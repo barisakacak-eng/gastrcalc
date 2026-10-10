@@ -1,0 +1,254 @@
+/* GastroCalc – Oberfläche für die Küche: groß, ruhig, eine Entscheidung je Bildschirm. */
+
+:root {
+  --papier: #F5EDE2; --papier-tief: #EDE2D3; --weiss: #FFFDF9;
+  --tinte: #22301F; --tinte-weich: #5C6B5A;
+  --salbei: #4C6B55; --salbei-tief: #2E4034; --salbei-hell: #E3EAE0;
+  --holz: #E2CDB2; --holz-tief: #C9A87C; --lehm: #A98467;
+  --glut: #E8763A; --gelb: #D9A22E; --rot: #C0453B; --gruen: #4F8A5B;
+  --radius: 14px;
+  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Systemschrift: offline, keine Weitergabe an Dritte */
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { font-size: 17px; }
+body {
+  margin: 0; background: var(--papier); color: var(--tinte); font-family: var(--schrift);
+  line-height: 1.4; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, p { margin: 0; }
+
+/* Grundgerüst */
+#app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; }
+.schirm { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.kopf { padding: max(12px, env(safe-area-inset-top)) 20px 0; }
+.inhalt { flex: 1; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+.fuss {
+  position: sticky; bottom: 0; padding: 12px 20px max(16px, env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--papier) 70%, rgba(245,237,226,0));
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* Fortschritt: ein Segment je Schritt, in Glut. Keine Prozentzahl. */
+.fortschritt { display: flex; gap: 3px; height: 5px; }
+.fortschritt i { flex: 1; background: var(--holz); border-radius: 3px; }
+.fortschritt i.da { background: var(--glut); }
+.kopfzeile { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; min-height: 36px; }
+.kopfzeile .zurueck { background: none; border: 0; padding: 12px 12px 12px 0; min-height: 44px; color: var(--tinte-weich); font-size: 1rem; }
+.kopfzeile .schrittzahl { color: var(--lehm); font-size: 0.9rem; }
+
+/* Frage und Hinweis */
+.frage { font-size: 1.65rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; max-width: 24ch; }
+.hinweis { color: var(--tinte-weich); font-size: 1rem; max-width: 40ch; }
+.tipp { background: var(--salbei-hell); border-left: 5px solid var(--salbei); border-radius: 10px; padding: 12px 14px; color: var(--tinte); font-size: 0.95rem; }
+
+/* Das große Zahlenfeld – das eine Element, das man aus Armlänge liest. */
+.zahlfeld { display: flex; align-items: baseline; gap: 10px; border-bottom: 3px solid var(--salbei-tief); padding: 6px 0; }
+.zahlfeld input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 2.8rem; font-weight: 800; letter-spacing: -0.02em; padding: 0; outline: none; }
+.zahlfeld input::placeholder { color: var(--holz-tief); font-weight: 600; }
+.zahlfeld .einheit { font-size: 1.3rem; font-weight: 600; color: var(--tinte-weich); white-space: nowrap; }
+.zahlfeld.klein input { font-size: 1.8rem; }
+.zahlfeld.offen { border-bottom-color: var(--gelb); }
+.zahlfeld.geschaetzt { border-bottom-color: var(--holz-tief); }
+.feldzeile { display: flex; flex-direction: column; gap: 8px; }
+.feldzeile label { font-weight: 600; }
+.textfeld { width: 100%; border: 2px solid var(--holz); border-radius: var(--radius); background: var(--weiss); padding: 14px 16px; font-size: 1.15rem; outline: none; }
+.textfeld:focus { border-color: var(--salbei); }
+.textfeld.gross { font-size: 1.5rem; font-weight: 700; }
+
+/* Stepper für kleine Zahlen (Tage, Monate) */
+.stepper { display: flex; align-items: center; gap: 12px; }
+.stepper button { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--holz); background: var(--weiss); font-size: 1.6rem; font-weight: 700; color: var(--salbei-tief); }
+.stepper button:active { background: var(--salbei-hell); }
+.stepper .wert { flex: 1; text-align: center; font-size: 1.5rem; font-weight: 700; }
+
+/* Auswahlkacheln: ein Rahmen, Status als linker Balken, keine Schatten */
+.kacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kachel {
+  text-align: left; background: var(--weiss); border: 2px solid var(--holz); border-radius: var(--radius);
+  padding: 14px 14px 12px; min-height: 76px; display: flex; flex-direction: column; gap: 3px;
+}
+.kachel b { font-weight: 700; font-size: 1.05rem; line-height: 1.2; }
+.kachel small { color: var(--tinte-weich); font-size: 0.85rem; line-height: 1.25; }
+.kachel.an { border-color: var(--salbei-tief); background: var(--salbei-hell); box-shadow: inset 4px 0 0 var(--salbei-tief); }
+.kachel.breit { grid-column: 1 / -1; }
+.gruppe { color: var(--lehm); font-weight: 600; font-size: 0.9rem; margin-top: 6px; }
+
+/* Listen */
+.liste { display: flex; flex-direction: column; gap: 10px; }
+.zeile { background: var(--weiss); border: 2px solid var(--holz); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.zeile.an { border-color: var(--salbei); }
+.zeile.offen { border-color: var(--gelb); }
+.zeile .oben { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.zeile .oben .name { font-weight: 700; }
+.zeile .oben small { display: block; color: var(--tinte-weich); font-weight: 400; font-size: 0.85rem; }
+.schalter { flex: none; width: 64px; height: 38px; border-radius: 19px; background: var(--holz); border: 0; position: relative; transition: background .15s; }
+.schalter::after { content: ""; position: absolute; top: 3px; left: 3px; width: 32px; height: 32px; border-radius: 50%; background: var(--weiss); transition: left .15s; }
+.schalter.an { background: var(--salbei); }
+.schalter.an::after { left: 29px; }
+.betrag { display: flex; align-items: center; gap: 10px; }
+.betrag input { flex: 1; min-width: 0; border: 0; border-bottom: 2px solid var(--salbei-tief); background: transparent; font-size: 1.6rem; font-weight: 800; padding: 4px 0; outline: none; }
+.betrag input::placeholder { color: var(--holz-tief); font-weight: 600; }
+.betrag.geschaetzt input { border-bottom-color: var(--holz-tief); color: var(--tinte-weich); }
+.betrag.offen input { border-bottom-color: var(--gelb); }
+.betrag .einheit { color: var(--tinte-weich); font-weight: 600; }
+.periode { display: inline-flex; border: 2px solid var(--holz); border-radius: 999px; overflow: hidden; }
+.periode button { border: 0; background: var(--weiss); padding: 10px 12px; min-height: 44px; font-size: 0.9rem; color: var(--tinte-weich); }
+.periode button.an { background: var(--salbei-tief); color: var(--weiss); }
+.unterzeile { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.marke { font-size: 0.85rem; color: var(--tinte-weich); }
+.marke.geschaetzt { color: var(--lehm); }
+.marke.offen { color: #8a6a12; }
+.leise { background: none; border: 0; color: var(--salbei-tief); text-decoration: underline; text-underline-offset: 3px; padding: 12px 0; min-height: 44px; font-size: 0.95rem; }
+
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 2px solid var(--holz); background: var(--weiss); border-radius: 999px; padding: 10px 16px; font-weight: 600; }
+.chip.an { border-color: var(--salbei-tief); background: var(--salbei-tief); color: var(--weiss); }
+
+/* Knöpfe */
+.knopf { width: 100%; border: 0; border-radius: var(--radius); padding: 17px 18px; font-size: 1.1rem; font-weight: 700; background: var(--salbei-tief); color: var(--weiss); }
+.knopf:disabled { background: var(--holz); color: var(--weiss); }
+.knopf.glut { background: var(--glut); }
+.knopf.zweit { background: var(--weiss); color: var(--salbei-tief); border: 2px solid var(--holz); }
+.knopf.weich { background: var(--salbei-hell); color: var(--salbei-tief); }
+.knopf.warn { background: var(--weiss); color: var(--rot); border: 2px solid var(--holz); }
+
+/* Startseite */
+.kopfband { background: var(--salbei-tief); color: var(--weiss); padding: max(16px, env(safe-area-inset-top)) 20px 20px; border-radius: 0 0 22px 22px; }
+.kopfband h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.01em; }
+.kopfband .unter { color: var(--salbei-hell); font-size: 0.95rem; margin-top: 4px; }
+.karte { background: var(--weiss); border: 2px solid var(--holz); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.karte h2 { font-size: 1rem; color: var(--tinte-weich); font-weight: 600; }
+.karte .gross { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.karte.hinweisgelb { border-color: var(--gelb); background: #FBF3DF; }
+.karte.leer { border-style: dashed; color: var(--tinte-weich); }
+.zeileknopf { width: 100%; text-align: left; background: var(--weiss); border: 2px solid var(--holz); border-radius: var(--radius); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.zeileknopf b { font-weight: 700; }
+.zeileknopf small { color: var(--tinte-weich); display: block; font-size: 0.85rem; }
+.zeileknopf .pfeil { color: var(--holz-tief); font-size: 1.3rem; }
+.nav { position: sticky; bottom: 0; display: flex; background: var(--weiss); border-top: 2px solid var(--holz); padding: 8px 8px max(8px, env(safe-area-inset-bottom)); }
+.nav button { flex: 1; background: none; border: 0; padding: 12px 4px; min-height: 48px; font-size: 0.85rem; font-weight: 600; color: var(--tinte-weich); border-radius: 10px; }
+.nav button.an { color: var(--salbei-tief); background: var(--salbei-hell); }
+.summenzeile { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--holz); }
+.summenzeile:last-child { border-bottom: 0; }
+.summenzeile .wert { font-weight: 700; }
+.summenzeile.gesamt { border-top: 3px solid var(--salbei-tief); border-bottom: 0; margin-top: 4px; padding-top: 14px; }
+.summenzeile.gesamt .wert { font-size: 1.5rem; font-weight: 800; }
+.abzeichen { display: inline-block; border: 1.5px solid var(--glut); color: var(--glut); border-radius: 6px; padding: 1px 7px; font-size: 0.75rem; font-weight: 700; vertical-align: middle; margin-left: 8px; }
+
+.meldung { position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: var(--tinte); color: var(--weiss); padding: 10px 16px; border-radius: 999px; font-size: 0.95rem; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.meldung.da { opacity: 1; }
+
+.versteckt { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+:focus-visible { outline: 3px solid var(--glut); outline-offset: 2px; }
+
+/* Etappe 2: Karte, Rezepte, Preise, Ergebnis */
+.liste.eng { gap: 6px; }
+.wahl { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--weiss); border: 2px solid var(--holz); border-radius: 12px; padding: 11px 14px; font-size: 1rem; min-height: 48px; }
+.wahl.an { border-color: var(--salbei-tief); background: var(--salbei-hell); }
+.wahl .haken { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--holz); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; color: var(--weiss); }
+.wahl.an .haken { background: var(--salbei-tief); border-color: var(--salbei-tief); }
+.wahl small { color: var(--tinte-weich); font-size: 0.8rem; }
+.knopf.schmal { width: auto; padding: 12px 16px; white-space: nowrap; }
+.hinweis.mitte { text-align: center; }
+.packung { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.packung input { width: 5.5em; min-width: 0; border: 0; border-bottom: 2px solid var(--salbei-tief); background: transparent; font-size: 1.25rem; font-weight: 700; padding: 6px 0; outline: none; }
+.packung input::placeholder { color: var(--holz-tief); font-weight: 500; font-size: 0.95rem; }
+.packung .einheit { color: var(--tinte-weich); font-weight: 600; }
+.chip.klein { padding: 9px 12px; font-size: 0.85rem; min-height: 44px; }
+.ampelzeile { display: flex; flex-wrap: wrap; gap: 8px; }
+.ampel { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 0.9rem; background: var(--weiss); border: 2px solid var(--holz); }
+.ampel::before, .punkt { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--holz-tief); margin-right: 0; }
+.punkt { margin-right: 8px; vertical-align: middle; }
+.ampel.gruen::before, .punkt.gruen { background: var(--gruen); }
+.ampel.gelb::before, .punkt.gelb { background: var(--gelb); }
+.ampel.rot::before, .punkt.rot { background: var(--rot); }
+.ampel.grau::before, .punkt.grau { background: var(--holz-tief); }
+.preisheute { font-size: 1.3rem; font-weight: 800; white-space: nowrap; }
+.kennzahlen { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--tinte-weich); font-size: 0.9rem; }
+.kennzahlen b { color: var(--tinte); }
+.neu { display: flex; gap: 8px; align-items: stretch; }
+.neu .textfeld { flex: 1; min-width: 0; }
+
+/* Etappe 3: Tag, Listen, Läden */
+.nav button { font-size: 0.8rem; padding: 12px 2px; }
+.zeile.storno { opacity: 0.55; }
+.zeile.storno .name { text-decoration: line-through; }
+.karte.formular h2 { margin-top: 6px; }
+.karte.dunkel { background: var(--salbei-tief); color: var(--weiss); border-color: var(--salbei-tief); }
+.karte.dunkel h2 { color: var(--weiss); }
+.karte.dunkel .zahlenraster small, .karte.dunkel .zahlenraster b { color: var(--weiss); }
+.marke.hell { color: #D7E0D3; }
+.zahlenraster { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.zahlenraster > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.zahlenraster small { color: var(--tinte-weich); font-size: 0.8rem; line-height: 1.25; }
+.zahlenraster b { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.karte.laden .oben { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.karte.laden .oben .name { font-weight: 800; font-size: 1.15rem; }
+.karte.laden .oben small { color: var(--tinte-weich); font-size: 0.85rem; }
+.karte.laden.aktiv { border-color: var(--salbei-tief); box-shadow: inset 4px 0 0 var(--salbei-tief); }
+.ampelmini { display: inline-flex; gap: 6px; }
+.ampelmini span { display: inline-flex; align-items: center; gap: 4px; font-size: 1.05rem; }
+.ampelmini span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: var(--holz-tief); }
+.ampelmini .gruen::before { background: var(--gruen); } .ampelmini .gelb::before { background: var(--gelb); } .ampelmini .rot::before { background: var(--rot); }
+
+/* Lange Namen ohne Leerzeichen dürfen das Layout nicht sprengen */
+.kopfband h1, .kopfband .unter, .zeile .name, .wahl span, .zeileknopf b, .zeileknopf small, .karte .name, .kachel b, .chip, .summenzeile span { overflow-wrap: break-word; word-break: break-word; min-width: 0; }
+.kopfband h1 { overflow-wrap: anywhere; }
+.zeile .oben .name, .karte.laden .oben > div { min-width: 0; flex: 1 1 55%; }
+.zeile .oben > div:last-child:not(.name) { flex: 0 1 auto; max-width: 48%; }
+.zeile .oben > div:last-child:not(.name) small { display: block; }
+.packung input { width: 3.9em; }
+.packung { gap: 6px; }
+.packung .periode button { padding: 10px 10px; }
+.schalter { height: 44px; border-radius: 22px; }
+.schalter::after { top: 3px; width: 38px; height: 38px; }
+.schalter.an::after { left: 23px; }
+.kennzahlen, .zahlenraster { overflow-wrap: anywhere; }
+.schirm { overflow-x: clip; }
+.karte h2, .marke, .abzeichen { overflow-wrap: anywhere; }
+.nav button { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 0; padding-right: 0; }
+.zahlfeld input, .betrag input { min-height: 44px; }
+/* Feld am unteren Rand darf nicht unter der Weiter-Leiste liegen: Inhalt bekommt unten Luft */
+.inhalt { padding-bottom: 96px; }
+.fuss { margin-top: -72px; }
+
+/* Etappe 4: Kühlkontrolle, Kontrollblatt, Druck */
+.rot { color: var(--rot); }
+.karte.hinweisrot { border-color: var(--rot); background: #FBE9E6; }
+.zahlfeld.rot { border-bottom-color: var(--rot); }
+.zahlfeld.rot input { color: var(--rot); }
+.wahl.warnung { border-color: var(--rot); }
+.zeileknopf.warn { border-color: var(--rot); }
+.stapel { display: flex; flex-direction: column; }
+.stapel .leise { padding: 4px 10px; min-height: 22px; line-height: 1; }
+.chip .chipx { background: none; border: 0; color: inherit; font-size: 1.1rem; padding: 0 0 0 6px; min-height: 0; line-height: 1; }
+.blatt { display: flex; flex-direction: column; gap: 4px; }
+.blattzeile { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 10px; background: var(--weiss); border: 1px solid var(--holz); }
+.blattzeile .datum { flex: none; width: 3.2em; font-weight: 700; }
+.blattzeile .messung { flex: 1; min-width: 0; }
+.blattzeile .messung small { display: block; color: var(--tinte-weich); font-size: 0.8rem; }
+.blattzeile.fehlt { border-color: var(--rot); background: #FBE9E6; }
+.blattzeile.nichtGemessen, .blattzeile.nacherfasst, .blattzeile.teilweise { border-color: var(--gelb); background: #FBF3DF; }
+.blattzeile.ruhetag, .blattzeile.offen { opacity: 0.7; }
+.kennzahlen span { white-space: nowrap; }
+@media print {
+  body { background: #fff; }
+  .nav, .nichtdrucken, .meldung, .tipp { display: none !important; }
+  .schirm { min-height: 0; }
+  .kopfband { background: none; color: #000; padding: 0 0 8px; }
+  .kopfband h1 { color: #000; } .kopfband .unter { color: #333; }
+  .karte, .blattzeile { break-inside: avoid; border-color: #999; box-shadow: none; background: #fff !important; }
+  .blattzeile.fehlt .messung, .blattzeile.fehlt .datum { color: #b00; }
+  .inhalt { padding: 0; gap: 8px; }
+}
+.tipp.warnband { border-left-color: var(--rot); background: #FBE9E6; }
+.stapel .leise { padding: 8px 12px; min-height: 44px; min-width: 44px; }
+.chip .chipx { min-width: 44px; min-height: 44px; margin: -10px -12px -10px 0; }
+.blattzeile .messung small, .blattzeile .messung { overflow-wrap: anywhere; }
+.knopf:disabled { opacity: 0.45; filter: grayscale(0.6); }

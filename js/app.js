@@ -1,0 +1,381 @@
+// GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
+// speichert nach jeder Änderung. Etappe 3: mehrere Läden, Tag (Umsatz, Weggeworfen), Listen, Läden-Übersicht.
+import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
+import { t, setzeSprache, SPRACHEN } from "./i18n.js";
+import { esc, parseZahl } from "./util.js";
+import { SCHRITTE, schrittIndex } from "./screens/onboarding.js";
+import { startView, einstellungenView, karteView } from "./screens/home.js";
+import { tagView, listenView, tagAktion, tagEingabe, tagFormOffen, tagFormVerwerfen, tagFormGueltig, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
+import { parseTemperatur } from "./screens/kuehl.js";
+import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
+import { laedenView } from "./screens/laeden.js";
+
+const root = document.getElementById("app");
+let wurzel = null;
+let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
+let ansicht = "start";      // in Phase "app": "start" | "karte" | "tag" | "listen" | "laeden" | "einstellungen"
+let ereignisAnzahl = 0;
+let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
+let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
+let aktualisierung = null;  // wartender Service Worker (neue Fassung liegt bereit)
+let offlineStand = "laedt";   // "laedt" | "bereit" | "keinSw"
+let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner stehen, bis es wieder klappt
+let ruheBis = 0, tippX = -99, tippY = -99; // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
+
+function aktivSetzen(id) {
+  if (stand && stand.id !== id) { tagFormVerwerfen(); tagZuruecksetzen(); kuehlZuruecksetzen(); } // offene Formulare gehören zum alten Laden
+  stand = wurzel.betriebe.find((b) => b.id === id) || null;
+  if (!stand) { stand = wurzel.betriebe[0] || null; }
+  if (!stand) { stand = leererBetrieb(); wurzel.betriebe.push(stand); }
+  wurzel.aktiv = stand.id;
+}
+
+// ---------- Zeichnen ----------
+
+function schirmKennung() {
+  return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.schritt}` : `app:${stand.id}:${ansicht}${ansicht === "kuehl" ? ":" + kuehlKennung() : ""}`;
+}
+
+function zeichne() {
+  const kennung = schirmKennung();
+  const y = kennung === letzterSchirm ? window.scrollY : 0;
+  try {
+    if (stand.phase === "onboarding") zeichneOnboarding();
+    else {
+      const v = ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
+        : ansicht === "karte" ? karteView(stand)
+        : ansicht === "tag" ? tagView(stand)
+        : ansicht === "listen" ? listenView(stand)
+        : ansicht === "kuehl" ? kuehlView(stand)
+        : ansicht === "laeden" ? laedenView(wurzel)
+        : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
+      root.innerHTML = `<div class="schirm">${v}</div>`;
+    }
+  } catch (e) {
+    console.error(e);
+    root.innerHTML = `<div class="schirm"><div class="inhalt">
+      <h1 class="frage">${esc(t("einstellungen.fehlerTitel"))}</h1><p class="hinweis">${esc(t("einstellungen.fehlerText"))}</p>
+      <label class="knopf zweit" style="text-align:center">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
+      <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button></div></div>`;
+  }
+  if (!speicherVerfuegbar() || speicherProblem) {
+    const b = document.createElement("div"); b.className = "tipp warnband"; b.style.margin = "12px 20px 0";
+    b.textContent = t(speicherProblem === "fassung" ? "einstellungen.andereFassung" : speicherProblem ? "einstellungen.speichernFehlgeschlagen" : "einstellungen.speicherFehlt");
+    root.prepend(b);
+  }
+  if (kennung !== letzterSchirm) ruheBis = Date.now() + 250;
+  letzterSchirm = kennung;
+  window.scrollTo(0, y);
+}
+
+function zeichneOnboarding() {
+  const i = Math.min(stand.schritt, SCHRITTE.length - 1);
+  const s = SCHRITTE[i];
+  const bearbeitet = !!stand.rueckkehr;
+  const zeigeFortschritt = s.id !== "sprache" && !bearbeitet;
+  const kannZurueck = i > 0 || stand.rueckkehr || wurzel.betriebe.length > 1;
+  root.innerHTML = `
+    <div class="schirm">
+      <div class="kopf">
+        ${zeigeFortschritt ? `<div class="fortschritt" aria-hidden="true">${SCHRITTE.slice(1).map((x, j) => `<i class="${j + 1 <= i ? "da" : ""}"></i>`).join("")}</div>` : ""}
+        <div class="kopfzeile">
+          ${kannZurueck ? `<button type="button" class="zurueck" data-a="zurueck">‹ ${esc(t("allgemein.zurueck"))}</button>` : "<span></span>"}
+          ${zeigeFortschritt ? `<span class="schrittzahl">${esc(t("allgemein.schrittVon", i, SCHRITTE.length - 1))}</span>` : bearbeitet ? `<span class="schrittzahl">${esc(t("allgemein.bearbeiten"))}</span>` : ""}
+        </div>
+      </div>
+      <div class="inhalt">${s.view(stand)}${i === 0 && wurzel.betriebe.length === 1 ? `<label class="leise" style="display:block;text-align:center;margin-top:24px">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>` : ""}</div>
+      <div class="fuss">${s.fuss ? s.fuss(stand) : ""}</div>
+    </div>`;
+  if (bearbeitet && stand.rueckkehr.bis === s.id) { const k = root.querySelector('.fuss [data-a="weiter"]'); if (k) k.textContent = t("allgemein.uebernehmen"); }
+  // Am Rechner das erste leere Textfeld fokussieren; am Handy nicht, sonst springt die Tastatur ungefragt hoch.
+  const erstes = root.querySelector("input.textfeld, .zahlfeld input");
+  if (erstes && !erstes.value && i > 0 && !/Mobi|Android/i.test(navigator.userAgent)) erstes.focus();
+}
+
+// ---------- Ablauf ----------
+// Bearbeiten aus der App heraus: stand.rueckkehr = { von, bis } – nach Schritt „bis" geht es zurück zur App.
+// Neuer Laden aus der App heraus: stand.neuAus = id des vorherigen Ladens – „Zurück" auf Schritt 1 geht zu dem zurück.
+
+const ctx = {
+  setzeSprache(code) { wurzel.sprache = code; setzeSprache(code); },
+  weiter(art) { schrittWeiter(art); },
+  zurueck() { schrittZurueck(); },
+  fertig() { fertig(); },
+};
+
+async function schrittWeiter(art = "fertig") {
+  if (wechselt) return; wechselt = true;
+  try {
+    const s = SCHRITTE[stand.schritt];
+    if (s.beimVerlassen) s.beimVerlassen(stand);
+    await ereignis(art === "uebersprungen" ? "schritt-uebersprungen" : "schritt-fertig", { schritt: s.id, laden: stand.id });
+    if (stand.rueckkehr && stand.rueckkehr.bis === s.id) { zurueckZurApp(); }
+    else if (stand.schritt < SCHRITTE.length - 1) {
+      stand.schritt += 1; history.pushState({ schritt: stand.schritt }, "");
+      await ereignis("schritt-start", { schritt: SCHRITTE[stand.schritt].id, laden: stand.id });
+    }
+    speichern(wurzel); zeichne();
+  } finally { wechselt = false; }
+}
+
+function schrittZurueck() {
+  const s = SCHRITTE[stand.schritt];
+  if (s.zurueck && s.zurueck(stand)) { speichern(wurzel); zeichne(); return; }
+  if (stand.rueckkehr && (stand.rueckkehr.von === s.id || stand.schritt === 0)) { zurueckZurApp(); }
+  else if (stand.schritt > (stand.neuAus ? 1 : 0)) { stand.schritt -= 1; ereignis("schritt-zurueck", { schritt: SCHRITTE[stand.schritt].id }); }
+  else if (wurzel.betriebe.length > 1) {
+    // Ein noch leerer neuer Laden wird wieder verworfen, wenn der Nutzer auf dem ersten Schritt zurück geht.
+    const alt = stand; const ziel = alt.neuAus && wurzel.betriebe.some((b) => b.id === alt.neuAus) ? alt.neuAus : wurzel.betriebe.find((b) => b.id !== alt.id).id;
+    if (!alt.betrieb.name && !alt.kosten.length && !alt.gerichte.length) wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== alt.id);
+    aktivSetzen(ziel); ansicht = "laeden";
+    zeichne(); sofortSpeichern(wurzel); return;
+  }
+  speichern(wurzel); zeichne();
+}
+
+function zurueckZurApp() { ansicht = stand.rueckkehr?.ansicht || "start"; stand.rueckkehr = null; stand.phase = "app"; }
+
+async function fertig() {
+  if (wechselt) return; wechselt = true;
+  try {
+    stand.phase = "app"; stand.rueckkehr = null; delete stand.neuAus; ansicht = "start";
+    await ereignis("onboarding-fertig", { laden: stand.id });
+    await sofortSpeichern(wurzel); zeichne();
+  } finally { wechselt = false; }
+}
+
+function bearbeiten(vonId, bisId) {
+  const i = schrittIndex(vonId); if (i < 0) return;
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ansicht === "einstellungen" || ansicht === "karte" ? ansicht : "start" };
+  ereignis("bearbeiten", { schritt: vonId });
+  history.pushState({ schritt: i }, "");
+  speichern(wurzel); zeichne();
+}
+
+// Neuer Laden: Sprache ist schon gewählt, also beginnt der neue Laden beim Format (Schritt 1).
+// Strukturänderungen (neuer Laden, Wechsel) werden sofort geschrieben, nicht erst nach der Verzögerung.
+async function ladenNeu() {
+  const neu = leererBetrieb(); neu.schritt = 1; neu.neuAus = stand.id;
+  wurzel.betriebe.push(neu); aktivSetzen(neu.id);
+  ereignis("laden-neu", { laden: neu.id, anzahl: wurzel.betriebe.length });
+  history.pushState({ schritt: 1 }, "");
+  zeichne(); await sofortSpeichern(wurzel);
+}
+
+async function ladenWechseln(id) {
+  if (!wurzel.betriebe.some((b) => b.id === id)) return;
+  aktivSetzen(id); ansicht = stand.phase === "app" ? "start" : ansicht;
+  ereignis("laden-wechsel", { laden: id });
+  zeichne(); await sofortSpeichern(wurzel);
+}
+
+function meldung(text) {
+  let m = document.querySelector(".meldung");
+  if (!m) { m = document.createElement("div"); m.className = "meldung"; document.body.appendChild(m); }
+  m.textContent = text; m.classList.add("da");
+  setTimeout(() => m.classList.remove("da"), 2600);
+}
+
+async function sicherungTeilen() {
+  const { blob, name, fingerabdruck } = await exportDatei(wurzel);
+  ereignisAnzahl += 1;
+  const gelungen = () => { // erst nach Teilen oder Download zählt die Sicherung
+    wurzel.letzteSicherung = new Date().toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel);
+    meldung(t("einstellungen.exportOk", wurzel.betriebe.length) + (fingerabdruck ? ` · ${fingerabdruck}` : ` · ${t("einstellungen.ohnePruefsumme")}`));
+    sofortSpeichern(wurzel); zeichne();
+  };
+  const datei = new File([blob], name, { type: "application/json" });
+  if (navigator.canShare && navigator.canShare({ files: [datei] })) {
+    try { await navigator.share({ files: [datei], title: "GastroCalc" }); gelungen(); return; } catch (e) { if (e.name === "AbortError") return; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000); gelungen();
+}
+
+// Einlesen führt zusammen: gleiche Laden-Kennung wird ersetzt, neue Läden kommen dazu. Nichts anderes geht verloren.
+async function sicherungEinlesen(datei) {
+  try {
+    const text = await datei.text();
+    const { wurzel: importiert, ereignisse, pruefsumme } = await importDatei(text);
+    if (pruefsumme === "abweichung" && !confirm(t("einstellungen.pruefsummeFalsch"))) return;
+    const gleich = importiert.betriebe.filter((b) => wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
+    const neu = importiert.betriebe.filter((b) => !wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
+    if (!confirm(t("einstellungen.importFrage", neu, gleich))) return;
+    const leerVorher = stand && stand.phase === "onboarding" && !stand.betrieb.name && !stand.kosten.length && !stand.gerichte.length ? stand.id : null;
+    zusammenfuehren(wurzel, importiert);
+    if (leerVorher && wurzel.betriebe.length > 1) { wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== leerVorher); if (wurzel.aktiv === leerVorher) wurzel.aktiv = importiert.aktiv; }
+    aktivSetzen(wurzel.aktiv); // der eigene aktive Laden bleibt, die Datei ändert ihn nicht
+    setzeSprache(wurzel.sprache || spracheDesGeraets());
+    await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme });
+    ereignisAnzahl = (await alleEreignisse()).length;
+    ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start"; meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : "einstellungen.importOhnePruefsumme")); zeichne();
+  } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
+}
+
+// ---------- Ereignisse der Oberfläche (eine Stelle für alles) ----------
+
+root.addEventListener("click", async (ev) => {
+  const el = ev.target.closest("[data-a]"); if (!el) return;
+  const name = el.dataset.a;
+  const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
+  if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
+
+  if (name === "zurueck") return schrittZurueck();
+  if (name === "weiter") return schrittWeiter();
+  if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
+  if (name === "nav") { ansicht = el.dataset.wert; return zeichne(); }
+  if (name === "export") return sicherungTeilen();
+  if (name === "laden-neu") return ladenNeu();
+  if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
+  if (name === "kuehl-rundgang-start") { ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
+  if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
+  if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
+  if (name === "laden-loeschen") {
+    if (wurzel.betriebe.length < 2 || !confirm(t("einstellungen.ladenLoeschenFrage", stand.betrieb.name))) return;
+    const weg = stand.id; wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== weg);
+    aktivSetzen((wurzel.betriebe.find((b) => b.phase === "app") || wurzel.betriebe[0]).id);
+    await ereignis("laden-geloescht", { laden: weg }); ansicht = "laeden"; await sofortSpeichern(wurzel); return zeichne();
+  }
+  if (name === "loeschen") {
+    if (!confirm(t("einstellungen.loeschenFrage"))) return;
+    speichernAbbrechen(); await allesLoeschen(); tagFormVerwerfen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+    setzeSprache(spracheDesGeraets()); return zeichne();
+  }
+  if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache); speichern(wurzel); return zeichne(); }
+
+  if (stand.phase === "onboarding") {
+    if (wechselt) return;
+    const s = SCHRITTE[stand.schritt];
+    if (s.aktion && s.aktion(name, el, stand, ctx)) { speichern(wurzel); if (stand.phase === "onboarding" && !wechselt) zeichne(); }
+    return;
+  }
+  if (ansicht === "tag" || ansicht === "listen") {
+    const r = tagAktion(name, el, stand);
+    if (r) { speichern(wurzel); if (r === "gespeichert") { ereignis("schwund-eintrag", { laden: stand.id }); meldung(t("tag.gespeichert")); } zeichne(); }
+  }
+  if (ansicht === "kuehl") {
+    const r = kuehlAktion(name, el, stand, wurzel);
+    if (r) {
+      zeichne();
+      const feld = root.querySelector('[data-f="station-wert"]'); if (feld && !feld.value) feld.focus(); // Tastatur gleich hoch, der nächste Schritt ist Tippen
+      if (r === "abgeschlossen") { ereignis("rundgang-fertig", { laden: stand.id }); meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(wurzel); } else speichern(wurzel);
+    }
+  }
+});
+
+// Eingaben: nicht bei jedem Zeichen neu zeichnen, sonst springt die Tastatur. Nur Stand ändern und speichern.
+root.addEventListener("input", (ev) => {
+  ruheBis = 0; // wer tippt, hat nicht doppelt getippt
+  const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
+  let neu = false;
+  if (stand.phase === "onboarding") {
+    const s = SCHRITTE[stand.schritt];
+    if (s.eingabe) neu = s.eingabe(el.dataset.f, el.value, stand);
+    const zeile = el.closest(".zeile"); const betrag = el.closest(".betrag");
+    if (zeile && betrag) { const leer = el.value.trim() === ""; zeile.classList.toggle("offen", leer); betrag.classList.remove("geschaetzt"); betrag.classList.toggle("offen", leer); }
+  } else if (ansicht === "tag") {
+    neu = tagEingabe(el.dataset.f, el.value, stand, wurzel);
+    const k = root.querySelector('[data-a="schwund-speichern"]'); if (k) k.disabled = !tagFormGueltig(); // ohne Neuzeichnen, sonst springt die Tastatur
+  } else if (ansicht === "kuehl") {
+    neu = kuehlEingabe(el.dataset.f, el.value, stand);
+    if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="station-speichern"]'); if (k) k.disabled = !kuehlFormGueltig(); }
+  }
+  speichern(wurzel);
+  if (neu === true) { // Suchfelder: Liste live filtern, Fokus und Cursor behalten
+    const f = el.dataset.f, pos = el.selectionStart; zeichne();
+    const wieder = root.querySelector(`[data-f="${CSS.escape(f)}"]`); if (wieder) { wieder.focus(); try { wieder.setSelectionRange(pos, pos); } catch (_) {} }
+  }
+});
+
+// Wenn ein Feld verlassen wird, einmal neu zeichnen, damit Zwischenstände und Markierungen stimmen.
+root.addEventListener("focusout", (ev) => {
+  const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
+  if ((el.dataset.f === "station-wert" || el.dataset.f.startsWith("stelle-max:") || el.dataset.f.startsWith("stelle-min:")) && el.value.trim() !== "" && parseTemperatur(el.value) === null) meldung(t("kuehl.tempUngueltig", el.value.trim().slice(0, 12)));
+  if (el.getAttribute("inputmode") === "decimal" && el.value.trim() !== "" && parseZahl(el.value) === null) {
+    meldung(t(/^[0-9.,\s]+$/.test(el.value) ? "allgemein.zahlZuGross" : "allgemein.zahlUngueltig", el.value.trim().slice(0, 20)));
+    if (el.dataset.f === "umsatz") { tagEingabe("umsatz", "", stand, wurzel); speichern(wurzel); } // halbe Zahl nicht stehen lassen
+  }
+  if (el.dataset.f.startsWith("wert:") && tagWertUebernehmen(el.dataset.f, el.value, stand)) { speichern(wurzel); meldung(t("tag.gespeichert")); }
+  if (stand.phase === "onboarding" || ansicht === "tag" || ansicht === "kuehl") setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
+});
+
+root.addEventListener("change", (ev) => {
+  const el = ev.target; if (el.dataset.f !== "import" || !el.files?.[0]) return;
+  const datei = el.files[0]; el.value = ""; sicherungEinlesen(datei);
+});
+
+// Enter = Weiter, aber nur auf Bildschirmen mit genau einem Feld (sonst überspringt es Felder).
+root.addEventListener("keydown", (ev) => {
+  if (ev.key !== "Enter") return;
+  const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
+  ev.preventDefault();
+  if (el.dataset.f === "eigenes" || el.dataset.f === "stelle-neu" || el.dataset.f === "person-neu") { const b = el.closest(".neu")?.querySelector('[data-a$="-neu"]'); if (b) b.click(); return; }
+  el.blur();
+  if (stand.phase === "onboarding" && root.querySelectorAll("[data-f]").length === 1) schrittWeiter();
+});
+
+// Zurück-Geste des Handys / Browser-Zurück: ein Schritt zurück statt App verlassen.
+window.addEventListener("popstate", () => {
+  if (!stand) return;
+  if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr)) { schrittZurueck(); }
+  else if (stand.phase === "app" && ansicht !== "start") {
+    if (ansicht === "listen") ansicht = "tag"; else if (ansicht === "tag" && tagFormOffen()) tagAktion("schwund-abbruch", null, stand); else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ } else if (ansicht === "kuehl") ansicht = "tag"; else ansicht = "start";
+    zeichne();
+  }
+  history.pushState({ schritt: stand.schritt }, "");
+});
+
+// Beim Verlassen (Wechsel zu WhatsApp, Kamera, Sperrbildschirm) sofort sichern – der Tester tippt oft und wechselt weg.
+window.addEventListener("pagehide", () => { if (wurzel) sofortSpeichern(wurzel, { stempel: false }); });
+document.addEventListener("visibilitychange", () => {
+  if (!wurzel) return;
+  if (document.visibilityState === "hidden") sofortSpeichern(wurzel, { stempel: false });
+  else { ereignis("app-sichtbar", { phase: stand.phase }); ereignisAnzahl += 1; }
+});
+
+function spracheDesGeraets() {
+  const code = (navigator.language || "de").slice(0, 2).toLowerCase();
+  return SPRACHEN.includes(code) ? code : "de";
+}
+
+// ---------- Start ----------
+
+let aktualisierungKlick = false;
+async function serviceWorkerStarten() {
+  if (!("serviceWorker" in navigator) || !window.isSecureContext) { offlineStand = "keinSw"; return; }
+  try {
+    const reg = await navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
+    const bereit = (w) => { aktualisierung = w; if (ansicht === "start" && stand?.phase === "app") zeichne(); };
+    if (reg.waiting && navigator.serviceWorker.controller) bereit(reg.waiting);
+    reg.addEventListener("updatefound", () => { const w = reg.installing; if (!w) return; w.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) bereit(w); }); });
+    navigator.serviceWorker.addEventListener("controllerchange", () => { if (aktualisierungKlick) location.reload(); });
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) reg.update().catch(() => {}); });
+    await navigator.serviceWorker.ready; offlineStand = "bereit";
+  } catch (e) { console.warn("Kein Service Worker:", e); offlineStand = "keinSw"; }
+}
+
+beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen")); zeichne(); });
+
+(async () => {
+  try { wurzel = await laden(); }
+  catch (e) {
+    // Der gespeicherte Stand stammt aus einer neueren Fassung der App (z. B. alte Fassung aus dem Cache): nichts anfassen, nur erklären.
+    setzeSprache(spracheDesGeraets());
+    root.innerHTML = `<div class="schirm"><div class="inhalt"><h1 class="frage">${esc(t("einstellungen.fehlerTitel"))}</h1><p class="hinweis">${esc(t("einstellungen.standNeuer"))}</p><button type="button" class="knopf" data-a="aktualisieren-oder-neu">${esc(t("start.jetztUebernehmen"))}</button></div></div>`;
+    root.querySelector('[data-a="aktualisieren-oder-neu"]').onclick = () => { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } else location.reload(); };
+    serviceWorkerStarten(); return;
+  }
+  aktivSetzen(wurzel.aktiv);
+  serviceWorkerStarten();
+  // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
+  setzeSprache(wurzel.sprache || spracheDesGeraets());
+  const ev = await alleEreignisse(); ereignisAnzahl = ev.length;
+  await ereignis("app-geoeffnet", { phase: stand.phase, schritt: SCHRITTE[stand.schritt]?.id, sprache: wurzel.sprache, laeden: wurzel.betriebe.length });
+  ereignisAnzahl += 1;
+  history.replaceState({ schritt: stand.schritt }, "");
+  history.pushState({ schritt: stand.schritt }, "");
+  zeichne();
+})();
+
+// Für Tests und Fehlersuche
+window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };
