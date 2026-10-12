@@ -1,19 +1,23 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
-// speichert nach jeder Änderung. Etappe 3: mehrere Läden, Tag (Umsatz, Weggeworfen), Listen, Läden-Übersicht.
+// speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN } from "./i18n.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex } from "./screens/onboarding.js";
 import { startView, einstellungenView, karteView } from "./screens/home.js";
-import { tagView, listenView, tagAktion, tagEingabe, tagFormOffen, tagFormVerwerfen, tagFormGueltig, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
+import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
 import { parseTemperatur } from "./screens/kuehl.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung } from "./screens/muell.js";
+import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
+import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa } from "./screens/beleg.js";
+import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
 
 const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
-let ansicht = "start";      // in Phase "app": "start" | "karte" | "tag" | "listen" | "laeden" | "einstellungen"
+let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
 let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
@@ -23,7 +27,7 @@ let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner s
 let ruheBis = 0, tippX = -99, tippY = -99; // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
 
 function aktivSetzen(id) {
-  if (stand && stand.id !== id) { tagFormVerwerfen(); tagZuruecksetzen(); kuehlZuruecksetzen(); } // offene Formulare gehören zum alten Laden
+  if (stand && stand.id !== id) { tagZuruecksetzen(); kuehlZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); } // offene Formulare gehören zum alten Laden
   stand = wurzel.betriebe.find((b) => b.id === id) || null;
   if (!stand) { stand = wurzel.betriebe[0] || null; }
   if (!stand) { stand = leererBetrieb(); wurzel.betriebe.push(stand); }
@@ -33,7 +37,8 @@ function aktivSetzen(id) {
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.schritt}` : `app:${stand.id}:${ansicht}${ansicht === "kuehl" ? ":" + kuehlKennung() : ""}`;
+  const unter = ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : "";
+  return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.schritt}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
 function zeichne() {
@@ -44,10 +49,13 @@ function zeichne() {
     else {
       const v = ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
         : ansicht === "karte" ? karteView(stand)
-        : ansicht === "tag" ? tagView(stand)
+        : ansicht === "muell" ? muellView(stand)
+        : ansicht === "umsatz" ? umsatzView(stand)
         : ansicht === "listen" ? listenView(stand)
         : ansicht === "kuehl" ? kuehlView(stand)
         : ansicht === "laeden" ? laedenView(wurzel)
+        : ansicht === "beleg" ? belegView(stand)
+        : ansicht === "abschluss" ? abschlussView(stand)
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
     }
@@ -223,11 +231,11 @@ root.addEventListener("click", async (ev) => {
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
-  if (name === "nav") { ansicht = el.dataset.wert; return zeichne(); }
+  if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz") { tagZuruecksetzen(); muellZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
-  if (name === "kuehl-rundgang-start") { ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
+  if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
   if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
   if (name === "laden-loeschen") {
@@ -238,7 +246,7 @@ root.addEventListener("click", async (ev) => {
   }
   if (name === "loeschen") {
     if (!confirm(t("einstellungen.loeschenFrage"))) return;
-    speichernAbbrechen(); await allesLoeschen(); tagFormVerwerfen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+    speichernAbbrechen(); await allesLoeschen(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
     setzeSprache(spracheDesGeraets()); return zeichne();
   }
   if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache); speichern(wurzel); return zeichne(); }
@@ -249,9 +257,21 @@ root.addEventListener("click", async (ev) => {
     if (s.aktion && s.aktion(name, el, stand, ctx)) { speichern(wurzel); if (stand.phase === "onboarding" && !wechselt) zeichne(); }
     return;
   }
-  if (ansicht === "tag" || ansicht === "listen") {
-    const r = tagAktion(name, el, stand);
-    if (r) { speichern(wurzel); if (r === "gespeichert") { ereignis("schwund-eintrag", { laden: stand.id }); meldung(t("tag.gespeichert")); } zeichne(); }
+  if (name === "tag-datum" || name === "listen-zeitraum" || (name === "schwund-storno" && ansicht !== "muell")) {
+    if (tagAktion(name, el, stand)) { speichern(wurzel); zeichne(); } return;
+  }
+  if (ansicht === "muell") {
+    const r = muellAktion(name, el, stand);
+    if (r) { speichern(wurzel); if (r.meldung) { ereignis("schwund-eintrag", { laden: stand.id }); meldung(r.meldung); } zeichne(); }
+  }
+  if (ansicht === "umsatz") { if (umsatzAktion(name, el)) zeichne(); }
+  if (ansicht === "beleg") {
+    const r = belegAktion(name, el, stand, wurzel);
+    if (r) { if (r.meldung) meldung(r.meldung); if (r === "uebernommen") { ereignis("beleg-uebernommen", { laden: stand.id }); await sofortSpeichern(wurzel); } else speichern(wurzel); zeichne(); }
+  }
+  if (ansicht === "abschluss") {
+    const r = abschlussAktion(name, el, stand, wurzel);
+    if (r) { ereignis("tag-abgeschlossen", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); }
   }
   if (ansicht === "kuehl") {
     const r = kuehlAktion(name, el, stand, wurzel);
@@ -273,9 +293,17 @@ root.addEventListener("input", (ev) => {
     if (s.eingabe) neu = s.eingabe(el.dataset.f, el.value, stand);
     const zeile = el.closest(".zeile"); const betrag = el.closest(".betrag");
     if (zeile && betrag) { const leer = el.value.trim() === ""; zeile.classList.toggle("offen", leer); betrag.classList.remove("geschaetzt"); betrag.classList.toggle("offen", leer); }
-  } else if (ansicht === "tag") {
-    neu = tagEingabe(el.dataset.f, el.value, stand, wurzel);
-    const k = root.querySelector('[data-a="schwund-speichern"]'); if (k) k.disabled = !tagFormGueltig(); // ohne Neuzeichnen, sonst springt die Tastatur
+  } else if (ansicht === "umsatz" || ansicht === "abschluss") {
+    neu = umsatzEingabe(el.dataset.f, el.value, stand, wurzel);
+  } else if (ansicht === "muell") {
+    neu = muellEingabe(el.dataset.f, el.value);
+    if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="muell-rohware-speichern"], [data-a="muell-eimer-speichern"]'); if (k) k.disabled = !muellFormGueltig(); }
+  } else if (ansicht === "beleg") {
+    neu = belegEingabe(el.dataset.f, el.value);
+    if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="beleg-zerlegen"]'); if (k) k.disabled = !belegTextDa(); }
+  } else if (ansicht === "einstellungen") {
+    if (el.dataset.f === "warenQuote") { const n = parseZahl(el.value); stand.verkauf.warenQuote = n !== null && n < 90 ? n / 100 : null; }
+    if (el.dataset.f === "steuerSatz") { const n = parseZahl(el.value); stand.betrieb.steuerSatz = n !== null && n < 100 ? n / 100 : null; }
   } else if (ansicht === "kuehl") {
     neu = kuehlEingabe(el.dataset.f, el.value, stand);
     if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="station-speichern"]'); if (k) k.disabled = !kuehlFormGueltig(); }
@@ -293,10 +321,10 @@ root.addEventListener("focusout", (ev) => {
   if ((el.dataset.f === "station-wert" || el.dataset.f.startsWith("stelle-max:") || el.dataset.f.startsWith("stelle-min:")) && el.value.trim() !== "" && parseTemperatur(el.value) === null) meldung(t("kuehl.tempUngueltig", el.value.trim().slice(0, 12)));
   if (el.getAttribute("inputmode") === "decimal" && el.value.trim() !== "" && parseZahl(el.value) === null) {
     meldung(t(/^[0-9.,\s]+$/.test(el.value) ? "allgemein.zahlZuGross" : "allgemein.zahlUngueltig", el.value.trim().slice(0, 20)));
-    if (el.dataset.f === "umsatz") { tagEingabe("umsatz", "", stand, wurzel); speichern(wurzel); } // halbe Zahl nicht stehen lassen
+    if (el.dataset.f === "umsatz") { umsatzEingabe("umsatz", "", stand, wurzel); speichern(wurzel); } // halbe Zahl nicht stehen lassen
   }
   if (el.dataset.f.startsWith("wert:") && tagWertUebernehmen(el.dataset.f, el.value, stand)) { speichern(wurzel); meldung(t("tag.gespeichert")); }
-  if (stand.phase === "onboarding" || ansicht === "tag" || ansicht === "kuehl") setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
+  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
 });
 
 root.addEventListener("change", (ev) => {
@@ -307,7 +335,7 @@ root.addEventListener("change", (ev) => {
 // Enter = Weiter, aber nur auf Bildschirmen mit genau einem Feld (sonst überspringt es Felder).
 root.addEventListener("keydown", (ev) => {
   if (ev.key !== "Enter") return;
-  const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
+  const el = ev.target.closest("[data-f]"); if (!el || el.type === "file" || el.tagName === "TEXTAREA") return;
   ev.preventDefault();
   if (el.dataset.f === "eigenes" || el.dataset.f === "stelle-neu" || el.dataset.f === "person-neu") { const b = el.closest(".neu")?.querySelector('[data-a$="-neu"]'); if (b) b.click(); return; }
   el.blur();
@@ -319,7 +347,11 @@ window.addEventListener("popstate", () => {
   if (!stand) return;
   if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr)) { schrittZurueck(); }
   else if (stand.phase === "app" && ansicht !== "start") {
-    if (ansicht === "listen") ansicht = "tag"; else if (ansicht === "tag" && tagFormOffen()) tagAktion("schwund-abbruch", null, stand); else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ } else if (ansicht === "kuehl") ansicht = "tag"; else ansicht = "start";
+    if (ansicht === "listen") ansicht = "umsatz";
+    else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
+    else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }
     zeichne();
   }
   history.pushState({ schritt: stand.schritt }, "");

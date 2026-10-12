@@ -1,0 +1,119 @@
+// Etappe 5: „Umsatz" – Tagesumsatz eintragen und die Zähler-Seite (Strecke, Prognose, Rechnung, Monatsstreifen, Preise).
+import { t } from "../i18n.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
+import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, umsatzSteuerSatz, schwundAuswertung } from "../engine.js";
+import { zaehler } from "../zaehler.js";
+import { preisAenderungen } from "../lieferung.js";
+import { nav } from "./nav.js";
+import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
+import { zaehlerKarte } from "./home.js";
+
+let umsatzBasis = "brutto"; // Schalter am Feld: Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert (der Zähler rechnet netto)
+
+const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; };
+
+export function umsatzView(stand) {
+  const H = heute(); const D = tagGewaehlt(); const nach = D !== H;
+  const z = zaehler(stand, { datum: D }); const st = umsatzSteuerSatz(stand);
+  const notiz = umsatzEintrag(stand, D); const konflikte = umsatzKonflikte(stand);
+  const wert = notiz ? (umsatzBasis === "netto" ? Math.round(notiz.umsatz / (1 + st.satz) * 100) / 100 : notiz.umsatz) : null;
+  const tageBis = Math.round(z.gewichtBisHeute), tageMonat = Math.round(z.gewichtMonat);
+  return `
+    <div class="kopfband"><h1>${esc(t("zaehler.titel"))}</h1><div class="unter">${esc(t("zaehler.unter", monatName(D), tageBis, tageMonat))}</div></div>
+    <div class="inhalt">
+      <div class="chips">${letzteTage(7).map((d, i) => `<button type="button" class="chip klein ${D === d ? "an" : ""}" data-a="tag-datum" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}</div>
+      ${nach ? `<div class="tipp">${esc(t("tag.nacherfassenHinweis"))}</div>` : ""}
+      ${konflikte.length ? `<div class="karte hinweisgelb"><h2>${esc(t("tag.konfliktTitel"))}</h2><div>${esc(t("tag.konfliktText", konflikte.map(datumLesbar).join(", ")))}</div></div>` : ""}
+      <div class="karte">
+        <h2>${esc(t("tag.umsatz"))}${nach ? ` <span class="marke">${esc(datumLesbar(D))}</span>` : ""}</h2>
+        <div class="zahlfeld klein"><input inputmode="decimal" data-f="umsatz" value="${esc(wertAnzeige(wert))}" placeholder="" aria-label="${esc(t("tag.umsatz"))}"><span class="einheit">€</span>
+          <span class="seg">${["brutto", "netto"].map((b) => `<button type="button" class="${umsatzBasis === b ? "an" : ""}" data-a="umsatz-basis" data-wert="${b}">${esc(t("zaehler.umsatzBasis." + b))}</button>`).join("")}</span></div>
+        <span class="marke">${esc(umsatzBasis === "netto" && notiz ? t("zaehler.nettoGespeichert", fmtEuro(notiz.umsatz, { dezimal: 2 })) : t("tag.umsatzHinweis"))}</span>
+      </div>
+      ${zaehlerKarte(z, D, { tipp: false })}
+      ${streckeKarte(z, st)}
+      ${prognoseKarte(z)}
+      ${gesternKarte(stand, z, D)}
+      ${rechnungKarte(z)}
+      ${monatKarte(z, D)}
+      ${preiseKarte(stand, D)}
+      <button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("zaehler.listen"))}</b><small>${esc(t("zaehler.listenKurz"))}</small></span><span class="pfeil">›</span></button>
+      <button type="button" class="zeileknopf" data-a="nav" data-wert="beleg"><span><b>${esc(t("beleg.belege"))}</b><small>${esc(t("zaehler.belegeKurz"))}</small></span><span class="pfeil">›</span></button>
+      <p class="hinweis">${esc(t("cockpit.kalkulatorisch"))}.</p>
+    </div>
+    ${nav("umsatz")}`;
+}
+
+// Die Strecke: von „alle Kosten des Monats offen" (links) bis „Monatsende" (rechts), Marke heute und Marke null.
+function streckeKarte(z, st) {
+  if (z.keinUmsatz) return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2><p class="hinweis">${esc(t("zaehler.nochKeinSchnitt"))}</p></div>`;
+  const min = -Math.max(z.last.gesamt, 1); const max = Math.max(z.monatsende ?? 0, z.stand, Math.abs(min) * 0.3);
+  const pos = (v) => Math.round(Math.min(1, Math.max(0, (v - min) / (max - min))) * 100);
+  const beispiel = 1000; const bringt = beispiel / (1 + st.satz) * (1 - (z.stufe === 2 ? z.quote : 0));
+  return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2>
+    <div class="strecke" style="--null:${pos(0)}%"><i class="heute" style="left:${pos(z.stand)}%" data-l="${esc(t("zaehler.heute"))}"></i><i class="null" style="left:${pos(0)}%" data-l="${esc(t("zaehler.null"))}${z.nullTag ? " · " + esc(datumLesbar(z.nullTag).slice(0, 6)) : ""}"></i></div>
+    <small class="marke">${esc(t("zaehler.jederTag", fmtEuro(beispiel), fmtEuro(bringt)))} ${esc(t("zaehler.legendeStrecke"))}</small></div>`;
+}
+
+function prognoseKarte(z) {
+  if (z.dbProTag === null) return "";
+  const zeile = (k, v) => `<div class="summenzeile"><span>${esc(t("zaehler." + k))}</span><span class="wert">${v}</span></div>`;
+  return `<div class="karte"><h2>${esc(t("zaehler.wennSoWeiter"))}</h2>
+    ${zeile("nullAm", z.imPlus ? `<span class="gruen">✓</span>` : z.nullTag ? esc(datumLesbar(z.nullTag).slice(0, 6)) : `<span class="rot">${esc(t("zaehler.nieDiesenMonat"))}</span>`)}
+    ${zeile("monatsende", `<span class="${z.monatsende >= 0 ? "gruen" : "rot"}">${z.monatsende >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.monatsende))}</span>`)}
+    ${zeile("tagesschnitt", fmtEuro(z.dbProTag))}
+    ${zeile("tageskosten", fmtEuro(z.tageskosten))}
+    ${z.noetigProTag !== null && !z.imPlus ? zeile("noetig", fmtEuro(z.noetigProTag)) : ""}
+  </div>`;
+}
+
+function gesternKarte(stand, z, D) {
+  if (z.keinUmsatz || !z.tage.find((x) => x.datum === D)?.umsatz) return "";
+  const sw = schwundAuswertung(stand, { von: D, bis: D });
+  const vor = z.standGestern;
+  return `<div class="karte ${z.bewegungHeute >= 0 ? "gruenrand" : "rotrand"}"><h2>${esc(t("zaehler.gestern"))}</h2>
+    <div class="mid ${vor >= 0 ? "gruen" : "rot"}">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</div>
+    <small class="marke">${esc(z.bewegungHeute >= 0 ? t("zaehler.naeher", fmtEuro(Math.abs(z.bewegungHeute))) : t("zaehler.weiterWeg", fmtEuro(Math.abs(z.bewegungHeute))))}${sw.muellwert > 0 && z.stufe !== 3 ? " " + esc(t("zaehler.tonneGefressen", fmtEuro(sw.muellwert, { dezimal: 2 }))) : ""}</small></div>`;
+}
+
+function rechnungKarte(z) {
+  const zeile = (text, v, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${v}</span></div>`;
+  return `<div class="karte"><h2>${esc(t("zaehler.soRechnet"))}</h2>
+    ${zeile(t("zaehler.fixBis"), fmtEuro(z.fix))}
+    ${zeile(t("zaehler.lohnBis"), z.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.lohn))}
+    ${zeile(t("zaehler.eigenBis"), z.last.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.eigen))}
+    ${zeile(z.stufe === 3 ? t("zaehler.wareBelege") : z.stufe === 2 ? t("zaehler.wareGeschaetzt", fmtZahl(z.quote * 100, 0)) : t("zaehler.wareFehlt"), z.stufe === 1 ? "–" : fmtEuro(z.ware))}
+    ${z.stufe === 3 ? "" : zeile(t("zaehler.muellBis"), fmtEuro(z.muell, { dezimal: z.muell < 100 ? 2 : 0 }))}
+    ${zeile(t("zaehler.umsatzBis"), fmtEuro(z.umsatzNetto), "gruen")}
+    <small class="marke">${esc(t("zaehler.umsatzBruttoHinweis", fmtEuro(z.umsatzBrutto), fmtZahl(z.steuer * 100, 1)))} · ${esc(t("zaehler.steuerQuelle." + z.steuerQuelle))} · ${esc(t("zaehler.quoteQuelle." + z.quoteQuelle))}</small>
+  </div>`;
+}
+
+function monatKarte(z, D) {
+  return `<div class="karte"><h2>${esc(t("zaehler.monat"))}</h2>
+    <div class="monat">${z.tage.map((x) => { const cls = x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus"); return `<i class="${cls} ${x.datum === D ? "heute" : ""}">${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
+    <small class="marke">${esc(t("zaehler.legendeMonat"))}</small></div>`;
+}
+
+function preiseKarte(stand, D) {
+  const l = preisAenderungen(stand, { datum: D }).slice(0, 8);
+  const einheit = (e) => e === "g" ? "kg" : e === "ml" ? "l" : t("allgemein.stueck");
+  const jeBasis = (p, e) => e === "g" || e === "ml" ? p * 1000 : p;
+  return `<div class="karte"><h2>${esc(t("zaehler.preise"))}</h2>
+    ${l.length ? l.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke" style="display:block">${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
+  </div>`;
+}
+
+// ---------- Aktionen und Eingaben ----------
+export function umsatzAktion(name, el) {
+  if (name === "umsatz-basis") { umsatzBasis = el.dataset.wert === "netto" ? "netto" : "brutto"; return true; }
+  return false;
+}
+export function umsatzEingabe(feld, wert, stand, wurzel) {
+  if (feld !== "umsatz") return false;
+  const n = parseZahl(wert); const D = tagGewaehlt(); const st = umsatzSteuerSatz(stand);
+  if (n === null) tagesnotizLoeschen(stand, D, wurzel?.geraet || null);
+  else tagesnotizSetzen(stand, D, umsatzBasis === "netto" ? Math.round(n * (1 + st.satz) * 100) / 100 : n, { nacherfasst: D !== heute(), geraet: wurzel?.geraet || null });
+  return false;
+}
+export const umsatzZuruecksetzen = () => { umsatzBasis = "brutto"; };

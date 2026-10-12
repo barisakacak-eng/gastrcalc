@@ -4,10 +4,25 @@
 
 // ---------- Feste Kosten (Etappe 1) ----------
 
-// Betrag eines Postens je Monat. periode "jahr" wird durch 12 geteilt.
+// Mehrwertsteuer auf Eingangsrechnungen (Strom, Telefon, Entsorgung …): Regelsatz. Ein brutto eingetragener Posten wird netto verrechnet,
+// weil der Betrieb die Vorsteuer zurückbekommt (Regelbesteuerung). Kleinunternehmer: Schalter auf netto lassen, dann zählt der Betrag, wie er ist.
+export const VORSTEUER = 0.19;
+export const nettoVonBrutto = (betrag, satz) => (Number(betrag) || 0) / (1 + (Number(satz) || 0));
+
+// Betrag eines Postens je Monat, netto. periode "jahr" wird durch 12 geteilt, basis "brutto" durch (1 + 19 %).
 export function betragJeMonat(posten) {
   if (posten.betrag === null || posten.betrag === undefined) return null;
-  return posten.periode === "jahr" ? posten.betrag / 12 : posten.betrag;
+  const b = posten.basis === "brutto" ? nettoVonBrutto(posten.betrag, VORSTEUER) : posten.betrag;
+  return posten.periode === "jahr" ? b / 12 : b;
+}
+
+// Eigener Lohn (Etappe 5, Wunsch Baris 12.10.): eigene Kostenzeile, damit der Zähler erst grün wird, wenn auch der Chef bezahlt ist.
+// Richtwert: gesetzlicher Mindestlohn 2026 (13,90 €/Std) × 173 Std ≈ 2.400 € – als Schätzung gekennzeichnet, der Wirt überschreibt.
+export const EIGENER_LOHN_RICHTWERT = 2400;
+export function eigenerLohnJeMonat(team) {
+  if (team.eigenerLohnStatus === "offen") return { betrag: null, status: "offen" };
+  if (typeof team.eigenerLohn === "number") return { betrag: team.eigenerLohn, status: team.eigenerLohnStatus === "geschaetzt" ? "geschaetzt" : "eigen" };
+  return { betrag: EIGENER_LOHN_RICHTWERT, status: "geschaetzt" };
 }
 
 // Summe der festen Kosten je Monat, getrennt nach Status.
@@ -47,8 +62,9 @@ export function lohnJeMonat(team) {
 export function monatsLast(stand) {
   const fk = fixkosten(stand);
   const lohn = lohnJeMonat(stand.team);
+  const eigen = eigenerLohnJeMonat(stand.team);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
-  return { fix: fk, lohn, fixJeOffen, gesamt: fixJeOffen + (lohn ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) };
+  return { fix: fk, lohn, eigen, fixJeOffen, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) };
 }
 
 // Minutensatz auf Leistungsstunden (Prüfung "Minutensatz, nebenbei"): bezahlte Stunden sind nicht produktive Stunden.
@@ -174,12 +190,46 @@ export function steuersatzAusZutaten(zutaten) {
   return STEUER_JE_GRUPPE[g] ?? 0.07;
 }
 
-// Preis je Basiseinheit (g, ml, Stück) eines Artikels aus Packungsgröße und Packungspreis. null = Preis fehlt.
-export function preisJeBasis(artikel) {
+// Steuersatz eines Artikels beim Einkauf: Getränke 19 %, Lebensmittel 7 %. Verpackung 19 %.
+export const steuersatzArtikel = (artikel) => STEUER_JE_GRUPPE[artikel?.gruppe] ?? (artikel?.gruppe === "verpackung" ? 0.19 : 0.07);
+// Nettopreis je Gebinde: ein brutto eingetragener Preis (Supermarktbon) wird um die Steuer bereinigt.
+export function preisNettoGebinde(artikel) {
   if (artikel.preis === null || artikel.preis === undefined) return null;
+  return artikel.preisBasis === "brutto" ? nettoVonBrutto(artikel.preis, steuersatzArtikel(artikel)) : artikel.preis;
+}
+// Preis je Basiseinheit (g, ml, Stück) eines Artikels aus Gebindeinhalt und Gebindepreis, netto. null = Preis fehlt.
+export function preisJeBasis(artikel) {
+  const p = preisNettoGebinde(artikel);
+  if (p === null) return null;
   const basisMenge = inBasis(artikel.packung?.menge, artikel.packung?.einheit);
   if (!(basisMenge > 0)) return null;
-  return artikel.preis / basisMenge;
+  return p / basisMenge;
+}
+
+// Gebinde (Etappe 5): Der Wirt kauft ein Gebinde (Karton, Kiste, Beutel …) mit einem Inhalt (packung.menge/einheit);
+// optional eine Zwischengröße (Karton à 4 Beutel). Kette von groß nach klein, mit Inhalt je Stufe.
+export const GEBINDE_ARTEN = ["karton", "kiste", "beutel", "packung", "kanister", "eimer", "sack", "flasche", "dose", "lose"];
+export function gebindeKette(artikel) {
+  const g = artikel.gebinde || { art: "packung", zwischen: null };
+  const menge = Number(artikel.packung?.menge) || null; const einheit = artikel.packung?.einheit || artikel.einheit || "stk";
+  const kette = [{ art: g.art, anzahl: 1, inhalt: menge, einheit }];
+  if (g.zwischen && g.zwischen.anzahl > 0 && menge) kette.push({ art: g.zwischen.art, anzahl: g.zwischen.anzahl, inhalt: menge / g.zwischen.anzahl, einheit });
+  return kette;
+}
+// Preis je Zwischengebinde (Beutel) und je Einheit, netto.
+export function gebindePreise(artikel) {
+  const p = preisNettoGebinde(artikel); const kette = gebindeKette(artikel);
+  const z = kette[1] || null;
+  return { gebinde: p, zwischen: p !== null && z ? p / z.anzahl : null, jeEinheit: p !== null && kette[0].inhalt ? p / kette[0].inhalt : null, einheit: kette[0].einheit };
+}
+// Einen alten Preis festhalten, bevor ein neuer gesetzt wird (Preisverlauf für „Preise gestiegen").
+export function preisMerken(artikel, datum) {
+  if (typeof artikel.preis !== "number" || !(artikel.packung?.menge > 0)) return;
+  artikel.preisHistorie ??= [];
+  const letzter = artikel.preisHistorie[artikel.preisHistorie.length - 1];
+  if (letzter && letzter.preis === artikel.preis && letzter.menge === artikel.packung.menge && letzter.einheit === artikel.packung.einheit) return;
+  artikel.preisHistorie.push({ datum, preis: artikel.preis, menge: artikel.packung.menge, einheit: artikel.packung.einheit, basis: artikel.preisBasis || "netto" });
+  if (artikel.preisHistorie.length > 24) artikel.preisHistorie.splice(0, artikel.preisHistorie.length - 24);
 }
 
 // Garverlust eines Artikels: eigene Messung (roh, gar) vor Schätzung (Branchenwert) vor nichts (0).
@@ -297,6 +347,20 @@ export function kalkulation(stand, { produktivAnteil = 0.7 } = {}) {
     unvollstaendig: last.offen > 0 || geschaetzt || zeilen.some((z) => z.ampel === "grau") };
 }
 
+// Mischsatz der Umsatzsteuer auf den Tagesumsatz (Etappe 5): eigener Wert, sonst aus der Karte (Speisen 7 %, Getränke 19 %,
+// gewichtet mit Preis × Menge), sonst 7 %. Der Tagesumsatz aus der Kasse ist brutto; der Zähler rechnet netto.
+export function umsatzSteuerSatz(stand) {
+  if (typeof stand.betrieb?.steuerSatz === "number") return { satz: stand.betrieb.steuerSatz, quelle: "eigen" };
+  const mitPreis = (stand.gerichte || []).filter((g) => typeof g.preis === "number" && g.preis > 0);
+  if (mitPreis.length) {
+    const { mengen } = mengenJeMonat(stand);
+    let s = 0, n = 0;
+    for (const g of mitPreis) { const w = g.preis * (mengen[g.id] || 1); s += w * steuersatzGericht(g); n += w; }
+    if (n > 0) return { satz: Math.round(s / n * 10000) / 10000, quelle: "karte" };
+  }
+  return { satz: 0.07, quelle: "standard" };
+}
+
 // Einheit wechseln, Zahl mitnehmen: 180 g -> 0,18 kg, 10 kg -> 10000 g (Review Etappe 2, Punkt 5).
 export function mengeUmrechnen(menge, von, nach) {
   if (menge === null || menge === undefined) return null;
@@ -312,7 +376,8 @@ import { heute, uid, SITZUNG } from "./util.js";
 //  1 = Verderb, Bruch, Zubereitungsfehler, nicht verkauft – bewertet zu Einkaufspreisen
 //  2 = Personalverzehr – bewertet nach Sachbezugswerten (SvEV 2026)
 //  3 = Eigenverzehr des Inhabers – BMF-Pauschbeträge oder Einzelaufzeichnung; hier Einzelaufzeichnung
-export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, personal: 2, eigen: 3 };
+// Etappe 5: drei Wege in zwei Tipps – gericht (Teller weg), rohware (Artikel weg), eimer (nur gewogen). Alte Arten bleiben lesbar.
+export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3 };
 export const FRAKTIONEN = ["bio", "rest", "verpackung", "glas", "papier", "fett"];
 // Sachbezugswerte 2026 (SvEV): 345 € je Monat, kalendertäglich 11,50 €, Frühstück 2,37 €, Mittag und Abend je 4,57 € (Prüfung Teil 3).
 export const SVEV_2026 = { fruehstueck: 2.37, mittag: 4.57, abend: 4.57, tag: 11.5, monat: 345 };
@@ -439,14 +504,24 @@ export const NICHT_GEMESSEN = ["geschlossen", "geraetAus", "leer"];
 export const NACHKONTROLLE_STUNDEN = { h1: 1, h2: 2, naechste: null };
 export const WOCHENTAGE = [0, 1, 2, 3, 4, 5, 6]; // 0 = Sonntag (JavaScript)
 
-export const stelleBereit = (k) => !k.archiviert && !!k.name && (typeof k.min === "number" || typeof k.max === "number");
+// Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt der gesetzliche Anhaltswert als Standard
+// (Kühlung ≤ 7 °C, Tiefkühlung ≤ −18 °C, Warmhalten ≥ 65 °C). Eigene Werte (Fisch 2 °C) überschreiben ihn; das Blatt sagt, welcher galt.
+export const GRENZEN_STANDARD = { kuehl: { min: null, max: 7 }, tk: { min: null, max: -18 }, warm: { min: 65, max: null } };
+export function grenzenVon(k) {
+  const eigen = typeof k.min === "number" || typeof k.max === "number";
+  if (eigen) return { min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, standard: false };
+  const st = GRENZEN_STANDARD[k.art] || GRENZEN_STANDARD.kuehl;
+  return { min: st.min, max: st.max, standard: true };
+}
+export const stelleBereit = (k) => !k.archiviert && !!k.name;
 export const aktiveStellen = (stand) => (stand.kuehlstellen || []).filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
 export const kuehlBereit = (stand) => aktiveStellen(stand).length > 0 && aktiveStellen(stand).every(stelleBereit);
 
 export function abweichung(stelle, wert) {
   if (typeof wert !== "number") return false;
-  if (typeof stelle.min === "number" && wert < stelle.min - 1e-9) return true;
-  if (typeof stelle.max === "number" && wert > stelle.max + 1e-9) return true;
+  const g = grenzenVon(stelle);
+  if (typeof g.min === "number" && wert < g.min - 1e-9) return true;
+  if (typeof g.max === "number" && wert > g.max + 1e-9) return true;
   return false;
 }
 
@@ -463,7 +538,7 @@ export function stationEintragen(r, stelle, daten) {
   const i = r.messungen.findIndex((m) => m.stelle === stelle.id);
   const m = { id: i >= 0 ? r.messungen[i].id : uid(), stelle: stelle.id, zeit: new Date().toISOString(), weg: Array.isArray(daten.weg) ? daten.weg : [],
     wert: typeof daten.wert === "number" ? daten.wert : null, grund: daten.wert === null || daten.wert === undefined ? (daten.grund || null) : null,
-    min: stelle.min, max: stelle.max, abweichung: abweichung(stelle, daten.wert),
+    min: grenzenVon(stelle).min, max: grenzenVon(stelle).max, grenzeStandard: grenzenVon(stelle).standard, abweichung: abweichung(stelle, daten.wert),
     massnahmen: Array.isArray(daten.massnahmen) ? daten.massnahmen : [], notiz: (daten.notiz || "").slice(0, 200),
     nachkontrolle: daten.nachkontrolle || null };
   if (!m.abweichung) { m.massnahmen = []; m.nachkontrolle = null; m.weg = []; m.notiz = ""; } // eine korrigierte Zahl nimmt die alte Maßnahme mit
@@ -511,8 +586,8 @@ export function offeneNachkontrollen(stand) {
   return out;
 }
 
-const tagPlus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + n); return heute(x); };
-const wochentag = (iso) => { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).getDay(); };
+export const tagPlus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + n); return heute(x); };
+export const wochentag = (iso) => { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).getDay(); };
 
 // Monatsblatt je Stelle: je Tag der Status – ruhetag | puenktlich | teilweise | nacherfasst | nichtGemessen | fehlt | offen (heute, noch nicht gemessen).
 export function monatsblatt(stand, stelleId, { von, bis }) {

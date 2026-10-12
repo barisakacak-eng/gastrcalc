@@ -4,7 +4,7 @@
 import { t } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
-  letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag } from "../engine.js";
+  letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD } from "../engine.js";
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
@@ -28,7 +28,8 @@ export function kuehlZurueck() { // Zurück-Geste: eine Ebene hoch; true = behan
 }
 
 const artName = (a) => t("kuehl.arten." + a);
-const grenzen = (k) => [typeof k.min === "number" ? `≥ ${fmtZahl(k.min, 1)} °C` : "", typeof k.max === "number" ? `≤ ${fmtZahl(k.max, 1)} °C` : ""].filter(Boolean).join(" · ");
+// Grenzen einer Stelle als Text; ohne eigene Grenze gilt der Standard (Etappe 5), das steht dann dabei.
+const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `≥ ${fmtZahl(g.min, 1)} °C` : "", typeof g.max === "number" ? `≤ ${fmtZahl(g.max, 1)} °C` : ""].filter(Boolean).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
 const kuerzelVon = (stand, id) => stand.personen.find((p) => p.id === id)?.kuerzel || "";
 const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
@@ -73,7 +74,7 @@ export function kuehlView(stand) {
       </div>
       <p class="hinweis">${esc(t("kuehl.haftung"))}</p>`}
     </div>
-    ${nav("tag")}`;
+    ${nav("kuehl")}`;
 }
 
 // ---------- Einrichtung ----------
@@ -83,6 +84,7 @@ function einrichtungView(stand) {
     <div class="kopfband"><h1>${esc(t("kuehl.einrichtenTitel"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>
     <div class="inhalt">
       ${stellen.length && !kuehlBereit(stand) ? `<div class="tipp warnband">${esc(t("kuehl.grenzenFehlen"))}</div>` : ""}
+      <p class="tipp">${esc(t("kuehl.richtwerte"))}</p>
       <div class="karte">
         <h2>${esc(t("kuehl.stellen"))}</h2>
         <p class="hinweis">${esc(t("kuehl.stellenHinweis"))}</p>
@@ -92,14 +94,14 @@ function einrichtungView(stand) {
               <div class="stapel"><button type="button" class="leise" data-a="stelle-hoch" data-id="${esc(k.id)}" ${i === 0 ? "disabled" : ""}>▲</button><button type="button" class="leise" data-a="stelle-runter" data-id="${esc(k.id)}" ${i === stellen.length - 1 ? "disabled" : ""}>▼</button></div></div>
             <div class="chips">${KUEHL_ARTEN.map((a) => `<button type="button" class="chip klein ${k.art === a ? "an" : ""}" data-a="stelle-art" data-id="${esc(k.id)}" data-wert="${a}">${esc(artName(a))}</button>`).join("")}</div>
             <div class="packung">
-              ${k.art !== "warm" ? `<span class="einheit">${esc(t("kuehl.hoechstens"))}</span><input inputmode="text" data-f="stelle-max:${esc(k.id)}" value="${esc(wertAnzeige(k.max))}" placeholder="°C" aria-label="${esc(t("kuehl.hoechstens"))}"><span class="einheit">°C</span>` : ""}
-              ${k.art === "warm" || k.art === "kuehl" ? `<span class="einheit">${esc(t("kuehl.mindestens"))}</span><input inputmode="text" data-f="stelle-min:${esc(k.id)}" value="${esc(wertAnzeige(k.min))}" placeholder="°C" aria-label="${esc(t("kuehl.mindestens"))}"><span class="einheit">°C</span>` : ""}
+              ${k.art !== "warm" ? `<span class="einheit">${esc(t("kuehl.hoechstens"))}</span><input inputmode="text" data-f="stelle-max:${esc(k.id)}" value="${esc(wertAnzeige(k.max))}" placeholder="${esc(String(GRENZEN_STANDARD[k.art].max))}" aria-label="${esc(t("kuehl.hoechstens"))}"><span class="einheit">°C</span>` : ""}
+              ${k.art === "warm" || k.art === "kuehl" ? `<span class="einheit">${esc(t("kuehl.mindestens"))}</span><input inputmode="text" data-f="stelle-min:${esc(k.id)}" value="${esc(wertAnzeige(k.min))}" placeholder="${esc(k.art === "warm" ? String(GRENZEN_STANDARD.warm.min) : "")}" aria-label="${esc(t("kuehl.mindestens"))}"><span class="einheit">°C</span>` : ""}
             </div>
-            ${!stelleBereit(k) ? `<span class="marke offen">${esc(t("kuehl.grenzeFehlt"))}</span>` : ""}
+            <span class="marke ${grenzenVon(k).standard ? "geschaetzt" : ""}">${esc(grenzen(k))}</span>
+            ${!stelleBereit(k) ? `<span class="marke offen">${esc(t("kuehl.grenzenFehlenKurz"))}</span>` : ""}
             <button type="button" class="leise" data-a="stelle-archiv" data-id="${esc(k.id)}">${esc(t("kuehl.stelleWeg"))}</button>
           </div>`).join("")}</div>
         <div class="neu"><input class="textfeld" data-f="stelle-neu" value="${esc(neuName)}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}" autocomplete="off" enterkeyhint="done"><button type="button" class="knopf weich schmal" data-a="stelle-neu">${esc(t("allgemein.hinzufuegen"))}</button></div>
-        <p class="tipp">${esc(t("kuehl.richtwerte"))}</p>
       </div>
       <div class="karte">
         <h2>${esc(t("kuehl.takt"))}</h2>
@@ -116,7 +118,7 @@ function einrichtungView(stand) {
       </div>
       <button type="button" class="knopf ${kuehlBereit(stand) ? "" : "zweit"}" data-a="kuehl-einrichtung-fertig">${esc(t(kuehlBereit(stand) ? "allgemein.fertig" : "kuehl.spaeter"))}</button>
     </div>
-    ${nav("tag")}`;
+    ${nav("kuehl")}`;
 }
 
 // ---------- Rundgang ----------
@@ -141,7 +143,7 @@ function rundgangView(stand) {
       ${fertig < stellen.length ? `<button type="button" class="knopf zweit" data-a="kuehl-start">${esc(t("kuehl.unterbrechen"))}</button>` : ""}
       <button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}
     </div>
-    ${nav("tag")}`;
+    ${nav("kuehl")}`;
 }
 
 function rundgangStartView(stand) {
@@ -160,7 +162,7 @@ function rundgangStartView(stand) {
         <button type="button" class="knopf glut" data-a="rundgang-start" ${personen.length && startVon === null ? "disabled" : ""}>${esc(t("kuehl.los"))}</button>
       </div>
     </div>
-    ${nav("tag")}`;
+    ${nav("kuehl")}`;
 }
 
 function stationView(stand, r, k) {
@@ -227,7 +229,7 @@ function blattView(stand) {
       <div class="nichtdrucken"><button type="button" class="knopf zweit" data-a="blatt-drucken">${esc(t("kuehl.drucken"))}</button>
       <button type="button" class="leise" data-a="kuehl-start">‹ ${esc(t("kuehl.titel"))}</button></div>
     </div>
-    ${nav("tag")}`;
+    ${nav("kuehl")}`;
 }
 
 // ---------- Aktionen ----------

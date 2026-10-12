@@ -12,10 +12,15 @@ const laden = () => { const b = S.leererBetrieb(); b.phase = "app";
   b.kuehlstellen = [{ id: "k1", name: "Theke", art: "kuehl", min: null, max: 7, reihe: 0, archiviert: false }, { id: "k2", name: "TK Keller", art: "tk", min: null, max: -18, reihe: 1, archiviert: false }, { id: "k3", name: "Bain-Marie", art: "warm", min: 65, max: null, reihe: 2, archiviert: false }];
   b.kuehl = { takt: 1, ruhetage: [], eingerichtet: true }; b.personen = [{ id: "p1", kuerzel: "MU", aktiv: true, entfernt: false }]; return b; };
 
-test("Grenzen: ohne Grenze keine Kontrolle; Abweichung je Art", () => {
+test("Grenzen: ohne eigene Grenze gilt der Standard je Art; Abweichung je Art", () => {
   const b = laden(); assert.equal(E.kuehlBereit(b), true);
-  b.kuehlstellen.push({ id: "k4", name: "Neu", art: "kuehl", min: null, max: null, reihe: 3, archiviert: false }); assert.equal(E.kuehlBereit(b), false);
-  b.kuehlstellen[3].archiviert = true; assert.equal(E.kuehlBereit(b), true, "archivierte Stelle zählt nicht");
+  b.kuehlstellen.push({ id: "k4", name: "Neu", art: "tk", min: null, max: null, reihe: 3, archiviert: false }); assert.equal(E.kuehlBereit(b), true, "Standardgrenze reicht");
+  assert.deepEqual(E.grenzenVon(b.kuehlstellen[3]), { min: null, max: -18, standard: true });
+  assert.equal(E.abweichung(b.kuehlstellen[3], -15), true); assert.equal(E.abweichung(b.kuehlstellen[3], -19), false);
+  b.kuehlstellen[3].max = -20; assert.deepEqual(E.grenzenVon(b.kuehlstellen[3]), { min: null, max: -20, standard: false }); assert.equal(E.abweichung(b.kuehlstellen[3], -19), true, "eigene Grenze schlägt Standard");
+  b.kuehlstellen.push({ id: "k5", name: "", art: "kuehl", min: null, max: null, reihe: 4, archiviert: false }); assert.equal(E.kuehlBereit(b), false, "ohne Namen nicht bereit");
+  b.kuehlstellen[4].archiviert = true; assert.equal(E.kuehlBereit(b), true, "archivierte Stelle zählt nicht");
+  b.kuehlstellen.splice(3, 2);
   assert.equal(E.abweichung(b.kuehlstellen[0], 7), false); assert.equal(E.abweichung(b.kuehlstellen[0], 7.5), true);
   assert.equal(E.abweichung(b.kuehlstellen[1], -18), false); assert.equal(E.abweichung(b.kuehlstellen[1], -12), true);
   assert.equal(E.abweichung(b.kuehlstellen[2], 70), false); assert.equal(E.abweichung(b.kuehlstellen[2], 58), true);

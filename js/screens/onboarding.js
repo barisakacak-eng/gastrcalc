@@ -4,8 +4,9 @@ import { t, SPRACHEN } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, uid, wertAnzeige } from "../util.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
-import { KATEGORIEN, postenJeKategorie, istTypisch } from "../data/kosten.js";
-import { fixkosten } from "../engine.js";
+import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard } from "../data/kosten.js";
+import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
+import { heute } from "../util.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
 
 // ---------- Bausteine ----------
@@ -29,7 +30,7 @@ const knopfOffen = (text = t("allgemein.weissNicht")) => `<button type="button" 
 // Kostenposten eines Betriebs holen oder anlegen
 function postenEintrag(stand, postenId, kat) {
   let e = stand.kosten.find((k) => k.posten === postenId);
-  if (!e) { e = { id: uid(), posten: postenId, kategorie: kat, betrag: null, status: "aus", periode: "monat" }; stand.kosten.push(e); }
+  if (!e) { e = { id: uid(), posten: postenId, kategorie: kat, betrag: null, status: "aus", periode: "monat", basis: basisStandard(postenId) }; stand.kosten.push(e); }
   return e;
 }
 
@@ -130,10 +131,23 @@ const lohn = {
     <h1 class="frage">${esc(t("team.frageLohn"))}</h1>
     <p class="hinweis">${esc(t("team.lohnHinweis"))}</p>
     ${zahlfeld({ feld: "team.lohnkosten", wert: stand.team.lohnkosten, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: "", status: stand.team.lohnkosten === null && stand.team.lohnOffen ? "offen" : "" })}
-    <p class="tipp">${esc(t("team.lohnTipp"))}</p>`,
+    <p class="tipp">${esc(t("team.lohnTipp"))}</p>
+    <div class="feldzeile" style="margin-top:8px">
+      <label>${esc(t("team.frageEigen"))}</label>
+      <p class="hinweis">${esc(t("team.eigenHinweis"))}</p>
+      ${(() => { const e = eigenerLohnJeMonat(stand.team); return zahlfeld({ feld: "team.eigenerLohn", wert: e.status === "eigen" ? stand.team.eigenerLohn : null, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: e.status === "offen" ? "" : String(EIGENER_LOHN_RICHTWERT), klein: true, status: e.status === "geschaetzt" ? "geschaetzt" : e.status === "offen" ? "offen" : "" }); })()}
+      <span class="marke ${stand.team.eigenerLohnStatus === "offen" ? "offen" : "geschaetzt"}">${esc(stand.team.eigenerLohnStatus === "offen" ? t("allgemein.offen") : stand.team.eigenerLohnStatus === "eigen" ? t("allgemein.bekannt") : t("team.eigenRichtwert", fmtEuro(EIGENER_LOHN_RICHTWERT)))}</span>
+      ${stand.team.eigenerLohnStatus === "offen" ? "" : `<button type="button" class="leise" data-a="eigen-offen">${esc(t("team.eigenOffen"))}</button>`}
+    </div>`,
   fuss: () => knopfOffen() + knopfWeiter(),
-  eingabe(feld, wert, stand) { if (feld === "team.lohnkosten") { stand.team.lohnkosten = parseZahl(wert); stand.team.lohnOffen = false; } },
-  aktion(name, el, stand, ctx) { if (name === "offen") { stand.team.lohnkosten = null; stand.team.lohnOffen = true; ctx.weiter("uebersprungen"); return true; } },
+  eingabe(feld, wert, stand) {
+    if (feld === "team.lohnkosten") { stand.team.lohnkosten = parseZahl(wert); stand.team.lohnOffen = false; }
+    if (feld === "team.eigenerLohn") { const n = parseZahl(wert); stand.team.eigenerLohn = n; stand.team.eigenerLohnStatus = n === null ? "geschaetzt" : "eigen"; }
+  },
+  aktion(name, el, stand, ctx) {
+    if (name === "offen") { stand.team.lohnkosten = null; stand.team.lohnOffen = true; ctx.weiter("uebersprungen"); return true; }
+    if (name === "eigen-offen") { stand.team.eigenerLohn = null; stand.team.eigenerLohnStatus = "offen"; return true; }
+  },
 };
 
 const kostenIntro = {
@@ -179,6 +193,7 @@ function kostenSchritt(kat) {
                       <button type="button" class="${e.periode === "jahr" ? "an" : ""}" data-a="periode" data-posten="${p.id}" data-wert="jahr">${esc(t("allgemein.proJahr"))}</button>
                     </div>
                   </div>
+                  <div class="seg klein"><button type="button" class="${(e.basis || basisStandard(p.id)) === "brutto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="brutto">${esc(t("gebinde.brutto"))}</button><button type="button" class="${(e.basis || basisStandard(p.id)) === "netto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="netto">${esc(t("gebinde.netto"))}</button></div>
                   <div class="unterzeile">
                     ${e.status === "geschaetzt" ? `<span class="marke geschaetzt">${esc(t("kosten.richtwertHinweis", fmtEuro(rw)))}</span>`
                       : e.status === "offen" ? `<span class="marke offen">${esc(t("kosten.offenHinweis"))}</span>`
@@ -218,6 +233,7 @@ function kostenSchritt(kat) {
         e.periode = neu; return true;
       }
       if (name === "posten-offen") { const e = postenEintrag(stand, el.dataset.posten, kat); e.betrag = null; e.status = "offen"; return true; }
+      if (name === "basis-posten") { const e = postenEintrag(stand, el.dataset.posten, kat); e.basis = el.dataset.wert === "brutto" ? "brutto" : "netto"; return true; }
     },
     beimVerlassen(stand) { if (!stand.kostenKategorienGeprueft.includes(kat)) stand.kostenKategorienGeprueft.push(kat); },
   };
@@ -269,5 +285,40 @@ const kanaele = {
   },
 };
 
-export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), kanaele, karte, rezepte, preise, verkauf, ergebnis];
+// Etappe 5 (Baris 12.10.): Kühlstellen direkt im Onboarding – wie viele, Namen, Art. Keine Grenzen: Standard nach Gesetz gilt, eigene später unter Mehr.
+const kuehlstellen = {
+  id: "kuehlstellen",
+  view(stand) {
+    const stellen = stand.kuehlstellen.filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
+    const grenze = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `≥ ${g.min} °C` : "", typeof g.max === "number" ? `≤ ${g.max} °C` : ""].filter(Boolean).join(" · ") + (g.standard ? ` · ${t("kuehl.standard")}` : ""); };
+    return `
+      <h1 class="frage">${esc(t("kuehl.obFrage"))}</h1>
+      <p class="hinweis">${esc(t("kuehl.obHinweis"))}</p>
+      ${stepper("stellen", stellen.length, String(stellen.length))}
+      <div class="liste">${stellen.map((k) => `
+        <div class="zeile an">
+          <input class="textfeld" data-f="ob-stelle:${esc(k.id)}" value="${esc(k.name)}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}" autocomplete="off">
+          <div class="unterzeile"><div class="seg klein">${["kuehl", "tk", "warm"].map((a) => `<button type="button" class="${k.art === a ? "an" : ""}" data-a="ob-art" data-id="${esc(k.id)}" data-wert="${a}">${esc(t("kuehl.artKurz." + a))}</button>`).join("")}</div>
+          <span class="marke">${esc(grenze(k))}</span></div>
+        </div>`).join("")}</div>
+      ${stellen.length ? `<p class="tipp">${esc(t("kuehl.grenzeStandard"))}</p>` : ""}`;
+  },
+  fuss(stand) { return stand.kuehlstellen.some((k) => !k.archiviert) ? knopfWeiter() : `<button type="button" class="knopf zweit" data-a="weiter">${esc(t("kuehl.obKeine"))}</button>`; },
+  eingabe(feld, wert, stand) { if (feld.startsWith("ob-stelle:")) { const k = stand.kuehlstellen.find((x) => x.id === feld.slice(10)); if (k) k.name = wert.slice(0, 40); } },
+  aktion(name, el, stand) {
+    const aktiv = () => stand.kuehlstellen.filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
+    if (name === "plus" && el.dataset.feld === "stellen") {
+      const n = aktiv().length; if (n >= 20) return false;
+      const art = n === 0 ? "kuehl" : n === 1 ? "tk" : "kuehl"; const nK = aktiv().filter((k) => k.art === "kuehl").length;
+      const nameNeu = art === "tk" ? t("kuehl.obNameTk") : t("kuehl.obName", nK + 1);
+      if (!stand.kuehl.seit) stand.kuehl.seit = heute();
+      stand.kuehlstellen.push({ id: uid(), name: nameNeu, art, min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false }); return true;
+    }
+    if (name === "minus" && el.dataset.feld === "stellen") { const l = aktiv(); const k = l[l.length - 1]; if (!k) return false; if (stand.messungen.some((m) => m.stelle === k.id)) k.archiviert = true; else stand.kuehlstellen = stand.kuehlstellen.filter((x) => x.id !== k.id); return true; }
+    if (name === "ob-art") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k) return false; k.art = el.dataset.wert; k.min = null; k.max = null; if (k.art === "tk" && /^Kühlschrank|^Fridge|^Buzdolabı/.test(k.name)) k.name = t("kuehl.obNameTk"); if (k.art === "warm" && /^Kühlschrank|^Fridge|^Buzdolabı|^Tiefkühler|^Freezer|^Derin/.test(k.name)) k.name = t("kuehl.obNameWarm"); return true; }
+  },
+  beimVerlassen(stand) { stand.kuehl.eingerichtet = stand.kuehlstellen.some((k) => !k.archiviert); },
+};
+
+export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);

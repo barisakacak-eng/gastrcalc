@@ -27,6 +27,9 @@ export function t(pfad, ...args) {
   return typeof v === "function" ? v(...args) : v;
 }
 
+// Alle Sprachen eines Schlüssels (für dreisprachige Kacheln): { de, tr, en }.
+export function tAlle(pfad) { const out = {}; for (const c of SPRACHEN) { const v = hole(TABELLEN[c], pfad); out[c] = typeof v === "string" ? v : hole(de, pfad); } return out; }
+
 // Selbstprüfung: fehlende Schlüssel je Sprache (für die Entwicklung, läuft in den Tests).
 export function fehlendeSchluessel(code) {
   const out = [];

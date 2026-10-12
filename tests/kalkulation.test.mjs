@@ -13,7 +13,7 @@ const artikel = [
 ];
 const stand = () => ({
   betrieb: { tageProWoche: 6, monate: 12 },
-  team: { personen: 3, stundenProPerson: 160, lohnkosten: 6000 },
+  team: { personen: 3, stundenProPerson: 160, lohnkosten: 6000, eigenerLohn: null, eigenerLohnStatus: "offen" }, // eigener Lohn offen: die Zahlen unten rechnen ohne ihn
   kosten: [ { kategorie: "miete", betrag: 2000, status: "bekannt", periode: "monat" } ],
   kanaele: { portale: [ { name: "Lieferando", provision: 30, basis: "unbekannt" } ] },
   verkauf: { zielgewinn: 10, bestellungenTag: 200 },

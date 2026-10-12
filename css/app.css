@@ -252,3 +252,85 @@ h1, h2, h3, p { margin: 0; }
 .chip .chipx { min-width: 44px; min-height: 44px; margin: -10px -12px -10px 0; }
 .blattzeile .messung small, .blattzeile .messung { overflow-wrap: anywhere; }
 .knopf:disabled { opacity: 0.45; filter: grayscale(0.6); }
+
+/* Etappe 5: Cockpit, Zähler, Müll in zwei Tipps, Belege, Tag abschließen, Brutto/Netto-Schalter */
+.gruen { color: var(--gruen); }
+.karte.gruenrand { border-color: var(--gruen); }
+.karte.rotrand { border-color: var(--rot); }
+.mid { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.karte.zaehler { width: 100%; text-align: left; gap: 4px; cursor: pointer; }
+.karte.zaehler .lbl { color: #C9D6CB; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
+.karte.zaehler .riesig { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; display: block; }
+.karte.zaehler.minus .riesig { color: #F2A79F; }
+.karte.zaehler.plus .riesig { color: #9FD3A8; }
+.karte.zaehler.grau .riesig { color: #C9D6CB; }
+.karte.zaehler small { color: #E3EAE0; font-size: 0.95rem; }
+.karte.zaehler small.warn { color: #F2D27F; }
+.karte.zaehler small.fein { color: #A9B9AC; font-size: 0.78rem; }
+.karte.zaehler .bewegung { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.karte.zaehler .bewegung .alt { font-size: 1.3rem; font-weight: 700; color: #C9D6CB; font-variant-numeric: tabular-nums; }
+.karte.zaehler .bewegung .pfeil { color: #C9D6CB; }
+.band { padding: 12px 14px; border-radius: 12px; color: var(--weiss); font-weight: 700; line-height: 1.25; }
+.band small { display: block; font-weight: 500; font-size: 0.85rem; opacity: 0.92; margin-top: 2px; }
+.band.rot { background: var(--rot); } .band.gelb { background: var(--gelb); color: var(--tinte); } .band.gruen { background: var(--gruen); }
+.dreier { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.zweier { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kachel.klein { padding: 10px; min-height: 72px; gap: 1px; }
+.kachel.klein b { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kachel.klein small { font-size: 0.72rem; }
+.kachel.rotrand { border-color: var(--rot); }
+.jetzt { width: 100%; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--salbei-hell); border: 0; border-left: 5px solid var(--salbei); border-radius: 12px; padding: 12px 14px; }
+.jetzt > span:first-child { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.jetzt small { color: var(--tinte-weich); font-size: 0.8rem; }
+.jetzt b { font-size: 1rem; }
+.jetzt .pfeil { color: var(--salbei-tief); font-size: 1.3rem; }
+.jetzt.still { border-left-color: var(--holz-tief); }
+.balken { display: flex; align-items: flex-end; gap: 6px; height: 64px; }
+.balken i { flex: 1; position: relative; height: 100%; }
+.balken i s, .balken i b { position: absolute; bottom: 0; display: block; border-radius: 3px 3px 0 0; }
+.balken i s { left: 0; width: 45%; background: var(--holz); text-decoration: none; }
+.balken i b { right: 0; width: 45%; background: var(--salbei); }
+.balken i.heute b { background: var(--glut); }
+.tage { display: flex; font-size: 0.72rem; color: var(--tinte-weich); }
+.tage span { flex: 1; text-align: center; }
+.tueren { display: flex; gap: 6px; }
+.tueren button { flex: 1; min-width: 0; border: 2px solid var(--holz); background: var(--weiss); border-radius: 10px; padding: 10px 2px; min-height: 44px; font-size: 0.8rem; font-weight: 600; color: var(--salbei-tief); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seg { display: inline-flex; border: 2px solid var(--holz); border-radius: 999px; overflow: hidden; flex: none; }
+.seg button { border: 0; background: var(--weiss); padding: 8px 12px; min-height: 40px; font-size: 0.85rem; font-weight: 700; color: var(--tinte-weich); }
+.seg button.an { background: var(--salbei-tief); color: var(--weiss); }
+.seg.klein button { padding: 6px 10px; min-height: 36px; font-size: 0.8rem; }
+.zahlfeld .seg { align-self: center; }
+.strecke { position: relative; height: 18px; border-radius: 9px; margin: 26px 10px 30px; background: linear-gradient(to right, #E9B2AC 0, #E9B2AC calc(var(--null) - 10%), #EAD9A8 var(--null), #BFDCC4 calc(var(--null) + 6%), #BFDCC4 100%); }
+.strecke i { position: absolute; top: -5px; width: 4px; height: 28px; margin-left: -2px; background: var(--tinte); border-radius: 2px; }
+.strecke i.null { background: var(--gruen); }
+.strecke i::after { content: attr(data-l); position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.75rem; font-style: normal; color: var(--tinte-weich); }
+.strecke i.heute::after { top: -22px; font-weight: 700; color: var(--tinte); }
+.strecke i.null::after { top: 30px; }
+.monat { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.monat i { aspect-ratio: 1; border-radius: 6px; background: #E9B2AC; display: grid; place-items: center; font-size: 0.8rem; font-style: normal; color: var(--tinte); font-weight: 600; }
+.monat i.zukunft { background: #F3D9D5; color: var(--tinte-weich); }
+.monat i.ziel { background: #BFDCC4; }
+.monat i.frei { background: var(--papier-tief); color: var(--lehm); }
+.monat i.offen { background: var(--papier-tief); color: var(--tinte-weich); }
+.monat i.heute { outline: 3px solid var(--tinte); outline-offset: -3px; }
+.tueren3 { display: flex; flex-direction: column; gap: 10px; }
+.kachel.tuer { min-height: 92px; justify-content: center; gap: 2px; padding: 14px 16px; }
+.kachel.tuer b { font-size: 1.3rem; }
+.kachel.tuer small { font-size: 0.85rem; color: var(--salbei-tief); }
+.kachel.tuer small.fein { color: var(--tinte-weich); font-size: 0.78rem; }
+.zaehlkachel { padding: 0; overflow: hidden; }
+.zaehlkachel .tipp-flaeche { width: 100%; border: 0; background: none; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 14px 12px 8px; min-height: 64px; }
+.zaehlkachel .tipp-flaeche b { font-size: 1rem; line-height: 1.2; min-width: 0; overflow-wrap: anywhere; }
+.zaehlkachel .unterzeile { padding: 0 12px 4px; min-height: 36px; }
+.zaehlkachel .unterzeile .leise { padding: 6px 0; min-height: 36px; font-size: 0.85rem; }
+.zaehl { display: inline-grid; place-items: center; min-width: 34px; height: 34px; border-radius: 17px; background: var(--salbei-tief); color: var(--weiss); font-weight: 800; font-size: 1rem; padding: 0 10px; flex: none; }
+.zaehl.leer { background: var(--holz); color: var(--tinte-weich); }
+.hak { width: 28px; height: 28px; border-radius: 8px; background: var(--gruen); color: var(--weiss); display: inline-grid; place-items: center; font-weight: 800; font-size: 0.9rem; flex: none; }
+.hak.offen { background: var(--weiss); border: 2px solid var(--gelb); color: #8a6a12; }
+.hakzeile { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hakzeile small { display: block; }
+.belegtext { min-height: 160px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.9rem; line-height: 1.35; }
+.ergebnis { background: var(--salbei-hell); border-radius: 10px; padding: 8px 11px; font-size: 0.95rem; }
+.inhalt.cockpit { gap: 12px; }
+.kachel.klein, .karte.zaehler { font-family: inherit; }
+button.kachel { cursor: pointer; }

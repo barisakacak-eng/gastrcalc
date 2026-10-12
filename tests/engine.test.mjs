@@ -100,12 +100,38 @@ test("fixkosten: ausgeschaltete Posten zählen nirgends, auch nicht als offen", 
   const f = E.fixkosten({ kosten: [ { kategorie: "miete", betrag: null, status: "aus", periode: "monat" } ] });
   assert.equal(f.offen, 0); nah(f.gesamt, 0);
 });
-test("monatsLast: Löhne offen bleibt offen, Saison nur auf feste Kosten", () => {
-  const stand = { betrieb: { monate: 6 }, team: { lohnkosten: null }, kosten: [ { kategorie: "miete", betrag: 1000, status: "bekannt", periode: "monat" } ] };
+test("monatsLast: Löhne offen bleibt offen, Saison nur auf feste Kosten, eigener Lohn als Richtwert", () => {
+  const stand = { betrieb: { monate: 6 }, team: { lohnkosten: null, eigenerLohn: null, eigenerLohnStatus: "offen" }, kosten: [ { kategorie: "miete", betrag: 1000, status: "bekannt", periode: "monat" } ] };
   const m = E.monatsLast(stand);
-  assert.equal(m.lohnOffen, true); assert.equal(m.offen, 1); nah(m.fixJeOffen, 2000); nah(m.gesamt, 2000);
+  assert.equal(m.lohnOffen, true); assert.equal(m.offen, 2); nah(m.fixJeOffen, 2000); nah(m.gesamt, 2000);
   stand.team.lohnkosten = 3000;
   nah(E.monatsLast(stand).gesamt, 5000);
+  stand.team.eigenerLohnStatus = "geschaetzt"; // Richtwert Mindestlohn × 173 Std
+  nah(E.monatsLast(stand).gesamt, 5000 + E.EIGENER_LOHN_RICHTWERT); assert.equal(E.monatsLast(stand).eigen.status, "geschaetzt");
+  stand.team.eigenerLohn = 3200; stand.team.eigenerLohnStatus = "eigen";
+  nah(E.monatsLast(stand).gesamt, 8200); assert.equal(E.monatsLast(stand).offen, 0);
+});
+test("betragJeMonat: brutto eingetragene Posten werden netto verrechnet (Vorsteuer 19 %), netto bleibt", () => {
+  nah(E.betragJeMonat({ betrag: 119, periode: "monat", basis: "brutto" }), 100);
+  nah(E.betragJeMonat({ betrag: 119, periode: "monat", basis: "netto" }), 119);
+  nah(E.betragJeMonat({ betrag: 1428, periode: "jahr", basis: "brutto" }), 100);
+  assert.equal(E.betragJeMonat({ betrag: null, basis: "brutto" }), null);
+});
+test("Artikel: Gebindekette, Preis je Beutel und je Einheit, brutto eingetragener Preis wird netto", () => {
+  const a = { name: "Falafel", gruppe: "fleisch", einheit: "stk", packung: { menge: 200, einheit: "stk" }, gebinde: { art: "karton", zwischen: { art: "beutel", anzahl: 4 } }, preis: 18.9, preisBasis: "netto" };
+  const k = E.gebindeKette(a); assert.equal(k.length, 2); assert.equal(k[1].anzahl, 4); nah(k[1].inhalt, 50);
+  const p = E.gebindePreise(a); nah(p.zwischen, 4.725); nah(p.jeEinheit, 0.0945); nah(E.preisJeBasis(a), 0.0945);
+  a.preisBasis = "brutto"; nah(E.preisJeBasis(a), 18.9 / 1.07 / 200);
+  const g = { name: "Cola", gruppe: "getraenk", einheit: "l", packung: { menge: 24, einheit: "l" }, preis: 23.8, preisBasis: "brutto" }; nah(E.preisNettoGebinde(g), 20);
+  const t = { name: "Tomaten", gruppe: "gemuese", einheit: "kg", packung: { menge: 6, einheit: "kg" }, gebinde: { art: "kiste", zwischen: null }, preis: 11.1, preisBasis: "netto", preisHistorie: [] };
+  E.preisMerken(t, "2026-10-01"); E.preisMerken(t, "2026-10-01"); assert.equal(t.preisHistorie.length, 1, "gleicher Preis wird nicht doppelt gemerkt");
+  t.preis = 12.3; E.preisMerken(t, "2026-10-11"); assert.equal(t.preisHistorie.length, 2);
+});
+test("umsatzSteuerSatz: eigener Wert, sonst aus der Karte gewichtet, sonst 7 %", () => {
+  assert.deepEqual(E.umsatzSteuerSatz({ betrieb: { steuerSatz: 0.1 }, gerichte: [] }), { satz: 0.1, quelle: "eigen" });
+  assert.deepEqual(E.umsatzSteuerSatz({ betrieb: {}, gerichte: [] }), { satz: 0.07, quelle: "standard" });
+  const s = { betrieb: { tageProWoche: 6 }, verkauf: { bestellungenTag: 0 }, gerichte: [ { id: "d", preis: 10, mengeTag: 90, klasse: "haupt", steuer: 0.07, zutaten: [] }, { id: "c", preis: 10, mengeTag: 10, klasse: "getraenk", steuer: 0.19, zutaten: [] } ] };
+  const r = E.umsatzSteuerSatz(s); assert.equal(r.quelle, "karte"); nah(r.satz, 0.082, 1e-3);
 });
 test("Provision: unbekannte Basis wird vorsichtig (wie brutto) gerechnet", () => {
   assert.equal(E.basisFuerRechnung("unbekannt"), "brutto");

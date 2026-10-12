@@ -2,16 +2,19 @@
 // plus ein Ereignisprotokoll (nur lokal, Teil der Sicherungsdatei).
 // Nichts verlässt das Gerät, außer der Tester exportiert die Datei selbst.
 //
-// Schema 3 (Etappe 4): Wurzel = { schema, sprache, aktiv, geraet, lfd, letzteSicherung, betriebe: [Betrieb, …] }.
-// Journale (schwund, messungen, rundgaenge, tagesnotizen) werden nur angehängt; Rücknahme = storniert, Korrektur = neuer Eintrag.
-// Schema 1 (Einzelbetrieb) und 2 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
+// Schema 4 (Etappe 5): Wurzel = { schema, sprache, aktiv, geraet, lfd, letzteSicherung, betriebe: [Betrieb, …] }.
+// Neu gegenüber Schema 3: Kostenposten tragen basis (netto/brutto), Artikel tragen Gebinde, Preisbasis und Preisverlauf,
+// der eigene Lohn ist eine Kostenzeile, dazu die Journale lieferungen (Belege) und abschluesse (Tag abschließen).
+// Journale (schwund, messungen, rundgaenge, tagesnotizen, lieferungen, abschluesse) werden nur angehängt; Rücknahme = storniert.
+// Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
 import { debounce, uid, heute } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
+import { basisStandard } from "./data/kosten.js";
 
-export const SCHEMA = 3;
-export const APP_FASSUNG = "etappe4";
+export const SCHEMA = 4;
+export const APP_FASSUNG = "etappe5";
 const DB_NAME = "gastrocalc";
 const DB_VERSION = 1;
 const EREIGNISSE_MAX = 2000;
@@ -23,13 +26,15 @@ export function leererBetrieb() {
     geaendert: null,
     phase: "onboarding",        // "onboarding" | "app"
     schritt: 0,                 // aktueller Onboarding-Schritt
-    betrieb: { name: "", format: null, kuechen: [], tageProWoche: 6, monate: 12 },
-    team: { personen: null, stundenProPerson: null, lohnkosten: null, eigenerLohn: null },
-    kosten: [],                 // {id, kategorie, posten, betrag, status, periode}
+    betrieb: { name: "", format: null, kuechen: [], tageProWoche: 6, monate: 12, steuerSatz: null }, // steuerSatz: eigener Mischsatz für den Umsatz (null = aus der Karte oder 7 %)
+    team: { personen: null, stundenProPerson: null, lohnkosten: null, eigenerLohn: null, eigenerLohnStatus: "geschaetzt" }, // eigenerLohn null + geschaetzt = Richtwert gilt
+    kosten: [],                 // {id, kategorie, posten, betrag, status, periode, basis: netto|brutto}
     kostenKategorienGeprueft: [],
     kanaele: { vorOrt: true, abholung: true, eigeneLieferung: false, portale: [] },
-    verkauf: { zielgewinn: 10, zielgewinnStatus: "vorschlag", bestellungenTag: null },
-    artikel: [], gerichte: [],
+    verkauf: { zielgewinn: 10, zielgewinnStatus: "vorschlag", bestellungenTag: null, warenQuote: null }, // warenQuote: eigener Wareneinsatz-Anteil 0..1 (null = aus der Karte)
+    artikel: [], gerichte: [],  // artikel: {name, gruppe, einheit, packung:{menge,einheit}, gebinde:{art, zwischen:{art,anzahl}|null}, preis, preisBasis, preisHistorie:[{datum,preis,menge,einheit}]}
+    lieferungen: [],            // nur anhängen: eingelesene Belege {id, datum, erfasst, lieferant, typ, basis, summeNetto, summeBrutto, zeilen:[…], storniert}
+    abschluesse: [],            // nur anhängen: Tag abschließen {id, datum, erfasst, geraet, umsatz, muell, kuehl, stand}
     schwund: [],                // nur anhängen; Rücknahme = storniert:true
     tagesnotizen: [],           // nur anhängen: {id, datum, umsatz, erfasst, nacherfasst} – der jüngste Eintrag je Datum gilt
     personen: [],               // {id, kuerzel, aktiv, entfernt} – wer misst; Kürzel änderbar (Pseudonymisierung), Einträge zeigen nur die id
@@ -113,7 +118,7 @@ function ergaenze(ziel, vorlage) {
 const mitId = (liste) => liste.filter((e) => istObjekt(e) && typeof e.id === "string");
 
 // Ein einzelner Betrieb (Schema 1, 2 oder 3) wird geprüft und vervollständigt.
-export function migrierenBetrieb(s) {
+export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stammt aus Schema ≤ 3
   if (!istObjekt(s)) return leererBetrieb();
   const leer = leererBetrieb();
   if (typeof s.id !== "string" || !s.id) s.id = leer.id;
@@ -121,7 +126,12 @@ export function migrierenBetrieb(s) {
   s.kosten = s.kosten.filter((k) => istObjekt(k) && typeof k.posten === "string" && typeof k.kategorie === "string")
     .map((k) => ({ ...k, betrag: typeof k.betrag === "number" && Number.isFinite(k.betrag) ? k.betrag : null,
                    status: ["aus", "bekannt", "geschaetzt", "offen"].includes(k.status) ? k.status : "offen",
-                   periode: k.periode === "jahr" ? "jahr" : "monat" }));
+                   periode: k.periode === "jahr" ? "jahr" : "monat",
+                   // Schema ≤ 3 kannte keine Basis: eingetragene Zahlen bleiben, wie sie sind (netto = so verrechnen, wie eingetragen)
+                   basis: k.basis === "brutto" || k.basis === "netto" ? k.basis : (alt ? "netto" : basisStandard(k.posten)) }));
+  if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
+  if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
+  if (typeof s.verkauf.warenQuote !== "number" || !(s.verkauf.warenQuote >= 0 && s.verkauf.warenQuote < 0.9)) s.verkauf.warenQuote = null;
   s.kanaele.portale = s.kanaele.portale.filter(istObjekt).map((p) => ({ id: String(p.id || uid()), name: String(p.name || ""),
     provision: typeof p.provision === "number" ? p.provision : null, basis: ["netto", "brutto", "unbekannt"].includes(p.basis) ? p.basis : "unbekannt" }));
   s.betrieb.name = String(s.betrieb.name || "").slice(0, 40); s.betrieb.kuechen = s.betrieb.kuechen.filter((k) => KUECHEN.some((x) => x.id === k));
@@ -129,7 +139,12 @@ export function migrierenBetrieb(s) {
   s.betrieb.tageProWoche = Math.min(7, Math.max(1, Number(s.betrieb.tageProWoche) || 6));
   s.betrieb.monate = Math.min(12, Math.max(1, Number(s.betrieb.monate) || 12));
   s.gerichte = mitId(s.gerichte).map((g) => ({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }));
-  s.artikel = s.artikel.filter((a) => istObjekt(a) && typeof a.name === "string");
+  s.artikel = s.artikel.filter((a) => istObjekt(a) && typeof a.name === "string").map((a) => ({ ...a,
+    gebinde: istObjekt(a.gebinde) && typeof a.gebinde.art === "string" ? { art: a.gebinde.art, zwischen: istObjekt(a.gebinde.zwischen) && Number(a.gebinde.zwischen.anzahl) > 0 ? { art: String(a.gebinde.zwischen.art || "beutel"), anzahl: Number(a.gebinde.zwischen.anzahl) } : null } : { art: "packung", zwischen: null },
+    preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
+    preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
+  s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt) : [], storniert: !!l.storniert }));
+  s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
   s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
@@ -155,7 +170,8 @@ export function migrierenWurzel(w) {
   if (Array.isArray(w.betriebe)) {
     const out = leereWurzel();
     out.sprache = ["de", "tr", "en"].includes(w.sprache) ? w.sprache : null;
-    out.betriebe = w.betriebe.map(migrierenBetrieb);
+    const alt = Number(w.schema) < 4;
+    out.betriebe = w.betriebe.map((b) => migrierenBetrieb(b, { alt }));
     out.aktiv = out.betriebe.some((b) => b.id === w.aktiv) ? w.aktiv : (out.betriebe[0]?.id ?? null);
     if (typeof w.geraet === "string" && w.geraet) out.geraet = w.geraet;
     out.lfd = Math.max(0, Number(w.lfd) || 0);
@@ -166,7 +182,7 @@ export function migrierenWurzel(w) {
   // Schema 1: der alte Einzelbetrieb. Er hatte keine Kennung; sie wird aus Anlagezeit und Namen abgeleitet,
   // damit dieselbe Altdatei beim zweiten Einlesen denselben Laden ersetzt statt einen zweiten anzulegen.
   if (typeof w.id !== "string" || !w.id) w.id = "alt-" + kurzHash(String(w.angelegt || "") + "|" + String(w.betrieb?.name || ""));
-  const b = migrierenBetrieb(w);
+  const b = migrierenBetrieb(w, { alt: true });
   const out = leereWurzel();
   out.sprache = ["de", "tr", "en"].includes(w.sprache) ? w.sprache : null;
   out.betriebe = [b]; out.aktiv = b.id;
@@ -195,7 +211,7 @@ export const speichernAbbrechen = () => speichern.abbrechen();
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length, 0);
+  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length, 0);
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
@@ -243,7 +259,7 @@ export async function exportDatei(wurzel) {
   return { blob, name, fingerabdruck: sha ? sha.slice(0, 10) : null };
 }
 
-// Liest eine Sicherung (Schema 1, 2 oder 3) und liefert {wurzel, ereignisse, pruefsumme: "ok"|"fehlt"|"abweichung"};
+// Liest eine Sicherung (Schema 1 bis 4) und liefert {wurzel, ereignisse, pruefsumme: "ok"|"fehlt"|"abweichung"};
 // wirft Fehler mit .grund = "format" | "neuer".
 export async function importDatei(text) {
   const fehler = (grund) => { const e = new Error(grund); e.grund = grund; return e; };
@@ -292,6 +308,8 @@ export function verschmelzen(lokal, fremd) {
   basis.schwund = journalVereinigen(lokal.schwund, fremd.schwund).sort(sortErfasst);
   basis.tagesnotizen = journalVereinigen(lokal.tagesnotizen, fremd.tagesnotizen).sort(sortErfasst);
   basis.messungen = journalVereinigen(lokal.messungen, fremd.messungen).sort(sortErfasst);
+  basis.lieferungen = journalVereinigen(lokal.lieferungen, fremd.lieferungen).sort(sortErfasst);
+  basis.abschluesse = journalVereinigen(lokal.abschluesse, fremd.abschluesse).sort(sortErfasst);
   basis.personen = journalVereinigen(lokal.personen, fremd.personen, ["entfernt"]).map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
   // Kühlstellen: Archivierung gewinnt; Name und Grenzen vom jüngeren Stand
   const stellen = new Map();

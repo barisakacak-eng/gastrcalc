@@ -1,11 +1,24 @@
-"""Durchlauf des Onboardings im Handy-Format, Bilder je Schritt, Prüfung der Speicherung nach Neuladen.
+"""Durchlauf Etappe 5 im Handy-Format: Onboarding (mit Kühlstellen, eigenem Lohn, Brutto/Netto, Gebinde), Cockpit, Müll in zwei Tipps,
+Umsatz und Zähler, Beleg einlesen, Tag abschließen, Kühlkontrolle mit Standardgrenzen, Sicherung, Sprachen. Bilder je Schritt.
 Start: python3 tests/durchlauf.py  (startet selbst einen kleinen Webserver)"""
-import asyncio, subprocess, sys, time, pathlib, json
+import asyncio, subprocess, sys, time, pathlib, json, os
 from playwright.async_api import async_playwright
 
 APP = pathlib.Path(__file__).resolve().parent.parent
-OUT = APP.parent / "pdfbuild" / "app-check"; OUT.mkdir(parents=True, exist_ok=True)
-PORT = 8765
+OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", APP.parent / "pdfbuild" / "app-check")); OUT.mkdir(parents=True, exist_ok=True)
+PORT = int(os.environ.get("DURCHLAUF_PORT", "8765"))
+
+BELEG = """METRO Cash & Carry Deutschland
+Rechnung Nr. 4711 vom 11.10.2026
+4001234 Tomaten rund KI 6kg 2 9,90 19,80 A
+4022871 aro Sonnenblumenöl 10 l KA 1 18,90 18,90 A
+4035512 Dönerbrot / Fladen 10er PK 5 3,30 16,50 A
+4099000 Ayran 0,25 l 24x0,25l KT 1 9,60 9,60 B
+PFAND MEHRWEG KASTEN 1 1,50 1,50 A
+Summe Netto 66,30
+MwSt A 7% 3,97
+MwSt B 19% 1,82
+Gesamtbetrag 72,09"""
 
 async def main():
     srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT), "--bind", "127.0.0.1"], cwd=APP, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -20,8 +33,6 @@ async def main():
             pg.on("pageerror", lambda e: fehler.append(str(e)))
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html")
             await pg.wait_for_selector(".kachel")
-            # Die App ignoriert 300 ms nach einem Bildschirmwechsel einen zweiten Tipp an derselben Stelle (Doppeltipp-Schutz).
-            # Ein Mensch tippt nicht schneller über zwei Bildschirme; Playwright schon – also nach jedem Klick kurz warten.
             _klick = pg.click
             async def klick(sel, **kw): await _klick(sel, **kw); await pg.wait_for_timeout(320)
             pg.click = klick
@@ -29,319 +40,224 @@ async def main():
             async def bild(name):
                 nonlocal n; n += 1
                 await pg.screenshot(path=str(OUT / f"{n:02d}_{name}.png"), full_page=True)
+            async def stand(): return await pg.evaluate("window.__gastrocalc.stand")
 
-            await bild("sprache")
-            await pg.click('[data-a="sprache"][data-wert="de"]')
-            await bild("format")
+            # ---- Onboarding
+            await bild("sprache"); await pg.click('[data-a="sprache"][data-wert="de"]')
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
-            await bild("kueche")
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
-            await bild("betrieb")
-            await pg.fill('[data-f="betrieb.name"]', "Döner Baris")
-            await pg.click('[data-a="minus"][data-feld="monate"]'); await pg.click('[data-a="minus"][data-feld="monate"]')
-            await bild("betrieb-saison")
-            await pg.click('[data-a="weiter"]')
-            await bild("team")
+            await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="team.personen"]', "3"); await pg.fill('[data-f="team.stundenProPerson"]', "160"); await pg.click('[data-a="weiter"]')
-            await bild("lohn")
-            await pg.fill('[data-f="team.lohnkosten"]', "6200"); await pg.click('[data-a="weiter"]')
-            await bild("kosten-intro")
+            await bild("lohn-mit-eigenem")
+            await pg.fill('[data-f="team.lohnkosten"]', "6000")
+            assert (await pg.input_value('[data-f="team.eigenerLohn"]')) == "", "eigener Lohn darf nicht vorbelegt sein, nur als Richtwert gezeigt"
+            await pg.fill('[data-f="team.eigenerLohn"]', "2500"); await pg.locator('[data-f="team.eigenerLohn"]').blur(); await pg.wait_for_timeout(150)
+            s = await stand(); assert s["team"]["eigenerLohn"] == 2500 and s["team"]["eigenerLohnStatus"] == "eigen", s["team"]
+            await pg.click('[data-a="weiter"]'); await pg.click('[data-a="weiter"]')
+            # Kosten: Miete netto (Standard), Strom brutto (Standard) → umschalten auf netto und zurück
+            await pg.click('[data-a="posten"][data-posten="miete"]'); await pg.fill('[data-f="posten:miete"]', "2000"); await pg.locator('[data-f="posten:miete"]').blur(); await pg.wait_for_timeout(150)
+            await bild("kosten-miete-basis")
             await pg.click('[data-a="weiter"]')
-            await bild("kosten-miete")
-            await pg.click('[data-a="posten"][data-posten="miete"]')   # Richtwert → geschätzt
-            await bild("kosten-miete-richtwert")
-            await pg.fill('[data-f="posten:miete"]', "1450"); await pg.locator('[data-f="posten:miete"]').blur(); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="posten"][data-posten="nebenkosten"]')  # kein Richtwert → offen
-            await pg.wait_for_timeout(100)
-            await bild("kosten-miete-eingetragen")
+            await pg.click('[data-a="posten"][data-posten="strom"]'); await pg.fill('[data-f="posten:strom"]', "714"); await pg.locator('[data-f="posten:strom"]').blur(); await pg.wait_for_timeout(150)
+            s = await stand(); strom = next(k for k in s["kosten"] if k["posten"] == "strom"); assert strom["basis"] == "brutto", strom
+            await pg.click('[data-a="basis-posten"][data-posten="strom"][data-wert="netto"]')
+            s = await stand(); assert next(k for k in s["kosten"] if k["posten"] == "strom")["basis"] == "netto"
+            await pg.click('[data-a="basis-posten"][data-posten="strom"][data-wert="brutto"]'); await bild("kosten-strom-brutto")
             await pg.click('[data-a="weiter"]')
-            await bild("kosten-energie")
-            await pg.click('[data-a="posten"][data-posten="strom"]'); await pg.fill('[data-f="posten:strom"]', "3600"); await pg.click('[data-a="periode"][data-posten="strom"][data-wert="jahr"]')
-            await pg.wait_for_timeout(100); await bild("kosten-energie-jahr")
+            for _ in range(8): await pg.click('[data-a="weiter"]')
+            # Kanäle
             await pg.click('[data-a="weiter"]')
-            # Restliche Kategorien: Versicherung mit Betrag, Rest "nichts davon"
-            await pg.click('[data-a="posten"][data-posten="versicherungen"]'); await pg.fill('[data-f="posten:versicherungen"]', "180"); await pg.click('[data-a="weiter"]')
-            for _ in range(7):
-                await pg.click('[data-a="weiter"]')
-            await bild("kanaele")
-            await pg.click('[data-a="kanal"][data-wert="portale"]')
-            await pg.fill('[data-f="portal:0:name"]', "Lieferando"); await pg.fill('[data-f="portal:0:provision"]', "30")
-            await pg.locator('[data-f="portal:0:provision"]').blur(); await pg.wait_for_timeout(150)
-            await bild("kanaele-portal")
+            # ---- Kühlstellen im Onboarding
+            await pg.wait_for_selector('[data-a="plus"][data-feld="stellen"]'); await bild("ob-kuehl-leer")
+            await pg.click('[data-a="plus"][data-feld="stellen"]'); await pg.click('[data-a="plus"][data-feld="stellen"]'); await pg.click('[data-a="plus"][data-feld="stellen"]')
+            s = await stand(); ks = [k for k in s["kuehlstellen"] if not k["archiviert"]]
+            assert len(ks) == 3 and ks[0]["name"] == "Kühlschrank 1" and ks[1]["art"] == "tk" and ks[1]["name"] == "Tiefkühler", ks
+            await pg.fill(f'[data-f="ob-stelle:{ks[0]["id"]}"]', "Theke vorne"); await pg.locator(f'[data-f="ob-stelle:{ks[0]["id"]}"]').blur(); await pg.wait_for_timeout(150)
+            await pg.click(f'[data-a="ob-art"][data-id="{ks[2]["id"]}"][data-wert="warm"]')
+            await bild("ob-kuehl-drei")
+            s = await stand(); ks = [k for k in s["kuehlstellen"] if not k["archiviert"]]
+            assert ks[0]["name"] == "Theke vorne" and ks[2]["art"] == "warm" and ks[2]["name"] == "Warmhalter" and ks[0]["max"] is None, ks
+            await pg.click('[data-a="minus"][data-feld="stellen"]')
+            assert len([k for k in (await stand())["kuehlstellen"] if not k["archiviert"]]) == 2
             await pg.click('[data-a="weiter"]')
-            # ---- Etappe 2: Karte
-            await bild("karte")
+            s = await stand(); assert s["kuehl"]["eingerichtet"] is True and s["kuehl"]["seit"], s["kuehl"]
+            # ---- Karte
             await pg.fill('[data-f="suche"]', "Döner"); await pg.wait_for_timeout(150)
-            assert await pg.evaluate("document.activeElement && document.activeElement.dataset.f") == "suche", "Suchfeld hat den Fokus verloren"
-            await bild("karte-suche")
-            for nm in ["Döner Kebab", "Dürüm Döner", "Dönerteller"]:
-                await pg.click(f'[data-a="vorlage"][data-name="{nm}"]')
+            for nm in ["Döner Kebab", "Dürüm Döner", "Dönerteller"]: await pg.click(f'[data-a="vorlage"][data-name="{nm}"]')
             await pg.fill('[data-f="suche"]', ""); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="vorlage"][data-name="Cola 0,33 l"]') if await pg.locator('[data-a="vorlage"][data-name="Cola 0,33 l"]').count() else None
-            await pg.fill('[data-f="eigenes"]', "Hausspezial"); await pg.click('[data-a="eigenes-neu"]')
-            await bild("karte-gewaehlt")
+            if await pg.locator('[data-a="vorlage"][data-name="Cola 0,33 l"]').count(): await pg.click('[data-a="vorlage"][data-name="Cola 0,33 l"]')
             await pg.click('[data-a="weiter"]')
-            # ---- Rezepte
-            await bild("rezepte")
-            await pg.click('[data-a="rezept-auf"] >> nth=0')
-            await bild("rezept-detail")
-            await pg.fill('[data-f="zutat:0"]', "200")
-            await pg.fill('[data-f="zutat-suche"]', "Peperoni"); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="zutat-neu"] >> nth=0')
-            n_z = await pg.evaluate("window.__gastrocalc.stand.gerichte[0].zutaten.length")
-            await pg.fill(f'[data-f="zutat:{n_z-1}"]', "20")
-            await pg.click('[data-a="zeit"][data-d="1"]')
-            await bild("rezept-geaendert")
-            await pg.click('[data-a="rezept-zu"]')
-            await pg.click('[data-a="weiter"]')
-            # ---- Einkaufspreise
-            await bild("preise")
-            async def preis(name, menge, einheit, p):
-                await pg.fill(f'[data-f="packung:{name}"]', menge); await pg.click(f'[data-a="packung-einheit"][data-name="{name}"][data-wert="{einheit}"]')
+            await pg.click('[data-a="rezept-auf"] >> nth=0'); await pg.fill('[data-f="zutat:0"]', "200"); await pg.click('[data-a="rezept-zu"]'); await pg.click('[data-a="weiter"]')
+            # ---- Einkaufspreise mit Gebinde (Variante C)
+            await bild("preise-gebinde")
+            async def preis(name, menge, einheit, p, art=None, basis=None, zwischen=None):
+                if art: await pg.click(f'[data-a="gebinde-art"][data-name="{name}"][data-wert="{art}"]')
+                await pg.click(f'[data-a="packung-einheit"][data-name="{name}"][data-wert="{einheit}"]')
+                await pg.fill(f'[data-f="packung:{name}"]', menge)
                 await pg.fill(f'[data-f="preis:{name}"]', p); await pg.locator(f'[data-f="preis:{name}"]').blur(); await pg.wait_for_timeout(120)
-            await preis("Dönerspieß Kalb/Pute", "10", "kg", "74,50")
-            await preis("Dönerbrot / Fladen", "100", "stk", "41")
-            await pg.click('[data-a="messen"][data-name="Dönerspieß Kalb/Pute"]')
-            await pg.fill('[data-f="roh:Dönerspieß Kalb/Pute"]', "1000"); await pg.fill('[data-f="gar:Dönerspieß Kalb/Pute"]', "780")
-            await pg.locator('[data-f="gar:Dönerspieß Kalb/Pute"]').blur(); await pg.wait_for_timeout(120)
-            await bild("preise-teils")
-            # alle übrigen Artikel mit Platzhalterpreisen füllen, damit ein Gericht grün werden kann
-            namen = await pg.evaluate("window.__gastrocalc.stand.artikel.filter(a => a.preis === null).map(a => a.name)")
+                if basis: await pg.click(f'[data-a="preis-basis"][data-name="{name}"][data-wert="{basis}"]')
+                if zwischen:
+                    await pg.click(f'[data-a="zwischen-auf"][data-name="{name}"]'); await pg.fill(f'[data-f="zwischen:{name}"]', zwischen); await pg.locator(f'[data-f="zwischen:{name}"]').blur(); await pg.wait_for_timeout(120)
+            await preis("Dönerspieß Kalb/Pute", "10", "kg", "74,50", art="karton")
+            await preis("Dönerbrot / Fladen", "200", "stk", "60", art="karton", zwischen="4")
+            await preis("Tomaten", "6", "kg", "9,60", art="kiste")
+            await bild("preise-falafel-kette")
+            s = await stand(); brot = next(a for a in s["artikel"] if a["name"] == "Dönerbrot / Fladen")
+            assert brot["gebinde"]["art"] == "karton" and brot["gebinde"]["zwischen"]["anzahl"] == 4 and brot["packung"]["menge"] == 200, brot
+            html = await pg.content(); assert "Karton à 4 Beutel à 200 Stück" in html or "Karton à 4 Beutel à 50 Stück" in html, "Gebindesatz fehlt"
+            assert "à 50 Stück" in html, "Inhalt je Beutel muss 50 sein"
+            namen = await pg.evaluate("window.__gastrocalc.stand.artikel.filter(a => a.preis === null && a.benutzt !== false).map(a => a.name)")
             for nm in namen:
                 e = await pg.evaluate(f"(window.__gastrocalc.stand.artikel.find(a => a.name === {nm!r}) || {{}}).einheit")
                 await preis(nm, "10", {"kg": "kg", "l": "l"}.get(e, "stk"), "20")
+            # Cola brutto vom Supermarkt
+            if await pg.locator('[data-a="preis-basis"][data-name="Cola 0,33 l"]').count():
+                await pg.click('[data-a="preis-basis"][data-name="Cola 0,33 l"][data-wert="brutto"]')
             await pg.click('[data-a="weiter"]')
-            # ---- Verkauf
-            await bild("verkauf")
             ids = await pg.evaluate("window.__gastrocalc.stand.gerichte.map(g => g.id)")
-            for i, gid in enumerate(ids):
-                await pg.fill(f'[data-f="preis:{gid}"]', ["7,50", "8", "12,90", "2,50", "9"][i % 5])
+            for i, gid in enumerate(ids): await pg.fill(f'[data-f="preis:{gid}"]', ["7,50", "8", "12,90", "2,50"][i % 4])
             await pg.click(f'[data-a="bestseller"][data-id="{ids[0]}"]'); await pg.fill(f'[data-f="menge:{ids[0]}"]', "120")
-            await pg.fill('[data-f="bestellungenTag"]', "200")
-            await pg.locator('[data-f="bestellungenTag"]').blur(); await pg.wait_for_timeout(150)
-            await bild("verkauf-ausgefuellt")
-            await pg.click('[data-a="weiter"]')
-            await bild("ergebnis")
-            k = await pg.evaluate("window.__gastrocalc.stand.gerichte.length")
-            assert k == 5, f"{k} Gerichte statt 5"
-            await pg.click('[data-a="fertig"]')
-            await pg.wait_for_selector(".kopfband")
-            await bild("start")
-            # Speicherung: Seite neu laden, Stand muss da sein
-            await pg.reload(); await pg.wait_for_selector(".kopfband")
-            stand = await pg.evaluate("window.__gastrocalc.stand")
-            await bild("start-nach-neuladen")
-            assert stand["betrieb"]["name"] == "Döner Baris", "Name nach Neuladen weg"
-            assert stand["phase"] == "app"
-            miete = next(k for k in stand["kosten"] if k["posten"] == "miete")
-            assert miete["betrag"] == 1450 and miete["status"] == "bekannt", miete
-            strom = next(k for k in stand["kosten"] if k["posten"] == "strom")
-            assert strom["periode"] == "jahr" and strom["betrag"] == 3600, strom
-            nk = next(k for k in stand["kosten"] if k["posten"] == "nebenkosten")
-            assert nk["status"] == "offen", nk
-            assert stand["kanaele"]["portale"][0]["provision"] == 30
-            # Bearbeiten aus der Startseite und zurück
-            await pg.click('.zeileknopf[data-schritt="kosten-miete"]'); await pg.wait_for_selector('[data-f="posten:miete"]')
-            await bild("bearbeiten-miete")
-            await pg.click('[data-a="weiter"]'); await pg.wait_for_selector(".kopfband")
-            # Doppeltipp darf keinen Schritt überspringen
-            await pg.click('.knopf[data-schritt="kosten-miete"]'); await pg.wait_for_selector('[data-f="posten:miete"]')
-            await pg.evaluate("() => { const b = document.querySelector('[data-a=\"weiter\"]'); b.click(); b.click(); }")
-            await pg.wait_for_timeout(400)
-            assert await pg.evaluate("window.__gastrocalc.stand.schritt") == 8, "Doppeltipp hat Schritt übersprungen"
-            # Zurück-Geste des Browsers = ein Schritt zurück, nicht raus
-            await pg.go_back(); await pg.wait_for_timeout(300)
-            assert await pg.evaluate("window.__gastrocalc.stand.schritt") == 7, "Zurück-Geste"
-            await pg.go_back(); await pg.wait_for_timeout(300)
-            await pg.wait_for_selector(".kopfband")
-            # Einstellungen, Sprache Türkisch
-            await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await pg.click('[data-a="sprache"][data-wert="tr"]')
-            await bild("einstellungen-tr")
-            await pg.click('[data-a="nav"][data-wert="start"]'); await bild("start-tr")
-            await pg.click('[data-a="nav"][data-wert="karte"]'); await bild("karte-ansicht-tr")
-            await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await pg.click('[data-a="sprache"][data-wert="en"]'); await pg.click('[data-a="nav"][data-wert="start"]'); await bild("start-en")
-            await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await pg.click('[data-a="sprache"][data-wert="de"]')
-            # Export-Datei prüfen
-            async with pg.expect_download() as dl:
-                await pg.click('[data-a="export"]')
+            await pg.fill('[data-f="bestellungenTag"]', "200"); await pg.locator('[data-f="bestellungenTag"]').blur(); await pg.wait_for_timeout(150)
+            await pg.click('[data-a="weiter"]'); await bild("ergebnis")
+            await pg.click('[data-a="fertig"]'); await pg.wait_for_selector(".cockpit")
+            # ---- Cockpit
+            await bild("cockpit-leer")
+            html = await pg.content(); assert "Bis null fehlen" in html and "kalkulatorisch" in html
+            z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
+            assert z["stufe"] == 2 and z["keinUmsatz"] and z["quote"] > 0.05, {k: z[k] for k in ("stufe", "keinUmsatz", "quote")}
+            assert await pg.locator('.nav button[data-wert="muell"]').count() == 1 and await pg.locator('.nav button[data-wert="umsatz"]').count() == 1
+            # ---- Umsatz eintragen
+            await pg.click('[data-a="nav"][data-wert="umsatz"]'); await pg.wait_for_selector('[data-f="umsatz"]'); await bild("umsatz-leer")
+            await pg.fill('[data-f="umsatz"]', "1.850"); await pg.locator('[data-f="umsatz"]').blur(); await pg.wait_for_timeout(200)
+            s = await stand(); assert s["tagesnotizen"][0]["umsatz"] == 1850
+            await bild("umsatz-zaehler")
+            html = await pg.content(); assert "So rechnet die App" in html and "Dein Weg durch den Monat" in html
+            # netto-Schalter: Anzeige wechselt, gespeichert bleibt brutto
+            await pg.click('[data-a="umsatz-basis"][data-wert="netto"]')
+            v = await pg.input_value('[data-f="umsatz"]'); assert v != "1850" and v != "", v
+            await pg.click('[data-a="umsatz-basis"][data-wert="brutto"]')
+            assert (await pg.input_value('[data-f="umsatz"]')) == "1850"
+            # ---- Müll: drei Türen
+            await pg.click('[data-a="nav"][data-wert="muell"]'); await pg.wait_for_selector('[data-a="muell-weg"]'); await bild("muell-tueren")
+            html = await pg.content(); assert "Yemek atıldı" in html and "Dish binned" in html, "Kacheln nicht dreisprachig"
+            await pg.click('[data-a="muell-weg"][data-wert="gericht"]'); await bild("muell-gerichte")
+            await pg.click(f'[data-a="muell-gericht"][data-id="{ids[0]}"]:not([data-n])'); await pg.click(f'[data-a="muell-gericht"][data-id="{ids[0]}"]:not([data-n])')
+            await pg.click(f'[data-a="muell-gericht"][data-id="{ids[0]}"][data-n="5"]')
+            s = await stand(); g = [e for e in s["schwund"] if e["art"] == "gericht" and not e["storniert"]]
+            assert len(g) == 3 and sum(e["menge"] for e in g) == 7 and all(e["wert"] is not None for e in g), g
+            assert (await pg.locator(".zaehl").first.inner_text()).strip() == "7", await pg.locator(".zaehl").first.inner_text()
+            await bild("muell-gerichte-7")
+            await pg.click(f'[data-a="muell-rueck"][data-id="{ids[0]}"]')
+            s = await stand(); assert sum(e["menge"] for e in s["schwund"] if e["art"] == "gericht" and not e["storniert"]) == 2
+            await pg.click('[data-a="muell-start"]')
+            # Rohware
+            await pg.click('[data-a="muell-weg"][data-wert="rohware"]'); await bild("muell-rohware")
+            await pg.fill('[data-f="muell-suche"]', "Toma"); await pg.wait_for_timeout(150)
+            await pg.click('[data-a="muell-artikel"][data-name="Tomaten"]'); await bild("muell-rohware-menge")
+            await pg.fill('[data-f="muell-menge"]', "1,2"); await pg.wait_for_timeout(100)
+            assert not await pg.locator('[data-a="muell-rohware-speichern"]').is_disabled()
+            await pg.locator('[data-f="muell-menge"]').blur(); await pg.wait_for_timeout(150); await pg.click('[data-a="muell-rohware-speichern"]')
+            s = await stand(); r = [e for e in s["schwund"] if e["art"] == "rohware"]; assert len(r) == 1 and abs(r[0]["wert"] - 1.2 * 1.6) < 1e-6 and r[0]["fraktion"] == "bio", r
+            # Eimer: gemeldete Teller werden abgezogen
+            await pg.click('[data-a="muell-weg"][data-wert="eimer"]'); await bild("muell-eimer")
+            await pg.fill('[data-f="eimer-kg"]', "3"); await pg.wait_for_timeout(150); await pg.locator('[data-f="eimer-kg"]').blur(); await pg.wait_for_timeout(200)
+            await bild("muell-eimer-rest")
+            await pg.click('[data-a="muell-eimer-speichern"]')
+            s = await stand(); ei = [e for e in s["schwund"] if e["art"] == "eimer"]; assert len(ei) == 1 and ei[0]["gewogen"] == 3 and ei[0]["menge"] < 3 and ei[0]["gemeldet"] > 0, ei
+            await bild("muell-heute")
+            # Personalessen
+            await pg.click('[data-a="muell-weg"][data-wert="personal"]'); await pg.click('[data-a="muell-mahlzeit"][data-wert="abend"]')
+            await pg.click(f'[data-a="muell-gericht"][data-id="{ids[1]}"][data-art="personal"]')
+            s = await stand(); pe = [e for e in s["schwund"] if e["art"] == "personal"]; assert len(pe) == 1 and pe[0]["mahlzeit"] == "abend", pe
+            await pg.click('[data-a="muell-start"]'); await bild("muell-mit-personal")
+            # ---- Cockpit mit Zahlen
+            await pg.click('[data-a="nav"][data-wert="start"]'); await bild("cockpit-mit-zahlen")
+            html = await pg.content(); assert "Tonne heute" in html and "1.850" in html
+            # ---- Beleg einlesen
+            await pg.click('[data-a="nav"][data-wert="beleg"]'); await pg.wait_for_selector('[data-f="beleg-text"]'); await bild("beleg-leer")
+            assert await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
+            await pg.fill('[data-f="beleg-text"]', BELEG); await pg.wait_for_timeout(150)
+            assert not await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
+            await pg.click('[data-a="beleg-zerlegen"]'); await bild("beleg-pruefen")
+            html = await pg.content(); assert "Zeilen erkannt" in html and "stimmt" in html, "Summenprobe fehlt"
+            # Ayran ist unbekannt → Frage: neu anlegen
+            for _ in range(6):
+                if await pg.locator('[data-a="beleg-zuordnen"][data-name="neu"]').count(): await pg.click('[data-a="beleg-zuordnen"][data-name="neu"] >> nth=0')
+                elif await pg.locator('[data-a="beleg-antwort"]').count(): await pg.click('[data-a="beleg-antwort"] >> nth=0')
+                else: break
+            await bild("beleg-geklaert")
+            assert not await pg.locator('[data-a="beleg-uebernehmen"]').is_disabled(), "Übernehmen bleibt gesperrt"
+            await pg.click('[data-a="beleg-uebernehmen"]'); await pg.wait_for_timeout(300); await bild("beleg-fertig")
+            s = await stand(); assert len(s["lieferungen"]) == 1 and s["lieferungen"][0]["lieferant"] == "Metro" and abs(s["lieferungen"][0]["summeNetto"] - 66.3) < 0.01, s["lieferungen"][0]
+            tom = next(a for a in s["artikel"] if a["name"] == "Tomaten"); assert tom["preis"] == 9.9 and tom["packung"]["menge"] == 6 and len(tom["preisHistorie"]) == 1, tom
+            assert any(a["name"].startswith("Ayran") for a in s["artikel"]), "neuer Artikel nicht angelegt"
+            html = await pg.content(); assert "Tomaten" in html and "+3 %" in html, "Preisänderung Tomaten fehlt (9,60 → 9,90)"
+            # Zähler: ein kleiner Beleg unter der Karten-Schätzung macht den Zähler nicht grüner (bleibt Stufe 2), der Beleg zählt aber
+            z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
+            assert z["stufe"] == 2 and z["belege"] == 1 and z["ware"] > 66.3, (z["stufe"], z["ware"])
+            await pg.click('[data-a="nav"][data-wert="umsatz"]'); await bild("umsatz-nach-beleg-preise")
+            html = await pg.content(); assert "Ware (geschätzt" in html and "Tomaten" in html
+            # ---- Tag abschließen
+            await pg.click('[data-a="nav"][data-wert="start"]'); await pg.click('[data-a="nav"][data-wert="abschluss"]'); await pg.wait_for_selector('[data-a="abschluss-fertig"]'); await bild("abschluss-haken")
+            await pg.click('[data-a="abschluss-fertig"]'); await pg.wait_for_timeout(300); await bild("abschluss-bilanz")
+            s = await stand(); assert len(s["abschluesse"]) == 1 and s["abschluesse"][0]["umsatz"] == 1850, s["abschluesse"]
+            html = await pg.content(); assert "Tag geschafft" in html
+            await pg.click('[data-a="nav"][data-wert="start"]'); html = await pg.content(); assert "Tag abgeschlossen um" in html
+            await bild("cockpit-abgeschlossen")
+            # ---- Neuladen: alles da, Schema 4
+            await pg.reload(); await pg.wait_for_selector(".cockpit")
+            w = await pg.evaluate("window.__gastrocalc.wurzel")
+            assert w["schema"] == 4 and len(w["betriebe"][0]["lieferungen"]) == 1 and len(w["betriebe"][0]["abschluesse"]) == 1
+            # ---- Kühlkontrolle mit Standardgrenzen
+            await pg.click('[data-a="nav"][data-wert="kuehl"]'); await bild("kuehl-start")
+            html = await pg.content(); assert "Standard" in html, "Standardgrenze nicht sichtbar"
+            await pg.click('[data-a="kuehl-rundgang"]'); await pg.click('[data-a="rundgang-start"]')
+            kids = await pg.evaluate("window.__gastrocalc.stand.kuehlstellen.filter(k => !k.archiviert).map(k => k.id)")
+            await pg.click(f'[data-a="station"][data-id="{kids[0]}"]'); await pg.fill('[data-f="station-wert"]', "8,5"); await pg.wait_for_timeout(200)
+            await bild("kuehl-abweichung-standard")
+            assert await pg.locator('[data-a="station-speichern"]').is_disabled(), "8,5 °C über Standard 7 muss Abweichung sein"
+            await pg.click('[data-a="massnahme"][data-wert="tuer"]'); await pg.click('[data-a="station-speichern"]')
+            await pg.click(f'[data-a="station"][data-id="{kids[1]}"]'); await pg.fill('[data-f="station-wert"]', "-19"); await pg.wait_for_timeout(150); await pg.click('[data-a="station-speichern"]')
+            await pg.click('[data-a="rundgang-abschluss"]'); await pg.wait_for_timeout(300)
+            s = await stand(); assert len(s["messungen"]) == 2 and s["messungen"][0]["abweichung"] and s["messungen"][0]["grenzeStandard"] and s["messungen"][0]["max"] == 7, s["messungen"]
+            await pg.click('[data-a="kuehl-blatt"]'); await bild("kuehl-blatt")
+            # eigene Grenze setzen
+            await pg.click('[data-a="kuehl-start"]'); await pg.click('[data-a="kuehl-einrichtung"]'); await bild("kuehl-einrichtung-standard")
+            await pg.fill(f'[data-f="stelle-max:{kids[0]}"]', "4"); await pg.locator(f'[data-f="stelle-max:{kids[0]}"]').blur(); await pg.wait_for_timeout(200)
+            html = await pg.content(); assert "≤ 4,0 °C" in html and "(Standard)" not in html.split("≤ 4,0 °C")[1][:30]
+            await pg.click('[data-a="kuehl-einrichtung-fertig"]')
+            # ---- Mehr: Zähler-Einstellungen
+            await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await bild("mehr")
+            await pg.fill('[data-f="warenQuote"]', "35"); await pg.locator('[data-f="warenQuote"]').blur(); await pg.wait_for_timeout(200)
+            s = await stand(); assert abs(s["verkauf"]["warenQuote"] - 0.35) < 1e-9
+            # Export: Schema 4 mit Prüfsumme
+            async with pg.expect_download() as dl: await pg.click('[data-a="export"]')
             d = await dl.value; pfad = OUT / "export.json"; await d.save_as(str(pfad))
             kopf, inhalt = pfad.read_text().split("\n", 1); kopfd = json.loads(kopf); daten = json.loads(inhalt)
-            assert kopfd["typ"] == "gastrocalc-sicherung" and kopfd["schema"] == 3 and len(kopfd["sha256"]) == 64, kopfd
-            assert daten["wurzel"]["betriebe"][0]["betrieb"]["name"] == "Döner Baris"
-            assert any(e["art"] == "onboarding-fertig" for e in daten["ereignisse"]), "Ereignisprotokoll fehlt"
-            print("Ereignisse:", [e["art"] for e in daten["ereignisse"]][:12], "…", len(daten["ereignisse"]))
-
-            # ---- Etappe 3: Heute (Umsatz, Weggeworfen), Listen
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await pg.wait_for_selector('[data-f="umsatz"]')
-            await bild("tag-leer")
-            await pg.fill('[data-f="umsatz"]', "1.850"); await pg.locator('[data-f="umsatz"]').blur(); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="schwund-neu"]'); await bild("tag-form-art")
-            await pg.click('[data-a="schwund-art"][data-wert="verderb"]')
-            await pg.fill('[data-f="schwund-suche"]', "Döner"); await pg.wait_for_timeout(100)
-            await bild("tag-form-suche")
-            await pg.click('[data-a="schwund-ref"][data-name="Dönerspieß Kalb/Pute"]')
-            await pg.fill('[data-f="schwund-menge"]', "1,2"); await pg.wait_for_timeout(100)
-            assert not await pg.locator('[data-a="schwund-speichern"]').is_disabled(), "Eintragen bleibt gesperrt, solange die Tastatur offen ist"
-            await pg.locator('[data-f="schwund-menge"]').blur(); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="schwund-fraktion"][data-wert="bio"]')
-            await bild("tag-form-ausgefuellt")
-            await pg.click('[data-a="schwund-speichern"]'); await pg.wait_for_timeout(150)
-            sw = await pg.evaluate("window.__gastrocalc.stand.schwund")
-            assert len(sw) == 1 and abs(sw[0]["wert"] - 1.2 * 7.45) < 1e-6, sw  # 74,50 € je 10 kg → 7,45 €/kg → 1,2 kg = 8,94 €
-            # Personalessen mit Gericht
-            await pg.click('[data-a="schwund-neu"]'); await pg.click('[data-a="schwund-art"][data-wert="personal"]')
-            await pg.click('[data-a="schwund-ref"][data-typ="gericht"]'); await pg.fill('[data-f="schwund-menge"]', "2"); await pg.locator('[data-f="schwund-menge"]').blur(); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="schwund-mahlzeit"][data-wert="abend"]'); await pg.click('[data-a="schwund-speichern"]'); await pg.wait_for_timeout(150)
-            await bild("tag-mit-eintraegen")
-            # Zurücknehmen bleibt sichtbar
-            pg.once("dialog", lambda d: asyncio.ensure_future(d.accept()))
-            await pg.click('[data-a="schwund-storno"]'); await pg.wait_for_timeout(150)
-            sw = await pg.evaluate("window.__gastrocalc.stand.schwund")
-            assert len(sw) == 2 and sum(1 for e in sw if e.get("storniert")) == 1, "Storno löscht statt zu kennzeichnen"
-            await bild("tag-storno")
-            await pg.click('[data-a="nav"][data-wert="listen"]'); await pg.wait_for_selector(".kopfband"); await bild("listen-woche")
-            await pg.click('[data-a="listen-zeitraum"][data-wert="monat"]'); await bild("listen-monat")
-            # Neuladen: Einträge und Umsatz bleiben
-            await pg.reload(); await pg.wait_for_selector(".kopfband")
-            w = await pg.evaluate("window.__gastrocalc.wurzel")
-            assert w["schema"] == 3 and len(w["betriebe"]) == 1 and len(w["betriebe"][0]["schwund"]) == 2
-            assert w["betriebe"][0]["tagesnotizen"][0]["umsatz"] == 1850, w["betriebe"][0]["tagesnotizen"]
-            await bild("start-mit-heute")
-            # ---- Läden: zweiten Laden anlegen, Übersicht, wechseln
-            await pg.click('[data-a="nav"][data-wert="laeden"]'); await pg.wait_for_selector('[data-a="laden-neu"]'); await bild("laeden-ein-laden")
-            await pg.click('[data-a="laden-neu"]'); await pg.wait_for_selector('[data-a="format"]')
-            assert await pg.evaluate("window.__gastrocalc.stand.schritt") == 1, "neuer Laden startet nicht beim Format"
-            await bild("laden-neu-format")
-            # Zurück auf Schritt 1 verwirft den leeren Laden
-            await pg.click('[data-a="zurueck"]'); await pg.wait_for_selector('[data-a="laden-neu"]')
-            assert await pg.evaluate("window.__gastrocalc.wurzel.betriebe.length") == 1, "leerer Laden nicht verworfen"
-            await pg.click('[data-a="laden-neu"]'); await pg.wait_for_selector('[data-a="format"]')
-            await pg.click('[data-a="format"][data-wert="cafe"]'); await pg.click('[data-a="weiter"]')
-            await pg.click('[data-a="kueche"][data-wert="fruehstueck"]'); await pg.click('[data-a="weiter"]')
-            await pg.fill('[data-f="betrieb.name"]', "Café Murre"); await pg.click('[data-a="weiter"]')
-            # Rest bis zum Ende überspringen
-            for _ in range(60):
-                if await pg.locator('[data-a="fertig"]').count(): break
-                if not await pg.locator('[data-a="weiter"]').count(): await pg.click('[data-a="vorlage"] >> nth=0')  # Karte braucht ein Gericht
-                await pg.click('[data-a="weiter"]'); await pg.wait_for_timeout(400)
-            await pg.click('[data-a="fertig"]'); await pg.wait_for_selector(".kopfband")
-            assert await pg.evaluate("window.__gastrocalc.stand.betrieb.name") == "Café Murre"
-            await pg.click('[data-a="nav"][data-wert="laeden"]'); await pg.wait_for_selector('[data-a="laden-wechseln"]'); await bild("laeden-zwei")
-            await pg.click('[data-a="laden-wechseln"]'); await pg.wait_for_selector(".kopfband")
-            assert await pg.evaluate("window.__gastrocalc.stand.betrieb.name") == "Döner Baris", "Wechsel zurück klappt nicht"
-            await bild("start-nach-wechsel")
-            await pg.reload(); await pg.wait_for_selector(".kopfband")
-            w = await pg.evaluate("window.__gastrocalc.wurzel")
-            assert len(w["betriebe"]) == 2 and w["aktiv"] == w["betriebe"][0]["id"], (len(w["betriebe"]), w["aktiv"], [b["id"] for b in w["betriebe"]], [b["betrieb"]["name"] for b in w["betriebe"]])
-            # Import einer Schema-1-Datei (alte Sicherung) muss als dritter Laden dazukommen
-            alt = {"typ": "gastrocalc-sicherung", "schema": 1, "stand": {"id": "alt-1", "phase": "app", "schritt": 21, "sprache": "de",
-                   "betrieb": {"name": "Altes Bistro", "format": "bistro", "kuechen": [], "tageProWoche": 6, "monate": 12},
-                   "kosten": [{"id": "k1", "kategorie": "miete", "posten": "miete", "betrag": 900, "status": "bekannt", "periode": "monat"}]}, "ereignisse": []}
-            altp = OUT / "alt.json"; altp.write_text(json.dumps(alt))
-            await pg.click('[data-a="nav"][data-wert="einstellungen"]')
-            pg.once("dialog", lambda d: asyncio.ensure_future(d.accept()))
-            await pg.set_input_files('[data-f="import"]', str(altp)); await pg.wait_for_timeout(500)
-            w = await pg.evaluate("window.__gastrocalc.wurzel")
-            assert len(w["betriebe"]) == 3 and any(b["betrieb"]["name"] == "Altes Bistro" for b in w["betriebe"]), [b["betrieb"]["name"] for b in w["betriebe"]]
-            await pg.wait_for_selector('[data-a="laden-wechseln"]'); await bild("laeden-drei-nach-import")
-            assert await pg.evaluate("window.__gastrocalc.stand.betrieb.name") == "Döner Baris", "Import hat den aktiven Laden gewechselt"
-            await pg.click('[data-a="nav"][data-wert="einstellungen"]')
-            pg.once("dialog", lambda d: asyncio.ensure_future(d.accept()))
-            await pg.set_input_files('[data-f="import"]', str(altp)); await pg.wait_for_timeout(500)
-            assert await pg.evaluate("window.__gastrocalc.wurzel.betriebe.length") == 3, "Altdatei zweimal → vierter Laden"
-            # Personalessen: kein Artikel wählbar
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await pg.click('[data-a="schwund-neu"]'); await pg.click('[data-a="schwund-art"][data-wert="personal"]')
-            assert await pg.locator('[data-a="schwund-ref"][data-typ="artikel"]').count() == 0, "Artikel bei Personalessen wählbar"
-            await pg.click('[data-a="schwund-abbruch"]')
-            # ---- Etappe 4: Kühlkontrolle
-            await pg.click('[data-a="laden-wechseln"] >> nth=0') if await pg.evaluate("window.__gastrocalc.stand.betrieb.name") != "Döner Baris" else None
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await pg.click('[data-a="nav"][data-wert="kuehl"]'); await bild("kuehl-leer")
-            await pg.click('[data-a="kuehl-einrichtung"]'); await bild("kuehl-einrichtung-leer")
-            for nm in ["Theke vorne", "Fleischkühlschrank", "TK Keller"]:
-                await pg.fill('[data-f="stelle-neu"]', nm); await pg.click('[data-a="stelle-neu"]')
-            ids = await pg.evaluate("window.__gastrocalc.stand.kuehlstellen.map(k => k.id)")
-            await pg.fill(f'[data-f="stelle-max:{ids[0]}"]', "7"); await pg.fill(f'[data-f="stelle-max:{ids[1]}"]', "4")
-            await pg.click(f'[data-a="stelle-art"][data-id="{ids[2]}"][data-wert="tk"]'); await pg.fill(f'[data-f="stelle-max:{ids[2]}"]', "-18")
-            await pg.locator(f'[data-f="stelle-max:{ids[2]}"]').blur(); await pg.wait_for_timeout(150)
-            await pg.click('[data-a="kuehl-ruhetag"][data-wert="0"]')
-            await pg.fill('[data-f="person-neu"]', "MU"); await pg.click('[data-a="person-neu"]')
-            await pg.fill('[data-f="person-neu"]', "Ayşe"); await pg.click('[data-a="person-neu"]')
-            await bild("kuehl-einrichtung")
-            st = await pg.evaluate("window.__gastrocalc.stand.kuehlstellen")
-            assert st[2]["max"] == -18 and st[2]["art"] == "tk" and st[0]["max"] == 7, st
-            await pg.click('[data-a="kuehl-einrichtung-fertig"]'); await bild("kuehl-start")
-            # Rundgang: Person, heute
-            await pg.click('[data-a="kuehl-rundgang"]'); await bild("kuehl-rundgang-wer")
-            assert await pg.locator('[data-a="rundgang-start"]').is_disabled(), "ohne Kürzel darf es nicht losgehen, wenn Kürzel angelegt sind"
-            await pg.click('[data-a="start-von"] >> nth=0'); await pg.click('[data-a="rundgang-start"]'); await bild("kuehl-rundgang-liste")
-            # Station 1: Wert in Ordnung – Knopf muss ohne Blur freigeschaltet werden
-            await pg.click(f'[data-a="station"][data-id="{ids[0]}"]'); await bild("kuehl-station-leer")
-            assert await pg.locator('[data-a="station-speichern"]').is_disabled()
-            assert (await pg.input_value('[data-f="station-wert"]')) == "", "Wert darf nicht vorbelegt sein"
-            await pg.fill('[data-f="station-wert"]', "4,5"); await pg.wait_for_timeout(150)
-            assert not await pg.locator('[data-a="station-speichern"]').is_disabled()
-            await pg.click('[data-a="station-speichern"]')
-            # Station 2: Abweichung → Maßnahme Pflicht, Ware weggeworfen → Schwund ohne Wert
-            await pg.click(f'[data-a="station"][data-id="{ids[1]}"]'); await pg.fill('[data-f="station-wert"]', "11"); await pg.wait_for_timeout(200)
-            await bild("kuehl-station-abweichung")
-            assert await pg.locator('[data-a="station-speichern"]').is_disabled(), "Abweichung ohne Maßnahme darf nicht speicherbar sein"
-            await pg.click('[data-a="massnahme"][data-wert="tuer"]'); await pg.click('[data-a="massnahme"][data-wert="weggeworfen"]')
-            await pg.fill('[data-f="weg-name"]', "Döner"); await pg.wait_for_timeout(100); await pg.click('[data-a="weg-artikel"] >> nth=0')
-            await pg.fill('[data-f="weg-menge"]', "3"); await pg.click('[data-a="weg-hinzu"]')
-            await pg.click('[data-a="weg-alles"]'); await bild("kuehl-station-weggeworfen")
-            await pg.click('[data-a="nachkontrolle"][data-wert="h1"]'); await pg.click('[data-a="station-speichern"]')
-            # Station 3: nicht gemessen
-            await pg.click(f'[data-a="station"][data-id="{ids[2]}"]'); await pg.click('[data-a="station-grund"][data-wert="geraetAus"]'); await pg.click('[data-a="station-speichern"]')
-            await bild("kuehl-rundgang-fertig")
-            # Unterbrechen und Neuladen: offener Rundgang bleibt
-            await pg.reload(); await pg.wait_for_selector(".kopfband")  # Neuladen mit offenem Rundgang
-            r = await pg.evaluate("window.__gastrocalc.stand.rundgaenge")
-            assert len(r) == 1 and r[0]["abgeschlossen"] is None and len(r[0]["messungen"]) == 3, r
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await pg.click('[data-a="nav"][data-wert="kuehl"]'); await pg.click('[data-a="kuehl-rundgang"]')
-            await pg.click('[data-a="rundgang-abschluss"]')
-            await pg.wait_for_timeout(300); await bild("kuehl-nach-abschluss")
-            st = await pg.evaluate("window.__gastrocalc.stand")
-            assert len(st["messungen"]) == 3 and st["messungen"][1]["abweichung"] and st["messungen"][1]["nachkontrolle"]["art"] == "h1", st["messungen"]
-            assert [m["lfd"] for m in st["messungen"]] == [1, 2, 3]
-            neu_schwund = [e for e in st["schwund"] if e.get("quelle") == "kuehl"]
-            assert len(neu_schwund) == 2 and neu_schwund[1]["wert"] is None and neu_schwund[1]["wertOffen"], neu_schwund
-            assert abs(neu_schwund[0]["wert"] - 3 * 7.45) < 1e-6 or neu_schwund[0]["wert"] is None, neu_schwund[0]
-            # Startseite: Nachkontrolle und Wert fehlt als offene Punkte
-            await pg.click('[data-a="nav"][data-wert="start"]'); await bild("start-mit-kuehl")
-            html = await pg.content(); assert "Nachkontrolle" in html and "ohne Wert" in html
-            # Wert nachtragen auf Heute
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await bild("tag-mit-kuehl")
-            wid = neu_schwund[1]["id"]
-            await pg.fill(f'[data-f="wert:{wid}"]', "180"); await pg.locator(f'[data-f="wert:{wid}"]').blur(); await pg.wait_for_timeout(200)
-            e = await pg.evaluate(f"window.__gastrocalc.stand.schwund.find(x => x.id === {wid!r})")
-            assert e["wert"] == 180 and not e["wertOffen"], e
-            # Nacherfassung: gestern Umsatz
-            await pg.click('[data-a="tag-datum"] >> nth=1'); await bild("tag-gestern")
-            await pg.fill('[data-f="umsatz"]', "1200"); await pg.locator('[data-f="umsatz"]').blur(); await pg.wait_for_timeout(200)
-            tn = await pg.evaluate("window.__gastrocalc.stand.tagesnotizen"); g = [n for n in tn if n["umsatz"] == 1200]
-            assert g and g[0]["nacherfasst"], tn
-            await pg.click('[data-a="tag-datum"] >> nth=0')
-            # Kontrollblatt und Druckansicht
-            await pg.click('[data-a="nav"][data-wert="kuehl"]'); await pg.click('[data-a="kuehl-blatt"]'); await pg.click(f'[data-a="blatt-stelle"][data-id="{ids[1]}"]'); await bild("kuehl-blatt")
-            await pg.emulate_media(media="print"); await pg.screenshot(path=str(OUT / "99_blatt-druck.png"), full_page=True); await pg.emulate_media(media="screen")
-            # Zweite Messung schließt die Nachkontrolle
-            await pg.click('[data-a="kuehl-start"]'); await pg.click(f'[data-a="kuehl-einzel"][data-id="{ids[1]}"]'); await bild("kuehl-einzel-wer")
-            await pg.click('[data-a="start-von"] >> nth=1'); await pg.click('[data-a="rundgang-start"]')
-            assert await pg.locator('[data-f="station-wert"]').count() == 1, "Einzelmessung öffnet die Stelle direkt"
-            # Tippen Zeichen für Zeichen: Komma und Minus müssen überleben
-            await pg.type('[data-f="station-wert"]', "3,5", delay=60); await pg.wait_for_timeout(150)
-            assert (await pg.input_value('[data-f="station-wert"]')) == "3,5", await pg.input_value('[data-f="station-wert"]')
-            await pg.click('[data-a="station-speichern"]'); await pg.wait_for_timeout(300)
-            assert await pg.evaluate("window.__gastrocalc.stand.rundgaenge.every(r => r.abgeschlossen)"), "Einzelmessung muss sofort abgeschlossen sein"
-            assert await pg.evaluate("window.__gastrocalc.stand.messungen.at(-1).wert") == 3.5
-            html = await pg.content(); assert "Nachkontrolle fällig" not in html and "Nachkontrolle offen" not in html, "Nachkontrolle nicht geschlossen"
-            await bild("kuehl-nach-zweitem-rundgang")
-            # Türkisch auf den neuen Seiten
+            assert kopfd["schema"] == 4 and len(kopfd["sha256"]) == 64 and daten["wurzel"]["betriebe"][0]["lieferungen"], kopfd
+            # Alte Schema-3-Sicherung einlesen: Posten bekommen basis netto, Artikel Gebinde
+            alt = {"typ": "gastrocalc-sicherung", "schema": 3, "wurzel": {"schema": 3, "betriebe": [{"id": "alt-3", "phase": "app", "betrieb": {"name": "Altes Café", "format": "cafe", "kuechen": [], "tageProWoche": 6, "monate": 12},
+                   "kosten": [{"id": "k1", "kategorie": "energie", "posten": "strom", "betrag": 119, "status": "bekannt", "periode": "monat"}], "artikel": [{"name": "Milch", "gruppe": "kaese", "einheit": "l", "packung": {"menge": 1, "einheit": "l"}, "preis": 1}]}], "aktiv": "alt-3"}, "ereignisse": []}
+            altp = OUT / "alt3.json"; altp.write_text(json.dumps(alt))
+            pg.once("dialog", lambda dd: asyncio.ensure_future(dd.accept()))
+            await pg.set_input_files('[data-f="import"]', str(altp)); await pg.wait_for_timeout(600)
+            w = await pg.evaluate("window.__gastrocalc.wurzel"); altb = next(x for x in w["betriebe"] if x["id"] == "alt-3")
+            assert altb["kosten"][0]["basis"] == "netto" and altb["artikel"][0]["gebinde"]["art"] == "packung" and altb["artikel"][0]["preisBasis"] == "netto", altb
+            await bild("laeden-nach-import")
+            # ---- Sprachen auf den neuen Seiten
             await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await pg.click('[data-a="sprache"][data-wert="tr"]')
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await pg.click('[data-a="nav"][data-wert="kuehl"]'); await bild("kuehl-tr")
-            await pg.click('[data-a="nav"][data-wert="tag"]'); await bild("tag-tr")
-            await pg.click('[data-a="nav"][data-wert="laeden"]'); await bild("laeden-tr")
+            await pg.click('[data-a="nav"][data-wert="start"]'); await bild("cockpit-tr")
+            await pg.click('[data-a="nav"][data-wert="muell"]'); await bild("muell-tr")
+            await pg.click('[data-a="nav"][data-wert="umsatz"]'); await bild("umsatz-tr")
+            await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await pg.click('[data-a="sprache"][data-wert="en"]')
+            await pg.click('[data-a="nav"][data-wert="start"]'); await bild("cockpit-en")
+            await pg.click('[data-a="nav"][data-wert="beleg"]'); await bild("beleg-en")
             await pg.click('[data-a="nav"][data-wert="einstellungen"]'); await pg.click('[data-a="sprache"][data-wert="de"]')
+            # Zurück-Geste aus Müll-Unterseite: eine Ebene hoch
+            await pg.click('[data-a="nav"][data-wert="muell"]'); await pg.click('[data-a="muell-weg"][data-wert="gericht"]')
+            await pg.go_back(); await pg.wait_for_timeout(300)
+            assert await pg.locator('[data-a="muell-weg"]').count() >= 3, "Zurück-Geste aus Gerichte-Kacheln"
+            await pg.go_back(); await pg.wait_for_timeout(300); await pg.wait_for_selector(".cockpit")
             await b.close()
     finally:
         srv.terminate()
