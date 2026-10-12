@@ -188,13 +188,13 @@ async def main():
             await bild("beleg-geklaert")
             assert not await pg.locator('[data-a="beleg-uebernehmen"]').is_disabled(), "Übernehmen bleibt gesperrt"
             await pg.click('[data-a="beleg-uebernehmen"]'); await pg.wait_for_timeout(300); await bild("beleg-fertig")
-            s = await stand(); assert len(s["lieferungen"]) == 1 and s["lieferungen"][0]["lieferant"] == "Metro" and abs(s["lieferungen"][0]["summeNetto"] - 66.3) < 0.01, s["lieferungen"][0]
+            s = await stand(); assert len(s["lieferungen"]) == 1 and s["lieferungen"][0]["lieferant"] == "Metro" and abs(s["lieferungen"][0]["summeNetto"] - 64.8) < 0.01, s["lieferungen"][0]
             tom = next(a for a in s["artikel"] if a["name"] == "Tomaten"); assert tom["preis"] == 9.9 and tom["packung"]["menge"] == 6 and len(tom["preisHistorie"]) == 1, tom
             assert any(a["name"].startswith("Ayran") for a in s["artikel"]), "neuer Artikel nicht angelegt"
             html = await pg.content(); assert "Tomaten" in html and "+3 %" in html, "Preisänderung Tomaten fehlt (9,60 → 9,90)"
             # Zähler: ein kleiner Beleg unter der Karten-Schätzung macht den Zähler nicht grüner (bleibt Stufe 2), der Beleg zählt aber
             z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
-            assert z["stufe"] == 2 and z["belege"] == 1 and z["ware"] > 66.3, (z["stufe"], z["ware"])
+            assert z["stufe"] == 2 and z["belege"] == 1 and z["ware"] > 64.8, (z["stufe"], z["ware"])
             await pg.click('[data-a="nav"][data-wert="umsatz"]'); await bild("umsatz-nach-beleg-preise")
             html = await pg.content(); assert "Ware (geschätzt" in html and "Tomaten" in html
             # ---- Tag abschließen

@@ -1,9 +1,9 @@
 // Etappe 2: Karte wählen, Rezepte prüfen, Einkaufspreise, Verkaufspreise, Ergebnis.
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
 import { t, einheitLabel } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige } from "../util.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN, vorlagenFuer, bereicheFuer } from "../data/katalog.js";
-import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise } from "../engine.js";
+import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken } from "../engine.js";
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
 const EINHEITEN_JE_BASIS = { g: ["g", "kg"], ml: ["ml", "l"], stk: ["stk"] };
@@ -171,7 +171,7 @@ function artikelZeile(a) {
         <input inputmode="decimal" data-f="preis:${esc(a.name)}" value="${esc(wertAnzeige(a.preis))}" placeholder="${esc(t("preise.preis"))}" aria-label="${esc(t("preise.preis"))}"><span class="einheit">€</span>
         <div class="seg klein">${["netto", "brutto"].map((b) => `<button type="button" class="${(a.preisBasis || "netto") === b ? "an" : ""}" data-a="preis-basis" data-name="${esc(a.name)}" data-wert="${b}">${esc(t("gebinde." + b))}</button>`).join("")}</div>
       </div></div>
-    ${jeBasis !== null ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 1 ? 3 : 2 }), einheitBasis))}${p.zwischen !== null && g.zwischen ? ` · ${esc(t("gebinde.jeZwischen", fmtEuro(p.zwischen, { dezimal: 2 }), t("gebinde.arten." + g.zwischen.art)))}` : ""}</div>` : ""}
+    ${jeBasis !== null ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 0.1 ? 4 : jeBasis < 1 ? 3 : 2 }), einheitBasis))}${p.zwischen !== null && g.zwischen ? ` · ${esc(t("gebinde.jeZwischen", fmtEuro(p.zwischen, { dezimal: 2 }), t("gebinde.arten." + g.zwischen.art)))}` : ""}</div>` : ""}
     ${zOffen ? `<div class="feldzeile"><label>${esc(t("gebinde.zwischenAnzahl", artName, t("gebinde.arten." + (g.zwischen?.art || "beutel"))))}</label>
       <div class="packung"><input inputmode="decimal" data-f="zwischen:${esc(a.name)}" value="${esc(wertAnzeige(g.zwischen?.anzahl ?? null))}" placeholder="4" aria-label="${esc(t("gebinde.zwischen"))}"><span class="einheit">${esc(t("gebinde.arten." + (g.zwischen?.art || "beutel")))}</span>
       <button type="button" class="leise" data-a="zwischen-weg" data-name="${esc(a.name)}">${esc(t("gebinde.zwischenWeg"))}</button></div></div>`
@@ -202,7 +202,7 @@ export const preise = {
     const [art, ...rest] = feld.split(":"); const name = rest.join(":");
     const a = stand.artikel.find((x) => x.name === name); if (!a) return;
     if (art === "packung") { a.packung ??= { menge: null, einheit: a.einheit }; a.packung.menge = parseZahl(wert); }
-    if (art === "preis") a.preis = parseZahl(wert);
+    if (art === "preis") { const n = parseZahl(wert); if (n !== a.preis) { preisMerken(a, heute()); a.preis = n; if (n !== null) a.preisDatum = heute(); } }
     if (art === "zwischen") { a.gebinde ??= { art: "packung", zwischen: null }; const n = parseZahl(wert); a.gebinde.zwischen = n > 0 ? { art: a.gebinde.zwischen?.art || "beutel", anzahl: Math.round(n) } : null; }
     if (art === "roh") { a.garverlust ??= {}; a.garverlust.roh = parseZahl(wert); }
     if (art === "gar") { a.garverlust ??= {}; a.garverlust.gar = parseZahl(wert); }

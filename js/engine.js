@@ -342,7 +342,7 @@ export function kalkulation(stand, { produktivAnteil = 0.7 } = {}) {
   });
   const zaehl = { gruen: 0, gelb: 0, rot: 0, grau: 0 };
   for (const z of zeilen) zaehl[z.ampel] += 1;
-  const geschaetzt = last.fix.geschaetzt > 0 || mengenGeschaetzt || zeilen.some((z) => z.warenGeschaetzt);
+  const geschaetzt = last.fix.geschaetzt > 0 || last.eigen.status === "geschaetzt" || mengenGeschaetzt || zeilen.some((z) => z.warenGeschaetzt);
   return { zeilen, zaehl, last, minutensatz, tQuer, mengenGeschaetzt, geschaetzt, zielStufe: nettoPreis(1, g, 0).stufe,
     unvollstaendig: last.offen > 0 || geschaetzt || zeilen.some((z) => z.ampel === "grau") };
 }
@@ -508,10 +508,10 @@ export const WOCHENTAGE = [0, 1, 2, 3, 4, 5, 6]; // 0 = Sonntag (JavaScript)
 // (Kühlung ≤ 7 °C, Tiefkühlung ≤ −18 °C, Warmhalten ≥ 65 °C). Eigene Werte (Fisch 2 °C) überschreiben ihn; das Blatt sagt, welcher galt.
 export const GRENZEN_STANDARD = { kuehl: { min: null, max: 7 }, tk: { min: null, max: -18 }, warm: { min: 65, max: null } };
 export function grenzenVon(k) {
-  const eigen = typeof k.min === "number" || typeof k.max === "number";
-  if (eigen) return { min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, standard: false };
   const st = GRENZEN_STANDARD[k.art] || GRENZEN_STANDARD.kuehl;
-  return { min: st.min, max: st.max, standard: true };
+  const minEigen = typeof k.min === "number", maxEigen = typeof k.max === "number";
+  // je Feld: eigener Wert schlägt den Standard; ein leeres Feld behält seinen Standard (Review Etappe 5, Punkt 7)
+  return { min: minEigen ? k.min : st.min, max: maxEigen ? k.max : st.max, standard: !minEigen && !maxEigen };
 }
 export const stelleBereit = (k) => !k.archiviert && !!k.name;
 export const aktiveStellen = (stand) => (stand.kuehlstellen || []).filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
@@ -569,8 +569,9 @@ export function rundgangAbschliessen(stand, r, lfdGeber, geraet = null, text = (
 
 export const messungenDerStelle = (stand, stelleId) => (stand.messungen || []).filter((m) => m.stelle === stelleId && !m.storniert).sort((a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.zeit).localeCompare(String(b.zeit)));
 // Welche spätere Messung hat eine Nachkontrolle erledigt?
+// Erledigt ist eine Nachkontrolle erst durch eine spätere echte Messung INNERHALB der Grenze; ein weiterer Ausreißer zählt nicht (Nachtest Etappe 5, Punkt 7).
 export function nachkontrolleErledigt(stand, m) {
-  return (stand.messungen || []).filter((x) => x.id !== m.id && x.stelle === m.stelle && !x.storniert && typeof x.wert === "number" && !x.nacherfasst && x.datum >= m.datum && String(x.zeit) >= String(m.zeit)).sort((a, b) => String(a.zeit).localeCompare(String(b.zeit)))[0] || null;
+  return (stand.messungen || []).filter((x) => x.id !== m.id && x.stelle === m.stelle && !x.storniert && typeof x.wert === "number" && !x.abweichung && !x.nacherfasst && x.datum >= m.datum && String(x.zeit) >= String(m.zeit)).sort((a, b) => String(a.zeit).localeCompare(String(b.zeit)))[0] || null;
 }
 export const letzteMessung = (stand, stelleId) => messungenDerStelle(stand, stelleId).filter((m) => typeof m.wert === "number").pop() || null;
 
@@ -580,7 +581,7 @@ export function offeneNachkontrollen(stand) {
   for (const m of stand.messungen || []) {
     if (m.storniert || !m.abweichung || !m.nachkontrolle) continue;
     // nur eine echte, nicht nachgetragene Messung mit Wert am selben oder einem späteren Tag schließt die Nachkontrolle
-    const spaeter = (stand.messungen || []).some((x) => x.id !== m.id && x.stelle === m.stelle && !x.storniert && typeof x.wert === "number" && !x.nacherfasst && x.datum >= m.datum && String(x.zeit) >= String(m.zeit));
+    const spaeter = nachkontrolleErledigt(stand, m);
     if (!spaeter) out.push({ messung: m, faellig: m.nachkontrolle.faellig, ueberfaellig: m.nachkontrolle.faellig ? Date.parse(m.nachkontrolle.faellig) < Date.now() : false });
   }
   return out;

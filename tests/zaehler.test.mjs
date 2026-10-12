@@ -31,20 +31,26 @@ test("Zähler Stufe 2: Kosten je Öffnungstag, netto, Deckungsbeitrag statt voll
   const z0 = Z.zaehler(b, { datum: "2026-10-12" });
   assert.equal(z0.stufe, 2); assert.equal(z0.keinUmsatz, true); assert.equal(z0.imPlus, false);
   nah(z0.gewichtMonat, 26); nah(z0.tageskosten, (2000 + 600 + 3000 + 2400) / 26); // Strom 714 brutto = 600 netto
-  nah(z0.gewichtBisHeute, 10); // 1.–12.10.: zwei Samstage (3. und 10.)
-  nah(z0.kosten, z0.tageskosten * 10); nah(z0.stand, -z0.tageskosten * 10);
+  nah(z0.gewichtBisHeute, 1); // ohne Eintrag zählt der Zähler erst ab heute, nicht ab dem 1. (Review Etappe 5, Punkt 10)
+  nah(z0.kosten, z0.tageskosten); nah(z0.stand, -z0.tageskosten); assert.equal(z0.start, "2026-10-12");
   // Umsatz 1.070 brutto = 1.000 netto am 12.; Ware aus der Karte: Döner 1,2 € Fleisch + 0,3 Brot + 0,08 Tomaten = 1,58 € von 6,54 netto
   stand(b, "2026-10-12", 1070);
   const z = Z.zaehler(b, { datum: "2026-10-12" });
   nah(z.umsatzNetto, 1000); const q = (0.15 * 8 + 0.3 + 0.05 * 1.6) / (7 / 1.07); nah(z.quote, q, 1e-6); nah(z.ware, 1000 * q);
   nah(z.stand, 1000 - 1000 * q - z.kosten); assert.equal(z.tageMitUmsatz, 1); nah(z.bewegungHeute, 1000 - 1000 * q - z.tageskosten);
+  // Nachtrag vom 5.10.: Zählung beginnt dort, die Tage dazwischen tragen Kosten
+  stand(b, "2026-10-05", 535); const zN = Z.zaehler(b, { datum: "2026-10-12" }); assert.equal(zN.start, "2026-10-05"); nah(zN.gewichtBisHeute, 7); assert.equal(zN.tage[3].status, "vorher");
+  b.tagesnotizen = b.tagesnotizen.filter((n) => n.datum !== "2026-10-05");
   // Müll heute 20 € schiebt den Zähler um 20 € ins Rote
   b.schwund.push({ id: "w", datum: "2026-10-12", art: "gericht", vorgang: 1, ref: { typ: "gericht", id: "d" }, menge: 2, einheit: "portion", wert: 20, storniert: false });
   nah(Z.zaehler(b, { datum: "2026-10-12" }).stand, z.stand - 20);
   // Prognose: Tagesschnitt netto 1.000 − Ware − Müll gegen Tageskosten → Null-Tag liegt vor Monatsende
   const z2 = Z.zaehler(b, { datum: "2026-10-12" });
-  assert.ok(z2.dbProTag > z2.tageskosten); assert.ok(z2.nullTag !== null && z2.nullTag > "2026-10-12" && z2.nullTag <= "2026-10-31", z2.nullTag);
+  assert.ok(z2.dbProTag > z2.tageskosten); assert.equal(z2.imPlus, true, "ein Tag Kosten, ein guter Tag Umsatz: im Plus"); assert.equal(z2.kippTag, "2026-10-12"); assert.equal(z2.nullTag, "2026-10-12");
   assert.ok(z2.monatsende > z2.stand); assert.equal(z2.reichtNicht, false);
+  // Mit Nachtrag ab dem 1.10. (nur ein Umsatztag) liegt der Null-Tag in der Zukunft
+  stand(b, "2026-10-01", 1070); const z3 = Z.zaehler(b, { datum: "2026-10-12" }); assert.equal(z3.start, "2026-10-01"); assert.ok(z3.stand < 0); assert.ok(z3.nullTag > "2026-10-12" && z3.nullTag <= "2026-10-31", z3.nullTag);
+  b.tagesnotizen = b.tagesnotizen.filter((n) => n.datum !== "2026-10-01");
   assert.equal(z2.tage.length, 31); assert.equal(z2.tage[2].gewicht, 0, "Samstag 3.10. ist Ruhetag"); assert.equal(z2.tage[11].status, "heute"); assert.equal(z2.tage[12].status, "zukunft");
 });
 
@@ -62,10 +68,14 @@ test("Zähler Stufe 3: Einkauf aus Belegen statt Schätzung, Müll nicht doppelt
   b.lieferungen.push({ id: "l1", datum: "2026-10-11", erfasst: "2026-10-11T10:00:00.000Z", lieferant: "Metro", basis: "netto", summeNetto: 300, zeilen: [], storniert: false });
   b.schwund.push({ id: "w", datum: "2026-10-12", art: "gericht", vorgang: 1, ref: { typ: "gericht", id: "d" }, menge: 2, einheit: "portion", wert: 20, storniert: false });
   const z = Z.zaehler(b, { datum: "2026-10-12" });
-  assert.equal(z.stufe, 3); nah(z.ware, 300); nah(z.muell, 0); nah(z.stand, 1000 - 300 - z.kosten);
+  assert.equal(z.stufe, 3); nah(z.ware, 300); nah(z.muell, 0); nah(z.stand, 1000 - 300 - z.kosten); assert.equal(z.start, "2026-10-11"); nah(z.gewichtBisHeute, 2);
+  nah(z.quoteEff, 0.3); nah(z.dbProTag, 1000 * 0.7); // Prognose rechnet mit der Belegquote, nicht mit dem vollen Umsatz (Review Punkt 2)
   // Ein Beleg weit unter der Schätzung macht den Zähler nicht grüner: es bleibt Stufe 2
   b.lieferungen[0].summeNetto = 20;
   const z2 = Z.zaehler(b, { datum: "2026-10-12" }); assert.equal(z2.stufe, 2); assert.ok(z2.ware > 20); assert.equal(z2.belege, 1);
+  // Ohne Karte gibt es keine Stufe 3 (keine Schätzung zum Vergleichen)
+  const c = laden(); c.gerichte = []; stand(c, "2026-10-12", 1070); c.lieferungen.push({ id: "l2", datum: "2026-10-12", erfasst: "x", basis: "netto", summeNetto: 500, zeilen: [], storniert: false });
+  assert.equal(Z.zaehler(c, { datum: "2026-10-12" }).stufe, 1);
 });
 
 test("Wochenvergleich: sieben Tage gegen die sieben davor", () => {
@@ -113,4 +123,18 @@ test("Tag abschließen: Journal mit Stand, jüngster je Datum gilt", () => {
   const a = Z.tagAbschliessen(b, { datum: "2026-10-12", geraet: "g1" });
   assert.equal(b.abschluesse.length, 1); assert.equal(a.umsatz, 1070); assert.equal(typeof a.stand, "number");
   const a2 = Z.tagAbschliessen(b, { datum: "2026-10-12", geraet: "g1" }); assert.equal(Z.abschlussVon(b, "2026-10-12").id, a2.id);
+});
+
+test("Lieferung: Dublette erkannt, Preissprung gemeldet, Retoure setzt keinen Preis, Fußsumme ohne Pfand", () => {
+  const b = laden();
+  const beleg = belegZerlegen("METRO\nRechnung vom 11.10.2026\n4001 Tomaten rot KI 6kg 1 30,00 30,00 A\n4002 Dönerbrot 10er PK -2 3,30 -6,60 A\nPFAND KASTEN 1 1,50 1,50 A\nSumme Netto 24,90\nMwSt A 7% 1,74\nGesamtbetrag 26,64", { bekannt: b.artikel.map((a) => a.name) });
+  const sp = L.preisSprung(b, beleg.zeilen[0], "netto"); assert.ok(sp && sp.prozent > 2, sp); // 1,60 → 5,00 je kg
+  const l = L.lieferungAnlegen(b, beleg, { zeilen: beleg.zeilen, geraet: "g1" });
+  nah(l.summeNetto, 23.4); nah(l.pfand, 1.5); // Fußzeile stimmt → 24,90 abzüglich Pfand
+  const ae = L.preiseUebernehmen(b, l); assert.ok(!ae.some((x) => x.name === "Dönerbrot / Fladen"), "Retoure darf keinen Preis setzen");
+  assert.ok(L.lieferungDoppelt(b, beleg, "2026-10-11")); assert.equal(L.lieferungDoppelt(b, beleg, "2026-10-10"), null);
+  // Zukünftiges Belegdatum wird auf heute gekappt
+  const l2 = L.lieferungAnlegen(b, { ...beleg, datum: "2099-01-01" }, { zeilen: beleg.zeilen }); assert.ok(l2.datum <= new Date().toISOString().slice(0, 10));
+  // Nicht alle Zeilen übernommen → Zeilensumme statt Fußzeile
+  const l3 = L.lieferungAnlegen(b, beleg, { zeilen: [beleg.zeilen[0]], alleZeilen: false }); nah(l3.summeNetto, 30);
 });

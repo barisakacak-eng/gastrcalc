@@ -294,7 +294,7 @@ h1, h2, h3, p { margin: 0; }
 .tage { display: flex; font-size: 0.72rem; color: var(--tinte-weich); }
 .tage span { flex: 1; text-align: center; }
 .tueren { display: flex; gap: 6px; }
-.tueren button { flex: 1; min-width: 0; border: 2px solid var(--holz); background: var(--weiss); border-radius: 10px; padding: 10px 2px; min-height: 44px; font-size: 0.8rem; font-weight: 600; color: var(--salbei-tief); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tueren button { flex: 1; min-width: 0; border: 2px solid var(--holz); background: var(--weiss); border-radius: 10px; padding: 10px 0; min-height: 44px; font-size: 0.74rem; letter-spacing: -0.01em; font-weight: 600; color: var(--salbei-tief); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .seg { display: inline-flex; border: 2px solid var(--holz); border-radius: 999px; overflow: hidden; flex: none; }
 .seg button { border: 0; background: var(--weiss); padding: 8px 12px; min-height: 40px; font-size: 0.85rem; font-weight: 700; color: var(--tinte-weich); }
 .seg button.an { background: var(--salbei-tief); color: var(--weiss); }

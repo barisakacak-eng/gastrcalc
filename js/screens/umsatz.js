@@ -2,15 +2,23 @@
 import { t } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, umsatzSteuerSatz, schwundAuswertung } from "../engine.js";
-import { zaehler } from "../zaehler.js";
+import { zaehler, monatsGrenzen } from "../zaehler.js";
+import { tagPlus } from "../engine.js";
 import { preisAenderungen } from "../lieferung.js";
 import { nav } from "./nav.js";
 import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
 import { zaehlerKarte } from "./home.js";
 
 let umsatzBasis = "brutto"; // Schalter am Feld: Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert (der Zähler rechnet netto)
+let mehrTage = false;       // Datumsleiste bis zum Monatsanfang ausgeklappt (Nachtest Etappe 5, Punkt 4)
 
 const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; };
+// Chips: die letzten 7 Tage, dazu auf Wunsch alle Tage bis zum Monatsanfang (und der Vormonat ab dem 7. Tag nicht mehr)
+function tagChips(D) {
+  const H = heute(); const tage = letzteTage(7);
+  if (mehrTage) { const M = monatsGrenzen(H); for (let d = tagPlus(tage[tage.length - 1], -1); d >= M.von; d = tagPlus(d, -1)) tage.push(d); }
+  return `<div class="chips">${tage.map((d, i) => `<button type="button" class="chip klein ${D === d ? "an" : ""}" data-a="tag-datum" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}${mehrTage || tagPlus(tage[tage.length - 1], -1) < monatsGrenzen(H).von ? "" : `<button type="button" class="chip klein" data-a="umsatz-mehr-tage">${esc(t("zaehler.frueher"))}</button>`}</div>`;
+}
 
 export function umsatzView(stand) {
   const H = heute(); const D = tagGewaehlt(); const nach = D !== H;
@@ -21,7 +29,7 @@ export function umsatzView(stand) {
   return `
     <div class="kopfband"><h1>${esc(t("zaehler.titel"))}</h1><div class="unter">${esc(t("zaehler.unter", monatName(D), tageBis, tageMonat))}</div></div>
     <div class="inhalt">
-      <div class="chips">${letzteTage(7).map((d, i) => `<button type="button" class="chip klein ${D === d ? "an" : ""}" data-a="tag-datum" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}</div>
+      ${tagChips(D)}
       ${nach ? `<div class="tipp">${esc(t("tag.nacherfassenHinweis"))}</div>` : ""}
       ${konflikte.length ? `<div class="karte hinweisgelb"><h2>${esc(t("tag.konfliktTitel"))}</h2><div>${esc(t("tag.konfliktText", konflikte.map(datumLesbar).join(", ")))}</div></div>` : ""}
       <div class="karte">
@@ -49,7 +57,7 @@ function streckeKarte(z, st) {
   if (z.keinUmsatz) return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2><p class="hinweis">${esc(t("zaehler.nochKeinSchnitt"))}</p></div>`;
   const min = -Math.max(z.last.gesamt, 1); const max = Math.max(z.monatsende ?? 0, z.stand, Math.abs(min) * 0.3);
   const pos = (v) => Math.round(Math.min(1, Math.max(0, (v - min) / (max - min))) * 100);
-  const beispiel = 1000; const bringt = beispiel / (1 + st.satz) * (1 - (z.stufe === 2 ? z.quote : 0));
+  const beispiel = 1000; const bringt = z.bleibtVon(beispiel);
   return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2>
     <div class="strecke" style="--null:${pos(0)}%"><i class="heute" style="left:${pos(z.stand)}%" data-l="${esc(t("zaehler.heute"))}"></i><i class="null" style="left:${pos(0)}%" data-l="${esc(t("zaehler.null"))}${z.nullTag ? " · " + esc(datumLesbar(z.nullTag).slice(0, 6)) : ""}"></i></div>
     <small class="marke">${esc(t("zaehler.jederTag", fmtEuro(beispiel), fmtEuro(bringt)))} ${esc(t("zaehler.legendeStrecke"))}</small></div>`;
@@ -85,13 +93,14 @@ function rechnungKarte(z) {
     ${zeile(z.stufe === 3 ? t("zaehler.wareBelege") : z.stufe === 2 ? t("zaehler.wareGeschaetzt", fmtZahl(z.quote * 100, 0)) : t("zaehler.wareFehlt"), z.stufe === 1 ? "–" : fmtEuro(z.ware))}
     ${z.stufe === 3 ? "" : zeile(t("zaehler.muellBis"), fmtEuro(z.muell, { dezimal: z.muell < 100 ? 2 : 0 }))}
     ${zeile(t("zaehler.umsatzBis"), fmtEuro(z.umsatzNetto), "gruen")}
-    <small class="marke">${esc(t("zaehler.umsatzBruttoHinweis", fmtEuro(z.umsatzBrutto), fmtZahl(z.steuer * 100, 1)))} · ${esc(t("zaehler.steuerQuelle." + z.steuerQuelle))} · ${esc(t("zaehler.quoteQuelle." + z.quoteQuelle))}</small>
+    <small class="marke">${esc(t("zaehler.umsatzBruttoHinweis", fmtEuro(z.umsatzBrutto), fmtZahl(z.steuer * 100, 1)))} · ${esc(t("zaehler.steuerQuelle." + z.steuerQuelle))} · ${esc(t("zaehler.quoteQuelle." + z.quoteQuelle))}${z.start > z.monat.von ? ` · ${esc(t("zaehler.zaehltAb", datumLesbar(z.start).slice(0, 6)))}` : ""}</small>
+    ${z.quote !== null && z.quote > 0.5 && z.quoteQuelle === "karte" ? `<span class="marke offen">${esc(t("zaehler.quoteHoch", fmtZahl(z.quote * 100, 0)))}</span>` : ""}
   </div>`;
 }
 
 function monatKarte(z, D) {
   return `<div class="karte"><h2>${esc(t("zaehler.monat"))}</h2>
-    <div class="monat">${z.tage.map((x) => { const cls = x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus"); return `<i class="${cls} ${x.datum === D ? "heute" : ""}">${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
+    <div class="monat">${z.tage.map((x) => { const cls = x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus"); return `<i class="${cls} ${x.datum === D ? "heute" : ""}">${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
     <small class="marke">${esc(t("zaehler.legendeMonat"))}</small></div>`;
 }
 
@@ -107,6 +116,7 @@ function preiseKarte(stand, D) {
 // ---------- Aktionen und Eingaben ----------
 export function umsatzAktion(name, el) {
   if (name === "umsatz-basis") { umsatzBasis = el.dataset.wert === "netto" ? "netto" : "brutto"; return true; }
+  if (name === "umsatz-mehr-tage") { mehrTage = true; return true; }
   return false;
 }
 export function umsatzEingabe(feld, wert, stand, wurzel) {
@@ -116,4 +126,4 @@ export function umsatzEingabe(feld, wert, stand, wurzel) {
   else tagesnotizSetzen(stand, D, umsatzBasis === "netto" ? Math.round(n * (1 + st.satz) * 100) / 100 : n, { nacherfasst: D !== heute(), geraet: wurzel?.geraet || null });
   return false;
 }
-export const umsatzZuruecksetzen = () => { umsatzBasis = "brutto"; };
+export const umsatzZuruecksetzen = () => { umsatzBasis = "brutto"; mehrTage = false; };

@@ -510,6 +510,9 @@ export default {
   },
 
   zaehler: {
+    frueher: "Earlier …",
+    zaehltAb: (d) => `counting from ${d}`,
+    quoteHoch: (q) => `${q} % goods share is unusually high – check the purchase prices in the menu or enter your real share under More.`,
     nav: "Takings",
     titel: "Takings and counter",
     unter: (m, a, b) => `${m} · opening day ${a} of ${b}`,
@@ -595,6 +598,8 @@ export default {
   },
 
   beleg: {
+    doppeltFrage: "You have already read in this receipt (same supplier, same day, same total). Apply it again anyway?",
+    preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} per kg/l/piece (${p} %). Is that right?`,
     titel: "Read a receipt",
     belege: "Receipts",
     anleitung: "iPhone: point the camera at the receipt, tap the text, “Copy”. Then paste here. Android: Google Lens, “Copy text”.",

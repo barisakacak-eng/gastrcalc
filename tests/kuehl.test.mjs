@@ -102,3 +102,15 @@ test("Abnahme Posten 1: Nachkontrolle schließt nur durch echte spätere Messung
   const r8 = E.rundgangStarten(b, { datum: tag(-3), nacherfasst: true }); E.stationEintragen(r8, b.kuehlstellen[0], { wert: 1 }); E.rundgangAbschliessen(b, r8, () => S.naechsteLfd(w));
   assert.equal(E.letzteMessung(b, "k1").wert, 5, "Nachtrag vom Vortag ist nicht die letzte Messung");
 });
+
+test("Etappe 5: Grenze je Feld (Standard bleibt für das leere Feld); Nachkontrolle nur durch Wert innerhalb der Grenze erledigt", () => {
+  const b = laden();
+  const k = { id: "k9", name: "Fisch", art: "kuehl", min: 0, max: null, reihe: 9, archiviert: false };
+  assert.deepEqual(E.grenzenVon(k), { min: 0, max: 7, standard: false }); assert.equal(E.abweichung(k, 12), true);
+  const m1 = { id: "m1", stelle: "k1", datum: "2026-10-12", zeit: "2026-10-12T08:00:00.000Z", wert: 8, abweichung: true, nachkontrolle: { art: "h1", faellig: null }, storniert: false, nacherfasst: false };
+  const m2 = { id: "m2", stelle: "k1", datum: "2026-10-12", zeit: "2026-10-12T09:00:00.000Z", wert: 9, abweichung: true, nachkontrolle: { art: "h1", faellig: null }, storniert: false, nacherfasst: false };
+  b.messungen = [m1, m2];
+  assert.equal(E.nachkontrolleErledigt(b, m1), null, "ein weiterer Ausreißer erledigt nichts"); assert.equal(E.offeneNachkontrollen(b).length, 2);
+  b.messungen.push({ id: "m3", stelle: "k1", datum: "2026-10-12", zeit: "2026-10-12T10:00:00.000Z", wert: 4, abweichung: false, nachkontrolle: null, storniert: false, nacherfasst: false });
+  assert.equal(E.nachkontrolleErledigt(b, m1)?.id, "m3"); assert.equal(E.offeneNachkontrollen(b).length, 0);
+});

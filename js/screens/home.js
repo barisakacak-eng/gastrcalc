@@ -63,7 +63,7 @@ export function zaehlerKarte(z, H, { tipp = true } = {}) {
     <span class="riesig">${grau ? "–" : `${z.imPlus ? "+" : "−"} ${fmtEuro(Math.abs(z.stand))}`}</span>
     <small>${esc(satz)}</small>
     ${z.unvollstaendig ? `<small class="warn">${esc(t("cockpit.unvollstaendig"))}</small>` : ""}
-    <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("cockpit.stufe." + z.stufe))}</small>
+    <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("cockpit.stufe." + z.stufe))}${!grau && z.start > z.monat.von ? ` · ${esc(t("zaehler.zaehltAb", datumLesbar(z.start).slice(0, 6)))}` : ""}</small>
   </${tipp ? "button" : "div"}>`;
 }
 
@@ -75,7 +75,7 @@ function naechsteHandlung(stand, z, ks, nk, ab) {
   if (nk.length) return mk("nachkontrolle", "nav", 'data-wert="kuehl"');
   if (ks.eingerichtet && ks.heuteGemessen < ks.stellen) return mk(h < 15 ? "kuehlMorgen" : "kuehlAbend", "kuehl-rundgang-start", 'data-offen="0"');
   if (h >= 17 && !umsatzEintrag(stand, H)) return mk("umsatz", "nav", 'data-wert="umsatz"');
-  if (z.unvollstaendig) return mk("kosten", "bearbeiten", 'data-schritt="kosten-miete" data-bis="kosten-sonstiges"');
+  if (z.unvollstaendig) return z.last.fix.offen ? mk("kosten", "bearbeiten", 'data-schritt="kosten-miete" data-bis="kosten-sonstiges"') : mk("kosten", "bearbeiten", 'data-schritt="lohn"');
   if (stand.gerichte.length && kalkulation(stand).zaehl.grau) return mk("karte", "nav", 'data-wert="karte"');
   if (!ks.eingerichtet) return mk("kuehlEinrichten", "kuehl-einrichtung-oeffnen");
   if (h >= 18 && !ab) return mk("abschluss", "nav", 'data-wert="abschluss"');
@@ -97,7 +97,8 @@ function offenKarte(stand, z, nk) {
   const ohneWert = schwundOhneWert(stand); const konflikte = umsatzKonflikte(stand);
   const grau = stand.gerichte.length ? kalkulation(stand).zaehl.grau : 0;
   const zeilen = [];
-  if (z.unvollstaendig) zeilen.push(`<button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges"><span><b>${esc(t("start.kostenTitel"))}</b><small>${esc(t("start.offenPosten", z.last.offen))}</small></span><span class="pfeil">›</span></button>`);
+  if (z.last.fix.offen) zeilen.push(`<button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges"><span><b>${esc(t("start.kostenTitel"))}</b><small>${esc(t("start.offenPosten", z.last.fix.offen))}</small></span><span class="pfeil">›</span></button>`);
+  if (z.last.lohnOffen || z.last.eigen.betrag === null) zeilen.push(`<button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="lohn"><span><b>${esc(z.last.lohnOffen ? t("zusammenfassung.loehne") : t("start.eigenerLohn"))}</b><small>${esc(t("allgemein.offen"))}</small></span><span class="pfeil">›</span></button>`);
   if (grau) zeilen.push(`<button type="button" class="zeileknopf" data-a="nav" data-wert="karte"><span><b>${esc(t("start.karteTitel"))}</b><small>${esc(t("start.karteOffen", grau))}</small></span><span class="pfeil">›</span></button>`);
   if (ohneWert.length) zeilen.push(`<button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("tag.wertFehltTitel"))}</b><small>${esc(t("tag.wertFehlt", ohneWert.length))}</small></span><span class="pfeil">›</span></button>`);
   if (konflikte.length) zeilen.push(`<button type="button" class="zeileknopf" data-a="nav" data-wert="umsatz"><span><b>${esc(t("tag.konfliktTitel"))}</b><small>${esc(konflikte.map(datumLesbar).join(", "))}</small></span><span class="pfeil">›</span></button>`);

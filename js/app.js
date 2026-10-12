@@ -231,7 +231,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
-  if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz") { tagZuruecksetzen(); muellZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
+  if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
@@ -351,6 +351,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "beleg") ansicht = "umsatz";
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }
     zeichne();
   }

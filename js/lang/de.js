@@ -511,6 +511,9 @@ export default {
   },
 
   zaehler: {
+    frueher: "Früher …",
+    zaehltAb: (d) => `zählt ab dem ${d}`,
+    quoteHoch: (q) => `${q} % Warenanteil ist ungewöhnlich hoch – prüf die Einkaufspreise in der Karte oder trag deinen echten Anteil unter Mehr ein.`,
     nav: "Umsatz",
     titel: "Umsatz und Zähler",
     unter: (m, a, b) => `${m} · Öffnungstag ${a} von ${b}`,
@@ -596,6 +599,8 @@ export default {
   },
 
   beleg: {
+    doppeltFrage: "Diesen Beleg hast du schon eingelesen (gleicher Händler, gleicher Tag, gleiche Summe). Trotzdem noch einmal übernehmen?",
+    preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} je kg/l/Stück (${p} %). Stimmt das?`,
     titel: "Beleg einlesen",
     belege: "Belege",
     anleitung: "iPhone: Kamera auf den Beleg halten, den Text antippen, „Kopieren“. Dann hier einfügen. Android: Google Lens, „Text kopieren“.",

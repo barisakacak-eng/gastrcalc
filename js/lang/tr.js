@@ -511,6 +511,9 @@ export default {
   },
 
   zaehler: {
+    frueher: "Daha önce …",
+    zaehltAb: (d) => `${d} tarihinden itibaren sayıyor`,
+    quoteHoch: (q) => `%${q} mal payı alışılmadık derecede yüksek – menüdeki alış fiyatlarını kontrol et veya gerçek payını Daha fazla altında gir.`,
     nav: "Ciro",
     titel: "Ciro ve sayaç",
     unter: (m, a, b) => `${m} · açık gün ${a} / ${b}`,
@@ -596,6 +599,8 @@ export default {
   },
 
   beleg: {
+    doppeltFrage: "Bu fişi zaten okuttun (aynı tedarikçi, aynı gün, aynı toplam). Yine de tekrar alınsın mı?",
+    preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} kg/l/adet başına (%${p}). Doğru mu?`,
     titel: "Fiş oku",
     belege: "Fişler",
     anleitung: "iPhone: kamerayı fişe tut, yazıya dokun, „Kopyala“. Sonra buraya yapıştır. Android: Google Lens, „Metni kopyala“.",

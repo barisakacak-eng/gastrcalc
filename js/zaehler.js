@@ -65,15 +65,21 @@ export function zaehler(stand, { datum = heute() } = {}) {
   const q = warenQuote(stand);
   const einkauf = einkaufJeTag(stand, M.von, M.bis);
   const muell = muellJeTag(stand, M.von, M.bis);
-  // Stufe 3 nur, wenn der Einkauf aus Belegen mindestens so hoch ist wie die Schätzung aus der Karte – ein einzelner Beleg
-  // würde den Zähler sonst zu grün machen. Lieber zu rot als zu grün: es zählt die höhere Zahl.
+  // Beginn der Zählung: der erste Tag des Monats mit Umsatzeintrag (Review Etappe 5, Punkt 10). Wer am 12. anfängt, bekommt nicht elf Tage
+  // Kosten ohne Umsatz angerechnet; Tage davor zählen nicht, und das steht im Cockpit („zählt ab dem …").
+  let start = null;
+  for (let d = M.von; d <= datum && d <= M.bis; d = tagPlus(d, 1)) if (umsatzEintrag(stand, d) || einkauf.jeTag[d]) { start = d; break; } // auch ein Beleg (Ware vor dem Verkauf) startet die Zählung
+  if (start === null) start = datum;
+  // Umsatz netto gesamt vorab, für die Belegquote
+  let umsatzNettoGesamt = 0;
+  for (let d = start; d <= datum && d <= M.bis; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) umsatzNettoGesamt += e.umsatz / (1 + steuer.satz); }
+  // Stufe 3 nur mit Karte (sonst gibt es keine Schätzung zum Vergleichen) und wenn der Einkauf aus Belegen mindestens so hoch ist wie die
+  // Schätzung aus der Karte – ein einzelner Beleg würde den Zähler sonst zu grün machen. Lieber zu rot als zu grün: es zählt die höhere Zahl.
   let stufe = q.quote !== null ? 2 : 1;
-  if (einkauf.anzahl > 0) {
-    const belegSumme = Object.values(einkauf.jeTag).reduce((a, b) => a + b, 0);
-    let schaetzung = 0;
-    if (q.quote !== null) for (let d = M.von; d <= datum && d <= M.bis; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) schaetzung += e.umsatz / (1 + steuer.satz) * q.quote; }
-    if (belegSumme >= schaetzung) stufe = 3;
-  }
+  const belegSumme = Object.values(einkauf.jeTag).reduce((a, b) => a + b, 0);
+  if (einkauf.anzahl > 0 && q.quote !== null && belegSumme > 0 && belegSumme >= umsatzNettoGesamt * q.quote) stufe = 3;
+  // Quote für die Prognose: in Stufe 3 die Belegquote (nie unter der Kartenquote), sonst die Karte
+  const quoteEff = stufe === 3 ? Math.min(0.95, Math.max(q.quote, umsatzNettoGesamt > 0 ? belegSumme / umsatzNettoGesamt : q.quote)) : (q.quote ?? 0);
 
   // Öffnungstage des Monats (gewichtet) und Tageskosten
   const tage = []; let gewichtMonat = 0;
@@ -81,11 +87,12 @@ export function zaehler(stand, { datum = heute() } = {}) {
   const tageskosten = gewichtMonat > 0 ? last.gesamt / gewichtMonat : 0;
   const anteil = (betrag) => gewichtMonat > 0 ? (betrag || 0) / gewichtMonat : 0;
 
-  // Vergangenheit bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
+  // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
   let kosten = 0, umsatzBrutto = 0, umsatzNetto = 0, ware = 0, muellSumme = 0, gewichtBisHeute = 0, tageMitUmsatz = 0, db = 0;
   let standGestern = 0, kippTag = null, letzterStand = 0;
   for (const t of tage) {
     if (t.datum > datum) { t.status = "zukunft"; continue; }
+    if (t.datum < start) { t.status = "vorher"; t.stand = 0; continue; }
     t.status = t.datum === datum ? "heute" : "vergangen";
     const e = umsatzEintrag(stand, t.datum);
     const ub = e ? e.umsatz : 0; const un = ub / (1 + steuer.satz);
@@ -93,7 +100,7 @@ export function zaehler(stand, { datum = heute() } = {}) {
     const m = stufe === 3 ? 0 : (muell[t.datum] || 0);
     kosten += tageskosten * t.gewicht; gewichtBisHeute += t.gewicht;
     umsatzBrutto += ub; umsatzNetto += un; ware += w; muellSumme += m;
-    if (e) { tageMitUmsatz += 1; db += un - (stufe === 2 ? un * q.quote : 0) - m; }
+    if (e) { tageMitUmsatz += 1; db += un * (1 - quoteEff) - m; }
     if (t.datum === datum) standGestern = letzterStand;
     letzterStand = umsatzNetto - ware - muellSumme - kosten;
     t.stand = letzterStand; t.umsatz = !!e;
@@ -117,7 +124,8 @@ export function zaehler(stand, { datum = heute() } = {}) {
   }
   const unvollstaendig = last.offen > 0;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteQuelle: q.quelle, steuer: steuer.satz, steuerQuelle: steuer.quelle,
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteQuelle: q.quelle, steuer: steuer.satz, steuerQuelle: steuer.quelle, start, belegSumme,
+    nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: anteil(last.lohn ?? 0) * gewichtBisHeute, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute,
     umsatzBrutto, umsatzNetto, ware, muell: muellSumme, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
@@ -142,7 +150,7 @@ export function wochenVergleich(stand, datum = heute()) {
 // Tag abschließen (Abendritual): ein Journaleintrag je Abschluss mit dem Stand des Zählers. Der jüngste je Datum gilt.
 export function tagAbschliessen(stand, { datum = heute(), geraet = null } = {}) {
   const z = zaehler(stand, { datum }); const sw = schwundAuswertung(stand, { von: datum, bis: datum }); const ks = datum === heute() ? kuehlStatus(stand) : null;
-  const e = { id: uid(), datum, erfasst: new Date().toISOString(), geraet, umsatz: z.tage.find((t) => t.datum === datum)?.umsatz ? z.umsatzBrutto : null,
+  const e = { id: uid(), datum, erfasst: new Date().toISOString(), geraet, umsatz: umsatzEintrag(stand, datum)?.umsatz ?? null,
     muell: sw.muellwert, muellOhneWert: sw.ohneWert, kuehl: ks && ks.eingerichtet ? { gemessen: ks.heuteGemessen, stellen: ks.stellen } : null,
     stand: z.stand, standGestern: z.standGestern, stufe: z.stufe, storniert: false };
   stand.abschluesse.push(e); return e;

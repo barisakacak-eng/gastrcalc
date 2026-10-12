@@ -3,7 +3,7 @@
 import { t, tAlle, einheitLabel } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { EINHEITEN } from "../data/katalog.js";
-import { schwundAuswertung, mengeUmrechnen, SCHWUND_ARTEN, SVEV_2026 } from "../engine.js";
+import { schwundAuswertung, mengeUmrechnen, SCHWUND_ARTEN, SVEV_2026, preisJeBasis } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, heuteJeGericht, letzterEintrag, mahlzeitJetzt } from "../muell.js";
 import { nav } from "./nav.js";
 import { datumLesbar, tagGewaehlt, eintragName, eintragMenge } from "./tag.js";
@@ -14,6 +14,7 @@ let wahl = null;         // Rohware: gewählter Artikel {name, menge, einheit}
 let eimer = { kg: null, name: "" };
 let mahlzeit = null;     // Personalessen: gewählte Mahlzeit (null = nach Uhrzeit)
 let zeigeTage = false;   // Datumsleiste für Nachträge eingeblendet
+let letzterTipp = { id: "", zeit: 0 }; // Doppeltipp-Schutz auf derselben Kachel (Review Etappe 5, Punkt 13)
 const EINHEITEN_JE_BASIS = { g: ["g", "kg"], ml: ["ml", "l"], stk: ["stk"] };
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.name : ""}`;
@@ -78,13 +79,13 @@ function gerichteView(stand, D, art) {
         <button type="button" class="tipp-flaeche" data-a="muell-gericht" data-id="${esc(g.id)}" data-art="${art}"><b>${esc(g.name)}</b><span class="zaehl ${z[g.id] ? "" : "leer"}">${z[g.id] || 0}</span></button>
         <div class="unterzeile">${art === "gericht" ? `<button type="button" class="leise" data-a="muell-gericht" data-id="${esc(g.id)}" data-art="${art}" data-n="5">${esc(t("muell.fuenf"))}</button>` : "<span></span>"}${z[g.id] ? `<button type="button" class="leise" data-a="muell-rueck" data-id="${esc(g.id)}" data-art="${art}">${esc(t("muell.rueckgaengig"))}</button>` : ""}</div>
       </div>`).join("")}</div>` : `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="karte" data-bis="ergebnis">${esc(t("start.karteAnlegen"))}</button></div>`}
-    ${art === "gericht" ? `<div class="karte"><h2>${esc(t("muell.heuteWeg"))}</h2><div class="gross">${fmtEuro(sw.muellwert, { dezimal: 2 })}</div><small class="marke">${sw.portionen !== null && sw.muellwert > 0 ? esc(t("cockpit.portionenKurz", fmtZahl(sw.portionen, sw.portionen < 10 ? 1 : 0))) : ""}${sw.ohneWert ? ` · ${esc(t("listen.ohneWert", sw.ohneWert))}` : ""}</small></div>` : ""}
+    ${art === "gericht" ? `<div class="karte"><h2>${esc(D === heute() ? t("muell.heuteWeg") : t("tag.eintraegeAm", datumLesbar(D)))}</h2><div class="gross">${fmtEuro(sw.muellwert, { dezimal: 2 })}</div><small class="marke">${sw.portionen !== null && sw.muellwert > 0 ? esc(t("cockpit.portionenKurz", fmtZahl(sw.portionen, sw.portionen < 10 ? 1 : 0))) : ""}${sw.ohneWert ? ` · ${esc(t("listen.ohneWert", sw.ohneWert))}` : ""}</small></div>` : ""}
   </div>`;
 }
 
 function rohwareView(stand, D) {
   const q = suche.trim().toLowerCase();
-  const artikel = (stand.artikel || []).filter((a) => a.benutzt !== false);
+  const artikel = (stand.artikel || []).filter((a) => a.benutzt !== false || preisJeBasis(a) !== null);
   if (wahl) {
     const basis = EINHEITEN[wahl.einheit]?.basis || "stk";
     const a = artikel.find((x) => x.name === wahl.name);
@@ -137,6 +138,9 @@ export function muellAktion(name, el, stand) {
   if (name === "muell-gericht") {
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false;
     const n = Number(el.dataset.n) || 1;
+    const kennung = g.id + ":" + n; const jetzt = Date.now();
+    if (letzterTipp.id === kennung && jetzt - letzterTipp.zeit < 250) return false; // zweiter Tipp eines Doppeltipps (Menschen tippen bewusst nicht schneller)
+    letzterTipp = { id: kennung, zeit: jetzt };
     if (el.dataset.art === "personal") { personalessen(stand, g, { datum: D, mahlzeit: mahlzeit || mahlzeitJetzt() }); return { meldung: t("muell.personalEingetragen", g.name) }; }
     gerichtWeg(stand, g, { datum: D, anzahl: n });
     return { meldung: t("muell.eingetragen", g.name, heuteJeGericht(stand, D, "gericht")[g.id] || 0) };

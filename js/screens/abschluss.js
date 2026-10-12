@@ -1,7 +1,7 @@
 // Etappe 5: „Tag abschließen" – drei Haken (Umsatz, Müll, Kühlung), dann die Bilanz des Tages. Das Abendritual.
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
-import { umsatzEintrag, schwundAuswertung, kuehlStatus, umsatzSteuerSatz, tagPlus, wochentag } from "../engine.js";
+import { umsatzEintrag, schwundAuswertung, kuehlStatus, tagPlus, wochentag } from "../engine.js";
 import { zaehler, tagAbschliessen, abschlussVon } from "../zaehler.js";
 import { nav } from "./nav.js";
 import { zeitKurz } from "./tag.js";
@@ -34,10 +34,10 @@ export function abschlussView(stand) {
 }
 
 function bilanzView(stand, H) {
-  const z = zaehler(stand, { datum: H }); const st = umsatzSteuerSatz(stand);
+  const z = zaehler(stand, { datum: H });
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H }); const ks = kuehlStatus(stand);
   const vor = z.standGestern; const nach = z.stand; const besser = nach - vor;
-  const netto = u ? u.umsatz / (1 + st.satz) : 0; const bleibt = z.quote !== null ? netto * (1 - z.quote) : netto;
+  const netto = u ? z.nettoVon(u.umsatz) : 0; const bleibt = u ? z.bleibtVon(u.umsatz) : 0;
   const rundgaenge = (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === H).length;
   // Vergleich mit demselben Wochentag der Vorwoche
   const V = tagPlus(H, -7); const uv = umsatzEintrag(stand, V); const swv = schwundAuswertung(stand, { von: V, bis: V });
