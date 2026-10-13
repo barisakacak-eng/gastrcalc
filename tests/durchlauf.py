@@ -27,14 +27,16 @@ async def main():
     try:
         async with async_playwright() as p:
             b = await p.chromium.launch()
-            ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
+            VID = os.environ.get("DURCHLAUF_VIDEO")
+            ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE",
+                                      **({"record_video_dir": VID, "record_video_size": {"width": 390, "height": 844}} if VID else {}))
             pg = await ctx.new_page()
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html")
             await pg.wait_for_selector(".kachel")
             _klick = pg.click
-            async def klick(sel, **kw): await _klick(sel, **kw); await pg.wait_for_timeout(320)
+            async def klick(sel, **kw): await _klick(sel, **kw); await pg.wait_for_timeout(900 if os.environ.get("DURCHLAUF_VIDEO") else 320)
             pg.click = klick
             n = 0
             async def bild(name):
@@ -258,7 +260,7 @@ async def main():
             await pg.go_back(); await pg.wait_for_timeout(300)
             assert await pg.locator('[data-a="muell-weg"]').count() >= 3, "Zurück-Geste aus Gerichte-Kacheln"
             await pg.go_back(); await pg.wait_for_timeout(300); await pg.wait_for_selector(".cockpit")
-            await b.close()
+            await ctx.close(); await b.close()
     finally:
         srv.terminate()
     if fehler: print("FEHLER IN DER SEITE:", *fehler, sep="\n  "); sys.exit(1)
