@@ -153,3 +153,22 @@ test("Ablage: ablegen, holen, entfernen über den lokalen Ort (ohne IndexedDB im
   await entfernen(meta); assert.equal(await holen(meta), null);
   await assert.rejects(() => ablegen(new Blob([]), {}));
 });
+
+// ---------- Nach dem Review ----------
+import { kostenbelegDoppelt, postenVorher } from "../js/kostenbeleg.js";
+test("Review: Jahreszahl wird nicht Teil des Betrags, 17 % ist nicht 7 %, Rechnungsdatum vor Abrechnungszeitraum", () => {
+  const k = kostenbelegLesen("Abrechnungszeitraum 01.01.2025 - 31.12.2025\nRechnungsdatum 05.10.2026\nRechnungsbetrag zahlbar bis 15.11.2026 119,00 €\nVersicherungsteuer 17 %");
+  assert.deepEqual([k.brutto, k.datum, k.satz], [119, "2026-10-05", null]);
+});
+test("Review: Rücknahme stellt den vorherigen festen Betrag wieder her; Dubletten werden erkannt", () => {
+  const s = ladenMit();
+  s.kosten.push({ id: "k", posten: "strom", kategorie: "energie", betrag: 300, status: "bekannt", periode: "monat", basis: "brutto", sammel: "strom-gas" });
+  assert.ok(postenVorher(s, "gas").sammel);
+  const e = kostenbelegAnlegen(s, { stelle: "strom", betrag: 480, basis: "brutto", datum: "2026-10-02", verteilung: "monatlich" });
+  assert.equal(s.kosten[0].betrag, 480); assert.equal(postenVorher(s, "strom").posten.betrag, 480);
+  assert.ok(kostenbelegDoppelt(s, { stelle: "strom", betrag: 480, datum: "2026-10-02" }));
+  assert.ok(!kostenbelegDoppelt(s, { stelle: "strom", betrag: 480, datum: "2026-10-03" }));
+  kostenbelegStornieren(s, e.id);
+  assert.deepEqual([s.kosten[0].betrag, s.kosten[0].sammel, s.kosten[0].beleg], [300, "strom-gas", undefined]);
+  assert.ok(!kostenbelegDoppelt(s, { stelle: "strom", betrag: 480, datum: "2026-10-02" }), "stornierte zählen nicht als Dublette");
+});

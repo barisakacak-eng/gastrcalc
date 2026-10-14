@@ -12,9 +12,12 @@ import { VORLAGEN } from "../data/katalog.js";
 let lauf = null;       // { zweck, status: "lesen"|"fertig"|"fehler", schritt, text, upload, fehler, dauerMs }
 let vorschlaege = [];  // Speisekarte: [{id, name, preis, vorlage, sicher, an, getraenk}]
 let seiten = 0;
+let laufUploads = [];  // Uploads dieser Prüfliste – nur sie werden beim Übernehmen als übernommen markiert
 
 export const fotoLauf = () => lauf;
-export function fotoZuruecksetzen() { lauf = null; vorschlaege = []; seiten = 0; }
+export function fotoZuruecksetzen() { lauf = null; vorschlaege = []; seiten = 0; laufUploads = []; }
+// Nur einen Rechnungs-Lauf beenden (Beleg-Bildschirm verlassen), eine offene Speisekarten-Prüfliste bleibt
+export function rechnungsLaufZuruecksetzen() { if (lauf && lauf.zweck !== "speisekarte") lauf = null; }
 export const fotoKennung = () => (lauf ? `${lauf.zweck}:${lauf.status}:${seiten}` : "leer");
 export const hatVorschlaege = () => vorschlaege.length > 0;
 
@@ -31,34 +34,41 @@ export function fotoKnoepfe(zweck, { kamera = "foto.kamera", datei = "foto.datei
 export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet = null } = {}) {
   if (!datei) return null;
   if (!istPdf(datei) && !istBild(datei)) { lauf = { zweck, status: "fehler", fehler: t("foto.fehlerArt") }; neuZeichnen(); return lauf; }
-  lauf = { zweck, status: "lesen", schritt: "ablegen", text: "", upload: null, fehler: null };
+  const mein = { zweck, status: "lesen", schritt: "ablegen", text: "", upload: null, fehler: null };
+  lauf = mein;
+  const verworfen = () => lauf !== mein; // Laden gewechselt, abgebrochen oder neues Foto: Ergebnis gehört nicht mehr hierher (Review 6a)
   neuZeichnen();
   const eintrag = { id: uid(), zweck, erfasst: new Date().toISOString(), geraet, status: "neu", datei: null, auswertung: null, ergebnis: null };
   try {
     const fuerAblage = await bildFuerAblage(datei);
     eintrag.datei = await ablegen(fuerAblage, { name: datei.name || "", zweck, laden: stand.id });
-    stand.uploads.push(eintrag); lauf.upload = eintrag;
+    stand.uploads.push(eintrag); mein.upload = eintrag; if (zweck === "speisekarte") laufUploads.push(eintrag);
   } catch (e) {
     // Ablegen fehlgeschlagen (zu groß, Speicher voll): trotzdem lesen, nur ohne Kopie auf dem Gerät
-    lauf.hinweis = e.grund === "gross" ? t("foto.zuGross") : t("foto.nichtAbgelegt");
+    mein.hinweis = e.grund === "gross" ? t("foto.zuGross") : t("foto.nichtAbgelegt");
   }
+  if (verworfen()) return null;
   try {
-    lauf.schritt = "lesen"; neuZeichnen();
-    const r = await auswerten(datei, { zweck, fortschritt: (f) => { lauf.schritt = f.schritt; lauf.seite = f.seite; lauf.von = f.von; neuZeichnen(); } });
-    lauf.text = r.text; lauf.dauerMs = r.dauerMs; lauf.status = "fertig";
-    if (lauf.upload) { lauf.upload.status = "gelesen"; lauf.upload.auswertung = { quelle: r.quelle, art: r.art, dauerMs: r.dauerMs, zeichen: r.text.length }; }
+    mein.schritt = "lesen"; neuZeichnen();
+    const r = await auswerten(datei, { zweck, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
+    if (mein.upload) { mein.upload.status = "gelesen"; mein.upload.auswertung = { quelle: r.quelle, art: r.art, dauerMs: r.dauerMs, zeichen: r.text.length }; }
+    if (verworfen()) return null;
+    mein.text = r.text; mein.dauerMs = r.dauerMs; mein.status = "fertig";
+    if (r.nichtGelesen) mein.hinweis = t("foto.seitenGrenze", r.seiten, r.seiten + r.nichtGelesen);
     if (zweck === "speisekarte") {
       const neu = vorschlaegeAusText(r.text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
       vorschlaege.push(...neu); seiten += 1;
-      if (!neu.length) { lauf.status = "fehler"; lauf.fehler = t("foto.nichtsErkannt"); }
-    } else if (!r.text.trim()) { lauf.status = "fehler"; lauf.fehler = t("foto.nichtsErkannt"); }
+      if (!neu.length) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
+    } else if (!r.text.trim()) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
   } catch (e) {
     console.warn(e);
-    lauf.status = "fehler"; lauf.fehler = e.grund === "art" ? t("foto.fehlerArt") : t("foto.fehlerLesen");
-    if (lauf.upload) lauf.upload.status = "fehler";
+    if (mein.upload) mein.upload.status = "fehler";
+    if (verworfen()) return null;
+    mein.status = "fehler";
+    mein.fehler = t({ art: "foto.fehlerArt", laden: "foto.fehlerLaden", zeit: "foto.fehlerZeit", gross: "foto.fehlerGross" }[e.grund] || "foto.fehlerLesen");
   }
   neuZeichnen();
-  return lauf;
+  return mein;
 }
 
 // Beim Öffnen des Foto-Bildschirms die Texterkennung schon laden.
@@ -71,7 +81,8 @@ const schrittText = () => lauf.schritt === "seite" ? t("foto.seite", lauf.seite,
 export function karteFotoView(stand) {
   fotoVorbereiten();
   if (lauf && lauf.status === "lesen") return `
-    <div class="fotolauf"><div class="kreisel" aria-hidden="true"></div><h1 class="frage">${esc(schrittText())}</h1><p class="hinweis">${esc(t("foto.lesenHinweis"))}</p></div>`;
+    <div class="fotolauf" role="status" aria-live="polite"><div class="kreisel" aria-hidden="true"></div><h1 class="frage">${esc(schrittText())}</h1><p class="hinweis">${esc(t("foto.lesenHinweis"))}</p>
+      <button type="button" class="leise" data-a="foto-abbrechen">${esc(t("allgemein.abbrechen"))}</button></div>`;
   return `
     <h1 class="frage">${esc(t(seiten ? "foto.karteWeitere" : "foto.karteFrage"))}</h1>
     <p class="hinweis">${esc(t("foto.karteHinweis"))}</p>
@@ -129,8 +140,7 @@ export function kartePruefenAktion(name, el) {
 export function karteUebernehmen(stand) {
   const r = vorschlaegeUebernehmen(stand, vorschlaege);
   stand.artikel = artikelAusGerichten(stand);
-  if (lauf?.upload) { lauf.upload.status = "uebernommen"; lauf.upload.ergebnis = { gerichte: r.neu, aktualisiert: r.aktualisiert }; }
-  for (const u of stand.uploads) if (u.zweck === "speisekarte" && u.status === "gelesen") u.status = "uebernommen";
+  for (const u of laufUploads) if (u.status === "gelesen") { u.status = "uebernommen"; u.ergebnis = { gerichte: r.neu, aktualisiert: r.aktualisiert }; }
   const inv = inventurVorschau(stand);
   fotoZuruecksetzen();
   return { ...r, artikel: inv.anzahl };

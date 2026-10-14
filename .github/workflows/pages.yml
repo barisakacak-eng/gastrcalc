@@ -12,7 +12,17 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
+  # Erst prüfen, dann veröffentlichen: schlägt ein Test fehl, geht nichts live (Befund E05 aus Sanjis Prüfung)
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/*.mjs
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     environment:
       name: github-pages

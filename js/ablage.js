@@ -28,17 +28,24 @@ function lokalOrt() {
     name: "lokal",
     get fluechtig() { return fluechtig; },
     async schreiben(id, blob) {
-      if (!fluechtig) { try { await tx("readwrite", (s) => s.put(blob, id)); return; } catch (e) { console.warn("Ablage auf dem Gerät nicht möglich, nur in dieser Sitzung:", e); fluechtig = true; } }
+      if (!fluechtig) {
+        for (let versuch = 0; versuch < 2; versuch++) {
+          try { await tx("readwrite", (s) => s.put(blob, id)); return; }
+          catch (e) { db = null; if (versuch) { console.warn("Ablage auf dem Gerät nicht möglich, diese Datei nur in dieser Sitzung:", e); } } // iOS trennt die Verbindung manchmal: einmal neu öffnen
+        }
+      }
       speicher.set(id, blob);
     },
-    async lesen(id) { if (speicher.has(id)) return speicher.get(id); if (fluechtig) return null; try { return (await tx("readonly", (s) => s.get(id))) || null; } catch (_) { return null; } },
+    async lesen(id) { if (speicher.has(id)) return speicher.get(id); if (typeof indexedDB === "undefined") return null; try { return (await tx("readonly", (s) => s.get(id))) || null; } catch (_) { return null; } },
     async loeschen(id) { speicher.delete(id); if (!fluechtig) { try { await tx("readwrite", (s) => s.delete(id)); } catch (_) {} } },
+    async leeren() { speicher.clear(); if (typeof indexedDB === "undefined") return; try { await tx("readwrite", (s) => s.clear()); } catch (_) {} },
   };
 }
 
 // Platzhalter für die Cloud: absichtlich ohne Funktion, damit niemand versehentlich hochlädt (Kapitän 14.10.: Testphase lokal, ohne Kosten).
 const cloudOrt = {
   name: "cloud",
+  async leeren() {},
   fluechtig: false,
   async schreiben() { throw new Error("Cloud-Ablage ist noch nicht eingerichtet"); },
   async lesen() { return null; },
@@ -63,6 +70,8 @@ export async function ablegen(blob, { name = "", zweck = "rechnung", laden = nul
 }
 
 export async function holen(meta) { const ort = ORTE[meta?.ort || aktiv]; return ort ? ort.lesen(meta.id || meta) : null; }
+// „Alles löschen" in den Einstellungen: auch alle abgelegten Fotos und Dateien dieses Geräts weg (Review 6a)
+export async function ablageLeeren() { for (const o of Object.values(ORTE)) await o.leeren(); }
 export async function entfernen(meta) { const ort = ORTE[meta?.ort || aktiv]; if (ort) await ort.loeschen(meta.id || meta); }
 
 export const istPdf = (datei) => datei?.type === "application/pdf" || /\.pdf$/i.test(datei?.name || "");

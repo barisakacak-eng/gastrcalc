@@ -510,6 +510,7 @@ export default {
   },
 
   zaehler: {
+    sonderBis: (n) => `One-off invoices until today (${n})`,
     frueher: "Earlier …",
     zaehltAb: (d) => `counting from ${d}`,
     quoteHoch: (q) => `${q} % goods share is unusually high – check the purchase prices in the menu or enter your real share under More.`,
@@ -742,6 +743,18 @@ export default {
   },
   // Stage 6a – photo, upload, quick start
   foto: {
+    fehlerLaden: "The text recognition has to be loaded once with internet. Please go online briefly and try again.",
+    fehlerZeit: "Reading takes too long. Please try a smaller or sharper photo.",
+    fehlerGross: "The photo is too big for this phone. Please take it at normal camera resolution.",
+    seitenGrenze: (a, b) => `I read the first ${a} of ${b} pages. Please add further pages one by one.`,
+    kostenbelege: "Cost invoices read", zuruecknehmen: "Undo",
+    zuruecknehmenFrage: "Undo this invoice? A fixed amount it set gets its old value back.",
+    zurueckgenommen: "Undone",
+    andererMonat: (d) => `Note: date ${d} is not in this month – the amount counts there, not now. Please check.`,
+    ersetzt: (b, p) => `Entered so far: ${b} ${p}. This invoice replaces it.`,
+    zusaetzlich: (b) => `There is already a fixed amount (${b}). This invoice is added on top this month – is that right?`,
+    stromGasSammel: "Electricity and gas are entered together as one amount so far. Please check under costs so nothing counts twice.",
+    doppeltFrage: "An invoice with the same amount, cost item and date is already saved. Save it again anyway?",
     titel: "Photograph your menu",
     kamera: "Take a photo", datei: "Choose a photo or PDF",
     nochSeite: "Photograph another page", nochDatei: "Another file",

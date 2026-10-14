@@ -341,7 +341,7 @@ const ladenSchnell = {
   view: (stand) => `
     <h1 class="frage">${esc(t("schnell.ladenFrage"))}</h1>
     <input class="textfeld gross" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off">
-    <div class="kacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel ${stand.ladenArt === a.id ? "an" : ""}" data-a="laden-art" data-wert="${a.id}"><b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
+    <div class="kacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}"><b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
     <div class="feldzeile"><label>${esc(t("betrieb.frageTage"))}</label>${stepper("tage", stand.betrieb.tageProWoche, t("betrieb.tage", stand.betrieb.tageProWoche))}</div>
     <button type="button" class="leise" data-a="weg-genau">${esc(t("schnell.genau"))}</button>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",

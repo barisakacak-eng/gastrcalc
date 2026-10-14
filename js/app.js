@@ -2,6 +2,7 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN } from "./i18n.js";
+import { ablageLeeren } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { fotoVerarbeiten, fotoZuruecksetzen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf } from "./screens/foto.js";
@@ -249,6 +250,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav") { const ziel = el.dataset.wert; if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
+  if (name === "foto-abbrechen") { fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
   if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
@@ -262,7 +264,7 @@ root.addEventListener("click", async (ev) => {
   }
   if (name === "loeschen") {
     if (!confirm(t("einstellungen.loeschenFrage"))) return;
-    speichernAbbrechen(); await allesLoeschen(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+    speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
     setzeSprache(spracheDesGeraets()); return zeichne();
   }
   if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache); speichern(wurzel); return zeichne(); }
@@ -347,7 +349,7 @@ root.addEventListener("focusout", (ev) => {
     if (el.dataset.f === "umsatz") { umsatzEingabe("umsatz", "", stand, wurzel); speichern(wurzel); } // halbe Zahl nicht stehen lassen
   }
   if (el.dataset.f.startsWith("wert:") && tagWertUebernehmen(el.dataset.f, el.value, stand)) { speichern(wurzel); meldung(t("tag.gespeichert")); }
-  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
+  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen", "beleg"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
 });
 
 root.addEventListener("change", async (ev) => {
@@ -359,7 +361,7 @@ root.addEventListener("change", async (ev) => {
     const zweck = el.dataset.zweck || "rechnung";
     ereignis("foto", { laden: stand.id, zweck, art: datei.type || "?" });
     const lauf = await fotoVerarbeiten(stand, datei, zweck, () => zeichne(), { geraet: wurzel.geraet });
-    if (lauf?.status === "fertig" && zweck !== "speisekarte" && ansicht === "beleg") belegTextVonFoto(lauf.text, lauf.upload);
+    if (lauf && lauf === fotoLauf() && lauf.status === "fertig" && zweck !== "speisekarte" && ansicht === "beleg") belegTextVonFoto(lauf.text, lauf.upload);
     speichern(wurzel); zeichne();
   }
 });

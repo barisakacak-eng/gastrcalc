@@ -90,6 +90,7 @@ function rechnungKarte(z) {
     ${zeile(t("zaehler.fixBis"), fmtEuro(z.fix))}
     ${zeile(t("zaehler.lohnBis"), z.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.lohn))}
     ${zeile(t("zaehler.eigenBis"), z.last.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.eigen))}
+    ${z.sonderBis > 0 ? zeile(t("zaehler.sonderBis", z.sonder.belege.length), fmtEuro(z.sonderBis)) : ""}
     ${zeile(z.stufe === 3 ? t("zaehler.wareBelege") : z.stufe === 2 ? t("zaehler.wareGeschaetzt", fmtZahl(z.quote * 100, 0)) : t("zaehler.wareFehlt"), z.stufe === 1 ? "–" : fmtEuro(z.ware))}
     ${z.stufe === 3 ? "" : zeile(t("zaehler.muellBis"), fmtEuro(z.muell, { dezimal: z.muell < 100 ? 2 : 0 }))}
     ${zeile(t("zaehler.umsatzBis"), fmtEuro(z.umsatzNetto), "gruen")}

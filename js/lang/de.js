@@ -511,6 +511,7 @@ export default {
   },
 
   zaehler: {
+    sonderBis: (n) => `Einmalige Rechnungen bis heute (${n})`,
     frueher: "Früher …",
     zaehltAb: (d) => `zählt ab dem ${d}`,
     quoteHoch: (q) => `${q} % Warenanteil ist ungewöhnlich hoch – prüf die Einkaufspreise in der Karte oder trag deinen echten Anteil unter Mehr ein.`,
@@ -743,6 +744,18 @@ export default {
   },
   // Etappe 6a – Foto, Upload, Schnellstart
   foto: {
+    fehlerLaden: "Die Texterkennung muss einmal mit Internet geladen werden. Bitte kurz online gehen und noch einmal versuchen.",
+    fehlerZeit: "Das Lesen dauert zu lange. Bitte ein kleineres oder schärferes Foto versuchen.",
+    fehlerGross: "Das Foto ist zu groß für dieses Handy. Bitte mit der normalen Kamera-Auflösung fotografieren.",
+    seitenGrenze: (a, b) => `Ich habe die ersten ${a} von ${b} Seiten gelesen. Weitere Seiten bitte einzeln hinzufügen.`,
+    kostenbelege: "Eingelesene Kostenrechnungen", zuruecknehmen: "Zurücknehmen",
+    zuruecknehmenFrage: "Diese Rechnung zurücknehmen? Ein dadurch gesetzter fester Betrag bekommt seinen alten Wert zurück.",
+    zurueckgenommen: "Zurückgenommen",
+    andererMonat: (d) => `Achtung: Datum ${d} liegt nicht in diesem Monat – dann zählt der Betrag dort, nicht jetzt. Bitte prüfen.`,
+    ersetzt: (b, p) => `Bisher eingetragen: ${b} ${p}. Wird durch diese Rechnung ersetzt.`,
+    zusaetzlich: (b) => `Es gibt schon einen festen Betrag (${b}). Diese Rechnung kommt diesen Monat zusätzlich dazu – passt das?`,
+    stromGasSammel: "Strom und Gas sind bisher zusammen als ein Betrag eingetragen. Bitte unter Kosten prüfen, damit nichts doppelt zählt.",
+    doppeltFrage: "Eine Rechnung mit gleichem Betrag, gleicher Stelle und gleichem Datum ist schon gespeichert. Trotzdem noch einmal speichern?",
     titel: "Speisekarte fotografieren",
     kamera: "Foto machen", datei: "Foto oder PDF wählen",
     nochSeite: "Noch eine Seite fotografieren", nochDatei: "Noch eine Datei",

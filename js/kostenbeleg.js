@@ -40,20 +40,26 @@ export function stelleRaten(text) {
   return best ? best.stelle : null;
 }
 
-const ZAHL = /(\d{1,3}(?:[.\s]\d{3})*|\d+)[,](\d{2})(?!\d)/;
-const zahl = (m) => Number(m[1].replace(/[.\s]/g, "")) + Number(m[2]) / 100;
+// Betrag: 1.250,00 oder 119,00 – kein Leerzeichen als Tausendertrenner (sonst wird „2026 119,00" zu 26.119,00, Review 6a)
+const ZAHL = /(?<![\d.,])(\d{1,3}(?:\.\d{3})+|\d+),(\d{2})(?!\d)/g;
+const zahl = (m) => Number(m[1].replace(/\./g, "")) + Number(m[2]) / 100;
+const DATUM = /(?<!\d)(\d{1,2})\.(\d{1,2})\.(\d{4}|\d{2})(?!\d)/g;
+function isoAus(m) { const j = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]); if (j < 2000 || j > 2100 || Number(m[2]) < 1 || Number(m[2]) > 12 || Number(m[1]) < 1 || Number(m[1]) > 31) return null; return `${j}-${String(m[2]).padStart(2, "0")}-${String(m[1]).padStart(2, "0")}`; }
 
 // Betrag und Datum aus dem Text (für die Vorbelegung). Gesucht wird zuerst nach „Gesamt/Rechnungsbetrag/zu zahlen", dann nach netto.
 export function kostenbelegLesen(text) {
   const zeilen = String(text || "").split(/\r?\n/);
-  const finde = (re) => { for (const z of zeilen) if (re.test(z)) { const m = z.slice(z.search(re)).match(ZAHL); if (m) return zahl(m); } return null; };
+  // der letzte Betrag der Zeile hinter dem Stichwort („Rechnungsbetrag fällig am 15.11.2026 119,00 €" → 119,00)
+  const finde = (re) => { for (const z of zeilen) if (re.test(z)) { const ms = [...z.slice(z.search(re)).matchAll(ZAHL)]; if (ms.length) return zahl(ms[ms.length - 1]); } return null; };
   const brutto = finde(/(gesamtbetrag|rechnungsbetrag|zu\s+zahlen|endbetrag|gesamt\s*(brutto)?|summe\s+brutto|bruttobetrag|total)/i);
   const netto = finde(/(netto(betrag)?|summe\s+netto|zwischensumme)/i);
-  const mwst = finde(/(mwst|ust|umsatzsteuer)\b[^\n]*?(19|7)\s?%/i);
-  let datum = null;
-  const d = String(text || "").match(/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
-  if (d) { const j = d[3].length === 2 ? 2000 + Number(d[3]) : Number(d[3]); const iso = `${j}-${String(d[2]).padStart(2, "0")}-${String(d[1]).padStart(2, "0")}`; if (j > 2000 && j < 2100 && Number(d[2]) <= 12 && Number(d[1]) <= 31) datum = iso; }
-  let satz = null; const s = String(text || "").match(/(19|7)\s?%/); if (s) satz = Number(s[1]) / 100;
+  const mwst = finde(/(mwst|ust|umsatzsteuer)\b[^\n]*?(?<!\d)(19|7)\s?%/i);
+  // Datum: zuerst hinter „Rechnungsdatum/Datum/vom", sonst das jüngste Datum, das nicht in der Zukunft liegt (nicht den Abrechnungszeitraum-Beginn)
+  let datum = null; const T = String(text || "");
+  const stich = T.match(/(rechnungsdatum|belegdatum|datum|vom)\D{0,15}(\d{1,2}\.\d{1,2}\.(?:\d{4}|\d{2}))(?!\d)/i);
+  if (stich) { const m = [...stich[2].matchAll(DATUM)][0]; if (m) datum = isoAus(m); }
+  if (!datum) { const alle = [...T.matchAll(DATUM)].map(isoAus).filter((d) => d && d <= heute()).sort(); datum = alle.pop() || null; }
+  let satz = null; const s = T.match(/(?<!\d)(19|7)\s?%/); if (s) satz = Number(s[1]) / 100;
   return { brutto, netto: netto !== null && brutto !== null && netto > brutto ? null : netto, mwst, satz, datum };
 }
 
@@ -73,10 +79,24 @@ export function kostenbelegAnlegen(stand, { stelle, betrag, basis = null, datum 
   if (verteilung === "monatlich" || verteilung === "jaehrlich") {
     const p = POSTEN.find((x) => x.id === stelle);
     let k = stand.kosten.find((x) => x.posten === stelle);
-    if (!k) { k = { id: uid(), posten: stelle, kategorie: p.kat }; stand.kosten.push(k); }
+    if (!k) { k = { id: uid(), posten: stelle, kategorie: p.kat, status: "aus", betrag: null, periode: "monat" }; stand.kosten.push(k); }
+    e.vorher = { betrag: k.betrag ?? null, status: k.status || "aus", periode: k.periode || "monat", basis: k.basis || b, sammel: k.sammel || null }; // für die Rücknahme
     Object.assign(k, { betrag, status: "bekannt", periode: verteilung === "jaehrlich" ? "jahr" : "monat", basis: b, beleg: e.id });
+    delete k.sammel;
   }
   return e;
+}
+
+// Gleicher Beleg schon da? (gleiche Stelle, gleicher Betrag, gleiches Datum, nicht storniert) – dann fragt die App nach.
+export function kostenbelegDoppelt(stand, { stelle, betrag, datum }) {
+  return (stand.kostenbelege || []).some((e) => !e.storniert && e.stelle === stelle && Math.abs(e.betrag - betrag) < 0.005 && e.datum === datum);
+}
+
+// Was steht für diese Stelle schon als fester Posten drin? Für den Hinweis vor dem Ersetzen.
+export function postenVorher(stand, stelle) {
+  const k = stand.kosten.find((x) => x.posten === stelle && x.status !== "aus" && typeof x.betrag === "number");
+  const sammel = stelle === "gas" ? stand.kosten.find((x) => x.posten === "strom" && x.sammel === "strom-gas" && x.status !== "aus") : null;
+  return { posten: k || null, sammel: sammel || null };
 }
 
 // Netto-Anteil eines Kostenbelegs für einen Monat "JJJJ-MM" (nur einmalig/verteilt; monatlich/jährlich laufen über den Kostenposten).
@@ -97,6 +117,8 @@ export function sonderkostenImMonat(stand, monat) {
 export function kostenbelegStornieren(stand, id) {
   const e = (stand.kostenbelege || []).find((x) => x.id === id); if (!e || e.storniert) return false;
   e.storniert = true; e.storniertZeit = new Date().toISOString();
-  const k = stand.kosten.find((x) => x.beleg === id); if (k) { delete k.beleg; } // der Posten bleibt, wie er ist – der Wirt ändert ihn unter Kosten
+  // Hat dieser Beleg einen festen Posten gesetzt, kommt der vorherige Wert zurück (Review 6a)
+  const k = stand.kosten.find((x) => x.beleg === id);
+  if (k) { delete k.beleg; if (e.vorher) { Object.assign(k, { betrag: e.vorher.betrag, status: e.vorher.status, periode: e.vorher.periode, basis: e.vorher.basis }); if (e.vorher.sammel) k.sammel = e.vorher.sammel; } }
   return true;
 }

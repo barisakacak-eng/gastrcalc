@@ -511,6 +511,7 @@ export default {
   },
 
   zaehler: {
+    sonderBis: (n) => `Bugüne kadar tek seferlik faturalar (${n})`,
     frueher: "Daha önce …",
     zaehltAb: (d) => `${d} tarihinden itibaren sayıyor`,
     quoteHoch: (q) => `%${q} mal payı alışılmadık derecede yüksek – menüdeki alış fiyatlarını kontrol et veya gerçek payını Daha fazla altında gir.`,
@@ -743,6 +744,18 @@ export default {
   },
   // Aşama 6a – fotoğraf, yükleme, hızlı başlangıç
   foto: {
+    fehlerLaden: "Yazı tanımanın bir kez internetle yüklenmesi gerekiyor. Lütfen kısa süre internete bağlan ve tekrar dene.",
+    fehlerZeit: "Okuma çok uzun sürüyor. Lütfen daha küçük veya daha net bir fotoğraf dene.",
+    fehlerGross: "Fotoğraf bu telefon için çok büyük. Lütfen normal kamera çözünürlüğüyle çek.",
+    seitenGrenze: (a, b) => `${b} sayfanın ilk ${a} sayfasını okudum. Diğer sayfaları tek tek ekle.`,
+    kostenbelege: "Okunan gider faturaları", zuruecknehmen: "Geri al",
+    zuruecknehmenFrage: "Bu fatura geri alınsın mı? Onun girdiği sabit tutar eski değerine döner.",
+    zurueckgenommen: "Geri alındı",
+    andererMonat: (d) => `Dikkat: ${d} tarihi bu ayda değil – tutar o ayda sayılır, şimdi değil. Lütfen kontrol et.`,
+    ersetzt: (b, p) => `Şimdiye kadar girilen: ${b} ${p}. Bu fatura onun yerine geçer.`,
+    zusaetzlich: (b) => `Zaten sabit bir tutar var (${b}). Bu fatura bu ay ek olarak sayılır – doğru mu?`,
+    stromGasSammel: "Elektrik ve gaz şimdiye kadar tek tutar olarak girildi. Hiçbir şey iki kez sayılmasın diye giderler altında kontrol et.",
+    doppeltFrage: "Aynı tutar, aynı gider ve aynı tarihle bir fatura zaten kayıtlı. Yine de tekrar kaydedilsin mi?",
     titel: "Menünün fotoğrafını çek",
     kamera: "Fotoğraf çek", datei: "Fotoğraf veya PDF seç",
     nochSeite: "Bir sayfa daha çek", nochDatei: "Bir dosya daha",

@@ -350,3 +350,4 @@ button.kachel { cursor: pointer; }
 .zeile .oben .textfeld { flex: 1; min-width: 0; margin-right: 10px; }
 .fotofeld .knopf { position: relative; overflow: hidden; }
 .dateifeld { position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.fotofeld .knopf:focus-within { outline: 3px solid var(--salbei); outline-offset: 2px; }
