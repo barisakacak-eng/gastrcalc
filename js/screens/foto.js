@@ -1,7 +1,7 @@
 // Foto und Upload – Speisekarte fotografieren (Einrichtung und Karte) und den Lauf von der Datei bis zum Text.
 // Ein Lauf: Datei wählen → ablegen (Ablage) → auswerten (Auswertung) → Vorschläge → der Wirt bestätigt. Etappe 6a.
 import { t } from "../i18n.js";
-import { esc, parseZahl, wertAnzeige, uid } from "../util.js";
+import { esc, parseZahl, wertAnzeige, uid, fmtEuro } from "../util.js";
 import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ablage.js";
 import { auswerten, vorwaermen } from "../auswertung.js";
 import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau } from "../karte_lesen.js";
@@ -138,37 +138,54 @@ export function karteFotoView(stand) {
 
 // ---------- Speisekarte: prüfen ----------
 
+// Kompakte Prüfliste (Kapitän 14.10., Entwurf A mit Teilen von B): oben „Bitte prüfen" offen zum Bearbeiten,
+// darunter „Erkannt" als eine Zeile pro Gericht – antippen klappt die Zeile zum Bearbeiten auf.
+let aufgeklappt = null;
+const grund = (v) => v.preis === null ? "preis" : v.pruefen ? "name" : v.sicher === "vorschlag" ? "rezept" : null;
+const punkt = (v) => !v.an ? "grau" : v.preis === null ? "rot" : (v.pruefen || v.sicher === "vorschlag") ? "gelb" : "";
+function bearbeiter(v) {
+  return `<div class="fvbearb">
+      <input class="textfeld" data-f="fv-name:${v.id}" value="${esc(v.name)}" maxlength="60" aria-label="${esc(t("foto.name"))}">
+      <div class="fvreihe"><div class="betrag klein"><input inputmode="decimal" data-f="fv-preis:${v.id}" value="${esc(wertAnzeige(v.preis))}" placeholder="0,00" aria-label="${esc(t("foto.preis"))}"><span class="einheit">€</span></div>
+        ${v.sicher === "vorschlag" ? `<button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button>` : ""}
+        <button type="button" class="chip klein leise" data-a="fv-an" data-id="${v.id}">${esc(t("foto.weglassen"))}</button></div>
+      <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : esc(t("foto.ohneRezept"))}</small>
+    </div>`;
+}
+function fvZeile(v) {
+  const g = grund(v); const auf = aufgeklappt === v.id && v.an;
+  const notiz = !v.an ? "" : g === "preis" ? `<small class="rot">${esc(t("foto.preisFehltKurz"))}</small>` : g === "name" ? `<small class="gelb">${esc(t("foto.namePruefen"))}</small>` : g === "rezept" ? `<small class="gelb">${esc(t("foto.rezeptVorschlag", v.vorlage))}</small>` : "";
+  return `<div class="fvz ${v.an ? "" : "aus"} ${auf ? "auf" : ""}">
+      <div class="fvkopf"><button type="button" class="fvtipp" data-a="fv-auf" data-id="${v.id}" aria-expanded="${auf}"><span class="pkt ${punkt(v)}" aria-hidden="true"></span><span class="n">${esc(v.name)}${notiz}</span><span class="p ${v.preis === null ? "leer" : ""}">${v.preis === null ? esc(t("foto.fehlt")) : esc(fmtEuro(v.preis, { dezimal: 2 }))}</span></button>
+        <button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-pressed="${!v.an}" aria-label="${esc(t(v.an ? "foto.weglassen" : "foto.zurueckholen"))}: ${esc(v.name)}">${v.an ? "✕" : "↺"}</button></div>
+      ${auf ? bearbeiter(v) : ""}
+    </div>`;
+}
 export function kartePruefenView() {
   const an = vorschlaege.filter((v) => v.an);
   const mitRezept = an.filter((v) => v.vorlage).length;
   const zutaten = new Set(); for (const v of an) { if (v.vorlage) for (const l of Object.values(VORLAGEN)) { const x = l.find((y) => y.name === v.vorlage); if (x) x.zutaten.forEach((z) => zutaten.add(z[0])); } else if (v.getraenk) zutaten.add(v.name); }
-  const marke = (v) => v.sicher === "sicher" ? `<span class="marke gruen">✓ ${esc(t("foto.rezeptVon", v.vorlage))}</span>`
-    : v.sicher === "vorschlag" ? `<span class="marke geschaetzt">? ${esc(t("foto.rezeptVorschlag", v.vorlage))}</span>`
-    : v.sicher === "getraenk" ? `<span class="marke">${esc(t("foto.getraenk"))}</span>`
-    : `<span class="marke offen">${esc(t("foto.ohneRezept"))}</span>`;
+  // Gruppe einmal festlegen, damit ein Gericht beim Korrigieren nicht wegspringt
+  for (const v of vorschlaege) if (v.gruppe === undefined) v.gruppe = grund(v) ? "pruefen" : "erkannt";
+  const pr = vorschlaege.filter((v) => v.gruppe === "pruefen"), ok = vorschlaege.filter((v) => v.gruppe === "erkannt");
   return `
     <h1 class="frage">${esc(t("foto.pruefenFrage", vorschlaege.length))}</h1>
-    <p class="hinweis">${esc(t("foto.pruefenHinweis"))}</p>
-    <div class="liste">${vorschlaege.map((v) => `
-      <div class="zeile ${v.an ? "an" : "storno"}">
-        <div class="oben">
-          <input class="textfeld" data-f="fv-name:${v.id}" value="${esc(v.name)}" maxlength="60" aria-label="${esc(t("foto.name"))}" ${v.an ? "" : "disabled"}>
-          <button type="button" class="schalter ${v.an ? "an" : ""}" data-a="fv-an" data-id="${v.id}" aria-pressed="${v.an}" aria-label="${esc(v.name)}"></button>
-        </div>
-        <div class="unterzeile">
-          <div class="betrag klein"><input inputmode="decimal" data-f="fv-preis:${v.id}" value="${esc(wertAnzeige(v.preis))}" aria-label="${esc(t("foto.preis"))}" ${v.an ? "" : "disabled"}><span class="einheit">€</span></div>
-          ${marke(v)}${v.preis === null && v.an ? ` <span class="marke offen">${esc(t("foto.preisFehlt"))}</span>` : ""}
-        </div>
-        ${v.sicher === "vorschlag" && v.an ? `<div class="chips"><button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button></div>` : ""}
-      </div>`).join("")}</div>
-    <div class="karte gruenrand"><div class="mid">${esc(t("foto.inventurVorschau", an.length, zutaten.size))}</div><small class="marke">${esc(t("foto.inventurHinweis", mitRezept))}</small></div>
+    <p class="hinweis">${esc(t(pr.length ? "foto.pruefenHinweisKurz" : "foto.pruefenHinweisAlle"))}</p>
+    ${pr.length ? `<h2 class="fvgrp">${esc(t("foto.gruppePruefen", pr.length))}</h2>
+    <div class="fvliste offen">${pr.map((v) => `<div class="fvz ${v.an ? "" : "aus"} karte-${(punkt(v) || "ok").replace("grau", "ok")}">
+      <div class="fvkopf"><span class="fvgrund">${esc(t(v.an ? { preis: "foto.preisFehltKurz", name: "foto.namePruefen", rezept: "foto.rezeptBestaetigen" }[grund(v) || ""] || "foto.erledigt" : "foto.weggelassen"))}</span>
+        ${v.an ? "" : `<button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-label="${esc(t("foto.zurueckholen"))}: ${esc(v.name)}">↺</button>`}</div>
+      ${v.an ? bearbeiter(v) : `<div class="n durch">${esc(v.name)}</div>`}</div>`).join("")}</div>` : ""}
+    ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.gruppeErkannt", ok.length))}</h2>
+    <div class="fvliste">${ok.map(fvZeile).join("")}</div>` : ""}
+    <p class="hinweis klein">${esc(t("foto.inventurVorschau", an.length, zutaten.size))} · ${esc(t("foto.inventurHinweis", mitRezept))}</p>
     <div class="fotofeld">${fotoKnoepfe("speisekarte", { kamera: "foto.nochSeite", datei: "foto.nochDatei" })}</div>`;
 }
 
 export function kartePruefenEingabe(feld, wert) {
   const m = feld.match(/^fv-(name|preis):(.+)$/); if (!m) return false;
   const v = vorschlaege.find((x) => x.id === m[2]); if (!v) return false;
-  if (m[1] === "name") v.name = wert.slice(0, 60); else v.preis = parseZahl(wert);
+  if (m[1] === "name") { v.name = wert.slice(0, 60); v.pruefen = false; } else v.preis = parseZahl(wert);
   return false;
 }
 
@@ -176,7 +193,8 @@ export function kartePruefenAktion(name, el) {
   if (name === "fv-fertig") { sammelnBeenden(); return true; }
   if (name === "fv-mehr") { sammeln = true; return true; }
   const v = vorschlaege.find((x) => x.id === el.dataset.id);
-  if (name === "fv-an" && v) { v.an = !v.an; return true; }
+  if (name === "fv-an" && v) { v.an = !v.an; if (!v.an && aufgeklappt === v.id) aufgeklappt = null; return true; }
+  if (name === "fv-auf" && v) { aufgeklappt = aufgeklappt === v.id ? null : v.id; return true; }
   if (name === "fv-rezept-ja" && v) { v.sicher = "sicher"; return true; }
   if (name === "fv-rezept-nein" && v) { v.vorlage = null; v.sicher = v.getraenk ? "getraenk" : "ohne"; return true; }
   return false;

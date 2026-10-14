@@ -47,14 +47,16 @@ async def main():
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=60000); await pg.wait_for_timeout(300)
             await bild("karte-pruefen")
             s = await stand(); assert len(s["uploads"]) == 1 and s["uploads"][0]["status"] == "gelesen", s["uploads"]
-            namen = await pg.eval_on_selector_all('[data-f^="fv-name:"]', "els => els.map(e => e.value)")
+            namen = await pg.evaluate("[...document.querySelectorAll('.fvz')].map(z => z.querySelector('[data-f^=\\'fv-name:\\']')?.value || z.querySelector('.n')?.firstChild?.textContent || '')")
             assert len(namen) >= 7, namen
             # eine Zeile ausschalten, einen Preis ändern
             await klick('[data-a="fv-an"] >> nth=-1')
-            erster = pg.locator('[data-f^="fv-preis:"]').first; await erster.fill("7,90"); await erster.blur(); await pg.wait_for_timeout(200)
+            await klick('.fvliste:not(.offen) [data-a="fv-auf"] >> nth=0'); await bild("karte-aufgeklappt")
+            geaendert = await pg.locator('.fvz.auf [data-f^="fv-name:"]').input_value()
+            erster = pg.locator('.fvz.auf [data-f^="fv-preis:"]'); await erster.fill("7,90"); await erster.blur(); await pg.wait_for_timeout(200)
             await bild("karte-geaendert"); await klick('[data-a="fv-uebernehmen"]')
             s = await stand(); assert len(s["gerichte"]) == len(namen) - 1, (len(s["gerichte"]), namen)
-            assert s["gerichte"][0]["preis"] == 7.9, s["gerichte"][0]
+            g7 = next(g for g in s["gerichte"] if g["name"] == geaendert); assert g7["preis"] == 7.9, g7
             assert len(s["artikel"]) >= 10, len(s["artikel"])
             assert any(a["name"] == "Dönerspieß Kalb/Pute" for a in s["artikel"])
             # 4 Kosten
@@ -90,7 +92,7 @@ async def main():
             await klick('[data-a="nav"][data-wert="kartefoto"]'); await pg.wait_for_selector('input[data-f="foto"]', state="attached")
             await pg.locator('input[data-f="foto"]:not([capture])').set_input_files(str(BILD / "karte2.pdf"))
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=60000); await pg.wait_for_timeout(300); await bild("pdf-pruefen")
-            pdfnamen = await pg.eval_on_selector_all('[data-f^="fv-name:"]', "els => els.map(e => e.value)")
+            pdfnamen = await pg.evaluate("[...document.querySelectorAll('.fvz')].map(z => z.querySelector('[data-f^=\\'fv-name:\\']')?.value || z.querySelector('.n')?.firstChild?.textContent || '')")
             assert len(pdfnamen) == 8 and any("Margherita" in x for x in pdfnamen), pdfnamen
             await klick('[data-a="fv-uebernehmen"]'); await bild("karte-nach-pdf")
             s = await stand(); assert any("Margherita" in g["name"] for g in s["gerichte"])
@@ -101,7 +103,7 @@ async def main():
             await pg.locator('input[data-f="foto"][capture]').set_input_files(str(BILD / "karte2_foto.jpg"))
             await pg.wait_for_selector('[data-a="fv-fertig"]'); await bild("serie-2"); await klick('[data-a="fv-fertig"]')
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=120000); await pg.wait_for_timeout(300); await bild("serie-pruefen")
-            serie = await pg.eval_on_selector_all('[data-f^="fv-name:"]', "els => els.map(e => e.value)")
+            serie = await pg.evaluate("[...document.querySelectorAll('.fvz')].map(z => z.querySelector('[data-f^=\\'fv-name:\\']')?.value || z.querySelector('.n')?.firstChild?.textContent || '')")
             assert len(serie) >= 3, serie
             await klick('[data-a="fv-uebernehmen"]')
             # 9 Cockpit

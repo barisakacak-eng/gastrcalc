@@ -50,7 +50,7 @@ export function nameAufbereiten(roh) {
   n = n.replace(/^[^\p{L}]+/u, "").replace(/(\s+[^\p{L}\s]+|\s+\p{L}{1}|\s+\.)+\s*$/u, "").replace(/[\s.:\-–—|/]+$/, "").replace(/\s+/g, " ").trim();
   if (menge) n = `${n} ${menge[1]} ${menge[2].toLowerCase()}`;
   // Buchstabensalat: Wort mit Großbuchstaben mitten drin („anEXa", „ReBBu"), Wort ohne Vokal ab 4 Zeichen
-  const pruefen = n.split(" ").some((w) => /\p{Ll}\p{Lu}|\p{Lu}{2,}\p{Ll}/u.test(w) && !/^[A-ZÄÖÜ]{2,5}$/.test(w) || (w.length >= 4 && !/[aeiouäöüyıAEIOUÄÖÜ]/.test(w)));
+  const pruefen = n.split(" ").filter((w) => !/\d/.test(w) && !/^(l|ml|cl)$/i.test(w)).some((w) => /\p{Ll}\p{Lu}|\p{Lu}{2,}\p{Ll}/u.test(w) && !/^[A-ZÄÖÜ]{2,5}$/.test(w) || (w.length >= 4 && !/[aeiouäöüyıAEIOUÄÖÜ]/.test(w)));
   return { name: n, pruefen };
 }
 
