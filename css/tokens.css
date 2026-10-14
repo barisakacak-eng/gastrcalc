@@ -13,6 +13,7 @@
   --geschaetzt: #D9A22E; --geschaetzt-hell: #FBEFD3; --geschaetzt-text: #7A5A10;
   --eigen: #4F8A5B; --eigen-hell: #E3EFE5;
   --muell: #8B3A2E; --muell-hell: #F3E1DE; --weggelassen: #BBBBBB;
+  --branche: #3E6FA8; --branche-hell: #E1EAF5;
   --aktion: var(--glut); --aktion-text: #FFFFFF;
   --schatten-karte: none; --schatten-knopf: none;
   --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Systemschrift: offline, keine Weitergabe an Dritte */

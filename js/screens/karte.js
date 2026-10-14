@@ -5,6 +5,8 @@ import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../ut
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
 import { zwischenrezept } from "../data/zwischen.js";
+import { rezeptBauen } from "../rezept_baukasten.js";
+import { rezeptStempel, quelleVon, waageFragen, schnellwahl, familieAnpassen, geldSatz } from "../rezept_quelle.js";
 import { selbstAnwenden, selbstGewaehlt } from "../selbst.js";
 import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken } from "../engine.js";
 
@@ -16,6 +18,8 @@ let suche = "";            // Suchtext auf dem Karten-Bildschirm (flüchtig)
 let offenesGericht = null; // id des Gerichts im Rezept-Detail (flüchtig)
 let zutatSuche = "";       // Suchtext im Rezept-Detail
 let eigenesText = "";      // Text im Feld „eigenes Gericht" (flüchtig, überlebt das Neuzeichnen)
+let waage = null;          // Waage-Check (Punkt 7): { gid, fragen[], k, wert, meldungen[] }
+let stempelInfo = false;   // Erklärung zum Stempel aufgeklappt
 let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
@@ -23,7 +27,7 @@ const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type=
 function gerichtAusVorlage(v) {
   const zutaten = v.zutaten.map(([name, menge, einheit]) => ({ name, menge, einheit }));
   return { id: uid(), name: v.name, vorlageName: v.name, bereich: v.bereich, klasse: klasseFuerBereich(v.bereich), zeit: v.zeit, vorlage: true,
-    zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten) };
+    zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten), rezeptFamilie: rezeptBauen(v.name)?.familie || null };
 }
 
 // ---------- Schritt: Karte ----------
@@ -87,6 +91,29 @@ export const karte = {
 const gerichtHatEingaben = (g) => typeof g.preis === "number" || g.mengeTag > 0 || !g.vorlage;
 
 // ---------- Schritt: Rezepte ----------
+// ---------- Punkt 7: Stempel und Waage-Check ----------
+const PKT = { schaetzung: "gelb", pilot: "blau", branche: "blau", "eigen-abgeleitet": "gruen", eigen: "gruen" };
+function stempelHtml(st, { info = false } = {}) {
+  if (!st?.stufe) return "";
+  const text = st.stufe === "branche" ? t("stempel.branche", (st.quellen || []).length) : st.stufe === "eigen" && st.datum ? t("stempel.eigenAm", datumKurz(st.datum)) : t("stempel." + st.stufe);
+  return `<button type="button" class="stempel stempel-${st.stufe}" data-a="stempel-info" aria-expanded="${info}">${esc(text)}</button>${info ? `<p class="hinweis stempel-erklaerung">${esc(t("stempel.erklaerung." + st.stufe))}</p>` : ""}`;
+}
+const datumKurz = (iso) => { const [, m, d] = String(iso).split("-"); return `${Number(d)}.${Number(m)}.`; };
+const mengeText = (z, g) => `${quelleVon(z, g) === "schaetzung" ? "≈ " : ""}${fmtZahl(z.menge)} ${einheitLabel(z.einheit)}`;
+
+function waageView(stand) {
+  const g = stand.gerichte.find((x) => x.id === waage.gid); const f = waage.fragen[waage.k];
+  if (!g || !f) return "";
+  const chips = schnellwahl(f.menge, f.einheit);
+  return `
+    <p class="tipp">${esc(t("waage.schritt", waage.k + 1, waage.fragen.length))}</p>
+    <h1 class="frage">${esc(t("waage.frage", f.name, g.name))}</h1>
+    <p class="hinweis">${esc(t("waage.startwert", `${fmtZahl(f.menge)} ${einheitLabel(f.einheit)}`))}</p>
+    <div class="stepper gross"><button type="button" data-a="waage-d" data-d="-1" aria-label="−">−</button><div class="wert">${esc(fmtZahl(waage.wert))} ${esc(einheitLabel(f.einheit))}</div><button type="button" data-a="waage-d" data-d="1" aria-label="+">+</button></div>
+    <div class="chips">${chips.map((c) => `<button type="button" class="chip ${c === waage.wert ? "an" : ""}" data-a="waage-chip" data-wert="${c}">${esc(fmtZahl(c))} ${esc(einheitLabel(f.einheit))}</button>`).join("")}</div>
+    ${waage.meldungen.map((m) => `<p class="tipp gruen">${esc(m)}</p>`).join("")}`;
+}
+
 function rezeptDetail(stand, g) {
   const q = zutatSuche.trim().toLowerCase();
   // Laden-Profil (Punkt 9): Zutaten aus dem eigenen Bereich zuerst; nur wenn dort nichts passt, andere mit „aus: …“
@@ -94,6 +121,9 @@ function rezeptDetail(stand, g) {
   return `
     <button type="button" class="leise" data-a="rezept-zu">‹ ${esc(t("rezepte.alle"))}</button>
     <input class="textfeld gross" data-f="gericht-name" value="${esc(g.name)}" autocomplete="off">
+    <div class="stempelzeile">${stempelHtml(rezeptStempel(g), { info: stempelInfo })}</div>
+    ${waage && waage.fertig && waage.gid === g.id ? waage.meldungen.map((m) => `<p class="tipp gruen">${esc(m)}</p>`).join("") : ""}
+    ${waageFragen(stand, g).length ? `<button type="button" class="knopf glut" data-a="waage-start"><span aria-hidden="true">⚖️</span> ${esc(t("waage.start"))}</button>` : ""}
     <div class="feldzeile"><label>${esc(t("rezepte.klasse"))}</label>
       <div class="chips">${KLASSEN.map((k) => `<button type="button" class="chip ${g.klasse === k ? "an" : ""}" data-a="klasse" data-wert="${k}">${esc(t("rezepte.klassen." + k))}</button>`).join("")}</div>
       <span class="marke">${esc(t("rezepte.klasseHinweis"))}</span></div>
@@ -104,7 +134,8 @@ function rezeptDetail(stand, g) {
       ${g.zutaten.map((z, i) => {
         const basis = basisVon(z.einheit); const gruppe = PRODUKT_INDEX[z.name]?.g;
         const offen = !(Number(z.menge) > 0);
-        return `<div class="zeile ${offen ? "offen" : "an"}"><div class="oben"><div class="name">${esc(z.name)}${gruppe === "verpackung" ? `<small>${esc(t("rezepte.verpackung"))}</small>` : ""}</div>
+        const q = quelleVon(z, g);
+        return `<div class="zeile ${offen ? "offen" : "an"} quelle-${q}"><div class="oben"><div class="name"><span class="pkt ${PKT[q]}" aria-hidden="true"></span> ${esc(z.name)}${gruppe === "verpackung" ? `<small>${esc(t("rezepte.verpackung"))}</small>` : `<small>${esc(t("stempel.kurz." + q))}${offen ? "" : " · " + esc(mengeText(z, g))}</small>`}</div>
           <button type="button" class="leise" data-a="zutat-weg" data-i="${i}">${esc(t("allgemein.loeschen"))}</button></div>
           <div class="betrag"><input inputmode="decimal" data-f="zutat:${i}" value="${esc(wertAnzeige(z.menge))}" aria-label="${esc(z.name)}">
             <div class="periode">${EINHEITEN_JE_BASIS[basis].map((e) => `<button type="button" class="${z.einheit === e ? "an" : ""}" data-a="einheit" data-i="${i}" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div></div></div>`;
@@ -120,26 +151,50 @@ export const rezepte = {
   id: "rezepte",
   view(stand) {
     const g = offenesGericht ? stand.gerichte.find((x) => x.id === offenesGericht) : null;
+    if (waage && !waage.fertig && g) return waageView(stand);
     if (g) return rezeptDetail(stand, g);
     return `
       <h1 class="frage">${esc(t("rezepte.frage"))}</h1>
       <p class="hinweis">${esc(t("rezepte.hinweis"))}</p>
       <div class="liste">
         ${stand.gerichte.map((x) => `<button type="button" class="zeileknopf" data-a="rezept-auf" data-id="${esc(x.id)}">
-          <span><b>${esc(x.name)}</b><small>${esc(t("rezepte.zusammenfassung", x.zutaten.length, x.zeit))}${x.rezeptQuelle === "baukasten" ? ` · ${esc(t("rezepte.startwerte"))}` : ""}${x.zutaten.length === 0 ? ` · ${esc(t("rezepte.leer"))}` : ""}</small></span><span class="pfeil">›</span></button>`).join("")}
+          <span><b>${esc(x.name)}</b><small>${esc(t("rezepte.zusammenfassung", x.zutaten.length, x.zeit))}${(() => { const st = rezeptStempel(x).stufe; return st ? ` · ${esc(t("stempel." + st))}` : ""; })()}${x.zutaten.length === 0 ? ` · ${esc(t("rezepte.leer"))}` : ""}</small></span><span class="pfeil">›</span></button>`).join("")}
       </div>`;
   },
-  fuss() { return offenesGericht ? `<button type="button" class="knopf" data-a="rezept-zu">${esc(t("allgemein.fertig"))}</button>` : knopfWeiter(); },
+  fuss() {
+    if (waage && !waage.fertig) return `<button type="button" class="knopf" data-a="waage-ok">${esc(t("waage.ok"))}</button><button type="button" class="knopf zweit" data-a="waage-weiss-nicht">${esc(t("waage.weissNicht"))}</button>`;
+    return offenesGericht ? `<button type="button" class="knopf" data-a="rezept-zu">${esc(t("allgemein.fertig"))}</button>` : knopfWeiter();
+  },
   eingabe(feld, wert, stand) {
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return;
     if (feld === "gericht-name") g.name = wert;
     else if (feld === "zutat-suche") { zutatSuche = wert; return true; }
-    else if (feld.startsWith("zutat:")) { const z = g.zutaten[Number(feld.slice(6))]; if (z) { z.menge = parseZahl(wert); if (g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; } }
+    else if (feld.startsWith("zutat:")) { const z = g.zutaten[Number(feld.slice(6))]; if (z) { const n = parseZahl(wert); if (n !== z.menge) { z.menge = n; z.quelle = "eigen"; z.quelleInfo = { datum: heute() }; } if (g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; } }
   },
   aktion(name, el, stand) {
-    if (name === "rezept-auf") { offenesGericht = el.dataset.id; zutatSuche = ""; return true; }
-    if (name === "rezept-zu") { offenesGericht = null; zutatSuche = ""; stand.artikel = artikelAusGerichten(stand); return true; }
+    if (name === "rezept-auf") { offenesGericht = el.dataset.id; zutatSuche = ""; waage = null; stempelInfo = false; return true; }
+    if (name === "rezept-zu") { offenesGericht = null; zutatSuche = ""; waage = null; stempelInfo = false; stand.artikel = artikelAusGerichten(stand); return true; }
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return false;
+    if (name === "stempel-info") { stempelInfo = !stempelInfo; return true; }
+    if (name === "waage-start") { const fragen = waageFragen(stand, g); if (!fragen.length) return false; waage = { gid: g.id, fragen, k: 0, wert: fragen[0].menge, meldungen: [], fertig: false }; return true; }
+    if (waage && !waage.fertig) {
+      const f = waage.fragen[waage.k];
+      const schritt = f.einheit === "stk" ? 1 : f.menge >= 150 ? 5 : f.menge >= 50 ? 5 : 1;
+      if (name === "waage-d") { waage.wert = Math.max(schritt, Math.round((waage.wert + Number(el.dataset.d) * schritt) * 10) / 10); return true; }
+      if (name === "waage-chip") { waage.wert = Number(el.dataset.wert); return true; }
+      if (name === "waage-ok" || name === "waage-weiss-nicht") {
+        if (name === "waage-ok") {
+          const geld = geldSatz(stand, f.name, f.menge, waage.wert, f.einheit);
+          const r = familieAnpassen(stand, { gerichtId: g.id, zutat: f.name, wert: waage.wert, datum: heute() });
+          waage.meldungen.push(t("waage.gelernt", f.name, r.geaendert.length + 1));
+          if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld)), g.name));
+        }
+        waage.k += 1;
+        if (waage.k >= waage.fragen.length) { waage.fertig = true; stand.artikel = artikelAusGerichten(stand); }
+        else waage.wert = waage.fragen[waage.k].menge;
+        return true;
+      }
+    }
     if (name === "klasse") { g.klasse = el.dataset.wert; return true; }
     if (name === "zeit") { const d = Number(el.dataset.d); const z = Number(g.zeit) || 0; const schritt = (d > 0 ? z >= 5 : z > 5) ? 1 : 0.5; g.zeit = Math.max(0.5, Math.round((z + d * schritt) * 2) / 2); return true; }
     if (["zutat-weg", "zutat-neu", "zutat-frei", "einheit"].includes(name) && g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; // vom Wirt angepasst
@@ -149,9 +204,9 @@ export const rezepte = {
     if (name === "zutat-frei") { g.zutaten.push({ name: el.dataset.name, menge: null, einheit: "stk" }); zutatSuche = ""; return true; }
     if (name === "gericht-weg") { if (!confirm(t("karte.wegFrage", g.name))) return false; stand.gerichte = stand.gerichte.filter((x) => x.id !== g.id); offenesGericht = null; return true; }
   },
-  beimVerlassen(stand) { offenesGericht = null; stand.artikel = artikelAusGerichten(stand); },
+  beimVerlassen(stand) { offenesGericht = null; waage = null; stand.artikel = artikelAusGerichten(stand); },
   // Zurück-Geste im Detail: nur das Detail schließen, nicht den Schritt verlassen
-  zurueck(stand) { if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; stand.artikel = artikelAusGerichten(stand); return true; },
+  zurueck(stand) { if (waage && !waage.fertig) { waage = null; return true; } if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; stand.artikel = artikelAusGerichten(stand); return true; },
 };
 
 // ---------- Schritt: Einkaufspreise mit Gebinde (Etappe 5, Variante C: was kaufst du, was ist drin, was kostet es) ----------

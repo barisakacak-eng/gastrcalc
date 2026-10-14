@@ -7,6 +7,8 @@ import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
 import { artikelAusGerichten } from "./engine.js";
+import { BRANCHENWERTE } from "./data/branchenwerte.js";
+import { branchenwerteAnwenden } from "./rezept_quelle.js";
 import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf, karteFussKnopf, karteZeigtPruefliste } from "./screens/foto.js";
 import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
@@ -439,6 +441,13 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
   aktivSetzen(wurzel.aktiv);
   // Gerichte ohne Rezept (aus älteren Fassungen) bekommen beim Start Startwerte aus dem Baukasten (Pilot 14.10.: keine leere App)
   { let n = 0; for (const b of wurzel.betriebe) n += fehlendeRezepteErgaenzen(b); if (n) { for (const b of wurzel.betriebe) b.artikel = artikelAusGerichten(b); speichern(wurzel); } }
+  // Neue Branchenwerte (Punkt 7.4): einmal je Version einspielen, nur Schätzungen ersetzen, Meldung fürs Cockpit merken
+  if (BRANCHENWERTE.werte.length) for (const b of wurzel.betriebe) {
+    if ((b.branchenVersion || 0) >= BRANCHENWERTE.version) continue;
+    const r = branchenwerteAnwenden(b, BRANCHENWERTE.werte); b.branchenVersion = BRANCHENWERTE.version;
+    if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: new Date().toISOString().slice(0, 10) };
+    speichern(wurzel);
+  }
   serviceWorkerStarten();
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
   setzeSprache(wurzel.sprache || spracheDesGeraets());

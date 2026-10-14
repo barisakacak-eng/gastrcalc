@@ -285,7 +285,7 @@ export function vorschlaegeUebernehmen(stand, vorschlaege) {
       if (!stand.artikel.some((a) => a.name === name)) stand.artikel.push({ name, gruppe: "getraenk", einheit: "stk", packung: { menge: null, einheit: "stk" }, gebinde: { art: "kiste", zwischen: null }, preis: null, preisBasis: "netto", preisHistorie: [], status: "offen", benutzt: true });
     } else { zutaten = []; klasse = "haupt"; steuer = 0.07; ohneRezept += 1; }
     stand.gerichte.push({ id: uid(), name, vorlageName: vl?.name || null, bereich, klasse, zeit: vl?.zeit ?? (baukasten ? (rezeptBauen(name, { rubrik: v.rubrik })?.zeit ?? 4) : 4), vorlage: !!vl, zutaten, ...(v.rubrik ? { rubrik: v.rubrik } : {}),
-      ...(baukasten ? { rezeptQuelle: "baukasten", rezeptFamilie: baukasten } : {}),
+      ...(baukasten ? { rezeptQuelle: "baukasten", rezeptFamilie: baukasten } : vl ? { rezeptFamilie: rezeptBauen(name, { rubrik: v.rubrik })?.familie || null } : {}),
       preis: typeof v.preis === "number" ? v.preis : null, mengeTag: null, steuer, quelle: "foto" });
     neu += 1;
   }

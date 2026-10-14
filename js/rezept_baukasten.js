@@ -235,6 +235,8 @@ export function rezeptBauen(name, { rubrik = null } = {}) {
 export function fehlendeRezepteErgaenzen(stand) {
   let n = 0;
   for (const g of stand.gerichte || []) {
+    // Familie merken, auch bei Vorlagen-Rezepten (Punkt 7: Waage-Check und Branchenwerte wirken je Familie)
+    if (!g.rezeptFamilie && g.klasse !== "getraenk") { const f = rezeptBauen(g.name, { rubrik: g.rubrik })?.familie; if (f) g.rezeptFamilie = f; }
     if ((g.zutaten || []).length || g.rezeptBewusstLeer || g.klasse === "getraenk") continue;
     const r = rezeptBauen(g.name, { rubrik: g.rubrik }); if (!r) continue;
     g.zutaten = r.zutaten.map((z) => ({ name: z.name, menge: z.menge, einheit: z.einheit }));

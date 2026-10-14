@@ -387,3 +387,13 @@ button.kachel { cursor: pointer; }
 /* Bild-Plätze: Datei bilder/<name>.svg kommt von Sanji; fehlt sie, bleibt ein ruhiger Kreis */
 .bildplatz { width: 64px; height: 64px; border-radius: 50%; background: var(--papier-tief) center / 70% no-repeat; flex: none; display: inline-block; }
 .bildplatz.klein { width: 44px; height: 44px; }
+
+/* Punkt 7: Stempel je Rezept (Bedeutung fest: geschätzt gelb-gestrichelt mit ≈, Branchenwert blau, eigen grün). Aussehen gehört Sanji. */
+.pkt.blau { background: var(--branche); }
+.stempelzeile { margin: 8px 0; }
+.stempel { display: inline-block; min-height: 48px; padding: 8px 12px; border-radius: 8px; font: inherit; font-weight: 700; background: transparent; cursor: pointer; }
+.stempel-schaetzung { border: 2px dashed var(--geschaetzt); background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
+.stempel-pilot, .stempel-branche { border: 2px solid var(--branche); background: var(--branche-hell); color: var(--branche); }
+.stempel-eigen, .stempel-eigen-abgeleitet { border: 2px solid var(--eigen); background: var(--eigen-hell); color: var(--eigen); }
+.tipp.gruen { color: var(--eigen); }
+.stepper.gross .wert { font-size: 1.6em; font-variant-numeric: tabular-nums; }
