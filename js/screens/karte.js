@@ -4,6 +4,8 @@ import { t, einheitLabel } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
+import { zwischenrezept } from "../data/zwischen.js";
+import { selbstAnwenden, selbstGewaehlt } from "../selbst.js";
 import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken } from "../engine.js";
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
@@ -166,7 +168,21 @@ export function gebindeSatz(a) {
   return k[1] ? t("gebinde.satz", art, k[1].anzahl, t("gebinde.arten." + k[1].art), zahlKurz(k[1].inhalt), einheit) : t("gebinde.satz", art, null, null, zahlKurz(k[0].inhalt), einheit);
 }
 
+// Selbst gemachtes Teil (Punkt 2): kein Einkaufspreis, sondern Rezept und errechneter Preis. Wechsel auf „kaufen wir fertig" mit einem Tipp.
+function selbstZeile(a) {
+  const r = a.rezept; const ok = preisJeBasis(a) !== null; const basis = basisVon(r.ausbeute.einheit);
+  const jeBasis = ok ? (basis === "stk" ? preisJeBasis(a) : preisJeBasis(a) * 1000) : null;
+  const einheitBasis = basis === "g" ? "kg" : basis === "ml" ? "l" : t("allgemein.stueck");
+  const fehlt = (a.zwischenFehlt || []).filter((x) => x !== "rezept");
+  return `<div class="zeile selbst ${ok ? "an" : "offen"}">
+    <div class="oben"><div class="name">${esc(a.name)}<small>${esc(t("selbst.gemacht"))}${r.quelle === "baukasten" ? " · " + esc(t("rezepte.startwerte")) : ""}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("selbst.errechnet") : t("allgemein.offen"))}</span></div>
+    <p class="hinweis">${esc(t("selbst.ansatz", r.zutaten.map((z) => `${fmtZahl(z.menge)} ${einheitLabel(z.einheit)} ${z.name}`).join(", "), `${fmtZahl(r.ausbeute.menge)} ${einheitLabel(r.ausbeute.einheit)}`, r.arbeitMin))}</p>
+    ${ok ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 1 ? 3 : 2 }), einheitBasis))}</div>` : fehlt.length ? `<p class="tipp">${esc(t("selbst.fehlt", fehlt.join(", ")))}</p>` : ""}
+    <button type="button" class="leise" data-a="selbst-aus" data-name="${esc(a.name)}">${esc(t("selbst.dochKaufen"))}</button></div>`;
+}
+
 function artikelZeile(a) {
+  if (a.herkunft === "selbst" && a.rezept) return selbstZeile(a);
   const ok = preisJeBasis(a) !== null; const basis = basisVon(a.einheit); const gv = a.garverlust ? garverlustAnteil(a) : null;
   const g = a.gebinde || { art: "packung", zwischen: null }; const artName = t("gebinde.arten." + g.art);
   const p = gebindePreise(a); const einheitBasis = basis === "g" ? "kg" : basis === "ml" ? "l" : t("allgemein.stueck");
@@ -174,6 +190,7 @@ function artikelZeile(a) {
   const zOffen = zwischenOffen.has(a.name) || !!g.zwischen;
   return `<div class="zeile ${ok ? "an" : "offen"}">
     <div class="oben"><div class="name">${esc(a.name)}<small>${esc(ok ? gebindeSatz(a) : t("allgemein.offen"))}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
+    ${zwischenrezept(a.name) ? `<button type="button" class="leise" data-a="selbst-an" data-name="${esc(a.name)}">${esc(t("selbst.machenSelbst"))}</button>` : ""}
     <div class="chips">${(mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? GEBINDE_WAHL : GEBINDE_KURZ).map((x) => `<button type="button" class="chip klein ${g.art === x ? "an" : ""}" data-a="gebinde-art" data-name="${esc(a.name)}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}${mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? "" : `<button type="button" class="chip klein" data-a="gebinde-mehr" data-name="${esc(a.name)}">…</button>`}</div>
     <div class="feldzeile"><label>${esc(t("gebinde.inhalt", artName))}</label>
       <div class="packung">
@@ -224,6 +241,11 @@ export const preise = {
   },
   aktion(name, el, stand) {
     const a = stand.artikel.find((x) => x.name === el.dataset.name); if (!a) return false;
+    if (name === "selbst-an" || name === "selbst-aus") {
+      const kachel = zwischenrezept(a.name)?.kachel; if (!kachel) return false;
+      const an = new Set(selbstGewaehlt(stand)); if (name === "selbst-an") an.add(kachel); else an.delete(kachel);
+      selbstAnwenden(stand, [...an]); stand.artikel = artikelAusGerichten(stand); return true;
+    }
     if (name === "packung-einheit") { a.packung ??= { menge: null, einheit: a.einheit }; if (a.packung.einheit !== el.dataset.wert) { a.packung.menge = mengeUmrechnen(a.packung.menge, a.packung.einheit, el.dataset.wert); a.packung.einheit = el.dataset.wert; } return true; }
     if (name === "gebinde-art") { a.gebinde ??= { art: "packung", zwischen: null }; a.gebinde.art = el.dataset.wert; if (el.dataset.wert === "lose") a.gebinde.zwischen = null; return true; }
     if (name === "preis-basis") { a.preisBasis = el.dataset.wert === "brutto" ? "brutto" : "netto"; return true; }

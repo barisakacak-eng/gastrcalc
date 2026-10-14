@@ -283,8 +283,11 @@ export function artikelAusGerichten(stand) {
   const benutzt = new Set();
   for (const g of stand.gerichte) for (const z of g.zutaten) benutzt.add(z.name);
   // Reihenfolge bleibt, wie sie war (sonst springt die Liste beim Eintragen); eingetragene Preise bleiben, auch wenn das Gericht weg ist
-  for (const a of Object.values(alt)) if (preisJeBasis(a) !== null || benutzt.has(a.name)) neu[a.name] = a;
-  for (const g of stand.gerichte) for (const z of g.zutaten) {
+  // Selbst gemachte Teile (Punkt 2): ihre Rohstoffe gehören auch ins Verzeichnis (Inventur, Einkaufspreise)
+  for (const a of Object.values(alt)) if (a.herkunft === "selbst" && a.rezept && benutzt.has(a.name)) for (const z of a.rezept.zutaten) benutzt.add(z.name);
+  for (const a of Object.values(alt)) if (preisJeBasis(a) !== null || benutzt.has(a.name) || a.herkunft === "selbst") neu[a.name] = a;
+  const zutatenAlle = [...stand.gerichte.flatMap((g) => g.zutaten), ...Object.values(neu).filter((a) => a.herkunft === "selbst" && benutzt.has(a.name)).flatMap((a) => a.rezept?.zutaten || [])];
+  for (const z of zutatenAlle) {
     if (neu[z.name]) continue;
     const kat = PRODUKT_INDEX[z.name];
     const gruppe = kat?.g || "gewuerz";
@@ -294,7 +297,55 @@ export function artikelAusGerichten(stand) {
     neu[z.name] = a;
   }
   for (const a of Object.values(neu)) a.benutzt = benutzt.has(a.name);
-  return Object.values(neu);
+  const liste = Object.values(neu);
+  zwischenpreiseRechnen({ ...stand, artikel: liste });
+  return liste;
+}
+
+// Preis eines selbst gemachten Teils (Punkt 2): Material / Ausbeute. Fehlt ein Rohstoffpreis, bleibt der Preis offen – nichts wird erfunden.
+// Die Arbeitszeit steckt NICHT im Preis: Löhne sind schon in den Lohnkosten des Ladens. Sie wandert stattdessen als Minuten in die
+// Zubereitungszeit der Gerichte (zeitMitZwischen) und verteilt sich so über den Zeitzuschlag – ohne doppelt zu zählen.
+// arbeitGeld (Minuten × Minutensatz) dient nur dem Vergleich „selbst oder gekauft". Nur eine Stufe: Rohstoffe sind gekaufte Artikel.
+export function zwischenpreis(artikel, artikelIndex, minutensatz = null) {
+  const r = artikel.rezept; if (!r || !(r.ausbeute?.menge > 0)) return { preis: null, arbeitGeld: null, fehlt: ["rezept"] };
+  let material = 0; const fehlt = [];
+  for (const z of r.zutaten || []) {
+    const a = artikelIndex[z.name];
+    const pj = a && a.herkunft !== "selbst" ? preisJeBasis(a) : null;
+    if (pj === null || !(Number(z.menge) > 0) || EINHEITEN[z.einheit]?.basis !== EINHEITEN[a.packung?.einheit]?.basis) { fehlt.push(z.name); continue; }
+    material += inBasis(z.menge, z.einheit) * pj;
+  }
+  const arbeitGeld = minutensatz === null ? null : (Number(r.arbeitMin) || 0) * minutensatz;
+  return { preis: fehlt.length ? null : material, arbeitGeld, fehlt };
+}
+
+// Rechnet die Preise aller selbst gemachten Artikel neu und schreibt sie wie einen Einkaufspreis (netto, je Ausbeute) an den Artikel.
+// Ändert sich der Preis (Mehl teurer), kommt der alte in den Preisverlauf – so erscheint das Teil in „Preise, die sich geändert haben".
+export function zwischenpreiseRechnen(stand) {
+  const index = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
+  for (const a of stand.artikel || []) {
+    if (a.herkunft !== "selbst" || !a.rezept) continue;
+    const z = zwischenpreis(a, index);
+    const preis = z.preis === null ? null : Math.round(z.preis * 10000) / 10000;
+    const menge = a.rezept.ausbeute.menge, einheit = a.rezept.ausbeute.einheit;
+    if (preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit) {
+      if (typeof a.preis === "number" && preis !== null) preisMerken(a, heute());
+      a.preis = preis; a.packung = { menge, einheit }; a.preisBasis = "netto";
+    }
+    a.status = preis === null ? "offen" : "errechnet"; a.zwischenFehlt = z.fehlt;
+  }
+}
+
+// Zubereitungszeit eines Gerichts plus der anteiligen Arbeit an selbst gemachten Teilen (Pizza: 20 min je 1650 g Teig × 280 g ≈ 3,4 min).
+export function zeitMitZwischen(gericht, artikelIndex) {
+  let extra = 0;
+  for (const z of gericht.zutaten || []) {
+    const a = artikelIndex[z.name]; const r = a?.herkunft === "selbst" ? a.rezept : null;
+    if (!r || !(r.ausbeute?.menge > 0) || !(Number(r.arbeitMin) > 0)) continue;
+    if (EINHEITEN[z.einheit]?.basis !== EINHEITEN[r.ausbeute.einheit]?.basis) continue;
+    extra += r.arbeitMin * inBasis(z.menge, z.einheit) / inBasis(r.ausbeute.menge, r.ausbeute.einheit);
+  }
+  return (Number(gericht.zeit) || 0) + extra;
 }
 
 // Vollständige Kalkulation der Karte. Alle Formeln aus der Prüfung Oktober 2026:
@@ -302,12 +353,13 @@ export function artikelAusGerichten(stand) {
 //  netto_ziel = SK / (1 − g − p)   (p nur für den Portalpreis)
 //  Ampel gegen den heutigen Preis: grün = Ziel erreicht, gelb = Kosten gedeckt, rot = unter Kosten, grau = Preise fehlen.
 export function kalkulation(stand, { produktivAnteil = 0.7 } = {}) {
+  zwischenpreiseRechnen(stand); // selbst gemachte Teile folgen den Rohstoffpreisen (Mehl teurer → Pide teurer)
   const last = monatsLast(stand);
   const artikelIndex = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   const { mengen, geschaetzt: mengenGeschaetzt } = mengenJeMonat(stand);
   const minutensatz = lohnMinutensatz(stand.team, produktivAnteil);
   const g = (Number(stand.verkauf?.zielgewinn) || 0) / 100;
-  const gerichteMitMenge = stand.gerichte.map((x) => ({ ...x, menge: mengen[x.id] || 0 }));
+  const gerichteMitMenge = stand.gerichte.map((x) => ({ ...x, zeit: zeitMitZwischen(x, artikelIndex), menge: mengen[x.id] || 0 }));
   const tQuer = gewichteteZeit(gerichteMitMenge);
   const kFix = fixkostenJeGericht(gerichteMitMenge, last.gesamt);
   const portal = (stand.kanaele?.portale || []).find((p) => p.provision > 0) || null;

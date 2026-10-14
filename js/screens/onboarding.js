@@ -1,5 +1,8 @@
 // Onboarding: eine Frage je Bildschirm, jeder Schritt wird sofort gespeichert,
 // jeder Schritt lässt sich mit „weiß ich gerade nicht" offen lassen. Nichts blockiert.
+import { selbstGewaehlt, selbstAnwenden } from "../selbst.js";
+import { kachelnFuer } from "../data/zwischen.js";
+import { ladenArtVon } from "../profil.js";
 import { t, SPRACHEN } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, uid, wertAnzeige } from "../util.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
@@ -353,6 +356,28 @@ const ladenSchnell = {
   },
 };
 
+// Punkt 2 (Baris 14.10., 18:13): „Was macht ihr selbst?" – ein Tipp pro Kachel, typische sind je Laden-Art schon angetippt.
+// Keine Mengen hier: die selbst gemachten Teile bekommen sofort Start-Rezepte (gelb, geschätzt), anpassen später.
+const selbstSchnell = {
+  id: "selbst",
+  view: (stand) => {
+    const an = new Set(selbstGewaehlt(stand));
+    return `
+    <h1 class="frage">${esc(t("schnell.selbstFrage"))}</h1>
+    <p class="hinweis">${esc(t("schnell.selbstHinweis"))}</p>
+    <div class="kacheln">${kachelnFuer(ladenArtVon(stand)).map((k) => `<button type="button" class="kachel ${an.has(k.id) ? "an" : ""}" aria-pressed="${an.has(k.id)}" data-a="selbst" data-wert="${k.id}"><span class="bildplatz klein" data-bild="selbst-${k.id}" aria-hidden="true"></span><b>${esc(t("schnell.selbstKacheln." + k.id))}</b></button>`).join("")}</div>
+    <p class="hinweis">${esc(t("schnell.selbstRest"))}</p>`;
+  },
+  fuss: () => knopfWeiter(),
+  aktion(name, el, stand) {
+    if (name !== "selbst") return false;
+    const an = new Set(selbstGewaehlt(stand)); const id = el.dataset.wert;
+    if (an.has(id)) an.delete(id); else an.add(id);
+    stand.selbst = [...an]; return true;
+  },
+  beimVerlassen(stand) { selbstAnwenden(stand); },
+};
+
 const karteSchnell = {
   id: "karte-foto",
   view: (stand) => (karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)),
@@ -413,5 +438,5 @@ const fertigSchnell = {
   aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(el.dataset.ziel === "beleg" ? "beleg" : "start"); return false; } },
 };
 
-export const SCHNELL = [sprache, ladenSchnell, karteSchnell, kostenSchnell, fertigSchnell];
+export const SCHNELL = [sprache, ladenSchnell, selbstSchnell, karteSchnell, kostenSchnell, fertigSchnell];
 export const schritteFuer = (stand) => (stand?.weg === "schnell" ? SCHNELL : SCHRITTE);

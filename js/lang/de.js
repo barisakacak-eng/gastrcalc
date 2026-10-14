@@ -343,6 +343,7 @@ export default {
   },
 
   profil: { kern: (art) => `Für deinen Laden: ${art}`, kernAllgemein: "Für deinen Laden", oft: "Auch oft dabei", weitere: "Weitere Bereiche", weitereAuf: (n) => `Weitere Bereiche zeigen (${n})`, weitereZu: "Weitere Bereiche zuklappen", aus: (b) => `aus: ${b}` },
+  selbst: { gemacht: "Selbst gemacht", errechnet: "errechnet", ansatz: (z, aus, min) => `Ansatz: ${z} ergibt ${aus}, etwa ${min} Minuten Arbeit.`, fehlt: (n) => `Preis offen. Es fehlen Einkaufspreise für: ${n}`, dochKaufen: "Kaufen wir doch fertig", machenSelbst: "Machen wir selbst" },
   bereiche: {
     doener: "Döner & Kebab", pizza: "Pizza & Pasta", burger: "Burger & Grill", currywurst: "Currywurst & Pommes", asia: "Asiatisch & Wok",
     fruehstueck: "Frühstück & Backwaren", kuchen: "Kuchen & Konditorei", kaffee: "Kaffee & Heißgetränke", bar: "Bar & Cocktails", bier: "Bier & Fassgetränke",
@@ -823,6 +824,7 @@ export default {
   },
 
   schnell: {
+    selbstFrage: "Was macht ihr selbst?", selbstHinweis: "Tippe an, was bei euch selbst gemacht wird. Alles andere kauft ihr fertig.", selbstRest: "Mengen brauchst du jetzt nicht. Die App nimmt Startwerte, du passt sie später an.", selbstKacheln: { teig: "Teig für Pizza und Pide", brot: "Brot / Fladen", lahmacun: "Lahmacun-Teig", sossen: "Soßen (Knoblauch, Kräuter)", patty: "Burger-Patties", tomatensosse: "Pizzasoße" }, 
     ladenFrage: "Wie heißt dein Laden und was verkaufst du?",
     arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", anders: "Etwas anderes" },
     genau: "Lieber alles Schritt für Schritt einrichten (dauert länger)",

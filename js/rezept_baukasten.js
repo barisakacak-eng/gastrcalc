@@ -3,6 +3,8 @@
 //
 // Prinzip: Gericht = Grundrezept (aus dem Namen erkannt: Pide, Lahmacun, Döner, Teller, Seele …) + Belag (aus „mit X, Y, Z")
 //          + Größe (klein/groß) + Abwandlung (vegetarisch/vegan, Reis oder Pommes).
+// Teig und Soßen stehen als eigene Artikel drin (Pizzateig, Pide-Teig, Lahmacun-Teig, Pizzasoße, Punkt 2): ob gekauft oder selbst
+// gemacht, entscheidet der Artikel (js/data/zwischen.js). Pizza- und Seele-Teig 280 g je Stück (Sanji, Lauf 2: Teigling 250–300 g für 30 cm).
 // Die Mengen sind STARTWERTE: übliche Portionsgrößen in Imbissbetrieben, als Schätzung gekennzeichnet (rezeptQuelle "baukasten").
 // Der Wirt passt sie im Rezept an; später ersetzen belegte Branchenwerte (Sanji-Recherche) die Zahlen. Keine Zahl ist „gemessen".
 
@@ -31,15 +33,15 @@ export const GRUNDREZEPTE = [
   { id: "salat", muster: /salat\b|salad/i, zeit: 4,
     zutaten: [Z("Eisbergsalat", 120), Z("Tomaten", 50), Z("Salatgurke", 50), Z("Zwiebeln", 20), Z("Joghurtdressing", 50), Z("Salatschale", 1, "stk")] },
   { id: "lahmacun", muster: /lahmacun|lahmacun/i, zeit: 4, fleisch: "Lammhackfleisch",
-    zutaten: [Z("Pide-Brot", 1, "stk"), Z("Lammhackfleisch", 80), Z("Zwiebeln", 30), Z("Tomaten", 30), Z("Petersilie", 10), Z("Dönergewürz", 3), Z("Alufolie-Bogen", 1, "stk")] },
+    zutaten: [Z("Lahmacun-Teig", 110), Z("Lammhackfleisch", 80), Z("Zwiebeln", 30), Z("Tomaten", 30), Z("Petersilie", 10), Z("Dönergewürz", 3), Z("Alufolie-Bogen", 1, "stk")] },
   { id: "pide", muster: /\bpide\b/i, zeit: 8,
-    zutaten: [Z("Pizzamehl Typ 00", 220), Z("Frischhefe", 3), Z("Sonnenblumenöl", 10, "ml"), Z("Pizzakarton 30 cm", 1, "stk")] },
+    zutaten: [Z("Pide-Teig", 250), Z("Sonnenblumenöl", 10, "ml"), Z("Pizzakarton 30 cm", 1, "stk")] },
   { id: "nudeln", muster: /maccaroni|makkaroni|penne|spaghetti|nudel|pasta|tortellini|rigatoni/i, zeit: 10,
     zutaten: [Z("Penne", 130), Z("Pizzatomaten (Dose)", 120), Z("Pizzakäse gerieben", 60), Z("Pastabox", 1, "stk")] },
   { id: "seele", muster: /seele|calzone/i, zeit: 9,
-    zutaten: [Z("Pizzamehl Typ 00", 250), Z("Frischhefe", 3), Z("Pizzatomaten (Dose)", 60), Z("Pizzakäse gerieben", 80), Z("Pizzakarton 30 cm", 1, "stk")] },
+    zutaten: [Z("Pizzateig", 280), Z("Pizzasoße", 60), Z("Pizzakäse gerieben", 80), Z("Pizzakarton 30 cm", 1, "stk")] },
   { id: "pizza", muster: /pizza/i, zeit: 8,
-    zutaten: [Z("Pizzamehl Typ 00", 260), Z("Frischhefe", 3), Z("Pizzatomaten (Dose)", 90), Z("Pizzakäse gerieben", 100), Z("Olivenöl", 5, "ml"), Z("Pizzakarton 30 cm", 1, "stk")] },
+    zutaten: [Z("Pizzateig", 280), Z("Pizzasoße", 90), Z("Pizzakäse gerieben", 100), Z("Olivenöl", 5, "ml"), Z("Pizzakarton 30 cm", 1, "stk")] },
   { id: "falafel-wrap", muster: /falafel.*(yufka|d[üu]r[üu]m|wrap)|(yufka|d[üu]r[üu]m|wrap).*falafel/i, zeit: 5,
     zutaten: [Z("Falafelbällchen", 6, "stk"), Z("Dürüm-Wrap", 1, "stk"), Z("Eisbergsalat", 40), Z("Tomaten", 30), Z("Kräutersauce", 40), Z("Alufolie-Bogen", 1, "stk")] },
   { id: "falafel", muster: /falafel/i, zeit: 4,

@@ -342,6 +342,7 @@ export default {
   },
 
   profil: { kern: (art) => `For your shop: ${art}`, kernAllgemein: "For your shop", oft: "Also common", weitere: "More areas", weitereAuf: (n) => `Show more areas (${n})`, weitereZu: "Hide more areas", aus: (b) => `from: ${b}` },
+  selbst: { gemacht: "Made in-house", errechnet: "calculated", ansatz: (z, aus, min) => `Batch: ${z} makes ${aus}, about ${min} minutes of work.`, fehlt: (n) => `Price open. Purchase prices missing for: ${n}`, dochKaufen: "We buy it ready-made", machenSelbst: "We make it ourselves" },
   bereiche: {
     doener: "Döner & kebab", pizza: "Pizza & pasta", burger: "Burgers & grill", currywurst: "Currywurst & fries", asia: "Asian & wok",
     fruehstueck: "Breakfast & bakery", kuchen: "Cakes & pastry", kaffee: "Coffee & hot drinks", bar: "Bar & cocktails", bier: "Beer & draught",
@@ -822,6 +823,7 @@ export default {
   },
 
   schnell: {
+    selbstFrage: "What do you make yourselves?", selbstHinweis: "Tap what you make in-house. Everything else you buy ready-made.", selbstRest: "No amounts needed now. The app uses starting values, you adjust them later.", selbstKacheln: { teig: "Dough for pizza and pide", brot: "Bread / flatbread", lahmacun: "Lahmacun dough", sossen: "Sauces (garlic, herb)", patty: "Burger patties", tomatensosse: "Pizza sauce" }, 
     ladenFrage: "What is your shop called and what do you sell?",
     arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", anders: "Something else" },
     genau: "Set up everything step by step instead (takes longer)",

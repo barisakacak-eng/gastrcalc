@@ -343,6 +343,7 @@ export default {
   },
 
   profil: { kern: (art) => `Senin dükkânın için: ${art}`, kernAllgemein: "Senin dükkânın için", oft: "Sık olanlar", weitere: "Diğer alanlar", weitereAuf: (n) => `Diğer alanları göster (${n})`, weitereZu: "Diğer alanları kapat", aus: (b) => `şuradan: ${b}` },
+  selbst: { gemacht: "Kendimiz yapıyoruz", errechnet: "hesaplandı", ansatz: (z, aus, min) => `Tarif: ${z}, sonuç ${aus}, yaklaşık ${min} dakika iş.`, fehlt: (n) => `Fiyat açık. Şunların alış fiyatı eksik: ${n}`, dochKaufen: "Hazır alıyoruz", machenSelbst: "Kendimiz yapıyoruz" },
   bereiche: {
     doener: "Döner & kebap", pizza: "Pizza & makarna", burger: "Burger & ızgara", currywurst: "Currywurst & patates", asia: "Asya & wok",
     fruehstueck: "Kahvaltı & fırın", kuchen: "Pasta & tatlı", kaffee: "Kahve & sıcak içecekler", bar: "Bar & kokteyl", bier: "Bira & fıçı",
@@ -823,6 +824,7 @@ export default {
   },
 
   schnell: {
+    selbstFrage: "Neleri kendiniz yapıyorsunuz?", selbstHinweis: "Kendiniz yaptıklarınıza dokun. Gerisini hazır alıyorsunuz.", selbstRest: "Şimdi miktar gerekmiyor. Uygulama başlangıç değerleri kullanır, sonra düzeltirsin.", selbstKacheln: { teig: "Pizza ve pide hamuru", brot: "Ekmek / pide ekmeği", lahmacun: "Lahmacun hamuru", sossen: "Soslar (sarımsak, otlu)", patty: "Burger köftesi", tomatensosse: "Pizza sosu" }, 
     ladenFrage: "Dükkanının adı ne ve ne satıyorsun?",
     arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", anders: "Başka bir şey" },
     genau: "Her şeyi adım adım kur (daha uzun sürer)",

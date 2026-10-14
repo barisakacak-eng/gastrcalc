@@ -1,12 +1,12 @@
 // Service Worker: alle App-Dateien einer Fassung werden in EINEN Cache mit Fassungsnamen gelegt – ganz oder gar nicht.
 // Die Seite liest nur aus dem Cache ihrer eigenen Fassung, nie gemischt. Eine neue Fassung wartet, bis die Seite sie
 // ausdrücklich übernimmt (Hinweis auf der Startseite), dann genau ein Neuladen. (Vorprüfung Gremium, Posten 1.)
-const V = "2026-10-14.8";
+const V = "2026-10-14.9";
 const NAME = "gc-" + V;
 // Fremdbausteine (Texterkennung ~9 MB, PDF-Leser ~1,4 MB) werden nicht bei jeder Fassung neu geladen, sondern beim ersten
 // Gebrauch in einen eigenen, fassungsunabhängigen Cache gelegt – danach offline verfügbar. Neuer Name nur bei neuen Bausteinen.
 const VENDOR = "gcv-2026-10-14b"; // b: deutsches Modell „best" statt „fast" (Pilot 14.10.)
-const DATEIEN = ["./", "index.html", "css/app.css", "css/tokens.css", "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png", "js/ablage.js", "js/app.js", "js/auswertung.js", "js/beleg.js", "js/data/formate.js", "js/data/katalog.js", "js/data/kosten.js", "js/data/kuechen.js", "js/data/register.js", "js/engine.js", "js/i18n.js", "js/karte_lesen.js", "js/kostenbeleg.js", "js/lang/de.js", "js/lang/en.js", "js/lang/tr.js", "js/lieferung.js", "js/muell.js", "js/ocr-worker.js", "js/ocr_layout.js", "js/profil.js", "js/rezept_baukasten.js", "js/screens/abschluss.js", "js/screens/beleg.js", "js/screens/foto.js", "js/screens/home.js", "js/screens/karte.js", "js/screens/kuehl.js", "js/screens/laeden.js", "js/screens/muell.js", "js/screens/nav.js", "js/screens/onboarding.js", "js/screens/tag.js", "js/screens/umsatz.js", "js/store.js", "js/util.js", "js/zaehler.js", "manifest.webmanifest"];
+const DATEIEN = ["./", "index.html", "css/app.css", "css/tokens.css", "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png", "js/ablage.js", "js/app.js", "js/auswertung.js", "js/beleg.js", "js/data/formate.js", "js/data/katalog.js", "js/data/kosten.js", "js/data/kuechen.js", "js/data/register.js", "js/data/zwischen.js", "js/engine.js", "js/i18n.js", "js/karte_lesen.js", "js/kostenbeleg.js", "js/lang/de.js", "js/lang/en.js", "js/lang/tr.js", "js/lieferung.js", "js/muell.js", "js/ocr-worker.js", "js/ocr_layout.js", "js/profil.js", "js/rezept_baukasten.js", "js/screens/abschluss.js", "js/screens/beleg.js", "js/screens/foto.js", "js/screens/home.js", "js/screens/karte.js", "js/screens/kuehl.js", "js/screens/laeden.js", "js/screens/muell.js", "js/screens/nav.js", "js/screens/onboarding.js", "js/screens/tag.js", "js/screens/umsatz.js", "js/selbst.js", "js/store.js", "js/util.js", "js/zaehler.js", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(NAME).then((c) => c.addAll(DATEIEN.map((u) => new Request(u, { cache: "reload" })))));

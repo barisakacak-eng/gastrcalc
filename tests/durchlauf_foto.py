@@ -40,6 +40,10 @@ async def main():
             await pg.wait_for_selector('[data-a="laden-art"]'); await bild("laden")
             await pg.fill('[data-f="betrieb.name"]', "Döner Haus"); await klick('[data-a="laden-art"][data-wert="doener"]')
             await bild("laden-gewaehlt"); await klick('[data-a="weiter"]')
+            # 2b Was macht ihr selbst? (Punkt 2) – Dönerladen: Teig, Brot, Lahmacun, Soßen schon angetippt
+            await pg.wait_for_selector('[data-a="selbst"]'); an = await pg.locator('[data-a="selbst"].an').count()
+            assert an == 4, f"Vorauswahl Dönerladen: {an}"
+            await klick('[data-a="selbst"][data-wert="patty"]'); await klick('[data-a="selbst"][data-wert="patty"]'); await bild("selbst"); await klick('[data-a="weiter"]')
             # 3 Speisekarte fotografieren (Galerie-Eingang: setInputFiles; der Kamera-Eingang hat capture)
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="speisekarte"]', state="attached"); await bild("karte-foto")
             assert await pg.locator('input[data-f="foto"][capture]').count() == 1, "Kamera-Eingang fehlt"
