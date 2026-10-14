@@ -3,6 +3,8 @@
 import { selbstGewaehlt, selbstAnwenden } from "../selbst.js";
 import { kachelnFuer } from "../data/zwischen.js";
 import { ladenArtVon } from "../profil.js";
+import { einrichtungStand } from "../einrichtung.js";
+import { ring } from "./home.js";
 import { t, SPRACHEN } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, uid, wertAnzeige } from "../util.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
@@ -431,8 +433,8 @@ const fertigSchnell = {
         <div class="summenzeile"><span>${esc(t("schnell.inventur"))}</span><span class="wert">${stand.artikel.length}</span></div>
         <div class="summenzeile"><span>${esc(t("schnell.kostenMonat"))}</span><span class="wert">${fmtEuro(last.gesamt)}</span></div>
       </div>
-      ${r.ohneRezept ? `<p class="tipp">${esc(t("schnell.ohneRezept", r.ohneRezept))}</p>` : ""}
-      <p class="hinweis">${esc(t("schnell.fertigHinweis"))}</p>`;
+      ${(() => { const e = einrichtungStand(stand); return `<div class="karte einrichtung"><div class="einrichtung-kopf">${ring(e.prozent)}<div><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.rest", e.offen))}</small></div></div></div>`; })()}
+      <p class="hinweis">${esc(t("schnell.fertigHinweis"))}</p>`; // Punkt 6: Ring statt „fehlt noch"-Kästen; r.ohneRezept steckt im Ring
   },
   fuss: () => `<button type="button" class="knopf glut" data-a="ob-fertig" data-ziel="beleg">${esc(t("schnell.rechnungen"))}</button><button type="button" class="knopf zweit" data-a="ob-fertig" data-ziel="start">${esc(t("schnell.zumCockpit"))}</button>`,
   aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(el.dataset.ziel === "beleg" ? "beleg" : "start"); return false; } },

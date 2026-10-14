@@ -15,7 +15,8 @@ import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./s
 import { parseTemperatur } from "./screens/kuehl.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
-import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung } from "./screens/muell.js";
+import { navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig } from "./screens/muell.js";
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
@@ -53,6 +54,7 @@ function zeichne() {
   try {
     if (stand.phase === "onboarding") zeichneOnboarding();
     else {
+      navKontext(stand, wurzel);
       const v = ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
         : ansicht === "karte" ? karteView(stand)
         : ansicht === "muell" ? muellView(stand)
@@ -248,6 +250,19 @@ root.addEventListener("click", async (ev) => {
   const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
   if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
 
+  // Menü und Schnellknopf (Punkt 4): öffnen/schließen ohne Bildschirmwechsel; jede andere Handlung schließt beides
+  if (name === "menue-auf") { menueSetzen(!menueIstOffen()); if (menueIstOffen()) history.pushState({ menue: true }, ""); return zeichne(); }
+  if (name === "menue-zu") { menueSetzen(false); return zeichne(); }
+  if (name === "schnell-auf") { schnellSetzen(true); return zeichne(); }
+  if (name === "schnell-zu") { schnellSetzen(false); return zeichne(); }
+  if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); }
+  if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") === "1"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
+  if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
+  if (name === "kuehl-keine") { stand.kuehl.keine = true; speichern(wurzel); return zeichne(); }
+  if (name === "branchen-ok") { delete stand.branchenMeldung; speichern(wurzel); return zeichne(); }
+  if (name === "waage-vorschlag") { stand.waageVorschlag = new Date().toISOString().slice(0, 10); speichern(wurzel); return bearbeiten("rezepte"); }
+  if (name === "schnell-muell") { tagZuruecksetzen(); muellZuruecksetzen(); muellEingabeOeffnen(); ansicht = "muell"; return zeichne(); }
+  if (name === "schnell-umsatz") { tagZuruecksetzen(); umsatzZuruecksetzen(); ansicht = "umsatz"; zeichne(); root.querySelector('[data-f="umsatz"]')?.focus(); return; }
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
@@ -282,8 +297,9 @@ root.addEventListener("click", async (ev) => {
     if (tagAktion(name, el, stand)) { speichern(wurzel); zeichne(); } return;
   }
   if (ansicht === "muell") {
+    if (name === "muell-rueckgaengig") { if (muellRueckgaengig(stand, el.dataset.id)) { speichern(wurzel); meldung(t("muell.zurueckgenommen")); } return zeichne(); }
     const r = muellAktion(name, el, stand);
-    if (r) { speichern(wurzel); if (r.meldung) { ereignis("schwund-eintrag", { laden: stand.id }); meldung(r.meldung); } zeichne(); }
+    if (r) { speichern(wurzel); if (name === "muell-weg-damit") ereignis("schwund-eintrag", { laden: stand.id }); if (r.meldung) meldung(r.meldung); zeichne(); }
   }
   if (ansicht === "umsatz") { if (umsatzAktion(name, el)) zeichne(); }
   if (ansicht === "kartefoto") {
@@ -324,7 +340,7 @@ root.addEventListener("input", (ev) => {
     neu = umsatzEingabe(el.dataset.f, el.value, stand, wurzel);
   } else if (ansicht === "muell") {
     neu = muellEingabe(el.dataset.f, el.value);
-    if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="muell-rohware-speichern"], [data-a="muell-eimer-speichern"]'); if (k) k.disabled = !muellFormGueltig(); }
+    if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="muell-weg-damit"]'); if (k) k.disabled = !muellFormGueltig(); }
   } else if (ansicht === "beleg") {
     neu = belegEingabe(el.dataset.f, el.value);
     if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="beleg-zerlegen"]'); if (k) k.disabled = !belegTextDa(); }
@@ -384,6 +400,7 @@ root.addEventListener("keydown", (ev) => {
 // Zurück-Geste des Handys / Browser-Zurück: ein Schritt zurück statt App verlassen.
 window.addEventListener("popstate", () => {
   if (!stand) return;
+  if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); zeichne(); return; } // Zurück schließt zuerst das Menü
   if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr || fotoLauf())) { schrittZurueck(); }
   else if (stand.phase === "app" && ansicht !== "start") {
     if (ansicht === "listen") ansicht = "umsatz";

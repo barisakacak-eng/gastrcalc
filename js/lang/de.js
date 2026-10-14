@@ -348,6 +348,16 @@ export default {
     kurz: { schaetzung: "geschätzt", pilot: "Pilotbetrieb", branche: "Branchenwert", eigen: "dein Wert", "eigen-abgeleitet": "~ dein Wert" },
     erklaerung: { schaetzung: "Geschätzt heißt: So machen es viele Imbisse. Dein Laden ist vielleicht anders. Wieg einmal ab, dann stimmt es.", pilot: "Diese Menge hat ein echter Laden gewogen. Dein Laden ist vielleicht anders.", branche: "Diese Menge kommt aus mehreren Quellen der Branche. Dein Laden ist vielleicht anders.", eigen: "Diese Menge hast du selbst eingetragen oder gewogen. Die App ändert sie nie.", "eigen-abgeleitet": "Du hast diese Zutat bei einem anderen Gericht gewogen. Die App hat deine Menge hier übertragen. Du kannst sie einzeln nachwiegen." } },
   waage: { start: "Jetzt abwiegen – 2 Minuten", schritt: (k, n) => `Frage ${k} von ${n}`, frage: (z, g) => `Wie viel ${z} kommt in „${g}"?`, startwert: (x) => `Startwert: ${x}. Leg es auf die Waage und tipp den Wert an.`, ok: "Stimmt so", weissNicht: "Weiß ich nicht – Startwert behalten", gelernt: (z, n) => `✓ ${n} Gerichte haben jetzt deine Menge für ${z}.`, geldMehr: (e, g) => `Das sind ${e} mehr Gewinn je ${g}.`, geldWeniger: (e, g) => `Das kostet dich ${e} mehr je ${g}. Gut zu wissen.` },
+  menue: { titel: "Menü", oeffnen: "Menü öffnen", deinLaden: "Dein Laden", gruppen: { heute: "Heute", kalkulation: "Kalkulation", auswertung: "Auswertung", einstellungen: "Einstellungen" },
+    cockpit: "Cockpit", muell: "Müll", kuehl: "Kühlung", umsatz: "Umsatz und Zähler", abschluss: "Tag abschließen", karte: "Speisekarte", beleg: "Einkaufspreise und Belege", kosten: "Feste Kosten und Löhne",
+    listen: "Listen und Kontrollblatt", laeden: "Alle Läden", einstellungen: "Laden, Team, Sprache", sicherung: "Sicherung" },
+  schnellknopf: { auf: "Schnell eintragen", zu: "Schließen", muell: "Müll eintragen", kuehl: "Kühlung messen", umsatz: "Umsatz eintragen" },
+  einrichtung: { titel: (p) => `Dein Laden ist zu ${p} % eingerichtet`, rest: (n) => n === 1 ? "Noch 1 Schritt, dann rechnet der Zähler genau." : `Noch ${n} Schritte, dann rechnet der Zähler genau.`, als: "Als Nächstes:",
+    weniger: "Weniger anzeigen", mehr: "Alle Schritte zeigen", fertig: "Fertig eingerichtet", fertigText: "Alle sieben Schritte sind erledigt. Der Zähler rechnet jetzt mit deinen Zahlen.", ok: "Gut", habenWirNicht: "Haben wir nicht / später",
+    kurz: (p) => `Einrichtung ${p} % · weiter im Cockpit ›`,
+    schritte: { karte: "Speisekarte", preise: "Preise der Gerichte", rezepte: "Rezepte", kosten: "Feste Kosten", einkauf: "Einkaufspreise", kuehlung: "Kühlung", sicherung: "Sicherung" },
+    offen: { karte: () => "Speisekarte fotografieren", preise: (n) => `${n} Gerichte ohne Preis`, rezepte: (n) => `${n} Gerichte ohne Rezept`, kosten: (n) => `${n} Pflichtposten offen (Miete, Personal, eigener Lohn, Strom/Gas)`,
+      einkauf: (n) => `${n} Zutaten ohne Einkaufspreis – ein Rechnungsfoto füllt das`, kuehlung: () => "Kühlstelle anlegen", sicherung: () => "Letzte Sicherung älter als 7 Tage" } },
   bereiche: {
     doener: "Döner & Kebab", pizza: "Pizza & Pasta", burger: "Burger & Grill", currywurst: "Currywurst & Pommes", asia: "Asiatisch & Wok",
     fruehstueck: "Frühstück & Backwaren", kuchen: "Kuchen & Konditorei", kaffee: "Kaffee & Heißgetränke", bar: "Bar & Cocktails", bier: "Bier & Fassgetränke",
@@ -473,6 +483,7 @@ export default {
   },
 
   cockpit: {
+    umsatzWoche: "Umsatz Woche", zurVorwoche: (p) => `${p} % zur Vorwoche`, umsatzLeer: "Ersten Tagesumsatz eintragen", tonneWoche: "Tonne Woche", tonneLeer: "Noch nichts weggeworfen", wareneinsatz: "Wareneinsatz", karteFehlt: "Karte fehlt", genauerAbwiegen: "Genauer wird’s, wenn du abwiegst", ziel: (p) => `Ziel ${p} %`, einrichten: "einrichten", branchenMeldung: (n) => `${n} Rezepte mit Branchenwerten aktualisiert. Deine eigenen Werte bleiben.`, 
     bisNull: (m) => `Bis null fehlen im ${m}`,
     verdient: (m) => `Verdient im ${m}`,
     nullErreicht: "Null erreicht",
@@ -493,6 +504,7 @@ export default {
     nichtEingerichtet: "nicht eingerichtet",
     jetztDran: "Jetzt dran",
     dran: {
+      sicherung: ["Sicherung machen", "Seit über 7 Tagen nicht gesichert. Ein Tipp, eine Datei."], waage: ["Ein Gericht abwiegen – 2 Minuten", "Dann stimmt dein Wareneinsatz genauer."], 
       rundgangWeiter: ["Rundgang fortsetzen", "Ein Rundgang ist noch offen."],
       kuehlEinrichten: ["Kühlstellen anlegen", "Zwei Minuten, dann schreibt sich das Kontrollblatt selbst."],
       nachkontrolle: ["Nachkontrolle fällig", "Eine Stelle war außerhalb der Grenze. Noch mal messen."],
@@ -571,6 +583,7 @@ export default {
   },
 
   muell: {
+    wasWeg: "Was ist weg?", wocheTonne: "Diese Woche in der Tonne", monatTonne: "Monatstonne", leerWoche: "Noch nichts eingetragen. Nichts weggeworfen? Guter Tag.", wocheZeile: (p, kg) => `≈ ${p} verkaufte Portionen, um das reinzuholen · ${kg} kg`, wenigerAls: (m, d) => `weniger als im ${m} bis zum ${d}.`, mehrAls: (m, d) => `mehr als im ${m} bis zum ${d}.`, rueckgaengig: "Rückgängig", ammeisten: "Am meisten weg", eintragen: "Müll eintragen", andererTag: "Für einen anderen Tag", teller: "Teller", eimerNurGewicht: "nur das Gewicht", ganzePackung: "ganze Packung", personalWert: (e) => `Personalessen · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} in der Tonne`, eimerHinweisKurz: "Teller und Rohware, die heute schon gemeldet sind, werden abgezogen.", fuerPersonal: "Für Personal gegessen", wegDamit: "Weg damit", geradeEben: "gerade eben", zurueckgenommen: "Zurückgenommen.",
     nav: "Müll",
     titel: "Was ist weg?",
     gerichtWeg: "Gericht weg",

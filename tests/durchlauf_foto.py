@@ -92,7 +92,7 @@ async def main():
             await bild("bon-zuweisen"); await klick('[data-a="beleg-zerlegen"]')
             await pg.wait_for_selector('[data-a="beleg-uebernehmen"]'); await bild("bon-pruefen")
             # 8 PDF-Speisekarte über Karte
-            await klick('[data-a="nav"][data-wert="einstellungen"]'); await klick('[data-a="nav"][data-wert="karte"]'); await bild("karte-app")
+            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="karte"]'); await bild("karte-app")
             await klick('[data-a="nav"][data-wert="kartefoto"]'); await pg.wait_for_selector('input[data-f="foto"]', state="attached")
             await pg.locator('input[data-f="foto"]:not([capture])').set_input_files(str(BILD / "karte2.pdf"))
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=60000); await pg.wait_for_timeout(300); await bild("pdf-pruefen")
@@ -111,7 +111,7 @@ async def main():
             assert len(serie) >= 3, serie
             await klick('[data-a="fv-uebernehmen"]')
             # 9 Cockpit
-            await klick('[data-a="nav"][data-wert="start"]'); await bild("cockpit")
+            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="start"]'); await bild("cockpit")
             # Türkisch: Schnellstart-Texte vorhanden
             await ctx.close(); await b.close()
             print(f"Schnellstart bis fertig: {dauer:.1f} s (Testautomat, ohne Denkpausen)")

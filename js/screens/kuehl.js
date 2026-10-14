@@ -143,7 +143,7 @@ function rundgangView(stand) {
       ${fertig < stellen.length ? `<button type="button" class="knopf zweit" data-a="kuehl-start">${esc(t("kuehl.unterbrechen"))}</button>` : ""}
       <button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}
     </div>
-    ${nav("kuehl")}`;
+    ${nav("kuehl", { schnell: false })}`;
 }
 
 function rundgangStartView(stand) {

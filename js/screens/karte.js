@@ -354,7 +354,7 @@ export function ergebnisView(stand, { inApp = false } = {}) {
     ${inApp ? "" : `<h1 class="frage">${esc(t("ergebnis.titel"))}</h1><p class="hinweis">${esc(t("ergebnis.hinweis"))}</p>`}
     <div class="ampelzeile">${["gruen", "gelb", "rot", "grau"].map((a) => `<span class="ampel ${a}">${k.zaehl[a]} ${esc(ampelWort(a))}</span>`).join("")}</div>
     ${k.zielStufe !== "ok" ? `<p class="tipp">${esc(t(k.zielStufe === "sperre" ? "ergebnis.zielSperreAlle" : "ergebnis.zielWarnung"))}</p>` : ""}
-    ${k.unvollstaendig ? `<p class="tipp">${esc(t("ergebnis.unvollstaendig"))}</p>` : ""}
+    ${k.unvollstaendig && !inApp ? `<p class="tipp">${esc(t("ergebnis.unvollstaendig"))}</p>` : ""}
     <div class="liste">
       ${k.zeilen.map((z) => `<div class="zeile ${z.ampel === "grau" ? "offen" : ""}">
         <div class="oben"><div class="name"><i class="punkt ${z.ampel}"></i>${esc(z.name)}<small>${esc(t("rezepte.klassen." + z.klasse))}${z.warenGeschaetzt ? ` · ${esc(t("ergebnis.garverlustGeschaetzt"))}` : ""}</small></div>

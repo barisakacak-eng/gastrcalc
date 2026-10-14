@@ -347,6 +347,16 @@ export default {
     kurz: { schaetzung: "estimated", pilot: "pilot shop", branche: "industry value", eigen: "your value", "eigen-abgeleitet": "~ your value" },
     erklaerung: { schaetzung: "Estimated means: many snack bars do it like this. Your shop may be different. Weigh it once and it is right.", pilot: "A real shop weighed this amount. Your shop may be different.", branche: "This amount comes from several industry sources. Your shop may be different.", eigen: "You entered or weighed this amount yourself. The app never changes it.", "eigen-abgeleitet": "You weighed this ingredient for another dish. The app carried your amount over. You can weigh it here separately." } },
   waage: { start: "Weigh now – 2 minutes", schritt: (k, n) => `Question ${k} of ${n}`, frage: (z, g) => `How much ${z} goes into “${g}”?`, startwert: (x) => `Starting value: ${x}. Put it on the scale and tap the value.`, ok: "That's right", weissNicht: "Don't know – keep starting value", gelernt: (z, n) => `✓ ${n} dishes now use your amount of ${z}.`, geldMehr: (e, g) => `That is ${e} more profit per ${g}.`, geldWeniger: (e, g) => `That costs you ${e} more per ${g}. Good to know.` },
+  menue: { titel: "Menu", oeffnen: "Open menu", deinLaden: "Your shop", gruppen: { heute: "Today", kalkulation: "Costing", auswertung: "Reports", einstellungen: "Settings" },
+    cockpit: "Cockpit", muell: "Waste", kuehl: "Cooling", umsatz: "Sales and counter", abschluss: "Close the day", karte: "Menu card", beleg: "Purchase prices and receipts", kosten: "Fixed costs and wages",
+    listen: "Lists and log sheet", laeden: "All shops", einstellungen: "Shop, team, language", sicherung: "Backup" },
+  schnellknopf: { auf: "Quick entry", zu: "Close", muell: "Add waste", kuehl: "Measure cooling", umsatz: "Enter sales" },
+  einrichtung: { titel: (p) => `Your shop is ${p} % set up`, rest: (n) => n === 1 ? "1 step left, then the counter is accurate." : `${n} steps left, then the counter is accurate.`, als: "Next:",
+    weniger: "Show less", mehr: "Show all steps", fertig: "All set up", fertigText: "All seven steps are done. The counter now uses your numbers.", ok: "OK", habenWirNicht: "We don't have one / later",
+    kurz: (p) => `Setup ${p} % · continue in the cockpit ›`,
+    schritte: { karte: "Menu card", preise: "Dish prices", rezepte: "Recipes", kosten: "Fixed costs", einkauf: "Purchase prices", kuehlung: "Cooling", sicherung: "Backup" },
+    offen: { karte: () => "Take a photo of the menu", preise: (n) => `${n} dishes without a price`, rezepte: (n) => `${n} dishes without a recipe`, kosten: (n) => `${n} required items open (rent, staff, your own pay, power/gas)`,
+      einkauf: (n) => `${n} ingredients without purchase price – a receipt photo fills this`, kuehlung: () => "Add a cooling unit", sicherung: () => "Last backup older than 7 days" } },
   bereiche: {
     doener: "Döner & kebab", pizza: "Pizza & pasta", burger: "Burgers & grill", currywurst: "Currywurst & fries", asia: "Asian & wok",
     fruehstueck: "Breakfast & bakery", kuchen: "Cakes & pastry", kaffee: "Coffee & hot drinks", bar: "Bar & cocktails", bier: "Beer & draught",
@@ -472,6 +482,7 @@ export default {
   },
 
   cockpit: {
+    umsatzWoche: "Sales this week", zurVorwoche: (p) => `${p} % vs last week`, umsatzLeer: "Enter your first daily sales", tonneWoche: "Bin this week", tonneLeer: "Nothing thrown away yet", wareneinsatz: "Cost of goods", karteFehlt: "Menu missing", genauerAbwiegen: "Weigh it and it gets more accurate", ziel: (p) => `Target ${p} %`, einrichten: "set up", branchenMeldung: (n) => `${n} recipes updated with industry values. Your own values stay.`, 
     bisNull: (m) => `Still missing to zero in ${m}`,
     verdient: (m) => `Earned in ${m}`,
     nullErreicht: "Zero reached",
@@ -492,6 +503,7 @@ export default {
     nichtEingerichtet: "not set up",
     jetztDran: "Up next",
     dran: {
+      sicherung: ["Make a backup", "No backup for more than 7 days. One tap, one file."], waage: ["Weigh one dish – 2 minutes", "Then your cost of goods is more accurate."], 
       rundgangWeiter: ["Continue the round", "A round is still open."],
       kuehlEinrichten: ["Set up cooling units", "Two minutes, then the inspection sheet writes itself."],
       nachkontrolle: ["Re-check due", "One unit was out of range. Measure again."],
@@ -570,6 +582,7 @@ export default {
   },
 
   muell: {
+    wasWeg: "What went in the bin?", wocheTonne: "In the bin this week", monatTonne: "Monthly bin", leerWoche: "Nothing entered yet. Nothing thrown away? Good day.", wocheZeile: (p, kg) => `≈ ${p} portions sold to make up for it · ${kg} kg`, wenigerAls: (m, d) => `less than in ${m} up to day ${d}.`, mehrAls: (m, d) => `more than in ${m} up to day ${d}.`, rueckgaengig: "Undo", ammeisten: "Most thrown away", eintragen: "Add waste", andererTag: "For another day", teller: "plate", eimerNurGewicht: "weight only", ganzePackung: "whole pack", personalWert: (e) => `Staff meal · benefit value ${e}`, inDerTonne: (e) => `= ${e} in the bin`, eimerHinweisKurz: "Plates and raw goods already reported today are subtracted.", fuerPersonal: "Eaten by staff", wegDamit: "Throw away", geradeEben: "just now", zurueckgenommen: "Undone.",
     nav: "Bin",
     titel: "What went in the bin?",
     gerichtWeg: "Dish binned",

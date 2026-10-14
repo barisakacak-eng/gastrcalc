@@ -5,43 +5,96 @@ import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { monatsLast, kalkulation, schwundAuswertung, umsatzEintrag, kuehlStatus, offeneNachkontrollen, schwundOhneWert, umsatzKonflikte, umsatzSteuerSatz } from "../engine.js";
 import { zaehler, wochenVergleich, abschlussVon, warenQuote } from "../zaehler.js";
 import { ergebnisView } from "./karte.js";
-import { nav } from "./nav.js";
+import { nav, sicherungStufe } from "./nav.js";
+import { einrichtungStand } from "../einrichtung.js";
+import { muellWoche } from "../muell.js";
+import { wareneinsatzSicherheit } from "../rezept_quelle.js";
 import { eintraegeZaehlen } from "../store.js";
 import { datumLesbar, monatName, tagLesbar, zeitKurz } from "./tag.js";
 
+// Etappe 6, Punkt 4 (Baris 13.10., 12:57) und Punkt 6 (14.10., 16:35): Cockpit = Einrichtungskarte (bis 100 %), dunkle Zählerkarte mit
+// Monatskurve, vier Instrumente (Umsatz Woche, Tonne Woche, Wareneinsatz, Kühlung heute), „Jetzt dran". Türen, „Noch offen",
+// Sicherungskarte, Wochenkarte und der große Abschluss-Knopf sind weg (Menü, Zahlen im Menü, „Jetzt dran").
 export function startView(stand, extra = {}) {
   const H = heute(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand); const nk = offeneNachkontrollen(stand);
-  const sw = schwundAuswertung(stand, { von: H, bis: H }); const u = umsatzEintrag(stand, H); const ab = abschlussVon(stand, H);
-  const dran = naechsteHandlung(stand, z, ks, nk, ab);
+  const ab = abschlussVon(stand, H); const e = einrichtungStand(stand, extra.wurzel);
+  const dran = naechsteHandlung(stand, z, ks, nk, ab, e, extra.wurzel);
   const unter = [stand.betrieb.format ? t("format." + stand.betrieb.format)[0] : "", ...stand.betrieb.kuechen.map((k) => t("kueche." + k))].filter(Boolean).join(", ");
   return `
     <div class="kopfband">
-      <h1>${esc(t("start.hallo", stand.betrieb.name))}<span class="abzeichen">${esc(t("app.entwurf"))}</span></h1>
+      <h1>${esc(stand.betrieb.name || t("menue.deinLaden"))}<span class="abzeichen">${esc(t("app.entwurf"))}</span></h1>
       <div class="unter">${esc(tagLesbar(H))}${unter ? ` · ${esc(unter)}` : ""}</div>
     </div>
     <div class="inhalt cockpit">
       ${extra.aktualisierung ? `<div class="karte hinweisgelb"><h2>${esc(t("start.neueFassung"))}</h2><div>${esc(t("start.neueFassungText"))}</div><button type="button" class="knopf" data-a="aktualisieren">${esc(t("start.jetztUebernehmen"))}</button></div>` : ""}
+      ${stand.branchenMeldung ? `<div class="karte hinweisgruen"><div>${esc(t("cockpit.branchenMeldung", stand.branchenMeldung.geaendert))}</div><button type="button" class="knopf zweit" data-a="branchen-ok">${esc(t("einrichtung.ok"))}</button></div>` : ""}
+      ${einrichtungKarte(stand, e, { kompakt: !!stand.einrichtungFertig })}
       ${bandView(z, H)}
       ${zaehlerKarte(z, H)}
-      <div class="dreier">
-        <button type="button" class="kachel klein" data-a="nav" data-wert="umsatz"><small>${esc(t("cockpit.umsatzHeute"))}</small><b>${u ? fmtEuro(u.umsatz) : "–"}</b></button>
-        <button type="button" class="kachel klein" data-a="nav" data-wert="muell"><small>${esc(t("cockpit.tonneHeute"))}</small><b>${sw.anzahl ? fmtEuro(sw.muellwert, { dezimal: sw.muellwert < 100 ? 2 : 0 }) : "–"}</b><small>${sw.portionen !== null && sw.anzahl ? esc(t("cockpit.portionenKurz", fmtZahl(sw.portionen, sw.portionen < 10 ? 1 : 0))) : sw.ohneWert ? esc(t("listen.ohneWert", sw.ohneWert)) : ""}</small></button>
-        <button type="button" class="kachel klein ${ks.ueberfaellig ? "rotrand" : ""}" data-a="nav" data-wert="kuehl"><small>${esc(t("cockpit.kuehlung"))}</small><b>${ks.eingerichtet ? `${ks.heuteGemessen} / ${ks.stellen}` : "–"}</b><small>${esc(ks.eingerichtet ? (ks.heuteGemessen >= ks.stellen ? t("cockpit.alleGemessen") : t("cockpit.nochOffen", ks.stellen - ks.heuteGemessen)) : t("cockpit.nichtEingerichtet"))}</small></button>
-      </div>
+      <div class="instrumente">${umsatzInstrument(stand, H)}${tonneInstrument(stand, H)}${wareneinsatzInstrument(stand, z)}${kuehlInstrument(ks)}</div>
       <button type="button" class="jetzt" data-a="${esc(dran.aktion)}" ${dran.attr || ""}><span><small>${esc(t("cockpit.jetztDran"))}</small><b>${esc(dran.text[0])}</b><small>${esc(dran.text[1])}</small></span><span class="pfeil">›</span></button>
-      ${sicherungKarte(extra.wurzel)}
-      ${wochenKarte(stand, H)}
-      <div class="tueren">
-        <button type="button" data-a="nav" data-wert="karte">${esc(t("cockpit.tueren.karte"))}</button>
-        <button type="button" data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges">${esc(t("cockpit.tueren.kosten"))}</button>
-        <button type="button" data-a="nav" data-wert="laeden">${esc(t("cockpit.tueren.laeden"))}</button>
-        <button type="button" data-a="nav" data-wert="beleg">${esc(t("cockpit.tueren.belege"))}</button>
-        <button type="button" data-a="nav" data-wert="listen">${esc(t("cockpit.tueren.listen"))}</button>
-      </div>
-      ${offenKarte(stand, z, nk)}
-      <button type="button" class="knopf ${ab ? "zweit" : "glut"}" data-a="nav" data-wert="abschluss">${esc(ab ? t("cockpit.tagAbgeschlossen", zeitKurz(ab.erfasst)) : t("cockpit.tagAbschliessen"))}</button>
     </div>
     ${nav("start")}`;
+}
+
+// ---------- Einrichtungskarte (Punkt 6, Mischung A + B) ----------
+const zielAttr = (z) => z.aktion === "nav" ? `data-a="nav" data-wert="${z.wert}"` : z.aktion === "bearbeiten" ? `data-a="bearbeiten" data-schritt="${z.schritt}"${z.bis ? ` data-bis="${z.bis}"` : ""}` : `data-a="${z.aktion}"`;
+function listeZu() { try { return localStorage.getItem("gc-einrichtung-zu") === "1"; } catch { return false; } }
+export function ring(prozent, klein = false) {
+  const r = 26, u = 2 * Math.PI * r;
+  return `<svg class="ring ${klein ? "klein" : ""}" viewBox="0 0 64 64" role="img" aria-label="${prozent} %"><circle class="ring-grund" cx="32" cy="32" r="${r}"/><circle class="ring-wert" cx="32" cy="32" r="${r}" stroke-dasharray="${(u * prozent / 100).toFixed(1)} ${u.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">${prozent}</text></svg>`;
+}
+export function einrichtungKarte(stand, e, { kompakt = false } = {}) {
+  if (e.prozent >= 100) return stand.einrichtungFertig ? "" : `<div class="karte einrichtung fertig"><h2>${esc(t("einrichtung.fertig"))}</h2><div>${esc(t("einrichtung.fertigText"))}</div><button type="button" class="knopf zweit" data-a="einrichtung-fertig-ok">${esc(t("einrichtung.ok"))}</button></div>`;
+  const zu = kompakt || listeZu(); const n = e.naechster;
+  return `<div class="karte einrichtung">
+    <div class="einrichtung-kopf">${ring(e.prozent)}<div><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.rest", e.offen))}</small></div></div>
+    ${n ? `<button type="button" class="knopf glut" ${zielAttr(n.ziel)}><small>${esc(t("einrichtung.als"))}</small> ${esc(t("einrichtung.schritte." + n.id))}${n.rest > 0 && n.id !== "karte" && n.id !== "kuehlung" && n.id !== "sicherung" ? ` · ${esc(t("einrichtung.offen." + n.id, n.rest))}` : ""}</button>` : ""}
+    ${zu ? "" : `<div class="checkliste">${e.schritte.map((x) => `<div class="schrittzeile ${x.fertig ? "fertig" : x.anteil > 0 ? "halb" : "offen"}">
+      ${x.fertig ? `<span class="haken" aria-hidden="true">✓</span><s>${esc(t("einrichtung.schritte." + x.id))}</s>`
+        : `<button type="button" class="zeileknopf" ${zielAttr(x.ziel)}><span class="anteil" aria-hidden="true">${x.anteil > 0 ? Math.round(x.anteil * 100) : ""}</span><span><b>${esc(t("einrichtung.schritte." + x.id))}</b><small>${esc(t("einrichtung.offen." + x.id, x.rest))}</small></span><span class="pfeil">›</span></button>${x.id === "kuehlung" ? `<button type="button" class="leise" data-a="kuehl-keine">${esc(t("einrichtung.habenWirNicht"))}</button>` : ""}`}
+    </div>`).join("")}</div>`}
+    ${kompakt ? "" : `<button type="button" class="leise" data-a="einrichtung-liste">${esc(zu ? t("einrichtung.mehr") : t("einrichtung.weniger"))}</button>`}
+  </div>`;
+}
+// Schmale Zeile auf anderen Seiten, solange ein offener Schritt die Seite betrifft
+export function einrichtungZeile(e, ids) {
+  if (e.prozent >= 100 || !e.schritte.some((x) => ids.includes(x.id) && !x.fertig)) return "";
+  return `<button type="button" class="einrichtungzeile" data-a="nav" data-wert="start">${esc(t("einrichtung.kurz", e.prozent))}</button>`;
+}
+
+// ---------- Instrumente (Punkt 4) ----------
+function umsatzInstrument(stand, H) {
+  const w = wochenVergleich(stand, H);
+  const pct = w.tageDiese && w.tageVorige && w.summeVorige > 0 ? Math.round((w.summeDiese / w.summeVorige - 1) * 100) : null;
+  return `<button type="button" class="instrument i-umsatz" data-a="nav" data-wert="umsatz"><small>${esc(t("cockpit.umsatzWoche"))}</small>
+    <b>${w.tageDiese ? fmtEuro(w.summeDiese, { dezimal: 0 }) : "–"}</b><small>${pct !== null ? esc(t("cockpit.zurVorwoche", (pct > 0 ? "+" : "") + pct)) : esc(w.tageDiese ? t("cockpit.vorwoche") : t("cockpit.umsatzLeer"))}</small>
+    <span class="balken mini">${w.diese.map((d, i) => `<i class="${d.datum === H ? "heute" : ""}"><s style="height:${w.max ? Math.round((w.vorige[i].umsatz || 0) / w.max * 100) : 0}%"></s><b style="height:${w.max ? Math.round((d.umsatz || 0) / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
+}
+function tonneInstrument(stand, H) {
+  const w = muellWoche(stand, H);
+  return `<button type="button" class="instrument i-tonne" data-a="nav" data-wert="muell"><small>${esc(t("cockpit.tonneWoche"))}</small>
+    <b>${w.anzahl ? fmtEuro(w.summe, { dezimal: w.summe < 100 ? 2 : 0 }) : "–"}</b><small>${w.anzahl ? (w.portionen !== null ? esc(t("cockpit.portionenKurz", fmtZahl(w.portionen, w.portionen < 10 ? 1 : 0))) : w.ohneWert ? esc(t("listen.ohneWert", w.ohneWert)) : "") : esc(t("cockpit.tonneLeer"))}</small>
+    <span class="balken mini muell">${w.tage.map((x) => `<i class="${x.datum === H ? "heute" : ""}"><b style="height:${w.max ? Math.round(x.wert / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
+}
+// Wareneinsatz in % vom Netto-Umsatz: Stufe 3 aus Belegen und Umsatz, Stufe 2 aus Karte oder eigener Quote, Stufe 1 „–"
+export function wareneinsatzQuote(stand, z) {
+  if (z.stufe === 3 && z.umsatzNetto > 0) return { quote: z.belegSumme / z.umsatzNetto, quelle: "belege" };
+  if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle };
+  return { quote: null, quelle: "keine" };
+}
+function wareneinsatzInstrument(stand, z) {
+  const q = wareneinsatzQuote(stand, z); const ziel = Number(stand.verkauf?.zielWareneinsatz) || 0.33;
+  const unsicher = q.quelle === "karte" && wareneinsatzSicherheit(stand).unsicher;
+  const farbe = q.quote === null ? "" : q.quote <= ziel ? "gruen" : q.quote <= ziel + 0.05 ? "gelb" : "rot";
+  return `<button type="button" class="instrument i-ware ${farbe}" data-a="nav" data-wert="karte"><small>${esc(t("cockpit.wareneinsatz"))}</small>
+    <b>${q.quote === null ? "–" : `${unsicher ? "≈ " : ""}${fmtZahl(q.quote * 100, 0)} %`}</b><small>${esc(q.quote === null ? t("cockpit.karteFehlt") : unsicher ? t("cockpit.genauerAbwiegen") : t("cockpit.ziel", fmtZahl(ziel * 100, 0)))}</small>
+    <span class="zielbalken"><i style="width:${q.quote === null ? 0 : Math.min(100, Math.round(q.quote / 0.6 * 100))}%"></i><s style="left:${Math.round(ziel / 0.6 * 100)}%"></s></span></button>`;
+}
+function kuehlInstrument(ks) {
+  return `<button type="button" class="instrument i-kuehl ${ks.ueberfaellig ? "rotrand" : ""}" data-a="nav" data-wert="kuehl"><small>${esc(t("cockpit.kuehlung"))}</small>
+    <b>${ks.eingerichtet ? `${ks.heuteGemessen} / ${ks.stellen}` : "–"}</b><small>${esc(ks.eingerichtet ? (ks.heuteGemessen >= ks.stellen ? t("cockpit.alleGemessen") : t("cockpit.nochOffen", ks.stellen - ks.heuteGemessen)) : t("cockpit.einrichten"))}</small>
+    ${ks.eingerichtet ? `<span class="kreise">${Array.from({ length: ks.stellen }, (_, i) => `<i class="${i < ks.heuteGemessen ? "gruen" : "gelb"}"></i>`).join("")}</span>` : ""}</button>`;
 }
 
 // Das Band oben: nur, wenn der Zustand kippt oder kippen wird.
@@ -61,68 +114,58 @@ export function zaehlerKarte(z, H, { tipp = true } = {}) {
   return `<${tipp ? 'button type="button" data-a="nav" data-wert="umsatz"' : "div"} class="karte dunkel zaehler ${grau ? "grau" : z.imPlus ? "plus" : "minus"}">
     <small class="lbl">${esc(z.imPlus ? t("cockpit.verdient", monat) : t("cockpit.bisNull", monat))}</small>
     <span class="riesig">${grau ? "–" : `${z.imPlus ? "+" : "−"} ${fmtEuro(Math.abs(z.stand))}`}</span>
+    ${grau ? "" : monatsKurve(z, H)}
     <small>${esc(satz)}</small>
     ${z.unvollstaendig ? `<small class="warn">${esc(t("cockpit.unvollstaendig"))}</small>` : ""}
     <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("cockpit.stufe." + z.stufe))}${!grau && z.start > z.monat.von ? ` · ${esc(t("zaehler.zaehltAb", datumLesbar(z.start).slice(0, 6)))}` : ""}</small>
   </${tipp ? "button" : "div"}>`;
 }
 
+// Monatskurve in der Zählerkarte: Stand je Tag seit Zählbeginn, Nulllinie, Punkt „heute", gestrichelte Prognose bis Monatsende, Null-Tag markiert
+export function zaehlerVerlauf(z) {
+  const ist = z.tage.filter((x) => x.status === "vergangen" || x.status === "heute").filter((x) => x.datum >= z.start).map((x) => ({ datum: x.datum, stand: x.stand }));
+  const prognose = z.dbProTag !== null ? z.tage.filter((x) => x.status === "zukunft" && typeof x.stand === "number").map((x) => ({ datum: x.datum, stand: x.stand })) : [];
+  return { ist, prognose, nullTag: z.nullTag, tage: z.tage.length };
+}
+function monatsKurve(z, H) {
+  const v = zaehlerVerlauf(z); if (!v.ist.length) return "";
+  const alle = [...v.ist, ...v.prognose]; const min = Math.min(0, ...alle.map((x) => x.stand)), max = Math.max(0, ...alle.map((x) => x.stand));
+  const W = 300, Hh = 80, sp = max - min || 1; const tagIdx = (d) => Number(d.slice(8, 10)) - 1;
+  const X = (d) => (tagIdx(d) / Math.max(1, v.tage - 1) * W).toFixed(1), Y = (s) => (Hh - (s - min) / sp * Hh).toFixed(1);
+  const pfad = (l) => l.map((x, i) => `${i ? "L" : "M"}${X(x.datum)},${Y(x.stand)}`).join(" ");
+  const heute = v.ist[v.ist.length - 1];
+  return `<svg class="monatskurve" viewBox="-4 -4 ${W + 8} ${Hh + 8}" preserveAspectRatio="none" aria-hidden="true">
+    <line class="nulllinie" x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}"/>
+    <path class="ist" d="${pfad(v.ist)}"/>${v.prognose.length ? `<path class="prognose" d="${pfad([heute, ...v.prognose])}"/>` : ""}
+    <circle class="heute" cx="${X(heute.datum)}" cy="${Y(heute.stand)}" r="3.5"/>
+    ${v.nullTag && v.nullTag > H ? `<circle class="nulltag" cx="${X(v.nullTag)}" cy="${Y(0)}" r="3"/>` : ""}</svg>`;
+}
+
 // „Jetzt dran": die eine nächste Handlung aus Uhrzeit und Stand. Reihenfolge = Dringlichkeit.
-function naechsteHandlung(stand, z, ks, nk, ab) {
-  const h = new Date().getHours(); const H = heute();
+// Solange die Einrichtung unter 100 % ist, steht hier nur Tagesgeschäft – die Einrichtungsschritte zeigt die Karte darüber (nichts doppelt).
+function naechsteHandlung(stand, z, ks, nk, ab, e, wurzel) {
+  const jetzt = new Date(); const h = jetzt.getHours() + jetzt.getMinutes() / 60; const H = heute();
   const mk = (key, aktion, attr = "") => ({ text: t("cockpit.dran." + key), aktion, attr });
+  const einrichtung = e.prozent < 100;
   if (ks.eingerichtet && ks.offenerRundgang) return mk("rundgangWeiter", "kuehl-rundgang-start", 'data-offen="0"');
   if (nk.length) return mk("nachkontrolle", "nav", 'data-wert="kuehl"');
   if (ks.eingerichtet && ks.heuteGemessen < ks.stellen) return mk(h < 15 ? "kuehlMorgen" : "kuehlAbend", "kuehl-rundgang-start", 'data-offen="0"');
   if (h >= 17 && !umsatzEintrag(stand, H)) return mk("umsatz", "nav", 'data-wert="umsatz"');
-  if (z.unvollstaendig) return z.last.fix.offen ? mk("kosten", "bearbeiten", 'data-schritt="kosten-miete" data-bis="kosten-sonstiges"') : mk("kosten", "bearbeiten", 'data-schritt="lohn"');
-  if (stand.gerichte.length && kalkulation(stand).zaehl.grau) return mk("karte", "nav", 'data-wert="karte"');
-  if (!ks.eingerichtet) return mk("kuehlEinrichten", "kuehl-einrichtung-oeffnen");
+  if (sicherungStufe(wurzel)?.stufe === "rot") return mk("sicherung", "export");
+  if (!einrichtung && z.unvollstaendig) return z.last.fix.offen ? mk("kosten", "bearbeiten", 'data-schritt="kosten-miete" data-bis="kosten-sonstiges"') : mk("kosten", "bearbeiten", 'data-schritt="lohn"');
   if (h >= 18 && !ab) return mk("abschluss", "nav", 'data-wert="abschluss"');
+  // Waage-Vorschlag (Punkt 7): höchstens einmal am Tag, nicht in der Hauptzeit (11:30–14:00, 17:30–20:30)
+  const hauptzeit = (h >= 11.5 && h < 14) || (h >= 17.5 && h < 20.5);
+  if (!einrichtung && !hauptzeit && stand.waageVorschlag !== H && wareneinsatzSicherheit(stand).zaehl.schaetzung > 0) return mk("waage", "waage-vorschlag");
+  if (!einrichtung && stand.gerichte.length && kalkulation(stand).zaehl.grau) return mk("karte", "nav", 'data-wert="karte"');
   return mk("nichts", "nav", 'data-wert="umsatz"');
-}
-
-function wochenKarte(stand, H) {
-  const w = wochenVergleich(stand, H);
-  if (!w.tageDiese && !w.tageVorige) return "";
-  const tag = (iso) => t("kuehl.tage." + new Date(iso + "T12:00:00").getDay());
-  return `<div class="karte"><h2>${esc(t("cockpit.woche"))}</h2>
-    <div class="balken">${w.diese.map((d, i) => `<i class="${d.datum === H ? "heute" : ""}"><s style="height:${Math.round((w.vorige[i].umsatz || 0) / w.max * 100)}%"></s><b style="height:${Math.round((d.umsatz || 0) / w.max * 100)}%"></b></i>`).join("")}</div>
-    <div class="tage">${w.diese.map((d) => `<span>${esc(tag(d.datum))}</span>`).join("")}</div>
-    <small class="marke">${w.tageDiese && w.tageVorige ? esc(t("cockpit.wocheSumme", fmtEuro(w.summeDiese), fmtEuro(w.summeVorige))) : esc(t("cockpit.vorwoche"))}</small></div>`;
-}
-
-// Offene Punkte, nur wenn es welche gibt – kurz, jede Zeile ist eine Tür.
-function offenKarte(stand, z, nk) {
-  const ohneWert = schwundOhneWert(stand); const konflikte = umsatzKonflikte(stand);
-  const grau = stand.gerichte.length ? kalkulation(stand).zaehl.grau : 0;
-  const zeilen = [];
-  if (z.last.fix.offen) zeilen.push(`<button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges"><span><b>${esc(t("start.kostenTitel"))}</b><small>${esc(t("start.offenPosten", z.last.fix.offen))}</small></span><span class="pfeil">›</span></button>`);
-  if (z.last.lohnOffen || z.last.eigen.betrag === null) zeilen.push(`<button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="lohn"><span><b>${esc(z.last.lohnOffen ? t("zusammenfassung.loehne") : t("start.eigenerLohn"))}</b><small>${esc(t("allgemein.offen"))}</small></span><span class="pfeil">›</span></button>`);
-  if (grau) zeilen.push(`<button type="button" class="zeileknopf" data-a="nav" data-wert="karte"><span><b>${esc(t("start.karteTitel"))}</b><small>${esc(t("start.karteOffen", grau))}</small></span><span class="pfeil">›</span></button>`);
-  if (ohneWert.length) zeilen.push(`<button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("tag.wertFehltTitel"))}</b><small>${esc(t("tag.wertFehlt", ohneWert.length))}</small></span><span class="pfeil">›</span></button>`);
-  if (konflikte.length) zeilen.push(`<button type="button" class="zeileknopf" data-a="nav" data-wert="umsatz"><span><b>${esc(t("tag.konfliktTitel"))}</b><small>${esc(konflikte.map(datumLesbar).join(", "))}</small></span><span class="pfeil">›</span></button>`);
-  if (!stand.gerichte.length) zeilen.push(`<button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="karte" data-bis="ergebnis"><span><b>${esc(t("start.karteTitel"))}</b><small>${esc(t("start.karteLeer"))}</small></span><span class="pfeil">›</span></button>`);
-  if (!zeilen.length) return "";
-  return `<div class="karte hinweisgelb"><h2>${esc(t("start.offenTitel"))}</h2>${zeilen.join("")}</div>`;
-}
-
-// Sicherung: die einzige Verteidigung gegen Handyverlust und gelöschte Website-Daten. Gelb ab 3 Tagen oder 20 neuen Einträgen, rot ab 7 Tagen.
-function sicherungKarte(wurzel) {
-  if (!wurzel) return "";
-  const n = eintraegeZaehlen(wurzel); const neu = n - (wurzel.sicherungZaehler || 0);
-  const tage = wurzel.letzteSicherung ? Math.floor((Date.now() - Date.parse(wurzel.letzteSicherung)) / 86400e3) : null;
-  const stufe = tage === null ? (n >= 5 ? "rot" : null) : tage >= 7 ? "rot" : (tage >= 3 || neu >= 20) ? "gelb" : null;
-  if (!stufe) return "";
-  return `<div class="karte ${stufe === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(t("start.sicherungTitel"))}</h2>
-    <div>${esc(tage === null ? t("start.sicherungNie", n) : t("start.sicherungAlt", tage, neu))}</div>
-    <button type="button" class="knopf ${stufe === "rot" ? "" : "zweit"}" data-a="export">${esc(t("einstellungen.exportieren"))}</button></div>`;
 }
 
 export function karteView(stand) {
   return `
     <div class="kopfband"><h1>${esc(t("start.karteTitel"))}</h1><div class="unter">${esc(t("start.hallo", stand.betrieb.name))}</div></div>
     <div class="inhalt">
+      ${einrichtungZeile(einrichtungStand(stand), ["karte", "preise", "rezepte", "einkauf", "kosten"])}
       ${stand.gerichte.length ? ergebnisView(stand, { inApp: true }) : `<div class="karte leer"><div>${esc(t("start.karteLeer"))}</div><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="karte" data-bis="ergebnis">${esc(t("start.karteAnlegen"))}</button></div>`}
       <button type="button" class="knopf glut" data-a="nav" data-wert="kartefoto"><span aria-hidden="true">📷</span> ${esc(t("foto.karteKnopf"))}</button>
       <div class="karte">

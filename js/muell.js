@@ -93,3 +93,68 @@ export function letzterEintrag(stand, datum, art, gerichtId) {
   const l = (stand.schwund || []).filter((e) => !e.storniert && e.datum === datum && e.art === art && e.ref?.id === gerichtId);
   return l[l.length - 1] || null;
 }
+
+// ---------- Etappe 6, Punkt 1: Müll-Zentrale (Baris 13.10., 12:45) ----------
+import { schwundAuswertung, preisJeBasis } from "./engine.js";
+const tagMinus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); return heute(new Date(j, m - 1, d - n)); };
+const istMuell = (e) => !e.storniert && (SCHWUND_ARTEN[e.art] || 1) === 1;
+
+// Gewicht eines Eintrags in kg (Teller über das Rezept, Rohware über die Einheit, Eimer = Rest-kg). Stück ohne Gewicht: 0.
+export function kgEintrag(e, stand) {
+  if (e.art === "eimer") return Number(e.menge) || 0;
+  if (e.ref?.typ === "gericht") { const g = (stand.gerichte || []).find((x) => x.id === e.ref.id); return (g ? gewichtGericht(g) : 0) / 1000 * (Number(e.menge) || 0); }
+  const b = EINHEITEN[e.einheit]?.basis; return b === "g" || b === "ml" ? inBasis(e.menge, e.einheit) / 1000 : 0;
+}
+
+// Die letzten 7 Tage bis datum: Summe in Euro (nur bewertete Einträge), kg, Portionen zum Reinholen, je Tag und die drei größten Verursacher.
+export function muellWoche(stand, datum = heute()) {
+  const von = tagMinus(datum, 6);
+  const tage = []; for (let i = 6; i >= 0; i--) tage.push({ datum: tagMinus(datum, i), wert: 0, kg: 0, anzahl: 0 });
+  const je = new Map(); let kg = 0;
+  for (const e of stand.schwund || []) {
+    if (!istMuell(e) || e.datum < von || e.datum > datum) continue;
+    const t = tage.find((x) => x.datum === e.datum); const w = typeof e.wert === "number" ? e.wert : null; const k = kgEintrag(e, stand);
+    t.anzahl += 1; t.kg += k; kg += k; if (w !== null) t.wert += w;
+    const name = e.art === "eimer" ? "eimer" : (e.ref?.typ === "gericht" ? "g:" + e.ref.id : "a:" + e.ref?.name);
+    const x = je.get(name) || { schluessel: name, art: e.art, ref: e.ref, menge: 0, einheit: e.einheit, wert: 0, ohneWert: 0 };
+    x.menge += Number(e.menge) || 0; if (w === null) x.ohneWert += 1; else x.wert += w; je.set(name, x);
+  }
+  const a = schwundAuswertung(stand, { von, bis: datum });
+  const top = [...je.values()].sort((x, y) => (y.wert > 0) - (x.wert > 0) || y.wert - x.wert).slice(0, 3);
+  return { von, bis: datum, summe: a.muellwert, kg, portionen: a.portionen, ohneWert: a.ohneWert, anzahl: a.anzahl, tage, top, max: Math.max(0, ...tage.map((t) => t.wert)) };
+}
+
+// Monat bis heute gegen Vormonat bis zum selben Tag (ohne Einträge im Vormonat: keine Vergleichslinie)
+export function muellMonatVergleich(stand, datum = heute()) {
+  const [j, m, d] = datum.split("-").map(Number);
+  const vm = new Date(j, m - 2, 1); const vmEnde = new Date(j, m - 1, 0).getDate();
+  const vVon = heute(vm); const vBis = heute(new Date(vm.getFullYear(), vm.getMonth(), Math.min(d, vmEnde)));
+  const summe = (von, bis) => (stand.schwund || []).filter((e) => istMuell(e) && e.datum >= von && e.datum <= bis).reduce((s, e) => s + (typeof e.wert === "number" ? e.wert : 0), 0);
+  const hatVormonat = (stand.schwund || []).some((e) => istMuell(e) && e.datum >= vVon && e.datum <= heute(new Date(j, m - 1, 0)));
+  return { monat: summe(datum.slice(0, 8) + "01", datum), vormonat: hatVormonat ? summe(vVon, vBis) : null, tag: d };
+}
+
+// Die 12 Kacheln „Was ist weg?": nach Häufigkeit der letzten 30 Tage (bei Gleichstand zuletzt benutzt); ohne Verlauf erst Gerichte, dann Artikel.
+export function haeufigsteMuell(stand, { tage = 30, max = 12, datum = heute() } = {}) {
+  const von = tagMinus(datum, tage - 1); const zahl = new Map();
+  for (const e of stand.schwund || []) {
+    if (e.storniert || e.datum < von || e.datum > datum || !e.ref || e.art === "eimer") continue;
+    const k = e.ref.typ === "gericht" ? "g:" + e.ref.id : "a:" + e.ref.name;
+    const x = zahl.get(k) || { n: 0, zuletzt: "" }; x.n += 1; if (String(e.erfasst) > x.zuletzt) x.zuletzt = String(e.erfasst); zahl.set(k, x);
+  }
+  const kandidaten = [
+    ...(stand.gerichte || []).filter((g) => g.klasse !== "getraenk").map((g) => ({ typ: "gericht", id: g.id, name: g.name, einheit: "portion", gruppe: "speise", k: "g:" + g.id })),
+    ...(stand.artikel || []).filter((a) => a.benutzt !== false && a.gruppe !== "verpackung").map((a) => ({ typ: "artikel", name: a.name, einheit: a.packung?.einheit || a.einheit || "stk", gruppe: a.gruppe, k: "a:" + a.name })),
+  ];
+  const rang = (x) => zahl.get(x.k) || { n: 0, zuletzt: "" };
+  return kandidaten.map((x, i) => ({ ...x, i })).sort((a, b) => rang(b).n - rang(a).n || rang(b).zuletzt.localeCompare(rang(a).zuletzt) || a.i - b.i).slice(0, max).map(({ k, i, ...x }) => x);
+}
+
+// Vorschau „= 1,92 € in der Tonne" für das Blatt (ohne zu speichern)
+export function muellVorschau(stand, wahl, D = heute()) {
+  if (!(wahl?.menge > 0)) return null;
+  const e = wahl.typ === "gericht" ? { art: wahl.personal ? "personal" : "gericht", ref: { typ: "gericht", id: wahl.id, name: wahl.name }, menge: wahl.menge, einheit: "portion", datum: D, mahlzeit: mahlzeitJetzt() }
+    : { art: "rohware", ref: { typ: "artikel", name: wahl.name }, menge: wahl.menge, einheit: wahl.einheit, datum: D };
+  return wertEintrag(e, stand);
+}
+void preisJeBasis;
