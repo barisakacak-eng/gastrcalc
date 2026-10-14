@@ -5,6 +5,7 @@ import { kachelnFuer } from "../data/zwischen.js";
 import { ladenArtVon } from "../profil.js";
 import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./home.js";
+import { FOTOS } from "../data/fotos.js";
 import { t, SPRACHEN } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, uid, wertAnzeige } from "../util.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
@@ -334,19 +335,23 @@ export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 // Sprache → Laden (Name, Art, Tage) → Speisekarte fotografieren und prüfen → vier Kostenfragen → fertig.
 // Alles andere (Rezepte verfeinern, Einkaufspreise, Kühlstellen) später in der App oder über Rechnungsfotos.
 
-export const LADEN_ARTEN = [
-  { id: "doener", format: "imbiss", kuechen: ["doener"] }, { id: "imbiss", format: "imbiss", kuechen: ["burger"] },
-  { id: "pizza", format: "imbiss", kuechen: ["pizza"] }, { id: "asia", format: "imbiss", kuechen: ["asiatisch"] },
-  { id: "foodtruck", format: "foodtruck", kuechen: ["burger"] }, { id: "baeckerei", format: "baeckerei", kuechen: ["fruehstueck"] }, { id: "cafe", format: "cafe", kuechen: ["bistro"] },
+export const LADEN_ARTEN = [ // Reihenfolge wie im Zielbild (15.10.): Döner, Pizza, Asia, Foodtruck, Bäckerei, Kiosk – dann die übrigen
+  { id: "doener", format: "imbiss", kuechen: ["doener"] }, { id: "pizza", format: "imbiss", kuechen: ["pizza"] },
+  { id: "asia", format: "imbiss", kuechen: ["asiatisch"] }, { id: "foodtruck", format: "foodtruck", kuechen: ["burger"] },
+  { id: "baeckerei", format: "baeckerei", kuechen: ["fruehstueck"] }, { id: "kiosk", format: "imbiss", kuechen: ["burger"] },
+  { id: "imbiss", format: "imbiss", kuechen: ["burger"] }, { id: "cafe", format: "cafe", kuechen: ["bistro"] },
   { id: "anders", format: "eigen", kuechen: ["eigene"] },
 ];
 
+// Foto je Laden-Art (foto/laden-*.webp, sobald Sanjis Bildpaket da ist), sonst Sanjis Piktogramm
+const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
+const ladenBild = (id) => FOTOS.has("laden-" + id) ? `<img class="kachelfoto" src="foto/laden-${id}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`;
 const ladenSchnell = {
   id: "laden-schnell",
   view: (stand) => `
     <h1 class="frage">${esc(t("schnell.ladenFrage"))}</h1>
     <input class="textfeld gross" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off">
-    <div class="kacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}"><img class="bildplatz klein" src="bilder/laden-${a.id === "imbiss" ? "burger" : a.id}.svg" alt="" aria-hidden="true"><b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
+    <div class="kacheln fotokacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
     <div class="feldzeile"><label>${esc(t("betrieb.frageTage"))}</label>${stepper("tage", stand.betrieb.tageProWoche, t("betrieb.tage", stand.betrieb.tageProWoche))}</div>
     <button type="button" class="leise" data-a="weg-genau">${esc(t("schnell.genau"))}</button>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",

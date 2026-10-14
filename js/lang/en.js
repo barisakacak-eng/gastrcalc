@@ -585,6 +585,8 @@ export default {
   },
 
   muell: {
+    zurUebersicht: "Waste overview", 
+    auswaehlen: "Select item", aendern: "Tap to change", mengeEingeben: "Enter amount", foto: "Photo (optional)", fotoDabei: "Photo added", fotoFehler: "Photo could not be saved.", satz: "Turn mistakes into knowledge. Enter what ended up in the bin today.", orientierung: "Estimated values are for guidance.", ohnePreisKurz: "No purchase price yet – still counted.", 
     wasWeg: "What went in the bin?", wocheTonne: "In the bin this week", monatTonne: "Monthly bin", leerWoche: "Nothing entered yet. Nothing thrown away? Good day.", wocheZeile: (p, kg) => `≈ ${p} portions sold to make up for it · ${kg} kg`, wenigerAls: (m, d) => `less than in ${m} up to day ${d}.`, mehrAls: (m, d) => `more than in ${m} up to day ${d}.`, rueckgaengig: "Undo", ammeisten: "Most thrown away", eintragen: "Add waste", andererTag: "For another day", teller: "plate", eimerNurGewicht: "weight only", ganzePackung: "whole pack", personalWert: (e) => `Staff meal · benefit value ${e}`, inDerTonne: (e) => `= ${e} in the bin`, eimerHinweisKurz: "Plates and raw goods already reported today are subtracted.", fuerPersonal: "Eaten by staff", wegDamit: "Throw away", geradeEben: "just now", zurueckgenommen: "Undone.",
     nav: "Bin",
     titel: "What went in the bin?",
@@ -846,7 +848,7 @@ export default {
   schnell: {
     selbstFrage: "What do you make yourselves?", selbstHinweis: "Tap what you make in-house. Everything else you buy ready-made.", selbstRest: "No amounts needed now. The app uses starting values, you adjust them later.", selbstKacheln: { teig: "Dough for pizza and pide", brot: "Bread / flatbread", lahmacun: "Lahmacun dough", sossen: "Sauces (garlic, herb)", patty: "Burger patties", tomatensosse: "Pizza sauce" }, 
     ladenFrage: "What is your shop called and what do you sell?",
-    arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", anders: "Something else" },
+    arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", kiosk: "Kiosk with hot food", anders: "Something else" },
     genau: "Set up everything step by step instead (takes longer)",
     kostenFrage: "Your fixed costs per month",
     kostenHinweis: "Roughly is fine. Leave empty what you do not know.",

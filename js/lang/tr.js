@@ -586,6 +586,8 @@ export default {
   },
 
   muell: {
+    zurUebersicht: "Çöp özeti", 
+    auswaehlen: "Ürün seç", aendern: "Değiştirmek için dokun", mengeEingeben: "Miktar gir", foto: "Fotoğraf (isteğe bağlı)", fotoDabei: "Fotoğraf eklendi", fotoFehler: "Fotoğraf kaydedilemedi.", satz: "Hatalardan bilgi çıkar. Bugün çöpe gideni gir.", orientierung: "Tahmini değerler yön göstermek içindir.", ohnePreisKurz: "Henüz alış fiyatı yok – yine de sayılır.", 
     wasWeg: "Ne atıldı?", wocheTonne: "Bu hafta çöpte", monatTonne: "Aylık çöp", leerWoche: "Henüz bir şey girilmedi. Hiçbir şey atılmadı mı? İyi gün.", wocheZeile: (p, kg) => `≈ bunu geri kazanmak için ${p} porsiyon satış · ${kg} kg`, wenigerAls: (m, d) => `${m} ayında ${d}. güne göre daha az.`, mehrAls: (m, d) => `${m} ayında ${d}. güne göre daha fazla.`, rueckgaengig: "Geri al", ammeisten: "En çok atılan", eintragen: "Çöp gir", andererTag: "Başka bir gün için", teller: "tabak", eimerNurGewicht: "sadece ağırlık", ganzePackung: "tüm paket", personalWert: (e) => `Personel yemeği · ayni değer ${e}`, inDerTonne: (e) => `= çöpte ${e}`, eimerHinweisKurz: "Bugün bildirilen tabaklar ve ham mallar düşülür.", fuerPersonal: "Personel yedi", wegDamit: "Atıldı", geradeEben: "az önce", zurueckgenommen: "Geri alındı.",
     nav: "Çöp",
     titel: "Ne atıldı?",
@@ -847,7 +849,7 @@ export default {
   schnell: {
     selbstFrage: "Neleri kendiniz yapıyorsunuz?", selbstHinweis: "Kendiniz yaptıklarınıza dokun. Gerisini hazır alıyorsunuz.", selbstRest: "Şimdi miktar gerekmiyor. Uygulama başlangıç değerleri kullanır, sonra düzeltirsin.", selbstKacheln: { teig: "Pizza ve pide hamuru", brot: "Ekmek / pide ekmeği", lahmacun: "Lahmacun hamuru", sossen: "Soslar (sarımsak, otlu)", patty: "Burger köftesi", tomatensosse: "Pizza sosu" }, 
     ladenFrage: "Dükkanının adı ne ve ne satıyorsun?",
-    arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", anders: "Başka bir şey" },
+    arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", kiosk: "Sıcak mutfaklı büfe", anders: "Başka bir şey" },
     genau: "Her şeyi adım adım kur (daha uzun sürer)",
     kostenFrage: "Aylık sabit giderlerin",
     kostenHinweis: "Yaklaşık yeterli. Bilmediğini boş bırak.",

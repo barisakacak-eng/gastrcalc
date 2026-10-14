@@ -59,3 +59,29 @@
 .vk-balken i { display: block; height: 100%; background: var(--eigen); border-radius: 4px; } .vk-balken i.knapp { background: var(--geschaetzt); }
 .geschaetzt-hinweis { border: 2px dashed var(--geschaetzt); background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border-radius: 10px; padding: 8px 12px; }
 .vk-ohne { padding: 6px 0; border-bottom: 1px solid var(--papier-tief); }
+/* Laden-Art als Foto-Kacheln */
+.fotokacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kachel.fotokachel { padding: 0; overflow: hidden; display: flex; flex-direction: column; align-items: stretch; min-height: 0; }
+.kachelfoto { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--salbei-hell); }
+.kachelfoto.pikto { object-fit: contain; padding: 14px 0; box-sizing: border-box; }
+.kachel.fotokachel b { padding: 8px 10px 10px; text-align: left; }
+.kachel.fotokachel.an { outline: 3px solid var(--salbei-tief); outline-offset: -3px; }
+/* Müll eintragen auf einer Seite */
+.muellsatz { color: var(--tinte); margin: 0; }
+.auswahlkarte { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; font: inherit; color: var(--muell); min-height: 96px; border: 2px solid var(--muell-hell); }
+.auswahlkarte b { display: block; font-size: 18px; } .auswahlkarte small { display: block; color: var(--tinte-weich); }
+.auswahlkarte > .sym:last-child { margin-left: auto; }
+.auswahlsym { width: 56px; height: 56px; border-radius: 14px; background: var(--muell-hell); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.auswahlkarte.gewaehlt b { color: var(--tinte); }
+.formkacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.formkachel { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; color: var(--muell); }
+.formkachel b { color: var(--muell); font-size: 15px; } .formkachel small { color: var(--tinte-weich); font-size: 12px; }
+.formkachel.aus { opacity: .6; }
+.formkachel .kachelsym { background: var(--muell-hell); color: var(--muell); }
+.formkachel .stepper { width: 100%; margin-top: 6px; } .formkachel .stepper .wert input { width: 4ch; font: inherit; font-weight: 800; text-align: center; border: 0; background: transparent; }
+.fotokachel-muell.an { border-color: var(--eigen); } .fotokachel-muell.an .kachelsym { background: var(--eigen-hell); color: var(--eigen); }
+.knopf.muellhaupt { background: var(--muell); color: #fff; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; }
+.knopf.muellhaupt small { width: 100%; font-weight: 400; opacity: .9; }
+.knopf.muellhaupt:disabled { background: var(--muell-hell); color: var(--muell); }
+.muellwert .leise-text { color: var(--tinte-weich); font-weight: 400; font-size: 14px; }
+.auswahlblatt { max-height: 82vh; }

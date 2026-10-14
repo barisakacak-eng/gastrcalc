@@ -586,6 +586,8 @@ export default {
   },
 
   muell: {
+    zurUebersicht: "Müll-Übersicht", 
+    auswaehlen: "Lebensmittel auswählen", aendern: "Antippen zum Ändern", mengeEingeben: "Menge eingeben", foto: "Foto (optional)", fotoDabei: "Foto ist dabei", fotoFehler: "Foto konnte nicht gespeichert werden.", satz: "Mache aus Fehlern Wissen. Trage ein, was heute im Müll gelandet ist.", orientierung: "Geschätzte Werte dienen der Orientierung.", ohnePreisKurz: "Noch ohne Einkaufspreis – zählt trotzdem mit.", 
     wasWeg: "Was ist weg?", wocheTonne: "Diese Woche in der Tonne", monatTonne: "Monatstonne", leerWoche: "Noch nichts eingetragen. Nichts weggeworfen? Guter Tag.", wocheZeile: (p, kg) => `≈ ${p} verkaufte Portionen, um das reinzuholen · ${kg} kg`, wenigerAls: (m, d) => `weniger als im ${m} bis zum ${d}.`, mehrAls: (m, d) => `mehr als im ${m} bis zum ${d}.`, rueckgaengig: "Rückgängig", ammeisten: "Am meisten weg", eintragen: "Müll eintragen", andererTag: "Für einen anderen Tag", teller: "Teller", eimerNurGewicht: "nur das Gewicht", ganzePackung: "ganze Packung", personalWert: (e) => `Personalessen · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} in der Tonne`, eimerHinweisKurz: "Teller und Rohware, die heute schon gemeldet sind, werden abgezogen.", fuerPersonal: "Für Personal gegessen", wegDamit: "Weg damit", geradeEben: "gerade eben", zurueckgenommen: "Zurückgenommen.",
     nav: "Müll",
     titel: "Was ist weg?",
@@ -847,7 +849,7 @@ export default {
   schnell: {
     selbstFrage: "Was macht ihr selbst?", selbstHinweis: "Tippe an, was bei euch selbst gemacht wird. Alles andere kauft ihr fertig.", selbstRest: "Mengen brauchst du jetzt nicht. Die App nimmt Startwerte, du passt sie später an.", selbstKacheln: { teig: "Teig für Pizza und Pide", brot: "Brot / Fladen", lahmacun: "Lahmacun-Teig", sossen: "Soßen (Knoblauch, Kräuter)", patty: "Burger-Patties", tomatensosse: "Pizzasoße" }, 
     ladenFrage: "Wie heißt dein Laden und was verkaufst du?",
-    arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", anders: "Etwas anderes" },
+    arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", kiosk: "Kiosk mit warmer Küche", anders: "Etwas anderes" },
     genau: "Lieber alles Schritt für Schritt einrichten (dauert länger)",
     kostenFrage: "Deine festen Kosten im Monat",
     kostenHinweis: "Ungefähr reicht. Was du nicht weißt, lässt du leer.",

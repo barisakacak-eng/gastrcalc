@@ -2,7 +2,7 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN } from "./i18n.js";
-import { ablageLeeren } from "./ablage.js";
+import { ablageLeeren, ablegen, bildFuerAblage } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
@@ -17,7 +17,7 @@ import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen,
 import { laedenView } from "./screens/laeden.js";
 import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
-import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig } from "./screens/muell.js";
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen } from "./screens/muell.js";
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
@@ -378,6 +378,12 @@ root.addEventListener("change", async (ev) => {
   const el = ev.target; if (!el.files?.[0]) return;
   const dateien = [...el.files]; const datei = dateien[0]; el.value = "";
   if (el.dataset.f === "import") return sicherungEinlesen(datei);
+  if (el.dataset.f === "muell-foto") { // Zielbild: Foto (optional) beim Müll – nur ablegen, nicht lesen; hängt am nächsten Eintrag
+    const eintrag = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: null, auswertung: null, ergebnis: null };
+    try { eintrag.datei = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: stand.id }); stand.uploads.push(eintrag); muellFotoSetzen(eintrag); speichern(wurzel); }
+    catch (e) { console.warn(e); meldung(t("muell.fotoFehler")); }
+    return zeichne();
+  }
   if (el.dataset.f === "foto") {
     // Foto oder Datei: ablegen, lesen, Ergebnis zeigen. Speisekarte → Prüfliste, Rechnung → Zuweisung im Beleg-Bildschirm.
     const zweck = el.dataset.zweck || "rechnung";
