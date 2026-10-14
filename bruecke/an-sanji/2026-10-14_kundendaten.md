@@ -53,3 +53,17 @@ Ablage:
 - **Nur privat** (`barisakacak-eng/gastrcalc-daten`, Ordner `kundendaten/2026-10-14/`, oder als ZIP an Baris): `betriebe.csv`, `lieferanten.csv`, `karten_gerichte.csv`.
 
 Danach setz oben `Status: erledigt` und leg `bruecke/an-zoro/2026-10-14_kundendaten_ergebnis.md` mit 5 Zeilen Zusammenfassung an.
+
+## Nachtrag 17:50 (Zoro) – Teil 4 bitte so liefern, damit die App die Werte direkt übernehmen kann
+Spalten von `rezept_grundlagen.csv`:
+`gericht; familie; zutat; zutat_app; menge; einheit; menge_min; menge_max; quelle_link; art`
+
+- **familie:** eine von `doener, wrap, doener-teller, doener-box, doener-salat, lahmacun, pide, seele, pizza, nudeln, falafel, falafel-wrap, falafel-teller, salat, boerek, cevapi, burger, currywurst, asia-nudeln, asia-reis, pommes` (neue Familie erlaubt, dann kurz begründen).
+- **zutat_app:** der passende Name aus unserer Artikelliste, wenn es ihn gibt. Sonst leer lassen, Zoro ordnet zu.
+  Unsere Artikelnamen: Menüschale 1-teilig · Dönerspieß Kalb/Pute · Eisbergsalat · Tomaten · Zwiebeln · Weißkohl · Knoblauchsauce · Menüschale 3-teilig · Pommes frites · Pommesschale · Falafelbällchen · Salatgurke · Kräutersauce · Rotkohl · Joghurtdressing · Salatschale · Pide-Brot · Lammhackfleisch · Petersilie · Dönergewürz · Alufolie-Bogen · Pizzamehl Typ 00 · Frischhefe · Sonnenblumenöl · Pizzakarton 30 cm · Penne · Pizzatomaten (Dose) · Pizzakäse gerieben · Pastabox · Olivenöl · Dürüm-Wrap · Dönerbrot / Fladen · Dönertüte · Hähnchenspieß · Joghurtsauce · Yufka-Teigblatt · Hirtenkäse / Feta · Eier · Hackfleisch gemischt · Ajvar · Rinderpatty 150 g · Burger-Bun · Burgersauce · Burgerbox · Currywurst · Currysauce · Currypulver · Currywurstschale · Mie-Nudeln · Möhren · Sojasprossen · Frühlingszwiebeln · Sojasauce · Asia-Box · Jasminreis · Paprika · Putenbrustschinken · Truthahnsalami · Hähnchenbrust · Sucuk · Thunfisch (Dose) · Babyspinat · Champignons · Ananas (Dose) · Oliven · Mais aus der Dose · Peperoni eingelegt · Kichererbsen · Langkornreis · Sahnesauce
+- **menge:** typische Portion, roh, je Gericht. Für **menge_min** und **menge_max** gilt die Spanne aus den Quellen.
+- **art:** genau einer dieser Werte:
+  - `beleg`: Fachbuch, Kalkulationshilfe des Großhandels, Hersteller-Portionsangabe
+  - `branche`: mehrere Betriebe oder Branchenportal
+  - `schaetzung`: keine Quelle
+- **Wichtigste Gerichte zuerst** (sie entscheiden über den Wareneinsatz): Döner im Brot, Dürüm, Döner-Teller, Döner-Box, Lahmacun, Pide mit Käse, Falafel, Pommes. Dabei vor allem die Fleischmenge je Portion.
