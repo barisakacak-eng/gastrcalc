@@ -8,6 +8,8 @@ import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard } from "../dat
 import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
 import { heute } from "../util.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
+import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf } from "./foto.js";
+import { monatsLast } from "../engine.js";
 
 // ---------- Bausteine ----------
 
@@ -322,3 +324,94 @@ const kuehlstellen = {
 
 export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
+
+// ---------- Schnellstart (Etappe 6a, Baris 14.10.2026): Foto zuerst, in etwa zehn Minuten ----------
+// Sprache → Laden (Name, Art, Tage) → Speisekarte fotografieren und prüfen → vier Kostenfragen → fertig.
+// Alles andere (Rezepte verfeinern, Einkaufspreise, Kühlstellen) später in der App oder über Rechnungsfotos.
+
+export const LADEN_ARTEN = [
+  { id: "doener", format: "imbiss", kuechen: ["doener"] }, { id: "imbiss", format: "imbiss", kuechen: ["burger"] },
+  { id: "pizza", format: "imbiss", kuechen: ["pizza"] }, { id: "asia", format: "imbiss", kuechen: ["asiatisch"] },
+  { id: "foodtruck", format: "foodtruck", kuechen: ["burger"] }, { id: "cafe", format: "cafe", kuechen: ["bistro"] },
+  { id: "anders", format: "eigen", kuechen: ["eigene"] },
+];
+
+const ladenSchnell = {
+  id: "laden-schnell",
+  view: (stand) => `
+    <h1 class="frage">${esc(t("schnell.ladenFrage"))}</h1>
+    <input class="textfeld gross" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off">
+    <div class="kacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel ${stand.ladenArt === a.id ? "an" : ""}" data-a="laden-art" data-wert="${a.id}"><b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
+    <div class="feldzeile"><label>${esc(t("betrieb.frageTage"))}</label>${stepper("tage", stand.betrieb.tageProWoche, t("betrieb.tage", stand.betrieb.tageProWoche))}</div>
+    <button type="button" class="leise" data-a="weg-genau">${esc(t("schnell.genau"))}</button>`,
+  fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
+  eingabe(feld, wert, stand) { if (feld === "betrieb.name") stand.betrieb.name = wert; },
+  aktion(name, el, stand) {
+    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; stand.ladenArt = a.id; stand.betrieb.format = a.format; stand.betrieb.kuechen = [...a.kuechen]; return true; }
+    if ((name === "minus" || name === "plus") && el.dataset.feld === "tage") { stand.betrieb.tageProWoche = Math.min(7, Math.max(1, stand.betrieb.tageProWoche + (name === "plus" ? 1 : -1))); return true; }
+    if (name === "weg-genau") { stand.weg = "genau"; stand.schritt = schrittIndex("format"); return true; }
+  },
+};
+
+const karteSchnell = {
+  id: "karte-foto",
+  view: (stand) => (hatVorschlaege() && fotoLauf()?.status !== "lesen" ? kartePruefenView(stand) : karteFotoView(stand)),
+  fuss: () => fotoLauf()?.status === "lesen" ? "" : hatVorschlaege() ? `<button type="button" class="knopf glut" data-a="fv-uebernehmen">${esc(t("foto.uebernehmen"))}</button>` : `<button type="button" class="knopf zweit" data-a="weiter">${esc(t("foto.ohneKarte"))}</button>`,
+  eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
+  aktion(name, el, stand, ctx) {
+    if (name === "fv-uebernehmen") { stand.schnellErgebnis = karteUebernehmen(stand); ctx.weiter(); return true; }
+    return kartePruefenAktion(name, el);
+  },
+};
+
+const KS_POSTEN = { miete: "miete", energie: "strom" };
+const kostenSchnell = {
+  id: "kosten-schnell",
+  view(stand) {
+    const f = findeFormat(stand.betrieb.format);
+    const wert = (posten) => stand.kosten.find((k) => k.posten === posten && k.status === "bekannt")?.betrag ?? null;
+    const zeile = (feld, label, hint, w, rw) => `<div class="feldzeile"><label>${esc(label)}</label>${hint ? `<p class="hinweis">${esc(hint)}</p>` : ""}${zahlfeld({ feld, wert: w, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: rw ? String(rw) : "", klein: true })}</div>`;
+    const eigen = stand.team.eigenerLohnStatus === "eigen" ? stand.team.eigenerLohn : null;
+    return `
+      <h1 class="frage">${esc(t("schnell.kostenFrage"))}</h1>
+      <p class="hinweis">${esc(t("schnell.kostenHinweis"))}</p>
+      ${zeile("ks:miete", t("schnell.miete"), t("schnell.mieteHinweis"), wert("miete"), f?.rw.miete)}
+      ${zeile("ks:personal", t("schnell.personal"), t("schnell.personalHinweis"), stand.team.lohnkosten, null)}
+      ${zeile("ks:eigen", t("schnell.eigen"), t("schnell.eigenHinweis", fmtEuro(EIGENER_LOHN_RICHTWERT)), eigen, EIGENER_LOHN_RICHTWERT)}
+      ${zeile("ks:energie", t("schnell.energie"), t("schnell.energieHinweis"), wert("strom"), null)}
+      <p class="tipp">${esc(t("schnell.kostenFoto"))}</p>`;
+  },
+  fuss: () => knopfWeiter(),
+  eingabe(feld, wert, stand) {
+    const m = feld.match(/^ks:(\w+)$/); if (!m) return;
+    const n = parseZahl(wert);
+    if (m[1] === "personal") { stand.team.lohnkosten = n; return; }
+    if (m[1] === "eigen") { stand.team.eigenerLohn = n; stand.team.eigenerLohnStatus = n === null ? "geschaetzt" : "eigen"; return; }
+    const posten = KS_POSTEN[m[1]]; if (!posten) return;
+    const e = postenEintrag(stand, posten, posten === "miete" ? "miete" : "energie");
+    e.betrag = n; e.status = n === null ? "aus" : "bekannt"; e.periode = "monat";
+    if (posten === "strom") { e.sammel = "strom-gas"; e.basis = "brutto"; }
+  },
+};
+
+const fertigSchnell = {
+  id: "fertig-schnell",
+  view(stand) {
+    const r = stand.schnellErgebnis || { neu: stand.gerichte.length, artikel: stand.artikel.length, ohneRezept: 0 };
+    const last = monatsLast(stand);
+    return `
+      <h1 class="frage">${esc(t("schnell.fertigFrage"))}</h1>
+      <div class="liste">
+        <div class="summenzeile"><span>${esc(t("schnell.gerichte"))}</span><span class="wert">${stand.gerichte.length}</span></div>
+        <div class="summenzeile"><span>${esc(t("schnell.inventur"))}</span><span class="wert">${stand.artikel.length}</span></div>
+        <div class="summenzeile"><span>${esc(t("schnell.kostenMonat"))}</span><span class="wert">${fmtEuro(last.gesamt)}</span></div>
+      </div>
+      ${r.ohneRezept ? `<p class="tipp">${esc(t("schnell.ohneRezept", r.ohneRezept))}</p>` : ""}
+      <p class="hinweis">${esc(t("schnell.fertigHinweis"))}</p>`;
+  },
+  fuss: () => `<button type="button" class="knopf glut" data-a="ob-fertig" data-ziel="beleg">${esc(t("schnell.rechnungen"))}</button><button type="button" class="knopf zweit" data-a="ob-fertig" data-ziel="start">${esc(t("schnell.zumCockpit"))}</button>`,
+  aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(el.dataset.ziel === "beleg" ? "beleg" : "start"); return false; } },
+};
+
+export const SCHNELL = [sprache, ladenSchnell, karteSchnell, kostenSchnell, fertigSchnell];
+export const schritteFuer = (stand) => (stand?.weg === "schnell" ? SCHNELL : SCHRITTE);

@@ -4,7 +4,7 @@ import pathlib, re, datetime
 APP = pathlib.Path(__file__).resolve().parent.parent
 dateien = ["./", "index.html"]
 for p in sorted(APP.rglob("*")):
-    if p.is_file() and p.suffix in (".js", ".css", ".png", ".svg", ".webmanifest") and "tests" not in p.parts and "tools" not in p.parts and p.name != "sw.js":
+    if p.is_file() and p.suffix in (".js", ".css", ".png", ".svg", ".webmanifest") and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js":
         rel = p.relative_to(APP).as_posix()
         if rel not in dateien: dateien.append(rel)
 assert len(dateien) == len(set(dateien)), "doppelte Einträge in der Dateiliste"

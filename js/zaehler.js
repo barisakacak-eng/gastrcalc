@@ -9,6 +9,7 @@
 //  - Netto rechnen: Tagesumsatz aus der Kasse ist brutto, der Mischsatz kommt aus der Karte oder vom Wirt.
 //  - Durch Öffnungstage teilen: Ruhetage (aus der Kühlkontrolle) zählen nicht; ohne Ruhetage gilt der Anteil tageProWoche/7 je Kalendertag.
 //  - Unvollständig (Kosten offen, kein Umsatz eingetragen) wird gesagt, nicht erfunden.
+import { sonderkostenImMonat } from "./kostenbeleg.js";
 import { heute, uid } from "./util.js";
 import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus } from "./engine.js";
 
@@ -84,7 +85,9 @@ export function zaehler(stand, { datum = heute() } = {}) {
   // Öffnungstage des Monats (gewichtet) und Tageskosten
   const tage = []; let gewichtMonat = 0;
   for (let d = M.von; d <= M.bis; d = tagPlus(d, 1)) { const w = tagGewicht(stand, d); gewichtMonat += w; tage.push({ datum: d, gewicht: w }); }
-  const tageskosten = gewichtMonat > 0 ? last.gesamt / gewichtMonat : 0;
+  // Sonderkosten des Monats aus Kostenbelegen (einmalig / auf Monate verteilt), Etappe 6a – kommen zur Monatslast dazu
+  const sonder = sonderkostenImMonat(stand, M.von.slice(0, 7));
+  const tageskosten = gewichtMonat > 0 ? (last.gesamt + sonder.summe) / gewichtMonat : 0;
   const anteil = (betrag) => gewichtMonat > 0 ? (betrag || 0) / gewichtMonat : 0;
 
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
@@ -130,7 +133,7 @@ export function zaehler(stand, { datum = heute() } = {}) {
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: anteil(last.lohn ?? 0) * gewichtBisHeute, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute,
     umsatzBrutto, umsatzNetto, ware, muell: muellSumme, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
     dbProTag, noetigProTag: standHeute < 0 && gewichtMonat - gewichtBisHeute > 0 ? tageskosten + (-standHeute) / (gewichtMonat - gewichtBisHeute) : null,
-    nullTag, kippTag, monatsende, reichtNicht, tage, unvollstaendig, keinUmsatz: tageMitUmsatz === 0, last, belege: einkauf.anzahl,
+    nullTag, kippTag, monatsende, reichtNicht, tage, unvollstaendig, keinUmsatz: tageMitUmsatz === 0, last, sonder, belege: einkauf.anzahl,
   };
 }
 

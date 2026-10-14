@@ -334,3 +334,19 @@ h1, h2, h3, p { margin: 0; }
 .inhalt.cockpit { gap: 12px; }
 .kachel.klein, .karte.zaehler { font-family: inherit; }
 button.kachel { cursor: pointer; }
+
+/* Etappe 6a – Foto und Upload */
+.fotofeld { display: grid; gap: 10px; margin: 14px 0; }
+.fotofeld .knopf { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; cursor: pointer; }
+.fotoknopf { font-size: 1.15rem; }
+.fotolauf { text-align: center; padding: 40px 0 20px; }
+.kreisel { width: 54px; height: 54px; margin: 0 auto 18px; border-radius: 50%; border: 5px solid var(--salbei-hell); border-top-color: var(--glut); animation: dreh 0.9s linear infinite; }
+@keyframes dreh { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .kreisel { animation-duration: 3s; } }
+.ocrtext { white-space: pre-wrap; font-size: 0.8rem; background: var(--papier-tief); border-radius: 10px; padding: 10px; max-height: 260px; overflow: auto; }
+.betrag.klein input { max-width: 110px; }
+.marke.gruen { color: var(--gruen); }
+.hinweis.klein { font-size: 0.85rem; }
+.zeile .oben .textfeld { flex: 1; min-width: 0; margin-right: 10px; }
+.fotofeld .knopf { position: relative; overflow: hidden; }
+.dateifeld { position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }

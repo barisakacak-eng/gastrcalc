@@ -6,6 +6,8 @@
 // Neu gegenüber Schema 3: Kostenposten tragen basis (netto/brutto), Artikel tragen Gebinde, Preisbasis und Preisverlauf,
 // der eigene Lohn ist eine Kostenzeile, dazu die Journale lieferungen (Belege) und abschluesse (Tag abschließen).
 // Journale (schwund, messungen, rundgaenge, tagesnotizen, lieferungen, abschluesse) werden nur angehängt; Rücknahme = storniert.
+// Schema 5 (Etappe 6a): dazu uploads (Beschreibung abgelegter Fotos/Dateien – die Datei selbst liegt in der Ablage, nie im Laden),
+// kostenbelege (Rechnungen mit Kostenstelle und Verteilung) und weg ("schnell" | "genau") für die Einrichtung.
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
 import { debounce, uid, heute } from "./util.js";
@@ -14,8 +16,8 @@ import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
 
-export const SCHEMA = 4;
-export const APP_FASSUNG = "etappe5";
+export const SCHEMA = 5;
+export const APP_FASSUNG = "etappe6a";
 const DB_NAME = "gastrocalc";
 const DB_VERSION = 1;
 const EREIGNISSE_MAX = 2000;
@@ -26,6 +28,7 @@ export function leererBetrieb() {
     angelegt: new Date().toISOString(),
     geaendert: null,
     phase: "onboarding",        // "onboarding" | "app"
+    weg: "schnell",             // Einrichtung: "schnell" (Foto zuerst, Etappe 6a) | "genau" (alle Schritte wie bis Etappe 5)
     schritt: 0,                 // aktueller Onboarding-Schritt
     betrieb: { name: "", format: null, kuechen: [], tageProWoche: 6, monate: 12, steuerSatz: null }, // steuerSatz: eigener Mischsatz für den Umsatz (null = aus der Karte oder 7 %)
     team: { personen: null, stundenProPerson: null, lohnkosten: null, eigenerLohn: null, eigenerLohnStatus: "geschaetzt" }, // eigenerLohn null + geschaetzt = Richtwert gilt
@@ -35,6 +38,8 @@ export function leererBetrieb() {
     verkauf: { zielgewinn: 10, zielgewinnStatus: "vorschlag", bestellungenTag: null, warenQuote: null }, // warenQuote: eigener Wareneinsatz-Anteil 0..1 (null = aus der Karte)
     artikel: [], gerichte: [],  // artikel: {name, gruppe, einheit, packung:{menge,einheit}, gebinde:{art, zwischen:{art,anzahl}|null}, preis, preisBasis, preisHistorie:[{datum,preis,menge,einheit}]}
     lieferungen: [],            // nur anhängen: eingelesene Belege {id, datum, erfasst, lieferant, typ, basis, summeNetto, summeBrutto, zeilen:[…], storniert}
+    uploads: [],                // nur anhängen: {id, datei:{id, ort, typ, groesse, name, zweck, erstellt}, zweck, erfasst, status, auswertung:{quelle, art, dauerMs, zeichen}, ergebnis}
+    kostenbelege: [],           // nur anhängen: {id, datum, erfasst, stelle, betrag, basis, satz, verteilung, monate, ab, upload, lieferant, storniert}
     abschluesse: [],            // nur anhängen: Tag abschließen {id, datum, erfasst, geraet, umsatz, muell, kuehl, stand}
     schwund: [],                // nur anhängen; Rücknahme = storniert:true
     tagesnotizen: [],           // nur anhängen: {id, datum, umsatz, erfasst, nacherfasst} – der jüngste Eintrag je Datum gilt
@@ -146,6 +151,10 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
     preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
   s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt) : [], storniert: !!l.storniert }));
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
+  s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
+  s.kostenbelege = mitId(s.kostenbelege).filter((k) => typeof k.stelle === "string" && typeof k.betrag === "number" && typeof k.ab === "string").map((k) => ({ ...k, storniert: !!k.storniert }));
+  // Läden, die schon vor Etappe 6a mitten in der Einrichtung waren, bleiben auf dem genauen Weg
+  if (!["schnell", "genau"].includes(s.weg)) s.weg = alt || s.schritt > 0 || s.phase === "app" ? "genau" : "schnell";
   s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
@@ -172,7 +181,8 @@ export function migrierenWurzel(w) {
     const out = leereWurzel();
     out.sprache = ["de", "tr", "en"].includes(w.sprache) ? w.sprache : null;
     const alt = Number(w.schema) < 4;
-    out.betriebe = w.betriebe.map((b) => migrierenBetrieb(b, { alt }));
+    const vor6 = Number(w.schema) < 5;
+    out.betriebe = w.betriebe.map((b) => { if (vor6 && !b.weg) b.weg = "genau"; return migrierenBetrieb(b, { alt }); });
     out.aktiv = out.betriebe.some((b) => b.id === w.aktiv) ? w.aktiv : (out.betriebe[0]?.id ?? null);
     if (typeof w.geraet === "string" && w.geraet) out.geraet = w.geraet;
     out.lfd = Math.max(0, Number(w.lfd) || 0);
@@ -212,7 +222,7 @@ export const speichernAbbrechen = () => speichern.abbrechen();
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length, 0);
+  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length, 0);
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
@@ -311,6 +321,8 @@ export function verschmelzen(lokal, fremd) {
   basis.messungen = journalVereinigen(lokal.messungen, fremd.messungen).sort(sortErfasst);
   basis.lieferungen = journalVereinigen(lokal.lieferungen, fremd.lieferungen).sort(sortErfasst);
   basis.abschluesse = journalVereinigen(lokal.abschluesse, fremd.abschluesse).sort(sortErfasst);
+  basis.uploads = journalVereinigen(lokal.uploads, fremd.uploads).sort(sortErfasst);
+  basis.kostenbelege = journalVereinigen(lokal.kostenbelege, fremd.kostenbelege).sort(sortErfasst);
   basis.personen = journalVereinigen(lokal.personen, fremd.personen, ["entfernt"]).map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
   // Kühlstellen: Archivierung gewinnt; Name und Grenzen vom jüngeren Stand
   const stellen = new Map();

@@ -7,6 +7,9 @@ import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, preisSprung, geb
 import { preisJeBasis } from "../engine.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
+import { fotoKnoepfe, fotoLauf, fotoVorbereiten } from "./foto.js";
+import { STELLEN, VERTEILUNGEN, stelleRaten, kostenbelegLesen, kostenbelegAnlegen } from "../kostenbeleg.js";
+import { parseZahl, wertAnzeige } from "../util.js";
 
 let text = "";
 let beleg = null;        // Ergebnis des Zerlegers (flüchtig)
@@ -16,23 +19,44 @@ let basisWahl = null;    // "netto" | "brutto" wenn der Beleg unklar ist
 let zeigeAlle = false;
 let datumWahl = null;    // "beleg" | "heute" (Review Etappe 5, Punkt 5)
 let fertig = null;       // { lieferung, aenderungen, anzahl }
+let zuweisung = null;    // nach Foto/PDF: { stelle, betrag, basis, datum, verteilung, monate, lieferant, upload } (Etappe 6a)
+let kostenFertig = null; // gespeicherter Kostenbeleg
+let zeigeText = false;
 const istLieferschein = () => beleg && (beleg.typ === "lieferschein" || !zeilen.some((z) => z.gesamt !== null));
 const belegDatum = () => (datumWahl === "heute" || !beleg?.datum || beleg.datum > heute() ? heute() : beleg.datum);
 
-export const belegKennung = () => `${fertig ? "fertig" : beleg ? "pruefen" : "text"}`;
-export function belegZuruecksetzen() { text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; }
-export function belegZurueck() { if (fertig) { belegZuruecksetzen(); return true; } if (beleg) { beleg = null; zeilen = []; return true; } return false; }
+export const belegKennung = () => `${fertig ? "fertig" : kostenFertig ? "kfertig" : beleg ? "pruefen" : zuweisung ? "zuweisen" : "text"}:${fotoLauf()?.status || ""}`;
+export function belegZuruecksetzen() { text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; zuweisung = null; kostenFertig = null; zeigeText = false; }
+export function belegZurueck() { if (fertig || kostenFertig) { belegZuruecksetzen(); return true; } if (beleg) { beleg = null; zeilen = []; return true; } if (zuweisung) { zuweisung = null; text = ""; return true; } return false; }
+
+// Nach dem Foto: Text übernehmen und fragen, wofür die Rechnung ist. Kostenstelle und Betrag sind vorbelegt, nie still gespeichert.
+export function belegTextVonFoto(ocrText, upload) {
+  text = ocrText; beleg = null; fertig = null; kostenFertig = null;
+  const k = kostenbelegLesen(ocrText);
+  const stelle = stelleRaten(ocrText) || "ware";
+  zuweisung = { stelle, betrag: k.netto ?? k.brutto, basis: k.netto !== null ? "netto" : "brutto", satz: k.satz, datum: k.datum && k.datum <= heute() ? k.datum : heute(), verteilung: stelle === "versicherungen" ? "jaehrlich" : "monatlich", monate: 3, lieferant: ocrText.split(/\r?\n/).map((z) => z.trim()).find((z) => z.length > 3) || "", upload };
+}
 
 export function belegView(stand) {
   const kopf = `<div class="kopfband"><h1>${esc(t("beleg.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>`;
   if (fertig) return kopf + fertigView(stand) + nav("umsatz");
+  if (kostenFertig) return kopf + kostenFertigView() + nav("umsatz");
   if (beleg) return kopf + pruefView(stand) + nav("umsatz");
+  const lauf = fotoLauf();
+  if (lauf && lauf.status === "lesen" && lauf.zweck !== "speisekarte") return kopf + `<div class="inhalt"><div class="fotolauf"><div class="kreisel" aria-hidden="true"></div><h1 class="frage">${esc(t(lauf.schritt === "seite" ? "foto.seite" : "foto.lesenRechnung", lauf.seite, lauf.von))}</h1><p class="hinweis">${esc(t("foto.lesenHinweis"))}</p></div></div>` + nav("umsatz");
+  if (zuweisung) return kopf + zuweisungView(stand) + nav("umsatz");
+  fotoVorbereiten();
   const letzte = (stand.lieferungen || []).filter((l) => !l.storniert).slice(-6).reverse();
   return `${kopf}
     <div class="inhalt">
+      <p class="hinweis">${esc(t("foto.rechnungHinweis"))}</p>
+      ${lauf?.status === "fehler" && lauf.zweck !== "speisekarte" ? `<div class="tipp warnband">${esc(lauf.fehler)}</div>` : ""}
+      <div class="fotofeld">${fotoKnoepfe("rechnung", { kamera: "foto.rechnungKamera", datei: "foto.rechnungDatei" })}</div>
+      <button type="button" class="leise" data-a="beleg-text-zeigen">${esc(t(zeigeText ? "beleg.textAus" : "beleg.textEinfuegen"))}</button>
+      ${zeigeText || text.trim() ? `
       <p class="hinweis">${esc(t("beleg.anleitung"))}</p>
       <textarea class="textfeld belegtext" data-f="beleg-text" rows="7" placeholder="${esc(t("beleg.einfuegen"))}">${esc(text)}</textarea>
-      <button type="button" class="knopf glut" data-a="beleg-zerlegen" ${text.trim() ? "" : "disabled"}>${esc(t("beleg.zerlegen"))}</button>
+      <button type="button" class="knopf glut" data-a="beleg-zerlegen" ${text.trim() ? "" : "disabled"}>${esc(t("beleg.zerlegen"))}</button>` : ""}
       <p class="tipp">${esc(t("beleg.hinweisEcht"))}</p>
       <p class="hinweis">${esc(t("beleg.datenschutz"))}</p>
       <div class="karte"><h2>${esc(t("beleg.letzte"))}</h2>
@@ -40,6 +64,42 @@ export function belegView(stand) {
       </div>
     </div>
     ${nav("umsatz")}`;
+}
+
+function zuweisungView(stand) {
+  const z = zuweisung; const ware = z.stelle === "ware";
+  const name = (st) => st === "ware" ? t("foto.stelleWare") : t("kosten.posten." + st)[0];
+  return `<div class="inhalt">
+    <h2 class="frage" style="font-size:1.3rem">${esc(t("foto.zuweisenFrage"))}</h2>
+    <p class="hinweis">${esc(z.lieferant)}</p>
+    <div class="chips">${STELLEN.map((st) => `<button type="button" class="chip ${z.stelle === st ? "an" : ""}" data-a="zw-stelle" data-wert="${st}">${esc(name(st))}</button>`).join("")}</div>
+    ${ware ? `<p class="hinweis">${esc(t("foto.wareHinweis"))}</p><button type="button" class="knopf glut" data-a="beleg-zerlegen">${esc(t("foto.wareWeiter"))}</button>` : `
+    <div class="karte">
+      <div class="feldzeile"><label>${esc(t("foto.betrag"))}</label>
+        <div class="betrag"><input inputmode="decimal" data-f="zw-betrag" value="${esc(wertAnzeige(z.betrag))}" aria-label="${esc(t("foto.betrag"))}"><span class="einheit">€</span></div>
+        <div class="seg klein"><button type="button" class="${z.basis === "brutto" ? "an" : ""}" data-a="zw-basis" data-wert="brutto">${esc(t("gebinde.brutto"))}</button><button type="button" class="${z.basis === "netto" ? "an" : ""}" data-a="zw-basis" data-wert="netto">${esc(t("gebinde.netto"))}</button></div>
+        ${z.betrag === null ? `<small class="marke offen">${esc(t("foto.betragFehlt"))}</small>` : `<small class="marke">${esc(t("foto.betragErkannt"))}</small>`}</div>
+      <div class="feldzeile"><label>${esc(t("foto.datum"))}</label><span class="marke">${esc(datumLesbar(z.datum))}</span></div>
+      <div class="feldzeile"><label>${esc(t("foto.verteilung"))}</label>
+        <div class="chips">${VERTEILUNGEN.map((v) => `<button type="button" class="chip ${z.verteilung === v ? "an" : ""}" data-a="zw-verteilung" data-wert="${v}">${esc(t("foto.verteilungen." + v))}</button>`).join("")}</div>
+        ${z.verteilung === "verteilt" ? `<div class="stepper"><button type="button" data-a="zw-monate" data-wert="-1" aria-label="−">−</button><div class="wert">${esc(t("foto.monate", z.monate))}</div><button type="button" data-a="zw-monate" data-wert="1" aria-label="+">+</button></div>` : ""}
+        <small class="marke">${esc(t("foto.verteilungHinweis." + z.verteilung, fmtEuro(z.betrag || 0, { dezimal: 2 }), z.monate))}</small></div>
+    </div>
+    <button type="button" class="knopf glut" data-a="zw-speichern" ${z.betrag > 0 && z.basis ? "" : "disabled"}>${esc(t("foto.kostenSpeichern"))}</button>`}
+    <button type="button" class="leise" data-a="zw-text">${esc(t(zeigeText ? "foto.textAus" : "foto.textZeigen"))}</button>
+    ${zeigeText ? `<pre class="ocrtext">${esc(text)}</pre>` : ""}
+    <button type="button" class="leise" data-a="beleg-neu">${esc(t("allgemein.abbrechen"))}</button>
+  </div>`;
+}
+
+function kostenFertigView() {
+  const e = kostenFertig;
+  return `<div class="inhalt"><div class="karte gruenrand"><h2>${esc(t("foto.kostenGespeichert"))}</h2>
+    <div class="mid">${esc(t("kosten.posten." + e.stelle)[0])} · ${fmtEuro(e.betrag, { dezimal: 2 })} ${esc(t("gebinde." + e.basis))}</div>
+    <small class="marke">${esc(t("foto.verteilungHinweis." + e.verteilung, fmtEuro(e.betrag, { dezimal: 2 }), e.monate))}</small></div>
+    <p class="hinweis">${esc(t("foto.zaehlerAktuell"))}</p>
+    <button type="button" class="knopf" data-a="nav" data-wert="start">${esc(t("beleg.zumCockpit"))}</button>
+    <button type="button" class="knopf zweit" data-a="beleg-neu">${esc(t("beleg.nochmal"))}</button></div>`;
 }
 
 // Kandidaten aus der Artikelliste: Wortüberlappung, bis zu vier.
@@ -125,6 +185,19 @@ export function belegAktion(name, el, stand, wurzel) {
     return true;
   }
   if (name === "beleg-zurueck") { beleg = null; zeilen = []; return true; }
+  if (name === "beleg-text-zeigen") { zeigeText = !zeigeText; return true; }
+  if (name === "zw-text") { zeigeText = !zeigeText; return true; }
+  if (name === "zw-stelle" && zuweisung) { zuweisung.stelle = el.dataset.wert; if (zuweisung.stelle === "versicherungen" && zuweisung.verteilung === "monatlich") zuweisung.verteilung = "jaehrlich"; return true; }
+  if (name === "zw-basis" && zuweisung) { zuweisung.basis = el.dataset.wert; return true; }
+  if (name === "zw-verteilung" && zuweisung) { zuweisung.verteilung = el.dataset.wert; return true; }
+  if (name === "zw-monate" && zuweisung) { zuweisung.monate = Math.min(24, Math.max(2, zuweisung.monate + Number(el.dataset.wert))); return true; }
+  if (name === "zw-speichern" && zuweisung) {
+    const z = zuweisung; if (!(z.betrag > 0) || !z.basis) return false;
+    const e = kostenbelegAnlegen(stand, { stelle: z.stelle, betrag: z.betrag, basis: z.basis, satz: z.satz, datum: z.datum, verteilung: z.verteilung, monate: z.monate, upload: z.upload?.id || null, lieferant: z.lieferant });
+    if (z.upload) { z.upload.status = "uebernommen"; z.upload.ergebnis = { kostenbeleg: e.id }; z.upload.zweck = "kosten"; }
+    kostenFertig = e; zuweisung = null; text = "";
+    return "uebernommen";
+  }
   if (name === "beleg-neu") { belegZuruecksetzen(); return true; }
   if (name === "beleg-alle") { zeigeAlle = !zeigeAlle; return true; }
   if (name === "beleg-basis") { basisWahl = el.dataset.wert; return true; }
@@ -152,12 +225,15 @@ export function belegAktion(name, el, stand, wurzel) {
     const l = lieferungAnlegen(stand, beleg, { zeilen: genommen, geraet: wurzel?.geraet || null, basis, datum, alleZeilen: weggelassen === 0 });
     const ae = preiseUebernehmen(stand, l);
     fertig = { lieferung: l, aenderungen: ae, anzahl: genommen.length }; beleg = null; zeilen = []; text = "";
+    if (zuweisung?.upload) { zuweisung.upload.status = "uebernommen"; zuweisung.upload.ergebnis = { lieferung: l.id }; l.upload = zuweisung.upload.id; }
+    zuweisung = null;
     return "uebernommen";
   }
   return false;
 }
 export function belegEingabe(feld, wert) {
   if (feld === "beleg-text") { text = wert; return "knopf"; }
+  if (feld === "zw-betrag" && zuweisung) { zuweisung.betrag = parseZahl(wert); return "knopf-zw"; }
   return false;
 }
 export const belegTextDa = () => !!text.trim();

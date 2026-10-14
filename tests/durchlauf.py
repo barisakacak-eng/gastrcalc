@@ -45,7 +45,7 @@ async def main():
             async def stand(): return await pg.evaluate("window.__gastrocalc.stand")
 
             # ---- Onboarding
-            await bild("sprache"); await pg.click('[data-a="sprache"][data-wert="de"]')
+            await bild("sprache"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.click('[data-a="weg-genau"]')
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')
@@ -176,7 +176,7 @@ async def main():
             await pg.click('[data-a="nav"][data-wert="start"]'); await bild("cockpit-mit-zahlen")
             html = await pg.content(); assert "Tonne heute" in html and "1.850" in html
             # ---- Beleg einlesen
-            await pg.click('[data-a="nav"][data-wert="beleg"]'); await pg.wait_for_selector('[data-f="beleg-text"]'); await bild("beleg-leer")
+            await pg.click('[data-a="nav"][data-wert="beleg"]'); await bild("beleg-leer"); await pg.click('[data-a="beleg-text-zeigen"]'); await pg.wait_for_selector('[data-f="beleg-text"]')
             assert await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
             await pg.fill('[data-f="beleg-text"]', BELEG); await pg.wait_for_timeout(150)
             assert not await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
@@ -209,7 +209,7 @@ async def main():
             # ---- Neuladen: alles da, Schema 4
             await pg.reload(); await pg.wait_for_selector(".cockpit")
             w = await pg.evaluate("window.__gastrocalc.wurzel")
-            assert w["schema"] == 4 and len(w["betriebe"][0]["lieferungen"]) == 1 and len(w["betriebe"][0]["abschluesse"]) == 1
+            assert w["schema"] == 5 and len(w["betriebe"][0]["lieferungen"]) == 1 and len(w["betriebe"][0]["abschluesse"]) == 1
             # ---- Kühlkontrolle mit Standardgrenzen
             await pg.click('[data-a="nav"][data-wert="kuehl"]'); await bild("kuehl-start")
             html = await pg.content(); assert "Standard" in html, "Standardgrenze nicht sichtbar"
@@ -236,7 +236,7 @@ async def main():
             async with pg.expect_download() as dl: await pg.click('[data-a="export"]')
             d = await dl.value; pfad = OUT / "export.json"; await d.save_as(str(pfad))
             kopf, inhalt = pfad.read_text().split("\n", 1); kopfd = json.loads(kopf); daten = json.loads(inhalt)
-            assert kopfd["schema"] == 4 and len(kopfd["sha256"]) == 64 and daten["wurzel"]["betriebe"][0]["lieferungen"], kopfd
+            assert kopfd["schema"] == 5 and len(kopfd["sha256"]) == 64 and daten["wurzel"]["betriebe"][0]["lieferungen"], kopfd
             # Alte Schema-3-Sicherung einlesen: Posten bekommen basis netto, Artikel Gebinde
             alt = {"typ": "gastrocalc-sicherung", "schema": 3, "wurzel": {"schema": 3, "betriebe": [{"id": "alt-3", "phase": "app", "betrieb": {"name": "Altes Café", "format": "cafe", "kuechen": [], "tageProWoche": 6, "monate": 12},
                    "kosten": [{"id": "k1", "kategorie": "energie", "posten": "strom", "betrag": 119, "status": "bekannt", "periode": "monat"}], "artikel": [{"name": "Milch", "gruppe": "kaese", "einheit": "l", "packung": {"menge": 1, "einheit": "l"}, "preis": 1}]}], "aktiv": "alt-3"}, "ereignisse": []}
