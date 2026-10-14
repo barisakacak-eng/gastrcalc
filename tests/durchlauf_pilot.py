@@ -52,7 +52,8 @@ async def main():
                 await bild(f"schritt-{i}"); await pg.click('[data-a="weiter"]'); await pg.wait_for_timeout(500)
             await bild("ende")
             st = await pg.evaluate("window.__gastrocalc.stand")
-            print("Gerichte:", len(st["gerichte"]), "· Artikel Inventurliste:", len(st["artikel"]), "· Phase:", st.get("phase"))
+            ohne = [g["name"] for g in st["gerichte"] if not g["zutaten"]]
+            print("Gerichte:", len(st["gerichte"]), "· mit Rezept:", len(st["gerichte"]) - len(ohne), "· Artikel Inventurliste:", len(st["artikel"]), "· Phase:", st.get("phase")); print("Ohne Rezept:", ohne)
             print("Konsolenfehler:", fehler)
             await ctx.close(); await b.close()
     finally:

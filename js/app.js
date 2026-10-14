@@ -5,6 +5,8 @@ import { t, setzeSprache, SPRACHEN } from "./i18n.js";
 import { ablageLeeren } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
+import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
+import { artikelAusGerichten } from "./engine.js";
 import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf, karteFussKnopf, karteZeigtPruefliste } from "./screens/foto.js";
 import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
@@ -435,6 +437,8 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
     serviceWorkerStarten(); return;
   }
   aktivSetzen(wurzel.aktiv);
+  // Gerichte ohne Rezept (aus älteren Fassungen) bekommen beim Start Startwerte aus dem Baukasten (Pilot 14.10.: keine leere App)
+  { let n = 0; for (const b of wurzel.betriebe) n += fehlendeRezepteErgaenzen(b); if (n) { for (const b of wurzel.betriebe) b.artikel = artikelAusGerichten(b); speichern(wurzel); } }
   serviceWorkerStarten();
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
   setzeSprache(wurzel.sprache || spracheDesGeraets());

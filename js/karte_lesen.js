@@ -6,6 +6,7 @@
 import { VORLAGEN, vorlagenFuer, PRODUKT_INDEX } from "./data/katalog.js";
 import { klasseFuerBereich, steuersatzAusZutaten } from "./engine.js";
 import { uid } from "./util.js";
+import { rezeptBauen, BEREICH_JE_FAMILIE } from "./rezept_baukasten.js";
 
 const PREIS = /(\d{1,3})\s?[.,]\s?(\d{2})(?!\d)\s*(?:€|eur(?:o)?|e)?/gi;
 const RAUSCHEN = /(preise?\s+inkl|inkl\.?\s*mwst|\bmwst\b|\btel\b\.?|telefon|\bfax\b|www\.|@|stra(ss|ß)e\b|\bstr\.|öffnungszeiten|offnungszeiten|ruhetag|mindestbestell|allergene|zusatzstoffe|^\s*seite\s+\d)/iu;
@@ -219,12 +220,16 @@ export function vorschlaegeAusText(text, stand) {
   return pos.map((p) => {
     const treffer = besteVorlage(p.name, stand);
     const getraenk = istGetraenk(p.name);
-    return {
+    // Kein sicherer Vorlagen-Treffer: Rezept aus dem Baukasten (Grundrezept + Belag + Größe) – nie ein Gericht ohne Rezept
+    const bau = !getraenk && !(treffer && treffer.s >= 0.75) ? rezeptBauen(p.name) : null;
+    const v = {
       id: uid(), name: p.name, preis: p.preis, roh: p.roh, an: true, pruefen: !!p.pruefen, preisPruefen: !!p.preisPruefen,
       vorlage: treffer ? treffer.v.name : null, bereich: treffer ? treffer.v.bereich : null,
-      sicher: treffer ? (treffer.s >= 0.75 ? "sicher" : "vorschlag") : getraenk ? "getraenk" : "ohne",
+      sicher: treffer && treffer.s >= 0.75 ? "sicher" : bau ? "baukasten" : treffer ? "vorschlag" : getraenk ? "getraenk" : "ohne",
       getraenk,
     };
+    if (bau) Object.assign(v, { vorlage: null, bereich: BEREICH_JE_FAMILIE[bau.familie] || null, bau });
+    return v;
   });
 }
 
@@ -237,16 +242,24 @@ export function vorschlaegeUebernehmen(stand, vorschlaege) {
     if (!v.an || !String(v.name).trim()) continue;
     const name = String(v.name).trim().slice(0, 80);
     const vorhanden = stand.gerichte.find((g) => normName(g.name) === normName(name));
-    if (vorhanden) { if (typeof v.preis === "number") vorhanden.preis = v.preis; aktualisiert += 1; continue; }
+    if (vorhanden) { if (typeof v.preis === "number") vorhanden.preis = v.preis; aktualisiert += 1; continue; } // leere Rezepte füllt fehlendeRezepteErgaenzen
     const vl = v.vorlage ? alleVorlagen.find((x) => x.name === v.vorlage) : null;
-    let zutaten, klasse, bereich = vl?.bereich || null, steuer;
+    let zutaten, klasse, bereich = vl?.bereich || null, steuer, baukasten = null;
     if (vl) { zutaten = vl.zutaten.map(([n, menge, einheit]) => ({ name: n, menge, einheit })); klasse = klasseFuerBereich(vl.bereich); steuer = steuersatzAusZutaten(zutaten); }
+    else if (v.bau || (!v.getraenk && rezeptBauen(name))) {
+      // Rezept aus dem Baukasten: Startwerte, gekennzeichnet – der Wirt passt sie an
+      const b = rezeptBauen(name) || v.bau; // Name evtl. vom Wirt geändert: neu bauen
+      zutaten = b.zutaten.map((z) => ({ name: z.name, menge: z.menge, einheit: z.einheit })); bereich = BEREICH_JE_FAMILIE[b.familie] || null;
+      klasse = klasseFuerBereich(bereich); steuer = steuersatzAusZutaten(zutaten);
+      baukasten = b.familie;
+    }
     else if (v.getraenk) {
       // Getränk ohne Vorlage: es wird 1:1 eingekauft und verkauft – Zutat ist das Getränk selbst
       zutaten = [{ name, menge: 1, einheit: "stk" }]; klasse = "getraenk"; steuer = 0.19;
       if (!stand.artikel.some((a) => a.name === name)) stand.artikel.push({ name, gruppe: "getraenk", einheit: "stk", packung: { menge: null, einheit: "stk" }, gebinde: { art: "kiste", zwischen: null }, preis: null, preisBasis: "netto", preisHistorie: [], status: "offen", benutzt: true });
     } else { zutaten = []; klasse = "haupt"; steuer = 0.07; ohneRezept += 1; }
-    stand.gerichte.push({ id: uid(), name, vorlageName: vl?.name || null, bereich, klasse, zeit: vl?.zeit ?? 4, vorlage: !!vl, zutaten,
+    stand.gerichte.push({ id: uid(), name, vorlageName: vl?.name || null, bereich, klasse, zeit: vl?.zeit ?? (baukasten ? (rezeptBauen(name)?.zeit ?? 4) : 4), vorlage: !!vl, zutaten,
+      ...(baukasten ? { rezeptQuelle: "baukasten", rezeptFamilie: baukasten } : {}),
       preis: typeof v.preis === "number" ? v.preis : null, mengeTag: null, steuer, quelle: "foto" });
     neu += 1;
   }

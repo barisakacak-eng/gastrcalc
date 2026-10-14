@@ -111,7 +111,7 @@ export const rezepte = {
       <p class="hinweis">${esc(t("rezepte.hinweis"))}</p>
       <div class="liste">
         ${stand.gerichte.map((x) => `<button type="button" class="zeileknopf" data-a="rezept-auf" data-id="${esc(x.id)}">
-          <span><b>${esc(x.name)}</b><small>${esc(t("rezepte.zusammenfassung", x.zutaten.length, x.zeit))}${x.zutaten.length === 0 ? ` · ${esc(t("rezepte.leer"))}` : ""}</small></span><span class="pfeil">›</span></button>`).join("")}
+          <span><b>${esc(x.name)}</b><small>${esc(t("rezepte.zusammenfassung", x.zutaten.length, x.zeit))}${x.rezeptQuelle === "baukasten" ? ` · ${esc(t("rezepte.startwerte"))}` : ""}${x.zutaten.length === 0 ? ` · ${esc(t("rezepte.leer"))}` : ""}</small></span><span class="pfeil">›</span></button>`).join("")}
       </div>`;
   },
   fuss() { return offenesGericht ? `<button type="button" class="knopf" data-a="rezept-zu">${esc(t("allgemein.fertig"))}</button>` : knopfWeiter(); },
@@ -119,7 +119,7 @@ export const rezepte = {
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return;
     if (feld === "gericht-name") g.name = wert;
     else if (feld === "zutat-suche") { zutatSuche = wert; return true; }
-    else if (feld.startsWith("zutat:")) { const z = g.zutaten[Number(feld.slice(6))]; if (z) z.menge = parseZahl(wert); }
+    else if (feld.startsWith("zutat:")) { const z = g.zutaten[Number(feld.slice(6))]; if (z) { z.menge = parseZahl(wert); if (g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; } }
   },
   aktion(name, el, stand) {
     if (name === "rezept-auf") { offenesGericht = el.dataset.id; zutatSuche = ""; return true; }
@@ -127,7 +127,8 @@ export const rezepte = {
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return false;
     if (name === "klasse") { g.klasse = el.dataset.wert; return true; }
     if (name === "zeit") { const d = Number(el.dataset.d); const z = Number(g.zeit) || 0; const schritt = (d > 0 ? z >= 5 : z > 5) ? 1 : 0.5; g.zeit = Math.max(0.5, Math.round((z + d * schritt) * 2) / 2); return true; }
-    if (name === "zutat-weg") { g.zutaten.splice(Number(el.dataset.i), 1); return true; }
+    if (["zutat-weg", "zutat-neu", "zutat-frei", "einheit"].includes(name) && g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; // vom Wirt angepasst
+    if (name === "zutat-weg") { g.zutaten.splice(Number(el.dataset.i), 1); if (!g.zutaten.length) g.rezeptBewusstLeer = true; return true; }
     if (name === "einheit") { const z = g.zutaten[Number(el.dataset.i)]; if (z && z.einheit !== el.dataset.wert) { z.menge = mengeUmrechnen(z.menge, z.einheit, el.dataset.wert); z.einheit = el.dataset.wert; } return true; }
     if (name === "zutat-neu") { const p = PRODUKT_INDEX[el.dataset.name]; if (p) g.zutaten.push({ name: p.n, menge: null, einheit: p.e === "kg" ? "g" : p.e === "l" ? "ml" : p.e }); zutatSuche = ""; return true; }
     if (name === "zutat-frei") { g.zutaten.push({ name: el.dataset.name, menge: null, einheit: "stk" }); zutatSuche = ""; return true; }

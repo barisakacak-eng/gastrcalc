@@ -6,6 +6,7 @@ import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ab
 import { auswerten, vorwaermen } from "../auswertung.js";
 import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau } from "../karte_lesen.js";
 import { artikelAusGerichten } from "../engine.js";
+import { fehlendeRezepteErgaenzen } from "../rezept_baukasten.js";
 import { VORLAGEN } from "../data/katalog.js";
 
 // Zustand des laufenden Fotos (flüchtig; das Ergebnis landet erst mit „Übernehmen" im Laden)
@@ -149,7 +150,8 @@ function bearbeiter(v) {
       <div class="fvreihe"><div class="betrag klein"><input inputmode="decimal" data-f="fv-preis:${v.id}" value="${esc(v.preis === null ? "" : v.preis.toFixed(2).replace(".", ","))}" placeholder="0,00" aria-label="${esc(t("foto.preis"))}"><span class="einheit">€</span></div>
         ${v.sicher === "vorschlag" ? `<button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button>` : ""}
         <button type="button" class="chip klein leise" data-a="fv-an" data-id="${v.id}">${esc(t("foto.weglassen"))}</button></div>
-      <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : esc(t("foto.ohneRezept"))}</small>
+      <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : v.sicher === "baukasten" ? esc(t("foto.rezeptStartwert", v.bau.zutaten.length)) : esc(t("foto.ohneRezept"))}</small>
+      ${v.sicher === "baukasten" ? `<small class="marke">${esc(v.bau.zutaten.filter((z) => !/schale|tüte|karton|box|folie|bogen/i.test(z.name)).map((z) => `${z.name} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " Stk" : " " + z.einheit}`).join(" · "))}</small>` : ""}
     </div>`;
 }
 function fvZeile(v) {
@@ -204,6 +206,7 @@ export function kartePruefenAktion(name, el) {
 // Übernehmen: Gerichte in die Karte, Zutaten in die Artikelliste (Inventurliste). Rückgabe für die Meldung.
 export function karteUebernehmen(stand) {
   const r = vorschlaegeUebernehmen(stand, vorschlaege);
+  fehlendeRezepteErgaenzen(stand); // auch ältere Gerichte ohne Rezept bekommen jetzt Startwerte
   stand.artikel = artikelAusGerichten(stand);
   for (const u of laufUploads) if (u.status === "gelesen") { u.status = "uebernommen"; u.ergebnis = { gerichte: r.neu, aktualisiert: r.aktualisiert }; }
   const inv = inventurVorschau(stand);

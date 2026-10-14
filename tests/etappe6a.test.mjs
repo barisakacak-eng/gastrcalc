@@ -44,9 +44,10 @@ test("Vorschläge → Karte → Inventurliste; Getränk wird Artikel; bestehende
   s.gerichte.push({ id: "g1", name: "Lahmacun", zutaten: [], preis: 5, vorlage: false });
   const v = vorschlaegeAusText("Döner Kebab 7,50\nLahmacun 5,90\nFalafel Sandwich 6,50\nAyran 0,25 l 2,00", s);
   assert.equal(v.find((x) => x.name === "Döner Kebab").sicher, "sicher");
-  assert.equal(v.find((x) => x.name === "Falafel Sandwich").sicher, "ohne");
+  assert.equal(v.find((x) => x.name === "Falafel Sandwich").sicher, "baukasten"); // Pilot 14.10.: nie ohne Rezept
   const r = vorschlaegeUebernehmen(s, v);
-  assert.deepEqual(r, { neu: 3, aktualisiert: 1, ohneRezept: 1 });
+  assert.deepEqual(r, { neu: 3, aktualisiert: 1, ohneRezept: 0 });
+  assert.equal(s.gerichte.find((g) => g.name === "Falafel Sandwich").rezeptQuelle, "baukasten");
   assert.equal(s.gerichte.find((g) => g.name === "Lahmacun").preis, 5.9);
   const doener = s.gerichte.find((g) => g.name === "Döner Kebab");
   assert.ok(doener.zutaten.length >= 5 && doener.preis === 7.5 && doener.quelle === "foto");
@@ -219,4 +220,35 @@ test("Foto-Serie: mehrere Fotos in der Warteschlange, Prüfliste erst nach „Fe
   assert.equal(f.karteModus(), "sammeln");
   assert.match(f.karteFussKnopf("OHNE"), /OHNE/);
   f.fotoZuruecksetzen();
+});
+
+
+test("Rezept-Baukasten: jedes Gericht der Pilot-Karte bekommt ein Rezept mit passenden Hauptzutaten", async () => {
+  const { rezeptBauen, fehlendeRezepteErgaenzen } = await import("../js/rezept_baukasten.js");
+  const { PRODUKT_INDEX } = await import("../js/data/katalog.js");
+  const hat = (n, artikel) => rezeptBauen(n)?.zutaten.some((z) => z.name === artikel);
+  const menge = (n, artikel) => rezeptBauen(n)?.zutaten.find((z) => z.name === artikel)?.menge;
+  // Familie aus dem Kopf: „Döner mit Salat" ist ein Döner, kein Salat
+  assert.equal(rezeptBauen("Döner (groß) mit Salat, Soße").familie, "doener");
+  assert.ok(menge("Döner (groß) mit Salat, Soße", "Dönerspieß Kalb/Pute") > menge("Döner (klein) mit Salat, Soße", "Dönerspieß Kalb/Pute"));
+  // Belag aus „mit …" und aus dem Kopf
+  assert.ok(hat("Pide mit Spinat, Weichkäse, Eiern", "Babyspinat") && hat("Pide mit Spinat, Weichkäse, Eiern", "Eier") && hat("Pide mit Spinat, Weichkäse, Eiern", "Hirtenkäse / Feta"));
+  assert.ok(hat("Schinken Seele", "Putenbrustschinken") && hat("Salami Seele", "Truthahnsalami") && hat("Tonno Salat mit Eisbergsalat, Zwiebeln", "Thunfisch (Dose)"));
+  // vegetarisch/vegan ohne Fleisch, vegan ohne Käse; Ersatz ohne Fleischwort ohne Fleisch
+  assert.ok(!hat("Döner Vegetarisch mit Käse", "Dönerspieß Kalb/Pute") && hat("Döner Vegetarisch mit Käse", "Pizzakäse gerieben"));
+  assert.ok(!hat("Vegane Pizza", "Pizzakäse gerieben") && !hat("Vegane Lahmacun mit Salat", "Lammhackfleisch"));
+  assert.ok(!hat("Kichererbsen im Yufka mit Salat", "Dönerspieß Kalb/Pute") && hat("Kichererbsen im Yufka mit Salat", "Kichererbsen"));
+  // Teller: erste Beilage aus „Reis oder Pommes" mit Hinweis; Extras nur die Zutat; Box ohne doppeltes Fleisch
+  assert.ok(hat("Döner-Teller mit Reis oder Pommes", "Langkornreis") && rezeptBauen("Döner-Teller mit Reis oder Pommes").hinweise.includes("wahl"));
+  assert.deepEqual(rezeptBauen("extra Weichkäse").zutaten.map((z) => z.name), ["Hirtenkäse / Feta"]);
+  assert.equal(rezeptBauen("Döner Box").zutaten.filter((z) => z.name === "Dönerspieß Kalb/Pute").length, 1);
+  assert.equal(rezeptBauen("Extra Seele").familie, "seele");
+  assert.equal(rezeptBauen("Maccaroni Stadt Döner Pizza").familie, "nudeln");
+  // alle Zutaten stehen im Katalog (sonst fehlt Warengruppe/Einheit in der Inventurliste)
+  const soll = ["Döner (groß) mit Salat, Soße", "Yufka (gerollt) mit Salat, Soße", "Falafel Fladenbrot", "Portion Reis", "Gemischter Salat", "Maccaroni Roma", "Bauernsalat mit Gurken", "Lahmacun mit Dönerfl., Weichkäse"];
+  for (const n of soll) { const r = rezeptBauen(n); assert.ok(r && r.zutaten.length >= 2 || /portion/i.test(n), n); for (const z of r.zutaten) assert.ok(PRODUKT_INDEX[z.name], `${n}: ${z.name} fehlt im Katalog`); }
+  // ältere Gerichte ohne Rezept werden ergänzt, bewusst leere nicht
+  const st = { gerichte: [{ name: "Pide mit Hackfleisch", zutaten: [] }, { name: "Spezial", zutaten: [] }, { name: "Pide mit Käse", zutaten: [], rezeptBewusstLeer: true }] };
+  assert.equal(fehlendeRezepteErgaenzen(st), 1);
+  assert.equal(st.gerichte[0].rezeptQuelle, "baukasten"); assert.equal(st.gerichte[1].zutaten.length, 0); assert.equal(st.gerichte[2].zutaten.length, 0);
 });
