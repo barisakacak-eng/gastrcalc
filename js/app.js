@@ -15,6 +15,7 @@ import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./s
 import { parseTemperatur } from "./screens/kuehl.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
+import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig } from "./screens/muell.js";
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
@@ -65,6 +66,7 @@ function zeichne() {
         : ansicht === "beleg" ? belegView(stand)
         : ansicht === "abschluss" ? abschlussView(stand)
         : ansicht === "kartefoto" ? karteFotoSchirm()
+        : ansicht === "vergleich" ? vergleichView(stand)
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
     }
@@ -256,6 +258,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "schnell-auf") { schnellSetzen(true); return zeichne(); }
   if (name === "schnell-zu") { schnellSetzen(false); return zeichne(); }
   if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); }
+  if (name === "vergleich-modus") { vergleichModus(el.dataset.wert); return zeichne(); }
   if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") !== "0"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
   if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
   if (name === "kuehl-keine") { stand.kuehl.keine = true; speichern(wurzel); return zeichne(); }

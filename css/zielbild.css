@@ -43,3 +43,19 @@
 .karte.spruch { display: flex; flex-direction: row; align-items: center; text-align: left; }
 .instrument .kachelsym { width: 34px; height: 34px; }
 .instrumente.heute .instrument.klein small { font-size: 13px; line-height: 1.25; }
+/* Gerichte im Vergleich */
+.umschalter { display: flex; background: var(--papier-tief); border-radius: 12px; padding: 4px; gap: 4px; }
+.umschalter button { flex: 1; min-height: 44px; border: 0; border-radius: 9px; background: transparent; font: inherit; font-weight: 700; color: var(--tinte-weich); }
+.umschalter button.an { background: var(--salbei-tief); color: var(--weiss); }
+.vergleichkarte { display: flex; gap: 12px; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); padding: 10px; box-shadow: var(--schatten-karte); }
+.gerichtbild { width: 96px; height: 96px; object-fit: cover; border-radius: 12px; flex: none; background: var(--salbei-hell); }
+.gerichtbild.pikto { object-fit: contain; padding: 10px; box-sizing: border-box; }
+.vk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.vk-kopf { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.vk-kopf b { font-size: 16px; } .vk-preis { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.vk-zeile { display: flex; justify-content: space-between; font-size: 14px; color: var(--tinte-weich); font-variant-numeric: tabular-nums; }
+.vk-zeile span:last-child { color: var(--tinte); }
+.vk-balken { display: block; height: 8px; border-radius: 4px; background: var(--papier-tief); margin-top: 4px; overflow: hidden; }
+.vk-balken i { display: block; height: 100%; background: var(--eigen); border-radius: 4px; } .vk-balken i.knapp { background: var(--geschaetzt); }
+.geschaetzt-hinweis { border: 2px dashed var(--geschaetzt); background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border-radius: 10px; padding: 8px 12px; }
+.vk-ohne { padding: 6px 0; border-bottom: 1px solid var(--papier-tief); }
