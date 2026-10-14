@@ -9,7 +9,7 @@
 | Bereich | Datei/Ort | Regel |
 |---|---|---|
 | Farben, Schrift, Radien, Schatten | `css/tokens.css`, ab Etappe 6 (bis dahin `:root` oben in `css/app.css`) | frei |
-| Aussehen aller Bausteine | `css/app.css` (nur Eigenschaften wie color, background, border, radius, shadow, font, padding, gap, Animation) | frei, solange die Klassennamen bleiben |
+| Aussehen aller Bausteine | **`css/optik.css`** (seit 15.10.: eigene Datei, wird nach `app.css` geladen und überschreibt sie; nur Eigenschaften wie color, background, border, radius, shadow, font, padding, gap, Animation) | frei, solange die Klassennamen bleiben. `app.css` selbst nicht abgeben – dort baut Zoro weiter |
 | Bilder und Piktogramme | `bilder/` (SVG, je Motiv eine Datei, Namen siehe Bildliste unten) | frei, nur SVG oder WebP, je Datei unter 20 KB |
 | Logo und App-Symbol | `icons/` (icon-180.png, icon-192.png, icon-512.png, logo.svg) | frei |
 | Schriften | `fonts/` | nur freie Lizenz (SIL OFL), lokal mitgeliefert, keine Google-Fonts-Verbindung (Datenschutz, offline) |
@@ -25,7 +25,8 @@
 1. **Ansehen:** Live-App unter https://barisakacak-eng.github.io/gastrcalc/. Ab Etappe 6 gibt es zusätzlich den Baukasten unter `/design/`, eine Seite mit allen Bausteinen (Knöpfe, Karten, Kacheln, Diagramme, Blätter) und Beispieldaten.
 2. **Liefern, je nachdem was geht:**
    - a) ChatGPT/Codex kann ins Repo schreiben: Zweig `design/<datum>-<thema>` und Pull Request. Nie direkt auf `main`.
-   - b) Kein Schreibzugriff: ZIP an Baris mit genau den Dateipfaden aus der Tabelle oben. Baris legt es hier im Chat bei Zoro ab.
+   - b) Kein Schreibzugriff (Stand 15.10.: ChatGPT liest GitHub nur): **eine ZIP `sanji_optik_JJJJ-MM-TT.zip`** mit genau den Repo-Pfaden (`css/tokens.css`, `css/optik.css`, `bilder/…`, `icons/…`, `fonts/…`) plus `LIESMICH_SANJI.md` (was geändert, welche Variante, offene Fragen). Baris lädt sie zum Herunterladen und legt sie im Chat bei Zoro ab.
+   - c) Ausweichweg ohne Chat: Baris lädt die ZIP im Browser in den Brückenordner hoch: https://github.com/barisakacak-eng/gastrcalc/upload/main/bruecke/an-zoro/optik (Zoro prüft den Ordner bei jedem Brückencheck).
 3. **Zoro prüft:**
    - Tests und Durchläufe laufen.
    - Keine Klasse und kein `data-`-Attribut ist kaputt.
