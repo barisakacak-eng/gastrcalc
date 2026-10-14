@@ -342,6 +342,7 @@ export default {
     hinweis: "Jeder Laden hat seine eigene Karte, seine Kosten und seine Listen. Die Sicherungsdatei eines anderen Handys einlesen fügt dessen Läden hier hinzu.",
   },
 
+  profil: { kern: (art) => `Für deinen Laden: ${art}`, kernAllgemein: "Für deinen Laden", oft: "Auch oft dabei", weitere: "Weitere Bereiche", weitereAuf: (n) => `Weitere Bereiche zeigen (${n})`, weitereZu: "Weitere Bereiche zuklappen", aus: (b) => `aus: ${b}` },
   bereiche: {
     doener: "Döner & Kebab", pizza: "Pizza & Pasta", burger: "Burger & Grill", currywurst: "Currywurst & Pommes", asia: "Asiatisch & Wok",
     fruehstueck: "Frühstück & Backwaren", kuchen: "Kuchen & Konditorei", kaffee: "Kaffee & Heißgetränke", bar: "Bar & Cocktails", bier: "Bier & Fassgetränke",
@@ -823,7 +824,7 @@ export default {
 
   schnell: {
     ladenFrage: "Wie heißt dein Laden und was verkaufst du?",
-    arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", cafe: "Café & Bistro", anders: "Etwas anderes" },
+    arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", anders: "Etwas anderes" },
     genau: "Lieber alles Schritt für Schritt einrichten (dauert länger)",
     kostenFrage: "Deine festen Kosten im Monat",
     kostenHinweis: "Ungefähr reicht. Was du nicht weißt, lässt du leer.",

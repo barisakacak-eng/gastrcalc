@@ -2,7 +2,8 @@
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
 import { t, einheitLabel } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
-import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN, vorlagenFuer, bereicheFuer } from "../data/katalog.js";
+import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
+import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
 import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken } from "../engine.js";
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
@@ -13,6 +14,7 @@ let suche = "";            // Suchtext auf dem Karten-Bildschirm (flüchtig)
 let offenesGericht = null; // id des Gerichts im Rezept-Detail (flüchtig)
 let zutatSuche = "";       // Suchtext im Rezept-Detail
 let eigenesText = "";      // Text im Feld „eigenes Gericht" (flüchtig, überlebt das Neuzeichnen)
+let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 
@@ -26,23 +28,32 @@ function gerichtAusVorlage(v) {
 export const karte = {
   id: "karte",
   view(stand) {
-    const vorlagen = vorlagenFuer(stand.betrieb.format, stand.betrieb.kuechen);
+    // Laden-Profil (Punkt 9): erst „Für deinen Laden“, dann „Auch oft dabei“, „Weitere Bereiche“ eingeklappt. Die Suche findet alles.
+    const sortiert = vorlagenSortiert(stand);
+    const alle = [...sortiert.kern, ...sortiert.oft, ...sortiert.weitere];
     const gewaehlt = new Set(stand.gerichte.filter((g) => g.vorlage).map((g) => g.vorlageName || g.name));
-    const gelistet = new Set(vorlagen.map((v) => v.name));
+    const gelistet = new Set(alle.map((v) => v.name));
     const q = suche.trim().toLowerCase();
-    const bereiche = bereicheFuer(stand.betrieb.format, stand.betrieb.kuechen).filter((b) => vorlagen.some((v) => v.bereich === b));
     const eigene = stand.gerichte.filter((g) => !g.vorlage || !gelistet.has(g.vorlageName || g.name));
+    const gruppen = (liste) => [...new Set(liste.map((v) => v.bereich))].map((b) => {
+      const l = liste.filter((v) => v.bereich === b && (!q || v.name.toLowerCase().includes(q)));
+      if (!l.length) return "";
+      return `<div class="gruppe">${esc(t("bereiche." + b))}</div><div class="liste eng">${l.map((v) => `
+          <button type="button" class="wahl ${gewaehlt.has(v.name) ? "an" : ""}" data-a="vorlage" data-name="${esc(v.name)}" data-bereich="${esc(b)}">
+            <span class="haken" aria-hidden="true">${gewaehlt.has(v.name) ? "✓" : ""}</span><span>${esc(v.name)}</span></button>`).join("")}</div>`;
+    }).join("");
+    const art = ladenArtVon(stand);
+    const kernHtml = gruppen(sortiert.kern), oftHtml = gruppen(sortiert.oft);
+    const weitereZeigen = weitereOffen || !!q;
+    const weitereHtml = weitereZeigen ? gruppen(sortiert.weitere) : "";
+    const nWeitere = new Set(sortiert.weitere.map((v) => v.bereich)).size;
     return `
       <h1 class="frage">${esc(t("karte.frage"))}</h1>
       <p class="hinweis">${esc(t("karte.hinweis"))}</p>
       <input class="textfeld" data-f="suche" value="${esc(suche)}" placeholder="${esc(t("karte.suchen"))}" autocomplete="off">
-      ${bereiche.map((b) => {
-        const liste = vorlagen.filter((v) => v.bereich === b && (!q || v.name.toLowerCase().includes(q)));
-        if (!liste.length) return "";
-        return `<div class="gruppe">${esc(t("bereiche." + b))}</div><div class="liste eng">${liste.map((v) => `
-          <button type="button" class="wahl ${gewaehlt.has(v.name) ? "an" : ""}" data-a="vorlage" data-name="${esc(v.name)}" data-bereich="${esc(b)}">
-            <span class="haken" aria-hidden="true">${gewaehlt.has(v.name) ? "✓" : ""}</span><span>${esc(v.name)}</span></button>`).join("")}</div>`;
-      }).join("")}
+      ${kernHtml ? `<div class="ring ring-kern"><h2 class="ring-titel">${esc(art === "anders" ? t("profil.kernAllgemein") : t("profil.kern", t("schnell.arten." + art)))}</h2>${kernHtml}</div>` : ""}
+      ${oftHtml ? `<div class="ring ring-oft"><h2 class="ring-titel">${esc(t("profil.oft"))}</h2>${oftHtml}</div>` : ""}
+      ${nWeitere && (!q || weitereHtml) ? `<div class="ring ring-weitere">${q ? `<h2 class="ring-titel">${esc(t("profil.weitere"))}</h2>` : `<button type="button" class="knopf zweit" data-a="weitere" aria-expanded="${weitereOffen}">${esc(weitereOffen ? t("profil.weitereZu") : t("profil.weitereAuf", nWeitere))}</button>`}${weitereHtml}</div>` : ""}
       <div class="gruppe">${esc(t("karte.eigene"))}</div>
       ${eigene.length ? `<div class="liste eng">${eigene.map((g) => `<button type="button" class="wahl an" data-a="eigenes-weg" data-id="${esc(g.id)}"><span class="haken">✓</span><span>${esc(g.name)}</span></button>`).join("")}</div>` : ""}
       <div class="neu"><input class="textfeld" data-f="eigenes" maxlength="60" value="${esc(eigenesText)}" placeholder="${esc(t("karte.eigenesPlatzhalter"))}" autocomplete="off" enterkeyhint="done"><button type="button" class="knopf weich schmal" data-a="eigenes-neu">${esc(t("allgemein.hinzufuegen"))}</button></div>`;
@@ -53,10 +64,11 @@ export const karte = {
   },
   eingabe(feld, wert, stand) { if (feld === "suche") { suche = wert; return true; } if (feld === "eigenes") eigenesText = wert; },
   aktion(name, el, stand) {
+    if (name === "weitere") { weitereOffen = !weitereOffen; return true; }
     if (name === "vorlage") {
       const i = stand.gerichte.findIndex((g) => g.vorlage && (g.vorlageName || g.name) === el.dataset.name);
       if (i >= 0) { if (gerichtHatEingaben(stand.gerichte[i]) && !confirm(t("karte.wegFrage", stand.gerichte[i].name))) return false; stand.gerichte.splice(i, 1); }
-      else { const v = vorlagenFuer(stand.betrieb.format, stand.betrieb.kuechen).find((x) => x.name === el.dataset.name); if (v) stand.gerichte.push(gerichtAusVorlage(v)); }
+      else { const so = vorlagenSortiert(stand); const v = [...so.kern, ...so.oft, ...so.weitere].find((x) => x.name === el.dataset.name); if (v) stand.gerichte.push(gerichtAusVorlage(v)); }
       return true;
     }
     if (name === "eigenes-neu") {
@@ -66,7 +78,7 @@ export const karte = {
     }
     if (name === "eigenes-weg") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false; if (gerichtHatEingaben(g) && !confirm(t("karte.wegFrage", g.name))) return false; stand.gerichte = stand.gerichte.filter((x) => x.id !== g.id); return true; }
   },
-  beimVerlassen(stand) { suche = ""; eigenesText = ""; stand.artikel = artikelAusGerichten(stand); },
+  beimVerlassen(stand) { suche = ""; eigenesText = ""; weitereOffen = false; stand.artikel = artikelAusGerichten(stand); },
 };
 
 // Hat der Betrieb an diesem Gericht schon etwas eingetragen? Dann vor dem Löschen fragen.
@@ -75,7 +87,8 @@ const gerichtHatEingaben = (g) => typeof g.preis === "number" || g.mengeTag > 0 
 // ---------- Schritt: Rezepte ----------
 function rezeptDetail(stand, g) {
   const q = zutatSuche.trim().toLowerCase();
-  const treffer = q ? Object.values(PRODUKT_INDEX).filter((p) => p.n.toLowerCase().includes(q) && !g.zutaten.some((z) => z.name === p.n)).slice(0, 8) : [];
+  // Laden-Profil (Punkt 9): Zutaten aus dem eigenen Bereich zuerst; nur wenn dort nichts passt, andere mit „aus: …“
+  const treffer = zutatenSuchen(stand, q, { ohne: g.zutaten.map((z) => z.name) }).map((x) => ({ ...PRODUKT_INDEX[x.name], aus: x.aus }));
   return `
     <button type="button" class="leise" data-a="rezept-zu">‹ ${esc(t("rezepte.alle"))}</button>
     <input class="textfeld gross" data-f="gericht-name" value="${esc(g.name)}" autocomplete="off">
@@ -96,7 +109,7 @@ function rezeptDetail(stand, g) {
       }).join("")}
     </div>
     <input class="textfeld" data-f="zutat-suche" value="${esc(zutatSuche)}" placeholder="${esc(t("rezepte.zutatSuchen"))}" autocomplete="off">
-    ${treffer.length ? `<div class="liste eng">${treffer.map((p) => `<button type="button" class="wahl" data-a="zutat-neu" data-name="${esc(p.n)}"><span class="haken"></span><span>${esc(p.n)} <small>${esc(p.g ? t("warengruppen." + p.g) : "")}</small></span></button>`).join("")}</div>` : ""}
+    ${treffer.length ? `<div class="liste eng">${treffer.map((p) => `<button type="button" class="wahl" data-a="zutat-neu" data-name="${esc(p.n)}"><span class="haken"></span><span>${esc(p.n)} <small>${esc(p.aus ? t("profil.aus", t("bereiche." + p.aus)) : p.g ? t("warengruppen." + p.g) : "")}</small></span></button>`).join("")}</div>` : ""}
     ${q && !treffer.length ? `<button type="button" class="knopf weich" data-a="zutat-frei" data-name="${esc(zutatSuche.trim())}">${esc(t("rezepte.zutatFrei", zutatSuche.trim()))}</button>` : ""}
     <button type="button" class="leise" data-a="gericht-weg">${esc(t("rezepte.gerichtWeg"))}</button>`;
 }

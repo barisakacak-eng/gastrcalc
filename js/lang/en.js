@@ -341,6 +341,7 @@ export default {
     hinweis: "Each shop has its own menu, costs and lists. Importing another phone's backup adds its shops here.",
   },
 
+  profil: { kern: (art) => `For your shop: ${art}`, kernAllgemein: "For your shop", oft: "Also common", weitere: "More areas", weitereAuf: (n) => `Show more areas (${n})`, weitereZu: "Hide more areas", aus: (b) => `from: ${b}` },
   bereiche: {
     doener: "Döner & kebab", pizza: "Pizza & pasta", burger: "Burgers & grill", currywurst: "Currywurst & fries", asia: "Asian & wok",
     fruehstueck: "Breakfast & bakery", kuchen: "Cakes & pastry", kaffee: "Coffee & hot drinks", bar: "Bar & cocktails", bier: "Beer & draught",
@@ -822,7 +823,7 @@ export default {
 
   schnell: {
     ladenFrage: "What is your shop called and what do you sell?",
-    arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", cafe: "Café & bistro", anders: "Something else" },
+    arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", anders: "Something else" },
     genau: "Set up everything step by step instead (takes longer)",
     kostenFrage: "Your fixed costs per month",
     kostenHinweis: "Roughly is fine. Leave empty what you do not know.",

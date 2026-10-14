@@ -332,7 +332,7 @@ export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 export const LADEN_ARTEN = [
   { id: "doener", format: "imbiss", kuechen: ["doener"] }, { id: "imbiss", format: "imbiss", kuechen: ["burger"] },
   { id: "pizza", format: "imbiss", kuechen: ["pizza"] }, { id: "asia", format: "imbiss", kuechen: ["asiatisch"] },
-  { id: "foodtruck", format: "foodtruck", kuechen: ["burger"] }, { id: "cafe", format: "cafe", kuechen: ["bistro"] },
+  { id: "foodtruck", format: "foodtruck", kuechen: ["burger"] }, { id: "baeckerei", format: "baeckerei", kuechen: ["fruehstueck"] }, { id: "cafe", format: "cafe", kuechen: ["bistro"] },
   { id: "anders", format: "eigen", kuechen: ["eigene"] },
 ];
 

@@ -342,6 +342,7 @@ export default {
     hinweis: "Her işletmenin kendi menüsü, giderleri ve listeleri var. Başka bir telefonun yedeğini okutmak, onun işletmelerini buraya ekler.",
   },
 
+  profil: { kern: (art) => `Senin dükkânın için: ${art}`, kernAllgemein: "Senin dükkânın için", oft: "Sık olanlar", weitere: "Diğer alanlar", weitereAuf: (n) => `Diğer alanları göster (${n})`, weitereZu: "Diğer alanları kapat", aus: (b) => `şuradan: ${b}` },
   bereiche: {
     doener: "Döner & kebap", pizza: "Pizza & makarna", burger: "Burger & ızgara", currywurst: "Currywurst & patates", asia: "Asya & wok",
     fruehstueck: "Kahvaltı & fırın", kuchen: "Pasta & tatlı", kaffee: "Kahve & sıcak içecekler", bar: "Bar & kokteyl", bier: "Bira & fıçı",
@@ -823,7 +824,7 @@ export default {
 
   schnell: {
     ladenFrage: "Dükkanının adı ne ve ne satıyorsun?",
-    arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", cafe: "Kafe & bistro", anders: "Başka bir şey" },
+    arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", anders: "Başka bir şey" },
     genau: "Her şeyi adım adım kur (daha uzun sürer)",
     kostenFrage: "Aylık sabit giderlerin",
     kostenHinweis: "Yaklaşık yeterli. Bilmediğini boş bırak.",

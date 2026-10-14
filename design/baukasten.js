@@ -56,7 +56,7 @@ function schirme(s) {
     { titel: "Rechnung lesen", html: () => belegView(s) },
     { titel: "Tag abschließen", html: () => abschlussView(s) },
     { titel: "Einstellungen", html: () => einstellungenView(s, 0, w, { offline: "bereit" }) },
-    ...SCHRITTE.filter((x) => ["rezepte", "preise", "verkauf", "ergebnis"].includes(x.id)).map((x) => ({ titel: `Genaue Einrichtung: ${x.id}`, html: () => x.view(s) })),
+    ...SCHRITTE.filter((x) => ["karte", "rezepte", "preise", "verkauf", "ergebnis"].includes(x.id)).map((x) => ({ titel: `Genaue Einrichtung: ${x.id}`, html: () => x.view(s) })),
   ];
 }
 

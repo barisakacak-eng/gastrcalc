@@ -3,7 +3,8 @@
 // „Kamerafunktion für die Aufnahme der Speisekarte, auf der dann automatisch die Inventurliste entsteht."
 // Grundsatz: Nichts wird still übernommen. Jede Zeile kommt als Vorschlag mit Sicherheit; der Wirt bestätigt oder ändert.
 
-import { VORLAGEN, vorlagenFuer, PRODUKT_INDEX } from "./data/katalog.js";
+import { VORLAGEN, PRODUKT_INDEX } from "./data/katalog.js";
+import { profilFuer } from "./profil.js";
 import { klasseFuerBereich, steuersatzAusZutaten } from "./engine.js";
 import { uid } from "./util.js";
 import { rezeptBauen, BEREICH_JE_FAMILIE } from "./rezept_baukasten.js";
@@ -190,15 +191,18 @@ export function aehnlichkeit(kartenName, vorlageName) {
   return 0.75 * (2 * gemeinsam) / (ta.size + tb.length);
 }
 
+// Laden-Profil (Punkt 9): Vorlagen außerhalb von Kern und „Oft dabei“ brauchen einen deutlich besseren Treffer (0,15 Vorsprung).
+// Der Vorsprung gilt nur für die Rangfolge; „sicher“ (≥ 0,75) misst weiter die echte Ähnlichkeit.
+export const PROFIL_VORSPRUNG = 0.15;
 function besteVorlage(name, stand) {
-  const passend = vorlagenFuer(stand.betrieb.format, stand.betrieb.kuechen);
-  const alle = [...passend, ...Object.entries(VORLAGEN).flatMap(([b, l]) => l.map((v) => ({ ...v, bereich: b })))];
+  const p = profilFuer(stand); const kern = new Set(p.kern), oft = new Set(p.oft);
   let best = null;
-  for (const v of alle) {
-    const s = aehnlichkeit(name, v.name) + (passend.some((p) => p.name === v.name) ? 0.03 : 0); // Küche des Ladens leicht bevorzugen
-    if (!best || s > best.s) best = { v, s };
+  for (const [b, liste] of Object.entries(VORLAGEN)) for (const v0 of liste) {
+    const s = aehnlichkeit(name, v0.name); if (!s) continue;
+    const rang = s + (kern.has(b) ? PROFIL_VORSPRUNG : oft.has(b) ? PROFIL_VORSPRUNG - 0.03 : 0); // Kern vor „Oft dabei“
+    if (!best || rang > best.rang) best = { v: { ...v0, bereich: b }, s, rang };
   }
-  return best && best.s >= 0.5 ? best : null;
+  return best && best.s >= 0.5 ? { v: best.v, s: best.s } : null;
 }
 
 export const istGetraenk = (name) => GETRAENK.test(name);
