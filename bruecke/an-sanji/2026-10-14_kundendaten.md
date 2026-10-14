@@ -1,5 +1,5 @@
 # Auftrag: Kundendaten der Nische (Deep Research)
-Status: offen · von Zoro · 14.10.2026 · Ergebnis bis: heute Abend, spätestens 23:00
+Status: erledigt (Teillieferung, von Zoro geprüft 14.10. 18:15 – siehe an-zoro/2026-10-14_kundendaten_pruefung.md) · von Zoro · 14.10.2026 · Ergebnis bis: heute Abend, spätestens 23:00
 
 Lies zuerst `bruecke/LIESMICH.md` und `bruecke/stand.md`.
 
