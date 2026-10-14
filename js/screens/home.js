@@ -7,6 +7,7 @@ import { zaehler, wochenVergleich, abschlussVon, warenQuote } from "../zaehler.j
 import { ergebnisView } from "./karte.js";
 import { nav, sicherungStufe } from "./nav.js";
 import { einrichtungStand } from "../einrichtung.js";
+import { sym } from "../symbole.js";
 import { muellWoche } from "../muell.js";
 import { wareneinsatzSicherheit } from "../rezept_quelle.js";
 import { eintraegeZaehlen } from "../store.js";
@@ -67,13 +68,13 @@ export function einrichtungZeile(e, ids) {
 function umsatzInstrument(stand, H) {
   const w = wochenVergleich(stand, H);
   const pct = w.tageDiese && w.tageVorige && w.summeVorige > 0 ? Math.round((w.summeDiese / w.summeVorige - 1) * 100) : null;
-  return `<button type="button" class="instrument i-umsatz" data-a="nav" data-wert="umsatz"><small>${esc(t("cockpit.umsatzWoche"))}</small>
+  return `<button type="button" class="instrument i-umsatz" data-a="nav" data-wert="umsatz"><small class="kopfzeile">${sym("chart-column", "klein")}${esc(t("cockpit.umsatzWoche"))}</small>
     <b>${w.tageDiese ? fmtEuro(w.summeDiese, { dezimal: 0 }) : "–"}</b><small>${pct !== null ? esc(t("cockpit.zurVorwoche", (pct > 0 ? "+" : "") + pct)) : esc(w.tageDiese ? t("cockpit.vorwoche") : t("cockpit.umsatzLeer"))}</small>
     <span class="balken mini">${w.diese.map((d, i) => `<i class="${d.datum === H ? "heute" : ""}"><s style="height:${w.max ? Math.round((w.vorige[i].umsatz || 0) / w.max * 100) : 0}%"></s><b style="height:${w.max ? Math.round((d.umsatz || 0) / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
 }
 function tonneInstrument(stand, H) {
   const w = muellWoche(stand, H);
-  return `<button type="button" class="instrument i-tonne" data-a="nav" data-wert="muell"><small>${esc(t("cockpit.tonneWoche"))}</small>
+  return `<button type="button" class="instrument i-tonne" data-a="nav" data-wert="muell"><small class="kopfzeile">${sym("trash-2", "klein")}${esc(t("cockpit.tonneWoche"))}</small>
     <b>${w.anzahl ? fmtEuro(w.summe, { dezimal: w.summe < 100 ? 2 : 0 }) : "–"}</b><small>${w.anzahl ? (w.portionen !== null ? esc(t("cockpit.portionenKurz", fmtZahl(w.portionen, w.portionen < 10 ? 1 : 0))) : w.ohneWert ? esc(t("listen.ohneWert", w.ohneWert)) : "") : esc(t("cockpit.tonneLeer"))}</small>
     <span class="balken mini muell">${w.tage.map((x) => `<i class="${x.datum === H ? "heute" : ""}"><b style="height:${w.max ? Math.round(x.wert / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
 }
@@ -87,12 +88,12 @@ function wareneinsatzInstrument(stand, z) {
   const q = wareneinsatzQuote(stand, z); const ziel = Number(stand.verkauf?.zielWareneinsatz) || 0.33;
   const unsicher = q.quelle === "karte" && wareneinsatzSicherheit(stand).unsicher;
   const farbe = q.quote === null ? "" : q.quote <= ziel ? "gruen" : q.quote <= ziel + 0.05 ? "gelb" : "rot";
-  return `<button type="button" class="instrument i-ware ${farbe}" data-a="nav" data-wert="karte"><small>${esc(t("cockpit.wareneinsatz"))}</small>
+  return `<button type="button" class="instrument i-ware ${farbe}" data-a="nav" data-wert="karte"><small class="kopfzeile">${sym("shopping-cart", "klein")}${esc(t("cockpit.wareneinsatz"))}</small>
     <b>${q.quote === null ? "–" : `${unsicher ? "≈ " : ""}${fmtZahl(q.quote * 100, 0)} %`}</b><small>${esc(q.quote === null ? t("cockpit.karteFehlt") : unsicher ? t("cockpit.genauerAbwiegen") : t("cockpit.ziel", fmtZahl(ziel * 100, 0)))}</small>
     <span class="zielbalken"><i style="width:${q.quote === null ? 0 : Math.min(100, Math.round(q.quote / 0.6 * 100))}%"></i><s style="left:${Math.round(ziel / 0.6 * 100)}%"></s></span></button>`;
 }
 function kuehlInstrument(ks) {
-  return `<button type="button" class="instrument i-kuehl ${ks.ueberfaellig ? "rotrand" : ""}" data-a="nav" data-wert="kuehl"><small>${esc(t("cockpit.kuehlung"))}</small>
+  return `<button type="button" class="instrument i-kuehl ${ks.ueberfaellig ? "rotrand" : ""}" data-a="nav" data-wert="kuehl"><small class="kopfzeile">${sym("snowflake", "klein")}${esc(t("cockpit.kuehlung"))}</small>
     <b>${ks.eingerichtet ? `${ks.heuteGemessen} / ${ks.stellen}` : "–"}</b><small>${esc(ks.eingerichtet ? (ks.heuteGemessen >= ks.stellen ? t("cockpit.alleGemessen") : t("cockpit.nochOffen", ks.stellen - ks.heuteGemessen)) : t("cockpit.einrichten"))}</small>
     ${ks.eingerichtet ? `<span class="kreise">${Array.from({ length: ks.stellen }, (_, i) => `<i class="${i < ks.heuteGemessen ? "gruen" : "gelb"}"></i>`).join("")}</span>` : ""}</button>`;
 }

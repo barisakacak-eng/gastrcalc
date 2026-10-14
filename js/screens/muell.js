@@ -7,6 +7,7 @@ import { EINHEITEN } from "../data/katalog.js";
 import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau } from "../muell.js";
 import { nav } from "./nav.js";
+import { sym } from "../symbole.js";
 import { datumLesbar, tagGewaehlt, eintragName, eintragMenge, tagLesbar } from "./tag.js";
 
 let ansicht = "start";   // "start" | "eingabe"
@@ -53,7 +54,7 @@ function cockpitView(stand, D, nach) {
     </div>
     ${zuletzt ? `<div class="zuletzt"><span>${esc(zuletzt.text)}</span><button type="button" class="leise" data-a="muell-rueckgaengig" data-id="${esc(zuletzt.id)}">${esc(t("muell.rueckgaengig"))}</button></div>` : ""}
     ${w.top.length ? `<div class="karte"><h2>${esc(t("muell.ammeisten"))}</h2>${w.top.map((x, i) => `<div class="zeile topzeile g-${esc(x.art === "gericht" || x.ref?.typ === "gericht" ? "speise" : x.art)}"><div class="oben"><div class="name"><span class="rang">${i + 1}</span> ${esc(x.art === "eimer" ? t("muell.eimer") : x.ref?.name || "")}<small>${esc(x.art === "eimer" ? `${fmtZahl(x.menge, 1)} kg` : `${fmtZahl(x.menge, 1)} ${einheitLabel(x.einheit)}`)}</small></div><b>${x.wert > 0 ? fmtEuro(x.wert, { dezimal: 2 }) : `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>`}</b></div></div>`).join("")}</div>` : ""}
-    <button type="button" class="knopf glut gross muellknopf" data-a="muell-eingabe"><b>${esc(t("muell.eintragen"))}</b><small>${esc(dreisprachig("muell.eintragen"))}</small></button>
+    <button type="button" class="knopf glut gross muellknopf" data-a="muell-eingabe">${sym("trash-2", "gross")}<b>${esc(t("muell.eintragen"))}</b><small>${esc(dreisprachig("muell.eintragen"))}</small></button>
     <div class="unterlinks">
       <button type="button" class="leise" data-a="nav" data-wert="listen">${esc(t("listen.titel"))}</button>
       ${nach || zeigeTage ? "" : `<button type="button" class="leise" data-a="muell-nachtragen">${esc(t("muell.andererTag"))}</button>`}
@@ -75,7 +76,7 @@ function eingabeView(stand, D) {
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))} · ${esc(dreisprachig("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
       ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"><b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name=""><b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
+      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${sym("scale")}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
     </div>
     ${!kacheln.length && !q ? `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div><button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button></div>` : ""}
   </div>`;
@@ -99,7 +100,7 @@ function blattView(stand, D) {
     <p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : esc(t("tag.keinPreisLang"))) : ""}</p>
     ${w.typ === "eimer" ? `<p class="hinweis">${esc(t("muell.eimerHinweisKurz"))}</p>` : ""}
     ${w.typ === "gericht" ? `<button type="button" class="schalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
-    <button type="button" class="knopf glut" data-a="muell-weg-damit" ${w.menge > 0 ? "" : "disabled"}><b>${esc(t("muell.wegDamit"))}</b> <small>${esc(dreisprachig("muell.wegDamit"))}</small></button>
+    <button type="button" class="knopf glut" data-a="muell-weg-damit" ${w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t("muell.wegDamit"))}</b> <small>${esc(dreisprachig("muell.wegDamit"))}</small></button>
   </div>`;
 }
 
