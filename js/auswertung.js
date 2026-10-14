@@ -5,13 +5,12 @@
 
 import { istPdf, istBild } from "./ablage.js";
 import { zeilenAusTsv } from "./ocr_layout.js";
-import { positionenAusText } from "./karte_lesen.js";
 
-// Speisekarte: von zwei Lesarten (Block / Spalten) die mit mehr erkannten Gerichten nehmen; bei Gleichstand die Blocklesart.
+// Speisekarte: beide Lesarten (Block / Spalten) weitergeben.
 export function besteKartenLesart(text, tsv) {
   if (!tsv) return text;
-  const spalten = zeilenAusTsv(tsv);
-  return positionenAusText(spalten).length > positionenAusText(text).length ? spalten : text;
+  // beide Lesarten behalten (\f trennt sie): karte_lesen führt sie zusammen – jede findet Gerichte, die die andere verliert (Pilot 14.10.)
+  return `${text}\n\f\n${zeilenAusTsv(tsv)}`;
 }
 
 let auswerter = "geraet";
@@ -29,7 +28,7 @@ function ocrWorker() {
 }
 // Alle offenen Aufträge beenden und den Arbeitsfaden verwerfen (Absturz, Zeitgrenze, iOS hat ihn wegen Speicher beendet)
 function abbruch(fehler) { for (const p of offen.values()) p.rej(fehler); offen.clear(); try { worker?.terminate(); } catch (_) {} worker = null; }
-const ZEITGRENZE_MS = 90000;
+const ZEITGRENZE_MS = 180000; // Modell „best" ist genauer, aber langsamer
 // Rückgabe: Text. modus "karte" liest zusätzlich spaltenweise und nimmt die bessere Lesart.
 async function ocrAuftrag(bild, modus = "block") {
   const r = await new Promise((res, rej) => {

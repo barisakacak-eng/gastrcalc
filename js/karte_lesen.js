@@ -23,8 +23,8 @@ const preisZahl = (a, b) => Number(a) + Number(b) / 100;
 // OCR-Eigenheiten glätten: "0,25 |" → "0,25 l", "€" zwischen Ziffern, Punkte-Leitern "......"
 function zeileGlaetten(z) {
   // „Cola 0,33 1" → 0,33 l (Menge bis 1,99 l); „0,25 |" → 0,25 l; Punkte-Leitern weg
-  return String(z).replace(/(?<![\d,.])([01][.,]\d{1,2})\s?1(?=\s|$)/g, "$1 l").replace(/\t/g, " ").replace(/(\d[.,]\d{1,2})\s?[|)!]\s/g, "$1 l ").replace(/(\d[.,]\d{1,2})\s?[|)!]$/g, "$1 l")
-    .replace(/\.{3,}|…+|_{3,}|-{3,}/g, " ").replace(/\s+/g, " ").trim();
+  return String(z).replace(/(?<![\d,.])([01][.,]\d{1,2})\s?1(?=\s|$)/g, "$1 l").replace(/\t/g, " ").replace(/(?<![\d,.])([01][.,]\d{1,2})\s?[|)!]\s/g, "$1 l ").replace(/(?<![\d,.])([01][.,]\d{1,2})\s?[|)!]$/g, "$1 l")
+    .replace(/(?:\s?[.·•:]){2,}\s?|…+|_{3,}|-{3,}/g, " ⋯ ").replace(/\s+/g, " ").trim();
 }
 
 function nameSaeubern(n) {
@@ -34,24 +34,44 @@ function nameSaeubern(n) {
 // Echte Karten (Pilot 14.10.): Nummern mitten in der Zeile („u 34. Pide …" – Rest der Nachbarspalte davor),
 // Fußnoten und Allergene („Weichkäse*® 2"), Beschreibungen nach dem Komma („Lahmacun mit Dönerfl., Weißkohl, …"),
 // Anführungszeichen und Buchstabensalat („anEXa", „ReBBu"). Ergebnis: sauberer Name + Kennzeichen „bitte prüfen".
-const KUERZEL = { "dönerfl": "Dönerfleisch", "doenerfl": "Dönerfleisch", "hähnchenfl": "Hähnchenfleisch", "hackfl": "Hackfleisch", "rindfl": "Rindfleisch", "kalbfl": "Kalbfleisch" };
+// Pilot 14.10. (echte Karte, 45 Gerichte): Der Name wird 1:1 übernommen – mit Komma, Klammer und Beschreibung auf derselben Zeile
+// („Pide mit Spinat, Weichkäse, Eiern" ≠ „Pide mit Spinat, Weichkäse"). Weg kommen nur Dinge, die nicht zum Namen gehören:
+// Gerichtnummer, Reste der Nachbarspalte/Fotos links, Allergen-Hochzahlen, Punkte-Leiter und das, was die Erkennung aus ihr macht.
+const LEITER_BUCHSTABEN = /^[unrsemaocvwiz]+$/;
+const istLeiterRest = (w) => LEITER_BUCHSTABEN.test(w) && (w.length <= 5 || /(.)\1/.test(w));
 export function nameAufbereiten(roh) {
   let n = String(roh || "");
-  // Gerichtnummer mitten in der Zeile: alles davor gehört zur Nachbarspalte
-  const nummern = [...n.matchAll(/(?:^|[^\p{L}\d])(\d{1,3})\s?[.)]\s+(?=\p{L})/gu)];
-  if (nummern.length) { const m = nummern[nummern.length - 1]; n = n.slice(m.index + m[0].length); }
+  // Punkte-Leiter: der Name endet davor
+  n = n.split("⋯").find((x) => /\p{L}{3,}/u.test(x)) ?? n.split("⋯")[0];
+  // Gerichtnummer („01." „35," „47.") mitten in der Zeile: alles davor gehört zur Nachbarspalte
+  const nummern = [...n.matchAll(/(?:^|[^\p{L}\d,])(\d{1,3})\s?[.),]\s+(?=\p{L})/gu)];
+  let mitNummer = false;
+  if (nummern.length) { const m = nummern[nummern.length - 1]; n = n.slice(m.index + m[0].length); mitNummer = true; }
   n = n.replace(/^\s*(nr\.?\s*)?[A-Z]?\d{1,3}[a-z]?\s*[.):\-]\s*/i, "");
-  // Getränkemenge („0,33 l") merken und am Ende wieder anhängen, damit sie nicht als Allergen-Nummer wegfällt
   const menge = n.match(/(\d[.,]\d{1,2}|\d{2,3})\s?(l|ml|cl)(?![\p{L}])/iu); if (menge) n = n.replace(menge[0], " ");
-  n = n.replace(/[*®©™"“”„«»^°§#=!|_~<>[\]{}]+/g, " ");          // Fußnoten, Zeichenmüll
-  n = n.split(/(?<!\d),(?!\d)|;|\s[-–—]\s|\(/)[0];                               // Beschreibung nach Komma / Gedankenstrich / Klammer weg
-  n = n.replace(/\s\d{1,2}(\s?[.,]\s?\d{1,2})*\s*\.?\s*$/, "");  // Allergen-Nummern am Ende („2." „1,3")
-  n = n.replace(/(\p{L}+)\.?(?=\s|$)/gu, (w, x) => KUERZEL[x.toLowerCase()] || w);
-  n = n.replace(/^[^\p{L}]+/u, "").replace(/(\s+[^\p{L}\s]+|\s+\p{L}{1}|\s+\.)+\s*$/u, "").replace(/[\s.:\-–—|/]+$/, "").replace(/\s+/g, " ").trim();
+  // Allergen-Hochzahlen am Wort („Soße4,7,A,F,G,K" „KäseA,G") und Zeichenmüll
+  n = n.replace(/(\p{Ll})(?:\d{1,2}|[A-L])(?:\s?,\s?(?:\d{1,2}|[A-L]))+(?=[\s,.]|$)/gu, "$1");
+  n = n.replace(/(\p{Ll}{3,})[il1|](mit|und)\b/gu, "$1 $2");
+  n = n.replace(/[*®©™"“”„‟«»‘’‚´`^°§#=!|_~<>[\]{}%+]+/g, " ");
+  let w = n.split(/\s+/).filter(Boolean);
+  // Reste links (Fotos, Nachbarspalte): kurze Schnipsel vor dem ersten richtigen Wort weg
+  if (!mitNummer && !/^(mit|und|dazu|im|in|aus|vom|von|zum|zur)$/i.test(w[0] || "")) { const k = w.findIndex((x) => /^[\p{L}-]{4,}[.,]?$/u.test(x) && !istLeiterRest(x.toLowerCase())); if (k > 0) w = w.slice(k); }
+  else while (w.length > 1 && !/\p{L}{2,}/u.test(w[0])) w.shift();
+  // Reste rechts: Leiter, die als Buchstaben gelesen wurde („unsnnnnr" „nen"), einzelne Zeichen, Ziffern
+  while (w.length > 1) {
+    const x = w[w.length - 1], l = x.replace(/[.,:;]+$/, "");
+    if (!l || !/\p{L}/u.test(l) || /^\p{L}$/u.test(l) || istLeiterRest(l) || /^\p{Ll}{2}$/u.test(l)) w.pop(); else break;
+  }
+  n = w.join(" ").replace(/^[^\p{L}(]+/u, "").replace(/[\s,;:\-–—|/]+$/, "").replace(/\s+([,.)])/g, "$1").replace(/\(\s+/g, "(").trim();
+  if (/\.$/.test(n) && !/\p{L}{2,}\.$/u.test(n.slice(-6))) n = n.replace(/\.+$/, "");
   if (menge) n = `${n} ${menge[1]} ${menge[2].toLowerCase()}`;
-  // Buchstabensalat: Wort mit Großbuchstaben mitten drin („anEXa", „ReBBu"), Wort ohne Vokal ab 4 Zeichen
-  const pruefen = n.split(" ").filter((w) => !/\d/.test(w) && !/^(l|ml|cl)$/i.test(w)).some((w) => /\p{Ll}\p{Lu}|\p{Lu}{2,}\p{Ll}/u.test(w) && !/^[A-ZÄÖÜ]{2,5}$/.test(w) || (w.length >= 4 && !/[aeiouäöüyıAEIOUÄÖÜ]/.test(w)));
-  return { name: n, pruefen };
+  // Buchstabensalat: Großbuchstabe mitten im Wort („anEXa", „ReBBu"), Wort ohne Vokal ab 4 Zeichen
+  const pruefen = n.split(" ").map((x) => x.replace(/[(),.]/g, "")).filter((x) => x && !/\d/.test(x) && !/^(l|ml|cl)$/i.test(x)).some((x) => /\p{Ll}\p{Lu}|\p{Lu}{2,}\p{Ll}/u.test(x) && !/^[A-ZÄÖÜ]{2,5}$/.test(x) || (x.length >= 4 && !/[aeiouäöüyıAEIOUÄÖÜ]/.test(x)));
+  // Zeichensalat im Namen: Ziffern (außer Menge/Klammer) oder mehrere Ein-/Zwei-Zeichen-Schnipsel („EBENE 5 7 3 re Fig BR", „Salat EU MN")
+  const ohneKlammer = n.replace(/\([^)]*\)/g, " ").replace(/\d[.,]\d{1,2}\s?(l|ml|cl)\b/gi, " ");
+  const kurz = ohneKlammer.split(/\s+/).filter((x) => x && x.replace(/[.,]/g, "").length <= 2 && !/^(&|zu|im|in|am|an|mit|und|xl|oder)$/i.test(x)).length;
+  const salat = /\d/.test(ohneKlammer) || kurz >= 2;
+  return { name: n, pruefen: pruefen || salat, nummer: mitNummer };
 }
 
 // Text → Positionen [{ name, preis, groesse, roh }]
@@ -64,21 +84,63 @@ export function istZutatenZeile(z) {
   t = t.replace(/^[^\p{L}]+/u, "").trim();
   if (!t) return false;
   if (/^(mit|dazu|und|oder|serviert|wahlweise|inkl|inklusive|gefüllt|gefuellt|belegt|nach\s+wahl|auf\s+wunsch|aus|in|vom|von)\b/i.test(t) && !/^(vom|von)\s+\p{Lu}/iu.test(t)) return true;
-  if (/^\p{Ll}/u.test(t)) return true;                     // beginnt klein: Fortsetzung, keine Überschrift
-  if ((t.match(/,/g) || []).length >= 2) return true;      // Aufzählung
+  if (/^\p{Ll}/u.test(t) && !/^(extra|zusätzlich|zusaetzlich|portion|kleine?|gro(ß|ss)e?|halbe?)\b/i.test(t)) return true;                     // beginnt klein: Fortsetzung, keine Überschrift
+  if ((t.match(/,/g) || []).length >= 2 && !/\smit\s/i.test(t)) return true;      // Aufzählung („Tomaten, Zwiebeln, Mais") – „Pide mit Spinat, Weichkäse, Eiern" ist ein Gericht
   return false;
 }
 
+// Zwei Lesarten derselben Seite (Block und Spalten, getrennt durch \f): die mit mehr Gerichten ist die Hauptlesart,
+// die andere ergänzt fehlende Gerichte und unlesbare Preise. Ähnliche Namen („Döner (kein) mit Sala" ~ „Döner (klein) mit Salat") zählen als dasselbe Gericht.
+// Rubrik-Überschriften („Vegane Gerichte", „Pide aus dem Steinofen", „Nudeln") sind keine Gerichte, auch wenn ein Preis danebenrutscht
+const RUBRIK = /^(?:[\p{L}-]+\s){0,2}(gerichte|speisen|getränke|getraenke|beilagen|desserts?|vorspeisen|hauptspeisen|nudeln|salate|menüs?|extras)$|\s(aus|qu\/?|au\/?|a\w{1,2})\s+dem\s+[\p{L}]+$/iu;
+export const istRubrik = (n) => RUBRIK.test(String(n || "").trim());
+const nameGuete = (p) => -(p.pruefen ? 5 : 0) - p.name.split(/\s+/).filter((x) => x.replace(/[.,()]/g, "").length <= 2 && !/^(&|zu|im|in|am|an|und|xl)$/i.test(x)).length * 2 - (p.name.match(/[^\p{L}\d\s,.()&\-]/gu) || []).length - (p.name.match(/ı/g) || []).length + Math.min(p.name.length, 40) / 100;
+function aehnlichName(a, b) {
+  const x = normName(a), y = normName(b); if (x === y) return true;
+  // verschiedene Gerichte unterscheiden sich in ganzen Wörtern („Döner-Teller" ≠ „Falafel-Teller", „…, Weichkäse" ≠ „…, Weichkäse, Eiern")
+  if (Math.abs(x.length - y.length) > 4 || x.slice(0, 3) !== y.slice(0, 3)) return false;
+  const bi = (s) => { const m = new Map(); for (let i = 0; i < s.length - 1; i++) { const k = s.slice(i, i + 2); m.set(k, (m.get(k) || 0) + 1); } return m; };
+  const A = bi(x), B = bi(y); let g = 0; for (const [k, n] of A) g += Math.min(n, B.get(k) || 0);
+  return (2 * g) / (x.length + y.length - 2) >= 0.8;
+}
 export function positionenAusText(text) {
+  const teile = String(text || "").split("\f");
+  if (teile.length > 1) {
+    const listen = teile.map(positionenEinerLesart).sort((a, b) => b.length - a.length);
+    // Wort-Häufigkeit über die ganze Karte: richtig gelesene Wörter kommen öfter vor („Portion" 2×) als Lesefehler („Porlion" 1×)
+    const haeufig = new Map(); for (const p of listen.flat()) for (const w of normName(p.name).split(" ")) haeufig.set(w, (haeufig.get(w) || 0) + 1);
+    const guete = (p) => { const w = normName(p.name).split(" ").filter(Boolean); return nameGuete(p) + (w.length ? w.reduce((s, x) => s + Math.min(haeufig.get(x) || 0, 4), 0) / w.length : 0); };
+    const aus = listen[0].map((p) => ({ ...p }));
+    for (const l of listen.slice(1)) for (const p of l) {
+      const h = aus.find((x) => aehnlichName(x.name, p.name));
+      if (!h) { aus.push(p); continue; }
+      if (guete(p) > guete(h)) { h.name = p.name; h.pruefen = p.pruefen; } // sauberere Schreibweise gewinnt („m Salat" < „mit Salat")
+      if ((h.preis === null || h.preisPruefen) && p.preis !== null && !p.preisPruefen) { h.preis = p.preis; h.preisPruefen = false; }
+      else if (h.preis !== null && p.preis !== null && !p.preisPruefen && !h.preisPruefen && h.preis !== p.preis) h.preisPruefen = true; // Lesarten widersprechen sich
+    }
+    return aus;
+  }
+  return positionenEinerLesart(text);
+}
+function positionenEinerLesart(text) {
   const zeilen = String(text || "").split(/\r?\n/).map(zeileGlaetten).filter(Boolean);
   const out = []; let vorher = null;
   for (let i = 0; i < zeilen.length; i++) {
     const z = zeilen[i];
     if (RAUSCHEN.test(z)) { vorher = null; continue; }
-    const preise = [...z.matchAll(PREIS)].map((m) => ({ wert: preisZahl(m[1], m[2]), index: m.index, laenge: m[0].length }))
+    let preise = [...z.matchAll(PREIS)].map((m) => ({ wert: preisZahl(m[1], m[2]), index: m.index, laenge: m[0].length }))
       // Mengenangaben wie „0,33 l" sind keine Preise
       .filter((p) => !/^\s?(l|ml|cl|kg|g)\b/i.test(z.slice(p.index + p.laenge)) && p.wert >= 0.5 && p.wert < 100);
+    // Preis ohne Komma hinter der Punkte-Leiter („Schinken Seele ……… 850", „……7:00"): als Preis nehmen, aber zum Prüfen markieren
+    if (!preise.length) {
+      const m = z.match(/⋯[^\p{L}\d]{0,4}(?:\p{L}{1,2}\s)?[^\p{L}\d]{0,3}(\d{1,2})\s?[:;]?\s?(\d{2})(?!\d)/u);
+      if (m && /\p{L}{3,}/u.test(z.slice(0, m.index))) { const wert = preisZahl(m[1], m[2]); if (wert >= 0.5 && wert < 100) preise = [{ wert, index: m.index, laenge: m[0].length, unsicher: true }]; }
+    }
     // Zeile ohne Preis: als möglicher Name merken – aber Zutatenzeilen überschreiben das Gericht darüber nicht
+    if (!preise.length && z.includes("⋯") && /⋯.*\d/.test(z)) {
+      const aufb = nameAufbereiten(z.split("⋯")[0]);
+      if (aufb.name.length >= 3 && /\p{Lu}\p{L}{3,}/u.test(aufb.name) && !istZutatenZeile(aufb.name) && !istRubrik(aufb.name)) { out.push({ name: aufb.name, preis: null, groesse: null, roh: z, pruefen: aufb.pruefen }); vorher = null; continue; }
+    }
     if (!preise.length) { if (!istZutatenZeile(z) || !vorher) vorher = istZutatenZeile(z) ? null : z.replace(/\s+/g, " ").trim(); continue; }
     // Abschnitte: Text bis zum Preis = Name. „Pizza Salami 9,50 Lasagne 10,90" → zwei Gerichte; Preise direkt hintereinander gehören zusammen
     const abschnitte = []; let start = 0;
@@ -90,16 +152,19 @@ export function positionenAusText(text) {
     abschnitte.forEach((a, k) => {
       let aufb = nameAufbereiten(a.seg);
       // Name und Preis in zwei Zeilen (zweispaltige Karten) – oder der Preis ist auf die Zutatenzeile gerutscht: dann gilt das Gericht darüber
-      if (k === 0 && vorher && (aufb.name.length < 2 || istZutatenZeile(a.seg))) aufb = nameAufbereiten(vorher);
-      else if (k === 0 && istZutatenZeile(a.seg) && !/\p{Lu}/u.test(a.seg.slice(0, 3))) return;
+      const zutat = !aufb.nummer && istZutatenZeile(aufb.name);
+      if (k === 0 && vorher && (aufb.name.length < 2 || zutat)) aufb = nameAufbereiten(vorher);
+      else if (k === 0 && zutat) return;
       let name = aufb.name;
-      if (name.length < 2 || name.length > 60) return;
+      if (name.length < 2 || name.length > 80 || !/\p{L}{3,}/u.test(name) || istRubrik(name)) return; // „Mr" ist kein Gericht, „Vegane Gerichte" eine Überschrift
       const groessen = [...name.matchAll(GROESSEN)].map((m) => m[0]);
       if (a.preise.length >= 2 && groessen.length >= 2) {
         // „Pommes klein / groß 3,50 4,50"
         const basis = name.replace(GROESSEN, "").replace(/[\s/|]+$/, "").replace(/\s+/g, " ").trim();
         a.preise.slice(0, groessen.length).forEach((p, j) => out.push({ name: `${basis} ${groessen[j]}`.trim(), preis: p.wert, groesse: groessen[j].toLowerCase(), roh: z }));
-      } else out.push({ name, preis: a.preise[a.preise.length - 1].wert, groesse: groessen[0]?.toLowerCase() || null, roh: z, pruefen: aufb.pruefen });
+      } else { const pz = a.preise[a.preise.length - 1]; const cent = Math.round(pz.wert * 100) % 100;
+        out.push({ name, preis: pz.wert, groesse: groessen[0]?.toLowerCase() || null, roh: z, pruefen: aufb.pruefen, preisPruefen: !!pz.unsicher || ![0, 5, 9].includes(cent % 10) });
+      }
     });
     vorher = null;
   }
@@ -155,7 +220,7 @@ export function vorschlaegeAusText(text, stand) {
     const treffer = besteVorlage(p.name, stand);
     const getraenk = istGetraenk(p.name);
     return {
-      id: uid(), name: p.name, preis: p.preis, roh: p.roh, an: true, pruefen: !!p.pruefen,
+      id: uid(), name: p.name, preis: p.preis, roh: p.roh, an: true, pruefen: !!p.pruefen, preisPruefen: !!p.preisPruefen,
       vorlage: treffer ? treffer.v.name : null, bereich: treffer ? treffer.v.bereich : null,
       sicher: treffer ? (treffer.s >= 0.75 ? "sicher" : "vorschlag") : getraenk ? "getraenk" : "ohne",
       getraenk,
@@ -170,7 +235,7 @@ export function vorschlaegeUebernehmen(stand, vorschlaege) {
   const alleVorlagen = Object.entries(VORLAGEN).flatMap(([b, l]) => l.map((v) => ({ ...v, bereich: b })));
   for (const v of vorschlaege) {
     if (!v.an || !String(v.name).trim()) continue;
-    const name = String(v.name).trim().slice(0, 60);
+    const name = String(v.name).trim().slice(0, 80);
     const vorhanden = stand.gerichte.find((g) => normName(g.name) === normName(name));
     if (vorhanden) { if (typeof v.preis === "number") vorhanden.preis = v.preis; aktualisiert += 1; continue; }
     const vl = v.vorlage ? alleVorlagen.find((x) => x.name === v.vorlage) : null;

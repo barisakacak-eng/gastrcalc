@@ -367,7 +367,7 @@ button.kachel { cursor: pointer; }
 .fvliste .fvz:first-child, .fvliste.offen .fvz { border-top-color: transparent; }
 .fvkopf { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
 .fvtipp { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 4px 4px 4px 12px; background: none; border: 0; text-align: left; }
-.fvtipp .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fvtipp .n { flex: 1; min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; }
 .fvtipp .n small { display: block; font-size: 0.78rem; white-space: normal; }
 .fvtipp .n small.rot { color: var(--rot); } .fvtipp .n small.gelb { color: #8a6610; }
 .fvtipp .p { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }

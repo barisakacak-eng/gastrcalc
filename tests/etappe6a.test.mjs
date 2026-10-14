@@ -175,17 +175,29 @@ test("Review: Rücknahme stellt den vorherigen festen Betrag wieder her; Dublett
 
 // ---------- Echte Karte aus dem Pilot (Bildschirmfotos des Kapitäns, 14.10.) ----------
 import { nameAufbereiten } from "../js/karte_lesen.js";
-test("Pilot-Karte: Nummern der Nachbarspalte, Fußnoten, Beschreibungen, Abkürzungen, Buchstabensalat", () => {
+test("Pilot-Karte: Namen 1:1 – Nummer, Fotoreste, Allergene und Punkte-Leiter weg, Komma und Klammer bleiben", () => {
   const n = (z) => positionenAusText(z).map((p) => p.name)[0];
-  assert.equal(n("u 34. Pide mit Eiern, Wei 7,50"), "Pide mit Eiern");
-  assert.equal(n("rn | 35. Pide mit Spinat, Weichkäse 8,50"), "Pide mit Spinat");
-  assert.equal(n("Be =! 36. Pide mit Döner 8,50"), "Pide mit Döner");
-  assert.equal(n("Pide mit Weichkäse*® 2. 6,50"), "Pide mit Weichkäse");
-  assert.equal(n("Pide mit Hackfleisch\" . n 7,00"), "Pide mit Hackfleisch");
-  assert.equal(n("Lahmacun mit Dönerfl., Weißkohl, Tomaten 10,00"), "Lahmacun mit Dönerfleisch");
-  assert.equal(n("Salami Seele\" 8,50"), "Salami Seele");
-  assert.ok(nameAufbereiten("anEXa Seele").pruefen && nameAufbereiten("Vegetarische ReBBu").pruefen);
-  assert.ok(!nameAufbereiten("Pide mit Döner").pruefen && !nameAufbereiten("XXL Döner").pruefen);
+  // echte Zeilen aus der Texterkennung der Pilot-Karte (14.10.)
+  assert.equal(n("/ B a 01. Döner (groß) mit Salat, Soße\", ..,., 7,00 ER"), "Döner (groß) mit Salat, Soße");
+  assert.equal(n("i ee SE 1 35, Pide mit Spinat, Weichkäse, Eiern’ .. » » 8,50"), "Pide mit Spinat, Weichkäse, Eiern");
+  assert.equal(n("u 33. Pide mit Spinat, Weichkäse* ...... 7,50"), "Pide mit Spinat, Weichkäse");
+  assert.equal(n("ua Kichererbsen im Yufka mit Salat‘. . . . . . . 7,00 a."), "Kichererbsen im Yufka mit Salat");
+  assert.equal(n("Ira U] Falafel Teller mit Salat & Pommes oder Reis‘ 8,00"), "Falafel Teller mit Salat & Pommes oder Reis");
+  assert.equal(n("BE EN 15. Falafel mit Käse““\"............... 6,00 > u"), "Falafel mit Käse");
+  assert.equal(n("N ae a 04. Döner Box“... «uns 0222 2..7,00 00"), "Döner Box");
+  assert.equal(n("24. Lahmacun mit Dönerfl., Weichkäse\"”\"* 10,00 Pu"), "Lahmacun mit Dönerfl., Weichkäse");
+  assert.equal(n("sg a extra Weichkäse® ......».usanss san 4nr..1,00"), "extra Weichkäse");
+  assert.equal(n("Döner Vegetarisch mit Käse4,7,A,F,G,K 5,00"), "Döner Vegetarisch mit Käse");
+  // Preis ohne Komma hinter der Leiter: übernommen, aber „Preis prüfen"
+  const s = positionenAusText("ER a d 44. Schinken Seele“ ..............850 100) AR")[0];
+  assert.equal(s.name, "Schinken Seele"); assert.equal(s.preis, 8.5); assert.ok(s.preisPruefen);
+  // Nummer und Leiter, Preis unlesbar: Gericht kommt mit „Preis fehlt"
+  assert.equal(positionenAusText("ur: 71 18. Pommes ..2uessssssensnenennn 50 | RE")[0]?.preis, null);
+  assert.ok(nameAufbereiten("anEXa Seele").pruefen && nameAufbereiten("Vegetarische ReBBu").pruefen && nameAufbereiten("EBENE 5 7 3 re Fig BR").pruefen);
+  assert.ok(!nameAufbereiten("Pide mit Döner").pruefen && !nameAufbereiten("XXL Döner").pruefen && !nameAufbereiten("Döner (groß) mit Salat, Soße").pruefen);
+  // zwei Lesarten: gleiche Gerichte einmal, fehlender Preis aus der anderen Lesart
+  const z = positionenAusText("Portion Reis ...... 5\nPide mit Weichkäse 6,50\n\f\nPortion Reis 5,00\nLahmacun 6,00");
+  assert.deepEqual(z.map((x) => `${x.name}|${x.preis}`).sort(), ["Lahmacun|6", "Pide mit Weichkäse|6.5", "Portion Reis|5"]);
 });
 
 test("Pilot-Karte: Zutatenzeilen unter dem Gericht werden nie zum Gericht, Preis gehört zum Gericht darüber", async () => {

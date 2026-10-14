@@ -200,3 +200,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+
+
+deu.traineddata: tesseract-ocr/tessdata_best (Apache-2.0), ab 14.10.2026 statt tessdata_fast – genauer auf echten Speisekarten.

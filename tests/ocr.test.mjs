@@ -13,7 +13,10 @@ const require = createRequire(import.meta.url);
 const pfad = (p) => new URL(p, import.meta.url);
 let api, M;
 // wie der Arbeitsfaden im Handy: "block" = Modus 6, "karte" = Modus 6 und 3 (Spalten), bessere Lesart gewinnt
-async function lesen(datei, modus) {
+// nacheinander: alle Tests teilen sich EINE Texterkennung und dieselbe Eingabedatei
+let kette = Promise.resolve();
+function lesen(datei, modus) { const p = kette.then(() => lesenJetzt(datei, modus)); kette = p.catch(() => {}); return p; }
+async function lesenJetzt(datei, modus) {
   if (!api) {
     M = await require("../vendor/tesseract/tesseract-core-simd-lstm.wasm.js")();
     M.FS.writeFile("deu.traineddata", readFileSync(pfad("../vendor/tesseract/deu.traineddata")));
@@ -65,5 +68,21 @@ test("Großhandelsbon vom Foto: Ware erkannt, Summe netto 66,30", async () => {
   const b = belegZerlegen(text, { bekannt: ["Tomaten"] });
   assert.equal(b.summeNetto, 66.3);
   assert.ok(b.zeilen.length >= 4, String(b.zeilen.length));
-  api.End();
 });
+
+// Pilot-Karte des Kapitäns (zwei echte Handyfotos, 14.10.). Die Fotos liegen nur lokal (tests/bilder/pilot, nicht im öffentlichen Repo):
+// ohne sie wird der Test übersprungen. Maßstab: Name 1:1 und Preis richtig.
+import { existsSync } from "node:fs";
+const PILOT = new URL("./bilder/pilot/", import.meta.url);
+test("Pilot-Karte (echte Fotos): mindestens 42 von 45 Gerichten mit Name 1:1 und Preis", { skip: !existsSync(new URL("karte_seite1_app.png", PILOT)) && "Pilotfotos nur lokal" }, async () => {
+  const soll = JSON.parse(readFileSync(new URL("soll.json", PILOT)));
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\d&]+/gu, " ").trim();
+  let treffer = 0, gesamt = 0; const fehlt = [];
+  for (const seite of ["1", "2"]) {
+    const roh = await lesen(`pilot/karte_seite${seite}_app.png`, "karte"); const v = vorschlaegeAusText(roh, laden());
+    for (const [n, p] of soll[seite]) { gesamt++; const h = v.find((x) => norm(x.name) === norm(n)); if (h && h.preis === p) treffer++; else fehlt.push(`${n} ${h ? h.preis : "fehlt"}`); }
+  }
+  assert.ok(treffer >= 42, `${treffer}/${gesamt}: ${fehlt.join(" | ")}`);
+});
+
+test.after(() => { try { api?.End(); } catch (_) {} });
