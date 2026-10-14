@@ -63,7 +63,7 @@ export function belegView(stand) {
       <p class="hinweis">${esc(t("beleg.datenschutz"))}</p>
       ${kostenListe(stand)}
       <div class="karte"><h2>${esc(t("beleg.letzte"))}</h2>
-        ${letzte.length ? letzte.map((l) => `<div class="summenzeile"><span>${esc(datumLesbar(l.datum))} · ${esc(l.lieferant || "–")}<small class="marke" style="display:block">${esc(t("beleg.zeilen", l.zeilen.length))}${l.typ === "lieferschein" ? ` · ${esc(t("kuehl.quellen.zettel"))}` : ""}</small></span><span class="wert">${l.summeNetto !== null ? fmtEuro(l.summeNetto, { dezimal: 2 }) : "–"}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.leer"))}</div>`}
+        ${letzte.length ? letzte.map((l) => `<div class="summenzeile"><span>${esc(datumLesbar(l.datum))} · ${esc(l.lieferant || "–")}<small class="marke block">${esc(t("beleg.zeilen", l.zeilen.length))}${l.typ === "lieferschein" ? ` · ${esc(t("kuehl.quellen.zettel"))}` : ""}</small></span><span class="wert">${l.summeNetto !== null ? fmtEuro(l.summeNetto, { dezimal: 2 }) : "–"}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.leer"))}</div>`}
       </div>
     </div>
     ${nav("umsatz")}`;
@@ -73,7 +73,7 @@ export function belegView(stand) {
 function kostenListe(stand) {
   const l = (stand.kostenbelege || []).filter((e) => !e.storniert).slice(-6).reverse();
   if (!l.length) return "";
-  return `<div class="karte"><h2>${esc(t("foto.kostenbelege"))}</h2>${l.map((e) => `<div class="summenzeile"><span>${esc(datumLesbar(e.datum))} · ${esc(t("kosten.posten." + e.stelle)[0])}<small class="marke" style="display:block">${esc(t("foto.verteilungen." + e.verteilung))}${e.monate > 1 ? ` · ${esc(t("foto.monate", e.monate))}` : ""}</small></span><span class="wert">${fmtEuro(e.betrag, { dezimal: 2 })}<button type="button" class="leise" data-a="kb-storno" data-id="${esc(e.id)}">${esc(t("foto.zuruecknehmen"))}</button></span></div>`).join("")}</div>`;
+  return `<div class="karte"><h2>${esc(t("foto.kostenbelege"))}</h2>${l.map((e) => `<div class="summenzeile"><span>${esc(datumLesbar(e.datum))} · ${esc(t("kosten.posten." + e.stelle)[0])}<small class="marke block">${esc(t("foto.verteilungen." + e.verteilung))}${e.monate > 1 ? ` · ${esc(t("foto.monate", e.monate))}` : ""}</small></span><span class="wert">${fmtEuro(e.betrag, { dezimal: 2 })}<button type="button" class="leise" data-a="kb-storno" data-id="${esc(e.id)}">${esc(t("foto.zuruecknehmen"))}</button></span></div>`).join("")}</div>`;
 }
 
 function zuweisungView(stand) {
@@ -82,7 +82,7 @@ function zuweisungView(stand) {
   const H = heute(); const andererMonat = z.datum.slice(0, 7) !== H.slice(0, 7);
   const name = (st) => st === "ware" ? t("foto.stelleWare") : t("kosten.posten." + st)[0];
   return `<div class="inhalt">
-    <h2 class="frage" style="font-size:1.3rem">${esc(t("foto.zuweisenFrage"))}</h2>
+    <h2 class="frage titel-klein">${esc(t("foto.zuweisenFrage"))}</h2>
     <p class="hinweis">${esc(z.lieferant)}</p>
     <div class="chips">${STELLEN.map((st) => `<button type="button" class="chip ${z.stelle === st ? "an" : ""}" aria-pressed="${z.stelle === st}" data-a="zw-stelle" data-wert="${st}">${esc(name(st))}</button>`).join("")}</div>
     ${ware ? `<p class="hinweis">${esc(t("foto.wareHinweis"))}</p><button type="button" class="knopf glut" data-a="beleg-zerlegen">${esc(t("foto.wareWeiter"))}</button>` : `
@@ -138,7 +138,7 @@ function pruefView(stand) {
   const H = heute(); const datumChips = beleg.datum && beleg.datum !== H && beleg.datum <= H;
   let nr = 0;
   return `<div class="inhalt">
-    <h2 class="frage" style="font-size:1.3rem">${esc(t("beleg.erkannt", zeilen.length, nFragen))}</h2>
+    <h2 class="frage titel-klein">${esc(t("beleg.erkannt", zeilen.length, nFragen))}</h2>
     <p class="hinweis">${esc(beleg.lieferant || t("beleg.lieferant"))} · ${esc(datumLesbar(belegDatum()))}${pfandSumme ? ` · ${esc(t("beleg.pfand", fmtEuro(pfandSumme, { dezimal: 2 })))}` : ""}</p>
     ${datumChips ? `<div class="chips"><button type="button" class="chip klein ${datumWahl !== "heute" ? "an" : ""}" data-a="beleg-datum" data-wert="beleg">${esc(t("beleg.datum"))} ${esc(datumLesbar(beleg.datum))}</button><button type="button" class="chip klein ${datumWahl === "heute" ? "an" : ""}" data-a="beleg-datum" data-wert="heute">${esc(t("tag.titel"))}</button></div>` : ""}
     ${ls ? `<div class="tipp">${esc(t("beleg.lieferschein"))}</div>` : ""}
@@ -173,7 +173,7 @@ function fertigView(stand) {
     <div class="karte gruenrand"><h2>${esc(t("beleg.titel"))}</h2><div class="mid">${esc(t("beleg.fertig", fertig.anzahl, fertig.aenderungen.length))}</div>
       <small class="marke">${esc(fertig.lieferung.lieferant || "")} · ${esc(datumLesbar(fertig.lieferung.datum))}${fertig.lieferung.summeNetto !== null ? ` · ${fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })} ${esc(t("gebinde.netto"))}` : ""}</small></div>
     <div class="karte"><h2>${esc(t("beleg.preiseNeu"))}</h2>
-      ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke" style="display:block">${x.alt !== null ? `${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
+      ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke block">${x.alt !== null ? `${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
     </div>
     ${fertig.lieferung.summeNetto ? `<p class="hinweis">${esc(t("beleg.zaehlerRoter", fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })))}</p>` : ""}
     <button type="button" class="knopf" data-a="nav" data-wert="start">${esc(t("beleg.zumCockpit"))}</button>

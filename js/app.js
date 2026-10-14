@@ -68,7 +68,7 @@ function zeichne() {
     console.error(e);
     root.innerHTML = `<div class="schirm"><div class="inhalt">
       <h1 class="frage">${esc(t("einstellungen.fehlerTitel"))}</h1><p class="hinweis">${esc(t("einstellungen.fehlerText"))}</p>
-      <label class="knopf zweit" style="text-align:center">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
+      <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
       <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button></div></div>`;
   }
   if (!speicherVerfuegbar() || speicherProblem) {

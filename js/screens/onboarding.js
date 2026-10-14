@@ -115,7 +115,7 @@ const team = {
     <h1 class="frage">${esc(t("team.fragePersonen"))}</h1>
     <p class="hinweis">${esc(t("team.personenHinweis"))}</p>
     ${zahlfeld({ feld: "team.personen", wert: stand.team.personen, einheit: t("allgemein.personen"), platzhalter: "" })}
-    <div class="feldzeile" style="margin-top:8px">
+    <div class="feldzeile abstand-o">
       <label>${esc(t("team.frageStunden"))}</label>
       <p class="hinweis">${esc(t("team.stundenHinweis"))}</p>
       ${zahlfeld({ feld: "team.stundenProPerson", wert: stand.team.stundenProPerson, einheit: t("allgemein.stunden"), platzhalter: "", klein: true })}
@@ -134,7 +134,7 @@ const lohn = {
     <p class="hinweis">${esc(t("team.lohnHinweis"))}</p>
     ${zahlfeld({ feld: "team.lohnkosten", wert: stand.team.lohnkosten, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: "", status: stand.team.lohnkosten === null && stand.team.lohnOffen ? "offen" : "" })}
     <p class="tipp">${esc(t("team.lohnTipp"))}</p>
-    <div class="feldzeile" style="margin-top:8px">
+    <div class="feldzeile abstand-o">
       <label>${esc(t("team.frageEigen"))}</label>
       <p class="hinweis">${esc(t("team.eigenHinweis"))}</p>
       ${(() => { const e = eigenerLohnJeMonat(stand.team); return zahlfeld({ feld: "team.eigenerLohn", wert: e.status === "eigen" ? stand.team.eigenerLohn : null, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: e.status === "offen" ? "" : String(EIGENER_LOHN_RICHTWERT), klein: true, status: e.status === "geschaetzt" ? "geschaetzt" : e.status === "offen" ? "offen" : "" }); })()}

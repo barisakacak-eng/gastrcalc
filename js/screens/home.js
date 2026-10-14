@@ -177,7 +177,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <h2>${esc(t("einstellungen.sicherung"))}</h2>
         <p class="hinweis">${esc(t("einstellungen.sicherungText"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
-        <label class="knopf zweit" style="text-align:center">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
+        <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
         <span class="marke">${esc(t("einstellungen.ereignisse", ereignisAnzahl))}${wurzel?.letzteSicherung ? ` · ${esc(t("einstellungen.letzteSicherung", datumLesbar(wurzel.letzteSicherung.slice(0, 10))))}` : ""}</span>
         <p class="hinweis">${esc(t("einstellungen.pruefsummeText"))}</p>
       </div>

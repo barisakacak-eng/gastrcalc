@@ -135,7 +135,7 @@ function rundgangView(stand) {
       <div class="liste">${stellen.map((x) => { const m = r.messungen.find((y) => y.stelle === x.id); const letzte = letzteMessung(stand, x.id); return `
         <button type="button" class="wahl ${m ? "an" : ""} ${m?.abweichung ? "warnung" : ""}" data-a="station" data-id="${esc(x.id)}">
           <span class="haken">${m ? "✓" : ""}</span>
-          <span style="flex:1"><b>${esc(x.name)}</b><small style="display:block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} ${fmtZahl(letzte.wert, 1)} °C` : ""}</small></span>
+          <span class="fuell"><b>${esc(x.name)}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} ${fmtZahl(letzte.wert, 1)} °C` : ""}</small></span>
           <span style="font-weight:800;white-space:nowrap" class="${m?.abweichung ? "rot" : ""}">${m ? (typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(t("kuehl.nichtGemessenKurz"))) : "›"}</span>
         </button>`; }).join("")}</div>
       <p class="hinweis mitte">${esc(t("kuehl.rundgangStand", fertig, stellen.length))}${fertig && fertig < stellen.length ? ` · ${esc(t("kuehl.teilAbschlussHinweis"))}` : ""}</p>

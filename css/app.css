@@ -1,14 +1,6 @@
 /* GastroCalc – Oberfläche für die Küche: groß, ruhig, eine Entscheidung je Bildschirm. */
 
-:root {
-  --papier: #F5EDE2; --papier-tief: #EDE2D3; --weiss: #FFFDF9;
-  --tinte: #22301F; --tinte-weich: #5C6B5A;
-  --salbei: #4C6B55; --salbei-tief: #2E4034; --salbei-hell: #E3EAE0;
-  --holz: #E2CDB2; --holz-tief: #C9A87C; --lehm: #A98467;
-  --glut: #E8763A; --gelb: #D9A22E; --rot: #C0453B; --gruen: #4F8A5B;
-  --radius: 14px;
-  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Systemschrift: offline, keine Weitergabe an Dritte */
-}
+/* Gestaltungswerte stehen in css/tokens.css (gehört Sanji). */
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { font-size: 17px; }
@@ -382,4 +374,16 @@ button.kachel { cursor: pointer; }
 .fvreihe { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .fvreihe .betrag { width: 120px; }
 .chip.leise { border-color: var(--holz); color: var(--tinte-weich); }
-.pkt.grau { background: #bbb; }
+.pkt.grau { background: var(--weggelassen); }
+
+/* Hilfsklassen statt Inline-Stil (Werkbank für Sanji) */
+.block { display: block; }
+.mitte { text-align: center; }
+.fett { font-weight: 700; }
+.nowrap { white-space: nowrap; }
+.fuell { flex: 1; }
+.titel-klein { font-size: 1.3rem; }
+.abstand-o { margin-top: 8px; }
+/* Bild-Plätze: Datei bilder/<name>.svg kommt von Sanji; fehlt sie, bleibt ein ruhiger Kreis */
+.bildplatz { width: 64px; height: 64px; border-radius: 50%; background: var(--papier-tief) center / 70% no-repeat; flex: none; display: inline-block; }
+.bildplatz.klein { width: 44px; height: 44px; }

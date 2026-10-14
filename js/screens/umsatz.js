@@ -110,7 +110,7 @@ function preiseKarte(stand, D) {
   const einheit = (e) => e === "g" ? "kg" : e === "ml" ? "l" : t("allgemein.stueck");
   const jeBasis = (p, e) => e === "g" || e === "ml" ? p * 1000 : p;
   return `<div class="karte"><h2>${esc(t("zaehler.preise"))}</h2>
-    ${l.length ? l.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke" style="display:block">${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
+    ${l.length ? l.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke block">${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
   </div>`;
 }
 

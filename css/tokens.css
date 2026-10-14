@@ -1,0 +1,19 @@
+/* GastroCalc – Gestaltungswerte (Tokens). Diese Datei gehört Sanji (Visual-Vertrag, bruecke/visual-vertrag.md):
+   Farben, Schrift, Radien, Schatten. Alle Bausteine in app.css lesen nur diese Variablen.
+   Bedeutungs-Variablen (--geschaetzt, --eigen, --muell …) müssen bleiben, ihre Werte sind frei. */
+
+:root {
+  --papier: #F5EDE2; --papier-tief: #EDE2D3; --weiss: #FFFDF9;
+  --tinte: #22301F; --tinte-weich: #5C6B5A;
+  --salbei: #4C6B55; --salbei-tief: #2E4034; --salbei-hell: #E3EAE0;
+  --holz: #E2CDB2; --holz-tief: #C9A87C; --lehm: #A98467;
+  --glut: #E8763A; --gelb: #D9A22E; --rot: #C0453B; --gruen: #4F8A5B;
+  --radius: 14px;
+  /* Bedeutungen (Pflicht laut Visual-Vertrag): geschätzt = gelb gestrichelt, eigener Wert = grün, Müll = gedeckt */
+  --geschaetzt: #D9A22E; --geschaetzt-hell: #FBEFD3; --geschaetzt-text: #7A5A10;
+  --eigen: #4F8A5B; --eigen-hell: #E3EFE5;
+  --muell: #8B3A2E; --muell-hell: #F3E1DE; --weggelassen: #BBBBBB;
+  --aktion: var(--glut); --aktion-text: #FFFFFF;
+  --schatten-karte: none; --schatten-knopf: none;
+  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Systemschrift: offline, keine Weitergabe an Dritte */
+}
