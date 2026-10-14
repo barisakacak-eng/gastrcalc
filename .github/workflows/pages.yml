@@ -3,6 +3,7 @@ name: Pages
 on:
   push:
     branches: [main]
+    paths-ignore: ["bruecke/**"]   # Briefkasten Zoro ⇄ Sanji: löst keine neue Veröffentlichung aus
   workflow_dispatch:
 permissions:
   contents: read
