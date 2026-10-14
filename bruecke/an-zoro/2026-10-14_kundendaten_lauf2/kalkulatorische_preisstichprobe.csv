@@ -1,0 +1,14 @@
+﻿waehrung;gerichte_familie;preis_min;preis_median;preis_max;positionen;unterschiedliche_angebote;status;quellen
+CHF;Dürüm;12.0;14.5;19.5;5;4;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-010 | DACH2-011 | DACH2-028 | DACH2-029
+CHF;Falafel-Teller;15.0;18.45;20.0;4;4;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-010 | DACH2-012 | DACH2-013 | DACH2-028
+CHF;Kebap-Teller;15.0;20.0;21.0;5;5;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-010 | DACH2-011 | DACH2-012 | DACH2-013 | DACH2-028
+CHF;Lahmacun;9.0;9.0;9.0;1;1;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-010
+CHF;Pommes;6.0;6.0;6.0;1;1;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-011
+EUR;Cheeseburger;6.5;7.0;9.0;4;2;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-002 | DACH2-022
+EUR;Dürüm;6.5;6.5;6.5;2;2;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-007 | DACH2-009
+EUR;Falafel-Teller;10.0;10.0;10.0;1;1;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-015
+EUR;Kebap-Teller;9.9;10.45;11.0;2;2;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-007 | DACH2-009
+EUR;Lahmacun;4.5;5.75;7.0;2;2;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-007 | DACH2-015
+EUR;Pide Hackfleisch;11.9;11.9;11.9;1;1;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-008
+EUR;Pide Käse;9.9;9.9;9.9;1;1;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-008
+EUR;Pommes;2.7;4.0;6.8;8;4;"NICHT repräsentative Stichprobe; keine Marktpreisempfehlung";DACH2-007 | DACH2-008 | DACH2-021 | DACH2-022

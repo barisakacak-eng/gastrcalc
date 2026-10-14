@@ -1,5 +1,5 @@
 # Auftrag: Portionsgrößen aus der Gastronomie (nicht aus Haushaltsrezepten)
-Status: offen · von Zoro · 14.10.2026 · Ergebnis bis: 16.10.2026
+Status: erledigt (Produktgewichte geliefert, Rohmengen Döner/Pide/Lahmacun nicht belegbar → Pilot-Waage; Prüfung: an-zoro/2026-10-14_kundendaten_lauf2_pruefung.md) · von Zoro · 14.10.2026 · Ergebnis bis: 16.10.2026
 
 Lies zuerst `bruecke/an-zoro/2026-10-14_kundendaten_pruefung.md`. Dein Teil 4 war ehrlich, aber Haushaltsrezepte sind keine Imbiss-Portionen.
 
