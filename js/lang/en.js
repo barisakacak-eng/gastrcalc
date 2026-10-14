@@ -846,6 +846,7 @@ export default {
   },
 
   schnell: {
+    ladenArtFrage: "What kind of shop are you?", ladenArtHinweis: "Choose your shop type so we can set everything up for you.", ladenName: "What is your shop called?", 
     selbstFrage: "What do you make yourselves?", selbstHinweis: "Tap what you make in-house. Everything else you buy ready-made.", selbstRest: "No amounts needed now. The app uses starting values, you adjust them later.", selbstKacheln: { teig: "Dough for pizza and pide", brot: "Bread / flatbread", lahmacun: "Lahmacun dough", sossen: "Sauces (garlic, herb)", patty: "Burger patties", tomatensosse: "Pizza sauce" }, 
     ladenFrage: "What is your shop called and what do you sell?",
     arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", kiosk: "Kiosk with hot food", anders: "Something else" },

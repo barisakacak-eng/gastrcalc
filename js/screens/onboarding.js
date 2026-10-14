@@ -349,9 +349,10 @@ const ladenBild = (id) => FOTOS.has("laden-" + id) ? `<img class="kachelfoto" sr
 const ladenSchnell = {
   id: "laden-schnell",
   view: (stand) => `
-    <h1 class="frage">${esc(t("schnell.ladenFrage"))}</h1>
-    <input class="textfeld gross" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off">
+    <h1 class="frage">${esc(t("schnell.ladenArtFrage"))}</h1>
+    <p class="hinweis">${esc(t("schnell.ladenArtHinweis"))}</p>
     <div class="kacheln fotokacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
+    <div class="feldzeile"><label>${esc(t("schnell.ladenName"))}</label><input class="textfeld" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off"></div>
     <div class="feldzeile"><label>${esc(t("betrieb.frageTage"))}</label>${stepper("tage", stand.betrieb.tageProWoche, t("betrieb.tage", stand.betrieb.tageProWoche))}</div>
     <button type="button" class="leise" data-a="weg-genau">${esc(t("schnell.genau"))}</button>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",

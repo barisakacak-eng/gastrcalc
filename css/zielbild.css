@@ -85,3 +85,9 @@
 .knopf.muellhaupt:disabled { background: var(--muell-hell); color: var(--muell); }
 .muellwert .leise-text { color: var(--tinte-weich); font-weight: 400; font-size: 14px; }
 .auswahlblatt { max-height: 82vh; }
+.appleiste { justify-content: center; }
+.appleiste .menueknopf { position: absolute; left: 8px; }
+.appleiste .leiste-rechts { position: absolute; right: 16px; }
+.appleiste .logo { height: 32px; }
+.formkachel .kachelsym { width: 48px; height: 48px; } .formkachel .kachelsym .sym { width: 28px; height: 28px; }
+.knopf.muellhaupt { min-height: 64px; font-size: 18px; }

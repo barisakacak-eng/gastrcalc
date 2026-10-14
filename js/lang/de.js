@@ -847,6 +847,7 @@ export default {
   },
 
   schnell: {
+    ladenArtFrage: "Was für ein Laden bist du?", ladenArtHinweis: "Wähle deine Laden-Art, damit wir alles optimal für dich einrichten können.", ladenName: "Wie heißt dein Laden?", 
     selbstFrage: "Was macht ihr selbst?", selbstHinweis: "Tippe an, was bei euch selbst gemacht wird. Alles andere kauft ihr fertig.", selbstRest: "Mengen brauchst du jetzt nicht. Die App nimmt Startwerte, du passt sie später an.", selbstKacheln: { teig: "Teig für Pizza und Pide", brot: "Brot / Fladen", lahmacun: "Lahmacun-Teig", sossen: "Soßen (Knoblauch, Kräuter)", patty: "Burger-Patties", tomatensosse: "Pizzasoße" }, 
     ladenFrage: "Wie heißt dein Laden und was verkaufst du?",
     arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", kiosk: "Kiosk mit warmer Küche", anders: "Etwas anderes" },

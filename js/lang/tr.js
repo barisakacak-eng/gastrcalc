@@ -847,6 +847,7 @@ export default {
   },
 
   schnell: {
+    ladenArtFrage: "Nasıl bir dükkânsın?", ladenArtHinweis: "Dükkân türünü seç, her şeyi senin için en iyi şekilde kuralım.", ladenName: "Dükkânının adı ne?", 
     selbstFrage: "Neleri kendiniz yapıyorsunuz?", selbstHinweis: "Kendiniz yaptıklarınıza dokun. Gerisini hazır alıyorsunuz.", selbstRest: "Şimdi miktar gerekmiyor. Uygulama başlangıç değerleri kullanır, sonra düzeltirsin.", selbstKacheln: { teig: "Pizza ve pide hamuru", brot: "Ekmek / pide ekmeği", lahmacun: "Lahmacun hamuru", sossen: "Soslar (sarımsak, otlu)", patty: "Burger köftesi", tomatensosse: "Pizza sosu" }, 
     ladenFrage: "Dükkanının adı ne ve ne satıyorsun?",
     arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", kiosk: "Sıcak mutfaklı büfe", anders: "Başka bir şey" },
