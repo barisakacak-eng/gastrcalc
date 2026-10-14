@@ -93,3 +93,12 @@
 .knopf.muellhaupt { min-height: 64px; font-size: 18px; }
 .bildwahl { position: relative; flex: none; cursor: pointer; }
 .bildwahl-sym { position: absolute; right: 4px; bottom: 4px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,253,248,.92); color: var(--tinte); display: inline-flex; align-items: center; justify-content: center; }
+.kopfband-cockpit { padding-top: 10px; padding-bottom: 0; }
+.kopfband-cockpit .unter { font-size: 14px; }
+.einrichtung-zeile { display: flex; flex-direction: column; gap: 2px; }
+.ez-haupt { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--holz); border-radius: var(--radius); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte); }
+.ez-haupt b, .ez-haupt small { display: block; } .ez-haupt small { color: var(--kupfer-dunkel, #8A4C20); }
+.ez-haupt > .sym:last-child { margin-left: auto; }
+.ring.klein { width: 40px; height: 40px; } .ring.klein text { font-size: 18px; }
+.ez-mehr { align-self: flex-end; font-size: 13px; }
+.band { font-size: 14px; padding: 8px 12px; }

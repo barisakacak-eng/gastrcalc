@@ -22,10 +22,7 @@ export function startView(stand, extra = {}) {
   const dran = naechsteHandlung(stand, z, ks, nk, ab, e, extra.wurzel);
   const unter = [stand.betrieb.format ? t("format." + stand.betrieb.format)[0] : "", ...stand.betrieb.kuechen.map((k) => t("kueche." + k))].filter(Boolean).join(", ");
   return `
-    <div class="kopfband">
-      <h1>${esc(stand.betrieb.name || t("menue.deinLaden"))}<span class="abzeichen">${esc(t("app.entwurf"))}</span></h1>
-      <div class="unter">${esc(tagLesbar(H))}${unter ? ` · ${esc(unter)}` : ""}</div>
-    </div>
+    <div class="kopfband kopfband-cockpit"><div class="unter">${esc(stand.betrieb.name || t("menue.deinLaden"))} · ${esc(tagLesbar(H))}<span class="abzeichen">${esc(t("app.entwurf"))}</span></div></div>
     <div class="inhalt cockpit">
       ${extra.aktualisierung ? `<div class="karte hinweisgelb"><h2>${esc(t("start.neueFassung"))}</h2><div>${esc(t("start.neueFassungText"))}</div><button type="button" class="knopf" data-a="aktualisieren">${esc(t("start.jetztUebernehmen"))}</button></div>` : ""}
       ${stand.branchenMeldung ? `<div class="karte hinweisgruen"><div>${esc(t("cockpit.branchenMeldung", stand.branchenMeldung.geaendert))}</div><button type="button" class="knopf zweit" data-a="branchen-ok">${esc(t("einrichtung.ok"))}</button></div>` : ""}
@@ -100,6 +97,8 @@ export function ring(prozent, klein = false) {
 export function einrichtungKarte(stand, e, { kompakt = false } = {}) {
   if (e.prozent >= 100) return stand.einrichtungFertig ? "" : `<div class="karte einrichtung fertig"><h2>${esc(t("einrichtung.fertig"))}</h2><div>${esc(t("einrichtung.fertigText"))}</div><button type="button" class="knopf zweit" data-a="einrichtung-fertig-ok">${esc(t("einrichtung.ok"))}</button></div>`;
   const zu = kompakt || listeZu(); const n = e.naechster;
+  // Zielbild: zugeklappt als schmale Zeile (kleiner Ring, nächster Schritt) – das Cockpit beginnt gleich mit „Bis null fehlen"
+  if (zu && n) return `<div class="einrichtung-zeile"><button type="button" class="ez-haupt" ${zielAttr(n.ziel)}>${ring(e.prozent, true)}<span><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.als"))} ${esc(t("einrichtung.schritte." + n.id))}</small></span>${sym("chevron-right")}</button>${kompakt ? "" : `<button type="button" class="leise ez-mehr" data-a="einrichtung-liste">${esc(t("einrichtung.mehr"))}</button>`}</div>`;
   return `<div class="karte einrichtung">
     <div class="einrichtung-kopf">${ring(e.prozent)}<div><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.rest", e.offen))}</small></div></div>
     ${n ? `<button type="button" class="knopf glut" ${zielAttr(n.ziel)}><small>${esc(t("einrichtung.als"))}</small> ${esc(t("einrichtung.schritte." + n.id))}${n.rest > 0 && n.id !== "karte" && n.id !== "kuehlung" && n.id !== "sicherung" ? ` · ${esc(t("einrichtung.offen." + n.id, n.rest))}` : ""}</button>` : ""}

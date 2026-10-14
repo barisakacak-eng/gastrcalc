@@ -135,7 +135,7 @@ async def main():
             assert await pg.locator('.menue [data-wert="muell"]').count() == 1 and await pg.locator('.menue .menuegruppe').count() == 4
             await pg.click('.menuehinten', position={"x": 370, "y": 400}); await pg.wait_for_timeout(150); assert await pg.locator('.menue').count() == 0
             await pg.click('[data-a="menue-auf"]'); await pg.go_back(); await pg.wait_for_timeout(200); assert await pg.locator('.menue').count() == 0, "Zurück schließt das Menü"
-            await bild("cockpit-einrichtung"); assert await pg.locator('.einrichtung .ring').count() == 1
+            await bild("cockpit-einrichtung"); assert await pg.locator('.einrichtung-zeile .ring, .einrichtung .ring').count() == 1
             # ---- Umsatz eintragen
             await geh("umsatz"); await pg.wait_for_selector('[data-f="umsatz"]'); await bild("umsatz-leer")
             await pg.fill('[data-f="umsatz"]', "1.850"); await pg.locator('[data-f="umsatz"]').blur(); await pg.wait_for_timeout(200)
