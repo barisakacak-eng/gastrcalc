@@ -172,3 +172,39 @@ test("Review: Rücknahme stellt den vorherigen festen Betrag wieder her; Dublett
   assert.deepEqual([s.kosten[0].betrag, s.kosten[0].sammel, s.kosten[0].beleg], [300, "strom-gas", undefined]);
   assert.ok(!kostenbelegDoppelt(s, { stelle: "strom", betrag: 480, datum: "2026-10-02" }), "stornierte zählen nicht als Dublette");
 });
+
+// ---------- Echte Karte aus dem Pilot (Bildschirmfotos des Kapitäns, 14.10.) ----------
+import { nameAufbereiten } from "../js/karte_lesen.js";
+test("Pilot-Karte: Nummern der Nachbarspalte, Fußnoten, Beschreibungen, Abkürzungen, Buchstabensalat", () => {
+  const n = (z) => positionenAusText(z).map((p) => p.name)[0];
+  assert.equal(n("u 34. Pide mit Eiern, Wei 7,50"), "Pide mit Eiern");
+  assert.equal(n("rn | 35. Pide mit Spinat, Weichkäse 8,50"), "Pide mit Spinat");
+  assert.equal(n("Be =! 36. Pide mit Döner 8,50"), "Pide mit Döner");
+  assert.equal(n("Pide mit Weichkäse*® 2. 6,50"), "Pide mit Weichkäse");
+  assert.equal(n("Pide mit Hackfleisch\" . n 7,00"), "Pide mit Hackfleisch");
+  assert.equal(n("Lahmacun mit Dönerfl., Weißkohl, Tomaten 10,00"), "Lahmacun mit Dönerfleisch");
+  assert.equal(n("Salami Seele\" 8,50"), "Salami Seele");
+  assert.ok(nameAufbereiten("anEXa Seele").pruefen && nameAufbereiten("Vegetarische ReBBu").pruefen);
+  assert.ok(!nameAufbereiten("Pide mit Döner").pruefen && !nameAufbereiten("XXL Döner").pruefen);
+});
+
+test("Pilot-Karte: Zutatenzeilen unter dem Gericht werden nie zum Gericht, Preis gehört zum Gericht darüber", async () => {
+  const { positionenAusText, istZutatenZeile } = await import("../js/karte_lesen.js");
+  const t = "Döner Kebab 7,50\nmit Salat, Tomaten, Zwiebeln und Soße\nDürüm Döner\nmit Salat, Rotkohl 8,00\nLahmacun 5,50\ngefüllt mit Salat\nVom Grill\nAdana Kebab 12,90";
+  const p = positionenAusText(t).map((x) => `${x.name}|${x.preis}`);
+  assert.deepEqual(p, ["Döner Kebab|7.5", "Dürüm Döner|8", "Lahmacun|5.5", "Adana Kebab|12.9"]);
+  assert.equal(istZutatenZeile("mit Salat, Tomaten"), true);
+  assert.equal(istZutatenZeile("Salat, Tomaten, Gurken"), true);
+  assert.equal(istZutatenZeile("Pide mit Käse"), false);
+  assert.equal(istZutatenZeile("Vom Grill"), false);
+});
+
+test("Foto-Serie: mehrere Fotos in der Warteschlange, Prüfliste erst nach „Fertig“", async () => {
+  const f = await import("../js/screens/foto.js");
+  f.fotoZuruecksetzen();
+  assert.equal(f.karteModus(), "sammeln");
+  f.sammelnBeenden(); // ohne Fotos: bleibt beim Sammeln
+  assert.equal(f.karteModus(), "sammeln");
+  assert.match(f.karteFussKnopf("OHNE"), /OHNE/);
+  f.fotoZuruecksetzen();
+});

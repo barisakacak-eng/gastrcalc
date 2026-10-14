@@ -94,6 +94,16 @@ async def main():
             assert len(pdfnamen) == 8 and any("Margherita" in x for x in pdfnamen), pdfnamen
             await klick('[data-a="fv-uebernehmen"]'); await bild("karte-nach-pdf")
             s = await stand(); assert any("Margherita" in g["name"] for g in s["gerichte"])
+            # 8b Kamera-Serie: zwei Fotos nacheinander, dann „Fertig – Liste prüfen" (Pilot 14.10.)
+            await klick('[data-a="nav"][data-wert="kartefoto"]'); await pg.wait_for_selector('input[capture]', state="attached")
+            await pg.locator('input[data-f="foto"][capture]').set_input_files(str(BILD / "karte_foto.jpg"))
+            await pg.wait_for_selector('.karte.serie', timeout=10000); await bild("serie-1")
+            await pg.locator('input[data-f="foto"][capture]').set_input_files(str(BILD / "karte2_foto.jpg"))
+            await pg.wait_for_selector('[data-a="fv-fertig"]'); await bild("serie-2"); await klick('[data-a="fv-fertig"]')
+            await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=120000); await pg.wait_for_timeout(300); await bild("serie-pruefen")
+            serie = await pg.eval_on_selector_all('[data-f^="fv-name:"]', "els => els.map(e => e.value)")
+            assert len(serie) >= 3, serie
+            await klick('[data-a="fv-uebernehmen"]')
             # 9 Cockpit
             await klick('[data-a="nav"][data-wert="start"]'); await bild("cockpit")
             # Türkisch: Schnellstart-Texte vorhanden

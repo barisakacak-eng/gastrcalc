@@ -28,11 +28,47 @@ function zeileGlaetten(z) {
 }
 
 function nameSaeubern(n) {
-  return n.replace(/^\s*(nr\.?\s*)?[A-Z]?\d{1,3}[a-z]?\s*[.):\-]\s*/i, "") // "12.", "Nr. 12)", "A3 -"
-    .replace(/^[^A-Za-zÄÖÜäöüÇçĞğİıŞş]+/, "").replace(/[\s.:\-–—|/]+$/, "").replace(/\s+/g, " ").trim();
+  return nameAufbereiten(n).name;
+}
+
+// Echte Karten (Pilot 14.10.): Nummern mitten in der Zeile („u 34. Pide …" – Rest der Nachbarspalte davor),
+// Fußnoten und Allergene („Weichkäse*® 2"), Beschreibungen nach dem Komma („Lahmacun mit Dönerfl., Weißkohl, …"),
+// Anführungszeichen und Buchstabensalat („anEXa", „ReBBu"). Ergebnis: sauberer Name + Kennzeichen „bitte prüfen".
+const KUERZEL = { "dönerfl": "Dönerfleisch", "doenerfl": "Dönerfleisch", "hähnchenfl": "Hähnchenfleisch", "hackfl": "Hackfleisch", "rindfl": "Rindfleisch", "kalbfl": "Kalbfleisch" };
+export function nameAufbereiten(roh) {
+  let n = String(roh || "");
+  // Gerichtnummer mitten in der Zeile: alles davor gehört zur Nachbarspalte
+  const nummern = [...n.matchAll(/(?:^|[^\p{L}\d])(\d{1,3})\s?[.)]\s+(?=\p{L})/gu)];
+  if (nummern.length) { const m = nummern[nummern.length - 1]; n = n.slice(m.index + m[0].length); }
+  n = n.replace(/^\s*(nr\.?\s*)?[A-Z]?\d{1,3}[a-z]?\s*[.):\-]\s*/i, "");
+  // Getränkemenge („0,33 l") merken und am Ende wieder anhängen, damit sie nicht als Allergen-Nummer wegfällt
+  const menge = n.match(/(\d[.,]\d{1,2}|\d{2,3})\s?(l|ml|cl)(?![\p{L}])/iu); if (menge) n = n.replace(menge[0], " ");
+  n = n.replace(/[*®©™"“”„«»^°§#=!|_~<>[\]{}]+/g, " ");          // Fußnoten, Zeichenmüll
+  n = n.split(/(?<!\d),(?!\d)|;|\s[-–—]\s|\(/)[0];                               // Beschreibung nach Komma / Gedankenstrich / Klammer weg
+  n = n.replace(/\s\d{1,2}(\s?[.,]\s?\d{1,2})*\s*\.?\s*$/, "");  // Allergen-Nummern am Ende („2." „1,3")
+  n = n.replace(/(\p{L}+)\.?(?=\s|$)/gu, (w, x) => KUERZEL[x.toLowerCase()] || w);
+  n = n.replace(/^[^\p{L}]+/u, "").replace(/(\s+[^\p{L}\s]+|\s+\p{L}{1}|\s+\.)+\s*$/u, "").replace(/[\s.:\-–—|/]+$/, "").replace(/\s+/g, " ").trim();
+  if (menge) n = `${n} ${menge[1]} ${menge[2].toLowerCase()}`;
+  // Buchstabensalat: Wort mit Großbuchstaben mitten drin („anEXa", „ReBBu"), Wort ohne Vokal ab 4 Zeichen
+  const pruefen = n.split(" ").some((w) => /\p{Ll}\p{Lu}|\p{Lu}{2,}\p{Ll}/u.test(w) && !/^[A-ZÄÖÜ]{2,5}$/.test(w) || (w.length >= 4 && !/[aeiouäöüyıAEIOUÄÖÜ]/.test(w)));
+  return { name: n, pruefen };
 }
 
 // Text → Positionen [{ name, preis, groesse, roh }]
+// Zutaten- oder Beschreibungszeile unter einem Gericht („mit Salat, Tomaten, Zwiebeln und Soße") – nie selbst ein Gericht-Name.
+// Pilot 14.10.: „Gericht, darunter die Zutaten, der Preis auf Höhe des Gerichts."
+export function istZutatenZeile(z) {
+  let t = String(z || "");
+  const nr = [...t.matchAll(/(?:^|[^\p{L}\d])(\d{1,3})\s?[.)]\s+(?=\p{L})/gu)]; // „u 34. Pide …": Nummerierung, davor Reste der Nachbarspalte
+  if (nr.length) { const m = nr[nr.length - 1]; t = t.slice(m.index + m[0].length); }
+  t = t.replace(/^[^\p{L}]+/u, "").trim();
+  if (!t) return false;
+  if (/^(mit|dazu|und|oder|serviert|wahlweise|inkl|inklusive|gefüllt|gefuellt|belegt|nach\s+wahl|auf\s+wunsch|aus|in|vom|von)\b/i.test(t) && !/^(vom|von)\s+\p{Lu}/iu.test(t)) return true;
+  if (/^\p{Ll}/u.test(t)) return true;                     // beginnt klein: Fortsetzung, keine Überschrift
+  if ((t.match(/,/g) || []).length >= 2) return true;      // Aufzählung
+  return false;
+}
+
 export function positionenAusText(text) {
   const zeilen = String(text || "").split(/\r?\n/).map(zeileGlaetten).filter(Boolean);
   const out = []; let vorher = null;
@@ -42,7 +78,8 @@ export function positionenAusText(text) {
     const preise = [...z.matchAll(PREIS)].map((m) => ({ wert: preisZahl(m[1], m[2]), index: m.index, laenge: m[0].length }))
       // Mengenangaben wie „0,33 l" sind keine Preise
       .filter((p) => !/^\s?(l|ml|cl|kg|g)\b/i.test(z.slice(p.index + p.laenge)) && p.wert >= 0.5 && p.wert < 100);
-    if (!preise.length) { vorher = z.replace(/\s+/g, " ").trim(); continue; }
+    // Zeile ohne Preis: als möglicher Name merken – aber Zutatenzeilen überschreiben das Gericht darüber nicht
+    if (!preise.length) { if (!istZutatenZeile(z) || !vorher) vorher = istZutatenZeile(z) ? null : z.replace(/\s+/g, " ").trim(); continue; }
     // Abschnitte: Text bis zum Preis = Name. „Pizza Salami 9,50 Lasagne 10,90" → zwei Gerichte; Preise direkt hintereinander gehören zusammen
     const abschnitte = []; let start = 0;
     for (const p of preise) {
@@ -51,15 +88,18 @@ export function positionenAusText(text) {
       start = p.index + p.laenge;
     }
     abschnitte.forEach((a, k) => {
-      let name = nameSaeubern(a.seg);
-      if (k === 0 && name.length < 2 && vorher) name = nameSaeubern(vorher); // Name und Preis in zwei Zeilen (zweispaltige Karten)
+      let aufb = nameAufbereiten(a.seg);
+      // Name und Preis in zwei Zeilen (zweispaltige Karten) – oder der Preis ist auf die Zutatenzeile gerutscht: dann gilt das Gericht darüber
+      if (k === 0 && vorher && (aufb.name.length < 2 || istZutatenZeile(a.seg))) aufb = nameAufbereiten(vorher);
+      else if (k === 0 && istZutatenZeile(a.seg) && !/\p{Lu}/u.test(a.seg.slice(0, 3))) return;
+      let name = aufb.name;
       if (name.length < 2 || name.length > 60) return;
       const groessen = [...name.matchAll(GROESSEN)].map((m) => m[0]);
       if (a.preise.length >= 2 && groessen.length >= 2) {
         // „Pommes klein / groß 3,50 4,50"
         const basis = name.replace(GROESSEN, "").replace(/[\s/|]+$/, "").replace(/\s+/g, " ").trim();
         a.preise.slice(0, groessen.length).forEach((p, j) => out.push({ name: `${basis} ${groessen[j]}`.trim(), preis: p.wert, groesse: groessen[j].toLowerCase(), roh: z }));
-      } else out.push({ name, preis: a.preise[a.preise.length - 1].wert, groesse: groessen[0]?.toLowerCase() || null, roh: z });
+      } else out.push({ name, preis: a.preise[a.preise.length - 1].wert, groesse: groessen[0]?.toLowerCase() || null, roh: z, pruefen: aufb.pruefen });
     });
     vorher = null;
   }
@@ -115,7 +155,7 @@ export function vorschlaegeAusText(text, stand) {
     const treffer = besteVorlage(p.name, stand);
     const getraenk = istGetraenk(p.name);
     return {
-      id: uid(), name: p.name, preis: p.preis, roh: p.roh, an: true,
+      id: uid(), name: p.name, preis: p.preis, roh: p.roh, an: true, pruefen: !!p.pruefen,
       vorlage: treffer ? treffer.v.name : null, bereich: treffer ? treffer.v.bereich : null,
       sicher: treffer ? (treffer.s >= 0.75 ? "sicher" : "vorschlag") : getraenk ? "getraenk" : "ohne",
       getraenk,

@@ -8,7 +8,7 @@ import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard } from "../dat
 import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
 import { heute } from "../util.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
-import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf } from "./foto.js";
+import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste } from "./foto.js";
 import { monatsLast } from "../engine.js";
 
 // ---------- Bausteine ----------
@@ -355,8 +355,8 @@ const ladenSchnell = {
 
 const karteSchnell = {
   id: "karte-foto",
-  view: (stand) => (hatVorschlaege() && fotoLauf()?.status !== "lesen" ? kartePruefenView(stand) : karteFotoView(stand)),
-  fuss: () => fotoLauf()?.status === "lesen" ? "" : hatVorschlaege() ? `<button type="button" class="knopf glut" data-a="fv-uebernehmen">${esc(t("foto.uebernehmen"))}</button>` : `<button type="button" class="knopf zweit" data-a="weiter">${esc(t("foto.ohneKarte"))}</button>`,
+  view: (stand) => (karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)),
+  fuss: () => karteFussKnopf(`<button type="button" class="knopf zweit" data-a="weiter">${esc(t("foto.ohneKarte"))}</button>`),
   eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
   aktion(name, el, stand, ctx) {
     if (name === "fv-uebernehmen") { stand.schnellErgebnis = karteUebernehmen(stand); ctx.weiter(); return true; }

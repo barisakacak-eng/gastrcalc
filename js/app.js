@@ -5,7 +5,7 @@ import { t, setzeSprache, SPRACHEN } from "./i18n.js";
 import { ablageLeeren } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
-import { fotoVerarbeiten, fotoZuruecksetzen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf } from "./screens/foto.js";
+import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf, karteFussKnopf, karteZeigtPruefliste } from "./screens/foto.js";
 import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
 import { parseTemperatur } from "./screens/kuehl.js";
@@ -81,10 +81,9 @@ function zeichne() {
 
 // Speisekarte fotografieren aus der App heraus (Karte → „Speisekarte fotografieren"): dieselben Bausteine wie im Schnellstart.
 function karteFotoSchirm() {
-  const pruefen = hatVorschlaege() && fotoLauf()?.status !== "lesen";
   return `<div class="kopfband"><h1>${esc(t("foto.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>
-    <div class="inhalt">${pruefen ? kartePruefenView(stand) : karteFotoView(stand)}
-      ${pruefen ? `<button type="button" class="knopf glut" data-a="fv-uebernehmen">${esc(t("foto.uebernehmen"))}</button>` : ""}
+    <div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
+      ${karteFussKnopf("")}
       <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>`;
 }
 
@@ -250,7 +249,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav") { const ziel = el.dataset.wert; if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
-  if (name === "foto-abbrechen") { fotoZuruecksetzen(); return zeichne(); }
+  if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
   if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
@@ -354,12 +353,14 @@ root.addEventListener("focusout", (ev) => {
 
 root.addEventListener("change", async (ev) => {
   const el = ev.target; if (!el.files?.[0]) return;
-  const datei = el.files[0]; el.value = "";
+  const dateien = [...el.files]; const datei = dateien[0]; el.value = "";
   if (el.dataset.f === "import") return sicherungEinlesen(datei);
   if (el.dataset.f === "foto") {
     // Foto oder Datei: ablegen, lesen, Ergebnis zeigen. Speisekarte → Prüfliste, Rechnung → Zuweisung im Beleg-Bildschirm.
     const zweck = el.dataset.zweck || "rechnung";
-    ereignis("foto", { laden: stand.id, zweck, art: datei.type || "?" });
+    ereignis("foto", { laden: stand.id, zweck, art: datei.type || "?", anzahl: dateien.length });
+    // Speisekarte: alle Fotos in die Warteschlange (Serie), gelesen wird nacheinander im Hintergrund
+    if (zweck === "speisekarte") { await fotosHinzufuegen(stand, dateien, zweck, () => zeichne(), { geraet: wurzel.geraet, fertig: !el.hasAttribute("capture") }); speichern(wurzel); zeichne(); return; }
     const lauf = await fotoVerarbeiten(stand, datei, zweck, () => zeichne(), { geraet: wurzel.geraet });
     if (lauf && lauf === fotoLauf() && lauf.status === "fertig" && zweck !== "speisekarte" && ansicht === "beleg") belegTextVonFoto(lauf.text, lauf.upload);
     speichern(wurzel); zeichne();

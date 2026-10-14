@@ -13,9 +13,47 @@ let lauf = null;       // { zweck, status: "lesen"|"fertig"|"fehler", schritt, t
 let vorschlaege = [];  // Speisekarte: [{id, name, preis, vorlage, sicher, an, getraenk}]
 let seiten = 0;
 let laufUploads = [];  // Uploads dieser Prüfliste – nur sie werden beim Übernehmen als übernommen markiert
+// Serie (Pilot 14.10.: „mehrere Bilder gleichzeitig"): Fotos kommen in eine Warteschlange und werden nacheinander gelesen,
+// während der Wirt schon das nächste Foto macht. „Fertig" zeigt die Prüfliste, sobald alles gelesen ist.
+let warteschlange = []; let laeuft = false; let generation = 0; let sammeln = true;
+let serie = { aufgenommen: 0, gelesen: 0, fehler: 0 };
 
 export const fotoLauf = () => lauf;
-export function fotoZuruecksetzen() { lauf = null; vorschlaege = []; seiten = 0; laufUploads = []; }
+export function fotoZuruecksetzen() { lauf = null; vorschlaege = []; seiten = 0; laufUploads = []; warteschlange = []; laeuft = false; generation += 1; sammeln = true; serie = { aufgenommen: 0, gelesen: 0, fehler: 0 }; }
+// Was die Speisekarten-Strecke gerade zeigt: Fotos sammeln, auf das Lesen warten oder die Prüfliste
+export const karteModus = () => (sammeln ? "sammeln" : laeuft || warteschlange.length ? "warten" : vorschlaege.length ? "pruefen" : "sammeln");
+export function sammelnBeenden() { sammeln = false; if (!vorschlaege.length && !laeuft && !warteschlange.length) sammeln = true; }
+// Abbrechen während des Wartens: Warteschlange stoppen, bereits Gefundenes bleibt in der Prüfliste.
+export function serieAbbrechen() { warteschlange = []; generation += 1; laeuft = false; lauf = null; if (!vorschlaege.length) fotoZuruecksetzen(); }
+// Was die Fußleiste zeigt: kein Knopf beim Warten, „Fertig" beim Sammeln mit Fotos, „Übernehmen" in der Prüfliste
+export function karteFussKnopf(ohne) {
+  const m = karteModus();
+  if (m === "warten") return "";
+  if (m === "pruefen") return `<button type="button" class="knopf glut" data-a="fv-uebernehmen">${esc(t("foto.uebernehmen"))}</button>`;
+  if (serie.aufgenommen) return `<button type="button" class="knopf glut" data-a="fv-fertig">${esc(t("foto.fertigPruefen"))}</button>`;
+  return ohne;
+}
+export const karteZeigtPruefliste = () => karteModus() === "pruefen";
+export const serieStand = () => ({ ...serie, gerichte: vorschlaege.length, laeuft: laeuft || warteschlange.length > 0 });
+
+// Mehrere Dateien (Galerie-Mehrfachauswahl oder Foto für Foto) in die Warteschlange; gelesen wird eins nach dem anderen.
+export async function fotosHinzufuegen(stand, dateien, zweck, neuZeichnen, opts = {}) {
+  const gen = generation;
+  for (const d of dateien) warteschlange.push({ stand, d, zweck, opts });
+  serie.aufgenommen += dateien.length;
+  if (opts.fertig) sammeln = false; // aus der Galerie gewählt: alles auf einmal, danach gleich die Prüfliste
+  neuZeichnen();
+  if (laeuft) return;
+  laeuft = true;
+  try {
+    while (warteschlange.length && gen === generation) {
+      const j = warteschlange.shift();
+      const r = await fotoVerarbeiten(j.stand, j.d, j.zweck, neuZeichnen, j.opts);
+      if (gen !== generation) return;
+      serie.gelesen += 1; if (!r || r.status === "fehler") serie.fehler += 1;
+    }
+  } finally { if (gen === generation) { laeuft = false; neuZeichnen(); } }
+}
 // Nur einen Rechnungs-Lauf beenden (Beleg-Bildschirm verlassen), eine offene Speisekarten-Prüfliste bleibt
 export function rechnungsLaufZuruecksetzen() { if (lauf && lauf.zweck !== "speisekarte") lauf = null; }
 export const fotoKennung = () => (lauf ? `${lauf.zweck}:${lauf.status}:${seiten}` : "leer");
@@ -27,7 +65,7 @@ export function fotoKnoepfe(zweck, { kamera = "foto.kamera", datei = "foto.datei
     <label class="knopf glut fotoknopf"><span aria-hidden="true">📷</span> ${esc(t(kamera))}
       <input type="file" accept="image/*" capture="environment" data-f="foto" data-zweck="${zweck}" class="dateifeld"></label>
     <label class="knopf zweit"><span aria-hidden="true">📄</span> ${esc(t(datei))}
-      <input type="file" accept="image/*,application/pdf,.pdf" data-f="foto" data-zweck="${zweck}" class="dateifeld"></label>`;
+      <input type="file" accept="image/*,application/pdf,.pdf" multiple data-f="foto" data-zweck="${zweck}" class="dateifeld"></label>`;
 }
 
 // Datei verarbeiten. neuZeichnen() wird bei jedem Zwischenstand gerufen. Rückgabe: Lauf.
@@ -58,6 +96,7 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
     if (zweck === "speisekarte") {
       const neu = vorschlaegeAusText(r.text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
       vorschlaege.push(...neu); seiten += 1;
+      mein.neu = neu.length;
       if (!neu.length) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
     } else if (!r.text.trim()) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
   } catch (e) {
@@ -75,20 +114,25 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
 let gewaermt = false;
 export function fotoVorbereiten() { if (!gewaermt) { gewaermt = true; vorwaermen(); } }
 
-const schrittText = () => lauf.schritt === "seite" ? t("foto.seite", lauf.seite, lauf.von) : lauf.schritt === "ablegen" ? t("foto.ablegen") : t("foto.lesen");
+const schrittText = () => !lauf ? t("foto.lesen") : lauf.schritt === "seite" ? t("foto.seite", lauf.seite, lauf.von) : lauf.schritt === "ablegen" ? t("foto.ablegen") : t("foto.lesen");
 
 // ---------- Speisekarte: aufnehmen ----------
 export function karteFotoView(stand) {
   fotoVorbereiten();
-  if (lauf && lauf.status === "lesen") return `
-    <div class="fotolauf" role="status" aria-live="polite"><div class="kreisel" aria-hidden="true"></div><h1 class="frage">${esc(schrittText())}</h1><p class="hinweis">${esc(t("foto.lesenHinweis"))}</p>
-      <button type="button" class="leise" data-a="foto-abbrechen">${esc(t("allgemein.abbrechen"))}</button></div>`;
+  const modus = karteModus();
+  if (modus === "warten") { const st = serieStand(); return `
+    <div class="fotolauf" role="status" aria-live="polite"><div class="kreisel" aria-hidden="true"></div><h1 class="frage">${esc(st.aufgenommen > 1 ? t("foto.wartenAufLesen") : schrittText())}</h1>
+      <p class="hinweis">${st.aufgenommen > 1 ? esc(t("foto.serieFotos", st.aufgenommen, st.gelesen)) + " · " + esc(t("foto.serieGerichte", st.gerichte)) : esc(t("foto.lesenHinweis"))}</p>
+      <button type="button" class="leise" data-a="foto-abbrechen">${esc(t(st.gerichte ? "foto.lesenStoppen" : "allgemein.abbrechen"))}</button></div>`; }
+  const st = serieStand();
   return `
-    <h1 class="frage">${esc(t(seiten ? "foto.karteWeitere" : "foto.karteFrage"))}</h1>
-    <p class="hinweis">${esc(t("foto.karteHinweis"))}</p>
-    ${lauf?.status === "fehler" ? `<div class="tipp warnband">${esc(lauf.fehler)}</div>` : ""}
+    <h1 class="frage">${esc(t(st.aufgenommen ? "foto.karteWeitere" : "foto.karteFrage"))}</h1>
+    <p class="hinweis">${esc(t(st.aufgenommen ? "foto.serieHinweis" : "foto.karteHinweis"))}</p>
+    ${st.aufgenommen ? `<div class="karte serie" role="status" aria-live="polite">${st.laeuft ? `<div class="kreisel klein" aria-hidden="true"></div>` : `<span class="haken" aria-hidden="true">✓</span>`}
+      <div><b>${esc(t("foto.serieFotos", st.aufgenommen, st.gelesen))}</b><small class="marke" style="display:block">${esc(t("foto.serieGerichte", st.gerichte))}${st.fehler ? " · " + esc(t("foto.serieFehler", st.fehler)) : ""}</small></div></div>` : ""}
+    ${lauf?.status === "fehler" && !st.aufgenommen ? `<div class="tipp warnband">${esc(lauf.fehler)}</div>` : ""}
     ${lauf?.hinweis ? `<p class="tipp">${esc(lauf.hinweis)}</p>` : ""}
-    <div class="fotofeld">${fotoKnoepfe("speisekarte")}</div>
+    <div class="fotofeld">${fotoKnoepfe("speisekarte", st.aufgenommen ? { kamera: "foto.naechstesFoto", datei: "foto.galerieMehrere" } : { kamera: "foto.kamera", datei: "foto.galerieMehrere" })}</div>
     <p class="hinweis klein">${esc(t(ablageFluechtig() ? "foto.datenschutzFluechtig" : "foto.datenschutz"))}</p>`;
 }
 
@@ -129,6 +173,8 @@ export function kartePruefenEingabe(feld, wert) {
 }
 
 export function kartePruefenAktion(name, el) {
+  if (name === "fv-fertig") { sammelnBeenden(); return true; }
+  if (name === "fv-mehr") { sammeln = true; return true; }
   const v = vorschlaege.find((x) => x.id === el.dataset.id);
   if (name === "fv-an" && v) { v.an = !v.an; return true; }
   if (name === "fv-rezept-ja" && v) { v.sicher = "sicher"; return true; }
