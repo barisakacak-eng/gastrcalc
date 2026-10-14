@@ -1,0 +1,45 @@
+/* Zielbild „Kräuter & Kupfer“ (Sanjis Vorlage vom 15.10.) – Zoros Abgleich, damit die App 1:1 wie die Vorlage aussieht.
+   Wird nach optik.css geladen. Wenn Sanji seine optik.css nachzieht, wandern diese Regeln dorthin. */
+.schirm { display: flex; flex-direction: column; min-height: 100vh; }
+.appleiste { order: -1; position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; min-height: 60px;
+  padding: calc(env(safe-area-inset-top, 0px) + 6px) 12px 6px; background: var(--weiss); border-bottom: 1px solid var(--holz); }
+.appleiste .logo { height: 28px; width: auto; }
+.appleiste .leiste-rechts { margin-left: auto; color: var(--muell); display: flex; }
+.menueknopf { position: static; width: 44px; height: 44px; background: transparent; color: var(--tinte); box-shadow: none; border-radius: 10px; }
+.menuepunkt { top: 6px; right: 6px; }
+/* Seitentitel hell statt dunkles Band */
+.kopfband { background: transparent; color: var(--tinte); box-shadow: none; border-radius: 0; padding: 18px 20px 4px; }
+.kopfband h1 { color: var(--tinte); font-size: 1.55rem; }
+.kopfband .unter { color: var(--tinte-weich); }
+.kopfband .abzeichen { vertical-align: middle; }
+/* Cockpit wie Vorlage */
+.zielkarte, .monatkarte { display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: 100%; text-align: left; font: inherit; color: var(--tinte); background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); padding: 16px; }
+.zielkopf { display: flex; justify-content: space-between; align-items: center; }
+.zielkarte .lbl, .monatkarte .lbl { font-size: 15px; font-weight: 700; color: var(--tinte); }
+.zielkarte .riesig { font-size: clamp(38px, 11vw, 48px); font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--tinte); line-height: 1.1; }
+.zielkarte.plus .riesig { color: var(--eigen); }
+.zielkarte small { color: var(--tinte-weich); font-size: 14px; }
+.zielsym { width: 46px; height: 46px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #F6E6D6; color: var(--glut); }
+.zielsym .sym { width: 28px; height: 28px; }
+.monatzahl { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.monatzahl b { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.monatzahl small { color: var(--tinte-weich); font-size: 14px; }
+.monatbalken { width: 100%; height: 130px; margin-top: 6px; overflow: visible; }
+.monatbalken rect { fill: var(--salbei); }
+.monatbalken rect.heute { fill: var(--glut); }
+.monatbalken .ziellinie { stroke: var(--tinte-weich); stroke-width: 1; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; }
+.monatbalken text { font: 11px var(--schrift); fill: var(--tinte-weich); }
+.instrumente.heute .instrument.klein { flex-direction: row; align-items: center; gap: 10px; min-height: 76px; }
+.instrument .kachelsym { width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--salbei-hell); color: var(--salbei-tief); flex: none; }
+.i-tonne .kachelsym { background: var(--muell-hell); color: var(--muell); }
+.i-ware .kachelsym { background: #F6E6D6; color: var(--kupfer-dunkel, #8A4C20); }
+.i-kuehl .kachelsym { background: var(--branche-hell); color: var(--branche); }
+.instrument.klein b { font-size: 20px; display: block; }
+.instrument.klein small { display: block; }
+.spruch { display: flex; gap: 12px; align-items: center; background: var(--weiss); }
+.spruch p { margin: 0; font-style: italic; color: var(--tinte); }
+.spruchsym { color: var(--salbei); flex: none; } .spruchsym .sym { width: 30px; height: 30px; }
+.menueknopf { position: relative; }
+.karte.spruch { display: flex; flex-direction: row; align-items: center; text-align: left; }
+.instrument .kachelsym { width: 34px; height: 34px; }
+.instrumente.heute .instrument.klein small { font-size: 13px; line-height: 1.25; }

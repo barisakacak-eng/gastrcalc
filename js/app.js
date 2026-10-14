@@ -256,7 +256,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "schnell-auf") { schnellSetzen(true); return zeichne(); }
   if (name === "schnell-zu") { schnellSetzen(false); return zeichne(); }
   if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); }
-  if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") === "1"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
+  if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") !== "0"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
   if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
   if (name === "kuehl-keine") { stand.kuehl.keine = true; speichern(wurzel); return zeichne(); }
   if (name === "branchen-ok") { delete stand.branchenMeldung; speichern(wurzel); return zeichne(); }

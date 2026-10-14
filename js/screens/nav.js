@@ -58,6 +58,8 @@ export function nav(aktiv, { schnell = true } = {}) {
         <button type="button" class="pille p-kuehl" data-a="kuehl-rundgang-start" data-offen="0">${esc(t("schnellknopf.kuehl"))}</button>
         <button type="button" class="pille p-umsatz" data-a="schnell-umsatz">${esc(t("schnellknopf.umsatz"))}</button></div>` : ""}
       <button type="button" class="fab" data-a="${schnellOffen ? "schnell-zu" : "schnell-auf"}" aria-label="${esc(t(schnellOffen ? "schnellknopf.zu" : "schnellknopf.auf"))}" aria-expanded="${schnellOffen}">${sym(schnellOffen ? "x" : "plus")}</button></div>`;
-  return knopf + menue + fab;
+  // Helle App-Leiste (Zielbild 15.10.): drei Striche und Logo. Steht im HTML am Ende, CSS (order: -1) stellt sie nach oben.
+  const leiste = `<header class="appleiste">${knopf}<img class="logo" src="icons/logo.svg" alt="GastroCalc" height="28"><span class="leiste-rechts">${aktiv === "muell" ? sym("trash-2") : ""}</span></header>`;
+  return leiste + menue + fab;
 }
 

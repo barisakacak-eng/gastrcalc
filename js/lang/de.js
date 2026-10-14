@@ -483,6 +483,8 @@ export default {
   },
 
   cockpit: {
+    bisNullFehlen: "Bis null fehlen", ueberNull: "Über null im Monat", zielOhneKosten: "Trag deine festen Kosten ein, dann rechnet die App dein Monatsziel.", zielErreicht: "Der Monat ist gedeckt. Alles darüber bleibt dir.", zielSatz: "So viel Umsatz brauchst du noch diesen Monat, damit alle Kosten gedeckt sind.", umsatzImMonat: "Umsatz im Monat", vonZiel: (z) => `von ${z} Ziel`, zielKurz: "Ziel", wareHeute: "Wareneinsatz heute", muellHeute: "Müll heute",
+    sprueche: ["Kleine Verbesserungen machen am Monatsende den großen Unterschied.", "Was du misst, kannst du verbessern.", "Jeder Teller, der nicht in der Tonne landet, ist Gewinn.", "Gute Zahlen machen gute Gastgeber.", "Fünf Gramm weniger je Portion sind am Monatsende ein voller Kasten.", "Wer seine Preise kennt, muss nicht raten.", "Heute abwiegen, morgen sicher kalkulieren."], 
     umsatzWoche: "Umsatz Woche", zurVorwoche: (p) => `${p} % zur Vorwoche`, umsatzLeer: "Ersten Tagesumsatz eintragen", tonneWoche: "Tonne Woche", tonneLeer: "Noch nichts weggeworfen", wareneinsatz: "Wareneinsatz", karteFehlt: "Karte fehlt", genauerAbwiegen: "Genauer wird’s, wenn du abwiegst", ziel: (p) => `Ziel ${p} %`, einrichten: "einrichten", branchenMeldung: (n) => `${n} Rezepte mit Branchenwerten aktualisiert. Deine eigenen Werte bleiben.`, 
     bisNull: (m) => `Bis null fehlen im ${m}`,
     verdient: (m) => `Verdient im ${m}`,

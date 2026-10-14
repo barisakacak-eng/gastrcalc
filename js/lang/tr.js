@@ -483,6 +483,8 @@ export default {
   },
 
   cockpit: {
+    bisNullFehlen: "Sıfıra kalan", ueberNull: "Ayda sıfırın üstünde", zielOhneKosten: "Sabit giderlerini gir, uygulama aylık hedefini hesaplasın.", zielErreicht: "Ay karşılandı. Üstündeki her şey senin.", zielSatz: "Tüm giderlerin karşılanması için bu ay hâlâ bu kadar ciroya ihtiyacın var.", umsatzImMonat: "Aylık ciro", vonZiel: (z) => `${z} hedeften`, zielKurz: "Hedef", wareHeute: "Bugünkü malzeme", muellHeute: "Bugünkü çöp",
+    sprueche: ["Küçük iyileştirmeler ay sonunda büyük fark yaratır.", "Ölçtüğünü iyileştirebilirsin.", "Çöpe gitmeyen her tabak kârdır.", "İyi rakamlar iyi ev sahipleri yaratır.", "Porsiyon başına beş gram az, ay sonunda dolu bir kasa demek.", "Fiyatlarını bilen tahmin etmek zorunda kalmaz.", "Bugün tart, yarın güvenle hesapla."], 
     umsatzWoche: "Haftalık ciro", zurVorwoche: (p) => `geçen haftaya göre %${p}`, umsatzLeer: "İlk günlük ciroyu gir", tonneWoche: "Haftalık çöp", tonneLeer: "Henüz bir şey atılmadı", wareneinsatz: "Malzeme maliyeti", karteFehlt: "Menü yok", genauerAbwiegen: "Tartarsan daha doğru olur", ziel: (p) => `Hedef %${p}`, einrichten: "kur", branchenMeldung: (n) => `${n} tarif sektör değerleriyle güncellendi. Kendi değerlerin kalıyor.`, 
     bisNull: (m) => `${m} ayında sıfıra kalan`,
     verdient: (m) => `${m} ayında kazanılan`,

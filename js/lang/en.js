@@ -482,6 +482,8 @@ export default {
   },
 
   cockpit: {
+    bisNullFehlen: "Left to break even", ueberNull: "Above break-even this month", zielOhneKosten: "Enter your fixed costs and the app works out your monthly target.", zielErreicht: "The month is covered. Everything above it is yours.", zielSatz: "This much sales you still need this month to cover all costs.", umsatzImMonat: "Sales this month", vonZiel: (z) => `of ${z} target`, zielKurz: "Target", wareHeute: "Cost of goods today", muellHeute: "Waste today",
+    sprueche: ["Small improvements make the big difference at month end.", "What you measure, you can improve.", "Every plate that stays out of the bin is profit.", "Good numbers make good hosts.", "Five grams less per portion is a full till at month end.", "Know your prices and you never have to guess.", "Weigh today, calculate with confidence tomorrow."], 
     umsatzWoche: "Sales this week", zurVorwoche: (p) => `${p} % vs last week`, umsatzLeer: "Enter your first daily sales", tonneWoche: "Bin this week", tonneLeer: "Nothing thrown away yet", wareneinsatz: "Cost of goods", karteFehlt: "Menu missing", genauerAbwiegen: "Weigh it and it gets more accurate", ziel: (p) => `Target ${p} %`, einrichten: "set up", branchenMeldung: (n) => `${n} recipes updated with industry values. Your own values stay.`, 
     bisNull: (m) => `Still missing to zero in ${m}`,
     verdient: (m) => `Earned in ${m}`,
