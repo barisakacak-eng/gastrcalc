@@ -1,2 +1,199 @@
-/* Optik-Schicht von Sanji (ChatGPT). Wird nach app.css geladen und überschreibt nur Aussehen.
-   Regeln: bruecke/visual-vertrag.md. Leer = die App sieht aus wie bisher. */
+/* SANJI | Kräuter & Kupfer | 15.10.2026 | DESIGN ONLY
+   Laden nach css/app.css. Keine Layoutsteuerung / HTML- / JS- / Klassenänderung.
+   Nur Optik, Größen der Touch-Ziele, Typografie, sichere Umbrüche, Animation.
+   Mobile: 390px. Keine fremden Schriftserver. Musterwerte kommen von Zoro. */
+
+/* Grundklima: edles Papier, klare Typografie, lesbar zwischen Grill und Kasse */
+html { color-scheme: light; }
+body { background: var(--papier); color: var(--tinte); font-family: var(--schrift); font-size: 17px; line-height: 1.48; }
+#app { background: var(--papier); }
+.schirm { background: var(--papier); }
+h1, h2, h3, .frage { letter-spacing: -.022em; }
+.frage { font-size: clamp(1.6rem,6.5vw,1.9rem); line-height: 1.16; font-weight: 800; }
+.hinweis, .tipp, .gruppe, .karte h2, .marke, .zeile .oben small,
+.zeileknopf small, .kachel small, .wahl small, .instrument small,
+.karte small, .kennzahlen, .fvgrp, .fvgrund, .fvz small, .fvtipp .n small, .zahlenraster small, .jetzt small, .band small, .tueren button, .kachel.tuer small.fein,
+.menuegruppe h2, .menuekopf small, .menuezeile .zahl,
+.schrittzahl, .chip.klein, .unterzeile, .tage, .muellkarte .tage,
+.blattzeile .messung small, .schrittzeile .anteil { font-size: 15px; line-height: 1.45; }
+.hinweis, .marke, .karte h2, .zeile .oben small, .zeileknopf small,
+.kachel small, .instrument small, .zahlenraster small { color: var(--tinte-weich); }
+.kopfband { background: linear-gradient(145deg,var(--salbei-tief) 2%,#395544 100%); color: var(--weiss); border-radius: 0 0 var(--radius-gross) var(--radius-gross); box-shadow: 0 12px 26px rgba(31,42,36,.16); }
+.kopfband .unter { color: #E6EBDD; }
+.kopfband h1 { letter-spacing: -.03em; }
+.kopfzeile .schrittzahl { color: var(--tinte-weich); }
+
+/* Oberflächen: keine sterile Tabellenoptik, trotzdem klare Kanten */
+.karte, .kachel, .zeile, .zeileknopf, .wahl, .instrument,
+.fvliste, .blattzeile { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); }
+.karte { padding: 17px; gap: 10px; }
+.zeile, .zeileknopf, .wahl { padding: 14px; }
+.kachel { padding: 14px; gap: 8px; }
+.kachel b { font-size: 17px; line-height: 1.36; }
+.karte.dunkel, .karte.zaehler { background: linear-gradient(156deg,var(--salbei-tief),#395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); }
+.karte.dunkel h2, .karte.zaehler h2 { color: #E6EBDD; }
+.karte.dunkel .gross, .karte .gross, .karte.zaehler .riesig,
+.instrument b, .mid, .preisheute, .zahlenraster b, .summenzeile .wert,
+.betrag input, .zahlfeld input, .muellwert { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.023em; }
+.karte .gross, .karte.zaehler .riesig { font-size: clamp(35px,9.5vw,45px); font-weight: 800; line-height: 1.12; }
+.karte.zaehler .lbl { color: #E6EBDD; font-size: 15px; }
+.karte.zaehler small { color: #E6EBDD; font-size: 15px; }
+.karte.zaehler small.fein { color: #E6EBDD; }
+.karte.zaehler.minus .riesig { color: #FFD8CB; }
+.karte.zaehler.plus .riesig { color: #C7F2D0; }
+.karte.zaehler.grau .riesig { color: #E9DDCB; }
+.karte.leer { border: 2px dashed var(--holz-tief); box-shadow: none; }
+.karte.hinweisgelb, .zeile.offen, .fvliste.offen .fvz { background: var(--geschaetzt-hell); border: 2px dashed var(--geschaetzt); }
+.kachel.an, .wahl.an, .zeile.an, .karte.gruenrand { background: var(--eigen-hell); border: 2px solid var(--eigen); box-shadow: 0 0 0 3px rgba(53,95,63,.10); }
+.kachel.klein { padding: 12px; }
+.kachel.klein b { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; font-size: 16px; }
+.kachel.klein small { font-size: 15px; }
+
+/* Bedienflächen: Platz für Handschuhe, schnelle sichere Berührung */
+.knopf { min-height: 56px; padding: 16px 18px; font-size: 17px; font-weight: 750; border-radius: var(--radius); background: var(--salbei-tief); color: var(--weiss); box-shadow: var(--schatten-knopf); transition: transform var(--bewegung) ease, background var(--bewegung) ease, box-shadow var(--bewegung) ease; }
+.knopf.glut, .muellknopf, .fab { background: var(--aktion); color: var(--aktion-text); }
+.knopf:active, .chip:active, .kachel:active, .zeileknopf:active { transform: translateY(1px); box-shadow: none; }
+.knopf.zweit, .knopf.weich { box-shadow: none; }
+.knopf.warn { border: 2px solid var(--rot); color: var(--rot); }
+.knopf:disabled { background: var(--papier-tief); color: var(--tinte-weich); box-shadow: none; }
+.chip, .chip.klein, .periode button, .seg button, .seg.klein button,
+.leise, .kopfzeile .zurueck, .menuezeile, .menuekopf,
+.zeileknopf, .wahl, button.kachel, .fvx, .fvtipp,
+.einrichtungzeile, .jetzt, .schrittzeile .anteil,
+.schalter, button.schalter, .pille, .tueren button,
+.muellkacheln .kachel { min-height: 48px; }
+.stepper button { min-height: 56px; min-width: 56px; background: var(--weiss); border-color: var(--holz); }
+.fab { min-height: 60px; min-width: 60px; border-radius: 50%; box-shadow: var(--schatten-knopf); }
+.pille { background: var(--weiss); color: var(--tinte); border: 1px solid var(--holz); box-shadow: var(--schatten-knopf); padding: 12px 18px; }
+.chip, .periode, .seg, .textfeld, .stepper button { border-color: var(--holz); }
+.chip { padding: 11px 15px; font-size: 16px; }
+.chip.an, .periode button.an, .seg button.an { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
+.textfeld { border-radius: var(--radius); background: var(--weiss); padding: 14px 16px; min-height: 52px; font-size: 17px; }
+:focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; }
+.textfeld:focus, .zahlfeld:focus-within, .betrag:focus-within { outline: 3px solid var(--fokus); outline-offset: 3px; }
+.fortschritt i.da { background: var(--glut); }
+.kachel.tuer, .kachel.breit { padding: 16px; }
+
+/* Pflicht-Bedeutungen: ≈ gelb gestrichelt, eigen grün, Branche blau */
+.stempel-schaetzung, .ampel.gelb, .karte.hinweisgelb,
+.zeile.offen, .zahlfeld.geschaetzt, .betrag.geschaetzt input { border: 2px dashed var(--geschaetzt); background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
+.stempel-schaetzung::before, .marke.geschaetzt::before,
+.zahlfeld.geschaetzt .einheit::before, .betrag.geschaetzt .einheit::before { content: '≈ '; font-weight: 800; color: var(--geschaetzt-text); }
+.stempel-eigen, .stempel-eigen-abgeleitet, .ampel.gruen { background: var(--eigen-hell); border: 2px solid var(--eigen); color: var(--eigen); }
+.stempel-branche, .stempel-pilot { background: var(--branche-hell); border: 2px solid var(--branche); color: var(--branche); }
+.pkt.gelb { background: var(--geschaetzt); }
+.pkt.gruen { background: var(--eigen); }
+.pkt.blau { background: var(--branche); }
+.pkt.rot { background: var(--rot); }
+.gruen, .marke.gruen { color: var(--eigen); }
+.ampel.rot { color: var(--rot); border: 2px solid var(--rot); background: var(--muell-hell); }
+.ampel::before { min-height: 12px; min-width: 12px; }
+.zahlfeld { border-bottom-color: var(--salbei); }
+.zahlfeld.offen, .betrag.offen input { border-bottom: 2px dashed var(--geschaetzt); }
+.gruppe { color: var(--salbei-tief); font-size: 15px; font-weight: 750; letter-spacing: .025em; }
+.tipp, .ergebnis { background: var(--salbei-hell); border-color: var(--salbei); color: var(--tinte); border-radius: var(--radius-klein); }
+.abzeichen { color: var(--tinte); border-color: var(--kupfer-dunkel); background: var(--geschaetzt-hell); }
+
+/* Navigation und Schnellknopf nur stylen: die Positionierung ist Zoros Aufgabe */
+.menueknopf { background: var(--salbei-tief); color: var(--weiss); border-radius: var(--radius); box-shadow: var(--schatten-karte); }
+.menue { background: var(--weiss); border-radius: 0 22px 22px 0; box-shadow: var(--schatten-menu); }
+.menuegruppe h2 { color: var(--tinte-weich); font-size: 15px; letter-spacing: .08em; }
+.menuezeile { color: var(--tinte); border-radius: 12px; padding: 12px; font-size: 16px; }
+.menuezeile.an { background: var(--salbei-hell); color: var(--salbei-tief); font-weight: 750; }
+.menuezeile .farbe { border-radius: 50%; }
+.m-muell .farbe { background: var(--muell); }
+.m-kuehl .farbe { background: var(--branche); }
+.m-karte .farbe { background: var(--eigen); }
+.m-umsatz .farbe { background: var(--glut); }
+.menuehinten, .schnellhinten, .blatthinten { background: rgba(24,34,28,.5); }
+
+/* Analysen: NEKAVO-Klarheit ohne sterile Kühle */
+.instrument { padding: 15px; gap: 7px; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); color: var(--tinte); }
+.instrument b { font-size: clamp(21px,5.5vw,27px); color: var(--tinte); line-height: 1.14; }
+.instrument .balken.mini { gap: 4px; }
+.instrument .balken.mini b { background: var(--salbei); border-radius: 4px 4px 0 0; }
+.instrument .balken.mini s { background: var(--holz); border-radius: 4px 4px 0 0; }
+.instrument .balken.mini i.heute b { background: var(--glut); }
+.instrument .balken.mini.muell b { background: #D6A6A4; }
+.instrument .balken.mini.muell i.heute b { background: var(--muell); }
+.i-tonne b, .muellwert { color: var(--muell); }
+.zielbalken { background: var(--papier-tief); border-radius: 99px; }
+.zielbalken i { background: var(--eigen); border-radius: 99px; }
+.i-ware.gelb .zielbalken i { background: var(--geschaetzt); }
+.i-ware.rot .zielbalken i { background: var(--rot); }
+.zielbalken s { background: var(--tinte); }
+.monatskurve { margin: 12px 0 10px; }
+.monatskurve .nulllinie { stroke: rgba(255,253,248,.72); stroke-width: 1.2; stroke-dasharray: 3 4; }
+.monatskurve path { stroke: var(--kurve-ist); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.monatskurve .prognose { stroke: var(--kurve-prognose); stroke-width: 2.7; stroke-dasharray: 6 6; opacity: 1; }
+.monatskurve .heute { fill: var(--glut); stroke: var(--weiss); stroke-width: 2; }
+.monatskurve .nulltag { fill: var(--eigen); stroke: var(--weiss); stroke-width: 2; }
+.ring .ring-grund { stroke: var(--holz); }
+.ring .ring-wert { stroke: var(--salbei); stroke-linecap: round; }
+.ring text { font-family: var(--schrift); fill: var(--tinte); font-weight: 800; }
+.strecke { border-radius: 99px; } /* Zoros dynamische --null-Grenze bleibt unangetastet */
+.strecke i, .strecke i.null { background: var(--tinte); }
+.strecke i.heute::after { color: var(--tinte); }
+.monat i { border-radius: 7px; }
+.einrichtungzeile { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border: 1px dashed var(--geschaetzt); border-radius: var(--radius-klein); padding: 12px; font-size: 15px; }
+
+/* Mitarbeiterwege: PORSIVO-Eindeutigkeit, Weinrot nur für Müll */
+.bildplatz { border: 1px solid var(--holz); border-radius: var(--radius); background-color: var(--salbei-hell); }
+.kachel.tuer { background: var(--weiss); border-color: var(--holz); }
+.fotofeld .knopf { background: var(--salbei-tief); color: var(--weiss); }
+.fotofeld .knopf.glut { background: var(--glut); color: var(--tinte); }
+.kreisel { border-color: var(--salbei-hell); border-top-color: var(--glut); }
+.fvgrp { color: var(--tinte-weich); }
+.fvliste { background: var(--weiss); border-color: var(--holz); }
+.fvliste.offen .fvz { background: var(--geschaetzt-hell); border: 2px dashed var(--geschaetzt); }
+.fvliste.offen .fvz.karte-rot { border-color: var(--rot); }
+.fvliste.offen .fvz.karte-ok { border-color: var(--eigen); }
+.fvz.auf { background: var(--salbei-hell); }
+.fvtipp .n { -webkit-line-clamp: unset; white-space: normal; overflow-wrap: anywhere; }
+.fvtipp .p { color: var(--tinte); }
+.fvtipp .p.leer { color: var(--rot); }
+.muellkarte { background: linear-gradient(158deg,var(--muell),#772A35); color: var(--weiss); border: 1px solid var(--muell); box-shadow: 0 12px 26px rgba(140,47,57,.16); }
+.muellkarte h2, .muellkarte small, .muellkarte .tage { color: var(--weiss); }
+.muellkarte .besser { color: #E2F3E1; }
+.muellkarte .schlechter { color: #FFE2DC; }
+.balken.muell b { background: #DEADA9; border-radius: 4px 4px 0 0; }
+.balken.muell i.heute b { background: var(--weiss); }
+.monatstonne .fuellung { background: #E0B0AE; }
+.zuletzt { background: var(--muell-hell); border: 1px solid #DDB7B5; color: var(--muell); border-radius: var(--radius-klein); }
+.topzeile .rang { background: var(--muell-hell); color: var(--muell); border-radius: 50%; }
+.muellkacheln .kachel { border-left: 6px solid var(--salbei); }
+.muellkacheln .g-gemuese { border-left-color: var(--eigen); }
+.muellkacheln .g-fleisch, .muellkacheln .g-fisch { border-left-color: var(--muell); }
+.muellkacheln .g-teig { border-left-color: var(--holz-tief); }
+.muellkacheln .g-sauce { border-left-color: var(--geschaetzt); }
+.eimerkachel { border: 2px dashed var(--muell) !important; }
+.blatt { background: var(--weiss); border-radius: 24px 24px 0 0; border-top: 3px solid var(--holz); box-shadow: 0 -16px 40px rgba(31,42,36,.18); padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 24px); gap: 12px; }
+.muellwert { font-size: 23px; font-weight: 800; }
+.schalter .knebel { background: var(--holz-tief); }
+.schalter.an .knebel { background: var(--eigen); }
+
+/* Textdehnung: kein gekapptes Türkisch, kein Ein-Zeilen-Zwang in Kacheln */
+.kachel b, .kachel small, .karte h2, .zeile .name, .wahl,
+.zeileknopf b, .zeileknopf small, .instrument small, .instrument b,
+.menuezeile, .pille, .chip, .schrittzeile, .fvtipp .n,
+.schirm .frage { overflow-wrap: anywhere; word-break: normal; }
+.zahlenraster b, .kachel.klein b { white-space: normal; text-overflow: clip; }
+.kennzahlen span, .tueren button { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; }
+
+/* Dezente Bewegung, nur wenn gewünscht. Keine permanenten Zahlenspiele */
+@media (prefers-reduced-motion: no-preference) {
+  .knopf, .chip, .kachel.an, .zeileknopf, .instrument { transition: background var(--bewegung) ease, border-color var(--bewegung) ease, box-shadow var(--bewegung) ease; }
+  .knopf:active, .chip:active, .zeileknopf:active { transform: translateY(1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .knopf, .chip, .kachel, .instrument, .zeileknopf, .monatskurve path { animation: none !important; transition: none !important; }
+}
+@media (max-width: 399px) {
+  .karte, .kachel, .instrument { padding: 12px; }
+  .instrumente, .kacheln, .muellkacheln { gap: 9px; }
+}
+
+/* Druck: keine Dunkelfläche hinter Tabellenkopien erzwingen */
+@media print {
+  .karte, .instrument, .zeile, .blattzeile { box-shadow: none; border-color: var(--holz-tief); }
+}

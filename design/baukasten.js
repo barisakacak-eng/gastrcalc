@@ -94,6 +94,7 @@ function zeichnen() {
   });
   document.getElementById("baukasten").innerHTML =
     `<section class="bk-teil"><h2 class="bk-titel">0. Bausteine</h2><div class="bk-handy"><div class="schirm"><div class="inhalt">${BAUSTEINE}</div></div></div></section>` + teile.join("");
+  for (const i of document.querySelectorAll('img[src^="bilder/"]')) i.src = "../" + i.getAttribute("src"); // Bilder liegen eine Ebene höher
   document.getElementById("sprachen").innerHTML = SPRACHEN.map((c) => `<a href="?lang=${c}"${c === lang ? ' aria-current="page"' : ""}>${c.toUpperCase()}</a>`).join(" · ");
 }
 

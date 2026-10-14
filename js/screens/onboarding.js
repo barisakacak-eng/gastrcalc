@@ -346,7 +346,7 @@ const ladenSchnell = {
   view: (stand) => `
     <h1 class="frage">${esc(t("schnell.ladenFrage"))}</h1>
     <input class="textfeld gross" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off">
-    <div class="kacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}"><b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
+    <div class="kacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}"><img class="bildplatz klein" src="bilder/laden-${a.id === "imbiss" ? "burger" : a.id}.svg" alt="" aria-hidden="true"><b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
     <div class="feldzeile"><label>${esc(t("betrieb.frageTage"))}</label>${stepper("tage", stand.betrieb.tageProWoche, t("betrieb.tage", stand.betrieb.tageProWoche))}</div>
     <button type="button" class="leise" data-a="weg-genau">${esc(t("schnell.genau"))}</button>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
@@ -367,7 +367,7 @@ const selbstSchnell = {
     return `
     <h1 class="frage">${esc(t("schnell.selbstFrage"))}</h1>
     <p class="hinweis">${esc(t("schnell.selbstHinweis"))}</p>
-    <div class="kacheln">${kachelnFuer(ladenArtVon(stand)).map((k) => `<button type="button" class="kachel ${an.has(k.id) ? "an" : ""}" aria-pressed="${an.has(k.id)}" data-a="selbst" data-wert="${k.id}"><span class="bildplatz klein" data-bild="selbst-${k.id}" aria-hidden="true"></span><b>${esc(t("schnell.selbstKacheln." + k.id))}</b></button>`).join("")}</div>
+    <div class="kacheln">${kachelnFuer(ladenArtVon(stand)).map((k) => `<button type="button" class="kachel ${an.has(k.id) ? "an" : ""}" aria-pressed="${an.has(k.id)}" data-a="selbst" data-wert="${k.id}"><img class="bildplatz klein" src="bilder/selbst-${k.id}.svg" alt="" aria-hidden="true"><b>${esc(t("schnell.selbstKacheln." + k.id))}</b></button>`).join("")}</div>
     <p class="hinweis">${esc(t("schnell.selbstRest"))}</p>`;
   },
   fuss: () => knopfWeiter(),
