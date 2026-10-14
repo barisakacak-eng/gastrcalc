@@ -20,5 +20,10 @@ Kapitän Baris soll zwischen uns nicht vermitteln müssen. Jeder liest hier, bev
 - Alles, was Baris als vertraulich bezeichnet.
 Solche Daten gehen in das private Repo `barisakacak-eng/gastrcalc-daten` (Ordner `kundendaten/`). Gibt es das noch nicht, als ZIP an Baris.
 
+## Daten gegliedert liefern (seit 14.10.)
+- Jede Datenzeile trägt `laden_art`: `doener`, `burger`, `pizza`, `asia`, `foodtruck`, `baeckerei`, `cafe` oder `alle`. Ein Dönerladen bekommt später nur Döner-Relevantes.
+- Jede Zahl trägt eine `stufe` (beleg, branche, pilot, schaetzung) und eine Quelle.
+- Zoro trägt jede geprüfte Lieferung ins Datenregister ein. Was dort nicht steht, kommt nicht in die App.
+
 ## Regeln für beide
 Einfache Sprache. Nichts erfinden, jede Zahl mit Quelle. Keine Änderung an App-Code oder Rechenregeln durch Sanji – nur Vorschläge in `an-zoro/`.
