@@ -2,7 +2,7 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN } from "./i18n.js";
-import { ablageLeeren, ablegen, bildFuerAblage } from "./ablage.js";
+import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
@@ -49,6 +49,16 @@ function schirmKennung() {
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
+// Eigene Fotos (Gericht) aus der Ablage nachladen – einmal je Foto, als Objekt-Adresse im Speicher
+const fotoAdressen = new Map();
+async function eigeneFotosLaden() {
+  for (const img of root.querySelectorAll("img[data-foto]")) {
+    const id = img.dataset.foto; let url = fotoAdressen.get(id);
+    if (!url) { const g = stand.gerichte.find((x) => x.foto === id); const blob = g?.fotoMeta ? await holen(g.fotoMeta).catch(() => null) : null; if (!blob) continue; url = URL.createObjectURL(blob); fotoAdressen.set(id, url); }
+    img.src = url; img.classList.remove("pikto");
+  }
+}
+
 function zeichne() {
   const kennung = schirmKennung();
   const y = kennung === letzterSchirm ? window.scrollY : 0;
@@ -69,6 +79,7 @@ function zeichne() {
         : ansicht === "vergleich" ? vergleichView(stand)
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
+      eigeneFotosLaden();
     }
   } catch (e) {
     console.error(e);
@@ -378,6 +389,14 @@ root.addEventListener("change", async (ev) => {
   const el = ev.target; if (!el.files?.[0]) return;
   const dateien = [...el.files]; const datei = dateien[0]; el.value = "";
   if (el.dataset.f === "import") return sicherungEinlesen(datei);
+  if (el.dataset.f === "gericht-foto") { // Zielbild: eigenes Foto je Gericht (ersetzt Standardbild), bleibt auf dem Gerät
+    const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return;
+    try { const meta = await ablegen(await bildFuerAblage(datei, 800), { name: datei.name || "", zweck: "gericht", laden: stand.id });
+      stand.uploads.push({ id: "u-" + Date.now().toString(36), zweck: "gericht", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: meta, ref: g.id });
+      g.foto = meta.id; g.fotoMeta = meta; speichern(wurzel); meldung(t("vergleich.fotoGespeichert")); }
+    catch (e) { console.warn(e); meldung(t("muell.fotoFehler")); }
+    return zeichne();
+  }
   if (el.dataset.f === "muell-foto") { // Zielbild: Foto (optional) beim Müll – nur ablegen, nicht lesen; hängt am nächsten Eintrag
     const eintrag = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: null, auswertung: null, ergebnis: null };
     try { eintrag.datei = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: stand.id }); stand.uploads.push(eintrag); muellFotoSetzen(eintrag); speichern(wurzel); }

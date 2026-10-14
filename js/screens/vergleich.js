@@ -7,6 +7,7 @@ import { kalkulation } from "../engine.js";
 import { rezeptStempel } from "../rezept_quelle.js";
 import { nav } from "./nav.js";
 import { FOTOS } from "../data/fotos.js";
+import { sym } from "../symbole.js";
 
 let modus = "db"; // "db" | "marge"
 export const vergleichModus = (m) => { if (m === "db" || m === "marge") modus = m; };
@@ -19,6 +20,7 @@ const FOTO = { "haehnchen-doener": "g-doener", "falafel-wrap": "g-duerum", wrap:
 export function gerichtBild(g) {
   const f = g.rezeptFamilie || "";
   const pikto = `bilder/${PIKTO[f] || "g-teller"}.svg`;
+  if (g.foto) return `<img class="gerichtbild" data-foto="${esc(g.foto)}" src="${pikto}" alt="">`; // eigenes Foto des Wirts, wird nach dem Zeichnen aus der Ablage geladen
   const name = f ? FOTO[f] || "g-" + f : null;
   return name && FOTOS.has(name) ? `<img class="gerichtbild" src="foto/${name}.webp" alt="" loading="lazy">` : `<img class="gerichtbild pikto" src="${pikto}" alt="" loading="lazy">`;
 }
@@ -34,7 +36,7 @@ export function vergleichView(stand) {
   const ohne = zeilen.filter((x) => x.db === null);
   const geschaetzt = mit.some((x) => x.geschaetzt);
   const karte = (x) => `<div class="vergleichkarte">
-      ${gerichtBild(x.g)}
+      <label class="bildwahl" aria-label="${esc(t("vergleich.eigenesFoto"))}">${gerichtBild(x.g)}<span class="bildwahl-sym">${sym("camera", "klein")}</span><input type="file" accept="image/*" capture="environment" data-f="gericht-foto" data-id="${esc(x.g.id)}" class="versteckt"></label>
       <div class="vk-text">
         <div class="vk-kopf"><b>${esc(x.z.name)}</b><span class="vk-preis">${x.z.preisBrutto !== null ? fmtEuro(x.z.preisBrutto, { dezimal: 2 }) : "–"}</span></div>
         <div class="vk-zeile"><span>${esc(t("vergleich.ware"))}</span><span>${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.z.waren, { dezimal: 2 })}</span></div>

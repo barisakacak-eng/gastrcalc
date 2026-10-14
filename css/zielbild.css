@@ -91,3 +91,5 @@
 .appleiste .logo { height: 32px; }
 .formkachel .kachelsym { width: 48px; height: 48px; } .formkachel .kachelsym .sym { width: 28px; height: 28px; }
 .knopf.muellhaupt { min-height: 64px; font-size: 18px; }
+.bildwahl { position: relative; flex: none; cursor: pointer; }
+.bildwahl-sym { position: absolute; right: 4px; bottom: 4px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,253,248,.92); color: var(--tinte); display: inline-flex; align-items: center; justify-content: center; }

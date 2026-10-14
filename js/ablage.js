@@ -58,7 +58,7 @@ export const ablageOrt = () => aktiv;
 export const ablageFluechtig = () => ORTE[aktiv].fluechtig;
 export function ablageOrtSetzen(name) { if (!ORTE[name]) throw new Error("unbekannter Ablageort"); aktiv = name; }
 
-export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell"];
+export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell", "gericht"];
 
 // Legt eine Datei ab und liefert die Beschreibung, die im Laden (stand.uploads) gespeichert wird – die Datei selbst steht nie im Laden.
 export async function ablegen(blob, { name = "", zweck = "rechnung", laden = null } = {}) {
