@@ -746,6 +746,7 @@ export default {
   },
   // Stage 6a – photo, upload, quick start
   foto: {
+    zweiPreise: (p) => `Two prices found (${p} €) – a deal? The higher one is entered.`, zweiPreiseKurz: "Two prices", 
     fehlerLaden: "The text recognition has to be loaded once with internet. Please go online briefly and try again.",
     fehlerZeit: "Reading takes too long. Please try a smaller or sharper photo.",
     fehlerGross: "The photo is too big for this phone. Please take it at normal camera resolution.",

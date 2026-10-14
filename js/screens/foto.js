@@ -142,7 +142,7 @@ export function karteFotoView(stand) {
 // Kompakte Prüfliste (Kapitän 14.10., Entwurf A mit Teilen von B): oben „Bitte prüfen" offen zum Bearbeiten,
 // darunter „Erkannt" als eine Zeile pro Gericht – antippen klappt die Zeile zum Bearbeiten auf.
 let aufgeklappt = null;
-const grund = (v) => v.preis === null ? "preis" : v.pruefen ? "name" : v.preisPruefen ? "preisUnsicher" : v.sicher === "vorschlag" ? "rezept" : null;
+const grund = (v) => v.preis === null ? "preis" : v.pruefen ? "name" : v.zweiPreise && v.preisPruefen ? "zweiPreise" : v.preisPruefen ? "preisUnsicher" : v.sicher === "vorschlag" ? "rezept" : null;
 const punkt = (v) => !v.an ? "grau" : v.preis === null ? "rot" : (v.pruefen || v.preisPruefen || v.sicher === "vorschlag") ? "gelb" : "";
 function bearbeiter(v) {
   return `<div class="fvbearb">
@@ -156,7 +156,7 @@ function bearbeiter(v) {
 }
 function fvZeile(v) {
   const g = grund(v); const auf = aufgeklappt === v.id && v.an;
-  const notiz = !v.an ? "" : g === "preis" ? `<small class="rot">${esc(t("foto.preisFehltKurz"))}</small>` : g === "name" ? `<small class="gelb">${esc(t("foto.namePruefen"))}</small>` : g === "preisUnsicher" ? `<small class="gelb">${esc(t("foto.preisPruefen"))}</small>` : g === "rezept" ? `<small class="gelb">${esc(t("foto.rezeptVorschlag", v.vorlage))}</small>` : "";
+  const notiz = !v.an ? "" : g === "preis" ? `<small class="rot">${esc(t("foto.preisFehltKurz"))}</small>` : g === "name" ? `<small class="gelb">${esc(t("foto.namePruefen"))}</small>` : g === "preisUnsicher" ? `<small class="gelb">${esc(t("foto.preisPruefen"))}</small>` : g === "zweiPreise" ? `<small class="gelb">${esc(t("foto.zweiPreise", v.zweiPreise.map((x) => x.toFixed(2).replace(".", ",")).join(" / ")))}</small>` : g === "rezept" ? `<small class="gelb">${esc(t("foto.rezeptVorschlag", v.vorlage))}</small>` : "";
   return `<div class="fvz ${v.an ? "" : "aus"} ${auf ? "auf" : ""}">
       <div class="fvkopf"><button type="button" class="fvtipp" data-a="fv-auf" data-id="${v.id}" aria-expanded="${auf}"><span class="pkt ${punkt(v)}" aria-hidden="true"></span><span class="n">${esc(v.name)}${notiz}</span><span class="p ${v.preis === null ? "leer" : ""}">${v.preis === null ? esc(t("foto.fehlt")) : esc(fmtEuro(v.preis, { dezimal: 2 }))}</span></button>
         <button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-pressed="${!v.an}" aria-label="${esc(t(v.an ? "foto.weglassen" : "foto.zurueckholen"))}: ${esc(v.name)}">${v.an ? "✕" : "↺"}</button></div>
@@ -176,7 +176,7 @@ export function kartePruefenView() {
     <p class="hinweis">${esc(t(pr.length ? "foto.pruefenHinweisKurz" : "foto.pruefenHinweisAlle"))}</p>
     ${pr.length ? `<h2 class="fvgrp">${esc(t("foto.gruppePruefen", pr.length))}</h2>
     <div class="fvliste offen">${pr.map((v) => `<div class="fvz ${v.an ? "" : "aus"} karte-${(punkt(v) || "ok").replace("grau", "ok")}">
-      <div class="fvkopf"><span class="fvgrund">${esc(t(v.an ? { preis: "foto.preisFehltKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", rezept: "foto.rezeptBestaetigen" }[grund(v) || ""] || "foto.erledigt" : "foto.weggelassen"))}</span>
+      <div class="fvkopf"><span class="fvgrund">${esc(t(v.an ? { preis: "foto.preisFehltKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", zweiPreise: "foto.zweiPreiseKurz", rezept: "foto.rezeptBestaetigen" }[grund(v) || ""] || "foto.erledigt" : "foto.weggelassen"))}</span>
         ${v.an ? "" : `<button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-label="${esc(t("foto.zurueckholen"))}: ${esc(v.name)}">↺</button>`}</div>
       ${v.an ? bearbeiter(v) : `<div class="n durch">${esc(v.name)}</div>`}</div>`).join("")}</div>` : ""}
     ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.gruppeErkannt", ok.length))}</h2>

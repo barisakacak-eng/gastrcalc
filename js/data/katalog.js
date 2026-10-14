@@ -41,7 +41,7 @@ export const KATALOG = {
       K("Peperoni eingelegt", "kg", "gemuese"), K("Mais aus der Dose", "kg", "gemuese"),
       K("Petersilie", "kg", "gemuese"), K("Ajvar", "kg", "sauce"), K("Bulgur", "kg", "teig"),
       K("Dönerbrot / Fladen", "stk", "teig"), K("Dürüm-Wrap", "stk", "teig"),
-      K("Pide-Brot", "stk", "teig"), K("Yufka-Teigblatt", "stk", "teig"), K("Pide-Teig", "kg", "teig"), K("Lahmacun-Teig", "kg", "teig"),
+      K("Pide-Brot", "stk", "teig"), K("Yufka-Teigblatt", "stk", "teig"), K("Pide-Teig", "kg", "teig"), K("Lahmacun-Teig", "kg", "teig"), K("Gyrosfleisch", "kg", "fleisch"),
       K("Knoblauchsauce", "kg", "sauce"), K("Kräutersauce", "kg", "sauce"),
       K("Scharfe Sauce", "kg", "sauce"), K("Cocktailsauce", "kg", "sauce"),
       K("Joghurtsauce", "kg", "sauce"),
@@ -99,7 +99,7 @@ export const KATALOG = {
   currywurst: {
     label: "Currywurst & Pommes", produkte: [
       K("Currywurst", "stk", "fleisch"), K("Bratwurst", "stk", "fleisch"),
-      K("Bockwurst", "stk", "fleisch"), K("Frikadelle", "stk", "fleisch"),
+      K("Bockwurst", "stk", "fleisch"), K("Frikadelle", "stk", "fleisch"), K("Krakauer", "stk", "fleisch"), K("Frikandel TK", "stk", "fleisch"), K("Käsesauce", "kg", "sauce"), K("Onion Rings TK", "kg", "teig"), K("Chicken Wings", "kg", "fleisch"), K("Mozzarella-Sticks TK", "kg", "kaese"),
       K("Schnitzel paniert", "stk", "fleisch"), K("Hähnchen-Nuggets", "kg", "fleisch"),
       K("Currywurst vegan", "stk", "fleisch"),
       K("Pommes frites", "kg", "teig"), K("Kroketten", "kg", "teig"),
@@ -122,7 +122,7 @@ export const KATALOG = {
       K("Garnelen", "kg", "fisch"), K("Tofu", "kg", "fleisch"),
       K("Basmatireis", "kg", "teig"), K("Jasminreis", "kg", "teig"),
       K("Mie-Nudeln", "kg", "teig"), K("Reisnudeln", "kg", "teig"),
-      K("Wan-Tan-Blätter", "kg", "teig"), K("Frühlingsrolle", "stk", "teig"),
+      K("Wan-Tan-Blätter", "kg", "teig"), K("Frühlingsrolle", "stk", "teig"), K("Teigtaschen TK", "stk", "teig"), K("Zucchini", "kg", "gemuese"),
       K("Paprika", "kg", "gemuese"), K("Zuckerschoten", "kg", "gemuese"),
       K("Pak Choi", "kg", "gemuese"), K("Bambussprossen", "kg", "gemuese"),
       K("Sojasprossen", "kg", "gemuese"), K("Möhren", "kg", "gemuese"),

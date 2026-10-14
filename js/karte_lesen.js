@@ -12,7 +12,7 @@ import { rezeptBauen, BEREICH_JE_FAMILIE } from "./rezept_baukasten.js";
 const PREIS = /(\d{1,3})\s?[.,]\s?(\d{2})(?!\d)\s*(?:€|eur(?:o)?|e)?/gi;
 const RAUSCHEN = /(preise?\s+inkl|inkl\.?\s*mwst|\bmwst\b|\btel\b\.?|telefon|\bfax\b|www\.|@|stra(ss|ß)e\b|\bstr\.|öffnungszeiten|offnungszeiten|ruhetag|mindestbestell|allergene|zusatzstoffe|^\s*seite\s+\d)/iu;
 const GROESSEN = /(?<!\p{L})(klein|mittel|gro(?:ß|ss)|normal|maxi|mini|xl|jumbo|kids?|kinder)(?!\p{L})/giu;
-const GETRAENK = /\b(\d[.,]\d{1,2}\s?l|\d{2,3}\s?ml|\d{2}\s?cl|cola|fanta|sprite|mezzo|spezi|ayran|wasser|sprudel|schorle|saft|limo|limonade|eistee|ice\s?tea|red\s?bull|energy|bier|pils|radler|weizen|tee|çay|cay|kaffee|espresso|cappuccino|latte|uluda[gğ]|capri|wein|sekt|fritz)\b/i;
+const GETRAENK = /\b(\d[.,]\d{1,2}\s?l|\d{2,3}\s?ml|\d{2}\s?cl|cola|fanta|sprite|mezzo|spezi|ayran|wasser|sprudel|schorle|saft|limo|limonade|eistee|ice\s?tea|red\s?bull|energy|bier|pils|radler|weizen|tee|çay|cay|kaffee|espresso|cappuccino|latte|uluda[gğ]|capri|wein|sekt|fritz|dose|flasche|softdrink|mate|club.?mate)\b/i;
 
 export const normName = (s) => String(s || "").toLowerCase()
   .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
@@ -39,6 +39,8 @@ function nameSaeubern(n) {
 // Pilot 14.10. (echte Karte, 45 Gerichte): Der Name wird 1:1 übernommen – mit Komma, Klammer und Beschreibung auf derselben Zeile
 // („Pide mit Spinat, Weichkäse, Eiern" ≠ „Pide mit Spinat, Weichkäse"). Weg kommen nur Dinge, die nicht zum Namen gehören:
 // Gerichtnummer, Reste der Nachbarspalte/Fotos links, Allergen-Hochzahlen, Punkte-Leiter und das, was die Erkennung aus ihr macht.
+// Kurze echte Wörter am Namensanfang (Sanjis Karten): alles andere mit 2–3 Zeichen vorne ist meist ein Rest der Nachbarspalte
+const KURZWORT = /^(pad|bbq|xl|xxl|big|hot|bun|bo|ca|ri|mi|ph[oở]|tom|ga|vit|xa|ot|mie|egg|veg|mix|duo|kid|bao|banh|com|ali|tex|sub|mac|döner|new|old|bio)$/iu;
 const LEITER_BUCHSTABEN = /^[unrsemaocvwiz]+$/;
 const istLeiterRest = (w) => LEITER_BUCHSTABEN.test(w) && (w.length <= 5 || /(.)\1/.test(w));
 export function nameAufbereiten(roh) {
@@ -54,10 +56,13 @@ export function nameAufbereiten(roh) {
   // Allergen-Hochzahlen am Wort („Soße4,7,A,F,G,K" „KäseA,G") und Zeichenmüll
   n = n.replace(/(\p{Ll})(?:\d{1,2}|[A-L])(?:\s?,\s?(?:\d{1,2}|[A-L]))+(?=[\s,.]|$)/gu, "$1");
   n = n.replace(/(\p{Ll}{3,})[il1|](mit|und)\b/gu, "$1 $2");
-  n = n.replace(/[*®©™"“”„‟«»‘’‚´`^°§#=!|_~<>[\]{}%+]+/g, " ");
+  n = n.replace(/\s\+\s/g, " \u0001 ").replace(/[*®©™"“”„‟«»‘’‚´`^°§#=!|_~<>[\]{}%+]+/g, " ").replace(/\u0001/g, "+"); // „Currywurst + Pommes" bleibt
   let w = n.split(/\s+/).filter(Boolean);
   // Reste links (Fotos, Nachbarspalte): kurze Schnipsel vor dem ersten richtigen Wort weg
-  if (!mitNummer && !/^(mit|und|dazu|im|in|aus|vom|von|zum|zur)$/i.test(w[0] || "")) { const k = w.findIndex((x) => /^[\p{L}-]{4,}[.,]?$/u.test(x) && !istLeiterRest(x.toLowerCase())); if (k > 0) w = w.slice(k); }
+  if (!mitNummer && !/^(mit|und|dazu|im|in|aus|vom|von|zum|zur)$/i.test(w[0] || "")) { // Ein Wort zählt als echt: ab 4 Buchstaben (keine gelesene Punkte-Leiter) – oder großgeschrieben mit 3 Buchstaben, wenn ein weiteres großes Wort folgt („Pad Thai", „BBQ Soße"; nicht „Ira U] Falafel")
+    const echt = (x, i) => (/^[\p{L}-]{4,}[.,]?$/u.test(x) && !(istLeiterRest(x.toLowerCase()) && /^\p{Ll}/u.test(x)) && !(/^\p{Ll}/u.test(x) && istLeiterRest(x)))
+      || (KURZWORT.test(x) && /^\p{Lu}[\p{L}-]{1,}$/u.test(w[i + 1] || "")); // „XL Yufka", „Ca Ri" – nur bekannte Kurzwörter, sonst Fotoreste („SUN Portion", „EM Vegetarische")
+    const k = w.findIndex(echt); if (k > 0) w = w.slice(k); }
   else while (w.length > 1 && !/\p{L}{2,}/u.test(w[0])) w.shift();
   // Reste rechts: Leiter, die als Buchstaben gelesen wurde („unsnnnnr" „nen"), einzelne Zeichen, Ziffern
   while (w.length > 1) {
@@ -87,14 +92,14 @@ export function istZutatenZeile(z) {
   if (!t) return false;
   if (/^(mit|dazu|und|oder|serviert|wahlweise|inkl|inklusive|gefüllt|gefuellt|belegt|nach\s+wahl|auf\s+wunsch|aus|in|vom|von)\b/i.test(t) && !/^(vom|von)\s+\p{Lu}/iu.test(t)) return true;
   if (/^\p{Ll}/u.test(t) && !/^(extra|zusätzlich|zusaetzlich|portion|kleine?|gro(ß|ss)e?|halbe?)\b/i.test(t)) return true;                     // beginnt klein: Fortsetzung, keine Überschrift
-  if ((t.match(/,/g) || []).length >= 2 && !/\smit\s/i.test(t)) return true;      // Aufzählung („Tomaten, Zwiebeln, Mais") – „Pide mit Spinat, Weichkäse, Eiern" ist ein Gericht
+  if ((t.split(/\s[-–]\s/)[0].match(/,/g) || []).length >= 2 && !/\smit\s/i.test(t)) return true; // „Nasi Goreng - Krabben, Huhn, Curry": Name vor dem Strich      // Aufzählung („Tomaten, Zwiebeln, Mais") – „Pide mit Spinat, Weichkäse, Eiern" ist ein Gericht
   return false;
 }
 
 // Zwei Lesarten derselben Seite (Block und Spalten, getrennt durch \f): die mit mehr Gerichten ist die Hauptlesart,
 // die andere ergänzt fehlende Gerichte und unlesbare Preise. Ähnliche Namen („Döner (kein) mit Sala" ~ „Döner (klein) mit Salat") zählen als dasselbe Gericht.
 // Rubrik-Überschriften („Vegane Gerichte", „Pide aus dem Steinofen", „Nudeln") sind keine Gerichte, auch wenn ein Preis danebenrutscht
-const RUBRIK = /^(?:[\p{L}-]+\s){0,2}(gerichte|speisen|getränke|getraenke|beilagen|desserts?|vorspeisen|hauptspeisen|nudeln|salate|menüs?|extras)$|\s(aus|qu\/?|au\/?|a\w{1,2})\s+dem\s+[\p{L}]+$/iu;
+const RUBRIK = /^(?:[\p{L}-]+\s){0,2}(gerichte|speisen|getränke|getraenke|beilagen|desserts?|vorspeisen|hauptspeisen|nudeln|salate|menüs|extras)$|\s(aus|qu\/?|au\/?|a\w{1,2})\s+dem\s+[\p{L}]+$/iu;
 export const istRubrik = (n) => RUBRIK.test(String(n || "").trim());
 const nameGuete = (p) => -(p.pruefen ? 5 : 0) - p.name.split(/\s+/).filter((x) => x.replace(/[.,()]/g, "").length <= 2 && !/^(&|zu|im|in|am|an|und|xl)$/i.test(x)).length * 2 - (p.name.match(/[^\p{L}\d\s,.()&\-]/gu) || []).length - (p.name.match(/ı/g) || []).length + Math.min(p.name.length, 40) / 100;
 function aehnlichName(a, b) {
@@ -127,6 +132,10 @@ export function positionenAusText(text) {
 function positionenEinerLesart(text) {
   const zeilen = String(text || "").split(/\r?\n/).map(zeileGlaetten).filter(Boolean);
   const out = []; let vorher = null;
+  // Rubrik (Punkt 8.1): die letzte Überschrift („Pizza 32 cm", „Dönergerichte") geht als Hinweis an die Gerichte darunter.
+  // Eine Zeile ohne Preis ist erst Kandidat; wird sie als Name des nächsten Gerichts gebraucht (zweizeilige Karte), war sie keine Überschrift.
+  let rubrik = null, kandidat = null;
+  const istUeberschrift = (z) => !istZutatenZeile(z) && /\p{L}{3,}/u.test(z) && z.split(/\s+/).length <= 7 && !/\d[.,]\d{2}/.test(z);
   for (let i = 0; i < zeilen.length; i++) {
     const z = zeilen[i];
     if (RAUSCHEN.test(z)) { vorher = null; continue; }
@@ -143,7 +152,8 @@ function positionenEinerLesart(text) {
       const aufb = nameAufbereiten(z.split("⋯")[0]);
       if (aufb.name.length >= 3 && /\p{Lu}\p{L}{3,}/u.test(aufb.name) && !istZutatenZeile(aufb.name) && !istRubrik(aufb.name)) { out.push({ name: aufb.name, preis: null, groesse: null, roh: z, pruefen: aufb.pruefen }); vorher = null; continue; }
     }
-    if (!preise.length) { if (!istZutatenZeile(z) || !vorher) vorher = istZutatenZeile(z) ? null : z.replace(/\s+/g, " ").trim(); continue; }
+    if (!preise.length) { if (!istZutatenZeile(z) || !vorher) vorher = istZutatenZeile(z) ? null : z.replace(/\s+/g, " ").trim(); kandidat = istUeberschrift(z) ? z.replace(/\s*⋯\s*$/, "").trim() : kandidat; continue; }
+    let vorherBenutzt = false;
     // Abschnitte: Text bis zum Preis = Name. „Pizza Salami 9,50 Lasagne 10,90" → zwei Gerichte; Preise direkt hintereinander gehören zusammen
     const abschnitte = []; let start = 0;
     for (const p of preise) {
@@ -155,17 +165,22 @@ function positionenEinerLesart(text) {
       let aufb = nameAufbereiten(a.seg);
       // Name und Preis in zwei Zeilen (zweispaltige Karten) – oder der Preis ist auf die Zutatenzeile gerutscht: dann gilt das Gericht darüber
       const zutat = !aufb.nummer && istZutatenZeile(aufb.name);
-      if (k === 0 && vorher && (aufb.name.length < 2 || zutat)) aufb = nameAufbereiten(vorher);
+      if (k === 0 && vorher && (aufb.name.length < 2 || zutat)) { aufb = nameAufbereiten(vorher); vorherBenutzt = true; }
       else if (k === 0 && zutat) return;
       let name = aufb.name;
-      if (name.length < 2 || name.length > 80 || !/\p{L}{3,}/u.test(name) || istRubrik(name)) return; // „Mr" ist kein Gericht, „Vegane Gerichte" eine Überschrift
+      if (istRubrik(name)) { rubrik = name; kandidat = null; return; } // „Vegane Gerichte" mit danebengerutschtem Preis: Überschrift
+      if (name.length < 2 || name.length > 80 || (!/\p{L}{3,}/u.test(name) && !/^(\p{Lu}\p{Ll}+\s){1,3}\p{Lu}\p{Ll}+$/u.test(name))) return; // „Ca Ri" (vietnamesisch) ist ein Gericht
+      if (k === 0 && kandidat && !vorherBenutzt) { rubrik = kandidat; } kandidat = null; // „Mr" ist kein Gericht, „Vegane Gerichte" eine Überschrift
       const groessen = [...name.matchAll(GROESSEN)].map((m) => m[0]);
       if (a.preise.length >= 2 && groessen.length >= 2) {
         // „Pommes klein / groß 3,50 4,50"
         const basis = name.replace(GROESSEN, "").replace(/[\s/|]+$/, "").replace(/\s+/g, " ").trim();
-        a.preise.slice(0, groessen.length).forEach((p, j) => out.push({ name: `${basis} ${groessen[j]}`.trim(), preis: p.wert, groesse: groessen[j].toLowerCase(), roh: z }));
-      } else { const pz = a.preise[a.preise.length - 1]; const cent = Math.round(pz.wert * 100) % 100;
-        out.push({ name, preis: pz.wert, groesse: groessen[0]?.toLowerCase() || null, roh: z, pruefen: aufb.pruefen, preisPruefen: !!pz.unsicher || ![0, 5, 9].includes(cent % 10) });
+        a.preise.slice(0, groessen.length).forEach((p, j) => out.push({ name: `${basis} ${groessen[j]}`.trim(), preis: p.wert, groesse: groessen[j].toLowerCase(), roh: z, rubrik }));
+      } else {
+        // Zwei Preise ohne Größenwort (Aktion/Liste, Punkt 8.4): der höhere ist der Verkaufspreis, der Wirt prüft
+        const zwei = a.preise.length >= 2 && a.preise[a.preise.length - 1].wert !== a.preise[a.preise.length - 2].wert;
+        const pz = zwei ? [...a.preise.slice(-2)].sort((x, y) => y.wert - x.wert)[0] : a.preise[a.preise.length - 1]; const cent = Math.round(pz.wert * 100) % 100;
+        out.push({ name, preis: pz.wert, groesse: groessen[0]?.toLowerCase() || null, roh: z, pruefen: aufb.pruefen, preisPruefen: zwei || !!pz.unsicher || ![0, 5, 9].includes(cent % 10), ...(zwei ? { zweiPreise: a.preise.slice(-2).map((x) => x.wert) } : {}), rubrik });
       }
     });
     vorher = null;
@@ -206,6 +221,7 @@ function besteVorlage(name, stand) {
 }
 
 export const istGetraenk = (name) => GETRAENK.test(name);
+const GETRAENK_RUBRIK = /getr[äa]nke?|drinks?|softdrinks?|hei(ß|ss)getr|kaltgetr|i[çc]ecek/i;
 
 // Positionen → Vorschläge für die Bestätigung. Jeder Vorschlag sagt, woher das Rezept kommt.
 export function vorschlaegeAusText(text, stand) {
@@ -221,16 +237,22 @@ export function vorschlaegeAusText(text, stand) {
     // Name der Vorlage nehmen (der Rest der Zeile ist meist der verwischte Preis)
     if (tr && tr.s >= 0.85 && !schon.has(normName(tr.v.name))) { pos.push({ name: tr.v.name, preis: null, groesse: null, roh: z }); schon.add(normName(tr.v.name)); }
   }
+  // Gleicher Name, anderer Preis, andere Rubrik (Punkt 8.5): beide behalten, Rubrik in Klammern dazu
+  const jeName = new Map(); for (const p of pos) { const k = normName(p.name); jeName.set(k, [...(jeName.get(k) || []), p]); }
+  for (const liste of jeName.values()) {
+    if (liste.length < 2 || new Set(liste.map((p) => p.rubrik || "")).size < 2 || new Set(liste.map((p) => p.preis)).size < 2) continue;
+    for (const p of liste) if (p.rubrik) p.name = `${p.name} (${p.rubrik})`;
+  }
   return pos.map((p) => {
     const treffer = besteVorlage(p.name, stand);
-    const getraenk = istGetraenk(p.name);
-    // Kein sicherer Vorlagen-Treffer: Rezept aus dem Baukasten (Grundrezept + Belag + Größe) – nie ein Gericht ohne Rezept
-    const bau = !getraenk && !(treffer && treffer.s >= 0.75) ? rezeptBauen(p.name) : null;
+    const getraenk = istGetraenk(p.name) || GETRAENK_RUBRIK.test(p.rubrik || "");
+    // Kein sicherer Vorlagen-Treffer: Rezept aus dem Baukasten (Grundrezept + Belag + Größe, Rubrik als Hinweis) – nie ein Gericht ohne Rezept
+    const bau = !getraenk && !(treffer && treffer.s >= 0.75) ? rezeptBauen(p.name, { rubrik: p.rubrik }) : null;
     const v = {
       id: uid(), name: p.name, preis: p.preis, roh: p.roh, an: true, pruefen: !!p.pruefen, preisPruefen: !!p.preisPruefen,
       vorlage: treffer ? treffer.v.name : null, bereich: treffer ? treffer.v.bereich : null,
       sicher: treffer && treffer.s >= 0.75 ? "sicher" : bau ? "baukasten" : treffer ? "vorschlag" : getraenk ? "getraenk" : "ohne",
-      getraenk,
+      getraenk, rubrik: p.rubrik || null, ...(p.zweiPreise ? { zweiPreise: p.zweiPreise } : {}),
     };
     if (bau) Object.assign(v, { vorlage: null, bereich: BEREICH_JE_FAMILIE[bau.familie] || null, bau });
     return v;
@@ -252,7 +274,7 @@ export function vorschlaegeUebernehmen(stand, vorschlaege) {
     if (vl) { zutaten = vl.zutaten.map(([n, menge, einheit]) => ({ name: n, menge, einheit })); klasse = klasseFuerBereich(vl.bereich); steuer = steuersatzAusZutaten(zutaten); }
     else if (v.bau || (!v.getraenk && rezeptBauen(name))) {
       // Rezept aus dem Baukasten: Startwerte, gekennzeichnet – der Wirt passt sie an
-      const b = rezeptBauen(name) || v.bau; // Name evtl. vom Wirt geändert: neu bauen
+      const b = rezeptBauen(name, { rubrik: v.rubrik }) || v.bau; // Name evtl. vom Wirt geändert: neu bauen
       zutaten = b.zutaten.map((z) => ({ name: z.name, menge: z.menge, einheit: z.einheit })); bereich = BEREICH_JE_FAMILIE[b.familie] || null;
       klasse = klasseFuerBereich(bereich); steuer = steuersatzAusZutaten(zutaten);
       baukasten = b.familie;
@@ -262,7 +284,7 @@ export function vorschlaegeUebernehmen(stand, vorschlaege) {
       zutaten = [{ name, menge: 1, einheit: "stk" }]; klasse = "getraenk"; steuer = 0.19;
       if (!stand.artikel.some((a) => a.name === name)) stand.artikel.push({ name, gruppe: "getraenk", einheit: "stk", packung: { menge: null, einheit: "stk" }, gebinde: { art: "kiste", zwischen: null }, preis: null, preisBasis: "netto", preisHistorie: [], status: "offen", benutzt: true });
     } else { zutaten = []; klasse = "haupt"; steuer = 0.07; ohneRezept += 1; }
-    stand.gerichte.push({ id: uid(), name, vorlageName: vl?.name || null, bereich, klasse, zeit: vl?.zeit ?? (baukasten ? (rezeptBauen(name)?.zeit ?? 4) : 4), vorlage: !!vl, zutaten,
+    stand.gerichte.push({ id: uid(), name, vorlageName: vl?.name || null, bereich, klasse, zeit: vl?.zeit ?? (baukasten ? (rezeptBauen(name, { rubrik: v.rubrik })?.zeit ?? 4) : 4), vorlage: !!vl, zutaten, ...(v.rubrik ? { rubrik: v.rubrik } : {}),
       ...(baukasten ? { rezeptQuelle: "baukasten", rezeptFamilie: baukasten } : {}),
       preis: typeof v.preis === "number" ? v.preis : null, mengeTag: null, steuer, quelle: "foto" });
     neu += 1;

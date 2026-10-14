@@ -747,6 +747,7 @@ export default {
   },
   // Aşama 6a – fotoğraf, yükleme, hızlı başlangıç
   foto: {
+    zweiPreise: (p) => `İki fiyat bulundu (${p} €) – kampanya mı? Yüksek olan girildi.`, zweiPreiseKurz: "İki fiyat", 
     fehlerLaden: "Yazı tanımanın bir kez internetle yüklenmesi gerekiyor. Lütfen kısa süre internete bağlan ve tekrar dene.",
     fehlerZeit: "Okuma çok uzun sürüyor. Lütfen daha küçük veya daha net bir fotoğraf dene.",
     fehlerGross: "Fotoğraf bu telefon için çok büyük. Lütfen normal kamera çözünürlüğüyle çek.",

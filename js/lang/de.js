@@ -747,6 +747,7 @@ export default {
   },
   // Etappe 6a – Foto, Upload, Schnellstart
   foto: {
+    zweiPreise: (p) => `Zwei Preise gefunden (${p} €) – Aktion? Der höhere ist eingetragen.`, zweiPreiseKurz: "Zwei Preise", 
     fehlerLaden: "Die Texterkennung muss einmal mit Internet geladen werden. Bitte kurz online gehen und noch einmal versuchen.",
     fehlerZeit: "Das Lesen dauert zu lange. Bitte ein kleineres oder schärferes Foto versuchen.",
     fehlerGross: "Das Foto ist zu groß für dieses Handy. Bitte mit der normalen Kamera-Auflösung fotografieren.",
