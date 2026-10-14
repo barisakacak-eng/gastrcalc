@@ -14,7 +14,9 @@ import { kuehlView } from "../js/screens/kuehl.js";
 import { listenView } from "../js/screens/tag.js";
 import { belegView } from "../js/screens/beleg.js";
 import { abschlussView } from "../js/screens/abschluss.js";
-import { nav } from "../js/screens/nav.js";
+import { nav, navKontext, menueSetzen, schnellSetzen } from "../js/screens/nav.js";
+import { muellEingabeOeffnen, muellAktion, muellZuruecksetzen } from "../js/screens/muell.js";
+import { gerichtWeg } from "../js/muell.js";
 
 const BEISPIEL_KARTE = `Döner Kebab ⋯ 7,50
 Dürüm Döner ⋯ 8,00
@@ -37,6 +39,7 @@ function beispielLaden() {
   fehlendeRezepteErgaenzen(s); artikelAusGerichten(s);
   s.kuehlstellen = [{ id: "kst1", name: "Kühlschrank 1", art: "kuehl", min: null, max: 7, reihe: 0, archiviert: false }];
   s.kuehl.eingerichtet = true;
+  gerichtWeg(s, s.gerichte[0], { anzahl: 2 });
   return s;
 }
 
@@ -48,6 +51,10 @@ function schirme(s) {
   return [
     ...SCHNELL.map((x, i) => ob(x, i + 1)),
     { titel: "Cockpit (Start)", html: () => startView(s, { wurzel: w }) },
+    { titel: "Menü offen (drei Striche)", html: () => { menueSetzen(true); const h = startView(s, { wurzel: w }); menueSetzen(false); return h; } },
+    { titel: "Schnellknopf offen", html: () => { schnellSetzen(true); const h = startView(s, { wurzel: w }); schnellSetzen(false); return h; } },
+    { titel: "Müll: Was ist weg?", html: () => { muellEingabeOeffnen(); const h = muellView(s); muellZuruecksetzen(); return h; } },
+    { titel: "Müll: Blatt", html: () => { muellEingabeOeffnen(); muellAktion("muell-kachel", { dataset: { typ: "gericht", id: s.gerichte[0].id } }, s); const h = muellView(s); muellZuruecksetzen(); return h; } },
     { titel: "Speisekarte", html: () => karteView(s) },
     { titel: "Müll", html: () => muellView(s) },
     { titel: "Umsatz", html: () => umsatzView(s) },
@@ -79,7 +86,7 @@ function zeichnen() {
   const lang = new URLSearchParams(location.search).get("lang") || "de";
   setzeSprache(SPRACHEN.includes(lang) ? lang : "de");
   document.documentElement.lang = lang;
-  const s = beispielLaden();
+  const s = beispielLaden(); navKontext(s, wurzel(s));
   const teile = schirme(s).map((x, i) => {
     let inhalt;
     try { inhalt = x.html(); } catch (e) { inhalt = `<p class="hinweis">Fehler beim Zeichnen: ${esc(e.message)}</p>`; }
