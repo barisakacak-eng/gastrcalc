@@ -1,7 +1,7 @@
 // Blätter über dem Bildschirm (15.10.2026, Entwickler A): Menü-Blatt mit vier Kacheln, Sprache, Laden wechseln, Hilfe „?", Büro-Code.
 // Leistung (Stresstest 15.10.): Die Blätter wohnen in einer eigenen Hülle außerhalb von #app. Öffnen und Schließen zeichnet den
 // Bildschirm darunter NICHT neu; teure Zahlen werden erst beim Öffnen gerechnet.
-// Platzhalter für „personal" und „buero" stehen unten – sie werden beim Zusammenführen durch die Ansichten von D und C ersetzt.
+// „personal" (Entwickler D, screens/personal.js) und „buero" (Entwickler C, screens/buero.js) haben eigene Bildschirme.
 import { t, sprache, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
 import { esc } from "../util.js";
 import { sym } from "../symbole.js";
@@ -111,17 +111,3 @@ export function bueroCodeKarte(wurzel) {
     ${da ? `<button type="button" class="leise" data-a="pin-entfernen">${esc(t("ebene.pin.entfernen"))}</button>` : ""}</div>`;
 }
 
-// ---------- Platzhalter (bis D „personal" und C „buero" liefern) ----------
-export function personalPlatzhalter(stand) {
-  const kachel = (z, s) => `<button type="button" class="karte riesenkachel-platz" data-a="nav" data-wert="${z}"><span class="ks">${sym(s)}</span><b>${esc(t("ebene.tabs." + z))}</b></button>`;
-  return `<div class="inhalt ebene-personal">${kachel("muell", "trash-2")}${kachel("kuehl", "snowflake")}${kachel("putzplan", "spray-can")}</div>${nav("personal")}`;
-}
-export function bueroPlatzhalter(stand, wurzel) {
-  const zeile = (wert, text, s, a = "nav", extra = "") => `<button type="button" class="zeileknopf" data-a="${a}"${wert ? ` data-wert="${wert}"` : ""}${extra}>${sym(s)}<b>${esc(text)}</b><span class="pfeil">›</span></button>`;
-  return `<div class="inhalt ebene-buero">
-      <div class="karte">${zeile("umsatz", t("menue.umsatz"), "trending-up")}${zeile("vergleich", t("menue.vergleich"), "chart-column")}${zeile("listen", t("menue.listen"), "file-text")}</div>
-      <div class="karte">${zeile("", t("start.rezepteAendern"), "chef-hat", "bearbeiten", ' data-schritt="rezepte"')}${zeile("karte", t("menue.karte"), "utensils-crossed")}${zeile("beleg", t("menue.beleg"), "receipt")}${zeile("inventur", t("inventur.menue"), "package")}${zeile("kartefoto", t("foto.karteKnopf"), "camera")}</div>
-      <div class="karte">${zeile("", t("menue.kosten"), "wallet", "bearbeiten", ' data-schritt="kosten-miete" data-bis="kosten-sonstiges"')}${zeile("kuehl", t("menue.kuehl"), "snowflake")}${zeile("putzplan", t("menue.putzplan"), "spray-can")}${zeile("laeden", t("menue.laeden"), "store")}${zeile("einstellungen", t("menue.einstellungen"), "settings")}</div>
-      ${bueroCodeKarte(wurzel)}
-    </div>${nav("buero")}`;
-}

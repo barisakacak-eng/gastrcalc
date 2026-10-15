@@ -1,5 +1,6 @@
 // Drei Ebenen, Punkt 8 + 9 (15.10.2026): Müll mit einem Tipp und Personal-Modus ohne Euro
 import test from "node:test";
+import { navKontext } from "../js/screens/nav.js";
 import assert from "node:assert/strict";
 globalThis.document ??= { documentElement: {} };
 import { leererBetrieb } from "../js/store.js";
@@ -79,12 +80,12 @@ test("Laden zeigt Euro, Personal-Modus zeigt keinen einzigen Euro (Müll-Raster,
   personalKontext({ modus: "laden" });
   muellTipp(kachel("artikel", "", "Dönerfleisch"), s);
   assert.ok(muellView(s).includes("€"), "Laden: Tageswert in Euro");
-  const w = { modus: "personal" }; personalKontext(w);
+  const w = { modus: "personal" }; personalKontext(w); navKontext(s, w, "muell");
   muellZuruecksetzen(); muellTipp(kachel("gericht", "d", "Döner Kebab"), s);
   const raster = muellView(s);
   assert.ok(!raster.includes("€") && !/EUR/.test(raster), "Raster ohne Euro");
   assert.ok(raster.includes("2×"), "Kopfzahl als Anzahl");
-  assert.ok(raster.includes('data-a="ebene-verlassen"'), "Schloss oben rechts");
+  assert.ok(raster.includes('data-a="schloss"'), "Schloss oben rechts (Kopf aus nav.js)");
   muellAktion("muell-detail", kachel("gericht", "d", "Döner Kebab"), s); muellAktion("muell-personal", {}, s);
   const detail = muellView(s); assert.ok(!detail.includes("€"), "Detail ohne Euro, auch beim Personalessen");
   const start = personalView(s); assert.ok(!start.includes("€"));

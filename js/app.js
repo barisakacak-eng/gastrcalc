@@ -22,7 +22,7 @@ import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen } from "./modus.js";
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, bueroPlatzhalter } from "./screens/ebene.js";
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste } from "./screens/ebene.js";
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
 import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
@@ -33,6 +33,9 @@ import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennun
 import { inventurView, inventurAktion, inventurEingabe, inventurZurueck, inventurZuruecksetzen, inventurKennung } from "./screens/inventur.js";
 // Entwickler B (Drei Ebenen): Laden-Karte als Fotoraster mit Preis-Blatt
 import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZurueck, karteLadenZuruecksetzen, karteLadenKennung } from "./screens/karte_laden.js";
+// Drei Ebenen (Entwickler C): Büro-Startseite und die drei Ordner
+import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen } from "./screens/buero.js";
+import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
 
 const root = document.getElementById("app");
 let wurzel = null;
@@ -84,7 +87,7 @@ function zeichne() {
       if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
-      const v = ansicht === "buero" ? bueroPlatzhalter(stand, wurzel)    // Entwickler C ersetzt den Platzhalter
+      const v = ansicht === "buero" ? bueroView(stand, wurzel) // Büro-Start (Entwickler C)
         : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
@@ -100,6 +103,9 @@ function zeichne() {
         : ansicht === "vergleich" ? vergleichView(stand)
         : ansicht === "inventur" ? inventurView(stand)
         : ansicht === "personal" ? personalView(stand) // D
+        : ansicht === "ordner-amt" ? ordnerAmtView(stand)
+        : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
+        : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       eigeneFotosLaden();
@@ -213,7 +219,7 @@ async function fertig(ziel = "start") {
 function bearbeiten(vonId, bisId) {
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : "start" };
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : ansicht.startsWith("ordner-") ? "buero" : "start" };
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();
@@ -354,6 +360,7 @@ async function aufKlick(ev) {
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
+  if (name === "nav" && el.dataset.wert !== ansicht) { if (ansicht.startsWith("ordner-")) ordnerZuruecksetzen(); if (ansicht === "buero") bueroZuruecksetzen(); } // Entwickler C: Büro zu, wenn es in den Laden geht
   if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) return bueroBetreten(nz.ansicht); // Büro-Bildschirm aus dem Laden: erst ins Büro
     const ziel = nz.ansicht; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
@@ -444,6 +451,11 @@ async function aufKlick(ev) {
       zeichne();
     }
   }
+  if (ansicht === "buero" || ansicht.startsWith("ordner-")) { // Entwickler C
+    const r = ansicht === "buero" ? await bueroAktion(name, el, stand, wurzel) : await ordnerAktion(name, el, stand, ansicht);
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); root.querySelector('.b-codefeld')?.focus(); }
+    return;
+  }
   if (ansicht === "kuehl") {
     const r = kuehlAktion(name, el, stand, wurzel);
     if (r) {
@@ -494,6 +506,10 @@ root.addEventListener("input", (ev) => {
   } else if (ansicht === "einstellungen") {
     if (el.dataset.f === "warenQuote") { const n = parseZahl(el.value); stand.verkauf.warenQuote = n !== null && n < 90 ? n / 100 : null; }
     if (el.dataset.f === "steuerSatz") { const n = parseZahl(el.value); stand.betrieb.steuerSatz = n !== null && n < 100 ? n / 100 : null; }
+  } else if (ansicht === "buero") { // Entwickler C
+    neu = bueroEingabe(el.dataset.f, el.value); if (neu === "knopf") { neu = false; if (el.value !== el.value.replace(/\D/g, "").slice(0, 4)) el.value = el.value.replace(/\D/g, "").slice(0, 4); }
+  } else if (ansicht.startsWith("ordner-")) {
+    neu = ordnerEingabe(el.dataset.f, el.value); if (neu === "knopf") neu = false;
   } else if (ansicht === "inventur") {
     neu = inventurEingabe(el.dataset.f, el.value);
   } else if (ansicht === "kuehl") {
@@ -555,6 +571,7 @@ root.addEventListener("keydown", (ev) => {
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file" || el.tagName === "TEXTAREA") return;
   ev.preventDefault();
   if (el.dataset.f === "eigenes" || el.dataset.f === "stelle-neu" || el.dataset.f === "person-neu") { const b = el.closest(".neu")?.querySelector('[data-a$="-neu"]'); if (b) b.click(); return; }
+  if (el.dataset.f === "buero-code") { root.querySelector('[data-a="buero-code-oeffnen"], [data-a="buero-code-weiter"]')?.click(); return; } // Entwickler C
   el.blur();
   if (stand.phase === "onboarding" && root.querySelectorAll("[data-f]").length === 1) schrittWeiter();
 });
@@ -576,6 +593,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
+    else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro
     else if (ansicht === "karte" && karteLadenZurueck()) { /* erst das Preis-Blatt schließen */ }
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = anfang; } // Laden-Reiter stapeln nicht: Zurück = Heute; Büro → Büro-Start; Personal → drei Kacheln
     if (!ansichtErlaubt(wurzel, ansicht)) ansicht = anfang;
