@@ -940,4 +940,8 @@ export default {
     lueckeGut: "Καλά είναι. Ή οι μερίδες είναι μάλλον μικρές, ή στο μενού είναι γραμμένες μεγαλύτερες ποσότητες απ' όσες βάζετε στ' αλήθεια. Έλεγξε τις συνταγές και η εφαρμογή υπολογίζει πιο σωστά.",
     gerichteKnopf: "Ποια πιάτα αποδίδουν περισσότερο;", zurUebersicht: "Στη σύνοψη απογραφής",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Έξοδος από λειτουργία προσωπικού", zurueck: "Πίσω", hallo: (n) => `Γεια ${n}`, halloOhne: "Γεια", wechseln: "Αλλαγή", werBistDu: "Ποιος δουλεύει;", ohneNamen: "Χωρίς όνομα",
+    muell: "Απορρίμματα", kuehlung: "Ψύξη", putzen: "Καθαριότητα", offen: (n) => `${n} ανοιχτά` },
+  muell1: { titel: "Απορρίμματα", andere: "Άλλα", portion: (n, z) => `${z} ${n === 1 ? "μερίδα" : "μερίδες"}`, eingetragen: "καταχωρήθηκε", menge: "Αλλαγή ποσότητας", personalessen: "Γεύμα προσωπικού" },
 };

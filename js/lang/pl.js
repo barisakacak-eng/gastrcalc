@@ -945,4 +945,8 @@ export default {
     lueckeGut: "Dobrze. Albo porcje są raczej małe, albo w karcie są większe ilości, niż naprawdę dajecie. Sprawdź przepisy, wtedy aplikacja policzy dokładniej.",
     gerichteKnopf: "Które dania dają najwięcej?", zurUebersicht: "Do przeglądu inwentaryzacji",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Wyjdź z trybu personelu", zurueck: "Wstecz", hallo: (n) => `Cześć ${n}`, halloOhne: "Cześć", wechseln: "Zmień", werBistDu: "Kto pracuje?", ohneNamen: "Bez imienia",
+    muell: "Odpady", kuehlung: "Chłodzenie", putzen: "Sprzątanie", offen: (n) => `${n} otwarte` },
+  muell1: { titel: "Odpady", andere: "Inne", portion: (n, z) => `${z} ${n === 1 ? "porcja" : "porcji"}`, eingetragen: "zapisano", menge: "Zmień ilość", personalessen: "Posiłek personelu" },
 };

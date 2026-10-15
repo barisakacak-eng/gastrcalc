@@ -944,4 +944,8 @@ export default {
     lueckeGut: "Хорошо. Либо порции скорее маленькие, либо в меню стоят большие количества, чем вы реально кладёте. Проверь рецепты – тогда приложение будет считать точнее.",
     gerichteKnopf: "Какие блюда приносят больше всего?", zurUebersicht: "К обзору инвентаризации",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Выйти из режима персонала", zurueck: "Назад", hallo: (n) => `Привет ${n}`, halloOhne: "Привет", wechseln: "Сменить", werBistDu: "Кто работает?", ohneNamen: "Без имени",
+    muell: "Отходы", kuehlung: "Охлаждение", putzen: "Уборка", offen: (n) => `${n} открыто` },
+  muell1: { titel: "Отходы", andere: "Другое", portion: (n, z) => `${z} ${n === 1 ? "порция" : "порций"}`, eingetragen: "записано", menge: "Изменить количество", personalessen: "Питание персонала" },
 };

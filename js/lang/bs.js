@@ -947,4 +947,8 @@ export default {
     lueckeGut: "Tako je dobro. Ili su porcije prije male, ili na jelovniku stoje veće količine nego što stvarno stavljate. Provjeri recepte, pa aplikacija računa tačnije.",
     gerichteKnopf: "Koja jela najviše donose?", zurUebersicht: "Na pregled inventure",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Izađi iz načina za osoblje", zurueck: "Nazad", hallo: (n) => `Zdravo ${n}`, halloOhne: "Zdravo", wechseln: "Promijeni", werBistDu: "Ko radi?", ohneNamen: "Bez imena",
+    muell: "Otpad", kuehlung: "Hlađenje", putzen: "Čišćenje", offen: (n) => `${n} otvoreno` },
+  muell1: { titel: "Otpad", andere: "Ostalo", portion: (n, z) => `${z} ${n === 1 ? "porcija" : "porcija"}`, eingetragen: "upisano", menge: "Promijeni količinu", personalessen: "Obrok za osoblje" },
 };

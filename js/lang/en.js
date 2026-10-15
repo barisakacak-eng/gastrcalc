@@ -937,4 +937,8 @@ export default {
     lueckeGut: "Good. Either portions are on the small side, or your menu lists bigger amounts than you really use. Check the recipes so the app calculates more precisely.",
     gerichteKnopf: "Which dishes earn the most?", zurUebersicht: "To the stocktake overview",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Leave staff mode", zurueck: "Back", hallo: (n) => `Hi ${n}`, halloOhne: "Hi", wechseln: "Switch", werBistDu: "Who is working?", ohneNamen: "No name",
+    muell: "Waste", kuehlung: "Cooling", putzen: "Cleaning", offen: (n) => `${n} open` },
+  muell1: { titel: "Waste", andere: "Other", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "logged", menge: "Change amount", personalessen: "Staff meal" },
 };

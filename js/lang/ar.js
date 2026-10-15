@@ -941,4 +941,8 @@ export default {
     lueckeGut: "جيد هكذا. إما أن الحصص صغيرة نوعًا ما، أو أن المنيو فيه كميات أكبر مما تأخذون فعلًا. افحص الوصفات، وسيحسب التطبيق بدقة أكبر.",
     gerichteKnopf: "أي الأطباق تجلب أكثر؟", zurUebersicht: "إلى نظرة الجرد",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "الخروج من وضع الموظفين", zurueck: "رجوع", hallo: (n) => `مرحبًا ${n}`, halloOhne: "مرحبًا", wechseln: "تبديل", werBistDu: "من يعمل؟", ohneNamen: "بدون اسم",
+    muell: "هدر", kuehlung: "تبريد", putzen: "تنظيف", offen: (n) => `${n} مفتوح` },
+  muell1: { titel: "هدر", andere: "أخرى", portion: (n, z) => `${z} ${n === 1 ? "حصة" : "حصص"}`, eingetragen: "تم التسجيل", menge: "تغيير الكمية", personalessen: "وجبة الموظفين" },
 };

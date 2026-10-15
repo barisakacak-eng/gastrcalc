@@ -938,4 +938,8 @@ export default {
     lueckeGut: "Baş e. An porsiyon hinekî biçûk in, an jî di menûyê de mîqdarên mezintir ji yên ku hûn bi rastî digirin hene. Reçeteyan kontrol bike, paşê app rasttir hesab dike.",
     gerichteKnopf: "Kîjan xwarin herî zêde tînin?", zurUebersicht: "Vegere nêrîna hejmartina malê",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Ji moda karmendan derkeve", zurueck: "Paş", hallo: (n) => `Silav ${n}`, halloOhne: "Silav", wechseln: "Biguherîne", werBistDu: "Kî dixebite?", ohneNamen: "Bê nav",
+    muell: "Avêtî", kuehlung: "Sarkirin", putzen: "Paqijî", offen: (n) => `${n} vekirî` },
+  muell1: { titel: "Avêtî", andere: "Yên din", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "hat tomarkirin", menge: "Mîqdarê biguherîne", personalessen: "Xwarina karmendan" },
 };

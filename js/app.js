@@ -19,7 +19,10 @@ import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen,
 import { laedenView } from "./screens/laeden.js";
 import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { nav, navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
-import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen } from "./screens/muell.js";
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen,
+  muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
+import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
+import { rundgangOffen, kuehlBereit } from "./engine.js"; // D: Personal-Kachel Kühlung
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
@@ -64,6 +67,8 @@ async function eigeneFotosLaden() {
 
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
+  // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
+  if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { personalNachtragen(stand); if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } }
   const kennung = schirmKennung();
   const y = kennung === letzterSchirm ? window.scrollY : 0;
   try {
@@ -83,8 +88,11 @@ function zeichne() {
         : ansicht === "kartefoto" ? karteFotoSchirm()
         : ansicht === "vergleich" ? vergleichView(stand)
         : ansicht === "inventur" ? inventurView(stand)
+        : ansicht === "personal" ? personalView(stand) // D
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
+      // D: Kühlung/Putzen im Personal-Modus ohne Laden-Menü und Schnellknopf – Kopf mit Zurück und Schloss
+      if (personalAktiv() && (ansicht === "kuehl" || ansicht === "putzplan")) { root.querySelectorAll(".appleiste, .schnell, .menue, .menuehinten").forEach((e) => e.remove()); root.firstElementChild.insertAdjacentHTML("afterbegin", personalLeiste(true)); }
       eigeneFotosLaden();
     }
   } catch (e) {
@@ -315,10 +323,28 @@ root.addEventListener("click", async (ev) => {
     if (s.aktion && s.aktion(name, el, stand, ctx)) { speichern(wurzel); if (stand.phase === "onboarding" && !wechselt) zeichne(); }
     return;
   }
+  // D: Müll nachtragen aus Büro/Listen (Tag wählen, dann das Foto-Raster für diesen Tag)
+  if (name === "muell1-nachtragen") { tagAktion("tag-datum", el, stand); muellZuruecksetzen(); ansicht = "muell"; return zeichne(); }
+  // D: Personal-Modus – Person wählen, Kacheln, Zurück zum Personal-Start
+  if (name === "personal-start") { ansicht = "personal"; return zeichne(); }
+  if (ansicht === "personal") {
+    const r = personalAktion(name, el, stand); if (!r) return;
+    if (r.ziel) {
+      const wer = schichtPerson(stand) || "";
+      if (r.ziel === "muell") { tagZuruecksetzen(); muellZuruecksetzen(); }
+      if (r.ziel === "kuehl") { kuehlZuruecksetzen(); if (kuehlBereit(stand) && !rundgangOffen(stand)) { kuehlAktion("kuehl-rundgang", el, stand, wurzel); kuehlAktion("start-von", { dataset: { id: wer } }, stand, wurzel); } }
+      if (r.ziel === "putzplan") { putzplanZuruecksetzen(); if (wer) putzplanAktion("pp-wer", { dataset: { id: wer } }, stand); }
+      herkunft = "personal"; ansicht = r.ziel;
+    }
+    return zeichne();
+  }
   if (name === "tag-datum" || name === "listen-zeitraum" || (name === "schwund-storno" && ansicht !== "muell")) {
     if (tagAktion(name, el, stand)) { speichern(wurzel); zeichne(); } return;
   }
   if (ansicht === "muell") {
+    // D: ein Tipp = eingetragen; nur Kachel, Kopfzahl und Hinweis werden getauscht (kein ganzes Neuzeichnen)
+    if (name === "muell-tipp") { if (muellKlickUnterdrueckt()) return; const r = muellTipp(el, stand); if (r) { if (!muellTippZeigen(root, stand)) zeichne(); speichern(wurzel); ereignis("schwund-eintrag", { laden: stand.id, tipp: true }); } return; }
+    if (name === "muell1-zurueck") { if (muellTippZurueck(stand, el.dataset.id)) { speichern(wurzel); if (!root.querySelector(".muellraster")) zeichne(); else muellZurueckZeigen(root, stand); } return; }
     if (name === "muell-rueckgaengig") { if (muellRueckgaengig(stand, el.dataset.id)) { speichern(wurzel); meldung(t("muell.zurueckgenommen")); } return zeichne(); }
     const r = muellAktion(name, el, stand);
     if (r) { speichern(wurzel); if (name === "muell-weg-damit") ereignis("schwund-eintrag", { laden: stand.id }); if (r.meldung) meldung(r.meldung); zeichne(); }
@@ -454,7 +480,7 @@ window.addEventListener("popstate", () => {
   if (!stand) return;
   if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); zeichne(); return; } // Zurück schließt zuerst das Menü
   if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr || fotoLauf())) { schrittZurueck(); }
-  else if (stand.phase === "app" && ansicht !== "start") {
+  else if (stand.phase === "app" && ansicht !== (personalAktiv() ? "personal" : "start")) { // D: im Personal-Modus ist der Personal-Start das Ende
     if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : "umsatz";
     else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "putzplan" && putzplanZurueck(stand)) { /* eine Ebene hoch */ }
@@ -463,7 +489,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "karte"; }
-    else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }
+    else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = personalAktiv() ? "personal" : "start"; }
     zeichne();
   }
   history.pushState({ schritt: stand.schritt }, "");
@@ -529,6 +555,9 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
   history.pushState({ schritt: stand.schritt }, "");
   zeichne();
 })();
+
+// D: lang drücken auf ein Müll-Foto öffnet das Detail (Menge, Foto, Personalessen)
+muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });
 
 // Für Tests und Fehlersuche
 window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };

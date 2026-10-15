@@ -938,4 +938,8 @@ export default {
     lueckeGut: "Güzel. Ya porsiyonlar küçük ya da menüde gerçekte kullandığınızdan büyük miktarlar yazıyor. Tarifleri kontrol et, uygulama daha doğru hesaplasın.",
     gerichteKnopf: "Hangi yemekler en çok kazandırıyor?", zurUebersicht: "Sayım özetine dön",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Personel modundan çık", zurueck: "Geri", hallo: (n) => `Merhaba ${n}`, halloOhne: "Merhaba", wechseln: "Değiştir", werBistDu: "Kim çalışıyor?", ohneNamen: "İsimsiz",
+    muell: "Çöp", kuehlung: "Soğutma", putzen: "Temizlik", offen: (n) => `${n} açık` },
+  muell1: { titel: "Çöp", andere: "Diğer", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "kaydedildi", menge: "Miktarı değiştir", personalessen: "Personel yemeği" },
 };

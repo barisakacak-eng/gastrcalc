@@ -939,4 +939,8 @@ export default {
     lueckeGut: "Tốt. Hoặc phần ăn hơi nhỏ, hoặc thực đơn ghi định lượng lớn hơn thực tế quán dùng. Kiểm tra công thức, app sẽ tính chính xác hơn.",
     gerichteKnopf: "Món nào lời nhiều nhất?", zurUebersicht: "Về tổng quan kiểm kho",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Thoát chế độ nhân viên", zurueck: "Quay lại", hallo: (n) => `Xin chào ${n}`, halloOhne: "Xin chào", wechseln: "Đổi", werBistDu: "Ai đang làm?", ohneNamen: "Không tên",
+    muell: "Rác thải", kuehlung: "Làm lạnh", putzen: "Vệ sinh", offen: (n) => `${n} chưa xong` },
+  muell1: { titel: "Rác thải", andere: "Khác", portion: (n, z) => `${z} ${n === 1 ? "phần" : "phần"}`, eingetragen: "đã ghi", menge: "Đổi số lượng", personalessen: "Bữa ăn nhân viên" },
 };

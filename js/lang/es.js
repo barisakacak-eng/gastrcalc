@@ -939,4 +939,8 @@ export default {
     lueckeGut: "Bien. O las raciones son más bien pequeñas, o en la carta hay cantidades más grandes de las que de verdad usáis. Revisa las recetas y la app calcula más exacto.",
     gerichteKnopf: "¿Qué platos te dejan más?", zurUebersicht: "Al resumen del inventario",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Salir del modo personal", zurueck: "Atrás", hallo: (n) => `Hola ${n}`, halloOhne: "Hola", wechseln: "Cambiar", werBistDu: "¿Quién trabaja?", ohneNamen: "Sin nombre",
+    muell: "Desperdicio", kuehlung: "Refrigeración", putzen: "Limpieza", offen: (n) => `${n} abiertos` },
+  muell1: { titel: "Desperdicio", andere: "Otros", portion: (n, z) => `${z} ${n === 1 ? "ración" : "raciones"}`, eingetragen: "registrado", menge: "Cambiar cantidad", personalessen: "Comida del personal" },
 };

@@ -938,4 +938,8 @@ export default {
     lueckeGut: "خوب است. یا پرس‌ها کمی کوچک‌اند، یا در منو مقدارها بیشتر از چیزی است که واقعاً برمی‌دارید. دستورهای پخت را چک کن، بعد اپ دقیق‌تر حساب می‌کند.",
     gerichteKnopf: "کدام غذاها بیشتر درمی‌آورند؟", zurUebersicht: "برگشت به نمای انبارگردانی",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "خروج از حالت کارکنان", zurueck: "بازگشت", hallo: (n) => `سلام ${n}`, halloOhne: "سلام", wechseln: "تغییر", werBistDu: "چه کسی کار می‌کند؟", ohneNamen: "بدون نام",
+    muell: "دورریز", kuehlung: "سرمایش", putzen: "نظافت", offen: (n) => `${n} باز` },
+  muell1: { titel: "دورریز", andere: "دیگر", portion: (n, z) => `${z} ${n === 1 ? "پرس" : "پرس"}`, eingetragen: "ثبت شد", menge: "تغییر مقدار", personalessen: "غذای کارکنان" },
 };

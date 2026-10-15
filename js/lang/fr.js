@@ -939,4 +939,8 @@ export default {
     lueckeGut: "C’est bien. Soit les portions sont plutôt petites, soit la carte indique des quantités plus grandes que ce que vous mettez vraiment. Vérifie les recettes, et l’appli calcule plus juste.",
     gerichteKnopf: "Quels plats rapportent le plus ?", zurUebersicht: "Vers la vue d’ensemble de l’inventaire",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Quitter le mode personnel", zurueck: "Retour", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Changer", werBistDu: "Qui travaille ?", ohneNamen: "Sans nom",
+    muell: "Déchets", kuehlung: "Froid", putzen: "Nettoyage", offen: (n) => `${n} ouverts` },
+  muell1: { titel: "Déchets", andere: "Autres", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "enregistré", menge: "Modifier la quantité", personalessen: "Repas du personnel" },
 };

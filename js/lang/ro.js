@@ -946,4 +946,8 @@ export default {
     lueckeGut: "E bine așa. Ori porțiile sunt mai degrabă mici, ori în meniu sunt trecute cantități mai mari decât puneți de fapt. Verifică rețetele și aplicația calculează mai exact.",
     gerichteKnopf: "Ce preparate aduc cel mai mult?", zurUebersicht: "La inventar, privire de ansamblu",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Ieși din modul personal", zurueck: "Înapoi", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Schimbă", werBistDu: "Cine lucrează?", ohneNamen: "Fără nume",
+    muell: "Deșeuri", kuehlung: "Răcire", putzen: "Curățenie", offen: (n) => `${n} deschise` },
+  muell1: { titel: "Deșeuri", andere: "Altele", portion: (n, z) => `${z} ${n === 1 ? "porție" : "porții"}`, eingetragen: "înregistrat", menge: "Schimbă cantitatea", personalessen: "Masa personalului" },
 };

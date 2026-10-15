@@ -944,4 +944,8 @@ export default {
     lueckeGut: "Mirë kështu. Ose porcionet janë më shumë të vogla, ose në meny janë sasi më të mëdha se sa vini vërtet. Kontrollo recetat, pastaj aplikacioni llogarit më saktë.",
     gerichteKnopf: "Cilat pjata sjellin më shumë?", zurUebersicht: "Te pasqyra e inventarit",
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Dil nga modaliteti i stafit", zurueck: "Mbrapa", hallo: (n) => `Përshëndetje ${n}`, halloOhne: "Përshëndetje", wechseln: "Ndrysho", werBistDu: "Kush punon?", ohneNamen: "Pa emër",
+    muell: "Mbeturina", kuehlung: "Ftohja", putzen: "Pastrimi", offen: (n) => `${n} të hapura` },
+  muell1: { titel: "Mbeturina", andere: "Të tjera", portion: (n, z) => `${z} ${n === 1 ? "porcion" : "porcione"}`, eingetragen: "u regjistrua", menge: "Ndrysho sasinë", personalessen: "Ushqim për stafin" },
 };
