@@ -1,3 +1,4 @@
 // Welche Fotos liegen in foto/ (WebP 520 × 390)? Nur gelistete werden geladen – sonst zeigt die App Sanjis Piktogramm (kein 404).
-// Neue Fotos: Datei nach foto/ legen und den Namen hier eintragen (Zoro macht das beim Einspielen von Sanjis Bildpaket).
-export const FOTOS = new Set([]);
+// Stand 15.10.2026: 38 Fotos aus Sanjis drei Bildbögen (mit ChatGPT erzeugt, Nutzung in der App durch Baris), von Zoro zugeschnitten.
+// Neue Fotos: Datei nach foto/ legen und den Namen hier eintragen. Eigene Fotos des Wirts je Gericht gehen vor (bleiben auf dem Gerät).
+export const FOTOS = new Set(["g-asia-nudeln", "g-asia-reis", "g-auflauf", "g-ayran", "g-boerek", "g-burger", "g-cevapi", "g-currywurst", "g-doener", "g-doener-box", "g-doener-teller", "g-duerum", "g-falafel", "g-falafel-teller", "g-fingerfood", "g-getraenk", "g-gyros", "g-iskender", "g-koefte", "g-lahmacun", "g-nudeln", "g-pad-thai", "g-pho", "g-pide", "g-pizza", "g-pommes", "g-salat", "g-schaschlik", "g-seele", "g-sosse", "g-teigtaschen", "g-wurst", "laden-asia", "laden-baeckerei", "laden-doener", "laden-foodtruck", "laden-kiosk", "laden-pizza"]);

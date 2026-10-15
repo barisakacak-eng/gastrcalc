@@ -345,7 +345,8 @@ export const LADEN_ARTEN = [ // Reihenfolge wie im Zielbild (15.10.): Döner, Pi
 
 // Foto je Laden-Art (foto/laden-*.webp, sobald Sanjis Bildpaket da ist), sonst Sanjis Piktogramm
 const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
-const ladenBild = (id) => FOTOS.has("laden-" + id) ? `<img class="kachelfoto" src="foto/laden-${id}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`;
+const LADEN_FOTO = { imbiss: "g-burger", cafe: "g-boerek" };
+const ladenBild = (id) => FOTOS.has(LADEN_FOTO[id] || "laden-" + id) ? `<img class="kachelfoto" src="foto/${LADEN_FOTO[id] || "laden-" + id}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`;
 const ladenSchnell = {
   id: "laden-schnell",
   view: (stand) => `

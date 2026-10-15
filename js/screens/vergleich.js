@@ -16,7 +16,8 @@ export const vergleichModus = (m) => { if (m === "db" || m === "marge") modus = 
 const PIKTO = { doener: "g-doener", "haehnchen-doener": "g-doener", wrap: "g-duerum", "falafel-wrap": "g-duerum", "doener-teller": "g-teller", teller: "g-teller", "falafel-teller": "g-teller",
   "doener-box": "g-box", lahmacun: "g-lahmacun", pide: "g-pide", seele: "g-seele", pizza: "g-pizza", nudeln: "g-nudeln", boerek: "g-boerek", falafel: "g-falafel",
   "doener-salat": "g-salat", salat: "g-salat", pommes: "g-pommes", burger: "g-burger", currywurst: "g-currywurst", wurst: "g-currywurst", "asia-nudeln": "g-asia-nudeln", "pad-thai": "g-asia-nudeln", "asia-reis": "g-asia-nudeln" };
-const FOTO = { "haehnchen-doener": "g-doener", "falafel-wrap": "g-duerum", wrap: "g-duerum", teller: "g-doener-teller", "falafel-teller": "g-falafel-teller", "doener-salat": "g-salat" };
+export const FOTO = { "haehnchen-doener": "g-doener", "falafel-wrap": "g-falafel", wrap: "g-duerum", teller: "g-doener-teller", "falafel-teller": "g-falafel-teller", "doener-salat": "g-salat",
+  shawarma: "g-duerum", pljeskavica: "g-cevapi", sosse: "g-sosse" };
 export function gerichtBild(g) {
   const f = g.rezeptFamilie || "";
   const pikto = `bilder/${PIKTO[f] || "g-teller"}.svg`;

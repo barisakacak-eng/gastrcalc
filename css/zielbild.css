@@ -102,3 +102,5 @@
 .ring.klein { width: 40px; height: 40px; } .ring.klein text { font-size: 18px; }
 .ez-mehr { align-self: flex-end; font-size: 13px; }
 .band { font-size: 14px; padding: 8px 12px; }
+.gerichtbild.mini { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 8px; margin-bottom: 6px; }
+.muellkacheln .kachel { display: flex; flex-direction: column; align-items: stretch; text-align: left; }

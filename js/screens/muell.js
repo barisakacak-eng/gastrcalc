@@ -8,6 +8,14 @@ import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau } from "../muell.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
+import { gerichtBild } from "./vergleich.js";
+// Piktogramm für Rohware (Sanjis w-*-Bilder), nach Wort im Namen bzw. Warengruppe
+const WARE = [[/tomate/i, "w-tomate"], [/salat|eisberg/i, "w-salat"], [/zwiebel/i, "w-zwiebel"], [/gurke/i, "w-gurke"], [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"],
+  [/d[öo]ner|spie(ß|ss)|kalb|pute/i, "w-doenerfleisch"], [/h[äa]hnchen|chicken/i, "w-haehnchen"], [/hack|patty/i, "w-hack"], [/feta|hirten|schafsk/i, "w-feta"], [/k[äa]se|mozzarella|cheddar/i, "w-kaese"],
+  [/mehl|teig/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"], [/pommes/i, "w-pommes-tk"], [/so(ß|ss)e|sauce|mayo|ketchup|dip/i, "w-sosse"], [/brot|fladen|wrap|yufka|bun|br[öo]tchen/i, "w-brot"]];
+const warePikto = (x) => { const n = (WARE.find(([re]) => re.test(x.name)) || [])[1] || (x.gruppe === "getraenk" ? "w-getraenk" : null); return n ? `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">` : ""; };
+// Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
+const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 import { datumLesbar, tagGewaehlt, eintragName, eintragMenge, tagLesbar } from "./tag.js";
 
 let ansicht = "start";   // "start" | "eingabe"
@@ -77,7 +85,7 @@ function eingabeView(stand, D) {
     <h2>${esc(t("muell.auswaehlen"))}</h2><p class="hinweis">${esc(dreisprachig("muell.wasWeg"))}</p>
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))} · ${esc(dreisprachig("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
-      ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"><b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
+      ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${x.typ === "gericht" ? thumb(stand, x.id) : warePikto(x)}<b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
       <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${sym("scale")}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
     </div>
     ${!kacheln.length && !q ? `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div><button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button></div>` : ""}
