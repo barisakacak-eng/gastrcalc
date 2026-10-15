@@ -15,6 +15,7 @@ const Z = (name, menge, einheit = "g") => ({ name, menge, einheit });
 // Bereich (für Klasse und Rechenwerk) je Familie
 export const BEREICH_JE_FAMILIE = { extra: "doener", portion: "beilagen", "doener-teller": "doener", "doener-box": "doener", "falafel-teller": "doener", teller: "doener",
   "doener-salat": "doener", salat: "salat", lahmacun: "doener", pide: "doener", nudeln: "pizza", seele: "pizza", pizza: "pizza", "falafel-wrap": "doener", falafel: "doener",
+  "falafel-box": "doener", pizzabroetchen: "pizza", brot: "doener",
   wrap: "doener", "haehnchen-doener": "doener", doener: "doener", boerek: "doener", cevapi: "doener", burger: "burger", currywurst: "currywurst", "asia-nudeln": "asia", "asia-reis": "asia", pommes: "beilagen",
   sosse: "beilagen", fingerfood: "fingerfood", auflauf: "doener", gemuese: "beilagen", iskender: "doener", "pad-thai": "asia", pho: "asia", teigtaschen: "asia",
   gyros: "doener", shawarma: "doener", pljeskavica: "doener", koefte: "doener", schaschlik: "currywurst", wurst: "currywurst" };
@@ -25,7 +26,8 @@ export const GRUNDREZEPTE = [
   // Punkt 8 (Sanjis Karten Mannheim und DACH): Soße/Dip als Extra, Fingerfood mit Stückzahl, Auflauf, Gemüse, Wurst und Grill, Balkan, Vietnam/Thai, Teigtaschen
   { id: "sosse", muster: /^(?:extra\s+|portion\s+)?(?![^]*\b(?:mit|und|im|in)\b)[\p{L}\s-]{0,24}(so(ß|ss)e|sauce|dip|mayo(nnaise)?|ketchup|aioli)$/iu, zeit: 0, zutaten: [Z("Dressingbecher", 1, "stk")], sosse: true },
   { id: "fingerfood", muster: /nuggets?|onion\s?rings?|zwiebelringe|chicken\s?wings?|\bwings\b|mozzarella.?sticks?|frikandel|chicken\s?strips?|crispy\s?chicken/i, zeit: 4, zutaten: [Z("Fingerfood-Schale", 1, "stk")], stueck: true },
-  { id: "auflauf", muster: /auflauf|[üu]berbacken/i, zeit: 8, fleisch: "Dönerspieß Kalb/Pute",
+  // Nudeln im Ofen („Makkaroni überbacken", „Nudelauflauf") sind Nudeln, kein Döner-Auflauf (Pilot 15.10.)
+  { id: "auflauf", muster: /(?<!(?:maccaroni|makkaroni|macaroni|penne|spaghetti|nudel|pasta|tortellini|rigatoni)[^]*)(?:auflauf|[üu]berbacken)/i, zeit: 8, fleisch: "Dönerspieß Kalb/Pute",
     zutaten: [Z("Dönerspieß Kalb/Pute", 150), Z("Pommes frites", 150), Z("Sahnesauce", 60), Z("Pizzakäse gerieben", 60), Z("Menüschale 1-teilig", 1, "stk")] },
   { id: "gemuese", muster: /gebratene?s?\s+gem[üu]se|gem[üu]sepfanne/i, zeit: 5,
     zutaten: [Z("Paprika", 60), Z("Zucchini", 60), Z("Champignons", 40), Z("Zwiebeln", 30), Z("Sonnenblumenöl", 10, "ml"), Z("Menüschale 1-teilig", 1, "stk")] },
@@ -38,6 +40,8 @@ export const GRUNDREZEPTE = [
   { id: "teigtaschen", muster: /sambosa|samosa|dumplings?|gyoza|wan\s?tan|teigtasche|fr[üu]hlingsroll/i, zeit: 3, zutaten: [Z("Süß-Sauer-Sauce", 30), Z("Fingerfood-Schale", 1, "stk")], stueck: true },
   { id: "doener-teller", muster: /(d[öo]ner|keba[bp])\s?-?teller|teller.*(d[öo]ner|keba[bp])/i, zeit: 8, fleisch: "Dönerspieß Kalb/Pute",
     zutaten: [Z("Dönerspieß Kalb/Pute", 220), Z("Eisbergsalat", 50), Z("Tomaten", 40), Z("Zwiebeln", 20), Z("Weißkohl", 30), Z("Knoblauchsauce", 50), Z("Menüschale 3-teilig", 1, "stk")], beilage: true },
+  { id: "falafel-box", muster: /falafel.?box/i, zeit: 4,
+    zutaten: [Z("Falafelbällchen", 5, "stk"), Z("Pommes frites", 150), Z("Kräutersauce", 30), Z("Pommesschale", 1, "stk")] },
   { id: "doener-box", muster: /d[öo]ner.?box|box/i, zeit: 4, fleisch: "Dönerspieß Kalb/Pute",
     zutaten: [Z("Dönerspieß Kalb/Pute", 120), Z("Pommes frites", 150), Z("Knoblauchsauce", 30), Z("Pommesschale", 1, "stk")] },
   { id: "falafel-teller", muster: /falafel.?teller/i, zeit: 7,
@@ -50,13 +54,17 @@ export const GRUNDREZEPTE = [
     zutaten: [Z("Eisbergsalat", 120), Z("Tomaten", 50), Z("Salatgurke", 50), Z("Zwiebeln", 20), Z("Joghurtdressing", 50), Z("Salatschale", 1, "stk")] },
   { id: "lahmacun", muster: /lahmacun|lahmacun/i, zeit: 4, fleisch: "Lammhackfleisch",
     zutaten: [Z("Lahmacun-Teig", 110), Z("Lammhackfleisch", 80), Z("Zwiebeln", 30), Z("Tomaten", 30), Z("Petersilie", 10), Z("Dönergewürz", 3), Z("Alufolie-Bogen", 1, "stk")] },
-  { id: "pide", muster: /\bpide\b|etli\s?ekmek/i, zeit: 8,
+  // Pide hat keinen Grundkäse: der Belag ist die Hauptsache, deshalb ×1,5 (Käse 75 g, Hack 120 g, Sucuk 75 g – Schätzung)
+  { id: "pide", muster: /\bpide\b|etli\s?ekmek/i, zeit: 8, belagFaktor: 1.5,
     zutaten: [Z("Pide-Teig", 250), Z("Sonnenblumenöl", 10, "ml"), Z("Pizzakarton 30 cm", 1, "stk")] },
   { id: "asia-nudeln", muster: /gebratene?\s+nudeln|\bmie\b|\bmi\s?x[àa]o|bami|udon|chow\s?mein/i, zeit: 6, zutaten: [Z("Mie-Nudeln", 150), Z("Möhren", 30), Z("Sojasprossen", 30), Z("Frühlingszwiebeln", 10), Z("Sojasauce", 15, "ml"), Z("Asia-Box", 1, "stk")] },
   { id: "nudeln", muster: /maccaroni|makkaroni|macaroni|penne|spaghetti|nudel|pasta|tortellini|rigatoni/i, zeit: 10,
     zutaten: [Z("Penne", 130), Z("Pizzatomaten (Dose)", 120), Z("Pizzakäse gerieben", 60), Z("Pastabox", 1, "stk")] },
   { id: "seele", muster: /seele|calzone/i, zeit: 9,
     zutaten: [Z("Pizzateig", 280), Z("Pizzasoße", 60), Z("Pizzakäse gerieben", 80), Z("Pizzakarton 30 cm", 1, "stk")] },
+  // Pizzabrötchen: kleine Teiglinge (je etwa 35 g, ohne Angabe 6 Stück) mit Knoblauchöl und Dip
+  { id: "pizzabroetchen", muster: /pizza.?br[öo]tchen/i, zeit: 6, stueckGramm: { name: "Pizzateig", g: 35 },
+    zutaten: [Z("Pizzateig", 210), Z("Olivenöl", 10, "ml"), Z("Knoblauch", 5), Z("Kräutersauce", 50), Z("Dressingbecher", 1, "stk"), Z("Pizzakarton 30 cm", 1, "stk")] },
   { id: "pizza", muster: /pizza/i, zeit: 8,
     zutaten: [Z("Pizzateig", 280), Z("Pizzasoße", 90), Z("Pizzakäse gerieben", 100), Z("Olivenöl", 5, "ml"), Z("Pizzakarton 30 cm", 1, "stk")] },
   { id: "falafel-wrap", muster: /falafel.*(yufka|d[üu]r[üu]m|wrap)|(yufka|d[üu]r[üu]m|wrap).*falafel/i, zeit: 5,
@@ -77,12 +85,16 @@ export const GRUNDREZEPTE = [
   { id: "koefte", muster: /k[öo]fte|kofte|frikadellenteller/i, zeit: 8, zutaten: [Z("Lammhackfleisch", 200), Z("Zwiebeln", 30), Z("Tomaten", 40), Z("Menüschale 3-teilig", 1, "stk")], beilage: true },
   { id: "schaschlik", muster: /schaschlik/i, zeit: 6, zutaten: [Z("Schweinegeschnetzeltes", 150), Z("Zwiebeln", 30), Z("Paprika", 30), Z("Currysauce", 60), Z("Menüschale 3-teilig", 1, "stk")], beilage: true },
   { id: "wurst", muster: /bratwurst|krakauer|rindswurst|bockwurst|grillwurst|wiener|frikadelle|manta.?platte|malocher/i, zeit: 4, zutaten: [Z("Senf", 15), Z("Pommesschale", 1, "stk")], wurst: true },
-  { id: "boerek", muster: /b[öo]rek|burek/i, zeit: 3, zutaten: [Z("Yufka-Teigblatt", 1, "stk"), Z("Hirtenkäse / Feta", 60), Z("Eier", 0.3, "stk"), Z("Alufolie-Bogen", 1, "stk")] },
+  // Börek: Käse ist die Standardfüllung; nennt der Name eine andere (Ispanaklı, Kıymalı), ersetzt sie den Käse. „Böreği" (Sigara/Su Böreği) zählt mit.
+  { id: "boerek", muster: /b[öo]re[kğg]|burek/i, zeit: 3, fuellung: "Hirtenkäse / Feta", zutaten: [Z("Yufka-Teigblatt", 1, "stk"), Z("Hirtenkäse / Feta", 60), Z("Eier", 0.3, "stk"), Z("Alufolie-Bogen", 1, "stk")] },
   { id: "cevapi", muster: /[čćc]evap|qebap/i, zeit: 8, stueckGramm: { name: "Hackfleisch gemischt", g: 40 }, zutaten: [Z("Hackfleisch gemischt", 200), Z("Zwiebeln", 40), Z("Ajvar", 40), Z("Menüschale 3-teilig", 1, "stk")], beilage: true },
   { id: "burger", muster: /burger/i, zeit: 6, fleisch: "Rinderpatty 150 g",
     zutaten: [Z("Rinderpatty 150 g", 1, "stk"), Z("Burger-Bun", 1, "stk"), Z("Eisbergsalat", 20), Z("Tomaten", 25), Z("Burgersauce", 25), Z("Burgerbox", 1, "stk")] },
   { id: "currywurst", muster: /currywurst/i, zeit: 4, zutaten: [Z("Currywurst", 1, "stk"), Z("Currysauce", 60), Z("Currypulver", 1), Z("Currywurstschale", 1, "stk")] },
   { id: "asia-reis", muster: /gebratener?\s+reis|nasi|curry|wok|ente|\bca\s?ri\b/i, rubrikMuster: /^reis(gerichte)?\b|reisgerichte/i, zeit: 6, zutaten: [Z("Jasminreis", 100), Z("Paprika", 30), Z("Möhren", 30), Z("Sojasauce", 15, "ml"), Z("Asia-Box", 1, "stk")] },
+  // „X im Brot" (Halloumi im Brot, Sucuk im Brot): Fladenbrot mit Salat und Soße, X kommt als Belag dazu
+  { id: "brot", muster: /\bim\s+(?:fladen)?brot\b|\bekme[kğg]i?\s+aras[ıi]/iu, zeit: 4,
+    zutaten: [Z("Dönerbrot / Fladen", 1, "stk"), Z("Eisbergsalat", 40), Z("Tomaten", 30), Z("Zwiebeln", 20), Z("Kräutersauce", 40), Z("Dönertüte", 1, "stk")] },
   { id: "pommes", muster: /pommes|fritten|fries/i, zeit: 3, zutaten: [Z("Pommes frites", 200), Z("Pommesschale", 1, "stk")] },
 ];
 
@@ -122,6 +134,22 @@ export const BELAEGE = [
   [/sahne/i, Z("Sahnesauce", 40)],
   [/tomatenso(ß|ss)e/i, Z("Pizzatomaten (Dose)", 60)],
   [/joghurt/i, Z("Joghurtsauce", 30)],
+  // Pilot 15.10.: türkische Karten-Wörter (Peynirli, Kaşarlı, Kıymalı, Kuşbaşılı, Ispanaklı, Yumurtalı – Sucuklu trifft schon „sucuk")
+  [/peynir/iu, Z("Hirtenkäse / Feta", 50)],
+  [/ka[şs]ar/iu, Z("Pizzakäse gerieben", 50)],
+  [/k[ıiIİ]yma/iu, Z("Rinderhack", 80)],
+  [/ku[şs]\s?ba[şs][ıi]/iu, Z("Rindergeschnetzeltes", 80)],
+  [/[ıiIİ]spanak/iu, Z("Babyspinat", 50)],
+  [/yumurta/iu, Z("Eier", 1, "stk")],
+  [/hall?oum[iy]|hellim/iu, Z("Halloumi", 80)],
+  // „Fleisch" allein (Extra Fleisch, Pide mit Fleisch): im Dönerladen das Dönerfleisch; nicht in „Dönerfleisch", „Rindfleisch" …
+  [/(?<!\p{L})fleisch(?!\p{L})/iu, Z("Dönerspieß Kalb/Pute", 80)],
+  [/gem[üu]se/i, Z("Paprika", 40)],
+  [/gem[üu]se/i, Z("Zucchini", 30)],
+  // Karışık / gemischt: Sucuk + Hack + Käse, nur bei Teig-Gerichten („Gemischter Salat" bleibt ein Salat)
+  [/kar[ıi][şs][ıi]k|gemischt|\bmixed\b/iu, Z("Sucuk", 30), ["pide", "seele", "pizza", "lahmacun"]],
+  [/kar[ıi][şs][ıi]k|gemischt|\bmixed\b/iu, Z("Rinderhack", 40), ["pide", "seele", "pizza", "lahmacun"]],
+  [/kar[ıi][şs][ıi]k|gemischt|\bmixed\b/iu, Z("Pizzakäse gerieben", 40), ["pide", "seele", "pizza", "lahmacun"]],
 ];
 
 // Beilage bei Tellern/Platten: „mit Reis oder Pommes" → erste Wahl (der Wirt kann tauschen)
@@ -141,7 +169,7 @@ const WUERSTE = [[/krakauer/i, "Krakauer"], [/frikadelle/i, "Frikadelle"], [/boc
 const stueckzahl = (n) => { const m = String(n).match(/(\d{1,2})\s*(?:stk\.?|st[üu]ck|pcs|tlg|er\b)/i); return m ? Number(m[1]) : null; };
 
 const istFleisch = (n) => /spie(ß|ss)|fleisch|hack|sucuk|schinken|salami|patty|wurst|h[äa]hnchen|lamm|rind|pute|thunfisch/i.test(n);
-const istKaese = (n) => /k[äa]se|feta|mozzarella|cheddar/i.test(n);
+const istKaese = (n) => /k[äa]se|feta|mozzarella|cheddar|halloumi/i.test(n);
 const runde = (x) => (x >= 20 ? Math.round(x / 5) * 5 : Math.round(x * 10) / 10);
 
 // Gericht → { familie, zutaten, zeit, hinweise[] } oder null (Name passt zu nichts)
@@ -186,8 +214,8 @@ export function rezeptBauen(name, { rubrik = null } = {}) {
   if (g.stueckGramm) { const k = stueckzahl(n); if (k) zutaten = zutaten.map((z) => (z.name === g.stueckGramm.name ? { ...z, menge: k * g.stueckGramm.g } : z)); }
   const vegan = /\bvegan/i.test(n), vegetarisch = vegan || /vegetari|veggie/i.test(n);
   const belag = [];
-  for (const [re, z] of BELAEGE) {
-    if (!re.test(mitOhneOder)) continue;
+  for (const [re, z, nur] of BELAEGE) {
+    if (!re.test(mitOhneOder) || (nur && !nur.includes(g.id))) continue;
     if (/tomatenso(ß|ss)e/i.test(mitOhneOder) && z.name === "Knoblauchsauce") continue;
     if (g.beilage && BEILAGEN.some(([b]) => b.test(mitOhneOder) && b.test(z.name.toLowerCase()))) continue;
     if (g.fleisch && z.name === g.fleisch) continue; // „Döner Box": das Fleisch steckt schon im Grundrezept
@@ -213,6 +241,11 @@ export function rezeptBauen(name, { rubrik = null } = {}) {
   if (vegan) {
     zutaten = zutaten.filter((z) => !istKaese(z.name) && z.name !== "Eier"); for (let i = belag.length - 1; i >= 0; i--) if (istKaese(belag[i].name) || belag[i].name === "Eier") belag.splice(i, 1);
     zutaten = zutaten.map((z) => (/knoblauchsauce|joghurt/i.test(z.name) ? { ...z, name: "Kräutersauce" } : z));
+  }
+  // Füllung (Börek): die Standardfüllung bleibt, wenn der Name sie nennt (Peynirli), sonst ersetzt der Belag sie (Ispanaklı, Kıymalı)
+  if (g.fuellung && belag.length) {
+    const i = belag.findIndex((b) => b.name === g.fuellung);
+    if (i >= 0) belag.splice(i, 1); else zutaten = zutaten.filter((z) => z.name !== g.fuellung);
   }
   // Belag mit gleichem Artikel wie das Grundrezept: Menge erhöhen statt doppelt aufführen
   for (const b of belag) {

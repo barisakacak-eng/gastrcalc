@@ -34,7 +34,7 @@ export const KATALOG = {
       K("Lammhackfleisch", "kg", "fleisch"), K("Adana-Spieß", "stk", "fleisch"),
       K("Falafelbällchen", "stk", "fleisch"), K("Sucuk", "kg", "fleisch"),
       K("Putenbrustschinken", "kg", "fleisch"), K("Truthahnsalami", "kg", "fleisch"),
-      K("Hirtenkäse / Feta", "kg", "kaese"), K("Kräuterquark", "kg", "kaese"),
+      K("Hirtenkäse / Feta", "kg", "kaese"), K("Kräuterquark", "kg", "kaese"), K("Halloumi", "kg", "kaese"),
       K("Eisbergsalat", "kg", "gemuese"), K("Weißkohl", "kg", "gemuese"),
       K("Rotkohl", "kg", "gemuese"), K("Tomaten", "kg", "gemuese"),
       K("Zwiebeln", "kg", "gemuese"), K("Salatgurke", "kg", "gemuese"),
