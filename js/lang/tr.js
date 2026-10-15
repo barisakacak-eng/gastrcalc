@@ -953,4 +953,22 @@ export default {
       laeden: "Burada dükkânların arasında geçiş yaparsın. Her dükkânın kendi rakamları var.",
       personal: "Çöp gir, soğutmayı ölç, temizliği işaretle. Geri dönüş sadece büro koduyla veya kilide 2 saniye basarak.",
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
+  // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân „Bugün“ ve „Ofiste açık“
+  heute: {
+    stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
+    tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",
+    kachel: { umsatz: "Bugünkü ciro", muell: "Bugünkü çöp", kuehlung: "Soğutma", putzen: "Temizlik" },
+    ok: "Tamam", offenN: (n) => `${n} açık`, jetztDran: "Şimdi sırada",
+    dran: { zuWarm: (s) => `${s} fazla sıcak`, zuKalt: (s) => `${s} fazla soğuk`, nachmessen: "Tekrar ölç", rundgang: "Soğutma turu", rundgangWeiter: "Tura devam et",
+      putzen: (n) => `${n} görev gecikti`, sicherung: "Yedek al", sichern: "Yedekle", abschluss: "Günü kapat", los: "Başla" },
+    offen: { fassung: "Uygulamanın yeni sürümü hazır", einrichtung: (p, s) => `Kurulum %${p} – sıradaki: ${s}`, kosten: "Sabit giderler veya maaşlar eksik",
+      karteGrau: (n) => `${n} yemeğin fiyatı veya tarifi yok`, waage: (n) => `${n} tarif tahmini – bir kez tart`,
+      putzplan: "Temizlik planını kur (HACCP önerisi)", sicherung: (n) => `Son yedek ${n} gün önce`, sicherungNie: "Henüz yedek yok",
+      muellOhneWert: (n) => `${n} çöp kaydının değeri yok` },
+  },
+  kartelaeden: {
+    titel: "Menü", anzahl: (n) => `${n} yemek`, alle: "Hepsi", zuBillig: (n) => `Çok ucuz · ${n}`, mehr: (n) => `${n} tane daha göster`,
+    leer: "Henüz yemek yok", fotografieren: "Menünün fotoğrafını çek", bleibt: "Sana kalan", speichern: "Kaydet", gespeichert: "Fiyat kaydedildi", preis: "Fiyat", schliessen: "Kapat",
+    ampel: { gruen: "Hedefe ulaşıldı", gelb: "Giderler karşılandı, hedefin altında", rot: "Çok ucuz", grau: "Henüz hesaplanamıyor" },
+  },
 };

@@ -954,4 +954,22 @@ export default {
       laeden: "Hier wechselst du zwischen deinen Läden. Jeder Laden hat eigene Zahlen.",
       personal: "Müll eintragen, Kühlung messen, Putzen abhaken. Zurück nur mit Büro-Code oder 2 Sekunden aufs Schloss.",
       buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
+  // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
+  heute: {
+    stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },
+    tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",
+    kachel: { umsatz: "Umsatz heute", muell: "Müll heute", kuehlung: "Kühlung", putzen: "Putzen" },
+    ok: "OK", offenN: (n) => `${n} offen`, jetztDran: "Jetzt dran",
+    dran: { zuWarm: (s) => `${s} zu warm`, zuKalt: (s) => `${s} zu kalt`, nachmessen: "Nachmessen", rundgang: "Kühlrundgang", rundgangWeiter: "Rundgang fortsetzen",
+      putzen: (n) => n === 1 ? "1 Aufgabe überfällig" : `${n} Aufgaben überfällig`, sicherung: "Sicherung machen", sichern: "Sichern", abschluss: "Tag abschließen", los: "Los" },
+    offen: { fassung: "Neue App-Fassung liegt bereit", einrichtung: (p, s) => `Einrichtung ${p} % – als Nächstes: ${s}`, kosten: "Feste Kosten oder Löhne unvollständig",
+      karteGrau: (n) => n === 1 ? "1 Gericht ohne Preis oder Rezept" : `${n} Gerichte ohne Preis oder Rezept`, waage: (n) => n === 1 ? "1 Rezept geschätzt – einmal abwiegen" : `${n} Rezepte geschätzt – einmal abwiegen`,
+      putzplan: "Putzplan einrichten (HACCP-Empfehlung)", sicherung: (n) => `Letzte Sicherung vor ${n} ${n === 1 ? "Tag" : "Tagen"}`, sicherungNie: "Noch keine Sicherung",
+      muellOhneWert: (n) => n === 1 ? "1 Müll-Eintrag ohne Wert" : `${n} Müll-Einträge ohne Wert` },
+  },
+  kartelaeden: {
+    titel: "Karte", anzahl: (n) => n === 1 ? "1 Gericht" : `${n} Gerichte`, alle: "Alle", zuBillig: (n) => `Zu billig · ${n}`, mehr: (n) => `${n} weitere zeigen`,
+    leer: "Noch keine Gerichte", fotografieren: "Karte fotografieren", bleibt: "Bleibt dir", speichern: "Speichern", gespeichert: "Preis gespeichert", preis: "Preis", schliessen: "Schließen",
+    ampel: { gruen: "Ziel erreicht", gelb: "Kosten gedeckt, unter Ziel", rot: "Zu billig", grau: "Noch nicht berechenbar" },
+  },
 };

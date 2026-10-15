@@ -132,7 +132,7 @@ async def main():
             await pg.click('[data-a="fertig"]'); await pg.wait_for_selector(".cockpit")
             # ---- Cockpit
             await bild("cockpit-leer")
-            html = await pg.content(); assert "Bis null fehlen" in html and "Umsatz im Monat" in html and "appleiste" in html
+            html = await pg.content(); assert "Bis null fehlen" in html and "Umsatz heute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro
             z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
             assert z["stufe"] == 2 and z["keinUmsatz"] and z["quote"] > 0.05, {k: z[k] for k in ("stufe", "keinUmsatz", "quote")}
             # Drei Ebenen: fünf Reiter unten, kein Schnellknopf; ☰ öffnet ein Blatt mit großen Kacheln, ohne den Bildschirm neu zu zeichnen
@@ -195,7 +195,7 @@ async def main():
             html = await pg.content(); assert "Am meisten weg" in html
             # ---- Cockpit mit Zahlen
             await geh("start"); await bild("cockpit-mit-zahlen")
-            html = await pg.content(); assert "Müll heute" in html and "Umsatz im Monat" in html and "1.850" in html
+            html = await pg.content(); assert "Müll heute" in html and "1.850" in html
             # ---- Beleg einlesen
             await geh("beleg"); await bild("beleg-leer"); await pg.click('[data-a="beleg-text-zeigen"]'); await pg.wait_for_selector('[data-f="beleg-text"]')
             assert await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
@@ -225,7 +225,7 @@ async def main():
             await pg.click('[data-a="abschluss-fertig"]'); await pg.wait_for_timeout(300); await bild("abschluss-bilanz")
             s = await stand(); assert len(s["abschluesse"]) == 1 and s["abschluesse"][0]["umsatz"] == 1850, s["abschluesse"]
             html = await pg.content(); assert "Tag geschafft" in html
-            await geh("start"); html = await pg.content(); assert "Tag abschließen" not in await pg.locator(".jetzt").inner_text()  # Abschluss steht nicht mehr in „Jetzt dran"
+            await geh("start"); html = await pg.content(); assert "Tag abschließen" not in await pg.inner_text(".cockpit")  # Abschluss steht nicht mehr in „Jetzt dran"
             await bild("cockpit-abgeschlossen")
             # ---- Neuladen: alles da, Schema 4
             await pg.reload(); await pg.wait_for_selector(".cockpit")

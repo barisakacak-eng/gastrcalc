@@ -952,4 +952,22 @@ export default {
       laeden: "Switch between your shops here. Each shop has its own numbers.",
       personal: "Log waste, measure fridges, tick off cleaning. Back only with the office code or by holding the lock for 2 seconds.",
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
+  // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
+  heute: {
+    stufe: { bisNull: "Left to break even", bisZiel: "Left to target", ueberZiel: "Above target" },
+    tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
+    kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },
+    ok: "OK", offenN: (n) => `${n} open`, jetztDran: "Up next",
+    dran: { zuWarm: (s) => `${s} too warm`, zuKalt: (s) => `${s} too cold`, nachmessen: "Re-check", rundgang: "Fridge round", rundgangWeiter: "Continue round",
+      putzen: (n) => n === 1 ? "1 task overdue" : `${n} tasks overdue`, sicherung: "Make a backup", sichern: "Back up", abschluss: "Close the day", los: "Go" },
+    offen: { fassung: "New app version ready", einrichtung: (p, s) => `Setup ${p} % – next: ${s}`, kosten: "Fixed costs or wages incomplete",
+      karteGrau: (n) => n === 1 ? "1 dish without price or recipe" : `${n} dishes without price or recipe`, waage: (n) => n === 1 ? "1 recipe estimated – weigh it once" : `${n} recipes estimated – weigh them once`,
+      putzplan: "Set up cleaning plan (HACCP advice)", sicherung: (n) => `Last backup ${n} ${n === 1 ? "day" : "days"} ago`, sicherungNie: "No backup yet",
+      muellOhneWert: (n) => n === 1 ? "1 waste entry without value" : `${n} waste entries without value` },
+  },
+  kartelaeden: {
+    titel: "Menu", anzahl: (n) => n === 1 ? "1 dish" : `${n} dishes`, alle: "All", zuBillig: (n) => `Too cheap · ${n}`, mehr: (n) => `Show ${n} more`,
+    leer: "No dishes yet", fotografieren: "Photograph the menu", bleibt: "You keep", speichern: "Save", gespeichert: "Price saved", preis: "Price", schliessen: "Close",
+    ampel: { gruen: "Target reached", gelb: "Costs covered, below target", rot: "Too cheap", grau: "Not calculable yet" },
+  },
 };
