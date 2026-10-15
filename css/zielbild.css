@@ -162,3 +162,126 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .knopf.glut, .fotofeld .knopf.glut, .muellknopf { background: #CD8043; } /* Kupfer minimal heller: dunkle Schrift 4,8:1 statt 4,5:1 knapp darunter */
 .zeileknopf .pfeil, .pfeil { color: #8F6E44; }
 .karte.zaehler .bewegung .pfeil { color: #C9D6CB; } .jetzt .pfeil { color: var(--salbei-tief); }
+
+/* ===== Inventur (Punkt 3, 15.10.: A1 Liste + A2 Karte je Ware, Ergebnis A–E) – nur Klassen mit „inv-“ ===== */
+.m-inventur .farbe { background: var(--kupfer-dunkel); }
+.inv-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.inv-kopf > div { min-width: 0; }
+.knopf.inv-pause { width: auto; flex: none; min-height: 44px; padding: 8px 14px; font-size: 15px; margin-top: 4px; }
+.inv-startknopf { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; }
+.inv-offenkarte p { color: var(--tinte); }
+.inv-verlauf { min-height: 56px; }
+.inv-verlauf .inv-verlaufwert { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inv-verlauf small { display: block; color: var(--tinte-weich); font-size: 14px; }
+/* A1 Liste */
+.inhalt.inv-listeseite { gap: 12px; padding-bottom: 0; }
+.inv-zusammen { flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; }
+.inv-zusammen b { font-size: 16px; } .inv-summe { text-align: right; } .inv-summe small { display: block; color: var(--tinte-weich); font-size: 14px; }
+.inv-summe b { font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inv-balken { height: 6px; width: 150px; max-width: 100%; background: var(--papier-tief); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.inv-balken i { display: block; height: 100%; background: var(--salbei); border-radius: 3px; }
+.inv-balken.gross { width: 100%; height: 6px; margin: 0; } .inv-balken.gross i { background: var(--glut); }
+.inv-gruppe { display: flex; flex-direction: column; }
+.inv-gruppenkopf { position: sticky; top: 60px; z-index: 5; display: flex; align-items: center; gap: 10px; margin: 0 -20px; padding: 10px 20px; background: rgba(245,235,221,.96);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--holz); font-size: 16px; font-weight: 800; color: var(--tinte); }
+.inv-gruppenkopf > span:nth-child(2) { min-width: 0; overflow-wrap: anywhere; }
+.inv-gruppenkopf small { margin-left: auto; font-weight: 600; color: var(--tinte-weich); font-size: 14px; white-space: nowrap; }
+.inv-gsym { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--salbei-hell); color: var(--salbei-tief); }
+.inv-gsym .sym { width: 19px; height: 19px; }
+.ort-kuehlhaus .inv-gsym, .ort-tiefkuehler .inv-gsym { background: var(--branche-hell); color: var(--branche); }
+.ort-trockenlager .inv-gsym { background: #F6E6D6; color: var(--kupfer-dunkel); }
+.inv-liste { display: flex; flex-direction: column; gap: 10px; padding: 10px 0 4px; }
+.inv-posten { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); padding: 10px; box-shadow: 0 2px 6px rgba(31,42,36,.04); }
+.inv-posten.offen { background: transparent; border-style: dashed; border-color: var(--holz-tief); box-shadow: none; }
+.inv-oben { display: flex; align-items: center; gap: 8px; }
+.inv-auf { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 0; border: 0; background: none; text-align: left; font: inherit; color: var(--tinte); }
+.gerichtbild.mini.inv-daumen { width: 54px; height: 54px; aspect-ratio: auto; margin: 0; flex: none; border-radius: 10px; }
+.gerichtbild.mini.inv-daumen.pikto { padding: 6px; }
+.inv-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.inv-text b { font-size: 16px; line-height: 1.2; overflow-wrap: break-word; hyphens: auto; }
+.inv-text small { color: var(--tinte-weich); font-size: 13.5px; line-height: 1.3; overflow-wrap: break-word; }
+.inv-text small.inv-eur { font-weight: 700; color: var(--eigen); }
+.inv-text small.inv-eur.fehlt { color: var(--geschaetzt-text); font-weight: 600; }
+.inv-text small.inv-eur.leer { font-weight: 500; color: var(--tinte-weich); }
+.inv-mini { display: flex; align-items: center; gap: 2px; flex: none; }
+.inv-mini button { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid var(--holz); background: var(--weiss); font-size: 24px; line-height: 1; padding: 0; color: var(--tinte); }
+.inv-mini button.plus { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
+.inv-mini .wert { min-width: 40px; text-align: center; font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inv-posten.offen .inv-mini .wert { color: var(--tinte-weich); font-weight: 500; }
+.inv-anbruch { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 64px; }
+.inv-anbruch span { font-size: 13px; color: var(--tinte-weich); margin-right: 2px; }
+.inv-anbruch button { min-height: 44px; min-width: 48px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--holz); background: var(--weiss); font-size: 16px; font-weight: 700; color: var(--tinte); }
+.inv-anbruch button.an { background: #F6E6D6; border-color: var(--glut); color: var(--kupfer-dunkel); }
+.inv-dazu .inv-treffer { display: flex; flex-direction: column; gap: 8px; }
+.inv-dazu .zeileknopf { min-height: 52px; padding: 10px 14px; } .inv-dazu .zeileknopf small { display: block; color: var(--tinte-weich); font-size: 13.5px; }
+.inv-weg { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--papier-tief); }
+.inv-weg span { min-width: 0; overflow-wrap: anywhere; }
+.inv-verwerfen { align-self: center; color: var(--tinte-weich); }
+.inv-fuss { position: sticky; bottom: 0; z-index: 6; margin: 4px -20px 0; padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 14px);
+  background: linear-gradient(to top, var(--papier) 78%, rgba(245,235,221,0)); display: flex; flex-direction: column; gap: 6px; }
+.inv-fuss small { text-align: center; color: var(--tinte-weich); font-size: 14px; font-variant-numeric: tabular-nums; }
+.inv-fuss.reihe { flex-direction: row; gap: 10px; } .inv-fuss.reihe .knopf.zweit { width: 40%; flex: none; } .inv-fuss.reihe .knopf:not(.zweit) { flex: 1; }
+/* A2 Karte je Ware */
+.inhalt.inv-karteseite { gap: 10px; padding-top: 10px; padding-bottom: 0; }
+.inv-ort { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; color: var(--tinte-weich); } .inv-ort b { color: var(--tinte); }
+.inv-karte { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius-gross); box-shadow: var(--schatten-karte); overflow: hidden; }
+.gerichtbild.inv-foto { width: 100%; height: 184px; border-radius: 0; display: block; object-fit: cover; }
+.gerichtbild.inv-foto.pikto { object-fit: contain; padding: 22px; }
+.inv-koerper { padding: 14px 16px 16px; display: flex; flex-direction: column; }
+.inv-koerper h2 { font-size: 25px; letter-spacing: -.02em; line-height: 1.15; color: var(--tinte); overflow-wrap: break-word; hyphens: auto; }
+.inv-einheit { color: var(--tinte-weich); font-size: 15.5px; margin-top: 2px; } .inv-einheit b { color: var(--tinte); }
+.inv-letztes { align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; margin-top: 8px; font-size: 14px; color: var(--branche); background: var(--branche-hell); border-radius: 8px; padding: 4px 10px; }
+.inv-letztes .sym { width: 16px; height: 16px; }
+.inv-grosszahl { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 8px; }
+.inv-grosszahl button { width: 76px; height: 76px; border-radius: 50%; border: 2px solid var(--holz); background: var(--weiss); font-size: 36px; line-height: 1; flex: none; padding: 0; color: var(--tinte); }
+.inv-grosszahl button.plus { background: var(--salbei-tief); color: var(--weiss); border-color: var(--salbei-tief); box-shadow: var(--schatten-knopf); }
+.inv-mitte { text-align: center; min-width: 0; } .inv-mitte b { display: block; font-size: 52px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.inv-mitte small { color: var(--tinte-weich); font-size: 15px; }
+.inv-teilwahl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 14px; background: var(--papier-tief); padding: 4px; border-radius: 12px; }
+.inv-teilwahl button { min-height: 46px; border: 0; border-radius: 9px; background: transparent; font-weight: 750; font-size: 16px; color: var(--tinte-weich); padding: 0 4px; }
+.inv-teilwahl button.an { background: var(--weiss); color: var(--kupfer-dunkel); box-shadow: 0 1px 4px rgba(31,42,36,.15); }
+.inv-teilhinweis { font-size: 13.5px; color: var(--tinte-weich); margin-top: 6px; text-align: center; }
+.inv-wertzeile { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--papier-tief); font-size: 15.5px; color: var(--tinte-weich); }
+.inv-wertzeile b { color: var(--eigen); font-size: 18px; font-variant-numeric: tabular-nums; } .inv-wertzeile b.fehlt { color: var(--geschaetzt-text); font-size: 15.5px; }
+.inv-karteseite > .leise { align-self: center; }
+/* Ergebnis A–E */
+.inhalt.inv-ergebnis { gap: 12px; }
+.karte.inv-zaehler { background: linear-gradient(156deg, var(--salbei-tief), #395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); gap: 2px; }
+.inv-zaehler .lbl { font-size: 14px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #E6EBDD; }
+.inv-zaehler .riesig { font-size: clamp(36px, 11vw, 46px); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.karte.inv-zaehler small { color: #E6EBDD; font-size: 15px; } .inv-delta { color: #C7F2D0; font-weight: 700; white-space: nowrap; }
+.inv-was { margin: -2px 0 4px; padding: 10px 12px; border-radius: 0 10px 10px 0; border-left: 4px solid var(--glut); background: #F6E6D6; color: var(--tinte); font-size: 15px; line-height: 1.45; }
+.inv-was b { color: var(--kupfer-dunkel); }
+.inv-ue { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tinte-weich); margin: 8px 0 -2px; }
+.karte.inv-rechnung { gap: 0; padding: 8px 16px; }
+.inv-z { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--papier-tief); font-size: 16px; }
+.inv-z span { color: var(--tinte-weich); min-width: 0; } .inv-z span em { font-style: normal; display: inline-block; width: 20px; font-weight: 800; color: var(--tinte); }
+.inv-z b { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.inv-z.summe { border-bottom: 0; border-top: 2px solid var(--tinte); margin-top: 2px; font-weight: 800; } .inv-z.summe span { color: var(--tinte); }
+.inv-belege p { color: var(--geschaetzt-text); font-size: 15px; }
+.karte.inv-vergleich { gap: 12px; }
+.inv-vbalken .kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 15px; margin-bottom: 5px; }
+.inv-vbalken .kopf span { min-width: 0; } .inv-vbalken .kopf b { font-size: 18px; white-space: nowrap; font-variant-numeric: tabular-nums; } .inv-vbalken .kopf b.rot { color: var(--muell); }
+.inv-bahn { height: 16px; border-radius: 8px; background: var(--papier-tief); overflow: hidden; } .inv-bahn i { display: block; height: 100%; border-radius: 8px; }
+.inv-klein { color: var(--tinte-weich); font-size: 13.5px; }
+.inv-luecke { background: var(--muell-hell); border: 2px solid var(--muell); border-radius: var(--radius); padding: 14px 16px; }
+.inv-luecke b.gross { display: block; font-size: 22px; color: var(--muell); letter-spacing: -.02em; line-height: 1.2; }
+.inv-luecke.gut { background: var(--eigen-hell); border-color: var(--eigen); } .inv-luecke.gut b.gross { color: var(--eigen); }
+.inv-aufteilung { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0 6px; background: var(--weiss); }
+.inv-aufteilung i.muell, .inv-legende i.muell { background: var(--muell); }
+.inv-aufteilung i.rest { flex: 1; background: repeating-linear-gradient(45deg, #D9B3AC 0 6px, #EBCFCA 6px 12px); } .inv-legende i.rest { background: #D9B3AC; }
+.inv-legende { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--tinte); }
+.inv-legende i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
+.inv-erste p { color: var(--tinte); }
+.inv-ergebnis > .leise { align-self: center; }
+.inv-delta.minus { color: #E6EBDD; }
+/* Schmale Handys (360 px): Namen nicht mitten im Wort trennen – Bild und Knöpfe etwas kleiner, Knöpfe bleiben ≥ 44 px */
+@media (max-width: 400px) {
+  .inv-posten { padding: 10px 8px; }
+  .gerichtbild.mini.inv-daumen { width: 44px; height: 44px; }
+  .inv-auf { gap: 8px; }
+  .inv-text b { font-size: 15px; word-break: normal; overflow-wrap: break-word; }
+  .inv-mini button { width: 44px; height: 44px; }
+  .inv-mini .wert { min-width: 34px; font-size: 18px; }
+  .inv-anbruch { margin-left: 52px; }
+}

@@ -21,11 +21,12 @@ import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen,
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
+import { inventurView, inventurAktion, inventurEingabe, inventurZurueck, inventurZuruecksetzen, inventurKennung } from "./screens/inventur.js";
 
 const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
-let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen
+let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
 let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
@@ -35,7 +36,7 @@ let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner s
 let ruheBis = 0, tippX = -99, tippY = -99; // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
 
 function aktivSetzen(id) {
-  if (stand && stand.id !== id) { fotoZuruecksetzen(); tagZuruecksetzen(); kuehlZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); } // offene Formulare gehören zum alten Laden
+  if (stand && stand.id !== id) { fotoZuruecksetzen(); tagZuruecksetzen(); kuehlZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); } // offene Formulare gehören zum alten Laden
   stand = wurzel.betriebe.find((b) => b.id === id) || null;
   if (!stand) { stand = wurzel.betriebe[0] || null; }
   if (!stand) { stand = leererBetrieb(); wurzel.betriebe.push(stand); }
@@ -45,7 +46,7 @@ function aktivSetzen(id) {
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : "";
+  const unter = ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : "";
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -77,6 +78,7 @@ function zeichne() {
         : ansicht === "abschluss" ? abschlussView(stand)
         : ansicht === "kartefoto" ? karteFotoSchirm()
         : ansicht === "vergleich" ? vergleichView(stand)
+        : ansicht === "inventur" ? inventurView(stand)
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       eigeneFotosLaden();
@@ -188,7 +190,7 @@ async function fertig(ziel = "start") {
 function bearbeiten(vonId, bisId) {
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ansicht === "einstellungen" || ansicht === "karte" ? ansicht : "start" };
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ansicht === "einstellungen" || ansicht === "karte" || ansicht === "inventur" ? ansicht : "start" };
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();
@@ -280,6 +282,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
+    if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
@@ -297,7 +300,7 @@ root.addEventListener("click", async (ev) => {
   }
   if (name === "loeschen") {
     if (!confirm(t("einstellungen.loeschenFrage"))) return;
-    speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+    speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
     setzeSprache(spracheDesGeraets()); return zeichne();
   }
   if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache); speichern(wurzel); return zeichne(); }
@@ -328,6 +331,15 @@ root.addEventListener("click", async (ev) => {
   if (ansicht === "abschluss") {
     const r = abschlussAktion(name, el, stand, wurzel);
     if (r) { ereignis("tag-abgeschlossen", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); }
+  }
+  if (ansicht === "inventur") {
+    const r = inventurAktion(name, el, stand);
+    if (r) {
+      if (r === "abgeschlossen") { ereignis("inventur-fertig", { laden: stand.id }); await sofortSpeichern(wurzel); }
+      else if (r === "sofort" || r.sofort) await sofortSpeichern(wurzel); else speichern(wurzel);
+      if (r.meldung) meldung(r.meldung);
+      zeichne();
+    }
   }
   if (ansicht === "kuehl") {
     const r = kuehlAktion(name, el, stand, wurzel);
@@ -363,6 +375,8 @@ root.addEventListener("input", (ev) => {
   } else if (ansicht === "einstellungen") {
     if (el.dataset.f === "warenQuote") { const n = parseZahl(el.value); stand.verkauf.warenQuote = n !== null && n < 90 ? n / 100 : null; }
     if (el.dataset.f === "steuerSatz") { const n = parseZahl(el.value); stand.betrieb.steuerSatz = n !== null && n < 100 ? n / 100 : null; }
+  } else if (ansicht === "inventur") {
+    neu = inventurEingabe(el.dataset.f, el.value);
   } else if (ansicht === "kuehl") {
     neu = kuehlEingabe(el.dataset.f, el.value, stand);
     if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="station-speichern"]'); if (k) k.disabled = !kuehlFormGueltig(); }
@@ -383,7 +397,7 @@ root.addEventListener("focusout", (ev) => {
     if (el.dataset.f === "umsatz") { umsatzEingabe("umsatz", "", stand, wurzel); speichern(wurzel); } // halbe Zahl nicht stehen lassen
   }
   if (el.dataset.f.startsWith("wert:") && tagWertUebernehmen(el.dataset.f, el.value, stand)) { speichern(wurzel); meldung(t("tag.gespeichert")); }
-  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen", "beleg"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
+  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen", "beleg", "inventur"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
 });
 
 root.addEventListener("change", async (ev) => {
@@ -437,6 +451,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "karte"; }
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }

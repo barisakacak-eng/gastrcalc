@@ -37,7 +37,7 @@ export function menueZaehler(stand, wurzel) {
 
 const GRUPPEN = [
   ["heute", [["start", "menue.cockpit"], ["muell", "menue.muell"], ["kuehl", "menue.kuehl"], ["umsatz", "menue.umsatz"], ["abschluss", "menue.abschluss"]]],
-  ["kalkulation", [["vergleich", "menue.vergleich"], ["karte", "menue.karte"], ["beleg", "menue.beleg"], ["kosten", "menue.kosten"]]],
+  ["kalkulation", [["vergleich", "menue.vergleich"], ["karte", "menue.karte"], ["beleg", "menue.beleg"], ["inventur", "inventur.menue"], ["kosten", "menue.kosten"]]],
   ["auswertung", [["listen", "menue.listen"], ["laeden", "menue.laeden"]]],
   ["einstellungen", [["einstellungen", "menue.einstellungen"], ["sicherung", "menue.sicherung"]]],
 ];
