@@ -18,7 +18,7 @@ export function eintragName(e, stand) {
 }
 export function eintragMenge(e) {
   if (e.art === "eimer") return t("tag.eimerZeile", fmtZahl(e.gewogen, 1), fmtZahl(e.menge, 1));
-  if (e.ref?.typ === "gericht") return `${fmtZahl(e.menge, 0)} ${t("tag.portionen")}`;
+  if (e.ref?.typ === "gericht") return `${fmtZahl(e.menge, Number.isInteger(e.menge) ? 0 : 1)} ${t("tag.portionen")}`;
   return `${fmtZahl(e.menge, e.einheit === "stk" ? 0 : 2)} ${einheitLabel(e.einheit)}`;
 }
 // Was ein Eintrag „wert" ist: Vorgang 1 zum Einkaufspreis, Personalessen zum Sachbezugswert (mit Wareneinsatz als Nebensatz), Eigenverbrauch zum Wareneinsatz.
@@ -58,7 +58,7 @@ export function listenView(stand) {
       </div>
       <div class="karte">
         <h2>${esc(t("listen.schwundliste"))}</h2>
-        ${eintraege.length ? `<div class="liste eng">${eintraege.map((e) => `<div class="zeile ${e.storniert ? "storno" : ""}"><div class="oben"><div class="name">${esc(datumLesbar(e.datum))}<small>${esc(eintragText(e, stand))}</small></div><div style="text-align:right">${eintragBetrag(e, stand)}</div></div></div>`).join("")}</div>` : `<div class="hinweis">${esc(t("listen.leer"))}</div>`}
+        ${eintraege.length ? `<div class="liste eng">${eintraege.map((e) => `<div class="zeile ${e.storniert ? "storno" : ""}"><div class="oben"><div class="name">${esc(datumLesbar(e.datum))}<small>${esc(eintragText(e, stand))}</small></div><div style="text-align:right">${eintragBetrag(e, stand)}${e.storniert ? "" : `<button type="button" class="leise klein" data-a="schwund-storno" data-id="${esc(e.id)}">${esc(t("muell.rueckgaengig"))}</button>`}</div></div></div>`).join("")}</div>` : `<div class="hinweis">${esc(t("listen.leer"))}</div>`}
         <span class="marke">${esc(t("listen.amtHinweis"))}</span>
       </div>
     </div>
@@ -67,7 +67,7 @@ export function listenView(stand) {
 
 function eintragText(e, stand) {
   const name = eintragName(e, stand); const menge = eintragMenge(e);
-  return `${t("tag.arten." + e.art)} · ${name} · ${menge}${e.storniert ? ` · ${t("tag.storniert")}` : ""}`;
+  return `${t("tag.arten." + e.art)}${e.art === "eimer" ? "" : ` · ${name}`} · ${menge}${e.storniert ? ` · ${t("tag.storniert")}` : ""}`;
 }
 
 export function datumLesbar(iso) {

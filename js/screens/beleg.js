@@ -63,7 +63,7 @@ export function belegView(stand) {
       <p class="hinweis">${esc(t("beleg.datenschutz"))}</p>
       ${kostenListe(stand)}
       <div class="karte"><h2>${esc(t("beleg.letzte"))}</h2>
-        ${letzte.length ? letzte.map((l) => `<div class="summenzeile"><span>${esc(datumLesbar(l.datum))} · ${esc(l.lieferant || "–")}<small class="marke block">${esc(t("beleg.zeilen", l.zeilen.length))}${l.typ === "lieferschein" ? ` · ${esc(t("kuehl.quellen.zettel"))}` : ""}</small></span><span class="wert">${l.summeNetto !== null ? fmtEuro(l.summeNetto, { dezimal: 2 }) : "–"}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.leer"))}</div>`}
+        ${letzte.length ? letzte.map((l) => `<div class="summenzeile"><span>${esc(datumLesbar(l.datum))} · ${esc(l.lieferant || "–")}<small class="marke block">${esc(t("beleg.zeilen", l.zeilen.length))}${l.typ === "lieferschein" ? ` · ${esc(t("kuehl.quellen.zettel"))}` : ""}</small></span><span class="wert">${l.summeNetto !== null ? fmtEuro(l.summeNetto, { dezimal: 2 }) : "–"}<button type="button" class="leise klein" data-a="lieferung-storno" data-id="${esc(l.id)}">${esc(t("foto.zuruecknehmen"))}</button></span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.leer"))}</div>`}
       </div>
     </div>
     ${nav("umsatz")}`;
@@ -203,6 +203,7 @@ export function belegAktion(name, el, stand, wurzel) {
   if (name === "beleg-zurueck") { beleg = null; zeilen = []; return true; }
   if (name === "beleg-text-zeigen") { zeigeText = !zeigeText; return true; }
   if (name === "zw-text") { zeigeText = !zeigeText; return true; }
+  if (name === "lieferung-storno") { const l = (stand.lieferungen || []).find((x) => x.id === el.dataset.id); if (!l || l.storniert || !confirm(t("beleg.stornoFrage"))) return false; l.storniert = true; l.storniertZeit = new Date().toISOString(); return { meldung: t("foto.zurueckgenommen") }; } // nie löschen, nur kennzeichnen (Prüfung 15.10.)
   if (name === "kb-storno") { if (!confirm(t("foto.zuruecknehmenFrage"))) return false; return kostenbelegStornieren(stand, el.dataset.id) ? { meldung: t("foto.zurueckgenommen") } : false; }
   if (name === "zw-stelle" && zuweisung) { zuweisung.stelle = el.dataset.wert; if (!zuweisung.basisVonHand && zuweisung.stelle !== "ware") zuweisung.basis = basisStandard(zuweisung.stelle); if (zuweisung.stelle === "versicherungen" && zuweisung.verteilung === "monatlich") zuweisung.verteilung = "jaehrlich"; return true; }
   if (name === "zw-basis" && zuweisung) { zuweisung.basis = el.dataset.wert; zuweisung.basisVonHand = true; return true; }

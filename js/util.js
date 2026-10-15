@@ -25,7 +25,7 @@ export function parseZahl(v) {
     else { if (!/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) return null; s = s.replace(/,/g, ""); }
   }
   else if (kommas === 1) s = s.replace(",", ".");                              // Komma ist Dezimal
-  else if (punkte === 1) { if (/\.\d{3}$/.test(s)) s = s.replace(".", ""); } // "3.600" Tausender, "12.5" Dezimal
+  else if (punkte === 1) { if (/^[1-9]\d{0,2}\.\d{3}$/.test(s)) s = s.replace(".", ""); } // "3.600" Tausender, "12.5" und "0.250" Dezimal
   else if (punkte > 1) { if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, ""); else return null; }
   const n = Number(s);
   return Number.isFinite(n) && n >= 0 && n <= MAX_ZAHL ? n : null;

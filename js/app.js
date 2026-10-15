@@ -250,7 +250,7 @@ async function sicherungEinlesen(datei) {
     setzeSprache(wurzel.sprache || spracheDesGeraets());
     await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme });
     ereignisAnzahl = (await alleEreignisse()).length;
-    ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start"; meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : "einstellungen.importOhnePruefsumme")); zeichne();
+    ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start"; meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme")); zeichne();
   } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
 }
 
@@ -279,7 +279,9 @@ root.addEventListener("click", async (ev) => {
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
-  if (name === "nav") { const ziel = el.dataset.wert; if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
+  if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
+    if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
+    if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
@@ -425,16 +427,17 @@ root.addEventListener("keydown", (ev) => {
 });
 
 // Zurück-Geste des Handys / Browser-Zurück: ein Schritt zurück statt App verlassen.
+let herkunft = null; // vorige Ansicht (für die Zurück-Geste aus Listen und Beleg)
 window.addEventListener("popstate", () => {
   if (!stand) return;
   if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); zeichne(); return; } // Zurück schließt zuerst das Menü
   if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr || fotoLauf())) { schrittZurueck(); }
   else if (stand.phase === "app" && ansicht !== "start") {
-    if (ansicht === "listen") ansicht = "umsatz";
+    if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : "umsatz";
     else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
-    else if (ansicht === "beleg") ansicht = "umsatz";
+    else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "karte"; }
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }
     zeichne();

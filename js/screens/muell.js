@@ -191,7 +191,7 @@ export function muellAktion(name, el, stand) {
     let e = null; const ids = [];
     if (wahl.typ === "gericht") {
       const g = stand.gerichte.find((x) => x.id === wahl.id); if (!g) return false;
-      if (wahl.personal) { for (let i = 0; i < Math.round(wahl.menge); i++) { e = personalessen(stand, g, { datum: D }); ids.push(e.id); } }
+      if (wahl.personal) { for (let i = 0; i < Math.max(1, Math.round(wahl.menge)); i++) { e = personalessen(stand, g, { datum: D }); ids.push(e.id); } }
       else { e = gerichtWeg(stand, g, { datum: D, anzahl: wahl.menge }); ids.push(e.id); }
     } else if (wahl.typ === "artikel") { const a = stand.artikel.find((x) => x.name === wahl.name); if (!a) return false; e = rohwareWeg(stand, a, { datum: D, menge: wahl.menge, einheit: wahl.einheit }); if (e) ids.push(e.id); }
     else { e = eimerEintragen(stand, { datum: D, kg: wahl.menge }); if (e) ids.push(e.id); }

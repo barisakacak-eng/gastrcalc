@@ -563,7 +563,9 @@ export function grenzenVon(k) {
   const st = GRENZEN_STANDARD[k.art] || GRENZEN_STANDARD.kuehl;
   const minEigen = typeof k.min === "number", maxEigen = typeof k.max === "number";
   // je Feld: eigener Wert schlägt den Standard; ein leeres Feld behält seinen Standard (Review Etappe 5, Punkt 7)
-  return { min: minEigen ? k.min : st.min, max: maxEigen ? k.max : st.max, standard: !minEigen && !maxEigen };
+  let min = minEigen ? k.min : st.min, max = maxEigen ? k.max : st.max;
+  if (typeof min === "number" && typeof max === "number" && min > max) [min, max] = [max, min]; // vertauscht eingegeben (Prüfung 15.10.): als Bereich lesen
+  return { min, max, standard: !minEigen && !maxEigen };
 }
 export const stelleBereit = (k) => !k.archiviert && !!k.name;
 export const aktiveStellen = (stand) => (stand.kuehlstellen || []).filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);

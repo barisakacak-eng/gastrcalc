@@ -33,13 +33,16 @@ export function lieferungAnlegen(stand, beleg, { zeilen, datum = null, geraet = 
   const fuss = typeof beleg.summeNetto === "number" && beleg.summeStimmt && alleZeilen ? Math.max(0, beleg.summeNetto - pfand) : null;
   const H = heute(); let d = datum || beleg.datum || H; if (d > H) d = H; // ein Zahlungsziel in der Zukunft ist kein Lieferdatum
   const l = { id: uid(), datum: d, erfasst: new Date().toISOString(), geraet, lieferant: (beleg.lieferant || "").slice(0, 40), typ: beleg.typ || "unklar", basis: b, quelle: "text",
-    summeNetto: fuss !== null ? fuss : (zeilenNetto > 0 ? zeilenNetto : null), summeBrutto: typeof beleg.summeBrutto === "number" ? beleg.summeBrutto : null, pfand, zeilen: jz, storniert: false };
+    summeNetto: fuss !== null ? fuss : (zeilenNetto > 0 ? zeilenNetto : null), summeBrutto: typeof beleg.summeBrutto === "number" ? beleg.summeBrutto : null, pfand, zeilen: jz, storniert: false, abdruck: belegAbdruck(beleg) };
   stand.lieferungen.push(l); return l;
 }
 // Gibt es diesen Beleg schon? Gleicher Händler, gleiches Datum, gleiche Summe (±0,05) – dann fragt die App nach (Nachtest Etappe 5, Punkt 2).
+// Fingerabdruck eines Belegs: Zeilen (Name und Betrag) – derselbe Beleg zweimal eingelesen ergibt denselben Abdruck (Prüfung 15.10.)
+export const belegAbdruck = (beleg) => (beleg.zeilen || []).map((z) => `${(z.roh || z.name || "").replace(/\s+/g, " ").trim().toLowerCase()}|${z.gesamt ?? ""}`).sort().join("\n");
 export function lieferungDoppelt(stand, beleg, datum) {
   const summe = typeof beleg.summeNetto === "number" ? beleg.summeNetto : beleg.zeilenSumme;
-  return (stand.lieferungen || []).find((l) => !l.storniert && l.datum === datum && (l.lieferant || "") === (beleg.lieferant || "") && l.summeNetto !== null && Math.abs((l.summeNetto + (l.pfand || 0)) - summe) < 0.05) || null;
+  const abdruck = belegAbdruck(beleg);
+  return (stand.lieferungen || []).find((l) => !l.storniert && (l.datum === datum && ((abdruck && l.abdruck === abdruck) || ((l.lieferant || "") === (beleg.lieferant || "") && l.summeNetto !== null && typeof summe === "number" && Math.abs((l.summeNetto + (l.pfand || 0)) - summe) < 0.05)))) || null;
 }
 
 // Preise der zugeordneten Artikel nachziehen. Das Gebinde des Belegs wird zur Packung des Artikels (netto), der alte Preis wandert in den Verlauf.

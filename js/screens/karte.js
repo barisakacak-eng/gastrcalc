@@ -189,7 +189,7 @@ export const rezepte = {
           const geld = geldSatz(stand, f.name, f.menge, waage.wert, f.einheit);
           const r = familieAnpassen(stand, { gerichtId: g.id, zutat: f.name, wert: waage.wert, datum: heute() });
           waage.meldungen.push(t("waage.gelernt", f.name, r.geaendert.length + 1));
-          if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld)), g.name));
+          if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld), { dezimal: 2 }), g.name));
         }
         waage.k += 1;
         if (waage.k >= waage.fragen.length) { waage.fertig = true; stand.artikel = artikelAusGerichten(stand); }

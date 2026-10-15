@@ -49,7 +49,7 @@ export function umsatzView(stand) {
       ${preiseKarte(stand, D)}
       <button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("zaehler.listen"))}</b><small>${esc(t("zaehler.listenKurz"))}</small></span><span class="pfeil">›</span></button>
       <button type="button" class="zeileknopf" data-a="nav" data-wert="beleg"><span><b>${esc(t("beleg.belege"))}</b><small>${esc(t("zaehler.belegeKurz"))}</small></span><span class="pfeil">›</span></button>
-      <p class="hinweis">${esc(t("cockpit.kalkulatorisch"))}.</p>
+      <p class="hinweis">${esc(t("cockpit.kalkulatorischSatz"))}</p>
     </div>
     ${nav("umsatz")}`;
 }

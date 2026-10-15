@@ -435,7 +435,7 @@ const fertigSchnell = {
     const r = stand.schnellErgebnis || { neu: stand.gerichte.length, artikel: stand.artikel.length, ohneRezept: 0 };
     const last = monatsLast(stand);
     return `
-      <h1 class="frage">${esc(t("schnell.fertigFrage"))}</h1>
+      <h1 class="frage">${esc(t(stand.gerichte.length ? "schnell.fertigFrage" : "schnell.fertigOhneKarte"))}</h1>
       <div class="liste">
         <div class="summenzeile"><span>${esc(t("schnell.gerichte"))}</span><span class="wert">${stand.gerichte.length}</span></div>
         <div class="summenzeile"><span>${esc(t("schnell.inventur"))}</span><span class="wert">${stand.artikel.length}</span></div>

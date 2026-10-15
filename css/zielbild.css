@@ -137,3 +137,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .zeile .oben { align-items: center; gap: 10px; } .zeile .oben .name { flex: 1; min-width: 0; }
 .zeileknopf:has(.gerichtbild) { display: flex; align-items: center; gap: 12px; }
 .muellkacheln .gerichtbild.mini.pikto { padding: 6px; }
+.wahl.an.warnung { background: #FBE9E6; border-color: var(--rot); color: var(--tinte); }
+.wahl.an.warnung .haken { background: var(--rot); border-color: var(--rot); color: #fff; }
+.wahl.an.warnung .rot { color: var(--rot); }
+.summenzeile .wert .leise.klein { display: block; margin-left: auto; min-height: 36px; font-size: 13px; }

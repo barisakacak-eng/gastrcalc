@@ -210,7 +210,10 @@ function naechsteHandlung(stand, z, ks, nk, ab, e, wurzel) {
   const hauptzeit = (h >= 11.5 && h < 14) || (h >= 17.5 && h < 20.5);
   if (!einrichtung && !hauptzeit && stand.waageVorschlag !== H && wareneinsatzSicherheit(stand).zaehl.schaetzung > 0) return mk("waage", "waage-vorschlag");
   if (!einrichtung && stand.gerichte.length && kalkulation(stand).zaehl.grau) return mk("karte", "nav", 'data-wert="karte"');
-  return mk("nichts", "nav", 'data-wert="umsatz"');
+  if (einrichtung && e.naechster) { const z2 = e.naechster.ziel; // Prüfung 15.10.: nicht „Alles erledigt“, solange die Einrichtung offen ist
+    const attr = z2.aktion === "nav" ? `data-wert="${z2.wert}"` : z2.aktion === "bearbeiten" ? `data-schritt="${z2.schritt}"${z2.bis ? ` data-bis="${z2.bis}"` : ""}` : "";
+    return { text: [t("cockpit.dran.einrichtung")[0], t("einrichtung.schritte." + e.naechster.id)], aktion: z2.aktion, attr }; }
+  return mk(h < 17 ? "nichtsTag" : "nichts", "nav", 'data-wert="umsatz"');
 }
 
 export function karteView(stand) {
@@ -268,7 +271,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="format" data-bis="ergebnis">${esc(t("einstellungen.onboardingNeu"))}</button>
         ${wurzel && wurzel.betriebe.length > 1 ? `<button type="button" class="knopf weich warn" data-a="laden-loeschen">${esc(t("einstellungen.ladenLoeschen"))}</button>` : ""}
       </div>
-      <div class="karte">
+      <div class="karte" id="sicherung">
         <h2>${esc(t("einstellungen.sicherung"))}</h2>
         <p class="hinweis">${esc(t("einstellungen.sicherungText"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
