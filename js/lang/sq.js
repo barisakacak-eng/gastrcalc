@@ -959,4 +959,8 @@ export default {
       laeden: "Këtu kalon nga një lokal te tjetri. Çdo lokal ka shifrat e veta.",
       personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës ose 2 sekonda mbi dryn.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Dil nga modaliteti i stafit", zurueck: "Mbrapa", hallo: (n) => `Përshëndetje ${n}`, halloOhne: "Përshëndetje", wechseln: "Ndrysho", werBistDu: "Kush punon?", ohneNamen: "Pa emër",
+    muell: "Mbeturina", kuehlung: "Ftohja", putzen: "Pastrimi", offen: (n) => `${n} të hapura` },
+  muell1: { titel: "Mbeturina", andere: "Të tjera", portion: (n, z) => `${z} ${n === 1 ? "porcion" : "porcione"}`, eingetragen: "u regjistrua", menge: "Ndrysho sasinë", personalessen: "Ushqim për stafin" },
 };

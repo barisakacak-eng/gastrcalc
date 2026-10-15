@@ -961,4 +961,8 @@ export default {
       laeden: "Aici treci de la un local la altul. Fiecare local are cifrele lui.",
       personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou sau 2 secunde pe lacăt.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Ieși din modul personal", zurueck: "Înapoi", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Schimbă", werBistDu: "Cine lucrează?", ohneNamen: "Fără nume",
+    muell: "Deșeuri", kuehlung: "Răcire", putzen: "Curățenie", offen: (n) => `${n} deschise` },
+  muell1: { titel: "Deșeuri", andere: "Altele", portion: (n, z) => `${z} ${n === 1 ? "porție" : "porții"}`, eingetragen: "înregistrat", menge: "Schimbă cantitatea", personalessen: "Masa personalului" },
 };

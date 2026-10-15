@@ -22,8 +22,11 @@ import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen } from "./modus.js";
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, personalPlatzhalter, bueroPlatzhalter } from "./screens/ebene.js";
-import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen } from "./screens/muell.js";
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, bueroPlatzhalter } from "./screens/ebene.js";
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen,
+  muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
+import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
+import { rundgangOffen, kuehlBereit } from "./engine.js"; // D: Personal-Kachel Kühlung
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
@@ -71,6 +74,8 @@ async function eigeneFotosLaden() {
 
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
+  // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
+  if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { personalNachtragen(stand); if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } }
   const kennung = schirmKennung();
   const y = kennung === letzterSchirm ? window.scrollY : 0;
   try {
@@ -79,8 +84,7 @@ function zeichne() {
       if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
-      const v = ansicht === "personal" ? personalPlatzhalter(stand) // Entwickler D ersetzt den Platzhalter
-        : ansicht === "buero" ? bueroPlatzhalter(stand, wurzel)    // Entwickler C ersetzt den Platzhalter
+      const v = ansicht === "buero" ? bueroPlatzhalter(stand, wurzel)    // Entwickler C ersetzt den Platzhalter
         : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
@@ -95,6 +99,7 @@ function zeichne() {
         : ansicht === "kartefoto" ? karteFotoSchirm()
         : ansicht === "vergleich" ? vergleichView(stand)
         : ansicht === "inventur" ? inventurView(stand)
+        : ansicht === "personal" ? personalView(stand) // D
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       eigeneFotosLaden();
@@ -381,10 +386,28 @@ async function aufKlick(ev) {
     if (s.aktion && s.aktion(name, el, stand, ctx)) { speichern(wurzel); if (stand.phase === "onboarding" && !wechselt) zeichne(); }
     return;
   }
+  // D: Müll nachtragen aus Büro/Listen (Tag wählen, dann das Foto-Raster für diesen Tag)
+  if (name === "muell1-nachtragen") { tagAktion("tag-datum", el, stand); muellZuruecksetzen(); ansicht = "muell"; return zeichne(); }
+  // D: Personal-Modus – Person wählen, Kacheln, Zurück zum Personal-Start
+  if (name === "personal-start") { ansicht = "personal"; return zeichne(); }
+  if (ansicht === "personal") {
+    const r = personalAktion(name, el, stand); if (!r) return;
+    if (r.ziel) {
+      const wer = schichtPerson(stand) || "";
+      if (r.ziel === "muell") { tagZuruecksetzen(); muellZuruecksetzen(); }
+      if (r.ziel === "kuehl") { kuehlZuruecksetzen(); if (kuehlBereit(stand) && !rundgangOffen(stand)) { kuehlAktion("kuehl-rundgang", el, stand, wurzel); kuehlAktion("start-von", { dataset: { id: wer } }, stand, wurzel); } }
+      if (r.ziel === "putzplan") { putzplanZuruecksetzen(); if (wer) putzplanAktion("pp-wer", { dataset: { id: wer } }, stand); }
+      herkunft = "personal"; ansicht = r.ziel;
+    }
+    return zeichne();
+  }
   if (name === "tag-datum" || name === "listen-zeitraum" || (name === "schwund-storno" && ansicht !== "muell")) {
     if (tagAktion(name, el, stand)) { speichern(wurzel); zeichne(); } return;
   }
   if (ansicht === "muell") {
+    // D: ein Tipp = eingetragen; nur Kachel, Kopfzahl und Hinweis werden getauscht (kein ganzes Neuzeichnen)
+    if (name === "muell-tipp") { if (muellKlickUnterdrueckt()) return; const r = muellTipp(el, stand); if (r) { if (!muellTippZeigen(root, stand)) zeichne(); speichern(wurzel); ereignis("schwund-eintrag", { laden: stand.id, tipp: true }); } return; }
+    if (name === "muell1-zurueck") { if (muellTippZurueck(stand, el.dataset.id)) { speichern(wurzel); if (!root.querySelector(".muellraster")) zeichne(); else muellZurueckZeigen(root, stand); } return; }
     if (name === "muell-rueckgaengig") { if (muellRueckgaengig(stand, el.dataset.id)) { speichern(wurzel); meldung(t("muell.zurueckgenommen")); } return zeichne(); }
     const r = muellAktion(name, el, stand);
     if (r) { speichern(wurzel); if (name === "muell-weg-damit") ereignis("schwund-eintrag", { laden: stand.id }); if (r.meldung) meldung(r.meldung); zeichne(); }
@@ -622,6 +645,9 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
   history.pushState({ schritt: stand.schritt }, "");
   zeichne();
 })();
+
+// D: lang drücken auf ein Müll-Foto öffnet das Detail (Menge, Foto, Personalessen)
+muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });
 
 // Für Tests und Fehlersuche
 window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };

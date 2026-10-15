@@ -956,4 +956,8 @@ export default {
       laeden: "هنا تنتقل بين محلاتك. لكل محل أرقامه الخاصة.",
       personal: "سجّل الهدر، قِس التبريد، علّم التنظيف. العودة فقط برمز المكتب أو بالضغط على القفل ثانيتين.",
       buero: "هنا كل الحسابات والقوائم والإعدادات. الملفات تعطيها للتفتيش أو المستشار الضريبي أو المحاسب." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "الخروج من وضع الموظفين", zurueck: "رجوع", hallo: (n) => `مرحبًا ${n}`, halloOhne: "مرحبًا", wechseln: "تبديل", werBistDu: "من يعمل؟", ohneNamen: "بدون اسم",
+    muell: "هدر", kuehlung: "تبريد", putzen: "تنظيف", offen: (n) => `${n} مفتوح` },
+  muell1: { titel: "هدر", andere: "أخرى", portion: (n, z) => `${z} ${n === 1 ? "حصة" : "حصص"}`, eingetragen: "تم التسجيل", menge: "تغيير الكمية", personalessen: "وجبة الموظفين" },
 };

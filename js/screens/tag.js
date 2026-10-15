@@ -4,6 +4,7 @@ import { t, einheitLabel, sprache } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute } from "../util.js";
 import { wertEintrag, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SCHWUND_ARTEN, SVEV_2026 } from "../engine.js";
 import { nav } from "./nav.js";
+import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
 
 let listenZeitraum = "woche"; // "woche" | "monat"
 let tagDatum = null;          // gewählter Tag auf „Heute" (null = heute); Vergangenheit = Nacherfassung, gekennzeichnet
@@ -36,6 +37,7 @@ export function listenView(stand) {
   return `
     <div class="kopfband"><h1>${esc(t("listen.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>
     <div class="inhalt">
+      ${muellStatistikView(stand)}
       <div class="chips"><button type="button" class="chip ${listenZeitraum === "woche" ? "an" : ""}" data-a="listen-zeitraum" data-wert="woche">${esc(t("listen.woche"))}</button><button type="button" class="chip ${listenZeitraum === "monat" ? "an" : ""}" data-a="listen-zeitraum" data-wert="monat">${esc(t("listen.monat"))}</button></div>
       <div class="karte">
         <h2>${esc(t("listen.muell"))}</h2>

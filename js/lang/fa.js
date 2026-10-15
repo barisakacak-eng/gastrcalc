@@ -953,4 +953,8 @@ export default {
       laeden: "اینجا بین مغازه‌هایت جابه‌جا می‌شوی. هر مغازه عددهای خودش را دارد.",
       personal: "دورریز را ثبت کن، سرمایش را اندازه بگیر، نظافت را تیک بزن. برگشت فقط با رمز دفتر یا ۲ ثانیه روی قفل.",
       buero: "همهٔ حساب‌ها، فهرست‌ها و تنظیمات اینجاست. پوشه‌ها را به بازرس، مشاور مالیاتی یا حسابدار می‌دهی." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "خروج از حالت کارکنان", zurueck: "بازگشت", hallo: (n) => `سلام ${n}`, halloOhne: "سلام", wechseln: "تغییر", werBistDu: "چه کسی کار می‌کند؟", ohneNamen: "بدون نام",
+    muell: "دورریز", kuehlung: "سرمایش", putzen: "نظافت", offen: (n) => `${n} باز` },
+  muell1: { titel: "دورریز", andere: "دیگر", portion: (n, z) => `${z} ${n === 1 ? "پرس" : "پرس"}`, eingetragen: "ثبت شد", menge: "تغییر مقدار", personalessen: "غذای کارکنان" },
 };

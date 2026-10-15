@@ -954,4 +954,8 @@ export default {
       laeden: "Ở đây bạn chuyển giữa các quán. Mỗi quán có số liệu riêng.",
       personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng hoặc giữ ổ khóa 2 giây.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Thoát chế độ nhân viên", zurueck: "Quay lại", hallo: (n) => `Xin chào ${n}`, halloOhne: "Xin chào", wechseln: "Đổi", werBistDu: "Ai đang làm?", ohneNamen: "Không tên",
+    muell: "Rác thải", kuehlung: "Làm lạnh", putzen: "Vệ sinh", offen: (n) => `${n} chưa xong` },
+  muell1: { titel: "Rác thải", andere: "Khác", portion: (n, z) => `${z} ${n === 1 ? "phần" : "phần"}`, eingetragen: "đã ghi", menge: "Đổi số lượng", personalessen: "Bữa ăn nhân viên" },
 };

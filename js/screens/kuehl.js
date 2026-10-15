@@ -10,6 +10,7 @@ import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, st
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
+import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
 
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : /theke|vitrine|saladette/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank";
@@ -201,7 +202,7 @@ function wegView(stand, k) {
   const f = form;
   return `<h2>${esc(t("kuehl.wegTitel"))}</h2>
     <p class="hinweis">${esc(t("kuehl.wegHinweis"))}</p>
-    <div class="liste eng">${f.weg.map((w, i) => `<div class="zeile"><div class="oben"><div class="name">${esc(w.name)}<small>${fmtZahl(w.menge, w.einheit === "stk" ? 0 : 2)} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}${w.wert === null ? ` · ${esc(t("tag.keinPreis"))}` : ` · ${fmtEuro(w.wert, { dezimal: 2 })}`}</small></div><button type="button" class="leise" data-a="weg-weg" data-i="${i}">×</button></div></div>`).join("")}</div>
+    <div class="liste eng">${f.weg.map((w, i) => `<div class="zeile"><div class="oben"><div class="name">${esc(w.name)}<small>${fmtZahl(w.menge, w.einheit === "stk" ? 0 : 2)} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}${personalAktiv() ? "" : w.wert === null ? ` · ${esc(t("tag.keinPreis"))}` : ` · ${fmtEuro(w.wert, { dezimal: 2 })}`}</small></div><button type="button" class="leise" data-a="weg-weg" data-i="${i}">×</button></div></div>`).join("")}</div>
     <div class="neu"><input class="textfeld" data-f="weg-name" value="${esc(f.wegName)}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off"><input class="textfeld" style="flex:0 0 5em" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"></div>
     ${f.wegName.trim() ? `<div class="chips">${(stand.artikel || []).filter((a) => a.name.toLowerCase().includes(f.wegName.trim().toLowerCase())).slice(0, 6).map((a) => `<button type="button" class="chip klein" data-a="weg-artikel" data-name="${esc(a.name)}">${esc(a.name)}</button>`).join("")}</div>` : ""}
     <div class="chips"><button type="button" class="chip klein" data-a="weg-hinzu">${esc(t("allgemein.hinzufuegen"))}</button><button type="button" class="chip klein" data-a="weg-alles">${esc(t("kuehl.wegAlles", k.name))}</button></div>`;

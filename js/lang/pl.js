@@ -960,4 +960,8 @@ export default {
       laeden: "Tu przełączasz się między lokalami. Każdy lokal ma własne liczby.",
       personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura lub 2 sekundy na kłódce.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Wyjdź z trybu personelu", zurueck: "Wstecz", hallo: (n) => `Cześć ${n}`, halloOhne: "Cześć", wechseln: "Zmień", werBistDu: "Kto pracuje?", ohneNamen: "Bez imienia",
+    muell: "Odpady", kuehlung: "Chłodzenie", putzen: "Sprzątanie", offen: (n) => `${n} otwarte` },
+  muell1: { titel: "Odpady", andere: "Inne", portion: (n, z) => `${z} ${n === 1 ? "porcja" : "porcji"}`, eingetragen: "zapisano", menge: "Zmień ilość", personalessen: "Posiłek personelu" },
 };

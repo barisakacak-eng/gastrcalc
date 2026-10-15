@@ -953,4 +953,8 @@ export default {
       laeden: "Li vir di navbera dikanên xwe de diguherînî. Her dikanek hejmarên xwe hene.",
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê an 2 çirkeyan li ser kilîdê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Ji moda karmendan derkeve", zurueck: "Paş", hallo: (n) => `Silav ${n}`, halloOhne: "Silav", wechseln: "Biguherîne", werBistDu: "Kî dixebite?", ohneNamen: "Bê nav",
+    muell: "Avêtî", kuehlung: "Sarkirin", putzen: "Paqijî", offen: (n) => `${n} vekirî` },
+  muell1: { titel: "Avêtî", andere: "Yên din", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "hat tomarkirin", menge: "Mîqdarê biguherîne", personalessen: "Xwarina karmendan" },
 };

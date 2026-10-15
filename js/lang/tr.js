@@ -986,4 +986,8 @@ export default {
     leer: "Henüz yemek yok", fotografieren: "Menünün fotoğrafını çek", bleibt: "Sana kalan", speichern: "Kaydet", gespeichert: "Fiyat kaydedildi", preis: "Fiyat", schliessen: "Kapat",
     ampel: { gruen: "Hedefe ulaşıldı", gelb: "Giderler karşılandı, hedefin altında", rot: "Çok ucuz", grau: "Henüz hesaplanamıyor" },
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Personel modundan çık", zurueck: "Geri", hallo: (n) => `Merhaba ${n}`, halloOhne: "Merhaba", wechseln: "Değiştir", werBistDu: "Kim çalışıyor?", ohneNamen: "İsimsiz",
+    muell: "Çöp", kuehlung: "Soğutma", putzen: "Temizlik", offen: (n) => `${n} açık` },
+  muell1: { titel: "Çöp", andere: "Diğer", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "kaydedildi", menge: "Miktarı değiştir", personalessen: "Personel yemeği" },
 };

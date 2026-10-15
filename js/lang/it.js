@@ -955,4 +955,8 @@ export default {
       laeden: "Qui passi da un locale all'altro. Ogni locale ha i suoi numeri.",
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio o 2 secondi sul lucchetto.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Esci dalla modalità personale", zurueck: "Indietro", hallo: (n) => `Ciao ${n}`, halloOhne: "Ciao", wechseln: "Cambia", werBistDu: "Chi lavora?", ohneNamen: "Senza nome",
+    muell: "Scarti", kuehlung: "Refrigerazione", putzen: "Pulizia", offen: (n) => `${n} aperti` },
+  muell1: { titel: "Scarti", andere: "Altro", portion: (n, z) => `${z} ${n === 1 ? "porzione" : "porzioni"}`, eingetragen: "registrato", menge: "Cambia quantità", personalessen: "Pasto del personale" },
 };

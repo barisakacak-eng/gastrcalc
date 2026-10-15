@@ -962,4 +962,8 @@ export default {
       laeden: "Ovdje prelaziš između svojih lokala. Svaki lokal ima svoje brojke.",
       personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda ili 2 sekunde na lokotu.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Izađi iz načina za osoblje", zurueck: "Nazad", hallo: (n) => `Zdravo ${n}`, halloOhne: "Zdravo", wechseln: "Promijeni", werBistDu: "Ko radi?", ohneNamen: "Bez imena",
+    muell: "Otpad", kuehlung: "Hlađenje", putzen: "Čišćenje", offen: (n) => `${n} otvoreno` },
+  muell1: { titel: "Otpad", andere: "Ostalo", portion: (n, z) => `${z} ${n === 1 ? "porcija" : "porcija"}`, eingetragen: "upisano", menge: "Promijeni količinu", personalessen: "Obrok za osoblje" },
 };

@@ -987,4 +987,8 @@ export default {
     leer: "Noch keine Gerichte", fotografieren: "Karte fotografieren", bleibt: "Bleibt dir", speichern: "Speichern", gespeichert: "Preis gespeichert", preis: "Preis", schliessen: "Schließen",
     ampel: { gruen: "Ziel erreicht", gelb: "Kosten gedeckt, unter Ziel", rot: "Zu billig", grau: "Noch nicht berechenbar" },
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Personal-Modus verlassen", zurueck: "Zurück", hallo: (n) => `Hallo ${n}`, halloOhne: "Hallo", wechseln: "Wechseln", werBistDu: "Wer arbeitet?", ohneNamen: "Ohne Namen",
+    muell: "Müll", kuehlung: "Kühlung", putzen: "Putzen", offen: (n) => `${n} offen` },
+  muell1: { titel: "Müll", andere: "Andere", portion: (n, z) => `${z} ${n === 1 ? "Portion" : "Portionen"}`, eingetragen: "eingetragen", menge: "Menge ändern", personalessen: "Personalessen" },
 };

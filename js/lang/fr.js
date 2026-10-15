@@ -954,4 +954,8 @@ export default {
       laeden: "Ici tu passes d'un commerce à l'autre. Chaque commerce a ses propres chiffres.",
       personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau ou 2 secondes sur le cadenas.",
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Quitter le mode personnel", zurueck: "Retour", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Changer", werBistDu: "Qui travaille ?", ohneNamen: "Sans nom",
+    muell: "Déchets", kuehlung: "Froid", putzen: "Nettoyage", offen: (n) => `${n} ouverts` },
+  muell1: { titel: "Déchets", andere: "Autres", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "enregistré", menge: "Modifier la quantité", personalessen: "Repas du personnel" },
 };

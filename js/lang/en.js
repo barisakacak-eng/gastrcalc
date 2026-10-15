@@ -985,4 +985,8 @@ export default {
     leer: "No dishes yet", fotografieren: "Photograph the menu", bleibt: "You keep", speichern: "Save", gespeichert: "Price saved", preis: "Price", schliessen: "Close",
     ampel: { gruen: "Target reached", gelb: "Costs covered, below target", rot: "Too cheap", grau: "Not calculable yet" },
   },
+  // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
+  personal: { verlassen: "Leave staff mode", zurueck: "Back", hallo: (n) => `Hi ${n}`, halloOhne: "Hi", wechseln: "Switch", werBistDu: "Who is working?", ohneNamen: "No name",
+    muell: "Waste", kuehlung: "Cooling", putzen: "Cleaning", offen: (n) => `${n} open` },
+  muell1: { titel: "Waste", andere: "Other", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "logged", menge: "Change amount", personalessen: "Staff meal" },
 };

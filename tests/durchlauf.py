@@ -159,40 +159,44 @@ async def main():
             v = await pg.input_value('[data-f="umsatz"]'); assert v != "1850" and v != "", v
             await pg.click('[data-a="umsatz-basis"][data-wert="brutto"]')
             assert (await pg.input_value('[data-f="umsatz"]')) == "1850"
-            # ---- Müll-Zentrale (Etappe 6, Punkt 1): Cockpit → Knopf → Kachel → Blatt → Weg damit, drei Tipps
-            await geh("muell"); await pg.wait_for_selector('[data-a="muell-eingabe"]'); await bild("muell-cockpit-leer")
-            html = await pg.content(); assert "Çöp gir" in html and "Add waste" in html, "Knopf nicht dreisprachig"
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.wait_for_selector('[data-a="muell-kachel"]'); await bild("muell-was-ist-weg")
-            assert await pg.locator('[data-a="muell-kachel"]').count() <= 13
-            await pg.click(f'[data-a="muell-kachel"][data-typ="gericht"][data-id="{ids[0]}"]'); await bild("muell-blatt")
+            # ---- Müll mit einem Tipp (Drei Ebenen, Punkt 8): Foto antippen = eingetragen, „Rückgängig" storniert, „…" = Detail, „Andere" = Suche + Eimer
+            await geh("muell"); await pg.wait_for_selector('.muellraster'); await bild("muell-raster-leer")
+            html = await pg.content(); assert "Çöp gir" not in html and "Add waste" not in html, "keine dreisprachigen Untertitel mehr"
+            assert await pg.locator('[data-a="muell-tipp"]').count() <= 8 and await pg.locator('[data-a="muell-andere"]').count() == 1
+            await pg.click(f'[data-a="muell-tipp"][data-typ="gericht"][data-id="{ids[0]}"]'); await pg.wait_for_selector('.muelltoast'); await bild("muell-getippt")
+            s = await stand(); g = [e for e in s["schwund"] if e["art"] == "gericht" and not e["storniert"]]
+            assert len(g) == 1 and g[0]["menge"] == 1 and g[0]["wert"] is not None, g
+            assert await pg.locator('.ware.frisch .haken').count() == 1 and "1×" in await pg.locator('.ware.frisch').inner_text()
+            # Rückgängig storniert, löscht nie
+            await pg.click('[data-a="muell1-zurueck"]'); await pg.wait_for_timeout(150)
+            s = await stand(); assert len(s["schwund"]) == 1 and s["schwund"][0]["storniert"]
+            # „…" öffnet das Detail: 2 Teller (bleibt stehen)
+            await pg.click(f'[data-a="muell-detail"][data-typ="gericht"][data-id="{ids[0]}"]'); await bild("muell-blatt")
             await pg.click('[data-a="muell-d"][data-d="1"]'); await pg.wait_for_timeout(100)
             assert "in der Tonne" in await pg.locator(".muellwert").inner_text()
-            await pg.click('[data-a="muell-weg-damit"]'); await pg.wait_for_selector('[data-a="muell-rueckgaengig"]'); await bild("muell-eingetragen")
+            await pg.click('[data-a="muell-weg-damit"]'); await pg.wait_for_selector('[data-a="muell1-zurueck"]'); await bild("muell-eingetragen")
             s = await stand(); g = [e for e in s["schwund"] if e["art"] == "gericht" and not e["storniert"]]
             assert len(g) == 1 and g[0]["menge"] == 2 and g[0]["wert"] is not None, g
-            # Rückgängig storniert, löscht nie
-            await pg.click('[data-a="muell-rueckgaengig"]'); await pg.wait_for_timeout(150)
-            s = await stand(); assert len(s["schwund"]) == 1 and s["schwund"][0]["storniert"]
-            # nochmal 2 Teller (bleibt stehen)
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.click(f'[data-a="muell-kachel\"][data-typ="gericht"][data-id="{ids[0]}"]'); await pg.click('[data-a="muell-chip"][data-wert="2"]'); await pg.click('[data-a="muell-weg-damit"]')
-            # Rohware über die Suche
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.fill('[data-f="muell-suche"]', "Toma"); await pg.wait_for_timeout(150); await bild("muell-suche")
+            # Rohware über „Andere" und die Suche
+            await pg.click('[data-a="muell-andere"]'); await pg.fill('[data-f="muell-suche"]', "Toma"); await pg.wait_for_timeout(150); await bild("muell-suche")
             await pg.click('[data-a="muell-kachel"][data-name="Tomaten"]')
+            if await pg.locator('[data-a="muell-einheit"][data-wert="kg"]').count(): await pg.click('[data-a="muell-einheit"][data-wert="kg"]')
             await pg.fill('[data-f="muell-menge"]', "1,2"); await pg.wait_for_timeout(100)
             assert not await pg.locator('[data-a="muell-weg-damit"]').is_disabled()
             await pg.locator('[data-f="muell-menge"]').blur(); await pg.wait_for_timeout(150); await bild("muell-blatt-rohware"); await pg.click('[data-a="muell-weg-damit"]')
             s = await stand(); r = [e for e in s["schwund"] if e["art"] == "rohware"]; assert len(r) == 1 and abs(r[0]["wert"] - 1.2 * 1.6) < 1e-6 and r[0]["fraktion"] == "bio", r
-            # Eimer: gemeldete Teller werden abgezogen
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.click('[data-a="muell-kachel\"][data-typ="eimer"]')
+            # Eimer (über „Andere"): gemeldete Teller werden abgezogen
+            await pg.click('[data-a="muell-andere"]'); await pg.click('[data-a="muell-kachel\"][data-typ="eimer"]')
             await pg.fill('[data-f="muell-menge"]', "3"); await pg.wait_for_timeout(150); await pg.locator('[data-f="muell-menge"]').blur(); await pg.wait_for_timeout(200)
             await bild("muell-eimer"); await pg.click('[data-a="muell-weg-damit"]')
             s = await stand(); ei = [e for e in s["schwund"] if e["art"] == "eimer"]; assert len(ei) == 1 and ei[0]["gewogen"] == 3 and ei[0]["menge"] < 3 and ei[0]["gemeldet"] > 0, ei
-            # Personalessen über den Schalter im Blatt
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.click(f'[data-a="muell-kachel\"][data-typ="gericht"][data-id="{ids[1]}"]')
+            # Personalessen über den Schalter im Detail
+            await pg.click('[data-a="muell-andere"]'); await pg.click(f'[data-a="muell-kachel\"][data-typ="gericht"][data-id="{ids[1]}"]')
             await pg.click('[data-a="muell-personal"]'); await pg.wait_for_timeout(100); await bild("muell-personal"); await pg.click('[data-a="muell-weg-damit"]')
             s = await stand(); pe = [e for e in s["schwund"] if e["art"] == "personal"]; assert len(pe) == 1, pe
-            await bild("muell-cockpit-voll")
-            html = await pg.content(); assert "Am meisten weg" in html
+            await bild("muell-raster-voll")
+            # Wochen-Statistik wohnt jetzt im Büro unter Listen
+            await geh("listen"); html = await pg.content(); assert "Am meisten weg" in html and "muellkarte" in html; await bild("listen-muell-statistik")
             # ---- Cockpit mit Zahlen
             await geh("start"); await bild("cockpit-mit-zahlen")
             html = await pg.content(); assert "Müll heute" in html and "1.850" in html
@@ -277,11 +281,9 @@ async def main():
             await geh("beleg"); await bild("beleg-en")
             await geh("einstellungen"); await pg.click('[data-a="sprache"][data-wert="de"]')
             # Zurück-Geste aus Müll-Unterseite: eine Ebene hoch
-            await geh("muell"); await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.wait_for_selector('[data-a="muell-kachel"]')
+            await geh("muell"); await pg.click('[data-a="muell-andere"]'); await pg.wait_for_selector('[data-a="muell-kachel"]')
             await pg.go_back(); await pg.wait_for_timeout(300)
-            assert await pg.locator('[data-a="muell-kachel"]').count() == 0 and await pg.locator('[data-a="muell-auswahl"]').count() == 1, "Zurück schließt erst das Auswahlblatt"
-            await pg.go_back(); await pg.wait_for_timeout(300)
-            assert await pg.locator('[data-a="muell-eingabe"]').count() == 1, "Zurück-Geste aus „Müll eintragen“"
+            assert await pg.locator('[data-a="muell-kachel"]').count() == 0 and await pg.locator('.muellraster').count() == 1, "Zurück schließt die Suche und zeigt wieder das Foto-Raster"
             await pg.go_back(); await pg.wait_for_timeout(300); await pg.wait_for_selector(".cockpit")
             await ctx.close(); await b.close()
     finally:

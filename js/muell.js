@@ -135,7 +135,8 @@ export function muellMonatVergleich(stand, datum = heute()) {
 }
 
 // Die 12 Kacheln „Was ist weg?": nach Häufigkeit der letzten 30 Tage (bei Gleichstand zuletzt benutzt); ohne Verlauf erst Gerichte, dann Artikel.
-export function haeufigsteMuell(stand, { tage = 30, max = 12, datum = heute() } = {}) {
+export function haeufigsteMuell(stand, { tage = 30, max = 12, datum = heute(), mischen = false } = {}) {
+  if (mischen) return gemischt(stand, haeufigsteMuell(stand, { tage, max: 10000, datum }), { tage, max, datum });
   const von = tagMinus(datum, tage - 1); const zahl = new Map();
   for (const e of stand.schwund || []) {
     if (e.storniert || e.datum < von || e.datum > datum || !e.ref || e.art === "eimer") continue;
@@ -150,6 +151,20 @@ export function haeufigsteMuell(stand, { tage = 30, max = 12, datum = heute() } 
   return kandidaten.map((x, i) => ({ ...x, i })).sort((a, b) => rang(b).n - rang(a).n || rang(b).zuletzt.localeCompare(rang(a).zuletzt) || a.i - b.i).slice(0, max).map(({ k, i, ...x }) => x);
 }
 
+// Foto-Raster (Drei Ebenen): erst was schon weg war (nach Häufigkeit), dann abwechselnd Gericht und Rohware –
+// Rohware nach Zahl der Gerichte, die sie brauchen (Fladenbrot, Fleisch, Salat vor Gewürzen). Getränke nicht.
+function gemischt(stand, alle, { tage, max, datum }) {
+  const von = tagMinus(datum, tage - 1); const benutzt = new Set();
+  for (const e of stand.schwund || []) if (!e.storniert && e.datum >= von && e.datum <= datum && e.ref && e.art !== "eimer") benutzt.add(muellSchluessel(e));
+  const vorne = alle.filter((x) => benutzt.has(muellSchluessel(x)));
+  const rest = alle.filter((x) => !benutzt.has(muellSchluessel(x)) && x.gruppe !== "getraenk");
+  const inRezepten = (name) => (stand.gerichte || []).filter((g) => (g.zutaten || []).some((z) => z.name === name)).length;
+  const gerichte = rest.filter((x) => x.typ === "gericht");
+  const waren = rest.filter((x) => x.typ === "artikel").map((x, i) => ({ x, n: inRezepten(x.name), i })).sort((a, b) => b.n - a.n || a.i - b.i).map((y) => y.x);
+  const misch = []; for (let i = 0; misch.length < gerichte.length + waren.length; i++) { if (gerichte[i]) misch.push(gerichte[i]); if (waren[i]) misch.push(waren[i]); }
+  return [...vorne, ...misch].slice(0, max);
+}
+
 // Vorschau „= 1,92 € in der Tonne" für das Blatt (ohne zu speichern)
 export function muellVorschau(stand, wahl, D = heute()) {
   if (!(wahl?.menge > 0)) return null;
@@ -158,3 +173,52 @@ export function muellVorschau(stand, wahl, D = heute()) {
   return wertEintrag(e, stand);
 }
 void preisJeBasis;
+
+// ---------- Drei Ebenen, Punkt 8: Müll mit einem Tipp (15.10.2026) ----------
+// Schlüssel einer Kachel: Gericht über die id, Rohware über den Namen (wie haeufigsteMuell).
+export const muellSchluessel = (x) => (x.ref ? (x.ref.typ === "gericht" ? "g:" + x.ref.id : "a:" + x.ref.name) : x.typ === "gericht" ? "g:" + x.id : "a:" + x.name);
+
+// Übliche Menge für einen Tipp: Gericht = 1 Portion; Rohware = die zuletzt eingetragene Menge, sonst nach Einheit
+// (Gewicht 250 g, Flüssigkeit 100 ml, Stück 1).
+export function standardMenge(stand, x) {
+  if (x.typ === "gericht") return { menge: 1, einheit: "portion" };
+  const l = (stand.schwund || []).filter((e) => !e.storniert && e.art === "rohware" && e.ref?.name === x.name && e.menge > 0);
+  if (l.length) { const e = l.reduce((a, b) => (String(b.erfasst) >= String(a.erfasst) ? b : a)); return { menge: Number(e.menge), einheit: e.einheit }; }
+  const a = (stand.artikel || []).find((y) => y.name === x.name);
+  const basis = EINHEITEN[a?.packung?.einheit || a?.einheit || x.einheit]?.basis || "stk";
+  return basis === "g" ? { menge: 250, einheit: "g" } : basis === "ml" ? { menge: 100, einheit: "ml" } : { menge: 1, einheit: "stk" };
+}
+
+// Ein Tipp = ein Eintrag mit der üblichen Menge. von = Person (Personal-Modus), sonst ohne.
+export function muellTippEintragen(stand, x, { datum = heute(), von = null } = {}) {
+  let e = null;
+  if (x.typ === "gericht") { const g = (stand.gerichte || []).find((y) => y.id === x.id); if (!g) return null; e = gerichtWeg(stand, g, { datum, anzahl: 1 }); }
+  else { const a = (stand.artikel || []).find((y) => y.name === x.name); if (!a) return null; const m = standardMenge(stand, x); e = rohwareWeg(stand, a, { datum, menge: m.menge, einheit: m.einheit }); }
+  if (!e) return null;
+  e.tipp = true; if (von) e.von = von;
+  return e;
+}
+
+// Rückgängig: storniert (nie löschen). Gibt die Zahl der stornierten Einträge zurück.
+export function muellStornieren(stand, ids) {
+  let n = 0;
+  for (const id of String(ids || "").split(",")) { const e = (stand.schwund || []).find((x) => x.id === id && !x.storniert); if (e) { e.storniert = true; e.storniertZeit = new Date().toISOString(); n += 1; } }
+  return n;
+}
+
+// Wie oft eine Kachel heute getippt wurde (Zähler „2ד) – Müll-Einträge, nicht Personalessen.
+export function tippsHeute(stand, datum = heute()) {
+  const out = {};
+  for (const e of stand.schwund || []) if (!e.storniert && e.datum === datum && (e.art === "gericht" || e.art === "rohware")) { const k = muellSchluessel(e); out[k] = (out[k] || 0) + 1; }
+  return out;
+}
+
+// Kopfzahl „Heute": Euro (Laden) und Zahl der Einträge (Personal, ohne Euro). Personalessen zählt nicht als Müll.
+export function muellHeute(stand, datum = heute()) {
+  let wert = 0, anzahl = 0, offen = 0;
+  for (const e of stand.schwund || []) {
+    if (e.storniert || e.datum !== datum || (SCHWUND_ARTEN[e.art] || 1) !== 1) continue;
+    anzahl += 1; if (typeof e.wert === "number") wert += e.wert; else offen += 1;
+  }
+  return { wert, anzahl, offen };
+}
