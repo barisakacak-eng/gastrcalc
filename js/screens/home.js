@@ -87,7 +87,7 @@ function heuteKacheln(stand, z, ks, H) {
 function spruchKarte(H) {
   const liste = t("cockpit.sprueche"); if (!Array.isArray(liste) || !liste.length) return "";
   const tag = Math.floor(Date.parse(H + "T12:00:00") / 86400e3);
-  return `<div class="karte spruch"><span class="spruchsym">${sym("leaf")}</span><p>„${esc(liste[tag % liste.length])}“</p></div>`;
+  return `<div class="karte spruch"><span class="spruchsym">${sym("leaf")}</span><p>${sprache() === "de" ? "„" : "“"}${esc(liste[tag % liste.length])}${sprache() === "de" ? "“" : "”"}</p></div>`;
 }
 
 // ---------- Einrichtungskarte (Punkt 6, Mischung A + B) ----------
