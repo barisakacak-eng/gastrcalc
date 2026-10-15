@@ -27,12 +27,20 @@ const WARE = [[/brot|fladen|wrap|yufka|lavash|bun\b|br[öo]tchen|baguette|toast|
   [/pommes|kroketten|wedges|kartoffel/i, "w-pommes-tk"]];
 const GETRAENK = [[/ayran/i, "g-ayran"], [/cola|fanta|sprite|dose/i, "d-cola"], [/wasser|sprudel/i, "d-wasser"], [/limo|orange/i, "d-limo"], [/eistee|ice ?tea/i, "d-eistee"],
   [/[çc]ay|\btee\b/i, "d-tee"], [/energy|red ?bull/i, "d-energy"], [/saft|schorle/i, "d-saft"], [/gazoz/i, "d-gazoz"]];
+// Echte Fotos (Sanji Welle 3, r-* und v-*), sobald vorhanden; sonst bleibt das Piktogramm
+const R_ALIAS = { "w-doenerfleisch": (n) => /h[äa]hnchen|pute/i.test(n) ? "r-haehnchenspiess" : /geschnitten|kg|gegart/i.test(n) ? "r-doener-geschnitten" : "r-doenerspiess",
+  "w-kohl": (n) => /wei(ß|ss)/i.test(n) ? "r-weisskohl" : "r-rotkohl", "w-kaese": (n) => /mozzarella/i.test(n) && !/gerieben/i.test(n) ? "r-mozzarella" : "r-pizzakaese",
+  "w-ei": () => "r-eier", "w-sosse": (n) => /knoblauch|joghurt|wei(ß|ss)/i.test(n) ? "r-knoblauchsauce" : /scharf|chili|acı/i.test(n) ? "r-scharfe-sosse" : "r-ketchup-mayo",
+  "w-brot": (n) => /yufka|wrap|d[üu]r[üu]m|lavash|tortilla/i.test(n) ? "r-yufka" : /bun|br[öo]tchen/i.test(n) ? "r-buns" : "r-fladenbrot",
+  "w-falafel": () => "r-falafel-tk", "w-mehl": (n) => /pizza/i.test(n) ? "r-pizzateig" : /lahmacun/i.test(n) ? "r-lahmacun-teig" : "r-mehl", "w-hack": (n) => /patty/i.test(n) ? "r-patty" : "r-hack" };
+const fotoFuer = (n, name) => { const kand = n.startsWith("v-") ? n : R_ALIAS[n] ? R_ALIAS[n](name) : "r-" + n.slice(2); return FOTOS.has(kand) ? kand : null; };
 export function wareBild(x) {
   if (x.gruppe === "getraenk") { const d = (GETRAENK.find(([re, n]) => re.test(x.name) && FOTOS.has(n)) || [])[1] || "g-getraenk";
     return `<img class="gerichtbild mini" src="foto/${d}.webp" alt="" loading="lazy">`; }
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
   const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
-  return `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy">`;
+  const foto = fotoFuer(n, x.name);
+  return foto ? `<img class="gerichtbild mini" src="foto/${foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy">`;
 }
 const warePikto = wareBild;
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)

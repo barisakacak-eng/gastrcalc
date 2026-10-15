@@ -2,6 +2,7 @@
 // Regeln aus der Vorprüfung des Gremiums: Grenzen setzt der Betrieb (die App nennt nur Anhaltspunkte), kein Wert ist vorbelegt,
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
 import { sym } from "../symbole.js";
+import { FOTOS } from "../data/fotos.js";
 import { t } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
@@ -11,7 +12,9 @@ import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
-const stelleBild = (k) => `<img class="gerichtbild mini pikto" src="bilder/${k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : /theke|vitrine/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank"}.svg" alt="">`;
+const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : /theke|vitrine|saladette/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank";
+  const f = { "k-theke": "k-saladette-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden
+  return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">`; };
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
 let station = null;             // id der Stelle, die im Rundgang gerade offen ist
 let form = null;                // Eingabe der offenen Station
