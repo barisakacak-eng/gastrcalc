@@ -48,6 +48,7 @@ export function leererBetrieb() {
     kuehlstellen: [],           // {id, name, art: kuehl|tk|warm, min, max, reihe, archiviert}
     rundgaenge: [],             // {id, datum, von, gestartet, abgeschlossen, nacherfasst, quelle, messungen:[…]} – bis zum Abschluss änderbar, danach nur anhängen
     messungen: [],              // abgeschlossene Messungen: {id, lfd, rundgang, stelle, datum, zeit, wert|null, grund, min, max, abweichung, massnahmen, notiz, nachkontrolle, von, erfasst, nacherfasst, quelle}
+    inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
 }
 
@@ -168,6 +169,12 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.messungen = mitId(s.messungen).filter((m) => typeof m.datum === "string" && typeof m.stelle === "string").map((m) => ({ ...m,
     wert: typeof m.wert === "number" ? m.wert : null, massnahmen: Array.isArray(m.massnahmen) ? m.massnahmen.filter((x) => typeof x === "string") : [],
     notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.datum + "T00:00:00.000Z" }));
+  // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)
+  s.inventuren = mitId(s.inventuren).filter((i) => typeof i.datum === "string").map((i) => ({ ...i,
+    begonnen: typeof i.begonnen === "string" ? i.begonnen : i.datum + "T00:00:00.000Z", abgeschlossen: typeof i.abgeschlossen === "string" ? i.abgeschlossen : null,
+    posten: Object.fromEntries(Object.entries(istObjekt(i.posten) ? i.posten : {}).map(([n, m]) => [n, typeof m === "number" && Number.isFinite(m) && m >= 0 ? m : null])),
+    ausgeblendet: (Array.isArray(i.ausgeblendet) ? i.ausgeblendet : []).filter((n) => typeof n === "string") }));
+  { const offen = s.inventuren.filter((i) => !i.abgeschlossen); if (offen.length > 1) s.inventuren = s.inventuren.filter((i) => i.abgeschlossen || i === offen[offen.length - 1]); }
   if (!["onboarding", "app"].includes(s.phase)) s.phase = "onboarding";
   s.schritt = Math.max(0, Number(s.schritt) || 0);
   delete s.schema; // gehört an die Wurzel
@@ -334,6 +341,8 @@ export function verschmelzen(lokal, fremd) {
   const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen));
   const offen = (lokal.rundgaenge || []).filter((r) => !r.abgeschlossen);
   basis.rundgaenge = [...abgeschlossen, ...offen];
+  // Inventuren wie Rundgänge: abgeschlossene vereinigen, eine offene nur vom lokalen Stand
+  basis.inventuren = [...journalVereinigen((lokal.inventuren || []).filter((i) => i.abgeschlossen), (fremd.inventuren || []).filter((i) => i.abgeschlossen)), ...(lokal.inventuren || []).filter((i) => !i.abgeschlossen)];
   basis.geaendert = [lokal.geaendert, fremd.geaendert].filter(Boolean).sort().pop() || new Date().toISOString();
   return basis;
 }
