@@ -3,7 +3,7 @@
 import { t, sprache } from "../i18n.js";
 import { esc, heute } from "../util.js";
 import { AUFGABEN, GERAETE, TAKT_TAGE } from "../data/putzplan.js";
-import { planVon, planVorschlag, aufgabenFuer, planGruppen, abhaken, zuruecknehmen, nachweis } from "../putzplan.js";
+import { planVon, planVorschlag, aufgabenFuer, planGruppen, abhaken, zuruecknehmen, nachweis, planUebernehmen } from "../putzplan.js"; // W2-H: planUebernehmen
 import { datumLesbar } from "./tag.js";
 import { sym } from "../symbole.js";
 import { nav } from "./nav.js";
@@ -88,9 +88,9 @@ export function putzplanAktion(name, el, stand) {
   if (name === "pp-ansicht") { ansicht = el.dataset.wert; if (ansicht !== "einrichten") entwurf = null; return true; }
   if (name === "pp-geraet") { const g = el.dataset.wert; entwurf.geraete = entwurf.geraete.includes(g) ? entwurf.geraete.filter((x) => x !== g) : [...entwurf.geraete, g]; return true; }
   if (name === "pp-aufgabe") { const id = el.dataset.id; entwurf.aus = entwurf.aus.includes(id) ? entwurf.aus.filter((x) => x !== id) : [...entwurf.aus, id]; return true; }
-  if (name === "pp-uebernehmen") { stand.putzplan = { ...entwurf, aktiv: true, seit: planVon(stand)?.seit || heute() }; entwurf = null; ansicht = "plan"; return "speichern"; }
+  if (name === "pp-uebernehmen") { planUebernehmen(stand, entwurf); entwurf = null; /* W2-H: Änderung gilt ab heute (Verlauf) */ ansicht = "plan"; return "speichern"; }
   if (name === "pp-haken") { const a = planGruppen(stand); const x = [...a.tag, ...a.woche, ...a.monat, ...a.spaeter].find((y) => y.id === el.dataset.id); if (!x) return false;
-    if (x.status === "erledigt" && x.letzte?.datum === heute()) zuruecknehmen(stand, x.id); else abhaken(stand, x.id, { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); return "speichern"; }
+    if (x.status === "erledigt" && x.letzte?.datum === heute()) zuruecknehmen(stand, x.id, heute(), { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); /* W2-H: wer zurücknimmt */ else abhaken(stand, x.id, { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); return "speichern"; }
   if (name === "pp-wer") { werId = el.dataset.id; try { localStorage.setItem("gc-putz-wer", werId); } catch { /* egal */ } return true; }
   if (name === "pp-spaeter") { stand.putzplanSpaeter = heute(); return "zurueck"; }
   if (name === "pp-drucken") { setTimeout(() => window.print(), 50); return false; }

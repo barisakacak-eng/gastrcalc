@@ -78,8 +78,11 @@ test("Kühlprotokoll: Lücken bis gestern, Abweichung erst mit Maßnahme und erl
   m(6, 4);
   k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.equal(k.abweichungen, 1); assert.equal(k.offen, 1); assert.equal(k.vollstaendig, false);
   s.messungen.find((x) => x.wert === 9.5).massnahmen = ["tuer"]; s.messungen.find((x) => x.wert === 9.5).nachkontrolle = { art: "h1", faellig: null };
+  // W2-H: ohne Fälligkeit gilt das Tagesende – die gute Messung am Folgetag ist „verspätet“, nicht „erledigt“
+  k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.equal(k.behoben, 0); assert.equal(k.zeilen.find((x) => x.abweichung).nachkontrolle, "verspaetet");
+  m(5, 5, { zeit: "2026-10-05T10:50:00" }); // pünktlich am selben Tag
   k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.equal(k.behoben, 1); assert.equal(k.zeilen.find((x) => x.abweichung).nachkontrolle, "erledigt"); assert.equal(k.vollstaendig, true);
-  const csv = A.amtCsv(A.ordnerAmt(s, z, { datum: "2026-10-07" }), "kuehl", ["D", "U", "S", "W", "Mi", "Ma", "Ab", "M", "N", "Na", "Nt"], { ja: () => "ja", massnahme: (x) => x, nachkontrolle: (x) => x });
+  const csv = A.amtCsv(A.ordnerAmt(s, z, { datum: "2026-10-07" }), "kuehl", ["D", "U", "S", "W", "Mi", "Ma", "Ab", "M", "N", "Na", "Nt", "NA", "L", "St"], { ja: () => "ja", massnahme: (x) => x, nachkontrolle: (x) => x.nachkontrolle });
   assert.match(csv, /05\.10\.2026;10:00;Theke;9,5;;7,0;ja;tuer;erledigt;Ayşe;/);
 });
 
@@ -97,8 +100,9 @@ test("Putznachweis und Vollständigkeit des Ordners", async () => {
   p = A.putznachweis(s, z, { datum: "2026-10-04" }); assert.deepEqual(p.luecken, ["2026-10-03"]); assert.equal(p.vollstaendig, false);
   s.belehrungen = [{ id: "b", person: "a", datum: "2025-05-01", art: "erst", storniert: false }];
   const o = A.ordnerAmt(s, z, { datum: "2026-10-03" });
-  assert.deepEqual(A.AMT_TEILE.map((t) => o.teile[t].vollstaendig), [true, true, true, true]);
-  assert.equal(o.vollstaendig, 4); assert.equal(o.prozent, 100);
+  assert.deepEqual(A.AMT_PFLICHT.map((t) => o.teile[t].vollstaendig), [true, true, true]); // W2-H: Geräteübersicht zählt nicht mehr als „Konzept vollständig“
+  assert.equal(o.teile.konzept.vollstaendig, null); assert.equal(o.teile.konzept.geraeteliste, true);
+  assert.equal(o.vollstaendig, 3); assert.equal(o.gesamt, 3); assert.equal(o.prozent, 100);
   assert.equal(o.teile.konzept.kuehlstellen[0].max, 7); assert.equal(o.teile.konzept.kuehlstellen[0].standard, true);
 });
 

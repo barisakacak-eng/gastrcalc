@@ -6,7 +6,8 @@ import { FOTOS } from "../data/fotos.js";
 import { t, sprache } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
-  letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD } from "../engine.js";
+  letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD,
+  ruhetagUmschalten, rundgangVollstaendig } from "../engine.js"; // W2-H
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
@@ -38,7 +39,7 @@ const artName = (a) => t("kuehl.arten." + a);
 // Grenzen einer Stelle als Text; ohne eigene Grenze gilt der Standard (Etappe 5), das steht dann dabei.
 const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `≥ ${fmtZahl(g.min, 1)} °C` : "", typeof g.max === "number" ? `≤ ${fmtZahl(g.max, 1)} °C` : ""].filter(Boolean).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
 const kuerzelVon = (stand, id) => stand.personen.find((p) => p.id === id)?.kuerzel || "";
-const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+const zeitKurz = (iso) => { if (!iso) return "–"; /* W2-H: Nachtrag ohne Uhrzeit */ const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
 
 // ---------- Hauptansicht ----------
@@ -222,7 +223,7 @@ function blattView(stand) {
       <div class="chips nichtdrucken">${stellen.map((x) => `<button type="button" class="chip klein ${x.id === k?.id ? "an" : ""}" data-a="blatt-stelle" data-id="${esc(x.id)}">${esc(x.name)}${x.archiviert ? ` (${esc(t("kuehl.archiviert"))})` : ""}</button>`).join("")}</div>
       <div class="chips nichtdrucken"><button type="button" class="chip klein ${blattMonat === 0 ? "an" : ""}" data-a="blatt-monat" data-wert="0">${esc(t("listen.monat"))}</button><button type="button" class="chip klein ${blattMonat === -1 ? "an" : ""}" data-a="blatt-monat" data-wert="-1">${esc(t("kuehl.vormonat"))}</button></div>
       <div class="karte">
-        <div class="kennzahlen"><span>${esc(t("kuehl.tageImMonat"))}</span>${["puenktlich", "teilweise", "nacherfasst", "nichtGemessen", "fehlt", "ruhetag"].filter((s) => mb.zaehl[s]).map((s) => `<span><b>${mb.zaehl[s]}</b> ${esc(t("kuehl.status." + s))}</span>`).join("")}</div>
+        <div class="kennzahlen"><span>${esc(t("kuehl.tageImMonat"))}</span>${["puenktlich", "teilweise", "nacherfasst", "nichtGemessen", "aus", "fehlt", "ruhetag"].filter((s) => mb.zaehl[s]).map((s) => `<span><b>${mb.zaehl[s]}</b> ${esc(s === "aus" ? t("amtW2.statusAus") : t("kuehl.status." + s))}</span>`) /* W2-H: „aus“ */.join("")}</div>
         ${k ? `<span class="marke">${esc(artName(k.art))} · ${esc(grenzen(k))} · ${esc(t("kuehl.taktWert", mb.takt))}</span>` : ""}
       </div>
       <div class="monatsblatt">${mb.tage.filter((tg) => tg.status !== "vorher" && tg.status !== "zukunft").slice().reverse().map((tg) => `
@@ -262,9 +263,9 @@ export function kuehlAktion(name, el, stand, wurzel) {
     if (i < 0 || j < 0 || j >= liste.length) return false; const a = liste[i].reihe; liste[i].reihe = liste[j].reihe; liste[j].reihe = a; if (liste[i].reihe === liste[j].reihe) { liste[i].reihe = j; liste[j].reihe = i; } return true;
   }
   if (name === "kuehl-takt") { stand.kuehl.takt = Number(el.dataset.wert) === 2 ? 2 : 1; return true; }
-  if (name === "kuehl-ruhetag") { const d = Number(el.dataset.wert); const i = stand.kuehl.ruhetage.indexOf(d); if (i >= 0) stand.kuehl.ruhetage.splice(i, 1); else if (stand.kuehl.ruhetage.length < 6) stand.kuehl.ruhetage.push(d); return true; } // sieben Ruhetage gibt es nicht
+  if (name === "kuehl-ruhetag") { ruhetagUmschalten(stand, Number(el.dataset.wert)); return true; } // W2-H: gilt ab heute (Verlauf), sieben Ruhetage gibt es nicht
   if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) return false; stand.personen.push({ id: uid(), kuerzel: k, aktiv: true, entfernt: false }); neuKuerzel = ""; return true; }
-  if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("kuehl.personWegFrage", p.kuerzel))) return false; p.entfernt = true; p.aktiv = false; p.kuerzel = t("kuehl.personAnonym", stand.personen.indexOf(p) + 1); return true; } // Pseudonymisierung: Kürzel weg, Einträge zeigen nur die id
+  if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("amtW2.personWegFrage", p.kuerzel))) return false; p.entfernt = true; p.aktiv = false; p.ausgeschieden = heute(); return true; } // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
   // Rundgang starten
   if (name === "start-von") { startVon = el.dataset.id; return true; }
   if (name === "start-datum") { startNach = el.dataset.wert; return true; }
@@ -303,7 +304,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     const k = aktiveStellen(stand).find((x) => x.id === station); if (!k) return false;
     stationEintragen(r, k, form); // „Ware weggeworfen" wird erst beim Abschluss zu Schwund-Einträgen
     station = null; form = null;
-    if (r.einzel) { rundgangAbschliessen(stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n)); ansicht = "start"; return "abgeschlossen"; } // Nachmessen einer Stelle: sofort ins Journal
+    if (r.einzel || rundgangVollstaendig(stand, r)) { rundgangAbschliessen( /* W2-H (p01 K3): nach der letzten Stelle schließt sich der Rundgang selbst */stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n)); ansicht = "start"; return "abgeschlossen"; } // Nachmessen einer Stelle: sofort ins Journal
     return true;
   }
   return false;
