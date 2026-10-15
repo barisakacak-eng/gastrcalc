@@ -513,31 +513,52 @@ export function schwundAuswertung(stand, { von, bis }) {
   return out;
 }
 
-// Tagesnotiz: Tagesumsatz (brutto) je Datum als Journal. Nur intern, nie in Ausgabedokumenten, nie neben errechneten Verkaufsmengen.
-// Es gilt der jüngste nicht stornierte Eintrag je Datum. Tippen in derselben Sitzung ändert den eigenen frischen Eintrag,
-// statt je Tastendruck einen neuen anzuhängen; alles andere ist ein neuer Eintrag.
+// Tagesnotiz: Tagesumsatz (brutto) je Datum als Journal – eine Notiz des Wirts, kein Kassenbericht. // W2-T
+// Intern rechnet der Zähler damit; in den Ordnern für Steuerberater und Buchhalter erscheint sie nur als Brutto-Notiz
+// mit der Kennzeichnung „Notiz – kein Z-Bon, nicht für die Buchung“, nie mit errechneter Umsatzsteuer (js/export_steuer.js).
+// Es gilt der jüngste nicht stornierte Eintrag je Datum.
+// Nur anhängen (GoBD, Prüfung p04 Nr. 3): Solange das Feld getippt wird, ist der eigene Eintrag ein Entwurf (entwurf: true) und
+// nimmt jede Taste auf. Beim Verlassen des Feldes wird er festgeschrieben (tagesnotizFestschreiben). Wer danach ändert, legt einen
+// neuen Eintrag an; der alte bleibt stehen, mit storniert, storniertZeit und ersetzt: <id des neuen>. Leeren nimmt zurück, löscht nie.
 export function umsatzEintrag(stand, datum) {
   let best = null;
   for (const n of stand.tagesnotizen || []) if (n.datum === datum && !n.storniert && typeof n.umsatz === "number" && (!best || String(n.erfasst || "") >= String(best.erfasst || ""))) best = n;
   return best;
 }
-export function tagesnotizSetzen(stand, datum, umsatz, { nacherfasst = false, geraet = null } = {}) {
-  const jetzt = new Date().toISOString();
-  const letzter = umsatzEintrag(stand, datum);
-  if (letzter && letzter.sitzung === SITZUNG && !letzter.nacherfasst === !nacherfasst) { letzter.umsatz = umsatz; letzter.erfasst = jetzt; return letzter; }
-  // Korrektur: frühere eigene Einträge dieses Tages werden storniert (ersetzt), damit keine zwei Werte nebeneinander stehen
-  for (const n of stand.tagesnotizen) if (n.datum === datum && !n.storniert && (n.geraet || null) === geraet) { n.storniert = true; n.storniertZeit = jetzt; n.ersetzt = true; }
-  const n = { id: uid(), datum, umsatz, erfasst: jetzt, nacherfasst: !!nacherfasst, sitzung: SITZUNG, geraet, storniert: false };
+// Der eigene, noch nicht festgeschriebene Eintrag dieses App-Starts für Datum und Gerät (auch leer, umsatz: null)
+const tagesEntwurf = (stand, datum, geraet) => (stand.tagesnotizen || []).find((n) => n.entwurf && n.sitzung === SITZUNG && n.datum === datum && !n.storniert && (n.geraet || null) === geraet) || null;
+function tagesEntwurfAnlegen(stand, datum, umsatz, { nacherfasst, geraet, jetzt }) {
+  const n = { id: uid(), datum, umsatz, erfasst: jetzt, nacherfasst: !!nacherfasst, sitzung: SITZUNG, geraet, storniert: false, entwurf: true };
+  // Korrektur: die bisher gültigen Einträge dieses Geräts (und alte ohne Gerät) für den Tag bleiben stehen und zeigen auf den neuen
+  for (const x of stand.tagesnotizen) if (x.datum === datum && !x.storniert && (!x.geraet || x.geraet === geraet)) { x.storniert = true; x.storniertZeit = jetzt; x.ersetzt = n.id; }
   stand.tagesnotizen.push(n); return n;
 }
+export function tagesnotizSetzen(stand, datum, umsatz, { nacherfasst = false, geraet = null } = {}) {
+  const jetzt = new Date().toISOString();
+  const e = tagesEntwurf(stand, datum, geraet);
+  if (e) { e.umsatz = umsatz; e.erfasst = jetzt; e.nacherfasst = !!nacherfasst; return e; }
+  return tagesEntwurfAnlegen(stand, datum, umsatz, { nacherfasst, geraet, jetzt });
+}
+// Feld geleert: Entwurf wird leer (zählt nicht); ein festgeschriebener Wert bekommt einen leeren Entwurf als Nachfolger.
 export function tagesnotizLoeschen(stand, datum, geraet = null) {
   const jetzt = new Date().toISOString();
-  for (const n of stand.tagesnotizen.slice()) {
-    if (n.datum !== datum || n.storniert || (n.geraet || null) !== geraet) continue;
-    if (n.sitzung === SITZUNG) stand.tagesnotizen.splice(stand.tagesnotizen.indexOf(n), 1); // eigener frischer Eintrag: weg
-    else { n.storniert = true; n.storniertZeit = jetzt; }
-  }
+  const e = tagesEntwurf(stand, datum, geraet);
+  if (e) { e.umsatz = null; e.erfasst = jetzt; return e; }
+  if (!(stand.tagesnotizen || []).some((x) => x.datum === datum && !x.storniert && (!x.geraet || x.geraet === geraet))) return null;
+  return tagesEntwurfAnlegen(stand, datum, null, { nacherfasst: datum !== heute(), geraet, jetzt });
 }
+// Feld verlassen: Entwurf festschreiben. Ein leerer Entwurf war nie ein Wert – er verschwindet, sein Vorgänger bleibt als Rücknahme stehen.
+export function tagesnotizFestschreiben(stand, datum, geraet = null) {
+  const e = tagesEntwurf(stand, datum, geraet); if (!e) return null;
+  if (typeof e.umsatz === "number") { delete e.entwurf; return e; }
+  stand.tagesnotizen.splice(stand.tagesnotizen.indexOf(e), 1);
+  for (const x of stand.tagesnotizen) if (x.ersetzt === e.id) x.ersetzt = null;
+  return null;
+}
+// Alle offenen Entwürfe dieses App-Starts festschreiben (z. B. beim Wechsel der Ansicht)
+export function tagesnotizenFestschreiben(stand) {
+  for (const n of (stand.tagesnotizen || []).filter((x) => x.entwurf && x.sitzung === SITZUNG)) tagesnotizFestschreiben(stand, n.datum, n.geraet || null);
+} // W2-T Ende
 export function umsatzZeitraum(stand, { von, bis }) {
   let s = 0, tage = 0;
   const tage_ = new Set((stand.tagesnotizen || []).filter((n) => n.datum >= von && n.datum <= bis && !n.storniert).map((n) => n.datum));

@@ -11,6 +11,7 @@ import { datumLesbar } from "./tag.js";
 import { fotoKnoepfe, fotoLauf, fotoVorbereiten, rechnungsLaufZuruecksetzen } from "./foto.js";
 import { STELLEN, VERTEILUNGEN, stelleRaten, kostenbelegLesen, kostenbelegAnlegen, kostenbelegDoppelt, kostenbelegStornieren, postenVorher } from "../kostenbeleg.js";
 import { basisStandard } from "../data/kosten.js";
+import { rechnungsNummerLesen } from "../export_steuer.js"; // W2-T
 import { parseZahl, wertAnzeige } from "../util.js";
 
 let text = "";
@@ -215,6 +216,7 @@ export function belegAktion(name, el, stand, wurzel) {
     const z = zuweisung; if (!(z.betrag > 0) || !z.basis) return false;
     if (kostenbelegDoppelt(stand, { stelle: z.stelle, betrag: z.betrag, datum: z.datum > heute() ? heute() : z.datum }) && !confirm(t("foto.doppeltFrage"))) return false;
     const e = kostenbelegAnlegen(stand, { stelle: z.stelle, betrag: z.betrag, basis: z.basis, satz: z.satz, datum: z.datum, verteilung: z.verteilung, monate: z.monate, upload: z.upload?.id || null, lieferant: z.lieferant });
+    { const nr = rechnungsNummerLesen(text); if (nr) e.rechnungNr = nr; } // W2-T
     if (z.upload) { z.upload.status = "uebernommen"; z.upload.ergebnis = { kostenbeleg: e.id }; z.upload.zweck = "kosten"; }
     kostenFertig = e; zuweisung = null; text = "";
     return "uebernommen";
@@ -244,6 +246,7 @@ export function belegAktion(name, el, stand, wurzel) {
     });
     if (!genommen.length) return false;
     const l = lieferungAnlegen(stand, beleg, { zeilen: genommen, geraet: wurzel?.geraet || null, basis, datum, alleZeilen: weggelassen === 0 });
+    { const nr = rechnungsNummerLesen(text); if (nr) l.rechnungNr = nr; } // W2-T: Rechnungsnummer für den Steuer-Export (keine Kundennummer)
     const ae = preiseUebernehmen(stand, l);
     fertig = { lieferung: l, aenderungen: ae, anzahl: genommen.length }; beleg = null; zeilen = []; text = "";
     if (zuweisung?.upload) { zuweisung.upload.status = "uebernommen"; zuweisung.upload.ergebnis = { lieferung: l.id }; l.upload = zuweisung.upload.id; }

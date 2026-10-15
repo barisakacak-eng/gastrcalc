@@ -1,7 +1,7 @@
 // Etappe 5: „Umsatz" – Tagesumsatz eintragen und die Zähler-Seite (Strecke, Prognose, Rechnung, Monatsstreifen, Preise).
 import { t, sprache } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
-import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, umsatzSteuerSatz, schwundAuswertung } from "../engine.js";
+import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung } from "../engine.js";
 import { zaehler, monatsGrenzen } from "../zaehler.js";
 import { tagPlus } from "../engine.js";
 import { preisAenderungen } from "../lieferung.js";
@@ -129,4 +129,6 @@ export function umsatzEingabe(feld, wert, stand, wurzel) {
   else tagesnotizSetzen(stand, D, umsatzBasis === "netto" ? Math.round(n * (1 + st.satz) * 100) / 100 : n, { nacherfasst: D !== heute(), geraet: wurzel?.geraet || null });
   return false;
 }
+// W2-T: Feld verlassen = Wert festschreiben. Jede spätere Änderung ist ein neuer Eintrag, der alte bleibt sichtbar (GoBD, Prüfung p04 Nr. 3).
+export function umsatzFeldVerlassen(stand) { tagesnotizenFestschreiben(stand); }
 export const umsatzZuruecksetzen = () => { umsatzBasis = "brutto"; mehrTage = false; };
