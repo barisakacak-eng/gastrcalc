@@ -2,7 +2,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 globalThis.document = { documentElement: {} };
-const { fehlendeSchluessel, SPRACHEN } = await import("../js/i18n.js");
+const { fehlendeSchluessel, SPRACHEN, ladeSprache } = await import("../js/i18n.js");
+for (const s of SPRACHEN) await ladeSprache(s); // nachladbare Sprachen erst laden
 for (const s of SPRACHEN) {
   test(`Sprachtabelle ${s} vollständig`, () => {
     const f = fehlendeSchluessel(s);

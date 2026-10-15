@@ -8,7 +8,7 @@ import en from "./lang/en.js";
 const TABELLEN = { de, tr, en };
 export const SPRACH_NAMEN = { de: "Deutsch", tr: "Türkçe", en: "English", ar: "العربية", fa: "فارسی", ku: "Kurdî (Kurmancî)", pl: "Polski", ro: "Română", bg: "Български",
   ru: "Русский", uk: "Українська", sq: "Shqip", bs: "Bosanski · Hrvatski · Srpski", el: "Ελληνικά", it: "Italiano", es: "Español", fr: "Français", vi: "Tiếng Việt" };
-export const NACHLADBAR = [];
+export const NACHLADBAR = ["pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
 export const SPRACHEN = ["de", "tr", "en", ...NACHLADBAR];
 export const RTL = new Set(["ar", "fa"]);
 let aktiv = "de";
