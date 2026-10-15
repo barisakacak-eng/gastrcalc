@@ -65,7 +65,7 @@ test("Alter Spiegel im localStorage wird übernommen und gelöscht", () => {
 test("Sicherung: Code und Zähler gehen nicht mit, Einlesen übernimmt sie nicht", async () => {
   const S = await import("../js/store.js");
   const w = S.leereWurzel(); w.betriebe = [S.leererBetrieb()]; w.aktiv = w.betriebe[0].id; await M.pinSetzen(w, "4711"); w.pinSperre = { fehler: 3, bis: 0 };
-  const { blob } = await S.exportDatei(w); const text = await blob.text();
+  const { blob } = await S.exportDatei(w); const Z = await import("../js/zip.js"); const text = new TextDecoder().decode(await (await Z.zipLesen(blob)).find((e) => e.name === S.SICHERUNG_JSON).bytes()); // Sicherung ist seit W2-D eine ZIP
   assert.ok(!text.includes("bueroPin") && !text.includes("pinSperre") && !text.includes("pbkdf2$"));
   const zeilen = text.split("\n"); const d = JSON.parse(zeilen[1]); d.wurzel.bueroPin = "a".repeat(64); d.wurzel.pinSperre = { fehler: 99, bis: 9e15 };
   const { wurzel } = await S.importDatei(zeilen[0] + "\n" + JSON.stringify(d)); assert.equal(wurzel.bueroPin, undefined); assert.equal(wurzel.pinSperre, undefined);

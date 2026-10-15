@@ -8,6 +8,8 @@
 // Journale (schwund, messungen, rundgaenge, tagesnotizen, lieferungen, abschluesse) werden nur angehängt; Rücknahme = storniert.
 // Schema 5 (Etappe 6a): dazu uploads (Beschreibung abgelegter Fotos/Dateien – die Datei selbst liegt in der Ablage, nie im Laden),
 // kostenbelege (Rechnungen mit Kostenstelle und Verteilung) und weg ("schnell" | "genau") für die Einrichtung.
+// Schema 6 (W2-D, 15.10.2026): putzplan, putzlog und belehrungen gehören zum Laden (belehrungen ist jetzt ein Journal mit eindeutigen
+// Kennungen), dazu je Laden stammZeit (Zeitstempel je Bereich; der Fingerabdruck liegt im Speicher-Kopf) und abgleich (Stand des letzten Zusammenführens).
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
 import { debounce, uid, heute } from "./util.js";
@@ -16,9 +18,12 @@ import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
+import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
+import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
+import { ablageKennungen, ablageLesen } from "./ablage.js";
 
-export const SCHEMA = 5;
-export const APP_FASSUNG = "etappe6a";
+export const SCHEMA = 6;
+export const APP_FASSUNG = FASSUNG;
 const DB_NAME = "gastrocalc";
 const DB_VERSION = 2; // 2 (Stresstest 15.10.): Speicher "teile" für die Journale in Monatsteilen
 const EREIGNISSE_MAX = 2000;
@@ -51,6 +56,7 @@ export function leererBetrieb() {
     kuehlstellen: [],           // {id, name, art: kuehl|tk|warm, min, max, reihe, archiviert}
     rundgaenge: [],             // {id, datum, von, gestartet, abgeschlossen, nacherfasst, quelle, messungen:[…]} – bis zum Abschluss änderbar, danach nur anhängen
     messungen: [],              // abgeschlossene Messungen: {id, lfd, rundgang, stelle, datum, zeit, wert|null, grund, min, max, abweichung, massnahmen, notiz, nachkontrolle, von, erfasst, nacherfasst, quelle}
+    putzplan: null, putzlog: [], belehrungen: [], // W2-D: Putzplan, Putz-Nachweis und Belehrungen gehören zum Laden (Schema 6)
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
 }
@@ -102,24 +108,30 @@ const tx = (store, mode, fn) => txMehr(store, mode, (t) => fn(t.objectStore(stor
 
 const fehlerNeuer = () => { const e = new Error("Stand stammt aus einer neueren Fassung"); e.grund = "neuer"; return e; };
 
+// W2-D: was beim letzten Laden nicht ging. gesperrt = Speicher ließ sich nicht öffnen (Daten wahrscheinlich noch da),
+// fehlt = übersprungene Teile (der Rest ist geladen). app.js zeigt das; die Liste steht zusätzlich in wurzel.ladeFehler (bleibt im Büro sichtbar).
+let ladeBericht = { gesperrt: false, grund: null, fehlt: [] };
+export const ladeProbleme = () => ladeBericht;
+
 export async function laden() {
+  ladeBericht = { gesperrt: false, grund: null, fehlt: [] }; bereichH = new Map();
   try {
+    if (typeof indexedDB === "undefined") throw Object.assign(new Error("ohne IndexedDB"), { ohne: true });
     db = await openDb();
     grundlageVerwerfen(); altModus = false;
     const [kopf, alt] = await tx("stand", "readonly", (st) => [st.get("kopf"), st.get("main")]);
-    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-    await ereignisseDeckeln();
+    await ereignisseDeckeln().catch(() => {});
+    if (kopf && Number(kopf.schema) > SCHEMA) throw fehlerNeuer();
+    const teile = kopf || !alt ? await tx("teile", "readonly", (st) => st.getAll()) : [];
     if (kopf) {
-      if (Number(kopf.schema) > SCHEMA) throw fehlerNeuer();
-      const teile = await tx("teile", "readonly", (st) => st.getAll());
-      let roh = null;
-      try { roh = zusammensetzen(kopf, teile); }
+      let roh = null; const fehlt = [];
+      try { roh = alt ? zusammensetzen(kopf, teile) : zusammensetzen(kopf, teile, fehlt); }
       catch (e) {
         console.warn("Geteilter Stand unvollständig:", e);
-        if (!alt) throw e;
         // Der alte Gesamt-Datensatz ist noch da (Umzug nicht bestätigt): von ihm aus neu umziehen
+        if (!alt) { try { roh = zusammensetzen(kopf, teile, fehlt); } catch (_) { roh = ausTeilenRetten(teile, fehlt); } }
       }
-      if (roh) { const w = migrierenWurzel(roh); grundlageSetzen(w, teile); return w; }
+      if (roh) { const w = migrierenWurzel(roh); ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); if (istObjekt(kopf.bereiche)) bereichH = new Map(Object.entries(kopf.bereiche).filter(([, v]) => istObjekt(v))); return w; }
     }
     if (alt) {
       if (Number(alt.schema) > SCHEMA) throw fehlerNeuer();
@@ -127,13 +139,38 @@ export async function laden() {
       await umziehen(w);
       return w;
     }
+    if (teile.length) { const fehlt = []; const roh = ausTeilenRetten(teile, fehlt); if (roh) { const w = migrierenWurzel(roh); ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); return w; } }
     return leereWurzel();
   } catch (e) {
     if (e.grund === "neuer") throw e;
     console.warn("Speicher nicht verfügbar, Daten nur in dieser Sitzung:", e);
     verfuegbar = false;
+    if (!e.ohne) ladeBericht.gesperrt = true; // Datenbank da, aber nicht zu öffnen: nicht zur Neu-Einrichtung einladen
+    ladeBericht.grund = String(e?.message || e);
     return leereWurzel();
   }
+}
+function ladeFehlerMerken(w, fehlt) {
+  if (!fehlt.length) return;
+  ladeBericht.fehlt = fehlt;
+  const jetzt = new Date().toISOString(); const da = new Set((w.ladeFehler || []).map((x) => x.laden + "|" + x.journal + "|" + x.monat));
+  w.ladeFehler = [...(w.ladeFehler || []), ...fehlt.filter((x) => !da.has(x.laden + "|" + x.journal + "|" + x.monat)).map((x) => ({ ...x, zeit: jetzt }))].slice(-50);
+  ereignis("speicher-teil-fehlt", { anzahl: fehlt.length, teile: fehlt.slice(0, 20).map((x) => [x.journal, x.monat, x.grund].join("|")) });
+}
+
+// W2-D: dauerhaften Speicher einmal nach der Einrichtung anfragen (sonst darf der Browser bei Platzmangel räumen). Ergebnis für die Einstellungen.
+let speicherDauerhaft = null; // true | false | null (unbekannt)
+export const speicherIstDauerhaft = () => speicherDauerhaft;
+export async function speicherDauerhaftPruefen({ anfragen = false } = {}) {
+  const s = globalThis.navigator?.storage; if (!s) return null;
+  try {
+    if (anfragen && s.persist) speicherDauerhaft = await s.persist();
+    else if (s.persisted) speicherDauerhaft = await s.persisted();
+  } catch (_) { /* unbekannt */ }
+  return speicherDauerhaft;
+}
+export async function speicherBelegt() {
+  try { const e = await globalThis.navigator?.storage?.estimate?.(); return e ? { belegt: e.usage ?? null, frei: e.quota ?? null } : null; } catch (_) { return null; }
 }
 
 // Einmaliger Umzug vom alten Gesamt-Datensatz ("main") in Kopf + Monatsteile. Der alte Datensatz bleibt,
@@ -168,6 +205,16 @@ function ergaenze(ziel, vorlage) {
   return ziel;
 }
 
+// W2-D: Kennung aus dem Inhalt (ohne Storno-Kennzeichen), bei Doppeln mit Zusatz – deterministisch
+const ohneStorno = (e) => { const { id, storniert, storniertZeit, ...rest } = e; return JSON.stringify(rest); };
+function eindeutigeIds(liste, vor) {
+  const da = new Set();
+  return liste.map((e) => {
+    let id = typeof e.id === "string" && e.id ? e.id : vor + "-" + kurzHash(ohneStorno(e));
+    if (da.has(id)) { id = id + "~" + kurzHash(ohneStorno(e)); while (da.has(id)) id += "~"; }
+    da.add(id); return id === e.id ? e : { ...e, id };
+  });
+}
 const mitId = (liste) => liste.filter((e) => istObjekt(e) && typeof e.id === "string");
 
 // Ein einzelner Betrieb (Schema 1, 2 oder 3) wird geprüft und vervollständigt.
@@ -226,6 +273,15 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
     posten: Object.fromEntries(Object.entries(istObjekt(i.posten) ? i.posten : {}).map(([n, m]) => [n, typeof m === "number" && Number.isFinite(m) && m >= 0 ? m : null])),
     ausgeblendet: (Array.isArray(i.ausgeblendet) ? i.ausgeblendet : []).filter((n) => typeof n === "string") }));
   { const offen = s.inventuren.filter((i) => !i.abgeschlossen); if (offen.length > 1) s.inventuren = s.inventuren.filter((i) => i.abgeschlossen || i === offen[offen.length - 1]); }
+  // W2-D (Schema 6): Putz-Nachweis und Belehrungen – jeder Eintrag braucht eine eigene Kennung (bis Schema 5 trugen „storniert“ und
+  // „neu eingetragen“ am selben Tag dieselbe Kennung, beim Zusammenführen gewann dann das Storno). Fehlende oder doppelte Kennungen
+  // werden aus dem Inhalt abgeleitet – auf jedem Handy gleich, damit dieselbe Belehrung nach dem Zusammenführen nicht doppelt steht.
+  s.putzlog = eindeutigeIds(s.putzlog.filter(istObjekt), "putz");
+  s.belehrungen = eindeutigeIds(s.belehrungen.filter(istObjekt), "bel");
+  if (s.putzplan !== null && !istObjekt(s.putzplan)) s.putzplan = null;
+  for (const k of ["stammZeit", "abgleich"]) if (!istObjekt(s[k])) delete s[k];
+  delete s.stammH; // Fingerabdrücke liegen im Kopf des Speichers, nicht im Laden
+  if (!istObjekt(s.abgleichHinweis)) delete s.abgleichHinweis;
   if (!["onboarding", "app"].includes(s.phase)) s.phase = "onboarding";
   s.schritt = Math.max(0, Number(s.schritt) || 0);
   delete s.schema; // gehört an die Wurzel
@@ -246,6 +302,10 @@ export function migrierenWurzel(w) {
     out.lfd = Math.max(0, Number(w.lfd) || 0);
     out.letzteSicherung = typeof w.letzteSicherung === "string" ? w.letzteSicherung : null;
     out.sicherungZaehler = Number(w.sicherungZaehler) || 0;
+    // W2-D: Lade-Probleme (fehlende Speicherteile) bleiben gemeldet, bis eine Sicherung eingelesen ist; Speicher-Anfrage nur einmal
+    if (Array.isArray(w.ladeFehler) && w.ladeFehler.length) out.ladeFehler = w.ladeFehler.filter(istObjekt).slice(0, 50);
+    if (w.persistGefragt === true) out.persistGefragt = true;
+    if (typeof w.letzteSicherungGroesse === "number") out.letzteSicherungGroesse = w.letzteSicherungGroesse;
     if (["laden", "personal", "buero"].includes(w.modus)) out.modus = w.modus; // Drei Ebenen: Modus je Handy
     if (pinWertGueltig(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern (W2-S: auch PBKDF2 mit Salz)
     { const sp = sperreSauber(w.pinSperre); if (sp) out.pinSperre = sp; } // W2-S: Fehlversuche übersteht den Neustart
@@ -280,7 +340,7 @@ function stempeln(wurzel) {
 //  4. im Leerlauf und beim Verlassen der App wird jedes Teil ganz verglichen – das fängt auch tiefe Änderungen an alten Einträgen.
 // Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über storniert/erfasst geändert
 // (oder durch ein neues Objekt ersetzt) – dann ist die Änderung sofort gespeichert, sonst erst bei 4.
-export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "rundgaenge", "inventuren", "uploads"];
+export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads"]; // W2-D: belehrungen als Journal (Schema 6)
 const JOURNAL_SET = new Set(JOURNALE);
 // Stammdaten, die groß werden (Waren mit Preisverlauf, Gerichte mit Zutaten): je Laden ein eigenes Teil "ladenId|artikel|alle",
 // bei jedem Speichern ganz verglichen (Text gegen Text) und nur geschrieben, wenn anders. So bleibt der Kopf klein.
@@ -399,9 +459,43 @@ function journalPruefen(b, sid, j, arr, tief, out) {
   return st.lauf;
 }
 
-function stammPruefen(sid, j, liste, out) {
+// ---------- W2-D: Bereiche mit eigenem Zeitstempel (Abgleich zweier Handys) ----------
+// Beim Speichern wird je Bereich ein Fingerabdruck des Inhalts gebildet. Ändert er sich, bekommt der Bereich stammZeit[bereich] = jetzt.
+// Kein Bildschirm muss etwas melden. Ein Müll- oder Umsatz-Eintrag ändert keinen Bereich. Erster Fingerabdruck (nach dem Update) = kein Zeitstempel.
+export const BEREICHE = {
+  kosten: ["kosten", "kostenKategorienGeprueft", "team"],
+  gerichte: ["gerichte", "selbst", "selbstAutoArt"],
+  artikel: ["artikel"],
+  betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt"],
+  kuehl: ["kuehlstellen", "kuehl"],
+  putzplan: ["putzplan", "putzplanSpaeter"],
+  personen: ["personen"],
+};
+const BEREICH_NAMEN = Object.keys(BEREICHE);
+function bereichText(b, a) { const f = BEREICHE[a]; return f.length === 1 ? JSON.stringify(b[f[0]] ?? null) : JSON.stringify(f.map((k) => b[k] ?? null)); }
+export const bereichHash = (b, a) => hash(bereichText(b, a));
+const bereichTexte = new WeakMap(); // Betrieb → { bereich: Text beim letzten Speichern } – spart das Hashen, wenn nichts anders ist
+// Fingerabdrücke je Laden (Kennung → { bereich: hash }) – gespeichert im Kopf (kopf.bereiche), nicht im Laden selbst
+let bereichH = new Map();
+const bereichVorgabe = new WeakMap(); // nach dem Zusammenführen: der Stand, der schon als „bekannt“ gilt (kein neuer Zeitstempel)
+function bereicheStempeln(b, sid, texte) {
+  if (!istObjekt(b)) return;
+  let alt = bereichTexte.get(b); if (!alt) { alt = {}; bereichTexte.set(b, alt); }
+  const vorgabe = bereichVorgabe.get(b); if (vorgabe) { bereichVorgabe.delete(b); bereichH.set(sid, { ...(bereichH.get(sid) || {}), ...vorgabe }); for (const a of Object.keys(vorgabe)) delete alt[a]; }
+  const H = bereichH.get(sid) || {}; let neuH = null, neuZ = null; const jetzt = new Date().toISOString();
+  for (const a of BEREICH_NAMEN) {
+    const t = bereichText(b, a); if (BEREICHE[a].length === 1 && STAMM_SET.has(BEREICHE[a][0])) texte[BEREICHE[a][0]] = t;
+    if (alt[a] === t && H[a] !== undefined) continue;
+    alt[a] = t; const h = hash(t); if (H[a] === h) continue;
+    neuH ??= { ...H }; const vorher = neuH[a]; neuH[a] = h;
+    if (vorher !== undefined) { neuZ ??= { ...(istObjekt(b.stammZeit) ? b.stammZeit : {}) }; neuZ[a] = jetzt; }
+  }
+  if (neuH) bereichH.set(sid, neuH); if (neuZ) b.stammZeit = neuZ;
+}
+
+function stammPruefen(sid, j, liste, out, fertig) {
   const key = sid + "|" + j + "|" + STAMM; out.stamm.add(key);
-  const t = JSON.stringify(liste);
+  const t = fertig ?? JSON.stringify(liste); // W2-D: Text der Waren kommt schon aus dem Bereichs-Fingerabdruck
   if (stammText.get(key) === t && teileH.has(key)) return;
   stammText.set(key, t); const h = hash(t);
   if (teileH.get(key) === h) return;
@@ -439,12 +533,13 @@ function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt() } = {}
   const ordnung = [], ids = [], stempelListe = [], schonSid = new Set();
   const betriebe = wurzel.betriebe.map((b, i) => {
     let sid = String(b?.id ?? ""); if (schonSid.has(sid)) sid += "~" + i; schonSid.add(sid); ids.push(sid);
+    const texte = {}; bereicheStempeln(b, sid, texte); // W2-D: Zeitstempel je Bereich aus dem Inhalt
     const k = {}; const ord = {}; stempelListe[i] = null;
     for (const key in b) {
       const v = b[key];
       if (key === "geaendert") { k[key] = PLATZHALTER; stempelListe[i] = v ?? null; }
       else if (JOURNAL_SET.has(key) && Array.isArray(v)) { k[key] = PLATZHALTER; ord[key] = journalPruefen(b, sid, key, v, tief, out); }
-      else if (STAMM_SET.has(key) && Array.isArray(v)) { k[key] = PLATZHALTER; ord[key] = STAMM; stammPruefen(sid, key, v, out); }
+      else if (STAMM_SET.has(key) && Array.isArray(v)) { k[key] = PLATZHALTER; ord[key] = STAMM; stammPruefen(sid, key, v, out, texte[key]); }
       else k[key] = v;
     }
     ordnung.push(ord);
@@ -470,7 +565,8 @@ function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt() } = {}
     leerlaufPlanen(); return Promise.resolve(true);
   }
   const teile = Object.fromEntries(teileH);
-  const kopf = { format: FORMAT_GETEILT, schema: Number(wurzel.schema) || SCHEMA, gespeichert: new Date().toISOString(), wurzel: kopfText, stempel: stempelText, ids, ordnung, teile };
+  const bereiche = {}; for (const sid of ids) if (bereichH.has(sid)) bereiche[sid] = bereichH.get(sid); // W2-D: Fingerabdrücke je Bereich
+  const kopf = { format: FORMAT_GETEILT, schema: Number(wurzel.schema) || SCHEMA, gespeichert: new Date().toISOString(), wurzel: kopfText, stempel: stempelText, ids, ordnung, teile, bereiche };
   // Die neue Grundlage gilt sofort (das nächste Speichern wartet ohnehin auf diese Transaktion); schlägt sie fehl, wird sie verworfen
   bekanntGueltig = true; kopfAlt = kopfText; ordnungAlt = ordnungText; stempelAlt = stempelText;
   return txMehr(["stand", "teile"], "readwrite", (t) => {
@@ -483,40 +579,70 @@ function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt() } = {}
 }
 function speicherFehler(e) { console.warn("Speichern fehlgeschlagen:", e); if (fehlerMelder) fehlerMelder("speichern", e); return false; }
 
-// Kopf + Teile → Wurzel in genau der Form, wie sie gespeichert wurde. Wirft, wenn ein Teil fehlt oder nicht passt.
-function zusammensetzen(kopf, teile) {
+// Kopf + Teile → Wurzel in genau der Form, wie sie gespeichert wurde.
+// W2-D: Ein fehlendes oder kaputtes Teil bricht nicht mehr alles ab – nur dieses Teil fehlt, alle anderen Monate laden.
+// Was fehlt, landet in `fehlt` ([{ laden, journal, monat, grund }]) und wird im Büro gemeldet. Wirft nur, wenn der Kopf selbst unlesbar ist.
+function zusammensetzen(kopf, teile, fehlt = null) {
   if (!istObjekt(kopf) || kopf.format !== FORMAT_GETEILT || typeof kopf.wurzel !== "string") throw new Error("Kopf unbekannt");
+  const melden = (sid, j, m, grund) => { if (fehlt) fehlt.push({ laden: String(sid).split("~")[0], journal: j, monat: m, grund }); else throw new Error("Teil " + grund + ": " + sid + "|" + j + "|" + m); };
   const nachSchluessel = new Map();
   for (const v of teile || []) if (istObjekt(v)) nachSchluessel.set(v.s + "|" + v.j + "|" + v.m, v);
-  for (const [key, h] of Object.entries(kopf.teile || {})) { const v = nachSchluessel.get(key); if (!v || v.h !== h) throw new Error("Teil fehlt oder veraltet: " + key); }
+  if (!fehlt) for (const [key, h] of Object.entries(kopf.teile || {})) { const v = nachSchluessel.get(key); if (!v || v.h !== h) throw new Error("Teil fehlt oder veraltet: " + key); }
+  const lies = (v) => { try { const e = JSON.parse(v.t); return Array.isArray(e) ? e : null; } catch (_) { return null; } };
   const w = JSON.parse(kopf.wurzel); const stempel = JSON.parse(kopf.stempel || "[]");
   (w.betriebe || []).forEach((b, i) => {
     if ("geaendert" in b) b.geaendert = stempel[i] ?? null;
-    const ord = kopf.ordnung?.[i] || {}; const sid = kopf.ids[i];
+    const ord = kopf.ordnung?.[i] || {}; const sid = kopf.ids?.[i] ?? String(b?.id ?? "");
     for (const j of Object.keys(ord)) {
       if (ord[j] === STAMM) {
-        const v = nachSchluessel.get(sid + "|" + j + "|" + STAMM); if (!v) throw new Error("Teil fehlt: " + sid + "|" + j);
-        const liste = JSON.parse(v.t); if (!Array.isArray(liste) || liste.length !== v.n) throw new Error("Teil unvollständig"); b[j] = liste; continue;
+        const v = nachSchluessel.get(sid + "|" + j + "|" + STAMM); const liste = v ? lies(v) : null;
+        if (!v) melden(sid, j, STAMM, "fehlt"); else if (!liste) melden(sid, j, STAMM, "kaputt");
+        b[j] = liste || []; continue;
       }
       const liste = []; const zeiger = new Map();
       for (const [m, n] of ord[j]) {
         let z = zeiger.get(m);
         if (!z) {
-          const v = nachSchluessel.get(sid + "|" + j + "|" + m); if (!v) throw new Error("Teil fehlt: " + sid + "|" + j + "|" + m);
-          z = { e: JSON.parse(v.t), i: 0 }; if (z.e.length !== v.n) throw new Error("Teil unvollständig"); zeiger.set(m, z);
+          const v = nachSchluessel.get(sid + "|" + j + "|" + m); const e = v ? lies(v) : null;
+          if (!v) melden(sid, j, m, "fehlt"); else if (!e) melden(sid, j, m, "kaputt");
+          else if (e.length !== v.n) melden(sid, j, m, "unvollstaendig");
+          z = { e: e || [], i: 0 }; zeiger.set(m, z);
         }
-        for (let k = 0; k < n; k++) { if (z.i >= z.e.length) throw new Error("Teil zu kurz"); liste.push(z.e[z.i++]); }
+        for (let k = 0; k < n && z.i < z.e.length; k++) liste.push(z.e[z.i++]);
       }
-      for (const z of zeiger.values()) if (z.i !== z.e.length) throw new Error("Teil zu lang");
+      for (const [m, z] of zeiger) if (z.i < z.e.length) { if (!fehlt) throw new Error("Teil zu lang"); while (z.i < z.e.length) liste.push(z.e[z.i++]); } // überzählige Einträge nicht wegwerfen
       b[j] = liste;
     }
   });
   return w;
 }
 
+// W2-D: Kopf fehlt oder ist unlesbar, aber Teile sind da – Läden aus den Teilen wieder aufbauen (Journale, Waren, Gerichte),
+// statt eine leere Einrichtung zu zeigen. Betriebsdaten (Name, Kosten …) sind dann weg; das meldet das Büro.
+function ausTeilenRetten(teile, fehlt) {
+  const laeden = new Map();
+  for (const v of teile || []) {
+    if (!istObjekt(v) || typeof v.s !== "string" || typeof v.j !== "string") continue;
+    let e; try { e = JSON.parse(v.t); } catch (_) { e = null; } if (!Array.isArray(e)) continue;
+    const sid = v.s.split("~")[0]; let b = laeden.get(sid);
+    if (!b) { b = leererBetrieb(); b.id = sid; b.phase = "app"; b.weg = "genau"; laeden.set(sid, b); }
+    if (STAMM_SET.has(v.j) && v.m === STAMM) b[v.j] = e;
+    else if (JOURNAL_SET.has(v.j)) (b["_" + v.j] ??= []).push([v.m, e]);
+  }
+  if (!laeden.size) return null;
+  const w = leereWurzel();
+  for (const b of laeden.values()) {
+    for (const j of JOURNALE) { const t = b["_" + j]; delete b["_" + j]; if (t) b[j] = t.sort((x, y) => String(x[0]).localeCompare(String(y[0]))).flatMap((x) => x[1]); }
+    w.betriebe.push(b);
+  }
+  w.aktiv = w.betriebe[0].id;
+  fehlt.push({ laden: null, journal: "kopf", monat: null, grund: "kaputt" });
+  return w;
+}
+
 // Nach dem Laden: Grundlage = die geladene (gehobene) Wurzel, Prüfsummen von den gespeicherten Teilen.
 // Was die Hebung verändert hat, findet die erste ganze Prüfung (Leerlauf/Verlassen) und schreibt es einmal nach.
-function grundlageSetzen(w, teile) {
+function grundlageSetzen(w, teile, fehlt = []) {
   grundlageVerwerfen();
   const gespeichert = new Map(), texte = new Map(); for (const v of teile) if (istObjekt(v)) { const key = v.s + "|" + v.j + "|" + v.m; gespeichert.set(key, v.h); if (v.m === STAMM) texte.set(key, v.t); }
   const schonSid = new Set(); const da = new Set();
@@ -534,7 +660,8 @@ function grundlageSetzen(w, teile) {
       for (const [m] of st.lauf) { const key = jk + "|" + m; da.add(key); if (gespeichert.has(key)) teileH.set(key, gespeichert.get(key)); else zwang.add(key); }
     }
   });
-  for (const key of gespeichert.keys()) if (!da.has(key)) loeschenOffen.add(key);
+  const behalten = new Set(fehlt.filter((x) => x.grund !== "fehlt").map((x) => x.laden + "|" + x.journal + "|" + x.monat)); // W2-D: kaputte Teile nicht löschen (vielleicht noch zu retten)
+  for (const key of gespeichert.keys()) if (!da.has(key) && !behalten.has(key)) loeschenOffen.add(key);
   bekanntGueltig = true; letzteWurzel = w;
 }
 
@@ -610,20 +737,57 @@ async function sha256Hex(daten) { // daten: Text oder schon kodierte Bytes
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-export async function exportDatei(wurzel) {
+// W2-D: Die Sicherung ist ein ZIP (ohne Kompression): gastrocalc-sicherung.json (zweizeilig wie bisher, mit Prüfsumme),
+// ablage.json (Typ und Größe je Datei) und ablage/<Kennung> – alle Fotos und Belege dieses Geräts. Ein Knopf, ein Dateiname mit Datum.
+// letzteSicherung setzt app.js erst, wenn Teilen oder Speichern geklappt hat.
+export const SICHERUNG_JSON = "gastrocalc-sicherung.json";
+export async function exportDatei(wurzel, { mitAblage = true } = {}) {
   await ereignis("export", { betriebe: wurzel.betriebe.length });
   const ereignisse = await alleEreignisse();
   // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
   const { bueroPin: _pin, pinSperre: _sperre, ...ohneCode } = wurzel; // W2-S (p07 M3): der Büro-Code wandert nicht in die Sicherung (das Einlesen übernimmt ihn ohnehin nicht)
   const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel: ohneCode, ereignisse }));
   const sha = await sha256Hex(bytes);
-  const kopf = JSON.stringify({ typ: "gastrocalc-sicherung", schema: SCHEMA, sha256: sha });
-  const blob = new Blob([kopf + "\n", bytes], { type: "application/json" });
+  const kopf = new TextEncoder().encode(JSON.stringify({ typ: "gastrocalc-sicherung", schema: SCHEMA, sha256: sha }) + "\n");
+  const json = new Uint8Array(kopf.length + bytes.length); json.set(kopf, 0); json.set(bytes, kopf.length);
+  const dateien = []; const liste = {};
+  if (mitAblage) for (const id of await ablageKennungen()) {
+    const d = await ablageLesen(id).catch(() => null); if (!d || !(d.size > 0)) continue;
+    dateien.push({ name: "ablage/" + id, daten: d }); liste[id] = { typ: d.type || "", groesse: d.size };
+  }
+  const blob = await zipBlob([{ name: SICHERUNG_JSON, daten: json }, { name: "ablage.json", daten: JSON.stringify(liste) }, ...dateien]);
   const aktiv = wurzel.betriebe.find((b) => b.id === wurzel.aktiv);
   const stamm = wurzel.betriebe.length > 1 ? `${wurzel.betriebe.length}-laeden` : (aktiv?.betrieb.name || "laden");
-  const name = `gastrocalc-${stamm.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}-${heute()}.json`;
-  wurzel.letzteSicherung = new Date().toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel);
-  return { blob, name, fingerabdruck: sha ? sha.slice(0, 10) : null };
+  const name = `gastrocalc-${stamm.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}-${heute()}.zip`;
+  return { blob, name, fingerabdruck: sha ? sha.slice(0, 10) : null, groesse: blob.size, dateien: dateien.length };
+}
+
+// W2-D: Einlesen nimmt das ZIP und die alte JSON-Datei. Rückgabe wie importDatei, dazu ablage: [{ id, typ, eintrag }] (Fotos/Belege, noch nicht abgelegt).
+export async function importSicherung(datei) {
+  if (await istZip(datei)) {
+    let eintraege; try { eintraege = await zipLesen(datei); } catch (_) { throw Object.assign(new Error("format"), { grund: "format" }); }
+    const j = eintraege.find((e) => e.name === SICHERUNG_JSON);
+    if (!j) throw Object.assign(new Error("format"), { grund: "format" });
+    const r = await importDatei(new TextDecoder().decode(await j.bytes()));
+    if (!(await j.crcOk()) && r.pruefsumme === "ok") r.pruefsumme = "abweichung";
+    let liste = {}; const lj = eintraege.find((e) => e.name === "ablage.json");
+    if (lj) { try { const x = JSON.parse(new TextDecoder().decode(await lj.bytes())); if (istObjekt(x)) liste = x; } catch (_) { /* ohne Typen */ } }
+    r.ablage = eintraege.filter((e) => e.name.startsWith("ablage/") && e.name.length > 7).map((e) => { const id = e.name.slice(7); return { id, typ: typeof liste[id]?.typ === "string" ? liste[id].typ : "", eintrag: e }; });
+    r.zip = true; return r;
+  }
+  const r = await importDatei(await datei.text()); r.ablage = []; r.zip = false; return r;
+}
+// Fotos/Belege aus dem ZIP zurück in die Ablage (vorhandene bleiben). zuruecklegen = ablageZuruecklegen aus ablage.js.
+export async function ablageAusSicherung(liste, zuruecklegen) {
+  let neu = 0, kaputt = 0, da = 0;
+  for (const x of liste || []) {
+    try {
+      const bytes = await x.eintrag.bytes();
+      if (crc32Pruefen(bytes) !== x.eintrag.crc) { kaputt += 1; continue; }
+      if (await zuruecklegen(x.id, new Blob([bytes], { type: x.typ || "application/octet-stream" }))) neu += 1; else da += 1;
+    } catch (_) { kaputt += 1; }
+  }
+  return { neu, kaputt, da };
 }
 
 // Liest eine Sicherung (Schema 1 bis 4) und liefert {wurzel, ereignisse, pruefsumme: "ok"|"fehlt"|"abweichung"};
@@ -651,64 +815,158 @@ export async function importDatei(text) {
 function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; return w; }
 
 // ---------- Zusammenführen ----------
+// W2-D (15.10.2026): Journale werden vereinigt (wie bisher). Stammdaten gewinnen nicht mehr als ganzer Laden, sondern je Bereich (BEREICHE).
+// HACCP-Nachweise (Messungen, Rundgänge, Putz-Nachweis, Belehrungen, Abschlüsse) werden beim Einlesen nie verändert: gleiche Kennung mit
+// anderem Inhalt kommt als eigener Eintrag daneben (quelle "sicherung", konfliktMit), Einträge mit Datum in der Zukunft werden nicht übernommen.
+const TAG_MS = 86400e3;
+const HACCP = new Set(["messungen", "rundgaenge", "putzlog", "belehrungen", "abschluesse"]);
+// Zeitstempel aus der Zukunft (mehr als 1 Tag nach jetzt) zählen als jetzt – eine falsch gestellte Handy-Uhr gewinnt sonst jeden Abgleich
+export function zeitKappen(t, jetzt = Date.now()) {
+  if (typeof t !== "string" || !t) return "";
+  const ms = Date.parse(t); if (!Number.isFinite(ms)) return "";
+  return ms > jetzt + TAG_MS ? new Date(jetzt).toISOString() : t;
+}
+function inZukunft(e, jetzt) {
+  const grenze = new Date(jetzt + TAG_MS); const tag = heute(grenze); const iso = grenze.toISOString();
+  return (typeof e.datum === "string" && e.datum.slice(0, 10) > tag) || ["zeit", "erfasst", "abgeschlossen"].some((k) => typeof e[k] === "string" && e[k].length > 10 && e[k] > iso);
+}
+// Text mit sortierten Schlüsseln: gleicher Inhalt = gleicher Text, egal in welcher Reihenfolge die Felder stehen
+function stabil(x) {
+  if (Array.isArray(x)) return "[" + x.map(stabil).join(",") + "]";
+  if (x && typeof x === "object") return "{" + Object.keys(x).filter((k) => x[k] !== undefined).sort().map((k) => JSON.stringify(k) + ":" + stabil(x[k])).join(",") + "}";
+  return JSON.stringify(x ?? null);
+}
+const FLAGGEN = new Set(["storniert", "storniertZeit", "importiert", "konfliktMit", "quelleVorher"]);
+function kern(e, ohneWert) { const o = {}; for (const k of Object.keys(e)) if (!FLAGGEN.has(k) && !(ohneWert && k === "wert")) o[k] = e[k]; return stabil(o); }
+
 // Journale: Vereinigung nach Kennung, Kennzeichen (storniert, entfernt, archiviert) gewinnen immer.
-function journalVereinigen(a, b, kennzeichen = ["storniert"]) {
-  const m = new Map();
-  for (const e of [...(a || []), ...(b || [])]) {
+// schutz (HACCP): vorhandene lokale Einträge ändern sich nur über Kennzeichen (Storno, nachgetragener Wert); bericht zählt Konflikte und Zukunft.
+function journalVereinigen(a, b, kennzeichen = ["storniert"], { schutz = false, bericht = null, jetzt = Date.now() } = {}) {
+  const m = new Map(); const lokal = new Set();
+  for (const e of a || []) if (e && typeof e.id === "string") { m.set(e.id, m.has(e.id) ? vereinige(m.get(e.id), e, kennzeichen) : e); lokal.add(e.id); }
+  for (const e of b || []) {
+    if (!e || typeof e.id !== "string") continue;
     const alt = m.get(e.id);
-    if (!alt) { m.set(e.id, e); continue; }
-    // Bei gleicher Kennung gewinnt der jünger erfasste Eintrag; Kennzeichen (storniert/entfernt) gewinnen immer
-    const [aelter, juenger] = String(e.erfasst || "") >= String(alt.erfasst || "") ? [alt, e] : [e, alt];
-    const neu = { ...aelter, ...juenger };
-    for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
-    if (kennzeichen.includes("entfernt") && (alt.entfernt || e.entfernt)) { const q = alt.entfernt ? alt : e; neu.kuerzel = q.kuerzel; neu.aktiv = false; } // Pseudonym bleibt
-    if (alt.storniertZeit || e.storniertZeit) neu.storniertZeit = alt.storniertZeit || e.storniertZeit;
-    if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert; // nachgetragener Wert gewinnt über „offen"
-    if (typeof alt.wert === "number" && e.wert === null) neu.wert = alt.wert;
-    m.set(e.id, neu);
+    if (!alt) {
+      if (schutz && inZukunft(e, jetzt)) { if (bericht) bericht.zukunft += 1; continue; }
+      m.set(e.id, e); continue;
+    }
+    if (schutz && lokal.has(e.id)) {
+      const ohneWert = alt.wert === null || e.wert === null;
+      if (kern(alt, ohneWert) !== kern(e, ohneWert)) {
+        const id = e.id + "~s" + kurzHash(stabil(e));
+        if (!m.has(id) && !inZukunft(e, jetzt)) { m.set(id, { ...e, id, quelleVorher: e.quelle ?? null, quelle: "sicherung", importiert: true, konfliktMit: e.id }); if (bericht) bericht.konflikte += 1; }
+        continue;
+      }
+      const neu = { ...alt };
+      for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
+      if (!alt.storniertZeit && e.storniertZeit) neu.storniertZeit = e.storniertZeit;
+      if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert; // nachgetragener Wert gewinnt über „offen"
+      m.set(e.id, neu); continue;
+    }
+    m.set(e.id, vereinige(alt, e, kennzeichen));
   }
   return [...m.values()];
 }
+function vereinige(alt, e, kennzeichen) {
+  // Bei gleicher Kennung gewinnt der jünger erfasste Eintrag; Kennzeichen (storniert/entfernt) gewinnen immer
+  const [aelter, juenger] = String(e.erfasst || "") >= String(alt.erfasst || "") ? [alt, e] : [e, alt];
+  const neu = { ...aelter, ...juenger };
+  for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
+  if (kennzeichen.includes("entfernt") && (alt.entfernt || e.entfernt)) { const q = alt.entfernt ? alt : e; neu.kuerzel = q.kuerzel; neu.aktiv = false; } // Pseudonym bleibt
+  if (alt.storniertZeit || e.storniertZeit) neu.storniertZeit = alt.storniertZeit || e.storniertZeit;
+  if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert;
+  if (typeof alt.wert === "number" && e.wert === null) neu.wert = alt.wert;
+  return neu;
+}
 
-export function verschmelzen(lokal, fremd) {
-  const juengerFremd = String(fremd.geaendert || "") >= String(lokal.geaendert || "");
-  const basis = structuredClone(juengerFremd ? fremd : lokal);
-  const sortErfasst = (x, y) => String(x.erfasst || x.datum || "").localeCompare(String(y.erfasst || y.datum || ""));
-  basis.schwund = journalVereinigen(lokal.schwund, fremd.schwund).sort(sortErfasst);
-  basis.tagesnotizen = journalVereinigen(lokal.tagesnotizen, fremd.tagesnotizen).sort(sortErfasst);
-  basis.messungen = journalVereinigen(lokal.messungen, fremd.messungen).sort(sortErfasst);
-  basis.lieferungen = journalVereinigen(lokal.lieferungen, fremd.lieferungen).sort(sortErfasst);
-  basis.abschluesse = journalVereinigen(lokal.abschluesse, fremd.abschluesse).sort(sortErfasst);
-  basis.uploads = journalVereinigen(lokal.uploads, fremd.uploads).sort(sortErfasst);
-  basis.kostenbelege = journalVereinigen(lokal.kostenbelege, fremd.kostenbelege).sort(sortErfasst);
-  basis.personen = journalVereinigen(lokal.personen, fremd.personen, ["entfernt"]).map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
-  // Kühlstellen: Archivierung gewinnt; Name und Grenzen vom jüngeren Stand
-  const stellen = new Map();
-  for (const k of [...(juengerFremd ? lokal : fremd).kuehlstellen, ...(juengerFremd ? fremd : lokal).kuehlstellen]) {
-    const alt = stellen.get(k.id); stellen.set(k.id, alt ? { ...alt, ...k, archiviert: !!(alt.archiviert || k.archiviert) } : k);
+// Welche Seite liefert einen Bereich? 1) gleicher Inhalt → lokal. 2) Es gab schon einen Abgleich: kennt dieses Handy den fremden Stand schon →
+// lokal; hat sich lokal seitdem nichts geändert → fremd; beide geändert → lokal bleibt (beide: true, Hinweis im Büro).
+// 3) Noch kein Abgleich: der jüngere Zeitstempel des Bereichs (gekappt), ohne Zeitstempel der jüngere Laden (wie bis Schema 5).
+function bereichWahl(lokal, fremd, a, jetzt) {
+  const hL = bereichHash(lokal, a), hF = bereichHash(fremd, a);
+  if (hL === hF) return { q: "lokal", hL, hF };
+  const ab = istObjekt(lokal.abgleich) ? lokal.abgleich[a] : null;
+  if (istObjekt(ab) && typeof ab.zuletzt === "string") {
+    if (ab.zuletzt === hF || (Array.isArray(ab.bekannt) && ab.bekannt.includes(hF))) return { q: "lokal", hL, hF };
+    if (ab.zuletzt === hL) return { q: "fremd", hL, hF };
+    return { q: "lokal", beide: true, hL, hF };
   }
-  basis.kuehlstellen = [...stellen.values()].sort((x, y) => x.reihe - y.reihe);
+  const tL = zeitKappen(lokal.stammZeit?.[a], jetzt), tF = zeitKappen(fremd.stammZeit?.[a], jetzt);
+  if (tL || tF) return { q: tF > tL ? "fremd" : "lokal", hL, hF };
+  return { q: zeitKappen(fremd.geaendert, jetzt) >= zeitKappen(lokal.geaendert, jetzt) ? "fremd" : "lokal", hL, hF };
+}
+// Listen mit Kennung (Kühlstellen, Personen): Liste der gewählten Seite, dazu Einträge, die nur die andere Seite kennt; Kennzeichen gewinnen.
+function listeMitKennzeichen(sieger, verlierer, flag) {
+  const m = new Map(); for (const x of sieger || []) if (x && typeof x.id === "string") m.set(x.id, { ...x });
+  for (const x of verlierer || []) {
+    if (!x || typeof x.id !== "string") continue; const s = m.get(x.id);
+    if (!s) { m.set(x.id, { ...x }); continue; }
+    if (x[flag] && !s[flag]) { s[flag] = true; if (flag === "entfernt") { s.kuerzel = x.kuerzel; s.aktiv = false; } }
+  }
+  return [...m.values()];
+}
+function abgleichMerken(b, a, hF) {
+  const h = bereichHash(b, a); bereichVorgabe.set(b, { ...(bereichVorgabe.get(b) || {}), [a]: h }); // gilt beim nächsten Speichern als bekannt
+  const alt = istObjekt(b.abgleich?.[a]) ? b.abgleich[a] : {};
+  const bekannt = [...new Set([...(Array.isArray(alt.bekannt) ? alt.bekannt : []), ...(hF ? [hF] : []), h])].slice(-8);
+  b.abgleich = { ...(istObjekt(b.abgleich) ? b.abgleich : {}), [a]: { zuletzt: h, bekannt } };
+}
+export function abgleichGrundlage(b) { for (const a of BEREICH_NAMEN) abgleichMerken(b, a, null); return b; }
+
+export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
+  const basis = structuredClone(lokal); // Rest (Einrichtungsstand, Hinweise …) bleibt vom eigenen Handy
+  if ((lokal.phase === "app" || fremd.phase === "app") && basis.phase !== "app") { basis.phase = "app"; basis.rueckkehr = null; }
+  const bericht = { beide: [], zukunft: 0, konflikte: 0 };
+  basis.stammZeit = { ...(istObjekt(lokal.stammZeit) ? lokal.stammZeit : {}) };
+  for (const a of BEREICH_NAMEN) {
+    const w = bereichWahl(lokal, fremd, a, jetzt);
+    const [sieger, verlierer] = w.q === "fremd" ? [fremd, lokal] : [lokal, fremd];
+    for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
+    if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
+    if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
+    const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
+    if (w.beide) bericht.beide.push(a);
+    abgleichMerken(basis, a, w.hF);
+  }
+  const sortErfasst = (x, y) => String(x.erfasst || x.datum || "").localeCompare(String(y.erfasst || y.datum || ""));
+  const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
+  for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen"])
+    basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
-  const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen));
-  const offen = (lokal.rundgaenge || []).filter((r) => !r.abgeschlossen);
-  basis.rundgaenge = [...abgeschlossen, ...offen];
+  const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen), ["storniert"], opt("rundgaenge"));
+  basis.rundgaenge = [...abgeschlossen, ...(lokal.rundgaenge || []).filter((r) => !r.abgeschlossen)];
   // Inventuren wie Rundgänge: abgeschlossene vereinigen, eine offene nur vom lokalen Stand
   const invFertig = journalVereinigen((lokal.inventuren || []).filter((i) => i.abgeschlossen), (fremd.inventuren || []).filter((i) => i.abgeschlossen));
   const fertigIds = new Set(invFertig.map((i) => i.id)); // lokal offen, in der Datei schon fertig → nur die fertige behalten (Review 15.10.)
   basis.inventuren = [...invFertig, ...(lokal.inventuren || []).filter((i) => !i.abgeschlossen && !fertigIds.has(i.id))];
-  // Putzplan-Protokoll ist Nachweis für die Kontrolle: Einträge beider Seiten behalten, Storno gewinnt (Review 15.10.)
-  basis.putzlog = journalVereinigen(lokal.putzlog, fremd.putzlog).sort(sortErfasst);
-  if (lokal.belehrungen || fremd.belehrungen) basis.belehrungen = journalVereinigen(lokal.belehrungen || [], fremd.belehrungen || []).sort(sortErfasst); // Belehrungen (Ordner Amt) gehen beim Zusammenführen nicht verloren
-  basis.geaendert = [lokal.geaendert, fremd.geaendert].filter(Boolean).sort().pop() || new Date().toISOString();
+  basis.geaendert = [zeitKappen(lokal.geaendert, jetzt), zeitKappen(fremd.geaendert, jetzt)].filter(Boolean).sort().pop() || new Date(jetzt).toISOString();
+  Object.defineProperty(basis, "_bericht", { value: bericht, enumerable: false, configurable: true }); // nur für zusammenfuehren
+  if (bericht.beide.length || bericht.zukunft || bericht.konflikte) {
+    const alt = istObjekt(lokal.abgleichHinweis) ? lokal.abgleichHinweis : { bereiche: [], zukunft: 0, konflikte: 0 };
+    basis.abgleichHinweis = { zeit: new Date(jetzt).toISOString(), bereiche: [...new Set([...(alt.bereiche || []), ...bericht.beide])], zukunft: (alt.zukunft || 0) + bericht.zukunft, konflikte: (alt.konflikte || 0) + bericht.konflikte };
+  }
   return basis;
 }
 
-export function zusammenfuehren(wurzel, importiert) {
+export function zusammenfuehren(wurzel, importiert, { jetzt = Date.now() } = {}) {
   const ids = new Set(wurzel.betriebe.map((b) => b.id));
   let ersetzt = 0, neu = 0;
+  const bericht = { beide: [], zukunft: 0, konflikte: 0 };
   for (const b of importiert.betriebe) {
     const i = wurzel.betriebe.findIndex((x) => x.id === b.id);
-    if (i >= 0) { wurzel.betriebe[i] = verschmelzen(wurzel.betriebe[i], b); ersetzt += 1; } else { wurzel.betriebe.push(b); ids.add(b.id); neu += 1; }
+    if (i >= 0) {
+      const m = verschmelzen(wurzel.betriebe[i], b, { jetzt }); const r = m._bericht; delete m._bericht;
+      wurzel.betriebe[i] = m; ersetzt += 1;
+      bericht.beide.push(...r.beide); bericht.zukunft += r.zukunft; bericht.konflikte += r.konflikte;
+    } else {
+      // Neuer Laden aus der Datei: Einträge mit Datum in der Zukunft auch hier nicht übernehmen
+      const n = { zukunft: 0, konflikte: 0 };
+      for (const j of HACCP) if (Array.isArray(b[j])) b[j] = journalVereinigen([], b[j], ["storniert"], { schutz: true, bericht: n, jetzt });
+      if (n.zukunft) { b.abgleichHinweis = { zeit: new Date(jetzt).toISOString(), bereiche: [], zukunft: n.zukunft, konflikte: 0 }; bericht.zukunft += n.zukunft; }
+      if (istObjekt(b.stammZeit)) for (const a of Object.keys(b.stammZeit)) { const t = zeitKappen(b.stammZeit[a], jetzt); if (t) b.stammZeit[a] = t; else delete b.stammZeit[a]; }
+      abgleichGrundlage(b); wurzel.betriebe.push(b); ids.add(b.id); neu += 1;
+    }
   }
   if (!wurzel.aktiv || !ids.has(wurzel.aktiv)) wurzel.aktiv = importiert.aktiv || wurzel.betriebe[0]?.id || null;
   if (!wurzel.sprache) wurzel.sprache = importiert.sprache;
@@ -716,7 +974,8 @@ export function zusammenfuehren(wurzel, importiert) {
   let maxEigen = 0;
   for (const b of wurzel.betriebe) for (const m of b.messungen) if (m.geraet === wurzel.geraet && Number(m.lfd) > maxEigen) maxEigen = Number(m.lfd);
   wurzel.lfd = Math.max(wurzel.lfd, maxEigen, importiert.geraet === wurzel.geraet ? (importiert.lfd || 0) : 0);
-  return { ersetzt, neu };
+  // bericht (nicht aufgezählt, damit die Rückgabe wie bisher { ersetzt, neu } bleibt): beide geändert, Zukunft, abweichende HACCP-Einträge
+  return Object.defineProperty({ ersetzt, neu }, "bericht", { value: { beide: [...new Set(bericht.beide)], zukunft: bericht.zukunft, konflikte: bericht.konflikte }, enumerable: false });
 }
 
 export async function ereignisseUebernehmen(liste) {
@@ -727,8 +986,11 @@ export async function ereignisseUebernehmen(liste) {
   try { await tx("ereignisse", "readwrite", (st) => { for (const e of neu) st.add({ ...e, importiert: true }); }); } catch (_) {}
 }
 
+// W2-D: Rückgabe true nur, wenn wirklich gelöscht wurde – nur dann darf app.js auch die Fotos und Belege (Ablage) leeren.
 export async function allesLoeschen() {
-  if (!verfuegbar || !db) return;
-  await txMehr(["stand", "teile", "ereignisse"], "readwrite", (t) => { for (const n of ["stand", "teile", "ereignisse"]) t.objectStore(n).clear(); });
-  grundlageVerwerfen(); altModus = false; letzteWurzel = null;
+  if (!verfuegbar || !db) return false;
+  try { await txMehr(["stand", "teile", "ereignisse"], "readwrite", (t) => { for (const n of ["stand", "teile", "ereignisse"]) t.objectStore(n).clear(); }); }
+  catch (e) { console.warn("Löschen fehlgeschlagen:", e); return false; }
+  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map();
+  return true;
 }

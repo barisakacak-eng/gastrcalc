@@ -10,6 +10,11 @@ import { planGruppen } from "./putzplan.js";
 import { einrichtungStand } from "./einrichtung.js";
 import { wareneinsatzSicherheit } from "./rezept_quelle.js";
 import { sicherungStufe } from "./screens/nav.js";
+import { imTakt } from "./takt.js";
+const JOURNAL_TEXT = { schwund: 1, tagesnotizen: 1, messungen: 1, lieferungen: 1, abschluesse: 1, kostenbelege: 1, putzlog: 1, belehrungen: 1, rundgaenge: 1, inventuren: 1, uploads: 1, artikel: 1, gerichte: 1 }; // W2-D
+// W2-D (Leistung Büro): Zähler und Einrichtungsstand je Bild nur einmal rechnen – Büro-Start und „Offen“ fragen beide
+export const zaehlerImTakt = (stand, H) => imTakt(stand, "zaehler:" + H, () => zaehler(stand, { datum: H }));
+export const einrichtungImTakt = (stand, wurzel) => imTakt(stand, "einrichtung", () => einrichtungStand(stand, wurzel));
 
 // Hauptzeiten im Laden: da stört keine Erinnerung, die warten kann (Sicherung).
 export const istHauptzeit = (h) => (h >= 11.5 && h < 14) || (h >= 17.5 && h < 20.5);
@@ -58,9 +63,16 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   const out = []; const H = heute(jetzt);
   const add = (id, text, ziel) => out.push({ id, text, ziel });
   if (aktualisierung) add("fassung", t("heute.offen.fassung"), { aktion: "aktualisieren" });
-  const e = einrichtungStand(stand, wurzel);
+  // W2-D: übersprungene Speicherteile (welcher Monat, welches Journal) und Hinweise vom Zusammenführen
+  for (const x of (wurzel?.ladeFehler || []).filter((x) => !x.laden || x.laden === stand.id).slice(0, 3))
+    add("ladeFehler", x.journal === "kopf" ? t("w2d.offen.kopf") : t("w2d.offen.teil", t("w2d.journal." + (x.journal in JOURNAL_TEXT ? x.journal : "anderes")), x.monat && x.monat !== "alle" && x.monat !== "ohne" ? x.monat.slice(5, 7) + "/" + x.monat.slice(0, 4) : ""), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });
+  const ah = stand.abgleichHinweis;
+  if (ah?.bereiche?.length) add("abgleich", t("w2d.offen.abgleich", ah.bereiche.map((b) => t("w2d.bereich." + b)).join(", ")), { aktion: "abgleich-ok" });
+  if (ah?.zukunft) add("abgleichZukunft", t("w2d.offen.zukunft", ah.zukunft), { aktion: "abgleich-ok" });
+  if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
+  const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
-  const z = zaehler(stand, { datum: H });
+  const z = zaehlerImTakt(stand, H); // W2-D
   if (z.unvollstaendig) add("kosten", t("heute.offen.kosten"), z.last?.fix?.offen ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" } : { aktion: "bearbeiten", schritt: "lohn" });
   if (stand.gerichte?.length) { const grau = kalkulation(stand).zaehl.grau; if (grau) add("karteGrau", t("heute.offen.karteGrau", grau), { aktion: "nav", wert: "kartebuero" }); }
   const schaetz = wareneinsatzSicherheit(stand).zaehl?.schaetzung || 0;

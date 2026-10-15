@@ -128,7 +128,7 @@ test("Kostenbeleg: unbekannte Stelle und fehlender Betrag werden abgewiesen, Zuk
 
 // ---------- Schema 5 ----------
 test("Schema 5: neuer Laden startet im Schnellstart, alter Laden (Schema 4) bleibt auf dem genauen Weg", () => {
-  assert.equal(SCHEMA, 5);
+  assert.ok(SCHEMA >= 5); // W2-D: Schema 6 (Belehrungen als Journal)
   assert.equal(leererBetrieb().weg, "schnell");
   const alt = { schema: 4, betriebe: [{ id: "a", phase: "onboarding", schritt: 3, betrieb: { name: "X" } }], aktiv: "a" };
   const w = migrierenWurzel(alt);

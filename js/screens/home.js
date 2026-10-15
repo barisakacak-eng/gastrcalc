@@ -28,6 +28,7 @@ export function startView(stand, extra = {}) {
       ${heuteZielKarte(stand, z, H)}
       <div class="h-kacheln">${heuteKachelnLaden(stand, ks, H)}</div>
       ${dran ? jetztKarte(dran) : ""}
+      ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
     ${nav("start")}`;
 }
@@ -289,7 +290,7 @@ export function karteView(stand) {
 export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
   const m = monatsLast(stand); const q = warenQuote(stand); const st = umsatzSteuerSatz(stand);
   return `
-    <div class="kopfband"><h1>${esc(t("einstellungen.titel"))}</h1><div class="unter">${esc(t("einstellungen.fassung"))}</div></div>
+    <div class="kopfband"><h1>${esc(t("einstellungen.titel"))}</h1><div class="unter">${esc(t("einstellungen.fassung"))}${extra.fassung ? ` · ${esc(extra.fassung)}` : ""}</div></div>
     <div class="inhalt">
       <div class="karte">
         ${[["karte", "start.karteTitel"], ["laeden", "laeden.titel"], ["listen", "listen.titel"], ["beleg", "beleg.belege"]].map(([a, k]) => `<button type="button" class="zeileknopf" data-a="nav" data-wert="${a}"><b>${esc(t(k))}</b><span class="pfeil">›</span></button>`).join("")}
@@ -330,16 +331,18 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
       <div class="karte" id="sicherung">
         <h2>${esc(t("einstellungen.sicherung"))}</h2>
         <p class="hinweis">${esc(t("einstellungen.sicherungText"))}</p>
-        ${stand.gerichte.some((g) => g.foto) ? `<p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>` : ""}
+        <p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
-        <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
-        <span class="marke">${esc(t("einstellungen.ereignisse", ereignisAnzahl))}${wurzel?.letzteSicherung ? ` · ${esc(t("einstellungen.letzteSicherung", datumLesbar(wurzel.letzteSicherung.slice(0, 10))))}` : ""}</span>
+        <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>
+        <span class="marke">${esc(t("einstellungen.ereignisse", ereignisAnzahl))}${wurzel?.letzteSicherung ? ` · ${esc(t("einstellungen.letzteSicherung", datumLesbar(wurzel.letzteSicherung.slice(0, 10))))}` : ""}${typeof wurzel?.letzteSicherungGroesse === "number" ? ` · ${esc(t("w2d.groesse", Math.max(0.1, Math.round(wurzel.letzteSicherungGroesse / 104857.6) / 10)))}` : ""}</span>
         <p class="hinweis">${esc(t("einstellungen.pruefsummeText"))}</p>
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.offline"))}</h2>
         <div>${esc(t(extra.offline === "bereit" ? "einstellungen.offlineBereit" : extra.offline === "keinSw" ? "einstellungen.offlineNicht" : "einstellungen.offlineLaedt"))}</div>
         <p class="hinweis">${esc(t("einstellungen.installieren"))}</p>
+        <div>${esc(t(extra.dauerhaft === true ? "w2d.dauerhaftJa" : extra.dauerhaft === false ? "w2d.dauerhaftNein" : "w2d.dauerhaftUnbekannt"))}</div>
+        <button type="button" class="zeileknopf" data-a="diagnose-kopieren"><b>${esc(t("w2d.diagnose"))}</b><small>${esc(t("w2d.diagnoseUnter"))}</small><span class="pfeil">›</span></button>
       </div>
       <div class="karte">
         <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button>

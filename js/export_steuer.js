@@ -7,7 +7,7 @@
 // Zeilenende CRLF. Textzellen, die mit = + - @ beginnen, bekommen ein Hochkomma davor (sonst führt Excel sie als Formel aus).
 import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026, tagPlus } from "./engine.js";
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
-import { inventurWert } from "./inventur.js";
+import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
 
 // ---------- CSV ----------
@@ -173,7 +173,7 @@ export function reinigungsmittel(stand, z) {
 // Es zählt nur der beim Abschluss festgehaltene Wert, nie eine Neubewertung zu heutigen Preisen (wert null = nicht festgehalten).
 export function inventurwerte(stand, z) {
   const fertig = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.datum === "string").sort((a, b) => a.datum.localeCompare(b.datum));
-  const zeile = (i, vorher = false) => { const w = inventurWert(stand, i); return { datum: i.datum, wert: typeof i.wert === "number" ? rund2(i.wert) : null, gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, vorher }; };
+  const zeile = (i, vorher = false) => { const w = inventurKurz(i) || inventurWert(stand, i); return { datum: i.datum, wert: typeof i.wert === "number" ? rund2(i.wert) : null, gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, vorher }; }; // W2-T Wert nur aus Abschluss, W2-D schneller Weg
   const drin = fertig.filter((i) => imZeitraum(i.datum, z)).map((i) => zeile(i));
   const davor = fertig.filter((i) => i.datum < z.von).pop();
   return { zeilen: davor ? [zeile(davor, true), ...drin] : drin, imZeitraum: drin.length };

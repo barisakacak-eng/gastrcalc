@@ -7,6 +7,7 @@ import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, belehrungEintragen, AMT_TEILE } from "../export_amt.js";
 import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe } from "../export_steuer.js";
 import de from "../lang/de.js"; // W2-T: feste deutsche Kennzeichnung der Umsatz-Notizen in jeder App-Sprache
+import { imTakt } from "../takt.js";
 import { monatName } from "./tag.js";
 import { bsym, ring, bueroKopf } from "./buero.js";
 
@@ -39,7 +40,7 @@ const paketZeit = (art, H = heute()) => monatVon((paketMonat[art] || monatPlus(H
 export function ordnerKachelStand(stand, { datum: H = heute() } = {}) {
   const a = ordnerAmt(stand, zeitraumFuer("monat", { datum: H }), { datum: H });
   const vm = monatVon(monatPlus(H.slice(0, 7), -1) + "-01");
-  const s = monatsPaket(stand, vm, "steuer"); const b = monatsPaket(stand, vm, "buch");
+  const s = imTakt(stand, "paket:steuer:" + vm.von, () => monatsPaket(stand, vm, "steuer")); const b = imTakt(stand, "paket:buch:" + vm.von, () => monatsPaket(stand, vm, "buch")); // W2-T-Regeln, je Bild einmal gerechnet
   return {
     amt: { farbe: a.vollstaendig === a.gesamt ? "gruen" : a.vollstaendig ? "gelb" : "rot", text: t("ordner.kachelVon", a.vollstaendig, a.gesamt) },
     // W2-T: grün nur durch Belege, Kosten und Listen – getippte Umsätze machen keinen Ordner fertig (Prüfung p04 Nr. 2)

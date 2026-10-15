@@ -1,9 +1,10 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { kalkulationNeuerTakt } from "./engine.js";
-import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
+import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
+import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
 import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
-import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
+import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heute } from "./util.js"; // W2-S: heute für die Personal-Sperre
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
@@ -11,7 +12,7 @@ import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
 import { artikelAusGerichten } from "./engine.js";
 import { BRANCHENWERTE } from "./data/branchenwerte.js";
 import { branchenwerteAnwenden } from "./rezept_quelle.js";
-import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf, karteFussKnopf, karteZeigtPruefliste } from "./screens/foto.js";
+import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf, karteFussKnopf, karteZeigtPruefliste, rechnungsLaufZuruecksetzen } from "./screens/foto.js"; // W2-D: rechnungsLaufZuruecksetzen
 import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
 import { parseTemperatur } from "./screens/kuehl.js";
@@ -36,6 +37,13 @@ import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, k
 // Drei Ebenen (Entwickler C): Büro-Startseite und die drei Ordner
 import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen } from "./screens/buero.js";
 import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
+import { rundgangOffen as w2RundgangOffen } from "./engine.js"; // W2-D: stilles Update nur ohne offenen Rundgang
+
+// W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
+// setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
+const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
+  abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen];
+function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
 let wurzel = null;
@@ -50,7 +58,7 @@ let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner s
 let ruheBis = 0, tippX = -99, tippY = -99; // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
 
 function aktivSetzen(id) {
-  if (stand && stand.id !== id) { fotoZuruecksetzen(); tagZuruecksetzen(); kuehlZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); } // offene Formulare gehören zum alten Laden
+  if (stand && stand.id !== id) alleZuruecksetzen(); // offene Formulare gehören zum alten Laden (W2-D: zentrale Liste)
   stand = wurzel.betriebe.find((b) => b.id === id) || null;
   if (!stand) { stand = wurzel.betriebe[0] || null; }
   if (!stand) { stand = leererBetrieb(); wurzel.betriebe.push(stand); }
@@ -87,8 +95,8 @@ function zeichne() {
       if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
-      const v = ansicht === "buero" ? bueroView(stand, wurzel) // Büro-Start (Entwickler C)
-        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
+      const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG }) // W2-D
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
         : ansicht === "muell" ? muellView(stand)
@@ -114,7 +122,7 @@ function zeichne() {
     console.error(e);
     root.innerHTML = `<div class="schirm"><div class="inhalt">
       <h1 class="frage">${esc(t("einstellungen.fehlerTitel"))}</h1><p class="hinweis">${esc(t("einstellungen.fehlerText"))}</p>
-      <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>
+      <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>
       <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button></div></div>`;
   }
   if (!speicherVerfuegbar() || speicherProblem) {
@@ -151,7 +159,7 @@ function zeichneOnboarding() {
           ${zeigeFortschritt ? `<span class="schrittzahl">${esc(t("allgemein.schrittVon", i, SCHRITTE.length - 1))}</span>` : bearbeitet ? `<span class="schrittzahl">${esc(t("allgemein.bearbeiten"))}</span>` : ""}
         </div>
       </div>
-      <div class="inhalt">${s.view(stand)}${i === 0 && wurzel.betriebe.length === 1 ? `<label class="leise" style="display:block;text-align:center;margin-top:24px">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/json,.json" data-f="import" class="versteckt"></label>` : ""}</div>
+      <div class="inhalt">${s.view(stand)}${i === 0 && wurzel.betriebe.length === 1 ? `<label class="leise" style="display:block;text-align:center;margin-top:24px">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>` : ""}</div>
       <div class="fuss">${s.fuss ? s.fuss(stand) : ""}</div>
     </div>`;
   if (bearbeitet && stand.rueckkehr.bis === s.id) { const k = root.querySelector('.fuss [data-a="weiter"]'); if (k) k.textContent = t("allgemein.uebernehmen"); }
@@ -213,6 +221,7 @@ async function fertig(ziel = "start") {
     { const nz = navZiel(wurzel, ziel); if (nz.buero) modusSetzen(wurzel, "buero"); ansicht = nz.ansicht; } // Einrichtung macht der Inhaber: „Beleg fotografieren" am Ende führt ins Büro
     await ereignis("onboarding-fertig", { laden: stand.id });
     const pinWunsch = !!stand.pinFestlegen; delete stand.pinFestlegen; // W2-S (p07 H1): „Büro-PIN festlegen" öffnet gleich das PIN-Blatt
+    dauerhaftAnfragen(); // W2-D
     await sofortSpeichern(wurzel); zeichne();
     if (pinWunsch) { history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); }
   } finally { wechselt = false; }
@@ -251,15 +260,17 @@ function meldung(text) {
   setTimeout(() => m.classList.remove("da"), 2600);
 }
 
+// W2-D: Sicherung als ZIP mit allen Fotos und Belegen; die Größe steht in der Meldung.
+const groesseText = (n) => n >= 1048576 ? `${(n / 1048576).toFixed(1).replace(".", ",")} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
 async function sicherungTeilen() {
-  const { blob, name, fingerabdruck } = await exportDatei(wurzel);
+  const { blob, name, fingerabdruck, groesse } = await exportDatei(wurzel);
   ereignisAnzahl += 1;
   const gelungen = () => { // erst nach Teilen oder Download zählt die Sicherung
-    wurzel.letzteSicherung = new Date().toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel);
-    meldung(t("einstellungen.exportOk", wurzel.betriebe.length) + (fingerabdruck ? ` · ${fingerabdruck}` : ` · ${t("einstellungen.ohnePruefsumme")}`));
+    wurzel.letzteSicherung = new Date().toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel); wurzel.letzteSicherungGroesse = groesse;
+    meldung(t("einstellungen.exportOk", wurzel.betriebe.length) + ` · ${groesseText(groesse)}` + (fingerabdruck ? ` · ${fingerabdruck}` : ` · ${t("einstellungen.ohnePruefsumme")}`));
     sofortSpeichern(wurzel); zeichne();
   };
-  const datei = new File([blob], name, { type: "application/json" });
+  const datei = new File([blob], name, { type: "application/zip" });
   if (navigator.canShare && navigator.canShare({ files: [datei] })) {
     try { await navigator.share({ files: [datei], title: "GastroCalc" }); gelungen(); return; } catch (e) { if (e.name === "AbortError") return; }
   }
@@ -267,24 +278,43 @@ async function sicherungTeilen() {
   setTimeout(() => URL.revokeObjectURL(a.href), 4000); gelungen();
 }
 
-// Einlesen führt zusammen: gleiche Laden-Kennung wird ersetzt, neue Läden kommen dazu. Nichts anderes geht verloren.
+// Einlesen führt zusammen: gleiche Laden-Kennung wird je Bereich zusammengeführt, neue Läden kommen dazu (W2-D: ZIP oder alte JSON).
 async function sicherungEinlesen(datei) {
   try {
-    const text = await datei.text();
-    const { wurzel: importiert, ereignisse, pruefsumme } = await importDatei(text);
-    if (pruefsumme === "abweichung" && !confirm(t("einstellungen.pruefsummeFalsch"))) return;
+    const { wurzel: importiert, ereignisse, pruefsumme, ablage } = await importSicherung(datei);
+    if (pruefsumme !== "ok") { await ereignis("import-pruefsumme", { pruefsumme }); if (!confirm(t(pruefsumme === "abweichung" ? "einstellungen.pruefsummeFalsch" : "w2d.pruefsummeFehlt"))) return; } // W2-D: Rückfrage vor dem Einlesen
     const gleich = importiert.betriebe.filter((b) => wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     const neu = importiert.betriebe.filter((b) => !wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     if (!confirm(t("einstellungen.importFrage", neu, gleich))) return;
     const leerVorher = stand && stand.phase === "onboarding" && !stand.betrieb.name && !stand.kosten.length && !stand.gerichte.length ? stand.id : null;
-    zusammenfuehren(wurzel, importiert);
+    const r = zusammenfuehren(wurzel, importiert).bericht;
     if (leerVorher && wurzel.betriebe.length > 1) { wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== leerVorher); if (wurzel.aktiv === leerVorher) wurzel.aktiv = importiert.aktiv; }
-    aktivSetzen(wurzel.aktiv); // der eigene aktive Laden bleibt, die Datei ändert ihn nicht
+    alleZuruecksetzen(); stand = null; aktivSetzen(wurzel.aktiv); // der eigene aktive Laden bleibt, die Datei ändert ihn nicht; Bildschirm-Zustände gehören zum alten Objekt
+    const fotos = ablage.length ? await ablageAusSicherung(ablage, ablageZuruecklegen) : { neu: 0, kaputt: 0, da: 0 };
+    delete wurzel.ladeFehler; // eine Sicherung ist eingelesen: die Meldung über fehlende Teile ist erledigt
     setzeSprache(wurzel.sprache || spracheDesGeraets(), () => zeichne());
-    await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme });
+    await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme, fotos: fotos.neu, fotosKaputt: fotos.kaputt, beide: r.beide, zukunft: r.zukunft, konflikte: r.konflikte });
     ereignisAnzahl = (await alleEreignisse()).length;
-    ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start"; meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme")); zeichne();
+    ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start";
+    const zusatz = [fotos.neu ? t("w2d.importFotos", fotos.neu) : "", fotos.kaputt ? t("w2d.importFotosKaputt", fotos.kaputt) : "", r.zukunft ? t("w2d.importZukunft", r.zukunft) : "", r.beide.length ? t("w2d.importBeide") : ""].filter(Boolean).join(" ");
+    meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme") + (zusatz ? " " + zusatz : "")); zeichne();
   } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
+}
+
+// W2-D: dauerhaften Speicher einmal anfragen (nach der Einrichtung); das Ergebnis zeigen die Einstellungen
+function dauerhaftAnfragen() {
+  if (!wurzel || wurzel.persistGefragt) return;
+  wurzel.persistGefragt = true; speichern(wurzel);
+  speicherDauerhaftPruefen({ anfragen: true }).then((ok) => { ereignis("speicher-dauerhaft", { ok }); if (ansicht === "einstellungen") zeichne(); });
+}
+// W2-D: „Diagnose kopieren“ – Fassung, Browser, Speicher, Anzahl Einträge. Keine Namen, keine Zahlen aus dem Laden.
+async function diagnoseKopieren() {
+  const sp = await speicherBelegt(); const mb = (n) => (typeof n === "number" ? (n / 1048576).toFixed(1) + " MB" : "?");
+  const installiert = (typeof matchMedia === "function" && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  const text = [`GastroCalc ${APP_FASSUNG} · Schema ${SCHEMA}`, `Browser: ${navigator.userAgent}`, `Installiert: ${installiert ? "ja" : "nein"} · Offline: ${offlineStand}`,
+    `Speicher: ${speicherVerfuegbar() ? "ok" : "nicht verfügbar"} · dauerhaft: ${speicherIstDauerhaft() === null ? "?" : speicherIstDauerhaft() ? "ja" : "nein"} · belegt ${mb(sp?.belegt)} von ${mb(sp?.frei)}`,
+    `Läden: ${wurzel.betriebe.length} · Einträge: ${eintraegeZaehlen(wurzel)} · Verlauf: ${ereignisAnzahl}`, `Fehlende Teile: ${(wurzel.ladeFehler || []).length} · Sprache: ${wurzel.sprache || "?"}`].join("\n");
+  try { await navigator.clipboard.writeText(text); meldung(t("w2d.diagnoseKopiert")); } catch (_) { window.prompt(t("w2d.diagnose"), text); }
 }
 
 // ---------- Ereignisse der Oberfläche (eine Stelle für alles) ----------
@@ -359,7 +389,7 @@ async function ladenLoeschenJetzt(id) {
 }
 async function allesLoeschenJetzt() {
   if (!confirm(t("einstellungen.loeschenFrage"))) return;
-  speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); ebeneVergessen(); blattSchliessen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+  speichernAbbrechen(); const geloescht = await allesLoeschen(); if (geloescht) await ablageLeeren(); else if (speicherVerfuegbar()) { meldung(t("w2d.loeschenFehlgeschlagen")); return; } alleZuruecksetzen(); ebeneVergessen(); blattSchliessen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0; // W2-D: Fotos nur weg, wenn die Daten wirklich gelöscht sind
   setzeSprache(spracheDesGeraets()); return zeichne();
 }
 
@@ -393,6 +423,8 @@ async function aufKlick(ev) {
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
+  if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
+  if (name === "abgleich-ok") { delete stand.abgleichHinweis; speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
@@ -628,16 +660,27 @@ function spracheDesGeraets() {
 // ---------- Start ----------
 
 let aktualisierungKlick = false;
+// W2-D: im Laden (und Personal-Modus) still auf die neue Fassung wechseln, wenn die App 30 Minuten nicht bedient wurde und nichts offen ist
+let zuletztBedient = Date.now();
+for (const e of ["pointerdown", "keydown", "input"]) document.addEventListener(e, () => { zuletztBedient = Date.now(); }, { capture: true, passive: true });
+function stillAktualisieren() {
+  if (!aktualisierung || aktualisierungKlick || !wurzel || !stand || stand.phase !== "app") return;
+  if (modus(wurzel) === "buero" || Date.now() - zuletztBedient < 30 * 60e3) return;
+  if (ansicht !== startAnsicht(wurzel) || blattOffen() || w2RundgangOffen(stand) || fotoLauf() || document.activeElement?.matches?.("input, textarea, select")) return; // kein Formular offen
+  aktualisierungKlick = true; ereignis("still-aktualisiert", {});
+  sofortSpeichern(wurzel, { stempel: false }).finally(() => aktualisierung.postMessage("uebernehmen"));
+}
 async function serviceWorkerStarten() {
   if (!("serviceWorker" in navigator) || !window.isSecureContext) { offlineStand = "keinSw"; return; }
   try {
     const reg = await navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
-    const bereit = (w) => { aktualisierung = w; if (ansicht === "start" && stand?.phase === "app") zeichne(); };
+    const bereit = (w) => { aktualisierung = w; if ((ansicht === "start" || ansicht === "buero") && stand?.phase === "app") zeichne(); }; // W2-D: auch im Büro
     if (reg.waiting && navigator.serviceWorker.controller) bereit(reg.waiting);
     reg.addEventListener("updatefound", () => { const w = reg.installing; if (!w) return; w.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) bereit(w); }); });
     navigator.serviceWorker.addEventListener("controllerchange", () => { if (aktualisierungKlick) location.reload(); });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) reg.update().catch(() => {}); });
     await navigator.serviceWorker.ready; offlineStand = "bereit";
+    setInterval(stillAktualisieren, 60e3); document.addEventListener("visibilitychange", () => { if (!document.hidden) stillAktualisieren(); }); // W2-D
   } catch (e) { console.warn("Kein Service Worker:", e); offlineStand = "keinSw"; }
 }
 
@@ -652,6 +695,8 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
     root.querySelector('[data-a="aktualisieren-oder-neu"]').onclick = () => { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } else location.reload(); };
     serviceWorkerStarten(); return;
   }
+  // W2-D: Speicher ließ sich nicht öffnen – die Daten sind wahrscheinlich noch da. Nicht zur Neu-Einrichtung einladen.
+  if (ladeProbleme().gesperrt && !(await speicherGesperrtSchirm())) return;
   aktivSetzen(wurzel.aktiv);
   ebeneWiederherstellen(wurzel); ansicht = startAnsicht(wurzel); // Modus gilt je Handy und bleibt nach dem Neustart (Büro mit Code: zurück in den Laden)
   // Gerichte ohne Rezept (aus älteren Fassungen) bekommen beim Start Startwerte aus dem Baukasten (Pilot 14.10.: keine leere App)
@@ -664,6 +709,7 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
     speichern(wurzel);
   }
   serviceWorkerStarten();
+  speicherDauerhaftPruefen().then(() => { if (wurzel.betriebe.some((b) => b.phase === "app")) dauerhaftAnfragen(); }); // W2-D: einmal nach der Einrichtung (auch für schon eingerichtete Läden)
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
   await ladeSprache(wurzel.sprache || spracheDesGeraets()); setzeSprache(wurzel.sprache || spracheDesGeraets());
   const ev = await alleEreignisse(); ereignisAnzahl = ev.length;
@@ -673,6 +719,18 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
   history.pushState({ schritt: stand.schritt }, "");
   zeichne();
 })();
+
+// W2-D: eigener Schirm statt leerer Einrichtung. Rückgabe true = trotzdem weiter (ohne Speichern, mit Warnband).
+async function speicherGesperrtSchirm() {
+  await ladeSprache(spracheDesGeraets()); setzeSprache(spracheDesGeraets());
+  root.innerHTML = `<div class="schirm"><div class="inhalt"><h1 class="frage">${esc(t("w2d.gesperrtTitel"))}</h1><p class="hinweis">${esc(t("w2d.gesperrtText"))}</p>
+    <button type="button" class="knopf" data-w2="neu">${esc(t("w2d.gesperrtNeu"))}</button>
+    <button type="button" class="leise" data-w2="weiter">${esc(t("w2d.gesperrtWeiter"))}</button></div></div>`;
+  return new Promise((res) => {
+    root.querySelector('[data-w2="neu"]').onclick = () => location.reload();
+    root.querySelector('[data-w2="weiter"]').onclick = () => { root.innerHTML = ""; res(true); };
+  });
+}
 
 // D: lang drücken auf ein Müll-Foto öffnet das Detail (Menge, Foto, Personalessen)
 muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });

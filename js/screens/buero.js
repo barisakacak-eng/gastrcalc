@@ -7,7 +7,7 @@ import { sym } from "../symbole.js";
 import { zaehler } from "../zaehler.js";
 import { inventurenFertig } from "../inventur.js";
 import { einrichtungStand } from "../einrichtung.js";
-import { offenImBuero } from "../offen.js";
+import { offenImBuero, zaehlerImTakt, einrichtungImTakt } from "../offen.js"; // W2-D: Zwischenspeicher je Bild
 import { pinGesetzt } from "../modus.js";
 import { belehrungen } from "../export_amt.js";
 import { ordnerKachelStand } from "./ordner.js";
@@ -46,20 +46,20 @@ const kopf = (zurueck, titel) => `<header class="appleiste ebene-kopf buero">${z
     : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="${esc(zurueck.ziel)}">${bsym("chevron-left")}<span>${esc(zurueck.text)}</span></button>`}<span class="kopftitel">${esc(titel)}</span><button type="button" class="ikonknopf hilfe" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${bsym("circle-help")}</button></header>`;
 export const bueroKopf = kopf;
 
-export function bueroView(stand, wurzel) {
+export function bueroView(stand, wurzel, extra = {}) {
   const H = heute();
-  const offen = offenImBuero(stand, wurzel);
+  const offen = offenImBuero(stand, wurzel, { aktualisierung: !!extra.aktualisierung }); // W2-D: Update-Hinweis als Chip
   const bel = belehrungen(stand, { datum: H });
   if (bel.zaehl.bald + bel.zaehl.ueberfaellig) offen.push({ id: "belehrung", text: t("buero.offen.belehrung", bel.zaehl.bald + bel.zaehl.ueberfaellig), farbe: bel.zaehl.ueberfaellig ? "rot" : "gelb", ziel: { aktion: "nav", wert: "ordner-amt" } });
   const chip = (o) => `<button type="button" class="b-chip" ${zielAttr(o.ziel)}>${typeof o.prozent === "number" ? ring(o.prozent) : `<i class="b-punkt ${o.farbe === "rot" ? "rot" : "gelb"}" aria-hidden="true"></i>`}<span>${esc(o.text)}${typeof o.prozent === "number" ? ` <b class="zahl">${o.prozent} %</b>` : ""}</span></button>`;
   const k = ordnerKachelStand(stand, { datum: H });
   const kachel = (id, symbol, s) => `<button type="button" class="karte b-ordnerkachel" data-a="nav" data-wert="ordner-${id}"><span class="b-ks ${id}">${bsym(symbol)}</span><b>${esc(t(`ordner.${id}.kachel`))}</b><small><i class="b-punkt ${s.farbe}" aria-hidden="true"></i>${esc(s.text)}</small></button>`;
-  const z = zaehler(stand, { datum: H });
+  const z = zaehlerImTakt(stand, H); // W2-D
   const inv = inventurenFertig(stand).pop();
   const zeile = (ziel, symbol, titel, unter, wert = "") => `<button type="button" class="b-zeile" ${zielAttr(ziel)}><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</button>`;
   const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}">${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
   const mini = (ziel, symbol, titel) => `<button type="button" class="karte b-minikachel" ${zielAttr(ziel)}><span class="b-ks">${bsym(symbol)}</span><b>${esc(titel)}</b></button>`;
-  const e = einrichtungStand(stand, wurzel);
+  const e = einrichtungImTakt(stand, wurzel); // W2-D
   const codeAn = pinGesetzt(wurzel);
   return `<div class="buero">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">

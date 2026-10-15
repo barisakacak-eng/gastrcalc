@@ -3,6 +3,10 @@ Aufruf vor jeder Veröffentlichung: python3 tools/sw_liste.py"""
 import pathlib, re, datetime, hashlib
 APP = pathlib.Path(__file__).resolve().parent.parent
 dateien = ["./", "index.html"]; fotos = {}
+# W2-D: Fassungsnummer auch für die App selbst (Einstellungen, Diagnose, Sicherung) – js/fassung.js, gleiche Nummer wie sw.js
+_sw = (APP / "sw.js").read_text(); _m = re.search(r'const V = "(\d{4}-\d{2}-\d{2})\.(\d+)"', _sw)
+_heute = datetime.date.today().isoformat(); _n = int(_m.group(2)) + 1 if _m and _m.group(1) == _heute else 1
+(APP / "js" / "fassung.js").write_text(f'// Wird von tools/sw_liste.py geschrieben – nicht von Hand ändern.\nexport const FASSUNG = "{_heute}.{_n}";\n')
 for p in sorted(APP.rglob("*")):
     if p.is_file() and p.suffix in (".js", ".css", ".png", ".svg", ".webp", ".woff2", ".webmanifest") and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js" and not any(t.startswith(".") for t in p.relative_to(APP).parts) and not ({"design", "bruecke", "node_modules"} & set(p.parts)):
         rel = p.relative_to(APP).as_posix()

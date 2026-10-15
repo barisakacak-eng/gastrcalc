@@ -11,7 +11,7 @@ import { aktiveStellen, grenzenVon, monatsblatt, nachkontrolleStand, abweichungS
 import { aufgabenFuer, nachweis, planAm, putzplanVerlauf, zurueckgenommen } from "./putzplan.js";
 import { AUFGABEN } from "./data/putzplan.js";
 import { ladenArtVon } from "./profil.js";
-import { esc, heute } from "./util.js";
+import { esc, heute, uid } from "./util.js"; // W2-D: uid für Belehrungen
 import { csvText, datumDe, schwund } from "./export_steuer.js";
 
 export const BELEHRUNG_MONATE = 24;  // Folgebelehrung alle zwei Jahre
@@ -134,7 +134,8 @@ export function belehrungEintragen(stand, personId, { datum, art = "folge", jetz
   if (!p || !gueltig(datum) || datum > bisHeute || !["erst", "folge"].includes(art)) return null;
   if (belehrungenVon(stand, p).some((b) => b.datum === datum && b.art === art)) return null;
   stand.belehrungen ??= [];
-  const e = { id: `bel-${personId}-${datum}-${art}`, person: personId, datum, art, erfasst: jetzt, storniert: false }; stand.belehrungen.push(e); return e;
+  const e = { id: "bel-" + uid(), person: personId, // W2-D: eindeutige Kennung (Storno + neu am selben Tag darf nach dem Zusammenführen nicht „fehlt“ ergeben)
+     datum, art, erfasst: jetzt, storniert: false }; stand.belehrungen.push(e); return e;
 }
 // Rücknahme: nur kennzeichnen (Journal), nie löschen
 export function belehrungEntfernen(stand, personId, datum, art) {

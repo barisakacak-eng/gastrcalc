@@ -39,6 +39,8 @@ function lokalOrt() {
     async lesen(id) { if (speicher.has(id)) return speicher.get(id); if (typeof indexedDB === "undefined") return null; try { return (await tx("readonly", (s) => s.get(id))) || null; } catch (_) { return null; } },
     async loeschen(id) { speicher.delete(id); if (!fluechtig) { try { await tx("readwrite", (s) => s.delete(id)); } catch (_) {} } },
     async leeren() { speicher.clear(); if (typeof indexedDB === "undefined") return; try { await tx("readwrite", (s) => s.clear()); } catch (_) {} },
+    // W2-D (Sicherung mit Fotos): alle Kennungen dieses Orts – die Dateien selbst werden einzeln geholt
+    async schluessel() { const ids = new Set(speicher.keys()); if (typeof indexedDB !== "undefined") { try { for (const k of (await tx("readonly", (s) => s.getAllKeys())) || []) ids.add(String(k)); } catch (_) {} } return [...ids]; },
   };
 }
 
@@ -50,6 +52,7 @@ const cloudOrt = {
   async schreiben() { throw new Error("Cloud-Ablage ist noch nicht eingerichtet"); },
   async lesen() { return null; },
   async loeschen() {},
+  async schluessel() { return []; },
 };
 
 const ORTE = { lokal: lokalOrt(), cloud: cloudOrt };
@@ -72,6 +75,15 @@ export async function ablegen(blob, { name = "", zweck = "rechnung", laden = nul
 export async function holen(meta) { const ort = ORTE[meta?.ort || aktiv]; return ort ? ort.lesen(meta.id || meta) : null; }
 // „Alles löschen" in den Einstellungen: auch alle abgelegten Fotos und Dateien dieses Geräts weg (Review 6a)
 export async function ablageLeeren() { for (const o of Object.values(ORTE)) await o.leeren(); }
+// W2-D (Sicherung mit Fotos): alle abgelegten Dateien dieses Geräts (Kennung + Holen einzeln, damit nie alle Fotos gleichzeitig im Speicher liegen)
+export async function ablageKennungen() { return ORTE.lokal.schluessel(); }
+export async function ablageLesen(id) { return ORTE.lokal.lesen(id); }
+// Einlesen einer Sicherung: Datei unter ihrer alten Kennung zurücklegen; schon vorhandene Dateien bleiben unberührt. Rückgabe: true = neu abgelegt.
+export async function ablageZuruecklegen(id, blob) {
+  if (typeof id !== "string" || !/^[\w.-]{1,80}$/.test(id) || !blob || !(blob.size > 0) || blob.size > MAX_BYTES) return false;
+  if (await ORTE.lokal.lesen(id)) return false;
+  await ORTE.lokal.schreiben(id, blob); return true;
+}
 export async function entfernen(meta) { const ort = ORTE[meta?.ort || aktiv]; if (ort) await ort.loeschen(meta.id || meta); }
 
 export const istPdf = (datei) => datei?.type === "application/pdf" || /\.pdf$/i.test(datei?.name || "");
