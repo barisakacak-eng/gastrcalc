@@ -78,7 +78,7 @@ async def main():
             dauer = time.time() - t0
             await klick('.fuss [data-a="ob-fertig"][data-ziel="start"]')
             s = await stand(); assert s["phase"] == "app", s["phase"]
-            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="beleg"]')
+            await nav_hilfe.geh(pg, "beleg")
             # 6 Stromrechnung fotografieren → Strom, jeden Monat
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="rechnung"]', state="attached"); await bild("beleg-foto")
             await pg.locator('input[data-f="foto"][data-zweck="rechnung"]:not([capture])').set_input_files(str(BILD / "strom_foto.jpg"))

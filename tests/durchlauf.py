@@ -147,7 +147,7 @@ async def main():
             assert await pg.evaluate("document.querySelector('#app .schirm').dataset.probe") == "1", "Blatt auf/zu darf den Bildschirm nicht neu zeichnen"
             await pg.click('[data-a="hilfe-auf"]'); await pg.wait_for_selector('#ebene-huelle .blatt-hilfe'); await bild("hilfe")
             await pg.click('#ebene-huelle [data-a="blatt-zu"] >> nth=-1'); await pg.wait_for_timeout(150)
-            await bild("cockpit-einrichtung"); assert await pg.locator('.einrichtung-zeile .ring, .einrichtung .ring').count() == 1
+            await bild("cockpit-einrichtung"); assert await pg.locator('#app .ring').count() == 0  # Einrichtungsring wohnt im Büro (Offen im Büro)
             # ---- Umsatz eintragen
             await geh("umsatz"); await pg.wait_for_selector('[data-f="umsatz"]'); await bild("umsatz-leer")
             await pg.fill('[data-f="umsatz"]', "1.850"); await pg.locator('[data-f="umsatz"]').blur(); await pg.wait_for_timeout(200)
