@@ -1,20 +1,17 @@
-// Menü hinter den drei Strichen und Schnellknopf (Etappe 6, Punkt 4 – Baris 13.10.2026, 12:57). Ersetzt die Leiste unten.
-// Menü von links, vier flache Gruppen, Zahlen rechts, wenn dort etwas wartet. Schnellknopf „+" unten rechts mit drei Pillen.
-// Optik gehört Sanji (visual-vertrag.md); hier stehen nur Aufbau, Klassen und data-Attribute.
+// Kopfleiste und Leiste unten – drei Ebenen (15.10.2026, Entwickler A). Ersetzt das Menü mit 16 Zeilen und den Schnellknopf „+".
+// LADEN: ☰ (öffnet das Menü-Blatt, siehe ebene.js) · Logo · „?" oben, fünf Reiter unten. PERSONAL: Logo und Schloss, keine Leiste.
+// BÜRO: „‹ Laden" bzw. „‹ Büro" oben, keine Leiste. Jede Ansicht ruft wie bisher nav(<aktiv>) am Ende ihres HTML auf.
 import { t } from "../i18n.js";
-import { esc, heute } from "../util.js";
-import { kuehlStatus, offeneNachkontrollen, schwundOhneWert, kalkulation } from "../engine.js";
+import { esc } from "../util.js";
+import { kuehlStatus, offeneNachkontrollen, schwundOhneWert, kalkulation, rundgangOffen, aktiveStellen, letzteMessung } from "../engine.js";
 import { eintraegeZaehlen } from "../store.js";
 import { einrichtungStand } from "../einrichtung.js";
+import { planGruppen } from "../putzplan.js";
+import { modus, LADEN_TABS, pinGesetzt } from "../modus.js";
 import { sym } from "../symbole.js";
 
-let menueOffen = false, schnellOffen = false;
-let kontext = { stand: null, wurzel: null };
-export const navKontext = (stand, wurzel) => { kontext = { stand, wurzel }; };
-export const menueIstOffen = () => menueOffen;
-export const schnellIstOffen = () => schnellOffen;
-export function menueSetzen(an) { menueOffen = !!an; if (an) schnellOffen = false; }
-export function schnellSetzen(an) { schnellOffen = !!an; if (an) menueOffen = false; }
+let kontext = { stand: null, wurzel: null, ansicht: "start" };
+export const navKontext = (stand, wurzel, ansicht = "start") => { kontext = { stand, wurzel, ansicht }; };
 
 // Sicherung: gelb ab 3 Tagen oder 20 neuen Einträgen, rot ab 7 Tagen (wie Etappe 5)
 export function sicherungStufe(wurzel, jetzt = Date.now()) {
@@ -24,7 +21,7 @@ export function sicherungStufe(wurzel, jetzt = Date.now()) {
   return { stufe: tage === null ? (n >= 5 ? "rot" : null) : tage >= 7 ? "rot" : (tage >= 3 || neu >= 20) ? "gelb" : null, tage, neu, n };
 }
 
-// Zahlen für die Menüpunkte (rein rechnend)
+// Zahlen für „Offen im Büro" (rein rechnend). Teuer (Kalkulation): wird nur auf Abruf gerechnet, nie beim Zeichnen des Ladens.
 export function menueZaehler(stand, wurzel) {
   if (!stand) return {};
   const ks = kuehlStatus(stand); const nk = offeneNachkontrollen(stand);
@@ -35,31 +32,43 @@ export function menueZaehler(stand, wurzel) {
     sicherung: s?.stufe ? "!" : null, punkt: s?.stufe === "rot" || nk.some((m) => m.ueberfaellig) };
 }
 
-const GRUPPEN = [
-  ["heute", [["start", "menue.cockpit"], ["muell", "menue.muell"], ["kuehl", "menue.kuehl"], ["putzplan", "menue.putzplan"], ["umsatz", "menue.umsatz"], ["abschluss", "menue.abschluss"]]],
-  ["kalkulation", [["vergleich", "menue.vergleich"], ["karte", "menue.karte"], ["beleg", "menue.beleg"], ["inventur", "inventur.menue"], ["kosten", "menue.kosten"]]],
-  ["auswertung", [["listen", "menue.listen"], ["laeden", "menue.laeden"]]],
-  ["einstellungen", [["einstellungen", "menue.einstellungen"], ["sicherung", "menue.sicherung"]]],
-];
-const ziel = (z) => z === "kosten" ? 'data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges"' : z === "sicherung" ? 'data-a="nav" data-wert="einstellungen" data-anker="sicherung"' : `data-a="nav" data-wert="${z}"`;
-
-export function nav(aktiv, { schnell = true } = {}) {
-  const { stand, wurzel } = kontext; const z = menueZaehler(stand, wurzel);
-  const name = stand?.betrieb?.name || t("menue.deinLaden");
-  const knopf = `<button type="button" class="menueknopf" data-a="menue-auf" aria-label="${esc(t("menue.oeffnen"))}" aria-expanded="${menueOffen}">${sym("menu")}${z.punkt ? '<i class="menuepunkt" aria-hidden="true"></i>' : ""}</button>`;
-  const menue = !menueOffen ? "" : `<div class="menuehinten" data-a="menue-zu"></div>
-    <nav class="menue" aria-label="${esc(t("menue.titel"))}">
-      <button type="button" class="menuekopf" data-a="nav" data-wert="laeden"><b>${esc(name)}</b><small>${esc(stand?.betrieb?.format ? t("format." + stand.betrieb.format)[0] : "")} · ${esc(t("app.entwurf"))}</small></button>
-      ${GRUPPEN.map(([g, punkte]) => `<div class="menuegruppe"><h2>${esc(t("menue.gruppen." + g))}</h2>${punkte.map(([id, key]) => `<button type="button" class="menuezeile m-${id} ${aktiv === id ? "an" : ""}" ${ziel(id)}><span class="farbe" aria-hidden="true"></span><span>${esc(t(key))}</span>${z[id] ? `<span class="zahl">${esc(String(z[id]))}</span>` : ""}</button>`).join("")}</div>`).join("")}
-    </nav>`;
-  const fab = !schnell ? "" : `<div class="schnell ${schnellOffen ? "offen" : ""}">
-      ${schnellOffen ? `<div class="schnellhinten" data-a="schnell-zu"></div><div class="pillen">
-        <button type="button" class="pille p-muell" data-a="schnell-muell">${esc(t("schnellknopf.muell"))}</button>
-        <button type="button" class="pille p-kuehl" data-a="kuehl-rundgang-start" data-offen="0">${esc(t("schnellknopf.kuehl"))}</button>
-        <button type="button" class="pille p-umsatz" data-a="schnell-umsatz">${esc(t("schnellknopf.umsatz"))}</button></div>` : ""}
-      <button type="button" class="fab" data-a="${schnellOffen ? "schnell-zu" : "schnell-auf"}" aria-label="${esc(t(schnellOffen ? "schnellknopf.zu" : "schnellknopf.auf"))}" aria-expanded="${schnellOffen}">${sym(schnellOffen ? "x" : "plus")}</button></div>`;
-  // Helle App-Leiste (Zielbild 15.10.): drei Striche und Logo. Steht im HTML am Ende, CSS (order: -1) stellt sie nach oben.
-  const leiste = `<header class="appleiste">${knopf}<img class="logo" src="icons/logo.svg" alt="GastroCalc" height="28"><span class="leiste-rechts">${aktiv === "muell" ? sym("trash-2") : ""}</span></header>`;
-  return leiste + menue + fab;
+// Roter Punkt in der Leiste: höchstens einer gleichzeitig, Kühlung vor Putzen (Architektur „Jetzt dran").
+// Kühlung: Nachkontrolle offen, letzter Wert einer Stelle außerhalb der Grenze oder Rundgang begonnen und nicht fertig. Putzen: Aufgabe überfällig.
+export function ladenPunkt(stand) {
+  if (!stand) return null;
+  try {
+    if (offeneNachkontrollen(stand).length || rundgangOffen(stand)) return "kuehl";
+    if (aktiveStellen(stand).some((k) => letzteMessung(stand, k.id)?.abweichung)) return "kuehl";
+    if (stand.putzplan?.aktiv && planGruppen(stand).ueberfaellig > 0) return "putzplan";
+  } catch (e) { console.warn(e); }
+  return null;
 }
 
+const TAB_SYM = { start: "house", muell: "trash-2", kuehl: "snowflake", putzplan: "spray-can", karte: "utensils-crossed" };
+
+export function tabLeiste(aktiv, stand) {
+  const punkt = ladenPunkt(stand);
+  return `<nav class="tableiste" aria-label="${esc(t("ebene.leiste"))}">${LADEN_TABS.map((id) => `<button type="button" class="tab ${aktiv === id ? "an" : ""}" data-a="nav" data-wert="${id}"${aktiv === id ? ' aria-current="page"' : ""}><span class="ik">${sym(TAB_SYM[id])}${punkt === id ? '<i class="punkt" aria-hidden="true"></i>' : ""}</span><span class="tabname">${esc(t("ebene.tabs." + id))}</span></button>`).join("")}</nav>`;
+}
+
+const logo = '<img class="logo" src="icons/logo.svg" alt="GastroCalc" height="28">';
+const hilfeKnopf = () => `<button type="button" class="ikonknopf hilfe" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${sym("circle-help")}</button>`;
+
+// nav(aktiv): Kopfleiste (+ Leiste unten im Laden). Zweites Argument nur noch aus Verträglichkeit ({ schnell } hat keine Wirkung mehr).
+export function nav(aktiv, _alt = {}) {
+  const { stand, wurzel, ansicht } = kontext; const m = modus(wurzel);
+  if (m === "personal") {
+    const zurueck = ansicht !== "personal" ? `<button type="button" class="ikonknopf zurueckknopf" data-a="nav" data-wert="personal" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button>` : "<span></span>";
+    const schloss = `<button type="button" class="schlossknopf" data-a="schloss" aria-label="${esc(t(pinGesetzt(wurzel) ? "ebene.schlossCode" : "ebene.schlossHalten"))}"><svg class="schlossring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/></svg>${sym("lock")}</button>`;
+    return `<header class="appleiste ebene-kopf personal">${zurueck}${logo}${schloss}</header>`;
+  }
+  if (m === "buero") {
+    const start = ansicht === "buero";
+    const links = start ? `<button type="button" class="zurueckzeile" data-a="modus" data-wert="laden">${sym("chevron-left")}<span>${esc(t("ebene.zumLaden"))}</span></button>`
+      : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="buero">${sym("chevron-left")}<span>${esc(t("ebene.zumBuero"))}</span></button>`;
+    return `<header class="appleiste ebene-kopf buero">${links}<span class="kopftitel">${start ? esc(t("ebene.buero")) : ""}</span>${hilfeKnopf()}</header>`;
+  }
+  const tab = LADEN_TABS.includes(ansicht) ? ansicht : LADEN_TABS.includes(aktiv) ? aktiv : null;
+  const menue = `<button type="button" class="ikonknopf menueknopf" data-a="menue-auf" aria-label="${esc(t("ebene.menueAuf"))}" aria-haspopup="dialog">${sym("menu")}</button>`;
+  return `<header class="appleiste ebene-kopf laden">${menue}${logo}${hilfeKnopf()}</header>${tabLeiste(tab, stand)}`;
+}

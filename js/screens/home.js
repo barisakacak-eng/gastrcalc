@@ -9,6 +9,7 @@ import { monatsLast, kalkulation, schwundAuswertung, umsatzEintrag, kuehlStatus,
 import { zaehler, wochenVergleich, abschlussVon, warenQuote } from "../zaehler.js";
 import { ergebnisView } from "./karte.js";
 import { nav, sicherungStufe } from "./nav.js";
+import { bueroCodeKarte } from "./ebene.js"; // Drei Ebenen (A): Büro-Code in den Einstellungen
 import { einrichtungStand } from "../einrichtung.js";
 import { sym } from "../symbole.js";
 import { muellWoche } from "../muell.js";
@@ -296,6 +297,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <h2>${esc(t("einstellungen.sprache"))}</h2>
         <div class="chips">${SPRACHEN.map((s) => `<button type="button" class="chip ${sprache() === s ? "an" : ""}" data-a="sprache" data-wert="${s}" lang="${s}">${esc(SPRACH_NAMEN[s] || s)}</button>`).join("")}</div>
       </div>
+      ${bueroCodeKarte(wurzel)}
       <div class="karte">
         <h2>${esc(t("einstellungen.betrieb"))} <span class="marke">${esc(stand.betrieb.name)}</span></h2>
         ${[["betrieb", "einstellungen.bereichBetrieb"], ["team", "einstellungen.bereichTeam"], ["kanaele", "einstellungen.bereichKanaele"], ["kuehlstellen", "einstellungen.bereichKuehl"]]

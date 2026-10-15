@@ -939,4 +939,19 @@ export default {
     lueckeGut: "Tốt. Hoặc phần ăn hơi nhỏ, hoặc thực đơn ghi định lượng lớn hơn thực tế quán dùng. Kiểm tra công thức, app sẽ tính chính xác hơn.",
     gerichteKnopf: "Món nào lời nhiều nhất?", zurUebersicht: "Về tổng quan kiểm kho",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Hôm nay", muell: "Rác", kuehl: "Làm lạnh", putzplan: "Dọn dẹp", karte: "Thực đơn" },
+    leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossHalten: "Giữ ổ khóa 2 giây", schlossCode: "Nhập mã văn phòng",
+    pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số" },
+    hilfeText: {
+      allgemein: "Thanh bên dưới dẫn đến mọi thứ bạn cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",
+      start: "Cả ngày trong một cái nhìn. Con số lớn cho biết còn thiếu bao nhiêu doanh thu để hòa vốn. Màu đỏ nghĩa là: xử lý ngay.",
+      muell: "Chạm vào món bị bỏ đi. Có thể hoàn tác ngay sau đó. Danh sách và số tiền nằm ở văn phòng.",
+      kuehl: "Đo từng chỗ làm lạnh và nhập giá trị. Nếu quá cao, ghi lại bạn làm gì và đo lại sau.",
+      putzplan: "Đánh dấu những gì đã dọn hôm nay. Danh sách là bằng chứng khi kiểm tra. Kế hoạch đổi ở văn phòng.",
+      karte: "Xanh: còn đạt mục tiêu. Vàng: sát. Đỏ: quá rẻ.",
+      abschluss: "Nhập doanh thu, kiểm tra rác và làm lạnh, xong.",
+      laeden: "Ở đây bạn chuyển giữa các quán. Mỗi quán có số liệu riêng.",
+      personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng hoặc giữ ổ khóa 2 giây.",
+      buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
 };

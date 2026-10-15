@@ -944,4 +944,19 @@ export default {
     lueckeGut: "Mirë kështu. Ose porcionet janë më shumë të vogla, ose në meny janë sasi më të mëdha se sa vini vërtet. Kontrollo recetat, pastaj aplikacioni llogarit më saktë.",
     gerichteKnopf: "Cilat pjata sjellin më shumë?", zurUebersicht: "Te pasqyra e inventarit",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Sot", muell: "Mbetje", kuehl: "Ftohja", putzplan: "Pastrimi", karte: "Menuja" },
+    leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossHalten: "Mbaj drynin 2 sekonda", schlossCode: "Shkruaj kodin e zyrës",
+    pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën" },
+    hilfeText: {
+      allgemein: "Shiriti poshtë të çon te gjithçka që të duhet në lokal. Llogaritë, rregullimet dhe listat janë në zyrë.",
+      start: "Dita me një shikim. Numri i madh tregon sa xhiro mungon ende deri në zero. E kuqe do të thotë: merru tani.",
+      muell: "Prek mallin që hidhet. Mund ta anulosh menjëherë pas. Listat dhe shumat janë në zyrë.",
+      kuehl: "Mat çdo vend ftohjeje dhe shkruaj vlerën. Nëse është shumë e lartë, shëno çfarë bën dhe mat përsëri më vonë.",
+      putzplan: "Shëno çfarë është pastruar sot. Lista është prova për kontrollin. Planin e ndryshon në zyrë.",
+      karte: "Jeshile: objektivi yt mbetet. E verdhë: ngushtë. E kuqe: shumë lirë.",
+      abschluss: "Shkruaj xhiron, kontrollo mbetjet dhe ftohjen, mbaruam.",
+      laeden: "Këtu kalon nga një lokal te tjetri. Çdo lokal ka shifrat e veta.",
+      personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës ose 2 sekonda mbi dryn.",
+      buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
 };

@@ -3,6 +3,7 @@ Umsatz und Zähler, Beleg einlesen, Tag abschließen, Kühlkontrolle mit Standar
 Start: python3 tests/durchlauf.py  (startet selbst einen kleinen Webserver)"""
 import asyncio, subprocess, sys, time, pathlib, json, os
 from playwright.async_api import async_playwright
+import nav_hilfe  # Wege durch die drei Ebenen (Laden-Leiste, Menü-Blatt, Büro)
 
 APP = pathlib.Path(__file__).resolve().parent.parent
 OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", APP.parent / "pdfbuild" / "app-check")); OUT.mkdir(parents=True, exist_ok=True)
@@ -39,8 +40,8 @@ async def main():
             async def klick(sel, **kw): await _klick(sel, **kw); await pg.wait_for_timeout(900 if os.environ.get("DURCHLAUF_VIDEO") else 320)
             pg.click = klick
             n = 0
-            async def geh(ziel):  # Punkt 4: alles über das Menü hinter den drei Strichen
-                await pg.click('[data-a="menue-auf"]'); await pg.wait_for_selector('.menue'); await pg.click(f'.menue [data-a="nav"][data-wert="{ziel}"]'); await pg.wait_for_timeout(150)
+            async def geh(ziel):  # drei Ebenen: Laden-Reiter unten, Tag abschließen im Menü-Blatt, alles andere im Büro
+                await nav_hilfe.geh(pg, ziel)
             async def bild(name):
                 nonlocal n; n += 1
                 await pg.screenshot(path=str(OUT / f"{n:02d}_{name}.png"), full_page=True)
@@ -134,12 +135,18 @@ async def main():
             html = await pg.content(); assert "Bis null fehlen" in html and "Umsatz im Monat" in html and "appleiste" in html
             z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
             assert z["stufe"] == 2 and z["keinUmsatz"] and z["quote"] > 0.05, {k: z[k] for k in ("stufe", "keinUmsatz", "quote")}
-            # Menü hinter den drei Strichen statt Leiste unten (Punkt 4)
-            assert await pg.locator('.nav').count() == 0 and await pg.locator('[data-a="menue-auf"]').count() == 1
-            await pg.click('[data-a="menue-auf"]'); await pg.wait_for_selector('.menue'); await bild("menue")
-            assert await pg.locator('.menue [data-wert="muell"]').count() == 1 and await pg.locator('.menue .menuegruppe').count() == 4
-            await pg.click('.menuehinten', position={"x": 370, "y": 400}); await pg.wait_for_timeout(150); assert await pg.locator('.menue').count() == 0
-            await pg.click('[data-a="menue-auf"]'); await pg.go_back(); await pg.wait_for_timeout(200); assert await pg.locator('.menue').count() == 0, "Zurück schließt das Menü"
+            # Drei Ebenen: fünf Reiter unten, kein Schnellknopf; ☰ öffnet ein Blatt mit großen Kacheln, ohne den Bildschirm neu zu zeichnen
+            assert await pg.locator('.tableiste .tab').count() == 5 and await pg.locator('.fab').count() == 0 and await pg.locator('[data-a="menue-auf"]').count() == 1
+            assert await pg.locator('.tableiste .tab.an[data-wert="start"]').count() == 1
+            await pg.evaluate("document.querySelector('#app .schirm').dataset.probe = '1'")
+            await pg.click('[data-a="menue-auf"]'); await pg.wait_for_selector('#ebene-huelle .blatt-menue'); await bild("menue")
+            assert await pg.locator('#ebene-huelle .grosskachel').count() == 3, "ein Laden: Tag abschließen, Personal, Büro"
+            assert await pg.locator('#ebene-huelle [data-a="modus"][data-wert="buero"]').count() == 1 and await pg.locator('#ebene-huelle [data-a="blatt-sprache"]').count() == 1
+            await pg.click('#ebene-huelle .ebene-dimmer', position={"x": 200, "y": 60}); await pg.wait_for_timeout(150); assert await pg.locator('#ebene-huelle .ebene-blatt').count() == 0
+            await pg.click('[data-a="menue-auf"]'); await pg.go_back(); await pg.wait_for_timeout(200); assert await pg.locator('#ebene-huelle .ebene-blatt').count() == 0, "Zurück schließt das Blatt"
+            assert await pg.evaluate("document.querySelector('#app .schirm').dataset.probe") == "1", "Blatt auf/zu darf den Bildschirm nicht neu zeichnen"
+            await pg.click('[data-a="hilfe-auf"]'); await pg.wait_for_selector('#ebene-huelle .blatt-hilfe'); await bild("hilfe")
+            await pg.click('#ebene-huelle [data-a="blatt-zu"] >> nth=-1'); await pg.wait_for_timeout(150)
             await bild("cockpit-einrichtung"); assert await pg.locator('.einrichtung-zeile .ring, .einrichtung .ring').count() == 1
             # ---- Umsatz eintragen
             await geh("umsatz"); await pg.wait_for_selector('[data-f="umsatz"]'); await bild("umsatz-leer")

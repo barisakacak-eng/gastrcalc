@@ -938,4 +938,19 @@ export default {
     lueckeGut: "Baş e. An porsiyon hinekî biçûk in, an jî di menûyê de mîqdarên mezintir ji yên ku hûn bi rastî digirin hene. Reçeteyan kontrol bike, paşê app rasttir hesab dike.",
     gerichteKnopf: "Kîjan xwarin herî zêde tînin?", zurUebersicht: "Vegere nêrîna hejmartina malê",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Îro", muell: "Çop", kuehl: "Sarkirin", putzplan: "Paqijî", karte: "Menû" },
+    leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossHalten: "2 çirkeyan li kilîdê bigire", schlossCode: "Koda ofîsê binivîse",
+    pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe" },
+    hilfeText: {
+      allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",
+      start: "Roj bi nêrînekê. Hejmara mezin nîşan dide ka heta sifirê çiqas firotin hîn kêm e. Sor tê wateya: niha lê binêre.",
+      muell: "Li ser kelûpelê ku tê avêtin bitikîne. Piştî wê tavilê dikarî paşve bigerînî. Lîste û mîqdar di ofîsê de ne.",
+      kuehl: "Her cihê sarkirinê bipîve û nirxê binivîse. Heke pir bilind be, binivîse tu çi dikî û paşê dîsa bipîve.",
+      putzplan: "Tiştên ku îro hatin paqijkirin nîşan bike. Lîste ji bo kontrolê belge ye. Planê di ofîsê de diguherînî.",
+      karte: "Kesk: armanca te dimîne. Zer: teng. Sor: pir erzan.",
+      abschluss: "Firotinê binivîse, çop û sarkirinê kontrol bike, qediya.",
+      laeden: "Li vir di navbera dikanên xwe de diguherînî. Her dikanek hejmarên xwe hene.",
+      personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê an 2 çirkeyan li ser kilîdê.",
+      buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
 };

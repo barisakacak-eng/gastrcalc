@@ -946,4 +946,19 @@ export default {
     lueckeGut: "E bine așa. Ori porțiile sunt mai degrabă mici, ori în meniu sunt trecute cantități mai mari decât puneți de fapt. Verifică rețetele și aplicația calculează mai exact.",
     gerichteKnopf: "Ce preparate aduc cel mai mult?", zurUebersicht: "La inventar, privire de ansamblu",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Azi", muell: "Deșeuri", kuehl: "Răcire", putzplan: "Curățenie", karte: "Meniu" },
+    leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossHalten: "Ține lacătul apăsat 2 secunde", schlossCode: "Introdu codul de birou",
+    pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra" },
+    hilfeText: {
+      allgemein: "Bara de jos duce la tot ce îți trebuie în local. Calculele, configurarea și listele sunt în birou.",
+      start: "Ziua dintr-o privire. Numărul mare arată cât încasări mai lipsesc până la zero. Roșu înseamnă: ocupă-te acum.",
+      muell: "Atinge marfa care se aruncă. Poți anula imediat după. Listele și sumele sunt în birou.",
+      kuehl: "Măsoară fiecare loc de răcire și introdu valoarea. Dacă e prea mare, notează ce faci și măsoară din nou mai târziu.",
+      putzplan: "Bifează ce s-a curățat azi. Lista este dovada pentru control. Planul îl schimbi în birou.",
+      karte: "Verde: îți rămâne ținta. Galben: la limită. Roșu: prea ieftin.",
+      abschluss: "Introdu încasările, verifică deșeurile și răcirea, gata.",
+      laeden: "Aici treci de la un local la altul. Fiecare local are cifrele lui.",
+      personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou sau 2 secunde pe lacăt.",
+      buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
 };

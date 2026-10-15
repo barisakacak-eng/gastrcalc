@@ -18,7 +18,10 @@ import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } 
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
 import { vergleichView, vergleichModus } from "./screens/vergleich.js";
-import { nav, navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
+import { nav, navKontext } from "./screens/nav.js";
+// Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
+import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen } from "./modus.js";
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, personalPlatzhalter, bueroPlatzhalter } from "./screens/ebene.js";
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen } from "./screens/muell.js";
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
@@ -69,8 +72,12 @@ function zeichne() {
   try {
     if (stand.phase === "onboarding") zeichneOnboarding();
     else {
-      navKontext(stand, wurzel);
-      const v = ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
+      if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
+      navKontext(stand, wurzel, ansicht);
+      document.body.dataset.modus = modus(wurzel);
+      const v = ansicht === "personal" ? personalPlatzhalter(stand) // Entwickler D ersetzt den Platzhalter
+        : ansicht === "buero" ? bueroPlatzhalter(stand, wurzel)    // Entwickler C ersetzt den Platzhalter
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
         : ansicht === "karte" ? karteView(stand)
         : ansicht === "muell" ? muellView(stand)
         : ansicht === "umsatz" ? umsatzView(stand)
@@ -108,7 +115,7 @@ function zeichne() {
 function karteFotoSchirm() {
   return `<div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
       ${karteFussKnopf("")}
-      <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte", { schnell: false })}`;
+      <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte")}`;
 }
 
 function zeichneOnboarding() {
@@ -185,7 +192,8 @@ function zurueckZurApp() { ansicht = stand.rueckkehr?.ansicht || "start"; stand.
 async function fertig(ziel = "start") {
   if (wechselt) return; wechselt = true;
   try {
-    stand.phase = "app"; stand.rueckkehr = null; delete stand.neuAus; ansicht = ziel;
+    stand.phase = "app"; stand.rueckkehr = null; delete stand.neuAus;
+    { const nz = navZiel(wurzel, ziel); if (nz.buero) modusSetzen(wurzel, "buero"); ansicht = nz.ansicht; } // Einrichtung macht der Inhaber: „Beleg fotografieren" am Ende führt ins Büro
     await ereignis("onboarding-fertig", { laden: stand.id });
     await sofortSpeichern(wurzel); zeichne();
   } finally { wechselt = false; }
@@ -194,7 +202,7 @@ async function fertig(ziel = "start") {
 function bearbeiten(vonId, bisId) {
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ansicht === "einstellungen" || ansicht === "karte" || ansicht === "inventur" ? ansicht : "start" };
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "inventur", "buero"].includes(ansicht) ? ansicht : "start" };
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();
@@ -212,7 +220,7 @@ async function ladenNeu() {
 
 async function ladenWechseln(id) {
   if (!wurzel.betriebe.some((b) => b.id === id)) return;
-  aktivSetzen(id); ansicht = stand.phase === "app" ? "start" : ansicht;
+  aktivSetzen(id); ansicht = stand.phase === "app" ? startAnsicht(wurzel) : ansicht;
   ereignis("laden-wechsel", { laden: id });
   zeichne(); await sofortSpeichern(wurzel);
 }
@@ -262,18 +270,68 @@ async function sicherungEinlesen(datei) {
 
 // ---------- Ereignisse der Oberfläche (eine Stelle für alles) ----------
 
-root.addEventListener("click", async (ev) => {
+// ---------- Ebenen: Laden · Personal · Büro (Entwickler A) ----------
+let schlossFertig = 0; // Zeitpunkt, an dem das Schloss nach 2 s ausgelöst hat (der Klick beim Loslassen zählt nicht)
+
+function ebeneWechseln(m, ziel) {
+  modusSetzen(wurzel, m); blattSchliessen();
+  ansicht = ziel || startAnsicht(wurzel);
+  ereignis("modus", { modus: m, laden: stand.id });
+  if (m === "buero") history.pushState({ buero: true }, "");
+  ruheBis = Date.now() + 350; speichern(wurzel); zeichne();
+}
+// Laden → Büro: mit Code, wenn einer gesetzt ist (Einstellung im Büro), sonst direkt.
+function bueroBetreten(ziel = "buero") {
+  if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel); return; }
+  ebeneWechseln("buero", ziel);
+}
+// Personal → Laden: mit Code oder 2 Sekunden aufs Schloss (ohne Code).
+function personalVerlassen() { ebeneWechseln("laden", "start"); }
+
+// Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
+const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg"]);
+async function ebeneAktion(name, el) {
+  if (name === "menue-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); menueZeigen(stand, wurzel); return true; }
+  if (name === "menue-zurueck") { menueZeigen(stand, wurzel); return true; }
+  if (name === "blatt-zu") { blattSchliessen(); return true; }
+  if (name === "blatt-sprache") { spracheZeigen(); return true; }
+  if (name === "blatt-laeden") { laedenZeigen(wurzel); return true; }
+  if (name === "hilfe-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); hilfeZeigen(ansicht); return true; }
+  if (name === "pin-taste" || name === "pin-weg") {
+    const r = await pinTaste(name === "pin-weg" ? "weg" : el.dataset.wert, wurzel);
+    if (r?.zweck === "buero") ebeneWechseln("buero", r.ziel || "buero");
+    else if (r?.zweck === "personal") personalVerlassen();
+    else if (r?.zweck === "setzen") { meldung(t("ebene.pin.gesetzt")); await sofortSpeichern(wurzel); zeichne(); }
+    return true;
+  }
+  if (name === "pin-setzen") { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen"); return true; }
+  if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }
+  if (name === "modus") {
+    const m = el.dataset.wert;
+    if (m === "buero") bueroBetreten();
+    else if (m === "personal") ebeneWechseln("personal", "personal");
+    else if (m === "laden" && modus(wurzel) === "buero") ebeneWechseln("laden", "start");
+    return true;
+  }
+  if (name === "schloss") { // Personal: Tipp aufs Schloss → Code (falls gesetzt), sonst Hinweis „2 Sekunden drücken"
+    if (Date.now() - schlossFertig < 800) return true;
+    if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("personal"); } else meldung(t("ebene.schlossHalten"));
+    return true;
+  }
+  return false;
+}
+
+async function aufKlick(ev) {
   const el = ev.target.closest("[data-a]"); if (!el) return;
   const name = el.dataset.a;
   const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
   if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
+  if (Date.now() - schlossFertig < 800) return; // Loslassen nach dem langen Druck aufs Schloss
+  if (!stand) return;
 
-  // Menü und Schnellknopf (Punkt 4): öffnen/schließen ohne Bildschirmwechsel; jede andere Handlung schließt beides
-  if (name === "menue-auf") { menueSetzen(!menueIstOffen()); if (menueIstOffen()) history.pushState({ menue: true }, ""); return zeichne(); }
-  if (name === "menue-zu") { menueSetzen(false); return zeichne(); }
-  if (name === "schnell-auf") { schnellSetzen(true); return zeichne(); }
-  if (name === "schnell-zu") { schnellSetzen(false); return zeichne(); }
-  if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); }
+  // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
+  if (await ebeneAktion(name, el)) return;
+  if (blattOffen() && !BLATT_INTERN.has(name)) blattSchliessen();
   if (name === "vergleich-modus") { vergleichModus(el.dataset.wert); return zeichne(); }
   if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") !== "0"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
   if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
@@ -285,7 +343,8 @@ root.addEventListener("click", async (ev) => {
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
-  if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
+  if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) return bueroBetreten(nz.ansicht); // Büro-Bildschirm aus dem Laden: erst ins Büro
+    const ziel = nz.ansicht; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
@@ -304,7 +363,7 @@ root.addEventListener("click", async (ev) => {
   }
   if (name === "loeschen") {
     if (!confirm(t("einstellungen.loeschenFrage"))) return;
-    speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+    speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); ebeneVergessen(); blattSchliessen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
     setzeSprache(spracheDesGeraets()); return zeichne();
   }
   if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache, () => zeichne()); speichern(wurzel); return zeichne(); }
@@ -338,7 +397,7 @@ root.addEventListener("click", async (ev) => {
   }
   if (ansicht === "putzplan") {
     const r = putzplanAktion(name, el, stand);
-    if (r) { if (r === "zurueck") { ansicht = "start"; speichern(wurzel); } else if (r === "speichern") await sofortSpeichern(wurzel); return zeichne(); }
+    if (r) { if (r === "zurueck") { ansicht = startAnsicht(wurzel); speichern(wurzel); } else if (r === "speichern") await sofortSpeichern(wurzel); return zeichne(); }
   }
   if (ansicht === "inventur") {
     const r = inventurAktion(name, el, stand);
@@ -357,7 +416,20 @@ root.addEventListener("click", async (ev) => {
       if (r === "abgeschlossen") { ereignis("rundgang-fertig", { laden: stand.id }); meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(wurzel); } else speichern(wurzel);
     }
   }
+}
+root.addEventListener("click", aufKlick);
+ebeneHuelle()?.addEventListener("click", aufKlick); // Blätter liegen außerhalb von #app
+
+// Personal-Modus: 2 Sekunden aufs Schloss drücken (nur ohne Büro-Code) – der Ring füllt sich, Loslassen bricht ab.
+root.addEventListener("pointerdown", (ev) => {
+  const el = ev.target.closest('[data-a="schloss"]'); if (!el || !wurzel || pinGesetzt(wurzel) || modus(wurzel) !== "personal") return;
+  el.classList.add("haelt");
+  const stop = () => { clearTimeout(uhr); el.classList.remove("haelt"); for (const e of ["pointerup", "pointercancel", "pointerleave"]) el.removeEventListener(e, stop); };
+  const uhr = setTimeout(() => { stop(); schlossFertig = Date.now(); personalVerlassen(); }, 2000);
+  for (const e of ["pointerup", "pointercancel", "pointerleave"]) el.addEventListener(e, stop);
 });
+root.addEventListener("contextmenu", (ev) => { if (ev.target.closest('[data-a="schloss"]')) ev.preventDefault(); });
+document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && blattSchliessen()) ev.preventDefault(); });
 
 // Eingaben: nicht bei jedem Zeichen neu zeichnen, sonst springt die Tastatur. Nur Stand ändern und speichern.
 root.addEventListener("input", (ev) => {
@@ -452,18 +524,21 @@ root.addEventListener("keydown", (ev) => {
 let herkunft = null; // vorige Ansicht (für die Zurück-Geste aus Listen und Beleg)
 window.addEventListener("popstate", () => {
   if (!stand) return;
-  if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); zeichne(); return; } // Zurück schließt zuerst das Menü
+  if (blattSchliessen()) return; // Zurück schließt zuerst ein offenes Blatt – ohne Neuzeichnen
+  const m = modus(wurzel); const anfang = startAnsicht(wurzel);
   if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr || fotoLauf())) { schrittZurueck(); }
-  else if (stand.phase === "app" && ansicht !== "start") {
-    if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : "umsatz";
+  else if (stand.phase === "app" && m === "buero" && ansicht === "buero") { ebeneWechseln("laden", "start"); } // Büro-Start: Zurück = „‹ Laden"
+  else if (stand.phase === "app" && ansicht !== anfang) {
+    if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "putzplan" && putzplanZurueck(stand)) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
-    else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : "umsatz";
+    else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "karte"; }
-    else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }
+    else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = anfang; } // Laden-Reiter stapeln nicht: Zurück = Heute; Büro → Büro-Start; Personal → drei Kacheln
+    if (!ansichtErlaubt(wurzel, ansicht)) ansicht = anfang;
     zeichne();
   }
   history.pushState({ schritt: stand.schritt }, "");
@@ -510,6 +585,7 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
     serviceWorkerStarten(); return;
   }
   aktivSetzen(wurzel.aktiv);
+  ebeneWiederherstellen(wurzel); ansicht = startAnsicht(wurzel); // Modus gilt je Handy und bleibt nach dem Neustart (Büro mit Code: zurück in den Laden)
   // Gerichte ohne Rezept (aus älteren Fassungen) bekommen beim Start Startwerte aus dem Baukasten (Pilot 14.10.: keine leere App)
   { let n = 0; for (const b of wurzel.betriebe) n += fehlendeRezepteErgaenzen(b); if (n) { for (const b of wurzel.betriebe) b.artikel = artikelAusGerichten(b); speichern(wurzel); } }
   // Neue Branchenwerte (Punkt 7.4): einmal je Version einspielen, nur Schätzungen ersetzen, Meldung fürs Cockpit merken

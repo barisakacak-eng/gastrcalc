@@ -940,4 +940,19 @@ export default {
     lueckeGut: "Va bene così. O le porzioni sono piuttosto piccole, o nel menù ci sono quantità più grandi di quelle che usate davvero. Controlla le ricette, così l'app calcola più preciso.",
     gerichteKnopf: "Quali piatti rendono di più?", zurUebersicht: "Al riepilogo inventario",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Oggi", muell: "Scarti", kuehl: "Frigo", putzplan: "Pulizie", karte: "Menu" },
+    leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossHalten: "Tieni premuto il lucchetto per 2 secondi", schlossCode: "Inserisci il codice ufficio",
+    pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra" },
+    hilfeText: {
+      allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",
+      start: "La giornata a colpo d'occhio. Il numero grande mostra quanto incasso manca ancora per arrivare a zero. Rosso vuol dire: occupatene ora.",
+      muell: "Tocca la merce che viene buttata. Subito dopo puoi annullare. Liste e importi sono in ufficio.",
+      kuehl: "Misura ogni punto di refrigerazione e inserisci il valore. Se è troppo alto, scrivi cosa fai e rimisura più tardi.",
+      putzplan: "Spunta ciò che è stato pulito oggi. La lista è la prova per i controlli. Il piano lo cambi in ufficio.",
+      karte: "Verde: il tuo obiettivo resta. Giallo: al limite. Rosso: troppo economico.",
+      abschluss: "Inserisci l'incasso, controlla scarti e frigo, fatto.",
+      laeden: "Qui passi da un locale all'altro. Ogni locale ha i suoi numeri.",
+      personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio o 2 secondi sul lucchetto.",
+      buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
 };

@@ -938,4 +938,19 @@ export default {
     lueckeGut: "Güzel. Ya porsiyonlar küçük ya da menüde gerçekte kullandığınızdan büyük miktarlar yazıyor. Tarifleri kontrol et, uygulama daha doğru hesaplasın.",
     gerichteKnopf: "Hangi yemekler en çok kazandırıyor?", zurUebersicht: "Sayım özetine dön",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Bugün", muell: "Çöp", kuehl: "Soğutma", putzplan: "Temizlik", karte: "Menü" },
+    leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossHalten: "Kilide 2 saniye bas", schlossCode: "Büro kodunu gir",
+    pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil" },
+    hilfeText: {
+      allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",
+      start: "Günün özeti. Büyük sayı, sıfıra kadar ne kadar ciro eksik olduğunu gösterir. Kırmızı: şimdi ilgilen.",
+      muell: "Atılan ürüne dokun. Hemen ardından geri alabilirsin. Listeler ve tutarlar büroda.",
+      kuehl: "Her soğutucuyu ölç ve değeri gir. Çok yüksekse ne yaptığını yaz ve sonra tekrar ölç.",
+      putzplan: "Bugün temizlenenleri işaretle. Liste denetim için kanıttır. Planı büroda değiştirirsin.",
+      karte: "Yeşil: hedefin kalıyor. Sarı: kıl payı. Kırmızı: çok ucuz.",
+      abschluss: "Ciroyu gir, çöpü ve soğutmayı kontrol et, bitti.",
+      laeden: "Burada dükkânların arasında geçiş yaparsın. Her dükkânın kendi rakamları var.",
+      personal: "Çöp gir, soğutmayı ölç, temizliği işaretle. Geri dönüş sadece büro koduyla veya kilide 2 saniye basarak.",
+      buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
 };

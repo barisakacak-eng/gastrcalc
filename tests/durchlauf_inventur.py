@@ -4,6 +4,7 @@ Ergebnis A–E prüfen (Texte und Zahlen), Türkisch und 360 px, keine Konsolenf
 Start: python3 tests/durchlauf_inventur.py  (startet selbst einen kleinen Webserver, Port DURCHLAUF_PORT oder 8767)"""
 import asyncio, subprocess, sys, time, pathlib, os
 from playwright.async_api import async_playwright
+import nav_hilfe  # Wege durch die drei Ebenen
 
 APP = pathlib.Path(__file__).resolve().parent.parent
 OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", "/home/claude/pdfbuild/inventur-check")); OUT.mkdir(parents=True, exist_ok=True)
@@ -43,8 +44,7 @@ async def main():
             async def bild(name, voll=True):
                 nonlocal n; n += 1; await pg.screenshot(path=str(OUT / f"{n:02d}_{name}.png"), full_page=voll)
             async def klick(sel): await pg.click(sel); await pg.wait_for_timeout(260)
-            async def geh(ziel):
-                await klick('[data-a="menue-auf"]'); await pg.wait_for_selector('.menue'); await klick(f'.menue [data-a="nav"][data-wert="{ziel}"]')
+            async def geh(ziel): await nav_hilfe.geh(pg, ziel)
             async def stand(): return await pg.evaluate("window.__gastrocalc.stand")
             async def ueberlauf():
                 return await pg.evaluate("document.documentElement.scrollWidth - window.innerWidth")
@@ -56,9 +56,9 @@ async def main():
             assert await pg.evaluate(LADEN) == 11
             await pg.wait_for_selector('[data-a="menue-auf"]')
 
-            # ---- Menü → Inventur (Übersicht)
-            await klick('[data-a="menue-auf"]'); await pg.wait_for_selector('.menue [data-wert="inventur"]'); await bild("menue", False)
-            await klick('.menue [data-a="nav"][data-wert="inventur"]')
+            # ---- Büro → Inventur (Übersicht)
+            await nav_hilfe.ins_buero(pg); await pg.wait_for_selector('#app [data-a="nav"][data-wert="inventur"]'); await bild("buero", False)
+            await klick('#app [data-a="nav"][data-wert="inventur"]')
             await pg.wait_for_selector('[data-a="inv-start"]'); await bild("start")
             assert "Noch keine Inventur" in await pg.inner_text(".inhalt")
 
@@ -104,7 +104,7 @@ async def main():
 
             # ---- Pause, neu laden: nichts verloren
             await klick('[data-a="inv-pause"]'); await pg.wait_for_selector('[data-a="inv-liste"]'); await bild("pause")
-            await pg.wait_for_timeout(500); await pg.reload(); await pg.wait_for_selector('[data-a="menue-auf"]')
+            await pg.wait_for_timeout(500); await pg.reload(); await pg.wait_for_selector('.ebene-kopf')
             await geh("inventur"); await pg.wait_for_selector(".inv-posten")
             s = await stand(); assert s["inventuren"][0]["posten"]["Pommes frites"] == 2.25 and not s["inventuren"][0]["abgeschlossen"]
 

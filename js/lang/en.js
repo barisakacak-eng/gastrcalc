@@ -937,4 +937,19 @@ export default {
     lueckeGut: "Good. Either portions are on the small side, or your menu lists bigger amounts than you really use. Check the recipes so the app calculates more precisely.",
     gerichteKnopf: "Which dishes earn the most?", zurUebersicht: "To the stocktake overview",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Today", muell: "Waste", kuehl: "Fridges", putzplan: "Cleaning", karte: "Menu" },
+    leiste: "Shop", menueAuf: "Open menu", schliessen: "Close", hilfeAuf: "Help", deinLaden: "Your shop", abschluss: "Close the day", personal: "Staff mode", buero: "Office", ladenWechseln: "Switch shop", sprache: "Language", zumLaden: "Shop", zumBuero: "Office", schlossHalten: "Hold the lock for 2 seconds", schlossCode: "Enter office code",
+    pin: { titel: "Office code", neu: "Choose a new code", nochmal: "Once more", falsch: "Wrong code", ungleich: "Doesn't match. Choose again.", gesetzt: "Office code saved", entfernt: "Office code removed", setzen: "Set office code", aendern: "Change office code", entfernen: "Remove code", ohne: "Without a code, anyone can open the office.", mit: "The office is protected by a code.", loeschen: "Delete digit" },
+    hilfeText: {
+      allgemein: "The bar at the bottom leads to everything you need in the shop. Costs, setup and lists live in the office.",
+      start: "Your day at a glance. The big number shows how much revenue is still missing to break even. Red means: act now.",
+      muell: "Tap the item that gets thrown away. You can undo right after. Lists and amounts are in the office.",
+      kuehl: "Measure each fridge and enter the value. If it is too high, note what you do and measure again later.",
+      putzplan: "Tick off what was cleaned today. The list is your proof for inspections. Change the plan in the office.",
+      karte: "Green: your target is left over. Yellow: tight. Red: too cheap.",
+      abschluss: "Enter revenue, check waste and fridges, done.",
+      laeden: "Switch between your shops here. Each shop has its own numbers.",
+      personal: "Log waste, measure fridges, tick off cleaning. Back only with the office code or by holding the lock for 2 seconds.",
+      buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
 };

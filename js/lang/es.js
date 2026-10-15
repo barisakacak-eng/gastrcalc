@@ -939,4 +939,19 @@ export default {
     lueckeGut: "Bien. O las raciones son más bien pequeñas, o en la carta hay cantidades más grandes de las que de verdad usáis. Revisa las recetas y la app calcula más exacto.",
     gerichteKnopf: "¿Qué platos te dejan más?", zurUebersicht: "Al resumen del inventario",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Hoy", muell: "Desperdicio", kuehl: "Frío", putzplan: "Limpieza", karte: "Carta" },
+    leiste: "Local", menueAuf: "Abrir menú", schliessen: "Cerrar", hilfeAuf: "Ayuda", deinLaden: "Tu local", abschluss: "Cerrar el día", personal: "Modo personal", buero: "Oficina", ladenWechseln: "Cambiar de local", sprache: "Idioma", zumLaden: "Local", zumBuero: "Oficina", schlossHalten: "Mantén pulsado el candado 2 segundos", schlossCode: "Introduce el código de oficina",
+    pin: { titel: "Código de oficina", neu: "Elige un código nuevo", nochmal: "Otra vez", falsch: "Código incorrecto", ungleich: "No coincide. Elige de nuevo.", gesetzt: "Código de oficina guardado", entfernt: "Código de oficina eliminado", setzen: "Fijar código de oficina", aendern: "Cambiar código de oficina", entfernen: "Quitar código", ohne: "Sin código, cualquiera entra en la oficina.", mit: "La oficina está protegida con un código.", loeschen: "Borrar cifra" },
+    hilfeText: {
+      allgemein: "La barra de abajo lleva a todo lo que necesitas en el local. Cuentas, ajustes y listas están en la oficina.",
+      start: "El día de un vistazo. El número grande muestra cuánta venta falta todavía para llegar a cero. Rojo significa: ocúpate ahora.",
+      muell: "Toca el producto que se tira. Justo después puedes deshacerlo. Listas e importes están en la oficina.",
+      kuehl: "Mide cada punto de frío y anota el valor. Si es demasiado alto, apunta lo que haces y vuelve a medir más tarde.",
+      putzplan: "Marca lo que se ha limpiado hoy. La lista es la prueba para la inspección. El plan lo cambias en la oficina.",
+      karte: "Verde: tu objetivo se cumple. Amarillo: justo. Rojo: demasiado barato.",
+      abschluss: "Anota la venta, revisa desperdicio y frío, listo.",
+      laeden: "Aquí cambias entre tus locales. Cada local tiene sus propios números.",
+      personal: "Anota desperdicio, mide el frío, marca la limpieza. Volver solo con el código de oficina o 2 segundos en el candado.",
+      buero: "Aquí están todas las cuentas, listas y ajustes. Las carpetas se las das a la inspección, al asesor fiscal o al contable." } },
 };

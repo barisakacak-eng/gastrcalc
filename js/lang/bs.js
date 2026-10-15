@@ -947,4 +947,19 @@ export default {
     lueckeGut: "Tako je dobro. Ili su porcije prije male, ili na jelovniku stoje veće količine nego što stvarno stavljate. Provjeri recepte, pa aplikacija računa tačnije.",
     gerichteKnopf: "Koja jela najviše donose?", zurUebersicht: "Na pregled inventure",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Danas", muell: "Otpad", kuehl: "Hlađenje", putzplan: "Čišćenje", karte: "Meni" },
+    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossHalten: "Drži lokot 2 sekunde", schlossCode: "Unesi šifru ureda",
+    pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru" },
+    hilfeText: {
+      allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",
+      start: "Dan na jedan pogled. Veliki broj pokazuje koliko prometa još fali do nule. Crveno znači: pobrini se sada.",
+      muell: "Dodirni robu koja se baca. Odmah nakon toga možeš poništiti. Liste i iznosi su u uredu.",
+      kuehl: "Izmjeri svako mjesto hlađenja i unesi vrijednost. Ako je previsoka, zapiši šta radiš i kasnije izmjeri ponovo.",
+      putzplan: "Označi šta je danas očišćeno. Lista je dokaz za kontrolu. Plan mijenjaš u uredu.",
+      karte: "Zeleno: tvoj cilj ostaje. Žuto: tijesno. Crveno: prejeftino.",
+      abschluss: "Unesi promet, provjeri otpad i hlađenje, gotovo.",
+      laeden: "Ovdje prelaziš između svojih lokala. Svaki lokal ima svoje brojke.",
+      personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda ili 2 sekunde na lokotu.",
+      buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
 };

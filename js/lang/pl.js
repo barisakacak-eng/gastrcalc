@@ -945,4 +945,19 @@ export default {
     lueckeGut: "Dobrze. Albo porcje są raczej małe, albo w karcie są większe ilości, niż naprawdę dajecie. Sprawdź przepisy, wtedy aplikacja policzy dokładniej.",
     gerichteKnopf: "Które dania dają najwięcej?", zurUebersicht: "Do przeglądu inwentaryzacji",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Dziś", muell: "Odpady", kuehl: "Chłodzenie", putzplan: "Sprzątanie", karte: "Menu" },
+    leiste: "Lokal", menueAuf: "Otwórz menu", schliessen: "Zamknij", hilfeAuf: "Pomoc", deinLaden: "Twój lokal", abschluss: "Zamknij dzień", personal: "Tryb personelu", buero: "Biuro", ladenWechseln: "Zmień lokal", sprache: "Język", zumLaden: "Lokal", zumBuero: "Biuro", schlossHalten: "Przytrzymaj kłódkę 2 sekundy", schlossCode: "Wpisz kod biura",
+    pin: { titel: "Kod biura", neu: "Wybierz nowy kod", nochmal: "Jeszcze raz", falsch: "Zły kod", ungleich: "Nie zgadza się. Wybierz ponownie.", gesetzt: "Kod biura zapisany", entfernt: "Kod biura usunięty", setzen: "Ustaw kod biura", aendern: "Zmień kod biura", entfernen: "Usuń kod", ohne: "Bez kodu każdy wejdzie do biura.", mit: "Biuro jest chronione kodem.", loeschen: "Usuń cyfrę" },
+    hilfeText: {
+      allgemein: "Pasek na dole prowadzi do wszystkiego, czego potrzebujesz w lokalu. Liczenie, ustawienia i listy są w biurze.",
+      start: "Dzień w skrócie. Duża liczba pokazuje, ile obrotu brakuje do zera. Czerwone znaczy: zajmij się tym teraz.",
+      muell: "Dotknij towaru, który idzie do kosza. Zaraz potem możesz cofnąć. Listy i kwoty są w biurze.",
+      kuehl: "Zmierz każde miejsce chłodzenia i wpisz wartość. Jeśli jest za wysoka, zapisz, co robisz, i zmierz później jeszcze raz.",
+      putzplan: "Odhacz, co dziś posprzątano. Lista jest dowodem dla kontroli. Plan zmieniasz w biurze.",
+      karte: "Zielony: twój cel zostaje. Żółty: na styk. Czerwony: za tanio.",
+      abschluss: "Wpisz obrót, sprawdź odpady i chłodzenie, gotowe.",
+      laeden: "Tu przełączasz się między lokalami. Każdy lokal ma własne liczby.",
+      personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura lub 2 sekundy na kłódce.",
+      buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
 };

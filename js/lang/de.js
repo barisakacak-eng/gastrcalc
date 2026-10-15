@@ -939,4 +939,19 @@ export default {
     lueckeGut: "Gut so. Entweder sind die Portionen eher klein, oder in der Karte stehen größere Mengen, als ihr wirklich nehmt. Prüf die Rezepte, dann rechnet die App genauer.",
     gerichteKnopf: "Welche Gerichte bringen am meisten?", zurUebersicht: "Zur Inventur-Übersicht",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Heute", muell: "Müll", kuehl: "Kühlung", putzplan: "Putzen", karte: "Karte" },
+    leiste: "Laden", menueAuf: "Menü öffnen", schliessen: "Schließen", hilfeAuf: "Hilfe", deinLaden: "Dein Laden", abschluss: "Tag abschließen", personal: "Personal-Modus", buero: "Büro", ladenWechseln: "Laden wechseln", sprache: "Sprache", zumLaden: "Laden", zumBuero: "Büro", schlossHalten: "2 Sekunden aufs Schloss drücken", schlossCode: "Büro-Code eingeben",
+    pin: { titel: "Büro-Code", neu: "Neuen Code wählen", nochmal: "Noch einmal", falsch: "Falscher Code", ungleich: "Nicht gleich. Bitte neu wählen.", gesetzt: "Büro-Code gespeichert", entfernt: "Büro-Code entfernt", setzen: "Büro-Code festlegen", aendern: "Büro-Code ändern", entfernen: "Code entfernen", ohne: "Ohne Code kommt jeder ins Büro.", mit: "Das Büro ist mit einem Code geschützt.", loeschen: "Ziffer löschen" },
+    hilfeText: {
+      allgemein: "Die Leiste unten führt zu allem, was du im Laden brauchst. Rechnen, Einrichten und Listen findest du im Büro.",
+      start: "Der Tag auf einen Blick. Die große Zahl zeigt, wie viel Umsatz bis null noch fehlt. Rot heißt: jetzt kümmern.",
+      muell: "Tipp auf die Ware, die weggeworfen wird. Rückgängig geht gleich danach. Listen und Werte stehen im Büro.",
+      kuehl: "Miss jede Kühlstelle und trag den Wert ein. Ist er zu hoch, schreib auf, was du tust, und miss später nach.",
+      putzplan: "Hak ab, was heute geputzt ist. Die Liste ist der Nachweis für die Kontrolle. Den Plan änderst du im Büro.",
+      karte: "Grün: dein Ziel bleibt übrig. Gelb: knapp. Rot: zu billig.",
+      abschluss: "Umsatz eintragen, Müll und Kühlung prüfen, fertig.",
+      laeden: "Hier wechselst du zwischen deinen Läden. Jeder Laden hat eigene Zahlen.",
+      personal: "Müll eintragen, Kühlung messen, Putzen abhaken. Zurück nur mit Büro-Code oder 2 Sekunden aufs Schloss.",
+      buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
 };

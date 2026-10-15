@@ -939,4 +939,19 @@ export default {
     lueckeGut: "C’est bien. Soit les portions sont plutôt petites, soit la carte indique des quantités plus grandes que ce que vous mettez vraiment. Vérifie les recettes, et l’appli calcule plus juste.",
     gerichteKnopf: "Quels plats rapportent le plus ?", zurUebersicht: "Vers la vue d’ensemble de l’inventaire",
   },
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  ebene: { tabs: { start: "Aujourd'hui", muell: "Déchets", kuehl: "Froid", putzplan: "Nettoyage", karte: "Carte" },
+    leiste: "Commerce", menueAuf: "Ouvrir le menu", schliessen: "Fermer", hilfeAuf: "Aide", deinLaden: "Ton commerce", abschluss: "Clôturer la journée", personal: "Mode équipe", buero: "Bureau", ladenWechseln: "Changer de commerce", sprache: "Langue", zumLaden: "Commerce", zumBuero: "Bureau", schlossHalten: "Appuie 2 secondes sur le cadenas", schlossCode: "Saisis le code bureau",
+    pin: { titel: "Code bureau", neu: "Choisis un nouveau code", nochmal: "Encore une fois", falsch: "Code erroné", ungleich: "Pas identique. Choisis à nouveau.", gesetzt: "Code bureau enregistré", entfernt: "Code bureau supprimé", setzen: "Définir le code bureau", aendern: "Changer le code bureau", entfernen: "Supprimer le code", ohne: "Sans code, tout le monde entre au bureau.", mit: "Le bureau est protégé par un code.", loeschen: "Effacer le chiffre" },
+    hilfeText: {
+      allgemein: "La barre du bas mène à tout ce qu'il te faut au commerce. Calculs, réglages et listes sont au bureau.",
+      start: "La journée en un coup d'œil. Le grand chiffre montre combien de chiffre d'affaires manque encore pour atteindre zéro. Rouge veut dire : agis maintenant.",
+      muell: "Touche le produit qui part à la poubelle. Tu peux annuler juste après. Listes et montants sont au bureau.",
+      kuehl: "Mesure chaque point de froid et saisis la valeur. Si elle est trop haute, note ce que tu fais et mesure de nouveau plus tard.",
+      putzplan: "Coche ce qui a été nettoyé aujourd'hui. La liste est la preuve pour le contrôle. Le plan se modifie au bureau.",
+      karte: "Vert : ton objectif reste. Jaune : juste. Rouge : trop bon marché.",
+      abschluss: "Saisis le chiffre d'affaires, vérifie déchets et froid, terminé.",
+      laeden: "Ici tu passes d'un commerce à l'autre. Chaque commerce a ses propres chiffres.",
+      personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau ou 2 secondes sur le cadenas.",
+      buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
 };

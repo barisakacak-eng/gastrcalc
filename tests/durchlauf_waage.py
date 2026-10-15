@@ -2,13 +2,15 @@
 import asyncio, json, os, subprocess, sys, pathlib, time
 APP = pathlib.Path(__file__).resolve().parent.parent
 from playwright.async_api import async_playwright
+sys.path.insert(0, str(APP / "tests")); import nav_hilfe  # Wege durch die drei Ebenen
+PORT = int(os.environ.get("DURCHLAUF_PORT", "8765"))
 S = "/home/claude/pdfbuild/waage-check/"; os.makedirs(S, exist_ok=True)
 async def main():
     async with async_playwright() as p:
         b = await p.chromium.launch(); fehler=[]
         for lang in ["de","tr","en"]:
             pg = await b.new_page(viewport={"width":390,"height":844}); pg.on("pageerror", lambda e: fehler.append(str(e)))
-            await pg.goto("http://localhost:8765/"); await pg.wait_for_timeout(800)
+            await pg.goto(f"http://127.0.0.1:{PORT}/"); await pg.wait_for_timeout(800)
             # Laden per Import-Logik direkt anlegen: über die App-Funktionen im Modul-Kontext
             await pg.evaluate("""async (lang) => {
               const st = await import('./js/store.js'); const kl = await import('./js/karte_lesen.js'); const e = await import('./js/engine.js');
@@ -18,8 +20,8 @@ async def main():
               w.betriebe.push(s); w.aktiv = s.id; await st.sofortSpeichern(w);
             }""", lang)
             await pg.reload(); await pg.wait_for_timeout(1000)
-            await pg.click('[data-a="menue-auf"]'); await pg.click('.menue [data-a="nav"][data-wert="karte"]'); await pg.wait_for_timeout(400)
-            await pg.click('[data-a="bearbeiten"][data-schritt="rezepte"]'); await pg.wait_for_timeout(400)
+            await nav_hilfe.ins_buero(pg)  # Rezepte wohnen im Büro
+            await pg.click('#app [data-a="bearbeiten"][data-schritt="rezepte"] >> nth=0'); await pg.wait_for_timeout(400)
             await pg.screenshot(path=S+f"w_{lang}_1liste.png")
             await pg.click('[data-a="rezept-auf"]'); await pg.wait_for_timeout(400)
             await pg.screenshot(path=S+f"w_{lang}_2detail.png")
@@ -34,7 +36,7 @@ async def main():
             print(lang, gruen, stempel)
             await pg.close()
         assert not fehler, fehler; print("Durchlauf Waage ok"); await b.close()
-srv = subprocess.Popen([sys.executable, "-m", "http.server", "8765", "--bind", "127.0.0.1"], cwd=APP, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT), "--bind", "127.0.0.1"], cwd=APP, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 try:
     time.sleep(1); asyncio.run(main())
 finally: srv.terminate()

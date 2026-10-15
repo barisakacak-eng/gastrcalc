@@ -4,6 +4,7 @@ als Strom zuweisen → Zähler; Großhandelsbon → Ware; PDF-Speisekarte über 
 Start: python3 tests/durchlauf_foto.py"""
 import asyncio, subprocess, sys, time, pathlib, os
 from playwright.async_api import async_playwright
+import nav_hilfe  # Wege durch die drei Ebenen
 
 APP = pathlib.Path(__file__).resolve().parent.parent
 OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", APP.parent / "pdfbuild" / "foto-check")); OUT.mkdir(parents=True, exist_ok=True)
@@ -94,8 +95,8 @@ async def main():
             await bild("bon-zuweisen"); await klick('[data-a="beleg-zerlegen"]')
             await pg.wait_for_selector('[data-a="beleg-uebernehmen"]'); await bild("bon-pruefen")
             # 8 PDF-Speisekarte über Karte
-            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="karte"]'); await bild("karte-app")
-            await klick('[data-a="nav"][data-wert="kartefoto"]'); await pg.wait_for_selector('input[data-f="foto"]', state="attached")
+            await nav_hilfe.geh(pg, "karte"); await bild("karte-app")
+            await nav_hilfe.geh(pg, "kartefoto"); await pg.wait_for_selector('input[data-f="foto"]', state="attached")
             await pg.locator('input[data-f="foto"]:not([capture])').set_input_files(str(BILD / "karte2.pdf"))
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=60000); await pg.wait_for_timeout(300); await bild("pdf-pruefen")
             pdfnamen = await pg.evaluate("[...document.querySelectorAll('.fvz')].map(z => z.querySelector('[data-f^=\\'fv-name:\\']')?.value || z.querySelector('.n')?.firstChild?.textContent || '')")
@@ -103,7 +104,7 @@ async def main():
             await klick('[data-a="fv-uebernehmen"]'); await bild("karte-nach-pdf")
             s = await stand(); assert any("Margherita" in g["name"] for g in s["gerichte"])
             # 8b Kamera-Serie: zwei Fotos nacheinander, dann „Fertig – Liste prüfen" (Pilot 14.10.)
-            await klick('[data-a="nav"][data-wert="kartefoto"]'); await pg.wait_for_selector('input[capture]', state="attached")
+            await nav_hilfe.geh(pg, "kartefoto"); await pg.wait_for_selector('input[capture]', state="attached")
             await pg.locator('input[data-f="foto"][capture]').set_input_files(str(BILD / "karte_foto.jpg"))
             await pg.wait_for_selector('.karte.serie', timeout=10000); await bild("serie-1")
             await pg.locator('input[data-f="foto"][capture]').set_input_files(str(BILD / "karte2_foto.jpg"))
@@ -113,7 +114,7 @@ async def main():
             assert len(serie) >= 3, serie
             await klick('[data-a="fv-uebernehmen"]')
             # 9 Cockpit
-            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="start"]'); await bild("cockpit")
+            await nav_hilfe.geh(pg, "start"); await bild("cockpit")
             # Türkisch: Schnellstart-Texte vorhanden
             await ctx.close(); await b.close()
             print(f"Schnellstart bis fertig: {dauer:.1f} s (Testautomat, ohne Denkpausen)")

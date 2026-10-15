@@ -6,8 +6,8 @@ from playwright.async_api import async_playwright
 
 APP = pathlib.Path(__file__).resolve().parent.parent
 PILOT = APP / "tests" / "bilder" / "pilot"
-OUT = APP.parent / "pdfbuild" / "pilot-check"; OUT.mkdir(parents=True, exist_ok=True)
-PORT = 8767
+OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", APP.parent / "pdfbuild" / "pilot-check")); OUT.mkdir(parents=True, exist_ok=True)
+PORT = int(os.environ.get("DURCHLAUF_PORT", "8767"))
 norm = lambda s: re.sub(r"[^\w&]+", " ", unicodedata.normalize("NFC", s).lower()).strip()
 
 async def main():
