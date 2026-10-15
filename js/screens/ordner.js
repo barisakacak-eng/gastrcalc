@@ -5,7 +5,7 @@
 import { t, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, belehrungEintragen, AMT_TEILE } from "../export_amt.js";
-import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe } from "../export_steuer.js";
+import { monatsPaket, monatsPaketKurz, teilCsv, monatVon, monatPlus, datumDe } from "../export_steuer.js"; // W2-D: monatsPaketKurz
 import { monatName } from "./tag.js";
 import { bsym, ring, bueroKopf } from "./buero.js";
 
@@ -38,7 +38,7 @@ const paketZeit = (art, H = heute()) => monatVon((paketMonat[art] || monatPlus(H
 export function ordnerKachelStand(stand, { datum: H = heute() } = {}) {
   const a = ordnerAmt(stand, zeitraumFuer("monat", { datum: H }), { datum: H });
   const vm = monatVon(monatPlus(H.slice(0, 7), -1) + "-01");
-  const s = monatsPaket(stand, vm, "steuer"); const b = monatsPaket(stand, vm, "buch");
+  const s = monatsPaketKurz(stand, vm, "steuer"); const b = { umsatz: s.umsatz }; // W2-D (Leistung): Buch-Kachel braucht nur die Umsatztage – dieselben wie im Steuer-Paket
   return {
     amt: { farbe: a.vollstaendig === a.gesamt ? "gruen" : a.vollstaendig ? "gelb" : "rot", text: t("ordner.kachelVon", a.vollstaendig, a.gesamt) },
     steuer: { farbe: s.vollstaendig === s.teile.length ? "gruen" : s.umsatz.tage ? "gelb" : "grau", text: monatName(vm.von) },

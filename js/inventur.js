@@ -116,6 +116,19 @@ export function hinzufuegen(stand, inv, name) {
   return true;
 }
 
+// W2-D (Leistung Büro): abgeschlossene Inventur mit festgehaltenen Preisen – Summe, gezählt, ohne Preis allein aus der Inventur.
+// Gleiches Ergebnis wie inventurWert(…).summe/.gezaehlt/.ohnePreis, ohne die Warenliste neu aufzubauen. Sonst: null.
+export function inventurKurz(inv) {
+  if (!inv?.abgeschlossen || !inv.preise || typeof inv.preise !== "object") return null;
+  const weg = new Set(inv.ausgeblendet || []); let summe = 0, gezaehlt = 0; const ohnePreis = [];
+  for (const [name, roh] of Object.entries(inv.posten || {})) {
+    if (weg.has(name)) continue; const menge = mengeSauber(roh); if (menge === null) continue;
+    gezaehlt += 1; const p = inv.preise[name]; const preis = typeof p === "number" && Number.isFinite(p) && p >= 0 ? p : null;
+    if (preis === null) { if (menge > 0) ohnePreis.push(name); continue; }
+    summe += menge * preis;
+  }
+  return { summe, gezaehlt, ohnePreis };
+}
 // Wert einer Inventur: Summe aller gezählten Zeilen mit Preis, je Lagerort, und was ohne Preis gezählt wurde.
 export function inventurWert(stand, inv) { return inv?.abgeschlossen ? imTakt(stand, "invWert:" + inv.id, () => inventurWertRechnen(stand, inv)) : inventurWertRechnen(stand, inv); }
 function inventurWertRechnen(stand, inv) {

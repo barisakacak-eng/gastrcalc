@@ -7,7 +7,7 @@
 // Zeilenende CRLF. Textzellen, die mit = + - @ beginnen, bekommen ein Hochkomma davor (sonst führt Excel sie als Formel aus).
 import { umsatzEintrag, umsatzSteuerSatz, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026, tagPlus, monatsLast } from "./engine.js";
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
-import { inventurWert } from "./inventur.js";
+import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
 
 // ---------- CSV ----------
@@ -114,7 +114,8 @@ export function reinigungsmittel(stand, z) {
 export function inventurwerte(stand, z) {
   const fertig = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.datum === "string").sort((a, b) => a.datum.localeCompare(b.datum));
   const wert = (i) => (typeof i.wert === "number" ? i.wert : inventurWert(stand, i).summe);
-  const zeile = (i, vorher = false) => { const w = inventurWert(stand, i); return { datum: i.datum, wert: rund2(wert(i)), gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, vorher }; };
+  const zeile = (i, vorher = false) => { const w = inventurKurz(i) || inventurWert(stand, i); // W2-D: schneller Weg für abgeschlossene Zählungen
+    return { datum: i.datum, wert: rund2(wert(i)), gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, vorher }; };
   const drin = fertig.filter((i) => imZeitraum(i.datum, z)).map((i) => zeile(i));
   const davor = fertig.filter((i) => i.datum < z.von).pop();
   return { zeilen: davor ? [zeile(davor, true), ...drin] : drin, imZeitraum: drin.length };
@@ -144,6 +145,16 @@ export function monatsPaket(stand, z, art = "steuer") {
   p.stand = Object.fromEntries(teile.map((t) => [t, teilStand(p, t)]));
   p.vollstaendig = teile.filter((t) => p.stand[t] === "ok").length;
   return p;
+}
+// W2-D (Leistung Büro-Start): nur, was die Ordner-Kachel braucht – gleiche Regeln wie teilStand, ohne die Zeilen aufzubauen
+export function monatsPaketKurz(stand, z, art = "steuer") {
+  const teile = TEILE[art] || TEILE.steuer; let tage = 0;
+  for (let d = z.von; d <= z.bis; d = tagPlus(d, 1)) if (umsatzEintrag(stand, d)) tage += 1;
+  const imZ = (x) => !x.storniert && imZeitraum(x.datum, z);
+  const belege = (stand.lieferungen || []).filter(imZ).length + (stand.kostenbelege || []).filter(imZ).length;
+  const inventur = (stand.inventuren || []).some((i) => i.abgeschlossen && typeof i.datum === "string" && imZeitraum(i.datum, z));
+  const st = { umsatz: tage > 0, belege: belege > 0, inventur, schwund: teile.includes("schwund") ? !schwundAuswertung(stand, z).ohneWert : true, kosten: teile.includes("kosten") ? (() => { const k = festeKosten(stand); return !!k.zeilen.length && !k.offen; })() : true };
+  return { teile, umsatz: { tage }, vollstaendig: teile.filter((t) => st[t] ?? true).length };
 }
 function teilStand(p, t) {
   if (t === "umsatz") return p.umsatz.tage ? "ok" : "luecke";

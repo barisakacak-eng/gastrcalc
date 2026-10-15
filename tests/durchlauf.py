@@ -234,7 +234,7 @@ async def main():
             # ---- Neuladen: alles da, Schema 4
             await pg.reload(); await pg.wait_for_selector(".cockpit")
             w = await pg.evaluate("window.__gastrocalc.wurzel")
-            assert w["schema"] == 5 and len(w["betriebe"][0]["lieferungen"]) == 1 and len(w["betriebe"][0]["abschluesse"]) == 1
+            assert w["schema"] == 6 and len(w["betriebe"][0]["lieferungen"]) == 1 and len(w["betriebe"][0]["abschluesse"]) == 1
             # ---- Kühlkontrolle mit Standardgrenzen
             await geh("kuehl"); await bild("kuehl-start")
             html = await pg.content(); assert "Standard" in html, "Standardgrenze nicht sichtbar"
@@ -259,15 +259,17 @@ async def main():
             s = await stand(); assert abs(s["verkauf"]["warenQuote"] - 0.35) < 1e-9
             # Export: Schema 4 mit Prüfsumme
             async with pg.expect_download() as dl: await pg.click('[data-a="export"]')
-            d = await dl.value; pfad = OUT / "export.json"; await d.save_as(str(pfad))
-            kopf, inhalt = pfad.read_text().split("\n", 1); kopfd = json.loads(kopf); daten = json.loads(inhalt)
-            assert kopfd["schema"] == 5 and len(kopfd["sha256"]) == 64 and daten["wurzel"]["betriebe"][0]["lieferungen"], kopfd
+            d = await dl.value; pfad = OUT / "export.zip"; await d.save_as(str(pfad))  # W2-D: Sicherung als ZIP mit Fotos
+            import zipfile
+            with zipfile.ZipFile(pfad) as zf: roh = zf.read("gastrocalc-sicherung.json").decode()
+            kopf, inhalt = roh.split("\n", 1); kopfd = json.loads(kopf); daten = json.loads(inhalt)
+            assert kopfd["schema"] == 6 and len(kopfd["sha256"]) == 64 and daten["wurzel"]["betriebe"][0]["lieferungen"], kopfd
             # Alte Schema-3-Sicherung einlesen: Posten bekommen basis netto, Artikel Gebinde
             alt = {"typ": "gastrocalc-sicherung", "schema": 3, "wurzel": {"schema": 3, "betriebe": [{"id": "alt-3", "phase": "app", "betrieb": {"name": "Altes Café", "format": "cafe", "kuechen": [], "tageProWoche": 6, "monate": 12},
                    "kosten": [{"id": "k1", "kategorie": "energie", "posten": "strom", "betrag": 119, "status": "bekannt", "periode": "monat"}], "artikel": [{"name": "Milch", "gruppe": "kaese", "einheit": "l", "packung": {"menge": 1, "einheit": "l"}, "preis": 1}]}], "aktiv": "alt-3"}, "ereignisse": []}
             altp = OUT / "alt3.json"; altp.write_text(json.dumps(alt))
-            pg.once("dialog", lambda dd: asyncio.ensure_future(dd.accept()))
-            await pg.set_input_files('[data-f="import"]', str(altp)); await pg.wait_for_timeout(600)
+            ja = lambda dd: asyncio.ensure_future(dd.accept()); pg.on("dialog", ja)  # W2-D: ohne Prüfsumme kommt erst eine Rückfrage, dann die Import-Frage
+            await pg.set_input_files('[data-f="import"]', str(altp)); await pg.wait_for_timeout(800); pg.remove_listener("dialog", ja)
             w = await pg.evaluate("window.__gastrocalc.wurzel"); altb = next(x for x in w["betriebe"] if x["id"] == "alt-3")
             assert altb["kosten"][0]["basis"] == "netto" and altb["artikel"][0]["gebinde"]["art"] == "packung" and altb["artikel"][0]["preisBasis"] == "netto", altb
             await bild("laeden-nach-import")

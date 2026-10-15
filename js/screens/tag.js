@@ -78,7 +78,8 @@ export function datumLesbar(iso) {
 // Monatsname und Wochentag in der Sprache der App (für Zähler und Cockpit).
 const LOCALE = { de: "de-DE", tr: "tr-TR", en: "en-GB", bs: "bs-BA", ku: "ku" }; // sonst gilt der Sprachcode selbst (ar, ru, vi …)
 const loc = () => LOCALE[sprache()] || sprache();
-export function monatName(iso) { const [j, m] = iso.split("-").map(Number); return new Date(j, m - 1, 1).toLocaleDateString(loc(), { month: "long" }); }
+const monatNamen = new Map(); // W2-D (Leistung): Monatsnamen je Sprache merken – das Formatieren kostet auf dem Handy spürbar
+export function monatName(iso) { const [j, m] = iso.split("-").map(Number); const k = loc() + "|" + j + "-" + m; let n = monatNamen.get(k); if (n === undefined) { n = new Date(j, m - 1, 1).toLocaleDateString(loc(), { month: "long" }); monatNamen.set(k, n); } return n; }
 export function tagLesbar(iso) { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).toLocaleDateString(loc(), { weekday: "long", day: "numeric", month: "long" }); }
 export const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 

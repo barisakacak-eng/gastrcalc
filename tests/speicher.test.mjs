@@ -186,13 +186,15 @@ test("Sicherungsdatei: gleiches Format, Prüfsumme über die zweite Zeile, Einle
   idbAttrappe(); await st.laden();
   const w = structuredClone(jahr()); await st.sofortSpeichern(w);
   const { blob, name, fingerabdruck } = await st.exportDatei(w);
-  const text = await blob.text();
+  // W2-D: die Sicherung ist ein ZIP, darin die bisherige zweizeilige Datei
+  const { zipLesen } = await import("../js/zip.js"); const z = await zipLesen(blob);
+  const text = new TextDecoder().decode(await z.find((e) => e.name === st.SICHERUNG_JSON).bytes());
   const nl = text.indexOf("\n"); const kopf = JSON.parse(text.slice(0, nl)); const inhalt = text.slice(nl + 1);
   assert.deepEqual(Object.keys(kopf), ["typ", "schema", "sha256"]); assert.equal(kopf.typ, "gastrocalc-sicherung"); assert.equal(kopf.schema, st.SCHEMA);
   const sha = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(inhalt)))].map((x) => x.toString(16).padStart(2, "0")).join("");
   assert.equal(kopf.sha256, sha); assert.equal(fingerabdruck, sha.slice(0, 10));
   const d = JSON.parse(inhalt); assert.deepEqual(Object.keys(d), ["exportiert", "geraet", "fassung", "wurzel", "ereignisse"]);
-  assert.match(name, /^gastrocalc-test-doner-\d{4}-\d{2}-\d{2}\.json$/);
+  assert.match(name, /^gastrocalc-test-doner-\d{4}-\d{2}-\d{2}\.zip$/);
   const imp = await st.importDatei(text);
   assert.equal(imp.pruefsumme, "ok");
   assert.equal(json(imp.wurzel), json(erwartet(d.wurzel)));
