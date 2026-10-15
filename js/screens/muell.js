@@ -4,6 +4,7 @@
 import { t, tAlle, einheitLabel } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { EINHEITEN } from "../data/katalog.js";
+import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau } from "../muell.js";
 import { nav } from "./nav.js";
@@ -104,11 +105,12 @@ function cockpitView(stand, D, nach) {
 }
 
 function eingabeView(stand, D) {
-  const q = suche.trim().toLowerCase();
+  const q = normalisieren(suche);
   const kacheln = q
     ? [...(stand.gerichte || []).filter((g) => g.klasse !== "getraenk").map((g) => ({ typ: "gericht", id: g.id, name: g.name, einheit: "portion", gruppe: "speise" })),
        ...(stand.artikel || []).filter((a) => a.benutzt !== false).map((a) => ({ typ: "artikel", name: a.name, einheit: a.packung?.einheit || a.einheit || "stk", gruppe: a.gruppe }))]
-        .filter((x) => x.name.toLowerCase().includes(q)).slice(0, 24)
+        // auch „domates“, „sogan“, „tomato“ finden (Suchnamen); Treffer im deutschen Namen zuerst
+        .filter((x) => suchRang(x.name, q) >= 0).sort((a, b) => suchRang(a.name, q) - suchRang(b.name, q)).slice(0, 24)
     : haeufigsteMuell(stand, { datum: D });
   return `<div class="inhalt">
     <h2>${esc(t("muell.auswaehlen"))}</h2><p class="hinweis">${esc(dreisprachig("muell.wasWeg"))}</p>
