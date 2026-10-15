@@ -58,16 +58,19 @@ export function monatsZiel(stand, z, H) {
   const ziel = nullpunkt === null ? null : 1 - q - g > 0.05 ? kosten / (1 - q - g) * brutto : nullpunkt;
   const tage = []; let summe = 0;
   for (const x of z.tage) { if (x.datum > H) break; const u = umsatzEintrag(stand, x.datum); summe += u ? u.umsatz : 0; tage.push({ datum: x.datum, umsatz: u ? u.umsatz : null, kumuliert: summe }); }
-  const stufe = nullpunkt === null ? "ohne" : summe < nullpunkt ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
-  // Tempo (Nachtester 15.10.: „fehlt 5.914 €“ klang schlecht, obwohl der Monat im Plan lief): Umsatz je Öffnungstag bisher,
-  // hochgerechnet auf die restlichen Öffnungstage → an welchem Tag wird die nächste Marke erreicht, oder wie viel je Tag fehlt.
-  let erreichtAm = null, proTagNoetig = null; const marke = stufe === "bisNull" ? nullpunkt : stufe === "bisZiel" ? ziel : null;
-  const gBis = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a, x) => a + (x.gewicht || 0), 0);
-  if (marke !== null && gBis > 0 && summe > 0) { const tempo = summe / gBis; let s2 = summe;
-    for (const x of z.tage) { if (x.datum <= H) continue; s2 += tempo * (x.gewicht || 0); if (s2 >= marke) { erreichtAm = x.datum; break; } }
-    if (!erreichtAm) { const rest = (z.tage || []).filter((x) => x.datum > H).reduce((a, x) => a + (x.gewicht || 0), 0); proTagNoetig = rest > 0 ? (marke - summe) / rest : null; } }
+  // „Null“ heißt überall dasselbe wie im Zähler (Nachtester 15.10.): gerechneter Stand bis heute ≥ 0. Danach zählt das Monatsziel mit Zielgewinn.
+  const imMinus = typeof z.stand === "number" && z.stand < 0 && !z.keinUmsatz;
+  const stufe = nullpunkt === null ? "ohne" : imMinus || z.keinUmsatz ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
+  const fehltNullZ = imMinus ? -z.stand / (1 - q) * brutto : z.keinUmsatz ? nullpunkt : 0; // Umsatz, der das Minus bis heute ausgleicht
+  let erreichtAm = null, proTagNoetig = null;
+  if (stufe === "bisNull" && !z.keinUmsatz) { erreichtAm = z.nullTag || null; if (!erreichtAm && z.noetigProTag) proTagNoetig = z.noetigProTag / (1 - q) * brutto; }
+  if (stufe === "bisZiel") { // Tempo: Umsatz je Öffnungstag bisher, hochgerechnet auf die restlichen Öffnungstage
+    const gBis = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a2, x) => a2 + (x.gewicht || 0), 0);
+    if (gBis > 0 && summe > 0) { const tempo = summe / gBis; let s2 = summe;
+      for (const x of z.tage) { if (x.datum <= H) continue; s2 += tempo * (x.gewicht || 0); if (s2 >= ziel) { erreichtAm = x.datum; break; } }
+      if (!erreichtAm) { const rest = (z.tage || []).filter((x) => x.datum > H).reduce((a2, x) => a2 + (x.gewicht || 0), 0); proTagNoetig = rest > 0 ? (ziel - summe) / rest : null; } } }
   return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe, erreichtAm, proTagNoetig,
-    fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : Math.max(0, nullpunkt - summe),
+    fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : fehltNullZ,
     darueber: ziel === null ? null : Math.max(0, summe - ziel), tage, geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 };
 }
 function bisNullKarte(stand, z, H) {
@@ -92,7 +95,6 @@ function monatKarte(stand, z, H) {
     <span class="monatzahl"><b>${fmtEuro(m.umsatz, { dezimal: 0 })}</b>${m.ziel ? `<small>${esc(t("cockpit.vonZiel", fmtEuro(m.ziel, { dezimal: 0 })))}</small>` : ""}</span>
     <svg class="monatbalken" viewBox="0 -12 ${W} ${Hh + 26}" preserveAspectRatio="none" aria-hidden="true">${balken}
       ${zielY !== null ? `<line class="ziellinie" x1="0" x2="${W}" y1="${zielY}" y2="${zielY}"/><text x="${W}" y="${zielY - 4}" text-anchor="end">${esc(t("cockpit.zielKurz"))}</text>` : ""}
-      ${nullY !== null && nullY !== zielY ? `<line class="nulllinie" x1="0" x2="${W}" y1="${nullY}" y2="${nullY}"/>${Math.abs(nullY - zielY) > 12 ? `<text x="0" y="${nullY - 4}">${esc(t("cockpit.nullKurz"))}</text>` : ""}` : ""}
       <text x="0" y="${Hh + 13}">${esc(datumLesbar(z.tage[0].datum).slice(0, 6))}</text><text x="${W}" y="${Hh + 13}" text-anchor="end">${esc(t("zaehler.heute"))}</text></svg></button>`;
 }
 function heuteKacheln(stand, z, ks, H) {

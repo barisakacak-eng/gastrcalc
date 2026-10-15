@@ -32,7 +32,9 @@ test("Monatsziel: Null = Kosten / (1 − Quote) × (1 + MwSt); Ziel = Kosten / (
   const kosten = z.tageskosten * gewicht + (z.muell || 0); // wie der Zähler: ab dem ersten Zähltag, plus Müll
   assert.ok(Math.abs(m.nullpunkt - kosten / (1 - z.quoteEff) * (1 + z.steuer)) < 1e-6);
   assert.ok(Math.abs(m.ziel - kosten / (1 - z.quoteEff - 0.1) * (1 + z.steuer)) < 1e-6); assert.ok(m.ziel > m.nullpunkt);
-  assert.ok(Math.abs(m.fehltNull - Math.max(0, m.nullpunkt - 1200)) < 1e-6);
+  // „bis null“ wie im Zähler: Minus bis heute in Umsatz umgerechnet
+  if (z.stand < 0) { assert.equal(m.stufe, "bisNull"); assert.ok(Math.abs(m.fehltNull - (-z.stand) / (1 - z.quoteEff) * (1 + z.steuer)) < 1e-6); }
+  else { assert.notEqual(m.stufe, "bisNull"); assert.equal(m.fehltNull, 0); }
   s.verkauf.zielgewinn = 0; assert.ok(Math.abs(monatsZiel(s, z, H).ziel - m.nullpunkt) < 1e-6); s.verkauf.zielgewinn = 10;
   assert.equal(m.umsatz, 1200);
   assert.ok(Math.abs(m.fehlt - (m.ziel - 1200)) < 1e-6); assert.equal(m.tage.length, 15); assert.equal(m.tage[14].kumuliert, 1200);
