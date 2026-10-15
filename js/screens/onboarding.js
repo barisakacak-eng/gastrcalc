@@ -6,8 +6,10 @@ import { ladenArtVon } from "../profil.js";
 import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./home.js";
 import { FOTOS } from "../data/fotos.js";
+import { sym } from "../symbole.js";
 import { t, SPRACHEN } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, uid, wertAnzeige } from "../util.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige } from "../util.js";
+import { reinigungVon, putzzeitMonat, REINIGUNG_LEER } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
 import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard } from "../data/kosten.js";
@@ -329,7 +331,45 @@ const kuehlstellen = {
   beimVerlassen(stand) { stand.kuehl.eingerichtet = stand.kuehlstellen.some((k) => !k.archiviert); },
 };
 
-export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
+
+// Punkt 5 – Reinigung (Entscheidung Baris 15.10., 12:43: Variante B1, alles auf einer Seite).
+// Firma = Geld vom Konto (Zeile im Zähler). Eigene Putzzeit = Einsicht, keine Kosten (Teamlohn steckt im Personal).
+const reinigungSchritt = {
+  id: "reinigung",
+  view(stand) {
+    const r = reinigungVon(stand);
+    const wahl = (w, s) => `<button type="button" class="wahl ${r.wer === w ? "an" : ""}" data-a="rein-wer" data-wert="${w}" aria-pressed="${r.wer === w}">
+      <span class="wahlsym">${sym(s)}</span><span class="fuell"><b>${esc(t("reinigung.wer." + w))}</b><small class="block">${esc(t("reinigung.werHinweis." + w))}</small></span><span class="haken">${r.wer === w ? "✓" : ""}</span></button>`;
+    const z = putzzeitMonat(stand);
+    return `
+      <h1 class="frage">${esc(t("reinigung.frage"))}</h1>
+      <p class="hinweis">${esc(t("reinigung.hinweis"))}</p>
+      <div class="liste">${wahl("firma", "store")}${wahl("selbst", "users")}${wahl("beides", "sprout")}</div>
+      ${r.wer && r.wer !== "firma" ? `
+        <div class="feldzeile"><label>${esc(t("reinigung.minutenFrage"))}</label>
+          <div class="stepper"><button type="button" data-a="rein-min" data-d="-15" aria-label="−15">−</button><span class="wert">${esc(t("reinigung.minuten", r.minutenTag))}</span><button type="button" data-a="rein-min" data-d="15" aria-label="+15">+</button></div></div>
+        <div class="feldzeile"><label>${esc(t("reinigung.durchFrage"))}</label>
+          <div class="chips">${["team", "inhaber"].map((d) => `<button type="button" class="chip ${r.durch === d ? "an" : ""}" data-a="rein-durch" data-wert="${d}">${esc(t("reinigung.durch." + d))}</button>`).join("")}</div></div>
+        ${z ? `<div class="karte einsicht"><span class="einsichtsym">${sym("chef-hat")}</span><div><p>${esc(z.euro !== null ? t("reinigung.einsichtEuro", r.minutenTag, fmtEuro(Math.round(z.euro / 10) * 10)) : t("reinigung.einsichtStunden", r.minutenTag, fmtZahl(z.stunden, 0)))}</p>
+          <small>${esc(t(r.durch === "team" ? "reinigung.nichtDoppelt" : "reinigung.inhaberZeit"))}</small></div></div>` : ""}` : ""}
+      ${r.wer && r.wer !== "selbst" ? `<div class="feldzeile"><label>${esc(t("reinigung.firmaFrage"))}</label>${zahlfeld({ feld: "rein-firma", wert: r.firmaBetrag, einheit: t("reinigung.jeMonat"), klein: true })}</div>` : ""}
+      ${r.wer ? `<div class="feldzeile"><label>${esc(t("reinigung.mittelFrage"))}</label><p class="hinweis">${esc(t("reinigung.mittelHinweis"))}</p>${zahlfeld({ feld: "rein-mittel", wert: r.mittelSchaetzung, einheit: t("reinigung.jeMonat"), klein: true, platzhalter: "–", status: typeof r.mittelSchaetzung === "number" ? "geschaetzt" : "" })}</div>` : ""}`;
+  },
+  fuss: () => knopfWeiter(),
+  eingabe(feld, wert, stand) {
+    const r = (stand.betrieb.reinigung ??= { ...REINIGUNG_LEER });
+    if (feld === "rein-firma") r.firmaBetrag = parseZahl(wert);
+    if (feld === "rein-mittel") r.mittelSchaetzung = parseZahl(wert);
+  },
+  aktion(name, el, stand) {
+    const r = (stand.betrieb.reinigung ??= { ...REINIGUNG_LEER });
+    if (name === "rein-wer") { r.wer = el.dataset.wert; return true; }
+    if (name === "rein-min") { r.minutenTag = Math.min(240, Math.max(15, (Number(r.minutenTag) || 45) + Number(el.dataset.d))); return true; }
+    if (name === "rein-durch") { r.durch = el.dataset.wert === "inhaber" ? "inhaber" : "team"; return true; }
+  },
+};
+
+export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 
 // ---------- Schnellstart (Etappe 6a, Baris 14.10.2026): Foto zuerst, in etwa zehn Minuten ----------
@@ -449,5 +489,5 @@ const fertigSchnell = {
   aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(el.dataset.ziel === "beleg" ? "beleg" : "start"); return false; } },
 };
 
-export const SCHNELL = [sprache, ladenSchnell, selbstSchnell, karteSchnell, kostenSchnell, fertigSchnell];
+export const SCHNELL = [sprache, ladenSchnell, selbstSchnell, karteSchnell, kostenSchnell, reinigungSchritt, fertigSchnell];
 export const schritteFuer = (stand) => (stand?.weg === "schnell" ? SCHNELL : SCHRITTE);

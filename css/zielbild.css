@@ -162,3 +162,17 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .knopf.glut, .fotofeld .knopf.glut, .muellknopf { background: #CD8043; } /* Kupfer minimal heller: dunkle Schrift 4,8:1 statt 4,5:1 knapp darunter */
 .zeileknopf .pfeil, .pfeil { color: #8F6E44; }
 .karte.zaehler .bewegung .pfeil { color: #C9D6CB; } .jetzt .pfeil { color: var(--salbei-tief); }
+/* Reinigung & Betriebsmittel (Punkt 5) */
+.reinigungzeile > span:first-child small { color: var(--tinte-weich); font-size: 13px; margin-top: 2px; }
+.stufe { display: inline-block; margin-top: 4px; font-size: 12.5px; font-weight: 750; border-radius: 6px; padding: 2px 7px; }
+.stufe.offen, .stufe.schaetzung { color: var(--geschaetzt-text); background: var(--geschaetzt-hell); border: 1.5px dashed var(--geschaetzt); }
+.stufe.beleg { color: var(--branche); background: var(--branche-hell); border: 1.5px solid var(--branche); }
+.stufe.inventur { color: #fff; background: var(--eigen); border: 1.5px solid var(--eigen); }
+.stufenleiter { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 8px; }
+.stufenleiter small { color: var(--tinte-weich); font-size: 13px; }
+.sprosse { display: block; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--holz); background: var(--weiss); font-size: 14px; color: var(--tinte-weich); }
+.sprosse.an { border-color: var(--eigen); color: var(--tinte); font-weight: 700; }
+.wahl .wahlsym { width: 44px; height: 44px; border-radius: 12px; background: var(--salbei-hell); color: var(--salbei-tief); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.karte.einsicht { display: flex; flex-direction: row; gap: 12px; align-items: flex-start; }
+.einsichtsym { width: 40px; height: 40px; border-radius: 50%; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel, #8A4C20); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.karte.einsicht p { margin: 0; font-size: 16px; } .karte.einsicht small { display: block; color: var(--tinte-weich); font-size: 13.5px; margin-top: 4px; }

@@ -483,6 +483,15 @@ export default {
     abgeschlossen: "Rundgang eingetragen.",
   },
 
+  reinigung: { frage: "Wer putzt bei dir?", hinweis: "Laden, Grill, Küche, Toilette. Nicht die Wäsche.",
+    wer: { firma: "Reinigungsfirma", selbst: "Wir selbst", beides: "Beides" }, werHinweis: { firma: "Kommt von außen, kostet jeden Monat", selbst: "Team oder du nach Feierabend", beides: "Firma für Grobes, ihr für jeden Tag" },
+    minutenFrage: "Wie lange am Tag, alles zusammen?", minuten: (m) => `${m} Min.`, durchFrage: "Wer macht es meistens?", durch: { team: "Team", inhaber: "Ich (Inhaber)" },
+    einsichtEuro: (m, e) => `Ihr putzt ${m} Min. am Tag. Das sind rund ≈ ${e} Lohn im Monat.`, einsichtStunden: (m, h) => `Ihr putzt ${m} Min. am Tag. Das sind rund ${h} Stunden im Monat.`,
+    nichtDoppelt: "Steckt schon im Personal, wird nicht doppelt gezählt.", inhaberZeit: "Kein Geld vom Konto, aber deine Zeit. Wird nicht als Kosten gezählt.",
+    firmaFrage: "Was zahlst du der Firma im Monat?", jeMonat: "€ im Monat", mittelFrage: "Putzmittel, Müllbeutel, Handschuhe – ungefähr im Monat?", mittelHinweis: "Weißt du nicht? Leer lassen. Die App rechnet es später aus deinen Belegen.",
+    zeile: "Reinigung & Betriebsmittel", stufe: { offen: "noch offen", schaetzung: "≈ geschätzt", beleg: "aus Belegen", inventur: "✓ aus Inventur" },
+    zeileText: { offen: "Noch keine Zahl. Fotografier einen Beleg mit Putzmitteln, dann wird es deine Zahl.", schaetzung: "Deine Schätzung. Mit Belegen wird es genauer.", beleg: (n) => `Aus ${n === 1 ? "1 Beleg" : n + " Belegen"} der letzten 60 Tage.`, inventur: "Gekauft minus was noch da ist. Genauer geht es nicht." },
+    firmaTeil: (e) => `Firma ${e}`, mittelTeil: (e) => `Putzmittel ${e}`, leiter: "Wie sicher ist die Zahl?", leiterText: ["Noch offen", "Aus Belegen", "Aus Inventur"], zeitHinweis: "Eigene Putzzeit steht nicht hier: Teamlohn ist schon im Personal, deine Zeit kostet kein Geld vom Konto." },
   cockpit: {
     bisNullFehlen: "Bis null fehlen", ueberNull: "Über null im Monat", zielOhneKosten: "Trag deine festen Kosten ein, dann rechnet die App dein Monatsziel.", zielErreicht: "Der Monat ist gedeckt. Alles darüber bleibt dir.", zielSatz: "So viel Umsatz brauchst du noch diesen Monat, damit alle Kosten gedeckt sind.", umsatzImMonat: "Umsatz im Monat", vonZiel: (z) => `von ${z} Ziel`, zielKurz: "Ziel", wareHeute: "Wareneinsatz heute", muellHeute: "Müll heute",
     sprueche: ["Kleine Verbesserungen machen am Monatsende den großen Unterschied.", "Was du misst, kannst du verbessern.", "Jeder Teller, der nicht in der Tonne landet, ist Gewinn.", "Gute Zahlen machen gute Gastgeber.", "Fünf Gramm weniger je Portion sind am Monatsende ein voller Kasten.", "Wer seine Preise kennt, muss nicht raten.", "Heute abwiegen, morgen sicher kalkulieren."], 

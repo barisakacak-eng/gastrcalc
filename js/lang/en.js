@@ -482,6 +482,15 @@ export default {
     abgeschlossen: "Round saved.",
   },
 
+  reinigung: { frage: "Who does the cleaning?", hinweis: "Shop, grill, kitchen, toilet. Not the laundry.",
+    wer: { firma: "Cleaning company", selbst: "We do it", beides: "Both" }, werHinweis: { firma: "External, costs every month", selbst: "Team or you after closing", beides: "Company for deep cleaning, you daily" },
+    minutenFrage: "How long per day, all together?", minuten: (m) => `${m} min`, durchFrage: "Who does it mostly?", durch: { team: "Team", inhaber: "Me (owner)" },
+    einsichtEuro: (m, e) => `You clean ${m} min a day. That is about ≈ ${e} in wages per month.`, einsichtStunden: (m, h) => `You clean ${m} min a day. That is about ${h} hours per month.`,
+    nichtDoppelt: "Already in staff costs, not counted twice.", inhaberZeit: "No money from the account, but your time. Not counted as a cost.",
+    firmaFrage: "What do you pay the company per month?", jeMonat: "€ per month", mittelFrage: "Cleaning agents, bin bags, gloves – roughly per month?", mittelHinweis: "Don't know? Leave it empty. The app will work it out from your receipts.",
+    zeile: "Cleaning & supplies", stufe: { offen: "still open", schaetzung: "≈ estimated", beleg: "from receipts", inventur: "✓ from stock count" },
+    zeileText: { offen: "No number yet. Photograph a receipt with cleaning supplies and it becomes your number.", schaetzung: "Your estimate. Receipts make it more precise.", beleg: (n) => `From ${n === 1 ? "1 receipt" : n + " receipts"} in the last 60 days.`, inventur: "Bought minus what is still there. It doesn't get more precise." },
+    firmaTeil: (e) => `Company ${e}`, mittelTeil: (e) => `Supplies ${e}`, leiter: "How sure is this number?", leiterText: ["Still open", "From receipts", "From stock count"], zeitHinweis: "Your own cleaning time is not here: team wages are already in staff costs, your time costs no money from the account." },
   cockpit: {
     bisNullFehlen: "Left to break even", ueberNull: "Above break-even this month", zielOhneKosten: "Enter your fixed costs and the app works out your monthly target.", zielErreicht: "The month is covered. Everything above it is yours.", zielSatz: "This much sales you still need this month to cover all costs.", umsatzImMonat: "Sales this month", vonZiel: (z) => `of ${z} target`, zielKurz: "Target", wareHeute: "Cost of goods today", muellHeute: "Waste today",
     sprueche: ["Small improvements make the big difference at month end.", "What you measure, you can improve.", "Every plate that stays out of the bin is profit.", "Good numbers make good hosts.", "Five grams less per portion is a full till at month end.", "Know your prices and you never have to guess.", "Weigh today, calculate with confidence tomorrow."], 

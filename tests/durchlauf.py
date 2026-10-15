@@ -69,6 +69,11 @@ async def main():
             await pg.click('[data-a="basis-posten"][data-posten="strom"][data-wert="brutto"]'); await bild("kosten-strom-brutto")
             await pg.click('[data-a="weiter"]')
             for _ in range(8): await pg.click('[data-a="weiter"]')
+            # Reinigung (Punkt 5, B1): beides, Firma 280 €, 30 Min. Team
+            await pg.wait_for_selector('[data-a="rein-wer"]'); await pg.click('[data-a="rein-wer"][data-wert="beides"]')
+            await pg.click('[data-a="rein-min"][data-d="-15"]'); await pg.fill('[data-f="rein-firma"]', "280"); await pg.locator('[data-f="rein-firma"]').blur(); await pg.wait_for_timeout(150)
+            r = (await stand())["betrieb"]["reinigung"]; assert r["wer"] == "beides" and r["firmaBetrag"] == 280 and r["minutenTag"] == 30, r
+            await bild("ob-reinigung"); await pg.click('[data-a="weiter"]')
             # Kanäle
             await pg.click('[data-a="weiter"]')
             # ---- Kühlstellen im Onboarding

@@ -68,6 +68,8 @@ async def main():
             for f, w in (("ks:miete", "1800"), ("ks:personal", "6000"), ("ks:eigen", "2500"), ("ks:energie", "450")):
                 await pg.fill(f'[data-f="{f}"]', w); await pg.locator(f'[data-f="{f}"]').blur(); await pg.wait_for_timeout(120)
             await klick('[data-a="weiter"]')
+            # Reinigung (Punkt 5)
+            await pg.wait_for_selector('[data-a="rein-wer"]'); await klick('[data-a="rein-wer"][data-wert="selbst"]'); await bild("reinigung"); await klick('[data-a="weiter"]')
             # 5 Fertig
             await pg.wait_for_selector('[data-a="ob-fertig"]'); await bild("fertig")
             s = await stand(); assert s["team"]["lohnkosten"] == 6000 and any(k["posten"] == "miete" and k["betrag"] == 1800 for k in s["kosten"])

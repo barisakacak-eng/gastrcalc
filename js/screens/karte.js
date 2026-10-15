@@ -2,6 +2,7 @@
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
 import { sym } from "../symbole.js";
 import { gerichtBild } from "./vergleich.js";
+import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, einheitLabel } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
@@ -378,6 +379,7 @@ export function ergebnisView(stand, { inApp = false } = {}) {
       <div class="gross">${fmtEuro(k.last.gesamt)}${k.last.offen ? `<span class="abzeichen">${esc(t("zusammenfassung.unvollstaendig"))}</span>` : ""}</div>
       <div class="summenzeile"><span>${esc(t("zusammenfassung.fix"))}</span><span class="wert">${fmtEuro(k.last.fixJeOffen)}</span></div>
       <div class="summenzeile"><span>${esc(t("zusammenfassung.loehne"))}</span><span class="wert">${k.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(k.last.lohn)}</span></div>
+      ${reinigungZeile(k.last.reinigung)}
     </div>
     <p class="hinweis">${esc(t("ergebnis.lesehilfe"))}</p>`;
 }

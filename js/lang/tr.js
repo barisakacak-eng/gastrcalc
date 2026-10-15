@@ -483,6 +483,15 @@ export default {
     abgeschlossen: "Tur kaydedildi.",
   },
 
+  reinigung: { frage: "Sende temizliği kim yapıyor?", hinweis: "Dükkan, ızgara, mutfak, tuvalet. Çamaşır değil.",
+    wer: { firma: "Temizlik firması", selbst: "Kendimiz", beides: "İkisi de" }, werHinweis: { firma: "Dışarıdan gelir, her ay ödenir", selbst: "Ekip ya da kapanıştan sonra sen", beides: "Firma büyük temizliğe, siz her gün" },
+    minutenFrage: "Günde toplam ne kadar?", minuten: (m) => `${m} dk`, durchFrage: "Çoğunlukla kim yapıyor?", durch: { team: "Ekip", inhaber: "Ben (sahibi)" },
+    einsichtEuro: (m, e) => `Günde ${m} dk temizlik yapıyorsunuz. Bu ayda yaklaşık ≈ ${e} maaş eder.`, einsichtStunden: (m, h) => `Günde ${m} dk temizlik yapıyorsunuz. Bu ayda yaklaşık ${h} saat eder.`,
+    nichtDoppelt: "Zaten personel giderinde var, iki kez sayılmaz.", inhaberZeit: "Hesaptan para çıkmaz ama senin zamanın. Gider olarak sayılmaz.",
+    firmaFrage: "Firmaya ayda ne ödüyorsun?", jeMonat: "€ / ay", mittelFrage: "Temizlik malzemesi, çöp poşeti, eldiven – ayda yaklaşık?", mittelHinweis: "Bilmiyor musun? Boş bırak. Uygulama sonra fişlerinden hesaplar.",
+    zeile: "Temizlik ve sarf malzemesi", stufe: { offen: "henüz açık", schaetzung: "≈ tahmini", beleg: "fişlerden", inventur: "✓ sayımdan" },
+    zeileText: { offen: "Henüz rakam yok. Temizlik malzemeli bir fişin fotoğrafını çek, rakam senin olur.", schaetzung: "Senin tahminin. Fişlerle daha doğru olur.", beleg: (n) => `Son 60 gündeki ${n} fişten.`, inventur: "Alınan eksi kalan. Bundan daha doğrusu olmaz." },
+    firmaTeil: (e) => `Firma ${e}`, mittelTeil: (e) => `Malzeme ${e}`, leiter: "Bu rakam ne kadar kesin?", leiterText: ["Henüz açık", "Fişlerden", "Sayımdan"], zeitHinweis: "Kendi temizlik zamanın burada yok: ekip maaşı zaten personelde, senin zamanın hesaptan para çıkarmaz." },
   cockpit: {
     bisNullFehlen: "Sıfıra kalan", ueberNull: "Ayda sıfırın üstünde", zielOhneKosten: "Sabit giderlerini gir, uygulama aylık hedefini hesaplasın.", zielErreicht: "Ay karşılandı. Üstündeki her şey senin.", zielSatz: "Tüm giderlerin karşılanması için bu ay hâlâ bu kadar ciroya ihtiyacın var.", umsatzImMonat: "Aylık ciro", vonZiel: (z) => `${z} hedeften`, zielKurz: "Hedef", wareHeute: "Bugünkü malzeme", muellHeute: "Bugünkü çöp",
     sprueche: ["Küçük iyileştirmeler ay sonunda büyük fark yaratır.", "Ölçtüğünü iyileştirebilirsin.", "Çöpe gitmeyen her tabak kârdır.", "İyi rakamlar iyi ev sahipleri yaratır.", "Porsiyon başına beş gram az, ay sonunda dolu bir kasa demek.", "Fiyatlarını bilen tahmin etmek zorunda kalmaz.", "Bugün tart, yarın güvenle hesapla."], 

@@ -64,7 +64,8 @@ export function monatsLast(stand) {
   const lohn = lohnJeMonat(stand.team);
   const eigen = eigenerLohnJeMonat(stand.team);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
-  return { fix: fk, lohn, eigen, fixJeOffen, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) };
+  const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
+  return { fix: fk, lohn, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) };
 }
 
 // Minutensatz auf Leistungsstunden (Prüfung "Minutensatz, nebenbei"): bezahlte Stunden sind nicht produktive Stunden.
@@ -423,6 +424,7 @@ export function mengeUmrechnen(menge, von, nach) {
 
 // ======================= Etappe 3: Schwund, Tagesnotiz, Läden-Übersicht =======================
 import { heute, uid, SITZUNG } from "./util.js";
+import { reinigungMonat } from "./reinigung.js";
 
 // Vorgangsarten nach Dossier C9 (drei Arten, nie vermischt):
 //  1 = Verderb, Bruch, Zubereitungsfehler, nicht verkauft – bewertet zu Einkaufspreisen

@@ -1,5 +1,6 @@
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
+import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { monatsLast, kalkulation, schwundAuswertung, umsatzEintrag, kuehlStatus, offeneNachkontrollen, schwundOhneWert, umsatzKonflikte, umsatzSteuerSatz } from "../engine.js";
@@ -247,7 +248,9 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <div class="summenzeile"><span>${esc(t("zusammenfassung.fix"))}</span><span class="wert">${fmtEuro(m.fixJeOffen)}</span></div>
         <div class="summenzeile"><span>${esc(t("zusammenfassung.loehne"))}</span><span class="wert">${m.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(m.lohn)}</span></div>
         <div class="summenzeile"><span>${esc(t("start.eigenerLohn"))}</span><span class="wert">${m.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : `${fmtEuro(m.eigen.betrag)}${m.eigen.status === "geschaetzt" ? ` <span class="marke geschaetzt">${esc(t("allgemein.schaetzung"))}</span>` : ""}`}</span></div>
+        ${reinigungZeile(m.reinigung, { leiter: true })}
         <button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges">${esc(t("start.kostenBearbeiten"))}</button>
+        <button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="reinigung"><b>${esc(t("reinigung.zeile"))}</b><small>${esc(stand.betrieb.reinigung?.wer ? t("reinigung.wer." + stand.betrieb.reinigung.wer) : t("allgemein.offen"))}</small><span class="pfeil">›</span></button>
         <button type="button" class="zeileknopf" data-a="bearbeiten" data-schritt="lohn"><b>${esc(t("zusammenfassung.loehne"))} · ${esc(t("start.eigenerLohn"))}</b><span class="pfeil">›</span></button>
       </div>
       <div class="karte">
