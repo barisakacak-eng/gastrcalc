@@ -22,6 +22,8 @@ const DB_NAME = "gastrocalc";
 const DB_VERSION = 1;
 const EREIGNISSE_MAX = 2000;
 
+// Alle Sprachen der App (i18n.js SPRACH_NAMEN); hier als Liste, damit store.js ohne i18n auskommt
+const SPRACH_CODES = ["de", "tr", "en", "ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
 export function leererBetrieb() {
   return {
     id: uid(),
@@ -186,7 +188,7 @@ export function migrierenWurzel(w) {
   if (!istObjekt(w)) return leereWurzel();
   if (Array.isArray(w.betriebe)) {
     const out = leereWurzel();
-    out.sprache = ["de", "tr", "en"].includes(w.sprache) ? w.sprache : null;
+    out.sprache = SPRACH_CODES.includes(w.sprache) ? w.sprache : null;
     const alt = Number(w.schema) < 4;
     const vor6 = Number(w.schema) < 5;
     out.betriebe = w.betriebe.map((b) => { if (vor6 && !b.weg) b.weg = "genau"; return migrierenBetrieb(b, { alt }); });
@@ -202,7 +204,7 @@ export function migrierenWurzel(w) {
   if (typeof w.id !== "string" || !w.id) w.id = "alt-" + kurzHash(String(w.angelegt || "") + "|" + String(w.betrieb?.name || ""));
   const b = migrierenBetrieb(w, { alt: true });
   const out = leereWurzel();
-  out.sprache = ["de", "tr", "en"].includes(w.sprache) ? w.sprache : null;
+  out.sprache = SPRACH_CODES.includes(w.sprache) ? w.sprache : null;
   out.betriebe = [b]; out.aktiv = b.id;
   return out;
 }

@@ -3,7 +3,7 @@
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
-import { t } from "../i18n.js";
+import { t, sprache } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
   letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD } from "../engine.js";
@@ -214,7 +214,7 @@ function blattView(stand) {
   const d = new Date(); d.setMonth(d.getMonth() + blattMonat, 1);
   const von = heute(d); const ende = new Date(d.getFullYear(), d.getMonth() + 1, 0); const bis = heute(ende) > heute() ? heute() : heute(ende);
   const mb = k ? monatsblatt(stand, k.id, { von, bis }) : { tage: [], zaehl: {} };
-  const monatName = d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  const monatName = d.toLocaleDateString(sprache(), { month: "long", year: "numeric" });
   return `
     <div class="kopfband druckkopf"><h1>${esc(t("kuehl.blatt"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(k?.name || "")} · ${esc(monatName)}</div></div>
     <div class="inhalt">

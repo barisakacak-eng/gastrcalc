@@ -10,3 +10,8 @@ for (const s of SPRACHEN) {
     assert.deepEqual(f, [], `fehlen in ${s}: ${f.join(", ")}`);
   });
 }
+test("Speicher behält jede Sprache der App", async () => {
+  const { SPRACH_NAMEN } = await import("../js/i18n.js");
+  const src = (await import("node:fs")).readFileSync(new URL("../js/store.js", import.meta.url), "utf8");
+  for (const c of Object.keys(SPRACH_NAMEN)) assert.ok(src.includes(`"${c}"`), c);
+});

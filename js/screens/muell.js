@@ -1,7 +1,7 @@
 // Müll-Zentrale (Etappe 6, Punkt 1 – Baris 13.10.2026, 12:45): eine Anlaufstelle, keine Türen Gericht/Rohware/Eimer mehr.
 // Cockpit (Woche in der Tonne, kleine Monatstonne, am meisten weg) → großer Knopf → „Was ist weg?" (12 Kacheln + Suche) → Blatt → „Weg damit".
 // Drei Tipps vom Cockpit bis zurück. Rechenwerk unverändert (js/muell.js), Storno statt Löschen. Optik gehört Sanji.
-import { t, tAlle, einheitLabel } from "../i18n.js";
+import { t, tAlle, einheitLabel, sprache } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { EINHEITEN } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
@@ -81,7 +81,7 @@ function cockpitView(stand, D, nach) {
   const leer = !w.anzahl;
   const fuell = mv.vormonat ? Math.min(1, mv.monat / Math.max(mv.monat, mv.vormonat * 1.25)) : (mv.monat > 0 ? 0.5 : 0);
   const linie = mv.vormonat ? Math.min(1, mv.vormonat / Math.max(mv.monat, mv.vormonat * 1.25)) : null;
-  const vormonatName = new Date(Number(D.slice(0, 4)), Number(D.slice(5, 7)) - 2, 1).toLocaleDateString(undefined, { month: "long" });
+  const vormonatName = new Date(Number(D.slice(0, 4)), Number(D.slice(5, 7)) - 2, 1).toLocaleDateString(sprache(), { month: "long" });
   return `<div class="inhalt muellzentrale">
     ${nach ? `<div class="tipp">${esc(t("tag.nacherfassenHinweis"))}</div>` : ""}
     <div class="karte muellkarte">

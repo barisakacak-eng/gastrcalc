@@ -74,9 +74,10 @@ export function datumLesbar(iso) {
   const [j, m, d] = iso.split("-"); return `${d}.${m}.${j}`;
 }
 // Monatsname und Wochentag in der Sprache der App (für Zähler und Cockpit).
-const LOCALE = { de: "de-DE", tr: "tr-TR", en: "en-GB" };
-export function monatName(iso) { const [j, m] = iso.split("-").map(Number); return new Date(j, m - 1, 1).toLocaleDateString(LOCALE[sprache()] || "de-DE", { month: "long" }); }
-export function tagLesbar(iso) { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).toLocaleDateString(LOCALE[sprache()] || "de-DE", { weekday: "long", day: "numeric", month: "long" }); }
+const LOCALE = { de: "de-DE", tr: "tr-TR", en: "en-GB", bs: "bs-BA", ku: "ku" }; // sonst gilt der Sprachcode selbst (ar, ru, vi …)
+const loc = () => LOCALE[sprache()] || sprache();
+export function monatName(iso) { const [j, m] = iso.split("-").map(Number); return new Date(j, m - 1, 1).toLocaleDateString(loc(), { month: "long" }); }
+export function tagLesbar(iso) { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).toLocaleDateString(loc(), { weekday: "long", day: "numeric", month: "long" }); }
 export const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 
 // ---------- Aktionen und Eingaben (von app.js aufgerufen) ----------

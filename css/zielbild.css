@@ -345,3 +345,5 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 [dir="rtl"] .bildwahl-sym { right: auto; left: 4px; }
 [dir="rtl"] .menue { left: auto; right: 0; }
 [dir="rtl"] .fab { right: auto; left: 16px; }
+/* Rechts-nach-links: Zahlen mit € und ≈ als eigenen Block, damit sie nicht verdreht erscheinen */
+[dir="rtl"] b, [dir="rtl"] .riesig, [dir="rtl"] .wert, [dir="rtl"] .vk-preis, [dir="rtl"] .monatzahl b, [dir="rtl"] .gross { unicode-bidi: plaintext; }
