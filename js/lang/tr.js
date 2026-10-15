@@ -888,6 +888,21 @@ export default {
     fertigHinweis: "Sıradaki: birkaç alış faturasının fotoğrafını çek. Böylece uygulama gerçek fiyatlarını bilir.",
     rechnungen: "Faturaların fotoğrafını çek", zumCockpit: "Kokpite git",
   },
+  // Hızlı kurulum 2 (15.10.2026)
+  schnell2: {
+    hilfe: "Kısaca", sprache: "Dil",
+    laden: "Dükkânın", namePlatzhalter: "Dükkânın adı",
+    ladenHilfe: "Dükkân türü tarifler, soğutma ve temizlik planı için başlangıç değerleri verir. Hepsini sonra büroda değiştirebilirsin.",
+    allesGenau: "Her şeyi ayrıntılı kur",
+    karte: "Menün", karteFoto: "Menüyü fotoğrafla", karteGalerie: "Fotoğraf veya PDF", spaeter: "Sonra",
+    karteHilfe: "Uygulama yemekleri ve fiyatları fotoğraftan okur. Kendiniz yaptıklarınızı büroda Tarifler bölümünde ayarlarsın.",
+    kuehl: "Soğutma", arten: { kuehlschrank: "Buzdolabı", saladette: "Saladet", tiefkuehler: "Derin dondurucu", warmhalter: "Sıcak tutucu" },
+    kuehlHilfe: "Her cihaz için sıcaklığı sonra girersin. İsimleri büroda değiştirirsin.",
+    geld: "Aylık giderler", miete: "Kira", personal: "Personel", eigen: "Senin maaşın", strom: "Elektrik",
+    geldHilfe: "Yaklaşık yeter, boş da bırakabilirsin. Faturaları sonra büroda fotoğraflarsın.",
+    putzt: "Kim temizliyor?", wer: { selbst: "Biz", firma: "Firma", beides: "İkisi de" }, firma: "Firma",
+    fertig: "Tamam!", eingerichtet: "kuruldu", los: "Başlayalım", pin: "Büro PIN'i belirle",
+  },
   // Envanter sayımı (Punkt 3)
   inventur: {
     menue: "Envanter sayımı", titel: "Envanter sayımı", titelMonat: (m) => `${m} sayımı`,

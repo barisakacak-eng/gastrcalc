@@ -1,7 +1,7 @@
 // Onboarding: eine Frage je Bildschirm, jeder Schritt wird sofort gespeichert,
 // jeder Schritt lässt sich mit „weiß ich gerade nicht" offen lassen. Nichts blockiert.
 import { selbstGewaehlt, selbstAnwenden } from "../selbst.js";
-import { kachelnFuer } from "../data/zwischen.js";
+import { kachelnFuer, vorauswahlFuer } from "../data/zwischen.js";
 import { ladenArtVon } from "../profil.js";
 import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./home.js";
@@ -16,7 +16,7 @@ import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard } from "../dat
 import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
 import { heute } from "../util.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
-import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste } from "./foto.js";
+import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste, karteModus, serieStand, fotoLauf, fotoVorbereiten } from "./foto.js";
 import { monatsLast } from "../engine.js";
 
 // ---------- Bausteine ----------
@@ -334,7 +334,7 @@ const kuehlstellen = {
 
 // Punkt 5 – Reinigung (Entscheidung Baris 15.10., 12:43: Variante B1, alles auf einer Seite).
 // Firma = Geld vom Konto (Zeile im Zähler). Eigene Putzzeit = Einsicht, keine Kosten (Teamlohn steckt im Personal).
-const reinigungSchritt = {
+export const reinigungSchritt = {
   id: "reinigung",
   view(stand) {
     const r = reinigungVon(stand);
@@ -374,10 +374,7 @@ const reinigungSchritt = {
 export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 
-// ---------- Schnellstart (Etappe 6a, Baris 14.10.2026): Foto zuerst, in etwa zehn Minuten ----------
-// Sprache → Laden (Name, Art, Tage) → Speisekarte fotografieren und prüfen → vier Kostenfragen → fertig.
-// Alles andere (Rezepte verfeinern, Einkaufspreise, Kühlstellen) später in der App oder über Rechnungsfotos.
-
+// ---------- Schnellstart: Laden-Arten (Etappe 6a) ----------
 export const LADEN_ARTEN = [ // Reihenfolge wie im Zielbild (15.10.): Döner, Pizza, Asia, Foodtruck, Bäckerei, Kiosk – dann die übrigen
   { id: "doener", format: "imbiss", kuechen: ["doener"] }, { id: "pizza", format: "imbiss", kuechen: ["pizza"] },
   { id: "asia", format: "imbiss", kuechen: ["asiatisch"] }, { id: "foodtruck", format: "foodtruck", kuechen: ["burger"] },
@@ -386,64 +383,9 @@ export const LADEN_ARTEN = [ // Reihenfolge wie im Zielbild (15.10.): Döner, Pi
   { id: "anders", format: "eigen", kuechen: ["eigene"] },
 ];
 
-// Foto je Laden-Art (foto/laden-*.webp, sobald Sanjis Bildpaket da ist), sonst Sanjis Piktogramm
-const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
-const LADEN_FOTO = { imbiss: ["laden-imbiss", "laden-kiosk"], cafe: ["laden-cafe", "laden-baeckerei"] }; // erst eigenes Foto, sonst das ähnlichste Ladenbild
-const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
-  return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`; };
-const ladenSchnell = {
-  id: "laden-schnell",
-  view: (stand) => `
-    <h1 class="frage">${esc(t("schnell.ladenArtFrage"))}</h1>
-    <p class="hinweis">${esc(t("schnell.ladenArtHinweis"))}</p>
-    <div class="kacheln fotokacheln">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>
-    <div class="feldzeile"><label>${esc(t("schnell.ladenName"))}</label><input class="textfeld" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("betrieb.namePlatzhalter"))}" autocomplete="off"></div>
-    <div class="feldzeile"><label>${esc(t("betrieb.frageTage"))}</label>${stepper("tage", stand.betrieb.tageProWoche, t("betrieb.tage", stand.betrieb.tageProWoche))}</div>
-    <button type="button" class="leise" data-a="weg-genau">${esc(t("schnell.genau"))}</button>`,
-  fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
-  eingabe(feld, wert, stand) { if (feld === "betrieb.name") stand.betrieb.name = wert; },
-  aktion(name, el, stand) {
-    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; stand.ladenArt = a.id; stand.betrieb.format = a.format; stand.betrieb.kuechen = [...a.kuechen]; return true; }
-    if ((name === "minus" || name === "plus") && el.dataset.feld === "tage") { stand.betrieb.tageProWoche = Math.min(7, Math.max(1, stand.betrieb.tageProWoche + (name === "plus" ? 1 : -1))); return true; }
-    if (name === "weg-genau") { stand.weg = "genau"; stand.schritt = schrittIndex("format"); return true; }
-  },
-};
-
-// Punkt 2 (Baris 14.10., 18:13): „Was macht ihr selbst?" – ein Tipp pro Kachel, typische sind je Laden-Art schon angetippt.
-// Keine Mengen hier: die selbst gemachten Teile bekommen sofort Start-Rezepte (gelb, geschätzt), anpassen später.
-const selbstSchnell = {
-  id: "selbst",
-  view: (stand) => {
-    const an = new Set(selbstGewaehlt(stand));
-    return `
-    <h1 class="frage">${esc(t("schnell.selbstFrage"))}</h1>
-    <p class="hinweis">${esc(t("schnell.selbstHinweis"))}</p>
-    <div class="kacheln">${kachelnFuer(ladenArtVon(stand)).map((k) => `<button type="button" class="kachel ${an.has(k.id) ? "an" : ""}" aria-pressed="${an.has(k.id)}" data-a="selbst" data-wert="${k.id}"><img class="bildplatz klein" src="bilder/selbst-${k.id}.svg" alt="" aria-hidden="true"><b>${esc(t("schnell.selbstKacheln." + k.id))}</b></button>`).join("")}</div>
-    <p class="hinweis">${esc(t("schnell.selbstRest"))}</p>`;
-  },
-  fuss: () => knopfWeiter(),
-  aktion(name, el, stand) {
-    if (name !== "selbst") return false;
-    const an = new Set(selbstGewaehlt(stand)); const id = el.dataset.wert;
-    if (an.has(id)) an.delete(id); else an.add(id);
-    stand.selbst = [...an]; return true;
-  },
-  beimVerlassen(stand) { selbstAnwenden(stand); },
-};
-
-const karteSchnell = {
-  id: "karte-foto",
-  view: (stand) => (karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)),
-  fuss: () => karteFussKnopf(`<button type="button" class="knopf zweit" data-a="weiter">${esc(t("foto.ohneKarte"))}</button>`),
-  eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
-  aktion(name, el, stand, ctx) {
-    if (name === "fv-uebernehmen") { stand.schnellErgebnis = karteUebernehmen(stand); ctx.weiter(); return true; }
-    return kartePruefenAktion(name, el);
-  },
-};
-
+// Die vier Kostenfragen des alten Schnellwegs (Etappe 6a). Kein eigener Bildschirm mehr – „Geld“ schreibt über diese Eingabe, damit die Daten gleich bleiben.
 const KS_POSTEN = { miete: "miete", energie: "strom" };
-const kostenSchnell = {
+export const kostenSchnell = {
   id: "kosten-schnell",
   view(stand) {
     const f = findeFormat(stand.betrieb.format);
@@ -472,24 +414,227 @@ const kostenSchnell = {
   },
 };
 
+// ---------- Schnellweg 2 (Entwickler E, 15.10.2026): höchstens 6 Bildschirme, zusammen höchstens 120 Wörter ----------
+// Sprache → Laden → Karte → Kühlung → Geld → Fertig. Keine Erklär-Absätze: Erklärung nur hinter einem „?“ (höchstens 2 Sätze).
+// „Was macht ihr selbst?“ fragt der Schnellweg nicht mehr: Startwerte nach Laden-Art, Korrektur im Büro (Rezepte/Einkaufspreise: „selbst machen“ / „doch kaufen“).
+// Der genaue Weg (SCHRITTE) bleibt unverändert und ist aus dem Büro über data-a="bearbeiten" data-schritt="format" data-bis="ergebnis" erreichbar.
+
+// „?“ – je Bildschirm höchstens eine aufklappbare Erklärung. Der Zustand gilt nur für den Bildschirm, auf dem sie geöffnet wurde.
+let hilfeAuf = null;
+const kopfS2 = (id, titel, hilfeText, extra = "") => `
+    <div class="s2kopf"><h1 class="frage" dir="auto">${esc(titel)}</h1>${hilfeText ? `<button type="button" class="s2fragezeichen" data-a="s2-hilfe" data-wert="${id}" aria-expanded="${hilfeAuf === id}" aria-label="${esc(t("schnell2.hilfe"))}">?</button>` : ""}</div>
+    ${hilfeText && hilfeAuf === id ? `<div class="s2hilfe" role="note"><p>${esc(hilfeText)}</p>${extra}</div>` : ""}`;
+const hilfeAktion = (name, el) => { if (name !== "s2-hilfe") return false; hilfeAuf = hilfeAuf === el.dataset.wert ? null : el.dataset.wert; return true; };
+
+// Vorauswahl „selbst gemacht“ nach Laden-Art – still angewendet, ohne Frage. Eine eigene Antwort des Wirts (im Büro geändert) bleibt.
+const gleich = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
+export function selbstStandard(stand) {
+  const art = ladenArtVon(stand); if (!art) return false;
+  const eigeneAntwort = Array.isArray(stand.selbst) && !(stand.selbstAutoArt && gleich(stand.selbst, vorauswahlFuer(stand.selbstAutoArt)));
+  if (eigeneAntwort) return false;
+  selbstAnwenden(stand, vorauswahlFuer(art)); stand.selbstAutoArt = art;
+  return true;
+}
+
+const spracheSchnell = {
+  id: "sprache",
+  view: () => `
+    <div class="s2sprache">
+      <h1 class="frage">${esc(t("schnell2.sprache"))}</h1>
+      <div class="kacheln s2sprachen">
+        ${SPRACHEN.map((s) => `<button type="button" class="kachel sprachkachel" data-a="sprache" data-wert="${s}" lang="${s}" dir="auto"><b>${esc(SPRACH_NAMEN[s] || s)}</b></button>`).join("")}
+      </div>
+    </div>`,
+  fuss: () => "",
+  aktion: sprache.aktion,
+};
+
+// Foto je Laden-Art (foto/laden-*.webp, sobald Sanjis Bildpaket da ist), sonst Sanjis Piktogramm
+const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
+const LADEN_FOTO = { imbiss: ["laden-imbiss", "laden-kiosk"], cafe: ["laden-cafe", "laden-baeckerei"] }; // erst eigenes Foto, sonst das ähnlichste Ladenbild
+const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
+  return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`; };
+const ladenSchnell = {
+  id: "laden-schnell",
+  view: (stand) => `
+    ${kopfS2("laden-schnell", t("schnell2.laden"), t("schnell2.ladenHilfe"), `<button type="button" class="leise" data-a="weg-genau">${esc(t("schnell2.allesGenau"))}</button>`)}
+    <input class="textfeld s2name" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("schnell2.namePlatzhalter"))}" aria-label="${esc(t("schnell2.namePlatzhalter"))}" autocomplete="off">
+    <div class="kacheln fotokacheln s2arten">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>`,
+  fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
+  eingabe(feld, wert, stand) { if (feld === "betrieb.name") stand.betrieb.name = wert; },
+  aktion(name, el, stand) {
+    if (hilfeAktion(name, el)) return true;
+    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; stand.ladenArt = a.id; stand.betrieb.format = a.format; stand.betrieb.kuechen = [...a.kuechen]; return true; }
+    if (name === "weg-genau") { hilfeAuf = null; stand.weg = "genau"; stand.schritt = schrittIndex("format"); stand.schrittId = "format"; return true; }
+  },
+  beimVerlassen(stand) { selbstStandard(stand); },
+};
+
+// Karte: eine große Foto-Fläche (Kamera), darunter leise „Fotos oder PDF“. Läuft das Lesen oder steht die Prüfliste, zeigt foto.js wie bisher.
+const karteSchnell = {
+  id: "karte-foto",
+  view(stand) {
+    if (karteZeigtPruefliste()) return kartePruefenView(stand);
+    const st = serieStand();
+    if (karteModus() !== "sammeln" || st.aufgenommen || fotoLauf()?.status === "fehler" || fotoLauf()?.hinweis) return karteFotoView(stand);
+    fotoVorbereiten();
+    return `
+      ${kopfS2("karte-foto", t("schnell2.karte"), t("schnell2.karteHilfe"))}
+      <label class="s2fotoflaeche">
+        ${FOTOS.has("g-doener-teller") ? `<img src="foto/g-doener-teller.webp" alt="" aria-hidden="true">` : ""}
+        <span class="s2fotoknopf"><span class="s2kamera" aria-hidden="true">${sym("camera")}</span>${esc(t("schnell2.karteFoto"))}</span>
+        <input type="file" accept="image/*" capture="environment" data-f="foto" data-zweck="speisekarte" class="dateifeld">
+      </label>
+      <label class="leise s2galerie">${esc(t("schnell2.karteGalerie"))}
+        <input type="file" accept="image/*,application/pdf,.pdf" multiple data-f="foto" data-zweck="speisekarte" class="dateifeld"></label>`;
+  },
+  fuss: () => karteFussKnopf(`<button type="button" class="knopf zweit" data-a="weiter">${esc(t("schnell2.spaeter"))}</button>`),
+  eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
+  aktion(name, el, stand, ctx) {
+    if (hilfeAktion(name, el)) return true;
+    if (name === "fv-uebernehmen") { selbstStandard(stand); stand.schnellErgebnis = karteUebernehmen(stand); ctx.weiter(); return true; }
+    return kartePruefenAktion(name, el);
+  },
+  beimVerlassen(stand) { selbstStandard(stand); },
+};
+
+// Kühlung: vier Foto-Zeilen mit Anzahl. Jede Stelle bekommt `typ` (neu, tolerant), damit die Zeile weiß, was zu ihr gehört.
+// Namen ändert man später (Büro → Kühlstellen); die Grenzwerte gelten nach Gesetz (Standard), wie bisher.
+export const KUEHL_TYPEN = [
+  { typ: "kuehlschrank", art: "kuehl", foto: "k-kuehlschrank-foto", pikto: "k-kuehlschrank" },
+  { typ: "saladette", art: "kuehl", foto: "k-saladette-foto", pikto: "k-theke" },
+  { typ: "tiefkuehler", art: "tk", foto: "k-tiefkuehler-foto", pikto: "k-tiefkuehler" },
+  { typ: "warmhalter", art: "warm", foto: "k-warmhalter-foto", pikto: "k-warmhalter" },
+];
+const TYP_AUS_ART = { kuehl: "kuehlschrank", tk: "tiefkuehler", warm: "warmhalter" };
+export const kuehlTyp = (k) => (KUEHL_TYPEN.some((x) => x.typ === k.typ) ? k.typ : TYP_AUS_ART[k.art] || "kuehlschrank");
+const aktiveStellen = (stand) => stand.kuehlstellen.filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
+export function kuehlAnzahlAendern(stand, typ, d) {
+  const T = KUEHL_TYPEN.find((x) => x.typ === typ); if (!T) return false;
+  const gleiche = aktiveStellen(stand).filter((k) => kuehlTyp(k) === typ);
+  if (d > 0) {
+    if (aktiveStellen(stand).length >= 20) return false;
+    const n = gleiche.length; const name = t("schnell2.arten." + typ) + (n ? " " + (n + 1) : "");
+    if (!stand.kuehl.seit) stand.kuehl.seit = heute();
+    stand.kuehlstellen.push({ id: uid(), name, art: T.art, typ, min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false });
+    return true;
+  }
+  const k = gleiche[gleiche.length - 1]; if (!k) return false;
+  if (stand.messungen.some((m) => m.stelle === k.id)) k.archiviert = true; // Messungen bleiben nachweisbar
+  else stand.kuehlstellen = stand.kuehlstellen.filter((x) => x.id !== k.id);
+  return true;
+}
+const kuehlSchnell = {
+  id: "kuehl-schnell",
+  view(stand) {
+    const alle = aktiveStellen(stand);
+    return `
+      ${kopfS2("kuehl-schnell", t("schnell2.kuehl"), t("schnell2.kuehlHilfe"))}
+      <div class="s2kuehl">${KUEHL_TYPEN.map((T) => {
+        const n = alle.filter((k) => kuehlTyp(k) === T.typ).length; const name = t("schnell2.arten." + T.typ);
+        return `<div class="s2kuehlzeile ${n ? "an" : ""}">
+          ${FOTOS.has(T.foto) ? `<img src="foto/${T.foto}.webp" alt="" aria-hidden="true">` : `<img class="pikto" src="bilder/${T.pikto}.svg" alt="" aria-hidden="true">`}
+          <b>${esc(name)}</b>
+          <div class="s2zaehler">
+            <button type="button" data-a="s2-kuehl" data-wert="${T.typ}" data-d="-1" aria-label="${esc(name)} −" ${n ? "" : "disabled"}>−</button>
+            <span class="s2anzahl" aria-live="polite">${n}</span>
+            <button type="button" data-a="s2-kuehl" data-wert="${T.typ}" data-d="1" aria-label="${esc(name)} +">+</button>
+          </div></div>`;
+      }).join("")}</div>`;
+  },
+  fuss: () => knopfWeiter(),
+  aktion(name, el, stand) {
+    if (hilfeAktion(name, el)) return true;
+    if (name === "s2-kuehl") return kuehlAnzahlAendern(stand, el.dataset.wert, Number(el.dataset.d));
+  },
+  beimVerlassen(stand) { stand.kuehl.eingerichtet = stand.kuehlstellen.some((k) => !k.archiviert); },
+};
+
+// Geld: die vier Kostenfragen und „Wer putzt?“ auf einem Bildschirm. Geschrieben wird genau wie bisher
+// (kostenSchnell.eingabe: Posten miete/strom, team.lohnkosten, team.eigenerLohn; reinigungSchritt: betrieb.reinigung).
+const geld = {
+  id: "geld",
+  view(stand) {
+    const f = findeFormat(stand.betrieb.format);
+    const wert = (posten) => stand.kosten.find((k) => k.posten === posten && k.status === "bekannt")?.betrag ?? null;
+    const eigen = stand.team.eigenerLohnStatus === "eigen" ? stand.team.eigenerLohn : null;
+    const r = reinigungVon(stand);
+    const feld = (f2, label, w, ph) => `<label class="s2geldzeile"><span>${esc(label)}</span><span class="betrag"><input inputmode="decimal" autocomplete="off" data-f="${f2}" value="${esc(wertAnzeige(w))}" placeholder="${esc(ph ? String(ph) : "0")}" aria-label="${esc(label)}"><span class="einheit">${esc(t("allgemein.euro"))}</span></span></label>`;
+    return `
+      ${kopfS2("geld", t("schnell2.geld"), t("schnell2.geldHilfe"))}
+      <div class="s2geld">
+        ${feld("ks:miete", t("schnell2.miete"), wert("miete"), f?.rw.miete)}
+        ${feld("ks:personal", t("schnell2.personal"), stand.team.lohnkosten, null)}
+        ${feld("ks:eigen", t("schnell2.eigen"), eigen, EIGENER_LOHN_RICHTWERT)}
+        ${feld("ks:energie", t("schnell2.strom"), wert("strom"), null)}
+      </div>
+      <div class="s2putz"><b>${esc(t("schnell2.putzt"))}</b>
+        <div class="chips">${["selbst", "firma", "beides"].map((w) => `<button type="button" class="chip ${r.wer === w ? "an" : ""}" data-a="rein-wer" data-wert="${w}" aria-pressed="${r.wer === w}">${esc(t("schnell2.wer." + w))}</button>`).join("")}</div>
+        ${r.wer === "firma" || r.wer === "beides" ? `<div class="s2geld">${feld("rein-firma", t("schnell2.firma"), r.firmaBetrag, null)}</div>` : ""}
+      </div>`;
+  },
+  fuss: () => knopfWeiter(),
+  eingabe(feld, wert, stand) {
+    if (feld.startsWith("ks:")) return kostenSchnell.eingabe(feld, wert, stand);
+    if (feld === "rein-firma") return reinigungSchritt.eingabe(feld, wert, stand);
+  },
+  aktion(name, el, stand) {
+    if (hilfeAktion(name, el)) return true;
+    if (name === "rein-wer") return reinigungSchritt.aktion(name, el, stand);
+  },
+};
+
+// Fertig: großer Haken, Einrichtungsring, EIN Hauptknopf (ohne Gerichte: Karte fotografieren, sonst „Los geht's“), leise „Büro-PIN festlegen“.
 const fertigSchnell = {
   id: "fertig-schnell",
   view(stand) {
-    const r = stand.schnellErgebnis || { neu: stand.gerichte.length, artikel: stand.artikel.length, ohneRezept: 0 };
-    const last = monatsLast(stand);
+    const e = einrichtungStand(stand);
     return `
-      <h1 class="frage">${esc(t(stand.gerichte.length ? "schnell.fertigFrage" : "schnell.fertigOhneKarte"))}</h1>
-      <div class="liste">
-        <div class="summenzeile"><span>${esc(t("schnell.gerichte"))}</span><span class="wert">${stand.gerichte.length}</span></div>
-        <div class="summenzeile"><span>${esc(t("schnell.inventur"))}</span><span class="wert">${stand.artikel.length}</span></div>
-        <div class="summenzeile"><span>${esc(t("schnell.kostenMonat"))}</span><span class="wert">${fmtEuro(last.gesamt)}</span></div>
-      </div>
-      ${(() => { const e = einrichtungStand(stand); return `<div class="karte einrichtung"><div class="einrichtung-kopf">${ring(e.prozent)}<div><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.rest", e.offen))}</small></div></div></div>`; })()}
-      <p class="hinweis">${esc(t("schnell.fertigHinweis"))}</p>`; // Punkt 6: Ring statt „fehlt noch"-Kästen; r.ohneRezept steckt im Ring
+      <div class="s2fertig">
+        <span class="s2haken" aria-hidden="true">${sym("check")}</span>
+        <h1 class="frage" dir="auto">${esc(t("schnell2.fertig"))}</h1>
+        <div class="s2ring">${ring(e.prozent)}<span>${esc(t("schnell2.eingerichtet"))}</span></div>
+        <button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>
+      </div>`;
   },
-  fuss: (stand) => `${stand && !stand.gerichte.length ? `<button type="button" class="knopf glut" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("foto.karteKnopf"))}</button>` : ""}<button type="button" class="knopf ${stand && !stand.gerichte.length ? "zweit" : "glut"}" data-a="ob-fertig" data-ziel="beleg">${esc(t("schnell.rechnungen"))}</button><button type="button" class="knopf zweit" data-a="ob-fertig" data-ziel="start">${esc(t("schnell.zumCockpit"))}</button>`,
-  aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(["beleg", "kartefoto"].includes(el.dataset.ziel) ? el.dataset.ziel : "start"); return false; } },
+  fuss: (stand) => stand && !stand.gerichte.length
+    ? `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("schnell2.karteFoto"))}</button>`
+    : `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="start">${esc(t("schnell2.los"))}</button>`,
+  aktion(name, el, stand, ctx) {
+    if (name !== "ob-fertig") return false;
+    delete stand.schnellErgebnis;
+    if (el.dataset.pin) stand.pinFestlegen = true; // Wunsch merken: Entwickler A (Büro-Code) öffnet damit das PIN-Blatt
+    ctx.fertig(["kartefoto", "buero"].includes(el.dataset.ziel) ? el.dataset.ziel : "start");
+    return false;
+  },
 };
 
-export const SCHNELL = [sprache, ladenSchnell, selbstSchnell, karteSchnell, kostenSchnell, reinigungSchritt, fertigSchnell];
+export const SCHNELL = [spracheSchnell, ladenSchnell, karteSchnell, kuehlSchnell, geld, fertigSchnell];
 export const schritteFuer = (stand) => (stand?.weg === "schnell" ? SCHNELL : SCHRITTE);
+
+// ---------- Gespeicherter Schritt: nach Kennung, nicht nur nach Nummer ----------
+// stand.schritt (Nummer) bleibt für app.js; stand.schrittId (neu) ist maßgeblich beim Laden. So verschiebt ein neuer
+// oder entfernter Schritt niemanden. Alte Stände ohne Kennung: Nummer im alten Schnellweg (7 Schritte) → neue Kennung.
+export const ALT_SCHNELL = ["sprache", "laden-schnell", "selbst", "karte-foto", "kosten-schnell", "reinigung", "fertig-schnell"];
+const ALT_NACH_NEU = { sprache: "sprache", "laden-schnell": "laden-schnell", selbst: "karte-foto", "karte-foto": "karte-foto", "kosten-schnell": "geld", reinigung: "geld", "fertig-schnell": "fertig-schnell", kuehlstellen: "kuehl-schnell" };
+
+export function schrittIdMerken(stand) {
+  if (!stand || stand.phase !== "onboarding") return;
+  const liste = schritteFuer(stand);
+  stand.schritt = Math.min(Math.max(0, stand.schritt || 0), liste.length - 1);
+  stand.schrittId = liste[stand.schritt].id;
+}
+
+export function schrittWiederherstellen(stand) {
+  if (!stand || stand.phase !== "onboarding") return stand;
+  const liste = schritteFuer(stand);
+  let id = typeof stand.schrittId === "string" ? stand.schrittId : null;
+  if (!id && stand.weg === "schnell") id = ALT_SCHNELL[Math.min(stand.schritt || 0, ALT_SCHNELL.length - 1)];
+  // Wer alt auf „Was macht ihr selbst?“ stand: seine Antwort (oder die Vorauswahl) jetzt übernehmen – die Frage gibt es nicht mehr
+  if (id === "selbst" && stand.weg === "schnell") { if (Array.isArray(stand.selbst)) selbstAnwenden(stand); else selbstStandard(stand); }
+  if (id && stand.weg === "schnell" && !liste.some((s) => s.id === id)) id = ALT_NACH_NEU[id] || null;
+  const i = id ? liste.findIndex((s) => s.id === id) : -1;
+  if (i >= 0) stand.schritt = i;
+  schrittIdMerken(stand);
+  return stand;
+}

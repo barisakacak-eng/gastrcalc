@@ -1,0 +1,86 @@
+/* Schnellweg 2 (Entwickler E, 15.10.2026): 6 Bildschirme, ein Hauptknopf, Erklärung nur hinter „?“.
+   Nur Tokens aus css/tokens.css. Gilt nur für .weg-schnell bzw. die s2-Bausteine. */
+
+/* Fortschritt reicht als Balken – „Schritt 2 von 5“ fällt im Schnellweg weg */
+.weg-schnell .kopfzeile .schrittzahl { display: none; }
+.weg-schnell .inhalt { gap: 16px; }
+
+/* Kopf mit „?“ */
+.s2kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.s2kopf .frage { margin: 0; }
+.s2fragezeichen {
+  flex: none; width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid var(--holz); background: var(--weiss); color: var(--salbei-tief);
+  font: 800 1.25rem/1 var(--schrift); cursor: pointer;
+}
+.s2fragezeichen[aria-expanded="true"] { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
+.s2hilfe { background: var(--salbei-hell); border-radius: var(--radius); padding: 12px 14px; color: var(--tinte); }
+.s2hilfe p { margin: 0; line-height: 1.4; }
+.s2hilfe .leise { padding: 8px 0 0; min-height: 44px; }
+
+/* 1 Sprache */
+.s2sprache { display: flex; flex-direction: column; gap: 16px; }
+.s2sprachen .kachel.sprachkachel { min-height: 52px; }
+
+/* 2 Laden: Name oben, Arten als 3er-Raster mit Foto */
+.s2name { font-size: 1.2rem; font-weight: 700; min-height: 56px; }
+.s2arten { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.s2arten .kachel.fotokachel b { font-size: 0.85rem; padding: 6px 8px 8px; line-height: 1.2; hyphens: auto; }
+.s2arten .kachelfoto { aspect-ratio: 1 / 1; }
+.s2arten .kachelfoto.pikto { padding: 12px; }
+
+/* 3 Karte: eine große Fotofläche */
+.s2fotoflaeche {
+  position: relative; display: block; overflow: hidden; cursor: pointer;
+  border-radius: var(--radius-gross); background: var(--salbei-tief); min-height: 300px;
+  box-shadow: var(--schatten-karte);
+}
+.s2fotoflaeche img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+.s2fotoknopf {
+  position: absolute; left: 16px; right: 16px; bottom: 16px; min-height: 64px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--aktion); color: var(--aktion-text); border-radius: var(--radius);
+  font-weight: 800; font-size: 1.1rem; box-shadow: var(--schatten-knopf);
+}
+.s2kamera svg { width: 26px; height: 26px; }
+.s2fotoflaeche:focus-within { outline: 3px solid var(--fokus); outline-offset: 3px; }
+.s2fotoflaeche .dateifeld, .s2galerie .dateifeld { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.s2galerie { position: relative; align-self: center; cursor: pointer; }
+
+/* 4 Kühlung: Foto · Name · − Zahl + */
+.s2kuehl { display: flex; flex-direction: column; gap: 10px; }
+.s2kuehlzeile {
+  display: grid; grid-template-columns: 60px 1fr auto; align-items: center; gap: 10px;
+  background: var(--weiss); border: 2px solid var(--holz); border-radius: var(--radius); padding: 8px 10px 8px 8px;
+}
+.s2kuehlzeile.an { border-color: var(--salbei-tief); }
+.s2kuehlzeile img { width: 60px; height: 60px; border-radius: var(--radius-klein); object-fit: cover; background: var(--salbei-hell); }
+.s2kuehlzeile img.pikto { object-fit: contain; padding: 8px; box-sizing: border-box; }
+.s2kuehlzeile b { font-size: 1rem; line-height: 1.2; min-width: 0; overflow-wrap: normal; word-break: normal; hyphens: auto; }
+.s2zaehler { display: flex; align-items: center; gap: 4px; }
+.s2zaehler button {
+  width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--holz); background: var(--weiss);
+  color: var(--salbei-tief); font: 800 1.5rem/1 var(--schrift); cursor: pointer;
+}
+.s2zaehler button:disabled { opacity: .35; }
+.s2anzahl { min-width: 2ch; text-align: center; font-size: 1.5rem; font-weight: 800; font-variant-numeric: var(--zahlen); }
+
+/* 5 Geld: vier Zahlenzeilen, darunter „Wer putzt?“ */
+.s2geld { display: flex; flex-direction: column; background: var(--weiss); border: 2px solid var(--holz); border-radius: var(--radius); }
+.s2geldzeile { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 14px; min-height: 60px; }
+.s2geldzeile + .s2geldzeile { border-top: 1px solid var(--papier-tief); }
+.s2geldzeile > span:first-child { font-weight: 700; font-size: 1.05rem; min-width: 0; }
+.s2geldzeile .betrag { flex: none; width: 150px; }
+.s2geldzeile .betrag input { font-size: 1.45rem; text-align: end; min-height: 48px; }
+.s2putz { display: flex; flex-direction: column; gap: 10px; }
+.s2putz b { font-size: 1.05rem; }
+.s2putz .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.s2putz .chip { min-height: 52px; padding: 10px 8px; font-size: 1rem; }
+
+/* 6 Fertig */
+.s2fertig { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; padding-top: 24px; }
+.s2fertig .frage { margin: 0; font-size: 2.2rem; }
+.s2haken { width: 112px; height: 112px; border-radius: 50%; background: var(--gruen); color: var(--weiss); display: grid; place-items: center; box-shadow: var(--schatten-karte); }
+.s2haken svg { width: 60px; height: 60px; stroke-width: 3; }
+.s2ring { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--tinte-weich); }
+.s2los { min-height: 64px; font-size: 1.15rem; }

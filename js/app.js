@@ -6,6 +6,7 @@ import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
+import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
 import { artikelAusGerichten } from "./engine.js";
 import { BRANCHENWERTE } from "./data/branchenwerte.js";
@@ -43,6 +44,7 @@ function aktivSetzen(id) {
   if (!stand) { stand = wurzel.betriebe[0] || null; }
   if (!stand) { stand = leererBetrieb(); wurzel.betriebe.push(stand); }
   wurzel.aktiv = stand.id;
+  schrittWiederherstellen(stand); // E: gespeicherter Onboarding-Schritt nach Kennung (alte Stände: Nummer → Kennung)
 }
 
 // ---------- Zeichnen ----------
@@ -112,6 +114,7 @@ function karteFotoSchirm() {
 }
 
 function zeichneOnboarding() {
+  schrittIdMerken(stand); // E: Kennung des sichtbaren Schritts mitspeichern
   const SCHRITTE = schritteFuer(stand);
   const i = Math.min(stand.schritt, SCHRITTE.length - 1);
   const s = SCHRITTE[i];
@@ -119,7 +122,7 @@ function zeichneOnboarding() {
   const zeigeFortschritt = s.id !== "sprache" && !bearbeitet;
   const kannZurueck = i > 0 || stand.rueckkehr || wurzel.betriebe.length > 1;
   root.innerHTML = `
-    <div class="schirm">
+    <div class="schirm weg-${esc(stand.weg)} schritt-${esc(s.id)}">
       <div class="kopf">
         ${zeigeFortschritt ? `<div class="fortschritt" aria-hidden="true">${SCHRITTE.slice(1).map((x, j) => `<i class="${j + 1 <= i ? "da" : ""}"></i>`).join("")}</div>` : ""}
         <div class="kopfzeile">

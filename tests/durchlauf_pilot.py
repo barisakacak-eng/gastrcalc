@@ -28,7 +28,6 @@ async def main():
                 nonlocal n; n += 1; await pg.screenshot(path=str(OUT / f"{n:02d}_{name}.png"), full_page=voll)
             await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
             await pg.fill('[data-f="betrieb.name"]', "Pilotladen"); await pg.click('[data-a="laden-art"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
-            await pg.wait_for_selector('[data-a="selbst"]'); await pg.wait_for_timeout(500); await pg.click('[data-a="weiter"]')
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="speisekarte"]', state="attached"); await bild("karte-foto")
             t0 = time.time()
             await pg.locator('input[data-f="foto"]:not([capture])').set_input_files([str(PILOT / "karte_seite1.jpg"), str(PILOT / "karte_seite2.jpg")])

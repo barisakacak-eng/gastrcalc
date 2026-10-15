@@ -888,6 +888,21 @@ export default {
     fertigHinweis: "Als Nächstes: ein paar Einkaufsrechnungen fotografieren. Dann kennt die App deine echten Preise.",
     rechnungen: "Rechnungen fotografieren", zumCockpit: "Zum Cockpit",
   },
+  // Schnellweg 2 (Entwickler E, 15.10.2026): 6 Bildschirme, kurze Wörter, Erklärung nur hinter „?“
+  schnell2: {
+    hilfe: "Kurz erklärt", sprache: "Sprache",
+    laden: "Dein Laden", namePlatzhalter: "Name des Ladens",
+    ladenHilfe: "Die Laden-Art gibt Startwerte für Rezepte, Kühlung und Putzplan. Alles kannst du später im Büro ändern.",
+    allesGenau: "Alles genau einrichten",
+    karte: "Deine Karte", karteFoto: "Karte fotografieren", karteGalerie: "Fotos oder PDF", spaeter: "Später",
+    karteHilfe: "Die App liest Gerichte und Preise vom Foto. Was ihr selbst macht, stellst du im Büro unter Rezepte ein.",
+    kuehl: "Kühlung", arten: { kuehlschrank: "Kühlschrank", saladette: "Saladette", tiefkuehler: "Tiefkühler", warmhalter: "Warmhalter" },
+    kuehlHilfe: "Für jedes Gerät trägst du später die Temperatur ein. Namen änderst du im Büro.",
+    geld: "Kosten im Monat", miete: "Miete", personal: "Personal", eigen: "Dein Lohn", strom: "Strom",
+    geldHilfe: "Ungefähr reicht, leer lassen geht auch. Rechnungen fotografierst du später im Büro.",
+    putzt: "Wer putzt?", wer: { selbst: "Wir", firma: "Firma", beides: "Beides" }, firma: "Firma",
+    fertig: "Fertig!", eingerichtet: "eingerichtet", los: "Los geht's", pin: "Büro-PIN festlegen",
+  },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
   inventur: {
     menue: "Inventur", titel: "Inventur", titelMonat: (m) => `Inventur ${m}`,
