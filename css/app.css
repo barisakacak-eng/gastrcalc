@@ -3,7 +3,9 @@
 /* Gestaltungswerte stehen in css/tokens.css (gehört Sanji). */
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html { font-size: 17px; }
+/* W2-U: Grundschrift folgt der Handy-/Browser-Einstellung. 106.25 % = 17px bei Standardschrift, also 1rem = 17px.
+   Alle Schriftgrößen stehen in rem (px/17), damit sie mit der Grundschrift wachsen. */
+html { font-size: 106.25%; }
 body {
   margin: 0; background: var(--papier); color: var(--tinte); font-family: var(--schrift);
   line-height: 1.4; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
@@ -400,26 +402,26 @@ button.kachel { cursor: pointer; }
 
 /* ---------- Etappe 6, Punkt 4/6/1: Menü, Schnellknopf, Cockpit-Instrumente, Einrichtung, Müll-Zentrale (Aufbau; Aussehen gehört Sanji) ---------- */
 .kopfband { padding-left: 68px; }
-.menueknopf { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 10px); left: 10px; z-index: 40; width: 48px; height: 48px; border: 0; border-radius: 12px; background: rgba(0,0,0,.18); color: #fff; font-size: 24px; }
+.menueknopf { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 10px); left: 10px; z-index: 40; width: 48px; height: 48px; border: 0; border-radius: 12px; background: rgba(0,0,0,.18); color: #fff; font-size: calc(24rem / 17); }
 .menuepunkt { position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; border-radius: 50%; background: var(--rot); }
 .menuehinten, .schnellhinten, .blatthinten { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50; }
 .schnellhinten { background: rgba(0,0,0,.25); z-index: 44; }
 .menue { position: fixed; top: 0; bottom: 0; left: 0; width: 78%; max-width: 360px; z-index: 51; overflow-y: auto; background: var(--weiss); padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 24px; box-sizing: border-box; }
 .menuekopf { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 56px; border: 0; background: transparent; font: inherit; text-align: left; padding: 8px; }
 .menuekopf small, .menuezeile .zahl { color: var(--tinte-weich); }
-.menuegruppe h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--tinte-weich); margin: 16px 8px 4px; }
-.menuezeile { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; border: 0; border-radius: 10px; background: transparent; font: inherit; font-size: 16px; text-align: left; padding: 0 8px; color: var(--tinte); }
+.menuegruppe h2 { font-size: calc(13rem / 17); text-transform: uppercase; letter-spacing: .04em; color: var(--tinte-weich); margin: 16px 8px 4px; }
+.menuezeile { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; border: 0; border-radius: 10px; background: transparent; font: inherit; font-size: calc(16rem / 17); text-align: left; padding: 0 8px; color: var(--tinte); }
 .menuezeile.an { background: var(--salbei-hell); }
 .menuezeile .farbe { width: 14px; height: 14px; border-radius: 4px; background: var(--salbei); flex: none; }
 .m-muell .farbe { background: var(--muell); } .m-kuehl .farbe { background: #5E7C8A; } .m-umsatz .farbe { background: var(--glut); } .m-karte .farbe { background: var(--eigen); }
 .menuezeile .zahl { margin-left: auto; font-weight: 700; }
 .schnell { position: fixed; right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); z-index: 45; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
-.fab { width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--aktion); color: var(--aktion-text); font-size: 30px; line-height: 1; position: relative; z-index: 46; }
+.fab { width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--aktion); color: var(--aktion-text); font-size: calc(30rem / 17); line-height: 1; position: relative; z-index: 46; }
 .pillen { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; position: relative; z-index: 46; }
 .pille { min-height: 48px; padding: 0 18px; border-radius: 24px; border: 0; background: var(--weiss); font: inherit; font-weight: 700; }
 .instrumente { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .instrument { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 120px; padding: 12px; border-radius: var(--radius); border: 1px solid var(--holz); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte); overflow: hidden; }
-.instrument b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.instrument b { font-size: calc(22rem / 17); font-variant-numeric: tabular-nums; }
 .instrument .balken.mini { display: flex; align-items: flex-end; gap: 3px; height: 32px; width: 100%; margin-top: auto; }
 .instrument .balken.mini i { flex: 1; position: relative; height: 100%; display: block; }
 .instrument .balken.mini b, .instrument .balken.mini s { position: absolute; bottom: 0; left: 0; right: 0; display: block; background: var(--salbei); border-radius: 2px; }
@@ -440,11 +442,11 @@ button.kachel { cursor: pointer; }
 .einrichtung-kopf { display: flex; align-items: center; gap: 12px; }
 .einrichtung-kopf b, .einrichtung-kopf small { display: block; }
 svg.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; stroke-width: 7; } .ring-grund { stroke: var(--holz); } .ring-wert { stroke: var(--glut); stroke-linecap: round; }
-.ring text { font: 700 16px var(--schrift); fill: var(--tinte); }
+.ring text { font: 700 calc(16rem / 17) var(--schrift); fill: var(--tinte); }
 .schrittzeile { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 44px; }
 .schrittzeile.fertig { color: var(--tinte-weich); } .schrittzeile .zeileknopf { flex: 1; }
-.schrittzeile .anteil { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--glut); font-size: 11px; flex: none; }
-.einrichtungzeile { display: block; width: 100%; min-height: 40px; border: 0; background: var(--geschaetzt-hell); color: var(--geschaetzt-text); font: inherit; font-size: 14px; }
+.schrittzeile .anteil { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--glut); font-size: calc(11rem / 17); flex: none; }
+.einrichtungzeile { display: block; width: 100%; min-height: 40px; border: 0; background: var(--geschaetzt-hell); color: var(--geschaetzt-text); font: inherit; font-size: calc(14rem / 17); }
 .muellkarte { background: var(--muell); color: #fff; }
 .muellkopf { display: flex; justify-content: space-between; align-items: flex-end; }
 .monatstonne { position: relative; width: 40px; height: 56px; border: 2px solid rgba(255,255,255,.7); border-top-width: 4px; border-radius: 4px 4px 8px 8px; overflow: hidden; }
@@ -453,7 +455,7 @@ svg.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; s
 .balken.muell { display: flex; align-items: flex-end; gap: 6px; height: 48px; margin-top: 10px; }
 .balken.muell i { flex: 1; height: 100%; position: relative; display: block; } .balken.muell b { position: absolute; bottom: 0; left: 0; right: 0; display: block; background: rgba(255,255,255,.45); border-radius: 2px; }
 .balken.muell i.heute b { background: #fff; }
-.muellkarte .tage { display: flex; justify-content: space-between; font-size: 12px; opacity: .85; }
+.muellkarte .tage { display: flex; justify-content: space-between; font-size: calc(12rem / 17); opacity: .85; }
 .muellkarte .besser { color: #CFE8D3; } .muellkarte .schlechter { color: #FFD9D2; }
 .zuletzt { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: var(--muell-hell); color: var(--muell); }
 .topzeile .rang { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; border-radius: 6px; background: var(--muell-hell); color: var(--muell); font-weight: 700; }

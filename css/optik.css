@@ -5,7 +5,7 @@
 
 /* Grundklima: edles Papier, klare Typografie, lesbar zwischen Grill und Kasse */
 html { color-scheme: light; }
-body { background: var(--papier); color: var(--tinte); font-family: var(--schrift); font-size: 17px; line-height: 1.48; }
+body { background: var(--papier); color: var(--tinte); font-family: var(--schrift); font-size: calc(17rem / 17); line-height: 1.48; }
 #app { background: var(--papier); }
 .schirm { background: var(--papier); }
 h1, h2, h3, .frage { letter-spacing: -.022em; }
@@ -15,7 +15,7 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .karte small, .kennzahlen, .fvgrp, .fvgrund, .fvz small, .fvtipp .n small, .zahlenraster small, .jetzt small, .band small, .tueren button, .kachel.tuer small.fein,
 .menuegruppe h2, .menuekopf small, .menuezeile .zahl,
 .schrittzahl, .chip.klein, .unterzeile, .tage, .muellkarte .tage,
-.blattzeile .messung small, .schrittzeile .anteil { font-size: 15px; line-height: 1.45; }
+.blattzeile .messung small, .schrittzeile .anteil { font-size: calc(15rem / 17); line-height: 1.45; }
 .hinweis, .marke, .karte h2, .zeile .oben small, .zeileknopf small,
 .kachel small, .instrument small, .zahlenraster small { color: var(--tinte-weich); }
 .kopfband { background: linear-gradient(145deg,var(--salbei-tief) 2%,#395544 100%); color: var(--weiss); border-radius: 0 0 var(--radius-gross) var(--radius-gross); box-shadow: 0 12px 26px rgba(31,42,36,.16); }
@@ -29,15 +29,15 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .karte { padding: 17px; gap: 10px; }
 .zeile, .zeileknopf, .wahl { padding: 14px; }
 .kachel { padding: 14px; gap: 8px; }
-.kachel b { font-size: 17px; line-height: 1.36; }
+.kachel b { font-size: calc(17rem / 17); line-height: 1.36; }
 .karte.dunkel, .karte.zaehler { background: linear-gradient(156deg,var(--salbei-tief),#395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); }
 .karte.dunkel h2, .karte.zaehler h2 { color: #E6EBDD; }
 .karte.dunkel .gross, .karte .gross, .karte.zaehler .riesig,
 .instrument b, .mid, .preisheute, .zahlenraster b, .summenzeile .wert,
 .betrag input, .zahlfeld input, .muellwert { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.023em; }
-.karte .gross, .karte.zaehler .riesig { font-size: clamp(35px,9.5vw,45px); font-weight: 800; line-height: 1.12; }
-.karte.zaehler .lbl { color: #E6EBDD; font-size: 15px; }
-.karte.zaehler small { color: #E6EBDD; font-size: 15px; }
+.karte .gross, .karte.zaehler .riesig { font-size: clamp(calc(35rem / 17),9.5vw,calc(45rem / 17)); font-weight: 800; line-height: 1.12; }
+.karte.zaehler .lbl { color: #E6EBDD; font-size: calc(15rem / 17); }
+.karte.zaehler small { color: #E6EBDD; font-size: calc(15rem / 17); }
 .karte.zaehler small.fein { color: #E6EBDD; }
 .karte.zaehler.minus .riesig { color: #FFD8CB; }
 .karte.zaehler.plus .riesig { color: #C7F2D0; }
@@ -46,11 +46,11 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .karte.hinweisgelb, .zeile.offen, .fvliste.offen .fvz { background: var(--geschaetzt-hell); border: 2px dashed var(--geschaetzt); }
 .kachel.an, .wahl.an, .zeile.an, .karte.gruenrand { background: var(--eigen-hell); border: 2px solid var(--eigen); box-shadow: 0 0 0 3px rgba(53,95,63,.10); }
 .kachel.klein { padding: 12px; }
-.kachel.klein b { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; font-size: 16px; }
-.kachel.klein small { font-size: 15px; }
+.kachel.klein b { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; font-size: calc(16rem / 17); }
+.kachel.klein small { font-size: calc(15rem / 17); }
 
 /* Bedienflächen: Platz für Handschuhe, schnelle sichere Berührung */
-.knopf { min-height: 56px; padding: 16px 18px; font-size: 17px; font-weight: 750; border-radius: var(--radius); background: var(--salbei-tief); color: var(--weiss); box-shadow: var(--schatten-knopf); transition: transform var(--bewegung) ease, background var(--bewegung) ease, box-shadow var(--bewegung) ease; }
+.knopf { min-height: 56px; padding: 16px 18px; font-size: calc(17rem / 17); font-weight: 750; border-radius: var(--radius); background: var(--salbei-tief); color: var(--weiss); box-shadow: var(--schatten-knopf); transition: transform var(--bewegung) ease, background var(--bewegung) ease, box-shadow var(--bewegung) ease; }
 .knopf.glut, .muellknopf, .fab { background: var(--aktion); color: var(--aktion-text); }
 .knopf:active, .chip:active, .kachel:active, .zeileknopf:active { transform: translateY(1px); box-shadow: none; }
 .knopf.zweit, .knopf.weich { box-shadow: none; }
@@ -66,9 +66,9 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .fab { min-height: 60px; min-width: 60px; border-radius: 50%; box-shadow: var(--schatten-knopf); }
 .pille { background: var(--weiss); color: var(--tinte); border: 1px solid var(--holz); box-shadow: var(--schatten-knopf); padding: 12px 18px; }
 .chip, .periode, .seg, .textfeld, .stepper button { border-color: var(--holz); }
-.chip { padding: 11px 15px; font-size: 16px; }
+.chip { padding: 11px 15px; font-size: calc(16rem / 17); }
 .chip.an, .periode button.an, .seg button.an { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
-.textfeld { border-radius: var(--radius); background: var(--weiss); padding: 14px 16px; min-height: 52px; font-size: 17px; }
+.textfeld { border-radius: var(--radius); background: var(--weiss); padding: 14px 16px; min-height: 52px; font-size: calc(17rem / 17); }
 :focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; }
 .textfeld:focus, .zahlfeld:focus-within, .betrag:focus-within { outline: 3px solid var(--fokus); outline-offset: 3px; }
 .fortschritt i.da { background: var(--glut); }
@@ -90,15 +90,15 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .ampel::before { min-height: 12px; min-width: 12px; }
 .zahlfeld { border-bottom-color: var(--salbei); }
 .zahlfeld.offen, .betrag.offen input { border-bottom: 2px dashed var(--geschaetzt); }
-.gruppe { color: var(--salbei-tief); font-size: 15px; font-weight: 750; letter-spacing: .025em; }
+.gruppe { color: var(--salbei-tief); font-size: calc(15rem / 17); font-weight: 750; letter-spacing: .025em; }
 .tipp, .ergebnis { background: var(--salbei-hell); border-color: var(--salbei); color: var(--tinte); border-radius: var(--radius-klein); }
 .abzeichen { color: var(--tinte); border-color: var(--kupfer-dunkel); background: var(--geschaetzt-hell); }
 
 /* Navigation und Schnellknopf nur stylen: die Positionierung ist Zoros Aufgabe */
 .menueknopf { background: var(--salbei-tief); color: var(--weiss); border-radius: var(--radius); box-shadow: var(--schatten-karte); }
 .menue { background: var(--weiss); border-radius: 0 22px 22px 0; box-shadow: var(--schatten-menu); }
-.menuegruppe h2 { color: var(--tinte-weich); font-size: 15px; letter-spacing: .08em; }
-.menuezeile { color: var(--tinte); border-radius: 12px; padding: 12px; font-size: 16px; }
+.menuegruppe h2 { color: var(--tinte-weich); font-size: calc(15rem / 17); letter-spacing: .08em; }
+.menuezeile { color: var(--tinte); border-radius: 12px; padding: 12px; font-size: calc(16rem / 17); }
 .menuezeile.an { background: var(--salbei-hell); color: var(--salbei-tief); font-weight: 750; }
 .menuezeile .farbe { border-radius: 50%; }
 .m-muell .farbe { background: var(--muell); }
@@ -109,7 +109,7 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 
 /* Analysen: NEKAVO-Klarheit ohne sterile Kühle */
 .instrument { padding: 15px; gap: 7px; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); color: var(--tinte); }
-.instrument b { font-size: clamp(21px,5.5vw,27px); color: var(--tinte); line-height: 1.14; }
+.instrument b { font-size: clamp(calc(21rem / 17),5.5vw,calc(27rem / 17)); color: var(--tinte); line-height: 1.14; }
 .instrument .balken.mini { gap: 4px; }
 .instrument .balken.mini b { background: var(--salbei); border-radius: 4px 4px 0 0; }
 .instrument .balken.mini s { background: var(--holz); border-radius: 4px 4px 0 0; }
@@ -135,7 +135,7 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .strecke i, .strecke i.null { background: var(--tinte); }
 .strecke i.heute::after { color: var(--tinte); }
 .monat i { border-radius: 7px; }
-.einrichtungzeile { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border: 1px dashed var(--geschaetzt); border-radius: var(--radius-klein); padding: 12px; font-size: 15px; }
+.einrichtungzeile { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border: 1px dashed var(--geschaetzt); border-radius: var(--radius-klein); padding: 12px; font-size: calc(15rem / 17); }
 
 /* Mitarbeiterwege: PORSIVO-Eindeutigkeit, Weinrot nur für Müll */
 .bildplatz { border: 1px solid var(--holz); border-radius: var(--radius); background-color: var(--salbei-hell); }
@@ -168,7 +168,7 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .muellkacheln .g-sauce { border-left-color: var(--geschaetzt); }
 .eimerkachel { border: 2px dashed var(--muell) !important; }
 .blatt { background: var(--weiss); border-radius: 24px 24px 0 0; border-top: 3px solid var(--holz); box-shadow: 0 -16px 40px rgba(31,42,36,.18); padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 24px); gap: 12px; }
-.muellwert { font-size: 23px; font-weight: 800; }
+.muellwert { font-size: calc(23rem / 17); font-weight: 800; }
 .knebelschalter .knebel { background: var(--holz-tief); }
 .knebelschalter.an .knebel { background: var(--eigen); }
 

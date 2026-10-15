@@ -3,27 +3,27 @@
 
 /* ---------- Heute ---------- */
 .inhalt.heute-laden { padding: 14px 16px 104px; gap: 12px; }
-.h-zeitzeile { color: var(--tinte-weich); font-size: 14px; padding: 0 4px; font-variant-numeric: var(--zahlen); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.h-zeitzeile { color: var(--tinte-weich); font-size: calc(14rem / 17); padding: 0 4px; font-variant-numeric: var(--zahlen); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .karte.h-ziel { display: flex; flex-direction: column; gap: 0; padding: 16px 18px 14px; border: 1px solid var(--holz); box-shadow: var(--schatten-karte); text-align: left; width: 100%; }
-.h-zielkopf { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; min-height: 42px; }
+.h-zielkopf { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: calc(15rem / 17); min-height: 42px; }
 .h-zielkopf .zielsym { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #F6E6D6; color: var(--glut); flex: none; }
-.h-tempo { border-radius: 999px; padding: 6px 11px; font-size: 13px; font-weight: 700; white-space: nowrap; font-variant-numeric: var(--zahlen); }
+.h-tempo { border-radius: 999px; padding: 6px 11px; font-size: calc(13rem / 17); font-weight: 700; white-space: nowrap; font-variant-numeric: var(--zahlen); }
 .h-tempo.gut { background: var(--eigen-hell); color: var(--eigen); }
 .h-tempo.knapp { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
-.h-riesig { font-size: 58px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 0 0 12px; font-variant-numeric: var(--zahlen); white-space: nowrap; color: var(--tinte); }
+.h-riesig { font-size: clamp(calc(24rem / 17), 19vw, calc(58rem / 17)); /* W2-U: wächst mit der Grundschrift, schrumpft aber vor dem Rand */ font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 0 0 12px; font-variant-numeric: var(--zahlen); white-space: nowrap; color: var(--tinte); }
 .h-riesig.leicht { color: #3B463F; } /* geschätzt: nur eine Spur heller, Erklärung steht im Büro */
 .karte.h-ziel.plus .h-riesig { color: var(--gruen); }
-.h-unter { color: var(--tinte-weich); font-size: 14px; }
+.h-unter { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 .h-balken { display: block; height: 10px; border-radius: 5px; background: var(--papier-tief); overflow: hidden; }
 .h-balken i { display: block; height: 100%; background: linear-gradient(90deg, var(--salbei), var(--salbei-tief)); border-radius: 5px; }
-.h-balkenzahlen { display: flex; justify-content: space-between; font-size: 13px; color: var(--tinte-weich); margin-top: 6px; font-variant-numeric: var(--zahlen); }
+.h-balkenzahlen { display: flex; justify-content: space-between; font-size: calc(13rem / 17); color: var(--tinte-weich); margin-top: 6px; font-variant-numeric: var(--zahlen); }
 
 .h-kacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .karte.h-kachel { padding: 14px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; min-height: 112px; border: 1px solid var(--holz); box-shadow: var(--schatten-karte); text-align: left; width: 100%; }
 .h-kachel .ks { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
-.h-kachel small { display: block; color: var(--tinte-weich); font-size: 13px; font-weight: 600; white-space: nowrap; }
-.h-kachel b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1; font-variant-numeric: var(--zahlen); white-space: nowrap; }
+.h-kachel small { display: block; color: var(--tinte-weich); font-size: calc(13rem / 17); font-weight: 600; white-space: nowrap; }
+.h-kachel b { display: block; font-size: calc(30rem / 17); font-weight: 800; letter-spacing: -.01em; line-height: 1.1; font-variant-numeric: var(--zahlen); white-space: nowrap; }
 .ks.umsatz { background: var(--salbei-hell); color: var(--salbei-tief); }
 .ks.muell { background: var(--muell-hell); color: var(--muell); }
 .ks.kuehl { background: var(--branche-hell); color: var(--branche); }
@@ -37,9 +37,9 @@
   background: var(--salbei-hell); color: var(--tinte); box-shadow: var(--schatten-karte); }
 .h-jetzt .ks { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--weiss); color: var(--salbei-tief); }
 .h-jetzt-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.h-jetzt-text small { font-size: 13px; font-weight: 600; color: var(--tinte-weich); }
-.h-jetzt-text b { font-size: 18px; line-height: 1.2; }
-.h-jetzt .los { background: var(--salbei-tief); color: var(--weiss); font-weight: 800; border-radius: 12px; padding: 0 16px; min-height: 48px; display: inline-flex; align-items: center; font-size: 15px; white-space: nowrap; flex: none; }
+.h-jetzt-text small { font-size: calc(13rem / 17); font-weight: 600; color: var(--tinte-weich); }
+.h-jetzt-text b { font-size: calc(18rem / 17); line-height: 1.2; }
+.h-jetzt .los { background: var(--salbei-tief); color: var(--weiss); font-weight: 800; border-radius: 12px; padding: 0 16px; min-height: 48px; display: inline-flex; align-items: center; font-size: calc(15rem / 17); white-space: nowrap; flex: none; }
 .jetzt.h-jetzt.rot { background: var(--rot); color: #fff; box-shadow: 0 10px 24px rgba(171,66,62,.28); }
 .h-jetzt.rot .ks { background: rgba(255,255,255,.16); color: #fff; }
 .h-jetzt.rot .h-jetzt-text small { color: #fff; opacity: .9; }
@@ -52,10 +52,10 @@
 /* ---------- Karte (Laden) ---------- */
 .inhalt.kartelaeden { padding: 14px 16px 104px; gap: 12px; }
 .kl-kopf { display: flex; justify-content: space-between; align-items: baseline; padding: 2px 4px 0; }
-.kl-kopf h1 { margin: 0; font-size: 28px; letter-spacing: -.02em; font-weight: 800; color: var(--tinte); }
-.kl-kopf small { color: var(--tinte-weich); font-size: 14px; font-variant-numeric: var(--zahlen); }
+.kl-kopf h1 { margin: 0; font-size: calc(28rem / 17); letter-spacing: -.02em; font-weight: 800; color: var(--tinte); }
+.kl-kopf small { color: var(--tinte-weich); font-size: calc(14rem / 17); font-variant-numeric: var(--zahlen); }
 .kl-segment { display: flex; background: var(--papier-tief); border-radius: 12px; padding: 4px; gap: 4px; }
-.kl-segment button { flex: 1; border: 0; background: transparent; min-height: 44px; border-radius: 9px; font-weight: 700; font-size: 14px; color: var(--tinte-weich); display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
+.kl-segment button { flex: 1; border: 0; background: transparent; min-height: 44px; border-radius: 9px; font-weight: 700; font-size: calc(14rem / 17); color: var(--tinte-weich); display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
 .kl-segment button.an { background: var(--salbei-tief); color: var(--weiss); }
 .kl-segment button:disabled { opacity: .55; cursor: default; }
 .kl-raster { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -64,9 +64,9 @@
 .kl-gericht .gerichtbild { width: 100%; aspect-ratio: 16 / 11; object-fit: cover; display: block; background: var(--papier-tief); }
 .kl-gericht .gerichtbild.pikto { object-fit: contain; padding: 14px; }
 .kl-gt { display: block; padding: 9px 11px 11px; }
-.kl-gn { display: block; font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tinte); }
+.kl-gn { display: block; font-size: calc(14rem / 17); font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tinte); }
 .kl-gp { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-.kl-gp b { font-size: 21px; font-weight: 800; letter-spacing: -.01em; font-variant-numeric: var(--zahlen); white-space: nowrap; }
+.kl-gp b { font-size: calc(21rem / 17); font-weight: 800; letter-spacing: -.01em; font-variant-numeric: var(--zahlen); white-space: nowrap; }
 .kl-punkt { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex: none; background: var(--weggelassen); box-shadow: 0 0 0 3px var(--weiss), 0 0 0 4px rgba(31,42,36,.08); }
 .kl-punkt.g { background: var(--eigen); } .kl-punkt.y { background: var(--gelb); } .kl-punkt.r { background: var(--rot); }
 .kl-punkt.klein { width: 10px; height: 10px; box-shadow: none; }
@@ -82,20 +82,20 @@
 .kl-preiskopf { display: flex; gap: 14px; align-items: center; }
 .kl-preiskopf .gerichtbild { width: 76px; height: 76px; border-radius: 16px; object-fit: cover; flex: none; background: var(--papier-tief); }
 .kl-preiskopf > div { flex: 1; min-width: 0; }
-.kl-preiskopf b { font-size: 20px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.kl-preiskopf s { color: var(--tinte-weich); font-size: 14px; font-variant-numeric: var(--zahlen); }
+.kl-preiskopf b { font-size: calc(20rem / 17); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kl-preiskopf s { color: var(--tinte-weich); font-size: calc(14rem / 17); font-variant-numeric: var(--zahlen); }
 .kl-x { width: 48px; height: 48px; border: 0; background: transparent; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; color: var(--tinte-weich); flex: none; }
 .kl-preisrad { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 22px 0 14px; }
 .kl-rund { width: 64px; height: 64px; border-radius: 50%; background: var(--weiss); border: 1px solid var(--holz); display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--schatten-karte); color: var(--salbei-tief); flex: none; }
 .kl-rund .sym { width: 28px; height: 28px; }
 .kl-rund:active { background: var(--salbei-hell); }
 .kl-rund:disabled { opacity: .4; }
-.kl-gross { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: center; gap: 6px; font-size: 52px; font-weight: 800; letter-spacing: -.03em; color: var(--tinte); }
+.kl-gross { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: center; gap: 6px; font-size: calc(52rem / 17); font-weight: 800; letter-spacing: -.03em; color: var(--tinte); }
 .kl-gross input { width: 100%; max-width: 190px; min-width: 0; border: 0; background: transparent; text-align: right; font: inherit; letter-spacing: inherit; color: inherit; padding: 0; font-variant-numeric: var(--zahlen); border-bottom: 2px dashed transparent; }
 .kl-gross input:focus { outline: none; border-bottom-color: var(--holz-tief); }
 .kl-bleibt { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: var(--radius); background: var(--geschaetzt-hell); font-weight: 650; margin-bottom: 14px; min-height: 56px; }
 .kl-bleibt.a-gruen { background: var(--eigen-hell); } .kl-bleibt.a-rot { background: var(--muell-hell); } .kl-bleibt.a-grau { background: var(--papier-tief); }
-.kl-bleibt b { font-size: 20px; display: inline-flex; align-items: center; gap: 12px; font-variant-numeric: var(--zahlen); }
+.kl-bleibt b { font-size: calc(20rem / 17); display: inline-flex; align-items: center; gap: 12px; font-variant-numeric: var(--zahlen); }
 .kl-bleibt .kl-punkt { box-shadow: none; }
 .knopf.kl-speichern { min-height: 60px; color: var(--tinte); box-shadow: var(--schatten-knopf); }
 .knopf.kl-speichern:disabled { opacity: .5; }

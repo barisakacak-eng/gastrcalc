@@ -15,26 +15,26 @@
 /* Cockpit wie Vorlage */
 .zielkarte, .monatkarte { display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: 100%; text-align: left; font: inherit; color: var(--tinte); background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); padding: 16px; }
 .zielkopf { display: flex; justify-content: space-between; align-items: center; }
-.zielkarte .lbl, .monatkarte .lbl { font-size: 15px; font-weight: 700; color: var(--tinte); }
-.zielkarte .riesig { font-size: clamp(38px, 11vw, 48px); font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--tinte); line-height: 1.1; }
+.zielkarte .lbl, .monatkarte .lbl { font-size: calc(15rem / 17); font-weight: 700; color: var(--tinte); }
+.zielkarte .riesig { font-size: clamp(calc(38rem / 17), 11vw, calc(48rem / 17)); font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--tinte); line-height: 1.1; }
 .zielkarte.plus .riesig { color: var(--eigen); }
-.zielkarte small { color: var(--tinte-weich); font-size: 14px; }
+.zielkarte small { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 .zielsym { width: 46px; height: 46px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #F6E6D6; color: var(--glut); }
 .zielsym .sym { width: 28px; height: 28px; }
 .monatzahl { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.monatzahl b { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.monatzahl small { color: var(--tinte-weich); font-size: 14px; }
+.monatzahl b { font-size: calc(26rem / 17); font-weight: 800; font-variant-numeric: tabular-nums; }
+.monatzahl small { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 .monatbalken { width: 100%; height: 130px; margin-top: 6px; overflow: visible; }
 .monatbalken rect { fill: var(--salbei); }
 .monatbalken rect.heute { fill: var(--glut); }
 .monatbalken .ziellinie { stroke: var(--tinte-weich); stroke-width: 1; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; }
-.monatbalken text { font: 11px var(--schrift); fill: var(--tinte-weich); }
+.monatbalken text { font: calc(11rem / 17) var(--schrift); fill: var(--tinte-weich); }
 .instrumente.heute .instrument.klein { flex-direction: row; align-items: center; gap: 10px; min-height: 76px; }
 .instrument .kachelsym { width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--salbei-hell); color: var(--salbei-tief); flex: none; }
 .i-tonne .kachelsym { background: var(--muell-hell); color: var(--muell); }
 .i-ware .kachelsym { background: #F6E6D6; color: var(--kupfer-dunkel, #8A4C20); }
 .i-kuehl .kachelsym { background: var(--branche-hell); color: var(--branche); }
-.instrument.klein b { font-size: 20px; display: block; }
+.instrument.klein b { font-size: calc(20rem / 17); display: block; }
 .instrument.klein small { display: block; }
 .spruch { display: flex; gap: 12px; align-items: center; background: var(--weiss); }
 .spruch p { margin: 0; font-style: italic; color: var(--tinte); }
@@ -42,7 +42,7 @@
 .menueknopf { position: relative; }
 .karte.spruch { display: flex; flex-direction: row; align-items: center; text-align: left; }
 .instrument .kachelsym { width: 34px; height: 34px; }
-.instrumente.heute .instrument.klein small { font-size: 13px; line-height: 1.25; }
+.instrumente.heute .instrument.klein small { font-size: calc(13rem / 17); line-height: 1.25; }
 /* Gerichte im Vergleich */
 .umschalter { display: flex; background: var(--papier-tief); border-radius: 12px; padding: 4px; gap: 4px; }
 .umschalter button { flex: 1; min-height: 44px; border: 0; border-radius: 9px; background: transparent; font: inherit; font-weight: 700; color: var(--tinte-weich); }
@@ -52,8 +52,8 @@
 .gerichtbild.pikto { object-fit: contain; padding: 10px; box-sizing: border-box; }
 .vk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .vk-kopf { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-.vk-kopf b { font-size: 16px; } .vk-preis { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.vk-zeile { display: flex; justify-content: space-between; font-size: 14px; color: var(--tinte-weich); font-variant-numeric: tabular-nums; }
+.vk-kopf b { font-size: calc(16rem / 17); } .vk-preis { font-size: calc(18rem / 17); font-weight: 800; font-variant-numeric: tabular-nums; }
+.vk-zeile { display: flex; justify-content: space-between; font-size: calc(14rem / 17); color: var(--tinte-weich); font-variant-numeric: tabular-nums; }
 .vk-zeile span:last-child { color: var(--tinte); }
 .vk-balken { display: block; height: 8px; border-radius: 4px; background: var(--papier-tief); margin-top: 4px; overflow: hidden; }
 .vk-balken i { display: block; height: 100%; background: var(--eigen); border-radius: 4px; } .vk-balken i.knapp { background: var(--geschaetzt); }
@@ -69,13 +69,13 @@
 /* Müll eintragen auf einer Seite */
 .muellsatz { color: var(--tinte); margin: 0; }
 .auswahlkarte { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; font: inherit; color: var(--muell); min-height: 96px; border: 2px solid var(--muell-hell); }
-.auswahlkarte b { display: block; font-size: 18px; } .auswahlkarte small { display: block; color: var(--tinte-weich); }
+.auswahlkarte b { display: block; font-size: calc(18rem / 17); } .auswahlkarte small { display: block; color: var(--tinte-weich); }
 .auswahlkarte > .sym:last-child { margin-left: auto; }
 .auswahlsym { width: 56px; height: 56px; border-radius: 14px; background: var(--muell-hell); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .auswahlkarte.gewaehlt b { color: var(--tinte); }
 .formkacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .formkachel { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; color: var(--muell); }
-.formkachel b { color: var(--muell); font-size: 15px; } .formkachel small { color: var(--tinte-weich); font-size: 12px; }
+.formkachel b { color: var(--muell); font-size: calc(15rem / 17); } .formkachel small { color: var(--tinte-weich); font-size: calc(12rem / 17); }
 .formkachel.aus { opacity: .6; }
 .formkachel .kachelsym { background: var(--muell-hell); color: var(--muell); }
 .formkachel .stepper { width: 100%; margin-top: 6px; } .formkachel .stepper .wert input { width: 4ch; font: inherit; font-weight: 800; text-align: center; border: 0; background: transparent; }
@@ -83,25 +83,25 @@
 .knopf.muellhaupt { background: var(--muell); color: #fff; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; }
 .knopf.muellhaupt small { width: 100%; font-weight: 400; opacity: .9; }
 .knopf.muellhaupt:disabled { background: var(--muell-hell); color: var(--muell); }
-.muellwert .leise-text { color: var(--tinte-weich); font-weight: 400; font-size: 14px; }
+.muellwert .leise-text { color: var(--tinte-weich); font-weight: 400; font-size: calc(14rem / 17); }
 .auswahlblatt { max-height: 82vh; }
 .appleiste { justify-content: center; }
 .appleiste .menueknopf { position: absolute; left: 8px; }
 .appleiste .leiste-rechts { position: absolute; right: 16px; }
 .appleiste .logo { height: 32px; }
 .formkachel .kachelsym { width: 48px; height: 48px; } .formkachel .kachelsym .sym { width: 28px; height: 28px; }
-.knopf.muellhaupt { min-height: 64px; font-size: 18px; }
+.knopf.muellhaupt { min-height: 64px; font-size: calc(18rem / 17); }
 .bildwahl { position: relative; flex: none; cursor: pointer; }
 .bildwahl-sym { position: absolute; right: 4px; bottom: 4px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,253,248,.92); color: var(--tinte); display: inline-flex; align-items: center; justify-content: center; }
 .kopfband-cockpit { padding-top: 10px; padding-bottom: 0; }
-.kopfband-cockpit .unter { font-size: 14px; }
+.kopfband-cockpit .unter { font-size: calc(14rem / 17); }
 .einrichtung-zeile { display: flex; flex-direction: column; gap: 2px; }
 .ez-haupt { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--holz); border-radius: var(--radius); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte); }
 .ez-haupt b, .ez-haupt small { display: block; } .ez-haupt small { color: var(--kupfer-dunkel, #8A4C20); }
 .ez-haupt > .sym:last-child { margin-left: auto; }
-.ring.klein { width: 40px; height: 40px; } .ring.klein text { font-size: 18px; }
-.ez-mehr { align-self: flex-end; font-size: 13px; }
-.band { font-size: 14px; padding: 8px 12px; }
+.ring.klein { width: 40px; height: 40px; } .ring.klein text { font-size: calc(18rem / 17); }
+.ez-mehr { align-self: flex-end; font-size: calc(13rem / 17); }
+.band { font-size: calc(14rem / 17); padding: 8px 12px; }
 .gerichtbild.mini { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 8px; margin-bottom: 6px; }
 .muellkacheln .kachel { display: flex; flex-direction: column; align-items: stretch; text-align: left; }
 
@@ -120,7 +120,7 @@
 .muellkacheln .g-gemuese { --streif: var(--eigen); } .muellkacheln .g-fleisch, .muellkacheln .g-fisch { --streif: #8A4B3A; } .muellkacheln .g-teig { --streif: var(--holz-tief); } .muellkacheln .g-sauce { --streif: var(--geschaetzt); }
 .muellkacheln .kachel b { overflow-wrap: break-word; hyphens: auto; }
 .auswahlblatt .inhalt { padding: 0 0 12px; }
-.auswahlblatt .textfeld::placeholder { font-size: 14px; }
+.auswahlblatt .textfeld::placeholder { font-size: calc(14rem / 17); }
 .karte.laden.aktiv { border-left-width: 1px; }
 .packung { flex-wrap: wrap; row-gap: 8px; }
 .grenzpaar { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
@@ -132,7 +132,7 @@
 input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .zahlfeld input:focus-visible { outline: none; } .zahlfeld:focus-within { border-bottom-color: var(--eigen); }
 .monat { grid-template-columns: repeat(7, 1fr); }
-.monat .wt { font-size: 11px; text-align: center; color: var(--tinte-weich); font-weight: 600; }
+.monat .wt { font-size: calc(11rem / 17); text-align: center; color: var(--tinte-weich); font-weight: 600; }
 .zeile .oben .gerichtbild.mini, .zeileknopf .gerichtbild.mini { width: 52px; height: 52px; aspect-ratio: auto; margin: 0; flex: none; border-radius: 10px; }
 .zeile .oben { align-items: center; gap: 10px; } .zeile .oben .name { flex: 1; min-width: 0; }
 .zeileknopf:has(.gerichtbild) { display: flex; align-items: center; gap: 12px; }
@@ -140,7 +140,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .wahl.an.warnung { background: #FBE9E6; border-color: var(--rot); color: var(--tinte); }
 .wahl.an.warnung .haken { background: var(--rot); border-color: var(--rot); color: #fff; }
 .wahl.an.warnung .rot { color: var(--rot); }
-.summenzeile .wert .leise.klein { display: block; margin-left: auto; min-height: 36px; font-size: 13px; }
+.summenzeile .wert .leise.klein { display: block; margin-left: auto; min-height: 36px; font-size: calc(13rem / 17); }
 /* Nachprüfung 15.10. */
 .formkachel .stepper { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 2px; }
 .formkachel .stepper button { min-width: 0; width: 40px; min-height: 44px; }
@@ -154,48 +154,48 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .instrumente.heute .instrument.klein > span, .instrumente.heute .instrument.klein > div { min-width: 0; }
 .instrumente.heute .instrument.klein small { white-space: normal; overflow-wrap: break-word; }
 .textfeld::placeholder { text-overflow: ellipsis; }
-.packung input::placeholder, .auswahlblatt .textfeld::placeholder, [data-f="stelle-neu"]::placeholder { font-size: 13px; }
+.packung input::placeholder, .auswahlblatt .textfeld::placeholder, [data-f="stelle-neu"]::placeholder { font-size: calc(13rem / 17); }
 .formkachel .stepper { grid-template-columns: 44px minmax(0, 1fr) 44px; }
 .formkachel .stepper button { width: 44px; height: 44px; min-height: 44px; min-width: 44px; border-radius: 50%; }
 .titelbild { width: 100%; aspect-ratio: 4 / 3; max-height: 220px; object-fit: cover; border-radius: var(--radius); display: block; }
 /* Abnahme 15.10.: Kontraste nach WCAG (Text 4,5:1, Symbole 3:1) */
-.knopf.glut, .fotofeld .knopf.glut, .muellknopf { background: #CD8043; } /* Kupfer minimal heller: dunkle Schrift 4,8:1 statt 4,5:1 knapp darunter */
+.knopf.glut, .fotofeld .knopf.glut, .muellknopf { background: #CD8043; color: var(--tinte); } /* W2-U: Schrift dunkel, sonst blieb bei „Müll eintragen“ Weiß auf Kupfer (3,1:1) */ /* Kupfer minimal heller: dunkle Schrift 4,8:1 statt 4,5:1 knapp darunter */
 .zeileknopf .pfeil, .pfeil { color: #8F6E44; }
 .karte.zaehler .bewegung .pfeil { color: #C9D6CB; } .jetzt .pfeil { color: var(--salbei-tief); }
 /* Reinigung & Betriebsmittel (Punkt 5) */
-.reinigungzeile > span:first-child small { color: var(--tinte-weich); font-size: 13px; margin-top: 2px; }
-.stufe { display: inline-block; margin-top: 4px; font-size: 12.5px; font-weight: 750; border-radius: 6px; padding: 2px 7px; }
+.reinigungzeile > span:first-child small { color: var(--tinte-weich); font-size: calc(13rem / 17); margin-top: 2px; }
+.stufe { display: inline-block; margin-top: 4px; font-size: calc(12.5rem / 17); font-weight: 750; border-radius: 6px; padding: 2px 7px; }
 .stufe.offen, .stufe.schaetzung { color: var(--geschaetzt-text); background: var(--geschaetzt-hell); border: 1.5px dashed var(--geschaetzt); }
 .stufe.beleg { color: var(--branche); background: var(--branche-hell); border: 1.5px solid var(--branche); }
 .stufe.inventur { color: #fff; background: var(--eigen); border: 1.5px solid var(--eigen); }
 .stufenleiter { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 8px; }
-.stufenleiter small { color: var(--tinte-weich); font-size: 13px; }
-.sprosse { display: block; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--holz); background: var(--weiss); font-size: 14px; color: var(--tinte-weich); }
+.stufenleiter small { color: var(--tinte-weich); font-size: calc(13rem / 17); }
+.sprosse { display: block; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--holz); background: var(--weiss); font-size: calc(14rem / 17); color: var(--tinte-weich); }
 .sprosse.an { border-color: var(--eigen); color: var(--tinte); font-weight: 700; }
 .wahl .wahlsym { width: 44px; height: 44px; border-radius: 12px; background: var(--salbei-hell); color: var(--salbei-tief); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .karte.einsicht { display: flex; flex-direction: row; gap: 12px; align-items: flex-start; }
 .einsichtsym { width: 40px; height: 40px; border-radius: 50%; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel, #8A4C20); display: inline-flex; align-items: center; justify-content: center; flex: none; }
-.karte.einsicht p { margin: 0; font-size: 16px; } .karte.einsicht small { display: block; color: var(--tinte-weich); font-size: 13.5px; margin-top: 4px; }
+.karte.einsicht p { margin: 0; font-size: calc(16rem / 17); } .karte.einsicht small { display: block; color: var(--tinte-weich); font-size: calc(13.5rem / 17); margin-top: 4px; }
 /* Putzplan (HACCP-Empfehlung, 15.10.) */
-.putzplan h2.pptakt, .putzplan h3.pptakt { margin: 14px 0 6px; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-weich); }
+.putzplan h2.pptakt, .putzplan h3.pptakt { margin: 14px 0 6px; font-size: calc(15rem / 17); text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-weich); }
 .putzerklaerung { margin: 0 0 6px; }
 .karte.ringkopf { display: flex; flex-direction: row; gap: 16px; align-items: center; }
-.ringkopf b { font-size: 20px; display: block; } .ringkopf small { color: var(--tinte-weich); }
+.ringkopf b { font-size: calc(20rem / 17); display: block; } .ringkopf small { color: var(--tinte-weich); }
 .planliste { display: flex; flex-direction: column; gap: 8px; }
 .aufgabe { display: flex; gap: 12px; align-items: center; min-height: 60px; padding: 10px 12px; border-radius: var(--radius); background: var(--weiss); border: 1px solid var(--holz); width: 100%; text-align: left; font: inherit; color: var(--tinte); }
 .aufgabe .box { width: 40px; height: 40px; border-radius: 11px; border: 2px solid var(--holz-tief); background: var(--weiss); flex: none; display: flex; align-items: center; justify-content: center; color: #fff; }
-.aufgabe .atext { flex: 1; min-width: 0; } .aufgabe .atext b { display: block; font-size: 16px; line-height: 1.25; } .aufgabe .atext small { display: block; color: var(--tinte-weich); font-size: 13.5px; }
+.aufgabe .atext { flex: 1; min-width: 0; } .aufgabe .atext b { display: block; font-size: calc(16rem / 17); line-height: 1.25; } .aufgabe .atext small { display: block; color: var(--tinte-weich); font-size: calc(13.5rem / 17); }
 .aufgabe.erledigt { background: var(--eigen-hell); border-color: #BFD5C4; } .aufgabe.erledigt .box { background: var(--eigen); border-color: var(--eigen); }
 .aufgabe.erledigt .atext b { text-decoration: line-through; text-decoration-color: rgba(31,42,36,.35); }
 .aufgabe.ueberfaellig { border: 2px solid var(--rot); } .aufgabe.ueberfaellig .atext small { color: var(--rot); font-weight: 700; }
-.pstufe { display: inline-block; flex: none; font-size: 11.5px; font-weight: 750; border-radius: 6px; padding: 2px 6px; margin-top: 4px; }
+.pstufe { display: inline-block; flex: none; font-size: calc(11.5rem / 17); font-weight: 750; border-radius: 6px; padding: 2px 6px; margin-top: 4px; }
 .pstufe.pflicht { background: var(--branche-hell); color: var(--branche); } .pstufe.empfehlung { background: var(--salbei-hell); color: var(--salbei-tief); } .pstufe.praxis { background: var(--papier-tief); color: var(--tinte-weich); }
 .pwahl { display: flex; gap: 12px; align-items: flex-start; width: 100%; min-height: 56px; padding: 10px 12px; margin-bottom: 6px; border-radius: var(--radius); border: 1px solid var(--holz); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte-weich); }
 .pwahl.an { color: var(--tinte); }
 .pwahl .knebel { margin-top: 4px; width: 44px; height: 26px; border-radius: 13px; background: var(--holz-tief); position: relative; flex: none; }
 .pwahl .knebel::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .15s; }
 .pwahl.an .knebel { background: var(--eigen); } .pwahl.an .knebel::after { left: 21px; }
-.ptext { flex: 1; min-width: 0; } .ptext b { display: block; font-size: 15.5px; } .ptext small { display: block; font-size: 13px; color: var(--tinte-weich); }
+.ptext { flex: 1; min-width: 0; } .ptext b { display: block; font-size: calc(15.5rem / 17); } .ptext small { display: block; font-size: calc(13rem / 17); color: var(--tinte-weich); }
 .phinweis { margin: 4px 0; }
 @media print { .nichtdrucken, .appleiste, .fab, .menue, nav.untenleiste { display: none !important; } .nachweis .karte { break-inside: avoid; } }
 
@@ -203,25 +203,25 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .m-inventur .farbe { background: var(--kupfer-dunkel); }
 .inv-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .inv-kopf > div { min-width: 0; }
-.knopf.inv-pause { width: auto; flex: none; min-height: 44px; padding: 8px 14px; font-size: 15px; margin-top: 4px; }
+.knopf.inv-pause { width: auto; flex: none; min-height: 44px; padding: 8px 14px; font-size: calc(15rem / 17); margin-top: 4px; }
 .inv-startknopf { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; }
 .inv-offenkarte p { color: var(--tinte); }
 .inv-verlauf { min-height: 56px; }
 .inv-verlauf .inv-verlaufwert { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.inv-verlauf small { display: block; color: var(--tinte-weich); font-size: 14px; }
+.inv-verlauf small { display: block; color: var(--tinte-weich); font-size: calc(14rem / 17); }
 /* A1 Liste */
 .inhalt.inv-listeseite { gap: 12px; padding-bottom: 0; }
 .inv-zusammen { flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; }
-.inv-zusammen b { font-size: 16px; } .inv-summe { text-align: right; } .inv-summe small { display: block; color: var(--tinte-weich); font-size: 14px; }
-.inv-summe b { font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inv-zusammen b { font-size: calc(16rem / 17); } .inv-summe { text-align: right; } .inv-summe small { display: block; color: var(--tinte-weich); font-size: calc(14rem / 17); }
+.inv-summe b { font-size: calc(18rem / 17); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .inv-balken { height: 6px; width: 150px; max-width: 100%; background: var(--papier-tief); border-radius: 3px; overflow: hidden; margin-top: 6px; }
 .inv-balken i { display: block; height: 100%; background: var(--salbei); border-radius: 3px; }
 .inv-balken.gross { width: 100%; height: 6px; margin: 0; } .inv-balken.gross i { background: var(--glut); }
 .inv-gruppe { display: flex; flex-direction: column; }
 .inv-gruppenkopf { position: sticky; top: 60px; z-index: 5; display: flex; align-items: center; gap: 10px; margin: 0 -20px; padding: 10px 20px; background: rgba(245,235,221,.96);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--holz); font-size: 16px; font-weight: 800; color: var(--tinte); }
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--holz); font-size: calc(16rem / 17); font-weight: 800; color: var(--tinte); }
 .inv-gruppenkopf > span:nth-child(2) { min-width: 0; overflow-wrap: anywhere; }
-.inv-gruppenkopf small { margin-left: auto; font-weight: 600; color: var(--tinte-weich); font-size: 14px; white-space: nowrap; }
+.inv-gruppenkopf small { margin-left: auto; font-weight: 600; color: var(--tinte-weich); font-size: calc(14rem / 17); white-space: nowrap; }
 .inv-gsym { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--salbei-hell); color: var(--salbei-tief); }
 .inv-gsym .sym { width: 19px; height: 19px; }
 .ort-kuehlhaus .inv-gsym, .ort-tiefkuehler .inv-gsym { background: var(--branche-hell); color: var(--branche); }
@@ -234,79 +234,79 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .gerichtbild.mini.inv-daumen { width: 54px; height: 54px; aspect-ratio: auto; margin: 0; flex: none; border-radius: 10px; }
 .gerichtbild.mini.inv-daumen.pikto { padding: 6px; }
 .inv-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.inv-text b { font-size: 16px; line-height: 1.2; overflow-wrap: break-word; hyphens: auto; }
-.inv-text small { color: var(--tinte-weich); font-size: 13.5px; line-height: 1.3; overflow-wrap: break-word; }
+.inv-text b { font-size: calc(16rem / 17); line-height: 1.2; overflow-wrap: break-word; hyphens: auto; }
+.inv-text small { color: var(--tinte-weich); font-size: calc(13.5rem / 17); line-height: 1.3; overflow-wrap: break-word; }
 .inv-text small.inv-eur { font-weight: 700; color: var(--eigen); }
 .inv-text small.inv-eur.fehlt { color: var(--geschaetzt-text); font-weight: 600; }
 .inv-text small.inv-eur.leer { font-weight: 500; color: var(--tinte-weich); }
 .inv-mini { display: flex; align-items: center; gap: 2px; flex: none; }
-.inv-mini button { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid var(--holz); background: var(--weiss); font-size: 24px; line-height: 1; padding: 0; color: var(--tinte); }
+.inv-mini button { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid var(--holz); background: var(--weiss); font-size: calc(24rem / 17); line-height: 1; padding: 0; color: var(--tinte); }
 .inv-mini button.plus { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
-.inv-mini .wert { min-width: 40px; text-align: center; font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.inv-mini .wert { min-width: 40px; text-align: center; font-size: calc(19rem / 17); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .inv-posten.offen .inv-mini .wert { color: var(--tinte-weich); font-weight: 500; }
 .inv-anbruch { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 64px; }
-.inv-anbruch span { font-size: 13px; color: var(--tinte-weich); margin-right: 2px; }
-.inv-anbruch button { min-height: 44px; min-width: 48px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--holz); background: var(--weiss); font-size: 16px; font-weight: 700; color: var(--tinte); }
+.inv-anbruch span { font-size: calc(13rem / 17); color: var(--tinte-weich); margin-right: 2px; }
+.inv-anbruch button { min-height: 44px; min-width: 48px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--holz); background: var(--weiss); font-size: calc(16rem / 17); font-weight: 700; color: var(--tinte); }
 .inv-anbruch button.an { background: #F6E6D6; border-color: var(--glut); color: var(--kupfer-dunkel); }
 .inv-dazu .inv-treffer { display: flex; flex-direction: column; gap: 8px; }
-.inv-dazu .zeileknopf { min-height: 52px; padding: 10px 14px; } .inv-dazu .zeileknopf small { display: block; color: var(--tinte-weich); font-size: 13.5px; }
+.inv-dazu .zeileknopf { min-height: 52px; padding: 10px 14px; } .inv-dazu .zeileknopf small { display: block; color: var(--tinte-weich); font-size: calc(13.5rem / 17); }
 .inv-weg { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--papier-tief); }
 .inv-weg span { min-width: 0; overflow-wrap: anywhere; }
 .inv-verwerfen { align-self: center; color: var(--tinte-weich); }
 .inv-fuss { position: sticky; bottom: 0; z-index: 6; margin: 4px -20px 0; padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 14px);
   background: linear-gradient(to top, var(--papier) 78%, rgba(245,235,221,0)); display: flex; flex-direction: column; gap: 6px; }
-.inv-fuss small { text-align: center; color: var(--tinte-weich); font-size: 14px; font-variant-numeric: tabular-nums; }
+.inv-fuss small { text-align: center; color: var(--tinte-weich); font-size: calc(14rem / 17); font-variant-numeric: tabular-nums; }
 .inv-fuss.reihe { flex-direction: row; gap: 10px; } .inv-fuss.reihe .knopf.zweit { width: 40%; flex: none; } .inv-fuss.reihe .knopf:not(.zweit) { flex: 1; }
 /* A2 Karte je Ware */
 .inhalt.inv-karteseite { gap: 10px; padding-top: 10px; padding-bottom: 0; }
-.inv-ort { display: flex; justify-content: space-between; gap: 10px; font-size: 15px; color: var(--tinte-weich); } .inv-ort b { color: var(--tinte); }
+.inv-ort { display: flex; justify-content: space-between; gap: 10px; font-size: calc(15rem / 17); color: var(--tinte-weich); } .inv-ort b { color: var(--tinte); }
 .inv-karte { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius-gross); box-shadow: var(--schatten-karte); overflow: hidden; }
 .gerichtbild.inv-foto { width: 100%; height: 184px; border-radius: 0; display: block; object-fit: cover; }
 .gerichtbild.inv-foto.pikto { object-fit: contain; padding: 22px; }
 .inv-koerper { padding: 14px 16px 16px; display: flex; flex-direction: column; }
-.inv-koerper h2 { font-size: 25px; letter-spacing: -.02em; line-height: 1.15; color: var(--tinte); overflow-wrap: break-word; hyphens: auto; }
-.inv-einheit { color: var(--tinte-weich); font-size: 15.5px; margin-top: 2px; } .inv-einheit b { color: var(--tinte); }
-.inv-letztes { align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; margin-top: 8px; font-size: 14px; color: var(--branche); background: var(--branche-hell); border-radius: 8px; padding: 4px 10px; }
+.inv-koerper h2 { font-size: calc(25rem / 17); letter-spacing: -.02em; line-height: 1.15; color: var(--tinte); overflow-wrap: break-word; hyphens: auto; }
+.inv-einheit { color: var(--tinte-weich); font-size: calc(15.5rem / 17); margin-top: 2px; } .inv-einheit b { color: var(--tinte); }
+.inv-letztes { align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; margin-top: 8px; font-size: calc(14rem / 17); color: var(--branche); background: var(--branche-hell); border-radius: 8px; padding: 4px 10px; }
 .inv-letztes .sym { width: 16px; height: 16px; }
 .inv-grosszahl { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 8px; }
-.inv-grosszahl button { width: 76px; height: 76px; border-radius: 50%; border: 2px solid var(--holz); background: var(--weiss); font-size: 36px; line-height: 1; flex: none; padding: 0; color: var(--tinte); }
+.inv-grosszahl button { width: 76px; height: 76px; border-radius: 50%; border: 2px solid var(--holz); background: var(--weiss); font-size: calc(36rem / 17); line-height: 1; flex: none; padding: 0; color: var(--tinte); }
 .inv-grosszahl button.plus { background: var(--salbei-tief); color: var(--weiss); border-color: var(--salbei-tief); box-shadow: var(--schatten-knopf); }
-.inv-mitte { text-align: center; min-width: 0; } .inv-mitte b { display: block; font-size: 52px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
-.inv-mitte small { color: var(--tinte-weich); font-size: 15px; }
+.inv-mitte { text-align: center; min-width: 0; } .inv-mitte b { display: block; font-size: calc(52rem / 17); font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.inv-mitte small { color: var(--tinte-weich); font-size: calc(15rem / 17); }
 .inv-teilwahl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 14px; background: var(--papier-tief); padding: 4px; border-radius: 12px; }
-.inv-teilwahl button { min-height: 46px; border: 0; border-radius: 9px; background: transparent; font-weight: 750; font-size: 16px; color: var(--tinte-weich); padding: 0 4px; }
+.inv-teilwahl button { min-height: 46px; border: 0; border-radius: 9px; background: transparent; font-weight: 750; font-size: calc(16rem / 17); color: var(--tinte-weich); padding: 0 4px; }
 .inv-teilwahl button.an { background: var(--weiss); color: var(--kupfer-dunkel); box-shadow: 0 1px 4px rgba(31,42,36,.15); }
-.inv-teilhinweis { font-size: 13.5px; color: var(--tinte-weich); margin-top: 6px; text-align: center; }
-.inv-wertzeile { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--papier-tief); font-size: 15.5px; color: var(--tinte-weich); }
-.inv-wertzeile b { color: var(--eigen); font-size: 18px; font-variant-numeric: tabular-nums; } .inv-wertzeile b.fehlt { color: var(--geschaetzt-text); font-size: 15.5px; }
+.inv-teilhinweis { font-size: calc(13.5rem / 17); color: var(--tinte-weich); margin-top: 6px; text-align: center; }
+.inv-wertzeile { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--papier-tief); font-size: calc(15.5rem / 17); color: var(--tinte-weich); }
+.inv-wertzeile b { color: var(--eigen); font-size: calc(18rem / 17); font-variant-numeric: tabular-nums; } .inv-wertzeile b.fehlt { color: var(--geschaetzt-text); font-size: calc(15.5rem / 17); }
 .inv-karteseite > .leise { align-self: center; }
 /* Ergebnis A–E */
 .inhalt.inv-ergebnis { gap: 12px; }
 .karte.inv-zaehler { background: linear-gradient(156deg, var(--salbei-tief), #395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); gap: 2px; }
-.inv-zaehler .lbl { font-size: 14px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #E6EBDD; }
-.inv-zaehler .riesig { font-size: clamp(36px, 11vw, 46px); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.karte.inv-zaehler small { color: #E6EBDD; font-size: 15px; } .inv-delta { color: #C7F2D0; font-weight: 700; white-space: nowrap; }
-.inv-was { margin: -2px 0 4px; padding: 10px 12px; border-radius: 0 10px 10px 0; border-left: 4px solid var(--glut); background: #F6E6D6; color: var(--tinte); font-size: 15px; line-height: 1.45; }
+.inv-zaehler .lbl { font-size: calc(14rem / 17); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #E6EBDD; }
+.inv-zaehler .riesig { font-size: clamp(calc(36rem / 17), 11vw, calc(46rem / 17)); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.karte.inv-zaehler small { color: #E6EBDD; font-size: calc(15rem / 17); } .inv-delta { color: #C7F2D0; font-weight: 700; white-space: nowrap; }
+.inv-was { margin: -2px 0 4px; padding: 10px 12px; border-radius: 0 10px 10px 0; border-left: 4px solid var(--glut); background: #F6E6D6; color: var(--tinte); font-size: calc(15rem / 17); line-height: 1.45; }
 .inv-was b { color: var(--kupfer-dunkel); }
-.inv-ue { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tinte-weich); margin: 8px 0 -2px; }
+.inv-ue { font-size: calc(13rem / 17); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tinte-weich); margin: 8px 0 -2px; }
 .karte.inv-rechnung { gap: 0; padding: 8px 16px; }
-.inv-z { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--papier-tief); font-size: 16px; }
+.inv-z { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--papier-tief); font-size: calc(16rem / 17); }
 .inv-z span { color: var(--tinte-weich); min-width: 0; } .inv-z span em { font-style: normal; display: inline-block; width: 20px; font-weight: 800; color: var(--tinte); }
 .inv-z b { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .inv-z.summe { border-bottom: 0; border-top: 2px solid var(--tinte); margin-top: 2px; font-weight: 800; } .inv-z.summe span { color: var(--tinte); }
-.inv-belege p { color: var(--geschaetzt-text); font-size: 15px; }
+.inv-belege p { color: var(--geschaetzt-text); font-size: calc(15rem / 17); }
 .karte.inv-vergleich { gap: 12px; }
-.inv-vbalken .kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 15px; margin-bottom: 5px; }
-.inv-vbalken .kopf span { min-width: 0; } .inv-vbalken .kopf b { font-size: 18px; white-space: nowrap; font-variant-numeric: tabular-nums; } .inv-vbalken .kopf b.rot { color: var(--muell); }
+.inv-vbalken .kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: calc(15rem / 17); margin-bottom: 5px; }
+.inv-vbalken .kopf span { min-width: 0; } .inv-vbalken .kopf b { font-size: calc(18rem / 17); white-space: nowrap; font-variant-numeric: tabular-nums; } .inv-vbalken .kopf b.rot { color: var(--muell); }
 .inv-bahn { height: 16px; border-radius: 8px; background: var(--papier-tief); overflow: hidden; } .inv-bahn i { display: block; height: 100%; border-radius: 8px; }
-.inv-klein { color: var(--tinte-weich); font-size: 13.5px; }
+.inv-klein { color: var(--tinte-weich); font-size: calc(13.5rem / 17); }
 .inv-luecke { background: var(--muell-hell); border: 2px solid var(--muell); border-radius: var(--radius); padding: 14px 16px; }
-.inv-luecke b.gross { display: block; font-size: 22px; color: var(--muell); letter-spacing: -.02em; line-height: 1.2; }
+.inv-luecke b.gross { display: block; font-size: calc(22rem / 17); color: var(--muell); letter-spacing: -.02em; line-height: 1.2; }
 .inv-luecke.gut { background: var(--eigen-hell); border-color: var(--eigen); } .inv-luecke.gut b.gross { color: var(--eigen); }
 .inv-aufteilung { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0 6px; background: var(--weiss); }
 .inv-aufteilung i.muell, .inv-legende i.muell { background: var(--muell); }
 .inv-aufteilung i.rest { flex: 1; background: repeating-linear-gradient(45deg, #D9B3AC 0 6px, #EBCFCA 6px 12px); } .inv-legende i.rest { background: #D9B3AC; }
-.inv-legende { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--tinte); }
+.inv-legende { display: flex; flex-direction: column; gap: 4px; font-size: calc(14rem / 17); color: var(--tinte); }
 .inv-legende i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
 .inv-erste p { color: var(--tinte); }
 .inv-ergebnis > .leise { align-self: center; }
@@ -316,27 +316,27 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
   .inv-posten { padding: 10px 8px; }
   .gerichtbild.mini.inv-daumen { width: 44px; height: 44px; }
   .inv-auf { gap: 8px; }
-  .inv-text b { font-size: 15px; word-break: normal; overflow-wrap: break-word; }
+  .inv-text b { font-size: calc(15rem / 17); word-break: normal; overflow-wrap: break-word; }
   .inv-mini button { width: 44px; height: 44px; }
-  .inv-mini .wert { min-width: 34px; font-size: 18px; }
+  .inv-mini .wert { min-width: 34px; font-size: calc(18rem / 17); }
   .inv-anbruch { margin-left: 52px; }
 }
 .monatbalken .nulllinie { stroke: var(--holz-tief); stroke-width: 1; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
 .zielkarte.halb .riesig { color: var(--salbei-tief); }
-.zieltempo { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+.zieltempo { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 999px; font-size: calc(14rem / 17); font-weight: 700; }
 .zieltempo.gut { background: var(--eigen-hell); color: var(--eigen); } .zieltempo.knapp { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
 .werabhakt { margin: 4px 0 8px; } .werabhakt small { color: var(--tinte-weich); }
-.unterschrift { display: flex; gap: 10px; align-items: flex-end; margin: 16px 0; font-size: 14px; } .unterschrift .linie { flex: 1; border-bottom: 1px solid var(--tinte); height: 24px; }
+.unterschrift { display: flex; gap: 10px; align-items: flex-end; margin: 16px 0; font-size: calc(14rem / 17); } .unterschrift .linie { flex: 1; border-bottom: 1px solid var(--tinte); height: 24px; }
 .vk-zeile.minus span:last-child { color: var(--rot); font-weight: 800; }
 /* Selbst-gemacht-Kacheln: Auswahl mit Haken sichtbar (Nachtester 15.10.) */
 .kacheln .kachel.an { position: relative; outline: 3px solid var(--eigen); outline-offset: -3px; }
-.kacheln .kachel.an::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: var(--eigen); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.kacheln .kachel.an::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: var(--eigen); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: calc(15rem / 17); }
 /* Kühlliste: lange Namen umbrechen statt überlappen */
 .zeileknopf > span:not(.pfeil) b { overflow-wrap: anywhere; }
 /* 18 Sprachen (15.10.): Sprachwahl als kompaktes Raster, Rechts-nach-links für Arabisch und Persisch */
 .kacheln:has(.sprachkachel) { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .kachel.sprachkachel { min-height: 56px; padding: 10px 12px; align-items: flex-start; justify-content: center; text-align: start; }
-.kachel.sprachkachel b { font-size: 16px; }
+.kachel.sprachkachel b { font-size: calc(16rem / 17); }
 [dir="rtl"] .appleiste .menueknopf { left: auto; right: 8px; }
 [dir="rtl"] .appleiste .leiste-rechts { right: auto; left: 16px; }
 [dir="rtl"] .pfeil, [dir="rtl"] .sym-richtung { transform: scaleX(-1); display: inline-block; }
@@ -347,3 +347,6 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 [dir="rtl"] .fab { right: auto; left: 16px; }
 /* Rechts-nach-links: Zahlen mit € und ≈ als eigenen Block, damit sie nicht verdreht erscheinen */
 [dir="rtl"] b, [dir="rtl"] .riesig, [dir="rtl"] .wert, [dir="rtl"] .vk-preis, [dir="rtl"] .monatzahl b, [dir="rtl"] .gross { unicode-bidi: plaintext; }
+
+/* W2-U: Müll-Schnellmengen 1/2/5 mindestens 44 px breit (vorher 41) */
+.mengekarte .chips .chip { min-width: 44px; }

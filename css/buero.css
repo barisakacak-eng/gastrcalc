@@ -7,21 +7,21 @@
 /* Kopfleiste: „‹ Laden“ · Titel */
 .b-leiste { position: sticky; top: 0; z-index: 30; display: grid; grid-template-columns: minmax(88px, auto) 1fr minmax(88px, auto); align-items: center; min-height: 56px;
   padding: calc(env(safe-area-inset-top, 0px) + 4px) 8px 4px; background: var(--b-grund); border-bottom: 1px solid var(--holz); }
-.b-zurueck { display: inline-flex; align-items: center; gap: 2px; min-height: 48px; padding: 0 8px 0 2px; border: 0; background: none; color: var(--salbei-tief) !important; font-weight: 650; font-size: 15px; white-space: nowrap; border-radius: 12px; }
+.b-zurueck { display: inline-flex; align-items: center; gap: 2px; min-height: 48px; padding: 0 8px 0 2px; border: 0; background: none; color: var(--salbei-tief) !important; font-weight: 650; font-size: calc(15rem / 17); white-space: nowrap; border-radius: 12px; }
 .b-zurueck .sym { width: 22px; height: 22px; }
-.b-titel { justify-self: center; font-weight: 750; font-size: 17px; }
+.b-titel { justify-self: center; font-weight: 750; font-size: calc(17rem / 17); }
 
 .b-inhalt { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 32px; max-width: 640px; width: 100%; margin: 0 auto; }
-.b-abschnitt { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-weich); margin: 8px 4px -4px; }
+.b-abschnitt { font-size: calc(12rem / 17); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--tinte-weich); margin: 8px 4px -4px; }
 .buero .karte { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); padding: 0; gap: 0; }
 .buero .zahl { font-variant-numeric: var(--zahlen); white-space: nowrap; }
-.b-leise { color: var(--tinte-weich); font-size: 14px; line-height: 1.45; margin: 0; }
+.b-leise { color: var(--tinte-weich); font-size: calc(14rem / 17); line-height: 1.45; margin: 0; }
 .b-fehler { color: var(--rot); font-weight: 650; margin: 0; }
 
 /* Offen: Chips */
 .b-offen { display: flex; gap: 8px; flex-wrap: wrap; }
 .b-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 12px; border-radius: 12px; background: var(--weiss); border: 1px solid var(--holz);
-  font-size: 13.5px; font-weight: 650; text-align: left; max-width: 100%; }
+  font-size: calc(13.5rem / 17); font-weight: 650; text-align: left; max-width: 100%; }
 .b-chip span { overflow-wrap: anywhere; }
 .b-chip .b-ring { flex: none; }
 .b-punkt { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; background: var(--weggelassen); }
@@ -30,8 +30,8 @@
 /* Ordner-Kacheln */
 .b-ordner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
 .b-ordnerkachel { padding: 12px 9px !important; display: flex !important; flex-direction: column; align-items: flex-start; gap: 10px !important; min-height: 132px; text-align: left; }
-.b-ordnerkachel b { font-size: 14px; line-height: 1.2; hyphens: manual; overflow-wrap: break-word; letter-spacing: -.01em; }
-.b-ordnerkachel small { font-size: 12.5px; color: var(--tinte-weich); display: flex; align-items: center; gap: 5px; margin-top: auto; }
+.b-ordnerkachel b { font-size: calc(14rem / 17); line-height: 1.2; hyphens: manual; overflow-wrap: break-word; letter-spacing: -.01em; }
+.b-ordnerkachel small { font-size: calc(12.5rem / 17); color: var(--tinte-weich); display: flex; align-items: center; gap: 5px; margin-top: auto; }
 .b-ks { width: 42px; height: 42px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--papier); color: var(--salbei-tief); }
 .b-ks.amt { background: var(--eigen-hell); color: var(--eigen); }
 .b-ks.steuer { background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); }
@@ -45,8 +45,8 @@
 button.b-zeile:active { background: var(--papier); }
 .b-zs { width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--papier); color: var(--tinte-weich); }
 .b-zs .sym { width: 20px; height: 20px; }
-.b-zt { flex: 1; min-width: 0; } .b-zt b { display: block; font-size: 15px; font-weight: 650; }
-.b-zt small { display: block; color: var(--tinte-weich); font-size: 13px; white-space: normal; overflow-wrap: anywhere; }
+.b-zt { flex: 1; min-width: 0; } .b-zt b { display: block; font-size: calc(15rem / 17); font-weight: 650; }
+.b-zt small { display: block; color: var(--tinte-weich); font-size: calc(13rem / 17); white-space: normal; overflow-wrap: anywhere; }
 .b-pfeil { width: 18px !important; height: 18px !important; color: var(--holz-tief); flex: none; }
 .b-wert { font-weight: 750; font-variant-numeric: var(--zahlen); white-space: nowrap; color: var(--tinte-weich); }
 .b-wert.plus { color: var(--eigen); } .b-wert.minus { color: var(--rot); }
@@ -56,14 +56,14 @@ button.b-zeile:active { background: var(--papier); }
 .b-minikachel { padding: 12px 10px !important; display: flex !important; flex-direction: column; align-items: flex-start; gap: 8px !important; min-height: 86px; text-align: left; }
 .b-minikachel .b-ks { width: 34px; height: 34px; border-radius: 10px; }
 .b-minikachel .b-ks .sym { width: 20px; height: 20px; }
-.b-minikachel b { font-size: 13.5px; line-height: 1.2; overflow-wrap: anywhere; hyphens: manual; }
+.b-minikachel b { font-size: calc(13.5rem / 17); line-height: 1.2; overflow-wrap: anywhere; hyphens: manual; }
 
 /* Sperre (Büro-Code) */
 .b-sperre { align-items: center; text-align: center; justify-content: center; gap: 16px; padding-top: 48px; }
-.b-sperre h1 { font-size: 22px; margin: 0; }
+.b-sperre h1 { font-size: calc(22rem / 17); margin: 0; }
 .b-sperrsym { width: 72px; height: 72px; border-radius: 22px; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; }
 .b-sperrsym .sym { width: 36px; height: 36px; }
-.b-codefeld { width: 100%; max-width: 240px; min-height: 64px; text-align: center; font: inherit; font-size: 32px; letter-spacing: .5em; padding: 8px 0 8px .5em; border: 2px solid var(--holz); border-radius: var(--radius); background: var(--weiss); color: var(--tinte); }
+.b-codefeld { width: 100%; max-width: 240px; min-height: 64px; text-align: center; font: inherit; font-size: calc(32rem / 17); letter-spacing: .5em; padding: 8px 0 8px .5em; border: 2px solid var(--holz); border-radius: var(--radius); background: var(--weiss); color: var(--tinte); }
 .b-codefeld:focus { outline: 3px solid var(--fokus); outline-offset: 2px; border-color: var(--fokus); }
 .b-haupt { min-height: 60px; display: flex !important; align-items: center; justify-content: center; gap: 8px; color: var(--tinte) !important; box-shadow: var(--schatten-knopf); border: 0; }
 .b-haupt .sym { width: 22px; height: 22px; }
@@ -73,7 +73,7 @@ button.b-zeile:active { background: var(--papier); }
 .b-blatt-hinten { position: fixed; inset: 0; z-index: 60; background: rgba(31,42,36,.42); }
 .b-blatt { position: fixed; left: 0; right: 0; bottom: 0; z-index: 61; background: var(--papier); border-radius: 28px 28px 0 0; padding: 10px 16px calc(env(safe-area-inset-bottom, 0px) + 20px);
   box-shadow: 0 -12px 40px rgba(31,42,36,.25); display: flex; flex-direction: column; gap: 12px; max-width: 640px; margin: 0 auto; }
-.b-blatt h2 { margin: 0; font-size: 20px; }
+.b-blatt h2 { margin: 0; font-size: calc(20rem / 17); }
 .b-griff { width: 40px; height: 5px; border-radius: 3px; background: var(--holz-tief); margin: 0 auto 4px; }
 .b-feld { display: flex; flex-direction: column; gap: 6px; align-items: center; font-weight: 650; }
 .b-blatt .b-codefeld { max-width: none; }
@@ -82,41 +82,41 @@ button.b-zeile:active { background: var(--papier); }
 .b-ordnerkopf { display: flex; gap: 14px; align-items: center; padding: 2px 2px 0; }
 .b-ordnerkopf .b-ks { width: 56px; height: 56px; border-radius: 16px; }
 .b-ordnerkopf .b-ks .sym { width: 30px; height: 30px; }
-.b-ordnerkopf b { font-size: 22px; display: block; letter-spacing: -.01em; line-height: 1.15; }
-.b-ordnerkopf small { color: var(--tinte-weich); font-size: 14px; }
+.b-ordnerkopf b { font-size: calc(22rem / 17); display: block; letter-spacing: -.01em; line-height: 1.15; }
+.b-ordnerkopf small { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 .b-segment { display: flex; background: var(--papier-tief); border-radius: 12px; padding: 4px; gap: 4px; }
-.b-segment button { flex: 1; min-height: 44px; border: 0; background: none; border-radius: 9px; font-weight: 700; font-size: 14px; color: var(--tinte-weich) !important; }
+.b-segment button { flex: 1; min-height: 44px; border: 0; background: none; border-radius: 9px; font-weight: 700; font-size: calc(14rem / 17); color: var(--tinte-weich) !important; }
 .b-segment button.an { background: var(--salbei-tief); color: var(--weiss) !important; }
 .b-frei { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.b-frei label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 650; color: var(--tinte-weich); min-width: 0; }
+.b-frei label { display: flex; flex-direction: column; gap: 4px; font-size: calc(13rem / 17); font-weight: 650; color: var(--tinte-weich); min-width: 0; }
 .b-frei input { min-height: 48px; width: 100%; min-width: 0; }
 .b-monat { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); padding: 6px; }
-.b-monat b { font-size: 17px; }
+.b-monat b { font-size: calc(17rem / 17); }
 .b-rund { width: 48px; height: 48px; border-radius: 12px; border: 0; background: var(--papier); color: var(--salbei-tief) !important; display: inline-flex; align-items: center; justify-content: center; }
 .b-rund:disabled { opacity: .35; }
 .b-stand { display: flex !important; flex-direction: row !important; align-items: center; gap: 14px !important; padding: 14px 16px !important; }
 .b-stand .b-ring { flex: none; }
-.b-stand b { font-size: 20px; display: block; } .b-stand small { color: var(--tinte-weich); font-size: 13.5px; display: block; }
+.b-stand b { font-size: calc(20rem / 17); display: block; } .b-stand small { color: var(--tinte-weich); font-size: calc(13.5rem / 17); display: block; }
 .b-status { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .b-status.ok { background: var(--eigen-hell); color: var(--eigen); }
 .b-status.ok .sym { width: 16px; height: 16px; stroke-width: 2.6; }
-.b-status.luecke { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); font-weight: 800; font-size: 15px; }
-.b-mini { flex: none; min-height: 36px; min-width: 48px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--holz); background: var(--weiss); color: var(--salbei-tief) !important; font-size: 12px !important; font-weight: 800; letter-spacing: .04em; }
+.b-status.luecke { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); font-weight: 800; font-size: calc(15rem / 17); }
+.b-mini { flex: none; min-height: 44px; /* W2-U: Tippfläche mind. 44 px (vorher 36) */ min-width: 48px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--holz); background: var(--weiss); color: var(--salbei-tief) !important; font-size: calc(12rem / 17) !important; font-weight: 800; letter-spacing: .04em; }
 .b-unten { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
 .b-knopfreihe { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.b-knopfreihe .knopf { min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; font-size: 16px; border-width: 1px; }
+.b-knopfreihe .knopf { min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; font-size: calc(16rem / 17); border-width: 1px; }
 .b-knopfreihe .sym { width: 20px; height: 20px; }
 
 /* Belehrungen (aufgeklappt) */
 .b-belehrung { padding: 4px 14px 14px; border-bottom: 1px solid var(--papier-tief); display: flex; flex-direction: column; gap: 10px; background: #FCF8F1; }
 .b-person { background: var(--weiss); border: 1px solid var(--holz); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
 .b-person-kopf { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.b-person small { color: var(--tinte-weich); font-size: 13px; white-space: normal; }
+.b-person small { color: var(--tinte-weich); font-size: calc(13rem / 17); white-space: normal; }
 .b-person-eingabe { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: center; }
 .b-person-eingabe input { grid-column: 1 / -1; }
 .b-person-eingabe input { min-height: 48px; min-width: 0; width: 100%; padding: 8px; }
-.b-person-eingabe .knopf { min-height: 48px; padding: 8px 10px; font-size: 13.5px; border-width: 1px; }
-.b-pille { border-radius: 999px; padding: 3px 10px; font-size: 12.5px; font-weight: 800; background: var(--eigen-hell); color: var(--eigen); white-space: nowrap; }
+.b-person-eingabe .knopf { min-height: 48px; padding: 8px 10px; font-size: calc(13.5rem / 17); border-width: 1px; }
+.b-pille { border-radius: 999px; padding: 3px 10px; font-size: calc(12.5rem / 17); font-weight: 800; background: var(--eigen-hell); color: var(--eigen); white-space: nowrap; }
 .b-pille.bald { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
 .b-pille.ueberfaellig, .b-pille.fehlt { background: var(--muell-hell); color: var(--rot); }
 .b-person-neu { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
@@ -126,7 +126,7 @@ button.b-zeile:active { background: var(--papier); }
 /* Vorschau des Dokuments */
 .b-vorschau { position: fixed; inset: 0; z-index: 70; background: var(--tinte); display: flex; flex-direction: column; }
 .b-vorschau-leiste { display: flex; gap: 8px; padding: calc(env(safe-area-inset-top, 0px) + 8px) 10px 8px; background: var(--b-grund); }
-.b-vorschau-leiste .knopf { flex: 1; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; font-size: 15px; border-width: 1px; }
+.b-vorschau-leiste .knopf { flex: 1; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; font-size: calc(15rem / 17); border-width: 1px; }
 .b-vorschau-leiste .knopf.glut { color: var(--tinte); }
 .b-vorschau-leiste .sym { width: 18px; height: 18px; }
 .b-vorschau-dok { flex: 1; width: 100%; border: 0; background: #fff; }

@@ -25,7 +25,7 @@
 /* 2 Laden: Name oben, Arten als 3er-Raster mit Foto */
 .s2name { font-size: 1.2rem; font-weight: 700; min-height: 56px; }
 .s2arten { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.s2arten .kachel.fotokachel b { font-size: 0.85rem; padding: 6px 8px 8px; line-height: 1.2; hyphens: auto; }
+.s2arten .kachel.fotokachel b { font-size: 0.85rem; padding: 6px 8px 8px; line-height: 1.2; hyphens: manual; word-break: normal; overflow-wrap: anywhere; } /* W2-U: keine Trennung mitten im Wort; anywhere nur, wenn ein Wort gar nicht passt */
 .s2arten .kachelfoto { aspect-ratio: 1 / 1; }
 .s2arten .kachelfoto.pikto { padding: 12px; }
 
@@ -56,7 +56,7 @@
 .s2kuehlzeile.an { border-color: var(--salbei-tief); }
 .s2kuehlzeile img { width: 60px; height: 60px; border-radius: var(--radius-klein); object-fit: cover; background: var(--salbei-hell); }
 .s2kuehlzeile img.pikto { object-fit: contain; padding: 8px; box-sizing: border-box; }
-.s2kuehlzeile b { font-size: 1rem; line-height: 1.2; min-width: 0; overflow-wrap: normal; word-break: normal; hyphens: auto; }
+.s2kuehlzeile b { font-size: 1rem; line-height: 1.2; min-width: 0; overflow-wrap: anywhere; word-break: normal; hyphens: manual; } /* W2-U: kein „Kühlu-ng“ */
 .s2zaehler { display: flex; align-items: center; gap: 4px; }
 .s2zaehler button {
   width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--holz); background: var(--weiss);
@@ -84,3 +84,12 @@
 .s2haken svg { width: 60px; height: 60px; stroke-width: 3; }
 .s2ring { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--tinte-weich); }
 .s2los { min-height: 64px; font-size: 1.15rem; }
+
+/* W2-U: Große Handy-Schrift. Container-Abfrage in em = Schriftgröße des Inhalts (17px bei Standardschrift).
+   16em = 272px: greift bei Standardschrift nie (auch nicht auf 320-px-Handys), bei 200 % (34px = 544px) immer. */
+.weg-schnell .inhalt { container-type: inline-size; }
+@container (max-width: 16em) {
+  .s2arten { grid-template-columns: repeat(2, 1fr); }
+  .s2kuehlzeile { grid-template-columns: 60px 1fr; }
+  .s2kuehlzeile .s2zaehler { grid-column: 1 / -1; justify-self: end; }
+}

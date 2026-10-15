@@ -3,11 +3,11 @@
 /* ---------- Müll: Foto-Raster ---------- */
 .muell1 { gap: 12px; padding-top: 14px; }
 .muellkopf1 { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 4px 0; }
-.muellkopf1 h1 { margin: 0; font-size: 28px; letter-spacing: -.02em; font-weight: 800; color: var(--tinte); }
-.heutewert { display: inline-flex; align-items: baseline; gap: 6px; background: var(--muell-hell); color: var(--muell); padding: 7px 13px; border-radius: 999px; font-weight: 800; font-size: 15px; white-space: nowrap; }
-.heutewert small { color: var(--muell); font-weight: 650; font-size: 13px; }
+.muellkopf1 h1 { margin: 0; font-size: calc(28rem / 17); letter-spacing: -.02em; font-weight: 800; color: var(--tinte); }
+.heutewert { display: inline-flex; align-items: baseline; gap: 6px; background: var(--muell-hell); color: var(--muell); padding: 7px 13px; border-radius: 999px; font-weight: 800; font-size: calc(15rem / 17); white-space: nowrap; }
+.heutewert small { color: var(--muell); font-weight: 650; font-size: calc(13rem / 17); }
 .heutewert .zahl { font-variant-numeric: var(--zahlen); }
-.nachband { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border-radius: var(--radius-klein); padding: 6px 6px 6px 12px; font-weight: 650; font-size: 14px; }
+.nachband { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border-radius: var(--radius-klein); padding: 6px 6px 6px 12px; font-weight: 650; font-size: calc(14rem / 17); }
 .nachband .leise { min-height: 44px; }
 
 .muellraster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
@@ -19,19 +19,19 @@
 .muellraster .ware .gerichtbild.mini { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 0; margin: 0; display: block; background: var(--salbei-hell); }
 .muellraster .ware .gerichtbild.mini.pikto { object-fit: contain; padding: 14px; }
 .ware .wt { display: block; padding: 7px 8px 9px; min-height: 48px; }
-.ware .wt b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 13.5px; line-height: 1.2; font-weight: 700; color: var(--tinte); overflow: hidden; overflow-wrap: anywhere; hyphens: auto; }
-.ware .wt small { display: block; font-size: 12.5px; color: var(--tinte-weich); font-variant-numeric: var(--zahlen); white-space: nowrap; }
+.ware .wt b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: calc(13.5rem / 17); line-height: 1.2; font-weight: 700; color: var(--tinte); overflow: hidden; overflow-wrap: anywhere; hyphens: auto; }
+.ware .wt small { display: block; font-size: calc(12.5rem / 17); color: var(--tinte-weich); font-variant-numeric: var(--zahlen); white-space: nowrap; }
 .ware.frisch { outline: 3px solid var(--eigen); outline-offset: -3px; }
 .ware .haken { position: absolute; top: 7px; right: 7px; width: 28px; height: 28px; border-radius: 50%; background: var(--eigen); color: #fff; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; animation: muell1-plopp 220ms ease-out; }
 .ware .haken .sym { width: 17px; height: 17px; stroke-width: 3; }
-.ware .zaehler { position: absolute; top: 7px; left: 7px; background: rgba(255,253,248,.95); border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 800; color: var(--muell); pointer-events: none; }
+.ware .zaehler { position: absolute; top: 7px; left: 7px; background: rgba(255,253,248,.95); border-radius: 999px; padding: 2px 8px; font-size: calc(12rem / 17); font-weight: 800; color: var(--muell); pointer-events: none; }
 /* „…" = Menge ändern: kleiner Kreis unten rechts auf dem Foto, Tippfläche 48 px */
 .ware-mehr { position: absolute; right: 0; top: calc(100cqw - 48px); width: 48px; height: 48px; border: 0; background: transparent; padding: 0; font: inherit; display: flex; align-items: center; justify-content: center; }
-.ware-mehr::before { content: "•••"; width: 30px; height: 22px; border-radius: 999px; background: rgba(255,253,248,.94); color: var(--tinte); font-size: 9px; letter-spacing: 1px; line-height: 22px; text-align: center; box-shadow: 0 1px 4px rgba(31,42,36,.18); }
+.ware-mehr::before { content: "•••"; width: 30px; height: 22px; border-radius: 999px; background: rgba(255,253,248,.94); color: var(--tinte); font-size: calc(9rem / 17); letter-spacing: 1px; line-height: calc(22rem / 17); text-align: center; box-shadow: 0 1px 4px rgba(31,42,36,.18); }
 .ware-mehr { color: transparent; }
 .ware.andere { all: unset; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 140px;
   border: 2px dashed var(--holz-tief); border-radius: var(--radius); background: transparent; color: var(--tinte-weich); cursor: pointer; }
-.ware.andere b { font-size: 13.5px; color: var(--tinte); }
+.ware.andere b { font-size: calc(13.5rem / 17); color: var(--tinte); }
 .ware.andere.einzeln { width: 100%; min-height: 72px; flex-direction: row; }
 .ware.andere .rund { width: 48px; height: 48px; border-radius: 50%; background: var(--weiss); border: 1px solid var(--holz); display: inline-flex; align-items: center; justify-content: center; color: var(--salbei-tief); }
 @keyframes muell1-plopp { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -43,9 +43,9 @@
 .muelltoast .ok { width: 32px; height: 32px; border-radius: 50%; background: var(--eigen); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .muelltoast .ok .sym { width: 18px; height: 18px; stroke-width: 3; }
 .muelltoast div { flex: 1; min-width: 0; }
-.muelltoast b { display: block; font-size: 15px; line-height: 1.25; overflow-wrap: anywhere; }
-.muelltoast small { opacity: .75; font-size: 13px; }
-.muelltoast .rueck { border: 0; background: transparent; color: #F2C49A; font: inherit; font-weight: 800; font-size: 15px; min-height: 48px; padding: 0 10px; }
+.muelltoast b { display: block; font-size: calc(15rem / 17); line-height: 1.25; overflow-wrap: anywhere; }
+.muelltoast small { opacity: .75; font-size: calc(13rem / 17); }
+.muelltoast .rueck { border: 0; background: transparent; color: #F2C49A; font: inherit; font-weight: 800; font-size: calc(15rem / 17); min-height: 48px; padding: 0 10px; }
 @keyframes muell1-hoch { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .muelltoast, .ware .haken { animation: none; } }
 
@@ -53,8 +53,8 @@
 .muellform .auswahlsym .gerichtbild.mini { width: 56px; height: 56px; aspect-ratio: 1; margin: 0; border-radius: 12px; }
 .mengekarte { gap: 12px; }
 .mengekarte .stepper .wert { display: flex; flex-direction: column; align-items: center; line-height: 1.05; }
-.mengekarte .stepper .wert input { font-size: 44px; width: 5ch; font: inherit; font-weight: 800; text-align: center; border: 0; background: transparent; color: var(--tinte); }
-.mengekarte .stepper .wert small { font-size: 15px; font-weight: 650; color: var(--tinte-weich); }
+.mengekarte .stepper .wert input { font-size: calc(44rem / 17); width: 5ch; font: inherit; font-weight: 800; text-align: center; border: 0; background: transparent; color: var(--tinte); }
+.mengekarte .stepper .wert small { font-size: calc(15rem / 17); font-weight: 650; color: var(--tinte-weich); }
 .personalkachel { font: inherit; }
 .personalkachel.an { border-color: var(--eigen); }
 .personalkachel.an .kachelsym { background: var(--eigen-hell); color: var(--eigen); }
@@ -73,10 +73,10 @@
 .personalstart { gap: 14px; padding-top: 16px; }
 .personalkopf { display: flex; align-items: center; gap: 12px; padding: 4px 4px 2px; }
 .personalkopf > div { flex: 1; min-width: 0; }
-.personalkopf b { display: block; font-size: 22px; letter-spacing: -.01em; color: var(--tinte); }
-.personalkopf small { color: var(--tinte-weich); font-size: 14px; }
+.personalkopf b { display: block; font-size: calc(22rem / 17); letter-spacing: -.01em; color: var(--tinte); }
+.personalkopf small { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 .personwechsel { min-height: 44px; }
-.avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--branche-hell); color: var(--branche); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; flex: none; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--branche-hell); color: var(--branche); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: calc(17rem / 17); flex: none; }
 
 .riesenkachel { all: unset; box-sizing: border-box; position: relative; height: 168px; border-radius: var(--radius-gross); overflow: hidden; display: flex; align-items: flex-end; color: #fff;
   box-shadow: var(--schatten-karte); cursor: pointer; background: var(--salbei-tief); -webkit-tap-highlight-color: transparent; transition: transform var(--bewegung); }
@@ -86,8 +86,8 @@
 .riesenkachel::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(31,42,36,0) 30%, rgba(31,42,36,.78)); }
 .riesenkachel .rt { position: relative; z-index: 1; padding: 16px 18px; display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
 .riesenkachel .rt .ks { width: 46px; height: 46px; border-radius: 14px; background: rgba(255,253,248,.95); display: inline-flex; align-items: center; justify-content: center; flex: none; }
-.riesenkachel .rt b { font-size: 24px; font-weight: 800; flex: 1; color: #fff; }
-.riesenkachel .pille { background: var(--rot); color: #fff; border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; }
+.riesenkachel .rt b { font-size: calc(24rem / 17); font-weight: 800; flex: 1; color: #fff; }
+.riesenkachel .pille { background: var(--rot); color: #fff; border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: calc(14rem / 17); display: inline-flex; align-items: center; }
 .riesenkachel .pille.ruhig { background: rgba(255,253,248,.95); color: var(--tinte); }
 .riesenkachel .pille .sym { width: 16px; height: 16px; stroke-width: 3; color: var(--eigen); }
 .riesenkachel.putz { background: radial-gradient(120% 120% at 100% 0%, #8FA27F 0%, var(--salbei) 40%, var(--salbei-tief) 100%); }
@@ -95,7 +95,7 @@
 .putzmuster { position: absolute; right: -18px; top: -18px; color: rgba(255,253,248,.16); }
 .putzmuster .sym { width: 150px; height: 150px; stroke-width: 1.4; }
 
-.personalfrage { margin: 8px 4px 0; font-size: 26px; font-weight: 800; letter-spacing: -.02em; color: var(--tinte); }
+.personalfrage { margin: 8px 4px 0; font-size: calc(26rem / 17); font-weight: 800; letter-spacing: -.02em; color: var(--tinte); }
 .personenraster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .personwahl { font: inherit; flex-direction: row; align-items: center; gap: 12px; min-height: 72px; text-align: left; border-width: 1px; box-shadow: var(--schatten-karte); color: var(--tinte); }
-.personwahl b { font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.personwahl b { font-size: calc(18rem / 17); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

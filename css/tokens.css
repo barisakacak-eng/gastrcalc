@@ -1,5 +1,8 @@
 /* Schrift Inter 4.1 (SIL OFL 1.1), lokal und gekürzt auf DE/TR/EN – keine Verbindung nach außen */
-@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../fonts/InterVariable-de-tr.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../fonts/InterVariable-de-tr.woff2") format("woff2");
+  /* W2-U: genau die Zeichen, die in der gekürzten Datei stecken (im Browser gemessen 15.10.2026). Alles andere nimmt sofort die Systemschrift. */
+  unicode-range: U+20-7E, U+A0-FF, U+11E-11F, U+130-131, U+15E-15F, U+2000-200A, U+2013-2014, U+2018-201E, U+2022, U+2026, U+2028-2029, U+202F,
+    U+2039-203A, U+205F, U+20AC, U+2191-2193, U+21BA, U+2212, U+2248, U+2264-2265, U+25B2, U+25BC, U+2713; }
 /* Sanji | Kräuter & Kupfer | 15.10.2026
    Vollständiger Ersatz der bisherigen Tokens. Alle bisherigen Namen bleiben.
    Schrift: lokale Systemschrift ohne Download, keine externe Verbindung. */
@@ -52,4 +55,13 @@
   --schrift: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --zahlen: tabular-nums lining-nums;
   --bewegung: 180ms;
+}
+
+
+/* W2-U: Sprachen, deren Buchstaben in der mitgelieferten Inter fehlen (Polnisch, Rumänisch, Bosnisch, Vietnamesisch,
+   Russisch, Ukrainisch, Bulgarisch, Griechisch): ganz in der Systemschrift setzen statt Buchstabe für Buchstabe zu mischen.
+   Greift für die ganze App (html lang) und für einzelne Elemente mit lang (z. B. Sprachwahl). Keine Schrift aus dem Netz. */
+[lang]:is(:lang(pl), :lang(ro), :lang(bs), :lang(vi), :lang(ru), :lang(uk), :lang(bg), :lang(el)) {
+  --schrift: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Arial, sans-serif;
+  font-family: var(--schrift);
 }

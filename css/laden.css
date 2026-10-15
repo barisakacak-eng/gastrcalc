@@ -14,9 +14,9 @@
 .ebene-kopf.buero { grid-template-columns: minmax(96px, auto) 1fr minmax(96px, auto); }
 .ebene-kopf.buero .ikonknopf { justify-self: end; }
 .zurueckzeile { display: inline-flex; align-items: center; gap: 2px; min-height: 48px; padding: 0 10px 0 4px; border: 0; background: transparent;
-  color: var(--salbei-tief); font: inherit; font-size: 16px; font-weight: 700; white-space: nowrap; justify-self: start; border-radius: 12px; }
+  color: var(--salbei-tief); font: inherit; font-size: calc(16rem / 17); font-weight: 700; white-space: nowrap; justify-self: start; border-radius: 12px; }
 .zurueckzeile .sym { width: 22px; height: 22px; }
-.kopftitel { justify-self: center; font-weight: 750; font-size: 17px; color: var(--tinte); }
+.kopftitel { justify-self: center; font-weight: 750; font-size: calc(17rem / 17); color: var(--tinte); }
 
 /* Personal: Schloss oben rechts. Ohne Code 2 Sekunden halten – der Ring füllt sich. */
 .ebene-kopf.personal .zurueckknopf { justify-self: start; }
@@ -34,10 +34,16 @@
   padding: 6px 4px calc(env(safe-area-inset-bottom, 0px) + 6px); background: var(--weiss); border-top: 1px solid var(--holz);
   box-shadow: 0 -6px 18px rgba(31,42,36,.06); }
 .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 58px; min-width: 0; padding: 2px 0;
-  border: 0; background: transparent; font: inherit; color: var(--tinte-weich); font-size: 12px; font-weight: 650; -webkit-tap-highlight-color: transparent; }
+  border: 0; background: transparent; font: inherit; color: var(--tinte-weich); font-size: calc(12rem / 17); font-weight: 650; -webkit-tap-highlight-color: transparent; }
 .tab .ik { position: relative; width: 56px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: background var(--bewegung); }
 .tab .sym { width: 24px; height: 24px; }
 .tab .tabname { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
+/* W2-U: Passt der Name nicht (große Schrift, lange Sprache), bleibt nur das Symbol – kein „Kü…“.
+   Trick: Flex-Zeile mit Höhe einer Textzeile. Vor dem Namen steht ein leeres Element ohne Breite;
+   ist der Name breiter als der Reiter, rutscht er in die zweite Zeile und wird weggeschnitten.
+   Vorlesen bleibt: der Text steht weiter im Knopf. */
+.tab .tabname { display: flex; flex-wrap: wrap; justify-content: center; width: 100%; height: 1.4em; height: 1lh; text-overflow: clip; align-content: flex-start; }
+.tab .tabname::before { content: ""; width: 0; height: 1.4em; height: 1lh; }
 .tab.an { color: var(--salbei-tief); font-weight: 750; }
 .tab.an .ik { background: var(--salbei-hell); }
 .tab .punkt { position: absolute; top: 0; right: 12px; width: 11px; height: 11px; border-radius: 50%; background: var(--rot); border: 2px solid var(--weiss); }
@@ -59,16 +65,16 @@ body.blatt-da { overflow: hidden; }
 .blattkopf { display: flex; align-items: center; gap: 12px; padding: 0 0 4px 4px; }
 .blattkopf .ladenbild { width: 48px; height: 48px; border-radius: 14px; object-fit: cover; background: var(--weiss); border: 1px solid var(--holz); flex: none; }
 .blattkopf > div { flex: 1; min-width: 0; }
-.blattkopf b { display: block; font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.blattkopf small { color: var(--tinte-weich); font-size: 14px; }
+.blattkopf b { display: block; font-size: calc(18rem / 17); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.blattkopf small { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 .blattkopf .ikonknopf { width: 48px; height: 48px; border: 0; background: transparent; color: var(--tinte-weich); border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; padding: 0; }
-.blattkopf.nur { padding-left: 0; } .blattkopf.nur b { font-size: 18px; }
+.blattkopf.nur { padding-left: 0; } .blattkopf.nur b { font-size: calc(18rem / 17); }
 
 .grosskacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .grosskacheln.drei > :first-child { grid-column: 1 / -1; min-height: 96px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; }
 .grosskachel { min-height: 118px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 12px;
   font: inherit; color: var(--tinte); text-align: start; cursor: pointer; }
-.grosskachel b { font-size: 17px; font-weight: 750; line-height: 1.2; }
+.grosskachel b { font-size: calc(17rem / 17); font-weight: 750; line-height: 1.2; }
 .grosskachel .ks { position: relative; width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .grosskachel .ks .sym { width: 26px; height: 26px; }
 .grosskachel .ks .punkt { position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border-radius: 50%; background: var(--rot); border: 2px solid var(--weiss); }
@@ -85,7 +91,7 @@ body.blatt-da { overflow: hidden; }
 
 .blattliste { display: flex; flex-direction: column; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); overflow: hidden; }
 .blattzeile { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 16px; border: 0; border-bottom: 1px solid var(--papier-tief);
-  background: transparent; font: inherit; font-size: 16px; color: var(--tinte); text-align: start; }
+  background: transparent; font: inherit; font-size: calc(16rem / 17); color: var(--tinte); text-align: start; }
 .blattzeile:last-child { border-bottom: 0; }
 .blattzeile span { flex: 1; min-width: 0; }
 .blattzeile.an { font-weight: 750; color: var(--salbei-tief); }
@@ -95,14 +101,14 @@ body.blatt-da { overflow: hidden; }
 /* Hilfe „?" */
 .hilfe-inhalt { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 4px 4px 6px; }
 .hilfe-inhalt .ks { width: 44px; height: 44px; border-radius: 12px; background: var(--salbei-hell); color: var(--salbei-tief); display: inline-flex; align-items: center; justify-content: center; }
-.hilfe-inhalt b { font-size: 20px; }
-.hilfe-inhalt p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--tinte); }
+.hilfe-inhalt b { font-size: calc(20rem / 17); }
+.hilfe-inhalt p { margin: 0; font-size: calc(16rem / 17); line-height: 1.5; color: var(--tinte); }
 
 /* Büro-Code */
 .pin-kopf { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding-top: 4px; }
 .pin-kopf .ks { width: 52px; height: 52px; border-radius: 16px; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; }
-.pin-kopf b { font-size: 20px; }
-.pin-meldung { min-height: 20px; font-size: 14px; color: var(--tinte-weich); font-weight: 600; }
+.pin-kopf b { font-size: calc(20rem / 17); }
+.pin-meldung { min-height: 20px; font-size: calc(14rem / 17); color: var(--tinte-weich); font-weight: 600; }
 .pin-meldung.fehler { color: var(--rot); }
 .pin-punkte { display: flex; justify-content: center; gap: 18px; margin: 6px 0 10px; }
 .pin-punkte i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--salbei-tief); }
@@ -110,9 +116,9 @@ body.blatt-da { overflow: hidden; }
 .pin-punkte.wackeln { animation: wackeln .35s; } .pin-punkte.wackeln i { border-color: var(--rot); }
 @keyframes wackeln { 0%, 100% { transform: none; } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 .pin-tasten { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 340px; width: 100%; margin: 0 auto; }
-.pintaste { min-height: 64px; border: 1px solid var(--holz); border-radius: 18px; background: var(--weiss); color: var(--tinte); font: inherit; font-size: 28px; font-weight: 700;
+.pintaste { min-height: 64px; border: 1px solid var(--holz); border-radius: 18px; background: var(--weiss); color: var(--tinte); font: inherit; font-size: calc(28rem / 17); font-weight: 700;
   font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--schatten-knopf); }
-.pintaste.leer { font-size: 15px; font-weight: 650; color: var(--tinte-weich); background: transparent; border-color: transparent; box-shadow: none; }
+.pintaste.leer { font-size: calc(15rem / 17); font-weight: 650; color: var(--tinte-weich); background: transparent; border-color: transparent; box-shadow: none; }
 .pintaste.weg { background: transparent; border-color: transparent; box-shadow: none; }
 .pintaste.weg .sym { width: 28px; height: 28px; }
 .buerocode h2 { display: flex; align-items: center; gap: 8px; } .buerocode h2 .sym { width: 20px; height: 20px; }
@@ -121,7 +127,7 @@ body.blatt-da { overflow: hidden; }
 .ebene-personal { gap: 14px; }
 .karte.riesenkachel-platz { flex-direction: row; justify-content: flex-start; min-height: 150px; border-radius: var(--radius-gross); display: flex; align-items: flex-end; gap: 12px; padding: 18px; font: inherit; color: var(--tinte); text-align: start; }
 .riesenkachel-platz .ks { width: 48px; height: 48px; border-radius: 14px; background: var(--salbei-hell); color: var(--salbei-tief); display: inline-flex; align-items: center; justify-content: center; }
-.riesenkachel-platz b { font-size: 24px; font-weight: 800; }
+.riesenkachel-platz b { font-size: calc(24rem / 17); font-weight: 800; }
 .ebene-buero .zeileknopf > .sym { width: 20px; height: 20px; color: var(--tinte-weich); flex: none; }
 .ebene-buero .karte:not(.buerocode) { padding: 4px 0; gap: 0; }
 .ebene-buero .zeileknopf { gap: 12px; border: 0; border-bottom: 1px solid var(--papier-tief); border-radius: 0; background: transparent; box-shadow: none; min-height: 56px; padding: 10px 16px; }
