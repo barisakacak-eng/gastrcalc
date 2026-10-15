@@ -22,7 +22,8 @@ export const FOTO = { "haehnchen-doener": "g-doener", "falafel-wrap": "g-falafel
 const NAME_FOTO = [[/adana|urfa|spie(ß|ss)/i, "g-adana", "g-koefte"], [/lasagne/i, "g-lasagne", "g-auflauf"], [/sucuk/i, "g-sucuk"], [/suppe|[çc]orba/i, "g-suppe"],
   [/reis|pilav/i, "g-reis"], [/gem[üu]se/i, "g-gemuese"], [/schnitzel/i, "g-fleischgericht"], [/fr[üu]hst[üu]ck/i, "g-fruehstueck"], [/kuchen|torte/i, "g-kuchen"],
   [/kaffee|espresso|cappuccino|latte/i, "g-kaffee"], [/eis\b|eisbecher/i, "g-eis"], [/bier|pils|radler/i, "g-bier"], [/ayran/i, "g-ayran"],
-  [/cola|fanta|sprite|limo|wasser|eistee|saft|schorle|tee\b|getr[äa]nk/i, "g-getraenk"], [/pommes|fries/i, "g-pommes"], [/falafel/i, "g-falafel"], [/salat/i, "g-salat"],
+  [/cola|fanta|sprite/i, "d-cola", "g-getraenk"], [/wasser|sprudel/i, "d-wasser", "g-getraenk"], [/limo|orange/i, "d-limo", "g-getraenk"], [/eistee|ice ?tea/i, "d-eistee", "g-getraenk"],
+  [/[çc]ay|\btee\b/i, "d-tee", "g-getraenk"], [/energy/i, "d-energy", "g-getraenk"], [/saft|schorle/i, "d-saft", "g-getraenk"], [/gazoz/i, "d-gazoz", "g-getraenk"], [/getr[äa]nk/i, "g-getraenk"], [/pommes|fries/i, "g-pommes"], [/falafel/i, "g-falafel"], [/salat/i, "g-salat"],
   [/pizza/i, "g-pizza"], [/burger/i, "g-burger"], [/b[öo]rek/i, "g-boerek"], [/lahmacun/i, "g-lahmacun"], [/pide/i, "g-pide"], [/d[üu]r[üu]m|wrap/i, "g-duerum"],
   [/d[öo]ner/i, "g-doener"], [/currywurst/i, "g-currywurst"], [/wurst/i, "g-wurst"], [/nudel|pasta|spaghetti|penne/i, "g-nudeln"], [/nugget|wings|fingerfood/i, "g-fingerfood"]];
 const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger", currywurst: "g-currywurst", asia: "g-asia-reis", salat: "g-salat", fingerfood: "g-fingerfood",
@@ -30,7 +31,7 @@ const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger",
 export function fotoName(g) {
   const f = g.rezeptFamilie || "";
   const kandidaten = [];
-  if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
+  if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk|^d-/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
   if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   if (f) kandidaten.push(FOTO[f] || "g-" + f);
   for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "")) { kandidaten.push(...namen); break; }
