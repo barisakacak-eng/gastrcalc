@@ -1,5 +1,5 @@
 // Drei Ebenen (15.10.2026, Entwickler A): LADEN (während der Arbeit), PERSONAL (Aushilfe, kein Euro), BÜRO (Rechnen, Einrichten, Abgeben).
-// Der Modus gilt je Handy und steht auf der Wurzel (wurzel.modus), der Büro-Code nur als Prüfwert (wurzel.bueroPin = SHA-256, nie die Ziffern).
+// Der Modus gilt je Handy und steht auf der Wurzel (wurzel.modus), der Büro-Code nur als Prüfwert (wurzel.bueroPin = PBKDF2 mit Salz, nie die Ziffern).
 // Reine Logik ohne Oberfläche – alle anderen Bausteine dürfen das hier importieren.
 
 export const MODI = ["laden", "personal", "buero"];
@@ -12,8 +12,9 @@ export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto"]; // Lad
 // Personal: drei Kacheln, sonst nichts.
 export const PERSONAL_ANSICHTEN = ["personal", "muell", "kuehl", "putzplan"];
 
-// Spiegel im Browser-Speicher: hält Modus und Code, bis store.js beide Felder beim Laden mitnimmt (gehört Entwickler F).
-const SCHLUESSEL = { modus: "gc-modus", pin: "gc-buero-pin" };
+// Spiegel im Browser-Speicher: nur noch der Modus. Der Büro-Code wohnt allein in der Wurzel (W2-S, Prüfgremium p07 M3);
+// ein alter Code-Spiegel („gc-buero-pin") wird beim Start einmal übernommen und dann gelöscht.
+const SCHLUESSEL = { modus: "gc-modus", pinAlt: "gc-buero-pin" };
 function merke(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* ohne Speicher gilt nur die Wurzel */ } }
 function lies(k) { try { return localStorage.getItem(k); } catch { return null; } }
 
@@ -26,14 +27,33 @@ export function modusSetzen(wurzel, m) {
 
 // Beim Start: was die Wurzel nicht mehr kennt (ältere Speicherung), kommt aus dem Spiegel zurück.
 // Büro bleibt nach einem Neustart nur offen, wenn kein Code gesetzt ist – sonst geht es zurück in den Laden.
+// Personal gibt es nur mit Code (W2-S): ohne Code geht es in den Laden.
 export function ebeneWiederherstellen(wurzel) {
   if (!wurzel) return;
-  if (wurzel.bueroPin === undefined) { const p = lies(SCHLUESSEL.pin); if (p && /^[0-9a-f]{64}$/.test(p)) wurzel.bueroPin = p; }
+  const alt = lies(SCHLUESSEL.pinAlt);
+  if (alt !== null) { if (wurzel.bueroPin === undefined && pinWertGueltig(alt)) wurzel.bueroPin = alt; merke(SCHLUESSEL.pinAlt, null); }
   if (!MODI.includes(wurzel.modus)) { const m = lies(SCHLUESSEL.modus); if (MODI.includes(m)) wurzel.modus = m; }
   if (wurzel.modus === "buero" && pinGesetzt(wurzel)) modusSetzen(wurzel, "laden");
+  if (wurzel.modus === "personal" && !pinGesetzt(wurzel)) modusSetzen(wurzel, "laden");
 }
-// „Alles löschen": auch den Spiegel vergessen, sonst käme der alte Code zurück.
-export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESSEL.pin, null); }
+// „Alles löschen": auch den Spiegel vergessen.
+export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESSEL.pinAlt, null); }
+
+// Personal-Modus (W2-S, p02 K2): diese Handlungen gibt es dort nicht – Einrichtung, Grenzen, Personen, Verwerfen,
+// Nachtragen für Vortage, Putzplan einrichten, Sprache dauerhaft, Code, Laden löschen. („Alles löschen" auf der Fehlerseite geht mit Code.) Die Knöpfe fehlen dort, app.js weist sie zusätzlich ab.
+const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffnen", "kuehl-einrichtung-fertig", "kuehl-keine", "kuehl-takt", "kuehl-ruhetag",
+  "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "muell1-nachtragen",
+  "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter",
+  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "einrichtung-fertig-ok", "bearbeiten", "export"]);
+// heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.
+export function personalGesperrt(name, wert, heute) {
+  if (PERSONAL_GESPERRT.has(name) || /^stelle-/.test(name)) return true;
+  if (name === "pp-ansicht" && wert === "einrichten") return true;
+  if (name === "tag-datum" && wert !== heute) return true;
+  return false;
+}
+// Eingabefelder der Einrichtung (Kühlstellen, Grenzen, Kürzel) – im Personal-Modus ohne Wirkung.
+export const personalFeldGesperrt = (feld) => /^stelle-|^person-neu$/.test(String(feld || ""));
 
 // Startbildschirm je Ebene
 export function startAnsicht(wurzel) { const m = modus(wurzel); return m === "personal" ? "personal" : m === "buero" ? "buero" : "start"; }
@@ -57,21 +77,88 @@ export function ansichtErlaubt(wurzel, ansicht) {
 }
 
 // ---------- Büro-Code ----------
-export const pinGesetzt = (wurzel) => typeof wurzel?.bueroPin === "string" && wurzel.bueroPin.length === 64;
+// Gespeichert wird nur ein Prüfwert (W2-S, p07 M3 / p02 H5):
+//   "pbkdf2$<runden>$<salz>$<hash>"  PBKDF2-SHA-256 über Web Crypto, zufälliges Salz (16 Byte) je Festlegen
+//   "salz$<runden>$<salz>$<hash>"    ohne crypto.subtle (http im WLAN): SHA-256 von Hand, gesalzen und wiederholt
+//   64 Hex-Zeichen                   alter Prüfwert (SHA-256 ohne Salz) – wird beim nächsten richtigen Code umgestellt
+export const PBKDF2_RUNDEN = 600000;   // OWASP Password Storage Cheat Sheet: 600.000 Runden für PBKDF2-HMAC-SHA256 (Stand 2023); steht im Prüfwert, lässt sich später ändern
+export const ERSATZ_RUNDEN = 5000;     // von Hand gerechnet, damit ein altes Handy nicht hängt
+const ALT = /^[0-9a-f]{64}$/;
+const NEU = /^(pbkdf2|salz)\$([1-9][0-9]{0,7})\$([0-9a-f]{32})\$([0-9a-f]{64})$/;
+export const pinWertGueltig = (v) => typeof v === "string" && (ALT.test(v) || NEU.test(v));
+export const pinGesetzt = (wurzel) => pinWertGueltig(wurzel?.bueroPin);
 export const pinGueltig = (pin) => /^[0-9]{4}$/.test(String(pin ?? ""));
+export const pinVeraltet = (wurzel) => typeof wurzel?.bueroPin === "string" && ALT.test(wurzel.bueroPin);
 
-export async function pinHash(pin) {
-  const text = "gastrocalc-buero:" + pin;
-  const fein = globalThis.crypto?.subtle;
-  if (fein) { try { const b = await fein.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); } catch { /* unten von Hand */ } }
-  return sha256Hex(text); // ohne sichere Verbindung (http im WLAN) gibt es crypto.subtle nicht
+const hex = (bytes) => [...bytes].map((x) => x.toString(16).padStart(2, "0")).join("");
+function zufallSalz() {
+  const b = new Uint8Array(16);
+  if (globalThis.crypto?.getRandomValues) globalThis.crypto.getRandomValues(b); // gibt es auch ohne sichere Verbindung
+  else for (let i = 0; i < b.length; i++) b[i] = Math.floor(Math.random() * 256);
+  return hex(b);
+}
+async function pbkdf2(pin, salz, runden) {
+  const fein = globalThis.crypto?.subtle; if (!fein) return null;
+  try {
+    const schluessel = await fein.importKey("raw", new TextEncoder().encode(String(pin)), "PBKDF2", false, ["deriveBits"]);
+    const salzBytes = new Uint8Array(salz.match(/../g).map((x) => parseInt(x, 16)));
+    const bits = await fein.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: salzBytes, iterations: runden }, schluessel, 256);
+    return hex(new Uint8Array(bits));
+  } catch { return null; }
+}
+function ersatzHash(pin, salz, runden) { let h = sha256Hex(`gastrocalc-buero:${salz}:${pin}`); for (let i = 1; i < runden; i++) h = sha256Hex(salz + h); return h; }
+const altHash = (pin) => sha256Hex("gastrocalc-buero:" + pin); // nur zum Prüfen alter Werte
+
+// Neuer Prüfwert für einen Code (mit frischem Salz)
+export async function pinHash(pin, salz = zufallSalz()) {
+  const h = await pbkdf2(pin, salz, PBKDF2_RUNDEN);
+  if (h) return `pbkdf2$${PBKDF2_RUNDEN}$${salz}$${h}`;
+  return `salz$${ERSATZ_RUNDEN}$${salz}$${ersatzHash(pin, salz, ERSATZ_RUNDEN)}`;
 }
 export async function pinSetzen(wurzel, pin) {
-  if (pin === null) { wurzel.bueroPin = null; merke(SCHLUESSEL.pin, null); return true; }
+  if (pin === null) { wurzel.bueroPin = null; delete wurzel.pinSperre; return true; }
   if (!pinGueltig(pin)) return false;
-  wurzel.bueroPin = await pinHash(pin); merke(SCHLUESSEL.pin, wurzel.bueroPin); return true;
+  wurzel.bueroPin = await pinHash(pin); delete wurzel.pinSperre; return true;
 }
-export async function pinPruefen(wurzel, pin) { return pinGesetzt(wurzel) && pinGueltig(pin) && (await pinHash(pin)) === wurzel.bueroPin; }
+// Gleichlang vergleichen (kein früher Abbruch)
+const gleich = (a, b) => { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; };
+async function pinStimmt(wert, pin) {
+  if (ALT.test(wert)) return gleich(altHash(pin), wert);
+  const m = NEU.exec(wert); if (!m) return false;
+  const [, art, rundenText, salz, soll] = m; const runden = Number(rundenText);
+  if (art === "pbkdf2") { const h = await pbkdf2(pin, salz, runden); return h !== null && gleich(h, soll); } // ohne crypto.subtle lässt sich ein PBKDF2-Wert nicht prüfen
+  return gleich(ersatzHash(pin, salz, Math.min(runden, 200000)), soll);
+}
+// Prüft den Code. Ein alter Prüfwert (ohne Salz) wird dabei gleich auf den neuen umgestellt – danach speichern.
+export async function pinPruefen(wurzel, pin) {
+  if (!pinGesetzt(wurzel) || !pinGueltig(pin)) return false;
+  const ok = await pinStimmt(wurzel.bueroPin, String(pin));
+  if (ok && pinVeraltet(wurzel)) wurzel.bueroPin = await pinHash(pin);
+  return ok;
+}
+
+// ---------- Wartezeit nach Fehlversuchen (W2-S, p07 M4 / p02 H5) ----------
+// Zähler in der Wurzel (wurzel.pinSperre = { fehler, bis }), damit ein Neustart ihn nicht zurücksetzt.
+// Ab dem 5. Fehlversuch: 30 s, dann je Fehlversuch doppelt so lang, höchstens 15 min. Ein richtiger Code setzt zurück.
+export const SPERRE_AB = 5, SPERRE_START_MS = 30000, SPERRE_MAX_MS = 15 * 60000;
+export const sperreDauer = (fehler) => (fehler < SPERRE_AB ? 0 : Math.min(SPERRE_MAX_MS, SPERRE_START_MS * 2 ** (fehler - SPERRE_AB)));
+export function sperreRest(wurzel, jetzt = Date.now()) {
+  const bis = Number(wurzel?.pinSperre?.bis) || 0; if (bis <= jetzt) return 0;
+  return Math.min(bis - jetzt, SPERRE_MAX_MS); // Uhr zurückgestellt: nie länger als die größte Wartezeit
+}
+export function fehlversuch(wurzel, jetzt = Date.now()) {
+  const fehler = Math.max(0, Number(wurzel.pinSperre?.fehler) || 0) + 1; const d = sperreDauer(fehler);
+  wurzel.pinSperre = { fehler, bis: d ? jetzt + d : 0 };
+  return d;
+}
+export function sperreLoesen(wurzel) { delete wurzel.pinSperre; }
+// Für store.js: nur gültige Zählerstände übernehmen
+export function sperreSauber(x) {
+  if (!x || typeof x !== "object") return undefined;
+  const fehler = Math.max(0, Math.min(1000, Math.floor(Number(x.fehler) || 0))); const bis = Math.max(0, Number(x.bis) || 0);
+  return fehler ? { fehler, bis } : undefined;
+}
+export const restText = (ms) => { const s = Math.ceil(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
 
 // SHA-256 von Hand (FIPS 180-4), nur für Text – kurz, ohne Abhängigkeiten.
 const K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,

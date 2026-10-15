@@ -4,7 +4,7 @@ import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
-import { esc, parseZahl } from "./util.js";
+import { esc, parseZahl, heute } from "./util.js"; // W2-S: heute für die Personal-Sperre
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
@@ -21,7 +21,7 @@ import { laedenView } from "./screens/laeden.js";
 import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
-import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen } from "./modus.js";
+import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt } from "./modus.js"; // W2-S: Sperrliste Personal
 import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste } from "./screens/ebene.js";
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
@@ -212,7 +212,9 @@ async function fertig(ziel = "start") {
     stand.phase = "app"; stand.rueckkehr = null; delete stand.neuAus;
     { const nz = navZiel(wurzel, ziel); if (nz.buero) modusSetzen(wurzel, "buero"); ansicht = nz.ansicht; } // Einrichtung macht der Inhaber: „Beleg fotografieren" am Ende führt ins Büro
     await ereignis("onboarding-fertig", { laden: stand.id });
+    const pinWunsch = !!stand.pinFestlegen; delete stand.pinFestlegen; // W2-S (p07 H1): „Büro-PIN festlegen" öffnet gleich das PIN-Blatt
     await sofortSpeichern(wurzel); zeichne();
+    if (pinWunsch) { history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); }
   } finally { wechselt = false; }
 }
 
@@ -288,9 +290,10 @@ async function sicherungEinlesen(datei) {
 // ---------- Ereignisse der Oberfläche (eine Stelle für alles) ----------
 
 // ---------- Ebenen: Laden · Personal · Büro (Entwickler A) ----------
-let schlossFertig = 0; // Zeitpunkt, an dem das Schloss nach 2 s ausgelöst hat (der Klick beim Loslassen zählt nicht)
 
 function ebeneWechseln(m, ziel) {
+  if (m === "personal" && !pinGesetzt(wurzel)) return; // W2-S: Personal nur mit Büro-Code
+  if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
   modusSetzen(wurzel, m); blattSchliessen();
   ansicht = ziel || startAnsicht(wurzel);
   ereignis("modus", { modus: m, laden: stand.id });
@@ -299,11 +302,16 @@ function ebeneWechseln(m, ziel) {
 }
 // Laden → Büro: mit Code, wenn einer gesetzt ist (Einstellung im Büro), sonst direkt.
 function bueroBetreten(ziel = "buero") {
-  if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel); return; }
+  if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel, wurzel); return; }
   ebeneWechseln("buero", ziel);
 }
-// Personal → Laden: mit Code oder 2 Sekunden aufs Schloss (ohne Code).
+// Personal → Laden: nur mit Code (W2-S – das 2-Sekunden-Schloss gibt es nicht mehr).
 function personalVerlassen() { ebeneWechseln("laden", "start"); }
+// W2-S (p07 M6): Löschen verlangt den Büro-Code, wenn einer gesetzt ist.
+function mitCode(zweck, ziel, weiter) {
+  if (!pinGesetzt(wurzel)) return weiter();
+  if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten(zweck, ziel, wurzel);
+}
 
 // Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
 const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg"]);
@@ -316,26 +324,43 @@ async function ebeneAktion(name, el) {
   if (name === "hilfe-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); hilfeZeigen(ansicht); return true; }
   if (name === "pin-taste" || name === "pin-weg") {
     const r = await pinTaste(name === "pin-weg" ? "weg" : el.dataset.wert, wurzel);
+    if (r?.fehler) { await sofortSpeichern(wurzel); return true; } // W2-S: Fehlversuch-Zähler übersteht einen Neustart
     if (r?.zweck === "buero") ebeneWechseln("buero", r.ziel || "buero");
     else if (r?.zweck === "personal") personalVerlassen();
-    else if (r?.zweck === "setzen") { meldung(t("ebene.pin.gesetzt")); await sofortSpeichern(wurzel); zeichne(); }
+    else if (r?.zweck === "loeschen") await allesLoeschenJetzt(); // W2-S
+    else if (r?.zweck === "ladenLoeschen") await ladenLoeschenJetzt(r.ziel); // W2-S
+    else if (r?.zweck === "setzen") { meldung(t("ebene.pin.gesetzt")); await sofortSpeichern(wurzel); if (r.ziel === "personal") ebeneWechseln("personal", "personal"); else zeichne(); } // W2-S: danach in Personal
+    if (r?.zweck && r.zweck !== "setzen") await sofortSpeichern(wurzel); // W2-S: umgestellter Prüfwert / gelöster Zähler
     return true;
   }
-  if (name === "pin-setzen") { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen"); return true; }
+  if (name === "pin-setzen") { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); return true; }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "modus") {
     const m = el.dataset.wert;
     if (m === "buero") bueroBetreten();
-    else if (m === "personal") ebeneWechseln("personal", "personal");
+    else if (m === "personal") { if (pinGesetzt(wurzel)) ebeneWechseln("personal", "personal"); else { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", "personal", wurzel, t("sicherheit.personalBrauchtCode")); } } // W2-S: erst Code festlegen
     else if (m === "laden" && modus(wurzel) === "buero") ebeneWechseln("laden", "start");
     return true;
   }
-  if (name === "schloss") { // Personal: Tipp aufs Schloss → Code (falls gesetzt), sonst Hinweis „2 Sekunden drücken"
-    if (Date.now() - schlossFertig < 800) return true;
-    if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("personal"); } else meldung(t("ebene.schlossHalten"));
+  if (name === "schloss") { // Personal: Tipp aufs Schloss → immer der Code (W2-S). Ohne Code gibt es keinen Personal-Modus (alter Stand: gleich zurück).
+    if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("personal", null, wurzel); } else personalVerlassen();
     return true;
   }
   return false;
+}
+
+// W2-S: die eigentlichen Löschungen – erst nach dem Code (falls gesetzt), dann noch die Rückfrage
+async function ladenLoeschenJetzt(id) {
+  const b = wurzel.betriebe.find((x) => x.id === id);
+  if (!b || wurzel.betriebe.length < 2 || !confirm(t("einstellungen.ladenLoeschenFrage", b.betrieb.name))) return;
+  wurzel.betriebe = wurzel.betriebe.filter((x) => x.id !== id);
+  aktivSetzen((wurzel.betriebe.find((x) => x.phase === "app") || wurzel.betriebe[0]).id);
+  await ereignis("laden-geloescht", { laden: id }); ansicht = "laeden"; await sofortSpeichern(wurzel); return zeichne();
+}
+async function allesLoeschenJetzt() {
+  if (!confirm(t("einstellungen.loeschenFrage"))) return;
+  speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); ebeneVergessen(); blattSchliessen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
+  setzeSprache(spracheDesGeraets()); return zeichne();
 }
 
 async function aufKlick(ev) {
@@ -343,8 +368,8 @@ async function aufKlick(ev) {
   const name = el.dataset.a;
   const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
   if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
-  if (Date.now() - schlossFertig < 800) return; // Loslassen nach dem langen Druck aufs Schloss
   if (!stand) return;
+  if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heute())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
 
   // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
   if (await ebeneAktion(name, el)) return;
@@ -374,17 +399,8 @@ async function aufKlick(ev) {
   if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
   if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
-  if (name === "laden-loeschen") {
-    if (wurzel.betriebe.length < 2 || !confirm(t("einstellungen.ladenLoeschenFrage", stand.betrieb.name))) return;
-    const weg = stand.id; wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== weg);
-    aktivSetzen((wurzel.betriebe.find((b) => b.phase === "app") || wurzel.betriebe[0]).id);
-    await ereignis("laden-geloescht", { laden: weg }); ansicht = "laeden"; await sofortSpeichern(wurzel); return zeichne();
-  }
-  if (name === "loeschen") {
-    if (!confirm(t("einstellungen.loeschenFrage"))) return;
-    speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); ebeneVergessen(); blattSchliessen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
-    setzeSprache(spracheDesGeraets()); return zeichne();
-  }
+  if (name === "laden-loeschen") { if (wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // W2-S: mit Büro-Code
+  if (name === "loeschen") return mitCode("loeschen", null, () => allesLoeschenJetzt()); // W2-S: mit Büro-Code (auch auf der Fehlerseite)
   if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache, () => zeichne()); speichern(wurzel); return zeichne(); }
 
   if (stand.phase === "onboarding") {
@@ -468,14 +484,6 @@ async function aufKlick(ev) {
 root.addEventListener("click", aufKlick);
 ebeneHuelle()?.addEventListener("click", aufKlick); // Blätter liegen außerhalb von #app
 
-// Personal-Modus: 2 Sekunden aufs Schloss drücken (nur ohne Büro-Code) – der Ring füllt sich, Loslassen bricht ab.
-root.addEventListener("pointerdown", (ev) => {
-  const el = ev.target.closest('[data-a="schloss"]'); if (!el || !wurzel || pinGesetzt(wurzel) || modus(wurzel) !== "personal") return;
-  el.classList.add("haelt");
-  const stop = () => { clearTimeout(uhr); el.classList.remove("haelt"); for (const e of ["pointerup", "pointercancel", "pointerleave"]) el.removeEventListener(e, stop); };
-  const uhr = setTimeout(() => { stop(); schlossFertig = Date.now(); personalVerlassen(); }, 2000);
-  for (const e of ["pointerup", "pointercancel", "pointerleave"]) el.addEventListener(e, stop);
-});
 root.addEventListener("contextmenu", (ev) => { if (ev.target.closest('[data-a="schloss"]')) ev.preventDefault(); });
 document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && blattSchliessen()) ev.preventDefault(); });
 
@@ -483,6 +491,7 @@ document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && blattS
 root.addEventListener("input", (ev) => {
   ruheBis = 0; // wer tippt, hat nicht doppelt getippt
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
+  if (modus(wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // W2-S: Einrichtungsfelder wirken im Personal-Modus nicht
   let neu = false;
   if (stand.phase === "onboarding") {
     const s = schritteFuer(stand)[stand.schritt];
@@ -667,5 +676,6 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
 // D: lang drücken auf ein Müll-Foto öffnet das Detail (Menge, Foto, Personalessen)
 muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });
 
-// Für Tests und Fehlersuche
-window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };
+// Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)
+if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) || new URLSearchParams(location.search).has("test"))
+  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };

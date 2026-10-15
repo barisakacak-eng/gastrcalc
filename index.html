@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- W2-S (p07 M7): nur eigene Dateien; blob:/data: für Fotos, PDF und Texterkennung; wasm für die Texterkennung -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self' data:; connect-src 'self' blob: data:; worker-src 'self' blob:; frame-src 'self' blob:; media-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>GastroCalc</title>
   <meta name="description" content="Kalkulation, Abfall und Hygienedokumentation für den Laden an der Ecke. Testfassung.">
   <meta name="theme-color" content="#2E4034">

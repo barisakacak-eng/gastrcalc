@@ -7,6 +7,7 @@ import { planVon, planVorschlag, aufgabenFuer, planGruppen, abhaken, zuruecknehm
 import { datumLesbar } from "./tag.js";
 import { sym } from "../symbole.js";
 import { nav } from "./nav.js";
+import { personalAktiv } from "./personal.js"; // W2-S: Einrichten nur außerhalb des Personal-Modus
 
 let ansicht = "plan"; // plan | einrichten | nachweis
 let entwurf = null;   // Plan während des Einrichtens
@@ -59,7 +60,7 @@ function planView(stand) {
       ${block("tag", g.tag, false)}${block("woche", g.woche, true)}${block("monat", g.monat, true)}${block("spaeter", g.spaeter, true)}
       ${g.hinweise.length ? `<div class="karte"><h2>${esc(t("putzplan.gruppe.nach"))}</h2>${g.hinweise.map((a) => `<p class="phinweis">• ${esc(text(a))}</p>`).join("")}</div>` : ""}
       <button type="button" class="knopf zweit" data-a="pp-ansicht" data-wert="nachweis">${esc(t("putzplan.nachweis"))}</button>
-      <button type="button" class="leise" data-a="pp-ansicht" data-wert="einrichten">${esc(t("putzplan.anpassen"))}</button>
+      ${personalAktiv() ? "" : `<button type="button" class="leise" data-a="pp-ansicht" data-wert="einrichten">${esc(t("putzplan.anpassen"))}</button>`}
     </div>${nav("putzplan")}`;
 }
 
@@ -78,6 +79,10 @@ function nachweisView(stand) {
 }
 
 export function putzplanView(stand) {
+  if (personalAktiv()) { // W2-S (p02 K2): kein Einrichten im Personal-Modus – ohne Plan nur der Hinweis
+    if (ansicht === "einrichten") { ansicht = "plan"; entwurf = null; }
+    if (!planVon(stand)?.aktiv) return `<div class="kopfband"><h1>${esc(t("putzplan.titel"))}</h1></div><div class="inhalt putzplan"><div class="karte"><p class="hinweis">${sym("lock")} ${esc(t("sicherheit.chefRichtetEin"))}</p></div></div>${nav("putzplan")}`;
+  }
   if (!planVon(stand)?.aktiv || ansicht === "einrichten") return einrichtenView(stand) + nav("putzplan");
   if (ansicht === "nachweis") return nachweisView(stand) + nav("putzplan");
   return planView(stand);

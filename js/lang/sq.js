@@ -1011,7 +1011,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Sot", muell: "Mbetje", kuehl: "Ftohja", putzplan: "Pastrimi", karte: "Menuja" },
-    leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossHalten: "Mbaj drynin 2 sekonda", schlossCode: "Shkruaj kodin e zyrës",
+    leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossCode: "Shkruaj kodin e zyrës",
     pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën" },
     hilfeText: {
       allgemein: "Shiriti poshtë të çon te gjithçka që të duhet në lokal. Llogaritë, rregullimet dhe listat janë në zyrë.",
@@ -1022,7 +1022,7 @@ export default {
       karte: "Jeshile: objektivi yt mbetet. E verdhë: ngushtë. E kuqe: shumë lirë.",
       abschluss: "Shkruaj xhiron, kontrollo mbetjet dhe ftohjen, mbaruam.",
       laeden: "Këtu kalon nga një lokal te tjetri. Çdo lokal ka shifrat e veta.",
-      personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës ose 2 sekonda mbi dryn.",
+      personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
   heute: {
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
@@ -1041,6 +1041,8 @@ export default {
     leer: "Ende pa pjata", fotografieren: "Fotografo menynë", bleibt: "Të mbetet", speichern: "Ruaj", gespeichert: "Çmimi u ruajt", preis: "Çmimi", schliessen: "Mbyll",
     ampel: { gruen: "Objektivi u arrit", gelb: "Kostot të mbuluara, nën objektiv", rot: "Shumë lirë", grau: "Ende nuk llogaritet" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Shumë përpjekje. Prit ${z}.`, personalBrauchtCode: "Për modalitetin e stafit vendos fillimisht një kod zyre.", chefRichtetEin: "Shefi e rregullon këtë në zyrë.", ohneCode: "Pa kod kushdo hyn në zyrë. Modaliteti i stafit ekziston vetëm me kod." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Dil nga modaliteti i stafit", zurueck: "Mbrapa", hallo: (n) => `Përshëndetje ${n}`, halloOhne: "Përshëndetje", wechseln: "Ndrysho", werBistDu: "Kush punon?", ohneNamen: "Pa emër",
     muell: "Mbeturina", kuehlung: "Ftohja", putzen: "Pastrimi", offen: (n) => `${n} të hapura` },

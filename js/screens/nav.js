@@ -59,7 +59,8 @@ export function nav(aktiv, _alt = {}) {
   const { stand, wurzel, ansicht } = kontext; const m = modus(wurzel);
   if (m === "personal") {
     const zurueck = ansicht !== "personal" ? `<button type="button" class="ikonknopf zurueckknopf" data-a="nav" data-wert="personal" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button>` : "<span></span>";
-    const schloss = `<button type="button" class="schlossknopf" data-a="schloss" aria-label="${esc(t(pinGesetzt(wurzel) ? "ebene.schlossCode" : "ebene.schlossHalten"))}"><svg class="schlossring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/></svg>${sym("lock")}</button>`;
+    // W2-S: Personal gibt es nur mit Büro-Code – das Schloss fragt immer nach dem Code (kein 2-Sekunden-Druck mehr)
+    const schloss = `<button type="button" class="schlossknopf" data-a="schloss" aria-label="${esc(t("ebene.schlossCode"))}"><svg class="schlossring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/></svg>${sym("lock")}</button>`;
     return `<header class="appleiste ebene-kopf personal">${zurueck}${logo}${schloss}</header>`;
   }
   if (m === "buero") {

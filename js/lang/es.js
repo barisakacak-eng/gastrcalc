@@ -1006,7 +1006,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hoy", muell: "Desperdicio", kuehl: "Frío", putzplan: "Limpieza", karte: "Carta" },
-    leiste: "Local", menueAuf: "Abrir menú", schliessen: "Cerrar", hilfeAuf: "Ayuda", deinLaden: "Tu local", abschluss: "Cerrar el día", personal: "Modo personal", buero: "Oficina", ladenWechseln: "Cambiar de local", sprache: "Idioma", zumLaden: "Local", zumBuero: "Oficina", schlossHalten: "Mantén pulsado el candado 2 segundos", schlossCode: "Introduce el código de oficina",
+    leiste: "Local", menueAuf: "Abrir menú", schliessen: "Cerrar", hilfeAuf: "Ayuda", deinLaden: "Tu local", abschluss: "Cerrar el día", personal: "Modo personal", buero: "Oficina", ladenWechseln: "Cambiar de local", sprache: "Idioma", zumLaden: "Local", zumBuero: "Oficina", schlossCode: "Introduce el código de oficina",
     pin: { titel: "Código de oficina", neu: "Elige un código nuevo", nochmal: "Otra vez", falsch: "Código incorrecto", ungleich: "No coincide. Elige de nuevo.", gesetzt: "Código de oficina guardado", entfernt: "Código de oficina eliminado", setzen: "Fijar código de oficina", aendern: "Cambiar código de oficina", entfernen: "Quitar código", ohne: "Sin código, cualquiera entra en la oficina.", mit: "La oficina está protegida con un código.", loeschen: "Borrar cifra" },
     hilfeText: {
       allgemein: "La barra de abajo lleva a todo lo que necesitas en el local. Cuentas, ajustes y listas están en la oficina.",
@@ -1017,7 +1017,7 @@ export default {
       karte: "Verde: tu objetivo se cumple. Amarillo: justo. Rojo: demasiado barato.",
       abschluss: "Anota la venta, revisa desperdicio y frío, listo.",
       laeden: "Aquí cambias entre tus locales. Cada local tiene sus propios números.",
-      personal: "Anota desperdicio, mide el frío, marca la limpieza. Volver solo con el código de oficina o 2 segundos en el candado.",
+      personal: "Anota desperdicio, mide el frío, marca la limpieza. Volver solo con el código de oficina.",
       buero: "Aquí están todas las cuentas, listas y ajustes. Las carpetas se las das a la inspección, al asesor fiscal o al contable." } },
   heute: {
     stufe: { bisNull: "Para llegar a cero faltan", bisZiel: "Hasta el objetivo", ueberZiel: "Por encima del objetivo" },
@@ -1036,6 +1036,8 @@ export default {
     leer: "Aún sin platos", fotografieren: "Fotografiar la carta", bleibt: "Te queda", speichern: "Guardar", gespeichert: "Precio guardado", preis: "Precio", schliessen: "Cerrar",
     ampel: { gruen: "Objetivo logrado", gelb: "Cubre gastos, bajo objetivo", rot: "Demasiado barato", grau: "Aún sin calcular" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Demasiados intentos. Espera ${z}.`, personalBrauchtCode: "Para el modo personal, primero fija un código de oficina.", chefRichtetEin: "El jefe lo configura en la oficina.", ohneCode: "Sin código, cualquiera entra en la oficina. El modo personal solo existe con código." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Salir del modo personal", zurueck: "Atrás", hallo: (n) => `Hola ${n}`, halloOhne: "Hola", wechseln: "Cambiar", werBistDu: "¿Quién trabaja?", ohneNamen: "Sin nombre",
     muell: "Desperdicio", kuehlung: "Refrigeración", putzen: "Limpieza", offen: (n) => `${n} abiertos` },

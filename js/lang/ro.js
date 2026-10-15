@@ -1013,7 +1013,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Azi", muell: "Deșeuri", kuehl: "Răcire", putzplan: "Curățenie", karte: "Meniu" },
-    leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossHalten: "Ține lacătul apăsat 2 secunde", schlossCode: "Introdu codul de birou",
+    leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossCode: "Introdu codul de birou",
     pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra" },
     hilfeText: {
       allgemein: "Bara de jos duce la tot ce îți trebuie în local. Calculele, configurarea și listele sunt în birou.",
@@ -1024,7 +1024,7 @@ export default {
       karte: "Verde: îți rămâne ținta. Galben: la limită. Roșu: prea ieftin.",
       abschluss: "Introdu încasările, verifică deșeurile și răcirea, gata.",
       laeden: "Aici treci de la un local la altul. Fiecare local are cifrele lui.",
-      personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou sau 2 secunde pe lacăt.",
+      personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
   heute: {
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },
@@ -1043,6 +1043,8 @@ export default {
     leer: "Încă niciun preparat", fotografieren: "Fotografiază meniul", bleibt: "Îți rămâne", speichern: "Salvează", gespeichert: "Preț salvat", preis: "Preț", schliessen: "Închide",
     ampel: { gruen: "Țintă atinsă", gelb: "Costuri acoperite, sub țintă", rot: "Prea ieftin", grau: "Încă nu se poate calcula" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Prea multe încercări. Așteaptă ${z}.`, personalBrauchtCode: "Pentru modul personal setează întâi un cod de birou.", chefRichtetEin: "Șeful setează asta în birou.", ohneCode: "Fără cod oricine intră în birou. Modul personal există doar cu cod." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Ieși din modul personal", zurueck: "Înapoi", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Schimbă", werBistDu: "Cine lucrează?", ohneNamen: "Fără nume",
     muell: "Deșeuri", kuehlung: "Răcire", putzen: "Curățenie", offen: (n) => `${n} deschise` },

@@ -1007,7 +1007,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Oggi", muell: "Scarti", kuehl: "Frigo", putzplan: "Pulizie", karte: "Menu" },
-    leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossHalten: "Tieni premuto il lucchetto per 2 secondi", schlossCode: "Inserisci il codice ufficio",
+    leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
     pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra" },
     hilfeText: {
       allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",
@@ -1018,7 +1018,7 @@ export default {
       karte: "Verde: il tuo obiettivo resta. Giallo: al limite. Rosso: troppo economico.",
       abschluss: "Inserisci l'incasso, controlla scarti e frigo, fatto.",
       laeden: "Qui passi da un locale all'altro. Ogni locale ha i suoi numeri.",
-      personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio o 2 secondi sul lucchetto.",
+      personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
   heute: {
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
@@ -1037,6 +1037,8 @@ export default {
     leer: "Ancora nessun piatto", fotografieren: "Fotografa il menu", bleibt: "Ti resta", speichern: "Salva", gespeichert: "Prezzo salvato", preis: "Prezzo", schliessen: "Chiudi",
     ampel: { gruen: "Obiettivo raggiunto", gelb: "Costi coperti, sotto obiettivo", rot: "Troppo basso", grau: "Non ancora calcolabile" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Troppi tentativi. Aspetta ${z}.`, personalBrauchtCode: "Per la modalità personale imposta prima un codice ufficio.", chefRichtetEin: "Il capo lo imposta in ufficio.", ohneCode: "Senza codice chiunque entra in ufficio. La modalità personale c’è solo con il codice." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Esci dalla modalità personale", zurueck: "Indietro", hallo: (n) => `Ciao ${n}`, halloOhne: "Ciao", wechseln: "Cambia", werBistDu: "Chi lavora?", ohneNamen: "Senza nome",
     muell: "Scarti", kuehlung: "Refrigerazione", putzen: "Pulizia", offen: (n) => `${n} aperti` },

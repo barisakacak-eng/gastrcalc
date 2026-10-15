@@ -1005,7 +1005,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Îro", muell: "Çop", kuehl: "Sarkirin", putzplan: "Paqijî", karte: "Menû" },
-    leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossHalten: "2 çirkeyan li kilîdê bigire", schlossCode: "Koda ofîsê binivîse",
+    leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
     pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe" },
     hilfeText: {
       allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",
@@ -1016,7 +1016,7 @@ export default {
       karte: "Kesk: armanca te dimîne. Zer: teng. Sor: pir erzan.",
       abschluss: "Firotinê binivîse, çop û sarkirinê kontrol bike, qediya.",
       laeden: "Li vir di navbera dikanên xwe de diguherînî. Her dikanek hejmarên xwe hene.",
-      personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê an 2 çirkeyan li ser kilîdê.",
+      personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   heute: {
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
@@ -1035,6 +1035,8 @@ export default {
     leer: "Hîn xwarin tune", fotografieren: "Wêneyê menûyê bikişîne", bleibt: "Ji te re dimîne", speichern: "Tomar bike", gespeichert: "Biha hat tomarkirin", preis: "Biha", schliessen: "Bigire",
     ampel: { gruen: "Armanc hat girtin", gelb: "Lêçûn derketin, di bin armancê de", rot: "Pir erzan", grau: "Hîn nayê hesabkirin" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Gelek ceribandin. ${z} bisekine.`, personalBrauchtCode: "Ji bo moda karmendan pêşî kodeke ofîsê diyar bike.", chefRichtetEin: "Şef vê di ofîsê de saz dike.", ohneCode: "Bê kod her kes dikeve ofîsê. Moda karmendan tenê bi kodê heye." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Ji moda karmendan derkeve", zurueck: "Paş", hallo: (n) => `Silav ${n}`, halloOhne: "Silav", wechseln: "Biguherîne", werBistDu: "Kî dixebite?", ohneNamen: "Bê nav",
     muell: "Çop", kuehlung: "Sarkirin", putzen: "Paqijî", offen: (n) => `${n} vekirî` },

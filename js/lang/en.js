@@ -1006,7 +1006,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Today", muell: "Waste", kuehl: "Fridges", putzplan: "Cleaning", karte: "Menu" },
-    leiste: "Shop", menueAuf: "Open menu", schliessen: "Close", hilfeAuf: "Help", deinLaden: "Your shop", abschluss: "Close the day", personal: "Staff mode", buero: "Office", ladenWechseln: "Switch shop", sprache: "Language", zumLaden: "Shop", zumBuero: "Office", schlossHalten: "Hold the lock for 2 seconds", schlossCode: "Enter office code",
+    leiste: "Shop", menueAuf: "Open menu", schliessen: "Close", hilfeAuf: "Help", deinLaden: "Your shop", abschluss: "Close the day", personal: "Staff mode", buero: "Office", ladenWechseln: "Switch shop", sprache: "Language", zumLaden: "Shop", zumBuero: "Office", schlossCode: "Enter office code",
     pin: { titel: "Office code", neu: "Choose a new code", nochmal: "Once more", falsch: "Wrong code", ungleich: "Doesn't match. Choose again.", gesetzt: "Office code saved", entfernt: "Office code removed", setzen: "Set office code", aendern: "Change office code", entfernen: "Remove code", ohne: "Without a code, anyone can open the office.", mit: "The office is protected by a code.", loeschen: "Delete digit" },
     hilfeText: {
       allgemein: "The bar at the bottom leads to everything you need in the shop. Costs, setup and lists live in the office.",
@@ -1017,7 +1017,7 @@ export default {
       karte: "Green: your target is left over. Yellow: tight. Red: too cheap.",
       abschluss: "Enter revenue, check waste and fridges, done.",
       laeden: "Switch between your shops here. Each shop has its own numbers.",
-      personal: "Log waste, measure fridges, tick off cleaning. Back only with the office code or by holding the lock for 2 seconds.",
+      personal: "Log waste, measure fridges, tick off cleaning. Back only with the office code.",
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   heute: {
@@ -1037,6 +1037,8 @@ export default {
     leer: "No dishes yet", fotografieren: "Photograph the menu", bleibt: "You keep", speichern: "Save", gespeichert: "Price saved", preis: "Price", schliessen: "Close",
     ampel: { gruen: "Target reached", gelb: "Costs covered, below target", rot: "Too cheap", grau: "Not calculable yet" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Too many tries. Wait ${z}.`, personalBrauchtCode: "Set an office code first to use staff mode.", chefRichtetEin: "The boss sets this up in the office.", ohneCode: "Without a code, anyone can enter the office. Staff mode only works with a code." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Leave staff mode", zurueck: "Back", hallo: (n) => `Hi ${n}`, halloOhne: "Hi", wechseln: "Switch", werBistDu: "Who is working?", ohneNamen: "No name",
     muell: "Waste", kuehlung: "Cooling", putzen: "Cleaning", offen: (n) => `${n} open` },

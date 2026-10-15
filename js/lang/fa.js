@@ -1005,7 +1005,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "امروز", muell: "دورریز", kuehl: "سرمایش", putzplan: "نظافت", karte: "منو" },
-    leiste: "مغازه", menueAuf: "باز کردن منو", schliessen: "بستن", hilfeAuf: "راهنما", deinLaden: "مغازهٔ تو", abschluss: "بستن روز", personal: "حالت کارکنان", buero: "دفتر", ladenWechseln: "عوض کردن مغازه", sprache: "زبان", zumLaden: "مغازه", zumBuero: "دفتر", schlossHalten: "قفل را ۲ ثانیه نگه دار", schlossCode: "رمز دفتر را وارد کن",
+    leiste: "مغازه", menueAuf: "باز کردن منو", schliessen: "بستن", hilfeAuf: "راهنما", deinLaden: "مغازهٔ تو", abschluss: "بستن روز", personal: "حالت کارکنان", buero: "دفتر", ladenWechseln: "عوض کردن مغازه", sprache: "زبان", zumLaden: "مغازه", zumBuero: "دفتر", schlossCode: "رمز دفتر را وارد کن",
     pin: { titel: "رمز دفتر", neu: "رمز تازه انتخاب کن", nochmal: "یک بار دیگر", falsch: "رمز اشتباه", ungleich: "یکی نیست. دوباره انتخاب کن.", gesetzt: "رمز دفتر ذخیره شد", entfernt: "رمز دفتر برداشته شد", setzen: "تعیین رمز دفتر", aendern: "تغییر رمز دفتر", entfernen: "برداشتن رمز", ohne: "بدون رمز هر کسی وارد دفتر می‌شود.", mit: "دفتر با رمز محافظت می‌شود.", loeschen: "پاک کردن رقم" },
     hilfeText: {
       allgemein: "نوار پایین تو را به هر چیزی که در مغازه لازم داری می‌برد. حساب‌ها، تنظیمات و فهرست‌ها در دفتر هستند.",
@@ -1016,7 +1016,7 @@ export default {
       karte: "سبز: هدفت می‌ماند. زرد: لب مرز. قرمز: خیلی ارزان.",
       abschluss: "فروش را وارد کن، دورریز و سرمایش را بررسی کن، تمام.",
       laeden: "اینجا بین مغازه‌هایت جابه‌جا می‌شوی. هر مغازه عددهای خودش را دارد.",
-      personal: "دورریز را ثبت کن، سرمایش را اندازه بگیر، نظافت را تیک بزن. برگشت فقط با رمز دفتر یا ۲ ثانیه روی قفل.",
+      personal: "دورریز را ثبت کن، سرمایش را اندازه بگیر، نظافت را تیک بزن. برگشت فقط با رمز دفتر.",
       buero: "همهٔ حساب‌ها، فهرست‌ها و تنظیمات اینجاست. پوشه‌ها را به بازرس، مشاور مالیاتی یا حسابدار می‌دهی." } },
   heute: {
     stufe: { bisNull: "تا صفر کم است", bisZiel: "تا هدف", ueberZiel: "بالای هدف" },
@@ -1035,6 +1035,8 @@ export default {
     leer: "هنوز غذایی نیست", fotografieren: "از منو عکس بگیر", bleibt: "برایت می‌ماند", speichern: "ذخیره", gespeichert: "قیمت ذخیره شد", preis: "قیمت", schliessen: "بستن",
     ampel: { gruen: "به هدف رسیدی", gelb: "هزینه پوشش دارد، زیر هدف", rot: "خیلی ارزان", grau: "هنوز حساب نمی‌شود" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `تلاش زیاد. ${z} صبر کن.`, personalBrauchtCode: "برای حالت کارکنان اول یک رمز دفتر بگذار.", chefRichtetEin: "رئیس این را در دفتر تنظیم می‌کند.", ohneCode: "بدون رمز هر کسی وارد دفتر می‌شود. حالت کارکنان فقط با رمز هست." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "خروج از حالت کارکنان", zurueck: "بازگشت", hallo: (n) => `سلام ${n}`, halloOhne: "سلام", wechseln: "تغییر", werBistDu: "چه کسی کار می‌کند؟", ohneNamen: "بدون نام",
     muell: "دورریز", kuehlung: "سرمایش", putzen: "نظافت", offen: (n) => `${n} باز` },
