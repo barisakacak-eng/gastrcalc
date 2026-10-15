@@ -27,7 +27,7 @@ import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
 import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
 import { rundgangOffen, kuehlBereit } from "./engine.js"; // D: Personal-Kachel Kühlung
-import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
+import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen, umsatzFeldVerlassen } from "./screens/umsatz.js"; // W2-T
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
 import { inventurView, inventurAktion, inventurEingabe, inventurZurueck, inventurZuruecksetzen, inventurKennung } from "./screens/inventur.js";
@@ -540,6 +540,7 @@ root.addEventListener("focusout", (ev) => {
     meldung(t(/^[0-9.,\s]+$/.test(el.value) ? "allgemein.zahlZuGross" : "allgemein.zahlUngueltig", el.value.trim().slice(0, 20)));
     if (el.dataset.f === "umsatz") { umsatzEingabe("umsatz", "", stand, wurzel); speichern(wurzel); } // halbe Zahl nicht stehen lassen
   }
+  if (el.dataset.f === "umsatz") { umsatzFeldVerlassen(stand); speichern(wurzel); } // W2-T: Wert festschreiben, spätere Änderung = neuer Eintrag
   if (el.dataset.f.startsWith("wert:") && tagWertUebernehmen(el.dataset.f, el.value, stand)) { speichern(wurzel); meldung(t("tag.gespeichert")); }
   if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen", "beleg", "inventur"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
 });

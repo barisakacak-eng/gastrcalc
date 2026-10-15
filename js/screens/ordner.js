@@ -5,7 +5,8 @@
 import { t, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, belehrungEintragen, AMT_TEILE } from "../export_amt.js";
-import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe } from "../export_steuer.js";
+import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe } from "../export_steuer.js";
+import de from "../lang/de.js"; // W2-T: feste deutsche Kennzeichnung der Umsatz-Notizen in jeder App-Sprache
 import { monatName } from "./tag.js";
 import { bsym, ring, bueroKopf } from "./buero.js";
 
@@ -41,13 +42,18 @@ export function ordnerKachelStand(stand, { datum: H = heute() } = {}) {
   const s = monatsPaket(stand, vm, "steuer"); const b = monatsPaket(stand, vm, "buch");
   return {
     amt: { farbe: a.vollstaendig === a.gesamt ? "gruen" : a.vollstaendig ? "gelb" : "rot", text: t("ordner.kachelVon", a.vollstaendig, a.gesamt) },
-    steuer: { farbe: s.vollstaendig === s.teile.length ? "gruen" : s.umsatz.tage ? "gelb" : "grau", text: monatName(vm.von) },
-    buch: { farbe: b.umsatz.tage ? "gruen" : "grau", text: t(b.umsatz.tage ? "ordner.bereit" : "ordner.leer") },
+    // W2-T: grün nur durch Belege, Kosten und Listen – getippte Umsätze machen keinen Ordner fertig (Prüfung p04 Nr. 2)
+    steuer: { farbe: s.vollstaendig === s.pruefTeile.length ? "gruen" : s.vollstaendig || s.umsatz.tage ? "gelb" : "grau", text: monatName(vm.von) },
+    buch: { farbe: b.vollstaendig === b.pruefTeile.length ? "gruen" : b.vollstaendig || b.umsatz.tage ? "gelb" : "grau",
+      text: b.vollstaendig === b.pruefTeile.length ? t("ordner.bereit") : b.vollstaendig || b.umsatz.tage || b.belege.anzahl ? t("ordner.kachelVon", b.vollstaendig, b.pruefTeile.length) : t("ordner.leer") },
   };
 }
 
 // ---------- Zeilen der Inhaltsliste ----------
-const statusSym = (ok) => ok ? `<span class="b-status ok" title="${esc(t("ordner.status.ok"))}">${bsym("check")}</span>` : `<span class="b-status luecke" title="${esc(t("ordner.status.luecke"))}">!</span>`;
+// W2-T: ok (Haken) · luecke (!) · pruefen (!) · notiz (i, nur Notiz) – Haken nur bei ok
+const statusSym = (ok) => ok === true || ok === "ok" ? `<span class="b-status ok" title="${esc(t("ordner.status.ok"))}">${bsym("check")}</span>`
+  : ok === "notiz" ? `<span class="b-status luecke" title="${esc(t("ordnerT.status.notiz"))}">i</span>`
+  : `<span class="b-status luecke" title="${esc(ok === "pruefen" ? t("ordnerT.status.pruefen") : t("ordner.status.luecke"))}">!</span>`;
 const inhaltZeile = (symbol, titel, unter, ok, { aktion = "", teil = "", csv = false, auf = null } = {}) => {
   const innen = `<span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b><small class="zahl">${esc(unter)}</small></span>`;
   const rechts = `${csv ? `<button type="button" class="b-mini" data-a="ordner-csv" data-teil="${esc(teil)}" aria-label="${esc(t("ordner.knopf.csvTeil", titel))}">CSV</button>` : ""}${statusSym(ok)}`;
@@ -103,8 +109,8 @@ const vorschauBlatt = () => !vorschauHtml ? "" : `<div class="b-vorschau" role="
 function kopfOrdner(stand, art, symbol, unter) {
   return `<div class="b-ordnerkopf"><span class="b-ks ${art}">${bsym(symbol)}</span><div><b>${esc(t(`ordner.${art}.titel`))}</b><small>${esc(stand.betrieb?.name || t("menue.deinLaden"))} · ${esc(unter)}</small></div></div>`;
 }
-function standKarte(von, gesamt, hinweis) {
-  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: von === gesamt ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(von === gesamt ? t("ordner.allesDa") : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
+function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
+  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: von === gesamt ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(von === gesamt ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
 }
 
 // ---------- Gesundheitsamt ----------
@@ -130,13 +136,14 @@ export function ordnerAmtView(stand) {
 
 // ---------- Steuerberater und Buchhalter ----------
 function paketUnter(teil, p) {
-  if (teil === "umsatz") return p.umsatz.tage ? t("ordner.zeile.umsatz", p.umsatz.tage, fmtEuro(p.umsatz.summe.brutto)) : t("ordner.zeile.umsatzKeine");
-  if (teil === "personal") return p.personal.zeilen.length ? t("ordner.zeile.personal", fmtZahl(p.personal.anzahl), euro(p.personal.sachbezug)) : t("ordner.zeile.keine");
+  if (teil === "umsatz") return p.umsatz.tage ? t("ordnerT.umsatzZeile", p.umsatz.tage, fmtEuro(p.umsatz.summe.brutto)) : t("ordner.zeile.umsatzKeine"); // W2-T
+  if (teil === "personal") return p.personal.zeilen.length ? t("ordner.zeile.personal", fmtZahl(p.personal.anzahl), euro(p.personal.sachbezug)) + (p.personal.ohnePerson ? " · " + t("ordnerT.personalOhne", p.personal.ohnePerson) : "") : t("ordner.zeile.keine");
   if (teil === "schwund") return p.schwund.zeilen.length ? (p.schwund.ohneWert ? t("ordner.zeile.schwundOffen", euro(p.schwund.muellwert), p.schwund.ohneWert) : t("ordner.zeile.schwund", euro(p.schwund.muellwert))) : t("ordner.zeile.keine");
   if (teil === "belege") return p.belege.anzahl ? t("ordner.zeile.belege", p.belege.anzahl, fmtEuro(p.belege.netto)) : t("ordner.zeile.belegeKeine");
-  if (teil === "inventur") { const l = p.inventur.zeilen.filter((x) => !x.vorher).pop(); return l ? `${datumDe(l.datum)} · ${euro(l.wert)}` : t("ordner.zeile.inventurKeine"); }
+  if (teil === "inventur") { const l = p.inventur.zeilen.filter((x) => !x.vorher).pop(); if (!l) return t("ordner.zeile.inventurKeine"); // W2-T: 0 € oder ohne Preis = prüfen
+    return `${datumDe(l.datum)} · ${l.wert === null ? t("ordnerT.wertFehlt") : euro(l.wert)}${l.ohnePreis ? " · " + t("ordnerT.inventurPruefen", l.ohnePreis) : !(l.wert > 0) && l.wert !== null ? " · " + t("ordnerT.status.pruefen") : ""}`; }
   if (teil === "reinigung") return p.reinigung.zeilen.length ? t("ordner.zeile.reinigung", euro(p.reinigung.netto)) : t("ordner.zeile.keine");
-  if (teil === "kosten") return p.kosten.zeilen.length ? t("ordner.zeile.kosten", fmtEuro(p.kosten.gesamt)) : t("ordner.zeile.kostenKeine");
+  if (teil === "kosten") return p.kosten.zeilen.length ? t("ordnerT.kostenZeile", p.kosten.zeilen.length) : t("ordner.zeile.kostenKeine"); // W2-T: ohne eigenen Lohn
   return "";
 }
 const TEIL_SYM = { umsatz: "trending-up", personal: "users", schwund: "trash-2", belege: "receipt", inventur: "clipboard-list", reinigung: "spray-can", kosten: "calculator" };
@@ -148,8 +155,8 @@ export function ordnerPaketView(stand, art) {
     <div class="b-inhalt b-ordnerseite">
       ${kopfOrdner(stand, art, art === "steuer" ? "calculator" : "receipt", t(`ordner.${art}.unter`))}
       <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t("ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t("ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
-      ${standKarte(p.vollstaendig, p.teile.length, p.umsatz?.tage ? t("ordner.hinweis.kasse") : "")}
-      <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil] === "ok", { teil, csv: true })).join("")}</div>
+      ${standKarte(p.vollstaendig, p.pruefTeile.length, t("ordnerT.kasse"), t("ordnerT.allesDa"))}
+      <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
       ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
@@ -166,11 +173,19 @@ const NAMEN = () => ({
   art: (a) => t("tag.arten." + a),
   mahlzeit: (m) => t("tag.mahlzeiten." + m),
   stelle: (s) => { if (s === "ware") return t("ordner.dok.ware"); const v = t("kosten.posten." + s); return Array.isArray(v) ? v[0] : s; },
-  posten: (s) => { const v = t("kosten.posten." + s); return Array.isArray(v) ? v[0] : s; },
+  posten: (s) => { if (s === "lohn") return t("ordnerT.lohn"); const v = t("kosten.posten." + s); return Array.isArray(v) ? v[0] : s; },
   periode: (p) => t(p === "jahr" ? "allgemein.proJahr" : "allgemein.proMonat"),
-  basis: (b) => t("ordner.dok.basis." + (b === "brutto" ? "brutto" : "netto")),
+  basis: (b) => (b === "lohn" ? t("ordnerT.basisLohn") : t("ordner.dok.basis." + (b === "brutto" ? "brutto" : "netto"))),
+  // W2-T
+  kennung: () => kennung(),
+  hinweis: (h) => t("ordnerT.hinweis." + h),
+  pstatus: (s) => (s === "geschaetzt" ? t("ordnerT.statusPosten.geschaetzt") : t("ordnerT.statusPosten.bekannt")),
+  aart: (a) => t("ordnerT.aart." + a),
+  vorgang: (v) => t("ordnerT.vorgang." + v),
 });
-const kopfVon = (teil) => t("ordner.dok.kopf." + teil);
+// Feste Kennzeichnung der Umsatz-Notizen (W2-T): in der App-Sprache, und für den deutschen Steuerberater immer auch auf Deutsch
+const kennung = () => (sprache() === "de" ? t("ordnerT.kennung") : `${t("ordnerT.kennung")} / ${de.ordnerT.kennung}`);
+const kopfVon = (teil) => (["umsatz", "belege", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-T
 const erstelltText = () => t("ordner.dok.erstellt", datumDe(heute()), new Date().toTimeString().slice(0, 5));
 
 export function amtDokument(stand, o) {
@@ -192,25 +207,31 @@ export function amtDokument(stand, o) {
   };
 }
 
+// W2-T (Prüfung p04): Umsätze nur als Brutto-Notiz mit Kennzeichnung, keine Steuer aus dem Mischsatz; Belege mit USt je Satz und Pfand;
+// Inventur ohne Haken bei 0 € oder fehlenden Preisen; feste Kosten ohne eigenen Lohn; alle Änderungen des Monats als eigener Abschnitt.
 export function paketDokument(stand, p) {
   const n = NAMEN(); const a = [];
-  const art = p.art;
-  if (p.umsatz) a.push({ titel: t("ordner.teil.umsatz"), info: t("ordner.dok.satz", fmtZahl(p.umsatz.satz * 100, 1)) + " · " + t("ordner.hinweis.kasse"), kopf: kopfVon("umsatz").slice(0, 4), rechts: [1, 2, 3],
-    zeilen: p.umsatz.zeilen.map((x) => [datumDe(x.datum) + (x.nacherfasst ? " *" : ""), euro(x.brutto), euro(x.netto), euro(x.steuer)]), summe: p.umsatz.tage ? [t("ordner.dok.summe"), euro(p.umsatz.summe.brutto), euro(p.umsatz.summe.netto), euro(p.umsatz.summe.steuer)] : null, leer: t("ordner.zeile.umsatzKeine") });
-  if (p.personal) a.push({ titel: t("ordner.teil.personal"), info: t("ordner.dok.svev"), kopf: kopfVon("personal").slice(0, 7), rechts: [4, 5, 6],
-    zeilen: p.personal.zeilen.map((x) => [datumDe(x.datum), x.person || "–", x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)]), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") });
-  if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: t("ordner.dok.netto"), warn: !!p.schwund.ohneWert, kopf: t("ordner.dok.druck.schwund"), rechts: [3, 4],
+  const art = p.art; const leerOder = (v) => (v === null || v === undefined ? "–" : euro(v));
+  if (p.umsatz) a.push({ titel: t("ordner.teil.umsatz"), info: `${kennung()} · ${t("ordnerT.steuerZbon")}`, warn: true, kopf: t("ordnerT.druck.umsatz"), rechts: [1, 2],
+    zeilen: p.umsatz.zeilen.map((x) => [datumDe(x.datum) + (x.nacherfasst ? " *" : ""), euro(x.brutto), x.geaendert === null ? "" : euro(x.geaendert)]), summe: p.umsatz.tage ? [t("ordner.dok.summe"), euro(p.umsatz.summe.brutto), ""] : null, leer: t("ordner.zeile.umsatzKeine") });
+  if (p.personal) { const je = Object.entries(p.personal.jePerson).map(([k, v]) => `${k || "–"}: ${fmtZahl(v.anzahl)} · ${euro(v.sachbezug)}`).join(" · ");
+    a.push({ titel: t("ordner.teil.personal"), info: [t("ordner.dok.svev"), je, p.personal.ohnePerson ? t("ordnerT.personalOhne", p.personal.ohnePerson) : ""].filter(Boolean).join(" · "), warn: !!p.personal.ohnePerson, kopf: kopfVon("personal").slice(0, 7), rechts: [4, 5, 6],
+      zeilen: p.personal.zeilen.map((x) => ({ warn: !x.person, zellen: [datumDe(x.datum), x.person || "–", x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)] })), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") }); }
+  if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: [t("ordner.dok.netto"), p.schwund.eigen?.anzahl ? t("ordnerT.eigen", euro(p.schwund.eigen.waren)) : ""].filter(Boolean).join(" · "), warn: !!p.schwund.ohneWert, kopf: t("ordnerT.druck.schwund"), rechts: [3, 4],
     zeilen: p.schwund.zeilen.map((x) => [datumDe(x.datum), n.art(x.art), x.name || "–", `${fmtZahl(x.menge, x.einheit === "stk" || x.einheit === "portion" ? 0 : 2)} ${x.einheit === "portion" ? t("tag.portionen") : x.einheit === "stk" ? t("allgemein.stueck") : x.einheit}`, x.wert === null ? t("tag.keinPreis") : euro(x.wert)]),
-    summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", euro(p.schwund.muellwert + (p.schwund.eigen?.waren || 0))] : null, leer: t("ordner.zeile.keine") });
-  if (p.belege) a.push({ titel: t("ordner.teil.belege"), kopf: kopfVon("belege").slice(0, 5), rechts: [3, 4],
-    zeilen: p.belege.zeilen.map((x) => [datumDe(x.datum), x.lieferant || "–", n.stelle(x.stelle), euro(x.netto), x.brutto === null ? "–" : euro(x.brutto)]), summe: p.belege.anzahl ? [t("ordner.dok.summe"), "", "", euro(p.belege.netto), euro(p.belege.brutto)] : null, leer: t("ordner.zeile.belegeKeine") });
+    summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", p.schwund.ohneWert ? `${euro(p.schwund.muellwert)} (${t("ordnerT.schwundOffen", p.schwund.ohneWert)})` : euro(p.schwund.muellwert)] : null, leer: t("ordner.zeile.keine") });
+  if (p.belege) a.push({ titel: t("ordner.teil.belege"), info: t("ordnerT.belegeInfo"), warn: !!p.belege.pruefen, kopf: t("ordnerT.druck.belege"), rechts: [3, 4, 5, 6, 7],
+    zeilen: p.belege.zeilen.map((x) => ({ warn: !!x.hinweis, zellen: [datumDe(x.datum), x.rechnungNr || "", `${x.lieferant || "–"} · ${n.stelle(x.stelle)}${x.hinweis ? " · " + n.hinweis(x.hinweis) : ""}`, leerOder(x.netto), leerOder(x.ust7), leerOder(x.ust19), x.pfand ? euro(x.pfand) : "", leerOder(x.brutto)] })),
+    summe: p.belege.anzahl ? [t("ordner.dok.summe"), "", "", euro(p.belege.netto), euro(p.belege.ust7), euro(p.belege.ust19), euro(p.belege.pfand), euro(p.belege.brutto)] : null, leer: t("ordner.zeile.belegeKeine") });
   if (p.inventur) a.push({ titel: t("ordner.teil.inventur"), kopf: kopfVon("inventur"), rechts: [1, 2, 3],
-    zeilen: p.inventur.zeilen.map((x) => [datumDe(x.datum) + (x.vorher ? ` (${t("ordner.dok.vormonat")})` : ""), euro(x.wert), fmtZahl(x.gezaehlt), fmtZahl(x.ohnePreis)]), leer: t("ordner.zeile.inventurKeine") });
+    zeilen: p.inventur.zeilen.map((x) => ({ warn: !x.vorher && (x.ohnePreis > 0 || !(x.wert > 0)), zellen: [datumDe(x.datum) + (x.vorher ? ` (${t("ordner.dok.vormonat")})` : ""), x.wert === null ? t("ordnerT.wertFehlt") : euro(x.wert), fmtZahl(x.gezaehlt), fmtZahl(x.ohnePreis)] })), leer: t("ordner.zeile.inventurKeine") });
   if (p.reinigung) a.push({ titel: t("ordner.teil.reinigung"), kopf: kopfVon("reinigung"), rechts: [3],
     zeilen: p.reinigung.zeilen.map((x) => [datumDe(x.datum), x.lieferant || "–", x.artikel, euro(x.netto)]), summe: p.reinigung.zeilen.length ? [t("ordner.dok.summe"), "", "", euro(p.reinigung.netto)] : null, leer: t("ordner.zeile.keine") });
-  if (p.kosten) a.push({ titel: t("ordner.teil.kosten"), kopf: kopfVon("kosten"), rechts: [1],
-    zeilen: p.kosten.zeilen.map((x) => [n.posten(x.posten), euro(x.betrag), n.periode(x.periode), n.basis(x.basis)]), summe: p.kosten.zeilen.length ? [t("ordner.dok.monatslast"), euro(p.kosten.gesamt), "", ""] : null, leer: t("ordner.zeile.kostenKeine") });
-  return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", zeitraum: monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordner.dok.fussSteuer") };
+  if (p.kosten) a.push({ titel: t("ordner.teil.kosten"), info: t("ordnerT.kostenInfo", euro(p.kosten.netto), euro(p.kosten.brutto), euro(p.kosten.lohn)), warn: !!(p.kosten.offen || p.kosten.geschaetzt), kopf: t("ordnerT.druck.kosten"), rechts: [1, 4],
+    zeilen: p.kosten.zeilen.map((x) => ({ warn: x.status === "geschaetzt", zellen: [n.posten(x.posten) + (x.status === "geschaetzt" ? ` (${n.pstatus(x.status)})` : ""), euro(x.betrag), n.periode(x.periode), n.basis(x.basis), euro(x.jeMonat)] })), leer: t("ordner.zeile.kostenKeine") });
+  a.push({ titel: t("ordnerT.aenderungen"), info: t("ordnerT.aenderungenInfo"), kopf: t("ordnerT.druck.aenderungen"), rechts: [4, 5],
+    zeilen: p.aenderungen.zeilen.map((x) => [datumDe(x.datum), n.aart(x.art), n.vorgang(x.vorgang), x.art === "kosten" ? [n.stelle(x.stelle), x.text].filter(Boolean).join(" · ") : (x.text || "–"), x.alt === null ? "–" : `${euro(x.alt)} ${n.basis(x.basis)}`, x.neu === null ? "–" : euro(x.neu), zeitDe(x.zeit)]), leer: t("ordnerT.aenderungenKeine") });
+  return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", zeitraum: monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordnerT.fuss") };
 }
 
 // Dateien (CSV) je Teil
@@ -220,7 +241,8 @@ function csvDateien(stand, ansicht, nurTeil = null) {
   if (ansicht === "ordner-amt") { const z = amtZeitraum(H); const o = ordnerAmt(stand, z, { datum: H });
     return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, t("ordner.datei." + teil), z), text: amtCsv(o, teil, kopfVon(teil), n) })); }
   const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const z = paketZeit(art, H); const p = monatsPaket(stand, z, art);
-  return p.teile.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, t("ordner.datei." + teil), z), text: teilCsv(p, teil, kopfVon(teil), n) }));
+  const teile = nurTeil ? p.teile.filter((x) => x === nurTeil) : [...p.teile, "aenderungen"]; // W2-T: Aenderungen.csv gehört zu jedem Monatspaket
+  return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : t("ordner.datei." + teil), z), text: teilCsv(p, teil, kopfVon(teil), n) }));
 }
 export function dokumentFuer(stand, ansicht) {
   const H = heute();
