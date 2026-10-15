@@ -24,12 +24,16 @@ const laden = () => {
   return s;
 };
 
-test("Monatsziel: Kosten / (1 − Quote) × (1 + MwSt), Umsatz und Fehlbetrag passen zusammen", () => {
-  const s = laden(); const H = "2026-10-15";
+test("Monatsziel: Null = Kosten / (1 − Quote) × (1 + MwSt); Ziel = Kosten / (1 − Quote − Zielgewinn) × (1 + MwSt) (Baris 15.10.)", () => {
+  const s = laden(); const H = "2026-10-15"; s.verkauf.zielgewinn = 10;
   tagesnotizSetzen(s, "2026-10-02", 500); tagesnotizSetzen(s, "2026-10-14", 700);
   const z = zaehler(s, { datum: H }); const m = monatsZiel(s, z, H);
-  const erwartet = (z.last.gesamt + z.sonder.summe) / (1 - z.quoteEff) * (1 + z.steuer);
-  assert.ok(Math.abs(m.ziel - erwartet) < 1e-6); assert.equal(m.umsatz, 1200);
+  const kosten = z.last.gesamt + z.sonder.summe;
+  assert.ok(Math.abs(m.nullpunkt - kosten / (1 - z.quoteEff) * (1 + z.steuer)) < 1e-6);
+  assert.ok(Math.abs(m.ziel - kosten / (1 - z.quoteEff - 0.1) * (1 + z.steuer)) < 1e-6); assert.ok(m.ziel > m.nullpunkt);
+  assert.equal(m.stufe, "bisNull"); assert.ok(Math.abs(m.fehltNull - (m.nullpunkt - 1200)) < 1e-6);
+  s.verkauf.zielgewinn = 0; assert.ok(Math.abs(monatsZiel(s, z, H).ziel - m.nullpunkt) < 1e-6); s.verkauf.zielgewinn = 10;
+  assert.equal(m.umsatz, 1200);
   assert.ok(Math.abs(m.fehlt - (m.ziel - 1200)) < 1e-6); assert.equal(m.tage.length, 15); assert.equal(m.tage[14].kumuliert, 1200);
 });
 

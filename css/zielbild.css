@@ -321,3 +321,5 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
   .inv-mini .wert { min-width: 34px; font-size: 18px; }
   .inv-anbruch { margin-left: 52px; }
 }
+.monatbalken .nulllinie { stroke: var(--holz-tief); stroke-width: 1; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
+.zielkarte.halb .riesig { color: var(--salbei-tief); }

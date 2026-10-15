@@ -43,33 +43,44 @@ export function startView(stand, extra = {}) {
 // ---------- Zielbild-Cockpit (Sanjis Vorlage 15.10.): Bis null fehlen · Umsatz im Monat gegen Ziel · Heute-Kacheln · Spruch ----------
 // Monatsziel = Umsatz (brutto), bei dem der Monat auf null kommt: (Monatskosten + Sonderkosten) / (1 − Wareneinsatz-Quote) × (1 + Mehrwertsteuer).
 // Alles aus dem Rechenwerk (Zähler), nichts geschätzt, was nicht schon geschätzt ist; ohne Kosten gibt es kein Ziel („–").
+// Monatsziel (Baris 15.10., 13:35): „bis null plus Zielgewinn“. null = Umsatz, der alle Kosten deckt; ziel = zusätzlich der Zielgewinn
+// (Anteil vom Nettoumsatz, wie in der Kalkulation, Feld verkauf.zielgewinn). Beides brutto, wie der Umsatz eingetragen wird.
 export function monatsZiel(stand, z, H) {
   const kosten = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
   const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
-  const ziel = kosten > 0 ? kosten / (1 - q) * (1 + (z.steuer || 0)) : null;
+  const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));
+  const brutto = 1 + (z.steuer || 0);
+  const nullpunkt = kosten > 0 ? kosten / (1 - q) * brutto : null;
+  const ziel = nullpunkt === null ? null : 1 - q - g > 0.05 ? kosten / (1 - q - g) * brutto : nullpunkt;
   const tage = []; let summe = 0;
   for (const x of z.tage) { if (x.datum > H) break; const u = umsatzEintrag(stand, x.datum); summe += u ? u.umsatz : 0; tage.push({ datum: x.datum, umsatz: u ? u.umsatz : null, kumuliert: summe }); }
-  return { ziel, umsatz: summe, fehlt: ziel === null ? null : Math.max(0, ziel - summe), darueber: ziel === null ? null : Math.max(0, summe - ziel), tage, geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 };
+  const stufe = nullpunkt === null ? "ohne" : summe < nullpunkt ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
+  return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe,
+    fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : Math.max(0, nullpunkt - summe),
+    darueber: ziel === null ? null : Math.max(0, summe - ziel), tage, geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 };
 }
 function bisNullKarte(stand, z, H) {
   const m = monatsZiel(stand, z, H);
-  const erreicht = m.ziel !== null && m.darueber > 0;
-  return `<button type="button" class="karte zielkarte ${erreicht ? "plus" : ""}" data-a="nav" data-wert="umsatz">
-    <span class="zielkopf"><small class="lbl">${esc(erreicht ? t("cockpit.ueberNull") : t("cockpit.bisNullFehlen"))}</small><span class="zielsym">${sym("target")}</span></span>
-    <span class="riesig">${m.ziel === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${fmtEuro(erreicht ? m.darueber : m.fehlt, { dezimal: 0 })}`}</span>
-    <small>${esc(m.ziel === null ? t("cockpit.zielOhneKosten") : erreicht ? t("cockpit.zielErreicht") : t("cockpit.zielSatz"))}</small></button>`;
+  const erreicht = m.stufe === "ueberZiel";
+  const zahl = m.stufe === "bisNull" ? m.fehltNull : m.stufe === "bisZiel" ? m.fehlt : m.darueber;
+  const g = Math.round(m.gewinnAnteil * 100);
+  return `<button type="button" class="karte zielkarte ${erreicht ? "plus" : m.stufe === "bisZiel" ? "halb" : ""}" data-a="nav" data-wert="umsatz">
+    <span class="zielkopf"><small class="lbl">${esc(t("cockpit.zielStufe." + (m.stufe === "ohne" ? "bisNull" : m.stufe), g))}</small><span class="zielsym">${sym("target")}</span></span>
+    <span class="riesig">${m.ziel === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${fmtEuro(zahl, { dezimal: 0 })}`}</span>
+    <small>${esc(m.ziel === null ? t("cockpit.zielOhneKosten") : t("cockpit.zielSatzStufe." + m.stufe, g))}</small></button>`;
 }
 function monatKarte(stand, z, H) {
   const m = monatsZiel(stand, z, H); if (!m.tage.length) return "";
   const max = Math.max(m.ziel || 0, m.umsatz) || 1; const n = z.tage.length;
   const W = 300, Hh = 110, bw = W / n;
   const balken = m.tage.map((x, i) => { const h = Math.round(x.kumuliert / max * Hh); return `<rect class="${x.datum === H ? "heute" : ""}" x="${(i * bw + bw * 0.18).toFixed(1)}" y="${Hh - h}" width="${(bw * 0.64).toFixed(1)}" height="${h}" rx="1.5"/>`; }).join("");
-  const zielY = m.ziel ? Math.round(Hh - m.ziel / max * Hh) : null;
+  const zielY = m.ziel ? Math.round(Hh - m.ziel / max * Hh) : null; const nullY = m.nullpunkt ? Math.round(Hh - m.nullpunkt / max * Hh) : null;
   return `<button type="button" class="karte monatkarte" data-a="nav" data-wert="umsatz">
     <small class="lbl">${esc(t("cockpit.umsatzImMonat"))}</small>
     <span class="monatzahl"><b>${fmtEuro(m.umsatz, { dezimal: 0 })}</b>${m.ziel ? `<small>${esc(t("cockpit.vonZiel", fmtEuro(m.ziel, { dezimal: 0 })))}</small>` : ""}</span>
     <svg class="monatbalken" viewBox="0 -12 ${W} ${Hh + 26}" preserveAspectRatio="none" aria-hidden="true">${balken}
       ${zielY !== null ? `<line class="ziellinie" x1="0" x2="${W}" y1="${zielY}" y2="${zielY}"/><text x="${W}" y="${zielY - 4}" text-anchor="end">${esc(t("cockpit.zielKurz"))}</text>` : ""}
+      ${nullY !== null && nullY !== zielY ? `<line class="nulllinie" x1="0" x2="${W}" y1="${nullY}" y2="${nullY}"/><text x="0" y="${nullY - 4}">${esc(t("cockpit.nullKurz"))}</text>` : ""}
       <text x="0" y="${Hh + 13}">${esc(datumLesbar(z.tage[0].datum).slice(0, 6))}</text><text x="${W}" y="${Hh + 13}" text-anchor="end">${esc(t("zaehler.heute"))}</text></svg></button>`;
 }
 function heuteKacheln(stand, z, ks, H) {
