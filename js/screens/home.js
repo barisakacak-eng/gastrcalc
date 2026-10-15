@@ -1,5 +1,7 @@
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
+import { planGruppen } from "../putzplan.js";
+import { tagPlus } from "../engine.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
@@ -211,6 +213,8 @@ function naechsteHandlung(stand, z, ks, nk, ab, e, wurzel) {
   const hauptzeit = (h >= 11.5 && h < 14) || (h >= 17.5 && h < 20.5);
   if (!einrichtung && !hauptzeit && stand.waageVorschlag !== H && wareneinsatzSicherheit(stand).zaehl.schaetzung > 0) return mk("waage", "waage-vorschlag");
   if (!einrichtung && stand.gerichte.length && kalkulation(stand).zaehl.grau) return mk("karte", "nav", 'data-wert="karte"');
+  if (stand.putzplan?.aktiv) { const pg = planGruppen(stand); if (pg.ueberfaellig) return mk("putzplanFaellig", "nav", 'data-wert="putzplan"'); } // Putzplan: Überfälliges zuerst
+  if (!einrichtung && !stand.putzplan?.aktiv && !hauptzeit && !(stand.putzplanSpaeter && stand.putzplanSpaeter > tagPlus(H, -7))) return mk("putzplan", "nav", 'data-wert="putzplan"'); // Empfehlung, wenn die Einrichtung fertig ist (Baris 15.10.)
   if (einrichtung && e.naechster) { const z2 = e.naechster.ziel; // Prüfung 15.10.: nicht „Alles erledigt“, solange die Einrichtung offen ist
     const attr = z2.aktion === "nav" ? `data-wert="${z2.wert}"` : z2.aktion === "bearbeiten" ? `data-schritt="${z2.schritt}"${z2.bis ? ` data-bis="${z2.bis}"` : ""}` : "";
     return { text: [t("cockpit.dran.einrichtung")[0], t("einrichtung.schritte." + e.naechster.id)], aktion: z2.aktion, attr }; }

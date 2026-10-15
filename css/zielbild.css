@@ -176,3 +176,25 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .karte.einsicht { display: flex; flex-direction: row; gap: 12px; align-items: flex-start; }
 .einsichtsym { width: 40px; height: 40px; border-radius: 50%; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel, #8A4C20); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .karte.einsicht p { margin: 0; font-size: 16px; } .karte.einsicht small { display: block; color: var(--tinte-weich); font-size: 13.5px; margin-top: 4px; }
+/* Putzplan (HACCP-Empfehlung, 15.10.) */
+.putzplan h2.pptakt, .putzplan h3.pptakt { margin: 14px 0 6px; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-weich); }
+.putzerklaerung { margin: 0 0 6px; }
+.karte.ringkopf { display: flex; flex-direction: row; gap: 16px; align-items: center; }
+.ringkopf b { font-size: 20px; display: block; } .ringkopf small { color: var(--tinte-weich); }
+.planliste { display: flex; flex-direction: column; gap: 8px; }
+.aufgabe { display: flex; gap: 12px; align-items: center; min-height: 60px; padding: 10px 12px; border-radius: var(--radius); background: var(--weiss); border: 1px solid var(--holz); width: 100%; text-align: left; font: inherit; color: var(--tinte); }
+.aufgabe .box { width: 40px; height: 40px; border-radius: 11px; border: 2px solid var(--holz-tief); background: var(--weiss); flex: none; display: flex; align-items: center; justify-content: center; color: #fff; }
+.aufgabe .atext { flex: 1; min-width: 0; } .aufgabe .atext b { display: block; font-size: 16px; line-height: 1.25; } .aufgabe .atext small { display: block; color: var(--tinte-weich); font-size: 13.5px; }
+.aufgabe.erledigt { background: var(--eigen-hell); border-color: #BFD5C4; } .aufgabe.erledigt .box { background: var(--eigen); border-color: var(--eigen); }
+.aufgabe.erledigt .atext b { text-decoration: line-through; text-decoration-color: rgba(31,42,36,.35); }
+.aufgabe.ueberfaellig { border: 2px solid var(--rot); } .aufgabe.ueberfaellig .atext small { color: var(--rot); font-weight: 700; }
+.pstufe { display: inline-block; flex: none; font-size: 11.5px; font-weight: 750; border-radius: 6px; padding: 2px 6px; margin-top: 4px; }
+.pstufe.pflicht { background: var(--branche-hell); color: var(--branche); } .pstufe.empfehlung { background: var(--salbei-hell); color: var(--salbei-tief); } .pstufe.praxis { background: var(--papier-tief); color: var(--tinte-weich); }
+.pwahl { display: flex; gap: 12px; align-items: flex-start; width: 100%; min-height: 56px; padding: 10px 12px; margin-bottom: 6px; border-radius: var(--radius); border: 1px solid var(--holz); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte-weich); }
+.pwahl.an { color: var(--tinte); }
+.pwahl .knebel { margin-top: 4px; width: 44px; height: 26px; border-radius: 13px; background: var(--holz-tief); position: relative; flex: none; }
+.pwahl .knebel::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .15s; }
+.pwahl.an .knebel { background: var(--eigen); } .pwahl.an .knebel::after { left: 21px; }
+.ptext { flex: 1; min-width: 0; } .ptext b { display: block; font-size: 15.5px; } .ptext small { display: block; font-size: 13px; color: var(--tinte-weich); }
+.phinweis { margin: 4px 0; }
+@media print { .nichtdrucken, .appleiste, .fab, .menue, nav.untenleiste { display: none !important; } .nachweis .karte { break-inside: avoid; } }

@@ -1,0 +1,60 @@
+// Putzplan (Empfehlung nach HACCP, Baris 15.10.2026): Plan = Stammdaten, Abhaken = Protokoll (Nachweis für die Lebensmittelkontrolle).
+// Protokoll wird nie gelöscht, nur storniert. Empfehlung der Recherche: mindestens 12, besser 24 Monate aufbewahren.
+import { AUFGABEN, TAKT_TAGE, GERAETE_JE_ART, STANDARD_AUS } from "./data/putzplan.js";
+import { heute, uid } from "./util.js";
+import { ladenArtVon } from "./profil.js";
+
+export const planVon = (stand) => stand.putzplan || null;
+
+// Plan anlegen: Geräte aus Laden-Art und Kühlstellen vorschlagen
+export function planVorschlag(stand) {
+  const art = ladenArtVon(stand) || "anders";
+  const g = new Set(GERAETE_JE_ART[art] || GERAETE_JE_ART.anders);
+  for (const k of stand.kuehlstellen || []) { if (k.archiviert) continue;
+    if (k.art === "tk") g.add("tiefkuehler"); else if (k.art === "kuehl") g.add(/theke|saladette|vitrine/i.test(k.name || "") ? "saladette" : "kuehlschrank"); }
+  return { aktiv: false, geraete: [...g], aus: [...STANDARD_AUS], seit: null };
+}
+
+export const aufgabenFuer = (plan) => AUFGABEN.filter((a) => (a.gilt === "alle" || plan.geraete.includes(a.gilt)) && !plan.aus.includes(a.id));
+
+const tageZwischen = (a, b) => Math.round((new Date(b + "T12:00") - new Date(a + "T12:00")) / 86400000);
+export function letzteErledigung(stand, id) {
+  let l = null; for (const e of stand.putzlog || []) if (e.aufgabe === id && !e.storniert && (!l || e.datum > l.datum || (e.datum === l.datum && e.zeit > l.zeit))) l = e;
+  return l;
+}
+
+// Stand je Aufgabe: erledigt (in diesem Takt schon gemacht), faellig, ueberfaellig (deutlich drüber), hinweis (nach Benutzung)
+export function aufgabenStand(stand, datum = heute()) {
+  const plan = planVon(stand); if (!plan?.aktiv) return [];
+  return aufgabenFuer(plan).map((a) => {
+    if (a.takt === "nach") return { ...a, status: "hinweis" };
+    const l = letzteErledigung(stand, a.id); const takt = TAKT_TAGE[a.takt];
+    const alter = l ? tageZwischen(l.datum, datum) : (plan.seit ? tageZwischen(plan.seit, datum) : 0);
+    const status = l && alter < takt ? "erledigt" : !l && alter < takt ? "faellig" : alter >= Math.max(takt + 1, Math.ceil(takt * 1.3)) ? "ueberfaellig" : "faellig";
+    return { ...a, status, letzte: l, alter };
+  });
+}
+
+// Gruppen für die Ansicht: heute (Tagesaufgaben), diese Woche, diesen Monat, später (Quartal/Jahr), nur Fälliges außer heute
+export function planGruppen(stand, datum = heute()) {
+  const alle = aufgabenStand(stand, datum);
+  const tag = alle.filter((a) => a.takt === "tag");
+  const woche = alle.filter((a) => a.takt === "woche"); const monat = alle.filter((a) => a.takt === "monat");
+  const spaeter = alle.filter((a) => ["quartal", "jahr", "zweijahre"].includes(a.takt));
+  const hinweise = alle.filter((a) => a.status === "hinweis");
+  const zaehl = [...tag, ...woche, ...monat, ...spaeter]; const erledigt = zaehl.filter((a) => a.status === "erledigt").length;
+  return { tag, woche, monat, spaeter, hinweise, erledigt, gesamt: zaehl.length, ueberfaellig: zaehl.filter((a) => a.status === "ueberfaellig").length };
+}
+
+export function abhaken(stand, id, { datum = heute(), von = null } = {}) {
+  stand.putzlog ??= [];
+  const e = { id: uid(), aufgabe: id, datum, zeit: new Date().toTimeString().slice(0, 5), von, storniert: false };
+  stand.putzlog.push(e); return e;
+}
+export function zuruecknehmen(stand, id, datum = heute()) {
+  const e = (stand.putzlog || []).filter((x) => x.aufgabe === id && x.datum === datum && !x.storniert).pop();
+  if (e) { e.storniert = true; e.storniertZeit = new Date().toISOString(); } return !!e;
+}
+
+// Nachweis für die Kontrolle: Einträge eines Zeitraums, neueste zuerst
+export const nachweis = (stand, von, bis) => (stand.putzlog || []).filter((e) => !e.storniert && e.datum >= von && e.datum <= bis).sort((a, b) => (b.datum + b.zeit).localeCompare(a.datum + a.zeit));

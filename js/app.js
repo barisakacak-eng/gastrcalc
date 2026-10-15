@@ -13,6 +13,7 @@ import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, f
 import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
 import { parseTemperatur } from "./screens/kuehl.js";
+import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } from "./screens/putzplan.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
 import { vergleichView, vergleichModus } from "./screens/vergleich.js";
@@ -72,6 +73,7 @@ function zeichne() {
         : ansicht === "umsatz" ? umsatzView(stand)
         : ansicht === "listen" ? listenView(stand)
         : ansicht === "kuehl" ? kuehlView(stand)
+        : ansicht === "putzplan" ? putzplanView(stand)
         : ansicht === "laeden" ? laedenView(wurzel)
         : ansicht === "beleg" ? belegView(stand)
         : ansicht === "abschluss" ? abschlussView(stand)
@@ -280,7 +282,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
-    if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
+    if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
@@ -328,6 +330,10 @@ root.addEventListener("click", async (ev) => {
   if (ansicht === "abschluss") {
     const r = abschlussAktion(name, el, stand, wurzel);
     if (r) { ereignis("tag-abgeschlossen", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); }
+  }
+  if (ansicht === "putzplan") {
+    const r = putzplanAktion(name, el, stand);
+    if (r) { if (r === "zurueck") { ansicht = "start"; speichern(wurzel); } else if (r === "speichern") await sofortSpeichern(wurzel); return zeichne(); }
   }
   if (ansicht === "kuehl") {
     const r = kuehlAktion(name, el, stand, wurzel);
@@ -435,6 +441,7 @@ window.addEventListener("popstate", () => {
   else if (stand.phase === "app" && ansicht !== "start") {
     if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : "umsatz";
     else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "putzplan" && putzplanZurueck(stand)) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : "umsatz";
