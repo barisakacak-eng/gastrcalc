@@ -7,7 +7,7 @@ import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./home.js";
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
-import { t, SPRACHEN } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige } from "../util.js";
 import { reinigungVon, putzzeitMonat, REINIGUNG_LEER } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
@@ -53,7 +53,7 @@ const sprache = {
     <h1 class="frage">${esc(t("sprache.frage"))}</h1>
     <p class="hinweis">${esc(t("sprache.hinweis"))}</p>
     <div class="kacheln">
-      ${SPRACHEN.map((s) => `<button type="button" class="kachel breit" data-a="sprache" data-wert="${s}"><b>${esc(t("sprache." + s))}</b></button>`).join("")}
+      ${SPRACHEN.map((s) => `<button type="button" class="kachel sprachkachel" data-a="sprache" data-wert="${s}" lang="${s}"><b>${esc(SPRACH_NAMEN[s] || s)}</b></button>`).join("")}
     </div>`,
   fuss: () => "",
   aktion(name, el, stand, ctx) {

@@ -333,3 +333,15 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .kacheln .kachel.an::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: var(--eigen); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 15px; }
 /* Kühlliste: lange Namen umbrechen statt überlappen */
 .zeileknopf > span:not(.pfeil) b { overflow-wrap: anywhere; }
+/* 18 Sprachen (15.10.): Sprachwahl als kompaktes Raster, Rechts-nach-links für Arabisch und Persisch */
+.kacheln:has(.sprachkachel) { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kachel.sprachkachel { min-height: 56px; padding: 10px 12px; align-items: flex-start; justify-content: center; text-align: start; }
+.kachel.sprachkachel b { font-size: 16px; }
+[dir="rtl"] .appleiste .menueknopf { left: auto; right: 8px; }
+[dir="rtl"] .appleiste .leiste-rechts { right: auto; left: 16px; }
+[dir="rtl"] .pfeil, [dir="rtl"] .sym-richtung { transform: scaleX(-1); display: inline-block; }
+[dir="rtl"] .zeileknopf, [dir="rtl"] .ez-haupt, [dir="rtl"] .auswahlkarte, [dir="rtl"] .aufgabe, [dir="rtl"] .pwahl { text-align: right; }
+[dir="rtl"] .auswahlkarte > .sym:last-child { margin-left: 0; margin-right: auto; transform: scaleX(-1); }
+[dir="rtl"] .bildwahl-sym { right: auto; left: 4px; }
+[dir="rtl"] .menue { left: auto; right: 0; }
+[dir="rtl"] .fab { right: auto; left: 16px; }

@@ -1,7 +1,7 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
-import { t, setzeSprache, SPRACHEN } from "./i18n.js";
+import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
@@ -139,7 +139,7 @@ function zeichneOnboarding() {
 // Neuer Laden aus der App heraus: stand.neuAus = id des vorherigen Ladens – „Zurück" auf Schritt 1 geht zu dem zurück.
 
 const ctx = {
-  setzeSprache(code) { wurzel.sprache = code; setzeSprache(code); },
+  setzeSprache(code) { wurzel.sprache = code; setzeSprache(code, () => zeichne()); },
   weiter(art) { schrittWeiter(art); },
   zurueck() { schrittZurueck(); },
   fertig(ziel) { fertig(ziel); },
@@ -251,7 +251,7 @@ async function sicherungEinlesen(datei) {
     zusammenfuehren(wurzel, importiert);
     if (leerVorher && wurzel.betriebe.length > 1) { wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== leerVorher); if (wurzel.aktiv === leerVorher) wurzel.aktiv = importiert.aktiv; }
     aktivSetzen(wurzel.aktiv); // der eigene aktive Laden bleibt, die Datei ändert ihn nicht
-    setzeSprache(wurzel.sprache || spracheDesGeraets());
+    setzeSprache(wurzel.sprache || spracheDesGeraets(), () => zeichne());
     await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme });
     ereignisAnzahl = (await alleEreignisse()).length;
     ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start"; meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme")); zeichne();
@@ -305,7 +305,7 @@ root.addEventListener("click", async (ev) => {
     speichernAbbrechen(); await allesLoeschen(); await ablageLeeren(); tagZuruecksetzen(); muellZuruecksetzen(); belegZuruecksetzen(); abschlussZuruecksetzen(); inventurZuruecksetzen(); wurzel = leereWurzel(); stand = null; aktivSetzen(null); ansicht = "start"; ereignisAnzahl = 0;
     setzeSprache(spracheDesGeraets()); return zeichne();
   }
-  if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache); speichern(wurzel); return zeichne(); }
+  if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache, () => zeichne()); speichern(wurzel); return zeichne(); }
 
   if (stand.phase === "onboarding") {
     if (wechselt) return;
@@ -519,7 +519,7 @@ beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" 
   }
   serviceWorkerStarten();
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
-  setzeSprache(wurzel.sprache || spracheDesGeraets());
+  await ladeSprache(wurzel.sprache || spracheDesGeraets()); setzeSprache(wurzel.sprache || spracheDesGeraets());
   const ev = await alleEreignisse(); ereignisAnzahl = ev.length;
   await ereignis("app-geoeffnet", { phase: stand.phase, schritt: schritteFuer(stand)[stand.schritt]?.id, sprache: wurzel.sprache, laeden: wurzel.betriebe.length });
   ereignisAnzahl += 1;

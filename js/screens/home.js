@@ -3,7 +3,7 @@
 import { planGruppen } from "../putzplan.js";
 import { tagPlus } from "../engine.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
-import { t, SPRACHEN, sprache } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { monatsLast, kalkulation, schwundAuswertung, umsatzEintrag, kuehlStatus, offeneNachkontrollen, schwundOhneWert, umsatzKonflikte, umsatzSteuerSatz } from "../engine.js";
 import { zaehler, wochenVergleich, abschlussVon, warenQuote } from "../zaehler.js";
@@ -294,7 +294,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.sprache"))}</h2>
-        <div class="chips">${SPRACHEN.map((s) => `<button type="button" class="chip ${sprache() === s ? "an" : ""}" data-a="sprache" data-wert="${s}">${esc(t("sprache." + s))}</button>`).join("")}</div>
+        <div class="chips">${SPRACHEN.map((s) => `<button type="button" class="chip ${sprache() === s ? "an" : ""}" data-a="sprache" data-wert="${s}" lang="${s}">${esc(SPRACH_NAMEN[s] || s)}</button>`).join("")}</div>
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.betrieb"))} <span class="marke">${esc(stand.betrieb.name)}</span></h2>

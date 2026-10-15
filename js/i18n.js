@@ -3,13 +3,26 @@ import de from "./lang/de.js";
 import tr from "./lang/tr.js";
 import en from "./lang/en.js";
 
+// Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
+// wenn jemand sie wählt (15.10.2026: 18 Sprachen, die App bleibt trotzdem klein und schnell).
 const TABELLEN = { de, tr, en };
-export const SPRACHEN = ["de", "tr", "en"];
+export const SPRACH_NAMEN = { de: "Deutsch", tr: "Türkçe", en: "English", ar: "العربية", fa: "فارسی", ku: "Kurdî (Kurmancî)", pl: "Polski", ro: "Română", bg: "Български",
+  ru: "Русский", uk: "Українська", sq: "Shqip", bs: "Bosanski · Hrvatski · Srpski", el: "Ελληνικά", it: "Italiano", es: "Español", fr: "Français", vi: "Tiếng Việt" };
+export const NACHLADBAR = [];
+export const SPRACHEN = ["de", "tr", "en", ...NACHLADBAR];
+export const RTL = new Set(["ar", "fa"]);
 let aktiv = "de";
-
-export function setzeSprache(code) {
-  aktiv = TABELLEN[code] ? code : "de";
-  document.documentElement.lang = aktiv;
+export const spracheGeladen = (c) => !!TABELLEN[c];
+export async function ladeSprache(code) {
+  if (!TABELLEN[code] && NACHLADBAR.includes(code)) { try { TABELLEN[code] = (await import(`./lang/${code}.js`)).default; } catch (e) { console.warn("Sprache", code, e); } }
+  return !!TABELLEN[code];
+}
+// Setzt die Sprache. Ist sie noch nicht geladen, wird sie geladen und danach `danach()` aufgerufen (neu zeichnen).
+export function setzeSprache(code, danach) {
+  if (!SPRACHEN.includes(code)) code = "de";
+  if (!TABELLEN[code]) { ladeSprache(code).then((ok) => { if (ok) { setzeSprache(code); if (danach) danach(); } }); return; }
+  aktiv = code;
+  if (typeof document !== "undefined") { document.documentElement.lang = aktiv; document.documentElement.dir = RTL.has(aktiv) ? "rtl" : "ltr"; }
 }
 export const sprache = () => aktiv;
 

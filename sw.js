@@ -1,7 +1,7 @@
 // Service Worker: alle App-Dateien einer Fassung werden in EINEN Cache mit Fassungsnamen gelegt – ganz oder gar nicht.
 // Die Seite liest nur aus dem Cache ihrer eigenen Fassung, nie gemischt. Eine neue Fassung wartet, bis die Seite sie
 // ausdrücklich übernimmt (Hinweis auf der Startseite), dann genau ein Neuladen. (Vorprüfung Gremium, Posten 1.)
-const V = "2026-10-15.37";
+const V = "2026-10-15.38";
 const NAME = "gc-" + V;
 // Fremdbausteine (Texterkennung ~9 MB, PDF-Leser ~1,4 MB) werden nicht bei jeder Fassung neu geladen, sondern beim ersten
 // Gebrauch in einen eigenen, fassungsunabhängigen Cache gelegt – danach offline verfügbar. Neuer Name nur bei neuen Bausteinen.
@@ -41,7 +41,9 @@ self.addEventListener("fetch", (e) => {
     const treffer = await c.match(e.request, { ignoreSearch: true });
     if (treffer) return treffer;
     if (e.request.mode === "navigate") { const start = await c.match("index.html"); if (start) return start; }
-    return fetch(e.request);
+    const r = await fetch(e.request);
+    if (r.ok && url.pathname.includes("/js/lang/")) c.put(e.request, r.clone()); // gewählte Sprache danach auch offline
+    return r;
   }).catch(() => fetch(e.request)));
 });
 self.addEventListener("message", (e) => { if (e.data === "uebernehmen") self.skipWaiting(); });
