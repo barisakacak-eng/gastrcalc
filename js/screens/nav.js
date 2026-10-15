@@ -39,7 +39,7 @@ const GRUPPEN = [
   ["heute", [["start", "menue.cockpit"], ["muell", "menue.muell"], ["kuehl", "menue.kuehl"], ["putzplan", "menue.putzplan"], ["umsatz", "menue.umsatz"], ["abschluss", "menue.abschluss"]]],
   ["kalkulation", [["vergleich", "menue.vergleich"], ["karte", "menue.karte"], ["beleg", "menue.beleg"], ["inventur", "inventur.menue"], ["kosten", "menue.kosten"]]],
   ["auswertung", [["listen", "menue.listen"], ["laeden", "menue.laeden"]]],
-  ["einstellungen", [["einstellungen", "menue.einstellungen"], ["sicherung", "menue.sicherung"]]],
+  ["einstellungen", [["buero", "buero.titel"], ["einstellungen", "menue.einstellungen"], ["sicherung", "menue.sicherung"]]], // „Büro“: Entwickler C, bis A die neue Navigation bringt
 ];
 const ziel = (z) => z === "kosten" ? 'data-a="bearbeiten" data-schritt="kosten-miete" data-bis="kosten-sonstiges"' : z === "sicherung" ? 'data-a="nav" data-wert="einstellungen" data-anker="sicherung"' : `data-a="nav" data-wert="${z}"`;
 
