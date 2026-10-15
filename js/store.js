@@ -19,7 +19,7 @@ import { GEBINDE_ARTEN } from "./engine.js";
 export const SCHEMA = 5;
 export const APP_FASSUNG = "etappe6a";
 const DB_NAME = "gastrocalc";
-const DB_VERSION = 1;
+const DB_VERSION = 2; // 2 (Stresstest 15.10.): Speicher "teile" für die Journale in Monatsteilen
 const EREIGNISSE_MAX = 2000;
 
 // Alle Sprachen der App (i18n.js SPRACH_NAMEN); hier als Liste, damit store.js ohne i18n auskommt
@@ -73,6 +73,7 @@ function openDb() {
       const d = r.result;
       if (!d.objectStoreNames.contains("stand")) d.createObjectStore("stand");
       if (!d.objectStoreNames.contains("ereignisse")) d.createObjectStore("ereignisse", { autoIncrement: true });
+      if (!d.objectStoreNames.contains("teile")) d.createObjectStore("teile"); // Fassung 2: Journale in Monatsteilen
     };
     r.onblocked = () => rej(new Error("Speicher blockiert: ein anderes Fenster der App ist noch offen"));
     r.onsuccess = () => {
@@ -84,30 +85,72 @@ function openDb() {
   });
 }
 
-function tx(store, mode, fn) {
+// Eine Transaktion über einen oder mehrere Speicher. fn bekommt die Transaktion; Rückgabe: Anfrage, Liste von Anfragen oder Wert.
+// Erst wenn die Transaktion ganz durch ist, gilt sie (alles oder nichts).
+function txMehr(stores, mode, fn) {
   return new Promise((res, rej) => {
-    const t = db.transaction(store, mode);
-    const s = t.objectStore(store);
-    const out = fn(s);
-    t.oncomplete = () => res(out instanceof IDBRequest ? out.result : out);
+    const t = db.transaction(stores, mode);
+    const out = fn(t);
+    const ergebnis = (x) => (typeof IDBRequest !== "undefined" && x instanceof IDBRequest ? x.result : x);
+    t.oncomplete = () => res(Array.isArray(out) ? out.map(ergebnis) : ergebnis(out));
     t.onerror = () => rej(t.error);
     t.onabort = () => rej(t.error);
   });
 }
+const tx = (store, mode, fn) => txMehr(store, mode, (t) => fn(t.objectStore(store)));
+
+const fehlerNeuer = () => { const e = new Error("Stand stammt aus einer neueren Fassung"); e.grund = "neuer"; return e; };
 
 export async function laden() {
   try {
     db = await openDb();
-    const s = await tx("stand", "readonly", (st) => st.get("main"));
+    grundlageVerwerfen(); altModus = false;
+    const [kopf, alt] = await tx("stand", "readonly", (st) => [st.get("kopf"), st.get("main")]);
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-    if (s && Number(s.schema) > SCHEMA) { const e = new Error("Stand stammt aus einer neueren Fassung"); e.grund = "neuer"; throw e; }
     await ereignisseDeckeln();
-    return s ? migrierenWurzel(s) : leereWurzel();
+    if (kopf) {
+      if (Number(kopf.schema) > SCHEMA) throw fehlerNeuer();
+      const teile = await tx("teile", "readonly", (st) => st.getAll());
+      let roh = null;
+      try { roh = zusammensetzen(kopf, teile); }
+      catch (e) {
+        console.warn("Geteilter Stand unvollständig:", e);
+        if (!alt) throw e;
+        // Der alte Gesamt-Datensatz ist noch da (Umzug nicht bestätigt): von ihm aus neu umziehen
+      }
+      if (roh) { const w = migrierenWurzel(roh); grundlageSetzen(w, teile); return w; }
+    }
+    if (alt) {
+      if (Number(alt.schema) > SCHEMA) throw fehlerNeuer();
+      const w = migrierenWurzel(alt);
+      await umziehen(w);
+      return w;
+    }
+    return leereWurzel();
   } catch (e) {
     if (e.grund === "neuer") throw e;
     console.warn("Speicher nicht verfügbar, Daten nur in dieser Sitzung:", e);
     verfuegbar = false;
     return leereWurzel();
+  }
+}
+
+// Einmaliger Umzug vom alten Gesamt-Datensatz ("main") in Kopf + Monatsteile. Der alte Datensatz bleibt,
+// bis der neue Stand zurückgelesen und als gleich bestätigt ist. Klappt das nicht, bleibt alles beim alten Format.
+async function umziehen(w) {
+  grundlageVerwerfen();
+  const ok = await schreibenJetzt(w, { stempel: false });
+  try {
+    if (!ok) throw new Error("Umzug: Schreiben fehlgeschlagen");
+    const [kopf] = await tx("stand", "readonly", (st) => [st.get("kopf")]);
+    const teile = await tx("teile", "readonly", (st) => st.getAll());
+    if (JSON.stringify(zusammensetzen(kopf, teile)) !== JSON.stringify(w)) throw new Error("Umzug: Rücklesen weicht ab");
+    await tx("stand", "readwrite", (st) => st.delete("main"));
+    ereignis("speicher-umzug", { teile: teile.length });
+  } catch (e) {
+    console.warn("Umzug in Monatsteile nicht bestätigt, Speicher bleibt im alten Format:", e);
+    altModus = true; grundlageVerwerfen();
+    await txMehr(["stand", "teile"], "readwrite", (t) => { t.objectStore("stand").delete("kopf"); t.objectStore("teile").clear(); }).catch(() => {});
   }
 }
 
@@ -171,6 +214,8 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.messungen = mitId(s.messungen).filter((m) => typeof m.datum === "string" && typeof m.stelle === "string").map((m) => ({ ...m,
     wert: typeof m.wert === "number" ? m.wert : null, massnahmen: Array.isArray(m.massnahmen) ? m.massnahmen.filter((x) => typeof x === "string") : [],
     notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.datum + "T00:00:00.000Z" }));
+  // Stresstest 15.10.: abgeschlossene Rundgänge tragen keine doppelte Kopie ihrer Messungen mehr (stehen vollständig im Journal)
+  s.rundgaenge = s.rundgaenge.map((r) => (rundeDoppelt(r, s) ? { ...r, messungen: [] } : r));
   // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)
   s.inventuren = mitId(s.inventuren).filter((i) => typeof i.datum === "string").map((i) => ({ ...i,
     begonnen: typeof i.begonnen === "string" ? i.begonnen : i.datum + "T00:00:00.000Z", abgeschlossen: typeof i.abgeschlossen === "string" ? i.abgeschlossen : null,
@@ -215,19 +260,312 @@ function stempeln(wurzel) {
   const b = wurzel.betriebe.find((x) => x.id === wurzel.aktiv); if (b) b.geaendert = new Date().toISOString();
 }
 
-async function schreiben(wurzel) {
-  if (!verfuegbar || !db) return false;
-  try { await tx("stand", "readwrite", (st) => st.put(wurzel, "main")); return true; }
-  catch (e) { console.warn("Speichern fehlgeschlagen:", e); if (fehlerMelder) fehlerMelder("speichern", e); return false; }
+// ---------- Geteilte Speicherung (Stresstest 15.10.) ----------
+// Ein Jahr Daten sind ~4,7 MB. Bis 15.10. wurde bei jedem Speichern alles kopiert und geschrieben (~200 ms Hänger bei langsamem Handy).
+// Jetzt: ein kleiner Kopf (Wurzel + Läden ohne Journale) unter "kopf" im Speicher "stand" und die Journale in Monatsteilen
+// im Speicher "teile", Schlüssel "ladenId|journal|JJJJ-MM". Geschrieben wird nur, was sich seit dem letzten Speichern geändert hat –
+// Kopf und geänderte Teile in EINER Transaktion, also nie halb. Beim Laden entsteht genau dieselbe Form wie vorher.
+//
+// Wie Änderungen erkannt werden, ohne alles zu lesen (keine andere Datei muss etwas melden):
+//  1. je Journal und Stelle: ist es noch dasselbe Objekt? Neu, entfernt, umsortiert → betroffene Monate neu schreiben.
+//  2. alte Einträge: die Felder storniert und erfasst (Storno setzt storniert, Neu-Erfassen setzt erfasst).
+//  3. in dieser Sitzung angelegte Einträge (die man noch bearbeiten darf) und offene Rundgänge/Inventuren: ganz verglichen.
+//  4. im Leerlauf und beim Verlassen der App wird jedes Teil ganz verglichen – das fängt auch tiefe Änderungen an alten Einträgen.
+// Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über storniert/erfasst geändert
+// (oder durch ein neues Objekt ersetzt) – dann ist die Änderung sofort gespeichert, sonst erst bei 4.
+export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "rundgaenge", "inventuren", "uploads"];
+const JOURNAL_SET = new Set(JOURNALE);
+// Stammdaten, die groß werden (Waren mit Preisverlauf, Gerichte mit Zutaten): je Laden ein eigenes Teil "ladenId|artikel|alle",
+// bei jedem Speichern ganz verglichen (Text gegen Text) und nur geschrieben, wenn anders. So bleibt der Kopf klein.
+const STAMM_SET = new Set(["artikel", "gerichte"]);
+const STAMM = "alle";
+const FORMAT_GETEILT = 2;
+const PLATZHALTER = 0;          // hält im Kopf die Stelle des Felds frei, damit die Reihenfolge der Felder gleich bleibt
+const NF = 2;                   // beobachtete Felder je alten Eintrag: storniert und erfasst – alle späteren Änderungen an
+                                // gespeicherten Einträgen setzen eines davon (Storno, neu erfasst). Feste Namen sind auf dem Handy am schnellsten.
+const FRISCH_MAX = 600;         // so viele frische/offene Einträge werden ganz verglichen
+const FRISCH_SCHUB = 50;        // kommen mehr neue Einträge auf einmal (Einlesen einer Sicherung), gelten sie gleich als alt
+const LEERLAUF_ABSTAND = 60e3;  // höchstens einmal je Minute im Leerlauf ganz prüfen
+const LEER = {};
+
+let journale = new Map();       // "ladenId|journal" → { j, arr, b, refs, monate, flags, texte, lauf } – Stand beim letzten Speichern
+let teileH = new Map();         // Schlüssel → Prüfsumme des gespeicherten Teils
+let stammText = new Map();      // "ladenId|artikel|alle" → zuletzt gespeicherter Text
+let frischZahl = 0;             // wie viele Einträge ganz verglichen werden (je Journal in texte[i])
+let zwang = new Set();          // Teile, die beim nächsten Speichern sicher neu geschrieben werden
+let loeschenOffen = new Set();  // gespeicherte Teile ohne Einträge (nach dem Laden gefunden)
+let bekanntGueltig = false;     // false → nächstes Speichern schreibt alles neu (erster Start, nach einem Fehler)
+let kopfAlt = null, ordnungAlt = null, stempelAlt = null;
+let altModus = false;           // Rückfall, wenn der Umzug nicht bestätigt wurde: ein Gesamt-Datensatz wie bis 15.10.
+let letzteWurzel = null, leerlaufZuletzt = 0, leerlaufGeplant = false, tiefZuletzt = 0;
+function grundlageVerwerfen() { journale = new Map(); teileH = new Map(); stammText = new Map(); frischZahl = 0; zwang = new Set(); loeschenOffen = new Set(); bekanntGueltig = false; kopfAlt = null; ordnungAlt = null; stempelAlt = null; }
+
+function monatVon(e) {
+  const d = e && typeof e === "object" ? (typeof e.datum === "string" ? e.datum : typeof e.erfasst === "string" ? e.erfasst : "") : "";
+  return d.length >= 7 && d.charCodeAt(4) === 45 ? d.slice(0, 7) : "ohne";
+}
+function flaggen(F, i, x) { const o = i * NF; F[o] = x.storniert; F[o + 1] = x.erfasst; }
+const flaggenGleich = (F, i, x) => { const o = i * NF; return x.storniert === F[o] && x.erfasst === F[o + 1]; };
+const offen = (j, e) => (j === "rundgaenge" || j === "inventuren") && !!e && typeof e === "object" && !e.abgeschlossen;
+function laeufe(M) {
+  const lauf = []; let letzt = null, n = 0;
+  for (let i = 0; i < M.length; i++) { const m = M[i]; if (m === letzt) n += 1; else { if (letzt !== null) lauf.push([letzt, n]); letzt = m; n = 1; } }
+  if (letzt !== null) lauf.push([letzt, n]);
+  return lauf;
 }
 
-export const speichern = debounce((wurzel) => { stempeln(wurzel); schreiben(wurzel); }, 900); // Stresstest 15.10.: seltener ganz schreiben; beim Verlassen der App wird sofort gesichert
+// Prüfsumme eines Teils (zwei 32-Bit-Hashes + Länge): nur zum Erkennen von Änderungen, kein Schutz gegen Absicht
+function hash(s) {
+  let a = 5381, b = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); a = (Math.imul(a, 33) + c) | 0; b = Math.imul(b ^ c, 16777619); }
+  return (a >>> 0).toString(36) + "." + (b >>> 0).toString(36) + "." + s.length;
+}
 
-export async function sofortSpeichern(wurzel, { stempel = true } = {}) {
-  if (stempel) stempeln(wurzel);
-  return schreiben(wurzel);
+// Abgeschlossene Rundgänge: ihre Messungen stehen 1:1 im Journal messungen (mit rundgang = Rundgang-Kennung) und
+// „weggeworfene Ware" als Schwund mit messung = Messungs-Kennung. Die Kopie im Rundgang liest niemand (Monatsblatt und
+// Nachkontrollen lesen das Journal) – sie wird nicht mehr gespeichert, wenn jede Messung dort vollständig vorhanden ist.
+const messIndexCache = new WeakMap();
+function messIndex(b) {
+  const ms = Array.isArray(b.messungen) ? b.messungen : [], sw = Array.isArray(b.schwund) ? b.schwund : [];
+  let ix = messIndexCache.get(b);
+  if (!ix || ix.ms !== ms || ix.nm !== ms.length || ix.sw !== sw || ix.ns !== sw.length) {
+    const mess = new Map(); for (const m of ms) if (m && typeof m.id === "string") mess.set(m.id, m);
+    const weg = new Set(); for (const e of sw) if (e && typeof e.messung === "string") weg.add(e.messung);
+    ix = { ms, nm: ms.length, sw, ns: sw.length, mess, weg }; messIndexCache.set(b, ix);
+  }
+  return ix;
+}
+export function rundeDoppelt(r, b) {
+  if (!r || !r.abgeschlossen || !Array.isArray(r.messungen) || !r.messungen.length) return false;
+  const ix = messIndex(b);
+  return r.messungen.every((m) => { const j = m && ix.mess.get(m.id);
+    return !!j && j.rundgang === r.id && j.stelle === m.stelle && j.wert === (typeof m.wert === "number" ? m.wert : null) && (!(Array.isArray(m.weg) && m.weg.length) || ix.weg.has(m.id)); });
+}
+const teilText = (j, liste, b) => JSON.stringify(j === "rundgaenge" ? liste.map((r) => (rundeDoppelt(r, b) ? { ...r, messungen: [] } : r)) : liste);
+
+// Einträge der genannten Monate eines Journals einsammeln, Text bilden und – nur wenn anders als gespeichert – zum Schreiben vormerken
+function monateSchreiben(jk, st, sid, j, monate, out) {
+  if (!monate.size) return;
+  const gruppen = new Map(); for (const m of monate) gruppen.set(m, []);
+  const A = st.arr; let off = 0; // über die Lauflängen: nur die Einträge der betroffenen Monate anfassen
+  for (const [m, n] of st.lauf) { const g = gruppen.get(m); if (g) for (let k = off; k < off + n; k++) g.push(A[k]); off += n; }
+  for (const [m, liste] of gruppen) {
+    const key = jk + "|" + m;
+    if (!liste.length) { if (teileH.has(key)) { teileH.delete(key); out.loeschen.push(key); } continue; }
+    const t = teilText(j, liste, st.b); const h = hash(t);
+    if (teileH.get(key) === h) continue; // Inhalt gleich geblieben
+    teileH.set(key, h); out.schreiben.push({ key, wert: { s: sid, j, m, n: liste.length, h, t } });
+  }
+}
+
+// Ein Journal gegen den zuletzt gespeicherten Stand prüfen; liefert die Reihenfolge der Monate (Lauflängen)
+function journalPruefen(b, sid, j, arr, tief, out) {
+  const jk = sid + "|" + j; out.gesehen.add(jk);
+  let st = journale.get(jk);
+  if (!st) { st = { j, arr, b, refs: [], monate: [], flags: [], texte: [], lauf: [] }; journale.set(jk, st); }
+  st.arr = arr; st.b = b;
+  const R = st.refs, M = st.monate, F = st.flags, T = st.texte, ohneFelder = j === "rundgaenge" || j === "inventuren"; const altN = R.length, n = arr.length;
+  const dirty = new Set(); let umgestellt = false;
+  for (let i = 0; i < n; i++) {
+    const e = arr[i]; const x = e !== null && typeof e === "object" ? e : LEER;
+    if (i < altN && e === R[i]) {
+      const t = T[i];
+      if (t !== undefined) {
+        const nt = JSON.stringify(e);
+        if (nt !== t) { T[i] = nt; dirty.add(M[i]); flaggen(F, i, x); const m = monatVon(e); if (m !== M[i]) { M[i] = m; dirty.add(m); umgestellt = true; } }
+      } else if (tief) {
+        const m = monatVon(e); if (m !== M[i]) { dirty.add(M[i]); M[i] = m; dirty.add(m); umgestellt = true; }
+        if (!flaggenGleich(F, i, x)) { flaggen(F, i, x); dirty.add(M[i]); }
+      } else if (!ohneFelder && !flaggenGleich(F, i, x)) { flaggen(F, i, x); dirty.add(M[i]); } // abgeschlossene Rundgänge/Inventuren ändern sich nicht mehr
+      continue;
+    }
+    // neu oder an dieser Stelle ein anderes Objekt
+    umgestellt = true;
+    if (i < altN) dirty.add(M[i]);
+    const m = monatVon(e); R[i] = e; M[i] = m; T[i] = undefined; flaggen(F, i, x); dirty.add(m); out.neu.push([st, i, e]);
+  }
+  if (n < altN) { umgestellt = true; for (let i = n; i < altN; i++) dirty.add(M[i]); R.length = n; M.length = n; T.length = n; F.length = n * NF; }
+  if (umgestellt || !st.lauf.length) st.lauf = laeufe(M);
+  if (tief) for (const [m] of st.lauf) dirty.add(m); // ganz vergleichen: jedes Teil
+  if (zwang.size) for (const k of zwang) if (k.startsWith(jk + "|")) dirty.add(k.slice(jk.length + 1));
+  monateSchreiben(jk, st, sid, j, dirty, out);
+  return st.lauf;
+}
+
+function stammPruefen(sid, j, liste, out) {
+  const key = sid + "|" + j + "|" + STAMM; out.stamm.add(key);
+  const t = JSON.stringify(liste);
+  if (stammText.get(key) === t && teileH.has(key)) return;
+  stammText.set(key, t); const h = hash(t);
+  if (teileH.get(key) === h) return;
+  teileH.set(key, h); out.schreiben.push({ key, wert: { s: sid, j, m: STAMM, n: liste.length, h, t } });
+}
+
+// Beim Verlassen der App (versteckt) ganz vergleichen – höchstens alle 5 s, denn auf „versteckt" folgt oft gleich „pagehide"
+const seiteVersteckt = () => typeof document !== "undefined" && document.visibilityState === "hidden" && Date.now() - tiefZuletzt > 5000;
+
+// Speichern läuft nacheinander: solange eine Transaktion offen ist, wartet das nächste Speichern auf sie.
+let kette = Promise.resolve(), laufend = 0;
+function schreiben(wurzel, opt) {
+  if (!verfuegbar || !db) return Promise.resolve(false);
+  const los = () => schreibenJetzt(wurzel, opt);
+  const p = laufend ? kette.then(los) : los();
+  laufend += 1; kette = p.then(() => { laufend -= 1; });
+  return p;
+}
+
+function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt() } = {}) {
+  if (!verfuegbar || !db) return Promise.resolve(false);
+  letzteWurzel = wurzel;
+  if (altModus) {
+    if (stempel) stempeln(wurzel);
+    return tx("stand", "readwrite", (st) => st.put(wurzel, "main")).then(() => true, (e) => speicherFehler(e));
+  }
+  const voll = !bekanntGueltig;
+  if (voll) grundlageVerwerfen();
+  if (tief) tiefZuletzt = Date.now();
+  // Zeitstempel vorläufig setzen; ändert sich sonst nichts, wird er zurückgenommen und nichts geschrieben
+  const aktiv = stempel ? wurzel.betriebe.find((x) => x.id === wurzel.aktiv) : null;
+  const stempelVorher = aktiv ? aktiv.geaendert : undefined;
+  if (aktiv) aktiv.geaendert = new Date().toISOString();
+  const out = { schreiben: [], loeschen: [...loeschenOffen], neu: [], gesehen: new Set(), stamm: new Set() };
+  const ordnung = [], ids = [], stempelListe = [], schonSid = new Set();
+  const betriebe = wurzel.betriebe.map((b, i) => {
+    let sid = String(b?.id ?? ""); if (schonSid.has(sid)) sid += "~" + i; schonSid.add(sid); ids.push(sid);
+    const k = {}; const ord = {}; stempelListe[i] = null;
+    for (const key in b) {
+      const v = b[key];
+      if (key === "geaendert") { k[key] = PLATZHALTER; stempelListe[i] = v ?? null; }
+      else if (JOURNAL_SET.has(key) && Array.isArray(v)) { k[key] = PLATZHALTER; ord[key] = journalPruefen(b, sid, key, v, tief, out); }
+      else if (STAMM_SET.has(key) && Array.isArray(v)) { k[key] = PLATZHALTER; ord[key] = STAMM; stammPruefen(sid, key, v, out); }
+      else k[key] = v;
+    }
+    ordnung.push(ord);
+    return k;
+  });
+  // Läden oder Journale, die es nicht mehr gibt: ihre Teile löschen
+  for (const jk of [...journale.keys()]) if (!out.gesehen.has(jk)) {
+    journale.delete(jk);
+    for (const key of [...teileH.keys()]) if (key.startsWith(jk + "|")) { teileH.delete(key); out.loeschen.push(key); }
+  }
+  for (const key of [...stammText.keys()]) if (!out.stamm.has(key)) { stammText.delete(key); if (teileH.delete(key)) out.loeschen.push(key); }
+  // frische Einträge (einzeln angelegt) und offene Rundgänge/Inventuren künftig ganz vergleichen
+  for (const [st, i, e] of out.neu) {
+    if (!e || typeof e !== "object") continue;
+    if (offen(st.j, e) || (out.neu.length <= FRISCH_SCHUB && frischZahl < FRISCH_MAX)) { st.texte[i] = JSON.stringify(e); frischZahl += 1; }
+  }
+  const kopfText = JSON.stringify({ ...wurzel, betriebe });
+  const stempelText = JSON.stringify(stempelListe);
+  const ordnungText = JSON.stringify(ordnung) + "\n" + ids.join("|");
+  zwang = new Set(); loeschenOffen = new Set();
+  if (!voll && !out.schreiben.length && !out.loeschen.length && kopfText === kopfAlt && ordnungText === ordnungAlt && (aktiv || stempelText === stempelAlt)) {
+    if (aktiv) aktiv.geaendert = stempelVorher; // nichts geändert: nichts schreiben, Zeitstempel bleibt
+    leerlaufPlanen(); return Promise.resolve(true);
+  }
+  const teile = Object.fromEntries(teileH);
+  const kopf = { format: FORMAT_GETEILT, schema: Number(wurzel.schema) || SCHEMA, gespeichert: new Date().toISOString(), wurzel: kopfText, stempel: stempelText, ids, ordnung, teile };
+  // Die neue Grundlage gilt sofort (das nächste Speichern wartet ohnehin auf diese Transaktion); schlägt sie fehl, wird sie verworfen
+  bekanntGueltig = true; kopfAlt = kopfText; ordnungAlt = ordnungText; stempelAlt = stempelText;
+  return txMehr(["stand", "teile"], "readwrite", (t) => {
+    const tl = t.objectStore("teile");
+    if (voll) tl.clear();
+    for (const x of out.schreiben) tl.put(x.wert, x.key);
+    for (const k of out.loeschen) tl.delete(k);
+    t.objectStore("stand").put(kopf, "kopf");
+  }).then(() => { leerlaufPlanen(); return true; }, (e) => { grundlageVerwerfen(); return speicherFehler(e); });
+}
+function speicherFehler(e) { console.warn("Speichern fehlgeschlagen:", e); if (fehlerMelder) fehlerMelder("speichern", e); return false; }
+
+// Kopf + Teile → Wurzel in genau der Form, wie sie gespeichert wurde. Wirft, wenn ein Teil fehlt oder nicht passt.
+function zusammensetzen(kopf, teile) {
+  if (!istObjekt(kopf) || kopf.format !== FORMAT_GETEILT || typeof kopf.wurzel !== "string") throw new Error("Kopf unbekannt");
+  const nachSchluessel = new Map();
+  for (const v of teile || []) if (istObjekt(v)) nachSchluessel.set(v.s + "|" + v.j + "|" + v.m, v);
+  for (const [key, h] of Object.entries(kopf.teile || {})) { const v = nachSchluessel.get(key); if (!v || v.h !== h) throw new Error("Teil fehlt oder veraltet: " + key); }
+  const w = JSON.parse(kopf.wurzel); const stempel = JSON.parse(kopf.stempel || "[]");
+  (w.betriebe || []).forEach((b, i) => {
+    if ("geaendert" in b) b.geaendert = stempel[i] ?? null;
+    const ord = kopf.ordnung?.[i] || {}; const sid = kopf.ids[i];
+    for (const j of Object.keys(ord)) {
+      if (ord[j] === STAMM) {
+        const v = nachSchluessel.get(sid + "|" + j + "|" + STAMM); if (!v) throw new Error("Teil fehlt: " + sid + "|" + j);
+        const liste = JSON.parse(v.t); if (!Array.isArray(liste) || liste.length !== v.n) throw new Error("Teil unvollständig"); b[j] = liste; continue;
+      }
+      const liste = []; const zeiger = new Map();
+      for (const [m, n] of ord[j]) {
+        let z = zeiger.get(m);
+        if (!z) {
+          const v = nachSchluessel.get(sid + "|" + j + "|" + m); if (!v) throw new Error("Teil fehlt: " + sid + "|" + j + "|" + m);
+          z = { e: JSON.parse(v.t), i: 0 }; if (z.e.length !== v.n) throw new Error("Teil unvollständig"); zeiger.set(m, z);
+        }
+        for (let k = 0; k < n; k++) { if (z.i >= z.e.length) throw new Error("Teil zu kurz"); liste.push(z.e[z.i++]); }
+      }
+      for (const z of zeiger.values()) if (z.i !== z.e.length) throw new Error("Teil zu lang");
+      b[j] = liste;
+    }
+  });
+  return w;
+}
+
+// Nach dem Laden: Grundlage = die geladene (gehobene) Wurzel, Prüfsummen von den gespeicherten Teilen.
+// Was die Hebung verändert hat, findet die erste ganze Prüfung (Leerlauf/Verlassen) und schreibt es einmal nach.
+function grundlageSetzen(w, teile) {
+  grundlageVerwerfen();
+  const gespeichert = new Map(), texte = new Map(); for (const v of teile) if (istObjekt(v)) { const key = v.s + "|" + v.j + "|" + v.m; gespeichert.set(key, v.h); if (v.m === STAMM) texte.set(key, v.t); }
+  const schonSid = new Set(); const da = new Set();
+  w.betriebe.forEach((b, i) => {
+    let sid = String(b?.id ?? ""); if (schonSid.has(sid)) sid += "~" + i; schonSid.add(sid);
+    for (const j of STAMM_SET) {
+      const key = sid + "|" + j + "|" + STAMM; if (!Array.isArray(b[j]) || !gespeichert.has(key)) continue;
+      da.add(key); teileH.set(key, gespeichert.get(key)); stammText.set(key, texte.get(key)); // weicht der gehobene Stand ab, schreibt das nächste Speichern ihn
+    }
+    for (const j of JOURNALE) {
+      const arr = b[j]; if (!Array.isArray(arr)) continue;
+      const jk = sid + "|" + j; const st = { j, arr, b, refs: arr.slice(), monate: arr.map(monatVon), flags: new Array(arr.length * NF), texte: new Array(arr.length).fill(undefined), lauf: [] };
+      for (let k = 0; k < arr.length; k++) { const e = arr[k]; flaggen(st.flags, k, e !== null && typeof e === "object" ? e : LEER); if (offen(j, e)) st.texte[k] = JSON.stringify(e); }
+      st.lauf = laeufe(st.monate); journale.set(jk, st);
+      for (const [m] of st.lauf) { const key = jk + "|" + m; da.add(key); if (gespeichert.has(key)) teileH.set(key, gespeichert.get(key)); else zwang.add(key); }
+    }
+  });
+  for (const key of gespeichert.keys()) if (!da.has(key)) loeschenOffen.add(key);
+  bekanntGueltig = true; letzteWurzel = w;
+}
+
+// Leerlauf-Prüfung: jedes Teil ganz vergleichen (fängt Änderungen tief in alten Einträgen, die die Felder aus 2. nicht sehen).
+// Läuft in kleinen Stücken, wenn das Handy nichts zu tun hat; findet sie etwas, wird normal (verzögert) gespeichert.
+function leerlaufPlanen() {
+  const ric = globalThis.requestIdleCallback;
+  if (typeof ric !== "function" || leerlaufGeplant || Date.now() - leerlaufZuletzt < LEERLAUF_ABSTAND) return;
+  leerlaufGeplant = true;
+  ric(() => {
+    const w = letzteWurzel;
+    const aufgaben = [];
+    for (const [jk, st] of journale) for (const [m] of st.lauf) aufgaben.push([jk, st, m]);
+    let i = 0, gefunden = false;
+    const stueck = (frist) => {
+      while (i < aufgaben.length && frist.timeRemaining() > 4) {
+        const [jk, st, m] = aufgaben[i++]; const key = jk + "|" + m;
+        if (journale.get(jk) !== st || !teileH.has(key)) continue; // inzwischen neu gespeichert oder ohnehin vorgemerkt
+        const liste = []; let off = 0; for (const [lm, n] of st.lauf) { if (lm === m) for (let k = off; k < off + n; k++) liste.push(st.arr[k]); off += n; }
+        if (hash(teilText(st.j, liste, st.b)) !== teileH.get(key)) { zwang.add(key); gefunden = true; }
+      }
+      if (i < aufgaben.length) { ric(stueck, { timeout: 5000 }); return; }
+      leerlaufGeplant = false; leerlaufZuletzt = Date.now();
+      if (gefunden && w && letzteWurzel === w && bekanntGueltig) speichern(w);
+    };
+    stueck({ timeRemaining: () => 10 });
+  }, { timeout: 10000 });
+}
+
+export const speichern = debounce((wurzel) => { schreiben(wurzel, { stempel: true }); }, 900); // Stresstest 15.10.: seltener schreiben; beim Verlassen der App wird sofort gesichert
+
+export function sofortSpeichern(wurzel, { stempel = true } = {}) {
+  return schreiben(wurzel, { stempel });
 }
 export const speichernAbbrechen = () => speichern.abbrechen();
+
+// Nur für Tests: wie viele Teile kennt die Speicherung gerade?
+export const _speicherInnen = () => ({ teile: teileH.size, gueltig: bekanntGueltig, altModus, frisch: frischZahl });
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
 export function eintraegeZaehlen(wurzel) {
@@ -259,19 +597,20 @@ async function ereignisseDeckeln() {
 // Zwei Zeilen: Kopf {typ, schema, sha256} und Inhalt (kompakt). Die Prüfsumme läuft über die Bytes der zweiten Zeile.
 // Sie erkennt Übertragungs- und Bedienfehler, keine Absicht – wer die Datei ändert, kann sie neu rechnen. Das sagt die App so.
 
-async function sha256Hex(text) {
+async function sha256Hex(daten) { // daten: Text oder schon kodierte Bytes
   if (!globalThis.crypto?.subtle) return null; // unsicherer Kontext (http im LAN): ohne Prüfsumme statt gar nicht
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  const buf = await crypto.subtle.digest("SHA-256", typeof daten === "string" ? new TextEncoder().encode(daten) : daten);
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export async function exportDatei(wurzel) {
   await ereignis("export", { betriebe: wurzel.betriebe.length });
   const ereignisse = await alleEreignisse();
-  const inhalt = JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel, ereignisse });
-  const sha = await sha256Hex(inhalt);
+  // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
+  const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel, ereignisse }));
+  const sha = await sha256Hex(bytes);
   const kopf = JSON.stringify({ typ: "gastrocalc-sicherung", schema: SCHEMA, sha256: sha });
-  const blob = new Blob([kopf + "\n" + inhalt], { type: "application/json" });
+  const blob = new Blob([kopf + "\n", bytes], { type: "application/json" });
   const aktiv = wurzel.betriebe.find((b) => b.id === wurzel.aktiv);
   const stamm = wurzel.betriebe.length > 1 ? `${wurzel.betriebe.length}-laeden` : (aktiv?.betrieb.name || "laden");
   const name = `gastrocalc-${stamm.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}-${heute()}.json`;
@@ -379,6 +718,6 @@ export async function ereignisseUebernehmen(liste) {
 
 export async function allesLoeschen() {
   if (!verfuegbar || !db) return;
-  await tx("stand", "readwrite", (st) => st.clear());
-  await tx("ereignisse", "readwrite", (st) => st.clear());
+  await txMehr(["stand", "teile", "ereignisse"], "readwrite", (t) => { for (const n of ["stand", "teile", "ereignisse"]) t.objectStore(n).clear(); });
+  grundlageVerwerfen(); altModus = false; letzteWurzel = null;
 }
