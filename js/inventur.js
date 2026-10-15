@@ -138,6 +138,7 @@ export function inventurAbschliessen(stand, inv, { datum = heute(), jetzt = new 
   for (const z of liste) { if (!(z.name in inv.posten)) inv.posten[z.name] = null; if (z.menge !== null) inv.preise[z.name] = z.preis; }
   inv.datum = datum; inv.abgeschlossen = jetzt;
   inv.wert = inventurWert(stand, inv).summe;
+  const v = inventurVergleich(stand, inv); if (v && typeof v.betriebsmittel.jeMonat === "number") inv.betriebsmittelJeMonat = v.betriebsmittel.jeMonat; // für die Zeile im Zähler (Stufe „aus Inventur“)
   return true;
 }
 // Verwerfen nur, solange die Inventur offen ist.
@@ -157,6 +158,13 @@ export function einkaufZeitraum(stand, { von, bis }) {
   }
   return { summe, belege, lieferanten: [...lieferanten] };
 }
+// Einkauf an Betriebsmitteln (Putzmittel, Müllbeutel, Handschuhe …) aus Belegzeilen im Zeitraum
+export function betriebsmittelEinkauf(stand, { von, bis }) {
+  let summe = 0;
+  for (const l of stand.lieferungen || []) { if (l.storniert || typeof l.datum !== "string" || l.datum < von || l.datum > bis) continue;
+    for (const z of l.zeilen || []) if (typeof z.netto === "number" && lagerortFuer({ name: z.artikel || z.name }) === "reinigung") summe += z.netto; }
+  return summe;
+}
 const tageZwischen = (von, bis) => Math.round((Date.parse(bis + "T12:00:00Z") - Date.parse(von + "T12:00:00Z")) / 86400e3) + 1;
 
 // Der Vergleich A–E. null, solange es keine vorige fertige Inventur gibt (erste Inventur).
@@ -166,7 +174,12 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
   const von = tagPlus(vorher.datum, 1), bis = inv.datum;
   const tage = bis >= von ? tageZwischen(von, bis) : 0;
   const einkauf = tage > 0 ? einkaufZeitraum(stand, { von, bis }) : { summe: 0, belege: 0, lieferanten: [] };
-  const verbrauch = anfang.summe + einkauf.summe - ende.summe;
+  // Putzmittel & Co. sind kein Wareneinsatz: getrennt rechnen (Punkt 5, Zeile „Reinigung & Betriebsmittel“ im Zähler)
+  const bmEinkauf = tage > 0 ? betriebsmittelEinkauf(stand, { von, bis }) : 0;
+  const bmAnfang = anfang.jeLagerort.reinigung.summe, bmEnde = ende.jeLagerort.reinigung.summe;
+  const bmVerbrauch = bmAnfang + bmEinkauf - bmEnde;
+  const betriebsmittel = { verbrauch: bmVerbrauch, einkauf: bmEinkauf, jeMonat: tage >= 7 && bmVerbrauch >= 0 ? bmVerbrauch * 30 / tage : null };
+  const verbrauch = (anfang.summe - bmAnfang) + (einkauf.summe - bmEinkauf) - (ende.summe - bmEnde);
   const st = umsatzSteuerSatz(stand);
   const u = tage > 0 ? umsatzZeitraum(stand, { von, bis }) : { summe: 0, tage: 0 };
   const umsatzNetto = u.summe / (1 + st.satz);
@@ -185,6 +198,6 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
     echteQuote, appQuote: q.quote, quoteQuelle: q.quelle, sollWare, luecke,
     muell: sw.muellwert, personal: sw.personal?.waren || 0, eingetragen, erklaert, ohneErklaerung, muellOhneWert: sw.ohneWert || 0,
     ohnePreis: [...new Set([...anfang.ohnePreis, ...ende.ohnePreis])], unvollstaendig: anfang.ohnePreis.length + ende.ohnePreis.length > 0 || ende.offen > 0,
-    verbrauchNegativ: verbrauch < 0,
+    verbrauchNegativ: verbrauch < 0, betriebsmittel,
   };
 }

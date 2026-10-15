@@ -187,3 +187,16 @@ test("Zusammenführen zweier Handys: abgeschlossene Inventuren vereinigt, offene
   const m = verschmelzen(lokal, fremd);
   assert.deepEqual(m.inventuren.map((i) => i.id).sort(), ["o", "x", "y"]);
 });
+
+test("Betriebsmittel getrennt vom Wareneinsatz; Monatswert landet in der Reinigungszeile (Stufe aus Inventur)", async () => {
+  const { reinigungMonat } = await import("../js/reinigung.js");
+  const b = laden(); b.betrieb.reinigung = { wer: "selbst", minutenTag: 30, durch: "team" };
+  const i1 = I.inventurStarten(b, { datum: "2026-09-15" }); I.mengeSetzen(i1, "Müllbeutel", 2); I.mengeSetzen(i1, "Dönerspieß Kalb/Pute", 1); I.inventurAbschliessen(b, i1, { datum: "2026-09-15" });
+  beleg(b, "2026-10-01", 50, { zeilen: [{ name: "Müllbeutel", artikel: "Müllbeutel", netto: 20 }, { name: "Tomaten", netto: 30 }] });
+  const i2 = I.inventurStarten(b, { datum: "2026-10-15" }); I.mengeSetzen(i2, "Müllbeutel", 1); I.mengeSetzen(i2, "Dönerspieß Kalb/Pute", 1); I.inventurAbschliessen(b, i2, { datum: "2026-10-15" });
+  const v = I.inventurVergleich(b, i2);
+  nah(v.betriebsmittel.verbrauch, 8 + 20 - 4); // 2×4 + 20 − 1×4
+  nah(v.verbrauch, 96 + 30 - 96); // nur Ware: Tomaten-Einkauf
+  nah(i2.betriebsmittelJeMonat, 24 * 30 / 30);
+  const r = reinigungMonat(b, { datum: "2026-10-15" }); assert.equal(r.stufe, "inventur"); nah(r.mittel, 24);
+});

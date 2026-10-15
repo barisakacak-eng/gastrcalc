@@ -45,7 +45,7 @@ function planView(stand) {
   const g = planGruppen(stand);
   const r = 24, u = 2 * Math.PI * r;
   const zeile = (a) => `<button type="button" class="aufgabe ${a.status}" data-a="pp-haken" data-id="${a.id}" aria-pressed="${a.status === "erledigt"}">
-      <span class="box">${a.status === "erledigt" ? sym("check") : ""}</span><span class="atext"><b>${esc(text(a))}</b><small>${esc(statusText(a))}</small></span>${a.stufe === "pflicht" ? stufeMarke(a) : ""}</button>`;
+      <span class="box">${a.status === "erledigt" ? sym("check") : ""}</span><span class="atext"><b>${esc(text(a))}</b><small>${esc(statusText(a))}</small>${a.stufe === "pflicht" ? stufeMarke(a) : ""}</span></button>`;
   const block = (key, xs, nurFaellig) => { const zeig = nurFaellig ? xs.filter((a) => a.status !== "erledigt" || a.letzte?.datum === heute()) : xs; return zeig.length ? `<h2 class="pptakt">${esc(t("putzplan.gruppe." + key))}</h2><div class="planliste">${zeig.map(zeile).join("")}</div>` : ""; };
   return `<div class="kopfband"><h1>${esc(t("putzplan.titel"))}</h1><div class="unter">${esc(stand.betrieb.name || "")}${stand.betrieb.name ? " · " : ""}${esc(datumLesbar(heute()))}</div></div>
     <div class="inhalt putzplan">

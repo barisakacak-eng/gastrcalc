@@ -37,7 +37,8 @@ export function mittelAusBelegen(stand, datum = heute()) {
 
 // Die Zeile im Kostenzähler. null = Reinigung wurde nie gefragt (alte Läden): dann gibt es die Zeile nicht.
 // inventurMittel: optionaler Verbrauch je Monat aus zwei Inventuren (Punkt 3), wird vom Aufrufer übergeben.
-export function reinigungMonat(stand, { datum = heute(), inventurMittel = null } = {}) {
+const ausInventur = (stand) => { const f = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.betriebsmittelJeMonat === "number").sort((a, b) => a.datum.localeCompare(b.datum)).pop(); return f ? f.betriebsmittelJeMonat : null; };
+export function reinigungMonat(stand, { datum = heute(), inventurMittel = ausInventur(stand) } = {}) {
   const r = stand.betrieb?.reinigung; if (!r || !r.wer) return null;
   const firma = r.wer === "selbst" ? 0 : (typeof r.firmaBetrag === "number" ? r.firmaBetrag : null);
   let mittel = null, stufe = "offen", belege = 0;
