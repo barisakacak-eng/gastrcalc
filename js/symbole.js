@@ -14,6 +14,8 @@ export const SYMBOLE = {
   "plus": '<path d="M5 12h14"/><path d="M12 5v14"/>',
   "x": '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   "chevron-right": '<path d="m9 18 6-6-6-6"/>',
+  "chevron-up": '<path d="m18 15-6-6-6 6"/>',
+  "chevron-down": '<path d="m6 9 6 6 6-6"/>',
   "undo-2": '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/>',
   "thermometer": '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
   "chef-hat": '<path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/>',

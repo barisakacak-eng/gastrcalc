@@ -220,7 +220,7 @@ h1, h2, h3, p { margin: 0; }
 .stapel { display: flex; flex-direction: column; }
 .stapel .leise { padding: 4px 10px; min-height: 22px; line-height: 1; }
 .chip .chipx { background: none; border: 0; color: inherit; font-size: 1.1rem; padding: 0 0 0 6px; min-height: 0; line-height: 1; }
-.blatt { display: flex; flex-direction: column; gap: 4px; }
+.monatsblatt { display: flex; flex-direction: column; gap: 4px; }
 .blattzeile { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 10px; background: var(--weiss); border: 1px solid var(--holz); }
 .blattzeile .datum { flex: none; width: 3.2em; font-weight: 700; }
 .blattzeile .messung { flex: 1; min-width: 0; }
@@ -439,7 +439,7 @@ button.kachel { cursor: pointer; }
 .monatskurve .heute { fill: var(--glut); } .monatskurve .nulltag { fill: var(--eigen); }
 .einrichtung-kopf { display: flex; align-items: center; gap: 12px; }
 .einrichtung-kopf b, .einrichtung-kopf small { display: block; }
-.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; stroke-width: 7; } .ring-grund { stroke: var(--holz); } .ring-wert { stroke: var(--glut); stroke-linecap: round; }
+svg.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; stroke-width: 7; } .ring-grund { stroke: var(--holz); } .ring-wert { stroke: var(--glut); stroke-linecap: round; }
 .ring text { font: 700 16px var(--schrift); fill: var(--tinte); }
 .schrittzeile { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 44px; }
 .schrittzeile.fertig { color: var(--tinte-weich); } .schrittzeile .zeileknopf { flex: 1; }
@@ -466,16 +466,16 @@ button.kachel { cursor: pointer; }
 .blatt { position: fixed; left: 0; right: 0; bottom: 0; z-index: 51; max-height: 88vh; overflow-y: auto; background: var(--weiss); border-radius: 18px 18px 0 0; padding: 20px 16px calc(env(safe-area-inset-bottom, 0px) + 20px); box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; }
 .blatt .stepper .wert input { width: 5ch; font: inherit; text-align: center; border: 0; background: transparent; }
 .muellwert { color: var(--muell); font-weight: 700; min-height: 1.4em; margin: 0; }
-.schalter { display: flex; align-items: center; gap: 10px; min-height: 48px; }
-.schalter input { width: 24px; height: 24px; }
+.knebelschalter { display: flex; align-items: center; gap: 10px; min-height: 48px; }
+.knebelschalter input { width: 24px; height: 24px; }
 .schirm .inhalt { padding-bottom: 96px; }
 .schrittzeile .leise { flex-basis: 100%; text-align: left; }
-.schalter input { flex: none; width: 24px; height: 24px; }
-button.schalter { border: 0; background: transparent; font: inherit; text-align: left; color: var(--tinte); padding: 0; }
-.schalter .knebel { width: 44px; height: 26px; border-radius: 13px; background: var(--holz); position: relative; flex: none; }
-.schalter .knebel::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; }
-.schalter.an .knebel { background: var(--eigen); } .schalter.an .knebel::after { left: 21px; }
-button.schalter { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; }
+.knebelschalter input { flex: none; width: 24px; height: 24px; }
+.knebelschalter { border: 0; background: transparent; font: inherit; text-align: left; color: var(--tinte); padding: 0; }
+.knebelschalter .knebel { width: 44px; height: 26px; border-radius: 13px; background: var(--holz); position: relative; flex: none; }
+.knebelschalter .knebel::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; }
+.knebelschalter.an .knebel { background: var(--eigen); } .knebelschalter.an .knebel::after { left: 21px; }
+.knebelschalter { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; }
 
 /* Linien-Symbole (Lucide) – Größe hier, Farbe über currentColor */
 .sym { width: 22px; height: 22px; flex: none; vertical-align: -4px; }

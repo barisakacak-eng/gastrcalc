@@ -18,12 +18,29 @@ const PIKTO = { doener: "g-doener", "haehnchen-doener": "g-doener", wrap: "g-due
   "doener-salat": "g-salat", salat: "g-salat", pommes: "g-pommes", burger: "g-burger", currywurst: "g-currywurst", wurst: "g-currywurst", "asia-nudeln": "g-asia-nudeln", "pad-thai": "g-asia-nudeln", "asia-reis": "g-asia-nudeln" };
 export const FOTO = { "haehnchen-doener": "g-doener", "falafel-wrap": "g-falafel", wrap: "g-duerum", teller: "g-doener-teller", "falafel-teller": "g-falafel-teller", "doener-salat": "g-salat",
   shawarma: "g-duerum", pljeskavica: "g-cevapi", sosse: "g-sosse" };
-export function gerichtBild(g) {
+// Fallback nach Name (erste passende Regel) und nach Katalogbereich, wenn die Familie kein Foto hat (Prüfung 15.10.)
+const NAME_FOTO = [[/adana|urfa|spie(ß|ss)/i, "g-adana", "g-koefte"], [/lasagne/i, "g-lasagne", "g-auflauf"], [/sucuk/i, "g-sucuk"], [/suppe|[çc]orba/i, "g-suppe"],
+  [/reis|pilav/i, "g-reis"], [/gem[üu]se/i, "g-gemuese"], [/schnitzel/i, "g-fleischgericht"], [/fr[üu]hst[üu]ck/i, "g-fruehstueck"], [/kuchen|torte/i, "g-kuchen"],
+  [/kaffee|espresso|cappuccino|latte/i, "g-kaffee"], [/eis\b|eisbecher/i, "g-eis"], [/bier|pils|radler/i, "g-bier"], [/ayran/i, "g-ayran"],
+  [/cola|fanta|sprite|limo|wasser|eistee|saft|schorle|tee\b|getr[äa]nk/i, "g-getraenk"], [/pommes|fries/i, "g-pommes"], [/falafel/i, "g-falafel"], [/salat/i, "g-salat"],
+  [/pizza/i, "g-pizza"], [/burger/i, "g-burger"], [/b[öo]rek/i, "g-boerek"], [/lahmacun/i, "g-lahmacun"], [/pide/i, "g-pide"], [/d[üu]r[üu]m|wrap/i, "g-duerum"],
+  [/d[öo]ner/i, "g-doener"], [/currywurst/i, "g-currywurst"], [/wurst/i, "g-wurst"], [/nudel|pasta|spaghetti|penne/i, "g-nudeln"], [/nugget|wings|fingerfood/i, "g-fingerfood"]];
+const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger", currywurst: "g-currywurst", asia: "g-asia-reis", salat: "g-salat", fingerfood: "g-fingerfood",
+  beilagen: "g-pommes", alkoholfrei: "g-getraenk", suppe: "g-suppe", kuchen: "g-kuchen", kaffee: "g-kaffee", fruehstueck: "g-fruehstueck", eis: "g-eis", bier: "g-bier", fleischgericht: "g-fleischgericht" };
+export function fotoName(g) {
   const f = g.rezeptFamilie || "";
-  const pikto = `bilder/${PIKTO[f] || "g-teller"}.svg`;
+  const kandidaten = [];
+  if (f) kandidaten.push(FOTO[f] || "g-" + f);
+  for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "")) { kandidaten.push(...namen); break; }
+  if (g.bereich) kandidaten.push(BEREICH_FOTO[g.bereich]);
+  if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
+  return kandidaten.find((n) => n && FOTOS.has(n)) || null;
+}
+export function gerichtBild(g) {
+  const pikto = `bilder/${PIKTO[g.rezeptFamilie || ""] || "g-teller"}.svg`;
   if (g.foto) return `<img class="gerichtbild" data-foto="${esc(g.foto)}" src="${pikto}" alt="">`; // eigenes Foto des Wirts, wird nach dem Zeichnen aus der Ablage geladen
-  const name = f ? FOTO[f] || "g-" + f : null;
-  return name && FOTOS.has(name) ? `<img class="gerichtbild" src="foto/${name}.webp" alt="" loading="lazy">` : `<img class="gerichtbild pikto" src="${pikto}" alt="" loading="lazy">`;
+  const name = fotoName(g);
+  return name ? `<img class="gerichtbild" src="foto/${name}.webp" alt="" loading="lazy">` : `<img class="gerichtbild pikto" src="${pikto}" alt="" loading="lazy">`;
 }
 
 export function vergleichView(stand) {

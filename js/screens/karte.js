@@ -1,5 +1,7 @@
 // Etappe 2: Karte wählen, Rezepte prüfen, Einkaufspreise, Verkaufspreise, Ergebnis.
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
+import { sym } from "../symbole.js";
+import { gerichtBild } from "./vergleich.js";
 import { t, einheitLabel } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
@@ -123,7 +125,7 @@ function rezeptDetail(stand, g) {
     <input class="textfeld gross" data-f="gericht-name" value="${esc(g.name)}" autocomplete="off">
     <div class="stempelzeile">${stempelHtml(rezeptStempel(g), { info: stempelInfo })}</div>
     ${waage && waage.fertig && waage.gid === g.id ? waage.meldungen.map((m) => `<p class="tipp gruen">${esc(m)}</p>`).join("") : ""}
-    ${waageFragen(stand, g).length ? `<button type="button" class="knopf glut" data-a="waage-start"><span aria-hidden="true">⚖️</span> ${esc(t("waage.start"))}</button>` : ""}
+    ${waageFragen(stand, g).length ? `<button type="button" class="knopf glut" data-a="waage-start">${sym("scale")} ${esc(t("waage.start"))}</button>` : ""}
     <div class="feldzeile"><label>${esc(t("rezepte.klasse"))}</label>
       <div class="chips">${KLASSEN.map((k) => `<button type="button" class="chip ${g.klasse === k ? "an" : ""}" data-a="klasse" data-wert="${k}">${esc(t("rezepte.klassen." + k))}</button>`).join("")}</div>
       <span class="marke">${esc(t("rezepte.klasseHinweis"))}</span></div>
@@ -157,7 +159,7 @@ export const rezepte = {
       <h1 class="frage">${esc(t("rezepte.frage"))}</h1>
       <p class="hinweis">${esc(t("rezepte.hinweis"))}</p>
       <div class="liste">
-        ${stand.gerichte.map((x) => `<button type="button" class="zeileknopf" data-a="rezept-auf" data-id="${esc(x.id)}">
+        ${stand.gerichte.map((x) => `<button type="button" class="zeileknopf" data-a="rezept-auf" data-id="${esc(x.id)}">${gerichtBild(x).replace('class="gerichtbild', 'class="gerichtbild mini')}
           <span><b>${esc(x.name)}</b><small>${esc(t("rezepte.zusammenfassung", x.zutaten.length, x.zeit))}${(() => { const st = rezeptStempel(x).stufe; return st ? ` · ${esc(t("stempel." + st))}` : ""; })()}${x.zutaten.length === 0 ? ` · ${esc(t("rezepte.leer"))}` : ""}</small></span><span class="pfeil">›</span></button>`).join("")}
       </div>`;
   },
@@ -347,6 +349,8 @@ export const verkauf = {
 };
 
 // ---------- Schritt: Ergebnis ----------
+// Kleines Gerichtbild in Listen (Prüfung 15.10.: Speisekarte ohne Bilder)
+const minibild = (stand, id) => { const g = stand.gerichte.find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 export function ergebnisView(stand, { inApp = false } = {}) {
   const k = kalkulation(stand);
   const ampelWort = (a) => t("ergebnis.ampel." + a);
@@ -357,7 +361,7 @@ export function ergebnisView(stand, { inApp = false } = {}) {
     ${k.unvollstaendig && !inApp ? `<p class="tipp">${esc(t("ergebnis.unvollstaendig"))}</p>` : ""}
     <div class="liste">
       ${k.zeilen.map((z) => `<div class="zeile ${z.ampel === "grau" ? "offen" : ""}">
-        <div class="oben"><div class="name"><i class="punkt ${z.ampel}"></i>${esc(z.name)}<small>${esc(t("rezepte.klassen." + z.klasse))}${z.warenGeschaetzt ? ` · ${esc(t("ergebnis.garverlustGeschaetzt"))}` : ""}</small></div>
+        <div class="oben">${inApp ? minibild(stand, z.id) : ""}<div class="name"><i class="punkt ${z.ampel}"></i>${esc(z.name)}<small>${esc(t("rezepte.klassen." + z.klasse))}${z.warenGeschaetzt ? ` · ${esc(t("ergebnis.garverlustGeschaetzt"))}` : ""}</small></div>
           <div class="preisheute">${z.preisBrutto !== null ? fmtEuro(z.preisBrutto, { dezimal: 2 }) : "–"}</div></div>
         ${z.sk !== null && z.preisBrutto === null ? `<span class="marke offen">${esc(t("ergebnis.preisFehlt"))}</span>` : ""}
         ${z.sk === null ? `<span class="marke offen">${esc(z.warenFehlt[0] === "rezept" ? t("rezepte.leer") : z.warenFehlt.length ? t("ergebnis.fehlt", z.warenFehlt.slice(0, 3).join(", ")) : t("ergebnis.preisFehlt"))}</span>` : `

@@ -752,7 +752,7 @@ export default {
     loeschenAlles: "Her şeyi sil",
     loeschenFrage: "Gerçekten her şey silinsin mi? Geri alınamaz.",
     ereignisse: (n) => `Kayıtta ${n} giriş`,
-    fassung: "Deneme sürümü etap 5, Ekim 2026",
+    fassung: "Deneme sürümü, Ekim 2026",
     letzteSicherung: (d) => `son yedek ${d}`,
     ohnePruefsumme: "sağlama toplamı yok (güvensiz bağlantı)",
     importOhnePruefsumme: "Okundu – bu dosyada sağlama toplamı yoktu.",

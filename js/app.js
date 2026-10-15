@@ -16,7 +16,7 @@ import { parseTemperatur } from "./screens/kuehl.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
 import { vergleichView, vergleichModus } from "./screens/vergleich.js";
-import { navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
+import { nav, navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen } from "./screens/muell.js";
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
@@ -100,10 +100,9 @@ function zeichne() {
 
 // Speisekarte fotografieren aus der App heraus (Karte → „Speisekarte fotografieren"): dieselben Bausteine wie im Schnellstart.
 function karteFotoSchirm() {
-  return `<div class="kopfband"><h1>${esc(t("foto.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>
-    <div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
+  return `<div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
       ${karteFussKnopf("")}
-      <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>`;
+      <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte", { schnell: false })}`;
 }
 
 function zeichneOnboarding() {

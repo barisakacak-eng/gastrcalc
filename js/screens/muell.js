@@ -9,11 +9,28 @@ import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen,
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
 import { gerichtBild } from "./vergleich.js";
-// Piktogramm für Rohware (Sanjis w-*-Bilder), nach Wort im Namen bzw. Warengruppe
-const WARE = [[/tomate/i, "w-tomate"], [/salat|eisberg/i, "w-salat"], [/zwiebel/i, "w-zwiebel"], [/gurke/i, "w-gurke"], [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"],
-  [/d[öo]ner|spie(ß|ss)|kalb|pute/i, "w-doenerfleisch"], [/h[äa]hnchen|chicken/i, "w-haehnchen"], [/hack|patty/i, "w-hack"], [/feta|hirten|schafsk/i, "w-feta"], [/k[äa]se|mozzarella|cheddar/i, "w-kaese"],
-  [/mehl|teig/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"], [/pommes/i, "w-pommes-tk"], [/so(ß|ss)e|sauce|mayo|ketchup|dip/i, "w-sosse"], [/brot|fladen|wrap|yufka|bun|br[öo]tchen/i, "w-brot"]];
-const warePikto = (x) => { const n = (WARE.find(([re]) => re.test(x.name)) || [])[1] || (x.gruppe === "getraenk" ? "w-getraenk" : null); return n ? `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">` : ""; };
+// Bild für Rohware, Verpackung und Getränke (Prüfung 15.10.: Reihenfolge zählt, die erste passende Regel gewinnt)
+const VERP = [[/handschuh/i, "v-handschuhe"], [/tragetasche|tasche/i, "v-tragetasche"], [/t[üu]te/i, "v-doenertuete"], [/alu|folie/i, "v-alufolie"], [/men[üu]/i, "v-menueschale"],
+  [/karton/i, "v-pizzakarton"], [/pommes/i, "v-pommesschale"], [/dressing|so(ß|ss)e|dip|sauce/i, "v-dressingbecher"], [/salat/i, "v-salatschale"], [/burger/i, "v-burgerbox"],
+  [/box|asia|nudel/i, "v-asiabox"], [/becher|cup/i, "v-becher"], [/serviette|papier/i, "v-serviette"]];
+const WARE = [[/brot|fladen|wrap|yufka|lavash|bun\b|br[öo]tchen|baguette|toast|tortilla/i, "w-brot"], [/onion|stick|nugget|frikandel|fingerfood|wings/i, "w-fingerfood-tk"],
+  [/so(ß|ss)e|sauce|mayo|ketchup|dip|dressing|remoulade|aioli|hummus|ajvar|senf|pesto|tzatziki|cac[iı]k/i, "w-sosse"],
+  [/gew[üu]rz|salz|pfeffer|oregano|pulver|kreuzk|kumin|flocken|pul biber|sumach|thymian|zimt/i, "w-gewuerz"], [/joghurt|quark|sahne|schmand|cr[eè]me/i, "w-joghurt"],
+  [/falafel/i, "w-falafel"], [/sucuk/i, "w-sucuk"], [/salami/i, "w-salami"], [/schinken/i, "w-schinken"], [/h[äa]hnchen|chicken|pute|truthahn/i, "w-haehnchen"],
+  [/d[öo]ner|gyros|kalb|lamm|rind|spie(ß|ss)/i, "w-doenerfleisch"], [/hack|patty|k[öo]fte|cevapi/i, "w-hack"], [/wurst|krakauer|wiener/i, "w-wurst"],
+  [/feta|hirten|schafsk|wei(ß|ss)k[äa]se/i, "w-feta"], [/k[äa]se|mozzarella|cheddar|gouda|emmentaler|halloumi/i, "w-kaese"], [/thunfisch/i, "w-thunfisch"],
+  [/champignon|pilz/i, "w-champignon"], [/peperoni|jalape|chili/i, "w-peperoni"], [/paprika/i, "w-paprika"], [/knoblauch/i, "w-knoblauch"], [/zwiebel/i, "w-zwiebel"],
+  [/gurke/i, "w-gurke"], [/tomate/i, "w-tomate"], [/salat|eisberg|rucola|lollo/i, "w-salat"], [/petersilie|basilikum|minze|dill|kr[äa]uter|koriander/i, "w-petersilie"],
+  [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"], [/mais/i, "w-mais"], [/(ö|oe)l(\s|$)|frittier/i, "w-oel"], [/olive/i, "w-oliven"], [/ananas/i, "w-ananas"],
+  [/nudel|penne|spaghetti|fusilli|tagliatelle|lasagne/i, "w-nudeln"], [/reis|basmati|bulgur|couscous/i, "w-reis"], [/mehl|teig|hefe/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"],
+  [/pommes|kroketten|wedges|kartoffel/i, "w-pommes-tk"]];
+export function wareBild(x) {
+  if (x.gruppe === "getraenk") return `<img class="gerichtbild mini" src="foto/${/ayran/i.test(x.name) ? "g-ayran" : "g-getraenk"}.webp" alt="" loading="lazy">`;
+  const liste = x.gruppe === "verpackung" ? VERP : WARE;
+  const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
+  return `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy">`;
+}
+const warePikto = wareBild;
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 import { datumLesbar, tagGewaehlt, eintragName, eintragMenge, tagLesbar } from "./tag.js";
@@ -86,7 +103,7 @@ function eingabeView(stand, D) {
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))} · ${esc(dreisprachig("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
       ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${x.typ === "gericht" ? thumb(stand, x.id) : warePikto(x)}<b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${sym("scale")}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
+      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name=""><img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt=""><b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
     </div>
     ${!kacheln.length && !q ? `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div><button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button></div>` : ""}
   </div>`;
@@ -114,7 +131,7 @@ function formView(stand, D) {
     ${w ? `<div class="chips">${chipsFuer(w).map((c) => `<button type="button" class="chip ${w.menge === c ? "an" : ""}" data-a="muell-chip" data-wert="${c}">${esc(fmtZahl(c, c < 1 ? 1 : 0))} ${esc(w.typ === "gericht" ? "" : einheitLabel(einheit))}</button>`).join("")}${ganze ? `<button type="button" class="chip" data-a="muell-chip" data-wert="${ganze}">${esc(t("muell.ganzePackung"))}</button>` : ""}</div>
       ${w.typ === "artikel" && (basis === "g" || basis === "ml") ? `<div class="periode">${(basis === "g" ? ["g", "kg"] : ["ml", "l"]).map((e) => `<button type="button" class="${w.einheit === e ? "an" : ""}" data-a="muell-einheit" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div>` : ""}
       <p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : `<span class="leise-text">${esc(t("muell.ohnePreisKurz"))}</span>`) : ""}</p>
-      ${w.typ === "gericht" ? `<button type="button" class="schalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
+      ${w.typ === "gericht" ? `<button type="button" class="knebelschalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
       ${w.typ === "eimer" ? `<p class="hinweis">${esc(t("muell.eimerHinweisKurz"))}</p>` : ""}` : ""}
     <button type="button" class="knopf muellhaupt" data-a="muell-weg-damit" ${w && w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t("muell.eintragen"))}</b> <small>${esc(dreisprachig("muell.eintragen"))}</small></button>
     <p class="hinweis geschaetzt-hinweis">≈ ${esc(t("muell.orientierung"))}</p>
@@ -139,7 +156,7 @@ function blattView(stand, D) {
     <div class="chips">${chipsFuer(w).map((c) => `<button type="button" class="chip ${w.menge === c ? "an" : ""}" data-a="muell-chip" data-wert="${c}">${esc(fmtZahl(c, c < 1 ? 1 : 0))} ${esc(w.typ === "gericht" ? "" : einheitLabel(einheit))}</button>`).join("")}${ganze ? `<button type="button" class="chip" data-a="muell-chip" data-wert="${ganze}">${esc(t("muell.ganzePackung"))}</button>` : ""}</div>
     <p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : esc(t("tag.keinPreisLang"))) : ""}</p>
     ${w.typ === "eimer" ? `<p class="hinweis">${esc(t("muell.eimerHinweisKurz"))}</p>` : ""}
-    ${w.typ === "gericht" ? `<button type="button" class="schalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
+    ${w.typ === "gericht" ? `<button type="button" class="knebelschalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
     <button type="button" class="knopf glut" data-a="muell-weg-damit" ${w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t("muell.wegDamit"))}</b> <small>${esc(dreisprachig("muell.wegDamit"))}</small></button>
   </div>`;
 }

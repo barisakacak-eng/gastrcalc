@@ -104,3 +104,36 @@
 .band { font-size: 14px; padding: 8px 12px; }
 .gerichtbild.mini { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 8px; margin-bottom: 6px; }
 .muellkacheln .kachel { display: flex; flex-direction: column; align-items: stretch; text-align: left; }
+
+/* Prüfung 15.10. (unabhängiger Layout-Test): Korrekturen */
+.schalter { height: 44px; min-height: 44px; }
+.formkacheln { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.formkachel { min-width: 0; }
+.formkachel .stepper { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+.formkachel .stepper button { min-width: 44px; min-height: 48px; padding: 0; }
+.auswahlkarte { flex-direction: row; }
+.formkachel .kachelsym, .auswahlsym { display: inline-flex; align-items: center; justify-content: center; border-radius: 14px; }
+.instrument.klein b, .summenzeile .wert, .vk-preis, .vk-zeile span:last-child { white-space: nowrap; }
+.knebelschalter .knebel::after { width: 20px; height: 20px; top: 3px; }
+.knebelschalter::after { content: none; }
+.muellkacheln .kachel { border-left: 1px solid var(--holz); box-shadow: inset 5px 0 0 var(--streif, var(--salbei)); overflow: hidden; }
+.muellkacheln .g-gemuese { --streif: var(--eigen); } .muellkacheln .g-fleisch, .muellkacheln .g-fisch { --streif: #8A4B3A; } .muellkacheln .g-teig { --streif: var(--holz-tief); } .muellkacheln .g-sauce { --streif: var(--geschaetzt); }
+.muellkacheln .kachel b { overflow-wrap: break-word; hyphens: auto; }
+.auswahlblatt .inhalt { padding: 0 0 12px; }
+.auswahlblatt .textfeld::placeholder { font-size: 14px; }
+.karte.laden.aktiv { border-left-width: 1px; }
+.packung { flex-wrap: wrap; row-gap: 8px; }
+.grenzpaar { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.stapel .sym { width: 20px; height: 20px; }
+.seg button:not(:first-child):not(:last-child).an, .periode button:not(:first-child):not(:last-child).an { border-radius: 8px; }
+.seg.klein { display: inline-flex; width: auto; align-self: flex-start; }
+.zuletzt .leise { white-space: nowrap; }
+.kennzahlen small { white-space: nowrap; }
+input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
+.zahlfeld input:focus-visible { outline: none; } .zahlfeld:focus-within { border-bottom-color: var(--eigen); }
+.monat { grid-template-columns: repeat(7, 1fr); }
+.monat .wt { font-size: 11px; text-align: center; color: var(--tinte-weich); font-weight: 600; }
+.zeile .oben .gerichtbild.mini, .zeileknopf .gerichtbild.mini { width: 52px; height: 52px; aspect-ratio: auto; margin: 0; flex: none; border-radius: 10px; }
+.zeile .oben { align-items: center; gap: 10px; } .zeile .oben .name { flex: 1; min-width: 0; }
+.zeileknopf:has(.gerichtbild) { display: flex; align-items: center; gap: 12px; }
+.muellkacheln .gerichtbild.mini.pikto { padding: 6px; }

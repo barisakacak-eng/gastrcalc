@@ -169,8 +169,8 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .eimerkachel { border: 2px dashed var(--muell) !important; }
 .blatt { background: var(--weiss); border-radius: 24px 24px 0 0; border-top: 3px solid var(--holz); box-shadow: 0 -16px 40px rgba(31,42,36,.18); padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 24px); gap: 12px; }
 .muellwert { font-size: 23px; font-weight: 800; }
-.schalter .knebel { background: var(--holz-tief); }
-.schalter.an .knebel { background: var(--eigen); }
+.knebelschalter .knebel { background: var(--holz-tief); }
+.knebelschalter.an .knebel { background: var(--eigen); }
 
 /* Textdehnung: kein gekapptes Türkisch, kein Ein-Zeilen-Zwang in Kacheln */
 .kachel b, .kachel small, .karte h2, .zeile .name, .wahl,

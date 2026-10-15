@@ -1,6 +1,7 @@
 // Etappe 4: Kühlkontrolle – Einrichtung der Kühlstellen, der Rundgang, das Monatsblatt.
 // Regeln aus der Vorprüfung des Gremiums: Grenzen setzt der Betrieb (die App nennt nur Anhaltspunkte), kein Wert ist vorbelegt,
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
+import { sym } from "../symbole.js";
 import { t } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
@@ -9,6 +10,8 @@ import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 
+// Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
+const stelleBild = (k) => `<img class="gerichtbild mini pikto" src="bilder/${k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : /theke|vitrine/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank"}.svg" alt="">`;
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
 let station = null;             // id der Stelle, die im Rundgang gerade offen ist
 let form = null;                // Eingabe der offenen Station
@@ -67,7 +70,7 @@ export function kuehlView(stand) {
         <h2>${esc(t("kuehl.stellen"))}</h2>
         <p class="hinweis">${esc(t("kuehl.stellenTippen"))}</p>
         <div class="liste eng">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
-          <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}><span><b>${esc(k.name)}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
+          <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(k.name)}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
             <span class="${m ? (m.abweichung ? "rot" : "") : "marke"}" style="font-weight:700;white-space:nowrap">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke" style="display:block;font-weight:400">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitKurz(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
         <button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>
@@ -91,11 +94,11 @@ function einrichtungView(stand) {
         <div class="liste">${stellen.map((k, i) => `
           <div class="zeile ${stelleBereit(k) ? "an" : "offen"}">
             <div class="oben"><input class="textfeld" data-f="stelle-name:${esc(k.id)}" value="${esc(k.name)}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}">
-              <div class="stapel"><button type="button" class="leise" data-a="stelle-hoch" data-id="${esc(k.id)}" ${i === 0 ? "disabled" : ""}>▲</button><button type="button" class="leise" data-a="stelle-runter" data-id="${esc(k.id)}" ${i === stellen.length - 1 ? "disabled" : ""}>▼</button></div></div>
+              <div class="stapel"><button type="button" class="leise" data-a="stelle-hoch" data-id="${esc(k.id)}" ${i === 0 ? "disabled" : ""} aria-label="▲">${sym("chevron-up")}</button><button type="button" class="leise" data-a="stelle-runter" data-id="${esc(k.id)}" ${i === stellen.length - 1 ? "disabled" : ""} aria-label="▼">${sym("chevron-down")}</button></div></div>
             <div class="chips">${KUEHL_ARTEN.map((a) => `<button type="button" class="chip klein ${k.art === a ? "an" : ""}" data-a="stelle-art" data-id="${esc(k.id)}" data-wert="${a}">${esc(artName(a))}</button>`).join("")}</div>
             <div class="packung">
-              ${k.art !== "warm" ? `<span class="einheit">${esc(t("kuehl.hoechstens"))}</span><input inputmode="text" data-f="stelle-max:${esc(k.id)}" value="${esc(wertAnzeige(k.max))}" placeholder="${esc(String(GRENZEN_STANDARD[k.art].max))}" aria-label="${esc(t("kuehl.hoechstens"))}"><span class="einheit">°C</span>` : ""}
-              ${k.art === "warm" || k.art === "kuehl" ? `<span class="einheit">${esc(t("kuehl.mindestens"))}</span><input inputmode="text" data-f="stelle-min:${esc(k.id)}" value="${esc(wertAnzeige(k.min))}" placeholder="${esc(k.art === "warm" ? String(GRENZEN_STANDARD.warm.min) : "")}" aria-label="${esc(t("kuehl.mindestens"))}"><span class="einheit">°C</span>` : ""}
+              ${k.art !== "warm" ? `<span class="grenzpaar"><span class="einheit">${esc(t("kuehl.hoechstens"))}</span><input inputmode="text" data-f="stelle-max:${esc(k.id)}" value="${esc(wertAnzeige(k.max))}" placeholder="${esc(String(GRENZEN_STANDARD[k.art].max))}" aria-label="${esc(t("kuehl.hoechstens"))}"><span class="einheit">°C</span></span>` : ""}
+              ${k.art === "warm" || k.art === "kuehl" ? `<span class="grenzpaar"><span class="einheit">${esc(t("kuehl.mindestens"))}</span><input inputmode="text" data-f="stelle-min:${esc(k.id)}" value="${esc(wertAnzeige(k.min))}" placeholder="${esc(k.art === "warm" ? String(GRENZEN_STANDARD.warm.min) : "")}" aria-label="${esc(t("kuehl.mindestens"))}"><span class="einheit">°C</span></span>` : ""}
             </div>
             <span class="marke ${grenzenVon(k).standard ? "geschaetzt" : ""}">${esc(grenzen(k))}</span>
             ${!stelleBereit(k) ? `<span class="marke offen">${esc(t("kuehl.grenzenFehlenKurz"))}</span>` : ""}
@@ -218,7 +221,7 @@ function blattView(stand) {
         <div class="kennzahlen"><span>${esc(t("kuehl.tageImMonat"))}</span>${["puenktlich", "teilweise", "nacherfasst", "nichtGemessen", "fehlt", "ruhetag"].filter((s) => mb.zaehl[s]).map((s) => `<span><b>${mb.zaehl[s]}</b> ${esc(t("kuehl.status." + s))}</span>`).join("")}</div>
         ${k ? `<span class="marke">${esc(artName(k.art))} · ${esc(grenzen(k))} · ${esc(t("kuehl.taktWert", mb.takt))}</span>` : ""}
       </div>
-      <div class="blatt">${mb.tage.filter((tg) => tg.status !== "vorher" && tg.status !== "zukunft").slice().reverse().map((tg) => `
+      <div class="monatsblatt">${mb.tage.filter((tg) => tg.status !== "vorher" && tg.status !== "zukunft").slice().reverse().map((tg) => `
         <div class="blattzeile ${tg.status}">
           <span class="datum">${esc(datumLesbar(tg.datum).slice(0, 6))}</span>
           ${tg.messungen.length ? tg.messungen.map((m) => { const weg = (stand.schwund || []).filter((e) => e.messung === m.id && !e.storniert); const erl = m.abweichung && m.nachkontrolle ? nachkontrolleErledigt(stand, m) : null; const gm = [typeof m.min === "number" ? `≥ ${fmtZahl(m.min, 1)}` : "", typeof m.max === "number" ? `≤ ${fmtZahl(m.max, 1)}` : ""].filter(Boolean).join(" · "); return `<span class="messung ${m.abweichung ? "rot" : ""}">${typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(grundText(m.grund))} <small>${esc(zeitKurz(m.zeit))}${gm ? ` · ${esc(gm)}${m.grenzeStandard ? " (" + esc(t("kuehl.standard")) + ")" : ""}` : ""}${m.von ? " · " + esc(kuerzelVon(stand, m.von)) : ""}${m.nacherfasst ? " · " + esc(t("kuehl.nacherfasst")) + (m.quelle ? " (" + esc(t("kuehl.quellen." + m.quelle)) + ")" : "") : ""}</small>

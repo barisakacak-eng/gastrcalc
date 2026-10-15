@@ -752,7 +752,7 @@ export default {
     loeschenAlles: "Alles löschen",
     loeschenFrage: "Wirklich alles löschen? Das lässt sich nicht rückgängig machen.",
     ereignisse: (n) => `${n} Einträge im Verlauf`,
-    fassung: "Testfassung Etappe 5, Oktober 2026",
+    fassung: "Testfassung, Oktober 2026",
     letzteSicherung: (d) => `letzte Sicherung ${d}`,
     ohnePruefsumme: "ohne Prüfsumme (unsichere Verbindung)",
     importOhnePruefsumme: "Eingelesen – diese Datei hatte keine Prüfsumme.",

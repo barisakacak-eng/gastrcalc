@@ -751,7 +751,7 @@ export default {
     loeschenAlles: "Delete everything",
     loeschenFrage: "Really delete everything? This cannot be undone.",
     ereignisse: (n) => `${n} entries in the log`,
-    fassung: "Test version stage 5, October 2026",
+    fassung: "Test version, October 2026",
     letzteSicherung: (d) => `last backup ${d}`,
     ohnePruefsumme: "without checksum (insecure connection)",
     importOhnePruefsumme: "Imported – this file had no checksum.",

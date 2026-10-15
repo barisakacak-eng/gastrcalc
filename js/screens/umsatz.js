@@ -1,5 +1,5 @@
 // Etappe 5: „Umsatz" – Tagesumsatz eintragen und die Zähler-Seite (Strecke, Prognose, Rechnung, Monatsstreifen, Preise).
-import { t } from "../i18n.js";
+import { t, sprache } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
 import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, umsatzSteuerSatz, schwundAuswertung } from "../engine.js";
 import { zaehler, monatsGrenzen } from "../zaehler.js";
@@ -20,6 +20,8 @@ function tagChips(D) {
   return `<div class="chips">${tage.map((d, i) => `<button type="button" class="chip klein ${D === d ? "an" : ""}" data-a="tag-datum" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}${mehrTage || tagPlus(tage[tage.length - 1], -1) < monatsGrenzen(H).von ? "" : `<button type="button" class="chip klein" data-a="umsatz-mehr-tage">${esc(t("zaehler.frueher"))}</button>`}</div>`;
 }
 
+// Wochentage Mo–So in der App-Sprache (Kalender mit 7 Spalten, Prüfung 15.10.)
+const wochentagKopf = () => { const f = new Intl.DateTimeFormat(sprache(), { weekday: "short" }); return Array.from({ length: 7 }, (_, i) => `<span class="wt">${f.format(new Date(2026, 9, 12 + i)).replace(".", "").slice(0, 2)}</span>`).join(""); };
 export function umsatzView(stand) {
   const H = heute(); const D = tagGewaehlt(); const nach = D !== H;
   const z = zaehler(stand, { datum: D }); const st = umsatzSteuerSatz(stand);
@@ -101,7 +103,7 @@ function rechnungKarte(z) {
 
 function monatKarte(z, D) {
   return `<div class="karte"><h2>${esc(t("zaehler.monat"))}</h2>
-    <div class="monat">${z.tage.map((x) => { const cls = x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus"); return `<i class="${cls} ${x.datum === D ? "heute" : ""}">${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
+    <div class="monat">${wochentagKopf()}${z.tage.map((x, i) => { const cls = x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus"); return `<i class="${cls} ${x.datum === D ? "heute" : ""}"${i === 0 ? ` style="grid-column-start:${((new Date(x.datum + "T12:00").getDay() + 6) % 7) + 1}"` : ""}>${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
     <small class="marke">${esc(t("zaehler.legendeMonat"))}</small></div>`;
 }
 
