@@ -169,6 +169,7 @@ export function provisionAnteil(portal) {
 }
 
 // ======================= Etappe 2: Karte, Artikel, Kalkulation =======================
+import { neuerTakt, imTakt } from "./takt.js";
 import { EINHEITEN, inBasis, PRODUKT_INDEX, GARVERLUST_START, STEUER_JE_GRUPPE } from "./data/katalog.js";
 
 // Klasse eines Gerichts aus dem Katalogbereich (Äquivalenzziffern, Prüfung Befund 3). Der Betrieb kann sie ändern.
@@ -356,7 +357,7 @@ export function zeitMitZwischen(gericht, artikelIndex) {
 // Pro Zeichnen nur einmal rechnen (Stresstest 15.10.: kalkulation lief 3× je Cockpit). app.js zählt den Takt hoch.
 // Gilt nur während des synchronen Zeichnens; danach (Mikrotask) wieder aus, damit Aktionen nach einer Änderung frisch rechnen.
 let kalkTakt = 0, kalkAktiv = false; const kalkMemo = new WeakMap();
-export const kalkulationNeuerTakt = () => { kalkTakt += 1; kalkAktiv = true; queueMicrotask(() => { kalkAktiv = false; }); };
+export const kalkulationNeuerTakt = () => { neuerTakt(); kalkTakt += 1; kalkAktiv = true; queueMicrotask(() => { kalkAktiv = false; }); };
 export function kalkulation(stand, opts = {}) {
   if (kalkAktiv && opts.produktivAnteil === undefined) { const m = kalkMemo.get(stand); if (m && m.takt === kalkTakt) return m.wert; const wert = kalkulationRechnen(stand, opts); kalkMemo.set(stand, { takt: kalkTakt, wert }); return wert; }
   return kalkulationRechnen(stand, opts);
@@ -642,7 +643,7 @@ export function rundgangAbschliessen(stand, r, lfdGeber, geraet = null, text = (
 }
 
 const vgl = (a, b) => { a = String(a); b = String(b); return a < b ? -1 : a > b ? 1 : 0; }; // schneller als localeCompare, für ISO-Daten gleich
-export const messungenDerStelle = (stand, stelleId) => (stand.messungen || []).filter((m) => m.stelle === stelleId && !m.storniert).sort((a, b) => vgl(a.datum, b.datum) || vgl(a.zeit, b.zeit));
+export const messungenDerStelle = (stand, stelleId) => imTakt(stand, "ms:" + stelleId, () => (stand.messungen || []).filter((m) => m.stelle === stelleId && !m.storniert).sort((a, b) => vgl(a.datum, b.datum) || vgl(a.zeit, b.zeit)));
 // Welche spätere Messung hat eine Nachkontrolle erledigt?
 // Erledigt ist eine Nachkontrolle erst durch eine spätere echte Messung INNERHALB der Grenze; ein weiterer Ausreißer zählt nicht (Nachtest Etappe 5, Punkt 7).
 export function nachkontrolleErledigt(stand, m) {
@@ -670,8 +671,9 @@ export function monatsblatt(stand, stelleId, { von, bis }) {
   const takt = stand.kuehl?.takt === 2 ? 2 : 1; const ruhetage = new Set(stand.kuehl?.ruhetage || []);
   const H = heute(); const liste = messungenDerStelle(stand, stelleId);
   const tage = [];
+  const jeTag = new Map(); for (const m of liste) { if (m.datum < von || m.datum > bis) continue; const x = jeTag.get(m.datum); if (x) x.push(m); else jeTag.set(m.datum, [m]); }
   for (let d = von; d <= bis; d = tagPlus(d, 1)) {
-    const ms = liste.filter((m) => m.datum === d);
+    const ms = jeTag.get(d) || [];
     const gemessen = ms.filter((m) => typeof m.wert === "number");
     let status;
     if (stand.kuehl?.seit && d < stand.kuehl.seit && !ms.length) status = "vorher"; // vor der Einrichtung: keine Lücke

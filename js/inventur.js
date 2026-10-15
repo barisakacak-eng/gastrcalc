@@ -9,6 +9,7 @@
 //
 // Vergleich (ab der zweiten Inventur): Anfang + Einkauf − Ende = Verbrauch. Zeitraum: nach dem Tag der vorigen Inventur bis einschließlich
 // des Tags dieser Inventur (gezählt wird nach Ladenschluss; was am Zähltag geliefert wurde, steckt schon in der vorigen Zählung).
+import { imTakt } from "./takt.js";
 import { uid, heute } from "./util.js";
 import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX } from "./data/katalog.js";
@@ -116,7 +117,8 @@ export function hinzufuegen(stand, inv, name) {
 }
 
 // Wert einer Inventur: Summe aller gezählten Zeilen mit Preis, je Lagerort, und was ohne Preis gezählt wurde.
-export function inventurWert(stand, inv) {
+export function inventurWert(stand, inv) { return inv?.abgeschlossen ? imTakt(stand, "invWert:" + inv.id, () => inventurWertRechnen(stand, inv)) : inventurWertRechnen(stand, inv); }
+function inventurWertRechnen(stand, inv) {
   const { liste } = artikelFuerInventur(stand, inv);
   const jeLagerort = Object.fromEntries(LAGERORTE.map((o) => [o, { summe: 0, anzahl: 0, gezaehlt: 0 }]));
   let summe = 0, gezaehlt = 0; const ohnePreis = [];

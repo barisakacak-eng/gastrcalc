@@ -1,6 +1,7 @@
 // Etappe 5: Müll in zwei Tipps – „Gericht weg", „Rohware weg", „Eimer gewogen", Personalessen. Reine Funktionen.
 // Einträge landen im Schwund-Journal (nur anhängen, Rücknahme = storniert) und werden sofort zum Einkaufspreis bewertet.
 // Mülltrennung fragt die App nicht mehr: die Tonne folgt aus der Warengruppe (Verpackung → Verpackung, alles andere → Bio).
+import { imTakt } from "./takt.js";
 import { uid, heute } from "./util.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { warenGericht, kalkulation, wertEintrag, SCHWUND_ARTEN } from "./engine.js";
@@ -135,7 +136,8 @@ export function muellMonatVergleich(stand, datum = heute()) {
 }
 
 // Die 12 Kacheln „Was ist weg?": nach Häufigkeit der letzten 30 Tage (bei Gleichstand zuletzt benutzt); ohne Verlauf erst Gerichte, dann Artikel.
-export function haeufigsteMuell(stand, { tage = 30, max = 12, datum = heute(), mischen = false } = {}) {
+export function haeufigsteMuell(stand, opts = {}) { return imTakt(stand, "hm:" + JSON.stringify(opts), () => haeufigsteMuellRechnen(stand, opts)); }
+function haeufigsteMuellRechnen(stand, { tage = 30, max = 12, datum = heute(), mischen = false } = {}) {
   if (mischen) return gemischt(stand, haeufigsteMuell(stand, { tage, max: 10000, datum }), { tage, max, datum });
   const von = tagMinus(datum, tage - 1); const zahl = new Map();
   for (const e of stand.schwund || []) {

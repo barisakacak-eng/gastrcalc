@@ -1,5 +1,6 @@
 // Putzplan (Empfehlung nach HACCP, Baris 15.10.2026): Plan = Stammdaten, Abhaken = Protokoll (Nachweis für die Lebensmittelkontrolle).
 // Protokoll wird nie gelöscht, nur storniert. Empfehlung der Recherche: mindestens 12, besser 24 Monate aufbewahren.
+import { imTakt } from "./takt.js";
 import { AUFGABEN, TAKT_TAGE, GERAETE_JE_ART, STANDARD_AUS } from "./data/putzplan.js";
 import { heute, uid } from "./util.js";
 import { ladenArtVon } from "./profil.js";
@@ -19,8 +20,10 @@ export const aufgabenFuer = (plan) => AUFGABEN.filter((a) => (a.gilt === "alle" 
 
 const tageZwischen = (a, b) => Math.round((new Date(b + "T12:00") - new Date(a + "T12:00")) / 86400000);
 export function letzteErledigung(stand, id) {
-  let l = null; for (const e of stand.putzlog || []) if (e.aufgabe === id && !e.storniert && (!l || e.datum > l.datum || (e.datum === l.datum && e.zeit > l.zeit))) l = e;
-  return l;
+  const letzte = imTakt(stand, "putzLetzte", () => { const m = new Map();
+    for (const e of stand.putzlog || []) { if (e.storniert) continue; const l = m.get(e.aufgabe); if (!l || e.datum > l.datum || (e.datum === l.datum && e.zeit > l.zeit)) m.set(e.aufgabe, e); }
+    return m; });
+  return letzte.get(id) || null;
 }
 
 // Stand je Aufgabe: erledigt (in diesem Takt schon gemacht), faellig, ueberfaellig (deutlich drüber), hinweis (nach Benutzung)

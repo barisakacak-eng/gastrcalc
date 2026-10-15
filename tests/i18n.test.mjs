@@ -4,12 +4,9 @@ import assert from "node:assert/strict";
 globalThis.document = { documentElement: {} };
 const { fehlendeSchluessel, SPRACHEN, ladeSprache } = await import("../js/i18n.js");
 for (const s of SPRACHEN) await ladeSprache(s); // nachladbare Sprachen erst laden
-// Drei Ebenen (Bauvertrag 15.10.2026): neue Blöcke gibt es zuerst nur in de/tr/en; die 15 nachladbaren Sprachen ergänzt danach ein Übersetzer
-// (bis dahin fällt t() auf Deutsch zurück). Für diese Sprachen werden nur die neuen Blöcke ausgenommen, alles andere bleibt Pflicht.
-const NEUE_BLOECKE = ["ebene", "heute", "kartelaeden", "buero", "ordner", "personal", "muell1", "schnell2"];
 for (const s of SPRACHEN) {
   test(`Sprachtabelle ${s} vollständig`, () => {
-    const f = fehlendeSchluessel(s).filter((k) => ["de", "tr", "en"].includes(s) || !NEUE_BLOECKE.includes(k.split(".")[0]));
+    const f = fehlendeSchluessel(s);
     assert.deepEqual(f, [], `fehlen in ${s}: ${f.join(", ")}`);
   });
 }
