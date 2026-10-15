@@ -392,11 +392,7 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
     }
     const preisBrutto = typeof x.preis === "number" ? x.preis : null;
     const preisNetto = preisBrutto === null ? null : preisBrutto / (1 + mwst);
-    // Ampel vergleicht auf den Cent, so wie die Zahlen angezeigt werden – wer den angezeigten Wert einträgt, bekommt Grün.
-    const cent = (v) => Math.round(v * 100) / 100;
-    let ampel = "grau";
-    if (sk !== null && preisNetto !== null && zielNetto !== null) ampel = cent(preisBrutto) >= cent(zielNetto * (1 + mwst)) ? "gruen" : cent(preisNetto) >= cent(sk) ? "gelb" : "rot";
-    const db = preisNetto === null || !w.vollstaendig ? null : preisNetto - w.waren; // Deckungsbeitrag je Portion (für Etappe 3)
+    const { ampel, db } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto);
     return { id: x.id, name: x.name, klasse: x.klasse, menge: x.menge, waren: w.vollstaendig ? w.waren : null, warenFehlt: w.fehlt, warenGeschaetzt: w.geschaetzt,
       fix, zeit, sk, mwst, preisBrutto, preisNetto, zielNetto, zielBrutto, zielAufschlag, zielStufe: ziel.stufe, portalBrutto, portalStufe, portalName: portal?.name || null, portalBasis: portal ? basisFuerRechnung(portal.basis) : null, portalBasisUnbekannt: portal ? portal.basis !== "netto" && portal.basis !== "brutto" : false, ampel, db,
       wareneinsatzAnteil: preisNetto > 0 && w.vollstaendig ? w.waren / preisNetto : null };
@@ -406,6 +402,20 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
   const geschaetzt = last.fix.geschaetzt > 0 || last.eigen.status === "geschaetzt" || mengenGeschaetzt || zeilen.some((z) => z.warenGeschaetzt);
   return { zeilen, zaehl, last, minutensatz, tQuer, mengenGeschaetzt, geschaetzt, zielStufe: nettoPreis(1, g, 0).stufe,
     unvollstaendig: last.offen > 0 || geschaetzt || zeilen.some((z) => z.ampel === "grau") };
+}
+
+// Ampel und Deckungsbeitrag je Portion für einen Bruttopreis – eine Stelle für Kalkulation und Preis-Blatt im Laden („Bleibt dir“).
+// zeile braucht sk, zielNetto, mwst, waren (wie in kalkulation().zeilen). Ampel vergleicht auf den Cent, so wie die Zahlen angezeigt werden –
+// wer den angezeigten Wert einträgt, bekommt Grün.
+export function preisAmpel(zeile, preisBrutto) {
+  const { sk = null, zielNetto = null, mwst = 0, waren = null } = zeile || {};
+  const brutto = typeof preisBrutto === "number" && Number.isFinite(preisBrutto) ? preisBrutto : null;
+  const preisNetto = brutto === null ? null : brutto / (1 + mwst);
+  const cent = (v) => Math.round(v * 100) / 100;
+  let ampel = "grau";
+  if (sk !== null && preisNetto !== null && zielNetto !== null) ampel = cent(brutto) >= cent(zielNetto * (1 + mwst)) ? "gruen" : cent(preisNetto) >= cent(sk) ? "gelb" : "rot";
+  const db = preisNetto === null || waren === null ? null : preisNetto - waren; // Deckungsbeitrag je Portion
+  return { ampel, db, preisNetto };
 }
 
 // Mischsatz der Umsatzsteuer auf den Tagesumsatz (Etappe 5): eigener Wert, sonst aus der Karte (Speisen 7 %, Getränke 19 %,

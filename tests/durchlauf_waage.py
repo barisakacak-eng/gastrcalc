@@ -18,7 +18,8 @@ async def main():
               w.betriebe.push(s); w.aktiv = s.id; await st.sofortSpeichern(w);
             }""", lang)
             await pg.reload(); await pg.wait_for_timeout(1000)
-            await pg.click('[data-a="menue-auf"]'); await pg.click('.menue [data-a="nav"][data-wert="karte"]'); await pg.wait_for_timeout(400)
+            # Drei Ebenen: die Kalkulations-Karte heißt jetzt „kartebuero“ (Büro); „karte“ ist das Fotoraster im Laden
+            await pg.evaluate("() => { const b = document.createElement('button'); b.dataset.a = 'nav'; b.dataset.wert = 'kartebuero'; document.querySelector('#app .schirm').appendChild(b); b.click(); }"); await pg.wait_for_timeout(400)
             await pg.click('[data-a="bearbeiten"][data-schritt="rezepte"]'); await pg.wait_for_timeout(400)
             await pg.screenshot(path=S+f"w_{lang}_1liste.png")
             await pg.click('[data-a="rezept-auf"]'); await pg.wait_for_timeout(400)

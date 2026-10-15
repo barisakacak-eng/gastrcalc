@@ -24,6 +24,8 @@ import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
 import { inventurView, inventurAktion, inventurEingabe, inventurZurueck, inventurZuruecksetzen, inventurKennung } from "./screens/inventur.js";
+// Entwickler B (Drei Ebenen): Laden-Karte als Fotoraster mit Preis-Blatt
+import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZurueck, karteLadenZuruecksetzen, karteLadenKennung } from "./screens/karte_laden.js";
 
 const root = document.getElementById("app");
 let wurzel = null;
@@ -48,7 +50,7 @@ function aktivSetzen(id) {
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : "";
+  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : "";
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -71,7 +73,8 @@ function zeichne() {
     else {
       navKontext(stand, wurzel);
       const v = ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand })
-        : ansicht === "karte" ? karteView(stand)
+        : ansicht === "karte" ? karteLadenView(stand) // B: Laden-Karte (Fotoraster)
+        : ansicht === "kartebuero" ? karteView(stand) // B: bisherige Karten-Übersicht mit Kalkulation – fürs Büro
         : ansicht === "muell" ? muellView(stand)
         : ansicht === "umsatz" ? umsatzView(stand)
         : ansicht === "listen" ? listenView(stand)
@@ -108,7 +111,7 @@ function zeichne() {
 function karteFotoSchirm() {
   return `<div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
       ${karteFussKnopf("")}
-      <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte", { schnell: false })}`;
+      <button type="button" class="leise" data-a="nav" data-wert="kartebuero">${esc(t("allgemein.zurueck"))}</button></div>${nav("kartebuero", { schnell: false })}`;
 }
 
 function zeichneOnboarding() {
@@ -194,7 +197,7 @@ async function fertig(ziel = "start") {
 function bearbeiten(vonId, bisId) {
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ansicht === "einstellungen" || ansicht === "karte" || ansicht === "inventur" ? ansicht : "start" };
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ansicht === "einstellungen" || ansicht === "kartebuero" || ansicht === "inventur" ? ansicht : ansicht === "karte" ? "karte" : "start" };
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();
@@ -287,6 +290,7 @@ root.addEventListener("click", async (ev) => {
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav") { const ziel = el.dataset.wert; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
+    if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "export") return sicherungTeilen();
@@ -324,8 +328,14 @@ root.addEventListener("click", async (ev) => {
     if (r) { speichern(wurzel); if (name === "muell-weg-damit") ereignis("schwund-eintrag", { laden: stand.id }); if (r.meldung) meldung(r.meldung); zeichne(); }
   }
   if (ansicht === "umsatz") { if (umsatzAktion(name, el)) zeichne(); }
+  if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)
+    const r = karteLadenAktion(name, el, stand);
+    if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
+    if (r && r.gespeichert) { ereignis("preis-geaendert", { laden: stand.id, gericht: r.id, vorher: r.vorher ?? null, preis: r.preis, ort: "laden" }); meldung(t("kartelaeden.gespeichert")); await sofortSpeichern(wurzel); return zeichne(); }
+    if (r) return zeichne();
+  }
   if (ansicht === "kartefoto") {
-    if (name === "fv-uebernehmen") { const r = karteUebernehmen(stand); ereignis("karte-foto-uebernommen", { laden: stand.id, neu: r.neu }); meldung(t("foto.uebernommen", r.neu, r.artikel)); ansicht = "karte"; await sofortSpeichern(wurzel); return zeichne(); }
+    if (name === "fv-uebernehmen") { const r = karteUebernehmen(stand); ereignis("karte-foto-uebernommen", { laden: stand.id, neu: r.neu }); meldung(t("foto.uebernommen", r.neu, r.artikel)); ansicht = "kartebuero"; await sofortSpeichern(wurzel); return zeichne(); }
     if (kartePruefenAktion(name, el)) zeichne();
   }
   if (ansicht === "beleg") {
@@ -369,6 +379,9 @@ root.addEventListener("input", (ev) => {
     if (s.eingabe) neu = s.eingabe(el.dataset.f, el.value, stand);
     const zeile = el.closest(".zeile"); const betrag = el.closest(".betrag");
     if (zeile && betrag) { const leer = el.value.trim() === ""; zeile.classList.toggle("offen", leer); betrag.classList.remove("geschaetzt"); betrag.classList.toggle("offen", leer); }
+  } else if (ansicht === "karte") { // B: Preis tippen – nur „Bleibt dir“ und Knopf austauschen, Feld behält den Fokus
+    if (karteLadenEingabe(el.dataset.f, el.value) === "teil") { const teil = karteLadenTeile(stand); const z = root.querySelector(".kl-bleibt"); if (teil && z) z.outerHTML = teil.bleibt; const k = root.querySelector('[data-a="kl-speichern"]'); if (k && teil) k.disabled = !teil.speichernAn; }
+    return; // Entwurf, noch nichts zu speichern
   } else if (ansicht === "kartefoto") {
     neu = kartePruefenEingabe(el.dataset.f, el.value);
   } else if (ansicht === "umsatz" || ansicht === "abschluss") {
@@ -462,7 +475,8 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : "umsatz";
-    else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "karte"; }
+    else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
+    else if (ansicht === "karte" && karteLadenZurueck()) { /* B: erst das Preis-Blatt schließen */ }
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "start"; }
     zeichne();
   }

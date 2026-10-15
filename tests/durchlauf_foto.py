@@ -94,7 +94,8 @@ async def main():
             await bild("bon-zuweisen"); await klick('[data-a="beleg-zerlegen"]')
             await pg.wait_for_selector('[data-a="beleg-uebernehmen"]'); await bild("bon-pruefen")
             # 8 PDF-Speisekarte über Karte
-            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="karte"]'); await bild("karte-app")
+            # Drei Ebenen: die Kalkulations-Karte heißt jetzt „kartebuero“ (Büro); „karte“ ist das Fotoraster im Laden
+            await pg.evaluate("() => { const b = document.createElement('button'); b.dataset.a = 'nav'; b.dataset.wert = 'kartebuero'; document.querySelector('#app .schirm').appendChild(b); b.click(); }"); await pg.wait_for_timeout(300); await bild("karte-app")
             await klick('[data-a="nav"][data-wert="kartefoto"]'); await pg.wait_for_selector('input[data-f="foto"]', state="attached")
             await pg.locator('input[data-f="foto"]:not([capture])').set_input_files(str(BILD / "karte2.pdf"))
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=60000); await pg.wait_for_timeout(300); await bild("pdf-pruefen")
