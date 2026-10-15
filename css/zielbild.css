@@ -141,3 +141,19 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .wahl.an.warnung .haken { background: var(--rot); border-color: var(--rot); color: #fff; }
 .wahl.an.warnung .rot { color: var(--rot); }
 .summenzeile .wert .leise.klein { display: block; margin-left: auto; min-height: 36px; font-size: 13px; }
+/* Nachprüfung 15.10. */
+.formkachel .stepper { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 2px; }
+.formkachel .stepper button { min-width: 0; width: 40px; min-height: 44px; }
+.formkachel .stepper .wert { min-width: 0; text-align: center; overflow: hidden; }
+.formkachel .stepper .wert input { width: 100%; }
+.zeileknopf .gerichtbild.mini.pikto { width: 40px; height: 40px; padding: 4px; }
+.zeileknopf b { word-break: normal; overflow-wrap: normal; hyphens: auto; }
+.zeileknopf small { white-space: normal; }
+.zeileknopf > span:not(.pfeil) { min-width: 0; flex: 1; }
+.summenzeile { gap: 8px; } .summenzeile > span:first-child { min-width: 0; }
+.instrumente.heute .instrument.klein > span, .instrumente.heute .instrument.klein > div { min-width: 0; }
+.instrumente.heute .instrument.klein small { white-space: normal; overflow-wrap: break-word; }
+.textfeld::placeholder { text-overflow: ellipsis; }
+.packung input::placeholder, .auswahlblatt .textfeld::placeholder, [data-f="stelle-neu"]::placeholder { font-size: 13px; }
+.formkachel .stepper { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+.formkachel .stepper button { width: 44px; height: 44px; min-height: 44px; min-width: 44px; border-radius: 50%; }

@@ -30,6 +30,8 @@ const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger",
 export function fotoName(g) {
   const f = g.rezeptFamilie || "";
   const kandidaten = [];
+  if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
+  if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   if (f) kandidaten.push(FOTO[f] || "g-" + f);
   for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "")) { kandidaten.push(...namen); break; }
   if (g.bereich) kandidaten.push(BEREICH_FOTO[g.bereich]);
