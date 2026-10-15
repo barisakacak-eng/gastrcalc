@@ -8,6 +8,7 @@ import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau } from "../muell.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
+import { FOTOS } from "../data/fotos.js";
 import { gerichtBild } from "./vergleich.js";
 // Bild für Rohware, Verpackung und Getränke (Prüfung 15.10.: Reihenfolge zählt, die erste passende Regel gewinnt)
 const VERP = [[/handschuh/i, "v-handschuhe"], [/tragetasche|tasche/i, "v-tragetasche"], [/t[üu]te/i, "v-doenertuete"], [/alu|folie/i, "v-alufolie"], [/men[üu]/i, "v-menueschale"],
@@ -24,8 +25,11 @@ const WARE = [[/brot|fladen|wrap|yufka|lavash|bun\b|br[öo]tchen|baguette|toast|
   [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"], [/mais/i, "w-mais"], [/(ö|oe)l(\s|$)|frittier/i, "w-oel"], [/olive/i, "w-oliven"], [/ananas/i, "w-ananas"],
   [/nudel|penne|spaghetti|fusilli|tagliatelle|lasagne/i, "w-nudeln"], [/reis|basmati|bulgur|couscous/i, "w-reis"], [/mehl|teig|hefe/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"],
   [/pommes|kroketten|wedges|kartoffel/i, "w-pommes-tk"]];
+const GETRAENK = [[/ayran/i, "g-ayran"], [/cola|fanta|sprite|dose/i, "d-cola"], [/wasser|sprudel/i, "d-wasser"], [/limo|orange/i, "d-limo"], [/eistee|ice ?tea/i, "d-eistee"],
+  [/[çc]ay|\btee\b/i, "d-tee"], [/energy|red ?bull/i, "d-energy"], [/saft|schorle/i, "d-saft"], [/gazoz/i, "d-gazoz"]];
 export function wareBild(x) {
-  if (x.gruppe === "getraenk") return `<img class="gerichtbild mini" src="foto/${/ayran/i.test(x.name) ? "g-ayran" : "g-getraenk"}.webp" alt="" loading="lazy">`;
+  if (x.gruppe === "getraenk") { const d = (GETRAENK.find(([re, n]) => re.test(x.name) && FOTOS.has(n)) || [])[1] || "g-getraenk";
+    return `<img class="gerichtbild mini" src="foto/${d}.webp" alt="" loading="lazy">`; }
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
   const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
   return `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy">`;
