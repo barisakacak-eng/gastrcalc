@@ -324,7 +324,7 @@ export const verkauf = {
       <p class="hinweis">${esc(t("verkauf.hinweis"))}</p>
       <div class="liste">
         ${stand.gerichte.map((g) => `<div class="zeile ${typeof g.preis === "number" ? "an" : ""}">
-          <div class="oben"><div class="name">${esc(g.name)}</div>
+          <div class="oben"><div class="name">${esc(g.name)}${g.preis === 0 ? `<small class="marke offen">${esc(t("verkauf.preisNull"))}</small>` : ""}${stand.gerichte.filter((x) => x.name.trim().toLowerCase() === g.name.trim().toLowerCase()).length > 1 ? `<small class="marke offen">${esc(t("verkauf.doppelt"))}</small>` : ""}</div>
             <button type="button" class="chip klein ${g.mengeTag !== null && g.mengeTag !== undefined ? "an" : ""}" data-a="bestseller" data-id="${esc(g.id)}">${esc(t("verkauf.bestseller"))}</button></div>
           <div class="betrag"><input inputmode="decimal" data-f="preis:${esc(g.id)}" value="${esc(wertAnzeige(g.preis))}" placeholder="${esc(t("verkauf.preisPlatzhalter"))}" aria-label="${esc(g.name)}"><span class="einheit">€</span>
             ${g.mengeTag !== null && g.mengeTag !== undefined ? `<span class="einheit">·</span><input inputmode="decimal" data-f="menge:${esc(g.id)}" value="${esc(wertAnzeige(g.mengeTag))}" placeholder="${esc(t("verkauf.amTag"))}" aria-label="${esc(t("verkauf.amTag"))}"><span class="einheit">${esc(t("verkauf.proTag"))}</span>` : ""}</div>

@@ -174,7 +174,7 @@ export default {
     messen: "Selbst messen",
     roh: "roh", gar: "gegart",
   },
-  verkauf: {
+  verkauf: { preisNull: "Preis 0 € – stimmt das?", doppelt: "Name kommt zweimal vor",
     frage: "Was nimmst du heute dafür?",
     hinweis: "Die Preise, wie sie jetzt auf der Karte stehen, mit Mehrwertsteuer. Bei deinen drei Rennern tipp „Renner“ an und sag, wie viele am Tag rausgehen.",
     bestseller: "Renner",
@@ -587,7 +587,7 @@ export default {
     belegeKurz: "Beleg einlesen, Preise nachziehen",
   },
 
-  muell: {
+  muell: { nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehmen.",
     zurUebersicht: "Müll-Übersicht", 
     auswaehlen: "Lebensmittel auswählen", aendern: "Antippen zum Ändern", mengeEingeben: "Menge eingeben", foto: "Foto (optional)", fotoDabei: "Foto ist dabei", fotoFehler: "Foto konnte nicht gespeichert werden.", satz: "Mache aus Fehlern Wissen. Trage ein, was heute im Müll gelandet ist.", orientierung: "Geschätzte Werte dienen der Orientierung.", ohnePreisKurz: "Noch ohne Einkaufspreis – zählt trotzdem mit.", 
     wasWeg: "Was ist weg?", wocheTonne: "Diese Woche in der Tonne", monatTonne: "Monatstonne", leerWoche: "Noch nichts eingetragen. Nichts weggeworfen? Guter Tag.", wocheZeile: (p, kg) => `≈ ${p} verkaufte Portionen, um das reinzuholen · ${kg} kg`, wenigerAls: (m, d) => `weniger als im ${m} bis zum ${d}.`, mehrAls: (m, d) => `mehr als im ${m} bis zum ${d}.`, rueckgaengig: "Rückgängig", ammeisten: "Am meisten weg", eintragen: "Müll eintragen", andererTag: "Für einen anderen Tag", teller: "Teller", eimerNurGewicht: "nur das Gewicht", ganzePackung: "ganze Packung", personalWert: (e) => `Personalessen · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} in der Tonne`, eimerHinweisKurz: "Teller und Rohware, die heute schon gemeldet sind, werden abgezogen.", fuerPersonal: "Für Personal gegessen", wegDamit: "Weg damit", geradeEben: "gerade eben", zurueckgenommen: "Zurückgenommen.",
@@ -726,7 +726,7 @@ export default {
     lieferungSpaeter: "Lieferung und Inventur zählst du später in Kartons oder Beuteln, die App rechnet um.",
   },
 
-  einstellungen: {
+  einstellungen: { fotosNichtDrin: "Eigene Gerichtfotos bleiben auf diesem Handy und sind nicht in der Sicherungsdatei.",
     bereichBetrieb: "Laden, Tage, Saison",
     bereichTeam: "Team",
     bereichKanaele: "Verkaufswege",

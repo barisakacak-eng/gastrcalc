@@ -173,7 +173,7 @@ export default {
     messen: "Measure myself",
     roh: "raw", gar: "cooked",
   },
-  verkauf: {
+  verkauf: { preisNull: "Price 0 € – is that right?", doppelt: "Name appears twice",
     frage: "What do you charge today?",
     hinweis: "The prices as they are on the menu now, including VAT. For your three best sellers tap “Top seller” and say how many go out per day.",
     bestseller: "Top seller",
@@ -586,7 +586,7 @@ export default {
     belegeKurz: "Read a receipt, update prices",
   },
 
-  muell: {
+  muell: { nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
     zurUebersicht: "Waste overview", 
     auswaehlen: "Select item", aendern: "Tap to change", mengeEingeben: "Enter amount", foto: "Photo (optional)", fotoDabei: "Photo added", fotoFehler: "Photo could not be saved.", satz: "Turn mistakes into knowledge. Enter what ended up in the bin today.", orientierung: "Estimated values are for guidance.", ohnePreisKurz: "No purchase price yet – still counted.", 
     wasWeg: "What went in the bin?", wocheTonne: "In the bin this week", monatTonne: "Monthly bin", leerWoche: "Nothing entered yet. Nothing thrown away? Good day.", wocheZeile: (p, kg) => `≈ ${p} portions sold to make up for it · ${kg} kg`, wenigerAls: (m, d) => `less than in ${m} up to day ${d}.`, mehrAls: (m, d) => `more than in ${m} up to day ${d}.`, rueckgaengig: "Undo", ammeisten: "Most thrown away", eintragen: "Add waste", andererTag: "For another day", teller: "plate", eimerNurGewicht: "weight only", ganzePackung: "whole pack", personalWert: (e) => `Staff meal · benefit value ${e}`, inDerTonne: (e) => `= ${e} in the bin`, eimerHinweisKurz: "Plates and raw goods already reported today are subtracted.", fuerPersonal: "Eaten by staff", wegDamit: "Throw away", geradeEben: "just now", zurueckgenommen: "Undone.",
@@ -725,7 +725,7 @@ export default {
     lieferungSpaeter: "Deliveries and stock counts you will later count in boxes or bags, the app converts.",
   },
 
-  einstellungen: {
+  einstellungen: { fotosNichtDrin: "Your own dish photos stay on this phone and are not in the backup file.",
     bereichBetrieb: "Place, days, season",
     bereichTeam: "Team",
     bereichKanaele: "Sales channels",
