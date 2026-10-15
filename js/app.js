@@ -1,5 +1,6 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
+import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
@@ -62,6 +63,7 @@ async function eigeneFotosLaden() {
 }
 
 function zeichne() {
+  kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
   const kennung = schirmKennung();
   const y = kennung === letzterSchirm ? window.scrollY : 0;
   try {

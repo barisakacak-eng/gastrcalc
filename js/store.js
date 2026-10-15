@@ -221,7 +221,7 @@ async function schreiben(wurzel) {
   catch (e) { console.warn("Speichern fehlgeschlagen:", e); if (fehlerMelder) fehlerMelder("speichern", e); return false; }
 }
 
-export const speichern = debounce((wurzel) => { stempeln(wurzel); schreiben(wurzel); }, 250);
+export const speichern = debounce((wurzel) => { stempeln(wurzel); schreiben(wurzel); }, 900); // Stresstest 15.10.: seltener ganz schreiben; beim Verlassen der App wird sofort gesichert
 
 export async function sofortSpeichern(wurzel, { stempel = true } = {}) {
   if (stempel) stempeln(wurzel);

@@ -31,15 +31,17 @@ export function parseZahl(v) {
   return Number.isFinite(n) && n >= 0 && n <= MAX_ZAHL ? n : null;
 }
 
+const EURO_FMT = {}; const ZAHL_FMT = {};
 export function fmtEuro(n, opts = {}) {
   if (n === null || n === undefined || !Number.isFinite(n)) return "–";
-  const f = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: opts.dezimal ?? 0, minimumFractionDigits: opts.dezimal ?? 0 });
+  const d = opts.dezimal ?? 0; // Formatierer je Nachkommastellen nur einmal bauen (Stresstest 15.10.: kostete 50 ms je Seite)
+  const f = EURO_FMT[d] ??= new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: d, minimumFractionDigits: d });
   return f.format(n);
 }
 
 export function fmtZahl(n, dezimal = 0) {
   if (n === null || n === undefined || !Number.isFinite(n)) return "–";
-  return new Intl.NumberFormat("de-DE", { maximumFractionDigits: dezimal, minimumFractionDigits: dezimal }).format(n);
+  return (ZAHL_FMT[dezimal] ??= new Intl.NumberFormat("de-DE", { maximumFractionDigits: dezimal, minimumFractionDigits: dezimal })).format(n);
 }
 
 // Datum in Ortszeit (nicht UTC – sonst ist zwischen Mitternacht und zwei Uhr der Tag falsch).
