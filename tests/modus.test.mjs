@@ -50,8 +50,7 @@ test("Büro-Code: nur 4 Ziffern, gespeichert wird nur der Prüfwert", async () =
   assert.equal(M.pinGesetzt(w), false);
   assert.equal(await M.pinSetzen(w, "12a4"), false); assert.equal(await M.pinSetzen(w, "123"), false);
   assert.equal(await M.pinSetzen(w, "4711"), true);
-  assert.equal(M.pinGesetzt(w), true); assert.equal(w.bueroPin.length, 64); assert.ok(!w.bueroPin.includes("4711"));
-  assert.equal(w.bueroPin, createHash("sha256").update("gastrocalc-buero:4711").digest("hex"));
+  assert.equal(M.pinGesetzt(w), true); assert.ok(w.bueroPin.startsWith("pbkdf2$")); assert.ok(!w.bueroPin.includes("4711")); // W2-S: PBKDF2 mit Salz
   assert.equal(await M.pinPruefen(w, "4711"), true); assert.equal(await M.pinPruefen(w, "4712"), false); assert.equal(await M.pinPruefen(w, ""), false);
   await M.pinSetzen(w, null); assert.equal(M.pinGesetzt(w), false); assert.equal(await M.pinPruefen(w, "4711"), false);
 });
@@ -59,5 +58,6 @@ test("Büro-Code: nur 4 Ziffern, gespeichert wird nur der Prüfwert", async () =
 test("Neustart: Büro mit Code geht zurück in den Laden, Personal bleibt", async () => {
   const a = { modus: "buero" }; await M.pinSetzen(a, "1111"); M.ebeneWiederherstellen(a); assert.equal(a.modus, "laden");
   const b = { modus: "buero", bueroPin: null }; M.ebeneWiederherstellen(b); assert.equal(b.modus, "buero");
-  const c = { modus: "personal", bueroPin: null }; M.ebeneWiederherstellen(c); assert.equal(c.modus, "personal");
+  const c = { modus: "personal", bueroPin: null }; M.ebeneWiederherstellen(c); assert.equal(c.modus, "laden"); // W2-S: Personal nur mit Code
+  const d = { modus: "personal" }; await M.pinSetzen(d, "2222"); M.ebeneWiederherstellen(d); assert.equal(d.modus, "personal");
 });

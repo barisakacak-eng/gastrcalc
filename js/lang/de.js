@@ -1008,7 +1008,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Heute", muell: "Müll", kuehl: "Kühlung", putzplan: "Putzen", karte: "Karte" },
-    leiste: "Laden", menueAuf: "Menü öffnen", schliessen: "Schließen", hilfeAuf: "Hilfe", deinLaden: "Dein Laden", abschluss: "Tag abschließen", personal: "Personal-Modus", buero: "Büro", ladenWechseln: "Laden wechseln", sprache: "Sprache", zumLaden: "Laden", zumBuero: "Büro", schlossHalten: "2 Sekunden aufs Schloss drücken", schlossCode: "Büro-Code eingeben",
+    leiste: "Laden", menueAuf: "Menü öffnen", schliessen: "Schließen", hilfeAuf: "Hilfe", deinLaden: "Dein Laden", abschluss: "Tag abschließen", personal: "Personal-Modus", buero: "Büro", ladenWechseln: "Laden wechseln", sprache: "Sprache", zumLaden: "Laden", zumBuero: "Büro", schlossCode: "Büro-Code eingeben",
     pin: { titel: "Büro-Code", neu: "Neuen Code wählen", nochmal: "Noch einmal", falsch: "Falscher Code", ungleich: "Nicht gleich. Bitte neu wählen.", gesetzt: "Büro-Code gespeichert", entfernt: "Büro-Code entfernt", setzen: "Büro-Code festlegen", aendern: "Büro-Code ändern", entfernen: "Code entfernen", ohne: "Ohne Code kommt jeder ins Büro.", mit: "Das Büro ist mit einem Code geschützt.", loeschen: "Ziffer löschen" },
     hilfeText: {
       allgemein: "Die Leiste unten führt zu allem, was du im Laden brauchst. Rechnen, Einrichten und Listen findest du im Büro.",
@@ -1019,7 +1019,7 @@ export default {
       karte: "Grün: dein Ziel bleibt übrig. Gelb: knapp. Rot: zu billig.",
       abschluss: "Umsatz eintragen, Müll und Kühlung prüfen, fertig.",
       laeden: "Hier wechselst du zwischen deinen Läden. Jeder Laden hat eigene Zahlen.",
-      personal: "Müll eintragen, Kühlung messen, Putzen abhaken. Zurück nur mit Büro-Code oder 2 Sekunden aufs Schloss.",
+      personal: "Müll eintragen, Kühlung messen, Putzen abhaken. Zurück nur mit Büro-Code.",
       buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
   heute: {
@@ -1039,6 +1039,8 @@ export default {
     leer: "Noch keine Gerichte", fotografieren: "Karte fotografieren", bleibt: "Bleibt dir", speichern: "Speichern", gespeichert: "Preis gespeichert", preis: "Preis", schliessen: "Schließen",
     ampel: { gruen: "Ziel erreicht", gelb: "Kosten gedeckt, unter Ziel", rot: "Zu billig", grau: "Noch nicht berechenbar" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Zu viele Versuche. Warte ${z}.`, personalBrauchtCode: "Für den Personal-Modus zuerst einen Büro-Code festlegen.", chefRichtetEin: "Chef richtet das im Büro ein.", ohneCode: "Ohne Code kommt jeder ins Büro. Den Personal-Modus gibt es nur mit Code." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Personal-Modus verlassen", zurueck: "Zurück", hallo: (n) => `Hallo ${n}`, halloOhne: "Hallo", wechseln: "Wechseln", werBistDu: "Wer arbeitet?", ohneNamen: "Ohne Namen",
     muell: "Müll", kuehlung: "Kühlung", putzen: "Putzen", offen: (n) => `${n} offen` },

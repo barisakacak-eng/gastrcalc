@@ -1007,7 +1007,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Bugün", muell: "Çöp", kuehl: "Soğutma", putzplan: "Temizlik", karte: "Menü" },
-    leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossHalten: "Kilide 2 saniye bas", schlossCode: "Büro kodunu gir",
+    leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
     pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil" },
     hilfeText: {
       allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",
@@ -1018,7 +1018,7 @@ export default {
       karte: "Yeşil: hedefin kalıyor. Sarı: kıl payı. Kırmızı: çok ucuz.",
       abschluss: "Ciroyu gir, çöpü ve soğutmayı kontrol et, bitti.",
       laeden: "Burada dükkânların arasında geçiş yaparsın. Her dükkânın kendi rakamları var.",
-      personal: "Çöp gir, soğutmayı ölç, temizliği işaretle. Geri dönüş sadece büro koduyla veya kilide 2 saniye basarak.",
+      personal: "Çöp gir, soğutmayı ölç, temizliği işaretle. Geri dönüş sadece büro koduyla.",
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân „Bugün“ ve „Ofiste açık“
   heute: {
@@ -1038,6 +1038,8 @@ export default {
     leer: "Henüz yemek yok", fotografieren: "Menünün fotoğrafını çek", bleibt: "Sana kalan", speichern: "Kaydet", gespeichert: "Fiyat kaydedildi", preis: "Fiyat", schliessen: "Kapat",
     ampel: { gruen: "Hedefe ulaşıldı", gelb: "Giderler karşılandı, hedefin altında", rot: "Çok ucuz", grau: "Henüz hesaplanamıyor" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Çok fazla deneme. ${z} bekle.`, personalBrauchtCode: "Personel modu için önce bir büro kodu belirle.", chefRichtetEin: "Bunu şef büroda ayarlar.", ohneCode: "Kod olmadan herkes büroya girer. Personel modu sadece kodla olur." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Personel modundan çık", zurueck: "Geri", hallo: (n) => `Merhaba ${n}`, halloOhne: "Merhaba", wechseln: "Değiştir", werBistDu: "Kim çalışıyor?", ohneNamen: "İsimsiz",
     muell: "Çöp", kuehlung: "Soğutma", putzen: "Temizlik", offen: (n) => `${n} açık` },

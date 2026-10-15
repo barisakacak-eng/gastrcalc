@@ -1011,7 +1011,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сегодня", muell: "Отходы", kuehl: "Холод", putzplan: "Уборка", karte: "Меню" },
-    leiste: "Заведение", menueAuf: "Открыть меню", schliessen: "Закрыть", hilfeAuf: "Помощь", deinLaden: "Твоё заведение", abschluss: "Закрыть день", personal: "Режим персонала", buero: "Офис", ladenWechseln: "Сменить заведение", sprache: "Язык", zumLaden: "Заведение", zumBuero: "Офис", schlossHalten: "Удерживай замок 2 секунды", schlossCode: "Введи код офиса",
+    leiste: "Заведение", menueAuf: "Открыть меню", schliessen: "Закрыть", hilfeAuf: "Помощь", deinLaden: "Твоё заведение", abschluss: "Закрыть день", personal: "Режим персонала", buero: "Офис", ladenWechseln: "Сменить заведение", sprache: "Язык", zumLaden: "Заведение", zumBuero: "Офис", schlossCode: "Введи код офиса",
     pin: { titel: "Код офиса", neu: "Выбери новый код", nochmal: "Ещё раз", falsch: "Неверный код", ungleich: "Не совпадает. Выбери заново.", gesetzt: "Код офиса сохранён", entfernt: "Код офиса удалён", setzen: "Задать код офиса", aendern: "Изменить код офиса", entfernen: "Удалить код", ohne: "Без кода в офис может войти любой.", mit: "Офис защищён кодом.", loeschen: "Стереть цифру" },
     hilfeText: {
       allgemein: "Панель внизу ведёт ко всему, что нужно в заведении. Расчёты, настройки и списки находятся в офисе.",
@@ -1022,7 +1022,7 @@ export default {
       karte: "Зелёный: твоя цель остаётся. Жёлтый: впритык. Красный: слишком дёшево.",
       abschluss: "Введи выручку, проверь отходы и холод, готово.",
       laeden: "Здесь ты переключаешься между заведениями. У каждого свои цифры.",
-      personal: "Внеси отходы, измерь холод, отметь уборку. Назад только с кодом офиса или 2 секунды на замке.",
+      personal: "Внеси отходы, измерь холод, отметь уборку. Назад только с кодом офиса.",
       buero: "Здесь все расчёты, списки и настройки. Папки ты отдаёшь инспекции, налоговому консультанту или бухгалтеру." } },
   heute: {
     stufe: { bisNull: "До нуля не хватает", bisZiel: "До цели", ueberZiel: "Выше цели" },
@@ -1041,6 +1041,8 @@ export default {
     leer: "Блюд пока нет", fotografieren: "Сфотографировать меню", bleibt: "Остаётся тебе", speichern: "Сохранить", gespeichert: "Цена сохранена", preis: "Цена", schliessen: "Закрыть",
     ampel: { gruen: "Цель достигнута", gelb: "Расходы покрыты, ниже цели", rot: "Слишком дёшево", grau: "Пока нельзя посчитать" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Слишком много попыток. Подожди ${z}.`, personalBrauchtCode: "Для режима персонала сначала задай код офиса.", chefRichtetEin: "Шеф настраивает это в офисе.", ohneCode: "Без кода в офис может войти любой. Режим персонала работает только с кодом." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Выйти из режима персонала", zurueck: "Назад", hallo: (n) => `Привет ${n}`, halloOhne: "Привет", wechseln: "Сменить", werBistDu: "Кто работает?", ohneNamen: "Без имени",
     muell: "Отходы", kuehlung: "Охлаждение", putzen: "Уборка", offen: (n) => `${n} открыто` },

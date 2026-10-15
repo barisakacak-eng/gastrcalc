@@ -42,7 +42,10 @@ const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime(
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
 
 // ---------- Hauptansicht ----------
+const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit.chefRichtetEin"))}</p>`; // W2-S: statt Einrichtung im Personal-Modus
 export function kuehlView(stand) {
+  const pers = personalAktiv(); // W2-S (p02 K2): Einrichtung, Grenzen, Verwerfen und Vortage gibt es im Personal-Modus nicht
+  if (pers && ansicht === "einrichtung") ansicht = "start";
   if (ansicht === "einrichtung") return einrichtungView(stand);
   if (ansicht === "rundgang") return rundgangView(stand);
   if (ansicht === "blatt") return blattView(stand);
@@ -56,10 +59,10 @@ export function kuehlView(stand) {
       ${!st.eingerichtet ? `
       <div class="karte">
         <h2>${esc(t("kuehl.einrichtenTitel"))}</h2>
-        <p class="hinweis">${esc(t("kuehl.einrichtenText"))}</p>
-        <button type="button" class="knopf glut" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichten"))}</button>
+        ${pers ? chefHinweis() : `<p class="hinweis">${esc(t("kuehl.einrichtenText"))}</p>
+        <button type="button" class="knopf glut" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichten"))}</button>`}
       </div>` : `
-      ${!st.bereit ? `<div class="karte hinweisgelb"><div>${esc(t("kuehl.grenzenFehlen"))}</div><button type="button" class="knopf zweit" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button></div>` : ""}
+      ${!st.bereit ? `<div class="karte hinweisgelb"><div>${esc(t("kuehl.grenzenFehlen"))}</div>${pers ? chefHinweis() : `<button type="button" class="knopf zweit" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}</div>` : ""}
       <div class="karte">
         <h2>${esc(t("kuehl.heute"))}</h2>
         <div class="gross">${st.heuteGemessen} / ${st.stellen}</div>
@@ -77,7 +80,7 @@ export function kuehlView(stand) {
           <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(k.name)}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
             <span class="${m ? (m.abweichung ? "rot" : "") : "marke"}" style="font-weight:700;white-space:nowrap">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke" style="display:block;font-weight:400">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitKurz(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
-        <button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>
+        ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
       </div>
       <p class="hinweis">${esc(t("kuehl.haftung"))}</p>`}
     </div>
@@ -148,7 +151,7 @@ function rundgangView(stand) {
       <p class="hinweis mitte">${esc(t("kuehl.rundgangStand", fertig, stellen.length))}${fertig && fertig < stellen.length ? ` · ${esc(t("kuehl.teilAbschlussHinweis"))}` : ""}</p>
       ${fertig > 0 ? `<button type="button" class="knopf glut" data-a="rundgang-abschluss">${esc(fertig === stellen.length ? t("kuehl.abschliessen") : t("kuehl.teilAbschliessen", fertig))}</button>` : ""}
       ${fertig < stellen.length ? `<button type="button" class="knopf zweit" data-a="kuehl-start">${esc(t("kuehl.unterbrechen"))}</button>` : ""}
-      <button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}
+      ${personalAktiv() ? "" : `<button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}`}
     </div>
     ${nav("kuehl", { schnell: false })}`;
 }
@@ -163,9 +166,9 @@ function rundgangStartView(stand) {
         <h2>${esc(t("kuehl.werMisst"))}</h2>
         ${startStelle ? `<div class="hinweis">${esc(t("kuehl.nurStelle", aktiveStellen(stand).find((k) => k.id === startStelle)?.name || ""))}</div>` : ""}
         ${personen.length ? `<div class="chips">${personen.map((p) => `<button type="button" class="chip ${startVon === p.id ? "an" : ""}" data-a="start-von" data-id="${esc(p.id)}">${esc(p.kuerzel)}</button>`).join("")}<button type="button" class="chip ${startVon === "" ? "an" : ""}" data-a="start-von" data-id="">${esc(t("kuehl.ohneKuerzel"))}</button></div>` : `<div class="hinweis">${esc(t("kuehl.keinePersonen"))}</div>`}
-        <h2>${esc(t("kuehl.fuerWann"))}</h2>
+        ${personalAktiv() ? "" : `<h2>${esc(t("kuehl.fuerWann"))}</h2>
         <div class="chips">${tage.map((d, i) => `<button type="button" class="chip klein ${(startNach || H) === d ? "an" : ""}" data-a="start-datum" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}</div>
-        ${startNach && startNach !== H ? `<span class="marke offen">${esc(t("kuehl.nacherfassungHinweis"))}</span>` : ""}
+        ${startNach && startNach !== H ? `<span class="marke offen">${esc(t("kuehl.nacherfassungHinweis"))}</span>` : ""}`}
         <button type="button" class="knopf glut" data-a="rundgang-start" ${personen.length && startVon === null ? "disabled" : ""}>${esc(t("kuehl.los"))}</button>
       </div>
     </div>
@@ -247,7 +250,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "kuehl-einrichtung") { ansicht = "einrichtung"; return true; }
   if (name === "kuehl-einrichtung-fertig") { stand.kuehl.eingerichtet = aktiveStellen(stand).length > 0; ansicht = "start"; return true; }
   if (name === "kuehl-start") { ansicht = "start"; station = null; form = null; return true; }
-  if (name === "kuehl-rundgang") { if (!kuehlBereit(stand)) { ansicht = "einrichtung"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = null; return true; }
+  if (name === "kuehl-rundgang") { if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = null; return true; } // W2-S: Personal ohne Einrichtung
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
@@ -269,7 +272,8 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "start-von") { startVon = el.dataset.id; return true; }
   if (name === "start-datum") { startNach = el.dataset.wert; return true; }
   if (name === "rundgang-start") {
-    if (!kuehlBereit(stand)) { ansicht = "einrichtung"; return true; }
+    if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } // W2-S
+    if (personalAktiv()) startNach = null; // W2-S: im Personal-Modus nur heute
     const H = heute(); const nach = startNach && startNach !== H;
     rundgangStarten(stand, { von: startVon || null, datum: startNach || H, nacherfasst: nach, quelle: nach ? "zettel" : null, einzel: startStelle });
     station = null; form = null;

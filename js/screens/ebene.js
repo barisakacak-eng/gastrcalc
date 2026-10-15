@@ -6,12 +6,13 @@ import { t, sprache, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
 import { esc } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
-import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig } from "../modus.js";
+import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText } from "../modus.js";
 import { nav, sicherungStufe } from "./nav.js";
 
 let huelle = null;
 let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin"
-let pin = null;       // { zweck: "buero" | "personal" | "setzen", ziel, eingabe, erste, meldung, fehler }
+let pin = null;       // { zweck: "buero" | "personal" | "setzen" | "loeschen" | "ladenLoeschen", ziel, eingabe, erste, meldung, fehler, wurzel }
+let uhr = null;       // Restzeit der Wartezeit sekündlich nachführen (W2-S)
 
 // Die Hülle hängt direkt am <body>; app.js hängt seine Klick-Weiche auch hier ein.
 export function ebeneHuelle() {
@@ -32,7 +33,7 @@ function zeigen(art, html) {
 }
 export function blattSchliessen() {
   if (!huelle || !offen) return false;
-  huelle.classList.remove("da"); huelle.innerHTML = ""; document.body.classList.remove("blatt-da"); offen = null; pin = null;
+  huelle.classList.remove("da"); huelle.innerHTML = ""; document.body.classList.remove("blatt-da"); offen = null; pin = null; uhrStop();
   return true;
 }
 
@@ -75,19 +76,39 @@ export function hilfeZeigen(ansicht) {
 }
 
 // ---------- Büro-Code (4 Ziffern) ----------
-// zweck "buero": Laden → Büro. zweck "personal": Personal → Laden. zweck "setzen": neuen Code wählen (zweimal).
-export function pinStarten(zweck, ziel = null) { pin = { zweck, ziel, eingabe: "", erste: null, meldung: null, fehler: false }; pinZeichnen(); }
+// zweck "buero": Laden → Büro. zweck "personal": Personal → Laden. zweck "setzen": neuen Code wählen (zweimal; ziel "personal" = danach in Personal).
+// zweck "loeschen" / "ladenLoeschen": Löschen nur mit Code (W2-S, p07 M6). Nach 5 Fehlversuchen Wartezeit mit sichtbarer Restzeit (W2-S, p07 M4).
+export function pinStarten(zweck, ziel = null, wurzel = null, meldung = null) {
+  pin = { zweck, ziel, eingabe: "", erste: null, meldung, fehler: false, wurzel }; pinZeichnen();
+}
+function uhrStop() { if (uhr) { clearInterval(uhr); uhr = null; } }
+function warteText(rest) { return t("sicherheit.warten", restText(rest)); }
+function uhrStarten() {
+  uhrStop(); if (!pin?.wurzel || typeof setInterval === "undefined") return;
+  uhr = setInterval(() => {
+    if (!pin || offen !== "pin") return uhrStop();
+    const rest = sperreRest(pin.wurzel);
+    if (!rest) { uhrStop(); pin.meldung = null; pin.fehler = false; pinZeichnen(); return; }
+    const m = huelle?.querySelector(".pin-meldung"); if (m) m.textContent = warteText(rest);
+  }, 1000);
+}
 function pinZeichnen() {
   const p = pin; const titel = p.zweck === "setzen" ? t(p.erste ? "ebene.pin.nochmal" : "ebene.pin.neu") : t("ebene.pin.titel");
-  const taste = (z) => `<button type="button" class="pintaste" data-a="pin-taste" data-wert="${z}">${z}</button>`;
+  const rest = p.zweck === "setzen" ? 0 : sperreRest(p.wurzel);
+  if (rest) { p.meldung = warteText(rest); p.fehler = true; }
+  const taste = (z) => `<button type="button" class="pintaste" data-a="pin-taste" data-wert="${z}"${rest ? " disabled" : ""}>${z}</button>`;
   zeigen("pin", `<div class="pin-kopf"><span class="ks">${sym("lock")}</span><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div>
-    <div class="pin-punkte${p.fehler ? " wackeln" : ""}" aria-hidden="true">${[0, 1, 2, 3].map((i) => `<i class="${i < p.eingabe.length ? "voll" : ""}"></i>`).join("")}</div>
-    <div class="pin-tasten">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}">${sym("delete")}</button></div>`);
+    <div class="pin-punkte${p.fehler && !rest ? " wackeln" : ""}" aria-hidden="true">${[0, 1, 2, 3].map((i) => `<i class="${i < p.eingabe.length ? "voll" : ""}"></i>`).join("")}</div>
+    <div class="pin-tasten">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}"${rest ? " disabled" : ""}>${sym("delete")}</button></div>`);
+  if (rest) uhrStarten(); else uhrStop();
 }
 
-// Eine Taste. Rückgabe: null (weiter tippen) oder { zweck, ziel } wenn der Code stimmt / gesetzt ist.
+// Eine Taste. Rückgabe: null (weiter tippen), { fehler: true } (falscher Code – Zähler in der Wurzel, bitte speichern)
+// oder { zweck, ziel } wenn der Code stimmt / gesetzt ist.
 export async function pinTaste(wert, wurzel) {
   if (!pin) return null;
+  pin.wurzel = wurzel;
+  if (pin.zweck !== "setzen" && sperreRest(wurzel)) { pin.eingabe = ""; pinZeichnen(); return null; } // Wartezeit läuft: keine Eingabe
   if (wert === "weg") { pin.eingabe = pin.eingabe.slice(0, -1); pin.fehler = false; pinZeichnen(); return null; }
   if (pin.eingabe.length >= 4 || !/^[0-9]$/.test(wert)) return null;
   pin.eingabe += wert; pin.fehler = false; pin.meldung = null; pinZeichnen();
@@ -96,17 +117,20 @@ export async function pinTaste(wert, wurzel) {
   if (p.zweck === "setzen") {
     if (!p.erste) { p.erste = e; p.eingabe = ""; pinZeichnen(); return null; }
     if (p.erste !== e || !pinGueltig(e)) { p.erste = null; p.eingabe = ""; p.fehler = true; p.meldung = t("ebene.pin.ungleich"); pinZeichnen(); return null; }
-    await pinSetzen(wurzel, e); blattSchliessen(); return { zweck: "setzen" };
+    await pinSetzen(wurzel, e); blattSchliessen(); return { zweck: "setzen", ziel: p.ziel };
   }
-  if (await pinPruefen(wurzel, e)) { blattSchliessen(); return { zweck: p.zweck, ziel: p.ziel }; }
-  if (pin !== p) return null; // inzwischen geschlossen
-  p.eingabe = ""; p.fehler = true; p.meldung = t("ebene.pin.falsch"); pinZeichnen(); return null;
+  if (p.pruefend) return null; p.pruefend = true; // die Prüfung dauert (PBKDF2) – keine zweite gleichzeitig
+  let ok = false; try { ok = await pinPruefen(wurzel, e); } finally { p.pruefend = false; }
+  if (ok) { sperreLoesen(wurzel); if (pin === p) blattSchliessen(); return { zweck: p.zweck, ziel: p.ziel }; }
+  const dauer = fehlversuch(wurzel);
+  if (pin !== p) return { fehler: true }; // inzwischen geschlossen
+  p.eingabe = ""; p.fehler = true; p.meldung = dauer ? warteText(dauer) : t("ebene.pin.falsch"); pinZeichnen(); return { fehler: true };
 }
 
 // Karte „Büro-Code" für Büro-Start und Einstellungen
 export function bueroCodeKarte(wurzel) {
   const da = pinGesetzt(wurzel);
-  return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(da ? "ebene.pin.mit" : "ebene.pin.ohne"))}</p>
+  return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(da ? "ebene.pin.mit" : "sicherheit.ohneCode"))}</p>
     <button type="button" class="knopf zweit" data-a="pin-setzen">${esc(t(da ? "ebene.pin.aendern" : "ebene.pin.setzen"))}</button>
     ${da ? `<button type="button" class="leise" data-a="pin-entfernen">${esc(t("ebene.pin.entfernen"))}</button>` : ""}</div>`;
 }

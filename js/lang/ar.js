@@ -1008,7 +1008,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "اليوم", muell: "الهدر", kuehl: "التبريد", putzplan: "التنظيف", karte: "القائمة" },
-    leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossHalten: "اضغط على القفل ثانيتين", schlossCode: "أدخل رمز المكتب",
+    leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
     pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم" },
     hilfeText: {
       allgemein: "الشريط في الأسفل يأخذك إلى كل ما تحتاجه في المحل. الحسابات والإعداد والقوائم في المكتب.",
@@ -1019,7 +1019,7 @@ export default {
       karte: "أخضر: يبقى هدفك. أصفر: على الحد. أحمر: رخيص جدًا.",
       abschluss: "أدخل المبيعات، افحص الهدر والتبريد، انتهى.",
       laeden: "هنا تنتقل بين محلاتك. لكل محل أرقامه الخاصة.",
-      personal: "سجّل الهدر، قِس التبريد، علّم التنظيف. العودة فقط برمز المكتب أو بالضغط على القفل ثانيتين.",
+      personal: "سجّل الهدر، قِس التبريد، علّم التنظيف. العودة فقط برمز المكتب.",
       buero: "هنا كل الحسابات والقوائم والإعدادات. الملفات تعطيها للتفتيش أو المستشار الضريبي أو المحاسب." } },
   heute: {
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },
@@ -1038,6 +1038,8 @@ export default {
     leer: "لا توجد أطباق بعد", fotografieren: "صوّر القائمة", bleibt: "يبقى لك", speichern: "حفظ", gespeichert: "تم حفظ السعر", preis: "السعر", schliessen: "إغلاق",
     ampel: { gruen: "الهدف تحقق", gelb: "التكاليف مغطاة، تحت الهدف", rot: "رخيص جدًا", grau: "لا يمكن الحساب بعد" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `محاولات كثيرة. انتظر ${z}.`, personalBrauchtCode: "لوضع الموظفين حدّد رمز المكتب أولاً.", chefRichtetEin: "المدير يجهّز هذا في المكتب.", ohneCode: "بدون رمز يدخل أي شخص إلى المكتب. وضع الموظفين يعمل فقط مع رمز." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "الخروج من وضع الموظفين", zurueck: "رجوع", hallo: (n) => `مرحبًا ${n}`, halloOhne: "مرحبًا", wechseln: "تبديل", werBistDu: "من يعمل؟", ohneNamen: "بدون اسم",
     muell: "هدر", kuehlung: "تبريد", putzen: "تنظيف", offen: (n) => `${n} مفتوح` },

@@ -1,6 +1,6 @@
 // Personal-Modus (Drei Ebenen, Punkt 9 – 15.10.2026): drei Fotokacheln Müll · Kühlung · Putzen, kein einziger Euro.
 // Die Person wird einmal je Schicht gewählt (je Gerät gemerkt) und steht danach an jedem Eintrag (von: personId).
-// Verlassen (Schloss) verdrahtet Entwickler A über data-a="ebene-verlassen".
+// Verlassen nur mit Büro-Code über das Schloss in der Kopfleiste (nav.js, data-a="schloss"); ohne Code gibt es keinen Personal-Modus (W2-S).
 import { t, sprache } from "../i18n.js";
 import { esc, heute } from "../util.js";
 import { sym } from "../symbole.js";
@@ -70,7 +70,7 @@ export function personalZahlen(stand) {
 const SCHLOSS = `<svg class="sym" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 export const schlossKnopf = () => `<button type="button" class="schlossknopf" data-a="ebene-verlassen" aria-label="${esc(t("personal.verlassen"))}">${SCHLOSS}</button>`;
 // Kopfleiste im Personal-Modus: links frei oder Zurück, Mitte Logo, rechts Schloss
-// Kopf im Personal-Modus kommt aus nav.js (Entwickler A: Zurück, Logo, Schloss mit 2-s-Druck oder Code) – eine Leiste für alle Personal-Bildschirme.
+// Kopf im Personal-Modus kommt aus nav.js (Zurück, Logo, Schloss – fragt immer den Büro-Code) – eine Leiste für alle Personal-Bildschirme.
 export const personalLeiste = () => nav("personal");
 
 // ---------- Ansicht ----------

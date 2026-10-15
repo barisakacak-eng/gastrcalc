@@ -1006,7 +1006,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Aujourd'hui", muell: "Déchets", kuehl: "Froid", putzplan: "Nettoyage", karte: "Carte" },
-    leiste: "Commerce", menueAuf: "Ouvrir le menu", schliessen: "Fermer", hilfeAuf: "Aide", deinLaden: "Ton commerce", abschluss: "Clôturer la journée", personal: "Mode équipe", buero: "Bureau", ladenWechseln: "Changer de commerce", sprache: "Langue", zumLaden: "Commerce", zumBuero: "Bureau", schlossHalten: "Appuie 2 secondes sur le cadenas", schlossCode: "Saisis le code bureau",
+    leiste: "Commerce", menueAuf: "Ouvrir le menu", schliessen: "Fermer", hilfeAuf: "Aide", deinLaden: "Ton commerce", abschluss: "Clôturer la journée", personal: "Mode équipe", buero: "Bureau", ladenWechseln: "Changer de commerce", sprache: "Langue", zumLaden: "Commerce", zumBuero: "Bureau", schlossCode: "Saisis le code bureau",
     pin: { titel: "Code bureau", neu: "Choisis un nouveau code", nochmal: "Encore une fois", falsch: "Code erroné", ungleich: "Pas identique. Choisis à nouveau.", gesetzt: "Code bureau enregistré", entfernt: "Code bureau supprimé", setzen: "Définir le code bureau", aendern: "Changer le code bureau", entfernen: "Supprimer le code", ohne: "Sans code, tout le monde entre au bureau.", mit: "Le bureau est protégé par un code.", loeschen: "Effacer le chiffre" },
     hilfeText: {
       allgemein: "La barre du bas mène à tout ce qu'il te faut au commerce. Calculs, réglages et listes sont au bureau.",
@@ -1017,7 +1017,7 @@ export default {
       karte: "Vert : ton objectif reste. Jaune : juste. Rouge : trop bon marché.",
       abschluss: "Saisis le chiffre d'affaires, vérifie déchets et froid, terminé.",
       laeden: "Ici tu passes d'un commerce à l'autre. Chaque commerce a ses propres chiffres.",
-      personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau ou 2 secondes sur le cadenas.",
+      personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau.",
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
   heute: {
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },
@@ -1036,6 +1036,8 @@ export default {
     leer: "Pas encore de plats", fotografieren: "Photographier la carte", bleibt: "Il te reste", speichern: "Enregistrer", gespeichert: "Prix enregistré", preis: "Prix", schliessen: "Fermer",
     ampel: { gruen: "Objectif atteint", gelb: "Coûts couverts, sous l’objectif", rot: "Trop bas", grau: "Pas encore calculable" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Trop d’essais. Attends ${z}.`, personalBrauchtCode: "Pour le mode personnel, définis d’abord un code bureau.", chefRichtetEin: "Le chef règle cela au bureau.", ohneCode: "Sans code, tout le monde entre au bureau. Le mode personnel n’existe qu’avec un code." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Quitter le mode équipe", zurueck: "Retour", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Changer", werBistDu: "Qui travaille ?", ohneNamen: "Sans nom",
     muell: "Déchets", kuehlung: "Froid", putzen: "Nettoyage", offen: (n) => `${n} ouverts` },

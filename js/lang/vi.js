@@ -1006,7 +1006,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hôm nay", muell: "Rác", kuehl: "Làm lạnh", putzplan: "Dọn dẹp", karte: "Thực đơn" },
-    leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossHalten: "Giữ ổ khóa 2 giây", schlossCode: "Nhập mã văn phòng",
+    leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
     pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số" },
     hilfeText: {
       allgemein: "Thanh bên dưới dẫn đến mọi thứ bạn cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",
@@ -1017,7 +1017,7 @@ export default {
       karte: "Xanh: còn đạt mục tiêu. Vàng: sát. Đỏ: quá rẻ.",
       abschluss: "Nhập doanh thu, kiểm tra rác và làm lạnh, xong.",
       laeden: "Ở đây bạn chuyển giữa các quán. Mỗi quán có số liệu riêng.",
-      personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng hoặc giữ ổ khóa 2 giây.",
+      personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
   heute: {
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },
@@ -1036,6 +1036,8 @@ export default {
     leer: "Chưa có món nào", fotografieren: "Chụp thực đơn", bleibt: "Còn lại cho bạn", speichern: "Lưu", gespeichert: "Đã lưu giá", preis: "Giá", schliessen: "Đóng",
     ampel: { gruen: "Đạt mục tiêu", gelb: "Đủ chi phí, dưới mục tiêu", rot: "Quá rẻ", grau: "Chưa tính được" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Thử quá nhiều lần. Chờ ${z}.`, personalBrauchtCode: "Muốn dùng chế độ nhân viên, hãy đặt mã văn phòng trước.", chefRichtetEin: "Chủ quán cài đặt việc này trong văn phòng.", ohneCode: "Không có mã thì ai cũng vào được văn phòng. Chế độ nhân viên chỉ có khi có mã." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Thoát chế độ nhân viên", zurueck: "Quay lại", hallo: (n) => `Xin chào ${n}`, halloOhne: "Xin chào", wechseln: "Đổi", werBistDu: "Ai đang làm?", ohneNamen: "Không tên",
     muell: "Rác thải", kuehlung: "Làm lạnh", putzen: "Vệ sinh", offen: (n) => `${n} chưa xong` },

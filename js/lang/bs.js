@@ -1014,7 +1014,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Danas", muell: "Otpad", kuehl: "Hlađenje", putzplan: "Čišćenje", karte: "Meni" },
-    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossHalten: "Drži lokot 2 sekunde", schlossCode: "Unesi šifru ureda",
+    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi šifru ureda",
     pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru" },
     hilfeText: {
       allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",
@@ -1025,7 +1025,7 @@ export default {
       karte: "Zeleno: tvoj cilj ostaje. Žuto: tijesno. Crveno: prejeftino.",
       abschluss: "Unesi promet, provjeri otpad i hlađenje, gotovo.",
       laeden: "Ovdje prelaziš između svojih lokala. Svaki lokal ima svoje brojke.",
-      personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda ili 2 sekunde na lokotu.",
+      personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
   heute: {
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
@@ -1044,6 +1044,8 @@ export default {
     leer: "Još nema jela", fotografieren: "Slikaj jelovnik", bleibt: "Ostaje ti", speichern: "Sačuvaj", gespeichert: "Cijena sačuvana", preis: "Cijena", schliessen: "Zatvori",
     ampel: { gruen: "Cilj postignut", gelb: "Troškovi pokriveni, ispod cilja", rot: "Prejeftino", grau: "Još se ne može izračunati" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Previše pokušaja. Sačekaj ${z}.`, personalBrauchtCode: "Za način osoblja prvo postavi šifru ureda.", chefRichtetEin: "Šef ovo podešava u uredu.", ohneCode: "Bez šifre svako ulazi u ured. Način osoblja postoji samo sa šifrom." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Izađi iz načina za osoblje", zurueck: "Nazad", hallo: (n) => `Zdravo ${n}`, halloOhne: "Zdravo", wechseln: "Promijeni", werBistDu: "Ko radi?", ohneNamen: "Bez imena",
     muell: "Otpad", kuehlung: "Hlađenje", putzen: "Čišćenje", offen: (n) => `${n} otvoreno` },

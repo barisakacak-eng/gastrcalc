@@ -1012,7 +1012,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Dziś", muell: "Odpady", kuehl: "Chłodzenie", putzplan: "Sprzątanie", karte: "Menu" },
-    leiste: "Lokal", menueAuf: "Otwórz menu", schliessen: "Zamknij", hilfeAuf: "Pomoc", deinLaden: "Twój lokal", abschluss: "Zamknij dzień", personal: "Tryb personelu", buero: "Biuro", ladenWechseln: "Zmień lokal", sprache: "Język", zumLaden: "Lokal", zumBuero: "Biuro", schlossHalten: "Przytrzymaj kłódkę 2 sekundy", schlossCode: "Wpisz kod biura",
+    leiste: "Lokal", menueAuf: "Otwórz menu", schliessen: "Zamknij", hilfeAuf: "Pomoc", deinLaden: "Twój lokal", abschluss: "Zamknij dzień", personal: "Tryb personelu", buero: "Biuro", ladenWechseln: "Zmień lokal", sprache: "Język", zumLaden: "Lokal", zumBuero: "Biuro", schlossCode: "Wpisz kod biura",
     pin: { titel: "Kod biura", neu: "Wybierz nowy kod", nochmal: "Jeszcze raz", falsch: "Zły kod", ungleich: "Nie zgadza się. Wybierz ponownie.", gesetzt: "Kod biura zapisany", entfernt: "Kod biura usunięty", setzen: "Ustaw kod biura", aendern: "Zmień kod biura", entfernen: "Usuń kod", ohne: "Bez kodu każdy wejdzie do biura.", mit: "Biuro jest chronione kodem.", loeschen: "Usuń cyfrę" },
     hilfeText: {
       allgemein: "Pasek na dole prowadzi do wszystkiego, czego potrzebujesz w lokalu. Liczenie, ustawienia i listy są w biurze.",
@@ -1023,7 +1023,7 @@ export default {
       karte: "Zielony: twój cel zostaje. Żółty: na styk. Czerwony: za tanio.",
       abschluss: "Wpisz obrót, sprawdź odpady i chłodzenie, gotowe.",
       laeden: "Tu przełączasz się między lokalami. Każdy lokal ma własne liczby.",
-      personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura lub 2 sekundy na kłódce.",
+      personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   heute: {
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
@@ -1042,6 +1042,8 @@ export default {
     leer: "Jeszcze brak dań", fotografieren: "Zrób zdjęcie karty", bleibt: "Zostaje ci", speichern: "Zapisz", gespeichert: "Cena zapisana", preis: "Cena", schliessen: "Zamknij",
     ampel: { gruen: "Cel osiągnięty", gelb: "Koszty pokryte, poniżej celu", rot: "Za tanio", grau: "Jeszcze nie da się policzyć" },
   },
+  // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
+  sicherheit: { warten: (z) => `Za dużo prób. Poczekaj ${z}.`, personalBrauchtCode: "Dla trybu personelu najpierw ustaw kod biura.", chefRichtetEin: "Szef ustawia to w biurze.", ohneCode: "Bez kodu każdy wejdzie do biura. Tryb personelu działa tylko z kodem." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Wyjdź z trybu personelu", zurueck: "Wstecz", hallo: (n) => `Cześć ${n}`, halloOhne: "Cześć", wechseln: "Zmień", werBistDu: "Kto pracuje?", ohneNamen: "Bez imienia",
     muell: "Odpady", kuehlung: "Chłodzenie", putzen: "Sprzątanie", offen: (n) => `${n} otwarte` },

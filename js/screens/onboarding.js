@@ -603,7 +603,7 @@ const fertigSchnell = {
   aktion(name, el, stand, ctx) {
     if (name !== "ob-fertig") return false;
     delete stand.schnellErgebnis;
-    if (el.dataset.pin) stand.pinFestlegen = true; // Wunsch merken: Entwickler A (Büro-Code) öffnet damit das PIN-Blatt
+    if (el.dataset.pin) stand.pinFestlegen = true; // W2-S: app.js (fertig) öffnet damit gleich das PIN-Blatt
     ctx.fertig(["kartefoto", "buero"].includes(el.dataset.ziel) ? el.dataset.ziel : "start");
     return false;
   },

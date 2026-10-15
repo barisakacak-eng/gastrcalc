@@ -15,6 +15,7 @@ import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
+import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 
 export const SCHEMA = 5;
 export const APP_FASSUNG = "etappe6a";
@@ -243,7 +244,8 @@ export function migrierenWurzel(w) {
     out.letzteSicherung = typeof w.letzteSicherung === "string" ? w.letzteSicherung : null;
     out.sicherungZaehler = Number(w.sicherungZaehler) || 0;
     if (["laden", "personal", "buero"].includes(w.modus)) out.modus = w.modus; // Drei Ebenen: Modus je Handy
-    if (typeof w.bueroPin === "string" && /^[0-9a-f]{64}$/.test(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern
+    if (pinWertGueltig(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern (W2-S: auch PBKDF2 mit Salz)
+    { const sp = sperreSauber(w.pinSperre); if (sp) out.pinSperre = sp; } // W2-S: Fehlversuche übersteht den Neustart
     return out;
   }
   // Schema 1: der alte Einzelbetrieb. Er hatte keine Kennung; sie wird aus Anlagezeit und Namen abgeleitet,
@@ -609,7 +611,8 @@ export async function exportDatei(wurzel) {
   await ereignis("export", { betriebe: wurzel.betriebe.length });
   const ereignisse = await alleEreignisse();
   // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
-  const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel, ereignisse }));
+  const { bueroPin: _pin, pinSperre: _sperre, ...ohneCode } = wurzel; // W2-S (p07 M3): der Büro-Code wandert nicht in die Sicherung (das Einlesen übernimmt ihn ohnehin nicht)
+  const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel: ohneCode, ereignisse }));
   const sha = await sha256Hex(bytes);
   const kopf = JSON.stringify({ typ: "gastrocalc-sicherung", schema: SCHEMA, sha256: sha });
   const blob = new Blob([kopf + "\n", bytes], { type: "application/json" });
@@ -634,13 +637,15 @@ export async function importDatei(text) {
     try { d = JSON.parse(inhalt); } catch (_) { throw fehler("format"); }
     if (typeof kopf.sha256 === "string") { const sha = await sha256Hex(inhalt); pruefsumme = sha === null ? "fehlt" : sha === kopf.sha256 ? "ok" : "abweichung"; }
     if (!istObjekt(d) || !istObjekt(d.wurzel)) throw fehler("format");
-    return { wurzel: migrierenWurzel(d.wurzel), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme };
+    return { wurzel: ohneCode(migrierenWurzel(d.wurzel)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme }; // W2-S
   }
   try { d = JSON.parse(text); } catch (_) { throw fehler("format"); }
   if (!istObjekt(d) || d.typ !== "gastrocalc-sicherung" || !(istObjekt(d.wurzel) || istObjekt(d.stand))) throw fehler("format");
   if (Number(d.schema) > SCHEMA) throw fehler("neuer");
-  return { wurzel: migrierenWurzel(d.wurzel || d.stand), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme: "fehlt" };
+  return { wurzel: ohneCode(migrierenWurzel(d.wurzel || d.stand)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme: "fehlt" }; // W2-S
 }
+// W2-S (p07 M3): Code und Fehlversuche aus einer Datei gelten nie – jedes Handy behält seinen eigenen Büro-Code
+function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; return w; }
 
 // ---------- Zusammenführen ----------
 // Journale: Vereinigung nach Kennung, Kennzeichen (storniert, entfernt, archiviert) gewinnen immer.
