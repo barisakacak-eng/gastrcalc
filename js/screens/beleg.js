@@ -1,4 +1,5 @@
 // Etappe 5: Beleg einlesen – Text aus Livetext einfügen, zerlegen, nur das Unklare fragen, Summe prüfen, übernehmen, Preisänderungen zeigen.
+import { FOTOS } from "../data/fotos.js";
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { PRODUKT_INDEX } from "../data/katalog.js";
@@ -51,6 +52,7 @@ export function belegView(stand) {
   const letzte = (stand.lieferungen || []).filter((l) => !l.storniert).slice(-6).reverse();
   return `${kopf}
     <div class="inhalt">
+      ${FOTOS.has("b-rechnung-foto") ? `<img class="titelbild" src="foto/b-rechnung-foto.webp" alt="">` : ""}
       <p class="hinweis">${esc(t("foto.rechnungHinweis"))}</p>
       ${lauf?.status === "fehler" && lauf.zweck !== "speisekarte" ? `<div class="tipp warnband">${esc(lauf.fehler)}</div>` : ""}
       <div class="fotofeld">${fotoKnoepfe("rechnung", { kamera: "foto.rechnungKamera", datei: "foto.rechnungDatei" })}</div>

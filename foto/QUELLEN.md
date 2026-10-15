@@ -5,3 +5,6 @@ Keine Marken, Logos oder Personen. Eigene Fotos des Wirts ersetzen diese Bilder 
 
 ## Welle 2 (15.10.2026, 03:41 Uhr)
 22 Fotos aus zwei Bildbögen, erzeugt von Sanji (ChatGPT) für Baris: g-reis, g-gemuese, g-suppe, g-sucuk, g-adana, g-lasagne, g-fleischgericht, g-fruehstueck, g-kuchen, g-kaffee, g-eis, g-bier, d-cola, d-wasser, d-limo, d-tee, d-eistee, d-energy, d-saft, d-gazoz, laden-imbiss, laden-cafe. Zugeschnitten von Zoro (WebP 520 × 390; Hochformat-Getränke seitlich mit Holzrand aufgefüllt).
+
+## Welle 3 (15.10.2026, 03:55 Uhr)
+64 Fotos aus vier Bildbögen, erzeugt von Sanji (ChatGPT) für Baris: 48 Rohwaren (r-*), 8 Verpackungen (v-*), 4 Kühlgeräte (k-*-foto), Eimer auf Waage, Biotonne, Rechnungsstapel, Dönergrill (hero-doenergrill). Zugeschnitten von Zoro (WebP 520 × 390).

@@ -157,3 +157,4 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .packung input::placeholder, .auswahlblatt .textfeld::placeholder, [data-f="stelle-neu"]::placeholder { font-size: 13px; }
 .formkachel .stepper { grid-template-columns: 44px minmax(0, 1fr) 44px; }
 .formkachel .stepper button { width: 44px; height: 44px; min-height: 44px; min-width: 44px; border-radius: 50%; }
+.titelbild { width: 100%; aspect-ratio: 4 / 3; max-height: 220px; object-fit: cover; border-radius: var(--radius); display: block; }

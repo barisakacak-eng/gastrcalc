@@ -22,7 +22,7 @@ const WARE = [[/brot|fladen|wrap|yufka|lavash|bun\b|br[öo]tchen|baguette|toast|
   [/feta|hirten|schafsk|wei(ß|ss)k[äa]se/i, "w-feta"], [/k[äa]se|mozzarella|cheddar|gouda|emmentaler|halloumi/i, "w-kaese"], [/thunfisch/i, "w-thunfisch"],
   [/champignon|pilz/i, "w-champignon"], [/peperoni|jalape|chili/i, "w-peperoni"], [/paprika/i, "w-paprika"], [/knoblauch/i, "w-knoblauch"], [/zwiebel/i, "w-zwiebel"],
   [/gurke/i, "w-gurke"], [/tomate/i, "w-tomate"], [/salat|eisberg|rucola|lollo/i, "w-salat"], [/petersilie|basilikum|minze|dill|kr[äa]uter|koriander/i, "w-petersilie"],
-  [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"], [/mais/i, "w-mais"], [/(ö|oe)l(\s|$)|frittier/i, "w-oel"], [/olive/i, "w-oliven"], [/ananas/i, "w-ananas"],
+  [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"], [/mais/i, "w-mais"], [/(ö|oe)l(\s|$)|frittier/i, "w-oel"], [/olive/i, "w-oliven"], [/ananas/i, "w-ananas"], [/zitrone|limette/i, "w-zitrone"], [/salatmix|salatmischung/i, "w-salatmix"],
   [/nudel|penne|spaghetti|fusilli|tagliatelle|lasagne/i, "w-nudeln"], [/reis|basmati|bulgur|couscous/i, "w-reis"], [/mehl|teig|hefe/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"],
   [/pommes|kroketten|wedges|kartoffel/i, "w-pommes-tk"]];
 const GETRAENK = [[/ayran/i, "g-ayran"], [/cola|fanta|sprite|dose/i, "d-cola"], [/wasser|sprudel/i, "d-wasser"], [/limo|orange/i, "d-limo"], [/eistee|ice ?tea/i, "d-eistee"],
@@ -40,7 +40,7 @@ export function wareBild(x) {
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
   const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
   const foto = fotoFuer(n, x.name);
-  return foto ? `<img class="gerichtbild mini" src="foto/${foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy">`;
+  return foto ? `<img class="gerichtbild mini" src="foto/${foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${/zitrone|salatmix/.test(n) ? "w-ware" : n}.svg" alt="" loading="lazy">`;
 }
 const warePikto = wareBild;
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
@@ -115,7 +115,7 @@ function eingabeView(stand, D) {
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))} · ${esc(dreisprachig("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
       ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${x.typ === "gericht" ? thumb(stand, x.id) : warePikto(x)}<b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name=""><img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt=""><b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
+      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
     </div>
     ${!kacheln.length && !q ? `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div><button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button></div>` : ""}
   </div>`;

@@ -47,6 +47,7 @@ function postenEintrag(stand, postenId, kat) {
 const sprache = {
   id: "sprache",
   view: () => `
+    ${FOTOS.has("hero-doenergrill") ? `<img class="titelbild" src="foto/hero-doenergrill.webp" alt="">` : ""}
     <h1 class="frage">${esc(t("sprache.frage"))}</h1>
     <p class="hinweis">${esc(t("sprache.hinweis"))}</p>
     <div class="kacheln">
