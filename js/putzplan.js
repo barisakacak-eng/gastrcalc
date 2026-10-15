@@ -1,4 +1,4 @@
-// Putzplan (Empfehlung nach HACCP, Baris 15.10.2026): Plan = Stammdaten, Abhaken = Protokoll (Nachweis für die Lebensmittelkontrolle).
+// Putzplan (Empfehlung nach HACCP, Baris 15.10.2026): Plan = Stammdaten, Abhaken = Protokoll (Liste für die Lebensmittelkontrolle).
 // Protokoll wird nie gelöscht, nur storniert. Empfehlung der Recherche: mindestens 12, besser 24 Monate aufbewahren.
 import { imTakt } from "./takt.js";
 import { AUFGABEN, TAKT_TAGE, GERAETE_JE_ART, STANDARD_AUS } from "./data/putzplan.js";
@@ -57,10 +57,39 @@ export function abhaken(stand, id, { datum = heute(), von = null } = {}) {
   const e = { id: uid(), aufgabe: id, datum, zeit: new Date().toTimeString().slice(0, 5), erfasst: new Date().toISOString(), von, storniert: false };
   stand.putzlog.push(e); return e;
 }
-export function zuruecknehmen(stand, id, datum = heute()) {
+// W2-H: wer zurücknimmt, wird mitgeschrieben (Amt-Druck „Zurückgenommen / geändert“)
+export function zuruecknehmen(stand, id, datum = heute(), { von = null } = {}) {
   const e = (stand.putzlog || []).filter((x) => x.aufgabe === id && x.datum === datum && !x.storniert).pop();
-  if (e) { e.storniert = true; e.storniertZeit = new Date().toISOString(); } return !!e;
+  if (e) { e.storniert = true; e.storniertZeit = new Date().toISOString(); e.storniertVon = von; } return !!e;
 }
 
-// Nachweis für die Kontrolle: Einträge eines Zeitraums, neueste zuerst
+// Liste für die Kontrolle: Einträge eines Zeitraums, neueste zuerst
 export const nachweis = (stand, von, bis) => (stand.putzlog || []).filter((e) => !e.storniert && e.datum >= von && e.datum <= bis).sort((a, b) => (b.datum + b.zeit).localeCompare(a.datum + a.zeit));
+export const zurueckgenommen = (stand, von, bis) => (stand.putzlog || []).filter((e) => e.storniert && e.datum >= von && e.datum <= bis);
+
+// W2-H (p03 K2): Putzplan mit Gültig-ab. plan.verlauf = [{ ab, geraete, aus, erfasst }]; ab "" bzw. plan.seit = von Anfang an.
+// Eine Änderung gilt ab heute; alte Tage werden nach dem alten Plan bewertet.
+const planVerlauf = (plan) => (Array.isArray(plan?.verlauf) ? plan.verlauf : []).filter((e) => e && typeof e.ab === "string" && Array.isArray(e.geraete) && Array.isArray(e.aus)).slice().sort((a, b) => (a.ab < b.ab ? -1 : a.ab > b.ab ? 1 : 0));
+export const putzplanVerlauf = (stand) => planVerlauf(planVon(stand));
+export function planAm(stand, datum) {
+  const plan = planVon(stand); if (!plan) return null;
+  const v = planVerlauf(plan); if (!v.length) return plan;
+  let x = v[0]; for (const e of v) { if (e.ab <= datum) x = e; else break; }
+  return { ...plan, geraete: x.geraete, aus: x.aus };
+}
+export function planUebernehmen(stand, entwurf, datum = heute(), jetzt = new Date().toISOString()) {
+  const alt = planVon(stand);
+  const neu = { ...entwurf, geraete: [...entwurf.geraete], aus: [...entwurf.aus], aktiv: true, seit: alt?.seit || datum };
+  delete neu.verlauf;
+  if (alt?.aktiv) {
+    const v = planVerlauf(alt);
+    if (!v.length) v.push({ ab: "", geraete: [...alt.geraete], aus: [...alt.aus], erfasst: null });
+    const e = { ab: datum, geraete: [...neu.geraete], aus: [...neu.aus], erfasst: jetzt };
+    if (v[v.length - 1].ab === datum) v[v.length - 1] = e; else v.push(e);
+    const gleich = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
+    const [p, q] = [v[v.length - 2], v[v.length - 1]];
+    if (p && q.ab === datum && gleich(p.geraete, q.geraete) && gleich(p.aus, q.aus)) v.pop();
+    neu.verlauf = v;
+  }
+  stand.putzplan = neu; return neu;
+}

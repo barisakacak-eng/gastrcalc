@@ -245,7 +245,8 @@ async def main():
             assert await pg.locator('[data-a="station-speichern"]').is_disabled(), "8,5 °C über Standard 7 muss Abweichung sein"
             await pg.click('[data-a="massnahme"][data-wert="tuer"]'); await pg.click('[data-a="station-speichern"]')
             await pg.click(f'[data-a="station"][data-id="{kids[1]}"]'); await pg.fill('[data-f="station-wert"]', "-19"); await pg.wait_for_timeout(150); await pg.click('[data-a="station-speichern"]')
-            await pg.click('[data-a="rundgang-abschluss"]'); await pg.wait_for_timeout(300)
+            await pg.wait_for_timeout(300)  # W2-H: nach der letzten Stelle schließt sich der Rundgang selbst
+            assert await pg.locator('[data-a="rundgang-abschluss"]').count() == 0, "Rundgang hätte sich selbst schließen sollen"
             s = await stand(); assert len(s["messungen"]) == 2 and s["messungen"][0]["abweichung"] and s["messungen"][0]["grenzeStandard"] and s["messungen"][0]["max"] == 7, s["messungen"]
             await pg.click('[data-a="kuehl-blatt"]'); await bild("kuehl-blatt")
             # eigene Grenze setzen

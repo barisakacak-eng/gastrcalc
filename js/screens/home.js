@@ -4,7 +4,7 @@ import { planGruppen } from "../putzplan.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, SPRACH_NAMEN, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
-import { monatsLast, schwundAuswertung, umsatzEintrag, kuehlStatus, umsatzSteuerSatz, aktiveStellen, letzteMessung } from "../engine.js";
+import { monatsLast, schwundAuswertung, umsatzEintrag, kuehlStatus, umsatzSteuerSatz, aktiveStellen, letzteMessung, rundgangAbweichungen } from "../engine.js"; // W2-H: rundgangAbweichungen
 import { jetztDran, zielAttr } from "../offen.js";
 import { zaehler, wochenVergleich, warenQuote } from "../zaehler.js";
 import { ergebnisView } from "./karte.js";
@@ -62,7 +62,7 @@ export function heuteKachelWerte(stand, ks, H) {
   let kuehl = { wert: "–", alarm: false };
   if (ks.eingerichtet) {
     const abw = (stand.messungen || []).filter((m) => m.datum === H && !m.storniert && m.abweichung && typeof m.wert === "number");
-    const stellenAbw = aktiveStellen(stand).map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.abweichung && typeof m.wert === "number");
+    const stellenAbw = [...aktiveStellen(stand).map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.abweichung && typeof m.wert === "number"), ...rundgangAbweichungen(stand)]; // W2-H (p01 K3): Alarm schon im offenen Rundgang
     const aus = (m) => typeof m.max === "number" && m.wert > m.max ? m.wert - m.max : typeof m.min === "number" && m.wert < m.min ? m.min - m.wert : 0; // wie weit außerhalb der Grenze
     const schlimm = [...stellenAbw, ...abw].sort((a, b) => aus(b) - aus(a))[0];
     if (schlimm) kuehl = { wert: `${fmtZahl(schlimm.wert, Number.isInteger(schlimm.wert) ? 0 : 1)} °C`, alarm: true };

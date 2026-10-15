@@ -4,7 +4,7 @@
 // als Liste für die Büro-Startseite. Reine Logik, kein HTML (außer dem kleinen Helfer zielAttr für data-Attribute).
 import { t } from "./i18n.js";
 import { heute } from "./util.js";
-import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus } from "./engine.js";
+import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, abweichungStand } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
 import { zaehler, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
 import { einrichtungStand } from "./einrichtung.js";
@@ -36,7 +36,8 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
   const ks = kuehlStatus(stand);
   if (ks.eingerichtet) {
     const nk = offeneNachkontrollen(stand);
-    const abw = aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m && x.m.abweichung);
+    const jetzt_ = rundgangAbweichungen(stand)[0]; // W2-H (p01 K3): Wert außerhalb der Grenze im offenen Rundgang → sofort rot
+    const abw = (jetzt_ ? { k: aktiveStellen(stand).find((k) => k.id === jetzt_.stelle), m: jetzt_ } : null) || aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m && x.m.abweichung);
     const stelle = abw?.k || (nk.length ? aktiveStellen(stand).find((k) => k.id === nk[0].messung.stelle) : null);
     if (abw || nk.length) {
       const m = abw?.m || nk[0].messung; const zuKalt = typeof m.min === "number" && typeof m.wert === "number" && m.wert < m.min;
@@ -67,6 +68,9 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (!stand.putzplan?.aktiv && !(stand.putzplanSpaeter && stand.putzplanSpaeter > tagPlus(H, -7))) add("putzplan", t("heute.offen.putzplan"), { aktion: "nav", wert: "putzplan" });
   const s = sicherungStufe(wurzel, jetzt.getTime());
   if (s?.stufe) add("sicherung", s.tage === null ? t("heute.offen.sicherungNie") : t("heute.offen.sicherung", s.tage), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });
+  // W2-H (p03 H1/H2): Abweichungen der letzten 30 Tage ohne Abschluss (Ware-Entscheidung oder pünktliche Nachkontrolle fehlt; auch „verspätet“)
+  const abwOffen = (stand.messungen || []).filter((m) => !m.storniert && m.abweichung && m.datum >= tagPlus(H, -30) && ["massnahmeOffen", "verspaetet", "ohneMassnahme"].includes(abweichungStand(stand, m))).length;
+  if (abwOffen) add("kuehlMassnahme", t("amtW2.buero", abwOffen), { aktion: "nav", wert: "ordner-amt" });
   const ohneWert = schwundOhneWert(stand).length;
   if (ohneWert) add("muellOhneWert", t("heute.offen.muellOhneWert", ohneWert), { aktion: "nav", wert: "listen" });
   if (stand.branchenMeldung) add("branche", t("cockpit.branchenMeldung", stand.branchenMeldung.geaendert), { aktion: "branchen-ok" });

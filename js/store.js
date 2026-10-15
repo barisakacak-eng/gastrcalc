@@ -210,14 +210,14 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
       // W2-T: Spur der Korrekturen bleibt beim Laden erhalten (Gerät, Rücknahmezeit, Nachfolger); ein Entwurf ist nach dem Neustart fest
       ...(typeof n.geraet === "string" ? { geraet: n.geraet } : {}), ...(typeof n.storniertZeit === "string" ? { storniertZeit: n.storniertZeit } : {}),
       ...(typeof n.ersetzt === "string" || n.ersetzt === true ? { ersetzt: n.ersetzt } : {}) }));
-  s.personen = mitId(s.personen).map((p) => ({ id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt }));
+  s.personen = mitId(s.personen).map((p) => ({ id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt, ...(typeof p.ausgeschieden === "string" ? { ausgeschieden: p.ausgeschieden } : {}) })); // W2-H: Datum „ausgeschieden“ bleibt
   s.kuehl.takt = s.kuehl.takt === 2 ? 2 : 1; if (typeof s.kuehl.seit !== "string") s.kuehl.seit = null; s.kuehl.ruhetage = (Array.isArray(s.kuehl.ruhetage) ? s.kuehl.ruhetage : []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
   s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => ({ id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm"].includes(k.art) ? k.art : "kuehl",
-    min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, reihe: Number.isFinite(k.reihe) ? k.reihe : i, archiviert: !!k.archiviert }));
+    min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, reihe: Number.isFinite(k.reihe) ? k.reihe : i, archiviert: !!k.archiviert, ...(typeof k.ware === "string" ? { ware: k.ware } : {}) })); // W2-H: Datenstelle Grenze je Ware
   s.rundgaenge = mitId(s.rundgaenge).filter((r) => typeof r.datum === "string").map((r) => ({ ...r, messungen: Array.isArray(r.messungen) ? r.messungen.filter(istObjekt) : [] }));
   s.messungen = mitId(s.messungen).filter((m) => typeof m.datum === "string" && typeof m.stelle === "string").map((m) => ({ ...m,
     wert: typeof m.wert === "number" ? m.wert : null, massnahmen: Array.isArray(m.massnahmen) ? m.massnahmen.filter((x) => typeof x === "string") : [],
-    notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.datum + "T00:00:00.000Z" }));
+    notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.nacherfasst ? null : m.datum + "T00:00:00.000Z" })); // W2-H: Nachtrag ohne Uhrzeit bleibt ohne
   // Stresstest 15.10.: abgeschlossene Rundgänge tragen keine doppelte Kopie ihrer Messungen mehr (stehen vollständig im Journal)
   s.rundgaenge = s.rundgaenge.map((r) => (rundeDoppelt(r, s) ? { ...r, messungen: [] } : r));
   // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)

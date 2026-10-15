@@ -51,7 +51,7 @@ export function ordnerKachelStand(stand, { datum: H = heute() } = {}) {
 
 // ---------- Zeilen der Inhaltsliste ----------
 // W2-T: ok (Haken) · luecke (!) · pruefen (!) · notiz (i, nur Notiz) – Haken nur bei ok
-const statusSym = (ok) => ok === true || ok === "ok" ? `<span class="b-status ok" title="${esc(t("ordner.status.ok"))}">${bsym("check")}</span>`
+const statusSym = (ok) => ok === null ? "" : ok === true || ok === "ok" ? `<span class="b-status ok" title="${esc(t("ordner.status.ok"))}">${bsym("check")}</span>`
   : ok === "notiz" ? `<span class="b-status luecke" title="${esc(t("ordnerT.status.notiz"))}">i</span>`
   : `<span class="b-status luecke" title="${esc(ok === "pruefen" ? t("ordnerT.status.pruefen") : t("ordner.status.luecke"))}">!</span>`;
 const inhaltZeile = (symbol, titel, unter, ok, { aktion = "", teil = "", csv = false, auf = null } = {}) => {
@@ -61,7 +61,9 @@ const inhaltZeile = (symbol, titel, unter, ok, { aktion = "", teil = "", csv = f
 };
 
 function amtUnter(teil, x) {
-  if (teil === "kuehl") return !x.stellen ? t("ordner.zeile.kuehlKeine") : x.offen ? t("ordner.zeile.kuehlOffen", x.offen) : x.luecken.length ? t("ordner.zeile.kuehlLuecken", x.anzahl, x.luecken.length) : t("ordner.zeile.kuehl", x.anzahl, x.behoben);
+  if (teil === "kuehl") return !x.stellen ? t("ordner.zeile.kuehlKeine") : x.offen ? t("amtW2.abwOffen", x.offen) : x.lueckenAlle.length ? t("amtW2.kuehlLuecken", x.anzahl, x.lueckenAlle.length) : t("ordner.zeile.kuehl", x.anzahl, x.behoben);
+  if (teil === "muell") return x.anzahl ? t("amtW2.muellZeile", x.anzahl) : t("ordner.zeile.keine");
+  if (teil === "konzept") return x.geraeteliste ? t("amtW2.geraeteliste") : t("amtW2.geraetelisteFehlt"); // W2-H: kein „Konzept vollständig“
   if (teil === "putz") return !x.aktiv ? t("ordner.zeile.putzAus") : t("ordner.zeile.putz", x.tage, x.tageGesamt);
   if (teil === "belehrung") {
     if (!x.zeilen.length) return t("ordner.zeile.belehrungKeine");
@@ -74,8 +76,9 @@ function amtHinweis(o) {
   const b = o.teile.belehrung.zaehl;
   if (b.bald) return t("ordner.hinweis.belehrungBald", b.bald);
   if (b.ueberfaellig || b.fehlt) return t("ordner.hinweis.belehrungFehlt", b.ueberfaellig + b.fehlt);
-  if (o.teile.kuehl.offen) return t("ordner.zeile.kuehlOffen", o.teile.kuehl.offen);
+  if (o.teile.kuehl.offen) return t("amtW2.abwOffen", o.teile.kuehl.offen);
   if (o.teile.kuehl.luecken.length) return t("ordner.hinweis.luecken", o.teile.kuehl.luecken.length);
+  if (o.teile.kuehl.lueckenAlle.length) return t("amtW2.kuehlLuecken", o.teile.kuehl.anzahl, o.teile.kuehl.lueckenAlle.length);
   return o.vollstaendig === o.gesamt ? t("ordner.hinweis.fertig") : "";
 }
 
@@ -128,7 +131,8 @@ export function ordnerAmtView(stand) {
         ${inhaltZeile("spray-can", t("ordner.teil.putz"), amtUnter("putz", o.teile.putz), o.teile.putz.vollstaendig)}
         ${inhaltZeile("users", t("ordner.teil.belehrung"), amtUnter("belehrung", o.teile.belehrung), o.teile.belehrung.vollstaendig, { aktion: "ordner-belehrung", auf: belehrungAuf })}
         ${belehrungAuf ? belehrungBlock(stand, o) : ""}
-        ${inhaltZeile("file-text", t("ordner.teil.konzept"), amtUnter("konzept", o.teile.konzept), o.teile.konzept.vollstaendig)}
+        ${inhaltZeile("file-text", t("amtW2.konzeptTitel"), amtUnter("konzept", o.teile.konzept), null)}
+        ${inhaltZeile("trash-2", t("amtW2.muellTitel"), amtUnter("muell", o.teile.muell), null)}
       </div>
       ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
@@ -164,9 +168,13 @@ export function ordnerPaketView(stand, art) {
 // ---------- Dokumente (übersetzt) ----------
 const NAMEN = () => ({
   ja: () => t("allgemein.ja"),
-  grund: (g) => (g ? t("ordner.dok.nichtGemessen") : ""),
+  grund: (g) => (!g ? "" : GRUENDE.includes(g) ? t("amtW2.nichtGemessen", t("kuehl.gruende." + g)) : t("ordner.dok.nichtGemessen")),
   massnahme: (m) => t("kuehl.massnahmen." + m),
-  nachkontrolle: (s) => t("ordner.dok.nk." + s),
+  nachkontrolle: (x) => nkText(typeof x === "string" ? { nachkontrolle: x, nkStunden: null } : x),
+  ausgeschieden: (k) => t("amtW2.ausgeschieden", k),
+  abwStatus: (s) => t("amtW2.abw." + s),
+  bereich: (b) => t("amtW2.bereich." + b),
+  rueckText: (x) => rueckText(x),
   aufgabe: (x) => aufgabeText(x),
   status: (s) => t("ordner.belehrung.status." + s),
   kuehlart: (a) => t("kuehl.arten." + a),
@@ -185,23 +193,58 @@ const NAMEN = () => ({
 });
 // Feste Kennzeichnung der Umsatz-Notizen (W2-T): in der App-Sprache, und für den deutschen Steuerberater immer auch auf Deutsch
 const kennung = () => (sprache() === "de" ? t("ordnerT.kennung") : `${t("ordnerT.kennung")} / ${de.ordnerT.kennung}`);
-const kopfVon = (teil) => (["umsatz", "belege", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-T
+// W2-H: Texte für Nachkontrolle mit Zeitfenster, Rücknahmen und Kopfzeilen der neuen Teile
+const GRUENDE = ["geschlossen", "geraetAus", "leer"];
+const nkText = (x) => x.nachkontrolle === "verspaetet" ? (x.nkStunden ? t("amtW2.nkVerspaetet", x.nkStunden) : t("amtW2.nkVerspaetetKurz")) : t("ordner.dok.nk." + x.nachkontrolle);
+const stempelText = (iso) => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? "" : `${datumDe(heute(d))} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+const tageText = (l) => (l?.length ? [1, 2, 3, 4, 5, 6, 0].filter((d) => l.includes(d)).map((d) => t("kuehl.tage." + d)).join(", ") : t("amtW2.keine"));
+function rueckText(x) {
+  if (x.bereich === "kuehl") return t("amtW2.rueck.kuehl", x.stelle, typeof x.wert === "number" ? grad(x.wert) : t("ordner.dok.nichtGemessen"));
+  if (x.bereich === "putz") return t("amtW2.rueck.putz", aufgabeText(x), datumDe(x.datum));
+  if (x.bereich === "belehrung") return t("amtW2.rueck.belehrung", x.person || "?", datumDe(x.datum));
+  if (x.bereich === "ruhetage") return t("amtW2.rueck.ruhetage", tageText(x.tage));
+  if (x.bereich === "putzplan") return t("amtW2.rueck.putzplan", x.anzahl);
+  if (x.bereich === "person") return t("amtW2.rueck.person", x.person || "?");
+  return "";
+}
+const KOPF_W2 = { muell: () => t("amtW2.muellKopfCsv"), rueck: () => t("amtW2.rueckKopfCsv"), kuehl: () => [...t("ordner.dok.kopf.kuehl"), t("amtW2.nachgetragenAm"), t("amtW2.lfd"), t("amtW2.abwStand")] };
+const kopfVon = (teil) => (KOPF_W2[teil] ? KOPF_W2[teil]() : ["umsatz", "belege", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-H + W2-T
+const dateiTeil = (teil) => (teil === "muell" ? t("amtW2.muellDatei") : teil === "rueck" ? t("amtW2.rueckDatei") : t("ordner.datei." + teil));
 const erstelltText = () => t("ordner.dok.erstellt", datumDe(heute()), new Date().toTimeString().slice(0, 5));
 
 export function amtDokument(stand, o) {
-  const n = NAMEN(); const k = o.teile.kuehl, p = o.teile.putz, b = o.teile.belehrung, c = o.teile.konzept;
+  const n = NAMEN(); const k = o.teile.kuehl, p = o.teile.putz, b = o.teile.belehrung, c = o.teile.konzept, mu = o.teile.muell, r = o.teile.rueck;
+  const nr = (i) => String(i + 1); // W2-H: laufende Nummer je Eintrag im Druck
+  const wer = (x) => (x.von && x.vonAus ? n.ausgeschieden(x.von) : x.von);
+  const grenze = (x) => (typeof x.min === "number" && typeof x.max === "number" ? `${fmtZahl(x.min, 1)} … ${fmtZahl(x.max, 1)} °C` : typeof x.max === "number" ? `≤ ${grad(x.max)}` : typeof x.min === "number" ? `≥ ${grad(x.min)}` : "–");
+  const massnahme = (x) => {
+    if (!x.abweichung) return "";
+    const teile = [x.massnahmen.map(n.massnahme).join(", ")];
+    if (x.ware && !(x.ware === "weggeworfen" && x.massnahmen.includes("weggeworfen"))) teile.push(t("amtW2.ware." + x.ware));
+    if (x.nachkontrolle) teile.push(nkText(x));
+    if (x.status === "massnahmeOffen") teile.push(t("amtW2.abw.massnahmeOffen"));
+    if (x.status === "verspaetet" && !x.nachkontrolle) teile.push(t("amtW2.abw.verspaetet"));
+    return teile.filter(Boolean).join(" · ") || t("ordner.dok.keineMassnahme");
+  };
+  const kuehlInfo = [amtUnter("kuehl", k), k.luecken.length ? t("ordner.dok.ohneMessung", k.luecken.map(datumDe).join(", ")) : "", k.teilweise.length ? t("amtW2.teilweise", k.teilweise.map(datumDe).join(", ")) : "",
+    k.aus.length ? t("amtW2.aus", k.aus.map(datumDe).join(", ")) : "", k.nachgetragen ? t("amtW2.nachgetragenN", k.nachgetragen) : ""].filter(Boolean).join(" · ");
+  const belZeilen = [...b.zeilen.map((x) => ({ warn: x.status !== "ok", zellen: [x.name, datum(x.erst), datum(x.letzte), datum(x.faellig), n.status(x.status)] })),
+    ...b.ausgeschieden.map((x) => ({ klasse: "nach", zellen: [x.ausgeschieden ? t("amtW2.ausgeschiedenAm", x.name, datumDe(x.ausgeschieden)) : n.ausgeschieden(x.name), datum(x.erst), datum(x.letzte), "–", t("amtW2.statusAusgeschieden")] }))];
   return {
-    titel: t("ordner.amt.titel"), laden: stand.betrieb?.name || "", zeitraum: zeitraumText(o.zeitraum), erstellt: erstelltText(), sprache: sprache(),
+    titel: t("ordner.amt.titel"), laden: stand.betrieb?.name || "", zeitraum: zeitraumText(o.zeitraum), erstellt: erstelltText(), sprache: sprache(), seite: t("amtW2.seite"),
     abschnitte: [
-      { titel: t("ordner.teil.kuehl"), info: `${amtUnter("kuehl", k)}${k.luecken.length ? ` · ${t("ordner.dok.ohneMessung", k.luecken.map(datumDe).join(", "))}` : ""}`, warn: !k.vollstaendig, kopf: t("ordner.dok.druck.kuehl"), rechts: [3, 4],
-        zeilen: k.zeilen.map((x) => ({ warn: x.abweichung, zellen: [datumDe(x.datum), x.zeit, x.stelle, x.wert === null ? n.grund(x.grund || "x") : grad(x.wert), (typeof x.min === "number" && typeof x.max === "number" ? `${fmtZahl(x.min, 1)} … ${fmtZahl(x.max, 1)} °C` : typeof x.max === "number" ? `≤ ${grad(x.max)}` : typeof x.min === "number" ? `≥ ${grad(x.min)}` : "–"),
-          x.abweichung ? [x.massnahmen.map(n.massnahme).join(", "), x.nachkontrolle ? n.nachkontrolle(x.nachkontrolle) : ""].filter(Boolean).join(" · ") || t("ordner.dok.keineMassnahme") : "", x.von] })), leer: t("ordner.zeile.keine") },
-      { titel: t("ordner.teil.putz"), info: amtUnter("putz", p) + (p.luecken.length ? ` · ${t("ordner.dok.offeneTage", p.luecken.map(datumDe).join(", "))}` : ""), warn: !p.vollstaendig, kopf: kopfVon("putz"),
-        zeilen: p.eintraege.map((x) => [datumDe(x.datum), x.zeit, aufgabeText(x), x.von]), leer: t("ordner.zeile.keine") },
-      { titel: t("ordner.teil.belehrung"), info: t("ordner.belehrung.hinweis"), kopf: kopfVon("belehrung"),
-        zeilen: b.zeilen.map((x) => ({ warn: x.status !== "ok", zellen: [x.name, datum(x.erst), datum(x.letzte), datum(x.faellig), n.status(x.status)] })), leer: t("ordner.zeile.belehrungKeine") },
-      { titel: t("ordner.teil.konzept"), info: [c.ladenArt ? t("ordner.dok.ladenArt", t("schnell.arten." + c.ladenArt)) : "", c.geraete.length ? t("ordner.dok.geraete", c.geraete.map((g) => t("putzplan.geraete." + g)).join(", ")) : "", t("ordner.dok.takt", c.takt), c.putzplan ? t("ordner.dok.aufgaben", c.aufgaben) : t("ordner.zeile.putzAus")].filter(Boolean).join(" · "),
-        kopf: kopfVon("konzept"), rechts: [2, 3], zeilen: c.kuehlstellen.map((x) => [x.name, n.kuehlart(x.art), typeof x.min === "number" ? grad(x.min) : "–", typeof x.max === "number" ? grad(x.max) : "–", x.standard ? t("ordner.dok.standardGrenze") : t("ordner.dok.eigeneGrenze")]), leer: t("ordner.zeile.kuehlKeine") },
+      { titel: t("ordner.teil.kuehl"), info: kuehlInfo, warn: !k.vollstaendig, kopf: [t("amtW2.spalteNr"), ...t("ordner.dok.druck.kuehl"), t("amtW2.nachgetragenAm")], rechts: [0, 4, 5],
+        zeilen: k.zeilen.map((x, i) => ({ warn: x.abweichung && x.status !== "verspaetet", klasse: [x.status === "verspaetet" ? "spaet" : "", x.nacherfasst ? "nach" : ""].filter(Boolean).join(" "),
+          zellen: [nr(i), datumDe(x.datum) + (x.nacherfasst ? " *" : ""), x.zeit, x.stelle, x.wert === null ? n.grund(x.grund || "x") : grad(x.wert), grenze(x), massnahme(x), wer(x), x.nacherfasst && x.erfasst ? stempelText(x.erfasst) : ""] })), leer: t("ordner.zeile.keine") },
+      { titel: t("ordner.teil.putz"), info: amtUnter("putz", p) + (p.luecken.length ? ` · ${t("ordner.dok.offeneTage", p.luecken.map(datumDe).join(", "))}` : ""), warn: !p.vollstaendig, kopf: [t("amtW2.spalteNr"), ...kopfVon("putz")], rechts: [0],
+        zeilen: p.eintraege.map((x, i) => [nr(i), datumDe(x.datum), x.zeit, aufgabeText(x), wer(x)]), leer: t("ordner.zeile.keine") },
+      { titel: t("ordner.teil.belehrung"), info: t("ordner.belehrung.hinweis"), kopf: kopfVon("belehrung"), zeilen: belZeilen, leer: t("ordner.zeile.belehrungKeine") },
+      { titel: t("amtW2.konzeptTitel"), info: [t("amtW2.keinKonzept"), c.ladenArt ? t("ordner.dok.ladenArt", t("schnell.arten." + c.ladenArt)) : "", c.geraete.length ? t("ordner.dok.geraete", c.geraete.map((g) => t("putzplan.geraete." + g)).join(", ")) : "", t("ordner.dok.takt", c.takt), c.putzplan ? t("ordner.dok.aufgaben", c.aufgaben) : t("ordner.zeile.putzAus")].filter(Boolean).join(" · "),
+        kopf: kopfVon("konzept"), rechts: [2, 3], zeilen: c.kuehlstellen.map((x) => [x.name, n.kuehlart(x.art), typeof x.min === "number" ? grad(x.min) : "–", typeof x.max === "number" ? grad(x.max) : "–", x.wareOhneGrenze ? t("amtW2.wareOhneGrenze") : x.standard ? t("ordner.dok.standardGrenze") : t("ordner.dok.eigeneGrenze")]), leer: t("ordner.zeile.kuehlKeine") },
+      { titel: t("amtW2.muellTitel"), info: t("amtW2.muellInfo"), kopf: t("amtW2.muellKopf"), rechts: [0, 4],
+        zeilen: mu.zeilen.map((x, i) => [nr(i), datumDe(x.datum), n.art(x.art), x.name || "–", `${fmtZahl(x.menge, x.einheit === "stk" || x.einheit === "portion" ? 0 : 2)} ${x.einheit === "portion" ? t("tag.portionen") : x.einheit === "stk" ? t("allgemein.stueck") : x.einheit}`, [x.grund, x.ausKuehlung ? t("amtW2.ausKuehlung") : ""].filter(Boolean).join(" · ")]), leer: t("ordner.zeile.keine") },
+      { titel: t("amtW2.rueckTitel"), kopf: t("amtW2.rueckKopf"), rechts: [0],
+        zeilen: r.zeilen.map((x, i) => ({ klasse: "nach", zellen: [nr(i), x.wann ? stempelText(x.wann) : datumDe(x.datum), n.bereich(x.bereich), rueckText(x), wer(x) || "–"] })), leer: t("amtW2.rueckLeer") },
     ],
     unterschrift: t("ordner.dok.unterschrift"), fuss: t("ordner.dok.fussAmt"),
   };
@@ -239,7 +282,7 @@ const dateiName = (stand, teil, z) => `${(stand.betrieb?.name || "laden").replac
 function csvDateien(stand, ansicht, nurTeil = null) {
   const H = heute(); const n = NAMEN();
   if (ansicht === "ordner-amt") { const z = amtZeitraum(H); const o = ordnerAmt(stand, z, { datum: H });
-    return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, t("ordner.datei." + teil), z), text: amtCsv(o, teil, kopfVon(teil), n) })); }
+    return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, dateiTeil(teil), z), text: amtCsv(o, teil, kopfVon(teil), n) })); }
   const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const z = paketZeit(art, H); const p = monatsPaket(stand, z, art);
   const teile = nurTeil ? p.teile.filter((x) => x === nurTeil) : [...p.teile, "aenderungen"]; // W2-T: Aenderungen.csv gehört zu jedem Monatspaket
   return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : t("ordner.datei." + teil), z), text: teilCsv(p, teil, kopfVon(teil), n) }));

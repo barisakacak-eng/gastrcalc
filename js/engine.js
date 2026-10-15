@@ -598,16 +598,23 @@ export const NICHT_GEMESSEN = ["geschlossen", "geraetAus", "leer"];
 export const NACHKONTROLLE_STUNDEN = { h1: 1, h2: 2, naechste: null };
 export const WOCHENTAGE = [0, 1, 2, 3, 4, 5, 6]; // 0 = Sonntag (JavaScript)
 
-// Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt der gesetzliche Anhaltswert als Standard
-// (Kühlung ≤ 7 °C, Tiefkühlung ≤ −18 °C, Warmhalten ≥ 65 °C). Eigene Werte (Fisch 2 °C) überschreiben ihn; das Blatt sagt, welcher galt.
+// Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt ein Standard-Anhaltswert
+// (Kühlung ≤ 7 °C, Tiefkühlung ≤ −18 °C, Warmhalten ≥ 65 °C) – kein Gesetzeswert für jede Ware (Welle 2, p03 H6 / p05 K1). Eigene Werte überschreiben ihn; das Blatt sagt, welcher galt.
 export const GRENZEN_STANDARD = { kuehl: { min: null, max: 7 }, tk: { min: null, max: -18 }, warm: { min: 65, max: null } };
+// W2-H: Grenze je Ware (k.ware, z. B. "hack", "fisch", "gefluegel") – nur die Datenstelle. Werte kommen erst hinein, wenn sie mit
+// Fundstelle belegt und von Baris freigegeben sind (Bauvertrag Welle 2: keine Grenzwerte erfinden). Bis dahin: leer → Standard der Art,
+// und grenzenVon meldet wareOhneGrenze, damit das Amt-Blatt „Grenze für die Ware nicht festgelegt“ schreiben kann.
+export const GRENZEN_WARE = {}; // Form: { hack: { min: null, max: <belegt> }, … }
 export function grenzenVon(k) {
-  const st = GRENZEN_STANDARD[k.art] || GRENZEN_STANDARD.kuehl;
+  const wareG = k.ware && GRENZEN_WARE[k.ware] ? GRENZEN_WARE[k.ware] : null;
+  const st = wareG || GRENZEN_STANDARD[k.art] || GRENZEN_STANDARD.kuehl;
   const minEigen = typeof k.min === "number", maxEigen = typeof k.max === "number";
   // je Feld: eigener Wert schlägt den Standard; ein leeres Feld behält seinen Standard (Review Etappe 5, Punkt 7)
   let min = minEigen ? k.min : st.min, max = maxEigen ? k.max : st.max;
   if (minEigen && maxEigen && min > max) [min, max] = [max, min]; // beide selbst vertauscht eingegeben (Prüfung 15.10.): als Bereich lesen; nie mit dem Standard mischen
-  return { min, max, standard: !minEigen && !maxEigen };
+  const g = { min, max, standard: !minEigen && !maxEigen && !wareG };
+  if (k.ware && !wareG && !minEigen && !maxEigen) g.wareOhneGrenze = true;
+  return g;
 }
 export const stelleBereit = (k) => !k.archiviert && !!k.name;
 export const aktiveStellen = (stand) => (stand.kuehlstellen || []).filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
@@ -622,6 +629,10 @@ export function abweichung(stelle, wert) {
 }
 
 export const rundgangOffen = (stand) => (stand.rundgaenge || []).find((r) => !r.abgeschlossen) || null;
+// W2-H (p01 K3): Abweichungen, die schon im offenen Rundgang stehen – Alarm sofort, nicht erst nach dem Abschluss.
+export const rundgangAbweichungen = (stand) => (rundgangOffen(stand)?.messungen || []).filter((m) => m.abweichung && typeof m.wert === "number");
+// Ist jede Stelle im Rundgang eingetragen? Dann schließt er sich selbst.
+export const rundgangVollstaendig = (stand, r) => !!r && (r.einzel ? r.messungen.some((m) => m.stelle === r.einzel) : aktiveStellen(stand).every((k) => r.messungen.some((m) => m.stelle === k.id)));
 
 export function rundgangStarten(stand, { von = null, datum = heute(), nacherfasst = false, quelle = null, einzel = null } = {}) {
   if (rundgangOffen(stand)) return rundgangOffen(stand);
@@ -652,7 +663,9 @@ export function rundgangAbschliessen(stand, r, lfdGeber, geraet = null, text = (
     const nk = m.abweichung && m.nachkontrolle && !r.nacherfasst ? { art: m.nachkontrolle, faellig: m.nachkontrolle === "naechste" ? null : new Date(Date.parse(m.zeit) + NACHKONTROLLE_STUNDEN[m.nachkontrolle] * 3600e3).toISOString() } : null;
     // Datum: nacherfasst = gewählter Tag; sonst der Tag der Eingabe (ein über Nacht offener Rundgang bucht nicht auf gestern)
     const datum = r.nacherfasst ? r.datum : heute(new Date(m.zeit));
-    stand.messungen.push({ ...rest, lfd: lfdGeber ? lfdGeber() : null, geraet, rundgang: r.id, datum, von: r.von, erfasst: jetzt, nacherfasst: !!r.nacherfasst, quelle: r.quelle || null, nachkontrolle: nk, storniert: false });
+    // W2-H (p03 K1): ein Nachtrag bekommt keine ausgedachte Messzeit. Uhrzeit leer (oder aus einer Eingabe: zeitEingabe); wann nachgetragen wurde, steht in erfasst.
+    const zeit = r.nacherfasst ? (typeof m.zeitEingabe === "string" ? m.zeitEingabe : null) : rest.zeit;
+    stand.messungen.push({ ...rest, zeit, lfd: lfdGeber ? lfdGeber() : null, geraet, rundgang: r.id, datum, von: r.von, erfasst: jetzt, nacherfasst: !!r.nacherfasst, quelle: r.quelle || null, nachkontrolle: nk, storniert: false });
     if (m.abweichung && (m.massnahmen || []).includes("weggeworfen")) {
       const stelle = (stand.kuehlstellen || []).find((k) => k.id === m.stelle);
       for (const w of weg || []) stand.schwund.push({ id: uid(), datum, erfasst: jetzt, art: "verderb", vorgang: 1, ref: w.ref, menge: w.menge, einheit: w.einheit, fraktion: "bio",
@@ -668,7 +681,50 @@ export const messungenDerStelle = (stand, stelleId) => imTakt(stand, "ms:" + ste
 // Welche spätere Messung hat eine Nachkontrolle erledigt?
 // Erledigt ist eine Nachkontrolle erst durch eine spätere echte Messung INNERHALB der Grenze; ein weiterer Ausreißer zählt nicht (Nachtest Etappe 5, Punkt 7).
 export function nachkontrolleErledigt(stand, m) {
-  return (stand.messungen || []).filter((x) => x.id !== m.id && x.stelle === m.stelle && !x.storniert && typeof x.wert === "number" && !x.abweichung && !x.nacherfasst && x.datum >= m.datum && String(x.zeit) >= String(m.zeit)).sort((a, b) => String(a.zeit).localeCompare(String(b.zeit)))[0] || null;
+  return (stand.messungen || []).filter((x) => x.id !== m.id && x.stelle === m.stelle && !x.storniert && typeof x.wert === "number" && !x.abweichung && !x.nacherfasst && x.datum >= m.datum && (!m.zeit || String(x.zeit) >= String(m.zeit))).sort((a, b) => String(a.zeit).localeCompare(String(b.zeit)))[0] || null;
+}
+
+// W2-H (p03 H2): Nachkontrolle mit Zeitfenster. Frist = fälliger Zeitpunkt + 1 Stunde Puffer; bei „nächste Messung“ (und ohne
+// gewählte Nachkontrolle) das Ende des Tages der Abweichung. Eine spätere gute Messung nach der Frist heißt „verspätet“, nicht „erledigt“.
+export const NACHKONTROLLE_PUFFER_MIN = 60;
+const tagesEnde = (iso) => { const [j, mo, d] = iso.split("-").map(Number); return new Date(j, mo - 1, d, 23, 59, 59, 999).getTime(); };
+export function nachkontrolleFrist(m) {
+  const f = m?.nachkontrolle?.faellig ? Date.parse(m.nachkontrolle.faellig) : NaN;
+  return Number.isFinite(f) ? f + NACHKONTROLLE_PUFFER_MIN * 60e3 : tagesEnde(m.datum);
+}
+// → { status: "erledigt" | "verspaetet" | "offen", messung, stunden (Abstand zur Abweichung, nur bei bekannter Uhrzeit) }
+export function nachkontrolleStand(stand, m) {
+  const x = nachkontrolleErledigt(stand, m);
+  if (!x) return { status: "offen", messung: null, stunden: null };
+  const tx = Date.parse(x.zeit); const tm = m.zeit ? Date.parse(m.zeit) : NaN;
+  const stunden = Number.isFinite(tx) && Number.isFinite(tm) ? Math.max(1, Math.round((tx - tm) / 3600e3)) : null;
+  return { status: Number.isFinite(tx) && tx > nachkontrolleFrist(m) ? "verspaetet" : "erledigt", messung: x, stunden };
+}
+
+// W2-H (p03 H1): Was ist mit der Ware? Nur Daten – die Knöpfe baut die Optik-Runde. „Ware weggeworfen“ als Maßnahme zählt schon heute.
+export const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen"];
+export function wareEntscheidung(m) {
+  if (m?.ware && WARE_ENTSCHEIDUNGEN.includes(m.ware.art)) return m.ware.art;
+  if ((m?.massnahmen || []).includes("weggeworfen")) return "weggeworfen";
+  return null;
+}
+// Einmal eintragen, mit Zeitstempel. Der Journal-Eintrag wird durch ein neues Objekt ersetzt, damit die Speicherung es sofort sieht.
+export function wareEntscheiden(stand, messungId, art, { von = null, jetzt = new Date().toISOString() } = {}) {
+  const i = (stand.messungen || []).findIndex((x) => x.id === messungId && !x.storniert);
+  const m = i >= 0 ? stand.messungen[i] : null;
+  if (!m || !m.abweichung || m.ware || !WARE_ENTSCHEIDUNGEN.includes(art)) return null;
+  stand.messungen[i] = { ...m, ware: { art, erfasst: jetzt, von } };
+  return stand.messungen[i];
+}
+// Stand einer Abweichung: behoben | verspaetet | massnahmeOffen | ohneMassnahme (null = keine Abweichung).
+// „Chef angerufen“ allein reicht nicht: behoben erst durch eine pünktliche Nachkontrolle in der Grenze oder eine Ware-Entscheidung.
+export function abweichungStand(stand, m) {
+  if (!m?.abweichung) return null;
+  const ware = wareEntscheidung(m);
+  if (ware) return "behoben";
+  if (!(m.massnahmen || []).length) return "ohneMassnahme";
+  const nk = nachkontrolleStand(stand, m).status;
+  return nk === "erledigt" ? "behoben" : nk === "verspaetet" ? "verspaetet" : "massnahmeOffen";
 }
 export const letzteMessung = (stand, stelleId) => messungenDerStelle(stand, stelleId).filter((m) => typeof m.wert === "number").pop() || null;
 
@@ -687,9 +743,39 @@ export function offeneNachkontrollen(stand) {
 export const tagPlus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + n); return heute(x); };
 export const wochentag = (iso) => { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).getDay(); };
 
-// Monatsblatt je Stelle: je Tag der Status – ruhetag | puenktlich | teilweise | nacherfasst | nichtGemessen | fehlt | offen (heute, noch nicht gemessen).
+// W2-H (p03 K2): Ruhetage mit Gültig-ab. stand.kuehl.ruhetageVerlauf = [{ ab: "JJJJ-MM-TT" | "", tage, erfasst }]; ab "" = von Anfang an.
+// Eine Änderung gilt ab heute; frühere Lücken bleiben Lücken. Ohne Verlauf (alte Daten) gelten die heutigen Ruhetage wie bisher.
+const verlaufVon = (v) => (Array.isArray(v) ? v : []).filter((e) => e && typeof e.ab === "string" && Array.isArray(e.tage)).slice().sort((a, b) => vgl(a.ab, b.ab));
+export const ruhetageVerlauf = (stand) => verlaufVon(stand.kuehl?.ruhetageVerlauf);
+export function ruhetageAm(stand, datum) {
+  const v = verlaufVon(stand.kuehl?.ruhetageVerlauf);
+  if (!v.length) return stand.kuehl?.ruhetage || [];
+  let x = v[0]; for (const e of v) { if (e.ab <= datum) x = e; else break; }
+  return x.tage;
+}
+export function ruhetageSetzen(stand, tage, datum = heute(), jetzt = new Date().toISOString()) {
+  stand.kuehl ??= { takt: 1, ruhetage: [], eingerichtet: false, seit: null };
+  const neu = [...new Set(tage)].filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
+  const v = verlaufVon(stand.kuehl.ruhetageVerlauf);
+  if (!v.length) v.push({ ab: "", tage: [...(stand.kuehl.ruhetage || [])], erfasst: null });
+  const letzte = v[v.length - 1];
+  if (letzte.ab === datum) { letzte.tage = neu; letzte.erfasst = jetzt; } else v.push({ ab: datum, tage: neu, erfasst: jetzt });
+  const gleich = (a, b) => a.length === b.length && a.every((d) => b.includes(d));
+  if (v.length > 1 && v[v.length - 1].ab === datum && gleich(v[v.length - 2].tage, v[v.length - 1].tage)) v.pop(); // am selben Tag zurückgestellt
+  stand.kuehl.ruhetageVerlauf = v; stand.kuehl.ruhetage = neu;
+  return neu;
+}
+export function ruhetagUmschalten(stand, tag, datum = heute()) {
+  const alt = stand.kuehl?.ruhetage || [];
+  if (alt.includes(tag)) { ruhetageSetzen(stand, alt.filter((d) => d !== tag), datum); return true; }
+  if (alt.length >= 6) return false; // sieben Ruhetage gibt es nicht
+  ruhetageSetzen(stand, [...alt, tag], datum); return true;
+}
+
+// Monatsblatt je Stelle: je Tag der Status – ruhetag | puenktlich | teilweise | nacherfasst | nichtGemessen | aus | fehlt | offen (heute, noch nicht gemessen).
+// W2-H (p03 H5): „teilweise“ (weniger Messungen als der Takt) und „aus“ (Gerät aus, kein Ruhetag) sind eigene Lücken.
 export function monatsblatt(stand, stelleId, { von, bis }) {
-  const takt = stand.kuehl?.takt === 2 ? 2 : 1; const ruhetage = new Set(stand.kuehl?.ruhetage || []);
+  const takt = stand.kuehl?.takt === 2 ? 2 : 1;
   const H = heute(); const liste = messungenDerStelle(stand, stelleId);
   const tage = [];
   const jeTag = new Map(); for (const m of liste) { if (m.datum < von || m.datum > bis) continue; const x = jeTag.get(m.datum); if (x) x.push(m); else jeTag.set(m.datum, [m]); }
@@ -698,9 +784,10 @@ export function monatsblatt(stand, stelleId, { von, bis }) {
     const gemessen = ms.filter((m) => typeof m.wert === "number");
     let status;
     if (stand.kuehl?.seit && d < stand.kuehl.seit && !ms.length) status = "vorher"; // vor der Einrichtung: keine Lücke
-    else if (ruhetage.has(wochentag(d)) && !ms.length) status = "ruhetag";
+    else if (ruhetageAm(stand, d).includes(wochentag(d)) && !gemessen.length) status = "ruhetag";
     else if (!ms.length) status = d > H ? "zukunft" : d === H ? "offen" : "fehlt";
-    else if (!gemessen.length) status = "nichtGemessen";
+    else if (!gemessen.length) status = ms.some((m) => m.grund === "geraetAus") ? "aus" : "nichtGemessen";
+    else if (gemessen.length < takt && d < H) status = "teilweise"; // eine Lücke wiegt mehr als „nachgetragen“; heute kann die zweite noch kommen
     else if (ms.some((m) => m.nacherfasst)) status = "nacherfasst";
     else if (gemessen.length < takt) status = "teilweise";
     else status = "puenktlich";
@@ -721,7 +808,10 @@ export function kuehlStatus(stand) {
   let fehlt = 0; for (let i = 0; i < (blaetter[0] || []).length; i++) if (blaetter.some((t) => t[i].status === "fehlt")) fehlt += 1;
   const nk = offeneNachkontrollen(stand);
   const offen = rundgangOffen(stand);
-  return { eingerichtet: true, bereit: kuehlBereit(stand), stellen: stellen.length, heuteGemessen, fehlt7: fehlt, nachkontrollen: nk.length, ueberfaellig: nk.filter((x) => x.ueberfaellig).length, offenerRundgang: !!offen, letzteAbweichung: stellen.map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.abweichung).length };
+  // W2-H (p01 K3): eine Abweichung im offenen Rundgang zählt sofort mit
+  const jetztAbw = new Set(rundgangAbweichungen(stand).map((m) => m.stelle));
+  const letzteAbweichung = stellen.filter((k) => jetztAbw.has(k.id) || letzteMessung(stand, k.id)?.abweichung).length;
+  return { eingerichtet: true, bereit: kuehlBereit(stand), stellen: stellen.length, heuteGemessen, fehlt7: fehlt, nachkontrollen: nk.length, ueberfaellig: nk.filter((x) => x.ueberfaellig).length, offenerRundgang: !!offen, letzteAbweichung, abweichungImRundgang: jetztAbw.size };
 }
 
 // Schwund-Einträge, die noch keinen Wert haben (aus der Kühlkontrolle „Ware weggeworfen" ohne Preis) – offener Punkt für den Chef.

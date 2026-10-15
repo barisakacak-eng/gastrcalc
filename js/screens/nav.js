@@ -3,7 +3,7 @@
 // BÜRO: „‹ Laden" bzw. „‹ Büro" oben, keine Leiste. Jede Ansicht ruft wie bisher nav(<aktiv>) am Ende ihres HTML auf.
 import { t } from "../i18n.js";
 import { esc } from "../util.js";
-import { kuehlStatus, offeneNachkontrollen, schwundOhneWert, kalkulation, rundgangOffen, aktiveStellen, letzteMessung } from "../engine.js";
+import { kuehlStatus, offeneNachkontrollen, schwundOhneWert, kalkulation, rundgangOffen, aktiveStellen, letzteMessung, rundgangAbweichungen } from "../engine.js"; // W2-H: rundgangAbweichungen
 import { eintraegeZaehlen } from "../store.js";
 import { einrichtungStand } from "../einrichtung.js";
 import { planGruppen } from "../putzplan.js";
@@ -39,6 +39,7 @@ export function ladenPunkt(stand) {
   try {
     if (offeneNachkontrollen(stand).length || rundgangOffen(stand)) return "kuehl";
     if (aktiveStellen(stand).some((k) => letzteMessung(stand, k.id)?.abweichung)) return "kuehl";
+    if (rundgangAbweichungen(stand).length) return "kuehl"; // W2-H (p01 K3): Abweichung im offenen Rundgang zählt sofort (bleibt rot, auch wenn der offene Rundgang allein später keinen Punkt mehr gibt)
     if (stand.putzplan?.aktiv && planGruppen(stand).ueberfaellig > 0) return "putzplan";
   } catch (e) { console.warn(e); }
   return null;
