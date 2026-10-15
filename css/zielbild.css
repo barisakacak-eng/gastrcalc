@@ -1,0 +1,106 @@
+/* Zielbild „Kräuter & Kupfer“ (Sanjis Vorlage vom 15.10.) – Zoros Abgleich, damit die App 1:1 wie die Vorlage aussieht.
+   Wird nach optik.css geladen. Wenn Sanji seine optik.css nachzieht, wandern diese Regeln dorthin. */
+.schirm { display: flex; flex-direction: column; min-height: 100vh; }
+.appleiste { order: -1; position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; min-height: 60px;
+  padding: calc(env(safe-area-inset-top, 0px) + 6px) 12px 6px; background: var(--weiss); border-bottom: 1px solid var(--holz); }
+.appleiste .logo { height: 28px; width: auto; }
+.appleiste .leiste-rechts { margin-left: auto; color: var(--muell); display: flex; }
+.menueknopf { position: static; width: 44px; height: 44px; background: transparent; color: var(--tinte); box-shadow: none; border-radius: 10px; }
+.menuepunkt { top: 6px; right: 6px; }
+/* Seitentitel hell statt dunkles Band */
+.kopfband { background: transparent; color: var(--tinte); box-shadow: none; border-radius: 0; padding: 18px 20px 4px; }
+.kopfband h1 { color: var(--tinte); font-size: 1.55rem; }
+.kopfband .unter { color: var(--tinte-weich); }
+.kopfband .abzeichen { vertical-align: middle; }
+/* Cockpit wie Vorlage */
+.zielkarte, .monatkarte { display: flex; flex-direction: column; align-items: stretch; gap: 4px; width: 100%; text-align: left; font: inherit; color: var(--tinte); background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); padding: 16px; }
+.zielkopf { display: flex; justify-content: space-between; align-items: center; }
+.zielkarte .lbl, .monatkarte .lbl { font-size: 15px; font-weight: 700; color: var(--tinte); }
+.zielkarte .riesig { font-size: clamp(38px, 11vw, 48px); font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--tinte); line-height: 1.1; }
+.zielkarte.plus .riesig { color: var(--eigen); }
+.zielkarte small { color: var(--tinte-weich); font-size: 14px; }
+.zielsym { width: 46px; height: 46px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #F6E6D6; color: var(--glut); }
+.zielsym .sym { width: 28px; height: 28px; }
+.monatzahl { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.monatzahl b { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.monatzahl small { color: var(--tinte-weich); font-size: 14px; }
+.monatbalken { width: 100%; height: 130px; margin-top: 6px; overflow: visible; }
+.monatbalken rect { fill: var(--salbei); }
+.monatbalken rect.heute { fill: var(--glut); }
+.monatbalken .ziellinie { stroke: var(--tinte-weich); stroke-width: 1; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; }
+.monatbalken text { font: 11px var(--schrift); fill: var(--tinte-weich); }
+.instrumente.heute .instrument.klein { flex-direction: row; align-items: center; gap: 10px; min-height: 76px; }
+.instrument .kachelsym { width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--salbei-hell); color: var(--salbei-tief); flex: none; }
+.i-tonne .kachelsym { background: var(--muell-hell); color: var(--muell); }
+.i-ware .kachelsym { background: #F6E6D6; color: var(--kupfer-dunkel, #8A4C20); }
+.i-kuehl .kachelsym { background: var(--branche-hell); color: var(--branche); }
+.instrument.klein b { font-size: 20px; display: block; }
+.instrument.klein small { display: block; }
+.spruch { display: flex; gap: 12px; align-items: center; background: var(--weiss); }
+.spruch p { margin: 0; font-style: italic; color: var(--tinte); }
+.spruchsym { color: var(--salbei); flex: none; } .spruchsym .sym { width: 30px; height: 30px; }
+.menueknopf { position: relative; }
+.karte.spruch { display: flex; flex-direction: row; align-items: center; text-align: left; }
+.instrument .kachelsym { width: 34px; height: 34px; }
+.instrumente.heute .instrument.klein small { font-size: 13px; line-height: 1.25; }
+/* Gerichte im Vergleich */
+.umschalter { display: flex; background: var(--papier-tief); border-radius: 12px; padding: 4px; gap: 4px; }
+.umschalter button { flex: 1; min-height: 44px; border: 0; border-radius: 9px; background: transparent; font: inherit; font-weight: 700; color: var(--tinte-weich); }
+.umschalter button.an { background: var(--salbei-tief); color: var(--weiss); }
+.vergleichkarte { display: flex; gap: 12px; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); padding: 10px; box-shadow: var(--schatten-karte); }
+.gerichtbild { width: 96px; height: 96px; object-fit: cover; border-radius: 12px; flex: none; background: var(--salbei-hell); }
+.gerichtbild.pikto { object-fit: contain; padding: 10px; box-sizing: border-box; }
+.vk-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.vk-kopf { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.vk-kopf b { font-size: 16px; } .vk-preis { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.vk-zeile { display: flex; justify-content: space-between; font-size: 14px; color: var(--tinte-weich); font-variant-numeric: tabular-nums; }
+.vk-zeile span:last-child { color: var(--tinte); }
+.vk-balken { display: block; height: 8px; border-radius: 4px; background: var(--papier-tief); margin-top: 4px; overflow: hidden; }
+.vk-balken i { display: block; height: 100%; background: var(--eigen); border-radius: 4px; } .vk-balken i.knapp { background: var(--geschaetzt); }
+.geschaetzt-hinweis { border: 2px dashed var(--geschaetzt); background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border-radius: 10px; padding: 8px 12px; }
+.vk-ohne { padding: 6px 0; border-bottom: 1px solid var(--papier-tief); }
+/* Laden-Art als Foto-Kacheln */
+.fotokacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kachel.fotokachel { padding: 0; overflow: hidden; display: flex; flex-direction: column; align-items: stretch; min-height: 0; }
+.kachelfoto { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--salbei-hell); }
+.kachelfoto.pikto { object-fit: contain; padding: 14px 0; box-sizing: border-box; }
+.kachel.fotokachel b { padding: 8px 10px 10px; text-align: left; }
+.kachel.fotokachel.an { outline: 3px solid var(--salbei-tief); outline-offset: -3px; }
+/* Müll eintragen auf einer Seite */
+.muellsatz { color: var(--tinte); margin: 0; }
+.auswahlkarte { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; font: inherit; color: var(--muell); min-height: 96px; border: 2px solid var(--muell-hell); }
+.auswahlkarte b { display: block; font-size: 18px; } .auswahlkarte small { display: block; color: var(--tinte-weich); }
+.auswahlkarte > .sym:last-child { margin-left: auto; }
+.auswahlsym { width: 56px; height: 56px; border-radius: 14px; background: var(--muell-hell); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.auswahlkarte.gewaehlt b { color: var(--tinte); }
+.formkacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.formkachel { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; color: var(--muell); }
+.formkachel b { color: var(--muell); font-size: 15px; } .formkachel small { color: var(--tinte-weich); font-size: 12px; }
+.formkachel.aus { opacity: .6; }
+.formkachel .kachelsym { background: var(--muell-hell); color: var(--muell); }
+.formkachel .stepper { width: 100%; margin-top: 6px; } .formkachel .stepper .wert input { width: 4ch; font: inherit; font-weight: 800; text-align: center; border: 0; background: transparent; }
+.fotokachel-muell.an { border-color: var(--eigen); } .fotokachel-muell.an .kachelsym { background: var(--eigen-hell); color: var(--eigen); }
+.knopf.muellhaupt { background: var(--muell); color: #fff; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; }
+.knopf.muellhaupt small { width: 100%; font-weight: 400; opacity: .9; }
+.knopf.muellhaupt:disabled { background: var(--muell-hell); color: var(--muell); }
+.muellwert .leise-text { color: var(--tinte-weich); font-weight: 400; font-size: 14px; }
+.auswahlblatt { max-height: 82vh; }
+.appleiste { justify-content: center; }
+.appleiste .menueknopf { position: absolute; left: 8px; }
+.appleiste .leiste-rechts { position: absolute; right: 16px; }
+.appleiste .logo { height: 32px; }
+.formkachel .kachelsym { width: 48px; height: 48px; } .formkachel .kachelsym .sym { width: 28px; height: 28px; }
+.knopf.muellhaupt { min-height: 64px; font-size: 18px; }
+.bildwahl { position: relative; flex: none; cursor: pointer; }
+.bildwahl-sym { position: absolute; right: 4px; bottom: 4px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,253,248,.92); color: var(--tinte); display: inline-flex; align-items: center; justify-content: center; }
+.kopfband-cockpit { padding-top: 10px; padding-bottom: 0; }
+.kopfband-cockpit .unter { font-size: 14px; }
+.einrichtung-zeile { display: flex; flex-direction: column; gap: 2px; }
+.ez-haupt { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--holz); border-radius: var(--radius); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte); }
+.ez-haupt b, .ez-haupt small { display: block; } .ez-haupt small { color: var(--kupfer-dunkel, #8A4C20); }
+.ez-haupt > .sym:last-child { margin-left: auto; }
+.ring.klein { width: 40px; height: 40px; } .ring.klein text { font-size: 18px; }
+.ez-mehr { align-self: flex-end; font-size: 13px; }
+.band { font-size: 14px; padding: 8px 12px; }
+.gerichtbild.mini { width: 100%; height: auto; aspect-ratio: 4 / 3; border-radius: 8px; margin-bottom: 6px; }
+.muellkacheln .kachel { display: flex; flex-direction: column; align-items: stretch; text-align: left; }

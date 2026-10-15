@@ -2,7 +2,7 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, importDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen } from "./store.js";
 import { t, setzeSprache, SPRACHEN } from "./i18n.js";
-import { ablageLeeren } from "./ablage.js";
+import { ablageLeeren, ablegen, bildFuerAblage, holen } from "./ablage.js";
 import { esc, parseZahl } from "./util.js";
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
@@ -15,8 +15,9 @@ import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./s
 import { parseTemperatur } from "./screens/kuehl.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
+import { vergleichView, vergleichModus } from "./screens/vergleich.js";
 import { navKontext, menueSetzen, menueIstOffen, schnellSetzen, schnellIstOffen } from "./screens/nav.js";
-import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig } from "./screens/muell.js";
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen } from "./screens/muell.js";
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen } from "./screens/umsatz.js";
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
@@ -48,6 +49,16 @@ function schirmKennung() {
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
+// Eigene Fotos (Gericht) aus der Ablage nachladen – einmal je Foto, als Objekt-Adresse im Speicher
+const fotoAdressen = new Map();
+async function eigeneFotosLaden() {
+  for (const img of root.querySelectorAll("img[data-foto]")) {
+    const id = img.dataset.foto; let url = fotoAdressen.get(id);
+    if (!url) { const g = stand.gerichte.find((x) => x.foto === id); const blob = g?.fotoMeta ? await holen(g.fotoMeta).catch(() => null) : null; if (!blob) continue; url = URL.createObjectURL(blob); fotoAdressen.set(id, url); }
+    img.src = url; img.classList.remove("pikto");
+  }
+}
+
 function zeichne() {
   const kennung = schirmKennung();
   const y = kennung === letzterSchirm ? window.scrollY : 0;
@@ -65,8 +76,10 @@ function zeichne() {
         : ansicht === "beleg" ? belegView(stand)
         : ansicht === "abschluss" ? abschlussView(stand)
         : ansicht === "kartefoto" ? karteFotoSchirm()
+        : ansicht === "vergleich" ? vergleichView(stand)
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
       root.innerHTML = `<div class="schirm">${v}</div>`;
+      eigeneFotosLaden();
     }
   } catch (e) {
     console.error(e);
@@ -256,7 +269,8 @@ root.addEventListener("click", async (ev) => {
   if (name === "schnell-auf") { schnellSetzen(true); return zeichne(); }
   if (name === "schnell-zu") { schnellSetzen(false); return zeichne(); }
   if (menueIstOffen() || schnellIstOffen()) { menueSetzen(false); schnellSetzen(false); }
-  if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") === "1"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
+  if (name === "vergleich-modus") { vergleichModus(el.dataset.wert); return zeichne(); }
+  if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") !== "0"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
   if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
   if (name === "kuehl-keine") { stand.kuehl.keine = true; speichern(wurzel); return zeichne(); }
   if (name === "branchen-ok") { delete stand.branchenMeldung; speichern(wurzel); return zeichne(); }
@@ -375,6 +389,20 @@ root.addEventListener("change", async (ev) => {
   const el = ev.target; if (!el.files?.[0]) return;
   const dateien = [...el.files]; const datei = dateien[0]; el.value = "";
   if (el.dataset.f === "import") return sicherungEinlesen(datei);
+  if (el.dataset.f === "gericht-foto") { // Zielbild: eigenes Foto je Gericht (ersetzt Standardbild), bleibt auf dem Gerät
+    const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return;
+    try { const meta = await ablegen(await bildFuerAblage(datei, 800), { name: datei.name || "", zweck: "gericht", laden: stand.id });
+      stand.uploads.push({ id: "u-" + Date.now().toString(36), zweck: "gericht", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: meta, ref: g.id });
+      g.foto = meta.id; g.fotoMeta = meta; speichern(wurzel); meldung(t("vergleich.fotoGespeichert")); }
+    catch (e) { console.warn(e); meldung(t("muell.fotoFehler")); }
+    return zeichne();
+  }
+  if (el.dataset.f === "muell-foto") { // Zielbild: Foto (optional) beim Müll – nur ablegen, nicht lesen; hängt am nächsten Eintrag
+    const eintrag = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: null, auswertung: null, ergebnis: null };
+    try { eintrag.datei = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: stand.id }); stand.uploads.push(eintrag); muellFotoSetzen(eintrag); speichern(wurzel); }
+    catch (e) { console.warn(e); meldung(t("muell.fotoFehler")); }
+    return zeichne();
+  }
   if (el.dataset.f === "foto") {
     // Foto oder Datei: ablegen, lesen, Ergebnis zeigen. Speisekarte → Prüfliste, Rechnung → Zuweisung im Beleg-Bildschirm.
     const zweck = el.dataset.zweck || "rechnung";

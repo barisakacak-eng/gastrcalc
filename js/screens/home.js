@@ -7,6 +7,7 @@ import { zaehler, wochenVergleich, abschlussVon, warenQuote } from "../zaehler.j
 import { ergebnisView } from "./karte.js";
 import { nav, sicherungStufe } from "./nav.js";
 import { einrichtungStand } from "../einrichtung.js";
+import { sym } from "../symbole.js";
 import { muellWoche } from "../muell.js";
 import { wareneinsatzSicherheit } from "../rezept_quelle.js";
 import { eintraegeZaehlen } from "../store.js";
@@ -21,25 +22,74 @@ export function startView(stand, extra = {}) {
   const dran = naechsteHandlung(stand, z, ks, nk, ab, e, extra.wurzel);
   const unter = [stand.betrieb.format ? t("format." + stand.betrieb.format)[0] : "", ...stand.betrieb.kuechen.map((k) => t("kueche." + k))].filter(Boolean).join(", ");
   return `
-    <div class="kopfband">
-      <h1>${esc(stand.betrieb.name || t("menue.deinLaden"))}<span class="abzeichen">${esc(t("app.entwurf"))}</span></h1>
-      <div class="unter">${esc(tagLesbar(H))}${unter ? ` · ${esc(unter)}` : ""}</div>
-    </div>
+    <div class="kopfband kopfband-cockpit"><div class="unter">${esc(stand.betrieb.name || t("menue.deinLaden"))} · ${esc(tagLesbar(H))}<span class="abzeichen">${esc(t("app.entwurf"))}</span></div></div>
     <div class="inhalt cockpit">
       ${extra.aktualisierung ? `<div class="karte hinweisgelb"><h2>${esc(t("start.neueFassung"))}</h2><div>${esc(t("start.neueFassungText"))}</div><button type="button" class="knopf" data-a="aktualisieren">${esc(t("start.jetztUebernehmen"))}</button></div>` : ""}
       ${stand.branchenMeldung ? `<div class="karte hinweisgruen"><div>${esc(t("cockpit.branchenMeldung", stand.branchenMeldung.geaendert))}</div><button type="button" class="knopf zweit" data-a="branchen-ok">${esc(t("einrichtung.ok"))}</button></div>` : ""}
       ${einrichtungKarte(stand, e, { kompakt: !!stand.einrichtungFertig })}
       ${bandView(z, H)}
-      ${zaehlerKarte(z, H)}
-      <div class="instrumente">${umsatzInstrument(stand, H)}${tonneInstrument(stand, H)}${wareneinsatzInstrument(stand, z)}${kuehlInstrument(ks)}</div>
+      ${bisNullKarte(stand, z, H)}
+      ${monatKarte(stand, z, H)}
+      <div class="instrumente heute">${heuteKacheln(stand, z, ks, H)}</div>
+      ${spruchKarte(H)}
       <button type="button" class="jetzt" data-a="${esc(dran.aktion)}" ${dran.attr || ""}><span><small>${esc(t("cockpit.jetztDran"))}</small><b>${esc(dran.text[0])}</b><small>${esc(dran.text[1])}</small></span><span class="pfeil">›</span></button>
     </div>
     ${nav("start")}`;
 }
 
+// ---------- Zielbild-Cockpit (Sanjis Vorlage 15.10.): Bis null fehlen · Umsatz im Monat gegen Ziel · Heute-Kacheln · Spruch ----------
+// Monatsziel = Umsatz (brutto), bei dem der Monat auf null kommt: (Monatskosten + Sonderkosten) / (1 − Wareneinsatz-Quote) × (1 + Mehrwertsteuer).
+// Alles aus dem Rechenwerk (Zähler), nichts geschätzt, was nicht schon geschätzt ist; ohne Kosten gibt es kein Ziel („–").
+export function monatsZiel(stand, z, H) {
+  const kosten = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
+  const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
+  const ziel = kosten > 0 ? kosten / (1 - q) * (1 + (z.steuer || 0)) : null;
+  const tage = []; let summe = 0;
+  for (const x of z.tage) { if (x.datum > H) break; const u = umsatzEintrag(stand, x.datum); summe += u ? u.umsatz : 0; tage.push({ datum: x.datum, umsatz: u ? u.umsatz : null, kumuliert: summe }); }
+  return { ziel, umsatz: summe, fehlt: ziel === null ? null : Math.max(0, ziel - summe), darueber: ziel === null ? null : Math.max(0, summe - ziel), tage, geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 };
+}
+function bisNullKarte(stand, z, H) {
+  const m = monatsZiel(stand, z, H);
+  const erreicht = m.ziel !== null && m.darueber > 0;
+  return `<button type="button" class="karte zielkarte ${erreicht ? "plus" : ""}" data-a="nav" data-wert="umsatz">
+    <span class="zielkopf"><small class="lbl">${esc(erreicht ? t("cockpit.ueberNull") : t("cockpit.bisNullFehlen"))}</small><span class="zielsym">${sym("target")}</span></span>
+    <span class="riesig">${m.ziel === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${fmtEuro(erreicht ? m.darueber : m.fehlt, { dezimal: 0 })}`}</span>
+    <small>${esc(m.ziel === null ? t("cockpit.zielOhneKosten") : erreicht ? t("cockpit.zielErreicht") : t("cockpit.zielSatz"))}</small></button>`;
+}
+function monatKarte(stand, z, H) {
+  const m = monatsZiel(stand, z, H); if (!m.tage.length) return "";
+  const max = Math.max(m.ziel || 0, m.umsatz) || 1; const n = z.tage.length;
+  const W = 300, Hh = 110, bw = W / n;
+  const balken = m.tage.map((x, i) => { const h = Math.round(x.kumuliert / max * Hh); return `<rect class="${x.datum === H ? "heute" : ""}" x="${(i * bw + bw * 0.18).toFixed(1)}" y="${Hh - h}" width="${(bw * 0.64).toFixed(1)}" height="${h}" rx="1.5"/>`; }).join("");
+  const zielY = m.ziel ? Math.round(Hh - m.ziel / max * Hh) : null;
+  return `<button type="button" class="karte monatkarte" data-a="nav" data-wert="umsatz">
+    <small class="lbl">${esc(t("cockpit.umsatzImMonat"))}</small>
+    <span class="monatzahl"><b>${fmtEuro(m.umsatz, { dezimal: 0 })}</b>${m.ziel ? `<small>${esc(t("cockpit.vonZiel", fmtEuro(m.ziel, { dezimal: 0 })))}</small>` : ""}</span>
+    <svg class="monatbalken" viewBox="0 -12 ${W} ${Hh + 26}" preserveAspectRatio="none" aria-hidden="true">${balken}
+      ${zielY !== null ? `<line class="ziellinie" x1="0" x2="${W}" y1="${zielY}" y2="${zielY}"/><text x="${W}" y="${zielY - 4}" text-anchor="end">${esc(t("cockpit.zielKurz"))}</text>` : ""}
+      <text x="0" y="${Hh + 13}">${esc(datumLesbar(z.tage[0].datum).slice(0, 6))}</text><text x="${W}" y="${Hh + 13}" text-anchor="end">${esc(t("zaehler.heute"))}</text></svg></button>`;
+}
+function heuteKacheln(stand, z, ks, H) {
+  const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H });
+  const ware = u && z.quoteEff ? u.umsatz / (1 + (z.steuer || 0)) * z.quoteEff : null;
+  const werte = (stand.messungen || []).filter((m) => m.datum === H && typeof m.wert === "number" && !m.storniert).map((m) => m.wert);
+  const kuehlOk = ks.eingerichtet && ks.heuteGemessen >= ks.stellen && !ks.letzteAbweichung;
+  const kachel = (cls, symbol, key, wert, unter, ziel) => `<button type="button" class="instrument klein ${cls}" ${ziel}><span class="kachelsym">${sym(symbol)}</span><span><small>${esc(t(key))}</small><b>${wert}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span></button>`;
+  return kachel("i-umsatz", "chart-column", "cockpit.umsatzHeute", u ? fmtEuro(u.umsatz, { dezimal: 0 }) : "–", "", 'data-a="nav" data-wert="umsatz"')
+    + kachel("i-ware", "shopping-cart", "cockpit.wareHeute", ware !== null ? `${z.stufe < 3 ? "≈ " : ""}${fmtEuro(ware, { dezimal: 0 })}` : "–", "", 'data-a="nav" data-wert="vergleich"')
+    + kachel("i-tonne", "trash-2", "cockpit.muellHeute", sw.anzahl ? fmtEuro(sw.muellwert, { dezimal: sw.muellwert < 100 ? 2 : 0 }) : "–", "", 'data-a="nav" data-wert="muell"')
+    + kachel(`i-kuehl ${ks.ueberfaellig || ks.letzteAbweichung ? "rotrand" : ""}`, "snowflake", "cockpit.kuehlung", !ks.eingerichtet ? "–" : kuehlOk ? "OK" : t("cockpit.nochOffen", ks.stellen - ks.heuteGemessen),
+      !ks.eingerichtet ? t("cockpit.einrichten") : werte.length ? `${fmtZahl(Math.min(...werte), 0)}–${fmtZahl(Math.max(...werte), 0)} °C` : "", 'data-a="nav" data-wert="kuehl"');
+}
+function spruchKarte(H) {
+  const liste = t("cockpit.sprueche"); if (!Array.isArray(liste) || !liste.length) return "";
+  const tag = Math.floor(Date.parse(H + "T12:00:00") / 86400e3);
+  return `<div class="karte spruch"><span class="spruchsym">${sym("leaf")}</span><p>„${esc(liste[tag % liste.length])}“</p></div>`;
+}
+
 // ---------- Einrichtungskarte (Punkt 6, Mischung A + B) ----------
 const zielAttr = (z) => z.aktion === "nav" ? `data-a="nav" data-wert="${z.wert}"` : z.aktion === "bearbeiten" ? `data-a="bearbeiten" data-schritt="${z.schritt}"${z.bis ? ` data-bis="${z.bis}"` : ""}` : `data-a="${z.aktion}"`;
-function listeZu() { try { return localStorage.getItem("gc-einrichtung-zu") === "1"; } catch { return false; } }
+function listeZu() { try { return localStorage.getItem("gc-einrichtung-zu") !== "0"; } catch { return true; } } // Zielbild: Liste standardmäßig zu, Kopf + nächster Schritt reichen
 export function ring(prozent, klein = false) {
   const r = 26, u = 2 * Math.PI * r;
   return `<svg class="ring ${klein ? "klein" : ""}" viewBox="0 0 64 64" role="img" aria-label="${prozent} %"><circle class="ring-grund" cx="32" cy="32" r="${r}"/><circle class="ring-wert" cx="32" cy="32" r="${r}" stroke-dasharray="${(u * prozent / 100).toFixed(1)} ${u.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">${prozent}</text></svg>`;
@@ -47,6 +97,8 @@ export function ring(prozent, klein = false) {
 export function einrichtungKarte(stand, e, { kompakt = false } = {}) {
   if (e.prozent >= 100) return stand.einrichtungFertig ? "" : `<div class="karte einrichtung fertig"><h2>${esc(t("einrichtung.fertig"))}</h2><div>${esc(t("einrichtung.fertigText"))}</div><button type="button" class="knopf zweit" data-a="einrichtung-fertig-ok">${esc(t("einrichtung.ok"))}</button></div>`;
   const zu = kompakt || listeZu(); const n = e.naechster;
+  // Zielbild: zugeklappt als schmale Zeile (kleiner Ring, nächster Schritt) – das Cockpit beginnt gleich mit „Bis null fehlen"
+  if (zu && n) return `<div class="einrichtung-zeile"><button type="button" class="ez-haupt" ${zielAttr(n.ziel)}>${ring(e.prozent, true)}<span><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.als"))} ${esc(t("einrichtung.schritte." + n.id))}</small></span>${sym("chevron-right")}</button>${kompakt ? "" : `<button type="button" class="leise ez-mehr" data-a="einrichtung-liste">${esc(t("einrichtung.mehr"))}</button>`}</div>`;
   return `<div class="karte einrichtung">
     <div class="einrichtung-kopf">${ring(e.prozent)}<div><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.rest", e.offen))}</small></div></div>
     ${n ? `<button type="button" class="knopf glut" ${zielAttr(n.ziel)}><small>${esc(t("einrichtung.als"))}</small> ${esc(t("einrichtung.schritte." + n.id))}${n.rest > 0 && n.id !== "karte" && n.id !== "kuehlung" && n.id !== "sicherung" ? ` · ${esc(t("einrichtung.offen." + n.id, n.rest))}` : ""}</button>` : ""}
@@ -67,13 +119,13 @@ export function einrichtungZeile(e, ids) {
 function umsatzInstrument(stand, H) {
   const w = wochenVergleich(stand, H);
   const pct = w.tageDiese && w.tageVorige && w.summeVorige > 0 ? Math.round((w.summeDiese / w.summeVorige - 1) * 100) : null;
-  return `<button type="button" class="instrument i-umsatz" data-a="nav" data-wert="umsatz"><small>${esc(t("cockpit.umsatzWoche"))}</small>
+  return `<button type="button" class="instrument i-umsatz" data-a="nav" data-wert="umsatz"><small class="kopfzeile">${sym("chart-column", "klein")}${esc(t("cockpit.umsatzWoche"))}</small>
     <b>${w.tageDiese ? fmtEuro(w.summeDiese, { dezimal: 0 }) : "–"}</b><small>${pct !== null ? esc(t("cockpit.zurVorwoche", (pct > 0 ? "+" : "") + pct)) : esc(w.tageDiese ? t("cockpit.vorwoche") : t("cockpit.umsatzLeer"))}</small>
     <span class="balken mini">${w.diese.map((d, i) => `<i class="${d.datum === H ? "heute" : ""}"><s style="height:${w.max ? Math.round((w.vorige[i].umsatz || 0) / w.max * 100) : 0}%"></s><b style="height:${w.max ? Math.round((d.umsatz || 0) / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
 }
 function tonneInstrument(stand, H) {
   const w = muellWoche(stand, H);
-  return `<button type="button" class="instrument i-tonne" data-a="nav" data-wert="muell"><small>${esc(t("cockpit.tonneWoche"))}</small>
+  return `<button type="button" class="instrument i-tonne" data-a="nav" data-wert="muell"><small class="kopfzeile">${sym("trash-2", "klein")}${esc(t("cockpit.tonneWoche"))}</small>
     <b>${w.anzahl ? fmtEuro(w.summe, { dezimal: w.summe < 100 ? 2 : 0 }) : "–"}</b><small>${w.anzahl ? (w.portionen !== null ? esc(t("cockpit.portionenKurz", fmtZahl(w.portionen, w.portionen < 10 ? 1 : 0))) : w.ohneWert ? esc(t("listen.ohneWert", w.ohneWert)) : "") : esc(t("cockpit.tonneLeer"))}</small>
     <span class="balken mini muell">${w.tage.map((x) => `<i class="${x.datum === H ? "heute" : ""}"><b style="height:${w.max ? Math.round(x.wert / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
 }
@@ -87,12 +139,12 @@ function wareneinsatzInstrument(stand, z) {
   const q = wareneinsatzQuote(stand, z); const ziel = Number(stand.verkauf?.zielWareneinsatz) || 0.33;
   const unsicher = q.quelle === "karte" && wareneinsatzSicherheit(stand).unsicher;
   const farbe = q.quote === null ? "" : q.quote <= ziel ? "gruen" : q.quote <= ziel + 0.05 ? "gelb" : "rot";
-  return `<button type="button" class="instrument i-ware ${farbe}" data-a="nav" data-wert="karte"><small>${esc(t("cockpit.wareneinsatz"))}</small>
+  return `<button type="button" class="instrument i-ware ${farbe}" data-a="nav" data-wert="karte"><small class="kopfzeile">${sym("shopping-cart", "klein")}${esc(t("cockpit.wareneinsatz"))}</small>
     <b>${q.quote === null ? "–" : `${unsicher ? "≈ " : ""}${fmtZahl(q.quote * 100, 0)} %`}</b><small>${esc(q.quote === null ? t("cockpit.karteFehlt") : unsicher ? t("cockpit.genauerAbwiegen") : t("cockpit.ziel", fmtZahl(ziel * 100, 0)))}</small>
     <span class="zielbalken"><i style="width:${q.quote === null ? 0 : Math.min(100, Math.round(q.quote / 0.6 * 100))}%"></i><s style="left:${Math.round(ziel / 0.6 * 100)}%"></s></span></button>`;
 }
 function kuehlInstrument(ks) {
-  return `<button type="button" class="instrument i-kuehl ${ks.ueberfaellig ? "rotrand" : ""}" data-a="nav" data-wert="kuehl"><small>${esc(t("cockpit.kuehlung"))}</small>
+  return `<button type="button" class="instrument i-kuehl ${ks.ueberfaellig ? "rotrand" : ""}" data-a="nav" data-wert="kuehl"><small class="kopfzeile">${sym("snowflake", "klein")}${esc(t("cockpit.kuehlung"))}</small>
     <b>${ks.eingerichtet ? `${ks.heuteGemessen} / ${ks.stellen}` : "–"}</b><small>${esc(ks.eingerichtet ? (ks.heuteGemessen >= ks.stellen ? t("cockpit.alleGemessen") : t("cockpit.nochOffen", ks.stellen - ks.heuteGemessen)) : t("cockpit.einrichten"))}</small>
     ${ks.eingerichtet ? `<span class="kreise">${Array.from({ length: ks.stellen }, (_, i) => `<i class="${i < ks.heuteGemessen ? "gruen" : "gelb"}"></i>`).join("")}</span>` : ""}</button>`;
 }

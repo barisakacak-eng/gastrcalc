@@ -7,19 +7,31 @@ import { EINHEITEN } from "../data/katalog.js";
 import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau } from "../muell.js";
 import { nav } from "./nav.js";
+import { sym } from "../symbole.js";
+import { gerichtBild } from "./vergleich.js";
+// Piktogramm für Rohware (Sanjis w-*-Bilder), nach Wort im Namen bzw. Warengruppe
+const WARE = [[/tomate/i, "w-tomate"], [/salat|eisberg/i, "w-salat"], [/zwiebel/i, "w-zwiebel"], [/gurke/i, "w-gurke"], [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"],
+  [/d[öo]ner|spie(ß|ss)|kalb|pute/i, "w-doenerfleisch"], [/h[äa]hnchen|chicken/i, "w-haehnchen"], [/hack|patty/i, "w-hack"], [/feta|hirten|schafsk/i, "w-feta"], [/k[äa]se|mozzarella|cheddar/i, "w-kaese"],
+  [/mehl|teig/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"], [/pommes/i, "w-pommes-tk"], [/so(ß|ss)e|sauce|mayo|ketchup|dip/i, "w-sosse"], [/brot|fladen|wrap|yufka|bun|br[öo]tchen/i, "w-brot"]];
+const warePikto = (x) => { const n = (WARE.find(([re]) => re.test(x.name)) || [])[1] || (x.gruppe === "getraenk" ? "w-getraenk" : null); return n ? `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">` : ""; };
+// Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
+const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 import { datumLesbar, tagGewaehlt, eintragName, eintragMenge, tagLesbar } from "./tag.js";
 
 let ansicht = "start";   // "start" | "eingabe"
 let suche = "";
 let wahl = null;         // Blatt: { typ: "gericht"|"artikel"|"eimer", id?, name, menge, einheit, packung?, personal }
 let zeigeTage = false;
-let zuletzt = null;      // { id, text } – gerade eingetragen, mit „Rückgängig"
+let zuletzt = null;
+let auswahlOffen = false; // Zielbild: Auswahlblatt „Lebensmittel auswählen“
+let foto = null;          // Zielbild: Foto (optional) zum Eintrag: Upload-Eintrag      // { id, text } – gerade eingetragen, mit „Rückgängig"
 let letzterTipp = { id: "", zeit: 0 };
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
-export function muellZuruecksetzen() { ansicht = "start"; suche = ""; wahl = null; zeigeTage = false; zuletzt = null; }
-export function muellEingabeOeffnen() { ansicht = "eingabe"; suche = ""; wahl = null; }
-export function muellZurueck() { if (wahl) { wahl = null; return true; } if (ansicht !== "start") { ansicht = "start"; return true; } return false; }
+export function muellZuruecksetzen() { ansicht = "start"; suche = ""; wahl = null; zeigeTage = false; zuletzt = null; auswahlOffen = false; foto = null; }
+export function muellEingabeOeffnen() { ansicht = "eingabe"; suche = ""; wahl = null; auswahlOffen = false; foto = null; }
+export function muellFotoSetzen(eintrag) { foto = eintrag; }
+export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; return true; } if (ansicht !== "start") { ansicht = "start"; return true; } return false; }
 export const muellAnsicht = () => ansicht;
 
 const dreisprachig = (key) => { const a = t(key); return [...new Set(Object.values(tAlle(key)).filter((x) => x && x !== a))].join(" · "); };
@@ -30,7 +42,7 @@ export function muellView(stand) {
   const D = tagGewaehlt(); const nach = D !== heute();
   const unter = [stand.betrieb.name, tagLesbar(D)].filter(Boolean).join(" · ");
   const kopf = (titel) => `<div class="kopfband"><h1>${esc(titel)}</h1><div class="unter">${esc(unter)}${nach ? ` · ${esc(t("kuehl.nacherfasst"))}` : ""}</div></div>`;
-  if (ansicht === "eingabe") return kopf(t("muell.wasWeg")) + eingabeView(stand, D) + (wahl ? blattView(stand, D) : "") + nav("muell", { schnell: false });
+  if (ansicht === "eingabe") return kopf(t("muell.eintragen")) + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog">${eingabeView(stand, D)}</div>` : "") + nav("muell", { schnell: false });
   return kopf(t("menue.muell")) + cockpitView(stand, D, nach) + nav("muell", { schnell: false });
 }
 
@@ -53,7 +65,7 @@ function cockpitView(stand, D, nach) {
     </div>
     ${zuletzt ? `<div class="zuletzt"><span>${esc(zuletzt.text)}</span><button type="button" class="leise" data-a="muell-rueckgaengig" data-id="${esc(zuletzt.id)}">${esc(t("muell.rueckgaengig"))}</button></div>` : ""}
     ${w.top.length ? `<div class="karte"><h2>${esc(t("muell.ammeisten"))}</h2>${w.top.map((x, i) => `<div class="zeile topzeile g-${esc(x.art === "gericht" || x.ref?.typ === "gericht" ? "speise" : x.art)}"><div class="oben"><div class="name"><span class="rang">${i + 1}</span> ${esc(x.art === "eimer" ? t("muell.eimer") : x.ref?.name || "")}<small>${esc(x.art === "eimer" ? `${fmtZahl(x.menge, 1)} kg` : `${fmtZahl(x.menge, 1)} ${einheitLabel(x.einheit)}`)}</small></div><b>${x.wert > 0 ? fmtEuro(x.wert, { dezimal: 2 }) : `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>`}</b></div></div>`).join("")}</div>` : ""}
-    <button type="button" class="knopf glut gross muellknopf" data-a="muell-eingabe"><b>${esc(t("muell.eintragen"))}</b><small>${esc(dreisprachig("muell.eintragen"))}</small></button>
+    <button type="button" class="knopf glut gross muellknopf" data-a="muell-eingabe">${sym("trash-2", "gross")}<b>${esc(t("muell.eintragen"))}</b><small>${esc(dreisprachig("muell.eintragen"))}</small></button>
     <div class="unterlinks">
       <button type="button" class="leise" data-a="nav" data-wert="listen">${esc(t("listen.titel"))}</button>
       ${nach || zeigeTage ? "" : `<button type="button" class="leise" data-a="muell-nachtragen">${esc(t("muell.andererTag"))}</button>`}
@@ -70,14 +82,43 @@ function eingabeView(stand, D) {
         .filter((x) => x.name.toLowerCase().includes(q)).slice(0, 24)
     : haeufigsteMuell(stand, { datum: D });
   return `<div class="inhalt">
-    <button type="button" class="leise" data-a="muell-start">‹ ${esc(t("muell.zurueck"))}</button>
-    <p class="hinweis">${esc(dreisprachig("muell.wasWeg"))}</p>
+    <h2>${esc(t("muell.auswaehlen"))}</h2><p class="hinweis">${esc(dreisprachig("muell.wasWeg"))}</p>
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))} · ${esc(dreisprachig("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
-      ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"><b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name=""><b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
+      ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${x.typ === "gericht" ? thumb(stand, x.id) : warePikto(x)}<b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
+      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${sym("scale")}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
     </div>
     ${!kacheln.length && !q ? `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div><button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button></div>` : ""}
+  </div>`;
+}
+
+// Zielbild (15.10.): Müll eintragen auf einer Seite – Lebensmittel auswählen · Menge · Foto (optional) · ein Knopf
+function formView(stand, D) {
+  const w = wahl; const einheit = !w ? "" : w.typ === "gericht" ? "portion" : w.typ === "eimer" ? "kg" : w.einheit;
+  const basis = w ? EINHEITEN[w.einheit]?.basis : null;
+  const ganze = w?.typ === "artikel" && w.packung?.menge > 0 ? mengeUmrechnen(w.packung.menge, w.packung.einheit, w.einheit) : null;
+  const wert = !w ? null : w.typ === "eimer" ? (w.menge > 0 ? eimerVerrechnen(stand, D, w.menge).wert : null) : muellVorschau(stand, w, D);
+  const personalWert = w?.typ === "gericht" && w.personal ? (w.menge || 0) * (SVEV_2026[mahlzeitJetzt()] ?? SVEV_2026.mittag) : null;
+  return `<div class="inhalt muellform">
+    <p class="hinweis">${esc(dreisprachig("muell.eintragen"))}</p>
+    <p class="muellsatz">${esc(t("muell.satz"))}</p>
+    <button type="button" class="karte auswahlkarte ${w ? "gewaehlt" : ""}" data-a="muell-auswahl">
+      <span class="auswahlsym">${sym(w?.typ === "eimer" ? "scale" : "trash-2", "gross")}</span>
+      <span><b>${esc(w ? (w.typ === "eimer" ? t("muell.eimer") : w.name) : t("muell.auswaehlen"))}</b><small>${esc(w ? t("muell.aendern") : dreisprachig("muell.auswaehlen"))}</small></span>${sym("chevron-right")}</button>
+    <div class="zweier formkacheln">
+      <div class="karte formkachel ${w ? "" : "aus"}"><span class="kachelsym">${sym("scale")}</span><b>${esc(t("muell.mengeEingeben"))}</b><small>${esc(dreisprachig("muell.mengeEingeben"))}</small>
+        ${w ? `<div class="stepper"><button type="button" data-a="muell-d" data-d="-1" aria-label="−">−</button><div class="wert"><input inputmode="decimal" data-f="muell-menge" value="${esc(wertAnzeige(w.menge))}" aria-label="${esc(t("tag.wieViel"))}"> <small>${esc(w.typ === "gericht" ? t("muell.teller") : einheitLabel(einheit))}</small></div><button type="button" data-a="muell-d" data-d="1" aria-label="+">+</button></div>` : ""}</div>
+      <label class="karte formkachel fotokachel-muell ${foto ? "an" : ""}"><span class="kachelsym">${sym(foto ? "check" : "camera")}</span><b>${esc(foto ? t("muell.fotoDabei") : t("muell.foto"))}</b><small>${esc(dreisprachig("muell.foto"))}</small>
+        <input type="file" accept="image/*" capture="environment" data-f="muell-foto" class="versteckt"></label>
+    </div>
+    ${w ? `<div class="chips">${chipsFuer(w).map((c) => `<button type="button" class="chip ${w.menge === c ? "an" : ""}" data-a="muell-chip" data-wert="${c}">${esc(fmtZahl(c, c < 1 ? 1 : 0))} ${esc(w.typ === "gericht" ? "" : einheitLabel(einheit))}</button>`).join("")}${ganze ? `<button type="button" class="chip" data-a="muell-chip" data-wert="${ganze}">${esc(t("muell.ganzePackung"))}</button>` : ""}</div>
+      ${w.typ === "artikel" && (basis === "g" || basis === "ml") ? `<div class="periode">${(basis === "g" ? ["g", "kg"] : ["ml", "l"]).map((e) => `<button type="button" class="${w.einheit === e ? "an" : ""}" data-a="muell-einheit" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div>` : ""}
+      <p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : `<span class="leise-text">${esc(t("muell.ohnePreisKurz"))}</span>`) : ""}</p>
+      ${w.typ === "gericht" ? `<button type="button" class="schalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
+      ${w.typ === "eimer" ? `<p class="hinweis">${esc(t("muell.eimerHinweisKurz"))}</p>` : ""}` : ""}
+    <button type="button" class="knopf muellhaupt" data-a="muell-weg-damit" ${w && w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t("muell.eintragen"))}</b> <small>${esc(dreisprachig("muell.eintragen"))}</small></button>
+    <p class="hinweis geschaetzt-hinweis">≈ ${esc(t("muell.orientierung"))}</p>
+    <button type="button" class="leise" data-a="muell-start">‹ ${esc(t("muell.zurUebersicht"))}</button>
   </div>`;
 }
 
@@ -99,7 +140,7 @@ function blattView(stand, D) {
     <p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : esc(t("tag.keinPreisLang"))) : ""}</p>
     ${w.typ === "eimer" ? `<p class="hinweis">${esc(t("muell.eimerHinweisKurz"))}</p>` : ""}
     ${w.typ === "gericht" ? `<button type="button" class="schalter ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="knebel" aria-hidden="true"></span> ${esc(t("muell.fuerPersonal"))}</button>` : ""}
-    <button type="button" class="knopf glut" data-a="muell-weg-damit" ${w.menge > 0 ? "" : "disabled"}><b>${esc(t("muell.wegDamit"))}</b> <small>${esc(dreisprachig("muell.wegDamit"))}</small></button>
+    <button type="button" class="knopf glut" data-a="muell-weg-damit" ${w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t("muell.wegDamit"))}</b> <small>${esc(dreisprachig("muell.wegDamit"))}</small></button>
   </div>`;
 }
 
@@ -110,11 +151,14 @@ export function muellAktion(name, el, stand) {
   if (name === "muell-start") { ansicht = "start"; wahl = null; return true; }
   if (name === "muell-nachtragen") { zeigeTage = true; return true; }
   if (name === "muell-blatt-zu") { wahl = null; return true; }
+  if (name === "muell-auswahl") { auswahlOffen = true; suche = ""; return true; }
+  if (name === "muell-auswahl-zu") { auswahlOffen = false; return true; }
   if (name === "muell-kachel") {
     const typ = el.dataset.typ;
     if (typ === "gericht") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false; wahl = { typ, id: g.id, name: g.name, menge: 1, einheit: "portion", personal: false }; }
     else if (typ === "artikel") { const a = stand.artikel.find((x) => x.name === el.dataset.name); if (!a) return false; const e = a.packung?.einheit === "g" ? "kg" : a.packung?.einheit === "ml" ? "l" : a.packung?.einheit || (a.einheit === "kg" ? "kg" : a.einheit) || "stk"; wahl = { typ, name: a.name, menge: null, einheit: e, packung: a.packung, personal: false }; }
     else wahl = { typ: "eimer", name: "", menge: null, einheit: "kg" };
+    auswahlOffen = false;
     return true;
   }
   if (!wahl) return false;
@@ -135,6 +179,8 @@ export function muellAktion(name, el, stand) {
     } else if (wahl.typ === "artikel") { const a = stand.artikel.find((x) => x.name === wahl.name); if (!a) return false; e = rohwareWeg(stand, a, { datum: D, menge: wahl.menge, einheit: wahl.einheit }); if (e) ids.push(e.id); }
     else { e = eimerEintragen(stand, { datum: D, kg: wahl.menge }); if (e) ids.push(e.id); }
     if (!e) return false;
+    if (foto) for (const id of ids) { const x = stand.schwund.find((y) => y.id === id); if (x) x.foto = foto.id; } // Foto als Nachweis am Eintrag
+    foto = null;
     const betrag = e.art === "personal" ? null : e.wert;
     zuletzt = { id: ids.join(","), text: `${betrag !== null && betrag !== undefined ? "+ " + fmtEuro(betrag, { dezimal: 2 }) + " " : ""}${t("muell.geradeEben")} · ${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} ${eintragMenge(e)}` };
     wahl = null; ansicht = "start"; suche = "";

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="w-doenerfleisch" color="#2E4034">
+<rect x="1" y="1" width="62" height="62" rx="14" fill="#E6EBDD"/>
+<g stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8Q14 23 25 47L32 55 39 47Q50 23 32 8Z"/><path d="M26 22l13 8M25 34l14 6"/></g>
+<path d="M14 57h36" stroke="#D28742" stroke-width="2" stroke-linecap="round"/>
+</svg>

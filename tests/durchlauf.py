@@ -126,7 +126,7 @@ async def main():
             await pg.click('[data-a="fertig"]'); await pg.wait_for_selector(".cockpit")
             # ---- Cockpit
             await bild("cockpit-leer")
-            html = await pg.content(); assert "Bis null fehlen" in html and "kalkulatorisch" in html
+            html = await pg.content(); assert "Bis null fehlen" in html and "Umsatz im Monat" in html and "appleiste" in html
             z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
             assert z["stufe"] == 2 and z["keinUmsatz"] and z["quote"] > 0.05, {k: z[k] for k in ("stufe", "keinUmsatz", "quote")}
             # Menü hinter den drei Strichen statt Leiste unten (Punkt 4)
@@ -135,7 +135,7 @@ async def main():
             assert await pg.locator('.menue [data-wert="muell"]').count() == 1 and await pg.locator('.menue .menuegruppe').count() == 4
             await pg.click('.menuehinten', position={"x": 370, "y": 400}); await pg.wait_for_timeout(150); assert await pg.locator('.menue').count() == 0
             await pg.click('[data-a="menue-auf"]'); await pg.go_back(); await pg.wait_for_timeout(200); assert await pg.locator('.menue').count() == 0, "Zurück schließt das Menü"
-            await bild("cockpit-einrichtung"); assert await pg.locator('.einrichtung .ring').count() == 1
+            await bild("cockpit-einrichtung"); assert await pg.locator('.einrichtung-zeile .ring, .einrichtung .ring').count() == 1
             # ---- Umsatz eintragen
             await geh("umsatz"); await pg.wait_for_selector('[data-f="umsatz"]'); await bild("umsatz-leer")
             await pg.fill('[data-f="umsatz"]', "1.850"); await pg.locator('[data-f="umsatz"]').blur(); await pg.wait_for_timeout(200)
@@ -150,7 +150,7 @@ async def main():
             # ---- Müll-Zentrale (Etappe 6, Punkt 1): Cockpit → Knopf → Kachel → Blatt → Weg damit, drei Tipps
             await geh("muell"); await pg.wait_for_selector('[data-a="muell-eingabe"]'); await bild("muell-cockpit-leer")
             html = await pg.content(); assert "Çöp gir" in html and "Add waste" in html, "Knopf nicht dreisprachig"
-            await pg.click('[data-a="muell-eingabe"]'); await pg.wait_for_selector('[data-a="muell-kachel"]'); await bild("muell-was-ist-weg")
+            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.wait_for_selector('[data-a="muell-kachel"]'); await bild("muell-was-ist-weg")
             assert await pg.locator('[data-a="muell-kachel"]').count() <= 13
             await pg.click(f'[data-a="muell-kachel"][data-typ="gericht"][data-id="{ids[0]}"]'); await bild("muell-blatt")
             await pg.click('[data-a="muell-d"][data-d="1"]'); await pg.wait_for_timeout(100)
@@ -162,28 +162,28 @@ async def main():
             await pg.click('[data-a="muell-rueckgaengig"]'); await pg.wait_for_timeout(150)
             s = await stand(); assert len(s["schwund"]) == 1 and s["schwund"][0]["storniert"]
             # nochmal 2 Teller (bleibt stehen)
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click(f'[data-a="muell-kachel"][data-typ="gericht"][data-id="{ids[0]}"]'); await pg.click('[data-a="muell-chip"][data-wert="2"]'); await pg.click('[data-a="muell-weg-damit"]')
+            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.click(f'[data-a="muell-kachel\"][data-typ="gericht"][data-id="{ids[0]}"]'); await pg.click('[data-a="muell-chip"][data-wert="2"]'); await pg.click('[data-a="muell-weg-damit"]')
             # Rohware über die Suche
-            await pg.click('[data-a="muell-eingabe"]'); await pg.fill('[data-f="muell-suche"]', "Toma"); await pg.wait_for_timeout(150); await bild("muell-suche")
+            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.fill('[data-f="muell-suche"]', "Toma"); await pg.wait_for_timeout(150); await bild("muell-suche")
             await pg.click('[data-a="muell-kachel"][data-name="Tomaten"]')
             await pg.fill('[data-f="muell-menge"]', "1,2"); await pg.wait_for_timeout(100)
             assert not await pg.locator('[data-a="muell-weg-damit"]').is_disabled()
             await pg.locator('[data-f="muell-menge"]').blur(); await pg.wait_for_timeout(150); await bild("muell-blatt-rohware"); await pg.click('[data-a="muell-weg-damit"]')
             s = await stand(); r = [e for e in s["schwund"] if e["art"] == "rohware"]; assert len(r) == 1 and abs(r[0]["wert"] - 1.2 * 1.6) < 1e-6 and r[0]["fraktion"] == "bio", r
             # Eimer: gemeldete Teller werden abgezogen
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-kachel"][data-typ="eimer"]')
+            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.click('[data-a="muell-kachel\"][data-typ="eimer"]')
             await pg.fill('[data-f="muell-menge"]', "3"); await pg.wait_for_timeout(150); await pg.locator('[data-f="muell-menge"]').blur(); await pg.wait_for_timeout(200)
             await bild("muell-eimer"); await pg.click('[data-a="muell-weg-damit"]')
             s = await stand(); ei = [e for e in s["schwund"] if e["art"] == "eimer"]; assert len(ei) == 1 and ei[0]["gewogen"] == 3 and ei[0]["menge"] < 3 and ei[0]["gemeldet"] > 0, ei
             # Personalessen über den Schalter im Blatt
-            await pg.click('[data-a="muell-eingabe"]'); await pg.click(f'[data-a="muell-kachel"][data-typ="gericht"][data-id="{ids[1]}"]')
+            await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.click(f'[data-a="muell-kachel\"][data-typ="gericht"][data-id="{ids[1]}"]')
             await pg.click('[data-a="muell-personal"]'); await pg.wait_for_timeout(100); await bild("muell-personal"); await pg.click('[data-a="muell-weg-damit"]')
             s = await stand(); pe = [e for e in s["schwund"] if e["art"] == "personal"]; assert len(pe) == 1, pe
             await bild("muell-cockpit-voll")
             html = await pg.content(); assert "Am meisten weg" in html
             # ---- Cockpit mit Zahlen
             await geh("start"); await bild("cockpit-mit-zahlen")
-            html = await pg.content(); assert "Tonne Woche" in html and "Umsatz Woche" in html and "1.850" in html
+            html = await pg.content(); assert "Müll heute" in html and "Umsatz im Monat" in html and "1.850" in html
             # ---- Beleg einlesen
             await geh("beleg"); await bild("beleg-leer"); await pg.click('[data-a="beleg-text-zeigen"]'); await pg.wait_for_selector('[data-f="beleg-text"]')
             assert await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
@@ -265,9 +265,11 @@ async def main():
             await geh("beleg"); await bild("beleg-en")
             await geh("einstellungen"); await pg.click('[data-a="sprache"][data-wert="de"]')
             # Zurück-Geste aus Müll-Unterseite: eine Ebene hoch
-            await geh("muell"); await pg.click('[data-a="muell-eingabe"]'); await pg.wait_for_selector('[data-a="muell-kachel"]')
+            await geh("muell"); await pg.click('[data-a="muell-eingabe"]'); await pg.click('[data-a="muell-auswahl"]'); await pg.wait_for_selector('[data-a="muell-kachel"]')
             await pg.go_back(); await pg.wait_for_timeout(300)
-            assert await pg.locator('[data-a="muell-eingabe"]').count() == 1, "Zurück-Geste aus „Was ist weg?“"
+            assert await pg.locator('[data-a="muell-kachel"]').count() == 0 and await pg.locator('[data-a="muell-auswahl"]').count() == 1, "Zurück schließt erst das Auswahlblatt"
+            await pg.go_back(); await pg.wait_for_timeout(300)
+            assert await pg.locator('[data-a="muell-eingabe"]').count() == 1, "Zurück-Geste aus „Müll eintragen“"
             await pg.go_back(); await pg.wait_for_timeout(300); await pg.wait_for_selector(".cockpit")
             await ctx.close(); await b.close()
     finally:

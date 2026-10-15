@@ -14,6 +14,7 @@ export const PROFILE = {
   foodtruck: { kern: ["burger", "beilagen"], oft: ["currywurst", "doener", "asia"] },
   cafe: { kern: ["kaffee", "kuchen", "fruehstueck"], oft: ["salat", "suppe", "fingerfood"] },
   baeckerei: { kern: ["fruehstueck", "kuchen", "kaffee"], oft: ["fingerfood", "salat"] },
+  kiosk: { kern: ["currywurst", "beilagen", "fingerfood"], oft: ["burger", "doener", "fruehstueck", "kaffee"] }, // Kiosk mit warmer Küche (Zielbild 15.10.)
   anders: { kern: [], oft: [] }, // die Karte bestimmt das Profil
 };
 

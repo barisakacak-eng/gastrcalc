@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="g-burger" color="#2E4034">
+<rect x="1" y="1" width="62" height="62" rx="14" fill="#E6EBDD"/>
+<g stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 28Q13 14 32 14T52 28M12 33h40M14 43h36M18 50h28"/><circle cx="26" cy="21" r="1"/><circle cx="37" cy="22" r="1"/><path d="M17 38h30"/></g>
+<path d="M14 57h36" stroke="#D28742" stroke-width="2" stroke-linecap="round"/>
+</svg>

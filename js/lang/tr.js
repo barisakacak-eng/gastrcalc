@@ -349,7 +349,7 @@ export default {
     erklaerung: { schaetzung: "Tahmini demek: Birçok büfe böyle yapıyor. Senin dükkânın farklı olabilir. Bir kez tart, doğru olsun.", pilot: "Bu miktarı gerçek bir dükkân tarttı. Senin dükkânın farklı olabilir.", branche: "Bu miktar sektörden birkaç kaynaktan geliyor. Senin dükkânın farklı olabilir.", eigen: "Bu miktarı sen girdin veya tarttın. Uygulama onu asla değiştirmez.", "eigen-abgeleitet": "Bu malzemeyi başka bir yemekte tarttın. Uygulama miktarını buraya aktardı. Tek tek yeniden tartabilirsin." } },
   waage: { start: "Şimdi tart – 2 dakika", schritt: (k, n) => `Soru ${k} / ${n}`, frage: (z, g) => `„${g}" içine ne kadar ${z} giriyor?`, startwert: (x) => `Başlangıç değeri: ${x}. Teraziye koy ve değere dokun.`, ok: "Doğru", weissNicht: "Bilmiyorum – başlangıç değeri kalsın", gelernt: (z, n) => `✓ ${n} yemekte artık ${z} için senin miktarın var.`, geldMehr: (e, g) => `Bu, her ${g} için ${e} daha fazla kâr.`, geldWeniger: (e, g) => `Bu sana her ${g} için ${e} daha pahalı. Bilmekte fayda var.` },
   menue: { titel: "Menü", oeffnen: "Menüyü aç", deinLaden: "Dükkânın", gruppen: { heute: "Bugün", kalkulation: "Hesap", auswertung: "Değerlendirme", einstellungen: "Ayarlar" },
-    cockpit: "Kokpit", muell: "Çöp", kuehl: "Soğutma", umsatz: "Ciro ve sayaç", abschluss: "Günü kapat", karte: "Menü kartı", beleg: "Alış fiyatları ve fişler", kosten: "Sabit giderler ve maaşlar",
+    vergleich: "Yemek karşılaştırması", cockpit: "Kokpit", muell: "Çöp", kuehl: "Soğutma", umsatz: "Ciro ve sayaç", abschluss: "Günü kapat", karte: "Menü kartı", beleg: "Alış fiyatları ve fişler", kosten: "Sabit giderler ve maaşlar",
     listen: "Listeler ve kontrol formu", laeden: "Tüm dükkânlar", einstellungen: "Dükkân, ekip, dil", sicherung: "Yedek" },
   schnellknopf: { auf: "Hızlı gir", zu: "Kapat", muell: "Çöp gir", kuehl: "Soğutma ölç", umsatz: "Ciro gir" },
   einrichtung: { titel: (p) => `Dükkânın %${p} kuruldu`, rest: (n) => `${n} adım kaldı, sonra sayaç doğru hesaplar.`, als: "Sıradaki:",
@@ -358,6 +358,7 @@ export default {
     schritte: { karte: "Menü kartı", preise: "Yemek fiyatları", rezepte: "Tarifler", kosten: "Sabit giderler", einkauf: "Alış fiyatları", kuehlung: "Soğutma", sicherung: "Yedek" },
     offen: { karte: () => "Menü kartının fotoğrafını çek", preise: (n) => `${n} yemeğin fiyatı yok`, rezepte: (n) => `${n} yemeğin tarifi yok`, kosten: (n) => `${n} zorunlu kalem açık (kira, personel, kendi maaşın, elektrik/gaz)`,
       einkauf: (n) => `${n} malzemenin alış fiyatı yok – bir fatura fotoğrafı doldurur`, kuehlung: () => "Soğutma yeri ekle", sicherung: () => "Son yedek 7 günden eski" } },
+  vergleich: { eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Katkı payı", marge: "Marj %" }, ware: "Malzeme maliyeti", db: "Katkı payı", marge: "Marj", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir." },
   bereiche: {
     doener: "Döner & kebap", pizza: "Pizza & makarna", burger: "Burger & ızgara", currywurst: "Currywurst & patates", asia: "Asya & wok",
     fruehstueck: "Kahvaltı & fırın", kuchen: "Pasta & tatlı", kaffee: "Kahve & sıcak içecekler", bar: "Bar & kokteyl", bier: "Bira & fıçı",
@@ -483,6 +484,8 @@ export default {
   },
 
   cockpit: {
+    bisNullFehlen: "Sıfıra kalan", ueberNull: "Ayda sıfırın üstünde", zielOhneKosten: "Sabit giderlerini gir, uygulama aylık hedefini hesaplasın.", zielErreicht: "Ay karşılandı. Üstündeki her şey senin.", zielSatz: "Tüm giderlerin karşılanması için bu ay hâlâ bu kadar ciroya ihtiyacın var.", umsatzImMonat: "Aylık ciro", vonZiel: (z) => `${z} hedeften`, zielKurz: "Hedef", wareHeute: "Bugünkü malzeme", muellHeute: "Bugünkü çöp",
+    sprueche: ["Küçük iyileştirmeler ay sonunda büyük fark yaratır.", "Ölçtüğünü iyileştirebilirsin.", "Çöpe gitmeyen her tabak kârdır.", "İyi rakamlar iyi ev sahipleri yaratır.", "Porsiyon başına beş gram az, ay sonunda dolu bir kasa demek.", "Fiyatlarını bilen tahmin etmek zorunda kalmaz.", "Bugün tart, yarın güvenle hesapla."], 
     umsatzWoche: "Haftalık ciro", zurVorwoche: (p) => `geçen haftaya göre %${p}`, umsatzLeer: "İlk günlük ciroyu gir", tonneWoche: "Haftalık çöp", tonneLeer: "Henüz bir şey atılmadı", wareneinsatz: "Malzeme maliyeti", karteFehlt: "Menü yok", genauerAbwiegen: "Tartarsan daha doğru olur", ziel: (p) => `Hedef %${p}`, einrichten: "kur", branchenMeldung: (n) => `${n} tarif sektör değerleriyle güncellendi. Kendi değerlerin kalıyor.`, 
     bisNull: (m) => `${m} ayında sıfıra kalan`,
     verdient: (m) => `${m} ayında kazanılan`,
@@ -583,6 +586,8 @@ export default {
   },
 
   muell: {
+    zurUebersicht: "Çöp özeti", 
+    auswaehlen: "Ürün seç", aendern: "Değiştirmek için dokun", mengeEingeben: "Miktar gir", foto: "Fotoğraf (isteğe bağlı)", fotoDabei: "Fotoğraf eklendi", fotoFehler: "Fotoğraf kaydedilemedi.", satz: "Hatalardan bilgi çıkar. Bugün çöpe gideni gir.", orientierung: "Tahmini değerler yön göstermek içindir.", ohnePreisKurz: "Henüz alış fiyatı yok – yine de sayılır.", 
     wasWeg: "Ne atıldı?", wocheTonne: "Bu hafta çöpte", monatTonne: "Aylık çöp", leerWoche: "Henüz bir şey girilmedi. Hiçbir şey atılmadı mı? İyi gün.", wocheZeile: (p, kg) => `≈ bunu geri kazanmak için ${p} porsiyon satış · ${kg} kg`, wenigerAls: (m, d) => `${m} ayında ${d}. güne göre daha az.`, mehrAls: (m, d) => `${m} ayında ${d}. güne göre daha fazla.`, rueckgaengig: "Geri al", ammeisten: "En çok atılan", eintragen: "Çöp gir", andererTag: "Başka bir gün için", teller: "tabak", eimerNurGewicht: "sadece ağırlık", ganzePackung: "tüm paket", personalWert: (e) => `Personel yemeği · ayni değer ${e}`, inDerTonne: (e) => `= çöpte ${e}`, eimerHinweisKurz: "Bugün bildirilen tabaklar ve ham mallar düşülür.", fuerPersonal: "Personel yedi", wegDamit: "Atıldı", geradeEben: "az önce", zurueckgenommen: "Geri alındı.",
     nav: "Çöp",
     titel: "Ne atıldı?",
@@ -842,9 +847,10 @@ export default {
   },
 
   schnell: {
+    ladenArtFrage: "Nasıl bir dükkânsın?", ladenArtHinweis: "Dükkân türünü seç, her şeyi senin için en iyi şekilde kuralım.", ladenName: "Dükkânının adı ne?", 
     selbstFrage: "Neleri kendiniz yapıyorsunuz?", selbstHinweis: "Kendiniz yaptıklarınıza dokun. Gerisini hazır alıyorsunuz.", selbstRest: "Şimdi miktar gerekmiyor. Uygulama başlangıç değerleri kullanır, sonra düzeltirsin.", selbstKacheln: { teig: "Pizza ve pide hamuru", brot: "Ekmek / pide ekmeği", lahmacun: "Lahmacun hamuru", sossen: "Soslar (sarımsak, otlu)", patty: "Burger köftesi", tomatensosse: "Pizza sosu" }, 
     ladenFrage: "Dükkanının adı ne ve ne satıyorsun?",
-    arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", anders: "Başka bir şey" },
+    arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", kiosk: "Sıcak mutfaklı büfe", anders: "Başka bir şey" },
     genau: "Her şeyi adım adım kur (daha uzun sürer)",
     kostenFrage: "Aylık sabit giderlerin",
     kostenHinweis: "Yaklaşık yeterli. Bilmediğini boş bırak.",

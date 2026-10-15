@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="selbst-patty" color="#2E4034">
+<rect x="1" y="1" width="62" height="62" rx="14" fill="#E6EBDD"/>
+<g stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="32" cy="34" rx="23" ry="13"/><path d="M12 29v10q2 10 20 10t20-10V29M19 33l6 5M32 29l6 6"/></g>
+<path d="M14 57h36" stroke="#D28742" stroke-width="2" stroke-linecap="round"/>
+</svg>

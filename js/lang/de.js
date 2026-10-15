@@ -349,7 +349,7 @@ export default {
     erklaerung: { schaetzung: "Geschätzt heißt: So machen es viele Imbisse. Dein Laden ist vielleicht anders. Wieg einmal ab, dann stimmt es.", pilot: "Diese Menge hat ein echter Laden gewogen. Dein Laden ist vielleicht anders.", branche: "Diese Menge kommt aus mehreren Quellen der Branche. Dein Laden ist vielleicht anders.", eigen: "Diese Menge hast du selbst eingetragen oder gewogen. Die App ändert sie nie.", "eigen-abgeleitet": "Du hast diese Zutat bei einem anderen Gericht gewogen. Die App hat deine Menge hier übertragen. Du kannst sie einzeln nachwiegen." } },
   waage: { start: "Jetzt abwiegen – 2 Minuten", schritt: (k, n) => `Frage ${k} von ${n}`, frage: (z, g) => `Wie viel ${z} kommt in „${g}"?`, startwert: (x) => `Startwert: ${x}. Leg es auf die Waage und tipp den Wert an.`, ok: "Stimmt so", weissNicht: "Weiß ich nicht – Startwert behalten", gelernt: (z, n) => `✓ ${n} Gerichte haben jetzt deine Menge für ${z}.`, geldMehr: (e, g) => `Das sind ${e} mehr Gewinn je ${g}.`, geldWeniger: (e, g) => `Das kostet dich ${e} mehr je ${g}. Gut zu wissen.` },
   menue: { titel: "Menü", oeffnen: "Menü öffnen", deinLaden: "Dein Laden", gruppen: { heute: "Heute", kalkulation: "Kalkulation", auswertung: "Auswertung", einstellungen: "Einstellungen" },
-    cockpit: "Cockpit", muell: "Müll", kuehl: "Kühlung", umsatz: "Umsatz und Zähler", abschluss: "Tag abschließen", karte: "Speisekarte", beleg: "Einkaufspreise und Belege", kosten: "Feste Kosten und Löhne",
+    vergleich: "Gerichte im Vergleich", cockpit: "Cockpit", muell: "Müll", kuehl: "Kühlung", umsatz: "Umsatz und Zähler", abschluss: "Tag abschließen", karte: "Speisekarte", beleg: "Einkaufspreise und Belege", kosten: "Feste Kosten und Löhne",
     listen: "Listen und Kontrollblatt", laeden: "Alle Läden", einstellungen: "Laden, Team, Sprache", sicherung: "Sicherung" },
   schnellknopf: { auf: "Schnell eintragen", zu: "Schließen", muell: "Müll eintragen", kuehl: "Kühlung messen", umsatz: "Umsatz eintragen" },
   einrichtung: { titel: (p) => `Dein Laden ist zu ${p} % eingerichtet`, rest: (n) => n === 1 ? "Noch 1 Schritt, dann rechnet der Zähler genau." : `Noch ${n} Schritte, dann rechnet der Zähler genau.`, als: "Als Nächstes:",
@@ -358,6 +358,7 @@ export default {
     schritte: { karte: "Speisekarte", preise: "Preise der Gerichte", rezepte: "Rezepte", kosten: "Feste Kosten", einkauf: "Einkaufspreise", kuehlung: "Kühlung", sicherung: "Sicherung" },
     offen: { karte: () => "Speisekarte fotografieren", preise: (n) => `${n} Gerichte ohne Preis`, rezepte: (n) => `${n} Gerichte ohne Rezept`, kosten: (n) => `${n} Pflichtposten offen (Miete, Personal, eigener Lohn, Strom/Gas)`,
       einkauf: (n) => `${n} Zutaten ohne Einkaufspreis – ein Rechnungsfoto füllt das`, kuehlung: () => "Kühlstelle anlegen", sicherung: () => "Letzte Sicherung älter als 7 Tage" } },
+  vergleich: { eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Deckungsbeitrag", marge: "Marge %" }, ware: "Wareneinsatz", db: "Deckungsbeitrag", marge: "Marge", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis." },
   bereiche: {
     doener: "Döner & Kebab", pizza: "Pizza & Pasta", burger: "Burger & Grill", currywurst: "Currywurst & Pommes", asia: "Asiatisch & Wok",
     fruehstueck: "Frühstück & Backwaren", kuchen: "Kuchen & Konditorei", kaffee: "Kaffee & Heißgetränke", bar: "Bar & Cocktails", bier: "Bier & Fassgetränke",
@@ -483,6 +484,8 @@ export default {
   },
 
   cockpit: {
+    bisNullFehlen: "Bis null fehlen", ueberNull: "Über null im Monat", zielOhneKosten: "Trag deine festen Kosten ein, dann rechnet die App dein Monatsziel.", zielErreicht: "Der Monat ist gedeckt. Alles darüber bleibt dir.", zielSatz: "So viel Umsatz brauchst du noch diesen Monat, damit alle Kosten gedeckt sind.", umsatzImMonat: "Umsatz im Monat", vonZiel: (z) => `von ${z} Ziel`, zielKurz: "Ziel", wareHeute: "Wareneinsatz heute", muellHeute: "Müll heute",
+    sprueche: ["Kleine Verbesserungen machen am Monatsende den großen Unterschied.", "Was du misst, kannst du verbessern.", "Jeder Teller, der nicht in der Tonne landet, ist Gewinn.", "Gute Zahlen machen gute Gastgeber.", "Fünf Gramm weniger je Portion sind am Monatsende ein voller Kasten.", "Wer seine Preise kennt, muss nicht raten.", "Heute abwiegen, morgen sicher kalkulieren."], 
     umsatzWoche: "Umsatz Woche", zurVorwoche: (p) => `${p} % zur Vorwoche`, umsatzLeer: "Ersten Tagesumsatz eintragen", tonneWoche: "Tonne Woche", tonneLeer: "Noch nichts weggeworfen", wareneinsatz: "Wareneinsatz", karteFehlt: "Karte fehlt", genauerAbwiegen: "Genauer wird’s, wenn du abwiegst", ziel: (p) => `Ziel ${p} %`, einrichten: "einrichten", branchenMeldung: (n) => `${n} Rezepte mit Branchenwerten aktualisiert. Deine eigenen Werte bleiben.`, 
     bisNull: (m) => `Bis null fehlen im ${m}`,
     verdient: (m) => `Verdient im ${m}`,
@@ -583,6 +586,8 @@ export default {
   },
 
   muell: {
+    zurUebersicht: "Müll-Übersicht", 
+    auswaehlen: "Lebensmittel auswählen", aendern: "Antippen zum Ändern", mengeEingeben: "Menge eingeben", foto: "Foto (optional)", fotoDabei: "Foto ist dabei", fotoFehler: "Foto konnte nicht gespeichert werden.", satz: "Mache aus Fehlern Wissen. Trage ein, was heute im Müll gelandet ist.", orientierung: "Geschätzte Werte dienen der Orientierung.", ohnePreisKurz: "Noch ohne Einkaufspreis – zählt trotzdem mit.", 
     wasWeg: "Was ist weg?", wocheTonne: "Diese Woche in der Tonne", monatTonne: "Monatstonne", leerWoche: "Noch nichts eingetragen. Nichts weggeworfen? Guter Tag.", wocheZeile: (p, kg) => `≈ ${p} verkaufte Portionen, um das reinzuholen · ${kg} kg`, wenigerAls: (m, d) => `weniger als im ${m} bis zum ${d}.`, mehrAls: (m, d) => `mehr als im ${m} bis zum ${d}.`, rueckgaengig: "Rückgängig", ammeisten: "Am meisten weg", eintragen: "Müll eintragen", andererTag: "Für einen anderen Tag", teller: "Teller", eimerNurGewicht: "nur das Gewicht", ganzePackung: "ganze Packung", personalWert: (e) => `Personalessen · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} in der Tonne`, eimerHinweisKurz: "Teller und Rohware, die heute schon gemeldet sind, werden abgezogen.", fuerPersonal: "Für Personal gegessen", wegDamit: "Weg damit", geradeEben: "gerade eben", zurueckgenommen: "Zurückgenommen.",
     nav: "Müll",
     titel: "Was ist weg?",
@@ -842,9 +847,10 @@ export default {
   },
 
   schnell: {
+    ladenArtFrage: "Was für ein Laden bist du?", ladenArtHinweis: "Wähle deine Laden-Art, damit wir alles optimal für dich einrichten können.", ladenName: "Wie heißt dein Laden?", 
     selbstFrage: "Was macht ihr selbst?", selbstHinweis: "Tippe an, was bei euch selbst gemacht wird. Alles andere kauft ihr fertig.", selbstRest: "Mengen brauchst du jetzt nicht. Die App nimmt Startwerte, du passt sie später an.", selbstKacheln: { teig: "Teig für Pizza und Pide", brot: "Brot / Fladen", lahmacun: "Lahmacun-Teig", sossen: "Soßen (Knoblauch, Kräuter)", patty: "Burger-Patties", tomatensosse: "Pizzasoße" }, 
     ladenFrage: "Wie heißt dein Laden und was verkaufst du?",
-    arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", anders: "Etwas anderes" },
+    arten: { doener: "Döner & Grill", imbiss: "Imbiss, Burger, Pommes", pizza: "Pizza & Pasta", asia: "Asia-Imbiss", foodtruck: "Foodtruck", baeckerei: "Bäckerei & Börek", cafe: "Café & Bistro", kiosk: "Kiosk mit warmer Küche", anders: "Etwas anderes" },
     genau: "Lieber alles Schritt für Schritt einrichten (dauert länger)",
     kostenFrage: "Deine festen Kosten im Monat",
     kostenHinweis: "Ungefähr reicht. Was du nicht weißt, lässt du leer.",

@@ -6,6 +6,7 @@ import { esc, heute } from "../util.js";
 import { kuehlStatus, offeneNachkontrollen, schwundOhneWert, kalkulation } from "../engine.js";
 import { eintraegeZaehlen } from "../store.js";
 import { einrichtungStand } from "../einrichtung.js";
+import { sym } from "../symbole.js";
 
 let menueOffen = false, schnellOffen = false;
 let kontext = { stand: null, wurzel: null };
@@ -36,7 +37,7 @@ export function menueZaehler(stand, wurzel) {
 
 const GRUPPEN = [
   ["heute", [["start", "menue.cockpit"], ["muell", "menue.muell"], ["kuehl", "menue.kuehl"], ["umsatz", "menue.umsatz"], ["abschluss", "menue.abschluss"]]],
-  ["kalkulation", [["karte", "menue.karte"], ["beleg", "menue.beleg"], ["kosten", "menue.kosten"]]],
+  ["kalkulation", [["vergleich", "menue.vergleich"], ["karte", "menue.karte"], ["beleg", "menue.beleg"], ["kosten", "menue.kosten"]]],
   ["auswertung", [["listen", "menue.listen"], ["laeden", "menue.laeden"]]],
   ["einstellungen", [["einstellungen", "menue.einstellungen"], ["sicherung", "menue.sicherung"]]],
 ];
@@ -45,7 +46,7 @@ const ziel = (z) => z === "kosten" ? 'data-a="bearbeiten" data-schritt="kosten-m
 export function nav(aktiv, { schnell = true } = {}) {
   const { stand, wurzel } = kontext; const z = menueZaehler(stand, wurzel);
   const name = stand?.betrieb?.name || t("menue.deinLaden");
-  const knopf = `<button type="button" class="menueknopf" data-a="menue-auf" aria-label="${esc(t("menue.oeffnen"))}" aria-expanded="${menueOffen}"><span aria-hidden="true">☰</span>${z.punkt ? '<i class="menuepunkt" aria-hidden="true"></i>' : ""}</button>`;
+  const knopf = `<button type="button" class="menueknopf" data-a="menue-auf" aria-label="${esc(t("menue.oeffnen"))}" aria-expanded="${menueOffen}">${sym("menu")}${z.punkt ? '<i class="menuepunkt" aria-hidden="true"></i>' : ""}</button>`;
   const menue = !menueOffen ? "" : `<div class="menuehinten" data-a="menue-zu"></div>
     <nav class="menue" aria-label="${esc(t("menue.titel"))}">
       <button type="button" class="menuekopf" data-a="nav" data-wert="laeden"><b>${esc(name)}</b><small>${esc(stand?.betrieb?.format ? t("format." + stand.betrieb.format)[0] : "")} · ${esc(t("app.entwurf"))}</small></button>
@@ -56,7 +57,9 @@ export function nav(aktiv, { schnell = true } = {}) {
         <button type="button" class="pille p-muell" data-a="schnell-muell">${esc(t("schnellknopf.muell"))}</button>
         <button type="button" class="pille p-kuehl" data-a="kuehl-rundgang-start" data-offen="0">${esc(t("schnellknopf.kuehl"))}</button>
         <button type="button" class="pille p-umsatz" data-a="schnell-umsatz">${esc(t("schnellknopf.umsatz"))}</button></div>` : ""}
-      <button type="button" class="fab" data-a="${schnellOffen ? "schnell-zu" : "schnell-auf"}" aria-label="${esc(t(schnellOffen ? "schnellknopf.zu" : "schnellknopf.auf"))}" aria-expanded="${schnellOffen}">${schnellOffen ? "×" : "+"}</button></div>`;
-  return knopf + menue + fab;
+      <button type="button" class="fab" data-a="${schnellOffen ? "schnell-zu" : "schnell-auf"}" aria-label="${esc(t(schnellOffen ? "schnellknopf.zu" : "schnellknopf.auf"))}" aria-expanded="${schnellOffen}">${sym(schnellOffen ? "x" : "plus")}</button></div>`;
+  // Helle App-Leiste (Zielbild 15.10.): drei Striche und Logo. Steht im HTML am Ende, CSS (order: -1) stellt sie nach oben.
+  const leiste = `<header class="appleiste">${knopf}<img class="logo" src="icons/logo.svg" alt="GastroCalc" height="28"><span class="leiste-rechts">${aktiv === "muell" ? sym("trash-2") : ""}</span></header>`;
+  return leiste + menue + fab;
 }
 

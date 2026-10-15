@@ -1,20 +1,55 @@
-/* GastroCalc – Gestaltungswerte (Tokens). Diese Datei gehört Sanji (Visual-Vertrag, bruecke/visual-vertrag.md):
-   Farben, Schrift, Radien, Schatten. Alle Bausteine in app.css lesen nur diese Variablen.
-   Bedeutungs-Variablen (--geschaetzt, --eigen, --muell …) müssen bleiben, ihre Werte sind frei. */
-
+/* Schrift Inter 4.1 (SIL OFL 1.1), lokal und gekürzt auf DE/TR/EN – keine Verbindung nach außen */
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../fonts/InterVariable-de-tr.woff2") format("woff2"); }
+/* Sanji | Kräuter & Kupfer | 15.10.2026
+   Vollständiger Ersatz der bisherigen Tokens. Alle bisherigen Namen bleiben.
+   Schrift: lokale Systemschrift ohne Download, keine externe Verbindung. */
 :root {
-  --papier: #F5EDE2; --papier-tief: #EDE2D3; --weiss: #FFFDF9;
-  --tinte: #22301F; --tinte-weich: #5C6B5A;
-  --salbei: #4C6B55; --salbei-tief: #2E4034; --salbei-hell: #E3EAE0;
-  --holz: #E2CDB2; --holz-tief: #C9A87C; --lehm: #A98467;
-  --glut: #E8763A; --gelb: #D9A22E; --rot: #C0453B; --gruen: #4F8A5B;
+  /* Papier, Kräuter, Kupfer */
+  --papier: #F5EBDD;
+  --papier-tief: #E9DDCB;
+  --weiss: #FFFDF8;
+  --tinte: #1F2A24;
+  --tinte-weich: #5D685B;
+  --salbei: #6B7F5E; /* Zielbild 15.10. */
+  --salbei-tief: #2E4034;
+  --salbei-hell: #E6EBDD;
+  --holz: #DDC9AD;
+  --holz-tief: #C9A87C;
+  --lehm: #78583F;
+  --glut: #C97A3E; /* Kupfer (Zielbild 15.10.). Text darauf dunkel! */
+  --gelb: #D9A22E;
+  --rot: #AB423E;
+  --gruen: #355F3F;
+
+  /* Bedeutungen: nie nur über eine Farbe vermitteln */
+  --geschaetzt: #BB871C;
+  --geschaetzt-hell: #FFF1D4;
+  --geschaetzt-text: #664A10;
+  --eigen: #355F3F;
+  --eigen-hell: #E3EFE5;
+  --muell: #8C2F39;
+  --muell-hell: #F6E5E4;
+  --weggelassen: #ACB1AC;
+  --branche: #365D75;
+  --branche-hell: #E5EDF2;
+
+  /* Knopf, Diagramme, Konturen */
+  --aktion: var(--glut);
+  --aktion-text: var(--tinte);
+  --kurve-ist: #E6EBDD;
+  --kurve-prognose: #F6D686;
+  --kurve-null: #FFFDF8;
+  --kupfer-dunkel: #8A4C20;
+  --fokus: #365D75;
+
+  /* Form & Bewegung */
   --radius: 14px;
-  /* Bedeutungen (Pflicht laut Visual-Vertrag): geschätzt = gelb gestrichelt, eigener Wert = grün, Müll = gedeckt */
-  --geschaetzt: #D9A22E; --geschaetzt-hell: #FBEFD3; --geschaetzt-text: #7A5A10;
-  --eigen: #4F8A5B; --eigen-hell: #E3EFE5;
-  --muell: #8B3A2E; --muell-hell: #F3E1DE; --weggelassen: #BBBBBB;
-  --branche: #3E6FA8; --branche-hell: #E1EAF5;
-  --aktion: var(--glut); --aktion-text: #FFFFFF;
-  --schatten-karte: none; --schatten-knopf: none;
-  --schrift: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Systemschrift: offline, keine Weitergabe an Dritte */
+  --radius-klein: 10px;
+  --radius-gross: 22px;
+  --schatten-karte: 0 3px 10px rgba(31,42,36,.045), 0 12px 28px rgba(31,42,36,.075);
+  --schatten-knopf: 0 3px 0 rgba(31,42,36,.12), 0 8px 16px rgba(31,42,36,.08);
+  --schatten-menu: 12px 0 38px rgba(31,42,36,.22);
+  --schrift: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --zahlen: tabular-nums lining-nums;
+  --bewegung: 180ms;
 }

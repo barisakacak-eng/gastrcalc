@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="rechnung" color="#2E4034">
+<rect x="1" y="1" width="62" height="62" rx="14" fill="#E6EBDD"/>
+<g stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9h22l9 10v36H18Z M40 9v11h9M24 28h18M24 36h18M24 44h13"/></g>
+<path d="M14 57h36" stroke="#D28742" stroke-width="2" stroke-linecap="round"/>
+</svg>

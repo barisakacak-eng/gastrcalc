@@ -348,7 +348,7 @@ export default {
     erklaerung: { schaetzung: "Estimated means: many snack bars do it like this. Your shop may be different. Weigh it once and it is right.", pilot: "A real shop weighed this amount. Your shop may be different.", branche: "This amount comes from several industry sources. Your shop may be different.", eigen: "You entered or weighed this amount yourself. The app never changes it.", "eigen-abgeleitet": "You weighed this ingredient for another dish. The app carried your amount over. You can weigh it here separately." } },
   waage: { start: "Weigh now – 2 minutes", schritt: (k, n) => `Question ${k} of ${n}`, frage: (z, g) => `How much ${z} goes into “${g}”?`, startwert: (x) => `Starting value: ${x}. Put it on the scale and tap the value.`, ok: "That's right", weissNicht: "Don't know – keep starting value", gelernt: (z, n) => `✓ ${n} dishes now use your amount of ${z}.`, geldMehr: (e, g) => `That is ${e} more profit per ${g}.`, geldWeniger: (e, g) => `That costs you ${e} more per ${g}. Good to know.` },
   menue: { titel: "Menu", oeffnen: "Open menu", deinLaden: "Your shop", gruppen: { heute: "Today", kalkulation: "Costing", auswertung: "Reports", einstellungen: "Settings" },
-    cockpit: "Cockpit", muell: "Waste", kuehl: "Cooling", umsatz: "Sales and counter", abschluss: "Close the day", karte: "Menu card", beleg: "Purchase prices and receipts", kosten: "Fixed costs and wages",
+    vergleich: "Dishes compared", cockpit: "Cockpit", muell: "Waste", kuehl: "Cooling", umsatz: "Sales and counter", abschluss: "Close the day", karte: "Menu card", beleg: "Purchase prices and receipts", kosten: "Fixed costs and wages",
     listen: "Lists and log sheet", laeden: "All shops", einstellungen: "Shop, team, language", sicherung: "Backup" },
   schnellknopf: { auf: "Quick entry", zu: "Close", muell: "Add waste", kuehl: "Measure cooling", umsatz: "Enter sales" },
   einrichtung: { titel: (p) => `Your shop is ${p} % set up`, rest: (n) => n === 1 ? "1 step left, then the counter is accurate." : `${n} steps left, then the counter is accurate.`, als: "Next:",
@@ -357,6 +357,7 @@ export default {
     schritte: { karte: "Menu card", preise: "Dish prices", rezepte: "Recipes", kosten: "Fixed costs", einkauf: "Purchase prices", kuehlung: "Cooling", sicherung: "Backup" },
     offen: { karte: () => "Take a photo of the menu", preise: (n) => `${n} dishes without a price`, rezepte: (n) => `${n} dishes without a recipe`, kosten: (n) => `${n} required items open (rent, staff, your own pay, power/gas)`,
       einkauf: (n) => `${n} ingredients without purchase price – a receipt photo fills this`, kuehlung: () => "Add a cooling unit", sicherung: () => "Last backup older than 7 days" } },
+  vergleich: { eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Contribution", marge: "Margin %" }, ware: "Cost of goods", db: "Contribution", marge: "Margin", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price." },
   bereiche: {
     doener: "Döner & kebab", pizza: "Pizza & pasta", burger: "Burgers & grill", currywurst: "Currywurst & fries", asia: "Asian & wok",
     fruehstueck: "Breakfast & bakery", kuchen: "Cakes & pastry", kaffee: "Coffee & hot drinks", bar: "Bar & cocktails", bier: "Beer & draught",
@@ -482,6 +483,8 @@ export default {
   },
 
   cockpit: {
+    bisNullFehlen: "Left to break even", ueberNull: "Above break-even this month", zielOhneKosten: "Enter your fixed costs and the app works out your monthly target.", zielErreicht: "The month is covered. Everything above it is yours.", zielSatz: "This much sales you still need this month to cover all costs.", umsatzImMonat: "Sales this month", vonZiel: (z) => `of ${z} target`, zielKurz: "Target", wareHeute: "Cost of goods today", muellHeute: "Waste today",
+    sprueche: ["Small improvements make the big difference at month end.", "What you measure, you can improve.", "Every plate that stays out of the bin is profit.", "Good numbers make good hosts.", "Five grams less per portion is a full till at month end.", "Know your prices and you never have to guess.", "Weigh today, calculate with confidence tomorrow."], 
     umsatzWoche: "Sales this week", zurVorwoche: (p) => `${p} % vs last week`, umsatzLeer: "Enter your first daily sales", tonneWoche: "Bin this week", tonneLeer: "Nothing thrown away yet", wareneinsatz: "Cost of goods", karteFehlt: "Menu missing", genauerAbwiegen: "Weigh it and it gets more accurate", ziel: (p) => `Target ${p} %`, einrichten: "set up", branchenMeldung: (n) => `${n} recipes updated with industry values. Your own values stay.`, 
     bisNull: (m) => `Still missing to zero in ${m}`,
     verdient: (m) => `Earned in ${m}`,
@@ -582,6 +585,8 @@ export default {
   },
 
   muell: {
+    zurUebersicht: "Waste overview", 
+    auswaehlen: "Select item", aendern: "Tap to change", mengeEingeben: "Enter amount", foto: "Photo (optional)", fotoDabei: "Photo added", fotoFehler: "Photo could not be saved.", satz: "Turn mistakes into knowledge. Enter what ended up in the bin today.", orientierung: "Estimated values are for guidance.", ohnePreisKurz: "No purchase price yet – still counted.", 
     wasWeg: "What went in the bin?", wocheTonne: "In the bin this week", monatTonne: "Monthly bin", leerWoche: "Nothing entered yet. Nothing thrown away? Good day.", wocheZeile: (p, kg) => `≈ ${p} portions sold to make up for it · ${kg} kg`, wenigerAls: (m, d) => `less than in ${m} up to day ${d}.`, mehrAls: (m, d) => `more than in ${m} up to day ${d}.`, rueckgaengig: "Undo", ammeisten: "Most thrown away", eintragen: "Add waste", andererTag: "For another day", teller: "plate", eimerNurGewicht: "weight only", ganzePackung: "whole pack", personalWert: (e) => `Staff meal · benefit value ${e}`, inDerTonne: (e) => `= ${e} in the bin`, eimerHinweisKurz: "Plates and raw goods already reported today are subtracted.", fuerPersonal: "Eaten by staff", wegDamit: "Throw away", geradeEben: "just now", zurueckgenommen: "Undone.",
     nav: "Bin",
     titel: "What went in the bin?",
@@ -841,9 +846,10 @@ export default {
   },
 
   schnell: {
+    ladenArtFrage: "What kind of shop are you?", ladenArtHinweis: "Choose your shop type so we can set everything up for you.", ladenName: "What is your shop called?", 
     selbstFrage: "What do you make yourselves?", selbstHinweis: "Tap what you make in-house. Everything else you buy ready-made.", selbstRest: "No amounts needed now. The app uses starting values, you adjust them later.", selbstKacheln: { teig: "Dough for pizza and pide", brot: "Bread / flatbread", lahmacun: "Lahmacun dough", sossen: "Sauces (garlic, herb)", patty: "Burger patties", tomatensosse: "Pizza sauce" }, 
     ladenFrage: "What is your shop called and what do you sell?",
-    arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", anders: "Something else" },
+    arten: { doener: "Döner & grill", imbiss: "Snack bar, burgers, fries", pizza: "Pizza & pasta", asia: "Asian snack bar", foodtruck: "Food truck", baeckerei: "Bakery & börek", cafe: "Café & bistro", kiosk: "Kiosk with hot food", anders: "Something else" },
     genau: "Set up everything step by step instead (takes longer)",
     kostenFrage: "Your fixed costs per month",
     kostenHinweis: "Roughly is fine. Leave empty what you do not know.",

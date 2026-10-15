@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="g-currywurst" color="#2E4034">
+<rect x="1" y="1" width="62" height="62" rx="14" fill="#E6EBDD"/>
+<g stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 36q20 16 40-2q4-10-5-12q-15-4-30 7q-8 6-5 7Z"/><path d="M21 31l6 11M31 25l6 13M42 23l3 11"/></g>
+<path d="M14 57h36" stroke="#D28742" stroke-width="2" stroke-linecap="round"/>
+</svg>
