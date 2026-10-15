@@ -10,6 +10,7 @@
 // Vergleich (ab der zweiten Inventur): Anfang + Einkauf − Ende = Verbrauch. Zeitraum: nach dem Tag der vorigen Inventur bis einschließlich
 // des Tags dieser Inventur (gezählt wird nach Ladenschluss; was am Zähltag geliefert wurde, steckt schon in der vorigen Zählung).
 import { uid, heute } from "./util.js";
+import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX } from "./data/katalog.js";
 import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
@@ -17,12 +18,11 @@ import { warenQuote } from "./zaehler.js";
 export const LAGERORTE = ["kuehlhaus", "tiefkuehler", "trockenlager", "verpackung", "reinigung"];
 const KUEHL_GRUPPEN = new Set(["fleisch", "fisch", "kaese", "gemuese"]);
 const RE_TK = /\bTK\b|tiefk[üu]hl|gefroren|pommes|kroketten|wedges|onion rings|nuggets/i;
-const RE_REINIGUNG = /reinig|sp[üu]lmittel|sp[üu]lmaschin|m[üu]llbeutel|m[üu]llsack|handschuh|desinfek|fettl[öo]ser|putz|klarsp[üu]l|seife|schwamm|wischtuch|k[üu]chenrolle|tabs\b/i;
 
 // Lagerort aus Warengruppe und Name. Unklar → Trockenlager.
 export function lagerortFuer(a) {
   const name = String(a?.name || ""); const g = a?.gruppe || PRODUKT_INDEX[name]?.g || null;
-  if (RE_REINIGUNG.test(name)) return "reinigung";
+  if (istBetriebsmittel(name)) return "reinigung";
   if (g === "verpackung") return "verpackung";
   if (RE_TK.test(name)) return "tiefkuehler";
   if (KUEHL_GRUPPEN.has(g)) return "kuehlhaus";
@@ -178,7 +178,7 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
   const bmEinkauf = tage > 0 ? betriebsmittelEinkauf(stand, { von, bis }) : 0;
   const bmAnfang = anfang.jeLagerort.reinigung.summe, bmEnde = ende.jeLagerort.reinigung.summe;
   const bmVerbrauch = bmAnfang + bmEinkauf - bmEnde;
-  const betriebsmittel = { verbrauch: bmVerbrauch, einkauf: bmEinkauf, jeMonat: tage >= 7 && bmVerbrauch >= 0 ? bmVerbrauch * 30 / tage : null };
+  const betriebsmittel = { verbrauch: bmVerbrauch, einkauf: bmEinkauf, jeMonat: tage >= 7 && bmVerbrauch >= 0 && anfang.jeLagerort.reinigung.gezaehlt > 0 && ende.jeLagerort.reinigung.gezaehlt > 0 ? bmVerbrauch * 30 / tage : null }; // nur wenn Putzmittel in beiden Inventuren gezählt wurden (Review 15.10.)
   const verbrauch = (anfang.summe - bmAnfang) + (einkauf.summe - bmEinkauf) - (ende.summe - bmEnde);
   const st = umsatzSteuerSatz(stand);
   const u = tage > 0 ? umsatzZeitraum(stand, { von, bis }) : { summe: 0, tage: 0 };

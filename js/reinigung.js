@@ -6,13 +6,13 @@
 //   inventur   – Einkauf minus Bestand aus zwei Inventuren (genauer geht es nicht; kommt mit Punkt 3)
 // Eigene Putzzeit ist KEIN Geld vom Konto: Teamlohn steckt schon im Personal, Inhaberzeit kostet kein Geld. Sie wird nur als Einsicht gezeigt.
 import { heute } from "./util.js";
+const MWST_REGEL = 0.19; // Regelsatz für Dienstleistung und Putzmittel
 // Öffnungstag-Gewicht wie im Zähler (zaehler.js tagGewicht), hier nachgebaut, damit engine.js ohne Kreisimport rechnen kann.
 const tagGewicht = (stand, datum) => { const ruhe = stand.kuehl?.ruhetage || []; if (ruhe.length) return ruhe.includes(new Date(datum + "T12:00").getDay()) ? 0 : 1;
   return Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6)) / 7; };
 
-// Betriebsmittel: wird verbraucht, aber nicht verkauft (nach Name, weil der Katalog sie bisher unter Verpackung führt).
-const BETRIEBSMITTEL = /reinig|spül|spuel|desinf|schwamm|lappen|m[üu]llbeutel|m[üu]llsack|abfallbeutel|handschuh|frischhalte|backpapier|k[üu]chenrolle|putz|wischtuch|seife|entkalk|fettl[öo]ser|scheuer|glasreiniger|grillreiniger|klarsp[üu]l|tabs\b/i;
-export const istBetriebsmittel = (name) => BETRIEBSMITTEL.test(String(name || ""));
+import { istBetriebsmittel } from "./betriebsmittel.js";
+export { istBetriebsmittel };
 
 export const REINIGUNG_LEER = { wer: null, firmaBetrag: null, minutenTag: 45, durch: "team", mittelSchaetzung: null };
 export const reinigungVon = (stand) => ({ ...REINIGUNG_LEER, ...(stand.betrieb?.reinigung || {}) });
@@ -40,12 +40,16 @@ export function mittelAusBelegen(stand, datum = heute()) {
 const ausInventur = (stand) => { const f = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.betriebsmittelJeMonat === "number").sort((a, b) => a.datum.localeCompare(b.datum)).pop(); return f ? f.betriebsmittelJeMonat : null; };
 export function reinigungMonat(stand, { datum = heute(), inventurMittel = ausInventur(stand) } = {}) {
   const r = stand.betrieb?.reinigung; if (!r || !r.wer) return null;
-  const firma = r.wer === "selbst" ? 0 : (typeof r.firmaBetrag === "number" ? r.firmaBetrag : null);
+  // Eingaben stehen meist brutto auf der Rechnung (Review 15.10.): wie die anderen Kosten auf netto umrechnen (19 %), Schalter je Feld.
+  const netto = (x) => (r.basis === "netto" ? x : x / (1 + MWST_REGEL));
+  const firma = r.wer === "selbst" ? 0 : (typeof r.firmaBetrag === "number" ? netto(r.firmaBetrag) : null);
+  const schaetzung = typeof r.mittelSchaetzung === "number" ? netto(r.mittelSchaetzung) : null;
   let mittel = null, stufe = "offen", belege = 0;
   if (typeof inventurMittel === "number") { mittel = inventurMittel; stufe = "inventur"; }
   else { const b = mittelAusBelegen(stand, datum);
-    if (b) { mittel = b.jeMonat; stufe = "beleg"; belege = b.belege; }
-    else if (typeof r.mittelSchaetzung === "number") { mittel = r.mittelSchaetzung; stufe = "schaetzung"; } }
+    // Lieber zu rot als zu grün: ein kleiner Beleg drückt die eigene Schätzung nicht (Review 15.10.)
+    if (b && (schaetzung === null || b.jeMonat >= schaetzung)) { mittel = b.jeMonat; stufe = "beleg"; belege = b.belege; }
+    else if (schaetzung !== null) { mittel = schaetzung; stufe = "schaetzung"; } }
   const betrag = firma === null && mittel === null ? null : (firma || 0) + (mittel || 0);
   return { firma, mittel, stufe, belege, betrag, firmaOffen: firma === null };
 }

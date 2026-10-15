@@ -153,7 +153,7 @@ function karteView(stand, inv) {
           <div class="inv-einheit">${esc(t("inventur.zaehltIn"))} <b>${esc(gebindeZeile(z))}</b></div>
           ${z.letztes !== null ? `<span class="inv-letztes">${sym("clock")} ${esc(t("inventur.letztesMal", zahlText(z.letztes), gebindeName(z)))}</span>` : ""}
           <div class="inv-grosszahl"><button type="button" data-a="inv-k-d" data-d="-1" aria-label="${esc(t("inventur.weniger"))}">−</button>
-            <div class="inv-mitte"><b>${esc(z.menge === null ? "–" : String(ganz))}</b><small>${esc(t("inventur.ganz", gebindeName(z)))}</small></div>
+            <div class="inv-mitte"><b>${esc(z.menge === null ? "–" : String(ganz) + (teil ? " " + ({ 0.25: "¼", 0.5: "½", 0.75: "¾" })[teil] : ""))}</b><small>${esc(t("inventur.ganz", gebindeName(z)))}</small></div>
             <button type="button" class="plus" data-a="inv-k-d" data-d="1" aria-label="${esc(t("inventur.mehr"))}">+</button></div>
           <div class="inv-teilwahl" role="group" aria-label="${esc(t("inventur.angebrochen"))}">${[0, 0.25, 0.5, 0.75].map((x) => { const an = z.menge !== null && Math.abs(teil - x) < 0.01; return `<button type="button" class="${an ? "an" : ""}" aria-pressed="${an}" data-a="inv-k-t" data-t="${x}">${x === 0 ? esc(t("inventur.voll")) : "+ " + TEIL[x]}</button>`; }).join("")}</div>
           <div class="inv-teilhinweis">${esc(t("inventur.teilHinweis"))}</div>

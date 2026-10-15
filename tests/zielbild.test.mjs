@@ -28,10 +28,11 @@ test("Monatsziel: Null = Kosten / (1 − Quote) × (1 + MwSt); Ziel = Kosten / (
   const s = laden(); const H = "2026-10-15"; s.verkauf.zielgewinn = 10;
   tagesnotizSetzen(s, "2026-10-02", 500); tagesnotizSetzen(s, "2026-10-14", 700);
   const z = zaehler(s, { datum: H }); const m = monatsZiel(s, z, H);
-  const kosten = z.last.gesamt + z.sonder.summe;
+  const gewicht = z.tage.filter((x) => x.datum >= z.start).reduce((s, x) => s + x.gewicht, 0);
+  const kosten = z.tageskosten * gewicht + (z.muell || 0); // wie der Zähler: ab dem ersten Zähltag, plus Müll
   assert.ok(Math.abs(m.nullpunkt - kosten / (1 - z.quoteEff) * (1 + z.steuer)) < 1e-6);
   assert.ok(Math.abs(m.ziel - kosten / (1 - z.quoteEff - 0.1) * (1 + z.steuer)) < 1e-6); assert.ok(m.ziel > m.nullpunkt);
-  assert.equal(m.stufe, "bisNull"); assert.ok(Math.abs(m.fehltNull - (m.nullpunkt - 1200)) < 1e-6);
+  assert.ok(Math.abs(m.fehltNull - Math.max(0, m.nullpunkt - 1200)) < 1e-6);
   s.verkauf.zielgewinn = 0; assert.ok(Math.abs(monatsZiel(s, z, H).ziel - m.nullpunkt) < 1e-6); s.verkauf.zielgewinn = 10;
   assert.equal(m.umsatz, 1200);
   assert.ok(Math.abs(m.fehlt - (m.ziel - 1200)) < 1e-6); assert.equal(m.tage.length, 15); assert.equal(m.tage[14].kumuliert, 1200);

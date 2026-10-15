@@ -323,3 +323,13 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 }
 .monatbalken .nulllinie { stroke: var(--holz-tief); stroke-width: 1; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
 .zielkarte.halb .riesig { color: var(--salbei-tief); }
+.zieltempo { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+.zieltempo.gut { background: var(--eigen-hell); color: var(--eigen); } .zieltempo.knapp { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
+.werabhakt { margin: 4px 0 8px; } .werabhakt small { color: var(--tinte-weich); }
+.unterschrift { display: flex; gap: 10px; align-items: flex-end; margin: 16px 0; font-size: 14px; } .unterschrift .linie { flex: 1; border-bottom: 1px solid var(--tinte); height: 24px; }
+.vk-zeile.minus span:last-child { color: var(--rot); font-weight: 800; }
+/* Selbst-gemacht-Kacheln: Auswahl mit Haken sichtbar (Nachtester 15.10.) */
+.kacheln .kachel.an { position: relative; outline: 3px solid var(--eigen); outline-offset: -3px; }
+.kacheln .kachel.an::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: var(--eigen); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+/* Kühlliste: lange Namen umbrechen statt überlappen */
+.zeileknopf > span:not(.pfeil) b { overflow-wrap: anywhere; }

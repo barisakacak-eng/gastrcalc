@@ -229,7 +229,7 @@ export const speichernAbbrechen = () => speichern.abbrechen();
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length, 0);
+  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length, 0);
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
@@ -342,7 +342,11 @@ export function verschmelzen(lokal, fremd) {
   const offen = (lokal.rundgaenge || []).filter((r) => !r.abgeschlossen);
   basis.rundgaenge = [...abgeschlossen, ...offen];
   // Inventuren wie Rundgänge: abgeschlossene vereinigen, eine offene nur vom lokalen Stand
-  basis.inventuren = [...journalVereinigen((lokal.inventuren || []).filter((i) => i.abgeschlossen), (fremd.inventuren || []).filter((i) => i.abgeschlossen)), ...(lokal.inventuren || []).filter((i) => !i.abgeschlossen)];
+  const invFertig = journalVereinigen((lokal.inventuren || []).filter((i) => i.abgeschlossen), (fremd.inventuren || []).filter((i) => i.abgeschlossen));
+  const fertigIds = new Set(invFertig.map((i) => i.id)); // lokal offen, in der Datei schon fertig → nur die fertige behalten (Review 15.10.)
+  basis.inventuren = [...invFertig, ...(lokal.inventuren || []).filter((i) => !i.abgeschlossen && !fertigIds.has(i.id))];
+  // Putzplan-Protokoll ist Nachweis für die Kontrolle: Einträge beider Seiten behalten, Storno gewinnt (Review 15.10.)
+  basis.putzlog = journalVereinigen(lokal.putzlog, fremd.putzlog).sort(sortErfasst);
   basis.geaendert = [lokal.geaendert, fremd.geaendert].filter(Boolean).sort().pop() || new Date().toISOString();
   return basis;
 }

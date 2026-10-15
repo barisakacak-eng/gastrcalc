@@ -19,13 +19,15 @@ test("Ohne Antwort keine Zeile, alte Läden rechnen wie bisher", () => {
 
 test("Firma zählt als Geld, eigene Zeit nicht; Stufen offen → Schätzung → Beleg", () => {
   const b = laden(); const vorher = monatsLast(b).gesamt;
-  b.betrieb.reinigung = { wer: "beides", firmaBetrag: 280, minutenTag: 30, durch: "team", mittelSchaetzung: null };
+  b.betrieb.reinigung = { wer: "beides", firmaBetrag: 280, minutenTag: 30, durch: "team", mittelSchaetzung: null, basis: "netto" };
   let r = reinigungMonat(b, { datum: "2026-10-15" }); assert.equal(r.stufe, "offen"); assert.equal(r.betrag, 280);
   assert.equal(monatsLast(b).gesamt - vorher, 280);
   b.betrieb.reinigung.mittelSchaetzung = 40; r = reinigungMonat(b, { datum: "2026-10-15" }); assert.equal(r.stufe, "schaetzung"); assert.equal(r.betrag, 320);
   b.lieferungen.push({ id: "l1", datum: "2026-10-01", storniert: false, zeilen: [{ name: "Spülmittel 10 l", netto: 20 }, { name: "Tomaten", netto: 50 }] },
     { id: "l2", datum: "2026-09-20", storniert: false, zeilen: [{ name: "Müllbeutel 120 l", netto: 12 }] },
     { id: "l3", datum: "2026-10-05", storniert: true, zeilen: [{ name: "Spülmittel 10 l", netto: 99 }] });
+  r = reinigungMonat(b, { datum: "2026-10-15" }); assert.equal(r.stufe, "schaetzung"); assert.equal(r.mittel, 40); // kleiner Beleg drückt die Schätzung nicht
+  b.betrieb.reinigung.mittelSchaetzung = null;
   r = reinigungMonat(b, { datum: "2026-10-15" }); assert.equal(r.stufe, "beleg"); assert.equal(r.belege, 2); assert.equal(r.mittel, 16); assert.equal(r.betrag, 296);
   assert.equal(mittelAusBelegen(b, "2026-12-31"), null); // außerhalb von 60 Tagen
   r = reinigungMonat(b, { datum: "2026-10-15", inventurMittel: 11 }); assert.equal(r.stufe, "inventur"); assert.equal(r.betrag, 291);
@@ -38,4 +40,10 @@ test("Nur selbst: keine Firma, Putzzeit als Einsicht (Euro nur mit Teamdaten)", 
   b.betrieb.reinigung.durch = "team"; b.team = { ...b.team, personen: 2, stundenProPerson: 160, lohnkosten: 6400 };
   z = putzzeitMonat(b, "2026-10-15"); assert.ok(Math.abs(z.euro - z.stunden * 20) < 0.01);
   b.betrieb.reinigung.wer = "firma"; assert.equal(putzzeitMonat(b), null);
+});
+
+test("Brutto-Eingaben werden mit 19 % auf netto gerechnet; fehlender Firmenbetrag zählt als offen", () => {
+  const b = laden(); b.betrieb.reinigung = { wer: "firma", firmaBetrag: 119, mittelSchaetzung: 23.8 };
+  const r = reinigungMonat(b, { datum: "2026-10-15" }); assert.ok(Math.abs(r.firma - 100) < 1e-9); assert.ok(Math.abs(r.mittel - 20) < 1e-9);
+  const vorher = monatsLast(b).offen; b.betrieb.reinigung.firmaBetrag = null; assert.equal(monatsLast(b).offen, vorher + 1);
 });

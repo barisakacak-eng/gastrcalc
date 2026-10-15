@@ -353,6 +353,7 @@ const reinigungSchritt = {
         ${z ? `<div class="karte einsicht"><span class="einsichtsym">${sym("chef-hat")}</span><div><p>${esc(z.euro !== null ? t("reinigung.einsichtEuro", r.minutenTag, fmtEuro(Math.round(z.euro / 10) * 10)) : t("reinigung.einsichtStunden", r.minutenTag, fmtZahl(z.stunden, 0)))}</p>
           <small>${esc(t(r.durch === "team" ? "reinigung.nichtDoppelt" : "reinigung.inhaberZeit"))}</small></div></div>` : ""}` : ""}
       ${r.wer && r.wer !== "selbst" ? `<div class="feldzeile"><label>${esc(t("reinigung.firmaFrage"))}</label>${zahlfeld({ feld: "rein-firma", wert: r.firmaBetrag, einheit: t("reinigung.jeMonat"), klein: true })}</div>` : ""}
+      ${r.wer ? `<div class="chips basiswahl">${["brutto", "netto"].map((b) => `<button type="button" class="chip klein ${(r.basis || "brutto") === b ? "an" : ""}" data-a="rein-basis" data-wert="${b}">${esc(t("reinigung.basis." + b))}</button>`).join("")}</div>` : ""}
       ${r.wer ? `<div class="feldzeile"><label>${esc(t("reinigung.mittelFrage"))}</label><p class="hinweis">${esc(t("reinigung.mittelHinweis"))}</p>${zahlfeld({ feld: "rein-mittel", wert: r.mittelSchaetzung, einheit: t("reinigung.jeMonat"), klein: true, platzhalter: "–", status: typeof r.mittelSchaetzung === "number" ? "geschaetzt" : "" })}</div>` : ""}`;
   },
   fuss: () => knopfWeiter(),
@@ -365,6 +366,7 @@ const reinigungSchritt = {
     const r = (stand.betrieb.reinigung ??= { ...REINIGUNG_LEER });
     if (name === "rein-wer") { r.wer = el.dataset.wert; return true; }
     if (name === "rein-min") { r.minutenTag = Math.min(240, Math.max(15, (Number(r.minutenTag) || 45) + Number(el.dataset.d))); return true; }
+    if (name === "rein-basis") { r.basis = el.dataset.wert === "netto" ? "netto" : "brutto"; return true; }
     if (name === "rein-durch") { r.durch = el.dataset.wert === "inhaber" ? "inhaber" : "team"; return true; }
   },
 };
@@ -485,8 +487,8 @@ const fertigSchnell = {
       ${(() => { const e = einrichtungStand(stand); return `<div class="karte einrichtung"><div class="einrichtung-kopf">${ring(e.prozent)}<div><b>${esc(t("einrichtung.titel", e.prozent))}</b><small>${esc(t("einrichtung.rest", e.offen))}</small></div></div></div>`; })()}
       <p class="hinweis">${esc(t("schnell.fertigHinweis"))}</p>`; // Punkt 6: Ring statt „fehlt noch"-Kästen; r.ohneRezept steckt im Ring
   },
-  fuss: () => `<button type="button" class="knopf glut" data-a="ob-fertig" data-ziel="beleg">${esc(t("schnell.rechnungen"))}</button><button type="button" class="knopf zweit" data-a="ob-fertig" data-ziel="start">${esc(t("schnell.zumCockpit"))}</button>`,
-  aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(el.dataset.ziel === "beleg" ? "beleg" : "start"); return false; } },
+  fuss: (stand) => `${stand && !stand.gerichte.length ? `<button type="button" class="knopf glut" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("foto.karteKnopf"))}</button>` : ""}<button type="button" class="knopf ${stand && !stand.gerichte.length ? "zweit" : "glut"}" data-a="ob-fertig" data-ziel="beleg">${esc(t("schnell.rechnungen"))}</button><button type="button" class="knopf zweit" data-a="ob-fertig" data-ziel="start">${esc(t("schnell.zumCockpit"))}</button>`,
+  aktion(name, el, stand, ctx) { if (name === "ob-fertig") { delete stand.schnellErgebnis; ctx.fertig(["beleg", "kartefoto"].includes(el.dataset.ziel) ? el.dataset.ziel : "start"); return false; } },
 };
 
 export const SCHNELL = [sprache, ladenSchnell, selbstSchnell, karteSchnell, kostenSchnell, reinigungSchritt, fertigSchnell];

@@ -61,8 +61,8 @@ export function vergleichView(stand) {
       <div class="vk-text">
         <div class="vk-kopf"><b>${esc(x.z.name)}</b><span class="vk-preis">${x.z.preisBrutto !== null ? fmtEuro(x.z.preisBrutto, { dezimal: 2 }) : "–"}</span></div>
         <div class="vk-zeile"><span>${esc(t("vergleich.ware"))}</span><span>${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.z.waren, { dezimal: 2 })}</span></div>
-        <div class="vk-zeile"><span>${esc(t("vergleich.db"))}</span><span>${fmtEuro(x.db, { dezimal: 2 })}</span></div>
-        <div class="vk-zeile"><span>${esc(t("vergleich.marge"))}</span><span>${fmtZahl(x.marge * 100, 0)} %</span></div>
+        <div class="vk-zeile ${x.db < 0 ? "minus" : ""}"><span>${esc(t("vergleich.db"))}</span><span>${fmtEuro(x.db, { dezimal: 2 })}</span></div>
+        <div class="vk-zeile ${x.marge < 0 ? "minus" : ""}"><span>${esc(t("vergleich.marge"))}</span><span>${fmtZahl(x.marge * 100, 0)} %</span></div>
         <span class="vk-balken"><i class="${x.marge < 0.5 ? "knapp" : ""}" style="width:${Math.max(0, Math.min(100, Math.round(x.marge * 100)))}%"></i></span>
       </div></div>`;
   return `<div class="kopfband"><h1>${esc(t("vergleich.titel"))}</h1><div class="unter">${esc(t("vergleich.unter"))}</div></div>

@@ -65,7 +65,7 @@ export function monatsLast(stand) {
   const eigen = eigenerLohnJeMonat(stand.team);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
   const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
-  return { fix: fk, lohn, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) };
+  return { fix: fk, lohn, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
 }
 
 // Minutensatz auf Leistungsstunden (Prüfung "Minutensatz, nebenbei"): bezahlte Stunden sind nicht produktive Stunden.
@@ -566,7 +566,7 @@ export function grenzenVon(k) {
   const minEigen = typeof k.min === "number", maxEigen = typeof k.max === "number";
   // je Feld: eigener Wert schlägt den Standard; ein leeres Feld behält seinen Standard (Review Etappe 5, Punkt 7)
   let min = minEigen ? k.min : st.min, max = maxEigen ? k.max : st.max;
-  if (typeof min === "number" && typeof max === "number" && min > max) [min, max] = [max, min]; // vertauscht eingegeben (Prüfung 15.10.): als Bereich lesen
+  if (minEigen && maxEigen && min > max) [min, max] = [max, min]; // beide selbst vertauscht eingegeben (Prüfung 15.10.): als Bereich lesen; nie mit dem Standard mischen
   return { min, max, standard: !minEigen && !maxEigen };
 }
 export const stelleBereit = (k) => !k.archiviert && !!k.name;

@@ -11,6 +11,7 @@
 //  - Unvollständig (Kosten offen, kein Umsatz eingetragen) wird gesagt, nicht erfunden.
 import { sonderkostenImMonat } from "./kostenbeleg.js";
 import { heute, uid } from "./util.js";
+import { lieferungTeile } from "./betriebsmittel.js";
 import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus } from "./engine.js";
 
 export function monatsGrenzen(datum) {
@@ -52,7 +53,7 @@ function einkaufJeTag(stand, von, bis) {
   const out = {}; let n = 0;
   for (const l of stand.lieferungen || []) {
     if (l.storniert || typeof l.datum !== "string" || l.datum < von || l.datum > bis) continue;
-    const netto = typeof l.summeNetto === "number" ? l.summeNetto : (l.zeilen || []).reduce((s, z) => s + (Number(z.netto) || 0), 0);
+    const netto = lieferungTeile(l).ware; // Putzmittel & Co. sind kein Wareneinsatz (eigene Zeile „Reinigung & Betriebsmittel“)
     out[l.datum] = (out[l.datum] || 0) + netto; n += 1;
   }
   return { jeTag: out, anzahl: n };

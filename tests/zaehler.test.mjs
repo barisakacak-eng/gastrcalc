@@ -133,7 +133,7 @@ test("Lieferung: Dublette erkannt, Preissprung gemeldet, Retoure setzt keinen Pr
   const l = L.lieferungAnlegen(b, beleg, { zeilen: beleg.zeilen, geraet: "g1" });
   nah(l.summeNetto, 23.4); nah(l.pfand, 1.5); // Fußzeile stimmt → 24,90 abzüglich Pfand
   const ae = L.preiseUebernehmen(b, l); assert.ok(!ae.some((x) => x.name === "Dönerbrot / Fladen"), "Retoure darf keinen Preis setzen");
-  assert.ok(L.lieferungDoppelt(b, beleg, "2026-10-11")); assert.equal(L.lieferungDoppelt(b, beleg, "2026-10-10"), null);
+  assert.ok(L.lieferungDoppelt(b, beleg, "2026-10-11")); assert.ok(L.lieferungDoppelt(b, beleg, "2026-10-10")); assert.equal(L.lieferungDoppelt(b, beleg, "2026-09-20"), null); // gleiche Zeilen: ±7 Tage
   // Zukünftiges Belegdatum wird auf heute gekappt
   const l2 = L.lieferungAnlegen(b, { ...beleg, datum: "2099-01-01" }, { zeilen: beleg.zeilen }); assert.ok(l2.datum < "2099-01-01" && l2.datum <= heuteLokal()); // lokales Datum (nach Mitternacht ist UTC noch gestern)
   // Nicht alle Zeilen übernommen → Zeilensumme statt Fußzeile

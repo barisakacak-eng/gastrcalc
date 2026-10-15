@@ -39,10 +39,12 @@ export function lieferungAnlegen(stand, beleg, { zeilen, datum = null, geraet = 
 // Gibt es diesen Beleg schon? Gleicher Händler, gleiches Datum, gleiche Summe (±0,05) – dann fragt die App nach (Nachtest Etappe 5, Punkt 2).
 // Fingerabdruck eines Belegs: Zeilen (Name und Betrag) – derselbe Beleg zweimal eingelesen ergibt denselben Abdruck (Prüfung 15.10.)
 export const belegAbdruck = (beleg) => (beleg.zeilen || []).map((z) => `${(z.roh || z.name || "").replace(/\s+/g, " ").trim().toLowerCase()}|${z.gesamt ?? ""}`).sort().join("\n");
+// Gleiche Zeilen innerhalb von 7 Tagen: fast sicher derselbe Beleg (OCR fand beim ersten Mal evtl. kein Datum). Wöchentlich gleiche Bestellungen fragen nur nach.
+const nah7 = (a, b) => !a || !b || Math.abs(Date.parse(a) - Date.parse(b)) <= 7 * 86400e3;
 export function lieferungDoppelt(stand, beleg, datum) {
   const summe = typeof beleg.summeNetto === "number" ? beleg.summeNetto : beleg.zeilenSumme;
   const abdruck = belegAbdruck(beleg);
-  return (stand.lieferungen || []).find((l) => !l.storniert && (l.datum === datum && ((abdruck && l.abdruck === abdruck) || ((l.lieferant || "") === (beleg.lieferant || "") && l.summeNetto !== null && typeof summe === "number" && Math.abs((l.summeNetto + (l.pfand || 0)) - summe) < 0.05)))) || null;
+  return (stand.lieferungen || []).find((l) => !l.storniert && ((abdruck && l.abdruck === abdruck && nah7(l.datum, datum)) || (l.datum === datum && ((l.lieferant || "") === (beleg.lieferant || "") && l.summeNetto !== null && typeof summe === "number" && Math.abs((l.summeNetto + (l.pfand || 0)) - summe) < 0.05)))) || null;
 }
 
 // Preise der zugeordneten Artikel nachziehen. Das Gebinde des Belegs wird zur Packung des Artikels (netto), der alte Preis wandert in den Verlauf.

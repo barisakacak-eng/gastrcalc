@@ -30,7 +30,8 @@ export function aufgabenStand(stand, datum = heute()) {
     if (a.takt === "nach") return { ...a, status: "hinweis" };
     const l = letzteErledigung(stand, a.id); const takt = TAKT_TAGE[a.takt];
     const alter = l ? tageZwischen(l.datum, datum) : (plan.seit ? tageZwischen(plan.seit, datum) : 0);
-    const status = l && alter < takt ? "erledigt" : !l && alter < takt ? "faellig" : alter >= Math.max(takt + 1, Math.ceil(takt * 1.3)) ? "ueberfaellig" : "faellig";
+    // Neu im Plan (Nachtester 15.10.): Tagesaufgaben sind sofort fällig, alles andere erst, wenn sein Takt seit Planbeginn um ist.
+    const status = l && alter < takt ? "erledigt" : !l && takt > 1 && alter < takt ? "spaeter" : !l && alter < takt ? "faellig" : alter >= Math.max(takt + 1, Math.ceil(takt * 1.3)) ? "ueberfaellig" : "faellig";
     return { ...a, status, letzte: l, alter };
   });
 }
@@ -42,13 +43,15 @@ export function planGruppen(stand, datum = heute()) {
   const woche = alle.filter((a) => a.takt === "woche"); const monat = alle.filter((a) => a.takt === "monat");
   const spaeter = alle.filter((a) => ["quartal", "jahr", "zweijahre"].includes(a.takt));
   const hinweise = alle.filter((a) => a.status === "hinweis");
-  const zaehl = [...tag, ...woche, ...monat, ...spaeter]; const erledigt = zaehl.filter((a) => a.status === "erledigt").length;
-  return { tag, woche, monat, spaeter, hinweise, erledigt, gesamt: zaehl.length, ueberfaellig: zaehl.filter((a) => a.status === "ueberfaellig").length };
+  const zaehl = [...tag, ...woche, ...monat, ...spaeter];
+  const heuteErledigt = zaehl.filter((a) => a.status === "erledigt" && a.letzte?.datum === datum).length;
+  const offen = zaehl.filter((a) => a.status === "faellig" || a.status === "ueberfaellig").length;
+  return { tag, woche, monat, spaeter, hinweise, erledigt: heuteErledigt, offen, gesamt: offen + heuteErledigt, ueberfaellig: zaehl.filter((a) => a.status === "ueberfaellig").length };
 }
 
 export function abhaken(stand, id, { datum = heute(), von = null } = {}) {
   stand.putzlog ??= [];
-  const e = { id: uid(), aufgabe: id, datum, zeit: new Date().toTimeString().slice(0, 5), von, storniert: false };
+  const e = { id: uid(), aufgabe: id, datum, zeit: new Date().toTimeString().slice(0, 5), erfasst: new Date().toISOString(), von, storniert: false };
   stand.putzlog.push(e); return e;
 }
 export function zuruecknehmen(stand, id, datum = heute()) {

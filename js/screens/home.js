@@ -30,7 +30,7 @@ export function startView(stand, extra = {}) {
       ${extra.aktualisierung ? `<div class="karte hinweisgelb"><h2>${esc(t("start.neueFassung"))}</h2><div>${esc(t("start.neueFassungText"))}</div><button type="button" class="knopf" data-a="aktualisieren">${esc(t("start.jetztUebernehmen"))}</button></div>` : ""}
       ${stand.branchenMeldung ? `<div class="karte hinweisgruen"><div>${esc(t("cockpit.branchenMeldung", stand.branchenMeldung.geaendert))}</div><button type="button" class="knopf zweit" data-a="branchen-ok">${esc(t("einrichtung.ok"))}</button></div>` : ""}
       ${einrichtungKarte(stand, e, { kompakt: !!stand.einrichtungFertig })}
-      ${bandView(z, H)}
+      ${bandView(z, H, stand)}
       ${bisNullKarte(stand, z, H)}
       ${monatKarte(stand, z, H)}
       <div class="instrumente heute">${heuteKacheln(stand, z, ks, H)}</div>
@@ -46,7 +46,11 @@ export function startView(stand, extra = {}) {
 // Monatsziel (Baris 15.10., 13:35): „bis null plus Zielgewinn“. null = Umsatz, der alle Kosten deckt; ziel = zusätzlich der Zielgewinn
 // (Anteil vom Nettoumsatz, wie in der Kalkulation, Feld verkauf.zielgewinn). Beides brutto, wie der Umsatz eingetragen wird.
 export function monatsZiel(stand, z, H) {
-  const kosten = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
+  // Kosten wie im Zähler (Review 15.10.): nur ab dem ersten Zähltag (z.start) anteilig nach Öffnungstagen, plus eingetragener Müll,
+  // damit Karte, Band und Zähler dieselbe Rechnung zeigen.
+  const gewichtAbStart = (z.tage || []).filter((x) => !z.start || x.datum >= z.start).reduce((s, x) => s + (x.gewicht || 0), 0);
+  const kostenMonat = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
+  const kosten = (z.tageskosten && gewichtAbStart ? z.tageskosten * gewichtAbStart : kostenMonat) + (z.muell || 0);
   const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
   const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));
   const brutto = 1 + (z.steuer || 0);
@@ -55,7 +59,14 @@ export function monatsZiel(stand, z, H) {
   const tage = []; let summe = 0;
   for (const x of z.tage) { if (x.datum > H) break; const u = umsatzEintrag(stand, x.datum); summe += u ? u.umsatz : 0; tage.push({ datum: x.datum, umsatz: u ? u.umsatz : null, kumuliert: summe }); }
   const stufe = nullpunkt === null ? "ohne" : summe < nullpunkt ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
-  return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe,
+  // Tempo (Nachtester 15.10.: „fehlt 5.914 €“ klang schlecht, obwohl der Monat im Plan lief): Umsatz je Öffnungstag bisher,
+  // hochgerechnet auf die restlichen Öffnungstage → an welchem Tag wird die nächste Marke erreicht, oder wie viel je Tag fehlt.
+  let erreichtAm = null, proTagNoetig = null; const marke = stufe === "bisNull" ? nullpunkt : stufe === "bisZiel" ? ziel : null;
+  const gBis = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a, x) => a + (x.gewicht || 0), 0);
+  if (marke !== null && gBis > 0 && summe > 0) { const tempo = summe / gBis; let s2 = summe;
+    for (const x of z.tage) { if (x.datum <= H) continue; s2 += tempo * (x.gewicht || 0); if (s2 >= marke) { erreichtAm = x.datum; break; } }
+    if (!erreichtAm) { const rest = (z.tage || []).filter((x) => x.datum > H).reduce((a, x) => a + (x.gewicht || 0), 0); proTagNoetig = rest > 0 ? (marke - summe) / rest : null; } }
+  return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe, erreichtAm, proTagNoetig,
     fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : Math.max(0, nullpunkt - summe),
     darueber: ziel === null ? null : Math.max(0, summe - ziel), tage, geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 };
 }
@@ -67,7 +78,8 @@ function bisNullKarte(stand, z, H) {
   return `<button type="button" class="karte zielkarte ${erreicht ? "plus" : m.stufe === "bisZiel" ? "halb" : ""}" data-a="nav" data-wert="umsatz">
     <span class="zielkopf"><small class="lbl">${esc(t("cockpit.zielStufe." + (m.stufe === "ohne" ? "bisNull" : m.stufe), g))}</small><span class="zielsym">${sym("target")}</span></span>
     <span class="riesig">${m.ziel === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${fmtEuro(zahl, { dezimal: 0 })}`}</span>
-    <small>${esc(m.ziel === null ? t("cockpit.zielOhneKosten") : t("cockpit.zielSatzStufe." + m.stufe, g))}</small></button>`;
+    <small>${esc(m.ziel === null ? t("cockpit.zielOhneKosten") : t("cockpit.zielSatzStufe." + m.stufe, g))}</small>
+    ${m.erreichtAm ? `<span class="zieltempo gut">${esc(t("cockpit.tempoGut", datumLesbar(m.erreichtAm).slice(0, 6)))}</span>` : m.proTagNoetig ? `<span class="zieltempo knapp">${esc(t("cockpit.tempoKnapp", fmtEuro(m.proTagNoetig, { dezimal: 0 })))}</span>` : ""}</button>`;
 }
 function monatKarte(stand, z, H) {
   const m = monatsZiel(stand, z, H); if (!m.tage.length) return "";
@@ -80,7 +92,7 @@ function monatKarte(stand, z, H) {
     <span class="monatzahl"><b>${fmtEuro(m.umsatz, { dezimal: 0 })}</b>${m.ziel ? `<small>${esc(t("cockpit.vonZiel", fmtEuro(m.ziel, { dezimal: 0 })))}</small>` : ""}</span>
     <svg class="monatbalken" viewBox="0 -12 ${W} ${Hh + 26}" preserveAspectRatio="none" aria-hidden="true">${balken}
       ${zielY !== null ? `<line class="ziellinie" x1="0" x2="${W}" y1="${zielY}" y2="${zielY}"/><text x="${W}" y="${zielY - 4}" text-anchor="end">${esc(t("cockpit.zielKurz"))}</text>` : ""}
-      ${nullY !== null && nullY !== zielY ? `<line class="nulllinie" x1="0" x2="${W}" y1="${nullY}" y2="${nullY}"/><text x="0" y="${nullY - 4}">${esc(t("cockpit.nullKurz"))}</text>` : ""}
+      ${nullY !== null && nullY !== zielY ? `<line class="nulllinie" x1="0" x2="${W}" y1="${nullY}" y2="${nullY}"/>${Math.abs(nullY - zielY) > 12 ? `<text x="0" y="${nullY - 4}">${esc(t("cockpit.nullKurz"))}</text>` : ""}` : ""}
       <text x="0" y="${Hh + 13}">${esc(datumLesbar(z.tage[0].datum).slice(0, 6))}</text><text x="${W}" y="${Hh + 13}" text-anchor="end">${esc(t("zaehler.heute"))}</text></svg></button>`;
 }
 function heuteKacheln(stand, z, ks, H) {
@@ -164,12 +176,13 @@ function kuehlInstrument(ks) {
 }
 
 // Das Band oben: nur, wenn der Zustand kippt oder kippen wird.
-function bandView(z, H) {
+function bandView(z, H, stand) {
   if (z.keinUmsatz) return "";
   if (z.kippTag === H && z.imPlus) return `<div class="band gruen"><b>${esc(t("cockpit.nullErreicht"))}</b><small>${esc(t("cockpit.nullErreichtText"))}</small></div>`;
-  if (z.reichtNicht) return `<div class="band rot">${esc(t("cockpit.bandRot"))}</div>`;
+  if (z.reichtNicht && !(z.last?.offen > 0)) return `<div class="band rot">${esc(t("cockpit.bandRot"))}</div>`; // erst urteilen, wenn die Kosten feststehen (Nachtester 15.10.)
   const bisNull = z.nullTag ? z.tage.filter((x) => x.datum > H && x.datum <= z.nullTag).reduce((s, x) => s + x.gewicht, 0) : null;
-  if (!z.imPlus && bisNull !== null && bisNull <= 2) return `<div class="band gelb">${esc(t("cockpit.bandKnapp", fmtEuro(-z.stand)))}</div>`;
+  if (!z.imPlus && bisNull !== null && bisNull <= 2) { const m = stand ? monatsZiel(stand, z, H) : null; // gleiche Zahl wie die Zielkarte (Umsatz bis null)
+    return m && m.fehltNull ? `<div class="band gelb">${esc(t("cockpit.bandKnapp", fmtEuro(m.fehltNull)))}</div>` : ""; }
   return "";
 }
 
