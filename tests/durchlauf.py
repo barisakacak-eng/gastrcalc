@@ -48,7 +48,7 @@ async def main():
             async def stand(): return await pg.evaluate("window.__gastrocalc.stand")
 
             # ---- Onboarding
-            await bild("sprache"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.click('[data-a="weg-genau"]')
+            await bild("sprache"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.click('[data-a="s2-hilfe"]'); await pg.click('[data-a="weg-genau"]')  # Schnellweg 2: „Alles genau einrichten“ hinter dem „?“
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')

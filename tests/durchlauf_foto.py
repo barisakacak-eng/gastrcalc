@@ -1,5 +1,5 @@
 """Durchlauf Etappe 6a im Handy-Format (echter Browser, echte Texterkennung im Arbeitsfaden):
-Schnellstart → Speisekarte als Foto → Prüfliste → Inventurliste → vier Kostenfragen → fertig → Stromrechnung fotografieren →
+Schnellweg 2 (Sprache → Laden → Karte als Foto → Prüfliste → Kühlung → Geld → fertig) → Stromrechnung fotografieren →
 als Strom zuweisen → Zähler; Großhandelsbon → Ware; PDF-Speisekarte über „Karte". Bilder je Schritt.
 Start: python3 tests/durchlauf_foto.py"""
 import asyncio, subprocess, sys, time, pathlib, os
@@ -41,10 +41,8 @@ async def main():
             await pg.wait_for_selector('[data-a="laden-art"]'); await bild("laden")
             await pg.fill('[data-f="betrieb.name"]', "Döner Haus"); await klick('[data-a="laden-art"][data-wert="doener"]')
             await bild("laden-gewaehlt"); await klick('[data-a="weiter"]')
-            # 2b Was macht ihr selbst? (Punkt 2) – Dönerladen: Teig, Brot, Lahmacun, Soßen schon angetippt
-            await pg.wait_for_selector('[data-a="selbst"]'); an = await pg.locator('[data-a="selbst"].an').count()
-            assert an == 4, f"Vorauswahl Dönerladen: {an}"
-            await klick('[data-a="selbst"][data-wert="patty"]'); await klick('[data-a="selbst"][data-wert="patty"]'); await bild("selbst"); await klick('[data-a="weiter"]')
+            # 2b „Was macht ihr selbst?“ fragt der Schnellweg 2 nicht mehr: Vorauswahl nach Laden-Art still (Dönerladen: Teig, Brot, Lahmacun, Soßen)
+            s = await stand(); assert len(s["selbst"]) == 4, f"Vorauswahl Dönerladen: {s.get('selbst')}"
             # 3 Speisekarte fotografieren (Galerie-Eingang: setInputFiles; der Kamera-Eingang hat capture)
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="speisekarte"]', state="attached"); await bild("karte-foto")
             assert await pg.locator('input[data-f="foto"][capture]').count() == 1, "Kamera-Eingang fehlt"
@@ -64,19 +62,23 @@ async def main():
             g7 = next(g for g in s["gerichte"] if g["name"] == geaendert); assert g7["preis"] == 7.9, g7
             assert len(s["artikel"]) >= 10, len(s["artikel"])
             assert any(a["name"] == "Dönerspieß Kalb/Pute" for a in s["artikel"])
-            # 4 Kosten
-            await pg.wait_for_selector('[data-f="ks:miete"]'); await bild("kosten")
+            # 4 Kühlung: ein Kühlschrank, ein Tiefkühler
+            await pg.wait_for_selector('[data-a="s2-kuehl"]'); await klick('[data-a="s2-kuehl"][data-wert="kuehlschrank"][data-d="1"]'); await klick('[data-a="s2-kuehl"][data-wert="tiefkuehler"][data-d="1"]')
+            await bild("kuehlung"); await klick('[data-a="weiter"]')
+            # 5 Geld: Kosten und Reinigung auf einem Bildschirm (Punkt 5)
+            await pg.wait_for_selector('[data-f="ks:miete"]')
             for f, w in (("ks:miete", "1800"), ("ks:personal", "6000"), ("ks:eigen", "2500"), ("ks:energie", "450")):
                 await pg.fill(f'[data-f="{f}"]', w); await pg.locator(f'[data-f="{f}"]').blur(); await pg.wait_for_timeout(120)
-            await klick('[data-a="weiter"]')
-            # Reinigung (Punkt 5)
-            await pg.wait_for_selector('[data-a="rein-wer"]'); await klick('[data-a="rein-wer"][data-wert="selbst"]'); await bild("reinigung"); await klick('[data-a="weiter"]')
-            # 5 Fertig
+            await klick('[data-a="rein-wer"][data-wert="selbst"]'); await bild("geld"); await klick('[data-a="weiter"]')
+            # 6 Fertig: ein Hauptknopf („Los geht's“, weil Gerichte da sind)
             await pg.wait_for_selector('[data-a="ob-fertig"]'); await bild("fertig")
             s = await stand(); assert s["team"]["lohnkosten"] == 6000 and any(k["posten"] == "miete" and k["betrag"] == 1800 for k in s["kosten"])
+            assert s["betrieb"]["reinigung"]["wer"] == "selbst" and len([k for k in s["kuehlstellen"] if not k["archiviert"]]) == 2
+            assert await pg.locator('.fuss [data-a="ob-fertig"]').count() == 1, "genau ein Hauptknopf"
             dauer = time.time() - t0
-            await klick('[data-a="ob-fertig"][data-ziel="beleg"]')
+            await klick('.fuss [data-a="ob-fertig"][data-ziel="start"]')
             s = await stand(); assert s["phase"] == "app", s["phase"]
+            await klick('[data-a="menue-auf"]'); await klick('.menue [data-a="nav"][data-wert="beleg"]')
             # 6 Stromrechnung fotografieren → Strom, jeden Monat
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="rechnung"]', state="attached"); await bild("beleg-foto")
             await pg.locator('input[data-f="foto"][data-zweck="rechnung"]:not([capture])').set_input_files(str(BILD / "strom_foto.jpg"))

@@ -887,6 +887,21 @@ export default {
     fertigHinweis: "Next: photograph a few purchase invoices. Then the app knows your real prices.",
     rechnungen: "Photograph invoices", zumCockpit: "To the cockpit",
   },
+  // Quick setup 2 (15 Oct 2026)
+  schnell2: {
+    hilfe: "Quick help", sprache: "Language",
+    laden: "Your shop", namePlatzhalter: "Shop name",
+    ladenHilfe: "The shop type sets starting values for recipes, cooling and the cleaning plan. You can change everything later in the office.",
+    allesGenau: "Set up everything in detail",
+    karte: "Your menu", karteFoto: "Photograph menu", karteGalerie: "Photos or PDF", spaeter: "Later",
+    karteHilfe: "The app reads dishes and prices from the photo. What you make yourselves is set in the office under Recipes.",
+    kuehl: "Cooling", arten: { kuehlschrank: "Fridge", saladette: "Prep fridge", tiefkuehler: "Freezer", warmhalter: "Food warmer" },
+    kuehlHilfe: "You will enter the temperature for each unit later. Rename them in the office.",
+    geld: "Monthly costs", miete: "Rent", personal: "Staff", eigen: "Your pay", strom: "Electricity",
+    geldHilfe: "Roughly is fine, empty is fine too. Photograph bills later in the office.",
+    putzt: "Who cleans?", wer: { selbst: "We do", firma: "A company", beides: "Both" }, firma: "Cleaning company",
+    fertig: "Done!", eingerichtet: "set up", los: "Let's go", pin: "Set office PIN",
+  },
   // Stocktake (Punkt 3)
   inventur: {
     menue: "Stocktake", titel: "Stocktake", titelMonat: (m) => `Stocktake ${m}`,
