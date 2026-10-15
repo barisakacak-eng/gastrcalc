@@ -3,6 +3,7 @@
 import { KATALOG, VORLAGEN } from "./data/katalog.js";
 import { PROFILE, GRUNDBEDARF, ART_JE_KUECHE, ART_JE_FORMAT, KARTE_SCHWELLE } from "./data/register.js";
 import { BEREICH_JE_FAMILIE } from "./rezept_baukasten.js";
+import { normalisieren, suchRang } from "./data/suchnamen.js";
 
 const ALLE_BEREICHE = Object.keys(KATALOG);
 
@@ -73,10 +74,12 @@ export const PRODUKT_BEREICHE = (() => {
 
 // Zutatensuche: Treffer aus dem Profil zuerst; nur wenn dort nichts passt, Weitere mit Bereichsname.
 export function zutatenSuchen(stand, q, { ohne = [], max = 8 } = {}) {
-  q = String(q || "").trim().toLowerCase();
+  q = normalisieren(q);
   if (!q) return [];
   const p = profilFuer(stand); const profil = new Set([...p.kern, ...p.oft]);
-  const treffer = Object.keys(PRODUKT_BEREICHE).filter((n) => n.toLowerCase().includes(q) && !ohne.includes(n));
+  // Deutscher Name oder türkischer/englischer Suchname (js/data/suchnamen.js); Treffer im deutschen Namen zuerst
+  const treffer = Object.keys(PRODUKT_BEREICHE).filter((n) => suchRang(n, q) >= 0 && !ohne.includes(n))
+    .sort((a, b) => suchRang(a, q) - suchRang(b, q));
   const drin = treffer.filter((n) => PRODUKT_BEREICHE[n].some((b) => profil.has(b)));
   if (drin.length) return drin.slice(0, max).map((n) => ({ name: n, aus: null }));
   return treffer.slice(0, max).map((n) => ({ name: n, aus: PRODUKT_BEREICHE[n][0] }));
