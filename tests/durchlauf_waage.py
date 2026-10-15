@@ -1,6 +1,7 @@
 # Durchlauf Punkt 7: Pilot-ähnliche Karte → Rezepte → Döner abwiegen → Familie lernt mit (DE/TR/EN)
 import asyncio, json, os, subprocess, sys, pathlib, time
 APP = pathlib.Path(__file__).resolve().parent.parent
+PORT = int(os.environ.get("DURCHLAUF_PORT", "8765"))  # wie die anderen Durchläufe: eigener Port je Arbeitskopie
 from playwright.async_api import async_playwright
 sys.path.insert(0, str(APP / "tests")); import nav_hilfe  # Wege durch die drei Ebenen
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8765"))
