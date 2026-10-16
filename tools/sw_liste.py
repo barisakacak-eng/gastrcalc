@@ -21,5 +21,14 @@ n = int(m.group(2)) + 1 if m and m.group(1) == heute else 1
 txt = re.sub(r'const V = "[^"]*"', f'const V = "{heute}.{n}"', txt)
 txt = re.sub(r"const DATEIEN = \[[^\]]*\]", "const DATEIEN = [" + ", ".join(f'"{d}"' for d in dateien) + "]", txt, flags=re.S)
 txt = re.sub(r"const FOTOS_H = \{[^}]*\}", "const FOTOS_H = {" + ", ".join(f'"{k}": "{v}"' for k, v in sorted(fotos.items())) + "}", txt, flags=re.S)
+# Inhalts-Fingerabdruck: ändert sich eine gelistete Datei ohne neuen Lauf dieses Skripts, schlägt tests/fassung.test.mjs fehl
+h = hashlib.sha1()
+for d in dateien:
+    if d == "./": continue
+    h.update(d.encode()); h.update((APP / d).read_bytes())
+for k in sorted(fotos): h.update(k.encode()); h.update(fotos[k].encode())
+inhalt = h.hexdigest()[:12]
+if re.search(r'const INHALT = "[^"]*"', txt): txt = re.sub(r'const INHALT = "[^"]*"', f'const INHALT = "{inhalt}"', txt)
+else: txt = txt.replace('const DATEIEN = [', f'const INHALT = "{inhalt}"; // Fingerabdruck der gelisteten Dateien (tools/sw_liste.py), geprüft in tests/fassung.test.mjs\nconst DATEIEN = [', 1)
 sw.write_text(txt)
 print("sw.js:", f"{heute}.{n}", len(dateien), "Dateien,", len(fotos), "Fotos")

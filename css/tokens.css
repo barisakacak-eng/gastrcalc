@@ -43,6 +43,7 @@
   --kurve-prognose: #F6D686;
   --kurve-null: #FFFDF8;
   --kupfer-dunkel: #8A4C20;
+  --kupfer-hell: #F6E6D6;   /* helle Kupferfläche (Büro-Chips, Schloss) – 16.10.2026: war nur als Fallback vorhanden */
   --fokus: #365D75;
 
   /* Form & Bewegung */
