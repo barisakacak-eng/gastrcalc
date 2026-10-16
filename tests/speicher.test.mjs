@@ -210,19 +210,36 @@ test("Sicherungsdatei: gleiches Format, Prüfsumme über die zweite Zeile, Einle
 });
 
 test("Leerlauf-Prüfung findet tiefe Änderungen an alten Einträgen und speichert sie nach", async () => {
+  // Paket 2 (16.10.2026): der Leerlauf wird jetzt auch ohne requestIdleCallback geplant (Rückfall setTimeout), darum steht der
+  // Idle-Callback hier vor dem ersten Speichern und die Uhr springt vor der zweiten Prüfung über den Mindestabstand (60 s).
   const a = idbAttrappe(); await st.laden();
-  const w = structuredClone(jahr()); await st.sofortSpeichern(w);
-  const b = w.betriebe[0]; const l = b.lieferungen[5];
   globalThis.requestIdleCallback = (fn) => setTimeout(() => fn({ timeRemaining: () => 50, didTimeout: false }), 0);
+  const echt = Date.now;
   try {
+    const w = structuredClone(jahr()); await st.sofortSpeichern(w);
+    await new Promise((r) => setTimeout(r, 50)); // erste Leerlauf-Prüfung (nichts anders) durchlaufen lassen
+    const b = w.betriebe[0]; const l = b.lieferungen[5];
+    Date.now = () => echt() + 61e3;
     l.zeilen[1].einzelpreis = 0.01; // tief, kein beobachtetes Feld
     b.betrieb.name = "Anstoß"; // sorgt für ein Speichern, nach dem der Leerlauf geplant wird
     const ab = schreibAb(a);
     await st.sofortSpeichern(w);
     await new Promise((r) => setTimeout(r, 1400)); // Leerlauf-Stücke + verzögertes Speichern (900 ms)
     assert.ok(teilPuts(ab()).includes(`${b.id}|lieferungen|${l.datum.slice(0, 7)}`));
-  } finally { delete globalThis.requestIdleCallback; }
-  assert.equal((await st.laden()).betriebe[0].lieferungen[5].zeilen[1].einzelpreis, 0.01);
+    assert.equal((await st.laden()).betriebe[0].lieferungen[5].zeilen[1].einzelpreis, 0.01);
+  } finally { delete globalThis.requestIdleCallback; Date.now = echt; }
+});
+
+test("Paket 2: ohne requestIdleCallback (Safari) läuft die Leerlauf-Prüfung über den setTimeout-Rückfall", async () => {
+  const a = idbAttrappe(); await st.laden();
+  assert.equal(typeof globalThis.requestIdleCallback, "undefined");
+  const w = structuredClone(jahr()); await st.sofortSpeichern(w); // plant den Rückfall (erstes Stück nach 1 s)
+  const b = w.betriebe[0]; const l = b.lieferungen[7];
+  l.zeilen[0].menge = 4321; // tief, kein beobachtetes Feld
+  const ab = schreibAb(a);
+  await new Promise((r) => setTimeout(r, 4500)); // Rückfall-Stücke (8 ms Budget, alle 200 ms) + verzögertes Speichern
+  assert.ok(teilPuts(ab()).includes(`${b.id}|lieferungen|${l.datum.slice(0, 7)}`), "Rückfall hat die tiefe Änderung gefunden und nachgeschrieben");
+  assert.equal((await st.laden()).betriebe[0].lieferungen[7].zeilen[0].menge, 4321);
 });
 
 test("allesLoeschen leert Kopf, Teile und Ereignisse", async () => {

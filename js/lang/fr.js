@@ -923,6 +923,7 @@ export default {
     offlineLaedt: "L’appli est en train d’être enregistrée pour marcher hors ligne…",
     installieren: "Sur le téléphone : « Sur l’écran d’accueil » (menu Partager). D’abord installer, ensuite remplir – sur iPhone, l’appli installée a sa propre mémoire.",
     andereFassung: "L’appli a été mise à jour dans une autre fenêtre. Recharge cette fenêtre, s’il te plaît.",
+    fremderStand: "Une autre fenêtre a enregistré – affichage actualisé.",
     speichernFehlgeschlagen: "Échec de l’enregistrement ! Crée tout de suite un fichier de sauvegarde et vérifie l’appareil (espace de stockage, navigation privée).",
     standNeuer: "Les données enregistrées viennent d’une version plus récente de l’appli. Recharge la page pour avoir la version actuelle. Rien n’est modifié.",
   },

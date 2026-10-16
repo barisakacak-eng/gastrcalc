@@ -930,6 +930,7 @@ export default {
     offlineLaedt: "Aplicația se salvează acum pentru folosire fără internet …",
     installieren: "Pe telefon: „Adaugă pe ecranul principal” (meniul Partajează). Întâi instalezi, apoi treci date – aplicația instalată are pe iPhone memorie separată.",
     andereFassung: "Aplicația a fost actualizată în altă fereastră. Reîncarcă fereastra asta.",
+    fremderStand: "O altă fereastră a salvat – afișarea a fost actualizată.",
     speichernFehlgeschlagen: "Salvarea a eșuat! Fă acum un fișier de copie și verifică aparatul (spațiu de stocare, mod privat).",
     standNeuer: "Starea salvată vine dintr-o versiune mai nouă a aplicației. Reîncarcă pagina ca să vină versiunea actuală. Nu se schimbă nimic.",
   },

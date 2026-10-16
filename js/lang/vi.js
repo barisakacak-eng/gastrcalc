@@ -923,6 +923,7 @@ export default {
     offlineLaedt: "App đang được lưu để dùng khi không có mạng …",
     installieren: "Trên điện thoại: “Thêm vào MH chính” (menu Chia sẻ). Cài trước rồi mới ghi – trên iPhone, app đã cài có bộ nhớ riêng.",
     andereFassung: "App đã được cập nhật ở một cửa sổ khác. Hãy tải lại cửa sổ này.",
+    fremderStand: "Một cửa sổ khác đã lưu – đã cập nhật hiển thị.",
     speichernFehlgeschlagen: "Lưu không thành công! Hãy tạo file sao lưu ngay và kiểm tra thiết bị (bộ nhớ trống, chế độ riêng tư).",
     standNeuer: "Dữ liệu đã lưu đến từ phiên bản app mới hơn. Hãy tải lại trang để có phiên bản hiện tại. Không có gì bị thay đổi.",
   },

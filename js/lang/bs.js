@@ -931,6 +931,7 @@ export default {
     offlineLaedt: "Aplikacija se upravo čuva za rad bez interneta …",
     installieren: "Na telefonu: „Dodaj na početni ekran“ (meni Dijeli). Prvo instaliraj, pa onda upisuj – instalirana aplikacija na iPhoneu ima svoju memoriju.",
     andereFassung: "Aplikacija je ažurirana u drugom prozoru. Molim te ponovo učitaj ovaj prozor.",
+    fremderStand: "Drugi prozor je sačuvao – prikaz osvježen.",
     speichernFehlgeschlagen: "Čuvanje nije uspjelo! Odmah napravi fajl sigurnosne kopije i provjeri uređaj (memorija, privatni način rada).",
     standNeuer: "Sačuvano stanje je iz novije verzije aplikacije. Ponovo učitaj stranicu da dobiješ aktuelnu verziju. Ništa se ne mijenja.",
   },

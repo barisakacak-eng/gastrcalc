@@ -114,12 +114,27 @@ let ladeBericht = { gesperrt: false, grund: null, fehlt: [] };
 export const ladeProbleme = () => ladeBericht;
 
 export async function laden() {
-  ladeBericht = { gesperrt: false, grund: null, fehlt: [] }; bereichH = new Map();
+  ladeBericht = { gesperrt: false, grund: null, fehlt: [] };
   try {
     if (typeof indexedDB === "undefined") throw Object.assign(new Error("ohne IndexedDB"), { ohne: true });
     db = await openDb();
-    grundlageVerwerfen(); altModus = false;
+    return await standLesen();
+  } catch (e) {
+    if (e.grund === "neuer") throw e;
+    console.warn("Speicher nicht verfügbar, Daten nur in dieser Sitzung:", e);
+    verfuegbar = false;
+    if (!e.ohne) ladeBericht.gesperrt = true; // Datenbank da, aber nicht zu öffnen: nicht zur Neu-Einrichtung einladen
+    ladeBericht.grund = String(e?.message || e);
+    return leereWurzel();
+  }
+}
+// Stand aus der offenen Datenbank lesen (Paket 2, 16.10.2026: aus laden() herausgelöst, damit ein fremder Stand ohne neues Öffnen nachgeladen wird)
+async function standLesen() {
+  {
+    ladeBericht = { gesperrt: false, grund: null, fehlt: [] }; bereichH = new Map();
+    grundlageVerwerfen(); altModus = false; leerlaufAbbrechen(); speichern.abbrechen(); // Paket 2: alte Planungen gehören zum alten Stand
     const [kopf, alt] = await tx("stand", "readonly", (st) => [st.get("kopf"), st.get("main")]);
+    genGelesen = istObjekt(kopf) ? Number(kopf.gen) || 0 : 0; // Paket 2: alte Köpfe ohne gen = 0
     await ereignisseDeckeln().catch(() => {});
     if (kopf && Number(kopf.schema) > SCHEMA) throw fehlerNeuer();
     const teile = kopf || !alt ? await tx("teile", "readonly", (st) => st.getAll()) : [];
@@ -140,13 +155,6 @@ export async function laden() {
       return w;
     }
     if (teile.length) { const fehlt = []; const roh = ausTeilenRetten(teile, fehlt); if (roh) { const w = migrierenWurzel(roh); ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); return w; } }
-    return leereWurzel();
-  } catch (e) {
-    if (e.grund === "neuer") throw e;
-    console.warn("Speicher nicht verfügbar, Daten nur in dieser Sitzung:", e);
-    verfuegbar = false;
-    if (!e.ohne) ladeBericht.gesperrt = true; // Datenbank da, aber nicht zu öffnen: nicht zur Neu-Einrichtung einladen
-    ladeBericht.grund = String(e?.message || e);
     return leereWurzel();
   }
 }
@@ -335,10 +343,11 @@ function stempeln(wurzel) {
 //
 // Wie Änderungen erkannt werden, ohne alles zu lesen (keine andere Datei muss etwas melden):
 //  1. je Journal und Stelle: ist es noch dasselbe Objekt? Neu, entfernt, umsortiert → betroffene Monate neu schreiben.
-//  2. alte Einträge: die Felder storniert und erfasst (Storno setzt storniert, Neu-Erfassen setzt erfasst).
+//  2. alte Einträge: die Felder storniert, erfasst, wertGesetzt und ersetzt (Storno setzt storniert, Neu-Erfassen setzt erfasst,
+//     Wert nachtragen setzt wertGesetzt, Festschreiben einer Tagesnotiz setzt ersetzt am Vorgänger – Paket 2, 16.10.2026).
 //  3. in dieser Sitzung angelegte Einträge (die man noch bearbeiten darf) und offene Rundgänge/Inventuren: ganz verglichen.
 //  4. im Leerlauf und beim Verlassen der App wird jedes Teil ganz verglichen – das fängt auch tiefe Änderungen an alten Einträgen.
-// Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über storniert/erfasst geändert
+// Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über die Felder aus 2. geändert
 // (oder durch ein neues Objekt ersetzt) – dann ist die Änderung sofort gespeichert, sonst erst bei 4.
 export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads"]; // W2-D: belehrungen als Journal (Schema 6)
 const JOURNAL_SET = new Set(JOURNALE);
@@ -348,8 +357,11 @@ const STAMM_SET = new Set(["artikel", "gerichte"]);
 const STAMM = "alle";
 const FORMAT_GETEILT = 2;
 const PLATZHALTER = 0;          // hält im Kopf die Stelle des Felds frei, damit die Reihenfolge der Felder gleich bleibt
-const NF = 2;                   // beobachtete Felder je alten Eintrag: storniert und erfasst – alle späteren Änderungen an
-                                // gespeicherten Einträgen setzen eines davon (Storno, neu erfasst). Feste Namen sind auf dem Handy am schnellsten.
+const NF = 5;                   // beobachtete Felder je alten Eintrag: storniert, erfasst, wertGesetzt, ersetzt, entwurf – alle späteren Änderungen an
+                                // gespeicherten Einträgen setzen eines davon (Storno, neu erfasst, Wert nachgetragen, Tagesnotiz festgeschrieben).
+                                // Feste Namen sind auf dem Handy am schnellsten. Paket 2 (16.10.2026): vorher nur storniert/erfasst – ein nachgetragener
+                                // Schwund-Wert (schwundWertSetzen) und das Festschreiben einer Tagesnotiz wurden erst im Leerlauf gefunden; Safari ohne
+                                // requestIdleCallback nie, und bei App-Abbruch war der Wert weg.
 const FRISCH_MAX = 600;         // so viele frische/offene Einträge werden ganz verglichen
 const FRISCH_SCHUB = 50;        // kommen mehr neue Einträge auf einmal (Einlesen einer Sicherung), gelten sie gleich als alt
 const LEERLAUF_ABSTAND = 60e3;  // höchstens einmal je Minute im Leerlauf ganz prüfen
@@ -365,14 +377,21 @@ let bekanntGueltig = false;     // false → nächstes Speichern schreibt alles 
 let kopfAlt = null, ordnungAlt = null, stempelAlt = null;
 let altModus = false;           // Rückfall, wenn der Umzug nicht bestätigt wurde: ein Gesamt-Datensatz wie bis 15.10.
 let letzteWurzel = null, leerlaufZuletzt = 0, leerlaufGeplant = false, tiefZuletzt = 0;
+// Paket 2 (16.10.2026): Generationszähler gegen zwei Fenster derselben Fassung. Der Kopf trägt `gen`; jedes Schreiben zählt hoch
+// und prüft in derselben Transaktion, ob die Datenbank noch die zuletzt gelesene Generation hat. Wenn nicht, hat ein anderes
+// Fenster geschrieben: nichts überschreiben, Stand neu laden und der App „gc-fremder-stand“ melden. Alte Köpfe ohne gen zählen als 0.
+let genGelesen = 0;
+const verworfen = new WeakSet(); // Arbeitskopien, die nach einem fremden Stand nicht mehr geschrieben werden dürfen (verzögertes Speichern läuft noch)
+export const FREMDER_STAND = "gc-fremder-stand";
+export const _generation = () => genGelesen; // nur für Tests
 function grundlageVerwerfen() { journale = new Map(); teileH = new Map(); stammText = new Map(); frischZahl = 0; zwang = new Set(); loeschenOffen = new Set(); bekanntGueltig = false; kopfAlt = null; ordnungAlt = null; stempelAlt = null; }
 
 function monatVon(e) {
   const d = e && typeof e === "object" ? (typeof e.datum === "string" ? e.datum : typeof e.erfasst === "string" ? e.erfasst : "") : "";
   return d.length >= 7 && d.charCodeAt(4) === 45 ? d.slice(0, 7) : "ohne";
 }
-function flaggen(F, i, x) { const o = i * NF; F[o] = x.storniert; F[o + 1] = x.erfasst; }
-const flaggenGleich = (F, i, x) => { const o = i * NF; return x.storniert === F[o] && x.erfasst === F[o + 1]; };
+function flaggen(F, i, x) { const o = i * NF; F[o] = x.storniert; F[o + 1] = x.erfasst; F[o + 2] = x.wertGesetzt; F[o + 3] = x.ersetzt; F[o + 4] = x.entwurf; }
+const flaggenGleich = (F, i, x) => { const o = i * NF; return x.storniert === F[o] && x.erfasst === F[o + 1] && x.wertGesetzt === F[o + 2] && x.ersetzt === F[o + 3] && x.entwurf === F[o + 4]; };
 const offen = (j, e) => (j === "rundgaenge" || j === "inventuren") && !!e && typeof e === "object" && !e.abgeschlossen;
 function laeufe(M) {
   const lauf = []; let letzt = null, n = 0;
@@ -515,8 +534,9 @@ function schreiben(wurzel, opt) {
   return p;
 }
 
-function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt() } = {}) {
+function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt(), zweiter = false } = {}) { // zweiter: Wiederholung nach fremdem Stand (Paket 2)
   if (!verfuegbar || !db) return Promise.resolve(false);
+  if (verworfen.has(wurzel)) return Promise.resolve(false); // Paket 2: diese Arbeitskopie ist überholt (fremder Stand geladen)
   letzteWurzel = wurzel;
   if (altModus) {
     if (stempel) stempeln(wurzel);
@@ -569,15 +589,64 @@ function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt() } = {}
   const kopf = { format: FORMAT_GETEILT, schema: Number(wurzel.schema) || SCHEMA, gespeichert: new Date().toISOString(), wurzel: kopfText, stempel: stempelText, ids, ordnung, teile, bereiche };
   // Die neue Grundlage gilt sofort (das nächste Speichern wartet ohnehin auf diese Transaktion); schlägt sie fehl, wird sie verworfen
   bekanntGueltig = true; kopfAlt = kopfText; ordnungAlt = ordnungText; stempelAlt = stempelText;
+  let fremd = null; // Paket 2: Generation in der Datenbank, falls sie nicht mehr die gelesene ist
   return txMehr(["stand", "teile"], "readwrite", (t) => {
-    const tl = t.objectStore("teile");
-    if (voll) tl.clear();
-    for (const x of out.schreiben) tl.put(x.wert, x.key);
-    for (const k of out.loeschen) tl.delete(k);
-    t.objectStore("stand").put(kopf, "kopf");
-  }).then(() => { leerlaufPlanen(); return true; }, (e) => { grundlageVerwerfen(); return speicherFehler(e); });
+    const stand = t.objectStore("stand"), tl = t.objectStore("teile");
+    // Paket 2 (16.10.2026): erst lesen, dann in DERSELBEN Transaktion schreiben – IndexedDB hält andere Schreiber solange zurück.
+    // Hat ein anderes Fenster inzwischen geschrieben (gen ≠ gelesen), bleibt die Transaktion ohne Schreiben; der Stand wird danach neu geladen.
+    const r = stand.get("kopf");
+    r.onsuccess = () => {
+      const genDa = istObjekt(r.result) ? Number(r.result.gen) || 0 : 0;
+      if (genDa !== genGelesen) { fremd = genDa; return; }
+      kopf.gen = genGelesen + 1;
+      if (voll) tl.clear();
+      for (const x of out.schreiben) tl.put(x.wert, x.key);
+      for (const k of out.loeschen) tl.delete(k);
+      stand.put(kopf, "kopf");
+    };
+  }).then(() => { if (fremd !== null) return fremderStand(wurzel, fremd, { stempel, zweiter }); genGelesen += 1; leerlaufPlanen(); return true; }, (e) => { grundlageVerwerfen(); return speicherFehler(e); });
 }
 function speicherFehler(e) { console.warn("Speichern fehlgeschlagen:", e); if (fehlerMelder) fehlerMelder("speichern", e); return false; }
+
+// Paket 2 (16.10.2026, Nachtrag Lead): ein anderes Fenster hat geschrieben. Die eigene Arbeitskopie wird nicht weggeworfen, sondern
+// in den frischen Stand aus der Datenbank gemischt (zusammenfuehren – derselbe Weg wie beim Einlesen einer Sicherung: Journale nach
+// Kennung vereinigt, Bereiche nach Zeitstempel, HACCP-Einträge nie überschrieben) und das Ergebnis einmal erneut geschrieben.
+// Meldet das zweite Schreiben wieder eine fremde Generation, wird aufgegeben: frischer Stand geladen, eigene Kopie verworfen.
+// In beiden Fällen bekommt die App das Ereignis „gc-fremder-stand“ (detail.wurzel = der Stand, mit dem sie weiterarbeiten muss,
+// detail.zusammengefuehrt = true, wenn die eigenen Änderungen drin sind). Die alte Arbeitskopie wird nie mehr geschrieben
+// (auch nicht vom noch anstehenden verzögerten Speichern). Rückgabe true = eigene Änderungen liegen in der Datenbank.
+const inhaltOffen = (j, e) => j === "rundgaenge" ? (Array.isArray(e.messungen) ? e.messungen.length : 0) : Object.values(istObjekt(e.posten) ? e.posten : {}).filter((m) => m !== null).length;
+function offeneBehalten(b, eigen) {
+  for (const j of ["rundgaenge", "inventuren"]) {
+    const liste = Array.isArray(b[j]) ? b[j] : (b[j] = []);
+    for (const e of (Array.isArray(eigen[j]) ? eigen[j] : []).filter((x) => offen(j, x))) {
+      const i = liste.findIndex((x) => x && x.id === e.id);
+      if (i < 0) liste.push(e); else if (offen(j, liste[i]) && inhaltOffen(j, e) > inhaltOffen(j, liste[i])) liste[i] = e;
+    }
+  }
+}
+async function fremderStand(wurzel, genDa, { stempel = true, zweiter = false } = {}) {
+  verworfen.add(wurzel); grundlageVerwerfen();
+  let neu = null;
+  try { neu = await standLesen(); } catch (e) { console.warn("Fremder Stand, Neuladen fehlgeschlagen:", e); }
+  let zusammengefuehrt = false, ok = false;
+  if (neu && !zweiter) {
+    try {
+      zusammenfuehren(neu, wurzel); if (neu.betriebe.some((b) => b.id === wurzel.aktiv)) neu.aktiv = wurzel.aktiv; // der hier gewählte Laden bleibt gewählt
+      // verschmelzen behält offene Rundgänge/Inventuren nur von der „lokalen“ Seite (hier: Datenbank). Ein in DIESEM Fenster laufender
+      // Rundgang darf nicht verschwinden: offene Einträge beider Seiten behalten; dieselbe Kennung auf beiden Seiten → die mit mehr Inhalt.
+      for (const b of neu.betriebe) { const eigen = wurzel.betriebe.find((x) => x.id === b.id); if (eigen) offeneBehalten(b, eigen); }
+      zusammengefuehrt = true;
+    } catch (e) { console.warn("Fremder Stand, Zusammenführen fehlgeschlagen:", e); }
+    if (zusammengefuehrt) {
+      ok = await schreibenJetzt(neu, { stempel, zweiter: true }); // zweiter Konflikt → gibt auf und meldet selbst (zusammengefuehrt: false)
+      if (!ok) return false;
+    }
+  }
+  ereignis("speicher-fremder-stand", { gen: genDa, geladen: !!neu, zusammengefuehrt: ok });
+  if (typeof window !== "undefined" && typeof CustomEvent === "function") window.dispatchEvent(new CustomEvent(FREMDER_STAND, { detail: { wurzel: neu, zusammengefuehrt: ok } }));
+  return ok;
+}
 
 // Kopf + Teile → Wurzel in genau der Form, wie sie gespeichert wurde.
 // W2-D: Ein fehlendes oder kaputtes Teil bricht nicht mehr alles ab – nur dieses Teil fehlt, alle anderen Monate laden.
@@ -667,11 +736,24 @@ function grundlageSetzen(w, teile, fehlt = []) {
 
 // Leerlauf-Prüfung: jedes Teil ganz vergleichen (fängt Änderungen tief in alten Einträgen, die die Felder aus 2. nicht sehen).
 // Läuft in kleinen Stücken, wenn das Handy nichts zu tun hat; findet sie etwas, wird normal (verzögert) gespeichert.
+// Paket 2 (16.10.2026): Safari/iOS kennt requestIdleCallback nicht – Rückfall auf setTimeout mit festem Zeitbudget je Stück (8 ms),
+// damit die Prüfung dort nicht ganz ausfällt. Die Felder aus 2. fangen die bekannten Änderungen sofort; das hier ist das Sicherheitsnetz.
+const ricRueckfall = (fn, { timeout = 0 } = {}) => { // erstes Stück nach 1 s (Start nicht stören), weitere alle 200 ms
+  const z = setTimeout(() => { const start = Date.now(); fn({ didTimeout: false, timeRemaining: () => Math.max(0, 8 - (Date.now() - start)) }); }, timeout >= 10000 ? 1000 : 200);
+  if (z && typeof z.unref === "function") z.unref(); // Node-Tests: hält den Prozess nicht offen
+  return z;
+};
+let leerlaufHandle = null, leerlaufEcht = false; // laufende Planung (zum Abbrechen beim Neuladen des Stands)
+function leerlaufAbbrechen() {
+  if (leerlaufHandle !== null) { try { if (leerlaufEcht && typeof globalThis.cancelIdleCallback === "function") globalThis.cancelIdleCallback(leerlaufHandle); else clearTimeout(leerlaufHandle); } catch (_) { /* egal */ } }
+  leerlaufHandle = null; leerlaufGeplant = false; leerlaufZuletzt = 0;
+}
 function leerlaufPlanen() {
-  const ric = globalThis.requestIdleCallback;
-  if (typeof ric !== "function" || leerlaufGeplant || Date.now() - leerlaufZuletzt < LEERLAUF_ABSTAND) return;
+  leerlaufEcht = typeof globalThis.requestIdleCallback === "function";
+  const ric = (fn, opt) => { leerlaufHandle = (leerlaufEcht ? globalThis.requestIdleCallback : ricRueckfall)(fn, opt); };
+  if (leerlaufGeplant || Date.now() - leerlaufZuletzt < LEERLAUF_ABSTAND) return;
   leerlaufGeplant = true;
-  ric(() => {
+  ric((frist) => {
     const w = letzteWurzel;
     const aufgaben = [];
     for (const [jk, st] of journale) for (const [m] of st.lauf) aufgaben.push([jk, st, m]);
@@ -684,10 +766,10 @@ function leerlaufPlanen() {
         if (hash(teilText(st.j, liste, st.b)) !== teileH.get(key)) { zwang.add(key); gefunden = true; }
       }
       if (i < aufgaben.length) { ric(stueck, { timeout: 5000 }); return; }
-      leerlaufGeplant = false; leerlaufZuletzt = Date.now();
+      leerlaufGeplant = false; leerlaufZuletzt = Date.now(); leerlaufHandle = null;
       if (gefunden && w && letzteWurzel === w && bekanntGueltig) speichern(w);
     };
-    stueck({ timeRemaining: () => 10 });
+    stueck(frist && typeof frist.timeRemaining === "function" ? frist : { timeRemaining: () => 10 }); // Rückfall: Budget des Stücks einhalten
   }, { timeout: 10000 });
 }
 
@@ -991,6 +1073,6 @@ export async function allesLoeschen() {
   if (!verfuegbar || !db) return false;
   try { await txMehr(["stand", "teile", "ereignisse"], "readwrite", (t) => { for (const n of ["stand", "teile", "ereignisse"]) t.objectStore(n).clear(); }); }
   catch (e) { console.warn("Löschen fehlgeschlagen:", e); return false; }
-  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map();
+  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map(); genGelesen = 0; // Paket 2: Kopf ist weg, Zähler beginnt neu
   return true;
 }

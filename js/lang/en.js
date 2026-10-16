@@ -902,7 +902,7 @@ export default {
     betrieb: "Place",
     onboardingNeu: "Go through setup again",
     sicherung: "Backup",
-    sicherungText: "All data lives only on this device. With the backup file you can pass it on or move it to a new phone.",
+    sicherungText: "All data lives only on this device. With the backup file you can pass it on or move it to a new phone. The file is not encrypted and contains your figures, wages and receipt photos. Only send it to places you trust.",
     exportieren: "Create backup file",
     importieren: "Read backup file",
     importFehler: "That is not a GastroCalc backup file.",
@@ -923,6 +923,7 @@ export default {
     offlineLaedt: "The app is being stored for offline use …",
     installieren: "On the phone: \"Add to Home Screen\" (share menu). Install first, then enter – on iPhone the installed app has its own storage.",
     andereFassung: "The app was updated in another window. Please reload this window.",
+    fremderStand: "Another window saved – view refreshed.", // Paket 2 (16.10.2026): zweites Fenster derselben Fassung hat gespeichert (Toast nur im Büro)
     speichernFehlgeschlagen: "Saving failed! Please create a backup file now and check the device (storage, private mode).",
     standNeuer: "The stored data comes from a newer version of the app. Please reload the page to get the current version. Nothing is changed.",
   },

@@ -24,6 +24,8 @@ let eigenesText = "";      // Text im Feld „eigenes Gericht" (flüchtig, über
 let waage = null;          // Waage-Check (Punkt 7): { gid, fragen[], k, wert, meldungen[] }
 let stempelInfo = false;   // Erklärung zum Stempel aufgeklappt
 let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
+// Paket 2 (16.10.2026): Ladenwechsel, Einlesen, „Alles löschen“ – der flüchtige Zustand gehört zum alten Laden (zentrale Liste in app.js)
+export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatSuche = ""; eigenesText = ""; waage = null; stempelInfo = false; weitereOffen = false; zwischenOffen = new Set(); mehrArten = new Set(); }
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 

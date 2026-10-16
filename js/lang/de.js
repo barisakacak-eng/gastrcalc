@@ -903,7 +903,7 @@ export default {
     betrieb: "Laden",
     onboardingNeu: "Einrichtung noch mal durchgehen",
     sicherung: "Sicherung",
-    sicherungText: "Alle Daten liegen nur auf diesem Gerät. Mit der Sicherungsdatei kannst du sie weitergeben oder auf ein neues Handy holen.",
+    sicherungText: "Alle Daten liegen nur auf diesem Gerät. Mit der Sicherungsdatei kannst du sie weitergeben oder auf ein neues Handy holen. Die Datei ist nicht verschlüsselt und enthält deine Zahlen, Löhne und Belegfotos. Schick sie nur an Orte, denen du vertraust.",
     exportieren: "Sicherungsdatei erstellen",
     importieren: "Sicherungsdatei einlesen",
     importFehler: "Das ist keine Sicherungsdatei von GastroCalc.",
@@ -924,6 +924,7 @@ export default {
     offlineLaedt: "Die App wird gerade für den Betrieb ohne Netz gespeichert …",
     installieren: "Auf dem Handy: „Zum Home-Bildschirm“ (Teilen-Menü). Erst installieren, dann eintragen – die installierte App hat auf dem iPhone einen eigenen Speicher.",
     andereFassung: "Die App wurde in einem anderen Fenster aktualisiert. Bitte dieses Fenster neu laden.",
+    fremderStand: "Ein anderes Fenster hat gespeichert – Anzeige aktualisiert.", // Paket 2 (16.10.2026): zweites Fenster derselben Fassung hat gespeichert (Toast nur im Büro)
     speichernFehlgeschlagen: "Speichern fehlgeschlagen! Bitte jetzt eine Sicherungsdatei erstellen und das Gerät prüfen (Speicherplatz, privater Modus).",
     standNeuer: "Der gespeicherte Stand stammt aus einer neueren Fassung der App. Bitte die Seite neu laden, damit die aktuelle Fassung kommt. Nichts wird verändert.",
   },

@@ -928,6 +928,7 @@ export default {
     offlineLaedt: "Aplikacioni po ruhet për punë pa internet …",
     installieren: "Në telefon: “Shto në ekranin kryesor” (menyja Ndaj). Së pari instaloje, pastaj shëno – aplikacioni i instaluar në iPhone ka memorien e vet.",
     andereFassung: "Aplikacioni u përditësua në një dritare tjetër. Të lutem rifresko këtë dritare.",
+    fremderStand: "Një dritare tjetër ruajti – pamja u përditësua.",
     speichernFehlgeschlagen: "Ruajtja dështoi! Krijo tani një skedar kopjeje dhe kontrollo pajisjen (memoria, modaliteti privat).",
     standNeuer: "Gjendja e ruajtur vjen nga një version më i ri i aplikacionit. Rifresko faqen që të vijë versioni aktual. Asgjë nuk ndryshohet.",
   },

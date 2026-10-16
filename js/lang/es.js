@@ -923,6 +923,7 @@ export default {
     offlineLaedt: "La app se está guardando para funcionar sin internet…",
     installieren: "En el móvil: “Añadir a pantalla de inicio” (menú Compartir). Primero instala, luego anota: en el iPhone, la app instalada tiene su propia memoria.",
     andereFassung: "La app se ha actualizado en otra ventana. Recarga esta ventana, por favor.",
+    fremderStand: "Otra ventana guardó los datos – vista actualizada.",
     speichernFehlgeschlagen: "¡No se ha podido guardar! Crea ahora un archivo de copia y revisa el aparato (espacio libre, modo privado).",
     standNeuer: "Lo guardado viene de una versión más nueva de la app. Recarga la página para que llegue la versión actual. No se cambia nada.",
   },

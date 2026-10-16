@@ -903,7 +903,7 @@ export default {
     betrieb: "Dükkân",
     onboardingNeu: "Kurulumu tekrar yap",
     sicherung: "Yedek",
-    sicherungText: "Bütün veriler sadece bu cihazda. Yedek dosyasıyla başkasına verebilir ya da yeni telefona taşıyabilirsin.",
+    sicherungText: "Bütün veriler sadece bu cihazda. Yedek dosyasıyla başkasına verebilir ya da yeni telefona taşıyabilirsin. Dosya şifreli değil; rakamlarını, maaşları ve fiş fotoğraflarını içerir. Sadece güvendiğin yerlere gönder.",
     exportieren: "Yedek dosyası oluştur",
     importieren: "Yedek dosyası yükle",
     importFehler: "Bu bir GastroCalc yedek dosyası değil.",
@@ -924,6 +924,7 @@ export default {
     offlineLaedt: "Uygulama internetsiz kullanım için kaydediliyor …",
     installieren: "Telefonda: “Ana Ekrana Ekle” (paylaş menüsü). Önce kur, sonra gir – iPhone'da kurulu uygulamanın kendi deposu vardır.",
     andereFassung: "Uygulama başka bir pencerede güncellendi. Lütfen bu pencereyi yeniden yükle.",
+    fremderStand: "Başka bir pencere kaydetti – görünüm güncellendi.", // Paket 2 (16.10.2026): zweites Fenster derselben Fassung hat gespeichert (Toast nur im Büro)
     speichernFehlgeschlagen: "Kaydetme başarısız! Lütfen şimdi bir yedek dosyası oluştur ve cihazı kontrol et (depolama, gizli mod).",
     standNeuer: "Kayıtlı veriler uygulamanın daha yeni bir sürümünden. Güncel sürüm için sayfayı yeniden yükle. Hiçbir şey değiştirilmez.",
   },

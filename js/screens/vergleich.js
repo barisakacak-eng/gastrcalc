@@ -11,6 +11,8 @@ import { sym } from "../symbole.js";
 
 let modus = "db"; // "db" | "marge"
 export const vergleichModus = (m) => { if (m === "db" || m === "marge") modus = m; };
+export const vergleichModusAktuell = () => modus; // Paket 2: für Tests
+export const vergleichZuruecksetzen = () => { modus = "db"; }; // Paket 2 (16.10.2026): Ladenwechsel – zentrale Liste in app.js
 
 // Bild je Gericht: eigenes Foto (später), sonst Foto der Familie (foto/g-*.webp), sonst Sanjis Piktogramm (bilder/g-*.svg)
 const PIKTO = { doener: "g-doener", "haehnchen-doener": "g-doener", wrap: "g-duerum", "falafel-wrap": "g-duerum", "doener-teller": "g-teller", teller: "g-teller", "falafel-teller": "g-teller",

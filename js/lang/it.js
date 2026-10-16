@@ -924,6 +924,7 @@ export default {
     offlineLaedt: "L'app si sta salvando per l'uso senza rete …",
     installieren: "Sul telefono: “Aggiungi alla schermata Home” (menu Condividi). Prima installa, poi inserisci i dati – sull'iPhone l'app installata ha una memoria sua.",
     andereFassung: "L'app è stata aggiornata in un'altra finestra. Ricarica questa finestra.",
+    fremderStand: "Un'altra finestra ha salvato – vista aggiornata.",
     speichernFehlgeschlagen: "Salvataggio non riuscito! Crea subito un file di backup e controlla il dispositivo (spazio libero, navigazione privata).",
     standNeuer: "I dati salvati vengono da una versione più nuova dell'app. Ricarica la pagina per avere la versione attuale. Non cambia niente.",
   },

@@ -421,6 +421,7 @@ export const kostenSchnell = {
 
 // „?“ – je Bildschirm höchstens eine aufklappbare Erklärung. Der Zustand gilt nur für den Bildschirm, auf dem sie geöffnet wurde.
 let hilfeAuf = null;
+export function onboardingZuruecksetzen() { hilfeAuf = null; } // Paket 2 (16.10.2026): Ladenwechsel – zentrale Liste in app.js
 const kopfS2 = (id, titel, hilfeText, extra = "") => `
     <div class="s2kopf"><h1 class="frage" dir="auto">${esc(titel)}</h1>${hilfeText ? `<button type="button" class="s2fragezeichen" data-a="s2-hilfe" data-wert="${id}" aria-expanded="${hilfeAuf === id}" aria-label="${esc(t("schnell2.hilfe"))}">?</button>` : ""}</div>
     ${hilfeText && hilfeAuf === id ? `<div class="s2hilfe" role="note"><p>${esc(hilfeText)}</p>${extra}</div>` : ""}`;

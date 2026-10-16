@@ -922,6 +922,7 @@ export default {
     offlineLaedt: "App niha ji bo karê bê înternet tê tomarkirin …",
     installieren: "Li ser telefonê: “Add to Home Screen” (menûya parvekirinê). Pêşî saz bike, paşê binivîse – appa sazkirî li ser iPhone bîra xwe ya cuda heye.",
     andereFassung: "App di pencereyeke din de hate nûkirin. Ji kerema xwe vê pencereyê ji nû ve bar bike.",
+    fremderStand: "Pencereyeke din tomar kir – nîşandan hat nûkirin.",
     speichernFehlgeschlagen: "Tomarkirin bi ser neket! Ji kerema xwe niha dosyaya kopiya ewlehiyê çêke û amûrê kontrol bike (cihê bîrê, moda taybet).",
     standNeuer: "Rewşa tomarkirî ji guhertoyeke nûtir a appê ye. Ji kerema xwe rûpelê ji nû ve bar bike da ku guhertoya niha were. Tiştek nayê guhertin.",
   },

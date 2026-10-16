@@ -929,6 +929,7 @@ export default {
     offlineLaedt: "Aplikacja zapisuje się właśnie do pracy bez internetu …",
     installieren: "Na telefonie: „Do ekranu początkowego” (menu Udostępnij). Najpierw zainstaluj, potem wpisuj – zainstalowana aplikacja ma na iPhonie osobną pamięć.",
     andereFassung: "Aplikację zaktualizowano w innym oknie. Odśwież to okno.",
+    fremderStand: "Inne okno zapisało dane – widok odświeżony.",
     speichernFehlgeschlagen: "Zapis się nie udał! Zrób teraz plik kopii i sprawdź urządzenie (wolne miejsce, tryb prywatny).",
     standNeuer: "Zapisany stan pochodzi z nowszej wersji aplikacji. Odśwież stronę, żeby przyszła aktualna wersja. Nic nie zostanie zmienione.",
   },
