@@ -1143,4 +1143,6 @@ export default {
   personal: { verlassen: "Ieși din modul personal", zurueck: "Înapoi", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Schimbă", werBistDu: "Cine lucrează?", ohneNamen: "Fără nume",
     muell: "Deșeuri", kuehlung: "Răcire", putzen: "Curățenie", offen: (n) => `${n} deschise` },
   muell1: { titel: "Deșeuri", andere: "Altele", portion: (n, z) => `${z} ${n === 1 ? "porție" : "porții"}`, eingetragen: "înregistrat", menge: "Schimbă cantitatea", personalessen: "Masa personalului" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Copie", titelEinlesen: "Parola copiei", feld: "Parolă", hinweis: "Cu parolă fișierul e criptat. Fără parolă oricine îl poate deschide.", teilen: "Trimite copia", ohne: "Trimite fără parolă", einlesen: "Citește", zuKurz: "Cel puțin 6 caractere", falsch: "Parolă greșită", zeigen: "Arată parola", verbergen: "Ascunde parola", mit: "cu parolă", ohneKurz: "fără parolă" },
 };

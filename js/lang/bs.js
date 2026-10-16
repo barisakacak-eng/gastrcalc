@@ -1144,4 +1144,6 @@ export default {
   personal: { verlassen: "Izađi iz načina za osoblje", zurueck: "Nazad", hallo: (n) => `Zdravo ${n}`, halloOhne: "Zdravo", wechseln: "Promijeni", werBistDu: "Ko radi?", ohneNamen: "Bez imena",
     muell: "Otpad", kuehlung: "Hlađenje", putzen: "Čišćenje", offen: (n) => `${n} otvoreno` },
   muell1: { titel: "Otpad", andere: "Ostalo", portion: (n, z) => `${z} ${pl(n, "porcija", "porcije", "porcija")}`, eingetragen: "upisano", menge: "Promijeni količinu", personalessen: "Obrok za osoblje" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Sigurnosna kopija", titelEinlesen: "Lozinka kopije", feld: "Lozinka", hinweis: "S lozinkom je fajl šifrovan. Bez lozinke ga svako može otvoriti.", teilen: "Podijeli kopiju", ohne: "Podijeli bez lozinke", einlesen: "Učitaj", zuKurz: "Najmanje 6 znakova", falsch: "Pogrešna lozinka", zeigen: "Prikaži lozinku", verbergen: "Sakrij lozinku", mit: "s lozinkom", ohneKurz: "bez lozinke" },
 };

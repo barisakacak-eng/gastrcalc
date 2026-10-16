@@ -1141,4 +1141,6 @@ export default {
   personal: { verlassen: "Вийти з режиму персоналу", zurueck: "Назад", hallo: (n) => `Привіт ${n}`, halloOhne: "Привіт", wechseln: "Змінити", werBistDu: "Хто працює?", ohneNamen: "Без імені",
     muell: "Відходи", kuehlung: "Охолодження", putzen: "Прибирання", offen: (n) => `${n} відкрито` },
   muell1: { titel: "Відходи", andere: "Інше", portion: (n, z) => `${z} ${pl(n, "порція", "порції", "порцій")}`, eingetragen: "записано", menge: "Змінити кількість", personalessen: "Харчування персоналу" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Копія", titelEinlesen: "Пароль копії", feld: "Пароль", hinweis: "З паролем файл зашифровано. Без пароля його відкриє будь-хто.", teilen: "Поділитися копією", ohne: "Поділитися без пароля", einlesen: "Прочитати", zuKurz: "Щонайменше 6 знаків", falsch: "Неправильний пароль", zeigen: "Показати пароль", verbergen: "Сховати пароль", mit: "з паролем", ohneKurz: "без пароля" },
 };

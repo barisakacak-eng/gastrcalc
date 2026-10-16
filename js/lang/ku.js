@@ -1135,4 +1135,6 @@ export default {
   personal: { verlassen: "Ji moda karmendan derkeve", zurueck: "Paş", hallo: (n) => `Silav ${n}`, halloOhne: "Silav", wechseln: "Biguherîne", werBistDu: "Kî dixebite?", ohneNamen: "Bê nav",
     muell: "Çop", kuehlung: "Sarkirin", putzen: "Paqijî", offen: (n) => `${n} vekirî` },
   muell1: { titel: "Çop", andere: "Yên din", portion: (n, z) => `${z} porsiyon`, eingetragen: "hat tomarkirin", menge: "Mîqdarê biguherîne", personalessen: "Xwarina karmendan" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Kopiya ewlehiyê", titelEinlesen: "Şîfreya kopiyê", feld: "Şîfre", hinweis: "Bi şîfreyê dosya şîfrekirî ye. Bê şîfre her kes dikare wê veke.", teilen: "Kopiyê parve bike", ohne: "Bê şîfre parve bike", einlesen: "Bixwîne", zuKurz: "Herî kêm 6 tîp", falsch: "Şîfre şaş e", zeigen: "Şîfreyê nîşan bide", verbergen: "Şîfreyê veşêre", mit: "bi şîfre", ohneKurz: "bê şîfre" },
 };

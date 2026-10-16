@@ -123,6 +123,17 @@ body.blatt-da { overflow: hidden; }
 .pintaste.weg .sym { width: 28px; height: 28px; }
 .buerocode h2 { display: flex; align-items: center; gap: 8px; } .buerocode h2 .sym { width: 20px; height: 20px; }
 
+/* E5 (16.10.2026): Passwort der Sicherung (Blatt beim Teilen und Einlesen) */
+.blattkopf .pw-ks { width: 44px; height: 44px; border-radius: 12px; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.blattkopf .pw-ks + b { flex: 1; min-width: 0; }
+.pw-form { display: flex; flex-direction: column; gap: 10px; }
+.pw-feld { position: relative; }
+.pw-feld .textfeld { padding-right: 56px; font-size: 1.25rem; min-height: 56px; box-sizing: border-box; }
+.pw-feld .pw-auge { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border: 0; background: transparent; color: var(--tinte-weich); border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.pw-form .pin-meldung { text-align: center; margin-top: -4px; }
+.pw-hinweis { max-width: none; margin: 0 0 2px; font-size: calc(15rem / 17); line-height: 1.45; }
+.pw-form .leise { text-align: center; }
+
 /* Platzhalter Personal-Start und Büro-Start (werden durch D und C ersetzt) */
 .ebene-personal { gap: 14px; }
 .karte.riesenkachel-platz { flex-direction: row; justify-content: flex-start; min-height: 150px; border-radius: var(--radius-gross); display: flex; align-items: flex-end; gap: 12px; padding: 18px; font: inherit; color: var(--tinte); text-align: start; }

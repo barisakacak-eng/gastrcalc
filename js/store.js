@@ -21,6 +21,7 @@ import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert un
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
 import { ablageKennungen, ablageLesen } from "./ablage.js";
+import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
 
 export const SCHEMA = 6;
 export const APP_FASSUNG = FASSUNG;
@@ -826,7 +827,16 @@ async function sha256Hex(daten) { // daten: Text oder schon kodierte Bytes
 // ablage.json (Typ und Größe je Datei) und ablage/<Kennung> – alle Fotos und Belege dieses Geräts. Ein Knopf, ein Dateiname mit Datum.
 // letzteSicherung setzt app.js erst, wenn Teilen oder Speichern geklappt hat.
 export const SICHERUNG_JSON = "gastrocalc-sicherung.json";
-export async function exportDatei(wurzel, { mitAblage = true } = {}) {
+// E5 (16.10.2026): mit passwort wird die fertige ZIP als Ganzes verschlüsselt (schluessel.js) und in eine zweite ZIP gelegt:
+// sicherung.enc + LIESMICH.txt, Endung .gcs.zip. Ohne passwort bleibt alles wie bisher (gleiche Bytes, gleicher Name). Das Passwort wird nicht gespeichert.
+export async function exportDatei(wurzel, { mitAblage = true, passwort = null } = {}) {
+  const r = await exportDateiOffen(wurzel, { mitAblage });
+  if (passwort === null || passwort === undefined) return { ...r, verschluesselt: false };
+  const enc = await verschluesseln(new Uint8Array(await r.blob.arrayBuffer()), passwort);
+  const blob = await zipBlob([{ name: SICHERUNG_ENC, daten: enc }, { name: LIESMICH_NAME, daten: LIESMICH }]);
+  return { ...r, blob, groesse: blob.size, name: r.name.replace(/\.zip$/, ".gcs.zip"), verschluesselt: true };
+}
+async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
   await ereignis("export", { betriebe: wurzel.betriebe.length });
   const ereignisse = await alleEreignisse();
   // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
@@ -848,9 +858,21 @@ export async function exportDatei(wurzel, { mitAblage = true } = {}) {
 }
 
 // W2-D: Einlesen nimmt das ZIP und die alte JSON-Datei. Rückgabe wie importDatei, dazu ablage: [{ id, typ, eintrag }] (Fotos/Belege, noch nicht abgelegt).
-export async function importSicherung(datei) {
+// E5 (16.10.2026): Liegt sicherung.enc in der ZIP, braucht es ein Passwort: ohne → { passwortNoetig: true }; mit → entschlüsseln und
+// wie bisher weiter. Falsches Passwort wirft Fehler mit grund "passwort". Unverschlüsselte Dateien laufen ohne Rückfrage.
+export async function importSicherung(datei, { passwort = null } = {}) {
   if (await istZip(datei)) {
     let eintraege; try { eintraege = await zipLesen(datei); } catch (_) { throw Object.assign(new Error("format"), { grund: "format" }); }
+    const enc = eintraege.find((e) => e.name === SICHERUNG_ENC);
+    if (enc) {
+      if (passwort === null || passwort === undefined) return { passwortNoetig: true, zip: true, verschluesselt: true };
+      const bytes = await enc.bytes();
+      if (!istVerschluesselt(bytes)) throw Object.assign(new Error("format"), { grund: "format" });
+      const klar = await entschluesseln(bytes, passwort); // wirft grund "passwort"
+      const r = await importSicherung(new Blob([klar], { type: "application/zip" }));
+      if (r.passwortNoetig) throw Object.assign(new Error("format"), { grund: "format" }); // doppelt verpackt gibt es nicht
+      r.verschluesselt = true; return r;
+    }
     const j = eintraege.find((e) => e.name === SICHERUNG_JSON);
     if (!j) throw Object.assign(new Error("format"), { grund: "format" });
     const r = await importDatei(new TextDecoder().decode(await j.bytes()));
@@ -858,9 +880,9 @@ export async function importSicherung(datei) {
     let liste = {}; const lj = eintraege.find((e) => e.name === "ablage.json");
     if (lj) { try { const x = JSON.parse(new TextDecoder().decode(await lj.bytes())); if (istObjekt(x)) liste = x; } catch (_) { /* ohne Typen */ } }
     r.ablage = eintraege.filter((e) => e.name.startsWith("ablage/") && e.name.length > 7).map((e) => { const id = e.name.slice(7); return { id, typ: typeof liste[id]?.typ === "string" ? liste[id].typ : "", eintrag: e }; });
-    r.zip = true; return r;
+    r.zip = true; r.verschluesselt = false; return r;
   }
-  const r = await importDatei(await datei.text()); r.ablage = []; r.zip = false; return r;
+  const r = await importDatei(await datei.text()); r.ablage = []; r.zip = false; r.verschluesselt = false; return r;
 }
 // Fotos/Belege aus dem ZIP zurück in die Ablage (vorhandene bleiben). zuruecklegen = ablageZuruecklegen aus ablage.js.
 export async function ablageAusSicherung(liste, zuruecklegen) {

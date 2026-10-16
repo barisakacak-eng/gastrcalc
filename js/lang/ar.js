@@ -1138,4 +1138,6 @@ export default {
   personal: { verlassen: "الخروج من وضع الموظفين", zurueck: "رجوع", hallo: (n) => `مرحبًا ${n}`, halloOhne: "مرحبًا", wechseln: "تبديل", werBistDu: "من يعمل؟", ohneNamen: "بدون اسم",
     muell: "هدر", kuehlung: "تبريد", putzen: "تنظيف", offen: (n) => `${n} مفتوح` },
   muell1: { titel: "هدر", andere: "أخرى", portion: (n, z) => `${z} ${n === 1 ? "حصة" : n === 2 ? "حصتان" : (n % 100 >= 3 && n % 100 <= 10) ? "حصص" : "حصة"}`, eingetragen: "تم التسجيل", menge: "تغيير الكمية", personalessen: "وجبة الموظفين" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "النسخة الاحتياطية", titelEinlesen: "كلمة مرور النسخة", feld: "كلمة المرور", hinweis: "مع كلمة مرور يكون الملف مشفّرًا. بدونها يستطيع أي شخص فتحه.", teilen: "مشاركة النسخة", ohne: "مشاركة بدون كلمة مرور", einlesen: "قراءة", zuKurz: "6 أحرف على الأقل", falsch: "كلمة المرور خاطئة", zeigen: "إظهار كلمة المرور", verbergen: "إخفاء كلمة المرور", mit: "مع كلمة مرور", ohneKurz: "بدون كلمة مرور" },
 };

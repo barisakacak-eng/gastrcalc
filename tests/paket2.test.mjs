@@ -176,8 +176,8 @@ test("Paket 2 (4): karte.js, vergleich.js und onboarding.js haben Zurücksetzer,
 });
 
 // ---------- 5. Sicherungs-Hinweis ----------
-test("Paket 2 (5): Sicherungs-Hinweis nennt in de/tr/en, dass die Datei unverschlüsselt ist", async () => {
-  for (const [c, wort] of [["de", "nicht verschlüsselt"], ["tr", "şifreli değil"], ["en", "not encrypted"]]) {
+test("Paket 2 (5): Sicherungs-Hinweis nennt in de/tr/en, dass die Datei nur mit Passwort verschlüsselt ist (E5, 16.10.2026)", async () => {
+  for (const [c, wort] of [["de", "nur mit Passwort verschlüsselt"], ["tr", "sadece parolayla şifrelenir"], ["en", "only encrypted with a password"]]) {
     const tab = (await import(`../js/lang/${c}.js`)).default;
     assert.ok(tab.einstellungen.sicherungText.includes(wort), `${c}: ${tab.einstellungen.sicherungText}`);
   }

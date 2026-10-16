@@ -1136,4 +1136,6 @@ export default {
   personal: { verlassen: "Quitter le mode équipe", zurueck: "Retour", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Changer", werBistDu: "Qui travaille ?", ohneNamen: "Sans nom",
     muell: "Déchets", kuehlung: "Froid", putzen: "Nettoyage", offen: (n) => `${n} ouverts` },
   muell1: { titel: "Déchets", andere: "Autres", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "enregistré", menge: "Modifier la quantité", personalessen: "Repas du personnel" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Sauvegarde", titelEinlesen: "Mot de passe de la sauvegarde", feld: "Mot de passe", hinweis: "Avec mot de passe, le fichier est chiffré. Sans, n’importe qui peut l’ouvrir.", teilen: "Partager la sauvegarde", ohne: "Partager sans mot de passe", einlesen: "Lire", zuKurz: "Au moins 6 caractères", falsch: "Mot de passe incorrect", zeigen: "Afficher le mot de passe", verbergen: "Masquer le mot de passe", mit: "avec mot de passe", ohneKurz: "sans mot de passe" },
 };

@@ -1137,4 +1137,6 @@ export default {
   personal: { verlassen: "Esci dalla modalità personale", zurueck: "Indietro", hallo: (n) => `Ciao ${n}`, halloOhne: "Ciao", wechseln: "Cambia", werBistDu: "Chi lavora?", ohneNamen: "Senza nome",
     muell: "Scarti", kuehlung: "Refrigerazione", putzen: "Pulizia", offen: (n) => `${n} aperti` },
   muell1: { titel: "Scarti", andere: "Altro", portion: (n, z) => `${z} ${n === 1 ? "porzione" : "porzioni"}`, eingetragen: "registrato", menge: "Cambia quantità", personalessen: "Pasto del personale" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Backup", titelEinlesen: "Password del backup", feld: "Password", hinweis: "Con password il file è cifrato. Senza password chiunque può aprirlo.", teilen: "Condividi backup", ohne: "Condividi senza password", einlesen: "Leggi", zuKurz: "Almeno 6 caratteri", falsch: "Password sbagliata", zeigen: "Mostra password", verbergen: "Nascondi password", mit: "con password", ohneKurz: "senza password" },
 };

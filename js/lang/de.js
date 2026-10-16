@@ -911,7 +911,7 @@ export default {
     betrieb: "Laden",
     onboardingNeu: "Einrichtung noch mal durchgehen",
     sicherung: "Sicherung",
-    sicherungText: "Alle Daten liegen nur auf diesem Gerät. Mit der Sicherungsdatei kannst du sie weitergeben oder auf ein neues Handy holen. Die Datei ist nicht verschlüsselt und enthält deine Zahlen, Löhne und Belegfotos. Schick sie nur an Orte, denen du vertraust.",
+    sicherungText: "Alle Daten liegen nur auf diesem Gerät. Mit der Sicherungsdatei kannst du sie weitergeben oder auf ein neues Handy holen. Die Datei ist nur mit Passwort verschlüsselt und enthält deine Zahlen, Löhne und Belegfotos. Schick sie nur an Orte, denen du vertraust.",
     exportieren: "Sicherungsdatei erstellen",
     importieren: "Sicherungsdatei einlesen",
     importFehler: "Das ist keine Sicherungsdatei von GastroCalc.",
@@ -1139,4 +1139,6 @@ export default {
   personal: { verlassen: "Personal-Modus verlassen", zurueck: "Zurück", hallo: (n) => `Hallo ${n}`, halloOhne: "Hallo", wechseln: "Wechseln", werBistDu: "Wer arbeitet?", ohneNamen: "Ohne Namen",
     muell: "Müll", kuehlung: "Kühlung", putzen: "Putzen", offen: (n) => `${n} offen` },
   muell1: { titel: "Müll", andere: "Andere", portion: (n, z) => `${z} ${n === 1 ? "Portion" : "Portionen"}`, eingetragen: "eingetragen", menge: "Menge ändern", personalessen: "Personalessen" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Sicherung", titelEinlesen: "Passwort der Sicherung", feld: "Passwort", hinweis: "Mit Passwort ist die Datei verschlüsselt. Ohne Passwort kann jeder sie öffnen.", teilen: "Sicherung teilen", ohne: "Ohne Passwort teilen", einlesen: "Einlesen", zuKurz: "Mindestens 6 Zeichen", falsch: "Passwort falsch", zeigen: "Passwort anzeigen", verbergen: "Passwort verbergen", mit: "mit Passwort", ohneKurz: "ohne Passwort" },
 };

@@ -911,7 +911,7 @@ export default {
     betrieb: "Dükkân",
     onboardingNeu: "Kurulumu tekrar yap",
     sicherung: "Yedek",
-    sicherungText: "Bütün veriler sadece bu cihazda. Yedek dosyasıyla başkasına verebilir ya da yeni telefona taşıyabilirsin. Dosya şifreli değil; rakamlarını, maaşları ve fiş fotoğraflarını içerir. Sadece güvendiğin yerlere gönder.",
+    sicherungText: "Bütün veriler sadece bu cihazda. Yedek dosyasıyla başkasına verebilir ya da yeni telefona taşıyabilirsin. Dosya sadece parolayla şifrelenir; rakamlarını, maaşları ve fiş fotoğraflarını içerir. Sadece güvendiğin yerlere gönder.",
     exportieren: "Yedek dosyası oluştur",
     importieren: "Yedek dosyası yükle",
     importFehler: "Bu bir GastroCalc yedek dosyası değil.",
@@ -1138,4 +1138,6 @@ export default {
   personal: { verlassen: "Personel modundan çık", zurueck: "Geri", hallo: (n) => `Merhaba ${n}`, halloOhne: "Merhaba", wechseln: "Değiştir", werBistDu: "Kim çalışıyor?", ohneNamen: "İsimsiz",
     muell: "Çöp", kuehlung: "Soğutma", putzen: "Temizlik", offen: (n) => `${n} açık` },
   muell1: { titel: "Çöp", andere: "Diğer", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "kaydedildi", menge: "Miktarı değiştir", personalessen: "Personel yemeği" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Yedek", titelEinlesen: "Yedeğin parolası", feld: "Parola", hinweis: "Parolayla dosya şifrelenir. Parolasız herkes açabilir.", teilen: "Yedeği paylaş", ohne: "Parolasız paylaş", einlesen: "Oku", zuKurz: "En az 6 karakter", falsch: "Parola yanlış", zeigen: "Parolayı göster", verbergen: "Parolayı gizle", mit: "parolalı", ohneKurz: "parolasız" },
 };

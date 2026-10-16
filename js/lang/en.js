@@ -910,7 +910,7 @@ export default {
     betrieb: "Place",
     onboardingNeu: "Go through setup again",
     sicherung: "Backup",
-    sicherungText: "All data lives only on this device. With the backup file you can pass it on or move it to a new phone. The file is not encrypted and contains your figures, wages and receipt photos. Only send it to places you trust.",
+    sicherungText: "All data lives only on this device. With the backup file you can pass it on or move it to a new phone. The file is only encrypted with a password and contains your figures, wages and receipt photos. Only send it to places you trust.",
     exportieren: "Create backup file",
     importieren: "Read backup file",
     importFehler: "That is not a GastroCalc backup file.",
@@ -1137,4 +1137,6 @@ export default {
   personal: { verlassen: "Leave staff mode", zurueck: "Back", hallo: (n) => `Hi ${n}`, halloOhne: "Hi", wechseln: "Switch", werBistDu: "Who is working?", ohneNamen: "No name",
     muell: "Waste", kuehlung: "Cooling", putzen: "Cleaning", offen: (n) => `${n} open` },
   muell1: { titel: "Waste", andere: "Other", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "logged", menge: "Change amount", personalessen: "Staff meal" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Backup", titelEinlesen: "Backup password", feld: "Password", hinweis: "With a password the file is encrypted. Without one, anyone can open it.", teilen: "Share backup", ohne: "Share without password", einlesen: "Read in", zuKurz: "At least 6 characters", falsch: "Wrong password", zeigen: "Show password", verbergen: "Hide password", mit: "with password", ohneKurz: "without password" },
 };

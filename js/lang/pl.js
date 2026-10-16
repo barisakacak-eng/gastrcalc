@@ -1142,4 +1142,6 @@ export default {
   personal: { verlassen: "Wyjdź z trybu personelu", zurueck: "Wstecz", hallo: (n) => `Cześć ${n}`, halloOhne: "Cześć", wechseln: "Zmień", werBistDu: "Kto pracuje?", ohneNamen: "Bez imienia",
     muell: "Odpady", kuehlung: "Chłodzenie", putzen: "Sprzątanie", offen: (n) => `${n} otwarte` },
   muell1: { titel: "Odpady", andere: "Inne", portion: (n, z) => `${z} ${lm(n, "porcja", "porcje", "porcji")}`, eingetragen: "zapisano", menge: "Zmień ilość", personalessen: "Posiłek personelu" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Kopia", titelEinlesen: "Hasło kopii", feld: "Hasło", hinweis: "Z hasłem plik jest zaszyfrowany. Bez hasła każdy może go otworzyć.", teilen: "Udostępnij kopię", ohne: "Udostępnij bez hasła", einlesen: "Wczytaj", zuKurz: "Co najmniej 6 znaków", falsch: "Błędne hasło", zeigen: "Pokaż hasło", verbergen: "Ukryj hasło", mit: "z hasłem", ohneKurz: "bez hasła" },
 };

@@ -36,6 +36,11 @@ async def main():
             pg.on("pageerror", lambda e: fehler.append(str(e)))
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html")
             await pg.wait_for_selector(".kachel")
+            # E5 (16.10.2026): erster Start – der Service Worker übernimmt die Seite und lädt sie einmal neu, sobald die App-Phase erreicht ist.
+            # Damit das nicht mitten in einem Bildschirm passiert: erst warten, bis er die Seite hat; das Neuladen kommt dann direkt nach „Fertig“.
+            for _ in range(240):
+                if await pg.evaluate("!!navigator.serviceWorker.controller"): break
+                await pg.wait_for_timeout(500)
             _klick = pg.click
             async def klick(sel, **kw): await _klick(sel, **kw); await pg.wait_for_timeout(900 if os.environ.get("DURCHLAUF_VIDEO") else 320)
             pg.click = klick
@@ -129,7 +134,8 @@ async def main():
             await pg.click(f'[data-a="bestseller"][data-id="{ids[0]}"]'); await pg.fill(f'[data-f="menge:{ids[0]}"]', "120")
             await pg.fill('[data-f="bestellungenTag"]', "200"); await pg.locator('[data-f="bestellungenTag"]').blur(); await pg.wait_for_timeout(150)
             await pg.click('[data-a="weiter"]'); await bild("ergebnis")
-            await pg.click('[data-a="fertig"]'); await pg.wait_for_selector(".cockpit")
+            async with pg.expect_event("load", timeout=20000): await pg.click('[data-a="fertig"]')  # E5: das einmalige Neuladen des Service Workers abwarten
+            await pg.wait_for_selector(".cockpit")
             # ---- Cockpit
             await bild("cockpit-leer")
             html = await pg.content(); assert "Bis null fehlen" in html and "Umsatz heute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro
@@ -259,7 +265,8 @@ async def main():
             await pg.fill('[data-f="warenQuote"]', "35"); await pg.locator('[data-f="warenQuote"]').blur(); await pg.wait_for_timeout(200)
             s = await stand(); assert abs(s["verkauf"]["warenQuote"] - 0.35) < 1e-9
             # Export: Schema 4 mit Prüfsumme
-            async with pg.expect_download() as dl: await pg.click('[data-a="export"]')
+            await pg.click('[data-a="export"]'); await pg.wait_for_selector("#ebene-huelle .blatt-passwort")  # E5 (16.10.2026): erst das Passwort-Blatt
+            async with pg.expect_download() as dl: await pg.click('[data-a="sicherung-ohne"]')
             d = await dl.value; pfad = OUT / "export.zip"; await d.save_as(str(pfad))  # W2-D: Sicherung als ZIP mit Fotos
             import zipfile
             with zipfile.ZipFile(pfad) as zf: roh = zf.read("gastrocalc-sicherung.json").decode()

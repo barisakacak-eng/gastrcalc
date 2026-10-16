@@ -25,7 +25,8 @@ import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: �
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt } from "./modus.js"; // W2-S: Sperrliste Personal
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste } from "./screens/ebene.js";
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { passwortGueltig } from "./schluessel.js"; // E5
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
 import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
@@ -264,13 +265,15 @@ function meldung(text) {
 }
 
 // W2-D: Sicherung als ZIP mit allen Fotos und Belegen; die Größe steht in der Meldung.
+// E5 (16.10.2026): passwort = Text → Datei verschlüsselt (.gcs.zip); null → wie bisher. Das Passwort wird hier nur durchgereicht, nie gespeichert.
 const groesseText = (n) => n >= 1048576 ? `${(n / 1048576).toFixed(1).replace(".", ",")} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
-async function sicherungTeilen() {
-  const { blob, name, fingerabdruck, groesse } = await exportDatei(wurzel);
+async function sicherungTeilen(passwort = null) {
+  let datei0; try { datei0 = await exportDatei(wurzel, { passwort }); } catch (e) { console.warn(e); meldung(t("einstellungen.importFehler")); return; }
+  const { blob, name, fingerabdruck, groesse, verschluesselt } = datei0;
   ereignisAnzahl += 1;
   const gelungen = () => { // erst nach Teilen oder Download zählt die Sicherung
     wurzel.letzteSicherung = new Date().toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel); wurzel.letzteSicherungGroesse = groesse;
-    meldung(t("einstellungen.exportOk", wurzel.betriebe.length) + ` · ${groesseText(groesse)}` + (fingerabdruck ? ` · ${fingerabdruck}` : ` · ${t("einstellungen.ohnePruefsumme")}`));
+    meldung(t("einstellungen.exportOk", wurzel.betriebe.length) + ` · ${groesseText(groesse)}` + (fingerabdruck ? ` · ${fingerabdruck}` : ` · ${t("einstellungen.ohnePruefsumme")}`) + ` · ${t(verschluesselt ? "passwort.mit" : "passwort.ohneKurz")}`);
     sofortSpeichern(wurzel); zeichne();
   };
   const datei = new File([blob], name, { type: "application/zip" });
@@ -282,9 +285,22 @@ async function sicherungTeilen() {
 }
 
 // Einlesen führt zusammen: gleiche Laden-Kennung wird je Bereich zusammengeführt, neue Läden kommen dazu (W2-D: ZIP oder alte JSON).
-async function sicherungEinlesen(datei) {
+// E5 (16.10.2026): verschlüsselte Datei → Blatt fragt nach dem Passwort; die Datei wartet in einleseDatei, bis das Passwort stimmt oder das Blatt zugeht.
+let einleseDatei = null;
+async function sicherungEinlesen(datei, passwort = null) {
+  let r;
+  try { r = await importSicherung(datei, { passwort }); }
+  catch (e) {
+    if (e.grund === "passwort") { passwortMeldung(t("passwort.falsch")); return; } // Blatt bleibt offen
+    console.warn(e); blattSchliessen(); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); return;
+  }
+  if (r.passwortNoetig) { einleseDatei = datei; if (!blattOffen()) history.pushState({ blatt: true }, ""); passwortStarten("einlesen"); return; }
+  blattSchliessen(); einleseDatei = null;
+  return sicherungUebernehmen(r);
+}
+async function sicherungUebernehmen(gelesen) {
   try {
-    const { wurzel: importiert, ereignisse, pruefsumme, ablage } = await importSicherung(datei);
+    const { wurzel: importiert, ereignisse, pruefsumme, ablage } = gelesen;
     if (pruefsumme !== "ok") { await ereignis("import-pruefsumme", { pruefsumme }); if (!confirm(t(pruefsumme === "abweichung" ? "einstellungen.pruefsummeFalsch" : "w2d.pruefsummeFehlt"))) return; } // W2-D: Rückfrage vor dem Einlesen
     const gleich = importiert.betriebe.filter((b) => wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     const neu = importiert.betriebe.filter((b) => !wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
@@ -349,11 +365,11 @@ function mitCode(zweck, ziel, weiter) {
 }
 
 // Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
-const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg"]);
+const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen"]); // E5: Passwort-Blatt
 async function ebeneAktion(name, el) {
   if (name === "menue-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); menueZeigen(stand, wurzel); return true; }
   if (name === "menue-zurueck") { menueZeigen(stand, wurzel); return true; }
-  if (name === "blatt-zu") { blattSchliessen(); return true; }
+  if (name === "blatt-zu") { blattSchliessen(); einleseDatei = null; return true; } // E5: wartende Sicherungsdatei loslassen
   if (name === "blatt-sprache") { spracheZeigen(); return true; }
   if (name === "blatt-laeden") { laedenZeigen(wurzel); return true; }
   if (name === "hilfe-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); hilfeZeigen(ansicht); return true; }
@@ -369,6 +385,18 @@ async function ebeneAktion(name, el) {
     return true;
   }
   if (name === "pin-setzen") { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); return true; }
+  // E5 (16.10.2026): „Sicherung“ öffnet erst das Passwort-Blatt; geteilt wird mit oder ohne Passwort
+  if (name === "export") { if (!blattOffen()) history.pushState({ blatt: true }, ""); passwortStarten("teilen"); return true; }
+  if (name === "passwort-zeigen") { passwortZeigen(); return true; }
+  if (name === "sicherung-ohne") { blattSchliessen(); await sicherungTeilen(null); return true; }
+  if (name === "sicherung-teilen" || name === "sicherung-einlesen") {
+    const p = passwortWert();
+    if (!passwortGueltig(p)) { passwortMeldung(t("passwort.zuKurz")); return true; }
+    passwortMeldung("", { laeuft: true }); // PBKDF2 rechnet – kein zweiter Tipp
+    if (name === "sicherung-teilen") { blattSchliessen(); await sicherungTeilen(p); return true; }
+    if (!einleseDatei) { blattSchliessen(); return true; }
+    await sicherungEinlesen(einleseDatei, p); return true;
+  }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "modus") {
     const m = el.dataset.wert;
@@ -429,7 +457,6 @@ async function aufKlick(ev) {
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
-  if (name === "export") return sicherungTeilen();
   if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
   if (name === "abgleich-ok") { delete stand.abgleichHinweis; speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }

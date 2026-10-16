@@ -1135,4 +1135,6 @@ export default {
   personal: { verlassen: "خروج از حالت کارکنان", zurueck: "بازگشت", hallo: (n) => `سلام ${n}`, halloOhne: "سلام", wechseln: "تغییر", werBistDu: "چه کسی کار می‌کند؟", ohneNamen: "بدون نام",
     muell: "دورریز", kuehlung: "سرمایش", putzen: "نظافت", offen: (n) => `${n} باز` },
   muell1: { titel: "دورریز", andere: "دیگر", portion: (n, z) => `${z} پرس`, eingetragen: "ثبت شد", menge: "تغییر مقدار", personalessen: "غذای کارکنان" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "پشتیبان", titelEinlesen: "رمز پشتیبان", feld: "رمز", hinweis: "با رمز، فایل رمزگذاری می‌شود. بدون رمز هر کسی می‌تواند آن را باز کند.", teilen: "اشتراک پشتیبان", ohne: "اشتراک بدون رمز", einlesen: "خواندن", zuKurz: "دست‌کم ۶ نویسه", falsch: "رمز اشتباه است", zeigen: "نمایش رمز", verbergen: "پنهان کردن رمز", mit: "با رمز", ohneKurz: "بدون رمز" },
 };

@@ -1142,4 +1142,6 @@ export default {
   personal: { verlassen: "Изход от режим персонал", zurueck: "Назад", hallo: (n) => `Здравей ${n}`, halloOhne: "Здравей", wechseln: "Смени", werBistDu: "Кой работи?", ohneNamen: "Без име",
     muell: "Отпадъци", kuehlung: "Охлаждане", putzen: "Почистване", offen: (n) => `${n} отворени` },
   muell1: { titel: "Отпадъци", andere: "Други", portion: (n, z) => `${z} ${n === 1 ? "порция" : "порции"}`, eingetragen: "записано", menge: "Промени количеството", personalessen: "Храна за персонала" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Копие", titelEinlesen: "Парола на копието", feld: "Парола", hinweis: "С парола файлът е шифрован. Без парола всеки може да го отвори.", teilen: "Сподели копието", ohne: "Сподели без парола", einlesen: "Прочети", zuKurz: "Поне 6 знака", falsch: "Грешна парола", zeigen: "Покажи паролата", verbergen: "Скрий паролата", mit: "с парола", ohneKurz: "без парола" },
 };

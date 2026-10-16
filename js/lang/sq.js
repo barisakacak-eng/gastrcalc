@@ -1141,4 +1141,6 @@ export default {
   personal: { verlassen: "Dil nga modaliteti i stafit", zurueck: "Mbrapa", hallo: (n) => `Përshëndetje ${n}`, halloOhne: "Përshëndetje", wechseln: "Ndrysho", werBistDu: "Kush punon?", ohneNamen: "Pa emër",
     muell: "Mbeturina", kuehlung: "Ftohja", putzen: "Pastrimi", offen: (n) => `${n} të hapura` },
   muell1: { titel: "Mbeturina", andere: "Të tjera", portion: (n, z) => `${z} ${n === 1 ? "porcion" : "porcione"}`, eingetragen: "u regjistrua", menge: "Ndrysho sasinë", personalessen: "Ushqim për stafin" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Kopja", titelEinlesen: "Fjalëkalimi i kopjes", feld: "Fjalëkalimi", hinweis: "Me fjalëkalim skedari është i koduar. Pa fjalëkalim mund ta hapë kushdo.", teilen: "Ndaj kopjen", ohne: "Ndaj pa fjalëkalim", einlesen: "Lexo", zuKurz: "Të paktën 6 shenja", falsch: "Fjalëkalim i gabuar", zeigen: "Shfaq fjalëkalimin", verbergen: "Fshih fjalëkalimin", mit: "me fjalëkalim", ohneKurz: "pa fjalëkalim" },
 };

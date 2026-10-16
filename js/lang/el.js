@@ -1137,4 +1137,6 @@ export default {
   personal: { verlassen: "Έξοδος από λειτουργία προσωπικού", zurueck: "Πίσω", hallo: (n) => `Γεια ${n}`, halloOhne: "Γεια", wechseln: "Αλλαγή", werBistDu: "Ποιος δουλεύει;", ohneNamen: "Χωρίς όνομα",
     muell: "Απορρίμματα", kuehlung: "Ψύξη", putzen: "Καθαριότητα", offen: (n) => `${n} ανοιχτά` },
   muell1: { titel: "Απορρίμματα", andere: "Άλλα", portion: (n, z) => `${z} ${n === 1 ? "μερίδα" : "μερίδες"}`, eingetragen: "καταχωρήθηκε", menge: "Αλλαγή ποσότητας", personalessen: "Γεύμα προσωπικού" },
+  // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
+  passwort: { titel: "Αντίγραφο", titelEinlesen: "Κωδικός του αντιγράφου", feld: "Κωδικός", hinweis: "Με κωδικό το αρχείο είναι κρυπτογραφημένο. Χωρίς κωδικό μπορεί να το ανοίξει ο καθένας.", teilen: "Κοινοποίηση αντιγράφου", ohne: "Κοινοποίηση χωρίς κωδικό", einlesen: "Ανάγνωση", zuKurz: "Τουλάχιστον 6 χαρακτήρες", falsch: "Λάθος κωδικός", zeigen: "Εμφάνιση κωδικού", verbergen: "Απόκρυψη κωδικού", mit: "με κωδικό", ohneKurz: "χωρίς κωδικό" },
 };

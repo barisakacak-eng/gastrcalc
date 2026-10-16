@@ -8,11 +8,13 @@ import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
 import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText } from "../modus.js";
 import { nav, sicherungStufe } from "./nav.js";
+import { PASSWORT_MIN } from "../schluessel.js"; // E5 (16.10.2026): Passwort der Sicherung
 
 let huelle = null;
-let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin"
+let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort"
 let pin = null;       // { zweck: "buero" | "personal" | "setzen" | "loeschen" | "ladenLoeschen", ziel, eingabe, erste, meldung, fehler, wurzel }
 let uhr = null;       // Restzeit der Wartezeit sekündlich nachführen (W2-S)
+let pw = null;        // E5 (16.10.2026): { zweck: "teilen" | "einlesen", sichtbar } – das Passwort selbst steht nur im Feld, nie hier
 
 // Die Hülle hängt direkt am <body>; app.js hängt seine Klick-Weiche auch hier ein.
 export function ebeneHuelle() {
@@ -27,13 +29,13 @@ export const pinOffen = () => offen === "pin";
 
 function zeigen(art, html) {
   const h = ebeneHuelle(); const neu = offen !== art && !offen;
-  h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
+  h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
   h.classList.add("da"); document.body.classList.add("blatt-da"); offen = art;
   h.querySelector(".ebene-blatt button")?.focus({ preventScroll: true });
 }
 export function blattSchliessen() {
   if (!huelle || !offen) return false;
-  huelle.classList.remove("da"); huelle.innerHTML = ""; document.body.classList.remove("blatt-da"); offen = null; pin = null; uhrStop();
+  huelle.classList.remove("da"); huelle.innerHTML = ""; document.body.classList.remove("blatt-da"); offen = null; pin = null; pw = null; uhrStop();
   return true;
 }
 
@@ -125,6 +127,45 @@ export async function pinTaste(wert, wurzel) {
   const dauer = fehlversuch(wurzel);
   if (pin !== p) return { fehler: true }; // inzwischen geschlossen
   p.eingabe = ""; p.fehler = true; p.meldung = dauer ? warteText(dauer) : t("ebene.pin.falsch"); pinZeichnen(); return { fehler: true };
+}
+
+// ---------- Passwort der Sicherung (E5, 16.10.2026) ----------
+// zweck "teilen": Blatt vor dem Teilen (Hauptknopf „Sicherung teilen“, leiser Knopf „Ohne Passwort teilen“).
+// zweck "einlesen": Datei ist verschlüsselt, Passwort abfragen (Knopf „Einlesen“). Das Passwort wird nie gespeichert – es steht nur im Feld.
+export const passwortOffen = () => offen === "passwort";
+export function passwortStarten(zweck) {
+  pw = { zweck, sichtbar: false };
+  const einlesen = zweck === "einlesen";
+  zeigen("passwort", `<div class="blattkopf nur"><span class="ks pw-ks">${sym("key-round")}</span><b>${esc(t(einlesen ? "passwort.titelEinlesen" : "passwort.titel"))}</b>
+      <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
+    <form class="pw-form" autocomplete="off">
+      <div class="pw-feld"><input class="textfeld" type="password" inputmode="text" minlength="${PASSWORT_MIN}" autocomplete="${einlesen ? "current-password" : "new-password"}" data-f="passwort" placeholder="${esc(t("passwort.feld"))}" aria-label="${esc(t("passwort.feld"))}">
+        <button type="button" class="ikonknopf pw-auge" data-a="passwort-zeigen" aria-label="${esc(t("passwort.zeigen"))}" aria-pressed="false">${sym("eye")}</button></div>
+      <small class="pin-meldung" role="status" aria-live="polite"></small>
+      ${einlesen ? "" : `<p class="hinweis pw-hinweis">${esc(t("passwort.hinweis"))}</p>`}
+      <button type="submit" class="knopf" data-a="${einlesen ? "sicherung-einlesen" : "sicherung-teilen"}">${esc(t(einlesen ? "passwort.einlesen" : "passwort.teilen"))}</button>
+      ${einlesen ? "" : `<button type="button" class="leise" data-a="sicherung-ohne">${esc(t("passwort.ohne"))}</button>`}
+    </form>`);
+  const f = huelle.querySelector(".pw-form"); f.addEventListener("submit", (ev) => ev.preventDefault()); // Enter = Hauptknopf (Klick-Weiche in app.js)
+  f.querySelector('[data-f="passwort"]').focus({ preventScroll: true });
+}
+// Wert aus dem Feld (nur im Moment des Teilens/Einlesens gelesen)
+export const passwortWert = () => (offen === "passwort" ? huelle?.querySelector('[data-f="passwort"]')?.value ?? "" : "");
+// Sichtbar-Umschalter: nur das Feld und das Symbol wechseln, kein Neuzeichnen (Tastatur bleibt)
+export function passwortZeigen() {
+  if (!pw || offen !== "passwort") return;
+  pw.sichtbar = !pw.sichtbar;
+  const feld = huelle.querySelector('[data-f="passwort"]'); const k = huelle.querySelector(".pw-auge");
+  if (feld) feld.type = pw.sichtbar ? "text" : "password";
+  if (k) { k.innerHTML = sym(pw.sichtbar ? "eye-off" : "eye"); k.setAttribute("aria-label", t(pw.sichtbar ? "passwort.verbergen" : "passwort.zeigen")); k.setAttribute("aria-pressed", String(pw.sichtbar)); }
+  feld?.focus({ preventScroll: true });
+}
+// Meldung unter dem Feld („Passwort falsch“, „Mindestens 6 Zeichen“); Blatt bleibt offen. laeuft: Knöpfe sperren, solange PBKDF2 rechnet.
+export function passwortMeldung(text, { laeuft = false } = {}) {
+  if (offen !== "passwort") return;
+  const m = huelle.querySelector(".pin-meldung"); if (m) { m.textContent = text || ""; m.classList.toggle("fehler", !!text); }
+  for (const k of huelle.querySelectorAll(".pw-form .knopf, .pw-form .leise")) k.disabled = laeuft;
+  if (text && !laeuft) { const feld = huelle.querySelector('[data-f="passwort"]'); feld?.focus({ preventScroll: true }); feld?.select?.(); }
 }
 
 // Karte „Büro-Code" für Büro-Start und Einstellungen
