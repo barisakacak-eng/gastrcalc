@@ -92,10 +92,15 @@ test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruc
   const html = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
   const inhalt = html.slice(0, html.indexOf("</div>\n    <header") > 0 ? html.indexOf("</div>\n    <header") : html.length);
   assert.equal((inhalt.match(/class="jetzt /g) || []).length, 1);
-  for (const weg of ["ring", "spruch", "monatkarte", "einrichtung", "abzeichen", "≈"]) assert.ok(!inhalt.includes(weg), weg);
-  const text = inhalt.replace(/<div class="h-zeitzeile">.*?<\/div>/s, "").replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ");
-  const woerter = text.split(/\s+/).filter((w) => w && !/[0-9€–·%/]/.test(w) && !["Saladette"].includes(w));
+  for (const weg of ["ring", "spruch", "monatkarte", "einrichtung", "abzeichen"]) assert.ok(!inhalt.includes(weg), weg);
+  // Paket 3 (16.10.2026), M15/E2: „≈“ vor der großen Zahl ist erlaubt (Richtwert), die Kupferzeile „Richtwert · Preise eintragen ›“ zählt getrennt (≤ 3 Wörter)
+  const richtwert = inhalt.match(/<button type="button" class="h-richtwert"[^>]*>(.*?)<\/button>/)?.[1] || "";
+  const ohne = inhalt.replace(/<button type="button" class="h-richtwert"[^>]*>.*?<\/button>/, "");
+  const zaehlen = (h) => h.replace(/<div class="h-zeitzeile">.*?<\/div>/s, "").replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").split(/\s+/).filter((w) => w && !/[0-9€–·%/≈›]/.test(w) && !["Saladette"].includes(w));
+  const woerter = zaehlen(ohne);
   assert.ok(woerter.length <= 15, `${woerter.length} Wörter: ${woerter.join(" ")}`);
+  assert.ok(zaehlen(richtwert).length <= 3, richtwert);
+  assert.ok(inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: Richtwert-Zeile und ≈ vor der Zahl");
 });
 
 test("Preis-Blatt: preisAmpel = Ampel und DB der Kalkulation; −/+ in 10-Cent-Schritten; Speichern setzt den Bruttopreis", () => {

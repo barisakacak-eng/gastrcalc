@@ -4,7 +4,7 @@
 // und „Eimer gewogen". Die Wochen-Statistik (früher Müll-Zentrale) wohnt jetzt im Büro unter Listen (muellStatistikView).
 // Im Personal-Modus: keine Euro-Beträge, nur Mengen; Einträge tragen von: personId. Rechenwerk unverändert (js/muell.js).
 import { t, einheitLabel, sprache } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
 import { EINHEITEN } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
@@ -69,7 +69,7 @@ export function muellFotoSetzen(eintrag) { foto = eintrag; }
 export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = "start"; return true; } if (ansicht !== "start") { ansicht = "start"; wahl = null; return true; } return false; }
 export const muellAnsicht = () => ansicht;
 
-const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; };
+const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Paket 3, M7: Geschäftstage
 const kurzTag = (iso) => t("kuehl.tage." + new Date(iso + "T12:00:00").getDay());
 const mengeText = (menge, einheit) => einheit === "portion" ? t("muell1.portion", menge, fmtZahl(menge, Number.isInteger(menge) ? 0 : 1)) : `${fmtZahl(menge, Number.isInteger(menge) ? 0 : 2)} ${einheitLabel(einheit)}`;
 const bildFuer = (stand, x) => (x.typ === "gericht" ? thumb(stand, x.id) : wareBild(x));

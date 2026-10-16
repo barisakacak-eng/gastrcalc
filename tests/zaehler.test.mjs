@@ -55,11 +55,12 @@ test("Zähler Stufe 2: Kosten je Öffnungstag, netto, Deckungsbeitrag statt voll
   assert.equal(z2.tage.length, 31); assert.equal(z2.tage[2].gewicht, 0, "Samstag 3.10. ist Ruhetag"); assert.equal(z2.tage[11].status, "heute"); assert.equal(z2.tage[12].status, "zukunft");
 });
 
-test("Zähler: Stufe 1 ohne Karte, unvollständig bei offenen Kosten, Kipptag und Plus", () => {
+test("Zähler: Stufe 1 ohne Karte rechnet die Ware mit dem Branchen-Richtwert (Paket 3), unvollständig bei offenen Kosten, Kipptag und Plus", () => {
   const b = laden(); b.gerichte = []; b.artikel = [];
   stand(b, "2026-10-01", 5000); // ein großer Tag
   const z = Z.zaehler(b, { datum: "2026-10-01" });
-  assert.equal(z.stufe, 1); nah(z.ware, 0); assert.equal(z.imPlus, true); assert.equal(z.kippTag, "2026-10-01"); nah(z.stand, 5000 / 1.07 - z.tageskosten);
+  assert.equal(z.stufe, 1); assert.equal(z.quoteQuelle, "richtwert"); assert.equal(z.quoteGeschaetzt, true); assert.equal(z.geschaetzt, true);
+  nah(z.ware, 5000 / 1.07 * E.RICHTWERT_WARENEINSATZ.quote); assert.equal(z.imPlus, true); assert.equal(z.kippTag, "2026-10-01"); nah(z.stand, 5000 / 1.07 * (1 - 0.32) - z.tageskosten);
   b.kosten[0].status = "offen"; b.kosten[0].betrag = null;
   assert.equal(Z.zaehler(b, { datum: "2026-10-01" }).unvollstaendig, true);
 });

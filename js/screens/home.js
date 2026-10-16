@@ -3,7 +3,7 @@
 import { planGruppen } from "../putzplan.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, SPRACH_NAMEN, sprache } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
+import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, schwundAuswertung, umsatzEintrag, kuehlStatus, umsatzSteuerSatz, aktiveStellen, letzteMessung, rundgangAbweichungen } from "../engine.js"; // W2-H: rundgangAbweichungen
 import { jetztDran, zielAttr } from "../offen.js";
 import { zaehler, wochenVergleich, warenQuote } from "../zaehler.js";
@@ -20,7 +20,7 @@ import { datumLesbar, monatName } from "./tag.js";
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
 // in js/offen.js. Einrichtungsring, Kostenlücken, Hinweise, Spruch und Monatskurve wohnen jetzt im Büro (offenImBuero, monatKarte, spruchKarte).
 export function startView(stand, extra = {}) {
-  const H = heute(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand);
+  const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand); // Kühl-Kachel bleibt am Kalendertag (kuehlStatus intern)
   const dran = jetztDran(stand, extra.wurzel, { jetzt: extra.jetzt || new Date() });
   return `
     <div class="inhalt cockpit heute-laden">
@@ -51,18 +51,20 @@ function heuteZielKarte(stand, z, H) {
   const w = heuteZielWerte(stand, z, H); const { m } = w;
   return `<button type="button" class="karte h-ziel ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz">
     <span class="h-zielkopf"><span>${esc(t("heute.stufe." + w.stufe))}</span>${w.tempo ? `<span class="h-tempo ${w.tempo.art}">${esc(w.tempo.text)}</span>` : `<span class="zielsym">${sym("target")}</span>`}</span>
-    <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
+    <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
     ${m.ziel === null ? `<span class="h-unter">${esc(t("heute.ohneKosten"))}</span>`
       : `<span class="h-balken" aria-hidden="true"><i style="width:${Math.round(w.anteil * 100)}%"></i></span><span class="h-balkenzahlen"><span>${fmtEuro(m.umsatz, { dezimal: 0 })}</span><span>${fmtEuro(w.marke, { dezimal: 0 })}</span></span>`}
-  </button>`;
+  </button>${m.richtwertWare ? `<button type="button" class="h-richtwert" data-a="nav" data-wert="preise">${esc(t("cockpit.richtwertZeile"))}</button>` : ""}`;
 }
 
 // Vier Kacheln: Symbol + Zahl. Kühlung zeigt den schlechtesten Wert (rot) oder „OK“ oder „2 offen“; Putzen erledigt/gesamt heute.
+// Paket 3 (16.10.2026), M7: Umsatz und Müll nach Geschäftstag (H), Kühlung und Putzen nach Kalendertag (K) – das Amt-Protokoll folgt dem Kalender.
 export function heuteKachelWerte(stand, ks, H) {
+  const K = heute();
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H });
   let kuehl = { wert: "–", alarm: false };
   if (ks.eingerichtet) {
-    const abw = (stand.messungen || []).filter((m) => m.datum === H && !m.storniert && m.abweichung && typeof m.wert === "number");
+    const abw = (stand.messungen || []).filter((m) => m.datum === K && !m.storniert && m.abweichung && typeof m.wert === "number");
     const stellenAbw = [...aktiveStellen(stand).map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.abweichung && typeof m.wert === "number"), ...rundgangAbweichungen(stand)]; // W2-H (p01 K3): Alarm schon im offenen Rundgang
     const aus = (m) => typeof m.max === "number" && m.wert > m.max ? m.wert - m.max : typeof m.min === "number" && m.wert < m.min ? m.min - m.wert : 0; // wie weit außerhalb der Grenze
     const schlimm = [...stellenAbw, ...abw].sort((a, b) => aus(b) - aus(a))[0];
@@ -71,7 +73,7 @@ export function heuteKachelWerte(stand, ks, H) {
     else kuehl = { wert: t("heute.offenN", ks.stellen - ks.heuteGemessen), alarm: false, offen: true };
   }
   let putz = { wert: "–", alarm: false };
-  if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, H); putz = { wert: `${pg.erledigt} / ${pg.gesamt}`, alarm: pg.ueberfaellig > 0 }; }
+  if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, K); putz = { wert: `${pg.erledigt} / ${pg.gesamt}`, alarm: pg.ueberfaellig > 0 }; }
   return { umsatz: u ? u.umsatz : null, muell: sw.anzahl ? sw.muellwert : null, kuehl, putz };
 }
 function heuteKachelnLaden(stand, ks, H) {
@@ -117,19 +119,13 @@ export function monatsZiel(stand, z, H) {
       if (!erreichtAm) { const rest = (z.tage || []).filter((x) => x.datum > H).reduce((a2, x) => a2 + (x.gewicht || 0), 0); proTagNoetig = rest > 0 ? (ziel - summe) / rest : null; } } }
   return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe, erreichtAm, proTagNoetig,
     fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : fehltNullZ,
-    darueber: ziel === null ? null : Math.max(0, summe - ziel), tage, geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 };
+    darueber: ziel === null ? null : Math.max(0, summe - ziel), tage,
+    // Paket 3 (16.10.2026), M2/M15/E2: ausdrücklich geschätzt, wenn der eigene Lohn ein Richtwert ist ODER die Warenquote vom Branchen-
+    // Richtwert kommt ODER der Mischsatz ohne echte Mengen gewichtet ist (dazu wie bisher: Ware unter Stufe 3, Fixkosten geschätzt).
+    geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 || z.last?.eigen?.status === "geschaetzt" || z.quoteQuelle === "richtwert" || !!z.steuerGeschaetzt,
+    richtwertWare: z.quoteQuelle === "richtwert", richtwertLohn: z.last?.eigen?.status === "geschaetzt" };
 }
-function bisNullKarte(stand, z, H) {
-  const m = monatsZiel(stand, z, H);
-  const erreicht = m.stufe === "ueberZiel";
-  const zahl = m.stufe === "bisNull" ? m.fehltNull : m.stufe === "bisZiel" ? m.fehlt : m.darueber;
-  const g = Math.round(m.gewinnAnteil * 100);
-  return `<button type="button" class="karte zielkarte ${erreicht ? "plus" : m.stufe === "bisZiel" ? "halb" : ""}" data-a="nav" data-wert="umsatz">
-    <span class="zielkopf"><small class="lbl">${esc(t("cockpit.zielStufe." + (m.stufe === "ohne" ? "bisNull" : m.stufe), g))}</small><span class="zielsym">${sym("target")}</span></span>
-    <span class="riesig">${m.ziel === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${fmtEuro(zahl, { dezimal: 0 })}`}</span>
-    <small>${esc(m.ziel === null ? t("cockpit.zielOhneKosten") : t("cockpit.zielSatzStufe." + m.stufe, g))}</small>
-    ${m.erreichtAm ? `<span class="zieltempo gut">${esc(t("cockpit.tempoGut", datumLesbar(m.erreichtAm).slice(0, 6)))}</span>` : m.proTagNoetig ? `<span class="zieltempo knapp">${esc(t("cockpit.tempoKnapp", fmtEuro(m.proTagNoetig, { dezimal: 0 })))}</span>` : ""}</button>`;
-}
+// Paket 3 (16.10.2026): die alte bisNullKarte war tot (kein Aufrufer mehr seit Drei Ebenen) und ist entfernt; die Zielkarte im Laden ist heuteZielKarte.
 // Monatsbalken (wohnt jetzt im Büro, Entwickler C)
 export function monatKarte(stand, z, H) {
   const m = monatsZiel(stand, z, H); if (!m.tage.length) return "";
@@ -205,11 +201,12 @@ function tonneInstrument(stand, H) {
     <b>${w.anzahl ? fmtEuro(w.summe, { dezimal: w.summe < 100 ? 2 : 0 }) : "–"}</b><small>${w.anzahl ? (w.portionen !== null ? esc(t("cockpit.portionenKurz", fmtZahl(w.portionen, w.portionen < 10 ? 1 : 0))) : w.ohneWert ? esc(t("listen.ohneWert", w.ohneWert)) : "") : esc(t("cockpit.tonneLeer"))}</small>
     <span class="balken mini muell">${w.tage.map((x) => `<i class="${x.datum === H ? "heute" : ""}"><b style="height:${w.max ? Math.round(x.wert / w.max * 100) : 0}%"></b></i>`).join("")}</span></button>`;
 }
-// Wareneinsatz in % vom Netto-Umsatz: Stufe 3 aus Belegen und Umsatz, Stufe 2 aus Karte oder eigener Quote, Stufe 1 „–"
+// Wareneinsatz in % vom Netto-Umsatz: Stufe 3 aus Belegen und Umsatz, Stufe 2 aus Karte oder eigener Quote, sonst (Paket 3, M15/E2)
+// der Branchen-Richtwert als Schätzung (geschaetzt: true, quelle "richtwert").
 export function wareneinsatzQuote(stand, z) {
-  if (z.stufe === 3 && z.umsatzNetto > 0) return { quote: z.belegSumme / z.umsatzNetto, quelle: "belege" };
-  if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle };
-  return { quote: null, quelle: "keine" };
+  if (z.stufe === 3 && z.umsatzNetto > 0) return { quote: z.belegSumme / z.umsatzNetto, quelle: "belege", geschaetzt: false };
+  if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle, geschaetzt: z.quoteQuelle === "richtwert" };
+  return { quote: null, quelle: "keine", geschaetzt: false };
 }
 function wareneinsatzInstrument(stand, z) {
   const q = wareneinsatzQuote(stand, z); const ziel = Number(stand.verkauf?.zielWareneinsatz) || 0.33;
@@ -314,6 +311,8 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <div class="feldzeile"><label>${esc(t("zaehler.steuer"))}</label>
           <div class="betrag"><input inputmode="decimal" data-f="steuerSatz" value="${esc(typeof stand.betrieb.steuerSatz === "number" ? wertAnzeige(Math.round(stand.betrieb.steuerSatz * 1000) / 10) : "")}" placeholder="${esc(fmtZahl(st.satz * 100, 1))}" aria-label="%"><span class="einheit">%</span></div>
           <span class="marke">${esc(t("zaehler.steuerHinweis"))} ${esc(t("zaehler.steuerQuelle." + st.quelle))}.</span></div>
+        <div class="zeile"><div class="oben"><div class="name">${esc(t("einstellungen.kleinunternehmer"))}<small>${esc(t("einstellungen.kleinunternehmerHinweis"))}</small></div>
+          <button type="button" class="schalter ${stand.betrieb.kleinunternehmer ? "an" : ""}" data-a="kleinunternehmer" aria-pressed="${!!stand.betrieb.kleinunternehmer}" aria-label="${esc(t("einstellungen.kleinunternehmer"))}"></button></div></div>
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.sprache"))}</h2>

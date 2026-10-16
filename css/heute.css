@@ -15,6 +15,8 @@
 .h-riesig.leicht { color: #3B463F; } /* geschätzt: nur eine Spur heller, Erklärung steht im Büro */
 .karte.h-ziel.plus .h-riesig { color: var(--gruen); }
 .h-unter { color: var(--tinte-weich); font-size: calc(14rem / 17); }
+/* Paket 3 (16.10.2026), M15/E2: kleine Kupferzeile unter der Zielkarte – „Richtwert · Preise eintragen ›“, führt ins Büro zu den Einkaufspreisen */
+.h-richtwert { display: block; width: 100%; background: none; border: 0; text-align: left; padding: 0 6px; margin-top: -8px; min-height: 28px; color: var(--kupfer-dunkel, #8A4C20); font-size: calc(13rem / 17); font-weight: 700; }
 .h-balken { display: block; height: 10px; border-radius: 5px; background: var(--papier-tief); overflow: hidden; }
 .h-balken i { display: block; height: 100%; background: linear-gradient(90deg, var(--salbei), var(--salbei-tief)); border-radius: 5px; }
 .h-balkenzahlen { display: flex; justify-content: space-between; font-size: calc(13rem / 17); color: var(--tinte-weich); margin-top: 6px; font-variant-numeric: var(--zahlen); }

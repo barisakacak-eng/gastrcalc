@@ -64,6 +64,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "%19 KDV", 7: "%7 KDV", 0: "KDV'siz" }, // Paket 3 (16.10.2026), M1
     titel: "Sabit giderlerin",
     einleitung: "Şimdi az ya da çok satsan da her ay ödenen her şeyi topluyoruz. On kısa liste. Bilmediğini açık bırak.",
     los: "Başlayalım",
@@ -164,6 +165,7 @@ export default {
     leer: "henüz tarif yok",
   },
   preise: {
+    preisNull: "Fiyat 0 € – doğru mu? „Fiyat yok“ sayılır.", // Paket 3 (16.10.2026), M3
     frage: "Alırken ne ödüyorsun?",
     hinweis: "Her ürün için aldığın paket ve fiyatı – KDV hariç, tedarikçi faturasında yazdığı gibi. Tahmini değer yok, fiyatları sadece senin dükkânın bilir. Eksik olanı açık bırak.",
     stand: (a, b) => `${b} fiyattan ${a} tanesi girildi`,
@@ -358,14 +360,16 @@ export default {
     schritte: { karte: "Menü kartı", preise: "Yemek fiyatları", rezepte: "Tarifler", kosten: "Sabit giderler", einkauf: "Alış fiyatları", kuehlung: "Soğutma", sicherung: "Yedek" },
     offen: { karte: () => "Menü kartının fotoğrafını çek", preise: (n) => `${n} yemeğin fiyatı yok`, rezepte: (n) => `${n} yemeğin tarifi yok`, kosten: (n) => `${n} zorunlu kalem açık (kira, personel, kendi maaşın, elektrik/gaz)`,
       einkauf: (n) => `${n} malzemenin alış fiyatı yok – bir fatura fotoğrafı doldurur`, kuehlung: () => "Soğutma yeri ekle", sicherung: () => "Son yedek 7 günden eski" } },
-  vergleich: { eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Adet başı kalan", marge: "Marj %" }, ware: "Malzeme maliyeti", db: "Adet başı sana kalan", marge: "Marj", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir." },
+  vergleich: { wareHoch: (q) => `%${q} – yüksek`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Adet başı kalan", marge: "Marj %" }, ware: "Malzeme maliyeti", db: "Adet başı sana kalan", marge: "Marj", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Ofis", zurueck: "Dükkan",
     abschnitt: { offen: "Açık işler", ordner: "Teslim dosyaları", zahlen: "Rakamlar", karte: "Menü ve alım", einrichten: "Dükkanı kur" },
     offen: { einrichtung: "Kurulum", kosten: (n) => `Sabit giderler: ${n} eksik`, billig: (n) => `${n} fiyat çok ucuz`,
       ohneZahlen: (n) => `${n} yemeğin rakamı yok`, sicherung: (n) => `Yedek ${n} gün önce`, sicherungNie: "Henüz yedek yok",
       waage: "Porsiyonları tart", belehrung: (n) => `${n} eğitim zamanı geldi` },
-    zahlen: { monat: "Ay ve sayaç", monatUnter: (m) => `${m} şimdiye kadar`, vergleich: "Yemek karşılaştırması", vergleichUnter: "Porsiyon başına ne kalıyor", listen: "Listeler", listenUnter: "Çöp, fire, personel yemeği",
+    zahlen: { richtwert: "Mal tahmini", wareHoch: (q) => `Mal payı %${q} – yüksek`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Ay ve sayaç", monatUnter: (m) => `${m} şimdiye kadar`, vergleich: "Yemek karşılaştırması", vergleichUnter: "Porsiyon başına ne kalıyor", listen: "Listeler", listenUnter: "Çöp, fire, personel yemeği",
       inventur: "Sayım", inventurUnter: (d) => `Son sayım ${d}`, inventurNie: "Henüz sayım yok" },
     karte: { rezepte: "Tarifler", preise: "Alış fiyatları", belege: "Fişler", verkauf: "Satış fiyatları", kosten: "Sabit giderler", kartefoto: "Fotoğrafla menü" },
     einrichten: { einrichtung: "Kurulum", kuehl: "Soğutucular", putzplan: "Temizlik planını düzenle", laeden: "Dükkanlar", sicherung: "Yedek", code: "Ofis kodu", codeAn: "açık", codeAus: "kapalı", einstellungen: "Ayarlar" },
@@ -631,6 +635,7 @@ export default {
     unvollstaendig: "Giderler eksik – sayaç yalnızca girilenlerle hesaplıyor.",
     kalkulatorischSatz: "Tüm tutarlar hesaplanmıştır, banka bakiyesi değildir.",
     kalkulatorisch: "hesaplama, banka bakiyesi değil",
+    richtwertZeile: "Tahmini · Fiyatları gir ›", // Paket 3 (16.10.2026)
     stufe: { 1: "yalnızca sabit giderler ve maaşlar, mal henüz yok", 2: "mal menüden tahmini", 3: "mal fişlerinden" },
     umsatzHeute: "Bugünkü ciro",
     tonneHeute: "Bugün çöpe",
@@ -699,12 +704,14 @@ export default {
     eigenBis: "Bugüne kadar kendi maaşın",
     wareGeschaetzt: (q) => `Mal (ciro üzerinden tahmini %${q})`,
     wareBelege: "Fişlerinden mal",
+    wareRichtwert: (q) => `Mal (tahmini ≈ ciro %${q})`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Kendi fiyatların olmadan tahmin: büfelerde mal payı %${min}–${max}. Kaynak: ${q}. Alış fiyatlarını gir, uygulama senin rakamlarınla hesaplasın.`,
     wareFehlt: "Mal (henüz hesaplanmadı)",
     muellBis: "Bugüne kadar çöp",
     umsatzBis: "Bugüne kadar net ciro",
     umsatzBruttoHinweis: (b, s) => `${b} brütten, %${s} vergi çıkarıldı`,
     steuerQuelle: { eigen: "kendi vergi oranın", karte: "menüden karma oran", standard: "%7 varsayıldı" },
-    quoteQuelle: { eigen: "kendi mal payın", karte: "menüden", keine: "menü yok" },
+    quoteQuelle: { richtwert: "sektör tahmini (yaklaşık)", eigen: "kendi mal payın", karte: "menüden", keine: "menü yok" },
     monat: "Ay bir bakışta",
     legendeMonat: "Kırmızı: hâlâ eksi. Yeşil: buradan itibaren kazanıyorsun. Gri: kapalı gün. Çerçeveli: bugün.",
     preise: "Değişen fiyatlar (30 gün)",
@@ -883,7 +890,8 @@ export default {
     journal: { schwund: "Çöp", tagesnotizen: "Ciro", messungen: "Soğutma", lieferungen: "Teslimatlar", abschluesse: "Gün kapanışları", kostenbelege: "Masraf belgeleri", putzlog: "Temizlik planı", belehrungen: "Hijyen eğitimleri", rundgaenge: "Soğutma turları", inventuren: "Sayımlar", uploads: "Fotoğraflar", artikel: "Mallar", gerichte: "Yemekler", anderes: "Veriler" },
     bereich: { kosten: "Masraflar", gerichte: "Yemekler ve tarifler", artikel: "Mallar ve fiyatlar", betrieb: "İşletme", kuehl: "Soğutucular", putzplan: "Temizlik planı", personen: "Kişiler" },
   },
-  einstellungen: { fotosNichtDrin: "Fatura, çöp ve yemek fotoğrafları yedek dosyasında var. Dosya bu yüzden büyür.",
+  einstellungen: { kleinunternehmer: "Küçük işletme (KDV iadesi yok)", kleinunternehmerHinweis: "Açık: brüt tutarlar tam sayılır, KDV düşülmez.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Fatura, çöp ve yemek fotoğrafları yedek dosyasında var. Dosya bu yüzden büyür.",
     bereichBetrieb: "Dükkân, günler, sezon",
     bereichTeam: "Ekip",
     bereichKanaele: "Satış yolları",
@@ -1097,7 +1105,7 @@ export default {
     pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil" },
     hilfeText: {
       allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",
-      start: "Günün özeti. Büyük sayı, sıfıra kadar ne kadar ciro eksik olduğunu gösterir. Kırmızı: şimdi ilgilen.",
+      start: "Günün özeti. Büyük sayı, sıfıra kadar ne kadar ciro eksik olduğunu gösterir. Kırmızı: şimdi ilgilen. Önünde „≈“ varsa sayı tahminidir (mal veya kendi maaşın için) – açıklama ofiste „Ay ve sayaç“ altında. Alış fiyatı yoksa uygulama %32 mal payıyla hesaplar (büfeler: %23–41, BMF 2025 sektör tablosu).",
       muell: "Atılan ürüne dokun. Hemen ardından geri alabilirsin. Listeler ve tutarlar büroda.",
       kuehl: "Her soğutucuyu ölç ve değeri gir. Çok yüksekse ne yaptığını yaz ve sonra tekrar ölç.",
       putzplan: "Bugün temizlenenleri işaretle. İşaretle, liste güncel olsun. Planı ofiste değiştirirsin.",

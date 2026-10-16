@@ -65,6 +65,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "TVA 19 %", 7: "TVA 7 %", 0: "sans TVA" }, // Paket 3 (16.10.2026), M1
     titel: "Tes frais fixes",
     einleitung: "On rassemble maintenant tout ce qui se paie chaque mois, que tu vendes beaucoup ou peu. Dix petites listes. Ce que tu ne sais pas, tu le laisses à remplir.",
     los: "C’est parti",
@@ -166,6 +167,7 @@ export default {
     leer: "pas encore de recette",
   },
   preise: {
+    preisNull: "Prix 0 € – c’est juste ? Compte comme « sans prix ».", // Paket 3 (16.10.2026), M3
     frage: "Tu paies combien à l’achat ?",
     hinweis: "Par article, le conditionnement tel que tu l’achètes et son prix – HT, comme sur la facture du fournisseur. Pas de repères : les prix, seul ton resto les connaît. Ce qui manque, tu le laisses à remplir.",
     stand: (a, b) => `${a} prix sur ${b} remplis`,
@@ -359,13 +361,15 @@ export default {
     schritte: { karte: "Carte", preise: "Prix des plats", rezepte: "Recettes", kosten: "Frais fixes", einkauf: "Prix d’achat", kuehlung: "Froid", sicherung: "Sauvegarde" },
     offen: { karte: () => "Prendre la carte en photo", preise: (n) => `${n} plats sans prix`, rezepte: (n) => `${n} plats sans recette`, kosten: (n) => `${n} lignes obligatoires à remplir (loyer, personnel, ton salaire, électricité/gaz)`,
       einkauf: (n) => `${n} ingrédients sans prix d’achat – une photo de facture remplit ça`, kuehlung: () => "Créer un point froid", sicherung: () => "Dernière sauvegarde il y a plus de 7 jours" } },
-  vergleich: { eigenesFoto: "Prendre ma propre photo", fotoGespeichert: "Photo enregistrée. Elle reste sur ce téléphone.",  titel: "Comparer les plats", unter: "Quels plats te rapportent le plus ?", tab: { db: "Il te reste par pièce", marge: "Marge %" }, ware: "Coût marchandise", db: "Il te reste par pièce", marge: "Marge", leer: "Remplis les prix de vente et d’achat, et tu verras ici quels plats rapportent le plus.", ohneZahlen: (n) => (n <= 1 ? `${n} plat encore sans chiffres` : `${n} plats encore sans chiffres`), einkaufFehlt: "Prix d’achat manquants", hinweis: "Les valeurs sont des estimations et peuvent varier selon les ingrédients et les prix. Tous les montants HT, sauf le prix de vente." },
+  vergleich: { wareHoch: (q) => `${q} % – élevé`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Prendre ma propre photo", fotoGespeichert: "Photo enregistrée. Elle reste sur ce téléphone.",  titel: "Comparer les plats", unter: "Quels plats te rapportent le plus ?", tab: { db: "Il te reste par pièce", marge: "Marge %" }, ware: "Coût marchandise", db: "Il te reste par pièce", marge: "Marge", leer: "Remplis les prix de vente et d’achat, et tu verras ici quels plats rapportent le plus.", ohneZahlen: (n) => (n <= 1 ? `${n} plat encore sans chiffres` : `${n} plats encore sans chiffres`), einkaufFehlt: "Prix d’achat manquants", hinweis: "Les valeurs sont des estimations et peuvent varier selon les ingrédients et les prix. Tous les montants HT, sauf le prix de vente." },
   buero: { titel: "Bureau", zurueck: "Commerce",
     abschnitt: { offen: "À faire", ordner: "Dossiers à remettre", zahlen: "Chiffres", karte: "Carte & achats", einrichten: "Régler le commerce" },
     offen: { einrichtung: "Réglage", kosten: (n) => (n === 1 ? "Frais fixes : 1 manque" : `Frais fixes : ${n} manquent`), billig: (n) => (n === 1 ? "1 prix trop bas" : `${n} prix trop bas`),
       ohneZahlen: (n) => (n === 1 ? "1 plat sans chiffres" : `${n} plats sans chiffres`), sicherung: (n) => (n === 1 ? "Sauvegarde il y a 1 jour" : `Sauvegarde il y a ${n} jours`), sicherungNie: "Pas encore de sauvegarde",
       waage: "Peser les portions", belehrung: (n) => (n === 1 ? "1 formation à faire" : `${n} formations à faire`) },
-    zahlen: { monat: "Mois & compteur", monatUnter: (m) => `${m} jusqu’ici`, vergleich: "Comparer les plats", vergleichUnter: "Ce qui reste par pièce", listen: "Listes", listenUnter: "Déchets, pertes, repas du personnel",
+    zahlen: { richtwert: "Repère marchandise", wareHoch: (q) => `Coût marchandise ${q} % – élevé`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Mois & compteur", monatUnter: (m) => `${m} jusqu’ici`, vergleich: "Comparer les plats", vergleichUnter: "Ce qui reste par pièce", listen: "Listes", listenUnter: "Déchets, pertes, repas du personnel",
       inventur: "Inventaire", inventurUnter: (d) => `Dernier comptage le ${d}`, inventurNie: "Jamais compté" },
     karte: { rezepte: "Recettes", preise: "Prix d’achat", belege: "Tickets", verkauf: "Prix de vente", kosten: "Frais fixes", kartefoto: "Carte en photo" },
     einrichten: { einrichtung: "Réglage", kuehl: "Points froids", putzplan: "Modifier le plan de nettoyage", laeden: "Commerces", sicherung: "Sauvegarde", code: "Code bureau", codeAn: "oui", codeAus: "non", einstellungen: "Réglages" },
@@ -631,6 +635,7 @@ export default {
     unvollstaendig: "Frais incomplets – le compteur calcule seulement avec ce qui est rempli.",
     kalkulatorischSatz: "Tous les montants sont calculés, ce n’est pas ton solde bancaire.",
     kalkulatorisch: "calculé, pas un solde bancaire",
+    richtwertZeile: "Estimation · Saisir les prix ›", // Paket 3 (16.10.2026)
     stufe: { 1: "seulement frais fixes et salaires, la marchandise manque", 2: "marchandise estimée d’après la carte", 3: "marchandise d’après tes tickets" },
     umsatzHeute: "CA aujourd’hui",
     tonneHeute: "Poubelle aujourd’hui",
@@ -699,12 +704,14 @@ export default {
     eigenBis: "Ton salaire jusqu’à aujourd’hui",
     wareGeschaetzt: (q) => `Marchandise (estimée à ${q} % du CA)`,
     wareBelege: "Marchandise d’après tes tickets",
+    wareRichtwert: (q) => `Marchandise (repère ≈ ${q} % du chiffre)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Repère sans tes prix : les snacks sont à ${min}–${max} % de coût marchandise. Source : ${q}. Saisis tes prix d’achat et l’appli calcule avec tes chiffres.`,
     wareFehlt: "Marchandise (pas encore calculée)",
     muellBis: "Déchets jusqu’à aujourd’hui",
     umsatzBis: "CA HT jusqu’à aujourd’hui",
     umsatzBruttoHinweis: (b, s) => `sur ${b} TTC, ${s} % de TVA retirés`,
     steuerQuelle: { eigen: "taux de TVA perso", karte: "taux moyen de la carte", standard: "7 % par défaut" },
-    quoteQuelle: { eigen: "part marchandise perso", karte: "d’après la carte", keine: "pas de carte" },
+    quoteQuelle: { richtwert: "repère du secteur (estimation)", eigen: "part marchandise perso", karte: "d’après la carte", keine: "pas de carte" },
     monat: "Le mois en un coup d’œil",
     legendeMonat: "Rouge : encore dans le négatif. Vert : à partir d’ici tu gagnes. Gris : fermé. Entouré : aujourd’hui.",
     preise: "Prix qui ont changé (30 jours)",
@@ -882,7 +889,8 @@ export default {
     journal: { schwund: "Déchets", tagesnotizen: "Chiffre d'affaires", messungen: "Froid", lieferungen: "Livraisons", abschluesse: "Clôtures du jour", kostenbelege: "Justificatifs de frais", putzlog: "Plan de nettoyage", belehrungen: "Formations hygiène", rundgaenge: "Tournées de froid", inventuren: "Inventaires", uploads: "Photos", artikel: "Marchandises", gerichte: "Plats", anderes: "Données" },
     bereich: { kosten: "Frais", gerichte: "Plats et recettes", artikel: "Marchandises et prix", betrieb: "Commerce", kuehl: "Points de froid", putzplan: "Plan de nettoyage", personen: "Personnes" },
   },
-  einstellungen: { fotosNichtDrin: "Les photos de factures, déchets et plats sont dans le fichier de sauvegarde. Le fichier est donc plus gros.",
+  einstellungen: { kleinunternehmer: "Petite entreprise (pas de TVA déductible)", kleinunternehmerHinweis: "Activé : les montants TTC comptent en entier, aucune TVA n’est déduite.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Les photos de factures, déchets et plats sont dans le fichier de sauvegarde. Le fichier est donc plus gros.",
     bereichBetrieb: "Resto, jours, saison",
     bereichTeam: "Équipe",
     bereichKanaele: "Canaux de vente",
@@ -1096,7 +1104,7 @@ export default {
     pin: { titel: "Code bureau", neu: "Choisis un nouveau code", nochmal: "Encore une fois", falsch: "Code erroné", ungleich: "Pas identique. Choisis à nouveau.", gesetzt: "Code bureau enregistré", entfernt: "Code bureau supprimé", setzen: "Définir le code bureau", aendern: "Changer le code bureau", entfernen: "Supprimer le code", ohne: "Sans code, tout le monde entre au bureau.", mit: "Le bureau est protégé par un code.", loeschen: "Effacer le chiffre" },
     hilfeText: {
       allgemein: "La barre du bas mène à tout ce qu'il te faut au commerce. Calculs, réglages et listes sont au bureau.",
-      start: "La journée en un coup d'œil. Le grand chiffre montre combien de chiffre d'affaires manque encore pour atteindre zéro. Rouge veut dire : agis maintenant.",
+      start: "La journée en un coup d'œil. Le grand chiffre montre combien de chiffre d'affaires manque encore pour atteindre zéro. Rouge veut dire : agis maintenant. Un « ≈ » devant signifie une estimation (marchandise ou ton salaire) – explication au bureau sous « Mois et compteur ». Sans prix d’achat, l’appli compte 32 % de marchandise (snacks : 23–41 %, tables BMF 2025).",
       muell: "Touche le produit qui part à la poubelle. Tu peux annuler juste après. Listes et montants sont au bureau.",
       kuehl: "Mesure chaque point de froid et saisis la valeur. Si elle est trop haute, note ce que tu fais et mesure de nouveau plus tard.",
       putzplan: "Coche ce qui a été nettoyé aujourd'hui. Coche, et la liste est à jour. Le plan se modifie au bureau.",

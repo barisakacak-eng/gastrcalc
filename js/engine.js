@@ -5,14 +5,23 @@
 // ---------- Feste Kosten (Etappe 1) ----------
 
 // Mehrwertsteuer auf Eingangsrechnungen (Strom, Telefon, Entsorgung …): Regelsatz. Ein brutto eingetragener Posten wird netto verrechnet,
-// weil der Betrieb die Vorsteuer zurückbekommt (Regelbesteuerung). Kleinunternehmer: Schalter auf netto lassen, dann zählt der Betrag, wie er ist.
+// weil der Betrieb die Vorsteuer zurückbekommt (Regelbesteuerung).
+// Paket 3 (16.10.2026), M1: Steuersatz je Posten (Feld satz: 19, 7 oder 0 in Prozent), Standard 19; Wasser 7. Kleinunternehmer
+// (betrieb.kleinunternehmer, Schalter im Büro) bekommen keine Vorsteuer zurück: dann zählt jeder Bruttobetrag, wie er ist (Satz 0).
 export const VORSTEUER = 0.19;
 export const nettoVonBrutto = (betrag, satz) => (Number(betrag) || 0) / (1 + (Number(satz) || 0));
+export const VORSTEUER_SAETZE = [19, 7, 0];
+// Vorsteuersatz eines Postens als Anteil (0.19 / 0.07 / 0): alte Daten ohne satz = 19 % (Fallback, keine Migration nötig).
+export function vorsteuerSatz(posten, betrieb = null) {
+  if (betrieb?.kleinunternehmer) return 0;
+  const s = Number(posten?.satz);
+  return VORSTEUER_SAETZE.includes(s) ? s / 100 : VORSTEUER;
+}
 
-// Betrag eines Postens je Monat, netto. periode "jahr" wird durch 12 geteilt, basis "brutto" durch (1 + 19 %).
-export function betragJeMonat(posten) {
+// Betrag eines Postens je Monat, netto. periode "jahr" wird durch 12 geteilt, basis "brutto" durch (1 + Satz des Postens).
+export function betragJeMonat(posten, betrieb = null) {
   if (posten.betrag === null || posten.betrag === undefined) return null;
-  const b = posten.basis === "brutto" ? nettoVonBrutto(posten.betrag, VORSTEUER) : posten.betrag;
+  const b = posten.basis === "brutto" ? nettoVonBrutto(posten.betrag, vorsteuerSatz(posten, betrieb)) : posten.betrag;
   return posten.periode === "jahr" ? b / 12 : b;
 }
 
@@ -31,7 +40,7 @@ export function fixkosten(stand) {
   const out = { gesamt: 0, bekannt: 0, geschaetzt: 0, offen: 0, jeKategorie: {} };
   for (const p of stand.kosten) {
     if (p.status === "aus") continue; // ausgeschaltet = gibt es in diesem Betrieb nicht, zählt nirgends
-    const b = betragJeMonat(p);
+    const b = betragJeMonat(p, stand.betrieb); // Paket 3, M1: Satz je Posten, Kleinunternehmer ohne Vorsteuer
     out.jeKategorie[p.kategorie] ??= { summe: 0, offen: 0, geschaetzt: 0 };
     if (p.status === "offen" || b === null) { out.offen += 1; out.jeKategorie[p.kategorie].offen += 1; continue; }
     out.gesamt += b;
@@ -195,8 +204,9 @@ export function steuersatzAusZutaten(zutaten) {
 // Steuersatz eines Artikels beim Einkauf: Getränke 19 %, Lebensmittel 7 %. Verpackung 19 %.
 export const steuersatzArtikel = (artikel) => STEUER_JE_GRUPPE[artikel?.gruppe] ?? (artikel?.gruppe === "verpackung" ? 0.19 : 0.07);
 // Nettopreis je Gebinde: ein brutto eingetragener Preis (Supermarktbon) wird um die Steuer bereinigt.
+// Paket 3 (16.10.2026), M3: Preis 0 ist kein Preis (sonst wird das Gericht grün statt grau) – gilt wie null als „fehlt“.
 export function preisNettoGebinde(artikel) {
-  if (artikel.preis === null || artikel.preis === undefined) return null;
+  if (artikel.preis === null || artikel.preis === undefined || !(Number(artikel.preis) > 0)) return null;
   return artikel.preisBasis === "brutto" ? nettoVonBrutto(artikel.preis, steuersatzArtikel(artikel)) : artikel.preis;
 }
 // Preis je Basiseinheit (g, ml, Stück) eines Artikels aus Gebindeinhalt und Gebindepreis, netto. null = Preis fehlt.
@@ -421,17 +431,34 @@ export function preisAmpel(zeile, preisBrutto) {
 
 // Mischsatz der Umsatzsteuer auf den Tagesumsatz (Etappe 5): eigener Wert, sonst aus der Karte (Speisen 7 %, Getränke 19 %,
 // gewichtet mit Preis × Menge), sonst 7 %. Der Tagesumsatz aus der Kasse ist brutto; der Zähler rechnet netto.
+// Paket 3 (16.10.2026), M2: ohne echte Mengen (mengenJeMonat verteilt gleichmäßig, eine Cola zählt wie ein Döner) ist der Mischsatz
+// eine Schätzung – geschaetzt: true wandert in Zähler und Monatsziel. Keine neue Mengenabfrage; eigener Satz = nicht geschätzt.
 export function umsatzSteuerSatz(stand) {
-  if (typeof stand.betrieb?.steuerSatz === "number") return { satz: stand.betrieb.steuerSatz, quelle: "eigen" };
+  if (typeof stand.betrieb?.steuerSatz === "number") return { satz: stand.betrieb.steuerSatz, quelle: "eigen", geschaetzt: false };
   const mitPreis = (stand.gerichte || []).filter((g) => typeof g.preis === "number" && g.preis > 0);
   if (mitPreis.length) {
-    const { mengen } = mengenJeMonat(stand);
+    const { mengen, geschaetzt } = mengenJeMonat(stand);
     let s = 0, n = 0;
     for (const g of mitPreis) { const w = g.preis * (mengen[g.id] || 1); s += w * steuersatzGericht(g); n += w; }
-    if (n > 0) return { satz: Math.round(s / n * 10000) / 10000, quelle: "karte" };
+    if (n > 0) return { satz: Math.round(s / n * 10000) / 10000, quelle: "karte", geschaetzt };
   }
-  return { satz: 0.07, quelle: "standard" };
+  return { satz: 0.07, quelle: "standard", geschaetzt: true };
 }
+
+// Paket 3 (16.10.2026), M4: eine Warnstufe für den Wareneinsatz-Anteil am Nettoumsatz, für Umsatz-Seite, Büro „Monat & Zähler“ und
+// Gerichte im Vergleich. null = unauffällig; "hoch" ab 50 %, "sehrHoch" ab 65 %. Im Laden (home.js) wird sie bewusst NICHT gezeigt.
+export const WARENEINSATZ_WARNUNG_AB = 0.5;
+export function wareneinsatzWarnung(quote) {
+  if (typeof quote !== "number" || !Number.isFinite(quote)) return null;
+  if (quote >= 0.65 - 1e-9) return "sehrHoch";
+  if (quote >= WARENEINSATZ_WARNUNG_AB - 1e-9) return "hoch";
+  return null;
+}
+
+// Paket 3 (16.10.2026), M15/E2: Branchen-Richtwert Wareneinsatz, wenn weder Belege noch eine Karte mit Einkaufspreisen eine Quote liefern.
+// Quelle (geprüft 16.10.2026): BMF-Richtsatzsammlung für das Kalenderjahr 2025, Gewerbeklasse „Imbissstuben u. Ä.“ (56103.0/56109.0),
+// Rohgewinn I 59–68–77 % des wirtschaftlichen Umsatzes → Wareneinsatz 23–32–41 %, Mittel 32 %. Immer als Schätzung (≈) gekennzeichnet.
+export const RICHTWERT_WARENEINSATZ = { quote: 0.32, min: 0.23, max: 0.41, quelle: "BMF-Richtsatzsammlung Kalenderjahr 2025, Imbissstuben u. Ä. (56103.0)", stand: "2026-10-16" };
 
 // Einheit wechseln, Zahl mitnehmen: 180 g -> 0,18 kg, 10 kg -> 10000 g (Review Etappe 2, Punkt 5).
 export function mengeUmrechnen(menge, von, nach) {
@@ -442,7 +469,7 @@ export function mengeUmrechnen(menge, von, nach) {
 }
 
 // ======================= Etappe 3: Schwund, Tagesnotiz, Läden-Übersicht =======================
-import { heute, uid, SITZUNG } from "./util.js";
+import { heute, heuteGeschaeft, uid, SITZUNG } from "./util.js";
 import { reinigungMonat } from "./reinigung.js";
 
 // Vorgangsarten nach Dossier C9 (drei Arten, nie vermischt):
@@ -473,6 +500,14 @@ export function wertEintrag(e, stand) {
   return null;
 }
 
+// Paket 3 (16.10.2026), M6: EINE Bewertung für jeden Schwund-Eintrag – Momentaufnahme (Feld wert, auch null = kein Preis) bleibt;
+// nur Alt-Einträge ohne das Feld werden zum heutigen Einkaufspreis nachbewertet. Genutzt von schwundAuswertung, Zähler (muellJeTag),
+// muellHeute und den Listen, damit alle dieselbe Zahl zeigen.
+export function eintragWert(e, stand) {
+  if ("wert" in e) return typeof e.wert === "number" ? e.wert : null;
+  return wertEintrag(e, stand);
+}
+
 // Deckungsbeitrag je Portion, mengengewichtet über die Karte (für das Abfall-Äquivalent, Prüfung Befund 2).
 export function dbJePortion(stand) {
   if (!(stand.gerichte || []).length) return null;
@@ -482,9 +517,10 @@ export function dbJePortion(stand) {
   return m > 0 ? s / m : null;
 }
 
-const tagMinus = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return heute(d); };
-export const zeitraumTage = (n) => ({ von: tagMinus(n - 1), bis: heute() });
-export const monatsZeitraum = () => { const h = heute(); return { von: h.slice(0, 8) + "01", bis: h }; };
+// Paket 3 (16.10.2026), M7: Schwund-Zeiträume enden am Geschäftstag (bis 4 Uhr zählt die Nacht zum Vortag).
+const tagMinus = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return heuteGeschaeft(d); };
+export const zeitraumTage = (n) => ({ von: tagMinus(n - 1), bis: heuteGeschaeft() });
+export const monatsZeitraum = () => { const h = heuteGeschaeft(); return { von: h.slice(0, 8) + "01", bis: h }; };
 
 // Auswertung der Schwund-Einträge in einem Zeitraum (Datum als "JJJJ-MM-TT", Grenzen einschließlich).
 export function schwundAuswertung(stand, { von, bis }) {
@@ -493,8 +529,7 @@ export function schwundAuswertung(stand, { von, bis }) {
   for (const e of stand.schwund || []) {
     if (e.storniert || typeof e.datum !== "string" || e.datum < von || e.datum > bis) continue;
     out.anzahl += 1;
-    // Momentaufnahme: der beim Eintragen ermittelte Wert bleibt – auch "kein Preis" (null). Nur Alt-Einträge ohne Feld werden nachbewertet.
-    const wert = "wert" in e ? (typeof e.wert === "number" ? e.wert : null) : wertEintrag(e, stand);
+    const wert = eintragWert(e, stand); // Paket 3, M6: eine Bewertung für alle Stellen
     const vorgang = SCHWUND_ARTEN[e.art] || 1;
     if (vorgang === 1) {
       if (wert === null) out.ohneWert += 1; else { out.muellwert += wert; out.jeArt[e.art] = (out.jeArt[e.art] || 0) + wert; }
@@ -545,7 +580,7 @@ export function tagesnotizLoeschen(stand, datum, geraet = null) {
   const e = tagesEntwurf(stand, datum, geraet);
   if (e) { e.umsatz = null; e.erfasst = jetzt; return e; }
   if (!(stand.tagesnotizen || []).some((x) => x.datum === datum && !x.storniert && (!x.geraet || x.geraet === geraet))) return null;
-  return tagesEntwurfAnlegen(stand, datum, null, { nacherfasst: datum !== heute(), geraet, jetzt });
+  return tagesEntwurfAnlegen(stand, datum, null, { nacherfasst: datum !== heuteGeschaeft(), geraet, jetzt }); // Paket 3, M7: Geschäftstag
 }
 // Feld verlassen: Entwurf festschreiben. Ein leerer Entwurf war nie ein Wert – er verschwindet, sein Vorgänger bleibt als Rücknahme stehen.
 export function tagesnotizFestschreiben(stand, datum, geraet = null) {

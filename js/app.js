@@ -5,7 +5,7 @@ import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEr
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
 import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen } from "./ablage.js"; // W2-D: ablageZuruecklegen
-import { esc, parseZahl, heute } from "./util.js"; // W2-S: heute für die Personal-Sperre
+import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
 import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
@@ -328,10 +328,12 @@ function ebeneWechseln(m, ziel) {
   if (m === "personal" && !pinGesetzt(wurzel)) return; // W2-S: Personal nur mit Büro-Code
   if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
   modusSetzen(wurzel, m); blattSchliessen();
-  ansicht = ziel || startAnsicht(wurzel);
+  ansicht = ziel === "preise" ? "buero" : (ziel || startAnsicht(wurzel)); // Paket 3 (16.10.2026): Nav-Ziel „preise“ = Büro, dann der Schritt Einkaufspreise
   ereignis("modus", { modus: m, laden: stand.id });
   if (m === "buero") history.pushState({ buero: true }, "");
-  ruheBis = Date.now() + 350; speichern(wurzel); zeichne();
+  ruheBis = Date.now() + 350; speichern(wurzel);
+  if (m === "buero" && ziel === "preise") return bearbeiten("preise");
+  zeichne();
 }
 // Laden → Büro: mit Code, wenn einer gesetzt ist (Einstellung im Büro), sonst direkt.
 function bueroBetreten(ziel = "buero") {
@@ -402,7 +404,7 @@ async function aufKlick(ev) {
   const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
   if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
   if (!stand) return;
-  if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heute())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
+  if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
 
   // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
   if (await ebeneAktion(name, el)) return;
@@ -412,6 +414,7 @@ async function aufKlick(ev) {
   if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
   if (name === "kuehl-keine") { stand.kuehl.keine = true; speichern(wurzel); return zeichne(); }
   if (name === "branchen-ok") { delete stand.branchenMeldung; speichern(wurzel); return zeichne(); }
+  if (name === "kleinunternehmer") { stand.betrieb.kleinunternehmer = !stand.betrieb.kleinunternehmer; speichern(wurzel); return zeichne(); } // Paket 3 (16.10.2026), M1: keine Vorsteuer – alle Posten Satz 0
   if (name === "waage-vorschlag") { stand.waageVorschlag = new Date().toISOString().slice(0, 10); speichern(wurzel); return bearbeiten("rezepte"); }
   if (name === "schnell-muell") { tagZuruecksetzen(); muellZuruecksetzen(); muellEingabeOeffnen(); ansicht = "muell"; return zeichne(); }
   if (name === "schnell-umsatz") { tagZuruecksetzen(); umsatzZuruecksetzen(); ansicht = "umsatz"; zeichne(); root.querySelector('[data-f="umsatz"]')?.focus(); return; }
@@ -420,6 +423,7 @@ async function aufKlick(ev) {
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav" && el.dataset.wert !== ansicht) { if (ansicht.startsWith("ordner-")) ordnerZuruecksetzen(); if (ansicht === "buero") bueroZuruecksetzen(); } // Entwickler C: Büro zu, wenn es in den Laden geht
   if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) return bueroBetreten(nz.ansicht); // Büro-Bildschirm aus dem Laden: erst ins Büro
+    if (nz.ansicht === "preise") return bearbeiten("preise"); // Paket 3 (16.10.2026): Richtwert-Zeile „Preise eintragen“ – im Büro direkt in den Schritt
     const ziel = nz.ansicht; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)

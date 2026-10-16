@@ -70,6 +70,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % TVSH", 7: "7 % TVSH", 0: "pa TVSH" }, // Paket 3 (16.10.2026), M1
     titel: "Shpenzimet e tua fikse",
     einleitung: "Tani mbledhim gjithçka që paguhet çdo muaj, pavarësisht nëse shet shumë apo pak. Dhjetë lista të shkurtra. Atë që nuk e di, lëre bosh.",
     los: "Fillojmë",
@@ -171,6 +172,7 @@ export default {
     leer: "ende pa recetë",
   },
   preise: {
+    preisNull: "Çmimi 0 € – a është saktë? Numërohet si „pa çmim“.", // Paket 3 (16.10.2026), M3
     frage: "Sa paguan kur blen mallin?",
     hinweis: "Për çdo artikull paketimin, ashtu siç e blen, dhe sa kushton – pa TVSH, siç shkruhet në faturën e furnitorit. Nuk ka vlera orientuese, këto çmime i di vetëm lokali yt. Atë që mungon, lëre bosh.",
     stand: (a, b) => `${a} nga ${b} çmime të plotësuara`,
@@ -364,13 +366,15 @@ export default {
     schritte: { karte: "Menyja", preise: "Çmimet e pjatave", rezepte: "Recetat", kosten: "Shpenzimet fikse", einkauf: "Çmimet e blerjes", kuehlung: "Frigoriferët", sicherung: "Kopja rezervë" },
     offen: { karte: () => "Fotografo menynë", preise: (n) => `${sn(n, "pjatë", "pjata")} pa çmim`, rezepte: (n) => `${sn(n, "pjatë", "pjata")} pa recetë`, kosten: (n) => `${sn(n, "zë i detyrueshëm bosh", "zëra të detyrueshëm bosh")} (qiraja, personeli, rroga jote, rryma/gazi)`,
       einkauf: (n) => `${n} përbërës pa çmim blerjeje – një foto e faturës i plotëson`, kuehlung: () => "Krijo pikat e matjes", sicherung: () => "Kopja e fundit është më e vjetër se 7 ditë" } },
-  vergleich: { eigenesFoto: "Bëj foton tënde", fotoGespeichert: "Fotoja u ruajt. Mbetet në këtë telefon.",  titel: "Krahasimi i pjatave", unter: "Cilat pjata të sjellin më shumë?", tab: { db: "Të mbetet për copë", marge: "Marzhi %" }, ware: "Kostoja e mallit", db: "Të mbetet për copë", marge: "Marzhi", leer: "Shkruaj çmimet e shitjes dhe të blerjes, pastaj sheh këtu cilat pjata sjellin më shumë.", ohneZahlen: (n) => (n === 1 ? "1 pjatë ende pa shifra" : `${n} pjata ende pa shifra`), einkaufFehlt: "Mungojnë çmimet e blerjes", hinweis: "Vlerat janë të përafërta dhe mund të ndryshojnë sipas përbërësve dhe çmimeve. Të gjitha shumat pa TVSH, përveç çmimit të shitjes." },
+  vergleich: { wareHoch: (q) => `${q} % – e lartë`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Bëj foton tënde", fotoGespeichert: "Fotoja u ruajt. Mbetet në këtë telefon.",  titel: "Krahasimi i pjatave", unter: "Cilat pjata të sjellin më shumë?", tab: { db: "Të mbetet për copë", marge: "Marzhi %" }, ware: "Kostoja e mallit", db: "Të mbetet për copë", marge: "Marzhi", leer: "Shkruaj çmimet e shitjes dhe të blerjes, pastaj sheh këtu cilat pjata sjellin më shumë.", ohneZahlen: (n) => (n === 1 ? "1 pjatë ende pa shifra" : `${n} pjata ende pa shifra`), einkaufFehlt: "Mungojnë çmimet e blerjes", hinweis: "Vlerat janë të përafërta dhe mund të ndryshojnë sipas përbërësve dhe çmimeve. Të gjitha shumat pa TVSH, përveç çmimit të shitjes." },
   buero: { titel: "Zyra", zurueck: "Lokali",
     abschnitt: { offen: "Për t'u bërë", ordner: "Dosje për dorëzim", zahlen: "Shifrat", karte: "Menyja dhe blerjet", einrichten: "Rregullo lokalin" },
     offen: { einrichtung: "Rregullimi", kosten: (n) => (n === 1 ? "Shpenzime fikse: mungon 1" : `Shpenzime fikse: mungojnë ${n}`), billig: (n) => `${sn(n, "çmim", "çmime")} shumë lirë`,
       ohneZahlen: (n) => `${sn(n, "pjatë", "pjata")} pa shifra`, sicherung: (n) => `Kopja: para ${sn(n, "dite", "ditësh")}`, sicherungNie: "Ende pa kopje",
       waage: "Peshoji porcionet", belehrung: (n) => `${sn(n, "trajnim", "trajnime")} për t'u bërë` },
-    zahlen: { monat: "Muaji dhe numëruesi", monatUnter: (m) => `${m} deri tani`, vergleich: "Krahasimi i pjatave", vergleichUnter: "Çfarë mbetet për copë", listen: "Listat", listenUnter: "Mbeturina, humbje, ushqim për stafin",
+    zahlen: { richtwert: "Vlerësim malli", wareHoch: (q) => `Kosto malli ${q} % – e lartë`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Muaji dhe numëruesi", monatUnter: (m) => `${m} deri tani`, vergleich: "Krahasimi i pjatave", vergleichUnter: "Çfarë mbetet për copë", listen: "Listat", listenUnter: "Mbeturina, humbje, ushqim për stafin",
       inventur: "Inventari", inventurUnter: (d) => `Numëruar së fundi më ${d}`, inventurNie: "Ende pa numëruar" },
     karte: { rezepte: "Recetat", preise: "Çmimet e blerjes", belege: "Faturat", verkauf: "Çmimet e shitjes", kosten: "Shpenzimet fikse", kartefoto: "Menyja nga foto" },
     einrichten: { einrichtung: "Rregullimi", kuehl: "Vendet e ftohjes", putzplan: "Ndrysho planin e pastrimit", laeden: "Lokalet", sicherung: "Kopja rezervë", code: "Kodi i zyrës", codeAn: "ndezur", codeAus: "fikur", einstellungen: "Cilësimet" },
@@ -636,6 +640,7 @@ export default {
     unvollstaendig: "Shpenzimet jo të plota – numëruesi llogarit vetëm me atë që është shënuar.",
     kalkulatorischSatz: "Të gjitha shumat janë të llogaritura, jo gjendje e llogarisë.",
     kalkulatorisch: "e llogaritur, jo gjendje e llogarisë",
+    richtwertZeile: "Vlerësim · Shkruaj çmimet ›", // Paket 3 (16.10.2026)
     stufe: { 1: "vetëm shpenzime fikse dhe rroga, malli mungon ende", 2: "malli i përafërt nga menyja", 3: "malli nga faturat e tua" },
     umsatzHeute: "Xhiroja sot",
     tonneHeute: "Koshi sot",
@@ -704,12 +709,14 @@ export default {
     eigenBis: "Rroga jote deri sot",
     wareGeschaetzt: (q) => `Malli (përafërsisht ${q} % e xhiros)`,
     wareBelege: "Malli nga faturat e tua",
+    wareRichtwert: (q) => `Mall (vlerësim ≈ ${q} % e shitjeve)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Vlerësim pa çmimet e tua: lokalet e vogla kanë ${min}–${max} % kosto malli. Burimi: ${q}. Shkruaj çmimet e blerjes dhe aplikacioni llogarit me shifrat e tua.`,
     wareFehlt: "Malli (ende i pallogaritur)",
     muellBis: "Mbeturinat deri sot",
     umsatzBis: "Xhiroja neto deri sot",
     umsatzBruttoHinweis: (b, s) => `nga ${b} bruto, minus ${s} % taksë`,
     steuerQuelle: { eigen: "norma jote e taksës", karte: "normë e përzier nga menyja", standard: "marrë 7 %" },
-    quoteQuelle: { eigen: "pjesa jote e mallit", karte: "nga menyja", keine: "pa meny" },
+    quoteQuelle: { richtwert: "vlerësim i degës (afërsisht)", eigen: "pjesa jote e mallit", karte: "nga menyja", keine: "pa meny" },
     monat: "Muaji me një shikim",
     legendeMonat: "E kuqe: ende në minus. E gjelbër: që këtu po fiton. Gri: ditë pushimi. Me kornizë: sot.",
     preise: "Çmime që kanë ndryshuar (30 ditë)",
@@ -887,7 +894,8 @@ export default {
     journal: { schwund: "Mbeturina", tagesnotizen: "Xhiro", messungen: "Ftohja", lieferungen: "Dorëzimet", abschluesse: "Mbylljet e ditës", kostenbelege: "Faturat e kostove", putzlog: "Plani i pastrimit", belehrungen: "Trajnimet e higjienës", rundgaenge: "Raundet e ftohjes", inventuren: "Inventarët", uploads: "Fotot", artikel: "Mallrat", gerichte: "Pjatat", anderes: "Të dhënat" },
     bereich: { kosten: "Kostot", gerichte: "Pjatat dhe recetat", artikel: "Mallrat dhe çmimet", betrieb: "Lokali", kuehl: "Vendet e ftohjes", putzplan: "Plani i pastrimit", personen: "Personat" },
   },
-  einstellungen: { fotosNichtDrin: "Fotot e faturave, mbeturinave dhe pjatave janë në skedarin e kopjes. Prandaj skedari është më i madh.",
+  einstellungen: { kleinunternehmer: "Biznes i vogël (pa zbritje TVSH)", kleinunternehmerHinweis: "Ndezur: shumat bruto numërohen të plota, TVSH nuk zbritet.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Fotot e faturave, mbeturinave dhe pjatave janë në skedarin e kopjes. Prandaj skedari është më i madh.",
     bereichBetrieb: "Lokali, ditët, sezoni",
     bereichTeam: "Ekipi",
     bereichKanaele: "Mënyrat e shitjes",
@@ -1101,7 +1109,7 @@ export default {
     pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën" },
     hilfeText: {
       allgemein: "Shiriti poshtë të çon te gjithçka që të duhet në lokal. Llogaritë, rregullimet dhe listat janë në zyrë.",
-      start: "Dita me një shikim. Numri i madh tregon sa xhiro mungon ende deri në zero. E kuqe do të thotë: merru tani.",
+      start: "Dita me një shikim. Numri i madh tregon sa xhiro mungon ende deri në zero. E kuqe do të thotë: merru tani. „≈“ përpara do të thotë vlerësim (mall ose paga jote) – shpjegimi në zyrë te „Muaji dhe numëruesi“. Pa çmime blerjeje aplikacioni llogarit 32 % mall (lokale të vogla: 23–41 %, tabelat BMF 2025).",
       muell: "Prek mallin që hidhet. Mund ta anulosh menjëherë pas. Listat dhe shumat janë në zyrë.",
       kuehl: "Mat çdo vend ftohjeje dhe shkruaj vlerën. Nëse është shumë e lartë, shëno çfarë bën dhe mat përsëri më vonë.",
       putzplan: "Shëno çfarë u pastrua sot. Shëno dhe lista është e përditësuar. Planin e ndryshon në zyrë.",

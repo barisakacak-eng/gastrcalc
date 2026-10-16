@@ -1,7 +1,7 @@
 // Etappe 5: „Umsatz" – Tagesumsatz eintragen und die Zähler-Seite (Strecke, Prognose, Rechnung, Monatsstreifen, Preise).
 import { t, sprache } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
-import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung } from "../engine.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: auf dieser Seite ist „heute“ der Geschäftstag (bis 4 Uhr = Vortag)
+import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung, wareneinsatzWarnung, RICHTWERT_WARENEINSATZ } from "../engine.js"; // Paket 3 (16.10.2026), M4/M15
 import { zaehler, monatsGrenzen } from "../zaehler.js";
 import { tagPlus } from "../engine.js";
 import { preisAenderungen } from "../lieferung.js";
@@ -12,7 +12,7 @@ import { zaehlerKarte } from "./home.js";
 let umsatzBasis = "brutto"; // Schalter am Feld: Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert (der Zähler rechnet netto)
 let mehrTage = false;       // Datumsleiste bis zum Monatsanfang ausgeklappt (Nachtest Etappe 5, Punkt 4)
 
-const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; };
+const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Geschäftstage rückwärts
 // Chips: die letzten 7 Tage, dazu auf Wunsch alle Tage bis zum Monatsanfang (und der Vormonat ab dem 7. Tag nicht mehr)
 function tagChips(D) {
   const H = heute(); const tage = letzteTage(7);
@@ -93,11 +93,12 @@ function rechnungKarte(z) {
     ${zeile(t("zaehler.lohnBis"), z.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.lohn))}
     ${zeile(t("zaehler.eigenBis"), z.last.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.eigen))}
     ${z.sonderBis > 0 ? zeile(t("zaehler.sonderBis", z.sonder.belege.length), fmtEuro(z.sonderBis)) : ""}
-    ${zeile(z.stufe === 3 ? t("zaehler.wareBelege") : z.stufe === 2 ? t("zaehler.wareGeschaetzt", fmtZahl(z.quote * 100, 0)) : t("zaehler.wareFehlt"), z.stufe === 1 ? "–" : fmtEuro(z.ware))}
+    ${zeile(z.stufe === 3 ? t("zaehler.wareBelege") : z.stufe === 2 ? t("zaehler.wareGeschaetzt", fmtZahl(z.quote * 100, 0)) : t("zaehler.wareRichtwert", fmtZahl(z.quote * 100, 0)), `${z.stufe < 3 ? "≈ " : ""}${fmtEuro(z.ware)}`)}
     ${z.stufe === 3 ? "" : zeile(t("zaehler.muellBis"), fmtEuro(z.muell, { dezimal: z.muell < 100 ? 2 : 0 }))}
     ${zeile(t("zaehler.umsatzBis"), fmtEuro(z.umsatzNetto), "gruen")}
     <small class="marke">${esc(t("zaehler.umsatzBruttoHinweis", fmtEuro(z.umsatzBrutto), fmtZahl(z.steuer * 100, 1)))} · ${esc(t("zaehler.steuerQuelle." + z.steuerQuelle))} · ${esc(t("zaehler.quoteQuelle." + z.quoteQuelle))}${z.start > z.monat.von ? ` · ${esc(t("zaehler.zaehltAb", datumLesbar(z.start).slice(0, 6)))}` : ""}</small>
-    ${z.quote !== null && z.quote > 0.5 && z.quoteQuelle === "karte" ? `<span class="marke offen">${esc(t("zaehler.quoteHoch", fmtZahl(z.quote * 100, 0)))}</span>` : ""}
+    ${z.quoteQuelle === "richtwert" ? `<span class="marke geschaetzt">${esc(t("zaehler.richtwertErklaerung", fmtZahl(RICHTWERT_WARENEINSATZ.min * 100, 0), fmtZahl(RICHTWERT_WARENEINSATZ.max * 100, 0), RICHTWERT_WARENEINSATZ.quelle))}</span>` : ""}
+    ${wareneinsatzWarnung(z.quoteEff) && z.quoteQuelle !== "richtwert" ? `<span class="marke offen">${esc(t("zaehler.quoteHoch", fmtZahl(z.quoteEff * 100, 0)))}</span>` : ""}
   </div>`;
 }
 

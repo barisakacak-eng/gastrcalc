@@ -198,7 +198,7 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
   const st = umsatzSteuerSatz(stand);
   const u = tage > 0 ? umsatzZeitraum(stand, { von, bis }) : { summe: 0, tage: 0 };
   const umsatzNetto = u.summe / (1 + st.satz);
-  const q = warenQuote(stand);
+  const q = warenQuote(stand); if (q.quelle === "richtwert") q.quote = null; // Paket 3 (16.10.2026): die Inventur vergleicht echte Zahlen, kein Branchen-Richtwert
   const echteQuote = umsatzNetto > 0 ? verbrauch / umsatzNetto : null;
   const sollWare = umsatzNetto > 0 && q.quote !== null ? umsatzNetto * q.quote : null;
   const luecke = sollWare !== null ? verbrauch - sollWare : null;

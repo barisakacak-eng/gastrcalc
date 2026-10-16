@@ -65,6 +65,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "IVA 19 %", 7: "IVA 7 %", 0: "senza IVA" }, // Paket 3 (16.10.2026), M1
     titel: "I tuoi costi fissi",
     einleitung: "Adesso raccogliamo tutto quello che si paga ogni mese, che tu venda tanto o poco. Dieci liste brevi. Quello che non sai, lo lasci aperto.",
     los: "Cominciamo",
@@ -166,6 +167,7 @@ export default {
     leer: "ancora senza ricetta",
   },
   preise: {
+    preisNull: "Prezzo 0 € – è giusto? Conta come «senza prezzo».", // Paket 3 (16.10.2026), M3
     frage: "Quanto paghi negli acquisti?",
     hinweis: "Per ogni articolo la confezione, come la compri, e quanto costa – senza IVA, come scritto sulla fattura del fornitore. Niente valori indicativi, i prezzi li conosce solo il tuo locale. Quello che manca, lo lasci aperto.",
     stand: (a, b) => `${a} di ${b} prezzi inseriti`,
@@ -359,13 +361,15 @@ export default {
     schritte: { karte: "Menù", preise: "Prezzi dei piatti", rezepte: "Ricette", kosten: "Costi fissi", einkauf: "Prezzi d'acquisto", kuehlung: "Frigo", sicherung: "Backup" },
     offen: { karte: () => "Fotografa il menù", preise: (n) => `${n} ${n === 1 ? "piatto" : "piatti"} senza prezzo`, rezepte: (n) => `${n} ${n === 1 ? "piatto" : "piatti"} senza ricetta`, kosten: (n) => `${n} ${n === 1 ? "voce obbligatoria aperta" : "voci obbligatorie aperte"} (affitto, personale, tuo stipendio, luce/gas)`,
       einkauf: (n) => `${n} ${n === 1 ? "ingrediente" : "ingredienti"} senza prezzo d'acquisto – una foto della fattura lo compila`, kuehlung: () => "Aggiungi un apparecchio frigo", sicherung: () => "Ultimo backup più vecchio di 7 giorni" } },
-  vergleich: { eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Margine %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Margine", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita." },
+  vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Margine %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Margine", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita." },
   buero: { titel: "Ufficio", zurueck: "Locale",
     abschnitt: { offen: "Da fare", ordner: "Cartelle da consegnare", zahlen: "Numeri", karte: "Menu & acquisti", einrichten: "Imposta il locale" },
     offen: { einrichtung: "Impostazione", kosten: (n) => (n === 1 ? "Costi fissi: ne manca 1" : `Costi fissi: ne mancano ${n}`), billig: (n) => (n === 1 ? "1 prezzo troppo basso" : `${n} prezzi troppo bassi`),
       ohneZahlen: (n) => (n === 1 ? "1 piatto senza numeri" : `${n} piatti senza numeri`), sicherung: (n) => (n === 1 ? "Backup di 1 giorno fa" : `Backup di ${n} giorni fa`), sicherungNie: "Ancora nessun backup",
       waage: "Pesa le porzioni", belehrung: (n) => (n === 1 ? "1 formazione in scadenza" : `${n} formazioni in scadenza`) },
-    zahlen: { monat: "Mese & contatore", monatUnter: (m) => `${m} finora`, vergleich: "Piatti a confronto", vergleichUnter: "Quanto resta al pezzo", listen: "Liste", listenUnter: "Scarti, ammanchi, pasti personale",
+    zahlen: { richtwert: "Riferimento merce", wareHoch: (q) => `Costo merce ${q} % – alto`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Mese & contatore", monatUnter: (m) => `${m} finora`, vergleich: "Piatti a confronto", vergleichUnter: "Quanto resta al pezzo", listen: "Liste", listenUnter: "Scarti, ammanchi, pasti personale",
       inventur: "Inventario", inventurUnter: (d) => `Ultimo conteggio il ${d}`, inventurNie: "Mai contato" },
     karte: { rezepte: "Ricette", preise: "Prezzi d'acquisto", belege: "Scontrini", verkauf: "Prezzi di vendita", kosten: "Costi fissi", kartefoto: "Menu da foto" },
     einrichten: { einrichtung: "Impostazione", kuehl: "Punti frigo", putzplan: "Modifica piano pulizie", laeden: "Locali", sicherung: "Backup", code: "Codice ufficio", codeAn: "sì", codeAus: "no", einstellungen: "Impostazioni" },
@@ -631,6 +635,7 @@ export default {
     unvollstaendig: "Costi incompleti – il contatore calcola solo con quello che è inserito.",
     kalkulatorischSatz: "Tutti gli importi sono calcolati, non è il saldo del conto.",
     kalkulatorisch: "calcolato, non è il saldo del conto",
+    richtwertZeile: "Stima · Inserisci prezzi ›", // Paket 3 (16.10.2026)
     stufe: { 1: "solo costi fissi e stipendi, manca ancora la merce", 2: "merce stimata dal menù", 3: "merce dai tuoi scontrini" },
     umsatzHeute: "Incasso oggi",
     tonneHeute: "Bidone oggi",
@@ -699,12 +704,14 @@ export default {
     eigenBis: "Il tuo stipendio fino a oggi",
     wareGeschaetzt: (q) => `Merce (stimata ${q} % dell'incasso)`,
     wareBelege: "Merce dai tuoi scontrini",
+    wareRichtwert: (q) => `Merce (riferimento ≈ ${q} % del fatturato)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Riferimento senza i tuoi prezzi: i chioschi stanno al ${min}–${max} % di costo merce. Fonte: ${q}. Inserisci i prezzi d’acquisto e l’app calcola con i tuoi numeri.`,
     wareFehlt: "Merce (non ancora calcolata)",
     muellBis: "Rifiuti fino a oggi",
     umsatzBis: "Incasso netto fino a oggi",
     umsatzBruttoHinweis: (b, s) => `da ${b} lordi, tolto ${s} % di imposta`,
     steuerQuelle: { eigen: "aliquota tua", karte: "aliquota media dal menù", standard: "ipotesi 7 %" },
-    quoteQuelle: { eigen: "quota merce tua", karte: "dal menù", keine: "nessun menù" },
+    quoteQuelle: { richtwert: "riferimento di settore (stima)", eigen: "quota merce tua", karte: "dal menù", keine: "nessun menù" },
     monat: "Il mese a colpo d'occhio",
     legendeMonat: "Rosso: ancora in negativo. Verde: da qui guadagni. Grigio: giorno di chiusura. Bordato: oggi.",
     preise: "Prezzi cambiati (30 giorni)",
@@ -883,7 +890,8 @@ export default {
     journal: { schwund: "Rifiuti", tagesnotizen: "Incasso", messungen: "Refrigerazione", lieferungen: "Consegne", abschluesse: "Chiusure del giorno", kostenbelege: "Ricevute di costo", putzlog: "Piano pulizie", belehrungen: "Formazioni igiene", rundgaenge: "Giri di refrigerazione", inventuren: "Inventari", uploads: "Foto", artikel: "Merci", gerichte: "Piatti", anderes: "Dati" },
     bereich: { kosten: "Costi", gerichte: "Piatti e ricette", artikel: "Merci e prezzi", betrieb: "Locale", kuehl: "Punti di refrigerazione", putzplan: "Piano pulizie", personen: "Persone" },
   },
-  einstellungen: { fotosNichtDrin: "Le foto di fatture, rifiuti e piatti sono nel file di backup. Per questo il file è più grande.",
+  einstellungen: { kleinunternehmer: "Piccola impresa (senza IVA detraibile)", kleinunternehmerHinweis: "Attivo: gli importi lordi contano per intero, nessuna IVA viene detratta.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Le foto di fatture, rifiuti e piatti sono nel file di backup. Per questo il file è più grande.",
     bereichBetrieb: "Locale, giorni, stagione",
     bereichTeam: "Team",
     bereichKanaele: "Canali di vendita",
@@ -1097,7 +1105,7 @@ export default {
     pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra" },
     hilfeText: {
       allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",
-      start: "La giornata a colpo d'occhio. Il numero grande mostra quanto incasso manca ancora per arrivare a zero. Rosso vuol dire: occupatene ora.",
+      start: "La giornata a colpo d'occhio. Il numero grande mostra quanto incasso manca ancora per arrivare a zero. Rosso vuol dire: occupatene ora. Un «≈» davanti significa stima (merce o il tuo stipendio) – spiegazione in ufficio sotto «Mese e contatore». Senza prezzi d’acquisto l’app calcola il 32 % di merce (chioschi: 23–41 %, tabelle BMF 2025).",
       muell: "Tocca la merce che viene buttata. Subito dopo puoi annullare. Liste e importi sono in ufficio.",
       kuehl: "Misura ogni punto di refrigerazione e inserisci il valore. Se è troppo alto, scrivi cosa fai e rimisura più tardi.",
       putzplan: "Spunta ciò che è stato pulito oggi. Spunta e la lista è aggiornata. Il piano lo cambi in ufficio.",

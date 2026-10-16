@@ -12,7 +12,8 @@ import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige } from "../util.js";
 import { reinigungVon, putzzeitMonat, REINIGUNG_LEER } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
-import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard } from "../data/kosten.js";
+import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard, satzStandard } from "../data/kosten.js";
+import { VORSTEUER_SAETZE } from "../engine.js"; // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten
 import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
 import { heute } from "../util.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
@@ -40,7 +41,7 @@ const knopfOffen = (text = t("allgemein.weissNicht")) => `<button type="button" 
 // Kostenposten eines Betriebs holen oder anlegen
 function postenEintrag(stand, postenId, kat) {
   let e = stand.kosten.find((k) => k.posten === postenId);
-  if (!e) { e = { id: uid(), posten: postenId, kategorie: kat, betrag: null, status: "aus", periode: "monat", basis: basisStandard(postenId) }; stand.kosten.push(e); }
+  if (!e) { e = { id: uid(), posten: postenId, kategorie: kat, betrag: null, status: "aus", periode: "monat", basis: basisStandard(postenId), satz: satzStandard(postenId) }; stand.kosten.push(e); }
   return e;
 }
 
@@ -205,6 +206,7 @@ function kostenSchritt(kat) {
                     </div>
                   </div>
                   <div class="seg klein"><button type="button" class="${(e.basis || basisStandard(p.id)) === "brutto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="brutto">${esc(t("gebinde.brutto"))}</button><button type="button" class="${(e.basis || basisStandard(p.id)) === "netto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="netto">${esc(t("gebinde.netto"))}</button></div>
+                  ${(e.basis || basisStandard(p.id)) === "brutto" && !stand.betrieb.kleinunternehmer ? `<div class="chips satzwahl">${VORSTEUER_SAETZE.map((sz) => `<button type="button" class="chip klein ${(VORSTEUER_SAETZE.includes(Number(e.satz)) ? Number(e.satz) : satzStandard(p.id)) === sz ? "an" : ""}" data-a="satz-posten" data-posten="${p.id}" data-wert="${sz}">${esc(t("kosten.satz." + sz))}</button>`).join("")}</div>` : ""}
                   <div class="unterzeile">
                     ${e.status === "geschaetzt" ? `<span class="marke geschaetzt">${esc(t("kosten.richtwertHinweis", fmtEuro(rw)))}</span>`
                       : e.status === "offen" ? `<span class="marke offen">${esc(t("kosten.offenHinweis"))}</span>`
@@ -245,6 +247,7 @@ function kostenSchritt(kat) {
       }
       if (name === "posten-offen") { const e = postenEintrag(stand, el.dataset.posten, kat); e.betrag = null; e.status = "offen"; return true; }
       if (name === "basis-posten") { const e = postenEintrag(stand, el.dataset.posten, kat); e.basis = el.dataset.wert === "brutto" ? "brutto" : "netto"; return true; }
+      if (name === "satz-posten") { const e = postenEintrag(stand, el.dataset.posten, kat); const sz = Number(el.dataset.wert); e.satz = VORSTEUER_SAETZE.includes(sz) ? sz : satzStandard(el.dataset.posten); return true; } // Paket 3, M1
     },
     beimVerlassen(stand) { if (!stand.kostenKategorienGeprueft.includes(kat)) stand.kostenKategorienGeprueft.push(kat); },
   };

@@ -1,6 +1,6 @@
 // Etappe 5: „Tag abschließen" – drei Haken (Umsatz, Müll, Kühlung), dann die Bilanz des Tages. Das Abendritual.
 import { t } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl, heute, wertAnzeige } from "../util.js";
+import { esc, fmtEuro, fmtZahl, heute as kalendertag, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); Kühlung bleibt am Kalendertag
 import { umsatzEintrag, schwundAuswertung, kuehlStatus, tagPlus, wochentag } from "../engine.js";
 import { zaehler, tagAbschliessen, abschlussVon } from "../zaehler.js";
 import { nav } from "./nav.js";
@@ -38,7 +38,7 @@ function bilanzView(stand, H) {
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H }); const ks = kuehlStatus(stand);
   const vor = z.standGestern; const nach = z.stand; const besser = nach - vor;
   const netto = u ? z.nettoVon(u.umsatz) : 0; const bleibt = u ? z.bleibtVon(u.umsatz) : 0;
-  const rundgaenge = (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === H).length;
+  const rundgaenge = (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === kalendertag()).length; // Kühlung: Kalendertag
   // Vergleich mit demselben Wochentag der Vorwoche
   const V = tagPlus(H, -7); const uv = umsatzEintrag(stand, V); const swv = schwundAuswertung(stand, { von: V, bis: V });
   const tag = t("abschluss.tage." + wochentag(H));

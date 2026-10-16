@@ -65,6 +65,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % VAT", 7: "7 % VAT", 0: "không VAT" }, // Paket 3 (16.10.2026), M1
     titel: "Chi phí cố định của bạn",
     einleitung: "Giờ mình gom hết những khoản phải trả mỗi tháng, dù bán nhiều hay ít. Mười danh sách ngắn. Cái nào chưa biết thì để trống.",
     los: "Bắt đầu",
@@ -166,6 +167,7 @@ export default {
     leer: "chưa có công thức",
   },
   preise: {
+    preisNull: "Giá 0 € – đúng không? Tính là „chưa có giá“.", // Paket 3 (16.10.2026), M3
     frage: "Bạn mua hàng với giá bao nhiêu?",
     hinweis: "Mỗi mặt hàng: loại đóng gói bạn mua và giá của nó – chưa thuế, như trên hóa đơn nhà cung cấp. Không có số tham khảo, giá thì chỉ quán bạn biết. Cái nào thiếu thì để trống.",
     stand: (a, b) => `Đã điền ${a}/${b} giá`,
@@ -359,13 +361,15 @@ export default {
     schritte: { karte: "Thực đơn", preise: "Giá các món", rezepte: "Công thức", kosten: "Chi phí cố định", einkauf: "Giá mua", kuehlung: "Nhiệt độ lạnh", sicherung: "Sao lưu" },
     offen: { karte: () => "Chụp ảnh thực đơn", preise: (n) => `${n} món chưa có giá`, rezepte: (n) => `${n} món chưa có công thức`, kosten: (n) => `${n} khoản bắt buộc chưa điền (tiền thuê, nhân viên, lương của bạn, điện/gas)`,
       einkauf: (n) => `${n} nguyên liệu chưa có giá mua – chụp một hóa đơn là điền được`, kuehlung: () => "Tạo điểm lạnh", sicherung: () => "Lần sao lưu cuối đã hơn 7 ngày" } },
-  vergleich: { eigenesFoto: "Tự chụp ảnh", fotoGespeichert: "Đã lưu ảnh. Ảnh chỉ nằm trên điện thoại này.",  titel: "So sánh món", unter: "Món nào lời nhiều nhất?", tab: { db: "Còn lại mỗi phần", marge: "Lợi nhuận %" }, ware: "Tiền nguyên liệu", db: "Còn lại cho bạn mỗi phần", marge: "Tỷ lệ lời", leer: "Điền giá bán và giá mua, rồi ở đây bạn sẽ thấy món nào lời nhiều nhất.", ohneZahlen: (n) => `${n} món chưa có số liệu`, einkaufFehlt: "Thiếu giá mua", hinweis: "Các số là ước tính và có thể khác tùy nguyên liệu và giá. Tất cả số tiền đều chưa thuế, trừ giá bán." },
+  vergleich: { wareHoch: (q) => `${q} % – cao`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Tự chụp ảnh", fotoGespeichert: "Đã lưu ảnh. Ảnh chỉ nằm trên điện thoại này.",  titel: "So sánh món", unter: "Món nào lời nhiều nhất?", tab: { db: "Còn lại mỗi phần", marge: "Lợi nhuận %" }, ware: "Tiền nguyên liệu", db: "Còn lại cho bạn mỗi phần", marge: "Tỷ lệ lời", leer: "Điền giá bán và giá mua, rồi ở đây bạn sẽ thấy món nào lời nhiều nhất.", ohneZahlen: (n) => `${n} món chưa có số liệu`, einkaufFehlt: "Thiếu giá mua", hinweis: "Các số là ước tính và có thể khác tùy nguyên liệu và giá. Tất cả số tiền đều chưa thuế, trừ giá bán." },
   buero: { titel: "Văn phòng", zurueck: "Quán",
     abschnitt: { offen: "Còn việc", ordner: "Hồ sơ để nộp", zahlen: "Số liệu", karte: "Thực đơn & mua hàng", einrichten: "Cài đặt quán" },
     offen: { einrichtung: "Cài đặt", kosten: (n) => `Chi phí cố định: thiếu ${n}`, billig: (n) => `${n} giá quá rẻ`,
       ohneZahlen: (n) => `${n} món chưa có số`, sicherung: (n) => `Sao lưu ${n} ngày trước`, sicherungNie: "Chưa sao lưu",
       waage: "Cân khẩu phần", belehrung: (n) => `${n} buổi hướng dẫn đến hạn` },
-    zahlen: { monat: "Tháng & bộ đếm", monatUnter: (m) => `${m} đến nay`, vergleich: "So sánh món", vergleichUnter: "Còn lại mỗi phần", listen: "Danh sách", listenUnter: "Rác, hao hụt, bữa nhân viên",
+    zahlen: { richtwert: "Ước tính nguyên liệu", wareHoch: (q) => `Chi phí nguyên liệu ${q} % – cao`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Tháng & bộ đếm", monatUnter: (m) => `${m} đến nay`, vergleich: "So sánh món", vergleichUnter: "Còn lại mỗi phần", listen: "Danh sách", listenUnter: "Rác, hao hụt, bữa nhân viên",
       inventur: "Kiểm kho", inventurUnter: (d) => `Đếm lần cuối ngày ${d}`, inventurNie: "Chưa đếm lần nào" },
     karte: { rezepte: "Công thức", preise: "Giá mua", belege: "Hóa đơn", verkauf: "Giá bán", kosten: "Chi phí cố định", kartefoto: "Thực đơn từ ảnh" },
     einrichten: { einrichtung: "Cài đặt", kuehl: "Chỗ làm lạnh", putzplan: "Sửa lịch dọn vệ sinh", laeden: "Các quán", sicherung: "Sao lưu", code: "Mã văn phòng", codeAn: "bật", codeAus: "tắt", einstellungen: "Cài đặt" },
@@ -631,6 +635,7 @@ export default {
     unvollstaendig: "Chi phí chưa đủ – bộ đếm chỉ tính những gì đã điền.",
     kalkulatorischSatz: "Mọi số tiền đều là số tính toán, không phải số dư tài khoản.",
     kalkulatorisch: "số tính toán, không phải số dư tài khoản",
+    richtwertZeile: "Ước tính · Nhập giá ›", // Paket 3 (16.10.2026)
     stufe: { 1: "chỉ có chi phí cố định và lương, còn thiếu nguyên liệu", 2: "nguyên liệu ước tính từ thực đơn", 3: "nguyên liệu từ hóa đơn của bạn" },
     umsatzHeute: "Doanh thu hôm nay",
     tonneHeute: "Rác hôm nay",
@@ -699,12 +704,14 @@ export default {
     eigenBis: "Lương của bạn đến hôm nay",
     wareGeschaetzt: (q) => `Nguyên liệu (ước tính ${q} % doanh thu)`,
     wareBelege: "Nguyên liệu từ hóa đơn của bạn",
+    wareRichtwert: (q) => `Nguyên liệu (ước tính ≈ ${q} % doanh thu)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Ước tính khi chưa có giá của bạn: quán ăn nhanh ở mức ${min}–${max} % chi phí nguyên liệu. Nguồn: ${q}. Nhập giá mua để ứng dụng tính bằng số của bạn.`,
     wareFehlt: "Nguyên liệu (chưa tính)",
     muellBis: "Rác đến hôm nay",
     umsatzBis: "Doanh thu chưa thuế đến hôm nay",
     umsatzBruttoHinweis: (b, s) => `từ ${b} gồm thuế, đã trừ ${s} % thuế`,
     steuerQuelle: { eigen: "thuế suất riêng", karte: "thuế suất trung bình theo thực đơn", standard: "tạm tính 7 %" },
-    quoteQuelle: { eigen: "tỷ lệ nguyên liệu riêng", karte: "theo thực đơn", keine: "chưa có thực đơn" },
+    quoteQuelle: { richtwert: "ước tính ngành (gần đúng)", eigen: "tỷ lệ nguyên liệu riêng", karte: "theo thực đơn", keine: "chưa có thực đơn" },
     monat: "Cả tháng trong một cái nhìn",
     legendeMonat: "Đỏ: vẫn đang âm. Xanh: từ đây bạn có lời. Xám: ngày nghỉ. Có viền: hôm nay.",
     preise: "Giá đã thay đổi (30 ngày)",
@@ -882,7 +889,8 @@ export default {
     journal: { schwund: "Rác", tagesnotizen: "Doanh thu", messungen: "Làm lạnh", lieferungen: "Giao hàng", abschluesse: "Đóng ngày", kostenbelege: "Hóa đơn chi phí", putzlog: "Kế hoạch vệ sinh", belehrungen: "Hướng dẫn vệ sinh", rundgaenge: "Vòng kiểm lạnh", inventuren: "Kiểm kho", uploads: "Ảnh", artikel: "Hàng hóa", gerichte: "Món ăn", anderes: "Dữ liệu" },
     bereich: { kosten: "Chi phí", gerichte: "Món và công thức", artikel: "Hàng và giá", betrieb: "Quán", kuehl: "Chỗ làm lạnh", putzplan: "Kế hoạch vệ sinh", personen: "Người" },
   },
-  einstellungen: { fotosNichtDrin: "Ảnh hóa đơn, rác và món ăn có trong file sao lưu. Vì vậy file lớn hơn.",
+  einstellungen: { kleinunternehmer: "Doanh nghiệp nhỏ (không khấu trừ VAT)", kleinunternehmerHinweis: "Bật: số tiền gộp tính đủ, không trừ VAT.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Ảnh hóa đơn, rác và món ăn có trong file sao lưu. Vì vậy file lớn hơn.",
     bereichBetrieb: "Quán, ngày mở, mùa",
     bereichTeam: "Nhân viên",
     bereichKanaele: "Cách bán",
@@ -1096,7 +1104,7 @@ export default {
     pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số" },
     hilfeText: {
       allgemein: "Thanh bên dưới dẫn đến mọi thứ bạn cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",
-      start: "Cả ngày trong một cái nhìn. Con số lớn cho biết còn thiếu bao nhiêu doanh thu để hòa vốn. Màu đỏ nghĩa là: xử lý ngay.",
+      start: "Cả ngày trong một cái nhìn. Con số lớn cho biết còn thiếu bao nhiêu doanh thu để hòa vốn. Màu đỏ nghĩa là: xử lý ngay. Có „≈“ phía trước nghĩa là số ước tính (nguyên liệu hoặc lương của bạn) – giải thích trong văn phòng, mục „Tháng và bộ đếm“. Chưa có giá mua thì ứng dụng tính 32 % nguyên liệu (quán ăn nhanh: 23–41 %, bảng BMF 2025).",
       muell: "Chạm vào món bị bỏ đi. Có thể hoàn tác ngay sau đó. Danh sách và số tiền nằm ở văn phòng.",
       kuehl: "Đo từng chỗ làm lạnh và nhập giá trị. Nếu quá cao, ghi lại bạn làm gì và đo lại sau.",
       putzplan: "Đánh dấu những gì đã dọn hôm nay. Đánh dấu là danh sách được cập nhật. Kế hoạch đổi ở văn phòng.",

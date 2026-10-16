@@ -10,9 +10,9 @@
 //  - Durch Öffnungstage teilen: Ruhetage (aus der Kühlkontrolle) zählen nicht; ohne Ruhetage gilt der Anteil tageProWoche/7 je Kalendertag.
 //  - Unvollständig (Kosten offen, kein Umsatz eingetragen) wird gesagt, nicht erfunden.
 import { sonderkostenImMonat } from "./kostenbeleg.js";
-import { heute, uid } from "./util.js";
+import { heute, heuteGeschaeft, uid } from "./util.js";
 import { lieferungTeile } from "./betriebsmittel.js";
-import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus } from "./engine.js";
+import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus, ruhetageAm, eintragWert, RICHTWERT_WARENEINSATZ } from "./engine.js";
 
 export function monatsGrenzen(datum) {
   const [j, m] = datum.split("-").map(Number);
@@ -21,22 +21,26 @@ export function monatsGrenzen(datum) {
 }
 
 // Gewicht eines Kalendertags als Öffnungstag: 1 oder 0 bei bekannten Ruhetagen, sonst tageProWoche/7.
+// Paket 3 (16.10.2026), M5: Ruhetage mit Gültig-ab-Verlauf (ruhetageAm) – eine Änderung mitten im Monat ändert vergangene Tage nicht.
 export function tagGewicht(stand, datum) {
-  const ruhetage = stand.kuehl?.ruhetage || [];
+  const ruhetage = ruhetageAm(stand, datum);
   if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
   const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));
   return t / 7;
 }
 
 // Warenquote (Anteil Wareneinsatz am Nettoumsatz): eigener Wert vor Karte (mengengewichtet über Gerichte mit Preis und vollständigem Rezept).
+// Paket 3 (16.10.2026), M15/E2: liefert die Karte keine Quote, gilt der Branchen-Richtwert (RICHTWERT_WARENEINSATZ) als Schätzung –
+// quelle "richtwert", geschaetzt true. Vorher stand hier Quote 0 (Ziel zu niedrig). Karte und eigener Wert: geschaetzt false.
 export function warenQuote(stand) {
-  if (typeof stand.verkauf?.warenQuote === "number") return { quote: stand.verkauf.warenQuote, quelle: "eigen" };
-  if (!(stand.gerichte || []).length) return { quote: null, quelle: "keine" };
+  if (typeof stand.verkauf?.warenQuote === "number") return { quote: stand.verkauf.warenQuote, quelle: "eigen", geschaetzt: false };
+  const richtwert = { quote: RICHTWERT_WARENEINSATZ.quote, quelle: "richtwert", geschaetzt: true };
+  if (!(stand.gerichte || []).length) return richtwert;
   const k = kalkulation(stand);
   let w = 0, u = 0;
   for (const z of k.zeilen) if (z.waren !== null && z.preisNetto !== null && z.preisNetto > 0) { const m = z.menge || 1; w += z.waren * m; u += z.preisNetto * m; }
-  if (!(u > 0)) return { quote: null, quelle: "keine" };
-  return { quote: Math.min(0.89, w / u), quelle: "karte" };
+  if (!(u > 0)) return richtwert;
+  return { quote: Math.min(0.89, w / u), quelle: "karte", geschaetzt: false };
 }
 
 // Müllwert je Tag (Vorgang 1, bewertete Einträge), als Karte datum → €.
@@ -44,7 +48,7 @@ function muellJeTag(stand, von, bis) {
   const out = {};
   for (const e of stand.schwund || []) {
     if (e.storniert || (SCHWUND_ARTEN[e.art] || 1) !== 1 || typeof e.datum !== "string" || e.datum < von || e.datum > bis) continue;
-    if (typeof e.wert === "number") out[e.datum] = (out[e.datum] || 0) + e.wert;
+    const w = eintragWert(e, stand); if (w !== null) out[e.datum] = (out[e.datum] || 0) + w; // Paket 3, M6: Alt-Einträge wie in schwundAuswertung
   }
   return out;
 }
@@ -59,8 +63,8 @@ function einkaufJeTag(stand, von, bis) {
   return { jeTag: out, anzahl: n };
 }
 
-// Der Zähler für den Monat, in dem `datum` liegt, Stand am Abend von `datum`.
-export function zaehler(stand, { datum = heute() } = {}) {
+// Der Zähler für den Monat, in dem `datum` liegt, Stand am Abend von `datum`. Paket 3, M7: Standard ist der Geschäftstag (bis 4 Uhr = Vortag).
+export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const M = monatsGrenzen(datum);
   const last = monatsLast(stand);
   const steuer = umsatzSteuerSatz(stand);
@@ -77,10 +81,13 @@ export function zaehler(stand, { datum = heute() } = {}) {
   for (let d = start; d <= datum && d <= M.bis; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) umsatzNettoGesamt += e.umsatz / (1 + steuer.satz); }
   // Stufe 3 nur mit Karte (sonst gibt es keine Schätzung zum Vergleichen) und wenn der Einkauf aus Belegen mindestens so hoch ist wie die
   // Schätzung aus der Karte – ein einzelner Beleg würde den Zähler sonst zu grün machen. Lieber zu rot als zu grün: es zählt die höhere Zahl.
-  let stufe = q.quote !== null ? 2 : 1;
+  // Paket 3 (16.10.2026), M15/E2: Stufe 1 = ohne Karte, rechnet jetzt mit dem Branchen-Richtwert (quelle "richtwert") statt mit Quote 0;
+  // Stufe 3 weiterhin nur mit Karte (ein Richtwert ist keine Schätzung zum Vergleichen – Entscheidung „Ohne Karte keine Stufe 3“ bleibt).
+  const mitKarte = q.quelle !== "richtwert";
+  let stufe = mitKarte ? 2 : 1;
   const belegSumme = Object.values(einkauf.jeTag).reduce((a, b) => a + b, 0);
-  if (einkauf.anzahl > 0 && q.quote !== null && belegSumme > 0 && belegSumme >= umsatzNettoGesamt * q.quote) stufe = 3;
-  // Quote für die Prognose: in Stufe 3 die Belegquote (nie unter der Kartenquote), sonst die Karte
+  if (einkauf.anzahl > 0 && mitKarte && belegSumme > 0 && belegSumme >= umsatzNettoGesamt * q.quote) stufe = 3;
+  // Quote für die Prognose: in Stufe 3 die Belegquote (nie unter der Kartenquote), sonst Karte oder Richtwert
   const quoteEff = stufe === 3 ? Math.min(0.95, Math.max(q.quote, umsatzNettoGesamt > 0 ? belegSumme / umsatzNettoGesamt : q.quote)) : (q.quote ?? 0);
 
   // Öffnungstage des Monats (gewichtet) und Tageskosten
@@ -100,7 +107,7 @@ export function zaehler(stand, { datum = heute() } = {}) {
     t.status = t.datum === datum ? "heute" : "vergangen";
     const e = umsatzEintrag(stand, t.datum);
     const ub = e ? e.umsatz : 0; const un = ub / (1 + steuer.satz);
-    const w = stufe === 3 ? (einkauf.jeTag[t.datum] || 0) : stufe === 2 ? un * q.quote : 0;
+    const w = stufe === 3 ? (einkauf.jeTag[t.datum] || 0) : un * quoteEff; // Paket 3: Stufe 1 schätzt die Ware mit dem Richtwert
     const m = stufe === 3 ? 0 : (muell[t.datum] || 0);
     kosten += tageskosten * t.gewicht; gewichtBisHeute += t.gewicht;
     umsatzBrutto += ub; umsatzNetto += un; ware += w; muellSumme += m;
@@ -127,8 +134,11 @@ export function zaehler(stand, { datum = heute() } = {}) {
     reichtNicht = standHeute < 0 && nullTag === null;
   }
   const unvollstaendig = last.offen > 0;
+  // Paket 3 (16.10.2026), M2/M15: geschätzt, wenn der Mischsatz ohne echte Mengen gewichtet ist, die Quote vom Richtwert kommt oder der
+  // eigene Lohn ein Richtwert ist – unter Stufe 3 ist die Ware ohnehin eine Schätzung aus der Karte.
+  const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteQuelle: q.quelle, steuer: steuer.satz, steuerQuelle: steuer.quelle, start, belegSumme,
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: anteil(last.lohn ?? 0) * gewichtBisHeute, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
@@ -139,7 +149,7 @@ export function zaehler(stand, { datum = heute() } = {}) {
 }
 
 // Sieben Tage bis `datum` gegen die sieben Tage davor (Tagesumsatz brutto), für die Balken im Cockpit.
-export function wochenVergleich(stand, datum = heute()) {
+export function wochenVergleich(stand, datum = heuteGeschaeft()) { // Paket 3, M7
   const diese = [], vorige = [];
   for (let i = 6; i >= 0; i--) {
     const d = tagPlus(datum, -i); const v = tagPlus(datum, -i - 7);
@@ -152,8 +162,9 @@ export function wochenVergleich(stand, datum = heute()) {
 }
 
 // Tag abschließen (Abendritual): ein Journaleintrag je Abschluss mit dem Stand des Zählers. Der jüngste je Datum gilt.
-export function tagAbschliessen(stand, { datum = heute(), geraet = null } = {}) {
-  const z = zaehler(stand, { datum }); const sw = schwundAuswertung(stand, { von: datum, bis: datum }); const ks = datum === heute() ? kuehlStatus(stand) : null;
+// Paket 3, M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); der Kühl-Stand bleibt am Kalendertag (kuehlStatus rechnet mit heute()).
+export function tagAbschliessen(stand, { datum = heuteGeschaeft(), geraet = null } = {}) {
+  const z = zaehler(stand, { datum }); const sw = schwundAuswertung(stand, { von: datum, bis: datum }); const ks = datum === heuteGeschaeft() ? kuehlStatus(stand) : null;
   const e = { id: uid(), datum, erfasst: new Date().toISOString(), geraet, umsatz: umsatzEintrag(stand, datum)?.umsatz ?? null,
     muell: sw.muellwert, muellOhneWert: sw.ohneWert, kuehl: ks && ks.eingerichtet ? { gemessen: ks.heuteGemessen, stellen: ks.stellen } : null,
     stand: z.stand, standGestern: z.standGestern, stufe: z.stufe, storniert: false };

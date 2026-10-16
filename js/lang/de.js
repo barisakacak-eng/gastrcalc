@@ -64,6 +64,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % MwSt", 7: "7 % MwSt", 0: "ohne MwSt" }, // Paket 3 (16.10.2026), M1
     titel: "Deine festen Kosten",
     einleitung: "Jetzt sammeln wir alles, was jeden Monat bezahlt wird, egal ob du viel oder wenig verkaufst. Zehn kurze Listen. Was du nicht weißt, lässt du offen.",
     los: "Los geht's",
@@ -165,6 +166,7 @@ export default {
     leer: "noch ohne Rezept",
   },
   preise: {
+    preisNull: "Preis 0 € – ist das richtig? Zählt als „kein Preis“.", // Paket 3 (16.10.2026), M3
     frage: "Was zahlst du im Einkauf?",
     hinweis: "Je Artikel die Packung, so wie du sie kaufst, und was sie kostet – ohne Mehrwertsteuer, so wie es auf der Lieferantenrechnung steht. Keine Richtwerte, die Preise kennt nur dein Laden. Was fehlt, lässt du offen.",
     stand: (a, b) => `${a} von ${b} Preisen eingetragen`,
@@ -358,14 +360,16 @@ export default {
     schritte: { karte: "Speisekarte", preise: "Preise der Gerichte", rezepte: "Rezepte", kosten: "Feste Kosten", einkauf: "Einkaufspreise", kuehlung: "Kühlung", sicherung: "Sicherung" },
     offen: { karte: () => "Speisekarte fotografieren", preise: (n) => `${n} Gerichte ohne Preis`, rezepte: (n) => `${n} Gerichte ohne Rezept`, kosten: (n) => `${n} Pflichtposten offen (Miete, Personal, eigener Lohn, Strom/Gas)`,
       einkauf: (n) => `${n} Zutaten ohne Einkaufspreis – ein Rechnungsfoto füllt das`, kuehlung: () => "Kühlstelle anlegen", sicherung: () => "Letzte Sicherung älter als 7 Tage" } },
-  vergleich: { eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Bleibt pro Stück", marge: "Marge %" }, ware: "Wareneinsatz", db: "Bleibt dir pro Stück", marge: "Marge", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis." },
+  vergleich: { wareHoch: (q) => `${q} % – hoch`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Bleibt pro Stück", marge: "Marge %" }, ware: "Wareneinsatz", db: "Bleibt dir pro Stück", marge: "Marge", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Büro", zurueck: "Laden",
     abschnitt: { offen: "Offen", ordner: "Ordner zum Abgeben", zahlen: "Zahlen", karte: "Karte & Einkauf", einrichten: "Laden einrichten" },
     offen: { einrichtung: "Einrichtung", kosten: (n) => (n === 1 ? "Feste Kosten: 1 fehlt" : `Feste Kosten: ${n} fehlen`), billig: (n) => (n === 1 ? "1 Preis zu billig" : `${n} Preise zu billig`),
       ohneZahlen: (n) => (n === 1 ? "1 Gericht ohne Zahlen" : `${n} Gerichte ohne Zahlen`), sicherung: (n) => (n === 1 ? "Sicherung 1 Tag" : `Sicherung ${n} Tage`), sicherungNie: "Noch keine Sicherung",
       waage: "Portionen abwiegen", belehrung: (n) => (n === 1 ? "1 Belehrung fällig" : `${n} Belehrungen fällig`) },
-    zahlen: { monat: "Monat & Zähler", monatUnter: (m) => `${m} bisher`, vergleich: "Gerichte im Vergleich", vergleichUnter: "Was bleibt pro Stück", listen: "Listen", listenUnter: "Müll, Schwund, Personalessen",
+    zahlen: { richtwert: "Richtwert Ware", wareHoch: (q) => `Wareneinsatz ${q} % – hoch`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Monat & Zähler", monatUnter: (m) => `${m} bisher`, vergleich: "Gerichte im Vergleich", vergleichUnter: "Was bleibt pro Stück", listen: "Listen", listenUnter: "Müll, Schwund, Personalessen",
       inventur: "Inventur", inventurUnter: (d) => `Zuletzt gezählt am ${d}`, inventurNie: "Noch nie gezählt" },
     karte: { rezepte: "Rezepte", preise: "Einkaufs­preise", belege: "Belege", verkauf: "Verkaufs­preise", kosten: "Feste Kosten", kartefoto: "Karte per Foto" },
     einrichten: { einrichtung: "Einrichtung", kuehl: "Kühlstellen", putzplan: "Putzplan bearbeiten", laeden: "Läden", sicherung: "Sicherung", code: "Büro-Code", codeAn: "an", codeAus: "aus", einstellungen: "Einstellungen" },
@@ -631,6 +635,7 @@ export default {
     unvollstaendig: "Kosten unvollständig – der Zähler rechnet nur mit dem, was eingetragen ist.",
     kalkulatorischSatz: "Alle Beträge sind gerechnet, kein Kontostand.",
     kalkulatorisch: "kalkulatorisch, kein Kontostand",
+    richtwertZeile: "Richtwert · Preise eintragen ›", // Paket 3 (16.10.2026)
     stufe: { 1: "nur feste Kosten und Löhne, Ware fehlt noch", 2: "Ware geschätzt aus der Karte", 3: "Ware aus deinen Belegen" },
     umsatzHeute: "Umsatz heute",
     tonneHeute: "Tonne heute",
@@ -699,12 +704,14 @@ export default {
     eigenBis: "Dein eigener Lohn bis heute",
     wareGeschaetzt: (q) => `Ware (geschätzt ${q} % vom Umsatz)`,
     wareBelege: "Ware aus deinen Belegen",
+    wareRichtwert: (q) => `Ware (Richtwert ≈ ${q} % vom Umsatz)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Richtwert ohne eigene Preise: Imbisse liegen bei ${min}–${max} % Wareneinsatz. Quelle: ${q}. Trag Einkaufspreise ein, dann rechnet die App mit deinen Zahlen.`,
     wareFehlt: "Ware (noch nicht gerechnet)",
     muellBis: "Müll bis heute",
     umsatzBis: "Umsatz netto bis heute",
     umsatzBruttoHinweis: (b, s) => `aus ${b} brutto, ${s} % Steuer raus`,
     steuerQuelle: { eigen: "eigener Steuersatz", karte: "Mischsatz aus der Karte", standard: "7 % angenommen" },
-    quoteQuelle: { eigen: "eigener Warenanteil", karte: "aus der Karte", keine: "keine Karte" },
+    quoteQuelle: { richtwert: "Branchen-Richtwert (geschätzt)", eigen: "eigener Warenanteil", karte: "aus der Karte", keine: "keine Karte" },
     monat: "Der Monat auf einen Blick",
     legendeMonat: "Rot: noch im Minus. Grün: ab hier verdienst du. Grau: Ruhetag. Umrandet: heute.",
     preise: "Preise, die sich geändert haben (30 Tage)",
@@ -883,7 +890,8 @@ export default {
     journal: { schwund: "Müll", tagesnotizen: "Umsatz", messungen: "Kühlung", lieferungen: "Lieferungen", abschluesse: "Tagesabschlüsse", kostenbelege: "Kostenbelege", putzlog: "Putzplan", belehrungen: "Belehrungen", rundgaenge: "Kühl-Rundgänge", inventuren: "Inventuren", uploads: "Fotos", artikel: "Waren", gerichte: "Gerichte", anderes: "Daten" },
     bereich: { kosten: "Kosten", gerichte: "Gerichte und Rezepte", artikel: "Waren und Preise", betrieb: "Betrieb", kuehl: "Kühlstellen", putzplan: "Putzplan", personen: "Personen" },
   },
-  einstellungen: { fotosNichtDrin: "Fotos von Rechnungen, Müll und Gerichten sind mit in der Sicherungsdatei. Die Datei wird dadurch größer.",
+  einstellungen: { kleinunternehmer: "Kleinunternehmer (keine Vorsteuer)", kleinunternehmerHinweis: "An: Bruttobeträge zählen voll, keine Umsatzsteuer wird abgezogen.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Fotos von Rechnungen, Müll und Gerichten sind mit in der Sicherungsdatei. Die Datei wird dadurch größer.",
     bereichBetrieb: "Laden, Tage, Saison",
     bereichTeam: "Team",
     bereichKanaele: "Verkaufswege",
@@ -1098,7 +1106,7 @@ export default {
     pin: { titel: "Büro-Code", neu: "Neuen Code wählen", nochmal: "Noch einmal", falsch: "Falscher Code", ungleich: "Nicht gleich. Bitte neu wählen.", gesetzt: "Büro-Code gespeichert", entfernt: "Büro-Code entfernt", setzen: "Büro-Code festlegen", aendern: "Büro-Code ändern", entfernen: "Code entfernen", ohne: "Ohne Code kommt jeder ins Büro.", mit: "Das Büro ist mit einem Code geschützt.", loeschen: "Ziffer löschen" },
     hilfeText: {
       allgemein: "Die Leiste unten führt zu allem, was du im Laden brauchst. Rechnen, Einrichten und Listen findest du im Büro.",
-      start: "Der Tag auf einen Blick. Die große Zahl zeigt, wie viel Umsatz bis null noch fehlt. Rot heißt: jetzt kümmern.",
+      start: "Der Tag auf einen Blick. Die große Zahl zeigt, wie viel Umsatz bis null noch fehlt. Rot heißt: jetzt kümmern. Steht „≈“ davor, ist die Zahl geschätzt (Richtwert für Ware oder eigenen Lohn) – Erklärung im Büro unter „Monat & Zähler“. Ohne Einkaufspreise rechnet die App mit 32 % Wareneinsatz (Imbisse: 23–41 %, BMF-Richtsatzsammlung 2025).",
       muell: "Tipp auf die Ware, die weggeworfen wird. Rückgängig geht gleich danach. Listen und Werte stehen im Büro.",
       kuehl: "Miss jede Kühlstelle und trag den Wert ein. Ist er zu hoch, schreib auf, was du tust, und miss später nach.",
       putzplan: "Hak ab, was heute geputzt ist. Abhaken, dann ist die Liste aktuell. Den Plan änderst du im Büro.",

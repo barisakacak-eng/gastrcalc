@@ -63,6 +63,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % VAT", 7: "7 % VAT", 0: "no VAT" }, // Paket 3 (16.10.2026), M1
     titel: "Your fixed costs",
     einleitung: "Now we collect everything you pay every month, no matter how much you sell. Ten short lists. What you don't know, you leave open.",
     los: "Let's go",
@@ -164,6 +165,7 @@ export default {
     leer: "no recipe yet",
   },
   preise: {
+    preisNull: "Price 0 € – is that right? Counts as “no price”.", // Paket 3 (16.10.2026), M3
     frage: "What do you pay when buying?",
     hinweis: "Per item the pack as you buy it, and what it costs – without VAT, as it appears on the supplier invoice. No reference values, only your place knows its prices. What is missing, you leave open.",
     stand: (a, b) => `${a} of ${b} prices entered`,
@@ -357,14 +359,16 @@ export default {
     schritte: { karte: "Menu card", preise: "Dish prices", rezepte: "Recipes", kosten: "Fixed costs", einkauf: "Purchase prices", kuehlung: "Cooling", sicherung: "Backup" },
     offen: { karte: () => "Take a photo of the menu", preise: (n) => `${n} dishes without a price`, rezepte: (n) => `${n} dishes without a recipe`, kosten: (n) => `${n} required items open (rent, staff, your own pay, power/gas)`,
       einkauf: (n) => `${n} ingredients without purchase price – a receipt photo fills this`, kuehlung: () => "Add a cooling unit", sicherung: () => "Last backup older than 7 days" } },
-  vergleich: { eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Kept per item", marge: "Margin %" }, ware: "Cost of goods", db: "You keep per item", marge: "Margin", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price." },
+  vergleich: { wareHoch: (q) => `${q} % – high`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Kept per item", marge: "Margin %" }, ware: "Cost of goods", db: "You keep per item", marge: "Margin", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Office", zurueck: "Shop",
     abschnitt: { offen: "To do", ordner: "Folders to hand in", zahlen: "Numbers", karte: "Menu & purchasing", einrichten: "Set up the shop" },
     offen: { einrichtung: "Setup", kosten: (n) => (n === 1 ? "Fixed costs: 1 missing" : `Fixed costs: ${n} missing`), billig: (n) => (n === 1 ? "1 price too low" : `${n} prices too low`),
       ohneZahlen: (n) => (n === 1 ? "1 dish without numbers" : `${n} dishes without numbers`), sicherung: (n) => (n === 1 ? "Backup 1 day old" : `Backup ${n} days old`), sicherungNie: "No backup yet",
       waage: "Weigh portions", belehrung: (n) => (n === 1 ? "1 briefing due" : `${n} briefings due`) },
-    zahlen: { monat: "Month & counter", monatUnter: (m) => `${m} so far`, vergleich: "Dishes compared", vergleichUnter: "What each one leaves you", listen: "Lists", listenUnter: "Waste, shrinkage, staff meals",
+    zahlen: { richtwert: "Goods benchmark", wareHoch: (q) => `Cost of goods ${q} % – high`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Month & counter", monatUnter: (m) => `${m} so far`, vergleich: "Dishes compared", vergleichUnter: "What each one leaves you", listen: "Lists", listenUnter: "Waste, shrinkage, staff meals",
       inventur: "Stocktake", inventurUnter: (d) => `Last counted ${d}`, inventurNie: "Never counted" },
     karte: { rezepte: "Recipes", preise: "Purchase prices", belege: "Receipts", verkauf: "Selling prices", kosten: "Fixed costs", kartefoto: "Menu from photo" },
     einrichten: { einrichtung: "Setup", kuehl: "Fridges", putzplan: "Edit cleaning plan", laeden: "Shops", sicherung: "Backup", code: "Office code", codeAn: "on", codeAus: "off", einstellungen: "Settings" },
@@ -630,6 +634,7 @@ export default {
     unvollstaendig: "Costs incomplete – the counter only uses what is entered.",
     kalkulatorischSatz: "All amounts are calculated, not a bank balance.",
     kalkulatorisch: "calculated, not a bank balance",
+    richtwertZeile: "Estimate · Enter prices ›", // Paket 3 (16.10.2026)
     stufe: { 1: "fixed costs and wages only, goods not yet included", 2: "goods estimated from your menu", 3: "goods from your receipts" },
     umsatzHeute: "Takings today",
     tonneHeute: "Bin today",
@@ -698,12 +703,14 @@ export default {
     eigenBis: "Your own pay to date",
     wareGeschaetzt: (q) => `Goods (estimated ${q} % of takings)`,
     wareBelege: "Goods from your receipts",
+    wareRichtwert: (q) => `Goods (benchmark ≈ ${q} % of sales)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Benchmark without your own prices: snack bars run ${min}–${max} % cost of goods. Source: ${q}. Enter purchase prices and the app uses your numbers.`,
     wareFehlt: "Goods (not yet calculated)",
     muellBis: "Bin to date",
     umsatzBis: "Net takings to date",
     umsatzBruttoHinweis: (b, s) => `from ${b} gross, ${s} % tax removed`,
     steuerQuelle: { eigen: "your own tax rate", karte: "mixed rate from the menu", standard: "7 % assumed" },
-    quoteQuelle: { eigen: "your own goods share", karte: "from the menu", keine: "no menu" },
+    quoteQuelle: { richtwert: "industry benchmark (estimate)", eigen: "your own goods share", karte: "from the menu", keine: "no menu" },
     monat: "The month at a glance",
     legendeMonat: "Red: still in the red. Green: from here you earn. Grey: closed. Outlined: today.",
     preise: "Prices that changed (30 days)",
@@ -882,7 +889,8 @@ export default {
     journal: { schwund: "Waste", tagesnotizen: "Sales", messungen: "Cooling", lieferungen: "Deliveries", abschluesse: "Day closings", kostenbelege: "Cost receipts", putzlog: "Cleaning plan", belehrungen: "Hygiene trainings", rundgaenge: "Cooling rounds", inventuren: "Stock counts", uploads: "Photos", artikel: "Goods", gerichte: "Dishes", anderes: "Data" },
     bereich: { kosten: "Costs", gerichte: "Dishes and recipes", artikel: "Goods and prices", betrieb: "Business", kuehl: "Cooling points", putzplan: "Cleaning plan", personen: "People" },
   },
-  einstellungen: { fotosNichtDrin: "Photos of invoices, waste and dishes are included in the backup file. This makes the file bigger.",
+  einstellungen: { kleinunternehmer: "Small business (no input VAT)", kleinunternehmerHinweis: "On: gross amounts count in full, no VAT is deducted.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Photos of invoices, waste and dishes are included in the backup file. This makes the file bigger.",
     bereichBetrieb: "Place, days, season",
     bereichTeam: "Team",
     bereichKanaele: "Sales channels",
@@ -1096,7 +1104,7 @@ export default {
     pin: { titel: "Office code", neu: "Choose a new code", nochmal: "Once more", falsch: "Wrong code", ungleich: "Doesn't match. Choose again.", gesetzt: "Office code saved", entfernt: "Office code removed", setzen: "Set office code", aendern: "Change office code", entfernen: "Remove code", ohne: "Without a code, anyone can open the office.", mit: "The office is protected by a code.", loeschen: "Delete digit" },
     hilfeText: {
       allgemein: "The bar at the bottom leads to everything you need in the shop. Costs, setup and lists live in the office.",
-      start: "Your day at a glance. The big number shows how much revenue is still missing to break even. Red means: act now.",
+      start: "Your day at a glance. The big number shows how much revenue is still missing to break even. Red means: act now. An “≈” in front means the number is an estimate (benchmark for goods or your own wage) – explained in the office under “Month & counter”. Without purchase prices the app uses 32 % cost of goods (snack bars: 23–41 %, BMF benchmark tables 2025).",
       muell: "Tap the item that gets thrown away. You can undo right after. Lists and amounts are in the office.",
       kuehl: "Measure each fridge and enter the value. If it is too high, note what you do and measure again later.",
       putzplan: "Tick off what was cleaned today. Tick it off and the list is up to date. Change the plan in the office.",

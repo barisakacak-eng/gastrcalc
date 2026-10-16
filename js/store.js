@@ -15,7 +15,7 @@
 import { debounce, uid, heute } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
-import { basisStandard } from "./data/kosten.js";
+import { basisStandard, satzStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
@@ -38,7 +38,7 @@ export function leererBetrieb() {
     phase: "onboarding",        // "onboarding" | "app"
     weg: "schnell",             // Einrichtung: "schnell" (Foto zuerst, Etappe 6a) | "genau" (alle Schritte wie bis Etappe 5)
     schritt: 0,                 // aktueller Onboarding-Schritt
-    betrieb: { name: "", format: null, kuechen: [], tageProWoche: 6, monate: 12, steuerSatz: null }, // steuerSatz: eigener Mischsatz für den Umsatz (null = aus der Karte oder 7 %)
+    betrieb: { name: "", format: null, kuechen: [], tageProWoche: 6, monate: 12, steuerSatz: null, kleinunternehmer: false }, // steuerSatz: eigener Mischsatz für den Umsatz (null = aus der Karte oder 7 %); kleinunternehmer (Paket 3, M1): keine Vorsteuer
     team: { personen: null, stundenProPerson: null, lohnkosten: null, eigenerLohn: null, eigenerLohnStatus: "geschaetzt" }, // eigenerLohn null + geschaetzt = Richtwert gilt
     kosten: [],                 // {id, kategorie, posten, betrag, status, periode, basis: netto|brutto}
     kostenKategorienGeprueft: [],
@@ -236,8 +236,11 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
                    status: ["aus", "bekannt", "geschaetzt", "offen"].includes(k.status) ? k.status : "offen",
                    periode: k.periode === "jahr" ? "jahr" : "monat",
                    // Schema ≤ 3 kannte keine Basis: eingetragene Zahlen bleiben, wie sie sind (netto = so verrechnen, wie eingetragen)
-                   basis: k.basis === "brutto" || k.basis === "netto" ? k.basis : (alt ? "netto" : basisStandard(k.posten)) }));
+                   basis: k.basis === "brutto" || k.basis === "netto" ? k.basis : (alt ? "netto" : basisStandard(k.posten)),
+                   // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten; alte Daten ohne Feld bekommen den Standard (19, Wasser 7)
+                   satz: [19, 7, 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) }));
   if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
+  s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
   if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
   if (typeof s.verkauf.warenQuote !== "number" || !(s.verkauf.warenQuote >= 0 && s.verkauf.warenQuote < 0.9)) s.verkauf.warenQuote = null;
   s.kanaele.portale = s.kanaele.portale.filter(istObjekt).map((p) => ({ id: String(p.id || uid()), name: String(p.name || ""),

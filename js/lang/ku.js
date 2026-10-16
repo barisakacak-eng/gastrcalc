@@ -64,6 +64,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % KDV", 7: "7 % KDV", 0: "bê KDV" }, // Paket 3 (16.10.2026), M1
     titel: "Lêçûnên te yên sabît",
     einleitung: "Niha em her tiştê ku her meh tê dayîn kom dikin, çi tu zêde bifiroşî çi kêm. Deh lîsteyên kurt. Ya ku tu nizanî vala bihêle.",
     los: "Em dest pê bikin",
@@ -165,6 +166,7 @@ export default {
     leer: "hîn bê reçete",
   },
   preise: {
+    preisNull: "Biha 0 € – rast e? Wek „bê biha“ tê hesibandin.", // Paket 3 (16.10.2026), M3
     frage: "Tu di kirînê de çiqas didî?",
     hinweis: "Ji bo her malî: pakêta ku tu dikirî û bihayê wê – bê bac, wek ku li ser fatûreya firoşkar nivîsandî ye. Nirxên pêşniyarî tune ne, biha tenê dikana te dizane. Ya ku kêm e vala bihêle.",
     stand: (a, b) => `${a} ji ${b} bihayan hatin nivîsandin`,
@@ -358,13 +360,15 @@ export default {
     schritte: { karte: "Menû", preise: "Bihayên xwarinan", rezepte: "Reçete", kosten: "Lêçûnên sabît", einkauf: "Bihayên kirînê", kuehlung: "Sarker", sicherung: "Kopiya ewlehiyê" },
     offen: { karte: () => "Wêneyê menûyê bikişîne", preise: (n) => `${n} xwarin bê biha`, rezepte: (n) => `${n} xwarin bê reçete`, kosten: (n) => `${n} xalên mecbûrî vala ne (kirê, karker, meaşê te, elektrîk/gaz)`,
       einkauf: (n) => `${n} malzeme bê bihayê kirînê – wêneyek ji fatûreyê vê tije dike`, kuehlung: () => "Sarkeran tomar bike", sicherung: () => "Kopiya dawî ji 7 rojan kevntir e" } },
-  vergleich: { eigenesFoto: "Wêneyê xwe bikişîne", fotoGespeichert: "Wêne hate tomarkirin. Li ser vê telefonê dimîne.", titel: "Berhevdana xwarinan", unter: "Kîjan xwarin herî zêde ji te re tînin?", tab: { db: "Ji her heban dimîne", marge: "Marj %" }, ware: "Lêçûna malê", db: "Ji her heban ji te re dimîne", marge: "Marj", leer: "Bihayên firotin û kirînê binivîse, paşê li vir dibînî kîjan xwarin herî zêde tînin.", ohneZahlen: (n) => `${n} xwarin hîn bê hejmar`, einkaufFehlt: "Bihayên kirînê kêm in", hinweis: "Nirx texmînî ne û li gorî malzeme û bihayan dikarin cuda bin. Hemû mîqdar bê bac in, ji bilî bihayê firotinê." },
+  vergleich: { wareHoch: (q) => `${q} % – bilind`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Wêneyê xwe bikişîne", fotoGespeichert: "Wêne hate tomarkirin. Li ser vê telefonê dimîne.", titel: "Berhevdana xwarinan", unter: "Kîjan xwarin herî zêde ji te re tînin?", tab: { db: "Ji her heban dimîne", marge: "Marj %" }, ware: "Lêçûna malê", db: "Ji her heban ji te re dimîne", marge: "Marj", leer: "Bihayên firotin û kirînê binivîse, paşê li vir dibînî kîjan xwarin herî zêde tînin.", ohneZahlen: (n) => `${n} xwarin hîn bê hejmar`, einkaufFehlt: "Bihayên kirînê kêm in", hinweis: "Nirx texmînî ne û li gorî malzeme û bihayan dikarin cuda bin. Hemû mîqdar bê bac in, ji bilî bihayê firotinê." },
   buero: { titel: "Ofîs", zurueck: "Dikan",
     abschnitt: { offen: "Vekirî", ordner: "Dosyeyên radestkirinê", zahlen: "Hejmar", karte: "Menû û kirîn", einrichten: "Dikanê saz bike" },
     offen: { einrichtung: "Sazkirin", kosten: (n) => `Lêçûnên sabît: ${n} kêm in`, billig: (n) => `${n} biha pir erzan`,
       ohneZahlen: (n) => `${n} xwarin bê hejmar`, sicherung: (n) => `Kopî: berî ${n} rojan`, sicherungNie: "Hîn kopî tune",
       waage: "Porsiyonan bikêşe", belehrung: (n) => `Dema ${n} perwerdeyan hat` },
-    zahlen: { monat: "Meh û hejmarker", monatUnter: (m) => `Heta niha ${m}`, vergleich: "Xwarin li ber hev", vergleichUnter: "Ji her yekê çi dimîne", listen: "Lîste", listenUnter: "Çop, kêmbûn, xwarina karkeran",
+    zahlen: { richtwert: "Texmîna malê", wareHoch: (q) => `Lêçûna malê ${q} % – bilind`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Meh û hejmarker", monatUnter: (m) => `Heta niha ${m}`, vergleich: "Xwarin li ber hev", vergleichUnter: "Ji her yekê çi dimîne", listen: "Lîste", listenUnter: "Çop, kêmbûn, xwarina karkeran",
       inventur: "Hejmartina malê", inventurUnter: (d) => `Cara dawî hat hejmartin: ${d}`, inventurNie: "Hîn nehatiye hejmartin" },
     karte: { rezepte: "Reçete", preise: "Bihayên kirînê", belege: "Fîş", verkauf: "Bihayên firotinê", kosten: "Lêçûnên sabît", kartefoto: "Menû bi wêneyê" },
     einrichten: { einrichtung: "Sazkirin", kuehl: "Amûrên sar", putzplan: "Plana paqijiyê biguherîne", laeden: "Dikan", sicherung: "Kopiya ewlehiyê", code: "Koda ofîsê", codeAn: "vekirî", codeAus: "girtî", einstellungen: "Mîheng" },
@@ -630,6 +634,7 @@ export default {
     unvollstaendig: "Lêçûn netemam in – hejmarker tenê bi ya ku hatiye nivîsandin hesab dike.",
     kalkulatorischSatz: "Hemû mîqdar hesabkirî ne, ne bermahiya hesabê bankê.",
     kalkulatorisch: "hesabkirî, ne hesabê bankê",
+    richtwertZeile: "Texmîn · Bihayan binivîse ›", // Paket 3 (16.10.2026)
     stufe: { 1: "tenê lêçûnên sabît û meaş, mal hîn kêm e", 2: "mal ji menûyê texmînî", 3: "mal ji fîşên te" },
     umsatzHeute: "Firotina îro",
     tonneHeute: "Zibilê îro",
@@ -698,12 +703,14 @@ export default {
     eigenBis: "Meaşê te bi xwe heta îro",
     wareGeschaetzt: (q) => `Mal (texmînî ${q} % ji firotinê)`,
     wareBelege: "Mal ji fîşên te",
+    wareRichtwert: (q) => `Mal (texmîn ≈ ${q} % ji firotinê)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Texmîn bê bihayên te: xwarinxaneyên biçûk di ${min}–${max} % lêçûna malê de ne. Çavkanî: ${q}. Bihayên kirînê binivîse, sepan bi hejmarên te dihesibîne.`,
     wareFehlt: "Mal (hîn nehatiye hesabkirin)",
     muellBis: "Zibil heta îro",
     umsatzBis: "Firotina bê bac heta îro",
     umsatzBruttoHinweis: (b, s) => `ji ${b} bi bac, ${s} % bac hate derxistin`,
     steuerQuelle: { eigen: "rêjeya bacê ya xwe", karte: "rêjeya tevlihev ji menûyê", standard: "7 % hate texmînkirin" },
-    quoteQuelle: { eigen: "para malê ya xwe", karte: "ji menûyê", keine: "menû tune" },
+    quoteQuelle: { richtwert: "texmîna sektorê (nêzîkî)", eigen: "para malê ya xwe", karte: "ji menûyê", keine: "menû tune" },
     monat: "Meh bi yek nêrînê",
     legendeMonat: "Sor: hîn di zirarê de. Kesk: ji vir ve tu qezenc dikî. Gewr: roja betlaneyê. Bi çarçove: îro.",
     preise: "Bihayên ku guherîn (30 roj)",
@@ -881,7 +888,8 @@ export default {
     journal: { schwund: "Çop", tagesnotizen: "Firotin", messungen: "Sarkirin", lieferungen: "Radestkirin", abschluesse: "Girtina rojê", kostenbelege: "Belgeyên lêçûnê", putzlog: "Plana paqijiyê", belehrungen: "Perwerdeyên paqijiyê", rundgaenge: "Gerên sarkirinê", inventuren: "Jimartin", uploads: "Wêne", artikel: "Mal", gerichte: "Xwarin", anderes: "Dane" },
     bereich: { kosten: "Lêçûn", gerichte: "Xwarin û reçete", artikel: "Mal û biha", betrieb: "Kar", kuehl: "Cihên sarkirinê", putzplan: "Plana paqijiyê", personen: "Kes" },
   },
-  einstellungen: { fotosNichtDrin: "Wêneyên fatûre, çop û xwarinan di dosyaya kopiyê de ne. Ji ber vê dosya mezintir dibe.",
+  einstellungen: { kleinunternehmer: "Karsaziya biçûk (bê vegera KDV)", kleinunternehmerHinweis: "Vekirî: mîqdarên brût tam tên hesibandin, KDV nayê kêmkirin.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Wêneyên fatûre, çop û xwarinan di dosyaya kopiyê de ne. Ji ber vê dosya mezintir dibe.",
     bereichBetrieb: "Dikan, roj, demsal",
     bereichTeam: "Tîm",
     bereichKanaele: "Rêyên firotinê",
@@ -1095,7 +1103,7 @@ export default {
     pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe" },
     hilfeText: {
       allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",
-      start: "Roj bi nêrînekê. Hejmara mezin nîşan dide ka heta sifirê çiqas firotin hîn kêm e. Sor tê wateya: niha lê binêre.",
+      start: "Roj bi nêrînekê. Hejmara mezin nîşan dide ka heta sifirê çiqas firotin hîn kêm e. Sor tê wateya: niha lê binêre. Heke „≈“ li pêş be, hejmar texmîn e (mal an mûçeya te) – ravekirin di ofîsê de di bin „Meh û jimêr“ de. Bê bihayên kirînê sepan bi 32 % malê dihesibîne (xwarinxaneyên biçûk: 23–41 %, tabloyên BMF 2025).",
       muell: "Li ser kelûpelê ku tê avêtin bitikîne. Piştî wê tavilê dikarî paşve bigerînî. Lîste û mîqdar di ofîsê de ne.",
       kuehl: "Her cihê sarkirinê bipîve û nirxê binivîse. Heke pir bilind be, binivîse tu çi dikî û paşê dîsa bipîve.",
       putzplan: "Tiştên ku îro hatin paqijkirin nîşan bike. Nîşan bike, lîste nû ye. Planê li ofîsê diguherînî.",

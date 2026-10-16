@@ -2,9 +2,10 @@
 // Blöcke: Offen (Chips, statt Meldungen im Laden) · Ordner zum Abgeben · Zahlen · Karte & Einkauf · Laden einrichten.
 // Büro-Code: ein Code für alles (modus.js, wurzel.bueroPin, Zifferntastatur in ebene.js) – er schützt den Eintritt ins Büro, nicht diese Seite. Optik: css/buero.css (Klassen mit „b-“).
 import { t } from "../i18n.js";
-import { esc, fmtEuro, heute } from "../util.js";
+import { esc, fmtEuro, heute, heuteGeschaeft } from "../util.js";
 import { sym } from "../symbole.js";
 import { zaehler } from "../zaehler.js";
+import { wareneinsatzWarnung } from "../engine.js"; // Paket 3 (16.10.2026), M4: gemeinsame Warnschwelle, auch im Büro „Monat & Zähler“
 import { inventurenFertig } from "../inventur.js";
 import { einrichtungStand } from "../einrichtung.js";
 import { offenImBuero, zaehlerImTakt, einrichtungImTakt } from "../offen.js"; // W2-D: Zwischenspeicher je Bild
@@ -54,7 +55,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   const chip = (o) => `<button type="button" class="b-chip" ${zielAttr(o.ziel)}>${typeof o.prozent === "number" ? ring(o.prozent) : `<i class="b-punkt ${o.farbe === "rot" ? "rot" : "gelb"}" aria-hidden="true"></i>`}<span>${esc(o.text)}${typeof o.prozent === "number" ? ` <b class="zahl">${o.prozent} %</b>` : ""}</span></button>`;
   const k = ordnerKachelStand(stand, { datum: H });
   const kachel = (id, symbol, s) => `<button type="button" class="karte b-ordnerkachel" data-a="nav" data-wert="ordner-${id}"><span class="b-ks ${id}">${bsym(symbol)}</span><b>${esc(t(`ordner.${id}.kachel`))}</b><small><i class="b-punkt ${s.farbe}" aria-hidden="true"></i>${esc(s.text)}</small></button>`;
-  const z = zaehlerImTakt(stand, H); // W2-D
+  const z = zaehlerImTakt(stand, heuteGeschaeft()); // W2-D; Paket 3, M7: Zähler nach Geschäftstag, Belehrungen/Ordner (H) nach Kalender
   const inv = inventurenFertig(stand).pop();
   const zeile = (ziel, symbol, titel, unter, wert = "") => `<button type="button" class="b-zeile" ${zielAttr(ziel)}><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</button>`;
   const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}">${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
@@ -68,7 +69,7 @@ export function bueroView(stand, wurzel, extra = {}) {
       <div class="b-ordner">${kachel("amt", "shield-check", k.amt)}${kachel("steuer", "calculator", k.steuer)}${kachel("buch", "receipt", k.buch)}</div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.zahlen"))}</h2>
       <div class="karte b-liste">
-        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), t("buero.zahlen.monatUnter", monatName(H)), monatWert)}
+        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" ? ` · ${t("buero.zahlen.richtwert")}` : wareneinsatzWarnung(z.quoteEff) ? ` · ${t("buero.zahlen.wareHoch", Math.round(z.quoteEff * 100))}` : ""}`, monatWert)}
         ${zeile({ aktion: "nav", wert: "vergleich" }, "chart-column", t("buero.zahlen.vergleich"), t("buero.zahlen.vergleichUnter"))}
         ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}
         ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}

@@ -72,6 +72,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % PDV", 7: "7 % PDV", 0: "bez PDV-a" }, // Paket 3 (16.10.2026), M1
     titel: "Tvoji fiksni troškovi",
     einleitung: "Sad skupljamo sve što se plaća svaki mjesec, bez obzira prodaješ li puno ili malo. Deset kratkih lista. Šta ne znaš, ostavi otvoreno.",
     los: "Idemo",
@@ -173,6 +174,7 @@ export default {
     leer: "još bez recepta",
   },
   preise: {
+    preisNull: "Cijena 0 € – je li tačno? Računa se kao „bez cijene“.", // Paket 3 (16.10.2026), M3
     frage: "Koliko plaćaš u nabavci?",
     hinweis: "Za svaki artikal pakovanje, kako ga kupuješ, i koliko košta – bez PDV-a, kako piše na računu dobavljača. Nema okvirnih vrijednosti, cijene zna samo tvoj lokal. Šta fali, ostavi otvoreno.",
     stand: (a, b) => `${a} od ${b} cijena upisano`,
@@ -366,13 +368,15 @@ export default {
     schritte: { karte: "Jelovnik", preise: "Cijene jela", rezepte: "Recepti", kosten: "Fiksni troškovi", einkauf: "Nabavne cijene", kuehlung: "Hlađenje", sicherung: "Sigurnosna kopija" },
     offen: { karte: () => "Slikaj jelovnik", preise: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez cijene`, rezepte: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez recepta`, kosten: (n) => `${n} ${pl(n, "obavezna stavka otvorena", "obavezne stavke otvorene", "obaveznih stavki otvoreno")} (kirija, osoblje, tvoja plata, struja/plin)`,
       einkauf: (n) => `${n} ${pl(n, "sastojak", "sastojka", "sastojaka")} bez nabavne cijene – jedna slika računa to popuni`, kuehlung: () => "Dodaj rashladni uređaj", sicherung: () => "Zadnja kopija starija od 7 dana" } },
-  vergleich: { eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Marža %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Marža", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene." },
+  vergleich: { wareHoch: (q) => `${q} % – visoko`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Marža %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Marža", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene." },
   buero: { titel: "Ured", zurueck: "Lokal",
     abschnitt: { offen: "Za uraditi", ordner: "Fascikle za predaju", zahlen: "Brojke", karte: "Jelovnik i nabavka", einrichten: "Podesi lokal" },
     offen: { einrichtung: "Podešavanje", kosten: (n) => `Fiksni troškovi: fali ${n}`, billig: (n) => `Prejeftino: ${n} ${pl(n, "cijena", "cijene", "cijena")}`,
       ohneZahlen: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez brojki`, sicherung: (n) => `Kopija: prije ${n} ${pl(n, "dan", "dana", "dana")}`, sicherungNie: "Još nema kopije",
       waage: "Izvaži porcije", belehrung: (n) => `${n} ${pl(n, "obuka", "obuke", "obuka")} na redu` },
-    zahlen: { monat: "Mjesec i brojač", monatUnter: (m) => `${m} do sada`, vergleich: "Jela u poređenju", vergleichUnter: "Šta ostaje po komadu", listen: "Liste", listenUnter: "Otpad, gubitak, obrok za osoblje",
+    zahlen: { richtwert: "Procjena robe", wareHoch: (q) => `Trošak robe ${q} % – visok`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Mjesec i brojač", monatUnter: (m) => `${m} do sada`, vergleich: "Jela u poređenju", vergleichUnter: "Šta ostaje po komadu", listen: "Liste", listenUnter: "Otpad, gubitak, obrok za osoblje",
       inventur: "Inventura", inventurUnter: (d) => `Zadnji put brojano ${d}`, inventurNie: "Još nije brojano" },
     karte: { rezepte: "Recepti", preise: "Nabavne cijene", belege: "Računi", verkauf: "Prodajne cijene", kosten: "Fiksni troškovi", kartefoto: "Jelovnik sa slike" },
     einrichten: { einrichtung: "Podešavanje", kuehl: "Mjesta hlađenja", putzplan: "Uredi plan čišćenja", laeden: "Lokali", sicherung: "Sigurnosna kopija", code: "Šifra ureda", codeAn: "uklj.", codeAus: "isklj.", einstellungen: "Postavke" },
@@ -638,6 +642,7 @@ export default {
     unvollstaendig: "Troškovi nepotpuni – brojač računa samo s onim što je upisano.",
     kalkulatorischSatz: "Svi iznosi su izračunati, nije stanje na računu.",
     kalkulatorisch: "izračunato, nije stanje na računu",
+    richtwertZeile: "Procjena · Unesi cijene ›", // Paket 3 (16.10.2026)
     stufe: { 1: "samo fiksni troškovi i plate, roba još fali", 2: "roba procijenjena iz jelovnika", 3: "roba iz tvojih računa" },
     umsatzHeute: "Promet danas",
     tonneHeute: "Kanta danas",
@@ -706,12 +711,14 @@ export default {
     eigenBis: "Tvoja vlastita plata do danas",
     wareGeschaetzt: (q) => `Roba (procjena ${q} % od prometa)`,
     wareBelege: "Roba iz tvojih računa",
+    wareRichtwert: (q) => `Roba (procjena ≈ ${q} % prometa)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Procjena bez tvojih cijena: snek-barovi imaju ${min}–${max} % troška robe. Izvor: ${q}. Unesi nabavne cijene i aplikacija računa s tvojim brojevima.`,
     wareFehlt: "Roba (još nije uračunata)",
     muellBis: "Otpad do danas",
     umsatzBis: "Neto promet do danas",
     umsatzBruttoHinweis: (b, s) => `od ${b} bruto, ${s} % poreza odbijeno`,
     steuerQuelle: { eigen: "vlastita poreska stopa", karte: "prosječna stopa iz jelovnika", standard: "uzeto 7 %" },
-    quoteQuelle: { eigen: "vlastiti udio robe", karte: "iz jelovnika", keine: "nema jelovnika" },
+    quoteQuelle: { richtwert: "procjena branše (približno)", eigen: "vlastiti udio robe", karte: "iz jelovnika", keine: "nema jelovnika" },
     monat: "Mjesec na jedan pogled",
     legendeMonat: "Crveno: još u minusu. Zeleno: od ovdje zarađuješ. Sivo: neradni dan. Uokvireno: danas.",
     preise: "Cijene koje su se promijenile (30 dana)",
@@ -890,7 +897,8 @@ export default {
     journal: { schwund: "Otpad", tagesnotizen: "Promet", messungen: "Hlađenje", lieferungen: "Isporuke", abschluesse: "Zatvaranja dana", kostenbelege: "Računi troškova", putzlog: "Plan čišćenja", belehrungen: "Higijenske obuke", rundgaenge: "Obilasci hlađenja", inventuren: "Inventure", uploads: "Slike", artikel: "Roba", gerichte: "Jela", anderes: "Podaci" },
     bereich: { kosten: "Troškovi", gerichte: "Jela i recepti", artikel: "Roba i cijene", betrieb: "Lokal", kuehl: "Mjesta hlađenja", putzplan: "Plan čišćenja", personen: "Osobe" },
   },
-  einstellungen: { fotosNichtDrin: "Slike računa, otpada i jela su u fajlu kopije. Zato je fajl veći.",
+  einstellungen: { kleinunternehmer: "Mali preduzetnik (bez odbitka PDV-a)", kleinunternehmerHinweis: "Uključeno: bruto iznosi se računaju u cijelosti, PDV se ne odbija.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Slike računa, otpada i jela su u fajlu kopije. Zato je fajl veći.",
     bereichBetrieb: "Lokal, dani, sezona",
     bereichTeam: "Tim",
     bereichKanaele: "Načini prodaje",
@@ -1104,7 +1112,7 @@ export default {
     pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru" },
     hilfeText: {
       allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",
-      start: "Dan na jedan pogled. Veliki broj pokazuje koliko prometa još fali do nule. Crveno znači: pobrini se sada.",
+      start: "Dan na jedan pogled. Veliki broj pokazuje koliko prometa još fali do nule. Crveno znači: pobrini se sada. „≈“ ispred broja znači procjenu (roba ili tvoja plata) – objašnjenje u uredu pod „Mjesec i brojač“. Bez nabavnih cijena aplikacija računa s 32 % robe (snek-barovi: 23–41 %, BMF tabele 2025).",
       muell: "Dodirni robu koja se baca. Odmah nakon toga možeš poništiti. Liste i iznosi su u uredu.",
       kuehl: "Izmjeri svako mjesto hlađenja i unesi vrijednost. Ako je previsoka, zapiši šta radiš i kasnije izmjeri ponovo.",
       putzplan: "Označi šta je danas očišćeno. Označi i lista je ažurna. Plan mijenjaš u kancelariji.",

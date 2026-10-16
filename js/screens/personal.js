@@ -2,7 +2,7 @@
 // Die Person wird einmal je Schicht gewählt (je Gerät gemerkt) und steht danach an jedem Eintrag (von: personId).
 // Verlassen nur mit Büro-Code über das Schloss in der Kopfleiste (nav.js, data-a="schloss"); ohne Code gibt es keinen Personal-Modus (W2-S).
 import { t, sprache } from "../i18n.js";
-import { esc, heute } from "../util.js";
+import { esc, heuteGeschaeft as heute } from "../util.js"; // Paket 3 (16.10.2026), M7: eine Schicht endet mit dem Geschäftstag (4 Uhr), nicht um Mitternacht
 import { sym } from "../symbole.js";
 import { kuehlStatus, offeneNachkontrollen } from "../engine.js";
 import { planVon, planGruppen } from "../putzplan.js";

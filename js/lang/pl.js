@@ -70,6 +70,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % VAT", 7: "7 % VAT", 0: "bez VAT" }, // Paket 3 (16.10.2026), M1
     titel: "Twoje koszty stałe",
     einleitung: "Teraz zbieramy wszystko, co płacisz co miesiąc – bez względu na to, czy sprzedajesz dużo czy mało. Dziesięć krótkich list. Czego nie wiesz, zostaw otwarte.",
     los: "Zaczynamy",
@@ -171,6 +172,7 @@ export default {
     leer: "jeszcze bez przepisu",
   },
   preise: {
+    preisNull: "Cena 0 € – zgadza się? Liczy się jako „brak ceny”.", // Paket 3 (16.10.2026), M3
     frage: "Ile płacisz w hurtowni i sklepie?",
     hinweis: "Przy każdym towarze: opakowanie, tak jak je kupujesz, i ile kosztuje – bez VAT, tak jak na fakturze od dostawcy. Bez wartości orientacyjnych, te ceny zna tylko twój lokal. Czego brakuje, zostaw otwarte.",
     stand: (a, b) => `Wpisano ${a} z ${b} cen`,
@@ -364,13 +366,15 @@ export default {
     schritte: { karte: "Karta dań", preise: "Ceny dań", rezepte: "Przepisy", kosten: "Koszty stałe", einkauf: "Ceny zakupu", kuehlung: "Chłodzenie", sicherung: "Kopia zapasowa" },
     offen: { karte: () => "Zrób zdjęcie karty dań", preise: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez ceny`, rezepte: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez przepisu`, kosten: (n) => `${n} ${lm(n, "ważna pozycja otwarta", "ważne pozycje otwarte", "ważnych pozycji otwartych")} (czynsz, personel, własna pensja, prąd/gaz)`,
       einkauf: (n) => `${n} ${lm(n, "składnik", "składniki", "składników")} bez ceny zakupu – zdjęcie faktury to uzupełni`, kuehlung: () => "Dodaj punkt chłodzenia", sicherung: () => "Ostatnia kopia starsza niż 7 dni" } },
-  vergleich: { eigenesFoto: "Zrób własne zdjęcie", fotoGespeichert: "Zdjęcie zapisane. Zostaje na tym telefonie.",  titel: "Porównanie dań", unter: "Które dania dają ci najwięcej?", tab: { db: "Zostaje na sztuce", marge: "Marża %" }, ware: "Koszt towaru", db: "Zostaje ci na sztuce", marge: "Marża", leer: "Wpisz ceny sprzedaży i zakupu, wtedy zobaczysz tu, które dania dają najwięcej.", ohneZahlen: (n) => (n === 1 ? "1 danie jeszcze bez liczb" : `${n} ${lm(n, "danie", "dania", "dań")} jeszcze bez liczb`), einkaufFehlt: "Brak cen zakupu", hinweis: "Wartości są szacunkowe i mogą się różnić zależnie od składników i cen. Wszystkie kwoty bez VAT, poza ceną sprzedaży." },
+  vergleich: { wareHoch: (q) => `${q} % – wysoko`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Zrób własne zdjęcie", fotoGespeichert: "Zdjęcie zapisane. Zostaje na tym telefonie.",  titel: "Porównanie dań", unter: "Które dania dają ci najwięcej?", tab: { db: "Zostaje na sztuce", marge: "Marża %" }, ware: "Koszt towaru", db: "Zostaje ci na sztuce", marge: "Marża", leer: "Wpisz ceny sprzedaży i zakupu, wtedy zobaczysz tu, które dania dają najwięcej.", ohneZahlen: (n) => (n === 1 ? "1 danie jeszcze bez liczb" : `${n} ${lm(n, "danie", "dania", "dań")} jeszcze bez liczb`), einkaufFehlt: "Brak cen zakupu", hinweis: "Wartości są szacunkowe i mogą się różnić zależnie od składników i cen. Wszystkie kwoty bez VAT, poza ceną sprzedaży." },
   buero: { titel: "Biuro", zurueck: "Lokal",
     abschnitt: { offen: "Do zrobienia", ordner: "Teczki do oddania", zahlen: "Liczby", karte: "Karta i zakupy", einrichten: "Ustaw lokal" },
     offen: { einrichtung: "Konfiguracja", kosten: (n) => `Stałe koszty: brak ${n}`, billig: (n) => `Za tanio: ${n} ${lm(n, "cena", "ceny", "cen")}`,
       ohneZahlen: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez liczb`, sicherung: (n) => `Kopia: ${n} ${lm(n, "dzień", "dni", "dni")} temu`, sicherungNie: "Jeszcze brak kopii",
       waage: "Zważ porcje", belehrung: (n) => `${n} ${lm(n, "szkolenie", "szkolenia", "szkoleń")} do zrobienia` },
-    zahlen: { monat: "Miesiąc i licznik", monatUnter: (m) => `${m} do teraz`, vergleich: "Porównanie dań", vergleichUnter: "Co zostaje na sztuce", listen: "Listy", listenUnter: "Odpady, straty, posiłki personelu",
+    zahlen: { richtwert: "Orientacyjny towar", wareHoch: (q) => `Koszt towaru ${q} % – wysoki`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Miesiąc i licznik", monatUnter: (m) => `${m} do teraz`, vergleich: "Porównanie dań", vergleichUnter: "Co zostaje na sztuce", listen: "Listy", listenUnter: "Odpady, straty, posiłki personelu",
       inventur: "Inwentaryzacja", inventurUnter: (d) => `Ostatnio liczone ${d}`, inventurNie: "Jeszcze nie liczone" },
     karte: { rezepte: "Przepisy", preise: "Ceny zakupu", belege: "Rachunki", verkauf: "Ceny sprzedaży", kosten: "Stałe koszty", kartefoto: "Karta ze zdjęcia" },
     einrichten: { einrichtung: "Konfiguracja", kuehl: "Punkty chłodzenia", putzplan: "Zmień plan sprzątania", laeden: "Lokale", sicherung: "Kopia zapasowa", code: "Kod biura", codeAn: "wł.", codeAus: "wył.", einstellungen: "Ustawienia" },
@@ -636,6 +640,7 @@ export default {
     unvollstaendig: "Koszty niepełne – licznik liczy tylko to, co jest wpisane.",
     kalkulatorischSatz: "Wszystkie kwoty są wyliczone, to nie stan konta.",
     kalkulatorisch: "wyliczone, nie stan konta",
+    richtwertZeile: "Szacunek · Wpisz ceny ›", // Paket 3 (16.10.2026)
     stufe: { 1: "tylko koszty stałe i pensje, brakuje jeszcze towaru", 2: "towar szacowany z karty", 3: "towar z twoich rachunków" },
     umsatzHeute: "Utarg dziś",
     tonneHeute: "Kosz dziś",
@@ -704,12 +709,14 @@ export default {
     eigenBis: "Twoja własna pensja do dziś",
     wareGeschaetzt: (q) => `Towar (szacunkowo ${q} % utargu)`,
     wareBelege: "Towar z twoich rachunków",
+    wareRichtwert: (q) => `Towar (orientacyjnie ≈ ${q} % obrotu)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Wartość orientacyjna bez twoich cen: bary mają ${min}–${max} % kosztu towaru. Źródło: ${q}. Wpisz ceny zakupu, a aplikacja liczy twoimi liczbami.`,
     wareFehlt: "Towar (jeszcze nie policzony)",
     muellBis: "Śmieci do dziś",
     umsatzBis: "Utarg netto do dziś",
     umsatzBruttoHinweis: (b, s) => `z ${b} brutto, minus ${s} % podatku`,
     steuerQuelle: { eigen: "własna stawka podatku", karte: "stawka mieszana z karty", standard: "przyjęto 7 %" },
-    quoteQuelle: { eigen: "własny udział towaru", karte: "z karty", keine: "brak karty" },
+    quoteQuelle: { richtwert: "wartość branżowa (szacunek)", eigen: "własny udział towaru", karte: "z karty", keine: "brak karty" },
     monat: "Miesiąc w skrócie",
     legendeMonat: "Czerwony: jeszcze na minusie. Zielony: od tego dnia zarabiasz. Szary: dzień wolny. W ramce: dziś.",
     preise: "Ceny, które się zmieniły (30 dni)",
@@ -888,7 +895,8 @@ export default {
     journal: { schwund: "Odpady", tagesnotizen: "Utarg", messungen: "Chłodzenie", lieferungen: "Dostawy", abschluesse: "Zamknięcia dnia", kostenbelege: "Rachunki kosztów", putzlog: "Plan sprzątania", belehrungen: "Szkolenia higieniczne", rundgaenge: "Obchody chłodzenia", inventuren: "Inwentaryzacje", uploads: "Zdjęcia", artikel: "Towary", gerichte: "Dania", anderes: "Dane" },
     bereich: { kosten: "Koszty", gerichte: "Dania i przepisy", artikel: "Towary i ceny", betrieb: "Lokal", kuehl: "Miejsca chłodzenia", putzplan: "Plan sprzątania", personen: "Osoby" },
   },
-  einstellungen: { fotosNichtDrin: "Zdjęcia rachunków, odpadów i dań są w pliku kopii. Przez to plik jest większy.",
+  einstellungen: { kleinunternehmer: "Mała firma (bez odliczenia VAT)", kleinunternehmerHinweis: "Wł.: kwoty brutto liczą się w całości, VAT nie jest odliczany.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Zdjęcia rachunków, odpadów i dań są w pliku kopii. Przez to plik jest większy.",
     bereichBetrieb: "Lokal, dni, sezon",
     bereichTeam: "Zespół",
     bereichKanaele: "Drogi sprzedaży",
@@ -1102,7 +1110,7 @@ export default {
     pin: { titel: "Kod biura", neu: "Wybierz nowy kod", nochmal: "Jeszcze raz", falsch: "Zły kod", ungleich: "Nie zgadza się. Wybierz ponownie.", gesetzt: "Kod biura zapisany", entfernt: "Kod biura usunięty", setzen: "Ustaw kod biura", aendern: "Zmień kod biura", entfernen: "Usuń kod", ohne: "Bez kodu każdy wejdzie do biura.", mit: "Biuro jest chronione kodem.", loeschen: "Usuń cyfrę" },
     hilfeText: {
       allgemein: "Pasek na dole prowadzi do wszystkiego, czego potrzebujesz w lokalu. Liczenie, ustawienia i listy są w biurze.",
-      start: "Dzień w skrócie. Duża liczba pokazuje, ile obrotu brakuje do zera. Czerwone znaczy: zajmij się tym teraz.",
+      start: "Dzień w skrócie. Duża liczba pokazuje, ile obrotu brakuje do zera. Czerwone znaczy: zajmij się tym teraz. „≈” z przodu oznacza szacunek (towar lub twoja pensja) – wyjaśnienie w biurze pod „Miesiąc i licznik”. Bez cen zakupu aplikacja liczy 32 % towaru (bary: 23–41 %, tabele BMF 2025).",
       muell: "Dotknij towaru, który idzie do kosza. Zaraz potem możesz cofnąć. Listy i kwoty są w biurze.",
       kuehl: "Zmierz każde miejsce chłodzenia i wpisz wartość. Jeśli jest za wysoka, zapisz, co robisz, i zmierz później jeszcze raz.",
       putzplan: "Odhacz, co dziś posprzątano. Odhacz, a lista jest aktualna. Plan zmieniasz w biurze.",

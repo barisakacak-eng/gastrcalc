@@ -44,11 +44,27 @@ export function fmtZahl(n, dezimal = 0) {
   return (ZAHL_FMT[dezimal] ??= new Intl.NumberFormat("de-DE", { maximumFractionDigits: dezimal, minimumFractionDigits: dezimal })).format(n);
 }
 
-// Datum in Ortszeit (nicht UTC – sonst ist zwischen Mitternacht und zwei Uhr der Tag falsch).
+// Datum in Ortszeit (nicht UTC – sonst ist zwischen Mitternacht und zwei Uhr der Tag falsch). Kalendertag.
 export function heute(d = new Date()) {
   const z = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`;
 }
+
+// Paket 3 (16.10.2026), M7 – Geschäftstag bis 4 Uhr (Entscheidung Baris 15.10.2026): Was nach Mitternacht bis 03:59 Uhr passiert,
+// gehört noch zum Vortag. Gilt für alles, was den Tag des Ladens meint:
+//   Geschäftstag: Tagesumsatz (screens/umsatz.js, tagGewaehlt in screens/tag.js, tagesnotizLoeschen), Müll und Personalessen (muell.js,
+//     screens/muell.js), Tagesabschluss (screens/abschluss.js, tagAbschliessen), Zählerstand und Monatsziel (zaehler.js, screens/home.js,
+//     screens/buero.js, offenImBuero), Schwund-Zeiträume (zeitraumTage, monatsZeitraum), Schicht im Personal-Modus, „Jetzt dran“-Abschluss.
+//   Kalendertag (bleibt heute()): Kühlmessungen und Rundgänge (engine rundgangStarten/rundgangAbschliessen, screens/kuehl.js), Putzplan,
+//     Belehrungen, Export und Ordner fürs Amt, Belege und Lieferungen (Rechnungsdatum), Inventur, Preisverlauf, Sicherung – das Amt-Protokoll
+//     folgt dem Kalender, eine Messung um 01:30 steht beim echten Datum mit echter Uhrzeit.
+export const GESCHAEFTSTAG_BIS_STUNDE = 4;
+export function geschaeftstag(d = new Date()) {
+  const g = new Date(d.getTime());
+  if (g.getHours() < GESCHAEFTSTAG_BIS_STUNDE) g.setDate(g.getDate() - 1);
+  return g;
+}
+export const heuteGeschaeft = (d = new Date()) => heute(geschaeftstag(d));
 
 export function debounce(fn, ms) {
   let t;

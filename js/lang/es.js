@@ -65,6 +65,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % IVA", 7: "7 % IVA", 0: "sin IVA" }, // Paket 3 (16.10.2026), M1
     titel: "Tus gastos fijos",
     einleitung: "Ahora juntamos todo lo que pagas cada mes, vendas mucho o poco. Diez listas cortas. Lo que no sepas, déjalo pendiente.",
     los: "Vamos",
@@ -166,6 +167,7 @@ export default {
     leer: "todavía sin receta",
   },
   preise: {
+    preisNull: "Precio 0 € – ¿es correcto? Cuenta como «sin precio».", // Paket 3 (16.10.2026), M3
     frage: "¿Cuánto pagas al comprar?",
     hinweis: "Por artículo, el paquete tal como lo compras y lo que cuesta, sin IVA, como pone en la factura del proveedor. No hay referencias: los precios solo los conoce tu local. Lo que falte, déjalo pendiente.",
     stand: (a, b) => `${a} de ${b} precios anotados`,
@@ -359,13 +361,15 @@ export default {
     schritte: { karte: "Carta", preise: "Precios de los platos", rezepte: "Recetas", kosten: "Gastos fijos", einkauf: "Precios de compra", kuehlung: "Frío", sicherung: "Copia de seguridad" },
     offen: { karte: () => "Hacer foto de la carta", preise: (n) => `${n} platos sin precio`, rezepte: (n) => `${n} platos sin receta`, kosten: (n) => `${n} gastos obligatorios pendientes (alquiler, personal, tu sueldo, luz/gas)`,
       einkauf: (n) => `${n} ingredientes sin precio de compra: una foto de factura lo rellena`, kuehlung: () => "Crear punto de frío", sicherung: () => "Última copia de hace más de 7 días" } },
-  vergleich: { eigenesFoto: "Hacer foto propia", fotoGespeichert: "Foto guardada. Se queda en este móvil.",  titel: "Comparar platos", unter: "¿Qué platos te dejan más?", tab: { db: "Te queda por unidad", marge: "Margen %" }, ware: "Coste de producto", db: "Te queda por unidad", marge: "Margen", leer: "Anota precios de venta y de compra y aquí verás qué platos te dejan más.", ohneZahlen: (n) => (n === 1 ? "1 plato todavía sin cifras" : `${n} platos todavía sin cifras`), einkaufFehlt: "Faltan precios de compra", hinweis: "Los valores son estimaciones y pueden variar según ingredientes y precios. Todos los importes sin IVA, menos el precio de venta." },
+  vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Hacer foto propia", fotoGespeichert: "Foto guardada. Se queda en este móvil.",  titel: "Comparar platos", unter: "¿Qué platos te dejan más?", tab: { db: "Te queda por unidad", marge: "Margen %" }, ware: "Coste de producto", db: "Te queda por unidad", marge: "Margen", leer: "Anota precios de venta y de compra y aquí verás qué platos te dejan más.", ohneZahlen: (n) => (n === 1 ? "1 plato todavía sin cifras" : `${n} platos todavía sin cifras`), einkaufFehlt: "Faltan precios de compra", hinweis: "Los valores son estimaciones y pueden variar según ingredientes y precios. Todos los importes sin IVA, menos el precio de venta." },
   buero: { titel: "Oficina", zurueck: "Local",
     abschnitt: { offen: "Pendiente", ordner: "Carpetas para entregar", zahlen: "Cifras", karte: "Carta y compras", einrichten: "Configurar local" },
     offen: { einrichtung: "Configuración", kosten: (n) => (n === 1 ? "Gastos fijos: falta 1" : `Gastos fijos: faltan ${n}`), billig: (n) => (n === 1 ? "1 precio demasiado barato" : `${n} precios demasiado baratos`),
       ohneZahlen: (n) => (n === 1 ? "1 plato sin cifras" : `${n} platos sin cifras`), sicherung: (n) => (n === 1 ? "Copia de hace 1 día" : `Copia de hace ${n} días`), sicherungNie: "Aún sin copia",
       waage: "Pesar raciones", belehrung: (n) => (n === 1 ? "1 formación pendiente" : `${n} formaciones pendientes`) },
-    zahlen: { monat: "Mes y contador", monatUnter: (m) => `${m} hasta ahora`, vergleich: "Comparar platos", vergleichUnter: "Lo que queda por unidad", listen: "Listas", listenUnter: "Basura, mermas, comida del personal",
+    zahlen: { richtwert: "Referencia mercancía", wareHoch: (q) => `Coste de mercancía ${q} % – alto`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Mes y contador", monatUnter: (m) => `${m} hasta ahora`, vergleich: "Comparar platos", vergleichUnter: "Lo que queda por unidad", listen: "Listas", listenUnter: "Basura, mermas, comida del personal",
       inventur: "Inventario", inventurUnter: (d) => `Último recuento el ${d}`, inventurNie: "Nunca contado" },
     karte: { rezepte: "Recetas", preise: "Precios de compra", belege: "Tickets", verkauf: "Precios de venta", kosten: "Gastos fijos", kartefoto: "Carta por foto" },
     einrichten: { einrichtung: "Configuración", kuehl: "Puntos de frío", putzplan: "Editar plan de limpieza", laeden: "Locales", sicherung: "Copia", code: "Código de oficina", codeAn: "sí", codeAus: "no", einstellungen: "Ajustes" },
@@ -631,6 +635,7 @@ export default {
     unvollstaendig: "Gastos incompletos: el contador solo calcula con lo que está anotado.",
     kalkulatorischSatz: "Todos los importes son calculados, no es el saldo de la cuenta.",
     kalkulatorisch: "calculado, no es el saldo",
+    richtwertZeile: "Estimación · Pon precios ›", // Paket 3 (16.10.2026)
     stufe: { 1: "solo gastos fijos y sueldos, falta el producto", 2: "producto estimado a partir de la carta", 3: "producto de tus tickets" },
     umsatzHeute: "Ventas hoy",
     tonneHeute: "Basura hoy",
@@ -699,12 +704,14 @@ export default {
     eigenBis: "Tu sueldo hasta hoy",
     wareGeschaetzt: (q) => `Producto (estimado ${q} % de las ventas)`,
     wareBelege: "Producto de tus tickets",
+    wareRichtwert: (q) => `Mercancía (referencia ≈ ${q} % de las ventas)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Referencia sin tus precios: los puestos de comida están en ${min}–${max} % de coste de mercancía. Fuente: ${q}. Pon precios de compra y la app calcula con tus números.`,
     wareFehlt: "Producto (todavía sin calcular)",
     muellBis: "Basura hasta hoy",
     umsatzBis: "Ventas netas hasta hoy",
     umsatzBruttoHinweis: (b, s) => `de ${b} bruto, quitando ${s} % de IVA`,
     steuerQuelle: { eigen: "tipo de IVA propio", karte: "tipo mixto de la carta", standard: "se supone 7 %" },
-    quoteQuelle: { eigen: "porcentaje de producto propio", karte: "de la carta", keine: "sin carta" },
+    quoteQuelle: { richtwert: "referencia del sector (estimación)", eigen: "porcentaje de producto propio", karte: "de la carta", keine: "sin carta" },
     monat: "El mes de un vistazo",
     legendeMonat: "Rojo: todavía en negativo. Verde: desde aquí ganas. Gris: cerrado. Con borde: hoy.",
     preise: "Precios que han cambiado (30 días)",
@@ -882,7 +889,8 @@ export default {
     journal: { schwund: "Basura", tagesnotizen: "Ventas", messungen: "Refrigeración", lieferungen: "Entregas", abschluesse: "Cierres del día", kostenbelege: "Recibos de gastos", putzlog: "Plan de limpieza", belehrungen: "Formaciones de higiene", rundgaenge: "Rondas de frío", inventuren: "Inventarios", uploads: "Fotos", artikel: "Productos", gerichte: "Platos", anderes: "Datos" },
     bereich: { kosten: "Gastos", gerichte: "Platos y recetas", artikel: "Productos y precios", betrieb: "Local", kuehl: "Puntos de frío", putzplan: "Plan de limpieza", personen: "Personas" },
   },
-  einstellungen: { fotosNichtDrin: "Las fotos de facturas, basura y platos van en el archivo de copia. Por eso el archivo es más grande.",
+  einstellungen: { kleinunternehmer: "Pequeña empresa (sin IVA deducible)", kleinunternehmerHinweis: "Activado: los importes brutos cuentan enteros, no se descuenta IVA.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Las fotos de facturas, basura y platos van en el archivo de copia. Por eso el archivo es más grande.",
     bereichBetrieb: "Local, días, temporada",
     bereichTeam: "Equipo",
     bereichKanaele: "Formas de venta",
@@ -1096,7 +1104,7 @@ export default {
     pin: { titel: "Código de oficina", neu: "Elige un código nuevo", nochmal: "Otra vez", falsch: "Código incorrecto", ungleich: "No coincide. Elige de nuevo.", gesetzt: "Código de oficina guardado", entfernt: "Código de oficina eliminado", setzen: "Fijar código de oficina", aendern: "Cambiar código de oficina", entfernen: "Quitar código", ohne: "Sin código, cualquiera entra en la oficina.", mit: "La oficina está protegida con un código.", loeschen: "Borrar cifra" },
     hilfeText: {
       allgemein: "La barra de abajo lleva a todo lo que necesitas en el local. Cuentas, ajustes y listas están en la oficina.",
-      start: "El día de un vistazo. El número grande muestra cuánta venta falta todavía para llegar a cero. Rojo significa: ocúpate ahora.",
+      start: "El día de un vistazo. El número grande muestra cuánta venta falta todavía para llegar a cero. Rojo significa: ocúpate ahora. Si hay «≈» delante, el número es una estimación (mercancía o tu sueldo) – explicación en la oficina, «Mes y contador». Sin precios de compra la app calcula con 32 % de mercancía (puestos: 23–41 %, tablas BMF 2025).",
       muell: "Toca el producto que se tira. Justo después puedes deshacerlo. Listas e importes están en la oficina.",
       kuehl: "Mide cada punto de frío y anota el valor. Si es demasiado alto, apunta lo que haces y vuelve a medir más tarde.",
       putzplan: "Marca lo que se ha limpiado hoy. Marca y la lista está al día. El plan lo cambias en la oficina.",

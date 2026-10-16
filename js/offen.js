@@ -3,7 +3,7 @@
 // gefüllt hat (Einrichtungsring, Kostenlücken, Waage-Vorschlag, graue Gerichte, Hinweise, neue Fassung …), liefert offenImBuero()
 // als Liste für die Büro-Startseite. Reine Logik, kein HTML (außer dem kleinen Helfer zielAttr für data-Attribute).
 import { t } from "./i18n.js";
-import { heute } from "./util.js";
+import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
 import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, abweichungStand } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
 import { zaehler, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
@@ -34,7 +34,7 @@ export function zielAttr(z) {
 //  2. Kühlrundgang offen (angefangen; oder heute noch nicht gemessen: morgens bis 15 Uhr, abends ab 17 Uhr)
 //  3. Putzaufgabe überfällig
 //  4. Sicherung älter als 7 Tage – nur außerhalb der Hauptzeiten (11:30–14:00, 17:30–20:30)
-//  5. ab 18 Uhr: Tag abschließen (wenn noch nicht abgeschlossen)
+//  5. ab 18 Uhr bis 4 Uhr früh: Tag abschließen (wenn der Geschäftstag noch nicht abgeschlossen ist; Paket 3, M7)
 // Rückgabe: null oder { id, ton: "rot" | "normal", symbol, titel, knopf, ziel }
 export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
   const h = stunde(jetzt); const H = heute(jetzt);
@@ -53,7 +53,7 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
   }
   if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, H); if (pg.ueberfaellig) return { id: "putzen", ton: "normal", symbol: "spray-can", titel: t("heute.dran.putzen", pg.ueberfaellig), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "putzplan" } }; }
   if (!istHauptzeit(h) && sicherungStufe(wurzel, jetzt.getTime())?.stufe === "rot") return { id: "sicherung", ton: "normal", symbol: "package", titel: t("heute.dran.sicherung"), knopf: t("heute.dran.sichern"), ziel: { aktion: "export" } };
-  if (h >= 18 && !abschlussVon(stand, H)) return { id: "abschluss", ton: "dunkel", symbol: "check", titel: t("heute.dran.abschluss"), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "abschluss" } };
+  if ((h >= 18 || h < 4) && !abschlussVon(stand, heuteGeschaeft(jetzt))) return { id: "abschluss", ton: "dunkel", symbol: "check", titel: t("heute.dran.abschluss"), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "abschluss" } };
   return null;
 }
 
@@ -72,7 +72,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
-  const z = zaehlerImTakt(stand, H); // W2-D
+  const z = zaehlerImTakt(stand, heuteGeschaeft(jetzt)); // W2-D; Paket 3, M7: Zähler nach Geschäftstag
   if (z.unvollstaendig) add("kosten", t("heute.offen.kosten"), z.last?.fix?.offen ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" } : { aktion: "bearbeiten", schritt: "lohn" });
   if (stand.gerichte?.length) { const grau = kalkulation(stand).zaehl.grau; if (grau) add("karteGrau", t("heute.offen.karteGrau", grau), { aktion: "nav", wert: "kartebuero" }); }
   const schaetz = wareneinsatzSicherheit(stand).zaehl?.schaetzung || 0;

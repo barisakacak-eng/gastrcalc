@@ -128,8 +128,8 @@ test("Artikel: Gebindekette, Preis je Beutel und je Einheit, brutto eingetragene
   t.preis = 12.3; E.preisMerken(t, "2026-10-11"); assert.equal(t.preisHistorie.length, 2);
 });
 test("umsatzSteuerSatz: eigener Wert, sonst aus der Karte gewichtet, sonst 7 %", () => {
-  assert.deepEqual(E.umsatzSteuerSatz({ betrieb: { steuerSatz: 0.1 }, gerichte: [] }), { satz: 0.1, quelle: "eigen" });
-  assert.deepEqual(E.umsatzSteuerSatz({ betrieb: {}, gerichte: [] }), { satz: 0.07, quelle: "standard" });
+  assert.deepEqual(E.umsatzSteuerSatz({ betrieb: { steuerSatz: 0.1 }, gerichte: [] }), { satz: 0.1, quelle: "eigen", geschaetzt: false });
+  assert.deepEqual(E.umsatzSteuerSatz({ betrieb: {}, gerichte: [] }), { satz: 0.07, quelle: "standard", geschaetzt: true }); // Paket 3, M2
   const s = { betrieb: { tageProWoche: 6 }, verkauf: { bestellungenTag: 0 }, gerichte: [ { id: "d", preis: 10, mengeTag: 90, klasse: "haupt", steuer: 0.07, zutaten: [] }, { id: "c", preis: 10, mengeTag: 10, klasse: "getraenk", steuer: 0.19, zutaten: [] } ] };
   const r = E.umsatzSteuerSatz(s); assert.equal(r.quelle, "karte"); nah(r.satz, 0.082, 1e-3);
 });

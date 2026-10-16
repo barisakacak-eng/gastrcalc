@@ -3,7 +3,7 @@
 // Zahlen kommen aus kalkulation() (netto, wie überall in der Kalkulation); nichts wird hier neu gerechnet außer der Sortierung.
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl } from "../util.js";
-import { kalkulation } from "../engine.js";
+import { kalkulation, wareneinsatzWarnung } from "../engine.js"; // Paket 3 (16.10.2026), M4
 import { rezeptStempel } from "../rezept_quelle.js";
 import { nav } from "./nav.js";
 import { FOTOS } from "../data/fotos.js";
@@ -62,7 +62,7 @@ export function vergleichView(stand) {
       <label class="bildwahl" aria-label="${esc(t("vergleich.eigenesFoto"))}">${gerichtBild(x.g)}<span class="bildwahl-sym">${sym("camera", "klein")}</span><input type="file" accept="image/*" capture="environment" data-f="gericht-foto" data-id="${esc(x.g.id)}" class="versteckt"></label>
       <div class="vk-text">
         <div class="vk-kopf"><b>${esc(x.z.name)}</b><span class="vk-preis">${x.z.preisBrutto !== null ? fmtEuro(x.z.preisBrutto, { dezimal: 2 }) : "–"}</span></div>
-        <div class="vk-zeile"><span>${esc(t("vergleich.ware"))}</span><span>${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.z.waren, { dezimal: 2 })}</span></div>
+        <div class="vk-zeile ${wareneinsatzWarnung(x.z.wareneinsatzAnteil) ? "minus" : ""}"><span>${esc(t("vergleich.ware"))}</span><span>${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.z.waren, { dezimal: 2 })}${wareneinsatzWarnung(x.z.wareneinsatzAnteil) ? ` · ${esc(t("vergleich.wareHoch", fmtZahl(x.z.wareneinsatzAnteil * 100, 0)))}` : ""}</span></div>
         <div class="vk-zeile ${x.db < 0 ? "minus" : ""}"><span>${esc(t("vergleich.db"))}</span><span>${fmtEuro(x.db, { dezimal: 2 })}</span></div>
         <div class="vk-zeile ${x.marge < 0 ? "minus" : ""}"><span>${esc(t("vergleich.marge"))}</span><span>${fmtZahl(x.marge * 100, 0)} %</span></div>
         <span class="vk-balken"><i class="${x.marge < 0.5 ? "knapp" : ""}" style="width:${Math.max(0, Math.min(100, Math.round(x.marge * 100)))}%"></i></span>

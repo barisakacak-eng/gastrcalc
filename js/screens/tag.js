@@ -1,14 +1,14 @@
 // Etappe 3/5: die Listen (Schwund, Müll je Fraktion, Personalessen) und gemeinsame Helfer für Datum und Einträge.
 // Die Eingabe selbst liegt seit Etappe 5 in muell.js (Müll) und umsatz.js (Tagesumsatz). Einträge werden nur angehängt; Rücknahme = storniert.
 import { t, einheitLabel, sprache } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heute } from "../util.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3 (16.10.2026), M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
 import { wertEintrag, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SCHWUND_ARTEN, SVEV_2026 } from "../engine.js";
 import { nav } from "./nav.js";
 import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
 
 let listenZeitraum = "woche"; // "woche" | "monat"
 let tagDatum = null;          // gewählter Tag auf „Heute" (null = heute); Vergangenheit = Nacherfassung, gekennzeichnet
-export const tagGewaehlt = () => tagDatum || heute();
+export const tagGewaehlt = () => tagDatum || heuteGeschaeft();
 export function tagZuruecksetzen() { tagDatum = null; }
 
 // Name des Eintrags: zuerst der gemerkte Name (überlebt das Löschen des Gerichts), sonst aus der Karte.
@@ -85,7 +85,7 @@ export const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.g
 
 // ---------- Aktionen und Eingaben (von app.js aufgerufen) ----------
 export function tagAktion(name, el, stand) {
-  if (name === "tag-datum") { tagDatum = el.dataset.wert === heute() ? null : el.dataset.wert; return true; }
+  if (name === "tag-datum") { tagDatum = el.dataset.wert === heuteGeschaeft() ? null : el.dataset.wert; return true; }
   if (name === "listen-zeitraum") { listenZeitraum = el.dataset.wert; return true; }
   if (name === "schwund-storno") {
     const e = stand.schwund.find((x) => x.id === el.dataset.id); if (!e || e.storniert) return false;

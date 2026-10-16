@@ -71,6 +71,7 @@ export default {
   },
 
   kosten: {
+    satz: { 19: "19 % TVA", 7: "7 % TVA", 0: "fără TVA" }, // Paket 3 (16.10.2026), M1
     titel: "Costurile tale fixe",
     einleitung: "Acum strângem tot ce se plătește în fiecare lună, indiferent dacă vinzi mult sau puțin. Zece liste scurte. Ce nu știi, lași deschis.",
     los: "Hai să începem",
@@ -172,6 +173,7 @@ export default {
     leer: "încă fără rețetă",
   },
   preise: {
+    preisNull: "Preț 0 € – e corect? Contează ca „fără preț”.", // Paket 3 (16.10.2026), M3
     frage: "Cât plătești la cumpărare?",
     hinweis: "La fiecare articol: ambalajul, așa cum îl cumperi, și cât costă – fără TVA, cum scrie pe factura furnizorului. Fără valori orientative, prețurile le știe doar localul tău. Ce lipsește, lași deschis.",
     stand: (a, b) => `${a} din ${b} prețuri completate`,
@@ -365,13 +367,15 @@ export default {
     schritte: { karte: "Meniu", preise: "Prețurile preparatelor", rezepte: "Rețete", kosten: "Costuri fixe", einkauf: "Prețuri de cumpărare", kuehlung: "Răcire", sicherung: "Copie de siguranță" },
     offen: { karte: () => "Fotografiază meniul", preise: (n) => `${nr(n, "preparat", "preparate")} fără preț`, rezepte: (n) => `${nr(n, "preparat", "preparate")} fără rețetă`, kosten: (n) => `${nr(n, "poziție obligatorie deschisă", "poziții obligatorii deschise")} (chirie, personal, salariul tău, curent/gaz)`,
       einkauf: (n) => `${nr(n, "ingredient", "ingrediente")} fără preț de cumpărare – o poză cu factura le completează`, kuehlung: () => "Adaugă un punct de răcire", sicherung: () => "Ultima copie e mai veche de 7 zile" } },
-  vergleich: { eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Marjă %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Marjă", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare." },
+  vergleich: { wareHoch: (q) => `${q} % – ridicat`, // Paket 3 (16.10.2026), M4
+    eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Marjă %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Marjă", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare." },
   buero: { titel: "Birou", zurueck: "Local",
     abschnitt: { offen: "De făcut", ordner: "Dosare de predat", zahlen: "Cifre", karte: "Meniu și cumpărături", einrichten: "Configurează localul" },
     offen: { einrichtung: "Configurare", kosten: (n) => (n === 1 ? "Costuri fixe: lipsește 1" : `Costuri fixe: lipsesc ${n}`), billig: (n) => (n === 1 ? "1 preț prea mic" : `${nr(n, "preț", "prețuri")} prea mici`),
       ohneZahlen: (n) => `${nr(n, "preparat", "preparate")} fără cifre`, sicherung: (n) => `Copie: acum ${nr(n, "zi", "zile")}`, sicherungNie: "Încă nicio copie",
       waage: "Cântărește porțiile", belehrung: (n) => (n === 1 ? "1 instruire de făcut" : `${nr(n, "instruire", "instruiri")} de făcut`) },
-    zahlen: { monat: "Lună și contor", monatUnter: (m) => `${m} până acum`, vergleich: "Preparate comparate", vergleichUnter: "Ce rămâne pe bucată", listen: "Liste", listenUnter: "Deșeuri, pierderi, masa personalului",
+    zahlen: { richtwert: "Reper marfă", wareHoch: (q) => `Cost marfă ${q} % – ridicat`, // Paket 3 (16.10.2026), M4/M15
+      monat: "Lună și contor", monatUnter: (m) => `${m} până acum`, vergleich: "Preparate comparate", vergleichUnter: "Ce rămâne pe bucată", listen: "Liste", listenUnter: "Deșeuri, pierderi, masa personalului",
       inventur: "Inventar", inventurUnter: (d) => `Numărat ultima dată pe ${d}`, inventurNie: "Încă nenumărat" },
     karte: { rezepte: "Rețete", preise: "Prețuri de cumpărare", belege: "Bonuri", verkauf: "Prețuri de vânzare", kosten: "Costuri fixe", kartefoto: "Meniu din poză" },
     einrichten: { einrichtung: "Configurare", kuehl: "Puncte de răcire", putzplan: "Editează planul de curățenie", laeden: "Localuri", sicherung: "Copie de siguranță", code: "Cod de birou", codeAn: "pornit", codeAus: "oprit", einstellungen: "Setări" },
@@ -637,6 +641,7 @@ export default {
     unvollstaendig: "Costuri incomplete – contorul calculează doar cu ce e trecut.",
     kalkulatorischSatz: "Toate sumele sunt calculate, nu e soldul contului.",
     kalkulatorisch: "calculat, nu sold de cont",
+    richtwertZeile: "Estimare · Introdu prețuri ›", // Paket 3 (16.10.2026)
     stufe: { 1: "doar costuri fixe și salarii, marfa încă lipsește", 2: "marfă estimată din meniu", 3: "marfă din bonurile tale" },
     umsatzHeute: "Încasări azi",
     tonneHeute: "Gunoi azi",
@@ -705,12 +710,14 @@ export default {
     eigenBis: "Salariul tău până azi",
     wareGeschaetzt: (q) => `Marfă (estimat ${q} % din încasări)`,
     wareBelege: "Marfă din bonurile tale",
+    wareRichtwert: (q) => `Marfă (reper ≈ ${q} % din vânzări)`, // Paket 3 (16.10.2026), M15
+    richtwertErklaerung: (min, max, q) => `Reper fără prețurile tale: fast-foodurile au ${min}–${max} % cost marfă. Sursă: ${q}. Introdu prețuri de achiziție și aplicația calculează cu cifrele tale.`,
     wareFehlt: "Marfă (încă necalculată)",
     muellBis: "Gunoi până azi",
     umsatzBis: "Încasări nete până azi",
     umsatzBruttoHinweis: (b, s) => `din ${b} brut, minus ${s} % taxe`,
     steuerQuelle: { eigen: "cota ta de taxă", karte: "cotă mixtă din meniu", standard: "presupus 7 %" },
-    quoteQuelle: { eigen: "partea ta de marfă", karte: "din meniu", keine: "fără meniu" },
+    quoteQuelle: { richtwert: "reper de branșă (estimare)", eigen: "partea ta de marfă", karte: "din meniu", keine: "fără meniu" },
     monat: "Luna dintr-o privire",
     legendeMonat: "Roșu: încă pe minus. Verde: de aici câștigi. Gri: zi liberă. Încadrat: azi.",
     preise: "Prețuri care s-au schimbat (30 de zile)",
@@ -889,7 +896,8 @@ export default {
     journal: { schwund: "Gunoi", tagesnotizen: "Vânzări", messungen: "Răcire", lieferungen: "Livrări", abschluesse: "Închideri de zi", kostenbelege: "Facturi de costuri", putzlog: "Plan de curățenie", belehrungen: "Instruiri de igienă", rundgaenge: "Ture de răcire", inventuren: "Inventare", uploads: "Poze", artikel: "Mărfuri", gerichte: "Preparate", anderes: "Date" },
     bereich: { kosten: "Costuri", gerichte: "Preparate și rețete", artikel: "Mărfuri și prețuri", betrieb: "Local", kuehl: "Locuri de răcire", putzplan: "Plan de curățenie", personen: "Persoane" },
   },
-  einstellungen: { fotosNichtDrin: "Pozele cu facturi, gunoi și preparate sunt în fișierul de copie. De aceea fișierul e mai mare.",
+  einstellungen: { kleinunternehmer: "Firmă mică (fără TVA deductibil)", kleinunternehmerHinweis: "Pornit: sumele brute contează integral, nu se scade TVA.", // Paket 3 (16.10.2026), M1
+    fotosNichtDrin: "Pozele cu facturi, gunoi și preparate sunt în fișierul de copie. De aceea fișierul e mai mare.",
     bereichBetrieb: "Local, zile, sezon",
     bereichTeam: "Echipă",
     bereichKanaele: "Căi de vânzare",
@@ -1103,7 +1111,7 @@ export default {
     pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra" },
     hilfeText: {
       allgemein: "Bara de jos duce la tot ce îți trebuie în local. Calculele, configurarea și listele sunt în birou.",
-      start: "Ziua dintr-o privire. Numărul mare arată cât încasări mai lipsesc până la zero. Roșu înseamnă: ocupă-te acum.",
+      start: "Ziua dintr-o privire. Numărul mare arată cât încasări mai lipsesc până la zero. Roșu înseamnă: ocupă-te acum. Un „≈” în față înseamnă estimare (marfă sau salariul tău) – explicația la birou, sub „Lună și contor”. Fără prețuri de achiziție aplicația calculează cu 32 % marfă (fast-food: 23–41 %, tabele BMF 2025).",
       muell: "Atinge marfa care se aruncă. Poți anula imediat după. Listele și sumele sunt în birou.",
       kuehl: "Măsoară fiecare loc de răcire și introdu valoarea. Dacă e prea mare, notează ce faci și măsoară din nou mai târziu.",
       putzplan: "Bifează ce s-a curățat azi. Bifează și lista e la zi. Planul îl schimbi în birou.",

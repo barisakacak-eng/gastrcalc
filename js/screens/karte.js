@@ -249,7 +249,7 @@ function artikelZeile(a) {
   const jeBasis = p.jeEinheit === null ? null : basis === "stk" ? p.jeEinheit : preisJeBasis(a) * 1000;
   const zOffen = zwischenOffen.has(a.name) || !!g.zwischen;
   return `<div class="zeile ${ok ? "an" : "offen"}">
-    <div class="oben"><div class="name">${esc(a.name)}<small>${esc(ok ? gebindeSatz(a) : t("allgemein.offen"))}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
+    <div class="oben"><div class="name">${esc(a.name)}<small>${esc(ok ? gebindeSatz(a) : a.preis === 0 ? t("preise.preisNull") : t("allgemein.offen"))}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
     ${zwischenrezept(a.name) ? `<button type="button" class="leise" data-a="selbst-an" data-name="${esc(a.name)}">${esc(t("selbst.machenSelbst"))}</button>` : ""}
     <div class="chips">${(mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? GEBINDE_WAHL : GEBINDE_KURZ).map((x) => `<button type="button" class="chip klein ${g.art === x ? "an" : ""}" data-a="gebinde-art" data-name="${esc(a.name)}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}${mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? "" : `<button type="button" class="chip klein" data-a="gebinde-mehr" data-name="${esc(a.name)}">…</button>`}</div>
     <div class="feldzeile"><label>${esc(t("gebinde.inhalt", artName))}</label>
