@@ -22,6 +22,19 @@ jobs:
         with:
           node-version: 22
       - run: node --test tests/*.mjs
+  # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser – zunächst NICHT blockierend
+  # (continue-on-error); nach einigen stabilen Läufen wird der Job zur Voraussetzung für deploy.
+  regeln:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install playwright==1.56.0 && python -m playwright install --with-deps chromium
+      - run: python tests/regeln.py
+      - run: python tests/durchlauf_personal.py
   deploy:
     needs: test
     runs-on: ubuntu-latest
