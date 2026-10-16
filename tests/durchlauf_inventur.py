@@ -36,6 +36,10 @@ async def main():
             b = await p.chromium.launch()
             ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
             pg = await ctx.new_page()
+            # 17.10.2026: feste Tageszeit 12:00 (heutiges Datum) – der Durchlauf mischt Kalendertag (Inventur, Belege) und Geschäftstag
+            # (Umsatz bis 4 Uhr = Vortag, Paket 3); nachts zwischen 0 und 4 Uhr wären sonst ein Umsatztag doppelt belegt
+            import datetime as _dt
+            await pg.clock.set_system_time(_dt.datetime.combine(_dt.date.today(), _dt.time(12, 0)))
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
             fragen = []
