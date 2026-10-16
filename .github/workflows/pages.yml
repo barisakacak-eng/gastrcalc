@@ -33,8 +33,14 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install playwright==1.56.0 && python -m playwright install --with-deps chromium
-      - run: python tests/regeln.py
-      - run: python tests/durchlauf_personal.py
+      # Befunde zusätzlich als Anmerkungen (lesbar ohne Log-Download): jede Zeile mit NEU, Verletzungen, Fehler
+      - run: |
+          set -o pipefail
+          python tests/regeln.py 2>&1 | tee regeln.txt || { grep -E "NEU|neu:|Verletzungen|Error|Traceback|assert" regeln.txt | tail -20 | while read -r l; do echo "::warning::regeln: $l"; done; exit 1; }
+          grep -E "Verletzungen" regeln.txt | while read -r l; do echo "::notice::regeln: $l"; done
+      - run: |
+          set -o pipefail
+          python tests/durchlauf_personal.py 2>&1 | tee personal.txt || { tail -15 personal.txt | while read -r l; do echo "::warning::personal: $l"; done; exit 1; }
   deploy:
     needs: test
     runs-on: ubuntu-latest
