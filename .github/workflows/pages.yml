@@ -33,8 +33,14 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      # Nur die App geht auf die Seite (Entscheidung Baris 16.10.2026, E6): kein bruecke/, tests/, design/, tools/, .github/
+      - name: App-Dateien zusammenstellen
+        run: |
+          mkdir -p /tmp/seite
+          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons vendor design /tmp/seite/
+          echo "Dateien auf der Seite: $(find /tmp/seite -type f | wc -l)"
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: /tmp/seite
       - id: deployment
         uses: actions/deploy-pages@v4

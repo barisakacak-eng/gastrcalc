@@ -538,7 +538,7 @@ export default {
     grenzeFehlt: "Sînor kêm e",
     stelleWeg: "Vê amûrê êdî bikar neyne",
     stelleWegFrage: (n) => `“${n}” ji gera kontrolê rake? Pîvandinên kevn dimînin.`,
-    richtwerte: "Bê sînorê xwe standard derbas dibe: sarker herî zêde 7 °C, cemidok herî zêde −18 °C, germ-hilgirtin herî kêm 65 °C. Plana te ya paqijiyê dikare hişktir be (masî 2 °C, goştê hûrkirî 2 °C) – wê demê li vir binivîse. Heke şik hebe, ji fermangeha kontrola xwarinê (Lebensmittelüberwachungsamt) bipirse.",
+    richtwerte: "Bê sînorê xwe standard derbas dibe: sarker herî zêde 7 °C, cemidok herî zêde −18 °C, germ-hilgirtin herî kêm 65 °C. Plana te ya paqijiyê dikare hişktir be – wê demê li vir binivîse. Heke şik hebe, ji fermangeha kontrola xwarinê (Lebensmittelüberwachungsamt) bipirse.",
     takt: "Rojê çend caran?",
     taktWert: (n) => n === 1 ? "rojê carekê" : "rojê du caran",
     ruhetage: "Rojên betlaneyê",

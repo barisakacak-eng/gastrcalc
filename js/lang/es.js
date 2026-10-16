@@ -539,7 +539,7 @@ export default {
     grenzeFehlt: "Falta el límite",
     stelleWeg: "Dejar de usar este punto",
     stelleWegFrage: (n) => `¿Quitar “${n}” de la ronda? Las mediciones antiguas se quedan.`,
-    richtwerte: "Sin límite propio vale el estándar: frío máximo 7 °C, congelado máximo −18 °C, mantener caliente mínimo 65 °C. Tu plan de higiene puede ser más estricto (pescado 2 °C, carne picada 2 °C); entonces apúntalo aquí. Si dudas, pregunta a control alimentario (Lebensmittelüberwachung).",
+    richtwerte: "Sin límite propio vale el estándar: frío máximo 7 °C, congelado máximo −18 °C, mantener caliente mínimo 65 °C. Tu plan de higiene puede ser más estricto; entonces apúntalo aquí. Si dudas, pregunta a control alimentario (Lebensmittelüberwachung).",
     takt: "¿Cuántas veces al día?",
     taktWert: (n) => n === 1 ? "una vez al día" : "dos veces al día",
     ruhetage: "Días de cierre",

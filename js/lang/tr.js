@@ -539,7 +539,7 @@ export default {
     grenzeFehlt: "sınır eksik",
     stelleWeg: "Bu noktayı artık kullanma",
     stelleWegFrage: (n) => `“${n}” turdan çıkarılsın mı? Eski ölçümler kalır.`,
-    richtwerte: "Kendi sınırın yoksa standart geçerli: soğutma en fazla 7 °C, derin dondurucu en fazla −18 °C, sıcak tutma en az 65 °C. Hijyen planın daha sıkı olabilir (balık 2 °C, kıyma 2 °C) – o zaman buraya gir. Şüphede gıda denetim dairesine sor.",
+    richtwerte: "Kendi sınırın yoksa standart geçerli: soğutma en fazla 7 °C, derin dondurucu en fazla −18 °C, sıcak tutma en az 65 °C. Hijyen planın daha sıkı olabilir – o zaman buraya gir. Şüphede gıda denetim dairesine sor.",
     takt: "Günde kaç kez?",
     taktWert: (n) => n === 1 ? "günde bir" : "günde iki",
     ruhetage: "Kapalı günler",

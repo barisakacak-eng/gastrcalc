@@ -546,7 +546,7 @@ export default {
     grenzeFehlt: "Fali granica",
     stelleWeg: "Ne koristi više uređaj",
     stelleWegFrage: (n) => `Izbaciti „${n}“ iz obilaska? Stara mjerenja ostaju sačuvana.`,
-    richtwerte: "Bez vlastite granice važi standard: hlađenje najviše 7 °C, zamrzavanje najviše −18 °C, držanje toplog najmanje 65 °C. Tvoj plan higijene može biti strožiji (riba 2 °C, mljeveno meso 2 °C) – onda to upiši ovdje. Ako nisi siguran, pitaj nadležnu inspekciju za hranu (Lebensmittelüberwachung).",
+    richtwerte: "Bez vlastite granice važi standard: hlađenje najviše 7 °C, zamrzavanje najviše −18 °C, držanje toplog najmanje 65 °C. Tvoj plan higijene može biti strožiji – onda to upiši ovdje. Ako nisi siguran, pitaj nadležnu inspekciju za hranu (Lebensmittelüberwachung).",
     takt: "Koliko puta dnevno?",
     taktWert: (n) => n === 1 ? "jednom dnevno" : "dvaput dnevno",
     ruhetage: "Neradni dani",

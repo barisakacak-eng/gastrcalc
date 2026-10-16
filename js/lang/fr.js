@@ -539,7 +539,7 @@ export default {
     grenzeFehlt: "Limite manquante",
     stelleWeg: "Ne plus utiliser ce point",
     stelleWegFrage: (n) => `Retirer « ${n} » de la tournée ? Les anciennes mesures restent.`,
-    richtwerte: "Sans limite perso, c’est le standard qui compte : froid 7 °C maximum, surgelé −18 °C maximum, maintien au chaud 65 °C minimum. Ton plan d’hygiène peut être plus strict (poisson 2 °C, viande hachée 2 °C) – alors note-le ici. En cas de doute, demande au contrôle alimentaire (Lebensmittelüberwachung).",
+    richtwerte: "Sans limite perso, c’est le standard qui compte : froid 7 °C maximum, surgelé −18 °C maximum, maintien au chaud 65 °C minimum. Ton plan d’hygiène peut être plus strict – alors note-le ici. En cas de doute, demande au contrôle alimentaire (Lebensmittelüberwachung).",
     takt: "Combien de fois par jour ?",
     taktWert: (n) => n === 1 ? "une fois par jour" : "deux fois par jour",
     ruhetage: "Jours de fermeture",

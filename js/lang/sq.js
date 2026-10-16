@@ -544,7 +544,7 @@ export default {
     grenzeFehlt: "mungon kufiri",
     stelleWeg: "Mos e përdor më pikën",
     stelleWegFrage: (n) => `Ta heq “${n}” nga raundi? Matjet e vjetra mbeten.`,
-    richtwerte: "Pa kufi tëndin vlen standardi: ftohja më së shumti 7 °C, ngrirja më së shumti −18 °C, mbajtja e ngrohtë të paktën 65 °C. Plani yt i higjienës mund të jetë më i rreptë (peshku 2 °C, mishi i grirë 2 °C) – atëherë shkruaje këtu. Kur ke dyshim, pyet zyrën e kontrollit të ushqimit (Lebensmittelüberwachungsamt).",
+    richtwerte: "Pa kufi tëndin vlen standardi: ftohja më së shumti 7 °C, ngrirja më së shumti −18 °C, mbajtja e ngrohtë të paktën 65 °C. Plani yt i higjienës mund të jetë më i rreptë – atëherë shkruaje këtu. Kur ke dyshim, pyet zyrën e kontrollit të ushqimit (Lebensmittelüberwachungsamt).",
     takt: "Sa herë në ditë?",
     taktWert: (n) => n === 1 ? "një herë në ditë" : "dy herë në ditë",
     ruhetage: "Ditët e pushimit",

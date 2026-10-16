@@ -544,7 +544,7 @@ export default {
     grenzeFehlt: "Brak granicy",
     stelleWeg: "Nie używaj już tego punktu",
     stelleWegFrage: (n) => `Usunąć „${n}” z obchodu? Stare pomiary zostaną.`,
-    richtwerte: "Bez własnej granicy obowiązuje standard: chłodzenie najwyżej 7 °C, mrożenie najwyżej −18 °C, utrzymywanie na ciepło najmniej 65 °C. Twój plan higieny może być ostrzejszy (ryby 2 °C, mięso mielone 2 °C) – wtedy wpisz to tutaj. W razie wątpliwości zapytaj urząd kontroli żywności (Lebensmittelüberwachung).",
+    richtwerte: "Bez własnej granicy obowiązuje standard: chłodzenie najwyżej 7 °C, mrożenie najwyżej −18 °C, utrzymywanie na ciepło najmniej 65 °C. Twój plan higieny może być ostrzejszy – wtedy wpisz to tutaj. W razie wątpliwości zapytaj urząd kontroli żywności (Lebensmittelüberwachung).",
     takt: "Ile razy dziennie?",
     taktWert: (n) => n === 1 ? "raz dziennie" : "dwa razy dziennie",
     ruhetage: "Dni wolne",

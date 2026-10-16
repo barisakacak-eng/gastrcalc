@@ -539,7 +539,7 @@ export default {
     grenzeFehlt: "Manca il limite",
     stelleWeg: "Non usare più l'apparecchio",
     stelleWegFrage: (n) => `Togliere “${n}” dal giro? Le misure vecchie restano.`,
-    richtwerte: "Senza limite tuo vale lo standard: frigo al massimo 7 °C, congelatore al massimo −18 °C, mantenimento a caldo almeno 65 °C. Il tuo piano di igiene può essere più severo (pesce 2 °C, macinato 2 °C) – allora inseriscilo qui. Nel dubbio chiedi al controllo alimentare (Lebensmittelüberwachung).",
+    richtwerte: "Senza limite tuo vale lo standard: frigo al massimo 7 °C, congelatore al massimo −18 °C, mantenimento a caldo almeno 65 °C. Il tuo piano di igiene può essere più severo – allora inseriscilo qui. Nel dubbio chiedi al controllo alimentare (Lebensmittelüberwachung).",
     takt: "Quante volte al giorno?",
     taktWert: (n) => n === 1 ? "una volta al giorno" : "due volte al giorno",
     ruhetage: "Giorni di chiusura",

@@ -539,7 +539,7 @@ export default {
     grenzeFehlt: "Thiếu giới hạn",
     stelleWeg: "Không dùng điểm này nữa",
     stelleWegFrage: (n) => `Bỏ “${n}” khỏi vòng đo? Các lần đo cũ vẫn giữ lại.`,
-    richtwerte: "Nếu không có giới hạn riêng thì theo tiêu chuẩn: đồ lạnh tối đa 7 °C, đồ đông tối đa −18 °C, giữ nóng tối thiểu 65 °C. Kế hoạch vệ sinh của bạn có thể chặt hơn (cá 2 °C, thịt xay 2 °C) – thì ghi ở đây. Nếu không chắc, hỏi cơ quan kiểm tra thực phẩm (Lebensmittelüberwachung).",
+    richtwerte: "Nếu không có giới hạn riêng thì theo tiêu chuẩn: đồ lạnh tối đa 7 °C, đồ đông tối đa −18 °C, giữ nóng tối thiểu 65 °C. Kế hoạch vệ sinh của bạn có thể chặt hơn – thì ghi ở đây. Nếu không chắc, hỏi cơ quan kiểm tra thực phẩm (Lebensmittelüberwachung).",
     takt: "Mỗi ngày đo mấy lần?",
     taktWert: (n) => n === 1 ? "mỗi ngày một lần" : "mỗi ngày hai lần",
     ruhetage: "Ngày nghỉ",

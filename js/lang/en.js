@@ -538,7 +538,7 @@ export default {
     grenzeFehlt: "limit missing",
     stelleWeg: "Stop using this unit",
     stelleWegFrage: (n) => `Remove "${n}" from the round? Old measurements are kept.`,
-    richtwerte: "Without your own limit the standard applies: chilled at most 7 °C, frozen at most −18 °C, hot holding at least 65 °C. Your hygiene plan may be stricter (fish 2 °C, minced meat 2 °C) – then enter it here. If in doubt, ask your food safety office.",
+    richtwerte: "Without your own limit the standard applies: chilled at most 7 °C, frozen at most −18 °C, hot holding at least 65 °C. Your hygiene plan may be stricter – then enter it here. If in doubt, ask your food safety office.",
     takt: "How often per day?",
     taktWert: (n) => n === 1 ? "once a day" : "twice a day",
     ruhetage: "Closed days",

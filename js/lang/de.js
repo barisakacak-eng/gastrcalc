@@ -539,7 +539,7 @@ export default {
     grenzeFehlt: "Grenze fehlt",
     stelleWeg: "Stelle nicht mehr nutzen",
     stelleWegFrage: (n) => `„${n}“ aus dem Rundgang nehmen? Alte Messungen bleiben erhalten.`,
-    richtwerte: "Ohne eigene Grenze gilt der Standard: Kühlung höchstens 7 °C, Tiefkühlung höchstens −18 °C, Warmhalten mindestens 65 °C. Dein Hygienekonzept kann strenger sein (Fisch 2 °C, Hack 2 °C) – dann trag es hier ein. Frag im Zweifel dein Lebensmittelüberwachungsamt.",
+    richtwerte: "Ohne eigene Grenze gilt der Standard: Kühlung höchstens 7 °C, Tiefkühlung höchstens −18 °C, Warmhalten mindestens 65 °C. Dein Hygienekonzept kann strenger sein – dann trag es hier ein. Frag im Zweifel dein Lebensmittelüberwachungsamt.",
     takt: "Wie oft am Tag?",
     taktWert: (n) => n === 1 ? "einmal täglich" : "zweimal täglich",
     ruhetage: "Ruhetage",

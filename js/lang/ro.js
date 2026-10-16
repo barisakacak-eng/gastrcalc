@@ -545,7 +545,7 @@ export default {
     grenzeFehlt: "Lipsește limita",
     stelleWeg: "Nu mai folosi punctul",
     stelleWegFrage: (n) => `Scoți „${n}” din rundă? Măsurătorile vechi rămân.`,
-    richtwerte: "Fără limită proprie se aplică standardul: răcire cel mult 7 °C, congelare cel mult −18 °C, menținere la cald cel puțin 65 °C. Planul tău de igienă poate fi mai strict (pește 2 °C, carne tocată 2 °C) – atunci trece-l aici. Dacă nu ești sigur, întreabă autoritatea de control alimentar (Lebensmittelüberwachung).",
+    richtwerte: "Fără limită proprie se aplică standardul: răcire cel mult 7 °C, congelare cel mult −18 °C, menținere la cald cel puțin 65 °C. Planul tău de igienă poate fi mai strict – atunci trece-l aici. Dacă nu ești sigur, întreabă autoritatea de control alimentar (Lebensmittelüberwachung).",
     takt: "De câte ori pe zi?",
     taktWert: (n) => n === 1 ? "o dată pe zi" : "de două ori pe zi",
     ruhetage: "Zile libere",
