@@ -2,7 +2,7 @@
 // Je Gericht: Bild, Name, Verkaufspreis, Wareneinsatz, Deckungsbeitrag, Marge mit Balken. Umschalter Deckungsbeitrag | Marge %.
 // Zahlen kommen aus kalkulation() (netto, wie überall in der Kalkulation); nichts wird hier neu gerechnet außer der Sortierung.
 import { t } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl } from "../util.js";
+import { esc, fmtEuro, fmtZahl, fotoSlug } from "../util.js";
 import { kalkulation, wareneinsatzWarnung } from "../engine.js"; // Paket 3 (16.10.2026), M4
 import { rezeptStempel } from "../rezept_quelle.js";
 import { nav } from "./nav.js";
@@ -32,7 +32,7 @@ const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger",
   beilagen: "g-pommes", alkoholfrei: "g-getraenk", suppe: "g-suppe", kuchen: "g-kuchen", kaffee: "g-kaffee", fruehstueck: "g-fruehstueck", eis: "g-eis", bier: "g-bier", fleischgericht: "g-fleischgericht" };
 export function fotoName(g) {
   const f = g.rezeptFamilie || "";
-  const kandidaten = [];
+  const kandidaten = ["g-" + fotoSlug(g.name)]; // 17.10.2026: Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
   if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk|^d-/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
   if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   if (f) kandidaten.push(FOTO[f] || "g-" + f);

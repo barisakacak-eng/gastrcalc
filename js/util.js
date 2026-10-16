@@ -75,3 +75,9 @@ export function debounce(fn, ms) {
 
 // Zahl für ein Eingabefeld: Komma statt Punkt, nichts bei null.
 export const wertAnzeige = (n) => (n === null || n === undefined) ? "" : String(n).replace(".", ",");
+
+// Bildname aus einem Namen (17.10.2026, Bildliste für Sanji): „Dönerspieß Kalb/Pute“ → „doenerspiess-kalb-pute“.
+// Gleiche Regel wie tools/bildliste.mjs – die App sucht foto/<präfix>-<fotoSlug(name)>.webp vor dem Sammelbild.
+export const fotoSlug = (s) => String(s || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+  .replace(/[çc]/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ş/g, "s").normalize("NFKD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");

@@ -4,7 +4,7 @@
 // und „Eimer gewogen". Die Wochen-Statistik (früher Müll-Zentrale) wohnt jetzt im Büro unter Listen (muellStatistikView).
 // Im Personal-Modus: keine Euro-Beträge, nur Mengen; Einträge tragen von: personId. Rechenwerk unverändert (js/muell.js).
 import { t, einheitLabel, sprache } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige, fotoSlug } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
 import { EINHEITEN } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
@@ -40,6 +40,9 @@ const R_ALIAS = { "w-doenerfleisch": (n) => /h[äa]hnchen|pute/i.test(n) ? "r-ha
   "w-falafel": () => "r-falafel-tk", "w-mehl": (n) => /pizza/i.test(n) ? "r-pizzateig" : /lahmacun/i.test(n) ? "r-lahmacun-teig" : "r-mehl", "w-hack": (n) => /patty/i.test(n) ? "r-patty" : "r-hack" };
 const fotoFuer = (n, name) => { const kand = n.startsWith("v-") ? n : R_ALIAS[n] ? R_ALIAS[n](name) : "r-" + n.slice(2); return FOTOS.has(kand) ? kand : null; };
 export function wareBild(x) {
+  // 17.10.2026: Einzelbild je Artikel zuerst (Bildliste: r-/v-/d- + fotoSlug(Name)), dann Sammelbild, dann Piktogramm
+  const eigen = (x.gruppe === "verpackung" ? "v-" : x.gruppe === "getraenk" || x.gruppe === "spirituose" ? "d-" : "r-") + fotoSlug(x.name);
+  if (FOTOS.has(eigen)) return `<img class="gerichtbild mini" src="foto/${eigen}.webp" alt="" loading="lazy">`;
   if (x.gruppe === "getraenk") { const d = (GETRAENK.find(([re, n]) => re.test(x.name) && FOTOS.has(n)) || [])[1] || "g-getraenk";
     return `<img class="gerichtbild mini" src="foto/${d}.webp" alt="" loading="lazy">`; }
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
