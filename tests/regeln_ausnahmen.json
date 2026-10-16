@@ -1,0 +1,17 @@
+[
+  {"bildschirm": "heute", "regel": "woerter", "grund": "Paket 4 offen", "stand": "17 Wörter (Richtwert-Zeile ‚Preise eintragen‘ und ‚Jetzt dran‘), Soll ≤ 15 – 16.10.2026"},
+  {"bildschirm": "heute", "regel": "scroll", "grund": "Paket 4 offen", "stand": "792 px bei 360×780 (Richtwert-Zeile), 390×844 passt – 16.10.2026"},
+  {"bildschirm": "heute", "regel": "tippflaeche", "grund": "Paket 4 offen", "stand": "Richtwert-Zeile ‚Preise eintragen ›‘ 28 px hoch – 16.10.2026"},
+  {"bildschirm": "kuehlung", "regel": "woerter", "grund": "Paket 4 offen", "stand": "74 Wörter mit zwei Stellen (Erklärtexte, Verantwortungshinweis), Soll ≤ 15 – 16.10.2026"},
+  {"bildschirm": "kuehlung", "regel": "scroll", "grund": "Paket 4 offen", "stand": "1143 px (390×844) / 1209 px (360×780) – 16.10.2026"},
+  {"bildschirm": "kuehlung", "regel": "absaetze", "grund": "Paket 4 offen", "stand": "1 Absatz ‚Du bleibst verantwortlich …‘ – 16.10.2026"},
+  {"bildschirm": "kuehlung", "regel": "knopfhoehe", "grund": "Paket 4 offen", "stand": "‚Kontrolle starten‘ 57,2 px, Soll ≥ 64 – 16.10.2026"},
+  {"bildschirm": "putzen", "regel": "woerter", "grund": "Paket 4 offen", "stand": "405 Wörter ohne Plan (Einrichten-Ansicht mit allen Aufgaben), Soll ≤ 15 – 16.10.2026"},
+  {"bildschirm": "putzen", "regel": "scroll", "grund": "Paket 4 offen", "stand": "5427 px (390×844) / 5748 px (360×780) – 16.10.2026"},
+  {"bildschirm": "putzen", "regel": "absaetze", "grund": "Paket 4 offen", "stand": "2 Absätze (‚Putzen ist Pflicht …‘, ‚Grundlage: EU-Hygieneverordnung …‘) – 16.10.2026"},
+  {"bildschirm": "putzen", "regel": "schrift", "grund": "Paket 4 offen", "stand": "11,5 px bei der Stufenmarke ‚Nachweis empfohlen‘, Soll ≥ 12 – 16.10.2026"},
+  {"bildschirm": "putzen", "regel": "knopfhoehe", "grund": "Paket 4 offen", "stand": "‚Plan übernehmen‘ 57,2 px, Soll ≥ 64 – 16.10.2026"},
+  {"bildschirm": "putzen-plan", "regel": "woerter", "grund": "Paket 4 offen", "stand": "100 Wörter mit übernommenem Plan (9 Aufgaben mit Status und Stufe), Soll ≤ 15 – 16.10.2026"},
+  {"bildschirm": "putzen-plan", "regel": "schrift", "grund": "Paket 4 offen", "stand": "11,5 px bei der Stufenmarke ‚Nachweis empfohlen‘ – 16.10.2026"},
+  {"bildschirm": "karte", "regel": "knopfhoehe", "grund": "Paket 4 offen", "stand": "‚Karte fotografieren‘ 57,2 px, Soll ≥ 64 – 16.10.2026"}
+]

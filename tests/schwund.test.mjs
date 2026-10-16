@@ -2,12 +2,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as E from "../js/engine.js";
-import { heute } from "../js/util.js";
+import { heuteGeschaeft } from "../js/util.js"; // 17.10.2026: Geschäftstag wie die App (Paket 3), sonst rot zwischen 0 und 4 Uhr
 globalThis.indexedDB = undefined;
 const S = await import("../js/store.js");
 
 const nah = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${a} ≠ ${b}`);
-const H = heute();
+const H = heuteGeschaeft();
 const stand = () => ({
   id: "b1", phase: "app", betrieb: { name: "Döner Baris", format: "imbiss", kuechen: ["doener"], tageProWoche: 6, monate: 12 },
   team: { personen: 3, stundenProPerson: 160, lohnkosten: 6000 },
