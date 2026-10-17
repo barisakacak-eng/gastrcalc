@@ -14,6 +14,7 @@ import { belehrungen } from "../export_amt.js";
 import { ordnerKachelStand } from "./ordner.js";
 import { monatName, datumLesbar } from "./tag.js";
 import { verkaufSichtbar } from "../verkauf.js"; // E7 (17.10.2026): Einstieg „Verkauf je Gericht“ nur mit Schalter oder im Beispiel-Laden
+import { bestandUhrzeit } from "../bestand.js"; // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit
 
 // Symbole, die es in symbole.js (noch) nicht gibt – Lucide, ISC-Lizenz wie dort. Eigene Liste, damit symbole.js unberührt bleibt.
 const EXTRA = {
@@ -75,6 +76,7 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}
         ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
+        ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bestandUhrzeit(stand)?.text || t("bestand.einstiegUnter"))}
       </div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.karte"))}</h2>
       <div class="b-raster3">

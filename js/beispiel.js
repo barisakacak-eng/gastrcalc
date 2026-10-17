@@ -64,6 +64,9 @@ const ZUKAUF = [
 // E7 (17.10.2026): Beispielverkäufe – Adana-Spieß verkauft sich im Beispiel nicht (Ladenhüter); Cola fehlt bei der zweiten Inventur (Schwund-Verdacht)
 const VERKAUF_FEST = { "Adana-Spieß": 0 };
 const SCHWUND_BEISPIEL = { name: "Cola 0,33 l", menge: 72 }; // Stück, die bei der zweiten Inventur fehlen (Beispiel)
+// Bestand (17.10.2026): eine Ware ist bei der zweiten Inventur knapp (reicht ≈ 1–1,5 Öffnungstage) – der letzte Einkauf war kleiner (abgerundet statt
+// aufgerundet), damit „Lager & Bestellen“ im Beispiel an jedem Wochentag einen dringenden Bestellvorschlag zeigt. Inventur, Einkauf und Verkauf passen weiter zusammen.
+export const KNAPP_BEISPIEL = { name: "Dönerspieß Kalb/Pute", tage: 1.5 };
 const FEIN = ["Ayran 0,25 l", "Cola 0,33 l", "Pommes frites (Beilage)", "Lahmacun", "Döner Kebab"]; // damit die Tagessumme genau aufgeht
 // Mengen je Gericht für einen Tag: Portionen der Karte, auf den Tagesumsatz skaliert, mit fester Schwankung, dann genau auf den Umsatz gebracht
 export function beispielVerkaufTag(umsatz, i) {
@@ -161,6 +164,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   const verkauf = tage.map((d, i) => (offen(d) ? { d, i, mengen: beispielVerkaufTag(umsatzAm(i, d), i) } : null)).filter(Boolean);
   const idx0 = Object.fromEntries(s.artikel.map((x) => [x.name, x]));
   const bedarf = {}; for (const v of verkauf) v.mengen.forEach((q, k) => { if (q > 0) for (const x of bedarfGericht(s.gerichte[k], idx0).bedarf) bedarf[x.name] = (bedarf[x.name] || 0) + x.menge * q; });
+  const bedarfSeit = {}; for (const v of verkauf) if (v.d > start) v.mengen.forEach((q, k) => { if (q > 0) for (const x of bedarfGericht(s.gerichte[k], idx0).bedarf) bedarfSeit[x.name] = (bedarfSeit[x.name] || 0) + x.menge * q; }); // Bestand (17.10.2026): nach der ersten Inventur
   bedarf[SCHWUND_BEISPIEL.name] = (bedarf[SCHWUND_BEISPIEL.name] || 0) + SCHWUND_BEISPIEL.menge; // was bei der Inventur fehlt, wurde vorher gekauft
   const ziel = (n, basisEinheit) => (BESTAND[n] || BESTAND_STANDARD[basisEinheit] || BESTAND_STANDARD.stk);
   const zukauf = ZUKAUF.map(([n, gebinde, inhalt, einheit, satz]) => { const x = idx0[n]; const pj = x ? preisJeBasis(x) : null;
@@ -168,6 +172,11 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   const anzahlJeBeleg = (n, inhalt, einheit, alt) => { // Gebinde je Beleg: Bedarf + 5 % + Endbestand − Anfangsbestand, auf vier Belege verteilt (aufgerundet, Summe genau)
     const je = inBasis(inhalt, einheit); const b = EINHEITEN[einheit]?.basis || "stk"; const [anfang, ende] = ziel(n, b);
     if (!(bedarf[n] > 0)) return () => alt;
+    if (n === KNAPP_BEISPIEL.name) { // Bestand (17.10.2026): Endbestand ≈ 1,5 Tage Verkauf, Gebinde abgerundet
+      const nTage = verkauf.filter((v) => v.d > start).length; const b = bedarfSeit[n] || 0;
+      const rest = Math.max(0, b + KNAPP_BEISPIEL.tage * b / Math.max(1, nTage) - anfang) / je;
+      return (k) => Math.floor(rest * (k + 1) / 4 + 1e-9) - Math.floor(rest * k / 4 + 1e-9);
+    }
     const gesamt = Math.max(0, bedarf[n] * 1.05 + ende - anfang) / je;
     return (k) => Math.ceil(gesamt * (k + 1) / 4 - 1e-9) - Math.ceil(gesamt * k / 4 - 1e-9);
   };

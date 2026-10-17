@@ -59,6 +59,7 @@ export function leererBetrieb() {
     messungen: [],              // abgeschlossene Messungen: {id, lfd, rundgang, stelle, datum, zeit, wert|null, grund, min, max, abweichung, massnahmen, notiz, nachkontrolle, von, erfasst, nacherfasst, quelle}
     putzplan: null, putzlog: [], belehrungen: [], // W2-D: Putzplan, Putz-Nachweis und Belehrungen gehören zum Laden (Schema 6)
     verkaeufe: [],              // E7 (17.10.2026): nur anhängen: {id, datum (Geschäftstag), gericht|null, name, text?, plu?, menge, umsatzBrutto|null, herkunft, importId|null, erfasst, storniert} (js/verkauf.js)
+    lager: { tage: 7, puffer: 2 }, // Bestand (17.10.2026): Bestellvorschlag – bestellen für so viele Tage, dazu Puffer in Tagen (js/bestand.js); Artikel dürfen mindestbestand (Gebinde) tragen
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
 }
@@ -256,6 +257,9 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
     gebinde: istObjekt(a.gebinde) && GEBINDE_ARTEN.includes(a.gebinde.art) ? { art: a.gebinde.art, zwischen: istObjekt(a.gebinde.zwischen) && Number(a.gebinde.zwischen.anzahl) > 0 ? { art: String(a.gebinde.zwischen.art || "beutel"), anzahl: Number(a.gebinde.zwischen.anzahl) } : null } : { art: "packung", zwischen: null },
     preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
     preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
+  for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
+  { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
+    s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
   s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt) : [], storniert: !!l.storniert }));
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
@@ -514,6 +518,7 @@ export const BEREICHE = {
   kuehl: ["kuehlstellen", "kuehl"],
   putzplan: ["putzplan", "putzplanSpaeter"],
   personen: ["personen"],
+  lager: ["lager"], // Bestand (17.10.2026): eigener Bereich – ältere Stände bekommen dadurch keinen neuen Zeitstempel in „Betrieb“
 };
 const BEREICH_NAMEN = Object.keys(BEREICHE);
 function bereichText(b, a) { const f = BEREICHE[a]; return f.length === 1 ? JSON.stringify(b[f[0]] ?? null) : JSON.stringify(f.map((k) => b[k] ?? null)); }

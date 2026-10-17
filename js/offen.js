@@ -12,6 +12,7 @@ import { einrichtungStand } from "./einrichtung.js";
 import { wareneinsatzSicherheit } from "./rezept_quelle.js";
 import { sicherungStufe } from "./screens/nav.js";
 import { imTakt } from "./takt.js";
+import { bestandUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
 const JOURNAL_TEXT = { schwund: 1, tagesnotizen: 1, messungen: 1, lieferungen: 1, abschluesse: 1, kostenbelege: 1, putzlog: 1, belehrungen: 1, rundgaenge: 1, inventuren: 1, uploads: 1, artikel: 1, gerichte: 1 }; // W2-D
 // W2-D (Leistung Büro): Zähler und Einrichtungsstand je Bild nur einmal rechnen – Büro-Start und „Offen“ fragen beide
 export const zaehlerImTakt = (stand, H) => imTakt(stand, "zaehler:" + H, () => zaehler(stand, { datum: H }));
@@ -72,6 +73,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (ah?.bereiche?.length) add("abgleich", t("w2d.offen.abgleich", ah.bereiche.map((b) => t("w2d.bereich." + b)).join(", ")), { aktion: "abgleich-ok" });
   if (ah?.zukunft) add("abgleichZukunft", t("w2d.offen.zukunft", ah.zukunft), { aktion: "abgleich-ok" });
   if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
+  { const u = bestandUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "bestand", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Bestand (17.10.2026)
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
   const z = zaehlerImTakt(stand, heuteGeschaeft(jetzt)); // W2-D; Paket 3, M7: Zähler nach Geschäftstag
