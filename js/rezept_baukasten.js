@@ -120,7 +120,7 @@ export const BELAEGE = [
   [/champignon|pilz/i, Z("Champignons", 40)],
   [/ananas/i, Z("Ananas (Dose)", 40)],
   [/oliven/i, Z("Oliven", 20)],
-  [/mais/i, Z("Mais aus der Dose", 30)],
+  [/mais/i, Z("Mais", 30)],
   [/peperoni|pfefferoni/i, Z("Peperoni eingelegt", 20)],
   [/paprika/i, Z("Paprika", 30)],
   [/zwiebel/i, Z("Zwiebeln", 25)],

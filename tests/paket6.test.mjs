@@ -39,7 +39,7 @@ test("artikelText folgt der aktiven Sprache", () => {
 });
 
 test(`alle ${ALLE.length} Katalogartikel haben tr und en (neuer Artikel ohne Übersetzung = rot)`, () => {
-  assert.ok(ALLE.length >= 429);
+  assert.ok(ALLE.length >= 428 /* 17.10.: Mais-Doppel entfernt */);
   const fehlt = ALLE.filter((n) => !(ARTIKELNAMEN[n]?.tr?.trim() && ARTIKELNAMEN[n]?.en?.trim()));
   assert.deepEqual(fehlt, [], "ohne Übersetzung: " + fehlt.join(", "));
   const zuviel = Object.keys(ARTIKELNAMEN).filter((n) => !ALLE.includes(n));

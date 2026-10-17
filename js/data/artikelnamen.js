@@ -27,7 +27,6 @@ export const ARTIKELNAMEN = {
   "Zwiebeln": A("Soğan", "Onions"),
   "Salatgurke": A("Salatalık", "Cucumber"),
   "Peperoni eingelegt": A("Biber turşusu", "Pickled peppers"),
-  "Mais aus der Dose": A("Konserve mısır", "Canned sweetcorn"),
   "Petersilie": A("Maydanoz", "Parsley"),
   "Ajvar": A("Ajvar", "Ajvar (pepper relish)"),
   "Bulgur": A("Bulgur", "Bulgur"),

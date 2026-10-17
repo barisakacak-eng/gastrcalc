@@ -15,20 +15,20 @@ concurrency:
 jobs:
   # Erst prüfen, dann veröffentlichen: schlägt ein Test fehl, geht nichts live (Befund E05 aus Sanjis Prüfung)
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # fest: ubuntu-latest wechselt ab 19.10.2026 auf Ubuntu 26
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: node --test tests/*.mjs
   # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser. Seit 17.10. mittags blockierend
   # (5 stabile Läufe): neue Regelverstöße oder ein kaputter Personal-Modus gehen nicht mehr live.
   regeln:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install playwright==1.56.0 && python -m playwright install --with-deps chromium
@@ -51,12 +51,12 @@ jobs:
           exit 1
   deploy:
     needs: [test, regeln]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/configure-pages@v5
         with:
           enablement: true

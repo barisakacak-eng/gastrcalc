@@ -40,7 +40,7 @@ async def schnellstart(pg, port, name="Döner Test"):
     await pg.click('[data-a="s2-kuehl"][data-wert="tiefkuehler"][data-d="1"]'); await pg.wait_for_timeout(150)
     await weiter("geld")
     await weiter("fertig-schnell")  # Kosten leer lassen
-    await pg.locator('[data-a="ob-fertig"].s2los').click(); await pg.wait_for_selector('[data-a="menue-auf"]')
+    await pg.locator('[data-a="ob-fertig"].s2los').click(); await pg.wait_for_selector('[data-a="menue-auf"], [data-a="foto-abbrechen"]', timeout=60000)  # 17.10.: langsame CI-Rechner
     if await pg.locator('[data-a="foto-abbrechen"]').count(): await pg.click('[data-a="foto-abbrechen"]')  # ohne Gerichte landet „Los“ bei „Karte per Foto“
     await nav_hilfe.geh(pg, "start")
     try:

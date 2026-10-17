@@ -38,7 +38,7 @@ export const KATALOG = {
       K("Eisbergsalat", "kg", "gemuese"), K("Weißkohl", "kg", "gemuese"),
       K("Rotkohl", "kg", "gemuese"), K("Tomaten", "kg", "gemuese"),
       K("Zwiebeln", "kg", "gemuese"), K("Salatgurke", "kg", "gemuese"),
-      K("Peperoni eingelegt", "kg", "gemuese"), K("Mais aus der Dose", "kg", "gemuese"),
+      K("Peperoni eingelegt", "kg", "gemuese"), K("Mais", "kg", "gemuese"),
       K("Petersilie", "kg", "gemuese"), K("Ajvar", "kg", "sauce"), K("Bulgur", "kg", "teig"),
       K("Dönerbrot / Fladen", "stk", "teig"), K("Dürüm-Wrap", "stk", "teig"),
       K("Pide-Brot", "stk", "teig"), K("Yufka-Teigblatt", "stk", "teig"), K("Pide-Teig", "kg", "teig"), K("Lahmacun-Teig", "kg", "teig"), K("Gyrosfleisch", "kg", "fleisch"),
