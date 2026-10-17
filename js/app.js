@@ -45,12 +45,13 @@ import { beispielLaden } from "./beispiel.js"; // Beispiel-Laden (17.10.2026)
 import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
 import { verkaufSichtbar } from "./verkauf.js"; // E7
 import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
+import { aktionenView, aktionenAktion, aktionenZuruecksetzen, aktionenZurueck, aktionenKennung } from "./screens/aktionen.js"; // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen]; // Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen]; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -77,7 +78,7 @@ function aktivSetzen(id) {
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ""; // E7; Bestand (17.10.2026)
+  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ""; // E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -122,6 +123,7 @@ function zeichne() {
         : ansicht === "inventur" ? inventurView(stand)
         : ansicht === "verkauf" ? verkaufView(stand) // E7 (17.10.2026)
         : ansicht === "bestand" ? bestandView(stand) // Bestand (17.10.2026)
+        : ansicht === "aktionen" ? aktionenView(stand) // Stufe 1 (17.10.2026)
         : ansicht === "personal" ? personalView(stand) // D
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
@@ -476,6 +478,7 @@ async function aufKlick(ev) {
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
+    if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
@@ -565,6 +568,11 @@ async function aufKlick(ev) {
   if (ansicht === "bestand") { // Bestand (17.10.2026): Lager & Bestellen
     const r = await bestandAktion(name, el, stand);
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
+  if (ansicht === "aktionen") { // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit – nur Vorschläge, nichts wird gespeichert
+    const r = await aktionenAktion(name, el, stand);
+    if (r) { if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
   if (ansicht === "buero" || ansicht.startsWith("ordner-")) { // Entwickler C
@@ -711,6 +719,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
     else if (ansicht === "verkauf" && verkaufZurueck()) { /* E7: Vorschau/Handeingabe → Übersicht */ }
     else if (ansicht === "bestand" && bestandZurueck()) { /* Bestand (17.10.2026): Mindestbestand-Liste zu */ }
+    else if (ansicht === "aktionen" && aktionenZurueck()) { /* Stufe 1 (17.10.2026): Kombi-Auswahl leeren */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro

@@ -23,7 +23,7 @@ const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b>
 const euro = (v, ca = true) => (v === null || v === undefined ? t("inventur.preisFehlt") : (ca ? "≈ " : "") + fmtEuro(v, { dezimal: Math.abs(v) < 100 ? 2 : 0 }));
 const kurz = (iso) => datumLesbar(iso).slice(0, 6);
 // Menge in der Grundeinheit lesbar: ab 1000 g → kg, ab 1000 ml → l
-function mengeText(menge, basis) {
+export function mengeText(menge, basis) { // Stufe 1 (17.10.2026): auch für „Aktionen & Haltbarkeit“
   const m = Math.abs(menge);
   if (basis === "g") return m >= 1000 ? `${fmtZahl(m / 1000, 1)} ${einheitLabel("kg")}` : `${fmtZahl(m, 0)} ${einheitLabel("g")}`;
   if (basis === "ml") return m >= 1000 ? `${fmtZahl(m / 1000, 1)} ${einheitLabel("l")}` : `${fmtZahl(m, 0)} ${einheitLabel("ml")}`;

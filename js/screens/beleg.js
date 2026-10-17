@@ -13,6 +13,7 @@ import { STELLEN, VERTEILUNGEN, stelleRaten, kostenbelegLesen, kostenbelegAnlege
 import { basisStandard } from "../data/kosten.js";
 import { rechnungsNummerLesen } from "../export_steuer.js"; // W2-T
 import { parseZahl, wertAnzeige } from "../util.js";
+import { haltbarSetzen, haltbarArtVon, HALTBAR_ARTEN } from "../haltbar.js"; // Stufe 1 (17.10.2026): Haltbarkeit als freiwilliger Schritt nach dem Übernehmen
 
 let text = "";
 let beleg = null;        // Ergebnis des Zerlegers (flüchtig)
@@ -25,12 +26,14 @@ let fertig = null;       // { lieferung, aenderungen, anzahl }
 let zuweisung = null;    // nach Foto/PDF: { stelle, betrag, basis, datum, verteilung, monate, lieferant, upload } (Etappe 6a)
 let kostenFertig = null; // gespeicherter Kostenbeleg
 let zeigeText = false;
+let hbOffen = false;     // Stufe 1 (17.10.2026): Liste „Haltbarkeit eintragen“ offen
+let hbEntwurf = {};      // Zeile → { art, datum } bis „Speichern“
 const istLieferschein = () => beleg && (beleg.typ === "lieferschein" || !zeilen.some((z) => z.gesamt !== null));
 const belegDatum = () => (datumWahl === "heute" || !beleg?.datum || beleg.datum > heute() ? heute() : beleg.datum);
 
 export const belegKennung = () => `${fertig ? "fertig" : kostenFertig ? "kfertig" : beleg ? "pruefen" : zuweisung ? "zuweisen" : "text"}:${fotoLauf()?.status || ""}`;
-export function belegZuruecksetzen() { rechnungsLaufZuruecksetzen(); text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; zuweisung = null; kostenFertig = null; zeigeText = false; }
-export function belegZurueck() { if (fertig || kostenFertig) { belegZuruecksetzen(); return true; } if (beleg) { beleg = null; zeilen = []; return true; } if (zuweisung) { zuweisung = null; text = ""; return true; } return false; }
+export function belegZuruecksetzen() { rechnungsLaufZuruecksetzen(); text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; zuweisung = null; kostenFertig = null; zeigeText = false; hbOffen = false; hbEntwurf = {}; }
+export function belegZurueck() { if (fertig && hbOffen) { hbOffen = false; hbEntwurf = {}; return true; } if (fertig || kostenFertig) { belegZuruecksetzen(); return true; } if (beleg) { beleg = null; zeilen = []; return true; } if (zuweisung) { zuweisung = null; text = ""; return true; } return false; }
 
 // Nach dem Foto: Text übernehmen und fragen, wofür die Rechnung ist. Kostenstelle und Betrag sind vorbelegt, nie still gespeichert.
 export function belegTextVonFoto(ocrText, upload) {
@@ -178,10 +181,32 @@ function fertigView(stand) {
     <div class="karte"><h2>${esc(t("beleg.preiseNeu"))}</h2>
       ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${x.alt !== null ? `${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
     </div>
+    ${haltbarKarte(stand)}
     ${fertig.lieferung.summeNetto ? `<p class="hinweis">${esc(t("beleg.zaehlerRoter", fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })))}</p>` : ""}
     <button type="button" class="knopf" data-a="nav" data-wert="start">${esc(t("beleg.zumCockpit"))}</button>
     <button type="button" class="knopf zweit" data-a="beleg-neu">${esc(t("beleg.nochmal"))}</button>
   </div>`;
+}
+
+// Stufe 1 (17.10.2026): Haltbarkeit (freiwillig) – Datum von der Packung je Ware, Art vorbelegt (MHD/Verbrauchsdatum, änderbar). Nichts wird erzwungen.
+function hbStand(stand, z, i) {
+  if (hbEntwurf[i]) return hbEntwurf[i];
+  const a = (stand?.artikel || []).find((x) => x.name === z.artikel);
+  return { art: z.haltbar?.art || haltbarArtVon(a || { name: z.artikel }), datum: z.haltbar?.datum || "" };
+}
+function haltbarKarte(stand) {
+  const l = fertig.lieferung; const liste = (l.zeilen || []).map((z, i) => ({ z, i })).filter((x) => x.z.artikel);
+  if (!liste.length) return "";
+  const da = liste.filter((x) => x.z.haltbar);
+  const kopf = `<h2>${esc(t("aktionen.beleg.titel"))}</h2><p class="hinweis">${esc(t("aktionen.beleg.unter"))}</p>`;
+  if (!hbOffen) return `<div class="karte">${kopf}${da.length ? `<small class="marke">${esc(t("aktionen.beleg.anzahl", da.length))}</small>` : ""}
+    <button type="button" class="knopf zweit" data-a="hb-auf">${esc(t("aktionen.beleg.auf"))}</button></div>`;
+  return `<div class="karte">${kopf}${liste.map(({ z, i }) => { const h = hbStand(stand, z, i);
+      return `<div class="feldzeile"><label for="hb-${i}">${esc(artikelText(z.artikel))}</label>
+        <div class="seg klein">${HALTBAR_ARTEN.map((art) => `<button type="button" class="${h.art === art ? "an" : ""}" aria-pressed="${h.art === art}" data-a="hb-art" data-i="${i}" data-wert="${art}">${esc(t("aktionen.beleg." + art))}</button>`).join("")}</div>
+        <input id="hb-${i}" class="textfeld" type="date" data-f="hb-datum:${i}" value="${esc(h.datum)}" aria-label="${esc(t("aktionen.beleg.datum") + ": " + artikelText(z.artikel))}"></div>`; }).join("")}
+    <button type="button" class="knopf glut" data-a="hb-speichern">${esc(t("aktionen.beleg.speichern"))}</button>
+    <button type="button" class="leise" data-a="hb-zu">${esc(t("aktionen.beleg.zu"))}</button></div>`;
 }
 
 // ---------- Aktionen ----------
@@ -222,6 +247,18 @@ export function belegAktion(name, el, stand, wurzel) {
     return "uebernommen";
   }
   if (name === "beleg-neu") { belegZuruecksetzen(); return true; }
+  // Stufe 1 (17.10.2026): Haltbarkeit
+  if (name === "hb-auf" && fertig) { hbOffen = true; hbEntwurf = {}; fertig.lieferung.zeilen.forEach((z, i) => { if (z.artikel) hbEntwurf[i] = hbStand(stand, z, i); }); return true; }
+  if (name === "hb-zu") { hbOffen = false; hbEntwurf = {}; return true; }
+  if (name === "hb-art" && fertig) { const i = Number(el.dataset.i); const z = fertig.lieferung.zeilen[i]; if (!z || !HALTBAR_ARTEN.includes(el.dataset.wert)) return false; hbEntwurf[i] = { ...hbStand(stand, z, i), art: el.dataset.wert }; return true; }
+  if (name === "hb-speichern" && fertig) {
+    const angaben = {};
+    for (const [i, h] of Object.entries(hbEntwurf)) { const z = fertig.lieferung.zeilen[Number(i)]; if (!z) continue; if (/^\d{4}-\d{2}-\d{2}$/.test(h.datum)) angaben[i] = { art: h.art, datum: h.datum }; else if (z.haltbar && !h.datum) angaben[i] = null; }
+    const neu = haltbarSetzen(stand, fertig.lieferung.id, angaben);
+    hbOffen = false; hbEntwurf = {};
+    if (!neu) return { meldung: t("aktionen.beleg.nichts") };
+    fertig = { ...fertig, lieferung: neu }; return { meldung: t("aktionen.beleg.gespeichert") };
+  }
   if (name === "beleg-alle") { zeigeAlle = !zeigeAlle; return true; }
   if (name === "beleg-basis") { basisWahl = el.dataset.wert; return true; }
   if (name === "beleg-datum") { datumWahl = el.dataset.wert; return true; }
@@ -258,6 +295,7 @@ export function belegAktion(name, el, stand, wurzel) {
 export function belegEingabe(feld, wert) {
   if (feld === "beleg-text") { text = wert; return "knopf"; }
   if (feld === "zw-betrag" && zuweisung) { zuweisung.betrag = parseZahl(wert); return "knopf-zw"; }
+  if (String(feld).startsWith("hb-datum:") && fertig) { const i = Number(String(feld).slice(9)); const z = fertig.lieferung.zeilen[i]; if (z && hbEntwurf[i]) hbEntwurf[i] = { ...hbEntwurf[i], datum: /^\d{4}-\d{2}-\d{2}$/.test(wert) ? wert : "" }; return false; } // Stufe 1 (17.10.2026)
   if (feld === "zw-datum" && zuweisung) { if (/^\d{4}-\d{2}-\d{2}$/.test(wert)) zuweisung.datum = wert > heute() ? heute() : wert; return false; }
   return false;
 }

@@ -260,7 +260,8 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
   { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
     s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
-  s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt) : [], storniert: !!l.storniert }));
+  s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
+  for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
   s.kostenbelege = mitId(s.kostenbelege).filter((k) => typeof k.stelle === "string" && typeof k.betrag === "number" && typeof k.ab === "string").map((k) => ({ ...k, storniert: !!k.storniert }));
@@ -308,6 +309,30 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   return s;
 }
 
+// Stufe 1 (17.10.2026): Haltbarkeit einer Belegzeile – haltbar {art: "mhd"|"verbrauch", datum: JJJJ-MM-TT, erfasst?}; Ungültiges fällt weg
+const HALTBAR_ARTEN = ["mhd", "verbrauch"];
+function haltbarZeile(z) {
+  if (z.haltbar === undefined) return z;
+  const h = z.haltbar; const { haltbar: _weg, ...rest } = z;
+  if (!istObjekt(h) || !HALTBAR_ARTEN.includes(h.art) || typeof h.datum !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(h.datum)) return rest;
+  return { ...rest, haltbar: { art: h.art, datum: h.datum, ...(typeof h.erfasst === "string" ? { erfasst: h.erfasst } : {}) } };
+}
+// Stufe 1 (17.10.2026): Zusammenführen – derselbe Beleg auf zwei Handys, auf einem die Haltbarkeit nachgetragen: sie geht nicht verloren
+// (der Beleg selbst bleibt, wie er war; je Zeile gewinnt die zuletzt eingetragene Haltbarkeit, eine fehlende wird ergänzt).
+function haltbarVereinigen(liste, lokal, fremd) {
+  const a = new Map((lokal || []).filter((l) => l && typeof l.id === "string").map((l) => [l.id, l])), b = new Map((fremd || []).filter((l) => l && typeof l.id === "string").map((l) => [l.id, l]));
+  return liste.map((l) => {
+    const x = a.get(l.id), y = b.get(l.id); if (!x || !y || !Array.isArray(l.zeilen)) return l;
+    let neu = null;
+    l.zeilen.forEach((z, i) => {
+      const hx = x.zeilen?.[i]?.haltbar, hy = y.zeilen?.[i]?.haltbar; if (!hx && !hy) return;
+      const best = !hx ? hy : !hy ? hx : String(hy.erfasst || "") > String(hx.erfasst || "") ? hy : hx;
+      if (JSON.stringify(z.haltbar ?? null) === JSON.stringify(best)) return;
+      neu ??= l.zeilen.slice(); neu[i] = { ...z, haltbar: best };
+    });
+    return neu ? { ...l, zeilen: neu } : l;
+  });
+}
 // E7 (17.10.2026): Kassen-Artikelnummer (plu) und gelernte Kassentexte (kassenNamen) je Gericht – nur Text, sonst weg
 function gerichtKasse(g) {
   if (typeof g.plu === "string" && g.plu.trim()) g.plu = g.plu.trim().slice(0, 50); else delete g.plu;
@@ -1067,6 +1092,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
   for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7 (17.10.2026): verkaeufe
     basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
+  basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1 (17.10.2026)
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
   const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen), ["storniert"], opt("rundgaenge"));
   basis.rundgaenge = [...abgeschlossen, ...(lokal.rundgaenge || []).filter((r) => !r.abgeschlossen)];

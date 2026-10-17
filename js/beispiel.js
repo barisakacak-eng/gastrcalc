@@ -67,6 +67,9 @@ const SCHWUND_BEISPIEL = { name: "Cola 0,33 l", menge: 72 }; // Stück, die bei 
 // Bestand (17.10.2026): eine Ware ist bei der zweiten Inventur knapp (reicht ≈ 1–1,5 Öffnungstage) – der letzte Einkauf war kleiner (abgerundet statt
 // aufgerundet), damit „Lager & Bestellen“ im Beispiel an jedem Wochentag einen dringenden Bestellvorschlag zeigt. Inventur, Einkauf und Verkauf passen weiter zusammen.
 export const KNAPP_BEISPIEL = { name: "Dönerspieß Kalb/Pute", tage: 1.5 };
+// Stufe 1 (17.10.2026): Haltbarkeit auf dem letzten Beleg – Hähnchenspieß mit Verbrauchsdatum morgen (Hinweis „nicht mehr verwenden ab …“,
+// nie Abverkauf), Ayran mit MHD in 3 Tagen (es bleibt laut Verbrauch etwas übrig → Abverkaufs-Vorschlag). Beispielwerte, kein echtes Datum.
+export const HALTBAR_BEISPIEL = [{ name: "Hähnchenspieß", art: "verbrauch", tage: 1 }, { name: "Ayran 0,25 l", art: "mhd", tage: 3 }];
 const FEIN = ["Ayran 0,25 l", "Cola 0,33 l", "Pommes frites (Beilage)", "Lahmacun", "Döner Kebab"]; // damit die Tagessumme genau aufgeht
 // Mengen je Gericht für einen Tag: Portionen der Karte, auf den Tagesumsatz skaliert, mit fester Schwankung, dann genau auf den Umsatz gebracht
 export function beispielVerkaufTag(umsatz, i) {
@@ -190,6 +193,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     const summeNetto = rund2(zeilen.reduce((x, z) => x + z.netto, 0)); const summeBrutto = rund2(zeilen.reduce((x, z) => x + z.netto * (1 + z.steuersatz), 0));
     const l = { id: `bsp-lief-${i + 1}`, datum: d, erfasst: zeit(d, 10, 15), geraet: null, lieferant: "Großhandel (Beispiel)", typ: "rechnung", basis: "netto", quelle: "text",
       rechnungNr: `BSP-${String(i + 1).padStart(4, "0")}`, summeNetto, summeBrutto, pfand: 0, zeilen, storniert: false, abdruck: "" };
+    if (i === lieferTage.length - 1) for (const hb of HALTBAR_BEISPIEL) { const z = zeilen.find((x) => x.artikel === hb.name); if (z) z.haltbar = { art: hb.art, datum: tagPlus(heute, hb.tage), erfasst: zeit(d, 10, 16) }; } // Stufe 1 (17.10.2026)
     s.lieferungen.push(l); preiseUebernehmen(s, l);
   });
   zwischenpreiseRechnen(s);

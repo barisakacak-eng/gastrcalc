@@ -125,7 +125,7 @@ export function verbrauchSchnitt(stand, { heuteTag = heuteGeschaeft(), idx = art
 
 // Bedarf an einem Tag: mit Wochentagen der Wert des Wochentags (Wochentag ohne Verkauf = geschlossen), sonst Ø × Gewicht des Tags
 // (Ruhetag 0, ohne bekannte Ruhetage Tage-je-Woche/7 wie im Zähler).
-function bedarfAm(stand, s, d) {
+export function bedarfAm(stand, s, d) { // Stufe 1 (17.10.2026): exportiert für js/haltbar.js (Verbrauch bis zum Ablaufdatum) – keine zweite Rechnung
   if (s.jeWochentag) {
     const w = s.jeWochentag[wochentag(d)]; const bekannt = ruhetageBekannt(stand, d); const g = bekannt ? tagGewicht(stand, d) : 1;
     if (w === null) return bekannt && g > 0 ? { menge: s.schnitt * g, gewicht: g } : { menge: 0, gewicht: 0 }; // Wochentag ohne Werte: offen laut Ruhetagen → Ø
