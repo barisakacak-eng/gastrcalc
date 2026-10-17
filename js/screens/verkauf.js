@@ -44,13 +44,13 @@ function startView(stand) {
       <label class="knopf glut">${esc(t("verkaeufe.import.knopf"))}<input type="file" accept=".zip,.csv,.xml,application/zip,text/csv" multiple data-f="verkauf-datei" class="versteckt"></label>
       <button type="button" class="knopf zweit" data-a="vk-hand">${esc(t("verkaeufe.hand.knopf"))}</button></div>`;
   const zr = `<p class="hinweis">${esc(t("verkaeufe.zeitraum", datumLesbar(z.von), datumLesbar(z.bis)))}${z.quelle === "inventur" ? " · " + esc(t("verkaeufe.zeitraumInventur")) : ""}</p>`;
-  if (!(vk.menge > 0) && !vk.ohneZuordnung.menge) return `${kopf}<div class="inhalt"><p class="tipp">${esc(t("verkaeufe.entwurf"))}</p>${einlesen}${zr}<div class="karte leer"><div>${esc(t("verkaeufe.keine"))}</div></div>${importListe(stand)}</div>`;
+  if (!(vk.menge > 0) && !vk.ohneZuordnung.menge) return `${kopf}<div class="inhalt">${einlesen}${zr}<div class="karte leer"><div>${esc(t("verkaeufe.keine"))}</div></div>${importListe(stand)}</div>`;
   // (a) Rang
   const rang = `<div class="karte"><h2>${esc(t("verkaeufe.rangTitel"))}</h2>
       ${vk.zeilen.filter((r) => r.menge > 0).map((r) => `<div class="summenzeile"><span>${r.rang}. ${esc(r.name)}</span><span class="wert">${esc(stueck(r.menge))}</span></div>`).join("")}
       ${vk.ohneZuordnung.menge ? `<div class="summenzeile"><span>${esc(t("verkaeufe.ohneGericht"))}</span><span class="wert">${esc(stueck(vk.ohneZuordnung.menge))}</span></div>` : ""}
       <div class="summenzeile gesamt"><span>${esc(t("verkaeufe.summe", vk.tage))}</span><span class="wert">${esc(stueck(vk.menge))}</span></div></div>`;
-  return `${kopf}<div class="inhalt"><p class="tipp">${esc(t("verkaeufe.entwurf"))}</p>${zr}${ehrlichView(a)}${rang}${abgleichView(a)}${ladenhueterView(a)}${einlesen}${importListe(stand)}</div>`;
+  return `${kopf}<div class="inhalt">${zr}${ehrlichView(a)}${rang}${abgleichView(a)}${ladenhueterView(a)}${einlesen}${importListe(stand)}</div>`;
 }
 
 // (c) Abgleich mit der Inventur

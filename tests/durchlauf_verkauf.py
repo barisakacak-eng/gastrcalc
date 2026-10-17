@@ -36,8 +36,7 @@ async def main():
 
             # ---- eigener Laden ohne Schalter: kein Einstieg
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
-            assert await pg.locator(EINSTIEG).count() == 0, "Einstieg „Verkauf“ ohne Schalter sichtbar"
-            assert "Verkauf je Gericht" not in await text()
+            assert await pg.locator(EINSTIEG).count() == 1, "Einstieg „Verkauf“ fehlt (seit 17.10. abends für alle)"
             await bild("buero_ohne_schalter")
 
             # ---- Beispiel-Laden anlegen → Büro zeigt den Einstieg
@@ -88,7 +87,7 @@ async def main():
             await pg.evaluate(f"(() => {{ const b = document.createElement('button'); b.dataset.a = 'laden-wechseln'; b.dataset.id = '{eigen_id}'; document.querySelector('#app').appendChild(b); b.click(); }})()")
             await pg.wait_for_timeout(700); assert (await stand())["id"] == eigen_id
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
-            assert await pg.locator(EINSTIEG).count() == 0, "eigener Laden: Einstieg ohne Schalter"
+            assert await pg.locator(EINSTIEG).count() == 1, "eigener Laden: Einstieg fehlt"
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html?verkauf=1"); await pg.wait_for_selector("#app .schirm"); await pg.wait_for_timeout(600)
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
             assert await pg.locator(EINSTIEG).count() == 1, "?verkauf=1: Einstieg fehlt"
@@ -99,7 +98,7 @@ async def main():
             assert await pg.locator(EINSTIEG).count() == 1, "Schalter nicht gemerkt"
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html?verkauf=0"); await pg.wait_for_selector("#app .schirm"); await pg.wait_for_timeout(600)
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
-            assert await pg.locator(EINSTIEG).count() == 0, "?verkauf=0 nimmt den Einstieg nicht weg"
+            assert await pg.locator(EINSTIEG).count() == 1, "Einstieg bleibt (seit 17.10. abends für alle)"
             await b.close()
         print("Konsolenfehler:", fehler); assert not fehler, fehler
         print("OK – durchlauf_verkauf:", n, "Bilder in", OUT)

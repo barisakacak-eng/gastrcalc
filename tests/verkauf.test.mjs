@@ -279,18 +279,33 @@ test("E7 Schalter: ?verkauf=1 wird gemerkt, ?verkauf=0 nimmt ihn weg; Beispiel-L
   assert.equal(vk.verkaufSchalter({ suche: "?verkauf=0", speicher: sp }), false);
   const kaputt = { getItem() { throw new Error("gesperrt"); }, setItem() { throw new Error("gesperrt"); }, removeItem() {} };
   assert.equal(vk.verkaufSchalter({ suche: "?verkauf=1", speicher: kaputt }), true); assert.equal(vk.verkaufSchalter({ suche: "", speicher: kaputt }), false);
-  assert.equal(vk.verkaufSichtbar({ beispiel: true }, false), true); assert.equal(vk.verkaufSichtbar(laden(), false), false);
+  assert.equal(vk.verkaufSichtbar({ beispiel: true }, false), true); assert.equal(vk.verkaufSichtbar(laden()), true, "seit 17.10. abends für alle sichtbar");
 });
 
 test("E7 Oberfläche: Büro-Einstieg nur mit Schalter; Texte in allen Sprachen ohne verbotene Wörter", async () => {
   const i18n = await import("../js/i18n.js"); if (i18n.setzeSprache) await i18n.setzeSprache("de");
   const { bueroView } = await import("../js/screens/buero.js");
   const w = st.leereWurzel(); const s = laden(); w.betriebe.push(s); w.aktiv = s.id;
-  assert.ok(!bueroView(s, w).includes('data-wert="verkauf"'), "eigener Laden ohne Schalter: kein Einstieg");
+  assert.ok(bueroView(s, w).includes('data-wert="verkauf"'), "eigener Laden: Einstieg sichtbar (seit 17.10. abends)");
   const b = beispielLaden(H); w.betriebe.push(b);
   assert.ok(bueroView(b, w).includes('data-wert="verkauf"'), "Beispiel-Laden: Einstieg sichtbar");
   const { verkaufView } = await import("../js/screens/verkauf.js");
   const html = verkaufView(b); assert.match(html, /Cola 0,33 l/); assert.match(html, /Adana-Spieß/); assert.ok(!/undefined|NaN/.test(html), "keine Lücken im Text");
   const VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betriebsprüfungsfest", "steuersicher", "rechtssicher"];
   for (const f of ["js/verkauf.js", "js/screens/verkauf.js"]) { const t = fs.readFileSync(path.join(HIER, "..", f), "utf8").toLowerCase(); for (const v of VERBOTEN) assert.ok(!t.includes(v.toLowerCase()), f + ": " + v); }
+});
+
+test("E7: Inventur merkt den Packungsinhalt; Abgleich nutzt ihn auch nach einem Gebinde-Wechsel", async () => {
+  const { beispielLaden } = await import("../js/beispiel.js");
+  const { inventurenFertig } = await import("../js/inventur.js");
+  const { abgleichInventur } = await import("../js/verkauf.js");
+  const s = beispielLaden("2026-10-17");
+  const [i1, i2] = inventurenFertig(s);
+  assert.ok(i1.inhalte && Object.keys(i1.inhalte).length > 5, "Inhalte gespeichert");
+  const vorher = abgleichInventur(s, i2, i1);
+  const cola = s.artikel.find((a) => a.name.startsWith("Cola 0,33"));
+  cola.packung = { ...cola.packung, menge: cola.packung.menge * 2 }; // Lieferant liefert jetzt doppelt so große Gebinde
+  const nachher = abgleichInventur(s, i2, i1);
+  const z = (r) => (r.zeilen || r.waren || []).find((x) => x.name === cola.name);
+  assert.equal(z(nachher)?.ist, z(vorher)?.ist, "Ist-Verbrauch bleibt gleich");
 });

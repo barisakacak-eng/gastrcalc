@@ -36,7 +36,8 @@ export function verkaufSchalter({ suche = globalThis.location?.search || "", spe
   } catch (_) { /* ohne Speicher gilt nur die Adresse */ }
   return wert === "1";
 }
-export const verkaufSichtbar = (stand, schalter = verkaufSchalter()) => !!schalter || stand?.beispiel === true;
+// E7 (17.10.2026, abends): Baris – Inhalt vor Optik, Büro-Funktionen sichtbar, sobald geprüft. Schalter bleibt für Tests erhalten.
+export const verkaufSichtbar = (stand) => !!stand;
 
 // ---------- CSV lesen ----------
 function kurzHash(str) { let a = 5381, b = 0x811c9dc5; for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); a = (Math.imul(a, 33) + c) | 0; b = Math.imul(b ^ c, 16777619); } return (a >>> 0).toString(36) + (b >>> 0).toString(36); }
@@ -457,7 +458,9 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
   const namen = new Set([...Object.keys(soll.artikel), ...[...Object.keys(inv.posten || {}), ...Object.keys(vorher.posten || {})].filter((n) => rezeptWaren.has(n))]);
   const zeilen = [];
   for (const name of namen) {
-    const a = idx[name] || null; const inhalt = inhaltBasis(a); const basis = basisVon(a) || soll.artikel[name]?.basis || null;
+    const a = idx[name] || null; const jetzt = inhaltBasis(a);
+    // E7 (17.10.2026): bei der Inventur gespeicherter Packungsinhalt gewinnt (Gebinde kann sich seitdem geändert haben)
+    const iA = vorher.inhalte?.[name] > 0 ? vorher.inhalte[name] : jetzt, iE = inv.inhalte?.[name] > 0 ? inv.inhalte[name] : jetzt; const inhalt = iE; const basis = basisVon(a) || soll.artikel[name]?.basis || null;
     const mA = mengeSauber(vorher.posten?.[name]), mE = mengeSauber(inv.posten?.[name]);
     const s = soll.artikel[name]?.menge || 0, mu = sw.muell[name]?.menge || 0, pe = sw.personal[name]?.menge || 0;
     const erwartet = s + mu + pe; const e = ek[name] || { menge: 0, basis: null, zeilen: 0, unklar: 0 };
@@ -465,9 +468,9 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
     const z = { name, basis, inhalt, soll: s, muell: mu, personal: pe, erwartet, einkauf: e.menge, belegZeilen: e.zeilen, anfang: null, ende: null, ist: null, diff: null, diffWert: null, toleranz: null,
       preisJeBasis: pj, geschaetzt: !!a && preisGeschaetzt(a), ueber: soll.artikel[name]?.ueber || [], status: "ok" };
     if (mA === null || mE === null) z.status = "nichtGezaehlt";
-    else if (inhalt === null || (e.basis && basis && e.basis !== basis) || e.unklar) z.status = "unklar";
+    else if (inhalt === null || iA === null || (e.basis && basis && e.basis !== basis) || e.unklar) z.status = "unklar";
     else {
-      z.anfang = mA * inhalt; z.ende = mE * inhalt; z.ist = z.anfang + e.menge - z.ende; z.diff = z.ist - erwartet;
+      z.anfang = mA * (iA ?? inhalt); z.ende = mE * inhalt; z.ist = z.anfang + e.menge - z.ende; z.diff = z.ist - erwartet;
       z.toleranz = Math.max(TOLERANZ_GEBINDE * inhalt, TOLERANZ_ANTEIL * erwartet);
       z.diffWert = pj === null ? null : z.diff * pj;
       if (z.diff > z.toleranz) z.status = "schwund";

@@ -12,7 +12,7 @@
 import { imTakt } from "./takt.js";
 import { uid, heute } from "./util.js";
 import { istBetriebsmittel } from "./betriebsmittel.js";
-import { PRODUKT_INDEX } from "./data/katalog.js";
+import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus, istRichtpreis } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
 
@@ -157,7 +157,9 @@ export function inventurAbschliessen(stand, inv, { datum = heute(), jetzt = new 
   if (!inv || inv.abgeschlossen) return false;
   const { liste } = artikelFuerInventur(stand, inv);
   inv.preise = {};
-  for (const z of liste) { if (!(z.name in inv.posten)) inv.posten[z.name] = null; if (z.menge !== null) inv.preise[z.name] = z.preis; }
+  inv.inhalte = {}; // E7 (17.10.2026): Packungsinhalt in Grundeinheit beim Abschluss merken – für den Abgleich mit Verkäufen
+  const art = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
+  for (const z of liste) { if (!(z.name in inv.posten)) inv.posten[z.name] = null; if (z.menge !== null) { inv.preise[z.name] = z.preis; const p = art[z.name]?.packung; if (p?.menge > 0 && EINHEITEN[p.einheit]) inv.inhalte[z.name] = inBasis(p.menge, p.einheit); } }
   const rp = liste.filter((z) => z.menge !== null && z.richtpreis).map((z) => z.name); if (rp.length) inv.richtpreise = rp; // Richtpreise (17.10.2026)
   inv.datum = datum; inv.abgeschlossen = jetzt;
   inv.wert = inventurWert(stand, inv).summe;
