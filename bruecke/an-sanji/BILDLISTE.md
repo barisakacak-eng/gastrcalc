@@ -1,9 +1,9 @@
 # BILDLISTE GastroCalc – alle Bilder, die die App braucht
 Stand 17.10.2026 · erzeugt aus den App-Daten mit `node tools/bildliste.mjs` (nicht von Hand ändern, neu erzeugen) · gepflegt von Zoro · für Sanji und Baris
 
-Insgesamt **645 Bilder**, davon **67 vorhanden**, **578 fehlen** – 359 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 219 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
-Fehlend nach Prio: Prio 1 = 162 · Prio 2 = 205 · Prio 3 = 211.
-Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 19 · C Warengruppe: 11 · D Gericht-Familie: 12 · E Gericht: 118 · F Artikel: 407 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
+Insgesamt **645 Bilder**, davon **79 vorhanden**, **566 fehlen** – 347 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 219 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
+Fehlend nach Prio: Prio 1 = 150 · Prio 2 = 205 · Prio 3 = 211.
+Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 19 · C Warengruppe: 11 · D Gericht-Familie: 12 · E Gericht: 118 · F Artikel: 395 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
 Die gleiche Liste als Tabelle: `bruecke/an-sanji/bildliste.csv` (Spalten: prio;gruppe;datei;name;status;motiv).
 
 ## Was drauf soll – was du (Sanji) entscheidest
@@ -100,7 +100,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-adana-spiess.webp` | Adana-Spieß | fehlt – zeigt bis dahin g-adana | „Adana-Spieß“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Adana-Spieß, Pide-Brot, Zwiebeln, Petersilie, Joghurtsauce.
 1 | E Gericht | `g-apfelschorle-0-3-l.webp` | Apfelschorle 0,3 l | fehlt – zeigt bis dahin d-saft | „Apfelschorle 0,3 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Apfelsaft.
 1 | E Gericht | `g-caesar-salad.webp` | Caesar Salad | fehlt – zeigt bis dahin g-salat | „Caesar Salad“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Romanasalat, Hähnchenbrust, Parmesan, Croutons, Caesar-Dressing.
-1 | E Gericht | `g-cola-0-33-l.webp` | Cola 0,33 l | fehlt – zeigt bis dahin d-cola | „Cola 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Cola 0,2 l.
+1 | E Gericht | `g-cola-0-33-l.webp` | Cola 0,33 l | fehlt – zeigt bis dahin d-cola | „Cola 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Cola 0,33 l.
 1 | E Gericht | `g-couscous-salat.webp` | Couscous-Salat | fehlt – zeigt bis dahin g-salat | „Couscous-Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Couscous, Cocktailtomaten, Salatgurke, Kichererbsen, Olivenöl.
 1 | E Gericht | `g-doener-kebab.webp` | Döner Kebab | fehlt – zeigt bis dahin g-doener | „Döner Kebab“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Zwiebeln, Weißkohl.
 1 | E Gericht | `g-doenerteller.webp` | Dönerteller | fehlt – zeigt bis dahin g-doener | „Dönerteller“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Pommes frites, Eisbergsalat, Tomaten, Knoblauchsauce, Hirtenkäse / Feta.
@@ -124,19 +124,19 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-spaetzle-beilage.webp` | Spätzle (Beilage) | fehlt – zeigt bis dahin g-pommes | „Spätzle (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Spätzle, Butter.
 1 | E Gericht | `g-sucuk-sandwich.webp` | Sucuk-Sandwich | fehlt – zeigt bis dahin g-sucuk | „Sucuk-Sandwich“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Sucuk, Dönerbrot / Fladen, Tomaten, Zwiebeln, Scharfe Sauce.
 1 | E Gericht | `g-thunfischsalat.webp` | Thunfischsalat | fehlt – zeigt bis dahin g-salat | „Thunfischsalat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Thunfisch (Dose), Mais, Tomaten, Joghurtdressing.
-1 | F Artikel | `d-apfelsaft.webp` | Apfelsaft | fehlt – zeigt bis dahin d-saft | Apfelsaft als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-ayran-0-25-l.webp` | Ayran 0,25 l | fehlt – zeigt bis dahin g-ayran | Ayran 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-bio-limonade-0-33-l.webp` | Bio-Limonade 0,33 l | fehlt – zeigt bis dahin d-limo | Bio-Limonade 0,33 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-cola-1-0-l.webp` | Cola 1,0 l | fehlt – zeigt bis dahin d-cola | Cola 1,0 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-apfelsaft.webp` | Apfelsaft | vorhanden | Apfelsaft als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-ayran-0-25-l.webp` | Ayran 0,25 l | vorhanden | Ayran 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-bio-limonade-0-33-l.webp` | Bio-Limonade 0,33 l | vorhanden | Bio-Limonade 0,33 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-1-0-l.webp` | Cola 1,0 l | vorhanden | Cola 1,0 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-eistee.webp` | Eistee | vorhanden | Eistee als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-energydrink-0-25-l.webp` | Energydrink 0,25 l | fehlt – zeigt bis dahin d-energy | Energydrink 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-fanta-0-2-l.webp` | Fanta 0,2 l | fehlt – zeigt bis dahin d-cola | Fanta 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-hausgemachte-limonade.webp` | Hausgemachte Limonade | fehlt – zeigt bis dahin d-limo | Hausgemachte Limonade als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-ingwershot.webp` | Ingwershot | fehlt – zeigt bis dahin g-getraenk | Ingwershot als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-kirschsaft.webp` | Kirschsaft | fehlt – zeigt bis dahin d-saft | Kirschsaft als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-kokoswasser.webp` | Kokoswasser | fehlt – zeigt bis dahin d-wasser | Kokoswasser als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-lassi.webp` | Lassi | fehlt – zeigt bis dahin g-getraenk | Lassi als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-mineralwasser-0-75-l.webp` | Mineralwasser 0,75 l | fehlt – zeigt bis dahin d-wasser | Mineralwasser 0,75 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-energydrink-0-25-l.webp` | Energydrink 0,25 l | vorhanden | Energydrink 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-fanta-0-2-l.webp` | Fanta 0,2 l | vorhanden | Fanta 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-hausgemachte-limonade.webp` | Hausgemachte Limonade | vorhanden | Hausgemachte Limonade als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-ingwershot.webp` | Ingwershot | vorhanden | Ingwershot als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-kirschsaft.webp` | Kirschsaft | vorhanden | Kirschsaft als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-kokoswasser.webp` | Kokoswasser | vorhanden | Kokoswasser als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-lassi.webp` | Lassi | vorhanden | Lassi als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-mineralwasser-0-75-l.webp` | Mineralwasser 0,75 l | vorhanden | Mineralwasser 0,75 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-rhabarberschorle.webp` | Rhabarberschorle | fehlt – zeigt bis dahin d-saft | Rhabarberschorle als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-sprite-0-2-l.webp` | Sprite 0,2 l | fehlt – zeigt bis dahin d-cola | Sprite 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `r-adana-spiess.webp` | Adana-Spieß | fehlt – zeigt bis dahin r-doenerspiess | Adana-Spieß als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
