@@ -167,9 +167,10 @@ export default {
     leer: "ancora senza ricetta",
   },
   preise: {
+    richtpreis: { knopf: "Inserisci prezzi indicativi", satz: "Riempie i prezzi mancanti con valori medi della regione (ottobre 2026). I tuoi prezzi restano.", meldung: (n, m) => `${n} prezzi inseriti · ${m} senza prezzo indicativo`, entfernen: "Rimuovi i prezzi indicativi", entfernt: (n) => `${n} prezzi indicativi rimossi`, marke: "Prezzo indicativo", aktiv: (n) => `${n} prezzi indicativi attivi`, quelleAuf: "Da dove vengono i prezzi indicativi?", quelle: "Prezzi online di grossisti e produttori, rilevati il 17.10.2026; dove c’erano solo prezzi da supermercato è stato tolto il 15 %. Valori di prova, non offerte.", inventur: "≈ Alcuni prezzi sono indicativi, quindi gli importi in euro sono approssimativi." },
     preisNull: "Prezzo 0 € – è giusto? Conta come «senza prezzo».", // Paket 3 (16.10.2026), M3
     frage: "Quanto paghi negli acquisti?",
-    hinweis: "Per ogni articolo la confezione, come la compri, e quanto costa – senza IVA, come scritto sulla fattura del fornitore. Niente valori indicativi, i prezzi li conosce solo il tuo locale. Quello che manca, lo lasci aperto.",
+    hinweis: "Per ogni articolo la confezione, come la compri, e quanto costa – senza IVA, come scritto sulla fattura del fornitore. Quello che manca, lo lasci aperto.",
     stand: (a, b) => `${a} di ${b} prezzi inseriti`,
     menge: "Confezione", fuer: "per", preis: "Prezzo",
     garverlust: (p, status) => `Calo di cottura ${p} % (${status})`,

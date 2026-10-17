@@ -53,7 +53,7 @@ export function vergleichView(stand) {
   const zeilen = k.zeilen.filter((z) => z.klasse !== "getraenk").map((z) => {
     const g = stand.gerichte.find((x) => x.id === z.id);
     const db = z.preisNetto !== null && z.waren !== null ? z.preisNetto - z.waren : null;
-    return { z, g, db, marge: db !== null && z.preisNetto > 0 ? db / z.preisNetto : null, geschaetzt: rezeptStempel(g).stufe === "schaetzung" };
+    return { z, g, db, marge: db !== null && z.preisNetto > 0 ? db / z.preisNetto : null, geschaetzt: rezeptStempel(g).stufe === "schaetzung" || !!z.warenRichtpreis }; // Richtpreise (17.10.2026): Wareneinsatz mit Richtpreis = ≈
   });
   const mit = zeilen.filter((x) => x.db !== null).sort((a, b) => (modus === "db" ? b.db - a.db : b.marge - a.marge));
   const ohne = zeilen.filter((x) => x.db === null);

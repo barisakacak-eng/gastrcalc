@@ -50,10 +50,11 @@ const bild = (z, gross = false) => { const h = wareBild({ name: z.name, gruppe: 
 const euro = (v) => fmtEuro(v, { dezimal: v !== null && v !== 0 && Math.abs(v) < 10 ? 2 : 0 }); // kleine Beträge mit Cent, sonst ganze Euro
 const prozent = (q) => (q === null || q === undefined ? "–" : `${fmtZahl(q * 100, 1)} %`);
 
+const ca = (w) => (w?.richtpreis?.length ? "≈ " : ""); // Richtpreise (17.10.2026): Summe mit mindestens einem Richtpreis = Schätzung
 function wertText(z) {
   if (z.menge === null) return `<small class="inv-eur leer">${esc(t("inventur.nochNicht"))}</small>`;
   if (z.preis === null) return `<small class="inv-eur fehlt">${esc(t("inventur.preisFehlt"))}</small>`;
-  return `<small class="inv-eur">= ${esc(fmtEuro(z.wert, { dezimal: 2 }))}</small>`;
+  return `<small class="inv-eur">${z.richtpreis ? "≈" : "="} ${esc(fmtEuro(z.wert, { dezimal: 2 }))}</small>`; // Richtpreise (17.10.2026): ≈
 }
 
 // ---------- Ansicht ----------
@@ -84,7 +85,7 @@ function startView(stand, offen) {
       ${offenKarte || `<button type="button" class="knopf ${leer ? "zweit" : "glut gross"} inv-startknopf" data-a="inv-start">${sym("package", "gross")}<b>${esc(t("inventur.starten"))}</b></button>`}
       <div class="tipp">${esc(t("inventur.soGehts"))}</div>
       <div class="karte"><h2>${esc(t("inventur.letzte"))}</h2>
-        ${fertig.length ? fertig.map((i) => `<button type="button" class="zeileknopf inv-verlauf" data-a="inv-ergebnis" data-id="${esc(i.id)}"><span><b>${esc(datumLesbar(i.datum))}</b><small>${esc(t("inventur.ansehen"))}</small></span><span class="inv-verlaufwert">${esc(euro(inventurWert(stand, i).summe))}</span><span class="pfeil">›</span></button>`).join("")
+        ${fertig.length ? fertig.map((i) => `<button type="button" class="zeileknopf inv-verlauf" data-a="inv-ergebnis" data-id="${esc(i.id)}"><span><b>${esc(datumLesbar(i.datum))}</b><small>${esc(t("inventur.ansehen"))}</small></span><span class="inv-verlaufwert">${esc((() => { const w = inventurWert(stand, i); return ca(w) + euro(w.summe); })())}</span><span class="pfeil">›</span></button>`).join("")
           : `<p class="hinweis">${esc(t("inventur.keine"))}</p>`}
       </div>
     </div>`;
@@ -110,7 +111,7 @@ function listeView(stand, inv) {
       <button type="button" class="knopf zweit inv-pause" data-a="inv-pause">${esc(t("inventur.pause"))}</button></div>
     <div class="inhalt inv-listeseite">
       <div class="karte inv-zusammen"><div><b>${esc(t("inventur.gezaehlt", w.gezaehlt, w.anzahl))}</b><div class="inv-balken"><i style="width:${fortschritt}%"></i></div></div>
-        <div class="inv-summe"><small>${esc(t("inventur.wareBisher"))}</small><b>${esc(euro(w.summe))}</b></div></div>
+        <div class="inv-summe"><small>${esc(t("inventur.wareBisher"))}</small><b>${esc(ca(w) + euro(w.summe))}</b></div></div>
       ${!liste.length ? leerKarte() : ""}
       ${gruppen.map((g) => { const s = g.zeilen.reduce((x, z) => x + (z.wert || 0), 0);
         return `<section class="inv-gruppe"><h2 class="inv-gruppenkopf ort-${g.o}"><span class="inv-gsym">${sym(ORT_SYM[g.o])}</span><span>${esc(t("inventur.lagerorte." + g.o))}</span><small>${esc(t("inventur.waren", g.zeilen.length))} · ${esc(euro(s))}</small></h2>
@@ -122,7 +123,7 @@ function listeView(stand, inv) {
           ${zeigeAusgeblendet ? ausgeblendet.map((z) => `<div class="inv-weg"><span>${esc(artikelText(z.name))}</span><button type="button" class="chip klein" data-a="inv-einblenden" data-name="${esc(z.name)}">${esc(t("inventur.einblenden"))}</button></div>`).join("") : ""}` : ""}
       </div>
       <button type="button" class="leise inv-verwerfen" data-a="inv-verwerfen">${esc(t("inventur.verwerfen"))}</button>
-      <div class="inv-fuss"><small>${esc(t("inventur.gezaehlt", w.gezaehlt, w.anzahl))} · ${esc(euro(w.summe))}</small>
+      <div class="inv-fuss"><small>${esc(t("inventur.gezaehlt", w.gezaehlt, w.anzahl))} · ${esc(ca(w) + euro(w.summe))}</small>
         <button type="button" class="knopf" data-a="inv-fertig" ${w.gezaehlt ? "" : "disabled"}>${esc(t("inventur.fertig"))}</button></div>
     </div>`;
 }
@@ -164,7 +165,7 @@ function karteView(stand, inv) {
             <button type="button" class="plus" data-a="inv-k-d" data-d="1" aria-label="${esc(t("inventur.mehr"))}">+</button></div>
           <div class="inv-teilwahl" role="group" aria-label="${esc(t("inventur.angebrochen"))}">${[0, 0.25, 0.5, 0.75].map((x) => { const an = z.menge !== null && Math.abs(teil - x) < 0.01; return `<button type="button" class="${an ? "an" : ""}" aria-pressed="${an}" data-a="inv-k-t" data-t="${x}">${x === 0 ? esc(t("inventur.voll")) : "+ " + TEIL[x]}</button>`; }).join("")}</div>
           <div class="inv-teilhinweis">${esc(t("inventur.teilHinweis"))}</div>
-          <div class="inv-wertzeile"><span>${esc(t("inventur.wert"))}</span>${z.preis === null ? `<b class="fehlt">${esc(t("inventur.preisFehlt"))}</b>` : `<b>${esc(fmtEuro((z.menge || 0) * z.preis, { dezimal: 2 }))}</b>`}</div>
+          <div class="inv-wertzeile"><span>${esc(t("inventur.wert"))}</span>${z.preis === null ? `<b class="fehlt">${esc(t("inventur.preisFehlt"))}</b>` : `<b>${z.richtpreis ? "≈ " : ""}${esc(fmtEuro((z.menge || 0) * z.preis, { dezimal: 2 }))}</b>`}</div>
         </div>
       </div>
       <button type="button" class="leise" data-a="inv-ausblenden">${esc(t("inventur.ausblenden"))}</button>
@@ -180,7 +181,7 @@ function ergebnisView(stand) {
   const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
   const diff = wv ? w.summe - wv.summe : null;
   const kopf = `<div class="kopfband"><h1>${esc(t("inventur.fertigTitel"))}</h1><div class="unter">${esc([stand.betrieb.name, datumLesbar(inv.datum)].filter(Boolean).join(" · "))}</div></div>`;
-  const ware = `<div class="karte inv-zaehler"><small class="lbl">${esc(t("inventur.wareImLaden"))}</small><span class="riesig">${esc(euro(w.summe))}</span>
+  const ware = `<div class="karte inv-zaehler"><small class="lbl">${esc(t("inventur.wareImLaden"))}</small><span class="riesig">${esc(ca(w) + euro(w.summe))}</span>
       <small>${esc(t("inventur.gezaehltZeile", w.gezaehlt))}${wv ? ` · ${esc(t("inventur.vorherZeile", datumLesbar(vorher.datum), euro(wv.summe)))} <span class="inv-delta ${diff < 0 ? "minus" : ""}">(${diff >= 0 ? "+" : "−"} ${esc(euro(Math.abs(diff)))})</span>` : ""}</small></div>
     ${was(t("inventur.wareText"))}`;
   const orte = `<div class="karte"><h2>${esc(t("inventur.jeOrt"))}</h2>${LAGERORTE.filter((o) => w.jeLagerort[o].anzahl).map((o) => `<div class="summenzeile"><span>${esc(t("inventur.lagerorte." + o))}</span><span class="wert">${esc(euro(w.jeLagerort[o].summe))}</span></div>`).join("")}</div>`;
@@ -195,15 +196,15 @@ function ergebnisView(stand) {
       <div class="karte inv-erste"><h2>${esc(t("inventur.ersteTitel"))}</h2><p>${esc(t("inventur.ersteText"))}</p><div class="tipp">${esc(t("inventur.ersteTipp"))}</div></div>
       ${orte}${luecken}${fuss}</div>`;
   }
-  const ca = v.unvollstaendig ? "≈ " : "";
+  const ungefaehr = v.unvollstaendig ? "≈ " : "";
   const zeile = (zeichen, text, wert, cls = "") => `<div class="inv-z ${cls}"><span><em>${zeichen}</em>${esc(text)}</span><b>${esc(wert)}</b></div>`;
   const rechnung = v.tage === 0 ? `<div class="karte hinweisgelb">${esc(t("inventur.gleicherTag"))}</div>` : `
     <h2 class="inv-ue">${esc(t("inventur.verbrauchUe"))}</h2>
     <div class="karte inv-rechnung">
-      ${zeile("", t("inventur.anfang", datumLesbar(v.vorherDatum)), ca + euro(v.anfang))}
+      ${zeile("", t("inventur.anfang", datumLesbar(v.vorherDatum)), ungefaehr + euro(v.anfang))}
       ${zeile("+", t("inventur.einkauf", v.belege), euro(v.einkauf))}
-      ${zeile("−", t("inventur.ende", datumLesbar(v.datum)), ca + euro(v.ende))}
-      ${zeile("=", t("inventur.verbraucht", v.tage), ca + euro(v.verbrauch), "summe")}
+      ${zeile("−", t("inventur.ende", datumLesbar(v.datum)), ungefaehr + euro(v.ende))}
+      ${zeile("=", t("inventur.verbraucht", v.tage), ungefaehr + euro(v.verbrauch), "summe")}
     </div>
     ${was(t("inventur.verbrauchText"))}
     <div class="karte hinweisgelb inv-belege"><p>${esc(v.belege ? t("inventur.belegeWarnung") : t("inventur.belegeKeine"))}</p>${v.belege ? "" : `<button type="button" class="knopf zweit" data-a="nav" data-wert="beleg">${esc(t("inventur.belegeKnopf"))}</button>`}</div>
@@ -215,7 +216,7 @@ function ergebnisView(stand) {
     <h2 class="inv-ue">${esc(t("inventur.quoteUe"))}</h2>
     <div class="karte inv-vergleich">
       <div class="inv-vbalken"><div class="kopf"><span>${esc(v.quoteQuelle === "eigen" ? t("inventur.quoteEigen") : t("inventur.quoteApp"))}</span><b>${esc(prozent(v.appQuote))}</b></div>${balken(v.appQuote, "var(--salbei)")}</div>
-      <div class="inv-vbalken"><div class="kopf"><span>${esc(t("inventur.quoteEcht"))}</span><b class="${v.appQuote !== null && v.echteQuote > v.appQuote ? "rot" : ""}">${esc(ca + prozent(v.echteQuote))}</b></div>${balken(v.echteQuote, "var(--glut)")}</div>
+      <div class="inv-vbalken"><div class="kopf"><span>${esc(t("inventur.quoteEcht"))}</span><b class="${v.appQuote !== null && v.echteQuote > v.appQuote ? "rot" : ""}">${esc(ungefaehr + prozent(v.echteQuote))}</b></div>${balken(v.echteQuote, "var(--glut)")}</div>
       <small class="inv-klein">${esc(t("inventur.umsatzZeile", euro(v.umsatzNetto), v.umsatzTage, v.tage))}</small>
     </div>
     ${was(v.appQuote !== null ? t("inventur.quoteText", cent(v.echteQuote), cent(v.appQuote)) : t("inventur.quoteTextOhneApp", cent(v.echteQuote)))}`
@@ -234,7 +235,7 @@ function ergebnisView(stand) {
     }
   }
   return `${kopf}<div class="inhalt inv-ergebnis">${ware}${rechnung}${quote}${luecke}
-    ${v.unvollstaendig ? `<p class="hinweis geschaetzt-hinweis">${esc(t("inventur.ungefaehr"))}</p>` : ""}
+    ${v.unvollstaendig ? `<p class="hinweis geschaetzt-hinweis">${esc(t(v.richtpreis.length && !v.ohnePreis.length ? "preise.richtpreis.inventur" : "inventur.ungefaehr"))}</p>` : ""}
     ${luecken}${orte}${fuss}</div>`;
 }
 

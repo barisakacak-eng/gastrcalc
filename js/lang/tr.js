@@ -165,9 +165,10 @@ export default {
     leer: "henüz tarif yok",
   },
   preise: {
+    richtpreis: { knopf: "Tavsiye fiyatları ekle", satz: "Eksik fiyatları bölgedeki ortalama değerlerle doldurur (Ekim 2026 itibarıyla). Kendi fiyatların kalır.", meldung: (n, m) => `${n} fiyat eklendi · ${m} tavsiye fiyatı yok`, entfernen: "Tavsiye fiyatlarını kaldır", entfernt: (n) => `${n} tavsiye fiyatı kaldırıldı`, marke: "Tavsiye fiyatı", aktiv: (n) => `${n} tavsiye fiyatı etkin`, quelleAuf: "Tavsiye fiyatları nereden geliyor?", quelle: "Toptancı ve üreticilerin internet fiyatları, 17.10.2026 tarihinde alındı; yalnızca market fiyatı bulunanlardan %15 düşüldü. Test değerleri, teklif değil.", inventur: "≈ Bazı fiyatlar tavsiye fiyatıdır, bu yüzden euro tutarları yaklaşıktır." },
     preisNull: "Fiyat 0 € – doğru mu? „Fiyat yok“ sayılır.", // Paket 3 (16.10.2026), M3
     frage: "Alırken ne ödüyorsun?",
-    hinweis: "Her ürün için aldığın paket ve fiyatı – KDV hariç, tedarikçi faturasında yazdığı gibi. Tahmini değer yok, fiyatları sadece senin dükkânın bilir. Eksik olanı açık bırak.",
+    hinweis: "Her ürün için aldığın paket ve fiyatı – KDV hariç, tedarikçi faturasında yazdığı gibi. Tahmini fiyatlar sadece başlangıç – senin gerçek fiyatın daha önemli. Eksik olanı açık bırak.",
     stand: (a, b) => `${b} fiyattan ${a} tanesi girildi`,
     menge: "Paket", fuer: "fiyatı", preis: "Fiyat",
     garverlust: (p, status) => `Pişirme kaybı % ${p} (${status})`,

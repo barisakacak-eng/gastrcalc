@@ -11,7 +11,8 @@ import { zwischenrezept } from "../data/zwischen.js";
 import { rezeptBauen } from "../rezept_baukasten.js";
 import { rezeptStempel, quelleVon, waageFragen, schnellwahl, familieAnpassen, geldSatz } from "../rezept_quelle.js";
 import { selbstAnwenden, selbstGewaehlt } from "../selbst.js";
-import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken } from "../engine.js";
+import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken, istRichtpreis } from "../engine.js";
+import { richtpreiseEinsetzen, richtpreiseEntfernen, richtpreiseAktiv, richtpreiseMoeglich } from "../richtpreise.js"; // Richtpreise (17.10.2026)
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
 const EINHEITEN_JE_BASIS = { g: ["g", "kg"], ml: ["ml", "l"], stk: ["stk"] };
@@ -219,6 +220,7 @@ const GEBINDE_WAHL = ["karton", "kiste", "beutel", "packung", "kanister", "eimer
 const GEBINDE_KURZ = ["karton", "kiste", "beutel", "packung", "lose"]; // die fünf häufigsten; der Rest hinter „mehr"
 let zwischenOffen = new Set(); // Artikel, bei denen die Zwischengröße eingeblendet ist (flüchtig)
 let mehrArten = new Set();     // Artikel, bei denen alle Gebindearten gezeigt werden (flüchtig)
+let rpQuelleOffen = false;     // Richtpreise (17.10.2026): Satz zu Quelle und Methode aufgeklappt (flüchtig)
 const zahlKurz = (n) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(n);
 
 export function gebindeSatz(a) {
@@ -237,7 +239,7 @@ function selbstZeile(a) {
   return `<div class="zeile selbst ${ok ? "an" : "offen"}">
     <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(t("selbst.gemacht"))}${r.quelle === "baukasten" ? " · " + esc(t("rezepte.startwerte")) : ""}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("selbst.errechnet") : t("allgemein.offen"))}</span></div>
     <p class="hinweis">${esc(t("selbst.ansatz", r.zutaten.map((z) => `${fmtZahl(z.menge)} ${einheitLabel(z.einheit)} ${artikelText(z.name)}`).join(", "), `${fmtZahl(r.ausbeute.menge)} ${einheitLabel(r.ausbeute.einheit)}`, r.arbeitMin))}</p>
-    ${ok ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 1 ? 3 : 2 }), einheitBasis))}</div>` : fehlt.length ? `<p class="tipp">${esc(t("selbst.fehlt", fehlt.map(artikelText).join(", ")))}</p>` : ""}
+    ${ok ? `<div class="ergebnis">${a.zwischenRichtpreis ? "≈ " : ""}${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 1 ? 3 : 2 }), einheitBasis))}</div>` : fehlt.length ? `<p class="tipp">${esc(t("selbst.fehlt", fehlt.map(artikelText).join(", ")))}</p>` : ""}
     <button type="button" class="leise" data-a="selbst-aus" data-name="${esc(a.name)}">${esc(t("selbst.dochKaufen"))}</button></div>`;
 }
 
@@ -248,8 +250,9 @@ function artikelZeile(a) {
   const p = gebindePreise(a); const einheitBasis = basis === "g" ? "kg" : basis === "ml" ? "l" : t("allgemein.stueck");
   const jeBasis = p.jeEinheit === null ? null : basis === "stk" ? p.jeEinheit : preisJeBasis(a) * 1000;
   const zOffen = zwischenOffen.has(a.name) || !!g.zwischen;
+  const rp = ok && istRichtpreis(a); // Richtpreise (17.10.2026): ≈ und Herkunft „Richtpreis“ (Marke wie bei Schätzungen)
   return `<div class="zeile ${ok ? "an" : "offen"}">
-    <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(ok ? gebindeSatz(a) : a.preis === 0 ? t("preise.preisNull") : t("allgemein.offen"))}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
+    <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(ok ? (rp ? "≈ " : "") + gebindeSatz(a) + (rp ? " · " + t("preise.richtpreis.marke") : "") : a.preis === 0 ? t("preise.preisNull") : t("allgemein.offen"))}</small></div><span class="marke ${rp ? "geschaetzt" : ok ? "" : "offen"}">${esc(rp ? t("preise.richtpreis.marke") : ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
     ${zwischenrezept(a.name) ? `<button type="button" class="leise" data-a="selbst-an" data-name="${esc(a.name)}">${esc(t("selbst.machenSelbst"))}</button>` : ""}
     <div class="chips">${(mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? GEBINDE_WAHL : GEBINDE_KURZ).map((x) => `<button type="button" class="chip klein ${g.art === x ? "an" : ""}" data-a="gebinde-art" data-name="${esc(a.name)}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}${mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? "" : `<button type="button" class="chip klein" data-a="gebinde-mehr" data-name="${esc(a.name)}">…</button>`}</div>
     <div class="feldzeile"><label>${esc(t("gebinde.inhalt", artName))}</label>
@@ -262,7 +265,7 @@ function artikelZeile(a) {
         <input inputmode="decimal" data-f="preis:${esc(a.name)}" value="${esc(wertAnzeige(a.preis))}" placeholder="${esc(t("preise.preis"))}" aria-label="${esc(t("preise.preis"))}"><span class="einheit">€</span>
         <div class="seg klein">${["netto", "brutto"].map((b) => `<button type="button" class="${(a.preisBasis || "netto") === b ? "an" : ""}" data-a="preis-basis" data-name="${esc(a.name)}" data-wert="${b}">${esc(t("gebinde." + b))}</button>`).join("")}</div>
       </div></div>
-    ${jeBasis !== null ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 0.1 ? 4 : jeBasis < 1 ? 3 : 2 }), einheitBasis))}${p.zwischen !== null && g.zwischen ? ` · ${esc(t("gebinde.jeZwischen", fmtEuro(p.zwischen, { dezimal: 2 }), t("gebinde.arten." + g.zwischen.art)))}` : ""}</div>` : ""}
+    ${jeBasis !== null ? `<div class="ergebnis">${rp ? "≈ " : ""}${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 0.1 ? 4 : jeBasis < 1 ? 3 : 2 }), einheitBasis))}${p.zwischen !== null && g.zwischen ? ` · ${esc(t("gebinde.jeZwischen", fmtEuro(p.zwischen, { dezimal: 2 }), t("gebinde.arten." + g.zwischen.art)))}` : ""}</div>` : ""}
     ${zOffen ? `<div class="feldzeile"><label>${esc(t("gebinde.zwischenAnzahl", artName, t("gebinde.arten." + (g.zwischen?.art || "beutel"))))}</label>
       <div class="packung"><input inputmode="decimal" data-f="zwischen:${esc(a.name)}" value="${esc(wertAnzeige(g.zwischen?.anzahl ?? null))}" placeholder="4" aria-label="${esc(t("gebinde.zwischen"))}"><span class="einheit">${esc(t("gebinde.arten." + (g.zwischen?.art || "beutel")))}</span>
       <button type="button" class="leise" data-a="zwischen-weg" data-name="${esc(a.name)}">${esc(t("gebinde.zwischenWeg"))}</button></div></div>`
@@ -280,11 +283,17 @@ export const preise = {
     stand.artikel = artikelAusGerichten(stand);
     const artikel = stand.artikel.filter((a) => a.benutzt !== false);
     const gruppen = [...new Set(artikel.map((a) => a.gruppe))];
-    const fertig = artikel.filter((a) => preisJeBasis(a) !== null).length;
+    const rpAktiv = richtpreiseAktiv({ artikel }); // Richtpreise (17.10.2026): zählen nicht als eingetragen
+    const fertig = artikel.filter((a) => preisJeBasis(a) !== null).length - rpAktiv;
+    const rpMoeglich = richtpreiseMoeglich({ artikel });
     return `
       <h1 class="frage">${esc(t("preise.frage"))}</h1>
       <p class="hinweis">${esc(t("preise.hinweis"))} ${esc(t("gebinde.basisHinweis"))}</p>
-      <p class="tipp">${esc(t("preise.stand", fertig, artikel.length))}</p>
+      <p class="tipp">${esc(t("preise.stand", fertig, artikel.length))}${rpAktiv ? " · " + esc(t("preise.richtpreis.aktiv", rpAktiv)) : ""}</p>
+      ${rpMoeglich ? `<button type="button" class="knopf zweit" data-a="richtpreise-ein">${esc(t("preise.richtpreis.knopf"))}</button>
+      <p class="hinweis">${esc(t("preise.richtpreis.satz"))}</p>` : ""}
+      ${rpAktiv ? `<button type="button" class="leise" data-a="richtpreise-weg">${esc(t("preise.richtpreis.entfernen"))}</button>` : ""}
+      ${rpMoeglich || rpAktiv ? `<button type="button" class="leise" data-a="richtpreise-quelle" aria-expanded="${rpQuelleOffen}">${esc(t("preise.richtpreis.quelleAuf"))}</button>${rpQuelleOffen ? `<p class="hinweis">${esc(t("preise.richtpreis.quelle"))}</p>` : ""}` : ""}
       ${gruppen.map((gr) => `<div class="gruppe">${esc(t("warengruppen." + gr))}</div><div class="liste">${artikel.filter((a) => a.gruppe === gr).map(artikelZeile).join("")}</div>`).join("")}
       <p class="hinweis">${esc(t("gebinde.lieferungSpaeter"))}</p>`;
   },
@@ -297,9 +306,14 @@ export const preise = {
     if (art === "zwischen") { a.gebinde ??= { art: "packung", zwischen: null }; const n = parseZahl(wert); a.gebinde.zwischen = n > 0 ? { art: a.gebinde.zwischen?.art || "beutel", anzahl: Math.round(n) } : null; }
     if (art === "roh") { a.garverlust ??= {}; a.garverlust.roh = parseZahl(wert); }
     if (art === "gar") { a.garverlust ??= {}; a.garverlust.gar = parseZahl(wert); }
-    a.status = preisJeBasis(a) !== null ? "bekannt" : "offen";
+    // Richtpreise (17.10.2026): solange Preis und Packung unverändert sind, bleibt es ein Richtpreis; jede Änderung macht ihn zum eigenen
+    a.status = preisJeBasis(a) === null ? "offen" : istRichtpreis(a) ? "richtpreis" : "bekannt";
+    if (a.richtpreis && !istRichtpreis(a)) delete a.richtpreis;
   },
-  aktion(name, el, stand) {
+  aktion(name, el, stand, ctx) {
+    if (name === "richtpreise-ein") { const r = richtpreiseEinsetzen(stand); ctx?.meldung?.(t("preise.richtpreis.meldung", r.gesetzt, r.ohneRichtpreis.length)); return true; } // Richtpreise (17.10.2026)
+    if (name === "richtpreise-weg") { const r = richtpreiseEntfernen(stand); ctx?.meldung?.(t("preise.richtpreis.entfernt", r.entfernt)); return true; }
+    if (name === "richtpreise-quelle") { rpQuelleOffen = !rpQuelleOffen; return true; }
     const a = stand.artikel.find((x) => x.name === el.dataset.name); if (!a) return false;
     if (name === "selbst-an" || name === "selbst-aus") {
       const kachel = zwischenrezept(a.name)?.kachel; if (!kachel) return false;
@@ -308,13 +322,13 @@ export const preise = {
     }
     if (name === "packung-einheit") { a.packung ??= { menge: null, einheit: a.einheit }; if (a.packung.einheit !== el.dataset.wert) { a.packung.menge = mengeUmrechnen(a.packung.menge, a.packung.einheit, el.dataset.wert); a.packung.einheit = el.dataset.wert; } return true; }
     if (name === "gebinde-art") { a.gebinde ??= { art: "packung", zwischen: null }; a.gebinde.art = el.dataset.wert; if (el.dataset.wert === "lose") a.gebinde.zwischen = null; return true; }
-    if (name === "preis-basis") { a.preisBasis = el.dataset.wert === "brutto" ? "brutto" : "netto"; return true; }
+    if (name === "preis-basis") { a.preisBasis = el.dataset.wert === "brutto" ? "brutto" : "netto"; if (a.richtpreis && !istRichtpreis(a)) { delete a.richtpreis; a.status = preisJeBasis(a) !== null ? "bekannt" : "offen"; } return true; }
     if (name === "zwischen-auf") { zwischenOffen.add(a.name); return true; }
     if (name === "gebinde-mehr") { mehrArten.add(a.name); return true; }
     if (name === "zwischen-weg") { zwischenOffen.delete(a.name); if (a.gebinde) a.gebinde.zwischen = null; return true; }
     if (name === "messen") { a.garverlust ??= {}; a.garverlust.messen = !a.garverlust.messen; return true; }
   },
-  beimVerlassen() { zwischenOffen = new Set(); mehrArten = new Set(); },
+  beimVerlassen() { zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; },
 };
 
 // ---------- Schritt: Verkaufspreise und Mengen ----------

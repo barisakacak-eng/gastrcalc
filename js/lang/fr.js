@@ -167,9 +167,10 @@ export default {
     leer: "pas encore de recette",
   },
   preise: {
+    richtpreis: { knopf: "Insérer des prix indicatifs", satz: "Remplit les prix manquants avec des moyennes de la région (octobre 2026). Tes propres prix restent.", meldung: (n, m) => `${n} prix insérés · ${m} sans prix indicatif`, entfernen: "Retirer les prix indicatifs", entfernt: (n) => `${n} prix indicatifs retirés`, marke: "Prix indicatif", aktiv: (n) => `${n} prix indicatifs actifs`, quelleAuf: "D’où viennent les prix indicatifs ?", quelle: "Prix en ligne de grossistes et de fabricants, relevés le 17.10.2026 ; là où seuls des prix de supermarché existaient, 15 % ont été déduits. Valeurs de test, pas des offres.", inventur: "≈ Certains prix sont indicatifs, les montants en euros sont donc approximatifs." },
     preisNull: "Prix 0 € – c’est juste ? Compte comme « sans prix ».", // Paket 3 (16.10.2026), M3
     frage: "Tu paies combien à l’achat ?",
-    hinweis: "Par article, le conditionnement tel que tu l’achètes et son prix – HT, comme sur la facture du fournisseur. Pas de repères : les prix, seul ton resto les connaît. Ce qui manque, tu le laisses à remplir.",
+    hinweis: "Par article, le conditionnement tel que tu l’achètes et son prix – HT, comme sur la facture du fournisseur. Ce qui manque, tu le laisses à remplir.",
     stand: (a, b) => `${a} prix sur ${b} remplis`,
     menge: "Conditionnement", fuer: "pour", preis: "Prix",
     garverlust: (p, status) => `Perte à la cuisson ${p} % (${status})`,

@@ -167,9 +167,10 @@ export default {
     leer: "chưa có công thức",
   },
   preise: {
+    richtpreis: { knopf: "Điền giá tham khảo", satz: "Điền giá còn thiếu bằng giá trung bình trong vùng (tháng 10/2026). Giá của bạn được giữ nguyên.", meldung: (n, m) => `${n} giá đã điền · ${m} không có giá tham khảo`, entfernen: "Bỏ giá tham khảo", entfernt: (n) => `${n} giá tham khảo đã bỏ`, marke: "Giá tham khảo", aktiv: (n) => `${n} giá tham khảo đang dùng`, quelleAuf: "Giá tham khảo lấy từ đâu?", quelle: "Giá trực tuyến của nhà bán sỉ và nhà sản xuất, lấy ngày 17.10.2026; nơi chỉ có giá siêu thị thì trừ 15 %. Giá thử nghiệm, không phải báo giá.", inventur: "≈ Một số giá là giá tham khảo, vì vậy số tiền euro là ước tính." },
     preisNull: "Giá 0 € – đúng không? Tính là „chưa có giá“.", // Paket 3 (16.10.2026), M3
     frage: "Bạn mua hàng với giá bao nhiêu?",
-    hinweis: "Mỗi mặt hàng: loại đóng gói bạn mua và giá của nó – chưa thuế, như trên hóa đơn nhà cung cấp. Không có số tham khảo, giá thì chỉ quán bạn biết. Cái nào thiếu thì để trống.",
+    hinweis: "Mỗi mặt hàng: loại đóng gói bạn mua và giá của nó – chưa thuế, như trên hóa đơn nhà cung cấp. Cái nào thiếu thì để trống.",
     stand: (a, b) => `Đã điền ${a}/${b} giá`,
     menge: "Đóng gói", fuer: "giá", preis: "Giá",
     garverlust: (p, status) => `Hao hụt khi nấu ${p} % (${status})`,

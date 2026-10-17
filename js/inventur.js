@@ -13,7 +13,7 @@ import { imTakt } from "./takt.js";
 import { uid, heute } from "./util.js";
 import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX } from "./data/katalog.js";
-import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus } from "./engine.js";
+import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus, istRichtpreis } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
 
 export const LAGERORTE = ["kuehlhaus", "tiefkuehler", "trockenlager", "verpackung", "reinigung"];
@@ -93,7 +93,9 @@ export function artikelFuerInventur(stand, inv) {
     const a = artikel[name] || null; const gruppe = a?.gruppe || PRODUKT_INDEX[name]?.g || null;
     const preis = preise ? (typeof preise[name] === "number" ? preise[name] : null) : (a ? preisNettoGebinde(a) : null);
     const menge = mengeSauber(inv?.posten?.[name]);
-    return { name, gruppe, lagerort: lagerortFuer({ name, gruppe }), artikel: a, gebinde: a?.gebinde?.art || "packung", packung: a?.packung || null,
+    // Richtpreise (17.10.2026): Wert zu einem Richtpreis ist eine Schätzung (≈); abgeschlossene Inventur merkt sich, welche es waren
+    const richtpreis = preise ? (Array.isArray(inv.richtpreise) && inv.richtpreise.includes(name)) : !!a && istRichtpreis(a);
+    return { name, gruppe, richtpreis, lagerort: lagerortFuer({ name, gruppe }), artikel: a, gebinde: a?.gebinde?.art || "packung", packung: a?.packung || null,
       preis: typeof preis === "number" && Number.isFinite(preis) && preis >= 0 ? preis : null, menge, wert: menge !== null && typeof preis === "number" ? menge * preis : null,
       letztes: vor ? mengeSauber(vor.posten?.[name]) : null, ausgeblendet: weg.has(name) };
   });
@@ -138,15 +140,16 @@ export function inventurWert(stand, inv) { return inv?.abgeschlossen ? imTakt(st
 function inventurWertRechnen(stand, inv) {
   const { liste } = artikelFuerInventur(stand, inv);
   const jeLagerort = Object.fromEntries(LAGERORTE.map((o) => [o, { summe: 0, anzahl: 0, gezaehlt: 0 }]));
-  let summe = 0, gezaehlt = 0; const ohnePreis = [];
+  let summe = 0, gezaehlt = 0; const ohnePreis = [], richtpreis = [];
   for (const z of liste) {
     const o = jeLagerort[z.lagerort]; o.anzahl += 1;
     if (z.menge === null) continue;
     gezaehlt += 1; o.gezaehlt += 1;
     if (z.preis === null) { if (z.menge > 0) ohnePreis.push(z.name); continue; }
     summe += z.wert; o.summe += z.wert;
+    if (z.richtpreis && z.menge > 0) richtpreis.push(z.name);
   }
-  return { summe, gezaehlt, anzahl: liste.length, offen: liste.length - gezaehlt, ohnePreis, jeLagerort };
+  return { summe, gezaehlt, anzahl: liste.length, offen: liste.length - gezaehlt, ohnePreis, richtpreis, jeLagerort };
 }
 
 // Abschließen: Datum des Zähltags, Preise festhalten, Wert merken. Danach ändert sich nichts mehr.
@@ -155,6 +158,7 @@ export function inventurAbschliessen(stand, inv, { datum = heute(), jetzt = new 
   const { liste } = artikelFuerInventur(stand, inv);
   inv.preise = {};
   for (const z of liste) { if (!(z.name in inv.posten)) inv.posten[z.name] = null; if (z.menge !== null) inv.preise[z.name] = z.preis; }
+  const rp = liste.filter((z) => z.menge !== null && z.richtpreis).map((z) => z.name); if (rp.length) inv.richtpreise = rp; // Richtpreise (17.10.2026)
   inv.datum = datum; inv.abgeschlossen = jetzt;
   inv.wert = inventurWert(stand, inv).summe;
   const v = inventurVergleich(stand, inv); if (v && typeof v.betriebsmittel.jeMonat === "number") inv.betriebsmittelJeMonat = v.betriebsmittel.jeMonat; // für die Zeile im Zähler (Stufe „aus Inventur“)
@@ -216,7 +220,8 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
     verbrauch, umsatzBrutto: u.summe, umsatzNetto, umsatzTage: u.tage, steuer: st.satz,
     echteQuote, appQuote: q.quote, quoteQuelle: q.quelle, sollWare, luecke,
     muell: sw.muellwert, personal: sw.personal?.waren || 0, eingetragen, erklaert, ohneErklaerung, muellOhneWert: sw.ohneWert || 0,
-    ohnePreis: [...new Set([...anfang.ohnePreis, ...ende.ohnePreis])], unvollstaendig: anfang.ohnePreis.length + ende.ohnePreis.length > 0 || ende.offen > 0,
+    ohnePreis: [...new Set([...anfang.ohnePreis, ...ende.ohnePreis])], unvollstaendig: anfang.ohnePreis.length + ende.ohnePreis.length > 0 || ende.offen > 0 || anfang.richtpreis.length + ende.richtpreis.length > 0,
+    richtpreis: [...new Set([...anfang.richtpreis, ...ende.richtpreis])],
     verbrauchNegativ: verbrauch < 0, betriebsmittel,
   };
 }

@@ -172,9 +172,10 @@ export default {
     leer: "ende pa recetë",
   },
   preise: {
+    richtpreis: { knopf: "Vendos çmime orientuese", satz: "Plotëson çmimet që mungojnë me vlera mesatare nga rajoni (tetor 2026). Çmimet e tua mbeten.", meldung: (n, m) => `${n} çmime u vendosën · ${m} pa çmim orientues`, entfernen: "Hiq çmimet orientuese", entfernt: (n) => `${n} çmime orientuese u hoqën`, marke: "Çmim orientues", aktiv: (n) => `${n} çmime orientuese aktive`, quelleAuf: "Nga vijnë çmimet orientuese?", quelle: "Çmime online nga shitës me shumicë dhe prodhues, marrë më 17.10.2026; ku kishte vetëm çmime supermarketi, u zbrit 15 %. Vlera prove, jo oferta.", inventur: "≈ Disa çmime janë orientuese, prandaj shumat në euro janë të përafërta." },
     preisNull: "Çmimi 0 € – a është saktë? Numërohet si „pa çmim“.", // Paket 3 (16.10.2026), M3
     frage: "Sa paguan kur blen mallin?",
-    hinweis: "Për çdo artikull paketimin, ashtu siç e blen, dhe sa kushton – pa TVSH, siç shkruhet në faturën e furnitorit. Nuk ka vlera orientuese, këto çmime i di vetëm lokali yt. Atë që mungon, lëre bosh.",
+    hinweis: "Për çdo artikull paketimin, ashtu siç e blen, dhe sa kushton – pa TVSH, siç shkruhet në faturën e furnitorit. Atë që mungon, lëre bosh.",
     stand: (a, b) => `${a} nga ${b} çmime të plotësuara`,
     menge: "Paketimi", fuer: "për", preis: "Çmimi",
     garverlust: (p, status) => `Humbja gjatë gatimit ${p} % (${status})`,

@@ -69,7 +69,7 @@ export function bueroView(stand, wurzel, extra = {}) {
       <div class="b-ordner">${kachel("amt", "shield-check", k.amt)}${kachel("steuer", "calculator", k.steuer)}${kachel("buch", "receipt", k.buch)}</div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.zahlen"))}</h2>
       <div class="karte b-liste">
-        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" ? ` · ${t("buero.zahlen.richtwert")}` : wareneinsatzWarnung(z.quoteEff) ? ` · ${t("buero.zahlen.wareHoch", Math.round(z.quoteEff * 100))}` : ""}`, monatWert)}
+        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : wareneinsatzWarnung(z.quoteEff) ? ` · ${t("buero.zahlen.wareHoch", Math.round(z.quoteEff * 100))}` : ""}`, monatWert)}
         ${zeile({ aktion: "nav", wert: "vergleich" }, "chart-column", t("buero.zahlen.vergleich"), t("buero.zahlen.vergleichUnter"))}
         ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}
         ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}

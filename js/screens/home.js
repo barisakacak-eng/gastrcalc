@@ -122,8 +122,8 @@ export function monatsZiel(stand, z, H) {
     darueber: ziel === null ? null : Math.max(0, summe - ziel), tage,
     // Paket 3 (16.10.2026), M2/M15/E2: ausdrücklich geschätzt, wenn der eigene Lohn ein Richtwert ist ODER die Warenquote vom Branchen-
     // Richtwert kommt ODER der Mischsatz ohne echte Mengen gewichtet ist (dazu wie bisher: Ware unter Stufe 3, Fixkosten geschätzt).
-    geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 || z.last?.eigen?.status === "geschaetzt" || z.quoteQuelle === "richtwert" || !!z.steuerGeschaetzt,
-    richtwertWare: z.quoteQuelle === "richtwert", richtwertLohn: z.last?.eigen?.status === "geschaetzt" };
+    geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 || z.last?.eigen?.status === "geschaetzt" || z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis || !!z.steuerGeschaetzt,
+    richtwertWare: z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis, richtwertLohn: z.last?.eigen?.status === "geschaetzt" };
 }
 // Paket 3 (16.10.2026): die alte bisNullKarte war tot (kein Aufrufer mehr seit Drei Ebenen) und ist entfernt; die Zielkarte im Laden ist heuteZielKarte.
 // Monatsbalken (wohnt jetzt im Büro, Entwickler C)
@@ -205,12 +205,12 @@ function tonneInstrument(stand, H) {
 // der Branchen-Richtwert als Schätzung (geschaetzt: true, quelle "richtwert").
 export function wareneinsatzQuote(stand, z) {
   if (z.stufe === 3 && z.umsatzNetto > 0) return { quote: z.belegSumme / z.umsatzNetto, quelle: "belege", geschaetzt: false };
-  if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle, geschaetzt: z.quoteQuelle === "richtwert" };
+  if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle, geschaetzt: z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis, ...(z.quoteRichtpreis ? { richtpreis: true } : {}) }; // Richtpreise (17.10.2026)
   return { quote: null, quelle: "keine", geschaetzt: false };
 }
 function wareneinsatzInstrument(stand, z) {
   const q = wareneinsatzQuote(stand, z); const ziel = Number(stand.verkauf?.zielWareneinsatz) || 0.33;
-  const unsicher = q.quelle === "karte" && wareneinsatzSicherheit(stand).unsicher;
+  const unsicher = q.quelle === "karte" && (q.richtpreis || wareneinsatzSicherheit(stand).unsicher); // Richtpreise (17.10.2026): ≈
   const farbe = q.quote === null ? "" : q.quote <= ziel ? "gruen" : q.quote <= ziel + 0.05 ? "gelb" : "rot";
   return `<button type="button" class="instrument i-ware ${farbe}" data-a="nav" data-wert="karte"><small class="kopfzeile">${sym("shopping-cart", "klein")}${esc(t("cockpit.wareneinsatz"))}</small>
     <b>${q.quote === null ? "–" : `${unsicher ? "≈ " : ""}${fmtZahl(q.quote * 100, 0)} %`}</b><small>${esc(q.quote === null ? t("cockpit.karteFehlt") : unsicher ? t("cockpit.genauerAbwiegen") : t("cockpit.ziel", fmtZahl(ziel * 100, 0)))}</small>

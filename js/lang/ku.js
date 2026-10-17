@@ -166,9 +166,10 @@ export default {
     leer: "hîn bê reçete",
   },
   preise: {
+    richtpreis: { knopf: "Bihayên rêber têxe", satz: "Bihayên kêm bi nirxên navîn ên herêmê tije dike (Cotmeh 2026). Bihayên te dimînin.", meldung: (n, m) => `${n} biha hatin danîn · ${m} bê bihayê rêber`, entfernen: "Bihayên rêber rake", entfernt: (n) => `${n} bihayên rêber hatin rakirin`, marke: "Bihayê rêber", aktiv: (n) => `${n} bihayên rêber çalak`, quelleAuf: "Bihayên rêber ji ku tên?", quelle: "Bihayên online ên firoşkarên mezin û hilberîneran, 17.10.2026 hatin girtin; li cihê ku tenê bihayên supermarketê hebûn, 15 % hat kêmkirin. Nirxên ceribandinê, ne pêşniyar.", inventur: "≈ Hin biha bihayên rêber in, ji ber vê yekê mîqdarên euro nêzîkî ne." },
     preisNull: "Biha 0 € – rast e? Wek „bê biha“ tê hesibandin.", // Paket 3 (16.10.2026), M3
     frage: "Tu di kirînê de çiqas didî?",
-    hinweis: "Ji bo her malî: pakêta ku tu dikirî û bihayê wê – bê bac, wek ku li ser fatûreya firoşkar nivîsandî ye. Nirxên pêşniyarî tune ne, biha tenê dikana te dizane. Ya ku kêm e vala bihêle.",
+    hinweis: "Ji bo her malî: pakêta ku tu dikirî û bihayê wê – bê bac, wek ku li ser fatûreya firoşkar nivîsandî ye. Ya ku kêm e vala bihêle.",
     stand: (a, b) => `${a} ji ${b} bihayan hatin nivîsandin`,
     menge: "Pakêt", fuer: "ji bo", preis: "Biha",
     garverlust: (p, status) => `Kêmbûna di pijandinê de ${p} % (${status})`,

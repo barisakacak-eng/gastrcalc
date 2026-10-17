@@ -3,7 +3,7 @@
 // Datenschutz: Es wird nur gespeichert, was die App braucht – Artikel, Menge, Preis, Händlername, Datum. Kein Kundenname, keine Kundennummer, keine Adresse.
 import { uid, heute } from "./util.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
-import { preisMerken, preisJeBasis, preisNettoGebinde } from "./engine.js";
+import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis } from "./engine.js";
 import { preisJeEinheit } from "./beleg.js";
 
 // Belegeinheit → App-Einheit für packung.einheit
@@ -57,12 +57,12 @@ export function preiseUebernehmen(stand, lieferung) {
     const a = (stand.artikel || []).find((x) => x.name === z.artikel); if (!a) continue;
     const basisAlt = EINHEITEN[a.packung?.einheit]?.basis, basisNeu = EINHEITEN[z.inhaltEinheit]?.basis;
     if (basisAlt && basisNeu && basisAlt !== basisNeu) continue; // kg gegen Stück: nicht umrechnen, lieber nichts tun
-    const alt = preisJeBasis(a);
+    const alt = istRichtpreis(a) ? null : preisJeBasis(a); // Richtpreise (17.10.2026): ein Richtpreis ist kein alter Preis – erster echter Preis
     preisMerken(a, lieferung.datum);
     const preisNetto = z.netto !== null && z.menge ? z.netto / Math.abs(z.menge) : null; if (preisNetto === null) continue;
     a.packung = { menge: z.inhaltMenge, einheit: z.inhaltEinheit };
     a.gebinde = { art: gebindeArtApp(z.gebinde), zwischen: z.inhaltAnzahl > 1 && z.inhaltMenge !== z.inhaltAnzahl ? { art: "packung", anzahl: z.inhaltAnzahl } : null };
-    a.preis = Math.round(preisNetto * 100) / 100; a.preisBasis = "netto"; a.status = "bekannt"; a.preisDatum = lieferung.datum;
+    a.preis = Math.round(preisNetto * 100) / 100; a.preisBasis = "netto"; a.status = "bekannt"; a.preisDatum = lieferung.datum; delete a.richtpreis;
     const neu = preisJeBasis(a);
     if (alt !== null && neu !== null && Math.abs(neu - alt) > 1e-9) aenderungen.push({ name: a.name, alt, neu, prozent: alt > 0 ? (neu - alt) / alt : null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
     else if (alt === null && neu !== null) aenderungen.push({ name: a.name, alt: null, neu, prozent: null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
@@ -75,7 +75,7 @@ export function preisAenderungen(stand, { tage = 30, datum = heute() } = {}) {
   const grenze = new Date(Date.parse(datum) - tage * 86400e3).toISOString().slice(0, 10);
   const out = [];
   for (const a of stand.artikel || []) {
-    const h = (a.preisHistorie || []).filter((x) => x.datum >= grenze);
+    const h = (a.preisHistorie || []).filter((x) => x.datum >= grenze && x.herkunft !== "richtpreis"); // Richtpreise (17.10.2026): Richtpreis → echter Preis ist keine Preisänderung
     if (!h.length || !(a.preisDatum >= grenze)) continue;
     const letzter = h[h.length - 1];
     const altBasis = inBasis(letzter.menge, letzter.einheit); if (!(altBasis > 0)) continue;
@@ -91,7 +91,7 @@ export function preisAenderungen(stand, { tage = 30, datum = heute() } = {}) {
 export function preisSprung(stand, z, belegBasis) {
   const a = (stand.artikel || []).find((x) => x.name === z.bekannt); if (!a) return null;
   const jz = journalZeile(z, belegBasis); if (!(jz.menge > 0) || !(jz.netto > 0) || !(jz.inhaltMenge > 0) || !jz.inhaltEinheit) return null;
-  const alt = preisJeBasis(a); if (!(alt > 0)) return null;
+  const alt = istRichtpreis(a) ? null : preisJeBasis(a); if (!(alt > 0)) return null; // Richtpreise (17.10.2026): kein Sprung gegen einen Richtpreis
   const neu = preisJeBasis({ ...a, packung: { menge: jz.inhaltMenge, einheit: jz.inhaltEinheit }, preis: jz.netto / jz.menge, preisBasis: "netto" }); if (neu === null) return null;
   return { alt, neu, prozent: (neu - alt) / alt, einheit: EINHEITEN[jz.inhaltEinheit]?.basis || "stk" };
 }

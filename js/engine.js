@@ -234,13 +234,23 @@ export function gebindePreise(artikel) {
   const z = kette[1] || null;
   return { gebinde: p, zwischen: p !== null && z ? p / z.anzahl : null, jeEinheit: p !== null && kette[0].inhalt ? p / kette[0].inhalt : null, einheit: kette[0].einheit };
 }
+// Richtpreise (17.10.2026): ein eingesetzter Richtpreis trägt am Artikel die Marke richtpreis {preis, menge, einheit, stand, …}.
+// Er gilt nur, solange Preis, Packung und Basis genau so sind, wie sie eingesetzt wurden – ändert der Wirt etwas, ist es sein Preis.
+export function istRichtpreis(a) {
+  const r = a?.richtpreis;
+  if (!r || typeof r !== "object" || typeof a.preis !== "number" || !(a.preis > 0)) return false;
+  return a.preis === r.preis && a.packung?.menge === r.menge && a.packung?.einheit === r.einheit && (a.preisBasis || "netto") === "netto";
+}
+// Preis geschätzt: Richtpreis, oder selbst gemachtes Teil, dessen Rohstoffe Richtpreise haben (zwischenpreiseRechnen setzt zwischenRichtpreis).
+export const preisGeschaetzt = (a) => istRichtpreis(a) || (a?.herkunft === "selbst" && !!a.zwischenRichtpreis);
+
 // Einen alten Preis festhalten, bevor ein neuer gesetzt wird (Preisverlauf für „Preise gestiegen").
 export function preisMerken(artikel, datum) {
   if (typeof artikel.preis !== "number" || !(artikel.packung?.menge > 0)) return;
   artikel.preisHistorie ??= [];
   const letzter = artikel.preisHistorie[artikel.preisHistorie.length - 1];
   if (letzter && letzter.preis === artikel.preis && letzter.menge === artikel.packung.menge && letzter.einheit === artikel.packung.einheit) return;
-  artikel.preisHistorie.push({ datum, preis: artikel.preis, menge: artikel.packung.menge, einheit: artikel.packung.einheit, basis: artikel.preisBasis || "netto" });
+  artikel.preisHistorie.push({ datum, preis: artikel.preis, menge: artikel.packung.menge, einheit: artikel.packung.einheit, basis: artikel.preisBasis || "netto", ...(istRichtpreis(artikel) ? { herkunft: "richtpreis" } : {}) });
   if (artikel.preisHistorie.length > 24) artikel.preisHistorie.splice(0, artikel.preisHistorie.length - 24);
 }
 
@@ -255,7 +265,7 @@ export function garverlustAnteil(artikel) {
 
 // Wareneinsatz eines Gerichts: Σ Menge × Preis je Basis, garende Rohware mit Garverlust (C5: Rohmenge = Menge / (1 − v)).
 export function warenGericht(gericht, artikelIndex) {
-  let waren = 0; const fehlt = []; let geschaetzt = false;
+  let waren = 0; const fehlt = []; let geschaetzt = false, richtpreis = false;
   for (const z of gericht.zutaten) {
     const a = artikelIndex[z.name];
     const pj = a ? preisJeBasis(a) : null;
@@ -264,13 +274,14 @@ export function warenGericht(gericht, artikelIndex) {
     if ((EINHEITEN[z.einheit]?.basis) !== (EINHEITEN[a.packung?.einheit]?.basis)) { fehlt.push(z.name); continue; } // g gegen Stück: nicht rechnen
     const gv = a ? garverlustAnteil(a) : { wert: 0 };
     if (gv.status === "geschaetzt") geschaetzt = true;
+    if (preisGeschaetzt(a)) { geschaetzt = true; richtpreis = true; } // Richtpreise (17.10.2026): Wareneinsatz mit Richtpreis = Schätzung (≈)
     const roh = rohmengeFuer(inBasis(z.menge, z.einheit), gv.wert);
     if (roh === null) { fehlt.push(z.name); continue; }
     waren += roh * pj;
   }
   // Ein Gericht ohne Rezept hat keinen Wareneinsatz von 0 €, sondern keinen – bleibt grau.
   if (!gericht.zutaten.length) fehlt.push("rezept");
-  return { waren, fehlt, geschaetzt, vollstaendig: fehlt.length === 0 };
+  return { waren, fehlt, geschaetzt, richtpreis, vollstaendig: fehlt.length === 0 };
 }
 
 // Verkaufsmengen je Monat, grob (Prüfung: „drei meistverkaufte Gerichte" reichen für den Start):
@@ -320,15 +331,16 @@ export function artikelAusGerichten(stand) {
 // arbeitGeld (Minuten × Minutensatz) dient nur dem Vergleich „selbst oder gekauft". Nur eine Stufe: Rohstoffe sind gekaufte Artikel.
 export function zwischenpreis(artikel, artikelIndex, minutensatz = null) {
   const r = artikel.rezept; if (!r || !(r.ausbeute?.menge > 0)) return { preis: null, arbeitGeld: null, fehlt: ["rezept"] };
-  let material = 0; const fehlt = [];
+  let material = 0; const fehlt = []; let richtpreis = false;
   for (const z of r.zutaten || []) {
     const a = artikelIndex[z.name];
     const pj = a && a.herkunft !== "selbst" ? preisJeBasis(a) : null;
     if (pj === null || !(Number(z.menge) > 0) || EINHEITEN[z.einheit]?.basis !== EINHEITEN[a.packung?.einheit]?.basis) { fehlt.push(z.name); continue; }
     material += inBasis(z.menge, z.einheit) * pj;
+    if (istRichtpreis(a)) richtpreis = true; // Richtpreise (17.10.2026): das Teil erbt die Schätzung
   }
   const arbeitGeld = minutensatz === null ? null : (Number(r.arbeitMin) || 0) * minutensatz;
-  return { preis: fehlt.length ? null : material, arbeitGeld, fehlt };
+  return { preis: fehlt.length ? null : material, arbeitGeld, fehlt, richtpreis };
 }
 
 // Rechnet die Preise aller selbst gemachten Artikel neu und schreibt sie wie einen Einkaufspreis (netto, je Ausbeute) an den Artikel.
@@ -345,6 +357,7 @@ export function zwischenpreiseRechnen(stand) {
       a.preis = preis; a.packung = { menge, einheit }; a.preisBasis = "netto";
     }
     a.status = preis === null ? "offen" : "errechnet"; a.zwischenFehlt = z.fehlt;
+    if (preis !== null && z.richtpreis) a.zwischenRichtpreis = true; else delete a.zwischenRichtpreis;
   }
 }
 
@@ -404,7 +417,7 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
     const preisBrutto = typeof x.preis === "number" ? x.preis : null;
     const preisNetto = preisBrutto === null ? null : preisBrutto / (1 + mwst);
     const { ampel, db } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto);
-    return { id: x.id, name: x.name, klasse: x.klasse, menge: x.menge, waren: w.vollstaendig ? w.waren : null, warenFehlt: w.fehlt, warenGeschaetzt: w.geschaetzt,
+    return { id: x.id, name: x.name, klasse: x.klasse, menge: x.menge, waren: w.vollstaendig ? w.waren : null, warenFehlt: w.fehlt, warenGeschaetzt: w.geschaetzt, warenRichtpreis: w.richtpreis,
       fix, zeit, sk, mwst, preisBrutto, preisNetto, zielNetto, zielBrutto, zielAufschlag, zielStufe: ziel.stufe, portalBrutto, portalStufe, portalName: portal?.name || null, portalBasis: portal ? basisFuerRechnung(portal.basis) : null, portalBasisUnbekannt: portal ? portal.basis !== "netto" && portal.basis !== "brutto" : false, ampel, db,
       wareneinsatzAnteil: preisNetto > 0 && w.vollstaendig ? w.waren / preisNetto : null };
   });

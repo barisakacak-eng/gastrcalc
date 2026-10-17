@@ -1,7 +1,7 @@
 // Einrichtung in Prozent (Etappe 6, Punkt 6 – Baris 14.10.2026, 16:32/16:35): statt „fehlt noch"-Kästen auf jeder Seite
 // zeigt das Cockpit einen Ring mit Prozent, den nächsten Schritt und die Checkliste. Rein rechnend, Texte über Schlüssel.
 // Sieben Schritte, je 1/7, Teilerfüllung anteilig. 100 % nur, wenn wirklich alles erfüllt ist. Keine erfundenen Zahlen.
-import { preisJeBasis, stelleBereit } from "./engine.js";
+import { preisJeBasis, stelleBereit, istRichtpreis } from "./engine.js";
 
 const PFLICHT = ["miete", "personal", "eigenerLohn", "energie"];
 const SICHERUNG_TAGE = 7;
@@ -26,7 +26,9 @@ export function einrichtungStand(stand, wurzel = null, { jetzt = Date.now() } = 
   const mitPreis = speisen.filter((g) => typeof g.preis === "number").length;
   const mitRezept = speisen.filter((g) => g.klasse === "getraenk" || (g.zutaten || []).length || g.rezeptBewusstLeer).length;
   const artikel = (stand.artikel || []).filter((a) => a.benutzt !== false);
-  const mitEk = artikel.filter((a) => preisJeBasis(a) !== null).length;
+  // Richtpreise (17.10.2026): zählen NICHT als erledigt (sonst trägt der Wirt nie nach). Rezept-Startwerte zählen hier voll – das ist
+  // bewusst anders: ein Startwert ist eine Menge, die meist passt; ein Richtpreis ist ein fremder Preis. Anteil für Richtpreise: 0.
+  const mitEk = artikel.filter((a) => preisJeBasis(a) !== null && !istRichtpreis(a)).length;
   const k = kostenAnteil(stand);
   const kuehlFertig = (stand.kuehlstellen || []).some((x) => !x.archiviert && stelleBereit(x) && (x.max !== null || x.min !== null)) || stand.kuehl?.keine === true;
   const gesichert = wurzel?.letzteSicherung ? (jetzt - Date.parse(wurzel.letzteSicherung)) / 86400e3 < SICHERUNG_TAGE : false;

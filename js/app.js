@@ -182,6 +182,7 @@ const ctx = {
   weiter(art) { schrittWeiter(art); },
   zurueck() { schrittZurueck(); },
   fertig(ziel) { fertig(ziel); },
+  meldung(text) { meldung(text); }, // Richtpreise (17.10.2026): Schritte dürfen eine kurze Meldung zeigen
 };
 
 async function schrittWeiter(art = "fertig") {

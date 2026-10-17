@@ -173,9 +173,10 @@ export default {
     leer: "încă fără rețetă",
   },
   preise: {
+    richtpreis: { knopf: "Introdu prețuri orientative", satz: "Completează prețurile lipsă cu valori medii din regiune (octombrie 2026). Prețurile tale rămân.", meldung: (n, m) => `${n} prețuri introduse · ${m} fără preț orientativ`, entfernen: "Elimină prețurile orientative", entfernt: (n) => `${n} prețuri orientative eliminate`, marke: "Preț orientativ", aktiv: (n) => `${n} prețuri orientative active`, quelleAuf: "De unde vin prețurile orientative?", quelle: "Prețuri online de la angrosiști și producători, preluate la 17.10.2026; unde existau doar prețuri de supermarket s-a scăzut 15 %. Valori de test, nu oferte.", inventur: "≈ Unele prețuri sunt orientative, de aceea sumele în euro sunt aproximative." },
     preisNull: "Preț 0 € – e corect? Contează ca „fără preț”.", // Paket 3 (16.10.2026), M3
     frage: "Cât plătești la cumpărare?",
-    hinweis: "La fiecare articol: ambalajul, așa cum îl cumperi, și cât costă – fără TVA, cum scrie pe factura furnizorului. Fără valori orientative, prețurile le știe doar localul tău. Ce lipsește, lași deschis.",
+    hinweis: "La fiecare articol: ambalajul, așa cum îl cumperi, și cât costă – fără TVA, cum scrie pe factura furnizorului. Ce lipsește, lași deschis.",
     stand: (a, b) => `${a} din ${b} prețuri completate`,
     menge: "Ambalaj", fuer: "pentru", preis: "Preț",
     garverlust: (p, status) => `Pierdere la gătit ${p} % (${status})`,

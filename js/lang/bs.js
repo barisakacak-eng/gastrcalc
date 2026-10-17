@@ -174,9 +174,10 @@ export default {
     leer: "još bez recepta",
   },
   preise: {
+    richtpreis: { knopf: "Unesi orijentacione cijene", satz: "Popunjava cijene koje nedostaju prosječnim vrijednostima iz regije (stanje oktobar 2026). Tvoje cijene ostaju.", meldung: (n, m) => `${n} cijena uneseno · ${m} bez orijentacione cijene`, entfernen: "Ukloni orijentacione cijene", entfernt: (n) => `${n} orijentacionih cijena uklonjeno`, marke: "Orijentaciona cijena", aktiv: (n) => `${n} orijentacionih cijena aktivno`, quelleAuf: "Odakle su orijentacione cijene?", quelle: "Online cijene veletrgovaca i proizvođača, preuzete 17.10.2026; gdje su nađene samo cijene iz supermarketa, oduzeto je 15 %. Testne vrijednosti, ne ponude.", inventur: "≈ Neke cijene su orijentacione, zato su iznosi u eurima približni." },
     preisNull: "Cijena 0 € – je li tačno? Računa se kao „bez cijene“.", // Paket 3 (16.10.2026), M3
     frage: "Koliko plaćaš u nabavci?",
-    hinweis: "Za svaki artikal pakovanje, kako ga kupuješ, i koliko košta – bez PDV-a, kako piše na računu dobavljača. Nema okvirnih vrijednosti, cijene zna samo tvoj lokal. Šta fali, ostavi otvoreno.",
+    hinweis: "Za svaki artikal pakovanje, kako ga kupuješ, i koliko košta – bez PDV-a, kako piše na računu dobavljača. Šta fali, ostavi otvoreno.",
     stand: (a, b) => `${a} od ${b} cijena upisano`,
     menge: "Pakovanje", fuer: "za", preis: "Cijena",
     garverlust: (p, status) => `Gubitak pri kuhanju ${p} % (${status})`,

@@ -167,9 +167,10 @@ export default {
     leer: "todavía sin receta",
   },
   preise: {
+    richtpreis: { knopf: "Insertar precios orientativos", satz: "Rellena los precios que faltan con valores medios de la región (octubre de 2026). Tus propios precios se mantienen.", meldung: (n, m) => `${n} precios insertados · ${m} sin precio orientativo`, entfernen: "Quitar precios orientativos", entfernt: (n) => `${n} precios orientativos quitados`, marke: "Precio orientativo", aktiv: (n) => `${n} precios orientativos activos`, quelleAuf: "¿De dónde salen los precios orientativos?", quelle: "Precios en línea de mayoristas y fabricantes, consultados el 17.10.2026; donde solo había precios de supermercado se restó un 15 %. Valores de prueba, no ofertas.", inventur: "≈ Algunos precios son orientativos, por eso los importes en euros son aproximados." },
     preisNull: "Precio 0 € – ¿es correcto? Cuenta como «sin precio».", // Paket 3 (16.10.2026), M3
     frage: "¿Cuánto pagas al comprar?",
-    hinweis: "Por artículo, el paquete tal como lo compras y lo que cuesta, sin IVA, como pone en la factura del proveedor. No hay referencias: los precios solo los conoce tu local. Lo que falte, déjalo pendiente.",
+    hinweis: "Por artículo, el paquete tal como lo compras y lo que cuesta, sin IVA, como pone en la factura del proveedor. Lo que falte, déjalo pendiente.",
     stand: (a, b) => `${a} de ${b} precios anotados`,
     menge: "Paquete", fuer: "por", preis: "Precio",
     garverlust: (p, status) => `Merma al cocinar ${p} % (${status})`,
