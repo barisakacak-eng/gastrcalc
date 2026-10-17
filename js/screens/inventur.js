@@ -2,7 +2,7 @@
 // A1 = lange Liste nach Lagerort (Hauptbildschirm), Antippen von Foto/Name öffnet A2 = eine große Karte je Ware mit ＋/− und ¼ ½ ¾,
 // „Weiter" zur nächsten Ware. Nach dem Abschluss das Ergebnis A–E: jede Zahl mit „Was heißt das?" in einfachen Worten.
 // Rechnen tut nur js/inventur.js; hier stehen Aufbau, Texte und data-Attribute.
-import { t, einheitLabel, artikelText } from "../i18n.js";
+import { t, einheitLabel, artikelText, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute } from "../util.js";
 import { PRODUKT_INDEX } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
@@ -96,7 +96,7 @@ function listeView(stand, inv) {
   const w = inventurWert(stand, inv);
   const titel = t("inventur.titelMonat", monatName(inv.begonnen.slice(0, 10)));
   const fortschritt = w.anzahl ? Math.round(w.gezaehlt / w.anzahl * 100) : 0;
-  const gruppen = LAGERORTE.map((o) => ({ o, zeilen: liste.filter((z) => z.lagerort === o) })).filter((g) => g.zeilen.length);
+  const gruppen = LAGERORTE.map((o) => ({ o, zeilen: liste.filter((z) => z.lagerort === o).sort((a, b) => artikelText(a.name).localeCompare(artikelText(b.name), sprache())) })) // Paket 6 (17.10.2026): Reihenfolge nach dem angezeigten Namen.filter((g) => g.zeilen.length);
   const posten = (z) => {
     const { teil } = ganzTeil(z.menge);
     return `<div class="inv-posten ${z.menge === null ? "offen" : ""}" data-name="${esc(z.name)}">
