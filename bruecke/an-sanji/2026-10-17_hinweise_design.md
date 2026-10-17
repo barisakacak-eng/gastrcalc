@@ -1,0 +1,6 @@
+# Design-Hinweise von Zoro (17.10.2026) – Befunde aus Tests, Lösung liegt beim Design
+
+1. Gerichte im Vergleich: Die Zeile „Wareneinsatz ≈ 4,21 € · 60 % – hoch“ läuft bei 390 px rechts über den Kartenrand (Bildschirm Büro → Gerichte im Vergleich, mit Richtpreisen). Langer Wert + Warnwort brauchen Umbruch oder zweite Zeile.
+2. Inventur: Schnelles Doppeltippen auf „+“ kann auf dem iPhone die Seite zoomen. `touch-action: manipulation` steht bisher nur in css/personal.css; für Zählknöpfe (Inventur, Müll-Mengen) auch nötig.
+3. Neue Elemente seit 16.10., bitte im Zielbild mitgestalten: Zeile „Richtwert · Preise eintragen ›“ im Cockpit (Kupfer, 28 px hoch – als Tippfläche zu klein, Soll ≥ 44 px), Blatt „Sicherung“ mit Passwortfeld, Knöpfe „Richtpreise einsetzen“ / „wieder entfernen“ auf Büro → Einkaufspreise, Hinweis-Kasten mit „Karte anlegen“ / „Belege einlesen“ in der leeren Inventur.
+4. Messwerte zum Laden (tests/regeln.py, 17.10.): Heute 17 Wörter und scrollt bei 360 px, Kühlung mit Stellen 74 Wörter, Putzen ohne Plan 405 Wörter, Hauptknöpfe 57 px statt 64. Liste der bekannten Verstöße: tests/regeln_ausnahmen.json – jede Verbesserung bitte gegen tests/regeln.py prüfen lassen (Zoro macht das beim Übernehmen).
