@@ -66,7 +66,7 @@ const STELLEN = [
   { id: "bsp-k-4", name: "Saladette", art: "kuehl", typ: "saladette", basis: 4.6 },
 ];
 
-export function beispielLaden(heute, { name = BEISPIEL_NAME } = {}) {
+export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}) {
   const start = tagPlus(heute, -BEISPIEL_TAGE);
   const tage = []; for (let i = BEISPIEL_TAGE; i >= 1; i--) tage.push(tagPlus(heute, -i)); // start … gestern
   const offen = (d) => wochentag(d) !== 0;
@@ -193,8 +193,10 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME } = {}) {
   });
 
   // Beispiel-Laden (17.10.2026): zweite Inventur heute (Preise von heute)
-  const inv2 = inventurStarten(s, { datum: heute, jetzt: zeit(heute, 8) }); inv2.id = "bsp-inv-2";
-  zaehlen(inv2, 1); inventurAbschliessen(s, inv2, { datum: heute, jetzt: zeit(heute, 8, 30) });
+  // nie in der Zukunft: wer zwischen 4 und 8:30 Uhr anlegt, bekommt die Inventur kurz vor „jetzt“ (Beispiel-Laden, 17.10.2026)
+  const ende = jetzt && new Date(jetzt) < new Date(zeit(heute, 8, 30)) ? new Date(new Date(jetzt).getTime() - 60000) : new Date(zeit(heute, 8, 30));
+  const inv2 = inventurStarten(s, { datum: heute, jetzt: new Date(ende.getTime() - 30 * 60000).toISOString() }); inv2.id = "bsp-inv-2";
+  zaehlen(inv2, 1); inventurAbschliessen(s, inv2, { datum: heute, jetzt: ende.toISOString() });
 
   const fertig = migrierenBetrieb(s);
   // nur für den Bericht/Test, nicht gespeichert: welche Zutaten ohne Preis geblieben sind

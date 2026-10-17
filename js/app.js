@@ -90,6 +90,7 @@ async function eigeneFotosLaden() {
 
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
+  if (wurzel) for (const b of wurzel.betriebe || []) if (b.beispiel && b.betrieb) b.betrieb.name = t("beispiel.name"); // Beispiel-Laden (17.10.2026): Name folgt der Sprache
   // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
   if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { personalNachtragen(stand); if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } }
   const kennung = schirmKennung();
@@ -428,7 +429,7 @@ async function ladenLoeschenJetzt(id) {
 async function beispielAnlegen() {
   const da = wurzel.betriebe.find((b) => b.beispiel);
   if (da) return ladenWechseln(da.id);
-  const b = beispielLaden(heuteGeschaeft(), { name: t("beispiel.name") });
+  const b = beispielLaden(heuteGeschaeft(), { name: t("beispiel.name"), jetzt: new Date().toISOString() });
   wurzel.betriebe.push(b);
   await ereignis("beispiel-angelegt", { laden: b.id });
   return ladenWechseln(b.id);

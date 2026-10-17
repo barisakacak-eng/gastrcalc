@@ -51,6 +51,12 @@ async def main():
             assert "Beispiel-Döner" in t and "€" in t, t[:400]
             assert await ueberlauf() <= 0, "waagrechter Überlauf (Heute)"
             await bild("heute")
+            # Name folgt der Sprache (17.10.2026): kurz auf Türkisch und zurück
+            async def sprache(c):
+                await pg.evaluate("c => { const b = document.createElement('button'); b.dataset.a = 'sprache'; b.dataset.wert = c; document.querySelector('#app').appendChild(b); b.click(); }", c)
+                await pg.wait_for_timeout(900)
+            await sprache("tr"); t = await text(); assert "Örnek Döner" in t, t[:300]
+            await sprache("de"); t = await text(); assert "Beispiel-Döner" in t, t[:300]
             # Müll-Raster mit den Gerichten
             await nav_hilfe.geh(pg, "muell"); t = await text()
             assert "Döner Kebab" in t and "Dürüm Döner" in t, t[:400]

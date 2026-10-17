@@ -123,3 +123,13 @@ test("Beispiel-Laden: Sicherung behält das Merkmal; Sicherungs-Erinnerung zähl
   // nur echtes true zählt
   const x = migrierenWurzel({ betriebe: [{ ...leererBetrieb(), beispiel: "ja" }], schema: 6 }); assert.equal(x.betriebe[0].beispiel, undefined);
 });
+
+test("Beispiel-Laden: Inventur von heute liegt nie in der Zukunft (Anlegen zwischen 4 und 8:30 Uhr)", () => {
+  const heute = "2026-10-17";
+  const jetzt = new Date(2026, 9, 17, 5, 10).toISOString();
+  const b = beispielLaden(heute, { jetzt });
+  const zeiten = JSON.stringify(b).match(/"\d{4}-\d{2}-\d{2}T[^"]+"/g).map((z) => new Date(JSON.parse(z)));
+  assert.ok(zeiten.every((z) => z <= new Date(jetzt)), "kein Zeitstempel nach dem Anlegen");
+  const spaet = beispielLaden(heute, { jetzt: new Date(2026, 9, 17, 14, 0).toISOString() });
+  assert.deepEqual(spaet, beispielLaden(heute), "nach 8:30 Uhr wie ohne Uhrzeit");
+});
