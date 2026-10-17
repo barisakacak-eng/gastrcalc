@@ -454,7 +454,7 @@ export default {
     abw: { behoben: "رفع شد", verspaetet: "اندازه‌گیری دوباره دیر شد", massnahmeOffen: "اقدام باز است", ohneMassnahme: "اقدامی ثبت نشده" },
     nkVerspaetet: (h) => `اندازه‌گیری دوباره دیر شد (بعد از ${h} ساعت)`,
     nkVerspaetetKurz: "اندازه‌گیری دوباره دیر شد",
-    ware: { umgelagert: "کالا جابه‌جا شد", weggeworfen: "کالا دور ریخته شد" },
+    ware: { umgelagert: "کالا جابه‌جا شد", weggeworfen: "کالا دور ریخته شد", behalten: "کالا نگه داشته شد" },
     abwOffen: (n) => `${n} انحراف باز`,
     kuehlLuecken: (n, l) => `${n} اندازه · ${l} روز با کمبود`,
     teilweise: (l) => `فقط بخشی اندازه گرفته شد: ${l}`,
@@ -1242,4 +1242,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: امروز مصرف کن`, morgen: (ware) => `${ware}: تا فردا مصرف کن`, vorbei: (ware) => `${ware}: تاریخ انقضا گذشت – استفاده نکن`, vorbeiMehrere: (n) => `${n} کالا: تاریخ انقضا گذشت – استفاده نکن`, mehrere: (n) => `${n} کالا تا فردا مصرف شود`, mehrereHeute: (n) => `${n} کالا امروز مصرف شود`,
       bis: (ware, tag) => `${ware}: تا ${tag} مصرف کن`, aktion: (ware, tag) => `${ware}: تخفیف تا ${tag} می‌ارزد`, mhdVorbei: (ware) => `${ware}: „بهتر است تا“ گذشت – بررسی کن`, knopf: "دیدن" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "کالا پس از انحراف سرما", unter: "چه بر سر کالا آمد؟", leer: "انحراف بازی نیست. همه تصمیم گرفته شد.", wegwerfen: "دور ریخته شد", behalten: "نگه داشته شد", wegFrage: "چه چیزی دور ریخته شد؟", wegLeer: "هنوز کالایی وارد نشده.", wegSpeichern: "ثبت به‌عنوان ضایعات", wert: "ارزش کالا", grundFrage: "چرا نگه داشته شد؟", grundPlatzhalter: "مثلاً فوراً به یخچال دیگر منتقل شد", grundSpeichern: "ذخیرهٔ دلیل", abbrechen: "انصراف", gebucht: "به‌عنوان ضایعات ثبت شد.", behaltenOk: "ذخیره شد.", grundKurz: "لطفاً دلیل کوتاهی بنویس." },
 };

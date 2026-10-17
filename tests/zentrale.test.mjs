@@ -3,7 +3,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { leererBetrieb, leereWurzel } from "../js/store.js";
 import { gerichtWeg, rohwareWeg, muellWoche, muellMonatVergleich, haeufigsteMuell } from "../js/muell.js";
-import { menueZaehler, sicherungStufe } from "../js/screens/nav.js";
+import { menueZaehler } from "../js/offen.js"; // Trennung (17.10.2026)
+import { sicherungStufe } from "../js/sicherung_stufe.js";
 
 const laden = () => {
   const s = leererBetrieb(); s.phase = "app";

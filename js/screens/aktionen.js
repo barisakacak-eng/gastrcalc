@@ -7,7 +7,7 @@ import { esc, fmtEuro, fmtZahl } from "../util.js";
 import { haltbarStand, haltbarUhrzeit, abverkaufText, datumKurz } from "../haltbar.js";
 import { kombiTeile, kombiRechnen, kombiVorschlaege, kombiText, KOMBI_MAX } from "../deal.js";
 import { kalkulation } from "../engine.js";
-import { mengeText } from "./bestand.js";
+import { mengeBasisText as mengeText, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
 import { nav } from "./nav.js";
 
 let auswahl = [];   // Kombi: gewählte Gericht-Kennungen (2–4)
@@ -100,10 +100,7 @@ export function aktionenTextFuer(stand, art, wert) {
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? kombiText(kb, s) : null; }
   return null;
 }
-async function teilen(text) {
-  if (typeof navigator !== "undefined" && navigator.share) { try { await navigator.share({ text }); return "geteilt"; } catch (e) { if (e?.name === "AbortError") return "abgebrochen"; } }
-  try { await navigator.clipboard.writeText(text); return "kopiert"; } catch (_) { window.prompt(t("aktionen.teilen"), text); return "gezeigt"; }
-}
+const teilen = (text) => textTeilen(text, t("aktionen.teilen")); // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
 
 // ---------- Aktionen ----------
 // Rückgabe: false (nicht meine) | true (neu zeichnen) | { meldung }

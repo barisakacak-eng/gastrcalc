@@ -5,7 +5,8 @@ import assert from "node:assert/strict";
 globalThis.document ??= { documentElement: {} };
 import { leererBetrieb } from "../js/store.js";
 import { heute } from "../js/util.js";
-import { jetztDran, offenImBuero, istHauptzeit, zielAttr } from "../js/offen.js";
+import { jetztDran, offenImBuero, istHauptzeit } from "../js/offen.js";
+import { zielAttr } from "../js/screens/bausteine.js"; // Trennung (17.10.2026)
 import { kalkulation, preisAmpel, tagPlus } from "../js/engine.js";
 import { startView } from "../js/screens/home.js";
 import { karteLadenView, karteLadenAktion, karteLadenZuruecksetzen, karteLadenEingabe, karteLadenTeile } from "../js/screens/karte_laden.js";

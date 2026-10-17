@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "διορθώθηκε", verspaetet: "Ο επανέλεγχος καθυστέρησε", massnahmeOffen: "Μέτρο ανοιχτό", ohneMassnahme: "δεν καταχωρίστηκε μέτρο" },
     nkVerspaetet: (h) => `Ο επανέλεγχος καθυστέρησε (μετά από ${h} ώρες)`,
     nkVerspaetetKurz: "Ο επανέλεγχος καθυστέρησε",
-    ware: { umgelagert: "Το εμπόρευμα μεταφέρθηκε", weggeworfen: "Το εμπόρευμα πετάχτηκε" },
+    ware: { umgelagert: "Το εμπόρευμα μεταφέρθηκε", weggeworfen: "Το εμπόρευμα πετάχτηκε", behalten: "Το εμπόρευμα κρατήθηκε" },
     abwOffen: (n) => `${n} ανοιχτές αποκλίσεις`,
     kuehlLuecken: (n, l) => `${n} μετρήσεις · ${l} ημέρες με κενό`,
     teilweise: (l) => `μόνο μερική μέτρηση: ${l}`,
@@ -1244,4 +1244,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: χρήση σήμερα`, morgen: (ware) => `${ware}: χρήση έως αύριο`, vorbei: (ware) => `${ware}: η λήξη πέρασε – μη χρήση`, vorbeiMehrere: (n) => `${n} προϊόντα: η λήξη πέρασε – μη χρήση`, mehrere: (n) => `${n} προϊόντα για χρήση έως αύριο`, mehrereHeute: (n) => `${n} προϊόντα για χρήση σήμερα`,
       bis: (ware, tag) => `${ware}: χρήση έως ${tag}`, aktion: (ware, tag) => `${ware}: προσφορά έως ${tag} αξίζει`, mhdVorbei: (ware) => `${ware}: κατά προτίμηση πέρασε – έλεγξε`, knopf: "Δες" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Εμπόρευμα μετά από απόκλιση ψύξης", unter: "Τι έγινε με το εμπόρευμα;", leer: "Καμία ανοιχτή απόκλιση. Όλα αποφασίστηκαν.", wegwerfen: "Πετάχτηκε", behalten: "Κρατήθηκε", wegFrage: "Τι πετάχτηκε;", wegLeer: "Δεν έχει καταχωριστεί εμπόρευμα ακόμη.", wegSpeichern: "Καταχώριση ως απόρριμμα", wert: "Αξία εμπορεύματος", grundFrage: "Γιατί κρατήθηκε;", grundPlatzhalter: "π.χ. μεταφέρθηκε αμέσως στο άλλο ψυγείο", grundSpeichern: "Αποθήκευση αιτίας", abbrechen: "Άκυρο", gebucht: "Καταχωρίστηκε ως απόρριμμα.", behaltenOk: "Αποθηκεύτηκε.", grundKurz: "Γράψε μια σύντομη αιτία." },
 };

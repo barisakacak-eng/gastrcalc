@@ -9,7 +9,8 @@ import * as M from "../js/muell.js";
 import * as U from "../js/util.js";
 import { reinigungMonat, oeffnungstageMonat } from "../js/reinigung.js";
 import { leererBetrieb, migrierenBetrieb } from "../js/store.js";
-import { monatsZiel, wareneinsatzQuote, startView } from "../js/screens/home.js";
+import { startView } from "../js/screens/home.js";
+import { monatsZiel, wareneinsatzQuote } from "../js/zaehler.js"; // Trennung (17.10.2026)
 import { vergleichView } from "../js/screens/vergleich.js";
 import { navKontext } from "../js/screens/nav.js";
 import { jetztDran } from "../js/offen.js";

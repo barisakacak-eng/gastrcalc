@@ -460,7 +460,7 @@ export default {
     abw: { behoben: "zgjidhur", verspaetet: "Kontrolli i dytë u vonua", massnahmeOffen: "Masa e hapur", ohneMassnahme: "nuk u shënua masë" },
     nkVerspaetet: (h) => `Kontrolli i dytë u vonua (pas ${h} orësh)`,
     nkVerspaetetKurz: "Kontrolli i dytë u vonua",
-    ware: { umgelagert: "Malli u zhvendos", weggeworfen: "Malli u hodh" },
+    ware: { umgelagert: "Malli u zhvendos", weggeworfen: "Malli u hodh", behalten: "Malli u mbajt" },
     abwOffen: (n) => `${n} devijime të hapura`,
     kuehlLuecken: (n, l) => `${n} matje · ${l} ditë me mungesë`,
     teilweise: (l) => `matur vetëm pjesërisht: ${l}`,
@@ -1248,4 +1248,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: përdore sot`, morgen: (ware) => `${ware}: përdore deri nesër`, vorbei: (ware) => `${ware}: afati i përdorimit kaloi – mos e përdor`, vorbeiMehrere: (n) => `${n} mallra: afati i përdorimit kaloi – mos i përdor`, mehrere: (n) => `${n} mallra për t'u përdorur deri nesër`, mehrereHeute: (n) => `${n} mallra për t'u përdorur sot`,
       bis: (ware, tag) => `${ware}: përdore deri ${tag}`, aktion: (ware, tag) => `${ware}: oferta deri ${tag} ia vlen`, mhdVorbei: (ware) => `${ware}: «mirë para» kaloi – kontrollo`, knopf: "Shiko" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Malli pas një shmangieje ftohjeje", unter: "Çfarë ndodhi me mallin?", leer: "Asnjë shmangie e hapur. Gjithçka u vendos.", wegwerfen: "U hodh", behalten: "U mbajt", wegFrage: "Çfarë u hodh?", wegLeer: "Ende nuk është shënuar mall.", wegSpeichern: "Regjistro si mbetje", wert: "Vlera e mallit", grundFrage: "Pse u mbajt?", grundPlatzhalter: "p.sh. u zhvendos menjëherë në frigoriferin tjetër", grundSpeichern: "Ruaj arsyen", abbrechen: "Anulo", gebucht: "U regjistrua si mbetje.", behaltenOk: "U ruajt.", grundKurz: "Të lutem shkruaj një arsye të shkurtër." },
 };

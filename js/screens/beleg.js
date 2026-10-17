@@ -4,7 +4,8 @@ import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Artikelnam
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { PRODUKT_INDEX } from "../data/katalog.js";
 import { belegZerlegen, zeileAnwenden } from "../beleg.js";
-import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, preisSprung, gebindeArtApp } from "../lieferung.js";
+import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, preisSprung, gebindeArtApp, lieferungStornieren, rechnungNrSetzen, belegUploadVerknuepfen } from "../lieferung.js"; // Trennung (17.10.2026): Storno, Rechnungsnummer, Foto-Verweis
+import { artikelAusBeleg } from "../karte_daten.js"; // Trennung (17.10.2026): neue Ware aus einer Belegzeile
 import { preisJeBasis } from "../engine.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
@@ -231,7 +232,7 @@ export function belegAktion(name, el, stand, wurzel) {
   if (name === "beleg-zurueck") { beleg = null; zeilen = []; return true; }
   if (name === "beleg-text-zeigen") { zeigeText = !zeigeText; return true; }
   if (name === "zw-text") { zeigeText = !zeigeText; return true; }
-  if (name === "lieferung-storno") { const l = (stand.lieferungen || []).find((x) => x.id === el.dataset.id); if (!l || l.storniert || !confirm(t("beleg.stornoFrage"))) return false; l.storniert = true; l.storniertZeit = new Date().toISOString(); return { meldung: t("foto.zurueckgenommen") }; } // nie löschen, nur kennzeichnen (Prüfung 15.10.)
+  if (name === "lieferung-storno") { const l = (stand.lieferungen || []).find((x) => x.id === el.dataset.id); if (!l || l.storniert || !confirm(t("beleg.stornoFrage"))) return false; lieferungStornieren(stand, l.id); return { meldung: t("foto.zurueckgenommen") }; } // nie löschen, nur kennzeichnen (Prüfung 15.10.)
   if (name === "kb-storno") { if (!confirm(t("foto.zuruecknehmenFrage"))) return false; return kostenbelegStornieren(stand, el.dataset.id) ? { meldung: t("foto.zurueckgenommen") } : false; }
   if (name === "zw-stelle" && zuweisung) { zuweisung.stelle = el.dataset.wert; if (!zuweisung.basisVonHand && zuweisung.stelle !== "ware") zuweisung.basis = basisStandard(zuweisung.stelle); if (zuweisung.stelle === "versicherungen" && zuweisung.verteilung === "monatlich") zuweisung.verteilung = "jaehrlich"; return true; }
   if (name === "zw-basis" && zuweisung) { zuweisung.basis = el.dataset.wert; zuweisung.basisVonHand = true; return true; }
@@ -241,8 +242,8 @@ export function belegAktion(name, el, stand, wurzel) {
     const z = zuweisung; if (!(z.betrag > 0) || !z.basis) return false;
     if (kostenbelegDoppelt(stand, { stelle: z.stelle, betrag: z.betrag, datum: z.datum > heute() ? heute() : z.datum }) && !confirm(t("foto.doppeltFrage"))) return false;
     const e = kostenbelegAnlegen(stand, { stelle: z.stelle, betrag: z.betrag, basis: z.basis, satz: z.satz, datum: z.datum, verteilung: z.verteilung, monate: z.monate, upload: z.upload?.id || null, lieferant: z.lieferant });
-    { const nr = rechnungsNummerLesen(text); if (nr) e.rechnungNr = nr; } // W2-T
-    if (z.upload) { z.upload.status = "uebernommen"; z.upload.ergebnis = { kostenbeleg: e.id }; z.upload.zweck = "kosten"; }
+    rechnungNrSetzen(e, rechnungsNummerLesen(text)); // W2-T
+    belegUploadVerknuepfen(z.upload, e, "kosten");
     kostenFertig = e; zuweisung = null; text = "";
     return "uebernommen";
   }
@@ -276,17 +277,16 @@ export function belegAktion(name, el, stand, wurzel) {
       let name = z.bekannt; if (typeof zuordnung[i] === "string" && zuordnung[i] !== "neu") name = zuordnung[i];
       if (zuordnung[i] === "neu" && !name) {
         const kat = PRODUKT_INDEX[z.name]; const einheit = z.inhalt?.einheit === "kg" || z.inhalt?.einheit === "g" ? "kg" : z.inhalt?.einheit === "l" || z.inhalt?.einheit === "ml" || z.inhalt?.einheit === "cl" ? "l" : "stk";
-        const a = { name: z.name.slice(0, 60), gruppe: kat?.g || "gewuerz", einheit, packung: { menge: null, einheit }, gebinde: { art: gebindeArtApp(z.gebinde), zwischen: null }, preis: null, preisBasis: "netto", preisHistorie: [], status: "offen", benutzt: false };
-        if (!stand.artikel.some((x) => x.name === a.name)) stand.artikel.push(a); name = a.name;
+        name = artikelAusBeleg(stand, { name: z.name, gruppe: kat?.g || "gewuerz", einheit, gebindeArt: gebindeArtApp(z.gebinde) });
       }
       genommen.push({ ...z, bekannt: name || null });
     });
     if (!genommen.length) return false;
     const l = lieferungAnlegen(stand, beleg, { zeilen: genommen, geraet: wurzel?.geraet || null, basis, datum, alleZeilen: weggelassen === 0 });
-    { const nr = rechnungsNummerLesen(text); if (nr) l.rechnungNr = nr; } // W2-T: Rechnungsnummer für den Steuer-Export (keine Kundennummer)
+    rechnungNrSetzen(l, rechnungsNummerLesen(text)); // W2-T: Rechnungsnummer für den Steuer-Export (keine Kundennummer)
     const ae = preiseUebernehmen(stand, l);
     fertig = { lieferung: l, aenderungen: ae, anzahl: genommen.length }; beleg = null; zeilen = []; text = "";
-    if (zuweisung?.upload) { zuweisung.upload.status = "uebernommen"; zuweisung.upload.ergebnis = { lieferung: l.id }; l.upload = zuweisung.upload.id; }
+    belegUploadVerknuepfen(zuweisung?.upload, l, "lieferung");
     zuweisung = null;
     return "uebernommen";
   }

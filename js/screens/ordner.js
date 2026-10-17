@@ -3,13 +3,15 @@
 // "ordner-buch" (Buchhalter). Je Ordner: Zeitraum, Stand mit Ring, Inhaltsliste mit Haken/Lücke, „Als PDF teilen“, Vorschau, CSV.
 // Daten kommen rein rechnend aus js/export_amt.js und js/export_steuer.js; hier stehen nur Texte, Aufbau und Teilen/Drucken.
 import { t, sprache } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
+import { esc, fmtEuro, fmtZahl, heute } from "../util.js";
+import { personAnlegen } from "../stamm.js"; // Trennung (17.10.2026)
 import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, belehrungEintragen, AMT_TEILE } from "../export_amt.js";
 import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe } from "../export_steuer.js";
 import de from "../lang/de.js"; // W2-T: feste deutsche Kennzeichnung der Umsatz-Notizen in jeder App-Sprache
 import { imTakt } from "../takt.js";
 import { monatName } from "./tag.js";
-import { bsym, ring, bueroKopf } from "./buero.js";
+import { bsym, bueroKopf } from "./buero.js";
+import { bueroRing as ring, dateienTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
 
 // ---------- Zustand ----------
 let amtZeit = { art: "monat", von: null, bis: null };
@@ -224,7 +226,7 @@ export function amtDokument(stand, o) {
   const massnahme = (x) => {
     if (!x.abweichung) return "";
     const teile = [x.massnahmen.map(n.massnahme).join(", ")];
-    if (x.ware && !(x.ware === "weggeworfen" && x.massnahmen.includes("weggeworfen"))) teile.push(t("amtW2.ware." + x.ware));
+    if (x.ware && !(x.ware === "weggeworfen" && x.massnahmen.includes("weggeworfen"))) teile.push(t("amtW2.ware." + x.ware) + (x.wareGrund ? `: ${x.wareGrund}` : "")); // Trennung (17.10.2026): Begründung bei „behalten“
     if (x.nachkontrolle) teile.push(nkText(x));
     if (x.status === "massnahmeOffen") teile.push(t("amtW2.abw.massnahmeOffen"));
     if (x.status === "verspaetet" && !x.nachkontrolle) teile.push(t("amtW2.abw.verspaetet"));
@@ -306,14 +308,7 @@ function drucken(html) {
   f.onload = () => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { console.warn(e); const w = window.open("", "_blank"); if (w) { w.document.write(html); w.document.close(); w.print(); } } setTimeout(() => f.remove(), 60000); };
   f.srcdoc = html; document.body.appendChild(f);
 }
-async function teilen(dateien, titel) {
-  const files = dateien.map((d) => new File([d.text], d.name, { type: d.typ || "text/csv;charset=utf-8" }));
-  if (navigator.canShare && navigator.canShare({ files })) {
-    try { await navigator.share({ files, title: titel }); return "geteilt"; } catch (e) { if (e.name === "AbortError") return "abgebrochen"; }
-  }
-  for (const f of files) { const a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
-  return "geladen";
-}
+const teilen = dateienTeilen; // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
 
 // ---------- Aktionen und Eingaben ----------
 // Rückgabe: false | true (neu zeichnen) | { speichern?: true, meldung? }
@@ -327,7 +322,7 @@ export async function ordnerAktion(name, el, stand, ansicht) {
     if (!e) return { meldung: t("ordner.belehrung.ungueltig") };
     delete belDatum[id]; return { speichern: true, meldung: t("ordner.belehrung.gespeichert") };
   }
-  if (name === "bel-person-neu") { const k = personNeu.trim(); if (!k) return false; stand.personen ??= []; stand.personen.push({ id: uid(), kuerzel: k.slice(0, 12), aktiv: true, entfernt: false }); personNeu = ""; return { speichern: true }; }
+  if (name === "bel-person-neu") { const k = personNeu.trim(); if (!k) return false; personAnlegen(stand, k.slice(0, 12)); personNeu = ""; return { speichern: true }; }
   if (name === "ordner-vorschau") { vorschauHtml = dokumentFuer(stand, ansicht); return true; }
   if (name === "ordner-vorschau-zu") { vorschauHtml = null; return true; }
   if (name === "ordner-pdf") { drucken(vorschauHtml || dokumentFuer(stand, ansicht)); return { meldung: t("ordner.knopf.druckHinweis") }; }

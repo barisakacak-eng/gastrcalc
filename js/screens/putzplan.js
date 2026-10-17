@@ -7,6 +7,7 @@ import { planVon, planVorschlag, aufgabenFuer, planGruppen, abhaken, zuruecknehm
 import { datumLesbar } from "./tag.js";
 import { sym } from "../symbole.js";
 import { nav } from "./nav.js";
+import { putzplanSpaeterSetzen } from "../stamm.js"; // Trennung (17.10.2026)
 import { personalAktiv } from "./personal.js"; // W2-S: Einrichten nur außerhalb des Personal-Modus
 
 let ansicht = "plan"; // plan | einrichten | nachweis
@@ -99,7 +100,7 @@ export function putzplanAktion(name, el, stand) {
   if (name === "pp-haken") { const a = planGruppen(stand); const x = [...a.tag, ...a.woche, ...a.monat, ...a.spaeter].find((y) => y.id === el.dataset.id); if (!x) return false;
     if (x.status === "erledigt" && x.letzte?.datum === heute()) zuruecknehmen(stand, x.id, heute(), { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); /* W2-H: wer zurücknimmt */ else abhaken(stand, x.id, { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); return "speichern"; }
   if (name === "pp-wer") { werId = el.dataset.id; try { localStorage.setItem("gc-putz-wer", werId); } catch { /* egal */ } return true; }
-  if (name === "pp-spaeter") { stand.putzplanSpaeter = heute(); return "zurueck"; }
+  if (name === "pp-spaeter") { putzplanSpaeterSetzen(stand, heute()); return "zurueck"; }
   if (name === "pp-drucken") { setTimeout(() => window.print(), 50); return false; }
   return false;
 }

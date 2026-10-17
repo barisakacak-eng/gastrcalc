@@ -4,10 +4,12 @@
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
 import { t, sprache, artikelText } from "../i18n.js";
-import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
+import { esc, parseZahl, fmtZahl, fmtEuro, heute, wertAnzeige, parseTemperatur } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
   letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD,
-  ruhetagUmschalten, rundgangVollstaendig } from "../engine.js"; // W2-H
+  ruhetagUmschalten, rundgangVollstaendig, rundgangVerwerfen } from "../engine.js"; // W2-H
+// Trennung (17.10.2026): Einrichtung (Stellen, Grenzen, Takt, Personen) schreibt über js/stamm.js
+import { kuehlstelleAnlegen, kuehlstelleArtSetzen, kuehlstelleArchivieren, kuehlstelleVerschieben, kuehlstelleNameSetzen, kuehlstelleGrenzeSetzen, kuehlEingerichtetSetzen, kuehlTaktSetzen, personAnlegen, personEntfernen } from "../stamm.js";
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
@@ -251,7 +253,7 @@ const leeresForm = () => ({ wert: null, wertText: "", abwGezeigt: false, grund: 
 export function kuehlAktion(name, el, stand, wurzel) {
   const r = rundgangOffen(stand);
   if (name === "kuehl-einrichtung") { ansicht = "einrichtung"; return true; }
-  if (name === "kuehl-einrichtung-fertig") { stand.kuehl.eingerichtet = aktiveStellen(stand).length > 0; ansicht = "start"; return true; }
+  if (name === "kuehl-einrichtung-fertig") { kuehlEingerichtetSetzen(stand); ansicht = "start"; return true; }
   if (name === "kuehl-start") { ansicht = "start"; station = null; form = null; return true; }
   if (name === "kuehl-rundgang") { if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = null; return true; } // W2-S: Personal ohne Einrichtung
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
@@ -260,17 +262,14 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "blatt-monat") { blattMonat = Number(el.dataset.wert); return true; }
   if (name === "blatt-drucken") { window.print(); return false; }
   // Einrichtung
-  if (name === "stelle-neu") { const n = neuName.trim(); if (!n) return false; if (!stand.kuehl.seit) stand.kuehl.seit = heute(); stand.kuehlstellen.push({ id: uid(), name: n, art: "kuehl", min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false }); neuName = ""; return true; }
-  if (name === "stelle-art") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k) return false; k.art = el.dataset.wert; if (k.art === "warm") k.max = null; if (k.art === "tk") k.min = null; return true; }
-  if (name === "stelle-archiv") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k || !confirm(t("kuehl.stelleWegFrage", kn(k)))) return false; k.archiviert = true; return true; } // nie löschen – alte Messungen behalten ihre Stelle
-  if (name === "stelle-hoch" || name === "stelle-runter") {
-    const liste = aktiveStellen(stand); const i = liste.findIndex((x) => x.id === el.dataset.id); const j = name === "stelle-hoch" ? i - 1 : i + 1;
-    if (i < 0 || j < 0 || j >= liste.length) return false; const a = liste[i].reihe; liste[i].reihe = liste[j].reihe; liste[j].reihe = a; if (liste[i].reihe === liste[j].reihe) { liste[i].reihe = j; liste[j].reihe = i; } return true;
-  }
-  if (name === "kuehl-takt") { stand.kuehl.takt = Number(el.dataset.wert) === 2 ? 2 : 1; return true; }
+  if (name === "stelle-neu") { const n = neuName.trim(); if (!n) return false; kuehlstelleAnlegen(stand, { name: n, art: "kuehl" }); neuName = ""; return true; }
+  if (name === "stelle-art") return kuehlstelleArtSetzen(stand, el.dataset.id, el.dataset.wert);
+  if (name === "stelle-archiv") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k || !confirm(t("kuehl.stelleWegFrage", kn(k)))) return false; return kuehlstelleArchivieren(stand, k.id); } // nie löschen – alte Messungen behalten ihre Stelle
+  if (name === "stelle-hoch" || name === "stelle-runter") return kuehlstelleVerschieben(stand, el.dataset.id, name === "stelle-hoch" ? -1 : 1);
+  if (name === "kuehl-takt") { kuehlTaktSetzen(stand, el.dataset.wert); return true; }
   if (name === "kuehl-ruhetag") { ruhetagUmschalten(stand, Number(el.dataset.wert)); return true; } // W2-H: gilt ab heute (Verlauf), sieben Ruhetage gibt es nicht
-  if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) return false; stand.personen.push({ id: uid(), kuerzel: k, aktiv: true, entfernt: false }); neuKuerzel = ""; return true; }
-  if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("amtW2.personWegFrage", p.kuerzel))) return false; p.entfernt = true; p.aktiv = false; p.ausgeschieden = heute(); return true; } // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
+  if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) return false; personAnlegen(stand, k); neuKuerzel = ""; return true; }
+  if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("amtW2.personWegFrage", p.kuerzel))) return false; return personEntfernen(stand, p.id, heute()); } // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
   // Rundgang starten
   if (name === "start-von") { startVon = el.dataset.id; return true; }
   if (name === "start-datum") { startNach = el.dataset.wert; return true; }
@@ -286,7 +285,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (!r) return false;
   if (name === "station") { station = el.dataset.id; const m = r.messungen.find((x) => x.stelle === station); form = leeresForm(); form.k = aktiveStellen(stand).find((x) => x.id === station); if (m) { form.wert = m.wert; form.wertText = wertAnzeige(m.wert); form.grund = m.grund; form.massnahmen = [...m.massnahmen]; form.notiz = m.notiz; form.nachkontrolle = m.nachkontrolle || "h2"; form.weg = (m.weg || []).map((w) => ({ ...w })); } return true; }
   if (name === "station-zu") { station = null; form = null; return true; }
-  if (name === "rundgang-verwerfen") { if (!confirm(t("kuehl.verwerfenFrage"))) return false; stand.rundgaenge = stand.rundgaenge.filter((x) => x.id !== r.id); station = null; form = null; ansicht = "start"; return true; }
+  if (name === "rundgang-verwerfen") { if (!confirm(t("kuehl.verwerfenFrage"))) return false; rundgangVerwerfen(stand, r.id); station = null; form = null; ansicht = "start"; return true; }
   if (name === "rundgang-abschluss") {
     rundgangAbschliessen(stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n));
     station = null; form = null; ansicht = "start"; return "abgeschlossen";
@@ -319,11 +318,8 @@ export function kuehlAktion(name, el, stand, wurzel) {
 export function kuehlEingabe(feld, wert, stand) {
   if (feld === "stelle-neu") { neuName = wert; return false; }
   if (feld === "person-neu") { neuKuerzel = wert; return false; }
-  if (feld.startsWith("stelle-name:")) { const k = stand.kuehlstellen.find((x) => x.id === feld.slice(12)); if (k) k.name = wert.slice(0, 40); return false; }
-  if (feld.startsWith("stelle-max:") || feld.startsWith("stelle-min:")) {
-    const k = stand.kuehlstellen.find((x) => x.id === feld.slice(11)); if (!k) return false;
-    const n = parseTemperatur(wert); if (feld.startsWith("stelle-max:")) k.max = n; else k.min = n; return false;
-  }
+  if (feld.startsWith("stelle-name:")) { kuehlstelleNameSetzen(stand, feld.slice(12), wert); return false; }
+  if (feld.startsWith("stelle-max:") || feld.startsWith("stelle-min:")) { kuehlstelleGrenzeSetzen(stand, feld.slice(11), feld.startsWith("stelle-max:") ? "max" : "min", parseTemperatur(wert)); return false; }
   if (!form) return false;
   if (feld === "station-wert") {
     form.wertText = wert; form.wert = parseTemperatur(wert); if (form.wert !== null) form.grund = null;
@@ -339,12 +335,4 @@ export function kuehlEingabe(feld, wert, stand) {
   return false;
 }
 
-// Temperaturen dürfen negativ sein (Tiefkühlung) – parseZahl nimmt kein Minus, deshalb hier getrennt.
-export function parseTemperatur(v) {
-  const s = String(v ?? "").trim().replace(/\s/g, "").replace("−", "-").replace("–", "-");
-  if (s === "" || s === "-") return null;
-  const neg = s.startsWith("-"); const n = parseZahl(neg ? s.slice(1) : s);
-  if (n === null || n > 300 || (neg && n > 100)) return null; // Küche: −100 bis 300 °C
-  return neg ? -n : n;
-}
 export const kuehlFormGueltig = () => { if (!form) return false; if (typeof form.wert === "number") return !(form.k && abweichung(form.k, form.wert)) || form.massnahmen.length > 0; return !!form.grund; };

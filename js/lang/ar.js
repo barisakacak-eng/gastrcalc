@@ -457,7 +457,7 @@ export default {
     abw: { behoben: "تمت المعالجة", verspaetet: "القياس اللاحق متأخر", massnahmeOffen: "الإجراء مفتوح", ohneMassnahme: "لم يُسجَّل إجراء" },
     nkVerspaetet: (h) => `القياس اللاحق متأخر (بعد ${h} ساعة)`,
     nkVerspaetetKurz: "القياس اللاحق متأخر",
-    ware: { umgelagert: "نُقلت البضاعة", weggeworfen: "رُميت البضاعة" },
+    ware: { umgelagert: "نُقلت البضاعة", weggeworfen: "رُميت البضاعة", behalten: "احتُفظ بالبضاعة" },
     abwOffen: (n) => `${n} انحرافات مفتوحة`,
     kuehlLuecken: (n, l) => `${n} قياسات · ${l} أيام فيها نقص`,
     teilweise: (l) => `قياس جزئي فقط: ${l}`,
@@ -1245,4 +1245,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: استعمله اليوم`, morgen: (ware) => `${ware}: استعمله حتى الغد`, vorbei: (ware) => `${ware}: انتهى تاريخ الاستهلاك – لا تستعمل`, vorbeiMehrere: (n) => `${n} بضائع: انتهى تاريخ الاستهلاك – لا تستعمل`, mehrere: (n) => `${n} بضائع تُستعمل حتى الغد`, mehrereHeute: (n) => `${n} بضائع تُستعمل اليوم`,
       bis: (ware, tag) => `${ware}: استعمله حتى ${tag}`, aktion: (ware, tag) => `${ware}: عرض حتى ${tag} يستحق`, mhdVorbei: (ware) => `${ware}: انتهى „يفضل قبل“ – افحص`, knopf: "عرض" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "البضاعة بعد انحراف التبريد", unter: "ماذا حدث للبضاعة؟", leer: "لا يوجد انحراف مفتوح. كل شيء تقرر.", wegwerfen: "رُميت", behalten: "احتُفظ بها", wegFrage: "ما الذي رُمي؟", wegLeer: "لم تُدخل بضاعة بعد.", wegSpeichern: "سجّل كهدر", wert: "قيمة البضاعة", grundFrage: "لماذا احتُفظ بها؟", grundPlatzhalter: "مثلاً نُقلت فوراً إلى الثلاجة الأخرى", grundSpeichern: "احفظ السبب", abbrechen: "إلغاء", gebucht: "سُجّلت كهدر.", behaltenOk: "تم الحفظ.", grundKurz: "اكتب سبباً قصيراً من فضلك." },
 };

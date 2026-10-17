@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "giderildi", verspaetet: "Kontrol ölçümü gecikti", massnahmeOffen: "Önlem açık", ohneMassnahme: "önlem girilmedi" },
     nkVerspaetet: (h) => `Kontrol ölçümü gecikti (${h} saat sonra)`,
     nkVerspaetetKurz: "Kontrol ölçümü gecikti",
-    ware: { umgelagert: "Mal başka yere kondu", weggeworfen: "Mal atıldı" },
+    ware: { umgelagert: "Mal başka yere kondu", weggeworfen: "Mal atıldı", behalten: "Mal saklandı" },
     abwOffen: (n) => `${n} sapma açık`,
     kuehlLuecken: (n, l) => `${n} ölçüm · ${l} günde eksik`,
     teilweise: (l) => `kısmen ölçüldü: ${l}`,
@@ -1231,4 +1231,6 @@ export default {
     uhr: { heute: (ware) => `${ware} bugün kullan`, morgen: (ware) => `${ware} yarına kadar kullan`, vorbei: (ware) => `${ware}: son kullanma tarihi geçti – kullanma`, vorbeiMehrere: (n) => `${n} ürün: son kullanma tarihi geçti – kullanma`, mehrere: (n) => `${n} ürünü yarına kadar kullan`, mehrereHeute: (n) => `${n} ürünü bugün kullan`,
       bis: (ware, tag) => `${ware} ${tag} gününe kadar kullan`, aktion: (ware, tag) => `${ware}: ${tag} gününe kadar kampanya kazandırır`, mhdVorbei: (ware) => `${ware}: TETT geçti – kontrol et`, knopf: "Bak" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Soğutma sapmasından sonra mal", unter: "Mala ne oldu?", leer: "Açık sapma yok. Hepsi karara bağlandı.", wegwerfen: "Atıldı", behalten: "Saklandı", wegFrage: "Ne atıldı?", wegLeer: "Henüz mal girilmedi.", wegSpeichern: "Çöp olarak kaydet", wert: "Malın değeri", grundFrage: "Neden saklandı?", grundPlatzhalter: "örn. hemen diğer buzdolabına kondu", grundSpeichern: "Gerekçeyi kaydet", abbrechen: "Vazgeç", gebucht: "Çöp olarak kaydedildi.", behaltenOk: "Kaydedildi.", grundKurz: "Lütfen kısaca gerekçe yaz." },
 };

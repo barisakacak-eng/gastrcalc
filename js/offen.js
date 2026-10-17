@@ -1,16 +1,16 @@
 // Drei Ebenen (15.10.2026), Entwickler B: was darf im Laden melden – und was wartet im Büro.
 // Laden „Heute“ zeigt höchstens EINE Aufgabe („Jetzt dran“) aus einer festen Liste (jetztDran). Alles andere, was früher das Cockpit
 // gefüllt hat (Einrichtungsring, Kostenlücken, Waage-Vorschlag, graue Gerichte, Hinweise, neue Fassung …), liefert offenImBuero()
-// als Liste für die Büro-Startseite. Reine Logik, kein HTML (außer dem kleinen Helfer zielAttr für data-Attribute).
+// als Liste für die Büro-Startseite. Reine Logik, kein HTML.
 import { t } from "./i18n.js";
 import { kuehlstelleAnzeige } from "./kuehlname.js"; // Paket 6 (17.10.2026)
 import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
-import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, abweichungStand } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
+import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, rundgangOffen, offeneWareEntscheidungen } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
 import { zaehler, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
 import { einrichtungStand } from "./einrichtung.js";
 import { wareneinsatzSicherheit } from "./rezept_quelle.js";
-import { sicherungStufe } from "./screens/nav.js";
+import { sicherungStufe } from "./sicherung_stufe.js"; // Trennung (17.10.2026): vorher aus einem Bildschirm (screens/nav.js)
 import { imTakt } from "./takt.js";
 import { haltbarUhrzeit } from "./haltbar.js"; // Stufe 1 (17.10.2026): Ablauf/Aktion als Büro-Hinweis (im Laden nichts)
 import { bestandUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
@@ -23,14 +23,7 @@ export const einrichtungImTakt = (stand, wurzel) => imTakt(stand, "einrichtung",
 export const istHauptzeit = (h) => (h >= 11.5 && h < 14) || (h >= 17.5 && h < 20.5);
 const stunde = (d) => d.getHours() + d.getMinutes() / 60;
 
-// ziel → data-Attribute für einen Knopf ({ aktion: "nav", wert } | { aktion: "bearbeiten", schritt, bis } | { aktion: "<name>" })
-export function zielAttr(z) {
-  if (!z) return "";
-  const q = (v) => String(v).replace(/"/g, "&quot;");
-  if (z.aktion === "nav") return `data-a="nav" data-wert="${q(z.wert)}"${z.anker ? ` data-anker="${q(z.anker)}"` : ""}`;
-  if (z.aktion === "bearbeiten") return `data-a="bearbeiten" data-schritt="${q(z.schritt)}"${z.bis ? ` data-bis="${q(z.bis)}"` : ""}`;
-  return `data-a="${q(z.aktion)}"${z.offen !== undefined ? ` data-offen="${q(z.offen)}"` : ""}`;
-}
+// Trennung (17.10.2026): zielAttr (ziel → data-Attribute) wohnt jetzt bei den Anzeige-Bausteinen (js/screens/bausteine.js).
 
 // „Jetzt dran“ im Laden – nur diese Fälle, in dieser Reihenfolge, immer nur einer:
 //  1. Kühlwert außerhalb der Grenze / Nachkontrolle offen → rot, „Nachmessen“
@@ -87,11 +80,38 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   const s = sicherungStufe(wurzel, jetzt.getTime());
   if (s?.stufe) add("sicherung", s.tage === null ? t("heute.offen.sicherungNie") : t("heute.offen.sicherung", s.tage), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });
   // W2-H (p03 H1/H2): Abweichungen der letzten 30 Tage ohne Abschluss (Ware-Entscheidung oder pünktliche Nachkontrolle fehlt; auch „verspätet“)
-  const abwOffen = (stand.messungen || []).filter((m) => !m.storniert && m.abweichung && m.datum >= tagPlus(H, -30) && ["massnahmeOffen", "verspaetet", "ohneMassnahme"].includes(abweichungStand(stand, m))).length;
-  if (abwOffen) add("kuehlMassnahme", t("amtW2.buero", abwOffen), { aktion: "nav", wert: "ordner-amt" });
+  // Trennung (17.10.2026), Punkt 4: dieselbe Auswahl als Rechenwerk-Funktion; der Hinweis führt jetzt auf den Büro-Bildschirm „Ware nach Kühl-Abweichung“
+  const abwOffen = offeneWareEntscheidungen(stand, { heuteTag: H }).length;
+  if (abwOffen) add("kuehlMassnahme", t("amtW2.buero", abwOffen), { aktion: "nav", wert: "kuehlware" });
   const ohneWert = schwundOhneWert(stand).length;
   if (ohneWert) add("muellOhneWert", t("heute.offen.muellOhneWert", ohneWert), { aktion: "nav", wert: "listen" });
   if (stand.branchenMeldung) add("branche", t("cockpit.branchenMeldung", stand.branchenMeldung.geaendert), { aktion: "branchen-ok" });
   if (e.prozent >= 100 && !stand.einrichtungFertig) add("einrichtungFertig", t("einrichtung.fertig"), { aktion: "einrichtung-fertig-ok" });
   return out;
 }
+
+// ---------- Trennung (17.10.2026): aus js/screens/nav.js ins Rechenwerk verschoben (unverändert) ----------
+// Zahlen für „Offen im Büro" (rein rechnend). Teuer (Kalkulation): wird nur auf Abruf gerechnet, nie beim Zeichnen des Ladens.
+export function menueZaehler(stand, wurzel) {
+  if (!stand) return {};
+  const ks = kuehlStatus(stand); const nk = offeneNachkontrollen(stand);
+  const kuehl = (ks.eingerichtet ? Math.max(0, ks.stellen - ks.heuteGemessen) : 0) + nk.length;
+  const karte = stand.gerichte?.length ? kalkulation(stand).zaehl.grau : 0;
+  const s = sicherungStufe(wurzel); const e = einrichtungStand(stand, wurzel);
+  return { start: e.prozent < 100 ? `${e.prozent} %` : null, kuehl: kuehl || null, karte: karte || null, listen: schwundOhneWert(stand).length || null,
+    sicherung: s?.stufe ? "!" : null, punkt: s?.stufe === "rot" || nk.some((m) => m.ueberfaellig) };
+}
+
+// Roter Punkt in der Leiste: höchstens einer gleichzeitig, Kühlung vor Putzen (Architektur „Jetzt dran").
+// Kühlung: Nachkontrolle offen, letzter Wert einer Stelle außerhalb der Grenze oder Rundgang begonnen und nicht fertig. Putzen: Aufgabe überfällig.
+export function ladenPunkt(stand) {
+  if (!stand) return null;
+  try {
+    if (offeneNachkontrollen(stand).length || rundgangOffen(stand)) return "kuehl";
+    if (aktiveStellen(stand).some((k) => letzteMessung(stand, k.id)?.abweichung)) return "kuehl";
+    if (rundgangAbweichungen(stand).length) return "kuehl"; // W2-H (p01 K3): Abweichung im offenen Rundgang zählt sofort (bleibt rot, auch wenn der offene Rundgang allein später keinen Punkt mehr gibt)
+    if (stand.putzplan?.aktiv && planGruppen(stand).ueberfaellig > 0) return "putzplan";
+  } catch (e) { console.warn(e); }
+  return null;
+}
+

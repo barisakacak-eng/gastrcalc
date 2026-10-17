@@ -32,3 +32,14 @@ export function selbstAnwenden(stand, ids = selbstGewaehlt(stand)) {
   }
   return stand;
 }
+
+// Trennung (17.10.2026): aus js/screens/onboarding.js ins Rechenwerk verschoben (unverändert).
+// Vorauswahl „selbst gemacht“ nach Laden-Art – still angewendet, ohne Frage. Eine eigene Antwort des Wirts (im Büro geändert) bleibt.
+const gleich = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
+export function selbstStandard(stand) {
+  const art = ladenArtVon(stand); if (!art) return false;
+  const eigeneAntwort = Array.isArray(stand.selbst) && !(stand.selbstAutoArt && gleich(stand.selbst, vorauswahlFuer(stand.selbstAutoArt)));
+  if (eigeneAntwort) return false;
+  selbstAnwenden(stand, vorauswahlFuer(art)); stand.selbstAutoArt = art;
+  return true;
+}

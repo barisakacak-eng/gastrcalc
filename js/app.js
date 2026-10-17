@@ -1,9 +1,9 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { kalkulationNeuerTakt } from "./engine.js";
-import { laden, speichern, sofortSpeichern, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
+import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
-import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
+import { t, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
@@ -15,7 +15,7 @@ import { branchenwerteAnwenden } from "./rezept_quelle.js";
 import { fotoVerarbeiten, fotosHinzufuegen, fotoZuruecksetzen, serieAbbrechen, fotoKennung, karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, hatVorschlaege, fotoLauf, karteFussKnopf, karteZeigtPruefliste, rechnungsLaufZuruecksetzen } from "./screens/foto.js"; // W2-D: rechnungsLaufZuruecksetzen
 import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
-import { parseTemperatur } from "./screens/kuehl.js";
+import { parseTemperatur } from "./util.js"; // Trennung (17.10.2026)
 import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } from "./screens/putzplan.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView } from "./screens/laeden.js";
@@ -27,7 +27,7 @@ import { nav, navKontext } from "./screens/nav.js";
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt } from "./modus.js"; // W2-S: Sperrliste Personal
 import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
-import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellEingabeOeffnen, muellRueckgaengig, muellFotoSetzen,
+import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
 import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
 import { rundgangOffen, kuehlBereit } from "./engine.js"; // D: Personal-Kachel Kühlung
@@ -41,17 +41,21 @@ import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, k
 import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen } from "./screens/buero.js";
 import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
 import { rundgangOffen as w2RundgangOffen } from "./engine.js"; // W2-D: stilles Update nur ohne offenen Rundgang
-import { beispielLaden } from "./beispiel.js"; // Beispiel-Laden (17.10.2026)
+import { beispielLaden, beispielNamenFolgen } from "./beispiel.js"; // Beispiel-Laden (17.10.2026); Trennung (17.10.2026): beispielNamenFolgen
+// Trennung (17.10.2026): Handlungen und Eingaben schreiben über das Rechenwerk (js/stamm.js, js/karte_daten.js)
+import { einrichtungFertigSetzen, kuehlKeineSetzen, branchenMeldungQuittieren, abgleichHinweisQuittieren, kleinunternehmerUmschalten, waageVorschlagGesehen, warenQuoteSetzen, steuerSatzSetzen, uploadAnlegen } from "./stamm.js";
+import { gerichtFotoSetzen } from "./karte_daten.js";
 import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
 import { verkaufSichtbar } from "./verkauf.js"; // E7
 import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
-import { aktionenView, aktionenAktion, aktionenZuruecksetzen, aktionenZurueck, aktionenKennung } from "./screens/aktionen.js"; // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
+import { aktionenView, aktionenAktion, aktionenZuruecksetzen, aktionenZurueck, aktionenKennung } from "./screens/aktionen.js";
+import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen]; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, kuehlWareZuruecksetzen]; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -73,12 +77,21 @@ function aktivSetzen(id) {
   if (!stand) { stand = leererBetrieb(); wurzel.betriebe.push(stand); }
   wurzel.aktiv = stand.id;
   schrittWiederherstellen(stand); // E: gespeicherter Onboarding-Schritt nach Kennung (alte Stände: Nummer → Kennung)
+  schrittBetreten();
 }
+// Trennung (17.10.2026): Ein Schritt, der beim Betreten Daten vorbereitet (Einkaufspreise: Artikelliste abgleichen), tut das hier –
+// beim Wechsel des Schritts oder Ladens, nicht mehr im Zeichnen.
+// Dazu wird hier die Kennung des Schritts gemerkt (schrittIdMerken) – vorher bei jedem Zeichnen der Einrichtung.
+function schrittBetreten() { if (stand?.phase !== "onboarding") return; schrittIdMerken(stand); const s = schritteFuer(stand)[stand.schritt]; if (s?.beimBetreten) s.beimBetreten(stand); }
+// Trennung (17.10.2026): Personal-Modus – neue Einträge bekommen die Schicht-Person, bevor gespeichert wird (vorher schrieb das Zeichnen das nach).
+function personNachtragen() { if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) personalNachtragen(stand); } }
+function speichern(w) { personNachtragen(); return speichernStore(w); }
+function sofortSpeichern(w) { personNachtragen(); return sofortSpeichernStore(w); }
 
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ""; // E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
+  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ansicht === "kuehlware" ? kuehlWareKennung() : ""; // E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -94,9 +107,8 @@ async function eigeneFotosLaden() {
 
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
-  if (wurzel) for (const b of wurzel.betriebe || []) if (b.beispiel && b.betrieb) b.betrieb.name = t("beispiel.name"); // Beispiel-Laden (17.10.2026): Name folgt der Sprache
   // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
-  if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { personalNachtragen(stand); if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } }
+  if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } } // Trennung (17.10.2026): Person nachtragen beim Speichern (unten), nicht im Zeichnen
   const kennung = schirmKennung();
   const y = kennung === letzterSchirm ? window.scrollY : 0;
   try {
@@ -124,6 +136,7 @@ function zeichne() {
         : ansicht === "verkauf" ? verkaufView(stand) // E7 (17.10.2026)
         : ansicht === "bestand" ? bestandView(stand) // Bestand (17.10.2026)
         : ansicht === "aktionen" ? aktionenView(stand) // Stufe 1 (17.10.2026)
+        : ansicht === "kuehlware" ? kuehlWareView(stand) // Trennung (17.10.2026), Punkt 4
         : ansicht === "personal" ? personalView(stand) // D
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
@@ -149,6 +162,12 @@ function zeichne() {
   window.scrollTo(0, y);
 }
 
+// Trennung (17.10.2026): Sprache setzen und dabei den Namen des Beispiel-Ladens nachziehen (vorher schrieb das Zeichnen ihn bei jedem Bild).
+function setzeSprache(code, danach) {
+  setzeSpracheI18n(code, () => { beispielNamenFolgen(wurzel, t("beispiel.name")); if (danach) danach(); });
+  beispielNamenFolgen(wurzel, t("beispiel.name"));
+}
+
 // Speisekarte fotografieren aus der App heraus (Karte → „Speisekarte fotografieren"): dieselben Bausteine wie im Schnellstart.
 function karteFotoSchirm() {
   return `<div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
@@ -158,7 +177,7 @@ function karteFotoSchirm() {
 }
 
 function zeichneOnboarding() {
-  schrittIdMerken(stand); // E: Kennung des sichtbaren Schritts mitspeichern
+  // E: Kennung des sichtbaren Schritts – Trennung (17.10.2026): gemerkt in schrittBetreten(), nicht mehr beim Zeichnen
   const SCHRITTE = schritteFuer(stand);
   const i = Math.min(stand.schritt, SCHRITTE.length - 1);
   const s = SCHRITTE[i];
@@ -204,7 +223,7 @@ async function schrittWeiter(art = "fertig") {
     await ereignis(art === "uebersprungen" ? "schritt-uebersprungen" : "schritt-fertig", { schritt: s.id, laden: stand.id });
     if (stand.rueckkehr && stand.rueckkehr.bis === s.id) { zurueckZurApp(); }
     else if (stand.schritt < SCHRITTE.length - 1) {
-      stand.schritt += 1; history.pushState({ schritt: stand.schritt }, "");
+      stand.schritt += 1; schrittBetreten(); history.pushState({ schritt: stand.schritt }, "");
       await ereignis("schritt-start", { schritt: SCHRITTE[stand.schritt].id, laden: stand.id });
     }
     speichern(wurzel); zeichne();
@@ -217,7 +236,7 @@ function schrittZurueck() {
   if (s?.id === "karte-foto" && hatVorschlaege()) { fotoZuruecksetzen(); zeichne(); return; } // erst die Prüfliste verwerfen, dann zurück
   if (s.zurueck && s.zurueck(stand)) { speichern(wurzel); zeichne(); return; }
   if (stand.rueckkehr && (stand.rueckkehr.von === s.id || stand.schritt === 0)) { zurueckZurApp(); }
-  else if (stand.schritt > (stand.neuAus ? 1 : 0)) { stand.schritt -= 1; ereignis("schritt-zurueck", { schritt: SCHRITTE[stand.schritt].id }); }
+  else if (stand.schritt > (stand.neuAus ? 1 : 0)) { stand.schritt -= 1; schrittBetreten(); ereignis("schritt-zurueck", { schritt: SCHRITTE[stand.schritt].id }); }
   else if (wurzel.betriebe.length > 1) {
     // Ein noch leerer neuer Laden wird wieder verworfen, wenn der Nutzer auf dem ersten Schritt zurück geht.
     const alt = stand; const ziel = alt.neuAus && wurzel.betriebe.some((b) => b.id === alt.neuAus) ? alt.neuAus : wurzel.betriebe.find((b) => b.id !== alt.id).id;
@@ -248,6 +267,7 @@ function bearbeiten(vonId, bisId) {
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
   stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : ansicht === "kartefoto" ? "kartebuero" : ansicht.startsWith("ordner-") ? "buero" : "start" }; // 17.10.2026 Fehler F1: aus „Karte per Foto“ zurück zur Speisekarte
+  schrittBetreten();
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();
@@ -460,14 +480,11 @@ async function aufKlick(ev) {
   if (await ebeneAktion(name, el)) return;
   if (blattOffen() && !BLATT_INTERN.has(name)) blattSchliessen();
   if (name === "vergleich-modus") { vergleichModus(el.dataset.wert); return zeichne(); }
-  if (name === "einrichtung-liste") { try { const zu = localStorage.getItem("gc-einrichtung-zu") !== "0"; localStorage.setItem("gc-einrichtung-zu", zu ? "0" : "1"); } catch { /* ohne Speicher bleibt die Liste offen */ } return zeichne(); }
-  if (name === "einrichtung-fertig-ok") { stand.einrichtungFertig = true; speichern(wurzel); return zeichne(); }
-  if (name === "kuehl-keine") { stand.kuehl.keine = true; speichern(wurzel); return zeichne(); }
-  if (name === "branchen-ok") { delete stand.branchenMeldung; speichern(wurzel); return zeichne(); }
-  if (name === "kleinunternehmer") { stand.betrieb.kleinunternehmer = !stand.betrieb.kleinunternehmer; speichern(wurzel); return zeichne(); } // Paket 3 (16.10.2026), M1: keine Vorsteuer – alle Posten Satz 0
-  if (name === "waage-vorschlag") { stand.waageVorschlag = new Date().toISOString().slice(0, 10); speichern(wurzel); return bearbeiten("rezepte"); }
-  if (name === "schnell-muell") { tagZuruecksetzen(); muellZuruecksetzen(); muellEingabeOeffnen(); ansicht = "muell"; return zeichne(); }
-  if (name === "schnell-umsatz") { tagZuruecksetzen(); umsatzZuruecksetzen(); ansicht = "umsatz"; zeichne(); root.querySelector('[data-f="umsatz"]')?.focus(); return; }
+  if (name === "einrichtung-fertig-ok") { einrichtungFertigSetzen(stand); speichern(wurzel); return zeichne(); }
+  if (name === "kuehl-keine") { kuehlKeineSetzen(stand); speichern(wurzel); return zeichne(); }
+  if (name === "branchen-ok") { branchenMeldungQuittieren(stand); speichern(wurzel); return zeichne(); }
+  if (name === "kleinunternehmer") { kleinunternehmerUmschalten(stand); speichern(wurzel); return zeichne(); } // Paket 3 (16.10.2026), M1: keine Vorsteuer – alle Posten Satz 0
+  if (name === "waage-vorschlag") { waageVorschlagGesehen(stand, new Date().toISOString().slice(0, 10)); speichern(wurzel); return bearbeiten("rezepte"); }
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
@@ -479,11 +496,12 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
+    if (ziel === "kuehlware") kuehlWareZuruecksetzen(); // Trennung (17.10.2026), Punkt 4
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
-  if (name === "abgleich-ok") { delete stand.abgleichHinweis; speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
+  if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
@@ -505,7 +523,6 @@ async function aufKlick(ev) {
   // D: Müll nachtragen aus Büro/Listen (Tag wählen, dann das Foto-Raster für diesen Tag)
   if (name === "muell1-nachtragen") { tagAktion("tag-datum", el, stand); muellZuruecksetzen(); ansicht = "muell"; return zeichne(); }
   // D: Personal-Modus – Person wählen, Kacheln, Zurück zum Personal-Start
-  if (name === "personal-start") { ansicht = "personal"; return zeichne(); }
   if (ansicht === "personal") {
     const r = personalAktion(name, el, stand); if (!r) return;
     if (r.ziel) {
@@ -570,6 +587,11 @@ async function aufKlick(ev) {
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
+  if (ansicht === "kuehlware") { // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung – weggeworfen (Müll) oder behalten (Begründung)
+    const r = kuehlWareAktion(name, el, stand);
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
   if (ansicht === "aktionen") { // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit – nur Vorschläge, nichts wird gespeichert
     const r = await aktionenAktion(name, el, stand);
     if (r) { if (r.meldung) meldung(r.meldung); zeichne(); }
@@ -621,8 +643,8 @@ root.addEventListener("input", (ev) => {
     if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="beleg-zerlegen"]'); if (k) k.disabled = !belegTextDa(); }
     if (neu === "knopf-zw") { neu = false; const k = root.querySelector('[data-a="zw-speichern"]'); const w = parseZahl(el.value); if (k) k.disabled = !(w > 0); }
   } else if (ansicht === "einstellungen") {
-    if (el.dataset.f === "warenQuote") { const n = parseZahl(el.value); stand.verkauf.warenQuote = n !== null && n < 90 ? n / 100 : null; }
-    if (el.dataset.f === "steuerSatz") { const n = parseZahl(el.value); stand.betrieb.steuerSatz = n !== null && n < 100 ? n / 100 : null; }
+    if (el.dataset.f === "warenQuote") warenQuoteSetzen(stand, parseZahl(el.value));
+    if (el.dataset.f === "steuerSatz") steuerSatzSetzen(stand, parseZahl(el.value));
   } else if (ansicht === "buero") { // Entwickler C
     neu = bueroEingabe(el.dataset.f, el.value); if (neu === "knopf") { neu = false; if (el.value !== el.value.replace(/\D/g, "").slice(0, 4)) el.value = el.value.replace(/\D/g, "").slice(0, 4); }
   } else if (ansicht.startsWith("ordner-")) {
@@ -631,6 +653,10 @@ root.addEventListener("input", (ev) => {
     neu = inventurEingabe(el.dataset.f, el.value);
   } else if (ansicht === "verkauf") { // E7 (17.10.2026): Handeingabe ist ein Entwurf bis „Speichern“; nur der Tag zeichnet neu
     const r = verkaufEingabe(el.dataset.f, el.value); if (r === "zeichnen") { zeichne(); return; } if (r === "entwurf") return;
+  } else if (ansicht === "kuehlware") { // Trennung (17.10.2026), Punkt 4: nur Entwurf; Begründung schaltet nur den Knopf
+    neu = kuehlWareEingabe(el.dataset.f, el.value, stand);
+    if (neu === "knopf") { const k = root.querySelector('[data-a="kw-behalten-speichern"]'); if (k) k.disabled = !kuehlWareGrundGueltig(); return; }
+    if (neu !== true) return;
   } else if (ansicht === "bestand") { // Bestand (17.10.2026): Mindestbestand ist ein Entwurf bis „Speichern“
     if (bestandEingabe(el.dataset.f, el.value) === "entwurf") return;
   } else if (ansicht === "kuehl") {
@@ -668,14 +694,13 @@ root.addEventListener("change", async (ev) => {
   if (el.dataset.f === "gericht-foto") { // Zielbild: eigenes Foto je Gericht (ersetzt Standardbild), bleibt auf dem Gerät
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return;
     try { const meta = await ablegen(await bildFuerAblage(datei, 800), { name: datei.name || "", zweck: "gericht", laden: stand.id });
-      stand.uploads.push({ id: "u-" + Date.now().toString(36), zweck: "gericht", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: meta, ref: g.id });
-      g.foto = meta.id; g.fotoMeta = meta; speichern(wurzel); meldung(t("vergleich.fotoGespeichert")); }
+      gerichtFotoSetzen(stand, g.id, meta, { geraet: wurzel.geraet }); speichern(wurzel); meldung(t("vergleich.fotoGespeichert")); }
     catch (e) { console.warn(e); meldung(t("muell.fotoFehler")); }
     return zeichne();
   }
   if (el.dataset.f === "muell-foto") { // Zielbild: Foto (optional) beim Müll – nur ablegen, nicht lesen; hängt am nächsten Eintrag
-    const eintrag = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt", datei: null, auswertung: null, ergebnis: null };
-    try { eintrag.datei = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: stand.id }); stand.uploads.push(eintrag); muellFotoSetzen(eintrag); speichern(wurzel); }
+    const kopf = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: wurzel.geraet, status: "abgelegt" };
+    try { const abgelegt = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: stand.id }); muellFotoSetzen(uploadAnlegen(stand, { ...kopf, datei: abgelegt, auswertung: null, ergebnis: null })); speichern(wurzel); } // Trennung (17.10.2026)
     catch (e) { console.warn(e); meldung(t("muell.fotoFehler")); }
     return zeichne();
   }
@@ -720,6 +745,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "verkauf" && verkaufZurueck()) { /* E7: Vorschau/Handeingabe → Übersicht */ }
     else if (ansicht === "bestand" && bestandZurueck()) { /* Bestand (17.10.2026): Mindestbestand-Liste zu */ }
     else if (ansicht === "aktionen" && aktionenZurueck()) { /* Stufe 1 (17.10.2026): Kombi-Auswahl leeren */ }
+    else if (ansicht === "kuehlware" && kuehlWareZurueck()) { /* Trennung (17.10.2026): offene Entscheidung schließen */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro

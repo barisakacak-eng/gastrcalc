@@ -461,7 +461,7 @@ export default {
     abw: { behoben: "rezolvat", verspaetet: "Controlul ulterior a întârziat", massnahmeOffen: "Măsură deschisă", ohneMassnahme: "nicio măsură introdusă" },
     nkVerspaetet: (h) => `Controlul ulterior a întârziat (după ${h} ore)`,
     nkVerspaetetKurz: "Controlul ulterior a întârziat",
-    ware: { umgelagert: "Marfa mutată", weggeworfen: "Marfa aruncată" },
+    ware: { umgelagert: "Marfa mutată", weggeworfen: "Marfa aruncată", behalten: "Marfa păstrată" },
     abwOffen: (n) => `Abateri deschise: ${n}`,
     kuehlLuecken: (n, l) => `${n} măsurători · zile cu lipsă: ${l}`,
     teilweise: (l) => `măsurat doar parțial: ${l}`,
@@ -1250,4 +1250,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: folosește azi`, morgen: (ware) => `${ware}: folosește până mâine`, vorbei: (ware) => `${ware}: data limită a trecut – nu mai folosi`, vorbeiMehrere: (n) => `${n} mărfuri: data limită a trecut – nu mai folosi`, mehrere: (n) => `${n} mărfuri de folosit până mâine`, mehrereHeute: (n) => `${n} mărfuri de folosit azi`,
       bis: (ware, tag) => `${ware}: folosește până ${tag}`, aktion: (ware, tag) => `${ware}: o ofertă până ${tag} merită`, mhdVorbei: (ware) => `${ware}: durabilitate trecută – verifică`, knopf: "Vezi" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Marfa după o abatere la răcire", unter: "Ce s-a întâmplat cu marfa?", leer: "Nicio abatere deschisă. Totul e decis.", wegwerfen: "Aruncată", behalten: "Păstrată", wegFrage: "Ce s-a aruncat?", wegLeer: "Încă nu e trecută nicio marfă.", wegSpeichern: "Înregistrează ca deșeu", wert: "Valoarea mărfii", grundFrage: "De ce păstrată?", grundPlatzhalter: "de ex. mutată imediat în celălalt frigider", grundSpeichern: "Salvează motivul", abbrechen: "Renunță", gebucht: "Înregistrat ca deșeu.", behaltenOk: "Salvat.", grundKurz: "Te rog scrie un motiv scurt." },
 };

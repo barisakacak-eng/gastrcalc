@@ -460,7 +460,7 @@ export default {
     abw: { behoben: "устранено", verspaetet: "Контрольный замер опоздал", massnahmeOffen: "Мера не завершена", ohneMassnahme: "мера не указана" },
     nkVerspaetet: (h) => `Контрольный замер опоздал (через ${h} ч)`,
     nkVerspaetetKurz: "Контрольный замер опоздал",
-    ware: { umgelagert: "Товар переложен", weggeworfen: "Товар выброшен" },
+    ware: { umgelagert: "Товар переложен", weggeworfen: "Товар выброшен", behalten: "Товар оставлен" },
     abwOffen: (n) => `Открытых отклонений: ${n}`,
     kuehlLuecken: (n, l) => `Замеров: ${n} · дней с пропуском: ${l}`,
     teilweise: (l) => `измерено частично: ${l}`,
@@ -1248,4 +1248,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: использовать сегодня`, morgen: (ware) => `${ware}: использовать до завтра`, vorbei: (ware) => `${ware}: срок годности истёк – не использовать`, vorbeiMehrere: (n) => `Товаров с истёкшим сроком: ${n} – не использовать`, mehrere: (n) => `Товаров использовать до завтра: ${n}`, mehrereHeute: (n) => `Товаров использовать сегодня: ${n}`,
       bis: (ware, tag) => `${ware}: использовать до ${tag}`, aktion: (ware, tag) => `${ware}: акция до ${tag} выгодна`, mhdVorbei: (ware) => `${ware}: «годен до» прошёл – проверить`, knopf: "Открыть" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Товар после отклонения охлаждения", unter: "Что стало с товаром?", leer: "Открытых отклонений нет. Всё решено.", wegwerfen: "Выброшен", behalten: "Оставлен", wegFrage: "Что выбросили?", wegLeer: "Товар ещё не внесён.", wegSpeichern: "Записать как отходы", wert: "Стоимость товара", grundFrage: "Почему оставлен?", grundPlatzhalter: "напр. сразу переложен в другой холодильник", grundSpeichern: "Сохранить причину", abbrechen: "Отмена", gebucht: "Записано как отходы.", behaltenOk: "Сохранено.", grundKurz: "Пожалуйста, кратко укажи причину." },
 };

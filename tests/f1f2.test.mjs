@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { leererBetrieb } from "../js/store.js";
 import { VORLAGEN, PRODUKT_INDEX } from "../js/data/katalog.js";
 import { bearbeitenZiel, schrittIndex } from "../js/screens/onboarding.js";
-import { gerichtAusVorlage } from "../js/screens/karte.js";
+import { gerichtAusVorlage } from "../js/karte_daten.js"; // Trennung (17.10.2026)
 import { artikelAusGerichten } from "../js/engine.js";
 import { rezeptStempel } from "../js/rezept_quelle.js";
 import * as I from "../js/inventur.js";

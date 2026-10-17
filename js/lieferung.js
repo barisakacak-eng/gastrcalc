@@ -5,6 +5,7 @@ import { uid, heute } from "./util.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis } from "./engine.js";
 import { preisJeEinheit } from "./beleg.js";
+import { uploadAendern } from "./stamm.js"; // Trennung (17.10.2026)
 
 // Belegeinheit → App-Einheit für packung.einheit
 const EINHEIT_APP = { kg: "kg", g: "g", l: "l", ml: "ml", cl: "ml", stk: "stk" };
@@ -94,4 +95,19 @@ export function preisSprung(stand, z, belegBasis) {
   const alt = istRichtpreis(a) ? null : preisJeBasis(a); if (!(alt > 0)) return null; // Richtpreise (17.10.2026): kein Sprung gegen einen Richtpreis
   const neu = preisJeBasis({ ...a, packung: { menge: jz.inhaltMenge, einheit: jz.inhaltEinheit }, preis: jz.netto / jz.menge, preisBasis: "netto" }); if (neu === null) return null;
   return { alt, neu, prozent: (neu - alt) / alt, einheit: EINHEITEN[jz.inhaltEinheit]?.basis || "stk" };
+}
+
+// ---------- Trennung (17.10.2026): kleine Schreibvorgänge, die vorher in js/screens/beleg.js standen ----------
+// Lieferung zurücknehmen: nie löschen, nur kennzeichnen (Prüfung 15.10.). false = unbekannt oder schon storniert
+export function lieferungStornieren(stand, id, jetzt = new Date().toISOString()) {
+  const l = (stand.lieferungen || []).find((x) => x.id === id); if (!l || l.storniert) return false;
+  l.storniert = true; l.storniertZeit = jetzt; return true;
+}
+// W2-T: Rechnungsnummer am Journal-Eintrag (Lieferung oder Kostenbeleg) für den Steuer-Export (keine Kundennummer)
+export function rechnungNrSetzen(eintrag, nr) { if (eintrag && nr) eintrag.rechnungNr = nr; }
+// Das Beleg-Foto gehört jetzt zu dieser Lieferung bzw. diesem Kostenbeleg
+export function belegUploadVerknuepfen(upload, eintrag, art) {
+  if (!upload || !eintrag) return;
+  if (art === "kosten") { uploadAendern(upload, { status: "uebernommen", ergebnis: { kostenbeleg: eintrag.id }, zweck: "kosten" }); return; }
+  uploadAendern(upload, { status: "uebernommen", ergebnis: { lieferung: eintrag.id } }); eintrag.upload = upload.id;
 }

@@ -4,6 +4,7 @@ import { t, einheitLabel, sprache, artikelText } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3 (16.10.2026), M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
 import { wertEintrag, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SCHWUND_ARTEN, SVEV_2026 } from "../engine.js";
 import { nav } from "./nav.js";
+import { muellStornieren } from "../muell.js"; // Trennung (17.10.2026): Storno über das Rechenwerk
 import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
 
 let listenZeitraum = "woche"; // "woche" | "monat"
@@ -90,7 +91,7 @@ export function tagAktion(name, el, stand) {
   if (name === "schwund-storno") {
     const e = stand.schwund.find((x) => x.id === el.dataset.id); if (!e || e.storniert) return false;
     if (!confirm(t("tag.stornoFrage"))) return false;
-    e.storniert = true; e.storniertZeit = new Date().toISOString(); return true; // nie löschen, nur kennzeichnen
+    return muellStornieren(stand, e.id) > 0; // nie löschen, nur kennzeichnen
   }
   return false;
 }

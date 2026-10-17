@@ -9,8 +9,9 @@ import { EINHEITEN } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
 import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau,
-  muellSchluessel, standardMenge, muellTippEintragen, muellStornieren, tippsHeute, muellHeute } from "../muell.js";
+  muellSchluessel, standardMenge, muellTippEintragen, muellStornieren, tippsHeute, muellHeute, schwundNachweisSetzen } from "../muell.js"; // Trennung (17.10.2026): schwundNachweisSetzen
 import { nav } from "./nav.js";
+import { mengeEinheitText } from "./bausteine.js"; // Trennung (17.10.2026)
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
 import { gerichtBild } from "./vergleich.js";
@@ -67,14 +68,13 @@ const RASTER = 8;         // 8 Fotos + „Andere" = 3 × 3
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
 export function muellZuruecksetzen() { ansicht = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
-export function muellEingabeOeffnen() { ansicht = "start"; suche = ""; wahl = null; auswahlOffen = false; foto = null; } // Schnellweg „Müll": direkt aufs Foto-Raster
 export function muellFotoSetzen(eintrag) { foto = eintrag; }
 export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = "start"; return true; } if (ansicht !== "start") { ansicht = "start"; wahl = null; return true; } return false; }
 export const muellAnsicht = () => ansicht;
 
 const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Paket 3, M7: Geschäftstage
 const kurzTag = (iso) => t("kuehl.tage." + new Date(iso + "T12:00:00").getDay());
-const mengeText = (menge, einheit) => einheit === "portion" ? t("muell1.portion", menge, fmtZahl(menge, Number.isInteger(menge) ? 0 : 1)) : `${fmtZahl(menge, Number.isInteger(menge) ? 0 : 2)} ${einheitLabel(einheit)}`;
+const mengeText = mengeEinheitText; // Trennung (17.10.2026): ./bausteine.js
 // Paket 6 (17.10.2026): Artikel in der aktiven Sprache anzeigen; Gerichte heißen, wie der Wirt sie nennt. data-name bleibt deutsch.
 const zeigName = (x) => (x && x.typ === "artikel" ? artikelText(x.name) : x?.name || "");
 const bildFuer = (stand, x) => (x.typ === "gericht" ? thumb(stand, x.id) : wareBild(x));
@@ -290,7 +290,7 @@ export function muellAktion(name, el, stand) {
     else { e = eimerEintragen(stand, { datum: D, kg: wahl.menge }); if (e) ids.push(e.id); }
     if (!e) return false;
     const von = personalVon(stand);
-    for (const id of ids) { const x = stand.schwund.find((y) => y.id === id); if (!x) continue; if (foto) x.foto = foto.id; if (von) x.von = von; } // Foto als Nachweis, Person im Personal-Modus
+    schwundNachweisSetzen(stand, ids, { foto: foto ? foto.id : null, von }); // Foto als Nachweis, Person im Personal-Modus
     foto = null;
     zuletzt = { ids: ids.join(","), schluessel: e.art === "eimer" ? "eimer" : muellSchluessel(e), text: `${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} · ${e.art === "eimer" ? fmtZahl(e.gewogen, 1) + " kg" : mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
     wahl = null; ansicht = "start"; suche = "";

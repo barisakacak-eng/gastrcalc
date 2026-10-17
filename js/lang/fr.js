@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "résolu", verspaetet: "Contrôle tardif", massnahmeOffen: "Mesure en attente", ohneMassnahme: "aucune mesure saisie" },
     nkVerspaetet: (h) => `Contrôle tardif (après ${h} h)`,
     nkVerspaetetKurz: "Contrôle tardif",
-    ware: { umgelagert: "Marchandise déplacée", weggeworfen: "Marchandise jetée" },
+    ware: { umgelagert: "Marchandise déplacée", weggeworfen: "Marchandise jetée", behalten: "Marchandise gardée" },
     abwOffen: (n) => (n === 1 ? "1 écart en attente" : `${n} écarts en attente`),
     kuehlLuecken: (n, l) => `${n} mesures · ${l === 1 ? "1 jour avec un manque" : l + " jours avec un manque"}`,
     teilweise: (l) => `mesuré en partie seulement : ${l}`,
@@ -1243,4 +1243,6 @@ export default {
     uhr: { heute: (ware) => `Utiliser ${ware} aujourd’hui`, morgen: (ware) => `Utiliser ${ware} d’ici demain`, vorbei: (ware) => `${ware} : DLC dépassée – ne plus utiliser`, vorbeiMehrere: (n) => `${n} produits : DLC dépassée – ne plus utiliser`, mehrere: (n) => `Utiliser ${n} produits d’ici demain`, mehrereHeute: (n) => `Utiliser ${n} produits aujourd’hui`,
       bis: (ware, tag) => `Utiliser ${ware} d’ici ${tag}`, aktion: (ware, tag) => `${ware} : une promo jusqu’à ${tag} rapporte`, mhdVorbei: (ware) => `${ware} : DDM dépassée – vérifier`, knopf: "Voir" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Marchandise après un écart de froid", unter: "Qu’est devenue la marchandise ?", leer: "Aucun écart ouvert. Tout est décidé.", wegwerfen: "Jetée", behalten: "Gardée", wegFrage: "Qu’est-ce qui a été jeté ?", wegLeer: "Aucune marchandise saisie pour l’instant.", wegSpeichern: "Enregistrer comme perte", wert: "Valeur de la marchandise", grundFrage: "Pourquoi gardée ?", grundPlatzhalter: "p. ex. mise tout de suite dans l’autre frigo", grundSpeichern: "Enregistrer le motif", abbrechen: "Annuler", gebucht: "Enregistré comme perte.", behaltenOk: "Enregistré.", grundKurz: "Merci d’indiquer un motif court." },
 };

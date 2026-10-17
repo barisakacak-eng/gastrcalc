@@ -701,6 +701,16 @@ export function stationEintragen(r, stelle, daten) {
   return m;
 }
 
+// Trennung (17.10.2026): offenen Rundgang verwerfen (vorher in screens/kuehl.js) – er stand noch nicht im Journal der Messungen.
+export function rundgangVerwerfen(stand, id) { const vorher = (stand.rundgaenge || []).length; stand.rundgaenge = (stand.rundgaenge || []).filter((x) => x.id !== id); return stand.rundgaenge.length < vorher; }
+
+// Schwund-Eintrag für Ware, die nach einer Kühl-Abweichung weggeworfen wurde (Rundgang und Büro „Ware nach Kühl-Abweichung“ buchen gleich).
+// w: { ref, menge, einheit, wert } – wert aus wertEintrag (Einkaufspreis) oder null = Wert offen.
+function kuehlSchwund(w, { datum, jetzt, grund, messung, nacherfasst = false }) {
+  return { id: uid(), datum, erfasst: jetzt, art: "verderb", vorgang: 1, ref: w.ref, menge: w.menge, einheit: w.einheit, fraktion: "bio",
+    grund, wert: w.wert, wertOffen: w.wert === null, quelle: "kuehl", messung, nacherfasst, storniert: false };
+}
+
 // Abschluss: Messungen werden ins Journal übernommen (nur anhängen, mit laufender Nummer), der Rundgang geschlossen.
 // „Ware weggeworfen" wird erst hier zu Schwund-Einträgen – ein wieder geöffnetes oder verworfenes Formular hinterlässt nichts.
 export function rundgangAbschliessen(stand, r, lfdGeber, geraet = null, text = (k) => k) {
@@ -716,8 +726,7 @@ export function rundgangAbschliessen(stand, r, lfdGeber, geraet = null, text = (
     stand.messungen.push({ ...rest, zeit, lfd: lfdGeber ? lfdGeber() : null, geraet, rundgang: r.id, datum, von: r.von, erfasst: jetzt, nacherfasst: !!r.nacherfasst, quelle: r.quelle || null, nachkontrolle: nk, storniert: false });
     if (m.abweichung && (m.massnahmen || []).includes("weggeworfen")) {
       const stelle = (stand.kuehlstellen || []).find((k) => k.id === m.stelle);
-      for (const w of weg || []) stand.schwund.push({ id: uid(), datum, erfasst: jetzt, art: "verderb", vorgang: 1, ref: w.ref, menge: w.menge, einheit: w.einheit, fraktion: "bio",
-        grund: text(stelle?.name || ""), wert: w.wert, wertOffen: w.wert === null, quelle: "kuehl", messung: m.id, nacherfasst: !!r.nacherfasst, storniert: false });
+      for (const w of weg || []) stand.schwund.push(kuehlSchwund(w, { datum, jetzt, grund: text(stelle?.name || ""), messung: m.id, nacherfasst: !!r.nacherfasst }));
     }
   }
   r.abgeschlossen = jetzt;
@@ -750,20 +759,51 @@ export function nachkontrolleStand(stand, m) {
 }
 
 // W2-H (p03 H1): Was ist mit der Ware? Nur Daten – die Knöpfe baut die Optik-Runde. „Ware weggeworfen“ als Maßnahme zählt schon heute.
-export const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen"];
+export const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen", "behalten"]; // Trennung (17.10.2026), Punkt 4: „behalten“ mit Begründung (Büro)
 export function wareEntscheidung(m) {
   if (m?.ware && WARE_ENTSCHEIDUNGEN.includes(m.ware.art)) return m.ware.art;
   if ((m?.massnahmen || []).includes("weggeworfen")) return "weggeworfen";
   return null;
 }
 // Einmal eintragen, mit Zeitstempel. Der Journal-Eintrag wird durch ein neues Objekt ersetzt, damit die Speicherung es sofort sieht.
-export function wareEntscheiden(stand, messungId, art, { von = null, jetzt = new Date().toISOString() } = {}) {
+// grund: Pflicht bei „behalten“ (mindestens 3 Zeichen, höchstens 200), sonst ohne.
+export function wareEntscheiden(stand, messungId, art, { von = null, jetzt = new Date().toISOString(), grund = null } = {}) {
   const i = (stand.messungen || []).findIndex((x) => x.id === messungId && !x.storniert);
   const m = i >= 0 ? stand.messungen[i] : null;
   if (!m || !m.abweichung || m.ware || !WARE_ENTSCHEIDUNGEN.includes(art)) return null;
-  stand.messungen[i] = { ...m, ware: { art, erfasst: jetzt, von } };
+  const g = String(grund ?? "").trim().slice(0, 200);
+  if (art === "behalten" && g.length < 3) return null;
+  stand.messungen[i] = { ...m, ware: { art, erfasst: jetzt, von, ...(art === "behalten" ? { grund: g } : {}) } };
   return stand.messungen[i];
 }
+// Trennung (17.10.2026), Punkt 4 – Büro „Ware nach Kühl-Abweichung“: offene Abweichungen der letzten 30 Tage ohne Abschluss
+// (dieselbe Auswahl wie der Büro-Hinweis „kuehlMassnahme“ in offen.js), neueste zuerst.
+export function offeneWareEntscheidungen(stand, { heuteTag = heute() } = {}) {
+  const ab = tagPlus(heuteTag, -30);
+  return (stand.messungen || []).filter((m) => !m.storniert && m.abweichung && m.datum >= ab && ["massnahmeOffen", "verspaetet", "ohneMassnahme"].includes(abweichungStand(stand, m)))
+    .sort((a, b) => vgl(b.datum, a.datum) || vgl(b.zeit, a.zeit));
+}
+// Wegwerfen: jede Zeile wird ein Schwund-Eintrag wie im Rundgang (Wert zum Einkaufspreis, sonst offen), danach die Ware-Entscheidung.
+// weg: [{ ref: { typ: "artikel" | "frei", name }, menge, einheit }] – mindestens eine Zeile mit Menge > 0. Rückgabe: { messung, schwund } oder null.
+export function wareWegwerfen(stand, messungId, weg, { von = null, jetzt = new Date().toISOString(), datum = heute(), grund = "" } = {}) {
+  const m = (stand.messungen || []).find((x) => x.id === messungId && !x.storniert);
+  const zeilen = (weg || []).filter((w) => w && w.ref && w.menge > 0);
+  if (!m || !m.abweichung || m.ware || !zeilen.length) return null;
+  const neu = zeilen.map((w) => kuehlSchwund({ ...w, wert: w.ref.typ === "artikel" ? wertEintrag({ ref: w.ref, menge: w.menge, einheit: w.einheit, art: "verderb" }, stand) : null },
+    { datum, jetzt, grund, messung: m.id }));
+  const messung = wareEntscheiden(stand, m.id, "weggeworfen", { von, jetzt }); if (!messung) return null;
+  stand.schwund.push(...neu);
+  return { messung, schwund: neu };
+}
+// Eine Zeile „weggeworfen“ aus Name und Menge: bekannte Ware (Artikel) mit ihrer Einheit, sonst frei in Stück; wert zum Einkaufspreis oder null.
+export function wareWegZeile(stand, name, menge) {
+  const n = String(name || "").trim(); if (!n || !(menge > 0)) return null;
+  const a = (stand.artikel || []).find((x) => x.name === n);
+  const einheit = a ? (a.packung?.einheit || a.einheit || "stk") : "stk";
+  const ref = a ? { typ: "artikel", name: a.name } : { typ: "frei", name: n };
+  return { name: n, ref, menge, einheit, wert: a ? wertEintrag({ ref, menge, einheit, art: "verderb" }, stand) : null };
+}
+export function wareBehalten(stand, messungId, grund, { von = null, jetzt = new Date().toISOString() } = {}) { return wareEntscheiden(stand, messungId, "behalten", { von, jetzt, grund }); }
 // Stand einer Abweichung: behoben | verspaetet | massnahmeOffen | ohneMassnahme (null = keine Abweichung).
 // „Chef angerufen“ allein reicht nicht: behoben erst durch eine pünktliche Nachkontrolle in der Grenze oder eine Ware-Entscheidung.
 export function abweichungStand(stand, m) {
@@ -775,6 +815,14 @@ export function abweichungStand(stand, m) {
   return nk === "erledigt" ? "behoben" : nk === "verspaetet" ? "verspaetet" : "massnahmeOffen";
 }
 export const letzteMessung = (stand, stelleId) => messungenDerStelle(stand, stelleId).filter((m) => typeof m.wert === "number").pop() || null;
+// Trennung (17.10.2026): aus js/screens/home.js (Laden-Kachel Kühlung) – die schlimmste Abweichung: letzter Wert je Stelle, offener
+// Rundgang (W2-H, p01 K3) und heutige Messungen am Kalendertag K; sortiert nach Abstand zur Grenze. null = keine.
+export function kuehlSchlimmsteAbweichung(stand, K = heute()) {
+  const abw = (stand.messungen || []).filter((m) => m.datum === K && !m.storniert && m.abweichung && typeof m.wert === "number");
+  const stellenAbw = [...aktiveStellen(stand).map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.abweichung && typeof m.wert === "number"), ...rundgangAbweichungen(stand)];
+  const aus = (m) => typeof m.max === "number" && m.wert > m.max ? m.wert - m.max : typeof m.min === "number" && m.wert < m.min ? m.min - m.wert : 0; // wie weit außerhalb der Grenze
+  return [...stellenAbw, ...abw].sort((a, b) => aus(b) - aus(a))[0] || null;
+}
 
 // Offene Nachkontrollen: Abweichung mit Nachkontrolle, nach der noch keine spätere Messung derselben Stelle liegt.
 export function offeneNachkontrollen(stand) {

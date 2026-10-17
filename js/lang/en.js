@@ -454,7 +454,7 @@ export default {
     abw: { behoben: "resolved", verspaetet: "Re-check late", massnahmeOffen: "Action open", ohneMassnahme: "no action entered" },
     nkVerspaetet: (h) => `Re-check late (after ${h} h)`,
     nkVerspaetetKurz: "Re-check late",
-    ware: { umgelagert: "Food moved", weggeworfen: "Food thrown away" },
+    ware: { umgelagert: "Food moved", weggeworfen: "Food thrown away", behalten: "Food kept" },
     abwOffen: (n) => (n === 1 ? "1 deviation open" : `${n} deviations open`),
     kuehlLuecken: (n, l) => `${n} readings · ${l === 1 ? "1 day with a gap" : l + " days with a gap"}`,
     teilweise: (l) => `only partly measured: ${l}`,
@@ -1230,4 +1230,6 @@ export default {
     uhr: { heute: (ware) => `Use ${ware} today`, morgen: (ware) => `Use ${ware} by tomorrow`, vorbei: (ware) => `${ware}: use-by date passed – do not use`, vorbeiMehrere: (n) => `${n} items: use-by date passed – do not use`, mehrere: (n) => `Use ${n} items by tomorrow`, mehrereHeute: (n) => `Use ${n} items today`,
       bis: (ware, tag) => `Use ${ware} by ${tag}`, aktion: (ware, tag) => `${ware}: an offer until ${tag} pays off`, mhdVorbei: (ware) => `${ware}: best-before passed – check`, knopf: "View" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Food after a fridge deviation", unter: "What happened to the food?", leer: "No open deviation. Everything decided.", wegwerfen: "Thrown away", behalten: "Kept", wegFrage: "What was thrown away?", wegLeer: "No food entered yet.", wegSpeichern: "Book as waste", wert: "Value of the food", grundFrage: "Why kept?", grundPlatzhalter: "e.g. moved to the other fridge right away", grundSpeichern: "Save reason", abbrechen: "Cancel", gebucht: "Booked as waste.", behaltenOk: "Saved.", grundKurz: "Please give a short reason." },
 };

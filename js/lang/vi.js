@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "đã xử lý", verspaetet: "Đo lại bị trễ", massnahmeOffen: "Biện pháp còn mở", ohneMassnahme: "chưa ghi biện pháp" },
     nkVerspaetet: (h) => `Đo lại bị trễ (sau ${h} giờ)`,
     nkVerspaetetKurz: "Đo lại bị trễ",
-    ware: { umgelagert: "Hàng đã chuyển chỗ", weggeworfen: "Hàng đã bỏ đi" },
+    ware: { umgelagert: "Hàng đã chuyển chỗ", weggeworfen: "Hàng đã bỏ đi", behalten: "Đã giữ hàng" },
     abwOffen: (n) => `${n} sai lệch còn mở`,
     kuehlLuecken: (n, l) => `${n} lần đo · ${l} ngày bị thiếu`,
     teilweise: (l) => `chỉ đo một phần: ${l}`,
@@ -1243,4 +1243,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: dùng hôm nay`, morgen: (ware) => `${ware}: dùng trước ngày mai`, vorbei: (ware) => `${ware}: đã quá hạn sử dụng – không dùng`, vorbeiMehrere: (n) => `${n} món hàng: đã quá hạn sử dụng – không dùng`, mehrere: (n) => `${n} món hàng cần dùng trước ngày mai`, mehrereHeute: (n) => `${n} món hàng cần dùng hôm nay`,
       bis: (ware, tag) => `${ware}: dùng đến ${tag}`, aktion: (ware, tag) => `${ware}: khuyến mãi đến ${tag} có lời`, mhdVorbei: (ware) => `${ware}: „tốt nhất trước“ đã qua – kiểm tra`, knopf: "Xem" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Hàng sau khi lạnh bị lệch", unter: "Hàng đã ra sao?", leer: "Không còn sai lệch nào mở. Đã quyết định hết.", wegwerfen: "Đã bỏ đi", behalten: "Đã giữ lại", wegFrage: "Đã bỏ đi những gì?", wegLeer: "Chưa nhập hàng nào.", wegSpeichern: "Ghi thành rác", wert: "Giá trị hàng", grundFrage: "Vì sao giữ lại?", grundPlatzhalter: "vd. đã chuyển ngay sang tủ lạnh khác", grundSpeichern: "Lưu lý do", abbrechen: "Hủy", gebucht: "Đã ghi thành rác.", behaltenOk: "Đã lưu.", grundKurz: "Vui lòng ghi lý do ngắn." },
 };

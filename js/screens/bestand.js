@@ -7,6 +7,7 @@ import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
 import { bestandStand, bestellVorschlag, bestandUhrzeit, bestellText, lagerSetzen, mindestbestandSetzen } from "../bestand.js";
 import { datumLesbar } from "./tag.js";
 import { nav } from "./nav.js";
+import { mengeBasisText, gebindeAnzahl, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
 
 let mindestOffen = false;  // Liste „Mindestbestand je Ware“ aufgeklappt
 let entwurf = {};          // Mindestbestand: Warenname → getippter Text (bis „Speichern“)
@@ -22,16 +23,8 @@ export const PUFFER_WAHL = [0, 1, 2, 3, 5];
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 const euro = (v, ca = true) => (v === null || v === undefined ? t("inventur.preisFehlt") : (ca ? "≈ " : "") + fmtEuro(v, { dezimal: Math.abs(v) < 100 ? 2 : 0 }));
 const kurz = (iso) => datumLesbar(iso).slice(0, 6);
-// Menge in der Grundeinheit lesbar: ab 1000 g → kg, ab 1000 ml → l
-export function mengeText(menge, basis) { // Stufe 1 (17.10.2026): auch für „Aktionen & Haltbarkeit“
-  const m = Math.abs(menge);
-  if (basis === "g") return m >= 1000 ? `${fmtZahl(m / 1000, 1)} ${einheitLabel("kg")}` : `${fmtZahl(m, 0)} ${einheitLabel("g")}`;
-  if (basis === "ml") return m >= 1000 ? `${fmtZahl(m / 1000, 1)} ${einheitLabel("l")}` : `${fmtZahl(m, 0)} ${einheitLabel("ml")}`;
-  return `${fmtZahl(m, m < 10 && !Number.isInteger(m) ? 1 : 0)} ${einheitLabel("stk")}`;
-}
-// „2 × Kiste“ (sprachneutral), lose Ware und Waren ohne Gebinde in kg/l/Stück
-// Prüfgremium 17.10.2026 (8): eine Schreibweise für „N × Gebinde“ in allen Büro-Bildschirmen (keine Einzahl hinter einer Mehrzahl-Zahl)
-export const gebindeAnzahl = (anzahl, art) => `${fmtZahl(anzahl, Number.isInteger(anzahl) ? 0 : 2)} × ${t("gebinde.arten." + (art || "packung"))}`;
+// Trennung (17.10.2026): mengeText (jetzt mengeBasisText) und gebindeAnzahl wohnen in ./bausteine.js
+const mengeText = (menge, basis) => mengeBasisText(menge, basis);
 const gebindeText = (anzahl, art, menge, basis) => (anzahl !== null && art !== "lose" ? gebindeAnzahl(anzahl, art) : mengeText(menge, basis));
 const reichtText = (w) => (w.schnitt === null ? t("bestand.verbrauchUnbekannt") : !(w.schnitt > 0) ? t("bestand.keinVerbrauch") : w.lange ? t("bestand.reichtLange") : (w.reichweite ?? 0) < 1 ? t("bestand.reichtKurz") : t("bestand.reicht", Math.floor(w.reichweite)));
 const dringendText = (z) => (z.dringend === "spaeter" && z.bestellenAm ? t("bestand.dringend.spaeter", kurz(z.bestellenAm)) : t("bestand.dringend." + z.dringend));
@@ -104,8 +97,7 @@ function einstellungenView(stand, bs) {
 export async function bestandTeilen(stand, i) {
   const g = bestellVorschlag(stand).gruppen[Number(i)]; if (!g) return null;
   const text = bestellText(stand, g);
-  if (typeof navigator !== "undefined" && navigator.share) { try { await navigator.share({ text }); return { text, weg: "geteilt" }; } catch (e) { if (e?.name === "AbortError") return { text, weg: "abgebrochen" }; } }
-  try { await navigator.clipboard.writeText(text); return { text, weg: "kopiert" }; } catch (_) { window.prompt(t("bestand.teilen"), text); return { text, weg: "gezeigt" }; }
+  return { text, weg: await textTeilen(text, t("bestand.teilen")) }; // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
 }
 
 // ---------- Aktionen ----------

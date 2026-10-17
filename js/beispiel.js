@@ -10,7 +10,7 @@ import { inBasis, EINHEITEN } from "./data/katalog.js";
 import { KATEGORIEN } from "./data/kosten.js";
 import { BRANCHENWERTE } from "./data/branchenwerte.js";
 import { vorauswahlFuer } from "./data/zwischen.js";
-import { gerichtAusVorlage } from "./screens/karte.js";
+import { gerichtAusVorlage } from "./karte_daten.js"; // Trennung (17.10.2026): vorher aus einem Bildschirm (screens/karte.js)
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
 import { branchenwerteAnwenden } from "./rezept_quelle.js";
 import { selbstAnwenden } from "./selbst.js";
@@ -287,3 +287,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   Object.defineProperty(fertig, "_ohneRichtpreis", { value: rp.ohneRichtpreis, enumerable: false });
   return fertig;
 }
+
+// Trennung (17.10.2026): Der Beispiel-Laden heißt in jeder Sprache „Beispiel-…“ (name = t("beispiel.name") der aktiven Sprache).
+// Vorher setzte app.js den Namen bei jedem Zeichnen; jetzt nur, wenn die Sprache gesetzt wird.
+export function beispielNamenFolgen(wurzel, name) { for (const b of wurzel?.betriebe || []) if (b.beispiel && b.betrieb) b.betrieb.name = name; }

@@ -7,7 +7,8 @@ import { esc } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
 import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText } from "../modus.js";
-import { nav, sicherungStufe } from "./nav.js";
+import { nav } from "./nav.js";
+import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
 import { PASSWORT_MIN } from "../schluessel.js"; // E5 (16.10.2026): Passwort der Sicherung
 
 let huelle = null;

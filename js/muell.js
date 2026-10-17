@@ -210,6 +210,11 @@ export function muellStornieren(stand, ids) {
   return n;
 }
 
+// Trennung (17.10.2026): Nachweis an frische Müll-Einträge hängen (vorher screens/muell.js) – Foto-Upload und/oder Person im Personal-Modus.
+export function schwundNachweisSetzen(stand, ids, { foto = null, von = null } = {}) {
+  for (const id of ids) { const x = (stand.schwund || []).find((y) => y.id === id); if (!x) continue; if (foto) x.foto = foto; if (von) x.von = von; }
+}
+
 // Wie oft eine Kachel heute getippt wurde (Zähler „2ד) – Müll-Einträge, nicht Personalessen.
 export function tippsHeute(stand, datum = heuteGeschaeft()) {
   const out = {};

@@ -454,7 +454,7 @@ export default {
     abw: { behoben: "çareser bû", verspaetet: "Pîvana kontrolê dereng ma", massnahmeOffen: "Tedbîr vekirî ye", ohneMassnahme: "tedbîr nehatiye nivîsîn" },
     nkVerspaetet: (h) => `Pîvana kontrolê dereng ma (piştî ${h} saet)`,
     nkVerspaetetKurz: "Pîvana kontrolê dereng ma",
-    ware: { umgelagert: "Mal hat guhastin", weggeworfen: "Mal hat avêtin" },
+    ware: { umgelagert: "Mal hat guhastin", weggeworfen: "Mal hat avêtin", behalten: "Mal hat girtin" },
     abwOffen: (n) => `${n} cudabûn vekirî ne`,
     kuehlLuecken: (n, l) => `${n} pîvan · ${l} roj bi kêmasî`,
     teilweise: (l) => `tenê hinekî hat pîvan: ${l}`,
@@ -1242,4 +1242,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: îro bi kar bîne`, morgen: (ware) => `${ware}: heta sibê bi kar bîne`, vorbei: (ware) => `${ware}: dîroka bikaranînê derbas bû – bi kar neyne`, vorbeiMehrere: (n) => `${n} mal: dîroka bikaranînê derbas bû – bi kar neyne`, mehrere: (n) => `${n} mal heta sibê bên bikaranîn`, mehrereHeute: (n) => `${n} mal îro bên bikaranîn`,
       bis: (ware, tag) => `${ware}: heta ${tag} bi kar bîne`, aktion: (ware, tag) => `${ware}: kampanya heta ${tag} qezenc dike`, mhdVorbei: (ware) => `${ware}: „baştir berî“ derbas bû – kontrol bike`, knopf: "Binêre" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Mal piştî guherîna sarincê", unter: "Bi malê çi bû?", leer: "Guherîneke vekirî tune. Her tişt hat biryardan.", wegwerfen: "Hat avêtin", behalten: "Hat girtin", wegFrage: "Çi hat avêtin?", wegLeer: "Hîn mal nehatiye nivîsandin.", wegSpeichern: "Wek çop tomar bike", wert: "Nirxa malê", grundFrage: "Çima hat girtin?", grundPlatzhalter: "mînak yekser li sarinca din hat danîn", grundSpeichern: "Sedemê tomar bike", abbrechen: "Betal bike", gebucht: "Wek çop hat tomarkirin.", behaltenOk: "Hat tomarkirin.", grundKurz: "Ji kerema xwe sedemekî kurt binivîse." },
 };

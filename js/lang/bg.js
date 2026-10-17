@@ -460,7 +460,7 @@ export default {
     abw: { behoben: "отстранено", verspaetet: "Контролното измерване закъсня", massnahmeOffen: "Мярката е отворена", ohneMassnahme: "няма въведена мярка" },
     nkVerspaetet: (h) => `Контролното измерване закъсня (след ${h} ч.)`,
     nkVerspaetetKurz: "Контролното измерване закъсня",
-    ware: { umgelagert: "Стоката е преместена", weggeworfen: "Стоката е изхвърлена" },
+    ware: { umgelagert: "Стоката е преместена", weggeworfen: "Стоката е изхвърлена", behalten: "Стоката е задържана" },
     abwOffen: (n) => `${n} отворени отклонения`,
     kuehlLuecken: (n, l) => `${n} измервания · ${l} дни с пропуск`,
     teilweise: (l) => `само частично измерено: ${l}`,
@@ -1249,4 +1249,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: използвай днес`, morgen: (ware) => `${ware}: използвай до утре`, vorbei: (ware) => `${ware}: срокът „годен до“ изтече – не използвай`, vorbeiMehrere: (n) => `${n} стоки: срокът „годен до“ изтече – не използвай`, mehrere: (n) => `${n} стоки за използване до утре`, mehrereHeute: (n) => `${n} стоки за използване днес`,
       bis: (ware, tag) => `${ware}: използвай до ${tag}`, aktion: (ware, tag) => `${ware}: промоция до ${tag} си струва`, mhdVorbei: (ware) => `${ware}: „най-добър до“ изтече – провери`, knopf: "Виж" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Стока след отклонение в охлаждането", unter: "Какво стана със стоката?", leer: "Няма открито отклонение. Всичко е решено.", wegwerfen: "Изхвърлена", behalten: "Задържана", wegFrage: "Какво беше изхвърлено?", wegLeer: "Още няма въведена стока.", wegSpeichern: "Запиши като отпадък", wert: "Стойност на стоката", grundFrage: "Защо е задържана?", grundPlatzhalter: "напр. веднага преместена в другия хладилник", grundSpeichern: "Запази причината", abbrechen: "Отказ", gebucht: "Записано като отпадък.", behaltenOk: "Запазено.", grundKurz: "Моля, напиши кратка причина." },
 };

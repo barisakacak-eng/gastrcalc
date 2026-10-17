@@ -4,6 +4,7 @@
 import { t } from "../i18n.js";
 import { esc, fmtEuro, heute, heuteGeschaeft } from "../util.js";
 import { sym } from "../symbole.js";
+import { bueroRing, zielAttr as zielAttrAlle } from "./bausteine.js"; // Trennung (17.10.2026)
 import { zaehler } from "../zaehler.js";
 import { wareneinsatzWarnung } from "../engine.js"; // Paket 3 (16.10.2026), M4: gemeinsame Warnschwelle, auch im Büro „Monat & Zähler“
 import { inventurenFertig } from "../inventur.js";
@@ -30,17 +31,9 @@ const EXTRA = {
 };
 export const bsym = (name, klasse = "") => EXTRA[name] ? `<svg class="sym ${klasse}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${EXTRA[name]}</svg>` : sym(name, klasse);
 
-// Fortschrittsring (SVG), Prozent 0–100
-export function ring(prozent, { groesse = 26, dicke = 4, farbe = "var(--salbei-tief)", text = false } = {}) {
-  const r = (groesse - dicke) / 2; const u = 2 * Math.PI * r; const p = Math.max(0, Math.min(100, prozent || 0));
-  return `<svg class="b-ring" width="${groesse}" height="${groesse}" viewBox="0 0 ${groesse} ${groesse}" aria-hidden="true">
-    <circle cx="${groesse / 2}" cy="${groesse / 2}" r="${r}" fill="none" stroke="var(--papier-tief)" stroke-width="${dicke}"/>
-    <circle cx="${groesse / 2}" cy="${groesse / 2}" r="${r}" fill="none" stroke="${farbe}" stroke-width="${dicke}" stroke-linecap="round" stroke-dasharray="${(u * p / 100).toFixed(2)} ${u.toFixed(2)}" transform="rotate(-90 ${groesse / 2} ${groesse / 2})"/>
-    ${text ? `<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-size="${Math.round(groesse * (p >= 100 ? 0.22 : 0.27))}" font-weight="800" fill="var(--tinte)">${Math.round(p)}%</text>` : ""}</svg>`;
-}
-
-// data-Attribute für ein Ziel { aktion, wert?, schritt?, bis? }
-export const zielAttr = (z) => `data-a="${esc(z.aktion)}"${z.wert ? ` data-wert="${esc(z.wert)}"` : ""}${z.schritt ? ` data-schritt="${esc(z.schritt)}"` : ""}${z.bis ? ` data-bis="${esc(z.bis)}"` : ""}`;
+// Trennung (17.10.2026): Ring und zielAttr wohnen in ./bausteine.js (Büro-Ausgabe wie bisher: zielAttr ohne anker/offen)
+const ring = bueroRing;
+const zielAttr = (z) => zielAttrAlle(z, { zusatz: false });
 
 // ---------- Kopf ----------
 // Gleiche Leiste wie alle Büro-Bildschirme (nav.js): Ziel „start" heißt zurück in den Laden.

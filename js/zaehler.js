@@ -172,3 +172,54 @@ export function tagAbschliessen(stand, { datum = heuteGeschaeft(), geraet = null
   stand.abschluesse.push(e); return e;
 }
 export const abschlussVon = (stand, datum) => (stand.abschluesse || []).filter((a) => a.datum === datum && !a.storniert).sort((x, y) => String(x.erfasst).localeCompare(String(y.erfasst))).pop() || null;
+
+// ---------- Trennung (17.10.2026): aus js/screens/home.js ins Rechenwerk verschoben (unverändert) ----------
+// Monatsziel = Umsatz (brutto), bei dem der Monat auf null kommt: (Monatskosten + Sonderkosten) / (1 − Wareneinsatz-Quote) × (1 + Mehrwertsteuer).
+// Alles aus dem Rechenwerk (Zähler), nichts geschätzt, was nicht schon geschätzt ist; ohne Kosten gibt es kein Ziel („–").
+// Monatsziel (Baris 15.10., 13:35): „bis null plus Zielgewinn“. null = Umsatz, der alle Kosten deckt; ziel = zusätzlich der Zielgewinn
+// (Anteil vom Nettoumsatz, wie in der Kalkulation, Feld verkauf.zielgewinn). Beides brutto, wie der Umsatz eingetragen wird.
+export function monatsZiel(stand, z, H) {
+  // Kosten wie im Zähler (Review 15.10.): nur ab dem ersten Zähltag (z.start) anteilig nach Öffnungstagen, plus eingetragener Müll,
+  // damit Karte, Band und Zähler dieselbe Rechnung zeigen.
+  const gewichtAbStart = (z.tage || []).filter((x) => !z.start || x.datum >= z.start).reduce((s, x) => s + (x.gewicht || 0), 0);
+  const kostenMonat = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
+  const kosten = (z.tageskosten && gewichtAbStart ? z.tageskosten * gewichtAbStart : kostenMonat) + (z.muell || 0);
+  const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
+  const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));
+  const brutto = 1 + (z.steuer || 0);
+  const nullpunkt = kosten > 0 ? kosten / (1 - q) * brutto : null;
+  const ziel = nullpunkt === null ? null : 1 - q - g > 0.05 ? kosten / (1 - q - g) * brutto : nullpunkt;
+  const tage = []; let summe = 0;
+  for (const x of z.tage) { if (x.datum > H) break; const u = umsatzEintrag(stand, x.datum); summe += u ? u.umsatz : 0; tage.push({ datum: x.datum, umsatz: u ? u.umsatz : null, kumuliert: summe }); }
+  // „Null“ heißt überall dasselbe wie im Zähler (Nachtester 15.10.): gerechneter Stand bis heute ≥ 0. Danach zählt das Monatsziel mit Zielgewinn.
+  const imMinus = typeof z.stand === "number" && z.stand < 0 && !z.keinUmsatz;
+  const stufe = nullpunkt === null ? "ohne" : imMinus || z.keinUmsatz ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
+  const fehltNullZ = imMinus ? -z.stand / (1 - q) * brutto : z.keinUmsatz ? nullpunkt : 0; // Umsatz, der das Minus bis heute ausgleicht
+  let erreichtAm = null, proTagNoetig = null;
+  if (stufe === "bisNull" && !z.keinUmsatz) { erreichtAm = z.nullTag || null; if (!erreichtAm && z.noetigProTag) proTagNoetig = z.noetigProTag / (1 - q) * brutto; }
+  if (stufe === "bisZiel") { // Tempo: Umsatz je Öffnungstag bisher, hochgerechnet auf die restlichen Öffnungstage
+    const gBis = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a2, x) => a2 + (x.gewicht || 0), 0);
+    if (gBis > 0 && summe > 0) { const tempo = summe / gBis; let s2 = summe;
+      for (const x of z.tage) { if (x.datum <= H) continue; s2 += tempo * (x.gewicht || 0); if (s2 >= ziel) { erreichtAm = x.datum; break; } }
+      if (!erreichtAm) { const rest = (z.tage || []).filter((x) => x.datum > H).reduce((a2, x) => a2 + (x.gewicht || 0), 0); proTagNoetig = rest > 0 ? (ziel - summe) / rest : null; } } }
+  return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe, erreichtAm, proTagNoetig,
+    fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : fehltNullZ,
+    darueber: ziel === null ? null : Math.max(0, summe - ziel), tage,
+    // Paket 3 (16.10.2026), M2/M15/E2: ausdrücklich geschätzt, wenn der eigene Lohn ein Richtwert ist ODER die Warenquote vom Branchen-
+    // Richtwert kommt ODER der Mischsatz ohne echte Mengen gewichtet ist (dazu wie bisher: Ware unter Stufe 3, Fixkosten geschätzt).
+    geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 || z.last?.eigen?.status === "geschaetzt" || z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis || !!z.steuerGeschaetzt,
+    richtwertWare: z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis, richtwertLohn: z.last?.eigen?.status === "geschaetzt" };
+}
+// Wareneinsatz in % vom Netto-Umsatz: Stufe 3 aus Belegen und Umsatz, Stufe 2 aus Karte oder eigener Quote, sonst (Paket 3, M15/E2)
+// der Branchen-Richtwert als Schätzung (geschaetzt: true, quelle "richtwert").
+export function wareneinsatzQuote(stand, z) {
+  if (z.stufe === 3 && z.umsatzNetto > 0) return { quote: z.belegSumme / z.umsatzNetto, quelle: "belege", geschaetzt: false };
+  if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle, geschaetzt: z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis, ...(z.quoteRichtpreis ? { richtpreis: true } : {}) }; // Richtpreise (17.10.2026)
+  return { quote: null, quelle: "keine", geschaetzt: false };
+}
+// Monatskurve in der Zählerkarte: Stand je Tag seit Zählbeginn, Nulllinie, Punkt „heute", gestrichelte Prognose bis Monatsende, Null-Tag markiert
+export function zaehlerVerlauf(z) {
+  const ist = z.tage.filter((x) => x.status === "vergangen" || x.status === "heute").filter((x) => x.datum >= z.start).map((x) => ({ datum: x.datum, stand: x.stand }));
+  const prognose = z.dbProTag !== null ? z.tage.filter((x) => x.status === "zukunft" && typeof x.stand === "number").map((x) => ({ datum: x.datum, stand: x.stand })) : [];
+  return { ist, prognose, nullTag: z.nullTag, tage: z.tage.length };
+}

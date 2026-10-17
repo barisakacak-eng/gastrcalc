@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "risolto", verspaetet: "Controllo successivo in ritardo", massnahmeOffen: "Misura aperta", ohneMassnahme: "nessuna misura inserita" },
     nkVerspaetet: (h) => `Controllo successivo in ritardo (dopo ${h} h)`,
     nkVerspaetetKurz: "Controllo successivo in ritardo",
-    ware: { umgelagert: "Merce spostata", weggeworfen: "Merce buttata" },
+    ware: { umgelagert: "Merce spostata", weggeworfen: "Merce buttata", behalten: "Merce tenuta" },
     abwOffen: (n) => (n === 1 ? "1 scostamento aperto" : `${n} scostamenti aperti`),
     kuehlLuecken: (n, l) => `${n} misure · ${l === 1 ? "1 giorno con lacuna" : l + " giorni con lacuna"}`,
     teilweise: (l) => `misurato solo in parte: ${l}`,
@@ -1244,4 +1244,6 @@ export default {
     uhr: { heute: (ware) => `Usare ${ware} oggi`, morgen: (ware) => `Usare ${ware} entro domani`, vorbei: (ware) => `${ware}: scadenza passata – non usare`, vorbeiMehrere: (n) => `${n} merci: scadenza passata – non usare`, mehrere: (n) => `Usare ${n} merci entro domani`, mehrereHeute: (n) => `Usare ${n} merci oggi`,
       bis: (ware, tag) => `Usare ${ware} entro ${tag}`, aktion: (ware, tag) => `${ware}: un’offerta fino a ${tag} conviene`, mhdVorbei: (ware) => `${ware}: TMC passato – controllare`, knopf: "Vedi" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Merce dopo uno scostamento del freddo", unter: "Che fine ha fatto la merce?", leer: "Nessuno scostamento aperto. Tutto deciso.", wegwerfen: "Buttata", behalten: "Tenuta", wegFrage: "Cosa è stato buttato?", wegLeer: "Nessuna merce inserita.", wegSpeichern: "Registra come scarto", wert: "Valore della merce", grundFrage: "Perché tenuta?", grundPlatzhalter: "es. spostata subito nell’altro frigo", grundSpeichern: "Salva motivo", abbrechen: "Annulla", gebucht: "Registrato come scarto.", behaltenOk: "Salvato.", grundKurz: "Scrivi un breve motivo." },
 };

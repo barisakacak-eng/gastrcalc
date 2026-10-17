@@ -1,22 +1,24 @@
 // Onboarding: eine Frage je Bildschirm, jeder Schritt wird sofort gespeichert,
 // jeder Schritt lässt sich mit „weiß ich gerade nicht" offen lassen. Nichts blockiert.
-import { selbstGewaehlt, selbstAnwenden } from "../selbst.js";
-import { kachelnFuer, vorauswahlFuer } from "../data/zwischen.js";
-import { ladenArtVon } from "../profil.js";
+import { selbstAnwenden, selbstStandard } from "../selbst.js"; // Trennung (17.10.2026): selbstStandard wohnt im Rechenwerk
 import { einrichtungStand } from "../einrichtung.js";
-import { ring } from "./home.js";
+import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
 import { t, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
-import { kuehlstelleAnzeige, kuehlTypVon, TYP_AUS_ART } from "../kuehlname.js"; // Paket 6 (17.10.2026)
-import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige } from "../util.js";
-import { reinigungVon, putzzeitMonat, REINIGUNG_LEER } from "../reinigung.js";
+import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
+import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige } from "../util.js";
+import { reinigungVon, putzzeitMonat } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
 import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard, satzStandard } from "../data/kosten.js";
+// Trennung (17.10.2026): alle Schreibvorgänge der Einrichtung laufen über js/stamm.js
+import { schrittSetzen, einrichtungWegSetzen, schnellErgebnisSetzen, schnellFertig, betriebNameSetzen, betriebFormatSetzen, kuecheUmschalten, betriebTageAendern, betriebMonateAendern,
+  ladenArtSetzen, teamFeldSetzen, lohnkostenSetzen, lohnkostenOffen, eigenerLohnSetzen, eigenerLohnOffen, kostenBetragSetzen, kostenPostenUmschalten, kostenPeriodeSetzen,
+  kostenPostenOffen, kostenBasisSetzen, kostenSatzSetzen, kostenKategorieGeprueft, kostenSchnellSetzen, kanalUmschalten, portalAnlegen, portalEntfernen, portalBasisSetzen,
+  portalFeldSetzen, reinigungAendern, reinigungMinutenAendern, kuehlstelleAnlegen, kuehlstelleArtWaehlen, kuehlstelleNameSetzen, kuehlstelleWegnehmen, kuehlEingerichtetSetzen } from "../stamm.js";
 import { VORSTEUER_SAETZE } from "../engine.js"; // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten
 import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
-import { heute } from "../util.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
 import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste, karteModus, serieStand, fotoLauf, fotoVorbereiten } from "./foto.js";
 import { monatsLast } from "../engine.js";
@@ -39,12 +41,7 @@ const stepper = (feld, wert, text) => `
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 const knopfOffen = (text = t("allgemein.weissNicht")) => `<button type="button" class="leise" data-a="offen">${esc(text)}</button>`;
 
-// Kostenposten eines Betriebs holen oder anlegen
-function postenEintrag(stand, postenId, kat) {
-  let e = stand.kosten.find((k) => k.posten === postenId);
-  if (!e) { e = { id: uid(), posten: postenId, kategorie: kat, betrag: null, status: "aus", periode: "monat", basis: basisStandard(postenId), satz: satzStandard(postenId) }; stand.kosten.push(e); }
-  return e;
-}
+// Trennung (17.10.2026): postenEintrag (Kostenposten holen oder anlegen) heißt jetzt kostenPosten und wohnt in js/stamm.js
 
 // ---------- Schritte ----------
 
@@ -78,7 +75,7 @@ const format = {
       </div>`).join("")}`,
   fuss: (stand) => stand.betrieb.format ? knopfWeiter() : "",
   aktion(name, el, stand, ctx) {
-    if (name === "format") { stand.betrieb.format = el.dataset.wert; return true; }
+    if (name === "format") { betriebFormatSetzen(stand, el.dataset.wert); return true; }
   },
 };
 
@@ -92,11 +89,7 @@ const kueche = {
     </div>`,
   fuss: (stand) => stand.betrieb.kuechen.length ? knopfWeiter() : "",
   aktion(name, el, stand) {
-    if (name === "kueche") {
-      const id = el.dataset.wert; const k = stand.betrieb.kuechen;
-      const i = k.indexOf(id); if (i >= 0) k.splice(i, 1); else k.push(id);
-      return true;
-    }
+    if (name === "kueche") { kuecheUmschalten(stand, el.dataset.wert); return true; }
   },
 };
 
@@ -109,12 +102,12 @@ const betrieb = {
     <div class="feldzeile"><label>${esc(t("betrieb.frageMonate"))}</label>${stepper("monate", stand.betrieb.monate, t("betrieb.monate", stand.betrieb.monate))}</div>
     ${stand.betrieb.monate < 12 ? `<p class="tipp">${esc(t("betrieb.monateHinweis"))}</p>` : ""}`,
   fuss: () => knopfWeiter(),
-  eingabe(feld, wert, stand) { if (feld === "betrieb.name") stand.betrieb.name = wert; },
+  eingabe(feld, wert, stand) { if (feld === "betrieb.name") betriebNameSetzen(stand, wert); },
   aktion(name, el, stand) {
     if (name === "minus" || name === "plus") {
       const d = name === "plus" ? 1 : -1;
-      if (el.dataset.feld === "tage") stand.betrieb.tageProWoche = Math.min(7, Math.max(1, stand.betrieb.tageProWoche + d));
-      if (el.dataset.feld === "monate") stand.betrieb.monate = Math.min(12, Math.max(1, stand.betrieb.monate + d));
+      if (el.dataset.feld === "tage") betriebTageAendern(stand, d);
+      if (el.dataset.feld === "monate") betriebMonateAendern(stand, d);
       return true;
     }
   },
@@ -133,8 +126,8 @@ const team = {
     </div>`,
   fuss: () => knopfWeiter(),
   eingabe(feld, wert, stand) {
-    if (feld === "team.personen") stand.team.personen = parseZahl(wert);
-    if (feld === "team.stundenProPerson") stand.team.stundenProPerson = parseZahl(wert);
+    if (feld === "team.personen") teamFeldSetzen(stand, "personen", parseZahl(wert));
+    if (feld === "team.stundenProPerson") teamFeldSetzen(stand, "stundenProPerson", parseZahl(wert));
   },
 };
 
@@ -154,12 +147,12 @@ const lohn = {
     </div>`,
   fuss: () => knopfOffen() + knopfWeiter(),
   eingabe(feld, wert, stand) {
-    if (feld === "team.lohnkosten") { stand.team.lohnkosten = parseZahl(wert); stand.team.lohnOffen = false; }
-    if (feld === "team.eigenerLohn") { const n = parseZahl(wert); stand.team.eigenerLohn = n; stand.team.eigenerLohnStatus = n === null ? "geschaetzt" : "eigen"; }
+    if (feld === "team.lohnkosten") lohnkostenSetzen(stand, parseZahl(wert));
+    if (feld === "team.eigenerLohn") eigenerLohnSetzen(stand, parseZahl(wert));
   },
   aktion(name, el, stand, ctx) {
-    if (name === "offen") { stand.team.lohnkosten = null; stand.team.lohnOffen = true; ctx.weiter("uebersprungen"); return true; }
-    if (name === "eigen-offen") { stand.team.eigenerLohn = null; stand.team.eigenerLohnStatus = "offen"; return true; }
+    if (name === "offen") { lohnkostenOffen(stand); ctx.weiter("uebersprungen"); return true; }
+    if (name === "eigen-offen") { eigenerLohnOffen(stand); return true; }
   },
 };
 
@@ -225,32 +218,21 @@ function kostenSchritt(kat) {
     },
     eingabe(feld, wert, stand) {
       if (!feld.startsWith("posten:")) return;
-      const e = postenEintrag(stand, feld.slice(7), kat);
-      e.betrag = parseZahl(wert);
-      e.status = e.betrag === null ? "offen" : "bekannt";
+      kostenBetragSetzen(stand, feld.slice(7), kat, parseZahl(wert));
     },
     aktion(name, el, stand) {
       if (name === "posten") {
-        const e = postenEintrag(stand, el.dataset.posten, kat);
-        if (e.status !== "aus") { e.status = "aus"; e.betrag = null; }
-        else {
-          const p = postenJeKategorie(kat).find((x) => x.id === el.dataset.posten);
-          const rw = p.rw(findeFormat(stand.betrieb.format));
-          if (rw) { e.betrag = rw; e.status = "geschaetzt"; e.periode = "monat"; } else { e.betrag = null; e.status = "offen"; }
-        }
+        const aus = (stand.kosten.find((k) => k.posten === el.dataset.posten)?.status || "aus") === "aus";
+        const rw = aus ? postenJeKategorie(kat).find((x) => x.id === el.dataset.posten).rw(findeFormat(stand.betrieb.format)) : null; // Richtwert nur beim Einschalten
+        kostenPostenUmschalten(stand, el.dataset.posten, kat, rw);
         return true;
       }
-      if (name === "periode") {
-        const e = postenEintrag(stand, el.dataset.posten, kat);
-        const neu = el.dataset.wert; if (e.periode === neu) return false;
-        if (e.status === "geschaetzt" && e.betrag !== null) e.betrag = neu === "jahr" ? e.betrag * 12 : e.betrag / 12; // Richtwert mitnehmen
-        e.periode = neu; return true;
-      }
-      if (name === "posten-offen") { const e = postenEintrag(stand, el.dataset.posten, kat); e.betrag = null; e.status = "offen"; return true; }
-      if (name === "basis-posten") { const e = postenEintrag(stand, el.dataset.posten, kat); e.basis = el.dataset.wert === "brutto" ? "brutto" : "netto"; return true; }
-      if (name === "satz-posten") { const e = postenEintrag(stand, el.dataset.posten, kat); const sz = Number(el.dataset.wert); e.satz = VORSTEUER_SAETZE.includes(sz) ? sz : satzStandard(el.dataset.posten); return true; } // Paket 3, M1
+      if (name === "periode") return kostenPeriodeSetzen(stand, el.dataset.posten, kat, el.dataset.wert); // Richtwert wird mitgenommen
+      if (name === "posten-offen") { kostenPostenOffen(stand, el.dataset.posten, kat); return true; }
+      if (name === "basis-posten") { kostenBasisSetzen(stand, el.dataset.posten, kat, el.dataset.wert); return true; }
+      if (name === "satz-posten") { kostenSatzSetzen(stand, el.dataset.posten, kat, Number(el.dataset.wert)); return true; } // Paket 3, M1
     },
-    beimVerlassen(stand) { if (!stand.kostenKategorienGeprueft.includes(kat)) stand.kostenKategorienGeprueft.push(kat); },
+    beimVerlassen(stand) { kostenKategorieGeprueft(stand, kat); },
   };
 }
 
@@ -282,21 +264,14 @@ const kanaele = {
   fuss: () => knopfWeiter(),
   eingabe(feld, wert, stand) {
     const m = feld.match(/^portal:(\d+):(\w+)$/); if (!m) return;
-    const p = stand.kanaele.portale[Number(m[1])]; if (!p) return;
-    if (m[2] === "name") p.name = wert;
-    if (m[2] === "provision") p.provision = parseZahl(wert);
+    if (m[2] === "name") portalFeldSetzen(stand, Number(m[1]), "name", wert);
+    if (m[2] === "provision") portalFeldSetzen(stand, Number(m[1]), "provision", parseZahl(wert));
   },
   aktion(name, el, stand) {
-    const k = stand.kanaele;
-    if (name === "kanal") {
-      const w = el.dataset.wert;
-      if (w === "portale") { if (k.portale.length) k.portale = []; else k.portale.push({ id: uid(), name: "", provision: null, basis: "unbekannt" }); }
-      else k[w] = !k[w];
-      return true;
-    }
-    if (name === "portal-neu") { k.portale.push({ id: uid(), name: "", provision: null, basis: "unbekannt" }); return true; }
-    if (name === "portal-weg") { k.portale.splice(Number(el.dataset.i), 1); return true; }
-    if (name === "basis") { const p = k.portale[Number(el.dataset.i)]; if (p) p.basis = el.dataset.wert; return true; }
+    if (name === "kanal") { kanalUmschalten(stand, el.dataset.wert); return true; }
+    if (name === "portal-neu") { portalAnlegen(stand); return true; }
+    if (name === "portal-weg") { portalEntfernen(stand, Number(el.dataset.i)); return true; }
+    if (name === "basis") { portalBasisSetzen(stand, Number(el.dataset.i), el.dataset.wert); return true; }
   },
 };
 
@@ -319,20 +294,19 @@ const kuehlstellen = {
       ${stellen.length ? `<p class="tipp">${esc(t("kuehl.grenzeStandard"))}</p>` : ""}`;
   },
   fuss(stand) { return stand.kuehlstellen.some((k) => !k.archiviert) ? knopfWeiter() : `<button type="button" class="knopf zweit" data-a="weiter">${esc(t("kuehl.obKeine"))}</button>`; },
-  eingabe(feld, wert, stand) { if (feld.startsWith("ob-stelle:")) { const k = stand.kuehlstellen.find((x) => x.id === feld.slice(10)); if (k) k.name = wert.slice(0, 40); } },
+  eingabe(feld, wert, stand) { if (feld.startsWith("ob-stelle:")) kuehlstelleNameSetzen(stand, feld.slice(10), wert); },
   aktion(name, el, stand) {
     const aktiv = () => stand.kuehlstellen.filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
     if (name === "plus" && el.dataset.feld === "stellen") {
       const n = aktiv().length; if (n >= 20) return false;
       const art = n === 0 ? "kuehl" : n === 1 ? "tk" : "kuehl"; const nK = aktiv().filter((k) => k.art === "kuehl").length;
       const nameNeu = art === "tk" ? t("kuehl.obNameTk") : t("kuehl.obName", nK + 1);
-      if (!stand.kuehl.seit) stand.kuehl.seit = heute();
-      stand.kuehlstellen.push({ id: uid(), name: nameNeu, art, typ: art === "tk" ? "tiefkuehler" : "kuehlschrank", min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false }); return true;
+      kuehlstelleAnlegen(stand, { name: nameNeu, art, typ: art === "tk" ? "tiefkuehler" : "kuehlschrank" }); return true;
     }
-    if (name === "minus" && el.dataset.feld === "stellen") { const l = aktiv(); const k = l[l.length - 1]; if (!k) return false; if (stand.messungen.some((m) => m.stelle === k.id)) k.archiviert = true; else stand.kuehlstellen = stand.kuehlstellen.filter((x) => x.id !== k.id); return true; }
-    if (name === "ob-art") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k) return false; k.art = el.dataset.wert; k.min = null; k.max = null; k.typ = TYP_AUS_ART[k.art]; if (k.art === "tk" && /^Kühlschrank|^Fridge|^Buzdolabı/.test(k.name)) k.name = t("kuehl.obNameTk"); if (k.art === "warm" && /^Kühlschrank|^Fridge|^Buzdolabı|^Tiefkühler|^Freezer|^Derin/.test(k.name)) k.name = t("kuehl.obNameWarm"); return true; }
+    if (name === "minus" && el.dataset.feld === "stellen") { const l = aktiv(); const k = l[l.length - 1]; if (!k) return false; return kuehlstelleWegnehmen(stand, k.id); }
+    if (name === "ob-art") return kuehlstelleArtWaehlen(stand, el.dataset.id, el.dataset.wert, { tk: t("kuehl.obNameTk"), warm: t("kuehl.obNameWarm") });
   },
-  beimVerlassen(stand) { stand.kuehl.eingerichtet = stand.kuehlstellen.some((k) => !k.archiviert); },
+  beimVerlassen(stand) { kuehlEingerichtetSetzen(stand); },
 };
 
 
@@ -361,17 +335,16 @@ export const reinigungSchritt = {
       ${r.wer ? `<div class="feldzeile"><label>${esc(t("reinigung.mittelFrage"))}</label><p class="hinweis">${esc(t("reinigung.mittelHinweis"))}</p>${zahlfeld({ feld: "rein-mittel", wert: r.mittelSchaetzung, einheit: t("reinigung.jeMonat"), klein: true, platzhalter: "–", status: typeof r.mittelSchaetzung === "number" ? "geschaetzt" : "" })}</div>` : ""}`;
   },
   fuss: () => knopfWeiter(),
+  // Trennung (17.10.2026): wie bisher legt jede Eingabe/Handlung dieses Schritts betrieb.reinigung an (reinigungAendern ohne Felder)
   eingabe(feld, wert, stand) {
-    const r = (stand.betrieb.reinigung ??= { ...REINIGUNG_LEER });
-    if (feld === "rein-firma") r.firmaBetrag = parseZahl(wert);
-    if (feld === "rein-mittel") r.mittelSchaetzung = parseZahl(wert);
+    reinigungAendern(stand, feld === "rein-firma" ? { firmaBetrag: parseZahl(wert) } : feld === "rein-mittel" ? { mittelSchaetzung: parseZahl(wert) } : {});
   },
   aktion(name, el, stand) {
-    const r = (stand.betrieb.reinigung ??= { ...REINIGUNG_LEER });
-    if (name === "rein-wer") { r.wer = el.dataset.wert; return true; }
-    if (name === "rein-min") { r.minutenTag = Math.min(240, Math.max(15, (Number(r.minutenTag) || 45) + Number(el.dataset.d))); return true; }
-    if (name === "rein-basis") { r.basis = el.dataset.wert === "netto" ? "netto" : "brutto"; return true; }
-    if (name === "rein-durch") { r.durch = el.dataset.wert === "inhaber" ? "inhaber" : "team"; return true; }
+    if (name === "rein-wer") { reinigungAendern(stand, { wer: el.dataset.wert }); return true; }
+    if (name === "rein-min") { reinigungMinutenAendern(stand, Number(el.dataset.d)); return true; }
+    if (name === "rein-basis") { reinigungAendern(stand, { basis: el.dataset.wert === "netto" ? "netto" : "brutto" }); return true; }
+    if (name === "rein-durch") { reinigungAendern(stand, { durch: el.dataset.wert === "inhaber" ? "inhaber" : "team" }); return true; }
+    reinigungAendern(stand);
   },
 };
 
@@ -416,12 +389,10 @@ export const kostenSchnell = {
   eingabe(feld, wert, stand) {
     const m = feld.match(/^ks:(\w+)$/); if (!m) return;
     const n = parseZahl(wert);
-    if (m[1] === "personal") { stand.team.lohnkosten = n; return; }
-    if (m[1] === "eigen") { stand.team.eigenerLohn = n; stand.team.eigenerLohnStatus = n === null ? "geschaetzt" : "eigen"; return; }
+    if (m[1] === "personal") { teamFeldSetzen(stand, "lohnkosten", n); return; }
+    if (m[1] === "eigen") { eigenerLohnSetzen(stand, n); return; }
     const posten = KS_POSTEN[m[1]]; if (!posten) return;
-    const e = postenEintrag(stand, posten, posten === "miete" ? "miete" : "energie");
-    e.betrag = n; e.status = n === null ? "aus" : "bekannt"; e.periode = "monat";
-    if (posten === "strom") { e.sammel = "strom-gas"; e.basis = "brutto"; }
+    kostenSchnellSetzen(stand, posten, posten === "miete" ? "miete" : "energie", n);
   },
 };
 
@@ -438,15 +409,8 @@ const kopfS2 = (id, titel, hilfeText, extra = "") => `
     ${hilfeText && hilfeAuf === id ? `<div class="s2hilfe" role="note"><p>${esc(hilfeText)}</p>${extra}</div>` : ""}`;
 const hilfeAktion = (name, el) => { if (name !== "s2-hilfe") return false; hilfeAuf = hilfeAuf === el.dataset.wert ? null : el.dataset.wert; return true; };
 
-// Vorauswahl „selbst gemacht“ nach Laden-Art – still angewendet, ohne Frage. Eine eigene Antwort des Wirts (im Büro geändert) bleibt.
-const gleich = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
-export function selbstStandard(stand) {
-  const art = ladenArtVon(stand); if (!art) return false;
-  const eigeneAntwort = Array.isArray(stand.selbst) && !(stand.selbstAutoArt && gleich(stand.selbst, vorauswahlFuer(stand.selbstAutoArt)));
-  if (eigeneAntwort) return false;
-  selbstAnwenden(stand, vorauswahlFuer(art)); stand.selbstAutoArt = art;
-  return true;
-}
+// Vorauswahl „selbst gemacht“ nach Laden-Art – Trennung (17.10.2026): selbstStandard wohnt jetzt in js/selbst.js
+export { selbstStandard };
 
 const spracheSchnell = {
   id: "sprache",
@@ -473,11 +437,11 @@ const ladenSchnell = {
     <input class="textfeld s2name" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("schnell2.namePlatzhalter"))}" aria-label="${esc(t("schnell2.namePlatzhalter"))}" autocomplete="off">
     <div class="kacheln fotokacheln s2arten">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
-  eingabe(feld, wert, stand) { if (feld === "betrieb.name") stand.betrieb.name = wert; },
+  eingabe(feld, wert, stand) { if (feld === "betrieb.name") betriebNameSetzen(stand, wert); },
   aktion(name, el, stand) {
     if (hilfeAktion(name, el)) return true;
-    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; stand.ladenArt = a.id; stand.betrieb.format = a.format; stand.betrieb.kuechen = [...a.kuechen]; return true; }
-    if (name === "weg-genau") { hilfeAuf = null; stand.weg = "genau"; stand.schritt = schrittIndex("format"); stand.schrittId = "format"; return true; }
+    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; ladenArtSetzen(stand, a); return true; }
+    if (name === "weg-genau") { hilfeAuf = null; einrichtungWegSetzen(stand, "genau", schrittIndex("format"), "format"); return true; }
   },
   beimVerlassen(stand) { selbstStandard(stand); },
 };
@@ -504,7 +468,7 @@ const karteSchnell = {
   eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
   aktion(name, el, stand, ctx) {
     if (hilfeAktion(name, el)) return true;
-    if (name === "fv-uebernehmen") { selbstStandard(stand); stand.schnellErgebnis = karteUebernehmen(stand); ctx.weiter(); return true; }
+    if (name === "fv-uebernehmen") { selbstStandard(stand); schnellErgebnisSetzen(stand, karteUebernehmen(stand)); ctx.weiter(); return true; }
     return kartePruefenAktion(name, el);
   },
   beimVerlassen(stand) { selbstStandard(stand); },
@@ -527,14 +491,11 @@ export function kuehlAnzahlAendern(stand, typ, d) {
   if (d > 0) {
     if (aktiveStellen(stand).length >= 20) return false;
     const n = gleiche.length; const name = t("schnell2.arten." + typ) + (n ? " " + (n + 1) : "");
-    if (!stand.kuehl.seit) stand.kuehl.seit = heute();
-    stand.kuehlstellen.push({ id: uid(), name, art: T.art, typ, min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false });
+    kuehlstelleAnlegen(stand, { name, art: T.art, typ });
     return true;
   }
   const k = gleiche[gleiche.length - 1]; if (!k) return false;
-  if (stand.messungen.some((m) => m.stelle === k.id)) k.archiviert = true; // Messungen bleiben nachweisbar
-  else stand.kuehlstellen = stand.kuehlstellen.filter((x) => x.id !== k.id);
-  return true;
+  return kuehlstelleWegnehmen(stand, k.id); // Messungen bleiben nachweisbar (dann archiviert)
 }
 const kuehlSchnell = {
   id: "kuehl-schnell",
@@ -559,7 +520,7 @@ const kuehlSchnell = {
     if (hilfeAktion(name, el)) return true;
     if (name === "s2-kuehl") return kuehlAnzahlAendern(stand, el.dataset.wert, Number(el.dataset.d));
   },
-  beimVerlassen(stand) { stand.kuehl.eingerichtet = stand.kuehlstellen.some((k) => !k.archiviert); },
+  beimVerlassen(stand) { kuehlEingerichtetSetzen(stand); },
 };
 
 // Geld: die vier Kostenfragen und „Wer putzt?“ auf einem Bildschirm. Geschrieben wird genau wie bisher
@@ -614,8 +575,7 @@ const fertigSchnell = {
     : `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="start">${esc(t("schnell2.los"))}</button>`,
   aktion(name, el, stand, ctx) {
     if (name !== "ob-fertig") return false;
-    delete stand.schnellErgebnis;
-    if (el.dataset.pin) stand.pinFestlegen = true; // W2-S: app.js (fertig) öffnet damit gleich das PIN-Blatt
+    schnellFertig(stand, { pin: !!el.dataset.pin }); // W2-S: app.js (fertig) öffnet mit pinFestlegen gleich das PIN-Blatt
     ctx.fertig(["kartefoto", "buero"].includes(el.dataset.ziel) ? el.dataset.ziel : "start");
     return false;
   },
@@ -633,8 +593,8 @@ const ALT_NACH_NEU = { sprache: "sprache", "laden-schnell": "laden-schnell", sel
 export function schrittIdMerken(stand) {
   if (!stand || stand.phase !== "onboarding") return;
   const liste = schritteFuer(stand);
-  stand.schritt = Math.min(Math.max(0, stand.schritt || 0), liste.length - 1);
-  stand.schrittId = liste[stand.schritt].id;
+  const nr = Math.min(Math.max(0, stand.schritt || 0), liste.length - 1);
+  schrittSetzen(stand, nr, liste[nr].id);
 }
 
 export function schrittWiederherstellen(stand) {
@@ -646,7 +606,7 @@ export function schrittWiederherstellen(stand) {
   if (id === "selbst" && stand.weg === "schnell") { if (Array.isArray(stand.selbst)) selbstAnwenden(stand); else selbstStandard(stand); }
   if (id && stand.weg === "schnell" && !liste.some((s) => s.id === id)) id = ALT_NACH_NEU[id] || null;
   const i = id ? liste.findIndex((s) => s.id === id) : -1;
-  if (i >= 0) stand.schritt = i;
+  if (i >= 0) schrittSetzen(stand, i, stand.schrittId);
   schrittIdMerken(stand);
   return stand;
 }

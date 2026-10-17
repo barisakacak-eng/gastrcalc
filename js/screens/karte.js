@@ -4,14 +4,16 @@ import { sym } from "../symbole.js";
 import { gerichtBild } from "./vergleich.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, einheitLabel, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
-import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
 import { zwischenrezept } from "../data/zwischen.js";
-import { rezeptBauen } from "../rezept_baukasten.js";
 import { rezeptStempel, quelleVon, waageFragen, schnellwahl, familieAnpassen, geldSatz } from "../rezept_quelle.js";
-import { selbstAnwenden, selbstGewaehlt } from "../selbst.js";
-import { klasseFuerBereich, artikelAusGerichten, kalkulation, garverlustAnteil, preisJeBasis, steuersatzAusZutaten, mengeUmrechnen, gebindeKette, gebindePreise, preisMerken, istRichtpreis } from "../engine.js";
+import { kalkulation, garverlustAnteil, preisJeBasis, gebindeKette, gebindePreise, istRichtpreis } from "../engine.js";
+// Trennung (17.10.2026): alle Schreibvorgänge dieser Schritte laufen über js/karte_daten.js
+import { gerichtAusVorlage, gerichtAusVorlageAnlegen, gerichtEigenAnlegen, gerichtEntfernen, gerichtNameSetzen, gerichtKlasseSetzen, gerichtZeitSchritt, rezeptAngepasst,
+  zutatMengeSetzen, zutatEntfernen, zutatEinheitSetzen, zutatAusKatalog, zutatFrei, verkaufspreisSetzen, mengeTagSetzen, bestellungenTagSetzen, zielgewinnSetzen,
+  artikelAbgleichen, artikelVorschau, artikelFeldSetzen, packungEinheitSetzen, gebindeArtSetzen, preisBasisSetzen, zwischenEntfernen, garverlustMessenUmschalten, selbstUmschalten } from "../karte_daten.js";
 import { richtpreiseEinsetzen, richtpreiseEntfernen, richtpreiseAktiv, richtpreiseMoeglich } from "../richtpreise.js"; // Richtpreise (17.10.2026)
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
@@ -30,11 +32,7 @@ export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatS
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 
-export function gerichtAusVorlage(v) { // 17.10.2026 Fehler F1: exportiert für tests/f1f2.test.mjs
-  const zutaten = v.zutaten.map(([name, menge, einheit]) => ({ name, menge, einheit }));
-  return { id: uid(), name: v.name, vorlageName: v.name, bereich: v.bereich, klasse: klasseFuerBereich(v.bereich), zeit: v.zeit, vorlage: true,
-    zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten), rezeptFamilie: rezeptBauen(v.name)?.familie || null };
-}
+export { gerichtAusVorlage }; // Trennung (17.10.2026): wohnt jetzt in js/karte_daten.js (Verweis für ältere Aufrufer)
 
 // ---------- Schritt: Karte ----------
 export const karte = {
@@ -79,18 +77,18 @@ export const karte = {
     if (name === "weitere") { weitereOffen = !weitereOffen; return true; }
     if (name === "vorlage") {
       const i = stand.gerichte.findIndex((g) => g.vorlage && (g.vorlageName || g.name) === el.dataset.name);
-      if (i >= 0) { if (gerichtHatEingaben(stand.gerichte[i]) && !confirm(t("karte.wegFrage", stand.gerichte[i].name))) return false; stand.gerichte.splice(i, 1); }
-      else { const so = vorlagenSortiert(stand); const v = [...so.kern, ...so.oft, ...so.weitere].find((x) => x.name === el.dataset.name); if (v) stand.gerichte.push(gerichtAusVorlage(v)); }
+      if (i >= 0) { if (gerichtHatEingaben(stand.gerichte[i]) && !confirm(t("karte.wegFrage", stand.gerichte[i].name))) return false; gerichtEntfernen(stand, stand.gerichte[i].id); }
+      else { const so = vorlagenSortiert(stand); const v = [...so.kern, ...so.oft, ...so.weitere].find((x) => x.name === el.dataset.name); if (v) gerichtAusVorlageAnlegen(stand, v); }
       return true;
     }
     if (name === "eigenes-neu") {
       const n = eigenesText.trim(); if (!n) return false;
-      stand.gerichte.push({ id: uid(), name: n, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis: null, mengeTag: null, steuer: 0.07 });
+      gerichtEigenAnlegen(stand, n);
       eigenesText = ""; return true;
     }
-    if (name === "eigenes-weg") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false; if (gerichtHatEingaben(g) && !confirm(t("karte.wegFrage", g.name))) return false; stand.gerichte = stand.gerichte.filter((x) => x.id !== g.id); return true; }
+    if (name === "eigenes-weg") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false; if (gerichtHatEingaben(g) && !confirm(t("karte.wegFrage", g.name))) return false; gerichtEntfernen(stand, g.id); return true; }
   },
-  beimVerlassen(stand) { suche = ""; eigenesText = ""; weitereOffen = false; stand.artikel = artikelAusGerichten(stand); },
+  beimVerlassen(stand) { suche = ""; eigenesText = ""; weitereOffen = false; artikelAbgleichen(stand); },
 };
 
 // Hat der Betrieb an diesem Gericht schon etwas eingetragen? Dann vor dem Löschen fragen.
@@ -173,13 +171,13 @@ export const rezepte = {
   },
   eingabe(feld, wert, stand) {
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return;
-    if (feld === "gericht-name") g.name = wert;
+    if (feld === "gericht-name") gerichtNameSetzen(stand, g.id, wert);
     else if (feld === "zutat-suche") { zutatSuche = wert; return true; }
-    else if (feld.startsWith("zutat:")) { const z = g.zutaten[Number(feld.slice(6))]; if (z) { const n = parseZahl(wert); if (n !== z.menge) { z.menge = n; z.quelle = "eigen"; z.quelleInfo = { datum: heute() }; } if (g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; } }
+    else if (feld.startsWith("zutat:")) zutatMengeSetzen(stand, g.id, Number(feld.slice(6)), parseZahl(wert), heute());
   },
   aktion(name, el, stand) {
     if (name === "rezept-auf") { offenesGericht = el.dataset.id; zutatSuche = ""; waage = null; stempelInfo = false; return true; }
-    if (name === "rezept-zu") { offenesGericht = null; zutatSuche = ""; waage = null; stempelInfo = false; stand.artikel = artikelAusGerichten(stand); return true; }
+    if (name === "rezept-zu") { offenesGericht = null; zutatSuche = ""; waage = null; stempelInfo = false; artikelAbgleichen(stand); return true; }
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return false;
     if (name === "stempel-info") { stempelInfo = !stempelInfo; return true; }
     if (name === "waage-start") { const fragen = waageFragen(stand, g); if (!fragen.length) return false; waage = { gid: g.id, fragen, k: 0, wert: fragen[0].menge, meldungen: [], fertig: false }; return true; }
@@ -196,23 +194,23 @@ export const rezepte = {
           if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld), { dezimal: 2 }), g.name));
         }
         waage.k += 1;
-        if (waage.k >= waage.fragen.length) { waage.fertig = true; stand.artikel = artikelAusGerichten(stand); }
+        if (waage.k >= waage.fragen.length) { waage.fertig = true; artikelAbgleichen(stand); }
         else waage.wert = waage.fragen[waage.k].menge;
         return true;
       }
     }
-    if (name === "klasse") { g.klasse = el.dataset.wert; return true; }
-    if (name === "zeit") { const d = Number(el.dataset.d); const z = Number(g.zeit) || 0; const schritt = (d > 0 ? z >= 5 : z > 5) ? 1 : 0.5; g.zeit = Math.max(0.5, Math.round((z + d * schritt) * 2) / 2); return true; }
-    if (["zutat-weg", "zutat-neu", "zutat-frei", "einheit"].includes(name) && g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen"; // vom Wirt angepasst
-    if (name === "zutat-weg") { g.zutaten.splice(Number(el.dataset.i), 1); if (!g.zutaten.length) g.rezeptBewusstLeer = true; return true; }
-    if (name === "einheit") { const z = g.zutaten[Number(el.dataset.i)]; if (z && z.einheit !== el.dataset.wert) { z.menge = mengeUmrechnen(z.menge, z.einheit, el.dataset.wert); z.einheit = el.dataset.wert; } return true; }
-    if (name === "zutat-neu") { const p = PRODUKT_INDEX[el.dataset.name]; if (p) g.zutaten.push({ name: p.n, menge: null, einheit: p.e === "kg" ? "g" : p.e === "l" ? "ml" : p.e }); zutatSuche = ""; return true; }
-    if (name === "zutat-frei") { g.zutaten.push({ name: el.dataset.name, menge: null, einheit: "stk" }); zutatSuche = ""; return true; }
-    if (name === "gericht-weg") { if (!confirm(t("karte.wegFrage", g.name))) return false; stand.gerichte = stand.gerichte.filter((x) => x.id !== g.id); offenesGericht = null; return true; }
+    if (name === "klasse") { gerichtKlasseSetzen(stand, g.id, el.dataset.wert); return true; }
+    if (name === "zeit") { gerichtZeitSchritt(stand, g.id, Number(el.dataset.d)); return true; }
+    if (["zutat-weg", "zutat-neu", "zutat-frei", "einheit"].includes(name)) rezeptAngepasst(stand, g.id); // vom Wirt angepasst
+    if (name === "zutat-weg") { zutatEntfernen(stand, g.id, Number(el.dataset.i)); return true; }
+    if (name === "einheit") { zutatEinheitSetzen(stand, g.id, Number(el.dataset.i), el.dataset.wert); return true; }
+    if (name === "zutat-neu") { zutatAusKatalog(stand, g.id, el.dataset.name); zutatSuche = ""; return true; }
+    if (name === "zutat-frei") { zutatFrei(stand, g.id, el.dataset.name); zutatSuche = ""; return true; }
+    if (name === "gericht-weg") { if (!confirm(t("karte.wegFrage", g.name))) return false; gerichtEntfernen(stand, g.id); offenesGericht = null; return true; }
   },
-  beimVerlassen(stand) { offenesGericht = null; waage = null; stand.artikel = artikelAusGerichten(stand); },
+  beimVerlassen(stand) { offenesGericht = null; waage = null; artikelAbgleichen(stand); },
   // Zurück-Geste im Detail: nur das Detail schließen, nicht den Schritt verlassen
-  zurueck(stand) { if (waage && !waage.fertig) { waage = null; return true; } if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; stand.artikel = artikelAusGerichten(stand); return true; },
+  zurueck(stand) { if (waage && !waage.fertig) { waage = null; return true; } if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; artikelAbgleichen(stand); return true; },
 };
 
 // ---------- Schritt: Einkaufspreise mit Gebinde (Etappe 5, Variante C: was kaufst du, was ist drin, was kostet es) ----------
@@ -280,8 +278,8 @@ function artikelZeile(a) {
 export const preise = {
   id: "preise",
   view(stand) {
-    stand.artikel = artikelAusGerichten(stand);
-    const artikel = stand.artikel.filter((a) => a.benutzt !== false);
+    // Trennung (17.10.2026): Zeichnen schreibt nicht mehr – gespeichert wird beim Betreten des Schritts (beimBetreten) und bei jeder Eingabe
+    const artikel = artikelVorschau(stand).filter((a) => a.benutzt !== false);
     const gruppen = [...new Set(artikel.map((a) => a.gruppe))];
     const rpAktiv = richtpreiseAktiv({ artikel }); // Richtpreise (17.10.2026): zählen nicht als eingetragen
     const fertig = artikel.filter((a) => preisJeBasis(a) !== null).length - rpAktiv;
@@ -298,38 +296,35 @@ export const preise = {
       <p class="hinweis">${esc(t("gebinde.lieferungSpaeter"))}</p>`;
   },
   fuss() { return knopfWeiter(); },
+  beimBetreten(stand) { artikelAbgleichen(stand); }, // Trennung (17.10.2026): vorher im Zeichnen
+  // Trennung (17.10.2026): vorher glich das Zeichnen die Artikelliste ab und speicherte sie. Jetzt geschieht das vor und nach jeder
+  // Eingabe und Handlung dieses Schritts – gespeichert wird also dasselbe wie vorher, nur nicht mehr beim Anzeigen.
   eingabe(feld, wert, stand) {
     const [art, ...rest] = feld.split(":"); const name = rest.join(":");
-    const a = stand.artikel.find((x) => x.name === name); if (!a) return;
-    if (art === "packung") { a.packung ??= { menge: null, einheit: a.einheit }; a.packung.menge = parseZahl(wert); }
-    if (art === "preis") { const n = parseZahl(wert); if (n !== a.preis) { preisMerken(a, heute()); a.preis = n; if (n !== null) a.preisDatum = heute(); } }
-    if (art === "zwischen") { a.gebinde ??= { art: "packung", zwischen: null }; const n = parseZahl(wert); a.gebinde.zwischen = n > 0 ? { art: a.gebinde.zwischen?.art || "beutel", anzahl: Math.round(n) } : null; }
-    if (art === "roh") { a.garverlust ??= {}; a.garverlust.roh = parseZahl(wert); }
-    if (art === "gar") { a.garverlust ??= {}; a.garverlust.gar = parseZahl(wert); }
-    // Richtpreise (17.10.2026): solange Preis und Packung unverändert sind, bleibt es ein Richtpreis; jede Änderung macht ihn zum eigenen
-    a.status = preisJeBasis(a) === null ? "offen" : istRichtpreis(a) ? "richtpreis" : "bekannt";
-    if (a.richtpreis && !istRichtpreis(a)) delete a.richtpreis;
+    artikelAbgleichen(stand);
+    artikelFeldSetzen(stand, name, art, parseZahl(wert), heute());
+    artikelAbgleichen(stand);
   },
-  aktion(name, el, stand, ctx) {
+  aktion(name, el, stand, ctx) { artikelAbgleichen(stand); const r = preisAktion(name, el, stand, ctx); artikelAbgleichen(stand); return r; },
+  beimVerlassen() { zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; },
+};
+function preisAktion(name, el, stand, ctx) {
     if (name === "richtpreise-ein") { const r = richtpreiseEinsetzen(stand); ctx?.meldung?.(t("preise.richtpreis.meldung", r.gesetzt, r.ohneRichtpreis.length)); return true; } // Richtpreise (17.10.2026)
     if (name === "richtpreise-weg") { const r = richtpreiseEntfernen(stand); ctx?.meldung?.(t("preise.richtpreis.entfernt", r.entfernt)); return true; }
     if (name === "richtpreise-quelle") { rpQuelleOffen = !rpQuelleOffen; return true; }
     const a = stand.artikel.find((x) => x.name === el.dataset.name); if (!a) return false;
     if (name === "selbst-an" || name === "selbst-aus") {
       const kachel = zwischenrezept(a.name)?.kachel; if (!kachel) return false;
-      const an = new Set(selbstGewaehlt(stand)); if (name === "selbst-an") an.add(kachel); else an.delete(kachel);
-      selbstAnwenden(stand, [...an]); stand.artikel = artikelAusGerichten(stand); return true;
+      selbstUmschalten(stand, kachel, name === "selbst-an"); return true;
     }
-    if (name === "packung-einheit") { a.packung ??= { menge: null, einheit: a.einheit }; if (a.packung.einheit !== el.dataset.wert) { a.packung.menge = mengeUmrechnen(a.packung.menge, a.packung.einheit, el.dataset.wert); a.packung.einheit = el.dataset.wert; } return true; }
-    if (name === "gebinde-art") { a.gebinde ??= { art: "packung", zwischen: null }; a.gebinde.art = el.dataset.wert; if (el.dataset.wert === "lose") a.gebinde.zwischen = null; return true; }
-    if (name === "preis-basis") { a.preisBasis = el.dataset.wert === "brutto" ? "brutto" : "netto"; if (a.richtpreis && !istRichtpreis(a)) { delete a.richtpreis; a.status = preisJeBasis(a) !== null ? "bekannt" : "offen"; } return true; }
+    if (name === "packung-einheit") return packungEinheitSetzen(stand, a.name, el.dataset.wert);
+    if (name === "gebinde-art") return gebindeArtSetzen(stand, a.name, el.dataset.wert);
+    if (name === "preis-basis") return preisBasisSetzen(stand, a.name, el.dataset.wert);
     if (name === "zwischen-auf") { zwischenOffen.add(a.name); return true; }
     if (name === "gebinde-mehr") { mehrArten.add(a.name); return true; }
-    if (name === "zwischen-weg") { zwischenOffen.delete(a.name); if (a.gebinde) a.gebinde.zwischen = null; return true; }
-    if (name === "messen") { a.garverlust ??= {}; a.garverlust.messen = !a.garverlust.messen; return true; }
-  },
-  beimVerlassen() { zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; },
-};
+    if (name === "zwischen-weg") { zwischenOffen.delete(a.name); zwischenEntfernen(stand, a.name); return true; }
+    if (name === "messen") return garverlustMessenUmschalten(stand, a.name);
+}
 
 // ---------- Schritt: Verkaufspreise und Mengen ----------
 export const verkauf = {
@@ -355,13 +350,13 @@ export const verkauf = {
   },
   fuss() { return knopfWeiter(t("verkauf.zeigen"), "glut"); },
   eingabe(feld, wert, stand) {
-    if (feld === "bestellungenTag") stand.verkauf.bestellungenTag = parseZahl(wert);
-    else if (feld === "zielgewinn") { stand.verkauf.zielgewinn = parseZahl(wert); stand.verkauf.zielgewinnStatus = "eigen"; }
-    else { const [art, id] = feld.split(":"); const g = stand.gerichte.find((x) => x.id === id); if (!g) return;
-      if (art === "preis") g.preis = parseZahl(wert); if (art === "menge") g.mengeTag = parseZahl(wert); }
+    if (feld === "bestellungenTag") bestellungenTagSetzen(stand, parseZahl(wert));
+    else if (feld === "zielgewinn") zielgewinnSetzen(stand, parseZahl(wert));
+    else { const [art, id] = feld.split(":");
+      if (art === "preis") verkaufspreisSetzen(stand, id, parseZahl(wert)); if (art === "menge") mengeTagSetzen(stand, id, parseZahl(wert)); }
   },
   aktion(name, el, stand) {
-    if (name === "bestseller") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false; if (g.mengeTag === null || g.mengeTag === undefined) g.mengeTag = 0; else if (!(g.mengeTag > 0) || confirm(t("karte.bestsellerWeg"))) g.mengeTag = null; return true; }
+    if (name === "bestseller") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false; if (g.mengeTag === null || g.mengeTag === undefined) mengeTagSetzen(stand, g.id, 0); else if (!(g.mengeTag > 0) || confirm(t("karte.bestsellerWeg"))) mengeTagSetzen(stand, g.id, null); return true; }
   },
 };
 

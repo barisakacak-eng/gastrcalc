@@ -460,7 +460,7 @@ export default {
     abw: { behoben: "usunięte", verspaetet: "Pomiar kontrolny spóźniony", massnahmeOffen: "Działanie otwarte", ohneMassnahme: "brak wpisanego działania" },
     nkVerspaetet: (h) => `Pomiar kontrolny spóźniony (po ${h} godz.)`,
     nkVerspaetetKurz: "Pomiar kontrolny spóźniony",
-    ware: { umgelagert: "Towar przeniesiony", weggeworfen: "Towar wyrzucony" },
+    ware: { umgelagert: "Towar przeniesiony", weggeworfen: "Towar wyrzucony", behalten: "Towar zatrzymany" },
     abwOffen: (n) => `Otwarte odchylenia: ${n}`,
     kuehlLuecken: (n, l) => `${n} pomiarów · dni z luką: ${l}`,
     teilweise: (l) => `zmierzono tylko częściowo: ${l}`,
@@ -1249,4 +1249,6 @@ export default {
     uhr: { heute: (ware) => `${ware} zużyć dziś`, morgen: (ware) => `${ware} zużyć do jutra`, vorbei: (ware) => `${ware}: termin przydatności minął – nie używać`, vorbeiMehrere: (n) => `${n} towary: termin przydatności minął – nie używać`, mehrere: (n) => `${n} towary zużyć do jutra`, mehrereHeute: (n) => `${n} towary zużyć dziś`,
       bis: (ware, tag) => `${ware} zużyć do ${tag}`, aktion: (ware, tag) => `${ware}: promocja do ${tag} się opłaca`, mhdVorbei: (ware) => `${ware}: data trwałości minęła – sprawdzić`, knopf: "Zobacz" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Towar po odchyleniu chłodzenia", unter: "Co stało się z towarem?", leer: "Brak otwartych odchyleń. Wszystko rozstrzygnięte.", wegwerfen: "Wyrzucony", behalten: "Zatrzymany", wegFrage: "Co wyrzucono?", wegLeer: "Nie wpisano jeszcze towaru.", wegSpeichern: "Zaksięguj jako odpad", wert: "Wartość towaru", grundFrage: "Dlaczego zatrzymany?", grundPlatzhalter: "np. od razu przełożony do drugiej lodówki", grundSpeichern: "Zapisz powód", abbrechen: "Anuluj", gebucht: "Zaksięgowano jako odpad.", behaltenOk: "Zapisano.", grundKurz: "Podaj krótki powód." },
 };

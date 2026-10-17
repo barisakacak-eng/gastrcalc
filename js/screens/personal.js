@@ -8,6 +8,7 @@ import { kuehlStatus, offeneNachkontrollen } from "../engine.js";
 import { planVon, planGruppen } from "../putzplan.js";
 import { modus } from "../modus.js";
 import { nav } from "./nav.js";
+import { vonNachtragen as vonNachtragenR } from "../stamm.js"; // Trennung (17.10.2026)
 
 // ---------- Kontext: ist gerade Personal-Modus? (app.js setzt die Wurzel bei jedem Zeichnen) ----------
 let kontextWurzel = null;
@@ -45,18 +46,8 @@ export function schichtPersonVergessen(stand) {
 export const personalVon = (stand) => (personalAktiv() ? schichtPerson(stand) || null : null);
 const nameVon = (stand, id) => aktive(stand).find((p) => p.id === id)?.kuerzel || "";
 
-// Einträge seit dem Eintritt in den Personal-Modus ohne Person bekommen die Schicht-Person (Kühlrundgang, Messungen, Putzhaken, Müll).
-// Rein und gezielt: nur Einträge ohne von, nur ab „seit".
-export function vonNachtragen(stand, von, ab = seit) {
-  if (!von || !ab || !stand) return 0;
-  let n = 0;
-  const setze = (e, zeit) => { if (e && !e.von && String(zeit || "") >= ab) { e.von = von; n += 1; } };
-  for (const e of stand.schwund || []) setze(e, e.erfasst);
-  for (const e of stand.putzlog || []) setze(e, e.erfasst);
-  for (const r of stand.rundgaenge || []) { setze(r, r.gestartet); for (const m of r.messungen || []) setze(m, m.erfasst || r.gestartet); }
-  for (const m of stand.messungen || []) setze(m, m.erfasst);
-  return n;
-}
+// Einträge seit dem Eintritt in den Personal-Modus ohne Person bekommen die Schicht-Person. Trennung (17.10.2026): geschrieben wird in js/stamm.js.
+export const vonNachtragen = (stand, von, ab = seit) => vonNachtragenR(stand, von, ab);
 export function personalNachtragen(stand) { return personalAktiv() ? vonNachtragen(stand, schichtPerson(stand)) : 0; }
 
 // ---------- Zahlen für die Kacheln (ohne Euro) ----------

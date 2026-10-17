@@ -8,8 +8,8 @@ import { RICHTPREISE, RICHTPREIS_INDEX, STAND } from "../js/data/richtpreise.js"
 import { richtpreiseAusCsv } from "../tools/richtpreise.mjs";
 import { richtpreiseEinsetzen, richtpreiseEntfernen, richtpreiseAktiv, istRichtpreis } from "../js/richtpreise.js";
 import { artikelAusGerichten, kalkulation, preisJeBasis, warenGericht, preisMerken } from "../js/engine.js";
-import { gerichtAusVorlage } from "../js/screens/karte.js";
-import { monatsZiel, wareneinsatzQuote } from "../js/screens/home.js";
+import { gerichtAusVorlage } from "../js/karte_daten.js"; // Trennung (17.10.2026)
+import { monatsZiel, wareneinsatzQuote } from "../js/zaehler.js"; // Trennung (17.10.2026)
 import { einrichtungStand } from "../js/einrichtung.js";
 import { warenQuote, zaehler } from "../js/zaehler.js";
 import { preisAenderungen, preiseUebernehmen } from "../js/lieferung.js";

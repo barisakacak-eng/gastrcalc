@@ -5,6 +5,7 @@
 import { t } from "../i18n.js";
 import { esc, fmtEuro, parseZahl, wertAnzeige } from "../util.js";
 import { kalkulation, preisAmpel } from "../engine.js";
+import { verkaufspreisSetzen } from "../karte_daten.js"; // Trennung (17.10.2026)
 import { gerichtBild } from "./vergleich.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
@@ -90,7 +91,7 @@ export function karteLadenAktion(name, el, stand) {
   if (name === "kl-plus") { blatt.preis = Math.min(999, cent(blatt.preis + 0.1)); return "blatt"; }
   if (name === "kl-speichern") {
     const g = stand.gerichte.find((x) => x.id === blatt.id); if (!g || !(blatt.preis > 0)) return false;
-    const vorher = g.preis; g.preis = cent(blatt.preis); blatt = null;
+    const vorher = g.preis; verkaufspreisSetzen(stand, g.id, cent(blatt.preis)); blatt = null;
     return { gespeichert: true, id: g.id, vorher, preis: g.preis };
   }
   return false;

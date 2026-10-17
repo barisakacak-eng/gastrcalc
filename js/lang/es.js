@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "resuelto", verspaetet: "Control posterior tarde", massnahmeOffen: "Medida pendiente", ohneMassnahme: "sin medida registrada" },
     nkVerspaetet: (h) => `Control posterior tarde (tras ${h} h)`,
     nkVerspaetetKurz: "Control posterior tarde",
-    ware: { umgelagert: "Mercancía trasladada", weggeworfen: "Mercancía tirada" },
+    ware: { umgelagert: "Mercancía trasladada", weggeworfen: "Mercancía tirada", behalten: "Mercancía conservada" },
     abwOffen: (n) => (n === 1 ? "1 desviación pendiente" : `${n} desviaciones pendientes`),
     kuehlLuecken: (n, l) => `${n} mediciones · ${l === 1 ? "1 día con hueco" : l + " días con hueco"}`,
     teilweise: (l) => `medido solo en parte: ${l}`,
@@ -1243,4 +1243,6 @@ export default {
     uhr: { heute: (ware) => `Usar ${ware} hoy`, morgen: (ware) => `Usar ${ware} antes de mañana`, vorbei: (ware) => `${ware}: caducidad pasada – no usar`, vorbeiMehrere: (n) => `${n} productos: caducidad pasada – no usar`, mehrere: (n) => `Usar ${n} productos antes de mañana`, mehrereHeute: (n) => `Usar ${n} productos hoy`,
       bis: (ware, tag) => `Usar ${ware} hasta el ${tag}`, aktion: (ware, tag) => `${ware}: una oferta hasta el ${tag} compensa`, mhdVorbei: (ware) => `${ware}: consumo preferente pasado – revisar`, knopf: "Ver" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Mercancía tras una desviación de frío", unter: "¿Qué pasó con la mercancía?", leer: "No hay desviaciones abiertas. Todo decidido.", wegwerfen: "Tirada", behalten: "Conservada", wegFrage: "¿Qué se tiró?", wegLeer: "Aún no hay mercancía anotada.", wegSpeichern: "Registrar como desperdicio", wert: "Valor de la mercancía", grundFrage: "¿Por qué se conservó?", grundPlatzhalter: "p. ej. pasada enseguida a la otra nevera", grundSpeichern: "Guardar motivo", abbrechen: "Cancelar", gebucht: "Registrado como desperdicio.", behaltenOk: "Guardado.", grundKurz: "Escribe un motivo breve, por favor." },
 };

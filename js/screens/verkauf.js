@@ -7,7 +7,7 @@ import { esc, fmtEuro, fmtZahl, heuteGeschaeft, parseZahl, wertAnzeige } from ".
 import { tagPlus } from "../engine.js";
 import { exportEinlesen, importVorschau, importUebernehmen, importZuruecknehmen, importe, zuordnungLernen, handVerkaufSetzen, handTag, verkaufAuswertung } from "../verkauf.js";
 import { datumLesbar } from "./tag.js";
-import { gebindeAnzahl } from "./bestand.js"; // Prüfgremium 17.10.2026 (8)
+import { gebindeAnzahl, mengeBasisText } from "./bausteine.js"; // Prüfgremium 17.10.2026 (8); Trennung (17.10.2026): aus ./bausteine.js
 import { nav } from "./nav.js";
 
 let modus = "start";       // "start" | "vorschau" | "hand"
@@ -23,13 +23,8 @@ export function verkaufZurueck() { if (modus === "start") return false; modus = 
 
 const stueck = (m) => t("verkaeufe.stueck", fmtZahl(m, Number.isInteger(m) ? 0 : 1));
 const euro = (v, ca = false) => (v === null || v === undefined ? "–" : (ca ? "≈ " : "") + fmtEuro(v, { dezimal: Math.abs(v) < 100 ? 2 : 0 }));
-// Menge in der Basiseinheit lesbar: ab 1000 g → kg, ab 1000 ml → l
-function mengeText(menge, basis) {
-  const m = Math.abs(menge);
-  if (basis === "g") return m >= 1000 ? `${fmtZahl(m / 1000, 1)} ${einheitLabel("kg")}` : `${fmtZahl(m, 0)} ${einheitLabel("g")}`;
-  if (basis === "ml") return m >= 1000 ? `${fmtZahl(m / 1000, 1)} ${einheitLabel("l")}` : `${fmtZahl(m, 0)} ${einheitLabel("ml")}`;
-  return stueck(Math.round(m * 10) / 10);
-}
+// Trennung (17.10.2026): gemeinsame Mengen-Schreibweise (./bausteine.js), Stück wie bisher als „N Stück“
+const mengeText = (menge, basis) => mengeBasisText(menge, basis, { stueck });
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 
 export function verkaufView(stand) {

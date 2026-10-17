@@ -462,7 +462,7 @@ export default {
     abw: { behoben: "riješeno", verspaetet: "Kontrolno mjerenje kasni", massnahmeOffen: "Mjera otvorena", ohneMassnahme: "nije unesena mjera" },
     nkVerspaetet: (h) => `Kontrolno mjerenje kasni (nakon ${h} h)`,
     nkVerspaetetKurz: "Kontrolno mjerenje kasni",
-    ware: { umgelagert: "Roba premještena", weggeworfen: "Roba bačena" },
+    ware: { umgelagert: "Roba premještena", weggeworfen: "Roba bačena", behalten: "Roba zadržana" },
     abwOffen: (n) => `${n} otvorenih odstupanja`,
     kuehlLuecken: (n, l) => `${n} mjerenja · ${l} dana s prazninom`,
     teilweise: (l) => `samo djelimično mjereno: ${l}`,
@@ -1251,4 +1251,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: iskoristi danas`, morgen: (ware) => `${ware}: iskoristi do sutra`, vorbei: (ware) => `${ware}: rok upotrebe prošao – ne koristiti`, vorbeiMehrere: (n) => `${n} robe: rok upotrebe prošao – ne koristiti`, mehrere: (n) => `${n} robe iskoristiti do sutra`, mehrereHeute: (n) => `${n} robe iskoristiti danas`,
       bis: (ware, tag) => `${ware}: iskoristi do ${tag}`, aktion: (ware, tag) => `${ware}: akcija do ${tag} se isplati`, mhdVorbei: (ware) => `${ware}: „najbolje do“ prošlo – provjeri`, knopf: "Pogledaj" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Roba nakon odstupanja hlađenja", unter: "Šta je bilo s robom?", leer: "Nema otvorenog odstupanja. Sve je odlučeno.", wegwerfen: "Bačeno", behalten: "Zadržano", wegFrage: "Šta je bačeno?", wegLeer: "Još nema unesene robe.", wegSpeichern: "Knjiži kao otpad", wert: "Vrijednost robe", grundFrage: "Zašto zadržano?", grundPlatzhalter: "npr. odmah premješteno u drugi frižider", grundSpeichern: "Sačuvaj razlog", abbrechen: "Odustani", gebucht: "Knjiženo kao otpad.", behaltenOk: "Sačuvano.", grundKurz: "Molim kratko obrazloženje." },
 };

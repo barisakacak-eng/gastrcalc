@@ -3,47 +3,14 @@
 // BÜRO: „‹ Laden" bzw. „‹ Büro" oben, keine Leiste. Jede Ansicht ruft wie bisher nav(<aktiv>) am Ende ihres HTML auf.
 import { t } from "../i18n.js";
 import { esc } from "../util.js";
-import { kuehlStatus, offeneNachkontrollen, schwundOhneWert, kalkulation, rundgangOffen, aktiveStellen, letzteMessung, rundgangAbweichungen } from "../engine.js"; // W2-H: rundgangAbweichungen
-import { eintraegeZaehlen } from "../store.js";
-import { einrichtungStand } from "../einrichtung.js";
-import { planGruppen } from "../putzplan.js";
-import { modus, LADEN_TABS, pinGesetzt } from "../modus.js";
+import { ladenPunkt } from "../offen.js"; // Trennung (17.10.2026)
+import { modus, LADEN_TABS } from "../modus.js";
 import { sym } from "../symbole.js";
 
 let kontext = { stand: null, wurzel: null, ansicht: "start" };
 export const navKontext = (stand, wurzel, ansicht = "start") => { kontext = { stand, wurzel, ansicht }; };
 
-// Sicherung: gelb ab 3 Tagen oder 20 neuen Einträgen, rot ab 7 Tagen (wie Etappe 5)
-export function sicherungStufe(wurzel, jetzt = Date.now()) {
-  if (!wurzel) return null;
-  const n = eintraegeZaehlen(wurzel); const neu = n - (wurzel.sicherungZaehler || 0);
-  const tage = wurzel.letzteSicherung ? Math.floor((jetzt - Date.parse(wurzel.letzteSicherung)) / 86400e3) : null;
-  return { stufe: tage === null ? (n >= 5 ? "rot" : null) : tage >= 7 ? "rot" : (tage >= 3 || neu >= 20) ? "gelb" : null, tage, neu, n };
-}
-
-// Zahlen für „Offen im Büro" (rein rechnend). Teuer (Kalkulation): wird nur auf Abruf gerechnet, nie beim Zeichnen des Ladens.
-export function menueZaehler(stand, wurzel) {
-  if (!stand) return {};
-  const ks = kuehlStatus(stand); const nk = offeneNachkontrollen(stand);
-  const kuehl = (ks.eingerichtet ? Math.max(0, ks.stellen - ks.heuteGemessen) : 0) + nk.length;
-  const karte = stand.gerichte?.length ? kalkulation(stand).zaehl.grau : 0;
-  const s = sicherungStufe(wurzel); const e = einrichtungStand(stand, wurzel);
-  return { start: e.prozent < 100 ? `${e.prozent} %` : null, kuehl: kuehl || null, karte: karte || null, listen: schwundOhneWert(stand).length || null,
-    sicherung: s?.stufe ? "!" : null, punkt: s?.stufe === "rot" || nk.some((m) => m.ueberfaellig) };
-}
-
-// Roter Punkt in der Leiste: höchstens einer gleichzeitig, Kühlung vor Putzen (Architektur „Jetzt dran").
-// Kühlung: Nachkontrolle offen, letzter Wert einer Stelle außerhalb der Grenze oder Rundgang begonnen und nicht fertig. Putzen: Aufgabe überfällig.
-export function ladenPunkt(stand) {
-  if (!stand) return null;
-  try {
-    if (offeneNachkontrollen(stand).length || rundgangOffen(stand)) return "kuehl";
-    if (aktiveStellen(stand).some((k) => letzteMessung(stand, k.id)?.abweichung)) return "kuehl";
-    if (rundgangAbweichungen(stand).length) return "kuehl"; // W2-H (p01 K3): Abweichung im offenen Rundgang zählt sofort (bleibt rot, auch wenn der offene Rundgang allein später keinen Punkt mehr gibt)
-    if (stand.putzplan?.aktiv && planGruppen(stand).ueberfaellig > 0) return "putzplan";
-  } catch (e) { console.warn(e); }
-  return null;
-}
+// Trennung (17.10.2026): sicherungStufe → js/sicherung_stufe.js, menueZaehler und ladenPunkt → js/offen.js (Rechenwerk).
 
 const TAB_SYM = { start: "house", muell: "trash-2", kuehl: "snowflake", putzplan: "spray-can", karte: "utensils-crossed" };
 

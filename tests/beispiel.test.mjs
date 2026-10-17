@@ -10,7 +10,7 @@ import { inventurenFertig, inventurVergleich } from "../js/inventur.js";
 import { ordnerAmt, zeitraumFuer, druckHtml } from "../js/export_amt.js";
 import { monatsPaket, monatVon } from "../js/export_steuer.js";
 import { heuteGeschaeft } from "../js/util.js";
-import { sicherungStufe } from "../js/screens/nav.js";
+import { sicherungStufe } from "../js/sicherung_stufe.js"; // Trennung (17.10.2026)
 
 const H = "2026-10-17";
 const deutsch = async () => { const i18n = await import("../js/i18n.js"); if (i18n.setzeSprache) await i18n.setzeSprache("de"); };

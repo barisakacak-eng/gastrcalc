@@ -455,7 +455,7 @@ export default {
     abw: { behoben: "behoben", verspaetet: "Nachkontrolle verspätet", massnahmeOffen: "Maßnahme offen", ohneMassnahme: "keine Maßnahme eingetragen" },
     nkVerspaetet: (h) => `Nachkontrolle verspätet (nach ${h} Std.)`,
     nkVerspaetetKurz: "Nachkontrolle verspätet",
-    ware: { umgelagert: "Ware umgelagert", weggeworfen: "Ware weggeworfen" },
+    ware: { umgelagert: "Ware umgelagert", weggeworfen: "Ware weggeworfen", behalten: "Ware behalten" },
     abwOffen: (n) => (n === 1 ? "1 Abweichung offen" : `${n} Abweichungen offen`),
     kuehlLuecken: (n, l) => `${n} Messungen · ${l === 1 ? "1 Tag mit Lücke" : l + " Tage mit Lücke"}`,
     teilweise: (l) => `nur teilweise gemessen: ${l}`,
@@ -1232,4 +1232,6 @@ export default {
     uhr: { heute: (ware) => `${ware} heute verbrauchen`, morgen: (ware) => `${ware} bis morgen verbrauchen`, vorbei: (ware) => `${ware}: Verbrauchsdatum vorbei – nicht mehr verwenden`, vorbeiMehrere: (n) => `${n} Waren: Verbrauchsdatum vorbei – nicht mehr verwenden`, mehrere: (n) => `${n} Waren bis morgen verbrauchen`, mehrereHeute: (n) => `${n} Waren heute verbrauchen`,
       bis: (ware, tag) => `${ware} bis ${tag} verbrauchen`, aktion: (ware, tag) => `${ware}: Aktion bis ${tag} lohnt sich`, mhdVorbei: (ware) => `${ware}: MHD vorbei – prüfen`, knopf: "Ansehen" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Ware nach Kühl-Abweichung", unter: "Was ist mit der Ware passiert?", leer: "Keine offene Abweichung. Alles entschieden.", wegwerfen: "Weggeworfen", behalten: "Behalten", wegFrage: "Was wurde weggeworfen?", wegLeer: "Noch keine Ware eingetragen.", wegSpeichern: "Als Müll buchen", wert: "Wert der Ware", grundFrage: "Warum behalten?", grundPlatzhalter: "z. B. sofort in den anderen Kühlschrank gestellt", grundSpeichern: "Begründung speichern", abbrechen: "Abbrechen", gebucht: "Als Müll gebucht.", behaltenOk: "Gespeichert.", grundKurz: "Bitte kurz begründen." },
 };

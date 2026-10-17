@@ -47,7 +47,7 @@ const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffn
   "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export"]);
 // heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.
 export function personalGesperrt(name, wert, heute) {
-  if (PERSONAL_GESPERRT.has(name) || /^stelle-/.test(name)) return true;
+  if (PERSONAL_GESPERRT.has(name) || /^stelle-|^kw-/.test(name)) return true; // Trennung (17.10.2026): kw- = Büro „Ware nach Kühl-Abweichung“
   if (name === "pp-ansicht" && wert === "einrichten") return true;
   if (name === "tag-datum" && wert !== heute) return true;
   return false;

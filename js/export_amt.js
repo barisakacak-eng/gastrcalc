@@ -54,7 +54,8 @@ export function kuehlprotokoll(stand, z, { datum = heute() } = {}) {
     return { datum: m.datum, zeit, stelle: stelle(m.stelle)?.name || "?", art: stelle(m.stelle)?.art || "kuehl", wert: typeof m.wert === "number" ? m.wert : null,
       grund: m.grund || null, min: m.min ?? null, max: m.max ?? null, abweichung: !!m.abweichung, massnahmen: m.massnahmen || [], nachkontrolle: nk, nkStunden: nks?.stunden ?? null,
       ware: m.abweichung ? wareEntscheidung(m) : null, status, behoben: m.abweichung ? status === "behoben" : null, ...personInfo(stand, m.von),
-      nacherfasst: !!m.nacherfasst, erfasst: m.nacherfasst ? m.erfasst || null : null, lfd: m.lfd ?? null, notiz: m.notiz || "" };
+      nacherfasst: !!m.nacherfasst, erfasst: m.nacherfasst ? m.erfasst || null : null, lfd: m.lfd ?? null, notiz: m.notiz || "",
+      wareGrund: m.abweichung && m.ware?.art === "behalten" ? m.ware.grund || null : null }; // Trennung (17.10.2026), Punkt 4: Begründung „Ware behalten“
   });
   const abweichungen = zeilen.filter((x) => x.abweichung).length;
   const behoben = zeilen.filter((x) => x.abweichung && x.behoben).length;

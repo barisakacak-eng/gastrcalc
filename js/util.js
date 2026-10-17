@@ -81,3 +81,13 @@ export const wertAnzeige = (n) => (n === null || n === undefined) ? "" : String(
 export const fotoSlug = (s) => String(s || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
   .replace(/[çc]/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ş/g, "s").normalize("NFKD").replace(/[̀-ͯ]/g, "")
   .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+// Trennung (17.10.2026): aus js/screens/kuehl.js hierher (Eingabe lesen, unverändert).
+// Temperaturen dürfen negativ sein (Tiefkühlung) – parseZahl nimmt kein Minus, deshalb hier getrennt.
+export function parseTemperatur(v) {
+  const s = String(v ?? "").trim().replace(/\s/g, "").replace("−", "-").replace("–", "-");
+  if (s === "" || s === "-") return null;
+  const neg = s.startsWith("-"); const n = parseZahl(neg ? s.slice(1) : s);
+  if (n === null || n > 300 || (neg && n > 100)) return null; // Küche: −100 bis 300 °C
+  return neg ? -n : n;
+}

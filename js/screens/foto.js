@@ -5,7 +5,8 @@ import { esc, parseZahl, uid, fmtEuro } from "../util.js";
 import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ablage.js";
 import { auswerten, vorwaermen } from "../auswertung.js";
 import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau } from "../karte_lesen.js";
-import { artikelAusGerichten } from "../engine.js";
+import { artikelAbgleichen } from "../karte_daten.js"; // Trennung (17.10.2026)
+import { uploadAnlegen, uploadAendern } from "../stamm.js"; // Trennung (17.10.2026): Uploads schreibt das Rechenwerk
 import { fehlendeRezepteErgaenzen } from "../rezept_baukasten.js";
 import { VORLAGEN } from "../data/katalog.js";
 
@@ -77,11 +78,12 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
   lauf = mein;
   const verworfen = () => lauf !== mein; // Laden gewechselt, abgebrochen oder neues Foto: Ergebnis gehört nicht mehr hierher (Review 6a)
   neuZeichnen();
-  const eintrag = { id: uid(), zweck, erfasst: new Date().toISOString(), geraet, status: "neu", datei: null, auswertung: null, ergebnis: null };
+  const kopf = { id: uid(), zweck, erfasst: new Date().toISOString(), geraet, status: "neu" };
   try {
     const fuerAblage = await bildFuerAblage(datei);
-    eintrag.datei = await ablegen(fuerAblage, { name: datei.name || "", zweck, laden: stand.id });
-    stand.uploads.push(eintrag); mein.upload = eintrag; if (zweck === "speisekarte") laufUploads.push(eintrag);
+    const abgelegt = await ablegen(fuerAblage, { name: datei.name || "", zweck, laden: stand.id });
+    const eintrag = uploadAnlegen(stand, { ...kopf, datei: abgelegt, auswertung: null, ergebnis: null }); // Trennung (17.10.2026)
+    mein.upload = eintrag; if (zweck === "speisekarte") laufUploads.push(eintrag);
   } catch (e) {
     // Ablegen fehlgeschlagen (zu groß, Speicher voll): trotzdem lesen, nur ohne Kopie auf dem Gerät
     mein.hinweis = e.grund === "gross" ? t("foto.zuGross") : t("foto.nichtAbgelegt");
@@ -90,19 +92,22 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
   try {
     mein.schritt = "lesen"; neuZeichnen();
     const r = await auswerten(datei, { zweck, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
-    if (mein.upload) { mein.upload.status = "gelesen"; mein.upload.auswertung = { quelle: r.quelle, art: r.art, dauerMs: r.dauerMs, zeichen: r.text.length }; }
+    uploadAendern(mein.upload, { status: "gelesen", auswertung: { quelle: r.quelle, art: r.art, dauerMs: r.dauerMs, zeichen: r.text.length } });
     if (verworfen()) return null;
     mein.text = r.text; mein.dauerMs = r.dauerMs; mein.status = "fertig";
     if (r.nichtGelesen) mein.hinweis = t("foto.seitenGrenze", r.seiten, r.seiten + r.nichtGelesen);
     if (zweck === "speisekarte") {
       const neu = vorschlaegeAusText(r.text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
+      // Trennung (17.10.2026): Gruppe einmal beim Hinzufügen festlegen (vorher beim Zeichnen), damit ein Gericht beim Korrigieren nicht wegspringt.
+      // „Bitte prüfen" nur für Lesefehler (Name, Preis); eine Rezept-Rückfrage steht als Hinweis in der Zeile unter „Erkannt"
+      for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
       vorschlaege.push(...neu); seiten += 1;
       mein.neu = neu.length;
       if (!neu.length) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
     } else if (!r.text.trim()) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
   } catch (e) {
     console.warn(e);
-    if (mein.upload) mein.upload.status = "fehler";
+    uploadAendern(mein.upload, { status: "fehler" });
     if (verworfen()) return null;
     mein.status = "fehler";
     mein.fehler = t({ art: "foto.fehlerArt", laden: "foto.fehlerLaden", zeit: "foto.fehlerZeit", gross: "foto.fehlerGross" }[e.grund] || "foto.fehlerLesen");
@@ -167,9 +172,7 @@ export function kartePruefenView() {
   const an = vorschlaege.filter((v) => v.an);
   const mitRezept = an.filter((v) => v.vorlage).length;
   const zutaten = new Set(); for (const v of an) { if (v.vorlage) for (const l of Object.values(VORLAGEN)) { const x = l.find((y) => y.name === v.vorlage); if (x) x.zutaten.forEach((z) => zutaten.add(z[0])); } else if (v.getraenk) zutaten.add(v.name); }
-  // Gruppe einmal festlegen, damit ein Gericht beim Korrigieren nicht wegspringt
-  // „Bitte prüfen" nur für Lesefehler (Name, Preis); eine Rezept-Rückfrage steht als Hinweis in der Zeile unter „Erkannt"
-  for (const v of vorschlaege) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
+  // Trennung (17.10.2026): die Gruppe (prüfen/erkannt) steht schon seit dem Hinzufügen fest – Zeichnen schreibt nichts
   const pr = vorschlaege.filter((v) => v.gruppe === "pruefen"), ok = vorschlaege.filter((v) => v.gruppe === "erkannt");
   return `
     <h1 class="frage">${esc(t("foto.pruefenFrage", vorschlaege.length))}</h1>
@@ -207,8 +210,8 @@ export function kartePruefenAktion(name, el) {
 export function karteUebernehmen(stand) {
   const r = vorschlaegeUebernehmen(stand, vorschlaege);
   fehlendeRezepteErgaenzen(stand); // auch ältere Gerichte ohne Rezept bekommen jetzt Startwerte
-  stand.artikel = artikelAusGerichten(stand);
-  for (const u of laufUploads) if (u.status === "gelesen") { u.status = "uebernommen"; u.ergebnis = { gerichte: r.neu, aktualisiert: r.aktualisiert }; }
+  artikelAbgleichen(stand);
+  for (const u of laufUploads) if (u.status === "gelesen") uploadAendern(u, { status: "uebernommen", ergebnis: { gerichte: r.neu, aktualisiert: r.aktualisiert } });
   const inv = inventurVorschau(stand);
   fotoZuruecksetzen();
   return { ...r, artikel: inv.anzahl };

@@ -460,7 +460,7 @@ export default {
     abw: { behoben: "усунено", verspaetet: "Контрольний замір запізнився", massnahmeOffen: "Захід не завершено", ohneMassnahme: "захід не вказано" },
     nkVerspaetet: (h) => `Контрольний замір запізнився (через ${h} год)`,
     nkVerspaetetKurz: "Контрольний замір запізнився",
-    ware: { umgelagert: "Товар перекладено", weggeworfen: "Товар викинуто" },
+    ware: { umgelagert: "Товар перекладено", weggeworfen: "Товар викинуто", behalten: "Товар залишено" },
     abwOffen: (n) => `Відкритих відхилень: ${n}`,
     kuehlLuecken: (n, l) => `Замірів: ${n} · днів із пропуском: ${l}`,
     teilweise: (l) => `виміряно частково: ${l}`,
@@ -1248,4 +1248,6 @@ export default {
     uhr: { heute: (ware) => `${ware}: використати сьогодні`, morgen: (ware) => `${ware}: використати до завтра`, vorbei: (ware) => `${ware}: термін придатності минув – не використовувати`, vorbeiMehrere: (n) => `Товарів із простроченим терміном: ${n} – не використовувати`, mehrere: (n) => `Товарів використати до завтра: ${n}`, mehrereHeute: (n) => `Товарів використати сьогодні: ${n}`,
       bis: (ware, tag) => `${ware}: використати до ${tag}`, aktion: (ware, tag) => `${ware}: акція до ${tag} вигідна`, mhdVorbei: (ware) => `${ware}: «найкраще до» минуло – перевірити`, knopf: "Відкрити" },
   },
+  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  kuehlWare: { titel: "Товар після відхилення охолодження", unter: "Що сталося з товаром?", leer: "Відкритих відхилень немає. Усе вирішено.", wegwerfen: "Викинуто", behalten: "Залишено", wegFrage: "Що викинули?", wegLeer: "Товар ще не внесено.", wegSpeichern: "Записати як відходи", wert: "Вартість товару", grundFrage: "Чому залишено?", grundPlatzhalter: "напр. одразу перекладено в інший холодильник", grundSpeichern: "Зберегти причину", abbrechen: "Скасувати", gebucht: "Записано як відходи.", behaltenOk: "Збережено.", grundKurz: "Будь ласка, коротко вкажи причину." },
 };

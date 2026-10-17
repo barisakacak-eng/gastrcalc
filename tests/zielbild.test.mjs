@@ -5,7 +5,7 @@ globalThis.document ??= { documentElement: {} };
 import { leererBetrieb } from "../js/store.js";
 import { tagesnotizSetzen } from "../js/engine.js";
 import { zaehler } from "../js/zaehler.js";
-import { monatsZiel } from "../js/screens/home.js";
+import { monatsZiel } from "../js/zaehler.js"; // Trennung (17.10.2026)
 import { vergleichView, vergleichModus } from "../js/screens/vergleich.js";
 import { sym, SYMBOLE } from "../js/symbole.js";
 import { PROFILE } from "../js/data/register.js";
