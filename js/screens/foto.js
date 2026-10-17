@@ -151,7 +151,7 @@ function bearbeiter(v) {
         ${v.sicher === "vorschlag" ? `<button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button>` : ""}
         <button type="button" class="chip klein leise" data-a="fv-an" data-id="${v.id}">${esc(t("foto.weglassen"))}</button></div>
       <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : v.sicher === "baukasten" ? esc(t("foto.rezeptStartwert", v.bau.zutaten.length)) : esc(t("foto.ohneRezept"))}</small>
-      ${v.sicher === "baukasten" ? `<small class="marke">${esc(v.bau.zutaten.filter((z) => !/schale|tüte|karton|box|folie|bogen/i.test(z.name)).map((z) => `${artikelText(z.name)} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " Stk" : " " + z.einheit}`).join(" · "))}</small>` : ""}
+      ${v.sicher === "baukasten" ? `<small class="marke">${esc(v.bau.zutaten.filter((z) => !/schale|tüte|karton|box|folie|bogen/i.test(z.name)).map((z) => `${artikelText(z.name)} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " " + t("allgemein.stueck") : " " + z.einheit}`).join(" · "))}</small>` : ""}
     </div>`;
 }
 function fvZeile(v) {

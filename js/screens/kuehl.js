@@ -209,7 +209,7 @@ function wegView(stand, k) {
   return `<h2>${esc(t("kuehl.wegTitel"))}</h2>
     <p class="hinweis">${esc(t("kuehl.wegHinweis"))}</p>
     <div class="liste eng">${f.weg.map((w, i) => `<div class="zeile"><div class="oben"><div class="name">${esc(artikelText(w.name))}<small>${fmtZahl(w.menge, w.einheit === "stk" ? 0 : 2)} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}${personalAktiv() ? "" : w.wert === null ? ` · ${esc(t("tag.keinPreis"))}` : ` · ${fmtEuro(w.wert, { dezimal: 2 })}`}</small></div><button type="button" class="leise" data-a="weg-weg" data-i="${i}">×</button></div></div>`).join("")}</div>
-    <div class="neu"><input class="textfeld" data-f="weg-name" value="${esc(f.wegName)}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off"><input class="textfeld" style="flex:0 0 5em" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"></div>
+    <div class="neu"><input class="textfeld" data-f="weg-name" value="${esc(artikelText(f.wegName))}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off"><input class="textfeld" style="flex:0 0 5em" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"></div>
     ${f.wegName.trim() ? `<div class="chips">${(stand.artikel || []).filter((a) => suchRang(a.name, normalisieren(f.wegName.trim())) >= 0).slice(0, 6).map((a) => `<button type="button" class="chip klein" data-a="weg-artikel" data-name="${esc(a.name)}">${esc(artikelText(a.name))}</button>`).join("")}</div>` : ""}
     <div class="chips"><button type="button" class="chip klein" data-a="weg-hinzu">${esc(t("allgemein.hinzufuegen"))}</button><button type="button" class="chip klein" data-a="weg-alles">${esc(t("kuehl.wegAlles", kn(k)))}</button></div>`;
 }
@@ -333,7 +333,8 @@ export function kuehlEingabe(feld, wert, stand) {
     return "knopf";
   }
   if (feld === "station-notiz") { form.notiz = wert; return false; }
-  if (feld === "weg-name") { form.wegName = wert; return true; }
+  if (feld === "weg-name") { // 17.10.2026: angezeigt wird der übersetzte Name, gespeichert bleibt der deutsche Katalogname
+    const treffer = (stand?.artikel || []).find((x) => artikelText(x.name) === wert.trim()); form.wegName = treffer ? treffer.name : wert; return true; }
   if (feld === "weg-menge") { form.wegMenge = parseZahl(wert); return false; }
   return false;
 }
