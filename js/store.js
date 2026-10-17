@@ -412,6 +412,7 @@ export function migrierenWurzel(w) {
     if (["laden", "personal", "buero"].includes(w.modus)) out.modus = w.modus; // Drei Ebenen: Modus je Handy
     if (pinWertGueltig(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern (W2-S: auch PBKDF2 mit Salz)
     { const sp = sperreSauber(w.pinSperre); if (sp) out.pinSperre = sp; } // W2-S: Fehlversuche übersteht den Neustart
+    if (pinWertGueltig(w.rettungPin) && w.rettungPin.includes("$")) out.rettungPin = w.rettungPin; // Rettung (17.10.2026): nur der Prüfwert des Rettungscodes
     return out;
   }
   // Schema 1: der alte Einzelbetrieb. Er hatte keine Kennung; sie wird aus Anlagezeit und Namen abgeleitet,
@@ -933,7 +934,7 @@ async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
   await ereignis("export", { betriebe: wurzel.betriebe.length });
   const ereignisse = await alleEreignisse();
   // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
-  const { bueroPin: _pin, pinSperre: _sperre, ...ohneCode } = wurzel; // W2-S (p07 M3): der Büro-Code wandert nicht in die Sicherung (das Einlesen übernimmt ihn ohnehin nicht)
+  const { bueroPin: _pin, pinSperre: _sperre, rettungPin: _rettung, ...ohneCode } = wurzel; // W2-S (p07 M3): der Büro-Code wandert nicht in die Sicherung (das Einlesen übernimmt ihn ohnehin nicht)
   const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel: ohneCode, ereignisse }));
   const sha = await sha256Hex(bytes);
   const kopf = new TextEncoder().encode(JSON.stringify({ typ: "gastrocalc-sicherung", schema: SCHEMA, sha256: sha }) + "\n");
@@ -1012,7 +1013,7 @@ export async function importDatei(text) {
   return { wurzel: ohneCode(migrierenWurzel(d.wurzel || d.stand)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme: "fehlt" }; // W2-S
 }
 // W2-S (p07 M3): Code und Fehlversuche aus einer Datei gelten nie – jedes Handy behält seinen eigenen Büro-Code
-function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; return w; }
+function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; delete w.rettungPin; return w; } // Rettung (17.10.2026): auch der Rettungscode bleibt am Handy
 
 // ---------- Zusammenführen ----------
 // W2-D (15.10.2026): Journale werden vereinigt (wie bisher). Stammdaten gewinnen nicht mehr als ganzer Laden, sondern je Bereich (BEREICHE).

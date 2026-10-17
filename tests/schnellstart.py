@@ -62,5 +62,16 @@ async def code_setzen(pg, code="1234"):
     await pg.click('#app [data-a="pin-setzen"]'); await pg.wait_for_selector("#ebene-huelle .blatt-pin")
     await code_tippen(pg, code); await pg.wait_for_timeout(300); await code_tippen(pg, code)
     await pg.locator("#ebene-huelle .blatt-pin").wait_for(state="detached", timeout=20000)  # PBKDF2 rechnet
+    rettungscode = await rettungscode_quittieren(pg)
     await pg.wait_for_timeout(400)
     assert await pg.evaluate("!!window.__gastrocalc.wurzel.bueroPin"), "Büro-Code nicht gesetzt"
+    return rettungscode
+
+
+async def rettungscode_quittieren(pg):
+    """Rettung (17.10.2026): nach jedem neuen Büro-Code zeigt die App einmal den Rettungscode – ablesen, „Aufgeschrieben“ tippen."""
+    feld = pg.locator('#ebene-huelle .blatt-rettungscode [data-rettungscode]')
+    await feld.wait_for(timeout=20000)  # zweites PBKDF2 (Rettungscode)
+    code = await feld.input_value()
+    await pg.click('#ebene-huelle [data-a="rettung-ok"]'); await pg.locator("#ebene-huelle .blatt-rettungscode").wait_for(state="detached", timeout=5000)
+    return code

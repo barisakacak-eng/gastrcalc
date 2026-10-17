@@ -7,14 +7,16 @@ import { esc } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
 import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText } from "../modus.js";
+import { rettungGesetzt, rettungErlaubt, rettungAnlegen, rettungBloecke, RETTUNG_LAENGE } from "../rettung.js"; // Rettung (17.10.2026)
 import { nav } from "./nav.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
 import { PASSWORT_MIN } from "../schluessel.js"; // E5 (16.10.2026): Passwort der Sicherung
 
 let huelle = null;
-let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort"
+let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort" | "rettung" | "rettungscode"
 let pin = null;       // { zweck: "buero" | "personal" | "setzen" | "loeschen" | "ladenLoeschen", ziel, eingabe, erste, meldung, fehler, wurzel }
 let uhr = null;       // Restzeit der Wartezeit sekündlich nachführen (W2-S)
+let rett = null;      // Rettung (17.10.2026): { ziel } – wohin es nach dem Rettungscode geht. Der Code selbst steht nur im Blatt, nie hier
 let pw = null;        // E5 (16.10.2026): { zweck: "teilen" | "einlesen", sichtbar } – das Passwort selbst steht nur im Feld, nie hier
 
 // Die Hülle hängt direkt am <body>; app.js hängt seine Klick-Weiche auch hier ein.
@@ -30,13 +32,13 @@ export const pinOffen = () => offen === "pin";
 
 function zeigen(art, html) {
   const h = ebeneHuelle(); const neu = offen !== art && !offen;
-  h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
+  h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "rettung" || art === "rettungscode" ? t("rettung.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
   h.classList.add("da"); document.body.classList.add("blatt-da"); offen = art;
   h.querySelector(".ebene-blatt button")?.focus({ preventScroll: true });
 }
 export function blattSchliessen() {
   if (!huelle || !offen) return false;
-  huelle.classList.remove("da"); huelle.innerHTML = ""; document.body.classList.remove("blatt-da"); offen = null; pin = null; pw = null; uhrStop();
+  huelle.classList.remove("da"); huelle.innerHTML = ""; document.body.classList.remove("blatt-da"); offen = null; pin = null; pw = null; rett = null; uhrStop();
   return true;
 }
 
@@ -102,7 +104,8 @@ function pinZeichnen() {
   const taste = (z) => `<button type="button" class="pintaste" data-a="pin-taste" data-wert="${z}"${rest ? " disabled" : ""}>${z}</button>`;
   zeigen("pin", `<div class="pin-kopf"><span class="ks">${sym("lock")}</span><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div>
     <div class="pin-punkte${p.fehler && !rest ? " wackeln" : ""}" aria-hidden="true">${[0, 1, 2, 3].map((i) => `<i class="${i < p.eingabe.length ? "voll" : ""}"></i>`).join("")}</div>
-    <div class="pin-tasten">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}"${rest ? " disabled" : ""}>${sym("delete")}</button></div>`);
+    <div class="pin-tasten">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}"${rest ? " disabled" : ""}>${sym("delete")}</button></div>
+    ${vergessenErlaubt(p) ? `<button type="button" class="leise" data-a="rettung-start">${esc(t("rettung.vergessen"))}</button>` : ""}`);
   if (rest) uhrStarten(); else uhrStop();
 }
 
@@ -120,7 +123,8 @@ export async function pinTaste(wert, wurzel) {
   if (p.zweck === "setzen") {
     if (!p.erste) { p.erste = e; p.eingabe = ""; pinZeichnen(); return null; }
     if (p.erste !== e || !pinGueltig(e)) { p.erste = null; p.eingabe = ""; p.fehler = true; p.meldung = t("ebene.pin.ungleich"); pinZeichnen(); return null; }
-    await pinSetzen(wurzel, e); blattSchliessen(); return { zweck: "setzen", ziel: p.ziel };
+    await pinSetzen(wurzel, e); const rettungscode = await rettungAnlegen(wurzel); // Rettung (17.10.2026): zu jedem neuen Code ein neuer Rettungscode
+    blattSchliessen(); return { zweck: "setzen", ziel: p.ziel, rettungscode };
   }
   if (p.pruefend) return null; p.pruefend = true; // die Prüfung dauert (PBKDF2) – keine zweite gleichzeitig
   let ok = false; try { ok = await pinPruefen(wurzel, e); } finally { p.pruefend = false; }
@@ -128,6 +132,47 @@ export async function pinTaste(wert, wurzel) {
   const dauer = fehlversuch(wurzel);
   if (pin !== p) return { fehler: true }; // inzwischen geschlossen
   p.eingabe = ""; p.fehler = true; p.meldung = dauer ? warteText(dauer) : t("ebene.pin.falsch"); pinZeichnen(); return { fehler: true };
+}
+
+// ---------- Rettungscode (17.10.2026) ----------
+// „Code vergessen?“ nur an der Code-Abfrage, nur wenn ein Rettungscode angelegt ist; im Personal-Modus nur am Schloss (rettung.js).
+function vergessenErlaubt(p) { return !!p.wurzel && rettungErlaubt(p.wurzel, p.zweck); }
+export const pinZweck = () => (pin ? { zweck: pin.zweck, ziel: pin.ziel } : null);
+// Eingabe des Rettungscodes. ziel: was nach dem neuen Büro-Code passieren soll ({ zweck, ziel } der Code-Abfrage)
+export function rettungStarten(ziel, wurzel) {
+  rett = { ziel };
+  const rest = sperreRest(wurzel);
+  zeigen("rettung", `<div class="blattkopf nur"><span class="ks pw-ks">${sym("key-round")}</span><b>${esc(t("rettung.titel"))}</b>
+      <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
+    <form class="pw-form" autocomplete="off">
+      <p class="hinweis">${esc(t("rettung.eingeben"))}</p>
+      <input class="textfeld gross" type="text" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" maxlength="${RETTUNG_LAENGE + 6}" data-f="rettungscode" placeholder="XXXX-XXXX-XXXX" aria-label="${esc(t("rettung.titel"))}"${rest ? " disabled" : ""}>
+      <small class="pin-meldung${rest ? " fehler" : ""}" role="status" aria-live="polite">${rest ? esc(warteText(rest)) : ""}</small>
+      <button type="submit" class="knopf" data-a="rettung-pruefen"${rest ? " disabled" : ""}>${esc(t("allgemein.weiter"))}</button>
+    </form>`);
+  const f = huelle.querySelector(".pw-form"); f.addEventListener("submit", (ev) => ev.preventDefault());
+  if (!rest) f.querySelector('[data-f="rettungscode"]').focus({ preventScroll: true });
+}
+export const rettungOffen = () => offen === "rettung";
+export const rettungZiel = () => rett?.ziel || null;
+export const rettungWert = () => (offen === "rettung" ? huelle?.querySelector('[data-f="rettungscode"]')?.value ?? "" : "");
+// Meldung unter dem Feld; laeuft: Knopf sperren, solange PBKDF2 rechnet; gesperrt: Feld und Knopf zu (Wartezeit)
+export function rettungMeldung(text, { laeuft = false, gesperrt = false } = {}) {
+  if (offen !== "rettung") return;
+  const m = huelle.querySelector(".pin-meldung"); if (m) { m.textContent = text || ""; m.classList.toggle("fehler", !!text); }
+  const k = huelle.querySelector('[data-a="rettung-pruefen"]'); const feld = huelle.querySelector('[data-f="rettungscode"]');
+  if (k) k.disabled = laeuft || gesperrt; if (feld) feld.disabled = gesperrt;
+  if (text && !laeuft && !gesperrt) { feld?.focus({ preventScroll: true }); feld?.select?.(); }
+}
+export const rettungWarteText = (ms) => warteText(ms);
+// Neuer Rettungscode: einmal zeigen. Der Klartext steht nur in diesem Blatt; „Aufgeschrieben“ schließt es, danach ist er weg.
+export function rettungscodeZeigen(code, ziel = null) {
+  rett = { ziel };
+  zeigen("rettungscode", `<div class="hilfe-inhalt"><span class="ks">${sym("key-round")}</span><b>${esc(t("rettung.neuTitel"))}</b>
+      <p>${esc(t("rettung.aufschreiben"))}</p></div>
+    <input class="textfeld gross" type="text" readonly value="${esc(rettungBloecke(code))}" aria-label="${esc(t("rettung.titel"))}" data-rettungscode="1">
+    <p class="hinweis">${esc(t("rettung.nurEinmal"))}</p>
+    <button type="button" class="knopf" data-a="rettung-ok">${esc(t("rettung.aufgeschrieben"))}</button>`);
 }
 
 // ---------- Passwort der Sicherung (E5, 16.10.2026) ----------
@@ -174,6 +219,7 @@ export function bueroCodeKarte(wurzel) {
   const da = pinGesetzt(wurzel);
   return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(da ? "ebene.pin.mit" : "sicherheit.ohneCode"))}</p>
     <button type="button" class="knopf zweit" data-a="pin-setzen">${esc(t(da ? "ebene.pin.aendern" : "ebene.pin.setzen"))}</button>
+    ${da ? `<button type="button" class="leise" data-a="rettung-neu">${esc(t(rettungGesetzt(wurzel) ? "rettung.neuAnlegen" : "rettung.anlegen"))}</button>` : ""}
     ${da ? `<button type="button" class="leise" data-a="pin-entfernen">${esc(t("ebene.pin.entfernen"))}</button>` : ""}</div>`;
 }
 

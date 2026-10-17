@@ -12,6 +12,7 @@ import { einrichtungStand } from "./einrichtung.js";
 import { wareneinsatzSicherheit } from "./rezept_quelle.js";
 import { sicherungStufe } from "./sicherung_stufe.js"; // Trennung (17.10.2026): vorher aus einem Bildschirm (screens/nav.js)
 import { imTakt } from "./takt.js";
+import { rettungFehlt } from "./rettung.js"; // Rettung (17.10.2026)
 import { haltbarUhrzeit } from "./haltbar.js"; // Stufe 1 (17.10.2026): Ablauf/Aktion als Büro-Hinweis (im Laden nichts)
 import { bestandUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
 const JOURNAL_TEXT = { schwund: 1, tagesnotizen: 1, messungen: 1, lieferungen: 1, abschluesse: 1, kostenbelege: 1, putzlog: 1, belehrungen: 1, rundgaenge: 1, inventuren: 1, uploads: 1, artikel: 1, gerichte: 1 }; // W2-D
@@ -60,6 +61,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   const add = (id, text, ziel) => out.push({ id, text, ziel });
   if (stand?.beispiel) add("beispiel", t("beispiel.chip"), { aktion: "nav", wert: "laeden" }); // Beispiel-Laden (17.10.2026): steht immer oben
   if (aktualisierung) add("fassung", t("heute.offen.fassung"), { aktion: "aktualisieren" });
+  if (rettungFehlt(wurzel)) add("rettung", t("rettung.offen"), { aktion: "rettung-neu" }); // Rettung (17.10.2026): Büro-Code ohne Rettungscode (ältere Läden)
   // W2-D: übersprungene Speicherteile (welcher Monat, welches Journal) und Hinweise vom Zusammenführen
   for (const x of (wurzel?.ladeFehler || []).filter((x) => !x.laden || x.laden === stand.id).slice(0, 3))
     add("ladeFehler", x.journal === "kopf" ? t("w2d.offen.kopf") : t("w2d.offen.teil", t("w2d.journal." + (x.journal in JOURNAL_TEXT ? x.journal : "anderes")), x.monat && x.monat !== "alle" && x.monat !== "ohne" ? x.monat.slice(5, 7) + "/" + x.monat.slice(0, 4) : ""), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });

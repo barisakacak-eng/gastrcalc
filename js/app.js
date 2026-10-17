@@ -25,8 +25,9 @@ import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: �
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt } from "./modus.js"; // W2-S: Sperrliste Personal
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
+import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
 import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
@@ -147,10 +148,7 @@ function zeichne() {
     }
   } catch (e) {
     console.error(e);
-    root.innerHTML = `<div class="schirm"><div class="inhalt">
-      <h1 class="frage">${esc(t("einstellungen.fehlerTitel"))}</h1><p class="hinweis">${esc(t("einstellungen.fehlerText"))}</p>
-      <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>
-      <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button></div></div>`;
+    notfallSeite();
   }
   if (!speicherVerfuegbar() || speicherProblem) {
     const b = document.createElement("div"); b.className = "tipp warnband"; b.style.margin = "12px 20px 0";
@@ -160,6 +158,20 @@ function zeichne() {
   if (kennung !== letzterSchirm) ruheBis = Date.now() + 250;
   letzterSchirm = kennung;
   window.scrollTo(0, y);
+}
+
+// Fehlerseite (Rettung, 17.10.2026): eine Sicherung einlesen geht hier OHNE Büro-Code – sie ersetzt dann den kaputten Stand
+// (Rückfrage vorher). Das Passwort der Sicherung (E5) bleibt Pflicht. Im Personal-Modus wird wie sonst zusammengeführt, nicht ersetzt.
+// „Alles löschen“ bleibt mit Büro-Code (dort hilft „Code vergessen?“).
+let notfall = false;
+function notfallSeite() {
+  notfall = true; blattSchliessen();
+  const ersetzen = modus(wurzel) !== "personal";
+  root.innerHTML = `<div class="schirm"><div class="inhalt">
+      <h1 class="frage">${esc(t("einstellungen.fehlerTitel"))}</h1><p class="hinweis">${esc(t("einstellungen.fehlerText"))}</p>
+      ${ersetzen ? `<p class="hinweis">${esc(t("rettung.fehlerOhneCode"))}</p>` : ""}
+      <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import"${ersetzen ? ' data-ersetzen="1"' : ""} class="versteckt"></label>
+      <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button></div></div>`;
 }
 
 // Trennung (17.10.2026): Sprache setzen und dabei den Namen des Beispiel-Ladens nachziehen (vorher schrieb das Zeichnen ihn bei jedem Bild).
@@ -319,8 +331,9 @@ async function sicherungTeilen(passwort = null) {
 
 // Einlesen führt zusammen: gleiche Laden-Kennung wird je Bereich zusammengeführt, neue Läden kommen dazu (W2-D: ZIP oder alte JSON).
 // E5 (16.10.2026): verschlüsselte Datei → Blatt fragt nach dem Passwort; die Datei wartet in einleseDatei, bis das Passwort stimmt oder das Blatt zugeht.
-let einleseDatei = null;
-async function sicherungEinlesen(datei, passwort = null) {
+let einleseDatei = null, einleseErsetzen = false;
+async function sicherungEinlesen(datei, passwort = null, { ersetzen = einleseErsetzen } = {}) {
+  einleseErsetzen = !!ersetzen && notfall && modus(wurzel) !== "personal"; // Rettung (17.10.2026): nur von der Fehlerseite
   let r;
   try { r = await importSicherung(datei, { passwort }); }
   catch (e) {
@@ -329,7 +342,8 @@ async function sicherungEinlesen(datei, passwort = null) {
   }
   if (r.passwortNoetig) { einleseDatei = datei; if (!blattOffen()) history.pushState({ blatt: true }, ""); passwortStarten("einlesen"); return; }
   blattSchliessen(); einleseDatei = null;
-  return sicherungUebernehmen(r);
+  const ersetzenJetzt = einleseErsetzen; einleseErsetzen = false;
+  return ersetzenJetzt ? sicherungErsetzen(r) : sicherungUebernehmen(r);
 }
 async function sicherungUebernehmen(gelesen) {
   try {
@@ -350,6 +364,24 @@ async function sicherungUebernehmen(gelesen) {
     ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start";
     const zusatz = [fotos.neu ? t("w2d.importFotos", fotos.neu) : "", fotos.kaputt ? t("w2d.importFotosKaputt", fotos.kaputt) : "", r.zukunft ? t("w2d.importZukunft", r.zukunft) : "", r.beide.length ? t("w2d.importBeide") : ""].filter(Boolean).join(" ");
     meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme") + (zusatz ? " " + zusatz : "")); zeichne();
+  } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
+}
+
+// Rettung (17.10.2026): Fehlerseite – die Sicherung ersetzt den Stand auf diesem Handy. Büro-Code, Rettungscode und Fehlversuche bleiben (rettung.js).
+async function sicherungErsetzen(gelesen) {
+  try {
+    const { wurzel: importiert, ereignisse, pruefsumme, ablage } = gelesen;
+    if (pruefsumme !== "ok") { await ereignis("import-pruefsumme", { pruefsumme }); if (!confirm(t(pruefsumme === "abweichung" ? "einstellungen.pruefsummeFalsch" : "w2d.pruefsummeFehlt"))) return; }
+    const namen = importiert.betriebe.map((b) => b.betrieb?.name || t("ebene.deinLaden"));
+    if (!confirm(t("rettung.ersetzenFrage", namen.join(", ")))) return;
+    speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();
+    wurzel = wurzelErsetzen(wurzel || leereWurzel(), importiert); stand = null; aktivSetzen(wurzel.aktiv);
+    const fotos = ablage?.length ? await ablageAusSicherung(ablage, ablageZuruecklegen) : { neu: 0, kaputt: 0, da: 0 };
+    await ladeSprache(wurzel.sprache || spracheDesGeraets()).catch(() => {}); setzeSprache(wurzel.sprache || spracheDesGeraets());
+    await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import-ersetzt", { anzahl: ereignisse.length, laeden: importiert.betriebe.length, pruefsumme, fotos: fotos.neu, fotosKaputt: fotos.kaputt });
+    ereignisAnzahl = (await alleEreignisse()).length;
+    notfall = false; ansicht = startAnsicht(wurzel);
+    meldung(t("rettung.ersetzt") + (fotos.neu ? " " + t("w2d.importFotos", fotos.neu) : "")); zeichne();
   } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
 }
 
@@ -398,11 +430,11 @@ function mitCode(zweck, ziel, weiter) {
 }
 
 // Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
-const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen"]); // E5: Passwort-Blatt
+const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
 async function ebeneAktion(name, el) {
   if (name === "menue-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); menueZeigen(stand, wurzel); return true; }
   if (name === "menue-zurueck") { menueZeigen(stand, wurzel); return true; }
-  if (name === "blatt-zu") { blattSchliessen(); einleseDatei = null; return true; } // E5: wartende Sicherungsdatei loslassen
+  if (name === "blatt-zu") { blattSchliessen(); einleseDatei = null; einleseErsetzen = false; return true; } // E5: wartende Sicherungsdatei loslassen
   if (name === "blatt-sprache") { spracheZeigen(); return true; }
   if (name === "blatt-laeden") { laedenZeigen(wurzel); return true; }
   if (name === "hilfe-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); hilfeZeigen(ansicht); return true; }
@@ -413,9 +445,28 @@ async function ebeneAktion(name, el) {
     else if (r?.zweck === "personal") personalVerlassen();
     else if (r?.zweck === "loeschen") await allesLoeschenJetzt(); // W2-S
     else if (r?.zweck === "ladenLoeschen") await ladenLoeschenJetzt(r.ziel); // W2-S
-    else if (r?.zweck === "setzen") { meldung(t("ebene.pin.gesetzt")); await sofortSpeichern(wurzel); if (r.ziel === "personal") ebeneWechseln("personal", "personal"); else zeichne(); } // W2-S: danach in Personal
+    else if (r?.zweck === "setzen") { await sofortSpeichern(wurzel); if (r.rettungscode) rettungscodeZeigen(r.rettungscode, r.ziel); else nachCodeGesetzt(r.ziel); } // W2-S: danach in Personal; Rettung (17.10.2026): erst den Rettungscode zeigen
     if (r?.zweck && r.zweck !== "setzen") await sofortSpeichern(wurzel); // W2-S: umgestellter Prüfwert / gelöster Zähler
     return true;
+  }
+  // Rettung (17.10.2026): „Code vergessen?“ → Rettungscode → neuer Büro-Code → neuer Rettungscode. Im Personal-Modus nur am Schloss (Personal verlassen).
+  if (name === "rettung-start") { const u = pinZweck(); if (!u || !rettungErlaubt(wurzel, u.zweck)) return true; rettungStarten(u, wurzel); return true; }
+  if (name === "rettung-pruefen") {
+    if (!rettungOffen() || !rettungErlaubt(wurzel, rettungZiel()?.zweck)) return true;
+    rettungMeldung("", { laeuft: true }); // PBKDF2 rechnet – kein zweiter Tipp
+    const r = await rettungVersuch(wurzel, rettungWert());
+    if (r.gesperrt) { rettungMeldung(rettungWarteText(r.gesperrt), { gesperrt: true }); return true; }
+    await sofortSpeichern(wurzel); // Zähler übersteht einen Neustart (wie beim Büro-Code)
+    if (r.ok) { pinStarten("setzen", { rettung: rettungZiel() }, wurzel, t("rettung.richtig")); return true; }
+    rettungMeldung(r.dauer ? rettungWarteText(r.dauer) : t("rettung.falsch"), { gesperrt: !!r.dauer });
+    if (r.dauer) setTimeout(() => rettungMeldung("", {}), r.dauer);
+    return true;
+  }
+  if (name === "rettung-ok") { const z = rettungZiel(); if (modus(wurzel) === "personal" && z?.rettung?.zweck !== "personal") return true; blattSchliessen(); nachCodeGesetzt(z); return true; }
+  if (name === "rettung-neu") { // im Büro: neuen Rettungscode anlegen (der alte gilt nicht mehr) – auch der Offen-Hinweis für ältere Läden
+    if (modus(wurzel) !== "buero" || !pinGesetzt(wurzel)) return true;
+    const code = await rettungAnlegen(wurzel); await sofortSpeichern(wurzel);
+    if (!blattOffen()) history.pushState({ blatt: true }, ""); rettungscodeZeigen(code, null); return true;
   }
   if (name === "pin-setzen") { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); return true; }
   // E5 (16.10.2026): „Sicherung“ öffnet erst das Passwort-Blatt; geteilt wird mit oder ohne Passwort
@@ -443,6 +494,18 @@ async function ebeneAktion(name, el) {
     return true;
   }
   return false;
+}
+
+// Nach einem neuen Büro-Code (und dem Rettungscode): ziel "personal" → Personal-Modus; ziel { rettung: { zweck, ziel } } → wohin die
+// vergessene Code-Abfrage wollte (Büro: gleich hinein; Löschen: zurück, der Wirt tippt noch einmal mit dem neuen Code).
+function nachCodeGesetzt(ziel) {
+  meldung(t("ebene.pin.gesetzt"));
+  if (ziel === "personal") return ebeneWechseln("personal", "personal");
+  const u = ziel?.rettung;
+  if (u?.zweck === "buero" && !notfall) return ebeneWechseln("buero", u.ziel || "buero");
+  if (u?.zweck === "personal" && !notfall) return personalVerlassen(); // vom Personal-Schloss: neuer Code → Laden
+  if (notfall) return notfallSeite();
+  zeichne();
 }
 
 // W2-S: die eigentlichen Löschungen – erst nach dem Code (falls gesetzt), dann noch die Rückfrage
@@ -473,7 +536,7 @@ async function aufKlick(ev) {
   const name = el.dataset.a;
   const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
   if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
-  if (!stand) return;
+  if (!stand && !notfall) return; // Rettung (17.10.2026): auf der Fehlerseite gibt es evtl. keinen Laden – Sicherung einlesen und Löschen gehen trotzdem
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
 
   // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
@@ -686,7 +749,7 @@ root.addEventListener("focusout", (ev) => {
 root.addEventListener("change", async (ev) => {
   const el = ev.target; if (!el.files?.[0]) return;
   const dateien = [...el.files]; const datei = dateien[0]; el.value = "";
-  if (el.dataset.f === "import") return sicherungEinlesen(datei);
+  if (el.dataset.f === "import") return sicherungEinlesen(datei, null, { ersetzen: el.dataset.ersetzen === "1" }); // Rettung (17.10.2026): Fehlerseite ersetzt
   if (el.dataset.f === "verkauf-datei") { // E7 (17.10.2026): Kassen-Export lesen – bleibt auf dem Gerät, nichts wird gesendet
     try { await verkaufDatei(stand, dateien); } catch (e) { console.warn(e); meldung(t("verkaeufe.vorschau.fehlerDatei")); }
     return zeichne();
@@ -802,7 +865,9 @@ function fremdeFassungUebernehmen() {
   };
   versuch();
 }
+let swGestartet = false; // Rettung (17.10.2026): die Fehlerseite beim Start ruft ihn evtl. ein zweites Mal
 async function serviceWorkerStarten() {
+  if (swGestartet) return; swGestartet = true;
   if (!("serviceWorker" in navigator) || !window.isSecureContext) { offlineStand = "keinSw"; return; }
   try {
     const reg = await navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
@@ -842,6 +907,13 @@ window.addEventListener(FREMDER_STAND, (ev) => {
   }
   // W2-D: Speicher ließ sich nicht öffnen – die Daten sind wahrscheinlich noch da. Nicht zur Neu-Einrichtung einladen.
   if (ladeProbleme().gesperrt && !(await speicherGesperrtSchirm())) return;
+  try { await startNachLaden(); }
+  catch (e) { // Rettung (17.10.2026): der Start bricht ab (z. B. kaputter Stand) – Fehlerseite statt leerem Bildschirm
+    console.error(e); try { await ladeSprache(wurzel?.sprache || spracheDesGeraets()); setzeSprache(wurzel?.sprache || spracheDesGeraets()); } catch (_) { /* Deutsch */ }
+    notfallSeite(); serviceWorkerStarten();
+  }
+})();
+async function startNachLaden() {
   aktivSetzen(wurzel.aktiv);
   ebeneWiederherstellen(wurzel); ansicht = startAnsicht(wurzel); // Modus gilt je Handy und bleibt nach dem Neustart (Büro mit Code: zurück in den Laden)
   // Gerichte ohne Rezept (aus älteren Fassungen) bekommen beim Start Startwerte aus dem Baukasten (Pilot 14.10.: keine leere App)
@@ -863,7 +935,7 @@ window.addEventListener(FREMDER_STAND, (ev) => {
   history.replaceState({ schritt: stand.schritt }, "");
   history.pushState({ schritt: stand.schritt }, "");
   zeichne();
-})();
+}
 
 // W2-D: eigener Schirm statt leerer Einrichtung. Rückgabe true = trotzdem weiter (ohne Speichern, mit Warnband).
 async function speicherGesperrtSchirm() {

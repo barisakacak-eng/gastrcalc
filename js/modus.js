@@ -44,7 +44,8 @@ export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESS
 const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffnen", "kuehl-einrichtung-fertig", "kuehl-keine", "kuehl-takt", "kuehl-ruhetag",
   "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "muell1-nachtragen",
   "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter",
-  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export"]);
+  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export",
+  "rettung-neu"]); // Rettung (17.10.2026): kein neuer Rettungscode; „Code vergessen?“ nur am Schloss (rettungErlaubt in rettung.js, app.js prüft)
 // heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.
 export function personalGesperrt(name, wert, heute) {
   if (PERSONAL_GESPERRT.has(name) || /^stelle-|^kw-/.test(name)) return true; // Trennung (17.10.2026): kw- = Büro „Ware nach Kühl-Abweichung“
@@ -116,9 +117,9 @@ export async function pinHash(pin, salz = zufallSalz()) {
   return `salz$${ERSATZ_RUNDEN}$${salz}$${ersatzHash(pin, salz, ERSATZ_RUNDEN)}`;
 }
 export async function pinSetzen(wurzel, pin) {
-  if (pin === null) { wurzel.bueroPin = null; delete wurzel.pinSperre; return true; }
+  if (pin === null) { wurzel.bueroPin = null; delete wurzel.pinSperre; delete wurzel.rettungPin; return true; } // Rettung (17.10.2026): ohne Büro-Code kein Rettungscode
   if (!pinGueltig(pin)) return false;
-  wurzel.bueroPin = await pinHash(pin); delete wurzel.pinSperre; return true;
+  wurzel.bueroPin = await pinHash(pin); delete wurzel.pinSperre; delete wurzel.rettungPin; return true; // Rettung (17.10.2026): neuer Code = alter Rettungscode gilt nicht mehr (rettung.js legt gleich einen neuen an)
 }
 // Gleichlang vergleichen (kein früher Abbruch)
 const gleich = (a, b) => { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; };
@@ -129,6 +130,8 @@ async function pinStimmt(wert, pin) {
   if (art === "pbkdf2") { const h = await pbkdf2(pin, salz, runden); return h !== null && gleich(h, soll); } // ohne crypto.subtle lässt sich ein PBKDF2-Wert nicht prüfen
   return gleich(ersatzHash(pin, salz, Math.min(runden, 200000)), soll);
 }
+// Rettung (17.10.2026): derselbe Vergleich für den Rettungscode (rettung.js) – nur gesalzene Prüfwerte, nie alte ohne Salz
+export const pruefwertStimmt = (wert, text) => (typeof wert === "string" && NEU.test(wert) ? pinStimmt(wert, String(text)) : Promise.resolve(false));
 // Prüft den Code. Ein alter Prüfwert (ohne Salz) wird dabei gleich auf den neuen umgestellt – danach speichern.
 export async function pinPruefen(wurzel, pin) {
   if (!pinGesetzt(wurzel) || !pinGueltig(pin)) return false;
