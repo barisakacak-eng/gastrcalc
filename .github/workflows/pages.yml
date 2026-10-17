@@ -32,14 +32,23 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install playwright==1.56.0 && python -m playwright install --with-deps chromium
-      # Befunde zusätzlich als Anmerkungen (lesbar ohne Log-Download): jede Zeile mit NEU, Verletzungen, Fehler
-      - run: |
-          set -o pipefail
-          python tests/regeln.py 2>&1 | tee regeln.txt || { grep -E "NEU|neu:|Verletzungen|Error|Traceback|assert" regeln.txt | tail -20 | while read -r l; do echo "::warning::regeln: $l"; done; exit 1; }
-          grep -E "Verletzungen" regeln.txt | while read -r l; do echo "::notice::regeln: $l"; done
-      - run: |
-          set -o pipefail
-          python tests/durchlauf_personal.py 2>&1 | tee personal.txt || { tail -15 personal.txt | while read -r l; do echo "::warning::personal: $l"; done; exit 1; }
+      # Befunde als Anmerkungen (lesbar ohne Log-Download). Ein Browser-Lauf darf einmal wiederholt werden:
+      # GitHub-Rechner sind langsam beim ersten Service-Worker-Start (2 von 7 Läufen am 17.10. mit Zeitüberschreitung).
+      # Schlägt auch der zweite Lauf fehl, blockiert der Job den Deploy.
+      - name: Regelprüfung
+        run: |
+          for versuch in 1 2; do
+            if python tests/regeln.py > regeln.txt 2>&1; then grep -E "Verletzungen" regeln.txt | while read -r l; do echo "::notice::regeln: $l"; done; exit 0; fi
+            tail -25 regeln.txt | while read -r l; do echo "::warning::regeln Versuch $versuch: $l"; done
+          done
+          exit 1
+      - name: Personal-Durchlauf
+        run: |
+          for versuch in 1 2; do
+            if python tests/durchlauf_personal.py > personal.txt 2>&1; then exit 0; fi
+            tail -25 personal.txt | while read -r l; do echo "::warning::personal Versuch $versuch: $l"; done
+          done
+          exit 1
   deploy:
     needs: [test, regeln]
     runs-on: ubuntu-latest
