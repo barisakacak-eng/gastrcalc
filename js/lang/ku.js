@@ -1211,7 +1211,7 @@ export default {
     gespeichert: "Hate tomarkirin",
     ungueltig: "Hejmarek ne rast e – ji kerema xwe kontrol bike.",
     nichtsGeaendert: "Tiştek nehat guhertin",
-    uhr: { heute: (a) => `Îro siparîş bike: ${a} tişt`, morgen: (a) => `Sibê siparîş bike: ${a} tişt`, reicht: (a, b) => `${a} ≈ ${b} rojên din têr dike`, fastAlle: (a) => `${a} hema xelas bûye`, knopf: "Siparîş bike" },
+    uhr: { heute: (a) => `Îro siparîş bike: ${a} tişt`, morgen: (a) => `Sibê siparîş bike: ${a} tişt`, reicht: (a, b) => `${a} ≈ ${b} rojên din têr dike`, fastAlle: (a) => `${a} hema xelas bûye`, mindest: (a) => `${a} di bin kêmtirîn stokê de – dîsa siparîş bike`, knopf: "Siparîş bike" },
   },
   // Stufe 1 (17.10.2026): Ofîs „Kampanya û dema xerabûnê“ û dîrok li ser fîşê
   aktionen: {
@@ -1239,7 +1239,7 @@ export default {
     beleg: { titel: "Dema xerabûnê (bijarte)", unter: "Dîrok ji pakêtê – bername di wextê de hişyar dike.", auf: "Dîrokê binivîse", anzahl: (n) => `dîrokên nivîsandî: ${n}`,
       mhd: "Baştir berî", verbrauch: "Dîroka bikaranînê", datum: "Dîrok", speichern: "Tomar bike", zu: "Bigire", gespeichert: "Hate tomarkirin", nichts: "Tiştek nehat guhertin" },
     wt: ["Yş", "Dş", "Sş", "Çş", "Pş", "În", "Ş"],
-    uhr: { heute: (ware) => `${ware}: îro bi kar bîne`, morgen: (ware) => `${ware}: heta sibê bi kar bîne`, vorbei: (ware) => `${ware}: dîroka bikaranînê derbas bû`, mehrere: (n) => `${n} mal heta sibê bên bikaranîn`,
+    uhr: { heute: (ware) => `${ware}: îro bi kar bîne`, morgen: (ware) => `${ware}: heta sibê bi kar bîne`, vorbei: (ware) => `${ware}: dîroka bikaranînê derbas bû – bi kar neyne`, vorbeiMehrere: (n) => `${n} mal: dîroka bikaranînê derbas bû – bi kar neyne`, mehrere: (n) => `${n} mal heta sibê bên bikaranîn`, mehrereHeute: (n) => `${n} mal îro bên bikaranîn`,
       bis: (ware, tag) => `${ware}: heta ${tag} bi kar bîne`, aktion: (ware, tag) => `${ware}: kampanya heta ${tag} qezenc dike`, mhdVorbei: (ware) => `${ware}: „baştir berî“ derbas bû – kontrol bike`, knopf: "Binêre" },
   },
 };

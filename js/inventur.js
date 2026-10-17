@@ -10,7 +10,7 @@
 // Vergleich (ab der zweiten Inventur): Anfang + Einkauf − Ende = Verbrauch. Zeitraum: nach dem Tag der vorigen Inventur bis einschließlich
 // des Tags dieser Inventur (gezählt wird nach Ladenschluss; was am Zähltag geliefert wurde, steckt schon in der vorigen Zählung).
 import { imTakt } from "./takt.js";
-import { uid, heute } from "./util.js";
+import { uid, heuteGeschaeft } from "./util.js"; // Prüfgremium 17.10.2026 (2): Inventur zählt zum Geschäftstag (bis 4 Uhr = Vortag)
 import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus, istRichtpreis } from "./engine.js";
@@ -60,7 +60,7 @@ export function inventurVorher(stand, inv) {
   const i = f.findIndex((x) => x.id === inv.id); return i > 0 ? f[i - 1] : null;
 }
 
-export function inventurStarten(stand, { datum = heute(), jetzt = new Date().toISOString() } = {}) {
+export function inventurStarten(stand, { datum = heuteGeschaeft(), jetzt = new Date().toISOString() } = {}) {
   const offen = inventurOffen(stand); if (offen) return offen;
   const vor = inventurVorher(stand, null);
   const inv = { id: uid(), datum, begonnen: jetzt, abgeschlossen: null, posten: {}, ausgeblendet: vor ? [...(vor.ausgeblendet || [])] : [] };
@@ -153,7 +153,7 @@ function inventurWertRechnen(stand, inv) {
 }
 
 // Abschließen: Datum des Zähltags, Preise festhalten, Wert merken. Danach ändert sich nichts mehr.
-export function inventurAbschliessen(stand, inv, { datum = heute(), jetzt = new Date().toISOString() } = {}) {
+export function inventurAbschliessen(stand, inv, { datum = heuteGeschaeft(), jetzt = new Date().toISOString() } = {}) {
   if (!inv || inv.abgeschlossen) return false;
   const { liste } = artikelFuerInventur(stand, inv);
   inv.preise = {};
@@ -161,6 +161,9 @@ export function inventurAbschliessen(stand, inv, { datum = heute(), jetzt = new 
   const art = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   for (const z of liste) { if (!(z.name in inv.posten)) inv.posten[z.name] = null; if (z.menge !== null) { inv.preise[z.name] = z.preis; const p = art[z.name]?.packung; if (p?.menge > 0 && EINHEITEN[p.einheit]) inv.inhalte[z.name] = inBasis(p.menge, p.einheit); } }
   const rp = liste.filter((z) => z.menge !== null && z.richtpreis).map((z) => z.name); if (rp.length) inv.richtpreise = rp; // Richtpreise (17.10.2026)
+  // Prüfgremium 17.10.2026 (2): Der Zähltag liegt nie nach dem laufenden Geschäftstag – wer nach Mitternacht den Kalendertag übergibt
+  // (bis 4 Uhr), bekommt den Geschäftstag der Schicht, die gerade zu ist.
+  { const g = Number.isFinite(Date.parse(jetzt)) ? heuteGeschaeft(new Date(jetzt)) : null; if (g && typeof datum === "string" && datum > g) datum = g; }
   inv.datum = datum; inv.abgeschlossen = jetzt;
   inv.wert = inventurWert(stand, inv).summe;
   const v = inventurVergleich(stand, inv); if (v && typeof v.betriebsmittel.jeMonat === "number") inv.betriebsmittelJeMonat = v.betriebsmittel.jeMonat; // für die Zeile im Zähler (Stufe „aus Inventur“)

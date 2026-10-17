@@ -1200,7 +1200,7 @@ export default {
     ohneRezept: (namen) => `Tarifsiz, kullanıma sayılmaz: ${namen}`, ohneGericht: (n) => `Yemeği olmayan ${n} satılan adet – kullanıma sayılmaz.`,
     einstellungenTitel: "Ayarlar", tage: "Kaç gün için sipariş?", puffer: "Yedek gün", mindest: "Depoda en az", mindestHinweis: "Her zaman olması gereken paket sayısı. Önemli değilse boş bırak.",
     speichern: "Kaydet", zu: "Kapat", gespeichert: "Kaydedildi", ungueltig: "Bir sayı doğru değil – lütfen kontrol et.", nichtsGeaendert: "Değişiklik yok",
-    uhr: { heute: (n) => `Bugün sipariş et: ${n} ürün`, morgen: (n) => `Yarın sipariş et: ${n} ürün`, reicht: (name, n) => `${name} ≈ ${n} gün daha yeter`, fastAlle: (name) => `${name} bitmek üzere`, knopf: "Sipariş et" },
+    uhr: { heute: (n) => `Bugün sipariş et: ${n} ürün`, morgen: (n) => `Yarın sipariş et: ${n} ürün`, reicht: (name, n) => `${name} ≈ ${n} gün daha yeter`, fastAlle: (name) => `${name} bitmek üzere`, mindest: (name) => `${name} en az stokun altında – sipariş et`, knopf: "Sipariş et" },
   },
   // Stufe 1 (17.10.2026): Büro „Kampanya ve raf ömrü“ ve fişte son kullanma tarihi
   aktionen: {
@@ -1228,7 +1228,7 @@ export default {
     beleg: { titel: "Raf ömrü (isteğe bağlı)", unter: "Paketteki tarih – uygulama zamanında uyarır.", auf: "Tarih gir", anzahl: (n) => `${n} tarih girildi`,
       mhd: "TETT", verbrauch: "Son kullanma", datum: "Tarih", speichern: "Kaydet", zu: "Kapat", gespeichert: "Kaydedildi", nichts: "Değişiklik yok" },
     wt: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
-    uhr: { heute: (ware) => `${ware} bugün kullan`, morgen: (ware) => `${ware} yarına kadar kullan`, vorbei: (ware) => `${ware}: son kullanma tarihi geçti`, mehrere: (n) => `${n} ürünü yarına kadar kullan`,
+    uhr: { heute: (ware) => `${ware} bugün kullan`, morgen: (ware) => `${ware} yarına kadar kullan`, vorbei: (ware) => `${ware}: son kullanma tarihi geçti – kullanma`, vorbeiMehrere: (n) => `${n} ürün: son kullanma tarihi geçti – kullanma`, mehrere: (n) => `${n} ürünü yarına kadar kullan`, mehrereHeute: (n) => `${n} ürünü bugün kullan`,
       bis: (ware, tag) => `${ware} ${tag} gününe kadar kullan`, aktion: (ware, tag) => `${ware}: ${tag} gününe kadar kampanya kazandırır`, mhdVorbei: (ware) => `${ware}: TETT geçti – kontrol et`, knopf: "Bak" },
   },
 };

@@ -1212,7 +1212,7 @@ export default {
     gespeichert: "Guardado",
     ungueltig: "Un número no es correcto – revísalo.",
     nichtsGeaendert: "Nada cambiado",
-    uhr: { heute: (a) => `Pide hoy: ${a} productos`, morgen: (a) => `Pide mañana: ${a} productos`, reicht: (a, b) => `${a} alcanza ≈ ${b} días más`, fastAlle: (a) => `${a} casi se acabó`, knopf: "Pedir" },
+    uhr: { heute: (a) => `Pide hoy: ${a} productos`, morgen: (a) => `Pide mañana: ${a} productos`, reicht: (a, b) => `${a} alcanza ≈ ${b} días más`, fastAlle: (a) => `${a} casi se acabó`, mindest: (a) => `${a} bajo el stock mínimo – volver a pedir`, knopf: "Pedir" },
   },
   // Stufe 1 (17.10.2026): Oficina «Ofertas y caducidad» y fecha en el albarán
   aktionen: {
@@ -1240,7 +1240,7 @@ export default {
     beleg: { titel: "Caducidad (opcional)", unter: "Fecha del envase – así la app avisa a tiempo.", auf: "Poner fecha", anzahl: (n) => `${n} fechas puestas`,
       mhd: "Consumo preferente", verbrauch: "Caducidad", datum: "Fecha", speichern: "Guardar", zu: "Cerrar", gespeichert: "Guardado", nichts: "Nada cambiado" },
     wt: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
-    uhr: { heute: (ware) => `Usar ${ware} hoy`, morgen: (ware) => `Usar ${ware} antes de mañana`, vorbei: (ware) => `${ware}: caducidad pasada`, mehrere: (n) => `Usar ${n} productos antes de mañana`,
+    uhr: { heute: (ware) => `Usar ${ware} hoy`, morgen: (ware) => `Usar ${ware} antes de mañana`, vorbei: (ware) => `${ware}: caducidad pasada – no usar`, vorbeiMehrere: (n) => `${n} productos: caducidad pasada – no usar`, mehrere: (n) => `Usar ${n} productos antes de mañana`, mehrereHeute: (n) => `Usar ${n} productos hoy`,
       bis: (ware, tag) => `Usar ${ware} hasta el ${tag}`, aktion: (ware, tag) => `${ware}: una oferta hasta el ${tag} compensa`, mhdVorbei: (ware) => `${ware}: consumo preferente pasado – revisar`, knopf: "Ver" },
   },
 };

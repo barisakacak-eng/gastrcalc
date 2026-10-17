@@ -1219,7 +1219,7 @@ export default {
     gespeichert: "Salvat",
     ungueltig: "Un număr nu e corect – verifică.",
     nichtsGeaendert: "Nimic schimbat",
-    uhr: { heute: (a) => `Comandă azi: ${a} produse`, morgen: (a) => `Comandă mâine: ${a} produse`, reicht: (a, b) => `${a} mai ajunge ≈ ${b} zile`, fastAlle: (a) => `${a} aproape s-a terminat`, knopf: "Comandă" },
+    uhr: { heute: (a) => `Comandă azi: ${a} produse`, morgen: (a) => `Comandă mâine: ${a} produse`, reicht: (a, b) => `${a} mai ajunge ≈ ${b} zile`, fastAlle: (a) => `${a} aproape s-a terminat`, mindest: (a) => `${a} sub stocul minim – comandă din nou`, knopf: "Comandă" },
   },
   // Stufe 1 (17.10.2026): Birou „Oferte și termene” și data pe aviz
   aktionen: {
@@ -1247,7 +1247,7 @@ export default {
     beleg: { titel: "Termen (opțional)", unter: "Data de pe ambalaj – aplicația te avertizează la timp.", auf: "Trece data", anzahl: (n) => `${n} date trecute`,
       mhd: "Durabilitate", verbrauch: "Data limită", datum: "Data", speichern: "Salvează", zu: "Închide", gespeichert: "Salvat", nichts: "Nimic schimbat" },
     wt: ["dum", "lun", "mar", "mie", "joi", "vin", "sâm"],
-    uhr: { heute: (ware) => `${ware}: folosește azi`, morgen: (ware) => `${ware}: folosește până mâine`, vorbei: (ware) => `${ware}: data limită a trecut`, mehrere: (n) => `${n} mărfuri de folosit până mâine`,
+    uhr: { heute: (ware) => `${ware}: folosește azi`, morgen: (ware) => `${ware}: folosește până mâine`, vorbei: (ware) => `${ware}: data limită a trecut – nu mai folosi`, vorbeiMehrere: (n) => `${n} mărfuri: data limită a trecut – nu mai folosi`, mehrere: (n) => `${n} mărfuri de folosit până mâine`, mehrereHeute: (n) => `${n} mărfuri de folosit azi`,
       bis: (ware, tag) => `${ware}: folosește până ${tag}`, aktion: (ware, tag) => `${ware}: o ofertă până ${tag} merită`, mhdVorbei: (ware) => `${ware}: durabilitate trecută – verifică`, knopf: "Vezi" },
   },
 };

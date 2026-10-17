@@ -1218,7 +1218,7 @@ export default {
     gespeichert: "Zapisano",
     ungueltig: "Jedna liczba się nie zgadza – sprawdź.",
     nichtsGeaendert: "Nic nie zmieniono",
-    uhr: { heute: (a) => `Zamów dziś: ${a} towarów`, morgen: (a) => `Zamów jutro: ${a} towarów`, reicht: (a, b) => `${a} wystarczy jeszcze na ≈ ${b} dni`, fastAlle: (a) => `${a} prawie się skończył`, knopf: "Zamów" },
+    uhr: { heute: (a) => `Zamów dziś: ${a} towarów`, morgen: (a) => `Zamów jutro: ${a} towarów`, reicht: (a, b) => `${a} wystarczy jeszcze na ≈ ${b} dni`, fastAlle: (a) => `${a} prawie się skończył`, mindest: (a) => `${a} poniżej stanu minimalnego – zamów`, knopf: "Zamów" },
   },
   // Stufe 1 (17.10.2026): Biuro „Promocje i terminy” oraz termin na dowodzie dostawy
   aktionen: {
@@ -1246,7 +1246,7 @@ export default {
     beleg: { titel: "Termin (dobrowolnie)", unter: "Data z opakowania – aplikacja ostrzeże na czas.", auf: "Wpisz datę", anzahl: (n) => `wpisano dat: ${n}`,
       mhd: "Min. trwałość", verbrauch: "Termin przydatności", datum: "Data", speichern: "Zapisz", zu: "Zamknij", gespeichert: "Zapisano", nichts: "Nic nie zmieniono" },
     wt: ["nd", "pn", "wt", "śr", "czw", "pt", "sob"],
-    uhr: { heute: (ware) => `${ware} zużyć dziś`, morgen: (ware) => `${ware} zużyć do jutra`, vorbei: (ware) => `${ware}: termin przydatności minął`, mehrere: (n) => `${n} towary zużyć do jutra`,
+    uhr: { heute: (ware) => `${ware} zużyć dziś`, morgen: (ware) => `${ware} zużyć do jutra`, vorbei: (ware) => `${ware}: termin przydatności minął – nie używać`, vorbeiMehrere: (n) => `${n} towary: termin przydatności minął – nie używać`, mehrere: (n) => `${n} towary zużyć do jutra`, mehrereHeute: (n) => `${n} towary zużyć dziś`,
       bis: (ware, tag) => `${ware} zużyć do ${tag}`, aktion: (ware, tag) => `${ware}: promocja do ${tag} się opłaca`, mhdVorbei: (ware) => `${ware}: data trwałości minęła – sprawdzić`, knopf: "Zobacz" },
   },
 };

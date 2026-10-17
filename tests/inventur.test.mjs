@@ -200,3 +200,27 @@ test("Betriebsmittel getrennt vom Wareneinsatz; Monatswert landet in der Reinigu
   nah(i2.betriebsmittelJeMonat, 24 * 30 / 30);
   const r = reinigungMonat(b, { datum: "2026-10-15" }); assert.equal(r.stufe, "inventur"); nah(r.mittel, 24);
 });
+
+// ---------- Prüfgremium 17.10.2026: Regressionstest ----------
+test("Prüfgremium (2): Inventur nach Mitternacht (01:30) zählt zum Geschäftstag davor – Bildschirm, Vorgabe, gespeicherte Altdaten", async () => {
+  const { inventurAktion } = await import("../js/screens/inventur.js");
+  const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
+  const Echt = globalThis.Date; const fest = new Echt(2026, 9, 18, 1, 30).getTime(); // Sa 18.10. 01:30, Schicht vom Fr 17.10.
+  class Fest extends Echt { constructor(...a) { super(...(a.length ? a : [fest])); } static now() { return fest; } }
+  const b = laden(); globalThis.Date = Fest;
+  try {
+    inventurAktion("inv-start", { dataset: {} }, b);
+    const offen = I.inventurOffen(b); I.mengeSetzen(offen, "Tomaten", 1);
+    assert.equal(inventurAktion("inv-fertig", { dataset: {} }, b, { frage: () => true }), "abgeschlossen");
+  } finally { globalThis.Date = Echt; }
+  const f = I.inventurenFertig(b); assert.equal(f[f.length - 1].datum, "2026-10-17", "Geschäftstag, nicht Kalendertag");
+  // wer den Kalendertag übergibt, bekommt trotzdem den Geschäftstag
+  const c = laden(); const i = I.inventurStarten(c, { datum: "2026-10-18", jetzt: new Echt(2026, 9, 17, 22, 0).toISOString() }); I.mengeSetzen(i, "Tomaten", 1);
+  I.inventurAbschliessen(c, i, { datum: "2026-10-18", jetzt: new Echt(2026, 9, 18, 1, 30).toISOString() }); assert.equal(i.datum, "2026-10-17");
+  // gespeicherte Inventur von vor der Korrektur (Kalendertag 18.10., abgeschlossen 01:30) → beim Laden auf den 17.10.; 23:30 bleibt
+  const alt = laden(); alt.inventuren.push({ id: "alt1", datum: "2026-10-18", begonnen: "x", abgeschlossen: new Echt(2026, 9, 18, 1, 30).toISOString(), posten: { Tomaten: 1 } },
+    { id: "alt2", datum: "2026-10-20", begonnen: "x", abgeschlossen: new Echt(2026, 9, 20, 23, 30).toISOString(), posten: { Tomaten: 1 } });
+  const m = migrierenBetrieb(alt); const d = (id) => m.inventuren.find((x) => x.id === id).datum;
+  assert.equal(d("alt1"), "2026-10-17"); assert.equal(d("alt2"), "2026-10-20");
+  assert.equal(migrierenBetrieb(m).inventuren.find((x) => x.id === "alt1").datum, "2026-10-17", "zweites Laden ändert nichts mehr");
+});

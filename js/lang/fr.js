@@ -1212,7 +1212,7 @@ export default {
     gespeichert: "Enregistré",
     ungueltig: "Un nombre n'est pas bon – vérifie.",
     nichtsGeaendert: "Rien changé",
-    uhr: { heute: (a) => `Commande aujourd'hui : ${a} articles`, morgen: (a) => `Commande demain : ${a} articles`, reicht: (a, b) => `${a} suffit encore ≈ ${b} jours`, fastAlle: (a) => `${a} est presque épuisé`, knopf: "Commander" },
+    uhr: { heute: (a) => `Commande aujourd'hui : ${a} articles`, morgen: (a) => `Commande demain : ${a} articles`, reicht: (a, b) => `${a} suffit encore ≈ ${b} jours`, fastAlle: (a) => `${a} est presque épuisé`, mindest: (a) => `${a} sous le stock minimum – recommander`, knopf: "Commander" },
   },
   // Stufe 1 (17.10.2026): Bureau « Promotions & conservation » et date sur le bon de livraison
   aktionen: {
@@ -1240,7 +1240,7 @@ export default {
     beleg: { titel: "Conservation (facultatif)", unter: "Date sur l’emballage – l’app prévient à temps.", auf: "Saisir la date", anzahl: (n) => `${n} date(s) saisie(s)`,
       mhd: "DDM", verbrauch: "DLC", datum: "Date", speichern: "Enregistrer", zu: "Fermer", gespeichert: "Enregistré", nichts: "Rien de changé" },
     wt: ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"],
-    uhr: { heute: (ware) => `Utiliser ${ware} aujourd’hui`, morgen: (ware) => `Utiliser ${ware} d’ici demain`, vorbei: (ware) => `${ware} : DLC dépassée`, mehrere: (n) => `Utiliser ${n} produits d’ici demain`,
+    uhr: { heute: (ware) => `Utiliser ${ware} aujourd’hui`, morgen: (ware) => `Utiliser ${ware} d’ici demain`, vorbei: (ware) => `${ware} : DLC dépassée – ne plus utiliser`, vorbeiMehrere: (n) => `${n} produits : DLC dépassée – ne plus utiliser`, mehrere: (n) => `Utiliser ${n} produits d’ici demain`, mehrereHeute: (n) => `Utiliser ${n} produits aujourd’hui`,
       bis: (ware, tag) => `Utiliser ${ware} d’ici ${tag}`, aktion: (ware, tag) => `${ware} : une promo jusqu’à ${tag} rapporte`, mhdVorbei: (ware) => `${ware} : DDM dépassée – vérifier`, knopf: "Voir" },
   },
 };

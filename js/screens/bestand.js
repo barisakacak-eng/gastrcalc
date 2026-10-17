@@ -30,7 +30,9 @@ export function mengeText(menge, basis) { // Stufe 1 (17.10.2026): auch für „
   return `${fmtZahl(m, m < 10 && !Number.isInteger(m) ? 1 : 0)} ${einheitLabel("stk")}`;
 }
 // „2 × Kiste“ (sprachneutral), lose Ware und Waren ohne Gebinde in kg/l/Stück
-const gebindeText = (anzahl, art, menge, basis) => (anzahl !== null && art !== "lose" ? `${fmtZahl(anzahl, Number.isInteger(anzahl) ? 0 : 2)} × ${t("gebinde.arten." + art)}` : mengeText(menge, basis));
+// Prüfgremium 17.10.2026 (8): eine Schreibweise für „N × Gebinde“ in allen Büro-Bildschirmen (keine Einzahl hinter einer Mehrzahl-Zahl)
+export const gebindeAnzahl = (anzahl, art) => `${fmtZahl(anzahl, Number.isInteger(anzahl) ? 0 : 2)} × ${t("gebinde.arten." + (art || "packung"))}`;
+const gebindeText = (anzahl, art, menge, basis) => (anzahl !== null && art !== "lose" ? gebindeAnzahl(anzahl, art) : mengeText(menge, basis));
 const reichtText = (w) => (w.schnitt === null ? t("bestand.verbrauchUnbekannt") : !(w.schnitt > 0) ? t("bestand.keinVerbrauch") : w.lange ? t("bestand.reichtLange") : (w.reichweite ?? 0) < 1 ? t("bestand.reichtKurz") : t("bestand.reicht", Math.floor(w.reichweite)));
 const dringendText = (z) => (z.dringend === "spaeter" && z.bestellenAm ? t("bestand.dringend.spaeter", kurz(z.bestellenAm)) : t("bestand.dringend." + z.dringend));
 function lueckeText(l) {

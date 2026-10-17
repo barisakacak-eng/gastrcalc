@@ -1201,7 +1201,7 @@ export default {
     ohneRezept: (namen) => `Ohne Rezept, zählt beim Verbrauch nicht: ${namen}`, ohneGericht: (n) => `${n} verkaufte Stück ohne Gericht – zählen beim Verbrauch nicht.`,
     einstellungenTitel: "Einstellungen", tage: "Bestellen für wie viele Tage?", puffer: "Puffer in Tagen", mindest: "Mindestens im Lager", mindestHinweis: "Zahl der Packungen, die immer da sein sollen. Leer lassen, wenn egal.",
     speichern: "Speichern", zu: "Schließen", gespeichert: "Gespeichert", ungueltig: "Eine Zahl stimmt nicht – bitte prüfen.", nichtsGeaendert: "Nichts geändert",
-    uhr: { heute: (n) => `Heute bestellen: ${n} Waren`, morgen: (n) => `Morgen bestellen: ${n} ${n === 1 ? "Ware" : "Waren"}`, reicht: (name, n) => `${name} reicht noch ≈ ${n} ${n === 1 ? "Tag" : "Tage"}`, fastAlle: (name) => `${name} ist fast alle`, knopf: "Bestellen" },
+    uhr: { heute: (n) => `Heute bestellen: ${n} Waren`, morgen: (n) => `Morgen bestellen: ${n} ${n === 1 ? "Ware" : "Waren"}`, reicht: (name, n) => `${name} reicht noch ≈ ${n} ${n === 1 ? "Tag" : "Tage"}`, fastAlle: (name) => `${name} ist fast alle`, mindest: (name) => `${name} unter Mindestbestand – nachbestellen`, knopf: "Bestellen" },
   },
   // Stufe 1 (17.10.2026): Büro „Aktionen & Haltbarkeit“ und Haltbarkeit beim Beleg
   aktionen: {
@@ -1229,7 +1229,7 @@ export default {
     beleg: { titel: "Haltbarkeit (freiwillig)", unter: "Datum von der Packung – dann warnt die App rechtzeitig.", auf: "Datum eintragen", anzahl: (n) => `${n} ${n === 1 ? "Datum" : "Daten"} eingetragen`,
       mhd: "MHD", verbrauch: "Verbrauchsdatum", datum: "Datum", speichern: "Speichern", zu: "Schließen", gespeichert: "Gespeichert", nichts: "Nichts geändert" },
     wt: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
-    uhr: { heute: (ware) => `${ware} heute verbrauchen`, morgen: (ware) => `${ware} bis morgen verbrauchen`, vorbei: (ware) => `${ware}: Verbrauchsdatum vorbei`, mehrere: (n) => `${n} Waren bis morgen verbrauchen`,
+    uhr: { heute: (ware) => `${ware} heute verbrauchen`, morgen: (ware) => `${ware} bis morgen verbrauchen`, vorbei: (ware) => `${ware}: Verbrauchsdatum vorbei – nicht mehr verwenden`, vorbeiMehrere: (n) => `${n} Waren: Verbrauchsdatum vorbei – nicht mehr verwenden`, mehrere: (n) => `${n} Waren bis morgen verbrauchen`, mehrereHeute: (n) => `${n} Waren heute verbrauchen`,
       bis: (ware, tag) => `${ware} bis ${tag} verbrauchen`, aktion: (ware, tag) => `${ware}: Aktion bis ${tag} lohnt sich`, mhdVorbei: (ware) => `${ware}: MHD vorbei – prüfen`, knopf: "Ansehen" },
   },
 };

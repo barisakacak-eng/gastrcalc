@@ -11,7 +11,7 @@ const st = await import("../js/store.js");
 const h = await import("../js/haltbar.js");
 const vk = await import("../js/verkauf.js");
 const inv = await import("../js/inventur.js");
-const { tagPlus } = await import("../js/engine.js");
+const { tagPlus, wochentag } = await import("../js/engine.js");
 const { beispielLaden, HALTBAR_BEISPIEL } = await import("../js/beispiel.js");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
@@ -120,9 +120,11 @@ test("Abverkauf: Nachlass höchstens Warenwert, nie unter Wareneinsatz, Portione
 test("Uhrzeit: ein Satz – Verbrauchsdatum heute/morgen/vorbei (rot) vor Aktion (gelb); nichts, wenn nichts abläuft", () => {
   const u = (o, heuteTag = H) => h.haltbarUhrzeit(laden(o), { heuteTag });
   const a = u({}); assert.equal(a.ton, "gelb"); assert.equal(a.text, "Cola: Aktion bis Mo lohnt sich"); assert.equal(a.ziel.wert, "aktionen");
-  assert.equal(u({ art1: "verbrauch", datum1: "2026-10-18" }).text, "Cola bis morgen verbrauchen");
+  // Prüfgremium 17.10.2026 (4): So 18.10. ist Ruhetag – Ware mit Verbrauchsdatum Sonntag muss heute (Sa) weg, nicht „bis morgen“
+  assert.equal(u({ art1: "verbrauch", datum1: "2026-10-18" }).text, "Cola heute verbrauchen");
+  assert.equal(u({ art1: "verbrauch", datum1: "2026-10-17" }, "2026-10-16").text, "Cola bis morgen verbrauchen", "Fr → Sa offen");
   assert.equal(u({ art1: "verbrauch", datum1: "2026-10-17" }).text, "Cola heute verbrauchen");
-  assert.equal(u({ art1: "verbrauch", datum1: "2026-10-16" }).text, "Cola: Verbrauchsdatum vorbei");
+  assert.equal(u({ art1: "verbrauch", datum1: "2026-10-16" }).text, "Cola: Verbrauchsdatum vorbei – nicht mehr verwenden");
   assert.equal(u({ art1: "verbrauch", datum1: "2026-10-18" }).ton, "rot");
   assert.equal(u({ art1: "verbrauch", datum1: "2026-10-19" }).text, "Cola bis Mo verbrauchen");
   assert.equal(u({ datum1: "2026-10-28", datum2: "2026-11-30" }), null);
@@ -187,7 +189,8 @@ test("Beispiel-Laden: genau eine Ware mit Verbrauchsdatum läuft bald ab (kein A
     assert.equal(hs.abverkauf.length, 1, d); const a = hs.abverkauf[0];
     assert.equal(a.name, "Ayran 0,25 l"); assert.equal(a.tage, 3); assert.ok(a.rest > 0 && a.bester, d);
     assert.equal(a.bester.name, "Ayran 0,25 l"); assert.ok(a.bester.aktionspreis < a.bester.preis && a.bester.aktionspreis / 1.19 >= a.bester.wareneinsatz);
-    const u = h.haltbarUhrzeit(s, { heuteTag: d }); assert.equal(u.text, "Hähnchenspieß bis morgen verbrauchen"); assert.equal(u.ton, "rot");
+    // Prüfgremium 17.10.2026 (4): Ruhetag Sonntag – am Samstag heißt es „heute verbrauchen“
+    const u = h.haltbarUhrzeit(s, { heuteTag: d }); assert.equal(u.text, wochentag(tagPlus(d, 1)) === 0 ? "Hähnchenspieß heute verbrauchen" : "Hähnchenspieß bis morgen verbrauchen", d); assert.equal(u.ton, "rot");
   }
   assert.equal(JSON.stringify(h.haltbarStand(beispielLaden(H), { heuteTag: H })), JSON.stringify(h.haltbarStand(beispielLaden(H), { heuteTag: H })), "ohne Zufall");
 });
@@ -198,7 +201,7 @@ test("Oberfläche: Büro-Einstieg und Hinweis, Bereich mit drei Teilen und Kasse
   const { offenImBuero, jetztDran } = await import("../js/offen.js");
   const { navZiel, ansichtErlaubt } = await import("../js/modus.js");
   const s = beispielLaden(H); const w = st.leereWurzel(); w.betriebe.push(s); w.aktiv = s.id;
-  const b = bueroView(s, w); assert.ok(b.includes('data-wert="aktionen"')); assert.ok(b.includes("Hähnchenspieß bis morgen verbrauchen"));
+  const b = bueroView(s, w); assert.ok(b.includes('data-wert="aktionen"')); assert.ok(b.includes("Hähnchenspieß heute verbrauchen"), "Sa 17.10., So Ruhetag (Prüfgremium 17.10.2026)");
   const eigen = laden(); assert.ok(bueroView(eigen, { betriebe: [eigen] }).includes('data-wert="aktionen"'), "für alle sichtbar");
   assert.ok(offenImBuero(s, w).some((o) => o.id === "haltbar" && o.farbe === "rot" && o.ziel.wert === "aktionen"));
   for (const std of [8, 12, 19, 23]) { const j = jetztDran(s, w, { jetzt: new Date(`${H}T${String(std).padStart(2, "0")}:00:00`) }); assert.ok(!j || j.id !== "haltbar", "Laden: nichts"); }
@@ -246,4 +249,43 @@ test("Beleg-Schritt: Haltbarkeit eintragen setzt die Zeile, Vorschlag der Art vo
   const neu = s.lieferungen[s.lieferungen.length - 1]; assert.notEqual(neu, l); assert.equal(neu.id, l.id); assert.deepEqual({ art: neu.zeilen[0].haltbar.art, datum: neu.zeilen[0].haltbar.datum }, { art: "verbrauch", datum: "2026-10-19" });
   assert.match(bel.belegView(s), /1 Datum eingetragen/);
   bel.belegZuruecksetzen();
+});
+
+// ---------- Prüfgremium 17.10.2026: Regressionstests ----------
+// Testladen plus eine Lieferung vom 14.10. mit zwei Waren mit Verbrauchsdatum (wie /home/claude/audit/pruef/p3_haltbar_saetze.mjs)
+function mitVerbrauch(datumCola, datumHack, ruhetage = null) {
+  const s = laden({ datum1: "2026-10-30" });
+  if (ruhetage) { s.kuehl.ruhetage = ruhetage; s.kuehl.ruhetageVerlauf = []; }
+  s.lieferungen.push({ id: "lx", datum: "2026-10-14", erfasst: "2026-10-14T10:00:00.000Z", lieferant: "Metro", storniert: false, zeilen: [
+    { artikel: "Cola", menge: 4, inhaltMenge: 24, inhaltEinheit: "stk", netto: 48, haltbar: { art: "verbrauch", datum: datumCola } },
+    { artikel: "Hackfleisch gemischt", menge: 3, inhaltMenge: 2, inhaltEinheit: "kg", netto: 42, haltbar: { art: "verbrauch", datum: datumHack } }] });
+  return s;
+}
+test("Prüfgremium (3): abgelaufenes Verbrauchsdatum heißt nie „verbrauchen“, sondern „nicht mehr verwenden“ – mit Vorrang", () => {
+  const zwei = h.haltbarUhrzeit(mitVerbrauch("2026-10-15", "2026-10-15"), { heuteTag: H });
+  assert.equal(zwei.text, "2 Waren: Verbrauchsdatum vorbei – nicht mehr verwenden"); assert.equal(zwei.ton, "rot");
+  const gemischt = h.haltbarUhrzeit(mitVerbrauch("2026-10-12", H), { heuteTag: H });
+  assert.equal(gemischt.text, "Cola: Verbrauchsdatum vorbei – nicht mehr verwenden", "vorbei geht vor „heute“");
+  for (const x of [zwei, gemischt]) assert.ok(!/verbrauchen/.test(x.text), x.text);
+  for (const code of ["en", "tr"]) { i18n.setzeSprache(code); try { const x = h.haltbarUhrzeit(mitVerbrauch("2026-10-15", "2026-10-15"), { heuteTag: H }).text; assert.ok(!/tomorrow|yarın/i.test(x), x); } finally { i18n.setzeSprache("de"); } }
+});
+test("Prüfgremium (4): Ruhetage zählen nicht als Verbrauchstag – „heute“ oder der Wochentag statt „bis morgen“", () => {
+  const u = (s, heuteTag = H) => h.haltbarUhrzeit(s, { heuteTag }).text;
+  assert.equal(u(mitVerbrauch("2026-10-30", "2026-10-18")), "Hackfleisch gemischt heute verbrauchen", "Sa, Ablauf So = Ruhetag");
+  assert.equal(u(mitVerbrauch("2026-10-30", "2026-10-19"), "2026-10-17"), "Hackfleisch gemischt bis Mo verbrauchen", "Ablauf Mo, Mo offen");
+  assert.equal(u(mitVerbrauch("2026-10-30", "2026-10-19", [0, 1])), "Hackfleisch gemischt heute verbrauchen", "So und Mo zu: Sa ist der letzte Tag");
+  assert.equal(u(mitVerbrauch("2026-10-30", "2026-10-20", [0, 1])), "Hackfleisch gemischt bis Di verbrauchen");
+  assert.equal(u(mitVerbrauch("2026-10-30", "2026-10-19", [0, 1]), "2026-10-16"), "Hackfleisch gemischt bis morgen verbrauchen", "Fr: letzter offener Tag ist Sa");
+  assert.equal(u(mitVerbrauch("2026-10-18", "2026-10-18")), "2 Waren heute verbrauchen");
+  assert.equal(h.letzterOffenTag(mitVerbrauch("2026-10-30", "2026-10-30"), "2026-10-17", "2026-10-18"), "2026-10-17");
+  const hs = h.haltbarStand(mitVerbrauch("2026-10-30", "2026-10-18"), { heuteTag: H }); assert.ok(!hs.abverkauf.some((x) => x.art === "verbrauch"), "kein Abverkauf bei Verbrauchsdatum");
+});
+test("Prüfgremium (2): Haltbarkeit zählt ab dem Kalendertag – um 01:30 ist Ware mit Datum des Geschäftstags schon vorbei", async () => {
+  const s = mitVerbrauch("2026-10-30", "2026-10-16");
+  assert.equal(h.haltbarUhrzeit(s, { heuteTag: "2026-10-16", kalenderTag: "2026-10-17" }).text, "Hackfleisch gemischt: Verbrauchsdatum vorbei – nicht mehr verwenden");
+  assert.equal(h.haltbarUhrzeit(s, { heuteTag: "2026-10-16" }).text, "Hackfleisch gemischt heute verbrauchen", "fester Tag ohne Kalendertag: wie bisher");
+  const { offenImBuero } = await import("../js/offen.js");
+  const w = st.leereWurzel(); w.betriebe.push(s); w.aktiv = s.id;
+  const o = offenImBuero(s, w, { jetzt: new Date(2026, 9, 17, 1, 30) }).find((x) => x.id === "haltbar");
+  assert.equal(o.text, "Hackfleisch gemischt: Verbrauchsdatum vorbei – nicht mehr verwenden", "Büro-Hinweis um 01:30 nach der Freitagsschicht");
 });

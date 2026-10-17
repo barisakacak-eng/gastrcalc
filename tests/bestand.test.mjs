@@ -262,3 +262,16 @@ test("Oberfläche: Büro-Einstieg für alle, Bereich mit Uhrzeit, Bestellliste, 
   }
   for (const c of i18n.SPRACHEN) { await i18n.ladeSprache(c); assert.deepEqual(i18n.fehlendeSchluessel(c).filter((k) => k.startsWith("bestand")), [], c); }
 });
+
+// ---------- Prüfgremium 17.10.2026: Regressionstests ----------
+test("Prüfgremium (7): unter Mindestbestand heißt es „unter Mindestbestand – nachbestellen“, „fast alle“ nur nach Reichweite", () => {
+  const s = laden({ verkaufTage: [] }); b.mindestbestandSetzen(s, "Box", 8); // 5 Kartons da, kein Verbrauch
+  const u = b.bestandUhrzeit(s, { heuteTag: H }); assert.equal(u.text, "Box unter Mindestbestand – nachbestellen"); assert.equal(u.ton, "rot");
+  const z = b.bestellVorschlag(s, { heuteTag: H }).zeilen.find((x) => x.name === "Box");
+  assert.equal(z.grund, "mindest"); assert.equal(z.dringend, "jetzt");
+  assert.ok(!/fast alle/.test(u.text));
+  // nach Reichweite bleibt es bei „reicht noch“ / „fast alle“
+  const h = laden(); h.inventuren[0].posten["Testfleisch"] = 1;
+  const r = b.bestellVorschlag(h, { heuteTag: H }).zeilen.find((x) => x.name === "Testfleisch"); assert.equal(r.grund, "reichweite");
+  i18n.setzeSprache("en"); try { assert.equal(b.bestandUhrzeit(s, { heuteTag: H }).text, "Box below minimum stock – reorder"); } finally { i18n.setzeSprache("de"); }
+});

@@ -7,6 +7,7 @@ import { esc, fmtEuro, fmtZahl, heuteGeschaeft, parseZahl, wertAnzeige } from ".
 import { tagPlus } from "../engine.js";
 import { exportEinlesen, importVorschau, importUebernehmen, importZuruecknehmen, importe, zuordnungLernen, handVerkaufSetzen, handTag, verkaufAuswertung } from "../verkauf.js";
 import { datumLesbar } from "./tag.js";
+import { gebindeAnzahl } from "./bestand.js"; // Prüfgremium 17.10.2026 (8)
 import { nav } from "./nav.js";
 
 let modus = "start";       // "start" | "vorschau" | "hand"
@@ -75,7 +76,7 @@ function abgleichView(a) {
 function ladenhueterView(a) {
   const l = a.ladenhueter; if (l.ohneDaten) return "";
   const ger = l.gerichte.length ? `<div class="karte"><h2>${esc(t("verkaeufe.ladenhueterTitel"))}</h2>${l.gerichte.map((x) => `<div class="summenzeile"><span>${esc(x.name)}</span><span class="wert">${esc(x.art === "keinVerkauf" ? t("verkaeufe.keinVerkauf") : t("verkaeufe.wenig", stueck(x.menge)))}</span></div>`).join("")}</div>${was(t("verkaeufe.ladenhueterText"))}` : "";
-  const tot = l.totesLager.length ? `<div class="karte"><h2>${esc(t("verkaeufe.totTitel"))}</h2>${l.totesLager.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<br><small>${esc(fmtZahl(x.menge, Number.isInteger(x.menge) ? 0 : 2) + " " + t("gebinde.arten." + x.gebinde))}</small></span><span class="wert">${esc(x.wert === null ? t("inventur.preisFehlt") : euro(x.wert, x.geschaetzt))}</span></div>`).join("")}
+  const tot = l.totesLager.length ? `<div class="karte"><h2>${esc(t("verkaeufe.totTitel"))}</h2>${l.totesLager.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<br><small>${esc(gebindeAnzahl(x.menge, x.gebinde))}</small></span><span class="wert">${esc(x.wert === null ? t("inventur.preisFehlt") : euro(x.wert, x.geschaetzt))}</span></div>`).join("")}
       <div class="summenzeile gesamt"><span>${esc(t("verkaeufe.totSumme"))}</span><span class="wert">${esc(euro(l.gebunden, l.geschaetzt))}</span></div></div>${was(t("verkaeufe.totText"))}` : "";
   return ger + tot;
 }

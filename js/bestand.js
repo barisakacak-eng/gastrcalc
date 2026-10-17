@@ -258,12 +258,12 @@ export function bestellVorschlag(stand, { heuteTag = heuteGeschaeft(), bs = best
     let gebinde = null, menge;
     if (w.inhalt) { gebinde = Math.ceil(fehlt / w.inhalt - 1e-9); menge = gebinde * w.inhalt; }
     else { const sch = SCHRITT_OHNE_GEBINDE[w.basis] || 1; menge = Math.ceil(fehlt / sch - 1e-9) * sch; }
-    let bestellenAm = null;
-    if (w.schnitt > 0 && w.reichweite !== null && !w.lange) { const k = Math.floor(w.reichweite - puffer + 1e-9); bestellenAm = k < 0 ? heuteTag : (w.offen[k] || heuteTag); if (bestellenAm < heuteTag) bestellenAm = heuteTag; }
-    else if (mindest > w.bestand) bestellenAm = heuteTag;
+    let bestellenAm = null, grund = null; // Prüfgremium 17.10.2026 (7): warum jetzt bestellen – „reichweite“ (Ware geht aus) oder „mindest“ (Mindestbestand unterschritten)
+    if (w.schnitt > 0 && w.reichweite !== null && !w.lange) { const k = Math.floor(w.reichweite - puffer + 1e-9); bestellenAm = k < 0 ? heuteTag : (w.offen[k] || heuteTag); if (bestellenAm < heuteTag) bestellenAm = heuteTag; grund = "reichweite"; }
+    else if (mindest > w.bestand) { bestellenAm = heuteTag; grund = "mindest"; }
     const dringend = w.bestand <= 0 ? "leer" : bestellenAm && bestellenAm <= heuteTag ? "jetzt" : bestellenAm === morgen ? "morgen" : "spaeter";
     zeilen.push({ name: w.name, basis: w.basis, gebinde, gebindeArt: w.gebinde, inhalt: w.inhalt, menge, bestand: w.bestand, bedarf, mindestGewinnt: mindest > bedarf,
-      reichweite: w.reichweite, leerAm: w.leerAm, bestellenAm, dringend, wert: w.preisJeBasis !== null ? menge * w.preisJeBasis : null, geschaetzt: w.geschaetzt,
+      reichweite: w.reichweite, leerAm: w.leerAm, bestellenAm, grund, dringend, wert: w.preisJeBasis !== null ? menge * w.preisJeBasis : null, geschaetzt: w.geschaetzt,
       sicherheit: w.sicherheit, lieferant: lieferantVon(stand, w.name) });
   }
   const ordnung = { leer: 0, jetzt: 1, morgen: 2, spaeter: 3 };
@@ -302,7 +302,9 @@ export function bestandUhrzeit(stand, { heuteTag = heuteGeschaeft() } = {}) {
   const ziel = { aktion: "nav", wert: "bestand" };
   const jetzt = v.zeilen.filter((z) => z.dringend === "leer" || z.dringend === "jetzt");
   if (jetzt.length === 1) { const z = jetzt[0]; const tg = Math.floor(z.reichweite ?? 0);
-    return { id: "bestand", art: "jetzt", anzahl: 1, ton: "rot", text: z.dringend === "leer" || tg < 1 ? t("bestand.uhr.fastAlle", artikelText(z.name)) : t("bestand.uhr.reicht", artikelText(z.name), tg), knopf: t("bestand.uhr.knopf"), ziel }; }
+    // Prüfgremium 17.10.2026 (7): „fast alle“ nur nach Reichweite; unter Mindestbestand ein eigener Satz
+    const text = z.grund === "mindest" ? t("bestand.uhr.mindest", artikelText(z.name)) : z.dringend === "leer" || tg < 1 ? t("bestand.uhr.fastAlle", artikelText(z.name)) : t("bestand.uhr.reicht", artikelText(z.name), tg);
+    return { id: "bestand", art: "jetzt", anzahl: 1, ton: "rot", text, knopf: t("bestand.uhr.knopf"), ziel }; }
   if (jetzt.length > 1) return { id: "bestand", art: "jetzt", anzahl: jetzt.length, ton: "rot", text: t("bestand.uhr.heute", jetzt.length), knopf: t("bestand.uhr.knopf"), ziel };
   const morgen = v.zeilen.filter((z) => z.dringend === "morgen");
   if (morgen.length) return { id: "bestand", art: "morgen", anzahl: morgen.length, ton: "gelb", text: t("bestand.uhr.morgen", morgen.length), knopf: t("bestand.uhr.knopf"), ziel };

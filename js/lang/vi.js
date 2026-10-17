@@ -1212,7 +1212,7 @@ export default {
     gespeichert: "Đã lưu",
     ungueltig: "Một số không đúng – hãy kiểm tra.",
     nichtsGeaendert: "Không thay đổi gì",
-    uhr: { heute: (a) => `Đặt hôm nay: ${a} mặt hàng`, morgen: (a) => `Đặt ngày mai: ${a} mặt hàng`, reicht: (a, b) => `${a} còn đủ ≈ ${b} ngày`, fastAlle: (a) => `${a} sắp hết`, knopf: "Đặt hàng" },
+    uhr: { heute: (a) => `Đặt hôm nay: ${a} mặt hàng`, morgen: (a) => `Đặt ngày mai: ${a} mặt hàng`, reicht: (a, b) => `${a} còn đủ ≈ ${b} ngày`, fastAlle: (a) => `${a} sắp hết`, mindest: (a) => `${a} dưới mức tồn tối thiểu – đặt thêm`, knopf: "Đặt hàng" },
   },
   // Stufe 1 (17.10.2026): Văn phòng „Khuyến mãi & hạn dùng“ và hạn dùng trên phiếu giao hàng
   aktionen: {
@@ -1240,7 +1240,7 @@ export default {
     beleg: { titel: "Hạn dùng (tùy chọn)", unter: "Ngày trên bao bì – ứng dụng cảnh báo kịp thời.", auf: "Nhập ngày", anzahl: (n) => `đã nhập ${n} ngày`,
       mhd: "Tốt nhất trước", verbrauch: "Hạn sử dụng", datum: "Ngày", speichern: "Lưu", zu: "Đóng", gespeichert: "Đã lưu", nichts: "Không thay đổi" },
     wt: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
-    uhr: { heute: (ware) => `${ware}: dùng hôm nay`, morgen: (ware) => `${ware}: dùng trước ngày mai`, vorbei: (ware) => `${ware}: đã quá hạn sử dụng`, mehrere: (n) => `${n} món hàng cần dùng trước ngày mai`,
+    uhr: { heute: (ware) => `${ware}: dùng hôm nay`, morgen: (ware) => `${ware}: dùng trước ngày mai`, vorbei: (ware) => `${ware}: đã quá hạn sử dụng – không dùng`, vorbeiMehrere: (n) => `${n} món hàng: đã quá hạn sử dụng – không dùng`, mehrere: (n) => `${n} món hàng cần dùng trước ngày mai`, mehrereHeute: (n) => `${n} món hàng cần dùng hôm nay`,
       bis: (ware, tag) => `${ware}: dùng đến ${tag}`, aktion: (ware, tag) => `${ware}: khuyến mãi đến ${tag} có lời`, mhdVorbei: (ware) => `${ware}: „tốt nhất trước“ đã qua – kiểm tra`, knopf: "Xem" },
   },
 };

@@ -1220,7 +1220,7 @@ export default {
     gespeichert: "Spremljeno",
     ungueltig: "Jedan broj nije tačan – provjeri.",
     nichtsGeaendert: "Ništa promijenjeno",
-    uhr: { heute: (a) => `Naruči danas: ${a} artikala`, morgen: (a) => `Naruči sutra: ${a} artikala`, reicht: (a, b) => `${a} dovoljno još ≈ ${b} dana`, fastAlle: (a) => `${a} skoro nestalo`, knopf: "Naruči" },
+    uhr: { heute: (a) => `Naruči danas: ${a} artikala`, morgen: (a) => `Naruči sutra: ${a} artikala`, reicht: (a, b) => `${a} dovoljno još ≈ ${b} dana`, fastAlle: (a) => `${a} skoro nestalo`, mindest: (a) => `${a} ispod minimalne zalihe – naruči`, knopf: "Naruči" },
   },
   // Stufe 1 (17.10.2026): Ured „Akcije i rokovi“ i rok na otpremnici
   aktionen: {
@@ -1248,7 +1248,7 @@ export default {
     beleg: { titel: "Rok (po želji)", unter: "Datum s pakovanja – aplikacija upozori na vrijeme.", auf: "Unesi datum", anzahl: (n) => `uneseno datuma: ${n}`,
       mhd: "Najbolje do", verbrauch: "Rok upotrebe", datum: "Datum", speichern: "Spremi", zu: "Zatvori", gespeichert: "Spremljeno", nichts: "Ništa promijenjeno" },
     wt: ["ned", "pon", "uto", "sri", "čet", "pet", "sub"],
-    uhr: { heute: (ware) => `${ware}: iskoristi danas`, morgen: (ware) => `${ware}: iskoristi do sutra`, vorbei: (ware) => `${ware}: rok upotrebe prošao`, mehrere: (n) => `${n} robe iskoristiti do sutra`,
+    uhr: { heute: (ware) => `${ware}: iskoristi danas`, morgen: (ware) => `${ware}: iskoristi do sutra`, vorbei: (ware) => `${ware}: rok upotrebe prošao – ne koristiti`, vorbeiMehrere: (n) => `${n} robe: rok upotrebe prošao – ne koristiti`, mehrere: (n) => `${n} robe iskoristiti do sutra`, mehrereHeute: (n) => `${n} robe iskoristiti danas`,
       bis: (ware, tag) => `${ware}: iskoristi do ${tag}`, aktion: (ware, tag) => `${ware}: akcija do ${tag} se isplati`, mhdVorbei: (ware) => `${ware}: „najbolje do“ prošlo – provjeri`, knopf: "Pogledaj" },
   },
 };

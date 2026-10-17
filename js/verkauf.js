@@ -181,17 +181,18 @@ export function dsfinvkLesen(dateien) {
     let menge = menge0, umsatz = brutto.has(bonSchluessel(r) + "|" + r.POS_ZEILE) ? brutto.get(bonSchluessel(r) + "|" + r.POS_ZEILE) : stk !== null ? stk * menge0 : null;
     if (storno) { menge = -Math.abs(menge); if (umsatz !== null) umsatz = -Math.abs(umsatz); bericht.stornoZeilen += 1; }
     const plu = r.ART_NR || null; const text = (r.ARTIKELTEXT || "").slice(0, 120);
-    const k = datum + "|" + (plu || "") + "|" + normKasse(text);
-    const s = summen.get(k) || { datum, plu, text, menge: 0, umsatzBrutto: 0, umsatzFehlt: false, zeilen: 0 };
+    const kasse = r.Z_KASSE_ID ? String(r.Z_KASSE_ID).slice(0, 50) : null; // Prüfgremium 17.10.2026 (5): zwei Kassen = zwei getrennte Stände je Tag
+    const k = datum + "|" + (kasse || "") + "|" + (plu || "") + "|" + normKasse(text);
+    const s = summen.get(k) || { datum, kasse, plu, text, menge: 0, umsatzBrutto: 0, umsatzFehlt: false, zeilen: 0 };
     s.menge += menge; if (umsatz === null) s.umsatzFehlt = true; else s.umsatzBrutto += umsatz; s.zeilen += 1; summen.set(k, s);
     bericht.gezaehlt += 1;
   }
-  const positionen = [...summen.values()].map((s) => ({ datum: s.datum, plu: s.plu, text: s.text, menge: rund(s.menge, 3), umsatzBrutto: s.umsatzFehlt ? null : rund(s.umsatzBrutto, 2), zeilen: s.zeilen }))
+  const positionen = [...summen.values()].map((s) => ({ datum: s.datum, kasse: s.kasse, plu: s.plu, text: s.text, menge: rund(s.menge, 3), umsatzBrutto: s.umsatzFehlt ? null : rund(s.umsatzBrutto, 2), zeilen: s.zeilen }))
     .filter((p) => Math.abs(p.menge) > 1e-9 || (p.umsatzBrutto !== null && Math.abs(p.umsatzBrutto) > 0.004))
-    .sort((a, b) => a.datum.localeCompare(b.datum) || a.text.localeCompare(b.text, "de"));
+    .sort((a, b) => a.datum.localeCompare(b.datum) || String(a.kasse || "").localeCompare(String(b.kasse || "")) || a.text.localeCompare(b.text, "de"));
   for (const v of Object.values(bericht.nichtArtikel)) v.betrag = rund(v.betrag, 2);
   const tage = [...new Set(positionen.map((p) => p.datum))].sort();
-  return { positionen, tage, bericht, fingerabdruck: "imp-" + kurzHash(positionen.map((p) => [p.datum, p.plu, p.text, p.menge, p.umsatzBrutto].join("|")).join("\n")) };
+  return { positionen, tage, bericht, fingerabdruck: "imp-" + kurzHash(positionen.map((p) => [p.datum, p.kasse || "", p.plu, p.text, p.menge, p.umsatzBrutto].join("|")).join("\n")) };
 }
 const rund = (x, n) => { const f = 10 ** n; return Math.round(x * f) / f; };
 
@@ -244,14 +245,20 @@ export function gerichtVon(stand, e) {
 
 // ---------- Vorschau und Übernehmen ----------
 const aktiv = (stand) => (stand.verkaeufe || []).filter((v) => !v.storniert);
+// Prüfgremium 17.10.2026 (5): Kassen-ID (Z_KASSE_ID) gehört zum Ersetzungsschlüssel. Dieselbe Kasse und derselbe Tag ersetzt, eine andere Kasse addiert.
+// Einträge von vor dieser Änderung tragen kein Feld „kasse“: sie gelten als derselbe Stand wie die neue Datei (Verhalten wie bisher, kein Doppeltzählen).
+export const kasseVon = (p) => (typeof p?.kasse === "string" && p.kasse ? p.kasse : null);
+const gleicheKasse = (v, k) => !("kasse" in v) || kasseVon(v) === k;
+const kassenGruppen = (pos) => { const m = new Map(); for (const p of pos) { const k = kasseVon(p); if (!m.has(k)) m.set(k, []); m.get(k).push(p); } return m; };
 const abdruck = (liste) => liste.map((p) => [p.plu || "", normKasse(p.text || p.name), rund(p.menge, 3), p.umsatzBrutto ?? ""].join("|")).sort().join("\n");
 export function importVorschau(stand, ergebnis, { herkunft = "dsfinvk" } = {}) {
   const pos = (ergebnis?.positionen || []).map((p) => ({ ...p, ...zuordnen(stand, p) }));
   const offen = new Map();
   for (const p of pos) if (!p.gericht) { const k = (p.plu || "") + "|" + normKasse(p.text); const o = offen.get(k) || { text: p.text, plu: p.plu, menge: 0, umsatzBrutto: 0, tage: new Set(), vorschlaege: p.vorschlaege }; o.menge += p.menge; o.umsatzBrutto += p.umsatzBrutto || 0; o.tage.add(p.datum); offen.set(k, o); }
   const tage = ergebnis?.tage || [];
-  const jeTag = tage.map((d) => { const neu = pos.filter((p) => p.datum === d); const alt = aktiv(stand).filter((v) => v.datum === d && v.herkunft === herkunft);
-    return { datum: d, positionen: neu.length, stand: !alt.length ? "neu" : abdruck(alt) === abdruck(neu) ? "gleich" : "ersetzt" }; });
+  const jeTag = tage.map((d) => { const neuTag = pos.filter((p) => p.datum === d); const staende = [];
+    for (const [k, neu] of kassenGruppen(neuTag)) { const alt = aktiv(stand).filter((v) => v.datum === d && v.herkunft === herkunft && gleicheKasse(v, k)); staende.push(!alt.length ? "neu" : abdruck(alt) === abdruck(neu) ? "gleich" : "ersetzt"); }
+    return { datum: d, positionen: neuTag.length, stand: staende.includes("ersetzt") ? "ersetzt" : staende.every((x) => x === "gleich") ? "gleich" : "neu" }; });
   const summe = (f) => pos.filter(f).reduce((s, p) => s + p.menge, 0);
   const umsatz = (f) => pos.filter(f).reduce((s, p) => s + (p.umsatzBrutto || 0), 0);
   return { positionen: pos, tage, von: tage[0] || null, bis: tage[tage.length - 1] || null, zugeordnet: pos.filter((p) => p.gericht).length, offenAnzahl: pos.filter((p) => !p.gericht).length,
@@ -269,15 +276,19 @@ export function importUebernehmen(stand, ergebnis, { herkunft = "dsfinvk", jetzt
   const importId = (ergebnis?.fingerabdruck || "imp-" + kurzHash(jetzt)) + "-" + kurzHash(jetzt);
   const namen = new Map((stand.gerichte || []).map((g) => [g.id, g.name]));
   let neu = 0, ersetzt = 0, gleich = 0, tageNeu = 0;
+  const allePos = ergebnis?.positionen || [];
   for (const d of ergebnis?.tage || []) {
-    const pos = (ergebnis.positionen || []).filter((p) => p.datum === d);
-    const alt = aktiv(stand).filter((v) => v.datum === d && v.herkunft === herkunft);
-    if (alt.length && abdruck(alt) === abdruck(pos)) { gleich += 1; continue; }
-    for (const v of alt) { v.storniert = true; v.storniertZeit = jetzt; v.ersetzt = importId; ersetzt += 1; }
-    pos.forEach((p, i) => { const z = zuordnen(stand, p);
-      stand.verkaeufe.push({ id: `${importId}-${d}-${i}`, datum: d, gericht: z.gericht, name: z.gericht ? namen.get(z.gericht) : p.text, text: p.text, plu: p.plu || null, menge: p.menge,
-        umsatzBrutto: p.umsatzBrutto, herkunft, importId, erfasst: jetzt, geraet, storniert: false }); neu += 1; });
-    tageNeu += 1;
+    let geaendert = false;
+    for (const [k, pos] of kassenGruppen(allePos.filter((p) => p.datum === d))) {
+      const alt = aktiv(stand).filter((v) => v.datum === d && v.herkunft === herkunft && gleicheKasse(v, k));
+      if (alt.length && abdruck(alt) === abdruck(pos)) { gleich += 1; continue; }
+      for (const v of alt) { v.storniert = true; v.storniertZeit = jetzt; v.ersetzt = importId; ersetzt += 1; }
+      for (const p of pos) { const z = zuordnen(stand, p); const i = allePos.indexOf(p);
+        stand.verkaeufe.push({ id: `${importId}-${d}-${i}`, datum: d, gericht: z.gericht, name: z.gericht ? namen.get(z.gericht) : p.text, text: p.text, plu: p.plu || null, kasse: k, menge: p.menge,
+          umsatzBrutto: p.umsatzBrutto, herkunft, importId, erfasst: jetzt, geraet, storniert: false }); neu += 1; }
+      geaendert = true;
+    }
+    if (geaendert) tageNeu += 1;
   }
   return { importId, neu, ersetzt, gleich, tage: tageNeu };
 }
@@ -347,6 +358,24 @@ export function verkaufJeGericht(stand, z) {
 // Bedarf einer Portion an gekaufter Ware (Basiseinheit g/ml/Stück). Wie warenGericht: Garverlust auf die Rohware (rohmengeFuer);
 // selbst gemachte Teile über ihr Rezept anteilig auf die Rohstoffe (wie zwischenpreis: eine Stufe, ohne Garverlust).
 // probleme: Zutaten, die sich nicht rechnen lassen (unbekannt, Menge fehlt, Einheit passt nicht, kein Rezept).
+// Menge eines selbst gemachten Teils (Teig, Soße …) → Rohware über sein Rezept, anteilig zur Ausbeute (eine Stufe, ohne Garverlust).
+// Prüfgremium 17.10.2026 (6): gemeinsame Rechnung für den Soll-Verbrauch (bedarfGericht) und den Müll (schwundVerbrauch).
+// Rückgabe { bedarf: [{ name, menge, basis, ueber }], probleme } – ohne Rezept: null.
+export function selbstAufRohware(a, menge, einheit, idx) {
+  const r = a?.herkunft === "selbst" ? a.rezept : null; if (!r) return null;
+  const out = []; const probleme = [];
+  const aus = r.ausbeute; const bA = EINHEITEN[aus?.einheit]?.basis; const bZ = EINHEITEN[einheit]?.basis;
+  if (!(aus?.menge > 0) || !bZ || bA !== bZ) return { bedarf: out, probleme: [{ name: a.name, grund: "einheit" }] };
+  const anteil = inBasis(menge, einheit) / inBasis(aus.menge, aus.einheit);
+  for (const rz of r.zutaten || []) {
+    const ra = idx[rz.name]; const bR = EINHEITEN[rz.einheit]?.basis;
+    if (!ra || ra.herkunft === "selbst") { probleme.push({ name: rz.name, grund: "unbekannt", ueber: a.name }); continue; }
+    if (!(Number(rz.menge) > 0) || !bR) { probleme.push({ name: rz.name, grund: "menge", ueber: a.name }); continue; }
+    const bRa = EINHEITEN[ra.packung?.einheit || ra.einheit]?.basis; if (bRa && bRa !== bR) { probleme.push({ name: rz.name, grund: "einheit", ueber: a.name }); continue; }
+    out.push({ name: rz.name, menge: inBasis(rz.menge, rz.einheit) * anteil, basis: bR, ueber: a.name });
+  }
+  return { bedarf: out, probleme };
+}
 export function bedarfGericht(g, idx) {
   const out = []; const probleme = [];
   if (!(g?.zutaten || []).length) return { bedarf: out, probleme: [{ name: null, grund: "rezept" }] };
@@ -354,20 +383,7 @@ export function bedarfGericht(g, idx) {
     const a = idx[z.name]; const bZ = EINHEITEN[z.einheit]?.basis;
     if (!a) { probleme.push({ name: z.name, grund: "unbekannt" }); continue; }
     if (!(Number(z.menge) > 0) || !bZ) { probleme.push({ name: z.name, grund: "menge" }); continue; }
-    const r = a.herkunft === "selbst" ? a.rezept : null;
-    if (r) {
-      const aus = r.ausbeute; const bA = EINHEITEN[aus?.einheit]?.basis;
-      if (!(aus?.menge > 0) || bA !== bZ) { probleme.push({ name: z.name, grund: "einheit" }); continue; }
-      const anteil = inBasis(z.menge, z.einheit) / inBasis(aus.menge, aus.einheit);
-      for (const rz of r.zutaten || []) {
-        const ra = idx[rz.name]; const bR = EINHEITEN[rz.einheit]?.basis;
-        if (!ra || ra.herkunft === "selbst") { probleme.push({ name: rz.name, grund: "unbekannt", ueber: a.name }); continue; }
-        if (!(Number(rz.menge) > 0) || !bR) { probleme.push({ name: rz.name, grund: "menge", ueber: a.name }); continue; }
-        const bRa = EINHEITEN[ra.packung?.einheit || ra.einheit]?.basis; if (bRa && bRa !== bR) { probleme.push({ name: rz.name, grund: "einheit", ueber: a.name }); continue; }
-        out.push({ name: rz.name, menge: inBasis(rz.menge, rz.einheit) * anteil, basis: bR, ueber: a.name });
-      }
-      continue;
-    }
+    if (a.herkunft === "selbst" && a.rezept) { const s = selbstAufRohware(a, z.menge, z.einheit, idx); out.push(...s.bedarf); probleme.push(...s.probleme); continue; }
     const bA = EINHEITEN[a.packung?.einheit || a.einheit]?.basis;
     if (bA && bA !== bZ) { probleme.push({ name: z.name, grund: "einheit" }); continue; }
     const roh = rohmengeFuer(inBasis(z.menge, z.einheit), garverlustAnteil(a).wert);
@@ -403,7 +419,11 @@ export function schwundVerbrauch(stand, { von, bis }, idx = artikelIndex(stand))
     if (e.storniert || typeof e.datum !== "string" || e.datum < von || e.datum > bis) continue;
     const vorgang = SCHWUND_ARTEN[e.art] || 1; const ziel = vorgang === 1 ? muell : personal; eintraege += 1;
     if (e.art === "eimer") { eimerKg += Number(e.menge) || 0; continue; }
-    if (e.ref?.typ === "artikel") { const b = EINHEITEN[e.einheit]?.basis; if (!b) { ohne.push(e.id); continue; } dazu(ziel, e.ref.name, inBasis(e.menge, e.einheit), b); continue; }
+    if (e.ref?.typ === "artikel") { const b = EINHEITEN[e.einheit]?.basis; if (!b) { ohne.push(e.id); continue; }
+      // Prüfgremium 17.10.2026 (6): Selbstgemachtes (Teig, Soße …) über sein Rezept auf die Rohware – wie der Soll-Verbrauch
+      const s = selbstAufRohware(idx[e.ref.name], Number(e.menge) || 0, e.einheit, idx);
+      if (s) { if (!s.bedarf.length) { ohne.push(e.id); continue; } for (const x of s.bedarf) dazu(ziel, x.name, x.menge, x.basis); continue; }
+      dazu(ziel, e.ref.name, inBasis(e.menge, e.einheit), b); continue; }
     if (e.ref?.typ === "gericht") {
       const g = (stand.gerichte || []).find((x) => x.id === e.ref.id); if (!g) { ohne.push(e.id); continue; }
       const b = bedarfGericht(g, idx); if (!b.bedarf.length) { ohne.push(e.id); continue; }

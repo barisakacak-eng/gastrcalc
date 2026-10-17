@@ -8,6 +8,9 @@ import asyncio, sys, os, pathlib, traceback, re, datetime
 from playwright.async_api import async_playwright
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import schnellstart as ss, nav_hilfe
+# Prüfgremium 17.10.2026 (4): Beispiel-Laden hat Sonntag Ruhetag – ist morgen Sonntag, heißt es „heute verbrauchen“ (Geschäftstag bis 4 Uhr)
+_gt = datetime.datetime.now() - datetime.timedelta(hours=4)
+ERWARTET = "Hähnchenspieß heute verbrauchen" if (_gt + datetime.timedelta(days=1)).weekday() == 6 else "Hähnchenspieß bis morgen verbrauchen"
 
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8783"))
 OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", "/home/claude/audit/shots")); OUT.mkdir(parents=True, exist_ok=True)
@@ -77,14 +80,14 @@ async def main():
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
             chip = pg.locator('#app .b-chip[data-wert="aktionen"]')
             assert await chip.count() == 1, "Offen-Hinweis „Aktionen“ fehlt im Büro"
-            ct = await chip.inner_text(); assert "Hähnchenspieß bis morgen verbrauchen" in ct, ct
+            ct = await chip.inner_text(); assert ERWARTET in ct, (ERWARTET, ct)
             assert await chip.locator(".b-punkt.rot").count() == 1, "Hinweis sollte rot sein"
             et = await pg.locator(EINSTIEG).inner_text(); assert "Hähnchenspieß" in et, et
             await bild("buero_hinweis", voll=False)
 
             # ---- Bereich mit Daten
             await tipp('#app .b-chip[data-wert="aktionen"]'); t = await text()
-            for w in ["Hähnchenspieß bis morgen verbrauchen", "Läuft ab", "Hähnchenspieß", "nicht mehr verwenden ab", "Abverkauf", "Ayran 0,25 l für 1,50 € statt 2,00 €", "Wegwerfen kostet", "Aktion bringt",
+            for w in [ERWARTET, "Läuft ab", "Hähnchenspieß", "nicht mehr verwenden ab", "Abverkauf", "Ayran 0,25 l für 1,50 € statt 2,00 €", "Wegwerfen kostet", "Aktion bringt",
                       "Kombi-Angebot", "Vorschläge", "Renner", "Was heißt das?"]:
                 assert w.lower() in t.lower(), (w, t[:1500])
             assert "NaN" not in t and "undefined" not in t and "aktionen." not in t, t[:800]

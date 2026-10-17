@@ -1213,7 +1213,7 @@ export default {
     gespeichert: "Salvato",
     ungueltig: "Un numero non va – controlla.",
     nichtsGeaendert: "Niente cambiato",
-    uhr: { heute: (a) => `Ordina oggi: ${a} articoli`, morgen: (a) => `Ordina domani: ${a} articoli`, reicht: (a, b) => `${a} basta ancora ≈ ${b} giorni`, fastAlle: (a) => `${a} è quasi finito`, knopf: "Ordina" },
+    uhr: { heute: (a) => `Ordina oggi: ${a} articoli`, morgen: (a) => `Ordina domani: ${a} articoli`, reicht: (a, b) => `${a} basta ancora ≈ ${b} giorni`, fastAlle: (a) => `${a} è quasi finito`, mindest: (a) => `${a} sotto la scorta minima – riordinare`, knopf: "Ordina" },
   },
   // Stufe 1 (17.10.2026): Ufficio «Offerte e scadenze» e scadenza sulla bolla
   aktionen: {
@@ -1241,7 +1241,7 @@ export default {
     beleg: { titel: "Scadenza (facoltativo)", unter: "Data sulla confezione – l’app avvisa in tempo.", auf: "Inserisci data", anzahl: (n) => `${n} date inserite`,
       mhd: "TMC", verbrauch: "Scadenza", datum: "Data", speichern: "Salva", zu: "Chiudi", gespeichert: "Salvato", nichts: "Nessuna modifica" },
     wt: ["dom", "lun", "mar", "mer", "gio", "ven", "sab"],
-    uhr: { heute: (ware) => `Usare ${ware} oggi`, morgen: (ware) => `Usare ${ware} entro domani`, vorbei: (ware) => `${ware}: scadenza passata`, mehrere: (n) => `Usare ${n} merci entro domani`,
+    uhr: { heute: (ware) => `Usare ${ware} oggi`, morgen: (ware) => `Usare ${ware} entro domani`, vorbei: (ware) => `${ware}: scadenza passata – non usare`, vorbeiMehrere: (n) => `${n} merci: scadenza passata – non usare`, mehrere: (n) => `Usare ${n} merci entro domani`, mehrereHeute: (n) => `Usare ${n} merci oggi`,
       bis: (ware, tag) => `Usare ${ware} entro ${tag}`, aktion: (ware, tag) => `${ware}: un’offerta fino a ${tag} conviene`, mhdVorbei: (ware) => `${ware}: TMC passato – controllare`, knopf: "Vedi" },
   },
 };

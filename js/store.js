@@ -12,7 +12,7 @@
 // Kennungen), dazu je Laden stammZeit (Zeitstempel je Bereich; der Fingerabdruck liegt im Speicher-Kopf) und abgleich (Stand des letzten Zusammenführens).
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
-import { debounce, uid, heute } from "./util.js";
+import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
@@ -288,7 +288,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   // Stresstest 15.10.: abgeschlossene Rundgänge tragen keine doppelte Kopie ihrer Messungen mehr (stehen vollständig im Journal)
   s.rundgaenge = s.rundgaenge.map((r) => (rundeDoppelt(r, s) ? { ...r, messungen: [] } : r));
   // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)
-  s.inventuren = mitId(s.inventuren).filter((i) => typeof i.datum === "string").map((i) => ({ ...i,
+  s.inventuren = mitId(s.inventuren).filter((i) => typeof i.datum === "string").map((i) => ({ ...i, datum: inventurGeschaeftstag(i),
     begonnen: typeof i.begonnen === "string" ? i.begonnen : i.datum + "T00:00:00.000Z", abgeschlossen: typeof i.abgeschlossen === "string" ? i.abgeschlossen : null,
     posten: Object.fromEntries(Object.entries(istObjekt(i.posten) ? i.posten : {}).map(([n, m]) => [n, typeof m === "number" && Number.isFinite(m) && m >= 0 ? m : null])),
     ausgeblendet: (Array.isArray(i.ausgeblendet) ? i.ausgeblendet : []).filter((n) => typeof n === "string") }));
@@ -333,6 +333,14 @@ function haltbarVereinigen(liste, lokal, fremd) {
     return neu ? { ...l, zeilen: neu } : l;
   });
 }
+// Prüfgremium 17.10.2026 (2): Inventuren, die vor der Korrektur nach Mitternacht (0–4 Uhr) abgeschlossen wurden, trugen den Kalendertag.
+// Gezählt wurde nach Ladenschluss – der Tag der Zählung ist der Geschäftstag davor. Nur dieser eindeutige Fall wird umgestellt; es ist
+// idempotent (danach passt das Datum zum Geschäftstag) und auf jedem Handy gleich.
+function inventurGeschaeftstag(i) {
+  if (typeof i.abgeschlossen !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(i.datum)) return i.datum;
+  const d = new Date(i.abgeschlossen); if (!Number.isFinite(d.getTime()) || d.getHours() >= GESCHAEFTSTAG_BIS_STUNDE) return i.datum;
+  return heute(d) === i.datum ? heuteGeschaeft(d) : i.datum;
+}
 // E7 (17.10.2026): Kassen-Artikelnummer (plu) und gelernte Kassentexte (kassenNamen) je Gericht – nur Text, sonst weg
 function gerichtKasse(g) {
   if (typeof g.plu === "string" && g.plu.trim()) g.plu = g.plu.trim().slice(0, 50); else delete g.plu;
@@ -347,7 +355,40 @@ function verkaeufeSauber(liste) {
     .map((v) => ({ ...v, menge: Number(v.menge), gericht: typeof v.gericht === "string" && v.gericht ? v.gericht : null, name: String(v.name ?? "").slice(0, 120),
       umsatzBrutto: typeof v.umsatzBrutto === "number" && Number.isFinite(v.umsatzBrutto) ? v.umsatzBrutto : null, herkunft: VERKAUF_HERKUNFT.includes(v.herkunft) ? v.herkunft : "hand",
       importId: typeof v.importId === "string" && v.importId ? v.importId : null, erfasst: typeof v.erfasst === "string" ? v.erfasst : v.datum + "T00:00:00.000Z", storniert: !!v.storniert,
-      ...(typeof v.plu === "string" && v.plu ? { plu: v.plu.slice(0, 50) } : { plu: null }), ...(typeof v.text === "string" ? { text: v.text.slice(0, 120) } : {}) }));
+      ...(typeof v.plu === "string" && v.plu ? { plu: v.plu.slice(0, 50) } : { plu: null }), ...(typeof v.text === "string" ? { text: v.text.slice(0, 120) } : {}),
+      ...("kasse" in v ? { kasse: typeof v.kasse === "string" && v.kasse ? v.kasse.slice(0, 50) : null } : {}) })); // Prüfgremium 17.10.2026 (5): Kassen-ID
+}
+
+// Prüfgremium 17.10.2026 (1): Nach dem Vereinigen zweier Handys dürfen logisch gleiche Verkäufe nicht doppelt zählen. Die Kennungen sind
+// je Handy verschieden (Zeitpunkt, Zufall) – deshalb entscheidet hier der Inhalt, auch für schon gespeicherte Altdaten:
+//   Kasse/Z-Bon: je (Tag, Herkunft, Kasse) zählt nur EIN Import (der jüngste nach „erfasst“), die anderen gelten als ersetzt.
+//   Hand: je (Tag, Gericht) zählt nur EIN Eintrag (der jüngste).
+// Stornos: Hat ein Handy einen Stand zurückgenommen (storniert ohne „ersetzt“) und ist das jünger als der jüngste aktive Stand der
+// Gruppe, gilt die Rücknahme für die ganze Gruppe. Ergebnis hängt nur von der vereinigten Liste ab – beide Handys rechnen gleich.
+// Geänderte Einträge sind neue Objekte (Journal-Regel); Zeiten sind die aus den Daten, nicht „jetzt“.
+export function verkaeufeEntdoppeln(liste) {
+  const gruppen = new Map();
+  for (const v of liste || []) {
+    if (!v || typeof v.datum !== "string") continue;
+    const k = v.herkunft === "hand" ? `hand|${v.datum}|${v.gericht || "?" + (v.name || "")}` : `imp|${v.datum}|${v.herkunft}|${typeof v.kasse === "string" ? v.kasse : ""}`;
+    if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(v);
+  }
+  const neu = new Map();
+  for (const [k, l] of gruppen) {
+    const einheit = (v) => (k.startsWith("hand|") ? v.id : v.importId || v.id);
+    const aktiv = new Map(); // Einheit → jüngstes „erfasst“
+    for (const v of l) if (!v.storniert) { const e = einheit(v); const t = String(v.erfasst || ""); if (!aktiv.has(e) || t > aktiv.get(e)) aktiv.set(e, t); }
+    if (!aktiv.size) continue;
+    const [sieger, siegerZeit] = [...aktiv.entries()].sort((a, b) => b[1].localeCompare(a[1]) || String(b[0]).localeCompare(String(a[0])))[0];
+    const rueck = l.filter((v) => v.storniert && !v.ersetzt && !aktiv.has(einheit(v)) && String(v.storniertZeit || "") > siegerZeit).map((v) => String(v.storniertZeit)).sort().pop();
+    if (aktiv.size === 1 && !rueck) continue;
+    for (const v of l) {
+      if (v.storniert) continue;
+      if (rueck) neu.set(v, { ...v, storniert: true, storniertZeit: rueck });
+      else if (einheit(v) !== sieger) neu.set(v, { ...v, storniert: true, storniertZeit: siegerZeit, ersetzt: sieger });
+    }
+  }
+  return neu.size ? (liste || []).map((v) => neu.get(v) || v) : liste || [];
 }
 
 // Wurzel aus dem Speicher oder aus einer Sicherung: Schema 1 wird gehoben, 2 und 3 geprüft.
@@ -1092,6 +1133,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
   for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7 (17.10.2026): verkaeufe
     basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
+  basis.verkaeufe = verkaeufeEntdoppeln(basis.verkaeufe); // Prüfgremium 17.10.2026 (1): gleiche Verkäufe von zwei Handys zählen einmal
   basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1 (17.10.2026)
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
   const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen), ["storniert"], opt("rundgaenge"));

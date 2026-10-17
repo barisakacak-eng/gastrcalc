@@ -9,8 +9,9 @@ import { EINHEITEN } from "./data/katalog.js";
 import { kalkulation, tagPlus, wochentag } from "./engine.js";
 import { bestandStand, bedarfAm, datumKurzDe } from "./bestand.js";
 import { einkaufMengen, bedarfGericht } from "./verkauf.js";
-import { heuteGeschaeft } from "./util.js";
+import { heute, heuteGeschaeft } from "./util.js";
 import { fmtEuro } from "./util.js";
+import { tagGewicht } from "./zaehler.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
 
@@ -124,15 +125,20 @@ export function chargenStand(stand, { heuteTag = heuteGeschaeft(), bs = bestandS
 // ---------- 2. Ablauf-Warnung ----------
 // laeuftAb: Verbrauchsdatum (art "verbrauch") mit Rest > 0 oder unbekannt, von 7 Tagen zurück bis 7 Tage voraus; dazu MHD-Ware, die schon
 //   abgelaufen ist und noch da sein dürfte („prüfen“, kein Abverkauf). kandidaten: MHD-Ware mit Rest > 0, Ablauf heute bis in 7 Tagen.
-export function haltbarStand(stand, { heuteTag = heuteGeschaeft() } = {}) {
-  return imTakt(stand, "haltbar:" + heuteTag, () => haltbarRechnen(stand, heuteTag));
+// Prüfgremium 17.10.2026 (2): Bestand und Verbrauch rechnen mit dem Geschäftstag (heuteTag, bis 4 Uhr = Vortag), das Datum auf der Packung
+// ist ein Kalendertag – „vorbei/heute/morgen“ zählt deshalb ab dem Kalendertag (kalenderTag). Um 01:30 ist Freitags-Ware schon vorbei.
+// Ohne Angabe: Kalendertag = heute, wenn heuteTag der laufende Geschäftstag ist, sonst = heuteTag (fester Tag, z. B. in Tests).
+const kalenderVon = (heuteTag, kalenderTag) => kalenderTag || (heuteTag === heuteGeschaeft() ? heute() : heuteTag);
+export function haltbarStand(stand, { heuteTag = heuteGeschaeft(), kalenderTag = null } = {}) {
+  const k = kalenderVon(heuteTag, kalenderTag);
+  return imTakt(stand, "haltbar:" + heuteTag + "|" + k, () => haltbarRechnen(stand, heuteTag, k));
 }
-function haltbarRechnen(stand, heuteTag) {
+function haltbarRechnen(stand, heuteTag, kalenderTag = heuteTag) {
   const cs = chargenStand(stand, { heuteTag });
   const laeuftAb = [], kandidaten = [];
   for (const w of cs.waren) for (const c of w.chargen) {
     if (!c.haltbar) continue;
-    const tage = tageZwischen(heuteTag, c.haltbar.datum); if (tage < -RUECKBLICK_TAGE) continue;
+    const tage = tageZwischen(kalenderTag, c.haltbar.datum); if (tage < -RUECKBLICK_TAGE) continue;
     const wert = c.rest !== null && w.preisJeBasis !== null ? c.rest * w.preisJeBasis : null;
     const e = { name: w.name, art: c.haltbar.art, ablauf: c.haltbar.datum, tage, rest: c.rest, basis: w.basis, wert, geschaetzt: w.geschaetzt, verbrauchUnbekannt: !!c.verbrauchUnbekannt,
       lieferung: c.lieferung, zeile: c.zeile, geliefert: c.geliefert, ab: tagPlus(c.haltbar.datum, 1) };
@@ -145,7 +151,7 @@ function haltbarRechnen(stand, heuteTag) {
   kandidaten.sort((a, b) => a.ablauf.localeCompare(b.ablauf) || (b.wert ?? 0) - (a.wert ?? 0));
   const k = (stand.gerichte || []).length ? kalkulation(stand) : { zeilen: [] };
   const abverkauf = kandidaten.map((x) => { const v = abverkaufVorschlaege(stand, x, { k }); return { ...x, vorschlaege: v, bester: v.find((y) => y.art === "aktion") || null }; });
-  return { heute: heuteTag, start: cs.start, ohneInventur: cs.ohneInventur, laeuftAb, abverkauf };
+  return { heute: heuteTag, kalenderTag, start: cs.start, ohneInventur: cs.ohneInventur, laeuftAb, abverkauf };
 }
 
 // ---------- 3. Abverkaufs-Vorschlag ----------
@@ -192,19 +198,31 @@ export const kurzName = (n) => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").t
 // Verbrauchsdatum in 2–3 Tagen (gelb) → MHD vorbei (gelb). Im Laden steht nichts.
 export const wtKurz = (iso) => { const l = t("aktionen.wt"); return (Array.isArray(l) && l[wochentag(iso)]) || iso.slice(5); };
 export const datumKurz = (iso) => `${wtKurz(iso)} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`; // „Mo 20.10.“ in der Sprache der App
-export function haltbarUhrzeit(stand, { heuteTag = heuteGeschaeft() } = {}) {
-  const hs = haltbarStand(stand, { heuteTag });
+// Prüfgremium 17.10.2026 (4): Letzter Öffnungstag bis zum Ablauf (einschließlich). Ist der Ablauftag ein Ruhetag, muss die Ware vorher weg –
+// „bis morgen“ wäre dann falsch. Gibt es keinen Öffnungstag dazwischen (heute zu, morgen Ablauf und zu), gilt heute.
+export function letzterOffenTag(stand, von, ablauf) {
+  for (let d = ablauf; d > von; d = tagPlus(d, -1)) if (tagGewicht(stand, d) > 0) return d;
+  return von;
+}
+export function haltbarUhrzeit(stand, { heuteTag = heuteGeschaeft(), kalenderTag = null } = {}) {
+  const hs = haltbarStand(stand, { heuteTag, kalenderTag }); const K = hs.kalenderTag || heuteTag;
   const ziel = { aktion: "nav", wert: "aktionen" }; const knopf = t("aktionen.uhr.knopf");
   const satz = (ton, text, art) => ({ id: "haltbar", art, ton, text, knopf, ziel });
   const verbrauch = hs.laeuftAb.filter((x) => x.art === "verbrauch");
-  const dringend = verbrauch.filter((x) => x.tage <= 1);
-  if (dringend.length > 1) return satz("rot", t("aktionen.uhr.mehrere", dringend.length), "verbrauch");
+  // Prüfgremium 17.10.2026 (3): abgelaufen heißt „nicht mehr verwenden“ – eigener Satz, Vorrang vor allem anderen
+  const vorbei = verbrauch.filter((x) => x.tage < 0);
+  if (vorbei.length > 1) return satz("rot", t("aktionen.uhr.vorbeiMehrere", vorbei.length), "verbrauch");
+  if (vorbei.length === 1) return satz("rot", t("aktionen.uhr.vorbei", artikelText(vorbei[0].name)), "verbrauch");
+  // Frist = letzter Öffnungstag bis zum Ablauf (Ruhetage zählen nicht als Verbrauchstag)
+  const offen = verbrauch.map((x) => ({ ...x, frist: letzterOffenTag(stand, K, x.ablauf) })).map((x) => ({ ...x, fristTage: tageZwischen(K, x.frist) }));
+  const dringend = offen.filter((x) => x.fristTage <= 1);
+  if (dringend.length > 1) return satz("rot", dringend.some((x) => x.fristTage <= 0) ? t("aktionen.uhr.mehrereHeute", dringend.length) : t("aktionen.uhr.mehrere", dringend.length), "verbrauch");
   if (dringend.length === 1) { const x = dringend[0]; const n = artikelText(x.name);
-    return satz("rot", x.tage < 0 ? t("aktionen.uhr.vorbei", n) : x.tage === 0 ? t("aktionen.uhr.heute", n) : t("aktionen.uhr.morgen", n), "verbrauch"); }
+    return satz("rot", x.fristTage <= 0 ? t("aktionen.uhr.heute", n) : t("aktionen.uhr.morgen", n), "verbrauch"); }
   const aktion = hs.abverkauf.find((x) => x.bester);
   if (aktion) return satz("gelb", t("aktionen.uhr.aktion", artikelText(aktion.name), wtKurz(aktion.ablauf)), "aktion");
-  const bald = verbrauch.find((x) => x.tage <= 3);
-  if (bald) return satz("gelb", t("aktionen.uhr.bis", artikelText(bald.name), wtKurz(bald.ablauf)), "verbrauch");
+  const bald = offen.find((x) => x.tage <= 3);
+  if (bald) return satz("gelb", t("aktionen.uhr.bis", artikelText(bald.name), wtKurz(bald.frist)), "verbrauch");
   const mhd = hs.laeuftAb.find((x) => x.status === "mhdVorbei");
   if (mhd) return satz("gelb", t("aktionen.uhr.mhdVorbei", artikelText(mhd.name)), "mhd");
   return null;

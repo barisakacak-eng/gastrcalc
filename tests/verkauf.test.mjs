@@ -117,7 +117,7 @@ test("E7 Übernehmen: dieselbe Datei zweimal zählt nicht doppelt; geänderter T
   assert.deepEqual([b.neu, b.gleich, b.ersetzt], [0, 2, 0]);
   assert.equal(vk.verkaufJeGericht(s, z).zeilen.find((x) => x.gericht === "g1").menge, 5, "nichts doppelt");
   // gleicher Tag mit neuem Stand (eine Position mehr) ersetzt den alten
-  const r2 = structuredClone(r); r2.positionen.push({ datum: "2026-10-16", plu: "111", text: "Cola 0,33 l", menge: 4, umsatzBrutto: 10, zeilen: 1 });
+  const r2 = structuredClone(r); r2.positionen.push({ datum: "2026-10-16", kasse: r.positionen[0].kasse, plu: "111", text: "Cola 0,33 l", menge: 4, umsatzBrutto: 10, zeilen: 1 }); // dieselbe Kasse (Prüfgremium 17.10.2026)
   const c = vk.importUebernehmen(s, r2, { jetzt: "2026-10-17T12:00:00.000Z" });
   assert.deepEqual([c.gleich, c.tage, c.ersetzt], [1, 1, 2]);
   assert.equal(vk.verkaufJeGericht(s, z).zeilen.find((x) => x.gericht === "g3").menge, 6);
@@ -308,4 +308,88 @@ test("E7: Inventur merkt den Packungsinhalt; Abgleich nutzt ihn auch nach einem 
   const nachher = abgleichInventur(s, i2, i1);
   const z = (r) => (r.zeilen || r.waren || []).find((x) => x.name === cola.name);
   assert.equal(z(nachher)?.ist, z(vorher)?.ist, "Ist-Verbrauch bleibt gleich");
+});
+
+// ---------- Prüfgremium 17.10.2026: Regressionstests ----------
+const zeitraum = { von: "2026-10-15", bis: "2026-10-16" };
+const doener = (s) => vk.verkaufJeGericht(s, zeitraum).zeilen.find((x) => x.gericht === "g1").menge;
+const aktivIds = (s) => s.verkaeufe.filter((v) => !v.storniert).map((v) => v.id).sort();
+
+test("Prüfgremium (1): Abgleich zweier Handys – dieselbe Kassendatei und dieselbe Handeingabe zählen einmal; Rücknahme gilt; beide Richtungen gleich", async () => {
+  const basis = laden(); const r = await vk.exportEinlesen(einzeln());
+  const A = structuredClone(basis), B = structuredClone(basis);
+  vk.importUebernehmen(A, r, { jetzt: "2026-10-17T08:00:00.000Z", geraet: "A" });
+  vk.importUebernehmen(B, r, { jetzt: "2026-10-17T09:00:00.000Z", geraet: "B" });
+  assert.equal(doener(A), 5);
+  const AB = st.verschmelzen(A, B), BA = st.verschmelzen(B, A);
+  assert.equal(doener(AB), 5, "nach dem Abgleich nicht doppelt"); assert.equal(doener(BA), 5);
+  assert.deepEqual(aktivIds(AB), aktivIds(BA), "beide Handys rechnen gleich");
+  assert.ok(AB.verkaeufe.filter((v) => v.storniert).every((v) => v.ersetzt), "der ältere Stand gilt als ersetzt");
+  assert.equal(doener(st.verschmelzen(AB, A)), 5, "erneuter Abgleich bleibt bei einmal");
+  assert.equal(new Set(AB.verkaeufe.map((v) => v.id)).size, AB.verkaeufe.length, "eindeutige Kennungen");
+  // Rücknahme auf A, nachdem B eingelesen hatte: gilt nach dem Abgleich für beide
+  const A2 = structuredClone(A); vk.importZuruecknehmen(A2, vk.importe(A2)[0].importId, { jetzt: "2026-10-17T10:00:00.000Z" });
+  assert.equal(doener(st.verschmelzen(A2, B)), 0, "jüngere Rücknahme gewinnt"); assert.equal(doener(st.verschmelzen(B, A2)), 0);
+  // ältere Rücknahme verliert gegen einen jüngeren Import
+  const A3 = structuredClone(A); vk.importZuruecknehmen(A3, vk.importe(A3)[0].importId, { jetzt: "2026-10-17T08:30:00.000Z" });
+  assert.equal(doener(st.verschmelzen(A3, B)), 5);
+  // Hand: gleicher Tag und gleiches Gericht auf zwei Handys → der jüngere Eintrag zählt
+  const C = structuredClone(basis), D = structuredClone(basis);
+  vk.handVerkaufSetzen(C, "2026-10-16", "g1", 20, { jetzt: "2026-10-17T08:00:00.000Z" });
+  vk.handVerkaufSetzen(D, "2026-10-16", "g1", 25, { jetzt: "2026-10-17T08:05:00.000Z" });
+  assert.deepEqual(vk.handTag(st.verschmelzen(C, D), "2026-10-16"), { g1: 25 }); assert.deepEqual(vk.handTag(st.verschmelzen(D, C), "2026-10-16"), { g1: 25 });
+  // Hand: Löschen auf C nach Ds Eintrag → weg
+  const C2 = structuredClone(C); vk.handVerkaufSetzen(C2, "2026-10-16", "g1", 0, { jetzt: "2026-10-17T08:10:00.000Z" });
+  assert.deepEqual(vk.handTag(st.verschmelzen(C2, D), "2026-10-16"), {});
+  // gespeicherte Altdaten (über die Migration, wie aus einer Sicherung) werden genauso zusammengeführt
+  const alt = st.verschmelzen(st.migrierenBetrieb(structuredClone(A)), st.migrierenBetrieb(structuredClone(B)));
+  assert.equal(doener(alt), 5);
+});
+
+// DSFinV-K-Dateien einer Kasse für den 16.10. (wie der Export einer zweiten Kasse im selben Laden)
+const kassenDatei = (kasse, doenerMenge) => {
+  const k = `${kasse};2026-10-16T23:59:00+02:00;7`;
+  const f = (n, txt) => Object.assign(new Blob([txt]), { name: n });
+  return [f("lines.csv", "Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;BON_ID;POS_ZEILE;ARTIKELTEXT;GV_TYP;P_STORNO;ART_NR;MENGE;STK_BR\n" + `${k};1;1;Döner Kebab;Umsatz;0;101;${doenerMenge},000;8,00`),
+    f("transactions.csv", "Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;BON_ID;BON_TYP;BON_STORNO;BON_START;BON_ENDE\n" + `${k};1;Beleg;0;;`),
+    f("cashpointclosing.csv", "Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;Z_BUCHUNGSTAG\n" + `${k};2026-10-16`)];
+};
+test("Prüfgremium (5): zwei Kassen am selben Tag addieren; dieselbe Kasse ersetzt; gleiche Summen auf zwei Kassen werden nicht verworfen", async () => {
+  const s = laden(); const z = { von: "2026-10-16", bis: "2026-10-16" }; const m = () => vk.verkaufJeGericht(s, z).zeilen.find((x) => x.gericht === "g1").menge;
+  const k1 = await vk.exportEinlesen(kassenDatei("K1", 4));
+  vk.importUebernehmen(s, k1, { jetzt: "2026-10-17T08:00:00.000Z" });
+  const k2 = await vk.exportEinlesen(kassenDatei("K2", 5)); const vorschau = vk.importVorschau(s, k2).jeTag[0].stand;
+  vk.importUebernehmen(s, k2, { jetzt: "2026-10-17T08:10:00.000Z" }); assert.equal(m(), 9, "4 + 5");
+  assert.equal(vorschau, "neu", "andere Kasse: neu, nicht ersetzt"); assert.equal(k1.positionen[0].kasse, "K1");
+  const k1neu = await vk.exportEinlesen(kassenDatei("K1", 6));
+  assert.equal(vk.importVorschau(s, k1neu).jeTag[0].stand, "ersetzt");
+  vk.importUebernehmen(s, k1neu, { jetzt: "2026-10-17T08:20:00.000Z" }); assert.equal(m(), 11, "Kasse 1 ersetzt: 6 + 5");
+  const t = laden(); vk.importUebernehmen(t, await vk.exportEinlesen(kassenDatei("K1", 4)), { jetzt: "2026-10-17T08:00:00.000Z" });
+  const r = vk.importUebernehmen(t, await vk.exportEinlesen(kassenDatei("K2", 4)), { jetzt: "2026-10-17T08:10:00.000Z" });
+  assert.equal(r.gleich, 0, "gleiche Summe auf Kasse 2 ist nicht „gleich“");
+  assert.equal(vk.verkaufJeGericht(t, z).zeilen.find((x) => x.gericht === "g1").menge, 8);
+  // Altdaten ohne Kassen-ID: die neue Datei ersetzt sie wie bisher (kein Doppeltzählen)
+  const u = laden(); vk.importUebernehmen(u, await vk.exportEinlesen(kassenDatei("K1", 4)), { jetzt: "2026-10-17T08:00:00.000Z" });
+  for (const v of u.verkaeufe) delete v.kasse;
+  vk.importUebernehmen(u, await vk.exportEinlesen(kassenDatei("K1", 6)), { jetzt: "2026-10-17T08:10:00.000Z" });
+  assert.equal(vk.verkaufJeGericht(u, z).zeilen.find((x) => x.gericht === "g1").menge, 6);
+});
+
+test("Prüfgremium (6): Müll von Selbstgemachtem rechnet über das Rezept auf die Rohware – wie der Soll-Verbrauch", async () => {
+  const muell = await import("../js/muell.js");
+  const s = laden(); muell.rohwareWeg(s, s.artikel.find((a) => a.name === "Teig"), { datum: "2026-10-15", menge: 800, einheit: "g" }); // halbe Teigladung
+  const sw = vk.schwundVerbrauch(s, zeitraum);
+  assert.deepEqual(Object.keys(sw.muell).sort(), ["Hefe", "Mehl"], "kein Posten „Teig“");
+  assert.equal(sw.muell.Mehl.menge, 500); assert.equal(sw.muell.Hefe.menge, 10); assert.equal(sw.ohneZuordnung, 0);
+  // dieselbe Rechnung wie der Soll-Verbrauch: 800 g Teig im Rezept ergeben genauso 500 g Mehl
+  const idx = Object.fromEntries(s.artikel.map((a) => [a.name, a]));
+  const g = vk.bedarfGericht({ zutaten: [{ name: "Teig", menge: 800, einheit: "g" }] }, idx);
+  assert.equal(g.bedarf.find((x) => x.name === "Mehl").menge, sw.muell.Mehl.menge);
+});
+
+test("Prüfgremium (8): totes Lager zeigt „N × Gebinde“ (keine Einzahl hinter einer Mehrzahl-Zahl)", async () => {
+  const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
+  const { verkaufView } = await import("../js/screens/verkauf.js");
+  const html = verkaufView(beispielLaden(H));
+  assert.ok(html.includes("80 × Packung"), "totes Lager im Beispiel-Laden"); assert.ok(!/\b\d+ (Packung|Karton|Kiste|Sack|Flasche|Dose|Kanister|Eimer|Beutel)\b/.test(html), html.match(/\b\d+ (Packung|Karton|Kiste|Sack)\b/)?.[0]);
 });

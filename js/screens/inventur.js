@@ -3,7 +3,7 @@
 // „Weiter" zur nächsten Ware. Nach dem Abschluss das Ergebnis A–E: jede Zahl mit „Was heißt das?" in einfachen Worten.
 // Rechnen tut nur js/inventur.js; hier stehen Aufbau, Texte und data-Attribute.
 import { t, einheitLabel, artikelText, sprache } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl, heute } from "../util.js";
+import { esc, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js";
 import { PRODUKT_INDEX } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { gebindeKette } from "../engine.js";
@@ -258,7 +258,7 @@ export function inventurAktion(name, el, stand, { frage = (x) => confirm(x) } = 
   if (name === "inv-fertig") {
     const w = inventurWert(stand, offen); if (!w.gezaehlt) return false;
     if (w.offen && !frage(t("inventur.nichtGezaehltFrage", w.offen))) return false;
-    inventurAbschliessen(stand, offen, { datum: heute() });
+    inventurAbschliessen(stand, offen, { datum: heuteGeschaeft() }); // Prüfgremium 17.10.2026 (2): nach Mitternacht zählt die Schicht davor
     ergebnisId = offen.id; modus = "ergebnis"; return "abgeschlossen";
   }
   if (modus !== "karte" || !karteName) return false;

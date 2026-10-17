@@ -1199,7 +1199,7 @@ export default {
     ohneRezept: (namen) => `No recipe, not counted in use: ${namen}`, ohneGericht: (n) => `${n} sold items without a dish – not counted in use.`,
     einstellungenTitel: "Settings", tage: "Order for how many days?", puffer: "Buffer in days", mindest: "Minimum in stock", mindestHinweis: "Number of packs that should always be there. Leave empty if it doesn't matter.",
     speichern: "Save", zu: "Close", gespeichert: "Saved", ungueltig: "A number isn't right – please check.", nichtsGeaendert: "Nothing changed",
-    uhr: { heute: (n) => `Order today: ${n} items`, morgen: (n) => `Order tomorrow: ${n} ${n === 1 ? "item" : "items"}`, reicht: (name, n) => `${name} lasts ≈ ${n} more ${n === 1 ? "day" : "days"}`, fastAlle: (name) => `${name} is almost out`, knopf: "Order" },
+    uhr: { heute: (n) => `Order today: ${n} items`, morgen: (n) => `Order tomorrow: ${n} ${n === 1 ? "item" : "items"}`, reicht: (name, n) => `${name} lasts ≈ ${n} more ${n === 1 ? "day" : "days"}`, fastAlle: (name) => `${name} is almost out`, mindest: (name) => `${name} below minimum stock – reorder`, knopf: "Order" },
   },
   // Stufe 1 (17.10.2026): Back office "Offers & shelf life" and shelf life on the receipt
   aktionen: {
@@ -1227,7 +1227,7 @@ export default {
     beleg: { titel: "Shelf life (optional)", unter: "Date from the pack – then the app warns in time.", auf: "Enter date", anzahl: (n) => `${n} ${n === 1 ? "date" : "dates"} entered`,
       mhd: "Best before", verbrauch: "Use by", datum: "Date", speichern: "Save", zu: "Close", gespeichert: "Saved", nichts: "Nothing changed" },
     wt: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    uhr: { heute: (ware) => `Use ${ware} today`, morgen: (ware) => `Use ${ware} by tomorrow`, vorbei: (ware) => `${ware}: use-by date passed`, mehrere: (n) => `Use ${n} items by tomorrow`,
+    uhr: { heute: (ware) => `Use ${ware} today`, morgen: (ware) => `Use ${ware} by tomorrow`, vorbei: (ware) => `${ware}: use-by date passed – do not use`, vorbeiMehrere: (n) => `${n} items: use-by date passed – do not use`, mehrere: (n) => `Use ${n} items by tomorrow`, mehrereHeute: (n) => `Use ${n} items today`,
       bis: (ware, tag) => `Use ${ware} by ${tag}`, aktion: (ware, tag) => `${ware}: an offer until ${tag} pays off`, mhdVorbei: (ware) => `${ware}: best-before passed – check`, knopf: "View" },
   },
 };

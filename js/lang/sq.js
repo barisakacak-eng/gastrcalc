@@ -1217,7 +1217,7 @@ export default {
     gespeichert: "U ruajt",
     ungueltig: "Një numër nuk është i saktë – kontrollo.",
     nichtsGeaendert: "Asgjë nuk ndryshoi",
-    uhr: { heute: (a) => `Porosit sot: ${a} artikuj`, morgen: (a) => `Porosit nesër: ${a} artikuj`, reicht: (a, b) => `${a} mjafton edhe ≈ ${b} ditë`, fastAlle: (a) => `${a} pothuajse mbaroi`, knopf: "Porosit" },
+    uhr: { heute: (a) => `Porosit sot: ${a} artikuj`, morgen: (a) => `Porosit nesër: ${a} artikuj`, reicht: (a, b) => `${a} mjafton edhe ≈ ${b} ditë`, fastAlle: (a) => `${a} pothuajse mbaroi`, mindest: (a) => `${a} nën gjendjen minimale – porosit`, knopf: "Porosit" },
   },
   // Stufe 1 (17.10.2026): Zyra «Oferta & afati» dhe data në fletëdorëzim
   aktionen: {
@@ -1245,7 +1245,7 @@ export default {
     beleg: { titel: "Afati (sipas dëshirës)", unter: "Data nga paketimi – aplikacioni paralajmëron në kohë.", auf: "Fut datën", anzahl: (n) => `data të futura: ${n}`,
       mhd: "Mirë para", verbrauch: "Afati i përdorimit", datum: "Data", speichern: "Ruaj", zu: "Mbyll", gespeichert: "U ruajt", nichts: "Asgjë nuk ndryshoi" },
     wt: ["Die", "Hën", "Mar", "Mër", "Enj", "Pre", "Sht"],
-    uhr: { heute: (ware) => `${ware}: përdore sot`, morgen: (ware) => `${ware}: përdore deri nesër`, vorbei: (ware) => `${ware}: afati i përdorimit kaloi`, mehrere: (n) => `${n} mallra për t'u përdorur deri nesër`,
+    uhr: { heute: (ware) => `${ware}: përdore sot`, morgen: (ware) => `${ware}: përdore deri nesër`, vorbei: (ware) => `${ware}: afati i përdorimit kaloi – mos e përdor`, vorbeiMehrere: (n) => `${n} mallra: afati i përdorimit kaloi – mos i përdor`, mehrere: (n) => `${n} mallra për t'u përdorur deri nesër`, mehrereHeute: (n) => `${n} mallra për t'u përdorur sot`,
       bis: (ware, tag) => `${ware}: përdore deri ${tag}`, aktion: (ware, tag) => `${ware}: oferta deri ${tag} ia vlen`, mhdVorbei: (ware) => `${ware}: «mirë para» kaloi – kontrollo`, knopf: "Shiko" },
   },
 };

@@ -75,7 +75,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (ah?.zukunft) add("abgleichZukunft", t("w2d.offen.zukunft", ah.zukunft), { aktion: "abgleich-ok" });
   if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
   { const u = bestandUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "bestand", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Bestand (17.10.2026)
-  { const u = haltbarUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "haltbar", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Stufe 1 (17.10.2026)
+  { const u = haltbarUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), kalenderTag: heute(jetzt) }); if (u) out.push({ id: "haltbar", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Stufe 1 (17.10.2026)
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
   const z = zaehlerImTakt(stand, heuteGeschaeft(jetzt)); // W2-D; Paket 3, M7: Zähler nach Geschäftstag
