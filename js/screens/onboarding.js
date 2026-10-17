@@ -377,6 +377,13 @@ export const reinigungSchritt = {
 
 export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
+// 17.10.2026 Fehler F1: Ohne Gerichte zeigten „Rezepte“ und „Einkaufspreise“ (Büro, Speisekarte) eine leere Seite mit „Übernehmen“, das nichts übernahm.
+// Dann zuerst die Gerichte-Auswahl mit den Vorlagen öffnen; danach geht es weiter bis zum gewünschten Schritt.
+// „Verkauf“ bleibt, wie er ist: Tagesmenge und Ziel gehen auch ohne Gerichte.
+export function bearbeitenZiel(stand, von, bis) {
+  if (["rezepte", "preise"].includes(von) && !(stand?.gerichte || []).length) return { von: "karte", bis: bis || von };
+  return { von, bis };
+}
 
 // ---------- Schnellstart: Laden-Arten (Etappe 6a) ----------
 export const LADEN_ARTEN = [ // Reihenfolge wie im Zielbild (15.10.): Döner, Pizza, Asia, Foodtruck, Bäckerei, Kiosk – dann die übrigen

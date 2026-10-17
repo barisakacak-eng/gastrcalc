@@ -611,7 +611,7 @@ export const VORLAGEN = {
     V("Maß Helles 1,0 l", 2, [["Helles vom Fass", 1000, "ml"], ["Bierdeckel", 1, "stk"]]),
   ],
   alkoholfrei: [
-    V("Cola 0,33 l", 1, [["Cola 0,2 l", 1.65, "stk"]]),
+    V("Cola 0,33 l", 1, [["Cola 0,33 l", 1, "stk"]]), // 17.10.2026 Fehler F2: war 1,65 × „Cola 0,2 l“ – in der Inventur stand eine Flasche, die der Laden nicht hat
     V("Mineralwasser 0,25 l", 1, [["Mineralwasser 0,25 l", 1, "stk"]]),
     V("Apfelschorle 0,3 l", 1, [["Apfelsaft", 200, "ml"], ["Trinkbecher 0,3 l", 1, "stk"]]),
     V("Orangensaft 0,2 l", 1, [["Orangensaft", 200, "ml"], ["Trinkbecher 0,3 l", 1, "stk"]]),

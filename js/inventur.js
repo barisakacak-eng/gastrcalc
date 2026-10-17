@@ -101,6 +101,10 @@ export function artikelFuerInventur(stand, inv) {
   return { liste: zeilen.filter((z) => !z.ausgeblendet), ausgeblendet: zeilen.filter((z) => z.ausgeblendet) };
 }
 
+// 17.10.2026 Fehler F2: Gibt es noch gar nichts zu zählen (keine Gerichte mit Rezept, keine Belege, keine Verpackung, nichts vom letzten Mal)?
+// Dann führt die Übersicht zuerst zur Speisekarte statt in eine leere Liste.
+export const inventurOhneWaren = (stand) => !inventurOffen(stand) && artikelFuerInventur(stand, null).liste.length === 0;
+
 export function mengeSetzen(inv, name, menge) { if (!inv || inv.abgeschlossen) return false; inv.posten[name] = mengeSauber(menge); return true; }
 export function ausblenden(inv, name) { if (!inv || inv.abgeschlossen) return false; if (!inv.ausgeblendet.includes(name)) inv.ausgeblendet.push(name); return true; }
 export function einblenden(inv, name) { if (!inv || inv.abgeschlossen) return false; inv.ausgeblendet = inv.ausgeblendet.filter((n) => n !== name); return true; }

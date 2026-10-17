@@ -29,7 +29,7 @@ export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatS
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 
-function gerichtAusVorlage(v) {
+export function gerichtAusVorlage(v) { // 17.10.2026 Fehler F1: exportiert für tests/f1f2.test.mjs
   const zutaten = v.zutaten.map(([name, menge, einheit]) => ({ name, menge, einheit }));
   return { id: uid(), name: v.name, vorlageName: v.name, bereich: v.bereich, klasse: klasseFuerBereich(v.bereich), zeit: v.zeit, vorlage: true,
     zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten), rezeptFamilie: rezeptBauen(v.name)?.familie || null };

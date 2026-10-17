@@ -6,7 +6,7 @@ import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPru
 import { t, setzeSprache, SPRACHEN, ladeSprache } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
-import { SCHRITTE, schrittIndex, schritteFuer } from "./screens/onboarding.js";
+import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
 import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
 import { artikelAusGerichten } from "./engine.js";
@@ -143,6 +143,7 @@ function zeichne() {
 function karteFotoSchirm() {
   return `<div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
       ${karteFussKnopf("")}
+      ${!karteZeigtPruefliste() && !fotoLauf() && !stand.gerichte.length ? `<button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="karte" data-bis="ergebnis">${esc(t("start.karteAnlegen"))}</button>` : ""}
       <button type="button" class="leise" data-a="nav" data-wert="kartebuero">${esc(t("allgemein.zurueck"))}</button></div>${nav("kartebuero")}`;
 }
 
@@ -232,9 +233,10 @@ async function fertig(ziel = "start") {
 }
 
 function bearbeiten(vonId, bisId) {
+  ({ von: vonId, bis: bisId } = bearbeitenZiel(stand, vonId, bisId)); // 17.10.2026 Fehler F1: ohne Gerichte erst die Gerichte-Auswahl
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : ansicht.startsWith("ordner-") ? "buero" : "start" };
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : ansicht === "kartefoto" ? "kartebuero" : ansicht.startsWith("ordner-") ? "buero" : "start" }; // 17.10.2026 Fehler F1: aus „Karte per Foto“ zurück zur Speisekarte
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();

@@ -8,7 +8,7 @@ import { PRODUKT_INDEX } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { gebindeKette } from "../engine.js";
 import { LAGERORTE, inventurOffen, inventurenFertig, inventurStarten, artikelFuerInventur, inventurWert, inventurVergleich, inventurVorher,
-  mengeSetzen, mengeSchritt, anbruchSetzen, ganzTeil, ausblenden, einblenden, hinzufuegen, inventurAbschliessen, inventurVerwerfen, lagerortFuer } from "../inventur.js";
+  mengeSetzen, mengeSchritt, anbruchSetzen, ganzTeil, ausblenden, einblenden, hinzufuegen, inventurAbschliessen, inventurVerwerfen, lagerortFuer, inventurOhneWaren } from "../inventur.js";
 import { wareBild } from "./muell.js";
 import { datumLesbar, monatName } from "./tag.js";
 import { nav } from "./nav.js";
@@ -77,9 +77,11 @@ function startView(stand, offen) {
       <button type="button" class="knopf glut" data-a="inv-liste">${esc(t("inventur.weiterzaehlen"))}</button>
       <button type="button" class="leise" data-a="inv-verwerfen">${esc(t("inventur.verwerfen"))}</button></div>`;
   }
+  const leer = !offen && inventurOhneWaren(stand); // 17.10.2026 Fehler F2: ohne Waren zuerst zur Speisekarte, nicht in eine leere Liste
   return `<div class="kopfband"><h1>${esc(t("inventur.titel"))}</h1><div class="unter">${esc(t("inventur.unterStart"))}</div></div>
     <div class="inhalt inv-start">
-      ${offenKarte || `<button type="button" class="knopf glut gross inv-startknopf" data-a="inv-start">${sym("package", "gross")}<b>${esc(t("inventur.starten"))}</b></button>`}
+      ${leer ? leerKarte() : ""}
+      ${offenKarte || `<button type="button" class="knopf ${leer ? "zweit" : "glut gross"} inv-startknopf" data-a="inv-start">${sym("package", "gross")}<b>${esc(t("inventur.starten"))}</b></button>`}
       <div class="tipp">${esc(t("inventur.soGehts"))}</div>
       <div class="karte"><h2>${esc(t("inventur.letzte"))}</h2>
         ${fertig.length ? fertig.map((i) => `<button type="button" class="zeileknopf inv-verlauf" data-a="inv-ergebnis" data-id="${esc(i.id)}"><span><b>${esc(datumLesbar(i.datum))}</b><small>${esc(t("inventur.ansehen"))}</small></span><span class="inv-verlaufwert">${esc(euro(inventurWert(stand, i).summe))}</span><span class="pfeil">›</span></button>`).join("")
@@ -109,7 +111,7 @@ function listeView(stand, inv) {
     <div class="inhalt inv-listeseite">
       <div class="karte inv-zusammen"><div><b>${esc(t("inventur.gezaehlt", w.gezaehlt, w.anzahl))}</b><div class="inv-balken"><i style="width:${fortschritt}%"></i></div></div>
         <div class="inv-summe"><small>${esc(t("inventur.wareBisher"))}</small><b>${esc(euro(w.summe))}</b></div></div>
-      ${!liste.length ? `<div class="karte leer">${esc(t("inventur.leer"))}</div>` : ""}
+      ${!liste.length ? leerKarte() : ""}
       ${gruppen.map((g) => { const s = g.zeilen.reduce((x, z) => x + (z.wert || 0), 0);
         return `<section class="inv-gruppe"><h2 class="inv-gruppenkopf ort-${g.o}"><span class="inv-gsym">${sym(ORT_SYM[g.o])}</span><span>${esc(t("inventur.lagerorte." + g.o))}</span><small>${esc(t("inventur.waren", g.zeilen.length))} · ${esc(euro(s))}</small></h2>
           <div class="inv-liste">${g.zeilen.map(posten).join("")}</div></section>`; }).join("")}
@@ -124,6 +126,11 @@ function listeView(stand, inv) {
         <button type="button" class="knopf" data-a="inv-fertig" ${w.gezaehlt ? "" : "disabled"}>${esc(t("inventur.fertig"))}</button></div>
     </div>`;
 }
+
+// 17.10.2026 Fehler F2: leere Liste mit Weg dorthin, wo die Waren herkommen (Speisekarte mit Vorlagen, Belege). Nur vorhandene Texte.
+const leerKarte = () => `<div class="karte leer"><div>${esc(t("inventur.leer"))}</div>
+    <button type="button" class="knopf glut" data-a="bearbeiten" data-schritt="karte" data-bis="rezepte">${esc(t("start.karteAnlegen"))}</button>
+    <button type="button" class="knopf zweit" data-a="nav" data-wert="beleg">${esc(t("inventur.belegeKnopf"))}</button></div>`;
 
 function sucheTreffer(stand, liste) {
   const q = normalisieren(suche); if (!q) return "";
