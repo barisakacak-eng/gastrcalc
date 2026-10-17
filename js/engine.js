@@ -494,6 +494,10 @@ export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1
 export const FRAKTIONEN = ["bio", "rest", "verpackung", "glas", "papier", "fett"];
 // Sachbezugswerte 2026 (SvEV): 345 € je Monat, kalendertäglich 11,50 €, Frühstück 2,37 €, Mittag und Abend je 4,57 € (Prüfung Teil 3).
 export const SVEV_2026 = { fruehstueck: 2.37, mittag: 4.57, abend: 4.57, tag: 11.5, monat: 345 };
+// Trennung 2 (17.10.2026): Sachbezug eines Personalessens = Menge × Satz der Mahlzeit (ohne Mahlzeit: Mittag). Vorher zweimal im Bildschirm.
+export const sachbezugWert = (menge, mahlzeit) => (Number(menge) || 0) * (SVEV_2026[mahlzeit] ?? SVEV_2026.mittag);
+// Trennung 2 (17.10.2026): Schwund-Liste eines Zeitraums, neueste zuerst (Büro „Listen“).
+export const schwundEintraege = (stand, { von, bis }) => (stand.schwund || []).filter((e) => e.datum >= von && e.datum <= bis).slice().reverse();
 
 // Wert eines Schwund-Eintrags zu Einkaufspreisen. Rohware nach Gewicht ohne Garverlust (weggeworfen wird roh gewogen);
 // Gerichte über ihren Wareneinsatz. null = Preis fehlt, der Eintrag zählt dann in "ohne Wert".

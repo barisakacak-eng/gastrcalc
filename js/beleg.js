@@ -524,3 +524,32 @@ export function preisJeEinheit(zeile, basis = zeile.basis ?? "netto") {
   if (zeile.gebinde === "stueck") return { preis: r2(jeGebinde), einheit: "stk" };
   return n();
 }
+
+// ---------- Trennung 2 (17.10.2026): Prüfen eines gelesenen Belegs (vorher in js/screens/beleg.js) ----------
+// Vorschläge aus der Artikelliste für eine unbekannte Zeile: Wortüberlappung, bis zu vier Namen.
+export function belegKandidaten(stand, name) {
+  const w = name.toLowerCase().split(/[^a-zäöüß0-9]+/).filter((x) => x.length > 2);
+  return (stand.artikel || []).map((a) => { const an = a.name.toLowerCase(); const s = w.filter((x) => an.includes(x)).length + (w.some((x) => an.startsWith(x)) ? 1 : 0); return { a, s }; })
+    .filter((x) => x.s > 0).sort((x, y) => y.s - x.s).slice(0, 4).map((x) => x.a.name);
+}
+// Lieferschein = als Lieferschein erkannt oder keine Zeile mit Betrag.
+export const belegIstLieferschein = (beleg, zeilen) => !!beleg && (beleg.typ === "lieferschein" || !zeilen.some((z) => z.gesamt !== null));
+// Datum der Buchung: Belegdatum, außer „heute“ gewählt, Datum fehlt oder liegt in der Zukunft.
+export const belegDatumVon = (beleg, datumWahl, H) => (datumWahl === "heute" || !beleg?.datum || beleg.datum > H ? H : beleg.datum);
+// Stand der Prüfung: offene Fragen, ungeklärte und sichere Zeilen, Basis, Summen und ob übernommen werden kann.
+// zuordnung: Zeile → Artikelname | "neu" | "weg"; basisWahl: "netto" | "brutto" | null (nur bei unklarer Basis).
+export function belegPruefStand(beleg, zeilen, zuordnung, basisWahl) {
+  const fragen = zeilen.map((z, i) => ({ z, i })).filter((x) => x.z.frage);
+  const offen = zeilen.map((z, i) => ({ z, i })).filter((x) => !x.z.frage && !x.z.bekannt && zuordnung[x.i] === undefined);
+  const sicher = zeilen.filter((z, i) => !z.frage && (z.bekannt || typeof zuordnung[i] === "string"));
+  const ls = belegIstLieferschein(beleg, zeilen);
+  const basis = ls ? "netto" : beleg.basis === "unklar" ? basisWahl : beleg.basis;
+  const pfandSumme = (beleg.pfand || []).reduce((s, p) => s + (Number(p.betrag) || 0), 0);
+  const summe = zeilen.reduce((s, z) => s + (z.gesamt || 0), 0) + pfandSumme;
+  const sicherSumme = sicher.reduce((s, z) => s + (z.gesamt || 0), 0);
+  const basisFrage = !ls && beleg.basis === "unklar";
+  const nFragen = fragen.length + offen.length + (basisFrage && !basisWahl ? 1 : 0);
+  const kannUebernehmen = nFragen === 0 && zeilen.some((z, i) => zuordnung[i] !== "weg");
+  const summeBeleg = beleg.summeNetto !== null || beleg.summeBrutto !== null ? (basis === "brutto" && beleg.summeBrutto !== null ? beleg.summeBrutto : (beleg.summeNetto ?? beleg.summeBrutto)) : null;
+  return { fragen, offen, sicher, ls, basis, basisFrage, pfandSumme, summe, sicherSumme, summeBeleg, nFragen, kannUebernehmen };
+}

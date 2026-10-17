@@ -5,7 +5,7 @@
 import { t, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl } from "../util.js";
 import { haltbarStand, haltbarUhrzeit, abverkaufText, datumKurz } from "../haltbar.js";
-import { kombiTeile, kombiRechnen, kombiVorschlaege, kombiText, KOMBI_MAX } from "../deal.js";
+import { kombiTeileSortiert, kombiAuswahlBereinigt, kombiRechnen, kombiVorschlaege, kombiText, KOMBI_MAX } from "../deal.js";
 import { kalkulation } from "../engine.js";
 import { mengeBasisText as mengeText, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
 import { nav } from "./nav.js";
@@ -60,14 +60,13 @@ function abverkaufView(hs) {
 }
 
 // ---------- Kombi-Angebot ----------
-const ORDNUNG = { haupt: 0, gross: 0, kleinigkeit: 1, getraenk: 2 };
 function kombiView(stand, hs) {
   const ue = `<h2 class="inv-ue">${esc(t("aktionen.kombiTitel"))}</h2>`;
   const k = (stand.gerichte || []).length ? kalkulation(stand) : { zeilen: [] };
-  const teile = kombiTeile(stand, k).sort((a, b) => (ORDNUNG[a.klasse] ?? 1) - (ORDNUNG[b.klasse] ?? 1) || a.name.localeCompare(b.name, "de"));
+  const teile = kombiTeileSortiert(stand, k); // Trennung 2 (17.10.2026): Reihenfolge und Bereinigung in js/deal.js
   const kasse = `<p class="hinweis">${esc(t("aktionen.kasse"))}</p>`;
   if (teile.length < 2) return `${ue}<div class="karte leer"><div>${esc(t("aktionen.kombiLeer"))}</div></div>${kasse}`;
-  auswahl = auswahl.filter((id) => teile.some((x) => x.id === id));
+  auswahl = kombiAuswahlBereinigt(auswahl, teile); // flüchtiger Bildschirmzustand, kein Laden-Datum
   const vorschlaege = auswahl.length ? [] : kombiVorschlaege(stand, { k, hs });
   const vorschlagView = vorschlaege.length ? `<div class="karte"><h2>${esc(t("aktionen.kombiVorschlaege"))}</h2>${vorschlaege.map((v, i) => { const n = v.kombi.stufen.find((s) => s.stufe === "normal");
       return `<div class="summenzeile"><span><b>${esc(v.kombi.teile.map((x) => x.name).join(" + "))}</b><br><small>${esc(v.grund === "abverkauf" ? t("aktionen.grund.abverkauf", artikelText(v.ware)) : t("aktionen.grund." + v.grund))} · ${esc(fmtEuro(n.preis, { dezimal: 2 }))}</small></span><span class="wert"><button type="button" class="leise klein" data-a="akt-kombi-vorschlag" data-wert="${i}">${esc(t("aktionen.rechnen"))}</button></span></div>`; }).join("")}</div>` : "";

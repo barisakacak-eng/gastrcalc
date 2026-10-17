@@ -122,3 +122,12 @@ export function kostenbelegStornieren(stand, id) {
   if (k) { delete k.beleg; if (e.vorher) { Object.assign(k, { betrag: e.vorher.betrag, status: e.vorher.status, periode: e.vorher.periode, basis: e.vorher.basis }); if (e.vorher.sammel) k.sammel = e.vorher.sammel; } }
   return true;
 }
+
+// Trennung 2 (17.10.2026): Vorschlag nach Foto/PDF – wofür die Rechnung ist (vorher js/screens/beleg.js belegTextVonFoto).
+// Kostenstelle geraten (sonst Ware), Betrag netto wenn gedruckt, sonst brutto; Basis der Stelle (Versicherung: ohne Vorsteuer, Review 6a);
+// Datum nie in der Zukunft; Versicherung jährlich, sonst monatlich; Lieferant = erste Zeile mit mehr als 3 Zeichen. Nie still gespeichert.
+export function kostenZuweisungVorschlag(ocrText, upload, H = heute()) {
+  const k = kostenbelegLesen(ocrText);
+  const stelle = stelleRaten(ocrText) || "ware";
+  return { stelle, betrag: k.netto ?? k.brutto, basis: k.netto !== null ? "netto" : (stelle === "ware" ? "brutto" : basisStandard(stelle)), basisVonHand: k.netto !== null, satz: k.satz, datum: k.datum && k.datum <= H ? k.datum : H, verteilung: stelle === "versicherungen" ? "jaehrlich" : "monatlich", monate: 3, lieferant: ocrText.split(/\r?\n/).map((z) => z.trim()).find((z) => z.length > 3) || "", upload };
+}

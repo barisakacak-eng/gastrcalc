@@ -223,3 +223,21 @@ export function zaehlerVerlauf(z) {
   const prognose = z.dbProTag !== null ? z.tage.filter((x) => x.status === "zukunft" && typeof x.stand === "number").map((x) => ({ datum: x.datum, stand: x.stand })) : [];
   return { ist, prognose, nullTag: z.nullTag, tage: z.tage.length };
 }
+
+// ---------- Trennung 2 (17.10.2026): Zahlen der Seite „Monat & Zähler“ (vorher in js/screens/umsatz.js) ----------
+// Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert. satz = Umsatzsteuer-Satz (z. B. 0,07).
+export const umsatzAnzeigeWert = (brutto, basis, satz) => (brutto === null || brutto === undefined ? null : basis === "netto" ? Math.round(brutto / (1 + satz) * 100) / 100 : brutto);
+export const umsatzAusEingabe = (betrag, basis, satz) => (basis === "netto" ? Math.round(betrag * (1 + satz) * 100) / 100 : betrag);
+// Strecke von „alle Kosten offen“ (links, 0 %) bis Monatsende (rechts): Lage von heute und null in Prozent; bringt = was ein Beispielumsatz übrig lässt.
+export function zaehlerStrecke(z, beispiel = 1000) {
+  if (z.keinUmsatz) return null;
+  const min = -Math.max(z.last.gesamt, 1); const max = Math.max(z.monatsende ?? 0, z.stand, Math.abs(min) * 0.3);
+  const pos = (v) => Math.round(Math.min(1, Math.max(0, (v - min) / (max - min))) * 100);
+  return { heute: pos(z.stand), null: pos(0), nullTag: z.nullTag, beispiel, bringt: z.bleibtVon(beispiel) };
+}
+// Monatsstreifen: Zustand eines Tages – "offen" (vor dem Start / ohne Stand) | "frei" (Ruhetag) | "ziel" (im Plus) | "zukunft" | "minus".
+export function monatTagStatus(x, z) {
+  return x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus");
+}
+// Spalte (1 = Montag … 7 = Sonntag) des ersten Monatstags im Kalender.
+export const wochentagSpalte = (iso) => ((new Date(iso + "T12:00").getDay() + 6) % 7) + 1;

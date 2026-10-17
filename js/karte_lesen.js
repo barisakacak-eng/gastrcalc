@@ -298,3 +298,14 @@ export function inventurVorschau(stand) {
   const gruppen = {}; for (const n of namen) { const g = PRODUKT_INDEX[n]?.g || stand.artikel.find((a) => a.name === n)?.gruppe || "gewuerz"; gruppen[g] = (gruppen[g] || 0) + 1; }
   return { anzahl: namen.size, gruppen, namen: [...namen] };
 }
+
+// Trennung 2 (17.10.2026): Zahlen der Prüfliste „Karte per Foto“ (vorher in js/screens/foto.js kartePruefenView).
+// an = übernommene Vorschläge, mitRezept = davon mit Vorlage, zutaten = Zahl verschiedener Waren (Zutaten der Vorlagen, Getränke selbst).
+export function kartePruefZahlen(vorschlaege) {
+  const an = vorschlaege.filter((v) => v.an);
+  const zutaten = new Set(); for (const v of an) { if (v.vorlage) for (const l of Object.values(VORLAGEN)) { const x = l.find((y) => y.name === v.vorlage); if (x) x.zutaten.forEach((z) => zutaten.add(z[0])); } else if (v.getraenk) zutaten.add(v.name); }
+  return { an: an.length, mitRezept: an.filter((v) => v.vorlage).length, zutaten: zutaten.size,
+    pruefen: vorschlaege.filter((v) => v.gruppe === "pruefen"), erkannt: vorschlaege.filter((v) => v.gruppe === "erkannt") };
+}
+// Startwert-Rezept aus dem Baukasten ohne Verpackung (Schale, Tüte, Karton, Box, Folie, Bogen) – die Zeile unter dem Vorschlag.
+export const baukastenZutatenOhneVerpackung = (bau) => bau.zutaten.filter((z) => !/schale|tüte|karton|box|folie|bogen/i.test(z.name));

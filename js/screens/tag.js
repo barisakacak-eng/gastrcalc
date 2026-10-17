@@ -1,8 +1,8 @@
 // Etappe 3/5: die Listen (Schwund, Müll je Fraktion, Personalessen) und gemeinsame Helfer für Datum und Einträge.
 // Die Eingabe selbst liegt seit Etappe 5 in muell.js (Müll) und umsatz.js (Tagesumsatz). Einträge werden nur angehängt; Rücknahme = storniert.
-import { t, einheitLabel, sprache, artikelText } from "../i18n.js";
+import { t } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3 (16.10.2026), M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
-import { wertEintrag, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SCHWUND_ARTEN, SVEV_2026 } from "../engine.js";
+import { eintragWert, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SVEV_2026, sachbezugWert, schwundEintraege } from "../engine.js"; // Trennung 2 (17.10.2026): Sachbezug, Liste und Wert aus dem Rechenwerk
 import { nav } from "./nav.js";
 import { muellStornieren } from "../muell.js"; // Trennung (17.10.2026): Storno über das Rechenwerk
 import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
@@ -12,29 +12,21 @@ let tagDatum = null;          // gewählter Tag auf „Heute" (null = heute); Ve
 export const tagGewaehlt = () => tagDatum || heuteGeschaeft();
 export function tagZuruecksetzen() { tagDatum = null; }
 
-// Name des Eintrags: zuerst der gemerkte Name (überlebt das Löschen des Gerichts), sonst aus der Karte.
-export function eintragName(e, stand) {
-  if (e.art === "eimer") return t("muell.eimer") + (e.ref?.name ? " " + e.ref.name : "");
-  if (e.ref?.typ === "gericht") return stand.gerichte.find((g) => g.id === e.ref.id)?.name || e.ref.name || "?";
-  return e.ref?.name ? artikelText(e.ref.name) : "?"; // Paket 6 (17.10.2026): Artikel in der aktiven Sprache, gespeichert bleibt Deutsch
-}
-export function eintragMenge(e) {
-  if (e.art === "eimer") return t("tag.eimerZeile", fmtZahl(e.gewogen, 1), fmtZahl(e.menge, 1));
-  if (e.ref?.typ === "gericht") return `${fmtZahl(e.menge, Number.isInteger(e.menge) ? 0 : 1)} ${t("tag.portionen")}`;
-  return `${fmtZahl(e.menge, e.einheit === "stk" ? 0 : 2)} ${einheitLabel(e.einheit)}`;
-}
+// Trennung 2 (17.10.2026): eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz wohnen in js/anzeige_text.js
+import { eintragName, eintragMenge, datumLesbar } from "../anzeige_text.js";
+export { eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz } from "../anzeige_text.js";
 // Was ein Eintrag „wert" ist: Vorgang 1 zum Einkaufspreis, Personalessen zum Sachbezugswert (mit Wareneinsatz als Nebensatz), Eigenverbrauch zum Wareneinsatz.
 function eintragBetrag(e, stand) {
-  const waren = "wert" in e ? (typeof e.wert === "number" ? e.wert : null) : wertEintrag(e, stand);
+  const waren = eintragWert(e, stand); // Trennung 2 (17.10.2026)
   if (e.wertOffen && waren === null && !e.storniert) return `<span class="packung"><input inputmode="decimal" data-f="wert:${esc(e.id)}" placeholder="${esc(t("tag.wertNachtragen"))}" aria-label="${esc(t("tag.wertNachtragen"))}"><span class="einheit">€</span></span>`;
-  if (e.art === "personal") return `<b>${fmtEuro((Number(e.menge) || 0) * (SVEV_2026[e.mahlzeit] ?? SVEV_2026.mittag), { dezimal: 2 })}</b><small class="marke">${esc(t("tag.sachbezug"))}${waren !== null ? ` · ${esc(t("tag.warenKurz"))} ${fmtEuro(waren, { dezimal: 2 })}` : ""}</small>`;
+  if (e.art === "personal") return `<b>${fmtEuro(sachbezugWert(e.menge, e.mahlzeit), { dezimal: 2 })}</b><small class="marke">${esc(t("tag.sachbezug"))}${waren !== null ? ` · ${esc(t("tag.warenKurz"))} ${fmtEuro(waren, { dezimal: 2 })}` : ""}</small>`;
   return `<b>${waren === null ? `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>` : fmtEuro(waren, { dezimal: 2 })}</b>`;
 }
 
 export function listenView(stand) {
   const z = listenZeitraum === "monat" ? monatsZeitraum() : zeitraumTage(7);
   const a = schwundAuswertung(stand, z);
-  const eintraege = (stand.schwund || []).filter((e) => e.datum >= z.von && e.datum <= z.bis).slice().reverse();
+  const eintraege = schwundEintraege(stand, z);
   return `
     <div class="kopfband"><h1>${esc(t("listen.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>
     <div class="inhalt">
@@ -72,17 +64,6 @@ function eintragText(e, stand) {
   const name = eintragName(e, stand); const menge = eintragMenge(e);
   return `${t("tag.arten." + e.art)}${e.art === "eimer" ? "" : ` · ${name}`} · ${menge}${e.storniert ? ` · ${t("tag.storniert")}` : ""}`;
 }
-
-export function datumLesbar(iso) {
-  const [j, m, d] = iso.split("-"); return `${d}.${m}.${j}`;
-}
-// Monatsname und Wochentag in der Sprache der App (für Zähler und Cockpit).
-const LOCALE = { de: "de-DE", tr: "tr-TR", en: "en-GB", bs: "bs-BA", ku: "ku" }; // sonst gilt der Sprachcode selbst (ar, ru, vi …)
-const loc = () => LOCALE[sprache()] || sprache();
-const monatNamen = new Map(); // W2-D (Leistung): Monatsnamen je Sprache merken – das Formatieren kostet auf dem Handy spürbar
-export function monatName(iso) { const [j, m] = iso.split("-").map(Number); const k = loc() + "|" + j + "-" + m; let n = monatNamen.get(k); if (n === undefined) { n = new Date(j, m - 1, 1).toLocaleDateString(loc(), { month: "long" }); monatNamen.set(k, n); } return n; }
-export function tagLesbar(iso) { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).toLocaleDateString(loc(), { weekday: "long", day: "numeric", month: "long" }); }
-export const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 
 // ---------- Aktionen und Eingaben (von app.js aufgerufen) ----------
 export function tagAktion(name, el, stand) {

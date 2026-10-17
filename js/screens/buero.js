@@ -12,7 +12,7 @@ import { einrichtungStand } from "../einrichtung.js";
 import { offenImBuero, zaehlerImTakt, einrichtungImTakt } from "../offen.js"; // W2-D: Zwischenspeicher je Bild
 import { pinGesetzt } from "../modus.js";
 import { belehrungen } from "../export_amt.js";
-import { ordnerKachelStand } from "./ordner.js";
+import { ordnerKachelStand } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
 import { monatName, datumLesbar } from "./tag.js";
 import { verkaufSichtbar } from "../verkauf.js"; // E7 (17.10.2026): Einstieg „Verkauf je Gericht“ nur mit Schalter oder im Beispiel-Laden
 import { bestandUhrzeit } from "../bestand.js"; // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit

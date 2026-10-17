@@ -9,7 +9,7 @@ import * as P from "../js/putzplan.js";
 test("Amt-Dokument: Nachtrag, Maßnahme offen, verspätet, Rücknahmen, Müll, Ausgeschiedene", async () => {
   const i18n = await import("../js/i18n.js");
   if (i18n.spracheSetzen) await i18n.spracheSetzen("de"); else if (i18n.setzeSprache) await i18n.setzeSprache("de");
-  const { amtDokument } = await import("../js/screens/ordner.js");
+  const { amtDokument } = await import("../js/ordner_text.js"); // Trennung 2 (17.10.2026)
   const s = leererBetrieb(); s.phase = "app"; s.betrieb.name = "Döner Test";
   s.kuehl = { takt: 1, ruhetage: [], eingerichtet: true, seit: "2026-09-01" };
   s.kuehlstellen = [{ id: "k", name: "Theke", art: "kuehl", min: null, max: null, reihe: 0, archiviert: false }];

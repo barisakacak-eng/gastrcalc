@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { leererBetrieb, migrierenBetrieb } from "../js/store.js";
 import * as E from "../js/engine.js";
 import * as St from "../js/export_steuer.js";
-import { paketDokument, ordnerKachelStand } from "../js/screens/ordner.js";
+import { paketDokument, ordnerKachelStand } from "../js/ordner_text.js"; // Trennung 2 (17.10.2026)
 import { druckHtml } from "../js/export_amt.js";
 
 const Z = St.monatVon("2026-09-01");

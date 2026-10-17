@@ -13,6 +13,7 @@ import { kuehlstelleAnlegen, kuehlstelleArtSetzen, kuehlstelleArchivieren, kuehl
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
+import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
 import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
@@ -43,7 +44,7 @@ const artName = (a) => t("kuehl.arten." + a);
 // Grenzen einer Stelle als Text; ohne eigene Grenze gilt der Standard (Etappe 5), das steht dann dabei.
 const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `≥ ${fmtZahl(g.min, 1)} °C` : "", typeof g.max === "number" ? `≤ ${fmtZahl(g.max, 1)} °C` : ""].filter(Boolean).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
 const kuerzelVon = (stand, id) => stand.personen.find((p) => p.id === id)?.kuerzel || "";
-const zeitKurz = (iso) => { if (!iso) return "–"; /* W2-H: Nachtrag ohne Uhrzeit */ const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+const zeitOderStrich = (iso) => (iso ? zeitKurz(iso) : "–"); // W2-H: Nachtrag ohne Uhrzeit. Trennung 2 (17.10.2026): Uhrzeit aus js/anzeige_text.js
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
 
 // ---------- Hauptansicht ----------
@@ -76,14 +77,14 @@ export function kuehlView(stand) {
         ${st.fehlt7 ? `<span class="marke offen">${esc(t("kuehl.luecken7", st.fehlt7))}</span>` : ""}
       </div>
       ${nk.length ? `<div class="karte hinweisgelb"><h2>${esc(t("kuehl.nachkontrollenTitel"))}</h2>
-        ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">${fmtZahl(x.messung.wert, 1)} °C · ${esc(zeitKurz(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitKurz(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}
+        ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">${fmtZahl(x.messung.wert, 1)} °C · ${esc(zeitOderStrich(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitOderStrich(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}
         <span class="marke">${esc(t("kuehl.nachkontrolleHinweis"))}</span></div>` : ""}
       <div class="karte">
         <h2>${esc(t("kuehl.stellen"))}</h2>
         <p class="hinweis">${esc(t("kuehl.stellenTippen"))}</p>
         <div class="liste eng">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
           <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(kn(k))}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
-            <span class="${m ? (m.abweichung ? "rot" : "") : "marke"}" style="font-weight:700;white-space:nowrap">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke" style="display:block;font-weight:400">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitKurz(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
+            <span class="${m ? (m.abweichung ? "rot" : "") : "marke"}" style="font-weight:700;white-space:nowrap">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke" style="display:block;font-weight:400">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitOderStrich(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
         ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
       </div>
@@ -223,9 +224,9 @@ function blattView(stand) {
   const d = new Date(); d.setMonth(d.getMonth() + blattMonat, 1);
   const von = heute(d); const ende = new Date(d.getFullYear(), d.getMonth() + 1, 0); const bis = heute(ende) > heute() ? heute() : heute(ende);
   const mb = k ? monatsblatt(stand, k.id, { von, bis }) : { tage: [], zaehl: {} };
-  const monatName = d.toLocaleDateString(sprache(), { month: "long", year: "numeric" });
+  const monatText = d.toLocaleDateString(sprache(), { month: "long", year: "numeric" });
   return `
-    <div class="kopfband druckkopf"><h1>${esc(t("kuehl.blatt"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(k?.name || "")} · ${esc(monatName)}</div></div>
+    <div class="kopfband druckkopf"><h1>${esc(t("kuehl.blatt"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(k?.name || "")} · ${esc(monatText)}</div></div>
     <div class="inhalt">
       <div class="chips nichtdrucken">${stellen.map((x) => `<button type="button" class="chip klein ${x.id === k?.id ? "an" : ""}" data-a="blatt-stelle" data-id="${esc(x.id)}">${esc(kn(x))}${x.archiviert ? ` (${esc(t("kuehl.archiviert"))})` : ""}</button>`).join("")}</div>
       <div class="chips nichtdrucken"><button type="button" class="chip klein ${blattMonat === 0 ? "an" : ""}" data-a="blatt-monat" data-wert="0">${esc(t("listen.monat"))}</button><button type="button" class="chip klein ${blattMonat === -1 ? "an" : ""}" data-a="blatt-monat" data-wert="-1">${esc(t("kuehl.vormonat"))}</button></div>
@@ -236,8 +237,8 @@ function blattView(stand) {
       <div class="monatsblatt">${mb.tage.filter((tg) => tg.status !== "vorher" && tg.status !== "zukunft").slice().reverse().map((tg) => `
         <div class="blattzeile ${tg.status}">
           <span class="datum">${esc(datumLesbar(tg.datum).slice(0, 6))}</span>
-          ${tg.messungen.length ? tg.messungen.map((m) => { const weg = (stand.schwund || []).filter((e) => e.messung === m.id && !e.storniert); const erl = m.abweichung && m.nachkontrolle ? nachkontrolleErledigt(stand, m) : null; const gm = [typeof m.min === "number" ? `≥ ${fmtZahl(m.min, 1)}` : "", typeof m.max === "number" ? `≤ ${fmtZahl(m.max, 1)}` : ""].filter(Boolean).join(" · "); return `<span class="messung ${m.abweichung ? "rot" : ""}">${typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(grundText(m.grund))} <small>${esc(zeitKurz(m.zeit))}${gm ? ` · ${esc(gm)}${m.grenzeStandard ? " (" + esc(t("kuehl.standard")) + ")" : ""}` : ""}${m.von ? " · " + esc(kuerzelVon(stand, m.von)) : ""}${m.nacherfasst ? " · " + esc(t("kuehl.nacherfasst")) + (m.quelle ? " (" + esc(t("kuehl.quellen." + m.quelle)) + ")" : "") : ""}</small>
-            ${m.abweichung ? `<small class="rot">${esc((m.massnahmen || []).map((x) => t("kuehl.massnahmen." + x)).join(", "))}${m.notiz ? " – " + esc(m.notiz) : ""}${weg.length ? " · " + esc(t("kuehl.weggeworfenKurz")) + ": " + esc(weg.map((e) => `${e.ref?.name || "?"} ${fmtZahl(e.menge, e.einheit === "stk" ? 0 : 2)} ${e.einheit === "stk" ? t("allgemein.stueck") : e.einheit}`).join(", ")) : ""}${m.nachkontrolle ? " · " + esc(t("kuehl.nachkontrolle")) + ": " + esc(t("kuehl.nachkontrollen." + m.nachkontrolle.art)) + (erl ? " – " + esc(t("kuehl.erledigt", zeitKurz(erl.zeit), fmtZahl(erl.wert, 1))) : " – " + esc(t("kuehl.offenKurz"))) : ""}</small>` : ""}</span>`; }).join("")
+          ${tg.messungen.length ? tg.messungen.map((m) => { const weg = (stand.schwund || []).filter((e) => e.messung === m.id && !e.storniert); const erl = m.abweichung && m.nachkontrolle ? nachkontrolleErledigt(stand, m) : null; const gm = [typeof m.min === "number" ? `≥ ${fmtZahl(m.min, 1)}` : "", typeof m.max === "number" ? `≤ ${fmtZahl(m.max, 1)}` : ""].filter(Boolean).join(" · "); return `<span class="messung ${m.abweichung ? "rot" : ""}">${typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(grundText(m.grund))} <small>${esc(zeitOderStrich(m.zeit))}${gm ? ` · ${esc(gm)}${m.grenzeStandard ? " (" + esc(t("kuehl.standard")) + ")" : ""}` : ""}${m.von ? " · " + esc(kuerzelVon(stand, m.von)) : ""}${m.nacherfasst ? " · " + esc(t("kuehl.nacherfasst")) + (m.quelle ? " (" + esc(t("kuehl.quellen." + m.quelle)) + ")" : "") : ""}</small>
+            ${m.abweichung ? `<small class="rot">${esc((m.massnahmen || []).map((x) => t("kuehl.massnahmen." + x)).join(", "))}${m.notiz ? " – " + esc(m.notiz) : ""}${weg.length ? " · " + esc(t("kuehl.weggeworfenKurz")) + ": " + esc(weg.map((e) => `${e.ref?.name || "?"} ${fmtZahl(e.menge, e.einheit === "stk" ? 0 : 2)} ${e.einheit === "stk" ? t("allgemein.stueck") : e.einheit}`).join(", ")) : ""}${m.nachkontrolle ? " · " + esc(t("kuehl.nachkontrolle")) + ": " + esc(t("kuehl.nachkontrollen." + m.nachkontrolle.art)) + (erl ? " – " + esc(t("kuehl.erledigt", zeitOderStrich(erl.zeit), fmtZahl(erl.wert, 1))) : " – " + esc(t("kuehl.offenKurz"))) : ""}</small>` : ""}</span>`; }).join("")
             : `<span class="messung marke">${esc(t("kuehl.status." + tg.status))}</span>`}
         </div>`).join("")}</div>
       <p class="hinweis">${esc(t("kuehl.blattHinweis"))}</p>

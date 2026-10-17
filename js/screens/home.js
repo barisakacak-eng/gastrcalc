@@ -1,13 +1,13 @@
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
-import { planGruppen } from "../putzplan.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, SPRACH_NAMEN, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
-import { monatsLast, schwundAuswertung, umsatzEintrag, kuehlStatus, umsatzSteuerSatz, kuehlSchlimmsteAbweichung } from "../engine.js"; // Trennung (17.10.2026): schlimmste Kühl-Abweichung rechnet das Rechenwerk
+import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
 import { jetztDran } from "../offen.js";
 import { zielAttr } from "./bausteine.js"; // Trennung (17.10.2026): ein zielAttr für alle Bildschirme
-import { zaehler, warenQuote, monatsZiel, zaehlerVerlauf } from "../zaehler.js"; // Trennung (17.10.2026): monatsZiel, zaehlerVerlauf aus dem Rechenwerk
+import { zaehler, warenQuote, zaehlerVerlauf } from "../zaehler.js"; // Trennung (17.10.2026): zaehlerVerlauf aus dem Rechenwerk
+import { heuteZiel, heuteKachelZahlen } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026): Zahlen der Zielkarte und Kacheln
 import { ergebnisView } from "./karte.js";
 import { nav } from "./nav.js";
 import { bueroCodeKarte } from "./ebene.js"; // Drei Ebenen (A): Büro-Code in den Einstellungen
@@ -35,20 +35,14 @@ export function startView(stand, extra = {}) {
 const tagKurz = (H) => { const [j, m, d] = H.split("-").map(Number); try { return new Date(j, m - 1, d).toLocaleDateString(sprache() === "en" ? "en-GB" : sprache(), { weekday: "short", day: "numeric", month: "short" }); } catch { return datumLesbar(H); } };
 
 // Zielkarte im Laden: Stufe als Überschrift, eine große Zahl, Balken vom Monatsumsatz bis zur Zielmarke, Tempo als kleine Pille.
-// Rechnung nur aus monatsZiel() – hier wird nichts neu gerechnet außer der Balkenbreite.
-export function heuteZielWerte(stand, z, H) {
-  const m = monatsZiel(stand, z, H);
-  const stufe = m.stufe === "ohne" ? "bisNull" : m.stufe;
-  const zahl = m.ziel === null ? null : m.stufe === "bisNull" ? m.fehltNull : m.stufe === "bisZiel" ? m.fehlt : m.darueber;
-  // Zielmarke des Balkens: bis null = Umsatz + was bis null fehlt; danach das Monatsziel
-  const marke = m.ziel === null ? null : m.stufe === "bisNull" ? m.umsatz + (m.fehltNull || 0) : m.ziel;
-  const anteil = marke ? Math.max(0, Math.min(1, m.umsatz / marke)) : 0;
-  const tempo = m.erreichtAm ? { art: "gut", text: t("heute.tempoGut", datumLesbar(m.erreichtAm).slice(0, 6)) }
-    : m.proTagNoetig ? { art: "knapp", text: t("heute.tempoKnapp", fmtEuro(m.proTagNoetig, { dezimal: 0 })) } : null;
-  return { m, stufe, zahl, marke, anteil, tempo };
+// Trennung 2 (17.10.2026): alle Zahlen aus heuteZiel() (js/laden_zahlen.js); hier entsteht nur der Tempo-Satz.
+function zielTexte(stand, z, H) {
+  const w = heuteZiel(stand, z, H);
+  const tempo = !w.tempo ? null : w.tempo.art === "gut" ? { art: "gut", text: t("heute.tempoGut", datumLesbar(w.tempo.am).slice(0, 6)) } : { art: "knapp", text: t("heute.tempoKnapp", fmtEuro(w.tempo.proTag, { dezimal: 0 })) };
+  return { ...w, tempo };
 }
 function heuteZielKarte(stand, z, H) {
-  const w = heuteZielWerte(stand, z, H); const { m } = w;
+  const w = zielTexte(stand, z, H); const { m } = w;
   return `<button type="button" class="karte h-ziel ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz">
     <span class="h-zielkopf"><span>${esc(t("heute.stufe." + w.stufe))}</span>${w.tempo ? `<span class="h-tempo ${w.tempo.art}">${esc(w.tempo.text)}</span>` : `<span class="zielsym">${sym("target")}</span>`}</span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
@@ -58,23 +52,17 @@ function heuteZielKarte(stand, z, H) {
 }
 
 // Vier Kacheln: Symbol + Zahl. Kühlung zeigt den schlechtesten Wert (rot) oder „OK“ oder „2 offen“; Putzen erledigt/gesamt heute.
-// Paket 3 (16.10.2026), M7: Umsatz und Müll nach Geschäftstag (H), Kühlung und Putzen nach Kalendertag (K) – das Amt-Protokoll folgt dem Kalender.
-export function heuteKachelWerte(stand, ks, H) {
-  const K = heute();
-  const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H });
-  let kuehl = { wert: "–", alarm: false };
-  if (ks.eingerichtet) {
-    const schlimm = kuehlSchlimmsteAbweichung(stand, K); // Trennung (17.10.2026): Rechnung im Rechenwerk (engine.js)
-    if (schlimm) kuehl = { wert: `${fmtZahl(schlimm.wert, Number.isInteger(schlimm.wert) ? 0 : 1)} °C`, alarm: true };
-    else if (ks.heuteGemessen >= ks.stellen) kuehl = { wert: t("heute.ok"), alarm: false };
-    else kuehl = { wert: t("heute.offenN", ks.stellen - ks.heuteGemessen), alarm: false, offen: true };
-  }
-  let putz = { wert: "–", alarm: false };
-  if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, K); putz = { wert: `${pg.erledigt} / ${pg.gesamt}`, alarm: pg.ueberfaellig > 0 }; }
-  return { umsatz: u ? u.umsatz : null, muell: sw.anzahl ? sw.muellwert : null, kuehl, putz };
+// Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
+function kachelTexte(stand, ks, H) {
+  const w = heuteKachelZahlen(stand, ks, H);
+  const k = w.kuehl;
+  const kuehl = !k ? { wert: "–", alarm: false } : k.art === "abweichung" ? { wert: `${fmtZahl(k.wert, Number.isInteger(k.wert) ? 0 : 1)} °C`, alarm: true }
+    : k.art === "ok" ? { wert: t("heute.ok"), alarm: false } : { wert: t("heute.offenN", k.anzahl), alarm: false, offen: true };
+  const putz = w.putz ? { wert: `${w.putz.erledigt} / ${w.putz.gesamt}`, alarm: w.putz.alarm } : { wert: "–", alarm: false };
+  return { umsatz: w.umsatz, muell: w.muell, kuehl, putz };
 }
 function heuteKachelnLaden(stand, ks, H) {
-  const w = heuteKachelWerte(stand, ks, H);
+  const w = kachelTexte(stand, ks, H);
   const kachel = (cls, symbol, key, wert, ziel, alarm) => `<button type="button" class="karte h-kachel ${alarm ? "alarm" : ""}" ${ziel}><span class="ks ${cls}">${sym(symbol)}</span><span><small>${esc(t(key))}</small><b>${wert}</b></span></button>`;
   return kachel("umsatz", "chart-column", "heute.kachel.umsatz", w.umsatz === null ? "–" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatz"')
     + kachel("muell", "trash-2", "heute.kachel.muell", w.muell === null ? "–" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"')

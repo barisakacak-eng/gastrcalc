@@ -29,7 +29,7 @@ const ZUSAMMEN = /Object\.assign\(\s*([A-Za-z_$][\w$]*)/g;
 // lokal gebaute Listen/Objekte oder DOM-Knoten. stand, wurzel, Gerichte, Artikel, Kühlstellen, Journal-Einträge stehen hier nie.
 const AUSNAHMEN = {
   "bausteine.js": { a: "DOM: Download-Link beim Teilen" },
-  "beleg.js": { treffer: "lokale Zählung der Zuordnungen", z: "Zeilen des gerade gelesenen Belegs (flüchtig, Modulzustand zeilen)", zuweisung: "Entwurf Kostenbeleg (Modulzustand)",
+  "beleg.js": { zuweisung: "Entwurf Kostenbeleg (Modulzustand)",
     hbEntwurf: "Entwurf Haltbarkeit (Modulzustand)", angaben: "lokales Objekt für haltbarSetzen", zeilen: "gelesene Belegzeilen (Modulzustand)", zuordnung: "Auswahl je Zeile (Modulzustand)", genommen: "lokale Liste für lieferungAnlegen" },
   "bestand.js": { z: "lokale Liste von Hinweis-Sätzen", entwurf: "Entwurf Mindestbestand (Modulzustand)" },
   "buero.js": { offen: "lokale Liste der Büro-Chips" },
@@ -40,11 +40,10 @@ const AUSNAHMEN = {
   "karte_laden.js": { blatt: "Preis-Blatt-Entwurf (Modulzustand)" },
   "kuehl.js": { tage: "lokale Liste der Tage", f: "offenes Stations-Formular (Modulzustand form)", form: "offenes Stations-Formular (Modulzustand)" },
   "muell.js": { out: "lokale Liste", ziel: "DOM", p: "DOM", w: "DOM", wahl: "Auswahl vor dem Tipp (Modulzustand)", ids: "lokale Liste der neuen Einträge" },
-  "ordner.js": { teile: "lokale Liste (Druck)", a: "lokale Liste (Druckmodell)", f: "DOM (Druckrahmen)", amtZeit: "Zeitraum-Wahl (Modulzustand)", paketMonat: "Monats-Wahl (Modulzustand)", belDatum: "Datums-Entwürfe (Modulzustand)" },
+  "ordner.js": { f: "DOM (Druckrahmen)", amtZeit: "Zeitraum-Wahl (Modulzustand)", paketMonat: "Monats-Wahl (Modulzustand)", belDatum: "Datums-Entwürfe (Modulzustand)" },
   "personal.js": { alle: "Schicht-Person im Gerätespeicher (localStorage, nicht im Laden)", gemerkt: "Ersatz für den Gerätespeicher" },
   "putzplan.js": { entwurf: "Entwurf Putzplan (Modulzustand)" },
   "umsatz.js": { out: "lokale Liste", tage: "lokale Liste" },
-  "vergleich.js": { kandidaten: "lokale Liste von Bildnamen" },
   "verkauf.js": { zeilen: "lokale Liste von Sätzen", entwurf: "Entwurf Handeingabe (Modulzustand)" },
 };
 const NIE = new Set(["stand", "wurzel", "s", "b", "g", "e", "x", "l", "r", "k", "eintrag", "u"]); // diese Namen sind in den Bildschirmen Laden-Daten – erlaubt nur, wenn sie dort ein DOM-Knoten sind
@@ -92,7 +91,9 @@ test("Trennung: monatsZiel und Sicherungsstufe kommen aus dem Rechenwerk", async
   assert.equal(typeof S.sicherungStufe, "function"); assert.equal(typeof O.menueZaehler, "function"); assert.equal(typeof O.ladenPunkt, "function");
   const home = lies(path.join(SCREENS, "home.js")), nav = lies(path.join(SCREENS, "nav.js"));
   assert.ok(!/function monatsZiel|function wareneinsatzQuote|function zaehlerVerlauf/.test(home), "home.js rechnet nicht mehr selbst");
-  assert.match(home, /import \{[^}]*monatsZiel[^}]*\} from "\.\.\/zaehler\.js"/);
+  // Trennung 2 (17.10.2026): home.js holt die Zielkarte aus js/laden_zahlen.js, das monatsZiel aus zaehler.js nutzt
+  assert.match(home, /import \{[^}]*heuteZiel[^}]*\} from "\.\.\/laden_zahlen\.js"/);
+  assert.match(lies(path.join(JS, "laden_zahlen.js")), /import \{[^}]*monatsZiel[^}]*\} from "\.\/zaehler\.js"/);
   assert.ok(!/function sicherungStufe|function menueZaehler|function ladenPunkt/.test(nav), "nav.js rechnet nicht mehr selbst");
   assert.match(lies(path.join(JS, "offen.js")), /import \{ sicherungStufe \} from "\.\/sicherung_stufe\.js"/);
   for (const f of ["ebene.js", "home.js", "nav.js"]) assert.ok(!/sicherungStufe[^\n]*from "\.\/nav\.js"/.test(lies(path.join(SCREENS, f))), f);
@@ -104,6 +105,41 @@ test("Trennung: monatsZiel und Sicherungsstufe kommen aus dem Rechenwerk", async
 
 test("Trennung: kein Rechenwerk-Modul (js/*.js außer app.js) importiert aus js/screens/", () => {
   for (const f of fs.readdirSync(JS).filter((x) => x.endsWith(".js") && x !== "app.js")) assert.ok(!/from "\.\/screens\//.test(lies(path.join(JS, f))), f);
+});
+
+// Trennung 2 (17.10.2026): Rechenlogik aus Bauplan 5.2 A/B wohnt im Rechenwerk – in js/screens/ ist keine dieser Funktionen mehr definiert.
+const VERSCHOBEN = {
+  "anzeige_text.js": ["datumLesbar", "monatName", "tagLesbar", "zeitKurz", "eintragName", "eintragMenge", "gebindeSatz", "gebindeZeile", "gebindeName", "zahlText"],
+  "bilder.js": ["fotoName", "piktoName", "gerichtBildQuelle", "wareBildQuelle", "NAME_FOTO", "BEREICH_FOTO", "PIKTO", "VERP", "WARE", "GETRAENK", "R_ALIAS", "fotoFuer"],
+  "gerichte_vergleich.js": ["gerichteVergleich"], "personal.js": ["personalZahlen"],
+  "laden_zahlen.js": ["heuteZiel", "heuteKachelZahlen", "abschlussHaken", "tagesBilanz", "heuteZielWerte", "heuteKachelWerte"],
+  "zaehler.js": ["umsatzAnzeigeWert", "umsatzAusEingabe", "zaehlerStrecke", "monatTagStatus", "wochentagSpalte"],
+  "engine.js": ["sachbezugWert", "schwundEintraege"], "muell.js": ["muellTonne", "muellSuche", "muellFormWerte"],
+  "lieferung.js": ["preisAnzeige", "belegZeilenVorbereiten", "neuArtikelAngaben"], "beleg.js": ["belegKandidaten", "kandidaten", "belegIstLieferschein", "belegDatumVon", "belegPruefStand"],
+  "kostenbeleg.js": ["kostenZuweisungVorschlag"], "inventur.js": ["inventurListe", "inventurSuche", "inventurKarte", "lagerortVonName", "lagerortVon"],
+  "karte_lesen.js": ["kartePruefZahlen", "baukastenZutatenOhneVerpackung"], "deal.js": ["kombiTeileSortiert", "kombiAuswahlBereinigt", "ORDNUNG"],
+  "ordner_text.js": ["ordnerKachelStand", "amtHinweis", "amtUnter", "paketUnter", "amtDokument", "paketDokument", "csvDateien", "dokumentFuer", "dateiName", "zeitraumText", "amtZeitraumVon", "paketZeitVon",
+    "monatLang", "beispielKopf", "NAMEN", "kopfVon", "rueckText", "nkText"],
+};
+// Namen, die nur im Rechenwerk anders heißen (die alten Namen dürfen in js/screens/ nicht mehr definiert sein; im Rechenwerk gibt es sie nicht)
+const NUR_ALT = new Set(["heuteZielWerte", "heuteKachelWerte", "kandidaten", "lagerortVon"]);
+test("Trennung 2: verschobene Rechen- und Textfunktionen sind nicht mehr in js/screens/ definiert", async () => {
+  const def = (n) => new RegExp(`(^|\\n)\\s*(export\\s+)?(async\\s+)?(function\\s+${n}\\s*\\(|(const|let|var)\\s+${n}\\s*=)`);
+  const fehler = [];
+  for (const f of fs.readdirSync(SCREENS).filter((x) => x.endsWith(".js"))) {
+    const src = ohneKommentar(lies(path.join(SCREENS, f)));
+    for (const namen of Object.values(VERSCHOBEN)) for (const n of namen) if (def(n).test(src)) fehler.push(`${f}: ${n}`);
+  }
+  assert.deepEqual(fehler, [], "gehört ins Rechenwerk:\n" + fehler.join("\n"));
+  for (const [datei, namen] of Object.entries(VERSCHOBEN)) {
+    const src = lies(path.join(JS, datei));
+    for (const n of namen) if (!NUR_ALT.has(n)) assert.ok(def(n).test(src), `${datei}: ${n} fehlt`);
+  }
+  // die öffentlichen davon sind als Funktion erreichbar
+  const M = await import("../js/ordner_text.js"); for (const n of ["ordnerKachelStand", "amtDokument", "paketDokument", "csvDateien", "dokumentFuer"]) assert.equal(typeof M[n], "function", n);
+  // Gegenprobe: eine eingebaute Definition wird erkannt
+  assert.ok(def("personalZahlen").test("export function personalZahlen(stand) {}")); assert.ok(def("ORDNUNG").test("const ORDNUNG = {};"));
+  assert.ok(!def("personalZahlen").test('import { personalZahlen } from "../personal.js";'));
 });
 
 // ---------- (4) zusammengeführt und entfernt ----------

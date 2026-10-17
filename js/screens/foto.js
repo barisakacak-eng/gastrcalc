@@ -4,11 +4,10 @@ import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Zutaten in
 import { esc, parseZahl, uid, fmtEuro } from "../util.js";
 import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ablage.js";
 import { auswerten, vorwaermen } from "../auswertung.js";
-import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau } from "../karte_lesen.js";
+import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau, kartePruefZahlen, baukastenZutatenOhneVerpackung } from "../karte_lesen.js"; // Trennung 2 (17.10.2026)
 import { artikelAbgleichen } from "../karte_daten.js"; // Trennung (17.10.2026)
 import { uploadAnlegen, uploadAendern } from "../stamm.js"; // Trennung (17.10.2026): Uploads schreibt das Rechenwerk
 import { fehlendeRezepteErgaenzen } from "../rezept_baukasten.js";
-import { VORLAGEN } from "../data/katalog.js";
 
 // Zustand des laufenden Fotos (flüchtig; das Ergebnis landet erst mit „Übernehmen" im Laden)
 let lauf = null;       // { zweck, status: "lesen"|"fertig"|"fehler", schritt, text, upload, fehler, dauerMs }
@@ -156,7 +155,7 @@ function bearbeiter(v) {
         ${v.sicher === "vorschlag" ? `<button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button>` : ""}
         <button type="button" class="chip klein leise" data-a="fv-an" data-id="${v.id}">${esc(t("foto.weglassen"))}</button></div>
       <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : v.sicher === "baukasten" ? esc(t("foto.rezeptStartwert", v.bau.zutaten.length)) : esc(t("foto.ohneRezept"))}</small>
-      ${v.sicher === "baukasten" ? `<small class="marke">${esc(v.bau.zutaten.filter((z) => !/schale|tüte|karton|box|folie|bogen/i.test(z.name)).map((z) => `${artikelText(z.name)} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " " + t("allgemein.stueck") : " " + z.einheit}`).join(" · "))}</small>` : ""}
+      ${v.sicher === "baukasten" ? `<small class="marke">${esc(baukastenZutatenOhneVerpackung(v.bau).map((z) => `${artikelText(z.name)} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " " + t("allgemein.stueck") : " " + z.einheit}`).join(" · "))}</small>` : ""}
     </div>`;
 }
 function fvZeile(v) {
@@ -169,11 +168,8 @@ function fvZeile(v) {
     </div>`;
 }
 export function kartePruefenView() {
-  const an = vorschlaege.filter((v) => v.an);
-  const mitRezept = an.filter((v) => v.vorlage).length;
-  const zutaten = new Set(); for (const v of an) { if (v.vorlage) for (const l of Object.values(VORLAGEN)) { const x = l.find((y) => y.name === v.vorlage); if (x) x.zutaten.forEach((z) => zutaten.add(z[0])); } else if (v.getraenk) zutaten.add(v.name); }
   // Trennung (17.10.2026): die Gruppe (prüfen/erkannt) steht schon seit dem Hinzufügen fest – Zeichnen schreibt nichts
-  const pr = vorschlaege.filter((v) => v.gruppe === "pruefen"), ok = vorschlaege.filter((v) => v.gruppe === "erkannt");
+  const kz = kartePruefZahlen(vorschlaege); const pr = kz.pruefen, ok = kz.erkannt; // Trennung 2 (17.10.2026): Zahlen aus js/karte_lesen.js
   return `
     <h1 class="frage">${esc(t("foto.pruefenFrage", vorschlaege.length))}</h1>
     <p class="hinweis">${esc(t(pr.length ? "foto.pruefenHinweisKurz" : "foto.pruefenHinweisAlle"))}</p>
@@ -184,7 +180,7 @@ export function kartePruefenView() {
       ${v.an ? bearbeiter(v) : `<div class="n durch">${esc(v.name)}</div>`}</div>`).join("")}</div>` : ""}
     ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.gruppeErkannt", ok.length))}</h2>
     <div class="fvliste">${ok.map(fvZeile).join("")}</div>` : ""}
-    <p class="hinweis klein">${esc(t("foto.inventurVorschau", an.length, zutaten.size))} · ${esc(t("foto.inventurHinweis", mitRezept))}</p>
+    <p class="hinweis klein">${esc(t("foto.inventurVorschau", kz.an, kz.zutaten))} · ${esc(t("foto.inventurHinweis", kz.mitRezept))}</p>
     <div class="fotofeld">${fotoKnoepfe("speisekarte", { kamera: "foto.nochSeite", datei: "foto.nochDatei" })}</div>`;
 }
 

@@ -67,7 +67,7 @@ test("Beispiel-Laden: Zähler, Monatsziel, Vergleich, Inventur und Müll liefern
 
 test("Beispiel-Laden: Amt-Ordner vollständig ohne Nachträge; Exporte tragen BEISPIEL (Druck und CSV)", async () => {
   await deutsch();
-  const { amtDokument, paketDokument, csvDateien, dokumentFuer } = await import("../js/screens/ordner.js");
+  const { amtDokument, paketDokument, csvDateien, dokumentFuer } = await import("../js/ordner_text.js"); // Trennung 2 (17.10.2026)
   const s = beispielLaden(H);
   const o = ordnerAmt(s, zeitraumFuer("monat", { datum: H }), { datum: H });
   assert.ok(o.teile.kuehl.anzahl > 50 && o.teile.kuehl.nachgetragen === 0 && o.teile.kuehl.abweichungen === 1 && o.teile.kuehl.behoben === 1, JSON.stringify({ n: o.teile.kuehl.anzahl, nach: o.teile.kuehl.nachgetragen }));
@@ -92,7 +92,7 @@ test("Beispiel-Laden: Amt-Ordner vollständig ohne Nachträge; Exporte tragen BE
 
 test("Beispiel-Laden: eigener Laden bleibt unverändert (Anlegen, Rechnen, Exporte, Löschen)", async () => {
   await deutsch();
-  const { csvDateien, dokumentFuer } = await import("../js/screens/ordner.js");
+  const { csvDateien, dokumentFuer } = await import("../js/ordner_text.js"); // Trennung 2 (17.10.2026)
   const w = leereWurzel(); const eigen = leererBetrieb(); eigen.phase = "app"; eigen.betrieb.name = "Mein Laden"; eigen.ladenArt = "doener";
   eigen.tagesnotizen.push({ id: "n1", datum: "2026-10-10", umsatz: 500, erfasst: "2026-10-10T20:00:00.000Z", nacherfasst: false, storniert: false });
   w.betriebe.push(eigen); w.aktiv = eigen.id;

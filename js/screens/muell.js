@@ -4,52 +4,21 @@
 // und „Eimer gewogen". Die Wochen-Statistik (früher Müll-Zentrale) wohnt jetzt im Büro unter Listen (muellStatistikView).
 // Im Personal-Modus: keine Euro-Beträge, nur Mengen; Einträge tragen von: personId. Rechenwerk unverändert (js/muell.js).
 import { t, einheitLabel, sprache, artikelText } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige, fotoSlug } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
-import { EINHEITEN } from "../data/katalog.js";
-import { normalisieren, suchRang } from "../data/suchnamen.js";
-import { mengeUmrechnen, SVEV_2026 } from "../engine.js";
-import { gerichtWeg, rohwareWeg, eimerEintragen, eimerVerrechnen, personalessen, mahlzeitJetzt, muellWoche, muellMonatVergleich, haeufigsteMuell, muellVorschau,
-  muellSchluessel, standardMenge, muellTippEintragen, muellStornieren, tippsHeute, muellHeute, schwundNachweisSetzen } from "../muell.js"; // Trennung (17.10.2026): schwundNachweisSetzen
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
+import { normalisieren } from "../data/suchnamen.js";
+import { mengeUmrechnen } from "../engine.js";
+import { gerichtWeg, rohwareWeg, eimerEintragen, personalessen, muellWoche, muellMonatVergleich, haeufigsteMuell,
+  muellSchluessel, standardMenge, muellTippEintragen, muellStornieren, tippsHeute, muellHeute, schwundNachweisSetzen, muellTonne, muellSuche, muellFormWerte } from "../muell.js"; // Trennung (17.10.2026): schwundNachweisSetzen
 import { nav } from "./nav.js";
 import { mengeEinheitText } from "./bausteine.js"; // Trennung (17.10.2026)
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
 import { gerichtBild } from "./vergleich.js";
+import { wareBildQuelle } from "../bilder.js"; // Trennung 2 (17.10.2026): Bildzuordnung
 import { personalAktiv, personalVon, personalLeiste } from "./personal.js";
-// Bild für Rohware, Verpackung und Getränke (Prüfung 15.10.: Reihenfolge zählt, die erste passende Regel gewinnt)
-const VERP = [[/handschuh/i, "v-handschuhe"], [/tragetasche|tasche/i, "v-tragetasche"], [/t[üu]te/i, "v-doenertuete"], [/alu|folie/i, "v-alufolie"], [/men[üu]/i, "v-menueschale"],
-  [/karton/i, "v-pizzakarton"], [/pommes/i, "v-pommesschale"], [/dressing|so(ß|ss)e|dip|sauce/i, "v-dressingbecher"], [/salat/i, "v-salatschale"], [/burger/i, "v-burgerbox"],
-  [/box|asia|nudel/i, "v-asiabox"], [/becher|cup/i, "v-becher"], [/serviette|papier/i, "v-serviette"]];
-const WARE = [[/brot|fladen|wrap|yufka|lavash|bun\b|br[öo]tchen|baguette|toast|tortilla/i, "w-brot"], [/onion|stick|nugget|frikandel|fingerfood|wings/i, "w-fingerfood-tk"],
-  [/so(ß|ss)e|sauce|mayo|ketchup|dip|dressing|remoulade|aioli|hummus|ajvar|senf|pesto|tzatziki|cac[iı]k/i, "w-sosse"],
-  [/gew[üu]rz|salz|pfeffer|oregano|pulver|kreuzk|kumin|flocken|pul biber|sumach|thymian|zimt/i, "w-gewuerz"], [/joghurt|quark|sahne|schmand|cr[eè]me/i, "w-joghurt"],
-  [/falafel/i, "w-falafel"], [/sucuk/i, "w-sucuk"], [/salami/i, "w-salami"], [/schinken/i, "w-schinken"], [/d[öo]ner|gyros|kalb|lamm|rind/i, "w-doenerfleisch"],
-  [/h[äa]hnchen|chicken|pute|truthahn/i, "w-haehnchen"], [/spie(ß|ss)/i, "w-doenerfleisch"], [/hack|patty|k[öo]fte|cevapi/i, "w-hack"], [/wurst|krakauer|wiener/i, "w-wurst"],
-  [/feta|hirten|schafsk|wei(ß|ss)k[äa]se/i, "w-feta"], [/k[äa]se|mozzarella|cheddar|gouda|emmentaler|halloumi/i, "w-kaese"], [/thunfisch/i, "w-thunfisch"],
-  [/champignon|pilz/i, "w-champignon"], [/peperoni|jalape|chili/i, "w-peperoni"], [/paprika/i, "w-paprika"], [/knoblauch/i, "w-knoblauch"], [/zwiebel/i, "w-zwiebel"],
-  [/gurke/i, "w-gurke"], [/tomate/i, "w-tomate"], [/salat|eisberg|rucola|lollo/i, "w-salat"], [/petersilie|basilikum|minze|dill|kr[äa]uter|koriander/i, "w-petersilie"],
-  [/kohl/i, "w-kohl"], [/spinat/i, "w-spinat"], [/mais/i, "w-mais"], [/(ö|oe)l(\s|$)|frittier/i, "w-oel"], [/olive/i, "w-oliven"], [/ananas/i, "w-ananas"], [/zitrone|limette/i, "w-zitrone"], [/salatmix|salatmischung/i, "w-salatmix"],
-  [/nudel|penne|spaghetti|fusilli|tagliatelle|lasagne/i, "w-nudeln"], [/reis|basmati|bulgur|couscous/i, "w-reis"], [/mehl|teig|hefe/i, "w-mehl"], [/\bei(er)?\b/i, "w-ei"],
-  [/pommes|kroketten|wedges|kartoffel/i, "w-pommes-tk"]];
-const GETRAENK = [[/ayran/i, "g-ayran"], [/cola|fanta|sprite|dose/i, "d-cola"], [/wasser|sprudel/i, "d-wasser"], [/limo|orange/i, "d-limo"], [/eistee|ice ?tea/i, "d-eistee"],
-  [/[çc]ay|\btee\b/i, "d-tee"], [/energy|red ?bull/i, "d-energy"], [/saft|schorle/i, "d-saft"], [/gazoz/i, "d-gazoz"]];
-// Echte Fotos (Sanji Welle 3, r-* und v-*), sobald vorhanden; sonst bleibt das Piktogramm
-const R_ALIAS = { "w-doenerfleisch": (n) => /h[äa]hnchen|pute/i.test(n) ? "r-haehnchenspiess" : /geschnitten|kg|gegart/i.test(n) ? "r-doener-geschnitten" : "r-doenerspiess",
-  "w-kohl": (n) => /wei(ß|ss)/i.test(n) ? "r-weisskohl" : "r-rotkohl", "w-kaese": (n) => /mozzarella/i.test(n) && !/gerieben/i.test(n) ? "r-mozzarella" : "r-pizzakaese",
-  "w-ei": () => "r-eier", "w-sosse": (n) => /knoblauch|joghurt|wei(ß|ss)/i.test(n) ? "r-knoblauchsauce" : /scharf|chili|acı/i.test(n) ? "r-scharfe-sosse" : "r-ketchup-mayo",
-  "w-brot": (n) => /yufka|wrap|d[üu]r[üu]m|lavash|tortilla/i.test(n) ? "r-yufka" : /bun|br[öo]tchen/i.test(n) ? "r-buns" : "r-fladenbrot",
-  "w-falafel": () => "r-falafel-tk", "w-mehl": (n) => /pizza/i.test(n) ? "r-pizzateig" : /lahmacun/i.test(n) ? "r-lahmacun-teig" : "r-mehl", "w-hack": (n) => /patty/i.test(n) ? "r-patty" : "r-hack" };
-const fotoFuer = (n, name) => { const kand = n.startsWith("v-") ? n : R_ALIAS[n] ? R_ALIAS[n](name) : "r-" + n.slice(2); return FOTOS.has(kand) ? kand : null; };
 export function wareBild(x) {
-  // 17.10.2026: Einzelbild je Artikel zuerst (Bildliste: r-/v-/d- + fotoSlug(Name)), dann Sammelbild, dann Piktogramm
-  const eigen = (x.gruppe === "verpackung" ? "v-" : x.gruppe === "getraenk" || x.gruppe === "spirituose" ? "d-" : "r-") + fotoSlug(x.name);
-  if (FOTOS.has(eigen)) return `<img class="gerichtbild mini" src="foto/${eigen}.webp" alt="" loading="lazy">`;
-  if (x.gruppe === "getraenk") { const d = (GETRAENK.find(([re, n]) => re.test(x.name) && FOTOS.has(n)) || [])[1] || "g-getraenk";
-    return `<img class="gerichtbild mini" src="foto/${d}.webp" alt="" loading="lazy">`; }
-  const liste = x.gruppe === "verpackung" ? VERP : WARE;
-  const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
-  const foto = fotoFuer(n, x.name);
-  return foto ? `<img class="gerichtbild mini" src="foto/${foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${/zitrone|salatmix/.test(n) ? "w-ware" : n}.svg" alt="" loading="lazy">`;
+  const q = wareBildQuelle(x); // Trennung 2 (17.10.2026): Zuordnung in js/bilder.js
+  return q.foto ? `<img class="gerichtbild mini" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`;
 }
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
@@ -169,8 +138,7 @@ export function muellStatistikView(stand) {
   const D = heute();
   const w = muellWoche(stand, D); const mv = muellMonatVergleich(stand, D);
   const leer = !w.anzahl;
-  const fuell = mv.vormonat ? Math.min(1, mv.monat / Math.max(mv.monat, mv.vormonat * 1.25)) : (mv.monat > 0 ? 0.5 : 0);
-  const linie = mv.vormonat ? Math.min(1, mv.vormonat / Math.max(mv.monat, mv.vormonat * 1.25)) : null;
+  const { fuell, linie } = muellTonne(mv); // Trennung 2 (17.10.2026)
   const vormonatName = new Date(Number(D.slice(0, 4)), Number(D.slice(5, 7)) - 2, 1).toLocaleDateString(sprache(), { month: "long" });
   return `<div class="muellzentrale">
     <div class="karte muellkarte">
@@ -191,13 +159,7 @@ export function muellStatistikView(stand) {
 
 // ---------- „Andere": Suche über alle Waren (auch türkische/englische Namen) + Eimer gewogen ----------
 function eingabeView(stand, D) {
-  const q = normalisieren(suche);
-  const kacheln = q
-    ? [...(stand.gerichte || []).filter((g) => g.klasse !== "getraenk").map((g) => ({ typ: "gericht", id: g.id, name: g.name, einheit: "portion", gruppe: "speise" })),
-       ...(stand.artikel || []).filter((a) => a.benutzt !== false).map((a) => ({ typ: "artikel", name: a.name, einheit: a.packung?.einheit || a.einheit || "stk", gruppe: a.gruppe }))]
-        // auch „domates", „sogan", „tomato" finden (Suchnamen); Treffer im deutschen Namen zuerst
-        .filter((x) => suchRang(x.name, q) >= 0).sort((a, b) => suchRang(a.name, q) - suchRang(b.name, q)).slice(0, 24)
-    : haeufigsteMuell(stand, { datum: D });
+  const q = normalisieren(suche); const kacheln = muellSuche(stand, suche, D); // Trennung 2 (17.10.2026): Suche im Rechenwerk
   return `<div class="inhalt">
     <h2>${esc(t("muell.auswaehlen"))}</h2>
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))}" autocomplete="off">
@@ -211,11 +173,8 @@ function eingabeView(stand, D) {
 
 // ---------- Detail: Menge · Foto · Personalessen · ein Knopf (ohne Untertitel in drei Sprachen) ----------
 function formView(stand, D) {
-  const w = wahl; const pers = personalAktiv(); const einheit = !w ? "" : w.typ === "gericht" ? "portion" : w.typ === "eimer" ? "kg" : w.einheit;
-  const basis = w ? EINHEITEN[w.einheit]?.basis : null;
-  const ganze = w?.typ === "artikel" && w.packung?.menge > 0 ? mengeUmrechnen(w.packung.menge, w.packung.einheit, w.einheit) : null;
-  const wert = !w || pers ? null : w.typ === "eimer" ? (w.menge > 0 ? eimerVerrechnen(stand, D, w.menge).wert : null) : muellVorschau(stand, w, D);
-  const personalWert = !pers && w?.typ === "gericht" && w.personal ? (w.menge || 0) * (SVEV_2026[mahlzeitJetzt()] ?? SVEV_2026.mittag) : null;
+  const w = wahl; const pers = personalAktiv();
+  const { einheit, basis, ganze, wert, personalWert } = muellFormWerte(stand, w, D, { personal: pers }); // Trennung 2 (17.10.2026)
   const einheitText = w?.typ === "gericht" ? t("muell.teller") : einheitLabel(einheit);
   return `<div class="inhalt muellform">
     <button type="button" class="karte auswahlkarte ${w ? "gewaehlt" : ""}" data-a="muell-auswahl">

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { fotoSlug } from "../js/util.js";
 const { FOTOS } = await import("../js/data/fotos.js");
 const { wareBild } = await import("../js/screens/muell.js");
-const { fotoName } = await import("../js/screens/vergleich.js");
+const { fotoName } = await import("../js/bilder.js"); // Trennung 2 (17.10.2026): Bildzuordnung im Rechenwerk
 
 test("fotoSlug: Umlaute, ß, Türkisch, Sonderzeichen", () => {
   assert.equal(fotoSlug("Dönerspieß Kalb/Pute"), "doenerspiess-kalb-pute");

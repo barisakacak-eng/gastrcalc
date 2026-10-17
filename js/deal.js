@@ -92,3 +92,9 @@ export function kombiVorschlaege(stand, { heuteTag = heuteGeschaeft(), k = kalku
   }
   return out;
 }
+
+// Trennung 2 (17.10.2026): Kombi-Teile für die Auswahl-Chips – Hauptgericht, Kleinigkeit, Getränk, dann nach Name (vorher js/screens/aktionen.js).
+const ORDNUNG = { haupt: 0, gross: 0, kleinigkeit: 1, getraenk: 2 };
+export const kombiTeileSortiert = (stand, k = kalkulation(stand)) => kombiTeile(stand, k).sort((a, b) => (ORDNUNG[a.klasse] ?? 1) - (ORDNUNG[b.klasse] ?? 1) || a.name.localeCompare(b.name, "de"));
+// Auswahl ohne Teile, die es nicht mehr gibt (Gericht gelöscht oder ohne Preis).
+export const kombiAuswahlBereinigt = (auswahl, teile) => auswahl.filter((id) => teile.some((x) => x.id === id));

@@ -1,7 +1,9 @@
 // Etappe 5: Belege übernehmen – aus dem zerlegten Text (js/beleg.js) wird eine Lieferung im Journal,
 // die Preise der zugeordneten Artikel werden nachgezogen, und „Preise gestiegen" lässt sich daraus lesen.
 // Datenschutz: Es wird nur gespeichert, was die App braucht – Artikel, Menge, Preis, Händlername, Datum. Kein Kundenname, keine Kundennummer, keine Adresse.
-import { uid, heute } from "./util.js";
+import { uid, heute, fmtEuro, fmtZahl } from "./util.js";
+import { t } from "./i18n.js"; // Trennung 2 (17.10.2026): Rückfrage-Satz beim Preissprung
+import { PRODUKT_INDEX } from "./data/katalog.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis } from "./engine.js";
 import { preisJeEinheit } from "./beleg.js";
@@ -110,4 +112,33 @@ export function belegUploadVerknuepfen(upload, eintrag, art) {
   if (!upload || !eintrag) return;
   if (art === "kosten") { uploadAendern(upload, { status: "uebernommen", ergebnis: { kostenbeleg: eintrag.id }, zweck: "kosten" }); return; }
   uploadAendern(upload, { status: "uebernommen", ergebnis: { lieferung: eintrag.id } }); eintrag.upload = upload.id;
+}
+
+// Trennung 2 (17.10.2026): Preis einer Änderung in der Anzeige-Basis – Gramm/Milliliter als Preis je kg/l, Stück bleibt.
+// Rückgabe { alt, neu, einheit: "kg" | "l" | "stk" }; alt bleibt null, wenn es keinen alten Preis gab. Vorher zweimal im Bildschirm.
+export function preisAnzeige(x) {
+  const je = (p) => (p === null || p === undefined ? null : x.einheit === "g" || x.einheit === "ml" ? p * 1000 : p);
+  return { alt: je(x.alt), neu: je(x.neu), einheit: x.einheit === "g" ? "kg" : x.einheit === "ml" ? "l" : "stk" };
+}
+
+// Trennung 2 (17.10.2026): Belegzeilen nach dem Zerlegen vorbereiten (vorher in js/screens/beleg.js, Handlung „beleg-zerlegen“).
+// (1) Trifft ein Artikel mehrere Zeilen, ist die Zuordnung unsicher: alle diese Zeilen werden gefragt (bekannt → vorschlag).
+// (2) Preissprung über 40 %: Rückfrage statt Durchwinken. Gibt neue Zeilen-Kopien zurück, der Beleg bleibt unverändert.
+export function belegZeilenVorbereiten(stand, beleg) {
+  const zeilen = beleg.zeilen.map((z) => ({ ...z }));
+  const treffer = {}; for (const z of zeilen) if (z.bekannt) treffer[z.bekannt] = (treffer[z.bekannt] || 0) + 1;
+  for (const z of zeilen) if (z.bekannt && treffer[z.bekannt] > 1) { z.vorschlag = z.bekannt; z.bekannt = null; }
+  const basis = beleg.basis === "unklar" ? "netto" : beleg.basis;
+  for (const z of zeilen) {
+    if (!z.bekannt || z.frage) continue;
+    const sp = preisSprung(stand, z, basis);
+    if (sp && Math.abs(sp.prozent) > 0.4) z.frage = { art: "preis", text: t("beleg.preisSprungText", z.bekannt, fmtEuro(sp.alt * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtEuro(sp.neu * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtZahl(sp.prozent * 100, 0)), optionen: [{ text: t("beleg.uebernehmen"), wert: {} }] };
+  }
+  return zeilen;
+}
+// Trennung 2 (17.10.2026): Angaben für eine neue Ware aus einer Belegzeile (Gruppe aus dem Katalog, sonst Gewürz; Einheit kg, l oder Stück).
+export function neuArtikelAngaben(z) {
+  const kat = PRODUKT_INDEX[z.name]; const e = z.inhalt?.einheit;
+  const einheit = e === "kg" || e === "g" ? "kg" : e === "l" || e === "ml" || e === "cl" ? "l" : "stk";
+  return { name: z.name, gruppe: kat?.g || "gewuerz", einheit, gebindeArt: gebindeArtApp(z.gebinde) };
 }

@@ -10,7 +10,7 @@ const { GRUNDREZEPTE } = await import("../js/rezept_baukasten.js");
 const { SELBST_KACHELN } = await import("../js/data/zwischen.js");
 const DE = (await import("../js/lang/de.js")).default;
 const { wareBild } = await import("../js/screens/muell.js");
-const { fotoName } = await import("../js/screens/vergleich.js");
+const { fotoName } = await import("../js/bilder.js"); // Trennung 2 (17.10.2026): Bildzuordnung im Rechenwerk
 const ersatzWare = (p) => (wareBild({ name: p.n, gruppe: p.g }).match(/foto\/([^"]+)\.webp/) || [])[1] || null;
 
 const { fotoSlug: slug } = await import("../js/util.js"); // gleiche Regel wie die App

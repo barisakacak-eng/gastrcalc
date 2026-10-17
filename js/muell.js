@@ -4,7 +4,8 @@
 import { imTakt } from "./takt.js";
 import { uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
-import { warenGericht, kalkulation, wertEintrag, eintragWert, SCHWUND_ARTEN } from "./engine.js";
+import { warenGericht, kalkulation, wertEintrag, eintragWert, SCHWUND_ARTEN, mengeUmrechnen, sachbezugWert } from "./engine.js";
+import { normalisieren, suchRang } from "./data/suchnamen.js"; // Trennung 2 (17.10.2026): Suche „Andere“
 // Paket 3 (16.10.2026), M7: Müll und Personalessen gehören zum Geschäftstag (bis 4 Uhr = Vortag).
 
 // Gewicht eines Gerichts in Gramm aus dem Rezept (g- und ml-Zutaten; Stück-Zutaten wie Brot zählen nicht, die App sagt „≈").
@@ -230,4 +231,30 @@ export function muellHeute(stand, datum = heuteGeschaeft()) {
     const w = eintragWert(e, stand); anzahl += 1; if (w !== null) wert += w; else offen += 1; // Paket 3, M6: Alt-Einträge wie im Zähler
   }
   return { wert, anzahl, offen };
+}
+
+// ---------- Trennung 2 (17.10.2026): Zahlen für die Müll-Bildschirme (vorher in js/screens/muell.js) ----------
+// Monatstonne im Büro: Füllstand (0–1) dieses Monats und Linie des Vormonats (0–1 oder null), Maßstab = größerer Wert bzw. Vormonat × 1,25.
+export function muellTonne(mv) {
+  const fuell = mv.vormonat ? Math.min(1, mv.monat / Math.max(mv.monat, mv.vormonat * 1.25)) : (mv.monat > 0 ? 0.5 : 0);
+  const linie = mv.vormonat ? Math.min(1, mv.vormonat / Math.max(mv.monat, mv.vormonat * 1.25)) : null;
+  return { fuell, linie };
+}
+// Suche „Andere“: Gerichte (ohne Getränke) und benutzte Waren, die zur Eingabe passen (auch türkische/englische Suchnamen),
+// beste Treffer zuerst, höchstens 24. Ohne Eingabe: die häufigsten Müll-Waren des Ladens.
+export function muellSuche(stand, suche, D = heuteGeschaeft()) {
+  const q = normalisieren(suche);
+  if (!q) return haeufigsteMuell(stand, { datum: D });
+  return [...(stand.gerichte || []).filter((g) => g.klasse !== "getraenk").map((g) => ({ typ: "gericht", id: g.id, name: g.name, einheit: "portion", gruppe: "speise" })),
+    ...(stand.artikel || []).filter((a) => a.benutzt !== false).map((a) => ({ typ: "artikel", name: a.name, einheit: a.packung?.einheit || a.einheit || "stk", gruppe: a.gruppe }))]
+    .filter((x) => suchRang(x.name, q) >= 0).sort((a, b) => suchRang(a.name, q) - suchRang(b.name, q)).slice(0, 24);
+}
+// Detail-Eingabe: Einheit, Basis, „ganze Packung“, Wert in der Tonne und Sachbezug (Personalessen). personal = Personal-Modus (ohne Euro).
+export function muellFormWerte(stand, w, D = heuteGeschaeft(), { personal = false, mahlzeit = mahlzeitJetzt() } = {}) {
+  const einheit = !w ? "" : w.typ === "gericht" ? "portion" : w.typ === "eimer" ? "kg" : w.einheit;
+  const basis = w ? EINHEITEN[w.einheit]?.basis : null;
+  const ganze = w?.typ === "artikel" && w.packung?.menge > 0 ? mengeUmrechnen(w.packung.menge, w.packung.einheit, w.einheit) : null;
+  const wert = !w || personal ? null : w.typ === "eimer" ? (w.menge > 0 ? eimerVerrechnen(stand, D, w.menge).wert : null) : muellVorschau(stand, w, D);
+  const personalWert = !personal && w?.typ === "gericht" && w.personal ? sachbezugWert(w.menge || 0, mahlzeit) : null;
+  return { einheit, basis, ganze, wert, personalWert };
 }

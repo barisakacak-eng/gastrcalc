@@ -2,15 +2,13 @@
 import { FOTOS } from "../data/fotos.js";
 import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Artikelnamen in der aktiven Sprache, Belegzeilen bleiben wie gedruckt
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
-import { PRODUKT_INDEX } from "../data/katalog.js";
-import { belegZerlegen, zeileAnwenden } from "../beleg.js";
-import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, preisSprung, gebindeArtApp, lieferungStornieren, rechnungNrSetzen, belegUploadVerknuepfen } from "../lieferung.js"; // Trennung (17.10.2026): Storno, Rechnungsnummer, Foto-Verweis
+import { belegZerlegen, zeileAnwenden, belegKandidaten, belegPruefStand, belegIstLieferschein, belegDatumVon } from "../beleg.js"; // Trennung 2 (17.10.2026)
+import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, lieferungStornieren, rechnungNrSetzen, belegUploadVerknuepfen, belegZeilenVorbereiten, neuArtikelAngaben, preisAnzeige } from "../lieferung.js"; // Trennung 2 (17.10.2026) // Trennung (17.10.2026): Storno, Rechnungsnummer, Foto-Verweis
 import { artikelAusBeleg } from "../karte_daten.js"; // Trennung (17.10.2026): neue Ware aus einer Belegzeile
-import { preisJeBasis } from "../engine.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 import { fotoKnoepfe, fotoLauf, fotoVorbereiten, rechnungsLaufZuruecksetzen } from "./foto.js";
-import { STELLEN, VERTEILUNGEN, stelleRaten, kostenbelegLesen, kostenbelegAnlegen, kostenbelegDoppelt, kostenbelegStornieren, postenVorher } from "../kostenbeleg.js";
+import { STELLEN, VERTEILUNGEN, kostenZuweisungVorschlag, kostenbelegAnlegen, kostenbelegDoppelt, kostenbelegStornieren, postenVorher } from "../kostenbeleg.js";
 import { basisStandard } from "../data/kosten.js";
 import { rechnungsNummerLesen } from "../export_steuer.js"; // W2-T
 import { parseZahl, wertAnzeige } from "../util.js";
@@ -29,8 +27,8 @@ let kostenFertig = null; // gespeicherter Kostenbeleg
 let zeigeText = false;
 let hbOffen = false;     // Stufe 1 (17.10.2026): Liste „Haltbarkeit eintragen“ offen
 let hbEntwurf = {};      // Zeile → { art, datum } bis „Speichern“
-const istLieferschein = () => beleg && (beleg.typ === "lieferschein" || !zeilen.some((z) => z.gesamt !== null));
-const belegDatum = () => (datumWahl === "heute" || !beleg?.datum || beleg.datum > heute() ? heute() : beleg.datum);
+const istLieferschein = () => belegIstLieferschein(beleg, zeilen); // Trennung 2 (17.10.2026): Regeln in js/beleg.js
+const belegDatum = () => belegDatumVon(beleg, datumWahl, heute());
 
 export const belegKennung = () => `${fertig ? "fertig" : kostenFertig ? "kfertig" : beleg ? "pruefen" : zuweisung ? "zuweisen" : "text"}:${fotoLauf()?.status || ""}`;
 export function belegZuruecksetzen() { rechnungsLaufZuruecksetzen(); text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; zuweisung = null; kostenFertig = null; zeigeText = false; hbOffen = false; hbEntwurf = {}; }
@@ -39,10 +37,7 @@ export function belegZurueck() { if (fertig && hbOffen) { hbOffen = false; hbEnt
 // Nach dem Foto: Text übernehmen und fragen, wofür die Rechnung ist. Kostenstelle und Betrag sind vorbelegt, nie still gespeichert.
 export function belegTextVonFoto(ocrText, upload) {
   text = ocrText; beleg = null; fertig = null; kostenFertig = null;
-  const k = kostenbelegLesen(ocrText);
-  const stelle = stelleRaten(ocrText) || "ware";
-  // Basis: steht ein Netto auf der Rechnung, nehmen wir das. Sonst die übliche Basis der Stelle (Versicherung: ohne Vorsteuer, Review 6a)
-  zuweisung = { stelle, betrag: k.netto ?? k.brutto, basis: k.netto !== null ? "netto" : (stelle === "ware" ? "brutto" : basisStandard(stelle)), basisVonHand: k.netto !== null, satz: k.satz, datum: k.datum && k.datum <= heute() ? k.datum : heute(), verteilung: stelle === "versicherungen" ? "jaehrlich" : "monatlich", monate: 3, lieferant: ocrText.split(/\r?\n/).map((z) => z.trim()).find((z) => z.length > 3) || "", upload };
+  zuweisung = kostenZuweisungVorschlag(ocrText, upload, heute()); // Trennung 2 (17.10.2026): Vorschlag aus js/kostenbeleg.js
 }
 
 export function belegView(stand) {
@@ -125,23 +120,10 @@ function kostenFertigView() {
     <button type="button" class="knopf zweit" data-a="beleg-neu">${esc(t("beleg.nochmal"))}</button></div>`;
 }
 
-// Kandidaten aus der Artikelliste: Wortüberlappung, bis zu vier.
-function kandidaten(stand, name) {
-  const w = name.toLowerCase().split(/[^a-zäöüß0-9]+/).filter((x) => x.length > 2);
-  return (stand.artikel || []).map((a) => { const an = a.name.toLowerCase(); const s = w.filter((x) => an.includes(x)).length + (w.some((x) => an.startsWith(x)) ? 1 : 0); return { a, s }; })
-    .filter((x) => x.s > 0).sort((x, y) => y.s - x.s).slice(0, 4).map((x) => x.a.name);
-}
-
+// Trennung 2 (17.10.2026): Kandidaten (belegKandidaten) und Prüfstand (belegPruefStand) rechnet js/beleg.js
 function pruefView(stand) {
-  const fragen = zeilen.map((z, i) => ({ z, i })).filter((x) => x.z.frage);
-  const offen = zeilen.map((z, i) => ({ z, i })).filter((x) => !x.z.frage && !x.z.bekannt && zuordnung[x.i] === undefined);
-  const sicher = zeilen.filter((z, i) => !z.frage && (z.bekannt || typeof zuordnung[i] === "string"));
-  const ls = istLieferschein();
-  const basis = ls ? "netto" : beleg.basis === "unklar" ? basisWahl : beleg.basis;
-  const pfandSumme = (beleg.pfand || []).reduce((s, p) => s + (Number(p.betrag) || 0), 0);
-  const summe = zeilen.reduce((s, z) => s + (z.gesamt || 0), 0) + pfandSumme;
-  const nFragen = fragen.length + offen.length + (!ls && beleg.basis === "unklar" && !basisWahl ? 1 : 0);
-  const kannUebernehmen = nFragen === 0 && zeilen.some((z, i) => zuordnung[i] !== "weg");
+  const ps = belegPruefStand(beleg, zeilen, zuordnung, basisWahl);
+  const { fragen, offen, sicher, ls, basis, pfandSumme, summe, nFragen, kannUebernehmen } = ps;
   const H = heute(); const datumChips = beleg.datum && beleg.datum !== H && beleg.datum <= H;
   let nr = 0;
   return `<div class="inhalt">
@@ -151,15 +133,15 @@ function pruefView(stand) {
     ${ls ? `<div class="tipp">${esc(t("beleg.lieferschein"))}</div>` : ""}
     ${!ls && beleg.basis === "unklar" ? `<div class="karte ${basisWahl ? "gruenrand" : "hinweisgelb"}"><h2>${esc(t("beleg.frageVon", ++nr, nFragen + (basisWahl ? 1 : 0)))}</h2><b>${esc(t("beleg.basisFrage"))}</b><small class="marke">${esc(t("beleg.basisHinweis"))}</small>
       <div class="chips">${["netto", "brutto"].map((b) => `<button type="button" class="chip ${basisWahl === b ? "an" : ""}" data-a="beleg-basis" data-wert="${b}">${esc(t("gebinde." + b))}</button>`).join("")}</div></div>` : ""}
-    ${sicher.length ? `<div class="karte gruenrand"><h2>${esc(t("beleg.passt"))}</h2><div class="mid">${esc(ls ? t("beleg.zeilen", sicher.length) : t("beleg.passtText", sicher.length, fmtEuro(sicher.reduce((s, z) => s + (z.gesamt || 0), 0), { dezimal: 2 })))}</div>
+    ${sicher.length ? `<div class="karte gruenrand"><h2>${esc(t("beleg.passt"))}</h2><div class="mid">${esc(ls ? t("beleg.zeilen", sicher.length) : t("beleg.passtText", sicher.length, fmtEuro(ps.sicherSumme, { dezimal: 2 })))}</div>
       <button type="button" class="leise" data-a="beleg-alle">${esc(zeigeAlle ? t("beleg.ausblenden") : t("beleg.anzeigen"))}</button>
       ${zeigeAlle ? `<div class="liste eng">${zeilen.map((z, i) => zeileView(stand, z, i)).join("")}</div>` : ""}</div>` : ""}
     ${fragen.map(({ z, i }) => `<div class="karte hinweisgelb"><h2>${esc(t("beleg.frageVon", ++nr, nFragen))}</h2><b>„${esc(z.roh.split("\n")[0].slice(0, 60))}“</b><small class="marke">${esc(z.frage.text)}</small>
       <div class="chips">${z.frage.optionen.map((o, k) => `<button type="button" class="chip klein" data-a="beleg-antwort" data-i="${i}" data-o="${k}">${esc(o.text)}</button>`).join("")}<button type="button" class="chip klein" data-a="beleg-weg" data-i="${i}">${esc(t("beleg.nichtUebernehmen"))}</button></div></div>`).join("")}
     ${offen.map(({ z, i }) => `<div class="karte hinweisgelb"><h2>${esc(t("beleg.frageVon", ++nr, nFragen))}</h2><b>${esc(z.name)}</b><small class="marke">${esc(t("beleg.zuordnen"))} ${z.menge !== null ? `· ${fmtZahl(z.menge, 0)} × ${z.einzelpreis !== null ? fmtEuro(z.einzelpreis, { dezimal: 2 }) : "–"}` : ""}</small>
-      <div class="chips">${[...new Set([z.vorschlag, ...kandidaten(stand, z.name)].filter(Boolean))].map((n) => `<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="${esc(n)}">${esc(artikelText(n))}</button>`).join("")}<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="neu">${esc(t("beleg.neuAnlegen"))}</button><button type="button" class="chip klein" data-a="beleg-weg" data-i="${i}">${esc(t("beleg.nichtUebernehmen"))}</button></div></div>`).join("")}
+      <div class="chips">${[...new Set([z.vorschlag, ...belegKandidaten(stand, z.name)].filter(Boolean))].map((n) => `<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="${esc(n)}">${esc(artikelText(n))}</button>`).join("")}<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="neu">${esc(t("beleg.neuAnlegen"))}</button><button type="button" class="chip klein" data-a="beleg-weg" data-i="${i}">${esc(t("beleg.nichtUebernehmen"))}</button></div></div>`).join("")}
     ${ls ? "" : `<div class="karte"><h2>${esc(t("beleg.pruefung"))}</h2>
-      ${beleg.summeNetto !== null || beleg.summeBrutto !== null ? `<div class="summenzeile"><span>${esc(t("beleg.summeBeleg"))}${basis ? ` (${esc(t("gebinde." + basis))})` : ""}</span><span class="wert">${fmtEuro(basis === "brutto" && beleg.summeBrutto !== null ? beleg.summeBrutto : (beleg.summeNetto ?? beleg.summeBrutto), { dezimal: 2 })}</span></div>
+      ${beleg.summeNetto !== null || beleg.summeBrutto !== null ? `<div class="summenzeile"><span>${esc(t("beleg.summeBeleg"))}${basis ? ` (${esc(t("gebinde." + basis))})` : ""}</span><span class="wert">${fmtEuro(ps.summeBeleg, { dezimal: 2 })}</span></div>
       <div class="summenzeile"><span>${esc(t("beleg.summeErkannt"))}</span><span class="wert ${beleg.summeStimmt ? "gruen" : "rot"}">${fmtEuro(summe, { dezimal: 2 })} · ${esc(beleg.summeStimmt ? t("beleg.stimmt") : t("beleg.stimmtNicht"))}</span></div>
       ${pfandSumme ? `<small class="marke">${esc(t("beleg.pfand", fmtEuro(pfandSumme, { dezimal: 2 })))}</small>` : ""}` : `<div class="hinweis">${esc(t("beleg.keineSumme"))}</div>`}
     </div>`}
@@ -174,13 +156,12 @@ function zeileView(stand, z, i) {
 }
 
 function fertigView(stand) {
-  const einheit = (e) => e === "g" ? "kg" : e === "ml" ? "l" : t("allgemein.stueck");
-  const jeBasis = (p, e) => e === "g" || e === "ml" ? p * 1000 : p;
+  const einheit = (e) => (e === "stk" ? t("allgemein.stueck") : e); // Trennung 2 (17.10.2026): Basis aus preisAnzeige() (js/lieferung.js)
   return `<div class="inhalt">
     <div class="karte gruenrand"><h2>${esc(t("beleg.titel"))}</h2><div class="mid">${esc(t("beleg.fertig", fertig.anzahl, fertig.aenderungen.length))}</div>
       <small class="marke">${esc(fertig.lieferung.lieferant || "")} · ${esc(datumLesbar(fertig.lieferung.datum))}${fertig.lieferung.summeNetto !== null ? ` · ${fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })} ${esc(t("gebinde.netto"))}` : ""}</small></div>
     <div class="karte"><h2>${esc(t("beleg.preiseNeu"))}</h2>
-      ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${x.alt !== null ? `${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
+      ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => { const p = preisAnzeige(x); return `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${p.alt !== null ? `${fmtEuro(p.alt, { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(p.neu, { dezimal: 2 })} / ${esc(einheit(p.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`; }).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
     </div>
     ${haltbarKarte(stand)}
     ${fertig.lieferung.summeNetto ? `<p class="hinweis">${esc(t("beleg.zaehlerRoter", fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })))}</p>` : ""}
@@ -215,18 +196,8 @@ export function belegAktion(name, el, stand, wurzel) {
   if (name === "beleg-zerlegen") {
     if (!text.trim()) return false;
     beleg = belegZerlegen(text, { bekannt: (stand.artikel || []).map((a) => a.name) });
-    zeilen = beleg.zeilen.map((z) => ({ ...z })); zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null;
+    zeilen = belegZeilenVorbereiten(stand, beleg); zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; // Trennung 2 (17.10.2026): Doppel-Treffer und Preissprung in js/lieferung.js
     if (!zeilen.length) { beleg = null; return { meldung: t("beleg.nichtsErkannt") }; }
-    // Trifft ein Artikel mehrere Zeilen, ist die Zuordnung unsicher: alle diese Zeilen werden gefragt (Nachtest Etappe 5, Punkt 1)
-    const treffer = {}; for (const z of zeilen) if (z.bekannt) treffer[z.bekannt] = (treffer[z.bekannt] || 0) + 1;
-    for (const z of zeilen) if (z.bekannt && treffer[z.bekannt] > 1) { z.vorschlag = z.bekannt; z.bekannt = null; }
-    // Preissprung über 40 %: nachfragen statt durchwinken (Nachtest Etappe 5, Punkt 8)
-    const basis = beleg.basis === "unklar" ? "netto" : beleg.basis;
-    for (const z of zeilen) {
-      if (!z.bekannt || z.frage) continue;
-      const sp = preisSprung(stand, z, basis);
-      if (sp && Math.abs(sp.prozent) > 0.4) z.frage = { art: "preis", text: t("beleg.preisSprungText", z.bekannt, fmtEuro(sp.alt * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtEuro(sp.neu * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtZahl(sp.prozent * 100, 0)), optionen: [{ text: t("beleg.uebernehmen"), wert: {} }] };
-    }
     return true;
   }
   if (name === "beleg-zurueck") { beleg = null; zeilen = []; return true; }
@@ -276,8 +247,7 @@ export function belegAktion(name, el, stand, wurzel) {
       if (zuordnung[i] === "weg" || z.frage) { weggelassen += 1; return; }
       let name = z.bekannt; if (typeof zuordnung[i] === "string" && zuordnung[i] !== "neu") name = zuordnung[i];
       if (zuordnung[i] === "neu" && !name) {
-        const kat = PRODUKT_INDEX[z.name]; const einheit = z.inhalt?.einheit === "kg" || z.inhalt?.einheit === "g" ? "kg" : z.inhalt?.einheit === "l" || z.inhalt?.einheit === "ml" || z.inhalt?.einheit === "cl" ? "l" : "stk";
-        name = artikelAusBeleg(stand, { name: z.name, gruppe: kat?.g || "gewuerz", einheit, gebindeArt: gebindeArtApp(z.gebinde) });
+        name = artikelAusBeleg(stand, neuArtikelAngaben(z)); // Trennung 2 (17.10.2026): Angaben aus js/lieferung.js
       }
       genommen.push({ ...z, bekannt: name || null });
     });

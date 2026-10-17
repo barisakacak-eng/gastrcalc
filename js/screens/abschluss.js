@@ -1,8 +1,8 @@
 // Etappe 5: „Tag abschließen" – drei Haken (Umsatz, Müll, Kühlung), dann die Bilanz des Tages. Das Abendritual.
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute as kalendertag, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); Kühlung bleibt am Kalendertag
-import { umsatzEintrag, schwundAuswertung, kuehlStatus, tagPlus, wochentag } from "../engine.js";
-import { zaehler, tagAbschliessen, abschlussVon } from "../zaehler.js";
+import { tagAbschliessen } from "../zaehler.js";
+import { abschlussHaken, tagesBilanz } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026)
 import { nav } from "./nav.js";
 import { zeitKurz } from "./tag.js";
 
@@ -14,7 +14,8 @@ export function abschlussZuruecksetzen() { bilanz = null; }
 export function abschlussView(stand) {
   const H = heute();
   if (bilanz) return bilanzView(stand, H);
-  const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H }); const ks = kuehlStatus(stand); const ab = abschlussVon(stand, H);
+  const hk = abschlussHaken(stand, H); const u = hk.umsatz; const ab = hk.schon; // Trennung 2 (17.10.2026): Haken aus js/laden_zahlen.js
+  const sw = { anzahl: hk.muell.anzahl, muellwert: hk.muell.wert, ohneWert: hk.muell.ohneWert }; const ks = { eingerichtet: hk.kuehl.eingerichtet, heuteGemessen: hk.kuehl.gemessen, stellen: hk.kuehl.stellen };
   const hak = (ok, n) => `<span class="hak ${ok ? "" : "offen"}">${ok ? "✓" : n}</span>`;
   return `
     <div class="kopfband"><h1>${esc(t("abschluss.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
@@ -34,17 +35,14 @@ export function abschlussView(stand) {
 }
 
 function bilanzView(stand, H) {
-  const z = zaehler(stand, { datum: H });
-  const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H }); const ks = kuehlStatus(stand);
-  const vor = z.standGestern; const nach = z.stand; const besser = nach - vor;
-  const netto = u ? z.nettoVon(u.umsatz) : 0; const bleibt = u ? z.bleibtVon(u.umsatz) : 0;
-  const rundgaenge = (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === kalendertag()).length; // Kühlung: Kalendertag
-  // Vergleich mit demselben Wochentag der Vorwoche
-  const V = tagPlus(H, -7); const uv = umsatzEintrag(stand, V); const swv = schwundAuswertung(stand, { von: V, bis: V });
-  const tag = t("abschluss.tage." + wochentag(H));
-  const vergleich = u && uv ? (Math.abs(u.umsatz - uv.umsatz) < 1 ? t("abschluss.gleich", tag) : u.umsatz > uv.umsatz ? t("abschluss.besser", tag, fmtEuro(u.umsatz - uv.umsatz)) : t("abschluss.schlechter", tag, fmtEuro(uv.umsatz - u.umsatz))) : t("abschluss.keinVergleich");
-  const tonne = u && uv && (sw.anzahl || swv.anzahl) ? (Math.abs(sw.muellwert - swv.muellwert) < 0.5 ? t("abschluss.tonneGleich") : sw.muellwert > swv.muellwert ? t("abschluss.tonneMehr", fmtEuro(sw.muellwert - swv.muellwert, { dezimal: 2 })) : t("abschluss.tonneWeniger", fmtEuro(swv.muellwert - sw.muellwert, { dezimal: 2 }))) : "";
-  const restTage = z.nullTag && !z.imPlus ? Math.round(z.tage.filter((x) => x.datum > H && x.datum <= z.nullTag).reduce((s, x) => s + x.gewicht, 0)) : null;
+  const b = tagesBilanz(stand, H, kalendertag()); // Trennung 2 (17.10.2026): alle Zahlen aus js/laden_zahlen.js, hier nur Texte
+  const { z, vor, nach, besser, netto, bleibt, rundgaenge, restTage } = b; const u = b.umsatz;
+  const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert }; const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen };
+  const tag = t("abschluss.tage." + b.vergleich.wochentag);
+  const v = b.vergleich;
+  const vergleich = v.art === "kein" ? t("abschluss.keinVergleich") : v.art === "gleich" ? t("abschluss.gleich", tag) : v.art === "besser" ? t("abschluss.besser", tag, fmtEuro(v.differenz)) : t("abschluss.schlechter", tag, fmtEuro(v.differenz));
+  const tn = b.tonne;
+  const tonne = !tn ? "" : tn.art === "gleich" ? t("abschluss.tonneGleich") : tn.art === "mehr" ? t("abschluss.tonneMehr", fmtEuro(tn.differenz, { dezimal: 2 })) : t("abschluss.tonneWeniger", fmtEuro(tn.differenz, { dezimal: 2 }));
   return `
     <div class="kopfband"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
     <div class="inhalt">

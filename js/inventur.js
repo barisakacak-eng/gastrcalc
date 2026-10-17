@@ -15,6 +15,8 @@ import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus, istRichtpreis } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
+import { artikelText, sprache } from "./i18n.js"; // Trennung 2 (17.10.2026): Reihenfolge nach dem angezeigten Namen
+import { normalisieren, suchRang } from "./data/suchnamen.js";
 
 export const LAGERORTE = ["kuehlhaus", "tiefkuehler", "trockenlager", "verpackung", "reinigung"];
 const KUEHL_GRUPPEN = new Set(["fleisch", "fisch", "kaese", "gemuese"]);
@@ -229,4 +231,34 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
     richtpreis: [...new Set([...anfang.richtpreis, ...ende.richtpreis])],
     verbrauchNegativ: verbrauch < 0, betriebsmittel,
   };
+}
+
+// ---------- Trennung 2 (17.10.2026): Zahlen für die Inventur-Bildschirme (vorher in js/screens/inventur.js) ----------
+// Liste A1: Waren je Lagerort (nach dem angezeigten Namen sortiert) mit Summe je Ort; fortschritt in Prozent (gezählt/alle).
+// Verhaltensgleich mit dem Bildschirm vorher: auch leere Lagerorte bleiben in der Liste (dort hatte ein Zeilenkommentar den Filter
+// „.filter((g) => g.zeilen.length)“ verschluckt). Ob leere Orte weg sollen, entscheidet Baris – dann eine Zeile hier.
+export function inventurListe(stand, inv) {
+  const { liste, ausgeblendet } = artikelFuerInventur(stand, inv);
+  const w = inventurWert(stand, inv);
+  const gruppen = LAGERORTE.map((o) => ({ o, zeilen: liste.filter((z) => z.lagerort === o).sort((a, b) => artikelText(a.name).localeCompare(artikelText(b.name), sprache())) }))
+    .filter((g) => g.zeilen.length) // leere Lagerorte nicht zeigen (Filter war am 17.10. durch einen Zeilenkommentar verschluckt)
+    .map((g) => ({ ...g, summe: g.zeilen.reduce((x, z) => x + (z.wert || 0), 0) }));
+  return { liste, ausgeblendet, w, gruppen, fortschritt: w.anzahl ? Math.round(w.gezaehlt / w.anzahl * 100) : 0 };
+}
+// Lagerort einer Ware nach Namen (eigene Ware oder Katalog).
+export const lagerortVonName = (stand, n) => { const a = (stand.artikel || []).find((x) => x.name === n); return lagerortFuer(a || { name: n, gruppe: PRODUKT_INDEX[n]?.g }); };
+// „Ware dazu“: Treffer aus eigenen (nicht selbst gemachten) Waren und Katalog, die noch nicht in der Liste stehen – höchstens 8, mit Lagerort.
+export function inventurSuche(stand, liste, suche) {
+  const q = normalisieren(suche); if (!q) return null;
+  const da = new Set(liste.map((z) => z.name));
+  const namen = [...new Set([...(stand.artikel || []).filter((a) => a.herkunft !== "selbst").map((a) => a.name), ...Object.keys(PRODUKT_INDEX)])].filter((n) => !da.has(n));
+  return namen.filter((n) => suchRang(n, q) >= 0).sort((a, b) => suchRang(a, q) - suchRang(b, q) || a.localeCompare(b, "de")).slice(0, 8).map((name) => ({ name, lagerort: lagerortVonName(stand, name) }));
+}
+// Karte A2: Position der Ware (im Lagerort und gesamt), Fortschritt und Wert der Zeile (null = Preis fehlt). null = Ware nicht in der Liste.
+export function inventurKarte(stand, inv, name) {
+  const { liste } = artikelFuerInventur(stand, inv);
+  const i = liste.findIndex((z) => z.name === name); if (i < 0) return null;
+  const z = liste[i]; const gruppe = liste.filter((x) => x.lagerort === z.lagerort); const w = inventurWert(stand, inv);
+  return { z, index: i + 1, gesamt: liste.length, imOrt: gruppe.indexOf(z) + 1, ortGesamt: gruppe.length,
+    fortschritt: w.anzahl ? Math.round(w.gezaehlt / w.anzahl * 100) : 0, wert: z.preis === null ? null : (z.menge || 0) * z.preis };
 }

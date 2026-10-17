@@ -2,14 +2,12 @@
 // A1 = lange Liste nach Lagerort (Hauptbildschirm), Antippen von Foto/Name öffnet A2 = eine große Karte je Ware mit ＋/− und ¼ ½ ¾,
 // „Weiter" zur nächsten Ware. Nach dem Abschluss das Ergebnis A–E: jede Zahl mit „Was heißt das?" in einfachen Worten.
 // Rechnen tut nur js/inventur.js; hier stehen Aufbau, Texte und data-Attribute.
-import { t, einheitLabel, artikelText, sprache } from "../i18n.js";
+import { t, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js";
-import { PRODUKT_INDEX } from "../data/katalog.js";
-import { normalisieren, suchRang } from "../data/suchnamen.js";
-import { gebindeKette } from "../engine.js";
 import { LAGERORTE, inventurOffen, inventurenFertig, inventurStarten, artikelFuerInventur, inventurWert, inventurVergleich, inventurVorher,
-  mengeSetzen, mengeSchritt, anbruchSetzen, ganzTeil, ausblenden, einblenden, hinzufuegen, inventurAbschliessen, inventurVerwerfen, lagerortFuer, inventurOhneWaren } from "../inventur.js";
+  mengeSetzen, mengeSchritt, anbruchSetzen, ganzTeil, ausblenden, einblenden, hinzufuegen, inventurAbschliessen, inventurVerwerfen, inventurOhneWaren, inventurListe, inventurSuche, inventurKarte } from "../inventur.js"; // Trennung 2 (17.10.2026): inventurListe/Suche/Karte
 import { wareBild } from "./muell.js";
+import { zahlText, gebindeZeile, gebindeName, TEIL } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
 import { datumLesbar, monatName } from "./tag.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
@@ -30,21 +28,7 @@ export function inventurZurueck(stand) {
 }
 
 const ORT_SYM = { kuehlhaus: "thermometer", tiefkuehler: "snowflake", trockenlager: "store", verpackung: "package", reinigung: "spray-can" };
-const TEIL = { 0.25: "¼", 0.5: "½", 0.75: "¾" };
-// 1,5 → „1 ½", 0,75 → „¾", null → „–"
-export function zahlText(v) {
-  if (v === null || v === undefined) return "–";
-  const { ganz, teil } = ganzTeil(v);
-  if (!teil) return String(ganz);
-  return ganz ? `${ganz} ${TEIL[teil]}` : TEIL[teil];
-}
-const gebindeName = (z) => t("gebinde.arten." + (z.gebinde || "packung"));
-function gebindeZeile(z) {
-  const a = z.artikel; const art = gebindeName(z);
-  if (!a || !(a.packung?.menge > 0)) return art;
-  const k = gebindeKette(a); const n = (x) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(x);
-  return k[1] ? t("gebinde.satz", art, k[1].anzahl, t("gebinde.arten." + k[1].art), n(k[1].inhalt), einheitLabel(k[0].einheit)) : t("gebinde.satz", art, null, null, n(k[0].inhalt), einheitLabel(k[0].einheit));
-}
+// Trennung 2 (17.10.2026): zahlText, gebindeZeile, gebindeName und TEIL wohnen in js/anzeige_text.js
 const bild = (z, gross = false) => { const h = wareBild({ name: z.name, gruppe: z.gruppe });
   return gross ? h.replace('class="gerichtbild mini', 'class="gerichtbild inv-foto') : h.replace('class="gerichtbild mini', 'class="gerichtbild mini inv-daumen'); };
 const euro = (v) => fmtEuro(v, { dezimal: v !== null && v !== 0 && Math.abs(v) < 10 ? 2 : 0 }); // kleine Beträge mit Cent, sonst ganze Euro
@@ -92,11 +76,8 @@ function startView(stand, offen) {
 }
 
 function listeView(stand, inv) {
-  const { liste, ausgeblendet } = artikelFuerInventur(stand, inv);
-  const w = inventurWert(stand, inv);
+  const { liste, ausgeblendet, w, gruppen, fortschritt } = inventurListe(stand, inv); // Trennung 2 (17.10.2026): Gruppen, Summen, Fortschritt aus js/inventur.js
   const titel = t("inventur.titelMonat", monatName(inv.begonnen.slice(0, 10)));
-  const fortschritt = w.anzahl ? Math.round(w.gezaehlt / w.anzahl * 100) : 0;
-  const gruppen = LAGERORTE.map((o) => ({ o, zeilen: liste.filter((z) => z.lagerort === o).sort((a, b) => artikelText(a.name).localeCompare(artikelText(b.name), sprache())) })) // Paket 6 (17.10.2026): Reihenfolge nach dem angezeigten Namen.filter((g) => g.zeilen.length);
   const posten = (z) => {
     const { teil } = ganzTeil(z.menge);
     return `<div class="inv-posten ${z.menge === null ? "offen" : ""}" data-name="${esc(z.name)}">
@@ -113,7 +94,7 @@ function listeView(stand, inv) {
       <div class="karte inv-zusammen"><div><b>${esc(t("inventur.gezaehlt", w.gezaehlt, w.anzahl))}</b><div class="inv-balken"><i style="width:${fortschritt}%"></i></div></div>
         <div class="inv-summe"><small>${esc(t("inventur.wareBisher"))}</small><b>${esc(ca(w) + euro(w.summe))}</b></div></div>
       ${!liste.length ? leerKarte() : ""}
-      ${gruppen.map((g) => { const s = g.zeilen.reduce((x, z) => x + (z.wert || 0), 0);
+      ${gruppen.map((g) => { const s = g.summe;
         return `<section class="inv-gruppe"><h2 class="inv-gruppenkopf ort-${g.o}"><span class="inv-gsym">${sym(ORT_SYM[g.o])}</span><span>${esc(t("inventur.lagerorte." + g.o))}</span><small>${esc(t("inventur.waren", g.zeilen.length))} · ${esc(euro(s))}</small></h2>
           <div class="inv-liste">${g.zeilen.map(posten).join("")}</div></section>`; }).join("")}
       <div class="karte inv-dazu"><h2>${esc(t("inventur.dazu"))}</h2>
@@ -134,26 +115,19 @@ const leerKarte = () => `<div class="karte leer"><div>${esc(t("inventur.leer"))}
     <button type="button" class="knopf zweit" data-a="nav" data-wert="beleg">${esc(t("inventur.belegeKnopf"))}</button></div>`;
 
 function sucheTreffer(stand, liste) {
-  const q = normalisieren(suche); if (!q) return "";
-  const da = new Set(liste.map((z) => z.name));
-  const namen = [...new Set([...(stand.artikel || []).filter((a) => a.herkunft !== "selbst").map((a) => a.name), ...Object.keys(PRODUKT_INDEX)])].filter((n) => !da.has(n));
-  const treffer = namen.filter((n) => suchRang(n, q) >= 0).sort((a, b) => suchRang(a, q) - suchRang(b, q) || a.localeCompare(b, "de")).slice(0, 8);
+  const treffer = inventurSuche(stand, liste, suche); if (!treffer) return ""; // Trennung 2 (17.10.2026)
   if (!treffer.length) return `<p class="hinweis">${esc(t("inventur.nichtsGefunden"))}</p>`;
-  return `<div class="inv-treffer">${treffer.map((n) => `<button type="button" class="zeileknopf" data-a="inv-dazu" data-name="${esc(n)}"><span><b>${esc(artikelText(n))}</b><small>${esc(t("inventur.lagerorte." + lagerortVon(stand, n)))}</small></span><span class="pfeil">${sym("plus")}</span></button>`).join("")}</div>`;
+  return `<div class="inv-treffer">${treffer.map(({ name: n, lagerort }) => `<button type="button" class="zeileknopf" data-a="inv-dazu" data-name="${esc(n)}"><span><b>${esc(artikelText(n))}</b><small>${esc(t("inventur.lagerorte." + lagerort))}</small></span><span class="pfeil">${sym("plus")}</span></button>`).join("")}</div>`;
 }
-const lagerortVon = (stand, n) => { const a = (stand.artikel || []).find((x) => x.name === n); return lagerortFuer(a || { name: n, gruppe: PRODUKT_INDEX[n]?.g }); };
-
 function karteView(stand, inv) {
-  const { liste } = artikelFuerInventur(stand, inv);
-  const i = liste.findIndex((z) => z.name === karteName);
-  if (i < 0) { modus = "liste"; return listeView(stand, inv); }
-  const z = liste[i]; const gruppe = liste.filter((x) => x.lagerort === z.lagerort); const k = gruppe.indexOf(z) + 1;
-  const { ganz, teil } = ganzTeil(z.menge); const w = inventurWert(stand, inv);
+  const pos = inventurKarte(stand, inv, karteName); // Trennung 2 (17.10.2026): Position, Fortschritt, Wert aus js/inventur.js
+  if (!pos) { modus = "liste"; return listeView(stand, inv); }
+  const { z } = pos; const { ganz, teil } = ganzTeil(z.menge);
   return `<div class="kopfband inv-kopf"><div><h1>${esc(t("inventur.titelMonat", monatName(inv.begonnen.slice(0, 10))))}</h1></div>
       <button type="button" class="knopf zweit inv-pause" data-a="inv-liste">${esc(t("inventur.zurListe"))}</button></div>
     <div class="inhalt inv-karteseite">
-      <div class="inv-balken gross" aria-hidden="true"><i style="width:${w.anzahl ? Math.round(w.gezaehlt / w.anzahl * 100) : 0}%"></i></div>
-      <div class="inv-ort"><span><b>${esc(t("inventur.vonIn", t("inventur.lagerorte." + z.lagerort), k, gruppe.length))}</b></span><span>${esc(t("inventur.gesamt", i + 1, liste.length))}</span></div>
+      <div class="inv-balken gross" aria-hidden="true"><i style="width:${pos.fortschritt}%"></i></div>
+      <div class="inv-ort"><span><b>${esc(t("inventur.vonIn", t("inventur.lagerorte." + z.lagerort), pos.imOrt, pos.ortGesamt))}</b></span><span>${esc(t("inventur.gesamt", pos.index, pos.gesamt))}</span></div>
       <div class="inv-karte">
         ${bild(z, true)}
         <div class="inv-koerper">
@@ -165,7 +139,7 @@ function karteView(stand, inv) {
             <button type="button" class="plus" data-a="inv-k-d" data-d="1" aria-label="${esc(t("inventur.mehr"))}">+</button></div>
           <div class="inv-teilwahl" role="group" aria-label="${esc(t("inventur.angebrochen"))}">${[0, 0.25, 0.5, 0.75].map((x) => { const an = z.menge !== null && Math.abs(teil - x) < 0.01; return `<button type="button" class="${an ? "an" : ""}" aria-pressed="${an}" data-a="inv-k-t" data-t="${x}">${x === 0 ? esc(t("inventur.voll")) : "+ " + TEIL[x]}</button>`; }).join("")}</div>
           <div class="inv-teilhinweis">${esc(t("inventur.teilHinweis"))}</div>
-          <div class="inv-wertzeile"><span>${esc(t("inventur.wert"))}</span>${z.preis === null ? `<b class="fehlt">${esc(t("inventur.preisFehlt"))}</b>` : `<b>${z.richtpreis ? "≈ " : ""}${esc(fmtEuro((z.menge || 0) * z.preis, { dezimal: 2 }))}</b>`}</div>
+          <div class="inv-wertzeile"><span>${esc(t("inventur.wert"))}</span>${z.preis === null ? `<b class="fehlt">${esc(t("inventur.preisFehlt"))}</b>` : `<b>${z.richtpreis ? "≈ " : ""}${esc(fmtEuro(pos.wert, { dezimal: 2 }))}</b>`}</div>
         </div>
       </div>
       <button type="button" class="leise" data-a="inv-ausblenden">${esc(t("inventur.ausblenden"))}</button>

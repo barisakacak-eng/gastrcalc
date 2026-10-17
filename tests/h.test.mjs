@@ -112,7 +112,7 @@ test("Kühlalarm sofort im offenen Rundgang; Rundgang schließt nach der letzten
   const ks = E.kuehlStatus(s); assert.equal(ks.letzteAbweichung, 1); assert.equal(ks.abweichungImRundgang, 1);
   const { ladenPunkt } = await import("../js/offen.js"); /* Trennung (17.10.2026) */ assert.equal(ladenPunkt(s), "kuehl");
   const { jetztDran } = await import("../js/offen.js"); assert.equal(jetztDran(s, null)?.ton, "rot");
-  const { heuteKachelWerte } = await import("../js/screens/home.js"); assert.equal(heuteKachelWerte(s, ks, E.heute ? E.heute() : new Date().toISOString().slice(0, 10)).kuehl.alarm, true);
+  const { heuteKachelZahlen } = await import("../js/laden_zahlen.js"); assert.equal(heuteKachelZahlen(s, ks, E.heute ? E.heute() : new Date().toISOString().slice(0, 10)).kuehl.alarm, true); // Trennung 2 (17.10.2026): Rechnung im Rechenwerk
   assert.equal(E.rundgangVollstaendig(s, r), false);
   E.stationEintragen(r, s.kuehlstellen[1], { wert: -20 });
   assert.equal(E.rundgangVollstaendig(s, r), true);

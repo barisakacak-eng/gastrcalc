@@ -9,7 +9,7 @@ import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
 import { zwischenrezept } from "../data/zwischen.js";
 import { rezeptStempel, quelleVon, waageFragen, schnellwahl, familieAnpassen, geldSatz } from "../rezept_quelle.js";
-import { kalkulation, garverlustAnteil, preisJeBasis, gebindeKette, gebindePreise, istRichtpreis } from "../engine.js";
+import { kalkulation, garverlustAnteil, preisJeBasis, gebindePreise, istRichtpreis } from "../engine.js";
 // Trennung (17.10.2026): alle Schreibvorgänge dieser Schritte laufen über js/karte_daten.js
 import { gerichtAusVorlage, gerichtAusVorlageAnlegen, gerichtEigenAnlegen, gerichtEntfernen, gerichtNameSetzen, gerichtKlasseSetzen, gerichtZeitSchritt, rezeptAngepasst,
   zutatMengeSetzen, zutatEntfernen, zutatEinheitSetzen, zutatAusKatalog, zutatFrei, verkaufspreisSetzen, mengeTagSetzen, bestellungenTagSetzen, zielgewinnSetzen,
@@ -219,14 +219,8 @@ const GEBINDE_KURZ = ["karton", "kiste", "beutel", "packung", "lose"]; // die f�
 let zwischenOffen = new Set(); // Artikel, bei denen die Zwischengröße eingeblendet ist (flüchtig)
 let mehrArten = new Set();     // Artikel, bei denen alle Gebindearten gezeigt werden (flüchtig)
 let rpQuelleOffen = false;     // Richtpreise (17.10.2026): Satz zu Quelle und Methode aufgeklappt (flüchtig)
-const zahlKurz = (n) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: 2 }).format(n);
-
-export function gebindeSatz(a) {
-  const k = gebindeKette(a); const art = t("gebinde.arten." + (k[0].art || "packung"));
-  const einheit = einheitLabel(k[0].einheit);
-  if (!k[0].inhalt) return art;
-  return k[1] ? t("gebinde.satz", art, k[1].anzahl, t("gebinde.arten." + k[1].art), zahlKurz(k[1].inhalt), einheit) : t("gebinde.satz", art, null, null, zahlKurz(k[0].inhalt), einheit);
-}
+// Trennung 2 (17.10.2026): gebindeSatz wohnt in js/anzeige_text.js
+import { gebindeSatz } from "../anzeige_text.js";
 
 // Selbst gemachtes Teil (Punkt 2): kein Einkaufspreis, sondern Rezept und errechneter Preis. Wechsel auf „kaufen wir fertig" mit einem Tipp.
 function selbstZeile(a) {
