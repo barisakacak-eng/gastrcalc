@@ -58,6 +58,7 @@ export function leererBetrieb() {
     rundgaenge: [],             // {id, datum, von, gestartet, abgeschlossen, nacherfasst, quelle, messungen:[…]} – bis zum Abschluss änderbar, danach nur anhängen
     messungen: [],              // abgeschlossene Messungen: {id, lfd, rundgang, stelle, datum, zeit, wert|null, grund, min, max, abweichung, massnahmen, notiz, nachkontrolle, von, erfasst, nacherfasst, quelle}
     putzplan: null, putzlog: [], belehrungen: [], // W2-D: Putzplan, Putz-Nachweis und Belehrungen gehören zum Laden (Schema 6)
+    verkaeufe: [],              // E7 (17.10.2026): nur anhängen: {id, datum (Geschäftstag), gericht|null, name, text?, plu?, menge, umsatzBrutto|null, herkunft, importId|null, erfasst, storniert} (js/verkauf.js)
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
 }
@@ -250,7 +251,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   if (!FORMATE.some((f) => f.id === s.betrieb.format)) s.betrieb.format = null; // unbekannte Kennungen aus fremden Dateien
   s.betrieb.tageProWoche = Math.min(7, Math.max(1, Number(s.betrieb.tageProWoche) || 6));
   s.betrieb.monate = Math.min(12, Math.max(1, Number(s.betrieb.monate) || 12));
-  s.gerichte = mitId(s.gerichte).map((g) => ({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }));
+  s.gerichte = mitId(s.gerichte).map((g) => gerichtKasse({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }));
   s.artikel = s.artikel.filter((a) => istObjekt(a) && typeof a.name === "string").map((a) => ({ ...a,
     gebinde: istObjekt(a.gebinde) && GEBINDE_ARTEN.includes(a.gebinde.art) ? { art: a.gebinde.art, zwischen: istObjekt(a.gebinde.zwischen) && Number(a.gebinde.zwischen.anzahl) > 0 ? { art: String(a.gebinde.zwischen.art || "beutel"), anzahl: Number(a.gebinde.zwischen.anzahl) } : null } : { art: "packung", zwischen: null },
     preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
@@ -262,6 +263,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   // Läden, die schon vor Etappe 6a mitten in der Einrichtung waren, bleiben auf dem genauen Weg
   if (!["schnell", "genau"].includes(s.weg)) s.weg = alt || s.schritt > 0 || s.phase === "app" ? "genau" : "schnell";
   s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
+  s.verkaeufe = verkaeufeSauber(s.verkaeufe); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
     .map((n) => ({ id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
@@ -300,6 +302,23 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.schritt = Math.max(0, Number(s.schritt) || 0);
   delete s.schema; // gehört an die Wurzel
   return s;
+}
+
+// E7 (17.10.2026): Kassen-Artikelnummer (plu) und gelernte Kassentexte (kassenNamen) je Gericht – nur Text, sonst weg
+function gerichtKasse(g) {
+  if (typeof g.plu === "string" && g.plu.trim()) g.plu = g.plu.trim().slice(0, 50); else delete g.plu;
+  if (Array.isArray(g.kassenNamen)) { const n = [...new Set(g.kassenNamen.filter((x) => typeof x === "string").map((x) => x.trim().slice(0, 120)).filter(Boolean))].slice(0, 40); if (n.length) g.kassenNamen = n; else delete g.kassenNamen; }
+  else delete g.kassenNamen;
+  return g;
+}
+// E7 (17.10.2026): Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
+const VERKAUF_HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
+function verkaeufeSauber(liste) {
+  return mitId(Array.isArray(liste) ? liste : []).filter((v) => typeof v.datum === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v.datum) && Number.isFinite(Number(v.menge)) && v.menge !== null && v.menge !== "")
+    .map((v) => ({ ...v, menge: Number(v.menge), gericht: typeof v.gericht === "string" && v.gericht ? v.gericht : null, name: String(v.name ?? "").slice(0, 120),
+      umsatzBrutto: typeof v.umsatzBrutto === "number" && Number.isFinite(v.umsatzBrutto) ? v.umsatzBrutto : null, herkunft: VERKAUF_HERKUNFT.includes(v.herkunft) ? v.herkunft : "hand",
+      importId: typeof v.importId === "string" && v.importId ? v.importId : null, erfasst: typeof v.erfasst === "string" ? v.erfasst : v.datum + "T00:00:00.000Z", storniert: !!v.storniert,
+      ...(typeof v.plu === "string" && v.plu ? { plu: v.plu.slice(0, 50) } : { plu: null }), ...(typeof v.text === "string" ? { text: v.text.slice(0, 120) } : {}) }));
 }
 
 // Wurzel aus dem Speicher oder aus einer Sicherung: Schema 1 wird gehoben, 2 und 3 geprüft.
@@ -355,7 +374,7 @@ function stempeln(wurzel) {
 //  4. im Leerlauf und beim Verlassen der App wird jedes Teil ganz verglichen – das fängt auch tiefe Änderungen an alten Einträgen.
 // Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über die Felder aus 2. geändert
 // (oder durch ein neues Objekt ersetzt) – dann ist die Änderung sofort gespeichert, sonst erst bei 4.
-export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads"]; // W2-D: belehrungen als Journal (Schema 6)
+export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads", "verkaeufe"]; // W2-D: belehrungen als Journal (Schema 6); E7 (17.10.2026): verkaeufe
 const JOURNAL_SET = new Set(JOURNALE);
 // Stammdaten, die groß werden (Waren mit Preisverlauf, Gerichte mit Zutaten): je Laden ein eigenes Teil "ladenId|artikel|alle",
 // bei jedem Speichern ganz verglichen (Text gegen Text) und nur geschrieben, wenn anders. So bleibt der Kopf klein.
@@ -792,7 +811,7 @@ export const _speicherInnen = () => ({ teile: teileH.size, gueltig: bekanntGuelt
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
 // Beispiel-Laden (17.10.2026): zählt nicht – erfundene Einträge machen keine Sicherung fällig.
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length, 0);
+  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length + (b.verkaeufe || []).length, 0); // E7 (17.10.2026): Verkäufe zählen mit
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
@@ -1041,7 +1060,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   }
   const sortErfasst = (x, y) => String(x.erfasst || x.datum || "").localeCompare(String(y.erfasst || y.datum || ""));
   const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
-  for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen"])
+  for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7 (17.10.2026): verkaeufe
     basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
   const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen), ["storniert"], opt("rundgaenge"));

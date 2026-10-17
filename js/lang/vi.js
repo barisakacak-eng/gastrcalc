@@ -1140,4 +1140,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Bản sao lưu", titelEinlesen: "Mật khẩu bản sao lưu", feld: "Mật khẩu", hinweis: "Có mật khẩu thì file được mã hóa. Không có mật khẩu thì ai cũng mở được.", teilen: "Chia sẻ bản sao lưu", ohne: "Chia sẻ không mật khẩu", einlesen: "Đọc vào", zuKurz: "Ít nhất 6 ký tự", falsch: "Sai mật khẩu", zeigen: "Hiện mật khẩu", verbergen: "Ẩn mật khẩu", mit: "có mật khẩu", ohneKurz: "không mật khẩu" },
   beispiel: { anlegen: "Tạo quán mẫu", satz: "Một quán döner đã điền đầy đủ để dùng thử. Mọi con số đều là ví dụ. Quán của bạn không bị thay đổi.", name: "Döner mẫu", loeschen: "Xóa quán mẫu", chip: "Ví dụ – mọi con số đều bịa", export: "VÍ DỤ – không phải dữ liệu thật" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Bán theo món", unter: "Bạn đã bán gì – từ máy tính tiền hoặc nhập tay.", entwurf: "Bản nháp: chưa được duyệt, chỉ để xem.", einstieg: "Bán theo món",
+    einstiegUnter: "Đọc máy tính tiền, món ế, hao hụt", zeitraumInventur: "giữa hai lần kiểm kho gần nhất", keine: "Chưa có lượt bán nào trong thời gian này.", ohneGericht: "Không có món",
+    rangTitel: "Bán chạy nhất", ohneInventur: "Để so với kho cần hai lần kiểm kho.", inventurKnopf: "Đến kiểm kho", abgleichTitel: "Hàng: dự kiến và đã dùng",
+    abgleichText: "Dự kiến: công thức nhân số phần đã bán, cộng hàng bỏ và bữa ăn nhân viên đã ghi. Đã dùng: kiểm kho trước cộng hàng mua trừ kiểm kho hiện tại.", schwundTitel: "Mất nhiều hơn dự kiến (nghi hao hụt)", schwundText: "Lý do có thể: hàng bỏ không ghi, phần ăn quá lớn, đồ ăn không có hóa đơn, đếm nhầm.", einkaufFehltTitel: "Có lẽ thiếu hóa đơn mua",
+    einkaufFehltText: "Hàng này không có hóa đơn trong thời gian này. Thêm hóa đơn thì so sánh sẽ đúng.", wenigerTitel: "Mất ít hơn dự kiến", wenigerText: "Có thể công thức ghi quá nhiều hoặc khi đếm có gì sai.", ladenhueterTitel: "Món ế",
+    ladenhueterText: "Những món gần như không bán được. Bỏ khỏi thực đơn hay bán theo cách khác?", keinVerkauf: "không bán được", totTitel: "Hàng mà không món đã bán nào cần", totText: "Hàng này nằm trong kho và giữ tiền, nhưng không món nào đã bán cần đến nó.",
+    totSumme: "Tiền bị giữ", ehrlichTitel: "Còn thiếu gì", allesDa: "Đủ cả: công thức, giá và ghép món.", importeTitel: "Đã đọc",
+    zuruecknehmen: "Hoàn tác", zurueckFrage: "Hoàn tác tệp này? Các lượt bán trong đó sẽ không còn được tính.", zurueckGemacht: "Đã hoàn tác", stueck: (m) => `${m} cái`,
+    zeitraum: (von, bis) => `Thời gian: ${von} đến ${bis}`, summe: (n) => `Tổng (${n} ngày)`, abgleichZeile: (ist, soll, diff) => `đã dùng ${ist}, dự kiến ${soll}, chênh lệch ${diff}`, unklar: (n) => `${n} mặt hàng không so được: thiếu quy cách hoặc đơn vị.`,
+    nichtGezaehlt: (n) => `${n} mặt hàng không được đếm ở cả hai lần kiểm kho.`, eimer: (kg) => `Thêm ${kg} kg cân ở thùng rác – không gán được cho mặt hàng nào.`, alleOk: (n) => `Mặt hàng khớp (đếm theo phần tư cho phép chút sai lệch)`, wenig: (m) => `chỉ ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % số lượng không có món (${texte}). Ghép trước, rồi kết quả mới đúng.`, ohneRezept: (namen) => `Không có công thức, không tính vào mức dùng dự kiến: ${namen}`, probleme: (namen) => `Không tính được theo công thức: ${namen}`, ohnePreis: (namen) => `Không có giá mua: ${namen}`,
+    geschaetzt: (n) => `${n} mặt hàng dùng giá tham khảo: số tiền có ≈ là ước tính.`, tageOhne: (n) => `${n} ngày có doanh thu nhưng không có bán theo món.`, doppelt: (n) => `${n} ngày vừa nhập tay vừa từ máy: tính theo máy.`, importZeile: (n, von, bis) => `${n} ngày, ${von} đến ${bis}`,
+    herkunft: { hand: "nhập tay", zbon: "từ phiếu Z", dsfinvk: "Máy tính tiền (DSFinV-K)", kasse: "Máy tính tiền" },
+    import: { titel: "Đọc từ máy tính tiền", text: "Máy tính tiền của bạn có thể xuất tệp cho cơ quan thuế (DSFinV-K, thường là ZIP). Chọn tệp ở đây. Tệp vẫn ở trên điện thoại này.", knopf: "Chọn tệp" },
+    hand: { knopf: "Nhập tay", titel: "Nhập tay", text: "Đọc số lượng từ phiếu Z (báo cáo theo mặt hàng).", tag: "Ngày", speichern: "Lưu", leer: "Không có thay đổi", gespeichert: (n) => `Đã lưu ${n} món` },
+    vorschau: {
+      titel: "Kiểm tra tệp", gepackt: "Thiết bị này không mở được ZIP. Hãy giải nén và chọn các tệp CSV.", fehlerLines: "Tệp thiếu danh sách dòng hàng (lines.csv).", leer: "Tệp không có lượt bán nào.",
+      fehlerDatei: "Không đọc được tệp.", ohneBonkopf: "Không có đầu hóa đơn (transactions.csv): không nhận ra hóa đơn hủy hay tập luyện.", punkt: "Đã đọc dấu chấm thay dấu phẩy làm dấu thập phân.", alle: "Tất cả món",
+      offenTitel: "Ứng dụng chưa biết các dòng chữ này của máy tính tiền", offenText: "Chạm vào món đúng. Ứng dụng sẽ nhớ.", positionen: "Dòng hàng", zugeordnet: "Đã ghép với món",
+      offen: "Còn mở", nichtGezaehlt: "Không tính là bán", uebernehmen: "Nhận", abbrechen: "Hủy",
+      gelernt: "Đã nhớ", nichtsNeu: "Không có gì mới – tất cả đã có.", storno: (n) => `Hủy: đã trừ ${n} dòng`, posStorno: (n) => `${n} dòng đã hủy không được tính`,
+      bonNicht: (n) => `${n} dòng từ hủy ngang, tập luyện v.v. không được tính`, artNicht: (n, betrag) => `${n} dòng tiền cọc, giảm giá, tiền boa v.v. (${betrag}) – không phải món`, ohneMenge: (n) => `Bỏ qua ${n} dòng không có số lượng`, ohneDatum: (n) => `Bỏ qua ${n} dòng không có ngày`,
+      nummer: (nr) => `Số ${nr}`, tage: (n) => `${n} ngày`, gleich: (n) => `${n} ngày đã có y hệt và không bị tính hai lần.`, ersetzt: (n) => `${n} ngày sẽ được thay bằng dữ liệu mới.`,
+      uebernommen: (n, tage) => `Đã nhận ${n} dòng cho ${tage} ngày`,
+    },
+  },
 };

@@ -1145,4 +1145,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopja", titelEinlesen: "Fjalëkalimi i kopjes", feld: "Fjalëkalimi", hinweis: "Me fjalëkalim skedari është i koduar. Pa fjalëkalim mund ta hapë kushdo.", teilen: "Ndaj kopjen", ohne: "Ndaj pa fjalëkalim", einlesen: "Lexo", zuKurz: "Të paktën 6 shenja", falsch: "Fjalëkalim i gabuar", zeigen: "Shfaq fjalëkalimin", verbergen: "Fshih fjalëkalimin", mit: "me fjalëkalim", ohneKurz: "pa fjalëkalim" },
   beispiel: { anlegen: "Krijo dyqan shembull", satz: "Një dyqan dyneri plotësisht i mbushur për ta provuar. Të gjithë numrat janë shembuj. Dyqani yt mbetet i paprekur.", name: "Dyner shembull", loeschen: "Fshi dyqanin shembull", chip: "Shembull – të gjithë numrat të sajuar", export: "SHEMBULL – jo të dhëna të vërteta" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Shitjet sipas gjellës", unter: "Çfarë ke shitur – nga arka ose me dorë.", entwurf: "Draft: ende i pamiratuar, vetëm për ta parë.", einstieg: "Shitjet sipas gjellës",
+    einstiegUnter: "Lexo arkën, gjellët që s'shiten, humbjet", zeitraumInventur: "midis dy inventarëve të fundit", keine: "Ende pa shitje në këtë periudhë.", ohneGericht: "Pa gjellë",
+    rangTitel: "Më të shiturat", ohneInventur: "Për krahasim me magazinën duhen dy inventarë.", inventurKnopf: "Te inventari", abgleichTitel: "Malli: i pritur dhe i harxhuar",
+    abgleichText: "I pritur: receta herë porcionet e shitura, plus mbeturinat dhe ushqimi i personelit të shënuar. I harxhuar: inventari i mëparshëm plus blerjet minus inventari i tanishëm.", schwundTitel: "Ka ikur më shumë se pritej (dyshim humbjeje)", schwundText: "Arsye të mundshme: mbeturina të pashënuara, porcione të mëdha, ushqim pa faturë, gabim në numërim.", einkaufFehltTitel: "Ndoshta mungon një blerje",
+    einkaufFehltText: "Për këtë mall s'ka faturë në periudhë. Shto faturën dhe krahasimi del saktë.", wenigerTitel: "Ka ikur më pak se pritej", wenigerText: "Ndoshta receta ka shumë ose diçka shkoi keq në numërim.", ladenhueterTitel: "Gjellë që s'shiten",
+    ladenhueterText: "Gjellë që pothuajse s'shiten. T'i heqësh nga menyja apo t'i ofrosh ndryshe?", keinVerkauf: "asnjë shitje", totTitel: "Mall që s'e do asnjë gjellë e shitur", totText: "Ky mall rri në magazinë dhe mban para, por asgjë e shitur s'ka nevojë për të.",
+    totSumme: "Para të bllokuara", ehrlichTitel: "Çfarë mungon ende", allesDa: "Gjithçka është: receta, çmime dhe lidhje.", importeTitel: "Të lexuara",
+    zuruecknehmen: "Anulo", zurueckFrage: "Ta anulosh këtë skedar? Shitjet e tij nuk do të numërohen më.", zurueckGemacht: "U anulua", stueck: (m) => `${m} copë`,
+    zeitraum: (von, bis) => `Periudha: ${von} deri ${bis}`, summe: (n) => `Gjithsej (${n} ditë)`, abgleichZeile: (ist, soll, diff) => `harxhuar ${ist}, pritur ${soll}, diferencë ${diff}`, unklar: (n) => `${n} mallra s'krahasohen: mungon paketimi ose njësia.`,
+    nichtGezaehlt: (n) => `${n} mallra nuk u numëruan në të dy inventarët.`, eimer: (kg) => `Plus ${kg} kg të peshuara në kosh – s'lidhen me asnjë mall.`, alleOk: (n) => `Mallra që përputhen (numërimi në çerekë lë pak hapësirë)`, wenig: (m) => `vetëm ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % e sasisë pa gjellë (${texte}). Lidhi më parë, pastaj llogaria del saktë.`, ohneRezept: (namen) => `Pa recetë, nuk hyn në harxhimin e pritur: ${namen}`, probleme: (namen) => `S'llogaritet në recetë: ${namen}`, ohnePreis: (namen) => `Pa çmim blerjeje: ${namen}`,
+    geschaetzt: (n) => `${n} mallra me çmim orientues: shumat me ≈ janë vlerësime.`, tageOhne: (n) => `${n} ditë me xhiro ditore, por pa shitje sipas gjellës.`, doppelt: (n) => `${n} ditë me dorë dhe nga arka: numërohet arka.`, importZeile: (n, von, bis) => `${n} ditë, ${von} deri ${bis}`,
+    herkunft: { hand: "me dorë", zbon: "nga raporti Z", dsfinvk: "Arka (DSFinV-K)", kasse: "Arka" },
+    import: { titel: "Lexo nga arka", text: "Arka jote mund të nxjerrë një skedar për tatimet (DSFinV-K, zakonisht ZIP). Zgjidhe këtu. Skedari mbetet në këtë telefon.", knopf: "Zgjidh skedarin" },
+    hand: { knopf: "Shkruaj me dorë", titel: "Shkruaj me dorë", text: "Lexo sasitë nga raporti Z (raporti i artikujve).", tag: "Dita", speichern: "Ruaj", leer: "Asgjë s'ndryshoi", gespeichert: (n) => `U ruajtën ${n} gjellë` },
+    vorschau: {
+      titel: "Kontrollo skedarin", gepackt: "Kjo pajisje s'e hap dot ZIP-in. Shpaketoje dhe zgjidh skedarët CSV.", fehlerLines: "Në skedar mungon lista e rreshtave (lines.csv).", leer: "Në skedar s'ka shitje.",
+      fehlerDatei: "Skedari nuk u lexua.", ohneBonkopf: "Pa kokë fature (transactions.csv): të ndërprerat dhe trajnimet s'dallohen.", punkt: "U lexua pikë në vend të presjes si shenjë dhjetore.", alle: "Të gjitha gjellët",
+      offenTitel: "Aplikacioni s'i njeh ende këto tekste të arkës", offenText: "Prek se cila gjellë është. Aplikacioni e mban mend.", positionen: "Rreshta", zugeordnet: "Të lidhura me gjellë",
+      offen: "Ende të hapura", nichtGezaehlt: "Nuk numërohet si shitje", uebernehmen: "Merr", abbrechen: "Anulo",
+      gelernt: "U mbajt mend", nichtsNeu: "Asgjë e re – gjithçka ishte aty.", storno: (n) => `Storno: u zbritën ${n} rreshta`, posStorno: (n) => `${n} rreshta të anuluar nuk u numëruan`,
+      bonNicht: (n) => `${n} rreshta nga ndërprerje, trajnim etj. nuk u numëruan`, artNicht: (n, betrag) => `${n} rreshta depozitë, zbritje, bakshish etj. (${betrag}) – jo gjellë`, ohneMenge: (n) => `${n} rreshta pa sasi u kapërcyen`, ohneDatum: (n) => `${n} rreshta pa datë u kapërcyen`,
+      nummer: (nr) => `Nr. ${nr}`, tage: (n) => `${n} ditë`, gleich: (n) => `${n} ditë janë tashmë saktësisht kështu dhe s'numërohen dy herë.`, ersetzt: (n) => `${n} ditë do të zëvendësohen me gjendjen e re.`,
+      uebernommen: (n, tage) => `U morën ${n} rreshta për ${tage} ditë`,
+    },
+  },
 };

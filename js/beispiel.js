@@ -20,6 +20,7 @@ import { preiseUebernehmen } from "./lieferung.js";
 import { planVorschlag, planUebernehmen, aufgabenFuer } from "./putzplan.js";
 import { gerichtWeg, rohwareWeg, personalessen } from "./muell.js";
 import { inventurStarten, inventurAbschliessen, artikelFuerInventur, mengeSetzen } from "./inventur.js";
+import { bedarfGericht, sollVerbrauch, schwundVerbrauch, einkaufMengen } from "./verkauf.js"; // E7 (17.10.2026)
 
 export const BEISPIEL_NAME = "Beispiel-Döner";
 export const BEISPIEL_TAGE = 30;           // so viele Tage vor heute sind gefüllt (heute selbst ist noch offen)
@@ -40,6 +41,8 @@ const KARTE = [
 // Beispiel-Laden (17.10.2026): Tagesumsatz brutto je Wochentag (1 = Montag … 6 = Samstag), Sonntag Ruhetag
 const UMSATZ_TAG = { 1: 790, 2: 830, 3: 870, 4: 920, 5: 1180, 6: 1350 };
 // Beispiel-Laden (17.10.2026): wöchentlicher Beleg vom Großhandel – [Artikel, Anzahl, Gebinde, Inhalt, Einheit, Preis je Gebinde netto, USt]
+// E7 (17.10.2026): Die Anzahl je Beleg wird jetzt aus den Beispielverkäufen abgeleitet (damit Einkauf, Verkauf und Inventur zusammenpassen);
+// die Anzahl hier gilt nur noch, wenn eine Ware in keinem Rezept steht.
 const LIEFERUNG = [
   ["Dönerspieß Kalb/Pute", 6, "karton", 15, "kg", 156.0, 0.07], ["Hähnchenspieß", 2, "karton", 10, "kg", 79.0, 0.07],
   ["Pommes frites", 10, "karton", 2.5, "kg", 6.9, 0.07], ["Eisbergsalat", 15, "lose", 1, "kg", 1.9, 0.07],
@@ -51,6 +54,36 @@ const LIEFERUNG = [
   ["Alufolie-Bogen", 1, "karton", 500, "stk", 15.9, 0.19], ["Pommesschale", 1, "karton", 500, "stk", 18.5, 0.19],
   ["Mineralwasser 0,25 l", 2, "kiste", 24, "stk", 7.2, 0.19], ["Eistee", 1, "kiste", 9, "l", 8.1, 0.19],
 ];
+// E7 (17.10.2026): Waren, die bisher ohne Beleg blieben, kommen mit auf den Beleg – Preis je Gebinde = bisheriger (Richt-)Preis je Einheit × Inhalt,
+// damit die Kalkulation gleich bleibt. [Artikel, Gebinde, Inhalt, Einheit, USt]. Adana-Spieß und Pide-Brot bleiben ohne Beleg (Ladenhüter, totes Lager).
+const ZUKAUF = [
+  ["Zwiebeln", "sack", 10, "kg", 0.07], ["Weißkohl", "kiste", 10, "kg", 0.07], ["Dürüm-Wrap", "karton", 100, "stk", 0.07], ["Hirtenkäse / Feta", "eimer", 2, "kg", 0.07],
+  ["Menüschale", "karton", 250, "stk", 0.19], ["Joghurtsauce", "eimer", 5, "kg", 0.07], ["Dönergewürz", "packung", 1, "kg", 0.07], ["Sonnenblumenöl", "kanister", 10, "l", 0.07],
+  ["Pizzakarton 30 cm", "karton", 100, "stk", 0.19], ["Falafelbällchen", "karton", 200, "stk", 0.07], ["Beilagenschale", "karton", 500, "stk", 0.19], ["Trinkbecher 0,3 l", "karton", 1000, "stk", 0.19],
+];
+// E7 (17.10.2026): Beispielverkäufe – Adana-Spieß verkauft sich im Beispiel nicht (Ladenhüter); Cola fehlt bei der zweiten Inventur (Schwund-Verdacht)
+const VERKAUF_FEST = { "Adana-Spieß": 0 };
+const SCHWUND_BEISPIEL = { name: "Cola 0,33 l", menge: 72 }; // Stück, die bei der zweiten Inventur fehlen (Beispiel)
+const FEIN = ["Ayran 0,25 l", "Cola 0,33 l", "Pommes frites (Beilage)", "Lahmacun", "Döner Kebab"]; // damit die Tagessumme genau aufgeht
+// Mengen je Gericht für einen Tag: Portionen der Karte, auf den Tagesumsatz skaliert, mit fester Schwankung, dann genau auf den Umsatz gebracht
+export function beispielVerkaufTag(umsatz, i) {
+  const preis = KARTE.map((k) => k[1]); const cent = preis.map((p) => Math.round(p * 100));
+  const basis = KARTE.map(([n, , m]) => (n in VERKAUF_FEST ? VERKAUF_FEST[n] : m));
+  const f = umsatz / basis.reduce((x, m, k) => x + m * preis[k], 0);
+  const m = basis.map((b, k) => (b ? Math.max(0, Math.round(b * f + (((i * 7 + k * 5) % 5) - 2) * 0.3)) : 0));
+  const d = KARTE.findIndex((k) => k[0] === "Döner Kebab");
+  let r = Math.round(umsatz * 100) - m.reduce((x, q, k) => x + q * cent[k], 0);
+  while (r >= 800) { m[d] += 1; r -= 800; } while (r <= -800 && m[d] > 0) { m[d] -= 1; r += 800; }
+  const fi = FEIN.map((n) => KARTE.findIndex((k) => k[0] === n)); let best = null;
+  const geh = (j, rest, adj, teuer) => {
+    if (best && teuer >= best.teuer) return;
+    if (j === fi.length) { if (rest === 0) best = { adj: adj.slice(), teuer }; return; }
+    for (const a of [0, 1, -1, 2, -2, 3, -3]) { if (m[fi[j]] + a < 0) continue; adj[j] = a; geh(j + 1, rest - a * cent[fi[j]], adj, teuer + Math.abs(a)); }
+  };
+  geh(0, r, new Array(fi.length).fill(0), 0);
+  if (best) best.adj.forEach((a, j) => { m[fi[j]] += a; });
+  return m;
+}
 // Beispiel-Laden (17.10.2026): nicht auf dem Beleg; seit dem Richtpreis-Nachtrag (17.10.) kommen Adana-Spieß, Falafelbällchen und Pizzakarton 30 cm aus den Richtpreisen (≈)
 // Beispiel-Laden (17.10.2026): Bestand bei den zwei Inventuren in Grundeinheit (g, ml, Stück); Rest nach Einheit
 const BESTAND = {
@@ -98,6 +131,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     if (art === "eigen") return { id, name: n, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis, mengeTag, steuer: 0.07 };
     return { ...gerichtAusVorlage(vorlage(n)), id, preis, mengeTag };
   });
+  s.gerichte.forEach((g, i) => { g.plu = String(101 + i); }); // E7 (17.10.2026): Kassen-Artikelnummer im Beispiel
   fehlendeRezepteErgaenzen(s);
   selbstAnwenden(s, vorauswahlFuer("doener")); s.selbstAutoArt = "doener";
   s.artikel = artikelAusGerichten(s);
@@ -122,8 +156,24 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
 
   // Beispiel-Laden (17.10.2026): vier Belege vom Großhandel (jeden Montag, sonst nächster Öffnungstag); Preise gehen in die Artikel
   const lieferTage = [-28, -21, -14, -7].map((n) => { let d = tagPlus(heute, n); while (!offen(d)) d = tagPlus(d, 1); return d; });
+  // E7 (17.10.2026): Beispielverkäufe je Öffnungstag (Summe Menge × Preis = Tagesumsatz) und daraus der Bedarf je Ware für die Belege
+  const umsatzAm = (i, d) => UMSATZ_TAG[wochentag(d)] + ((i * 37) % 7 - 3) * 15;
+  const verkauf = tage.map((d, i) => (offen(d) ? { d, i, mengen: beispielVerkaufTag(umsatzAm(i, d), i) } : null)).filter(Boolean);
+  const idx0 = Object.fromEntries(s.artikel.map((x) => [x.name, x]));
+  const bedarf = {}; for (const v of verkauf) v.mengen.forEach((q, k) => { if (q > 0) for (const x of bedarfGericht(s.gerichte[k], idx0).bedarf) bedarf[x.name] = (bedarf[x.name] || 0) + x.menge * q; });
+  bedarf[SCHWUND_BEISPIEL.name] = (bedarf[SCHWUND_BEISPIEL.name] || 0) + SCHWUND_BEISPIEL.menge; // was bei der Inventur fehlt, wurde vorher gekauft
+  const ziel = (n, basisEinheit) => (BESTAND[n] || BESTAND_STANDARD[basisEinheit] || BESTAND_STANDARD.stk);
+  const zukauf = ZUKAUF.map(([n, gebinde, inhalt, einheit, satz]) => { const x = idx0[n]; const pj = x ? preisJeBasis(x) : null;
+    return pj === null ? null : [n, 0, gebinde, inhalt, einheit, rund2(pj * inBasis(inhalt, einheit)), satz]; }).filter(Boolean);
+  const anzahlJeBeleg = (n, inhalt, einheit, alt) => { // Gebinde je Beleg: Bedarf + 5 % + Endbestand − Anfangsbestand, auf vier Belege verteilt (aufgerundet, Summe genau)
+    const je = inBasis(inhalt, einheit); const b = EINHEITEN[einheit]?.basis || "stk"; const [anfang, ende] = ziel(n, b);
+    if (!(bedarf[n] > 0)) return () => alt;
+    const gesamt = Math.max(0, bedarf[n] * 1.05 + ende - anfang) / je;
+    return (k) => Math.ceil(gesamt * (k + 1) / 4 - 1e-9) - Math.ceil(gesamt * k / 4 - 1e-9);
+  };
+  const beleg = [...LIEFERUNG, ...zukauf].map(([n, menge, gebinde, inhalt, einheit, preis, satz]) => ({ n, gebinde, inhalt, einheit, preis, satz, anzahl: anzahlJeBeleg(n, inhalt, einheit, menge) }));
   lieferTage.forEach((d, i) => {
-    const zeilen = LIEFERUNG.filter(([n]) => s.artikel.some((a) => a.name === n && a.herkunft !== "selbst")).map(([n, menge, gebinde, inhalt, einheit, preis, satz]) => {
+    const zeilen = beleg.filter((x) => s.artikel.some((a) => a.name === x.n && a.herkunft !== "selbst")).map((x) => ({ ...x, menge: x.anzahl(i) })).filter((x) => x.menge > 0).map(({ n, menge, gebinde, inhalt, einheit, preis, satz }) => {
       const netto = rund2(menge * preis);
       return { name: n, artikel: n, menge, gebinde, inhaltMenge: inhalt, inhaltEinheit: einheit, inhaltAnzahl: einheit === "stk" ? inhalt : null, einzelpreis: preis, jeKg: false,
         gesamt: netto, netto, steuersatz: satz, jeEinheit: rund2(preis / inhalt * 10000) / 10000, jeEinheitEinheit: einheit, sicher: true };
@@ -192,11 +242,31 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     }
   });
 
+  // E7 (17.10.2026): Verkäufe ins Journal – fast alle Tage aus dem Kassen-Export (dsfinvk), zwei Tage von Hand vom Z-Bon abgelesen
+  const handTage = new Set([verkauf[verkauf.length - 3]?.d, verkauf[verkauf.length - 10]?.d].filter(Boolean));
+  for (const v of verkauf) {
+    const hand = handTage.has(v.d); const imp = hand ? null : `bsp-imp-${v.d}`;
+    v.mengen.forEach((q, k) => { if (!(q > 0)) return; const g = s.gerichte[k];
+      s.verkaeufe.push({ id: `bsp-vk-${v.d}-${k + 1}`, datum: v.d, gericht: g.id, name: g.name, ...(hand ? {} : { text: g.name }), plu: g.plu, menge: q, umsatzBrutto: hand ? null : rund2(q * g.preis),
+        herkunft: hand ? "hand" : "dsfinvk", importId: imp, erfasst: zeit(v.d, 23, 5), geraet: null, storniert: false }); });
+  }
+
   // Beispiel-Laden (17.10.2026): zweite Inventur heute (Preise von heute)
   // nie in der Zukunft: wer zwischen 4 und 8:30 Uhr anlegt, bekommt die Inventur kurz vor „jetzt“ (Beispiel-Laden, 17.10.2026)
   const ende = jetzt && new Date(jetzt) < new Date(zeit(heute, 8, 30)) ? new Date(new Date(jetzt).getTime() - 60000) : new Date(zeit(heute, 8, 30));
   const inv2 = inventurStarten(s, { datum: heute, jetzt: new Date(ende.getTime() - 30 * 60000).toISOString() }); inv2.id = "bsp-inv-2";
-  zaehlen(inv2, 1); inventurAbschliessen(s, inv2, { datum: heute, jetzt: ende.toISOString() });
+  // E7 (17.10.2026): gezählt wird, was nach Einkauf, Verkauf, Müll und Personalessen übrig sein müsste (auf ¼ Gebinde gerundet) –
+  // nur bei der Cola fehlt mehr (SCHWUND_BEISPIEL). Waren ohne Verbrauch bleiben, wie sie waren.
+  { const von = tagPlus(start, 1); const idx = Object.fromEntries(s.artikel.map((x) => [x.name, x]));
+    const mengen = {}; for (const e of s.verkaeufe) if (e.datum >= von && e.datum <= heute) mengen[e.gericht] = (mengen[e.gericht] || 0) + e.menge;
+    const soll = sollVerbrauch(s, mengen, idx).artikel; const sw = schwundVerbrauch(s, { von, bis: heute }, idx); const ek = einkaufMengen(s, { von, bis: heute });
+    for (const z of artikelFuerInventur(s, inv2).liste) {
+      const x = idx[z.name]; const je = x?.packung?.menge > 0 ? inBasis(x.packung.menge, x.packung.einheit) : null; const vorher = inv1.posten[z.name];
+      if (!je || typeof vorher !== "number") { mengeSetzen(inv2, z.name, vorher ?? 0); continue; }
+      const weg = (soll[z.name]?.menge || 0) + (sw.muell[z.name]?.menge || 0) + (sw.personal[z.name]?.menge || 0) + (z.name === SCHWUND_BEISPIEL.name ? SCHWUND_BEISPIEL.menge : 0);
+      mengeSetzen(inv2, z.name, Math.max(0, Math.round((vorher * je + (ek[z.name]?.menge || 0) - weg) / je * 4) / 4));
+    } }
+  inventurAbschliessen(s, inv2, { datum: heute, jetzt: ende.toISOString() });
 
   const fertig = migrierenBetrieb(s);
   // nur für den Bericht/Test, nicht gespeichert: welche Zutaten ohne Preis geblieben sind

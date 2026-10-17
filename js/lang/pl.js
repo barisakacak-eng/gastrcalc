@@ -1146,4 +1146,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopia", titelEinlesen: "Hasło kopii", feld: "Hasło", hinweis: "Z hasłem plik jest zaszyfrowany. Bez hasła każdy może go otworzyć.", teilen: "Udostępnij kopię", ohne: "Udostępnij bez hasła", einlesen: "Wczytaj", zuKurz: "Co najmniej 6 znaków", falsch: "Błędne hasło", zeigen: "Pokaż hasło", verbergen: "Ukryj hasło", mit: "z hasłem", ohneKurz: "bez hasła" },
   beispiel: { anlegen: "Utwórz lokal przykładowy", satz: "W pełni wypełniony lokal z kebabem do wypróbowania. Wszystkie liczby są przykładowe. Twój lokal pozostaje bez zmian.", name: "Kebab przykładowy", loeschen: "Usuń lokal przykładowy", chip: "Przykład – wszystkie liczby zmyślone", export: "PRZYKŁAD – brak prawdziwych danych" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Sprzedaż na danie", unter: "Co sprzedałeś – z kasy albo wpisane ręcznie.", entwurf: "Szkic: jeszcze niezatwierdzony, tylko do podglądu.", einstieg: "Sprzedaż na danie",
+    einstiegUnter: "Wczytaj kasę, słabo sprzedawane, ubytki", zeitraumInventur: "między dwiema ostatnimi inwentaryzacjami", keine: "Brak sprzedaży w tym okresie.", ohneGericht: "Bez dania",
+    rangTitel: "Najczęściej sprzedawane", ohneInventur: "Do porównania z magazynem potrzebne są dwie inwentaryzacje.", inventurKnopf: "Do inwentaryzacji", abgleichTitel: "Towar: oczekiwane i zużyte",
+    abgleichText: "Oczekiwane: przepis razy sprzedane porcje, plus wpisane odpady i posiłki personelu. Zużyte: poprzednia inwentaryzacja plus zakup minus obecna inwentaryzacja.", schwundTitel: "Ubyło więcej niż oczekiwano (podejrzenie ubytku)", schwundText: "Możliwe przyczyny: odpady niewpisane, za duże porcje, jedzenie bez paragonu, błąd przy liczeniu.", einkaufFehltTitel: "Prawdopodobnie brak zakupu",
+    einkaufFehltText: "Dla tego towaru brak paragonu w okresie. Dodaj paragon, wtedy porównanie się zgodzi.", wenigerTitel: "Ubyło mniej niż oczekiwano", wenigerText: "Może przepis zawiera za dużo albo przy liczeniu coś poszło nie tak.", ladenhueterTitel: "Słabo sprzedawane",
+    ladenhueterText: "Dania, które prawie się nie sprzedają. Zdjąć z karty albo podać inaczej?", keinVerkauf: "brak sprzedaży", totTitel: "Towar, którego nie potrzebuje żadne sprzedane danie", totText: "Ten towar leży w magazynie i wiąże pieniądze, ale nic, co sprzedano, go nie potrzebuje.",
+    totSumme: "Związane pieniądze", ehrlichTitel: "Czego jeszcze brakuje", allesDa: "Wszystko jest: przepisy, ceny i przypisania.", importeTitel: "Wczytane",
+    zuruecknehmen: "Cofnij", zurueckFrage: "Cofnąć ten plik? Sprzedaż z niego przestanie się liczyć.", zurueckGemacht: "Cofnięto", stueck: (m) => `${m} szt.`,
+    zeitraum: (von, bis) => `Okres: ${von} do ${bis}`, summe: (n) => `Razem (${n} dni)`, abgleichZeile: (ist, soll, diff) => `zużyte ${ist}, oczekiwane ${soll}, różnica ${diff}`, unklar: (n) => `${n} towarów nie da się porównać: brak opakowania lub jednostki.`,
+    nichtGezaehlt: (n) => `${n} towarów nie policzono w obu inwentaryzacjach.`, eimer: (kg) => `Do tego ${kg} kg zważone w koszu – nie da się przypisać do towaru.`, alleOk: (n) => `Towary, które się zgadzają (liczenie w ćwiartkach daje trochę luzu)`, wenig: (m) => `tylko ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % ilości bez dania (${texte}). Najpierw przypisz, wtedy wynik się zgodzi.`, ohneRezept: (namen) => `Bez przepisu, nie liczy się w oczekiwanym zużyciu: ${namen}`, probleme: (namen) => `Nie da się policzyć w przepisie: ${namen}`, ohnePreis: (namen) => `Bez ceny zakupu: ${namen}`,
+    geschaetzt: (n) => `${n} towarów z ceną orientacyjną: kwoty z ≈ są szacunkowe.`, tageOhne: (n) => `${n} dni z utargiem dziennym, ale bez sprzedaży na danie.`, doppelt: (n) => `${n} dni ręcznie i z kasy: liczy się kasa.`, importZeile: (n, von, bis) => `${n} dni, ${von} do ${bis}`,
+    herkunft: { hand: "ręcznie", zbon: "z raportu Z", dsfinvk: "Kasa (DSFinV-K)", kasse: "Kasa" },
+    import: { titel: "Wczytaj z kasy", text: "Twoja kasa może wydać plik dla urzędu skarbowego (DSFinV-K, zwykle ZIP). Wybierz go tutaj. Plik zostaje na tym telefonie.", knopf: "Wybierz plik" },
+    hand: { knopf: "Wpisz ręcznie", titel: "Wpisz ręcznie", text: "Odczytaj ilości z raportu Z (raport artykułów).", tag: "Dzień", speichern: "Zapisz", leer: "Nic nie zmieniono", gespeichert: (n) => `Zapisano ${n} dań` },
+    vorschau: {
+      titel: "Sprawdź plik", gepackt: "To urządzenie nie otworzy tego ZIP. Rozpakuj go i wybierz pliki CSV.", fehlerLines: "W pliku brak listy pozycji (lines.csv).", leer: "W pliku nie ma sprzedaży.",
+      fehlerDatei: "Nie udało się odczytać pliku.", ohneBonkopf: "Bez nagłówka paragonu (transactions.csv): nie da się rozpoznać anulowanych i szkoleniowych.", punkt: "Odczytano kropkę zamiast przecinka jako znak dziesiętny.", alle: "Wszystkie dania",
+      offenTitel: "Tych tekstów z kasy aplikacja jeszcze nie zna", offenText: "Stuknij, jakie to danie. Aplikacja to zapamięta.", positionen: "Pozycje", zugeordnet: "Przypisane do dania",
+      offen: "Jeszcze otwarte", nichtGezaehlt: "Nie liczone jako sprzedaż", uebernehmen: "Przejmij", abbrechen: "Anuluj",
+      gelernt: "Zapamiętano", nichtsNeu: "Nic nowego – wszystko już było.", storno: (n) => `Storno: odjęto ${n} wierszy`, posStorno: (n) => `${n} anulowanych pozycji nie liczono`,
+      bonNicht: (n) => `${n} wierszy z anulowania, szkolenia itp. nie liczono`, artNicht: (n, betrag) => `${n} wierszy kaucji, rabatu, napiwku itp. (${betrag}) – to nie danie`, ohneMenge: (n) => `${n} wierszy bez ilości pominięto`, ohneDatum: (n) => `${n} wierszy bez daty pominięto`,
+      nummer: (nr) => `Nr ${nr}`, tage: (n) => `${n} dni`, gleich: (n) => `${n} dni już jest dokładnie tak i nie liczy się podwójnie.`, ersetzt: (n) => `${n} dni zostanie zastąpionych nowym stanem.`,
+      uebernommen: (n, tage) => `Przejęto ${n} pozycji z ${tage} dni`,
+    },
+  },
 };

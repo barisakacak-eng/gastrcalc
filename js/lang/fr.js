@@ -1140,4 +1140,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Sauvegarde", titelEinlesen: "Mot de passe de la sauvegarde", feld: "Mot de passe", hinweis: "Avec mot de passe, le fichier est chiffré. Sans, n’importe qui peut l’ouvrir.", teilen: "Partager la sauvegarde", ohne: "Partager sans mot de passe", einlesen: "Lire", zuKurz: "Au moins 6 caractères", falsch: "Mot de passe incorrect", zeigen: "Afficher le mot de passe", verbergen: "Masquer le mot de passe", mit: "avec mot de passe", ohneKurz: "sans mot de passe" },
   beispiel: { anlegen: "Créer un commerce exemple", satz: "Un kebab entièrement rempli pour essayer. Tous les chiffres sont des exemples. Ton commerce reste intact.", name: "Kebab exemple", loeschen: "Supprimer le commerce exemple", chip: "Exemple – tous les chiffres inventés", export: "EXEMPLE – pas de vraies données" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Ventes par plat", unter: "Ce que tu as vendu – depuis la caisse ou saisi à la main.", entwurf: "Brouillon : pas encore validé, seulement à consulter.", einstieg: "Ventes par plat",
+    einstiegUnter: "Lire la caisse, invendus, démarque", zeitraumInventur: "entre les deux derniers inventaires", keine: "Pas encore de ventes sur cette période.", ohneGericht: "Sans plat",
+    rangTitel: "Les plus vendus", ohneInventur: "Pour comparer avec le stock, il faut deux inventaires.", inventurKnopf: "Vers l'inventaire", abgleichTitel: "Marchandise : prévue et consommée",
+    abgleichText: "Prévue : recette fois portions vendues, plus pertes et repas du personnel saisis. Consommée : inventaire précédent plus achats moins inventaire actuel.", schwundTitel: "Plus parti que prévu (démarque suspecte)", schwundText: "Raisons possibles : pertes non saisies, portions trop grandes, repas sans ticket, erreur de comptage.", einkaufFehltTitel: "Achat sans doute manquant",
+    einkaufFehltText: "Aucun ticket pour cette marchandise sur la période. Ajoute le ticket et la comparaison sera juste.", wenigerTitel: "Moins parti que prévu", wenigerText: "La recette indique peut-être trop, ou le comptage s'est mal passé.", ladenhueterTitel: "Invendus",
+    ladenhueterText: "Plats qui ne se vendent presque pas. Les retirer de la carte ou les proposer autrement ?", keinVerkauf: "aucune vente", totTitel: "Marchandise dont aucun plat vendu n'a besoin", totText: "Cette marchandise reste en stock et immobilise de l'argent, mais rien de ce qui a été vendu n'en a besoin.",
+    totSumme: "Argent immobilisé", ehrlichTitel: "Ce qui manque encore", allesDa: "Tout y est : recettes, prix et attributions.", importeTitel: "Importés",
+    zuruecknehmen: "Annuler", zurueckFrage: "Annuler ce fichier ? Ses ventes ne compteront plus.", zurueckGemacht: "Annulé", stueck: (m) => `${m} pcs`,
+    zeitraum: (von, bis) => `Période : du ${von} au ${bis}`, summe: (n) => `Total (${n} jours)`, abgleichZeile: (ist, soll, diff) => `consommé ${ist}, prévu ${soll}, écart ${diff}`, unklar: (n) => `${n} articles ne peuvent pas être comparés : conditionnement ou unité manquant.`,
+    nichtGezaehlt: (n) => `${n} articles n'ont pas été comptés dans les deux inventaires.`, eimer: (kg) => `En plus ${kg} kg pesés à la poubelle – impossible à rattacher à un article.`, alleOk: (n) => `Articles qui concordent (compter par quarts laisse une marge)`, wenig: (m) => `seulement ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % de la quantité sans plat (${texte}). Attribue d'abord, ensuite le calcul sera juste.`, ohneRezept: (namen) => `Sans recette, ne compte pas dans la consommation prévue : ${namen}`, probleme: (namen) => `Impossible à calculer dans la recette : ${namen}`, ohnePreis: (namen) => `Sans prix d'achat : ${namen}`,
+    geschaetzt: (n) => `${n} articles avec prix indicatif : les montants avec ≈ sont estimés.`, tageOhne: (n) => `${n} jours avec chiffre du jour mais sans ventes par plat.`, doppelt: (n) => `${n} jours à la main et depuis la caisse : la caisse compte.`, importZeile: (n, von, bis) => `${n} jours, du ${von} au ${bis}`,
+    herkunft: { hand: "à la main", zbon: "du ticket Z", dsfinvk: "Caisse (DSFinV-K)", kasse: "Caisse" },
+    import: { titel: "Lire depuis la caisse", text: "Ta caisse peut exporter un fichier pour le fisc (DSFinV-K, souvent un ZIP). Choisis-le ici. Le fichier reste sur ce téléphone.", knopf: "Choisir un fichier" },
+    hand: { knopf: "Saisir à la main", titel: "Saisir à la main", text: "Relève les quantités sur le ticket Z (rapport articles).", tag: "Jour", speichern: "Enregistrer", leer: "Rien de changé", gespeichert: (n) => `${n} plats enregistrés` },
+    vorschau: {
+      titel: "Vérifier le fichier", gepackt: "Cet appareil ne peut pas ouvrir le ZIP. Décompresse-le et choisis les fichiers CSV.", fehlerLines: "Il manque la liste des lignes dans le fichier (lines.csv).", leer: "Le fichier ne contient aucune vente.",
+      fehlerDatei: "Impossible de lire le fichier.", ohneBonkopf: "Sans en-tête de ticket (transactions.csv) : annulations et formations ne sont pas reconnues.", punkt: "Point lu au lieu de la virgule comme séparateur décimal.", alle: "Tous les plats",
+      offenTitel: "L'appli ne connaît pas encore ces textes de caisse", offenText: "Touche le plat qui correspond. L'appli s'en souvient.", positionen: "Lignes", zugeordnet: "Attribuées à un plat",
+      offen: "Encore ouvertes", nichtGezaehlt: "Non compté comme vente", uebernehmen: "Appliquer", abbrechen: "Annuler",
+      gelernt: "Mémorisé", nichtsNeu: "Rien de nouveau – tout était déjà là.", storno: (n) => `Annulation : ${n} lignes déduites`, posStorno: (n) => `${n} lignes annulées non comptées`,
+      bonNicht: (n) => `${n} lignes d'annulations, formations et autres non comptées`, artNicht: (n, betrag) => `${n} lignes consigne, remise, pourboire et autres (${betrag}) – pas un plat`, ohneMenge: (n) => `${n} lignes sans quantité ignorées`, ohneDatum: (n) => `${n} lignes sans date ignorées`,
+      nummer: (nr) => `N° ${nr}`, tage: (n) => `${n} jours`, gleich: (n) => `${n} jours sont déjà exactement ainsi et ne comptent pas deux fois.`, ersetzt: (n) => `${n} jours seront remplacés par le nouvel état.`,
+      uebernommen: (n, tage) => `${n} lignes appliquées pour ${tage} jours`,
+    },
+  },
 };

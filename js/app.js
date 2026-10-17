@@ -42,12 +42,14 @@ import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen 
 import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
 import { rundgangOffen as w2RundgangOffen } from "./engine.js"; // W2-D: stilles Update nur ohne offenen Rundgang
 import { beispielLaden } from "./beispiel.js"; // Beispiel-Laden (17.10.2026)
+import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
+import { verkaufSichtbar } from "./verkauf.js"; // E7
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen]; // Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen]; // E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -74,7 +76,7 @@ function aktivSetzen(id) {
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : "";
+  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ""; // E7
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -99,6 +101,7 @@ function zeichne() {
     if (stand.phase === "onboarding") zeichneOnboarding();
     else {
       if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
+      if (ansicht === "verkauf" && !verkaufSichtbar(stand)) ansicht = startAnsicht(wurzel); // E7 (17.10.2026): ohne Schalter gibt es den Bereich nicht
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
@@ -116,6 +119,7 @@ function zeichne() {
         : ansicht === "kartefoto" ? karteFotoSchirm()
         : ansicht === "vergleich" ? vergleichView(stand)
         : ansicht === "inventur" ? inventurView(stand)
+        : ansicht === "verkauf" ? verkaufView(stand) // E7 (17.10.2026)
         : ansicht === "personal" ? personalView(stand) // D
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
@@ -468,6 +472,7 @@ async function aufKlick(ev) {
     if (nz.ansicht === "preise") return bearbeiten("preise"); // Paket 3 (16.10.2026): Richtwert-Zeile „Preise eintragen“ – im Büro direkt in den Schritt
     const ziel = nz.ansicht; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
+    if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
@@ -549,6 +554,11 @@ async function aufKlick(ev) {
       zeichne();
     }
   }
+  if (ansicht === "verkauf") { // E7 (17.10.2026): Verkauf je Gericht
+    const r = verkaufAktion(name, el, stand, wurzel);
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
   if (ansicht === "buero" || ansicht.startsWith("ordner-")) { // Entwickler C
     const r = ansicht === "buero" ? await bueroAktion(name, el, stand, wurzel) : await ordnerAktion(name, el, stand, ansicht);
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); root.querySelector('.b-codefeld')?.focus(); }
@@ -603,6 +613,8 @@ root.addEventListener("input", (ev) => {
     neu = ordnerEingabe(el.dataset.f, el.value); if (neu === "knopf") neu = false;
   } else if (ansicht === "inventur") {
     neu = inventurEingabe(el.dataset.f, el.value);
+  } else if (ansicht === "verkauf") { // E7 (17.10.2026): Handeingabe ist ein Entwurf bis „Speichern“; nur der Tag zeichnet neu
+    const r = verkaufEingabe(el.dataset.f, el.value); if (r === "zeichnen") { zeichne(); return; } if (r === "entwurf") return;
   } else if (ansicht === "kuehl") {
     neu = kuehlEingabe(el.dataset.f, el.value, stand);
     if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="station-speichern"]'); if (k) k.disabled = !kuehlFormGueltig(); }
@@ -631,6 +643,10 @@ root.addEventListener("change", async (ev) => {
   const el = ev.target; if (!el.files?.[0]) return;
   const dateien = [...el.files]; const datei = dateien[0]; el.value = "";
   if (el.dataset.f === "import") return sicherungEinlesen(datei);
+  if (el.dataset.f === "verkauf-datei") { // E7 (17.10.2026): Kassen-Export lesen – bleibt auf dem Gerät, nichts wird gesendet
+    try { await verkaufDatei(stand, dateien); } catch (e) { console.warn(e); meldung(t("verkaeufe.vorschau.fehlerDatei")); }
+    return zeichne();
+  }
   if (el.dataset.f === "gericht-foto") { // Zielbild: eigenes Foto je Gericht (ersetzt Standardbild), bleibt auf dem Gerät
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return;
     try { const meta = await ablegen(await bildFuerAblage(datei, 800), { name: datei.name || "", zweck: "gericht", laden: stand.id });
@@ -683,6 +699,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "inventur" && inventurZurueck(stand)) { /* eine Ebene hoch: Karte → Liste → Übersicht */ }
+    else if (ansicht === "verkauf" && verkaufZurueck()) { /* E7: Vorschau/Handeingabe → Übersicht */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro

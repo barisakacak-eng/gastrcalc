@@ -1148,4 +1148,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Sigurnosna kopija", titelEinlesen: "Lozinka kopije", feld: "Lozinka", hinweis: "S lozinkom je fajl šifrovan. Bez lozinke ga svako može otvoriti.", teilen: "Podijeli kopiju", ohne: "Podijeli bez lozinke", einlesen: "Učitaj", zuKurz: "Najmanje 6 znakova", falsch: "Pogrešna lozinka", zeigen: "Prikaži lozinku", verbergen: "Sakrij lozinku", mit: "s lozinkom", ohneKurz: "bez lozinke" },
   beispiel: { anlegen: "Napravi primjer-radnju", satz: "Potpuno popunjena ćevabdžinica za isprobavanje. Svi brojevi su primjeri. Tvoja radnja ostaje netaknuta.", name: "Primjer-Döner", loeschen: "Obriši primjer-radnju", chip: "Primjer – svi brojevi izmišljeni", export: "PRIMJER – nisu stvarni podaci" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Prodaja po jelu", unter: "Šta si prodao – iz kase ili upisano ručno.", entwurf: "Nacrt: još nije odobren, samo za pregled.", einstieg: "Prodaja po jelu",
+    einstiegUnter: "Učitaj kasu, jela koja ne idu, manjak", zeitraumInventur: "između posljednje dvije inventure", keine: "Još nema prodaje u ovom periodu.", ohneGericht: "Bez jela",
+    rangTitel: "Najviše prodano", ohneInventur: "Za poređenje sa skladištem trebaju dvije inventure.", inventurKnopf: "Na inventuru", abgleichTitel: "Roba: očekivano i potrošeno",
+    abgleichText: "Očekivano: recept puta prodane porcije, plus upisani otpad i obroci osoblja. Potrošeno: prethodna inventura plus nabavka minus sadašnja inventura.", schwundTitel: "Otišlo više nego što se očekivalo (sumnja na manjak)", schwundText: "Mogući razlozi: otpad nije upisan, prevelike porcije, hrana bez računa, greška pri brojanju.", einkaufFehltTitel: "Vjerovatno nedostaje nabavka",
+    einkaufFehltText: "Za ovu robu nema računa u periodu. Dodaj račun i poređenje će biti tačno.", wenigerTitel: "Otišlo manje nego što se očekivalo", wenigerText: "Možda u receptu piše previše ili je nešto pošlo naopako pri brojanju.", ladenhueterTitel: "Jela koja ne idu",
+    ladenhueterText: "Jela koja se skoro ne prodaju. Skinuti s menija ili ponuditi drugačije?", keinVerkauf: "nema prodaje", totTitel: "Roba koja ne treba nijednom prodanom jelu", totText: "Ova roba stoji u skladištu i veže novac, ali ništa prodano je ne treba.",
+    totSumme: "Vezan novac", ehrlichTitel: "Šta još nedostaje", allesDa: "Sve je tu: recepti, cijene i dodjele.", importeTitel: "Učitano",
+    zuruecknehmen: "Poništi", zurueckFrage: "Poništiti ovu datoteku? Prodaja iz nje se više neće računati.", zurueckGemacht: "Poništeno", stueck: (m) => `${m} kom.`,
+    zeitraum: (von, bis) => `Period: ${von} do ${bis}`, summe: (n) => `Ukupno (${n} dana)`, abgleichZeile: (ist, soll, diff) => `potrošeno ${ist}, očekivano ${soll}, razlika ${diff}`, unklar: (n) => `${n} artikala se ne može porediti: nedostaje pakovanje ili jedinica.`,
+    nichtGezaehlt: (n) => `${n} artikala nije prebrojano u obje inventure.`, eimer: (kg) => `Plus ${kg} kg izvagano u kanti – ne može se dodijeliti robi.`, alleOk: (n) => `Artikli koji se slažu (brojanje na četvrtine daje malo prostora)`, wenig: (m) => `samo ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % količine bez jela (${texte}). Prvo dodijeli, onda je obračun tačan.`, ohneRezept: (namen) => `Bez recepta, ne ulazi u očekivanu potrošnju: ${namen}`, probleme: (namen) => `Ne može se izračunati u receptu: ${namen}`, ohnePreis: (namen) => `Bez nabavne cijene: ${namen}`,
+    geschaetzt: (n) => `${n} artikala s okvirnom cijenom: iznosi s ≈ su procjena.`, tageOhne: (n) => `${n} dana s dnevnim prometom, ali bez prodaje po jelu.`, doppelt: (n) => `${n} dana ručno i iz kase: računa se kasa.`, importZeile: (n, von, bis) => `${n} dana, ${von} do ${bis}`,
+    herkunft: { hand: "ručno", zbon: "sa Z-izvještaja", dsfinvk: "Kasa (DSFinV-K)", kasse: "Kasa" },
+    import: { titel: "Učitaj iz kase", text: "Tvoja kasa može izbaciti datoteku za poreznu (DSFinV-K, obično ZIP). Odaberi je ovdje. Datoteka ostaje na ovom telefonu.", knopf: "Odaberi datoteku" },
+    hand: { knopf: "Upiši ručno", titel: "Upiši ručno", text: "Očitaj količine sa Z-izvještaja (izvještaj po artiklima).", tag: "Dan", speichern: "Sačuvaj", leer: "Ništa nije promijenjeno", gespeichert: (n) => `Sačuvano jela: ${n}` },
+    vorschau: {
+      titel: "Provjeri datoteku", gepackt: "Ovaj uređaj ne može otvoriti ZIP. Raspakuj ga i odaberi CSV datoteke.", fehlerLines: "U datoteci nedostaje lista stavki (lines.csv).", leer: "U datoteci nema prodaje.",
+      fehlerDatei: "Datoteka se nije mogla pročitati.", ohneBonkopf: "Bez zaglavlja računa (transactions.csv): prekinuti i probni računi se ne mogu prepoznati.", punkt: "Pročitana tačka umjesto zareza kao decimalni znak.", alle: "Sva jela",
+      offenTitel: "Aplikacija još ne poznaje ove tekstove iz kase", offenText: "Dodirni koje je to jelo. Aplikacija to pamti.", positionen: "Stavke", zugeordnet: "Dodijeljeno jelu",
+      offen: "Još otvoreno", nichtGezaehlt: "Ne računa se kao prodaja", uebernehmen: "Preuzmi", abbrechen: "Odustani",
+      gelernt: "Zapamćeno", nichtsNeu: "Ništa novo – sve je već bilo tu.", storno: (n) => `Storno: oduzeto redova: ${n}`, posStorno: (n) => `Stornirane stavke nisu brojane: ${n}`,
+      bonNicht: (n) => `Redovi iz prekida, obuke i sl. nisu brojani: ${n}`, artNicht: (n, betrag) => `Redova kaucija, popust, napojnica i sl.: ${n} (${betrag}) – nije jelo`, ohneMenge: (n) => `Preskočeno redova bez količine: ${n}`, ohneDatum: (n) => `Preskočeno redova bez datuma: ${n}`,
+      nummer: (nr) => `Br. ${nr}`, tage: (n) => `${n} dana`, gleich: (n) => `${n} dana već postoji tačno ovako i ne računa se dvaput.`, ersetzt: (n) => `${n} dana bit će zamijenjeno novim stanjem.`,
+      uebernommen: (n, tage) => `Preuzeto ${n} stavki za ${tage} dana`,
+    },
+  },
 };

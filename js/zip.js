@@ -62,7 +62,15 @@ export async function istZip(blob) {
 }
 
 const dec = new TextDecoder();
-export async function zipLesen(blob) {
+// E7 (17.10.2026): gepackt: true liest auch „deflate“-Einträge (Kassen-Exporte sind fast immer gepackt). Entpackt wird mit dem
+// Browser selbst (DecompressionStream „deflate-raw“), ohne Fremdbibliothek. Ohne diese Fähigkeit: Eintrag mit gepackt: true und bytes() wirft.
+// Ohne die Option bleibt alles wie bisher (die Sicherung liest nur „store“).
+async function entpacken(teil) {
+  if (typeof DecompressionStream !== "function") throw Object.assign(new Error("zip"), { grund: "gepackt" });
+  const strom = teil.stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  return new Uint8Array(await new Response(strom).arrayBuffer());
+}
+export async function zipLesen(blob, { gepackt = false } = {}) {
   const fehler = () => Object.assign(new Error("zip"), { grund: "format" });
   const L = Math.min(blob.size, 22 + 65535);
   const schwanz = new Uint8Array(await blob.slice(blob.size - L).arrayBuffer());
@@ -78,11 +86,17 @@ export async function zipLesen(blob) {
     const art = dv.getUint16(q + 10, true), crc = dv.getUint32(q + 16, true), groesse = dv.getUint32(q + 20, true), roh = dv.getUint32(q + 24, true);
     const nl = dv.getUint16(q + 28, true), xl = dv.getUint16(q + 30, true), kl = dv.getUint16(q + 32, true), lokal = dv.getUint32(q + 42, true);
     const name = dec.decode(z.subarray(q + 46, q + 46 + nl)); q += 46 + nl + xl + kl;
-    if (art !== 0 || groesse !== roh) continue; // nur „store“ – fremde, gepackte Einträge überspringen
+    const deflate = gepackt && art === 8; // E7 (17.10.2026)
+    if (!deflate && (art !== 0 || groesse !== roh)) continue; // nur „store“ – fremde, gepackte Einträge überspringen
     const kopf = new DataView(await blob.slice(lokal, lokal + 30).arrayBuffer());
     if (kopf.byteLength < 30 || kopf.getUint32(0, true) !== 0x04034b50) throw fehler();
     const start = lokal + 30 + kopf.getUint16(26, true) + kopf.getUint16(28, true);
     if (start + groesse > blob.size) throw fehler();
+    if (deflate) { // E7 (17.10.2026): groesse ist hier die gepackte Länge, roh die entpackte
+      const teil = () => blob.slice(start, start + groesse);
+      out.push({ name, groesse: roh, crc, gepackt: true, blob: teil, bytes: () => entpacken(teil()), async crcOk() { return crc32(await entpacken(teil())) === crc; } });
+      continue;
+    }
     const teil = () => blob.slice(start, start + groesse);
     out.push({ name, groesse, crc, blob: teil, async bytes() { return new Uint8Array(await teil().arrayBuffer()); }, async crcOk() { return crc32(new Uint8Array(await teil().arrayBuffer())) === crc; } });
   }

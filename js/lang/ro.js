@@ -1147,4 +1147,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Copie", titelEinlesen: "Parola copiei", feld: "Parolă", hinweis: "Cu parolă fișierul e criptat. Fără parolă oricine îl poate deschide.", teilen: "Trimite copia", ohne: "Trimite fără parolă", einlesen: "Citește", zuKurz: "Cel puțin 6 caractere", falsch: "Parolă greșită", zeigen: "Arată parola", verbergen: "Ascunde parola", mit: "cu parolă", ohneKurz: "fără parolă" },
   beispiel: { anlegen: "Creează local de probă", satz: "Un local de döner complet completat, pentru încercare. Toate cifrele sunt exemple. Localul tău rămâne neatins.", name: "Döner de probă", loeschen: "Șterge localul de probă", chip: "Exemplu – toate cifrele inventate", export: "EXEMPLU – nu sunt date reale" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Vânzări pe fel", unter: "Ce ai vândut – din casă sau introdus de mână.", entwurf: "Ciornă: încă neaprobată, doar pentru vizualizare.", einstieg: "Vânzări pe fel",
+    einstiegUnter: "Citește casa, produse fără vânzare, pierderi", zeitraumInventur: "între ultimele două inventare", keine: "Încă nu sunt vânzări în această perioadă.", ohneGericht: "Fără fel",
+    rangTitel: "Cele mai vândute", ohneInventur: "Pentru comparația cu stocul sunt necesare două inventare.", inventurKnopf: "La inventar", abgleichTitel: "Marfă: așteptat și consumat",
+    abgleichText: "Așteptat: rețeta înmulțită cu porțiile vândute, plus deșeurile și mesele personalului notate. Consumat: inventarul anterior plus cumpărături minus inventarul de acum.", schwundTitel: "S-a dus mai mult decât era de așteptat (suspiciune de pierdere)", schwundText: "Motive posibile: deșeuri nenotate, porții prea mari, mâncare fără bon, greșeală la numărat.", einkaufFehltTitel: "Probabil lipsește o cumpărare",
+    einkaufFehltText: "Pentru această marfă nu există bon în perioadă. Adaugă bonul și comparația va fi corectă.", wenigerTitel: "S-a dus mai puțin decât era de așteptat", wenigerText: "Poate rețeta are prea mult sau ceva n-a mers bine la numărat.", ladenhueterTitel: "Fără vânzare",
+    ladenhueterText: "Feluri care aproape nu se vând. Le scoți din meniu sau le oferi altfel?", keinVerkauf: "nicio vânzare", totTitel: "Marfă de care nu are nevoie niciun fel vândut", totText: "Marfa stă în depozit și blochează bani, dar nimic din ce s-a vândut nu are nevoie de ea.",
+    totSumme: "Bani blocați", ehrlichTitel: "Ce mai lipsește", allesDa: "Totul e acolo: rețete, prețuri și potriviri.", importeTitel: "Citite",
+    zuruecknehmen: "Anulează", zurueckFrage: "Anulezi acest fișier? Vânzările din el nu mai contează.", zurueckGemacht: "Anulat", stueck: (m) => `${m} buc.`,
+    zeitraum: (von, bis) => `Perioada: ${von} – ${bis}`, summe: (n) => `Total (${n} zile)`, abgleichZeile: (ist, soll, diff) => `consumat ${ist}, așteptat ${soll}, diferență ${diff}`, unklar: (n) => `${n} mărfuri nu pot fi comparate: lipsește ambalajul sau unitatea.`,
+    nichtGezaehlt: (n) => `${n} mărfuri nu au fost numărate în ambele inventare.`, eimer: (kg) => `În plus ${kg} kg cântărite la gunoi – nu pot fi legate de o marfă.`, alleOk: (n) => `Mărfuri care se potrivesc (numărarea pe sferturi lasă o marjă)`, wenig: (m) => `doar ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % din cantitate fără fel (${texte}). Potrivește întâi, apoi evaluarea e corectă.`, ohneRezept: (namen) => `Fără rețetă, nu intră în consumul așteptat: ${namen}`, probleme: (namen) => `Nu se poate calcula în rețetă: ${namen}`, ohnePreis: (namen) => `Fără preț de cumpărare: ${namen}`,
+    geschaetzt: (n) => `${n} mărfuri cu preț orientativ: sumele cu ≈ sunt estimate.`, tageOhne: (n) => `${n} zile cu încasare zilnică, dar fără vânzări pe fel.`, doppelt: (n) => `${n} zile de mână și din casă: contează casa.`, importZeile: (n, von, bis) => `${n} zile, ${von} – ${bis}`,
+    herkunft: { hand: "de mână", zbon: "din raportul Z", dsfinvk: "Casă (DSFinV-K)", kasse: "Casă" },
+    import: { titel: "Citește din casă", text: "Casa ta poate scoate un fișier pentru fisc (DSFinV-K, de obicei un ZIP). Alege-l aici. Fișierul rămâne pe acest telefon.", knopf: "Alege fișierul" },
+    hand: { knopf: "Introdu de mână", titel: "Introdu de mână", text: "Citește bucățile de pe raportul Z (raport pe articole).", tag: "Zi", speichern: "Salvează", leer: "Nimic schimbat", gespeichert: (n) => `${n} feluri salvate` },
+    vorschau: {
+      titel: "Verifică fișierul", gepackt: "Acest dispozitiv nu poate deschide ZIP-ul. Dezarhivează-l și alege fișierele CSV.", fehlerLines: "În fișier lipsește lista pozițiilor (lines.csv).", leer: "În fișier nu sunt vânzări.",
+      fehlerDatei: "Fișierul nu a putut fi citit.", ohneBonkopf: "Fără antet de bon (transactions.csv): bonurile anulate și de instruire nu pot fi recunoscute.", punkt: "S-a citit punct în loc de virgulă ca separator zecimal.", alle: "Toate felurile",
+      offenTitel: "Aplicația nu cunoaște încă aceste texte din casă", offenText: "Atinge ce fel este. Aplicația ține minte.", positionen: "Poziții", zugeordnet: "Potrivite cu un fel",
+      offen: "Încă deschise", nichtGezaehlt: "Nu se numără ca vânzare", uebernehmen: "Preia", abbrechen: "Renunță",
+      gelernt: "Reținut", nichtsNeu: "Nimic nou – totul era deja acolo.", storno: (n) => `Storno: ${n} rânduri scăzute`, posStorno: (n) => `${n} poziții anulate nenumărate`,
+      bonNicht: (n) => `${n} rânduri din anulare, instruire etc. nenumărate`, artNicht: (n, betrag) => `${n} rânduri garanție, reducere, bacșiș etc. (${betrag}) – nu e fel`, ohneMenge: (n) => `${n} rânduri fără cantitate sărite`, ohneDatum: (n) => `${n} rânduri fără dată sărite`,
+      nummer: (nr) => `Nr. ${nr}`, tage: (n) => `${n} zile`, gleich: (n) => `${n} zile sunt deja exact așa și nu se numără de două ori.`, ersetzt: (n) => `${n} zile vor fi înlocuite cu noua stare.`,
+      uebernommen: (n, tage) => `${n} poziții preluate pentru ${tage} zile`,
+    },
+  },
 };

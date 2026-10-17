@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- BEISPIEL: erfundene, stark gekürzte Beschreibung, nur Formatangaben -->
+<DataSet><Version>2.4</Version><Media><Name>BEISPIEL-Export (erfunden)</Name><Table><URL>lines.csv</URL><Name>Bonpos</Name><UTF8/><DecimalSymbol>,</DecimalSymbol><DigitGroupingSymbol>.</DigitGroupingSymbol><VariableLength><ColumnDelimiter>;</ColumnDelimiter><RecordDelimiter>&#13;&#10;</RecordDelimiter><TextEncapsulator>"</TextEncapsulator></VariableLength></Table></Media></DataSet>

@@ -1140,4 +1140,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Copia", titelEinlesen: "Contraseña de la copia", feld: "Contraseña", hinweis: "Con contraseña el archivo va cifrado. Sin contraseña cualquiera puede abrirlo.", teilen: "Compartir copia", ohne: "Compartir sin contraseña", einlesen: "Leer", zuKurz: "Mínimo 6 caracteres", falsch: "Contraseña incorrecta", zeigen: "Mostrar contraseña", verbergen: "Ocultar contraseña", mit: "con contraseña", ohneKurz: "sin contraseña" },
   beispiel: { anlegen: "Crear local de ejemplo", satz: "Un local de döner totalmente rellenado para probar. Todos los números son ejemplos. Tu local no cambia.", name: "Döner de ejemplo", loeschen: "Borrar local de ejemplo", chip: "Ejemplo – todos los números inventados", export: "EJEMPLO – sin datos reales" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Ventas por plato", unter: "Lo que vendiste – de la caja o anotado a mano.", entwurf: "Borrador: aún no aprobado, solo para ver.", einstieg: "Ventas por plato",
+    einstiegUnter: "Leer la caja, platos que no salen, mermas", zeitraumInventur: "entre los dos últimos inventarios", keine: "Todavía no hay ventas en este periodo.", ohneGericht: "Sin plato",
+    rangTitel: "Lo más vendido", ohneInventur: "Para comparar con el almacén hacen falta dos inventarios.", inventurKnopf: "Al inventario", abgleichTitel: "Mercancía: esperada y gastada",
+    abgleichText: "Esperada: receta por porciones vendidas, más merma y comidas del personal anotadas. Gastada: inventario anterior más compras menos inventario actual.", schwundTitel: "Ha salido más de lo esperado (sospecha de merma)", schwundText: "Posibles causas: merma sin anotar, porciones grandes, comida sin ticket, error al contar.", einkaufFehltTitel: "Probablemente falta una compra",
+    einkaufFehltText: "Para esta mercancía no hay ticket en el periodo. Añade el ticket y la comparación saldrá bien.", wenigerTitel: "Ha salido menos de lo esperado", wenigerText: "Quizá la receta pone demasiado o algo salió mal al contar.", ladenhueterTitel: "Platos que no salen",
+    ladenhueterText: "Platos que casi no se venden. ¿Quitarlos de la carta u ofrecerlos de otra forma?", keinVerkauf: "sin ventas", totTitel: "Mercancía que ningún plato vendido necesita", totText: "Esta mercancía está en el almacén y retiene dinero, pero nada de lo vendido la necesita.",
+    totSumme: "Dinero retenido", ehrlichTitel: "Lo que aún falta", allesDa: "Todo está: recetas, precios y asignaciones.", importeTitel: "Leídos",
+    zuruecknehmen: "Deshacer", zurueckFrage: "¿Deshacer este archivo? Sus ventas dejarán de contar.", zurueckGemacht: "Deshecho", stueck: (m) => `${m} uds.`,
+    zeitraum: (von, bis) => `Periodo: ${von} a ${bis}`, summe: (n) => `Total (${n} días)`, abgleichZeile: (ist, soll, diff) => `gastado ${ist}, esperado ${soll}, diferencia ${diff}`, unklar: (n) => `${n} productos no se pueden comparar: falta envase o unidad.`,
+    nichtGezaehlt: (n) => `${n} productos no se contaron en ambos inventarios.`, eimer: (kg) => `Además ${kg} kg pesados en el cubo – no se pueden asignar a un producto.`, alleOk: (n) => `Productos que cuadran (contar en cuartos deja algo de margen)`, wenig: (m) => `solo ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % de la cantidad sin plato (${texte}). Primero asigna y luego el cálculo será correcto.`, ohneRezept: (namen) => `Sin receta, no cuenta en el gasto esperado: ${namen}`, probleme: (namen) => `No se puede calcular en la receta: ${namen}`, ohnePreis: (namen) => `Sin precio de compra: ${namen}`,
+    geschaetzt: (n) => `${n} productos con precio orientativo: los importes con ≈ son estimados.`, tageOhne: (n) => `${n} días con caja diaria pero sin ventas por plato.`, doppelt: (n) => `${n} días a mano y de la caja: cuenta la caja.`, importZeile: (n, von, bis) => `${n} días, ${von} a ${bis}`,
+    herkunft: { hand: "a mano", zbon: "del ticket Z", dsfinvk: "Caja (DSFinV-K)", kasse: "Caja" },
+    import: { titel: "Leer de la caja", text: "Tu caja puede exportar un archivo para Hacienda (DSFinV-K, normalmente un ZIP). Elígelo aquí. El archivo se queda en este móvil.", knopf: "Elegir archivo" },
+    hand: { knopf: "Anotar a mano", titel: "Anotar a mano", text: "Lee las cantidades del ticket Z (informe de artículos).", tag: "Día", speichern: "Guardar", leer: "Nada cambiado", gespeichert: (n) => `${n} platos guardados` },
+    vorschau: {
+      titel: "Revisar archivo", gepackt: "Este dispositivo no puede abrir el ZIP. Descomprímelo y elige los archivos CSV.", fehlerLines: "Al archivo le falta la lista de líneas (lines.csv).", leer: "En el archivo no hay ventas.",
+      fehlerDatei: "No se pudo leer el archivo.", ohneBonkopf: "Sin cabecera de ticket (transactions.csv): no se distinguen anulados ni de prueba.", punkt: "Se leyó punto en vez de coma como separador decimal.", alle: "Todos los platos",
+      offenTitel: "La app aún no conoce estos textos de la caja", offenText: "Toca qué plato es. La app lo recuerda.", positionen: "Líneas", zugeordnet: "Asignadas a un plato",
+      offen: "Aún abiertas", nichtGezaehlt: "No contado como venta", uebernehmen: "Aplicar", abbrechen: "Cancelar",
+      gelernt: "Recordado", nichtsNeu: "Nada nuevo – todo estaba ya.", storno: (n) => `Anulación: ${n} líneas restadas`, posStorno: (n) => `${n} líneas anuladas no contadas`,
+      bonNicht: (n) => `${n} líneas de cancelaciones, pruebas y similares no contadas`, artNicht: (n, betrag) => `${n} líneas de depósito, descuento, propina y similares (${betrag}) – no es un plato`, ohneMenge: (n) => `${n} líneas sin cantidad omitidas`, ohneDatum: (n) => `${n} líneas sin fecha omitidas`,
+      nummer: (nr) => `N.º ${nr}`, tage: (n) => `${n} días`, gleich: (n) => `${n} días ya están exactamente así y no cuentan dos veces.`, ersetzt: (n) => `${n} días se sustituirán por el nuevo estado.`,
+      uebernommen: (n, tage) => `${n} líneas aplicadas para ${tage} días`,
+    },
+  },
 };

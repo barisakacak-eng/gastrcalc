@@ -1141,4 +1141,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Backup", titelEinlesen: "Password del backup", feld: "Password", hinweis: "Con password il file è cifrato. Senza password chiunque può aprirlo.", teilen: "Condividi backup", ohne: "Condividi senza password", einlesen: "Leggi", zuKurz: "Almeno 6 caratteri", falsch: "Password sbagliata", zeigen: "Mostra password", verbergen: "Nascondi password", mit: "con password", ohneKurz: "senza password" },
   beispiel: { anlegen: "Crea locale di esempio", satz: "Un locale kebab completamente compilato da provare. Tutti i numeri sono esempi. Il tuo locale resta invariato.", name: "Kebab di esempio", loeschen: "Elimina locale di esempio", chip: "Esempio – tutti i numeri inventati", export: "ESEMPIO – nessun dato reale" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Vendite per piatto", unter: "Cosa hai venduto – dalla cassa o inserito a mano.", entwurf: "Bozza: non ancora approvata, solo da guardare.", einstieg: "Vendite per piatto",
+    einstiegUnter: "Leggi la cassa, piatti fermi, ammanchi", zeitraumInventur: "tra gli ultimi due inventari", keine: "Ancora nessuna vendita in questo periodo.", ohneGericht: "Senza piatto",
+    rangTitel: "I più venduti", ohneInventur: "Per il confronto con il magazzino servono due inventari.", inventurKnopf: "All'inventario", abgleichTitel: "Merce: prevista e consumata",
+    abgleichText: "Prevista: ricetta per porzioni vendute, più scarti e pasti del personale registrati. Consumata: inventario precedente più acquisti meno inventario attuale.", schwundTitel: "Uscito più del previsto (sospetto ammanco)", schwundText: "Possibili motivi: scarti non registrati, porzioni troppo grandi, cibo senza scontrino, errore nel conteggio.", einkaufFehltTitel: "Probabilmente manca un acquisto",
+    einkaufFehltText: "Per questa merce non c'è scontrino nel periodo. Aggiungi lo scontrino e il confronto sarà giusto.", wenigerTitel: "Uscito meno del previsto", wenigerText: "Forse la ricetta indica troppo o qualcosa è andato storto nel conteggio.", ladenhueterTitel: "Piatti fermi",
+    ladenhueterText: "Piatti che quasi non si vendono. Toglierli dal menu o proporli diversamente?", keinVerkauf: "nessuna vendita", totTitel: "Merce che nessun piatto venduto usa", totText: "Questa merce resta in magazzino e blocca soldi, ma niente di ciò che è stato venduto la usa.",
+    totSumme: "Soldi bloccati", ehrlichTitel: "Cosa manca ancora", allesDa: "C'è tutto: ricette, prezzi e abbinamenti.", importeTitel: "Letti",
+    zuruecknehmen: "Annulla", zurueckFrage: "Annullare questo file? Le sue vendite non conteranno più.", zurueckGemacht: "Annullato", stueck: (m) => `${m} pz.`,
+    zeitraum: (von, bis) => `Periodo: dal ${von} al ${bis}`, summe: (n) => `Totale (${n} giorni)`, abgleichZeile: (ist, soll, diff) => `consumato ${ist}, previsto ${soll}, differenza ${diff}`, unklar: (n) => `${n} merci non confrontabili: manca confezione o unità.`,
+    nichtGezaehlt: (n) => `${n} merci non contate in entrambi gli inventari.`, eimer: (kg) => `In più ${kg} kg pesati nel bidone – non attribuibili a una merce.`, alleOk: (n) => `Merci che tornano (contare a quarti lascia un po' di margine)`, wenig: (m) => `solo ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % della quantità senza piatto (${texte}). Prima abbina, poi il calcolo è giusto.`, ohneRezept: (namen) => `Senza ricetta, non conta nel consumo previsto: ${namen}`, probleme: (namen) => `Non calcolabile nella ricetta: ${namen}`, ohnePreis: (namen) => `Senza prezzo d'acquisto: ${namen}`,
+    geschaetzt: (n) => `${n} merci con prezzo indicativo: gli importi con ≈ sono stime.`, tageOhne: (n) => `${n} giorni con incasso giornaliero ma senza vendite per piatto.`, doppelt: (n) => `${n} giorni a mano e dalla cassa: conta la cassa.`, importZeile: (n, von, bis) => `${n} giorni, dal ${von} al ${bis}`,
+    herkunft: { hand: "a mano", zbon: "dallo scontrino Z", dsfinvk: "Cassa (DSFinV-K)", kasse: "Cassa" },
+    import: { titel: "Leggi dalla cassa", text: "La tua cassa può esportare un file per il fisco (DSFinV-K, di solito uno ZIP). Sceglilo qui. Il file resta su questo telefono.", knopf: "Scegli file" },
+    hand: { knopf: "Inserisci a mano", titel: "Inserisci a mano", text: "Leggi le quantità dallo scontrino Z (report articoli).", tag: "Giorno", speichern: "Salva", leer: "Nessuna modifica", gespeichert: (n) => `${n} piatti salvati` },
+    vorschau: {
+      titel: "Controlla il file", gepackt: "Questo dispositivo non riesce ad aprire lo ZIP. Estrailo e scegli i file CSV.", fehlerLines: "Nel file manca l'elenco delle righe (lines.csv).", leer: "Nel file non ci sono vendite.",
+      fehlerDatei: "Impossibile leggere il file.", ohneBonkopf: "Senza testata dello scontrino (transactions.csv): annullati e prove non si riconoscono.", punkt: "Letto il punto invece della virgola come separatore decimale.", alle: "Tutti i piatti",
+      offenTitel: "L'app non conosce ancora questi testi della cassa", offenText: "Tocca quale piatto è. L'app se lo ricorda.", positionen: "Righe", zugeordnet: "Abbinate a un piatto",
+      offen: "Ancora aperte", nichtGezaehlt: "Non conteggiato come vendita", uebernehmen: "Applica", abbrechen: "Annulla",
+      gelernt: "Memorizzato", nichtsNeu: "Niente di nuovo – c'era già tutto.", storno: (n) => `Storno: sottratte ${n} righe`, posStorno: (n) => `${n} righe stornate non conteggiate`,
+      bonNicht: (n) => `${n} righe da annullamenti, prove e simili non conteggiate`, artNicht: (n, betrag) => `${n} righe cauzione, sconto, mance e simili (${betrag}) – non è un piatto`, ohneMenge: (n) => `${n} righe senza quantità saltate`, ohneDatum: (n) => `${n} righe senza data saltate`,
+      nummer: (nr) => `N. ${nr}`, tage: (n) => `${n} giorni`, gleich: (n) => `${n} giorni ci sono già esattamente così e non contano due volte.`, ersetzt: (n) => `${n} giorni saranno sostituiti dal nuovo stato.`,
+      uebernommen: (n, tage) => `${n} righe applicate per ${tage} giorni`,
+    },
+  },
 };

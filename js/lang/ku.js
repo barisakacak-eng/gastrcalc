@@ -1139,4 +1139,32 @@ export default {
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopiya ewlehiyê", titelEinlesen: "Şîfreya kopiyê", feld: "Şîfre", hinweis: "Bi şîfreyê dosya şîfrekirî ye. Bê şîfre her kes dikare wê veke.", teilen: "Kopiyê parve bike", ohne: "Bê şîfre parve bike", einlesen: "Bixwîne", zuKurz: "Herî kêm 6 tîp", falsch: "Şîfre şaş e", zeigen: "Şîfreyê nîşan bide", verbergen: "Şîfreyê veşêre", mit: "bi şîfre", ohneKurz: "bê şîfre" },
   beispiel: { anlegen: "Dikana mînakê çêke", satz: "Dikaneke donerê ya tije ji bo ceribandinê. Hemû hejmar mînak in. Dikana te wekî xwe dimîne.", name: "Donera Mînakê", loeschen: "Dikana mînakê jê bibe", chip: "Mînak – hemû hejmar çêkirî ne", export: "MÎNAK – ne daneyên rastîn" }, // Beispiel-Laden (17.10.2026)
+  // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
+  verkaeufe: {
+    titel: "Firotin li gor xwarinê", unter: "Te çi firot – ji kasê an bi destan.", entwurf: "Pêşnûme: hîn nehatiye pejirandin, tenê ji bo dîtinê.", einstieg: "Firotin li gor xwarinê",
+    einstiegUnter: "Kasê bixwîne, yên nayên firotin, kêmasî", zeitraumInventur: "di navbera du jimartinên dawî de", keine: "Di vê demê de hîn firotin tune.", ohneGericht: "Bê xwarin",
+    rangTitel: "Yên herî zêde hatine firotin", ohneInventur: "Ji bo berawirdkirina bi depoyê re du jimartin hewce ne.", inventurKnopf: "Biçe jimartinê", abgleichTitel: "Mal: tê hêvîkirin û hatiye xerckirin",
+    abgleichText: "Tê hêvîkirin: reçete carî porsiyonên firotî, bi çop û xwarina karmendan a nivîsandî re. Hatiye xerckirin: jimartina berê zêde kirîn kêm jimartina niha.", schwundTitel: "Ji hêviyê zêdetir çûye (gumana kêmasiyê)", schwundText: "Sedemên mimkun: çop nehatiye nivîsandin, porsiyon mezin, xwarin bê fîş, xeletiya jimartinê.", einkaufFehltTitel: "Dibe ku kirînek kêm be",
+    einkaufFehltText: "Ji bo vî malî di vê demê de fîş tune. Fîşê zêde bike, wê berawird rast be.", wenigerTitel: "Ji hêviyê kêmtir çûye", wenigerText: "Dibe ku di reçeteyê de zêde hatibe nivîsandin an di jimartinê de tiştek xelet çû.", ladenhueterTitel: "Yên nayên firotin",
+    ladenhueterText: "Xwarinên ku hema nayên firotin. Ji menuyê rakin an bi awayekî din pêşkêş bikin?", keinVerkauf: "firotin tune", totTitel: "Malê ku tu xwarineke firotî ne hewce dike", totText: "Ev mal di depoyê de ye û pere girê dide, lê tiştekî firotî jê re ne hewce ye.",
+    totSumme: "Pereyê girêdayî", ehrlichTitel: "Çi hîn kêm e", allesDa: "Her tişt heye: reçete, biha û lihevanîn.", importeTitel: "Hatine xwendin",
+    zuruecknehmen: "Paşve bigire", zurueckFrage: "Vê pelê paşve bigire? Firotinên wê êdî nayên hesibandin.", zurueckGemacht: "Hate paşvegirtin", stueck: (m) => `${m} hebe`,
+    zeitraum: (von, bis) => `Dem: ${von} heta ${bis}`, summe: (n) => `Bi hev re (${n} roj)`, abgleichZeile: (ist, soll, diff) => `xerckirî ${ist}, hêvîkirî ${soll}, ferq ${diff}`, unklar: (n) => `${n} mal nayên berawirdkirin: pakêt an yekîne kêm e.`,
+    nichtGezaehlt: (n) => `${n} mal di herdu jimartinan de nehatine jimartin.`, eimer: (kg) => `Herwiha ${kg} kg di sîtilê çopê de hate kişandin – bi tu malî ve nayê girêdan.`, alleOk: (n) => `Malên ku li hev tên (jimartina çaryekî hinek cih dihêle)`, wenig: (m) => `tenê ${m}`,
+    ohneZuordnung: (p, texte) => `${p} % ji hejmarê bê xwarin (${texte}). Pêşî li hev bîne, paşê hesab rast e.`, ohneRezept: (namen) => `Bê reçete, di xerca hêvîkirî de nayê hesibandin: ${namen}`, probleme: (namen) => `Di reçeteyê de nayê hesibandin: ${namen}`, ohnePreis: (namen) => `Bê bihayê kirînê: ${namen}`,
+    geschaetzt: (n) => `${n} mal bi bihayê rêber: mîqdarên bi ≈ texmîn in.`, tageOhne: (n) => `${n} roj bi dahata rojane lê bê firotin li gor xwarinê.`, doppelt: (n) => `${n} roj bi destan û ji kasê: kase tê hesibandin.`, importZeile: (n, von, bis) => `${n} roj, ${von} heta ${bis}`,
+    herkunft: { hand: "bi destan", zbon: "ji rapora Z", dsfinvk: "Kase (DSFinV-K)", kasse: "Kase" },
+    import: { titel: "Ji kasê bixwîne", text: "Kaseya te dikare pelekî ji bo baca derxîne (DSFinV-K, bi gelemperî ZIP). Li vir hilbijêre. Pel li ser vê telefonê dimîne.", knopf: "Pelê hilbijêre" },
+    hand: { knopf: "Bi destan binivîse", titel: "Bi destan binivîse", text: "Hejmaran ji rapora Z bixwîne (rapora gotaran).", tag: "Roj", speichern: "Tomar bike", leer: "Tiştek nehat guhertin", gespeichert: (n) => `${n} xwarin hatin tomarkirin` },
+    vorschau: {
+      titel: "Pelê kontrol bike", gepackt: "Ev amûr nikare ZIP-ê veke. Ji kerema xwe veke û pelên CSV hilbijêre.", fehlerLines: "Di pelê de lîsteya rêzan tune (lines.csv).", leer: "Di pelê de firotin tune.",
+      fehlerDatei: "Pel nehat xwendin.", ohneBonkopf: "Bê serê fîşê (transactions.csv): yên betalkirî û perwerdeyî nayên naskirin.", punkt: "Li şûna bêhnokê xal wek nîşana dehane hate xwendin.", alle: "Hemû xwarin",
+      offenTitel: "Sepan hîn van nivîsên kasê nas nake", offenText: "Bitikîne ka kîjan xwarin e. Sepan wê bi bîr tîne.", positionen: "Rêz", zugeordnet: "Bi xwarinekê ve hatine girêdan",
+      offen: "Hîn vekirî", nichtGezaehlt: "Wek firotin nayê hesibandin", uebernehmen: "Bigire", abbrechen: "Betal bike",
+      gelernt: "Hate bîrkirin", nichtsNeu: "Tiştek nû tune – her tişt berê hebû.", storno: (n) => `Storno: ${n} rêz hatin derxistin`, posStorno: (n) => `${n} rêzên betalkirî nehatin hesibandin`,
+      bonNicht: (n) => `${n} rêz ji betalkirin, perwerde û hwd. nehatin hesibandin`, artNicht: (n, betrag) => `${n} rêz depozîto, daxistin, bexşîş û hwd. (${betrag}) – ne xwarin e`, ohneMenge: (n) => `${n} rêz bê mîqdar hatin derbaskirin`, ohneDatum: (n) => `${n} rêz bê dîrok hatin derbaskirin`,
+      nummer: (nr) => `Hj. ${nr}`, tage: (n) => `${n} roj`, gleich: (n) => `${n} roj jixwe tam wiha hene û du caran nayên hesibandin.`, ersetzt: (n) => `${n} roj dê bi rewşa nû werin guhertin.`,
+      uebernommen: (n, tage) => `Ji bo ${tage} rojan ${n} rêz hatin girtin`,
+    },
+  },
 };
