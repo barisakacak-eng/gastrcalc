@@ -22,11 +22,10 @@ jobs:
         with:
           node-version: 22
       - run: node --test tests/*.mjs
-  # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser – zunächst NICHT blockierend
-  # (continue-on-error); nach einigen stabilen Läufen wird der Job zur Voraussetzung für deploy.
+  # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser. Seit 17.10. mittags blockierend
+  # (5 stabile Läufe): neue Regelverstöße oder ein kaputter Personal-Modus gehen nicht mehr live.
   regeln:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,7 +41,7 @@ jobs:
           set -o pipefail
           python tests/durchlauf_personal.py 2>&1 | tee personal.txt || { tail -15 personal.txt | while read -r l; do echo "::warning::personal: $l"; done; exit 1; }
   deploy:
-    needs: test
+    needs: [test, regeln]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
