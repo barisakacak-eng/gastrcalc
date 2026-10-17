@@ -1138,4 +1138,5 @@ export default {
   muell1: { titel: "دورریز", andere: "دیگر", portion: (n, z) => `${z} پرس`, eingetragen: "ثبت شد", menge: "تغییر مقدار", personalessen: "غذای کارکنان" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "پشتیبان", titelEinlesen: "رمز پشتیبان", feld: "رمز", hinweis: "با رمز، فایل رمزگذاری می‌شود. بدون رمز هر کسی می‌تواند آن را باز کند.", teilen: "اشتراک پشتیبان", ohne: "اشتراک بدون رمز", einlesen: "خواندن", zuKurz: "دست‌کم ۶ نویسه", falsch: "رمز اشتباه است", zeigen: "نمایش رمز", verbergen: "پنهان کردن رمز", mit: "با رمز", ohneKurz: "بدون رمز" },
+  beispiel: { anlegen: "ساخت مغازهٔ نمونه", satz: "یک مغازهٔ دونر کاملاً پر برای امتحان. همهٔ عددها نمونه‌اند. مغازهٔ خودت دست‌نخورده می‌ماند.", name: "دونر نمونه", loeschen: "حذف مغازهٔ نمونه", chip: "نمونه – همهٔ عددها ساختگی", export: "نمونه – دادهٔ واقعی نیست" }, // Beispiel-Laden (17.10.2026)
 };

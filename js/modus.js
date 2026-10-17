@@ -44,7 +44,7 @@ export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESS
 const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffnen", "kuehl-einrichtung-fertig", "kuehl-keine", "kuehl-takt", "kuehl-ruhetag",
   "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "muell1-nachtragen",
   "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter",
-  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "einrichtung-fertig-ok", "bearbeiten", "export"]);
+  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export"]);
 // heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.
 export function personalGesperrt(name, wert, heute) {
   if (PERSONAL_GESPERRT.has(name) || /^stelle-/.test(name)) return true;

@@ -295,6 +295,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   for (const k of ["stammZeit", "abgleich"]) if (!istObjekt(s[k])) delete s[k];
   delete s.stammH; // Fingerabdrücke liegen im Kopf des Speichers, nicht im Laden
   if (!istObjekt(s.abgleichHinweis)) delete s.abgleichHinweis;
+  if (s.beispiel !== true) delete s.beispiel; // Beispiel-Laden (17.10.2026): Merkmal bleibt beim Einlesen erhalten, nur echtes true
   if (!["onboarding", "app"].includes(s.phase)) s.phase = "onboarding";
   s.schritt = Math.max(0, Number(s.schritt) || 0);
   delete s.schema; // gehört an die Wurzel
@@ -789,8 +790,9 @@ export const speichernAbbrechen = () => speichern.abbrechen();
 export const _speicherInnen = () => ({ teile: teileH.size, gueltig: bekanntGueltig, altModus, frisch: frischZahl });
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
+// Beispiel-Laden (17.10.2026): zählt nicht – erfundene Einträge machen keine Sicherung fällig.
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length, 0);
+  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length, 0);
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).

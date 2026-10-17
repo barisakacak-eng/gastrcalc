@@ -8,7 +8,8 @@ import { nav } from "./nav.js";
 
 export function laedenView(wurzel) {
   const ue = wurzel.betriebe.map(ladenUebersicht);
-  const fertig = ue.filter((u) => u.eingerichtet);
+  const fertig = ue.filter((u, i) => u.eingerichtet && !wurzel.betriebe[i].beispiel); // Beispiel-Laden (17.10.2026): nicht in den Summen
+  const aktiv = wurzel.betriebe.find((b) => b.id === wurzel.aktiv);
   const summe = fertig.reduce((s, u) => ({ umsatz: s.umsatz + u.umsatz7, soll: s.soll + u.soll7, abfall: s.abfall + u.abfall7, last: s.last + u.last.gesamt,
     tage: s.tage + (u.tageMitUmsatz ? 1 : 0), ohneWert: s.ohneWert + u.ohneWert7,
     portionen: u.portionen7 === null ? s.portionen : (s.portionen || 0) + u.portionen7 }), { umsatz: 0, soll: 0, abfall: 0, last: 0, tage: 0, ohneWert: 0, portionen: null });
@@ -32,6 +33,8 @@ export function laedenView(wurzel) {
       </div>
       <button type="button" class="knopf zweit" data-a="laden-neu">${esc(t("laeden.neu"))}</button>
       <p class="hinweis">${esc(t("laeden.hinweis"))}</p>
+      ${aktiv?.beispiel ? `<button type="button" class="knopf weich warn" data-a="beispiel-loeschen">${esc(t("beispiel.loeschen"))}</button>` // Beispiel-Laden (17.10.2026)
+        : `<button type="button" class="knopf zweit" data-a="beispiel-anlegen">${esc(t("beispiel.anlegen"))}</button><p class="hinweis">${esc(t("beispiel.satz"))}</p>`}
     </div>
     ${nav("laeden")}`;
 }

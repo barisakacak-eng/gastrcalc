@@ -1140,4 +1140,5 @@ export default {
   muell1: { titel: "Scarti", andere: "Altro", portion: (n, z) => `${z} ${n === 1 ? "porzione" : "porzioni"}`, eingetragen: "registrato", menge: "Cambia quantità", personalessen: "Pasto del personale" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Backup", titelEinlesen: "Password del backup", feld: "Password", hinweis: "Con password il file è cifrato. Senza password chiunque può aprirlo.", teilen: "Condividi backup", ohne: "Condividi senza password", einlesen: "Leggi", zuKurz: "Almeno 6 caratteri", falsch: "Password sbagliata", zeigen: "Mostra password", verbergen: "Nascondi password", mit: "con password", ohneKurz: "senza password" },
+  beispiel: { anlegen: "Crea locale di esempio", satz: "Un locale kebab completamente compilato da provare. Tutti i numeri sono esempi. Il tuo locale resta invariato.", name: "Kebab di esempio", loeschen: "Elimina locale di esempio", chip: "Esempio – tutti i numeri inventati", export: "ESEMPIO – nessun dato reale" }, // Beispiel-Laden (17.10.2026)
 };

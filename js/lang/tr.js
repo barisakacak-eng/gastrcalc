@@ -1141,4 +1141,5 @@ export default {
   muell1: { titel: "Çöp", andere: "Diğer", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "kaydedildi", menge: "Miktarı değiştir", personalessen: "Personel yemeği" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Yedek", titelEinlesen: "Yedeğin parolası", feld: "Parola", hinweis: "Parolayla dosya şifrelenir. Parolasız herkes açabilir.", teilen: "Yedeği paylaş", ohne: "Parolasız paylaş", einlesen: "Oku", zuKurz: "En az 6 karakter", falsch: "Parola yanlış", zeigen: "Parolayı göster", verbergen: "Parolayı gizle", mit: "parolalı", ohneKurz: "parolasız" },
+  beispiel: { anlegen: "Örnek dükkân oluştur", satz: "Denemek için tamamen dolu bir döner dükkânı. Tüm sayılar örnektir. Kendi dükkânın değişmez.", name: "Örnek Döner", loeschen: "Örnek dükkânı sil", chip: "Örnek – tüm sayılar uydurma", export: "ÖRNEK – gerçek veri değil" }, // Beispiel-Laden (17.10.2026)
 };

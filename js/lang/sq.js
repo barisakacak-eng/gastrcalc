@@ -1144,4 +1144,5 @@ export default {
   muell1: { titel: "Mbeturina", andere: "Të tjera", portion: (n, z) => `${z} ${n === 1 ? "porcion" : "porcione"}`, eingetragen: "u regjistrua", menge: "Ndrysho sasinë", personalessen: "Ushqim për stafin" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopja", titelEinlesen: "Fjalëkalimi i kopjes", feld: "Fjalëkalimi", hinweis: "Me fjalëkalim skedari është i koduar. Pa fjalëkalim mund ta hapë kushdo.", teilen: "Ndaj kopjen", ohne: "Ndaj pa fjalëkalim", einlesen: "Lexo", zuKurz: "Të paktën 6 shenja", falsch: "Fjalëkalim i gabuar", zeigen: "Shfaq fjalëkalimin", verbergen: "Fshih fjalëkalimin", mit: "me fjalëkalim", ohneKurz: "pa fjalëkalim" },
+  beispiel: { anlegen: "Krijo dyqan shembull", satz: "Një dyqan dyneri plotësisht i mbushur për ta provuar. Të gjithë numrat janë shembuj. Dyqani yt mbetet i paprekur.", name: "Dyner shembull", loeschen: "Fshi dyqanin shembull", chip: "Shembull – të gjithë numrat të sajuar", export: "SHEMBULL – jo të dhëna të vërteta" }, // Beispiel-Laden (17.10.2026)
 };

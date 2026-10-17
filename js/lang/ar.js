@@ -1141,4 +1141,5 @@ export default {
   muell1: { titel: "هدر", andere: "أخرى", portion: (n, z) => `${z} ${n === 1 ? "حصة" : n === 2 ? "حصتان" : (n % 100 >= 3 && n % 100 <= 10) ? "حصص" : "حصة"}`, eingetragen: "تم التسجيل", menge: "تغيير الكمية", personalessen: "وجبة الموظفين" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "النسخة الاحتياطية", titelEinlesen: "كلمة مرور النسخة", feld: "كلمة المرور", hinweis: "مع كلمة مرور يكون الملف مشفّرًا. بدونها يستطيع أي شخص فتحه.", teilen: "مشاركة النسخة", ohne: "مشاركة بدون كلمة مرور", einlesen: "قراءة", zuKurz: "6 أحرف على الأقل", falsch: "كلمة المرور خاطئة", zeigen: "إظهار كلمة المرور", verbergen: "إخفاء كلمة المرور", mit: "مع كلمة مرور", ohneKurz: "بدون كلمة مرور" },
+  beispiel: { anlegen: "إنشاء محل تجريبي", satz: "محل دونر مملوء بالكامل للتجربة. كل الأرقام أمثلة. محلك يبقى كما هو.", name: "دونر تجريبي", loeschen: "حذف المحل التجريبي", chip: "مثال – كل الأرقام مختلقة", export: "مثال – ليست بيانات حقيقية" }, // Beispiel-Laden (17.10.2026)
 };

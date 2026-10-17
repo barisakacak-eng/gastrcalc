@@ -1145,4 +1145,5 @@ export default {
   muell1: { titel: "Odpady", andere: "Inne", portion: (n, z) => `${z} ${lm(n, "porcja", "porcje", "porcji")}`, eingetragen: "zapisano", menge: "Zmień ilość", personalessen: "Posiłek personelu" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopia", titelEinlesen: "Hasło kopii", feld: "Hasło", hinweis: "Z hasłem plik jest zaszyfrowany. Bez hasła każdy może go otworzyć.", teilen: "Udostępnij kopię", ohne: "Udostępnij bez hasła", einlesen: "Wczytaj", zuKurz: "Co najmniej 6 znaków", falsch: "Błędne hasło", zeigen: "Pokaż hasło", verbergen: "Ukryj hasło", mit: "z hasłem", ohneKurz: "bez hasła" },
+  beispiel: { anlegen: "Utwórz lokal przykładowy", satz: "W pełni wypełniony lokal z kebabem do wypróbowania. Wszystkie liczby są przykładowe. Twój lokal pozostaje bez zmian.", name: "Kebab przykładowy", loeschen: "Usuń lokal przykładowy", chip: "Przykład – wszystkie liczby zmyślone", export: "PRZYKŁAD – brak prawdziwych danych" }, // Beispiel-Laden (17.10.2026)
 };

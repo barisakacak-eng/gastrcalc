@@ -1139,4 +1139,5 @@ export default {
   muell1: { titel: "Rác thải", andere: "Khác", portion: (n, z) => `${z} phần`, eingetragen: "đã ghi", menge: "Đổi số lượng", personalessen: "Bữa ăn nhân viên" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Bản sao lưu", titelEinlesen: "Mật khẩu bản sao lưu", feld: "Mật khẩu", hinweis: "Có mật khẩu thì file được mã hóa. Không có mật khẩu thì ai cũng mở được.", teilen: "Chia sẻ bản sao lưu", ohne: "Chia sẻ không mật khẩu", einlesen: "Đọc vào", zuKurz: "Ít nhất 6 ký tự", falsch: "Sai mật khẩu", zeigen: "Hiện mật khẩu", verbergen: "Ẩn mật khẩu", mit: "có mật khẩu", ohneKurz: "không mật khẩu" },
+  beispiel: { anlegen: "Tạo quán mẫu", satz: "Một quán döner đã điền đầy đủ để dùng thử. Mọi con số đều là ví dụ. Quán của bạn không bị thay đổi.", name: "Döner mẫu", loeschen: "Xóa quán mẫu", chip: "Ví dụ – mọi con số đều bịa", export: "VÍ DỤ – không phải dữ liệu thật" }, // Beispiel-Laden (17.10.2026)
 };

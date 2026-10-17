@@ -21,6 +21,9 @@ let vorschauHtml = null;      // offene Vorschau (fertiges Dokument)
 export function ordnerZuruecksetzen() { belehrungAuf = false; vorschauHtml = null; personNeu = ""; }
 export const ordnerVorschauOffen = () => !!vorschauHtml;
 
+// Beispiel-Laden (17.10.2026): Kennzeichnung in Druck- und CSV-Kopf (null = echter Laden) – immer auch deutsch, wie die Umsatz-Kennung
+const beispielKopf = (stand) => (stand?.beispiel ? de.beispiel.export + (sprache() !== "de" ? ` / ${t("beispiel.export")}` : "") : null);
+const mitBeispiel = (stand, text) => (stand?.beispiel && text.startsWith("\ufeff") ? `\ufeff${beispielKopf(stand)}\r\n${text.slice(1)}` : text);
 const monatLang = (iso) => `${monatName(iso)} ${iso.slice(0, 4)}`;
 const datum = (iso) => (iso ? datumDe(iso) : "–");
 const euro = (n) => fmtEuro(n, { dezimal: 2 });
@@ -232,7 +235,7 @@ export function amtDokument(stand, o) {
   const belZeilen = [...b.zeilen.map((x) => ({ warn: x.status !== "ok", zellen: [x.name, datum(x.erst), datum(x.letzte), datum(x.faellig), n.status(x.status)] })),
     ...b.ausgeschieden.map((x) => ({ klasse: "nach", zellen: [x.ausgeschieden ? t("amtW2.ausgeschiedenAm", x.name, datumDe(x.ausgeschieden)) : n.ausgeschieden(x.name), datum(x.erst), datum(x.letzte), "–", t("amtW2.statusAusgeschieden")] }))];
   return {
-    titel: t("ordner.amt.titel"), laden: stand.betrieb?.name || "", zeitraum: zeitraumText(o.zeitraum), erstellt: erstelltText(), sprache: sprache(), seite: t("amtW2.seite"),
+    titel: t("ordner.amt.titel"), laden: stand.betrieb?.name || "", beispiel: beispielKopf(stand), zeitraum: zeitraumText(o.zeitraum), erstellt: erstelltText(), sprache: sprache(), seite: t("amtW2.seite"),
     abschnitte: [
       { titel: t("ordner.teil.kuehl"), info: kuehlInfo, warn: !k.vollstaendig, kopf: [t("amtW2.spalteNr"), ...t("ordner.dok.druck.kuehl"), t("amtW2.nachgetragenAm")], rechts: [0, 4, 5],
         zeilen: k.zeilen.map((x, i) => ({ warn: x.abweichung && x.status !== "verspaetet", klasse: [x.status === "verspaetet" ? "spaet" : "", x.nacherfasst ? "nach" : ""].filter(Boolean).join(" "),
@@ -275,18 +278,18 @@ export function paketDokument(stand, p) {
     zeilen: p.kosten.zeilen.map((x) => ({ warn: x.status === "geschaetzt", zellen: [n.posten(x.posten) + (x.status === "geschaetzt" ? ` (${n.pstatus(x.status)})` : ""), euro(x.betrag), n.periode(x.periode), n.basis(x.basis), euro(x.jeMonat)] })), leer: t("ordner.zeile.kostenKeine") });
   a.push({ titel: t("ordnerT.aenderungen"), info: t("ordnerT.aenderungenInfo"), kopf: t("ordnerT.druck.aenderungen"), rechts: [4, 5],
     zeilen: p.aenderungen.zeilen.map((x) => [datumDe(x.datum), n.aart(x.art), n.vorgang(x.vorgang), x.art === "kosten" ? [n.stelle(x.stelle), x.text].filter(Boolean).join(" · ") : (x.text || "–"), x.alt === null ? "–" : `${euro(x.alt)} ${n.basis(x.basis)}`, x.neu === null ? "–" : euro(x.neu), zeitDe(x.zeit)]), leer: t("ordnerT.aenderungenKeine") });
-  return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", zeitraum: monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordnerT.fuss") };
+  return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", beispiel: beispielKopf(stand), zeitraum: monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordnerT.fuss") };
 }
 
 // Dateien (CSV) je Teil
 const dateiName = (stand, teil, z) => `${(stand.betrieb?.name || "laden").replace(/ı/g, "i").replace(/ß/g, "ss").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w-]+/g, "_").replace(/_+/g, "_").slice(0, 30)}_${teil}_${z.von}_${z.bis}.csv`;
-function csvDateien(stand, ansicht, nurTeil = null) {
+export function csvDateien(stand, ansicht, nurTeil = null) { // Beispiel-Laden (17.10.2026): exportiert für tests/beispiel.test.mjs
   const H = heute(); const n = NAMEN();
   if (ansicht === "ordner-amt") { const z = amtZeitraum(H); const o = ordnerAmt(stand, z, { datum: H });
-    return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, dateiTeil(teil), z), text: amtCsv(o, teil, kopfVon(teil), n) })); }
+    return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, dateiTeil(teil), z), text: mitBeispiel(stand, amtCsv(o, teil, kopfVon(teil), n)) })); }
   const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const z = paketZeit(art, H); const p = monatsPaket(stand, z, art);
   const teile = nurTeil ? p.teile.filter((x) => x === nurTeil) : [...p.teile, "aenderungen"]; // W2-T: Aenderungen.csv gehört zu jedem Monatspaket
-  return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : t("ordner.datei." + teil), z), text: teilCsv(p, teil, kopfVon(teil), n) }));
+  return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : t("ordner.datei." + teil), z), text: mitBeispiel(stand, teilCsv(p, teil, kopfVon(teil), n)) }));
 }
 export function dokumentFuer(stand, ansicht) {
   const H = heute();

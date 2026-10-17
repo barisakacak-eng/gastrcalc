@@ -210,6 +210,7 @@ export function amtCsv(o, teil, kopf, namen = {}) {
 }
 
 // ---------- Druckdokument ----------
+// Beispiel-Laden (17.10.2026): dok.beispiel = Kennzeichnung („BEISPIEL – keine echten Daten“) in Kopf, Titel und Fußzeile, sonst leer.
 // dok = { titel, laden, zeitraum, erstellt, sprache, seite: ["Seite", "von"], abschnitte: [{ titel, info, kopf: [..], zeilen: [[..] | { zellen, warn, klasse }], rechts, leer, warn }], unterschrift, fuss }
 // Alle Zellen sind schon fertige Texte; hier wird nur escaped und gesetzt. Eigenes CSS, A4, ohne App-Stile, ohne Verbindung nach außen.
 // W2-H (p03 M2): Seitenzahlen über @page-Ränder (Chrome ab 131, Safari ab 18.2 – andere Browser lassen sie weg) und Laden/Zeitraum unten links.
@@ -222,8 +223,8 @@ export function druckHtml(dok) {
     ${a.summe ? `<tfoot><tr>${a.summe.map((c, i) => `<td${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(c)}</td>`).join("")}</tr></tfoot>` : ""}</table></div>` : a.leer ? `<p class="leer">${esc(a.leer)}</p>` : ""}</section>`;
   const seite = Array.isArray(dok.seite) && dok.seite.length === 2 ? dok.seite : null;
   const rand = seite ? ` @bottom-right { content: ${cssText(seite[0] + " ")} counter(page) ${cssText(" " + seite[1] + " ")} counter(pages); font-size: 8pt; color: #55604F; }
-  @bottom-left { content: ${cssText(`${dok.laden || ""} · ${dok.zeitraum || ""}`)}; font-size: 8pt; color: #55604F; }` : "";
-  return `<!doctype html><html lang="${esc(dok.sprache || "de")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(dok.titel)} – ${esc(dok.laden)} – ${esc(dok.zeitraum)}</title>
+  @bottom-left { content: ${cssText(`${dok.beispiel ? dok.beispiel + " · " : ""}${dok.laden || ""} · ${dok.zeitraum || ""}`)}; font-size: 8pt; color: #55604F; }` : "";
+  return `<!doctype html><html lang="${esc(dok.sprache || "de")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${dok.beispiel ? esc(dok.beispiel) + " – " : ""}${esc(dok.titel)} – ${esc(dok.laden)} – ${esc(dok.zeitraum)}</title>
 <style>
 @page { size: A4; margin: 16mm 14mm 18mm;${rand} }
 * { box-sizing: border-box; }
@@ -255,7 +256,7 @@ footer { margin-top: 18px; color: #55604F; font-size: 8.5pt; }
 @media screen { body { max-width: 900px; margin: 0 auto; } }
 @media print { body { padding: 0; } tr.warn td, tr.spaet td, tr.nach td { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style></head><body>
-<header><div><h1>${esc(dok.titel)}</h1><div class="laden">${esc(dok.laden)}</div></div><div class="meta">${esc(dok.zeitraum)}<br>${esc(dok.erstellt)}</div></header>
+<header><div><h1>${esc(dok.titel)}</h1><div class="laden">${esc(dok.laden)}${dok.beispiel ? ` · ${esc(dok.beispiel)}` : ""}</div></div><div class="meta">${esc(dok.zeitraum)}<br>${esc(dok.erstellt)}</div></header>
 ${(dok.abschnitte || []).map(abschnitt).join("\n")}
 ${dok.unterschrift ? `<div class="unterschrift">${dok.unterschrift.map((u) => `<div>${esc(u)}</div>`).join("")}</div>` : ""}
 ${dok.fuss ? `<footer>${esc(dok.fuss)}</footer>` : ""}

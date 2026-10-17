@@ -1140,4 +1140,5 @@ export default {
   muell1: { titel: "Waste", andere: "Other", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "logged", menge: "Change amount", personalessen: "Staff meal" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Backup", titelEinlesen: "Backup password", feld: "Password", hinweis: "With a password the file is encrypted. Without one, anyone can open it.", teilen: "Share backup", ohne: "Share without password", einlesen: "Read in", zuKurz: "At least 6 characters", falsch: "Wrong password", zeigen: "Show password", verbergen: "Hide password", mit: "with password", ohneKurz: "without password" },
+  beispiel: { anlegen: "Create sample shop", satz: "A fully filled kebab shop to try out. All numbers are examples. Your shop stays untouched.", name: "Sample Kebab", loeschen: "Delete sample shop", chip: "Sample – all numbers made up", export: "SAMPLE – no real data" }, // Beispiel-Laden (17.10.2026)
 };

@@ -1138,4 +1138,5 @@ export default {
   muell1: { titel: "Çop", andere: "Yên din", portion: (n, z) => `${z} porsiyon`, eingetragen: "hat tomarkirin", menge: "Mîqdarê biguherîne", personalessen: "Xwarina karmendan" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopiya ewlehiyê", titelEinlesen: "Şîfreya kopiyê", feld: "Şîfre", hinweis: "Bi şîfreyê dosya şîfrekirî ye. Bê şîfre her kes dikare wê veke.", teilen: "Kopiyê parve bike", ohne: "Bê şîfre parve bike", einlesen: "Bixwîne", zuKurz: "Herî kêm 6 tîp", falsch: "Şîfre şaş e", zeigen: "Şîfreyê nîşan bide", verbergen: "Şîfreyê veşêre", mit: "bi şîfre", ohneKurz: "bê şîfre" },
+  beispiel: { anlegen: "Dikana mînakê çêke", satz: "Dikaneke donerê ya tije ji bo ceribandinê. Hemû hejmar mînak in. Dikana te wekî xwe dimîne.", name: "Donera Mînakê", loeschen: "Dikana mînakê jê bibe", chip: "Mînak – hemû hejmar çêkirî ne", export: "MÎNAK – ne daneyên rastîn" }, // Beispiel-Laden (17.10.2026)
 };

@@ -1145,4 +1145,5 @@ export default {
   muell1: { titel: "Отпадъци", andere: "Други", portion: (n, z) => `${z} ${n === 1 ? "порция" : "порции"}`, eingetragen: "записано", menge: "Промени количеството", personalessen: "Храна за персонала" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Копие", titelEinlesen: "Парола на копието", feld: "Парола", hinweis: "С парола файлът е шифрован. Без парола всеки може да го отвори.", teilen: "Сподели копието", ohne: "Сподели без парола", einlesen: "Прочети", zuKurz: "Поне 6 знака", falsch: "Грешна парола", zeigen: "Покажи паролата", verbergen: "Скрий паролата", mit: "с парола", ohneKurz: "без парола" },
+  beispiel: { anlegen: "Създай примерен обект", satz: "Напълно попълнен дюнер обект за изпробване. Всички числа са примерни. Твоят обект остава непроменен.", name: "Примерен дюнер", loeschen: "Изтрий примерния обект", chip: "Пример – всички числа са измислени", export: "ПРИМЕР – не са истински данни" }, // Beispiel-Laden (17.10.2026)
 };

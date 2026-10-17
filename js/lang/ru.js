@@ -1144,4 +1144,5 @@ export default {
   muell1: { titel: "Отходы", andere: "Другое", portion: (n, z) => `${z} ${pl(n, "порция", "порции", "порций")}`, eingetragen: "записано", menge: "Изменить количество", personalessen: "Питание персонала" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Копия", titelEinlesen: "Пароль копии", feld: "Пароль", hinweis: "С паролем файл зашифрован. Без пароля его откроет любой.", teilen: "Поделиться копией", ohne: "Поделиться без пароля", einlesen: "Прочитать", zuKurz: "Не меньше 6 знаков", falsch: "Неверный пароль", zeigen: "Показать пароль", verbergen: "Скрыть пароль", mit: "с паролем", ohneKurz: "без пароля" },
+  beispiel: { anlegen: "Создать пример заведения", satz: "Полностью заполненная шаурмичная для пробы. Все числа — примеры. Твоё заведение не меняется.", name: "Пример-Дёнер", loeschen: "Удалить пример заведения", chip: "Пример – все числа выдуманы", export: "ПРИМЕР – не настоящие данные" }, // Beispiel-Laden (17.10.2026)
 };

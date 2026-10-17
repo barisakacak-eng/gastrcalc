@@ -63,6 +63,7 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
 export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung = false } = {}) {
   const out = []; const H = heute(jetzt);
   const add = (id, text, ziel) => out.push({ id, text, ziel });
+  if (stand?.beispiel) add("beispiel", t("beispiel.chip"), { aktion: "nav", wert: "laeden" }); // Beispiel-Laden (17.10.2026): steht immer oben
   if (aktualisierung) add("fassung", t("heute.offen.fassung"), { aktion: "aktualisieren" });
   // W2-D: übersprungene Speicherteile (welcher Monat, welches Journal) und Hinweise vom Zusammenführen
   for (const x of (wurzel?.ladeFehler || []).filter((x) => !x.laden || x.laden === stand.id).slice(0, 3))

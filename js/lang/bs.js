@@ -1147,4 +1147,5 @@ export default {
   muell1: { titel: "Otpad", andere: "Ostalo", portion: (n, z) => `${z} ${pl(n, "porcija", "porcije", "porcija")}`, eingetragen: "upisano", menge: "Promijeni količinu", personalessen: "Obrok za osoblje" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Sigurnosna kopija", titelEinlesen: "Lozinka kopije", feld: "Lozinka", hinweis: "S lozinkom je fajl šifrovan. Bez lozinke ga svako može otvoriti.", teilen: "Podijeli kopiju", ohne: "Podijeli bez lozinke", einlesen: "Učitaj", zuKurz: "Najmanje 6 znakova", falsch: "Pogrešna lozinka", zeigen: "Prikaži lozinku", verbergen: "Sakrij lozinku", mit: "s lozinkom", ohneKurz: "bez lozinke" },
+  beispiel: { anlegen: "Napravi primjer-radnju", satz: "Potpuno popunjena ćevabdžinica za isprobavanje. Svi brojevi su primjeri. Tvoja radnja ostaje netaknuta.", name: "Primjer-Döner", loeschen: "Obriši primjer-radnju", chip: "Primjer – svi brojevi izmišljeni", export: "PRIMJER – nisu stvarni podaci" }, // Beispiel-Laden (17.10.2026)
 };

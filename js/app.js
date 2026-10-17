@@ -41,6 +41,7 @@ import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, k
 import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen } from "./screens/buero.js";
 import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
 import { rundgangOffen as w2RundgangOffen } from "./engine.js"; // W2-D: stilles Update nur ohne offenen Rundgang
+import { beispielLaden } from "./beispiel.js"; // Beispiel-Laden (17.10.2026)
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
@@ -420,8 +421,17 @@ async function ladenLoeschenJetzt(id) {
   const b = wurzel.betriebe.find((x) => x.id === id);
   if (!b || wurzel.betriebe.length < 2 || !confirm(t("einstellungen.ladenLoeschenFrage", b.betrieb.name))) return;
   wurzel.betriebe = wurzel.betriebe.filter((x) => x.id !== id);
-  aktivSetzen((wurzel.betriebe.find((x) => x.phase === "app") || wurzel.betriebe[0]).id);
-  await ereignis("laden-geloescht", { laden: id }); ansicht = "laeden"; await sofortSpeichern(wurzel); return zeichne();
+  aktivSetzen((wurzel.betriebe.find((x) => x.phase === "app" && !x.beispiel) || wurzel.betriebe.find((x) => x.phase === "app") || wurzel.betriebe[0]).id); // Beispiel-Laden (17.10.2026): zurück zum eigenen Laden
+  await ereignis("laden-geloescht", { laden: id, beispiel: !!b.beispiel }); ansicht = "laeden"; await sofortSpeichern(wurzel); return zeichne();
+}
+// Beispiel-Laden (17.10.2026): zweiter Laden über die Mehr-Laden-Logik; gibt es ihn schon, nur dorthin wechseln. Der eigene Laden bleibt unberührt.
+async function beispielAnlegen() {
+  const da = wurzel.betriebe.find((b) => b.beispiel);
+  if (da) return ladenWechseln(da.id);
+  const b = beispielLaden(heuteGeschaeft(), { name: t("beispiel.name") });
+  wurzel.betriebe.push(b);
+  await ereignis("beispiel-angelegt", { laden: b.id });
+  return ladenWechseln(b.id);
 }
 async function allesLoeschenJetzt() {
   if (!confirm(t("einstellungen.loeschenFrage"))) return;
@@ -469,6 +479,8 @@ async function aufKlick(ev) {
   if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
   if (name === "laden-loeschen") { if (wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // W2-S: mit Büro-Code
+  if (name === "beispiel-anlegen") return beispielAnlegen(); // Beispiel-Laden (17.10.2026)
+  if (name === "beispiel-loeschen") { if (!stand.beispiel || wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // Beispiel-Laden (17.10.2026): gleiche Rückfrage wie „Laden löschen“
   if (name === "loeschen") return mitCode("loeschen", null, () => allesLoeschenJetzt()); // W2-S: mit Büro-Code (auch auf der Fehlerseite)
   if (name === "sprache" && stand.phase === "app") { wurzel.sprache = el.dataset.wert; setzeSprache(wurzel.sprache, () => zeichne()); speichern(wurzel); return zeichne(); }
 

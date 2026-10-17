@@ -1146,4 +1146,5 @@ export default {
   muell1: { titel: "Deșeuri", andere: "Altele", portion: (n, z) => `${z} ${n === 1 ? "porție" : "porții"}`, eingetragen: "înregistrat", menge: "Schimbă cantitatea", personalessen: "Masa personalului" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Copie", titelEinlesen: "Parola copiei", feld: "Parolă", hinweis: "Cu parolă fișierul e criptat. Fără parolă oricine îl poate deschide.", teilen: "Trimite copia", ohne: "Trimite fără parolă", einlesen: "Citește", zuKurz: "Cel puțin 6 caractere", falsch: "Parolă greșită", zeigen: "Arată parola", verbergen: "Ascunde parola", mit: "cu parolă", ohneKurz: "fără parolă" },
+  beispiel: { anlegen: "Creează local de probă", satz: "Un local de döner complet completat, pentru încercare. Toate cifrele sunt exemple. Localul tău rămâne neatins.", name: "Döner de probă", loeschen: "Șterge localul de probă", chip: "Exemplu – toate cifrele inventate", export: "EXEMPLU – nu sunt date reale" }, // Beispiel-Laden (17.10.2026)
 };

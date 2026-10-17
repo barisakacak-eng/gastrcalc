@@ -1139,4 +1139,5 @@ export default {
   muell1: { titel: "Desperdicio", andere: "Otros", portion: (n, z) => `${z} ${n === 1 ? "ración" : "raciones"}`, eingetragen: "registrado", menge: "Cambiar cantidad", personalessen: "Comida del personal" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Copia", titelEinlesen: "Contraseña de la copia", feld: "Contraseña", hinweis: "Con contraseña el archivo va cifrado. Sin contraseña cualquiera puede abrirlo.", teilen: "Compartir copia", ohne: "Compartir sin contraseña", einlesen: "Leer", zuKurz: "Mínimo 6 caracteres", falsch: "Contraseña incorrecta", zeigen: "Mostrar contraseña", verbergen: "Ocultar contraseña", mit: "con contraseña", ohneKurz: "sin contraseña" },
+  beispiel: { anlegen: "Crear local de ejemplo", satz: "Un local de döner totalmente rellenado para probar. Todos los números son ejemplos. Tu local no cambia.", name: "Döner de ejemplo", loeschen: "Borrar local de ejemplo", chip: "Ejemplo – todos los números inventados", export: "EJEMPLO – sin datos reales" }, // Beispiel-Laden (17.10.2026)
 };

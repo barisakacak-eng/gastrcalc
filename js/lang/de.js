@@ -1142,4 +1142,5 @@ export default {
   muell1: { titel: "Müll", andere: "Andere", portion: (n, z) => `${z} ${n === 1 ? "Portion" : "Portionen"}`, eingetragen: "eingetragen", menge: "Menge ändern", personalessen: "Personalessen" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Sicherung", titelEinlesen: "Passwort der Sicherung", feld: "Passwort", hinweis: "Mit Passwort ist die Datei verschlüsselt. Ohne Passwort kann jeder sie öffnen.", teilen: "Sicherung teilen", ohne: "Ohne Passwort teilen", einlesen: "Einlesen", zuKurz: "Mindestens 6 Zeichen", falsch: "Passwort falsch", zeigen: "Passwort anzeigen", verbergen: "Passwort verbergen", mit: "mit Passwort", ohneKurz: "ohne Passwort" },
+  beispiel: { anlegen: "Beispiel-Laden anlegen", satz: "Ein vollständig gefüllter Dönerladen zum Ausprobieren. Alle Zahlen sind Beispiele. Dein Laden bleibt unberührt.", name: "Beispiel-Döner", loeschen: "Beispiel-Laden löschen", chip: "Beispiel – alle Zahlen erfunden", export: "BEISPIEL – keine echten Daten" }, // Beispiel-Laden (17.10.2026)
 };
