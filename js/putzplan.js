@@ -12,7 +12,7 @@ export function planVorschlag(stand) {
   const art = ladenArtVon(stand) || "anders";
   const g = new Set(GERAETE_JE_ART[art] || GERAETE_JE_ART.anders);
   for (const k of stand.kuehlstellen || []) { if (k.archiviert) continue;
-    if (k.art === "tk") g.add("tiefkuehler"); else if (k.art === "kuehl") g.add(/theke|saladette|vitrine/i.test(k.name || "") ? "saladette" : "kuehlschrank"); }
+    if (k.art === "tk") g.add("tiefkuehler"); else if (k.art === "kuehl") g.add((k.typ === "saladette" || /theke|saladet|vitrine/i.test(k.name || "")) ? "saladette" : "kuehlschrank"); }
   return { aktiv: false, geraete: [...g], aus: [...STANDARD_AUS], seit: null };
 }
 

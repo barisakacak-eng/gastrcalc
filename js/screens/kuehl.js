@@ -3,7 +3,7 @@
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
-import { t, sprache } from "../i18n.js";
+import { t, sprache, artikelText } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, uid, heute, wertAnzeige } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
   letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD,
@@ -12,9 +12,11 @@ import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
+import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
+import { normalisieren, suchRang } from "../data/suchnamen.js";
 
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
-const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : /theke|vitrine|saladette/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank";
+const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank";
   const f = { "k-theke": "k-saladette-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden
   return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">`; };
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
@@ -72,13 +74,13 @@ export function kuehlView(stand) {
         ${st.fehlt7 ? `<span class="marke offen">${esc(t("kuehl.luecken7", st.fehlt7))}</span>` : ""}
       </div>
       ${nk.length ? `<div class="karte hinweisgelb"><h2>${esc(t("kuehl.nachkontrollenTitel"))}</h2>
-        ${nk.map((x) => `<div class="summenzeile"><span>${esc(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)?.name || "?")} <small class="marke">${fmtZahl(x.messung.wert, 1)} °C · ${esc(zeitKurz(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitKurz(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}
+        ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">${fmtZahl(x.messung.wert, 1)} °C · ${esc(zeitKurz(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitKurz(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}
         <span class="marke">${esc(t("kuehl.nachkontrolleHinweis"))}</span></div>` : ""}
       <div class="karte">
         <h2>${esc(t("kuehl.stellen"))}</h2>
         <p class="hinweis">${esc(t("kuehl.stellenTippen"))}</p>
         <div class="liste eng">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
-          <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(k.name)}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
+          <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(kn(k))}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
             <span class="${m ? (m.abweichung ? "rot" : "") : "marke"}" style="font-weight:700;white-space:nowrap">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke" style="display:block;font-weight:400">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitKurz(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
         ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
@@ -101,7 +103,7 @@ function einrichtungView(stand) {
         <p class="hinweis">${esc(t("kuehl.stellenHinweis"))}</p>
         <div class="liste">${stellen.map((k, i) => `
           <div class="zeile ${stelleBereit(k) ? "an" : "offen"}">
-            <div class="oben"><input class="textfeld" data-f="stelle-name:${esc(k.id)}" value="${esc(k.name)}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}">
+            <div class="oben"><input class="textfeld" data-f="stelle-name:${esc(k.id)}" value="${esc(kn(k))}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}">
               <div class="stapel"><button type="button" class="leise" data-a="stelle-hoch" data-id="${esc(k.id)}" ${i === 0 ? "disabled" : ""} aria-label="▲">${sym("chevron-up")}</button><button type="button" class="leise" data-a="stelle-runter" data-id="${esc(k.id)}" ${i === stellen.length - 1 ? "disabled" : ""} aria-label="▼">${sym("chevron-down")}</button></div></div>
             <div class="chips">${KUEHL_ARTEN.map((a) => `<button type="button" class="chip klein ${k.art === a ? "an" : ""}" data-a="stelle-art" data-id="${esc(k.id)}" data-wert="${a}">${esc(artName(a))}</button>`).join("")}</div>
             <div class="packung">
@@ -146,7 +148,7 @@ function rundgangView(stand) {
       <div class="liste">${stellen.map((x) => { const m = r.messungen.find((y) => y.stelle === x.id); const letzte = letzteMessung(stand, x.id); return `
         <button type="button" class="wahl ${m ? "an" : ""} ${m?.abweichung ? "warnung" : ""}" data-a="station" data-id="${esc(x.id)}">
           <span class="haken">${m ? (m.abweichung ? "!" : "✓") : ""}</span>
-          <span class="fuell"><b>${esc(x.name)}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} ${fmtZahl(letzte.wert, 1)} °C` : ""}</small></span>
+          <span class="fuell"><b>${esc(kn(x))}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} ${fmtZahl(letzte.wert, 1)} °C` : ""}</small></span>
           <span style="font-weight:800;white-space:nowrap" class="${m?.abweichung ? "rot" : ""}">${m ? (typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(t("kuehl.nichtGemessenKurz"))) : "›"}</span>
         </button>`; }).join("")}</div>
       <p class="hinweis mitte">${esc(t("kuehl.rundgangStand", fertig, stellen.length))}${fertig && fertig < stellen.length ? ` · ${esc(t("kuehl.teilAbschlussHinweis"))}` : ""}</p>
@@ -182,7 +184,7 @@ function stationView(stand, r, k) {
   const kannSpeichern = typeof wert === "number" ? (!abw || f.massnahmen.length > 0) : !!f.grund;
   return `
     <div class="karte formular">
-      <h2>${esc(k.name)} <span class="marke">${esc(grenzen(k))}</span></h2>
+      <h2>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></h2>
       ${f.grund ? "" : `
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" placeholder="°C" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       <span class="marke">${letzte ? esc(t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : esc(t("kuehl.ersteMessung"))}${k.art === "tk" ? ` · ${esc(t("kuehl.minusHinweis"))}` : ""}</span>
@@ -206,10 +208,10 @@ function wegView(stand, k) {
   const f = form;
   return `<h2>${esc(t("kuehl.wegTitel"))}</h2>
     <p class="hinweis">${esc(t("kuehl.wegHinweis"))}</p>
-    <div class="liste eng">${f.weg.map((w, i) => `<div class="zeile"><div class="oben"><div class="name">${esc(w.name)}<small>${fmtZahl(w.menge, w.einheit === "stk" ? 0 : 2)} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}${personalAktiv() ? "" : w.wert === null ? ` · ${esc(t("tag.keinPreis"))}` : ` · ${fmtEuro(w.wert, { dezimal: 2 })}`}</small></div><button type="button" class="leise" data-a="weg-weg" data-i="${i}">×</button></div></div>`).join("")}</div>
+    <div class="liste eng">${f.weg.map((w, i) => `<div class="zeile"><div class="oben"><div class="name">${esc(artikelText(w.name))}<small>${fmtZahl(w.menge, w.einheit === "stk" ? 0 : 2)} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}${personalAktiv() ? "" : w.wert === null ? ` · ${esc(t("tag.keinPreis"))}` : ` · ${fmtEuro(w.wert, { dezimal: 2 })}`}</small></div><button type="button" class="leise" data-a="weg-weg" data-i="${i}">×</button></div></div>`).join("")}</div>
     <div class="neu"><input class="textfeld" data-f="weg-name" value="${esc(f.wegName)}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off"><input class="textfeld" style="flex:0 0 5em" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"></div>
-    ${f.wegName.trim() ? `<div class="chips">${(stand.artikel || []).filter((a) => a.name.toLowerCase().includes(f.wegName.trim().toLowerCase())).slice(0, 6).map((a) => `<button type="button" class="chip klein" data-a="weg-artikel" data-name="${esc(a.name)}">${esc(a.name)}</button>`).join("")}</div>` : ""}
-    <div class="chips"><button type="button" class="chip klein" data-a="weg-hinzu">${esc(t("allgemein.hinzufuegen"))}</button><button type="button" class="chip klein" data-a="weg-alles">${esc(t("kuehl.wegAlles", k.name))}</button></div>`;
+    ${f.wegName.trim() ? `<div class="chips">${(stand.artikel || []).filter((a) => suchRang(a.name, normalisieren(f.wegName.trim())) >= 0).slice(0, 6).map((a) => `<button type="button" class="chip klein" data-a="weg-artikel" data-name="${esc(a.name)}">${esc(artikelText(a.name))}</button>`).join("")}</div>` : ""}
+    <div class="chips"><button type="button" class="chip klein" data-a="weg-hinzu">${esc(t("allgemein.hinzufuegen"))}</button><button type="button" class="chip klein" data-a="weg-alles">${esc(t("kuehl.wegAlles", kn(k)))}</button></div>`;
 }
 
 // ---------- Monatsblatt ----------
@@ -223,7 +225,7 @@ function blattView(stand) {
   return `
     <div class="kopfband druckkopf"><h1>${esc(t("kuehl.blatt"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(k?.name || "")} · ${esc(monatName)}</div></div>
     <div class="inhalt">
-      <div class="chips nichtdrucken">${stellen.map((x) => `<button type="button" class="chip klein ${x.id === k?.id ? "an" : ""}" data-a="blatt-stelle" data-id="${esc(x.id)}">${esc(x.name)}${x.archiviert ? ` (${esc(t("kuehl.archiviert"))})` : ""}</button>`).join("")}</div>
+      <div class="chips nichtdrucken">${stellen.map((x) => `<button type="button" class="chip klein ${x.id === k?.id ? "an" : ""}" data-a="blatt-stelle" data-id="${esc(x.id)}">${esc(kn(x))}${x.archiviert ? ` (${esc(t("kuehl.archiviert"))})` : ""}</button>`).join("")}</div>
       <div class="chips nichtdrucken"><button type="button" class="chip klein ${blattMonat === 0 ? "an" : ""}" data-a="blatt-monat" data-wert="0">${esc(t("listen.monat"))}</button><button type="button" class="chip klein ${blattMonat === -1 ? "an" : ""}" data-a="blatt-monat" data-wert="-1">${esc(t("kuehl.vormonat"))}</button></div>
       <div class="karte">
         <div class="kennzahlen"><span>${esc(t("kuehl.tageImMonat"))}</span>${["puenktlich", "teilweise", "nacherfasst", "nichtGemessen", "aus", "fehlt", "ruhetag"].filter((s) => mb.zaehl[s]).map((s) => `<span><b>${mb.zaehl[s]}</b> ${esc(s === "aus" ? t("amtW2.statusAus") : t("kuehl.status." + s))}</span>`) /* W2-H: „aus“ */.join("")}</div>
@@ -260,7 +262,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
   // Einrichtung
   if (name === "stelle-neu") { const n = neuName.trim(); if (!n) return false; if (!stand.kuehl.seit) stand.kuehl.seit = heute(); stand.kuehlstellen.push({ id: uid(), name: n, art: "kuehl", min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false }); neuName = ""; return true; }
   if (name === "stelle-art") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k) return false; k.art = el.dataset.wert; if (k.art === "warm") k.max = null; if (k.art === "tk") k.min = null; return true; }
-  if (name === "stelle-archiv") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k || !confirm(t("kuehl.stelleWegFrage", k.name))) return false; k.archiviert = true; return true; } // nie löschen – alte Messungen behalten ihre Stelle
+  if (name === "stelle-archiv") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k || !confirm(t("kuehl.stelleWegFrage", kn(k)))) return false; k.archiviert = true; return true; } // nie löschen – alte Messungen behalten ihre Stelle
   if (name === "stelle-hoch" || name === "stelle-runter") {
     const liste = aktiveStellen(stand); const i = liste.findIndex((x) => x.id === el.dataset.id); const j = name === "stelle-hoch" ? i - 1 : i + 1;
     if (i < 0 || j < 0 || j >= liste.length) return false; const a = liste[i].reihe; liste[i].reihe = liste[j].reihe; liste[j].reihe = a; if (liste[i].reihe === liste[j].reihe) { liste[i].reihe = j; liste[j].reihe = i; } return true;

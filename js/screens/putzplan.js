@@ -19,6 +19,8 @@ export const putzplanZuruecksetzen = () => { ansicht = "plan"; entwurf = null; }
 export const putzplanZurueck = (stand) => { if (ansicht !== "plan" && planVon(stand)?.aktiv) { ansicht = "plan"; entwurf = null; return true; } return false; };
 
 const text = (a) => a.text[sprache()] || a.text.de;
+// Paket 6 (17.10.2026): Begründung wie der Titel in der aktiven Sprache (sonst Deutsch); alte Form (Text) bleibt lesbar
+const warum = (a) => (typeof a.warum === "string" ? a.warum : a.warum?.[sprache()] || a.warum?.de || "");
 const stufeMarke = (a) => `<span class="pstufe ${a.stufe}">${esc(t("putzplan.stufe." + a.stufe))}</span>`;
 
 function einrichtenView(stand) {
@@ -35,7 +37,7 @@ function einrichtenView(stand) {
       <button type="button" class="knopf glut" data-a="pp-uebernehmen">${esc(t(planVon(stand)?.aktiv ? "putzplan.speichern" : "putzplan.uebernehmen"))}</button>
       <h2>${esc(t("putzplan.aufgabenAnpassen"))}</h2>
       ${["tag", "woche", "monat", "quartal", "jahr", "zweijahre", "nach"].map((takt) => { const xs = liste.filter((a) => a.takt === takt); return xs.length ? `<h3 class="pptakt">${esc(t("putzplan.takt." + takt))}</h3>
-        ${xs.map((a) => `<button type="button" class="pwahl ${entwurf.aus.includes(a.id) ? "" : "an"}" data-a="pp-aufgabe" data-id="${a.id}" aria-pressed="${!entwurf.aus.includes(a.id)}"><span class="knebel" aria-hidden="true"></span><span class="ptext"><b>${esc(text(a))}</b><small>${esc(a.warum)}</small>${stufeMarke(a)}</span></button>`).join("")}` : ""; }).join("")}
+        ${xs.map((a) => `<button type="button" class="pwahl ${entwurf.aus.includes(a.id) ? "" : "an"}" data-a="pp-aufgabe" data-id="${a.id}" aria-pressed="${!entwurf.aus.includes(a.id)}"><span class="knebel" aria-hidden="true"></span><span class="ptext"><b>${esc(text(a))}</b><small>${esc(warum(a))}</small>${stufeMarke(a)}</span></button>`).join("")}` : ""; }).join("")}
       ${planVon(stand)?.aktiv ? `<button type="button" class="leise" data-a="pp-ansicht" data-wert="plan">${esc(t("allgemein.zurueck"))}</button>` : `<button type="button" class="leise" data-a="pp-spaeter">${esc(t("putzplan.spaeter"))}</button>`}
     </div>`;
 }

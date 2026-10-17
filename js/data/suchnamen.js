@@ -3,6 +3,8 @@
 // Schlüssel = exakter Artikelname aus js/data/katalog.js. Begriffe klein; Sonderzeichen egal, die Suche faltet sie (normalisieren).
 // Lieber ein Begriff zu wenig als ein geratener.
 
+import { ARTIKELNAMEN } from "./artikelnamen.js";
+
 export const SUCHNAMEN = {
   // ── Fleisch & Wurst ──
   "Dönerspieß Kalb/Pute": ["dana döner", "hindi döner", "döner eti", "et döner", "doner kebab", "kebab", "veal doner", "turkey doner", "doner meat"],
@@ -441,7 +443,8 @@ export function normalisieren(s) {
 // Je Artikelname einmal vorbereitet: [deutscher Name, …Suchnamen], alles schon normalisiert.
 const VORBEREITET = new Map();
 function begriffe(name) {
-  if (!VORBEREITET.has(name)) VORBEREITET.set(name, (SUCHNAMEN[name] || []).map(normalisieren));
+  // Paket 6 (17.10.2026): die angezeigten Namen (tr/en) sind auch Suchbegriffe – wer sieht, sucht so.
+  if (!VORBEREITET.has(name)) { const a = ARTIKELNAMEN[name]; VORBEREITET.set(name, [...(SUCHNAMEN[name] || []), ...(a ? [a.tr, a.en] : [])].map(normalisieren)); }
   return VORBEREITET.get(name);
 }
 

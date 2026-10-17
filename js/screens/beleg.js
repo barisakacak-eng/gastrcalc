@@ -1,6 +1,6 @@
 // Etappe 5: Beleg einlesen – Text aus Livetext einfügen, zerlegen, nur das Unklare fragen, Summe prüfen, übernehmen, Preisänderungen zeigen.
 import { FOTOS } from "../data/fotos.js";
-import { t } from "../i18n.js";
+import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Artikelnamen in der aktiven Sprache, Belegzeilen bleiben wie gedruckt
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { PRODUKT_INDEX } from "../data/katalog.js";
 import { belegZerlegen, zeileAnwenden } from "../beleg.js";
@@ -153,7 +153,7 @@ function pruefView(stand) {
     ${fragen.map(({ z, i }) => `<div class="karte hinweisgelb"><h2>${esc(t("beleg.frageVon", ++nr, nFragen))}</h2><b>„${esc(z.roh.split("\n")[0].slice(0, 60))}“</b><small class="marke">${esc(z.frage.text)}</small>
       <div class="chips">${z.frage.optionen.map((o, k) => `<button type="button" class="chip klein" data-a="beleg-antwort" data-i="${i}" data-o="${k}">${esc(o.text)}</button>`).join("")}<button type="button" class="chip klein" data-a="beleg-weg" data-i="${i}">${esc(t("beleg.nichtUebernehmen"))}</button></div></div>`).join("")}
     ${offen.map(({ z, i }) => `<div class="karte hinweisgelb"><h2>${esc(t("beleg.frageVon", ++nr, nFragen))}</h2><b>${esc(z.name)}</b><small class="marke">${esc(t("beleg.zuordnen"))} ${z.menge !== null ? `· ${fmtZahl(z.menge, 0)} × ${z.einzelpreis !== null ? fmtEuro(z.einzelpreis, { dezimal: 2 }) : "–"}` : ""}</small>
-      <div class="chips">${[...new Set([z.vorschlag, ...kandidaten(stand, z.name)].filter(Boolean))].map((n) => `<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="${esc(n)}">${esc(n)}</button>`).join("")}<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="neu">${esc(t("beleg.neuAnlegen"))}</button><button type="button" class="chip klein" data-a="beleg-weg" data-i="${i}">${esc(t("beleg.nichtUebernehmen"))}</button></div></div>`).join("")}
+      <div class="chips">${[...new Set([z.vorschlag, ...kandidaten(stand, z.name)].filter(Boolean))].map((n) => `<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="${esc(n)}">${esc(artikelText(n))}</button>`).join("")}<button type="button" class="chip klein" data-a="beleg-zuordnen" data-i="${i}" data-name="neu">${esc(t("beleg.neuAnlegen"))}</button><button type="button" class="chip klein" data-a="beleg-weg" data-i="${i}">${esc(t("beleg.nichtUebernehmen"))}</button></div></div>`).join("")}
     ${ls ? "" : `<div class="karte"><h2>${esc(t("beleg.pruefung"))}</h2>
       ${beleg.summeNetto !== null || beleg.summeBrutto !== null ? `<div class="summenzeile"><span>${esc(t("beleg.summeBeleg"))}${basis ? ` (${esc(t("gebinde." + basis))})` : ""}</span><span class="wert">${fmtEuro(basis === "brutto" && beleg.summeBrutto !== null ? beleg.summeBrutto : (beleg.summeNetto ?? beleg.summeBrutto), { dezimal: 2 })}</span></div>
       <div class="summenzeile"><span>${esc(t("beleg.summeErkannt"))}</span><span class="wert ${beleg.summeStimmt ? "gruen" : "rot"}">${fmtEuro(summe, { dezimal: 2 })} · ${esc(beleg.summeStimmt ? t("beleg.stimmt") : t("beleg.stimmtNicht"))}</span></div>
@@ -165,7 +165,7 @@ function pruefView(stand) {
 }
 
 function zeileView(stand, z, i) {
-  const zu = zuordnung[i] === "weg" ? t("beleg.nichtUebernehmen") : zuordnung[i] === "neu" ? t("beleg.neuAnlegen") : (zuordnung[i] || z.bekannt || t("beleg.unbekannt"));
+  const zu = zuordnung[i] === "weg" ? t("beleg.nichtUebernehmen") : zuordnung[i] === "neu" ? t("beleg.neuAnlegen") : (zuordnung[i] || z.bekannt) ? artikelText(zuordnung[i] || z.bekannt) : t("beleg.unbekannt");
   return `<div class="zeile ${zuordnung[i] === "weg" ? "storno" : z.frage ? "offen" : "an"}"><div class="oben"><div class="name">${esc(z.name)}<small>${z.menge !== null ? `${fmtZahl(z.menge, 0)} × ` : ""}${z.inhalt?.groesse ? `${z.inhalt.anzahl && z.inhalt.anzahl > 1 ? z.inhalt.anzahl + " × " : ""}${fmtZahl(z.inhalt.groesse, 2)} ${esc(z.inhalt.einheit)}` : z.inhalt?.anzahl ? `${z.inhalt.anzahl} ${esc(t("allgemein.stueck"))}` : ""} → ${esc(zu)}</small></div><div style="text-align:right"><b>${z.gesamt !== null ? fmtEuro(z.gesamt, { dezimal: 2 }) : "–"}</b></div></div></div>`;
 }
 
@@ -176,7 +176,7 @@ function fertigView(stand) {
     <div class="karte gruenrand"><h2>${esc(t("beleg.titel"))}</h2><div class="mid">${esc(t("beleg.fertig", fertig.anzahl, fertig.aenderungen.length))}</div>
       <small class="marke">${esc(fertig.lieferung.lieferant || "")} · ${esc(datumLesbar(fertig.lieferung.datum))}${fertig.lieferung.summeNetto !== null ? ` · ${fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })} ${esc(t("gebinde.netto"))}` : ""}</small></div>
     <div class="karte"><h2>${esc(t("beleg.preiseNeu"))}</h2>
-      ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke block">${x.alt !== null ? `${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
+      ${fertig.aenderungen.length ? fertig.aenderungen.map((x) => `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${x.alt !== null ? `${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ` : `${esc(t("beleg.neuerPreis"))}: `}${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent === null ? "" : x.prozent > 0 ? "rot" : "gruen"}">${x.prozent === null ? "" : `${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %`}</span></div>`).join("") : `<div class="hinweis">${esc(t("beleg.keinePreise"))}</div>`}
     </div>
     ${fertig.lieferung.summeNetto ? `<p class="hinweis">${esc(t("beleg.zaehlerRoter", fmtEuro(fertig.lieferung.summeNetto, { dezimal: 2 })))}</p>` : ""}
     <button type="button" class="knopf" data-a="nav" data-wert="start">${esc(t("beleg.zumCockpit"))}</button>

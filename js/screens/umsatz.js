@@ -1,5 +1,5 @@
 // Etappe 5: „Umsatz" – Tagesumsatz eintragen und die Zähler-Seite (Strecke, Prognose, Rechnung, Monatsstreifen, Preise).
-import { t, sprache } from "../i18n.js";
+import { t, sprache, artikelText } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: auf dieser Seite ist „heute“ der Geschäftstag (bis 4 Uhr = Vortag)
 import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung, wareneinsatzWarnung, RICHTWERT_WARENEINSATZ } from "../engine.js"; // Paket 3 (16.10.2026), M4/M15
 import { zaehler, monatsGrenzen } from "../zaehler.js";
@@ -113,7 +113,7 @@ function preiseKarte(stand, D) {
   const einheit = (e) => e === "g" ? "kg" : e === "ml" ? "l" : t("allgemein.stueck");
   const jeBasis = (p, e) => e === "g" || e === "ml" ? p * 1000 : p;
   return `<div class="karte"><h2>${esc(t("zaehler.preise"))}</h2>
-    ${l.length ? l.map((x) => `<div class="summenzeile"><span>${esc(x.name)}<small class="marke block">${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
+    ${l.length ? l.map((x) => `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${fmtEuro(jeBasis(x.alt, x.einheit), { dezimal: 2 })} → ${fmtEuro(jeBasis(x.neu, x.einheit), { dezimal: 2 })} / ${esc(einheit(x.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
   </div>`;
 }
 

@@ -3,6 +3,7 @@
 // gefüllt hat (Einrichtungsring, Kostenlücken, Waage-Vorschlag, graue Gerichte, Hinweise, neue Fassung …), liefert offenImBuero()
 // als Liste für die Büro-Startseite. Reine Logik, kein HTML (außer dem kleinen Helfer zielAttr für data-Attribute).
 import { t } from "./i18n.js";
+import { kuehlstelleAnzeige } from "./kuehlname.js"; // Paket 6 (17.10.2026)
 import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
 import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, abweichungStand } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
 import { zaehler, abschlussVon } from "./zaehler.js";
@@ -46,7 +47,7 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
     const stelle = abw?.k || (nk.length ? aktiveStellen(stand).find((k) => k.id === nk[0].messung.stelle) : null);
     if (abw || nk.length) {
       const m = abw?.m || nk[0].messung; const zuKalt = typeof m.min === "number" && typeof m.wert === "number" && m.wert < m.min;
-      return { id: "kuehlAlarm", ton: "rot", symbol: "thermometer", titel: t(zuKalt ? "heute.dran.zuKalt" : "heute.dran.zuWarm", stelle?.name || t("heute.kachel.kuehlung")), knopf: t("heute.dran.nachmessen"), ziel: { aktion: "nav", wert: "kuehl" } };
+      return { id: "kuehlAlarm", ton: "rot", symbol: "thermometer", titel: t(zuKalt ? "heute.dran.zuKalt" : "heute.dran.zuWarm", (stelle && kuehlstelleAnzeige(stelle)) || t("heute.kachel.kuehlung")), knopf: t("heute.dran.nachmessen"), ziel: { aktion: "nav", wert: "kuehl" } };
     }
     if (ks.offenerRundgang) return { id: "rundgangOffen", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgangWeiter"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } };
     if (ks.heuteGemessen < ks.stellen && (h < 15 || h >= 17)) return { id: "rundgang", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgang"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } };

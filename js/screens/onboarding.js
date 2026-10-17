@@ -8,6 +8,7 @@ import { ring } from "./home.js";
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
 import { t, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
+import { kuehlstelleAnzeige, kuehlTypVon, TYP_AUS_ART } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige } from "../util.js";
 import { reinigungVon, putzzeitMonat, REINIGUNG_LEER } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
@@ -311,7 +312,7 @@ const kuehlstellen = {
       ${stepper("stellen", stellen.length, String(stellen.length))}
       <div class="liste">${stellen.map((k) => `
         <div class="zeile an">
-          <input class="textfeld" data-f="ob-stelle:${esc(k.id)}" value="${esc(k.name)}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}" autocomplete="off">
+          <input class="textfeld" data-f="ob-stelle:${esc(k.id)}" value="${esc(kuehlstelleAnzeige(k))}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}" autocomplete="off">
           <div class="unterzeile"><div class="seg klein">${["kuehl", "tk", "warm"].map((a) => `<button type="button" class="${k.art === a ? "an" : ""}" data-a="ob-art" data-id="${esc(k.id)}" data-wert="${a}">${esc(t("kuehl.artKurz." + a))}</button>`).join("")}</div>
           <span class="marke">${esc(grenze(k))}</span></div>
         </div>`).join("")}</div>
@@ -326,10 +327,10 @@ const kuehlstellen = {
       const art = n === 0 ? "kuehl" : n === 1 ? "tk" : "kuehl"; const nK = aktiv().filter((k) => k.art === "kuehl").length;
       const nameNeu = art === "tk" ? t("kuehl.obNameTk") : t("kuehl.obName", nK + 1);
       if (!stand.kuehl.seit) stand.kuehl.seit = heute();
-      stand.kuehlstellen.push({ id: uid(), name: nameNeu, art, min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false }); return true;
+      stand.kuehlstellen.push({ id: uid(), name: nameNeu, art, typ: art === "tk" ? "tiefkuehler" : "kuehlschrank", min: null, max: null, reihe: stand.kuehlstellen.length, archiviert: false }); return true;
     }
     if (name === "minus" && el.dataset.feld === "stellen") { const l = aktiv(); const k = l[l.length - 1]; if (!k) return false; if (stand.messungen.some((m) => m.stelle === k.id)) k.archiviert = true; else stand.kuehlstellen = stand.kuehlstellen.filter((x) => x.id !== k.id); return true; }
-    if (name === "ob-art") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k) return false; k.art = el.dataset.wert; k.min = null; k.max = null; if (k.art === "tk" && /^Kühlschrank|^Fridge|^Buzdolabı/.test(k.name)) k.name = t("kuehl.obNameTk"); if (k.art === "warm" && /^Kühlschrank|^Fridge|^Buzdolabı|^Tiefkühler|^Freezer|^Derin/.test(k.name)) k.name = t("kuehl.obNameWarm"); return true; }
+    if (name === "ob-art") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k) return false; k.art = el.dataset.wert; k.min = null; k.max = null; k.typ = TYP_AUS_ART[k.art]; if (k.art === "tk" && /^Kühlschrank|^Fridge|^Buzdolabı/.test(k.name)) k.name = t("kuehl.obNameTk"); if (k.art === "warm" && /^Kühlschrank|^Fridge|^Buzdolabı|^Tiefkühler|^Freezer|^Derin/.test(k.name)) k.name = t("kuehl.obNameWarm"); return true; }
   },
   beimVerlassen(stand) { stand.kuehl.eingerichtet = stand.kuehlstellen.some((k) => !k.archiviert); },
 };
@@ -510,8 +511,8 @@ export const KUEHL_TYPEN = [
   { typ: "tiefkuehler", art: "tk", foto: "k-tiefkuehler-foto", pikto: "k-tiefkuehler" },
   { typ: "warmhalter", art: "warm", foto: "k-warmhalter-foto", pikto: "k-warmhalter" },
 ];
-const TYP_AUS_ART = { kuehl: "kuehlschrank", tk: "tiefkuehler", warm: "warmhalter" };
-export const kuehlTyp = (k) => (KUEHL_TYPEN.some((x) => x.typ === k.typ) ? k.typ : TYP_AUS_ART[k.art] || "kuehlschrank");
+// Paket 6 (17.10.2026): Typ ohne gespeicherten Schlüssel auch aus dem Standardnamen (de/tr/en) erkennen – kuehlname.js
+export const kuehlTyp = (k) => kuehlTypVon(k);
 const aktiveStellen = (stand) => stand.kuehlstellen.filter((k) => !k.archiviert).sort((a, b) => a.reihe - b.reihe);
 export function kuehlAnzahlAendern(stand, typ, d) {
   const T = KUEHL_TYPEN.find((x) => x.typ === typ); if (!T) return false;

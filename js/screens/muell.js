@@ -3,7 +3,7 @@
 // Lang drücken (500 ms) oder „…" öffnet das Detail (Menge, Foto, Personalessen). „Andere" öffnet die Suche (auch türkische/englische Namen)
 // und „Eimer gewogen". Die Wochen-Statistik (früher Müll-Zentrale) wohnt jetzt im Büro unter Listen (muellStatistikView).
 // Im Personal-Modus: keine Euro-Beträge, nur Mengen; Einträge tragen von: personId. Rechenwerk unverändert (js/muell.js).
-import { t, einheitLabel, sprache } from "../i18n.js";
+import { t, einheitLabel, sprache, artikelText } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige, fotoSlug } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
 import { EINHEITEN } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
@@ -75,6 +75,8 @@ export const muellAnsicht = () => ansicht;
 const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Paket 3, M7: Geschäftstage
 const kurzTag = (iso) => t("kuehl.tage." + new Date(iso + "T12:00:00").getDay());
 const mengeText = (menge, einheit) => einheit === "portion" ? t("muell1.portion", menge, fmtZahl(menge, Number.isInteger(menge) ? 0 : 1)) : `${fmtZahl(menge, Number.isInteger(menge) ? 0 : 2)} ${einheitLabel(einheit)}`;
+// Paket 6 (17.10.2026): Artikel in der aktiven Sprache anzeigen; Gerichte heißen, wie der Wirt sie nennt. data-name bleibt deutsch.
+const zeigName = (x) => (x && x.typ === "artikel" ? artikelText(x.name) : x?.name || "");
 const bildFuer = (stand, x) => (x.typ === "gericht" ? thumb(stand, x.id) : wareBild(x));
 
 // ---------- Foto-Raster ----------
@@ -82,7 +84,7 @@ function kachelHtml(stand, x, zaehl, frisch) {
   const m = standardMenge(stand, x); const k = muellSchluessel(x); const n = zaehl[k] || 0;
   const daten = `data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"`;
   return `<div class="karte ware ${frisch === k ? "frisch" : ""}" data-k="${esc(k)}">
-    <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten}>${bildFuer(stand, x)}<span class="wt"><b>${esc(x.name)}</b><small>${esc(mengeText(m.menge, m.einheit))}</small></span></button>
+    <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten}>${bildFuer(stand, x)}<span class="wt"><b>${esc(zeigName(x))}</b><small>${esc(mengeText(m.menge, m.einheit))}</small></span></button>
     ${n ? `<span class="zaehler zahl">${n}×</span>` : ""}${frisch === k ? `<span class="haken">${sym("check")}</span>` : ""}
     <button type="button" class="ware-mehr" data-a="muell-detail" ${daten} aria-label="${esc(t("muell1.menge"))}">…</button>
   </div>`;
@@ -180,7 +182,7 @@ export function muellStatistikView(stand) {
       <div class="balken muell">${w.tage.map((x) => `<i class="${x.datum === D ? "heute" : ""}"><b style="height:${w.max > 0 ? Math.round(x.wert / w.max * 100) : 0}%"></b></i>`).join("")}</div>
       <div class="tage">${w.tage.map((x) => `<span>${esc(kurzTag(x.datum))}</span>`).join("")}</div>
     </div>
-    ${w.top.length ? `<div class="karte"><h2>${esc(t("muell.ammeisten"))}</h2>${w.top.map((x, i) => `<div class="zeile topzeile g-${esc(x.art === "gericht" || x.ref?.typ === "gericht" ? "speise" : x.art)}"><div class="oben"><div class="name"><span class="rang">${i + 1}</span> ${esc(x.art === "eimer" ? t("muell.eimer") : x.ref?.name || "")}<small>${esc(x.art === "eimer" ? `${fmtZahl(x.menge, 1)} kg` : `${fmtZahl(x.menge, 1)} ${einheitLabel(x.einheit)}`)}</small></div><b>${x.wert > 0 ? fmtEuro(x.wert, { dezimal: 2 }) : `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>`}</b></div></div>`).join("")}</div>` : ""}
+    ${w.top.length ? `<div class="karte"><h2>${esc(t("muell.ammeisten"))}</h2>${w.top.map((x, i) => `<div class="zeile topzeile g-${esc(x.art === "gericht" || x.ref?.typ === "gericht" ? "speise" : x.art)}"><div class="oben"><div class="name"><span class="rang">${i + 1}</span> ${esc(x.art === "eimer" ? t("muell.eimer") : x.ref?.typ === "artikel" ? artikelText(x.ref.name) : x.ref?.name || "")}<small>${esc(x.art === "eimer" ? `${fmtZahl(x.menge, 1)} kg` : `${fmtZahl(x.menge, 1)} ${einheitLabel(x.einheit)}`)}</small></div><b>${x.wert > 0 ? fmtEuro(x.wert, { dezimal: 2 }) : `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>`}</b></div></div>`).join("")}</div>` : ""}
     <div class="karte"><h2>${esc(t("muell.andererTag"))}</h2>
       <div class="chips">${letzteTage(7).map((d, i) => `<button type="button" class="chip klein" data-a="muell1-nachtragen" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}</div>
       <p class="hinweis">≈ ${esc(t("muell.orientierung"))}</p></div>
@@ -200,7 +202,7 @@ function eingabeView(stand, D) {
     <h2>${esc(t("muell.auswaehlen"))}</h2>
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
-      ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${bildFuer(stand, x)}<b>${esc(x.name)}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
+      ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${bildFuer(stand, x)}<b>${esc(zeigName(x))}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
       <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
     </div>
     ${!kacheln.length && q ? `<p class="hinweis">${esc(t("muell.nichtsGefunden"))}</p>` : ""}
@@ -218,7 +220,7 @@ function formView(stand, D) {
   return `<div class="inhalt muellform">
     <button type="button" class="karte auswahlkarte ${w ? "gewaehlt" : ""}" data-a="muell-auswahl">
       <span class="auswahlsym">${w && w.typ !== "eimer" ? bildFuer(stand, w) : sym(w?.typ === "eimer" ? "scale" : "trash-2", "gross")}</span>
-      <span><b>${esc(w ? (w.typ === "eimer" ? t("muell.eimer") : w.name) : t("muell.auswaehlen"))}</b>${w ? `<small>${esc(t("muell.aendern"))}</small>` : ""}</span>${sym("chevron-right")}</button>
+      <span><b>${esc(w ? (w.typ === "eimer" ? t("muell.eimer") : zeigName(w)) : t("muell.auswaehlen"))}</b>${w ? `<small>${esc(t("muell.aendern"))}</small>` : ""}</span>${sym("chevron-right")}</button>
     ${w ? `<div class="karte mengekarte">
       <div class="stepper gross"><button type="button" data-a="muell-d" data-d="-1" aria-label="−">−</button><div class="wert"><input inputmode="decimal" data-f="muell-menge" value="${esc(wertAnzeige(w.menge))}" aria-label="${esc(t("muell1.menge"))}"> <small>${esc(einheitText)}</small></div><button type="button" data-a="muell-d" data-d="1" aria-label="+">+</button></div>
       <div class="chips">${chipsFuer(w).map((c) => `<button type="button" class="chip ${w.menge === c ? "an" : ""}" data-a="muell-chip" data-wert="${c}">${esc(fmtZahl(c, c < 1 ? 1 : 0))} ${esc(w.typ === "gericht" ? "" : einheitLabel(einheit))}</button>`).join("")}${ganze ? `<button type="button" class="chip" data-a="muell-chip" data-wert="${ganze}">${esc(t("muell.ganzePackung"))}</button>` : ""}</div>
@@ -256,7 +258,7 @@ export function muellTipp(el, stand) {
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
   const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand) });
   if (!e) return false;
-  zuletzt = { ids: e.id, schluessel: k, text: `${x.name} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
+  zuletzt = { ids: e.id, schluessel: k, text: `${zeigName(x)} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
   return { eintrag: e };
 }
 export function muellTippZurueck(stand, ids) { const n = muellStornieren(stand, ids); if (zuletzt && zuletzt.ids === ids) zuletzt = null; return n; }

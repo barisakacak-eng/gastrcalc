@@ -3,7 +3,7 @@
 import { sym } from "../symbole.js";
 import { gerichtBild } from "./vergleich.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
-import { t, einheitLabel } from "../i18n.js";
+import { t, einheitLabel, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
 import { esc, parseZahl, fmtEuro, fmtZahl, uid, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
@@ -112,7 +112,7 @@ function waageView(stand) {
   const chips = schnellwahl(f.menge, f.einheit);
   return `
     <p class="tipp">${esc(t("waage.schritt", waage.k + 1, waage.fragen.length))}</p>
-    <h1 class="frage">${esc(t("waage.frage", f.name, g.name))}</h1>
+    <h1 class="frage">${esc(t("waage.frage", artikelText(f.name), g.name))}</h1>
     <p class="hinweis">${esc(t("waage.startwert", `${fmtZahl(f.menge)} ${einheitLabel(f.einheit)}`))}</p>
     <div class="stepper gross"><button type="button" data-a="waage-d" data-d="-1" aria-label="−">−</button><div class="wert">${esc(fmtZahl(waage.wert))} ${esc(einheitLabel(f.einheit))}</div><button type="button" data-a="waage-d" data-d="1" aria-label="+">+</button></div>
     <div class="chips">${chips.map((c) => `<button type="button" class="chip ${c === waage.wert ? "an" : ""}" data-a="waage-chip" data-wert="${c}">${esc(fmtZahl(c))} ${esc(einheitLabel(f.einheit))}</button>`).join("")}</div>
@@ -140,14 +140,14 @@ function rezeptDetail(stand, g) {
         const basis = basisVon(z.einheit); const gruppe = PRODUKT_INDEX[z.name]?.g;
         const offen = !(Number(z.menge) > 0);
         const q = quelleVon(z, g);
-        return `<div class="zeile ${offen ? "offen" : "an"} quelle-${q}"><div class="oben"><div class="name"><span class="pkt ${PKT[q]}" aria-hidden="true"></span> ${esc(z.name)}${gruppe === "verpackung" ? `<small>${esc(t("rezepte.verpackung"))}</small>` : `<small>${esc(t("stempel.kurz." + q))}${offen ? "" : " · " + esc(mengeText(z, g))}</small>`}</div>
+        return `<div class="zeile ${offen ? "offen" : "an"} quelle-${q}"><div class="oben"><div class="name"><span class="pkt ${PKT[q]}" aria-hidden="true"></span> ${esc(artikelText(z.name))}${gruppe === "verpackung" ? `<small>${esc(t("rezepte.verpackung"))}</small>` : `<small>${esc(t("stempel.kurz." + q))}${offen ? "" : " · " + esc(mengeText(z, g))}</small>`}</div>
           <button type="button" class="leise" data-a="zutat-weg" data-i="${i}">${esc(t("allgemein.loeschen"))}</button></div>
-          <div class="betrag"><input inputmode="decimal" data-f="zutat:${i}" value="${esc(wertAnzeige(z.menge))}" aria-label="${esc(z.name)}">
+          <div class="betrag"><input inputmode="decimal" data-f="zutat:${i}" value="${esc(wertAnzeige(z.menge))}" aria-label="${esc(artikelText(z.name))}">
             <div class="periode">${EINHEITEN_JE_BASIS[basis].map((e) => `<button type="button" class="${z.einheit === e ? "an" : ""}" data-a="einheit" data-i="${i}" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div></div></div>`;
       }).join("")}
     </div>
     <input class="textfeld" data-f="zutat-suche" value="${esc(zutatSuche)}" placeholder="${esc(t("rezepte.zutatSuchen"))}" autocomplete="off">
-    ${treffer.length ? `<div class="liste eng">${treffer.map((p) => `<button type="button" class="wahl" data-a="zutat-neu" data-name="${esc(p.n)}"><span class="haken"></span><span>${esc(p.n)} <small>${esc(p.aus ? t("profil.aus", t("bereiche." + p.aus)) : p.g ? t("warengruppen." + p.g) : "")}</small></span></button>`).join("")}</div>` : ""}
+    ${treffer.length ? `<div class="liste eng">${treffer.map((p) => `<button type="button" class="wahl" data-a="zutat-neu" data-name="${esc(p.n)}"><span class="haken"></span><span>${esc(artikelText(p.n))} <small>${esc(p.aus ? t("profil.aus", t("bereiche." + p.aus)) : p.g ? t("warengruppen." + p.g) : "")}</small></span></button>`).join("")}</div>` : ""}
     ${q && !treffer.length ? `<button type="button" class="knopf weich" data-a="zutat-frei" data-name="${esc(zutatSuche.trim())}">${esc(t("rezepte.zutatFrei", zutatSuche.trim()))}</button>` : ""}
     <button type="button" class="leise" data-a="gericht-weg">${esc(t("rezepte.gerichtWeg"))}</button>`;
 }
@@ -191,7 +191,7 @@ export const rezepte = {
         if (name === "waage-ok") {
           const geld = geldSatz(stand, f.name, f.menge, waage.wert, f.einheit);
           const r = familieAnpassen(stand, { gerichtId: g.id, zutat: f.name, wert: waage.wert, datum: heute() });
-          waage.meldungen.push(t("waage.gelernt", f.name, r.geaendert.length + 1));
+          waage.meldungen.push(t("waage.gelernt", artikelText(f.name), r.geaendert.length + 1));
           if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld), { dezimal: 2 }), g.name));
         }
         waage.k += 1;
@@ -235,9 +235,9 @@ function selbstZeile(a) {
   const einheitBasis = basis === "g" ? "kg" : basis === "ml" ? "l" : t("allgemein.stueck");
   const fehlt = (a.zwischenFehlt || []).filter((x) => x !== "rezept");
   return `<div class="zeile selbst ${ok ? "an" : "offen"}">
-    <div class="oben"><div class="name">${esc(a.name)}<small>${esc(t("selbst.gemacht"))}${r.quelle === "baukasten" ? " · " + esc(t("rezepte.startwerte")) : ""}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("selbst.errechnet") : t("allgemein.offen"))}</span></div>
-    <p class="hinweis">${esc(t("selbst.ansatz", r.zutaten.map((z) => `${fmtZahl(z.menge)} ${einheitLabel(z.einheit)} ${z.name}`).join(", "), `${fmtZahl(r.ausbeute.menge)} ${einheitLabel(r.ausbeute.einheit)}`, r.arbeitMin))}</p>
-    ${ok ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 1 ? 3 : 2 }), einheitBasis))}</div>` : fehlt.length ? `<p class="tipp">${esc(t("selbst.fehlt", fehlt.join(", ")))}</p>` : ""}
+    <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(t("selbst.gemacht"))}${r.quelle === "baukasten" ? " · " + esc(t("rezepte.startwerte")) : ""}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("selbst.errechnet") : t("allgemein.offen"))}</span></div>
+    <p class="hinweis">${esc(t("selbst.ansatz", r.zutaten.map((z) => `${fmtZahl(z.menge)} ${einheitLabel(z.einheit)} ${artikelText(z.name)}`).join(", "), `${fmtZahl(r.ausbeute.menge)} ${einheitLabel(r.ausbeute.einheit)}`, r.arbeitMin))}</p>
+    ${ok ? `<div class="ergebnis">${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 1 ? 3 : 2 }), einheitBasis))}</div>` : fehlt.length ? `<p class="tipp">${esc(t("selbst.fehlt", fehlt.map(artikelText).join(", ")))}</p>` : ""}
     <button type="button" class="leise" data-a="selbst-aus" data-name="${esc(a.name)}">${esc(t("selbst.dochKaufen"))}</button></div>`;
 }
 
@@ -249,7 +249,7 @@ function artikelZeile(a) {
   const jeBasis = p.jeEinheit === null ? null : basis === "stk" ? p.jeEinheit : preisJeBasis(a) * 1000;
   const zOffen = zwischenOffen.has(a.name) || !!g.zwischen;
   return `<div class="zeile ${ok ? "an" : "offen"}">
-    <div class="oben"><div class="name">${esc(a.name)}<small>${esc(ok ? gebindeSatz(a) : a.preis === 0 ? t("preise.preisNull") : t("allgemein.offen"))}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
+    <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(ok ? gebindeSatz(a) : a.preis === 0 ? t("preise.preisNull") : t("allgemein.offen"))}</small></div><span class="marke ${ok ? "" : "offen"}">${esc(ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
     ${zwischenrezept(a.name) ? `<button type="button" class="leise" data-a="selbst-an" data-name="${esc(a.name)}">${esc(t("selbst.machenSelbst"))}</button>` : ""}
     <div class="chips">${(mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? GEBINDE_WAHL : GEBINDE_KURZ).map((x) => `<button type="button" class="chip klein ${g.art === x ? "an" : ""}" data-a="gebinde-art" data-name="${esc(a.name)}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}${mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? "" : `<button type="button" class="chip klein" data-a="gebinde-mehr" data-name="${esc(a.name)}">…</button>`}</div>
     <div class="feldzeile"><label>${esc(t("gebinde.inhalt", artName))}</label>

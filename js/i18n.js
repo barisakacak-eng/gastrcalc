@@ -2,6 +2,7 @@
 import de from "./lang/de.js";
 import tr from "./lang/tr.js";
 import en from "./lang/en.js";
+import { artikelAnzeige } from "./data/artikelnamen.js";
 
 // Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
 // wenn jemand sie wählt (15.10.2026: 18 Sprachen, die App bleibt trotzdem klein und schnell).
@@ -59,3 +60,6 @@ export function fehlendeSchluessel(code) {
 
 // Einheiten-Beschriftung: "Stück" ist das einzige Wort, die Kürzel g/kg/ml/l sind in allen drei Sprachen gleich.
 export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === "portion" ? t("tag.portionen") : (e || ""));
+
+// Paket 6 (17.10.2026): Katalog-Artikelname in der aktiven Sprache – nur Anzeige, gespeichert bleibt der deutsche Name.
+export const artikelText = (name) => artikelAnzeige(name, aktiv);

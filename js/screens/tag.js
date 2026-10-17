@@ -1,6 +1,6 @@
 // Etappe 3/5: die Listen (Schwund, Müll je Fraktion, Personalessen) und gemeinsame Helfer für Datum und Einträge.
 // Die Eingabe selbst liegt seit Etappe 5 in muell.js (Müll) und umsatz.js (Tagesumsatz). Einträge werden nur angehängt; Rücknahme = storniert.
-import { t, einheitLabel, sprache } from "../i18n.js";
+import { t, einheitLabel, sprache, artikelText } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3 (16.10.2026), M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
 import { wertEintrag, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SCHWUND_ARTEN, SVEV_2026 } from "../engine.js";
 import { nav } from "./nav.js";
@@ -15,7 +15,7 @@ export function tagZuruecksetzen() { tagDatum = null; }
 export function eintragName(e, stand) {
   if (e.art === "eimer") return t("muell.eimer") + (e.ref?.name ? " " + e.ref.name : "");
   if (e.ref?.typ === "gericht") return stand.gerichte.find((g) => g.id === e.ref.id)?.name || e.ref.name || "?";
-  return e.ref?.name || "?";
+  return e.ref?.name ? artikelText(e.ref.name) : "?"; // Paket 6 (17.10.2026): Artikel in der aktiven Sprache, gespeichert bleibt Deutsch
 }
 export function eintragMenge(e) {
   if (e.art === "eimer") return t("tag.eimerZeile", fmtZahl(e.gewogen, 1), fmtZahl(e.menge, 1));

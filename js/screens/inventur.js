@@ -2,7 +2,7 @@
 // A1 = lange Liste nach Lagerort (Hauptbildschirm), Antippen von Foto/Name öffnet A2 = eine große Karte je Ware mit ＋/− und ¼ ½ ¾,
 // „Weiter" zur nächsten Ware. Nach dem Abschluss das Ergebnis A–E: jede Zahl mit „Was heißt das?" in einfachen Worten.
 // Rechnen tut nur js/inventur.js; hier stehen Aufbau, Texte und data-Attribute.
-import { t, einheitLabel } from "../i18n.js";
+import { t, einheitLabel, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute } from "../util.js";
 import { PRODUKT_INDEX } from "../data/katalog.js";
 import { normalisieren, suchRang } from "../data/suchnamen.js";
@@ -98,7 +98,7 @@ function listeView(stand, inv) {
     const { teil } = ganzTeil(z.menge);
     return `<div class="inv-posten ${z.menge === null ? "offen" : ""}" data-name="${esc(z.name)}">
       <div class="inv-oben">
-        <button type="button" class="inv-auf" data-a="inv-karte" data-name="${esc(z.name)}" aria-label="${esc(t("inventur.gross", z.name))}">${bild(z)}<span class="inv-text"><b>${esc(z.name)}</b><small>${esc(gebindeZeile(z))}</small>${wertText(z)}</span></button>
+        <button type="button" class="inv-auf" data-a="inv-karte" data-name="${esc(z.name)}" aria-label="${esc(t("inventur.gross", artikelText(z.name)))}">${bild(z)}<span class="inv-text"><b>${esc(artikelText(z.name))}</b><small>${esc(gebindeZeile(z))}</small>${wertText(z)}</span></button>
         <div class="inv-mini"><button type="button" data-a="inv-d" data-name="${esc(z.name)}" data-d="-1" aria-label="${esc(t("inventur.weniger"))}">−</button><span class="wert">${esc(zahlText(z.menge))}</span><button type="button" class="plus" data-a="inv-d" data-name="${esc(z.name)}" data-d="1" aria-label="${esc(t("inventur.mehr"))}">+</button></div>
       </div>
       <div class="inv-anbruch"><span>${esc(t("inventur.angebrochen"))}</span>${[0.25, 0.5, 0.75].map((x) => `<button type="button" class="${z.menge !== null && Math.abs(teil - x) < 0.01 ? "an" : ""}" data-a="inv-t" data-name="${esc(z.name)}" data-t="${x}" aria-pressed="${z.menge !== null && Math.abs(teil - x) < 0.01}">${TEIL[x]}</button>`).join("")}</div>
@@ -117,7 +117,7 @@ function listeView(stand, inv) {
         <input class="textfeld" data-f="inv-suche" value="${esc(suche)}" placeholder="${esc(t("inventur.dazuSuche"))}" autocomplete="off" enterkeyhint="search">
         ${sucheTreffer(stand, liste)}
         ${ausgeblendet.length ? `<button type="button" class="leise" data-a="inv-ausgeblendet">${esc(zeigeAusgeblendet ? t("inventur.ausgeblendetZu") : t("inventur.ausgeblendetZeigen", ausgeblendet.length))}</button>
-          ${zeigeAusgeblendet ? ausgeblendet.map((z) => `<div class="inv-weg"><span>${esc(z.name)}</span><button type="button" class="chip klein" data-a="inv-einblenden" data-name="${esc(z.name)}">${esc(t("inventur.einblenden"))}</button></div>`).join("") : ""}` : ""}
+          ${zeigeAusgeblendet ? ausgeblendet.map((z) => `<div class="inv-weg"><span>${esc(artikelText(z.name))}</span><button type="button" class="chip klein" data-a="inv-einblenden" data-name="${esc(z.name)}">${esc(t("inventur.einblenden"))}</button></div>`).join("") : ""}` : ""}
       </div>
       <button type="button" class="leise inv-verwerfen" data-a="inv-verwerfen">${esc(t("inventur.verwerfen"))}</button>
       <div class="inv-fuss"><small>${esc(t("inventur.gezaehlt", w.gezaehlt, w.anzahl))} · ${esc(euro(w.summe))}</small>
@@ -131,7 +131,7 @@ function sucheTreffer(stand, liste) {
   const namen = [...new Set([...(stand.artikel || []).filter((a) => a.herkunft !== "selbst").map((a) => a.name), ...Object.keys(PRODUKT_INDEX)])].filter((n) => !da.has(n));
   const treffer = namen.filter((n) => suchRang(n, q) >= 0).sort((a, b) => suchRang(a, q) - suchRang(b, q) || a.localeCompare(b, "de")).slice(0, 8);
   if (!treffer.length) return `<p class="hinweis">${esc(t("inventur.nichtsGefunden"))}</p>`;
-  return `<div class="inv-treffer">${treffer.map((n) => `<button type="button" class="zeileknopf" data-a="inv-dazu" data-name="${esc(n)}"><span><b>${esc(n)}</b><small>${esc(t("inventur.lagerorte." + lagerortVon(stand, n)))}</small></span><span class="pfeil">${sym("plus")}</span></button>`).join("")}</div>`;
+  return `<div class="inv-treffer">${treffer.map((n) => `<button type="button" class="zeileknopf" data-a="inv-dazu" data-name="${esc(n)}"><span><b>${esc(artikelText(n))}</b><small>${esc(t("inventur.lagerorte." + lagerortVon(stand, n)))}</small></span><span class="pfeil">${sym("plus")}</span></button>`).join("")}</div>`;
 }
 const lagerortVon = (stand, n) => { const a = (stand.artikel || []).find((x) => x.name === n); return lagerortFuer(a || { name: n, gruppe: PRODUKT_INDEX[n]?.g }); };
 
@@ -149,7 +149,7 @@ function karteView(stand, inv) {
       <div class="inv-karte">
         ${bild(z, true)}
         <div class="inv-koerper">
-          <h2>${esc(z.name)}</h2>
+          <h2>${esc(artikelText(z.name))}</h2>
           <div class="inv-einheit">${esc(t("inventur.zaehltIn"))} <b>${esc(gebindeZeile(z))}</b></div>
           ${z.letztes !== null ? `<span class="inv-letztes">${sym("clock")} ${esc(t("inventur.letztesMal", zahlText(z.letztes), gebindeName(z)))}</span>` : ""}
           <div class="inv-grosszahl"><button type="button" data-a="inv-k-d" data-d="-1" aria-label="${esc(t("inventur.weniger"))}">−</button>
@@ -178,7 +178,7 @@ function ergebnisView(stand) {
     ${was(t("inventur.wareText"))}`;
   const orte = `<div class="karte"><h2>${esc(t("inventur.jeOrt"))}</h2>${LAGERORTE.filter((o) => w.jeLagerort[o].anzahl).map((o) => `<div class="summenzeile"><span>${esc(t("inventur.lagerorte." + o))}</span><span class="wert">${esc(euro(w.jeLagerort[o].summe))}</span></div>`).join("")}</div>`;
   const luecken = [
-    w.ohnePreis.length ? `<div class="karte hinweisgelb"><p>${esc(t("inventur.ohnePreis", w.ohnePreis.length, w.ohnePreis.slice(0, 6).join(", ") + (w.ohnePreis.length > 6 ? " …" : "")))}</p><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="preise">${esc(t("inventur.preiseEintragen"))}</button></div>` : "",
+    w.ohnePreis.length ? `<div class="karte hinweisgelb"><p>${esc(t("inventur.ohnePreis", w.ohnePreis.length, w.ohnePreis.slice(0, 6).map(artikelText).join(", ") + (w.ohnePreis.length > 6 ? " …" : "")))}</p><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="preise">${esc(t("inventur.preiseEintragen"))}</button></div>` : "",
     w.offen ? `<p class="hinweis">${esc(t("inventur.nichtGezaehlt", w.offen))}</p>` : "",
   ].join("");
   const fuss = `<button type="button" class="knopf glut" data-a="nav" data-wert="vergleich">${esc(t("inventur.gerichteKnopf"))}</button>
