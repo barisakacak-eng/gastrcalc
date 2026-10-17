@@ -25,14 +25,14 @@ function laden() {
 }
 const art = (s, n) => s.artikel.find((a) => a.name === n);
 
-test("Daten: generierte Datei passt zur CSV (69 Artikel mit Preis, gleiche Werte)", { skip: !fs.existsSync(CSV) && "CSV fehlt" }, () => {
+test("Daten: generierte Datei passt zur CSV (98 Artikel mit Preis, gleiche Werte)", { skip: !fs.existsSync(CSV) && "CSV fehlt" }, () => {
   const ausCsv = richtpreiseAusCsv(fs.readFileSync(CSV, "utf8"));
-  assert.equal(ausCsv.length, 69); assert.equal(RICHTPREISE.length, 69);
+  assert.equal(ausCsv.length, 98); assert.equal(RICHTPREISE.length, 98);
   assert.deepEqual(RICHTPREISE, ausCsv, "js/data/richtpreise.js neu erzeugen: node tools/richtpreise.mjs");
   assert.equal(STAND, "2026-10-17");
   for (const r of RICHTPREISE) { assert.ok(r.preis > 0 && ["kg", "l", "stk"].includes(r.einheit) && r.quellen.length >= 1 && r.methode && r.abruf, r.name); }
   assert.equal(RICHTPREIS_INDEX["Dönerspieß Kalb/Pute"].preis, 15.62);
-  assert.ok(!RICHTPREIS_INDEX["Lammhackfleisch"], "Artikel ohne Preis nicht aufnehmen");
+  assert.ok(!RICHTPREIS_INDEX["Eisbergsalat"] && !RICHTPREIS_INDEX["Pide-Teig"], "Artikel ohne Preis nicht aufnehmen");
 });
 
 test("Einsetzen füllt nur leere Preise, eigene bleiben unangetastet", () => {

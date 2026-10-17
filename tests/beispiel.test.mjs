@@ -58,11 +58,11 @@ test("Beispiel-Laden: Zähler, Monatsziel, Vergleich, Inventur und Müll liefern
   assert.ok(Number.isFinite(z.monatsende) && z.quoteEff > 0.1 && z.quoteEff < 0.6, `Quote ${z.quoteEff}`);
   assert.equal(z.unvollstaendig, false, "Kosten vollständig");
   const k = kalkulation(s); assert.ok(k.zaehl.gruen + k.zaehl.gelb + k.zaehl.rot >= 8, JSON.stringify(k.zaehl));
-  assert.ok(k.zaehl.grau >= 1, "bewusst offene Preise zeigen sich als grau");
+  assert.equal(k.zaehl.grau, 0, "seit dem Richtpreis-Nachtrag 17.10. haben alle Gerichte einen Preis");
   const sw = schwundAuswertung(s, { von: "2026-09-17", bis: H }); assert.ok(sw.muellwert > 0 && sw.ohneWert === 0, JSON.stringify(sw.muellwert));
   const [i1, i2] = inventurenFertig(s); const v = inventurVergleich(s, i2, i1);
   assert.ok(v && v.anfang > 0 && v.ende > 0 && v.einkauf > 0 && v.echteQuote > 0.1 && v.echteQuote < 0.6, JSON.stringify(v && { a: v.anfang, e: v.ende, q: v.echteQuote }));
-  assert.ok(s._ohnePreis.length >= 1, "Zutaten ohne Preis werden genannt");
+  assert.ok(Array.isArray(s._ohnePreis), "Liste der Zutaten ohne Preis vorhanden");
 });
 
 test("Beispiel-Laden: Amt-Ordner vollständig ohne Nachträge; Exporte tragen BEISPIEL (Druck und CSV)", async () => {

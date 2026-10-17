@@ -51,7 +51,7 @@ const LIEFERUNG = [
   ["Alufolie-Bogen", 1, "karton", 500, "stk", 15.9, 0.19], ["Pommesschale", 1, "karton", 500, "stk", 18.5, 0.19],
   ["Mineralwasser 0,25 l", 2, "kiste", 24, "stk", 7.2, 0.19], ["Eistee", 1, "kiste", 9, "l", 8.1, 0.19],
 ];
-// Beispiel-Laden (17.10.2026): bewusst OHNE Preis (kein Richtpreis, nicht auf dem Beleg) – zeigt „Preis fehlt“: Adana-Spieß, Falafelbällchen, Pizzakarton 30 cm
+// Beispiel-Laden (17.10.2026): nicht auf dem Beleg; seit dem Richtpreis-Nachtrag (17.10.) kommen Adana-Spieß, Falafelbällchen und Pizzakarton 30 cm aus den Richtpreisen (≈)
 // Beispiel-Laden (17.10.2026): Bestand bei den zwei Inventuren in Grundeinheit (g, ml, Stück); Rest nach Einheit
 const BESTAND = {
   "Dönerspieß Kalb/Pute": [30000, 22500], "Hähnchenspieß": [10000, 7500], "Pommes frites": [15000, 12500], "Eisbergsalat": [4000, 3000],
