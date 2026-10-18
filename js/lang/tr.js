@@ -1239,4 +1239,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Soğutma sapmasından sonra mal", unter: "Mala ne oldu?", leer: "Açık sapma yok. Hepsi karara bağlandı.", wegwerfen: "Atıldı", behalten: "Saklandı", wegFrage: "Ne atıldı?", wegLeer: "Henüz mal girilmedi.", wegSpeichern: "Çöp olarak kaydet", wert: "Malın değeri", grundFrage: "Neden saklandı?", grundPlatzhalter: "örn. hemen diğer buzdolabına kondu", grundSpeichern: "Gerekçeyi kaydet", abbrechen: "Vazgeç", gebucht: "Çöp olarak kaydedildi.", behaltenOk: "Kaydedildi.", grundKurz: "Lütfen kısaca gerekçe yaz." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Menü panosu", einstiegUnter: "Televizyon için menü ve kampanyalar", titel: "Menü panosu", unter: "Dükkândaki televizyon veya tablet için dosya", vorschau: "Önizleme", seiten: (n) => `${n} sayfa`,
+    einstellungen: "Ayarlar", wechsel: "Sayfa değişimi", sekunden: (n) => `${n} sn`, gruppen: "Panoda ne olsun?", aktionenZeigen: "Kampanyaları göster", sprache: "Panonun dili", teilen: "Pano dosyasını paylaş",
+    kasse: "Panodaki ve kasadaki fiyat aynı olmalı.", geteilt: "Dosya paylaşıldı.", geladen: "Dosya kaydedildi.", fehler: "Olmadı. Lütfen tekrar dene.", hinweisTitel: "Lütfen kontrol et",
+    hinweis: { mengeFehlt: (name) => `${name}: miktar yok (ör. 0,33 l). Ada ekle – içeceklerde zorunlu.`, ohnePreis: (name) => `${name}: fiyat yok – panoda görünmez.`, aktionOhneGericht: (name) => `Kampanya ${name}: bir yemek eksik – panoda görünmez.` },
+    leer: "Henüz fiyatlı yemek yok. Önce menüyü doldur.", aktionenTitel: "Panodaki kampanyalar", aktionenLeer: "Kampanya yok. „Kampanya ve raf ömrü“ bölümünden ekle.", beenden: "Bitir", beendet: "Kampanya bitti.", uebernehmen: "Panoya ekle", uebernommen: "Panoda – fiyatı kasaya da gir.",
+    was: "Dosya internetsiz çalışır. Televizyonda tarayıcıda aç, tam ekran için bir kez dokun. Süresi biten kampanyalar kendiliğinden kaybolur. Her fiyat değişikliğinden sonra yeniden paylaş.",
+    inhalt: { gruppen: { speisen: "Yemekler", beilagen: "Yan ürünler ve atıştırmalık", getraenke: "İçecekler" }, aktion: "Kampanya", statt: (p) => `yerine ${p}`, bis: (d) => `${d} tarihine kadar`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Güncel: ${d}`, endpreise: "Euro cinsinden son fiyatlar, KDV dahil", endpreiseOhne: "Euro cinsinden son fiyatlar", leer: "Menü yakında." },
+  },
 };

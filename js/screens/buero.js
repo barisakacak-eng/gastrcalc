@@ -28,6 +28,7 @@ const EXTRA = {
   "clipboard-list": '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
   "eye": '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
   "chevron-left": '<path d="m15 18-6-6 6-6"/>',
+  "tv": '<rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>', // Menütafel (18.10.2026)
 };
 export const bsym = (name, klasse = "") => EXTRA[name] ? `<svg class="sym ${klasse}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${EXTRA[name]}</svg>` : sym(name, klasse);
 
@@ -82,6 +83,7 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${mini({ aktion: "bearbeiten", schritt: "verkauf" }, "wallet", t("buero.karte.verkauf"))}
         ${mini({ aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" }, "calculator", t("buero.karte.kosten"))}
         ${mini({ aktion: "nav", wert: "kartefoto" }, "file-text", t("buero.karte.kartefoto"))}
+        ${mini({ aktion: "nav", wert: "tafel" }, "tv", t("tafel.einstieg"))}
       </div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.einrichten"))}</h2>
       <div class="karte b-liste">

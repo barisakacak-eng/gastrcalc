@@ -1256,4 +1256,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Товар після відхилення охолодження", unter: "Що сталося з товаром?", leer: "Відкритих відхилень немає. Усе вирішено.", wegwerfen: "Викинуто", behalten: "Залишено", wegFrage: "Що викинули?", wegLeer: "Товар ще не внесено.", wegSpeichern: "Записати як відходи", wert: "Вартість товару", grundFrage: "Чому залишено?", grundPlatzhalter: "напр. одразу перекладено в інший холодильник", grundSpeichern: "Зберегти причину", abbrechen: "Скасувати", gebucht: "Записано як відходи.", behaltenOk: "Збережено.", grundKurz: "Будь ласка, коротко вкажи причину." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Табло меню", einstiegUnter: "Меню й акції для телевізора", titel: "Табло меню", unter: "Файл для телевізора чи планшета в закладі", vorschau: "Попередній перегляд", seiten: (n) => `${n} стор.`,
+    einstellungen: "Налаштування", wechsel: "Зміна сторінки кожні", sekunden: (n) => `${n} с`, gruppen: "Що на табло?", aktionenZeigen: "Показувати акції", sprache: "Мова табло", teilen: "Надіслати файл табло",
+    kasse: "Ціни на табло і в касі мають збігатися.", geteilt: "Файл надіслано.", geladen: "Файл збережено.", fehler: "Не вдалося. Спробуй ще раз.", hinweisTitel: "Перевір, будь ласка",
+    hinweis: { mengeFehlt: (name) => `${name}: немає об’єму (напр. 0,33 l). Додай у назву – обов’язково для напоїв.`, ohnePreis: (name) => `${name}: без ціни – немає на табло.`, aktionOhneGericht: (name) => `Акція ${name}: бракує страви – немає на табло.` },
+    leer: "Ще немає страви з ціною. Спершу заповни меню.", aktionenTitel: "Акції на табло", aktionenLeer: "Немає акції. Додай у розділі «Акції та терміни».", beenden: "Завершити", beendet: "Акцію завершено.", uebernehmen: "На табло", uebernommen: "На табло – введи ціну і в касу.",
+    was: "Файл працює без інтернету. Відкрий у браузері телевізора й торкнися раз для повного екрана. Прострочені акції зникають самі. Надсилай знову після кожної зміни цін.",
+    inhalt: { gruppen: { speisen: "Страви", beilagen: "Гарніри й закуски", getraenke: "Напої" }, aktion: "Акція", statt: (p) => `замість ${p}`, bis: (d) => `до ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Станом на: ${d}`, endpreise: "Кінцеві ціни в євро з ПДВ", endpreiseOhne: "Кінцеві ціни в євро", leer: "Меню незабаром." },
+  },
 };

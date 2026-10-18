@@ -281,6 +281,13 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     } }
   inventurAbschliessen(s, inv2, { datum: heute, jetzt: ende.toISOString() });
 
+  // Menütafel (18.10.2026): eine laufende Kombi-Aktion (Beispiel, wie aus „Aktionen & Haltbarkeit“ übernommen): Döner + Pommes + Cola,
+  // 10 % unter der Summe der Kartenpreise, auf 50 Cent gerundet; seit gestern, noch 6 Tage – so zeigt die Tafel eine Aktion mit Laufzeit.
+  { const ids = ["Döner Kebab", "Pommes frites (Beilage)", "Cola 0,33 l"].map((n) => s.gerichte.find((g) => g.name === n)).filter(Boolean);
+    const summe = rund2(ids.reduce((x, g) => x + g.preis, 0));
+    if (ids.length === 3) s.aktionen = [{ id: "bsp-aktion-1", art: "kombi", gerichte: ids.map((g) => g.id), preis: Math.round(summe * 0.9 * 2) / 2, statt: summe,
+      von: tagPlus(heute, -1), bis: tagPlus(heute, 6), erfasst: zeit(tagPlus(heute, -1), 10), entfernt: false }]; }
+
   const fertig = migrierenBetrieb(s);
   // nur für den Bericht/Test, nicht gespeichert: welche Zutaten ohne Preis geblieben sind
   Object.defineProperty(fertig, "_ohnePreis", { value: s.artikel.filter((x) => x.benutzt !== false && preisJeBasis(x) === null).map((x) => x.name), enumerable: false });

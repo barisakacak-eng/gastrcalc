@@ -1256,4 +1256,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Malli pas një shmangieje ftohjeje", unter: "Çfarë ndodhi me mallin?", leer: "Asnjë shmangie e hapur. Gjithçka u vendos.", wegwerfen: "U hodh", behalten: "U mbajt", wegFrage: "Çfarë u hodh?", wegLeer: "Ende nuk është shënuar mall.", wegSpeichern: "Regjistro si mbetje", wert: "Vlera e mallit", grundFrage: "Pse u mbajt?", grundPlatzhalter: "p.sh. u zhvendos menjëherë në frigoriferin tjetër", grundSpeichern: "Ruaj arsyen", abbrechen: "Anulo", gebucht: "U regjistrua si mbetje.", behaltenOk: "U ruajt.", grundKurz: "Të lutem shkruaj një arsye të shkurtër." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Tabela e menysë", einstiegUnter: "Menyja dhe ofertat për televizorin", titel: "Tabela e menysë", unter: "Skedar për televizor ose tablet në lokal", vorschau: "Parapamje", seiten: (n) => `${n} ${n === 1 ? "faqe" : "faqe"}`,
+    einstellungen: "Cilësimet", wechsel: "Ndërrimi i faqes çdo", sekunden: (n) => `${n} s`, gruppen: "Çfarë ka në tabelë?", aktionenZeigen: "Shfaq ofertat", sprache: "Gjuha e tabelës", teilen: "Ndaj skedarin e tabelës",
+    kasse: "Çmimet në tabelë dhe në arkë duhet të jenë të njëjta.", geteilt: "Skedari u nda.", geladen: "Skedari u ruajt.", fehler: "Nuk funksionoi. Provo përsëri.", hinweisTitel: "Të lutem kontrollo",
+    hinweis: { mengeFehlt: (name) => `${name}: mungon sasia (p.sh. 0,33 l). Shtoje te emri – e detyrueshme për pijet.`, ohnePreis: (name) => `${name}: pa çmim – nuk del në tabelë.`, aktionOhneGericht: (name) => `Oferta ${name}: mungon një gjellë – nuk del në tabelë.` },
+    leer: "Ende asnjë gjellë me çmim. Plotëso fillimisht menynë.", aktionenTitel: "Ofertat në tabelë", aktionenLeer: "Asnjë ofertë. Shtoje te „Oferta & afati”.", beenden: "Përfundo", beendet: "Oferta përfundoi.", uebernehmen: "Në tabelë", uebernommen: "Në tabelë – fute çmimin edhe në arkë.",
+    was: "Skedari punon pa internet. Hape në shfletuesin e televizorit dhe prek një herë për ekran të plotë. Ofertat e skaduara zhduken vetë. Ndaje përsëri pas çdo ndryshimi çmimi.",
+    inhalt: { gruppen: { speisen: "Gjellët", beilagen: "Garniturat dhe ushqime të lehta", getraenke: "Pijet" }, aktion: "Ofertë", statt: (p) => `në vend të ${p}`, bis: (d) => `deri ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Gjendja: ${d}`, endpreise: "Çmime përfundimtare në euro me TVSH", endpreiseOhne: "Çmime përfundimtare në euro", leer: "Menyja vjen së shpejti." },
+  },
 };

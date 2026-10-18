@@ -1256,4 +1256,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Товар после отклонения охлаждения", unter: "Что стало с товаром?", leer: "Открытых отклонений нет. Всё решено.", wegwerfen: "Выброшен", behalten: "Оставлен", wegFrage: "Что выбросили?", wegLeer: "Товар ещё не внесён.", wegSpeichern: "Записать как отходы", wert: "Стоимость товара", grundFrage: "Почему оставлен?", grundPlatzhalter: "напр. сразу переложен в другой холодильник", grundSpeichern: "Сохранить причину", abbrechen: "Отмена", gebucht: "Записано как отходы.", behaltenOk: "Сохранено.", grundKurz: "Пожалуйста, кратко укажи причину." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Табло меню", einstiegUnter: "Меню и акции для телевизора", titel: "Табло меню", unter: "Файл для телевизора или планшета в кафе", vorschau: "Предпросмотр", seiten: (n) => `${n} стр.`,
+    einstellungen: "Настройки", wechsel: "Смена страницы каждые", sekunden: (n) => `${n} с`, gruppen: "Что на табло?", aktionenZeigen: "Показывать акции", sprache: "Язык табло", teilen: "Отправить файл табло",
+    kasse: "Цены на табло и в кассе должны совпадать.", geteilt: "Файл отправлен.", geladen: "Файл сохранён.", fehler: "Не получилось. Попробуй ещё раз.", hinweisTitel: "Проверь, пожалуйста",
+    hinweis: { mengeFehlt: (name) => `${name}: нет объёма (напр. 0,33 l). Добавь в название – обязательно для напитков.`, ohnePreis: (name) => `${name}: без цены – нет на табло.`, aktionOhneGericht: (name) => `Акция ${name}: не хватает блюда – нет на табло.` },
+    leer: "Пока нет блюда с ценой. Сначала заполни меню.", aktionenTitel: "Акции на табло", aktionenLeer: "Нет акции. Добавь в разделе «Акции и сроки».", beenden: "Завершить", beendet: "Акция завершена.", uebernehmen: "На табло", uebernommen: "На табло – введи цену и в кассу.",
+    was: "Файл работает без интернета. Открой в браузере телевизора и коснись один раз для полного экрана. Истёкшие акции исчезают сами. Отправляй заново после каждого изменения цен.",
+    inhalt: { gruppen: { speisen: "Блюда", beilagen: "Гарниры и закуски", getraenke: "Напитки" }, aktion: "Акция", statt: (p) => `вместо ${p}`, bis: (d) => `до ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `На: ${d}`, endpreise: "Итоговые цены в евро с НДС", endpreiseOhne: "Итоговые цены в евро", leer: "Меню скоро." },
+  },
 };

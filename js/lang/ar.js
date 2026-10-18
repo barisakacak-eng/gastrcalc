@@ -1253,4 +1253,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "البضاعة بعد انحراف التبريد", unter: "ماذا حدث للبضاعة؟", leer: "لا يوجد انحراف مفتوح. كل شيء تقرر.", wegwerfen: "رُميت", behalten: "احتُفظ بها", wegFrage: "ما الذي رُمي؟", wegLeer: "لم تُدخل بضاعة بعد.", wegSpeichern: "سجّل كهدر", wert: "قيمة البضاعة", grundFrage: "لماذا احتُفظ بها؟", grundPlatzhalter: "مثلاً نُقلت فوراً إلى الثلاجة الأخرى", grundSpeichern: "احفظ السبب", abbrechen: "إلغاء", gebucht: "سُجّلت كهدر.", behaltenOk: "تم الحفظ.", grundKurz: "اكتب سبباً قصيراً من فضلك." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "لوحة القائمة", einstiegUnter: "القائمة والعروض للتلفاز", titel: "لوحة القائمة", unter: "ملف للتلفاز أو الجهاز اللوحي في المحل", vorschau: "معاينة", seiten: (n) => `${n} صفحات`,
+    einstellungen: "الإعدادات", wechsel: "تغيير الصفحة كل", sekunden: (n) => `${n} ث`, gruppen: "ماذا يظهر على اللوحة؟", aktionenZeigen: "عرض العروض", sprache: "لغة اللوحة", teilen: "مشاركة ملف اللوحة",
+    kasse: "يجب أن تتطابق الأسعار على اللوحة وفي الصندوق.", geteilt: "تمت مشاركة الملف.", geladen: "تم حفظ الملف.", fehler: "لم ينجح ذلك. حاول مرة أخرى.", hinweisTitel: "يرجى التحقق",
+    hinweis: { mengeFehlt: (name) => `${name}: الكمية ناقصة (مثل 0,33 l). أضفها إلى الاسم – إلزامية للمشروبات.`, ohnePreis: (name) => `${name}: بلا سعر – لا يظهر على اللوحة.`, aktionOhneGericht: (name) => `العرض ${name}: طبق ناقص – لا يظهر على اللوحة.` },
+    leer: "لا يوجد طبق بسعر بعد. املأ القائمة أولاً.", aktionenTitel: "العروض على اللوحة", aktionenLeer: "لا يوجد عرض. أضفه من „العروض والصلاحية“.", beenden: "إنهاء", beendet: "انتهى العرض.", uebernehmen: "إلى اللوحة", uebernommen: "على اللوحة – أدخل السعر في الصندوق أيضاً.",
+    was: "الملف يعمل بدون إنترنت. افتحه في متصفح التلفاز واضغط مرة لملء الشاشة. العروض المنتهية تختفي تلقائياً. شاركه من جديد بعد كل تغيير في الأسعار.",
+    inhalt: { gruppen: { speisen: "الأطباق", beilagen: "أطباق جانبية ووجبات خفيفة", getraenke: "المشروبات" }, aktion: "عرض", statt: (p) => `بدلاً من ${p}`, bis: (d) => `حتى ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `الحالة: ${d}`, endpreise: "الأسعار النهائية باليورو شاملة الضريبة", endpreiseOhne: "الأسعار النهائية باليورو", leer: "القائمة قريباً." },
+  },
 };

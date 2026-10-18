@@ -1238,4 +1238,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Food after a fridge deviation", unter: "What happened to the food?", leer: "No open deviation. Everything decided.", wegwerfen: "Thrown away", behalten: "Kept", wegFrage: "What was thrown away?", wegLeer: "No food entered yet.", wegSpeichern: "Book as waste", wert: "Value of the food", grundFrage: "Why kept?", grundPlatzhalter: "e.g. moved to the other fridge right away", grundSpeichern: "Save reason", abbrechen: "Cancel", gebucht: "Booked as waste.", behaltenOk: "Saved.", grundKurz: "Please give a short reason." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Menu board", einstiegUnter: "Menu and offers for the TV", titel: "Menu board", unter: "File for a TV or tablet in the shop", vorschau: "Preview", seiten: (n) => `${n} ${n === 1 ? "page" : "pages"}`,
+    einstellungen: "Settings", wechsel: "Change page every", sekunden: (n) => `${n} s`, gruppen: "What is on the board?", aktionenZeigen: "Show offers", sprache: "Language of the board", teilen: "Share board file",
+    kasse: "Prices on board and till must match.", geteilt: "File shared.", geladen: "File saved.", fehler: "That did not work. Please try again.", hinweisTitel: "Please check",
+    hinweis: { mengeFehlt: (name) => `${name}: size missing (e.g. 0.33 l). Add it to the name – required for drinks.`, ohnePreis: (name) => `${name}: no price – not on the board.`, aktionOhneGericht: (name) => `Offer ${name}: a dish is missing – not on the board.` },
+    leer: "No dish with a price yet. Fill in the menu first.", aktionenTitel: "Offers on the board", aktionenLeer: "No offer. Add one under “Offers & shelf life”.", beenden: "End", beendet: "Offer ended.", uebernehmen: "Put on board", uebernommen: "On the board – enter the price in the till too.",
+    was: "The file works without internet. Open it in the TV browser and tap once for full screen. Expired offers disappear by themselves. Share again after every price change.",
+    inhalt: { gruppen: { speisen: "Food", beilagen: "Sides & snacks", getraenke: "Drinks" }, aktion: "Offer", statt: (p) => `instead of ${p}`, bis: (d) => `until ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `As of: ${d}`, endpreise: "Final prices in euros incl. VAT", endpreiseOhne: "Final prices in euros", leer: "Menu coming soon." },
+  },
 };

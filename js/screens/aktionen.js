@@ -7,6 +7,7 @@ import { esc, fmtEuro, fmtZahl } from "../util.js";
 import { haltbarStand, haltbarUhrzeit, abverkaufText, datumKurz } from "../haltbar.js";
 import { kombiTeileSortiert, kombiAuswahlBereinigt, kombiRechnen, kombiVorschlaege, kombiText, KOMBI_MAX } from "../deal.js";
 import { kalkulation } from "../engine.js";
+import { aktionUebernehmen } from "../tafel.js"; // Menütafel (18.10.2026): „Auf die Tafel“ – übernimmt den Vorschlag als Aktion
 import { mengeBasisText as mengeText, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
 import { nav } from "./nav.js";
 
@@ -54,7 +55,8 @@ function abverkaufView(hs) {
       <div class="summenzeile"><span>${esc(t("aktionen.wegwerfen"))}</span><span class="wert">${esc(euro(v.verlust, true))}</span></div>
       <div class="summenzeile gesamt"><span>${esc(t("aktionen.bringt"))}</span><span class="wert">${esc(euro(v.vorteil, true))}</span></div>
       ${ca ? `<small class="marke">${esc(t("aktionen.geschaetzt"))}</small>` : ""}
-      <button type="button" class="knopf zweit" data-a="akt-teilen" data-art="abverkauf" data-wert="${i}">${esc(t("aktionen.teilen"))}</button></div>`;
+      <button type="button" class="knopf zweit" data-a="akt-teilen" data-art="abverkauf" data-wert="${i}">${esc(t("aktionen.teilen"))}</button>
+      <button type="button" class="knopf weich" data-a="akt-tafel" data-art="abverkauf" data-wert="${i}">${esc(t("tafel.uebernehmen"))}</button></div>`;
   };
   return `${ue}${hs.abverkauf.map(karte).join("")}${was(t("aktionen.wasAbverkauf"))}`;
 }
@@ -83,7 +85,8 @@ function kombiErgebnis(stand, k) {
     const teile = [t("aktionen.rabatt", fmtZahl(s.rabattProzent * 100, 0), fmtEuro(s.rabatt, { dezimal: 2 })), t("aktionen.rohertrag", euro(s.rohertrag, ca)), s.jeZehn === null ? t("aktionen.mehrNie") : t("aktionen.mehr", s.jeZehn)];
     return `<div class="summenzeile" data-stufe="${s.stufe}"><span><b>${esc(t("aktionen.stufen." + s.stufe))}: ${esc(fmtEuro(s.preis, { dezimal: 2 }))}</b><br><small>${esc(teile.join(" · "))}</small>
       ${s.amBoden ? `<br><small class="marke">${esc(t("aktionen.amBoden"))}</small>` : ""}${s.warnung ? `<br><small class="marke offen">${esc(t("aktionen.warnung", fmtZahl(s.warnung.quote * 100, 0), fmtZahl(s.warnung.grenze * 100, 0)) + (s.warnung.quelle === "richtwert" ? " (≈)" : ""))}</small>` : ""}</span></div>
-      <button type="button" class="leise klein" data-a="akt-teilen" data-art="kombi" data-wert="${s.stufe}">${esc(t("aktionen.teilen"))}</button>`;
+      <button type="button" class="leise klein" data-a="akt-teilen" data-art="kombi" data-wert="${s.stufe}">${esc(t("aktionen.teilen"))}</button>
+      <button type="button" class="leise klein" data-a="akt-tafel" data-art="kombi" data-wert="${s.stufe}">${esc(t("tafel.uebernehmen"))}</button>`;
   };
   return `<div class="karte" data-kombi="1"><h2>${esc(kb.teile.map((x) => x.name).join(" + "))}</h2>
     <p class="hinweis">${esc(t("aktionen.einzeln", fmtEuro(kb.summe, { dezimal: 2 })))} · ${esc(t("aktionen.ware", euro(kb.waren, ca), fmtZahl(kb.quoteEinzeln * 100, 0)))}</p>
@@ -99,6 +102,12 @@ export function aktionenTextFuer(stand, art, wert) {
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? kombiText(kb, s) : null; }
   return null;
 }
+// Menütafel (18.10.2026): Angaben für „Auf die Tafel“ aus dem gezeigten Vorschlag (Abverkauf: ein Gericht bis zum Ablauf; Kombi: Stufe, 14 Tage)
+export function aktionTafelAngaben(stand, art, wert) {
+  if (art === "abverkauf") { const v = haltbarStand(stand).abverkauf[Number(wert)]?.bester; return v ? { art, gerichte: [v.gericht], preis: v.aktionspreis, statt: v.preis, bis: v.bis } : null; }
+  if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? { art, gerichte: kb.teile.map((x) => x.id), preis: s.preis, statt: kb.summe } : null; }
+  return null;
+}
 const teilen = (text) => textTeilen(text, t("aktionen.teilen")); // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
 
 // ---------- Aktionen ----------
@@ -107,6 +116,11 @@ export async function aktionenAktion(name, el, stand) {
   if (name === "akt-kombi") { const id = el.dataset.wert; if (auswahl.includes(id)) auswahl = auswahl.filter((x) => x !== id); else if (auswahl.length < KOMBI_MAX) auswahl = [...auswahl, id]; return true; }
   if (name === "akt-kombi-leeren") { auswahl = []; return true; }
   if (name === "akt-kombi-vorschlag") { const v = kombiVorschlaege(stand)[Number(el.dataset.wert)]; if (!v) return false; auswahl = v.kombi.teile.map((x) => x.id); return true; }
+  if (name === "akt-tafel") { // Menütafel (18.10.2026): Vorschlag als Aktion übernehmen – erst dann steht er auf der Tafel
+    const angaben = aktionTafelAngaben(stand, el.dataset.art, el.dataset.wert); if (!angaben) return false;
+    const vorher = (stand.aktionen || []).length; const a = aktionUebernehmen(stand, angaben); if (!a) return false;
+    return (stand.aktionen || []).length > vorher ? { speichern: true, meldung: t("tafel.uebernommen") } : { meldung: t("tafel.uebernommen") };
+  }
   if (name === "akt-teilen") {
     const text = aktionenTextFuer(stand, el.dataset.art, el.dataset.wert); if (!text) return false;
     const weg = await teilen(text); if (weg === "abgebrochen") return false;

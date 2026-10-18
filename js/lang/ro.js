@@ -1258,4 +1258,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Marfa după o abatere la răcire", unter: "Ce s-a întâmplat cu marfa?", leer: "Nicio abatere deschisă. Totul e decis.", wegwerfen: "Aruncată", behalten: "Păstrată", wegFrage: "Ce s-a aruncat?", wegLeer: "Încă nu e trecută nicio marfă.", wegSpeichern: "Înregistrează ca deșeu", wert: "Valoarea mărfii", grundFrage: "De ce păstrată?", grundPlatzhalter: "de ex. mutată imediat în celălalt frigider", grundSpeichern: "Salvează motivul", abbrechen: "Renunță", gebucht: "Înregistrat ca deșeu.", behaltenOk: "Salvat.", grundKurz: "Te rog scrie un motiv scurt." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Panou meniu", einstiegUnter: "Meniu și oferte pentru televizor", titel: "Panou meniu", unter: "Fișier pentru televizor sau tabletă în local", vorschau: "Previzualizare", seiten: (n) => `${n} ${n === 1 ? "pagină" : "pagini"}`,
+    einstellungen: "Setări", wechsel: "Schimbare pagină la", sekunden: (n) => `${n} s`, gruppen: "Ce apare pe panou?", aktionenZeigen: "Arată ofertele", sprache: "Limba panoului", teilen: "Trimite fișierul panoului",
+    kasse: "Prețurile de pe panou și din casă trebuie să fie la fel.", geteilt: "Fișier trimis.", geladen: "Fișier salvat.", fehler: "Nu a mers. Încearcă din nou.", hinweisTitel: "Te rog verifică",
+    hinweis: { mengeFehlt: (name) => `${name}: lipsește cantitatea (ex. 0,33 l). Adaug-o în nume – obligatoriu la băuturi.`, ohnePreis: (name) => `${name}: fără preț – nu apare pe panou.`, aktionOhneGericht: (name) => `Oferta ${name}: lipsește un preparat – nu apare pe panou.` },
+    leer: "Încă niciun preparat cu preț. Completează întâi meniul.", aktionenTitel: "Oferte pe panou", aktionenLeer: "Nicio ofertă. Adaug-o la „Oferte și termene”.", beenden: "Încheie", beendet: "Oferta s-a încheiat.", uebernehmen: "Pe panou", uebernommen: "Pe panou – trece prețul și în casă.",
+    was: "Fișierul merge fără internet. Deschide-l în browserul televizorului și atinge o dată pentru ecran complet. Ofertele expirate dispar singure. Trimite din nou după fiecare schimbare de preț.",
+    inhalt: { gruppen: { speisen: "Preparate", beilagen: "Garnituri și gustări", getraenke: "Băuturi" }, aktion: "Ofertă", statt: (p) => `în loc de ${p}`, bis: (d) => `până ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Stare: ${d}`, endpreise: "Prețuri finale în euro cu TVA", endpreiseOhne: "Prețuri finale în euro", leer: "Meniul urmează." },
+  },
 };

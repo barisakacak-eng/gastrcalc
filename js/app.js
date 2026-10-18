@@ -3,7 +3,7 @@
 import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
-import { t, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache } from "./i18n.js";
+import { t, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
@@ -50,6 +50,8 @@ import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruec
 import { verkaufSichtbar } from "./verkauf.js"; // E7
 import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
 import { aktionenView, aktionenAktion, aktionenZuruecksetzen, aktionenZurueck, aktionenKennung } from "./screens/aktionen.js";
+import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Menütafel (18.10.2026): Büro „Menütafel“
+import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
@@ -137,6 +139,7 @@ function zeichne() {
         : ansicht === "verkauf" ? verkaufView(stand) // E7 (17.10.2026)
         : ansicht === "bestand" ? bestandView(stand) // Bestand (17.10.2026)
         : ansicht === "aktionen" ? aktionenView(stand) // Stufe 1 (17.10.2026)
+        : ansicht === "tafel" ? tafelView(stand) // Menütafel (18.10.2026)
         : ansicht === "kuehlware" ? kuehlWareView(stand) // Trennung (17.10.2026), Punkt 4
         : ansicht === "personal" ? personalView(stand) // D
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
@@ -559,6 +562,7 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
+    if (ziel === "tafel") { const sp = tafelEinstellung(stand).sprache; if (!spracheGeladen(sp)) ladeSprache(sp).then(() => { if (ansicht === "tafel") zeichne(); }); } // Menütafel (18.10.2026)
     if (ziel === "kuehlware") kuehlWareZuruecksetzen(); // Trennung (17.10.2026), Punkt 4
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
@@ -655,9 +659,14 @@ async function aufKlick(ev) {
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
-  if (ansicht === "aktionen") { // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit – nur Vorschläge, nichts wird gespeichert
+  if (ansicht === "aktionen") { // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit – Vorschläge; Menütafel (18.10.2026): „Auf die Tafel“ speichert
     const r = await aktionenAktion(name, el, stand);
-    if (r) { if (r.meldung) meldung(r.meldung); zeichne(); }
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
+  if (ansicht === "tafel") { // Menütafel (18.10.2026): Einstellungen, Aktion beenden, Datei teilen
+    const r = await tafelAktion(name, el, stand);
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
   if (ansicht === "buero" || ansicht.startsWith("ordner-")) { // Entwickler C
@@ -720,6 +729,9 @@ root.addEventListener("input", (ev) => {
     neu = kuehlWareEingabe(el.dataset.f, el.value, stand);
     if (neu === "knopf") { const k = root.querySelector('[data-a="kw-behalten-speichern"]'); if (k) k.disabled = !kuehlWareGrundGueltig(); return; }
     if (neu !== true) return;
+  } else if (ansicht === "tafel") { // Menütafel (18.10.2026): Sprache der Tafel – speichern, Sprache laden, neu zeichnen
+    const r = tafelEingabe(el.dataset.f, el.value, stand); if (!r) return;
+    speichern(wurzel); ladeSprache(r.sprache).then(() => { if (ansicht === "tafel") zeichne(); }); return;
   } else if (ansicht === "bestand") { // Bestand (17.10.2026): Mindestbestand ist ein Entwurf bis „Speichern“
     if (bestandEingabe(el.dataset.f, el.value) === "entwurf") return;
   } else if (ansicht === "kuehl") {

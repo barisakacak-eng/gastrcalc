@@ -1250,4 +1250,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "کالا پس از انحراف سرما", unter: "چه بر سر کالا آمد؟", leer: "انحراف بازی نیست. همه تصمیم گرفته شد.", wegwerfen: "دور ریخته شد", behalten: "نگه داشته شد", wegFrage: "چه چیزی دور ریخته شد؟", wegLeer: "هنوز کالایی وارد نشده.", wegSpeichern: "ثبت به‌عنوان ضایعات", wert: "ارزش کالا", grundFrage: "چرا نگه داشته شد؟", grundPlatzhalter: "مثلاً فوراً به یخچال دیگر منتقل شد", grundSpeichern: "ذخیرهٔ دلیل", abbrechen: "انصراف", gebucht: "به‌عنوان ضایعات ثبت شد.", behaltenOk: "ذخیره شد.", grundKurz: "لطفاً دلیل کوتاهی بنویس." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "تابلوی منو", einstiegUnter: "منو و پیشنهادها برای تلویزیون", titel: "تابلوی منو", unter: "فایل برای تلویزیون یا تبلت در مغازه", vorschau: "پیش‌نمایش", seiten: (n) => `${n} صفحه`,
+    einstellungen: "تنظیمات", wechsel: "تعویض صفحه هر", sekunden: (n) => `${n} ثانیه`, gruppen: "چه چیزی روی تابلو باشد؟", aktionenZeigen: "نمایش پیشنهادها", sprache: "زبان تابلو", teilen: "اشتراک فایل تابلو",
+    kasse: "قیمت روی تابلو و صندوق باید یکی باشد.", geteilt: "فایل به اشتراک گذاشته شد.", geladen: "فایل ذخیره شد.", fehler: "نشد. دوباره امتحان کن.", hinweisTitel: "لطفاً بررسی کن",
+    hinweis: { mengeFehlt: (name) => `${name}: مقدار نیست (مثلاً 0,33 l). به نام اضافه کن – برای نوشیدنی الزامی است.`, ohnePreis: (name) => `${name}: بدون قیمت – روی تابلو نیست.`, aktionOhneGericht: (name) => `پیشنهاد ${name}: یک غذا نیست – روی تابلو نیست.` },
+    leer: "هنوز غذایی با قیمت نیست. اول منو را پر کن.", aktionenTitel: "پیشنهادها روی تابلو", aktionenLeer: "پیشنهادی نیست. از „تخفیف‌ها و تاریخ مصرف“ اضافه کن.", beenden: "پایان", beendet: "پیشنهاد تمام شد.", uebernehmen: "روی تابلو", uebernommen: "روی تابلو – قیمت را در صندوق هم وارد کن.",
+    was: "فایل بدون اینترنت کار می‌کند. در مرورگر تلویزیون باز کن و یک بار برای تمام‌صفحه بزن. پیشنهادهای تمام‌شده خودشان حذف می‌شوند. بعد از هر تغییر قیمت دوباره بفرست.",
+    inhalt: { gruppen: { speisen: "غذاها", beilagen: "کنار غذا و تنقلات", getraenke: "نوشیدنی‌ها" }, aktion: "پیشنهاد", statt: (p) => `به جای ${p}`, bis: (d) => `تا ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `وضعیت: ${d}`, endpreise: "قیمت نهایی به یورو با مالیات", endpreiseOhne: "قیمت نهایی به یورو", leer: "منو به‌زودی." },
+  },
 };

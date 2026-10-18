@@ -1257,4 +1257,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Towar po odchyleniu chłodzenia", unter: "Co stało się z towarem?", leer: "Brak otwartych odchyleń. Wszystko rozstrzygnięte.", wegwerfen: "Wyrzucony", behalten: "Zatrzymany", wegFrage: "Co wyrzucono?", wegLeer: "Nie wpisano jeszcze towaru.", wegSpeichern: "Zaksięguj jako odpad", wert: "Wartość towaru", grundFrage: "Dlaczego zatrzymany?", grundPlatzhalter: "np. od razu przełożony do drugiej lodówki", grundSpeichern: "Zapisz powód", abbrechen: "Anuluj", gebucht: "Zaksięgowano jako odpad.", behaltenOk: "Zapisano.", grundKurz: "Podaj krótki powód." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Tablica menu", einstiegUnter: "Menu i promocje na telewizor", titel: "Tablica menu", unter: "Plik na telewizor lub tablet w lokalu", vorschau: "Podgląd", seiten: (n) => `${n} ${n === 1 ? "strona" : "strony"}`,
+    einstellungen: "Ustawienia", wechsel: "Zmiana strony co", sekunden: (n) => `${n} s`, gruppen: "Co jest na tablicy?", aktionenZeigen: "Pokaż promocje", sprache: "Język tablicy", teilen: "Udostępnij plik tablicy",
+    kasse: "Ceny na tablicy i w kasie muszą być takie same.", geteilt: "Plik udostępniony.", geladen: "Plik zapisany.", fehler: "Nie udało się. Spróbuj ponownie.", hinweisTitel: "Sprawdź",
+    hinweis: { mengeFehlt: (name) => `${name}: brak ilości (np. 0,33 l). Dopisz w nazwie – obowiązkowe przy napojach.`, ohnePreis: (name) => `${name}: bez ceny – nie ma na tablicy.`, aktionOhneGericht: (name) => `Promocja ${name}: brak dania – nie ma na tablicy.` },
+    leer: "Nie ma jeszcze dania z ceną. Najpierw uzupełnij menu.", aktionenTitel: "Promocje na tablicy", aktionenLeer: "Brak promocji. Dodaj w „Promocje i terminy”.", beenden: "Zakończ", beendet: "Promocja zakończona.", uebernehmen: "Na tablicę", uebernommen: "Na tablicy – wpisz cenę także w kasie.",
+    was: "Plik działa bez internetu. Otwórz w przeglądarce telewizora i dotknij raz, aby był pełny ekran. Wygasłe promocje znikają same. Udostępnij ponownie po każdej zmianie cen.",
+    inhalt: { gruppen: { speisen: "Dania", beilagen: "Dodatki i przekąski", getraenke: "Napoje" }, aktion: "Promocja", statt: (p) => `zamiast ${p}`, bis: (d) => `do ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Stan: ${d}`, endpreise: "Ceny końcowe w euro z VAT", endpreiseOhne: "Ceny końcowe w euro", leer: "Menu wkrótce." },
+  },
 };

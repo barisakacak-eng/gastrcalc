@@ -1250,4 +1250,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Mal piştî guherîna sarincê", unter: "Bi malê çi bû?", leer: "Guherîneke vekirî tune. Her tişt hat biryardan.", wegwerfen: "Hat avêtin", behalten: "Hat girtin", wegFrage: "Çi hat avêtin?", wegLeer: "Hîn mal nehatiye nivîsandin.", wegSpeichern: "Wek çop tomar bike", wert: "Nirxa malê", grundFrage: "Çima hat girtin?", grundPlatzhalter: "mînak yekser li sarinca din hat danîn", grundSpeichern: "Sedemê tomar bike", abbrechen: "Betal bike", gebucht: "Wek çop hat tomarkirin.", behaltenOk: "Hat tomarkirin.", grundKurz: "Ji kerema xwe sedemekî kurt binivîse." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Tabloya menûyê", einstiegUnter: "Menû û kampanya ji bo televîzyonê", titel: "Tabloya menûyê", unter: "Pel ji bo televîzyon an tabletê li dikanê", vorschau: "Pêşdîtin", seiten: (n) => `${n} rûpel`,
+    einstellungen: "Mîheng", wechsel: "Guhertina rûpelê her", sekunden: (n) => `${n} s`, gruppen: "Çi li ser tabloyê be?", aktionenZeigen: "Kampanyayan nîşan bide", sprache: "Zimanê tabloyê", teilen: "Pela tabloyê parve bike",
+    kasse: "Bihayê li ser tabloyê û li kasê divê yek be.", geteilt: "Pel hate parvekirin.", geladen: "Pel hate tomarkirin.", fehler: "Nebû. Ji kerema xwe dîsa biceribîne.", hinweisTitel: "Ji kerema xwe kontrol bike",
+    hinweis: { mengeFehlt: (name) => `${name}: mîqdar tune (mînak 0,33 l). Li navê zêde bike – ji bo vexwarinan mecbûrî ye.`, ohnePreis: (name) => `${name}: bê biha – li ser tabloyê nîne.`, aktionOhneGericht: (name) => `Kampanya ${name}: xwarinek kêm e – li ser tabloyê nîne.` },
+    leer: "Hêj xwarinek bi biha tune. Pêşî menûyê tije bike.", aktionenTitel: "Kampanyayên li ser tabloyê", aktionenLeer: "Kampanya tune. Ji „Kampanya û dema xerabûnê“ zêde bike.", beenden: "Biqedîne", beendet: "Kampanya qediya.", uebernehmen: "Li ser tabloyê", uebernommen: "Li ser tabloyê – bihayê li kasê jî binivîse.",
+    was: "Pel bê înternetê dixebite. Li televîzyonê di gerokê de veke, ji bo ekrana tije carekê bitikîne. Kampanyayên qediyayî bi xwe winda dibin. Piştî her guhertina bihayê dîsa parve bike.",
+    inhalt: { gruppen: { speisen: "Xwarin", beilagen: "Li kêlekê û sivik", getraenke: "Vexwarin" }, aktion: "Kampanya", statt: (p) => `li şûna ${p}`, bis: (d) => `heta ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Rewş: ${d}`, endpreise: "Bihayên dawî bi euro, bi bacê", endpreiseOhne: "Bihayên dawî bi euro", leer: "Menû tê." },
+  },
 };

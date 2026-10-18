@@ -1252,4 +1252,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Merce dopo uno scostamento del freddo", unter: "Che fine ha fatto la merce?", leer: "Nessuno scostamento aperto. Tutto deciso.", wegwerfen: "Buttata", behalten: "Tenuta", wegFrage: "Cosa è stato buttato?", wegLeer: "Nessuna merce inserita.", wegSpeichern: "Registra come scarto", wert: "Valore della merce", grundFrage: "Perché tenuta?", grundPlatzhalter: "es. spostata subito nell’altro frigo", grundSpeichern: "Salva motivo", abbrechen: "Annulla", gebucht: "Registrato come scarto.", behaltenOk: "Salvato.", grundKurz: "Scrivi un breve motivo." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Tabellone menù", einstiegUnter: "Menù e offerte per il televisore", titel: "Tabellone menù", unter: "File per televisore o tablet nel locale", vorschau: "Anteprima", seiten: (n) => `${n} ${n === 1 ? "pagina" : "pagine"}`,
+    einstellungen: "Impostazioni", wechsel: "Cambio pagina ogni", sekunden: (n) => `${n} s`, gruppen: "Cosa c’è sul tabellone?", aktionenZeigen: "Mostra offerte", sprache: "Lingua del tabellone", teilen: "Condividi file del tabellone",
+    kasse: "I prezzi sul tabellone e in cassa devono essere uguali.", geteilt: "File condiviso.", geladen: "File salvato.", fehler: "Non è riuscito. Riprova.", hinweisTitel: "Controlla per favore",
+    hinweis: { mengeFehlt: (name) => `${name}: manca la quantità (es. 0,33 l). Aggiungila al nome – obbligatoria per le bevande.`, ohnePreis: (name) => `${name}: senza prezzo – non è sul tabellone.`, aktionOhneGericht: (name) => `Offerta ${name}: manca un piatto – non è sul tabellone.` },
+    leer: "Ancora nessun piatto con prezzo. Prima compila il menù.", aktionenTitel: "Offerte sul tabellone", aktionenLeer: "Nessuna offerta. Aggiungila in «Offerte e scadenze».", beenden: "Termina", beendet: "Offerta terminata.", uebernehmen: "Sul tabellone", uebernommen: "Sul tabellone – inserisci il prezzo anche in cassa.",
+    was: "Il file funziona senza internet. Aprilo nel browser del televisore e tocca una volta per lo schermo intero. Le offerte scadute spariscono da sole. Condividi di nuovo dopo ogni cambio di prezzo.",
+    inhalt: { gruppen: { speisen: "Piatti", beilagen: "Contorni e snack", getraenke: "Bevande" }, aktion: "Offerta", statt: (p) => `invece di ${p}`, bis: (d) => `fino a ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Aggiornato: ${d}`, endpreise: "Prezzi finali in euro IVA inclusa", endpreiseOhne: "Prezzi finali in euro", leer: "Menù in arrivo." },
+  },
 };

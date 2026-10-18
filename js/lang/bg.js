@@ -1257,4 +1257,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Стока след отклонение в охлаждането", unter: "Какво стана със стоката?", leer: "Няма открито отклонение. Всичко е решено.", wegwerfen: "Изхвърлена", behalten: "Задържана", wegFrage: "Какво беше изхвърлено?", wegLeer: "Още няма въведена стока.", wegSpeichern: "Запиши като отпадък", wert: "Стойност на стоката", grundFrage: "Защо е задържана?", grundPlatzhalter: "напр. веднага преместена в другия хладилник", grundSpeichern: "Запази причината", abbrechen: "Отказ", gebucht: "Записано като отпадък.", behaltenOk: "Запазено.", grundKurz: "Моля, напиши кратка причина." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Табло с меню", einstiegUnter: "Меню и оферти за телевизора", titel: "Табло с меню", unter: "Файл за телевизор или таблет в заведението", vorschau: "Преглед", seiten: (n) => `${n} ${n === 1 ? "страница" : "страници"}`,
+    einstellungen: "Настройки", wechsel: "Смяна на страница на", sekunden: (n) => `${n} с`, gruppen: "Какво има на таблото?", aktionenZeigen: "Покажи офертите", sprache: "Език на таблото", teilen: "Сподели файла на таблото",
+    kasse: "Цените на таблото и в касата трябва да са еднакви.", geteilt: "Файлът е споделен.", geladen: "Файлът е запазен.", fehler: "Не стана. Опитай пак.", hinweisTitel: "Моля, провери",
+    hinweis: { mengeFehlt: (name) => `${name}: липсва количество (напр. 0,33 l). Добави го в името – задължително за напитки.`, ohnePreis: (name) => `${name}: без цена – не е на таблото.`, aktionOhneGericht: (name) => `Оферта ${name}: липсва ястие – не е на таблото.` },
+    leer: "Още няма ястие с цена. Първо попълни менюто.", aktionenTitel: "Оферти на таблото", aktionenLeer: "Няма оферта. Добави от „Промоции и срокове“.", beenden: "Край", beendet: "Офертата приключи.", uebernehmen: "На таблото", uebernommen: "На таблото – въведи цената и в касата.",
+    was: "Файлът работи без интернет. Отвори го в браузъра на телевизора и докосни веднъж за цял екран. Изтеклите оферти изчезват сами. Сподели отново след всяка промяна на цените.",
+    inhalt: { gruppen: { speisen: "Ястия", beilagen: "Гарнитури и закуски", getraenke: "Напитки" }, aktion: "Оферта", statt: (p) => `вместо ${p}`, bis: (d) => `до ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Към: ${d}`, endpreise: "Крайни цени в евро с ДДС", endpreiseOhne: "Крайни цени в евро", leer: "Менюто предстои." },
+  },
 };

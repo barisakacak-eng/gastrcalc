@@ -1251,4 +1251,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Hàng sau khi lạnh bị lệch", unter: "Hàng đã ra sao?", leer: "Không còn sai lệch nào mở. Đã quyết định hết.", wegwerfen: "Đã bỏ đi", behalten: "Đã giữ lại", wegFrage: "Đã bỏ đi những gì?", wegLeer: "Chưa nhập hàng nào.", wegSpeichern: "Ghi thành rác", wert: "Giá trị hàng", grundFrage: "Vì sao giữ lại?", grundPlatzhalter: "vd. đã chuyển ngay sang tủ lạnh khác", grundSpeichern: "Lưu lý do", abbrechen: "Hủy", gebucht: "Đã ghi thành rác.", behaltenOk: "Đã lưu.", grundKurz: "Vui lòng ghi lý do ngắn." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Bảng thực đơn", einstiegUnter: "Thực đơn và khuyến mãi cho TV", titel: "Bảng thực đơn", unter: "Tệp cho TV hoặc máy tính bảng trong quán", vorschau: "Xem trước", seiten: (n) => `${n} trang`,
+    einstellungen: "Cài đặt", wechsel: "Đổi trang mỗi", sekunden: (n) => `${n} giây`, gruppen: "Bảng hiển thị gì?", aktionenZeigen: "Hiện khuyến mãi", sprache: "Ngôn ngữ của bảng", teilen: "Chia sẻ tệp bảng",
+    kasse: "Giá trên bảng và ở quầy thu ngân phải giống nhau.", geteilt: "Đã chia sẻ tệp.", geladen: "Đã lưu tệp.", fehler: "Không được. Vui lòng thử lại.", hinweisTitel: "Vui lòng kiểm tra",
+    hinweis: { mengeFehlt: (name) => `${name}: thiếu dung tích (vd. 0,33 l). Thêm vào tên – bắt buộc với đồ uống.`, ohnePreis: (name) => `${name}: không có giá – không có trên bảng.`, aktionOhneGericht: (name) => `Khuyến mãi ${name}: thiếu một món – không có trên bảng.` },
+    leer: "Chưa có món nào có giá. Hãy điền thực đơn trước.", aktionenTitel: "Khuyến mãi trên bảng", aktionenLeer: "Không có khuyến mãi. Thêm trong „Khuyến mãi & hạn dùng”.", beenden: "Kết thúc", beendet: "Đã kết thúc khuyến mãi.", uebernehmen: "Lên bảng", uebernommen: "Đã lên bảng – nhập giá vào máy tính tiền nữa.",
+    was: "Tệp chạy không cần internet. Mở trong trình duyệt của TV, chạm một lần để toàn màn hình. Khuyến mãi hết hạn tự biến mất. Chia sẻ lại sau mỗi lần đổi giá.",
+    inhalt: { gruppen: { speisen: "Món ăn", beilagen: "Món phụ và ăn vặt", getraenke: "Đồ uống" }, aktion: "Khuyến mãi", statt: (p) => `thay vì ${p}`, bis: (d) => `đến ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Cập nhật: ${d}`, endpreise: "Giá cuối bằng euro gồm VAT", endpreiseOhne: "Giá cuối bằng euro", leer: "Thực đơn sắp có." },
+  },
 };

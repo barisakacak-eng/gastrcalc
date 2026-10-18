@@ -1259,4 +1259,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Roba nakon odstupanja hlađenja", unter: "Šta je bilo s robom?", leer: "Nema otvorenog odstupanja. Sve je odlučeno.", wegwerfen: "Bačeno", behalten: "Zadržano", wegFrage: "Šta je bačeno?", wegLeer: "Još nema unesene robe.", wegSpeichern: "Knjiži kao otpad", wert: "Vrijednost robe", grundFrage: "Zašto zadržano?", grundPlatzhalter: "npr. odmah premješteno u drugi frižider", grundSpeichern: "Sačuvaj razlog", abbrechen: "Odustani", gebucht: "Knjiženo kao otpad.", behaltenOk: "Sačuvano.", grundKurz: "Molim kratko obrazloženje." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Tabla s menijem", einstiegUnter: "Meni i akcije za televizor", titel: "Tabla s menijem", unter: "Datoteka za televizor ili tablet u lokalu", vorschau: "Pregled", seiten: (n) => `${n} str.`,
+    einstellungen: "Postavke", wechsel: "Promjena stranice svakih", sekunden: (n) => `${n} s`, gruppen: "Šta je na tabli?", aktionenZeigen: "Prikaži akcije", sprache: "Jezik table", teilen: "Podijeli datoteku table",
+    kasse: "Cijene na tabli i na kasi moraju biti iste.", geteilt: "Datoteka podijeljena.", geladen: "Datoteka spremljena.", fehler: "Nije uspjelo. Pokušaj ponovo.", hinweisTitel: "Molim provjeri",
+    hinweis: { mengeFehlt: (name) => `${name}: nedostaje količina (npr. 0,33 l). Dodaj u naziv – obavezno za pića.`, ohnePreis: (name) => `${name}: bez cijene – nije na tabli.`, aktionOhneGericht: (name) => `Akcija ${name}: nedostaje jelo – nije na tabli.` },
+    leer: "Još nema jela s cijenom. Prvo popuni meni.", aktionenTitel: "Akcije na tabli", aktionenLeer: "Nema akcije. Dodaj pod „Akcije i rokovi”.", beenden: "Završi", beendet: "Akcija završena.", uebernehmen: "Na tablu", uebernommen: "Na tabli – unesi cijenu i u kasu.",
+    was: "Datoteka radi bez interneta. Otvori je u pregledniku televizora i dodirni jednom za cijeli ekran. Istekle akcije nestaju same. Podijeli ponovo nakon svake promjene cijena.",
+    inhalt: { gruppen: { speisen: "Jela", beilagen: "Prilozi i grickalice", getraenke: "Pića" }, aktion: "Akcija", statt: (p) => `umjesto ${p}`, bis: (d) => `do ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Stanje: ${d}`, endpreise: "Konačne cijene u eurima s PDV-om", endpreiseOhne: "Konačne cijene u eurima", leer: "Meni uskoro." },
+  },
 };

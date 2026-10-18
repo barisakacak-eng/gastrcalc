@@ -61,6 +61,8 @@ export function leererBetrieb() {
     verkaeufe: [],              // E7 (17.10.2026): nur anhängen: {id, datum (Geschäftstag), gericht|null, name, text?, plu?, menge, umsatzBrutto|null, herkunft, importId|null, erfasst, storniert} (js/verkauf.js)
     kassenKombis: [],           // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse {id, name, kassenNamen, plu, teile:[{gericht, menge}]} (js/verkauf.js)
     lager: { tage: 7, puffer: 2 }, // Bestand (17.10.2026): Bestellvorschlag – bestellen für so viele Tage, dazu Puffer in Tagen (js/bestand.js); Artikel dürfen mindestbestand (Gebinde) tragen
+    aktionen: [],               // Menütafel (18.10.2026): vom Wirt übernommene Aktionen {id, art: abverkauf|kombi, gerichte:[id], preis (brutto), statt|null, von, bis (Geschäftstage), erfasst, entfernt?, entferntZeit?} (js/tafel.js)
+    tafel: { sekunden: 12, gruppen: ["speisen", "beilagen", "getraenke"], aktionen: true, sprache: "de" }, // Menütafel (18.10.2026): Einstellungen der Tafel-Datei
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
 }
@@ -271,6 +273,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
   s.verkaeufe = verkaeufeSauber(s.verkaeufe); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste
   s.kassenKombis = kombisSauber(s.kassenKombis, s.gerichte); // Schwadron 18.10.2026, M1
+  s.aktionen = aktionenSauber(s.aktionen); s.tafel = tafelSauber(s.tafel); // Menütafel (18.10.2026)
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
     .map((n) => ({ id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
@@ -358,6 +361,35 @@ function kombisSauber(liste, gerichte) {
     kassenNamen: [...new Set((Array.isArray(k.kassenNamen) ? k.kassenNamen : []).filter((x) => typeof x === "string").map((x) => x.trim().slice(0, 120)).filter(Boolean))].slice(0, 40),
     plu: typeof k.plu === "string" && k.plu.trim() ? k.plu.trim().slice(0, 50) : null,
     teile: (Array.isArray(k.teile) ? k.teile : []).filter((x) => istObjekt(x) && ids.has(x.gericht) && Number(x.menge) > 0).map((x) => ({ gericht: x.gericht, menge: Number(x.menge) })) }));
+}
+// Menütafel (18.10.2026): übernommene Aktionen – Kennung, Gerichte (Kennungen, 1–4), Preis > 0, von ≤ bis als JJJJ-MM-TT; Ungültiges fällt weg.
+// Gerichte, die es nicht mehr gibt, bleiben in der Liste (die Tafel lässt die Aktion dann weg und sagt es im Büro) – so geht beim Zusammenführen nichts verloren.
+const TAG_RE = /^\d{4}-\d{2}-\d{2}$/;
+function aktionenSauber(liste) {
+  return mitId(Array.isArray(liste) ? liste : []).map((a) => ({ id: a.id, art: ["abverkauf", "kombi"].includes(a.art) ? a.art : "kombi",
+    gerichte: [...new Set((Array.isArray(a.gerichte) ? a.gerichte : []).filter((x) => typeof x === "string" && x))].slice(0, 4),
+    preis: typeof a.preis === "number" && Number.isFinite(a.preis) && a.preis > 0 && a.preis < 10000 ? Math.round(a.preis * 100) / 100 : null,
+    statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? Math.round(a.statt * 100) / 100 : null,
+    von: typeof a.von === "string" && TAG_RE.test(a.von) ? a.von : null, bis: typeof a.bis === "string" && TAG_RE.test(a.bis) ? a.bis : null,
+    erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}) }))
+    .filter((a) => a.gerichte.length && a.preis !== null && a.von && a.bis && a.von <= a.bis);
+}
+// Menütafel (18.10.2026): Einstellungen – Seitenwechsel 5–120 s, Gruppen aus der festen Liste (mindestens eine), Aktionen ja/nein, Sprache der Tafel
+const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
+function tafelSauber(x) {
+  const t = istObjekt(x) ? x : {}; const sek = Math.round(Number(t.sekunden));
+  const gruppen = TAFEL_GRUPPEN.filter((g) => Array.isArray(t.gruppen) && t.gruppen.includes(g));
+  return { sekunden: typeof t.sekunden === "number" && sek >= 5 && sek <= 120 ? sek : 12, gruppen: Array.isArray(t.gruppen) && gruppen.length ? gruppen : [...TAFEL_GRUPPEN],
+    aktionen: t.aktionen !== false, sprache: SPRACH_CODES.includes(t.sprache) ? t.sprache : "de" };
+}
+// Menütafel (18.10.2026): Zusammenführen – Aktionen beider Handys bleiben (Vereinigung nach Kennung); „beendet“ gewinnt immer.
+function aktionenVereinigen(sieger, verlierer) {
+  const m = new Map(); for (const a of sieger || []) if (istObjekt(a) && typeof a.id === "string") m.set(a.id, { ...a });
+  for (const a of verlierer || []) {
+    if (!istObjekt(a) || typeof a.id !== "string") continue; const s = m.get(a.id);
+    if (!s) m.set(a.id, { ...a }); else if (a.entfernt && !s.entfernt) { s.entfernt = true; if (a.entferntZeit) s.entferntZeit = a.entferntZeit; }
+  }
+  return [...m.values()].sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || x.id.localeCompare(y.id));
 }
 // E7 (17.10.2026): Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
 const VERKAUF_HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
@@ -621,6 +653,8 @@ export const BEREICHE = {
   personen: ["personen"],
   lager: ["lager"], // Bestand (17.10.2026): eigener Bereich – ältere Stände bekommen dadurch keinen neuen Zeitstempel in „Betrieb“
   kombis: ["kassenKombis"], // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – eigener Bereich (wie lager), alte Stände bleiben unberührt
+  aktionen: ["aktionen"], // Menütafel (18.10.2026): übernommene Aktionen – eigener Bereich, beim Zusammenführen vereinigt (verschmelzen)
+  tafel: ["tafel"],       // Menütafel (18.10.2026): Einstellungen der Tafel
 };
 const BEREICH_NAMEN = Object.keys(BEREICHE);
 function bereichText(b, a) { const f = BEREICHE[a]; return f.length === 1 ? JSON.stringify(b[f[0]] ?? null) : JSON.stringify(f.map((k) => b[k] ?? null)); }
@@ -1160,6 +1194,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     const [sieger, verlierer] = w.q === "fremd" ? [fremd, lokal] : [lokal, fremd];
     for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
     if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
+    if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel (18.10.2026)
     if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
     const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
     if (w.beide) bericht.beide.push(a);

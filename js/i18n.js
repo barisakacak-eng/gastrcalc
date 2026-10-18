@@ -41,6 +41,14 @@ export function t(pfad, ...args) {
   return typeof v === "function" ? v(...args) : v;
 }
 
+// Menütafel (18.10.2026): Text in einer bestimmten Sprache (die Sprache der Tafel, nicht die der App). Nicht geladen → Deutsch.
+export function tIn(code, pfad, ...args) {
+  let v = hole(TABELLEN[code] || de, pfad);
+  if (v === undefined) v = hole(de, pfad);
+  if (v === undefined) return pfad;
+  return typeof v === "function" ? v(...args) : v;
+}
+
 // Alle Sprachen eines Schlüssels (für dreisprachige Kacheln): { de, tr, en }.
 export function tAlle(pfad) { const out = {}; for (const c of SPRACHEN) { const v = hole(TABELLEN[c], pfad); out[c] = typeof v === "string" ? v : hole(de, pfad); } return out; }
 

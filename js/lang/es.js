@@ -1251,4 +1251,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Mercancía tras una desviación de frío", unter: "¿Qué pasó con la mercancía?", leer: "No hay desviaciones abiertas. Todo decidido.", wegwerfen: "Tirada", behalten: "Conservada", wegFrage: "¿Qué se tiró?", wegLeer: "Aún no hay mercancía anotada.", wegSpeichern: "Registrar como desperdicio", wert: "Valor de la mercancía", grundFrage: "¿Por qué se conservó?", grundPlatzhalter: "p. ej. pasada enseguida a la otra nevera", grundSpeichern: "Guardar motivo", abbrechen: "Cancelar", gebucht: "Registrado como desperdicio.", behaltenOk: "Guardado.", grundKurz: "Escribe un motivo breve, por favor." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Pantalla de menú", einstiegUnter: "Menú y ofertas para el televisor", titel: "Pantalla de menú", unter: "Archivo para televisor o tableta en el local", vorschau: "Vista previa", seiten: (n) => `${n} ${n === 1 ? "página" : "páginas"}`,
+    einstellungen: "Ajustes", wechsel: "Cambio de página cada", sekunden: (n) => `${n} s`, gruppen: "¿Qué sale en la pantalla?", aktionenZeigen: "Mostrar ofertas", sprache: "Idioma de la pantalla", teilen: "Compartir archivo de la pantalla",
+    kasse: "Los precios en pantalla y caja deben ser iguales.", geteilt: "Archivo compartido.", geladen: "Archivo guardado.", fehler: "No funcionó. Inténtalo de nuevo.", hinweisTitel: "Revisa, por favor",
+    hinweis: { mengeFehlt: (name) => `${name}: falta la cantidad (p. ej. 0,33 l). Añádela al nombre – obligatorio en bebidas.`, ohnePreis: (name) => `${name}: sin precio – no sale en la pantalla.`, aktionOhneGericht: (name) => `Oferta ${name}: falta un plato – no sale en la pantalla.` },
+    leer: "Aún no hay platos con precio. Primero completa el menú.", aktionenTitel: "Ofertas en la pantalla", aktionenLeer: "No hay oferta. Añádela en «Ofertas y caducidad».", beenden: "Terminar", beendet: "Oferta terminada.", uebernehmen: "A la pantalla", uebernommen: "En la pantalla – pon el precio también en la caja.",
+    was: "El archivo funciona sin internet. Ábrelo en el navegador del televisor y toca una vez para pantalla completa. Las ofertas vencidas desaparecen solas. Compártelo de nuevo tras cada cambio de precio.",
+    inhalt: { gruppen: { speisen: "Platos", beilagen: "Guarniciones y snacks", getraenke: "Bebidas" }, aktion: "Oferta", statt: (p) => `antes ${p}`, bis: (d) => `hasta ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Actualizado: ${d}`, endpreise: "Precios finales en euros con IVA", endpreiseOhne: "Precios finales en euros", leer: "Menú próximamente." },
+  },
 };

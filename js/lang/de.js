@@ -1240,4 +1240,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Ware nach Kühl-Abweichung", unter: "Was ist mit der Ware passiert?", leer: "Keine offene Abweichung. Alles entschieden.", wegwerfen: "Weggeworfen", behalten: "Behalten", wegFrage: "Was wurde weggeworfen?", wegLeer: "Noch keine Ware eingetragen.", wegSpeichern: "Als Müll buchen", wert: "Wert der Ware", grundFrage: "Warum behalten?", grundPlatzhalter: "z. B. sofort in den anderen Kühlschrank gestellt", grundSpeichern: "Begründung speichern", abbrechen: "Abbrechen", gebucht: "Als Müll gebucht.", behaltenOk: "Gespeichert.", grundKurz: "Bitte kurz begründen." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Menütafel", einstiegUnter: "Karte und Aktionen für den Fernseher", titel: "Menütafel", unter: "Datei für Fernseher oder Tablet im Laden", vorschau: "Vorschau", seiten: (n) => `${n} ${n === 1 ? "Seite" : "Seiten"}`,
+    einstellungen: "Einstellungen", wechsel: "Seitenwechsel alle", sekunden: (n) => `${n} s`, gruppen: "Was steht auf der Tafel?", aktionenZeigen: "Aktionen zeigen", sprache: "Sprache der Tafel", teilen: "Tafel-Datei teilen",
+    kasse: "Preise auf Tafel und Kasse müssen gleich sein.", geteilt: "Datei geteilt.", geladen: "Datei gespeichert.", fehler: "Das ging nicht. Bitte nochmal.", hinweisTitel: "Bitte prüfen",
+    hinweis: { mengeFehlt: (name) => `${name}: Menge fehlt (z. B. 0,33 l). Im Namen ergänzen – Pflicht bei Getränken.`, ohnePreis: (name) => `${name}: ohne Preis – fehlt auf der Tafel.`, aktionOhneGericht: (name) => `Aktion ${name}: ein Gericht fehlt – steht nicht auf der Tafel.` },
+    leer: "Noch kein Gericht mit Preis. Erst die Karte füllen.", aktionenTitel: "Aktionen auf der Tafel", aktionenLeer: "Keine Aktion. Unter „Aktionen & Haltbarkeit“ übernehmen.", beenden: "Beenden", beendet: "Aktion beendet.", uebernehmen: "Auf die Tafel", uebernommen: "Auf der Tafel – Preis auch in der Kasse eintragen.",
+    was: "Die Datei läuft ohne Internet. Auf dem Fernseher im Browser öffnen, einmal antippen für Vollbild. Abgelaufene Aktionen verschwinden von selbst. Nach jeder Preisänderung neu teilen.",
+    inhalt: { gruppen: { speisen: "Speisen", beilagen: "Beilagen & Snacks", getraenke: "Getränke" }, aktion: "Aktion", statt: (p) => `statt ${p}`, bis: (d) => `bis ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Stand: ${d}`, endpreise: "Endpreise in Euro inkl. MwSt.", endpreiseOhne: "Endpreise in Euro", leer: "Karte folgt." },
+  },
 };

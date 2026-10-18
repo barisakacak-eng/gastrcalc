@@ -1251,4 +1251,14 @@ export default {
   },
   // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Marchandise après un écart de froid", unter: "Qu’est devenue la marchandise ?", leer: "Aucun écart ouvert. Tout est décidé.", wegwerfen: "Jetée", behalten: "Gardée", wegFrage: "Qu’est-ce qui a été jeté ?", wegLeer: "Aucune marchandise saisie pour l’instant.", wegSpeichern: "Enregistrer comme perte", wert: "Valeur de la marchandise", grundFrage: "Pourquoi gardée ?", grundPlatzhalter: "p. ex. mise tout de suite dans l’autre frigo", grundSpeichern: "Enregistrer le motif", abbrechen: "Annuler", gebucht: "Enregistré comme perte.", behaltenOk: "Enregistré.", grundKurz: "Merci d’indiquer un motif court." },
+  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  tafel: {
+    einstieg: "Écran menu", einstiegUnter: "Carte et offres pour la télé", titel: "Écran menu", unter: "Fichier pour télé ou tablette au restaurant", vorschau: "Aperçu", seiten: (n) => `${n} ${n === 1 ? "page" : "pages"}`,
+    einstellungen: "Réglages", wechsel: "Changer de page toutes les", sekunden: (n) => `${n} s`, gruppen: "Qu’y a-t-il à l’écran ?", aktionenZeigen: "Afficher les offres", sprache: "Langue de l’écran", teilen: "Partager le fichier",
+    kasse: "Les prix à l’écran et en caisse doivent être identiques.", geteilt: "Fichier partagé.", geladen: "Fichier enregistré.", fehler: "Ça n’a pas marché. Réessaie.", hinweisTitel: "À vérifier",
+    hinweis: { mengeFehlt: (name) => `${name} : quantité manquante (ex. 0,33 l). L’ajouter au nom – obligatoire pour les boissons.`, ohnePreis: (name) => `${name} : sans prix – absent de l’écran.`, aktionOhneGericht: (name) => `Offre ${name} : un plat manque – absente de l’écran.` },
+    leer: "Aucun plat avec prix pour l’instant. Remplis d’abord la carte.", aktionenTitel: "Offres à l’écran", aktionenLeer: "Aucune offre. L’ajouter dans « Promotions & conservation ».", beenden: "Terminer", beendet: "Offre terminée.", uebernehmen: "À l’écran", uebernommen: "À l’écran – saisis aussi le prix en caisse.",
+    was: "Le fichier marche sans internet. Ouvre-le dans le navigateur de la télé et touche une fois pour le plein écran. Les offres expirées disparaissent seules. Partage-le à nouveau après chaque changement de prix.",
+    inhalt: { gruppen: { speisen: "Plats", beilagen: "Accompagnements et snacks", getraenke: "Boissons" }, aktion: "Offre", statt: (p) => `au lieu de ${p}`, bis: (d) => `jusqu’au ${d}`, abBis: (v, b) => `${v} – ${b}`, stand: (d) => `Mis à jour : ${d}`, endpreise: "Prix TTC en euros", endpreiseOhne: "Prix finaux en euros", leer: "Carte bientôt." },
+  },
 };
