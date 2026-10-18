@@ -21,7 +21,9 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - run: node --test tests/*.mjs
+      # 18.10.2026: Tests in zwei Zeitzonen – der Laden lebt in deutscher Zeit, der Testrechner in UTC
+      - run: TZ=UTC node --test tests/*.mjs
+      - run: TZ=Europe/Berlin node --test tests/*.mjs
   # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser. Seit 17.10. mittags blockierend
   # (5 stabile Läufe): neue Regelverstöße oder ein kaputter Personal-Modus gehen nicht mehr live.
   regeln:
