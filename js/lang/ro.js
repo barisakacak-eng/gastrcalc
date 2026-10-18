@@ -371,7 +371,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – ridicat`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Marjă %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Marjă", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare." },
   buero: { titel: "Birou", zurueck: "Local",
-    abschnitt: { offen: "De făcut", ordner: "Dosare de predat", zahlen: "Cifre", karte: "Meniu și cumpărături", einrichten: "Configurează localul" },
+    abschnitt: { geld: "Bani", ware: "Marfă", kartePreise: "Meniu și prețuri", offen: "De făcut", ordner: "Dosare de predat", zahlen: "Cifre", karte: "Meniu și cumpărături", einrichten: "Configurează localul" },
     offen: { einrichtung: "Configurare", kosten: (n) => (n === 1 ? "Costuri fixe: lipsește 1" : `Costuri fixe: lipsesc ${n}`), billig: (n) => (n === 1 ? "1 preț prea mic" : `${nr(n, "preț", "prețuri")} prea mici`),
       ohneZahlen: (n) => `${nr(n, "preparat", "preparate")} fără cifre`, sicherung: (n) => `Copie: acum ${nr(n, "zi", "zile")}`, sicherungNie: "Încă nicio copie",
       waage: "Cântărește porțiile", belehrung: (n) => (n === 1 ? "1 instruire de făcut" : `${nr(n, "instruire", "instruiri")} de făcut`) },

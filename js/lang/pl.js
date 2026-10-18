@@ -370,7 +370,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – wysoko`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Zrób własne zdjęcie", fotoGespeichert: "Zdjęcie zapisane. Zostaje na tym telefonie.",  titel: "Porównanie dań", unter: "Które dania dają ci najwięcej?", tab: { db: "Zostaje na sztuce", marge: "Marża %" }, ware: "Koszt towaru", db: "Zostaje ci na sztuce", marge: "Marża", leer: "Wpisz ceny sprzedaży i zakupu, wtedy zobaczysz tu, które dania dają najwięcej.", ohneZahlen: (n) => (n === 1 ? "1 danie jeszcze bez liczb" : `${n} ${lm(n, "danie", "dania", "dań")} jeszcze bez liczb`), einkaufFehlt: "Brak cen zakupu", hinweis: "Wartości są szacunkowe i mogą się różnić zależnie od składników i cen. Wszystkie kwoty bez VAT, poza ceną sprzedaży." },
   buero: { titel: "Biuro", zurueck: "Lokal",
-    abschnitt: { offen: "Do zrobienia", ordner: "Teczki do oddania", zahlen: "Liczby", karte: "Karta i zakupy", einrichten: "Ustaw lokal" },
+    abschnitt: { geld: "Pieniądze", ware: "Towar", kartePreise: "Karta i ceny", offen: "Do zrobienia", ordner: "Teczki do oddania", zahlen: "Liczby", karte: "Karta i zakupy", einrichten: "Ustaw lokal" },
     offen: { einrichtung: "Konfiguracja", kosten: (n) => `Stałe koszty: brak ${n}`, billig: (n) => `Za tanio: ${n} ${lm(n, "cena", "ceny", "cen")}`,
       ohneZahlen: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez liczb`, sicherung: (n) => `Kopia: ${n} ${lm(n, "dzień", "dni", "dni")} temu`, sicherungNie: "Jeszcze brak kopii",
       waage: "Zważ porcje", belehrung: (n) => `${n} ${lm(n, "szkolenie", "szkolenia", "szkoleń")} do zrobienia` },

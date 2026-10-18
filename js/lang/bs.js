@@ -372,7 +372,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – visoko`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Marža %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Marža", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene." },
   buero: { titel: "Ured", zurueck: "Lokal",
-    abschnitt: { offen: "Za uraditi", ordner: "Fascikle za predaju", zahlen: "Brojke", karte: "Jelovnik i nabavka", einrichten: "Podesi lokal" },
+    abschnitt: { geld: "Novac", ware: "Roba", kartePreise: "Meni i cijene", offen: "Za uraditi", ordner: "Fascikle za predaju", zahlen: "Brojke", karte: "Jelovnik i nabavka", einrichten: "Podesi lokal" },
     offen: { einrichtung: "Podešavanje", kosten: (n) => `Fiksni troškovi: fali ${n}`, billig: (n) => `Prejeftino: ${n} ${pl(n, "cijena", "cijene", "cijena")}`,
       ohneZahlen: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez brojki`, sicherung: (n) => `Kopija: prije ${n} ${pl(n, "dan", "dana", "dana")}`, sicherungNie: "Još nema kopije",
       waage: "Izvaži porcije", belehrung: (n) => `${n} ${pl(n, "obuka", "obuke", "obuka")} na redu` },

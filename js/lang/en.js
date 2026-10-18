@@ -364,7 +364,7 @@ export default {
     eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Kept per item", marge: "Margin %" }, ware: "Cost of goods", db: "You keep per item", marge: "Margin", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Office", zurueck: "Shop",
-    abschnitt: { offen: "To do", ordner: "Folders to hand in", zahlen: "Numbers", karte: "Menu & purchasing", einrichten: "Set up the shop" },
+    abschnitt: { geld: "Money", ware: "Stock", kartePreise: "Menu & prices", offen: "To do", ordner: "Folders to hand in", zahlen: "Numbers", karte: "Menu & purchasing", einrichten: "Set up the shop" },
     offen: { einrichtung: "Setup", kosten: (n) => (n === 1 ? "Fixed costs: 1 missing" : `Fixed costs: ${n} missing`), billig: (n) => (n === 1 ? "1 price too low" : `${n} prices too low`),
       ohneZahlen: (n) => (n === 1 ? "1 dish without numbers" : `${n} dishes without numbers`), sicherung: (n) => (n === 1 ? "Backup 1 day old" : `Backup ${n} days old`), sicherungNie: "No backup yet",
       waage: "Weigh portions", belehrung: (n) => (n === 1 ? "1 briefing due" : `${n} briefings due`) },

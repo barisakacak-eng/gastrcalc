@@ -365,7 +365,7 @@ export default {
     eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Bleibt pro Stück", marge: "Marge %" }, ware: "Wareneinsatz", db: "Bleibt dir pro Stück", marge: "Marge", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Büro", zurueck: "Laden",
-    abschnitt: { offen: "Offen", ordner: "Ordner zum Abgeben", zahlen: "Zahlen", karte: "Karte & Einkauf", einrichten: "Laden einrichten" },
+    abschnitt: { geld: "Geld", ware: "Ware", kartePreise: "Karte & Preise", offen: "Offen", ordner: "Ordner zum Abgeben", zahlen: "Zahlen", karte: "Karte & Einkauf", einrichten: "Laden einrichten" },
     offen: { einrichtung: "Einrichtung", kosten: (n) => (n === 1 ? "Feste Kosten: 1 fehlt" : `Feste Kosten: ${n} fehlen`), billig: (n) => (n === 1 ? "1 Preis zu billig" : `${n} Preise zu billig`),
       ohneZahlen: (n) => (n === 1 ? "1 Gericht ohne Zahlen" : `${n} Gerichte ohne Zahlen`), sicherung: (n) => (n === 1 ? "Sicherung 1 Tag" : `Sicherung ${n} Tage`), sicherungNie: "Noch keine Sicherung",
       waage: "Portionen abwiegen", belehrung: (n) => (n === 1 ? "1 Belehrung fällig" : `${n} Belehrungen fällig`) },

@@ -365,7 +365,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Hacer foto propia", fotoGespeichert: "Foto guardada. Se queda en este móvil.",  titel: "Comparar platos", unter: "¿Qué platos te dejan más?", tab: { db: "Te queda por unidad", marge: "Margen %" }, ware: "Coste de producto", db: "Te queda por unidad", marge: "Margen", leer: "Anota precios de venta y de compra y aquí verás qué platos te dejan más.", ohneZahlen: (n) => (n === 1 ? "1 plato todavía sin cifras" : `${n} platos todavía sin cifras`), einkaufFehlt: "Faltan precios de compra", hinweis: "Los valores son estimaciones y pueden variar según ingredientes y precios. Todos los importes sin IVA, menos el precio de venta." },
   buero: { titel: "Oficina", zurueck: "Local",
-    abschnitt: { offen: "Pendiente", ordner: "Carpetas para entregar", zahlen: "Cifras", karte: "Carta y compras", einrichten: "Configurar local" },
+    abschnitt: { geld: "Dinero", ware: "Mercancía", kartePreise: "Carta y precios", offen: "Pendiente", ordner: "Carpetas para entregar", zahlen: "Cifras", karte: "Carta y compras", einrichten: "Configurar local" },
     offen: { einrichtung: "Configuración", kosten: (n) => (n === 1 ? "Gastos fijos: falta 1" : `Gastos fijos: faltan ${n}`), billig: (n) => (n === 1 ? "1 precio demasiado barato" : `${n} precios demasiado baratos`),
       ohneZahlen: (n) => (n === 1 ? "1 plato sin cifras" : `${n} platos sin cifras`), sicherung: (n) => (n === 1 ? "Copia de hace 1 día" : `Copia de hace ${n} días`), sicherungNie: "Aún sin copia",
       waage: "Pesar raciones", belehrung: (n) => (n === 1 ? "1 formación pendiente" : `${n} formaciones pendientes`) },

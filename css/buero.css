@@ -132,3 +132,19 @@ button.b-zeile:active { background: var(--papier); }
 .b-vorschau-dok { flex: 1; width: 100%; border: 0; background: #fff; }
 
 @media (min-width: 700px) { .b-inhalt { padding-top: 24px; } }
+
+/* Entrümpelung Punkt 3 (19.10.2026): vier Bereiche statt fünf Abschnitte */
+.b-bereiche { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.b-bereich { border-radius: var(--radius); background: var(--weiss); box-shadow: var(--schatten-karte); overflow: hidden; }
+.b-bereich > summary { list-style: none; cursor: pointer; border-bottom: 0; min-height: 68px; }
+.b-bereich > summary::-webkit-details-marker { display: none; }
+.b-bereich > summary .b-zt b { font-size: 1.05rem; }
+.b-bereich > summary small.rot { color: var(--rot); font-weight: 700; }
+.b-bereich > summary .b-pfeil { transition: transform var(--bewegung); }
+.b-bereich[open] > summary .b-pfeil { transform: rotate(90deg); }
+.b-bereich[open] > summary { border-bottom: 1px solid var(--papier-tief); }
+.b-bereich > .b-liste { box-shadow: none; border-radius: 0; margin: 0; background: var(--papier); }
+.b-offen-mehr { display: contents; }
+.b-offen-mehr > summary { list-style: none; cursor: pointer; }
+.b-offen-mehr > summary::-webkit-details-marker { display: none; }
+@media (prefers-reduced-motion: reduce) { .b-bereich > summary .b-pfeil { transition: none; } }

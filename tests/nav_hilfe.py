@@ -10,7 +10,11 @@ async def modus(pg):
     return await pg.evaluate("window.__gastrocalc.wurzel.modus || 'laden'")
 
 
+OEFFNEN = "s => { for (const e of document.querySelectorAll(s)) { const d = e.closest('details'); if (d && !d.open) d.open = true; } }"
+
+
 async def _tipp(pg, sel, warte):
+    await pg.evaluate(OEFFNEN, sel)  # Büro-Bereiche (19.10.2026) sind aufklappbar – Ziel vorher aufklappen, wie ein Mensch es täte
     await pg.locator(sel).first.click(); await pg.wait_for_timeout(warte)
 
 

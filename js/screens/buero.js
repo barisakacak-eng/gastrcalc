@@ -58,46 +58,47 @@ export function bueroView(stand, wurzel, extra = {}) {
   const inv = inventurenFertig(stand).pop();
   const zeile = (ziel, symbol, titel, unter, wert = "") => `<button type="button" class="b-zeile" ${zielAttr(ziel)}><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</button>`;
   const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}">${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
-  const mini = (ziel, symbol, titel) => `<button type="button" class="karte b-minikachel" ${zielAttr(ziel)}><span class="b-ks">${bsym(symbol)}</span><b>${esc(titel)}</b></button>`;
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   const codeAn = pinGesetzt(wurzel);
+  // Entrümpelung Punkt 3 (19.10.2026, freigegeben 18.10.): 3 Ordner + 4 Bereiche statt 27 Einträge. Jeder Bereich zeigt nur seine „Uhrzeit“,
+  // aufgeklappt (details/summary, ohne eigenen Zustand) alle Wege wie bisher. Oben nur der wichtigste offene Punkt, der Rest hinter „+ n“.
+  const bu = bestandUhrzeit(stand); const ware = bu || lieferUhrzeit(stand);
+  const karteSatz = haltbarUhrzeit(stand) || aktionUhrzeit(stand);
+  const bereich = (id, symbol, titel, satz, rot, inhalt, wert = "") => `<details class="b-bereich" data-bereich="${id}"><summary class="b-zeile b-bereichkopf"><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${satz ? `<small class="${rot ? "rot" : ""}">${esc(satz)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</summary><div class="karte b-liste">${inhalt}</div></details>`;
+  const [erster, ...rest] = offen;
   return `<div class="buero">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">
-      ${offen.length ? `<h2 class="b-abschnitt">${esc(t("buero.abschnitt.offen"))}</h2><div class="b-offen">${offen.map(chip).join("")}</div>` : ""}
-      <h2 class="b-abschnitt">${esc(t("buero.abschnitt.ordner"))}</h2>
+      ${erster ? `<div class="b-offen">${chip(erster)}${rest.length ? `<details class="b-offen-mehr"><summary class="b-chip b-mehr">+ ${rest.length}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}</div>` : ""}
       <div class="b-ordner">${kachel("amt", "shield-check", k.amt)}${kachel("steuer", "calculator", k.steuer)}${kachel("buch", "receipt", k.buch)}</div>
-      <h2 class="b-abschnitt">${esc(t("buero.abschnitt.zahlen"))}</h2>
-      <div class="karte b-liste">
-        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : wareneinsatzWarnung(z.quoteEff) ? ` · ${t("buero.zahlen.wareHoch", Math.round(z.quoteEff * 100))}` : ""}`, monatWert)}
+      <div class="b-bereiche">
+      ${bereich("geld", "trending-up", t("buero.abschnitt.geld"), t("buero.zahlen.monatUnter", monatName(H)), false, `
+        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("buero.zahlen.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}
         ${zeile({ aktion: "nav", wert: "vergleich" }, "chart-column", t("buero.zahlen.vergleich"), t("buero.zahlen.vergleichUnter"))}
-        ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}
-        ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
-        ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bestandUhrzeit(stand)?.text || t("bestand.einstiegUnter"))}
+        ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}`, monatWert)}
+      ${bereich("ware", "package", t("buero.abschnitt.ware"), ware?.text || (inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie")), bu?.ton === "rot", `
+        ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bu?.text || t("bestand.einstiegUnter"))}
+        ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}
         ${zeile({ aktion: "nav", wert: "lieferanten" }, "truck", t("lieferanten.einstieg"), lieferUhrzeit(stand)?.text || t("lieferanten.einstiegUnter"))}
+        ${zeile({ aktion: "bearbeiten", schritt: "preise" }, "shopping-cart", t("buero.karte.preise"), "")}
+        ${zeile({ aktion: "nav", wert: "beleg" }, "camera", t("buero.karte.belege"), "")}
+        ${zeile({ aktion: "nav", wert: "getraenke" }, "cup-soda", t("getraenke.einstieg"), "")}`)}
+      ${bereich("karte", "utensils-crossed", t("buero.abschnitt.kartePreise"), karteSatz?.text || "", karteSatz?.ton === "rot", `
+        ${zeile({ aktion: "nav", wert: "kartebuero" }, "utensils-crossed", t("menue.karte"), "")}
+        ${zeile({ aktion: "bearbeiten", schritt: "rezepte" }, "chef-hat", t("buero.karte.rezepte"), "")}
+        ${zeile({ aktion: "bearbeiten", schritt: "verkauf" }, "wallet", t("buero.karte.verkauf"), "")}
+        ${zeile({ aktion: "nav", wert: "kartefoto" }, "file-text", t("buero.karte.kartefoto"), "")}
         ${zeile({ aktion: "nav", wert: "aktionen" }, "target", t("aktionen.einstieg"), haltbarUhrzeit(stand)?.text || aktionUhrzeit(stand)?.text || t("aktionen.einstiegUnter"))}
-      </div>
-      <h2 class="b-abschnitt">${esc(t("buero.abschnitt.karte"))}</h2>
-      <div class="b-raster3">
-        ${mini({ aktion: "nav", wert: "kartebuero" }, "utensils-crossed", t("menue.karte"))}
-        ${mini({ aktion: "bearbeiten", schritt: "rezepte" }, "chef-hat", t("buero.karte.rezepte"))}
-        ${mini({ aktion: "bearbeiten", schritt: "preise" }, "shopping-cart", t("buero.karte.preise"))}
-        ${mini({ aktion: "nav", wert: "beleg" }, "camera", t("buero.karte.belege"))}
-        ${mini({ aktion: "bearbeiten", schritt: "verkauf" }, "wallet", t("buero.karte.verkauf"))}
-        ${mini({ aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" }, "calculator", t("buero.karte.kosten"))}
-        ${mini({ aktion: "nav", wert: "kartefoto" }, "file-text", t("buero.karte.kartefoto"))}
-        ${mini({ aktion: "nav", wert: "tafel" }, "tv", t("tafel.einstieg"))}
-        ${mini({ aktion: "nav", wert: "getraenke" }, "cup-soda", t("getraenke.einstieg"))}
-      </div>
-      <h2 class="b-abschnitt">${esc(t("buero.abschnitt.einrichten"))}</h2>
-      <div class="karte b-liste">
+        ${zeile({ aktion: "nav", wert: "tafel" }, "tv", t("tafel.einstieg"), "")}`)}
+      ${bereich("laden", "store", t("buero.abschnitt.einrichten"), `${t("buero.einrichten.einrichtung")} ${e.prozent} %`, false, `
         ${zeile(e.naechster ? e.naechster.ziel : { aktion: "nav", wert: "buero" }, "store", t("buero.einrichten.einrichtung"), "", `<span class="b-wert zahl">${e.prozent} %</span>`)}
         ${zeile({ aktion: "kuehl-einrichtung-oeffnen" }, "snowflake", t("buero.einrichten.kuehl"), "")}
         ${zeile({ aktion: "nav", wert: "putzplan" }, "spray-can", t("buero.einrichten.putzplan"), "")}
+        ${zeile({ aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" }, "calculator", t("buero.karte.kosten"), "")}
         ${zeile({ aktion: "nav", wert: "laeden" }, "store", t("buero.einrichten.laeden"), "")}
         ${zeile({ aktion: "export" }, "download", t("buero.einrichten.sicherung"), "")}
         ${zeile({ aktion: "pin-setzen" }, "lock", t("buero.einrichten.code"), "", `<span class="b-wert ${codeAn ? "plus" : ""}">${esc(t(codeAn ? "buero.einrichten.codeAn" : "buero.einrichten.codeAus"))}</span>`)}
-        ${zeile({ aktion: "nav", wert: "einstellungen" }, "settings", t("buero.einrichten.einstellungen"), "")}
+        ${zeile({ aktion: "nav", wert: "einstellungen" }, "settings", t("buero.einrichten.einstellungen"), "")}`)}
       </div>
     </div></div>`;
 }

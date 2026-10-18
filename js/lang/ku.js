@@ -364,7 +364,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – bilind`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Wêneyê xwe bikişîne", fotoGespeichert: "Wêne hate tomarkirin. Li ser vê telefonê dimîne.", titel: "Berhevdana xwarinan", unter: "Kîjan xwarin herî zêde ji te re tînin?", tab: { db: "Ji her heban dimîne", marge: "Marj %" }, ware: "Lêçûna malê", db: "Ji her heban ji te re dimîne", marge: "Marj", leer: "Bihayên firotin û kirînê binivîse, paşê li vir dibînî kîjan xwarin herî zêde tînin.", ohneZahlen: (n) => `${n} xwarin hîn bê hejmar`, einkaufFehlt: "Bihayên kirînê kêm in", hinweis: "Nirx texmînî ne û li gorî malzeme û bihayan dikarin cuda bin. Hemû mîqdar bê bac in, ji bilî bihayê firotinê." },
   buero: { titel: "Ofîs", zurueck: "Dikan",
-    abschnitt: { offen: "Vekirî", ordner: "Dosyeyên radestkirinê", zahlen: "Hejmar", karte: "Menû û kirîn", einrichten: "Dikanê saz bike" },
+    abschnitt: { geld: "Pere", ware: "Mal", kartePreise: "Menû û biha", offen: "Vekirî", ordner: "Dosyeyên radestkirinê", zahlen: "Hejmar", karte: "Menû û kirîn", einrichten: "Dikanê saz bike" },
     offen: { einrichtung: "Sazkirin", kosten: (n) => `Lêçûnên sabît: ${n} kêm in`, billig: (n) => `${n} biha pir erzan`,
       ohneZahlen: (n) => `${n} xwarin bê hejmar`, sicherung: (n) => `Kopî: berî ${n} rojan`, sicherungNie: "Hîn kopî tune",
       waage: "Porsiyonan bikêşe", belehrung: (n) => `Dema ${n} perwerdeyan hat` },

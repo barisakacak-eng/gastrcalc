@@ -365,7 +365,7 @@ export default {
     eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Adet başı kalan", marge: "Marj %" }, ware: "Malzeme maliyeti", db: "Adet başı sana kalan", marge: "Marj", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Ofis", zurueck: "Dükkan",
-    abschnitt: { offen: "Açık işler", ordner: "Teslim dosyaları", zahlen: "Rakamlar", karte: "Menü ve alım", einrichten: "Dükkanı kur" },
+    abschnitt: { geld: "Para", ware: "Mal", kartePreise: "Menü ve fiyatlar", offen: "Açık işler", ordner: "Teslim dosyaları", zahlen: "Rakamlar", karte: "Menü ve alım", einrichten: "Dükkanı kur" },
     offen: { einrichtung: "Kurulum", kosten: (n) => `Sabit giderler: ${n} eksik`, billig: (n) => `${n} fiyat çok ucuz`,
       ohneZahlen: (n) => `${n} yemeğin rakamı yok`, sicherung: (n) => `Yedek ${n} gün önce`, sicherungNie: "Henüz yedek yok",
       waage: "Porsiyonları tart", belehrung: (n) => `${n} eğitim zamanı geldi` },

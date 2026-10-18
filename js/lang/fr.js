@@ -365,7 +365,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – élevé`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Prendre ma propre photo", fotoGespeichert: "Photo enregistrée. Elle reste sur ce téléphone.",  titel: "Comparer les plats", unter: "Quels plats te rapportent le plus ?", tab: { db: "Il te reste par pièce", marge: "Marge %" }, ware: "Coût marchandise", db: "Il te reste par pièce", marge: "Marge", leer: "Remplis les prix de vente et d’achat, et tu verras ici quels plats rapportent le plus.", ohneZahlen: (n) => (n <= 1 ? `${n} plat encore sans chiffres` : `${n} plats encore sans chiffres`), einkaufFehlt: "Prix d’achat manquants", hinweis: "Les valeurs sont des estimations et peuvent varier selon les ingrédients et les prix. Tous les montants HT, sauf le prix de vente." },
   buero: { titel: "Bureau", zurueck: "Commerce",
-    abschnitt: { offen: "À faire", ordner: "Dossiers à remettre", zahlen: "Chiffres", karte: "Carte & achats", einrichten: "Régler le commerce" },
+    abschnitt: { geld: "Argent", ware: "Marchandise", kartePreise: "Carte et prix", offen: "À faire", ordner: "Dossiers à remettre", zahlen: "Chiffres", karte: "Carte & achats", einrichten: "Régler le commerce" },
     offen: { einrichtung: "Réglage", kosten: (n) => (n === 1 ? "Frais fixes : 1 manque" : `Frais fixes : ${n} manquent`), billig: (n) => (n === 1 ? "1 prix trop bas" : `${n} prix trop bas`),
       ohneZahlen: (n) => (n === 1 ? "1 plat sans chiffres" : `${n} plats sans chiffres`), sicherung: (n) => (n === 1 ? "Sauvegarde il y a 1 jour" : `Sauvegarde il y a ${n} jours`), sicherungNie: "Pas encore de sauvegarde",
       waage: "Peser les portions", belehrung: (n) => (n === 1 ? "1 formation à faire" : `${n} formations à faire`) },

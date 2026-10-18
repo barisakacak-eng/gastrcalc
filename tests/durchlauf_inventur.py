@@ -35,6 +35,7 @@ async def main():
         async with async_playwright() as p:
             b = await p.chromium.launch()
             ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
+            await ctx.add_init_script(path=__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "hilfe", "aufklappen.js"))  # Büro-Bereiche offen (19.10.2026)
             pg = await ctx.new_page()
             # 17.10.2026: feste Tageszeit 12:00 (heutiges Datum) – der Durchlauf mischt Kalendertag (Inventur, Belege) und Geschäftstag
             # (Umsatz bis 4 Uhr = Vortag, Paket 3); nachts zwischen 0 und 4 Uhr wären sonst ein Umsatztag doppelt belegt

@@ -370,7 +370,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – e lartë`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Bëj foton tënde", fotoGespeichert: "Fotoja u ruajt. Mbetet në këtë telefon.",  titel: "Krahasimi i pjatave", unter: "Cilat pjata të sjellin më shumë?", tab: { db: "Të mbetet për copë", marge: "Marzhi %" }, ware: "Kostoja e mallit", db: "Të mbetet për copë", marge: "Marzhi", leer: "Shkruaj çmimet e shitjes dhe të blerjes, pastaj sheh këtu cilat pjata sjellin më shumë.", ohneZahlen: (n) => (n === 1 ? "1 pjatë ende pa shifra" : `${n} pjata ende pa shifra`), einkaufFehlt: "Mungojnë çmimet e blerjes", hinweis: "Vlerat janë të përafërta dhe mund të ndryshojnë sipas përbërësve dhe çmimeve. Të gjitha shumat pa TVSH, përveç çmimit të shitjes." },
   buero: { titel: "Zyra", zurueck: "Lokali",
-    abschnitt: { offen: "Për t'u bërë", ordner: "Dosje për dorëzim", zahlen: "Shifrat", karte: "Menyja dhe blerjet", einrichten: "Rregullo lokalin" },
+    abschnitt: { geld: "Paratë", ware: "Malli", kartePreise: "Menuja dhe çmimet", offen: "Për t'u bërë", ordner: "Dosje për dorëzim", zahlen: "Shifrat", karte: "Menyja dhe blerjet", einrichten: "Rregullo lokalin" },
     offen: { einrichtung: "Rregullimi", kosten: (n) => (n === 1 ? "Shpenzime fikse: mungon 1" : `Shpenzime fikse: mungojnë ${n}`), billig: (n) => `${sn(n, "çmim", "çmime")} shumë lirë`,
       ohneZahlen: (n) => `${sn(n, "pjatë", "pjata")} pa shifra`, sicherung: (n) => `Kopja: para ${sn(n, "dite", "ditësh")}`, sicherungNie: "Ende pa kopje",
       waage: "Peshoji porcionet", belehrung: (n) => `${sn(n, "trajnim", "trajnime")} për t'u bërë` },

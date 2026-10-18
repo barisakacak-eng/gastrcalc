@@ -365,7 +365,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – cao`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Tự chụp ảnh", fotoGespeichert: "Đã lưu ảnh. Ảnh chỉ nằm trên điện thoại này.",  titel: "So sánh món", unter: "Món nào lời nhiều nhất?", tab: { db: "Còn lại mỗi phần", marge: "Lợi nhuận %" }, ware: "Tiền nguyên liệu", db: "Còn lại cho bạn mỗi phần", marge: "Tỷ lệ lời", leer: "Điền giá bán và giá mua, rồi ở đây bạn sẽ thấy món nào lời nhiều nhất.", ohneZahlen: (n) => `${n} món chưa có số liệu`, einkaufFehlt: "Thiếu giá mua", hinweis: "Các số là ước tính và có thể khác tùy nguyên liệu và giá. Tất cả số tiền đều chưa thuế, trừ giá bán." },
   buero: { titel: "Văn phòng", zurueck: "Quán",
-    abschnitt: { offen: "Còn việc", ordner: "Hồ sơ để nộp", zahlen: "Số liệu", karte: "Thực đơn & mua hàng", einrichten: "Cài đặt quán" },
+    abschnitt: { geld: "Tiền", ware: "Hàng hóa", kartePreise: "Thực đơn và giá", offen: "Còn việc", ordner: "Hồ sơ để nộp", zahlen: "Số liệu", karte: "Thực đơn & mua hàng", einrichten: "Cài đặt quán" },
     offen: { einrichtung: "Cài đặt", kosten: (n) => `Chi phí cố định: thiếu ${n}`, billig: (n) => `${n} giá quá rẻ`,
       ohneZahlen: (n) => `${n} món chưa có số`, sicherung: (n) => `Sao lưu ${n} ngày trước`, sicherungNie: "Chưa sao lưu",
       waage: "Cân khẩu phần", belehrung: (n) => `${n} buổi hướng dẫn đến hạn` },

@@ -365,7 +365,7 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Margine %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Margine", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita." },
   buero: { titel: "Ufficio", zurueck: "Locale",
-    abschnitt: { offen: "Da fare", ordner: "Cartelle da consegnare", zahlen: "Numeri", karte: "Menu & acquisti", einrichten: "Imposta il locale" },
+    abschnitt: { geld: "Soldi", ware: "Merce", kartePreise: "Menù e prezzi", offen: "Da fare", ordner: "Cartelle da consegnare", zahlen: "Numeri", karte: "Menu & acquisti", einrichten: "Imposta il locale" },
     offen: { einrichtung: "Impostazione", kosten: (n) => (n === 1 ? "Costi fissi: ne manca 1" : `Costi fissi: ne mancano ${n}`), billig: (n) => (n === 1 ? "1 prezzo troppo basso" : `${n} prezzi troppo bassi`),
       ohneZahlen: (n) => (n === 1 ? "1 piatto senza numeri" : `${n} piatti senza numeri`), sicherung: (n) => (n === 1 ? "Backup di 1 giorno fa" : `Backup di ${n} giorni fa`), sicherungNie: "Ancora nessun backup",
       waage: "Pesa le porzioni", belehrung: (n) => (n === 1 ? "1 formazione in scadenza" : `${n} formazioni in scadenza`) },
