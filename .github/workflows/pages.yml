@@ -4,13 +4,16 @@ on:
   push:
     branches: [main]
     paths-ignore: ["bruecke/**"]   # Briefkasten Zoro ⇄ Sanji: löst keine neue Veröffentlichung aus
+  # 18.10.2026: Vorschläge von Gemini/Jules kommen als Pull Request – Tests laufen mit, veröffentlicht wird nur von main
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   # Erst prüfen, dann veröffentlichen: schlägt ein Test fehl, geht nichts live (Befund E05 aus Sanjis Prüfung)
@@ -53,6 +56,7 @@ jobs:
           exit 1
   deploy:
     needs: [test, regeln]
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
