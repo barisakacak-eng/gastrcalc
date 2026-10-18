@@ -1,0 +1,82 @@
+{
+  "_hinweis": "Prüfdaten (18.10.2026) für tests/dsfinvk_spec.test.mjs: Spaltennamen, Dateinamen und Wertelisten der DSFinV-K, gegen die js/verkauf.js geprüft wird. Nichts erfunden – jede Angabe hat eine Quelle und Fundstelle.",
+  "status": "original_teilweise",
+  "status_erklaerung": "Das amtliche Dokument „DSFinV-K Version 2.4“ (BZSt) wurde als PDF-Spiegel gelesen (Q1). Aus der Arbeitsumgebung waren bzst.de und der Spiegel per Download gesperrt; über den Seitenleser waren nur die Seiten 1–49 lesbar (Abschnitte 1–5, Anhang A, B und der Anfang von Anhang C). Anhang E (Feldbeschreibung mit Länge, Pflicht und Format, S. 64–105) und Anhang F (Beispiele) konnten NICHT gelesen werden. Alles, was nur aus Anhang E käme (Länge, Pflichtfeld, Datums-/Zeitformat), stammt aus Sekundärquellen (Q2, Q3) und ist so gekennzeichnet.",
+  "quellen": {
+    "Q1": "DSFinV-K Version 2.4 (BZSt), Original-Text, gelesen am 18.10.2026 über den Spiegel https://kassensichv.com/downloads/DSFinV-K-Vers-2-4.pdf (amtliche Fundstelle: https://www.bzst.de/DE/Unternehmen/Aussenpruefungen/DigitaleSchnittstelleFinV/digitaleschnittstellefinv_node.html, Download dsfinv_k_v_2_4.zip). Abschnitt 5: „Inhaltliche Änderungen zur Version 2.3 erfolgten nicht.“ Seitenangaben = Seitenzahl im PDF-Text.",
+    "Q2": "SEKUNDÄR: python-dsfinvk (pretix), dsfinvk/models.py, Commit 06ba579 vom 25.08.2024, https://github.com/pretix/python-dsfinvk – Transkription der Feldtabellen der Fassung 2.0/2.1 (README: „based on version 2.0“), mit Längen (max_length) und Dezimalstellen.",
+    "Q3": "SEKUNDÄR: fiskaltrust, „Procedural documentation for DSFinV-K generation“ (Fassung 2.3), https://docs.fiskaltrust.eu/docs/poscreators/middleware-doc/germany/dsfinv-k – Dateinamen, BON_STORNO „0 or 1“, Z_ERSTELLUNG/BON_START/BON_ENDE „ISO 8601 and RFC3339 date“.",
+    "Q4": "SEKUNDÄR: fiskaly, „Process Types & Business Transaction Types“, https://workspace.fiskaly.com/dsfinvk/process-types-business-transaction-types – Listen BON_TYP (Anhang B) und GV_TYP (Anhang C), Schreibweise bestätigt."
+  },
+  "tabellen": {
+    "lines.csv": { "name": "Bonpos", "quelle": "Q1 Anhang E Inhaltsverzeichnis S. 93; Q3", "fundstelle_felder": "Q1 Abschnitt 3 S. 17 (Spalten Feldname, Typ, Dezimal, Beschreibung)" },
+    "lines_vat.csv": { "name": "Bonpos_USt", "quelle": "Q1 Anhang E Inhaltsverzeichnis S. 97; Q3", "fundstelle_felder": "Q1 Abschnitt 3 S. 17" },
+    "transactions.csv": { "name": "Bonkopf", "quelle": "Q1 Anhang E Inhaltsverzeichnis S. 84; Q3", "fundstelle_felder": "Q1 Abschnitt 3 S. 20" },
+    "cashpointclosing.csv": { "name": "Stamm_Abschluss", "quelle": "Q1 Anhang E Inhaltsverzeichnis S. 66; Q3", "fundstelle_felder": "Q1 Abschnitt 3 S. 24" }
+  },
+  "felder": [
+    { "datei": "lines.csv", "feld": "Z_KASSE_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "ID der (Abschluss-) Kasse", "laenge": 50, "quelle": "Q1 S. 17; Länge Q2 (sekundär)" },
+    { "datei": "lines.csv", "feld": "Z_ERSTELLUNG", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeitpunkt des Kassenabschlusses", "format": "nicht in Q1 S. 1–49; Q3: ISO 8601/RFC 3339 (sekundär); Q2 schreibt YYYY-MM-DDThh:mm:ss ohne Zone (sekundär)", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "Z_NR", "typ": "Numerisch", "dezimal": 0, "beschreibung": "Nr. des Kassenabschlusses", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "BON_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "Vorgangs-ID", "laenge": 40, "quelle": "Q1 S. 17; Länge Q2 (sekundär)" },
+    { "datei": "lines.csv", "feld": "POS_ZEILE", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeilennummer", "laenge": 50, "quelle": "Q1 S. 17; Länge Q2 (sekundär)" },
+    { "datei": "lines.csv", "feld": "ARTIKELTEXT", "typ": "Zeichen", "dezimal": null, "beschreibung": "Artikeltext", "laenge": 255, "quelle": "Q1 S. 17; Länge Q2 (sekundär)" },
+    { "datei": "lines.csv", "feld": "GV_TYP", "typ": "Zeichen", "dezimal": null, "beschreibung": "Geschäftsvorfall-Art", "werte": "siehe wertelisten.GV_TYP", "quelle": "Q1 S. 17; Werte Q1 Anhang C S. 48–49 und 4.1.3 S. 35" },
+    { "datei": "lines.csv", "feld": "GV_NAME", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zusatz zu der Geschäftsvorfall-Art", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "INHAUS", "typ": "Zeichen", "dezimal": null, "beschreibung": "Verzehr an Ort und Stelle", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "P_STORNO", "typ": "Zeichen", "dezimal": null, "beschreibung": "Positionsstorno-Kennzeichnung", "werte": "„1“ = storniert (Q1 4.2.3 S. 36: „in der ursprünglichen Position P_STORNO auf „1“ zu setzen“); Q2 schreibt 0/1 (sekundär)", "quelle": "Q1 S. 17, S. 36" },
+    { "datei": "lines.csv", "feld": "ART_NR", "typ": "Zeichen", "dezimal": null, "beschreibung": "Artikelnummer", "laenge": 50, "quelle": "Q1 S. 17; Länge Q2 (sekundär)" },
+    { "datei": "lines.csv", "feld": "MENGE", "typ": "Numerisch", "dezimal": 3, "beschreibung": "Menge", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "FAKTOR", "typ": "Numerisch", "dezimal": 3, "beschreibung": "Faktor, z. B. Gebindegrößen", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "EINHEIT", "typ": "Zeichen", "dezimal": null, "beschreibung": "Maßeinheit, z. B. kg, Liter oder Stück", "quelle": "Q1 S. 17" },
+    { "datei": "lines.csv", "feld": "STK_BR", "typ": "Numerisch", "dezimal": 5, "beschreibung": "Preis pro Einheit inkl. USt", "quelle": "Q1 S. 17" },
+
+    { "datei": "lines_vat.csv", "feld": "Z_KASSE_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "ID der (Abschluss-) Kasse", "quelle": "Q1 S. 17 ff. (Schlüsselfelder aller Tabellen); Q2" },
+    { "datei": "lines_vat.csv", "feld": "Z_ERSTELLUNG", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeitpunkt des Kassenabschlusses", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "lines_vat.csv", "feld": "Z_NR", "typ": "Numerisch", "dezimal": 0, "beschreibung": "Nr. des Kassenabschlusses", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "lines_vat.csv", "feld": "BON_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "Vorgangs-ID", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "lines_vat.csv", "feld": "POS_ZEILE", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeilennummer", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "lines_vat.csv", "feld": "UST_SCHLUESSEL", "typ": "Numerisch", "dezimal": 0, "beschreibung": "ID des USt-Satzes", "quelle": "Q2 (sekundär)" },
+    { "datei": "lines_vat.csv", "feld": "POS_BRUTTO", "typ": "Numerisch", "dezimal": 5, "beschreibung": "Bruttoumsatz", "quelle": "Q1 S. 17" },
+
+    { "datei": "transactions.csv", "feld": "Z_KASSE_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "ID der (Abschluss-) Kasse", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "transactions.csv", "feld": "Z_ERSTELLUNG", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeitpunkt des Kassenabschlusses", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "transactions.csv", "feld": "Z_NR", "typ": "Numerisch", "dezimal": 0, "beschreibung": "Nr. des Kassenabschlusses", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "transactions.csv", "feld": "BON_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "Vorgangs-ID", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "transactions.csv", "feld": "BON_TYP", "typ": "Zeichen", "dezimal": null, "beschreibung": "Bontyp", "werte": "siehe wertelisten.BON_TYP", "quelle": "Q1 S. 20; Werte Q1 Anhang B S. 43–47 und 4.1.1 S. 32" },
+    { "datei": "transactions.csv", "feld": "BON_STORNO", "typ": "Zeichen", "dezimal": null, "beschreibung": "Storno-Kennzeichen", "werte": "„1“ = Stornobeleg (Q1 4.2.2 S. 36: „durch BON_STORNO = „1“ zu kennzeichnen“); Q3: „0 or 1“ (sekundär)", "quelle": "Q1 S. 20, S. 35–36" },
+    { "datei": "transactions.csv", "feld": "BON_START", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeitpunkt des Vorgangsstarts", "format": "nicht in Q1 S. 1–49; Q3: ISO 8601/RFC 3339 (sekundär)", "quelle": "Q1 S. 20" },
+    { "datei": "transactions.csv", "feld": "BON_ENDE", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeitpunkt der Vorgangsbeendigung", "format": "nicht in Q1 S. 1–49; Q3: ISO 8601/RFC 3339 (sekundär)", "quelle": "Q1 S. 20" },
+
+    { "datei": "cashpointclosing.csv", "feld": "Z_KASSE_ID", "typ": "Zeichen", "dezimal": null, "beschreibung": "ID der (Abschluss-) Kasse", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "cashpointclosing.csv", "feld": "Z_ERSTELLUNG", "typ": "Zeichen", "dezimal": null, "beschreibung": "Zeitpunkt des Kassenabschlusses", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "cashpointclosing.csv", "feld": "Z_NR", "typ": "Numerisch", "dezimal": 0, "beschreibung": "Nr. des Kassenabschlusses", "quelle": "Q1 S. 17 ff.; Q2" },
+    { "datei": "cashpointclosing.csv", "feld": "Z_BUCHUNGSTAG", "typ": "Zeichen", "dezimal": null, "beschreibung": "Vom Erstellungsdatum abweichender Verbuchungstag", "format": "nicht in Q1 S. 1–49 (Anhang E nicht lesbar)", "quelle": "Q1 S. 24" },
+    { "datei": "cashpointclosing.csv", "feld": "TAXONOMIE_VERSION", "typ": "Zeichen", "dezimal": null, "beschreibung": "Version der DFKA-Taxonomie-Kasse", "quelle": "Q2 (sekundär)" }
+  ],
+  "wertelisten": {
+    "BON_TYP": {
+      "quelle": "Q1 Anhang B S. 43–47 und Abschnitt 4.1.1 S. 32; Schreibweise auch Q4",
+      "werte": ["Beleg", "AVTransfer", "AVBestellung", "AVTraining", "AVBelegstorno", "AVBelegabbruch", "AVSachbezug", "AVSonstige", "AVRechnung"],
+      "abschluss_relevant": ["Beleg"],
+      "anmerkung": "Q1 S. 32/43: nur „Beleg“ geht in den Kassenabschluss ein, die AV-Typen nicht. AVBelegstorno nur ohne TSE und nur innerhalb eines Kassenabschlusses (Q1 S. 35, S. 46–47); „Mit dem AVBelegstorno ist nicht die negative Darstellung eines Beleges gemeint“ (S. 46)."
+    },
+    "GV_TYP": {
+      "quelle": "Q1 Anhang C S. 48–49 und Abschnitt 4.1.3 S. 35; Schreibweise auch Q4",
+      "werte": ["Umsatz", "Pfand", "PfandRueckzahlung", "Rabatt", "Aufschlag", "ZuschussEcht", "ZuschussUnecht", "TrinkgeldAG", "TrinkgeldAN", "EinzweckgutscheinKauf", "EinzweckgutscheinEinloesung", "MehrzweckgutscheinKauf", "MehrzweckgutscheinEinloesung", "Forderungsentstehung", "Forderungsaufloesung", "Anzahlungseinstellung", "Anzahlungsaufloesung", "Anfangsbestand", "Privatentnahme", "Privateinlage", "Geldtransit", "Lohnzahlung", "Einzahlung", "Auszahlung", "DifferenzSollIst"]
+    },
+    "STORNO": {
+      "quelle": "Q1 Abschnitt 4.2.1 S. 35, 4.2.2 S. 35–36, 4.2.3 S. 36, 4.2.5 S. 38",
+      "regeln": [
+        "Sofortstorno (nur ohne TSE): BON_STORNO wird auf „1“ gesetzt, sonst bleibt der Datensatz unverändert; Vorgangstyp AVBelegstorno (S. 35).",
+        "Stornobeleg (mit TSE): „Der Stornobeleg ist ein separater Beleg, der durch BON_STORNO = „1“ zu kennzeichnen ist.“ Der Ursprungsbeleg bleibt unverändert; Verweis in Bon_Referenzen (S. 35–36).",
+        "Positionsstorno: entweder in der ursprünglichen Position P_STORNO = „1“ – nicht mehr nach TSE-Signatur – oder zusätzliche Zeile mit MENGE „mit negiertem Vorzeichen“ (S. 36).",
+        "Negative Positionen (Rücknahmen, Positionsstornos) werden wie normale Verkäufe dargestellt: „Lediglich das Vorzeichen für das Feld MENGE ändert sich“ (S. 38)."
+      ]
+    }
+  },
+  "format": {
+    "quelle": "Q1 Abschnitt 1.1.3 S. 9–10, Abschnitt 4 S. 31",
+    "befund": "Die DSFinV-K selbst legt Zeichensatz, Spaltentrenner, Textbegrenzer und Dezimalzeichen NICHT fest. Sie verweist auf „csv-Dateien mit beschreibender index.xml“ und für die index.xml auf das Dokument „Ergänzende Informationen zur Datenträgerüberlassung“ (GoBD). Beträge: „Die Darstellung aller Beträge erfolgt mit zwei Dezimalstellen.“ (S. 31). Die Wörter „UTF-8“ (außer TSE_PD_ENCODING), „Semikolon“, „Anführungszeichen“, „Zeitzone“, „ISO 8601“ kommen auf S. 1–49 nicht vor."
+  }
+}

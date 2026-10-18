@@ -1,6 +1,6 @@
 Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;BON_ID;POS_ZEILE;GUTSCHEIN_NR;ARTIKELTEXT;GV_TYP;GV_NAME;INHAUS;P_STORNO;AGENTUR_ID;ART_NR;GTIN;WARENGR_ID;WARENGR;MENGE;FAKTOR;EINHEIT;STK_BR
 "BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"1";"1";"";"Döner Kebab";"Umsatz";"";0;0;0;"101";"";"1";"Speisen";2,000;1,000;"Stück";8,00000
-"BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"1";"2";"";"Cola 0,33 l";"Umsatz";"";0;0;0;"111";"";"1";"Speisen";2,000;1,000;"Stück";2,50000
+"BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"1";"2";"";"Cola 0,33 l";"Umsatz";"";0;0;0;"111";"";"1";"Speisen";1,000;2,000;"Stück";2,50000
 "BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"1";"3";"";"Pfand Flasche";"Pfand";"";0;0;0;"";"";"1";"Speisen";1,000;1,000;"Stück";0,25000
 "BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"2";"1";"";"Dürüm";"Umsatz";"";0;0;0;"9001";"";"1";"Speisen";1,000;1,000;"Stück";9,00000
 "BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"2";"2";"";"Ayran";"Umsatz";"";0;0;0;"9002";"";"1";"Speisen";1,000;1,000;"Stück";2,00000
@@ -14,3 +14,4 @@ Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;BON_ID;POS_ZEILE;GUTSCHEIN_NR;ARTIKELTEXT;GV_TYP;GV
 "BEISPIEL-KASSE-1";2026-10-16T01:30:00+02:00;1;"7";"2";"";"Cola 0,33 l";"Umsatz";"";0;0;0;"111";"";"1";"Speisen";1,000;1,000;"Stück";2,50000
 "BEISPIEL-KASSE-1";2026-10-17T01:40:00+02:00;2;"8";"1";"";"Döner Kebab";"Umsatz";"";0;0;0;"101";"";"1";"Speisen";3,000;1,000;"Stück";8,00000
 "BEISPIEL-KASSE-1";2026-10-17T01:40:00+02:00;2;"8";"2";"";"Pommes frites (Beilage)";"Umsatz";"";0;0;0;"110";"";"1";"Speisen";2,000;1,000;"Stück";3,50000
+"BEISPIEL-KASSE-1";2026-10-17T01:40:00+02:00;2;"8";"3";"";"Baklava (gewogen)";"Umsatz";"";0;0;0;"120";"";"1";"Speisen";0,350;1,000;"kg";24,00000

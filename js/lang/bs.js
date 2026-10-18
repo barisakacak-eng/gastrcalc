@@ -1157,7 +1157,7 @@ export default {
     fehlenVerkaeufe: (n, d) => `${n} artikala odstupa, ali za ${d} dana još nedostaju prodaje. Sumnja na manjak tek kad su sve prodaje tu.`, // Schwadron 18.10.2026, N4
     titel: "Prodaja po jelu", unter: "Šta si prodao – iz kase ili upisano ručno.", entwurf: "Nacrt: još nije odobren, samo za pregled.", einstieg: "Prodaja po jelu",
     einstiegUnter: "Učitaj kasu, jela koja ne idu, manjak", zeitraumInventur: "između posljednje dvije inventure", keine: "Još nema prodaje u ovom periodu.", ohneGericht: "Bez jela",
-    rangTitel: "Najviše prodano", ohneInventur: "Za poređenje sa skladištem trebaju dvije inventure.", inventurKnopf: "Na inventuru", abgleichTitel: "Roba: očekivano i potrošeno",
+    nachMengeZeile: (text) => `${text} – po količini`, rangTitel: "Najviše prodano", ohneInventur: "Za poređenje sa skladištem trebaju dvije inventure.", inventurKnopf: "Na inventuru", abgleichTitel: "Roba: očekivano i potrošeno",
     abgleichText: "Očekivano: recept puta prodane porcije, plus upisani otpad i obroci osoblja. Potrošeno: prethodna inventura plus nabavka minus sadašnja inventura.", schwundTitel: "Otišlo više nego što se očekivalo (sumnja na manjak)", schwundText: "Mogući razlozi: otpad nije upisan, prevelike porcije, hrana bez računa, greška pri brojanju.", einkaufFehltTitel: "Vjerovatno nedostaje nabavka",
     einkaufFehltText: "Za ovu robu nema računa u periodu. Dodaj račun i poređenje će biti tačno.", wenigerTitel: "Otišlo manje nego što se očekivalo", wenigerText: "Možda u receptu piše previše ili je nešto pošlo naopako pri brojanju.", ladenhueterTitel: "Jela koja ne idu",
     ladenhueterText: "Jela koja se skoro ne prodaju. Skinuti s menija ili ponuditi drugačije?", keinVerkauf: "nema prodaje", totTitel: "Roba koja ne treba nijednom prodanom jelu", totText: "Ova roba stoji u skladištu i veže novac, ali ništa prodano je ne treba.",
@@ -1178,7 +1178,7 @@ export default {
       offenTitel: "Aplikacija još ne poznaje ove tekstove iz kase", offenText: "Dodirni koje je to jelo. Aplikacija to pamti.", positionen: "Stavke", zugeordnet: "Dodijeljeno jelu",
       offen: "Još otvoreno", nichtGezaehlt: "Ne računa se kao prodaja", uebernehmen: "Preuzmi", abbrechen: "Odustani",
       gelernt: "Zapamćeno", nichtsNeu: "Ništa novo – sve je već bilo tu.", storno: (n) => `Storno: oduzeto redova: ${n}`, posStorno: (n) => `Stornirane stavke nisu brojane: ${n}`,
-      bonNicht: (n) => `Redovi iz prekida, obuke i sl. nisu brojani: ${n}`, artNicht: (n, betrag) => `Redova kaucija, popust, napojnica i sl.: ${n} (${betrag}) – nije jelo`, ohneMenge: (n) => `Preskočeno redova bez količine: ${n}`, ohneDatum: (n) => `Preskočeno redova bez datuma: ${n}`,
+      bonNicht: (n) => `Redovi iz prekida, obuke i sl. nisu brojani: ${n}`, artNicht: (n, betrag) => `Redova kaucija, popust, napojnica i sl.: ${n} (${betrag}) – nije jelo`, ohneMenge: (n) => `Preskočeno redova bez količine: ${n}`, nachMenge: (n) => `${n} stavki po težini ili količini (kg, l): nije jelo, računa se samo u prometu`, rabattVerteilt: (betrag) => `Popusti i doplate (${betrag}) raspoređeni na jela s računa`, nachMengeZeile: "Prodano po količini – nije jelo", ohneDatum: (n) => `Preskočeno redova bez datuma: ${n}`,
       nummer: (nr) => `Br. ${nr}`, tage: (n) => `${n} dana`, gleich: (n) => `${n} dana već postoji tačno ovako i ne računa se dvaput.`, ersetzt: (n) => `${n} dana bit će zamijenjeno novim stanjem.`,
       uebernommen: (n, tage) => `Preuzeto ${n} stavki za ${tage} dana`,
     },

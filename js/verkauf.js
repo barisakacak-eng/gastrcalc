@@ -6,13 +6,22 @@
 // DSFinV-K (Digitale Schnittstelle der Finanzverwaltung für Kassensysteme), Version 2.4 vom Januar 2024 (inhaltlich gleich 2.3), BZSt:
 // https://www.bzst.de/DE/Unternehmen/Aussenpruefungen/DigitaleSchnittstelleFinV/digitaleschnittstellefinv_node.html
 // Genutzte Dateien und Felder (Spaltennamen der Spezifikation):
-//   lines.csv (Bonpos): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, BON_ID, POS_ZEILE, ARTIKELTEXT, GV_TYP, P_STORNO, ART_NR, MENGE, STK_BR
+//   lines.csv (Bonpos): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, BON_ID, POS_ZEILE, ARTIKELTEXT, GV_TYP, P_STORNO, ART_NR, MENGE, FAKTOR, EINHEIT, STK_BR
 //   transactions.csv (Bonkopf): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, BON_ID, BON_TYP, BON_STORNO, BON_START, BON_ENDE
 //   cashpointclosing.csv (Stamm_Abschluss): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, Z_BUCHUNGSTAG
 //   lines_vat.csv (Bonpos_USt, wenn vorhanden): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, BON_ID, POS_ZEILE, POS_BRUTTO
 //   index.xml (wenn vorhanden): DecimalSymbol, ColumnDelimiter, TextEncapsulator
-// Format laut Beschreibung (index.xml): Spalten mit Semikolon, Dezimalkomma, Text in Anführungszeichen, Kopfzeile mit Spaltennamen, UTF-8.
-// Gelesen wird trotzdem vorsichtig: Trennzeichen aus der Kopfzeile erkannt, Punkt oder Komma als Dezimalzeichen, BOM und Windows-1252 als Rückfall.
+// Zeichensatz, Spaltentrenner, Textbegrenzer und Dezimalzeichen legt die DSFinV-K selbst NICHT fest (Prüfung 18.10.2026, audit/dsfinvk_pruefung.md,
+// Abschnitt 1.1.3 und 4): sie verweist auf die beschreibende index.xml nach dem GoBD-Beschreibungsstandard („Ergänzende Informationen zur
+// Datenträgerüberlassung“). Deshalb liest dieser Parser die index.xml (erste Fundstelle gilt für alle Dateien) und fällt ohne sie auf Erkennung
+// zurück: Trennzeichen aus der Kopfzeile, Punkt oder Komma als Dezimalzeichen, BOM, UTF-8 mit Windows-1252 als Rückfall. Üblich in der Praxis
+// (keine Vorgabe der DSFinV-K): Semikolon, Dezimalkomma, Anführungszeichen, UTF-8.
+// Mengen (Prüfung 18.10.2026, Abweichung 1): Menge = MENGE × FAKTOR (Gebindegröße), EINHEIT „Stück“ oder leer zählt als Stück; jede andere
+// Einheit (kg, g, l …) ist „nach Menge“ und wird keinem Gericht zugeordnet, weil Gerichte nur je Stück verkauft werden.
+// Rabatt/Aufschlag (Abweichung 2): eigene Bonpos-Zeilen mit GV_TYP „Rabatt“/„Aufschlag“ werden auf die Umsatz-Zeilen desselben Bons
+// anteilig nach POS_BRUTTO verteilt, damit der Umsatz je Gericht nach Rabatt stimmt; die Menge bleibt.
+// Stornobeleg (Abweichung 4, Abschnitt 4.2.2 und Anhang B): ein separater Beleg mit BON_STORNO = „1“ ist die negative Darstellung des
+// Ursprungsbelegs – Vorzeichen von MENGE und POS_BRUTTO gelten wie geliefert (ein Storno einer Rücknahme steht dann positiv und addiert wieder).
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026)
@@ -138,10 +147,21 @@ function geschaeftstagVon(iso) {
   return heute(geschaeftstag(new Date(ms)));
 }
 
+// EINHEIT (Bonpos) → null für Stück (auch leer), sonst kurze Einheit („kg“, „g“, „l“, „ml“ oder der gelieferte Text, gekürzt).
+const STUECK = new Set(["", "stk", "stück", "stueck", "stck", "st", "pcs", "pc", "piece", "pieces", "ea", "x", "portion", "einheit"]);
+const EINHEIT_KURZ = { kg: "kg", kilogramm: "kg", kilo: "kg", g: "g", gramm: "g", gr: "g", l: "l", liter: "l", ltr: "l", lt: "l", ml: "ml", milliliter: "ml", cl: "cl" };
+export function einheitLesen(s) {
+  const e = String(s ?? "").trim().toLowerCase().replace(/\.$/, "");
+  if (STUECK.has(e)) return null;
+  return EINHEIT_KURZ[e] || String(s).trim().slice(0, 10);
+}
+// Rabatt/Aufschlag als eigene Zeile: Betrag gehört zum Bon und wird auf dessen Umsatz-Zeilen verteilt (Prüfung 18.10.2026, Abweichung 2).
+const VERTEILEN = new Set(["rabatt", "aufschlag"]);
+
 // Der Export (Liste {name, bytes}) → Summen je Geschäftstag und Kassenartikel plus Bericht über alles, was nicht gezählt wurde.
 export function dsfinvkLesen(dateien) {
-  const bericht = { dateien: [], kodierung: [], zeilen: 0, bons: 0, gezaehlt: 0, bonTyp: {}, stornoBons: 0, stornoZeilen: 0, positionsStorno: 0,
-    nichtArtikel: {}, ohneMenge: 0, ohneDatum: 0, ohneBonkopf: false, datumQuelle: { abschluss: 0, bon: 0, erstellung: 0 }, punktStattKomma: false, fehler: [] };
+  const bericht = { dateien: [], kodierung: [], zeilen: 0, bons: 0, gezaehlt: 0, bonTyp: {}, stornoBons: 0, stornoZeilen: 0, stornoRueck: 0, positionsStorno: 0,
+    nichtArtikel: {}, nachMenge: 0, faktor: 0, verteilt: 0, nichtVerteilt: 0, ohneMenge: 0, ohneDatum: 0, ohneBonkopf: false, datumQuelle: { abschluss: 0, bon: 0, erstellung: 0 }, punktStattKomma: false, fehler: [] };
   const xml = (dateien || []).find((d) => d.name.endsWith(".xml"));
   const fmt = xml ? indexXmlLesen(textAusBytes(xml.bytes).text) : { dezimal: null, trenner: null, quote: null };
   const tab = {};
@@ -162,38 +182,65 @@ export function dsfinvkLesen(dateien) {
   bericht.ohneBonkopf = !tab.transactions; bericht.bons = bons.size;
   for (const r of bons.values()) { const typ = r.BON_TYP || "?"; bericht.bonTyp[typ] = (bericht.bonTyp[typ] || 0) + 1; if (r.BON_STORNO === "1") bericht.stornoBons += 1; }
   const brutto = new Map(); for (const r of tab.lines_vat || []) { const v = zahl(r.POS_BRUTTO); if (v !== null) { const k = bonSchluessel(r) + "|" + r.POS_ZEILE; brutto.set(k, (brutto.get(k) || 0) + v); } }
-  const summen = new Map();
+  // Erst je Zeile lesen (Umsatz-Zeilen und Rabatt/Aufschlag je Bon merken), dann Rabatte verteilen, dann je Tag und Kassenartikel summieren.
+  const gezaehlt = []; const korrektur = new Map(); // Bon-Schlüssel → Summe Rabatt/Aufschlag
   for (const r of tab.lines) {
     bericht.zeilen += 1;
-    const bon = bons.get(bonSchluessel(r)) || null;
+    const bk = bonSchluessel(r); const bon = bons.get(bk) || null;
     // Nur echte Verkaufsbelege: Training, Abbruch, Bestellung, Transfer, Sachbezug, Rechnung und Sonstiges zählen nicht als Verkauf
     if (tab.transactions && (!bon || String(bon.BON_TYP || "").toLowerCase() !== "beleg")) { const k = "bonTyp:" + (bon?.BON_TYP || "?"); bericht.nichtArtikel[k] ??= { zeilen: 0, betrag: 0 }; bericht.nichtArtikel[k].zeilen += 1; continue; }
     if (r.P_STORNO === "1") { bericht.positionsStorno += 1; continue; }
-    const gv = r.GV_TYP || "Umsatz";
-    const menge0 = zahl(r.MENGE); const stk = zahl(r.STK_BR);
-    if (gv.toLowerCase() !== "umsatz") { bericht.nichtArtikel[gv] ??= { zeilen: 0, betrag: 0 }; bericht.nichtArtikel[gv].zeilen += 1; bericht.nichtArtikel[gv].betrag += (menge0 ?? 1) * (stk ?? 0); continue; }
+    const gv = r.GV_TYP || "Umsatz"; const gvKlein = gv.toLowerCase();
+    // Menge = MENGE × FAKTOR (Gebindegröße, Vorgabe 1); Preis STK_BR gilt je Einheit, also je MENGE × FAKTOR (Annahme, Anhang E nicht lesbar –
+    // POS_BRUTTO aus lines_vat.csv geht immer vor)
+    const mengeRoh = zahl(r.MENGE); const faktor = zahl(r.FAKTOR); const stk = zahl(r.STK_BR);
+    const f = faktor !== null && faktor > 0 ? faktor : 1; const menge0 = mengeRoh === null ? null : mengeRoh * f;
+    const bruttoKey = bk + "|" + r.POS_ZEILE;
+    const umsatz0 = brutto.has(bruttoKey) ? brutto.get(bruttoKey) : stk !== null && menge0 !== null ? stk * menge0 : null;
+    if (gvKlein !== "umsatz") {
+      bericht.nichtArtikel[gv] ??= { zeilen: 0, betrag: 0 }; bericht.nichtArtikel[gv].zeilen += 1;
+      const betrag = umsatz0 ?? (stk ?? 0); bericht.nichtArtikel[gv].betrag += betrag;
+      if (VERTEILEN.has(gvKlein) && betrag) korrektur.set(bk, (korrektur.get(bk) || 0) + betrag); // Vorzeichen wie geliefert (Rabatt negativ)
+      continue;
+    }
     if (menge0 === null) { bericht.ohneMenge += 1; continue; }
     let datum = tagAbschluss.get(abschlussSchluessel(r)) || null, quelle = "abschluss";
     if (!datum) { datum = geschaeftstagVon(bon?.BON_ENDE) || geschaeftstagVon(bon?.BON_START); quelle = "bon"; }
     if (!datum) { datum = geschaeftstagVon(r.Z_ERSTELLUNG); quelle = "erstellung"; }
     if (!datum) { bericht.ohneDatum += 1; continue; }
     bericht.datumQuelle[quelle] += 1;
-    const storno = bon?.BON_STORNO === "1"; // Storno-Beleg hebt einen früheren Beleg auf: immer abziehen
-    let menge = menge0, umsatz = brutto.has(bonSchluessel(r) + "|" + r.POS_ZEILE) ? brutto.get(bonSchluessel(r) + "|" + r.POS_ZEILE) : stk !== null ? stk * menge0 : null;
-    if (storno) { menge = -Math.abs(menge); if (umsatz !== null) umsatz = -Math.abs(umsatz); bericht.stornoZeilen += 1; }
+    // Stornobeleg (BON_STORNO „1“, Abschnitt 4.2.2): negative Darstellung des Ursprungsbelegs – Vorzeichen wie geliefert. Eine positive Menge
+    // im Stornobeleg ist eine stornierte Rücknahme (addiert wieder) und wird gezählt, damit sie im Bericht auffällt.
+    const storno = bon?.BON_STORNO === "1";
+    if (storno) { bericht.stornoZeilen += 1; if (menge0 > 0) bericht.stornoRueck += 1; }
+    if (f !== 1) bericht.faktor += 1;
+    const einheit = einheitLesen(r.EINHEIT); if (einheit) bericht.nachMenge += 1;
     const plu = r.ART_NR || null; const text = (r.ARTIKELTEXT || "").slice(0, 120);
     const kasse = r.Z_KASSE_ID ? String(r.Z_KASSE_ID).slice(0, 50) : null; // Prüfgremium 17.10.2026 (5): zwei Kassen = zwei getrennte Stände je Tag
-    const k = datum + "|" + (kasse || "") + "|" + (plu || "") + "|" + normKasse(text);
-    const s = summen.get(k) || { datum, kasse, plu, text, menge: 0, umsatzBrutto: 0, umsatzFehlt: false, zeilen: 0 };
-    s.menge += menge; if (umsatz === null) s.umsatzFehlt = true; else s.umsatzBrutto += umsatz; s.zeilen += 1; summen.set(k, s);
+    gezaehlt.push({ bk, datum, kasse, plu, text, einheit, menge: menge0, umsatz: umsatz0 });
     bericht.gezaehlt += 1;
   }
-  const positionen = [...summen.values()].map((s) => ({ datum: s.datum, kasse: s.kasse, plu: s.plu, text: s.text, menge: rund(s.menge, 3), umsatzBrutto: s.umsatzFehlt ? null : rund(s.umsatzBrutto, 2), zeilen: s.zeilen }))
+  // Rabatt/Aufschlag anteilig nach POS_BRUTTO auf die Umsatz-Zeilen des Bons (ohne Umsatz-Zeile mit Betrag: bleibt nur Information)
+  const jeBon = new Map(); for (const z of gezaehlt) { if (z.umsatz === null) continue; const l = jeBon.get(z.bk) || []; l.push(z); jeBon.set(z.bk, l); }
+  for (const [bk, betrag] of korrektur) {
+    const l = jeBon.get(bk); if (!l) { bericht.nichtVerteilt += betrag; continue; }
+    const summe = l.reduce((s, z) => s + z.umsatz, 0);
+    for (const z of l) z.umsatz += betrag * (Math.abs(summe) > 1e-9 ? z.umsatz / summe : 1 / l.length);
+    bericht.verteilt += betrag;
+  }
+  const summen = new Map();
+  for (const z of gezaehlt) {
+    const k = z.datum + "|" + (z.kasse || "") + "|" + (z.plu || "") + "|" + normKasse(z.text) + "|" + (z.einheit || "");
+    const s = summen.get(k) || { datum: z.datum, kasse: z.kasse, plu: z.plu, text: z.text, einheit: z.einheit, menge: 0, umsatzBrutto: 0, umsatzFehlt: false, zeilen: 0 };
+    s.menge += z.menge; if (z.umsatz === null) s.umsatzFehlt = true; else s.umsatzBrutto += z.umsatz; s.zeilen += 1; summen.set(k, s);
+  }
+  const positionen = [...summen.values()].map((s) => ({ datum: s.datum, kasse: s.kasse, plu: s.plu, text: s.text, ...(s.einheit ? { einheit: s.einheit } : {}), menge: rund(s.menge, 3), umsatzBrutto: s.umsatzFehlt ? null : rund(s.umsatzBrutto, 2), zeilen: s.zeilen }))
     .filter((p) => Math.abs(p.menge) > 1e-9 || (p.umsatzBrutto !== null && Math.abs(p.umsatzBrutto) > 0.004))
     .sort((a, b) => a.datum.localeCompare(b.datum) || String(a.kasse || "").localeCompare(String(b.kasse || "")) || a.text.localeCompare(b.text, "de"));
   for (const v of Object.values(bericht.nichtArtikel)) v.betrag = rund(v.betrag, 2);
+  bericht.verteilt = rund(bericht.verteilt, 2); bericht.nichtVerteilt = rund(bericht.nichtVerteilt, 2);
   const tage = [...new Set(positionen.map((p) => p.datum))].sort();
-  return { positionen, tage, bericht, fingerabdruck: "imp-" + kurzHash(positionen.map((p) => [p.datum, p.kasse || "", p.plu, p.text, p.menge, p.umsatzBrutto].join("|")).join("\n")) };
+  return { positionen, tage, bericht, fingerabdruck: "imp-" + kurzHash(positionen.map((p) => [p.datum, p.kasse || "", p.plu, p.text, p.einheit || "", p.menge, p.umsatzBrutto].join("|")).join("\n")) };
 }
 const rund = (x, n) => { const f = 10 ** n; return Math.round(x * f) / f; };
 
@@ -208,7 +255,11 @@ export async function exportEinlesen(dateien) {
 export const normKasse = (s) => normalisieren(s).replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 // Reihenfolge: Artikelnummer (plu) → gelernter Kassentext → genau gleicher Name. Mehrdeutig oder unbekannt: nicht zugeordnet, nie geraten.
 // Schwadron 18.10.2026, M1: ein Kassenartikel kann auch ein Kombi-Menü sein (stand.kassenKombis) – dann { gericht: null, kombi: id }.
-export function zuordnen(stand, { plu = null, text = "" } = {}) {
+// Prüfung 18.10.2026 (Abweichung 1): eine Position „nach Menge“ (EINHEIT kg, g, l …) wird keinem Gericht zugeordnet – Gerichte haben kein
+// Verkaufs-Einheitsfeld, sie zählen je Stück. Sie bleibt { gericht: null, grund: "einheit" } und wird in Vorschau und Auswertung mit Einheit ausgewiesen.
+export const nachMenge = (p) => typeof p?.einheit === "string" && !!p.einheit;
+export function zuordnen(stand, { plu = null, text = "", einheit = null } = {}) {
+  if (nachMenge({ einheit })) return { gericht: null, weg: null, grund: "einheit", vorschlaege: [] };
   const gerichte = stand.gerichte || []; const kombis = kombisVon(stand); const q = normKasse(text);
   const eins = (liste) => (liste.length === 1 ? liste[0] : null);
   if (plu) { const g = eins(gerichte.filter((x) => x.plu && x.plu === String(plu))); if (g) return { gericht: g.id, weg: "plu", vorschlaege: [] };
@@ -257,7 +308,7 @@ export function kombiTeileVorschlag(stand, text) {
 export function teileVon(stand, e) {
   if (e.kombi) { const k = kombiVon(stand, e.kombi); if (k) return teileSauber(stand, k.teile); }
   const id = gerichtVon(stand, e); if (id) return [{ gericht: id, menge: 1 }];
-  const z = zuordnen(stand, { plu: e.plu, text: e.text || e.name }); const k = z.kombi ? kombiVon(stand, z.kombi) : null;
+  const z = zuordnen(stand, { plu: e.plu, text: e.text || e.name, einheit: e.einheit || null }); const k = z.kombi ? kombiVon(stand, z.kombi) : null;
   return k ? teileSauber(stand, k.teile) : [];
 }
 // Vorschläge für die Chips: Gerichte, deren Name im Kassentext steckt oder umgekehrt (vorhandene Suche), höchstens vier
@@ -284,6 +335,7 @@ export function zuordnungLernen(stand, { text = "", plu = null } = {}, gerichtId
 }
 // Gericht eines gespeicherten Eintrags: gespeicherte Kennung (wenn es das Gericht noch gibt), sonst mit der heutigen Zuordnung
 export function gerichtVon(stand, e) {
+  if (nachMenge(e)) return null; // nach Menge (kg, l …): nie ein Gericht
   if (e.gericht && (stand.gerichte || []).some((g) => g.id === e.gericht)) return e.gericht;
   return zuordnen(stand, { plu: e.plu, text: e.text || e.name }).gericht;
 }
@@ -295,19 +347,21 @@ const aktiv = (stand) => (stand.verkaeufe || []).filter((v) => !v.storniert);
 export const kasseVon = (p) => (typeof p?.kasse === "string" && p.kasse ? p.kasse : null);
 const gleicheKasse = (v, k) => !("kasse" in v) || kasseVon(v) === k;
 const kassenGruppen = (pos) => { const m = new Map(); for (const p of pos) { const k = kasseVon(p); if (!m.has(k)) m.set(k, []); m.get(k).push(p); } return m; };
-const abdruck = (liste) => liste.map((p) => [p.plu || "", normKasse(p.text || p.name), rund(p.menge, 3), p.umsatzBrutto ?? ""].join("|")).sort().join("\n");
+const abdruck = (liste) => liste.map((p) => [p.plu || "", normKasse(p.text || p.name), p.einheit || "", rund(p.menge, 3), p.umsatzBrutto ?? ""].join("|")).sort().join("\n");
 export function importVorschau(stand, ergebnis, { herkunft = "dsfinvk" } = {}) {
   const pos = (ergebnis?.positionen || []).map((p) => ({ ...p, ...zuordnen(stand, p) }));
   const offen = new Map();
   const zu = (p) => !!(p.gericht || p.kombi); // Schwadron 18.10.2026, M1: ein Menü gilt als zugeordnet
-  for (const p of pos) if (!zu(p)) { const k = (p.plu || "") + "|" + normKasse(p.text); const o = offen.get(k) || { text: p.text, plu: p.plu, menge: 0, umsatzBrutto: 0, tage: new Set(), vorschlaege: p.vorschlaege }; o.menge += p.menge; o.umsatzBrutto += p.umsatzBrutto || 0; o.tage.add(p.datum); offen.set(k, o); }
+  for (const p of pos) if (!zu(p)) { const k = (p.plu || "") + "|" + normKasse(p.text) + "|" + (p.einheit || ""); const o = offen.get(k) || { text: p.text, plu: p.plu, ...(p.einheit ? { einheit: p.einheit } : {}), menge: 0, umsatzBrutto: 0, tage: new Set(), vorschlaege: p.vorschlaege }; o.menge += p.menge; o.umsatzBrutto += p.umsatzBrutto || 0; o.tage.add(p.datum); offen.set(k, o); }
   const tage = ergebnis?.tage || [];
   const jeTag = tage.map((d) => { const neuTag = pos.filter((p) => p.datum === d); const staende = [];
     for (const [k, neu] of kassenGruppen(neuTag)) { const alt = aktiv(stand).filter((v) => v.datum === d && v.herkunft === herkunft && gleicheKasse(v, k)); staende.push(!alt.length ? "neu" : abdruck(alt) === abdruck(neu) ? "gleich" : "ersetzt"); }
     return { datum: d, positionen: neuTag.length, stand: staende.includes("ersetzt") ? "ersetzt" : staende.every((x) => x === "gleich") ? "gleich" : "neu" }; });
-  const summe = (f) => pos.filter(f).reduce((s, p) => s + p.menge, 0);
+  const summe = (f) => pos.filter((p) => !nachMenge(p) && f(p)).reduce((s, p) => s + p.menge, 0); // Stück; Positionen nach Menge (kg …) stehen in nachMenge
   const umsatz = (f) => pos.filter(f).reduce((s, p) => s + (p.umsatzBrutto || 0), 0);
+  const nm = pos.filter(nachMenge);
   return { positionen: pos, tage, von: tage[0] || null, bis: tage[tage.length - 1] || null, zugeordnet: pos.filter(zu).length, offenAnzahl: pos.filter((p) => !zu(p)).length,
+    nachMenge: { positionen: nm.length, umsatzBrutto: rund(umsatz(nachMenge), 2) },
     mengeZugeordnet: summe(zu), mengeOffen: summe((p) => !zu(p)), umsatzZugeordnet: rund(umsatz(zu), 2), umsatzOffen: rund(umsatz((p) => !zu(p)), 2),
     offen: [...offen.values()].map((o) => ({ ...o, menge: rund(o.menge, 3), umsatzBrutto: rund(o.umsatzBrutto, 2), tage: o.tage.size })).sort((a, b) => b.menge - a.menge),
     jeTag, gleich: jeTag.filter((t) => t.stand === "gleich").length, ersetzt: jeTag.filter((t) => t.stand === "ersetzt").length, bericht: ergebnis?.bericht || null };
@@ -330,7 +384,7 @@ export function importUebernehmen(stand, ergebnis, { herkunft = "dsfinvk", jetzt
       if (alt.length && abdruck(alt) === abdruck(pos)) { gleich += 1; continue; }
       for (const v of alt) { v.storniert = true; v.storniertZeit = jetzt; v.ersetzt = importId; ersetzt += 1; }
       for (const p of pos) { const z = zuordnen(stand, p); const i = allePos.indexOf(p);
-        stand.verkaeufe.push({ id: `${importId}-${d}-${i}`, datum: d, gericht: z.gericht, ...(z.kombi ? { kombi: z.kombi } : {}), name: z.gericht ? namen.get(z.gericht) : p.text, text: p.text, plu: p.plu || null, kasse: k, menge: p.menge,
+        stand.verkaeufe.push({ id: `${importId}-${d}-${i}`, datum: d, gericht: z.gericht, ...(z.kombi ? { kombi: z.kombi } : {}), name: z.gericht ? namen.get(z.gericht) : p.text, text: p.text, plu: p.plu || null, kasse: k, menge: p.menge, ...(p.einheit ? { einheit: p.einheit } : {}),
           umsatzBrutto: p.umsatzBrutto, herkunft, importId, erfasst: jetzt, geraet, storniert: false }); neu += 1; }
       geaendert = true;
     }
@@ -389,8 +443,10 @@ export function verkaeufeImZeitraum(stand, { von, bis }) {
 export function verkaufJeGericht(stand, z) {
   const { eintraege, tage, doppelt } = verkaeufeImZeitraum(stand, z);
   const je = new Map((stand.gerichte || []).map((g) => [g.id, { gericht: g.id, name: g.name, menge: 0, umsatz: 0, umsatzTeile: 0, preis: typeof g.preis === "number" ? g.preis : null }]));
-  const ohne = { menge: 0, umsatz: 0, texte: new Map() }; let menge = 0, umsatz = 0, mitUmsatz = 0;
+  const ohne = { menge: 0, umsatz: 0, texte: new Map(), nachMenge: new Map() }; let menge = 0, umsatz = 0, mitUmsatz = 0;
   for (const v of eintraege) {
+    // Prüfung 18.10.2026 (Abweichung 1): nach Menge verkauft (kg, l …) – nie als Stück zählen, eigener Posten mit Einheit; Umsatz zählt mit
+    if (nachMenge(v)) { if (v.umsatzBrutto !== null) { umsatz += v.umsatzBrutto; mitUmsatz += 1; } ohne.umsatz += v.umsatzBrutto || 0; const t = v.text || v.name; const kk = t + "|" + v.einheit; const x = ohne.nachMenge.get(kk) || { text: t, einheit: v.einheit, menge: 0 }; x.menge += v.menge; ohne.nachMenge.set(kk, x); continue; }
     // Schwadron 18.10.2026, M1: ein Menü zählt jeden Bestandteil (Menge × Teil-Menge); sein Umsatz wird nach Kartenpreis × Menge verteilt
     const teile = teileVon(stand, v).filter((x) => je.has(x.gericht)); if (v.umsatzBrutto !== null) { umsatz += v.umsatzBrutto; mitUmsatz += 1; }
     if (!teile.length) { menge += v.menge; ohne.menge += v.menge; ohne.umsatz += v.umsatzBrutto || 0; const t = v.text || v.name; ohne.texte.set(t, (ohne.texte.get(t) || 0) + v.menge); continue; }
@@ -402,7 +458,8 @@ export function verkaufJeGericht(stand, z) {
     .sort((a, b) => b.menge - a.menge || a.name.localeCompare(b.name, "de"));
   let rang = 0, vorher = null; zeilen.forEach((r, i) => { if (r.menge !== vorher) { rang = i + 1; vorher = r.menge; } r.rang = r.menge > 0 ? rang : null; });
   return { zeilen, tage, doppelt, menge: rund(menge, 3), umsatz: mitUmsatz ? rund(umsatz, 2) : null,
-    ohneZuordnung: { menge: rund(ohne.menge, 3), umsatz: rund(ohne.umsatz, 2), texte: [...ohne.texte.entries()].map(([text, m]) => ({ text, menge: rund(m, 3) })).sort((a, b) => b.menge - a.menge) } };
+    ohneZuordnung: { menge: rund(ohne.menge, 3), umsatz: rund(ohne.umsatz, 2), texte: [...ohne.texte.entries()].map(([text, m]) => ({ text, menge: rund(m, 3) })).sort((a, b) => b.menge - a.menge),
+      nachMenge: [...ohne.nachMenge.values()].map((x) => ({ ...x, menge: rund(x.menge, 3) })).sort((a, b) => b.menge - a.menge) } };
 }
 
 // Bedarf einer Portion an gekaufter Ware (Basiseinheit g/ml/Stück). Wie warenGericht: Garverlust auf die Rohware (rohmengeFuer);

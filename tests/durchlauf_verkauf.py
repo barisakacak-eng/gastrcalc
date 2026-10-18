@@ -69,7 +69,8 @@ async def main():
             # ---- Übernehmen
             await tipp('#app [data-a="vk-uebernehmen"]'); await pg.wait_for_timeout(500)
             s = await stand(); neu = [v for v in s["verkaeufe"] if not v["id"].startswith("bsp-")]
-            assert len(neu) == 7 and len(s["verkaeufe"]) == vorher + 7, (len(neu), len(s["verkaeufe"]), vorher)
+            assert len(neu) == 8 and len(s["verkaeufe"]) == vorher + 8, (len(neu), len(s["verkaeufe"]), vorher)  # DSFinV-K-Prüfung 18.10.2026: + Baklava nach Menge (kg)
+            assert any(v.get("einheit") == "kg" and v["gericht"] is None for v in neu), "Position nach Menge (kg) nicht ohne Gericht gespeichert"
             assert any(v["gericht"] == "bsp-g-2" and v.get("text") == "Dürüm" for v in neu), "Dürüm nicht zugeordnet übernommen"
             assert sum(1 for v in s["verkaeufe"] if v["storniert"] and v.get("ersetzt")) > 0, "Beispiel-Tage nicht ersetzt"
             t = (await text()).lower(); assert "am meisten verkauft" in t and "eingelesen" in t, t[:600]

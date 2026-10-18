@@ -59,6 +59,7 @@ function startView(stand) {
   const rang = `<div class="karte"><h2>${esc(t("verkaeufe.rangTitel"))}</h2>
       ${vk.zeilen.filter((r) => r.menge > 0).map((r) => `<div class="summenzeile"><span>${r.rang}. ${esc(r.name)}</span><span class="wert">${esc(stueck(r.menge))}</span></div>`).join("")}
       ${vk.ohneZuordnung.menge ? `<div class="summenzeile"><span>${esc(t("verkaeufe.ohneGericht"))}</span><span class="wert">${esc(stueck(vk.ohneZuordnung.menge))}</span></div>` : ""}
+      ${(vk.ohneZuordnung.nachMenge || []).map((x) => `<div class="summenzeile"><span>${esc(t("verkaeufe.nachMengeZeile", x.text))}</span><span class="wert">${esc(`${fmtZahl(x.menge, 3)} ${x.einheit}`)}</span></div>`).join("")}
       <div class="summenzeile gesamt"><span>${esc(t("verkaeufe.summe", vk.tage))}</span><span class="wert">${esc(stueck(vk.menge))}</span></div></div>`;
   return `${kopf}<div class="inhalt">${zr}${ehrlichView(a)}${rang}${abgleichView(a)}${ladenhueterView(a)}${einlesen}${importListe(stand)}</div>`;
 }
@@ -125,10 +126,12 @@ function vorschauView(stand) {
     b.stornoZeilen ? t("verkaeufe.vorschau.storno", b.stornoZeilen) : "", b.positionsStorno ? t("verkaeufe.vorschau.posStorno", b.positionsStorno) : "",
     bonNicht.length ? t("verkaeufe.vorschau.bonNicht", sumZeilen(bonNicht)) : "", artNicht.length ? t("verkaeufe.vorschau.artNicht", sumZeilen(artNicht), fmtEuro(artNicht.reduce((s, [, x]) => s + x.betrag, 0), { dezimal: 2 })) : "",
     b.ohneBonkopf ? t("verkaeufe.vorschau.ohneBonkopf") : "", b.punktStattKomma ? t("verkaeufe.vorschau.punkt") : "", b.ohneMenge ? t("verkaeufe.vorschau.ohneMenge", b.ohneMenge) : "", b.ohneDatum ? t("verkaeufe.vorschau.ohneDatum", b.ohneDatum) : "",
+    // DSFinV-K-Prüfung 18.10.2026: Rabatt/Aufschlag auf die Gerichte des Bons verteilt; Positionen nach Gewicht/Menge (kg, l) sind kein Gericht
+    b.verteilt ? t("verkaeufe.vorschau.rabattVerteilt", fmtEuro(b.verteilt, { dezimal: 2 })) : "", v.nachMenge?.positionen ? t("verkaeufe.vorschau.nachMenge", v.nachMenge.positionen) : "",
   ].filter(Boolean);
   const chipsFuer = (o) => chipsZuordnen(stand, o);
   const offen = v.offen.length ? `<h2 class="inv-ue">${esc(t("verkaeufe.vorschau.offenTitel"))}</h2><p class="hinweis">${esc(t("verkaeufe.vorschau.offenText"))}</p>
-      ${v.offen.map((o) => `<div class="zeile offen"><div class="oben"><div class="name">${esc(o.text)}<small>${esc(stueck(o.menge))}${o.plu ? ` · ${esc(t("verkaeufe.vorschau.nummer", o.plu))}` : ""}</small></div><b>${esc(o.umsatzBrutto ? fmtEuro(o.umsatzBrutto, { dezimal: 2 }) : "")}</b></div>${chipsFuer(o)}</div>`).join("")}` : "";
+      ${v.offen.map((o) => `<div class="zeile offen"><div class="oben"><div class="name">${esc(o.text)}<small>${esc(o.einheit ? `${fmtZahl(o.menge, 3)} ${o.einheit} · ${t("verkaeufe.vorschau.nachMengeZeile")}` : stueck(o.menge))}${o.plu ? ` · ${esc(t("verkaeufe.vorschau.nummer", o.plu))}` : ""}</small></div><b>${esc(o.umsatzBrutto ? fmtEuro(o.umsatzBrutto, { dezimal: 2 }) : "")}</b></div>${o.einheit ? "" : chipsFuer(o)}</div>`).join("")}` : "";
   return `${kopf}<div class="inhalt">
     <div class="karte"><div class="summenzeile"><span>${esc(t("verkaeufe.vorschau.tage", v.tage.length))}</span><span class="wert">${esc(datumLesbar(v.von))} – ${esc(datumLesbar(v.bis))}</span></div>
       <div class="summenzeile"><span>${esc(t("verkaeufe.vorschau.positionen"))}</span><span class="wert">${v.positionen.length}</span></div>

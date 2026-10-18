@@ -45,7 +45,7 @@ test("E7 Parser: Beispiel-Export (CSV einzeln und als gepackte ZIP) – Summen j
   for (const dateien of [einzeln(), [zipBlob()]]) {
     const r = await vk.exportEinlesen(dateien);
     assert.deepEqual(r.tage, ["2026-10-15", "2026-10-16"]);
-    assert.equal(r.positionen.length, 7, JSON.stringify(r.positionen));
+    assert.equal(r.positionen.length, 8, JSON.stringify(r.positionen)); // 7 Stück-Positionen + Baklava nach Menge (kg)
     assert.deepEqual([pos(r, "2026-10-15", "Döner Kebab").menge, pos(r, "2026-10-15", "Döner Kebab").umsatzBrutto], [2, 16]);
     assert.equal(pos(r, "2026-10-16", "Döner Kebab").menge, 3, "Bon nach Mitternacht gehört zum Buchungstag des Abschlusses");
     assert.equal(pos(r, "2026-10-16", "Döner Kebab").umsatzBrutto, 24, "POS_BRUTTO aus lines_vat.csv");
@@ -62,12 +62,70 @@ test("E7 Parser: Beispiel-Export (CSV einzeln und als gepackte ZIP) – Summen j
 test("E7 Parser: Storno, Abbruch, Training, Positionsstorno, Pfand/Rabatt/Trinkgeld werden nicht als Verkauf gezählt, aber berichtet", async () => {
   const r = await vk.exportEinlesen(einzeln());
   const b = r.bericht;
-  assert.equal(pos(r, "2026-10-15", "Cola 0,33 l").menge, 2, "2 verkauft − 1 Storno-Beleg + 1 = 2");
+  assert.equal(pos(r, "2026-10-15", "Cola 0,33 l").menge, 2, "1 × Faktor 2 verkauft − 1 Storno-Beleg + 1 = 2");
   assert.equal(b.stornoBons, 1); assert.equal(b.stornoZeilen, 1); assert.equal(b.positionsStorno, 1);
   assert.equal(b.nichtArtikel["bonTyp:AVBelegabbruch"].zeilen, 1); assert.equal(b.nichtArtikel["bonTyp:AVTraining"].zeilen, 1);
   assert.equal(b.nichtArtikel.Pfand.betrag, 0.25); assert.equal(b.nichtArtikel.Rabatt.betrag, -1); assert.equal(b.nichtArtikel.TrinkgeldAN.zeilen, 1);
   assert.equal(pos(r, "2026-10-15", "Döner Kebab").menge, 2, "Abbruch (1), Training (3) und Positionsstorno (1) zählen nicht");
-  assert.equal(b.zeilen, 15);
+  assert.equal(b.zeilen, 16);
+});
+
+// ---------- DSFinV-K-Prüfung 18.10.2026 (audit/dsfinvk_pruefung.md, „Abweichungen mit Folge“) ----------
+const KOPF_L = "Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;BON_ID;POS_ZEILE;ARTIKELTEXT;GV_TYP;P_STORNO;ART_NR;MENGE;FAKTOR;EINHEIT;STK_BR";
+const KOPF_T = "Z_KASSE_ID;Z_ERSTELLUNG;Z_NR;BON_ID;BON_TYP;BON_STORNO;BON_START;BON_ENDE";
+const ZE = "2026-10-16T01:30:00+02:00";
+const zeileL = (bon, pos, text, gv, menge, { faktor = "1,000", einheit = "Stück", stk = "2,50000", plu = "111", pst = "0" } = {}) => `"K1";${ZE};1;"${bon}";"${pos}";"${text}";"${gv}";${pst};"${plu}";${menge};${faktor};"${einheit}";${stk}`;
+const zeileT = (bon, typ = "Beleg", storno = "0") => `"K1";${ZE};1;"${bon}";"${typ}";${storno};2026-10-15T12:00:00+02:00;2026-10-15T12:01:00+02:00`;
+const blobs = (lines, trans) => [Object.assign(new Blob([[KOPF_L, ...lines].join("\r\n")]), { name: "lines.csv" }), Object.assign(new Blob([[KOPF_T, ...trans].join("\r\n")]), { name: "transactions.csv" })];
+const nah = (a, b, m) => assert.ok(Math.abs(a - b) < 0.006, `${m || ""}: ${a} ≠ ${b}`);
+
+test("DSFinV-K (1) FAKTOR und EINHEIT: Menge = MENGE × FAKTOR; kg-Positionen nach Menge, nie als Stück und nie einem Gericht zugeordnet", async () => {
+  const s = laden(); const r = await vk.exportEinlesen(einzeln());
+  const cola = pos(r, "2026-10-15", "Cola 0,33 l"); assert.equal(cola.menge, 2, "Beispiel: MENGE 1 × FAKTOR 2"); assert.equal(cola.einheit, undefined);
+  const bak = pos(r, "2026-10-16", "Baklava (gewogen)"); assert.ok(bak, "Position nach Menge fehlt");
+  assert.equal(bak.einheit, "kg"); assert.equal(bak.menge, 0.35); assert.equal(bak.umsatzBrutto, 8.4, "STK_BR je kg × 0,350 kg");
+  assert.equal(r.bericht.nachMenge, 1); assert.equal(r.bericht.faktor, 1);
+  // Zuordnung: auch mit passender Artikelnummer oder gleichem Namen nie ein Gericht (Gerichte zählen je Stück, kein Verkaufs-Einheitsfeld)
+  assert.deepEqual(vk.zuordnen(s, { plu: "101", text: "Döner Kebab", einheit: "kg" }), { gericht: null, weg: null, grund: "einheit", vorschlaege: [] });
+  assert.equal(vk.zuordnen(s, { plu: "101", text: "Döner Kebab", einheit: null }).gericht, "g1", "ohne Einheit wie bisher");
+  assert.equal(vk.einheitLesen("Stück"), null); assert.equal(vk.einheitLesen(""), null); assert.equal(vk.einheitLesen("Stk"), null); assert.equal(vk.einheitLesen("Kilogramm"), "kg"); assert.equal(vk.einheitLesen("Liter"), "l"); assert.equal(vk.einheitLesen("g"), "g");
+  const v = vk.importVorschau(s, r);
+  const o = v.offen.find((x) => x.text === "Baklava (gewogen)"); assert.ok(o); assert.equal(o.einheit, "kg"); assert.deepEqual(o.vorschlaege, []); assert.equal(o.menge, 0.35);
+  assert.equal(v.nachMenge.positionen, 1); assert.equal(v.nachMenge.umsatzBrutto, 8.4);
+  assert.equal(v.mengeOffen, 3, "Stück offen: Dürüm 1, Ayran 1, Döner groß 1 – Baklava-Kilogramm nicht als Stück");
+  vk.importUebernehmen(s, r, { jetzt: "2026-10-17T10:00:00.000Z" });
+  const e = s.verkaeufe.find((x) => x.text === "Baklava (gewogen)"); assert.equal(e.einheit, "kg"); assert.equal(e.gericht, null); assert.equal(vk.gerichtVon(s, e), null);
+  const j = vk.verkaufJeGericht(s, { von: "2026-10-15", bis: "2026-10-16" });
+  assert.deepEqual(j.ohneZuordnung.nachMenge, [{ text: "Baklava (gewogen)", einheit: "kg", menge: 0.35 }]);
+  assert.equal(j.ohneZuordnung.menge, 3, "Stück ohne Gericht ohne die Kilogramm"); assert.ok(!j.ohneZuordnung.texte.some((x) => x.text.startsWith("Baklava")));
+  // Faktor im Rückfall-Umsatz (ohne lines_vat): 1 Kiste × 6 × 2,50 = 15 €, Menge 6
+  const r2 = await vk.exportEinlesen(blobs([zeileL("1", "1", "Cola 0,33 l", "Umsatz", "1,000", { faktor: "6,000" })], [zeileT("1")]));
+  assert.equal(r2.positionen[0].menge, 6); assert.equal(r2.positionen[0].umsatzBrutto, 15);
+});
+
+test("DSFinV-K (2) Rabatt/Aufschlag als eigene Zeile: anteilig nach POS_BRUTTO auf die Umsatz-Zeilen des Bons, Menge bleibt, Bericht bleibt", async () => {
+  const r = await vk.exportEinlesen(einzeln()); // Bon 2: Dürüm 9,00 + Ayran 2,00 + Rabatt −1,00
+  nah(pos(r, "2026-10-15", "Dürüm").umsatzBrutto, 9 - 9 / 11, "Dürüm nach Rabatt"); nah(pos(r, "2026-10-15", "Ayran").umsatzBrutto, 2 - 2 / 11, "Ayran nach Rabatt");
+  assert.equal(pos(r, "2026-10-15", "Dürüm").menge, 1); assert.equal(pos(r, "2026-10-15", "Ayran").menge, 1);
+  assert.equal(r.bericht.nichtArtikel.Rabatt.betrag, -1, "Information bleibt"); assert.equal(r.bericht.verteilt, -1); assert.equal(r.bericht.nichtVerteilt, 0);
+  // Aufschlag positiv; Rabatt auf einem Bon ohne Umsatz-Zeile bleibt unverteilt; Storno-Bon: Vorzeichen wie geliefert
+  const r2 = await vk.exportEinlesen(blobs([
+    zeileL("1", "1", "Döner", "Umsatz", "2,000", { stk: "8,00000", plu: "101" }), zeileL("1", "2", "Cola", "Umsatz", "1,000", { stk: "2,00000" }), zeileL("1", "3", "Lieferzuschlag", "Aufschlag", "1,000", { stk: "3,00000", plu: "" }),
+    zeileL("2", "1", "Rabatt", "Rabatt", "1,000", { stk: "-2,00000", plu: "" }),
+  ], [zeileT("1"), zeileT("2")]));
+  nah(r2.positionen.find((p) => p.text === "Döner").umsatzBrutto, 16 + 3 * 16 / 18); nah(r2.positionen.find((p) => p.text === "Cola").umsatzBrutto, 2 + 3 * 2 / 18);
+  assert.equal(r2.bericht.verteilt, 3); assert.equal(r2.bericht.nichtVerteilt, -2); assert.equal(r2.bericht.nichtArtikel.Rabatt.betrag, -2);
+});
+
+test("DSFinV-K (4) Stornobeleg: Vorzeichen wie geliefert – Storno eines Verkaufs zieht ab, Storno einer Rücknahme addiert wieder (4.2.2, Anhang B)", async () => {
+  // Bon 1: 2 Cola verkauft. Bon 2: Rücknahme 1 Cola (negative MENGE, Abschnitt 4.2.5). Bon 3: Stornobeleg zur Rücknahme (BON_STORNO 1, +1).
+  // Bon 4: Stornobeleg zu einem Verkauf (BON_STORNO 1, −1). Bon 5: Sofortstorno ohne TSE (AVBelegstorno) zählt gar nicht.
+  const r = await vk.exportEinlesen(blobs([
+    zeileL("1", "1", "Cola", "Umsatz", "2,000"), zeileL("2", "1", "Cola", "Umsatz", "-1,000"), zeileL("3", "1", "Cola", "Umsatz", "1,000"), zeileL("4", "1", "Cola", "Umsatz", "-1,000"), zeileL("5", "1", "Cola", "Umsatz", "1,000"),
+  ], [zeileT("1"), zeileT("2"), zeileT("3", "Beleg", "1"), zeileT("4", "Beleg", "1"), zeileT("5", "AVBelegstorno", "1")]));
+  const c = r.positionen.find((p) => p.text === "Cola");
+  assert.equal(c.menge, 1, "2 − 1 + 1 − 1 = 1 (vorher mit −Math.abs: 2 − 1 − 1 − 1 = −1)"); assert.equal(c.umsatzBrutto, 2.5);
+  assert.equal(r.bericht.stornoZeilen, 2); assert.equal(r.bericht.stornoRueck, 1, "eine stornierte Rücknahme ausgewiesen"); assert.equal(r.bericht.nichtArtikel["bonTyp:AVBelegstorno"].zeilen, 1);
 });
 
 test("E7 CSV: Trennzeichen, Anführungszeichen, Dezimalzeichen und Kodierung defensiv", () => {
@@ -91,7 +149,7 @@ test("E7 ZIP: gepackte Einträge nur mit Option – die Sicherung liest weiter n
 test("E7 Zuordnung: Artikelnummer → gelernter Text → gleicher Name; Unklares nie geraten; Lernen per Chip", async () => {
   const s = laden(); const r = await vk.exportEinlesen(einzeln());
   const v = vk.importVorschau(s, r);
-  assert.equal(v.zugeordnet, 4); assert.deepEqual(v.offen.map((o) => o.text).sort(), ["Ayran", "Döner groß", "Dürüm"]);
+  assert.equal(v.zugeordnet, 4); assert.deepEqual(v.offen.map((o) => o.text).sort(), ["Ayran", "Baklava (gewogen)", "Döner groß", "Dürüm"]); // Baklava: nach Menge (kg), ohne Chips
   assert.equal(vk.zuordnen(s, { plu: "101", text: "irgendwas" }).weg, "plu");
   assert.equal(vk.zuordnen(s, { text: "DÖNER  kebab" }).weg, "name", "groß/klein und Leerzeichen egal");
   const groß = vk.zuordnen(s, { plu: "9003", text: "Döner groß" }); assert.equal(groß.gericht, null, "nicht geraten"); assert.ok(groß.vorschlaege.includes("g1"));
@@ -99,7 +157,7 @@ test("E7 Zuordnung: Artikelnummer → gelernter Text → gleicher Name; Unklares
   vk.zuordnungLernen(s, { text: "Dürüm", plu: "9001" }, "g2");
   assert.deepEqual(s.gerichte.find((g) => g.id === "g2").kassenNamen, ["Dürüm"]); assert.equal(s.gerichte.find((g) => g.id === "g2").plu, "9001");
   assert.equal(vk.zuordnen(s, { text: "dürüm" }).weg, "gelernt");
-  assert.equal(vk.importVorschau(s, r).offen.length, 2);
+  assert.equal(vk.importVorschau(s, r).offen.length, 3);
   // umlernen: gleicher Text zu einem anderen Gericht → beim alten weg
   vk.zuordnungLernen(s, { text: "Dürüm" }, "g1");
   assert.equal(s.gerichte.find((g) => g.id === "g2").kassenNamen, undefined); assert.deepEqual(s.gerichte.find((g) => g.id === "g1").kassenNamen, ["Dürüm"]);
@@ -110,7 +168,7 @@ test("E7 Zuordnung: Artikelnummer → gelernter Text → gleicher Name; Unklares
 test("E7 Übernehmen: dieselbe Datei zweimal zählt nicht doppelt; geänderter Tag ersetzt; Zurücknehmen", async () => {
   const s = laden(); const r = await vk.exportEinlesen(einzeln());
   const a = vk.importUebernehmen(s, r, { jetzt: "2026-10-17T10:00:00.000Z" });
-  assert.equal(a.neu, 7); assert.equal(a.tage, 2);
+  assert.equal(a.neu, 8); assert.equal(a.tage, 2);
   const z = { von: "2026-10-15", bis: "2026-10-16" };
   const vor = vk.verkaufJeGericht(s, z); assert.equal(vor.zeilen.find((x) => x.gericht === "g1").menge, 5);
   const b = vk.importUebernehmen(s, r, { jetzt: "2026-10-17T11:00:00.000Z" });
@@ -119,12 +177,12 @@ test("E7 Übernehmen: dieselbe Datei zweimal zählt nicht doppelt; geänderter T
   // gleicher Tag mit neuem Stand (eine Position mehr) ersetzt den alten
   const r2 = structuredClone(r); r2.positionen.push({ datum: "2026-10-16", kasse: r.positionen[0].kasse, plu: "111", text: "Cola 0,33 l", menge: 4, umsatzBrutto: 10, zeilen: 1 }); // dieselbe Kasse (Prüfgremium 17.10.2026)
   const c = vk.importUebernehmen(s, r2, { jetzt: "2026-10-17T12:00:00.000Z" });
-  assert.deepEqual([c.gleich, c.tage, c.ersetzt], [1, 1, 2]);
+  assert.deepEqual([c.gleich, c.tage, c.ersetzt], [1, 1, 3]);
   assert.equal(vk.verkaufJeGericht(s, z).zeilen.find((x) => x.gericht === "g3").menge, 6);
   assert.ok(s.verkaeufe.filter((v) => v.storniert).every((v) => v.ersetzt === c.importId && v.storniertZeit));
   assert.equal(new Set(s.verkaeufe.map((v) => v.id)).size, s.verkaeufe.length, "eindeutige Kennungen");
   // Zurücknehmen des letzten Imports
-  const n = vk.importZuruecknehmen(s, c.importId); assert.equal(n, 3, "drei Positionen des neuen Tags");
+  const n = vk.importZuruecknehmen(s, c.importId); assert.equal(n, 4, "vier Positionen des neuen Tags (mit Baklava nach Menge)");
   assert.equal(vk.verkaufJeGericht(s, z).zeilen.find((x) => x.gericht === "g3").menge, 2);
 });
 
@@ -262,7 +320,7 @@ test("E7 Speicher und Sicherung: Verkäufe überstehen Speichern/Laden (Monatste
   const w = st.leereWurzel(); const s = laden(); w.betriebe.push(s); w.aktiv = s.id;
   vk.importUebernehmen(s, await vk.exportEinlesen(einzeln()));
   await st.sofortSpeichern(w);
-  const g = await st.laden(); assert.equal(g.betriebe[0].verkaeufe.length, 7);
+  const g = await st.laden(); assert.equal(g.betriebe[0].verkaeufe.length, 8);
   vk.verkaufStornieren(g.betriebe[0], g.betriebe[0].verkaeufe[0].id); await st.sofortSpeichern(g);
   const g2 = await st.laden(); assert.equal(g2.betriebe[0].verkaeufe.filter((x) => x.storniert).length, 1, "Storno-Kennzeichen gespeichert");
   const { blob } = await st.exportDatei(g2);

@@ -1149,7 +1149,7 @@ export default {
     fehlenVerkaeufe: (n, d) => `${n} hàng bị lệch, nhưng còn thiếu số bán của ${d} ngày. Chỉ nghi hao hụt khi đủ mọi số bán.`, // Schwadron 18.10.2026, N4
     titel: "Bán theo món", unter: "Bạn đã bán gì – từ máy tính tiền hoặc nhập tay.", entwurf: "Bản nháp: chưa được duyệt, chỉ để xem.", einstieg: "Bán theo món",
     einstiegUnter: "Đọc máy tính tiền, món ế, hao hụt", zeitraumInventur: "giữa hai lần kiểm kho gần nhất", keine: "Chưa có lượt bán nào trong thời gian này.", ohneGericht: "Không có món",
-    rangTitel: "Bán chạy nhất", ohneInventur: "Để so với kho cần hai lần kiểm kho.", inventurKnopf: "Đến kiểm kho", abgleichTitel: "Hàng: dự kiến và đã dùng",
+    nachMengeZeile: (text) => `${text} – theo số lượng`, rangTitel: "Bán chạy nhất", ohneInventur: "Để so với kho cần hai lần kiểm kho.", inventurKnopf: "Đến kiểm kho", abgleichTitel: "Hàng: dự kiến và đã dùng",
     abgleichText: "Dự kiến: công thức nhân số phần đã bán, cộng hàng bỏ và bữa ăn nhân viên đã ghi. Đã dùng: kiểm kho trước cộng hàng mua trừ kiểm kho hiện tại.", schwundTitel: "Mất nhiều hơn dự kiến (nghi hao hụt)", schwundText: "Lý do có thể: hàng bỏ không ghi, phần ăn quá lớn, đồ ăn không có hóa đơn, đếm nhầm.", einkaufFehltTitel: "Có lẽ thiếu hóa đơn mua",
     einkaufFehltText: "Hàng này không có hóa đơn trong thời gian này. Thêm hóa đơn thì so sánh sẽ đúng.", wenigerTitel: "Mất ít hơn dự kiến", wenigerText: "Có thể công thức ghi quá nhiều hoặc khi đếm có gì sai.", ladenhueterTitel: "Món ế",
     ladenhueterText: "Những món gần như không bán được. Bỏ khỏi thực đơn hay bán theo cách khác?", keinVerkauf: "không bán được", totTitel: "Hàng mà không món đã bán nào cần", totText: "Hàng này nằm trong kho và giữ tiền, nhưng không món nào đã bán cần đến nó.",
@@ -1170,7 +1170,7 @@ export default {
       offenTitel: "Ứng dụng chưa biết các dòng chữ này của máy tính tiền", offenText: "Chạm vào món đúng. Ứng dụng sẽ nhớ.", positionen: "Dòng hàng", zugeordnet: "Đã ghép với món",
       offen: "Còn mở", nichtGezaehlt: "Không tính là bán", uebernehmen: "Nhận", abbrechen: "Hủy",
       gelernt: "Đã nhớ", nichtsNeu: "Không có gì mới – tất cả đã có.", storno: (n) => `Hủy: đã trừ ${n} dòng`, posStorno: (n) => `${n} dòng đã hủy không được tính`,
-      bonNicht: (n) => `${n} dòng từ hủy ngang, tập luyện v.v. không được tính`, artNicht: (n, betrag) => `${n} dòng tiền cọc, giảm giá, tiền boa v.v. (${betrag}) – không phải món`, ohneMenge: (n) => `Bỏ qua ${n} dòng không có số lượng`, ohneDatum: (n) => `Bỏ qua ${n} dòng không có ngày`,
+      bonNicht: (n) => `${n} dòng từ hủy ngang, tập luyện v.v. không được tính`, artNicht: (n, betrag) => `${n} dòng tiền cọc, giảm giá, tiền boa v.v. (${betrag}) – không phải món`, ohneMenge: (n) => `Bỏ qua ${n} dòng không có số lượng`, nachMenge: (n) => `${n} dòng bán theo cân hoặc dung tích (kg, l): không phải món, chỉ tính vào doanh thu`, rabattVerteilt: (betrag) => `Giảm giá và phụ phí (${betrag}) đã chia cho các món trong hóa đơn`, nachMengeZeile: "Bán theo số lượng – không phải món", ohneDatum: (n) => `Bỏ qua ${n} dòng không có ngày`,
       nummer: (nr) => `Số ${nr}`, tage: (n) => `${n} ngày`, gleich: (n) => `${n} ngày đã có y hệt và không bị tính hai lần.`, ersetzt: (n) => `${n} ngày sẽ được thay bằng dữ liệu mới.`,
       uebernommen: (n, tage) => `Đã nhận ${n} dòng cho ${tage} ngày`,
     },
