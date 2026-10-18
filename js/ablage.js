@@ -61,7 +61,7 @@ export const ablageOrt = () => aktiv;
 export const ablageFluechtig = () => ORTE[aktiv].fluechtig;
 export function ablageOrtSetzen(name) { if (!ORTE[name]) throw new Error("unbekannter Ablageort"); aktiv = name; }
 
-export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell", "gericht"];
+export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell", "gericht", "zbon"]; // zbon (18.10.2026): Foto des Z-Bons, nachvollziehbar für Amt/Steuerberater
 
 // Legt eine Datei ab und liefert die Beschreibung, die im Laden (stand.uploads) gespeichert wird – die Datei selbst steht nie im Laden.
 export async function ablegen(blob, { name = "", zweck = "rechnung", laden = null } = {}) {

@@ -46,7 +46,7 @@ import { beispielLaden, beispielNamenFolgen } from "./beispiel.js"; // Beispiel-
 // Trennung (17.10.2026): Handlungen und Eingaben schreiben über das Rechenwerk (js/stamm.js, js/karte_daten.js)
 import { einrichtungFertigSetzen, kuehlKeineSetzen, branchenMeldungQuittieren, abgleichHinweisQuittieren, kleinunternehmerUmschalten, waageVorschlagGesehen, warenQuoteSetzen, steuerSatzSetzen, uploadAnlegen } from "./stamm.js";
 import { gerichtFotoSetzen } from "./karte_daten.js";
-import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
+import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung, verkaufZbonFoto } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
 import { verkaufSichtbar } from "./verkauf.js"; // E7
 import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
 import { aktionenView, aktionenAktion, aktionenZuruecksetzen, aktionenZurueck, aktionenKennung } from "./screens/aktionen.js";
@@ -743,7 +743,7 @@ root.addEventListener("focusout", (ev) => {
   }
   if (el.dataset.f === "umsatz") { umsatzFeldVerlassen(stand); speichern(wurzel); } // W2-T: Wert festschreiben, spätere Änderung = neuer Eintrag
   if (el.dataset.f.startsWith("wert:") && tagWertUebernehmen(el.dataset.f, el.value, stand)) { speichern(wurzel); meldung(t("tag.gespeichert")); }
-  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen", "beleg", "inventur"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
+  if (stand.phase === "onboarding" || ["umsatz", "kuehl", "muell", "abschluss", "einstellungen", "listen", "beleg", "inventur", "verkauf"].includes(ansicht)) setTimeout(() => { const a = document.activeElement; if (!a || a === document.body || !a.matches("[data-f]")) zeichne(); }, 80);
 });
 
 root.addEventListener("change", async (ev) => {
@@ -753,6 +753,12 @@ root.addEventListener("change", async (ev) => {
   if (el.dataset.f === "verkauf-datei") { // E7 (17.10.2026): Kassen-Export lesen – bleibt auf dem Gerät, nichts wird gesendet
     try { await verkaufDatei(stand, dateien); } catch (e) { console.warn(e); meldung(t("verkaeufe.vorschau.fehlerDatei")); }
     return zeichne();
+  }
+  if (el.dataset.f === "zbon-foto") { // Z-Bon per Foto (18.10.2026): ablegen und auf dem Handy lesen wie ein Belegfoto; nur im Büro
+    if (ansicht !== "verkauf" || modus(wurzel) === "personal") return;
+    ereignis("foto", { laden: stand.id, zweck: "zbon", art: datei.type || "?", anzahl: 1 });
+    try { await verkaufZbonFoto(stand, datei, () => zeichne(), { geraet: wurzel.geraet }); } catch (e) { console.warn(e); meldung(t("verkaeufe.zbon.nichts")); }
+    speichern(wurzel); return zeichne();
   }
   if (el.dataset.f === "gericht-foto") { // Zielbild: eigenes Foto je Gericht (ersetzt Standardbild), bleibt auf dem Gerät
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return;

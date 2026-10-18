@@ -1,0 +1,31 @@
+ERFUNDENES BEISPIEL - KEIN ECHTER BON
+Imbiss Beispiel
+Musterstr. 1
+12345 Musterstadt
+Tel. 01234 567890
+St.-Nr. 12/345/67890
+
+Z-BON  Nr. 0815
+Datum 16.10.2026   23:48
+Kasse 1   Bediener 1
+
+PLU-BERICHT
+Artikel              Anz.     Betrag
+Döner Kebab           43     344,00 A
+Dürüm Döner           21     189,00 A
+Dönerteller            9     130,50 A
+Lahmacun              12      66,00 A
+Pommes frites         18      63,00 A
+Cola 0,33 l           30      75,00 B
+Ayran 0,25 l          14      28,00 B
+---------------------------------------
+Summe PLU                    895,50
+
+FINANZBERICHT
+Bar                          612,50
+EC-Karte                     283,00
+Gesamt                       895,50
+MwSt 19%   A    116,10
+MwSt 7%    B      6,72
+Netto                        772,68
+Anzahl Bons                     112

@@ -1,0 +1,25 @@
+ERFUNDENES BEISPIEL - KEIN ECHTER BON (mit Storno und Warengruppen)
+Beispiel-Grill
+Z-Abschluss Nr. 2207      15.10.2026 22:30
+
+WARENGRUPPEN
+Speisen                1.105,00
+Getränke                 119,50
+
+PLU-UMSATZ
+PLU 101 Döner Kebab     95   760,00
+PLU 102 Dürüm Döner     30   270,00
+PLU 104 Hähnchendöner   10    75,00
+PLU 111 Cola 0,33 l     28    70,00
+PLU 112 Ayran 0,25 l    20    40,00
+PLU 113 Mineralwasser   12    24,00
+Storno Döner Kebab       2    16,00-
+Storno Cola 0,33 l       1     2,50-
+Pfand                   10     2,50
+Summe Artikel              1.223,00
+
+Stornos gesamt   3   18,50
+Rabatt                     0,00
+Bar                    1.000,00
+Karte                    223,00
+Gesamtumsatz brutto    1.223,00
