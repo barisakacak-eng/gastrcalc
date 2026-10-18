@@ -52,6 +52,8 @@ const STUNDE = /^\d{1,2}[:.]?\d{0,2}\s*(-|bis)\s*\d{1,2}[:.]?\d{0,2}\s*(uhr)?\b/
 // ---------- Kopf: Datum, Uhrzeit, Z-Nummer ----------
 const DATUM_DE = /(?<!\d)(\d{1,2})\s?[.\/]\s?(\d{1,2})\s?[.\/]\s?(\d{4}|\d{2})(?!\d)/;
 const DATUM_ISO = /(?<!\d)(\d{4})-(\d{2})-(\d{2})(?!\d)/;
+// 18.10.2026: OCR liest Punkte oft als Kommas („17,10,2026“) – nur mit vierstelligem Jahr, damit kein Betrag als Datum gilt
+const DATUM_KOMMA = /(?<!\d)(\d{1,2}),(\d{1,2}),(\d{4})(?!\d)/;
 const UHR = /(?<!\d)([01]?\d|2[0-3])[:.]([0-5]\d)(?![\d.,])/;
 function isoDatum(j, m, d) {
   const jj = j < 100 ? 2000 + j : j;
@@ -69,13 +71,14 @@ export function zbonKopf(text, { heuteTag = heute() } = {}) {
     let m = DATUM_DE.exec(z), iso = null;
     if (m) iso = isoDatum(Number(m[3]), Number(m[2]), Number(m[1]));
     if (!iso && (m = DATUM_ISO.exec(z))) iso = isoDatum(Number(m[1]), Number(m[2]), Number(m[3]));
+    if (!iso && (m = DATUM_KOMMA.exec(z))) iso = isoDatum(Number(m[3]), Number(m[2]), Number(m[1]));
     if (!iso) return;
     const rest = z.replace(m[0], " "); let u = UHR.exec(rest);
     // Prüfgremium 18.10.2026 (M5): Uhrzeit in einer eigenen Zeile („Datum: 17.10.2026“ / „Zeit: 00:45“) – höchstens zwei Zeilen tiefer,
     // nur eine Zeile mit „Zeit/Uhrzeit/Uhr“ oder eine Zeile, die nur eine Uhrzeit ist; nie eine Zeile mit eigenem Datum
     if (!u) for (const n of [zeilen[i + 1], zeilen[i + 2]]) {
       if (typeof n !== "string") break; const zn = n.replace(/[Oo](?=\d)|(?<=\d)[Oo]/g, "0");
-      if (DATUM_DE.test(zn) || DATUM_ISO.test(zn)) break;
+      if (DATUM_DE.test(zn) || DATUM_ISO.test(zn) || DATUM_KOMMA.test(zn)) break;
       if (/(uhr)?zeit\b|\buhr\b/i.test(zn) || /^\s*([01]?\d|2[0-3])[:.][0-5]\d([:.][0-5]\d)?\s*(uhr)?\s*$/i.test(zn)) { u = UHR.exec(zn); if (u) break; }
     }
     const stich = /(datum|z[\s-]*(bon|bericht|nr|abschluss)|abschluss|tagesabschluss|bis\b|ende)/i.test(z) ? 0 : 1;

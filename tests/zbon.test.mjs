@@ -262,3 +262,11 @@ test("Bildschirm: Z-Bon-Vorschau zeichnet Zeilen, Prüfung und Chips, ohne den L
   sc.verkaufZbonText("", null); assert.ok(sc.verkaufView(s).includes("nichts zu lesen"));
   sc.verkaufZuruecksetzen();
 });
+
+test("Z-Bon Kopf: Datum mit Kommas aus der OCR („17,10,2026“) wird erkannt, Beträge nicht", () => {
+  const H = "2026-10-18";
+  assert.equal(zb.zbonKopf("Z-Bon Nr. 412  17,10,2026  21:30", { heuteTag: H }).datum, "2026-10-17");
+  assert.equal(zb.zbonKopf("Datum: 17,10,2026\nZeit: 00:45", { heuteTag: H }).datum, "2026-10-16", "Uhrzeit in eigener Zeile, vor 4 Uhr = Vortag");
+  assert.equal(zb.zbonKopf("Döner 12,50 344,00", { heuteTag: H }).datum, null, "Beträge sind kein Datum");
+  assert.equal(zb.zbonKopf("17,10,26", { heuteTag: H }).datum, null, "nur vierstelliges Jahr");
+});
