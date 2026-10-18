@@ -14,6 +14,7 @@ import { fmtEuro } from "./util.js";
 import { tagGewicht } from "./zaehler.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
+import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang mit Ausschankmenge
 
 export const HALTBAR_ARTEN = ["mhd", "verbrauch"];
 export const ABVERKAUF_TAGE = 7;   // Stufe 1 (17.10.2026): MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
@@ -172,7 +173,7 @@ export function abverkaufVorschlaege(stand, kandidat, { k = kalkulation(stand), 
     const m = bedarfGericht(g, idx).bedarf.filter((x) => x.name === kandidat.name).reduce((s, x) => s + x.menge, 0);
     if (!(m > EPS)) continue;
     const z = zeilen.get(g.id); const P = z?.preisBrutto ?? null;
-    const basis = { gericht: g.id, name: g.name, jePortion: m, portionen: Math.ceil(R / m - EPS), preis: P, bis: kandidat.ablauf, ware: kandidat.name };
+    const basis = { gericht: g.id, name: g.name, aushang: nameMitMenge(g, kurzName(g.name)), jePortion: m, portionen: Math.ceil(R / m - EPS), preis: P, bis: kandidat.ablauf, ware: kandidat.name };
     if (!(P > 0)) { out.push({ ...basis, art: "ohnePreis" }); continue; }
     if (z.waren === null) { out.push({ ...basis, art: "ohneWareneinsatz" }); continue; }
     if (V === null) { out.push({ ...basis, art: "ohneEinkaufspreis" }); continue; }
@@ -190,7 +191,7 @@ export function abverkaufVorschlaege(stand, kandidat, { k = kalkulation(stand), 
   return out.sort((a, b) => rang[a.art] - rang[b.art] || a.portionen - b.portionen || (b.vorteil ?? 0) - (a.vorteil ?? 0) || a.name.localeCompare(b.name, "de"));
 }
 // Text zum Teilen (Aushang/WhatsApp-Status) – auf Deutsch wie der Bestelltext, Gerichtname wie auf der Karte
-export const abverkaufText = (v) => `${kurzName(v.name)} nur ${fmtEuro(v.aktionspreis, { dezimal: 2 })} statt ${fmtEuro(v.preis, { dezimal: 2 })} – bis ${datumKurzDe(v.bis)}`;
+export const abverkaufText = (v) => `${v.aushang || kurzName(v.name)} nur ${fmtEuro(v.aktionspreis, { dezimal: 2 })} statt ${fmtEuro(v.preis, { dezimal: 2 })} – bis ${datumKurzDe(v.bis)}`;
 export const kurzName = (n) => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").trim(); // „Pommes frites (Beilage)“ → „Pommes frites“
 
 // ---------- 4. „Die Uhrzeit“ ----------

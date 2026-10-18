@@ -16,7 +16,8 @@ import { tagGewicht } from "./zaehler.js";
 import { heuteGeschaeft } from "./util.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
-import { chargenStand } from "./haltbar.js"; // Schwadron 18.10.2026, M3: abgelaufene Ware (Verbrauchsdatum vorbei) zählt im Vorschlag nicht als Bestand
+import { chargenStand } from "./haltbar.js";
+import { getraenkArtikelVon } from "./getraenk_feld.js"; // Getränke (18.10.2026): Lieferant am Getränke-Artikel, solange kein Beleg einen nennt // Schwadron 18.10.2026, M3: abgelaufene Ware (Verbrauchsdatum vorbei) zählt im Vorschlag nicht als Bestand
 
 // Bestand (17.10.2026): Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
 export const LAGER_STANDARD = { tage: 7, puffer: 2 };
@@ -271,7 +272,7 @@ export function bestellVorschlag(stand, { heuteTag = heuteGeschaeft(), bs = best
     const dringend = w.bestand <= 0 ? "leer" : bestellenAm && bestellenAm <= heuteTag ? "jetzt" : bestellenAm === morgen ? "morgen" : "spaeter";
     zeilen.push({ name: w.name, basis: w.basis, gebinde, gebindeArt: w.gebinde, inhalt: w.inhalt, menge, bestand: w.bestand, bedarf, mindestGewinnt: mindest > bedarf,
       reichweite: w.reichweite, leerAm: w.leerAm, bestellenAm, grund, dringend, wert: w.preisJeBasis !== null ? menge * w.preisJeBasis : null, geschaetzt: w.geschaetzt,
-      sicherheit: w.sicherheit, lieferant: lieferantVon(stand, w.name), abgelaufen: ab > 1e-9 ? ab : 0 });
+      sicherheit: w.sicherheit, lieferant: lieferantVon(stand, w.name) || getraenkArtikelVon((stand.artikel || []).find((a) => a.name === w.name))?.lieferant || null, abgelaufen: ab > 1e-9 ? ab : 0 });
   }
   const ordnung = { leer: 0, jetzt: 1, morgen: 2, spaeter: 3 };
   zeilen.sort((a, b) => ordnung[a.dringend] - ordnung[b.dringend] || (a.reichweite ?? 1e9) - (b.reichweite ?? 1e9) || a.name.localeCompare(b.name, "de"));

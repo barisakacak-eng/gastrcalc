@@ -180,6 +180,7 @@ export function provisionAnteil(portal) {
 // ======================= Etappe 2: Karte, Artikel, Kalkulation =======================
 import { neuerTakt, imTakt } from "./takt.js";
 import { EINHEITEN, inBasis, PRODUKT_INDEX, GARVERLUST_START, STEUER_JE_GRUPPE } from "./data/katalog.js";
+import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026): offene Getränke – Schankverlust auf das Großgebinde
 
 // Klasse eines Gerichts aus dem Katalogbereich (Äquivalenzziffern, Prüfung Befund 3). Der Betrieb kann sie ändern.
 const KLASSE_JE_BEREICH = {
@@ -275,8 +276,9 @@ export function warenGericht(gericht, artikelIndex) {
     const gv = a ? garverlustAnteil(a) : { wert: 0 };
     if (gv.status === "geschaetzt") geschaetzt = true;
     if (preisGeschaetzt(a)) { geschaetzt = true; richtpreis = true; } // Richtpreise (17.10.2026): Wareneinsatz mit Richtpreis = Schätzung (≈)
-    const roh = rohmengeFuer(inBasis(z.menge, z.einheit), gv.wert);
-    if (roh === null) { fehlt.push(z.name); continue; }
+    const roh0 = rohmengeFuer(inBasis(z.menge, z.einheit), gv.wert);
+    if (roh0 === null) { fehlt.push(z.name); continue; }
+    const roh = mitSchankverlust(roh0, schankAnteil(gericht, z.name)); // Getränke (18.10.2026): Ausschank / (1 − Schankverlust), Standard 0
     waren += roh * pj;
   }
   // Ein Gericht ohne Rezept hat keinen Wareneinsatz von 0 €, sondern keinen – bleibt grau.

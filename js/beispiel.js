@@ -21,6 +21,8 @@ import { planVorschlag, planUebernehmen, aufgabenFuer } from "./putzplan.js";
 import { gerichtWeg, rohwareWeg, personalessen } from "./muell.js";
 import { inventurStarten, inventurAbschliessen, artikelFuerInventur, mengeSetzen } from "./inventur.js";
 import { bedarfGericht, sollVerbrauch, schwundVerbrauch, einkaufMengen } from "./verkauf.js"; // E7 (17.10.2026)
+import { getraenkSetzen } from "./getraenk.js"; // Getränke (18.10.2026): Gebinde, Marke, Pfand, offener Ausschank im Beispiel
+import { aktionVorschlag } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Vorschlag mit Begründung an der Beispiel-Aktion
 
 export const BEISPIEL_NAME = "Beispiel-Döner";
 export const BEISPIEL_TAGE = 30;           // so viele Tage vor heute sind gefüllt (heute selbst ist noch offen)
@@ -144,6 +146,13 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   if (BRANCHENWERTE.werte.length) branchenwerteAnwenden(s, BRANCHENWERTE.werte, { datum: start });
   s.branchenVersion = BRANCHENWERTE.version;
   const rp = richtpreiseEinsetzen(s, { datum: start }); zwischenpreiseRechnen(s);
+  // Getränke (18.10.2026): Beispielwerte, keine echten Daten – Cola als Markengetränk in der Glasflasche (Mehrweg-Kiste à 24, Pfand als Info),
+  // Eistee offen im Becher aus der 1,5-l-PET-Flasche (Kiste 6 × 1,5 l = 9 l, Schankverlust 0 % = Standard), Ayran im fertigen Becher, Wasser in der Glasflasche.
+  // Rezepte und Wareneinsatz bleiben dabei gleich (Eistee: 330 ml aus dem Großgebinde wie in der Vorlage).
+  for (const [n, f] of [["Cola 0,33 l", { gebinde: "glas", marke: "Fritz-Kola", pfand: 0.08, einkauf: "glas" }], ["Eistee 0,33 l", { gebinde: "becher", quelle: "Eistee", flasche: 1.5, einkauf: "pet" }],
+    ["Ayran 0,25 l", { gebinde: "becher", einkauf: "becher" }], ["Mineralwasser 0,25 l", { gebinde: "glas", einkauf: "glas" }]]) {
+    const g = s.gerichte.find((x) => x.name === n); if (g) getraenkSetzen(s, g.id, f);
+  }
 
   // Beispiel-Laden (17.10.2026): Kühlung – 4 Stellen, morgens und abends, Sonntag Ruhetag
   s.kuehlstellen = STELLEN.map((k, i) => ({ id: k.id, name: k.name, art: k.art, typ: k.typ, min: null, max: null, reihe: i, archiviert: false }));
@@ -286,7 +295,10 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   { const ids = ["Döner Kebab", "Pommes frites (Beilage)", "Cola 0,33 l"].map((n) => s.gerichte.find((g) => g.name === n)).filter(Boolean);
     const summe = rund2(ids.reduce((x, g) => x + g.preis, 0));
     if (ids.length === 3) s.aktionen = [{ id: "bsp-aktion-1", art: "kombi", gerichte: ids.map((g) => g.id), preis: Math.round(summe * 0.9 * 2) / 2, statt: summe,
-      von: tagPlus(heute, -1), bis: tagPlus(heute, 6), erfasst: zeit(tagPlus(heute, -1), 10), entfernt: false }]; }
+      von: tagPlus(heute, -1), bis: tagPlus(heute, 6), ende: "datum", erfasst: zeit(tagPlus(heute, -1), 10), entfernt: false }];
+    // Aktion planen (18.10.2026): der Vorschlag, den der Wirt gestern gesehen hat (Zeitraum, Begründung, erwartete Mehrmenge) – er hat einen Tag länger gewählt
+    const a0 = s.aktionen[0]; const vs = a0 ? aktionVorschlag(s, a0, { heuteTag: tagPlus(heute, -1) }) : null;
+    if (vs?.moeglich) a0.plan = { von: vs.von, bis: vs.bis, ende: vs.ende, satz: vs.satz, erwartung: Math.round(vs.erwartung.mehrAnteil * 10000) / 10000, quelle: vs.erwartung.quelle, erstellt: a0.erfasst }; }
 
   const fertig = migrierenBetrieb(s);
   // nur für den Bericht/Test, nicht gespeichert: welche Zutaten ohne Preis geblieben sind

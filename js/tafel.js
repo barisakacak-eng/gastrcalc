@@ -4,7 +4,8 @@
 // Ablauf: tafelBeschreibung(stand) → Seiten und Spalten nach Gruppen (Speisen, Beilagen, Getränke), Aktionen mit Laufzeit, Hinweise fürs Büro
 //         tafelHtml(beschreibung) → EINE HTML-Datei, alles eingebettet (Texte, Fotos als data-URI, Systemschrift), Querformat 16:9
 // Pflicht nach § 13 PAngV (Gaststätten): Endpreise (inkl. Umsatzsteuer; Gerichte tragen in der App den Bruttopreis), bei Getränken die
-// Ausschankmenge. Die Menge kommt aus dem Namen („Cola 0,33 l“) oder dem Feld ausschank; fehlt sie, rät die App nicht – Hinweis im Büro.
+// Ausschankmenge. Getränke (18.10.2026): Die Menge kommt aus dem Feld getraenk.menge (js/getraenk_feld.js) – nicht mehr aus dem Namen; der Name
+// liefert sie nur noch einmal bei der Migration. Fehlt sie, rät die App nicht – Hinweis im Büro.
 // Gültigkeit: unten steht „Stand: Datum Uhrzeit“; abgelaufene Aktionen blendet die Datei anhand der Uhr des Anzeigegeräts selbst aus
 // (tafelAktionSichtbar wird so, wie sie hier steht, in die Datei eingebettet – darum ES5 ohne Bezüge nach außen, für alte Fernseh-Browser).
 import { esc, fmtEuro, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE, uid } from "./util.js";
@@ -12,13 +13,14 @@ import { tIn, RTL, SPRACHEN } from "./i18n.js";
 import { gerichtBildQuelle } from "./bilder.js";
 import { tagPlus, wochentag } from "./engine.js";
 import { kurzName } from "./haltbar.js";
+import { getraenkVon, literAusText, literText, nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Ausschankmenge aus dem Feld
+import { aktionVorschlag, aktionBilanz, PLAN_TAGE } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Zeitraum-Vorschlag und Bilanz
 
 export const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 export const TAFEL_SEKUNDEN = [8, 12, 20, 30];   // Auswahl im Büro (gespeichert werden 5–120 s, store.js)
 export const ZEILEN_JE_SPALTE = 6;                // so viele Gerichte stehen in einer Spalte (lesbar aus 3–4 m auf 40–55 Zoll, Annahme)
 export const SPALTEN_JE_SEITE = 2;
 export const AKTIONEN_JE_SEITE = 3;
-export const KOMBI_LAUFZEIT_TAGE = 14;            // Kombi ohne natürliches Ende: läuft 14 Tage (Annahme der App), danach verschwindet sie von selbst
 const GRUPPE_JE_KLASSE = { haupt: "speisen", gross: "speisen", kleinigkeit: "beilagen", getraenk: "getraenke" };
 
 // ---------- Einstellungen ----------
@@ -48,39 +50,69 @@ export function mengeAusText(text) {
   const zahl = m[1].replace(".", ","); if (!(Number(m[1].replace(",", ".")) > 0)) return null;
   const e = m[2].toLowerCase(); return `${zahl} ${e === "liter" ? "l" : e}`;
 }
-// { menge, imNamen }: aus dem Namen (dann steht sie schon da) oder aus dem Feld ausschank (dann wird sie dazugeschrieben); sonst menge null
+// Getränke (18.10.2026): { menge, imNamen, anders } aus dem Feld getraenk.menge. imNamen: der Name nennt dieselbe Menge (dann nicht doppelt
+// anschreiben); anders: der Name nennt eine andere Menge als das Feld (das Feld gilt, Hinweis im Büro). menge null = fehlt.
 export function ausschankMenge(g) {
-  const n = mengeAusText(g?.name); if (n) return { menge: n, imNamen: true };
-  const f = mengeAusText(g?.ausschank); return { menge: f, imNamen: false };
+  const x = getraenkVon(g); const feld = x?.menge ?? null; const imName = literAusText(g?.name);
+  if (!feld) return { menge: null, imNamen: false, anders: false };
+  return { menge: literText(feld), imNamen: imName !== null && Math.abs(imName - feld) < 1e-6, anders: imName !== null && Math.abs(imName - feld) >= 1e-6 };
 }
 
 // ---------- Aktionen ----------
-// Gerichte einer Aktion, die es (noch) gibt; Name = Kurznamen mit „+“ (wie der Teilen-Text)
+// Gerichte einer Aktion, die es (noch) gibt; Name = Kurznamen mit „+“ (wie der Teilen-Text), Getränke mit Ausschankmenge (§ 13 PAngV)
 const aktionGerichte = (stand, a) => (a.gerichte || []).map((id) => (stand.gerichte || []).find((g) => g.id === id)).filter(Boolean);
-export const aktionName = (stand, a) => aktionGerichte(stand, a).map((g) => kurzName(g.name)).join(" + ");
-// Läuft (oder kommt noch): nicht beendet, Ende nicht vorbei, alle Gerichte da
+export const aktionName = (stand, a) => aktionGerichte(stand, a).map((g) => nameMitMenge(g, kurzName(g.name))).join(" + ");
+// Läuft (oder kommt noch): nicht beendet, Ende nicht vorbei (oder „bis Ware weg“ ohne Datum), alle Gerichte da
+const laeuftNoch = (a, heuteTag) => !a.entfernt && (!a.bis || a.bis >= heuteTag);
 export function aktiveAktionen(stand, { heuteTag = heuteGeschaeft() } = {}) {
-  return (stand.aktionen || []).filter((a) => !a.entfernt && a.bis >= heuteTag && aktionGerichte(stand, a).length === (a.gerichte || []).length && a.preis > 0)
-    .sort((x, y) => x.von.localeCompare(y.von) || x.bis.localeCompare(y.bis) || String(x.erfasst || "").localeCompare(String(y.erfasst || "")));
+  return (stand.aktionen || []).filter((a) => laeuftNoch(a, heuteTag) && aktionGerichte(stand, a).length === (a.gerichte || []).length && a.preis > 0)
+    .sort((x, y) => x.von.localeCompare(y.von) || String(x.bis || "9999").localeCompare(String(y.bis || "9999")) || String(x.erfasst || "").localeCompare(String(y.erfasst || "")));
 }
-// Übernehmen (Büro „Aktionen & Haltbarkeit“): art „abverkauf“ (ein Gericht, bis zum Ablauf) oder „kombi“ (2–4 Gerichte, 14 Tage).
+// Übernehmen (Büro „Aktionen & Haltbarkeit“): art „abverkauf“ (ein Gericht) oder „kombi“ (2–4 Gerichte).
+// Aktion planen (18.10.2026): KEINE feste Laufzeit mehr. Der Zeitraum kommt vom Wirt (von, bis, ende "datum" | "ware" = bis Ware weg) – er hat
+// den Vorschlag der App gesehen (plan: Vorschlag und Begründung, wie gezeigt). Ohne Angabe gilt der Vorschlag (aktionVorschlag); lässt er sich nicht
+// rechnen (Gericht ohne Rezept), eine Woche ab sofort. Nie eine Aktion für Ware mit Verbrauchsdatum (Rückgabe null).
 // Gleiche laufende Aktion (gleiche Gerichte, gleicher Preis) wird nicht doppelt angelegt – Rückgabe dann die vorhandene.
-export function aktionUebernehmen(stand, { art, gerichte, preis, statt = null, von = null, bis = null }, { heuteTag = heuteGeschaeft(), jetzt = new Date().toISOString() } = {}) {
+export function aktionUebernehmen(stand, { art, gerichte, preis, statt = null, von = null, bis = null, ende = null, ware = null, plan = null }, { heuteTag = heuteGeschaeft(), jetzt = new Date().toISOString() } = {}) {
   const ids = [...new Set((gerichte || []).filter((id) => (stand.gerichte || []).some((g) => g.id === id)))];
   if (!ids.length || !(preis > 0)) return null;
-  const v = von && von >= heuteTag ? von : heuteTag;
-  const b = bis && bis >= v ? bis : tagPlus(v, (art === "abverkauf" ? 3 : KOMBI_LAUFZEIT_TAGE) - 1);
+  const artSauber = art === "abverkauf" ? "abverkauf" : "kombi";
+  const vs = aktionVorschlag(stand, { art: artSauber, gerichte: ids, preis, ware }, { heuteTag });
+  if (!vs.moeglich && vs.grund === "verbrauch") return null;
+  const v = von && von >= heuteTag ? von : vs.moeglich ? vs.von : heuteTag;
+  const e = ende === "ware" || ende === "datum" ? ende : vs.moeglich ? vs.ende : "datum";
+  let b = bis && bis >= v ? bis : null;
+  if (!b && !(e === "ware" && bis === "")) b = vs.moeglich && vs.bis >= v ? vs.bis : tagPlus(v, PLAN_TAGE - 1); // bis "" + „bis Ware weg“ = ohne letztes Datum
   const p = Math.round(preis * 100) / 100; const schluessel = [...ids].sort().join("|");
   const da = aktiveAktionen(stand, { heuteTag }).find((a) => [...a.gerichte].sort().join("|") === schluessel && a.preis === p);
   if (da) return da;
-  const a = { id: "akt-" + uid(), art: art === "abverkauf" ? "abverkauf" : "kombi", gerichte: ids, preis: p, statt: statt > p ? Math.round(statt * 100) / 100 : null, von: v, bis: b, erfasst: jetzt, entfernt: false };
+  const vorschlag = plan && plan.von ? plan : vs.moeglich ? { von: vs.von, bis: vs.bis, ende: vs.ende, satz: vs.satz, erwartung: Math.round(vs.erwartung.mehrAnteil * 10000) / 10000, quelle: vs.erwartung.quelle } : null;
+  const a = { id: "akt-" + uid(), art: artSauber, gerichte: ids, preis: p, statt: statt > p ? Math.round(statt * 100) / 100 : null, von: v, bis: b, ende: e,
+    ...(ware ? { ware: String(ware) } : {}), ...(vorschlag ? { plan: { ...vorschlag, erstellt: jetzt } } : {}), erfasst: jetzt, entfernt: false };
   stand.aktionen = [...(stand.aktionen || []), a];
   return a;
 }
-// Beenden: bleibt in der Liste (beim Zusammenführen gewinnt „beendet“), steht nicht mehr auf der Tafel
-export function aktionBeenden(stand, id, { jetzt = new Date().toISOString() } = {}) {
+// Aktion planen (18.10.2026): Zeitraum einer laufenden oder kommenden Aktion ändern (der Wirt bespricht und entscheidet). Läuft sie schon, bleibt der
+// Start; sonst frühestens heute. bis ≥ von (und nicht vor heute); „bis Ware weg“ darf ohne Datum sein. Rückgabe: die neue Aktion oder null (ungültig/unverändert).
+export function aktionZeitraumSetzen(stand, id, { von, bis, ende }, { heuteTag = heuteGeschaeft(), jetzt = new Date().toISOString() } = {}) {
+  const i = (stand.aktionen || []).findIndex((a) => a.id === id && laeuftNoch(a, heuteTag)); if (i < 0) return null;
+  const a = stand.aktionen[i]; const TAG = /^\d{4}-\d{2}-\d{2}$/;
+  const e = ende === "ware" ? "ware" : "datum";
+  const v = a.von <= heuteTag ? a.von : TAG.test(von || "") && von >= heuteTag ? von : a.von;
+  const b = TAG.test(bis || "") ? bis : null;
+  if (!b && e !== "ware") return null;
+  if (b && (b < v || b < heuteTag)) return null;
+  if (v === a.von && b === a.bis && e === a.ende) return null;
+  const neu = { ...a, von: v, bis: b, ende: e, geaendertZeit: jetzt };
+  stand.aktionen = stand.aktionen.map((x, j) => (j === i ? neu : x));
+  return neu;
+}
+// Beenden: bleibt in der Liste (beim Zusammenführen gewinnt „beendet“), steht nicht mehr auf der Tafel. Aktion planen (18.10.2026): mit Bilanz.
+export function aktionBeenden(stand, id, { jetzt = new Date().toISOString(), heuteTag = heuteGeschaeft(new Date(jetzt)) } = {}) {
   const i = (stand.aktionen || []).findIndex((a) => a.id === id && !a.entfernt); if (i < 0) return false;
-  stand.aktionen = stand.aktionen.map((a, j) => (j === i ? { ...a, entfernt: true, entferntZeit: jetzt } : a));
+  const beendet = { ...stand.aktionen[i], entfernt: true, entferntZeit: jetzt };
+  let bilanz = null; try { bilanz = aktionBilanz(stand, beendet, { heuteTag, jetzt }); } catch (e) { console.warn("Bilanz:", e); }
+  stand.aktionen = stand.aktionen.map((a, j) => (j === i ? { ...beendet, ...(bilanz ? { bilanz } : {}) } : a));
   return true;
 }
 
@@ -104,6 +136,12 @@ export const tafelStandText = (jetzt) => { const d = new Date(jetzt); return `${
 // Gleichmäßig auf Spalten verteilen: 9 → 5 + 4 (nicht 6 + 3)
 function stuecke(liste, max) { const n = Math.ceil(liste.length / max); const out = []; let i = 0; for (let k = 0; k < n; k++) { const g = Math.ceil((liste.length - i) / (n - k)); out.push(liste.slice(i, i + g)); i += g; } return out; }
 
+// Laufzeit auf der Tafel: „bis Sa 24.10.“, „Di 20.10. – So 25.10.“; bis Ware weg: „solange Vorrat, längstens bis …“ / „solange Vorrat reicht“ (+ „ab …“)
+function laufText(T, sp, a, heuteTag) {
+  const kommt = a.von > heuteTag;
+  if (a.ende === "ware") { const r = a.bis ? T("solangeBis", tafelDatum(sp, a.bis)) : T("solange"); return kommt ? `${T("ab", tafelDatum(sp, a.von))}, ${r}` : r; }
+  return kommt ? T("abBis", tafelDatum(sp, a.von), tafelDatum(sp, a.bis)) : T("bis", tafelDatum(sp, a.bis));
+}
 export function tafelBeschreibung(stand, { heuteTag = heuteGeschaeft(), jetzt = new Date().toISOString(), einstellung = tafelEinstellung(stand) } = {}) {
   const sp = einstellung.sprache; const T = (k, ...a) => tIn(sp, "tafel.inhalt." + k, ...a);
   const hinweise = [];
@@ -115,6 +153,7 @@ export function tafelBeschreibung(stand, { heuteTag = heuteGeschaeft(), jetzt = 
       if (!(typeof g.preis === "number" && g.preis > 0)) { hinweise.push({ art: "ohnePreis", id: g.id, name: g.name }); continue; }
       const m = gruppe === "getraenke" ? ausschankMenge(g) : { menge: null, imNamen: false };
       if (gruppe === "getraenke" && !m.menge) hinweise.push({ art: "mengeFehlt", id: g.id, name: g.name });
+      if (gruppe === "getraenke" && m.anders) hinweise.push({ art: "mengeAnders", id: g.id, name: g.name }); // Getränke (18.10.2026): Feld gilt, Name sagt etwas anderes
       eintraege.push({ id: g.id, name: String(g.name || ""), preis: g.preis, preisText: euro(g.preis), menge: m.imNamen ? null : m.menge, bild: bild(g) });
     }
     return { gruppe, titel: T("gruppen." + gruppe), eintraege };
@@ -123,10 +162,10 @@ export function tafelBeschreibung(stand, { heuteTag = heuteGeschaeft(), jetzt = 
     const gs = aktionGerichte(stand, a);
     const statt = a.statt > a.preis ? a.statt : null;
     return { id: a.id, art: a.art, name: aktionName(stand, a), preis: a.preis, preisText: euro(a.preis), statt, stattText: statt ? T("statt", euro(statt)) : "",
-      von: a.von, bis: a.bis, laufText: a.von > heuteTag ? T("abBis", tafelDatum(sp, a.von), tafelDatum(sp, a.bis)) : T("bis", tafelDatum(sp, a.bis)),
+      von: a.von, bis: a.bis || "", laufText: laufText(T, sp, a, heuteTag),
       gerichte: gs.map((g) => ({ id: g.id, name: g.name, bild: bild(g) })) };
   });
-  for (const a of stand.aktionen || []) if (!a.entfernt && a.bis >= heuteTag && aktionGerichte(stand, a).length !== (a.gerichte || []).length) hinweise.push({ art: "aktionOhneGericht", id: a.id, name: aktionName(stand, a) });
+  for (const a of stand.aktionen || []) if (laeuftNoch(a, heuteTag) && aktionGerichte(stand, a).length !== (a.gerichte || []).length) hinweise.push({ art: "aktionOhneGericht", id: a.id, name: aktionName(stand, a) });
   const seiten = [];
   for (const teil of stuecke(aktionen, AKTIONEN_JE_SEITE)) seiten.push({ art: "aktionen", aktionen: teil });
   const spalten = []; for (const g of gruppen) for (const teil of stuecke(g.eintraege, ZEILEN_JE_SPALTE)) spalten.push({ gruppe: g.gruppe, titel: g.titel, eintraege: teil });

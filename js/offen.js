@@ -15,6 +15,7 @@ import { imTakt } from "./takt.js";
 import { rettungFehlt } from "./rettung.js"; // Rettung (17.10.2026)
 import { haltbarUhrzeit } from "./haltbar.js"; // Stufe 1 (17.10.2026): Ablauf/Aktion als Büro-Hinweis (im Laden nichts)
 import { bestandUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
+import { aktionUhrzeit } from "./aktion_plan.js"; // Aktion planen (18.10.2026)
 const JOURNAL_TEXT = { schwund: 1, tagesnotizen: 1, messungen: 1, lieferungen: 1, abschluesse: 1, kostenbelege: 1, putzlog: 1, belehrungen: 1, rundgaenge: 1, inventuren: 1, uploads: 1, artikel: 1, gerichte: 1 }; // W2-D
 // W2-D (Leistung Büro): Zähler und Einrichtungsstand je Bild nur einmal rechnen – Büro-Start und „Offen“ fragen beide
 export const zaehlerImTakt = (stand, H) => imTakt(stand, "zaehler:" + H, () => zaehler(stand, { datum: H }));
@@ -71,6 +72,8 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
   { const u = bestandUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "bestand", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Bestand (17.10.2026)
   { const u = haltbarUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), kalenderTag: heute(jetzt) }); if (u) out.push({ id: "haltbar", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Stufe 1 (17.10.2026)
+  // Aktion planen (18.10.2026): Satz zur laufenden Aktion – nur, wenn Haltbarkeit nichts sagt (ein Hinweis je Bereich „Aktionen & Haltbarkeit“)
+  if (!out.some((x) => x.id === "haltbar")) { const u = aktionUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "aktion", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); }
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
   const z = zaehlerImTakt(stand, heuteGeschaeft(jetzt)); // W2-D; Paket 3, M7: Zähler nach Geschäftstag

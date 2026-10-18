@@ -68,6 +68,10 @@ async def main():
             await pg.locator('#app [data-a="akt-tafel"][data-art="abverkauf"]').first.scroll_into_view_if_needed(); await bild("aktionen_auf_tafel")
             vorher = len((await stand())["aktionen"])
             await tipp('#app [data-a="akt-tafel"][data-art="abverkauf"][data-wert="0"]')
+            # Aktion planen (18.10.2026): erst Vorschlag mit Begründung, „Auf die Tafel“ im Plan übernimmt (nie automatisch)
+            assert len((await stand())["aktionen"]) == vorher, "nicht automatisch"
+            await tipp('#app [data-a="akt-plan-von"]')  # „Ab sofort“ (an einem Ruhetag schlägt die App den nächsten Öffnungstag vor) – damit die Tafel sie gleich zeigt
+            await tipp('#app [data-a="akt-plan-ok"]')
             s = await stand(); assert len(s["aktionen"]) == vorher + 1, s["aktionen"]; assert s["aktionen"][-1]["art"] == "abverkauf"
             await nav_hilfe.geh(pg, "tafel"); await pg.wait_for_timeout(300)
             assert await pg.locator("#app [data-tafel-aktion]").count() == 2, "zwei laufende Aktionen"

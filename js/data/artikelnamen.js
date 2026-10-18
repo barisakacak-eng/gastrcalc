@@ -308,6 +308,11 @@ export const ARTIKELNAMEN = {
   // ── Alkoholfreie Getränke ──
   "Mineralwasser 0,75 l": A("Maden suyu 0,75 l", "Mineral water 0.75 l"),
   "Cola 1,0 l": A("Kola 1,0 l", "Cola 1.0 l"),
+  // Getränke (18.10.2026): markenneutrale Getränke und Großgebinde
+  "Cola 0,33 l Dose": A("Kola 0,33 l kutu", "Cola 0.33 l can"), "Cola 0,33 l Glas": A("Kola 0,33 l cam şişe", "Cola 0.33 l glass bottle"),
+  "Cola 0,5 l PET": A("Kola 0,5 l pet şişe", "Cola 0.5 l PET bottle"), "Cola 1,0 l Glas": A("Kola 1,0 l cam şişe", "Cola 1.0 l glass bottle"),
+  "Cola 1,5 l PET": A("Kola 1,5 l pet şişe", "Cola 1.5 l PET bottle"), "Cola Bag-in-Box (Postmix)": A("Kola şurup kutusu (postmix)", "Cola bag-in-box (postmix)"),
+  "Ayran 1,0 l": A("Ayran 1 l şişe", "Ayran 1 l bottle"),
   "Fanta 0,2 l": A("Fanta 0,2 l", "Fanta 0.2 l"),
   "Sprite 0,2 l": A("Sprite 0,2 l", "Sprite 0.2 l"),
   "Apfelsaft": A("Elma suyu", "Apple juice"),

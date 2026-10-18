@@ -17,6 +17,7 @@ import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
+import { getraenkGerichtMigrieren, getraenkArtikelMigrieren } from "./getraenk_feld.js"; // Getränke (18.10.2026): Größe, Gebinde, Marke, Pfand, Lieferant
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
@@ -62,6 +63,8 @@ export function leererBetrieb() {
     kassenKombis: [],           // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse {id, name, kassenNamen, plu, teile:[{gericht, menge}]} (js/verkauf.js)
     lager: { tage: 7, puffer: 2 }, // Bestand (17.10.2026): Bestellvorschlag – bestellen für so viele Tage, dazu Puffer in Tagen (js/bestand.js); Artikel dürfen mindestbestand (Gebinde) tragen
     aktionen: [],               // Menütafel (18.10.2026): vom Wirt übernommene Aktionen {id, art: abverkauf|kombi, gerichte:[id], preis (brutto), statt|null, von, bis (Geschäftstage), erfasst, entfernt?, entferntZeit?} (js/tafel.js)
+                                // Aktion planen (18.10.2026): dazu ende "datum"|"ware" (bis Ware weg: bis = längstens, darf leer sein), ware? (Abverkaufs-Ware), plan? (Vorschlag mit
+                                // Begründung, wie bestätigt), geaendertZeit? (Zeitraum vom Wirt geändert), bilanz? (nach dem Ende, js/aktion_plan.js)
     tafel: { sekunden: 12, gruppen: ["speisen", "beilagen", "getraenke"], aktionen: true, sprache: "de" }, // Menütafel (18.10.2026): Einstellungen der Tafel-Datei
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
@@ -255,11 +258,12 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   if (!FORMATE.some((f) => f.id === s.betrieb.format)) s.betrieb.format = null; // unbekannte Kennungen aus fremden Dateien
   s.betrieb.tageProWoche = Math.min(7, Math.max(1, Number(s.betrieb.tageProWoche) || 6));
   s.betrieb.monate = Math.min(12, Math.max(1, Number(s.betrieb.monate) || 12));
-  s.gerichte = mitId(s.gerichte).map((g) => gerichtKasse({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }));
+  s.gerichte = mitId(s.gerichte).map((g) => getraenkGerichtMigrieren(gerichtKasse({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }))); // Getränke (18.10.2026): Feld getraenk, Größe aus dem Namen
   s.artikel = s.artikel.filter((a) => istObjekt(a) && typeof a.name === "string").map((a) => ({ ...a,
     gebinde: istObjekt(a.gebinde) && GEBINDE_ARTEN.includes(a.gebinde.art) ? { art: a.gebinde.art, zwischen: istObjekt(a.gebinde.zwischen) && Number(a.gebinde.zwischen.anzahl) > 0 ? { art: String(a.gebinde.zwischen.art || "beutel"), anzahl: Number(a.gebinde.zwischen.anzahl) } : null } : { art: "packung", zwischen: null },
     preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
     preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
+  for (const a of s.artikel) getraenkArtikelMigrieren(a); // Getränke (18.10.2026)
   for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
   { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
     s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
@@ -364,15 +368,34 @@ function kombisSauber(liste, gerichte) {
 }
 // Menütafel (18.10.2026): übernommene Aktionen – Kennung, Gerichte (Kennungen, 1–4), Preis > 0, von ≤ bis als JJJJ-MM-TT; Ungültiges fällt weg.
 // Gerichte, die es nicht mehr gibt, bleiben in der Liste (die Tafel lässt die Aktion dann weg und sagt es im Büro) – so geht beim Zusammenführen nichts verloren.
+// Aktion planen (18.10.2026): frei wählbarer Zeitraum – ende "datum" (bis = letzter Tag) oder "ware" (bis Ware weg; bis = längstens, darf fehlen).
+// Alte Aktionen (feste Laufzeit) behalten von/bis und bekommen ende "datum". plan und bilanz werden geprüft, nicht neu gerechnet.
 const TAG_RE = /^\d{4}-\d{2}-\d{2}$/;
+const tagOder = (x) => (typeof x === "string" && TAG_RE.test(x) ? x : null);
+const zahlOder = (x, min = -1e9, max = 1e9) => (typeof x === "number" && Number.isFinite(x) && x >= min && x <= max ? x : null);
+function planSauber(p) {
+  if (!istObjekt(p)) return null;
+  const von = tagOder(p.von), bis = tagOder(p.bis); if (!von) return null;
+  return { von, bis, ende: p.ende === "ware" ? "ware" : "datum", satz: typeof p.satz === "string" ? p.satz.slice(0, 300) : "", erwartung: zahlOder(p.erwartung, 0, 100), quelle: ["breakEven", "gelernt"].includes(p.quelle) ? p.quelle : "breakEven",
+    erstellt: typeof p.erstellt === "string" ? p.erstellt : null };
+}
+function bilanzSauber(b) {
+  if (!istObjekt(b)) return null;
+  const tage = zahlOder(b.tage, 0, 10000); if (tage === null) return null;
+  return { von: tagOder(b.von), bis: tagOder(b.bis), tage, vergleichbar: zahlOder(b.vergleichbar, 0, 10000) ?? 0, verkauft: zahlOder(b.verkauft, 0), vorher: zahlOder(b.vorher, 0), mehrAnteil: zahlOder(b.mehrAnteil, -1, 1000),
+    rohertrag: zahlOder(b.rohertrag), rohertragVorher: zahlOder(b.rohertragVorher), geschaetzt: b.geschaetzt === true, erstellt: typeof b.erstellt === "string" ? b.erstellt : null };
+}
 function aktionenSauber(liste) {
-  return mitId(Array.isArray(liste) ? liste : []).map((a) => ({ id: a.id, art: ["abverkauf", "kombi"].includes(a.art) ? a.art : "kombi",
-    gerichte: [...new Set((Array.isArray(a.gerichte) ? a.gerichte : []).filter((x) => typeof x === "string" && x))].slice(0, 4),
-    preis: typeof a.preis === "number" && Number.isFinite(a.preis) && a.preis > 0 && a.preis < 10000 ? Math.round(a.preis * 100) / 100 : null,
-    statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? Math.round(a.statt * 100) / 100 : null,
-    von: typeof a.von === "string" && TAG_RE.test(a.von) ? a.von : null, bis: typeof a.bis === "string" && TAG_RE.test(a.bis) ? a.bis : null,
-    erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}) }))
-    .filter((a) => a.gerichte.length && a.preis !== null && a.von && a.bis && a.von <= a.bis);
+  return mitId(Array.isArray(liste) ? liste : []).map((a) => {
+    const ende = a.ende === "ware" ? "ware" : "datum"; const plan = planSauber(a.plan), bilanz = bilanzSauber(a.bilanz);
+    return { id: a.id, art: ["abverkauf", "kombi"].includes(a.art) ? a.art : "kombi",
+      gerichte: [...new Set((Array.isArray(a.gerichte) ? a.gerichte : []).filter((x) => typeof x === "string" && x))].slice(0, 4),
+      preis: typeof a.preis === "number" && Number.isFinite(a.preis) && a.preis > 0 && a.preis < 10000 ? Math.round(a.preis * 100) / 100 : null,
+      statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? Math.round(a.statt * 100) / 100 : null,
+      von: tagOder(a.von), bis: tagOder(a.bis), ende,
+      ...(typeof a.ware === "string" && a.ware.trim() ? { ware: a.ware.trim().slice(0, 120) } : {}), ...(plan ? { plan } : {}), ...(typeof a.geaendertZeit === "string" ? { geaendertZeit: a.geaendertZeit } : {}), ...(bilanz ? { bilanz } : {}),
+      erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}) };
+  }).filter((a) => a.gerichte.length && a.preis !== null && a.von && (a.bis ? a.von <= a.bis : a.ende === "ware"));
 }
 // Menütafel (18.10.2026): Einstellungen – Seitenwechsel 5–120 s, Gruppen aus der festen Liste (mindestens eine), Aktionen ja/nein, Sprache der Tafel
 const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
@@ -387,7 +410,11 @@ function aktionenVereinigen(sieger, verlierer) {
   const m = new Map(); for (const a of sieger || []) if (istObjekt(a) && typeof a.id === "string") m.set(a.id, { ...a });
   for (const a of verlierer || []) {
     if (!istObjekt(a) || typeof a.id !== "string") continue; const s = m.get(a.id);
-    if (!s) m.set(a.id, { ...a }); else if (a.entfernt && !s.entfernt) { s.entfernt = true; if (a.entferntZeit) s.entferntZeit = a.entferntZeit; }
+    if (!s) { m.set(a.id, { ...a }); continue; }
+    if (a.entfernt && !s.entfernt) { s.entfernt = true; if (a.entferntZeit) s.entferntZeit = a.entferntZeit; }
+    // Aktion planen (18.10.2026): Zeitraum – die zuletzt vom Wirt geänderte Fassung gilt; eine Bilanz geht nie verloren
+    if (String(a.geaendertZeit || "") > String(s.geaendertZeit || "")) { s.von = a.von; s.bis = a.bis; s.ende = a.ende; s.geaendertZeit = a.geaendertZeit; }
+    if (a.bilanz && (!s.bilanz || String(a.bilanz.erstellt || "") > String(s.bilanz.erstellt || ""))) s.bilanz = a.bilanz;
   }
   return [...m.values()].sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || x.id.localeCompare(y.id));
 }

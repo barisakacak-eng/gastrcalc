@@ -238,6 +238,9 @@ export const KATALOG = {
       K("Energydrink 0,25 l", "stk", "getraenk"), K("Tonic Water 0,2 l", "stk", "getraenk"),
       K("Bio-Limonade 0,33 l", "stk", "getraenk"), K("Hausgemachte Limonade", "l", "getraenk"),
       K("Ayran 0,25 l", "stk", "getraenk"), K("Lassi", "l", "getraenk"),
+      // Getränke (18.10.2026): markenneutral – Dose, Glas- und PET-Flasche; Großgebinde in Litern zum offenen Ausschank
+      K("Cola 0,33 l Dose", "stk", "getraenk"), K("Cola 0,33 l Glas", "stk", "getraenk"), K("Cola 0,5 l PET", "stk", "getraenk"), K("Cola 1,0 l Glas", "stk", "getraenk"),
+      K("Cola 1,5 l PET", "l", "getraenk"), K("Cola Bag-in-Box (Postmix)", "l", "getraenk"), K("Ayran 1,0 l", "l", "getraenk"),
       K("Kokoswasser", "l", "getraenk"), K("Ingwershot", "l", "getraenk"),
       K("Zitronen", "kg", "gemuese"), K("Minze", "kg", "gemuese"),
       K("Trinkhalm", "stk", "verpackung"), K("Trinkbecher 0,3 l", "stk", "verpackung"),
@@ -724,6 +727,20 @@ export const BEREICHE_JE_KUECHE = {
 
 // Welche Warengruppen garen und damit einen Garverlust haben (C5: Branchenwert rund 15 % als sichtbare Schätzung).
 export const GARVERLUST_START = { fleisch: 0.15, fisch: 0.15 };
+
+// Getränke (18.10.2026): Vorlagen für „Neues Getränk“ (Büro „Getränke“), markenneutral – die Marke (Fritz-Kola, Coca-Cola, Hausmarke …) trägt der Wirt ein.
+// Ohne quelle: verkauft wie gekauft (Artikel gleichen Namens, Stück). Mit quelle: offen ausgeschenkt aus dem Großgebinde (Artikel in Litern).
+// GETRAENK_EINKAUF: Größe und Gebinde der Katalog-Artikel, die nicht im Namen stehen (Bag-in-Box) oder die Art klären.
+export const GETRAENK_VORLAGEN = [
+  { name: "Cola 0,33 l Dose", menge: 0.33, gebinde: "dose" }, { name: "Cola 0,33 l Glas", menge: 0.33, gebinde: "glas" },
+  { name: "Cola 0,5 l PET", menge: 0.5, gebinde: "pet" }, { name: "Cola 1,0 l Glas", menge: 1, gebinde: "glas" },
+  { name: "Cola offen 0,4 l", menge: 0.4, gebinde: "offen", quelle: "Cola 1,5 l PET" }, { name: "Cola offen 0,3 l", menge: 0.3, gebinde: "becher", quelle: "Cola Bag-in-Box (Postmix)" },
+  { name: "Ayran offen 0,3 l", menge: 0.3, gebinde: "becher", quelle: "Ayran 1,0 l" },
+];
+export const GETRAENK_EINKAUF = {
+  "Cola 0,33 l Dose": { gebinde: "dose" }, "Cola 0,33 l Glas": { gebinde: "glas" }, "Cola 0,5 l PET": { gebinde: "pet" }, "Cola 1,0 l Glas": { gebinde: "glas" },
+  "Cola 1,5 l PET": { gebinde: "pet" }, "Cola Bag-in-Box (Postmix)": { gebinde: "box" }, "Ayran 1,0 l": { gebinde: "pet" },
+};
 
 // Steuersatz je Warengruppe (Prüfung Befund 7): Speisen 7 %, Getränke 19 %. Gilt für das fertige Gericht über seine Hauptzutat.
 export const STEUER_JE_GRUPPE = { getraenk: 0.19, spirituose: 0.19 };

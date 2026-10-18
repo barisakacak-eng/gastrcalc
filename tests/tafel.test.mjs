@@ -75,23 +75,23 @@ test("Getränke: Ausschankmenge aus Name oder Feld; fehlt sie, Hinweis im Büro 
   assert.ok(T.tafelHtml(b, { eingebettet: false }).includes('<span class="menge">0,5 l</span>'));
   const { tafelView } = await import("../js/screens/tafel.js");
   const v = tafelView(laden());
-  assert.ok(v.includes("Ayran: Menge fehlt (z. B. 0,33 l). Im Namen ergänzen – Pflicht bei Getränken.") && v.includes("Lahmacun: ohne Preis – fehlt auf der Tafel."), "Hinweise im Büro");
+  assert.ok(v.includes("Ayran: Menge fehlt (z. B. 0,33 l). Unter „Getränke“ eintragen – Pflicht bei Getränken.") && v.includes("Lahmacun: ohne Preis – fehlt auf der Tafel."), "Hinweise im Büro");
   assert.ok(!T.tafelBeschreibung(beispielLaden(H), { heuteTag: H }).hinweise.length, "Beispiel-Laden: alles vollständig");
 });
 
-test("Aktion mit Laufzeit: übernehmen (Kombi 14 Tage, Abverkauf bis Ablauf), hervorgehoben vorne, ‚bis‘/‚ab – bis‘, doppelt nicht, beenden", () => {
+test("Aktion mit Laufzeit: übernehmen (Kombi: Zeitraum-Vorschlag, ohne Rezept eine Woche – Aktion planen 18.10.2026; Abverkauf bis Ablauf), hervorgehoben vorne, ‚bis‘/‚ab – bis‘, doppelt nicht, beenden", () => {
   const s = laden();
   const a = T.aktionUebernehmen(s, { art: "kombi", gerichte: ["d1", "p1", "c1"], preis: 11.5, statt: 13 }, { heuteTag: H, jetzt: JETZT });
-  assert.equal(a.von, H); assert.equal(a.bis, "2026-10-31"); assert.equal(a.statt, 13); assert.equal(s.aktionen.length, 1);
+  assert.equal(a.von, H); assert.equal(a.bis, "2026-10-24", "keine feste Laufzeit mehr: ohne Rezept kein Vorschlag rechenbar → eine Woche ab sofort"); assert.equal(a.ende, "datum"); assert.equal(a.statt, 13); assert.equal(s.aktionen.length, 1);
   assert.equal(T.aktionUebernehmen(s, { art: "kombi", gerichte: ["c1", "p1", "d1"], preis: 11.5 }, { heuteTag: H }), a, "gleiche Aktion nicht doppelt"); assert.equal(s.aktionen.length, 1);
   const ab = T.aktionUebernehmen(s, { art: "abverkauf", gerichte: ["a1"], preis: 1.5, statt: 2, bis: "2026-10-20" }, { heuteTag: H }); assert.equal(ab.bis, "2026-10-20");
   assert.equal(T.aktionUebernehmen(s, { art: "kombi", gerichte: ["gibtsnicht"], preis: 5 }, { heuteTag: H }), null);
   const b = T.tafelBeschreibung(s, { heuteTag: H, jetzt: JETZT });
   assert.equal(b.seiten[0].art, "aktionen"); assert.deepEqual(b.aktionen.map((x) => x.name), ["Ayran", "Döner + Pommes + Cola 0,33 l"], "die zuerst endende vorne");
   const kb = b.aktionen[1]; assert.equal(b.aktionen[0].laufText, "bis Di 20.10.");
-  assert.equal(kb.laufText, "bis Sa 31.10."); assert.equal(kb.stattText.replace(/\s/g, " "), "statt 13,00 €"); assert.match(kb.preisText, EURO);
+  assert.equal(kb.laufText, "bis Sa 24.10."); assert.equal(kb.stattText.replace(/\s/g, " "), "statt 13,00 €"); assert.match(kb.preisText, EURO);
   const html = T.tafelHtml(b, { eingebettet: false });
-  assert.ok(html.includes('class="aktion" data-von="2026-10-18" data-bis="2026-10-31"') && html.includes('<span class="marke">Aktion</span>') && html.includes("bis Sa 31.10."));
+  assert.ok(html.includes('class="aktion" data-von="2026-10-18" data-bis="2026-10-24"') && html.includes('<span class="marke">Aktion</span>') && html.includes("bis Sa 24.10."));
   // kommt erst: „ab – bis“
   const k = laden(); T.aktionUebernehmen(k, { art: "kombi", gerichte: ["d2", "c1"], preis: 9.5, von: "2026-10-20", bis: "2026-10-25" }, { heuteTag: H });
   assert.equal(T.tafelBeschreibung(k, { heuteTag: H }).aktionen[0].laufText, "Di 20.10. – So 25.10.");
@@ -195,7 +195,7 @@ test("Migration: alter Laden ohne Felder bekommt Standard; Ungültiges fällt we
   ];
   const k = st.migrierenBetrieb(kaputt);
   assert.deepEqual(k.tafel, { sekunden: 12, gruppen: ["speisen", "beilagen", "getraenke"], aktionen: true, sprache: "de" });
-  assert.deepEqual(k.aktionen, [{ id: "ok", art: "kombi", gerichte: ["g1"], preis: 10, statt: null, von: "2026-10-18", bis: "2026-10-20", erfasst: JETZT, entfernt: false }]);
+  assert.deepEqual(k.aktionen, [{ id: "ok", art: "kombi", gerichte: ["g1"], preis: 10, statt: null, von: "2026-10-18", bis: "2026-10-20", ende: "datum", erfasst: JETZT, entfernt: false }]); // Aktion planen (18.10.2026): alte Aktion behält ihre Laufzeit, ende „datum“
   assert.deepEqual(st.migrierenBetrieb(structuredClone(k)), k, "zweimal migrieren ändert nichts");
   assert.deepEqual(st.BEREICHE.aktionen, ["aktionen"]); assert.deepEqual(st.BEREICHE.tafel, ["tafel"]);
 });
@@ -246,10 +246,13 @@ test("Oberfläche: Büro-Kachel für alle, Bereich mit Vorschau/Einstellungen/Te
   const akt = await import("../js/screens/aktionen.js"); akt.aktionenZuruecksetzen();
   const s2 = beispielLaden(H); const vorher = s2.aktionen.length;
   assert.ok(akt.aktionenView(s2).includes('data-a="akt-tafel" data-art="abverkauf"'));
-  const r2 = await akt.aktionenAktion("akt-tafel", { dataset: { art: "abverkauf", wert: "0" } }, s2);
+  // Aktion planen (18.10.2026): „Auf die Tafel“ zeigt erst den Vorschlag mit Begründung, „Auf die Tafel“ im Plan übernimmt
+  assert.equal(await akt.aktionenAktion("akt-tafel", { dataset: { art: "abverkauf", wert: "0" } }, s2), true); assert.equal(s2.aktionen.length, vorher, "nie automatisch");
+  const r2 = await akt.aktionenAktion("akt-plan-ok", { dataset: {} }, s2);
   assert.equal(r2.speichern, true); assert.equal(s2.aktionen.length, vorher + 1); const neu = s2.aktionen.at(-1);
   assert.equal(neu.art, "abverkauf"); assert.equal(neu.preis, 1.5); assert.equal(neu.statt, 2); assert.equal(neu.gerichte.length, 1);
-  assert.ok(!(await akt.aktionenAktion("akt-tafel", { dataset: { art: "abverkauf", wert: "0" } }, s2)).speichern, "zweimal: nicht doppelt");
+  await akt.aktionenAktion("akt-tafel", { dataset: { art: "abverkauf", wert: "0" } }, s2);
+  assert.ok(!(await akt.aktionenAktion("akt-plan-ok", { dataset: {} }, s2)).speichern, "zweimal: nicht doppelt"); akt.aktionenZuruecksetzen();
   // Personal und Laden
   assert.equal(ansichtErlaubt({ modus: "personal" }, "tafel"), false); assert.equal(navZiel({ modus: "personal" }, "tafel").ansicht, "personal");
   assert.equal(navZiel({ modus: "laden" }, "tafel").buero, true); assert.equal(ansichtErlaubt({ modus: "laden" }, "tafel"), false);

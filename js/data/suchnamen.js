@@ -323,6 +323,8 @@ export const SUCHNAMEN = {
   "Cola 0,33 l": ["kola", "coke"],
   "Cola 0,2 l": ["kola", "coke"],
   "Cola 1,0 l": ["kola", "coke"],
+  "Cola 0,33 l Dose": ["kola", "coke", "kutu", "can"], "Cola 0,33 l Glas": ["kola", "coke", "cam şişe", "glass bottle"], "Cola 0,5 l PET": ["kola", "coke", "pet şişe"],
+  "Cola 1,0 l Glas": ["kola", "coke", "cam şişe"], "Cola 1,5 l PET": ["kola", "coke", "pet şişe"], "Cola Bag-in-Box (Postmix)": ["kola", "coke", "postmix", "şurup"], "Ayran 1,0 l": ["ayran"],
   "Mineralwasser 0,5 l": ["maden suyu", "su", "mineral water", "water"],
   "Mineralwasser 0,25 l": ["maden suyu", "su", "mineral water", "water"],
   "Mineralwasser 0,75 l": ["maden suyu", "su", "mineral water", "water"],

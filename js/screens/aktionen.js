@@ -7,16 +7,20 @@ import { esc, fmtEuro, fmtZahl } from "../util.js";
 import { haltbarStand, haltbarUhrzeit, abverkaufText, datumKurz } from "../haltbar.js";
 import { kombiTeileSortiert, kombiAuswahlBereinigt, kombiRechnen, kombiVorschlaege, kombiText, KOMBI_MAX } from "../deal.js";
 import { kalkulation } from "../engine.js";
-import { aktionUebernehmen } from "../tafel.js"; // Menütafel (18.10.2026): „Auf die Tafel“ – übernimmt den Vorschlag als Aktion
+import { aktionUebernehmen, aktiveAktionen, aktionName, aktionZeitraumSetzen, aktionBeenden } from "../tafel.js"; // Menütafel (18.10.2026): „Auf die Tafel“
+import { aktionVorschlag, aktionFortschritt, fortschrittZeilen, aktionUhrzeit, aktionBilanz, bilanzText, aktionVorbei, aktionZeitraumText } from "../aktion_plan.js"; // Aktion planen (18.10.2026)
+import { heuteGeschaeft } from "../util.js";
 import { mengeBasisText as mengeText, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
 import { nav } from "./nav.js";
 
 let auswahl = [];   // Kombi: gewählte Gericht-Kennungen (2–4)
+// Aktion planen (18.10.2026): offener Plan (flüchtiger Bildschirmzustand) – { angaben, vorschlag, entwurf: { von, bis, ende }, aktion? (Zeitraum ändern) }
+let plan = null;
 
-export const aktionenKennung = () => auswahl.join(",");
-export function aktionenZuruecksetzen() { auswahl = []; }
-// Zurück-Geste: erst die Kombi-Auswahl leeren; false = den Bereich verlassen
-export function aktionenZurueck() { if (!auswahl.length) return false; auswahl = []; return true; }
+export const aktionenKennung = () => auswahl.join(",") + (plan ? "|plan:" + (plan.aktion || plan.angaben?.art) : "");
+export function aktionenZuruecksetzen() { auswahl = []; plan = null; }
+// Zurück-Geste: erst den Plan schließen, dann die Kombi-Auswahl leeren; false = den Bereich verlassen
+export function aktionenZurueck() { if (plan) { plan = null; return true; } if (!auswahl.length) return false; auswahl = []; return true; }
 
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 const euro = (v, ca = false) => (v === null || v === undefined ? "–" : (ca ? "≈ " : "") + fmtEuro(v, { dezimal: 2 }));
@@ -24,9 +28,54 @@ const menge = (m, basis) => (m === null || m === undefined ? t("aktionen.mengeUn
 
 export function aktionenView(stand) {
   const kopf = `<div class="kopfband"><h1>${esc(t("aktionen.titel"))}</h1><div class="unter">${esc(t("aktionen.unter"))}</div></div>`;
-  const hs = haltbarStand(stand); const uhr = haltbarUhrzeit(stand);
+  const hs = haltbarStand(stand); const uhr = haltbarUhrzeit(stand) || aktionUhrzeit(stand); // Aktion planen (18.10.2026): sonst der Satz zur laufenden Aktion
   const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2></div>` : `<div class="karte"><h2>${esc(t("aktionen.allesGut"))}</h2></div>`;
-  return `${kopf}<div class="inhalt">${oben}${laeuftView(hs)}${abverkaufView(hs)}${kombiView(stand, hs)}</div>${nav("aktionen", { schnell: false })}`;
+  if (plan) return `${kopf}<div class="inhalt">${planView(stand)}</div>${nav("aktionen", { schnell: false })}`; // Aktion planen: eine Handlung – bestätigen oder ändern
+  return `${kopf}<div class="inhalt">${oben}${laufendView(stand)}${laeuftView(hs)}${abverkaufView(hs)}${kombiView(stand, hs)}${vorbeiView(stand)}</div>${nav("aktionen", { schnell: false })}`;
+}
+
+// ---------- Aktion planen (18.10.2026) ----------
+// Vorschlag der App (Zeitraum + ein Satz Begründung aus Ware, Haltbarkeit, Interesse), darunter änderbar: ab sofort / von, bis Datum / bis Ware weg.
+function planView(stand) {
+  const H = heuteGeschaeft(); const v = plan.vorschlag; const e = plan.entwurf;
+  const name = plan.aktion ? aktionName(stand, (stand.aktionen || []).find((a) => a.id === plan.aktion) || { gerichte: [] }) : aktionName(stand, plan.angaben);
+  const preis = plan.angaben?.preis ? ` · ${fmtEuro(plan.angaben.preis, { dezimal: 2 })}` : "";
+  const titel = `<h2 class="inv-ue">${esc(t(plan.aktion ? "plan.aendernTitel" : "plan.titel"))}</h2>`;
+  if (!plan.aktion && !v.moeglich) return `${titel}<div class="karte hinweisrot" data-plan="nein"><h2>${esc(name)}</h2><p>${esc(v.satz)}</p>
+    <button type="button" class="knopf zweit" data-a="akt-plan-zu">${esc(t("plan.abbrechen"))}</button></div>`;
+  const vorschlagText = v?.moeglich ? `<p class="hinweis"><b>${esc(t("plan.vorschlag"))}:</b> ${esc(aktionZeitraumText({ von: v.von, bis: v.bis, ende: v.ende }))}</p><p data-plan-satz="1">${esc(v.satz)}</p>` : "";
+  const geaendert = !plan.aktion && v?.moeglich && (e.von !== v.von || e.bis !== v.bis || e.ende !== v.ende); // Zeitraum ändern: der Vorschlag von heute steht nur daneben
+  const chip = (aktion, wert, an, text) => `<button type="button" class="chip klein ${an ? "an" : ""}" data-a="${aktion}" data-wert="${esc(wert)}" aria-pressed="${an}">${esc(text)}</button>`;
+  const startGesperrt = plan.aktion && ((stand.aktionen || []).find((a) => a.id === plan.aktion)?.von || H) <= H;
+  return `${titel}<div class="karte" data-plan="${plan.aktion ? "aendern" : "neu"}"><h2>${esc(name)}${esc(preis)}</h2>${vorschlagText}
+    <div class="chips">${startGesperrt ? "" : chip("akt-plan-von", "sofort", e.von === H, t("plan.abSofort"))}${chip("akt-plan-ende", "datum", e.ende === "datum", t("plan.bisDatum"))}${chip("akt-plan-ende", "ware", e.ende === "ware", t("plan.bisWare"))}</div>
+    <div class="b-frei"><label><span>${esc(t("plan.von"))}</span><input type="date" class="textfeld" data-f="akt-von" value="${esc(e.von)}" min="${esc(H)}"${startGesperrt ? " disabled" : ""}></label>
+      <label><span>${esc(t(e.ende === "ware" ? "plan.laengstens" : "plan.bis"))}</span><input type="date" class="textfeld" data-f="akt-bis" value="${esc(e.bis || "")}" min="${esc(e.von > H ? e.von : H)}"></label></div>
+    ${geaendert ? `<small class="marke">${esc(t("plan.geaendert"))}</small>` : ""}
+    <p class="hinweis">${esc(t("plan.dein"))}</p>
+    <button type="button" class="knopf glut" data-a="${plan.aktion ? "akt-zeit-ok" : "akt-plan-ok"}">${esc(t(plan.aktion ? "plan.speichern" : "tafel.uebernehmen"))}</button>
+    <button type="button" class="leise" data-a="akt-plan-zu">${esc(t("plan.abbrechen"))}</button></div>${was(t("plan.was"))}`;
+}
+
+// Laufende Aktionen: Zeitraum, Fortschritt in einfachen Worten, geplante Begründung, ändern/beenden
+function laufendView(stand) {
+  const liste = aktiveAktionen(stand); if (!liste.length) return "";
+  const zeile = (a) => {
+    const f = aktionFortschritt(stand, a);
+    return `<div class="karte" data-aktion-lauf="${esc(a.id)}"><h2>${esc(aktionName(stand, a))} · ${esc(fmtEuro(a.preis, { dezimal: 2 }))}</h2>
+      <p class="hinweis">${esc(aktionZeitraumText(a))}</p>${fortschrittZeilen(f).map((x) => `<p>${esc(x)}</p>`).join("")}
+      ${a.plan?.satz ? `<small class="marke">${esc(t("plan.geplant", a.plan.satz))}</small>` : ""}
+      <button type="button" class="leise klein" data-a="akt-zeit" data-wert="${esc(a.id)}">${esc(t("plan.aendern"))}</button>
+      <button type="button" class="leise klein" data-a="akt-beenden" data-wert="${esc(a.id)}">${esc(t("tafel.beenden"))}</button></div>`;
+  };
+  return `<h2 class="inv-ue">${esc(t("plan.laufendTitel"))}</h2>${liste.map(zeile).join("")}`;
+}
+// Beendete Aktionen (die letzten 3): kurze Bilanz – gespeichert oder, solange noch nicht gespeichert, gerechnet
+function vorbeiView(stand) {
+  const H = heuteGeschaeft();
+  const liste = (stand.aktionen || []).filter((a) => aktionVorbei(a, H)).sort((x, y) => String(y.bis || y.entferntZeit || "").localeCompare(String(x.bis || x.entferntZeit || ""))).slice(0, 3);
+  if (!liste.length) return "";
+  return `<h2 class="inv-ue">${esc(t("plan.vorbeiTitel"))}</h2><div class="karte">${liste.map((a) => `<div class="summenzeile" data-aktion-bilanz="${esc(a.id)}"><span><b>${esc(aktionName(stand, a))}</b><br><small>${esc(bilanzText(a.bilanz || aktionBilanz(stand, a)))}</small></span></div>`).join("")}</div>`;
 }
 
 // ---------- Läuft ab ----------
@@ -102,9 +151,10 @@ export function aktionenTextFuer(stand, art, wert) {
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? kombiText(kb, s) : null; }
   return null;
 }
-// Menütafel (18.10.2026): Angaben für „Auf die Tafel“ aus dem gezeigten Vorschlag (Abverkauf: ein Gericht bis zum Ablauf; Kombi: Stufe, 14 Tage)
+// Menütafel (18.10.2026): Angaben für „Auf die Tafel“ aus dem gezeigten Vorschlag (Abverkauf: ein Gericht, Ware mit MHD; Kombi: Stufe).
+// Aktion planen (18.10.2026): den Zeitraum schlägt aktionVorschlag vor, der Wirt bestätigt oder ändert ihn (planView).
 export function aktionTafelAngaben(stand, art, wert) {
-  if (art === "abverkauf") { const v = haltbarStand(stand).abverkauf[Number(wert)]?.bester; return v ? { art, gerichte: [v.gericht], preis: v.aktionspreis, statt: v.preis, bis: v.bis } : null; }
+  if (art === "abverkauf") { const x = haltbarStand(stand).abverkauf[Number(wert)]; const v = x?.bester; return v ? { art, gerichte: [v.gericht], preis: v.aktionspreis, statt: v.preis, ware: x.name } : null; }
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? { art, gerichte: kb.teile.map((x) => x.id), preis: s.preis, statt: kb.summe } : null; }
   return null;
 }
@@ -116,15 +166,51 @@ export async function aktionenAktion(name, el, stand) {
   if (name === "akt-kombi") { const id = el.dataset.wert; if (auswahl.includes(id)) auswahl = auswahl.filter((x) => x !== id); else if (auswahl.length < KOMBI_MAX) auswahl = [...auswahl, id]; return true; }
   if (name === "akt-kombi-leeren") { auswahl = []; return true; }
   if (name === "akt-kombi-vorschlag") { const v = kombiVorschlaege(stand)[Number(el.dataset.wert)]; if (!v) return false; auswahl = v.kombi.teile.map((x) => x.id); return true; }
-  if (name === "akt-tafel") { // Menütafel (18.10.2026): Vorschlag als Aktion übernehmen – erst dann steht er auf der Tafel
+  if (name === "akt-tafel") { // Aktion planen (18.10.2026): erst der Vorschlag mit Begründung – „Auf die Tafel“ im Plan übernimmt (akt-plan-ok)
     const angaben = aktionTafelAngaben(stand, el.dataset.art, el.dataset.wert); if (!angaben) return false;
-    const vorher = (stand.aktionen || []).length; const a = aktionUebernehmen(stand, angaben); if (!a) return false;
+    const vorschlag = aktionVorschlag(stand, angaben);
+    plan = { angaben, vorschlag, entwurf: vorschlag.moeglich ? { von: vorschlag.von, bis: vorschlag.bis, ende: vorschlag.ende } : { von: heuteGeschaeft(), bis: null, ende: "datum" } };
+    return true;
+  }
+  if (name === "akt-plan-zu") { plan = null; return true; }
+  if (name === "akt-plan-von") { if (!plan) return false; const H = heuteGeschaeft(); plan = { ...plan, entwurf: { ...plan.entwurf, von: H, bis: plan.entwurf.bis && plan.entwurf.bis < H ? H : plan.entwurf.bis } }; return true; }
+  if (name === "akt-plan-ende") { if (!plan) return false; const ende = el.dataset.wert === "ware" ? "ware" : "datum";
+    plan = { ...plan, entwurf: { ...plan.entwurf, ende, bis: plan.entwurf.bis || (ende === "datum" ? (plan.vorschlag?.bis || plan.entwurf.von) : null) } }; return true; }
+  if (name === "akt-plan-ok") {
+    if (!plan || !plan.vorschlag?.moeglich) return false;
+    const e = plan.entwurf; if (e.ende === "datum" && !e.bis) return { meldung: t("plan.ungueltig") }; if (e.bis && e.bis < e.von) return { meldung: t("plan.ungueltig") };
+    const v = plan.vorschlag;
+    const vorher = (stand.aktionen || []).length;
+    const a = aktionUebernehmen(stand, { ...plan.angaben, von: e.von, bis: e.ende === "ware" && !e.bis ? "" : e.bis, ende: e.ende,
+      plan: { von: v.von, bis: v.bis, ende: v.ende, satz: v.satz, erwartung: Math.round(v.erwartung.mehrAnteil * 10000) / 10000, quelle: v.erwartung.quelle } });
+    if (!a) return { meldung: t("plan.ungueltig") };
+    plan = null;
     return (stand.aktionen || []).length > vorher ? { speichern: true, meldung: t("tafel.uebernommen") } : { meldung: t("tafel.uebernommen") };
   }
+  if (name === "akt-zeit") { // laufende Aktion: Zeitraum ändern – Vorschlag der App von heute daneben
+    const a = aktiveAktionen(stand).find((x) => x.id === el.dataset.wert); if (!a) return false;
+    plan = { aktion: a.id, angaben: { art: a.art, gerichte: a.gerichte, preis: a.preis, ware: a.ware || null }, vorschlag: aktionVorschlag(stand, a), entwurf: { von: a.von, bis: a.bis, ende: a.ende || "datum" } };
+    return true;
+  }
+  if (name === "akt-zeit-ok") {
+    if (!plan?.aktion) return false;
+    const neu = aktionZeitraumSetzen(stand, plan.aktion, plan.entwurf);
+    if (!neu) { const alt = (stand.aktionen || []).find((x) => x.id === plan.aktion); const gleich = alt && alt.von === plan.entwurf.von && alt.bis === plan.entwurf.bis && alt.ende === plan.entwurf.ende;
+      if (gleich) { plan = null; return { meldung: t("aktionen.beleg.nichts") }; } return { meldung: t("plan.ungueltig") }; }
+    plan = null; return { speichern: true, meldung: t("plan.gespeichert") };
+  }
+  if (name === "akt-beenden") return aktionBeenden(stand, el.dataset.wert) ? { speichern: true, meldung: t("tafel.beendet") } : true;
   if (name === "akt-teilen") {
     const text = aktionenTextFuer(stand, el.dataset.art, el.dataset.wert); if (!text) return false;
     const weg = await teilen(text); if (weg === "abgebrochen") return false;
     return { meldung: t(weg === "kopiert" ? "aktionen.kopiert" : "aktionen.geteilt") };
   }
   return false;
+}
+// Aktion planen (18.10.2026): Datumsfelder des Plans – nur Entwurf, gespeichert wird erst mit „Auf die Tafel“ / „Speichern“
+export function aktionenEingabe(feld, wert) {
+  if (!plan || (feld !== "akt-von" && feld !== "akt-bis")) return false;
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(String(wert || "")) ? String(wert) : null;
+  if (feld === "akt-von") { if (!d) return "entwurf"; plan = { ...plan, entwurf: { ...plan.entwurf, von: d } }; return "zeichnen"; }
+  plan = { ...plan, entwurf: { ...plan.entwurf, bis: d } }; return "zeichnen";
 }

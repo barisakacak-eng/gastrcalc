@@ -17,6 +17,7 @@ import { monatName, datumLesbar } from "./tag.js";
 import { verkaufSichtbar } from "../verkauf.js"; // E7 (17.10.2026): Einstieg „Verkauf je Gericht“ nur mit Schalter oder im Beispiel-Laden
 import { bestandUhrzeit } from "../bestand.js"; // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit
 import { haltbarUhrzeit } from "../haltbar.js"; // Stufe 1 (17.10.2026): Einstieg „Aktionen & Haltbarkeit“, Unterzeile = die Uhrzeit
+import { aktionUhrzeit } from "../aktion_plan.js"; // Aktion planen (18.10.2026): Satz zur laufenden Aktion
 
 // Symbole, die es in symbole.js (noch) nicht gibt – Lucide, ISC-Lizenz wie dort. Eigene Liste, damit symbole.js unberührt bleibt.
 const EXTRA = {
@@ -29,6 +30,7 @@ const EXTRA = {
   "eye": '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
   "chevron-left": '<path d="m15 18-6-6 6-6"/>',
   "tv": '<rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>', // Menütafel (18.10.2026)
+  "cup-soda": '<path d="m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8"/><path d="M5 8h14"/><path d="M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/><path d="m12 8 1-6h2"/>', // Getränke (18.10.2026)
 };
 export const bsym = (name, klasse = "") => EXTRA[name] ? `<svg class="sym ${klasse}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${EXTRA[name]}</svg>` : sym(name, klasse);
 
@@ -72,7 +74,7 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
         ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bestandUhrzeit(stand)?.text || t("bestand.einstiegUnter"))}
-        ${zeile({ aktion: "nav", wert: "aktionen" }, "target", t("aktionen.einstieg"), haltbarUhrzeit(stand)?.text || t("aktionen.einstiegUnter"))}
+        ${zeile({ aktion: "nav", wert: "aktionen" }, "target", t("aktionen.einstieg"), haltbarUhrzeit(stand)?.text || aktionUhrzeit(stand)?.text || t("aktionen.einstiegUnter"))}
       </div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.karte"))}</h2>
       <div class="b-raster3">
@@ -84,6 +86,7 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${mini({ aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" }, "calculator", t("buero.karte.kosten"))}
         ${mini({ aktion: "nav", wert: "kartefoto" }, "file-text", t("buero.karte.kartefoto"))}
         ${mini({ aktion: "nav", wert: "tafel" }, "tv", t("tafel.einstieg"))}
+        ${mini({ aktion: "nav", wert: "getraenke" }, "cup-soda", t("getraenke.einstieg"))}
       </div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.einrichten"))}</h2>
       <div class="karte b-liste">

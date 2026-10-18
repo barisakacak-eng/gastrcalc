@@ -12,6 +12,7 @@ import { kalkulation, RICHTWERT_WARENEINSATZ, wareneinsatzWarnung } from "./engi
 import { verkaufJeGericht, auswertungZeitraum, ladenhueter } from "./verkauf.js";
 import { haltbarStand, preisStufeNah, preisStufeAuf, PREIS_SCHRITT, kurzName } from "./haltbar.js";
 import { heuteGeschaeft, fmtEuro } from "./util.js";
+import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang-Text mit Ausschankmenge (§ 13 PAngV)
 
 export const KOMBI_MIN = 2, KOMBI_MAX = 4;
 // Stufe 1 (17.10.2026): Rabatt-Stufen auf die Summe der Einzelpreise. KEINE Branchenzahl – eine Annahme der App, damit der Wirt drei
@@ -30,8 +31,21 @@ export function kombiGrenze(stand) {
 
 // Gerichte, die sich für eine Kombi rechnen lassen: Kartenpreis und vollständiger Wareneinsatz
 export function kombiTeile(stand, k = kalkulation(stand)) {
+  const gs = new Map((stand.gerichte || []).map((g) => [g.id, g]));
   return k.zeilen.filter((z) => z.preisBrutto > 0 && z.waren !== null).map((z) => ({ id: z.id, name: z.name, klasse: z.klasse, preis: z.preisBrutto, netto: z.preisBrutto / (1 + z.mwst), mwst: z.mwst,
-    waren: z.waren, rohertrag: z.preisBrutto / (1 + z.mwst) - z.waren, geschaetzt: !!z.warenGeschaetzt }));
+    waren: z.waren, rohertrag: z.preisBrutto / (1 + z.mwst) - z.waren, geschaetzt: !!z.warenGeschaetzt, aushang: nameMitMenge(gs.get(z.id), kurzName(z.name)) }));
+}
+
+// Aktion planen (18.10.2026): Break-even-Mehrmenge für EINEN Aktionspreis (Kombi aus 2–4 Gerichten oder ein Gericht im Abverkauf) – dieselbe Rechnung
+// wie in kombiRechnen: so viel mehr muss verkauft werden, damit gleich viel Rohertrag bleibt wie zum Kartenpreis. null = nicht rechenbar
+// (Gericht ohne Preis/Wareneinsatz); lohntNie = der Aktionspreis deckt die Ware nicht. Grundlage der erwarteten Mehrmenge (js/aktion_plan.js).
+export function aktionBreakEven(stand, ids, preis, { k = kalkulation(stand) } = {}) {
+  const alle = new Map(kombiTeile(stand, k).map((x) => [x.id, x])); const liste = [...new Set(ids || [])];
+  const teile = liste.map((id) => alle.get(id)).filter(Boolean);
+  if (!teile.length || teile.length !== liste.length || !(preis > 0)) return null;
+  const S = teile.reduce((s, x) => s + x.preis, 0), Snet = teile.reduce((s, x) => s + x.netto, 0), W = teile.reduce((s, x) => s + x.waren, 0);
+  const R = Snet - W, Rk = preis * Snet / S - W;
+  return { summe: S, rohertragEinzeln: R, rohertragAktion: Rk, mehrAnteil: Rk > EPS ? Math.max(0, (R - Rk) / Rk) : null, lohntNie: !(Rk > EPS), geschaetzt: teile.some((x) => x.geschaetzt), teile };
 }
 
 // Kombi aus Gericht-Kennungen rechnen. Rückgabe null bei weniger als 2 oder mehr als 4 rechenbaren Gerichten (fehlt: was sich nicht rechnen ließ).
@@ -61,7 +75,7 @@ export function kombiRechnen(stand, ids, { k = kalkulation(stand) } = {}) {
 }
 
 // Text zum Teilen (Aushang, WhatsApp-Status) – Deutsch wie der Bestelltext: „Döner Kebab + Pommes frites + Ayran nur 11,50 €“
-export const kombiText = (kombi, stufe) => `${kombi.teile.map((x) => kurzName(x.name)).join(" + ")} nur ${fmtEuro(stufe.preis, { dezimal: 2 })}`;
+export const kombiText = (kombi, stufe) => `${kombi.teile.map((x) => x.aushang || kurzName(x.name)).join(" + ")} nur ${fmtEuro(stufe.preis, { dezimal: 2 })}`; // Getränke (18.10.2026): mit Ausschankmenge
 
 // ---------- Automatische Vorschläge ----------
 // Bis zu 3 Kombis: (1) Renner – meistverkauftes Hauptgericht + Beilage + Getränk; (2) mit einer Abverkaufs-Ware (MHD läuft ab);

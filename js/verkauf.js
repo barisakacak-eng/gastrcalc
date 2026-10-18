@@ -15,6 +15,7 @@
 // Gelesen wird trotzdem vorsichtig: Trennzeichen aus der Kopfzeile erkannt, Punkt oder Komma als Dezimalzeichen, BOM und Windows-1252 als Rückfall.
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
+import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026)
 import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNettoGebinde, istRichtpreis, tagPlus, SCHWUND_ARTEN } from "./engine.js";
 import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber, inventurAbTag, inventurBisTag } from "./inventur.js";
 import { uid, heute, heuteGeschaeft, geschaeftstag } from "./util.js";
@@ -437,7 +438,7 @@ export function bedarfGericht(g, idx) {
     if (bA && bA !== bZ) { probleme.push({ name: z.name, grund: "einheit" }); continue; }
     const roh = rohmengeFuer(inBasis(z.menge, z.einheit), garverlustAnteil(a).wert);
     if (roh === null) { probleme.push({ name: z.name, grund: "menge" }); continue; }
-    out.push({ name: z.name, menge: roh, basis: bZ });
+    out.push({ name: z.name, menge: mitSchankverlust(roh, schankAnteil(g, z.name)), basis: bZ }); // Getränke (18.10.2026): offenes Getränk – Schankverlust wie in warenGericht
   }
   return { bedarf: out, probleme };
 }
