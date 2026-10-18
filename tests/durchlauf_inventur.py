@@ -55,8 +55,8 @@ async def main():
             plus = lambda name: f'.inv-posten[data-name="{name}"] [data-a="inv-d"][data-d="1"]'
             teil = lambda name, t: f'.inv-posten[data-name="{name}"] [data-a="inv-t"][data-t="{t}"]'
 
-            await pg.goto(f"http://127.0.0.1:{PORT}/index.html"); await pg.wait_for_selector(".kachel")
-            await klick('[data-a="sprache"][data-wert="de"]')
+            await pg.goto(f"http://127.0.0.1:{PORT}/index.html"); await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
+            await pg.select_option('[data-f="sprache-wahl"]', "de"); await klick('[data-a="sprache"][data-wert="de"]')
             assert await pg.evaluate(LADEN) == 11
             await pg.wait_for_selector('[data-a="menue-auf"]')
 

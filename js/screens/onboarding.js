@@ -5,7 +5,7 @@ import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
-import { t, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN, sprache as aktiveSprache } from "../i18n.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige } from "../util.js";
 import { reinigungVon, putzzeitMonat } from "../reinigung.js";
@@ -412,16 +412,20 @@ const hilfeAktion = (name, el) => { if (name !== "s2-hilfe") return false; hilfe
 // Vorauswahl „selbst gemacht“ nach Laden-Art – Trennung (17.10.2026): selbstStandard wohnt jetzt in js/selbst.js
 export { selbstStandard };
 
+// Entrümpelung Punkt 1+2 (19.10.2026, freigegeben 18.10.): Willkommen statt 18 Sprachkacheln – Logo-Platzhalter (eine Datei, icons/logo.svg),
+// ein Auswahlfeld mit der Handysprache vorgewählt (Sprachname in eigener Schrift, keine Flaggen), „Weiter“ übernimmt die gewählte Sprache.
+// Wechsel im Feld zeichnet sofort in der neuen Sprache (app.js, Feld „sprache-wahl“).
 const spracheSchnell = {
   id: "sprache",
   view: () => `
-    <div class="s2sprache">
-      <h1 class="frage">${esc(t("schnell2.sprache"))}</h1>
-      <div class="kacheln s2sprachen">
-        ${SPRACHEN.map((s) => `<button type="button" class="kachel sprachkachel" data-a="sprache" data-wert="${s}" lang="${s}" dir="auto"><b>${esc(SPRACH_NAMEN[s] || s)}</b></button>`).join("")}
-      </div>
+    <div class="s2sprache s2willkommen">
+      <img class="s2logo" src="icons/logo.svg" alt="" aria-hidden="true">
+      <label class="s2feldtitel" for="sprache-wahl">${esc(t("schnell2.sprache"))}</label>
+      <select id="sprache-wahl" class="textfeld s2sprachwahl" data-f="sprache-wahl" dir="auto">
+        ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(SPRACH_NAMEN[s] || s)}</option>`).join("")}
+      </select>
     </div>`,
-  fuss: () => "",
+  fuss: () => `<button type="button" class="knopf" data-a="sprache" data-wert="${aktiveSprache()}">${esc(t("allgemein.weiter"))}</button>`,
   aktion: sprache.aktion,
 };
 

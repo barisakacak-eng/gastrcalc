@@ -21,11 +21,11 @@ async def kontext(b, breite, hoehe, fehler):
 
 async def schnellstart(pg, port, name="Döner Test"):
     import nav_hilfe
-    await pg.goto(f"http://127.0.0.1:{port}/index.html"); await pg.wait_for_selector(".kachel")
+    await pg.goto(f"http://127.0.0.1:{port}/index.html"); await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
     for _ in range(240):  # erster Start: der Service Worker lädt die Seite nach der Einrichtung einmal neu – erst warten, bis er sie hat
         if await pg.evaluate("!!navigator.serviceWorker.controller"): break
         await pg.wait_for_timeout(500)
-    await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
+    await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
     async def weiter(id_):  # „Weiter“ tippen und warten, bis der Schritt mit dieser Kennung steht (CSP erlaubt kein wait_for_function)
         for versuch in range(3):
             await pg.click('[data-a="weiter"]')

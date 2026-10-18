@@ -35,7 +35,7 @@ async def main():
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html")
-            await pg.wait_for_selector(".kachel")
+            await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
             # E5 (16.10.2026): erster Start – der Service Worker übernimmt die Seite und lädt sie einmal neu, sobald die App-Phase erreicht ist.
             # Damit das nicht mitten in einem Bildschirm passiert: erst warten, bis er die Seite hat; das Neuladen kommt dann direkt nach „Fertig“.
             for _ in range(240):
@@ -53,7 +53,7 @@ async def main():
             async def stand(): return await pg.evaluate("window.__gastrocalc.stand")
 
             # ---- Onboarding
-            await bild("sprache"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.click('[data-a="s2-hilfe"]'); await pg.click('[data-a="weg-genau"]')  # Schnellweg 2: „Alles genau einrichten“ hinter dem „?“
+            await bild("sprache"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.click('[data-a="s2-hilfe"]'); await pg.click('[data-a="weg-genau"]')  # Schnellweg 2: „Alles genau einrichten“ hinter dem „?“
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')
@@ -289,7 +289,7 @@ async def main():
             await geh("einstellungen"); await pg.click('[data-a="sprache"][data-wert="en"]')
             await geh("start"); await bild("cockpit-en")
             await geh("beleg"); await bild("beleg-en")
-            await geh("einstellungen"); await pg.click('[data-a="sprache"][data-wert="de"]')
+            await geh("einstellungen"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]')
             # Zurück-Geste aus Müll-Unterseite: eine Ebene hoch
             await geh("muell"); await pg.click('[data-a="muell-andere"]'); await pg.wait_for_selector('[data-a="muell-kachel"]')
             await pg.go_back(); await pg.wait_for_timeout(300)

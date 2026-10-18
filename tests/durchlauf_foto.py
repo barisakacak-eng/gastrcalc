@@ -25,7 +25,7 @@ async def main():
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html")
-            await pg.wait_for_selector(".kachel")
+            await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
             warte = 900 if VID else 300
             async def klick(sel): await pg.click(sel); await pg.wait_for_timeout(warte)
             n = 0
@@ -36,7 +36,7 @@ async def main():
             t0 = time.time()
 
             # 1 Sprache
-            await bild("sprache"); await klick('[data-a="sprache"][data-wert="de"]')
+            await bild("sprache"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await klick('[data-a="sprache"][data-wert="de"]')
             # 2 Laden
             await pg.wait_for_selector('[data-a="laden-art"]'); await bild("laden")
             await pg.fill('[data-f="betrieb.name"]', "Döner Haus"); await klick('[data-a="laden-art"][data-wert="doener"]')

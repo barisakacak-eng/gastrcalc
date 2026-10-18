@@ -22,12 +22,12 @@ async def main():
             pg = await ctx.new_page()
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
-            await pg.goto(f"http://127.0.0.1:{PORT}/index.html"); await pg.wait_for_selector(".kachel")
+            await pg.goto(f"http://127.0.0.1:{PORT}/index.html"); await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
             for _ in range(240):  # erster Start: warten, bis der Service Worker die Seite hat (er lädt sie nach der Einrichtung einmal neu)
                 if await pg.evaluate("!!navigator.serviceWorker.controller"): break
                 await pg.wait_for_timeout(500)
             # Schnellster Weg in die App: Schnellweg mit Namen, dann Kostenschritte überspringen
-            await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
+            await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Test"); await pg.click('[data-a="laden-art"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             for _ in range(8):
                 if await pg.locator('[data-a="weiter"]').count() == 0: break

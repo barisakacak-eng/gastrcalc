@@ -718,6 +718,7 @@ root.addEventListener("input", (ev) => {
   ruheBis = 0; // wer tippt, hat nicht doppelt getippt
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
   if (modus(wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // W2-S: Einrichtungsfelder wirken im Personal-Modus nicht
+  if (el.dataset.f === "sprache-wahl") { wurzel.sprache = el.value; setzeSprache(el.value, () => zeichne()); return; } // Willkommen (19.10.2026): Sprache sofort zeigen
   let neu = false;
   if (stand.phase === "onboarding") {
     const s = schritteFuer(stand)[stand.schritt];

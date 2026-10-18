@@ -182,7 +182,7 @@ test("Speichern, Sicherung und Zusammenführen: Haltbarkeit übersteht alles, na
 test("Beispiel-Laden: genau eine Ware mit Verbrauchsdatum läuft bald ab (kein Abverkauf), eine MHD-Ware ergibt einen Abverkauf – an jedem Wochentag", () => {
   assert.deepEqual(HALTBAR_BEISPIEL.map((x) => x.art), ["verbrauch", "mhd"]);
   for (let i = 0; i < 7; i++) {
-    const d = tagPlus(H, i); const s = beispielLaden(d); const hs = h.haltbarStand(s, { heuteTag: d });
+    const d = tagPlus(H, i); const s = beispielLaden(d); const hs = h.haltbarStand(s, { heuteTag: d, kalenderTag: d }); // 19.10.2026: Kalendertag fest – zwischen 0 und 4 Uhr ist der Geschäftstag noch gestern
     assert.equal(hs.laeuftAb.length, 1, d); const x = hs.laeuftAb[0];
     assert.equal(x.name, "Hähnchenspieß"); assert.equal(x.art, "verbrauch"); assert.equal(x.tage, 1); assert.ok(x.rest > 0, d);
     assert.ok(!hs.abverkauf.some((y) => y.name === "Hähnchenspieß"), "Verbrauchsdatum nie Abverkauf");
@@ -190,16 +190,17 @@ test("Beispiel-Laden: genau eine Ware mit Verbrauchsdatum läuft bald ab (kein A
     assert.equal(a.name, "Ayran 0,25 l"); assert.equal(a.tage, 3); assert.ok(a.rest > 0 && a.bester, d);
     assert.equal(a.bester.name, "Ayran 0,25 l"); assert.ok(a.bester.aktionspreis < a.bester.preis && a.bester.aktionspreis / 1.19 >= a.bester.wareneinsatz);
     // Prüfgremium 17.10.2026 (4): Ruhetag Sonntag – am Samstag heißt es „heute verbrauchen“
-    const u = h.haltbarUhrzeit(s, { heuteTag: d }); assert.equal(u.text, wochentag(tagPlus(d, 1)) === 0 ? "Hähnchenspieß heute verbrauchen" : "Hähnchenspieß bis morgen verbrauchen", d); assert.equal(u.ton, "rot");
+    const u = h.haltbarUhrzeit(s, { heuteTag: d, kalenderTag: d }); assert.equal(u.text, wochentag(tagPlus(d, 1)) === 0 ? "Hähnchenspieß heute verbrauchen" : "Hähnchenspieß bis morgen verbrauchen", d); assert.equal(u.ton, "rot");
   }
   assert.equal(JSON.stringify(h.haltbarStand(beispielLaden(H), { heuteTag: H })), JSON.stringify(h.haltbarStand(beispielLaden(H), { heuteTag: H })), "ohne Zufall");
 });
 
-test("Oberfläche: Büro-Einstieg und Hinweis, Bereich mit drei Teilen und Kassen-Hinweis; Laden zeigt nichts; Personal gesperrt; Beleg-Schritt freiwillig", async () => {
+test("Oberfläche: Büro-Einstieg und Hinweis, Bereich mit drei Teilen und Kassen-Hinweis; Laden zeigt nichts; Personal gesperrt; Beleg-Schritt freiwillig", async (t) => {
   const { bueroView } = await import("../js/screens/buero.js");
   const { aktionenView, aktionenAktion, aktionenTextFuer, aktionenZuruecksetzen } = await import("../js/screens/aktionen.js");
   const { offenImBuero, jetztDran } = await import("../js/offen.js");
   const { navZiel, ansichtErlaubt } = await import("../js/modus.js");
+  t.mock.timers.enable({ apis: ["Date"], now: new Date(`${H}T12:00:00`) }); // 19.10.2026: Bildschirme rechnen mit der echten Uhr – hier fest Sa 17.10. mittags
   const s = beispielLaden(H); const w = st.leereWurzel(); w.betriebe.push(s); w.aktiv = s.id;
   const b = bueroView(s, w); assert.ok(b.includes('data-wert="aktionen"')); assert.ok(b.includes("Hähnchenspieß heute verbrauchen"), "Sa 17.10., So Ruhetag (Prüfgremium 17.10.2026)");
   const eigen = laden(); assert.ok(bueroView(eigen, { betriebe: [eigen] }).includes('data-wert="aktionen"'), "für alle sichtbar");

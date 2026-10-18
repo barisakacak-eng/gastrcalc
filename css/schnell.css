@@ -21,6 +21,11 @@
 /* 1 Sprache */
 .s2sprache { display: flex; flex-direction: column; gap: 16px; }
 .s2sprachen .kachel.sprachkachel { min-height: 52px; }
+/* Willkommen (19.10.2026): Logo-Platzhalter + ein Sprachfeld */
+.s2willkommen { align-items: center; padding-top: 24px; gap: 12px; }
+.s2willkommen .s2logo { height: 44px; width: auto; margin-bottom: 20px; }
+.s2willkommen .s2feldtitel { align-self: stretch; font-weight: 700; color: var(--tinte-weich); }
+.s2sprachwahl { align-self: stretch; min-height: 56px; font-size: 1.1rem; font-weight: 700; background: var(--weiss); border-radius: var(--radius); }
 
 /* 2 Laden: Name oben, Arten als 3er-Raster mit Foto */
 .s2name { font-size: 1.2rem; font-weight: 700; min-height: 56px; }

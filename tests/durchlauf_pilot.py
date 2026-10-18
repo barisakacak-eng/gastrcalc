@@ -22,11 +22,11 @@ async def main():
             pg = await ctx.new_page()
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
-            await pg.goto(f"http://127.0.0.1:{PORT}/index.html"); await pg.wait_for_selector(".kachel")
+            await pg.goto(f"http://127.0.0.1:{PORT}/index.html"); await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
             n = 0
             async def bild(name, voll=True):
                 nonlocal n; n += 1; await pg.screenshot(path=str(OUT / f"{n:02d}_{name}.png"), full_page=voll)
-            await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
+            await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
             await pg.fill('[data-f="betrieb.name"]', "Pilotladen"); await pg.click('[data-a="laden-art"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="speisekarte"]', state="attached"); await bild("karte-foto")
             t0 = time.time()
