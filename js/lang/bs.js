@@ -1360,7 +1360,7 @@ export default {
     was: "Veličina stoji na ekranu i cjenovniku – obavezno za pića. Točeno: roba po čaši = cijena po litru × porcija, s gubitkom. Skladište i narudžbe računaju u litrima.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Nova godina", dreikoenige: "Bogojavljenje", karfreitag: "Veliki petak", ostermontag: "Uskršnji ponedjeljak", maifeiertag: "1. maj", himmelfahrt: "Uzašašće", pfingstmontag: "Duhovski ponedjeljak", fronleichnam: "Tijelovo", einheit: "Dan njemačkog jedinstva", allerheiligen: "Svi sveti", weihnachten1: "Božić (1. dan)", weihnachten2: "Božić (2. dan)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Nova godina", dreikoenige: "Bogojavljenje", karfreitag: "Veliki petak", ostermontag: "Uskršnji ponedjeljak", maifeiertag: "1. maj", himmelfahrt: "Uzašašće", pfingstmontag: "Duhovski ponedjeljak", fronleichnam: "Tijelovo", einheit: "Dan njemačkog jedinstva", allerheiligen: "Svi sveti", weihnachten1: "Božić (1. dan)", weihnachten2: "Božić (2. dan)", frauentag: "Međunarodni dan žena", weltkindertag: "Svjetski dan djeteta", reformationstag: "Dan reformacije", bussbettag: "Dan pokajanja i molitve" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Praznici", land: "Savezna pokrajina", nurBund: "Samo praznici u cijeloj zemlji", ungeprueft: "Za ovu pokrajinu aplikacija zna samo praznike u cijeloj zemlji.", ladenZu: "Lokal je zatvoren praznicima", liefern: "Praznicima nijedan dobavljač ne isporučuje. Narudžba ide na sljedeći dan isporuke.", naechster: (n, d) => `Sljedeći praznik: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Dobavljači", einstiegUnter: "Dani isporuke, rok narudžbe, način naručivanja",
@@ -1400,5 +1400,29 @@ export default {
     knappVor: (tag) => `možda neće trajati do isporuke ${tag}`, ausweich: (name, tag) => `${name} dolazi ${tag}`, ausweichOhne: (name) => `uzeti kod ${name}?`,
     termin: (tag, bis, naechste) => `Isporuka ${tag}, naruči do ${bis}. Traje do isporuke ${naechste}, plus rezerva.`, terminAbholung: (tag, naechste) => `Preuzimanje ${tag}. Traje do ${naechste}, plus rezerva.`,
     mindestMenge: (liste) => `Prijedlog: ${liste}.`, perWhatsapp: "Naruči preko WhatsAppa", bestellenZyklus: (p) => `S danima isporuke: traje do sljedeće isporuke, plus ${p} dana rezerve.`,
+  },
+  eigentuemer: {
+    titel: "Vlasnik: sve radnje", ladenNr: (n) => `Radnja ${n}`, laedenAnzahl: (n) => n === 1 ? "1 radnja" : `${n} radnje`, beispiel: "Primjer", fehlt: "nedostaje",
+    zeit: { woche: "7 dana", monat: "Mjesec", frei: "Slobodno", von: "Od", bis: "Do" },
+    kennzahl: { umsatz: "Promet", ware: "Trošak robe", muell: "Bačeno", schwund: "Sumnja na manjak", personal: "Obroci osoblja", pflichten: "Otvorene obaveze", bisNull: "Do nule", lager: "Vrijednost zalihe", bestellen: "Naručiti", aktionen: "Akcije" },
+    umsatzTage: (tage, soll) => `uneseno ${tage} od ${soll} dana`, quelle: { notiz: "bilješka", kasse: "kasa", zbon: "Z-izvještaj", hand: "ručno" },
+    wareQuelle: { belege: "iz računa", karte: "iz jelovnika", eigen: "vlastita vrijednost", richtwert: "orijentir branše ≈" }, wareUnplausibel: "još premalo prometa",
+    portionen: (n) => `≈ ${n} porcija`, schwundKeine: "treba 2 popisa", schwundNichts: "nema sumnje", schwundZeitraum: (von, bis) => `popisi ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 pouka dospijeva" : `${n} pouke dospijevaju`, kuehlAbw: (n) => n === 1 ? "1 odstupanje hlađenja otvoreno" : `${n} odstupanja hlađenja otvorena`, kuehl: (n) => n === 1 ? "1 dan hlađenja nedostaje" : `${n} dana hlađenja nedostaje`, putz: (n) => n === 1 ? "1 dan čišćenja nedostaje" : `${n} dana čišćenja nedostaje`, keine: "ništa otvoreno", keineDaten: "nije podešeno" },
+    keineInventur: "nema popisa", ohnePreis: (n) => n === 1 ? "1 roba bez cijene" : `${n} roba bez cijene`,
+    bestellen: { jetzt: (n) => n === 1 ? "naruči 1 robu danas" : `naruči ${n} roba danas`, morgen: (n) => n === 1 ? "naruči 1 robu sutra" : `naruči ${n} roba sutra`, keine: "ništa za naručiti" },
+    aktionenLaufend: (n) => n === 1 ? "1 akcija traje" : `${n} akcije traju`, aktionenKeine: "nema akcije",
+    unvollstaendig: (liste) => `Nepotpuno: ${liste}`, vollstaendig: "potpuno",
+    fehltWas: { umsatz: "nema prometa", umsatzTage: "nedostaju dani prometa", richtpreise: "orijentacione cijene", richtwert: "orijentir umjesto jelovnika", muellOhneWert: "otpad bez cijene", verkaeufe: "nema prodaje", pflichten: "hlađenje/čišćenje nije podešeno", kosten: "troškovi otvoreni", inventur: "nema popisa" },
+    rang: { platz: (r, n) => `Mjesto ${r} od ${n}`, abstand: (x) => `${x} iza najboljeg`, fehlt: "nema podataka", andereBasis: "druga baza podataka – nije uporedivo", zuWenig: "poređenje od dvije radnje" },
+    punkte: (n) => n === "1" ? "1 poen" : `${n} poena`,
+    trend: { hoch: (p) => `+${p} % prema prethodnom periodu`, runter: (p) => `−${p} % prema prethodnom periodu`, gleich: "kao u prethodnom periodu", hochNeu: "novo, prije ništa", keine: "nema prethodnog perioda" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "pouka dospijeva" : "pouke dospijevaju"}`, kuehlAbw: (l, n) => `${l}: ${n} ${n === 1 ? "odstupanje hlađenja otvoreno" : "odstupanja hlađenja otvorena"}`, kuehl: (l, n) => `${l}: ${n} ${n === 1 ? "obilazak hlađenja nedostaje" : "obilaska hlađenja nedostaje"}`, putz: (l, n) => `${l}: ${n} ${n === 1 ? "dan čišćenja nedostaje" : "dana čišćenja nedostaje"}`,
+      wareUeber: (l, p, b) => `${l}: trošak robe ${p} poena iznad ${b}`, minus: (l, e) => `${l}: ${e} do nule`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "dan" : "dana"} bez unosa prometa`, bestellen: (l, n) => `${l}: naruči ${n} ${n === 1 ? "robu" : "roba"} danas`,
+      inventurFehlt: (l) => `${l}: još nema popisa`, umsatzKeiner: (l) => `${l}: nema prometa u periodu`, gut: "Sve radnje: ništa otvoreno" },
+    vergleich: "Poređenje", vergleichAb: "Poređenje od dvije radnje", keineLaeden: "Nema radnje s podacima", bericht: "Izvještaj za vlasnika", datei: "Vlasnik", drucken: "Štampaj izvještaj", csv: "CSV", geteilt: "Izvještaj podijeljen",
+    dok: { zahlen: "Pokazatelji po radnji", hinweis: "≈ = procijenjeno (orijentacione cijene, orijentir ili procjena). „nedostaje“ = nema podataka u periodu. Samo radnje na ovom telefonu, brojevi iz unosa u aplikaciji.",
+      kopf: ["Radnja", "Promet", "Trošak robe", "Bačeno", "Sumnja na manjak", "Otvorene obaveze", "Do nule", "Vrijednost zalihe", "Naručiti"], laden: "Radnja", vergleich: "Poređenje", vergleichInfo: "Rang samo između radnji s istom bazom podataka.",
+      trend: "Trend prema prethodnom periodu", daten: "Baza podataka", fehlt: "Nepotpuno", tage: "dana", quelle: "Izvor troška robe", fuss: "GastroCalc · Izvještaj za vlasnika. Brojevi iz unosa u aplikaciji – nije knjigovodstvo, nisu podaci kase." },
   },
 };

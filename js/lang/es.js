@@ -1352,7 +1352,7 @@ export default {
     was: "El tamaño sale en la pantalla y la lista de precios – obligatorio en bebidas. Servido: mercancía por vaso = precio por litro × ración, con merma. Almacén y pedidos cuentan en litros.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Año Nuevo", dreikoenige: "Epifanía (Reyes)", karfreitag: "Viernes Santo", ostermontag: "Lunes de Pascua", maifeiertag: "1 de mayo", himmelfahrt: "Ascensión", pfingstmontag: "Lunes de Pentecostés", fronleichnam: "Corpus Christi", einheit: "Día de la Unidad Alemana", allerheiligen: "Todos los Santos", weihnachten1: "Navidad (1.er día)", weihnachten2: "Navidad (2.º día)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Año Nuevo", dreikoenige: "Epifanía (Reyes)", karfreitag: "Viernes Santo", ostermontag: "Lunes de Pascua", maifeiertag: "1 de mayo", himmelfahrt: "Ascensión", pfingstmontag: "Lunes de Pentecostés", fronleichnam: "Corpus Christi", einheit: "Día de la Unidad Alemana", allerheiligen: "Todos los Santos", weihnachten1: "Navidad (1.er día)", weihnachten2: "Navidad (2.º día)", frauentag: "Día Internacional de la Mujer", weltkindertag: "Día Mundial de la Infancia", reformationstag: "Día de la Reforma", bussbettag: "Día de Penitencia y Oración" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Festivos", land: "Estado federado", nurBund: "Solo festivos nacionales", ungeprueft: "Para este estado la app solo conoce los festivos nacionales.", ladenZu: "El local cierra los festivos", liefern: "En festivos ningún proveedor entrega. El pedido pasa al siguiente día de entrega.", naechster: (n, d) => `Próximo festivo: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Proveedores", einstiegUnter: "Días de entrega, hora límite, cómo pedir",
@@ -1392,5 +1392,29 @@ export default {
     knappVor: (tag) => `puede no llegar a la entrega del ${tag}`, ausweich: (name, tag) => `${name} viene ${tag}`, ausweichOhne: (name) => `¿traer de ${name}?`,
     termin: (tag, bis, naechste) => `Entrega ${tag}, pedir antes de ${bis}. Alcanza hasta la entrega del ${naechste}, más reserva.`, terminAbholung: (tag, naechste) => `Recogida ${tag}. Alcanza hasta el ${naechste}, más reserva.`,
     mindestMenge: (liste) => `Sugerencia: ${liste}.`, perWhatsapp: "Pedir por WhatsApp", bestellenZyklus: (p) => `Con días de entrega: alcanza hasta la entrega siguiente, más ${p} ${p === 1 ? "día" : "días"} de reserva.`,
+  },
+  eigentuemer: {
+    titel: "Propietario: todos los locales", ladenNr: (n) => `Local ${n}`, laedenAnzahl: (n) => n === 1 ? "1 local" : `${n} locales`, beispiel: "Ejemplo", fehlt: "falta",
+    zeit: { woche: "7 días", monat: "Mes", frei: "Libre", von: "Desde", bis: "Hasta" },
+    kennzahl: { umsatz: "Ventas", ware: "Coste de mercancía", muell: "Tirado", schwund: "Sospecha de merma", personal: "Comida del personal", pflichten: "Obligaciones abiertas", bisNull: "Hasta cero", lager: "Valor del almacén", bestellen: "Pedir", aktionen: "Promociones" },
+    umsatzTage: (tage, soll) => `${tage} de ${soll} días registrados`, quelle: { notiz: "nota", kasse: "caja", zbon: "informe Z", hand: "a mano" },
+    wareQuelle: { belege: "de facturas", karte: "de la carta", eigen: "valor propio", richtwert: "valor orientativo del sector ≈" }, wareUnplausibel: "aún muy pocas ventas",
+    portionen: (n) => `≈ ${n} raciones`, schwundKeine: "necesita 2 inventarios", schwundNichts: "sin sospecha", schwundZeitraum: (von, bis) => `inventarios ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 formación de higiene pendiente" : `${n} formaciones de higiene pendientes`, kuehlAbw: (n) => n === 1 ? "1 desviación de frío abierta" : `${n} desviaciones de frío abiertas`, kuehl: (n) => n === 1 ? "falta 1 día de frío" : `faltan ${n} días de frío`, putz: (n) => n === 1 ? "falta 1 día de limpieza" : `faltan ${n} días de limpieza`, keine: "nada abierto", keineDaten: "sin configurar" },
+    keineInventur: "sin inventario", ohnePreis: (n) => n === 1 ? "1 artículo sin precio" : `${n} artículos sin precio`,
+    bestellen: { jetzt: (n) => n === 1 ? "pedir 1 artículo hoy" : `pedir ${n} artículos hoy`, morgen: (n) => n === 1 ? "pedir 1 artículo mañana" : `pedir ${n} artículos mañana`, keine: "nada que pedir" },
+    aktionenLaufend: (n) => n === 1 ? "1 promoción en curso" : `${n} promociones en curso`, aktionenKeine: "sin promoción",
+    unvollstaendig: (liste) => `Incompleto: ${liste}`, vollstaendig: "completo",
+    fehltWas: { umsatz: "sin ventas", umsatzTage: "faltan días de ventas", richtpreise: "precios orientativos", richtwert: "valor orientativo en vez de carta", muellOhneWert: "residuos sin precio", verkaeufe: "sin ventas por plato", pflichten: "frío/limpieza sin configurar", kosten: "costes abiertos", inventur: "sin inventario" },
+    rang: { platz: (r, n) => `Puesto ${r} de ${n}`, abstand: (x) => `${x} por detrás del mejor`, fehlt: "sin datos", andereBasis: "otra base de datos – no comparable", zuWenig: "comparación a partir de dos locales" },
+    punkte: (n) => n === "1" ? "1 punto" : `${n} puntos`,
+    trend: { hoch: (p) => `+${p} % frente al periodo anterior`, runter: (p) => `−${p} % frente al periodo anterior`, gleich: "igual que el periodo anterior", hochNeu: "nuevo, antes nada", keine: "sin periodo anterior" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "formación pendiente" : "formaciones pendientes"}`, kuehlAbw: (l, n) => `${l}: ${n} ${n === 1 ? "desviación de frío abierta" : "desviaciones de frío abiertas"}`, kuehl: (l, n) => `${l}: ${n === 1 ? "falta 1 ronda de frío" : `faltan ${n} rondas de frío`}`, putz: (l, n) => `${l}: ${n === 1 ? "falta 1 día de limpieza" : `faltan ${n} días de limpieza`}`,
+      wareUeber: (l, p, b) => `${l}: coste de mercancía ${p} puntos por encima de ${b}`, minus: (l, e) => `${l}: ${e} hasta cero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "día" : "días"} sin registro de ventas`, bestellen: (l, n) => `${l}: pedir ${n} ${n === 1 ? "artículo" : "artículos"} hoy`,
+      inventurFehlt: (l) => `${l}: aún sin inventario`, umsatzKeiner: (l) => `${l}: sin ventas en el periodo`, gut: "Todos los locales: nada abierto" },
+    vergleich: "Comparación", vergleichAb: "Comparación a partir de dos locales", keineLaeden: "Ningún local con datos", bericht: "Informe del propietario", datei: "Propietario", drucken: "Imprimir informe", csv: "CSV", geteilt: "Informe compartido",
+    dok: { zahlen: "Cifras por local", hinweis: "≈ = estimado (precios orientativos, valor orientativo o estimación). «falta» = sin datos en el periodo. Solo locales en este móvil, cifras de los registros de la app.",
+      kopf: ["Local", "Ventas", "Coste de mercancía", "Tirado", "Sospecha de merma", "Obligaciones abiertas", "Hasta cero", "Valor del almacén", "Pedir"], laden: "Local", vergleich: "Comparación", vergleichInfo: "Clasificación solo entre locales con la misma base de datos.",
+      trend: "Tendencia frente al periodo anterior", daten: "Base de datos", fehlt: "Incompleto", tage: "días", quelle: "Origen coste de mercancía", fuss: "GastroCalc · Informe del propietario. Cifras de los registros de la app – no es contabilidad ni datos de caja." },
   },
 };

@@ -1358,7 +1358,7 @@ export default {
     was: "Pojemność stoi na tablicy i w cenniku – obowiązkowe przy napojach. Nalewane: towar na szklankę = cena za litr × porcja, ze stratą. Magazyn i zamówienia liczą w litrach.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Nowy Rok", dreikoenige: "Trzech Króli", karfreitag: "Wielki Piątek", ostermontag: "Poniedziałek Wielkanocny", maifeiertag: "1 Maja", himmelfahrt: "Wniebowstąpienie", pfingstmontag: "Poniedziałek Zielonych Świątek", fronleichnam: "Boże Ciało", einheit: "Dzień Jedności Niemiec", allerheiligen: "Wszystkich Świętych", weihnachten1: "Boże Narodzenie (1. dzień)", weihnachten2: "Boże Narodzenie (2. dzień)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Nowy Rok", dreikoenige: "Trzech Króli", karfreitag: "Wielki Piątek", ostermontag: "Poniedziałek Wielkanocny", maifeiertag: "1 Maja", himmelfahrt: "Wniebowstąpienie", pfingstmontag: "Poniedziałek Zielonych Świątek", fronleichnam: "Boże Ciało", einheit: "Dzień Jedności Niemiec", allerheiligen: "Wszystkich Świętych", weihnachten1: "Boże Narodzenie (1. dzień)", weihnachten2: "Boże Narodzenie (2. dzień)", frauentag: "Międzynarodowy Dzień Kobiet", weltkindertag: "Światowy Dzień Dziecka", reformationstag: "Święto Reformacji", bussbettag: "Dzień Pokuty i Modlitwy" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Święta", land: "Kraj związkowy", nurBund: "Tylko święta ogólnokrajowe", ungeprueft: "Dla tego kraju związkowego aplikacja zna tylko święta ogólnokrajowe.", ladenZu: "Lokal jest zamknięty w święta", liefern: "W święta żaden dostawca nie dostarcza. Zamówienie przechodzi na następny dzień dostawy.", naechster: (n, d) => `Najbliższe święto: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Dostawcy", einstiegUnter: "Dni dostaw, termin zamówienia, sposób zamawiania",
@@ -1398,5 +1398,29 @@ export default {
     knappVor: (tag) => `może nie wystarczyć do dostawy ${tag}`, ausweich: (name, tag) => `${name} przyjeżdża ${tag}`, ausweichOhne: (name) => `wziąć u ${name}?`,
     termin: (tag, bis, naechste) => `Dostawa ${tag}, zamów do ${bis}. Wystarczy do dostawy ${naechste}, plus zapas.`, terminAbholung: (tag, naechste) => `Odbiór ${tag}. Wystarczy do ${naechste}, plus zapas.`,
     mindestMenge: (liste) => `Propozycja: ${liste}.`, perWhatsapp: "Zamów przez WhatsApp", bestellenZyklus: (p) => `Z dniami dostaw: wystarcza do następnej dostawy, plus ${p} dni zapasu.`,
+  },
+  eigentuemer: {
+    titel: "Właściciel: wszystkie lokale", ladenNr: (n) => `Lokal ${n}`, laedenAnzahl: (n) => n === 1 ? "1 lokal" : `${n} lokale`, beispiel: "Przykład", fehlt: "brak",
+    zeit: { woche: "7 dni", monat: "Miesiąc", frei: "Dowolny", von: "Od", bis: "Do" },
+    kennzahl: { umsatz: "Obrót", ware: "Koszt towaru", muell: "Wyrzucone", schwund: "Podejrzenie ubytku", personal: "Posiłki personelu", pflichten: "Otwarte obowiązki", bisNull: "Do zera", lager: "Wartość magazynu", bestellen: "Zamówić", aktionen: "Promocje" },
+    umsatzTage: (tage, soll) => `wpisane ${tage} z ${soll} dni`, quelle: { notiz: "notatka", kasse: "kasa", zbon: "raport Z", hand: "ręcznie" },
+    wareQuelle: { belege: "z faktur", karte: "z karty", eigen: "własna wartość", richtwert: "wartość orientacyjna branży ≈" }, wareUnplausibel: "jeszcze za mały obrót",
+    portionen: (n) => `≈ ${n} porcji`, schwundKeine: "potrzebne 2 inwentaryzacje", schwundNichts: "bez podejrzeń", schwundZeitraum: (von, bis) => `inwentaryzacje ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 szkolenie higieniczne do zrobienia" : `${n} szkolenia higieniczne do zrobienia`, kuehlAbw: (n) => n === 1 ? "1 odchylenie chłodzenia otwarte" : `${n} odchylenia chłodzenia otwarte`, kuehl: (n) => n === 1 ? "brak 1 dnia chłodzenia" : `brak ${n} dni chłodzenia`, putz: (n) => n === 1 ? "brak 1 dnia sprzątania" : `brak ${n} dni sprzątania`, keine: "nic otwartego", keineDaten: "nie skonfigurowano" },
+    keineInventur: "brak inwentaryzacji", ohnePreis: (n) => n === 1 ? "1 towar bez ceny" : `${n} towarów bez ceny`,
+    bestellen: { jetzt: (n) => n === 1 ? "zamów 1 towar dziś" : `zamów ${n} towarów dziś`, morgen: (n) => n === 1 ? "zamów 1 towar jutro" : `zamów ${n} towarów jutro`, keine: "nic do zamówienia" },
+    aktionenLaufend: (n) => n === 1 ? "1 promocja trwa" : `${n} promocji trwa`, aktionenKeine: "brak promocji",
+    unvollstaendig: (liste) => `Niekompletne: ${liste}`, vollstaendig: "kompletne",
+    fehltWas: { umsatz: "brak obrotu", umsatzTage: "brakuje dni obrotu", richtpreise: "ceny orientacyjne", richtwert: "wartość orientacyjna zamiast karty", muellOhneWert: "odpady bez ceny", verkaeufe: "brak sprzedaży", pflichten: "chłodzenie/sprzątanie nie skonfigurowane", kosten: "koszty otwarte", inventur: "brak inwentaryzacji" },
+    rang: { platz: (r, n) => `Miejsce ${r} z ${n}`, abstand: (x) => `${x} za najlepszym`, fehlt: "brak danych", andereBasis: "inna baza danych – nieporównywalne", zuWenig: "porównanie od dwóch lokali" },
+    punkte: (n) => n === "1" ? "1 punkt" : `${n} pkt`,
+    trend: { hoch: (p) => `+${p} % do poprzedniego okresu`, runter: (p) => `−${p} % do poprzedniego okresu`, gleich: "jak w poprzednim okresie", hochNeu: "nowe, wcześniej nic", keine: "brak poprzedniego okresu" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "szkolenie do zrobienia" : "szkolenia do zrobienia"}`, kuehlAbw: (l, n) => `${l}: ${n} ${n === 1 ? "odchylenie chłodzenia otwarte" : "odchylenia chłodzenia otwarte"}`, kuehl: (l, n) => `${l}: brak ${n} ${n === 1 ? "obchodu chłodzenia" : "obchodów chłodzenia"}`, putz: (l, n) => `${l}: brak ${n} ${n === 1 ? "dnia sprzątania" : "dni sprzątania"}`,
+      wareUeber: (l, p, b) => `${l}: koszt towaru ${p} pkt powyżej ${b}`, minus: (l, e) => `${l}: ${e} do zera`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "dzień" : "dni"} bez wpisu obrotu`, bestellen: (l, n) => `${l}: zamów ${n} ${n === 1 ? "towar" : "towarów"} dziś`,
+      inventurFehlt: (l) => `${l}: jeszcze brak inwentaryzacji`, umsatzKeiner: (l) => `${l}: brak obrotu w okresie`, gut: "Wszystkie lokale: nic otwartego" },
+    vergleich: "Porównanie", vergleichAb: "Porównanie od dwóch lokali", keineLaeden: "Brak lokalu z danymi", bericht: "Raport właściciela", datei: "Wlasciciel", drucken: "Drukuj raport", csv: "CSV", geteilt: "Raport udostępniony",
+    dok: { zahlen: "Wskaźniki według lokalu", hinweis: "≈ = szacunek (ceny orientacyjne, wartość orientacyjna lub szacunek). „brak” = brak danych w okresie. Tylko lokale na tym telefonie, liczby z wpisów w aplikacji.",
+      kopf: ["Lokal", "Obrót", "Koszt towaru", "Wyrzucone", "Podejrzenie ubytku", "Otwarte obowiązki", "Do zera", "Wartość magazynu", "Zamówić"], laden: "Lokal", vergleich: "Porównanie", vergleichInfo: "Ranking tylko między lokalami o tej samej bazie danych.",
+      trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCalc · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
   },
 };

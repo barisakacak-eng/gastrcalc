@@ -1351,7 +1351,7 @@ export default {
     was: "اندازه روی تابلو و فهرست قیمت می‌آید – برای نوشیدنی الزامی است. ریختنی: جنس هر لیوان = قیمت هر لیتر × سهم، با هدررفت. انبار و سفارش به لیتر حساب می‌شوند.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "سال نو میلادی", dreikoenige: "عید ظهور", karfreitag: "جمعه نیک", ostermontag: "دوشنبه عید پاک", maifeiertag: "اول ماه مه", himmelfahrt: "عید صعود", pfingstmontag: "دوشنبه پنطیکاست", fronleichnam: "عید جسد مسیح", einheit: "روز وحدت آلمان", allerheiligen: "روز همه مقدسین", weihnachten1: "کریسمس (روز اول)", weihnachten2: "کریسمس (روز دوم)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "سال نو میلادی", dreikoenige: "عید ظهور", karfreitag: "جمعه نیک", ostermontag: "دوشنبه عید پاک", maifeiertag: "اول ماه مه", himmelfahrt: "عید صعود", pfingstmontag: "دوشنبه پنطیکاست", fronleichnam: "عید جسد مسیح", einheit: "روز وحدت آلمان", allerheiligen: "روز همه مقدسین", weihnachten1: "کریسمس (روز اول)", weihnachten2: "کریسمس (روز دوم)", frauentag: "روز جهانی زن", weltkindertag: "روز جهانی کودک", reformationstag: "روز اصلاحات", bussbettag: "روز توبه و دعا" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "تعطیلات رسمی", land: "ایالت", nurBund: "فقط تعطیلات سراسری", ungeprueft: "برای این ایالت برنامه فقط تعطیلات سراسری را می‌شناسد.", ladenZu: "مغازه در تعطیلات رسمی بسته است", liefern: "در تعطیلات رسمی هیچ تأمین‌کننده‌ای تحویل نمی‌دهد. سفارش به روز تحویل بعدی می‌رود.", naechster: (n, d) => `تعطیلی بعدی: ${n}، ${d}` }, // Feiertage (18.10.2026)
     einstieg: "تأمین‌کنندگان", einstiegUnter: "روزهای تحویل، مهلت سفارش، روش سفارش",
@@ -1391,5 +1391,29 @@ export default {
     knappVor: (tag) => `شاید تا تحویل ${tag} کافی نباشد`, ausweich: (name, tag) => `${name} ${tag} می‌آید`, ausweichOhne: (name) => `از ${name} گرفته شود؟`,
     termin: (tag, bis, naechste) => `تحویل ${tag}، سفارش تا ${bis}. تا تحویل ${naechste} کافی است، به‌اضافهٔ ذخیره.`, terminAbholung: (tag, naechste) => `برداشت ${tag}. تا ${naechste} کافی است، به‌اضافهٔ ذخیره.`,
     mindestMenge: (liste) => `پیشنهاد: ${liste}.`, perWhatsapp: "سفارش با واتس‌اپ", bestellenZyklus: (p) => `با روزهای تحویل: تا تحویل بعدی کافی است، به‌اضافهٔ ${p} روز ذخیره.`,
+  },
+  eigentuemer: {
+    titel: "مالک: همهٔ مغازه‌ها", ladenNr: (n) => `مغازه ${n}`, laedenAnzahl: (n) => n === 1 ? "۱ مغازه" : `${n} مغازه`, beispiel: "نمونه", fehlt: "ندارد",
+    zeit: { woche: "۷ روز", monat: "ماه", frei: "دلخواه", von: "از", bis: "تا" },
+    kennzahl: { umsatz: "فروش", ware: "هزینهٔ مواد", muell: "دورریخته", schwund: "شک به کسری", personal: "غذای کارکنان", pflichten: "وظایف باز", bisNull: "تا صفر", lager: "ارزش انبار", bestellen: "سفارش", aktionen: "پیشنهادها" },
+    umsatzTage: (tage, soll) => `${tage} از ${soll} روز ثبت شده`, quelle: { notiz: "یادداشت", kasse: "صندوق", zbon: "گزارش Z", hand: "دستی" },
+    wareQuelle: { belege: "از فاکتورها", karte: "از منو", eigen: "مقدار خودت", richtwert: "مقدار راهنمای صنف ≈" }, wareUnplausibel: "هنوز فروش خیلی کم است",
+    portionen: (n) => `≈ ${n} پرس`, schwundKeine: "به ۲ انبارگردانی نیاز دارد", schwundNichts: "شکی نیست", schwundZeitraum: (von, bis) => `انبارگردانی ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => `${n} آموزش بهداشت موعدش رسیده`, kuehlAbw: (n) => `${n} انحراف سرمایش باز`, kuehl: (n) => `${n} روز سرمایش ثبت نشده`, putz: (n) => `${n} روز نظافت ثبت نشده`, keine: "چیزی باز نیست", keineDaten: "تنظیم نشده" },
+    keineInventur: "انبارگردانی ندارد", ohnePreis: (n) => `${n} کالا بدون قیمت`,
+    bestellen: { jetzt: (n) => `امروز ${n} کالا سفارش بده`, morgen: (n) => `فردا ${n} کالا سفارش بده`, keine: "چیزی برای سفارش نیست" },
+    aktionenLaufend: (n) => `${n} پیشنهاد در جریان`, aktionenKeine: "پیشنهادی نیست",
+    unvollstaendig: (liste) => `ناقص: ${liste}`, vollstaendig: "کامل",
+    fehltWas: { umsatz: "فروش ندارد", umsatzTage: "روزهای فروش کم است", richtpreise: "قیمت‌های راهنما", richtwert: "مقدار راهنما به جای منو", muellOhneWert: "دورریز بدون قیمت", verkaeufe: "فروش به تفکیک غذا ندارد", pflichten: "سرمایش/نظافت تنظیم نشده", kosten: "هزینه‌ها باز", inventur: "انبارگردانی ندارد" },
+    rang: { platz: (r, n) => `رتبهٔ ${r} از ${n}`, abstand: (x) => `${x} عقب‌تر از بهترین`, fehlt: "داده ندارد", andereBasis: "پایهٔ دادهٔ متفاوت – قابل مقایسه نیست", zuWenig: "مقایسه از دو مغازه" },
+    punkte: (n) => `${n} واحد`,
+    trend: { hoch: (p) => `+${p} ٪ نسبت به دورهٔ قبل`, runter: (p) => `−${p} ٪ نسبت به دورهٔ قبل`, gleich: "مثل دورهٔ قبل", hochNeu: "جدید، قبلاً چیزی نبود", keine: "دورهٔ قبل ندارد" },
+    satz: { belehrung: (l, n) => `${l}: ${n} آموزش بهداشت موعدش رسیده`, kuehlAbw: (l, n) => `${l}: ${n} انحراف سرمایش باز`, kuehl: (l, n) => `${l}: ${n} دور سرمایش ثبت نشده`, putz: (l, n) => `${l}: ${n} روز نظافت ثبت نشده`,
+      wareUeber: (l, p, b) => `${l}: هزینهٔ مواد ${p} واحد بالاتر از ${b}`, minus: (l, e) => `${l}: ${e} تا صفر`, umsatzFehlt: (l, n) => `${l}: ${n} روز بدون ثبت فروش`, bestellen: (l, n) => `${l}: امروز ${n} کالا سفارش بده`,
+      inventurFehlt: (l) => `${l}: هنوز انبارگردانی ندارد`, umsatzKeiner: (l) => `${l}: در این دوره فروش ندارد`, gut: "همهٔ مغازه‌ها: چیزی باز نیست" },
+    vergleich: "مقایسه", vergleichAb: "مقایسه از دو مغازه", keineLaeden: "مغازه‌ای با داده نیست", bericht: "گزارش مالک", datei: "Malek", drucken: "چاپ گزارش", csv: "CSV", geteilt: "گزارش به اشتراک گذاشته شد",
+    dok: { zahlen: "شاخص‌ها به تفکیک مغازه", hinweis: "≈ = تخمینی (قیمت راهنما، مقدار راهنما یا تخمین). «ندارد» = داده‌ای در دوره نیست. فقط مغازه‌های روی این گوشی، اعداد از ثبت‌های برنامه.",
+      kopf: ["مغازه", "فروش", "هزینهٔ مواد", "دورریخته", "شک به کسری", "وظایف باز", "تا صفر", "ارزش انبار", "سفارش"], laden: "مغازه", vergleich: "مقایسه", vergleichInfo: "رتبه فقط بین مغازه‌هایی با پایهٔ دادهٔ یکسان.",
+      trend: "روند نسبت به دورهٔ قبل", daten: "پایهٔ داده", fehlt: "ناقص", tage: "روز", quelle: "منبع هزینهٔ مواد", fuss: "GastroCalc · گزارش مالک. اعداد از ثبت‌های برنامه – نه حسابداری، نه دادهٔ صندوق." },
   },
 };

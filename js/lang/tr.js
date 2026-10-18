@@ -1340,7 +1340,7 @@ export default {
     was: "Boyut panoda ve fiyat listesinde yazar – içeceklerde zorunlu. Açık servis: bardak başı mal = litre fiyatı × servis, dökme kaybıyla. Stok ve sipariş litre ile hesaplanır.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Yılbaşı", dreikoenige: "Üç Kral Yortusu", karfreitag: "Kutsal Cuma", ostermontag: "Paskalya Pazartesi", maifeiertag: "1 Mayıs", himmelfahrt: "İsa'nın Göğe Yükselişi", pfingstmontag: "Pentekost Pazartesi", fronleichnam: "Kutsal Beden Bayramı (Fronleichnam)", einheit: "Alman Birliği Günü", allerheiligen: "Azizler Günü", weihnachten1: "Noel 1. gün", weihnachten2: "Noel 2. gün" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Yılbaşı", dreikoenige: "Üç Kral Yortusu", karfreitag: "Kutsal Cuma", ostermontag: "Paskalya Pazartesi", maifeiertag: "1 Mayıs", himmelfahrt: "İsa'nın Göğe Yükselişi", pfingstmontag: "Pentekost Pazartesi", fronleichnam: "Kutsal Beden Bayramı (Fronleichnam)", einheit: "Alman Birliği Günü", allerheiligen: "Azizler Günü", weihnachten1: "Noel 1. gün", weihnachten2: "Noel 2. gün", frauentag: "Dünya Kadınlar Günü", weltkindertag: "Dünya Çocuk Günü", reformationstag: "Reform Günü", bussbettag: "Tövbe ve Dua Günü" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Resmî tatiller", land: "Eyalet", nurBund: "Yalnızca ülke genelindeki tatiller", ungeprueft: "Bu eyalet için uygulama yalnızca ülke genelindeki tatilleri biliyor.", ladenZu: "Dükkân resmî tatillerde kapalı", liefern: "Resmî tatillerde hiçbir tedarikçi teslimat yapmaz. Sipariş bir sonraki teslimat gününe kayar.", naechster: (n, d) => `Sıradaki resmî tatil: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Tedarikçiler", einstiegUnter: "Teslim günleri, sipariş son saati, sipariş yolu",
@@ -1380,5 +1380,29 @@ export default {
     knappVor: (tag) => `${tag} teslimine kadar kesin yetmez`, ausweich: (name, tag) => `${name} ${tag} geliyor`, ausweichOhne: (name) => `${name}’dan alınsın mı?`,
     termin: (tag, bis, naechste) => `Teslim ${tag}, sipariş en geç ${bis}. ${naechste} teslimine kadar yeter, artı yedek.`, terminAbholung: (tag, naechste) => `Alım ${tag}. ${naechste} gününe kadar yeter, artı yedek.`,
     mindestMenge: (liste) => `Öneri: ${liste}.`, perWhatsapp: "WhatsApp ile sipariş ver", bestellenZyklus: (p) => `Teslim günleriyle: sonraki teslime kadar yeter, artı ${p} gün yedek.`,
+  },
+  eigentuemer: {
+    titel: "Sahip: tüm dükkânlar", ladenNr: (n) => `Dükkân ${n}`, laedenAnzahl: (n) => n === 1 ? "1 dükkân" : `${n} dükkân`, beispiel: "Örnek", fehlt: "eksik",
+    zeit: { woche: "7 gün", monat: "Ay", frei: "Serbest", von: "Başlangıç", bis: "Bitiş" },
+    kennzahl: { umsatz: "Ciro", ware: "Mal maliyeti", muell: "Atılan", schwund: "Fire şüphesi", personal: "Personel yemeği", pflichten: "Açık görevler", bisNull: "Sıfıra kadar", lager: "Depo değeri", bestellen: "Sipariş", aktionen: "Kampanyalar" },
+    umsatzTage: (tage, soll) => `${soll} günden ${tage} gün girildi`, quelle: { notiz: "not", kasse: "kasa", zbon: "Z raporu", hand: "elle" },
+    wareQuelle: { belege: "fişlerden", karte: "menüden", eigen: "kendi değerin", richtwert: "sektör kılavuz değeri ≈" }, wareUnplausibel: "henüz çok az ciro",
+    portionen: (n) => `≈ ${n} porsiyon`, schwundKeine: "2 sayım gerekir", schwundNichts: "şüphe yok", schwundZeitraum: (von, bis) => `sayımlar ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 hijyen eğitimi vadesi geldi" : `${n} hijyen eğitimi vadesi geldi`, kuehlAbw: (n) => n === 1 ? "1 soğutma sapması açık" : `${n} soğutma sapması açık`, kuehl: (n) => n === 1 ? "1 soğutma günü eksik" : `${n} soğutma günü eksik`, putz: (n) => n === 1 ? "1 temizlik günü eksik" : `${n} temizlik günü eksik`, keine: "açık bir şey yok", keineDaten: "kurulmadı" },
+    keineInventur: "sayım yok", ohnePreis: (n) => n === 1 ? "1 ürün fiyatsız" : `${n} ürün fiyatsız`,
+    bestellen: { jetzt: (n) => n === 1 ? "bugün 1 ürün sipariş et" : `bugün ${n} ürün sipariş et`, morgen: (n) => n === 1 ? "yarın 1 ürün sipariş et" : `yarın ${n} ürün sipariş et`, keine: "sipariş gerekmiyor" },
+    aktionenLaufend: (n) => n === 1 ? "1 kampanya sürüyor" : `${n} kampanya sürüyor`, aktionenKeine: "kampanya yok",
+    unvollstaendig: (liste) => `Eksik: ${liste}`, vollstaendig: "tam",
+    fehltWas: { umsatz: "ciro yok", umsatzTage: "ciro günleri eksik", richtpreise: "kılavuz fiyatlar", richtwert: "menü yerine kılavuz değer", muellOhneWert: "fiyatsız atık", verkaeufe: "satış yok", pflichten: "soğutma/temizlik kurulmadı", kosten: "giderler açık", inventur: "sayım yok" },
+    rang: { platz: (r, n) => `${n} içinde ${r}. sıra`, abstand: (x) => `en iyinin ${x} gerisinde`, fehlt: "veri yok", andereBasis: "farklı veri tabanı – karşılaştırılamaz", zuWenig: "karşılaştırma için iki dükkân gerekir" },
+    punkte: (n) => `${n} puan`,
+    trend: { hoch: (p) => `önceki döneme göre +%${p}`, runter: (p) => `önceki döneme göre −%${p}`, gleich: "önceki dönemle aynı", hochNeu: "yeni, önce hiçbir şey yoktu", keine: "önceki dönem yok" },
+    satz: { belehrung: (l, n) => `${l}: ${n} hijyen eğitimi vadesi geldi`, kuehlAbw: (l, n) => `${l}: ${n} soğutma sapması açık`, kuehl: (l, n) => `${l}: ${n} soğutma turu eksik`, putz: (l, n) => `${l}: ${n} temizlik günü eksik`,
+      wareUeber: (l, p, b) => `${l}: mal maliyeti ${b} dükkânından ${p} puan yüksek`, minus: (l, e) => `${l}: sıfıra ${e}`, umsatzFehlt: (l, n) => `${l}: ${n} gün ciro girilmedi`, bestellen: (l, n) => `${l}: bugün ${n} ürün sipariş et`,
+      inventurFehlt: (l) => `${l}: henüz sayım yok`, umsatzKeiner: (l) => `${l}: bu dönemde ciro yok`, gut: "Tüm dükkânlar: açık bir şey yok" },
+    vergleich: "Karşılaştırma", vergleichAb: "Karşılaştırma için iki dükkân gerekir", keineLaeden: "Verisi olan dükkân yok", bericht: "Sahip raporu", datei: "Sahip", drucken: "Raporu yazdır", csv: "CSV", geteilt: "Rapor paylaşıldı",
+    dok: { zahlen: "Dükkân başına rakamlar", hinweis: "≈ = tahmini (kılavuz fiyat, kılavuz değer veya tahmin). „eksik“ = dönemde veri yok. Yalnızca bu telefondaki dükkânlar, rakamlar uygulamadaki kayıtlardan.",
+      kopf: ["Dükkân", "Ciro", "Mal maliyeti", "Atılan", "Fire şüphesi", "Açık görevler", "Sıfıra kadar", "Depo değeri", "Sipariş"], laden: "Dükkân", vergleich: "Karşılaştırma", vergleichInfo: "Sıralama yalnızca aynı veri tabanına sahip dükkânlar arasında.",
+      trend: "Önceki döneme göre eğilim", daten: "Veri tabanı", fehlt: "Eksik", tage: "gün", quelle: "Mal maliyeti kaynağı", fuss: "GastroCalc · Sahip raporu. Rakamlar uygulamadaki kayıtlardan – muhasebe değil, kasa verisi değil." },
   },
 };

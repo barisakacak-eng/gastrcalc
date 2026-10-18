@@ -1339,7 +1339,7 @@ export default {
     was: "The size is shown on the menu board and price list – required for drinks. Poured drinks: goods per glass = price per litre × serving, with pouring loss. Stock and orders count in litres.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "New Year's Day", dreikoenige: "Epiphany", karfreitag: "Good Friday", ostermontag: "Easter Monday", maifeiertag: "1 May", himmelfahrt: "Ascension Day", pfingstmontag: "Whit Monday", fronleichnam: "Corpus Christi", einheit: "German Unity Day", allerheiligen: "All Saints' Day", weihnachten1: "Christmas Day", weihnachten2: "Second Day of Christmas" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "New Year's Day", dreikoenige: "Epiphany", karfreitag: "Good Friday", ostermontag: "Easter Monday", maifeiertag: "1 May", himmelfahrt: "Ascension Day", pfingstmontag: "Whit Monday", fronleichnam: "Corpus Christi", einheit: "German Unity Day", allerheiligen: "All Saints' Day", weihnachten1: "Christmas Day", weihnachten2: "Second Day of Christmas", frauentag: "International Women's Day", weltkindertag: "World Children's Day", reformationstag: "Reformation Day", bussbettag: "Day of Repentance and Prayer" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Public holidays", land: "Federal state", nurBund: "Nationwide holidays only", ungeprueft: "For this state the app only knows the nationwide holidays.", ladenZu: "Shop is closed on public holidays", liefern: "No supplier delivers on public holidays. The order then moves to the next delivery day.", naechster: (n, d) => `Next public holiday: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Suppliers", einstiegUnter: "Delivery days, order deadline, how to order",
@@ -1379,5 +1379,29 @@ export default {
     knappVor: (tag) => `may not last until the delivery ${tag}`, ausweich: (name, tag) => `${name} comes ${tag}`, ausweichOhne: (name) => `get it from ${name}?`,
     termin: (tag, bis, naechste) => `Delivery ${tag}, order by ${bis}. Lasts until the delivery ${naechste}, plus buffer.`, terminAbholung: (tag, naechste) => `Pick-up ${tag}. Lasts until ${naechste}, plus buffer.`,
     mindestMenge: (liste) => `Suggestion: ${liste}.`, perWhatsapp: "Order via WhatsApp", bestellenZyklus: (p) => `With delivery days: lasts until the delivery after, plus ${p} ${p === 1 ? "day" : "days"} buffer.`,
+  },
+  eigentuemer: {
+    titel: "Owner: all shops", ladenNr: (n) => `Shop ${n}`, laedenAnzahl: (n) => n === 1 ? "1 shop" : `${n} shops`, beispiel: "Example", fehlt: "missing",
+    zeit: { woche: "7 days", monat: "Month", frei: "Custom", von: "From", bis: "To" },
+    kennzahl: { umsatz: "Sales", ware: "Food cost", muell: "Thrown away", schwund: "Suspected loss", personal: "Staff meals", pflichten: "Duties open", bisNull: "To zero", lager: "Stock value", bestellen: "Order", aktionen: "Specials" },
+    umsatzTage: (tage, soll) => `${tage} of ${soll} days entered`, quelle: { notiz: "note", kasse: "till", zbon: "Z report", hand: "by hand" },
+    wareQuelle: { belege: "from invoices", karte: "from the menu", eigen: "own value", richtwert: "industry guide value ≈" }, wareUnplausibel: "not enough sales yet",
+    portionen: (n) => `≈ ${n} portions`, schwundKeine: "needs 2 stock counts", schwundNichts: "nothing suspicious", schwundZeitraum: (von, bis) => `stock counts ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 hygiene briefing due" : `${n} hygiene briefings due`, kuehlAbw: (n) => n === 1 ? "1 cooling deviation open" : `${n} cooling deviations open`, kuehl: (n) => n === 1 ? "1 cooling day missing" : `${n} cooling days missing`, putz: (n) => n === 1 ? "1 cleaning day missing" : `${n} cleaning days missing`, keine: "nothing open", keineDaten: "not set up" },
+    keineInventur: "no stock count", ohnePreis: (n) => n === 1 ? "1 item without price" : `${n} items without price`,
+    bestellen: { jetzt: (n) => n === 1 ? "order 1 item today" : `order ${n} items today`, morgen: (n) => n === 1 ? "order 1 item tomorrow" : `order ${n} items tomorrow`, keine: "nothing to order" },
+    aktionenLaufend: (n) => n === 1 ? "1 special running" : `${n} specials running`, aktionenKeine: "no special",
+    unvollstaendig: (liste) => `Incomplete: ${liste}`, vollstaendig: "complete",
+    fehltWas: { umsatz: "no sales", umsatzTage: "sales days missing", richtpreise: "guide prices", richtwert: "guide value instead of menu", muellOhneWert: "waste without price", verkaeufe: "no sales per dish", pflichten: "cooling/cleaning not set up", kosten: "costs open", inventur: "no stock count" },
+    rang: { platz: (r, n) => `Rank ${r} of ${n}`, abstand: (x) => `${x} behind the best`, fehlt: "no data", andereBasis: "different data basis – not comparable", zuWenig: "comparison needs two shops" },
+    punkte: (n) => n === "1" ? "1 point" : `${n} points`,
+    trend: { hoch: (p) => `+${p} % vs. previous period`, runter: (p) => `−${p} % vs. previous period`, gleich: "same as previous period", hochNeu: "new, nothing before", keine: "no previous period" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "briefing" : "briefings"} due`, kuehlAbw: (l, n) => `${l}: ${n} cooling ${n === 1 ? "deviation" : "deviations"} open`, kuehl: (l, n) => `${l}: ${n} cooling ${n === 1 ? "round" : "rounds"} missing`, putz: (l, n) => `${l}: ${n} cleaning ${n === 1 ? "day" : "days"} missing`,
+      wareUeber: (l, p, b) => `${l}: food cost ${p} points above ${b}`, minus: (l, e) => `${l}: ${e} to zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "day" : "days"} without sales entry`, bestellen: (l, n) => `${l}: order ${n} ${n === 1 ? "item" : "items"} today`,
+      inventurFehlt: (l) => `${l}: no stock count yet`, umsatzKeiner: (l) => `${l}: no sales in this period`, gut: "All shops: nothing open" },
+    vergleich: "Comparison", vergleichAb: "Comparison needs two shops", keineLaeden: "No shop with data", bericht: "Owner report", datei: "Owner", drucken: "Print report", csv: "CSV", geteilt: "Report shared",
+    dok: { zahlen: "Figures per shop", hinweis: "≈ = estimated (guide prices, guide value or estimate). “missing” = no data in the period. Only shops on this phone, figures from the app's entries.",
+      kopf: ["Shop", "Sales", "Food cost", "Thrown away", "Suspected loss", "Duties open", "To zero", "Stock value", "Order"], laden: "Shop", vergleich: "Comparison", vergleichInfo: "Rank only between shops with the same data basis.",
+      trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCalc · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
   },
 };

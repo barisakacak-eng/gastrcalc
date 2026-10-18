@@ -1352,7 +1352,7 @@ export default {
     was: "La contenance figure sur l’écran et la liste de prix – obligatoire pour les boissons. Servi au verre : marchandise par verre = prix au litre × service, avec perte. Stock et commandes comptent en litres.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Jour de l'An", dreikoenige: "Épiphanie", karfreitag: "Vendredi saint", ostermontag: "Lundi de Pâques", maifeiertag: "1er mai", himmelfahrt: "Ascension", pfingstmontag: "Lundi de Pentecôte", fronleichnam: "Fête-Dieu", einheit: "Jour de l'Unité allemande", allerheiligen: "Toussaint", weihnachten1: "Noël", weihnachten2: "Lendemain de Noël" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Jour de l'An", dreikoenige: "Épiphanie", karfreitag: "Vendredi saint", ostermontag: "Lundi de Pâques", maifeiertag: "1er mai", himmelfahrt: "Ascension", pfingstmontag: "Lundi de Pentecôte", fronleichnam: "Fête-Dieu", einheit: "Jour de l'Unité allemande", allerheiligen: "Toussaint", weihnachten1: "Noël", weihnachten2: "Lendemain de Noël", frauentag: "Journée internationale des femmes", weltkindertag: "Journée mondiale de l'enfance", reformationstag: "Fête de la Réformation", bussbettag: "Jour de pénitence et de prière" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Jours fériés", land: "Land", nurBund: "Jours fériés nationaux uniquement", ungeprueft: "Pour ce Land, l'appli ne connaît que les jours fériés nationaux.", ladenZu: "Le commerce est fermé les jours fériés", liefern: "Les jours fériés, aucun fournisseur ne livre. La commande passe au jour de livraison suivant.", naechster: (n, d) => `Prochain jour férié : ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Fournisseurs", einstiegUnter: "Jours de livraison, heure limite, mode de commande",
@@ -1392,5 +1392,29 @@ export default {
     knappVor: (tag) => `risque de manquer avant la livraison ${tag}`, ausweich: (name, tag) => `${name} vient ${tag}`, ausweichOhne: (name) => `prendre chez ${name} ?`,
     termin: (tag, bis, naechste) => `Livraison ${tag}, commander avant ${bis}. Tient jusqu’à la livraison ${naechste}, plus la réserve.`, terminAbholung: (tag, naechste) => `Retrait ${tag}. Tient jusqu’au ${naechste}, plus la réserve.`,
     mindestMenge: (liste) => `Suggestion : ${liste}.`, perWhatsapp: "Commander par WhatsApp", bestellenZyklus: (p) => `Avec jours de livraison : tient jusqu’à la livraison suivante, plus ${p} j de réserve.`,
+  },
+  eigentuemer: {
+    titel: "Propriétaire : tous les commerces", ladenNr: (n) => `Commerce ${n}`, laedenAnzahl: (n) => n === 1 ? "1 commerce" : `${n} commerces`, beispiel: "Exemple", fehlt: "manque",
+    zeit: { woche: "7 jours", monat: "Mois", frei: "Libre", von: "Du", bis: "Au" },
+    kennzahl: { umsatz: "Chiffre d'affaires", ware: "Coût matière", muell: "Jeté", schwund: "Soupçon de perte", personal: "Repas du personnel", pflichten: "Obligations ouvertes", bisNull: "Jusqu'à zéro", lager: "Valeur du stock", bestellen: "Commander", aktionen: "Promotions" },
+    umsatzTage: (tage, soll) => `${tage} jours sur ${soll} saisis`, quelle: { notiz: "note", kasse: "caisse", zbon: "ticket Z", hand: "à la main" },
+    wareQuelle: { belege: "d'après les factures", karte: "d'après la carte", eigen: "valeur propre", richtwert: "valeur indicative du secteur ≈" }, wareUnplausibel: "encore trop peu de chiffre",
+    portionen: (n) => `≈ ${n} portions`, schwundKeine: "il faut 2 inventaires", schwundNichts: "aucun soupçon", schwundZeitraum: (von, bis) => `inventaires ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 formation hygiène à faire" : `${n} formations hygiène à faire`, kuehlAbw: (n) => n === 1 ? "1 écart de froid ouvert" : `${n} écarts de froid ouverts`, kuehl: (n) => n === 1 ? "1 jour de froid manquant" : `${n} jours de froid manquants`, putz: (n) => n === 1 ? "1 jour de nettoyage manquant" : `${n} jours de nettoyage manquants`, keine: "rien d'ouvert", keineDaten: "non configuré" },
+    keineInventur: "pas d'inventaire", ohnePreis: (n) => n === 1 ? "1 article sans prix" : `${n} articles sans prix`,
+    bestellen: { jetzt: (n) => n === 1 ? "commander 1 article aujourd'hui" : `commander ${n} articles aujourd'hui`, morgen: (n) => n === 1 ? "commander 1 article demain" : `commander ${n} articles demain`, keine: "rien à commander" },
+    aktionenLaufend: (n) => n === 1 ? "1 promotion en cours" : `${n} promotions en cours`, aktionenKeine: "aucune promotion",
+    unvollstaendig: (liste) => `Incomplet : ${liste}`, vollstaendig: "complet",
+    fehltWas: { umsatz: "pas de chiffre", umsatzTage: "jours de chiffre manquants", richtpreise: "prix indicatifs", richtwert: "valeur indicative au lieu de la carte", muellOhneWert: "déchets sans prix", verkaeufe: "pas de ventes", pflichten: "froid/nettoyage non configurés", kosten: "coûts ouverts", inventur: "pas d'inventaire" },
+    rang: { platz: (r, n) => `Rang ${r} sur ${n}`, abstand: (x) => `${x} derrière le meilleur`, fehlt: "pas de données", andereBasis: "autre base de données – pas comparable", zuWenig: "comparaison à partir de deux commerces" },
+    punkte: (n) => n === "1" ? "1 point" : `${n} points`,
+    trend: { hoch: (p) => `+${p} % par rapport à la période précédente`, runter: (p) => `−${p} % par rapport à la période précédente`, gleich: "comme la période précédente", hochNeu: "nouveau, rien avant", keine: "pas de période précédente" },
+    satz: { belehrung: (l, n) => `${l} : ${n} ${n === 1 ? "formation à faire" : "formations à faire"}`, kuehlAbw: (l, n) => `${l} : ${n} ${n === 1 ? "écart de froid ouvert" : "écarts de froid ouverts"}`, kuehl: (l, n) => `${l} : ${n} ${n === 1 ? "tournée de froid manquante" : "tournées de froid manquantes"}`, putz: (l, n) => `${l} : ${n} ${n === 1 ? "jour de nettoyage manquant" : "jours de nettoyage manquants"}`,
+      wareUeber: (l, p, b) => `${l} : coût matière ${p} points au-dessus de ${b}`, minus: (l, e) => `${l} : ${e} jusqu'à zéro`, umsatzFehlt: (l, n) => `${l} : ${n} ${n === 1 ? "jour" : "jours"} sans saisie de chiffre`, bestellen: (l, n) => `${l} : commander ${n} ${n === 1 ? "article" : "articles"} aujourd'hui`,
+      inventurFehlt: (l) => `${l} : pas encore d'inventaire`, umsatzKeiner: (l) => `${l} : pas de chiffre sur la période`, gut: "Tous les commerces : rien d'ouvert" },
+    vergleich: "Comparaison", vergleichAb: "Comparaison à partir de deux commerces", keineLaeden: "Aucun commerce avec des données", bericht: "Rapport du propriétaire", datei: "Proprietaire", drucken: "Imprimer le rapport", csv: "CSV", geteilt: "Rapport partagé",
+    dok: { zahlen: "Chiffres par commerce", hinweis: "≈ = estimé (prix indicatifs, valeur indicative ou estimation). « manque » = pas de données sur la période. Seulement les commerces sur ce téléphone, chiffres tirés des saisies de l'appli.",
+      kopf: ["Commerce", "Chiffre d'affaires", "Coût matière", "Jeté", "Soupçon de perte", "Obligations ouvertes", "Jusqu'à zéro", "Valeur du stock", "Commander"], laden: "Commerce", vergleich: "Comparaison", vergleichInfo: "Classement uniquement entre commerces ayant la même base de données.",
+      trend: "Tendance par rapport à la période précédente", daten: "Base de données", fehlt: "Incomplet", tage: "jours", quelle: "Source coût matière", fuss: "GastroCalc · Rapport du propriétaire. Chiffres tirés des saisies de l'appli – ni comptabilité, ni données de caisse." },
   },
 };

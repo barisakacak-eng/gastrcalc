@@ -115,7 +115,8 @@ export function ordnerPaketView(stand, art) {
 }
 
 // ---------- Drucken und Teilen (Browser) ----------
-function drucken(html) {
+// Eigentümer-Ebene (18.10.2026): exportiert, screens/laeden.js druckt den Eigentümer-Bericht damit
+export function drucken(html) {
   const f = document.createElement("iframe");
   f.setAttribute("aria-hidden", "true"); f.className = "b-druckrahmen";
   f.style.cssText = "position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0;pointer-events:none";

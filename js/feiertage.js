@@ -15,7 +15,31 @@
 //       (8.8.) nur in Augsburg (Abs. 2) – beides nicht landesweit, darum NICHT in der Liste (die App kennt die Gemeinde nicht).
 //   NW  Feiertagsgesetz NW § 2 Abs. 1, https://recht.nrw.de/lrgv/gesetz/01012000-bekanntmachung-der-neufassung-des-gesetzes-ueber-die-sonn-und-feiertage/
 //       (Fassung ab 01.01.2000, § 2 Abs. 1 zuletzt geändert 1994): zusätzlich Fronleichnam, Allerheiligen.
-//   Die anderen 13 Länder: nicht geprüft (Landesportale ohne abrufbaren Gesetzestext) → nur bundesweit. Nachtragen erst mit amtlicher Quelle.
+//   BE  Senatsverwaltung für Inneres, „Sonn- und Feiertagsrecht“ (Liste nach § 1 FTG Berlin), https://www.berlin.de/sen/inneres/buerger-und-staat/verfassungs-und-verwaltungsrecht/artikel.1435639.php:
+//       zusätzlich Internationaler Frauentag (8.3.). Der 8. Mai war nur in Einzeljahren Feiertag (kein Dauerdatum) → nicht in der Liste.
+//   BB  Feiertagsgesetz Brandenburg (FTG) § 2 Abs. 1, https://bravors.brandenburg.de/gesetze/ftg_2015 (Gesetz vom 21.03.1991, zuletzt geändert 30.04.2015):
+//       zusätzlich Reformationstag (31.10.).
+//   HB  Gesetz zur Änderung des Gesetzes über die Sonn- und Feiertage vom 26.06.2018 (Brem.GBl. Nr. 63 vom 28.06.2018, § 2 Abs. 1 Buchst. j),
+//       https://www.gesetzblatt.bremen.de/fastmedia/218/2018_06_28_GBl_Nr_0063_signed.pdf: zusätzlich Reformationstag.
+//   HE  Hessisches Ministerium des Innern, „Gesetzliche Feiertage“, https://innen.hessen.de/buerger-staat/feiertage (Hessisches Feiertagsgesetz): zusätzlich Fronleichnam.
+//   MV  Viertes Gesetz zur Änderung des Feiertagsgesetzes M-V vom 07.07.2022 (GVOBl. M-V Nr. 31/2022, § 2 Abs. 1 Nr. 2 „der Frauentag (8. März)“),
+//       https://www.dokumentation.landtag-mv.de/parldok/dokument/53736/gesetz_und_verordnungsblatt_31_2022.pdf: zusätzlich Frauentag.
+//       Reformationstag: Wortlaut des MV-Gesetzes nicht abrufbar; belegt über die Landtagsdrucksache Niedersachsen 18/827 (Gesetzentwurf
+//       Reformationstag, S. 3: „In Mecklenburg-Vorpommern ist der 31. Oktober bereits ein gesetzlicher Feiertag.“), Abruf 18.10.2026 (Zoro).
+//   NI  Niedersächsisches Ministerium für Inneres, „Feiertagsgesetz“ (NFeiertagsG § 2 Abs. 1, Fassung 07.03.1995, zuletzt geändert 22.06.2018),
+//       https://www.mi.niedersachsen.de/startseite/themen/allgemeine_angelegenheiten_des_inneren/feiertagsrecht/feiertagsgesetz-61491.html: zusätzlich Reformationstag.
+//   RP  Ministerium des Innern und für Sport RLP, „Sonn- und Feiertagsrecht“ (LFtG), https://mdi.rlp.de/themen/buerger-und-staat/verfassung-und-verwaltung/sonn-und-feiertagsrecht:
+//       zusätzlich Fronleichnam, Allerheiligen.
+//   SN  Gesetz über Sonn- und Feiertage im Freistaat Sachsen (SächsSFG) § 1 Abs. 1, https://revosax.sachsen.de/vorschrift_gesamt/3997.html (Stand 07.05.2025):
+//       zusätzlich Reformationstag, Buß- und Bettag. Fronleichnam nur in per Rechtsverordnung bestimmten Regionen → nicht landesweit, NICHT in der Liste.
+//       Das Gesetz nennt für den Buß- und Bettag kein Datum; gerechnet wird die übliche Regel „Mittwoch vor dem 23. November“ (Vorgabe des Auftrags).
+//   SH  Schleswig-Holsteinischer Landtag, „Reformationstag wird zum Feiertag“ (Beschluss 22.02.2018, Änderung des Gesetzes über Sonn- und Feiertage, gilt ab 2018),
+//       https://www.landtag.ltsh.de/nachrichten/18_02_feiertag/: zusätzlich Reformationstag.
+//   TH  Thüringer Landtag, Drucksache 6/6163 vom 18.09.2018 (Drittes Gesetz zur Änderung des Thüringer Feier- und Gedenktagsgesetzes, § 2 Abs. 1 – Liste mit
+//       Weltkindertag 20.9. und Reformationstag), https://parldok.thueringer-landtag.de/ParlDok/dokument/68329/...pdf: zusätzlich Weltkindertag, Reformationstag.
+//       Fronleichnam steht nicht in § 2 Abs. 1 (nur regional) → nicht landesweit.
+//   HH, SL, ST: nicht geprüft (Landesrecht-Portale sperren den Abruf, Ministeriumsseiten nicht erreichbar) → nur bundesweit. Nachtragen erst mit amtlicher Quelle.
+//   Erwartet, aber unbelegt: HH Reformationstag; SL Fronleichnam, Mariä Himmelfahrt, Allerheiligen; ST Heilige Drei Könige, Reformationstag.
 // Sonntage (Ostersonntag, Pfingstsonntag) stehen nicht in der Liste: sie sind ohnehin Sonntage.
 
 // Ostersonntag nach Gauß in der Fassung von Meeus („Astronomical Algorithms“, Anonymous Gregorian algorithm), gregorianischer Kalender.
@@ -35,7 +59,17 @@ export const BUNDESWEIT = ["neujahr", "karfreitag", "ostermontag", "maifeiertag"
 export const LAND_FEIERTAGE = {
   BW: ["dreikoenige", "fronleichnam", "allerheiligen"],
   BY: ["dreikoenige", "fronleichnam", "allerheiligen"],
+  BE: ["frauentag"],
+  BB: ["reformationstag"],
+  HB: ["reformationstag"],
+  HE: ["fronleichnam"],
+  MV: ["frauentag", "reformationstag"],
+  NI: ["reformationstag"],
   NW: ["fronleichnam", "allerheiligen"],
+  RP: ["fronleichnam", "allerheiligen"],
+  SN: ["reformationstag", "bussbettag"],
+  SH: ["reformationstag"],
+  TH: ["weltkindertag", "reformationstag"],
 };
 // Alle 16 Länder (Kürzel nach ISO 3166-2:DE); geprueft = landesweite Feiertage hinterlegt. Die Namen sind Eigennamen und bleiben deutsch.
 export const BUNDESLAENDER = [
@@ -46,11 +80,16 @@ export const BUNDESLAENDER = [
 export const LAND_CODES = BUNDESLAENDER.map((l) => l.code);
 export const landGeprueft = (code) => !!LAND_FEIERTAGE[code];
 
+// Buß- und Bettag: der Mittwoch vor dem 23. November (also zwischen 16. und 22. November)
+export function bussBettag(jahr) {
+  const wt = new Date(Date.UTC(jahr, 10, 22)).getUTCDay(); // 0 = So … 3 = Mi
+  return iso(jahr, 11, 22 - ((wt - 3 + 7) % 7));
+}
 function tageImJahr(jahr) {
   const o = ostersonntag(jahr);
-  return { neujahr: iso(jahr, 1, 1), dreikoenige: iso(jahr, 1, 6), karfreitag: plusTage(o, -2), ostermontag: plusTage(o, 1), maifeiertag: iso(jahr, 5, 1),
-    himmelfahrt: plusTage(o, 39), pfingstmontag: plusTage(o, 50), fronleichnam: plusTage(o, 60), einheit: iso(jahr, 10, 3), allerheiligen: iso(jahr, 11, 1),
-    weihnachten1: iso(jahr, 12, 25), weihnachten2: iso(jahr, 12, 26) };
+  return { neujahr: iso(jahr, 1, 1), dreikoenige: iso(jahr, 1, 6), frauentag: iso(jahr, 3, 8), karfreitag: plusTage(o, -2), ostermontag: plusTage(o, 1), maifeiertag: iso(jahr, 5, 1),
+    himmelfahrt: plusTage(o, 39), pfingstmontag: plusTage(o, 50), fronleichnam: plusTage(o, 60), weltkindertag: iso(jahr, 9, 20), einheit: iso(jahr, 10, 3),
+    reformationstag: iso(jahr, 10, 31), allerheiligen: iso(jahr, 11, 1), bussbettag: bussBettag(jahr), weihnachten1: iso(jahr, 12, 25), weihnachten2: iso(jahr, 12, 26) };
 }
 const cache = new Map();
 // Feiertage eines Jahres: [{ datum, schluessel }] nach Datum; land = Kürzel oder null (nur bundesweit)

@@ -1291,7 +1291,7 @@ export default {
     was: "Die Größe steht auf Tafel und Aushang – Pflicht bei Getränken. Offen ausgeschenkt: Ware je Glas = Preis je Liter × Ausschank, mit Schankverlust. Lager und Bestellung rechnen in Litern.",
   },
   // Lieferanten (18.10.2026): Büro „Lieferanten“, Liefertage im Bestellvorschlag, Sätze für das Büro (nicht im Laden)
-  feiertage: { neujahr: "Neujahr", dreikoenige: "Heilige Drei Könige", karfreitag: "Karfreitag", ostermontag: "Ostermontag", maifeiertag: "1. Mai", himmelfahrt: "Christi Himmelfahrt", pfingstmontag: "Pfingstmontag", fronleichnam: "Fronleichnam", einheit: "Tag der Deutschen Einheit", allerheiligen: "Allerheiligen", weihnachten1: "1. Weihnachtstag", weihnachten2: "2. Weihnachtstag" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Neujahr", dreikoenige: "Heilige Drei Könige", karfreitag: "Karfreitag", ostermontag: "Ostermontag", maifeiertag: "1. Mai", himmelfahrt: "Christi Himmelfahrt", pfingstmontag: "Pfingstmontag", fronleichnam: "Fronleichnam", einheit: "Tag der Deutschen Einheit", allerheiligen: "Allerheiligen", weihnachten1: "1. Weihnachtstag", weihnachten2: "2. Weihnachtstag", frauentag: "Internationaler Frauentag", weltkindertag: "Weltkindertag", reformationstag: "Reformationstag", bussbettag: "Buß- und Bettag" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Feiertage", land: "Bundesland", nurBund: "Nur bundesweite Feiertage", ungeprueft: "Für dieses Land kennt die App nur die bundesweiten Feiertage.", ladenZu: "Laden hat an Feiertagen zu", liefern: "An Feiertagen liefert kein Lieferant. Die Bestellung geht dann zum nächsten Liefertag.", naechster: (n, d) => `Nächster Feiertag: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Lieferanten", einstiegUnter: "Liefertage, Bestellschluss, Bestellweg",
@@ -1331,5 +1331,30 @@ export default {
     knappVor: (tag) => `reicht nicht sicher bis zur Lieferung ${tag}`, ausweich: (name, tag) => `${name} kommt ${tag}`, ausweichOhne: (name) => `bei ${name} holen?`,
     termin: (tag, bis, naechste) => `Lieferung ${tag}, bestellen bis ${bis}. Reicht bis zur Lieferung ${naechste}, plus Puffer.`, terminAbholung: (tag, naechste) => `Abholung ${tag}. Reicht bis ${naechste}, plus Puffer.`,
     mindestMenge: (liste) => `Vorschlag: ${liste}.`, perWhatsapp: "Per WhatsApp bestellen", bestellenZyklus: (p) => `Mit Liefertagen: reicht bis zur Lieferung danach, dazu ${p} ${p === 1 ? "Tag" : "Tage"} Puffer.`,
+  },
+  // Eigentümer-Ebene (18.10.2026): Büro „Alle Läden“ – Kennzahlen je Laden, Vergleich, Satz, Bericht
+  eigentuemer: {
+    titel: "Eigentümer: alle Läden", ladenNr: (n) => `Laden ${n}`, laedenAnzahl: (n) => n === 1 ? "1 Laden" : `${n} Läden`, beispiel: "Beispiel", fehlt: "fehlt",
+    zeit: { woche: "7 Tage", monat: "Monat", frei: "Frei", von: "Von", bis: "Bis" },
+    kennzahl: { umsatz: "Umsatz", ware: "Wareneinsatz", muell: "Weggeworfen", schwund: "Schwund-Verdacht", personal: "Personalessen", pflichten: "Pflichten offen", bisNull: "Bis null", lager: "Lager-Wert", bestellen: "Bestellen", aktionen: "Aktionen" },
+    umsatzTage: (tage, soll) => `${tage} von ${soll} Tagen eingetragen`, quelle: { notiz: "Notiz", kasse: "Kasse", zbon: "Z-Bon", hand: "von Hand" },
+    wareQuelle: { belege: "aus Belegen", karte: "aus der Karte", eigen: "eigener Wert", richtwert: "Branchen-Richtwert ≈" }, wareUnplausibel: "noch zu wenig Umsatz",
+    portionen: (n) => `≈ ${n} Portionen`, schwundKeine: "braucht 2 Inventuren", schwundNichts: "kein Verdacht", schwundZeitraum: (von, bis) => `Inventuren ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 Belehrung fällig" : `${n} Belehrungen fällig`, kuehlAbw: (n) => n === 1 ? "1 Kühl-Abweichung offen" : `${n} Kühl-Abweichungen offen`, kuehl: (n) => n === 1 ? "1 Kühltag fehlt" : `${n} Kühltage fehlen`, putz: (n) => n === 1 ? "1 Putztag fehlt" : `${n} Putztage fehlen`, keine: "nichts offen", keineDaten: "nicht eingerichtet" },
+    keineInventur: "keine Inventur", ohnePreis: (n) => n === 1 ? "1 Ware ohne Preis" : `${n} Waren ohne Preis`,
+    bestellen: { jetzt: (n) => n === 1 ? "1 Ware heute bestellen" : `${n} Waren heute bestellen`, morgen: (n) => n === 1 ? "1 Ware morgen bestellen" : `${n} Waren morgen bestellen`, keine: "nichts zu bestellen" },
+    aktionenLaufend: (n) => n === 1 ? "1 Aktion läuft" : `${n} Aktionen laufen`, aktionenKeine: "keine Aktion",
+    unvollstaendig: (liste) => `Unvollständig: ${liste}`, vollstaendig: "vollständig",
+    fehltWas: { umsatz: "kein Umsatz", umsatzTage: "Umsatz-Tage fehlen", richtpreise: "Richtpreise", richtwert: "Richtwert statt Karte", muellOhneWert: "Müll ohne Preis", verkaeufe: "keine Verkäufe", pflichten: "Kühlung/Putzen nicht eingerichtet", kosten: "Kosten offen", inventur: "keine Inventur" },
+    rang: { platz: (r, n) => `Platz ${r} von ${n}`, abstand: (x) => `${x} hinter dem besten`, fehlt: "keine Daten", andereBasis: "andere Datenbasis – nicht vergleichbar", zuWenig: "Vergleich ab zwei Läden" },
+    punkte: (n) => n === "1" ? "1 Punkt" : `${n} Punkte`,
+    trend: { hoch: (p) => `+${p} % zum Vorzeitraum`, runter: (p) => `−${p} % zum Vorzeitraum`, gleich: "wie im Vorzeitraum", hochNeu: "neu, vorher nichts", keine: "kein Vorzeitraum" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "Belehrung" : "Belehrungen"} fällig`, kuehlAbw: (l, n) => `${l}: ${n} ${n === 1 ? "Kühl-Abweichung" : "Kühl-Abweichungen"} offen`, kuehl: (l, n) => `${l}: ${n} ${n === 1 ? "Kühlrundgang fehlt" : "Kühlrundgänge fehlen"}`, putz: (l, n) => `${l}: ${n} ${n === 1 ? "Putztag fehlt" : "Putztage fehlen"}`,
+      wareUeber: (l, p, b) => `${l}: Wareneinsatz ${p} Punkte über ${b}`, minus: (l, e) => `${l}: ${e} bis null`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "Tag" : "Tage"} ohne Umsatz-Eintrag`, bestellen: (l, n) => `${l}: ${n} ${n === 1 ? "Ware" : "Waren"} heute bestellen`,
+      inventurFehlt: (l) => `${l}: noch keine Inventur`, umsatzKeiner: (l) => `${l}: kein Umsatz im Zeitraum`, gut: "Alle Läden: nichts offen" },
+    vergleich: "Vergleich", vergleichAb: "Vergleich ab zwei Läden", keineLaeden: "Kein Laden mit Daten", bericht: "Eigentümer-Bericht", datei: "Eigentuemer", drucken: "Bericht drucken", csv: "CSV", geteilt: "Bericht geteilt",
+    dok: { zahlen: "Kennzahlen je Laden", hinweis: "≈ = geschätzt (Richtpreise, Richtwert oder Schätzung). „fehlt“ = keine Daten im Zeitraum. Nur Läden auf diesem Handy, Zahlen aus den Einträgen der App.",
+      kopf: ["Laden", "Umsatz", "Wareneinsatz", "Weggeworfen", "Schwund-Verdacht", "Pflichten offen", "Bis null", "Lager-Wert", "Bestellen"], laden: "Laden", vergleich: "Vergleich", vergleichInfo: "Rang nur zwischen Läden mit gleicher Datenbasis.",
+      trend: "Trend zum Vorzeitraum", daten: "Datenbasis", fehlt: "Unvollständig", tage: "Tage", quelle: "Quelle Wareneinsatz", fuss: "GastroCalc · Eigentümer-Bericht. Kennzahlen aus den Einträgen der App – keine Buchhaltung, keine Kassendaten." },
   },
 };

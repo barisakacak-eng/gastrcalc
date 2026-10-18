@@ -1359,7 +1359,7 @@ export default {
     was: "Mărimea apare pe panou și în lista de prețuri – obligatoriu la băuturi. Turnat: marfă pe pahar = preț pe litru × porție, cu pierdere. Stocul și comenzile se socotesc în litri.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Anul Nou", dreikoenige: "Boboteaza", karfreitag: "Vinerea Mare", ostermontag: "Lunea Paștelui", maifeiertag: "1 Mai", himmelfahrt: "Înălțarea Domnului", pfingstmontag: "Lunea Rusaliilor", fronleichnam: "Corpus Christi", einheit: "Ziua Unității Germane", allerheiligen: "Ziua Tuturor Sfinților", weihnachten1: "Crăciunul (ziua 1)", weihnachten2: "Crăciunul (ziua 2)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Anul Nou", dreikoenige: "Boboteaza", karfreitag: "Vinerea Mare", ostermontag: "Lunea Paștelui", maifeiertag: "1 Mai", himmelfahrt: "Înălțarea Domnului", pfingstmontag: "Lunea Rusaliilor", fronleichnam: "Corpus Christi", einheit: "Ziua Unității Germane", allerheiligen: "Ziua Tuturor Sfinților", weihnachten1: "Crăciunul (ziua 1)", weihnachten2: "Crăciunul (ziua 2)", frauentag: "Ziua Internațională a Femeii", weltkindertag: "Ziua Mondială a Copilului", reformationstag: "Ziua Reformei", bussbettag: "Ziua Pocăinței și Rugăciunii" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Sărbători legale", land: "Land (stat federal)", nurBund: "Doar sărbătorile naționale", ungeprueft: "Pentru acest land aplicația cunoaște doar sărbătorile naționale.", ladenZu: "Localul e închis de sărbători", liefern: "De sărbători niciun furnizor nu livrează. Comanda trece la următoarea zi de livrare.", naechster: (n, d) => `Următoarea sărbătoare: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Furnizori", einstiegUnter: "Zile de livrare, termen comandă, cum comanzi",
@@ -1399,5 +1399,29 @@ export default {
     knappVor: (tag) => `poate nu ajunge până la livrarea din ${tag}`, ausweich: (name, tag) => `${name} vine ${tag}`, ausweichOhne: (name) => `iei de la ${name}?`,
     termin: (tag, bis, naechste) => `Livrare ${tag}, comandă până ${bis}. Ajunge până la livrarea din ${naechste}, plus rezervă.`, terminAbholung: (tag, naechste) => `Ridicare ${tag}. Ajunge până ${naechste}, plus rezervă.`,
     mindestMenge: (liste) => `Propunere: ${liste}.`, perWhatsapp: "Comandă pe WhatsApp", bestellenZyklus: (p) => `Cu zile de livrare: ajunge până la livrarea următoare, plus ${p} zile rezervă.`,
+  },
+  eigentuemer: {
+    titel: "Proprietar: toate localurile", ladenNr: (n) => `Local ${n}`, laedenAnzahl: (n) => n === 1 ? "1 local" : `${n} localuri`, beispiel: "Exemplu", fehlt: "lipsește",
+    zeit: { woche: "7 zile", monat: "Lună", frei: "Liber", von: "De la", bis: "Până la" },
+    kennzahl: { umsatz: "Încasări", ware: "Costul mărfii", muell: "Aruncat", schwund: "Suspiciune de pierdere", personal: "Mesele personalului", pflichten: "Obligații deschise", bisNull: "Până la zero", lager: "Valoarea stocului", bestellen: "Comandă", aktionen: "Promoții" },
+    umsatzTage: (tage, soll) => `${tage} din ${soll} zile înregistrate`, quelle: { notiz: "notă", kasse: "casă", zbon: "raport Z", hand: "manual" },
+    wareQuelle: { belege: "din facturi", karte: "din meniu", eigen: "valoare proprie", richtwert: "valoare orientativă a branșei ≈" }, wareUnplausibel: "încă prea puține încasări",
+    portionen: (n) => `≈ ${n} porții`, schwundKeine: "necesită 2 inventare", schwundNichts: "nicio suspiciune", schwundZeitraum: (von, bis) => `inventare ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 instruire de igienă scadentă" : `${n} instruiri de igienă scadente`, kuehlAbw: (n) => n === 1 ? "1 abatere de răcire deschisă" : `${n} abateri de răcire deschise`, kuehl: (n) => n === 1 ? "lipsește 1 zi de răcire" : `lipsesc ${n} zile de răcire`, putz: (n) => n === 1 ? "lipsește 1 zi de curățenie" : `lipsesc ${n} zile de curățenie`, keine: "nimic deschis", keineDaten: "neconfigurat" },
+    keineInventur: "fără inventar", ohnePreis: (n) => n === 1 ? "1 marfă fără preț" : `${n} mărfuri fără preț`,
+    bestellen: { jetzt: (n) => n === 1 ? "comandă 1 marfă azi" : `comandă ${n} mărfuri azi`, morgen: (n) => n === 1 ? "comandă 1 marfă mâine" : `comandă ${n} mărfuri mâine`, keine: "nimic de comandat" },
+    aktionenLaufend: (n) => n === 1 ? "1 promoție în curs" : `${n} promoții în curs`, aktionenKeine: "nicio promoție",
+    unvollstaendig: (liste) => `Incomplet: ${liste}`, vollstaendig: "complet",
+    fehltWas: { umsatz: "fără încasări", umsatzTage: "lipsesc zile de încasări", richtpreise: "prețuri orientative", richtwert: "valoare orientativă în loc de meniu", muellOhneWert: "deșeuri fără preț", verkaeufe: "fără vânzări", pflichten: "răcire/curățenie neconfigurate", kosten: "costuri deschise", inventur: "fără inventar" },
+    rang: { platz: (r, n) => `Locul ${r} din ${n}`, abstand: (x) => `${x} în urma celui mai bun`, fehlt: "fără date", andereBasis: "altă bază de date – necomparabil", zuWenig: "comparație de la două localuri" },
+    punkte: (n) => n === "1" ? "1 punct" : `${n} puncte`,
+    trend: { hoch: (p) => `+${p} % față de perioada anterioară`, runter: (p) => `−${p} % față de perioada anterioară`, gleich: "ca în perioada anterioară", hochNeu: "nou, înainte nimic", keine: "fără perioadă anterioară" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "instruire scadentă" : "instruiri scadente"}`, kuehlAbw: (l, n) => `${l}: ${n} ${n === 1 ? "abatere de răcire deschisă" : "abateri de răcire deschise"}`, kuehl: (l, n) => `${l}: ${n === 1 ? "lipsește 1 rond de răcire" : `lipsesc ${n} ronduri de răcire`}`, putz: (l, n) => `${l}: ${n === 1 ? "lipsește 1 zi de curățenie" : `lipsesc ${n} zile de curățenie`}`,
+      wareUeber: (l, p, b) => `${l}: costul mărfii cu ${p} puncte peste ${b}`, minus: (l, e) => `${l}: ${e} până la zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "zi" : "zile"} fără încasări înregistrate`, bestellen: (l, n) => `${l}: comandă ${n} ${n === 1 ? "marfă" : "mărfuri"} azi`,
+      inventurFehlt: (l) => `${l}: încă fără inventar`, umsatzKeiner: (l) => `${l}: fără încasări în perioadă`, gut: "Toate localurile: nimic deschis" },
+    vergleich: "Comparație", vergleichAb: "Comparație de la două localuri", keineLaeden: "Niciun local cu date", bericht: "Raportul proprietarului", datei: "Proprietar", drucken: "Tipărește raportul", csv: "CSV", geteilt: "Raport partajat",
+    dok: { zahlen: "Cifre pe local", hinweis: "≈ = estimat (prețuri orientative, valoare orientativă sau estimare). „lipsește” = fără date în perioadă. Doar localurile de pe acest telefon, cifre din înregistrările aplicației.",
+      kopf: ["Local", "Încasări", "Costul mărfii", "Aruncat", "Suspiciune de pierdere", "Obligații deschise", "Până la zero", "Valoarea stocului", "Comandă"], laden: "Local", vergleich: "Comparație", vergleichInfo: "Clasament doar între localuri cu aceeași bază de date.",
+      trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCalc · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
   },
 };

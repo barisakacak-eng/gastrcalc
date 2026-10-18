@@ -18,7 +18,7 @@ import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./s
 import { parseTemperatur } from "./util.js"; // Trennung (17.10.2026)
 import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } from "./screens/putzplan.js";
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
-import { laedenView } from "./screens/laeden.js";
+import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
 import { karteZuruecksetzen } from "./screens/karte.js"; // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
@@ -61,7 +61,7 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, kuehlWareZuruecksetzen]; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, kuehlWareZuruecksetzen]; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -688,6 +688,11 @@ async function aufKlick(ev) {
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
+  if (ansicht === "laeden") { // Eigentümer-Ebene (18.10.2026): Zeitraum, Bericht drucken, CSV
+    const r = await laedenAktion(name, el, wurzel);
+    if (r) { if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
   if (ansicht === "buero" || ansicht.startsWith("ordner-")) { // Entwickler C
     const r = ansicht === "buero" ? await bueroAktion(name, el, stand, wurzel) : await ordnerAktion(name, el, stand, ansicht);
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); root.querySelector('.b-codefeld')?.focus(); }
@@ -740,6 +745,8 @@ root.addEventListener("input", (ev) => {
     neu = bueroEingabe(el.dataset.f, el.value); if (neu === "knopf") { neu = false; if (el.value !== el.value.replace(/\D/g, "").slice(0, 4)) el.value = el.value.replace(/\D/g, "").slice(0, 4); }
   } else if (ansicht.startsWith("ordner-")) {
     neu = ordnerEingabe(el.dataset.f, el.value); if (neu === "knopf") neu = false;
+  } else if (ansicht === "laeden") { // Eigentümer-Ebene (18.10.2026): freier Zeitraum
+    neu = laedenEingabe(el.dataset.f, el.value);
   } else if (ansicht === "inventur") {
     neu = inventurEingabe(el.dataset.f, el.value);
   } else if (ansicht === "verkauf") { // E7 (17.10.2026): Handeingabe ist ein Entwurf bis „Speichern“; nur der Tag zeichnet neu

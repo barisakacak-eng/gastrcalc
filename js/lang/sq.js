@@ -1357,7 +1357,7 @@ export default {
     was: "Madhësia del në ekran dhe në listën e çmimeve – e detyrueshme për pijet. E derdhur: mall për gotë = çmimi për litër × porcion, me humbje. Magazina dhe porositë llogariten në litra.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Viti i Ri", dreikoenige: "Epifania", karfreitag: "E Premtja e Madhe", ostermontag: "E Hëna e Pashkëve", maifeiertag: "1 Maji", himmelfahrt: "Ngjitja në Qiell", pfingstmontag: "E Hëna e Rrëshajëve", fronleichnam: "Korpus Krishti", einheit: "Dita e Bashkimit Gjerman", allerheiligen: "Dita e të Gjithë Shenjtorëve", weihnachten1: "Krishtlindja (dita 1)", weihnachten2: "Krishtlindja (dita 2)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Viti i Ri", dreikoenige: "Epifania", karfreitag: "E Premtja e Madhe", ostermontag: "E Hëna e Pashkëve", maifeiertag: "1 Maji", himmelfahrt: "Ngjitja në Qiell", pfingstmontag: "E Hëna e Rrëshajëve", fronleichnam: "Korpus Krishti", einheit: "Dita e Bashkimit Gjerman", allerheiligen: "Dita e të Gjithë Shenjtorëve", weihnachten1: "Krishtlindja (dita 1)", weihnachten2: "Krishtlindja (dita 2)", frauentag: "Dita Ndërkombëtare e Gruas", weltkindertag: "Dita Botërore e Fëmijëve", reformationstag: "Dita e Reformacionit", bussbettag: "Dita e Pendimit dhe Lutjes" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Festat zyrtare", land: "Landi (shteti federal)", nurBund: "Vetëm festat në gjithë vendin", ungeprueft: "Për këtë land aplikacioni njeh vetëm festat në gjithë vendin.", ladenZu: "Lokali është i mbyllur në festa", liefern: "Në festa asnjë furnitor nuk dorëzon. Porosia kalon në ditën e ardhshme të dorëzimit.", naechster: (n, d) => `Festa e ardhshme: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Furnitorët", einstiegUnter: "Ditët e dorëzimit, afati i porosisë, si porosit",
@@ -1397,5 +1397,29 @@ export default {
     knappVor: (tag) => `mund të mos mjaftojë deri te dorëzimi ${tag}`, ausweich: (name, tag) => `${name} vjen ${tag}`, ausweichOhne: (name) => `të merret te ${name}?`,
     termin: (tag, bis, naechste) => `Dorëzim ${tag}, porosit deri ${bis}. Mjafton deri te dorëzimi ${naechste}, plus rezervë.`, terminAbholung: (tag, naechste) => `Marrje ${tag}. Mjafton deri ${naechste}, plus rezervë.`,
     mindestMenge: (liste) => `Propozim: ${liste}.`, perWhatsapp: "Porosit me WhatsApp", bestellenZyklus: (p) => `Me ditë dorëzimi: mjafton deri te dorëzimi i radhës, plus ${p} ditë rezervë.`,
+  },
+  eigentuemer: {
+    titel: "Pronari: të gjitha lokalet", ladenNr: (n) => `Lokali ${n}`, laedenAnzahl: (n) => n === 1 ? "1 lokal" : `${n} lokale`, beispiel: "Shembull", fehlt: "mungon",
+    zeit: { woche: "7 ditë", monat: "Muaji", frei: "I lirë", von: "Nga", bis: "Deri" },
+    kennzahl: { umsatz: "Xhiro", ware: "Kosto e mallit", muell: "Hedhur", schwund: "Dyshim për humbje", personal: "Ushqimi i stafit", pflichten: "Detyrime të hapura", bisNull: "Deri në zero", lager: "Vlera e magazinës", bestellen: "Porosit", aktionen: "Oferta" },
+    umsatzTage: (tage, soll) => `${tage} nga ${soll} ditë të regjistruara`, quelle: { notiz: "shënim", kasse: "arka", zbon: "raporti Z", hand: "me dorë" },
+    wareQuelle: { belege: "nga faturat", karte: "nga menyja", eigen: "vlera jote", richtwert: "vlerë orientuese e sektorit ≈" }, wareUnplausibel: "ende shumë pak xhiro",
+    portionen: (n) => `≈ ${n} porcione`, schwundKeine: "duhen 2 inventarë", schwundNichts: "asnjë dyshim", schwundZeitraum: (von, bis) => `inventarë ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => n === 1 ? "1 trajnim higjiene për t'u bërë" : `${n} trajnime higjiene për t'u bërë`, kuehlAbw: (n) => n === 1 ? "1 devijim ftohjeje i hapur" : `${n} devijime ftohjeje të hapura`, kuehl: (n) => n === 1 ? "mungon 1 ditë ftohjeje" : `mungojnë ${n} ditë ftohjeje`, putz: (n) => n === 1 ? "mungon 1 ditë pastrimi" : `mungojnë ${n} ditë pastrimi`, keine: "asgjë e hapur", keineDaten: "i pakonfiguruar" },
+    keineInventur: "pa inventar", ohnePreis: (n) => n === 1 ? "1 mall pa çmim" : `${n} mallra pa çmim`,
+    bestellen: { jetzt: (n) => n === 1 ? "porosit 1 mall sot" : `porosit ${n} mallra sot`, morgen: (n) => n === 1 ? "porosit 1 mall nesër" : `porosit ${n} mallra nesër`, keine: "asgjë për të porositur" },
+    aktionenLaufend: (n) => n === 1 ? "1 ofertë në vazhdim" : `${n} oferta në vazhdim`, aktionenKeine: "asnjë ofertë",
+    unvollstaendig: (liste) => `E paplotë: ${liste}`, vollstaendig: "e plotë",
+    fehltWas: { umsatz: "pa xhiro", umsatzTage: "mungojnë ditë xhiroje", richtpreise: "çmime orientuese", richtwert: "vlerë orientuese në vend të menysë", muellOhneWert: "mbeturina pa çmim", verkaeufe: "pa shitje", pflichten: "ftohja/pastrimi të pakonfiguruara", kosten: "kosto të hapura", inventur: "pa inventar" },
+    rang: { platz: (r, n) => `Vendi ${r} nga ${n}`, abstand: (x) => `${x} pas më të mirit`, fehlt: "pa të dhëna", andereBasis: "bazë tjetër të dhënash – jo e krahasueshme", zuWenig: "krahasimi nga dy lokale" },
+    punkte: (n) => n === "1" ? "1 pikë" : `${n} pikë`,
+    trend: { hoch: (p) => `+${p} % ndaj periudhës së mëparshme`, runter: (p) => `−${p} % ndaj periudhës së mëparshme`, gleich: "si periudha e mëparshme", hochNeu: "e re, më parë asgjë", keine: "pa periudhë të mëparshme" },
+    satz: { belehrung: (l, n) => `${l}: ${n} ${n === 1 ? "trajnim për t'u bërë" : "trajnime për t'u bërë"}`, kuehlAbw: (l, n) => `${l}: ${n} ${n === 1 ? "devijim ftohjeje i hapur" : "devijime ftohjeje të hapura"}`, kuehl: (l, n) => `${l}: ${n === 1 ? "mungon 1 kontroll ftohjeje" : `mungojnë ${n} kontrolle ftohjeje`}`, putz: (l, n) => `${l}: ${n === 1 ? "mungon 1 ditë pastrimi" : `mungojnë ${n} ditë pastrimi`}`,
+      wareUeber: (l, p, b) => `${l}: kosto e mallit ${p} pikë mbi ${b}`, minus: (l, e) => `${l}: ${e} deri në zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "ditë" : "ditë"} pa regjistrim xhiroje`, bestellen: (l, n) => `${l}: porosit ${n} ${n === 1 ? "mall" : "mallra"} sot`,
+      inventurFehlt: (l) => `${l}: ende pa inventar`, umsatzKeiner: (l) => `${l}: pa xhiro në periudhë`, gut: "Të gjitha lokalet: asgjë e hapur" },
+    vergleich: "Krahasim", vergleichAb: "Krahasimi nga dy lokale", keineLaeden: "Asnjë lokal me të dhëna", bericht: "Raporti i pronarit", datei: "Pronari", drucken: "Printo raportin", csv: "CSV", geteilt: "Raporti u nda",
+    dok: { zahlen: "Shifra për lokal", hinweis: "≈ = i vlerësuar (çmime orientuese, vlerë orientuese ose vlerësim). „mungon“ = pa të dhëna në periudhë. Vetëm lokalet në këtë telefon, shifra nga regjistrimet e aplikacionit.",
+      kopf: ["Lokali", "Xhiro", "Kosto e mallit", "Hedhur", "Dyshim për humbje", "Detyrime të hapura", "Deri në zero", "Vlera e magazinës", "Porosit"], laden: "Lokali", vergleich: "Krahasim", vergleichInfo: "Renditje vetëm midis lokaleve me të njëjtën bazë të dhënash.",
+      trend: "Prirja ndaj periudhës së mëparshme", daten: "Baza e të dhënave", fehlt: "E paplotë", tage: "ditë", quelle: "Burimi i kostos së mallit", fuss: "GastroCalc · Raporti i pronarit. Shifra nga regjistrimet e aplikacionit – jo kontabilitet, jo të dhëna arke." },
   },
 };

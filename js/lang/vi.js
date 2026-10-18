@@ -1352,7 +1352,7 @@ export default {
     was: "Dung tích hiện trên bảng menu và bảng giá – bắt buộc với đồ uống. Rót ly: hàng mỗi ly = giá mỗi lít × phần rót, cộng hao hụt. Kho và đặt hàng tính bằng lít.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Tết Dương lịch", dreikoenige: "Lễ Hiển Linh", karfreitag: "Thứ Sáu Tuần Thánh", ostermontag: "Thứ Hai Phục Sinh", maifeiertag: "Ngày 1/5", himmelfahrt: "Lễ Thăng Thiên", pfingstmontag: "Thứ Hai Lễ Ngũ Tuần", fronleichnam: "Lễ Mình Máu Thánh Chúa", einheit: "Ngày Thống nhất nước Đức", allerheiligen: "Lễ Các Thánh", weihnachten1: "Giáng sinh (ngày 1)", weihnachten2: "Giáng sinh (ngày 2)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Tết Dương lịch", dreikoenige: "Lễ Hiển Linh", karfreitag: "Thứ Sáu Tuần Thánh", ostermontag: "Thứ Hai Phục Sinh", maifeiertag: "Ngày 1/5", himmelfahrt: "Lễ Thăng Thiên", pfingstmontag: "Thứ Hai Lễ Ngũ Tuần", fronleichnam: "Lễ Mình Máu Thánh Chúa", einheit: "Ngày Thống nhất nước Đức", allerheiligen: "Lễ Các Thánh", weihnachten1: "Giáng sinh (ngày 1)", weihnachten2: "Giáng sinh (ngày 2)", frauentag: "Ngày Quốc tế Phụ nữ", weltkindertag: "Ngày Thiếu nhi Thế giới", reformationstag: "Ngày Cải cách", bussbettag: "Ngày Sám hối và Cầu nguyện" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Ngày lễ", land: "Bang", nurBund: "Chỉ ngày lễ toàn quốc", ungeprueft: "Với bang này, ứng dụng chỉ biết các ngày lễ toàn quốc.", ladenZu: "Quán đóng cửa vào ngày lễ", liefern: "Vào ngày lễ không nhà cung cấp nào giao hàng. Đơn hàng chuyển sang ngày giao tiếp theo.", naechster: (n, d) => `Ngày lễ tiếp theo: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Nhà cung cấp", einstiegUnter: "Ngày giao, hạn đặt hàng, cách đặt",
@@ -1392,5 +1392,29 @@ export default {
     knappVor: (tag) => `có thể không đủ đến lần giao ${tag}`, ausweich: (name, tag) => `${name} đến ${tag}`, ausweichOhne: (name) => `lấy ở ${name}?`,
     termin: (tag, bis, naechste) => `Giao ${tag}, đặt trước ${bis}. Đủ đến lần giao ${naechste}, cộng dự phòng.`, terminAbholung: (tag, naechste) => `Lấy hàng ${tag}. Đủ đến ${naechste}, cộng dự phòng.`,
     mindestMenge: (liste) => `Gợi ý: ${liste}.`, perWhatsapp: "Đặt qua WhatsApp", bestellenZyklus: (p) => `Có ngày giao: đủ đến lần giao tiếp theo, cộng ${p} ngày dự phòng.`,
+  },
+  eigentuemer: {
+    titel: "Chủ: tất cả cửa hàng", ladenNr: (n) => `Cửa hàng ${n}`, laedenAnzahl: (n) => `${n} cửa hàng`, beispiel: "Ví dụ", fehlt: "thiếu",
+    zeit: { woche: "7 ngày", monat: "Tháng", frei: "Tùy chọn", von: "Từ", bis: "Đến" },
+    kennzahl: { umsatz: "Doanh thu", ware: "Chi phí nguyên liệu", muell: "Bỏ đi", schwund: "Nghi hao hụt", personal: "Bữa ăn nhân viên", pflichten: "Việc còn mở", bisNull: "Đến hòa vốn", lager: "Giá trị kho", bestellen: "Đặt hàng", aktionen: "Khuyến mãi" },
+    umsatzTage: (tage, soll) => `đã nhập ${tage} trên ${soll} ngày`, quelle: { notiz: "ghi chú", kasse: "máy tính tiền", zbon: "báo cáo Z", hand: "nhập tay" },
+    wareQuelle: { belege: "từ hóa đơn", karte: "từ thực đơn", eigen: "giá trị riêng", richtwert: "giá trị tham khảo ngành ≈" }, wareUnplausibel: "doanh thu còn quá ít",
+    portionen: (n) => `≈ ${n} phần`, schwundKeine: "cần 2 lần kiểm kho", schwundNichts: "không nghi ngờ", schwundZeitraum: (von, bis) => `kiểm kho ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => `${n} buổi tập huấn vệ sinh đến hạn`, kuehlAbw: (n) => `${n} sai lệch nhiệt độ còn mở`, kuehl: (n) => `thiếu ${n} ngày kiểm tra lạnh`, putz: (n) => `thiếu ${n} ngày vệ sinh`, keine: "không có gì còn mở", keineDaten: "chưa thiết lập" },
+    keineInventur: "chưa kiểm kho", ohnePreis: (n) => `${n} mặt hàng chưa có giá`,
+    bestellen: { jetzt: (n) => `đặt ${n} mặt hàng hôm nay`, morgen: (n) => `đặt ${n} mặt hàng ngày mai`, keine: "không cần đặt" },
+    aktionenLaufend: (n) => `${n} khuyến mãi đang chạy`, aktionenKeine: "không có khuyến mãi",
+    unvollstaendig: (liste) => `Chưa đủ: ${liste}`, vollstaendig: "đầy đủ",
+    fehltWas: { umsatz: "không có doanh thu", umsatzTage: "thiếu ngày doanh thu", richtpreise: "giá tham khảo", richtwert: "giá trị tham khảo thay cho thực đơn", muellOhneWert: "đồ bỏ chưa có giá", verkaeufe: "không có bán hàng", pflichten: "lạnh/vệ sinh chưa thiết lập", kosten: "chi phí còn mở", inventur: "chưa kiểm kho" },
+    rang: { platz: (r, n) => `Hạng ${r} trên ${n}`, abstand: (x) => `${x} sau cửa hàng tốt nhất`, fehlt: "không có dữ liệu", andereBasis: "cơ sở dữ liệu khác – không so sánh được", zuWenig: "so sánh từ hai cửa hàng" },
+    punkte: (n) => `${n} điểm`,
+    trend: { hoch: (p) => `+${p} % so với kỳ trước`, runter: (p) => `−${p} % so với kỳ trước`, gleich: "như kỳ trước", hochNeu: "mới, trước đó không có", keine: "không có kỳ trước" },
+    satz: { belehrung: (l, n) => `${l}: ${n} buổi tập huấn đến hạn`, kuehlAbw: (l, n) => `${l}: ${n} sai lệch nhiệt độ còn mở`, kuehl: (l, n) => `${l}: thiếu ${n} lượt kiểm tra lạnh`, putz: (l, n) => `${l}: thiếu ${n} ngày vệ sinh`,
+      wareUeber: (l, p, b) => `${l}: chi phí nguyên liệu cao hơn ${b} ${p} điểm`, minus: (l, e) => `${l}: còn ${e} đến hòa vốn`, umsatzFehlt: (l, n) => `${l}: ${n} ngày chưa nhập doanh thu`, bestellen: (l, n) => `${l}: đặt ${n} mặt hàng hôm nay`,
+      inventurFehlt: (l) => `${l}: chưa kiểm kho`, umsatzKeiner: (l) => `${l}: không có doanh thu trong kỳ`, gut: "Tất cả cửa hàng: không có gì còn mở" },
+    vergleich: "So sánh", vergleichAb: "So sánh từ hai cửa hàng", keineLaeden: "Không có cửa hàng nào có dữ liệu", bericht: "Báo cáo chủ", datei: "Chu", drucken: "In báo cáo", csv: "CSV", geteilt: "Đã chia sẻ báo cáo",
+    dok: { zahlen: "Chỉ số theo cửa hàng", hinweis: "≈ = ước tính (giá tham khảo, giá trị tham khảo hoặc ước tính). „thiếu“ = không có dữ liệu trong kỳ. Chỉ các cửa hàng trên điện thoại này, số liệu từ các mục nhập trong ứng dụng.",
+      kopf: ["Cửa hàng", "Doanh thu", "Chi phí nguyên liệu", "Bỏ đi", "Nghi hao hụt", "Việc còn mở", "Đến hòa vốn", "Giá trị kho", "Đặt hàng"], laden: "Cửa hàng", vergleich: "So sánh", vergleichInfo: "Xếp hạng chỉ giữa các cửa hàng có cùng cơ sở dữ liệu.",
+      trend: "Xu hướng so với kỳ trước", daten: "Cơ sở dữ liệu", fehlt: "Chưa đủ", tage: "ngày", quelle: "Nguồn chi phí nguyên liệu", fuss: "GastroCalc · Báo cáo chủ. Số liệu từ các mục nhập trong ứng dụng – không phải kế toán, không phải dữ liệu máy tính tiền." },
   },
 };

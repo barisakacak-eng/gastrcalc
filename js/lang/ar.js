@@ -1354,7 +1354,7 @@ export default {
     was: "يظهر الحجم على الشاشة وقائمة الأسعار – إلزامي للمشروبات. المصبوب: بضاعة لكل كأس = سعر اللتر × الحصة، مع الفاقد. المخزون والطلبات تُحسب باللتر.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "رأس السنة", dreikoenige: "عيد الغطاس", karfreitag: "الجمعة العظيمة", ostermontag: "اثنين الفصح", maifeiertag: "عيد العمال (1 مايو)", himmelfahrt: "عيد الصعود", pfingstmontag: "اثنين العنصرة", fronleichnam: "عيد القربان", einheit: "يوم الوحدة الألمانية", allerheiligen: "عيد جميع القديسين", weihnachten1: "أول أيام عيد الميلاد", weihnachten2: "ثاني أيام عيد الميلاد" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "رأس السنة", dreikoenige: "عيد الغطاس", karfreitag: "الجمعة العظيمة", ostermontag: "اثنين الفصح", maifeiertag: "عيد العمال (1 مايو)", himmelfahrt: "عيد الصعود", pfingstmontag: "اثنين العنصرة", fronleichnam: "عيد القربان", einheit: "يوم الوحدة الألمانية", allerheiligen: "عيد جميع القديسين", weihnachten1: "أول أيام عيد الميلاد", weihnachten2: "ثاني أيام عيد الميلاد", frauentag: "اليوم العالمي للمرأة", weltkindertag: "اليوم العالمي للطفل", reformationstag: "يوم الإصلاح", bussbettag: "يوم التوبة والصلاة" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "العطل الرسمية", land: "الولاية", nurBund: "العطل على مستوى البلاد فقط", ungeprueft: "لهذه الولاية يعرف التطبيق العطل على مستوى البلاد فقط.", ladenZu: "المحل مغلق في العطل الرسمية", liefern: "لا يوصّل أي مورد في العطل الرسمية. ينتقل الطلب إلى يوم التوصيل التالي.", naechster: (n, d) => `العطلة الرسمية التالية: ${n}، ${d}` }, // Feiertage (18.10.2026)
     einstieg: "الموردون", einstiegUnter: "أيام التوريد، آخر موعد للطلب، طريقة الطلب",
@@ -1394,5 +1394,29 @@ export default {
     knappVor: (tag) => `قد لا يكفي حتى توريد ${tag}`, ausweich: (name, tag) => `${name} يأتي ${tag}`, ausweichOhne: (name) => `تأخذ من ${name}؟`,
     termin: (tag, bis, naechste) => `توريد ${tag}، اطلب حتى ${bis}. يكفي حتى توريد ${naechste}، مع احتياطي.`, terminAbholung: (tag, naechste) => `استلام ${tag}. يكفي حتى ${naechste}، مع احتياطي.`,
     mindestMenge: (liste) => `اقتراح: ${liste}.`, perWhatsapp: "اطلب عبر واتساب", bestellenZyklus: (p) => `مع أيام التوريد: يكفي حتى التوريد التالي، مع احتياطي ${p} يوم.`,
+  },
+  eigentuemer: {
+    titel: "المالك: كل المحلات", ladenNr: (n) => `محل ${n}`, laedenAnzahl: (n) => n === 1 ? "محل واحد" : `${n} محلات`, beispiel: "مثال", fehlt: "ناقص",
+    zeit: { woche: "7 أيام", monat: "الشهر", frei: "حر", von: "من", bis: "إلى" },
+    kennzahl: { umsatz: "المبيعات", ware: "تكلفة البضاعة", muell: "المرمي", schwund: "اشتباه نقص", personal: "أكل الموظفين", pflichten: "واجبات مفتوحة", bisNull: "حتى الصفر", lager: "قيمة المخزون", bestellen: "الطلب", aktionen: "العروض" },
+    umsatzTage: (tage, soll) => `مُدخل ${tage} من ${soll} أيام`, quelle: { notiz: "ملاحظة", kasse: "الكاشير", zbon: "تقرير Z", hand: "يدويًا" },
+    wareQuelle: { belege: "من الفواتير", karte: "من المنيو", eigen: "قيمتك", richtwert: "قيمة إرشادية للقطاع ≈" }, wareUnplausibel: "المبيعات قليلة بعد",
+    portionen: (n) => `≈ ${n} حصة`, schwundKeine: "يحتاج جردين", schwundNichts: "لا اشتباه", schwundZeitraum: (von, bis) => `الجرد ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => `${n} توعية صحية مستحقة`, kuehlAbw: (n) => `${n} انحراف تبريد مفتوح`, kuehl: (n) => `${n} يوم تبريد ناقص`, putz: (n) => `${n} يوم تنظيف ناقص`, keine: "لا شيء مفتوح", keineDaten: "غير مُعدّ" },
+    keineInventur: "لا جرد", ohnePreis: (n) => `${n} سلعة بلا سعر`,
+    bestellen: { jetzt: (n) => `اطلب ${n} سلعة اليوم`, morgen: (n) => `اطلب ${n} سلعة غدًا`, keine: "لا شيء للطلب" },
+    aktionenLaufend: (n) => `${n} عرض جارٍ`, aktionenKeine: "لا عرض",
+    unvollstaendig: (liste) => `ناقص: ${liste}`, vollstaendig: "كامل",
+    fehltWas: { umsatz: "لا مبيعات", umsatzTage: "أيام مبيعات ناقصة", richtpreise: "أسعار إرشادية", richtwert: "قيمة إرشادية بدل المنيو", muellOhneWert: "مرمي بلا سعر", verkaeufe: "لا مبيعات حسب الطبق", pflichten: "التبريد/التنظيف غير مُعدّ", kosten: "تكاليف مفتوحة", inventur: "لا جرد" },
+    rang: { platz: (r, n) => `المرتبة ${r} من ${n}`, abstand: (x) => `${x} خلف الأفضل`, fehlt: "لا بيانات", andereBasis: "قاعدة بيانات مختلفة – لا يمكن المقارنة", zuWenig: "المقارنة تحتاج محلّين" },
+    punkte: (n) => `${n} نقطة`,
+    trend: { hoch: (p) => `+${p} % عن الفترة السابقة`, runter: (p) => `−${p} % عن الفترة السابقة`, gleich: "مثل الفترة السابقة", hochNeu: "جديد، لا شيء من قبل", keine: "لا فترة سابقة" },
+    satz: { belehrung: (l, n) => `${l}: ${n} توعية صحية مستحقة`, kuehlAbw: (l, n) => `${l}: ${n} انحراف تبريد مفتوح`, kuehl: (l, n) => `${l}: ${n} جولة تبريد ناقصة`, putz: (l, n) => `${l}: ${n} يوم تنظيف ناقص`,
+      wareUeber: (l, p, b) => `${l}: تكلفة البضاعة أعلى بـ ${p} نقطة من ${b}`, minus: (l, e) => `${l}: ${e} حتى الصفر`, umsatzFehlt: (l, n) => `${l}: ${n} يوم بلا إدخال مبيعات`, bestellen: (l, n) => `${l}: اطلب ${n} سلعة اليوم`,
+      inventurFehlt: (l) => `${l}: لا جرد بعد`, umsatzKeiner: (l) => `${l}: لا مبيعات في الفترة`, gut: "كل المحلات: لا شيء مفتوح" },
+    vergleich: "مقارنة", vergleichAb: "المقارنة تحتاج محلّين", keineLaeden: "لا محل فيه بيانات", bericht: "تقرير المالك", datei: "Malek", drucken: "طباعة التقرير", csv: "CSV", geteilt: "تمت مشاركة التقرير",
+    dok: { zahlen: "الأرقام لكل محل", hinweis: "≈ = تقديري (أسعار إرشادية أو قيمة إرشادية أو تقدير). „ناقص“ = لا بيانات في الفترة. فقط المحلات على هذا الهاتف، الأرقام من إدخالات التطبيق.",
+      kopf: ["المحل", "المبيعات", "تكلفة البضاعة", "المرمي", "اشتباه نقص", "واجبات مفتوحة", "حتى الصفر", "قيمة المخزون", "الطلب"], laden: "المحل", vergleich: "مقارنة", vergleichInfo: "الترتيب فقط بين المحلات ذات قاعدة البيانات نفسها.",
+      trend: "الاتجاه مقارنة بالفترة السابقة", daten: "قاعدة البيانات", fehlt: "ناقص", tage: "أيام", quelle: "مصدر تكلفة البضاعة", fuss: "GastroCalc · تقرير المالك. الأرقام من إدخالات التطبيق – ليست محاسبة ولا بيانات كاشير." },
   },
 };

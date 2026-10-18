@@ -1351,7 +1351,7 @@ export default {
     was: "Mezinahî li ser tablo û lîsteya bihayê tê nivîsîn – ji bo vexwarinan mecbûrî ye. Vekirî: mal ji bo qedehê = bihayê lîtreyê × porsiyon, bi windabûnê. Stok û siparîş bi lître têne hesibandin.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "Sersal", dreikoenige: "Cejna Xuyabûnê", karfreitag: "Îniya Pîroz", ostermontag: "Duşema Paskalyayê", maifeiertag: "1ê Gulanê", himmelfahrt: "Hilkişîna Îsa", pfingstmontag: "Duşema Pentîkostê", fronleichnam: "Cejna Bedena Pîroz", einheit: "Roja Yekîtiya Almanyayê", allerheiligen: "Roja Hemû Pîrozan", weihnachten1: "Noel (roja 1ê)", weihnachten2: "Noel (roja 2yê)" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "Sersal", dreikoenige: "Cejna Xuyabûnê", karfreitag: "Îniya Pîroz", ostermontag: "Duşema Paskalyayê", maifeiertag: "1ê Gulanê", himmelfahrt: "Hilkişîna Îsa", pfingstmontag: "Duşema Pentîkostê", fronleichnam: "Cejna Bedena Pîroz", einheit: "Roja Yekîtiya Almanyayê", allerheiligen: "Roja Hemû Pîrozan", weihnachten1: "Noel (roja 1ê)", weihnachten2: "Noel (roja 2yê)", frauentag: "Roja Jinan a Cîhanî", weltkindertag: "Roja Zarokan a Cîhanî", reformationstag: "Roja Reformê", bussbettag: "Roja Tobe û Duayê" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "Betlaneyên fermî", land: "Eyalet", nurBund: "Tenê betlaneyên li seranserê welêt", ungeprueft: "Ji bo vê eyaletê sepan tenê betlaneyên li seranserê welêt nas dike.", ladenZu: "Dikan di betlaneyên fermî de girtî ye", liefern: "Di betlaneyên fermî de tu dabînker nagihîne. Sipariş diçe roja gihandinê ya din.", naechster: (n, d) => `Betlaneya din: ${n}, ${d}` }, // Feiertage (18.10.2026)
     einstieg: "Pêşkêşvan", einstiegUnter: "Rojên radestkirinê, dawiya siparîşê, rêya siparîşê",
@@ -1391,5 +1391,29 @@ export default {
     knappVor: (tag) => `belkî heta radestkirina ${tag} têra neke`, ausweich: (name, tag) => `${name} ${tag} tê`, ausweichOhne: (name) => `ji ${name} were girtin?`,
     termin: (tag, bis, naechste) => `Radestkirin ${tag}, heta ${bis} siparîş bide. Heta radestkirina ${naechste} têra dike, bi rezerv.`, terminAbholung: (tag, naechste) => `Girtin ${tag}. Heta ${naechste} têra dike, bi rezerv.`,
     mindestMenge: (liste) => `Pêşniyar: ${liste}.`, perWhatsapp: "Bi WhatsApp siparîş bide", bestellenZyklus: (p) => `Bi rojên radestkirinê: heta radestkirina piştre têra dike, bi ${p} roj rezerv.`,
+  },
+  eigentuemer: {
+    titel: "Xwedî: hemû dikan", ladenNr: (n) => `Dikan ${n}`, laedenAnzahl: (n) => n === 1 ? "1 dikan" : `${n} dikan`, beispiel: "Mînak", fehlt: "kêm e",
+    zeit: { woche: "7 roj", monat: "Meh", frei: "Azad", von: "Ji", bis: "Heta" },
+    kennzahl: { umsatz: "Dahat", ware: "Mesrefa malê", muell: "Avêtî", schwund: "Guman a kêmbûnê", personal: "Xwarina karmendan", pflichten: "Erkên vekirî", bisNull: "Heta sifir", lager: "Nirxa depoyê", bestellen: "Sipariş", aktionen: "Kampanya" },
+    umsatzTage: (tage, soll) => `${tage} ji ${soll} rojan hatine nivîsîn`, quelle: { notiz: "nîşe", kasse: "kase", zbon: "rapora Z", hand: "bi dest" },
+    wareQuelle: { belege: "ji fatûreyan", karte: "ji menuyê", eigen: "nirxa te", richtwert: "nirxa rêber a sektorê ≈" }, wareUnplausibel: "hîn dahat pir kêm e",
+    portionen: (n) => `≈ ${n} porsiyon`, schwundKeine: "2 hejmartin lazim in", schwundNichts: "guman tune", schwundZeitraum: (von, bis) => `hejmartin ${von} – ${bis}`,
+    pflicht: { belehrung: (n) => `${n} perwerdeya paqijiyê dema wê hatiye`, kuehlAbw: (n) => `${n} devjêbûna sarkirinê vekirî`, kuehl: (n) => `${n} roja sarkirinê kêm e`, putz: (n) => `${n} roja paqijiyê kêm e`, keine: "tiştek vekirî nîne", keineDaten: "nehatiye sazkirin" },
+    keineInventur: "hejmartin tune", ohnePreis: (n) => `${n} mal bê biha`,
+    bestellen: { jetzt: (n) => `îro ${n} malan sipariş bike`, morgen: (n) => `sibê ${n} malan sipariş bike`, keine: "tiştek ji bo siparişê tune" },
+    aktionenLaufend: (n) => `${n} kampanya didome`, aktionenKeine: "kampanya tune",
+    unvollstaendig: (liste) => `Netemam: ${liste}`, vollstaendig: "temam",
+    fehltWas: { umsatz: "dahat tune", umsatzTage: "rojên dahatê kêm in", richtpreise: "bihayên rêber", richtwert: "nirxa rêber li şûna menuyê", muellOhneWert: "avêtî bê biha", verkaeufe: "firotin tune", pflichten: "sarkirin/paqijî nehatiye sazkirin", kosten: "mesref vekirî", inventur: "hejmartin tune" },
+    rang: { platz: (r, n) => `Cihê ${r} ji ${n}`, abstand: (x) => `${x} li paş ya herî baş`, fehlt: "dane tune", andereBasis: "bingeha daneyan cuda ye – nayê berawirdkirin", zuWenig: "berawirdkirin ji du dikanan" },
+    punkte: (n) => `${n} xal`,
+    trend: { hoch: (p) => `+${p} % li gorî dema berê`, runter: (p) => `−${p} % li gorî dema berê`, gleich: "wek dema berê", hochNeu: "nû, berê tiştek tunebû", keine: "dema berê tune" },
+    satz: { belehrung: (l, n) => `${l}: ${n} perwerdeya paqijiyê dema wê hatiye`, kuehlAbw: (l, n) => `${l}: ${n} devjêbûna sarkirinê vekirî`, kuehl: (l, n) => `${l}: ${n} gera sarkirinê kêm e`, putz: (l, n) => `${l}: ${n} roja paqijiyê kêm e`,
+      wareUeber: (l, p, b) => `${l}: mesrefa malê ${p} xal ji ${b} bilindtir`, minus: (l, e) => `${l}: ${e} heta sifir`, umsatzFehlt: (l, n) => `${l}: ${n} roj bê nivîsîna dahatê`, bestellen: (l, n) => `${l}: îro ${n} malan sipariş bike`,
+      inventurFehlt: (l) => `${l}: hîn hejmartin tune`, umsatzKeiner: (l) => `${l}: di vê demê de dahat tune`, gut: "Hemû dikan: tiştek vekirî nîne" },
+    vergleich: "Berawirdkirin", vergleichAb: "Berawirdkirin ji du dikanan", keineLaeden: "Dikaneke bi dane tune", bericht: "Rapora xwediyê", datei: "Xwedi", drucken: "Raporê çap bike", csv: "CSV", geteilt: "Rapor hat parvekirin",
+    dok: { zahlen: "Hejmar li gorî dikanê", hinweis: "≈ = texmînî (bihayên rêber, nirxa rêber an texmîn). „kêm e“ = di demê de dane tune. Tenê dikanên li ser vê telefonê, hejmar ji tomarên sepanê.",
+      kopf: ["Dikan", "Dahat", "Mesrefa malê", "Avêtî", "Guman a kêmbûnê", "Erkên vekirî", "Heta sifir", "Nirxa depoyê", "Sipariş"], laden: "Dikan", vergleich: "Berawirdkirin", vergleichInfo: "Rêz tenê di navbera dikanên bi heman bingeha daneyan.",
+      trend: "Meyl li gorî dema berê", daten: "Bingeha daneyan", fehlt: "Netemam", tage: "roj", quelle: "Çavkaniya mesrefa malê", fuss: "GastroCalc · Rapora xwediyê. Hejmar ji tomarên sepanê – ne hesabdarî, ne daneyên kaseyê." },
   },
 };
