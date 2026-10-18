@@ -110,7 +110,7 @@ test("heuteZiel: große Zahl, Balken und Tempo passen zu monatsZiel", () => {
 test("heuteKachelZahlen: Umsatz, Müll, Kühl- und Putzstand als Zahlen", () => {
   const s = laden(); const ks = E.kuehlStatus(s); const k = LZ.heuteKachelZahlen(s, ks, H);
   assert.ok(k.umsatz === null || typeof k.umsatz === "number");
-  assert.ok(k.kuehl === null || ["abweichung", "ok", "offen"].includes(k.kuehl.art));
+  assert.ok(k.kuehl === null || ["abweichung", "ok", "offen", "ruhetag"].includes(k.kuehl.art));
   assert.equal(LZ.heuteKachelZahlen({ ...s, putzplan: null }, { eingerichtet: false }, H).kuehl, null);
 });
 test("abschlussHaken und tagesBilanz: Zahlen für „Tag abschließen“", () => {

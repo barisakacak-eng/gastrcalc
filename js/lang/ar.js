@@ -770,6 +770,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "تغيير المحتوى", inhaltJe: "المحتوى لكل عبوة", inhaltFehlt: "أدخل كمية أكبر من صفر.", // Schwadron 18.10.2026, U3
     textEinfuegen: "أو الصق النص", textAus: "إخفاء النص",
     stornoFrage: "التراجع عن هذا الإيصال؟ عندها لا يُحسب في المشتريات. الأسعار المعتمدة تبقى.", doppeltFrage: "هذا الإيصال قرأته من قبل (نفس التاجر، نفس اليوم، نفس المجموع). هل تعتمده مرة أخرى؟",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} لكل kg/l/قطعة (${p} %). هل هذا صحيح؟`,
@@ -890,7 +891,7 @@ export default {
     dauerhaftUnbekannt: "هل الذاكرة دائمة؟ غير معروف.",
     offen: { kopf: "بيانات المحل حُمّلت ناقصة. هل تقرأ نسخة احتياطية؟", teil: (j, m) => `جزء ناقص (${j}${m ? " " + m : ""}). هل تقرأ نسخة احتياطية؟`, abgleich: (liste) => `تغيّر عند الدمج: ${liste} – تبقى نسختك، رجاءً تحقّق`, zukunft: (n) => `لم تُؤخذ ${n} إدخالات من النسخة (التاريخ في المستقبل)`, konflikt: (n) => `${n} إدخالات من النسخة كانت مختلفة – أضيفت بجانبها` },
     journal: { schwund: "النفايات", tagesnotizen: "المبيعات", messungen: "التبريد", lieferungen: "التوريدات", abschluesse: "إغلاق اليوم", kostenbelege: "فواتير التكاليف", putzlog: "خطة التنظيف", belehrungen: "تعليمات النظافة", rundgaenge: "جولات التبريد", inventuren: "الجرد", uploads: "الصور", artikel: "البضائع", gerichte: "الأطباق", anderes: "البيانات" },
-    bereich: { kosten: "التكاليف", gerichte: "الأطباق والوصفات", artikel: "البضائع والأسعار", betrieb: "المحل", kuehl: "أماكن التبريد", putzplan: "خطة التنظيف", personen: "الأشخاص", lager: "المخزون" },
+    bereich: { kombis: "قوائم الكومبو", kosten: "التكاليف", gerichte: "الأطباق والوصفات", artikel: "البضائع والأسعار", betrieb: "المحل", kuehl: "أماكن التبريد", putzplan: "خطة التنظيف", personen: "الأشخاص", lager: "المخزون" },
   },
   einstellungen: { kleinunternehmer: "منشأة صغيرة (بدون استرداد ضريبة)", kleinunternehmerHinweis: "مفعّل: المبالغ الإجمالية تُحسب كاملة، لا تُخصم ضريبة.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "صور الفواتير والنفايات والأطباق موجودة في ملف النسخة. لذلك يصبح الملف أكبر.",
@@ -1145,6 +1146,8 @@ export default {
   beispiel: { anlegen: "إنشاء محل تجريبي", satz: "محل دونر مملوء بالكامل للتجربة. كل الأرقام أمثلة. محلك يبقى كما هو.", name: "دونر تجريبي", loeschen: "حذف المحل التجريبي", chip: "مثال – كل الأرقام مختلقة", export: "مثال – ليست بيانات حقيقية" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "قائمة من عدة أطباق", titel: "تكوين القائمة", text: "أدخل كم من كل طبق في القائمة الواحدة. يتذكر التطبيق ذلك لنص الصندوق هذا.", menge: (n) => `${n}: الكمية لكل قائمة`, speichern: "حفظ القائمة", leer: "أدخل كمية لطبق واحد على الأقل.", gelernt: (n) => `تم الحفظ: قائمة من ${n} أطباق.`, marke: "قائمة" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} مواد مختلفة، لكن المبيعات ما زالت ناقصة لـ ${d} أيام. شبهة الفاقد فقط عند وجود كل المبيعات.`, // Schwadron 18.10.2026, N4
     titel: "المبيعات حسب الطبق", unter: "ما بعته – من الكاشير أو بإدخال يدوي.", entwurf: "مسودة: لم تُعتمد بعد، للاطلاع فقط.", einstieg: "المبيعات حسب الطبق",
     einstiegUnter: "قراءة الكاشير، أطباق راكدة، نقص", zeitraumInventur: "بين آخر جردين", keine: "لا توجد مبيعات بعد في هذه الفترة.", ohneGericht: "بدون طبق",
     rangTitel: "الأكثر مبيعًا", ohneInventur: "للمقارنة مع المخزن يلزم جردان.", inventurKnopf: "إلى الجرد", abgleichTitel: "البضاعة: المتوقع والمستهلك",
@@ -1174,6 +1177,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `لا شيء عاجل اليوم. الطلب التالي حتى ${d}` : "لا شيء عاجل اليوم.", // Schwadron 18.10.2026, N1
     einstieg: "المخزون والطلب",
     einstiegUnter: "ما عندك وما يجب طلبه",
     titel: "المخزون والطلب",

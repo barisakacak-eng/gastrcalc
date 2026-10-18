@@ -27,9 +27,39 @@ export function journalZeile(z, belegBasis) {
     einzelpreis: z.einzelpreis, jeKg: !!z.jeKg, gesamt: z.gesamt, netto, steuersatz: satz, jeEinheit: je.preis, jeEinheitEinheit: je.einheit, sicher: !!z.sicher };
 }
 
+// Schwadron 18.10.2026, H2: Die Einheit des Artikels hat Vorrang vor der gelesenen Füllmenge. Wird die Ware in Stück geführt, ist
+// „Cola 0,33 l KI 24 Stk“ eine Kiste mit 24 Stück (nicht 7,92 l); wird sie in Litern geführt, gilt die Alternative 24 × 0,33 l.
+// Ein von Hand eingetragener Inhalt (inhaltVonHand) bleibt immer. Gibt eine neue Zeile zurück (oder dieselbe, wenn nichts passt).
+const basisVon = (e) => EINHEITEN[e === "cl" ? "ml" : e]?.basis || null;
+export function inhaltFuerArtikel(z, a) {
+  if (!z || !a || z.inhaltVonHand || !z.inhalt?.einheit) return z;
+  const bA = basisVon(a.packung?.einheit) || basisVon(a.einheit); const bZ = basisVon(z.inhalt.einheit);
+  if (!bA || !bZ || bA === bZ) return z;
+  if (z.inhaltAlt && basisVon(z.inhaltAlt.einheit) === bA) return { ...z, inhalt: { ...z.inhaltAlt }, inhaltAlt: { ...z.inhalt } };
+  if (bA === "stk" && z.inhalt.anzahl > 1) return { ...z, inhalt: { anzahl: z.inhalt.anzahl, groesse: null, einheit: "stk" }, inhaltAlt: { ...z.inhalt } };
+  return z;
+}
+const artikelVon = (stand, name) => (name ? (stand.artikel || []).find((x) => x.name === name) || null : null);
+// Schwadron 18.10.2026, U3: Der Wirt korrigiert den gelesenen Inhalt einer Belegzeile (Anzahl/Menge je Gebinde und Einheit kg, l oder Stück).
+// Liefert eine neue Zeile; null bei ungültiger Eingabe.
+export const INHALT_EINHEITEN = ["stk", "kg", "l"];
+export function zeileInhaltSetzen(z, menge, einheit) {
+  const m = Number(menge); if (!z || !(m > 0) || !INHALT_EINHEITEN.includes(einheit)) return null;
+  const inhalt = einheit === "stk" ? { anzahl: Math.round(m), groesse: null, einheit: "stk" } : { anzahl: 1, groesse: m, einheit };
+  if (einheit === "stk" && !(inhalt.anzahl > 0)) return null;
+  const { inhaltAlt, ...rest } = z; return { ...rest, inhalt, inhaltVonHand: true };
+}
+// Inhalt einer Zeile für das Eingabefeld: { menge, einheit } in stk, kg oder l (g/ml/cl umgerechnet)
+export function zeileInhaltWert(z) {
+  const i = z?.inhalt; if (!i || !i.einheit) return { menge: null, einheit: "stk" };
+  if (i.groesse === null || i.groesse === undefined) return { menge: i.anzahl ?? null, einheit: "stk" };
+  const ges = (i.anzahl ?? 1) * i.groesse;
+  return i.einheit === "g" ? { menge: ges / 1000, einheit: "kg" } : i.einheit === "ml" ? { menge: ges / 1000, einheit: "l" } : i.einheit === "cl" ? { menge: ges / 100, einheit: "l" } : { menge: ges, einheit: i.einheit === "kg" ? "kg" : i.einheit === "l" ? "l" : "stk" };
+}
+
 export function lieferungAnlegen(stand, beleg, { zeilen, datum = null, geraet = null, basis = null, alleZeilen = true } = {}) {
   const b = basis || (beleg.basis === "brutto" ? "brutto" : "netto");
-  const jz = zeilen.map((z) => journalZeile(z, b));
+  const jz = zeilen.map((z) => journalZeile(inhaltFuerArtikel(z, artikelVon(stand, z.bekannt)), b));
   const pfand = (beleg.pfand || []).reduce((s, p) => s + (Number(p.betrag) || 0), 0);
   const zeilenNetto = jz.reduce((s, z) => s + (z.netto || 0), 0);
   // Einkaufssumme: Fußzeile nur, wenn sie zu den Zeilen passt und alle Zeilen übernommen wurden; sonst die übernommenen Zeilen (ohne Pfand)
@@ -94,6 +124,7 @@ export function preisAenderungen(stand, { tage = 30, datum = heute() } = {}) {
 export function preisSprung(stand, z, belegBasis) {
   const a = (stand.artikel || []).find((x) => x.name === z.bekannt); if (!a) return null;
   const jz = journalZeile(z, belegBasis); if (!(jz.menge > 0) || !(jz.netto > 0) || !(jz.inhaltMenge > 0) || !jz.inhaltEinheit) return null;
+  if (basisVon(a.packung?.einheit) && basisVon(jz.inhaltEinheit) !== basisVon(a.packung.einheit)) return null; // Schwadron 18.10.2026, H2: € je Stück nie gegen € je ml
   const alt = istRichtpreis(a) ? null : preisJeBasis(a); if (!(alt > 0)) return null; // Richtpreise (17.10.2026): kein Sprung gegen einen Richtpreis
   const neu = preisJeBasis({ ...a, packung: { menge: jz.inhaltMenge, einheit: jz.inhaltEinheit }, preis: jz.netto / jz.menge, preisBasis: "netto" }); if (neu === null) return null;
   return { alt, neu, prozent: (neu - alt) / alt, einheit: EINHEITEN[jz.inhaltEinheit]?.basis || "stk" };
@@ -129,6 +160,7 @@ export function belegZeilenVorbereiten(stand, beleg) {
   const treffer = {}; for (const z of zeilen) if (z.bekannt) treffer[z.bekannt] = (treffer[z.bekannt] || 0) + 1;
   for (const z of zeilen) if (z.bekannt && treffer[z.bekannt] > 1) { z.vorschlag = z.bekannt; z.bekannt = null; }
   const basis = beleg.basis === "unklar" ? "netto" : beleg.basis;
+  for (let i = 0; i < zeilen.length; i++) zeilen[i] = inhaltFuerArtikel(zeilen[i], artikelVon(stand, zeilen[i].bekannt)); // Schwadron 18.10.2026, H2
   for (const z of zeilen) {
     if (!z.bekannt || z.frage) continue;
     const sp = preisSprung(stand, z, basis);

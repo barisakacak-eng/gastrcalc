@@ -768,6 +768,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Cambiar contenido", inhaltJe: "Contenido por envase", inhaltFehlt: "Pon una cantidad mayor que cero.", // Schwadron 18.10.2026, U3
     textEinfuegen: "O pegar texto", textAus: "Ocultar texto",
     stornoFrage: "¿Anular este ticket? Ya no contará en las compras. Los precios aplicados se quedan.", doppeltFrage: "Este ticket ya lo has cargado (mismo proveedor, mismo día, mismo total). ¿Aplicarlo otra vez de todas formas?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} por kg/l/ud. (${p} %). ¿Es correcto?`,
@@ -888,7 +889,7 @@ export default {
     dauerhaftUnbekannt: "¿Memoria permanente? Desconocido.",
     offen: { kopf: "Datos del local cargados incompletos. ¿Leer una copia?", teil: (j, m) => `Falta una parte (${j}${m ? " " + m : ""}). ¿Leer una copia?`, abgleich: (liste) => `Cambiado al unir: ${liste} – se queda tu versión, revisa`, zukunft: (n) => `${n} entradas de la copia no tomadas (fecha en el futuro)`, konflikt: (n) => `${n} entradas de la copia eran distintas – puestas al lado` },
     journal: { schwund: "Basura", tagesnotizen: "Ventas", messungen: "Refrigeración", lieferungen: "Entregas", abschluesse: "Cierres del día", kostenbelege: "Recibos de gastos", putzlog: "Plan de limpieza", belehrungen: "Formaciones de higiene", rundgaenge: "Rondas de frío", inventuren: "Inventarios", uploads: "Fotos", artikel: "Productos", gerichte: "Platos", anderes: "Datos" },
-    bereich: { kosten: "Gastos", gerichte: "Platos y recetas", artikel: "Productos y precios", betrieb: "Local", kuehl: "Puntos de frío", putzplan: "Plan de limpieza", personen: "Personas", lager: "Almacén" },
+    bereich: { kombis: "Menús combo", kosten: "Gastos", gerichte: "Platos y recetas", artikel: "Productos y precios", betrieb: "Local", kuehl: "Puntos de frío", putzplan: "Plan de limpieza", personen: "Personas", lager: "Almacén" },
   },
   einstellungen: { kleinunternehmer: "Pequeña empresa (sin IVA deducible)", kleinunternehmerHinweis: "Activado: los importes brutos cuentan enteros, no se descuenta IVA.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Las fotos de facturas, basura y platos van en el archivo de copia. Por eso el archivo es más grande.",
@@ -1143,6 +1144,8 @@ export default {
   beispiel: { anlegen: "Crear local de ejemplo", satz: "Un local de döner totalmente rellenado para probar. Todos los números son ejemplos. Tu local no cambia.", name: "Döner de ejemplo", loeschen: "Borrar local de ejemplo", chip: "Ejemplo – todos los números inventados", export: "EJEMPLO – sin datos reales" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menú de varios platos", titel: "Montar el menú", text: "Pon cuánto de cada plato lleva un menú. La app lo recuerda para este texto de caja.", menge: (n) => `${n}: cantidad por menú`, speichern: "Guardar menú", leer: "Pon una cantidad en al menos un plato.", gelernt: (n) => `Guardado: menú con ${n} platos.`, marke: "Menú" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} productos no cuadran, pero faltan ventas de ${d} días. Sospecha de merma solo cuando estén todas las ventas.`, // Schwadron 18.10.2026, N4
     titel: "Ventas por plato", unter: "Lo que vendiste – de la caja o anotado a mano.", entwurf: "Borrador: aún no aprobado, solo para ver.", einstieg: "Ventas por plato",
     einstiegUnter: "Leer la caja, platos que no salen, mermas", zeitraumInventur: "entre los dos últimos inventarios", keine: "Todavía no hay ventas en este periodo.", ohneGericht: "Sin plato",
     rangTitel: "Lo más vendido", ohneInventur: "Para comparar con el almacén hacen falta dos inventarios.", inventurKnopf: "Al inventario", abgleichTitel: "Mercancía: esperada y gastada",
@@ -1172,6 +1175,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Hoy nada urgente. Próximo pedido hasta ${d}` : "Hoy nada urgente.", // Schwadron 18.10.2026, N1
     einstieg: "Almacén y pedidos",
     einstiegUnter: "Lo que tienes y lo que hay que pedir",
     titel: "Almacén y pedidos",

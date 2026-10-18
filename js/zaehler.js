@@ -64,6 +64,21 @@ function einkaufJeTag(stand, von, bis) {
   return { jeTag: out, anzahl: n };
 }
 
+// Schwadron 18.10.2026, H1: geglättete Belegquote für die Prognose – Einkauf netto / Umsatz netto der letzten PROGNOSE_FENSTER Kalendertage.
+// null, solange der erste Eintrag (Umsatz oder Beleg) jünger ist als das Fenster: dann zählt der Aufbau des Lagers noch als „Ware“.
+export const PROGNOSE_FENSTER = 28;
+export const QUOTE_MAX = 0.9;
+export function belegQuoteFenster(stand, datum, satz) {
+  const von = tagPlus(datum, -(PROGNOSE_FENSTER - 1));
+  let erster = null;
+  for (const n of stand.tagesnotizen || []) if (!n.storniert && typeof n.umsatz === "number" && typeof n.datum === "string" && (erster === null || n.datum < erster)) erster = n.datum;
+  for (const l of stand.lieferungen || []) if (!l.storniert && typeof l.datum === "string" && (erster === null || l.datum < erster)) erster = l.datum;
+  if (erster === null || erster > von) return null;
+  const ek = einkaufJeTag(stand, von, datum); const belege = Object.values(ek.jeTag).reduce((a, b) => a + b, 0);
+  let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += e.umsatz / (1 + satz); }
+  return u > 0 ? belege / u : null;
+}
+
 // Der Zähler für den Monat, in dem `datum` liegt, Stand am Abend von `datum`. Paket 3, M7: Standard ist der Geschäftstag (bis 4 Uhr = Vortag).
 export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const M = monatsGrenzen(datum);
@@ -88,8 +103,13 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   let stufe = mitKarte ? 2 : 1;
   const belegSumme = Object.values(einkauf.jeTag).reduce((a, b) => a + b, 0);
   if (einkauf.anzahl > 0 && mitKarte && belegSumme > 0 && belegSumme >= umsatzNettoGesamt * q.quote) stufe = 3;
-  // Quote für die Prognose: in Stufe 3 die Belegquote (nie unter der Kartenquote), sonst Karte oder Richtwert
-  const quoteEff = stufe === 3 ? Math.min(0.95, Math.max(q.quote, umsatzNettoGesamt > 0 ? belegSumme / umsatzNettoGesamt : q.quote)) : (q.quote ?? 0);
+  // Quote für Prognose, Tempo und „pro Tag nötig“. Schwadron 18.10.2026, H1: in Stufe 3 NICHT mehr „Belege Monat bis heute / Umsatz bis
+  // heute“ – am Einkaufstag und am Monatsersten stand dort der ganze Beleg gegen ein, zwei Tage Umsatz (Quote 95 %, „4.769 € / Tag nötig“).
+  // Jetzt: Belegquote über die letzten 28 Kalendertage (über die Monatsgrenze), erst wenn die App so lange Daten hat; davor die Kartenquote
+  // (Verbrauch laut Rezept). Nie unter der Kartenquote, höchstens 0,9. Stand, Ware und Monatssumme bleiben echte Belege (unverändert).
+  const belegQuoteMonat = umsatzNettoGesamt > 0 ? belegSumme / umsatzNettoGesamt : null;
+  const quoteFenster = stufe === 3 ? belegQuoteFenster(stand, datum, steuer.satz) : null;
+  const quoteEff = stufe === 3 ? Math.min(QUOTE_MAX, Math.max(q.quote, quoteFenster ?? q.quote)) : (q.quote ?? 0);
 
   // Öffnungstage des Monats (gewichtet) und Tageskosten
   const tage = []; let gewichtMonat = 0;
@@ -139,7 +159,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   // eigene Lohn ein Richtwert ist – unter Stufe 3 ist die Ware ohnehin eine Schätzung aus der Karte.
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: anteil(last.lohn ?? 0) * gewichtBisHeute, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
@@ -212,8 +232,10 @@ export function monatsZiel(stand, z, H) {
 }
 // Wareneinsatz in % vom Netto-Umsatz: Stufe 3 aus Belegen und Umsatz, Stufe 2 aus Karte oder eigener Quote, sonst (Paket 3, M15/E2)
 // der Branchen-Richtwert als Schätzung (geschaetzt: true, quelle "richtwert").
+// Schwadron 18.10.2026, N5: Belege gegen wenig Umsatz (Lager wird aufgebaut) ergaben 180 %. Gedeckelt auf QUOTE_MAX; liegt der Rohwert
+// darüber, steht unplausibel: true (roh = ungedeckelter Wert) – eine Anzeige zeigt dann keinen Prozentwert, sondern „noch zu wenig Umsatz“.
 export function wareneinsatzQuote(stand, z) {
-  if (z.stufe === 3 && z.umsatzNetto > 0) return { quote: z.belegSumme / z.umsatzNetto, quelle: "belege", geschaetzt: false };
+  if (z.stufe === 3 && z.umsatzNetto > 0) { const roh = z.belegSumme / z.umsatzNetto; return roh > QUOTE_MAX ? { quote: QUOTE_MAX, quelle: "belege", geschaetzt: false, unplausibel: true, roh } : { quote: roh, quelle: "belege", geschaetzt: false }; }
   if (z.quote !== null && z.quote !== undefined) return { quote: z.quote, quelle: z.quoteQuelle, geschaetzt: z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis, ...(z.quoteRichtpreis ? { richtpreis: true } : {}) }; // Richtpreise (17.10.2026)
   return { quote: null, quelle: "keine", geschaetzt: false };
 }

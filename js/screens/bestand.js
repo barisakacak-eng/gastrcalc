@@ -40,7 +40,7 @@ export function bestandView(stand) {
   if (bs.ohneInventur) return `${kopf}<div class="inhalt"><div class="karte hinweisgelb"><p>${esc(t("bestand.ohneInventur"))}</p>
       <button type="button" class="knopf zweit" data-a="nav" data-wert="inventur">${esc(t("bestand.inventurKnopf"))}</button></div>${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
   const v = bestellVorschlag(stand, { bs }); const uhr = bestandUhrzeit(stand);
-  const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2></div>` : `<div class="karte"><h2>${esc(t("bestand.allesGut"))}</h2></div>`;
+  const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2></div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2></div>`; // Schwadron 18.10.2026, N1
   return `${kopf}<div class="inhalt">${oben}${bestellenView(stand, v)}${lagerView(bs)}${hinweiseView(bs)}${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
 }
 

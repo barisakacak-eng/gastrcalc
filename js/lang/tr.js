@@ -769,6 +769,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "İçeriği değiştir", inhaltJe: "Ambalaj başına içerik", inhaltFehlt: "Lütfen sıfırdan büyük bir miktar gir.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Veya yazı yapıştır", textAus: "Yazıyı gizle",
     stornoFrage: "Bu fiş geri alınsın mı? Artık alışta sayılmaz. Alınan fiyatlar kalır.", doppeltFrage: "Bu fişi zaten okuttun (aynı tedarikçi, aynı gün, aynı toplam). Yine de tekrar alınsın mı?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} kg/l/adet başına (%${p}). Doğru mu?`,
@@ -889,7 +890,7 @@ export default {
     dauerhaftUnbekannt: "Hafıza kalıcı mı? Bilinmiyor.",
     offen: { kopf: "Dükkân verileri eksik yüklendi. Yedek okunsun mu?", teil: (j, m) => `Bir parça eksik (${j}${m ? " " + m : ""}). Yedek okunsun mu?`, abgleich: (liste) => `Birleştirmede değişti: ${liste} – senin hâlin kalıyor, lütfen kontrol et`, zukunft: (n) => `Yedekten ${n} kayıt alınmadı (tarih gelecekte)`, konflikt: (n) => `Yedekten ${n} kayıt farklıydı – yanına eklendi` },
     journal: { schwund: "Çöp", tagesnotizen: "Ciro", messungen: "Soğutma", lieferungen: "Teslimatlar", abschluesse: "Gün kapanışları", kostenbelege: "Masraf belgeleri", putzlog: "Temizlik planı", belehrungen: "Hijyen eğitimleri", rundgaenge: "Soğutma turları", inventuren: "Sayımlar", uploads: "Fotoğraflar", artikel: "Mallar", gerichte: "Yemekler", anderes: "Veriler" },
-    bereich: { kosten: "Masraflar", gerichte: "Yemekler ve tarifler", artikel: "Mallar ve fiyatlar", betrieb: "İşletme", kuehl: "Soğutucular", putzplan: "Temizlik planı", personen: "Kişiler", lager: "Depo" },
+    bereich: { kombis: "Kombi menüler", kosten: "Masraflar", gerichte: "Yemekler ve tarifler", artikel: "Mallar ve fiyatlar", betrieb: "İşletme", kuehl: "Soğutucular", putzplan: "Temizlik planı", personen: "Kişiler", lager: "Depo" },
   },
   einstellungen: { kleinunternehmer: "Küçük işletme (KDV iadesi yok)", kleinunternehmerHinweis: "Açık: brüt tutarlar tam sayılır, KDV düşülmez.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Fatura, çöp ve yemek fotoğrafları yedek dosyasında var. Dosya bu yüzden büyür.",
@@ -1145,6 +1146,8 @@ export default {
   beispiel: { anlegen: "Örnek dükkân oluştur", satz: "Denemek için tamamen dolu bir döner dükkânı. Tüm sayılar örnektir. Kendi dükkânın değişmez.", name: "Örnek Döner", loeschen: "Örnek dükkânı sil", chip: "Örnek – tüm sayılar uydurma", export: "ÖRNEK – gerçek veri değil" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Birkaç yemekten menü", titel: "Menüyü oluştur", text: "Bir menüde her yemekten ne kadar olduğunu gir. Uygulama bunu bu kasa metni için hatırlar.", menge: (n) => `${n}: menü başına miktar`, speichern: "Menüyü kaydet", leer: "En az bir yemek için miktar gir.", gelernt: (n) => `Kaydedildi: ${n} yemekli menü.`, marke: "Menü" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} ürün farklı, ama ${d} gün için satışlar hâlâ eksik. Tüm satışlar gelince fire şüphesi gösterilir.`, // Schwadron 18.10.2026, N4
     titel: "Yemek başına satış", unter: "Ne sattığın – kasadan ya da elle.", entwurf: "Taslak: henüz onaylanmadı, sadece bakmak için.",
     einstieg: "Yemek başına satış", einstiegUnter: "Kasayı oku, satmayanlar, fire",
     stueck: (m) => `${m} adet`, zeitraum: (von, bis) => `Dönem: ${von} – ${bis}`, zeitraumInventur: "son iki sayım arası", keine: "Bu dönemde henüz satış yok.",
@@ -1184,6 +1187,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Depo ve sipariş“
   bestand: {
+    nichtsDringend: (d) => d ? `Bugün acil bir şey yok. Sonraki sipariş en geç ${d}` : "Bugün acil bir şey yok.", // Schwadron 18.10.2026, N1
     einstieg: "Depo ve sipariş", einstiegUnter: "Ne var, ne sipariş etmelisin",
     titel: "Depo ve sipariş", unter: "Sayım, alış ve satıştan tahmin.",
     allesGut: "Her şey yetiyor. Sipariş gerekmiyor.", nichtsBestellen: "Şu an sipariş etmen gereken bir şey yok.",

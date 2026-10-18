@@ -393,3 +393,41 @@ test("Prüfgremium (8): totes Lager zeigt „N × Gebinde“ (keine Einzahl hint
   const html = verkaufView(beispielLaden(H));
   assert.ok(html.includes("80 × Packung"), "totes Lager im Beispiel-Laden"); assert.ok(!/\b\d+ (Packung|Karton|Kiste|Sack|Flasche|Dose|Kanister|Eimer|Beutel)\b/.test(html), html.match(/\b\d+ (Packung|Karton|Kiste|Sack)\b/)?.[0]);
 });
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): M1, N4 ----------
+const SF_IV = await import("../js/inventur.js");
+test("Schwadron M1: Kombi-Menü aus der Kasse zählt jeden Bestandteil – Kasse, Z-Bon und Hand, gelernt wie eine Zuordnung", () => {
+  const b = laden(); const D = "2026-10-14";
+  const erg = (datum, menge, umsatz) => ({ positionen: [{ datum, text: "Menü Döner+Pommes+Cola", plu: "900", menge, umsatzBrutto: umsatz }], tage: [datum], bericht: {} });
+  const v0 = vk.importVorschau(b, erg(D, 5, 60)); assert.equal(v0.offenAnzahl, 1);
+  const vor = vk.kombiTeileVorschlag(b, "Menü Döner+Pommes+Cola").map((x) => x.gericht).sort(); assert.deepEqual(vor, ["g3", "g5"], "eindeutige Teile vorbelegt, „Döner“ ist mehrdeutig");
+  const k = vk.kombiLernen(b, { text: "Menü Döner+Pommes+Cola", plu: "900" }, [{ gericht: "g1", menge: 1 }, { gericht: "g5", menge: 1 }, { gericht: "g3", menge: 1 }, { gericht: "gibtsnicht", menge: 1 }]);
+  assert.equal(k.teile.length, 3); assert.equal(vk.zuordnen(b, { text: "menü döner + pommes + cola" }).kombi, k.id);
+  const v1 = vk.importVorschau(b, erg(D, 5, 60)); assert.equal(v1.offenAnzahl, 0); assert.equal(v1.zugeordnet, 1);
+  vk.importUebernehmen(b, erg(D, 5, 60), { jetzt: "2026-10-14T23:00:00Z" });
+  const j = vk.verkaufJeGericht(b, { von: D, bis: D }); const m = (id) => j.zeilen.find((r) => r.gericht === id);
+  assert.equal(m("g1").menge, 5); assert.equal(m("g5").menge, 5); assert.equal(m("g3").menge, 5); assert.equal(j.ohneZuordnung.menge, 0);
+  assert.ok(Math.abs(m("g1").umsatz - 60 * 8 / 14) < 0.006 && Math.abs(m("g1").umsatz + m("g5").umsatz + m("g3").umsatz - 60) < 0.02, "Umsatz nach Kartenpreis verteilt");
+  // Z-Bon: gleicher Weg
+  vk.importUebernehmen(b, erg("2026-10-15", 2, 24), { herkunft: "zbon", jetzt: "2026-10-15T23:00:00Z" });
+  assert.equal(vk.verkaufJeGericht(b, { von: "2026-10-15", bis: "2026-10-15" }).zeilen.find((r) => r.gericht === "g5").menge, 2);
+  // Hand: das Menü als eigene Zeile
+  assert.ok(vk.handVerkaufSetzen(b, "2026-10-16", k.id, 3)); assert.equal(vk.handTag(b, "2026-10-16")[k.id], 3);
+  assert.equal(vk.verkaufJeGericht(b, { von: "2026-10-16", bis: "2026-10-16" }).zeilen.find((r) => r.gericht === "g3").menge, 3);
+  // Speichern/Laden behält Menü und Zuordnung
+  const n = st.migrierenBetrieb(structuredClone(b)); assert.deepEqual(n.kassenKombis, b.kassenKombis); assert.equal(n.verkaeufe.filter((v) => v.kombi === k.id && !v.storniert).length, 3);
+  // Zuordnung auf ein einzelnes Gericht nimmt den Text vom Menü weg
+  vk.zuordnungLernen(b, { text: "Menü Döner+Pommes+Cola", plu: "900" }, "g1"); assert.equal(vk.zuordnen(b, { text: "Menü Döner+Pommes+Cola" }).gericht, "g1");
+});
+test("Schwadron N4: fehlen im Inventur-Zeitraum Verkaufstage, gibt es keinen Schwund-Verdacht, sondern „Verkäufe fehlen“", () => {
+  const b = laden();
+  const zaehlen = (datum, fleisch, jetzt) => { const inv = SF_IV.inventurStarten(b, { datum, jetzt }); SF_IV.mengeSetzen(inv, "Fleisch", fleisch); SF_IV.inventurAbschliessen(b, inv, { datum, jetzt }); };
+  zaehlen("2026-10-10", 2, "2026-10-10T21:30:00Z"); // nach Ladenschluss
+  vk.handVerkaufSetzen(b, "2026-10-11", "g2", 10);
+  b.tagesnotizen.push({ id: "n11", datum: "2026-10-11", umsatz: 90, erfasst: "2026-10-11T21:00:00Z", storniert: false }, { id: "n12", datum: "2026-10-12", umsatz: 500, erfasst: "2026-10-12T21:00:00Z", storniert: false });
+  zaehlen("2026-10-12", 1, "2026-10-12T21:30:00Z"); // 10 kg weg, Verkäufe vom 12. fehlen
+  const a = vk.abgleichInventur(b); const f = a.zeilen.find((x) => x.name === "Fleisch");
+  assert.equal(f.status, "verkaufFehlt"); assert.equal(a.schwund.anzahl, 0); assert.deepEqual(a.tageOhneVerkauf, ["2026-10-12"]);
+  vk.handVerkaufSetzen(b, "2026-10-12", "g1", 5); // Verkäufe nachgetragen → jetzt ist es ein Verdacht
+  assert.equal(vk.abgleichInventur(b).zeilen.find((x) => x.name === "Fleisch").status, "schwund");
+});

@@ -773,6 +773,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Ndrysho përmbajtjen", inhaltJe: "Përmbajtja për paketim", inhaltFehlt: "Shkruaj një sasi mbi zero.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Ose ngjit tekstin", textAus: "Fshih tekstin",
     stornoFrage: "Ta anuloj këtë faturë? Atëherë nuk llogaritet më te blerjet. Çmimet e marra mbeten.", doppeltFrage: "Këtë faturë e ke lexuar tashmë (i njëjti tregtar, e njëjta ditë, e njëjta shumë). Ta marr gjithsesi edhe një herë?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} për kg/l/copë (${p} %). A është e saktë?`,
@@ -893,7 +894,7 @@ export default {
     dauerhaftUnbekannt: "Memoria e përhershme? E panjohur.",
     offen: { kopf: "Të dhënat e lokalit u ngarkuan jo të plota. Të lexoj një kopje?", teil: (j, m) => `Mungon një pjesë (${j}${m ? " " + m : ""}). Të lexoj një kopje?`, abgleich: (liste) => `U ndryshua gjatë bashkimit: ${liste} – mbetet versioni yt, të lutem kontrollo`, zukunft: (n) => `${n} regjistrime nga kopja nuk u morën (data në të ardhmen)`, konflikt: (n) => `${n} regjistrime nga kopja ishin ndryshe – u shtuan pranë` },
     journal: { schwund: "Mbeturina", tagesnotizen: "Xhiro", messungen: "Ftohja", lieferungen: "Dorëzimet", abschluesse: "Mbylljet e ditës", kostenbelege: "Faturat e kostove", putzlog: "Plani i pastrimit", belehrungen: "Trajnimet e higjienës", rundgaenge: "Raundet e ftohjes", inventuren: "Inventarët", uploads: "Fotot", artikel: "Mallrat", gerichte: "Pjatat", anderes: "Të dhënat" },
-    bereich: { kosten: "Kostot", gerichte: "Pjatat dhe recetat", artikel: "Mallrat dhe çmimet", betrieb: "Lokali", kuehl: "Vendet e ftohjes", putzplan: "Plani i pastrimit", personen: "Personat", lager: "Magazina" },
+    bereich: { kombis: "Menu kombo", kosten: "Kostot", gerichte: "Pjatat dhe recetat", artikel: "Mallrat dhe çmimet", betrieb: "Lokali", kuehl: "Vendet e ftohjes", putzplan: "Plani i pastrimit", personen: "Personat", lager: "Magazina" },
   },
   einstellungen: { kleinunternehmer: "Biznes i vogël (pa zbritje TVSH)", kleinunternehmerHinweis: "Ndezur: shumat bruto numërohen të plota, TVSH nuk zbritet.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Fotot e faturave, mbeturinave dhe pjatave janë në skedarin e kopjes. Prandaj skedari është më i madh.",
@@ -1148,6 +1149,8 @@ export default {
   beispiel: { anlegen: "Krijo dyqan shembull", satz: "Një dyqan dyneri plotësisht i mbushur për ta provuar. Të gjithë numrat janë shembuj. Dyqani yt mbetet i paprekur.", name: "Dyner shembull", loeschen: "Fshi dyqanin shembull", chip: "Shembull – të gjithë numrat të sajuar", export: "SHEMBULL – jo të dhëna të vërteta" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menu me disa gatime", titel: "Krijo menunë", text: "Shkruaj sa nga çdo gatim ka në një menu. Aplikacioni e mban mend për këtë tekst të arkës.", menge: (n) => `${n}: sasia për menu`, speichern: "Ruaj menunë", leer: "Shkruaj sasinë të paktën për një gatim.", gelernt: (n) => `U ruajt: menu me ${n} gatime.`, marke: "Menu" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} artikuj ndryshojnë, por mungojnë ende shitjet e ${d} ditëve. Dyshim për humbje vetëm kur janë të gjitha shitjet.`, // Schwadron 18.10.2026, N4
     titel: "Shitjet sipas gjellës", unter: "Çfarë ke shitur – nga arka ose me dorë.", entwurf: "Draft: ende i pamiratuar, vetëm për ta parë.", einstieg: "Shitjet sipas gjellës",
     einstiegUnter: "Lexo arkën, gjellët që s'shiten, humbjet", zeitraumInventur: "midis dy inventarëve të fundit", keine: "Ende pa shitje në këtë periudhë.", ohneGericht: "Pa gjellë",
     rangTitel: "Më të shiturat", ohneInventur: "Për krahasim me magazinën duhen dy inventarë.", inventurKnopf: "Te inventari", abgleichTitel: "Malli: i pritur dhe i harxhuar",
@@ -1177,6 +1180,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Sot asgjë urgjente. Porosia tjetër deri më ${d}` : "Sot asgjë urgjente.", // Schwadron 18.10.2026, N1
     einstieg: "Magazina dhe porositë",
     einstiegUnter: "Çfarë ke dhe çfarë duhet porositur",
     titel: "Magazina dhe porositë",

@@ -767,6 +767,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Naverokê biguherîne", inhaltJe: "Naverok her pakêt", inhaltFehlt: "Ji kerema xwe hejmarek ji sifirê mezintir binivîse.", // Schwadron 18.10.2026, U3
     textEinfuegen: "An nivîsê bi cih bike", textAus: "Nivîsê veşêre",
     stornoFrage: "Vê fîşê paş de bigire? Paşê êdî di kirînê de nayê hesabkirin. Bihayên ku hatin girtin dimînin.", doppeltFrage: "Te ev fîş berê xwendiye (heman firoşkar, heman roj, heman berhevok). Dîsa jî careke din bigire?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} ji bo her kg/l/hebe (${p} %). Rast e?`,
@@ -887,7 +888,7 @@ export default {
     dauerhaftUnbekannt: "Bîr domdar e? Nayê zanîn.",
     offen: { kopf: "Daneyên dikanê kêm hatin barkirin. Kopiya ewlehiyê bixwîne?", teil: (j, m) => `Parçeyek kêm e (${j}${m ? " " + m : ""}). Kopiya ewlehiyê bixwîne?`, abgleich: (liste) => `Di yekkirinê de hat guhertin: ${liste} – rewşa te dimîne, ji kerema xwe kontrol bike`, zukunft: (n) => `${n} tomar ji kopiyê nehatin girtin (dîrok di pêşerojê de)`, konflikt: (n) => `${n} tomar ji kopiyê cuda bûn – li kêleka wan hatin danîn` },
     journal: { schwund: "Çop", tagesnotizen: "Firotin", messungen: "Sarkirin", lieferungen: "Radestkirin", abschluesse: "Girtina rojê", kostenbelege: "Belgeyên lêçûnê", putzlog: "Plana paqijiyê", belehrungen: "Perwerdeyên paqijiyê", rundgaenge: "Gerên sarkirinê", inventuren: "Jimartin", uploads: "Wêne", artikel: "Mal", gerichte: "Xwarin", anderes: "Dane" },
-    bereich: { kosten: "Lêçûn", gerichte: "Xwarin û reçete", artikel: "Mal û biha", betrieb: "Kar", kuehl: "Cihên sarkirinê", putzplan: "Plana paqijiyê", personen: "Kes", lager: "Embar" },
+    bereich: { kombis: "Menûyên kombo", kosten: "Lêçûn", gerichte: "Xwarin û reçete", artikel: "Mal û biha", betrieb: "Kar", kuehl: "Cihên sarkirinê", putzplan: "Plana paqijiyê", personen: "Kes", lager: "Embar" },
   },
   einstellungen: { kleinunternehmer: "Karsaziya biçûk (bê vegera KDV)", kleinunternehmerHinweis: "Vekirî: mîqdarên brût tam tên hesibandin, KDV nayê kêmkirin.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Wêneyên fatûre, çop û xwarinan di dosyaya kopiyê de ne. Ji ber vê dosya mezintir dibe.",
@@ -1142,6 +1143,8 @@ export default {
   beispiel: { anlegen: "Dikana mînakê çêke", satz: "Dikaneke donerê ya tije ji bo ceribandinê. Hemû hejmar mînak in. Dikana te wekî xwe dimîne.", name: "Donera Mînakê", loeschen: "Dikana mînakê jê bibe", chip: "Mînak – hemû hejmar çêkirî ne", export: "MÎNAK – ne daneyên rastîn" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menûya ji çend xwarinan", titel: "Menûyê çêke", text: "Binivîse ji her xwarinê çiqas di menûyekê de heye. Bername vê ji bo vê nivîsa kasê bi bîr tîne.", menge: (n) => `${n}: hejmar her menû`, speichern: "Menûyê tomar bike", leer: "Ji bo herî kêm xwarinekê hejmarek binivîse.", gelernt: (n) => `Hat tomarkirin: menû bi ${n} xwarinan.`, marke: "Menû" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} kal cuda ne, lê firotinên ${d} rojan hîn kêm in. Gumana kêmbûnê tenê dema hemû firotin hebin.`, // Schwadron 18.10.2026, N4
     titel: "Firotin li gor xwarinê", unter: "Te çi firot – ji kasê an bi destan.", entwurf: "Pêşnûme: hîn nehatiye pejirandin, tenê ji bo dîtinê.", einstieg: "Firotin li gor xwarinê",
     einstiegUnter: "Kasê bixwîne, yên nayên firotin, kêmasî", zeitraumInventur: "di navbera du jimartinên dawî de", keine: "Di vê demê de hîn firotin tune.", ohneGericht: "Bê xwarin",
     rangTitel: "Yên herî zêde hatine firotin", ohneInventur: "Ji bo berawirdkirina bi depoyê re du jimartin hewce ne.", inventurKnopf: "Biçe jimartinê", abgleichTitel: "Mal: tê hêvîkirin û hatiye xerckirin",
@@ -1171,6 +1174,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Îro tiştek bilez nîne. Siparîşa din heta ${d}` : "Îro tiştek bilez nîne.", // Schwadron 18.10.2026, N1
     einstieg: "Embar û sipariş",
     einstiegUnter: "Çi heye û çi divê bê siparîşkirin",
     titel: "Embar û sipariş",

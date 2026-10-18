@@ -768,6 +768,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Change contents", inhaltJe: "Contents per pack", inhaltFehlt: "Please enter an amount above zero.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Or paste text", textAus: "Hide text",
     stornoFrage: "Take back this receipt? It will no longer count as a purchase. Prices already taken over stay.", doppeltFrage: "You have already read in this receipt (same supplier, same day, same total). Apply it again anyway?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} per kg/l/piece (${p} %). Is that right?`,
@@ -888,7 +889,7 @@ export default {
     dauerhaftUnbekannt: "Storage persistent? Unknown.",
     offen: { kopf: "Shop data loaded incompletely. Import a backup?", teil: (j, m) => `A part is missing (${j}${m ? " " + m : ""}). Import a backup?`, abgleich: (liste) => `Changed while merging: ${liste} – your version stays, please check`, zukunft: (n) => `${n} entries from the backup not imported (date in the future)`, konflikt: (n) => `${n} entries from the backup were different – added alongside` },
     journal: { schwund: "Waste", tagesnotizen: "Sales", messungen: "Cooling", lieferungen: "Deliveries", abschluesse: "Day closings", kostenbelege: "Cost receipts", putzlog: "Cleaning plan", belehrungen: "Hygiene trainings", rundgaenge: "Cooling rounds", inventuren: "Stock counts", uploads: "Photos", artikel: "Goods", gerichte: "Dishes", anderes: "Data" },
-    bereich: { kosten: "Costs", gerichte: "Dishes and recipes", artikel: "Goods and prices", betrieb: "Business", kuehl: "Cooling points", putzplan: "Cleaning plan", personen: "People", lager: "Stock" },
+    bereich: { kombis: "Combo menus", kosten: "Costs", gerichte: "Dishes and recipes", artikel: "Goods and prices", betrieb: "Business", kuehl: "Cooling points", putzplan: "Cleaning plan", personen: "People", lager: "Stock" },
   },
   einstellungen: { kleinunternehmer: "Small business (no input VAT)", kleinunternehmerHinweis: "On: gross amounts count in full, no VAT is deducted.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Photos of invoices, waste and dishes are included in the backup file. This makes the file bigger.",
@@ -1144,6 +1145,8 @@ export default {
   beispiel: { anlegen: "Create sample shop", satz: "A fully filled kebab shop to try out. All numbers are examples. Your shop stays untouched.", name: "Sample Kebab", loeschen: "Delete sample shop", chip: "Sample – all numbers made up", export: "SAMPLE – no real data" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menu of several dishes", titel: "Put the menu together", text: "Enter how much of each dish is in one menu. The app remembers this for this till text.", menge: (n) => `${n}: amount per menu`, speichern: "Save menu", leer: "Enter an amount for at least one dish.", gelernt: (n) => n === 1 ? `Saved: menu with 1 dish.` : `Saved: menu with ${n} dishes.`, marke: "Menu" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} ${n === 1 ? "item differs" : "items differ"}, but sales are still missing for ${d} ${d === 1 ? "day" : "days"}. Shrinkage suspicion only once all sales are in.`, // Schwadron 18.10.2026, N4
     titel: "Sales per dish", unter: "What you sold – from the till or entered by hand.", entwurf: "Draft: not approved yet, for viewing only.",
     einstieg: "Sales per dish", einstiegUnter: "Read the till, slow sellers, shrinkage",
     stueck: (m) => `${m} pcs`, zeitraum: (von, bis) => `Period: ${von} to ${bis}`, zeitraumInventur: "between the last two stock counts", keine: "No sales in this period yet.",
@@ -1183,6 +1186,7 @@ export default {
   },
   // Bestand (17.10.2026): back office "Stock & ordering"
   bestand: {
+    nichtsDringend: (d) => d ? `Nothing urgent today. Next order by ${d}` : "Nothing urgent today.", // Schwadron 18.10.2026, N1
     einstieg: "Stock & ordering", einstiegUnter: "What you have and what to order",
     titel: "Stock & ordering", unter: "Estimated from stock count, purchases and sales.",
     allesGut: "Everything lasts. Nothing to order.", nichtsBestellen: "You don't need to order anything right now.",

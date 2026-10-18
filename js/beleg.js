@@ -153,16 +153,22 @@ function inhaltAusName(str) {
   m = /(?<![\d,.])(\d+)er(?![A-Za-z])/.exec(rest);
   if (m && anzahl === null) { anzahl = Number(m[1]); rest = rest.replace(m[0], " "); }
   m = /(?<![\d,.])(\d+)\s*(Stück|Stck|Stk|ST|Fl\.?)(?=\s|$)/.exec(rest);
-  if (m && anzahl === null) { anzahl = Number(m[1]); rest = rest.replace(m[0], " "); }
+  let zaehl = false; // Schwadron 18.10.2026, H2: Anzahl kommt aus „24 Stk“ (Zähleinheit), nicht aus „24x0,33l“
+  if (m && anzahl === null) { anzahl = Number(m[1]); zaehl = true; rest = rest.replace(m[0], " "); }
   m = /\bca\.?\s*(\d+(?:[,.]\d+)?)\s*(kg|g)(?![A-Za-z])/i.exec(rest);
   if (m) { ca = parseZahl(m[1]) / (m[2].toLowerCase() === "g" ? 1000 : 1); rest = rest.replace(m[0], " "); }
+  let alt = null;
   if (groesse === null) {
     m = /(?<![\d,.xX/])(\d+(?:[,.]\d+)?)\s+(kg|g|l|L|ml|cl)(?![A-Za-z])/.exec(rest);
-    if (m) { groesse = parseZahl(m[1]); einheit = EINHEIT[m[2]]; rest = rest.replace(m[0], " "); }
+    // Schwadron 18.10.2026, H2: „Cola 0,33 l KI 24 Stk“ – steht eine Zähleinheit mit Anzahl in der Zeile, ist die Größe nur die Füllmenge je
+    // Stück (Teil des Namens). Inhalt = 24 Stück; 24 × 0,33 l bleibt als Alternative (alt), falls die Ware in Litern geführt wird
+    // (lieferung.js: inhaltFuerArtikel – die Einheit des Artikels hat Vorrang). Der Name behält „0,33 l“.
+    if (m && zaehl) alt = { anzahl, groesse: parseZahl(m[1]), einheit: EINHEIT[m[2]] };
+    else if (m) { groesse = parseZahl(m[1]); einheit = EINHEIT[m[2]]; rest = rest.replace(m[0], " "); }
   }
   if (anzahl !== null && einheit === null) einheit = "stk";
   if (anzahl === null && groesse !== null) anzahl = 1;
-  return { inhalt: { anzahl, groesse, einheit }, ca, rest, amAnfang, treffer };
+  return { inhalt: { anzahl, groesse, einheit }, alt, ca, rest, amAnfang, treffer };
 }
 
 // Namen bereinigen: Gebindekürzel, Zähleinheiten, „x“, MW/EW-Zusätze und Satzzeichen an den Rändern entfernen.
@@ -249,7 +255,7 @@ function gruppeZerlegen(lines, ctx) {
   const text = tokens.slice(start).join(" ");
   const pfand = istPfand(text), rabattWort = RE_RABATT.test(text);
 
-  let menge = null, einzel = null, gesamt = null, jeKg = false, gebinde = null, fr = null, inhalt = leer();
+  let menge = null, einzel = null, gesamt = null, jeKg = false, gebinde = null, fr = null, inhalt = leer(), inhaltAlt = null;
   let nameEnde = tokens.length, mengeInfo = null;
 
   const kg = kgWare(tokens, start);
@@ -342,6 +348,10 @@ function gruppeZerlegen(lines, ctx) {
 
   function fertig({ rabattSpalte = 0, aussenInnen = false }) {
     const nameTokens = tokens.slice(start, nameEnde);
+    // Schwadron 18.10.2026, N3: „KT 1000 Stk“ – eine Zähleinheit direkt hinter einer Zahl ist Inhalt, nicht Gebinde; das Kürzel davor gewinnt.
+    // Nur wenn kein anderes Gebinde-Kürzel in der Zeile steht, bleibt „Stk“ das Gebinde (wie bisher, „Brötchen 2 Stk“).
+    const inhaltZaehl = (i) => RE_ZAEHL.test(nameTokens[i]) && /^\d+$/.test(nameTokens[i - 1] ?? "");
+    if (gebinde === null) for (let i = nameTokens.length - 1; i >= 0 && !gebinde; i--) if (!inhaltZaehl(i)) gebinde = gebindeVon(nameTokens[i], nameTokens[i + 1] ?? "1");
     if (gebinde === null) for (let i = nameTokens.length - 1; i >= 0 && !gebinde; i--) gebinde = gebindeVon(nameTokens[i], nameTokens[i + 1] ?? "1");
     if (gebinde === null && mengeInfo?.gebTok) gebinde = mengeInfo.gebTok;
     const ia = inhaltAusName(nameTokens.join(" "));
@@ -349,7 +359,7 @@ function gruppeZerlegen(lines, ctx) {
     if (gebinde === null && !pfand && ia.inhalt.einheit === "l" && ia.inhalt.anzahl > 1 && nameTokens.some((t) => /^(MW|Mehrweg)$/i.test(t))) gebinde = "kasten";
     if (!jeKg || inhalt.groesse === null) {
       if (aussenInnen) inhalt = { anzahl: inhalt.anzahl, groesse: ia.inhalt.groesse, einheit: ia.inhalt.einheit ?? "stk" };
-      else if (ia.inhalt.anzahl !== null || ia.inhalt.groesse !== null) inhalt = ia.inhalt;
+      else if (ia.inhalt.anzahl !== null || ia.inhalt.groesse !== null) { inhalt = ia.inhalt; if (ia.alt) inhaltAlt = ia.alt; }
     }
     // Regel 6b: Kilopreis in der Zeile („7,49/kg“) → Inhalt = geliefertes Gewicht aus Gesamt / Preis, „ca.“-Gewicht nur zur Bestätigung
     if (jeKg && einzel && gesamt !== null && inhalt.groesse === null) {
@@ -403,7 +413,7 @@ function gruppeZerlegen(lines, ctx) {
     const sicher = !fr && !!name && menge !== null && (ctx.hatPreise ? probe === true : true);
     return {
       klasse: "ware",
-      zeile: { roh, name, artikelnummer: kopf.nr, bekannt: null, gebinde, inhalt, menge, einzelpreis: einzel, jeKg, gesamt, rabatt: rabattSpalte, steuer, steuersatz: steuersatzAus(steuer, ctx.zeichen), sicher, frage: fr },
+      zeile: { roh, name, artikelnummer: kopf.nr, bekannt: null, gebinde, inhalt, ...(inhaltAlt ? { inhaltAlt } : {}), menge, einzelpreis: einzel, jeKg, gesamt, rabatt: rabattSpalte, steuer, steuersatz: steuersatzAus(steuer, ctx.zeichen), sicher, frage: fr },
     };
   }
 }

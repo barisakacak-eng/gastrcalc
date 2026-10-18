@@ -89,3 +89,26 @@ test("Abnahme Posten 1: Pseudonym bleibt beim Zusammenführen; laufende Nummer f
   const r = await importDatei(JSON.stringify({ typ: "gastrocalc-sicherung", schema: 3, sha256: sha }) + "\r\n" + inhalt + "\r\n\r\n");
   assert.equal(r.pruefsumme, "ok");
 });
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): H3 ----------
+test("Schwadron H3: Rundgang dieser Sitzung gegen dieselbe Kennung aus der Sicherung ist kein Konflikt; alte Doppel verschwinden beim Laden", async () => {
+  const st = await import("../js/store.js"); const E = await import("../js/engine.js"); const stamm = await import("../js/stamm.js");
+  const w = st.leereWurzel(); const s = st.leererBetrieb(); s.phase = "app"; w.betriebe.push(s); w.aktiv = s.id;
+  const k = stamm.kuehlstelleAnlegen(s, { name: "Kühlschrank", art: "kuehl" }); stamm.kuehlEingerichtetSetzen(s);
+  const heute = E.tagPlus(new Date().toISOString().slice(0, 10), -1);
+  const r = E.rundgangStarten(s, { datum: heute }); E.stationEintragen(r, k, { wert: 4.1 }); E.rundgangAbschliessen(s, r, () => st.naechsteLfd(w), w.geraet);
+  assert.equal(s.rundgaenge[0].messungen.length, 1, "im Speicher dieser Sitzung: volle Kopie");
+  const sicherung = structuredClone(w); st.migrierenBetrieb(sicherung.betriebe[0]); // wie importSicherung: Kopie wird beim Laden geleert
+  assert.equal(sicherung.betriebe[0].rundgaenge[0].messungen.length, 0);
+  const b = st.zusammenfuehren(w, sicherung).bericht;
+  assert.equal(b.konflikte, 0); assert.equal(w.betriebe[0].rundgaenge.length, 1); assert.equal(w.betriebe[0].abgleichHinweis ?? null, null);
+  // Altbestand: Doppel mit quelle "sicherung" aus dem früheren Fehler → beim Laden entfernt, Hinweis zurückgezählt, zweimal laden ändert nichts
+  const x = w.betriebe[0]; const orig = x.rundgaenge[0];
+  x.rundgaenge.push({ ...structuredClone(orig), messungen: [], id: orig.id + "~sabc", quelleVorher: orig.quelle ?? null, quelle: "sicherung", importiert: true, konfliktMit: orig.id });
+  x.abgleichHinweis = { zeit: new Date().toISOString(), bereiche: [], zukunft: 0, konflikte: 1 };
+  const m1 = st.migrierenBetrieb(structuredClone(x)); assert.equal(m1.rundgaenge.length, 1); assert.equal(m1.abgleichHinweis, undefined);
+  const m2 = st.migrierenBetrieb(structuredClone(m1)); assert.deepEqual(m2.rundgaenge, m1.rundgaenge);
+  // Ein echter Konflikt (anderer Inhalt) bleibt stehen
+  const y = structuredClone(x); y.rundgaenge[1].von = "jemand-anders";
+  assert.equal(st.migrierenBetrieb(y).rundgaenge.length, 2);
+});

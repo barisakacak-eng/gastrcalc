@@ -769,6 +769,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Inhalt ändern", inhaltJe: "Inhalt je Gebinde", inhaltFehlt: "Bitte eine Menge über null eintragen.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Oder Text einfügen", textAus: "Text ausblenden",
     stornoFrage: "Diesen Beleg zurücknehmen? Er zählt dann nicht mehr im Einkauf. Übernommene Preise bleiben stehen.", doppeltFrage: "Diesen Beleg hast du schon eingelesen (gleicher Händler, gleicher Tag, gleiche Summe). Trotzdem noch einmal übernehmen?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} je kg/l/Stück (${p} %). Stimmt das?`,
@@ -889,7 +890,7 @@ export default {
     dauerhaftUnbekannt: "Speicher: dauerhaft? unbekannt.",
     offen: { kopf: "Laden-Daten unvollständig geladen. Sicherung einlesen?", teil: (j, m) => `Ein Teil fehlt (${j}${m ? " " + m : ""}). Sicherung einlesen?`, abgleich: (liste) => `Beim Zusammenführen geändert: ${liste} – dein Stand bleibt, bitte prüfen`, zukunft: (n) => `${n} Einträge aus der Sicherung nicht übernommen (Datum in der Zukunft)`, konflikt: (n) => `${n} Einträge aus der Sicherung wichen ab – stehen daneben` },
     journal: { schwund: "Müll", tagesnotizen: "Umsatz", messungen: "Kühlung", lieferungen: "Lieferungen", abschluesse: "Tagesabschlüsse", kostenbelege: "Kostenbelege", putzlog: "Putzplan", belehrungen: "Belehrungen", rundgaenge: "Kühl-Rundgänge", inventuren: "Inventuren", uploads: "Fotos", artikel: "Waren", gerichte: "Gerichte", anderes: "Daten" },
-    bereich: { kosten: "Kosten", gerichte: "Gerichte und Rezepte", artikel: "Waren und Preise", betrieb: "Betrieb", kuehl: "Kühlstellen", putzplan: "Putzplan", personen: "Personen", lager: "Lager" },
+    bereich: { kombis: "Kombi-Menüs", kosten: "Kosten", gerichte: "Gerichte und Rezepte", artikel: "Waren und Preise", betrieb: "Betrieb", kuehl: "Kühlstellen", putzplan: "Putzplan", personen: "Personen", lager: "Lager" },
   },
   einstellungen: { kleinunternehmer: "Kleinunternehmer (keine Vorsteuer)", kleinunternehmerHinweis: "An: Bruttobeträge zählen voll, keine Umsatzsteuer wird abgezogen.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Fotos von Rechnungen, Müll und Gerichten sind mit in der Sicherungsdatei. Die Datei wird dadurch größer.",
@@ -1146,6 +1147,8 @@ export default {
   beispiel: { anlegen: "Beispiel-Laden anlegen", satz: "Ein vollständig gefüllter Dönerladen zum Ausprobieren. Alle Zahlen sind Beispiele. Dein Laden bleibt unberührt.", name: "Beispiel-Döner", loeschen: "Beispiel-Laden löschen", chip: "Beispiel – alle Zahlen erfunden", export: "BEISPIEL – keine echten Daten" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menü aus mehreren Gerichten", titel: "Menü zusammenstellen", text: "Trag ein, wie viel von jedem Gericht in einem Menü steckt. Die App merkt sich das für diesen Kassentext.", menge: (n) => `${n}: Menge je Menü`, speichern: "Menü speichern", leer: "Trag bei mindestens einem Gericht eine Menge ein.", gelernt: (n) => n === 1 ? `Gemerkt: Menü mit 1 Gericht.` : `Gemerkt: Menü mit ${n} Gerichten.`, marke: "Menü" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} ${n === 1 ? "Ware weicht" : "Waren weichen"} ab, aber an ${d} ${d === 1 ? "Tag" : "Tagen"} fehlen noch Verkäufe. Schwund-Verdacht erst, wenn alle Verkäufe da sind.`, // Schwadron 18.10.2026, N4
     titel: "Verkauf je Gericht", unter: "Was du verkauft hast – aus der Kasse oder von Hand.", entwurf: "Entwurf: noch nicht freigegeben, nur zum Ansehen.",
     einstieg: "Verkauf je Gericht", einstiegUnter: "Kasse einlesen, Ladenhüter, Schwund",
     stueck: (m) => `${m} Stück`, zeitraum: (von, bis) => `Zeitraum: ${von} bis ${bis}`, zeitraumInventur: "zwischen den letzten zwei Inventuren", keine: "Noch keine Verkäufe in diesem Zeitraum.",
@@ -1185,6 +1188,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro-Bereich „Lager & Bestellen“ (js/bestand.js, js/screens/bestand.js)
   bestand: {
+    nichtsDringend: (d) => d ? `Heute nichts dringend. Nächste Bestellung bis ${d}` : "Heute nichts dringend.", // Schwadron 18.10.2026, N1
     einstieg: "Lager & Bestellen", einstiegUnter: "Was da ist und was du bestellen musst",
     titel: "Lager & Bestellen", unter: "Geschätzt aus Inventur, Einkauf und Verkauf.",
     allesGut: "Alles reicht. Nichts zu bestellen.", nichtsBestellen: "Gerade musst du nichts bestellen.",

@@ -768,6 +768,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Modifier le contenu", inhaltJe: "Contenu par conditionnement", inhaltFehlt: "Saisis une quantité supérieure à zéro.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Ou coller du texte", textAus: "Masquer le texte",
     stornoFrage: "Annuler ce ticket ? Il ne comptera plus dans les achats. Les prix repris restent.", doppeltFrage: "Tu as déjà chargé ce ticket (même fournisseur, même jour, même total). Le reprendre quand même ?",
     preisSprungText: (n, alt, neu, p) => `${n} : ${alt} → ${neu} par kg/l/pièce (${p} %). C’est bien ça ?`,
@@ -888,7 +889,7 @@ export default {
     dauerhaftUnbekannt: "Mémoire durable ? Inconnu.",
     offen: { kopf: "Données du commerce chargées incomplètes. Lire une sauvegarde ?", teil: (j, m) => `Une partie manque (${j}${m ? " " + m : ""}). Lire une sauvegarde ?`, abgleich: (liste) => `Changé à la fusion : ${liste} – ta version reste, vérifie`, zukunft: (n) => `${n} entrées de la sauvegarde non reprises (date dans le futur)`, konflikt: (n) => `${n} entrées de la sauvegarde étaient différentes – ajoutées à côté` },
     journal: { schwund: "Déchets", tagesnotizen: "Chiffre d'affaires", messungen: "Froid", lieferungen: "Livraisons", abschluesse: "Clôtures du jour", kostenbelege: "Justificatifs de frais", putzlog: "Plan de nettoyage", belehrungen: "Formations hygiène", rundgaenge: "Tournées de froid", inventuren: "Inventaires", uploads: "Photos", artikel: "Marchandises", gerichte: "Plats", anderes: "Données" },
-    bereich: { kosten: "Frais", gerichte: "Plats et recettes", artikel: "Marchandises et prix", betrieb: "Commerce", kuehl: "Points de froid", putzplan: "Plan de nettoyage", personen: "Personnes", lager: "Stock" },
+    bereich: { kombis: "Menus combinés", kosten: "Frais", gerichte: "Plats et recettes", artikel: "Marchandises et prix", betrieb: "Commerce", kuehl: "Points de froid", putzplan: "Plan de nettoyage", personen: "Personnes", lager: "Stock" },
   },
   einstellungen: { kleinunternehmer: "Petite entreprise (pas de TVA déductible)", kleinunternehmerHinweis: "Activé : les montants TTC comptent en entier, aucune TVA n’est déduite.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Les photos de factures, déchets et plats sont dans le fichier de sauvegarde. Le fichier est donc plus gros.",
@@ -1143,6 +1144,8 @@ export default {
   beispiel: { anlegen: "Créer un commerce exemple", satz: "Un kebab entièrement rempli pour essayer. Tous les chiffres sont des exemples. Ton commerce reste intact.", name: "Kebab exemple", loeschen: "Supprimer le commerce exemple", chip: "Exemple – tous les chiffres inventés", export: "EXEMPLE – pas de vraies données" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menu de plusieurs plats", titel: "Composer le menu", text: "Indique combien de chaque plat il y a dans un menu. L’appli s’en souvient pour ce texte de caisse.", menge: (n) => `${n} : quantité par menu`, speichern: "Enregistrer le menu", leer: "Indique une quantité pour au moins un plat.", gelernt: (n) => `Enregistré : menu de ${n} plats.`, marke: "Menu" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} articles ne collent pas, mais il manque encore les ventes de ${d} jours. Soupçon de perte seulement quand toutes les ventes sont là.`, // Schwadron 18.10.2026, N4
     titel: "Ventes par plat", unter: "Ce que tu as vendu – depuis la caisse ou saisi à la main.", entwurf: "Brouillon : pas encore validé, seulement à consulter.", einstieg: "Ventes par plat",
     einstiegUnter: "Lire la caisse, invendus, démarque", zeitraumInventur: "entre les deux derniers inventaires", keine: "Pas encore de ventes sur cette période.", ohneGericht: "Sans plat",
     rangTitel: "Les plus vendus", ohneInventur: "Pour comparer avec le stock, il faut deux inventaires.", inventurKnopf: "Vers l'inventaire", abgleichTitel: "Marchandise : prévue et consommée",
@@ -1172,6 +1175,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Rien d’urgent aujourd’hui. Prochaine commande avant le ${d}` : "Rien d’urgent aujourd’hui.", // Schwadron 18.10.2026, N1
     einstieg: "Stock et commandes",
     einstiegUnter: "Ce que tu as et ce qu'il faut commander",
     titel: "Stock et commandes",

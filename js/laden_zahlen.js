@@ -1,7 +1,7 @@
 // Trennung 2 (17.10.2026): Zahlen für die Laden-Bildschirme „Heute“ und „Tag abschließen“ – ohne Text und ohne HTML.
 // Vorher in js/screens/home.js (heuteZielWerte, heuteKachelWerte) und js/screens/abschluss.js (Haken, Bilanz, Vergleiche).
 import { heute } from "./util.js";
-import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichung, tagPlus, wochentag } from "./engine.js";
+import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichung, tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { zaehler, monatsZiel, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
 
@@ -19,7 +19,8 @@ export function heuteZiel(stand, z, H) {
 }
 
 // Vier Kacheln. Umsatz und Müll nach Geschäftstag H, Kühlung und Putzen nach Kalendertag K (Paket 3, M7).
-// kuehl: null (nicht eingerichtet) | { art: "abweichung", wert (°C), alarm: true } | { art: "ok" } | { art: "offen", anzahl, offen: true };
+// kuehl: null (nicht eingerichtet) | { art: "abweichung", wert (°C), alarm: true } | { art: "ok" } | { art: "offen", anzahl, offen: true }
+//   | { art: "ruhetag" } (Schwadron 18.10.2026, N2: heute ist laut Kühlkontrolle Ruhetag – nichts offen, solange nichts abweicht);
 // putz: null (kein Putzplan) | { erledigt, gesamt, alarm (etwas überfällig) }.
 export function heuteKachelZahlen(stand, ks, H, K = heute()) {
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H });
@@ -28,12 +29,16 @@ export function heuteKachelZahlen(stand, ks, H, K = heute()) {
     const schlimm = kuehlSchlimmsteAbweichung(stand, K);
     if (schlimm) kuehl = { art: "abweichung", wert: schlimm.wert, alarm: true };
     else if (ks.heuteGemessen >= ks.stellen) kuehl = { art: "ok", alarm: false };
+    else if (istRuhetag(stand, K)) kuehl = { art: "ruhetag", alarm: false };
     else kuehl = { art: "offen", anzahl: ks.stellen - ks.heuteGemessen, alarm: false, offen: true };
   }
   let putz = null;
   if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, K); putz = { erledigt: pg.erledigt, gesamt: pg.gesamt, alarm: pg.ueberfaellig > 0 }; }
   return { umsatz: u ? u.umsatz : null, muell: sw.anzahl ? sw.muellwert : null, kuehl, putz };
 }
+
+// Schwadron 18.10.2026, N2: Kalendertag K ist ein Ruhetag (Ruhetage der Kühlkontrolle, mit Gültig-ab-Verlauf)
+export const istRuhetag = (stand, K = heute()) => ruhetageAm(stand, K).includes(wochentag(K));
 
 // „Tag abschließen“ – die drei Haken. H = Geschäftstag. umsatz: Notiz oder null; muell: Auswertung des Tages;
 // kuehl: { eingerichtet, gemessen, stellen, fertig }; schon: letzter Abschluss dieses Tages oder null.

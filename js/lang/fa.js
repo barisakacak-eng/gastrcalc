@@ -767,6 +767,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "تغییر محتوا", inhaltJe: "محتوا در هر بسته", inhaltFehlt: "لطفاً مقداری بیشتر از صفر وارد کن.", // Schwadron 18.10.2026, U3
     textEinfuegen: "یا متن را بچسبان", textAus: "پنهان کردن متن",
     stornoFrage: "این رسید پس گرفته شود؟ بعد دیگر در خرید حساب نمی‌شود. قیمت‌هایی که برداشته شده می‌مانند.", doppeltFrage: "این رسید را قبلاً خوانده‌ای (همان فروشنده، همان روز، همان جمع). باز هم برداشته شود؟",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} برای هر kg/l/عدد (${p} %). درست است؟`,
@@ -887,7 +888,7 @@ export default {
     dauerhaftUnbekannt: "حافظه دائمی است؟ معلوم نیست.",
     offen: { kopf: "داده‌های مغازه ناقص بار شد. پشتیبان خوانده شود؟", teil: (j, m) => `یک بخش نیست (${j}${m ? " " + m : ""}). پشتیبان خوانده شود؟`, abgleich: (liste) => `هنگام ادغام عوض شد: ${liste} – نسخه تو می‌ماند، لطفاً بررسی کن`, zukunft: (n) => `${n} مورد از پشتیبان گرفته نشد (تاریخ در آینده)`, konflikt: (n) => `${n} مورد از پشتیبان فرق داشت – کنارش اضافه شد` },
     journal: { schwund: "زباله", tagesnotizen: "فروش", messungen: "سرمایش", lieferungen: "تحویل‌ها", abschluesse: "بستن روز", kostenbelege: "رسیدهای هزینه", putzlog: "برنامه نظافت", belehrungen: "آموزش‌های بهداشت", rundgaenge: "دورهای سرمایش", inventuren: "انبارگردانی", uploads: "عکس‌ها", artikel: "کالاها", gerichte: "غذاها", anderes: "داده‌ها" },
-    bereich: { kosten: "هزینه‌ها", gerichte: "غذاها و دستورها", artikel: "کالاها و قیمت‌ها", betrieb: "مغازه", kuehl: "جاهای سرمایش", putzplan: "برنامه نظافت", personen: "افراد", lager: "انبار" },
+    bereich: { kombis: "منوهای ترکیبی", kosten: "هزینه‌ها", gerichte: "غذاها و دستورها", artikel: "کالاها و قیمت‌ها", betrieb: "مغازه", kuehl: "جاهای سرمایش", putzplan: "برنامه نظافت", personen: "افراد", lager: "انبار" },
   },
   einstellungen: { kleinunternehmer: "کسب‌وکار کوچک (بدون بازپرداخت مالیات)", kleinunternehmerHinweis: "روشن: مبالغ ناخالص کامل حساب می‌شوند، مالیاتی کم نمی‌شود.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "عکس فاکتورها، زباله و غذاها در فایل پشتیبان هست. برای همین فایل بزرگ‌تر می‌شود.",
@@ -1142,6 +1143,8 @@ export default {
   beispiel: { anlegen: "ساخت مغازهٔ نمونه", satz: "یک مغازهٔ دونر کاملاً پر برای امتحان. همهٔ عددها نمونه‌اند. مغازهٔ خودت دست‌نخورده می‌ماند.", name: "دونر نمونه", loeschen: "حذف مغازهٔ نمونه", chip: "نمونه – همهٔ عددها ساختگی", export: "نمونه – دادهٔ واقعی نیست" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "منو از چند غذا", titel: "منو را بساز", text: "وارد کن از هر غذا چقدر در یک منو هست. برنامه این را برای این متن صندوق به خاطر می‌سپارد.", menge: (n) => `${n}: مقدار در هر منو`, speichern: "ذخیره منو", leer: "برای دست‌کم یک غذا مقدار وارد کن.", gelernt: (n) => `ذخیره شد: منو با ${n} غذا.`, marke: "منو" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} کالا فرق دارد، اما فروش ${d} روز هنوز نیامده است. گمان کسری فقط وقتی همه فروش‌ها باشند.`, // Schwadron 18.10.2026, N4
     titel: "فروش به تفکیک غذا", unter: "آنچه فروختی – از صندوق یا دستی.", entwurf: "پیش‌نویس: هنوز تأیید نشده، فقط برای دیدن.", einstieg: "فروش به تفکیک غذا",
     einstiegUnter: "خواندن صندوق، غذاهای کم‌فروش، کسری", zeitraumInventur: "بین دو انبارگردانی آخر", keine: "هنوز در این بازه فروشی نیست.", ohneGericht: "بدون غذا",
     rangTitel: "پرفروش‌ترین‌ها", ohneInventur: "برای مقایسه با انبار دو انبارگردانی لازم است.", inventurKnopf: "به انبارگردانی", abgleichTitel: "کالا: مورد انتظار و مصرف‌شده",
@@ -1171,6 +1174,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `امروز چیز فوری نیست. سفارش بعدی تا ${d}` : "امروز چیز فوری نیست.", // Schwadron 18.10.2026, N1
     einstieg: "انبار و سفارش",
     einstiegUnter: "چه داری و چه باید سفارش دهی",
     titel: "انبار و سفارش",

@@ -774,6 +774,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Zmień zawartość", inhaltJe: "Zawartość opakowania", inhaltFehlt: "Wpisz ilość większą od zera.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Albo wklej tekst", textAus: "Ukryj tekst",
     stornoFrage: "Cofnąć ten rachunek? Nie będzie się już liczył w zakupach. Przejęte ceny zostają.", doppeltFrage: "Ten rachunek już wczytałeś (ten sam sklep, ten sam dzień, ta sama suma). Mimo to wczytać jeszcze raz?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} za kg/l/szt. (${p} %). Zgadza się?`,
@@ -894,7 +895,7 @@ export default {
     dauerhaftUnbekannt: "Pamięć trwała? Nie wiadomo.",
     offen: { kopf: "Dane lokalu wczytane niekompletnie. Wczytać kopię?", teil: (j, m) => `Brakuje części (${j}${m ? " " + m : ""}). Wczytać kopię?`, abgleich: (liste) => `Zmienione przy łączeniu: ${liste} – zostaje twoja wersja, sprawdź`, zukunft: (n) => `Nie wczytano ${n} wpisów z kopii (data w przyszłości)`, konflikt: (n) => `${n} wpisów z kopii się różniło – dodane obok` },
     journal: { schwund: "Odpady", tagesnotizen: "Utarg", messungen: "Chłodzenie", lieferungen: "Dostawy", abschluesse: "Zamknięcia dnia", kostenbelege: "Rachunki kosztów", putzlog: "Plan sprzątania", belehrungen: "Szkolenia higieniczne", rundgaenge: "Obchody chłodzenia", inventuren: "Inwentaryzacje", uploads: "Zdjęcia", artikel: "Towary", gerichte: "Dania", anderes: "Dane" },
-    bereich: { kosten: "Koszty", gerichte: "Dania i przepisy", artikel: "Towary i ceny", betrieb: "Lokal", kuehl: "Miejsca chłodzenia", putzplan: "Plan sprzątania", personen: "Osoby", lager: "Magazyn" },
+    bereich: { kombis: "Zestawy combo", kosten: "Koszty", gerichte: "Dania i przepisy", artikel: "Towary i ceny", betrieb: "Lokal", kuehl: "Miejsca chłodzenia", putzplan: "Plan sprzątania", personen: "Osoby", lager: "Magazyn" },
   },
   einstellungen: { kleinunternehmer: "Mała firma (bez odliczenia VAT)", kleinunternehmerHinweis: "Wł.: kwoty brutto liczą się w całości, VAT nie jest odliczany.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Zdjęcia rachunków, odpadów i dań są w pliku kopii. Przez to plik jest większy.",
@@ -1149,6 +1150,8 @@ export default {
   beispiel: { anlegen: "Utwórz lokal przykładowy", satz: "W pełni wypełniony lokal z kebabem do wypróbowania. Wszystkie liczby są przykładowe. Twój lokal pozostaje bez zmian.", name: "Kebab przykładowy", loeschen: "Usuń lokal przykładowy", chip: "Przykład – wszystkie liczby zmyślone", export: "PRZYKŁAD – brak prawdziwych danych" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Zestaw z kilku dań", titel: "Złóż zestaw", text: "Wpisz, ile każdego dania jest w jednym zestawie. Aplikacja zapamięta to dla tego tekstu z kasy.", menge: (n) => `${n}: ilość na zestaw`, speichern: "Zapisz zestaw", leer: "Wpisz ilość przynajmniej dla jednego dania.", gelernt: (n) => `Zapisano: zestaw z ${n} dań.`, marke: "Zestaw" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} towarów się nie zgadza, ale brakuje jeszcze sprzedaży z ${d} dni. Podejrzenie ubytku dopiero, gdy będzie cała sprzedaż.`, // Schwadron 18.10.2026, N4
     titel: "Sprzedaż na danie", unter: "Co sprzedałeś – z kasy albo wpisane ręcznie.", entwurf: "Szkic: jeszcze niezatwierdzony, tylko do podglądu.", einstieg: "Sprzedaż na danie",
     einstiegUnter: "Wczytaj kasę, słabo sprzedawane, ubytki", zeitraumInventur: "między dwiema ostatnimi inwentaryzacjami", keine: "Brak sprzedaży w tym okresie.", ohneGericht: "Bez dania",
     rangTitel: "Najczęściej sprzedawane", ohneInventur: "Do porównania z magazynem potrzebne są dwie inwentaryzacje.", inventurKnopf: "Do inwentaryzacji", abgleichTitel: "Towar: oczekiwane i zużyte",
@@ -1178,6 +1181,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Dziś nic pilnego. Następne zamówienie do ${d}` : "Dziś nic pilnego.", // Schwadron 18.10.2026, N1
     einstieg: "Magazyn i zamówienia",
     einstiegUnter: "Co masz i co trzeba zamówić",
     titel: "Magazyn i zamówienia",

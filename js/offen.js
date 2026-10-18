@@ -5,7 +5,7 @@
 import { t } from "./i18n.js";
 import { kuehlstelleAnzeige } from "./kuehlname.js"; // Paket 6 (17.10.2026)
 import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
-import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, rundgangOffen, offeneWareEntscheidungen } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
+import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, rundgangOffen, offeneWareEntscheidungen, ruhetageAm, wochentag } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
 import { zaehler, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
 import { einrichtungStand } from "./einrichtung.js";
@@ -46,7 +46,7 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
       return { id: "kuehlAlarm", ton: "rot", symbol: "thermometer", titel: t(zuKalt ? "heute.dran.zuKalt" : "heute.dran.zuWarm", (stelle && kuehlstelleAnzeige(stelle)) || t("heute.kachel.kuehlung")), knopf: t("heute.dran.nachmessen"), ziel: { aktion: "nav", wert: "kuehl" } };
     }
     if (ks.offenerRundgang) return { id: "rundgangOffen", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgangWeiter"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } };
-    if (ks.heuteGemessen < ks.stellen && (h < 15 || h >= 17)) return { id: "rundgang", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgang"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } };
+    if (ks.heuteGemessen < ks.stellen && (h < 15 || h >= 17) && !ruhetageAm(stand, H).includes(wochentag(H))) return { id: "rundgang", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgang"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } }; // Schwadron 18.10.2026, N2: am Ruhetag kein Rundgang
   }
   if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, H); if (pg.ueberfaellig) return { id: "putzen", ton: "normal", symbol: "spray-can", titel: t("heute.dran.putzen", pg.ueberfaellig), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "putzplan" } }; }
   if (!istHauptzeit(h) && sicherungStufe(wurzel, jetzt.getTime())?.stufe === "rot") return { id: "sicherung", ton: "normal", symbol: "package", titel: t("heute.dran.sicherung"), knopf: t("heute.dran.sichern"), ziel: { aktion: "export" } };

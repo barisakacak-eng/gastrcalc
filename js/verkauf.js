@@ -16,7 +16,7 @@
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNettoGebinde, istRichtpreis, tagPlus, SCHWUND_ARTEN } from "./engine.js";
-import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber } from "./inventur.js";
+import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber, inventurAbTag, inventurBisTag } from "./inventur.js";
 import { uid, heute, heuteGeschaeft, geschaeftstag } from "./util.js";
 import { zipLesen, istZip } from "./zip.js";
 
@@ -206,15 +206,58 @@ export async function exportEinlesen(dateien) {
 // ---------- Zuordnung Kassentext → Gericht ----------
 export const normKasse = (s) => normalisieren(s).replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 // Reihenfolge: Artikelnummer (plu) → gelernter Kassentext → genau gleicher Name. Mehrdeutig oder unbekannt: nicht zugeordnet, nie geraten.
+// Schwadron 18.10.2026, M1: ein Kassenartikel kann auch ein Kombi-Menü sein (stand.kassenKombis) – dann { gericht: null, kombi: id }.
 export function zuordnen(stand, { plu = null, text = "" } = {}) {
-  const gerichte = stand.gerichte || []; const q = normKasse(text);
+  const gerichte = stand.gerichte || []; const kombis = kombisVon(stand); const q = normKasse(text);
   const eins = (liste) => (liste.length === 1 ? liste[0] : null);
-  if (plu) { const g = eins(gerichte.filter((x) => x.plu && x.plu === String(plu))); if (g) return { gericht: g.id, weg: "plu", vorschlaege: [] }; }
+  if (plu) { const g = eins(gerichte.filter((x) => x.plu && x.plu === String(plu))); if (g) return { gericht: g.id, weg: "plu", vorschlaege: [] };
+    const k = eins(kombis.filter((x) => x.plu && x.plu === String(plu))); if (k) return { gericht: null, kombi: k.id, weg: "plu", vorschlaege: [] }; }
   if (q) {
     const g = eins(gerichte.filter((x) => (x.kassenNamen || []).some((n) => normKasse(n) === q))); if (g) return { gericht: g.id, weg: "gelernt", vorschlaege: [] };
+    const k = eins(kombis.filter((x) => (x.kassenNamen || []).some((n) => normKasse(n) === q))); if (k) return { gericht: null, kombi: k.id, weg: "gelernt", vorschlaege: [] };
     const h = eins(gerichte.filter((x) => normKasse(x.name) === q)); if (h) return { gericht: h.id, weg: "name", vorschlaege: [] };
   }
   return { gericht: null, weg: null, vorschlaege: vorschlaege(stand, text) };
+}
+
+// ---------- Kombi-Menüs aus der Kasse (Schwadron 18.10.2026, M1) ----------
+// „Menü Döner+Pommes+Cola“ ist EIN Kassenartikel, aber drei Gerichte: Bestand, Verbrauch und Rang je Gericht zählen jeden Bestandteil.
+// stand.kassenKombis: [{ id, name, kassenNamen: [Kassentext], plu, teile: [{ gericht, menge }] }]. Gelernt wird wie bei Gerichten (Text/Nummer).
+export const kombisVon = (stand) => (Array.isArray(stand?.kassenKombis) ? stand.kassenKombis : []);
+export const kombiVon = (stand, id) => kombisVon(stand).find((k) => k.id === id) || null;
+const teileSauber = (stand, teile) => { const ids = new Set((stand.gerichte || []).map((g) => g.id)); const m = new Map();
+  for (const x of teile || []) { const n = Number(x?.menge); if (ids.has(x?.gericht) && Number.isFinite(n) && n > 0) m.set(x.gericht, (m.get(x.gericht) || 0) + Math.round(n * 1000) / 1000); }
+  return [...m.entries()].map(([gericht, menge]) => ({ gericht, menge })); };
+// Lernen: der Kassentext (und die Nummer) gehört ab jetzt zu diesem Menü mit diesen Teilen – bei keinem Gericht und keinem anderen Menü mehr.
+// Rückgabe das Menü oder null (keine gültigen Teile).
+export function kombiLernen(stand, { text = "", plu = null } = {}, teile) {
+  const q = normKasse(text); const liste = teileSauber(stand, teile); if ((!q && !plu) || !liste.length) return null;
+  zuordnungLernen(stand, { text, plu }, null); // weg von allen Gerichten (und von anderen Menüs, siehe unten)
+  stand.kassenKombis = kombisVon(stand);
+  let k = stand.kassenKombis.find((x) => (q && (x.kassenNamen || []).some((n) => normKasse(n) === q)) || (plu && x.plu === String(plu)));
+  for (const x of stand.kassenKombis) if (x !== k) { x.kassenNamen = (x.kassenNamen || []).filter((n) => normKasse(n) !== q); if (plu && x.plu === String(plu)) x.plu = null; }
+  if (!k) { k = { id: "kombi-" + uid(), name: String(text).trim().slice(0, 120) || String(plu), kassenNamen: [], plu: null, teile: [] }; stand.kassenKombis.push(k); }
+  if (q && !(k.kassenNamen || []).some((n) => normKasse(n) === q)) k.kassenNamen = [...(k.kassenNamen || []), String(text).trim().slice(0, 120)];
+  if (plu && !k.plu) k.plu = String(plu).slice(0, 50);
+  k.teile = liste; return k;
+}
+// Vorschlag für die Teile aus dem Kassentext („Menü Döner+Pommes+Cola“ → Teile, die eindeutig zu einem Gericht passen, Menge 1)
+export function kombiTeileVorschlag(stand, text) {
+  const stuecke = String(text || "").split(/\s*(?:\+|&|,|\/|\bund\b|\bmit\b)\s*/i).map((x) => normKasse(x).replace(/\b(menu|menue|kombi|spar|sparmenu|deal)\b/g, " ").replace(/\s+/g, " ").trim()).filter((x) => x.length >= 3);
+  const out = [];
+  for (const st of stuecke) {
+    const passt = (stand.gerichte || []).filter((g) => { const n = normKasse(g.name); return n === st || n.startsWith(st + " ") || n.split(" ").includes(st); });
+    if (passt.length === 1 && !out.some((x) => x.gericht === passt[0].id)) out.push({ gericht: passt[0].id, menge: 1 });
+  }
+  return out;
+}
+// Bestandteile eines gespeicherten Verkaufs: [{ gericht, menge je verkauftem Stück }] – Gericht = 1 Teil, Menü = seine Teile, unbekannt = [].
+// Wie gerichtVon gilt eine spätere Zuordnung rückwirkend.
+export function teileVon(stand, e) {
+  if (e.kombi) { const k = kombiVon(stand, e.kombi); if (k) return teileSauber(stand, k.teile); }
+  const id = gerichtVon(stand, e); if (id) return [{ gericht: id, menge: 1 }];
+  const z = zuordnen(stand, { plu: e.plu, text: e.text || e.name }); const k = z.kombi ? kombiVon(stand, z.kombi) : null;
+  return k ? teileSauber(stand, k.teile) : [];
 }
 // Vorschläge für die Chips: Gerichte, deren Name im Kassentext steckt oder umgekehrt (vorhandene Suche), höchstens vier
 export function vorschlaege(stand, text) {
@@ -231,6 +274,7 @@ export function zuordnungLernen(stand, { text = "", plu = null } = {}, gerichtId
     if (Array.isArray(g.kassenNamen)) { g.kassenNamen = g.kassenNamen.filter((n) => normKasse(n) !== q); if (!g.kassenNamen.length) delete g.kassenNamen; }
     if (plu && g.plu === String(plu) && g.id !== gerichtId) delete g.plu;
   }
+  for (const k of kombisVon(stand)) { k.kassenNamen = (k.kassenNamen || []).filter((n) => normKasse(n) !== q); if (plu && k.plu === String(plu)) k.plu = null; } // Schwadron 18.10.2026, M1
   if (!gerichtId) return true;
   const g = (stand.gerichte || []).find((x) => x.id === gerichtId); if (!g) return false;
   if (q && normKasse(g.name) !== q) g.kassenNamen = [...(g.kassenNamen || []), String(text).trim().slice(0, 120)];
@@ -254,15 +298,16 @@ const abdruck = (liste) => liste.map((p) => [p.plu || "", normKasse(p.text || p.
 export function importVorschau(stand, ergebnis, { herkunft = "dsfinvk" } = {}) {
   const pos = (ergebnis?.positionen || []).map((p) => ({ ...p, ...zuordnen(stand, p) }));
   const offen = new Map();
-  for (const p of pos) if (!p.gericht) { const k = (p.plu || "") + "|" + normKasse(p.text); const o = offen.get(k) || { text: p.text, plu: p.plu, menge: 0, umsatzBrutto: 0, tage: new Set(), vorschlaege: p.vorschlaege }; o.menge += p.menge; o.umsatzBrutto += p.umsatzBrutto || 0; o.tage.add(p.datum); offen.set(k, o); }
+  const zu = (p) => !!(p.gericht || p.kombi); // Schwadron 18.10.2026, M1: ein Menü gilt als zugeordnet
+  for (const p of pos) if (!zu(p)) { const k = (p.plu || "") + "|" + normKasse(p.text); const o = offen.get(k) || { text: p.text, plu: p.plu, menge: 0, umsatzBrutto: 0, tage: new Set(), vorschlaege: p.vorschlaege }; o.menge += p.menge; o.umsatzBrutto += p.umsatzBrutto || 0; o.tage.add(p.datum); offen.set(k, o); }
   const tage = ergebnis?.tage || [];
   const jeTag = tage.map((d) => { const neuTag = pos.filter((p) => p.datum === d); const staende = [];
     for (const [k, neu] of kassenGruppen(neuTag)) { const alt = aktiv(stand).filter((v) => v.datum === d && v.herkunft === herkunft && gleicheKasse(v, k)); staende.push(!alt.length ? "neu" : abdruck(alt) === abdruck(neu) ? "gleich" : "ersetzt"); }
     return { datum: d, positionen: neuTag.length, stand: staende.includes("ersetzt") ? "ersetzt" : staende.every((x) => x === "gleich") ? "gleich" : "neu" }; });
   const summe = (f) => pos.filter(f).reduce((s, p) => s + p.menge, 0);
   const umsatz = (f) => pos.filter(f).reduce((s, p) => s + (p.umsatzBrutto || 0), 0);
-  return { positionen: pos, tage, von: tage[0] || null, bis: tage[tage.length - 1] || null, zugeordnet: pos.filter((p) => p.gericht).length, offenAnzahl: pos.filter((p) => !p.gericht).length,
-    mengeZugeordnet: summe((p) => p.gericht), mengeOffen: summe((p) => !p.gericht), umsatzZugeordnet: rund(umsatz((p) => p.gericht), 2), umsatzOffen: rund(umsatz((p) => !p.gericht), 2),
+  return { positionen: pos, tage, von: tage[0] || null, bis: tage[tage.length - 1] || null, zugeordnet: pos.filter(zu).length, offenAnzahl: pos.filter((p) => !zu(p)).length,
+    mengeZugeordnet: summe(zu), mengeOffen: summe((p) => !zu(p)), umsatzZugeordnet: rund(umsatz(zu), 2), umsatzOffen: rund(umsatz((p) => !zu(p)), 2),
     offen: [...offen.values()].map((o) => ({ ...o, menge: rund(o.menge, 3), umsatzBrutto: rund(o.umsatzBrutto, 2), tage: o.tage.size })).sort((a, b) => b.menge - a.menge),
     jeTag, gleich: jeTag.filter((t) => t.stand === "gleich").length, ersetzt: jeTag.filter((t) => t.stand === "ersetzt").length, bericht: ergebnis?.bericht || null };
 }
@@ -284,7 +329,7 @@ export function importUebernehmen(stand, ergebnis, { herkunft = "dsfinvk", jetzt
       if (alt.length && abdruck(alt) === abdruck(pos)) { gleich += 1; continue; }
       for (const v of alt) { v.storniert = true; v.storniertZeit = jetzt; v.ersetzt = importId; ersetzt += 1; }
       for (const p of pos) { const z = zuordnen(stand, p); const i = allePos.indexOf(p);
-        stand.verkaeufe.push({ id: `${importId}-${d}-${i}`, datum: d, gericht: z.gericht, name: z.gericht ? namen.get(z.gericht) : p.text, text: p.text, plu: p.plu || null, kasse: k, menge: p.menge,
+        stand.verkaeufe.push({ id: `${importId}-${d}-${i}`, datum: d, gericht: z.gericht, ...(z.kombi ? { kombi: z.kombi } : {}), name: z.gericht ? namen.get(z.gericht) : p.text, text: p.text, plu: p.plu || null, kasse: k, menge: p.menge,
           umsatzBrutto: p.umsatzBrutto, herkunft, importId, erfasst: jetzt, geraet, storniert: false }); neu += 1; }
       geaendert = true;
     }
@@ -311,19 +356,21 @@ export function importe(stand) {
 // ---------- Handeingabe ----------
 // „Verkauf für Tag X: Gericht → Menge“ (z. B. vom Z-Bon-Artikelbericht abgelesen). Ersetzt den vorigen Hand-Eintrag desselben Tags und Gerichts.
 // Menge 0 oder leer nimmt den Eintrag zurück. Umsatz bleibt leer (abgelesen ist nur die Stückzahl).
+// Schwadron 18.10.2026, M1: gerichtId darf auch die Kennung eines Kombi-Menüs sein (Z-Bon-Artikelbericht führt das Menü als eigene Zeile).
 export function handVerkaufSetzen(stand, datum, gerichtId, menge, { jetzt = new Date().toISOString(), geraet = null } = {}) {
-  const g = (stand.gerichte || []).find((x) => x.id === gerichtId); if (!g || !/^\d{4}-\d{2}-\d{2}$/.test(String(datum))) return null;
+  const kombi = kombiVon(stand, gerichtId);
+  const g = kombi ? null : (stand.gerichte || []).find((x) => x.id === gerichtId); if ((!g && !kombi) || !/^\d{4}-\d{2}-\d{2}$/.test(String(datum))) return null;
   stand.verkaeufe ??= [];
   const n = typeof menge === "number" && Number.isFinite(menge) && menge > 0 ? Math.round(menge * 1000) / 1000 : null;
-  const alt = aktiv(stand).filter((v) => v.herkunft === "hand" && v.datum === datum && v.gericht === gerichtId);
+  const alt = aktiv(stand).filter((v) => v.herkunft === "hand" && v.datum === datum && (kombi ? v.kombi === gerichtId : v.gericht === gerichtId));
   if (n === null) { for (const v of alt) { v.storniert = true; v.storniertZeit = jetzt; } return alt.length ? { geloescht: alt.length } : null; }
   if (alt.length === 1 && alt[0].menge === n) return alt[0];
-  const e = { id: uid(), datum, gericht: gerichtId, name: g.name, plu: g.plu || null, menge: n, umsatzBrutto: null, herkunft: "hand", importId: null, erfasst: jetzt, geraet, storniert: false };
+  const e = { id: uid(), datum, gericht: kombi ? null : gerichtId, ...(kombi ? { kombi: kombi.id } : {}), name: (kombi || g).name, plu: (kombi || g).plu || null, menge: n, umsatzBrutto: null, herkunft: "hand", importId: null, erfasst: jetzt, geraet, storniert: false };
   for (const v of alt) { v.storniert = true; v.storniertZeit = jetzt; v.ersetzt = e.id; }
   stand.verkaeufe.push(e); return e;
 }
 export function handTag(stand, datum) {
-  const out = {}; for (const v of aktiv(stand)) if (v.herkunft === "hand" && v.datum === datum && v.gericht) out[v.gericht] = (out[v.gericht] || 0) + v.menge;
+  const out = {}; for (const v of aktiv(stand)) { const id = v.gericht || v.kombi; if (v.herkunft === "hand" && v.datum === datum && id) out[id] = (out[id] || 0) + v.menge; }
   return out;
 }
 
@@ -343,10 +390,12 @@ export function verkaufJeGericht(stand, z) {
   const je = new Map((stand.gerichte || []).map((g) => [g.id, { gericht: g.id, name: g.name, menge: 0, umsatz: 0, umsatzTeile: 0, preis: typeof g.preis === "number" ? g.preis : null }]));
   const ohne = { menge: 0, umsatz: 0, texte: new Map() }; let menge = 0, umsatz = 0, mitUmsatz = 0;
   for (const v of eintraege) {
-    const id = gerichtVon(stand, v); menge += v.menge; if (v.umsatzBrutto !== null) { umsatz += v.umsatzBrutto; mitUmsatz += 1; }
-    const r = id ? je.get(id) : null;
-    if (!r) { ohne.menge += v.menge; ohne.umsatz += v.umsatzBrutto || 0; const t = v.text || v.name; ohne.texte.set(t, (ohne.texte.get(t) || 0) + v.menge); continue; }
-    r.menge += v.menge; if (v.umsatzBrutto !== null) { r.umsatz += v.umsatzBrutto; r.umsatzTeile += 1; }
+    // Schwadron 18.10.2026, M1: ein Menü zählt jeden Bestandteil (Menge × Teil-Menge); sein Umsatz wird nach Kartenpreis × Menge verteilt
+    const teile = teileVon(stand, v).filter((x) => je.has(x.gericht)); if (v.umsatzBrutto !== null) { umsatz += v.umsatzBrutto; mitUmsatz += 1; }
+    if (!teile.length) { menge += v.menge; ohne.menge += v.menge; ohne.umsatz += v.umsatzBrutto || 0; const t = v.text || v.name; ohne.texte.set(t, (ohne.texte.get(t) || 0) + v.menge); continue; }
+    const gewicht = teile.map((x) => (je.get(x.gericht).preis || 0) * x.menge); const gSumme = gewicht.reduce((a, b) => a + b, 0);
+    teile.forEach((x, i) => { const r = je.get(x.gericht); r.menge += v.menge * x.menge; menge += v.menge * x.menge;
+      if (v.umsatzBrutto !== null) { r.umsatz += v.umsatzBrutto * (gSumme > 0 ? gewicht[i] / gSumme : 1 / teile.length); r.umsatzTeile += 1; } });
   }
   const zeilen = [...je.values()].map((r) => ({ ...r, menge: rund(r.menge, 3), umsatz: r.umsatzTeile ? rund(r.umsatz, 2) : null, anteil: menge > 0 ? r.menge / menge : 0 }))
     .sort((a, b) => b.menge - a.menge || a.name.localeCompare(b.name, "de"));
@@ -466,13 +515,16 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
   const fertig = inventurenFertig(stand);
   inv ??= fertig[fertig.length - 1] || null; vorher ??= inv ? inventurVorher(stand, inv) : null;
   if (!inv || !vorher) return null;
-  const von = tagPlus(vorher.datum, 1), bis = inv.datum; if (bis < von) return { von, bis, zeilen: [], gleicherTag: true };
+  const von = inventurAbTag(vorher), bis = inventurBisTag(inv); if (bis < von) return { von, bis, zeilen: [], gleicherTag: true }; // Schwadron 18.10.2026, M2
   const idx = artikelIndex(stand);
   const vk = verkaufJeGericht(stand, { von, bis });
   const mengen = Object.fromEntries(vk.zeilen.filter((r) => r.menge > 0).map((r) => [r.gericht, r.menge]));
   const soll = sollVerbrauch(stand, mengen, idx);
   const sw = schwundVerbrauch(stand, { von, bis }, idx);
   const ek = einkaufMengen(stand, { von, bis });
+  // Schwadron 18.10.2026, N4: Tage mit Umsatz, aber ohne Verkäufe (wie ehrlichkeit) – dann fehlt ein Teil des Solls, eine Differenz ist kein Schwund
+  const tageVk = new Set(verkaeufeImZeitraum(stand, { von, bis }).eintraege.map((v) => v.datum));
+  const fehlenTage = [...new Set((stand.tagesnotizen || []).filter((n) => !n.storniert && typeof n.umsatz === "number" && n.datum >= von && n.datum <= bis).map((n) => n.datum))].filter((d) => !tageVk.has(d)).sort();
   // Nur Waren, die in einem Rezept der Karte stehen (direkt oder über Selbstgemachtes): Putzmittel & Co. haben kein Soll
   const rezeptWaren = new Set(); for (const g of stand.gerichte || []) for (const x of bedarfGericht(g, idx).bedarf) rezeptWaren.add(x.name);
   const namen = new Set([...Object.keys(soll.artikel), ...[...Object.keys(inv.posten || {}), ...Object.keys(vorher.posten || {})].filter((n) => rezeptWaren.has(n))]);
@@ -493,15 +545,15 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
       z.anfang = mA * (iA ?? inhalt); z.ende = mE * inhalt; z.ist = z.anfang + e.menge - z.ende; z.diff = z.ist - erwartet;
       z.toleranz = Math.max(TOLERANZ_GEBINDE * inhalt, TOLERANZ_ANTEIL * erwartet);
       z.diffWert = pj === null ? null : z.diff * pj;
-      if (z.diff > z.toleranz) z.status = "schwund";
+      if (z.diff > z.toleranz) z.status = fehlenTage.length ? "verkaufFehlt" : "schwund"; // Schwadron 18.10.2026, N4: ohne alle Verkaufstage kein Schwund-Verdacht
       else if (z.diff < -z.toleranz) z.status = e.zeilen ? "weniger" : "einkaufFehlt";
     }
     zeilen.push(z);
   }
-  const ordnung = { schwund: 0, einkaufFehlt: 1, weniger: 2, unklar: 3, nichtGezaehlt: 4, ok: 5 };
+  const ordnung = { schwund: 0, verkaufFehlt: 1, einkaufFehlt: 2, weniger: 3, unklar: 4, nichtGezaehlt: 5, ok: 6 };
   zeilen.sort((x, y) => ordnung[x.status] - ordnung[y.status] || (y.diffWert ?? 0) - (x.diffWert ?? 0) || x.name.localeCompare(y.name, "de"));
   const schwund = zeilen.filter((x) => x.status === "schwund");
-  return { von, bis, vorherDatum: vorher.datum, datum: inv.datum, zeilen, verkaufTage: vk.tage, eimerKg: sw.eimerKg,
+  return { von, bis, vorherDatum: vorher.datum, datum: inv.datum, zeilen, verkaufTage: vk.tage, eimerKg: sw.eimerKg, tageOhneVerkauf: fehlenTage,
     schwund: { anzahl: schwund.length, wert: schwund.reduce((t, x) => t + (x.diffWert || 0), 0), ohneWert: schwund.filter((x) => x.diffWert === null).length, geschaetzt: schwund.some((x) => x.geschaetzt) },
     zaehl: Object.fromEntries(Object.keys(ordnung).map((k) => [k, zeilen.filter((x) => x.status === k).length])), soll, verkauf: vk };
 }
@@ -547,7 +599,7 @@ export function ehrlichkeit(stand, z, vk = verkaufJeGericht(stand, z)) {
 // Zeitraum der Auswertung: zwischen den letzten zwei Inventuren, sonst die letzten 30 Geschäftstage bis gestern.
 export function auswertungZeitraum(stand, { heuteTag = heuteGeschaeft() } = {}) {
   const f = inventurenFertig(stand);
-  if (f.length >= 2) { const inv = f[f.length - 1], vor = inventurVorher(stand, inv); if (vor && inv.datum >= tagPlus(vor.datum, 1)) return { von: tagPlus(vor.datum, 1), bis: inv.datum, quelle: "inventur" }; }
+  if (f.length >= 2) { const inv = f[f.length - 1], vor = inventurVorher(stand, inv); if (vor && inventurBisTag(inv) >= inventurAbTag(vor)) return { von: inventurAbTag(vor), bis: inventurBisTag(inv), quelle: "inventur" }; } // Schwadron 18.10.2026, M2
   return { von: tagPlus(heuteTag, -30), bis: tagPlus(heuteTag, -1), quelle: "tage" };
 }
 export function verkaufAuswertung(stand, z = auswertungZeitraum(stand)) {

@@ -59,6 +59,7 @@ export function leererBetrieb() {
     messungen: [],              // abgeschlossene Messungen: {id, lfd, rundgang, stelle, datum, zeit, wert|null, grund, min, max, abweichung, massnahmen, notiz, nachkontrolle, von, erfasst, nacherfasst, quelle}
     putzplan: null, putzlog: [], belehrungen: [], // W2-D: Putzplan, Putz-Nachweis und Belehrungen gehören zum Laden (Schema 6)
     verkaeufe: [],              // E7 (17.10.2026): nur anhängen: {id, datum (Geschäftstag), gericht|null, name, text?, plu?, menge, umsatzBrutto|null, herkunft, importId|null, erfasst, storniert} (js/verkauf.js)
+    kassenKombis: [],           // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse {id, name, kassenNamen, plu, teile:[{gericht, menge}]} (js/verkauf.js)
     lager: { tage: 7, puffer: 2 }, // Bestand (17.10.2026): Bestellvorschlag – bestellen für so viele Tage, dazu Puffer in Tagen (js/bestand.js); Artikel dürfen mindestbestand (Gebinde) tragen
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
@@ -269,6 +270,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   if (!["schnell", "genau"].includes(s.weg)) s.weg = alt || s.schritt > 0 || s.phase === "app" ? "genau" : "schnell";
   s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
   s.verkaeufe = verkaeufeSauber(s.verkaeufe); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste
+  s.kassenKombis = kombisSauber(s.kassenKombis, s.gerichte); // Schwadron 18.10.2026, M1
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
     .map((n) => ({ id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
@@ -287,6 +289,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
     notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.nacherfasst ? null : m.datum + "T00:00:00.000Z" })); // W2-H: Nachtrag ohne Uhrzeit bleibt ohne
   // Stresstest 15.10.: abgeschlossene Rundgänge tragen keine doppelte Kopie ihrer Messungen mehr (stehen vollständig im Journal)
   s.rundgaenge = s.rundgaenge.map((r) => (rundeDoppelt(r, s) ? { ...r, messungen: [] } : r));
+  rundgangDoppelBereinigen(s); // Schwadron 18.10.2026, H3: falsche „Sicherungs-Kopien“ gleicher Rundgänge aus früherem Zusammenführen entfernen
   // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)
   s.inventuren = mitId(s.inventuren).filter((i) => typeof i.datum === "string").map((i) => ({ ...i, datum: inventurGeschaeftstag(i),
     begonnen: typeof i.begonnen === "string" ? i.begonnen : i.datum + "T00:00:00.000Z", abgeschlossen: typeof i.abgeschlossen === "string" ? i.abgeschlossen : null,
@@ -348,14 +351,23 @@ function gerichtKasse(g) {
   else delete g.kassenNamen;
   return g;
 }
+// Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – Kennung, Name, gelernte Kassentexte, Nummer, Teile (Gericht-Kennung × Menge > 0)
+function kombisSauber(liste, gerichte) {
+  const ids = new Set((gerichte || []).map((g) => g.id));
+  return mitId(Array.isArray(liste) ? liste : []).map((k) => ({ id: k.id, name: String(k.name ?? "").slice(0, 120),
+    kassenNamen: [...new Set((Array.isArray(k.kassenNamen) ? k.kassenNamen : []).filter((x) => typeof x === "string").map((x) => x.trim().slice(0, 120)).filter(Boolean))].slice(0, 40),
+    plu: typeof k.plu === "string" && k.plu.trim() ? k.plu.trim().slice(0, 50) : null,
+    teile: (Array.isArray(k.teile) ? k.teile : []).filter((x) => istObjekt(x) && ids.has(x.gericht) && Number(x.menge) > 0).map((x) => ({ gericht: x.gericht, menge: Number(x.menge) })) }));
+}
 // E7 (17.10.2026): Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
 const VERKAUF_HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
 function verkaeufeSauber(liste) {
-  return mitId(Array.isArray(liste) ? liste : []).filter((v) => typeof v.datum === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v.datum) && Number.isFinite(Number(v.menge)) && v.menge !== null && v.menge !== "")
+  return mitId(Array.isArray(liste) ? liste : []).map(({ kombi, ...v }) => (typeof kombi === "string" && kombi ? { ...v, kombi } : v)).filter((v) => typeof v.datum === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v.datum) && Number.isFinite(Number(v.menge)) && v.menge !== null && v.menge !== "")
     .map((v) => ({ ...v, menge: Number(v.menge), gericht: typeof v.gericht === "string" && v.gericht ? v.gericht : null, name: String(v.name ?? "").slice(0, 120),
       umsatzBrutto: typeof v.umsatzBrutto === "number" && Number.isFinite(v.umsatzBrutto) ? v.umsatzBrutto : null, herkunft: VERKAUF_HERKUNFT.includes(v.herkunft) ? v.herkunft : "hand",
       importId: typeof v.importId === "string" && v.importId ? v.importId : null, erfasst: typeof v.erfasst === "string" ? v.erfasst : v.datum + "T00:00:00.000Z", storniert: !!v.storniert,
       ...(typeof v.plu === "string" && v.plu ? { plu: v.plu.slice(0, 50) } : { plu: null }), ...(typeof v.text === "string" ? { text: v.text.slice(0, 120) } : {}),
+      ...(typeof v.kombi === "string" && v.kombi ? { kombi: v.kombi.slice(0, 60) } : {}), // Schwadron 18.10.2026, M1
       ...("kasse" in v ? { kasse: typeof v.kasse === "string" && v.kasse ? v.kasse.slice(0, 50) : null } : {}) })); // Prüfgremium 17.10.2026 (5): Kassen-ID
 }
 
@@ -370,7 +382,7 @@ export function verkaeufeEntdoppeln(liste) {
   const gruppen = new Map();
   for (const v of liste || []) {
     if (!v || typeof v.datum !== "string") continue;
-    const k = v.herkunft === "hand" ? `hand|${v.datum}|${v.gericht || "?" + (v.name || "")}` : `imp|${v.datum}|${v.herkunft}|${typeof v.kasse === "string" ? v.kasse : ""}`;
+    const k = v.herkunft === "hand" ? `hand|${v.datum}|${v.gericht || (v.kombi ? "k:" + v.kombi : "?" + (v.name || ""))}` : `imp|${v.datum}|${v.herkunft}|${typeof v.kasse === "string" ? v.kasse : ""}`;
     if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(v);
   }
   const neu = new Map();
@@ -523,6 +535,28 @@ export function rundeDoppelt(r, b) {
   return r.messungen.every((m) => { const j = m && ix.mess.get(m.id);
     return !!j && j.rundgang === r.id && j.stelle === m.stelle && j.wert === (typeof m.wert === "number" ? m.wert : null) && (!(Array.isArray(m.weg) && m.weg.length) || ix.weg.has(m.id)); });
 }
+// Schwadron 18.10.2026, H3: Beim Zusammenführen galt jeder Rundgang dieser Sitzung (volle Messungs-Kopie) als Konflikt zur selben Kennung
+// aus einer Sicherung (Kopie beim Laden geleert, Zeile oben) und stand danach doppelt (quelle "sicherung", konfliktMit). Beide Seiten werden
+// jetzt vor dem Vergleich gleich geleert (rundgangKern). Vorhandene Doppel räumt diese Funktion beim Laden weg – idempotent: eine Kopie
+// verschwindet nur, wenn sie bis auf Messungs-Kopie und Sicherungs-Kennzeichen genau dem Rundgang mit der Kennung konfliktMit gleicht.
+const rundgangKern = (r, b) => (rundeDoppelt(r, b) ? { ...r, messungen: [] } : r);
+function rundgangDoppelBereinigen(s) {
+  const nachId = new Map(s.rundgaenge.map((r) => [r.id, r])); let weg = 0;
+  const vergleich = (r) => { const o = { ...r }; for (const k of ["id", "quelle", "quelleVorher", "importiert", "konfliktMit", "storniert", "storniertZeit"]) delete o[k]; return stabil(o); };
+  s.rundgaenge = s.rundgaenge.filter((r) => {
+    if (r.quelle !== "sicherung" || typeof r.konfliktMit !== "string") return true;
+    const orig = nachId.get(r.konfliktMit); if (!orig) return true;
+    const kopie = rundgangKern({ ...r, id: r.konfliktMit }, s);
+    if (vergleich({ ...kopie, ...(r.quelleVorher ? { quelle: r.quelleVorher } : {}) }) !== vergleich({ ...orig, ...(orig.quelle ? { quelle: orig.quelle } : {}) })) return true;
+    if (r.storniert && !orig.storniert) { orig.storniert = true; if (r.storniertZeit && !orig.storniertZeit) orig.storniertZeit = r.storniertZeit; }
+    weg += 1; return false;
+  });
+  if (weg && istObjekt(s.abgleichHinweis)) {
+    const h = s.abgleichHinweis; h.konflikte = Math.max(0, (Number(h.konflikte) || 0) - weg);
+    if (!h.konflikte && !(h.zukunft > 0) && !(Array.isArray(h.bereiche) && h.bereiche.length)) s.abgleichHinweis = null;
+  }
+  return weg;
+}
 const teilText = (j, liste, b) => JSON.stringify(j === "rundgaenge" ? liste.map((r) => (rundeDoppelt(r, b) ? { ...r, messungen: [] } : r)) : liste);
 
 // Einträge der genannten Monate eines Journals einsammeln, Text bilden und – nur wenn anders als gespeichert – zum Schreiben vormerken
@@ -586,6 +620,7 @@ export const BEREICHE = {
   putzplan: ["putzplan", "putzplanSpaeter"],
   personen: ["personen"],
   lager: ["lager"], // Bestand (17.10.2026): eigener Bereich – ältere Stände bekommen dadurch keinen neuen Zeitstempel in „Betrieb“
+  kombis: ["kassenKombis"], // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – eigener Bereich (wie lager), alte Stände bleiben unberührt
 };
 const BEREICH_NAMEN = Object.keys(BEREICHE);
 function bereichText(b, a) { const f = BEREICHE[a]; return f.length === 1 ? JSON.stringify(b[f[0]] ?? null) : JSON.stringify(f.map((k) => b[k] ?? null)); }
@@ -1137,7 +1172,8 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   basis.verkaeufe = verkaeufeEntdoppeln(basis.verkaeufe); // Prüfgremium 17.10.2026 (1): gleiche Verkäufe von zwei Handys zählen einmal
   basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1 (17.10.2026)
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
-  const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen), ["storniert"], opt("rundgaenge"));
+  // Schwadron 18.10.2026, H3: beide Seiten vorher wie beim Laden leeren (Messungs-Kopie, die vollständig im Journal steht) – sonst falscher Konflikt
+  const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen).map((r) => rundgangKern(r, lokal)), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen).map((r) => rundgangKern(r, fremd)), ["storniert"], opt("rundgaenge"));
   basis.rundgaenge = [...abgeschlossen, ...(lokal.rundgaenge || []).filter((r) => !r.abgeschlossen)];
   // Inventuren wie Rundgänge: abgeschlossene vereinigen, eine offene nur vom lokalen Stand
   const invFertig = journalVereinigen((lokal.inventuren || []).filter((i) => i.abgeschlossen), (fremd.inventuren || []).filter((i) => i.abgeschlossen));

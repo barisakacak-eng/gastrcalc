@@ -775,6 +775,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Schimbă conținutul", inhaltJe: "Conținut pe ambalaj", inhaltFehlt: "Introdu o cantitate mai mare de zero.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Sau lipește textul", textAus: "Ascunde textul",
     stornoFrage: "Anulezi bonul ăsta? Nu mai contează la cumpărături. Prețurile preluate rămân.", doppeltFrage: "Bonul ăsta l-ai încărcat deja (același magazin, aceeași zi, aceeași sumă). Îl preiei totuși încă o dată?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} pe kg/l/buc. (${p} %). E corect?`,
@@ -895,7 +896,7 @@ export default {
     dauerhaftUnbekannt: "Memorie permanentă? Necunoscut.",
     offen: { kopf: "Datele localului încărcate incomplet. Citești o copie?", teil: (j, m) => `Lipsește o parte (${j}${m ? " " + m : ""}). Citești o copie?`, abgleich: (liste) => `Schimbat la unire: ${liste} – rămâne varianta ta, verifică`, zukunft: (n) => `${n} înregistrări din copie nepreluate (dată în viitor)`, konflikt: (n) => `${n} înregistrări din copie erau diferite – puse alături` },
     journal: { schwund: "Gunoi", tagesnotizen: "Vânzări", messungen: "Răcire", lieferungen: "Livrări", abschluesse: "Închideri de zi", kostenbelege: "Facturi de costuri", putzlog: "Plan de curățenie", belehrungen: "Instruiri de igienă", rundgaenge: "Ture de răcire", inventuren: "Inventare", uploads: "Poze", artikel: "Mărfuri", gerichte: "Preparate", anderes: "Date" },
-    bereich: { kosten: "Costuri", gerichte: "Preparate și rețete", artikel: "Mărfuri și prețuri", betrieb: "Local", kuehl: "Locuri de răcire", putzplan: "Plan de curățenie", personen: "Persoane", lager: "Stoc" },
+    bereich: { kombis: "Meniuri combo", kosten: "Costuri", gerichte: "Preparate și rețete", artikel: "Mărfuri și prețuri", betrieb: "Local", kuehl: "Locuri de răcire", putzplan: "Plan de curățenie", personen: "Persoane", lager: "Stoc" },
   },
   einstellungen: { kleinunternehmer: "Firmă mică (fără TVA deductibil)", kleinunternehmerHinweis: "Pornit: sumele brute contează integral, nu se scade TVA.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Pozele cu facturi, gunoi și preparate sunt în fișierul de copie. De aceea fișierul e mai mare.",
@@ -1150,6 +1151,8 @@ export default {
   beispiel: { anlegen: "Creează local de probă", satz: "Un local de döner complet completat, pentru încercare. Toate cifrele sunt exemple. Localul tău rămâne neatins.", name: "Döner de probă", loeschen: "Șterge localul de probă", chip: "Exemplu – toate cifrele inventate", export: "EXEMPLU – nu sunt date reale" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Meniu din mai multe feluri", titel: "Alcătuiește meniul", text: "Scrie cât din fiecare fel este într-un meniu. Aplicația ține minte asta pentru acest text de casă.", menge: (n) => `${n}: cantitate pe meniu`, speichern: "Salvează meniul", leer: "Scrie o cantitate la cel puțin un fel.", gelernt: (n) => `Salvat: meniu cu ${n} feluri.`, marke: "Meniu" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} produse diferă, dar lipsesc încă vânzările din ${d} zile. Suspiciune de lipsă doar când sunt toate vânzările.`, // Schwadron 18.10.2026, N4
     titel: "Vânzări pe fel", unter: "Ce ai vândut – din casă sau introdus de mână.", entwurf: "Ciornă: încă neaprobată, doar pentru vizualizare.", einstieg: "Vânzări pe fel",
     einstiegUnter: "Citește casa, produse fără vânzare, pierderi", zeitraumInventur: "între ultimele două inventare", keine: "Încă nu sunt vânzări în această perioadă.", ohneGericht: "Fără fel",
     rangTitel: "Cele mai vândute", ohneInventur: "Pentru comparația cu stocul sunt necesare două inventare.", inventurKnopf: "La inventar", abgleichTitel: "Marfă: așteptat și consumat",
@@ -1179,6 +1182,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Azi nimic urgent. Următoarea comandă până la ${d}` : "Azi nimic urgent.", // Schwadron 18.10.2026, N1
     einstieg: "Stoc și comenzi",
     einstiegUnter: "Ce ai și ce trebuie comandat",
     titel: "Stoc și comenzi",

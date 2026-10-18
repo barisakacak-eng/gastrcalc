@@ -776,6 +776,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Promijeni sadržaj", inhaltJe: "Sadržaj po pakovanju", inhaltFehlt: "Unesi količinu veću od nule.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Ili zalijepi tekst", textAus: "Sakrij tekst",
     stornoFrage: "Poništiti ovaj račun? Onda se više ne računa u nabavku. Preuzete cijene ostaju.", doppeltFrage: "Ovaj račun si već učitao (isti dobavljač, isti dan, isti iznos). Ipak ga preuzeti još jednom?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} po kg/l/kom. (${p} %). Je li to tačno?`,
@@ -896,7 +897,7 @@ export default {
     dauerhaftUnbekannt: "Memorija trajna? Nepoznato.",
     offen: { kopf: "Podaci lokala učitani nepotpuno. Učitati kopiju?", teil: (j, m) => `Nedostaje dio (${j}${m ? " " + m : ""}). Učitati kopiju?`, abgleich: (liste) => `Promijenjeno pri spajanju: ${liste} – ostaje tvoja verzija, provjeri`, zukunft: (n) => `${n} unosa iz kopije nije preuzeto (datum u budućnosti)`, konflikt: (n) => `${n} unosa iz kopije se razlikovalo – dodano pored` },
     journal: { schwund: "Otpad", tagesnotizen: "Promet", messungen: "Hlađenje", lieferungen: "Isporuke", abschluesse: "Zatvaranja dana", kostenbelege: "Računi troškova", putzlog: "Plan čišćenja", belehrungen: "Higijenske obuke", rundgaenge: "Obilasci hlađenja", inventuren: "Inventure", uploads: "Slike", artikel: "Roba", gerichte: "Jela", anderes: "Podaci" },
-    bereich: { kosten: "Troškovi", gerichte: "Jela i recepti", artikel: "Roba i cijene", betrieb: "Lokal", kuehl: "Mjesta hlađenja", putzplan: "Plan čišćenja", personen: "Osobe", lager: "Skladište" },
+    bereich: { kombis: "Kombo meniji", kosten: "Troškovi", gerichte: "Jela i recepti", artikel: "Roba i cijene", betrieb: "Lokal", kuehl: "Mjesta hlađenja", putzplan: "Plan čišćenja", personen: "Osobe", lager: "Skladište" },
   },
   einstellungen: { kleinunternehmer: "Mali preduzetnik (bez odbitka PDV-a)", kleinunternehmerHinweis: "Uključeno: bruto iznosi se računaju u cijelosti, PDV se ne odbija.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Slike računa, otpada i jela su u fajlu kopije. Zato je fajl veći.",
@@ -1151,6 +1152,8 @@ export default {
   beispiel: { anlegen: "Napravi primjer-radnju", satz: "Potpuno popunjena ćevabdžinica za isprobavanje. Svi brojevi su primjeri. Tvoja radnja ostaje netaknuta.", name: "Primjer-Döner", loeschen: "Obriši primjer-radnju", chip: "Primjer – svi brojevi izmišljeni", export: "PRIMJER – nisu stvarni podaci" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Meni od više jela", titel: "Sastavi meni", text: "Unesi koliko svakog jela ima u jednom meniju. Aplikacija to pamti za ovaj tekst s kase.", menge: (n) => `${n}: količina po meniju`, speichern: "Sačuvaj meni", leer: "Unesi količinu za barem jedno jelo.", gelernt: (n) => `Sačuvano: meni sa ${n} jela.`, marke: "Meni" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} artikala odstupa, ali za ${d} dana još nedostaju prodaje. Sumnja na manjak tek kad su sve prodaje tu.`, // Schwadron 18.10.2026, N4
     titel: "Prodaja po jelu", unter: "Šta si prodao – iz kase ili upisano ručno.", entwurf: "Nacrt: još nije odobren, samo za pregled.", einstieg: "Prodaja po jelu",
     einstiegUnter: "Učitaj kasu, jela koja ne idu, manjak", zeitraumInventur: "između posljednje dvije inventure", keine: "Još nema prodaje u ovom periodu.", ohneGericht: "Bez jela",
     rangTitel: "Najviše prodano", ohneInventur: "Za poređenje sa skladištem trebaju dvije inventure.", inventurKnopf: "Na inventuru", abgleichTitel: "Roba: očekivano i potrošeno",
@@ -1180,6 +1183,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Danas ništa hitno. Sljedeća narudžba do ${d}` : "Danas ništa hitno.", // Schwadron 18.10.2026, N1
     einstieg: "Skladište i narudžbe",
     einstiegUnter: "Šta imaš i šta treba naručiti",
     titel: "Skladište i narudžbe",

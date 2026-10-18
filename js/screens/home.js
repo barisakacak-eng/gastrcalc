@@ -57,7 +57,7 @@ function kachelTexte(stand, ks, H) {
   const w = heuteKachelZahlen(stand, ks, H);
   const k = w.kuehl;
   const kuehl = !k ? { wert: "–", alarm: false } : k.art === "abweichung" ? { wert: `${fmtZahl(k.wert, Number.isInteger(k.wert) ? 0 : 1)} °C`, alarm: true }
-    : k.art === "ok" ? { wert: t("heute.ok"), alarm: false } : { wert: t("heute.offenN", k.anzahl), alarm: false, offen: true };
+    : k.art === "ok" ? { wert: t("heute.ok"), alarm: false } : k.art === "ruhetag" ? { wert: t("kuehl.status.ruhetag"), alarm: false } : { wert: t("heute.offenN", k.anzahl), alarm: false, offen: true };
   const putz = w.putz ? { wert: `${w.putz.erledigt} / ${w.putz.gesamt}`, alarm: w.putz.alarm } : { wert: "–", alarm: false };
   return { umsatz: w.umsatz, muell: w.muell, kuehl, putz };
 }

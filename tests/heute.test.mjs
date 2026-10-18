@@ -147,3 +147,17 @@ test("Laden-Karte: Filter „Zu billig“ zeigt nur rote Gerichte, lange Karten 
   assert.equal((karteLadenView(s).match(/data-a="kl-auf"/g) || []).length, 75);
   karteLadenZuruecksetzen();
 });
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): N2 ----------
+test("Schwadron N2: am Ruhetag zeigt die Kühl-Kachel „Ruhetag“ statt „3 offen“, „Jetzt dran“ fordert keinen Rundgang", async () => {
+  const stamm = await import("../js/stamm.js"); const E = await import("../js/engine.js"); const LZ = await import("../js/laden_zahlen.js");
+  const s = leererBetrieb(); s.phase = "app";
+  for (const n of ["Kühlschrank", "Saladette", "Tiefkühler"]) stamm.kuehlstelleAnlegen(s, { name: n, art: n === "Tiefkühler" ? "tk" : "kuehl" }); stamm.kuehlEingerichtetSetzen(s);
+  const K = heute(); E.ruhetageSetzen(s, [E.wochentag(K)], tagPlus(K, -14)); // heute ist Ruhetag
+  assert.deepEqual(LZ.heuteKachelZahlen(s, E.kuehlStatus(s), K, K).kuehl, { art: "ruhetag", alarm: false });
+  const morgens = new Date(); morgens.setHours(9, 0, 0, 0);
+  assert.notEqual(jetztDran(s, null, { jetzt: morgens })?.id, "rundgang");
+  E.ruhetageSetzen(s, [(E.wochentag(K) + 1) % 7], K); // kein Ruhetag mehr: wieder „3 offen“
+  assert.equal(LZ.heuteKachelZahlen(s, E.kuehlStatus(s), K, K).kuehl.art, "offen");
+  assert.equal(jetztDran(s, null, { jetzt: morgens })?.id, "rundgang");
+});

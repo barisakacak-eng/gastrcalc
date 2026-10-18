@@ -768,6 +768,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Sửa nội dung", inhaltJe: "Nội dung mỗi kiện", inhaltFehlt: "Hãy nhập số lượng lớn hơn 0.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Hoặc dán chữ vào", textAus: "Ẩn chữ",
     stornoFrage: "Hủy hóa đơn này? Nó sẽ không còn tính vào tiền mua hàng. Giá đã áp dụng vẫn giữ.", doppeltFrage: "Bạn đã nạp hóa đơn này rồi (cùng nơi bán, cùng ngày, cùng tổng tiền). Vẫn áp dụng lần nữa?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} mỗi kg/l/cái (${p} %). Đúng không?`,
@@ -888,7 +889,7 @@ export default {
     dauerhaftUnbekannt: "Bộ nhớ lâu dài? Chưa rõ.",
     offen: { kopf: "Dữ liệu quán tải không đủ. Đọc bản sao lưu?", teil: (j, m) => `Thiếu một phần (${j}${m ? " " + m : ""}). Đọc bản sao lưu?`, abgleich: (liste) => `Đã đổi khi gộp: ${liste} – giữ bản của bạn, hãy kiểm tra`, zukunft: (n) => `Không lấy ${n} mục từ bản sao lưu (ngày trong tương lai)`, konflikt: (n) => `${n} mục từ bản sao lưu khác – đã đặt bên cạnh` },
     journal: { schwund: "Rác", tagesnotizen: "Doanh thu", messungen: "Làm lạnh", lieferungen: "Giao hàng", abschluesse: "Đóng ngày", kostenbelege: "Hóa đơn chi phí", putzlog: "Kế hoạch vệ sinh", belehrungen: "Hướng dẫn vệ sinh", rundgaenge: "Vòng kiểm lạnh", inventuren: "Kiểm kho", uploads: "Ảnh", artikel: "Hàng hóa", gerichte: "Món ăn", anderes: "Dữ liệu" },
-    bereich: { kosten: "Chi phí", gerichte: "Món và công thức", artikel: "Hàng và giá", betrieb: "Quán", kuehl: "Chỗ làm lạnh", putzplan: "Kế hoạch vệ sinh", personen: "Người", lager: "Kho" },
+    bereich: { kombis: "Combo", kosten: "Chi phí", gerichte: "Món và công thức", artikel: "Hàng và giá", betrieb: "Quán", kuehl: "Chỗ làm lạnh", putzplan: "Kế hoạch vệ sinh", personen: "Người", lager: "Kho" },
   },
   einstellungen: { kleinunternehmer: "Doanh nghiệp nhỏ (không khấu trừ VAT)", kleinunternehmerHinweis: "Bật: số tiền gộp tính đủ, không trừ VAT.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Ảnh hóa đơn, rác và món ăn có trong file sao lưu. Vì vậy file lớn hơn.",
@@ -1143,6 +1144,8 @@ export default {
   beispiel: { anlegen: "Tạo quán mẫu", satz: "Một quán döner đã điền đầy đủ để dùng thử. Mọi con số đều là ví dụ. Quán của bạn không bị thay đổi.", name: "Döner mẫu", loeschen: "Xóa quán mẫu", chip: "Ví dụ – mọi con số đều bịa", export: "VÍ DỤ – không phải dữ liệu thật" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Combo từ nhiều món", titel: "Ghép combo", text: "Nhập mỗi món có bao nhiêu trong một combo. Ứng dụng sẽ nhớ cho dòng chữ quầy thu ngân này.", menge: (n) => `${n}: số lượng mỗi combo`, speichern: "Lưu combo", leer: "Hãy nhập số lượng cho ít nhất một món.", gelernt: (n) => `Đã lưu: combo gồm ${n} món.`, marke: "Combo" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} hàng bị lệch, nhưng còn thiếu số bán của ${d} ngày. Chỉ nghi hao hụt khi đủ mọi số bán.`, // Schwadron 18.10.2026, N4
     titel: "Bán theo món", unter: "Bạn đã bán gì – từ máy tính tiền hoặc nhập tay.", entwurf: "Bản nháp: chưa được duyệt, chỉ để xem.", einstieg: "Bán theo món",
     einstiegUnter: "Đọc máy tính tiền, món ế, hao hụt", zeitraumInventur: "giữa hai lần kiểm kho gần nhất", keine: "Chưa có lượt bán nào trong thời gian này.", ohneGericht: "Không có món",
     rangTitel: "Bán chạy nhất", ohneInventur: "Để so với kho cần hai lần kiểm kho.", inventurKnopf: "Đến kiểm kho", abgleichTitel: "Hàng: dự kiến và đã dùng",
@@ -1172,6 +1175,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Hôm nay không có gì gấp. Lần đặt hàng tới trước ${d}` : "Hôm nay không có gì gấp.", // Schwadron 18.10.2026, N1
     einstieg: "Kho và đặt hàng",
     einstiegUnter: "Có gì và cần đặt gì",
     titel: "Kho và đặt hàng",

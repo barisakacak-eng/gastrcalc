@@ -5,16 +5,18 @@
 //
 // Bestand heute = letzte abgeschlossene Inventur (Gebinde × Inhalt bei der Zählung) + Einkauf seit der Inventur (Belege)
 //               − Soll-Verbrauch aus Verkäufen seit der Inventur − erfasster Müll und Personalessen seit der Inventur.
-// Zeitraum „seit der Inventur“: Tag nach dem Zähltag bis heute (gezählt wird nach Ladenschluss, wie inventurVergleich).
+// Zeitraum „seit der Inventur“: Tag nach dem Zähltag bis heute (gezählt nach Ladenschluss); morgens vor dem Öffnen gezählt: ab dem Zähltag
+// selbst (Schwadron 18.10.2026, M2, inventurAbTag in js/inventur.js).
 // Nie negativ: fällt die Rechnung unter null, gilt 0 und der Hinweis „Einkauf fehlt wohl oder Inventur zu alt“.
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisJeBasis, preisGeschaetzt, tagPlus, wochentag, ruhetageAm } from "./engine.js";
-import { inventurenFertig, inventurVorher, mengeSauber } from "./inventur.js";
-import { verkaeufeImZeitraum, gerichtVon, sollVerbrauch, schwundVerbrauch, einkaufMengen, bedarfGericht } from "./verkauf.js";
+import { inventurenFertig, inventurVorher, mengeSauber, inventurAbTag, inventurBisTag, inventurVorVerkauf } from "./inventur.js";
+import { verkaeufeImZeitraum, teileVon, sollVerbrauch, schwundVerbrauch, einkaufMengen, bedarfGericht } from "./verkauf.js";
 import { tagGewicht } from "./zaehler.js";
 import { heuteGeschaeft } from "./util.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
+import { chargenStand } from "./haltbar.js"; // Schwadron 18.10.2026, M3: abgelaufene Ware (Verbrauchsdatum vorbei) zählt im Vorschlag nicht als Bestand
 
 // Bestand (17.10.2026): Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
 export const LAGER_STANDARD = { tage: 7, puffer: 2 };
@@ -45,7 +47,7 @@ const ruhetageBekannt = (stand, d) => ruhetageAm(stand, d).length > 0;
 function verkaufJeTag(stand, z) {
   const out = new Map();
   for (const v of verkaeufeImZeitraum(stand, z).eintraege) {
-    const m = out.get(v.datum) || {}; const id = gerichtVon(stand, v); if (id) m[id] = (m[id] || 0) + v.menge; out.set(v.datum, m);
+    const m = out.get(v.datum) || {}; for (const x of teileVon(stand, v)) m[x.gericht] = (m[x.gericht] || 0) + v.menge * x.menge; out.set(v.datum, m); // Schwadron 18.10.2026, M1: Menü → Teile
   }
   return out;
 }
@@ -93,7 +95,7 @@ export function verbrauchSchnitt(stand, { heuteTag = heuteGeschaeft(), idx = art
   const vor = inv ? inventurVorher(stand, inv) : null;
   let fallback = null;
   if (inv && vor && inv.datum > vor.datum) {
-    const z = { von: tagPlus(vor.datum, 1), bis: inv.datum }; const ek = einkaufMengen(stand, z);
+    const z = { von: inventurAbTag(vor), bis: inventurBisTag(inv) }; const ek = einkaufMengen(stand, z);
     let offen = 0; for (let d = z.von; d <= z.bis; d = tagPlus(d, 1)) offen += tagGewicht(stand, d);
     fallback = { z, ek, offen };
   }
@@ -180,7 +182,8 @@ function bestandRechnen(stand, heuteTag) {
   const einstellungen = lagerEinstellungen(stand); const idx = artikelIndex(stand);
   const inv = inventurenFertig(stand).filter((i) => i.datum <= heuteTag).pop() || null;
   if (!inv) return { heute: heuteTag, inventur: null, ohneInventur: true, einstellungen, start: heuteTag, waren: [], hinweise: [] };
-  const von = tagPlus(inv.datum, 1), bis = heuteTag; const seit = bis >= von;
+  // Schwadron 18.10.2026, M2: morgens vor dem Öffnen gezählt → Verkäufe, Müll und Einkauf des Zähltags zählen ab (sonst ab dem Tag danach)
+  const vorVerkauf = inventurVorVerkauf(inv); const von = inventurAbTag(inv), bis = heuteTag; const seit = bis >= von;
   const jeTag = seit ? verkaufJeTag(stand, { von, bis }) : new Map();
   const soll = sollVerbrauch(stand, summeMengen(jeTag), idx);
   const sw = seit ? schwundVerbrauch(stand, { von, bis }, idx) : { muell: {}, personal: {} };
@@ -189,7 +192,7 @@ function bestandRechnen(stand, heuteTag) {
   const luecke = seit ? verkaufsLuecken(stand, { von, bis: tagPlus(heuteTag, -1) }, new Set(jeTag.keys())) : { tage: [], anzahl: 0 };
   const vs = verbrauchSchnitt(stand, { heuteTag, idx, inv });
   // Rechnung ab heute, wenn heute noch nichts gezählt und nichts verkauft ist; sonst ab morgen
-  const start = inv.datum >= heuteTag || jeTag.has(heuteTag) ? tagPlus(heuteTag, 1) : heuteTag;
+  const start = (inv.datum >= heuteTag && !vorVerkauf) || jeTag.has(heuteTag) ? tagPlus(heuteTag, 1) : heuteTag;
   const weg = new Set(inv.ausgeblendet || []);
   const namen = new Set([...Object.keys(inv.posten || {}), ...Object.keys(ek), ...Object.keys(soll.artikel),
     ...(stand.artikel || []).filter((a) => mindestbestandVon(a)).map((a) => a.name)].filter((n) => !weg.has(n))); // ausgeblendet = wird nicht geführt
@@ -232,7 +235,7 @@ function bestandRechnen(stand, heuteTag) {
   waren.sort((x, y) => (x.reichweite ?? 1e9) - (y.reichweite ?? 1e9) || x.name.localeCompare(y.name, "de"));
   const hinweise = [];
   if (soll.ohneRezept.length) hinweise.push({ art: "ohneRezept", namen: soll.ohneRezept.map((x) => x.name) });
-  const ohneGericht = seit ? verkaeufeImZeitraum(stand, { von, bis }).eintraege.filter((v) => !gerichtVon(stand, v)).reduce((s, v) => s + v.menge, 0) : 0;
+  const ohneGericht = seit ? verkaeufeImZeitraum(stand, { von, bis }).eintraege.filter((v) => !teileVon(stand, v).length).reduce((s, v) => s + v.menge, 0) : 0;
   if (ohneGericht > 0) hinweise.push({ art: "ohneGericht", menge: ohneGericht });
   return { heute: heuteTag, inventur: { id: inv.id, datum: inv.datum, alter }, ohneInventur: false, einstellungen, start, wochentage: vs.wochentage, datenTage: vs.datenTage.length,
     verkaufLuecke: luecke, waren, hinweise };
@@ -246,8 +249,12 @@ export const SCHRITT_OHNE_GEBINDE = { g: 100, ml: 100, stk: 1 };
 export function bestellVorschlag(stand, { heuteTag = heuteGeschaeft(), bs = bestandStand(stand, { heuteTag }) } = {}) {
   const { tage, puffer } = bs.einstellungen; const morgen = tagPlus(heuteTag, 1);
   const zeilen = [];
-  for (const w of bs.waren) {
-    if (w.bestand === null) continue;
+  const weg = abgelaufenJeWare(stand, heuteTag, bs);
+  for (const w0 of bs.waren) {
+    if (w0.bestand === null) continue;
+    // Schwadron 18.10.2026, M3: was nach FIFO in Lieferungen mit vorbeigegangenem Verbrauchsdatum steckt, darf nicht mehr verwendet werden
+    const ab = Math.min(w0.bestand, weg.get(w0.name) || 0);
+    const w = ab > 1e-9 ? { ...w0, bestand: w0.bestand - ab, ...(() => { const r = reichweite(stand, { schnitt: w0.schnitt, jeWochentag: w0.jeWochentag }, w0.bestand - ab, bs.start); return { reichweite: r.tage, leerAm: r.leerAm, lange: r.lange, offen: r.offen }; })() } : w0;
     const s = { schnitt: w.schnitt, jeWochentag: w.jeWochentag };
     const bedarf = w.schnitt > 0 ? bedarfTage(stand, s, tage + puffer, bs.start) : 0;
     const mindest = w.mindestbestand && w.inhalt ? w.mindestbestand * w.inhalt : 0;
@@ -264,14 +271,25 @@ export function bestellVorschlag(stand, { heuteTag = heuteGeschaeft(), bs = best
     const dringend = w.bestand <= 0 ? "leer" : bestellenAm && bestellenAm <= heuteTag ? "jetzt" : bestellenAm === morgen ? "morgen" : "spaeter";
     zeilen.push({ name: w.name, basis: w.basis, gebinde, gebindeArt: w.gebinde, inhalt: w.inhalt, menge, bestand: w.bestand, bedarf, mindestGewinnt: mindest > bedarf,
       reichweite: w.reichweite, leerAm: w.leerAm, bestellenAm, grund, dringend, wert: w.preisJeBasis !== null ? menge * w.preisJeBasis : null, geschaetzt: w.geschaetzt,
-      sicherheit: w.sicherheit, lieferant: lieferantVon(stand, w.name) });
+      sicherheit: w.sicherheit, lieferant: lieferantVon(stand, w.name), abgelaufen: ab > 1e-9 ? ab : 0 });
   }
   const ordnung = { leer: 0, jetzt: 1, morgen: 2, spaeter: 3 };
   zeilen.sort((a, b) => ordnung[a.dringend] - ordnung[b.dringend] || (a.reichweite ?? 1e9) - (b.reichweite ?? 1e9) || a.name.localeCompare(b.name, "de"));
   const gruppen = new Map();
   for (const z of zeilen) { const k = z.lieferant || ""; const g = gruppen.get(k) || { lieferant: z.lieferant, zeilen: [], wert: 0, ohneWert: 0, geschaetzt: false }; g.zeilen.push(z); if (z.wert === null) g.ohneWert += 1; else g.wert += z.wert; if (z.geschaetzt) g.geschaetzt = true; gruppen.set(k, g); }
   const liste = [...gruppen.values()].sort((a, b) => (a.lieferant === null) - (b.lieferant === null) || ordnung[a.zeilen[0].dringend] - ordnung[b.zeilen[0].dringend] || String(a.lieferant).localeCompare(String(b.lieferant), "de"));
-  return { heute: heuteTag, tage, puffer, gruppen: liste, zeilen, zaehl: { leer: zeilen.filter((z) => z.dringend === "leer").length, jetzt: zeilen.filter((z) => z.dringend === "jetzt").length, morgen: zeilen.filter((z) => z.dringend === "morgen").length } };
+  // Schwadron 18.10.2026, N1: frühester Bestelltag der Liste (für „Heute nichts dringend. Nächste Bestellung bis …“ statt „Alles reicht“)
+  const naechste = zeilen.map((z) => z.bestellenAm).filter(Boolean).sort()[0] || null;
+  return { heute: heuteTag, tage, puffer, gruppen: liste, zeilen, naechste, zaehl: { leer: zeilen.filter((z) => z.dringend === "leer").length, jetzt: zeilen.filter((z) => z.dringend === "jetzt").length, morgen: zeilen.filter((z) => z.dringend === "morgen").length } };
+}
+
+// Menge je Ware (Grundeinheit), die heute in Lieferungen mit Verbrauchsdatum vor heute steckt (FIFO-Anteil am Bestand, js/haltbar.js)
+function abgelaufenJeWare(stand, heuteTag, bs) {
+  const out = new Map();
+  if (!(stand.lieferungen || []).some((l) => !l.storniert && (l.zeilen || []).some((z) => z?.haltbar?.art === "verbrauch"))) return out;
+  for (const w of chargenStand(stand, { heuteTag, bs }).waren) for (const c of w.chargen)
+    if (c.haltbar?.art === "verbrauch" && c.haltbar.datum < heuteTag && c.jetzt > 0) out.set(w.name, (out.get(w.name) || 0) + c.jetzt);
+  return out;
 }
 
 // ---------- Text zum Teilen (WhatsApp/SMS) ----------

@@ -71,7 +71,9 @@ test("Zähler Stufe 3: Einkauf aus Belegen statt Schätzung, Müll nicht doppelt
   b.schwund.push({ id: "w", datum: "2026-10-12", art: "gericht", vorgang: 1, ref: { typ: "gericht", id: "d" }, menge: 2, einheit: "portion", wert: 20, storniert: false });
   const z = Z.zaehler(b, { datum: "2026-10-12" });
   assert.equal(z.stufe, 3); nah(z.ware, 300); nah(z.muell, 0); nah(z.stand, 1000 - 300 - z.kosten); assert.equal(z.start, "2026-10-11"); nah(z.gewichtBisHeute, 2);
-  nah(z.quoteEff, 0.3); nah(z.dbProTag, 1000 * 0.7); // Prognose rechnet mit der Belegquote, nicht mit dem vollen Umsatz (Review Punkt 2)
+  // Schwadron 18.10.2026, H1: Prognose rechnet nicht mit dem vollen Umsatz (Review Punkt 2), aber auch nicht mit „Belege Monat bis heute“ –
+  // mit erst zwei Tagen Daten gilt die Kartenquote (geglättete 28-Tage-Belegquote erst, wenn so lange Daten da sind)
+  assert.equal(z.quoteFenster, null); nah(z.quoteEff, z.quote); nah(z.dbProTag, 1000 * (1 - z.quote)); assert.ok(z.dbProTag < 1000); nah(z.belegQuoteMonat, 0.3);
   // Ein Beleg weit unter der Schätzung macht den Zähler nicht grüner: es bleibt Stufe 2
   b.lieferungen[0].summeNetto = 20;
   const z2 = Z.zaehler(b, { datum: "2026-10-12" }); assert.equal(z2.stufe, 2); assert.ok(z2.ware > 20); assert.equal(z2.belege, 1);
@@ -139,4 +141,31 @@ test("Lieferung: Dublette erkannt, Preissprung gemeldet, Retoure setzt keinen Pr
   const l2 = L.lieferungAnlegen(b, { ...beleg, datum: "2099-01-01" }, { zeilen: beleg.zeilen }); assert.ok(l2.datum < "2099-01-01" && l2.datum <= heuteLokal()); // lokales Datum (nach Mitternacht ist UTC noch gestern)
   // Nicht alle Zeilen übernommen → Zeilensumme statt Fußzeile
   const l3 = L.lieferungAnlegen(b, beleg, { zeilen: [beleg.zeilen[0]], alleZeilen: false }); nah(l3.summeNetto, 30);
+});
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): H1 und N5 ----------
+import { heuteZiel as SF_heuteZiel } from "../js/laden_zahlen.js";
+test("Schwadron H1: Einkaufstag/Monatserster – „pro Tag nötig“ springt nicht, Monatssumme bleibt der Beleg", () => {
+  const b = laden();
+  // 1.10.: erster Tag mit 1.070 € brutto Umsatz und einem Großeinkauf von 1.500 € netto (Lager wird aufgebaut)
+  stand(b, "2026-10-01", 1070);
+  b.lieferungen.push({ id: "gross", datum: "2026-10-01", erfasst: "2026-10-01T08:00:00.000Z", lieferant: "Test", basis: "netto", summeNetto: 1500, zeilen: [], storniert: false });
+  const z = Z.zaehler(b, { datum: "2026-10-01" });
+  assert.equal(z.stufe, 3); nah(z.ware, 1500); nah(z.stand, 1000 - 1500 - z.kosten); // Monatssumme unverändert: der ganze Beleg
+  assert.ok(z.quoteEff < 0.9, `Prognose-Quote ${z.quoteEff} (vorher 0,95)`); nah(z.quoteEff, z.quote);
+  const hz = SF_heuteZiel(b, z, "2026-10-01");
+  assert.equal(hz.stufe, "bisNull");
+  const proTag = hz.tempo?.art === "knapp" ? hz.tempo.proTag : 0;
+  assert.ok(proTag < 2.5 * 1070, `„${Math.round(proTag)} € / Tag nötig“ bei 1.070 € Tagesumsatz`);
+  // Mit 28 Tagen Daten gilt die geglättete Belegquote (Einkauf / Umsatz der letzten 28 Tage), gedeckelt
+  const c = laden(); for (let i = 0; i < 28; i++) stand(c, E.tagPlus("2026-09-14", i), 1070);
+  for (const d of ["2026-09-14", "2026-09-21", "2026-09-28", "2026-10-05"]) c.lieferungen.push({ id: "l" + d, datum: d, erfasst: d + "T08:00:00.000Z", basis: "netto", summeNetto: 2800, zeilen: [], storniert: false });
+  const zc = Z.zaehler(c, { datum: "2026-10-11" });
+  assert.equal(zc.stufe, 3); nah(zc.quoteFenster, 4 * 2800 / (28 * 1000)); nah(zc.quoteEff, Math.max(zc.quote, zc.quoteFenster));
+});
+test("Schwadron N5: wareneinsatzQuote ist gedeckelt und kennzeichnet unplausible Belegquoten", () => {
+  const b = laden(); stand(b, "2026-10-01", 1070);
+  b.lieferungen.push({ id: "gross", datum: "2026-10-01", erfasst: "2026-10-01T08:00:00.000Z", basis: "netto", summeNetto: 1800, zeilen: [], storniert: false });
+  const z = Z.zaehler(b, { datum: "2026-10-01" }); const w = Z.wareneinsatzQuote(b, z);
+  assert.ok(w.quote <= 0.9, `Quote ${w.quote}`); assert.equal(w.unplausibel, true); nah(w.roh, 1.8);
 });

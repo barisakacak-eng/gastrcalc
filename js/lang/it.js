@@ -769,6 +769,7 @@ export default {
   },
 
   beleg: {
+    inhaltAendern: "Cambia contenuto", inhaltJe: "Contenuto per confezione", inhaltFehlt: "Inserisci una quantità maggiore di zero.", // Schwadron 18.10.2026, U3
     textEinfuegen: "Oppure incolla il testo", textAus: "Nascondi testo",
     stornoFrage: "Annullare questo scontrino? Allora non conta più negli acquisti. I prezzi già presi restano.", doppeltFrage: "Questo scontrino l'hai già caricato (stesso fornitore, stesso giorno, stesso totale). Prenderlo lo stesso un'altra volta?",
     preisSprungText: (n, alt, neu, p) => `${n}: ${alt} → ${neu} al kg/l/pz. (${p} %). È giusto?`,
@@ -889,7 +890,7 @@ export default {
     dauerhaftUnbekannt: "Memoria permanente? Non noto.",
     offen: { kopf: "Dati del locale caricati in modo incompleto. Leggere una copia?", teil: (j, m) => `Manca una parte (${j}${m ? " " + m : ""}). Leggere una copia?`, abgleich: (liste) => `Cambiato nell'unione: ${liste} – resta la tua versione, controlla`, zukunft: (n) => `${n} voci dalla copia non prese (data nel futuro)`, konflikt: (n) => `${n} voci dalla copia erano diverse – messe accanto` },
     journal: { schwund: "Rifiuti", tagesnotizen: "Incasso", messungen: "Refrigerazione", lieferungen: "Consegne", abschluesse: "Chiusure del giorno", kostenbelege: "Ricevute di costo", putzlog: "Piano pulizie", belehrungen: "Formazioni igiene", rundgaenge: "Giri di refrigerazione", inventuren: "Inventari", uploads: "Foto", artikel: "Merci", gerichte: "Piatti", anderes: "Dati" },
-    bereich: { kosten: "Costi", gerichte: "Piatti e ricette", artikel: "Merci e prezzi", betrieb: "Locale", kuehl: "Punti di refrigerazione", putzplan: "Piano pulizie", personen: "Persone", lager: "Magazzino" },
+    bereich: { kombis: "Menù combo", kosten: "Costi", gerichte: "Piatti e ricette", artikel: "Merci e prezzi", betrieb: "Locale", kuehl: "Punti di refrigerazione", putzplan: "Piano pulizie", personen: "Persone", lager: "Magazzino" },
   },
   einstellungen: { kleinunternehmer: "Piccola impresa (senza IVA detraibile)", kleinunternehmerHinweis: "Attivo: gli importi lordi contano per intero, nessuna IVA viene detratta.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Le foto di fatture, rifiuti e piatti sono nel file di backup. Per questo il file è più grande.",
@@ -1144,6 +1145,8 @@ export default {
   beispiel: { anlegen: "Crea locale di esempio", satz: "Un locale kebab completamente compilato da provare. Tutti i numeri sono esempi. Il tuo locale resta invariato.", name: "Kebab di esempio", loeschen: "Elimina locale di esempio", chip: "Esempio – tutti i numeri inventati", export: "ESEMPIO – nessun dato reale" }, // Beispiel-Laden (17.10.2026)
   // E7 (17.10.2026): Verkauf je Gericht (Büro, nur mit Schalter sichtbar)
   verkaeufe: {
+    kombi: { knopf: "Menù di più piatti", titel: "Componi il menù", text: "Inserisci quanto di ogni piatto c’è in un menù. L’app lo ricorda per questo testo di cassa.", menge: (n) => `${n}: quantità per menù`, speichern: "Salva menù", leer: "Inserisci una quantità per almeno un piatto.", gelernt: (n) => `Salvato: menù con ${n} piatti.`, marke: "Menù" }, // Schwadron 18.10.2026, M1
+    fehlenVerkaeufe: (n, d) => `${n} articoli non tornano, ma mancano ancora le vendite di ${d} giorni. Sospetto di ammanco solo quando ci sono tutte le vendite.`, // Schwadron 18.10.2026, N4
     titel: "Vendite per piatto", unter: "Cosa hai venduto – dalla cassa o inserito a mano.", entwurf: "Bozza: non ancora approvata, solo da guardare.", einstieg: "Vendite per piatto",
     einstiegUnter: "Leggi la cassa, piatti fermi, ammanchi", zeitraumInventur: "tra gli ultimi due inventari", keine: "Ancora nessuna vendita in questo periodo.", ohneGericht: "Senza piatto",
     rangTitel: "I più venduti", ohneInventur: "Per il confronto con il magazzino servono due inventari.", inventurKnopf: "All'inventario", abgleichTitel: "Merce: prevista e consumata",
@@ -1173,6 +1176,7 @@ export default {
   },
   // Bestand (17.10.2026): Büro „Lager & Bestellen“
   bestand: {
+    nichtsDringend: (d) => d ? `Oggi niente di urgente. Prossimo ordine entro ${d}` : "Oggi niente di urgente.", // Schwadron 18.10.2026, N1
     einstieg: "Magazzino e ordini",
     einstiegUnter: "Cosa hai e cosa ordinare",
     titel: "Magazzino e ordini",

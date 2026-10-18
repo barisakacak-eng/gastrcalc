@@ -5,7 +5,7 @@
 import { t, einheitLabel } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { tagPlus } from "../engine.js";
-import { exportEinlesen, importVorschau, importUebernehmen, importZuruecknehmen, importe, zuordnungLernen, handVerkaufSetzen, handTag, verkaufAuswertung } from "../verkauf.js";
+import { exportEinlesen, importVorschau, importUebernehmen, importZuruecknehmen, importe, zuordnungLernen, handVerkaufSetzen, handTag, verkaufAuswertung, kombiLernen, kombiTeileVorschlag, kombisVon } from "../verkauf.js";
 import { datumLesbar } from "./tag.js";
 import { gebindeAnzahl, mengeBasisText } from "./bausteine.js"; // Prüfgremium 17.10.2026 (8); Trennung (17.10.2026): aus ./bausteine.js
 import { nav } from "./nav.js";
@@ -17,6 +17,8 @@ let ergebnis = null;       // gelesener Export (dsfinvkLesen)
 let alleFuer = null;       // Kassentext, bei dem alle Gerichte als Chips stehen
 let handDatum = null;      // gewählter Tag der Handeingabe
 let entwurf = {};          // Handeingabe: gerichtId → getippter Text
+let kombiFuer = null;      // Schwadron 18.10.2026, M1: Kassentext (plu|text), für den gerade ein Menü aus mehreren Gerichten angelegt wird
+let kombiEntwurf = {};     // gerichtId → getippte Menge je Menü
 // Z-Bon per Foto (18.10.2026): flüchtiger Zustand bis „Übernehmen“ – die Lesung ist ein Entwurf, nichts davon steht im Laden
 let zbStatus = null;       // "lesen" | "pruefen" | "fehler"
 let zbLesung = null;       // Ergebnis von zbonLesen, bearbeitet mit zbonAendern
@@ -26,7 +28,7 @@ let zbLauf = 0;            // jede neue Aufnahme macht ältere Ergebnisse ungül
 
 export const verkaufKennung = () => `${modus}:${modus === "hand" ? handDatum : modus === "zbon" ? zbStatus : ""}`;
 function zbLeeren() { zbStatus = null; zbLesung = null; zbUpload = null; zbFehler = null; zbLauf += 1; }
-export function verkaufZuruecksetzen() { modus = "start"; ergebnis = null; alleFuer = null; handDatum = null; entwurf = {}; zbLeeren(); }
+export function verkaufZuruecksetzen() { modus = "start"; ergebnis = null; alleFuer = null; handDatum = null; entwurf = {}; kombiFuer = null; kombiEntwurf = {}; zbLeeren(); }
 // Zurück-Geste: aus Vorschau, Handeingabe oder Z-Bon zur Übersicht; false = den Bereich verlassen
 export function verkaufZurueck() { if (modus === "start") return false; modus = "start"; ergebnis = null; entwurf = {}; zbLeeren(); return true; }
 
@@ -73,6 +75,7 @@ function abgleichView(a) {
     ${gruppe("schwund", "hinweisrot", t("verkaeufe.schwundTitel"), t("verkaeufe.schwundText"))}
     ${gruppe("einkaufFehlt", "hinweisgelb", t("verkaeufe.einkaufFehltTitel"), t("verkaeufe.einkaufFehltText"))}
     ${gruppe("weniger", "hinweisgelb", t("verkaeufe.wenigerTitel"), t("verkaeufe.wenigerText"))}
+    ${g.zaehl.verkaufFehlt ? `<div class="karte hinweisgelb"><p>${esc(t("verkaeufe.fehlenVerkaeufe", g.zaehl.verkaufFehlt, g.tageOhneVerkauf.length))}</p></div>` : ""}
     ${g.zaehl.unklar ? `<p class="hinweis">${esc(t("verkaeufe.unklar", g.zaehl.unklar))}</p>` : ""}
     ${g.zaehl.nichtGezaehlt ? `<p class="hinweis">${esc(t("verkaeufe.nichtGezaehlt", g.zaehl.nichtGezaehlt))}</p>` : ""}
     ${g.eimerKg > 0 ? `<p class="hinweis">${esc(t("verkaeufe.eimer", fmtZahl(g.eimerKg, 1)))}</p>` : ""}
@@ -142,7 +145,16 @@ function vorschauView(stand) {
 function chipsZuordnen(stand, o) {
   const gerichte = stand.gerichte || []; const key = (o.plu || "") + "|" + o.text; const ids = alleFuer === key ? gerichte.map((g) => g.id) : o.vorschlaege;
   return `<div class="chips">${ids.map((id) => { const g = gerichte.find((x) => x.id === id); return g ? `<button type="button" class="chip klein" data-a="vk-zuordnen" data-text="${esc(o.text)}" data-plu="${esc(o.plu || "")}" data-id="${esc(id)}">${esc(g.name)}</button>` : ""; }).join("")}
-      ${alleFuer === key ? "" : `<button type="button" class="chip klein leise" data-a="vk-alle" data-text="${esc(o.text)}" data-plu="${esc(o.plu || "")}">${esc(t("verkaeufe.vorschau.alle"))}</button>`}</div>`;
+      ${alleFuer === key ? "" : `<button type="button" class="chip klein leise" data-a="vk-alle" data-text="${esc(o.text)}" data-plu="${esc(o.plu || "")}">${esc(t("verkaeufe.vorschau.alle"))}</button>`}
+      ${kombiFuer === key || gerichte.length < 2 ? "" : `<button type="button" class="chip klein leise" data-a="vk-kombi" data-text="${esc(o.text)}" data-plu="${esc(o.plu || "")}">${esc(t("verkaeufe.kombi.knopf"))}</button>`}</div>
+    ${kombiFuer === key ? kombiFormView(stand, o) : ""}`;
+}
+// Schwadron 18.10.2026, M1: ein Kassenartikel = Menü aus mehreren Gerichten (Menge je Bestandteil). Gelernt wie eine Zuordnung.
+function kombiFormView(stand, o) {
+  return `<div class="karte"><h2>${esc(t("verkaeufe.kombi.titel"))}</h2><p class="hinweis">${esc(t("verkaeufe.kombi.text"))}</p>
+      ${(stand.gerichte || []).map((g) => `<div class="zeile ${kombiEntwurf[g.id] ? "an" : ""}"><div class="oben"><div class="name">${esc(g.name)}</div><div class="betrag klein"><input inputmode="decimal" data-f="vk-kombi:${esc(g.id)}" value="${esc(kombiEntwurf[g.id] || "")}" placeholder="0" aria-label="${esc(t("verkaeufe.kombi.menge", g.name))}"></div></div></div>`).join("")}
+      <button type="button" class="knopf glut" data-a="vk-kombi-speichern" data-text="${esc(o.text)}" data-plu="${esc(o.plu || "")}">${esc(t("verkaeufe.kombi.speichern"))}</button>
+      <button type="button" class="leise" data-a="vk-kombi-zu">${esc(t("allgemein.abbrechen"))}</button></div>`;
 }
 
 // ---------- Z-Bon per Foto (18.10.2026) ----------
@@ -215,6 +227,8 @@ function handView(stand) {
       <div class="chips">${tage.map((x) => `<button type="button" class="chip klein ${x === d ? "an" : ""}" data-a="vk-hand-tag" data-wert="${esc(x)}" aria-pressed="${x === d}">${esc(datumLesbar(x))}</button>`).join("")}</div>
       ${(stand.gerichte || []).map((g) => { const wert = g.id in entwurf ? entwurf[g.id] : da[g.id] ? wertAnzeige(da[g.id]) : "";
         return `<div class="zeile ${da[g.id] ? "an" : ""}"><div class="oben"><div class="name">${esc(g.name)}</div><div class="betrag klein"><input inputmode="decimal" data-f="vk-hand:${esc(g.id)}" value="${esc(wert)}" placeholder="0" aria-label="${esc(t("verkaeufe.stueck", g.name))}"></div></div></div>`; }).join("")}
+      ${kombisVon(stand).filter((k) => k.teile.length).map((k) => { const wert = k.id in entwurf ? entwurf[k.id] : da[k.id] ? wertAnzeige(da[k.id]) : ""; // Schwadron 18.10.2026, M1: Menü als eigene Zeile
+        return `<div class="zeile ${da[k.id] ? "an" : ""}"><div class="oben"><div class="name">${esc(k.name)}<small>${esc(t("verkaeufe.kombi.marke"))}</small></div><div class="betrag klein"><input inputmode="decimal" data-f="vk-hand:${esc(k.id)}" value="${esc(wert)}" placeholder="0" aria-label="${esc(t("verkaeufe.stueck", k.name))}"></div></div></div>`; }).join("")}
       <button type="button" class="knopf glut" data-a="vk-hand-speichern">${esc(t("verkaeufe.hand.speichern"))}</button>
       <button type="button" class="leise" data-a="vk-abbrechen">${esc(t("verkaeufe.vorschau.abbrechen"))}</button>
     </div>`;
@@ -224,7 +238,7 @@ function handView(stand) {
 // Rückgabe: false (nicht meine) | true (neu zeichnen) | { speichern: true, meldung? }
 export function verkaufAktion(name, el, stand, wurzel, { frage = (x) => confirm(x) } = {}) {
   if (name === "vk-hand") { modus = "hand"; handDatum = tagPlus(heuteGeschaeft(), -1); entwurf = {}; return true; }
-  if (name === "vk-abbrechen") { modus = "start"; ergebnis = null; entwurf = {}; alleFuer = null; zbLeeren(); return true; }
+  if (name === "vk-abbrechen") { modus = "start"; ergebnis = null; entwurf = {}; alleFuer = null; kombiFuer = null; kombiEntwurf = {}; zbLeeren(); return true; }
   if (name === "vk-zb-weg") { zbLesung = zbonAendern(zbLesung, el.dataset.id, "weg"); return true; }
   if (name === "vk-zb-zweite") { zbLesung = zbonAendern(zbLesung, null, "zweite", el.dataset.wert === "1"); return true; }
   if (name === "vk-zb-neu") { zbLesung = zbonAendern(zbLesung, null, "neu"); return true; }
@@ -237,6 +251,14 @@ export function verkaufAktion(name, el, stand, wurzel, { frage = (x) => confirm(
   }
   if (name === "vk-hand-tag") { handDatum = el.dataset.wert; entwurf = {}; return true; }
   if (name === "vk-alle") { alleFuer = (el.dataset.plu || "") + "|" + el.dataset.text; return true; }
+  if (name === "vk-kombi") { kombiFuer = (el.dataset.plu || "") + "|" + el.dataset.text; kombiEntwurf = Object.fromEntries(kombiTeileVorschlag(stand, el.dataset.text).map((x) => [x.gericht, wertAnzeige(x.menge)])); return true; }
+  if (name === "vk-kombi-zu") { kombiFuer = null; kombiEntwurf = {}; return true; }
+  if (name === "vk-kombi-speichern") {
+    const teile = Object.entries(kombiEntwurf).map(([gericht, text]) => ({ gericht, menge: parseZahl(text) })).filter((x) => x.menge > 0);
+    const k = kombiLernen(stand, { text: el.dataset.text, plu: el.dataset.plu || null }, teile);
+    if (!k) return { speichern: false, meldung: t("verkaeufe.kombi.leer") };
+    kombiFuer = null; kombiEntwurf = {}; alleFuer = null; return { speichern: true, meldung: t("verkaeufe.kombi.gelernt", k.teile.length) };
+  }
   if (name === "vk-zuordnen") { zuordnungLernen(stand, { text: el.dataset.text, plu: el.dataset.plu || null }, el.dataset.id || null); alleFuer = null; return { speichern: true, meldung: t("verkaeufe.vorschau.gelernt") }; }
   if (name === "vk-uebernehmen") {
     if (!ergebnis) return false;
@@ -258,6 +280,7 @@ export function verkaufEingabe(feld, wert) {
   if (feld === "zb-bonsumme") { zbLesung = zbonAendern(zbLesung, null, "bonSumme", wert); return "entwurf"; }
   { const m = /^zb:([^:]+):(text|menge|betrag)$/.exec(String(feld)); if (m) { zbLesung = zbonAendern(zbLesung, m[1], m[2], wert); return "entwurf"; } }
   if (feld === "vk-hand-datum") { if (/^\d{4}-\d{2}-\d{2}$/.test(String(wert)) && String(wert) <= heuteGeschaeft()) { handDatum = String(wert); entwurf = {}; return "zeichnen"; } return false; }
+  if (String(feld).startsWith("vk-kombi:")) { kombiEntwurf = { ...kombiEntwurf, [String(feld).slice(9)]: String(wert || "").slice(0, 8) }; return "entwurf"; } // Schwadron 18.10.2026, M1
   if (String(feld).startsWith("vk-hand:")) { entwurf[String(feld).slice(8)] = String(wert || "").slice(0, 8); return "entwurf"; }
   return false;
 }

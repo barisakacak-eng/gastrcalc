@@ -326,3 +326,40 @@ test("Leerer oder sinnloser Text → leeres Ergebnis ohne Fehler", () => {
   assert.equal(f.zeilen.length, 0);
   assert.equal(f.lieferant, "Metro");
 });
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): H2, N3, U3 ----------
+import * as SF_L from "../js/lieferung.js";
+const SF_art = (name, einheit, menge) => ({ name, gruppe: "getraenk", einheit, packung: { menge, einheit }, gebinde: { art: "kiste", zwischen: null }, preis: 13.9, preisBasis: "netto", preisHistorie: [] });
+const SF_zeile = (z, bekannt) => belegZerlegen(`Großmarkt (Test)\nRechnung Nr. 1  Datum 14.10.2026\n${z}\nSumme Netto 1,00`, { bekannt }).zeilen[0];
+test("Schwadron H2: Füllmenge im Namen ist keine Inhaltsangabe, wenn „24 Stk“ dabeisteht – Einheit des Artikels hat Vorrang", () => {
+  for (const [zeile, name, n] of [["300020 Cola 0,33 l KI 24 Stk 2 13,90 27,80 B", "Cola 0,33 l", 24], ["300021 Mineralwasser 0,25 l KI 24 Stk 3 7,20 21,60 B", "Mineralwasser 0,25 l", 24], ["300022 Trinkbecher 0,3 l KT 1000 Stk 1 32,00 32,00 B", "Trinkbecher 0,3 l", 1000]]) {
+    const z = SF_zeile(zeile, [name]);
+    assert.deepEqual(z.inhalt, { anzahl: n, groesse: null, einheit: "stk" }, zeile); assert.equal(z.bekannt, name);
+    const s = { artikel: [SF_art(name, "stk", n)] };
+    const jz = SF_L.journalZeile(SF_L.belegZeilenVorbereiten(s, { zeilen: [z], basis: "netto" })[0], "netto");
+    assert.equal(jz.inhaltMenge, n); assert.equal(jz.inhaltEinheit, "stk");
+  }
+  // Wird die Ware in Litern geführt, gilt 24 × 0,33 l
+  const z = SF_zeile("300020 Cola 0,33 l KI 24 Stk 2 13,90 27,80 B", ["Cola 0,33 l"]);
+  const v = SF_L.belegZeilenVorbereiten({ artikel: [SF_art("Cola 0,33 l", "l", 7.92)] }, { zeilen: [z], basis: "netto" })[0];
+  assert.deepEqual(v.inhalt, { anzahl: 24, groesse: 0.33, einheit: "l" });
+  // „24x0,33l“ bei einer Stück-Ware: 24 Stück
+  const z2 = SF_zeile("300020 Cola 0,33 l KI 24x0,33l 2 13,90 27,80 B", ["Cola 0,33 l"]);
+  const v2 = SF_L.belegZeilenVorbereiten({ artikel: [SF_art("Cola 0,33 l", "stk", 24)] }, { zeilen: [z2], basis: "netto" })[0];
+  assert.deepEqual(v2.inhalt, { anzahl: 24, groesse: null, einheit: "stk" });
+  // Preissprung vergleicht nie € je Stück mit € je ml
+  assert.equal(SF_L.preisSprung({ artikel: [SF_art("Cola 0,33 l", "stk", 24)] }, { ...z, inhalt: { anzahl: 24, groesse: 0.33, einheit: "l" } }, "netto"), null);
+});
+test("Schwadron N3: „KT 1000 Stk“ ist ein Karton mit 1000 Stück, keine Packung", () => {
+  const z = SF_zeile("300006 Dönertüte KT 1000 Stk 1 29,00 29,00 B", ["Dönertüte"]);
+  assert.equal(z.gebinde, "karton"); assert.equal(SF_L.gebindeArtApp(z.gebinde), "karton"); assert.deepEqual(z.inhalt, { anzahl: 1000, groesse: null, einheit: "stk" });
+  assert.equal(SF_zeile("4711 Brötchen 2 Stk 0,50 1,00 A", []).gebinde, "stueck"); // ohne anderes Kürzel bleibt „Stk“ das Gebinde
+});
+test("Schwadron U3: Inhalt einer Belegzeile von Hand korrigieren (bleibt auch bei anderer Artikel-Einheit)", () => {
+  const z = SF_zeile("300020 Cola 0,33 l KI 24 Stk 2 13,90 27,80 B", ["Cola 0,33 l"]);
+  assert.deepEqual(SF_L.zeileInhaltWert(z), { menge: 24, einheit: "stk" });
+  const k = SF_L.zeileInhaltSetzen(z, 12, "stk"); assert.deepEqual(k.inhalt, { anzahl: 12, groesse: null, einheit: "stk" }); assert.equal(k.inhaltVonHand, true);
+  const l = SF_L.zeileInhaltSetzen(z, 7.92, "l"); assert.deepEqual(l.inhalt, { anzahl: 1, groesse: 7.92, einheit: "l" });
+  assert.equal(SF_L.inhaltFuerArtikel(l, SF_art("Cola 0,33 l", "stk", 24)), l, "von Hand eingetragen gewinnt");
+  assert.equal(SF_L.zeileInhaltSetzen(z, 0, "stk"), null); assert.equal(SF_L.zeileInhaltSetzen(z, 3, "kiste"), null);
+});

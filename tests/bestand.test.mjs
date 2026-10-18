@@ -275,3 +275,49 @@ test("Prüfgremium (7): unter Mindestbestand heißt es „unter Mindestbestand �
   const r = b.bestellVorschlag(h, { heuteTag: H }).zeilen.find((x) => x.name === "Testfleisch"); assert.equal(r.grund, "reichweite");
   i18n.setzeSprache("en"); try { assert.equal(b.bestandUhrzeit(s, { heuteTag: H }).text, "Box below minimum stock – reorder"); } finally { i18n.setzeSprache("de"); }
 });
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): M2, M3, N1 ----------
+function sfLaden() {
+  const s = st.leererBetrieb(); s.phase = "app"; s.kuehl.ruhetage = [0];
+  s.gerichte = [{ id: "g1", name: "Döner Kebab", preis: 7.5, klasse: "haupt", zutaten: [{ name: "Fleisch", menge: 180, einheit: "g" }] }];
+  s.artikel = [{ name: "Fleisch", gruppe: "fleisch", einheit: "kg", packung: { menge: 10, einheit: "kg" }, gebinde: { art: "karton", zwischen: null }, preis: 80, preisBasis: "netto" }];
+  return st.migrierenBetrieb(s);
+}
+const sfZaehlen = (s, datum, menge, lokal) => { const i = inv.inventurStarten(s, { datum, jetzt: lokal.toISOString() }); inv.mengeSetzen(i, "Fleisch", menge); inv.inventurAbschliessen(s, i, { datum, jetzt: lokal.toISOString() }); return i; };
+test("Schwadron M2: Inventur morgens vor dem Öffnen – Verkäufe des Zähltags werden abgezogen; nach Ladenschluss wie bisher", () => {
+  const s = sfLaden(); const i = sfZaehlen(s, "2026-10-14", 2, new Date(2026, 9, 14, 8, 0));
+  assert.equal(i.zeitpunkt, "vor"); assert.equal(inv.inventurAbTag(i), "2026-10-14");
+  vk.handVerkaufSetzen(s, "2026-10-14", "g1", 50); // 9 kg
+  nah(ware(b.bestandStand(s, { heuteTag: "2026-10-14" }), "Fleisch").bestand, 11000);
+  nah(ware(b.bestandStand(s, { heuteTag: "2026-10-15" }), "Fleisch").bestand, 11000);
+  // nach Ladenschluss (22:30) gezählt: die Verkäufe des Tags stecken schon in der Zählung
+  const t = sfLaden(); const j = sfZaehlen(t, "2026-10-14", 2, new Date(2026, 9, 14, 22, 30)); vk.handVerkaufSetzen(t, "2026-10-14", "g1", 50);
+  assert.equal(j.zeitpunkt, "nach"); nah(ware(b.bestandStand(t, { heuteTag: "2026-10-15" }), "Fleisch").bestand, 20000);
+  // nach Mitternacht (01:15) gehört die Zählung zum Vortag und gilt als „nach“
+  const u = sfLaden(); const k = sfZaehlen(u, "2026-10-14", 2, new Date(2026, 9, 15, 1, 15)); assert.equal(k.datum, "2026-10-14"); assert.equal(k.zeitpunkt, "nach");
+  // Abgleich zwischen zwei Inventuren nutzt dieselbe Regel: morgens gezählt → der Zähltag gehört zum nächsten Zeitraum
+  const v = sfLaden(); sfZaehlen(v, "2026-10-12", 2, new Date(2026, 9, 12, 22, 0)); vk.handVerkaufSetzen(v, "2026-10-13", "g1", 10); vk.handVerkaufSetzen(v, "2026-10-14", "g1", 50);
+  const i2 = sfZaehlen(v, "2026-10-14", 1.8, new Date(2026, 9, 14, 8, 0)); assert.equal(inv.inventurBisTag(i2), "2026-10-13");
+  const a = vk.abgleichInventur(v); assert.equal(a.bis, "2026-10-13"); assert.equal(a.zeilen.find((x) => x.name === "Fleisch").status, "ok");
+});
+test("Schwadron M3: Bestellvorschlag zieht Ware mit vorbeigegangenem Verbrauchsdatum vom Bestand ab", () => {
+  const s = sfLaden(); sfZaehlen(s, "2026-10-05", 0.25, new Date(2026, 9, 5, 23, 0));
+  for (const d of ["2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09"]) vk.handVerkaufSetzen(s, d, "g1", 40);
+  s.lieferungen.push({ id: "l1", datum: "2026-10-06", erfasst: "2026-10-06T08:00:00Z", lieferant: "Test", zeilen: [{ artikel: "Fleisch", menge: 3, inhaltMenge: 10, inhaltEinheit: "kg", netto: 240, haltbar: { art: "verbrauch", datum: "2026-10-08" } }], storniert: false });
+  const bs = b.bestandStand(s, { heuteTag: "2026-10-10" }); nah(ware(bs, "Fleisch").bestand, 3700);
+  const z = b.bestellVorschlag(s, { heuteTag: "2026-10-10", bs }).zeilen.find((x) => x.name === "Fleisch");
+  nah(z.abgelaufen, 3700); nah(z.bestand, 0); assert.equal(z.dringend, "leer");
+  // MHD vorbei zählt weiter (nur das Verbrauchsdatum verbietet die Verwendung)
+  s.lieferungen[0].zeilen[0].haltbar = { art: "mhd", datum: "2026-10-08" };
+  assert.equal(b.bestellVorschlag(s, { heuteTag: "2026-10-10" }).zeilen.find((x) => x.name === "Fleisch").abgelaufen, 0);
+});
+test("Schwadron N1: Bestellliste ohne dringende Zeile meldet den nächsten Bestelltag statt „Alles reicht“", async () => {
+  const { heuteGeschaeft } = await import("../js/util.js"); const T = heuteGeschaeft(); const d = (n) => tagPlus(T, n);
+  const s = sfLaden(); const [j, mo, ta] = d(-8).split("-").map(Number); sfZaehlen(s, d(-8), 4, new Date(j, mo - 1, ta, 21, 0)); // abends gezählt
+  for (const n of [-6, -5, -4]) vk.handVerkaufSetzen(s, d(n), "g1", 20);
+  const v = b.bestellVorschlag(s); assert.equal(v.zeilen.length, 1); assert.equal(v.zeilen[0].dringend, "spaeter"); assert.equal(b.bestandUhrzeit(s), null);
+  assert.equal(v.naechste, v.zeilen[0].bestellenAm);
+  assert.equal(i18n.t("bestand.nichtsDringend", "23.10."), "Heute nichts dringend. Nächste Bestellung bis 23.10.");
+  const { bestandView } = await import("../js/screens/bestand.js"); const html = bestandView(s);
+  assert.ok(!html.includes(i18n.t("bestand.allesGut")), "kein „Alles reicht“ über einer Bestellliste"); assert.ok(html.includes("Heute nichts dringend. Nächste Bestellung bis"));
+});

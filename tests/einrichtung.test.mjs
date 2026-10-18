@@ -41,3 +41,13 @@ test("Teilerfüllung: halbe Rezepte", () => {
   const r = einrichtungStand(s, null, { jetzt: JETZT }).schritte.find((x) => x.id === "rezepte");
   assert.equal(r.rest, 1); assert.ok(r.anteil > 0.6 && r.anteil < 0.7);
 });
+
+// ---------- Schwadron 18.10.2026 (30-Tage-Lauf): M4 ----------
+test("Schwadron M4: Kühlung mit Standardgrenze gilt als eingerichtet (kein „als Nächstes: Kühlung“)", async () => {
+  const stamm = await import("../js/stamm.js"); const E = await import("../js/engine.js");
+  const s = leererBetrieb(); s.phase = "app";
+  stamm.kuehlstelleAnlegen(s, { name: "Kühlschrank", art: "kuehl" }); stamm.kuehlEingerichtetSetzen(s);
+  assert.equal(E.grenzenVon(s.kuehlstellen[0]).standard, true);
+  const k = einrichtungStand(s).schritte.find((x) => x.id === "kuehlung"); assert.equal(k.fertig, true);
+  assert.notEqual(einrichtungStand(s).naechster?.id, "kuehlung");
+});

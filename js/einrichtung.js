@@ -1,7 +1,7 @@
 // Einrichtung in Prozent (Etappe 6, Punkt 6 – Baris 14.10.2026, 16:32/16:35): statt „fehlt noch"-Kästen auf jeder Seite
 // zeigt das Cockpit einen Ring mit Prozent, den nächsten Schritt und die Checkliste. Rein rechnend, Texte über Schlüssel.
 // Sieben Schritte, je 1/7, Teilerfüllung anteilig. 100 % nur, wenn wirklich alles erfüllt ist. Keine erfundenen Zahlen.
-import { preisJeBasis, stelleBereit, istRichtpreis } from "./engine.js";
+import { preisJeBasis, stelleBereit, istRichtpreis, grenzenVon } from "./engine.js";
 
 const PFLICHT = ["miete", "personal", "eigenerLohn", "energie"];
 const SICHERUNG_TAGE = 7;
@@ -30,7 +30,9 @@ export function einrichtungStand(stand, wurzel = null, { jetzt = Date.now() } = 
   // bewusst anders: ein Startwert ist eine Menge, die meist passt; ein Richtpreis ist ein fremder Preis. Anteil für Richtpreise: 0.
   const mitEk = artikel.filter((a) => preisJeBasis(a) !== null && !istRichtpreis(a)).length;
   const k = kostenAnteil(stand);
-  const kuehlFertig = (stand.kuehlstellen || []).some((x) => !x.archiviert && stelleBereit(x) && (x.max !== null || x.min !== null)) || stand.kuehl?.keine === true;
+  // Schwadron 18.10.2026, M4: fertig, sobald eine Stelle eine Grenze hat – auch die Standardgrenze (Schnellstart legt Stellen damit an,
+  // die Kühlkontrolle läuft damit). Vorher zählte nur eine selbst eingetragene Grenze → „als Nächstes: Kühlung“ trotz laufender Kontrolle.
+  const kuehlFertig = (stand.kuehlstellen || []).some((x) => { if (x.archiviert || !stelleBereit(x)) return false; const g = grenzenVon(x); return g.min !== null || g.max !== null; }) || stand.kuehl?.keine === true;
   const gesichert = wurzel?.letzteSicherung ? (jetzt - Date.parse(wurzel.letzteSicherung)) / 86400e3 < SICHERUNG_TAGE : false;
   const anteil = (n, von) => (von ? n / von : 0);
   const schritte = [

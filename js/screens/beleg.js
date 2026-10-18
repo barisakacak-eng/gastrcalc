@@ -3,7 +3,7 @@ import { FOTOS } from "../data/fotos.js";
 import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Artikelnamen in der aktiven Sprache, Belegzeilen bleiben wie gedruckt
 import { esc, fmtEuro, fmtZahl, heute, uid } from "../util.js";
 import { belegZerlegen, zeileAnwenden, belegKandidaten, belegPruefStand, belegIstLieferschein, belegDatumVon } from "../beleg.js"; // Trennung 2 (17.10.2026)
-import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, lieferungStornieren, rechnungNrSetzen, belegUploadVerknuepfen, belegZeilenVorbereiten, neuArtikelAngaben, preisAnzeige } from "../lieferung.js"; // Trennung 2 (17.10.2026) // Trennung (17.10.2026): Storno, Rechnungsnummer, Foto-Verweis
+import { lieferungAnlegen, preiseUebernehmen, lieferungDoppelt, lieferungStornieren, rechnungNrSetzen, belegUploadVerknuepfen, belegZeilenVorbereiten, neuArtikelAngaben, preisAnzeige, zeileInhaltSetzen, zeileInhaltWert, INHALT_EINHEITEN } from "../lieferung.js"; // Trennung 2 (17.10.2026) // Trennung (17.10.2026): Storno, Rechnungsnummer, Foto-Verweis
 import { artikelAusBeleg } from "../karte_daten.js"; // Trennung (17.10.2026): neue Ware aus einer Belegzeile
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
@@ -27,11 +27,13 @@ let kostenFertig = null; // gespeicherter Kostenbeleg
 let zeigeText = false;
 let hbOffen = false;     // Stufe 1 (17.10.2026): Liste „Haltbarkeit eintragen“ offen
 let hbEntwurf = {};      // Zeile → { art, datum } bis „Speichern“
+let inhaltOffen = null;  // Schwadron 18.10.2026, U3: Zeile, deren Inhalt der Wirt gerade korrigiert
+let inhaltEntwurf = null; // { menge, einheit } bis „Übernehmen“
 const istLieferschein = () => belegIstLieferschein(beleg, zeilen); // Trennung 2 (17.10.2026): Regeln in js/beleg.js
 const belegDatum = () => belegDatumVon(beleg, datumWahl, heute());
 
 export const belegKennung = () => `${fertig ? "fertig" : kostenFertig ? "kfertig" : beleg ? "pruefen" : zuweisung ? "zuweisen" : "text"}:${fotoLauf()?.status || ""}`;
-export function belegZuruecksetzen() { rechnungsLaufZuruecksetzen(); text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; zuweisung = null; kostenFertig = null; zeigeText = false; hbOffen = false; hbEntwurf = {}; }
+export function belegZuruecksetzen() { rechnungsLaufZuruecksetzen(); text = ""; beleg = null; zeilen = []; zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; fertig = null; zuweisung = null; kostenFertig = null; zeigeText = false; hbOffen = false; hbEntwurf = {}; inhaltOffen = null; inhaltEntwurf = null; }
 export function belegZurueck() { if (fertig && hbOffen) { hbOffen = false; hbEntwurf = {}; return true; } if (fertig || kostenFertig) { belegZuruecksetzen(); return true; } if (beleg) { beleg = null; zeilen = []; return true; } if (zuweisung) { zuweisung = null; text = ""; return true; } return false; }
 
 // Nach dem Foto: Text übernehmen und fragen, wofür die Rechnung ist. Kostenstelle und Betrag sind vorbelegt, nie still gespeichert.
@@ -152,7 +154,16 @@ function pruefView(stand) {
 
 function zeileView(stand, z, i) {
   const zu = zuordnung[i] === "weg" ? t("beleg.nichtUebernehmen") : zuordnung[i] === "neu" ? t("beleg.neuAnlegen") : (zuordnung[i] || z.bekannt) ? artikelText(zuordnung[i] || z.bekannt) : t("beleg.unbekannt");
-  return `<div class="zeile ${zuordnung[i] === "weg" ? "storno" : z.frage ? "offen" : "an"}"><div class="oben"><div class="name">${esc(z.name)}<small>${z.menge !== null ? `${fmtZahl(z.menge, 0)} × ` : ""}${z.inhalt?.groesse ? `${z.inhalt.anzahl && z.inhalt.anzahl > 1 ? z.inhalt.anzahl + " × " : ""}${fmtZahl(z.inhalt.groesse, 2)} ${esc(z.inhalt.einheit)}` : z.inhalt?.anzahl ? `${z.inhalt.anzahl} ${esc(t("allgemein.stueck"))}` : ""} → ${esc(zu)}</small></div><div style="text-align:right"><b>${z.gesamt !== null ? fmtEuro(z.gesamt, { dezimal: 2 }) : "–"}</b></div></div></div>`;
+  return `<div class="zeile ${zuordnung[i] === "weg" ? "storno" : z.frage ? "offen" : "an"}"><div class="oben"><div class="name">${esc(z.name)}<small>${z.menge !== null ? `${fmtZahl(z.menge, 0)} × ` : ""}${z.inhalt?.groesse ? `${z.inhalt.anzahl && z.inhalt.anzahl > 1 ? z.inhalt.anzahl + " × " : ""}${fmtZahl(z.inhalt.groesse, 2)} ${esc(z.inhalt.einheit)}` : z.inhalt?.anzahl ? `${z.inhalt.anzahl} ${esc(t("allgemein.stueck"))}` : ""} → ${esc(zu)}</small></div><div style="text-align:right"><b>${z.gesamt !== null ? fmtEuro(z.gesamt, { dezimal: 2 }) : "–"}</b></div></div>
+    ${zuordnung[i] === "weg" ? "" : inhaltOffen === i ? inhaltFormView(i) : `<button type="button" class="leise" data-a="beleg-inhalt" data-i="${i}">${esc(t("beleg.inhaltAendern"))}</button>`}</div>`;
+}
+// Schwadron 18.10.2026, U3: Inhalt je Gebinde korrigieren (z. B. „24 Stück“ statt „7,92 l“) – Rechnung in js/lieferung.js
+function inhaltFormView(i) {
+  const e = inhaltEntwurf || { menge: null, einheit: "stk" };
+  return `<div class="feldzeile"><label for="bi-${i}">${esc(t("beleg.inhaltJe"))}</label>
+      <input id="bi-${i}" class="textfeld" type="text" inputmode="decimal" data-f="beleg-inhalt-menge" value="${e.menge !== null ? esc(fmtZahl(e.menge, e.einheit === "stk" ? 0 : 3)) : ""}">
+      <div class="seg klein">${INHALT_EINHEITEN.map((x) => `<button type="button" class="${e.einheit === x ? "an" : ""}" aria-pressed="${e.einheit === x}" data-a="beleg-inhalt-einheit" data-wert="${x}">${esc(x === "stk" ? t("allgemein.stueck") : x)}</button>`).join("")}</div></div>
+    <button type="button" class="knopf zweit" data-a="beleg-inhalt-ok" data-i="${i}">${esc(t("allgemein.uebernehmen"))}</button>`;
 }
 
 function fertigView(stand) {
@@ -196,7 +207,7 @@ export function belegAktion(name, el, stand, wurzel) {
   if (name === "beleg-zerlegen") {
     if (!text.trim()) return false;
     beleg = belegZerlegen(text, { bekannt: (stand.artikel || []).map((a) => a.name) });
-    zeilen = belegZeilenVorbereiten(stand, beleg); zuordnung = {}; basisWahl = null; zeigeAlle = false; datumWahl = null; // Trennung 2 (17.10.2026): Doppel-Treffer und Preissprung in js/lieferung.js
+    zeilen = belegZeilenVorbereiten(stand, beleg); zuordnung = {}; inhaltOffen = null; inhaltEntwurf = null; basisWahl = null; zeigeAlle = false; datumWahl = null; // Trennung 2 (17.10.2026): Doppel-Treffer und Preissprung in js/lieferung.js
     if (!zeilen.length) { beleg = null; return { meldung: t("beleg.nichtsErkannt") }; }
     return true;
   }
@@ -232,6 +243,9 @@ export function belegAktion(name, el, stand, wurzel) {
     fertig = { ...fertig, lieferung: neu }; return { meldung: t("aktionen.beleg.gespeichert") };
   }
   if (name === "beleg-alle") { zeigeAlle = !zeigeAlle; return true; }
+  if (name === "beleg-inhalt") { const i = Number(el.dataset.i); if (!zeilen[i]) return false; inhaltOffen = inhaltOffen === i ? null : i; inhaltEntwurf = zeileInhaltWert(zeilen[i]); return true; }
+  if (name === "beleg-inhalt-einheit" && inhaltEntwurf) { if (!INHALT_EINHEITEN.includes(el.dataset.wert)) return false; inhaltEntwurf = { ...inhaltEntwurf, einheit: el.dataset.wert }; return true; }
+  if (name === "beleg-inhalt-ok" && inhaltEntwurf) { const i = Number(el.dataset.i); const neu = zeileInhaltSetzen(zeilen[i], inhaltEntwurf.menge, inhaltEntwurf.einheit); if (!neu) return { meldung: t("beleg.inhaltFehlt") }; zeilen[i] = neu; inhaltOffen = null; inhaltEntwurf = null; return true; }
   if (name === "beleg-basis") { basisWahl = el.dataset.wert; return true; }
   if (name === "beleg-datum") { datumWahl = el.dataset.wert; return true; }
   if (name === "beleg-antwort") { const i = Number(el.dataset.i); const z = zeilen[i]; const o = z?.frage?.optionen[Number(el.dataset.o)]; if (!z || !o) return false; zeilen[i] = zeileAnwenden(z, o.wert); return true; }
@@ -264,6 +278,7 @@ export function belegAktion(name, el, stand, wurzel) {
 }
 export function belegEingabe(feld, wert) {
   if (feld === "beleg-text") { text = wert; return "knopf"; }
+  if (feld === "beleg-inhalt-menge" && inhaltEntwurf) { inhaltEntwurf = { ...inhaltEntwurf, menge: parseZahl(wert) }; return false; } // Schwadron 18.10.2026, U3
   if (feld === "zw-betrag" && zuweisung) { zuweisung.betrag = parseZahl(wert); return "knopf-zw"; }
   if (String(feld).startsWith("hb-datum:") && fertig) { const i = Number(String(feld).slice(9)); const z = fertig.lieferung.zeilen[i]; if (z && hbEntwurf[i]) hbEntwurf[i] = { ...hbEntwurf[i], datum: /^\d{4}-\d{2}-\d{2}$/.test(wert) ? wert : "" }; return false; } // Stufe 1 (17.10.2026)
   if (feld === "zw-datum" && zuweisung) { if (/^\d{4}-\d{2}-\d{2}$/.test(wert)) zuweisung.datum = wert > heute() ? heute() : wert; return false; }
