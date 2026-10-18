@@ -14,6 +14,8 @@ const loc = () => LOCALE[sprache()] || sprache();
 const monatNamen = new Map(); // W2-D (Leistung): Monatsnamen je Sprache merken – das Formatieren kostet auf dem Handy spürbar
 export function monatName(iso) { const [j, m] = iso.split("-").map(Number); const k = loc() + "|" + j + "-" + m; let n = monatNamen.get(k); if (n === undefined) { n = new Date(j, m - 1, 1).toLocaleDateString(loc(), { month: "long" }); monatNamen.set(k, n); } return n; }
 export function tagLesbar(iso) { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).toLocaleDateString(loc(), { weekday: "long", day: "numeric", month: "long" }); }
+// Lieferanten (18.10.2026): Wochentag kurz und Datum ohne Jahr in der Sprache der App („Di 21.10.“) – für Liefer- und Bestelltage
+export function tagKurz(iso) { const [j, m, d] = iso.split("-").map(Number); return `${t("kuehl.tage." + new Date(j, m - 1, d).getDay())} ${String(d).padStart(2, "0")}.${String(m).padStart(2, "0")}.`; }
 export const zeitKurz = (iso) => { const d = new Date(iso); if (Number.isNaN(d.getTime())) return "–"; return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
 
 // Name des Eintrags: zuerst der gemerkte Name (überlebt das Löschen des Gerichts), sonst aus der Karte.

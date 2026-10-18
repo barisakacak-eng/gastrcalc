@@ -23,7 +23,7 @@ test("Amt-Dokument: Nachtrag, Maßnahme offen, verspätet, Rücknahmen, Müll, A
   const z = A.zeitraumFuer("monat", { datum: "2026-10-06" });
   const dok = amtDokument(s, A.ordnerAmt(s, z, { datum: "2026-10-06" }));
   const html = A.druckHtml(dok);
-  for (const text of ["Nachgetragen am", "04.10.2026 *", "05.10.2026 10:20", "Maßnahme offen", "Nachkontrolle verspätet (nach 24 Std.)", "Zurückgenommen / geändert", "Weggeworfene Ware", "MZ (ausgeschieden)",
+  for (const text of ["Nachgetragen am", "04.10.2026 *", "05.10.2026 10:20", "Maßnahme offen", "Nachkontrolle verspätet (nach 24 Std.)", "Zurückgenommen / geändert", "Weggeworfene Ware", "MZ (ausgeschieden am 03.10.2026)",
     "Geräte und Grenzen", "counter(pages)", "Diese Liste ersetzt kein HACCP-Konzept", 'class="nach"', 'class="spaet"'])
     assert.ok(html.includes(text), "fehlt: " + text);
   assert.ok(!html.includes("nie gelöscht"));

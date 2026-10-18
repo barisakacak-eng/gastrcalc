@@ -118,7 +118,8 @@ export const aktivePersonen = (stand) => (stand.personen || []).filter((p) => p 
 // W2-H (p03 H3): Ausgeschiedene bleiben im Ordner, wenn sie Belehrungen haben oder in Einträgen stehen – mit Status „ausgeschieden“,
 // ohne in die Zählung (vollständig, fällig) einzugehen.
 export function ausgeschiedenePersonen(stand) {
-  const benutzt = new Set([...(stand.messungen || []).map((m) => m.von), ...(stand.putzlog || []).map((e) => e.von)].filter(Boolean));
+  // Kürzel ausgeschiedener Mitarbeiter (18.10.2026): auch Rundgänge und Müll/Personalessen zählen als „steht in Einträgen“
+  const benutzt = new Set([...(stand.messungen || []).map((m) => m.von), ...(stand.putzlog || []).map((e) => e.von), ...(stand.rundgaenge || []).map((r) => r.von), ...(stand.schwund || []).map((e) => e.von)].filter(Boolean));
   return (stand.personen || []).filter((p) => p && istAus(p) && (benutzt.has(p.id) || belehrungenVon(stand, p).length));
 }
 export function belehrungen(stand, { datum = heute() } = {}) {
@@ -199,11 +200,12 @@ export function ordnerAmt(stand, z, { datum = heute() } = {}) {
 const stempel = (iso) => (iso ? `${datumDe(tagAus(iso))} ${zeitAus(iso)}` : "");
 export function amtCsv(o, teil, kopf, namen = {}) {
   const n = (f, k) => (namen[f] ? namen[f](k) : k);
-  const wer = (x) => (x.von && x.vonAus ? n("ausgeschieden", x.von) : x.von);
+  // Kürzel ausgeschiedener Mitarbeiter (18.10.2026): mit Datum, wenn bekannt („AB (ausgeschieden 12.10.2026)“)
+  const wer = (x) => (x.von && x.vonAus ? (x.vonAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.von, x.vonAusAm) : n("ausgeschieden", x.von)) : x.von);
   if (teil === "kuehl") return csvText(kopf, o.teile.kuehl.zeilen.map((x) => [datumDe(x.datum), x.zeit, x.stelle, x.wert ?? n("grund", x.grund), x.min, x.max, x.abweichung ? n("ja", "x") : "", x.massnahmen.map((m) => n("massnahme", m)).join(", "), x.nachkontrolle ? n("nachkontrolle", x) : "", wer(x), x.nacherfasst ? n("ja", "x") : "",
     x.nacherfasst ? stempel(x.erfasst) : "", x.lfd === null ? "" : String(x.lfd), x.status ? n("abwStatus", x.status) : ""]), { dezimal: [0, 0, 0, 1, 1, 1] });
   if (teil === "putz") return csvText(kopf, o.teile.putz.eintraege.map((x) => [datumDe(x.datum), x.zeit, n("aufgabe", x), wer(x)]));
-  if (teil === "belehrung") return csvText(kopf, [...o.teile.belehrung.zeilen, ...o.teile.belehrung.ausgeschieden].map((x) => [x.status === "ausgeschieden" ? n("ausgeschieden", x.name) : x.name, datumDe(x.erst), datumDe(x.letzte), datumDe(x.faellig), n("status", x.status)]));
+  if (teil === "belehrung") return csvText(kopf, [...o.teile.belehrung.zeilen, ...o.teile.belehrung.ausgeschieden].map((x) => [x.status === "ausgeschieden" ? (x.ausgeschieden && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.name, x.ausgeschieden) : n("ausgeschieden", x.name)) : x.name, datumDe(x.erst), datumDe(x.letzte), datumDe(x.faellig), n("status", x.status)]));
   if (teil === "konzept") return csvText(kopf, o.teile.konzept.kuehlstellen.map((k) => [k.name, n("kuehlart", k.art), k.min, k.max, k.standard ? n("ja", "x") : ""]), { dezimal: [0, 0, 1, 1] });
   if (teil === "muell") return csvText(kopf, o.teile.muell.zeilen.map((x) => [datumDe(x.datum), n("art", x.art), x.name, x.menge, x.einheit, x.grund]), { dezimal: [0, 0, 0, 2] });
   if (teil === "rueck") return csvText(kopf, o.teile.rueck.zeilen.map((x) => [x.wann ? stempel(x.wann) : datumDe(x.datum), n("bereich", x.bereich), n("rueckText", x), wer(x)]));

@@ -18,6 +18,7 @@ import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
 import { getraenkGerichtMigrieren, getraenkArtikelMigrieren } from "./getraenk_feld.js"; // Getränke (18.10.2026): Größe, Gebinde, Marke, Pfand, Lieferant
+import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, aus Beleg-Namen angelegt
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
@@ -66,6 +67,8 @@ export function leererBetrieb() {
                                 // Aktion planen (18.10.2026): dazu ende "datum"|"ware" (bis Ware weg: bis = längstens, darf leer sein), ware? (Abverkaufs-Ware), plan? (Vorschlag mit
                                 // Begründung, wie bestätigt), geaendertZeit? (Zeitraum vom Wirt geändert), bilanz? (nach dem Ende, js/aktion_plan.js)
     tafel: { sekunden: 12, gruppen: ["speisen", "beilagen", "getraenke"], aktionen: true, sprache: "de" }, // Menütafel (18.10.2026): Einstellungen der Tafel-Datei
+    lieferanten: [],            // Lieferanten (18.10.2026): Stammdaten {id, name, namen[], art, modus, tage[], schluss, lieferzeit, mindestwert, weg, kontakt, kundennummer, notiz, erfasst, geaendert, entfernt} (js/lieferant.js);
+                                // kontakt/kundennummer/notiz bleiben nur auf dem Gerät (und in der eigenen Sicherung), nie in Exporten. Artikel dürfen lieferantId/lieferant2Id tragen.
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
 }
@@ -264,11 +267,13 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
     preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
     preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
   for (const a of s.artikel) getraenkArtikelMigrieren(a); // Getränke (18.10.2026)
+  for (const a of s.artikel) artikelLieferantSauber(a); // Lieferanten (18.10.2026): Haupt-/Zweitlieferant nur als Kennung
   for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
   { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
     s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
   s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
   for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
+  s.lieferanten = lieferantenSauber(s.lieferanten); lieferantenAusBelegen(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich)
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
   s.kostenbelege = mitId(s.kostenbelege).filter((k) => typeof k.stelle === "string" && typeof k.betrag === "number" && typeof k.ab === "string").map((k) => ({ ...k, storniert: !!k.storniert }));
@@ -682,6 +687,7 @@ export const BEREICHE = {
   kombis: ["kassenKombis"], // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – eigener Bereich (wie lager), alte Stände bleiben unberührt
   aktionen: ["aktionen"], // Menütafel (18.10.2026): übernommene Aktionen – eigener Bereich, beim Zusammenführen vereinigt (verschmelzen)
   tafel: ["tafel"],       // Menütafel (18.10.2026): Einstellungen der Tafel
+  lieferanten: ["lieferanten"], // Lieferanten (18.10.2026): eigener Bereich, beim Zusammenführen vereinigt (entfernt gewinnt)
 };
 const BEREICH_NAMEN = Object.keys(BEREICHE);
 function bereichText(b, a) { const f = BEREICHE[a]; return f.length === 1 ? JSON.stringify(b[f[0]] ?? null) : JSON.stringify(f.map((k) => b[k] ?? null)); }
@@ -1194,12 +1200,15 @@ function bereichWahl(lokal, fremd, a, jetzt) {
   return { q: zeitKappen(fremd.geaendert, jetzt) >= zeitKappen(lokal.geaendert, jetzt) ? "fremd" : "lokal", hL, hF };
 }
 // Listen mit Kennung (Kühlstellen, Personen): Liste der gewählten Seite, dazu Einträge, die nur die andere Seite kennt; Kennzeichen gewinnen.
-function listeMitKennzeichen(sieger, verlierer, flag) {
+// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): das Datum „ausgeschieden“ geht beim Zusammenführen nicht verloren (das frühere gilt).
+// Lieferanten (18.10.2026): dieselbe Vereinigung für die Lieferanten – entfernt gewinnt, die Zeit der Entfernung bleibt (personen: false).
+function listeMitKennzeichen(sieger, verlierer, flag, { personen = flag === "entfernt" } = {}) {
   const m = new Map(); for (const x of sieger || []) if (x && typeof x.id === "string") m.set(x.id, { ...x });
   for (const x of verlierer || []) {
     if (!x || typeof x.id !== "string") continue; const s = m.get(x.id);
     if (!s) { m.set(x.id, { ...x }); continue; }
-    if (x[flag] && !s[flag]) { s[flag] = true; if (flag === "entfernt") { s.kuerzel = x.kuerzel; s.aktiv = false; } }
+    if (x[flag] && !s[flag]) { s[flag] = true; if (flag === "entfernt" && personen) { s.kuerzel = x.kuerzel; s.aktiv = false; } if (typeof x.entferntZeit === "string") s.entferntZeit = x.entferntZeit; }
+    if (personen && typeof x.ausgeschieden === "string" && (typeof s.ausgeschieden !== "string" || x.ausgeschieden < s.ausgeschieden)) s.ausgeschieden = x.ausgeschieden;
   }
   return [...m.values()];
 }
@@ -1222,6 +1231,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
     if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
     if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel (18.10.2026)
+    if (a === "lieferanten") basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten (18.10.2026)
     if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
     const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
     if (w.beide) bericht.beide.push(a);

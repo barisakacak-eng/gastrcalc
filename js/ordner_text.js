@@ -87,6 +87,7 @@ const NAMEN = () => ({
   massnahme: (m) => t("kuehl.massnahmen." + m),
   nachkontrolle: (x) => nkText(typeof x === "string" ? { nachkontrolle: x, nkStunden: null } : x),
   ausgeschieden: (k) => t("amtW2.ausgeschieden", k),
+  ausgeschiedenAm: (k, d) => t("amtW2.ausgeschiedenAm", k, datumDe(d)), // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
   abwStatus: (s) => t("amtW2.abw." + s),
   bereich: (b) => t("amtW2.bereich." + b),
   rueckText: (x) => rueckText(x),
@@ -130,7 +131,7 @@ const erstelltText = () => t("ordner.dok.erstellt", datumDe(heute()), new Date()
 export function amtDokument(stand, o) {
   const n = NAMEN(); const k = o.teile.kuehl, p = o.teile.putz, b = o.teile.belehrung, c = o.teile.konzept, mu = o.teile.muell, r = o.teile.rueck;
   const nr = (i) => String(i + 1); // W2-H: laufende Nummer je Eintrag im Druck
-  const wer = (x) => (x.von && x.vonAus ? n.ausgeschieden(x.von) : x.von);
+  const wer = (x) => (x.von && x.vonAus ? (x.vonAusAm ? n.ausgeschiedenAm(x.von, x.vonAusAm) : n.ausgeschieden(x.von)) : x.von); // Kürzel ausgeschiedener Mitarbeiter (18.10.2026): mit Datum
   const grenze = (x) => (typeof x.min === "number" && typeof x.max === "number" ? `${fmtZahl(x.min, 1)} … ${fmtZahl(x.max, 1)} °C` : typeof x.max === "number" ? `≤ ${grad(x.max)}` : typeof x.min === "number" ? `≥ ${grad(x.min)}` : "–");
   const massnahme = (x) => {
     if (!x.abweichung) return "";
@@ -174,7 +175,7 @@ export function paketDokument(stand, p) {
     zeilen: p.umsatz.zeilen.map((x) => [datumDe(x.datum) + (x.nacherfasst ? " *" : ""), euro(x.brutto), x.geaendert === null ? "" : euro(x.geaendert)]), summe: p.umsatz.tage ? [t("ordner.dok.summe"), euro(p.umsatz.summe.brutto), ""] : null, leer: t("ordner.zeile.umsatzKeine") });
   if (p.personal) { const je = Object.entries(p.personal.jePerson).map(([k, v]) => `${k || "–"}: ${fmtZahl(v.anzahl)} · ${euro(v.sachbezug)}`).join(" · ");
     a.push({ titel: t("ordner.teil.personal"), info: [t("ordner.dok.svev"), je, p.personal.ohnePerson ? t("ordnerT.personalOhne", p.personal.ohnePerson) : ""].filter(Boolean).join(" · "), warn: !!p.personal.ohnePerson, kopf: kopfVon("personal").slice(0, 7), rechts: [4, 5, 6],
-      zeilen: p.personal.zeilen.map((x) => ({ warn: !x.person, zellen: [datumDe(x.datum), x.person || "–", x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)] })), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") }); }
+      zeilen: p.personal.zeilen.map((x) => ({ warn: !x.person, zellen: [datumDe(x.datum), !x.person ? "–" : !x.personAus ? x.person : x.personAusAm ? n.ausgeschiedenAm(x.person, x.personAusAm) : n.ausgeschieden(x.person), x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)] })), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") }); }
   if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: [t("ordner.dok.netto"), p.schwund.eigen?.anzahl ? t("ordnerT.eigen", euro(p.schwund.eigen.waren)) : ""].filter(Boolean).join(" · "), warn: !!p.schwund.ohneWert, kopf: t("ordnerT.druck.schwund"), rechts: [3, 4],
     zeilen: p.schwund.zeilen.map((x) => [datumDe(x.datum), n.art(x.art), x.name || "–", `${fmtZahl(x.menge, x.einheit === "stk" || x.einheit === "portion" ? 0 : 2)} ${x.einheit === "portion" ? t("tag.portionen") : x.einheit === "stk" ? t("allgemein.stueck") : x.einheit}`, x.wert === null ? t("tag.keinPreis") : euro(x.wert)]),
     summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", p.schwund.ohneWert ? `${euro(p.schwund.muellwert)} (${t("ordnerT.schwundOffen", p.schwund.ohneWert)})` : euro(p.schwund.muellwert)] : null, leer: t("ordner.zeile.keine") });

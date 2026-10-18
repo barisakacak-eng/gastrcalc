@@ -14,7 +14,7 @@ import { sicherungStufe } from "./sicherung_stufe.js"; // Trennung (17.10.2026):
 import { imTakt } from "./takt.js";
 import { rettungFehlt } from "./rettung.js"; // Rettung (17.10.2026)
 import { haltbarUhrzeit } from "./haltbar.js"; // Stufe 1 (17.10.2026): Ablauf/Aktion als Büro-Hinweis (im Laden nichts)
-import { bestandUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
+import { bestandUhrzeit, lieferUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
 import { aktionUhrzeit } from "./aktion_plan.js"; // Aktion planen (18.10.2026)
 const JOURNAL_TEXT = { schwund: 1, tagesnotizen: 1, messungen: 1, lieferungen: 1, abschluesse: 1, kostenbelege: 1, putzlog: 1, belehrungen: 1, rundgaenge: 1, inventuren: 1, uploads: 1, artikel: 1, gerichte: 1 }; // W2-D
 // W2-D (Leistung Büro): Zähler und Einrichtungsstand je Bild nur einmal rechnen – Büro-Start und „Offen“ fragen beide
@@ -71,6 +71,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (ah?.zukunft) add("abgleichZukunft", t("w2d.offen.zukunft", ah.zukunft), { aktion: "abgleich-ok" });
   if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
   { const u = bestandUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "bestand", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Bestand (17.10.2026)
+  { const u = lieferUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), jetzt }); if (u) out.push({ id: "lieferant", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Lieferanten (18.10.2026): Bestellschluss, Mindestbestellwert, Liefertag – nur im Büro
   { const u = haltbarUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), kalenderTag: heute(jetzt) }); if (u) out.push({ id: "haltbar", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Stufe 1 (17.10.2026)
   // Aktion planen (18.10.2026): Satz zur laufenden Aktion – nur, wenn Haltbarkeit nichts sagt (ein Hinweis je Bereich „Aktionen & Haltbarkeit“)
   if (!out.some((x) => x.id === "haltbar")) { const u = aktionUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "aktion", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); }

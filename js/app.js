@@ -48,9 +48,10 @@ import { einrichtungFertigSetzen, kuehlKeineSetzen, branchenMeldungQuittieren, a
 import { gerichtFotoSetzen } from "./karte_daten.js";
 import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung, verkaufZbonFoto } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
 import { verkaufSichtbar } from "./verkauf.js"; // E7
-import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
+import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung, bestandLink } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
 import { aktionenView, aktionenAktion, aktionenZuruecksetzen, aktionenZurueck, aktionenKennung, aktionenEingabe } from "./screens/aktionen.js";
-import { getraenkeView, getraenkeAktion, getraenkeEingabe, getraenkeZuruecksetzen, getraenkeZurueck, getraenkeKennung } from "./screens/getraenke.js"; // Getränke (18.10.2026): Büro „Getränke“
+import { getraenkeView, getraenkeAktion, getraenkeEingabe, getraenkeZuruecksetzen, getraenkeZurueck, getraenkeKennung } from "./screens/getraenke.js";
+import { lieferantenView, lieferantenAktion, lieferantenEingabe, lieferantenZuruecksetzen, lieferantenZurueck, lieferantenKennung } from "./screens/lieferanten.js"; // Lieferanten (18.10.2026): Büro „Lieferanten“ // Getränke (18.10.2026): Büro „Getränke“
 import { aktionenAbschliessen } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Bilanz beendeter Aktionen beim Betreten speichern
 import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Menütafel (18.10.2026): Büro „Menütafel“
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
@@ -60,7 +61,7 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, kuehlWareZuruecksetzen]; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, kuehlWareZuruecksetzen]; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -96,7 +97,7 @@ function sofortSpeichern(w) { personNachtragen(); return sofortSpeichernStore(w)
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ansicht === "getraenke" ? getraenkeKennung() : ansicht === "kuehlware" ? kuehlWareKennung() : ""; // E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
+  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ansicht === "getraenke" ? getraenkeKennung() : ansicht === "kuehlware" ? kuehlWareKennung() : ansicht === "lieferanten" ? lieferantenKennung() : ""; // Lieferanten (18.10.2026); E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -143,6 +144,7 @@ function zeichne() {
         : ansicht === "aktionen" ? aktionenView(stand) // Stufe 1 (17.10.2026)
         : ansicht === "tafel" ? tafelView(stand) // Menütafel (18.10.2026)
         : ansicht === "getraenke" ? getraenkeView(stand) // Getränke (18.10.2026)
+        : ansicht === "lieferanten" ? lieferantenView(stand) // Lieferanten (18.10.2026)
         : ansicht === "kuehlware" ? kuehlWareView(stand) // Trennung (17.10.2026), Punkt 4
         : ansicht === "personal" ? personalView(stand) // D
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
@@ -544,6 +546,7 @@ async function aufKlick(ev) {
   if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
   if (!stand && !notfall) return; // Rettung (17.10.2026): auf der Fehlerseite gibt es evtl. keinen Laden – Sicherung einlesen und Löschen gehen trotzdem
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
+  if (name === "best-wa" && ansicht === "bestand") { const l = bestandLink(stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten (18.10.2026): WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
 
   // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
   if (await ebeneAktion(name, el)) return;
@@ -566,6 +569,7 @@ async function aufKlick(ev) {
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
     if (ziel === "getraenke") getraenkeZuruecksetzen(); // Getränke (18.10.2026)
+    if (ziel === "lieferanten") lieferantenZuruecksetzen(); // Lieferanten (18.10.2026)
     if ((ziel === "aktionen" || ziel === "tafel") && aktionenAbschliessen(stand)) speichern(wurzel); // Aktion planen (18.10.2026): Bilanz beendeter Aktionen festhalten
     if (ziel === "tafel") { const sp = tafelEinstellung(stand).sprache; if (!spracheGeladen(sp)) ladeSprache(sp).then(() => { if (ansicht === "tafel") zeichne(); }); } // Menütafel (18.10.2026)
     if (ziel === "kuehlware") kuehlWareZuruecksetzen(); // Trennung (17.10.2026), Punkt 4
@@ -669,6 +673,11 @@ async function aufKlick(ev) {
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
+  if (ansicht === "lieferanten") { // Lieferanten (18.10.2026): Liste, Bearbeiten, Waren zuordnen
+    const r = lieferantenAktion(name, el, stand);
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
   if (ansicht === "getraenke") { // Getränke (18.10.2026): Felder je Getränk, neues Getränk
     const r = getraenkeAktion(name, el, stand);
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
@@ -744,6 +753,8 @@ root.addEventListener("input", (ev) => {
     speichern(wurzel); ladeSprache(r.sprache).then(() => { if (ansicht === "tafel") zeichne(); }); return;
   } else if (ansicht === "aktionen") { // Aktion planen (18.10.2026): Datum im Plan ist ein Entwurf bis „Auf die Tafel“
     const r = aktionenEingabe(el.dataset.f, el.value); if (r === "zeichnen") { zeichne(); return; } if (r === "entwurf" || !r) return;
+  } else if (ansicht === "lieferanten") { // Lieferanten (18.10.2026): Formular = Entwurf; Zuordnung (Auswahl) schreibt gleich
+    const r = lieferantenEingabe(el.dataset.f, el.value, stand); if (r === "speichern") { speichern(wurzel); zeichne(); return; } if (r?.meldung) { meldung(r.meldung); zeichne(); } return;
   } else if (ansicht === "getraenke") { // Getränke (18.10.2026): Formular ist ein Entwurf bis „Speichern“
     const r = getraenkeEingabe(el.dataset.f, el.value); if (r === "zeichnen") { zeichne(); return; } return;
   } else if (ansicht === "bestand") { // Bestand (17.10.2026): Mindestbestand ist ein Entwurf bis „Speichern“
@@ -841,6 +852,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "bestand" && bestandZurueck()) { /* Bestand (17.10.2026): Mindestbestand-Liste zu */ }
     else if (ansicht === "aktionen" && aktionenZurueck()) { /* Stufe 1 (17.10.2026): Kombi-Auswahl leeren; Aktion planen: Plan schließen */ }
     else if (ansicht === "getraenke" && getraenkeZurueck()) { /* Getränke (18.10.2026): Formular schließen */ }
+    else if (ansicht === "lieferanten" && lieferantenZurueck()) { /* Lieferanten (18.10.2026): Formular bzw. Zuordnung schließen */ }
     else if (ansicht === "kuehlware" && kuehlWareZurueck()) { /* Trennung (17.10.2026): offene Entscheidung schließen */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }

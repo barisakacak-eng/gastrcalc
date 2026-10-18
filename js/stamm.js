@@ -135,6 +135,9 @@ export const kuehlTaktSetzen = (stand, takt) => { stand.kuehl.takt = Number(takt
 // ---------- Personen (Kürzel für Kühlung, Putzen, Belehrungen) ----------
 export function personAnlegen(stand, kuerzel) { stand.personen ??= []; const p = { id: uid(), kuerzel, aktiv: true, entfernt: false }; stand.personen.push(p); return p; }
 // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
+// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): wer ausgeschieden ist (für den Hinweis im Büro) – Kürzel und Datum, ältestes zuerst
+export const personenAusgeschieden = (stand) => (stand.personen || []).filter((p) => p && (p.entfernt || p.aktiv === false)).map((p) => ({ id: p.id, kuerzel: p.kuerzel || "?", ausgeschieden: p.ausgeschieden || null }))
+  .sort((a, b) => String(a.ausgeschieden || "").localeCompare(String(b.ausgeschieden || "")) || a.kuerzel.localeCompare(b.kuerzel, "de"));
 export function personEntfernen(stand, id, datum = heute()) { const p = stand.personen.find((x) => x.id === id); if (!p) return false; p.entfernt = true; p.aktiv = false; p.ausgeschieden = datum; return true; }
 
 // ---------- Personal-Modus: Person an neue Einträge (vorher screens/personal.js) ----------

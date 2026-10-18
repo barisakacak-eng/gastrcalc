@@ -46,7 +46,7 @@ function belehrungBlock(stand, o) {
   const H = heute();
   const statusText = (x) => x.status === "fehlt" ? t("ordner.belehrung.ohne") : `${t("ordner.belehrung.letzte", datum(x.letzte))} · ${t("ordner.belehrung.faellig", datum(x.faellig))}`;
   return `<div class="b-belehrung">
-    <p class="b-leise">${esc(t("ordner.belehrung.hinweis"))}</p>
+    <p class="b-leise">${esc(t("ordner.belehrung.hinweis"))}</p>${o.teile.belehrung.ausgeschieden.length ? `<p class="b-leise" data-ausgeschieden="${o.teile.belehrung.ausgeschieden.length}">${esc(t("amtW2.personAltHinweis"))}</p>` : ""}
     ${o.teile.belehrung.zeilen.map((x) => `<div class="b-person">
       <div class="b-person-kopf"><b>${esc(x.name)}</b><span class="b-pille ${x.status}">${esc(t("ordner.belehrung.status." + x.status))}</span></div>
       <small class="zahl">${esc(statusText(x))}</small>

@@ -48,7 +48,7 @@ const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffn
   "rettung-neu"]); // Rettung (17.10.2026): kein neuer Rettungscode; „Code vergessen?“ nur am Schloss (rettungErlaubt in rettung.js, app.js prüft)
 // heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.
 export function personalGesperrt(name, wert, heute) {
-  if (PERSONAL_GESPERRT.has(name) || /^stelle-|^kw-|^vk-|^tf-|^akt-|^gt-/.test(name)) return true; // Getränke (18.10.2026): gt- nur im Büro // Menütafel (18.10.2026): tf- (Menütafel) und akt- (Aktionen) nur im Büro // vk- (18.10.2026): Verkauf je Gericht und Z-Bon nur im Büro // Trennung (17.10.2026): kw- = Büro „Ware nach Kühl-Abweichung“
+  if (PERSONAL_GESPERRT.has(name) || /^stelle-|^kw-|^vk-|^tf-|^akt-|^gt-|^lf-/.test(name)) return true; // Lieferanten (18.10.2026): lf- nur im Büro // Getränke (18.10.2026): gt- nur im Büro // Menütafel (18.10.2026): tf- (Menütafel) und akt- (Aktionen) nur im Büro // vk- (18.10.2026): Verkauf je Gericht und Z-Bon nur im Büro // Trennung (17.10.2026): kw- = Büro „Ware nach Kühl-Abweichung“
   if (name === "pp-ansicht" && wert === "einrichten") return true;
   if (name === "tag-datum" && wert !== heute) return true;
   return false;

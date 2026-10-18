@@ -15,7 +15,7 @@ import { belehrungen } from "../export_amt.js";
 import { ordnerKachelStand } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
 import { monatName, datumLesbar } from "./tag.js";
 import { verkaufSichtbar } from "../verkauf.js"; // E7 (17.10.2026): Einstieg „Verkauf je Gericht“ nur mit Schalter oder im Beispiel-Laden
-import { bestandUhrzeit } from "../bestand.js"; // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit
+import { bestandUhrzeit, lieferUhrzeit } from "../bestand.js"; // Lieferanten (18.10.2026): lieferUhrzeit als Unterzeile „Lieferanten“ // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit
 import { haltbarUhrzeit } from "../haltbar.js"; // Stufe 1 (17.10.2026): Einstieg „Aktionen & Haltbarkeit“, Unterzeile = die Uhrzeit
 import { aktionUhrzeit } from "../aktion_plan.js"; // Aktion planen (18.10.2026): Satz zur laufenden Aktion
 
@@ -74,6 +74,7 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
         ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bestandUhrzeit(stand)?.text || t("bestand.einstiegUnter"))}
+        ${zeile({ aktion: "nav", wert: "lieferanten" }, "truck", t("lieferanten.einstieg"), lieferUhrzeit(stand)?.text || t("lieferanten.einstiegUnter"))}
         ${zeile({ aktion: "nav", wert: "aktionen" }, "target", t("aktionen.einstieg"), haltbarUhrzeit(stand)?.text || aktionUhrzeit(stand)?.text || t("aktionen.einstiegUnter"))}
       </div>
       <h2 class="b-abschnitt">${esc(t("buero.abschnitt.karte"))}</h2>

@@ -44,6 +44,9 @@ async def main():
             # ---- Beispiel-Laden anlegen → Büro: Offen-Hinweis und Einstieg mit der Uhrzeit
             await nav_hilfe.geh(pg, "laeden"); await tipp('#app [data-a="beispiel-anlegen"]'); await pg.wait_for_timeout(600)
             assert (await stand())["beispiel"] is True
+            # Lieferanten (18.10.2026): dieser Durchlauf prüft den Weg OHNE Liefertage („Tage + Puffer“ wie bisher) – die Beispiel-Lieferanten
+            # haben Liefertage, deshalb werden sie hier vorher geleert. Liefertage, Bestellschluss und Mindestbestellwert: durchlauf_lieferanten.py
+            await pg.evaluate("for (const l of window.__gastrocalc.stand.lieferanten) l.tage = []; window.__gastrocalc.zeichne()")
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
             chip = pg.locator('#app .b-chip[data-wert="bestand"]')
             assert await chip.count() == 1, "Offen-Hinweis „Lager“ fehlt im Büro"

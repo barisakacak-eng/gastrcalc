@@ -300,6 +300,17 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     const a0 = s.aktionen[0]; const vs = a0 ? aktionVorschlag(s, a0, { heuteTag: tagPlus(heute, -1) }) : null;
     if (vs?.moeglich) a0.plan = { von: vs.von, bis: vs.bis, ende: vs.ende, satz: vs.satz, erwartung: Math.round(vs.erwartung.mehrAnteil * 10000) / 10000, quelle: vs.erwartung.quelle, erstellt: a0.erfasst }; }
 
+  // Lieferanten (18.10.2026): zwei Beispiel-Lieferanten, keine echten Firmen, keine Nummern. Großhandel liefert Di und Fr, Bestellschluss am Vortag
+  // 18 Uhr (Bestellweg Webshop); Getränkehändler liefert Mi, Bestellschluss am Vortag 12 Uhr, Mindestbestellwert 150 € (Bestellweg Telefon).
+  // Die Getränke kommen vom Getränkehändler (Zweitlieferant: Großhandel) – so zeigt das Büro Bestellschluss, Liefertag und Mindestbestellwert.
+  s.lieferanten = [
+    { id: "bsp-lf-gross", name: "Großhandel (Beispiel)", namen: ["Großhandel (Beispiel)"], art: "grosshandel", modus: "lieferung", tage: [2, 5], schluss: { uhr: "18:00", tageVorher: 1 },
+      lieferzeit: null, mindestwert: null, weg: "webshop", kontakt: "", kundennummer: "BSP-1001", notiz: "", erfasst: zeit(start, 9), geaendert: null, entfernt: false },
+    { id: "bsp-lf-getraenke", name: "Getränkehändler (Beispiel)", namen: [], art: "getraenke", modus: "lieferung", tage: [3], schluss: { uhr: "12:00", tageVorher: 1 },
+      lieferzeit: null, mindestwert: 150, weg: "telefon", kontakt: "", kundennummer: "", notiz: "Leergut mitgeben", erfasst: zeit(start, 9), geaendert: null, entfernt: false },
+  ];
+  for (const a of s.artikel) if (a.herkunft !== "selbst" && a.gruppe === "getraenk") { a.lieferantId = "bsp-lf-getraenke"; a.lieferant2Id = "bsp-lf-gross"; }
+
   const fertig = migrierenBetrieb(s);
   // nur für den Bericht/Test, nicht gespeichert: welche Zutaten ohne Preis geblieben sind
   Object.defineProperty(fertig, "_ohnePreis", { value: s.artikel.filter((x) => x.benutzt !== false && preisJeBasis(x) === null).map((x) => x.name), enumerable: false });

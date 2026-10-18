@@ -47,6 +47,8 @@ const nachDatum = (a, b) => String(a.datum).localeCompare(String(b.datum)) || St
 const schwundWert = (e, stand) => ("wert" in e ? (typeof e.wert === "number" ? e.wert : null) : wertEintrag(e, stand));
 const rund2 = (n) => Math.round(n * 100) / 100;
 const personName = (stand, id) => (stand.personen || []).find((p) => p.id === id)?.kuerzel || null;
+// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): alte Personalessen zeigen das Kürzel weiter, gekennzeichnet mit dem Austrittsdatum
+const personAus = (stand, id) => { const p = (stand.personen || []).find((x) => x.id === id); return p && (p.entfernt || p.aktiv === false) ? { personAus: true, personAusAm: p.ausgeschieden || null } : { personAus: false, personAusAm: null }; };
 
 // ---------- Teile des Pakets ----------
 // Tagesumsätze (W2-T, Prüfung p04 Nr. 1–3): nur die getippte Brutto-Notiz je Tag, keine Umsatzsteuer aus einem geschätzten Mischsatz.
@@ -98,7 +100,7 @@ export function rechnungsNummerLesen(text) {
 export function personalessen(stand, z) {
   const zeilen = (stand.schwund || []).filter((e) => !e.storniert && e.art === "personal" && imZeitraum(e.datum, z)).sort(nachDatum).map((e) => {
     const je = SVEV_2026[e.mahlzeit] ?? SVEV_2026.mittag; const menge = Number(e.menge) || 0;
-    return { datum: e.datum, gericht: e.ref?.name || "", mahlzeit: e.mahlzeit || "mittag", menge, je, sachbezug: rund2(menge * je), waren: schwundWert(e, stand), person: personName(stand, e.von) };
+    return { datum: e.datum, gericht: e.ref?.name || "", mahlzeit: e.mahlzeit || "mittag", menge, je, sachbezug: rund2(menge * je), waren: schwundWert(e, stand), person: personName(stand, e.von), ...personAus(stand, e.von) };
   });
   const jePerson = {};
   for (const x of zeilen) { const k = x.person || ""; jePerson[k] ??= { anzahl: 0, sachbezug: 0 }; jePerson[k].anzahl += x.menge; jePerson[k].sachbezug += x.sachbezug; }
@@ -236,7 +238,8 @@ function teilStand(p, t) {
 export function teilCsv(p, teil, kopf, namen = {}) {
   const n = (f, k) => (namen[f] ? namen[f](k) : k);
   if (teil === "umsatz") return csvText(kopf, p.umsatz.zeilen.map((x) => [datumDe(x.datum), x.brutto, x.nacherfasst ? n("ja", "x") : "", x.geaendert, n("kennung", "notiz")]));
-  if (teil === "personal") return csvText(kopf, p.personal.zeilen.map((x) => [datumDe(x.datum), x.person || "", x.gericht, n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 0, 0, 2, 2, 2] });
+  const wer = (x) => (!x.person ? "" : !x.personAus ? x.person : x.personAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.person, x.personAusAm) : n("ausgeschieden", x.person)); // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
+  if (teil === "personal") return csvText(kopf, p.personal.zeilen.map((x) => [datumDe(x.datum), wer(x), x.gericht, n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 0, 0, 2, 2, 2] });
   if (teil === "schwund") return csvText(kopf, p.schwund.zeilen.map((x) => [datumDe(x.datum), n("art", x.art), x.name, x.menge, x.einheit, x.wert, x.grund]), { dezimal: [0, 0, 0, 2, 0, 2] });
   if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [datumDe(x.datum), x.rechnungNr || "", x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, x.hinweis ? n("hinweis", x.hinweis) : ""]));
   if (teil === "inventur") return csvText(kopf, p.inventur.zeilen.map((x) => [datumDe(x.datum), x.wert, x.gezaehlt, x.ohnePreis]), { dezimal: [0, 2, 0, 0] });

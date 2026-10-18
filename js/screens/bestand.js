@@ -4,7 +4,8 @@
 // Personal-Modus: der Bereich ist dort nicht erreichbar (modus.js lässt nur Personal, Müll, Kühlung, Putzen zu).
 import { t, einheitLabel, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
-import { bestandStand, bestellVorschlag, bestandUhrzeit, bestellText, lagerSetzen, mindestbestandSetzen } from "../bestand.js";
+import { bestandStand, bestellVorschlag, bestandUhrzeit, bestellNachricht, lagerSetzen, mindestbestandSetzen, lieferSaetze, mindestSatz, uhrText } from "../bestand.js"; // Lieferanten (18.10.2026): bestellNachricht, Sätze
+import { tagKurz } from "../anzeige_text.js";
 import { datumLesbar } from "./tag.js";
 import { nav } from "./nav.js";
 import { mengeBasisText, gebindeAnzahl, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
@@ -27,7 +28,14 @@ const kurz = (iso) => datumLesbar(iso).slice(0, 6);
 const mengeText = (menge, basis) => mengeBasisText(menge, basis);
 const gebindeText = (anzahl, art, menge, basis) => (anzahl !== null && art !== "lose" ? gebindeAnzahl(anzahl, art) : mengeText(menge, basis));
 const reichtText = (w) => (w.schnitt === null ? t("bestand.verbrauchUnbekannt") : !(w.schnitt > 0) ? t("bestand.keinVerbrauch") : w.lange ? t("bestand.reichtLange") : (w.reichweite ?? 0) < 1 ? t("bestand.reichtKurz") : t("bestand.reicht", Math.floor(w.reichweite)));
-const dringendText = (z) => (z.dringend === "spaeter" && z.bestellenAm ? t("bestand.dringend.spaeter", kurz(z.bestellenAm)) : t("bestand.dringend." + z.dringend));
+// Lieferanten (18.10.2026): reicht nicht bis zur nächsten Lieferung → das sagen (statt „heute bestellen“), dazu der Zweitlieferant, wenn er früher kommt
+const dringendText = (z) => {
+  if (z.grund === "vorLieferung" && z.lieferung && z.dringend !== "leer") return t("lieferanten.knappVor", tagKurz(z.lieferung)) + (z.ausweich ? " · " + (z.ausweich.tag ? t("lieferanten.ausweich", z.ausweich.name, tagKurz(z.ausweich.tag)) : t("lieferanten.ausweichOhne", z.ausweich.name)) : "");
+  return z.dringend === "spaeter" && z.bestellenAm ? t("bestand.dringend.spaeter", kurz(z.bestellenAm)) : t("bestand.dringend." + z.dringend);
+};
+// Liefertermin der Gruppe: „Lieferung Di 21.10. · bestellen bis Mo 20.10. 18 Uhr · reicht bis zur Lieferung danach (Fr 24.10.) plus Puffer“
+const terminText = (g) => (g.termin.abholung ? t("lieferanten.terminAbholung", tagKurz(g.termin.tag), tagKurz(g.termin.naechste))
+  : t("lieferanten.termin", tagKurz(g.termin.tag), tagKurz(g.termin.schlussTag) + (g.termin.uhr ? " " + uhrText(g.termin.uhr) : ""), tagKurz(g.termin.naechste)));
 function lueckeText(l) {
   if (l.art === "inventurAlt") return t("bestand.luecken.inventurAlt", l.tage);
   if (l.art === "verkaufFehlt") return t("bestand.luecken.verkaufFehlt", l.anzahl);
@@ -40,18 +48,26 @@ export function bestandView(stand) {
   if (bs.ohneInventur) return `${kopf}<div class="inhalt"><div class="karte hinweisgelb"><p>${esc(t("bestand.ohneInventur"))}</p>
       <button type="button" class="knopf zweit" data-a="nav" data-wert="inventur">${esc(t("bestand.inventurKnopf"))}</button></div>${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
   const v = bestellVorschlag(stand, { bs }); const uhr = bestandUhrzeit(stand);
-  const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2></div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2></div>`; // Schwadron 18.10.2026, N1
-  return `${kopf}<div class="inhalt">${oben}${bestellenView(stand, v)}${lagerView(bs)}${hinweiseView(bs)}${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
+  const lsatz = lieferSaetze(stand, { bs }).filter((x) => x.art === "schluss" || x.art === "schlussMorgen" || x.art === "kommtHeute" || x.art === "kommtMorgen").slice(0, 2); // Lieferanten (18.10.2026)
+  const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>`; // Schwadron 18.10.2026, N1
+  return `${kopf}<div class="inhalt">${oben}${bestellenView(stand, v)}<button type="button" class="knopf zweit" data-a="nav" data-wert="lieferanten">${esc(t("lieferanten.einstieg"))}</button>${lagerView(bs)}${hinweiseView(bs)}${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
 }
 
 // ---------- Bestellen je Lieferant ----------
 function bestellenView(stand, v) {
-  const ue = `<h2 class="inv-ue">${esc(t("bestand.bestellenTitel"))}</h2><p class="hinweis">${esc(t("bestand.bestellenFuer", v.tage, v.puffer))}</p>`;
+  const mitTermin = v.gruppen.filter((g) => g.termin).length; // Lieferanten (18.10.2026): mit Liefertagen gilt „bis zur Lieferung danach“ statt fester Tage
+  const fuer = [mitTermin < v.gruppen.length || !v.gruppen.length ? t("bestand.bestellenFuer", v.tage, v.puffer) : "", mitTermin ? t("lieferanten.bestellenZyklus", v.puffer) : ""].filter(Boolean);
+  const ue = `<h2 class="inv-ue">${esc(t("bestand.bestellenTitel"))}</h2>${fuer.map((x) => `<p class="hinweis">${esc(x)}</p>`).join("")}`;
   if (!v.gruppen.length) return `${ue}<div class="karte leer"><div>${esc(t("bestand.nichtsBestellen"))}</div></div>`;
-  const gruppe = (g, i) => `<div class="karte" data-lieferant="${i}"><h2>${esc(g.lieferant || t("bestand.ohneLieferant"))}</h2>
+  // Lieferanten (18.10.2026): Liefertermin je Gruppe, Mindestbestellwert-Vorschlag, WhatsApp nur mit gepflegter Nummer (sonst Teilen wie bisher)
+  const gruppe = (g, i) => { const nachricht = bestellNachricht(stand, g);
+    return `<div class="karte" data-lieferant="${i}"${g.lieferantId ? ` data-lieferant-id="${esc(g.lieferantId)}"` : ""}><h2>${esc(g.lieferant || t("bestand.ohneLieferant"))}</h2>
+      ${g.termin ? `<p class="hinweis" data-best-termin="${esc(g.termin.tag)}">${esc(terminText(g))}</p>` : ""}
       ${g.zeilen.map((z) => `<div class="summenzeile"><span><b>${esc(artikelText(z.name))}</b><br><small>${esc(dringendText(z))}${z.mindestGewinnt ? " · " + esc(t("bestand.mindestGewinnt")) : ""}</small></span><span class="wert">${esc(gebindeText(z.gebinde, z.gebindeArt, z.menge, z.basis))}</span></div>`).join("")}
       <div class="summenzeile gesamt"><span>${esc(t("bestand.summe"))}</span><span class="wert">${esc(g.ohneWert === g.zeilen.length ? t("inventur.preisFehlt") : euro(g.wert))}</span></div>
-      <button type="button" class="knopf glut" data-a="best-teilen" data-wert="${i}">${esc(t("bestand.teilen"))}</button></div>`;
+      ${g.mindest ? `<p class="hinweis" data-best-mindest="${Math.ceil(g.mindest.fehlt)}">${esc(mindestSatz(g.mindest))}${g.mindest.vorschlaege.length ? " " + esc(t("lieferanten.mindestMenge", g.mindest.vorschlaege.map((x) => gebindeText(x.gebinde, x.gebindeArt, x.menge, x.basis) + " " + artikelText(x.name)).join(", "))) : ""}</p>` : ""}
+      ${nachricht.link ? `<button type="button" class="knopf glut" data-a="best-wa" data-wert="${i}">${esc(t("lieferanten.perWhatsapp"))}</button><button type="button" class="leise" data-a="best-teilen" data-wert="${i}">${esc(t("bestand.teilen"))}</button>`
+        : `<button type="button" class="knopf glut" data-a="best-teilen" data-wert="${i}">${esc(t("bestand.teilen"))}</button>`}</div>`; };
   return `${ue}${v.gruppen.map(gruppe).join("")}${was(t("bestand.wasBestellen"))}`;
 }
 
@@ -96,9 +112,12 @@ function einstellungenView(stand, bs) {
 // Wie die App sonst teilt (Sicherung, Ordner): navigator.share, sonst Kopieren, sonst zum Abschreiben zeigen.
 export async function bestandTeilen(stand, i) {
   const g = bestellVorschlag(stand).gruppen[Number(i)]; if (!g) return null;
-  const text = bestellText(stand, g);
+  const text = bestellNachricht(stand, g).text; // Lieferanten (18.10.2026): mit Liefertag und Kundennummer
   return { text, weg: await textTeilen(text, t("bestand.teilen")) }; // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
 }
+
+// Lieferanten (18.10.2026): WhatsApp-Adresse der Gruppe i (nur mit Bestellweg WhatsApp und Nummer) – app.js öffnet sie gleich beim Tipp
+export function bestandLink(stand, i) { const g = bestellVorschlag(stand).gruppen[Number(i)]; return g ? bestellNachricht(stand, g).link : null; }
 
 // ---------- Aktionen ----------
 // Rückgabe: false (nicht meine) | true (neu zeichnen) | { speichern?: true, meldung? }

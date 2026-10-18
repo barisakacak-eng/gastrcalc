@@ -8,6 +8,7 @@ import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis } from "./engine.js";
 import { preisJeEinheit } from "./beleg.js";
 import { uploadAendern } from "./stamm.js"; // Trennung (17.10.2026)
+import { lieferantenAusBelegen } from "./lieferant.js"; // Lieferanten (18.10.2026): neuer Händlername → neuer Lieferant
 
 // Belegeinheit → App-Einheit für packung.einheit
 const EINHEIT_APP = { kg: "kg", g: "g", l: "l", ml: "ml", cl: "ml", stk: "stk" };
@@ -67,7 +68,7 @@ export function lieferungAnlegen(stand, beleg, { zeilen, datum = null, geraet = 
   const H = heute(); let d = datum || beleg.datum || H; if (d > H) d = H; // ein Zahlungsziel in der Zukunft ist kein Lieferdatum
   const l = { id: uid(), datum: d, erfasst: new Date().toISOString(), geraet, lieferant: (beleg.lieferant || "").slice(0, 40), typ: beleg.typ || "unklar", basis: b, quelle: "text",
     summeNetto: fuss !== null ? fuss : (zeilenNetto > 0 ? zeilenNetto : null), summeBrutto: typeof beleg.summeBrutto === "number" ? beleg.summeBrutto : null, pfand, zeilen: jz, storniert: false, abdruck: belegAbdruck(beleg) };
-  stand.lieferungen.push(l); return l;
+  stand.lieferungen.push(l); lieferantenAusBelegen(stand); return l;
 }
 // Gibt es diesen Beleg schon? Gleicher Händler, gleiches Datum, gleiche Summe (±0,05) – dann fragt die App nach (Nachtest Etappe 5, Punkt 2).
 // Fingerabdruck eines Belegs: Zeilen (Name und Betrag) – derselbe Beleg zweimal eingelesen ergibt denselben Abdruck (Prüfung 15.10.)

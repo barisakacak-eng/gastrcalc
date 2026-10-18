@@ -13,11 +13,12 @@ import { preisJeBasis, preisGeschaetzt, tagPlus, wochentag, ruhetageAm } from ".
 import { inventurenFertig, inventurVorher, mengeSauber, inventurAbTag, inventurBisTag, inventurVorVerkauf } from "./inventur.js";
 import { verkaeufeImZeitraum, teileVon, sollVerbrauch, schwundVerbrauch, einkaufMengen, bedarfGericht } from "./verkauf.js";
 import { tagGewicht } from "./zaehler.js";
-import { heuteGeschaeft } from "./util.js";
+import { heuteGeschaeft, heute } from "./util.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
 import { chargenStand } from "./haltbar.js";
-import { getraenkArtikelVon } from "./getraenk_feld.js"; // Getränke (18.10.2026): Lieferant am Getränke-Artikel, solange kein Beleg einen nennt // Schwadron 18.10.2026, M3: abgelaufene Ware (Verbrauchsdatum vorbei) zählt im Vorschlag nicht als Bestand
+import { hauptLieferant, zweitLieferant, liefertermine, liefertAm, lieferantMitId, lieferantenAktiv, whatsappNummer, whatsappLink } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, Liefertage, Bestellschluss; vorher nur Beleg-Name bzw. Getränke-Lieferant
+import { fmtEuro } from "./util.js";
 
 // Bestand (17.10.2026): Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
 export const LAGER_STANDARD = { tage: 7, puffer: 2 };
@@ -160,16 +161,8 @@ export function bedarfTage(stand, s, n, start) {
   return summe;
 }
 
-// Lieferant einer Ware: aus dem jüngsten Beleg mit dieser Ware (nicht storniert), sonst null
-export function lieferantVon(stand, name) {
-  let best = null;
-  for (const l of stand.lieferungen || []) {
-    if (l.storniert || typeof l.datum !== "string" || !(l.zeilen || []).some((z) => z.artikel === name)) continue;
-    if (!best || l.datum > best.datum || (l.datum === best.datum && String(l.erfasst || "") > String(best.erfasst || ""))) best = l;
-  }
-  const n = best && typeof best.lieferant === "string" ? best.lieferant.trim() : "";
-  return n || null;
-}
+// Lieferant einer Ware laut Beleg: wohnt seit Lieferanten (18.10.2026) in js/lieferant.js (dort auch Stammdaten und Liefertermine)
+export { lieferantVon } from "./lieferant.js";
 
 // ---------- 1. Laufender Bestand ----------
 // Rückgabe: { heute, inventur, ohneInventur, einstellungen, start, schnitt, waren: [ … je Ware … ], hinweise }
@@ -243,45 +236,106 @@ function bestandRechnen(stand, heuteTag) {
 }
 
 // ---------- 2. Bestellvorschlag ----------
-// Menge = Bedarf für (Tage + Puffer) Öffnungstage − Bestand, aufgerundet auf ganze Gebinde (ohne Gebinde: 100 g / 100 ml / 1 Stück).
-// Mindestbestand (Gebinde) gewinnt, wenn er mehr verlangt. Ohne Verbrauch kein Vorschlag (außer der Mindestbestand ist unterschritten).
-// bestellenAm: letzter Tag, an dem noch der Puffer übrig ist; liegt er heute oder davor → „jetzt“.
+// Ohne Liefertage (wie bis 17.10.2026): Menge = Bedarf für (Tage + Puffer) Öffnungstage − Bestand, aufgerundet auf ganze Gebinde
+// (ohne Gebinde: 100 g / 100 ml / 1 Stück). Mindestbestand (Gebinde) gewinnt, wenn er mehr verlangt. Ohne Verbrauch kein Vorschlag
+// (außer der Mindestbestand ist unterschritten). bestellenAm: letzter Tag, an dem noch der Puffer übrig ist (bei Lieferzeit am Lieferanten
+// so viele Tage früher); liegt er heute oder davor → „jetzt“.
+// Lieferanten (18.10.2026) – mit Liefertagen am Hauptlieferanten (js/lieferant.js) rechnet die Ware je Lieferant bis zur übernächsten Lieferung:
+//   L1 = nächster erreichbarer Liefer-/Abholtag (Bestellschluss noch nicht vorbei, Lieferung nicht am Ruhetag), L2 = der danach.
+//   Ziel = Bedarf von heute bis vor L2 (bis L1 aus dem Bestand, L1 bis L2 aus dieser Bestellung) + Bedarf für Puffer-Öffnungstage ab L2.
+//   Was bis L2 + Puffer reicht, kommt erst mit der nächsten Bestellung. bestellenAm = Tag des Bestellschlusses für L1.
+//   „jetzt“ auch, wenn die Ware nicht sicher bis L1 reicht (Reichweite < Öffnungstage bis L1 + Puffer, grund „vorLieferung“) –
+//   dann steht dabei, ob der Zweitlieferant früher käme (ausweich).
+//   Ruhetage: kein Bedarf am Ruhetag (bedarfAm), keine Lieferung am Ruhetag (liefertermine).
+// Mindestbestellwert: liegt die Summe darunter, schlägt die Gruppe Waren desselben Lieferanten vor, die bald knapp werden (nur Vorschlag).
+// jetzt: Zeitpunkt für den Bestellschluss. Ohne Angabe: jetzt, wenn heuteTag der heutige Geschäftstag ist, sonst heuteTag 12 Uhr.
 export const SCHRITT_OHNE_GEBINDE = { g: 100, ml: 100, stk: 1 };
-export function bestellVorschlag(stand, { heuteTag = heuteGeschaeft(), bs = bestandStand(stand, { heuteTag }) } = {}) {
-  const { tage, puffer } = bs.einstellungen; const morgen = tagPlus(heuteTag, 1);
+const jetztVon = (heuteTag, jetzt) => (jetzt ? new Date(jetzt) : heuteTag === heuteGeschaeft() ? new Date() : new Date(heuteTag + "T12:00:00"));
+// Bedarf in [von, bis) und Öffnungstage (Gewicht) in [von, bis)
+function bedarfZeitraum(stand, s, von, bis) {
+  let menge = 0, tage = 0; if (!s || !(s.schnitt > 0)) return { menge, tage };
+  for (let d = von, i = 0; d < bis && i < 400; d = tagPlus(d, 1), i++) { const x = bedarfAm(stand, s, d); menge += x.menge; tage += x.gewicht; }
+  return { menge, tage };
+}
+const aufrunden = (w, fehlt) => { if (w.inhalt) { const g = Math.ceil(fehlt / w.inhalt - 1e-9); return { gebinde: g, menge: g * w.inhalt }; } const sch = SCHRITT_OHNE_GEBINDE[w.basis] || 1; return { gebinde: null, menge: Math.ceil(fehlt / sch - 1e-9) * sch }; };
+export function bestellVorschlag(stand, { heuteTag = heuteGeschaeft(), bs = bestandStand(stand, { heuteTag }), jetzt = null } = {}) {
+  const { tage, puffer } = bs.einstellungen; const J = jetztVon(heuteTag, jetzt); const kal = heute(J); const morgen = tagPlus(heuteTag, 1), morgenKal = tagPlus(kal, 1);
   const zeilen = [];
   const weg = abgelaufenJeWare(stand, heuteTag, bs);
+  const termineVon = new Map(); // Lieferant-Kennung → Termine (einmal je Vorschlag)
+  const termine = (lf) => { if (!lf) return null; if (!termineVon.has(lf.id)) termineVon.set(lf.id, liefertermine(stand, lf, { jetzt: J, anzahl: 3 })); return termineVon.get(lf.id); };
+  const waren = [];
   for (const w0 of bs.waren) {
     if (w0.bestand === null) continue;
     // Schwadron 18.10.2026, M3: was nach FIFO in Lieferungen mit vorbeigegangenem Verbrauchsdatum steckt, darf nicht mehr verwendet werden
     const ab = Math.min(w0.bestand, weg.get(w0.name) || 0);
     const w = ab > 1e-9 ? { ...w0, bestand: w0.bestand - ab, ...(() => { const r = reichweite(stand, { schnitt: w0.schnitt, jeWochentag: w0.jeWochentag }, w0.bestand - ab, bs.start); return { reichweite: r.tage, leerAm: r.leerAm, lange: r.lange, offen: r.offen }; })() } : w0;
+    const lf = hauptLieferant(stand, w.name); waren.push({ w, lf, ab });
     const s = { schnitt: w.schnitt, jeWochentag: w.jeWochentag };
-    const bedarf = w.schnitt > 0 ? bedarfTage(stand, s, tage + puffer, bs.start) : 0;
+    const tm = termine(lf?.lf); const zyklus = tm && tm.length >= 2 ? { l1: tm[0], l2: tm[1], l3: tm[2] || null } : null;
     const mindest = w.mindestbestand && w.inhalt ? w.mindestbestand * w.inhalt : 0;
+    let bedarf, bisL1 = null;
+    if (zyklus) { bedarf = w.schnitt > 0 ? bedarfZeitraum(stand, s, bs.start, zyklus.l2.tag).menge + bedarfTage(stand, s, puffer, zyklus.l2.tag) : 0; bisL1 = bedarfZeitraum(stand, s, bs.start, zyklus.l1.tag).tage; }
+    else bedarf = w.schnitt > 0 ? bedarfTage(stand, s, tage + puffer, bs.start) : 0;
     const ziel = Math.max(bedarf, mindest);
     const fehlt = ziel - w.bestand;
     if (!(fehlt > 1e-6)) continue;
     if (!(w.schnitt > 0) && !(mindest > w.bestand)) continue;
-    let gebinde = null, menge;
-    if (w.inhalt) { gebinde = Math.ceil(fehlt / w.inhalt - 1e-9); menge = gebinde * w.inhalt; }
-    else { const sch = SCHRITT_OHNE_GEBINDE[w.basis] || 1; menge = Math.ceil(fehlt / sch - 1e-9) * sch; }
+    const { gebinde, menge } = aufrunden(w, fehlt);
     let bestellenAm = null, grund = null; // Prüfgremium 17.10.2026 (7): warum jetzt bestellen – „reichweite“ (Ware geht aus) oder „mindest“ (Mindestbestand unterschritten)
-    if (w.schnitt > 0 && w.reichweite !== null && !w.lange) { const k = Math.floor(w.reichweite - puffer + 1e-9); bestellenAm = k < 0 ? heuteTag : (w.offen[k] || heuteTag); if (bestellenAm < heuteTag) bestellenAm = heuteTag; grund = "reichweite"; }
-    else if (mindest > w.bestand) { bestellenAm = heuteTag; grund = "mindest"; }
-    const dringend = w.bestand <= 0 ? "leer" : bestellenAm && bestellenAm <= heuteTag ? "jetzt" : bestellenAm === morgen ? "morgen" : "spaeter";
+    let dringend, ausweich = null;
+    if (zyklus) {
+      bestellenAm = zyklus.l1.schlussTag; grund = mindest > bedarf && mindest > w.bestand ? "mindest" : "liefertag";
+      const vorLieferung = w.schnitt > 0 && w.reichweite !== null && !w.lange && w.reichweite < bisL1 + puffer - 1e-9;
+      if (vorLieferung) { grund = "vorLieferung"; const z2 = zweitLieferant(stand, w.name); const t2 = z2 ? termine(z2.lf) : null; const t2a = t2?.[0];
+        if (z2 && (z2.lf.tage.length ? t2a && t2a.tag < zyklus.l1.tag : true)) ausweich = { id: z2.id, name: z2.name, tag: t2a?.tag || null }; }
+      dringend = w.bestand <= 0 ? "leer" : bestellenAm <= kal || vorLieferung ? "jetzt" : bestellenAm === morgenKal ? "morgen" : "spaeter";
+    } else {
+      const vorlauf = lf?.lf?.lieferzeit || 0; // Lieferanten (18.10.2026): Lieferzeit ohne feste Liefertage = so viele Tage früher bestellen
+      if (w.schnitt > 0 && w.reichweite !== null && !w.lange) { const k = Math.floor(w.reichweite - puffer - vorlauf + 1e-9); bestellenAm = k < 0 ? heuteTag : (w.offen[k] || heuteTag); if (bestellenAm < heuteTag) bestellenAm = heuteTag; grund = "reichweite"; }
+      else if (mindest > w.bestand) { bestellenAm = heuteTag; grund = "mindest"; }
+      dringend = w.bestand <= 0 ? "leer" : bestellenAm && bestellenAm <= heuteTag ? "jetzt" : bestellenAm === morgen ? "morgen" : "spaeter";
+    }
     zeilen.push({ name: w.name, basis: w.basis, gebinde, gebindeArt: w.gebinde, inhalt: w.inhalt, menge, bestand: w.bestand, bedarf, mindestGewinnt: mindest > bedarf,
       reichweite: w.reichweite, leerAm: w.leerAm, bestellenAm, grund, dringend, wert: w.preisJeBasis !== null ? menge * w.preisJeBasis : null, geschaetzt: w.geschaetzt,
-      sicherheit: w.sicherheit, lieferant: lieferantVon(stand, w.name) || getraenkArtikelVon((stand.artikel || []).find((a) => a.name === w.name))?.lieferant || null, abgelaufen: ab > 1e-9 ? ab : 0 });
+      sicherheit: w.sicherheit, lieferant: lf?.name || null, lieferantId: lf?.id || null, lieferung: zyklus ? zyklus.l1.tag : null, ausweich, abgelaufen: ab > 1e-9 ? ab : 0 });
   }
   const ordnung = { leer: 0, jetzt: 1, morgen: 2, spaeter: 3 };
   zeilen.sort((a, b) => ordnung[a.dringend] - ordnung[b.dringend] || (a.reichweite ?? 1e9) - (b.reichweite ?? 1e9) || a.name.localeCompare(b.name, "de"));
   const gruppen = new Map();
-  for (const z of zeilen) { const k = z.lieferant || ""; const g = gruppen.get(k) || { lieferant: z.lieferant, zeilen: [], wert: 0, ohneWert: 0, geschaetzt: false }; g.zeilen.push(z); if (z.wert === null) g.ohneWert += 1; else g.wert += z.wert; if (z.geschaetzt) g.geschaetzt = true; gruppen.set(k, g); }
-  const liste = [...gruppen.values()].sort((a, b) => (a.lieferant === null) - (b.lieferant === null) || ordnung[a.zeilen[0].dringend] - ordnung[b.zeilen[0].dringend] || String(a.lieferant).localeCompare(String(b.lieferant), "de"));
+  for (const z of zeilen) { const k = z.lieferantId || (z.lieferant ? "n:" + z.lieferant : ""); const g = gruppen.get(k) || { lieferant: z.lieferant, lieferantId: z.lieferantId, zeilen: [], wert: 0, ohneWert: 0, geschaetzt: false }; g.zeilen.push(z); if (z.wert === null) g.ohneWert += 1; else g.wert += z.wert; if (z.geschaetzt) g.geschaetzt = true; gruppen.set(k, g); }
+  for (const g of gruppen.values()) {
+    const lf = lieferantMitId(stand, g.lieferantId); const tm = termine(lf);
+    g.termin = tm && tm.length >= 2 ? { tag: tm[0].tag, schlussTag: tm[0].schlussTag, uhr: tm[0].uhr, naechste: tm[1].tag, abholung: lf.modus === "abholung" } : null;
+    g.weg = lf?.weg || null; g.mindest = mindestHinweis(stand, g, lf, { waren, bs, tm, tage, puffer });
+  }
+  // Lieferanten (18.10.2026): bei gleicher Dringlichkeit zuerst die Gruppe, deren erste Ware am kürzesten reicht
+  const liste = [...gruppen.values()].sort((a, b) => (a.lieferant === null) - (b.lieferant === null) || ordnung[a.zeilen[0].dringend] - ordnung[b.zeilen[0].dringend]
+    || (a.zeilen[0].reichweite ?? 1e9) - (b.zeilen[0].reichweite ?? 1e9) || String(a.lieferant).localeCompare(String(b.lieferant), "de"));
   // Schwadron 18.10.2026, N1: frühester Bestelltag der Liste (für „Heute nichts dringend. Nächste Bestellung bis …“ statt „Alles reicht“)
   const naechste = zeilen.map((z) => z.bestellenAm).filter(Boolean).sort()[0] || null;
-  return { heute: heuteTag, tage, puffer, gruppen: liste, zeilen, naechste, zaehl: { leer: zeilen.filter((z) => z.dringend === "leer").length, jetzt: zeilen.filter((z) => z.dringend === "jetzt").length, morgen: zeilen.filter((z) => z.dringend === "morgen").length } };
+  return { heute: heuteTag, kalender: kal, tage, puffer, gruppen: liste, zeilen, naechste, zaehl: { leer: zeilen.filter((z) => z.dringend === "leer").length, jetzt: zeilen.filter((z) => z.dringend === "jetzt").length, morgen: zeilen.filter((z) => z.dringend === "morgen").length } };
+}
+
+// Mindestbestellwert (Lieferanten, 18.10.2026): Summe der Gruppe unter dem Mindestwert → { wert, summe, fehlt, vorschlaege: [Zeile wie im Vorschlag], unsicher }.
+// Vorschläge nur aus Waren desselben Hauptlieferanten, die noch nicht in der Liste stehen und bald knapp werden: mit Liefertagen reichen sie nicht
+// bis zur dritten Lieferung + Puffer, sonst nicht für doppelt so viele Tage wie eingestellt. Die kürzeste Reichweite zuerst, höchstens 3, bis der Mindestwert erreicht ist.
+// null, wenn kein Mindestwert gepflegt ist, die Summe reicht oder keine Ware der Gruppe einen Preis hat.
+function mindestHinweis(stand, g, lf, { waren, bs, tm, tage, puffer }) {
+  if (!lf?.mindestwert || g.ohneWert === g.zeilen.length || g.wert >= lf.mindestwert - 1e-9) return null;
+  const drin = new Set(g.zeilen.map((z) => z.name)); const kandidaten = [];
+  for (const { w, lf: h } of waren) {
+    if (h?.id !== lf.id || drin.has(w.name) || !(w.schnitt > 0) || w.preisJeBasis === null) continue;
+    const s = { schnitt: w.schnitt, jeWochentag: w.jeWochentag };
+    const bedarf = tm && tm.length >= 3 ? bedarfZeitraum(stand, s, bs.start, tm[2].tag).menge + bedarfTage(stand, s, puffer, tm[2].tag) : bedarfTage(stand, s, 2 * (tage + puffer), bs.start);
+    if (!(bedarf > w.bestand + 1e-6)) continue;
+    const { gebinde, menge } = aufrunden(w, bedarf - w.bestand);
+    kandidaten.push({ name: w.name, basis: w.basis, gebinde, gebindeArt: w.gebinde, inhalt: w.inhalt, menge, reichweite: w.reichweite, wert: menge * w.preisJeBasis, geschaetzt: w.geschaetzt });
+  }
+  kandidaten.sort((a, b) => (a.reichweite ?? 1e9) - (b.reichweite ?? 1e9) || a.name.localeCompare(b.name, "de"));
+  const fehlt = lf.mindestwert - g.wert; const vorschlaege = []; let summe = 0;
+  for (const k of kandidaten) { if (summe >= fehlt - 1e-9 || vorschlaege.length >= 3) break; vorschlaege.push(k); summe += k.wert; }
+  return { wert: lf.mindestwert, summe: g.wert, fehlt, vorschlaege, unsicher: g.ohneWert > 0 || g.geschaetzt };
 }
 
 // Menge je Ware (Grundeinheit), die heute in Lieferungen mit Verbrauchsdatum vor heute steckt (FIFO-Anteil am Bestand, js/haltbar.js)
@@ -307,9 +361,20 @@ export function mengeDeutsch(z) {
   return `${zahlDe(m)} Stück`;
 }
 export const datumKurzDe = (iso) => { const [, m, d] = iso.split("-"); return `${WT_DE[wochentag(iso)]} ${d}.${m}.`; };
-export function bestellText(stand, gruppe, { datum = heuteGeschaeft(), laden = stand?.betrieb?.name || "" } = {}) {
-  const posten = (gruppe?.zeilen || []).map((z) => `${mengeDeutsch(z)} ${z.name}`);
-  return `Bestellung${laden ? " " + laden : ""}, ${datumKurzDe(datum)}: ${posten.join(", ")}`;
+// Lieferanten (18.10.2026): mit Liefertagen steht am Ende „– Lieferung Di 21.10.“ (bzw. „Abholung …“), mit gepflegter Kundennummer „· Kundennr. …“.
+// mit: zusätzliche Zeilen (z. B. die Vorschläge zum Mindestbestellwert, wenn der Wirt sie übernimmt).
+export function bestellText(stand, gruppe, { datum = heuteGeschaeft(), laden = stand?.betrieb?.name || "", mit = [] } = {}) {
+  const posten = [...(gruppe?.zeilen || []), ...mit].map((z) => `${mengeDeutsch(z)} ${z.name}`);
+  const lf = lieferantMitId(stand, gruppe?.lieferantId);
+  const zusatz = [gruppe?.termin ? `${gruppe.termin.abholung ? "Abholung" : "Lieferung"} ${datumKurzDe(gruppe.termin.tag)}` : "", lf?.kundennummer ? `Kundennr. ${lf.kundennummer}` : ""].filter(Boolean);
+  return `Bestellung${laden ? " " + laden : ""}, ${datumKurzDe(datum)}: ${posten.join(", ")}${zusatz.length ? " – " + zusatz.join(" · ") : ""}`;
+}
+// Bestellung für den Bestellweg des Lieferanten: { text, weg, link }. link = WhatsApp-Adresse nur bei Bestellweg WhatsApp UND gültiger Nummer,
+// sonst null (dann Teilen/Kopieren wie bisher). Die Nummer steht nur im Link, nie im Text.
+export function bestellNachricht(stand, gruppe, opt = {}) {
+  const text = bestellText(stand, gruppe, opt); const lf = lieferantMitId(stand, gruppe?.lieferantId);
+  const nr = lf?.weg === "whatsapp" ? whatsappNummer(lf.kontakt) : null;
+  return { text, weg: lf?.weg || null, link: nr ? whatsappLink(nr, text) : null };
 }
 
 // ---------- 3. „Die Uhrzeit“ ----------
@@ -324,11 +389,47 @@ export function bestandUhrzeit(stand, { heuteTag = heuteGeschaeft() } = {}) {
     // Prüfgremium 17.10.2026 (7): „fast alle“ nur nach Reichweite; unter Mindestbestand ein eigener Satz
     const text = z.grund === "mindest" ? t("bestand.uhr.mindest", artikelText(z.name)) : z.dringend === "leer" || tg < 1 ? t("bestand.uhr.fastAlle", artikelText(z.name)) : t("bestand.uhr.reicht", artikelText(z.name), tg);
     return { id: "bestand", art: "jetzt", anzahl: 1, ton: "rot", text, knopf: t("bestand.uhr.knopf"), ziel }; }
-  if (jetzt.length > 1) return { id: "bestand", art: "jetzt", anzahl: jetzt.length, ton: "rot", text: t("bestand.uhr.heute", jetzt.length), knopf: t("bestand.uhr.knopf"), ziel };
+  // Lieferanten (18.10.2026): sind alle nur knapp bis zur nächsten Lieferung (Bestellschluss noch nicht heute), heißt der Satz nicht „Heute bestellen“
+  if (jetzt.length > 1) return { id: "bestand", art: "jetzt", anzahl: jetzt.length, ton: "rot", text: jetzt.every((z) => z.dringend === "jetzt" && z.grund === "vorLieferung" && z.bestellenAm > v.kalender) ? t("lieferanten.uhr.knapp", jetzt.length) : t("bestand.uhr.heute", jetzt.length), knopf: t("bestand.uhr.knopf"), ziel };
   const morgen = v.zeilen.filter((z) => z.dringend === "morgen");
   if (morgen.length) return { id: "bestand", art: "morgen", anzahl: morgen.length, ton: "gelb", text: t("bestand.uhr.morgen", morgen.length), knopf: t("bestand.uhr.knopf"), ziel };
   return null;
 }
+
+// ---------- Lieferanten (18.10.2026): Uhrzeit-Sätze für das Büro (NICHT im Laden) ----------
+// Je Lieferant mit Liefertagen höchstens ein Satz, wichtigster zuerst:
+//   „schluss“   Bestellschluss heute und es gibt etwas zu bestellen    → „Bestellschluss Großhandel heute 18 Uhr – 4 Waren“ (rot)
+//   „mindest“   Bestellschluss heute/morgen und Summe unter Mindestbestellwert → „Noch 38 € bis Mindestbestellwert – Cola mitbestellen?“ (gelb)
+//   „schlussMorgen“ Bestellschluss morgen mit Waren                     → „Bestellschluss Großhandel morgen 18 Uhr – 4 Waren“ (gelb)
+//   „kommtHeute“ / „kommtMorgen“ Liefertag heute / morgen (Abholung: „Morgen Abholung bei …“) (gelb, nur Info)
+// Rückgabe: [{ id, art, lieferantId, ton, text, ziel }]. Uhrzeit als „18 Uhr“ bzw. „18:30 Uhr“ (Text in der Sprache der App).
+export const uhrText = (uhr) => (uhr ? (uhr.endsWith(":00") ? t("lieferanten.uhr.voll", String(Number(uhr.slice(0, 2)))) : t("lieferanten.uhr.minute", uhr)) : "");
+export function lieferSaetze(stand, { heuteTag = heuteGeschaeft(), jetzt = null, bs = null } = {}) {
+  const J = jetztVon(heuteTag, jetzt); const kal = heute(J); const morgen = tagPlus(kal, 1);
+  const mitTagen = lieferantenAktiv(stand).filter((l) => l.tage.length); if (!mitTagen.length) return [];
+  const b = bs || bestandStand(stand, { heuteTag }); const v = b.ohneInventur ? { gruppen: [] } : bestellVorschlag(stand, { heuteTag, bs: b, jetzt: J });
+  const out = [];
+  for (const lf of mitTagen) {
+    const g = v.gruppen.find((x) => x.lieferantId === lf.id); const ziel = { aktion: "nav", wert: "bestand" };
+    const n = g ? g.zeilen.length : 0; const tm = g?.termin;
+    if (tm && n && tm.schlussTag === kal && !tm.abholung) { out.push({ id: "lf:" + lf.id, art: "schluss", lieferantId: lf.id, ton: "rot", text: t("lieferanten.satz.schluss", lf.name, uhrText(tm.uhr), n), ziel }); continue; }
+    if (tm && n && tm.abholung && tm.tag === kal) { out.push({ id: "lf:" + lf.id, art: "schluss", lieferantId: lf.id, ton: "rot", text: t("lieferanten.satz.abholenHeute", lf.name, n), ziel }); continue; }
+    if (g?.mindest && tm && (tm.schlussTag === kal || tm.schlussTag === morgen)) { out.push({ id: "lf:" + lf.id, art: "mindest", lieferantId: lf.id, ton: "gelb", text: mindestSatz(g.mindest), ziel }); continue; }
+    if (tm && n && tm.schlussTag === morgen) { out.push({ id: "lf:" + lf.id, art: "schlussMorgen", lieferantId: lf.id, ton: "gelb", text: tm.abholung ? t("lieferanten.satz.abholenMorgen", lf.name, n) : t("lieferanten.satz.schlussMorgen", lf.name, uhrText(tm.uhr), n), ziel }); continue; }
+    const zl = { aktion: "nav", wert: "lieferanten" };
+    if (liefertAm(stand, lf, kal) && J.getHours() < 14) { out.push({ id: "lf:" + lf.id, art: "kommtHeute", lieferantId: lf.id, ton: "gelb", text: t(lf.modus === "abholung" ? "lieferanten.satz.abholungHeute" : "lieferanten.satz.kommtHeute", lf.name), ziel: zl }); continue; }
+    if (liefertAm(stand, lf, morgen)) out.push({ id: "lf:" + lf.id, art: "kommtMorgen", lieferantId: lf.id, ton: "gelb", text: t(lf.modus === "abholung" ? "lieferanten.satz.abholungMorgen" : "lieferanten.satz.kommtMorgen", lf.name), ziel: zl });
+  }
+  const rang = { schluss: 0, mindest: 1, schlussMorgen: 2, kommtHeute: 3, kommtMorgen: 4 };
+  return out.sort((a, b2) => rang[a.art] - rang[b2.art]);
+}
+// Satz zum Mindestbestellwert: „Noch 38 € bis Mindestbestellwert – Cola mitbestellen?“ (höchstens zwei Namen)
+export function mindestSatz(m) {
+  const euro = fmtEuro(Math.ceil(m.fehlt), { dezimal: 0 }); const namen = m.vorschlaege.slice(0, 2).map((x) => artikelText(x.name));
+  return namen.length ? t("lieferanten.satz.mindest", euro, namen.join(namen.length > 1 ? t("lieferanten.und") : "")) : t("lieferanten.satz.mindestOhne", euro);
+}
+// Der wichtigste Satz (für Büro-Hinweis und Einstiegs-Unterzeile) oder null
+export function lieferUhrzeit(stand, opt = {}) { return lieferSaetze(stand, opt)[0] || null; }
 
 // ---------- Einstellungen ändern (Büro) ----------
 export function lagerSetzen(stand, feld, wert) {

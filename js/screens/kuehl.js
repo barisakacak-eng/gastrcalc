@@ -9,7 +9,7 @@ import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, st
   letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD,
   ruhetagUmschalten, rundgangVollstaendig, rundgangVerwerfen } from "../engine.js"; // W2-H
 // Trennung (17.10.2026): Einrichtung (Stellen, Grenzen, Takt, Personen) schreibt über js/stamm.js
-import { kuehlstelleAnlegen, kuehlstelleArtSetzen, kuehlstelleArchivieren, kuehlstelleVerschieben, kuehlstelleNameSetzen, kuehlstelleGrenzeSetzen, kuehlEingerichtetSetzen, kuehlTaktSetzen, personAnlegen, personEntfernen } from "../stamm.js";
+import { kuehlstelleAnlegen, kuehlstelleArtSetzen, kuehlstelleArchivieren, kuehlstelleVerschieben, kuehlstelleNameSetzen, kuehlstelleGrenzeSetzen, kuehlEingerichtetSetzen, kuehlTaktSetzen, personAnlegen, personEntfernen, personenAusgeschieden } from "../stamm.js";
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
@@ -94,6 +94,14 @@ export function kuehlView(stand) {
 }
 
 // ---------- Einrichtung ----------
+// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): wer ausgeschieden ist, steht in keiner Auswahl mehr (Schicht, Rundgang, Putzen) –
+// hier im Büro steht er mit Datum, dazu der Satz, dass alte Einträge und Nachweise erhalten bleiben. Löschen nach der Aufbewahrungsfrist kommt später.
+function ausgeschiedenView(stand) {
+  const aus = personenAusgeschieden(stand);
+  return `${aus.length ? `<p class="hinweis" data-ausgeschieden="${aus.length}">${esc(t("amtW2.ausgeschiedeneListe", aus.map((p) => (p.ausgeschieden ? t("amtW2.ausgeschiedenAm", p.kuerzel, datumLesbar(p.ausgeschieden)) : t("amtW2.ausgeschieden", p.kuerzel))).join(", ")))}</p>` : ""}
+        <p class="hinweis">${esc(t("amtW2.personAltHinweis"))}</p>`;
+}
+
 function einrichtungView(stand) {
   const stellen = aktiveStellen(stand);
   return `
@@ -130,6 +138,7 @@ function einrichtungView(stand) {
         <h2>${esc(t("kuehl.personen"))}</h2>
         <p class="hinweis">${esc(t("kuehl.personenHinweis"))}</p>
         <div class="chips">${stand.personen.filter((p) => !p.entfernt).map((p) => `<span class="chip klein an">${esc(p.kuerzel)} <button type="button" class="chipx" data-a="person-weg" data-id="${esc(p.id)}" aria-label="${esc(t("kuehl.personWeg"))}">×</button></span>`).join("")}</div>
+        ${ausgeschiedenView(stand)}
         <div class="neu"><input class="textfeld" data-f="person-neu" value="${esc(neuKuerzel)}" maxlength="12" placeholder="${esc(t("kuehl.kuerzelPlatzhalter"))}" autocomplete="off" enterkeyhint="done"><button type="button" class="knopf weich schmal" data-a="person-neu">${esc(t("allgemein.hinzufuegen"))}</button></div>
       </div>
       <button type="button" class="knopf ${kuehlBereit(stand) ? "" : "zweit"}" data-a="kuehl-einrichtung-fertig">${esc(t(kuehlBereit(stand) ? "allgemein.fertig" : "kuehl.spaeter"))}</button>
