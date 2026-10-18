@@ -163,8 +163,8 @@ test("Lücke negativ (weniger weg als gerechnet) und ohne Umsatz: keine Quote, n
 
 test("Zwei Inventuren am selben Tag: leerer Zeitraum, kein Einkauf, kein Umsatz", () => {
   const b = laden(); beleg(b, "2026-10-15", 500); umsatz(b, "2026-10-15", 1000);
-  const a = I.inventurStarten(b); I.mengeSetzen(a, "Tomaten", 1); I.inventurAbschliessen(b, a, { datum: "2026-10-15", jetzt: "2026-10-15T10:00:00Z" });
-  const c = I.inventurStarten(b); I.mengeSetzen(c, "Tomaten", 1); I.inventurAbschliessen(b, c, { datum: "2026-10-15", jetzt: "2026-10-15T11:00:00Z" });
+  const a = I.inventurStarten(b); I.mengeSetzen(a, "Tomaten", 1); I.inventurAbschliessen(b, a, { datum: "2026-10-15", jetzt: new Date(2026, 9, 15, 14).toISOString() /* nachmittags in Ortszeit – seit 18.10. zählt eine Inventur vor 11 Uhr als „vor dem Tag“ */ });
+  const c = I.inventurStarten(b); I.mengeSetzen(c, "Tomaten", 1); I.inventurAbschliessen(b, c, { datum: "2026-10-15", jetzt: new Date(2026, 9, 15, 15).toISOString() });
   const v = I.inventurVergleich(b, c); assert.equal(v.tage, 0); assert.equal(v.einkauf, 0); assert.equal(v.umsatzNetto, 0); assert.equal(v.vorherDatum, "2026-10-15");
   assert.equal(I.inventurVorher(b, a), null); assert.equal(I.inventurVorher(b, c), a);
 });
