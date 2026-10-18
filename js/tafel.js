@@ -78,7 +78,9 @@ export function aktionUebernehmen(stand, { art, gerichte, preis, statt = null, v
   if (!ids.length || !(preis > 0)) return null;
   const artSauber = art === "abverkauf" ? "abverkauf" : "kombi";
   const vs = aktionVorschlag(stand, { art: artSauber, gerichte: ids, preis, ware }, { heuteTag });
-  if (!vs.moeglich && vs.grund === "verbrauch") return null;
+  // Prüfgremium 18.10.2026 (N4): Das Rechenwerk lehnt selbst ab, nicht nur der Bildschirm – Verbrauchsdatum (nie eine Aktion), Preis unter dem
+  // Wareneinsatz („lohnt“: es bleibt nie etwas übrig) und Ware schon weg („leer“). Nur ein Gericht ohne Rezept („gericht“) fällt auf eine Woche zurück.
+  if (!vs.moeglich && ["verbrauch", "lohnt", "leer"].includes(vs.grund)) return null;
   const v = von && von >= heuteTag ? von : vs.moeglich ? vs.von : heuteTag;
   const e = ende === "ware" || ende === "datum" ? ende : vs.moeglich ? vs.ende : "datum";
   let b = bis && bis >= v ? bis : null;
@@ -131,7 +133,7 @@ export const tafelStundeStimmt = () => TAFEL_STUNDE === GESCHAEFTSTAG_BIS_STUNDE
 // ---------- Beschreibung ----------
 const euro = (n) => fmtEuro(n, { dezimal: 2 });
 const z2 = (n) => String(n).padStart(2, "0");
-export const tafelDatum = (sprache, iso) => { const l = tIn(sprache, "aktionen.wt"); return `${(Array.isArray(l) && l[wochentag(iso)]) || ""} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`.trim(); };
+export const tafelDatum = (sprache, iso) => { if (typeof iso !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; const l = tIn(sprache, "aktionen.wt"); return `${(Array.isArray(l) && l[wochentag(iso)]) || ""} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`.trim(); };
 export const tafelStandText = (jetzt) => { const d = new Date(jetzt); return `${z2(d.getDate())}.${z2(d.getMonth() + 1)}.${d.getFullYear()} ${z2(d.getHours())}:${z2(d.getMinutes())}`; };
 // Gleichmäßig auf Spalten verteilen: 9 → 5 + 4 (nicht 6 + 3)
 function stuecke(liste, max) { const n = Math.ceil(liste.length / max); const out = []; let i = 0; for (let k = 0; k < n; k++) { const g = Math.ceil((liste.length - i) / (n - k)); out.push(liste.slice(i, i + g)); i += g; } return out; }

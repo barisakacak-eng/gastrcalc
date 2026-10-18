@@ -178,19 +178,28 @@ function zbonView(stand) {
   const summe = `<div class="karte"><div class="summenzeile"><span>${esc(t("verkaeufe.zbon.summeZeilen"))}</span><span class="wert">${esc(fmtEuro(L.summePositionen, { dezimal: 2 }))}</span></div>
       <div class="summenzeile"><span>${esc(t("verkaeufe.zbon.summeBon"))}</span><div class="betrag klein"><input inputmode="decimal" data-f="zb-bonsumme" value="${esc(L.bonSumme === null ? "" : fmtZahl(L.bonSumme, 2))}" placeholder="0,00" aria-label="${esc(t("verkaeufe.zbon.summeBon"))}"><span class="einheit">€</span></div></div></div>${pruef}`;
   const unsicher = L.zeilen.filter((z) => z.unsicher).length;
-  const zeilen = L.zeilen.map((z) => `<div class="zeile ${z.unsicher ? "offen" : ""}">
+  // Prüfgremium 18.10.2026 (M2): Menü-Bestandteile (0,00 € unter einem Menü) zählen nicht – abgewählt, mit Knopf „doch zählen“
+  const nullZeile = (z) => typeof z.betrag === "number" && Math.abs(z.betrag) < 0.005 && !z.storno;
+  const teilKnopf = (z) => (z.bestandteil ? `<button type="button" class="leise klein" data-a="vk-zb-teil" data-id="${esc(z.id)}" data-wert="0">${esc(t("verkaeufe.zbon.teilZaehlen"))}</button>`
+    : nullZeile(z) ? `<button type="button" class="leise klein" data-a="vk-zb-teil" data-id="${esc(z.id)}" data-wert="1">${esc(t("verkaeufe.zbon.teilNicht"))}</button>` : "");
+  const zeilen = L.zeilen.map((z) => `<div class="zeile ${z.unsicher ? "offen" : ""}"${z.bestandteil ? ' data-teil="1"' : ""}>
       <div class="oben"><div class="name"><input class="textfeld" data-f="zb:${esc(z.id)}:text" value="${esc(z.text)}" maxlength="120" aria-label="${esc(t("verkaeufe.zbon.kassentext"))}">
-        <small>${z.storno ? esc(t("verkaeufe.zbon.storno")) + " · " : ""}${z.unsicher ? `<b>${esc(t("verkaeufe.zbon.pruefen", [...new Set(z.gruende.map((g) => GRUND[g]).filter(Boolean))].map((g) => t("verkaeufe.zbon.grund." + g)).join(", ")))}</b>` : ""}${z.roh ? `${z.unsicher ? " · " : ""}${esc(t("verkaeufe.zbon.gelesen", z.roh.trim().slice(0, 60)))}` : ""}</small></div>
+        <small>${z.bestandteil ? `<b>${esc(t("verkaeufe.zbon.teil"))}</b> · ` : ""}${z.storno ? esc(t("verkaeufe.zbon.storno")) + " · " : ""}${z.unsicher ? `<b>${esc(t("verkaeufe.zbon.pruefen", [...new Set(z.gruende.map((g) => GRUND[g]).filter(Boolean))].map((g) => t("verkaeufe.zbon.grund." + g)).join(", ")))}</b>` : ""}${z.roh ? `${z.unsicher ? " · " : ""}${esc(t("verkaeufe.zbon.gelesen", z.roh.trim().slice(0, 60)))}` : ""}</small></div>
         <button type="button" class="fvx" data-a="vk-zb-weg" data-id="${esc(z.id)}" aria-label="${esc(t("verkaeufe.zbon.entfernen"))}: ${esc(z.text)}">✕</button></div>
       <div class="fvreihe"><div class="betrag klein"><input inputmode="decimal" data-f="zb:${esc(z.id)}:menge" value="${esc(z.menge === null ? "" : wertAnzeige(Math.abs(z.menge)))}" placeholder="0" aria-label="${esc(t("verkaeufe.zbon.menge"))}"><span class="einheit">${esc(t("verkaeufe.zbon.stk"))}</span></div>
-        <div class="betrag klein"><input inputmode="decimal" data-f="zb:${esc(z.id)}:betrag" value="${esc(z.betrag === null ? "" : fmtZahl(Math.abs(z.betrag), 2))}" placeholder="0,00" aria-label="${esc(t("verkaeufe.zbon.betrag"))}"><span class="einheit">€</span></div></div></div>`).join("");
+        <div class="betrag klein"><input inputmode="decimal" data-f="zb:${esc(z.id)}:betrag" value="${esc(z.betrag === null ? "" : fmtZahl(Math.abs(z.betrag), 2))}" placeholder="0,00" aria-label="${esc(t("verkaeufe.zbon.betrag"))}"><span class="einheit">€</span></div>${teilKnopf(z)}</div></div>`).join("");
   const offen = v.offen.length ? `<h2 class="inv-ue">${esc(t("verkaeufe.vorschau.offenTitel"))}</h2><p class="hinweis">${esc(t("verkaeufe.vorschau.offenText"))}</p>
       ${v.offen.map((o) => `<div class="zeile offen"><div class="oben"><div class="name">${esc(o.text)}<small>${esc(stueck(o.menge))}${o.plu ? ` · ${esc(t("verkaeufe.vorschau.nummer", o.plu))}` : ""}</small></div><b>${esc(o.umsatzBrutto ? fmtEuro(o.umsatzBrutto, { dezimal: 2 }) : "")}</b></div>${chipsZuordnen(stand, o)}</div>`).join("")}` : "";
-  const frage = v.frage ? `<div class="karte hinweisgelb"><p>${esc(t("verkaeufe.zbon.frage"))}</p><div class="chips">
+  // Prüfgremium 18.10.2026 (N5): ein Z-Bon am Tag → Ja/Nein; mehrere → „Welchen ersetzt dieses Foto?“ (je Kasse/Abschluss) oder „weitere Kasse“
+  const kasseName = (k) => (k.art === "zNr" ? t("verkaeufe.zbon.zNrName", k.nr) : t("verkaeufe.zbon.kasseName", k.nr));
+  const chip = (wert, an, text) => `<button type="button" class="chip klein ${an ? "an" : ""}" data-a="vk-zb-kasse" data-wert="${esc(wert)}" aria-pressed="${an}">${esc(text)}</button>`;
+  const frage = !v.frage ? "" : v.kassen.length < 2 ? `<div class="karte hinweisgelb"><p>${esc(t("verkaeufe.zbon.frage"))}</p><div class="chips">
       <button type="button" class="chip klein ${v.zweite ? "an" : ""}" data-a="vk-zb-zweite" data-wert="1" aria-pressed="${v.zweite}">${esc(t("verkaeufe.zbon.fragJa"))}</button>
-      <button type="button" class="chip klein ${v.zweite ? "" : "an"}" data-a="vk-zb-zweite" data-wert="0" aria-pressed="${!v.zweite}">${esc(t("verkaeufe.zbon.fragNein"))}</button></div></div>` : "";
-  const hinweise = [v.addiert ? t("verkaeufe.zbon.addiert") : "", v.ersetzt && !v.addiert ? t("verkaeufe.zbon.ersetzt") : "", v.gleich ? t("verkaeufe.zbon.gleich") : "", v.kasseDa ? t("verkaeufe.zbon.kasseZaehlt") : ""].filter(Boolean);
-  const geht = !!L.datum && v.positionen.length > 0;
+      <button type="button" class="chip klein ${v.zweite ? "" : "an"}" data-a="vk-zb-zweite" data-wert="0" aria-pressed="${!v.zweite}">${esc(t("verkaeufe.zbon.fragNein"))}</button></div></div>`
+    : `<div class="karte hinweisgelb"><p>${esc(t("verkaeufe.zbon.frageWelche"))}</p><div class="chips">${v.kassen.map((k) => chip("k:" + (k.key ?? ""), v.modus === "ersetzt" && v.ziel === k.key, t("verkaeufe.zbon.ersetztKasse", kasseName(k)))).join("")}
+      ${chip("neu", v.modus === "neu", t("verkaeufe.zbon.neueKasse", v.neuNr))}</div>${v.mussWaehlen ? `<p><b>${esc(t("verkaeufe.zbon.waehlen"))}</b></p>` : ""}</div>`;
+  const hinweise = [v.addiert ? t("verkaeufe.zbon.addiert") + (v.modus === "neu" ? " " + t("verkaeufe.zbon.alsKasse", v.neuNr) : "") : "", v.ersetzt && !v.addiert ? t("verkaeufe.zbon.ersetzt") : "", v.gleich ? t("verkaeufe.zbon.gleich") : "", v.kasseDa ? t("verkaeufe.zbon.kasseZaehlt") : ""].filter(Boolean);
+  const geht = !!L.datum && v.positionen.length > 0 && !v.mussWaehlen;
   return `${kopf}<div class="inhalt">${tag}${summe}
     <h2 class="inv-ue">${esc(t("verkaeufe.zbon.zeilenTitel", L.zeilen.length))}</h2>${unsicher ? `<p class="hinweis">${esc(t("verkaeufe.zbon.unsicher", unsicher))}</p>` : ""}
     ${zeilen}<button type="button" class="leise" data-a="vk-zb-neu">${esc(t("verkaeufe.zbon.zeileDazu"))}</button>
@@ -205,13 +214,13 @@ export async function verkaufZbonFoto(stand, datei, neuZeichnen, { geraet = null
   const mein = ++zbLauf; modus = "zbon"; zbStatus = "lesen"; zbLesung = null; zbUpload = null; zbFehler = null; alleFuer = null; neuZeichnen();
   const lauf = await fotoVerarbeiten(stand, datei, "zbon", () => { if (mein === zbLauf) neuZeichnen(); }, { geraet });
   if (mein !== zbLauf || modus !== "zbon") return null; // abgebrochen oder neues Foto
-  return verkaufZbonText(lauf?.status === "fertig" ? lauf.text : null, lauf?.upload || null, lauf?.status === "fehler" ? lauf.fehler : null);
+  return verkaufZbonText(lauf?.status === "fertig" ? lauf.text : null, lauf?.upload || null, lauf?.status === "fehler" ? lauf.fehler : null, stand);
 }
 // Text (aus der Texterkennung) → Vorschau. Auch für den Browser-Durchlauf, wenn die echte Erkennung zu langsam ist.
-export function verkaufZbonText(text, upload = null, fehler = null) {
+export function verkaufZbonText(text, upload = null, fehler = null, stand = null) {
   modus = "zbon"; zbUpload = upload;
   if (fehler || !text || !String(text).trim()) { zbStatus = "fehler"; zbFehler = fehler || t("verkaeufe.zbon.nichts"); zbLesung = null; return null; }
-  zbLesung = zbonLesen(text, { heuteTag: heuteGeschaeft() });
+  zbLesung = zbonLesen(text, { heuteTag: heuteGeschaeft(), stand }); // stand: gelernte Kassen-Menüs erkennen ihre 0,00-Bestandteile (M2)
   if (!zbLesung.zeilen.length) { zbStatus = "fehler"; zbFehler = t("verkaeufe.zbon.keineZeilen"); return zbLesung; }
   zbStatus = "pruefen"; return zbLesung;
 }
@@ -242,8 +251,11 @@ export function verkaufAktion(name, el, stand, wurzel, { frage = (x) => confirm(
   if (name === "vk-zb-weg") { zbLesung = zbonAendern(zbLesung, el.dataset.id, "weg"); return true; }
   if (name === "vk-zb-zweite") { zbLesung = zbonAendern(zbLesung, null, "zweite", el.dataset.wert === "1"); return true; }
   if (name === "vk-zb-neu") { zbLesung = zbonAendern(zbLesung, null, "neu"); return true; }
+  if (name === "vk-zb-teil") { zbLesung = zbonAendern(zbLesung, el.dataset.id, "teil", el.dataset.wert === "1"); return true; } // Prüfgremium 18.10.2026 (M2)
+  if (name === "vk-zb-kasse") { const w = String(el.dataset.wert || ""); zbLesung = zbonAendern(zbLesung, null, "kasse", w === "neu" ? { art: "neu" } : w.startsWith("k:") ? { art: "ersetzt", key: w.slice(2) || null } : null); return true; } // N5
   if (name === "vk-zb-uebernehmen") {
     if (!zbLesung || modus !== "zbon") return false;
+    if (zbonVorschau(stand, zbLesung).mussWaehlen) return { speichern: false, meldung: t("verkaeufe.zbon.waehlen") };
     const r = zbonUebernehmen(stand, zbLesung, { upload: zbUpload, geraet: wurzel?.geraet || null });
     if (!r.neu && !r.gleich) return { speichern: false, meldung: t(r.fehler.includes("datum") ? "verkaeufe.zbon.ohneDatum" : "verkaeufe.zbon.keineZeilen") };
     modus = "start"; zbLeeren(); alleFuer = null;

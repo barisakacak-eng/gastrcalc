@@ -30,6 +30,7 @@
 import { heute } from "./util.js";
 import { tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { getraenkArtikelVon } from "./getraenk_feld.js";
+import { feiertagImLaden, feiertagZu } from "./feiertage.js"; // Feiertage (18.10.2026)
 
 export const LIEFERANT_ARTEN = ["grosshandel", "lieferdienst", "supermarkt", "getraenke", "baeckerei", "sonstiges"];
 export const LIEFER_MODI = ["lieferung", "abholung"];
@@ -83,7 +84,8 @@ export function lieferantSauber(x) {
     schluss: schlussSauber(x.schluss), lieferzeit: ganz(x.lieferzeit, LIEFERANT_GRENZEN.lieferzeit), mindestwert: mw,
     weg: BESTELLWEGE.includes(x.weg) ? x.weg : null, kontakt: text(x.kontakt, 80), kundennummer: text(x.kundennummer, 30), notiz: text(x.notiz, 200),
     erfasst: typeof x.erfasst === "string" ? x.erfasst : null, geaendert: typeof x.geaendert === "string" ? x.geaendert : null,
-    entfernt: x.entfernt === true, ...(typeof x.entferntZeit === "string" ? { entferntZeit: x.entferntZeit } : {}), ...(x.auto === true ? { auto: true } : {}) };
+    entfernt: x.entfernt === true, ...(typeof x.entferntZeit === "string" ? { entferntZeit: x.entferntZeit } : {}), ...(x.auto === true ? { auto: true } : {}),
+    ...(x.entfernt === true && typeof x.doppelt === "string" && x.doppelt ? { doppelt: x.doppelt.slice(0, 60) } : {}) };
 }
 export function lieferantenSauber(liste) {
   const m = new Map();
@@ -110,6 +112,39 @@ export function lieferantenAusBelegen(stand) {
   }
   for (const x of neu.values()) stand.lieferanten.push(x);
   return neu.size;
+}
+
+// ---------- Doppelte zusammenlegen (Prüfgremium 18.10.2026, N3) ----------
+// Handy A benennt „Metro“ in „Großmarkt“ um, Handy B legt „Großmarkt“ neu an: nach dem Zusammenführen zwei Lieferanten mit gleichem Namen
+// (verschiedene Kennungen). Gleicher Vergleichsname (lieferantNorm) unter den nicht entfernten = ein Lieferant. Es bleibt der zuerst angelegte
+// (bei gleicher Zeit die kleinere Kennung); Leeres an ihm füllt der andere auf (Liefertage, Bestellschluss, Kontakt …), Beleg-Namen werden vereinigt.
+// Der andere gilt als entfernt (doppelt = Kennung des bleibenden); Haupt- und Zweitlieferant an den Waren zeigen danach auf den bleibenden.
+// Rein aus den Daten – beide Handys rechnen gleich; ein zweiter Lauf ändert nichts. Rückgabe: Zahl der zusammengelegten.
+const LEER = { tage: (v) => !v?.length, schluss: (v) => !v, lieferzeit: (v) => v === null || v === undefined, mindestwert: (v) => v === null || v === undefined, weg: (v) => !v, kontakt: (v) => !v, kundennummer: (v) => !v, notiz: (v) => !v };
+export function lieferantenEntdoppeln(stand) {
+  if (!stand || !Array.isArray(stand.lieferanten)) return 0;
+  const gruppen = new Map();
+  for (const l of stand.lieferanten) if (l && !l.entfernt) { const k = lieferantNorm(l.name); if (!k) continue; if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(l); }
+  const ersatz = new Map(); const neu = new Map(); let n = 0;
+  for (const g of gruppen.values()) {
+    if (g.length < 2) continue;
+    g.sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || String(x.id).localeCompare(String(y.id)));
+    const [bleibt, ...rest] = g; const b = { ...bleibt, namen: [...(bleibt.namen || [])] };
+    for (const x of rest) {
+      for (const [f, leer] of Object.entries(LEER)) if (leer(b[f]) && !leer(x[f])) b[f] = structuredClone(x[f]);
+      for (const nm of [...(x.namen || []), x.name]) if (nm && nm !== b.name && !b.namen.includes(nm)) b.namen.push(nm);
+      if (b.auto && !x.auto) delete b.auto;
+      ersatz.set(x.id, b.id); neu.set(x, { ...x, entfernt: true, entferntZeit: x.geaendert || x.erfasst || b.erfasst || "", doppelt: b.id }); n += 1;
+    }
+    b.namen = b.namen.slice(0, 12); neu.set(bleibt, b);
+  }
+  if (!n) return 0;
+  stand.lieferanten = stand.lieferanten.map((l) => neu.get(l) || l);
+  for (const a of stand.artikel || []) {
+    for (const k of ["lieferantId", "lieferant2Id"]) if (ersatz.has(a[k])) a[k] = ersatz.get(a[k]);
+    if (a.lieferant2Id && a.lieferant2Id === a.lieferantId) delete a.lieferant2Id;
+  }
+  return n;
 }
 
 // ---------- Lesen ----------
@@ -151,7 +186,10 @@ export const lieferantWaren = (stand, id) => (stand.artikel || []).filter((a) =>
 export const lieferantZweitWaren = (stand, id) => (stand.artikel || []).filter((a) => a.herkunft !== "selbst" && zweitLieferant(stand, a.name)?.id === id).map((a) => a.name);
 
 // ---------- Liefertermine ----------
-const ruhetag = (stand, d) => ruhetageAm(stand, d).includes(wochentag(d));
+const ruhetag = (stand, d) => ruhetageAm(stand, d).includes(wochentag(d)) || feiertagZu(stand, d);
+// Feiertage (18.10.2026): An gesetzlichen Feiertagen (bundesweit und, wenn eingestellt, im Bundesland des Ladens; js/feiertage.js) liefert kein
+// Lieferant und der Großmarkt hat zu – der Bestellvorschlag springt zum nächsten Liefertag. Bestellschluss bleibt der des Liefertags.
+const feiertag = (stand, d) => !!feiertagImLaden(stand, d);
 // Wie viele Tage vor dem Liefertag ist Bestellschluss, bis wann? Abholung: am Tag selbst, ohne Uhrzeit.
 export function bestellFrist(lf) {
   if (lf.modus === "abholung") return { tageVorher: 0, uhr: null };
@@ -165,7 +203,7 @@ export function liefertermine(stand, lf, { jetzt = new Date(), anzahl = 3 } = {}
   const J = jetzt instanceof Date ? jetzt : new Date(jetzt); const { tageVorher, uhr } = bestellFrist(lf); const abholung = lf.modus === "abholung";
   const out = [];
   for (let i = 0, d = heute(J); i < HORIZONT && out.length < anzahl; i++, d = tagPlus(d, 1)) {
-    if (!lf.tage.includes(wochentag(d)) || (!abholung && ruhetag(stand, d))) continue;
+    if (!lf.tage.includes(wochentag(d)) || (!abholung && ruhetag(stand, d)) || feiertag(stand, d)) continue;
     const schlussTag = tagPlus(d, -tageVorher);
     if (new Date(`${schlussTag}T${uhr || "23:59"}:00`) <= J) continue;
     out.push({ tag: d, schlussTag, uhr });
@@ -173,7 +211,7 @@ export function liefertermine(stand, lf, { jetzt = new Date(), anzahl = 3 } = {}
   return out;
 }
 // Kommt dieser Lieferant an diesem Kalendertag (bzw. ist Abholung)? Unabhängig vom Bestellschluss.
-export const liefertAm = (stand, lf, d) => !!lf?.tage?.includes(wochentag(d)) && (lf.modus === "abholung" || !ruhetag(stand, d));
+export const liefertAm = (stand, lf, d) => !!lf?.tage?.includes(wochentag(d)) && (lf.modus === "abholung" || !ruhetag(stand, d)) && !feiertag(stand, d);
 
 // ---------- Schreiben ----------
 const fehler = (grund) => ({ ok: false, grund });

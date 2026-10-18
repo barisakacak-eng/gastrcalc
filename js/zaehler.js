@@ -9,6 +9,7 @@
 //  - Netto rechnen: Tagesumsatz aus der Kasse ist brutto, der Mischsatz kommt aus der Karte oder vom Wirt.
 //  - Durch Öffnungstage teilen: Ruhetage (aus der Kühlkontrolle) zählen nicht; ohne Ruhetage gilt der Anteil tageProWoche/7 je Kalendertag.
 //  - Unvollständig (Kosten offen, kein Umsatz eingetragen) wird gesagt, nicht erfunden.
+import { feiertagZu } from "./feiertage.js"; // Feiertage (18.10.2026)
 import { sonderkostenImMonat } from "./kostenbeleg.js";
 import { heute, heuteGeschaeft, uid } from "./util.js";
 import { lieferungTeile } from "./betriebsmittel.js";
@@ -23,6 +24,7 @@ export function monatsGrenzen(datum) {
 // Gewicht eines Kalendertags als Öffnungstag: 1 oder 0 bei bekannten Ruhetagen, sonst tageProWoche/7.
 // Paket 3 (16.10.2026), M5: Ruhetage mit Gültig-ab-Verlauf (ruhetageAm) – eine Änderung mitten im Monat ändert vergangene Tage nicht.
 export function tagGewicht(stand, datum) {
+  if (feiertagZu(stand, datum)) return 0; // Feiertage (18.10.2026): nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
   const ruhetage = ruhetageAm(stand, datum);
   if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
   const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));

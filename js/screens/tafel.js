@@ -5,7 +5,7 @@
 import { t, SPRACH_NAMEN, SPRACHEN, ladeSprache } from "../i18n.js";
 import { esc, fmtEuro } from "../util.js";
 import { tafelBeschreibung, tafelHtml, tafelEinstellung, aktiveAktionen, aktionName, TAFEL_GRUPPEN, TAFEL_SEKUNDEN, tafelSetzen, aktionBeenden, tafelBilder, tafelDatei } from "../tafel.js";
-import { datumKurz } from "../haltbar.js";
+import { aktionZeitraumText } from "../aktion_plan.js"; // Prüfgremium 18.10.2026 (H1): „bis Ware weg“ ohne Datum – Zeitraum in Worten statt Datum – Datum
 import { dateienTeilen } from "./bausteine.js";
 import { nav } from "./nav.js";
 
@@ -25,7 +25,7 @@ export function tafelView(stand) {
   const kasse = `<p class="hinweis">${esc(t("tafel.kasse"))}</p>`;
   // laufende Aktionen
   const akt = aktiveAktionen(stand);
-  const aktView = `${ue(t("tafel.aktionenTitel"))}${akt.length ? `<div class="karte">${akt.map((a) => `<div class="summenzeile" data-tafel-aktion="${esc(a.id)}"><span><b>${esc(aktionName(stand, a))}</b><br><small>${esc(fmtEuro(a.preis, { dezimal: 2 }))} · ${esc(datumKurz(a.von))} – ${esc(datumKurz(a.bis))}</small></span><span class="wert"><button type="button" class="leise klein" data-a="tf-aktion-beenden" data-wert="${esc(a.id)}">${esc(t("tafel.beenden"))}</button></span></div>`).join("")}</div>`
+  const aktView = `${ue(t("tafel.aktionenTitel"))}${akt.length ? `<div class="karte">${akt.map((a) => `<div class="summenzeile" data-tafel-aktion="${esc(a.id)}"><span><b>${esc(aktionName(stand, a))}</b><br><small>${esc(fmtEuro(a.preis, { dezimal: 2 }))} · ${esc(aktionZeitraumText(a))}</small></span><span class="wert"><button type="button" class="leise klein" data-a="tf-aktion-beenden" data-wert="${esc(a.id)}">${esc(t("tafel.beenden"))}</button></span></div>`).join("")}</div>`
     : `<div class="karte leer"><div>${esc(t("tafel.aktionenLeer"))}</div></div>`}`;
   // Einstellungen
   const chip = (aktion, wert, an, text) => `<button type="button" class="chip klein ${an ? "an" : ""}" data-a="${aktion}" data-wert="${esc(wert)}" aria-pressed="${an}">${esc(text)}</button>`;

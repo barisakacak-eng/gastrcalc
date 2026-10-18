@@ -4,12 +4,14 @@
 // und vorhandene CSS-Klassen. Einstieg im Büro und aus „Lager & Bestellen“. Personal-Modus: nicht erreichbar, Handlungen „lf-…“ gesperrt.
 // Datenschutz: Nummer/Adresse, Kundennummer und Notiz bleiben auf dem Gerät (js/lieferant.js) – der Bildschirm sagt das beim Feld.
 import { t, artikelText } from "../i18n.js";
-import { esc, fmtEuro, parseZahl } from "../util.js";
+import { esc, fmtEuro, parseZahl, heuteGeschaeft } from "../util.js";
 import { LIEFERANT_ARTEN, LIEFER_MODI, BESTELLWEGE, WOCHE, VORHER_WAHL, lieferantenAktiv, lieferantMitId, liefertermine, lieferantWaren, lieferantZweitWaren,
   lieferantAnlegen, lieferantSetzen, lieferantEntfernen, artikelLieferantSetzen, hauptLieferant, zweitLieferant, lieferantVon } from "../lieferant.js";
 import { lieferSaetze, uhrText } from "../bestand.js";
 import { tagKurz as kurz } from "../anzeige_text.js";
 import { nav } from "./nav.js";
+import { BUNDESLAENDER, ladenLand, feiertagOffen, feiertagSetzen, naechsterFeiertag, landGeprueft } from "../feiertage.js"; // Feiertage (18.10.2026)
+import { datumKurz } from "../haltbar.js";
 
 // flüchtiger Bildschirmzustand: offenes Formular { id | "neu", werte } oder die Zuordnung der Waren
 let form = null;
@@ -52,7 +54,19 @@ export function lieferantenView(stand) {
     <button type="button" class="knopf zweit" data-a="lf-neu">${esc(t("lieferanten.neu"))}</button>
     <button type="button" class="knopf zweit" data-a="lf-zuordnen">${esc(t("lieferanten.zuordnen"))}</button>
     <button type="button" class="leise" data-a="nav" data-wert="bestand">${esc(t("lieferanten.zumLager"))}</button>
+    ${feiertageView(stand)}
     ${was(t("lieferanten.was"))}</div>${nav("lieferanten", { schnell: false })}`;
+}
+// Feiertage (18.10.2026): Bundesland (für landesweite Feiertage, nur geprüfte Länder haben eigene) und ob der Laden an Feiertagen zu hat.
+// An Feiertagen liefert kein Lieferant – das rechnet js/lieferant.js; hier nur die Einstellung und der nächste Feiertag.
+function feiertageView(stand) {
+  const land = ladenLand(stand); const zu = !feiertagOffen(stand); const n = naechsterFeiertag(stand, heuteGeschaeft());
+  return `${ue(t("lieferanten.feiertage.titel"))}<div class="karte" data-lf-feiertage="${esc(land || "")}">
+    <div class="feldzeile"><label for="lf-land">${esc(t("lieferanten.feiertage.land"))}</label><select id="lf-land" class="textfeld" data-f="lf-land"><option value=""${land ? "" : " selected"}>${esc(t("lieferanten.feiertage.nurBund"))}</option>${BUNDESLAENDER.map((l) => `<option value="${l.code}"${l.code === land ? " selected" : ""}>${esc(l.name)}</option>`).join("")}</select></div>
+    ${land && !landGeprueft(land) ? `<p class="hinweis">${esc(t("lieferanten.feiertage.ungeprueft"))}</p>` : ""}
+    <div class="zeile"><div class="oben"><div class="name">${esc(t("lieferanten.feiertage.ladenZu"))}</div>
+      <button type="button" class="schalter ${zu ? "an" : ""}" data-a="lf-feiertag-zu" aria-pressed="${zu}" aria-label="${esc(t("lieferanten.feiertage.ladenZu"))}"></button></div></div>
+    <p class="hinweis">${esc(t("lieferanten.feiertage.liefern"))}${n ? " " + esc(t("lieferanten.feiertage.naechster", t("feiertage." + n.schluessel), datumKurz(n.datum))) : ""}</p></div>`;
 }
 
 // ---------- Formular ----------
@@ -122,6 +136,7 @@ export function lieferantenAktion(name, el, stand) {
   if (name === "lf-zu") { form = null; return true; }
   if (name === "lf-zuordnen") { zuordnen = true; form = null; return true; }
   if (name === "lf-zuordnen-zu") { zuordnen = false; return true; }
+  if (name === "lf-feiertag-zu") return feiertagSetzen(stand, "offen", !feiertagOffen(stand)) ? { speichern: true } : true; // Feiertage (18.10.2026)
   if (name === "lf-entfernen") {
     const lf = lieferantMitId(stand, el.dataset.wert); if (!lf) return false;
     if (typeof confirm === "function" && !confirm(t("lieferanten.entfernenFrage", lf.name))) return false;
@@ -151,6 +166,7 @@ export function lieferantenEingabe(feld, wert, stand) {
     const ok = artikelLieferantSetzen(stand, ware, f.startsWith("lf-haupt:") ? { haupt: id } : { zweit: id });
     return ok ? "speichern" : { meldung: t("lieferanten.fehler.unbekannt") };
   }
+  if (f === "lf-land") return feiertagSetzen(stand, "land", String(wert || "") || null) ? "speichern" : false; // Feiertage (18.10.2026)
   if (!form || !f.startsWith("lf-")) return false;
   const k = f.slice(3); if (!["name", "uhr", "lieferzeit", "mindest", "kontakt", "kundennummer", "notiz"].includes(k)) return false;
   form = { ...form, werte: { ...form.werte, [k]: String(wert ?? "").slice(0, 200) } };

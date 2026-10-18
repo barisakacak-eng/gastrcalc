@@ -73,6 +73,17 @@ export function getraenkSetzen(stand, id, felder = {}) {
     g.zutaten = i >= 0 ? g.zutaten.map((z, j) => (j === i ? { ...z, ...neuZ } : z)).filter((z, j) => j === i || z.name !== sauber.quelle) : [neuZ, ...g.zutaten];
     if (JSON.stringify(g.zutaten) !== alt && g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen";
   }
+  // Prüfgremium 18.10.2026 (N2): von „offen“/„Becher“ auf Dose oder Flasche umgestellt – das Rezept zog weiter aus dem Großgebinde ab. Jetzt wie
+  // beim Anlegen ohne Großgebinde: die Großgebinde-Zutat wird durch den Stück-Artikel des Getränks ersetzt (gleicher Name, 1 Stück; fehlt er, wird er
+  // ohne Preis angelegt – den trägt der Wirt unter „Einkaufspreise“ ein). Bestand und Bestellung zählen dann Dosen/Flaschen.
+  const altQuelle = getraenkVon(g)?.quelle || null;
+  if (altQuelle && !sauber.quelle) {
+    const alt = JSON.stringify(g.zutaten); const stueck = { name: g.name, menge: 1, einheit: "stk" };
+    const i = g.zutaten.findIndex((z) => z.name === altQuelle);
+    g.zutaten = i >= 0 ? g.zutaten.map((z, j) => (j === i ? stueck : z)).filter((z, j) => j === i || z.name !== g.name) : g.zutaten.some((z) => z.name === g.name) ? g.zutaten : [stueck, ...g.zutaten];
+    if (!idx[g.name]) { stand.artikel ??= []; stand.artikel.push(getraenkArtikelNeu(g.name, "getraenk", "stk")); }
+    if (JSON.stringify(g.zutaten) !== alt && g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen";
+  }
   g.getraenk = sauber;
   // Marke, Pfand, Lieferant, Flaschengröße und Einkaufs-Gebinde am gekauften Artikel
   const a = qa || getraenkArtikel(stand, g, idx);

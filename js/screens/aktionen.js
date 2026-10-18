@@ -73,7 +73,7 @@ function laufendView(stand) {
 // Beendete Aktionen (die letzten 3): kurze Bilanz – gespeichert oder, solange noch nicht gespeichert, gerechnet
 function vorbeiView(stand) {
   const H = heuteGeschaeft();
-  const liste = (stand.aktionen || []).filter((a) => aktionVorbei(a, H)).sort((x, y) => String(y.bis || y.entferntZeit || "").localeCompare(String(x.bis || x.entferntZeit || ""))).slice(0, 3);
+  const liste = (stand.aktionen || []).filter((a) => aktionVorbei(a, H) && !a.doppelt).sort((x, y) => String(y.bis || y.entferntZeit || "").localeCompare(String(x.bis || x.entferntZeit || ""))).slice(0, 3);
   if (!liste.length) return "";
   return `<h2 class="inv-ue">${esc(t("plan.vorbeiTitel"))}</h2><div class="karte">${liste.map((a) => `<div class="summenzeile" data-aktion-bilanz="${esc(a.id)}"><span><b>${esc(aktionName(stand, a))}</b><br><small>${esc(bilanzText(a.bilanz || aktionBilanz(stand, a)))}</small></span></div>`).join("")}</div>`;
 }

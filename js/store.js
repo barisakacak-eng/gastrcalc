@@ -18,7 +18,8 @@ import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN } from "./engine.js";
 import { getraenkGerichtMigrieren, getraenkArtikelMigrieren } from "./getraenk_feld.js"; // Getränke (18.10.2026): Größe, Gebinde, Marke, Pfand, Lieferant
-import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, aus Beleg-Namen angelegt
+import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber, lieferantenEntdoppeln } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, aus Beleg-Namen angelegt
+import { LAND_CODES } from "./feiertage.js"; // Feiertage (18.10.2026)
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
@@ -253,6 +254,8 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
                    satz: [19, 7, 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) }));
   if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
+  if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage (18.10.2026): Bundesland des Ladens (optional)
+  if (s.betrieb.feiertagOffen !== false) delete s.betrieb.feiertagOffen;      // Standard: an Feiertagen offen wie an einem normalen Wochentag
   if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
   if (typeof s.verkauf.warenQuote !== "number" || !(s.verkauf.warenQuote >= 0 && s.verkauf.warenQuote < 0.9)) s.verkauf.warenQuote = null;
   s.kanaele.portale = s.kanaele.portale.filter(istObjekt).map((p) => ({ id: String(p.id || uid()), name: String(p.name || ""),
@@ -273,16 +276,16 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
     s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
   s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
   for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
-  s.lieferanten = lieferantenSauber(s.lieferanten); lieferantenAusBelegen(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich)
+  s.lieferanten = lieferantenSauber(s.lieferanten); lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium 18.10.2026 (N3): gleiche Namen zusammenlegen
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
   s.kostenbelege = mitId(s.kostenbelege).filter((k) => typeof k.stelle === "string" && typeof k.betrag === "number" && typeof k.ab === "string").map((k) => ({ ...k, storniert: !!k.storniert }));
   // Läden, die schon vor Etappe 6a mitten in der Einrichtung waren, bleiben auf dem genauen Weg
   if (!["schnell", "genau"].includes(s.weg)) s.weg = alt || s.schritt > 0 || s.phase === "app" ? "genau" : "schnell";
   s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
-  s.verkaeufe = verkaeufeSauber(s.verkaeufe); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste
+  s.verkaeufe = verkaeufeEntdoppeln(verkaeufeSauber(s.verkaeufe), { nur: "zbon" }); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste; Prüfgremium 18.10.2026 (H2): Z-Bon-Doppel aus älteren Ständen bereinigen
   s.kassenKombis = kombisSauber(s.kassenKombis, s.gerichte); // Schwadron 18.10.2026, M1
-  s.aktionen = aktionenSauber(s.aktionen); s.tafel = tafelSauber(s.tafel); // Menütafel (18.10.2026)
+  s.aktionen = aktionenEntdoppeln(aktionenSauber(s.aktionen)); s.tafel = tafelSauber(s.tafel); // Menütafel (18.10.2026); Prüfgremium 18.10.2026 (M1): Doppel aus älteren Ständen
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
     .map((n) => ({ id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
@@ -399,8 +402,28 @@ function aktionenSauber(liste) {
       statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? Math.round(a.statt * 100) / 100 : null,
       von: tagOder(a.von), bis: tagOder(a.bis), ende,
       ...(typeof a.ware === "string" && a.ware.trim() ? { ware: a.ware.trim().slice(0, 120) } : {}), ...(plan ? { plan } : {}), ...(typeof a.geaendertZeit === "string" ? { geaendertZeit: a.geaendertZeit } : {}), ...(bilanz ? { bilanz } : {}),
-      erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}) };
+      erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}),
+      ...(typeof a.doppelt === "string" && a.doppelt ? { doppelt: a.doppelt.slice(0, 60) } : {}) };
   }).filter((a) => a.gerichte.length && a.preis !== null && a.von && (a.bis ? a.von <= a.bis : a.ende === "ware"));
+}
+// Prüfgremium 18.10.2026 (M1): Dieselbe Aktion auf zwei Handys angelegt (gleiche Art, gleiche Gerichte, gleicher Preis, beide laufend) ist EINE Aktion.
+// Die zuerst angelegte bleibt (bei gleicher Zeit die kleinere Kennung); die anderen gelten als beendet (entfernt, doppelt = Kennung der bleibenden,
+// keine eigene Bilanz). Ein später geänderter Zeitraum einer Kopie geht auf die bleibende über. Rein aus der Liste – beide Handys rechnen gleich.
+export function aktionenEntdoppeln(liste) {
+  const l = Array.isArray(liste) ? liste : []; const gruppen = new Map();
+  const sch = (a) => `${a.art}|${[...(a.gerichte || [])].sort().join("|")}|${a.preis}`;
+  for (const a of l) if (a && !a.entfernt) { const k = sch(a); if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(a); }
+  const neu = new Map();
+  for (const g of gruppen.values()) {
+    if (g.length < 2) continue;
+    g.sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || String(x.id).localeCompare(String(y.id)));
+    const [bleibt, ...rest] = g; let b = bleibt;
+    const juengster = [...g].filter((x) => x.geaendertZeit).sort((x, y) => String(y.geaendertZeit).localeCompare(String(x.geaendertZeit)))[0];
+    if (juengster && juengster !== bleibt && String(juengster.geaendertZeit) > String(bleibt.geaendertZeit || "")) b = { ...bleibt, von: juengster.von, bis: juengster.bis, ende: juengster.ende, geaendertZeit: juengster.geaendertZeit };
+    if (b !== bleibt) neu.set(bleibt, b);
+    for (const x of rest) neu.set(x, { ...x, entfernt: true, entferntZeit: x.geaendertZeit || x.erfasst || b.erfasst || null, doppelt: bleibt.id });
+  }
+  return neu.size ? l.map((a) => { const n = neu.get(a); if (!n) return a; if (n.entferntZeit === null) delete n.entferntZeit; return n; }) : l;
 }
 // Menütafel (18.10.2026): Einstellungen – Seitenwechsel 5–120 s, Gruppen aus der festen Liste (mindestens eine), Aktionen ja/nein, Sprache der Tafel
 const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
@@ -421,7 +444,7 @@ function aktionenVereinigen(sieger, verlierer) {
     if (String(a.geaendertZeit || "") > String(s.geaendertZeit || "")) { s.von = a.von; s.bis = a.bis; s.ende = a.ende; s.geaendertZeit = a.geaendertZeit; }
     if (a.bilanz && (!s.bilanz || String(a.bilanz.erstellt || "") > String(s.bilanz.erstellt || ""))) s.bilanz = a.bilanz;
   }
-  return [...m.values()].sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || x.id.localeCompare(y.id));
+  return aktionenEntdoppeln([...m.values()].sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || x.id.localeCompare(y.id))); // Prüfgremium 18.10.2026 (M1)
 }
 // E7 (17.10.2026): Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
 const VERKAUF_HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
@@ -442,11 +465,36 @@ function verkaeufeSauber(liste) {
 // Stornos: Hat ein Handy einen Stand zurückgenommen (storniert ohne „ersetzt“) und ist das jünger als der jüngste aktive Stand der
 // Gruppe, gilt die Rücknahme für die ganze Gruppe. Ergebnis hängt nur von der vereinigten Liste ab – beide Handys rechnen gleich.
 // Geänderte Einträge sind neue Objekte (Journal-Regel); Zeiten sind die aus den Daten, nicht „jetzt“.
-export function verkaeufeEntdoppeln(liste) {
-  const gruppen = new Map();
+// Prüfgremium 18.10.2026 (H2): Z-Bon ohne lesbare Nummer (kasse null oder eigene Kasse ohne Nummer) und ein Z-Bon MIT Nummer am selben Tag sind
+// derselbe Abschluss, wenn sie gleich sind: gleiches Foto (upload), gleiche Summe der Positionen oder gleiche Positionen. Dann zählt er zur Gruppe
+// der Nummer (der jüngste Stand gilt). Passt er zu keiner oder zu mehreren Nummern, bleibt er für sich (zweite Kasse bleibt möglich).
+// nur: "zbon" – nur Z-Bons entdoppeln (beim Laden, idempotent: bereinigt Doppel aus älteren Ständen).
+const Z_NR = /^Z-\d/;
+function zbonZielGruppen(liste) {
+  const imp = new Map();
+  for (const v of liste || []) {
+    if (!v || v.herkunft !== "zbon" || typeof v.datum !== "string") continue;
+    const k = (v.importId || v.id) + "|" + v.datum; const x = imp.get(k) || { datum: v.datum, kasse: typeof v.kasse === "string" && v.kasse ? v.kasse : null, uploads: new Set(), summe: 0, zeilen: [] };
+    if (typeof v.upload === "string" && v.upload) x.uploads.add(v.upload);
+    x.summe += typeof v.umsatzBrutto === "number" ? v.umsatzBrutto : 0;
+    x.zeilen.push([String(v.text || v.name || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim(), Math.round(Number(v.menge) * 1000) / 1000, v.umsatzBrutto ?? ""].join("|"));
+    imp.set(k, x);
+  }
+  const out = new Map(); const liste2 = [...imp.entries()].map(([k, x]) => ({ k, ...x, summe: Math.round(x.summe * 100) / 100, abdruck: x.zeilen.sort().join("\n") }));
+  for (const o of liste2) {
+    if (o.kasse && Z_NR.test(o.kasse)) continue;
+    const ziele = new Set(liste2.filter((n) => n.datum === o.datum && n.kasse && Z_NR.test(n.kasse) && ([...o.uploads].some((u) => n.uploads.has(u)) || (o.summe > 0.004 && Math.abs(n.summe - o.summe) <= 0.005) || n.abdruck === o.abdruck)).map((n) => n.kasse));
+    if (ziele.size === 1) out.set(o.k, [...ziele][0]);
+  }
+  return out;
+}
+export function verkaeufeEntdoppeln(liste, { nur = null } = {}) {
+  const gruppen = new Map(); const zbonZiel = zbonZielGruppen(liste);
   for (const v of liste || []) {
     if (!v || typeof v.datum !== "string") continue;
-    const k = v.herkunft === "hand" ? `hand|${v.datum}|${v.gericht || (v.kombi ? "k:" + v.kombi : "?" + (v.name || ""))}` : `imp|${v.datum}|${v.herkunft}|${typeof v.kasse === "string" ? v.kasse : ""}`;
+    if (nur && v.herkunft !== nur) continue;
+    const kasse = v.herkunft === "zbon" ? zbonZiel.get((v.importId || v.id) + "|" + v.datum) ?? (typeof v.kasse === "string" ? v.kasse : "") : typeof v.kasse === "string" ? v.kasse : "";
+    const k = v.herkunft === "hand" ? `hand|${v.datum}|${v.gericht || (v.kombi ? "k:" + v.kombi : "?" + (v.name || ""))}` : `imp|${v.datum}|${v.herkunft}|${kasse}`;
     if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(v);
   }
   const neu = new Map();
@@ -1231,7 +1279,8 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
     if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
     if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel (18.10.2026)
-    if (a === "lieferanten") basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten (18.10.2026)
+    if (a === "lieferanten") { basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten (18.10.2026)
+      if (lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); } // Prüfgremium 18.10.2026 (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
     if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
     const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
     if (w.beide) bericht.beide.push(a);

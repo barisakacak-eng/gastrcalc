@@ -198,7 +198,7 @@ export const kurzName = (n) => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").t
 // Höchstens EIN Satz für den Büro-Hinweis. Reihenfolge: Verbrauchsdatum heute/morgen/vorbei (rot) → lohnende Aktion (gelb) →
 // Verbrauchsdatum in 2–3 Tagen (gelb) → MHD vorbei (gelb). Im Laden steht nichts.
 export const wtKurz = (iso) => { const l = t("aktionen.wt"); return (Array.isArray(l) && l[wochentag(iso)]) || iso.slice(5); };
-export const datumKurz = (iso) => `${wtKurz(iso)} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`; // „Mo 20.10.“ in der Sprache der App
+export const datumKurz = (iso) => (typeof iso === "string" && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${wtKurz(iso)} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.` : ""); // „Mo 20.10.“ in der Sprache der App; Prüfgremium 18.10.2026 (H1): ohne Datum leer statt Absturz
 // Prüfgremium 17.10.2026 (4): Letzter Öffnungstag bis zum Ablauf (einschließlich). Ist der Ablauftag ein Ruhetag, muss die Ware vorher weg –
 // „bis morgen“ wäre dann falsch. Gibt es keinen Öffnungstag dazwischen (heute zu, morgen Ablauf und zu), gilt heute.
 export function letzterOffenTag(stand, von, ablauf) {
