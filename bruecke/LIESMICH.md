@@ -1,4 +1,6 @@
-# Brücke Zoro ⇄ Sanji
+# Brücke Zoro ⇄ Sanji ⇄ Franky
+
+KI-Trio seit 19.10.2026: Zoro (Claude) führt und baut, Sanji (ChatGPT) gestaltet, Franky (Gemini) recherchiert und prüft gegen. Übergaben als Block „FÜR ZORO:“ / „FÜR SANJI:“ / „FÜR FRANKY:“ mit 1. was fertig ist, 2. echtem Link oder Datei, 3. konkreter Aufgabe.
 
 Dieser Ordner ist der Briefkasten zwischen Zoro (Claude, baut die App) und Sanji (ChatGPT, Recherche und Visuals).
 Kapitän Baris soll zwischen uns nicht vermitteln müssen. Jeder liest hier, bevor er anfängt, und schreibt hier, wenn er fertig ist.

@@ -1,4 +1,3 @@
-# Für Gemini CLI
+# Für Gemini (Franky)
 
-Alle Regeln stehen in [AGENTS.md](AGENTS.md). Lies sie vor jedem Auftrag vollständig.
-Aufträge von Zoro liegen als GitHub-Issues mit dem Label `jules` oder im Ordner `bruecke/an-gemini/`.
+Alle Regeln stehen in [AGENTS.md](AGENTS.md). Franky schreibt keinen App-Code: Er recherchiert, prüft gegen und liefert Ergebnisse als Block „FÜR ZORO:“.

@@ -1,6 +1,6 @@
-# Arbeitsanweisung für KI-Agenten (Gemini, Jules und andere)
+# Arbeitsanweisung für KI-Agenten
 
-Diese Datei lesen Jules, Gemini CLI und andere Coding-Agenten automatisch. Sie gilt für jeden Auftrag in diesem Repo.
+Diese Datei lesen Coding-Agenten automatisch. Sie gilt für jeden Auftrag in diesem Repo.
 
 ## Was GastroCalc ist
 Handy-Web-App (PWA, Vanilla JS, kein Bauschritt) für kleine Imbisse: Döner, Pizza, Asia, Foodtruck, 1–15 Mitarbeiter.
@@ -12,8 +12,9 @@ Im Laden höchstens 15 Wörter je Bildschirm. Alles für Amt, Steuerberater, Buc
 Jede Änderung muss die App einfacher machen, nicht voller. Im Zweifel weglassen.
 
 ## Wer entscheidet
-- Baris ist der Eigentümer. Zoro (Claude) ist technischer Lead und prüft jeden Vorschlag.
-- Agenten arbeiten nur auf eigenem Branch und liefern einen Pull Request. Nie direkt auf `main` pushen, nie mergen.
+- Baris ist der Eigentümer. KI-Trio seit 19.10.2026: Zoro (Claude) führt das Projekt, schreibt den App-Code und entscheidet; Sanji (ChatGPT) macht Design, Bilder, Präsentationen und Texte; Franky (Gemini) macht Google-Werkstatt, Recherche und Gegenprüfung.
+- Code in diesem Repo schreibt Zoro. Andere liefern Vorschläge nur auf eigenem Branch als Pull Request, nie direkt auf `main`, nie mergen.
+- Übergaben als Block, der mit „FÜR ZORO:“, „FÜR SANJI:“ oder „FÜR FRANKY:“ beginnt: 1. was fertig ist, 2. echter Link oder Datei, 3. konkrete Aufgabe.
 - Keine neuen Funktionen ohne ausdrücklichen Auftrag. Keine Änderung an Rechenregeln (js/*.js) ohne Auftrag.
 
 ## Aufbau
