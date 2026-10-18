@@ -41,14 +41,14 @@ jobs:
         run: |
           for versuch in 1 2; do
             if python tests/regeln.py > regeln.txt 2>&1; then grep -E "Verletzungen" regeln.txt | while read -r l; do echo "::notice::regeln: $l"; done; exit 0; fi
-            tail -25 regeln.txt | while read -r l; do echo "::warning::regeln Versuch $versuch: $l"; done
+            grep -E "Error|assert|Timeout|Fehler" regeln.txt | tail -8 | while read -r l; do echo "::warning::regeln Versuch $versuch: $l"; done
           done
           exit 1
       - name: Personal-Durchlauf
         run: |
           for versuch in 1 2; do
             if python tests/durchlauf_personal.py > personal.txt 2>&1; then exit 0; fi
-            tail -25 personal.txt | while read -r l; do echo "::warning::personal Versuch $versuch: $l"; done
+            grep -E "Error|assert|Timeout|Fehler" personal.txt | tail -8 | while read -r l; do echo "::warning::personal Versuch $versuch: $l"; done
           done
           exit 1
   deploy:
