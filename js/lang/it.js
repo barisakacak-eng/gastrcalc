@@ -1129,7 +1129,7 @@ export default {
       putzplan: "Imposta il piano pulizie (consiglio HACCP)", sicherung: (n) => `Ultimo backup ${n} ${n === 1 ? "giorno" : "giorni"} fa`, sicherungNie: "Ancora nessun backup",
       muellOhneWert: (n) => n === 1 ? "1 scarto senza valore" : `${n} scarti senza valore` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Dove va il tuo prezzo?", nachAllem: "dopo tutti i costi", teil: { ware: "Merce", personal: "Personale", miete: "Affitto", neben: "Altri costi", steuer: "Tasse", gewinn: "Utile" },
     titel: "Menu", anzahl: (n) => n === 1 ? "1 piatto" : `${n} piatti`, alle: "Tutti", zuBillig: (n) => `Troppo bassi · ${n}`, mehr: (n) => `Mostra altri ${n}`,
     leer: "Ancora nessun piatto", fotografieren: "Fotografa il menu", bleibt: "Ti resta", speichern: "Salva", gespeichert: "Prezzo salvato", preis: "Prezzo", schliessen: "Chiudi",
     ampel: { gruen: "Obiettivo raggiunto", gelb: "Costi coperti, sotto obiettivo", rot: "Troppo basso", grau: "Non ancora calcolabile" },

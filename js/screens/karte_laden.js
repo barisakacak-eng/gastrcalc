@@ -3,8 +3,8 @@
 // (Tipp auf die Zahl = tippen), „Bleibt dir“ = Deckungsbeitrag je Stück mit Ampelpunkt, „Speichern“.
 // Kein Rezept, kein Wareneinsatz, keine Kosten – das wohnt im Büro (Ansicht „kartebuero“, karte.js-Schritte). Gerechnet wird nur im Rechenwerk.
 import { t } from "../i18n.js";
-import { esc, fmtEuro, parseZahl, wertAnzeige } from "../util.js";
-import { kalkulation, preisAmpel } from "../engine.js";
+import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
+import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
 import { verkaufspreisSetzen } from "../karte_daten.js"; // Trennung (17.10.2026)
 import { gerichtBild } from "./vergleich.js";
 import { nav } from "./nav.js";
@@ -25,6 +25,7 @@ export const karteLadenBlattOffen = () => !!blatt;
 // Zurück-Geste: erst das Blatt schließen
 export function karteLadenZurueck() { if (blatt) { blatt = null; return true; } return false; }
 
+const lastVon = (stand) => kalkulation(stand).last;
 const zeilenVon = (stand) => { const k = kalkulation(stand); const m = new Map(k.zeilen.map((z) => [z.id, z])); return stand.gerichte.map((g) => ({ g, z: m.get(g.id) })).filter((x) => x.z); };
 const zuBillig = (x) => x.z.ampel === "rot";
 const cent = (v) => Math.round(v * 100) / 100;
@@ -51,10 +52,19 @@ export function karteLadenView(stand) {
     ${nav("karte")}`;
 }
 
-// „Bleibt dir“-Zeile: Deckungsbeitrag je Stück für den Entwurfspreis, Punkt in Ampelfarbe (aus engine.preisAmpel)
-function bleibtZeile(z, preis) {
+// „Bleibt dir“-Zeile (19.10.2026): Gewinn nach allen Kosten je Stück und in %, Punkt in Ampelfarbe (engine.preisAmpel);
+// darunter „Wohin geht dein Preis?“ – Balken aus Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn (engine.preisAufteilung).
+const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
+function bleibtZeile(z, preis, last) {
   const a = preisAmpel(z, preis);
-  return `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}</span><b>${a.db === null ? "–" : fmtEuro(a.db, { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
+  const prozent = a.quote === null ? "" : ` · ${fmtZahl(Math.round(a.quote * 100))} %`;
+  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : fmtEuro(a.gewinn, { dezimal: 2 })}${prozent}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
+  const tl = preisAufteilung(z, last, preis);
+  if (!tl || !(preis > 0)) return zeile;
+  const breite = (v) => Math.max(0, v) / preis * 100;
+  return zeile + `<div class="kl-wohin"><small>${esc(t("kartelaeden.wohin"))}</small>
+    <div class="kl-balken" aria-hidden="true">${TEILE.map((k) => breite(tl[k]) > 0.4 ? `<i class="t-${k}" style="width:${breite(tl[k]).toFixed(1)}%"></i>` : "").join("")}</div>
+    <ul class="kl-teile">${TEILE.map((k) => `<li class="t-${k}${k === "gewinn" && tl.gewinn < 0 ? " minus" : ""}"><i></i><span>${esc(t("kartelaeden.teil." + k))}</span><b>${fmtEuro(tl[k], { dezimal: 2 })}</b></li>`).join("")}</ul></div>`;
 }
 export function karteLadenBlatt(stand) {
   if (!blatt) return "";
@@ -70,7 +80,7 @@ export function karteLadenBlatt(stand) {
         <label class="kl-gross"><input inputmode="decimal" data-f="kl-preis" value="${esc(wertAnzeige(blatt.preis.toFixed(2)))}" aria-label="${esc(t("kartelaeden.preis"))}" autocomplete="off"><span>€</span></label>
         <button type="button" class="kl-rund" data-a="kl-plus" aria-label="+0,10 €">${zeichen("plus")}</button>
       </div>
-      ${bleibtZeile(x.z, blatt.preis)}
+      ${bleibtZeile(x.z, blatt.preis, lastVon(stand))}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-speichern" ${geaendert && blatt.preis > 0 ? "" : "disabled"}>${esc(t("kartelaeden.speichern"))}</button>
     </div>`;
 }
@@ -107,5 +117,5 @@ export function karteLadenTeile(stand) {
   if (!blatt) return null;
   const x = zeilenVon(stand).find((y) => y.g.id === blatt.id); if (!x) return null;
   const geaendert = blatt.alt === null || cent(blatt.alt) !== cent(blatt.preis);
-  return { bleibt: bleibtZeile(x.z, blatt.preis), speichernAn: geaendert && blatt.preis > 0 };
+  return { bleibt: bleibtZeile(x.z, blatt.preis, lastVon(stand)), speichernAn: geaendert && blatt.preis > 0 };
 }

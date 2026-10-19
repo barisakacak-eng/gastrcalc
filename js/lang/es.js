@@ -1128,7 +1128,7 @@ export default {
       putzplan: "Crear plan de limpieza (recomendación HACCP)", sicherung: (n) => `Última copia hace ${n} ${n === 1 ? "día" : "días"}`, sicherungNie: "Aún sin copia",
       muellOhneWert: (n) => n === 1 ? "1 entrada de basura sin valor" : `${n} entradas de basura sin valor` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "¿Adónde va tu precio?", nachAllem: "tras todos los costes", teil: { ware: "Mercancía", personal: "Personal", miete: "Alquiler", neben: "Otros gastos", steuer: "Impuesto", gewinn: "Beneficio" },
     titel: "Carta", anzahl: (n) => n === 1 ? "1 plato" : `${n} platos`, alle: "Todos", zuBillig: (n) => `Muy baratos · ${n}`, mehr: (n) => `Ver ${n} más`,
     leer: "Aún sin platos", fotografieren: "Fotografiar la carta", bleibt: "Te queda", speichern: "Guardar", gespeichert: "Precio guardado", preis: "Precio", schliessen: "Cerrar",
     ampel: { gruen: "Objetivo logrado", gelb: "Cubre gastos, bajo objetivo", rot: "Demasiado barato", grau: "Aún sin calcular" },

@@ -1133,7 +1133,7 @@ export default {
       putzplan: "Rregullo planin e pastrimit (rekomandim HACCP)", sicherung: (n) => `Kopja e fundit para ${sn(n, "dite", "ditësh")}`, sicherungNie: "Ende pa kopje",
       muellOhneWert: (n) => `${sn(n, "shënim", "shënime")} mbeturinash pa vlerë` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Ku shkon çmimi yt?", nachAllem: "pas të gjitha kostove", teil: { ware: "Malli", personal: "Stafi", miete: "Qiraja", neben: "Kosto të tjera", steuer: "Taksa", gewinn: "Fitimi" },
     titel: "Menyja", anzahl: (n) => sn(n, "pjatë", "pjata"), alle: "Të gjitha", zuBillig: (n) => `Shumë lirë · ${n}`, mehr: (n) => `Trego edhe ${n}`,
     leer: "Ende pa pjata", fotografieren: "Fotografo menynë", bleibt: "Të mbetet", speichern: "Ruaj", gespeichert: "Çmimi u ruajt", preis: "Çmimi", schliessen: "Mbyll",
     ampel: { gruen: "Objektivi u arrit", gelb: "Kostot të mbuluara, nën objektiv", rot: "Shumë lirë", grau: "Ende nuk llogaritet" },

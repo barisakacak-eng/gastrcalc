@@ -1127,7 +1127,7 @@ export default {
       putzplan: "Plana paqijiyê saz bike (pêşniyara HACCP)", sicherung: (n) => `Kopiya dawî berî ${n} rojan`, sicherungNie: "Hîn kopî tune",
       muellOhneWert: (n) => `${n} tomarên çopê bê nirx` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Bihayê te diçe ku?", nachAllem: "piştî hemû lêçûnan", teil: { ware: "Mal", personal: "Karmend", miete: "Kirê", neben: "Lêçûnên din", steuer: "Bac", gewinn: "Qezenc" },
     titel: "Menû", anzahl: (n) => `${n} xwarin`, alle: "Hemû", zuBillig: (n) => `Pir erzan · ${n}`, mehr: (n) => `${n} yên din nîşan bide`,
     leer: "Hîn xwarin tune", fotografieren: "Wêneyê menûyê bikişîne", bleibt: "Ji te re dimîne", speichern: "Tomar bike", gespeichert: "Biha hat tomarkirin", preis: "Biha", schliessen: "Bigire",
     ampel: { gruen: "Armanc hat girtin", gelb: "Lêçûn derketin, di bin armancê de", rot: "Pir erzan", grau: "Hîn nayê hesabkirin" },

@@ -1136,7 +1136,7 @@ export default {
       putzplan: "Podesi plan čišćenja (preporuka HACCP)", sicherung: (n) => `Zadnja kopija prije ${n} ${pl(n, "dan", "dana", "dana")}`, sicherungNie: "Još nema kopije",
       muellOhneWert: (n) => `${n} ${pl(n, "unos", "unosa", "unosa")} otpada bez vrijednosti` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Gdje ide tvoja cijena?", nachAllem: "nakon svih troškova", teil: { ware: "Roba", personal: "Osoblje", miete: "Kirija", neben: "Ostali troškovi", steuer: "Porez", gewinn: "Dobit" },
     titel: "Jelovnik", anzahl: (n) => `${n} ${pl(n, "jelo", "jela", "jela")}`, alle: "Sva", zuBillig: (n) => `Prejeftino · ${n}`, mehr: (n) => `Prikaži još ${n}`,
     leer: "Još nema jela", fotografieren: "Slikaj jelovnik", bleibt: "Ostaje ti", speichern: "Sačuvaj", gespeichert: "Cijena sačuvana", preis: "Cijena", schliessen: "Zatvori",
     ampel: { gruen: "Cilj postignut", gelb: "Troškovi pokriveni, ispod cilja", rot: "Prejeftino", grau: "Još se ne može izračunati" },

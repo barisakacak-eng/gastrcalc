@@ -1130,7 +1130,7 @@ export default {
       putzplan: "Temizlik planını kur (HACCP önerisi)", sicherung: (n) => `Son yedek ${n} gün önce`, sicherungNie: "Henüz yedek yok",
       muellOhneWert: (n) => `${n} çöp kaydının değeri yok` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Fiyatın nereye gidiyor?", nachAllem: "tüm giderlerden sonra", teil: { ware: "Mal", personal: "Personel", miete: "Kira", neben: "Diğer giderler", steuer: "Vergi", gewinn: "Kâr" },
     titel: "Menü", anzahl: (n) => `${n} yemek`, alle: "Hepsi", zuBillig: (n) => `Çok ucuz · ${n}`, mehr: (n) => `${n} tane daha göster`,
     leer: "Henüz yemek yok", fotografieren: "Menünün fotoğrafını çek", bleibt: "Sana kalan", speichern: "Kaydet", gespeichert: "Fiyat kaydedildi", preis: "Fiyat", schliessen: "Kapat",
     ampel: { gruen: "Hedefe ulaşıldı", gelb: "Giderler karşılandı, hedefin altında", rot: "Çok ucuz", grau: "Henüz hesaplanamıyor" },

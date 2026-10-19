@@ -1129,7 +1129,7 @@ export default {
       putzplan: "Φτιάξε πρόγραμμα καθαριότητας (σύσταση HACCP)", sicherung: (n) => `Τελευταίο backup πριν ${n} ${n === 1 ? "μέρα" : "μέρες"}`, sicherungNie: "Κανένα backup ακόμα",
       muellOhneWert: (n) => n === 1 ? "1 καταχώρηση σκουπιδιών χωρίς αξία" : `${n} καταχωρήσεις σκουπιδιών χωρίς αξία` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Πού πάει η τιμή σου;", nachAllem: "μετά από όλα τα έξοδα", teil: { ware: "Εμπόρευμα", personal: "Προσωπικό", miete: "Ενοίκιο", neben: "Λοιπά έξοδα", steuer: "Φόρος", gewinn: "Κέρδος" },
     titel: "Μενού", anzahl: (n) => n === 1 ? "1 πιάτο" : `${n} πιάτα`, alle: "Όλα", zuBillig: (n) => `Πολύ φθηνά · ${n}`, mehr: (n) => `Δείξε ${n} ακόμα`,
     leer: "Κανένα πιάτο ακόμα", fotografieren: "Φωτογράφισε το μενού", bleibt: "Σου μένει", speichern: "Αποθήκευση", gespeichert: "Η τιμή αποθηκεύτηκε", preis: "Τιμή", schliessen: "Κλείσιμο",
     ampel: { gruen: "Στόχος επιτεύχθηκε", gelb: "Καλύπτει κόστος, κάτω από στόχο", rot: "Πολύ φθηνό", grau: "Δεν υπολογίζεται ακόμα" },

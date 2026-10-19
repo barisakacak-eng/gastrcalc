@@ -1130,7 +1130,7 @@ export default {
       putzplan: "أعدّ خطة التنظيف (توصية HACCP)", sicherung: (n) => `آخر نسخة احتياطية قبل ${pl(n, "يوم واحد", "يومين", "أيام", "يومًا")}`, sicherungNie: "لا توجد نسخة احتياطية بعد",
       muellOhneWert: (n) => `هدر بدون قيمة: ${pl(n, "إدخال واحد", "إدخالان", "إدخالات", "إدخالًا")}` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "أين يذهب سعرك؟", nachAllem: "بعد كل التكاليف", teil: { ware: "البضاعة", personal: "الموظفون", miete: "الإيجار", neben: "تكاليف أخرى", steuer: "الضريبة", gewinn: "الربح" },
     titel: "القائمة", anzahl: (n) => pl(n, "طبق واحد", "طبقان", "أطباق", "طبقًا"), alle: "الكل", zuBillig: (n) => `رخيص جدًا · ${n}`, mehr: (n) => `أظهر ${n} أخرى`,
     leer: "لا توجد أطباق بعد", fotografieren: "صوّر القائمة", bleibt: "يبقى لك", speichern: "حفظ", gespeichert: "تم حفظ السعر", preis: "السعر", schliessen: "إغلاق",
     ampel: { gruen: "الهدف تحقق", gelb: "التكاليف مغطاة، تحت الهدف", rot: "رخيص جدًا", grau: "لا يمكن الحساب بعد" },

@@ -1128,7 +1128,7 @@ export default {
       putzplan: "Tạo lịch dọn vệ sinh (khuyến nghị HACCP)", sicherung: (n) => `Sao lưu lần cuối ${n} ngày trước`, sicherungNie: "Chưa sao lưu",
       muellOhneWert: (n) => `${n} mục rác chưa có giá trị` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Giá của bạn đi đâu?", nachAllem: "sau mọi chi phí", teil: { ware: "Hàng", personal: "Nhân viên", miete: "Tiền thuê", neben: "Chi phí khác", steuer: "Thuế", gewinn: "Lợi nhuận" },
     titel: "Thực đơn", anzahl: (n) => `${n} món`, alle: "Tất cả", zuBillig: (n) => `Quá rẻ · ${n}`, mehr: (n) => `Xem thêm ${n}`,
     leer: "Chưa có món nào", fotografieren: "Chụp thực đơn", bleibt: "Còn lại cho bạn", speichern: "Lưu", gespeichert: "Đã lưu giá", preis: "Giá", schliessen: "Đóng",
     ampel: { gruen: "Đạt mục tiêu", gelb: "Đủ chi phí, dưới mục tiêu", rot: "Quá rẻ", grau: "Chưa tính được" },

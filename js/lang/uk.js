@@ -1133,7 +1133,7 @@ export default {
       putzplan: "Налаштувати план прибирання (за HACCP)", sicherung: (n) => `Остання копія ${pn(n, "день", "дні", "днів")} тому`, sicherungNie: "Копії ще немає",
       muellOhneWert: (n) => `Відходи без вартості: ${pn(n, "запис", "записи", "записів")}` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Куди йде твоя ціна?", nachAllem: "після всіх витрат", teil: { ware: "Товар", personal: "Персонал", miete: "Оренда", neben: "Інші витрати", steuer: "Податок", gewinn: "Прибуток" },
     titel: "Меню", anzahl: (n) => pn(n, "страва", "страви", "страв"), alle: "Усі", zuBillig: (n) => `Задешево · ${n}`, mehr: (n) => `Показати ще ${n}`,
     leer: "Страв поки немає", fotografieren: "Сфотографувати меню", bleibt: "Лишається тобі", speichern: "Зберегти", gespeichert: "Ціну збережено", preis: "Ціна", schliessen: "Закрити",
     ampel: { gruen: "Ціль досягнуто", gelb: "Витрати покрито, нижче цілі", rot: "Задешево", grau: "Поки не можна порахувати" },

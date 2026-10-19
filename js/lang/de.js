@@ -1131,7 +1131,7 @@ export default {
       putzplan: "Putzplan einrichten (HACCP-Empfehlung)", sicherung: (n) => `Letzte Sicherung vor ${n} ${n === 1 ? "Tag" : "Tagen"}`, sicherungNie: "Noch keine Sicherung",
       muellOhneWert: (n) => n === 1 ? "1 Müll-Eintrag ohne Wert" : `${n} Müll-Einträge ohne Wert` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Wohin geht dein Preis?", nachAllem: "nach allen Kosten", teil: { ware: "Ware", personal: "Personal", miete: "Miete", neben: "Nebenkosten", steuer: "Steuer", gewinn: "Gewinn" },
     titel: "Karte", anzahl: (n) => n === 1 ? "1 Gericht" : `${n} Gerichte`, alle: "Alle", zuBillig: (n) => `Zu billig · ${n}`, mehr: (n) => `${n} weitere zeigen`,
     leer: "Noch keine Gerichte", fotografieren: "Karte fotografieren", bleibt: "Bleibt dir", speichern: "Speichern", gespeichert: "Preis gespeichert", preis: "Preis", schliessen: "Schließen",
     ampel: { gruen: "Ziel erreicht", gelb: "Kosten gedeckt, unter Ziel", rot: "Zu billig", grau: "Noch nicht berechenbar" },

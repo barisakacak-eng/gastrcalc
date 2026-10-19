@@ -1135,7 +1135,7 @@ export default {
       putzplan: "Configurează planul de curățenie (recomandare HACCP)", sicherung: (n) => `Ultima copie acum ${nr(n, "zi", "zile")}`, sicherungNie: "Încă nicio copie",
       muellOhneWert: (n) => (n === 1 ? "1 deșeu introdus fără valoare" : `${nr(n, "deșeu", "deșeuri")} introduse fără valoare`) },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Unde merge prețul tău?", nachAllem: "după toate costurile", teil: { ware: "Marfă", personal: "Personal", miete: "Chirie", neben: "Alte costuri", steuer: "Taxă", gewinn: "Profit" },
     titel: "Meniu", anzahl: (n) => nr(n, "preparat", "preparate"), alle: "Toate", zuBillig: (n) => `Prea ieftin · ${n}`, mehr: (n) => `Arată încă ${n}`,
     leer: "Încă niciun preparat", fotografieren: "Fotografiază meniul", bleibt: "Îți rămâne", speichern: "Salvează", gespeichert: "Preț salvat", preis: "Preț", schliessen: "Închide",
     ampel: { gruen: "Țintă atinsă", gelb: "Costuri acoperite, sub țintă", rot: "Prea ieftin", grau: "Încă nu se poate calcula" },

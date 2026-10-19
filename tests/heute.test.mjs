@@ -113,7 +113,7 @@ test("Preis-Blatt: preisAmpel = Ampel und DB der Kalkulation; −/+ in 10-Cent-S
   s.artikel = [{ name: "Fleisch", gruppe: "fleisch", einheit: "kg", packung: { menge: 1, einheit: "kg" }, preis: 12, preisBasis: "netto", benutzt: true }];
   const z = kalkulation(s).zeilen[0];
   const a = preisAmpel(z, z.preisBrutto); assert.equal(a.ampel, z.ampel); assert.ok(Math.abs(a.db - z.db) < 1e-9);
-  assert.equal(preisAmpel(z, z.zielBrutto).ampel, "gruen");
+  assert.equal(preisAmpel(z, Math.ceil(z.sk / 0.8 * (1 + z.mwst) * 100) / 100).ampel, "gruen"); // 20 % Gewinn nach allen Kosten
   assert.equal(preisAmpel(z, 0.5).ampel, "rot");
   assert.equal(preisAmpel({}, 5).ampel, "grau");
 

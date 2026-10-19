@@ -1128,7 +1128,7 @@ export default {
       putzplan: "Créer le plan de nettoyage (conseil HACCP)", sicherung: (n) => `Dernière sauvegarde il y a ${n} ${n === 1 ? "jour" : "jours"}`, sicherungNie: "Pas encore de sauvegarde",
       muellOhneWert: (n) => n === 1 ? "1 déchet sans valeur" : `${n} déchets sans valeur` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Où va ton prix ?", nachAllem: "après tous les frais", teil: { ware: "Marchandise", personal: "Personnel", miete: "Loyer", neben: "Autres frais", steuer: "Taxe", gewinn: "Bénéfice" },
     titel: "Carte", anzahl: (n) => n === 1 ? "1 plat" : `${n} plats`, alle: "Tous", zuBillig: (n) => `Trop bas · ${n}`, mehr: (n) => `Voir ${n} de plus`,
     leer: "Pas encore de plats", fotografieren: "Photographier la carte", bleibt: "Il te reste", speichern: "Enregistrer", gespeichert: "Prix enregistré", preis: "Prix", schliessen: "Fermer",
     ampel: { gruen: "Objectif atteint", gelb: "Coûts couverts, sous l’objectif", rot: "Trop bas", grau: "Pas encore calculable" },

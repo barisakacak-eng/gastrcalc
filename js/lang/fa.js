@@ -1127,7 +1127,7 @@ export default {
       putzplan: "برنامه‌ی نظافت را تنظیم کن (توصیه‌ی HACCP)", sicherung: (n) => `آخرین پشتیبان ${n} روز پیش`, sicherungNie: "هنوز پشتیبان نیست",
       muellOhneWert: (n) => `${n} دورریز بدون ارزش` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "قیمتت کجا می‌رود؟", nachAllem: "بعد از همه هزینه‌ها", teil: { ware: "کالا", personal: "پرسنل", miete: "اجاره", neben: "هزینه‌های دیگر", steuer: "مالیات", gewinn: "سود" },
     titel: "منو", anzahl: (n) => `${n} غذا`, alle: "همه", zuBillig: (n) => `خیلی ارزان · ${n}`, mehr: (n) => `${n} تای دیگر`,
     leer: "هنوز غذایی نیست", fotografieren: "از منو عکس بگیر", bleibt: "برایت می‌ماند", speichern: "ذخیره", gespeichert: "قیمت ذخیره شد", preis: "قیمت", schliessen: "بستن",
     ampel: { gruen: "به هدف رسیدی", gelb: "هزینه پوشش دارد، زیر هدف", rot: "خیلی ارزان", grau: "هنوز حساب نمی‌شود" },

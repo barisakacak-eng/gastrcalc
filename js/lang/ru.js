@@ -1133,7 +1133,7 @@ export default {
       putzplan: "Настроить план уборки (по HACCP)", sicherung: (n) => `Последняя копия ${pn(n, "день", "дня", "дней")} назад`, sicherungNie: "Копии ещё нет",
       muellOhneWert: (n) => `Отходы без стоимости: ${pn(n, "запись", "записи", "записей")}` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Куда уходит твоя цена?", nachAllem: "после всех расходов", teil: { ware: "Товар", personal: "Персонал", miete: "Аренда", neben: "Прочие расходы", steuer: "Налог", gewinn: "Прибыль" },
     titel: "Меню", anzahl: (n) => pn(n, "блюдо", "блюда", "блюд"), alle: "Все", zuBillig: (n) => `Слишком дёшево · ${n}`, mehr: (n) => `Показать ещё ${n}`,
     leer: "Блюд пока нет", fotografieren: "Сфотографировать меню", bleibt: "Остаётся тебе", speichern: "Сохранить", gespeichert: "Цена сохранена", preis: "Цена", schliessen: "Закрыть",
     ampel: { gruen: "Цель достигнута", gelb: "Расходы покрыты, ниже цели", rot: "Слишком дёшево", grau: "Пока нельзя посчитать" },

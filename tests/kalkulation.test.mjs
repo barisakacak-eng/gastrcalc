@@ -107,13 +107,22 @@ test("Review Etappe 2: Selbstkosten nie unter dem Wareneinsatz (Befund 1 Untergr
 test("Review Etappe 2: Ziel ab 85 % -> kein Zielpreis, Ampel grau, Stufe Sperre", () => {
   const s = stand(); s.verkauf.zielgewinn = 90;
   const k = E.kalkulation(s); assert.equal(k.zielStufe, "sperre");
-  assert.equal(k.zeilen[0].zielBrutto, null); assert.equal(k.zeilen[0].ampel, "grau");
+  assert.equal(k.zeilen[0].zielBrutto, null); // 19.10.2026: Ampel hängt am Gewinn nach allen Kosten, nicht am Zielpreis
   s.verkauf.zielgewinn = 70; assert.equal(E.kalkulation(s).zielStufe, "warnung");
 });
-test("Review Etappe 2: Ampel vergleicht auf den Cent wie angezeigt", () => {
+test("Ampel (19.10.2026): Gewinn nach allen Kosten – rot unter 10 %, gelb 10 bis unter 19 %, grün ab 19 %", () => {
   const s = stand(); const d0 = E.kalkulation(s).zeilen[0];
-  s.gerichte[0].preis = Math.round(d0.zielBrutto * 100) / 100; // genau den angezeigten Zielpreis eintragen
-  assert.equal(E.kalkulation(s).zeilen[0].ampel, "gruen");
+  const preisFuer = (q) => Math.ceil(d0.sk / (1 - q) * (1 + d0.mwst) * 100) / 100; // kleinster Bruttopreis mit Gewinnquote ≥ q
+  assert.equal(E.preisAmpel(d0, preisFuer(0.19)).ampel, "gruen");
+  assert.equal(E.preisAmpel(d0, preisFuer(0.19) - 0.02).ampel, "gelb");
+  assert.equal(E.preisAmpel(d0, preisFuer(0.10)).ampel, "gelb");
+  assert.equal(E.preisAmpel(d0, preisFuer(0.10) - 0.02).ampel, "rot");
+  assert.equal(E.preisAmpel(d0, preisFuer(0) - 0.05).ampel, "rot", "unter Selbstkosten");
+  s.gerichte[0].preis = preisFuer(0.25); assert.equal(E.kalkulation(s).zeilen[0].ampel, "gruen", "Kalkulation nutzt dieselbe Ampel");
+  const t = E.preisAufteilung(d0, E.kalkulation(s).last, preisFuer(0.25));
+  const summe = t.ware + t.personal + t.miete + t.neben + t.steuer + t.gewinn;
+  assert.ok(Math.abs(summe - preisFuer(0.25)) < 0.02, "Teile ergeben den Preis: " + summe);
+  assert.ok(t.ware > 0 && t.gewinn > 0 && t.steuer > 0);
 });
 test("Review Etappe 2: Einheit wechseln rechnet um", () => {
   nah(E.mengeUmrechnen(180, "g", "kg"), 0.18); nah(E.mengeUmrechnen(10, "kg", "g"), 10000); nah(E.mengeUmrechnen(0.5, "l", "ml"), 500);

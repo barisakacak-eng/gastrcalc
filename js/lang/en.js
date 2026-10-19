@@ -1129,7 +1129,7 @@ export default {
       putzplan: "Set up cleaning plan (HACCP advice)", sicherung: (n) => `Last backup ${n} ${n === 1 ? "day" : "days"} ago`, sicherungNie: "No backup yet",
       muellOhneWert: (n) => n === 1 ? "1 waste entry without value" : `${n} waste entries without value` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Where does your price go?", nachAllem: "after all costs", teil: { ware: "Goods", personal: "Staff", miete: "Rent", neben: "Other costs", steuer: "Tax", gewinn: "Profit" },
     titel: "Menu", anzahl: (n) => n === 1 ? "1 dish" : `${n} dishes`, alle: "All", zuBillig: (n) => `Too cheap · ${n}`, mehr: (n) => `Show ${n} more`,
     leer: "No dishes yet", fotografieren: "Photograph the menu", bleibt: "You keep", speichern: "Save", gespeichert: "Price saved", preis: "Price", schliessen: "Close",
     ampel: { gruen: "Target reached", gelb: "Costs covered, below target", rot: "Too cheap", grau: "Not calculable yet" },

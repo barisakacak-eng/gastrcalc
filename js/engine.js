@@ -430,18 +430,41 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
     unvollstaendig: last.offen > 0 || geschaetzt || zeilen.some((z) => z.ampel === "grau") };
 }
 
-// Ampel und Deckungsbeitrag je Portion für einen Bruttopreis – eine Stelle für Kalkulation und Preis-Blatt im Laden („Bleibt dir“).
-// zeile braucht sk, zielNetto, mwst, waren (wie in kalkulation().zeilen). Ampel vergleicht auf den Cent, so wie die Zahlen angezeigt werden –
-// wer den angezeigten Wert einträgt, bekommt Grün.
+// Ampel je Gericht (Baris 19.10.2026): gemessen am GEWINN NACH ALLEN KOSTEN in % vom Nettopreis – Ware, Personal (auch eigener Lohn),
+// Miete, Nebenkosten und Zeit sind in den Selbstkosten (sk). Rot unter 10 %, Gelb 10 bis unter 19 %, Grün ab 19 %.
+// Einordnung: BMF-Richtsatzsammlung 2024, Imbissstuben u. Ä. (Umsatz über 100.000 €): Reingewinn 8–39 %, Mittel 24 % vom Umsatz –
+// dort OHNE Unternehmerlohn; unsere Rechnung zieht den eigenen Lohn ab und ist damit strenger.
+// Quelle: https://www.ihk-muenchen.de/ihk/documents/Recht-Steuern/Steuerrecht/Einkommensteuer/2025-12-08-download-richtsatzsammlung-2024.pdf (geprüft 19.10.2026)
+export const AMPEL_GRENZEN = { rot: 0.10, gruen: 0.19 };
+// zeile braucht sk, mwst, waren (wie in kalkulation().zeilen). Ampel rechnet auf den Cent, so wie die Zahlen angezeigt werden.
 export function preisAmpel(zeile, preisBrutto) {
-  const { sk = null, zielNetto = null, mwst = 0, waren = null } = zeile || {};
+  const { sk = null, mwst = 0, waren = null } = zeile || {};
   const brutto = typeof preisBrutto === "number" && Number.isFinite(preisBrutto) ? preisBrutto : null;
   const preisNetto = brutto === null ? null : brutto / (1 + mwst);
   const cent = (v) => Math.round(v * 100) / 100;
-  let ampel = "grau";
-  if (sk !== null && preisNetto !== null && zielNetto !== null) ampel = cent(brutto) >= cent(zielNetto * (1 + mwst)) ? "gruen" : cent(preisNetto) >= cent(sk) ? "gelb" : "rot";
-  const db = preisNetto === null || waren === null ? null : preisNetto - waren; // Deckungsbeitrag je Portion
-  return { ampel, db, preisNetto };
+  const gewinn = sk === null || preisNetto === null ? null : cent(preisNetto) - cent(sk);
+  const quote = gewinn === null || !(preisNetto > 0) ? null : gewinn / preisNetto;
+  const ampel = quote === null ? "grau" : quote < AMPEL_GRENZEN.rot - 1e-9 ? "rot" : quote < AMPEL_GRENZEN.gruen - 1e-9 ? "gelb" : "gruen";
+  const db = preisNetto === null || waren === null ? null : preisNetto - waren; // Deckungsbeitrag nach Ware (Rohgewinn) je Portion
+  return { ampel, db, gewinn, quote, preisNetto };
+}
+
+// Wohin geht der Preis? (Baris 19.10.2026) Aufteilung eines Bruttopreises je Portion in Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn.
+// Der Fixanteil (fix) verteilt die Monatslast; er wird nach den Anteilen der Monatslast aufgeteilt (Lohn + eigener Lohn → Personal,
+// Kategorie Miete/Standgebühr → Miete, Rest → Nebenkosten). Zeitzuschlag gehört zum Personal. Summe der Teile = Bruttopreis.
+export function preisAufteilung(zeile, last, preisBrutto) {
+  const a = preisAmpel(zeile, preisBrutto);
+  if (a.preisNetto === null || zeile?.sk === null || zeile?.waren === null || !last) return null;
+  const gesamt = last.gesamt || 0; const fix = Math.max(0, zeile.fix || 0); const zeit = zeile.zeit || 0;
+  const personalMonat = (last.lohn ?? 0) + (last.eigen?.betrag ?? 0);
+  const kat = last.fix?.jeKategorie || {}; const mieteMonat = ((kat.miete?.summe || 0) + (kat.standgebuehr?.summe || 0)) * (last.fix?.gesamt > 0 ? last.fixJeOffen / last.fix.gesamt : 1);
+  const anteil = (x) => (gesamt > 0 ? x / gesamt : 0);
+  const ware = zeile.waren;
+  const personal = Math.max(0, fix * anteil(personalMonat) + zeit);
+  const miete = fix * anteil(mieteMonat);
+  const neben = Math.max(0, zeile.sk - ware - personal - miete);
+  const steuer = preisBrutto - a.preisNetto;
+  return { ware, personal, miete, neben, steuer, gewinn: a.preisNetto - zeile.sk, brutto: preisBrutto, quote: a.quote, ampel: a.ampel };
 }
 
 // Mischsatz der Umsatzsteuer auf den Tagesumsatz (Etappe 5): eigener Wert, sonst aus der Karte (Speisen 7 %, Getränke 19 %,

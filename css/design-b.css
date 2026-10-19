@@ -250,3 +250,17 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .ware.andere { border: 1.5px solid var(--b-linie); }
 /* 46: Bereichstitel klar größer */
 .b-bereich > summary .b-zt b { font-size: calc(19rem / 17); }
+/* Preis-Blatt (19.10.2026): Gewinn nach allen Kosten + „Wohin geht dein Preis?“ */
+.kl-bleibt span small { display: block; font-size: calc(12.5rem / 17); font-weight: 500; color: var(--b-text-leise); }
+.kl-wohin { margin: -4px 0 14px; padding: 12px 14px; border: 1px solid var(--b-linie); border-radius: 14px; background: var(--b-karte); }
+.kl-wohin > small { display: block; font-weight: 700; color: var(--b-text); font-size: calc(14rem / 17); margin-bottom: 8px; }
+.kl-balken { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--papier-tief); margin-bottom: 10px; }
+.kl-balken i { display: block; height: 100%; }
+.kl-teile { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+.kl-teile li { display: flex; align-items: center; gap: 7px; font-size: calc(14rem / 17); min-width: 0; }
+.kl-teile li i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.kl-teile li span { flex: 1; min-width: 0; color: var(--b-text-leise); }
+.kl-teile li b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kl-teile li.t-gewinn b { color: var(--b-gruen-ok); } .kl-teile li.t-gewinn.minus b { color: var(--b-rot-text); }
+.t-ware i, i.t-ware { background: #E29A5B; } .t-personal i, i.t-personal { background: #5B8DB8; } .t-miete i, i.t-miete { background: #8E7CC3; }
+.t-neben i, i.t-neben { background: #A7B3AD; } .t-steuer i, i.t-steuer { background: #D9C27A; } .t-gewinn i, i.t-gewinn { background: var(--b-gruen-ok); }

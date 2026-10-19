@@ -1134,7 +1134,7 @@ export default {
       putzplan: "Ustaw plan sprzątania (zalecenie HACCP)", sicherung: (n) => `Ostatnia kopia ${n} ${lm(n, "dzień", "dni", "dni")} temu`, sicherungNie: "Jeszcze brak kopii",
       muellOhneWert: (n) => `${n} ${lm(n, "wpis", "wpisy", "wpisów")} odpadów bez wartości` },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Dokąd idzie twoja cena?", nachAllem: "po wszystkich kosztach", teil: { ware: "Towar", personal: "Personel", miete: "Czynsz", neben: "Inne koszty", steuer: "Podatek", gewinn: "Zysk" },
     titel: "Karta", anzahl: (n) => `${n} ${lm(n, "danie", "dania", "dań")}`, alle: "Wszystkie", zuBillig: (n) => `Za tanio · ${n}`, mehr: (n) => `Pokaż ${n} więcej`,
     leer: "Jeszcze brak dań", fotografieren: "Zrób zdjęcie karty", bleibt: "Zostaje ci", speichern: "Zapisz", gespeichert: "Cena zapisana", preis: "Cena", schliessen: "Zamknij",
     ampel: { gruen: "Cel osiągnięty", gelb: "Koszty pokryte, poniżej celu", rot: "Za tanio", grau: "Jeszcze nie da się policzyć" },

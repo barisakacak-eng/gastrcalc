@@ -1134,7 +1134,7 @@ export default {
       putzplan: "Настрой графика за почистване (препоръка HACCP)", sicherung: (n) => `Последно копие преди ${br(n, "ден", "дни")}`, sicherungNie: "Още няма копие",
       muellOhneWert: (n) => (n === 1 ? "1 запис за отпадъци без стойност" : `${n} записа за отпадъци без стойност`) },
   },
-  kartelaeden: {
+  kartelaeden: { wohin: "Къде отива цената ти?", nachAllem: "след всички разходи", teil: { ware: "Стока", personal: "Персонал", miete: "Наем", neben: "Други разходи", steuer: "Данък", gewinn: "Печалба" },
     titel: "Меню", anzahl: (n) => br(n, "ястие", "ястия"), alle: "Всички", zuBillig: (n) => `Твърде евтино · ${n}`, mehr: (n) => `Покажи още ${n}`,
     leer: "Още няма ястия", fotografieren: "Снимай менюто", bleibt: "Остава ти", speichern: "Запази", gespeichert: "Цената е запазена", preis: "Цена", schliessen: "Затвори",
     ampel: { gruen: "Целта е постигната", gelb: "Разходите са покрити, под целта", rot: "Твърде евтино", grau: "Още не може да се сметне" },
