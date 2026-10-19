@@ -1,0 +1,18 @@
+/* Design B – nur Visualisierung, nicht produktiv ohne Zoro-Freigabe. */
+:root {
+  --primaer:#0F3D2E; --primaer-hell:#E5F2EB;
+  --akzent:#FF7A3D; --akzent-hell:#FFE6D9;
+  --hintergrund:#FAFBF8; --karte:#FFFFFF;
+  --text:#0F1720; --text-leise:#53605C; --linie:#E2E8E3;
+  --rot:#D64545; --rot-hell:#FFF0EF; --rot-text:#A9292E;
+  --gelb:#F4B400; --gelb-hell:#FFF5D8; --gelb-text:#755300;
+  --gruen-ok:#176E47; --auf-dunkel:#FFFFFF;
+  --schrift:'Manrope',system-ui,-apple-system,sans-serif;
+  --gewicht-normal:400; --gewicht-mittel:500; --gewicht-halb:600; --gewicht-fett:700; --gewicht-extra:800;
+  --schrift-zahl:1.88235rem; --schrift-titel:1.17647rem; --schrift-standard:.94118rem;
+  --schrift-klein:.82353rem; --schrift-mini:.70588rem;
+  --abstand-1:4px; --abstand-2:8px; --abstand-3:12px; --abstand-4:16px; --abstand-5:20px; --abstand-6:24px;
+  --radius-klein:8px; --radius-kachel:12px; --radius-karte:14px; --radius-gross:18px;
+  --schatten-karte:0 3px 12px rgba(15,23,32,.07); --schatten-knopf:0 3px 8px rgba(15,23,32,.08);
+  --hoehe-knopf:56px; --hoehe-leiste:64px;
+}
