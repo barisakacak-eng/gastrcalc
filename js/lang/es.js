@@ -559,6 +559,7 @@ export default {
     kuerzelPlatzhalter: "Iniciales",
     personenKurz: (n) => n === 1 ? "1 inicial en el equipo" : `${n} iniciales en el equipo`,
     spaeter: "Seguir luego",
+    haftungTitel: "¿Quién es responsable?",
     haftung: "Tú sigues siendo responsable: tus límites, tus mediciones y tus medidas son tuyos. GastroCalc solo apunta lo que anotas y no comprueba nada. Los datos están solo en este móvil: haz tú la copia y guárdalos al menos 12 meses.",
     arten: { kuehl: "Frío", tk: "Congelado", warm: "Mantener caliente" },
     rundgang: "Ronda",

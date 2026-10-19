@@ -564,6 +564,7 @@ export default {
     kuerzelPlatzhalter: "Inicjały",
     personenKurz: (n) => n === 1 ? "1 osoba w zespole" : `${n} ${lm(n, "osoba", "osoby", "osób")} w zespole`,
     spaeter: "Dokończę później",
+    haftungTitel: "Kto odpowiada?",
     haftung: "Odpowiadasz ty: twoje granice, twoje pomiary i twoje działania należą do ciebie. GastroCalc tylko zapisuje to, co wpiszesz, i niczego nie sprawdza. Dane są tylko na tym telefonie – rób kopie sam i trzymaj je co najmniej 12 miesięcy.",
     arten: { kuehl: "Chłodzenie", tk: "Mrożenie", warm: "Utrzymywanie na ciepło" },
     rundgang: "Obchód",

@@ -559,6 +559,7 @@ export default {
     kuerzelPlatzhalter: "Sigla",
     personenKurz: (n) => n === 1 ? "1 sigla nel team" : `${n} sigle nel team`,
     spaeter: "Continua dopo",
+    haftungTitel: "Chi è responsabile?",
     haftung: "La responsabilità resta tua: i tuoi limiti, le tue misure e i tuoi interventi sono tuoi. GastroCalc scrive solo quello che inserisci e non controlla niente. I dati sono solo su questo telefono – fai tu il backup e conservali almeno 12 mesi.",
     arten: { kuehl: "Frigo", tk: "Congelatore", warm: "Mantenimento a caldo" },
     rundgang: "Giro di controllo",

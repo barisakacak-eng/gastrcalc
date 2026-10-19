@@ -566,6 +566,7 @@ export default {
     kuerzelPlatzhalter: "Inicijali",
     personenKurz: (n) => `${n} ${pl(n, "inicijal", "inicijala", "inicijala")} u timu`,
     spaeter: "Nastavi kasnije",
+    haftungTitel: "Ko je odgovoran?",
     haftung: "Ti ostaješ odgovoran: tvoje granice, tvoja mjerenja i tvoje mjere pripadaju tebi. GastroCalc samo zapisuje ono što upišeš i ništa ne provjerava. Podaci su samo na ovom telefonu – sam napravi sigurnosnu kopiju i čuvaj ih najmanje 12 mjeseci.",
     arten: { kuehl: "Hlađenje", tk: "Zamrzavanje", warm: "Držanje toplog" },
     rundgang: "Obilazak",

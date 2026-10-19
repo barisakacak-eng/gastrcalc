@@ -565,6 +565,7 @@ export default {
     kuerzelPlatzhalter: "Inițiale",
     personenKurz: (n) => n === 1 ? "1 persoană în echipă" : `${nr(n, "persoană", "persoane")} în echipă`,
     spaeter: "Continui mai târziu",
+    haftungTitel: "Cine este responsabil?",
     haftung: "Răspunderea rămâne a ta: limitele, măsurătorile și măsurile tale îți aparțin. GastroCalc doar notează ce treci și nu verifică nimic. Datele sunt doar pe telefonul ăsta – fă-ți singur copii și păstrează-le cel puțin 12 luni.",
     arten: { kuehl: "Răcire", tk: "Congelare", warm: "Menținere la cald" },
     rundgang: "Rundă",

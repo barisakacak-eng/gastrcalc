@@ -559,6 +559,7 @@ export default {
     kuerzelPlatzhalter: "Kısaltma",
     personenKurz: (n) => `Ekipte ${n} kısaltma`,
     spaeter: "Sonra devam et",
+    haftungTitel: "Kim sorumlu?",
     haftung: "Sorumluluk sende kalır: sınırların, ölçümlerin ve önlemlerin sana aittir. GastroCalc yalnızca girdiğini yazar, hiçbir şeyi denetlemez. Veriler yalnızca bu telefonda – kendin yedekle ve en az 12 ay sakla.",
     arten: { kuehl: "Soğutma", tk: "Derin dondurucu", warm: "Sıcak tutma" },
     rundgang: "Tur",

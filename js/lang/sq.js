@@ -564,6 +564,7 @@ export default {
     kuerzelPlatzhalter: "Inicialet",
     personenKurz: (n) => n === 1 ? "1 person në ekip" : `${n} persona në ekip`,
     spaeter: "Vazhdo më vonë",
+    haftungTitel: "Kush është përgjegjës?",
     haftung: "Përgjegjësia mbetet jotja: kufijtë, matjet dhe masat e tua janë të tuat. GastroCalc vetëm shënon atë që shkruan ti dhe nuk kontrollon asgjë. Të dhënat janë vetëm në këtë telefon – bëj kopje vetë dhe ruaji të paktën 12 muaj.",
     arten: { kuehl: "Ftohje", tk: "Ngrirje", warm: "Mbajtje e ngrohtë" },
     rundgang: "Raundi",

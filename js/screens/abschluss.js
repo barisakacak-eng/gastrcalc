@@ -23,7 +23,7 @@ export function abschlussView(stand) {
       ${ab ? `<div class="tipp">${esc(t("abschluss.schon", zeitKurz(ab.erfasst)))}</div>` : ""}
       <div class="karte">
         <div class="hakzeile">${hak(!!u, 1)}<div><b>${esc(t("abschluss.umsatz"))}</b><small class="marke">${esc(t("abschluss.umsatzKurz"))} · ${esc(t("zaehler.umsatzBasis.brutto"))}</small></div></div>
-        <div class="zahlfeld klein"><input inputmode="decimal" data-f="umsatz" value="${esc(wertAnzeige(u?.umsatz ?? null))}" placeholder="" aria-label="${esc(t("tag.umsatz"))}"><span class="einheit">€</span></div>
+        <div class="zahlfeld klein"><input inputmode="decimal" data-f="umsatz" value="${esc(wertAnzeige(u?.umsatz ?? null))}" placeholder="0,00" aria-label="${esc(t("tag.umsatz"))}"><span class="einheit">€</span></div>
         ${u ? "" : `<small class="marke">${esc(t("abschluss.ohneUmsatz"))}</small>`}
       </div>
       <button type="button" class="zeileknopf" data-a="nav" data-wert="muell"><span class="hakzeile">${hak(sw.anzahl > 0, 2)}<span><b>${esc(t("abschluss.muell"))}: ${sw.anzahl ? fmtEuro(sw.muellwert, { dezimal: 2 }) : esc(t("abschluss.muellLeer"))}</b><small>${sw.ohneWert ? esc(t("listen.ohneWert", sw.ohneWert)) : ""}</small></span></span><span class="pfeil">›</span></button>

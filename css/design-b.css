@@ -268,3 +268,13 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .b-beilagen { margin-top: 12px; border: 1px solid var(--b-linie); }
 .b-beilagen b { display: block; font-size: calc(16rem / 17); margin-bottom: 6px; }
 .b-beilagen ul { margin: 0 0 8px; padding-left: 20px; } .b-beilagen li { margin: 4px 0; font-size: calc(15rem / 17); }
+/* Paket D (Prüfer-Rest, 19.10.2026) */
+.knopf .sym { width: 20px; height: 20px; vertical-align: -4px; margin-right: 4px; }
+span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
+.putzerklaerung { line-height: 1.45; } .putzerklaerung li { margin: 2px 0; }
+.wahl > span, .schalterzeile > span, label.wahl span { min-width: 0; }
+.chip:not(.an) { background: var(--b-karte); color: var(--b-text); border: 1px solid var(--b-linie); }
+.chip.an { background: var(--b-primaer); color: #FFFFFF; border-color: var(--b-primaer); }
+.zahlfeld input::placeholder { color: #8A9690; }
+.textfeld::placeholder { color: #8A9690; }
+[data-a="loeschen"] { margin-top: 28px; }

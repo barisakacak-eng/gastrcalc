@@ -1,5 +1,6 @@
 // Foto und Upload – Speisekarte fotografieren (Einrichtung und Karte) und den Lauf von der Datei bis zum Text.
 // Ein Lauf: Datei wählen → ablegen (Ablage) → auswerten (Auswertung) → Vorschläge → der Wirt bestätigt. Etappe 6a.
+import { sym } from "../symbole.js";
 import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Zutaten in der aktiven Sprache
 import { esc, parseZahl, uid, fmtEuro } from "../util.js";
 import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ablage.js";
@@ -63,9 +64,9 @@ export const hatVorschlaege = () => vorschlaege.length > 0;
 // Die beiden Eingänge: Kamera (capture) und Galerie/Datei. Ein <label> um ein unsichtbares <input>, damit es am iPhone sicher öffnet.
 export function fotoKnoepfe(zweck, { kamera = "foto.kamera", datei = "foto.datei" } = {}) {
   return `
-    <label class="knopf glut fotoknopf"><span aria-hidden="true">📷</span> ${esc(t(kamera))}
+    <label class="knopf glut fotoknopf">${sym("camera")} ${esc(t(kamera))}
       <input type="file" accept="image/*" capture="environment" data-f="foto" data-zweck="${zweck}" class="dateifeld"></label>
-    <label class="knopf zweit"><span aria-hidden="true">📄</span> ${esc(t(datei))}
+    <label class="knopf zweit">${sym("file-text")} ${esc(t(datei))}
       <input type="file" accept="image/*,application/pdf,.pdf" multiple data-f="foto" data-zweck="${zweck}" class="dateifeld"></label>`;
 }
 

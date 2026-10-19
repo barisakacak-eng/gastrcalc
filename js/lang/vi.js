@@ -559,6 +559,7 @@ export default {
     kuerzelPlatzhalter: "Tên viết tắt",
     personenKurz: (n) => `${n} tên viết tắt trong nhóm`,
     spaeter: "Làm tiếp sau",
+    haftungTitel: "Ai chịu trách nhiệm?",
     haftung: "Bạn vẫn là người chịu trách nhiệm: giới hạn, các lần đo và cách xử lý là của bạn. GastroCalc chỉ ghi lại những gì bạn điền và không kiểm tra gì. Dữ liệu chỉ nằm trên điện thoại này – hãy tự sao lưu và giữ ít nhất 12 tháng.",
     arten: { kuehl: "Đồ lạnh", tk: "Đồ đông", warm: "Giữ nóng" },
     rundgang: "Vòng đo",

@@ -558,6 +558,7 @@ export default {
     kuerzelPlatzhalter: "Initials",
     personenKurz: (n) => n === 1 ? "1 set of initials in the team" : `${n} initials in the team`,
     spaeter: "Continue later",
+    haftungTitel: "Who is responsible?",
     haftung: "You stay responsible: your limits, your measurements and your actions are yours. GastroCalc only writes down what you enter and checks nothing. The data lives only on this phone – back it up yourself and keep it for at least 12 months.",
     arten: { kuehl: "Chilled", tk: "Frozen", warm: "Hot holding" },
     rundgang: "Round",

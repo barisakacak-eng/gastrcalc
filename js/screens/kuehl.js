@@ -1,6 +1,7 @@
 // Etappe 4: Kühlkontrolle – Einrichtung der Kühlstellen, der Rundgang, das Monatsblatt.
 // Regeln aus der Vorprüfung des Gremiums: Grenzen setzt der Betrieb (die App nennt nur Anhaltspunkte), kein Wert ist vorbelegt,
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
+import { einklappen } from "./bausteine.js"; // Prüfer 19.10.2026: Haftungstext eingeklappt (15-Wörter-Regel im Laden)
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
 import { t, sprache, artikelText } from "../i18n.js";
@@ -88,7 +89,7 @@ export function kuehlView(stand) {
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
         ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
       </div>
-      <p class="hinweis">${esc(t("kuehl.haftung"))}</p>`}
+      ${einklappen("kuehl-haftung", t("kuehl.haftungTitel"), `<p class="hinweis">${esc(t("kuehl.haftung"))}</p>`)}`}
     </div>
     ${nav("kuehl")}`;
 }

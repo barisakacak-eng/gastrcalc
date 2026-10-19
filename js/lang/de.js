@@ -559,6 +559,7 @@ export default {
     kuerzelPlatzhalter: "Kürzel",
     personenKurz: (n) => n === 1 ? "1 Kürzel im Team" : `${n} Kürzel im Team`,
     spaeter: "Später weitermachen",
+    haftungTitel: "Wer ist verantwortlich?",
     haftung: "Du bleibst verantwortlich: Deine Grenzen, deine Messungen und deine Maßnahmen gehören dir. GastroCalc schreibt nur auf, was du einträgst, und prüft nichts. Die Daten liegen nur auf diesem Handy – sichere sie selbst und bewahre sie mindestens 12 Monate auf.",
     arten: { kuehl: "Kühlung", tk: "Tiefkühlung", warm: "Warmhalten (Heißhaltung)" },
     rundgang: "Rundgang",

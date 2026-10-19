@@ -558,6 +558,7 @@ export default {
     kuerzelPlatzhalter: "Kurtenav",
     personenKurz: (n) => `${n} kurtenav di tîmê de`,
     spaeter: "Paşê bidomîne",
+    haftungTitel: "Kî berpirsiyar e?",
     haftung: "Berpirsiyarî li ser te dimîne: sînor, pîvandin û tedbîrên te yên te ne. GastroCalc tenê ya ku tu dinivîsî tomar dike û tiştekî kontrol nake. Dane tenê li ser vê telefonê ne – bi xwe kopiya ewlehiyê bigire û herî kêm 12 mehan biparêze.",
     arten: { kuehl: "Sarker", tk: "Cemidok", warm: "Germ-hilgirtin (Heißhaltung)" },
     rundgang: "Gera kontrolê",
