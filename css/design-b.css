@@ -199,3 +199,11 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .kuehlliste .kwert.rot { color: var(--b-rot-text); }
 .kuehlliste .kwert small { display: block; font-weight: 500; font-size: calc(12rem / 17); letter-spacing: 0; }
 .kuehlliste .zeileknopf:has(.kwert.rot) { background: var(--b-rot-hell); border-color: #F2C9C9; }
+/* Entrümpelung Punkt 4: eingeklappte Nebenteile langer Seiten */
+.einklapp { margin-top: 14px; border: 1px solid var(--b-linie); border-radius: 14px; background: var(--b-karte); }
+.einklapp-kopf { list-style: none; cursor: pointer; min-height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-weight: 800; font-size: calc(17rem / 17); color: var(--b-text); }
+.einklapp-kopf::-webkit-details-marker { display: none; }
+.einklapp-kopf::after { content: "›"; font-size: calc(24rem / 17); color: var(--b-text-leise); transition: transform .15s; }
+.einklapp[open] > .einklapp-kopf::after { transform: rotate(90deg); }
+.einklapp-inhalt { padding: 0 12px 12px; }
+[dir="rtl"] .einklapp-kopf::after { content: "‹"; }

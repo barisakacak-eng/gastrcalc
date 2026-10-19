@@ -1,5 +1,6 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
+import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
@@ -708,6 +709,7 @@ async function aufKlick(ev) {
   }
 }
 root.addEventListener("click", aufKlick);
+root.addEventListener("toggle", (e) => { const k = e.target?.dataset?.klapp; if (k) { if (e.target.open) offeneKlappen.add(k); else offeneKlappen.delete(k); } }, true); // Entrümpelung Punkt 4
 ebeneHuelle()?.addEventListener("click", aufKlick); // Blätter liegen außerhalb von #app
 
 root.addEventListener("contextmenu", (ev) => { if (ev.target.closest('[data-a="schloss"]')) ev.preventDefault(); });

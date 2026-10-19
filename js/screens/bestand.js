@@ -2,6 +2,7 @@
 // „Lager jetzt“ (Bestand, Reichweite, Wert, Sicherheit in einfachen Wörtern) und die Einstellungen (Tage, Puffer, Mindestbestand je Ware).
 // Rechnen tut nur js/bestand.js; hier stehen Aufbau, Texte und data-Attribute. Nur vorhandene Klassen der Büro-Bildschirme, kein eigenes CSS.
 // Personal-Modus: der Bereich ist dort nicht erreichbar (modus.js lässt nur Personal, Müll, Kühlung, Putzen zu).
+import { einklappen } from "./bausteine.js"; // Entrümpelung Punkt 4
 import { wareBild } from "./muell.js"; // Design B (19.10.2026): Foto je Bestellzeile
 import { t, einheitLabel, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
@@ -82,8 +83,8 @@ function lagerView(bs) {
     return `<div class="summenzeile"><span><b>${esc(artikelText(w.name))}</b><br><small>${esc(menge)} · ${esc(reichtText(w))} · ${esc(sicher.replace(/ \(\)$/, ""))}</small></span><span class="wert">${esc(w.wert === null ? (w.bestand === null ? "–" : t("inventur.preisFehlt")) : euro(w.wert))}</span></div>`;
   };
   const summe = mit.reduce((s, w) => s + (w.wert || 0), 0);
-  return `<h2 class="inv-ue">${esc(t("bestand.lagerTitel"))}</h2><p class="hinweis">${esc(t("bestand.lagerStand", kurz(bs.inventur.datum)))}</p>
-    <div class="karte">${mit.map(zeile).join("")}<div class="summenzeile gesamt"><span>${esc(t("bestand.lagerWert"))}</span><span class="wert">${esc(euro(summe))}</span></div></div>${was(t("bestand.wasLager"))}`;
+  return einklappen("bestand-lager", t("bestand.lagerTitel"), `<p class="hinweis">${esc(t("bestand.lagerStand", kurz(bs.inventur.datum)))}</p>
+    <div class="karte">${mit.map(zeile).join("")}<div class="summenzeile gesamt"><span>${esc(t("bestand.lagerWert"))}</span><span class="wert">${esc(euro(summe))}</span></div></div>${was(t("bestand.wasLager"))}`);
 }
 
 function hinweiseView(bs) {
@@ -104,9 +105,8 @@ function einstellungenView(stand, bs) {
       <button type="button" class="knopf glut" data-a="best-mindest-speichern">${esc(t("bestand.speichern"))}</button>
       <button type="button" class="leise" data-a="best-mindest-zu">${esc(t("bestand.zu"))}</button>`
     : waren.length ? `<button type="button" class="knopf zweit" data-a="best-mindest-auf">${esc(t("bestand.mindest"))}</button>` : "";
-  return `<h2 class="inv-ue">${esc(t("bestand.einstellungenTitel"))}</h2>
-    <div class="karte"><p><b>${esc(t("bestand.tage"))}</b></p>${chips(TAGE_WAHL, tage, "best-tage")}<p><b>${esc(t("bestand.puffer"))}</b></p>${chips(PUFFER_WAHL, puffer, "best-puffer")}</div>
-    ${mindest}`;
+  return einklappen("bestand-einstellungen", t("bestand.einstellungenTitel"), `<div class="karte"><p><b>${esc(t("bestand.tage"))}</b></p>${chips(TAGE_WAHL, tage, "best-tage")}<p><b>${esc(t("bestand.puffer"))}</b></p>${chips(PUFFER_WAHL, puffer, "best-puffer")}</div>
+    ${mindest}`);
 }
 
 // ---------- Teilen ----------

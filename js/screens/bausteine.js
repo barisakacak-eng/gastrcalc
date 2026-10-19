@@ -6,6 +6,12 @@ import { esc, fmtZahl } from "../util.js";
 // ---------- Fortschrittsringe ----------
 // Zwei Gestaltungen, wie bisher: der große Ring der Einrichtung (vorher home.js, CSS-Klasse „ring“) und der kleine Büro-Ring
 // (vorher buero.js, Klasse „b-ring“). Sie zeichnen verschieden aus; eine gemeinsame Gestaltung ist eine Entscheidung für das neue Frontend.
+// Entrümpelung Punkt 4 (freigegeben 18.10.2026): lange Seiten – Nebenteile eingeklappt. Offen bleibt offen, auch wenn die Seite neu zeichnet.
+export const offeneKlappen = new Set();
+export function einklappen(schluessel, titel, inhalt) {
+  if (!inhalt) return "";
+  return `<details class="einklapp" data-klapp="${esc(schluessel)}"${offeneKlappen.has(schluessel) ? " open" : ""}><summary class="einklapp-kopf">${esc(titel)}</summary><div class="einklapp-inhalt">${inhalt}</div></details>`;
+}
 export function ring(prozent, klein = false) {
   const r = 26, u = 2 * Math.PI * r;
   return `<svg class="ring ${klein ? "klein" : ""}" viewBox="0 0 64 64" role="img" aria-label="${prozent} %"><circle class="ring-grund" cx="32" cy="32" r="${r}"/><circle class="ring-wert" cx="32" cy="32" r="${r}" stroke-dasharray="${(u * prozent / 100).toFixed(1)} ${u.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">${prozent}</text></svg>`;
