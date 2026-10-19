@@ -353,7 +353,8 @@ export default {
   },
 
   profil: { kern: (art) => `Pentru localul tău: ${art}`, kernAllgemein: "Pentru localul tău", oft: "Des folosite și", weitere: "Alte categorii", weitereAuf: (n) => `Arată alte categorii (${n})`, weitereZu: "Ascunde alte categorii", aus: (b) => `din: ${b}` },
-  selbst: { gemacht: "Făcut în casă", errechnet: "calculat", ansatz: (z, aus, min) => `Rețetă de bază: ${z} dă ${aus}, cam ${min} minute de lucru.`, fehlt: (n) => `Preț deschis. Lipsesc prețurile de cumpărare pentru: ${n}`, dochKaufen: "Totuși îl cumpărăm gata", machenSelbst: "Îl facem noi" },
+  selbst: { gemacht: "Făcut în casă", errechnet: "calculat", ansatz: (z, aus, min) => `Rețetă de bază: ${z} dă ${aus}, cam ${min} minute de lucru.`, fehlt: (n) => `Preț deschis. Lipsesc prețurile de cumpărare pentru: ${n}`, dochKaufen: "Totuși îl cumpărăm gata", machenSelbst: "Îl facem noi" ,
+    deinAnsatz: "rețeta ta", bearbeiten: "Scrie rețeta ta", zutaten: "Ce intră în ea?", zutatDazu: "+ Adaugă ingredient", deineWaren: "Mărfurile tale", alleWaren: "Toate mărfurile", leer: "Încă nu sunt ingrediente. Alege primul mai jos.", weg: "Scoate ingredientul", ergibt: "Asta dă", als: { gewicht: "Greutate", stueck: "Bucăți" }, anzahl: "Câte bucăți?", gewicht: "Grame pe bucată", gJeStueck: "g pe bucată", arbeit: "minute de lucru", jeAnsatz: (x) => `${x} pe șarjă`, jeStueck: (x) => `${x} pe bucată`, je50: (x) => `${x} la 50 g`, bisher: (x) => `până acum ${x}`, ausbeuteFehlt: "Preț deschis. Scrie cât dă o șarjă.", mengeFehlt: "Preț deschis. La un ingredient lipsește cantitatea.", einmalWiegen: "Valori de start. Cântărește o dată șarja ta și scrie-o aici, atunci valoarea pe bucată e corectă." },
   stempel: { schaetzung: "≈ estimat · valoare de pornire", pilot: "Valoare dintr-un local pilot", branche: (n) => `Valoare din branșă · ${nr(n, "sursă", "surse")}`, eigen: "✓ valoarea ta", eigenAm: (d) => `✓ valoarea ta · cântărit pe ${d}`, "eigen-abgeleitet": "✓ ~ valoarea ta (preluată)",
     kurz: { schaetzung: "estimat", pilot: "local pilot", branche: "valoare din branșă", eigen: "valoarea ta", "eigen-abgeleitet": "~ valoarea ta" },
     erklaerung: { schaetzung: "Estimat înseamnă: așa fac multe localuri. Al tău poate face altfel. Cântărește o dată și atunci e corect.", pilot: "Cantitatea asta a cântărit-o un local adevărat. Al tău poate face altfel.", branche: "Cantitatea asta vine din mai multe surse din branșă. Localul tău poate face altfel.", eigen: "Cantitatea asta ai trecut-o sau ai cântărit-o tu. Aplicația n-o schimbă niciodată.", "eigen-abgeleitet": "Ingredientul ăsta l-ai cântărit la alt preparat. Aplicația a preluat aici cantitatea ta. Îl poți cântări separat." } },
@@ -861,6 +862,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml pe bucată", stueckGewichtFrage: "Cât cântărește o bucată?", optional: "dacă știi",
     wasKaufst: "Ce cumperi?",
     inhalt: (art) => `Conținut pe ${art}`,
     preis: (art) => `Preț pe ${art}`,
@@ -1129,7 +1131,7 @@ export default {
     tempoGut: (d) => `În plan · ${d}`, tempoKnapp: (b) => `${b} / zi necesar`, ohneKosten: "Lipsesc costurile fixe",
     kachel: { umsatz: "Încasări azi", muell: "Deșeuri azi", kuehlung: "Răcire", putzen: "Curățenie" },
     ok: "OK", offenN: (n) => `${n} deschise`, jetztDran: "Acum",
-    dran: { einkauf: "Introdu prețurile de achiziție", rezepte: "Cântărește rețetele", zuWarm: (s) => `${s} prea cald`, zuKalt: (s) => `${s} prea rece`, nachmessen: "Măsoară din nou", rundgang: "Rundă de răcire", rundgangWeiter: "Continuă runda",
+    dran: { selbst: (n) => `${n}: scrie rețeta`, einkauf: "Introdu prețurile de achiziție", rezepte: "Cântărește rețetele", zuWarm: (s) => `${s} prea cald`, zuKalt: (s) => `${s} prea rece`, nachmessen: "Măsoară din nou", rundgang: "Rundă de răcire", rundgangWeiter: "Continuă runda",
       putzen: (n) => (n === 1 ? "1 sarcină întârziată" : `${nr(n, "sarcină", "sarcini")} întârziate`), sicherung: "Fă o copie", sichern: "Salvează", abschluss: "Închide ziua", los: "Start" },
     offen: { fassung: "Versiune nouă a aplicației, gata", einrichtung: (p, s) => `Configurare ${p} % – urmează: ${s}`, kosten: "Costuri fixe sau salarii incomplete",
       karteGrau: (n) => (n === 1 ? "1 preparat fără preț sau rețetă" : `${nr(n, "preparat", "preparate")} fără preț sau rețetă`), waage: (n) => (n === 1 ? "1 rețetă estimată – cântărește o dată" : `${nr(n, "rețetă", "rețete")} estimate – cântărește o dată`),

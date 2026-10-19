@@ -346,7 +346,14 @@ export default {
   },
 
   profil: { kern: (art) => `Für deinen Laden: ${art}`, kernAllgemein: "Für deinen Laden", oft: "Auch oft dabei", weitere: "Weitere Bereiche", weitereAuf: (n) => `Weitere Bereiche zeigen (${n})`, weitereZu: "Weitere Bereiche zuklappen", aus: (b) => `aus: ${b}` },
-  selbst: { gemacht: "Selbst gemacht", errechnet: "errechnet", ansatz: (z, aus, min) => `Ansatz: ${z} ergibt ${aus}, etwa ${min} Minuten Arbeit.`, fehlt: (n) => `Preis offen. Es fehlen Einkaufspreise für: ${n}`, dochKaufen: "Kaufen wir doch fertig", machenSelbst: "Machen wir selbst" },
+  selbst: { gemacht: "Selbst gemacht", errechnet: "errechnet", ansatz: (z, aus, min) => `Ansatz: ${z} ergibt ${aus}, etwa ${min} Minuten Arbeit.`, fehlt: (n) => `Preis offen. Es fehlen Einkaufspreise für: ${n}`, dochKaufen: "Kaufen wir doch fertig", machenSelbst: "Machen wir selbst",
+    // Selbst gemacht als Unterrezept (19.10.2026)
+    deinAnsatz: "dein Ansatz", bearbeiten: "Ansatz eintragen", zutaten: "Was kommt rein?", zutatDazu: "+ Zutat dazu", deineWaren: "Deine Waren", alleWaren: "Alle Waren",
+    leer: "Noch keine Zutaten. Wähle unten die erste.", weg: "Zutat entfernen", ergibt: "Das ergibt", als: { gewicht: "Gewicht", stueck: "Stück" },
+    anzahl: "Wie viele Stück?", gewicht: "Gramm je Stück", gJeStueck: "g je Stück", arbeit: "Minuten Arbeit",
+    jeAnsatz: (x) => `${x} je Ansatz`, jeStueck: (x) => `${x} je Stück`, je50: (x) => `${x} je 50 g`, bisher: (x) => `bisher ${x}`,
+    ausbeuteFehlt: "Preis offen. Trag ein, was ein Ansatz ergibt.", mengeFehlt: "Preis offen. Bei einer Zutat fehlt die Menge.",
+    einmalWiegen: "Startwerte. Wieg deinen Ansatz einmal ab und trag ihn hier ein, dann stimmt der Wert je Stück." },
   stempel: { schaetzung: "≈ geschätzt · Startwert", pilot: "Wert aus einem Pilotbetrieb", branche: (n) => `Branchenwert · ${n} Quellen`, eigen: "✓ dein Wert", eigenAm: (d) => `✓ dein Wert · gewogen am ${d}`, "eigen-abgeleitet": "✓ ~ dein Wert (übertragen)",
     kurz: { schaetzung: "geschätzt", pilot: "Pilotbetrieb", branche: "Branchenwert", eigen: "dein Wert", "eigen-abgeleitet": "~ dein Wert" },
     erklaerung: { schaetzung: "Geschätzt heißt: So machen es viele Imbisse. Dein Laden ist vielleicht anders. Wieg einmal ab, dann stimmt es.", pilot: "Diese Menge hat ein echter Laden gewogen. Dein Laden ist vielleicht anders.", branche: "Diese Menge kommt aus mehreren Quellen der Branche. Dein Laden ist vielleicht anders.", eigen: "Diese Menge hast du selbst eingetragen oder gewogen. Die App ändert sie nie.", "eigen-abgeleitet": "Du hast diese Zutat bei einem anderen Gericht gewogen. Die App hat deine Menge hier übertragen. Du kannst sie einzeln nachwiegen." } },
@@ -855,6 +862,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml je Stück", stueckGewichtFrage: "Wie schwer ist ein Stück?", optional: "wenn bekannt", // Teil 2 (19.10.2026)
     wasKaufst: "Was kaufst du?",
     inhalt: (art) => `Inhalt je ${art}`,
     preis: (art) => `Preis je ${art}`,
@@ -1125,7 +1133,7 @@ export default {
     tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",
     kachel: { umsatz: "Umsatz heute", muell: "Müll heute", kuehlung: "Kühlung", putzen: "Putzen" },
     ok: "OK", offenN: (n) => `${n} offen`, jetztDran: "Jetzt dran",
-    dran: { einkauf: "Einkaufspreise eintragen", rezepte: "Rezepte abwiegen", zuWarm: (s) => `${s} zu warm`, zuKalt: (s) => `${s} zu kalt`, nachmessen: "Nachmessen", rundgang: "Kühlrundgang", rundgangWeiter: "Rundgang fortsetzen",
+    dran: { selbst: (n) => `${n}: Ansatz eintragen`, einkauf: "Einkaufspreise eintragen", rezepte: "Rezepte abwiegen", zuWarm: (s) => `${s} zu warm`, zuKalt: (s) => `${s} zu kalt`, nachmessen: "Nachmessen", rundgang: "Kühlrundgang", rundgangWeiter: "Rundgang fortsetzen",
       putzen: (n) => n === 1 ? "1 Aufgabe überfällig" : `${n} Aufgaben überfällig`, sicherung: "Sicherung machen", sichern: "Sichern", abschluss: "Tag abschließen", los: "Los" },
     offen: { fassung: "Neue App-Fassung liegt bereit", einrichtung: (p, s) => `Einrichtung ${p} % – als Nächstes: ${s}`, kosten: "Feste Kosten oder Löhne unvollständig",
       karteGrau: (n) => n === 1 ? "1 Gericht ohne Preis oder Rezept" : `${n} Gerichte ohne Preis oder Rezept`, waage: (n) => n === 1 ? "1 Rezept geschätzt – einmal abwiegen" : `${n} Rezepte geschätzt – einmal abwiegen`,

@@ -2,7 +2,7 @@
 // Laden „Heute“ zeigt höchstens EINE Aufgabe („Jetzt dran“) aus einer festen Liste (jetztDran). Alles andere, was früher das Cockpit
 // gefüllt hat (Einrichtungsring, Kostenlücken, Waage-Vorschlag, graue Gerichte, Hinweise, neue Fassung …), liefert offenImBuero()
 // als Liste für die Büro-Startseite. Reine Logik, kein HTML.
-import { t } from "./i18n.js";
+import { t, artikelText } from "./i18n.js";
 import { kuehlstelleAnzeige } from "./kuehlname.js"; // Paket 6 (17.10.2026)
 import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
 import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, rundgangOffen, offeneWareEntscheidungen, ruhetageAm, wochentag } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
@@ -57,6 +57,9 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
   //    im Laden, bis beides erledigt ist (nur außerhalb der Hauptzeiten, nie im Beispiel-Laden).
   if (!stand.beispiel && stand.phase === "app" && !istHauptzeit(h)) {
     const e = einrichtungImTakt(stand, wurzel); const schritt = (id) => e.schritte.find((x) => x.id === id);
+    // Selbst gemacht zuerst: den Ansatz kennt der Wirt auswendig, dafür braucht es keine Rechnung (Baris 19.10.2026: so früh wie möglich)
+    const so = schritt("rezepte")?.selbstOffen || [];
+    if (so.length && (stand.gerichte || []).length) return { id: "selbst", ton: "normal", symbol: "chef-hat", titel: t("heute.dran.selbst", artikelText(so[0])), knopf: t("heute.dran.los"), ziel: { aktion: "bearbeiten", schritt: "preise" } };
     if (schritt("einkauf") && !schritt("einkauf").fertig && (stand.gerichte || []).length) return { id: "einkauf", ton: "normal", symbol: "receipt", titel: t("heute.dran.einkauf"), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "beleg" } };
     if (schritt("rezepte") && !schritt("rezepte").fertig) return { id: "rezepte", ton: "normal", symbol: "chef-hat", titel: t("heute.dran.rezepte"), knopf: t("heute.dran.los"), ziel: schritt("rezepte").ziel };
   }

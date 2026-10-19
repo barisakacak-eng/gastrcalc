@@ -290,3 +290,19 @@ span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
 /* Amt-Ordner: Pflichtnachweise oben (gezählt), darunter Angaben ohne Haken (Prüfer 19.10.2026) */
 .b-status.info { background: var(--papier-tief); color: var(--b-text-leise); font-weight: 800; font-size: calc(13rem / 17); }
 .b-trenner { height: 1px; background: var(--b-linie); margin: 6px 0; }
+
+/* Selbst gemacht als Unterrezept (19.10.2026, Teil 1): Ansatz-Editor in der Einkaufsliste */
+.sz { display: grid; gap: calc(8rem/17); }
+.sz-titel { font-weight: 700; font-size: calc(15rem/17); margin-top: calc(6rem/17); color: var(--tinte, inherit); }
+.sz-zeile { display: grid; grid-template-columns: 1fr calc(76rem/17) auto calc(58rem/17) calc(36rem/17); align-items: center; gap: calc(6rem/17); }
+.sz-zeile .sz-name { font-size: calc(15rem/17); overflow-wrap: anywhere; }
+.sz-zeile input { width: 100%; min-height: calc(44rem/17); }
+.sz-zeile .sz-wert { font-size: calc(14rem/17); text-align: right; opacity: .8; }
+.sz-weg { min-width: calc(36rem/17); min-height: calc(44rem/17); border: 0; background: transparent; font-size: calc(22rem/17); color: var(--rot, #b3261e); cursor: pointer; }
+.sz-neu { width: 100%; min-height: calc(44rem/17); font-size: calc(15rem/17); border-radius: calc(10rem/17); padding: 0 calc(10rem/17); }
+.sz .packung { display: flex; flex-wrap: wrap; align-items: center; gap: calc(6rem/17); }
+.sz .packung input { width: calc(90rem/17); min-height: calc(44rem/17); }
+/* Teil 2: Stückzahl × Stückgewicht in einer Zeile */
+.stk-reihe { display: flex; flex-basis: 100%; flex-wrap: nowrap; align-items: center; gap: calc(6rem/17); }
+.stk-reihe input { width: calc(72rem/17) !important; min-width: 0; }
+.stk-reihe .einheit { white-space: nowrap; }

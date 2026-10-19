@@ -25,7 +25,7 @@
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026)
-import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNettoGebinde, istRichtpreis, tagPlus, SCHWUND_ARTEN } from "./engine.js";
+import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNettoGebinde, istRichtpreis, tagPlus, SCHWUND_ARTEN, mengeInArtikelBasis, mengeInBasisVon, stueckGewicht } from "./engine.js";
 import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber, inventurAbTag, inventurBisTag } from "./inventur.js";
 import { uid, heute, heuteGeschaeft, geschaeftstag } from "./util.js";
 import { zipLesen, istZip } from "./zip.js";
@@ -471,15 +471,15 @@ export function verkaufJeGericht(stand, z) {
 export function selbstAufRohware(a, menge, einheit, idx) {
   const r = a?.herkunft === "selbst" ? a.rezept : null; if (!r) return null;
   const out = []; const probleme = [];
-  const aus = r.ausbeute; const bA = EINHEITEN[aus?.einheit]?.basis; const bZ = EINHEITEN[einheit]?.basis;
-  if (!(aus?.menge > 0) || !bZ || bA !== bZ) return { bedarf: out, probleme: [{ name: a.name, grund: "einheit" }] };
-  const anteil = inBasis(menge, einheit) / inBasis(aus.menge, aus.einheit);
+  const aus = r.ausbeute; const mA = aus?.menge > 0 ? mengeInBasisVon(menge, einheit, aus.einheit, stueckGewicht(a)) : null; // 19.10.2026: „2 Ballen“ über das Stückgewicht
+  if (mA === null) return { bedarf: out, probleme: [{ name: a.name, grund: "einheit" }] };
+  const anteil = mA / inBasis(aus.menge, aus.einheit);
   for (const rz of r.zutaten || []) {
     const ra = idx[rz.name]; const bR = EINHEITEN[rz.einheit]?.basis;
     if (!ra || ra.herkunft === "selbst") { probleme.push({ name: rz.name, grund: "unbekannt", ueber: a.name }); continue; }
     if (!(Number(rz.menge) > 0) || !bR) { probleme.push({ name: rz.name, grund: "menge", ueber: a.name }); continue; }
-    const bRa = EINHEITEN[ra.packung?.einheit || ra.einheit]?.basis; if (bRa && bRa !== bR) { probleme.push({ name: rz.name, grund: "einheit", ueber: a.name }); continue; }
-    out.push({ name: rz.name, menge: inBasis(rz.menge, rz.einheit) * anteil, basis: bR, ueber: a.name });
+    const mR = mengeInArtikelBasis(rz.menge, rz.einheit, ra); if (mR === null) { probleme.push({ name: rz.name, grund: "einheit", ueber: a.name }); continue; }
+    out.push({ name: rz.name, menge: mR * anteil, basis: EINHEITEN[ra.packung?.einheit || ra.einheit]?.basis || bR, ueber: a.name });
   }
   return { bedarf: out, probleme };
 }
@@ -491,11 +491,12 @@ export function bedarfGericht(g, idx) {
     if (!a) { probleme.push({ name: z.name, grund: "unbekannt" }); continue; }
     if (!(Number(z.menge) > 0) || !bZ) { probleme.push({ name: z.name, grund: "menge" }); continue; }
     if (a.herkunft === "selbst" && a.rezept) { const s = selbstAufRohware(a, z.menge, z.einheit, idx); out.push(...s.bedarf); probleme.push(...s.probleme); continue; }
-    const bA = EINHEITEN[a.packung?.einheit || a.einheit]?.basis;
-    if (bA && bA !== bZ) { probleme.push({ name: z.name, grund: "einheit" }); continue; }
-    const roh = rohmengeFuer(inBasis(z.menge, z.einheit), garverlustAnteil(a).wert);
+    const bA = EINHEITEN[a.packung?.einheit || a.einheit]?.basis || bZ;
+    const mZ = mengeInArtikelBasis(z.menge, z.einheit, a); // 19.10.2026: Stück ↔ Gramm über das Stückgewicht
+    if (mZ === null) { probleme.push({ name: z.name, grund: "einheit" }); continue; }
+    const roh = rohmengeFuer(mZ, garverlustAnteil(a).wert);
     if (roh === null) { probleme.push({ name: z.name, grund: "menge" }); continue; }
-    out.push({ name: z.name, menge: mitSchankverlust(roh, schankAnteil(g, z.name)), basis: bZ }); // Getränke (18.10.2026): offenes Getränk – Schankverlust wie in warenGericht
+    out.push({ name: z.name, menge: mitSchankverlust(roh, schankAnteil(g, z.name)), basis: bA }); // Getränke (18.10.2026): offenes Getränk – Schankverlust wie in warenGericht
   }
   return { bedarf: out, probleme };
 }

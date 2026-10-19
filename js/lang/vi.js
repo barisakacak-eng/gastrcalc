@@ -347,7 +347,8 @@ export default {
   },
 
   profil: { kern: (art) => `Cho quán của bạn: ${art}`, kernAllgemein: "Cho quán của bạn", oft: "Cũng hay có", weitere: "Nhóm khác", weitereAuf: (n) => `Xem thêm nhóm khác (${n})`, weitereZu: "Thu gọn nhóm khác", aus: (b) => `từ: ${b}` },
-  selbst: { gemacht: "Tự làm", errechnet: "đã tính", ansatz: (z, aus, min) => `Mẻ: ${z} ra được ${aus}, khoảng ${min} phút làm.`, fehlt: (n) => `Chưa có giá. Còn thiếu giá mua của: ${n}`, dochKaufen: "Thôi mua sẵn", machenSelbst: "Mình tự làm" },
+  selbst: { gemacht: "Tự làm", errechnet: "đã tính", ansatz: (z, aus, min) => `Mẻ: ${z} ra được ${aus}, khoảng ${min} phút làm.`, fehlt: (n) => `Chưa có giá. Còn thiếu giá mua của: ${n}`, dochKaufen: "Thôi mua sẵn", machenSelbst: "Mình tự làm" ,
+    deinAnsatz: "công thức của bạn", bearbeiten: "Nhập công thức của bạn", zutaten: "Cho gì vào?", zutatDazu: "+ Thêm nguyên liệu", deineWaren: "Hàng của bạn", alleWaren: "Tất cả hàng", leer: "Chưa có nguyên liệu. Chọn cái đầu tiên ở dưới.", weg: "Bỏ nguyên liệu", ergibt: "Ra được", als: { gewicht: "Cân nặng", stueck: "Cái" }, anzahl: "Bao nhiêu cái?", gewicht: "Gam mỗi cái", gJeStueck: "g mỗi cái", arbeit: "phút làm", jeAnsatz: (x) => `${x} mỗi mẻ`, jeStueck: (x) => `${x} mỗi cái`, je50: (x) => `${x} mỗi 50 g`, bisher: (x) => `đến giờ ${x}`, ausbeuteFehlt: "Giá còn trống. Nhập một mẻ ra được bao nhiêu.", mengeFehlt: "Giá còn trống. Một nguyên liệu thiếu số lượng.", einmalWiegen: "Giá trị ban đầu. Cân mẻ của bạn một lần và nhập vào đây, khi đó giá mỗi cái mới đúng." },
   stempel: { schaetzung: "≈ ước tính · số khởi đầu", pilot: "Số từ một quán thử nghiệm", branche: (n) => `Số của ngành · ${n} nguồn`, eigen: "✓ số của bạn", eigenAm: (d) => `✓ số của bạn · cân ngày ${d}`, "eigen-abgeleitet": "✓ ~ số của bạn (lấy từ món khác)",
     kurz: { schaetzung: "ước tính", pilot: "quán thử nghiệm", branche: "số của ngành", eigen: "số của bạn", "eigen-abgeleitet": "~ số của bạn" },
     erklaerung: { schaetzung: "Ước tính nghĩa là: nhiều quán ăn nhanh làm như vậy. Quán bạn có thể khác. Cân thử một lần là chuẩn.", pilot: "Định lượng này do một quán thật cân. Quán bạn có thể khác.", branche: "Định lượng này lấy từ nhiều nguồn trong ngành. Quán bạn có thể khác.", eigen: "Định lượng này do bạn tự điền hoặc tự cân. App không bao giờ đổi nó.", "eigen-abgeleitet": "Bạn đã cân nguyên liệu này ở một món khác. App đã lấy định lượng của bạn qua đây. Bạn có thể cân lại riêng." } },
@@ -854,6 +855,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml mỗi cái", stueckGewichtFrage: "Một cái nặng bao nhiêu?", optional: "nếu biết",
     wasKaufst: "Bạn mua gì?",
     inhalt: (art) => `Bên trong mỗi ${art}`,
     preis: (art) => `Giá mỗi ${art}`,
@@ -1122,7 +1124,7 @@ export default {
     tempoGut: (d) => `Đúng kế hoạch · ${d}`, tempoKnapp: (b) => `Cần ${b} / ngày`, ohneKosten: "Thiếu chi phí cố định",
     kachel: { umsatz: "Doanh thu hôm nay", muell: "Rác hôm nay", kuehlung: "Làm lạnh", putzen: "Dọn dẹp" },
     ok: "OK", offenN: (n) => `${n} chưa xong`, jetztDran: "Làm ngay",
-    dran: { einkauf: "Nhập giá mua", rezepte: "Cân công thức", zuWarm: (s) => `${s} quá nóng`, zuKalt: (s) => `${s} quá lạnh`, nachmessen: "Đo lại", rundgang: "Đi đo nhiệt độ", rundgangWeiter: "Đo tiếp",
+    dran: { selbst: (n) => `${n}: nhập công thức`, einkauf: "Nhập giá mua", rezepte: "Cân công thức", zuWarm: (s) => `${s} quá nóng`, zuKalt: (s) => `${s} quá lạnh`, nachmessen: "Đo lại", rundgang: "Đi đo nhiệt độ", rundgangWeiter: "Đo tiếp",
       putzen: (n) => `${n} việc quá hạn`, sicherung: "Sao lưu ngay", sichern: "Sao lưu", abschluss: "Kết thúc ngày", los: "Làm" },
     offen: { fassung: "Có bản app mới", einrichtung: (p, s) => `Cài đặt ${p} % – tiếp theo: ${s}`, kosten: "Chi phí cố định hoặc lương chưa đủ",
       karteGrau: (n) => `${n} món chưa có giá hoặc công thức`, waage: (n) => `${n} công thức ước tính – cân một lần`,

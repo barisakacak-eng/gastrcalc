@@ -349,7 +349,8 @@ export default {
   },
 
   profil: { kern: (art) => `لمحلك: ${art}`, kernAllgemein: "لمحلك", oft: "موجود غالبًا أيضًا", weitere: "أقسام أخرى", weitereAuf: (n) => `عرض أقسام أخرى (${n})`, weitereZu: "إخفاء الأقسام الأخرى", aus: (b) => `من: ${b}` },
-  selbst: { gemacht: "صناعة بأيدينا", errechnet: "محسوب", ansatz: (z, aus, min) => `الطريقة: ${z} تعطي ${aus}، تقريبًا ${min} دقيقة شغل.`, fehlt: (n) => `السعر ناقص. أسعار الشراء ناقصة لـ: ${n}`, dochKaufen: "نشتريه جاهزًا", machenSelbst: "نعمله بأنفسنا" },
+  selbst: { gemacht: "صناعة بأيدينا", errechnet: "محسوب", ansatz: (z, aus, min) => `الطريقة: ${z} تعطي ${aus}، تقريبًا ${min} دقيقة شغل.`, fehlt: (n) => `السعر ناقص. أسعار الشراء ناقصة لـ: ${n}`, dochKaufen: "نشتريه جاهزًا", machenSelbst: "نعمله بأنفسنا" ,
+    deinAnsatz: "وصفتك", bearbeiten: "أدخل وصفتك", zutaten: "ماذا يدخل فيها؟", zutatDazu: "+ أضف مكوّناً", deineWaren: "بضاعتك", alleWaren: "كل البضائع", leer: "لا توجد مكوّنات بعد. اختر الأول من الأسفل.", weg: "احذف المكوّن", ergibt: "هذا يعطي", als: { gewicht: "الوزن", stueck: "قطع" }, anzahl: "كم قطعة؟", gewicht: "غرام للقطعة", gJeStueck: "غ للقطعة", arbeit: "دقائق عمل", jeAnsatz: (x) => `${x} للدفعة`, jeStueck: (x) => `${x} للقطعة`, je50: (x) => `${x} لكل 50 غ`, bisher: (x) => `حتى الآن ${x}`, ausbeuteFehlt: "السعر مفتوح. أدخل ما تعطيه الدفعة الواحدة.", mengeFehlt: "السعر مفتوح. ينقص مقدار أحد المكوّنات.", einmalWiegen: "قيم بداية. زن دفعتك مرة واحدة وأدخلها هنا، عندها يصبح سعر القطعة صحيحاً." },
   stempel: { schaetzung: "≈ تقدير · قيمة بداية", pilot: "قيمة من محل تجريبي", branche: (n) => `قيمة من السوق · المصادر: ${n}`, eigen: "✓ قيمتك", eigenAm: (d) => `✓ قيمتك · وُزنت في ${d}`, "eigen-abgeleitet": "✓ ~ قيمتك (منقولة)",
     kurz: { schaetzung: "تقدير", pilot: "محل تجريبي", branche: "قيمة السوق", eigen: "قيمتك", "eigen-abgeleitet": "~ قيمتك" },
     erklaerung: { schaetzung: "تقدير يعني: هكذا تعمل محلات إمبيس كثيرة. محلك ربما مختلف. زِن مرة واحدة، وهكذا يصير صحيحًا.", pilot: "هذه الكمية وزنها محل حقيقي. محلك ربما مختلف.", branche: "هذه الكمية من عدة مصادر في السوق. محلك ربما مختلف.", eigen: "هذه الكمية أدخلتها أو وزنتها بنفسك. التطبيق لا يغيّرها أبدًا.", "eigen-abgeleitet": "وزنت هذا المكوّن في طبق آخر. التطبيق نقل كميتك إلى هنا. يمكنك أن تزنه هنا لوحده." } },
@@ -856,6 +857,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "مل للقطعة", stueckGewichtFrage: "كم تزن القطعة الواحدة؟", optional: "إن كنت تعرف",
     wasKaufst: "ماذا تشتري؟",
     inhalt: (art) => `المحتوى لكل ${art}`,
     preis: (art) => `السعر لكل ${art}`,
@@ -1124,7 +1126,7 @@ export default {
     tempoGut: (d) => `حسب الخطة · ${d}`, tempoKnapp: (b) => `مطلوب ${b} / يوم`, ohneKosten: "التكاليف الثابتة ناقصة",
     kachel: { umsatz: "مبيعات اليوم", muell: "هدر اليوم", kuehlung: "التبريد", putzen: "التنظيف" },
     ok: "OK", offenN: (n) => `مفتوح: ${n}`, jetztDran: "الآن",
-    dran: { einkauf: "أدخل أسعار الشراء", rezepte: "زِن وصفاتك", zuWarm: (s) => `${s} دافئ جدًا`, zuKalt: (s) => `${s} بارد جدًا`, nachmessen: "قِس مرة أخرى", rundgang: "جولة التبريد", rundgangWeiter: "تابع الجولة",
+    dran: { selbst: (n) => `${n}: أدخل وصفتك`, einkauf: "أدخل أسعار الشراء", rezepte: "زِن وصفاتك", zuWarm: (s) => `${s} دافئ جدًا`, zuKalt: (s) => `${s} بارد جدًا`, nachmessen: "قِس مرة أخرى", rundgang: "جولة التبريد", rundgangWeiter: "تابع الجولة",
       putzen: (n) => `متأخر: ${pl(n, "مهمة واحدة", "مهمتان", "مهام", "مهمة")}`, sicherung: "اعمل نسخة احتياطية", sichern: "احفظ", abschluss: "أغلق اليوم", los: "ابدأ" },
     offen: { fassung: "نسخة جديدة من التطبيق جاهزة", einrichtung: (p, s) => `الإعداد ${p} % – التالي: ${s}`, kosten: "التكاليف الثابتة أو الرواتب ناقصة",
       karteGrau: (n) => `بدون سعر أو وصفة: ${pl(n, "طبق واحد", "طبقان", "أطباق", "طبقًا")}`, waage: (n) => `تقديري: ${pl(n, "وصفة واحدة", "وصفتان", "وصفات", "وصفة")} – زِن مرة واحدة`,

@@ -345,7 +345,8 @@ export default {
   },
 
   profil: { kern: (art) => `For your shop: ${art}`, kernAllgemein: "For your shop", oft: "Also common", weitere: "More areas", weitereAuf: (n) => `Show more areas (${n})`, weitereZu: "Hide more areas", aus: (b) => `from: ${b}` },
-  selbst: { gemacht: "Made in-house", errechnet: "calculated", ansatz: (z, aus, min) => `Batch: ${z} makes ${aus}, about ${min} minutes of work.`, fehlt: (n) => `Price open. Purchase prices missing for: ${n}`, dochKaufen: "We buy it ready-made", machenSelbst: "We make it ourselves" },
+  selbst: { gemacht: "Made in-house", errechnet: "calculated", ansatz: (z, aus, min) => `Batch: ${z} makes ${aus}, about ${min} minutes of work.`, fehlt: (n) => `Price open. Purchase prices missing for: ${n}`, dochKaufen: "We buy it ready-made", machenSelbst: "We make it ourselves" ,
+    deinAnsatz: "your batch", bearbeiten: "Enter your batch", zutaten: "What goes in?", zutatDazu: "+ Add ingredient", deineWaren: "Your goods", alleWaren: "All goods", leer: "No ingredients yet. Pick the first one below.", weg: "Remove ingredient", ergibt: "That makes", als: { gewicht: "Weight", stueck: "Pieces" }, anzahl: "How many pieces?", gewicht: "Grams per piece", gJeStueck: "g per piece", arbeit: "minutes of work", jeAnsatz: (x) => `${x} per batch`, jeStueck: (x) => `${x} per piece`, je50: (x) => `${x} per 50 g`, bisher: (x) => `so far ${x}`, ausbeuteFehlt: "Price open. Enter what one batch makes.", mengeFehlt: "Price open. One ingredient has no amount.", einmalWiegen: "Starting values. Weigh your batch once and enter it here, then the value per piece is right." },
   stempel: { schaetzung: "≈ estimated · starting value", pilot: "Value from a pilot shop", branche: (n) => `Industry value · ${n} sources`, eigen: "✓ your value", eigenAm: (d) => `✓ your value · weighed on ${d}`, "eigen-abgeleitet": "✓ ~ your value (carried over)",
     kurz: { schaetzung: "estimated", pilot: "pilot shop", branche: "industry value", eigen: "your value", "eigen-abgeleitet": "~ your value" },
     erklaerung: { schaetzung: "Estimated means: many snack bars do it like this. Your shop may be different. Weigh it once and it is right.", pilot: "A real shop weighed this amount. Your shop may be different.", branche: "This amount comes from several industry sources. Your shop may be different.", eigen: "You entered or weighed this amount yourself. The app never changes it.", "eigen-abgeleitet": "You weighed this ingredient for another dish. The app carried your amount over. You can weigh it here separately." } },
@@ -854,6 +855,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml per piece", stueckGewichtFrage: "How heavy is one piece?", optional: "if known",
     wasKaufst: "What do you buy?",
     inhalt: (art) => `Content per ${art}`,
     preis: (art) => `Price per ${art}`,
@@ -1123,7 +1125,7 @@ export default {
     tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
     kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },
     ok: "OK", offenN: (n) => `${n} open`, jetztDran: "Up next",
-    dran: { einkauf: "Enter purchase prices", rezepte: "Weigh your recipes", zuWarm: (s) => `${s} too warm`, zuKalt: (s) => `${s} too cold`, nachmessen: "Re-check", rundgang: "Fridge round", rundgangWeiter: "Continue round",
+    dran: { selbst: (n) => `${n}: enter your batch`, einkauf: "Enter purchase prices", rezepte: "Weigh your recipes", zuWarm: (s) => `${s} too warm`, zuKalt: (s) => `${s} too cold`, nachmessen: "Re-check", rundgang: "Fridge round", rundgangWeiter: "Continue round",
       putzen: (n) => n === 1 ? "1 task overdue" : `${n} tasks overdue`, sicherung: "Make a backup", sichern: "Back up", abschluss: "Close the day", los: "Go" },
     offen: { fassung: "New app version ready", einrichtung: (p, s) => `Setup ${p} % – next: ${s}`, kosten: "Fixed costs or wages incomplete",
       karteGrau: (n) => n === 1 ? "1 dish without price or recipe" : `${n} dishes without price or recipe`, waage: (n) => n === 1 ? "1 recipe estimated – weigh it once" : `${n} recipes estimated – weigh them once`,

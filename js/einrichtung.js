@@ -29,6 +29,10 @@ export function einrichtungStand(stand, wurzel = null, { jetzt = Date.now() } = 
   const rezeptWert = (g) => { if (g.klasse === "getraenk" || g.rezeptBewusstLeer) return 1; if (!(g.zutaten || []).length) return 0; const st = rezeptStempel(g).stufe; return st === "eigen" || st === "eigen-abgeleitet" ? 1 : 0.5; };
   const mitRezept = speisen.reduce((x, g) => x + rezeptWert(g), 0);
   const artikel = (stand.artikel || []).filter((a) => a.benutzt !== false);
+  // „Go beide“ (19.10.2026): selbst gemachte Teile (Teig, Soßen) zählen wie Rezepte – eigener Ansatz voll, Startwerte halb.
+  const selbstTeile = artikel.filter((a) => a.herkunft === "selbst" && a.rezept);
+  const selbstSumme = selbstTeile.reduce((x, a) => x + (a.rezept.quelle === "eigen" ? 1 : 0.5), 0);
+  const selbstOffen = selbstTeile.filter((a) => a.rezept.quelle !== "eigen").map((a) => a.name);
   // Richtpreise (17.10.2026): zählen NICHT als erledigt (sonst trägt der Wirt nie nach). Rezept-Startwerte zählen hier voll – das ist
   // bewusst anders: ein Startwert ist eine Menge, die meist passt; ein Richtpreis ist ein fremder Preis. Anteil für Richtpreise: 0.
   const mitEk = artikel.filter((a) => preisJeBasis(a) !== null && !istRichtpreis(a)).length;
@@ -41,7 +45,7 @@ export function einrichtungStand(stand, wurzel = null, { jetzt = Date.now() } = 
   const schritte = [
     { id: "karte", anteil: speisen.length ? 1 : 0, rest: speisen.length ? 0 : 1, ziel: { aktion: "nav", wert: "kartefoto" } },
     { id: "preise", anteil: anteil(mitPreis, speisen.length), rest: speisen.length - mitPreis, ziel: { aktion: "nav", wert: "kartefoto" } },
-    { id: "rezepte", anteil: anteil(mitRezept, speisen.length), rest: Math.ceil(speisen.length - mitRezept), ziel: { aktion: "bearbeiten", schritt: "rezepte" } },
+    { id: "rezepte", anteil: anteil(mitRezept + selbstSumme, speisen.length + selbstTeile.length), rest: Math.ceil(speisen.length + selbstTeile.length - mitRezept - selbstSumme), selbstOffen, ziel: { aktion: "bearbeiten", schritt: "rezepte" } },
     { id: "kosten", anteil: k.anteil, rest: k.fehlt.length, fehlt: k.fehlt, ziel: { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" } },
     { id: "einkauf", anteil: anteil(mitEk, artikel.length), rest: artikel.length - mitEk, ziel: { aktion: "nav", wert: "beleg" } },
     { id: "kuehlung", anteil: kuehlFertig ? 1 : 0, rest: kuehlFertig ? 0 : 1, ziel: { aktion: "nav", wert: "kuehl" } },

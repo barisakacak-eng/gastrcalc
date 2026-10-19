@@ -346,7 +346,8 @@ export default {
   },
 
   profil: { kern: (art) => `Ji bo dikana te: ${art}`, kernAllgemein: "Ji bo dikana te", oft: "Ev jî gelek caran hene", weitere: "Beşên din", weitereAuf: (n) => `Beşên din nîşan bide (${n})`, weitereZu: "Beşên din bigire", aus: (b) => `ji: ${b}` },
-  selbst: { gemacht: "Bi destê xwe", errechnet: "hesabkirî", ansatz: (z, aus, min) => `Rêbaz: ${z} dibe ${aus}, nêzîkî ${min} deqe kar.`, fehlt: (n) => `Biha vala ye. Bihayên kirînê kêm in ji bo: ${n}`, dochKaufen: "Em amade dikirin", machenSelbst: "Em bi xwe çêdikin" },
+  selbst: { gemacht: "Bi destê xwe", errechnet: "hesabkirî", ansatz: (z, aus, min) => `Rêbaz: ${z} dibe ${aus}, nêzîkî ${min} deqe kar.`, fehlt: (n) => `Biha vala ye. Bihayên kirînê kêm in ji bo: ${n}`, dochKaufen: "Em amade dikirin", machenSelbst: "Em bi xwe çêdikin" ,
+    deinAnsatz: "reçeteya te", bearbeiten: "Reçeteya xwe binivîse", zutaten: "Çi dikeve hundir?", zutatDazu: "+ Malzeme zêde bike", deineWaren: "Malên te", alleWaren: "Hemû mal", leer: "Hîn malzeme tune. Ya yekem ji jêr hilbijêre.", weg: "Malzemeyê jê bibe", ergibt: "Ev dide", als: { gewicht: "Giranî", stueck: "Hejmar" }, anzahl: "Çend hebe?", gewicht: "Gram ji bo hebekê", gJeStueck: "g / heb", arbeit: "deqe kar", jeAnsatz: (x) => `${x} ji bo carekê`, jeStueck: (x) => `${x} ji bo hebekê`, je50: (x) => `${x} ji bo 50 g`, bisher: (x) => `heta niha ${x}`, ausbeuteFehlt: "Biha vekirî ye. Binivîse carekê çiqas dide.", mengeFehlt: "Biha vekirî ye. Mîqdara malzemeyekê kêm e.", einmalWiegen: "Nirxên destpêkê. Carekê reçeteya xwe bikişîne û li vir binivîse, wê demê nirxa hebekê rast e." },
   stempel: { schaetzung: "≈ texmînî · nirxa destpêkê", pilot: "Nirx ji dikaneke ceribandinê", branche: (n) => `Nirxa sektorê · ${n} çavkanî`, eigen: "✓ nirxa te", eigenAm: (d) => `✓ nirxa te · di ${d} de hate kişandin`, "eigen-abgeleitet": "✓ ~ nirxa te (veguhastî)",
     kurz: { schaetzung: "texmînî", pilot: "dikana ceribandinê", branche: "nirxa sektorê", eigen: "nirxa te", "eigen-abgeleitet": "~ nirxa te" },
     erklaerung: { schaetzung: "Texmînî tê wateya: gelek imbiss wisa dikin. Dikana te belkî cuda ye. Carekê bikişîne, wê demê rast dibe.", pilot: "Vê mîqdarê dikaneke rastîn kişandiye. Dikana te belkî cuda ye.", branche: "Ev mîqdar ji çend çavkaniyên sektorê ye. Dikana te belkî cuda ye.", eigen: "Te ev mîqdar bi xwe nivîsandiye an kişandiye. App qet wê naguherîne.", "eigen-abgeleitet": "Te ev malzeme di xwarineke din de kişand. App mîqdara te li vir veguhast. Tu dikarî wê cuda dîsa bikişînî." } },
@@ -853,6 +854,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml / heb", stueckGewichtFrage: "Hebek çiqas giran e?", optional: "heke dizanî",
     wasKaufst: "Tu çi dikirî?",
     inhalt: (art) => `Naverok ji bo her ${art}`,
     preis: (art) => `Biha ji bo her ${art}`,
@@ -1121,7 +1123,7 @@ export default {
     tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",
     kachel: { umsatz: "Firotina îro", muell: "Çopa îro", kuehlung: "Sarkirin", putzen: "Paqijî" },
     ok: "OK", offenN: (n) => `${n} vekirî`, jetztDran: "Niha",
-    dran: { einkauf: "Bihayên kirînê binivîse", rezepte: "Reçeteyan bikêşe", zuWarm: (s) => `${s} pir germ e`, zuKalt: (s) => `${s} pir sar e`, nachmessen: "Dîsa bipîve", rundgang: "Gera sarkirinê", rundgangWeiter: "Gerê bidomîne",
+    dran: { selbst: (n) => `${n}: reçeteyê binivîse`, einkauf: "Bihayên kirînê binivîse", rezepte: "Reçeteyan bikêşe", zuWarm: (s) => `${s} pir germ e`, zuKalt: (s) => `${s} pir sar e`, nachmessen: "Dîsa bipîve", rundgang: "Gera sarkirinê", rundgangWeiter: "Gerê bidomîne",
       putzen: (n) => `${n} kar dereng mane`, sicherung: "Kopiyê çêke", sichern: "Tomar bike", abschluss: "Rojê bigire", los: "Dest pê bike" },
     offen: { fassung: "Guhertoya nû ya sepanê amade ye", einrichtung: (p, s) => `Sazkirin ${p} % – ya din: ${s}`, kosten: "Lêçûnên sabît an meaş ne temam in",
       karteGrau: (n) => `${n} xwarin bê biha an reçete`, waage: (n) => `${n} reçete texmînî ne – carekê bikêşe`,

@@ -36,6 +36,9 @@ export function gebindeSatz(a) {
   const k = gebindeKette(a); const art = t("gebinde.arten." + (k[0].art || "packung"));
   const einheit = einheitLabel(k[0].einheit);
   if (!k[0].inhalt) return art;
+  const st = a.gebinde?.stueck; // Teil 2 (19.10.2026): „Karton à 40 Stück × 250 g“
+  const inhalt0 = st?.anzahl > 0 && st?.gewicht > 0 ? `${zahlKurz(st.anzahl)} ${t("allgemein.stueck")} × ${zahlKurz(st.gewicht)}` : zahlKurz(k[0].inhalt);
+  if (st?.anzahl > 0 && st?.gewicht > 0 && !k[1]) return t("gebinde.satz", art, null, null, inhalt0, einheit);
   return k[1] ? t("gebinde.satz", art, k[1].anzahl, t("gebinde.arten." + k[1].art), zahlKurz(k[1].inhalt), einheit) : t("gebinde.satz", art, null, null, zahlKurz(k[0].inhalt), einheit);
 }
 // Inventur-Fassung: Gebindeart aus der Inventurzeile, ohne Packungsinhalt nur die Art (vorher screens/inventur.js gebindeZeile).

@@ -24,7 +24,10 @@ export function journalZeile(z, belegBasis) {
   const netto = z.gesamt === null ? null : basis === "brutto" ? (satz === null ? null : z.gesamt / (1 + satz)) : z.gesamt;
   const inhaltEinheit = z.inhalt?.einheit ? EINHEIT_APP[z.inhalt.einheit] || "stk" : null;
   const inhaltMenge = z.inhalt?.groesse !== null && z.inhalt?.groesse !== undefined ? (z.inhalt.anzahl ?? 1) * z.inhalt.groesse * (z.inhalt.einheit === "cl" ? 10 : 1) : (z.inhalt?.anzahl ?? null);
-  return { name: z.name, artikel: z.bekannt || null, menge: z.menge, gebinde: z.gebinde || null, inhaltMenge, inhaltEinheit, inhaltAnzahl: z.inhalt?.anzahl ?? null,
+  // Teil 2 (19.10.2026): „Falafel 50x20g“ – das Stückgewicht steckt in der Größe je Stück (bei Stück-Ware in inhaltAlt)
+  const gStk = (i) => (i && i.anzahl > 1 && i.groesse > 0 && (i.einheit === "g" || i.einheit === "kg") ? i.groesse * (i.einheit === "kg" ? 1000 : 1) : null);
+  const stueckGewicht = inhaltEinheit === "stk" ? gStk(z.inhaltAlt) : gStk(z.inhalt);
+  return { name: z.name, artikel: z.bekannt || null, menge: z.menge, gebinde: z.gebinde || null, inhaltMenge, inhaltEinheit, inhaltAnzahl: z.inhalt?.anzahl ?? null, ...(stueckGewicht ? { stueckGewicht } : {}),
     einzelpreis: z.einzelpreis, jeKg: !!z.jeKg, gesamt: z.gesamt, netto, steuersatz: satz, jeEinheit: je.preis, jeEinheitEinheit: je.einheit, sicher: !!z.sicher };
 }
 
@@ -95,7 +98,11 @@ export function preiseUebernehmen(stand, lieferung) {
     preisMerken(a, lieferung.datum);
     const preisNetto = z.netto !== null && z.menge ? z.netto / Math.abs(z.menge) : null; if (preisNetto === null) continue;
     a.packung = { menge: z.inhaltMenge, einheit: z.inhaltEinheit };
-    a.gebinde = { art: gebindeArtApp(z.gebinde), zwischen: z.inhaltAnzahl > 1 && z.inhaltMenge !== z.inhaltAnzahl ? { art: "packung", anzahl: z.inhaltAnzahl } : null };
+    // Teil 2 (19.10.2026): führt der Wirt die Ware „nach Stück“ (gebinde.stueck), bleibt das so – mit Anzahl und Stückgewicht vom Beleg
+    const stueckModus = !!a.gebinde?.stueck && z.inhaltAnzahl > 1 && z.stueckGewicht > 0;
+    a.gebinde = { art: gebindeArtApp(z.gebinde), zwischen: !stueckModus && z.inhaltAnzahl > 1 && z.inhaltMenge !== z.inhaltAnzahl ? { art: "packung", anzahl: z.inhaltAnzahl } : null };
+    if (stueckModus) a.gebinde.stueck = { anzahl: z.inhaltAnzahl, gewicht: z.stueckGewicht };
+    if (z.stueckGewicht > 0 && (stueckModus || z.inhaltEinheit === "stk")) a.stueckGewicht = z.stueckGewicht; // Gramm-Rezepte für Stück-Ware
     a.preis = Math.round(preisNetto * 100) / 100; a.preisBasis = "netto"; a.status = "bekannt"; a.preisDatum = lieferung.datum; delete a.richtpreis;
     const neu = preisJeBasis(a);
     if (alt !== null && neu !== null && Math.abs(neu - alt) > 1e-9) aenderungen.push({ name: a.name, alt, neu, prozent: alt > 0 ? (neu - alt) / alt : null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });

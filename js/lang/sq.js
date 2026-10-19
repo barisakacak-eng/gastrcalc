@@ -352,7 +352,8 @@ export default {
   },
 
   profil: { kern: (art) => `Për lokalin tënd: ${art}`, kernAllgemein: "Për lokalin tënd", oft: "Shpesh edhe këto", weitere: "Fusha të tjera", weitereAuf: (n) => `Shfaq fushat e tjera (${n})`, weitereZu: "Mbyll fushat e tjera", aus: (b) => `nga: ${b}` },
-  selbst: { gemacht: "E bëjmë vetë", errechnet: "llogaritur", ansatz: (z, aus, min) => `Llogaria: ${z} jep ${aus}, rreth ${min} minuta punë.`, fehlt: (n) => `Çmimi ende i panjohur. Mungojnë çmimet e blerjes për: ${n}`, dochKaufen: "Më mirë e blejmë gati", machenSelbst: "E bëjmë vetë" },
+  selbst: { gemacht: "E bëjmë vetë", errechnet: "llogaritur", ansatz: (z, aus, min) => `Llogaria: ${z} jep ${aus}, rreth ${min} minuta punë.`, fehlt: (n) => `Çmimi ende i panjohur. Mungojnë çmimet e blerjes për: ${n}`, dochKaufen: "Më mirë e blejmë gati", machenSelbst: "E bëjmë vetë" ,
+    deinAnsatz: "receta jote", bearbeiten: "Shkruaj recetën tënde", zutaten: "Çfarë hyn brenda?", zutatDazu: "+ Shto përbërës", deineWaren: "Mallrat e tua", alleWaren: "Të gjitha mallrat", leer: "Ende pa përbërës. Zgjidh të parin më poshtë.", weg: "Hiq përbërësin", ergibt: "Kjo jep", als: { gewicht: "Pesha", stueck: "Copë" }, anzahl: "Sa copë?", gewicht: "Gram për copë", gJeStueck: "g për copë", arbeit: "minuta punë", jeAnsatz: (x) => `${x} për brumë`, jeStueck: (x) => `${x} për copë`, je50: (x) => `${x} për 50 g`, bisher: (x) => `deri tani ${x}`, ausbeuteFehlt: "Çmimi i hapur. Shkruaj sa jep një brumë.", mengeFehlt: "Çmimi i hapur. Një përbërësi i mungon sasia.", einmalWiegen: "Vlera fillestare. Peshoje një herë brumin tënd dhe shkruaje këtu, atëherë vlera për copë është e saktë." },
   stempel: { schaetzung: "≈ përafërsisht · vlerë fillestare", pilot: "Vlerë nga një lokal pilot", branche: (n) => `Vlerë e degës · ${sn(n, "burim", "burime")}`, eigen: "✓ vlera jote", eigenAm: (d) => `✓ vlera jote · peshuar më ${d}`, "eigen-abgeleitet": "✓ ~ vlera jote (e bartur)",
     kurz: { schaetzung: "përafërsisht", pilot: "lokal pilot", branche: "vlerë e degës", eigen: "vlera jote", "eigen-abgeleitet": "~ vlera jote" },
     erklaerung: { schaetzung: "Përafërsisht do të thotë: kështu e bëjnë shumë imbiss-e. Lokali yt mund të jetë ndryshe. Peshoje një herë dhe del e saktë.", pilot: "Këtë sasi e ka peshuar një lokal i vërtetë. Lokali yt mund të jetë ndryshe.", branche: "Kjo sasi vjen nga disa burime të degës. Lokali yt mund të jetë ndryshe.", eigen: "Këtë sasi e ke shkruar ose peshuar vetë. Aplikacioni nuk e ndryshon kurrë.", "eigen-abgeleitet": "Këtë përbërës e ke peshuar te një pjatë tjetër. Aplikacioni e ka bartur sasinë tënde këtu. Mund ta peshosh veç." } },
@@ -859,6 +860,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml për copë", stueckGewichtFrage: "Sa peshon një copë?", optional: "nëse e di",
     wasKaufst: "Çfarë blen?",
     inhalt: (art) => `Përmbajtja për ${art}`,
     preis: (art) => `Çmimi për ${art}`,
@@ -1127,7 +1129,7 @@ export default {
     tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",
     kachel: { umsatz: "Xhiroja sot", muell: "Mbeturina sot", kuehlung: "Ftohja", putzen: "Pastrimi" },
     ok: "OK", offenN: (n) => `${n} të hapura`, jetztDran: "Tani",
-    dran: { einkauf: "Shkruaj çmimet e blerjes", rezepte: "Peshoji recetat", zuWarm: (s) => `${s} shumë ngrohtë`, zuKalt: (s) => `${s} shumë ftohtë`, nachmessen: "Mat përsëri", rundgang: "Raundi i ftohjes", rundgangWeiter: "Vazhdo raundin",
+    dran: { selbst: (n) => `${n}: shkruaj recetën`, einkauf: "Shkruaj çmimet e blerjes", rezepte: "Peshoji recetat", zuWarm: (s) => `${s} shumë ngrohtë`, zuKalt: (s) => `${s} shumë ftohtë`, nachmessen: "Mat përsëri", rundgang: "Raundi i ftohjes", rundgangWeiter: "Vazhdo raundin",
       putzen: (n) => (n === 1 ? "1 detyrë me vonesë" : `${n} detyra me vonesë`), sicherung: "Bëj kopjen", sichern: "Ruaj", abschluss: "Mbyll ditën", los: "Fillo" },
     offen: { fassung: "Version i ri i aplikacionit gati", einrichtung: (p, s) => `Rregullimi ${p} % – më pas: ${s}`, kosten: "Shpenzimet fikse ose rrogat jo të plota",
       karteGrau: (n) => `${sn(n, "pjatë", "pjata")} pa çmim ose recetë`, waage: (n) => (n === 1 ? "1 recetë e vlerësuar – peshoje një herë" : `${n} receta të vlerësuara – peshoji një herë`),

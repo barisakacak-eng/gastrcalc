@@ -347,7 +347,8 @@ export default {
   },
 
   profil: { kern: (art) => `Per il tuo locale: ${art}`, kernAllgemein: "Per il tuo locale", oft: "Spesso c'è anche", weitere: "Altre categorie", weitereAuf: (n) => `Mostra altre categorie (${n})`, weitereZu: "Chiudi altre categorie", aus: (b) => `da: ${b}` },
-  selbst: { gemacht: "Fatto in casa", errechnet: "calcolato", ansatz: (z, aus, min) => `Base: ${z} dà ${aus}, circa ${min} minuti di lavoro.`, fehlt: (n) => `Prezzo aperto. Mancano i prezzi d'acquisto di: ${n}`, dochKaufen: "Allora lo compriamo pronto", machenSelbst: "Lo facciamo noi" },
+  selbst: { gemacht: "Fatto in casa", errechnet: "calcolato", ansatz: (z, aus, min) => `Base: ${z} dà ${aus}, circa ${min} minuti di lavoro.`, fehlt: (n) => `Prezzo aperto. Mancano i prezzi d'acquisto di: ${n}`, dochKaufen: "Allora lo compriamo pronto", machenSelbst: "Lo facciamo noi" ,
+    deinAnsatz: "la tua ricetta", bearbeiten: "Inserisci la tua ricetta", zutaten: "Cosa ci va dentro?", zutatDazu: "+ Aggiungi ingrediente", deineWaren: "I tuoi prodotti", alleWaren: "Tutti i prodotti", leer: "Ancora nessun ingrediente. Scegli il primo qui sotto.", weg: "Togli ingrediente", ergibt: "Questo dà", als: { gewicht: "Peso", stueck: "Pezzi" }, anzahl: "Quanti pezzi?", gewicht: "Grammi per pezzo", gJeStueck: "g per pezzo", arbeit: "minuti di lavoro", jeAnsatz: (x) => `${x} per impasto`, jeStueck: (x) => `${x} al pezzo`, je50: (x) => `${x} ogni 50 g`, bisher: (x) => `finora ${x}`, ausbeuteFehlt: "Prezzo aperto. Inserisci quanto rende un impasto.", mengeFehlt: "Prezzo aperto. A un ingrediente manca la quantità.", einmalWiegen: "Valori di partenza. Pesa il tuo impasto una volta e inseriscilo qui, così il valore al pezzo è giusto." },
   stempel: { schaetzung: "≈ stima · valore di partenza", pilot: "Valore da un locale pilota", branche: (n) => `Valore del settore · ${n} ${n === 1 ? "fonte" : "fonti"}`, eigen: "✓ tuo valore", eigenAm: (d) => `✓ tuo valore · pesato il ${d}`, "eigen-abgeleitet": "✓ ~ tuo valore (riportato)",
     kurz: { schaetzung: "stima", pilot: "locale pilota", branche: "valore del settore", eigen: "tuo valore", "eigen-abgeleitet": "~ tuo valore" },
     erklaerung: { schaetzung: "Stima vuol dire: così fanno molti snack bar. Il tuo locale magari è diverso. Pesa una volta e sarà giusto.", pilot: "Questa quantità l'ha pesata un locale vero. Il tuo magari è diverso.", branche: "Questa quantità viene da più fonti del settore. Il tuo locale magari è diverso.", eigen: "Questa quantità l'hai inserita o pesata tu. L'app non la cambia mai.", "eigen-abgeleitet": "Questo ingrediente l'hai pesato in un altro piatto. L'app ha riportato qui la tua quantità. Puoi ripesarlo anche qui." } },
@@ -855,6 +856,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml per pezzo", stueckGewichtFrage: "Quanto pesa un pezzo?", optional: "se lo sai",
     wasKaufst: "Cosa compri?",
     inhalt: (art) => `Contenuto per ${art}`,
     preis: (art) => `Prezzo per ${art}`,
@@ -1123,7 +1125,7 @@ export default {
     tempoGut: (d) => `In linea · ${d}`, tempoKnapp: (b) => `Servono ${b} / giorno`, ohneKosten: "Mancano i costi fissi",
     kachel: { umsatz: "Incasso oggi", muell: "Scarti oggi", kuehlung: "Frigo", putzen: "Pulizie" },
     ok: "OK", offenN: (n) => `${n} da fare`, jetztDran: "Tocca a te",
-    dran: { einkauf: "Inserisci i prezzi d'acquisto", rezepte: "Pesa le ricette", zuWarm: (s) => `${s} troppo caldo`, zuKalt: (s) => `${s} troppo freddo`, nachmessen: "Rimisura", rundgang: "Giro frigo", rundgangWeiter: "Continua il giro",
+    dran: { selbst: (n) => `${n}: inserisci la ricetta`, einkauf: "Inserisci i prezzi d'acquisto", rezepte: "Pesa le ricette", zuWarm: (s) => `${s} troppo caldo`, zuKalt: (s) => `${s} troppo freddo`, nachmessen: "Rimisura", rundgang: "Giro frigo", rundgangWeiter: "Continua il giro",
       putzen: (n) => n === 1 ? "1 compito in ritardo" : `${n} compiti in ritardo`, sicherung: "Fai il backup", sichern: "Salva", abschluss: "Chiudi la giornata", los: "Vai" },
     offen: { fassung: "Nuova versione dell'app pronta", einrichtung: (p, s) => `Impostazione ${p} % – prossimo: ${s}`, kosten: "Costi fissi o stipendi incompleti",
       karteGrau: (n) => n === 1 ? "1 piatto senza prezzo o ricetta" : `${n} piatti senza prezzo o ricetta`, waage: (n) => n === 1 ? "1 ricetta stimata – pesala una volta" : `${n} ricette stimate – pesale una volta`,

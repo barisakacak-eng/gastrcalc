@@ -210,6 +210,28 @@ export function preisNettoGebinde(artikel) {
   if (artikel.preis === null || artikel.preis === undefined || !(Number(artikel.preis) > 0)) return null;
   return artikel.preisBasis === "brutto" ? nettoVonBrutto(artikel.preis, steuersatzArtikel(artikel)) : artikel.preis;
 }
+// Stück ↔ Gewicht (Baris 19.10.2026, Spezifikation „Selbstgemacht und Gebinde“): ein Artikel kann ein Stückgewicht haben
+// (g bzw. ml je Stück) – eigenes Feld stueckGewicht, sonst bei selbst Gemachtem aus der Stück-Ausbeute („40 Ballen à 250 g“).
+// Damit lassen sich Rezepte in Stück und Einkauf in Gramm (oder umgekehrt) verrechnen. Ohne Stückgewicht wird nie geraten.
+export function stueckGewicht(a) {
+  if (Number(a?.stueckGewicht) > 0) return Number(a.stueckGewicht);
+  const s = a?.herkunft === "selbst" ? a.rezept?.stueck : null;
+  return Number(s?.gewicht) > 0 ? Number(s.gewicht) : null;
+}
+// Menge (menge, einheit) in der Basis einer Ziel-Einheit, mit Stückgewicht sg als Brücke. null = nicht umrechenbar.
+export function mengeInBasisVon(menge, einheit, zielEinheit, sg = null) {
+  const von = EINHEITEN[einheit]?.basis, nach = EINHEITEN[zielEinheit]?.basis;
+  if (!von || !nach) return null;
+  const m = inBasis(menge, einheit);
+  if (von === nach) return m;
+  if (!(sg > 0)) return null;
+  if (von === "stk" && nach !== "stk") return m * sg;
+  if (nach === "stk" && von !== "stk") return m / sg;
+  return null; // g gegen ml: nicht raten
+}
+// Menge einer Zutat in der Basis des Artikels (seiner Packung).
+export const mengeInArtikelBasis = (menge, einheit, a) => mengeInBasisVon(menge, einheit, a?.packung?.einheit || a?.einheit, stueckGewicht(a));
+
 // Preis je Basiseinheit (g, ml, Stück) eines Artikels aus Gebindeinhalt und Gebindepreis, netto. null = Preis fehlt.
 export function preisJeBasis(artikel) {
   const p = preisNettoGebinde(artikel);
@@ -272,11 +294,12 @@ export function warenGericht(gericht, artikelIndex) {
     const pj = a ? preisJeBasis(a) : null;
     if (pj === null) { fehlt.push(z.name); continue; }
     if (!(Number(z.menge) > 0)) { fehlt.push(z.name); continue; }                      // Menge fehlt: kein 0-€-Posten
-    if ((EINHEITEN[z.einheit]?.basis) !== (EINHEITEN[a.packung?.einheit]?.basis)) { fehlt.push(z.name); continue; } // g gegen Stück: nicht rechnen
+    const mBasis = mengeInArtikelBasis(z.menge, z.einheit, a); // 19.10.2026: Stück ↔ Gramm über das Stückgewicht
+    if (mBasis === null) { fehlt.push(z.name); continue; } // g gegen Stück ohne Stückgewicht: nicht rechnen
     const gv = a ? garverlustAnteil(a) : { wert: 0 };
     if (gv.status === "geschaetzt") geschaetzt = true;
     if (preisGeschaetzt(a)) { geschaetzt = true; richtpreis = true; } // Richtpreise (17.10.2026): Wareneinsatz mit Richtpreis = Schätzung (≈)
-    const roh0 = rohmengeFuer(inBasis(z.menge, z.einheit), gv.wert);
+    const roh0 = rohmengeFuer(mBasis, gv.wert);
     if (roh0 === null) { fehlt.push(z.name); continue; }
     const roh = mitSchankverlust(roh0, schankAnteil(gericht, z.name)); // Getränke (18.10.2026): Ausschank / (1 − Schankverlust), Standard 0
     waren += roh * pj;
@@ -333,16 +356,32 @@ export function artikelAusGerichten(stand) {
 // arbeitGeld (Minuten × Minutensatz) dient nur dem Vergleich „selbst oder gekauft". Nur eine Stufe: Rohstoffe sind gekaufte Artikel.
 export function zwischenpreis(artikel, artikelIndex, minutensatz = null) {
   const r = artikel.rezept; if (!r || !(r.ausbeute?.menge > 0)) return { preis: null, arbeitGeld: null, fehlt: ["rezept"] };
-  let material = 0; const fehlt = []; let richtpreis = false;
+  let material = 0; const fehlt = []; let richtpreis = false; const teile = [];
   for (const z of r.zutaten || []) {
     const a = artikelIndex[z.name];
     const pj = a && a.herkunft !== "selbst" ? preisJeBasis(a) : null;
-    if (pj === null || !(Number(z.menge) > 0) || EINHEITEN[z.einheit]?.basis !== EINHEITEN[a.packung?.einheit]?.basis) { fehlt.push(z.name); continue; }
-    material += inBasis(z.menge, z.einheit) * pj;
+    const mB = pj === null ? null : mengeInArtikelBasis(z.menge, z.einheit, a);
+    if (pj === null || !(Number(z.menge) > 0) || mB === null) { fehlt.push(z.name); continue; }
+    material += mB * pj; teile.push({ name: z.name, wert: mB * pj });
     if (istRichtpreis(a)) richtpreis = true; // Richtpreise (17.10.2026): das Teil erbt die Schätzung
   }
   const arbeitGeld = minutensatz === null ? null : (Number(r.arbeitMin) || 0) * minutensatz;
-  return { preis: fehlt.length ? null : material, arbeitGeld, fehlt, richtpreis };
+  return { preis: fehlt.length ? null : material, bisher: material, teile, arbeitGeld, fehlt, richtpreis };
+}
+
+// Warenwert eines selbst gemachten Teils (19.10.2026): je Ansatz, je kg/l, je Stück (Ballen, Fladen) und je 50 g (Soße auf dem Teller).
+// Nur, was sich ohne Annahme rechnen lässt: je Stück braucht Stückzahl oder Stückgewicht, je 50 g eine Gewichtsausbeute.
+export function selbstWerte(a) {
+  const pj = preisJeBasis(a); if (pj === null) return null;
+  const basis = EINHEITEN[a.packung?.einheit || a.einheit]?.basis; const sg = stueckGewicht(a);
+  const anzahl = Number(a.rezept?.stueck?.anzahl) > 0 ? Number(a.rezept.stueck.anzahl) : null;
+  const ansatz = Number(a.preis);
+  return {
+    ansatz, basis,
+    jeKg: basis === "stk" ? (sg ? pj / sg * 1000 : null) : pj * 1000,
+    jeStueck: basis === "stk" ? pj : sg ? pj * sg : anzahl ? ansatz / anzahl : null,
+    je50: basis === "g" ? pj * 50 : basis === "stk" && sg ? pj / sg * 50 : null,
+  };
 }
 
 // Rechnet die Preise aller selbst gemachten Artikel neu und schreibt sie wie einen Einkaufspreis (netto, je Ausbeute) an den Artikel.
@@ -369,8 +408,8 @@ export function zeitMitZwischen(gericht, artikelIndex) {
   for (const z of gericht.zutaten || []) {
     const a = artikelIndex[z.name]; const r = a?.herkunft === "selbst" ? a.rezept : null;
     if (!r || !(r.ausbeute?.menge > 0) || !(Number(r.arbeitMin) > 0)) continue;
-    if (EINHEITEN[z.einheit]?.basis !== EINHEITEN[r.ausbeute.einheit]?.basis) continue;
-    extra += r.arbeitMin * inBasis(z.menge, z.einheit) / inBasis(r.ausbeute.menge, r.ausbeute.einheit);
+    const m = mengeInBasisVon(z.menge, z.einheit, r.ausbeute.einheit, stueckGewicht(a)); if (m === null) continue;
+    extra += r.arbeitMin * m / inBasis(r.ausbeute.menge, r.ausbeute.einheit);
   }
   return (Number(gericht.zeit) || 0) + extra;
 }

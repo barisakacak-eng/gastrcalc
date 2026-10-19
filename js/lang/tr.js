@@ -346,7 +346,8 @@ export default {
   },
 
   profil: { kern: (art) => `Senin dükkânın için: ${art}`, kernAllgemein: "Senin dükkânın için", oft: "Sık olanlar", weitere: "Diğer alanlar", weitereAuf: (n) => `Diğer alanları göster (${n})`, weitereZu: "Diğer alanları kapat", aus: (b) => `şuradan: ${b}` },
-  selbst: { gemacht: "Kendimiz yapıyoruz", errechnet: "hesaplandı", ansatz: (z, aus, min) => `Tarif: ${z}, sonuç ${aus}, yaklaşık ${min} dakika iş.`, fehlt: (n) => `Fiyat açık. Şunların alış fiyatı eksik: ${n}`, dochKaufen: "Hazır alıyoruz", machenSelbst: "Kendimiz yapıyoruz" },
+  selbst: { gemacht: "Kendimiz yapıyoruz", errechnet: "hesaplandı", ansatz: (z, aus, min) => `Tarif: ${z}, sonuç ${aus}, yaklaşık ${min} dakika iş.`, fehlt: (n) => `Fiyat açık. Şunların alış fiyatı eksik: ${n}`, dochKaufen: "Hazır alıyoruz", machenSelbst: "Kendimiz yapıyoruz" ,
+    deinAnsatz: "senin tarifin", bearbeiten: "Tarifini gir", zutaten: "İçine ne giriyor?", zutatDazu: "+ Malzeme ekle", deineWaren: "Senin malların", alleWaren: "Tüm mallar", leer: "Henüz malzeme yok. Aşağıdan ilkini seç.", weg: "Malzemeyi sil", ergibt: "Bundan çıkan", als: { gewicht: "Ağırlık", stueck: "Adet" }, anzahl: "Kaç adet?", gewicht: "Adet başı gram", gJeStueck: "g / adet", arbeit: "dakika iş", jeAnsatz: (x) => `Tarif başı ${x}`, jeStueck: (x) => `Adet başı ${x}`, je50: (x) => `50 g başı ${x}`, bisher: (x) => `şimdiye kadar ${x}`, ausbeuteFehlt: "Fiyat açık. Bir tariften ne çıktığını gir.", mengeFehlt: "Fiyat açık. Bir malzemenin miktarı eksik.", einmalWiegen: "Başlangıç değerleri. Tarifini bir kere tart ve buraya gir, o zaman adet başı değer doğru olur." },
   stempel: { schaetzung: "≈ tahmini · başlangıç değeri", pilot: "Pilot işletmeden değer", branche: (n) => `Sektör değeri · ${n} kaynak`, eigen: "✓ senin değerin", eigenAm: (d) => `✓ senin değerin · ${d} tarihinde tartıldı`, "eigen-abgeleitet": "✓ ~ senin değerin (aktarıldı)",
     kurz: { schaetzung: "tahmini", pilot: "pilot işletme", branche: "sektör değeri", eigen: "senin değerin", "eigen-abgeleitet": "~ senin değerin" },
     erklaerung: { schaetzung: "Tahmini demek: Birçok büfe böyle yapıyor. Senin dükkânın farklı olabilir. Bir kez tart, doğru olsun.", pilot: "Bu miktarı gerçek bir dükkân tarttı. Senin dükkânın farklı olabilir.", branche: "Bu miktar sektörden birkaç kaynaktan geliyor. Senin dükkânın farklı olabilir.", eigen: "Bu miktarı sen girdin veya tarttın. Uygulama onu asla değiştirmez.", "eigen-abgeleitet": "Bu malzemeyi başka bir yemekte tarttın. Uygulama miktarını buraya aktardı. Tek tek yeniden tartabilirsin." } },
@@ -855,6 +856,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml / adet", stueckGewichtFrage: "Bir adet ne kadar ağır?", optional: "biliyorsan",
     wasKaufst: "Ne alıyorsun?",
     inhalt: (art) => `${art} başına içerik`,
     preis: (art) => `${art} başına fiyat`,
@@ -1124,7 +1126,7 @@ export default {
     tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",
     kachel: { umsatz: "Bugünkü ciro", muell: "Bugünkü çöp", kuehlung: "Soğutma", putzen: "Temizlik" },
     ok: "Tamam", offenN: (n) => `${n} bekliyor`, jetztDran: "Şimdi sırada",
-    dran: { einkauf: "Alış fiyatlarını gir", rezepte: "Tarifleri tart", zuWarm: (s) => `${s} fazla sıcak`, zuKalt: (s) => `${s} fazla soğuk`, nachmessen: "Tekrar ölç", rundgang: "Soğutma turu", rundgangWeiter: "Tura devam et",
+    dran: { selbst: (n) => `${n}: tarifini gir`, einkauf: "Alış fiyatlarını gir", rezepte: "Tarifleri tart", zuWarm: (s) => `${s} fazla sıcak`, zuKalt: (s) => `${s} fazla soğuk`, nachmessen: "Tekrar ölç", rundgang: "Soğutma turu", rundgangWeiter: "Tura devam et",
       putzen: (n) => `${n} görev gecikti`, sicherung: "Yedek al", sichern: "Yedekle", abschluss: "Günü kapat", los: "Başla" },
     offen: { fassung: "Uygulamanın yeni sürümü hazır", einrichtung: (p, s) => `Kurulum %${p} – sıradaki: ${s}`, kosten: "Sabit giderler veya maaşlar eksik",
       karteGrau: (n) => `${n} yemeğin fiyatı veya tarifi yok`, waage: (n) => `${n} tarif tahmini – bir kez tart`,

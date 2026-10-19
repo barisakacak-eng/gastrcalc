@@ -352,7 +352,8 @@ export default {
   },
 
   profil: { kern: (art) => `Dla twojego lokalu: ${art}`, kernAllgemein: "Dla twojego lokalu", oft: "Często też", weitere: "Inne działy", weitereAuf: (n) => `Pokaż inne działy (${n})`, weitereZu: "Zwiń inne działy", aus: (b) => `z: ${b}` },
-  selbst: { gemacht: "Robione na miejscu", errechnet: "wyliczone", ansatz: (z, aus, min) => `Wsad: ${z} daje ${aus}, około ${min} min pracy.`, fehlt: (n) => `Cena otwarta. Brakuje cen zakupu dla: ${n}`, dochKaufen: "Jednak kupujemy gotowe", machenSelbst: "Robimy sami" },
+  selbst: { gemacht: "Robione na miejscu", errechnet: "wyliczone", ansatz: (z, aus, min) => `Wsad: ${z} daje ${aus}, około ${min} min pracy.`, fehlt: (n) => `Cena otwarta. Brakuje cen zakupu dla: ${n}`, dochKaufen: "Jednak kupujemy gotowe", machenSelbst: "Robimy sami" ,
+    deinAnsatz: "twoja receptura", bearbeiten: "Wpisz swoją recepturę", zutaten: "Co idzie do środka?", zutatDazu: "+ Dodaj składnik", deineWaren: "Twoje towary", alleWaren: "Wszystkie towary", leer: "Jeszcze brak składników. Wybierz pierwszy poniżej.", weg: "Usuń składnik", ergibt: "To daje", als: { gewicht: "Waga", stueck: "Sztuki" }, anzahl: "Ile sztuk?", gewicht: "Gramów na sztukę", gJeStueck: "g na sztukę", arbeit: "minut pracy", jeAnsatz: (x) => `${x} za partię`, jeStueck: (x) => `${x} za sztukę`, je50: (x) => `${x} za 50 g`, bisher: (x) => `na razie ${x}`, ausbeuteFehlt: "Cena otwarta. Wpisz, ile daje jedna partia.", mengeFehlt: "Cena otwarta. Przy jednym składniku brakuje ilości.", einmalWiegen: "Wartości startowe. Zważ raz swoją partię i wpisz ją tutaj, wtedy wartość za sztukę się zgadza." },
   stempel: { schaetzung: "≈ szacunek · wartość startowa", pilot: "Wartość z lokalu pilotażowego", branche: (n) => `Wartość branżowa · ${n} ${lm(n, "źródło", "źródła", "źródeł")}`, eigen: "✓ twoja wartość", eigenAm: (d) => `✓ twoja wartość · zważone ${d}`, "eigen-abgeleitet": "✓ ~ twoja wartość (przeniesiona)",
     kurz: { schaetzung: "szacunek", pilot: "lokal pilotażowy", branche: "wartość branżowa", eigen: "twoja wartość", "eigen-abgeleitet": "~ twoja wartość" },
     erklaerung: { schaetzung: "Szacunek znaczy: tak robi wiele lokali. Twój może robić inaczej. Zważ raz, wtedy będzie się zgadzać.", pilot: "Tę ilość zważył prawdziwy lokal. Twój może robić inaczej.", branche: "Ta ilość pochodzi z kilku źródeł z branży. Twój lokal może robić inaczej.", eigen: "Tę ilość wpisałeś albo zważyłeś sam. Aplikacja nigdy jej nie zmienia.", "eigen-abgeleitet": "Ten składnik zważyłeś przy innym daniu. Aplikacja przeniosła tu twoją ilość. Możesz go zważyć osobno." } },
@@ -860,6 +861,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml na sztukę", stueckGewichtFrage: "Ile waży jedna sztuka?", optional: "jeśli wiesz",
     wasKaufst: "Co kupujesz?",
     inhalt: (art) => `Zawartość (1 × ${art})`,
     preis: (art) => `Cena (1 × ${art})`,
@@ -1128,7 +1130,7 @@ export default {
     tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",
     kachel: { umsatz: "Utarg dziś", muell: "Odpady dziś", kuehlung: "Chłodzenie", putzen: "Sprzątanie" },
     ok: "OK", offenN: (n) => `${n} otwarte`, jetztDran: "Teraz",
-    dran: { einkauf: "Wpisz ceny zakupu", rezepte: "Zważ receptury", zuWarm: (s) => `${s} za ciepło`, zuKalt: (s) => `${s} za zimno`, nachmessen: "Zmierz jeszcze raz", rundgang: "Obchód chłodzenia", rundgangWeiter: "Dalej obchód",
+    dran: { selbst: (n) => `${n}: wpisz recepturę`, einkauf: "Wpisz ceny zakupu", rezepte: "Zważ receptury", zuWarm: (s) => `${s} za ciepło`, zuKalt: (s) => `${s} za zimno`, nachmessen: "Zmierz jeszcze raz", rundgang: "Obchód chłodzenia", rundgangWeiter: "Dalej obchód",
       putzen: (n) => `${n} ${lm(n, "zadanie", "zadania", "zadań")} po terminie`, sicherung: "Zrób kopię", sichern: "Zapisz kopię", abschluss: "Zamknij dzień", los: "Start" },
     offen: { fassung: "Nowa wersja aplikacji gotowa", einrichtung: (p, s) => `Konfiguracja ${p} % – dalej: ${s}`, kosten: "Stałe koszty lub pensje niekompletne",
       karteGrau: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez ceny lub przepisu`, waage: (n) => `${n} ${lm(n, "przepis", "przepisy", "przepisów")} na oko – zważ raz`,

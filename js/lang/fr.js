@@ -347,7 +347,8 @@ export default {
   },
 
   profil: { kern: (art) => `Pour ton resto : ${art}`, kernAllgemein: "Pour ton resto", oft: "Aussi souvent pris", weitere: "Autres rayons", weitereAuf: (n) => `Voir les autres rayons (${n})`, weitereZu: "Masquer les autres rayons", aus: (b) => `de : ${b}` },
-  selbst: { gemacht: "Fait maison", errechnet: "calculé", ansatz: (z, aus, min) => `Base : ${z} donne ${aus}, environ ${min} minutes de travail.`, fehlt: (n) => `Prix à remplir. Il manque les prix d’achat de : ${n}`, dochKaufen: "On l’achète tout prêt", machenSelbst: "On le fait nous-mêmes" },
+  selbst: { gemacht: "Fait maison", errechnet: "calculé", ansatz: (z, aus, min) => `Base : ${z} donne ${aus}, environ ${min} minutes de travail.`, fehlt: (n) => `Prix à remplir. Il manque les prix d’achat de : ${n}`, dochKaufen: "On l’achète tout prêt", machenSelbst: "On le fait nous-mêmes" ,
+    deinAnsatz: "ta recette", bearbeiten: "Saisis ta recette", zutaten: "Qu'est-ce qu'il y a dedans ?", zutatDazu: "+ Ajouter un ingrédient", deineWaren: "Tes produits", alleWaren: "Tous les produits", leer: "Pas encore d'ingrédients. Choisis le premier ci-dessous.", weg: "Retirer l'ingrédient", ergibt: "Ça donne", als: { gewicht: "Poids", stueck: "Pièces" }, anzahl: "Combien de pièces ?", gewicht: "Grammes par pièce", gJeStueck: "g par pièce", arbeit: "minutes de travail", jeAnsatz: (x) => `${x} par fournée`, jeStueck: (x) => `${x} par pièce`, je50: (x) => `${x} pour 50 g`, bisher: (x) => `jusqu'ici ${x}`, ausbeuteFehlt: "Prix ouvert. Indique ce que donne une fournée.", mengeFehlt: "Prix ouvert. Il manque la quantité d'un ingrédient.", einmalWiegen: "Valeurs de départ. Pèse ta fournée une fois et saisis-la ici, alors la valeur par pièce sera juste." },
   stempel: { schaetzung: "≈ estimé · valeur de départ", pilot: "Valeur d’un resto pilote", branche: (n) => `Valeur de la branche · ${n} sources`, eigen: "✓ ta valeur", eigenAm: (d) => `✓ ta valeur · pesée le ${d}`, "eigen-abgeleitet": "✓ ~ ta valeur (reprise)",
     kurz: { schaetzung: "estimé", pilot: "resto pilote", branche: "valeur de la branche", eigen: "ta valeur", "eigen-abgeleitet": "~ ta valeur" },
     erklaerung: { schaetzung: "Estimé veut dire : c’est comme ça que font beaucoup de snacks. Ton resto est peut-être différent. Pèse une fois, et ce sera juste.", pilot: "Cette quantité a été pesée par un vrai resto. Le tien est peut-être différent.", branche: "Cette quantité vient de plusieurs sources de la branche. Ton resto est peut-être différent.", eigen: "Cette quantité, c’est toi qui l’as remplie ou pesée. L’appli ne la change jamais.", "eigen-abgeleitet": "Tu as pesé cet ingrédient dans un autre plat. L’appli a repris ta quantité ici. Tu peux le repeser à part." } },
@@ -854,6 +855,7 @@ export default {
   },
 
   gebinde: {
+    mlJeStueck: "ml par pièce", stueckGewichtFrage: "Combien pèse une pièce ?", optional: "si tu sais",
     wasKaufst: "Tu achètes quoi ?",
     inhalt: (art) => `Contenu par ${art}`,
     preis: (art) => `Prix par ${art}`,
@@ -1122,7 +1124,7 @@ export default {
     tempoGut: (d) => `Dans les temps · ${d}`, tempoKnapp: (b) => `${b} / jour nécessaires`, ohneKosten: "Frais fixes manquants",
     kachel: { umsatz: "Ventes du jour", muell: "Déchets du jour", kuehlung: "Froid", putzen: "Nettoyage" },
     ok: "OK", offenN: (n) => `${n} à faire`, jetztDran: "À faire maintenant",
-    dran: { einkauf: "Saisis les prix d'achat", rezepte: "Pèse tes recettes", zuWarm: (s) => `${s} trop chaud`, zuKalt: (s) => `${s} trop froid`, nachmessen: "Mesurer à nouveau", rundgang: "Tournée du froid", rundgangWeiter: "Continuer la tournée",
+    dran: { selbst: (n) => `${n} : saisis ta recette`, einkauf: "Saisis les prix d'achat", rezepte: "Pèse tes recettes", zuWarm: (s) => `${s} trop chaud`, zuKalt: (s) => `${s} trop froid`, nachmessen: "Mesurer à nouveau", rundgang: "Tournée du froid", rundgangWeiter: "Continuer la tournée",
       putzen: (n) => n === 1 ? "1 tâche en retard" : `${n} tâches en retard`, sicherung: "Faire une sauvegarde", sichern: "Sauvegarder", abschluss: "Clôturer la journée", los: "Go" },
     offen: { fassung: "Nouvelle version de l’appli prête", einrichtung: (p, s) => `Réglage ${p} % – ensuite : ${s}`, kosten: "Frais fixes ou salaires incomplets",
       karteGrau: (n) => n === 1 ? "1 plat sans prix ni recette" : `${n} plats sans prix ni recette`, waage: (n) => n === 1 ? "1 recette estimée – pèse-la une fois" : `${n} recettes estimées – pèse-les une fois`,
