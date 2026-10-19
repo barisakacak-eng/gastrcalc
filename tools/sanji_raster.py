@@ -14,7 +14,7 @@ src = (WURZEL / "tools" / "sanji_bildauftrag.py").read_text(encoding="utf-8").re
 exec(compile(src, "sanji_bildauftrag", "exec"), ba.__dict__); sys.argv = _argv
 
 JE_RASTER = 9
-RASTER_JE_DATEI = 6  # 19.10. 13:25: große Blöcke (54 Fotos je Lieferung), damit weniger hin und her kopiert wird
+RASTER_JE_DATEI = 12  # 19.10. 13:45: Sanji ist schnell – 108 Fotos je Lieferung
 R0, D0 = 110, 13  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
 ROH = "https://raw.githubusercontent.com/barisakacak-eng/gastrcalc/main/bruecke/an-sanji/raster/"
 
