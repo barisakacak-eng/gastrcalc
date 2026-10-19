@@ -1,10 +1,10 @@
-# Rasterauftrag 27 von 31 – 18 Fotos in 2 Rasterbildern
+# Rasterauftrag 27 von 30 – 18 Fotos in 2 Rasterbildern
 
 Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten. Danach alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_27.zip` packen. Nicht zuschneiden, nicht umbenennen – das macht Zoro.
 
 ## Feste Regeln (gelten für jede Lieferung)
 1. Nie verwerfen. Weicht ein Feld ab, trotzdem liefern – Zoro ordnet jedes brauchbare Foto selbst zu.
-2. Jedes Motiv nur EINMAL. Nichts wiederholen, was in einem früheren Raster schon vorkam (Döner-Wrap, Döner-Box, Falafel-Wrap, Margherita, Salami, Gemüse-Pizza, Pommes, Currywurst, Schnitzel, Nuggets, Bowls, Griechischer Salat, Pasta, Reis, Suppe, Fladenbrot sind fertig).
+2. Jedes Motiv nur EINMAL. Nichts wiederholen, was in einem früheren Raster schon vorkam (Döner-Wrap, Döner-Box, Falafel-Wrap, Margherita, Salami, Gemüse-Pizza, Pommes, Currywurst, Schnitzel, Nuggets, Bowls, Griechischer Salat, Pasta, Reis, Suppe, Fladenbrot, Cola, Orangensaft, Sprite, Tee, Kaffee, Wasser, Cappuccino, Limonade, Brötchen, Penne, Kichererbsen, Reibekäse, Tomatensauce, Mayo, Kräutersauce sind fertig).
 3. Lieber ein anderes Motiv aus DIESER Liste als ein Lieblingsgericht von dir.
 4. Kopier-Regel: Deine Antwort endet mit GENAU EINEM Codeblock, den Baris unverändert an Zoro weitergibt – ohne Tabelle, ohne Text außerhalb. Form:
 
@@ -26,18 +26,18 @@ R NNN F2 = …
 Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
-Feld 1 = ZUCKERSCHOTEN: Zuckerschoten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 2 = ZUCKERSIRUP: Zuckersirup als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 3 = ÄPFEL: Äpfel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 4 = ANANAS (DOSE): Ananas (Dose) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 5 = BRIOCHE-BUN: Brioche-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 6 = BRÖTCHEN: Brötchen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 7 = BRÖTCHENTEIGLING TK: Brötchenteigling TK als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 8 = BURGER-BUN: Burger-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 9 = VOLLKORN-BUN: Vollkorn-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 1 = WAFFELBRUCH: Waffelbruch als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = WAN-TAN-BLÄTTER: Wan-Tan-Blätter als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = WEINESSIG: Weinessig als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = WEINTRAUBEN: Weintrauben als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = WEISSE BOHNEN: Weiße Bohnen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = ZANDERFILET: Zanderfilet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = ZUCCHINI: Zucchini als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = ZUCKER: Zucker als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = ZUCKERPORTION: Zuckerportion als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
 ```
 
-Belegung (nur zur Kontrolle): 1 Zuckerschoten · 2 Zuckersirup · 3 Äpfel · 4 Ananas (Dose) · 5 Brioche-Bun · 6 Brötchen · 7 Brötchenteigling TK · 8 Burger-Bun · 9 Vollkorn-Bun
+Belegung (nur zur Kontrolle): 1 Waffelbruch · 2 Wan-Tan-Blätter · 3 Weinessig · 4 Weintrauben · 5 Weiße Bohnen · 6 Zanderfilet · 7 Zucchini · 8 Zucker · 9 Zuckerportion
 
 ## Raster 134 → Datei `raster_134.png`
 
@@ -45,15 +45,15 @@ Belegung (nur zur Kontrolle): 1 Zuckerschoten · 2 Zuckersirup · 3 Äpfel · 4 
 Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
-Feld 1 = CHAMPIGNONS: Champignons als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 2 = ADANA-SPIESS: Adana-Spieß als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 3 = GARNELENSPIESS: Garnelenspieß als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 4 = GYROSFLEISCH: Gyrosfleisch als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 5 = KALBSSCHNITZEL: Kalbsschnitzel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 6 = LAMMHACKFLEISCH: Lammhackfleisch als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 7 = LAMMKOTELETT: Lammkotelett als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 8 = RINDERBRATEN: Rinderbraten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 9 = RINDERFILET: Rinderfilet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 1 = ZUCKERSCHOTEN: Zuckerschoten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = ZUCKERSIRUP: Zuckersirup als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = ÄPFEL: Äpfel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = ANANAS (DOSE): Ananas (Dose) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = BRIOCHE-BUN: Brioche-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = BRÖTCHENTEIGLING TK: Brötchenteigling TK als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = BURGER-BUN: Burger-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = VOLLKORN-BUN: Vollkorn-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = CHAMPIGNONS: Champignons als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
 ```
 
-Belegung (nur zur Kontrolle): 1 Champignons · 2 Adana-Spieß · 3 Garnelenspieß · 4 Gyrosfleisch · 5 Kalbsschnitzel · 6 Lammhackfleisch · 7 Lammkotelett · 8 Rinderbraten · 9 Rinderfilet
+Belegung (nur zur Kontrolle): 1 Zuckerschoten · 2 Zuckersirup · 3 Äpfel · 4 Ananas (Dose) · 5 Brioche-Bun · 6 Brötchenteigling TK · 7 Burger-Bun · 8 Vollkorn-Bun · 9 Champignons
