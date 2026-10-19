@@ -3,6 +3,7 @@
 // Rechnen und Schreiben: js/lieferant.js (Stammdaten, Termine) und js/bestand.js (Sätze). Hier nur Aufbau, Texte, data-Attribute
 // und vorhandene CSS-Klassen. Einstieg im Büro und aus „Lager & Bestellen“. Personal-Modus: nicht erreichbar, Handlungen „lf-…“ gesperrt.
 // Datenschutz: Nummer/Adresse, Kundennummer und Notiz bleiben auf dem Gerät (js/lieferant.js) – der Bildschirm sagt das beim Feld.
+import { sym } from "../symbole.js";
 import { t, artikelText } from "../i18n.js";
 import { esc, fmtEuro, parseZahl, heuteGeschaeft } from "../util.js";
 import { LIEFERANT_ARTEN, LIEFER_MODI, BESTELLWEGE, WOCHE, VORHER_WAHL, lieferantenAktiv, lieferantMitId, liefertermine, lieferantWaren, lieferantZweitWaren,
@@ -43,13 +44,16 @@ export function lieferantenView(stand) {
   const saetze = lieferSaetze(stand);
   const oben = saetze.length ? `<div class="karte ${saetze[0].ton === "rot" ? "hinweisrot" : "hinweisgelb"}" data-lf-saetze="${saetze.length}">${saetze.slice(0, 3).map((x, i) => (i ? `<p>${esc(x.text)}</p>` : `<h2>${esc(x.text)}</h2>`)).join("")}</div>` : "";
   const liste = lieferantenAktiv(stand);
+  // Prüfer 19.10.2026: statt Fließtext je Lieferant eine klare Karte – Name + „Ändern“, darunter drei Zeilen mit Symbol
   const zeile = (lf) => {
     const n = lieferantWaren(stand, lf.id).length; const naechste = naechsteText(stand, lf);
-    const unten = [naechste, lf.weg ? t("lieferanten.weg." + lf.weg) : "", lf.mindestwert ? t("lieferanten.mindestKurz", fmtEuro(lf.mindestwert)) : "", t("lieferanten.waren", n)].filter(Boolean).join(" · ");
-    return `<div class="summenzeile" data-lieferant-id="${esc(lf.id)}"><span><b>${esc(lf.name)}</b><br><small>${esc(t("lieferanten.art." + lf.art))} · ${esc(rhythmusText(lf))}</small><br><small>${esc(unten)}</small></span>
-      <span class="wert"><button type="button" class="leise klein" data-a="lf-auf" data-wert="${esc(lf.id)}">${esc(t("lieferanten.aendern"))}</button></span></div>`;
+    const details = [lf.weg ? t("lieferanten.weg." + lf.weg) : "", lf.mindestwert ? t("lieferanten.mindestKurz", fmtEuro(lf.mindestwert)) : "", t("lieferanten.waren", n)].filter(Boolean).join(" · ");
+    const z = (symbol, text) => (text ? `<div class="lf-z">${sym(symbol)}<span>${esc(text)}</span></div>` : "");
+    return `<div class="lf-karte" data-lieferant-id="${esc(lf.id)}">
+      <div class="lf-kopf"><b>${esc(lf.name)}</b><small>${esc(t("lieferanten.art." + lf.art))}</small><button type="button" class="leise klein" data-a="lf-auf" data-wert="${esc(lf.id)}">${esc(t("lieferanten.aendern"))}</button></div>
+      ${z("truck", rhythmusText(lf))}${z("clock", naechste)}${z("package", details)}</div>`;
   };
-  const listeView = liste.length ? `<div class="karte">${liste.map(zeile).join("")}</div>` : `<div class="karte leer"><div>${esc(t("lieferanten.leer"))}</div></div>`;
+  const listeView = liste.length ? `<div class="lf-liste">${liste.map(zeile).join("")}</div>` : `<div class="karte leer"><div>${esc(t("lieferanten.leer"))}</div></div>`;
   return `${kopf}<div class="inhalt">${oben}${ue(t("lieferanten.listeTitel"))}${listeView}
     <button type="button" class="knopf zweit" data-a="lf-neu">${esc(t("lieferanten.neu"))}</button>
     <button type="button" class="knopf zweit" data-a="lf-zuordnen">${esc(t("lieferanten.zuordnen"))}</button>

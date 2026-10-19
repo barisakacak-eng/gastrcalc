@@ -278,3 +278,15 @@ span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
 .zahlfeld input::placeholder { color: #8A9690; }
 .textfeld::placeholder { color: #8A9690; }
 [data-a="loeschen"] { margin-top: 28px; }
+/* Lieferanten als klare Karten (Prüfer 19.10.2026) */
+.lf-liste { display: flex; flex-direction: column; gap: 10px; }
+.lf-karte { background: var(--b-karte); border: 1px solid var(--b-linie); border-radius: 14px; padding: 12px 14px; }
+.lf-kopf { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 10px; margin-bottom: 6px; }
+.lf-kopf b { font-size: calc(17rem / 17); } .lf-kopf small { grid-column: 1; color: var(--b-text-leise); font-size: calc(13rem / 17); }
+.lf-kopf .leise { grid-column: 2; grid-row: 1 / span 2; }
+.lf-z { display: flex; gap: 8px; align-items: flex-start; font-size: calc(14rem / 17); color: var(--b-text); padding: 3px 0; }
+.lf-z .sym { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--b-text-leise); }
+.vk-rang { display: inline-block; min-width: 2.2em; color: var(--b-text-leise); font-variant-numeric: tabular-nums; } /* gleicher Platz: Nummer nur einmal */
+/* Amt-Ordner: Pflichtnachweise oben (gezählt), darunter Angaben ohne Haken (Prüfer 19.10.2026) */
+.b-status.info { background: var(--papier-tief); color: var(--b-text-leise); font-weight: 800; font-size: calc(13rem / 17); }
+.b-trenner { height: 1px; background: var(--b-linie); margin: 6px 0; }

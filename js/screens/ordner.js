@@ -33,7 +33,7 @@ const dokumentJetzt = (stand, ansicht) => dokumentFuerR(stand, ansicht, wahl());
 
 // ---------- Zeilen der Inhaltsliste ----------
 // W2-T: ok (Haken) · luecke (!) · pruefen (!) · notiz (i, nur Notiz) – Haken nur bei ok
-const statusSym = (ok) => ok === null ? "" : ok === true || ok === "ok" ? `<span class="b-status ok" title="${esc(t("ordner.status.ok"))}">${bsym("check")}</span>`
+const statusSym = (ok) => ok === null ? "" : ok === "info" ? `<span class="b-status info" aria-hidden="true">i</span>` : ok === true || ok === "ok" ? `<span class="b-status ok" title="${esc(t("ordner.status.ok"))}">${bsym("check")}</span>`
   : ok === "notiz" ? `<span class="b-status luecke" title="${esc(t("ordnerT.status.notiz"))}">i</span>`
   : `<span class="b-status luecke" title="${esc(ok === "pruefen" ? t("ordnerT.status.pruefen") : t("ordner.status.luecke"))}">!</span>`;
 const inhaltZeile = (symbol, titel, unter, ok, { aktion = "", teil = "", csv = false, auf = null } = {}) => {
@@ -94,8 +94,9 @@ export function ordnerAmtView(stand) {
         ${inhaltZeile("spray-can", t("ordner.teil.putz"), amtUnter("putz", o.teile.putz), o.teile.putz.vollstaendig)}
         ${inhaltZeile("users", t("ordner.teil.belehrung"), amtUnter("belehrung", o.teile.belehrung), o.teile.belehrung.vollstaendig, { aktion: "ordner-belehrung", auf: belehrungAuf })}
         ${belehrungAuf ? belehrungBlock(stand, o) : ""}
-        ${inhaltZeile("file-text", t("amtW2.konzeptTitel"), amtUnter("konzept", o.teile.konzept), null)}
-        ${inhaltZeile("trash-2", t("amtW2.muellTitel"), amtUnter("muell", o.teile.muell), null)}
+        <div class="b-trenner" aria-hidden="true"></div>
+        ${inhaltZeile("file-text", t("amtW2.konzeptTitel"), amtUnter("konzept", o.teile.konzept), "info")}
+        ${inhaltZeile("trash-2", t("amtW2.muellTitel"), amtUnter("muell", o.teile.muell), "info")}
       </div>
       ${beilagenKarte("amt")}
       ${knoepfe()}

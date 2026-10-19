@@ -57,7 +57,7 @@ function startView(stand) {
   if (!(vk.menge > 0) && !vk.ohneZuordnung.menge) return `${kopf}<div class="inhalt">${einlesen}${zr}<div class="karte leer"><div>${esc(t("verkaeufe.keine"))}</div></div>${importListe(stand)}</div>`;
   // (a) Rang
   const rang = `<div class="karte"><h2>${esc(t("verkaeufe.rangTitel"))}</h2>
-      ${vk.zeilen.filter((r) => r.menge > 0).map((r) => `<div class="summenzeile"><span>${r.rang}. ${esc(r.name)}</span><span class="wert">${esc(stueck(r.menge))}</span></div>`).join("")}
+      ${vk.zeilen.filter((r) => r.menge > 0).map((r, i, l) => `<div class="summenzeile"><span><span class="vk-rang">${i && l[i - 1].rang === r.rang ? "" : r.rang + "."}</span>${esc(r.name)}</span><span class="wert">${esc(stueck(r.menge))}</span></div>`).join("")}
       ${vk.ohneZuordnung.menge ? `<div class="summenzeile"><span>${esc(t("verkaeufe.ohneGericht"))}</span><span class="wert">${esc(stueck(vk.ohneZuordnung.menge))}</span></div>` : ""}
       ${(vk.ohneZuordnung.nachMenge || []).map((x) => `<div class="summenzeile"><span>${esc(t("verkaeufe.nachMengeZeile", x.text))}</span><span class="wert">${esc(`${fmtZahl(x.menge, 3)} ${x.einheit}`)}</span></div>`).join("")}
       <div class="summenzeile gesamt"><span>${esc(t("verkaeufe.summe", vk.tage))}</span><span class="wert">${esc(stueck(vk.menge))}</span></div></div>`;
