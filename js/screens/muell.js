@@ -33,7 +33,7 @@ let foto = null;          // Foto (optional) zum nächsten Eintrag (Upload-Eintr
 let letzterTipp = { id: "", zeit: 0 };
 let toastUhr = null;
 const TOAST_MS = 5000;
-const RASTER = 8;         // 8 Fotos + „Andere" = 3 × 3
+const RASTER = 5;         // Design B (19.10.2026): 5 Fotos + „Andere" = 2 × 3, passt ohne Scrollen
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
 export function muellZuruecksetzen() { ansicht = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }

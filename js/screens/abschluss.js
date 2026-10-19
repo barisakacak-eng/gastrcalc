@@ -46,6 +46,7 @@ function bilanzView(stand, H) {
   return `
     <div class="kopfband"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
     <div class="inhalt">
+      <img class="abschluss-pokal" src="bilder/ui/pokal.svg" alt="" aria-hidden="true">
       <div class="karte dunkel zaehler ${nach >= 0 ? "plus" : "minus"}">
         <small class="lbl">${esc(t("abschluss.zaehlerHeute"))}</small>
         <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil">→</span><span class="riesig">${nach >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(nach))}</span></span>

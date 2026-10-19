@@ -2,6 +2,7 @@
 // „Lager jetzt“ (Bestand, Reichweite, Wert, Sicherheit in einfachen Wörtern) und die Einstellungen (Tage, Puffer, Mindestbestand je Ware).
 // Rechnen tut nur js/bestand.js; hier stehen Aufbau, Texte und data-Attribute. Nur vorhandene Klassen der Büro-Bildschirme, kein eigenes CSS.
 // Personal-Modus: der Bereich ist dort nicht erreichbar (modus.js lässt nur Personal, Müll, Kühlung, Putzen zu).
+import { wareBild } from "./muell.js"; // Design B (19.10.2026): Foto je Bestellzeile
 import { t, einheitLabel, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
 import { bestandStand, bestellVorschlag, bestandUhrzeit, bestellNachricht, lagerSetzen, mindestbestandSetzen, lieferSaetze, mindestSatz, uhrText } from "../bestand.js"; // Lieferanten (18.10.2026): bestellNachricht, Sätze
@@ -49,7 +50,7 @@ export function bestandView(stand) {
       <button type="button" class="knopf zweit" data-a="nav" data-wert="inventur">${esc(t("bestand.inventurKnopf"))}</button></div>${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
   const v = bestellVorschlag(stand, { bs }); const uhr = bestandUhrzeit(stand);
   const lsatz = lieferSaetze(stand, { bs }).filter((x) => x.art === "schluss" || x.art === "schlussMorgen" || x.art === "kommtHeute" || x.art === "kommtMorgen").slice(0, 2); // Lieferanten (18.10.2026)
-  const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>`; // Schwadron 18.10.2026, N1
+  const oben = uhr ? `<div class="karte bestand-oben ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>`; // Schwadron 18.10.2026, N1
   return `${kopf}<div class="inhalt">${oben}${bestellenView(stand, v)}<button type="button" class="knopf zweit" data-a="nav" data-wert="lieferanten">${esc(t("lieferanten.einstieg"))}</button>${lagerView(bs)}${hinweiseView(bs)}${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
 }
 
@@ -63,7 +64,7 @@ function bestellenView(stand, v) {
   const gruppe = (g, i) => { const nachricht = bestellNachricht(stand, g);
     return `<div class="karte" data-lieferant="${i}"${g.lieferantId ? ` data-lieferant-id="${esc(g.lieferantId)}"` : ""}><h2>${esc(g.lieferant || t("bestand.ohneLieferant"))}</h2>
       ${g.termin ? `<p class="hinweis" data-best-termin="${esc(g.termin.tag)}">${esc(terminText(g))}</p>` : ""}
-      ${g.zeilen.map((z) => `<div class="summenzeile"><span><b>${esc(artikelText(z.name))}</b><br><small>${esc(dringendText(z))}${z.mindestGewinnt ? " · " + esc(t("bestand.mindestGewinnt")) : ""}</small></span><span class="wert">${esc(gebindeText(z.gebinde, z.gebindeArt, z.menge, z.basis))}</span></div>`).join("")}
+      ${g.zeilen.map((z) => `<div class="summenzeile bestzeile">${wareBild({ name: z.name, gruppe: z.gruppe })}<span><b>${esc(artikelText(z.name))}</b><br><small>${esc(dringendText(z))}${z.mindestGewinnt ? " · " + esc(t("bestand.mindestGewinnt")) : ""}</small></span><span class="wert">${esc(gebindeText(z.gebinde, z.gebindeArt, z.menge, z.basis))}</span></div>`).join("")}
       <div class="summenzeile gesamt"><span>${esc(t("bestand.summe"))}</span><span class="wert">${esc(g.ohneWert === g.zeilen.length ? t("inventur.preisFehlt") : euro(g.wert))}</span></div>
       ${g.mindest ? `<p class="hinweis" data-best-mindest="${Math.ceil(g.mindest.fehlt)}">${esc(mindestSatz(g.mindest))}${g.mindest.vorschlaege.length ? " " + esc(t("lieferanten.mindestMenge", g.mindest.vorschlaege.map((x) => gebindeText(x.gebinde, x.gebindeArt, x.menge, x.basis) + " " + artikelText(x.name)).join(", "))) : ""}</p>` : ""}
       ${nachricht.link ? `<button type="button" class="knopf glut" data-a="best-wa" data-wert="${i}">${esc(t("lieferanten.perWhatsapp"))}</button><button type="button" class="leise" data-a="best-teilen" data-wert="${i}">${esc(t("bestand.teilen"))}</button>`

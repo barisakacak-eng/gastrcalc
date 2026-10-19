@@ -160,9 +160,31 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .heutewert .zahl { font-size: calc(30rem / 17); font-weight: 800; letter-spacing: -.01em; }
 .muellraster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .muellraster .ware { border-radius: 14px; border-color: var(--b-linie); }
-.muellraster .ware .gerichtbild.mini { aspect-ratio: 4 / 3; }
-.ware-mehr { top: calc(75cqw - 48px); }
+.muellraster .ware .gerichtbild.mini { aspect-ratio: 16 / 10; }
+.ware-mehr { top: calc(62.5cqw - 48px); }
 .ware .wt { padding: 9px 12px 11px; }
 .ware .wt b { font-size: calc(16rem / 17); font-weight: 800; }
 .ware .wt small { font-size: calc(13.5rem / 17); }
 .ware.andere { min-height: 120px; border: 2px dashed var(--b-linie); border-radius: 14px; }
+/* Lager & Bestellen (Screen 9): große rote Karte oben, Bestellzeilen mit Foto */
+.karte.bestand-oben { border-radius: 16px; padding: 18px; }
+.karte.bestand-oben h2 { font-size: calc(24rem / 17); font-weight: 800; line-height: 1.2; margin: 0 0 6px; }
+.karte.bestand-oben.hinweisrot { background: var(--b-rot-hell); border: 1px solid #F2C9C9; }
+.karte.bestand-oben.hinweisrot h2 { color: var(--b-rot-text); }
+.karte.bestand-oben p { color: var(--b-text-leise); margin: 2px 0 0; }
+.summenzeile.bestzeile { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; padding: 10px 0; }
+.summenzeile.bestzeile .gerichtbild.mini { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; margin: 0; }
+.summenzeile.bestzeile .gerichtbild.mini.pikto { object-fit: contain; padding: 6px; background: var(--b-primaer-hell); }
+.summenzeile.bestzeile b { font-size: calc(16rem / 17); }
+.summenzeile.bestzeile .wert { font-weight: 800; font-size: calc(16rem / 17); color: var(--b-text); }
+/* Tag abschließen (Screen 10): grüne Haken, Pokal nach dem Abschluss */
+.hak { background: var(--b-gruen-ok); color: #FFFFFF; border-color: var(--b-gruen-ok); }
+.hak.offen { background: var(--b-karte); color: var(--b-text-leise); border: 2px solid var(--b-linie); }
+.abschluss-pokal { display: block; width: 120px; height: auto; margin: 4px auto 10px; }
+.hak { border-radius: 50%; width: 30px; height: 30px; }
+@media (max-height: 800px) {
+  .heutewert { padding: 9px 14px; } .heutewert .zahl { font-size: calc(24rem / 17); }
+  .muellkopf1 { gap: 6px; } .muellkopf1 h1 { font-size: calc(24rem / 17); }
+  .muellraster .ware .gerichtbild.mini { aspect-ratio: 2 / 1; } .ware-mehr { top: calc(50cqw - 48px); }
+  .ware .wt { padding: 6px 10px 8px; min-height: 0; }
+}
