@@ -15,7 +15,7 @@ exec(compile(src, "sanji_bildauftrag", "exec"), ba.__dict__); sys.argv = _argv
 
 JE_RASTER = 9
 RASTER_JE_DATEI = 12  # 19.10. 13:45: Sanji ist schnell – 108 Fotos je Lieferung
-R0, D0 = 110, 13  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
+R0, D0 = 111, 13  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
 ROH = "https://raw.githubusercontent.com/barisakacak-eng/gastrcalc/main/bruecke/an-sanji/raster/"
 
 RASTER_REGEL = ("Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern "
@@ -70,7 +70,7 @@ def main():
         nr0 = d * RASTER_JE_DATEI + 1 + R0
         t = [f"# Rasterauftrag {d + 1 + D0:02d} (letzter: {n_dat + D0:02d}) – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
              "## Ablauf (in EINER Antwort, ohne Zwischenfragen)",
-             "0. PFLICHT: Jedes Raster ist eine EIGENE Bildgenerierung in voller Größe 1536 × 1024. NIEMALS mehrere Raster in ein Bild packen und danach zerschneiden oder vergrößern – solche Lieferungen sind unscharf und werden komplett abgelehnt (19.10.: raster_14 abgelehnt). Lieber weniger Raster liefern als ein Sammelbild.",
+             "0. PFLICHT: Jedes Raster ist eine EIGENE Bildgenerierung in voller Größe 1536 × 1024. NIEMALS mehrere Raster in ein Bild packen und danach zerschneiden oder vergrößern – solche Lieferungen sind unscharf und werden komplett abgelehnt (19.10.: raster_14 abgelehnt). Lieber weniger Raster liefern als ein Sammelbild. Bewährter Ablauf (19.10.): PRO ANTWORT GENAU EIN RASTER erzeugen und im Arbeitsordner speichern; Baris schreibt nur „weiter“; erst nach dem letzten Raster alle zusammen in die ZIP und dann der Block.",
              f"1. Für jedes der {len(teil)} Raster unten genau EIN Bild erzeugen – Prompt steht fertig im Kasten. Die Bilder NICHT einzeln im Chat zeigen oder kommentieren, nur intern erzeugen und speichern.",
              f"2. Alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_{d + 1 + D0:02d}.zip` packen und als Download anbieten. Nicht zuschneiden, nicht umbenennen – das macht Zoro.",
              "3. Im Chat genau EIN Übersichtsbild zeigen: alle Raster dieses Auftrags verkleinert nebeneinander (eine Kontrollcollage). Mehr Bilder nicht.",

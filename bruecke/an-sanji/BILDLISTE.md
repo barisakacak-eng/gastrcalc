@@ -1,9 +1,9 @@
 # BILDLISTE GastroCalc – alle Bilder, die die App braucht
 Stand 19.10.2026 · erzeugt aus den App-Daten mit `node tools/bildliste.mjs` (nicht von Hand ändern, neu erzeugen) · gepflegt von Zoro · für Sanji und Baris
 
-Insgesamt **651 Bilder**, davon **168 vorhanden**, **483 fehlen** – 284 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 199 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
-Fehlend nach Prio: Prio 1 = 112 · Prio 2 = 172 · Prio 3 = 199.
-Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 13 · C Warengruppe: 9 · D Gericht-Familie: 8 · E Gericht: 89 · F Artikel: 354 · G Selbst gemacht: 5 · H Kühlung: 2 · I Müll: 2.
+Insgesamt **651 Bilder**, davon **172 vorhanden**, **479 fehlen** – 284 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 195 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
+Fehlend nach Prio: Prio 1 = 112 · Prio 2 = 172 · Prio 3 = 195.
+Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 12 · C Warengruppe: 9 · D Gericht-Familie: 8 · E Gericht: 86 · F Artikel: 354 · G Selbst gemacht: 5 · H Kühlung: 2 · I Müll: 2.
 Die gleiche Liste als Tabelle: `bruecke/an-sanji/bildliste.csv` (Spalten: prio;gruppe;datei;name;status;motiv).
 
 ## Was drauf soll – was du (Sanji) entscheidest
@@ -467,7 +467,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 2 | F Artikel | `v-pizzakarton-40-cm.webp` | Pizzakarton 40 cm | fehlt – zeigt bis dahin v-pizzakarton | Pizzakarton 40 cm, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
 2 | F Artikel | `v-pommesschale.webp` | Pommesschale | vorhanden | Pommesschale, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
 2 | F Artikel | `v-serviette.webp` | Serviette | fehlt | Serviette, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
-3 | B Bereich | `bereich-bar.webp` | Bar & Cocktails | fehlt | Typische Auswahl des Bereichs „Bar & Cocktails“ als Stillleben, 3–5 Dinge, Draufsicht.
+3 | B Bereich | `bereich-bar.webp` | Bar & Cocktails | vorhanden | Typische Auswahl des Bereichs „Bar & Cocktails“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | B Bereich | `bereich-bier.webp` | Bier & Fassgetränke | fehlt | Typische Auswahl des Bereichs „Bier & Fassgetränke“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | B Bereich | `bereich-eis.webp` | Eis & Desserts | vorhanden | Typische Auswahl des Bereichs „Eis & Desserts“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | B Bereich | `bereich-fruehstueck.webp` | Frühstück & Backwaren | fehlt | Typische Auswahl des Bereichs „Frühstück & Backwaren“ als Stillleben, 3–5 Dinge, Draufsicht.
@@ -476,7 +476,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 3 | B Bereich | `bereich-suppe.webp` | Suppen & Eintöpfe | vorhanden | Typische Auswahl des Bereichs „Suppen & Eintöpfe“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | E Gericht | `g-affogato.webp` | Affogato | fehlt – zeigt bis dahin g-eis | „Affogato“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Espressobohnen, Dessertglas.
 3 | E Gericht | `g-alkoholfreies-bier-0-33-l.webp` | Alkoholfreies Bier 0,33 l | fehlt – zeigt bis dahin g-bier | „Alkoholfreies Bier 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pils alkoholfrei 0,33 l.
-3 | E Gericht | `g-aperol-spritz.webp` | Aperol Spritz | fehlt | „Aperol Spritz“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Aperol, Prosecco 0,75 l, Sodawasser, Orangen.
+3 | E Gericht | `g-aperol-spritz.webp` | Aperol Spritz | vorhanden | „Aperol Spritz“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Aperol, Prosecco 0,75 l, Sodawasser, Orangen.
 3 | E Gericht | `g-apfelkuchen-stueck.webp` | Apfelkuchen (Stück) | fehlt – zeigt bis dahin g-kuchen | „Apfelkuchen (Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weizenmehl Typ 405, Butter, Zucker, Äpfel.
 3 | E Gericht | `g-becher-erdbeere-mit-sahne.webp` | Becher Erdbeere mit Sahne | fehlt – zeigt bis dahin g-eis | „Becher Erdbeere mit Sahne“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Erdbeeren, Sahne, Eislöffel.
 3 | E Gericht | `g-belegtes-broetchen-schinken.webp` | Belegtes Brötchen Schinken | fehlt – zeigt bis dahin g-fruehstueck | „Belegtes Brötchen Schinken“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Brötchen, Kochschinken, Butter, Tomaten.
@@ -491,7 +491,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 3 | E Gericht | `g-filterkaffee.webp` | Filterkaffee | vorhanden | „Filterkaffee“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Filterkaffee gemahlen, Coffee-to-go 0,3 l, Filterpapier.
 3 | E Gericht | `g-flat-white-mit-hafermilch.webp` | Flat White mit Hafermilch | fehlt – zeigt bis dahin g-kaffee | „Flat White mit Hafermilch“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Espressobohnen, Hafermilch, Coffee-to-go 0,3 l.
 3 | E Gericht | `g-fruehstuecksteller-klein.webp` | Frühstücksteller klein | fehlt – zeigt bis dahin g-fruehstueck | „Frühstücksteller klein“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Brötchen, Gouda, Kochschinken, Marmeladenportion, Butterportion, Eier.
-3 | E Gericht | `g-gin-tonic.webp` | Gin Tonic | fehlt | „Gin Tonic“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Gin, Tonic Water 0,2 l, Limetten.
+3 | E Gericht | `g-gin-tonic.webp` | Gin Tonic | vorhanden | „Gin Tonic“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Gin, Tonic Water 0,2 l, Limetten.
 3 | E Gericht | `g-glas-rotwein-0-2-l.webp` | Glas Rotwein 0,2 l | fehlt | „Glas Rotwein 0,2 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rotwein offen.
 3 | E Gericht | `g-glas-weisswein-0-2-l.webp` | Glas Weißwein 0,2 l | fehlt | „Glas Weißwein 0,2 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weißwein offen.
 3 | E Gericht | `g-gulaschsuppe.webp` | Gulaschsuppe | fehlt – zeigt bis dahin g-suppe | „Gulaschsuppe“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Suppenfleisch Rind, Kartoffeln, Zwiebeln, Passierte Tomaten, Rinderbrühe Pulver.
@@ -506,7 +506,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 3 | E Gericht | `g-laugenbrezel.webp` | Laugenbrezel | fehlt – zeigt bis dahin g-fruehstueck | „Laugenbrezel“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Laugenbrezel, Butter.
 3 | E Gericht | `g-linsensuppe-mit-wuerstchen.webp` | Linsensuppe mit Würstchen | fehlt – zeigt bis dahin g-suppe | „Linsensuppe mit Würstchen“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Linsen, Wiener Würstchen, Möhren, Lauch, Rinderbrühe Pulver.
 3 | E Gericht | `g-mass-helles-1-0-l.webp` | Maß Helles 1,0 l | fehlt – zeigt bis dahin g-bier | „Maß Helles 1,0 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Helles vom Fass, Bierdeckel.
-3 | E Gericht | `g-mojito.webp` | Mojito | fehlt | „Mojito“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weißer Rum, Limetten, Minze, Zuckersirup, Sodawasser, Trinkhalm.
+3 | E Gericht | `g-mojito.webp` | Mojito | vorhanden | „Mojito“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weißer Rum, Limetten, Minze, Zuckersirup, Sodawasser, Trinkhalm.
 3 | E Gericht | `g-muesli-mit-joghurt.webp` | Müsli mit Joghurt | fehlt – zeigt bis dahin g-fruehstueck | „Müsli mit Joghurt“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Müsli, Joghurt natur, Bananen.
 3 | E Gericht | `g-muffin.webp` | Muffin | vorhanden | „Muffin“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weizenmehl Typ 405, Zucker, Butter, Eier.
 3 | E Gericht | `g-pils-0-3-l.webp` | Pils 0,3 l | fehlt – zeigt bis dahin g-bier | „Pils 0,3 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pils vom Fass, Bierdeckel.
