@@ -1,0 +1,66 @@
+/* GastroCalc · Richtung B „Klar & Modern“ · ENTWURF 19.10.2026
+   Separater Entwurf: nicht blind über bestehende css/tokens.css kopieren.
+   Manrope muss lokal bereitgestellt werden (kein CDN, App funktioniert offline).
+   Die sechs mit ABGELEITET markierten Farbwerte sind für die verlangten Zustände ergänzt. */
+:root {
+  --primaer: #0F3D2E;
+  --primaer-hell: #E5F2EB;
+  --akzent: #FF7A3D;
+  --akzent-hell: #FFE6D9;
+  --hintergrund: #FAFBF8;
+  --karte: #FFFFFF; /* ABGELEITET: Kartenoberfläche */
+  --text: #0F1720;
+  --text-leise: #52616A; /* ABGELEITET: 6.17:1 auf Hintergrund */
+  --linie: #DCE5E0; /* ABGELEITET: Trennlinien */
+  --rot: #D64545; /* Warnflächen/Icons; als Text auf Weiß NICHT WCAG-AA */
+  --rot-hell: #FCEAEA; /* ABGELEITET */
+  --rot-text: #B4232C; /* ABGELEITET: für normalen Alarmtext */
+  --gelb: #F4B400; /* als Text auf Weiß NICHT WCAG-AA */
+  --gelb-hell: #FFF4CE; /* ABGELEITET */
+  --gelb-text: #715000; /* ABGELEITET: lesbarer Warntext */
+  --gruen-ok: #187A4C; /* ABGELEITET: lesbarer OK-Text */
+  --aktion-text: var(--text); /* dunkle Schrift auf Orange, 6.96:1 */
+  --auf-dunkel: #FFFFFF; /* weiße Schrift nur auf Dunkelgrün */
+
+  --schrift: 'Manrope', system-ui, -apple-system, sans-serif;
+  --gewicht-normal: 400;
+  --gewicht-mittel: 500;
+  --gewicht-halbfett: 600;
+  --gewicht-fett: 700;
+  --gewicht-extra: 800;
+  --schrift-zahl: 32px;
+  --schrift-titel: 20px;
+  --schrift-standard: 16px;
+  --schrift-klein: 14px;
+  --schrift-mini: 12px;
+  --zeile-zahl: 1.10;
+  --zeile-titel: 1.25;
+  --zeile-standard: 1.45;
+  --zeile-klein: 1.35;
+
+  --raum-1: 4px;
+  --raum-2: 8px;
+  --raum-3: 12px;
+  --raum-4: 16px;
+  --raum-5: 20px;
+  --raum-6: 24px;
+  --raum-8: 32px;
+  --radius-klein: 8px;
+  --radius: 12px;
+  --radius-karte: 14px;
+  --radius-gross: 18px;
+  --radius-rund: 999px;
+  --schatten-karte: 0 2px 10px rgba(15,23,32,.07);
+  --schatten-knopf: 0 2px 6px rgba(15,23,32,.09);
+  --schatten-kein: none;
+  --knopf-hoehe: 56px;
+  --leiste-hoehe: 64px;
+  --kopf-hoehe: 56px;
+  --touch-min: 48px;
+  --screen-breite: 390px;
+  --screen-hoehe: 844px;
+}
+/* Zoro: font-face auf lokale Datei setzen, nachdem Manrope unter SIL OFL eingebunden wurde.
+   Beispiel (nur falls fonts/Manrope-Variable.woff2 tatsächlich existiert):
+   @font-face { font-family: Manrope; src: url('../fonts/Manrope-Variable.woff2') format('woff2'); font-weight: 400 800; font-display: swap; }
+*/

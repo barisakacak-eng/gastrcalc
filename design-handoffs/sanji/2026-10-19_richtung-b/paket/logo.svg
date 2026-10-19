@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Servierhaube mit Flamme">
+ <path d="M20 94h88" stroke="#0F3D2E" stroke-width="8" stroke-linecap="round" fill="none"/>
+ <path d="M28 87a36 36 0 0 1 72 0H28Z" fill="none" stroke="#0F3D2E" stroke-width="7" stroke-linejoin="round"/>
+ <path d="M63 51c-10-13 6-21 4-34 17 12 7 24 12 30 8-6 10-14 9-19 13 21 2 34-15 39-14-3-21-10-10-16Z" fill="#FF7A3D"/>
+ <path d="M71 60c-6-9 5-14 3-22 9 10 9 16-3 22Z" fill="#FFE6D9"/>
+ <path d="M19 101h90" stroke="#0F3D2E" stroke-width="7" stroke-linecap="round"/>
+</svg>
