@@ -155,6 +155,9 @@ export function belege(stand, z) {
     zeilen.push({ datum: k.datum, quelle: "kosten", rechnungNr: k.rechnungNr || null, lieferant: k.lieferant || "", stelle: k.stelle, netto, ust7: satz === 0.07 ? ust : null, ust19: satz === 0.19 ? ust : null, pfand: 0, brutto, betriebsmittel: 0, hinweis: satz === null ? "ohneSatz" : null, verteilung: k.verteilung, id: k.id });
   }
   zeilen.sort(nachDatum);
+  // Paket C (19.10.2026): fortlaufende Beleg-Nr. je Monat (JJJJ-MM-001 …) – dieselbe Nummer schreibt der Inhaber auf den Beleg;
+  // Kleinbetrag (Brutto bis 250 €, § 33 UStDV) wird markiert, weil dort weniger Rechnungsangaben genügen.
+  zeilen.forEach((x, i) => { x.belegNr = `${String(z.von).slice(0, 7)}-${String(i + 1).padStart(3, "0")}`; x.klein = typeof x.brutto === "number" && x.brutto > 0 && x.brutto <= 250; });
   const sum = (f) => rund2(zeilen.reduce((s, x) => s + (typeof x[f] === "number" ? x[f] : 0), 0));
   return { zeilen, netto: sum("netto"), ust7: sum("ust7"), ust19: sum("ust19"), pfand: sum("pfand"), brutto: sum("brutto"), anzahl: zeilen.length,
     ohneBrutto: zeilen.filter((x) => x.brutto === null).length, ohneNetto: zeilen.filter((x) => x.netto === null).length, pruefen: zeilen.filter((x) => x.hinweis).length };
@@ -241,7 +244,7 @@ export function teilCsv(p, teil, kopf, namen = {}) {
   const wer = (x) => (!x.person ? "" : !x.personAus ? x.person : x.personAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.person, x.personAusAm) : n("ausgeschieden", x.person)); // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
   if (teil === "personal") return csvText(kopf, p.personal.zeilen.map((x) => [datumDe(x.datum), wer(x), x.gericht, n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 0, 0, 2, 2, 2] });
   if (teil === "schwund") return csvText(kopf, p.schwund.zeilen.map((x) => [datumDe(x.datum), n("art", x.art), x.name, x.menge, x.einheit, x.wert, x.grund]), { dezimal: [0, 0, 0, 2, 0, 2] });
-  if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [datumDe(x.datum), x.rechnungNr || "", x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, x.hinweis ? n("hinweis", x.hinweis) : ""]));
+  if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [x.belegNr, datumDe(x.datum), x.rechnungNr || "", x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, x.hinweis ? n("hinweis", x.hinweis) : x.klein && namen.kleinbetrag ? namen.kleinbetrag() : ""]));
   if (teil === "inventur") return csvText(kopf, p.inventur.zeilen.map((x) => [datumDe(x.datum), x.wert, x.gezaehlt, x.ohnePreis]), { dezimal: [0, 2, 0, 0] });
   if (teil === "reinigung") return csvText(kopf, p.reinigung.zeilen.map((x) => [datumDe(x.datum), x.lieferant, x.artikel, x.netto]));
   if (teil === "kosten") return csvText(kopf, p.kosten.zeilen.map((x) => [n("posten", x.posten), x.betrag, n("periode", x.periode), n("basis", x.basis), x.jeMonat, n("pstatus", x.status)]));

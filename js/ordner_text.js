@@ -81,7 +81,7 @@ export function paketUnter(teil, p) {
 }
 
 // ---------- Dokumente (übersetzt) ----------
-const NAMEN = () => ({
+const NAMEN = () => ({ kleinbetrag: () => t("ordnerC.kleinbetrag"),
   ja: () => t("allgemein.ja"),
   grund: (g) => (!g ? "" : GRUENDE.includes(g) ? t("amtW2.nichtGemessen", t("kuehl.gruende." + g)) : t("ordner.dok.nichtGemessen")),
   massnahme: (m) => t("kuehl.massnahmen." + m),
@@ -124,7 +124,19 @@ function rueckText(x) {
   return "";
 }
 const KOPF_W2 = { muell: () => t("amtW2.muellKopfCsv"), rueck: () => t("amtW2.rueckKopfCsv"), kuehl: () => [...t("ordner.dok.kopf.kuehl"), t("amtW2.nachgetragenAm"), t("amtW2.lfd"), t("amtW2.abwStand")] };
-const kopfVon = (teil) => (KOPF_W2[teil] ? KOPF_W2[teil]() : ["umsatz", "belege", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-H + W2-T
+const kopfVon = (teil) => (KOPF_W2[teil] ? KOPF_W2[teil]() : teil === "belege" ? [t("ordnerC.belegNr"), ...t("ordnerT.kopf.belege")] : ["umsatz", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-H + W2-T; Paket C: Beleg-Nr.
+
+// Paket C (19.10.2026): Was der Inhaber selbst beilegt (Originale aus Kasse, Bank, Lieferant, Amt) – je Ordner.
+// Grundlage: Kanzlei-Pendelordner und Behörden-Merkblätter (Recherche 19.10.2026, Projekt-Dokument „GastroCalc Recherche 1“).
+export const BEILAGEN = { steuer: ["zbon", "karten", "bank", "fapost"], buch: ["rechnungen", "ausgang", "vertraege"], amt: ["lieferscheine", "ifsg", "schaedling", "haccp"] };
+// Erster Abschnitt jedes Ordners: Inhalt (was die App liefert, mit Stand) und Beilagen (was du beilegst). dok = fertiges Druckmodell.
+export function inhaltAbschnitt(dok, art) {
+  const zeilen = []; let nr = 0;
+  for (const a of dok.abschnitte) zeilen.push({ warn: !!a.warn, zellen: [String(++nr), a.titel, t("ordnerC.app"), a.warn ? t(a.notiz ? "ordnerC.notiz" : "ordnerC.pruefen") : t("ordnerC.liegtBei")] });
+  for (const b of BEILAGEN[art] || []) zeilen.push({ warn: false, zellen: [String(++nr), t("ordnerC.teile." + b), t("ordnerC.du"), t("ordnerC.beilegen")] });
+  return { titel: t("ordnerC.titel"), info: art === "amt" ? "" : t("ordnerC.hinweis"), kopf: t("ordnerC.kopf"), rechts: [0], zeilen };
+}
+const mitInhalt = (dok, art) => ({ ...dok, abschnitte: [inhaltAbschnitt(dok, art), ...dok.abschnitte] });
 const dateiTeil = (teil) => (teil === "muell" ? t("amtW2.muellDatei") : teil === "rueck" ? t("amtW2.rueckDatei") : t("ordner.datei." + teil));
 const erstelltText = () => t("ordner.dok.erstellt", datumDe(heute()), new Date().toTimeString().slice(0, 5));
 
@@ -171,7 +183,7 @@ export function amtDokument(stand, o) {
 export function paketDokument(stand, p) {
   const n = NAMEN(); const a = [];
   const art = p.art; const leerOder = (v) => (v === null || v === undefined ? "–" : euro(v));
-  if (p.umsatz) a.push({ titel: t("ordner.teil.umsatz"), info: `${kennung()} · ${t("ordnerT.steuerZbon")}`, warn: true, kopf: t("ordnerT.druck.umsatz"), rechts: [1, 2],
+  if (p.umsatz) a.push({ titel: t("ordner.teil.umsatz"), info: `${kennung()} · ${t("ordnerT.steuerZbon")}`, warn: true, notiz: true, kopf: t("ordnerT.druck.umsatz"), rechts: [1, 2],
     zeilen: p.umsatz.zeilen.map((x) => [datumDe(x.datum) + (x.nacherfasst ? " *" : ""), euro(x.brutto), x.geaendert === null ? "" : euro(x.geaendert)]), summe: p.umsatz.tage ? [t("ordner.dok.summe"), euro(p.umsatz.summe.brutto), ""] : null, leer: t("ordner.zeile.umsatzKeine") });
   if (p.personal) { const je = Object.entries(p.personal.jePerson).map(([k, v]) => `${k || "–"}: ${fmtZahl(v.anzahl)} · ${euro(v.sachbezug)}`).join(" · ");
     a.push({ titel: t("ordner.teil.personal"), info: [t("ordner.dok.svev"), je, p.personal.ohnePerson ? t("ordnerT.personalOhne", p.personal.ohnePerson) : ""].filter(Boolean).join(" · "), warn: !!p.personal.ohnePerson, kopf: kopfVon("personal").slice(0, 7), rechts: [4, 5, 6],
@@ -179,9 +191,9 @@ export function paketDokument(stand, p) {
   if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: [t("ordner.dok.netto"), p.schwund.eigen?.anzahl ? t("ordnerT.eigen", euro(p.schwund.eigen.waren)) : ""].filter(Boolean).join(" · "), warn: !!p.schwund.ohneWert, kopf: t("ordnerT.druck.schwund"), rechts: [3, 4],
     zeilen: p.schwund.zeilen.map((x) => [datumDe(x.datum), n.art(x.art), x.name || "–", `${fmtZahl(x.menge, x.einheit === "stk" || x.einheit === "portion" ? 0 : 2)} ${x.einheit === "portion" ? t("tag.portionen") : x.einheit === "stk" ? t("allgemein.stueck") : x.einheit}`, x.wert === null ? t("tag.keinPreis") : euro(x.wert)]),
     summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", p.schwund.ohneWert ? `${euro(p.schwund.muellwert)} (${t("ordnerT.schwundOffen", p.schwund.ohneWert)})` : euro(p.schwund.muellwert)] : null, leer: t("ordner.zeile.keine") });
-  if (p.belege) a.push({ titel: t("ordner.teil.belege"), info: t("ordnerT.belegeInfo"), warn: !!p.belege.pruefen, kopf: t("ordnerT.druck.belege"), rechts: [3, 4, 5, 6, 7],
-    zeilen: p.belege.zeilen.map((x) => ({ warn: !!x.hinweis, zellen: [datumDe(x.datum), x.rechnungNr || "", `${x.lieferant || "–"} · ${n.stelle(x.stelle)}${x.hinweis ? " · " + n.hinweis(x.hinweis) : ""}`, leerOder(x.netto), leerOder(x.ust7), leerOder(x.ust19), x.pfand ? euro(x.pfand) : "", leerOder(x.brutto)] })),
-    summe: p.belege.anzahl ? [t("ordner.dok.summe"), "", "", euro(p.belege.netto), euro(p.belege.ust7), euro(p.belege.ust19), euro(p.belege.pfand), euro(p.belege.brutto)] : null, leer: t("ordner.zeile.belegeKeine") });
+  if (p.belege) a.push({ titel: t("ordner.teil.belege"), info: t("ordnerT.belegeInfo"), warn: !!p.belege.pruefen, kopf: [t("ordnerC.belegNr"), ...t("ordnerT.druck.belege")], rechts: [4, 5, 6, 7, 8],
+    zeilen: p.belege.zeilen.map((x) => ({ warn: !!x.hinweis, zellen: [x.belegNr, datumDe(x.datum), x.rechnungNr || "", `${x.lieferant || "–"} · ${n.stelle(x.stelle)}${x.hinweis ? " · " + n.hinweis(x.hinweis) : x.klein ? " · " + t("ordnerC.kleinbetrag") : ""}`, leerOder(x.netto), leerOder(x.ust7), leerOder(x.ust19), x.pfand ? euro(x.pfand) : "", leerOder(x.brutto)] })),
+    summe: p.belege.anzahl ? [t("ordner.dok.summe"), "", "", "", euro(p.belege.netto), euro(p.belege.ust7), euro(p.belege.ust19), euro(p.belege.pfand), euro(p.belege.brutto)] : null, leer: t("ordner.zeile.belegeKeine") });
   if (p.inventur) a.push({ titel: t("ordner.teil.inventur"), kopf: kopfVon("inventur"), rechts: [1, 2, 3],
     zeilen: p.inventur.zeilen.map((x) => ({ warn: !x.vorher && (x.ohnePreis > 0 || !(x.wert > 0)), zellen: [datumDe(x.datum) + (x.vorher ? ` (${t("ordner.dok.vormonat")})` : ""), x.wert === null ? t("ordnerT.wertFehlt") : euro(x.wert), fmtZahl(x.gezaehlt), fmtZahl(x.ohnePreis)] })), leer: t("ordner.zeile.inventurKeine") });
   if (p.reinigung) a.push({ titel: t("ordner.teil.reinigung"), kopf: kopfVon("reinigung"), rechts: [3],
@@ -206,8 +218,8 @@ export function csvDateien(stand, ansicht, nurTeil = null, wahl = {}) { // Beisp
 }
 export function dokumentFuer(stand, ansicht, wahl = {}) {
   const H = heute();
-  if (ansicht === "ordner-amt") return druckHtml(amtDokument(stand, ordnerAmt(stand, amtZeitraumVon(wahl.amtZeit, H), { datum: H })));
+  if (ansicht === "ordner-amt") return druckHtml(mitInhalt(amtDokument(stand, ordnerAmt(stand, amtZeitraumVon(wahl.amtZeit, H), { datum: H })), "amt"));
   const art = ansicht === "ordner-steuer" ? "steuer" : "buch";
-  return druckHtml(paketDokument(stand, monatsPaket(stand, paketZeitVon(wahl.paketMonat, art, H), art)));
+  return druckHtml(mitInhalt(paketDokument(stand, monatsPaket(stand, paketZeitVon(wahl.paketMonat, art, H), art)), art));
 }
 

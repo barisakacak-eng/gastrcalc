@@ -2,6 +2,7 @@
 // zeigt das Cockpit einen Ring mit Prozent, den nächsten Schritt und die Checkliste. Rein rechnend, Texte über Schlüssel.
 // Sieben Schritte, je 1/7, Teilerfüllung anteilig. 100 % nur, wenn wirklich alles erfüllt ist. Keine erfundenen Zahlen.
 import { preisJeBasis, stelleBereit, istRichtpreis, grenzenVon } from "./engine.js";
+import { rezeptStempel } from "./rezept_quelle.js"; // 19.10.2026: Startwerte zählen nur halb
 
 const PFLICHT = ["miete", "personal", "eigenerLohn", "energie"];
 const SICHERUNG_TAGE = 7;
@@ -24,7 +25,9 @@ export function einrichtungStand(stand, wurzel = null, { jetzt = Date.now() } = 
   const gerichte = stand.gerichte || [];
   const speisen = gerichte;
   const mitPreis = speisen.filter((g) => typeof g.preis === "number").length;
-  const mitRezept = speisen.filter((g) => g.klasse === "getraenk" || (g.zutaten || []).length || g.rezeptBewusstLeer).length;
+  // Baris 19.10.2026: 100 % erst mit echten Werten – ein Rezept mit Startwerten (geschätzte Mengen) zählt halb, selbst gewogen voll.
+  const rezeptWert = (g) => { if (g.klasse === "getraenk" || g.rezeptBewusstLeer) return 1; if (!(g.zutaten || []).length) return 0; const st = rezeptStempel(g).stufe; return st === "eigen" || st === "eigen-abgeleitet" ? 1 : 0.5; };
+  const mitRezept = speisen.reduce((x, g) => x + rezeptWert(g), 0);
   const artikel = (stand.artikel || []).filter((a) => a.benutzt !== false);
   // Richtpreise (17.10.2026): zählen NICHT als erledigt (sonst trägt der Wirt nie nach). Rezept-Startwerte zählen hier voll – das ist
   // bewusst anders: ein Startwert ist eine Menge, die meist passt; ein Richtpreis ist ein fremder Preis. Anteil für Richtpreise: 0.
@@ -38,7 +41,7 @@ export function einrichtungStand(stand, wurzel = null, { jetzt = Date.now() } = 
   const schritte = [
     { id: "karte", anteil: speisen.length ? 1 : 0, rest: speisen.length ? 0 : 1, ziel: { aktion: "nav", wert: "kartefoto" } },
     { id: "preise", anteil: anteil(mitPreis, speisen.length), rest: speisen.length - mitPreis, ziel: { aktion: "nav", wert: "kartefoto" } },
-    { id: "rezepte", anteil: anteil(mitRezept, speisen.length), rest: speisen.length - mitRezept, ziel: { aktion: "bearbeiten", schritt: "rezepte" } },
+    { id: "rezepte", anteil: anteil(mitRezept, speisen.length), rest: Math.ceil(speisen.length - mitRezept), ziel: { aktion: "bearbeiten", schritt: "rezepte" } },
     { id: "kosten", anteil: k.anteil, rest: k.fehlt.length, fehlt: k.fehlt, ziel: { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" } },
     { id: "einkauf", anteil: anteil(mitEk, artikel.length), rest: artikel.length - mitEk, ziel: { aktion: "nav", wert: "beleg" } },
     { id: "kuehlung", anteil: kuehlFertig ? 1 : 0, rest: kuehlFertig ? 0 : 1, ziel: { aktion: "nav", wert: "kuehl" } },

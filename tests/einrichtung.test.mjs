@@ -21,8 +21,10 @@ test("neuer Laden: 0 %, nächster Schritt Speisekarte", () => {
 test("Schnellstart mit Karte und Preisen, ohne Rest: Teilwerte, Getränk zählt bei Rezepten", () => {
   const s = voll(); const e = einrichtungStand(s, leereWurzel(), { jetzt: JETZT });
   const r = Object.fromEntries(e.schritte.map((x) => [x.id, x.anteil]));
-  assert.equal(r.karte, 1); assert.equal(r.preise, 1); assert.equal(r.rezepte, 1); assert.equal(r.kosten, 0); assert.equal(r.sicherung, 0);
-  assert.equal(e.prozent, Math.floor(3 / 7 * 100)); assert.equal(e.naechster.id, "kosten");
+  assert.equal(r.karte, 1); assert.equal(r.preise, 1); assert.ok(r.rezepte > 0 && r.rezepte < 1, "Startwerte zählen nur halb (19.10.2026)"); assert.equal(r.kosten, 0); assert.equal(r.sicherung, 0);
+  assert.equal(e.prozent, Math.floor((2 + r.rezepte) / 7 * 100)); assert.equal(e.naechster.id, "rezepte");
+  for (const g of s.gerichte) for (const z of g.zutaten || []) z.quelle = "eigen";
+  assert.equal(einrichtungStand(s, leereWurzel(), { jetzt: JETZT }).schritte.find((x) => x.id === "rezepte").anteil, 1, "selbst gewogen = voll");
 });
 
 test("alles erfüllt: 100 %; Sicherung älter als 7 Tage fällt zurück; „haben wir nicht“ zählt", () => {
@@ -30,7 +32,7 @@ test("alles erfüllt: 100 %; Sicherung älter als 7 Tage fällt zurück; „habe
   s.kosten = [{ id: "a", kategorie: "miete", posten: "miete", betrag: 1500, status: "bekannt" }, { id: "b", kategorie: "energie", posten: "strom", betrag: null, status: "aus" }];
   s.team = { personen: 2, stundenProPerson: 160, lohnkosten: 5000, eigenerLohn: 2000, eigenerLohnStatus: "eigen" };
   for (const a of s.artikel) { a.preis = 10; a.packung = { menge: 1, einheit: a.einheit === "stk" ? "stk" : "kg" }; }
-  s.kuehl.keine = true;
+  s.kuehl.keine = true; for (const g of s.gerichte) for (const z of g.zutaten || []) z.quelle = "eigen"; // 19.10.2026: 100 % nur mit eigenen Rezepten
   assert.equal(einrichtungStand(s, w, { jetzt: JETZT }).prozent, 100);
   w.letzteSicherung = "2026-10-01T10:00:00Z";
   const e = einrichtungStand(s, w, { jetzt: JETZT }); assert.equal(e.prozent, 85); assert.equal(e.naechster.id, "sicherung");
@@ -39,7 +41,7 @@ test("alles erfüllt: 100 %; Sicherung älter als 7 Tage fällt zurück; „habe
 test("Teilerfüllung: halbe Rezepte", () => {
   const s = voll(); s.gerichte.push({ id: "x", name: "Leer", klasse: "haupt", zutaten: [], preis: 5 });
   const r = einrichtungStand(s, null, { jetzt: JETZT }).schritte.find((x) => x.id === "rezepte");
-  assert.equal(r.rest, 1); assert.ok(r.anteil > 0.6 && r.anteil < 0.7);
+  assert.ok(r.rest >= 1); assert.ok(r.anteil > 0.3 && r.anteil < 0.7);
 });
 
 // ---------- Schwadron 18.10.2026 (30-Tage-Lauf): M4 ----------

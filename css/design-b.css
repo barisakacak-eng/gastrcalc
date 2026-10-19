@@ -264,3 +264,7 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .kl-teile li.t-gewinn b { color: var(--b-gruen-ok); } .kl-teile li.t-gewinn.minus b { color: var(--b-rot-text); }
 .t-ware i, i.t-ware { background: #E29A5B; } .t-personal i, i.t-personal { background: #5B8DB8; } .t-miete i, i.t-miete { background: #8E7CC3; }
 .t-neben i, i.t-neben { background: #A7B3AD; } .t-steuer i, i.t-steuer { background: #D9C27A; } .t-gewinn i, i.t-gewinn { background: var(--b-gruen-ok); }
+/* Paket C: „Das legst du selbst bei“ */
+.b-beilagen { margin-top: 12px; border: 1px solid var(--b-linie); }
+.b-beilagen b { display: block; font-size: calc(16rem / 17); margin-bottom: 6px; }
+.b-beilagen ul { margin: 0 0 8px; padding-left: 20px; } .b-beilagen li { margin: 4px 0; font-size: calc(15rem / 17); }

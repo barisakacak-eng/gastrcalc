@@ -33,6 +33,7 @@ const stunde = (d) => d.getHours() + d.getMinutes() / 60;
 //  3. Putzaufgabe überfällig
 //  4. Sicherung älter als 7 Tage – nur außerhalb der Hauptzeiten (11:30–14:00, 17:30–20:30)
 //  5. ab 18 Uhr bis 4 Uhr früh: Tag abschließen (wenn der Geschäftstag noch nicht abgeschlossen ist; Paket 3, M7)
+//  6. Einkaufspreise, dann eigene Rezepte – bis sie echt eingetragen sind (19.10.2026)
 // Rückgabe: null oder { id, ton: "rot" | "normal", symbol, titel, knopf, ziel }
 export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
   const h = stunde(jetzt); const H = heute(jetzt);
@@ -52,6 +53,13 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
   if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, H); if (pg.ueberfaellig) return { id: "putzen", ton: "normal", symbol: "spray-can", titel: t("heute.dran.putzen", pg.ueberfaellig), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "putzplan" } }; }
   if (!istHauptzeit(h) && sicherungStufe(wurzel, jetzt.getTime())?.stufe === "rot") return { id: "sicherung", ton: "normal", symbol: "package", titel: t("heute.dran.sicherung"), knopf: t("heute.dran.sichern"), ziel: { aktion: "export" } };
   if ((h >= 18 || h < 4) && !abschlussVon(stand, heuteGeschaeft(jetzt))) return { id: "abschluss", ton: "dunkel", symbol: "check", titel: t("heute.dran.abschluss"), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "abschluss" } };
+  // 6. (Baris 19.10.2026) Erst mit echten Einkaufspreisen und eigenen Rezepten rechnet die App genau – darum bleibt die Erinnerung
+  //    im Laden, bis beides erledigt ist (nur außerhalb der Hauptzeiten, nie im Beispiel-Laden).
+  if (!stand.beispiel && stand.phase === "app" && !istHauptzeit(h)) {
+    const e = einrichtungImTakt(stand, wurzel); const schritt = (id) => e.schritte.find((x) => x.id === id);
+    if (schritt("einkauf") && !schritt("einkauf").fertig && (stand.gerichte || []).length) return { id: "einkauf", ton: "normal", symbol: "receipt", titel: t("heute.dran.einkauf"), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "beleg" } };
+    if (schritt("rezepte") && !schritt("rezepte").fertig) return { id: "rezepte", ton: "normal", symbol: "chef-hat", titel: t("heute.dran.rezepte"), knopf: t("heute.dran.los"), ziel: schritt("rezepte").ziel };
+  }
   return null;
 }
 

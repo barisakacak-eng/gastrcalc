@@ -11,6 +11,8 @@ import { kalkulation, preisAmpel, tagPlus } from "../js/engine.js";
 import { startView } from "../js/screens/home.js";
 import { karteLadenView, karteLadenAktion, karteLadenZuruecksetzen, karteLadenEingabe, karteLadenTeile } from "../js/screens/karte_laden.js";
 import { navKontext } from "../js/screens/nav.js";
+// 19.10.2026: Erinnerung „Einkaufspreise/Rezepte“ ist die niedrigste Stufe – hier geht es um die Fälle davor
+const ohneErinnerung = (x) => (x && ["einkauf", "rezepte"].includes(x.id) ? null : x);
 
 const um = (hh, mm = 0) => { const d = new Date(); d.setHours(hh, mm, 0, 0); return d; };
 const H = heute();
@@ -25,8 +27,8 @@ const messung = (stelle, wert, { abw = false, datum = H } = {}) => ({ id: stelle
 
 test("Jetzt dran: ohne Anlass gar keine Karte (kein „Alles erledigt“, keine Einrichtung, kein Kosten-Hinweis)", () => {
   const s = laden(); s.gerichte = [{ id: "a", name: "Döner", klasse: "haupt", preis: null, zutaten: [] }];
-  assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(10) }), null);
-  assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(16) }), null);
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s), { jetzt: um(10) })), null);
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s), { jetzt: um(16) })), null);
 });
 
 test("Jetzt dran 1: Kühlwert außerhalb der Grenze → rot, mit Stellenname und „Nachmessen“ – schlägt alles andere", () => {
@@ -40,13 +42,13 @@ test("Jetzt dran 1: Kühlwert außerhalb der Grenze → rot, mit Stellenname und
 test("Jetzt dran 2: Kühlrundgang offen – angefangen immer, sonst morgens bis 15 Uhr und abends ab 17 Uhr", () => {
   const s = mitKuehlung(laden());
   assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(9) }).id, "rundgang");
-  assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(16) }), null);
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s), { jetzt: um(16) })), null);
   assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(17, 30) }).id, "rundgang");
   s.rundgaenge = [{ id: "r", datum: H, abgeschlossen: null, messungen: [] }];
   const d = jetztDran(s, wurzelVon(s), { jetzt: um(16) });
   assert.equal(d.id, "rundgangOffen"); assert.equal(zielAttr(d.ziel), 'data-a="kuehl-rundgang-start" data-offen="0"');
   s.rundgaenge = []; s.messungen = [messung("k1", 4), messung("k2", 5)]; // alle gemessen
-  assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(9) }), null);
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s), { jetzt: um(9) })), null);
 });
 
 test("Jetzt dran 3: Putzaufgabe überfällig", () => {
@@ -58,18 +60,18 @@ test("Jetzt dran 3: Putzaufgabe überfällig", () => {
 test("Jetzt dran 4: Sicherung älter als 7 Tage – nur außerhalb der Hauptzeiten", () => {
   const s = laden(); const w = wurzelVon(s, 9);
   assert.equal(jetztDran(s, w, { jetzt: um(10) }).id, "sicherung");
-  assert.equal(jetztDran(s, w, { jetzt: um(12, 15) }), null); // Mittagsgeschäft
-  assert.equal(jetztDran(s, w, { jetzt: um(17, 45) }), null); // Abendgeschäft
-  assert.equal(jetztDran(s, wurzelVon(s, 4), { jetzt: um(10) }), null); // gelb (3 Tage) meldet nur das Büro
+  assert.equal(ohneErinnerung(jetztDran(s, w, { jetzt: um(12, 15) })), null); // Mittagsgeschäft
+  assert.equal(ohneErinnerung(jetztDran(s, w, { jetzt: um(17, 45) })), null); // Abendgeschäft
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s, 4), { jetzt: um(10) })), null); // gelb (3 Tage) meldet nur das Büro
   assert.ok(istHauptzeit(11.5) && istHauptzeit(20.4) && !istHauptzeit(14) && !istHauptzeit(20.5));
 });
 
 test("Jetzt dran 5: ab 18 Uhr „Tag abschließen“, danach nicht mehr", () => {
   const s = laden();
-  assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(17, 59) }), null);
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s), { jetzt: um(17, 59) })), null);
   assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(18, 5) }).id, "abschluss");
   s.abschluesse = [{ id: "a", datum: H, erfasst: new Date().toISOString(), storniert: false }];
-  assert.equal(jetztDran(s, wurzelVon(s), { jetzt: um(18, 5) }), null);
+  assert.equal(ohneErinnerung(jetztDran(s, wurzelVon(s), { jetzt: um(18, 5) })), null);
 });
 
 test("Offen im Büro: Einrichtung, Kosten, graue Karte, Putzplan, Sicherung, neue Fassung – mit Ziel, nichts davon im Laden", () => {
@@ -160,4 +162,16 @@ test("Schwadron N2: am Ruhetag zeigt die Kühl-Kachel „Ruhetag“ statt „3 o
   E.ruhetageSetzen(s, [(E.wochentag(K) + 1) % 7], K); // kein Ruhetag mehr: wieder „3 offen“
   assert.equal(LZ.heuteKachelZahlen(s, E.kuehlStatus(s), K, K).kuehl.art, "offen");
   assert.equal(jetztDran(s, null, { jetzt: morgens })?.id, "rundgang");
+});
+
+test("Jetzt dran 6 (19.10.2026): Einkaufspreise, dann Rezepte – nicht in Hauptzeiten, nicht im Beispiel-Laden", () => {
+  const s = laden(); s.gerichte = [{ id: "a", name: "Döner", klasse: "haupt", preis: 8, zutaten: [{ name: "Fleisch", menge: 150, einheit: "g" }] }];
+  s.artikel = [{ name: "Fleisch", gruppe: "fleisch", einheit: "kg", benutzt: true, preis: null }];
+  const um = (h) => { const d = new Date("2026-10-19T00:00:00"); d.setHours(h); return d; };
+  assert.equal(jetztDran(s, null, { jetzt: um(10) })?.id, "einkauf");
+  assert.equal(jetztDran(s, null, { jetzt: um(12) }), null, "Mittagsgeschäft: keine Erinnerung");
+  s.artikel[0].preis = 12; s.artikel[0].packung = { menge: 1, einheit: "kg" }; s.artikel[0].preisBasis = "netto";
+  assert.equal(jetztDran(s, null, { jetzt: um(10) })?.id, "rezepte");
+  s.gerichte[0].rezeptQuelle = "eigen"; assert.equal(jetztDran(s, null, { jetzt: um(10) }), null);
+  s.beispiel = true; s.gerichte[0].rezeptQuelle = null; assert.equal(jetztDran(s, null, { jetzt: um(10) }), null, "Beispiel-Laden");
 });

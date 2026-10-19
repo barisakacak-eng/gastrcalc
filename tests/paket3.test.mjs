@@ -16,6 +16,8 @@ import { navKontext } from "../js/screens/nav.js";
 import { jetztDran } from "../js/offen.js";
 import { tagGewaehlt, tagAktion } from "../js/screens/tag.js";
 import { satzStandard } from "../js/data/kosten.js";
+// 19.10.2026: Erinnerung „Einkaufspreise/Rezepte“ ist die niedrigste Stufe – hier geht es um die Fälle davor
+const ohneErinnerung = (x) => (x && ["einkauf", "rezepte"].includes(x.id) ? null : x);
 
 const nah = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${a} ≠ ${b}`);
 const um = (hh, mm = 0, tag = 15) => new Date(2026, 9, tag, hh, mm, 0, 0); // Oktober 2026, Ortszeit
@@ -135,7 +137,7 @@ test("M7: Geschäftstag bis 4 Uhr – Umsatz um 01:30 auf dem Vortag, Monatswech
   // Tagesabschluss um 01:30 bucht auf den Vortag; „Jetzt dran“ bietet ihn nachts noch an
   const a = Z.tagAbschliessen(b, { datum: U.heuteGeschaeft(um(1, 30)) }); assert.equal(a.datum, "2026-10-14");
   const c = laden(); assert.equal(jetztDran(c, { betriebe: [c], letzteSicherung: new Date().toISOString() }, { jetzt: um(1, 30) })?.id, "abschluss");
-  assert.equal(jetztDran(c, { betriebe: [c], letzteSicherung: new Date().toISOString() }, { jetzt: um(5, 0) }), null);
+  assert.equal(ohneErinnerung(jetztDran(c, { betriebe: [c], letzteSicherung: new Date().toISOString() }, { jetzt: um(5, 0) })), null);
   assert.equal(E.zeitraumTage(7).bis, U.heuteGeschaeft()); assert.equal(E.monatsZeitraum().bis, U.heuteGeschaeft());
 });
 

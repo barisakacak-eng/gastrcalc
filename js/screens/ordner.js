@@ -8,7 +8,7 @@ import { esc, heute } from "../util.js";
 import { personAnlegen } from "../stamm.js"; // Trennung (17.10.2026)
 import { ordnerAmt, zeitraumFuer, belehrungEintragen } from "../export_amt.js";
 import { monatsPaket, monatPlus, datumDe } from "../export_steuer.js";
-import { amtZeitraumVon, paketZeitVon, monatLang, amtUnter, amtHinweis, paketUnter, dateiName, csvDateien as csvDateienR, dokumentFuer as dokumentFuerR } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
+import { BEILAGEN, amtZeitraumVon, paketZeitVon, monatLang, amtUnter, amtHinweis, paketUnter, dateiName, csvDateien as csvDateienR, dokumentFuer as dokumentFuerR } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
 import { monatName } from "./tag.js";
 import { bsym, bueroKopf } from "./buero.js";
 import { bueroRing as ring, dateienTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
@@ -76,6 +76,9 @@ function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
   return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: von === gesamt ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(von === gesamt ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
 }
 
+// Paket C (19.10.2026): was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“
+const beilagenKarte = (art) => `<div class="karte b-beilagen"><b>${esc(t("ordnerC.karteTitel"))}</b><ul>${(BEILAGEN[art] || []).map((b) => `<li>${esc(t("ordnerC.teile." + b))}</li>`).join("")}</ul>${art === "amt" ? "" : `<small class="b-leise">${esc(t("ordnerC.hinweis"))}</small>`}</div>`;
+
 // ---------- Gesundheitsamt ----------
 export function ordnerAmtView(stand) {
   const H = heute(); const z = amtZeitraum(H); const o = ordnerAmt(stand, z, { datum: H });
@@ -94,6 +97,7 @@ export function ordnerAmtView(stand) {
         ${inhaltZeile("file-text", t("amtW2.konzeptTitel"), amtUnter("konzept", o.teile.konzept), null)}
         ${inhaltZeile("trash-2", t("amtW2.muellTitel"), amtUnter("muell", o.teile.muell), null)}
       </div>
+      ${beilagenKarte("amt")}
       ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
@@ -110,6 +114,7 @@ export function ordnerPaketView(stand, art) {
       <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t("ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t("ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
       ${standKarte(p.vollstaendig, p.pruefTeile.length, t("ordnerT.kasse"), t("ordnerT.allesDa"))}
       <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
+      ${beilagenKarte(art)}
       ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
