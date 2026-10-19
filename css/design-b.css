@@ -182,7 +182,7 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .hak.offen { background: var(--b-karte); color: var(--b-text-leise); border: 2px solid var(--b-linie); }
 .abschluss-pokal { display: block; width: 120px; height: auto; margin: 4px auto 10px; }
 .hak { border-radius: 50%; width: 30px; height: 30px; }
-@media (max-height: 800px) {
+@media (max-height: 900px) {
   .heutewert { padding: 9px 14px; } .heutewert .zahl { font-size: calc(24rem / 17); }
   .muellkopf1 { gap: 6px; } .muellkopf1 h1 { font-size: calc(24rem / 17); }
   .muellraster .ware .gerichtbild.mini { aspect-ratio: 2 / 1; } .ware-mehr { top: calc(50cqw - 48px); }
@@ -207,3 +207,5 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .einklapp[open] > .einklapp-kopf::after { transform: rotate(90deg); }
 .einklapp-inhalt { padding: 0 12px 12px; }
 [dir="rtl"] .einklapp-kopf::after { content: "‹"; }
+.muell-anleitung { margin: 2px 4px 10px; font-size: calc(14rem / 17); color: var(--b-text-leise); line-height: 1.35; }
+@media (max-height: 800px) { .muell-anleitung { margin: 0 4px 6px; font-size: calc(13rem / 17); } }
