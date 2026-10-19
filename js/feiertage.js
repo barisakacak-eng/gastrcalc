@@ -38,8 +38,14 @@
 //   TH  Thüringer Landtag, Drucksache 6/6163 vom 18.09.2018 (Drittes Gesetz zur Änderung des Thüringer Feier- und Gedenktagsgesetzes, § 2 Abs. 1 – Liste mit
 //       Weltkindertag 20.9. und Reformationstag), https://parldok.thueringer-landtag.de/ParlDok/dokument/68329/...pdf: zusätzlich Weltkindertag, Reformationstag.
 //       Fronleichnam steht nicht in § 2 Abs. 1 (nur regional) → nicht landesweit.
-//   HH, SL, ST: nicht geprüft (Landesrecht-Portale sperren den Abruf, Ministeriumsseiten nicht erreichbar) → nur bundesweit. Nachtragen erst mit amtlicher Quelle.
-//   Erwartet, aber unbelegt: HH Reformationstag; SL Fronleichnam, Mariä Himmelfahrt, Allerheiligen; ST Heilige Drei Könige, Reformationstag.
+//   HH, SL, ST (19.10.2026, Zoro): Landesrecht-Portale sperren den Abruf; Wortlaut über die Gesetzestext-Sammlung umwelt-online.de (mit amtlicher
+//       Fundstelle im Gesetzblatt), gegengeprüft mit Frankys Recherche vom 19.10.2026 (Gemini, gleiche Listen):
+//   HH  Feiertagsgesetz Hamburg § 1 Nr. 8 „31. Oktober“ (Änderung vom 12.03.2018, HmbGVBl. S. 63),
+//       https://umwelt-online.de/recht/arbeitss/arbeitsrecht/laender/hh/feiertg.htm: zusätzlich Reformationstag.
+//   SL  Gesetz Nr. 1040 über die Sonn- und Feiertage (SFG) § 2 Abs. 1 (Amtsbl. 1976 S. 211, zuletzt geändert 13.10.2015 S. 790),
+//       https://www.umwelt-online.de/recht/arbeitss/arbeitsrecht/laender/srl/feiertg.htm: zusätzlich Fronleichnam, Mariä Himmelfahrt (15.8.), Allerheiligen.
+//   ST  FeiertG LSA § 2 (GVBl. 2004 S. 538, zuletzt geändert 04.05.2026 S. 178),
+//       https://umwelt-online.de/recht/arbeitss/arbeitsrecht/laender/lsa/feiertg.htm: zusätzlich Heilige Drei Könige, Reformationstag.
 // Sonntage (Ostersonntag, Pfingstsonntag) stehen nicht in der Liste: sie sind ohnehin Sonntage.
 
 // Ostersonntag nach Gauß in der Fassung von Meeus („Astronomical Algorithms“, Anonymous Gregorian algorithm), gregorianischer Kalender.
@@ -70,6 +76,9 @@ export const LAND_FEIERTAGE = {
   SN: ["reformationstag", "bussbettag"],
   SH: ["reformationstag"],
   TH: ["weltkindertag", "reformationstag"],
+  HH: ["reformationstag"],
+  SL: ["fronleichnam", "mariaehimmelfahrt", "allerheiligen"],
+  ST: ["dreikoenige", "reformationstag"],
 };
 // Alle 16 Länder (Kürzel nach ISO 3166-2:DE); geprueft = landesweite Feiertage hinterlegt. Die Namen sind Eigennamen und bleiben deutsch.
 export const BUNDESLAENDER = [
@@ -88,7 +97,7 @@ export function bussBettag(jahr) {
 function tageImJahr(jahr) {
   const o = ostersonntag(jahr);
   return { neujahr: iso(jahr, 1, 1), dreikoenige: iso(jahr, 1, 6), frauentag: iso(jahr, 3, 8), karfreitag: plusTage(o, -2), ostermontag: plusTage(o, 1), maifeiertag: iso(jahr, 5, 1),
-    himmelfahrt: plusTage(o, 39), pfingstmontag: plusTage(o, 50), fronleichnam: plusTage(o, 60), weltkindertag: iso(jahr, 9, 20), einheit: iso(jahr, 10, 3),
+    himmelfahrt: plusTage(o, 39), pfingstmontag: plusTage(o, 50), fronleichnam: plusTage(o, 60), mariaehimmelfahrt: iso(jahr, 8, 15), weltkindertag: iso(jahr, 9, 20), einheit: iso(jahr, 10, 3),
     reformationstag: iso(jahr, 10, 31), allerheiligen: iso(jahr, 11, 1), bussbettag: bussBettag(jahr), weihnachten1: iso(jahr, 12, 25), weihnachten2: iso(jahr, 12, 26) };
 }
 const cache = new Map();

@@ -217,7 +217,7 @@ test("Feiertage: Ostern (Gauß/Meeus), bundesweite und geprüfte Landes-Feiertag
   assert.equal(F.feiertagAm("2027-01-06", "BW"), "dreikoenige"); assert.equal(F.feiertagAm("2027-01-06", null), null); assert.equal(F.feiertagAm("2027-01-06", "NW"), null);
   assert.equal(F.feiertagAm("2027-05-27", "NW"), "fronleichnam"); assert.equal(F.feiertagAm("2026-11-01", "BY"), "allerheiligen");
   assert.equal(F.feiertagAm("2027-08-15", "BY"), null, "Mariä Himmelfahrt nur in einzelnen Gemeinden – nicht landesweit");
-  assert.equal(F.feiertagAm("2027-01-06", "HH"), null, "ungeprüftes Land: nur bundesweit"); assert.equal(F.landGeprueft("HH"), false); assert.equal(F.BUNDESLAENDER.length, 16);
+  assert.equal(F.feiertagAm("2027-01-06", "HH"), null, "HH: kein Dreikönig"); assert.equal(F.landGeprueft("HH"), true); assert.equal(F.landGeprueft("XX"), false, "unbekanntes Land: nur bundesweit"); assert.equal(F.BUNDESLAENDER.length, 16);
   assert.equal(F.feiertagAm("2026-10-03", "HH"), "einheit");
 });
 test("Feiertage: landesweite Feiertage der nachgetragenen Länder (Beispieljahr 2027), Buß- und Bettag-Regel", () => {
@@ -229,18 +229,19 @@ test("Feiertage: landesweite Feiertage der nachgetragenen Länder (Beispieljahr 
     BW: ["2027-01-06", "2027-05-27", "2027-11-01"], BY: ["2027-01-06", "2027-05-27", "2027-11-01"], NW: ["2027-05-27", "2027-11-01"],
     BE: ["2027-03-08"], BB: ["2027-10-31"], HB: ["2027-10-31"], HE: ["2027-05-27"], MV: ["2027-03-08", "2027-10-31"], NI: ["2027-10-31"], RP: ["2027-05-27", "2027-11-01"],
     SN: ["2027-10-31", "2027-11-17"], SH: ["2027-10-31"], TH: ["2027-09-20", "2027-10-31"],
+    HH: ["2027-10-31"], SL: ["2027-05-27", "2027-08-15", "2027-11-01"], ST: ["2027-01-06", "2027-10-31"], // nachgetragen 19.10.2026
   };
   for (const [land, extra] of Object.entries(erwartet)) {
     assert.equal(F.landGeprueft(land), true, land);
     assert.deepEqual(F.feiertageJahr(2027, land).map((f) => f.datum), [...bund, ...extra].sort(), land);
   }
-  for (const land of ["HH", "SL", "ST"]) { assert.equal(F.landGeprueft(land), false, land); assert.deepEqual(F.feiertageJahr(2027, land).map((f) => f.datum), bund, land + " nur bundesweit"); }
+  assert.equal(F.LAND_CODES.filter((l) => !F.landGeprueft(l)).length, 0, "alle 16 Länder geprüft"); assert.deepEqual(F.feiertageJahr(2027, null).map((f) => f.datum), bund, "ohne Land nur bundesweit");
   assert.equal(F.feiertagAm("2027-05-27", "HE"), "fronleichnam", "Fronleichnam 2027 = 27.05."); assert.equal(F.feiertagAm("2027-05-27", "SN"), null, "Fronleichnam in Sachsen nicht landesweit");
   assert.equal(F.feiertagAm("2026-11-18", "SN"), "bussbettag"); assert.equal(F.feiertagAm("2026-11-18", "BB"), null);
   assert.equal(F.feiertagAm("2026-10-31", "SH"), "reformationstag"); assert.equal(F.feiertagAm("2026-11-01", "RP"), "allerheiligen"); assert.equal(F.feiertagAm("2026-11-01", "SH"), null);
   assert.equal(F.feiertagAm("2026-03-08", "BE"), "frauentag"); assert.equal(F.feiertagAm("2026-03-08", "BB"), null);
   assert.equal(F.feiertagAm("2026-09-20", "TH"), "weltkindertag"); assert.equal(F.feiertagAm("2026-05-08", "BE"), null, "8. Mai nur in Einzeljahren – kein Dauerdatum");
-  assert.equal(F.feiertagAm("2027-08-15", "SL"), null, "SL ungeprüft: Mariä Himmelfahrt erst mit Quelle");
+  assert.equal(F.feiertagAm("2027-08-15", "SL"), "mariaehimmelfahrt", "SL: Mariä Himmelfahrt landesweit");
 });
 test("Feiertage: jeder Schlüssel hat in jeder Sprache einen Text", async () => {
   const fs = await import("node:fs"); const codes = fs.readdirSync(new URL("../js/lang/", import.meta.url)).map((f) => f.replace(".js", ""));
@@ -276,7 +277,7 @@ test("Feiertage: Büro „Lieferanten“ zeigt Bundesland und Schalter; Anzeigen
   for (const w of ['data-f="lf-land"', 'data-a="lf-feiertag-zu"', "Feiertage", "Baden-Württemberg", "Nächster Feiertag"]) assert.ok(html.includes(w), w);
   assert.equal(S.lieferantenEingabe("lf-land", "BY", s), "speichern"); assert.equal(s.betrieb.bundesland, "BY");
   assert.deepEqual(S.lieferantenAktion("lf-feiertag-zu", { dataset: {} }, s), { speichern: true }); assert.equal(s.betrieb.feiertagOffen, false);
-  S.lieferantenEingabe("lf-land", "HH", s); assert.ok(S.lieferantenView(s).includes("nur die bundesweiten"));
+  S.lieferantenEingabe("lf-land", "", s); assert.ok(S.lieferantenView(s).includes("nur die bundesweiten") || S.lieferantenView(s).includes("Nur bundesweite"), "ohne Land: Hinweis");
   S.lieferantenEingabe("lf-land", "SN", s); assert.ok(!S.lieferantenView(s).includes("nur die bundesweiten"), "geprüftes Land ohne Hinweis");
   assert.equal(personalGesperrt("lf-feiertag-zu", null, H), true); assert.equal(personalGesperrt("vk-zb-kasse", null, H), true); assert.equal(personalGesperrt("vk-zb-teil", null, H), true);
 });

@@ -1351,7 +1351,7 @@ export default {
     was: "اندازه روی تابلو و فهرست قیمت می‌آید – برای نوشیدنی الزامی است. ریختنی: جنس هر لیوان = قیمت هر لیتر × سهم، با هدررفت. انبار و سفارش به لیتر حساب می‌شوند.",
   },
   // Lieferanten (18.10.2026)
-  feiertage: { neujahr: "سال نو میلادی", dreikoenige: "عید ظهور", karfreitag: "جمعه نیک", ostermontag: "دوشنبه عید پاک", maifeiertag: "اول ماه مه", himmelfahrt: "عید صعود", pfingstmontag: "دوشنبه پنطیکاست", fronleichnam: "عید جسد مسیح", einheit: "روز وحدت آلمان", allerheiligen: "روز همه مقدسین", weihnachten1: "کریسمس (روز اول)", weihnachten2: "کریسمس (روز دوم)", frauentag: "روز جهانی زن", weltkindertag: "روز جهانی کودک", reformationstag: "روز اصلاحات", bussbettag: "روز توبه و دعا" }, // Feiertage (18.10.2026)
+  feiertage: { neujahr: "سال نو میلادی", dreikoenige: "عید ظهور", karfreitag: "جمعه نیک", ostermontag: "دوشنبه عید پاک", maifeiertag: "اول ماه مه", himmelfahrt: "عید صعود", pfingstmontag: "دوشنبه پنطیکاست", fronleichnam: "عید جسد مسیح", einheit: "روز وحدت آلمان", allerheiligen: "روز همه مقدسین", mariaehimmelfahrt: "عروج مریم مقدس", weihnachten1: "کریسمس (روز اول)", weihnachten2: "کریسمس (روز دوم)", frauentag: "روز جهانی زن", weltkindertag: "روز جهانی کودک", reformationstag: "روز اصلاحات", bussbettag: "روز توبه و دعا" }, // Feiertage (18.10.2026)
   lieferanten: {
     feiertage: { titel: "تعطیلات رسمی", land: "ایالت", nurBund: "فقط تعطیلات سراسری", ungeprueft: "برای این ایالت برنامه فقط تعطیلات سراسری را می‌شناسد.", ladenZu: "مغازه در تعطیلات رسمی بسته است", liefern: "در تعطیلات رسمی هیچ تأمین‌کننده‌ای تحویل نمی‌دهد. سفارش به روز تحویل بعدی می‌رود.", naechster: (n, d) => `تعطیلی بعدی: ${n}، ${d}` }, // Feiertage (18.10.2026)
     einstieg: "تأمین‌کنندگان", einstiegUnter: "روزهای تحویل، مهلت سفارش، روش سفارش",
