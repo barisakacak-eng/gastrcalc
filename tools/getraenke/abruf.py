@@ -13,14 +13,14 @@ FELDER = "code,product_name,product_name_de,brands,quantity,countries_tags,selec
 LIZENZ = "CC BY-SA 3.0 (Open Food Facts)"
 
 
-def hole(url, roh=False, versuche=3):
+def hole(url, roh=False, versuche=2):
     for i in range(versuche):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=40) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20) as r:
                 d = r.read(); return d if roh else json.loads(d)
         except Exception as e:  # Ratenbegrenzung oder Netz: kurz warten
             if i == versuche - 1: print("  Fehler", url[:90], e); return None
-            time.sleep(15)
+            time.sleep(5)
 
 
 def ml(text):
@@ -42,15 +42,26 @@ def frontbild(p):
     return None, None, None
 
 
+def produkt(code):
+    d = hole(f"https://world.openfoodfacts.org/api/v2/product/{code}.json?fields={FELDER}")
+    return d["product"] if d and d.get("status") == 1 else None
+
+
 def kandidaten(z):
+    """Erst der bekannte Barcode, sonst die schnelle Suche (search.openfoodfacts.org), dann je Treffer die Produktdaten."""
     if z["ean"]:
-        d = hole(f"https://world.openfoodfacts.org/api/v2/product/{z['ean']}.json?fields={FELDER}")
-        if d and d.get("status") == 1: return [d["product"]]
+        p = produkt(z["ean"])
+        if p: return [p]
     suche = f"{z['marke']} {z['sorte']}".replace("Original", "").strip()
-    q = urllib.parse.urlencode({"search_terms": suche, "tagtype_0": "countries", "tag_contains_0": "contains", "tag_0": "germany",
-                                "json": 1, "page_size": 24, "sort_by": "unique_scans_n", "fields": FELDER})
-    d = hole("https://world.openfoodfacts.org/cgi/search.pl?" + q); time.sleep(7)  # Suche: höchstens 10 Anfragen je Minute
-    return (d or {}).get("products") or []
+    q = urllib.parse.urlencode({"q": f'{suche} countries_tags:"en:germany"', "page_size": 20, "fields": "code,product_name,brands,quantity"})
+    d = hole("https://search.openfoodfacts.org/search?" + q) or {}
+    treffer = sorted(d.get("hits") or [], key=lambda p: -passt(p, z))[:4]
+    out = []
+    for t in treffer:
+        if passt(t, z) < 0: continue
+        p = produkt(t["code"]); time.sleep(0.7)
+        if p: out.append(p)
+    return out
 
 
 def passt(p, z):
@@ -89,6 +100,8 @@ def main():
                              produktseite=f"https://world.openfoodfacts.org/product/{p['code']}", bild=url, datei=datei, urheber=uploader, lizenz=LIZENZ, punkte=s)
         print("  →", zeile["status"], zeile["ean_gefunden"], zeile["name_off"], zeile["menge_off"])
         out.append(zeile)
+        with open(ORDNER / "ergebnis.csv", "w", encoding="utf-8", newline="") as f:  # nach jeder Zeile sichern
+            w = csv.DictWriter(f, fieldnames=list(zeile.keys()), delimiter=";"); w.writeheader(); w.writerows(out)
     with open(ORDNER / "ergebnis.csv", "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(out[0].keys()), delimiter=";"); w.writeheader(); w.writerows(out)
     print(sum(1 for x in out if x["status"] == "gefunden"), "von", len(out), "gefunden")
