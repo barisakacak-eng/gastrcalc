@@ -154,6 +154,7 @@ function bearbeiter(v) {
       <input class="textfeld" data-f="fv-name:${v.id}" value="${esc(v.name)}" maxlength="80" aria-label="${esc(t("foto.name"))}">
       <div class="fvreihe"><div class="betrag klein"><input inputmode="decimal" data-f="fv-preis:${v.id}" value="${esc(v.preis === null ? "" : v.preis.toFixed(2).replace(".", ","))}" placeholder="0,00" aria-label="${esc(t("foto.preis"))}"><span class="einheit">€</span></div>
         ${v.sicher === "vorschlag" ? `<button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button>` : ""}
+        ${v.preis !== null && ["name", "preisUnsicher", "zweiPreise"].includes(grund(v)) ? `<button type="button" class="chip klein an" data-a="fv-stimmt" data-id="${v.id}">${esc(t("waage.ok"))}</button>` : ""}
         <button type="button" class="chip klein leise" data-a="fv-an" data-id="${v.id}">${esc(t("foto.weglassen"))}</button></div>
       <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : v.sicher === "baukasten" ? esc(t("foto.rezeptStartwert", v.bau.zutaten.length)) : esc(t("foto.ohneRezept"))}</small>
       ${v.sicher === "baukasten" ? `<small class="marke">${esc(baukastenZutatenOhneVerpackung(v.bau).map((z) => `${artikelText(z.name)} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " " + t("allgemein.stueck") : " " + z.einheit}`).join(" · "))}</small>` : ""}
@@ -198,6 +199,7 @@ export function kartePruefenAktion(name, el) {
   const v = vorschlaege.find((x) => x.id === el.dataset.id);
   if (name === "fv-an" && v) { v.an = !v.an; if (!v.an && aufgeklappt === v.id) aufgeklappt = null; return true; }
   if (name === "fv-auf" && v) { aufgeklappt = aufgeklappt === v.id ? null : v.id; return true; }
+  if (name === "fv-stimmt" && v) { v.pruefen = false; v.preisPruefen = false; return true; } // Baris 19.10.2026: Name und Preis stimmen – bestätigen ohne zu tippen
   if (name === "fv-rezept-ja" && v) { v.sicher = "sicher"; return true; }
   if (name === "fv-rezept-nein" && v) { v.vorlage = null; v.sicher = v.getraenk ? "getraenk" : "ohne"; return true; }
   return false;
