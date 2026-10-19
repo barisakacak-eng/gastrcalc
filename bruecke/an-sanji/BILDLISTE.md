@@ -1,9 +1,9 @@
 # BILDLISTE GastroCalc – alle Bilder, die die App braucht
 Stand 19.10.2026 · erzeugt aus den App-Daten mit `node tools/bildliste.mjs` (nicht von Hand ändern, neu erzeugen) · gepflegt von Zoro · für Sanji und Baris
 
-Insgesamt **651 Bilder**, davon **94 vorhanden**, **557 fehlen** – 342 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 215 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
-Fehlend nach Prio: Prio 1 = 148 · Prio 2 = 199 · Prio 3 = 210.
-Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 17 · C Warengruppe: 11 · D Gericht-Familie: 10 · E Gericht: 108 · F Artikel: 400 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
+Insgesamt **651 Bilder**, davon **111 vorhanden**, **540 fehlen** – 326 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 214 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
+Fehlend nach Prio: Prio 1 = 139 · Prio 2 = 194 · Prio 3 = 207.
+Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 17 · C Warengruppe: 11 · D Gericht-Familie: 10 · E Gericht: 101 · F Artikel: 390 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
 Die gleiche Liste als Tabelle: `bruecke/an-sanji/bildliste.csv` (Spalten: prio;gruppe;datei;name;status;motiv).
 
 ## Was drauf soll – was du (Sanji) entscheidest
@@ -100,7 +100,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-adana-spiess.webp` | Adana-Spieß | fehlt – zeigt bis dahin g-adana | „Adana-Spieß“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Adana-Spieß, Pide-Brot, Zwiebeln, Petersilie, Joghurtsauce.
 1 | E Gericht | `g-apfelschorle-0-3-l.webp` | Apfelschorle 0,3 l | fehlt – zeigt bis dahin d-saft | „Apfelschorle 0,3 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Apfelsaft.
 1 | E Gericht | `g-caesar-salad.webp` | Caesar Salad | fehlt – zeigt bis dahin g-salat | „Caesar Salad“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Romanasalat, Hähnchenbrust, Parmesan, Croutons, Caesar-Dressing.
-1 | E Gericht | `g-cola-0-33-l.webp` | Cola 0,33 l | fehlt – zeigt bis dahin d-cola | „Cola 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Cola 0,33 l.
+1 | E Gericht | `g-cola-0-33-l.webp` | Cola 0,33 l | vorhanden | „Cola 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Cola 0,33 l.
 1 | E Gericht | `g-couscous-salat.webp` | Couscous-Salat | fehlt – zeigt bis dahin g-salat | „Couscous-Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Couscous, Cocktailtomaten, Salatgurke, Kichererbsen, Olivenöl.
 1 | E Gericht | `g-doener-kebab.webp` | Döner Kebab | vorhanden | „Döner Kebab“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Zwiebeln, Weißkohl.
 1 | E Gericht | `g-doenerteller.webp` | Dönerteller | fehlt – zeigt bis dahin g-doener | „Dönerteller“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Pommes frites, Eisbergsalat, Tomaten, Knoblauchsauce, Hirtenkäse / Feta.
@@ -112,12 +112,12 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-gemischtes-gemuese.webp` | Gemischtes Gemüse | fehlt – zeigt bis dahin g-gemuese | „Gemischtes Gemüse“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mischgemüse TK, Butter.
 1 | E Gericht | `g-griechischer-salat.webp` | Griechischer Salat | vorhanden | „Griechischer Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Tomaten, Salatgurke, Rote Zwiebeln, Oliven, Feta.
 1 | E Gericht | `g-haehnchendoener.webp` | Hähnchendöner | fehlt – zeigt bis dahin g-doener | „Hähnchendöner“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenspieß, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Zwiebeln, Joghurtsauce.
-1 | E Gericht | `g-hausgemachte-limonade-0-4-l.webp` | Hausgemachte Limonade 0,4 l | fehlt – zeigt bis dahin d-limo | „Hausgemachte Limonade 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hausgemachte Limonade, Zitronen, Minze, Trinkhalm.
+1 | E Gericht | `g-hausgemachte-limonade-0-4-l.webp` | Hausgemachte Limonade 0,4 l | vorhanden | „Hausgemachte Limonade 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hausgemachte Limonade, Zitronen, Minze, Trinkhalm.
 1 | E Gericht | `g-kartoffelknoedel-2-stueck.webp` | Kartoffelknödel (2 Stück) | fehlt – zeigt bis dahin g-pommes | „Kartoffelknödel (2 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kartoffelknödel.
 1 | E Gericht | `g-kartoffelsalat.webp` | Kartoffelsalat | fehlt – zeigt bis dahin g-salat | „Kartoffelsalat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kartoffeln, Zwiebeln, Weinessig, Rapsöl.
 1 | E Gericht | `g-kroketten-beilage.webp` | Kroketten (Beilage) | fehlt – zeigt bis dahin g-pommes | „Kroketten (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kroketten.
-1 | E Gericht | `g-mineralwasser-0-25-l.webp` | Mineralwasser 0,25 l | fehlt – zeigt bis dahin d-wasser | „Mineralwasser 0,25 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mineralwasser 0,25 l.
-1 | E Gericht | `g-orangensaft-0-2-l.webp` | Orangensaft 0,2 l | fehlt – zeigt bis dahin d-limo | „Orangensaft 0,2 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Orangensaft.
+1 | E Gericht | `g-mineralwasser-0-25-l.webp` | Mineralwasser 0,25 l | vorhanden | „Mineralwasser 0,25 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mineralwasser 0,25 l.
+1 | E Gericht | `g-orangensaft-0-2-l.webp` | Orangensaft 0,2 l | vorhanden | „Orangensaft 0,2 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Orangensaft.
 1 | E Gericht | `g-poke-bowl-lachs.webp` | Poke Bowl Lachs | fehlt – zeigt bis dahin g-salat | „Poke Bowl Lachs“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Quinoa, Räucherlachs, Avocado, Möhren, Babyspinat.
 1 | E Gericht | `g-pommes-frites-beilage.webp` | Pommes frites (Beilage) | vorhanden | „Pommes frites (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pommes frites.
 1 | E Gericht | `g-reis-beilage.webp` | Reis (Beilage) | vorhanden | „Reis (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Langkornreis.
@@ -145,7 +145,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | F Artikel | `d-lassi.webp` | Lassi | vorhanden | Lassi als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-mineralwasser-0-75-l.webp` | Mineralwasser 0,75 l | vorhanden | Mineralwasser 0,75 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-rhabarberschorle.webp` | Rhabarberschorle | fehlt – zeigt bis dahin d-saft | Rhabarberschorle als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
-1 | F Artikel | `d-sprite-0-2-l.webp` | Sprite 0,2 l | fehlt – zeigt bis dahin d-cola | Sprite 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-sprite-0-2-l.webp` | Sprite 0,2 l | vorhanden | Sprite 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `r-adana-spiess.webp` | Adana-Spieß | fehlt – zeigt bis dahin r-doenerspiess | Adana-Spieß als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-ajvar.webp` | Ajvar | fehlt – zeigt bis dahin r-ketchup-mayo | Ajvar als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-babyspinat.webp` | Babyspinat | fehlt | Babyspinat als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -176,17 +176,17 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | F Artikel | `r-joghurtsauce.webp` | Joghurtsauce | fehlt – zeigt bis dahin r-knoblauchsauce | Joghurtsauce als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-kartoffelgratin.webp` | Kartoffelgratin | fehlt – zeigt bis dahin r-pommes-tk | Kartoffelgratin als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-kartoffelknoedel.webp` | Kartoffelknödel | fehlt – zeigt bis dahin r-pommes-tk | Kartoffelknödel als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
-1 | F Artikel | `r-kichererbsen.webp` | Kichererbsen | fehlt | Kichererbsen als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+1 | F Artikel | `r-kichererbsen.webp` | Kichererbsen | vorhanden | Kichererbsen als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-kidneybohnen.webp` | Kidneybohnen | fehlt | Kidneybohnen als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-knoblauchgranulat.webp` | Knoblauchgranulat | fehlt – zeigt bis dahin r-knoblauch | Knoblauchgranulat als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-knoblauchsauce.webp` | Knoblauchsauce | vorhanden | Knoblauchsauce als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-kraeuterbutter.webp` | Kräuterbutter | fehlt – zeigt bis dahin r-petersilie | Kräuterbutter als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-kraeuterquark.webp` | Kräuterquark | fehlt – zeigt bis dahin r-joghurt | Kräuterquark als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-1 | F Artikel | `r-kraeutersauce.webp` | Kräutersauce | fehlt – zeigt bis dahin r-ketchup-mayo | Kräutersauce als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+1 | F Artikel | `r-kraeutersauce.webp` | Kräutersauce | vorhanden | Kräutersauce als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-kreuzkuemmel.webp` | Kreuzkümmel | fehlt – zeigt bis dahin r-gewuerz | Kreuzkümmel als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-lahmacun-teig.webp` | Lahmacun-Teig | vorhanden | Lahmacun-Teig als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-lammhackfleisch.webp` | Lammhackfleisch | fehlt – zeigt bis dahin r-doenerspiess | Lammhackfleisch als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-1 | F Artikel | `r-langkornreis.webp` | Langkornreis | fehlt – zeigt bis dahin r-reis | Langkornreis als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+1 | F Artikel | `r-langkornreis.webp` | Langkornreis | vorhanden | Langkornreis als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-mais.webp` | Mais | vorhanden | Mais als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-mischgemuese-tk.webp` | Mischgemüse TK | fehlt | Mischgemüse TK als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-oliven.webp` | Oliven | vorhanden | Oliven als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -194,7 +194,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | F Artikel | `r-paprika-edelsuess.webp` | Paprika edelsüß | fehlt – zeigt bis dahin r-paprika | Paprika edelsüß als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-peperoni-eingelegt.webp` | Peperoni eingelegt | fehlt – zeigt bis dahin r-peperoni | Peperoni eingelegt als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-petersilie.webp` | Petersilie | vorhanden | Petersilie als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-1 | F Artikel | `r-pide-brot.webp` | Pide-Brot | fehlt – zeigt bis dahin r-fladenbrot | Pide-Brot als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
+1 | F Artikel | `r-pide-brot.webp` | Pide-Brot | vorhanden | Pide-Brot als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-pide-teig.webp` | Pide-Teig | fehlt – zeigt bis dahin r-mehl | Pide-Teig als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-putenbrustschinken.webp` | Putenbrustschinken | fehlt – zeigt bis dahin r-schinken | Putenbrustschinken als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-putenstreifen.webp` | Putenstreifen | fehlt – zeigt bis dahin r-haehnchen | Putenstreifen als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -321,7 +321,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 2 | F Artikel | `r-bratenfond.webp` | Bratenfond | fehlt | Bratenfond als Rohware, Flasche oder Kanister; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-bratwurst.webp` | Bratwurst | fehlt – zeigt bis dahin r-wurst | Bratwurst als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-brioche-bun.webp` | Brioche-Bun | fehlt – zeigt bis dahin r-buns | Brioche-Bun als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
-2 | F Artikel | `r-broetchen.webp` | Brötchen | fehlt – zeigt bis dahin r-buns | Brötchen als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
+2 | F Artikel | `r-broetchen.webp` | Brötchen | vorhanden | Brötchen als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-brokkoli.webp` | Brokkoli | fehlt | Brokkoli als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-bueffelmozzarella.webp` | Büffelmozzarella | fehlt – zeigt bis dahin r-mozzarella | Büffelmozzarella als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-burger-bun.webp` | Burger-Bun | fehlt – zeigt bis dahin r-buns | Burger-Bun als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -381,7 +381,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 2 | F Artikel | `r-lammkotelett.webp` | Lammkotelett | fehlt – zeigt bis dahin r-doenerspiess | Lammkotelett als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-lasagneplatten.webp` | Lasagneplatten | fehlt – zeigt bis dahin r-nudeln | Lasagneplatten als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-matjesfilet.webp` | Matjesfilet | fehlt | Matjesfilet als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-2 | F Artikel | `r-mayonnaise.webp` | Mayonnaise | fehlt – zeigt bis dahin r-ketchup-mayo | Mayonnaise als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+2 | F Artikel | `r-mayonnaise.webp` | Mayonnaise | vorhanden | Mayonnaise als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-mie-nudeln.webp` | Mie-Nudeln | fehlt – zeigt bis dahin r-nudeln | Mie-Nudeln als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-mini-frikadellen.webp` | Mini-Frikadellen | fehlt | Mini-Frikadellen als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-mini-quiche.webp` | Mini-Quiche | fehlt | Mini-Quiche als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -397,12 +397,12 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 2 | F Artikel | `r-paprika.webp` | Paprika | vorhanden | Paprika als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-parmaschinken.webp` | Parmaschinken | fehlt – zeigt bis dahin r-schinken | Parmaschinken als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-parmesan.webp` | Parmesan | fehlt | Parmesan als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-2 | F Artikel | `r-penne.webp` | Penne | fehlt – zeigt bis dahin r-nudeln | Penne als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+2 | F Artikel | `r-penne.webp` | Penne | vorhanden | Penne als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-peperoni-salami.webp` | Peperoni-Salami | fehlt – zeigt bis dahin r-salami | Peperoni-Salami als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-pesto-genovese.webp` | Pesto Genovese | fehlt – zeigt bis dahin r-ketchup-mayo | Pesto Genovese als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-2 | F Artikel | `r-pizzakaese-gerieben.webp` | Pizzakäse gerieben | fehlt – zeigt bis dahin r-pizzakaese | Pizzakäse gerieben als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+2 | F Artikel | `r-pizzakaese-gerieben.webp` | Pizzakäse gerieben | vorhanden | Pizzakäse gerieben als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-pizzamehl-typ-00.webp` | Pizzamehl Typ 00 | fehlt – zeigt bis dahin r-pizzateig | Pizzamehl Typ 00 als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-2 | F Artikel | `r-pizzasosse.webp` | Pizzasoße | fehlt – zeigt bis dahin r-ketchup-mayo | Pizzasoße als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
+2 | F Artikel | `r-pizzasosse.webp` | Pizzasoße | vorhanden | Pizzasoße als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-pizzateig.webp` | Pizzateig | vorhanden | Pizzateig als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-pizzatomaten-dose.webp` | Pizzatomaten (Dose) | fehlt – zeigt bis dahin r-tomate | Pizzatomaten (Dose) als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 2 | F Artikel | `r-pommes-frites.webp` | Pommes frites | fehlt – zeigt bis dahin r-pommes-tk | Pommes frites als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -481,14 +481,14 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 3 | E Gericht | `g-becher-erdbeere-mit-sahne.webp` | Becher Erdbeere mit Sahne | fehlt – zeigt bis dahin g-eis | „Becher Erdbeere mit Sahne“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Erdbeeren, Sahne, Eislöffel.
 3 | E Gericht | `g-belegtes-broetchen-schinken.webp` | Belegtes Brötchen Schinken | fehlt – zeigt bis dahin g-fruehstueck | „Belegtes Brötchen Schinken“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Brötchen, Kochschinken, Butter, Tomaten.
 3 | E Gericht | `g-broetchen-mit-kaese.webp` | Brötchen mit Käse | fehlt – zeigt bis dahin g-fruehstueck | „Brötchen mit Käse“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Brötchen, Gouda, Butter.
-3 | E Gericht | `g-cappuccino.webp` | Cappuccino | fehlt – zeigt bis dahin g-kaffee | „Cappuccino“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Espressobohnen, Vollmilch, Coffee-to-go 0,3 l.
+3 | E Gericht | `g-cappuccino.webp` | Cappuccino | vorhanden | „Cappuccino“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Espressobohnen, Vollmilch, Coffee-to-go 0,3 l.
 3 | E Gericht | `g-chai-latte.webp` | Chai Latte | fehlt – zeigt bis dahin g-kaffee | „Chai Latte“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Chai-Pulver, Vollmilch, Coffee-to-go 0,4 l.
 3 | E Gericht | `g-croissant.webp` | Croissant | fehlt – zeigt bis dahin g-fruehstueck | „Croissant“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Croissantteigling TK.
 3 | E Gericht | `g-cuba-libre.webp` | Cuba Libre | fehlt | „Cuba Libre“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weißer Rum, Cola 0,2 l, Limetten.
 3 | E Gericht | `g-eiskugel-im-becher.webp` | Eiskugel im Becher | fehlt – zeigt bis dahin g-eis | „Eiskugel im Becher“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Eislöffel.
 3 | E Gericht | `g-eiswaffel-2-kugeln.webp` | Eiswaffel 2 Kugeln | fehlt – zeigt bis dahin g-eis | „Eiswaffel 2 Kugeln“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Eismix Schokolade, Eiswaffel.
 3 | E Gericht | `g-espresso.webp` | Espresso | fehlt – zeigt bis dahin g-kaffee | „Espresso“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Espressobohnen.
-3 | E Gericht | `g-filterkaffee.webp` | Filterkaffee | fehlt – zeigt bis dahin g-kaffee | „Filterkaffee“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Filterkaffee gemahlen, Coffee-to-go 0,3 l, Filterpapier.
+3 | E Gericht | `g-filterkaffee.webp` | Filterkaffee | vorhanden | „Filterkaffee“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Filterkaffee gemahlen, Coffee-to-go 0,3 l, Filterpapier.
 3 | E Gericht | `g-flat-white-mit-hafermilch.webp` | Flat White mit Hafermilch | fehlt – zeigt bis dahin g-kaffee | „Flat White mit Hafermilch“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Espressobohnen, Hafermilch, Coffee-to-go 0,3 l.
 3 | E Gericht | `g-fruehstuecksteller-klein.webp` | Frühstücksteller klein | fehlt – zeigt bis dahin g-fruehstueck | „Frühstücksteller klein“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Brötchen, Gouda, Kochschinken, Marmeladenportion, Butterportion, Eier.
 3 | E Gericht | `g-gin-tonic.webp` | Gin Tonic | fehlt | „Gin Tonic“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Gin, Tonic Water 0,2 l, Limetten.
@@ -516,7 +516,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 3 | E Gericht | `g-ruehrei-mit-speck.webp` | Rührei mit Speck | fehlt – zeigt bis dahin g-fruehstueck | „Rührei mit Speck“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eier, Frühstücksspeck, Butter, Brötchen.
 3 | E Gericht | `g-schokoladenkuchen-stueck.webp` | Schokoladenkuchen (Stück) | fehlt – zeigt bis dahin g-kuchen | „Schokoladenkuchen (Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weizenmehl Typ 405, Butter, Zucker, Kuvertüre zartbitter, Eier.
 3 | E Gericht | `g-spaghettieis.webp` | Spaghettieis | fehlt – zeigt bis dahin g-eis | „Spaghettieis“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Sahne, Fruchtpüree Erdbeere, Waffelbruch.
-3 | E Gericht | `g-tee.webp` | Tee | fehlt – zeigt bis dahin d-tee | „Tee“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Schwarztee, Coffee-to-go 0,3 l.
+3 | E Gericht | `g-tee.webp` | Tee | vorhanden | „Tee“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Schwarztee, Coffee-to-go 0,3 l.
 3 | E Gericht | `g-tiramisu-portion.webp` | Tiramisu (Portion) | fehlt – zeigt bis dahin g-kuchen | „Tiramisu (Portion)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mascarpone, Löffelbiskuit, Zucker, Espressobohnen, Dessertglas.
 3 | E Gericht | `g-tomatensuppe.webp` | Tomatensuppe | fehlt – zeigt bis dahin g-suppe | „Tomatensuppe“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Passierte Tomaten, Sahne, Zwiebeln, Gemüsebrühe Pulver.
 3 | E Gericht | `g-waffel-mit-eis.webp` | Waffel mit Eis | fehlt – zeigt bis dahin g-eis | „Waffel mit Eis“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Waffelteig, Eismix Vanille, Schokosauce, Dessertglas.

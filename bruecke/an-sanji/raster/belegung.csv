@@ -1,558 +1,541 @@
 raster;feld;datei;name
-101;1;foto/g-cola-0-33-l.webp;Cola 0,33 l
-101;2;foto/g-eistee-0-33-l.webp;Eistee 0,33 l
-101;3;foto/g-energydrink-0-25-l.webp;Energydrink 0,25 l
-101;4;foto/g-hausgemachte-limonade-0-4-l.webp;Hausgemachte Limonade 0,4 l
-101;5;foto/g-orangensaft-0-2-l.webp;Orangensaft 0,2 l
-101;6;foto/g-apfelschorle-0-3-l.webp;Apfelschorle 0,3 l
-101;7;foto/g-tee.webp;Tee
-101;8;foto/g-mineralwasser-0-25-l.webp;Mineralwasser 0,25 l
-101;9;foto/g-aperol-spritz.webp;Aperol Spritz
-102;1;foto/g-cuba-libre.webp;Cuba Libre
-102;2;foto/g-gin-tonic.webp;Gin Tonic
-102;3;foto/g-glas-rotwein-0-2-l.webp;Glas Rotwein 0,2 l
-102;4;foto/g-glas-weisswein-0-2-l.webp;Glas Weißwein 0,2 l
-102;5;foto/g-mojito.webp;Mojito
-102;6;foto/g-prosecco-0-1-l.webp;Prosecco 0,1 l
-102;7;foto/g-whisky-sour.webp;Whisky Sour
-102;8;foto/g-adana-spiess.webp;Adana-Spieß
-102;9;foto/g-haehnchenspiess-mit-dip.webp;Hähnchenspieß mit Dip
-103;1;foto/g-kaesespiess.webp;Käsespieß
-103;2;foto/g-fruehlingsrollen-3-stueck.webp;Frühlingsrollen (3 Stück)
-103;3;foto/g-garnelen-im-wok.webp;Garnelen im Wok
-103;4;foto/g-rotes-thai-curry.webp;Rotes Thai-Curry
-103;5;foto/g-suess-sauer-schwein.webp;Süß-sauer Schwein
-103;6;foto/g-alkoholfreies-bier-0-33-l.webp;Alkoholfreies Bier 0,33 l
-103;7;foto/g-helles-0-5-l.webp;Helles 0,5 l
-103;8;foto/g-mass-helles-1-0-l.webp;Maß Helles 1,0 l
-103;9;foto/g-pils-0-3-l.webp;Pils 0,3 l
-104;1;foto/g-pils-0-5-l.webp;Pils 0,5 l
-104;2;foto/g-radler-0-5-l.webp;Radler 0,5 l
-104;3;foto/g-weizen-0-5-l.webp;Weizen 0,5 l
-104;4;foto/g-bacon-burger.webp;Bacon Burger
-104;5;foto/g-cheeseburger-classic.webp;Cheeseburger Classic
-104;6;foto/g-chickenburger.webp;Chickenburger
-104;7;foto/g-doppel-cheeseburger.webp;Doppel-Cheeseburger
-104;8;foto/g-pulled-pork-burger.webp;Pulled-Pork-Burger
-104;9;foto/g-veggie-burger.webp;Veggie-Burger
-105;1;foto/g-currywurst-einzeln.webp;Currywurst einzeln
-105;2;foto/g-frikadelle-im-broetchen.webp;Frikadelle im Brötchen
-105;3;foto/g-doenerteller.webp;Dönerteller
-105;4;foto/g-haehnchendoener.webp;Hähnchendöner
-105;5;foto/g-dueruem-doener.webp;Dürüm Döner
-105;6;foto/g-wrap-haeppchen.webp;Wrap-Häppchen
-105;7;foto/g-affogato.webp;Affogato
-105;8;foto/g-becher-erdbeere-mit-sahne.webp;Becher Erdbeere mit Sahne
-105;9;foto/g-eiskugel-im-becher.webp;Eiskugel im Becher
-106;1;foto/g-eiswaffel-2-kugeln.webp;Eiswaffel 2 Kugeln
-106;2;foto/g-spaghettieis.webp;Spaghettieis
-106;3;foto/g-waffel-mit-eis.webp;Waffel mit Eis
-106;4;foto/g-falafel-dueruem.webp;Falafel-Dürüm
-106;5;foto/g-canape-lachs.webp;Canapé Lachs
-106;6;foto/g-mini-frikadellen-3-stueck.webp;Mini-Frikadellen (3 Stück)
-106;7;foto/g-mini-quiche.webp;Mini-Quiche
-106;8;foto/g-forelle-muellerin.webp;Forelle Müllerin
-106;9;foto/g-lachsfilet-gebraten.webp;Lachsfilet gebraten
-107;1;foto/g-rinderbraten-mit-kloessen.webp;Rinderbraten mit Klößen
-107;2;foto/g-rumpsteak-mit-beilage.webp;Rumpsteak mit Beilage
-107;3;foto/g-wiener-schnitzel-mit-pommes.webp;Wiener Schnitzel mit Pommes
-107;4;foto/g-belegtes-broetchen-schinken.webp;Belegtes Brötchen Schinken
-107;5;foto/g-broetchen-mit-kaese.webp;Brötchen mit Käse
-107;6;foto/g-croissant.webp;Croissant
-107;7;foto/g-fruehstuecksteller-klein.webp;Frühstücksteller klein
-107;8;foto/g-laugenbrezel.webp;Laugenbrezel
-107;9;foto/g-muesli-mit-joghurt.webp;Müsli mit Joghurt
-108;1;foto/g-ruehrei-mit-speck.webp;Rührei mit Speck
-108;2;foto/g-gemischtes-gemuese.webp;Gemischtes Gemüse
-108;3;foto/g-gemuesesticks-mit-hummus.webp;Gemüsesticks mit Hummus
-108;4;foto/g-cappuccino.webp;Cappuccino
-108;5;foto/g-chai-latte.webp;Chai Latte
-108;6;foto/g-espresso.webp;Espresso
-108;7;foto/g-filterkaffee.webp;Filterkaffee
-108;8;foto/g-flat-white-mit-hafermilch.webp;Flat White mit Hafermilch
-108;9;foto/g-heisse-schokolade.webp;Heiße Schokolade
-109;1;foto/g-latte-macchiato.webp;Latte Macchiato
-109;2;foto/g-apfelkuchen-stueck.webp;Apfelkuchen (Stück)
-109;3;foto/g-kaese-sahne-torte-stueck.webp;Käse-Sahne-Torte (Stück)
-109;4;foto/g-kaesekuchen-stueck.webp;Käsekuchen (Stück)
-109;5;foto/g-muffin.webp;Muffin
-109;6;foto/g-schokoladenkuchen-stueck.webp;Schokoladenkuchen (Stück)
-109;7;foto/g-tiramisu-portion.webp;Tiramisu (Portion)
-109;8;foto/g-gebratene-nudeln-mit-haehnchen.webp;Gebratene Nudeln mit Hähnchen
-109;9;foto/g-penne-arrabiata.webp;Penne Arrabiata
-110;1;foto/g-spaghetti-bolognese.webp;Spaghetti Bolognese
-110;2;foto/g-pizza-funghi.webp;Pizza Funghi
-110;3;foto/g-pizza-prosciutto.webp;Pizza Prosciutto
-110;4;foto/g-pizza-quattro-formaggi.webp;Pizza Quattro Formaggi
-110;5;foto/g-pizza-tonno.webp;Pizza Tonno
-110;6;foto/g-kartoffelknoedel-2-stueck.webp;Kartoffelknödel (2 Stück)
-110;7;foto/g-kroketten-beilage.webp;Kroketten (Beilage)
-110;8;foto/g-pommes-gross.webp;Pommes groß
-110;9;foto/g-pommes-klein.webp;Pommes klein
-111;1;foto/g-pommes-mit-dip.webp;Pommes mit Dip
-111;2;foto/g-spaetzle-beilage.webp;Spätzle (Beilage)
-111;3;foto/g-ente-knusprig-mit-reis.webp;Ente knusprig mit Reis
-111;4;foto/g-gebratener-reis-mit-ei.webp;Gebratener Reis mit Ei
-111;5;foto/g-caesar-salad.webp;Caesar Salad
-111;6;foto/g-couscous-salat.webp;Couscous-Salat
-111;7;foto/g-gemischter-salat-klein.webp;Gemischter Salat klein
-111;8;foto/g-kartoffelsalat.webp;Kartoffelsalat
-111;9;foto/g-poke-bowl-lachs.webp;Poke Bowl Lachs
-112;1;foto/g-thunfischsalat.webp;Thunfischsalat
-112;2;foto/g-sucuk-sandwich.webp;Sucuk-Sandwich
-112;3;foto/g-gulaschsuppe.webp;Gulaschsuppe
-112;4;foto/g-huehnersuppe.webp;Hühnersuppe
-112;5;foto/g-kartoffelsuppe.webp;Kartoffelsuppe
-112;6;foto/g-kuerbiscremesuppe.webp;Kürbiscremesuppe
-112;7;foto/g-linsensuppe-mit-wuerstchen.webp;Linsensuppe mit Würstchen
-112;8;foto/g-tomatensuppe.webp;Tomatensuppe
-112;9;foto/g-bratwurst-im-broetchen.webp;Bratwurst im Brötchen
-113;1;foto/g-brot.webp;brot
-113;2;foto/g-doener-salat.webp;doener-salat
-113;3;foto/g-extra.webp;extra
-113;4;foto/g-haehnchen-doener.webp;haehnchen-doener
-113;5;foto/g-pizzabroetchen.webp;pizzabroetchen
-113;6;foto/g-pljeskavica.webp;pljeskavica
-113;7;foto/g-portion.webp;portion
-113;8;foto/g-shawarma.webp;shawarma
-113;9;foto/g-teller.webp;teller
-114;1;foto/g-wrap.webp;wrap
-114;2;foto/s-brot.webp;brot
-114;3;foto/s-lahmacun.webp;lahmacun
-114;4;foto/s-patty.webp;patty
-114;5;foto/s-sossen.webp;sossen
-114;6;foto/s-teig.webp;teig
-114;7;foto/s-tomatensosse.webp;tomatensosse
-114;8;foto/d-aperol.webp;Aperol
-114;9;foto/d-brauner-rum.webp;Brauner Rum
-115;1;foto/d-campari.webp;Campari
-115;2;foto/d-gin.webp;Gin
-115;3;foto/d-korn.webp;Korn
-115;4;foto/d-obstler.webp;Obstler
-115;5;foto/d-prosecco-0-75-l.webp;Prosecco 0,75 l
-115;6;foto/d-rotwein-offen.webp;Rotwein offen
-115;7;foto/d-sekt-0-75-l.webp;Sekt 0,75 l
-115;8;foto/d-tequila.webp;Tequila
-115;9;foto/d-weisser-rum.webp;Weißer Rum
-116;1;foto/d-weisswein-offen.webp;Weißwein offen
-116;2;foto/d-whisky.webp;Whisky
-116;3;foto/d-wodka.webp;Wodka
-116;4;foto/d-cola-0-2-l.webp;Cola 0,2 l
-116;5;foto/d-cola-0-33-l.webp;Cola 0,33 l
-116;6;foto/d-cola-0-33-l-dose.webp;Cola 0,33 l Dose
-116;7;foto/d-cola-0-33-l-glas.webp;Cola 0,33 l Glas
-116;8;foto/d-cola-0-5-l-pet.webp;Cola 0,5 l PET
-116;9;foto/d-cola-1-0-l-glas.webp;Cola 1,0 l Glas
-117;1;foto/d-cola-1-5-l-pet.webp;Cola 1,5 l PET
-117;2;foto/d-cola-bag-in-box-postmix.webp;Cola Bag-in-Box (Postmix)
-117;3;foto/d-fanta-0-33-l.webp;Fanta 0,33 l
-117;4;foto/d-sprite-0-2-l.webp;Sprite 0,2 l
-117;5;foto/d-orangensaft.webp;Orangensaft
-117;6;foto/d-ananassaft.webp;Ananassaft
-117;7;foto/d-maracujasaft.webp;Maracujasaft
-117;8;foto/d-rhabarberschorle.webp;Rhabarberschorle
-117;9;foto/d-mineralwasser-0-25-l.webp;Mineralwasser 0,25 l
-118;1;foto/d-mineralwasser-0-5-l.webp;Mineralwasser 0,5 l
-118;2;foto/d-sodawasser.webp;Sodawasser
-118;3;foto/d-ayran-1-0-l.webp;Ayran 1,0 l
-118;4;foto/d-apfelwein.webp;Apfelwein
-118;5;foto/d-bitter-lemon-0-2-l.webp;Bitter Lemon 0,2 l
-118;6;foto/d-bockbier.webp;Bockbier
-118;7;foto/d-chai-pulver.webp;Chai-Pulver
-118;8;foto/d-espressobohnen.webp;Espressobohnen
-118;9;foto/d-fassbrause.webp;Fassbrause
-119;1;foto/d-filterkaffee-gemahlen.webp;Filterkaffee gemahlen
-119;2;foto/d-ginger-ale-0-2-l.webp;Ginger Ale 0,2 l
-119;3;foto/d-gruentee.webp;Grüntee
-119;4;foto/d-guinness-vom-fass.webp;Guinness vom Fass
-119;5;foto/d-helles-vom-fass.webp;Helles vom Fass
-119;6;foto/d-kakaopulver.webp;Kakaopulver
-119;7;foto/d-kraeutertee.webp;Kräutertee
-119;8;foto/d-koelsch-vom-fass.webp;Kölsch vom Fass
-119;9;foto/d-matcha.webp;Matcha
-120;1;foto/d-pils-alkoholfrei-0-33-l.webp;Pils alkoholfrei 0,33 l
-120;2;foto/d-pils-vom-fass.webp;Pils vom Fass
-120;3;foto/d-radler-0-5-l.webp;Radler 0,5 l
-120;4;foto/d-schwarztee.webp;Schwarztee
-120;5;foto/d-spezi-0-33-l.webp;Spezi 0,33 l
-120;6;foto/d-tonic-water-0-2-l.webp;Tonic Water 0,2 l
-120;7;foto/d-weizen-alkoholfrei-0-5-l.webp;Weizen alkoholfrei 0,5 l
-120;8;foto/d-weizenbier-0-5-l.webp;Weizenbier 0,5 l
-120;9;foto/r-amarenakirschen.webp;Amarenakirschen
-121;1;foto/r-artischockenherzen.webp;Artischockenherzen
-121;2;foto/r-avocado.webp;Avocado
-121;3;foto/r-babyspinat.webp;Babyspinat
-121;4;foto/r-bacon.webp;Bacon
-121;5;foto/r-balsamico.webp;Balsamico
-121;6;foto/r-bambussprossen.webp;Bambussprossen
-121;7;foto/r-bananen.webp;Bananen
-121;8;foto/r-bratenfond.webp;Bratenfond
-121;9;foto/r-brokkoli.webp;Brokkoli
-122;1;foto/r-bunte-streusel.webp;Bunte Streusel
-122;2;foto/r-butter.webp;Butter
-122;3;foto/r-butterschmalz.webp;Butterschmalz
-122;4;foto/r-canape-boeden.webp;Canapé-Böden
-122;5;foto/r-cracker.webp;Cracker
-122;6;foto/r-croutons.webp;Croutons
-122;7;foto/r-currypaste.webp;Currypaste
-122;8;foto/r-dorade-ganz.webp;Dorade ganz
-122;9;foto/r-eismix-schokolade.webp;Eismix Schokolade
-123;1;foto/r-eismix-vanille.webp;Eismix Vanille
-123;2;foto/r-eiswaffel.webp;Eiswaffel
-123;3;foto/r-entenbrust.webp;Entenbrust
-123;4;foto/r-erbsen-tk.webp;Erbsen TK
-123;5;foto/r-erdbeeren.webp;Erdbeeren
-123;6;foto/r-forelle-ganz.webp;Forelle ganz
-123;7;foto/r-frikadelle.webp;Frikadelle
-123;8;foto/r-fruchtpueree-erdbeere.webp;Fruchtpüree Erdbeere
-123;9;foto/r-fruchtpueree-mango.webp;Fruchtpüree Mango
-124;1;foto/r-fruehlingsrolle.webp;Frühlingsrolle
-124;2;foto/r-fruehstuecksspeck.webp;Frühstücksspeck
-124;3;foto/r-garnelen.webp;Garnelen
-124;4;foto/r-gnocchi.webp;Gnocchi
-124;5;foto/r-gorgonzola.webp;Gorgonzola
-124;6;foto/r-grenadine.webp;Grenadine
-124;7;foto/r-gruene-bohnen.webp;Grüne Bohnen
-124;8;foto/r-hafermilch.webp;Hafermilch
-124;9;foto/r-hartweizengriess.webp;Hartweizengrieß
-125;1;foto/r-heidelbeeren.webp;Heidelbeeren
-125;2;foto/r-honig.webp;Honig
-125;3;foto/r-ingwer.webp;Ingwer
-125;4;foto/r-jakobsmuscheln.webp;Jakobsmuscheln
-125;5;foto/r-kichererbsen.webp;Kichererbsen
-125;6;foto/r-kidneybohnen.webp;Kidneybohnen
-125;7;foto/r-knollensellerie.webp;Knollensellerie
-125;8;foto/r-kokosmilch.webp;Kokosmilch
-125;9;foto/r-kuvertuere-vollmilch.webp;Kuvertüre Vollmilch
-126;1;foto/r-kuvertuere-zartbitter.webp;Kuvertüre zartbitter
-126;2;foto/r-kuerbis.webp;Kürbis
-126;3;foto/r-lachsfilet.webp;Lachsfilet
-126;4;foto/r-lachstatar.webp;Lachstatar
-126;5;foto/r-lauch.webp;Lauch
-126;6;foto/r-laugenbrezel.webp;Laugenbrezel
-126;7;foto/r-linsen.webp;Linsen
-126;8;foto/r-lorbeerblaetter.webp;Lorbeerblätter
-126;9;foto/r-loeffelbiskuit.webp;Löffelbiskuit
-127;1;foto/r-mandelmilch.webp;Mandelmilch
-127;2;foto/r-mandeln-gehobelt.webp;Mandeln gehobelt
-127;3;foto/r-marmelade.webp;Marmelade
-127;4;foto/r-marzipanrohmasse.webp;Marzipanrohmasse
-127;5;foto/r-mascarpone.webp;Mascarpone
-127;6;foto/r-matjesfilet.webp;Matjesfilet
-127;7;foto/r-mini-frikadellen.webp;Mini-Frikadellen
-127;8;foto/r-mini-quiche.webp;Mini-Quiche
-127;9;foto/r-mischgemuese-tk.webp;Mischgemüse TK
-128;1;foto/r-muskatnuss.webp;Muskatnuss
-128;2;foto/r-moehren.webp;Möhren
-128;3;foto/r-muesli.webp;Müsli
-128;4;foto/r-orangen.webp;Orangen
-128;5;foto/r-pak-choi.webp;Pak Choi
-128;6;foto/r-parmesan.webp;Parmesan
-128;7;foto/r-puderzucker.webp;Puderzucker
-128;8;foto/r-pulled-pork.webp;Pulled Pork
-128;9;foto/r-quinoa.webp;Quinoa
-129;1;foto/r-radieschen.webp;Radieschen
-129;2;foto/r-rosmarin.webp;Rosmarin
-129;3;foto/r-rotweinjus.webp;Rotweinjus
-129;4;foto/r-rumpsteak.webp;Rumpsteak
-129;5;foto/r-raeucherlachs.webp;Räucherlachs
-129;6;foto/r-roesti.webp;Rösti
-129;7;foto/r-sardellenfilets.webp;Sardellenfilets
-129;8;foto/r-sauerkirschen-glas.webp;Sauerkirschen (Glas)
-129;9;foto/r-sauerkraut.webp;Sauerkraut
-130;1;foto/r-schnitzel-paniert.webp;Schnitzel paniert
-130;2;foto/r-schokostreusel.webp;Schokostreusel
-130;3;foto/r-schweinefilet.webp;Schweinefilet
-130;4;foto/r-schweinegeschnetzeltes.webp;Schweinegeschnetzeltes
-130;5;foto/r-schweineschnitzel.webp;Schweineschnitzel
-130;6;foto/r-semmelknoedel.webp;Semmelknödel
-130;7;foto/r-sirup-karamell.webp;Sirup Karamell
-130;8;foto/r-sirup-vanille.webp;Sirup Vanille
-130;9;foto/r-sojamilch.webp;Sojamilch
-131;1;foto/r-sojasprossen.webp;Sojasprossen
-131;2;foto/r-speck.webp;Speck
-131;3;foto/r-speckwuerfel.webp;Speckwürfel
-131;4;foto/r-speisestaerke.webp;Speisestärke
-131;5;foto/r-spaetzle.webp;Spätzle
-131;6;foto/r-tofu.webp;Tofu
-131;7;foto/r-vanillezucker.webp;Vanillezucker
-131;8;foto/r-vollmilch.webp;Vollmilch
-131;9;foto/r-waffelbecher.webp;Waffelbecher
-132;1;foto/r-waffelbruch.webp;Waffelbruch
-132;2;foto/r-wan-tan-blaetter.webp;Wan-Tan-Blätter
-132;3;foto/r-weinessig.webp;Weinessig
-132;4;foto/r-weintrauben.webp;Weintrauben
-132;5;foto/r-weisse-bohnen.webp;Weiße Bohnen
-132;6;foto/r-zanderfilet.webp;Zanderfilet
-132;7;foto/r-zucchini.webp;Zucchini
-132;8;foto/r-zucker.webp;Zucker
-132;9;foto/r-zuckerportion.webp;Zuckerportion
-133;1;foto/r-zuckerschoten.webp;Zuckerschoten
-133;2;foto/r-zuckersirup.webp;Zuckersirup
-133;3;foto/r-aepfel.webp;Äpfel
-133;4;foto/r-ananas-dose.webp;Ananas (Dose)
-133;5;foto/r-brioche-bun.webp;Brioche-Bun
-133;6;foto/r-broetchen.webp;Brötchen
-133;7;foto/r-broetchenteigling-tk.webp;Brötchenteigling TK
-133;8;foto/r-burger-bun.webp;Burger-Bun
-133;9;foto/r-vollkorn-bun.webp;Vollkorn-Bun
-134;1;foto/r-champignons.webp;Champignons
-134;2;foto/r-adana-spiess.webp;Adana-Spieß
-134;3;foto/r-garnelenspiess.webp;Garnelenspieß
-134;4;foto/r-gyrosfleisch.webp;Gyrosfleisch
-134;5;foto/r-kalbsschnitzel.webp;Kalbsschnitzel
-134;6;foto/r-lammhackfleisch.webp;Lammhackfleisch
-134;7;foto/r-lammkotelett.webp;Lammkotelett
-134;8;foto/r-rinderbraten.webp;Rinderbraten
-134;9;foto/r-rinderfilet.webp;Rinderfilet
-135;1;foto/r-rindergeschnetzeltes.webp;Rindergeschnetzeltes
-135;2;foto/r-rinderhack.webp;Rinderhack
-135;3;foto/r-rinderpatty-150-g.webp;Rinderpatty 150 g
-135;4;foto/r-suppenfleisch-rind.webp;Suppenfleisch Rind
-135;5;foto/r-falafelbaellchen.webp;Falafelbällchen
-135;6;foto/r-hirtenkaese-feta.webp;Hirtenkäse / Feta
-135;7;foto/r-chicken-wings.webp;Chicken Wings
-135;8;foto/r-frikandel-tk.webp;Frikandel TK
-135;9;foto/r-haehnchen-nuggets.webp;Hähnchen-Nuggets
-136;1;foto/r-mozzarella-sticks-tk.webp;Mozzarella-Sticks TK
-136;2;foto/r-onion-rings-tk.webp;Onion Rings TK
-136;3;foto/r-rohkost-sticks.webp;Rohkost-Sticks
-136;4;foto/r-baguette.webp;Baguette
-136;5;foto/r-bauernbrot.webp;Bauernbrot
-136;6;foto/r-pide-brot.webp;Pide-Brot
-136;7;foto/r-toastbrot.webp;Toastbrot
-136;8;foto/r-backpulver.webp;Backpulver
-136;9;foto/r-chiliflocken.webp;Chiliflocken
-137;1;foto/r-currypulver.webp;Currypulver
-137;2;foto/r-doenergewuerz.webp;Dönergewürz
-137;3;foto/r-gemuesebruehe-pulver.webp;Gemüsebrühe Pulver
-137;4;foto/r-gewuerzgurken.webp;Gewürzgurken
-137;5;foto/r-kreuzkuemmel.webp;Kreuzkümmel
-137;6;foto/r-oregano.webp;Oregano
-137;7;foto/r-oregano-getrocknet.webp;Oregano getrocknet
-137;8;foto/r-pfeffer-schwarz.webp;Pfeffer schwarz
-137;9;foto/r-rinderbruehe-pulver.webp;Rinderbrühe Pulver
-138;1;foto/r-salz.webp;Salz
-138;2;foto/r-thymian.webp;Thymian
-138;3;foto/r-zimt.webp;Zimt
-138;4;foto/r-gurkensalat.webp;Gurkensalat
-138;5;foto/r-salatgurke.webp;Salatgurke
-138;6;foto/r-hackfleisch-gemischt.webp;Hackfleisch gemischt
-138;7;foto/r-nuesse-gehackt.webp;Nüsse gehackt
-138;8;foto/r-haehnchenbrust.webp;Hähnchenbrust
-138;9;foto/r-haehnchenkarkasse.webp;Hähnchenkarkasse
-139;1;foto/r-haehnchenpatty.webp;Hähnchenpatty
-139;2;foto/r-putenstreifen.webp;Putenstreifen
-139;3;foto/r-doenerspiess-kalb-pute.webp;Dönerspieß Kalb/Pute
-139;4;foto/r-creme-fraiche.webp;Crème fraîche
-139;5;foto/r-joghurt-natur.webp;Joghurt natur
-139;6;foto/r-kraeuterquark.webp;Kräuterquark
-139;7;foto/r-nuss-nougat-creme.webp;Nuss-Nougat-Creme
-139;8;foto/r-quark.webp;Quark
-139;9;foto/r-sahne.webp;Sahne
-140;1;foto/r-sahnesteif.webp;Sahnesteif
-140;2;foto/r-aioli.webp;Aioli
-140;3;foto/r-ajvar.webp;Ajvar
-140;4;foto/r-bbq-sauce.webp;BBQ-Sauce
-140;5;foto/r-bratensauce.webp;Bratensauce
-140;6;foto/r-burgersauce.webp;Burgersauce
-140;7;foto/r-caesar-dressing.webp;Caesar-Dressing
-140;8;foto/r-cocktailsauce.webp;Cocktailsauce
-140;9;foto/r-currysauce.webp;Currysauce
-141;1;foto/r-erdnusssauce.webp;Erdnusssauce
-141;2;foto/r-hummus.webp;Hummus
-141;3;foto/r-karamellsauce.webp;Karamellsauce
-141;4;foto/r-ketchup.webp;Ketchup
-141;5;foto/r-kraeuterdip.webp;Kräuterdip
-141;6;foto/r-kraeutersauce.webp;Kräutersauce
-141;7;foto/r-kaesesauce.webp;Käsesauce
-141;8;foto/r-mayonnaise.webp;Mayonnaise
-141;9;foto/r-pesto-genovese.webp;Pesto Genovese
-142;1;foto/r-pizzasosse.webp;Pizzasoße
-142;2;foto/r-remoulade.webp;Remoulade
-142;3;foto/r-sahnesauce.webp;Sahnesauce
-142;4;foto/r-sauce-hollandaise.webp;Sauce hollandaise
-142;5;foto/r-schokosauce.webp;Schokosauce
-142;6;foto/r-senf.webp;Senf
-142;7;foto/r-sojasauce.webp;Sojasauce
-142;8;foto/r-suess-sauer-sauce.webp;Süß-Sauer-Sauce
-142;9;foto/r-worcestersauce.webp;Worcestersauce
-143;1;foto/r-knoblauchgranulat.webp;Knoblauchgranulat
-143;2;foto/r-joghurtdressing.webp;Joghurtdressing
-143;3;foto/r-joghurtsauce.webp;Joghurtsauce
-143;4;foto/r-blaetterteig.webp;Blätterteig
-143;5;foto/r-croissantteigling-tk.webp;Croissantteigling TK
-143;6;foto/r-dinkelmehl.webp;Dinkelmehl
-143;7;foto/r-frischhefe.webp;Frischhefe
-143;8;foto/r-mandelmehl.webp;Mandelmehl
-143;9;foto/r-muerbeteig.webp;Mürbeteig
-144;1;foto/r-pide-teig.webp;Pide-Teig
-144;2;foto/r-teigtaschen-tk.webp;Teigtaschen TK
-144;3;foto/r-waffelteig.webp;Waffelteig
-144;4;foto/r-weizenmehl-typ-405.webp;Weizenmehl Typ 405
-144;5;foto/r-weizenmehl-typ-550.webp;Weizenmehl Typ 550
-144;6;foto/r-bueffelmozzarella.webp;Büffelmozzarella
-144;7;foto/r-mozzarella-kugeln.webp;Mozzarella-Kugeln
-144;8;foto/r-bandnudeln.webp;Bandnudeln
-144;9;foto/r-lasagneplatten.webp;Lasagneplatten
-145;1;foto/r-mie-nudeln.webp;Mie-Nudeln
-145;2;foto/r-penne.webp;Penne
-145;3;foto/r-reisnudeln.webp;Reisnudeln
-145;4;foto/r-spaghetti.webp;Spaghetti
-145;5;foto/r-suppennudeln.webp;Suppennudeln
-145;6;foto/r-frittieroel.webp;Frittieröl
-145;7;foto/r-olivenoel.webp;Olivenöl
-145;8;foto/r-rapsoel.webp;Rapsöl
-145;9;foto/r-sesamoel.webp;Sesamöl
-146;1;foto/r-sonnenblumenoel.webp;Sonnenblumenöl
-146;2;foto/r-oliven-schwarz.webp;Oliven schwarz
-146;3;foto/r-paprika-edelsuess.webp;Paprika edelsüß
-146;4;foto/r-veggie-patty.webp;Veggie-Patty
-146;5;foto/r-jalapenos.webp;Jalapeños
-146;6;foto/r-peperoni-eingelegt.webp;Peperoni eingelegt
-146;7;foto/r-basilikum.webp;Basilikum
-146;8;foto/r-basilikum-getrocknet.webp;Basilikum getrocknet
-146;9;foto/r-kraeuterbutter.webp;Kräuterbutter
-147;1;foto/d-kraeuterlikoer.webp;Kräuterlikör
-147;2;foto/r-minze.webp;Minze
-147;3;foto/r-bergkaese.webp;Bergkäse
-147;4;foto/r-blauschimmelkaese.webp;Blauschimmelkäse
-147;5;foto/r-cheddar-scheiben.webp;Cheddar-Scheiben
-147;6;foto/r-emmentaler.webp;Emmentaler
-147;7;foto/r-frischkaese.webp;Frischkäse
-147;8;foto/r-gouda.webp;Gouda
-147;9;foto/r-halloumi.webp;Halloumi
-148;1;foto/r-kaesewuerfel.webp;Käsewürfel
-148;2;foto/r-pizzakaese-gerieben.webp;Pizzakäse gerieben
-148;3;foto/r-ziegenkaese.webp;Ziegenkäse
-148;4;foto/r-pizzamehl-typ-00.webp;Pizzamehl Typ 00
-148;5;foto/r-kartoffelgratin.webp;Kartoffelgratin
-148;6;foto/r-kartoffelknoedel.webp;Kartoffelknödel
-148;7;foto/r-kartoffeln.webp;Kartoffeln
-148;8;foto/r-kroketten.webp;Kroketten
-148;9;foto/r-pommes-frites.webp;Pommes frites
-149;1;foto/r-suesskartoffel-pommes.webp;Süßkartoffel-Pommes
-149;2;foto/r-suesskartoffeln.webp;Süßkartoffeln
-149;3;foto/r-basmatireis.webp;Basmatireis
-149;4;foto/r-bulgur.webp;Bulgur
-149;5;foto/r-couscous.webp;Couscous
-149;6;foto/r-jasminreis.webp;Jasminreis
-149;7;foto/r-langkornreis.webp;Langkornreis
-149;8;foto/r-rosenkohl.webp;Rosenkohl
-149;9;foto/r-peperoni-salami.webp;Peperoni-Salami
-150;1;foto/r-salamiwuerfel.webp;Salamiwürfel
-150;2;foto/r-truthahnsalami.webp;Truthahnsalami
-150;3;foto/r-eisbergsalat.webp;Eisbergsalat
-150;4;foto/r-feldsalat.webp;Feldsalat
-150;5;foto/r-krautsalat.webp;Krautsalat
-150;6;foto/r-romanasalat.webp;Romanasalat
-150;7;foto/r-rucola.webp;Rucola
-150;8;foto/r-scharfe-sauce.webp;Scharfe Sauce
-150;9;foto/r-kochschinken.webp;Kochschinken
-151;1;foto/r-parmaschinken.webp;Parmaschinken
-151;2;foto/r-putenbrustschinken.webp;Putenbrustschinken
-151;3;foto/r-serranoschinken.webp;Serranoschinken
-151;4;foto/r-thunfisch-dose.webp;Thunfisch (Dose)
-151;5;foto/r-cocktailtomaten.webp;Cocktailtomaten
-151;6;foto/r-passierte-tomaten.webp;Passierte Tomaten
-151;7;foto/r-pizzatomaten-dose.webp;Pizzatomaten (Dose)
-151;8;foto/r-tomaten.webp;Tomaten
-151;9;foto/r-tomatenmark.webp;Tomatenmark
-152;1;foto/r-bockwurst.webp;Bockwurst
-152;2;foto/r-bratwurst.webp;Bratwurst
-152;3;foto/r-currywurst.webp;Currywurst
-152;4;foto/r-currywurst-vegan.webp;Currywurst vegan
-152;5;foto/r-krakauer.webp;Krakauer
-152;6;foto/r-leberwurst.webp;Leberwurst
-152;7;foto/r-wiener-wuerstchen.webp;Wiener Würstchen
-152;8;foto/r-dueruem-wrap.webp;Dürüm-Wrap
-152;9;foto/r-weizenwraps.webp;Weizenwraps
-153;1;foto/r-yufka-teigblatt.webp;Yufka-Teigblatt
-153;2;foto/r-limetten.webp;Limetten
-153;3;foto/r-zitronen.webp;Zitronen
-153;4;foto/r-fruehlingszwiebeln.webp;Frühlingszwiebeln
-153;5;foto/r-rote-zwiebeln.webp;Rote Zwiebeln
-153;6;foto/r-zwiebelgranulat.webp;Zwiebelgranulat
-153;7;foto/r-zwiebeln.webp;Zwiebeln
-153;8;foto/v-asia-box.webp;Asia-Box
-153;9;foto/v-beilagenschale.webp;Beilagenschale
-154;1;foto/v-bierdeckel.webp;Bierdeckel
-154;2;foto/v-burgerbox.webp;Burgerbox
-154;3;foto/v-butterbrotpapier.webp;Butterbrotpapier
-154;4;foto/v-butterportion.webp;Butterportion
-154;5;foto/v-co2-flasche.webp;CO2-Flasche
-154;6;foto/v-cocktailspiess.webp;Cocktailspieß
-154;7;foto/v-coffee-to-go-0-3-l.webp;Coffee-to-go 0,3 l
-154;8;foto/v-coffee-to-go-0-4-l.webp;Coffee-to-go 0,4 l
-154;9;foto/v-currywurstschale.webp;Currywurstschale
-155;1;foto/v-dessertglas.webp;Dessertglas
-155;2;foto/v-einweghandschuhe.webp;Einweghandschuhe
-155;3;foto/v-eisloeffel.webp;Eislöffel
-155;4;foto/v-essstaebchen.webp;Essstäbchen
-155;5;foto/v-filterpapier.webp;Filterpapier
-155;6;foto/v-fingerfood-schale.webp;Fingerfood-Schale
-155;7;foto/v-holzbesteck-set.webp;Holzbesteck-Set
-155;8;foto/v-holzgabel.webp;Holzgabel
-155;9;foto/v-kuchenbox.webp;Kuchenbox
-156;1;foto/v-marmeladenportion.webp;Marmeladenportion
-156;2;foto/v-muellbeutel.webp;Müllbeutel
-156;3;foto/v-pappmanschette.webp;Pappmanschette
-156;4;foto/v-pastabox.webp;Pastabox
-156;5;foto/v-reiniger-zapfanlage.webp;Reiniger Zapfanlage
-156;6;foto/v-reinigungstabs-maschine.webp;Reinigungstabs Maschine
-156;7;foto/v-reinigungstuch.webp;Reinigungstuch
-156;8;foto/v-ruehrstaebchen.webp;Rührstäbchen
-156;9;foto/v-salatschale.webp;Salatschale
-157;1;foto/v-serviette.webp;Serviette
-157;2;foto/v-tortenspitze.webp;Tortenspitze
-157;3;foto/v-trinkhalm.webp;Trinkhalm
-157;4;foto/v-alufolie-rolle.webp;Alufolie (Rolle)
-157;5;foto/v-alufolie-bogen.webp;Alufolie-Bogen
-157;6;foto/v-frischhaltefolie-rolle.webp;Frischhaltefolie (Rolle)
-157;7;foto/v-becherdeckel.webp;Becherdeckel
-157;8;foto/v-dessertbecher.webp;Dessertbecher
-157;9;foto/v-einwegbecher-0-5-l.webp;Einwegbecher 0,5 l
-158;1;foto/v-eisbecher.webp;Eisbecher
-158;2;foto/v-pfandbecher-0-5-l.webp;Pfandbecher 0,5 l
-158;3;foto/v-suppenbecher-0-4-l.webp;Suppenbecher 0,4 l
-158;4;foto/v-trinkbecher-0-3-l.webp;Trinkbecher 0,3 l
-158;5;foto/v-trinkbecher-0-4-l.webp;Trinkbecher 0,4 l
-158;6;foto/v-menueschale-1-teilig.webp;Menüschale 1-teilig
-158;7;foto/v-menueschale-3-teilig.webp;Menüschale 3-teilig
-158;8;foto/v-pizzakarton-30-cm.webp;Pizzakarton 30 cm
-158;9;foto/v-pizzakarton-40-cm.webp;Pizzakarton 40 cm
-159;1;foto/v-tortenkarton.webp;Tortenkarton
-159;2;foto/v-papiertragetasche.webp;Papiertragetasche
-159;3;foto/k-getraenkekuehler-foto.webp;Getränkekühlschrank mit Glastür
-159;4;foto/k-kuehlraum-foto.webp;Kühlraum (begehbar)
-159;5;foto/m-frittieroel.webp;Altöl-Kanister
-159;6;foto/m-personalessen.webp;Personalessen (Teller am Tresen)
-159;7;foto/laden-anders.webp;Etwas anderes
-159;8;foto/bereich-alkoholfrei.webp;Alkoholfreie Getränke
-159;9;foto/bereich-asia.webp;Asiatisch & Wok
-160;1;foto/bereich-bar.webp;Bar & Cocktails
-160;2;foto/bereich-beilagen.webp;Beilagen & Sättigung
-160;3;foto/bereich-bier.webp;Bier & Fassgetränke
-160;4;foto/bereich-burger.webp;Burger & Grill
-160;5;foto/bereich-currywurst.webp;Currywurst & Pommes
-160;6;foto/bereich-doener.webp;Döner & Kebab
-160;7;foto/bereich-eis.webp;Eis & Desserts
-160;8;foto/bereich-fingerfood.webp;Fingerfood & Catering
-160;9;foto/bereich-fleischgericht.webp;Fleisch, Fisch & Hauptgang
-161;1;foto/bereich-fruehstueck.webp;Frühstück & Backwaren
-161;2;foto/bereich-grundzutaten.webp;Grundzutaten & Gewürze
-161;3;foto/bereich-kaffee.webp;Kaffee & Heißgetränke
-161;4;foto/bereich-kuchen.webp;Kuchen & Konditorei
-161;5;foto/bereich-pizza.webp;Pizza & Pasta
-161;6;foto/bereich-verpackung.webp;Verpackung & Einweg
-161;7;foto/gruppe-fisch.webp;Fisch & Meeresfrüchte
-161;8;foto/gruppe-fleisch.webp;Fleisch & Wurst
-161;9;foto/gruppe-gemuese.webp;Gemüse, Obst & Frisches
-162;1;foto/gruppe-getraenk.webp;Getränke
-162;2;foto/gruppe-gewuerz.webp;Gewürze & Grundzutaten
-162;3;foto/gruppe-kaese.webp;Käse & Molkerei
-162;4;foto/gruppe-sauce.webp;Saucen, Öl & Dips
-162;5;foto/gruppe-spirituose.webp;Spirituosen & Bar
-162;6;foto/gruppe-suess.webp;Süßes & Backzutaten
-162;7;foto/gruppe-teig.webp;Teig, Brot & Trockenware
-162;8;foto/gruppe-verpackung.webp;Verpackung & Einweg
+103;1;foto/g-eistee-0-33-l.webp;Eistee 0,33 l
+103;2;foto/g-energydrink-0-25-l.webp;Energydrink 0,25 l
+103;3;foto/g-apfelschorle-0-3-l.webp;Apfelschorle 0,3 l
+103;4;foto/g-aperol-spritz.webp;Aperol Spritz
+103;5;foto/g-cuba-libre.webp;Cuba Libre
+103;6;foto/g-gin-tonic.webp;Gin Tonic
+103;7;foto/g-glas-rotwein-0-2-l.webp;Glas Rotwein 0,2 l
+103;8;foto/g-glas-weisswein-0-2-l.webp;Glas Weißwein 0,2 l
+103;9;foto/g-mojito.webp;Mojito
+104;1;foto/g-prosecco-0-1-l.webp;Prosecco 0,1 l
+104;2;foto/g-whisky-sour.webp;Whisky Sour
+104;3;foto/g-adana-spiess.webp;Adana-Spieß
+104;4;foto/g-haehnchenspiess-mit-dip.webp;Hähnchenspieß mit Dip
+104;5;foto/g-kaesespiess.webp;Käsespieß
+104;6;foto/g-fruehlingsrollen-3-stueck.webp;Frühlingsrollen (3 Stück)
+104;7;foto/g-garnelen-im-wok.webp;Garnelen im Wok
+104;8;foto/g-rotes-thai-curry.webp;Rotes Thai-Curry
+104;9;foto/g-suess-sauer-schwein.webp;Süß-sauer Schwein
+105;1;foto/g-alkoholfreies-bier-0-33-l.webp;Alkoholfreies Bier 0,33 l
+105;2;foto/g-helles-0-5-l.webp;Helles 0,5 l
+105;3;foto/g-mass-helles-1-0-l.webp;Maß Helles 1,0 l
+105;4;foto/g-pils-0-3-l.webp;Pils 0,3 l
+105;5;foto/g-pils-0-5-l.webp;Pils 0,5 l
+105;6;foto/g-radler-0-5-l.webp;Radler 0,5 l
+105;7;foto/g-weizen-0-5-l.webp;Weizen 0,5 l
+105;8;foto/g-bacon-burger.webp;Bacon Burger
+105;9;foto/g-cheeseburger-classic.webp;Cheeseburger Classic
+106;1;foto/g-chickenburger.webp;Chickenburger
+106;2;foto/g-doppel-cheeseburger.webp;Doppel-Cheeseburger
+106;3;foto/g-pulled-pork-burger.webp;Pulled-Pork-Burger
+106;4;foto/g-veggie-burger.webp;Veggie-Burger
+106;5;foto/g-currywurst-einzeln.webp;Currywurst einzeln
+106;6;foto/g-frikadelle-im-broetchen.webp;Frikadelle im Brötchen
+106;7;foto/g-doenerteller.webp;Dönerteller
+106;8;foto/g-haehnchendoener.webp;Hähnchendöner
+106;9;foto/g-dueruem-doener.webp;Dürüm Döner
+107;1;foto/g-wrap-haeppchen.webp;Wrap-Häppchen
+107;2;foto/g-affogato.webp;Affogato
+107;3;foto/g-becher-erdbeere-mit-sahne.webp;Becher Erdbeere mit Sahne
+107;4;foto/g-eiskugel-im-becher.webp;Eiskugel im Becher
+107;5;foto/g-eiswaffel-2-kugeln.webp;Eiswaffel 2 Kugeln
+107;6;foto/g-spaghettieis.webp;Spaghettieis
+107;7;foto/g-waffel-mit-eis.webp;Waffel mit Eis
+107;8;foto/g-falafel-dueruem.webp;Falafel-Dürüm
+107;9;foto/g-canape-lachs.webp;Canapé Lachs
+108;1;foto/g-mini-frikadellen-3-stueck.webp;Mini-Frikadellen (3 Stück)
+108;2;foto/g-mini-quiche.webp;Mini-Quiche
+108;3;foto/g-forelle-muellerin.webp;Forelle Müllerin
+108;4;foto/g-lachsfilet-gebraten.webp;Lachsfilet gebraten
+108;5;foto/g-rinderbraten-mit-kloessen.webp;Rinderbraten mit Klößen
+108;6;foto/g-rumpsteak-mit-beilage.webp;Rumpsteak mit Beilage
+108;7;foto/g-wiener-schnitzel-mit-pommes.webp;Wiener Schnitzel mit Pommes
+108;8;foto/g-belegtes-broetchen-schinken.webp;Belegtes Brötchen Schinken
+108;9;foto/g-broetchen-mit-kaese.webp;Brötchen mit Käse
+109;1;foto/g-croissant.webp;Croissant
+109;2;foto/g-fruehstuecksteller-klein.webp;Frühstücksteller klein
+109;3;foto/g-laugenbrezel.webp;Laugenbrezel
+109;4;foto/g-muesli-mit-joghurt.webp;Müsli mit Joghurt
+109;5;foto/g-ruehrei-mit-speck.webp;Rührei mit Speck
+109;6;foto/g-gemischtes-gemuese.webp;Gemischtes Gemüse
+109;7;foto/g-gemuesesticks-mit-hummus.webp;Gemüsesticks mit Hummus
+109;8;foto/g-chai-latte.webp;Chai Latte
+109;9;foto/g-espresso.webp;Espresso
+110;1;foto/g-flat-white-mit-hafermilch.webp;Flat White mit Hafermilch
+110;2;foto/g-heisse-schokolade.webp;Heiße Schokolade
+110;3;foto/g-latte-macchiato.webp;Latte Macchiato
+110;4;foto/g-apfelkuchen-stueck.webp;Apfelkuchen (Stück)
+110;5;foto/g-kaese-sahne-torte-stueck.webp;Käse-Sahne-Torte (Stück)
+110;6;foto/g-kaesekuchen-stueck.webp;Käsekuchen (Stück)
+110;7;foto/g-muffin.webp;Muffin
+110;8;foto/g-schokoladenkuchen-stueck.webp;Schokoladenkuchen (Stück)
+110;9;foto/g-tiramisu-portion.webp;Tiramisu (Portion)
+111;1;foto/g-gebratene-nudeln-mit-haehnchen.webp;Gebratene Nudeln mit Hähnchen
+111;2;foto/g-penne-arrabiata.webp;Penne Arrabiata
+111;3;foto/g-spaghetti-bolognese.webp;Spaghetti Bolognese
+111;4;foto/g-pizza-funghi.webp;Pizza Funghi
+111;5;foto/g-pizza-prosciutto.webp;Pizza Prosciutto
+111;6;foto/g-pizza-quattro-formaggi.webp;Pizza Quattro Formaggi
+111;7;foto/g-pizza-tonno.webp;Pizza Tonno
+111;8;foto/g-kartoffelknoedel-2-stueck.webp;Kartoffelknödel (2 Stück)
+111;9;foto/g-kroketten-beilage.webp;Kroketten (Beilage)
+112;1;foto/g-pommes-gross.webp;Pommes groß
+112;2;foto/g-pommes-klein.webp;Pommes klein
+112;3;foto/g-pommes-mit-dip.webp;Pommes mit Dip
+112;4;foto/g-spaetzle-beilage.webp;Spätzle (Beilage)
+112;5;foto/g-ente-knusprig-mit-reis.webp;Ente knusprig mit Reis
+112;6;foto/g-gebratener-reis-mit-ei.webp;Gebratener Reis mit Ei
+112;7;foto/g-caesar-salad.webp;Caesar Salad
+112;8;foto/g-couscous-salat.webp;Couscous-Salat
+112;9;foto/g-gemischter-salat-klein.webp;Gemischter Salat klein
+113;1;foto/g-kartoffelsalat.webp;Kartoffelsalat
+113;2;foto/g-poke-bowl-lachs.webp;Poke Bowl Lachs
+113;3;foto/g-thunfischsalat.webp;Thunfischsalat
+113;4;foto/g-sucuk-sandwich.webp;Sucuk-Sandwich
+113;5;foto/g-gulaschsuppe.webp;Gulaschsuppe
+113;6;foto/g-huehnersuppe.webp;Hühnersuppe
+113;7;foto/g-kartoffelsuppe.webp;Kartoffelsuppe
+113;8;foto/g-kuerbiscremesuppe.webp;Kürbiscremesuppe
+113;9;foto/g-linsensuppe-mit-wuerstchen.webp;Linsensuppe mit Würstchen
+114;1;foto/g-tomatensuppe.webp;Tomatensuppe
+114;2;foto/g-bratwurst-im-broetchen.webp;Bratwurst im Brötchen
+114;3;foto/g-brot.webp;brot
+114;4;foto/g-doener-salat.webp;doener-salat
+114;5;foto/g-extra.webp;extra
+114;6;foto/g-haehnchen-doener.webp;haehnchen-doener
+114;7;foto/g-pizzabroetchen.webp;pizzabroetchen
+114;8;foto/g-pljeskavica.webp;pljeskavica
+114;9;foto/g-portion.webp;portion
+115;1;foto/g-shawarma.webp;shawarma
+115;2;foto/g-teller.webp;teller
+115;3;foto/g-wrap.webp;wrap
+115;4;foto/s-brot.webp;brot
+115;5;foto/s-lahmacun.webp;lahmacun
+115;6;foto/s-patty.webp;patty
+115;7;foto/s-sossen.webp;sossen
+115;8;foto/s-teig.webp;teig
+115;9;foto/s-tomatensosse.webp;tomatensosse
+116;1;foto/d-aperol.webp;Aperol
+116;2;foto/d-brauner-rum.webp;Brauner Rum
+116;3;foto/d-campari.webp;Campari
+116;4;foto/d-gin.webp;Gin
+116;5;foto/d-korn.webp;Korn
+116;6;foto/d-obstler.webp;Obstler
+116;7;foto/d-prosecco-0-75-l.webp;Prosecco 0,75 l
+116;8;foto/d-rotwein-offen.webp;Rotwein offen
+116;9;foto/d-sekt-0-75-l.webp;Sekt 0,75 l
+117;1;foto/d-tequila.webp;Tequila
+117;2;foto/d-weisser-rum.webp;Weißer Rum
+117;3;foto/d-weisswein-offen.webp;Weißwein offen
+117;4;foto/d-whisky.webp;Whisky
+117;5;foto/d-wodka.webp;Wodka
+117;6;foto/d-cola-0-2-l.webp;Cola 0,2 l
+117;7;foto/d-cola-0-33-l.webp;Cola 0,33 l
+117;8;foto/d-cola-0-33-l-dose.webp;Cola 0,33 l Dose
+117;9;foto/d-cola-0-33-l-glas.webp;Cola 0,33 l Glas
+118;1;foto/d-cola-0-5-l-pet.webp;Cola 0,5 l PET
+118;2;foto/d-cola-1-0-l-glas.webp;Cola 1,0 l Glas
+118;3;foto/d-cola-1-5-l-pet.webp;Cola 1,5 l PET
+118;4;foto/d-cola-bag-in-box-postmix.webp;Cola Bag-in-Box (Postmix)
+118;5;foto/d-fanta-0-33-l.webp;Fanta 0,33 l
+118;6;foto/d-orangensaft.webp;Orangensaft
+118;7;foto/d-ananassaft.webp;Ananassaft
+118;8;foto/d-maracujasaft.webp;Maracujasaft
+118;9;foto/d-rhabarberschorle.webp;Rhabarberschorle
+119;1;foto/d-mineralwasser-0-25-l.webp;Mineralwasser 0,25 l
+119;2;foto/d-mineralwasser-0-5-l.webp;Mineralwasser 0,5 l
+119;3;foto/d-sodawasser.webp;Sodawasser
+119;4;foto/d-ayran-1-0-l.webp;Ayran 1,0 l
+119;5;foto/d-apfelwein.webp;Apfelwein
+119;6;foto/d-bitter-lemon-0-2-l.webp;Bitter Lemon 0,2 l
+119;7;foto/d-bockbier.webp;Bockbier
+119;8;foto/d-chai-pulver.webp;Chai-Pulver
+119;9;foto/d-espressobohnen.webp;Espressobohnen
+120;1;foto/d-fassbrause.webp;Fassbrause
+120;2;foto/d-filterkaffee-gemahlen.webp;Filterkaffee gemahlen
+120;3;foto/d-ginger-ale-0-2-l.webp;Ginger Ale 0,2 l
+120;4;foto/d-gruentee.webp;Grüntee
+120;5;foto/d-guinness-vom-fass.webp;Guinness vom Fass
+120;6;foto/d-helles-vom-fass.webp;Helles vom Fass
+120;7;foto/d-kakaopulver.webp;Kakaopulver
+120;8;foto/d-kraeutertee.webp;Kräutertee
+120;9;foto/d-koelsch-vom-fass.webp;Kölsch vom Fass
+121;1;foto/d-matcha.webp;Matcha
+121;2;foto/d-pils-alkoholfrei-0-33-l.webp;Pils alkoholfrei 0,33 l
+121;3;foto/d-pils-vom-fass.webp;Pils vom Fass
+121;4;foto/d-radler-0-5-l.webp;Radler 0,5 l
+121;5;foto/d-schwarztee.webp;Schwarztee
+121;6;foto/d-spezi-0-33-l.webp;Spezi 0,33 l
+121;7;foto/d-tonic-water-0-2-l.webp;Tonic Water 0,2 l
+121;8;foto/d-weizen-alkoholfrei-0-5-l.webp;Weizen alkoholfrei 0,5 l
+121;9;foto/d-weizenbier-0-5-l.webp;Weizenbier 0,5 l
+122;1;foto/r-amarenakirschen.webp;Amarenakirschen
+122;2;foto/r-artischockenherzen.webp;Artischockenherzen
+122;3;foto/r-avocado.webp;Avocado
+122;4;foto/r-babyspinat.webp;Babyspinat
+122;5;foto/r-bacon.webp;Bacon
+122;6;foto/r-balsamico.webp;Balsamico
+122;7;foto/r-bambussprossen.webp;Bambussprossen
+122;8;foto/r-bananen.webp;Bananen
+122;9;foto/r-bratenfond.webp;Bratenfond
+123;1;foto/r-brokkoli.webp;Brokkoli
+123;2;foto/r-bunte-streusel.webp;Bunte Streusel
+123;3;foto/r-butter.webp;Butter
+123;4;foto/r-butterschmalz.webp;Butterschmalz
+123;5;foto/r-canape-boeden.webp;Canapé-Böden
+123;6;foto/r-cracker.webp;Cracker
+123;7;foto/r-croutons.webp;Croutons
+123;8;foto/r-currypaste.webp;Currypaste
+123;9;foto/r-dorade-ganz.webp;Dorade ganz
+124;1;foto/r-eismix-schokolade.webp;Eismix Schokolade
+124;2;foto/r-eismix-vanille.webp;Eismix Vanille
+124;3;foto/r-eiswaffel.webp;Eiswaffel
+124;4;foto/r-entenbrust.webp;Entenbrust
+124;5;foto/r-erbsen-tk.webp;Erbsen TK
+124;6;foto/r-erdbeeren.webp;Erdbeeren
+124;7;foto/r-forelle-ganz.webp;Forelle ganz
+124;8;foto/r-frikadelle.webp;Frikadelle
+124;9;foto/r-fruchtpueree-erdbeere.webp;Fruchtpüree Erdbeere
+125;1;foto/r-fruchtpueree-mango.webp;Fruchtpüree Mango
+125;2;foto/r-fruehlingsrolle.webp;Frühlingsrolle
+125;3;foto/r-fruehstuecksspeck.webp;Frühstücksspeck
+125;4;foto/r-garnelen.webp;Garnelen
+125;5;foto/r-gnocchi.webp;Gnocchi
+125;6;foto/r-gorgonzola.webp;Gorgonzola
+125;7;foto/r-grenadine.webp;Grenadine
+125;8;foto/r-gruene-bohnen.webp;Grüne Bohnen
+125;9;foto/r-hafermilch.webp;Hafermilch
+126;1;foto/r-hartweizengriess.webp;Hartweizengrieß
+126;2;foto/r-heidelbeeren.webp;Heidelbeeren
+126;3;foto/r-honig.webp;Honig
+126;4;foto/r-ingwer.webp;Ingwer
+126;5;foto/r-jakobsmuscheln.webp;Jakobsmuscheln
+126;6;foto/r-kidneybohnen.webp;Kidneybohnen
+126;7;foto/r-knollensellerie.webp;Knollensellerie
+126;8;foto/r-kokosmilch.webp;Kokosmilch
+126;9;foto/r-kuvertuere-vollmilch.webp;Kuvertüre Vollmilch
+127;1;foto/r-kuvertuere-zartbitter.webp;Kuvertüre zartbitter
+127;2;foto/r-kuerbis.webp;Kürbis
+127;3;foto/r-lachsfilet.webp;Lachsfilet
+127;4;foto/r-lachstatar.webp;Lachstatar
+127;5;foto/r-lauch.webp;Lauch
+127;6;foto/r-laugenbrezel.webp;Laugenbrezel
+127;7;foto/r-linsen.webp;Linsen
+127;8;foto/r-lorbeerblaetter.webp;Lorbeerblätter
+127;9;foto/r-loeffelbiskuit.webp;Löffelbiskuit
+128;1;foto/r-mandelmilch.webp;Mandelmilch
+128;2;foto/r-mandeln-gehobelt.webp;Mandeln gehobelt
+128;3;foto/r-marmelade.webp;Marmelade
+128;4;foto/r-marzipanrohmasse.webp;Marzipanrohmasse
+128;5;foto/r-mascarpone.webp;Mascarpone
+128;6;foto/r-matjesfilet.webp;Matjesfilet
+128;7;foto/r-mini-frikadellen.webp;Mini-Frikadellen
+128;8;foto/r-mini-quiche.webp;Mini-Quiche
+128;9;foto/r-mischgemuese-tk.webp;Mischgemüse TK
+129;1;foto/r-muskatnuss.webp;Muskatnuss
+129;2;foto/r-moehren.webp;Möhren
+129;3;foto/r-muesli.webp;Müsli
+129;4;foto/r-orangen.webp;Orangen
+129;5;foto/r-pak-choi.webp;Pak Choi
+129;6;foto/r-parmesan.webp;Parmesan
+129;7;foto/r-puderzucker.webp;Puderzucker
+129;8;foto/r-pulled-pork.webp;Pulled Pork
+129;9;foto/r-quinoa.webp;Quinoa
+130;1;foto/r-radieschen.webp;Radieschen
+130;2;foto/r-rosmarin.webp;Rosmarin
+130;3;foto/r-rotweinjus.webp;Rotweinjus
+130;4;foto/r-rumpsteak.webp;Rumpsteak
+130;5;foto/r-raeucherlachs.webp;Räucherlachs
+130;6;foto/r-roesti.webp;Rösti
+130;7;foto/r-sardellenfilets.webp;Sardellenfilets
+130;8;foto/r-sauerkirschen-glas.webp;Sauerkirschen (Glas)
+130;9;foto/r-sauerkraut.webp;Sauerkraut
+131;1;foto/r-schnitzel-paniert.webp;Schnitzel paniert
+131;2;foto/r-schokostreusel.webp;Schokostreusel
+131;3;foto/r-schweinefilet.webp;Schweinefilet
+131;4;foto/r-schweinegeschnetzeltes.webp;Schweinegeschnetzeltes
+131;5;foto/r-schweineschnitzel.webp;Schweineschnitzel
+131;6;foto/r-semmelknoedel.webp;Semmelknödel
+131;7;foto/r-sirup-karamell.webp;Sirup Karamell
+131;8;foto/r-sirup-vanille.webp;Sirup Vanille
+131;9;foto/r-sojamilch.webp;Sojamilch
+132;1;foto/r-sojasprossen.webp;Sojasprossen
+132;2;foto/r-speck.webp;Speck
+132;3;foto/r-speckwuerfel.webp;Speckwürfel
+132;4;foto/r-speisestaerke.webp;Speisestärke
+132;5;foto/r-spaetzle.webp;Spätzle
+132;6;foto/r-tofu.webp;Tofu
+132;7;foto/r-vanillezucker.webp;Vanillezucker
+132;8;foto/r-vollmilch.webp;Vollmilch
+132;9;foto/r-waffelbecher.webp;Waffelbecher
+133;1;foto/r-waffelbruch.webp;Waffelbruch
+133;2;foto/r-wan-tan-blaetter.webp;Wan-Tan-Blätter
+133;3;foto/r-weinessig.webp;Weinessig
+133;4;foto/r-weintrauben.webp;Weintrauben
+133;5;foto/r-weisse-bohnen.webp;Weiße Bohnen
+133;6;foto/r-zanderfilet.webp;Zanderfilet
+133;7;foto/r-zucchini.webp;Zucchini
+133;8;foto/r-zucker.webp;Zucker
+133;9;foto/r-zuckerportion.webp;Zuckerportion
+134;1;foto/r-zuckerschoten.webp;Zuckerschoten
+134;2;foto/r-zuckersirup.webp;Zuckersirup
+134;3;foto/r-aepfel.webp;Äpfel
+134;4;foto/r-ananas-dose.webp;Ananas (Dose)
+134;5;foto/r-brioche-bun.webp;Brioche-Bun
+134;6;foto/r-broetchenteigling-tk.webp;Brötchenteigling TK
+134;7;foto/r-burger-bun.webp;Burger-Bun
+134;8;foto/r-vollkorn-bun.webp;Vollkorn-Bun
+134;9;foto/r-champignons.webp;Champignons
+135;1;foto/r-adana-spiess.webp;Adana-Spieß
+135;2;foto/r-garnelenspiess.webp;Garnelenspieß
+135;3;foto/r-gyrosfleisch.webp;Gyrosfleisch
+135;4;foto/r-kalbsschnitzel.webp;Kalbsschnitzel
+135;5;foto/r-lammhackfleisch.webp;Lammhackfleisch
+135;6;foto/r-lammkotelett.webp;Lammkotelett
+135;7;foto/r-rinderbraten.webp;Rinderbraten
+135;8;foto/r-rinderfilet.webp;Rinderfilet
+135;9;foto/r-rindergeschnetzeltes.webp;Rindergeschnetzeltes
+136;1;foto/r-rinderhack.webp;Rinderhack
+136;2;foto/r-rinderpatty-150-g.webp;Rinderpatty 150 g
+136;3;foto/r-suppenfleisch-rind.webp;Suppenfleisch Rind
+136;4;foto/r-falafelbaellchen.webp;Falafelbällchen
+136;5;foto/r-hirtenkaese-feta.webp;Hirtenkäse / Feta
+136;6;foto/r-chicken-wings.webp;Chicken Wings
+136;7;foto/r-frikandel-tk.webp;Frikandel TK
+136;8;foto/r-haehnchen-nuggets.webp;Hähnchen-Nuggets
+136;9;foto/r-mozzarella-sticks-tk.webp;Mozzarella-Sticks TK
+137;1;foto/r-onion-rings-tk.webp;Onion Rings TK
+137;2;foto/r-rohkost-sticks.webp;Rohkost-Sticks
+137;3;foto/r-baguette.webp;Baguette
+137;4;foto/r-bauernbrot.webp;Bauernbrot
+137;5;foto/r-toastbrot.webp;Toastbrot
+137;6;foto/r-backpulver.webp;Backpulver
+137;7;foto/r-chiliflocken.webp;Chiliflocken
+137;8;foto/r-currypulver.webp;Currypulver
+137;9;foto/r-doenergewuerz.webp;Dönergewürz
+138;1;foto/r-gemuesebruehe-pulver.webp;Gemüsebrühe Pulver
+138;2;foto/r-gewuerzgurken.webp;Gewürzgurken
+138;3;foto/r-kreuzkuemmel.webp;Kreuzkümmel
+138;4;foto/r-oregano.webp;Oregano
+138;5;foto/r-oregano-getrocknet.webp;Oregano getrocknet
+138;6;foto/r-pfeffer-schwarz.webp;Pfeffer schwarz
+138;7;foto/r-rinderbruehe-pulver.webp;Rinderbrühe Pulver
+138;8;foto/r-salz.webp;Salz
+138;9;foto/r-thymian.webp;Thymian
+139;1;foto/r-zimt.webp;Zimt
+139;2;foto/r-gurkensalat.webp;Gurkensalat
+139;3;foto/r-salatgurke.webp;Salatgurke
+139;4;foto/r-hackfleisch-gemischt.webp;Hackfleisch gemischt
+139;5;foto/r-nuesse-gehackt.webp;Nüsse gehackt
+139;6;foto/r-haehnchenbrust.webp;Hähnchenbrust
+139;7;foto/r-haehnchenkarkasse.webp;Hähnchenkarkasse
+139;8;foto/r-haehnchenpatty.webp;Hähnchenpatty
+139;9;foto/r-putenstreifen.webp;Putenstreifen
+140;1;foto/r-doenerspiess-kalb-pute.webp;Dönerspieß Kalb/Pute
+140;2;foto/r-creme-fraiche.webp;Crème fraîche
+140;3;foto/r-joghurt-natur.webp;Joghurt natur
+140;4;foto/r-kraeuterquark.webp;Kräuterquark
+140;5;foto/r-nuss-nougat-creme.webp;Nuss-Nougat-Creme
+140;6;foto/r-quark.webp;Quark
+140;7;foto/r-sahne.webp;Sahne
+140;8;foto/r-sahnesteif.webp;Sahnesteif
+140;9;foto/r-aioli.webp;Aioli
+141;1;foto/r-ajvar.webp;Ajvar
+141;2;foto/r-bbq-sauce.webp;BBQ-Sauce
+141;3;foto/r-bratensauce.webp;Bratensauce
+141;4;foto/r-burgersauce.webp;Burgersauce
+141;5;foto/r-caesar-dressing.webp;Caesar-Dressing
+141;6;foto/r-cocktailsauce.webp;Cocktailsauce
+141;7;foto/r-currysauce.webp;Currysauce
+141;8;foto/r-erdnusssauce.webp;Erdnusssauce
+141;9;foto/r-hummus.webp;Hummus
+142;1;foto/r-karamellsauce.webp;Karamellsauce
+142;2;foto/r-ketchup.webp;Ketchup
+142;3;foto/r-kraeuterdip.webp;Kräuterdip
+142;4;foto/r-kaesesauce.webp;Käsesauce
+142;5;foto/r-pesto-genovese.webp;Pesto Genovese
+142;6;foto/r-remoulade.webp;Remoulade
+142;7;foto/r-sahnesauce.webp;Sahnesauce
+142;8;foto/r-sauce-hollandaise.webp;Sauce hollandaise
+142;9;foto/r-schokosauce.webp;Schokosauce
+143;1;foto/r-senf.webp;Senf
+143;2;foto/r-sojasauce.webp;Sojasauce
+143;3;foto/r-suess-sauer-sauce.webp;Süß-Sauer-Sauce
+143;4;foto/r-worcestersauce.webp;Worcestersauce
+143;5;foto/r-knoblauchgranulat.webp;Knoblauchgranulat
+143;6;foto/r-joghurtdressing.webp;Joghurtdressing
+143;7;foto/r-joghurtsauce.webp;Joghurtsauce
+143;8;foto/r-blaetterteig.webp;Blätterteig
+143;9;foto/r-croissantteigling-tk.webp;Croissantteigling TK
+144;1;foto/r-dinkelmehl.webp;Dinkelmehl
+144;2;foto/r-frischhefe.webp;Frischhefe
+144;3;foto/r-mandelmehl.webp;Mandelmehl
+144;4;foto/r-muerbeteig.webp;Mürbeteig
+144;5;foto/r-pide-teig.webp;Pide-Teig
+144;6;foto/r-teigtaschen-tk.webp;Teigtaschen TK
+144;7;foto/r-waffelteig.webp;Waffelteig
+144;8;foto/r-weizenmehl-typ-405.webp;Weizenmehl Typ 405
+144;9;foto/r-weizenmehl-typ-550.webp;Weizenmehl Typ 550
+145;1;foto/r-bueffelmozzarella.webp;Büffelmozzarella
+145;2;foto/r-mozzarella-kugeln.webp;Mozzarella-Kugeln
+145;3;foto/r-bandnudeln.webp;Bandnudeln
+145;4;foto/r-lasagneplatten.webp;Lasagneplatten
+145;5;foto/r-mie-nudeln.webp;Mie-Nudeln
+145;6;foto/r-reisnudeln.webp;Reisnudeln
+145;7;foto/r-spaghetti.webp;Spaghetti
+145;8;foto/r-suppennudeln.webp;Suppennudeln
+145;9;foto/r-frittieroel.webp;Frittieröl
+146;1;foto/r-olivenoel.webp;Olivenöl
+146;2;foto/r-rapsoel.webp;Rapsöl
+146;3;foto/r-sesamoel.webp;Sesamöl
+146;4;foto/r-sonnenblumenoel.webp;Sonnenblumenöl
+146;5;foto/r-oliven-schwarz.webp;Oliven schwarz
+146;6;foto/r-paprika-edelsuess.webp;Paprika edelsüß
+146;7;foto/r-veggie-patty.webp;Veggie-Patty
+146;8;foto/r-jalapenos.webp;Jalapeños
+146;9;foto/r-peperoni-eingelegt.webp;Peperoni eingelegt
+147;1;foto/r-basilikum.webp;Basilikum
+147;2;foto/r-basilikum-getrocknet.webp;Basilikum getrocknet
+147;3;foto/r-kraeuterbutter.webp;Kräuterbutter
+147;4;foto/d-kraeuterlikoer.webp;Kräuterlikör
+147;5;foto/r-minze.webp;Minze
+147;6;foto/r-bergkaese.webp;Bergkäse
+147;7;foto/r-blauschimmelkaese.webp;Blauschimmelkäse
+147;8;foto/r-cheddar-scheiben.webp;Cheddar-Scheiben
+147;9;foto/r-emmentaler.webp;Emmentaler
+148;1;foto/r-frischkaese.webp;Frischkäse
+148;2;foto/r-gouda.webp;Gouda
+148;3;foto/r-halloumi.webp;Halloumi
+148;4;foto/r-kaesewuerfel.webp;Käsewürfel
+148;5;foto/r-ziegenkaese.webp;Ziegenkäse
+148;6;foto/r-pizzamehl-typ-00.webp;Pizzamehl Typ 00
+148;7;foto/r-kartoffelgratin.webp;Kartoffelgratin
+148;8;foto/r-kartoffelknoedel.webp;Kartoffelknödel
+148;9;foto/r-kartoffeln.webp;Kartoffeln
+149;1;foto/r-kroketten.webp;Kroketten
+149;2;foto/r-pommes-frites.webp;Pommes frites
+149;3;foto/r-suesskartoffel-pommes.webp;Süßkartoffel-Pommes
+149;4;foto/r-suesskartoffeln.webp;Süßkartoffeln
+149;5;foto/r-basmatireis.webp;Basmatireis
+149;6;foto/r-bulgur.webp;Bulgur
+149;7;foto/r-couscous.webp;Couscous
+149;8;foto/r-jasminreis.webp;Jasminreis
+149;9;foto/r-rosenkohl.webp;Rosenkohl
+150;1;foto/r-peperoni-salami.webp;Peperoni-Salami
+150;2;foto/r-salamiwuerfel.webp;Salamiwürfel
+150;3;foto/r-truthahnsalami.webp;Truthahnsalami
+150;4;foto/r-eisbergsalat.webp;Eisbergsalat
+150;5;foto/r-feldsalat.webp;Feldsalat
+150;6;foto/r-krautsalat.webp;Krautsalat
+150;7;foto/r-romanasalat.webp;Romanasalat
+150;8;foto/r-rucola.webp;Rucola
+150;9;foto/r-scharfe-sauce.webp;Scharfe Sauce
+151;1;foto/r-kochschinken.webp;Kochschinken
+151;2;foto/r-parmaschinken.webp;Parmaschinken
+151;3;foto/r-putenbrustschinken.webp;Putenbrustschinken
+151;4;foto/r-serranoschinken.webp;Serranoschinken
+151;5;foto/r-thunfisch-dose.webp;Thunfisch (Dose)
+151;6;foto/r-cocktailtomaten.webp;Cocktailtomaten
+151;7;foto/r-passierte-tomaten.webp;Passierte Tomaten
+151;8;foto/r-pizzatomaten-dose.webp;Pizzatomaten (Dose)
+151;9;foto/r-tomaten.webp;Tomaten
+152;1;foto/r-tomatenmark.webp;Tomatenmark
+152;2;foto/r-bockwurst.webp;Bockwurst
+152;3;foto/r-bratwurst.webp;Bratwurst
+152;4;foto/r-currywurst.webp;Currywurst
+152;5;foto/r-currywurst-vegan.webp;Currywurst vegan
+152;6;foto/r-krakauer.webp;Krakauer
+152;7;foto/r-leberwurst.webp;Leberwurst
+152;8;foto/r-wiener-wuerstchen.webp;Wiener Würstchen
+152;9;foto/r-dueruem-wrap.webp;Dürüm-Wrap
+153;1;foto/r-weizenwraps.webp;Weizenwraps
+153;2;foto/r-yufka-teigblatt.webp;Yufka-Teigblatt
+153;3;foto/r-limetten.webp;Limetten
+153;4;foto/r-zitronen.webp;Zitronen
+153;5;foto/r-fruehlingszwiebeln.webp;Frühlingszwiebeln
+153;6;foto/r-rote-zwiebeln.webp;Rote Zwiebeln
+153;7;foto/r-zwiebelgranulat.webp;Zwiebelgranulat
+153;8;foto/r-zwiebeln.webp;Zwiebeln
+153;9;foto/v-asia-box.webp;Asia-Box
+154;1;foto/v-beilagenschale.webp;Beilagenschale
+154;2;foto/v-bierdeckel.webp;Bierdeckel
+154;3;foto/v-burgerbox.webp;Burgerbox
+154;4;foto/v-butterbrotpapier.webp;Butterbrotpapier
+154;5;foto/v-butterportion.webp;Butterportion
+154;6;foto/v-co2-flasche.webp;CO2-Flasche
+154;7;foto/v-cocktailspiess.webp;Cocktailspieß
+154;8;foto/v-coffee-to-go-0-3-l.webp;Coffee-to-go 0,3 l
+154;9;foto/v-coffee-to-go-0-4-l.webp;Coffee-to-go 0,4 l
+155;1;foto/v-currywurstschale.webp;Currywurstschale
+155;2;foto/v-dessertglas.webp;Dessertglas
+155;3;foto/v-einweghandschuhe.webp;Einweghandschuhe
+155;4;foto/v-eisloeffel.webp;Eislöffel
+155;5;foto/v-essstaebchen.webp;Essstäbchen
+155;6;foto/v-filterpapier.webp;Filterpapier
+155;7;foto/v-fingerfood-schale.webp;Fingerfood-Schale
+155;8;foto/v-holzbesteck-set.webp;Holzbesteck-Set
+155;9;foto/v-holzgabel.webp;Holzgabel
+156;1;foto/v-kuchenbox.webp;Kuchenbox
+156;2;foto/v-marmeladenportion.webp;Marmeladenportion
+156;3;foto/v-muellbeutel.webp;Müllbeutel
+156;4;foto/v-pappmanschette.webp;Pappmanschette
+156;5;foto/v-pastabox.webp;Pastabox
+156;6;foto/v-reiniger-zapfanlage.webp;Reiniger Zapfanlage
+156;7;foto/v-reinigungstabs-maschine.webp;Reinigungstabs Maschine
+156;8;foto/v-reinigungstuch.webp;Reinigungstuch
+156;9;foto/v-ruehrstaebchen.webp;Rührstäbchen
+157;1;foto/v-salatschale.webp;Salatschale
+157;2;foto/v-serviette.webp;Serviette
+157;3;foto/v-tortenspitze.webp;Tortenspitze
+157;4;foto/v-trinkhalm.webp;Trinkhalm
+157;5;foto/v-alufolie-rolle.webp;Alufolie (Rolle)
+157;6;foto/v-alufolie-bogen.webp;Alufolie-Bogen
+157;7;foto/v-frischhaltefolie-rolle.webp;Frischhaltefolie (Rolle)
+157;8;foto/v-becherdeckel.webp;Becherdeckel
+157;9;foto/v-dessertbecher.webp;Dessertbecher
+158;1;foto/v-einwegbecher-0-5-l.webp;Einwegbecher 0,5 l
+158;2;foto/v-eisbecher.webp;Eisbecher
+158;3;foto/v-pfandbecher-0-5-l.webp;Pfandbecher 0,5 l
+158;4;foto/v-suppenbecher-0-4-l.webp;Suppenbecher 0,4 l
+158;5;foto/v-trinkbecher-0-3-l.webp;Trinkbecher 0,3 l
+158;6;foto/v-trinkbecher-0-4-l.webp;Trinkbecher 0,4 l
+158;7;foto/v-menueschale-1-teilig.webp;Menüschale 1-teilig
+158;8;foto/v-menueschale-3-teilig.webp;Menüschale 3-teilig
+158;9;foto/v-pizzakarton-30-cm.webp;Pizzakarton 30 cm
+159;1;foto/v-pizzakarton-40-cm.webp;Pizzakarton 40 cm
+159;2;foto/v-tortenkarton.webp;Tortenkarton
+159;3;foto/v-papiertragetasche.webp;Papiertragetasche
+159;4;foto/k-getraenkekuehler-foto.webp;Getränkekühlschrank mit Glastür
+159;5;foto/k-kuehlraum-foto.webp;Kühlraum (begehbar)
+159;6;foto/m-frittieroel.webp;Altöl-Kanister
+159;7;foto/m-personalessen.webp;Personalessen (Teller am Tresen)
+159;8;foto/laden-anders.webp;Etwas anderes
+159;9;foto/bereich-alkoholfrei.webp;Alkoholfreie Getränke
+160;1;foto/bereich-asia.webp;Asiatisch & Wok
+160;2;foto/bereich-bar.webp;Bar & Cocktails
+160;3;foto/bereich-beilagen.webp;Beilagen & Sättigung
+160;4;foto/bereich-bier.webp;Bier & Fassgetränke
+160;5;foto/bereich-burger.webp;Burger & Grill
+160;6;foto/bereich-currywurst.webp;Currywurst & Pommes
+160;7;foto/bereich-doener.webp;Döner & Kebab
+160;8;foto/bereich-eis.webp;Eis & Desserts
+160;9;foto/bereich-fingerfood.webp;Fingerfood & Catering
+161;1;foto/bereich-fleischgericht.webp;Fleisch, Fisch & Hauptgang
+161;2;foto/bereich-fruehstueck.webp;Frühstück & Backwaren
+161;3;foto/bereich-grundzutaten.webp;Grundzutaten & Gewürze
+161;4;foto/bereich-kaffee.webp;Kaffee & Heißgetränke
+161;5;foto/bereich-kuchen.webp;Kuchen & Konditorei
+161;6;foto/bereich-pizza.webp;Pizza & Pasta
+161;7;foto/bereich-verpackung.webp;Verpackung & Einweg
+161;8;foto/gruppe-fisch.webp;Fisch & Meeresfrüchte
+161;9;foto/gruppe-fleisch.webp;Fleisch & Wurst
+162;1;foto/gruppe-gemuese.webp;Gemüse, Obst & Frisches
+162;2;foto/gruppe-getraenk.webp;Getränke
+162;3;foto/gruppe-gewuerz.webp;Gewürze & Grundzutaten
+162;4;foto/gruppe-kaese.webp;Käse & Molkerei
+162;5;foto/gruppe-sauce.webp;Saucen, Öl & Dips
+162;6;foto/gruppe-spirituose.webp;Spirituosen & Bar
+162;7;foto/gruppe-suess.webp;Süßes & Backzutaten
+162;8;foto/gruppe-teig.webp;Teig, Brot & Trockenware
+162;9;foto/gruppe-verpackung.webp;Verpackung & Einweg
