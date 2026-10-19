@@ -2,7 +2,9 @@
 // ein leerer dritter Laden und der Beispiel-Laden. Geprüft: Zeitraum, Kennzahlen, Rang, Abstand, Trend, Satz-Priorität (Pflichten vor Geld
 // vor Lager), Markierung unvollständiger Daten, Beispiel-Laden draußen (und nur als Ersatz drin), Druck/CSV ohne NaN/undefined und ohne
 // vertrauliche Felder (Büro-Code, Kundennummer, Kontakt), Personal-Modus gesperrt, Bildschirm zeichnet ohne zu schreiben.
-import test from "node:test";
+import test, { mock } from "node:test";
+// Feste Uhr (Sonntag 18.10.2026, 12 Uhr): Der Beispiel-Laden hat einen Ruhetag, sonst hängen „6 Tage“ und der Trend vom Wochentag ab.
+mock.timers.enable({ apis: ["Date"], now: new Date("2026-10-18T12:00:00") });
 import assert from "node:assert/strict";
 import { leereWurzel, leererBetrieb } from "../js/store.js";
 import { beispielLaden } from "../js/beispiel.js";
