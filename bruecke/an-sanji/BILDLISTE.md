@@ -1,9 +1,9 @@
 # BILDLISTE GastroCalc – alle Bilder, die die App braucht
-Stand 17.10.2026 · erzeugt aus den App-Daten mit `node tools/bildliste.mjs` (nicht von Hand ändern, neu erzeugen) · gepflegt von Zoro · für Sanji und Baris
+Stand 19.10.2026 · erzeugt aus den App-Daten mit `node tools/bildliste.mjs` (nicht von Hand ändern, neu erzeugen) · gepflegt von Zoro · für Sanji und Baris
 
-Insgesamt **645 Bilder**, davon **79 vorhanden**, **566 fehlen** – 347 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 219 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
-Fehlend nach Prio: Prio 1 = 150 · Prio 2 = 205 · Prio 3 = 211.
-Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 19 · C Warengruppe: 11 · D Gericht-Familie: 12 · E Gericht: 118 · F Artikel: 395 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
+Insgesamt **651 Bilder**, davon **79 vorhanden**, **572 fehlen** – 353 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 219 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
+Fehlend nach Prio: Prio 1 = 156 · Prio 2 = 205 · Prio 3 = 211.
+Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 19 · C Warengruppe: 11 · D Gericht-Familie: 12 · E Gericht: 118 · F Artikel: 401 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
 Die gleiche Liste als Tabelle: `bruecke/an-sanji/bildliste.csv` (Spalten: prio;gruppe;datei;name;status;motiv).
 
 ## Was drauf soll – was du (Sanji) entscheidest
@@ -126,8 +126,15 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-thunfischsalat.webp` | Thunfischsalat | fehlt – zeigt bis dahin g-salat | „Thunfischsalat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Thunfisch (Dose), Mais, Tomaten, Joghurtdressing.
 1 | F Artikel | `d-apfelsaft.webp` | Apfelsaft | vorhanden | Apfelsaft als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-ayran-0-25-l.webp` | Ayran 0,25 l | vorhanden | Ayran 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-ayran-1-0-l.webp` | Ayran 1,0 l | fehlt – zeigt bis dahin g-ayran | Ayran 1,0 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-bio-limonade-0-33-l.webp` | Bio-Limonade 0,33 l | vorhanden | Bio-Limonade 0,33 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-0-33-l-dose.webp` | Cola 0,33 l Dose | fehlt – zeigt bis dahin d-cola | Cola 0,33 l Dose als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-0-33-l-glas.webp` | Cola 0,33 l Glas | fehlt – zeigt bis dahin d-cola | Cola 0,33 l Glas als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-0-5-l-pet.webp` | Cola 0,5 l PET | fehlt – zeigt bis dahin d-cola | Cola 0,5 l PET als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-cola-1-0-l.webp` | Cola 1,0 l | vorhanden | Cola 1,0 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-1-0-l-glas.webp` | Cola 1,0 l Glas | fehlt – zeigt bis dahin d-cola | Cola 1,0 l Glas als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-1-5-l-pet.webp` | Cola 1,5 l PET | fehlt – zeigt bis dahin d-cola | Cola 1,5 l PET als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+1 | F Artikel | `d-cola-bag-in-box-postmix.webp` | Cola Bag-in-Box (Postmix) | fehlt – zeigt bis dahin d-cola | Cola Bag-in-Box (Postmix) als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-eistee.webp` | Eistee | vorhanden | Eistee als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-energydrink-0-25-l.webp` | Energydrink 0,25 l | vorhanden | Energydrink 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1 | F Artikel | `d-fanta-0-2-l.webp` | Fanta 0,2 l | vorhanden | Fanta 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
@@ -181,7 +188,6 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | F Artikel | `r-lammhackfleisch.webp` | Lammhackfleisch | fehlt – zeigt bis dahin r-doenerspiess | Lammhackfleisch als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-langkornreis.webp` | Langkornreis | fehlt – zeigt bis dahin r-reis | Langkornreis als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-mais.webp` | Mais | vorhanden | Mais als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-1 | F Artikel | `r-mais-aus-der-dose.webp` | Mais aus der Dose | fehlt – zeigt bis dahin r-mais | Mais aus der Dose als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-mischgemuese-tk.webp` | Mischgemüse TK | fehlt | Mischgemüse TK als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-oliven.webp` | Oliven | vorhanden | Oliven als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-oregano.webp` | Oregano | fehlt – zeigt bis dahin r-gewuerz | Oregano als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
