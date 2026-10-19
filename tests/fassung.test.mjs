@@ -30,7 +30,7 @@ test("Fassungs-Wächter: jede App-Datei auf der Platte steht in der Liste des Se
   const dateien = new Set(JSON.parse(sw.match(/const DATEIEN = (\[[^\]]*\])/)[1]));
   const fotos = JSON.parse(sw.match(/const FOTOS_H = (\{[^}]*\})/)[1]);
   const endungen = new Set([".js", ".css", ".png", ".svg", ".webp", ".woff2", ".webmanifest"]);
-  const aus = new Set(["tests", "tools", "vendor", "design", "bruecke", "node_modules"]);
+  const aus = new Set(["tests", "tools", "vendor", "design", "design-handoffs", "bruecke", "node_modules"]);
   const fehlt = [];
   const gehe = (dir) => {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
