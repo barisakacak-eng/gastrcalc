@@ -15,6 +15,7 @@ exec(compile(src, "sanji_bildauftrag", "exec"), ba.__dict__); sys.argv = _argv
 
 JE_RASTER = 9
 RASTER_JE_DATEI = 2
+R0, D0 = 100, 10  # Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
 ROH = "https://raw.githubusercontent.com/barisakacak-eng/gastrcalc/main/bruecke/an-sanji/raster/"
 
 RASTER_REGEL = ("Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern "
@@ -23,6 +24,24 @@ RASTER_REGEL = ("Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt 
                 "Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. "
                 "KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. "
                 "Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: ")
+
+REGELN = """## Feste Regeln (gelten für jede Lieferung)
+1. Nie verwerfen. Weicht ein Feld ab, trotzdem liefern – Zoro ordnet jedes brauchbare Foto selbst zu.
+2. Jedes Motiv nur EINMAL. Nichts wiederholen, was in einem früheren Raster schon vorkam (Döner-Wrap, Döner-Box, Falafel-Wrap, Margherita, Salami, Gemüse-Pizza, Pommes, Currywurst, Schnitzel, Nuggets, Bowls, Griechischer Salat, Pasta, Reis, Suppe, Fladenbrot sind fertig).
+3. Lieber ein anderes Motiv aus DIESER Liste als ein Lieblingsgericht von dir.
+4. Kopier-Regel: Deine Antwort endet mit GENAU EINEM Codeblock, den Baris unverändert an Zoro weitergibt – ohne Tabelle, ohne Text außerhalb. Form:
+
+```
+FÜR ZORO:
+1. Fertig: raster_NNN, raster_NNN
+2. Datei: raster_XX.zip
+3. Felder (was wirklich zu sehen ist):
+R NNN F1 = …
+R NNN F2 = …
+(alle 9 Felder je Raster, eine Zeile pro Feld)
+4. Weiter mit: raster_YY.md (nächste Nummer)
+```
+5. Keine kostenpflichtigen Apps oder Dienste vorschlagen."""
 
 
 def main():
@@ -41,7 +60,7 @@ def main():
     with open(ordner / "belegung.csv", "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f, delimiter=";"); w.writerow(["raster", "feld", "datei", "name"])
         for r, teil in enumerate(raster, 1):
-            for feld, b in enumerate(teil, 1): w.writerow([f"{r:03d}", feld, b["datei"], b["name"]])
+            for feld, b in enumerate(teil, 1): w.writerow([f"{r + R0:03d}", feld, b["datei"], b["name"]])
     n_dat = (len(raster) + RASTER_JE_DATEI - 1) // RASTER_JE_DATEI
     index = ["# Rasterauftrag an Sanji – alle App-Fotos (Design B, Holztisch-Stil)", "",
              f"{len(fotos)} Fotos in {len(raster)} Rastern zu je 9 Feldern, verteilt auf {n_dat} Auftragsdateien (je 2 Raster).",
@@ -49,18 +68,18 @@ def main():
              "Lieferung je Auftragsdatei: die Rasterbilder als PNG, benannt raster_NNN.png (Nummer steht in der Datei), zusammen in EINER ZIP raster_XX.zip.", ""]
     for d in range(n_dat):
         teil = raster[d * RASTER_JE_DATEI:(d + 1) * RASTER_JE_DATEI]
-        nr0 = d * RASTER_JE_DATEI + 1
-        t = [f"# Rasterauftrag {d + 1:02d} von {n_dat} – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
+        nr0 = d * RASTER_JE_DATEI + 1 + R0
+        t = [f"# Rasterauftrag {d + 1 + D0:02d} von {n_dat} – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
              "Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten. Danach alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP "
-             f"`raster_{d + 1:02d}.zip` packen und Block „FÜR ZORO:“ (fertig / ZIP-Name / was fehlt). Nicht zuschneiden, nicht umbenennen – das macht Zoro.", ""]
+             f"`raster_{d + 1 + D0:02d}.zip` packen. Nicht zuschneiden, nicht umbenennen – das macht Zoro.", "", REGELN, ""]
         for k, felder in enumerate(teil):
             rnr = nr0 + k
             liste = "\n".join(f"Feld {i} = {b['name'].upper()}: {b['motiv']}" for i, b in enumerate(felder, 1))
             if len(felder) < JE_RASTER: liste += f" Felder {len(felder) + 1}–9: leer, nur dunkler Holztisch."
             t += [f"## Raster {rnr:03d} → Datei `raster_{rnr:03d}.png`", "", "```", RASTER_REGEL + ba.STIL_FOTO, "", "Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:", liste, "```", "",
                   "Belegung (nur zur Kontrolle): " + " · ".join(f"{i} {b['name']}" for i, b in enumerate(felder, 1)), ""]
-        (ordner / f"raster_{d + 1:02d}.md").write_text("\n".join(t), encoding="utf-8")
-        index.append(f"- Auftrag {d + 1:02d}: {ROH}raster_{d + 1:02d}.md – {teil[0][0]['name']} … {teil[-1][-1]['name']}")
+        (ordner / f"raster_{d + 1 + D0:02d}.md").write_text("\n".join(t), encoding="utf-8")
+        index.append(f"- Auftrag {d + 1 + D0:02d}: {ROH}raster_{d + 1 + D0:02d}.md – {teil[0][0]['name']} … {teil[-1][-1]['name']}")
     (AUS / "RASTERAUFTRAG.md").write_text("\n".join(index), encoding="utf-8")
     print(f"Raster: {len(fotos)} Fotos, {len(raster)} Raster, {n_dat} Auftragsdateien")
 

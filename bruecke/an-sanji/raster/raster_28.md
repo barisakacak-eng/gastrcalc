@@ -1,41 +1,59 @@
-# Rasterauftrag 28 von 32 – 18 Fotos in 2 Rasterbildern
+# Rasterauftrag 28 von 31 – 18 Fotos in 2 Rasterbildern
 
-Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten. Danach alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_28.zip` packen und Block „FÜR ZORO:“ (fertig / ZIP-Name / was fehlt). Nicht zuschneiden, nicht umbenennen – das macht Zoro.
+Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten. Danach alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_28.zip` packen. Nicht zuschneiden, nicht umbenennen – das macht Zoro.
 
-## Raster 055 → Datei `raster_055.png`
+## Feste Regeln (gelten für jede Lieferung)
+1. Nie verwerfen. Weicht ein Feld ab, trotzdem liefern – Zoro ordnet jedes brauchbare Foto selbst zu.
+2. Jedes Motiv nur EINMAL. Nichts wiederholen, was in einem früheren Raster schon vorkam (Döner-Wrap, Döner-Box, Falafel-Wrap, Margherita, Salami, Gemüse-Pizza, Pommes, Currywurst, Schnitzel, Nuggets, Bowls, Griechischer Salat, Pasta, Reis, Suppe, Fladenbrot sind fertig).
+3. Lieber ein anderes Motiv aus DIESER Liste als ein Lieblingsgericht von dir.
+4. Kopier-Regel: Deine Antwort endet mit GENAU EINEM Codeblock, den Baris unverändert an Zoro weitergibt – ohne Tabelle, ohne Text außerhalb. Form:
+
+```
+FÜR ZORO:
+1. Fertig: raster_NNN, raster_NNN
+2. Datei: raster_XX.zip
+3. Felder (was wirklich zu sehen ist):
+R NNN F1 = …
+R NNN F2 = …
+(alle 9 Felder je Raster, eine Zeile pro Feld)
+4. Weiter mit: raster_YY.md (nächste Nummer)
+```
+5. Keine kostenpflichtigen Apps oder Dienste vorschlagen.
+
+## Raster 135 → Datei `raster_135.png`
 
 ```
 Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
-Feld 1 = BUTTERPORTION: Butterportion, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 2 = CO2-FLASCHE: CO2-Flasche, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 3 = COCKTAILSPIESS: Cocktailspieß, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 4 = COFFEE-TO-GO 0,3 L: Coffee-to-go 0,3 l, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 5 = COFFEE-TO-GO 0,4 L: Coffee-to-go 0,4 l, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 6 = CURRYWURSTSCHALE: Currywurstschale, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 7 = DESSERTGLAS: Dessertglas, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 8 = EINWEGHANDSCHUHE: Einweghandschuhe, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 9 = EISLÖFFEL: Eislöffel, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 1 = RINDERGESCHNETZELTES: Rindergeschnetzeltes als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = RINDERHACK: Rinderhack als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = RINDERPATTY 150 G: Rinderpatty 150 g als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = SUPPENFLEISCH RIND: Suppenfleisch Rind als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = FALAFELBÄLLCHEN: Falafelbällchen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = HIRTENKÄSE / FETA: Hirtenkäse / Feta als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = CHICKEN WINGS: Chicken Wings als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = FRIKANDEL TK: Frikandel TK als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = HÄHNCHEN-NUGGETS: Hähnchen-Nuggets als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
 ```
 
-Belegung (nur zur Kontrolle): 1 Butterportion · 2 CO2-Flasche · 3 Cocktailspieß · 4 Coffee-to-go 0,3 l · 5 Coffee-to-go 0,4 l · 6 Currywurstschale · 7 Dessertglas · 8 Einweghandschuhe · 9 Eislöffel
+Belegung (nur zur Kontrolle): 1 Rindergeschnetzeltes · 2 Rinderhack · 3 Rinderpatty 150 g · 4 Suppenfleisch Rind · 5 Falafelbällchen · 6 Hirtenkäse / Feta · 7 Chicken Wings · 8 Frikandel TK · 9 Hähnchen-Nuggets
 
-## Raster 056 → Datei `raster_056.png`
+## Raster 136 → Datei `raster_136.png`
 
 ```
 Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
-Feld 1 = ESSSTÄBCHEN: Essstäbchen, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 2 = FILTERPAPIER: Filterpapier, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 3 = FINGERFOOD-SCHALE: Fingerfood-Schale, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 4 = HOLZBESTECK-SET: Holzbesteck-Set, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 5 = HOLZGABEL: Holzgabel, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 6 = KUCHENBOX: Kuchenbox, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 7 = MARMELADENPORTION: Marmeladenportion, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 8 = MÜLLBEUTEL: Müllbeutel, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 9 = PAPPMANSCHETTE: Pappmanschette, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 1 = MOZZARELLA-STICKS TK: Mozzarella-Sticks TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = ONION RINGS TK: Onion Rings TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = ROHKOST-STICKS: Rohkost-Sticks als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = BAGUETTE: Baguette als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = BAUERNBROT: Bauernbrot als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = PIDE-BROT: Pide-Brot als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = TOASTBROT: Toastbrot als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = BACKPULVER: Backpulver als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = CHILIFLOCKEN: Chiliflocken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
 ```
 
-Belegung (nur zur Kontrolle): 1 Essstäbchen · 2 Filterpapier · 3 Fingerfood-Schale · 4 Holzbesteck-Set · 5 Holzgabel · 6 Kuchenbox · 7 Marmeladenportion · 8 Müllbeutel · 9 Pappmanschette
+Belegung (nur zur Kontrolle): 1 Mozzarella-Sticks TK · 2 Onion Rings TK · 3 Rohkost-Sticks · 4 Baguette · 5 Bauernbrot · 6 Pide-Brot · 7 Toastbrot · 8 Backpulver · 9 Chiliflocken
