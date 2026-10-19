@@ -30,8 +30,8 @@ async def main():
             b = await p.chromium.launch()
             VID = os.environ.get("DURCHLAUF_VIDEO")
             ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE",
-            await ctx.add_init_script(path=__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "hilfe", "aufklappen.js"))  # Büro-Bereiche offen (19.10.2026)
                                       **({"record_video_dir": VID, "record_video_size": {"width": 390, "height": 844}} if VID else {}))
+            await ctx.add_init_script(path=__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "hilfe", "aufklappen.js"))  # Büro-Bereiche offen (19.10.2026)
             pg = await ctx.new_page()
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
@@ -290,7 +290,7 @@ async def main():
             await geh("einstellungen"); await pg.click('[data-a="sprache"][data-wert="en"]')
             await geh("start"); await bild("cockpit-en")
             await geh("beleg"); await bild("beleg-en")
-            await geh("einstellungen"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]')
+            await geh("einstellungen"); await pg.click('[data-a="sprache"][data-wert="de"]')
             # Zurück-Geste aus Müll-Unterseite: eine Ebene hoch
             await geh("muell"); await pg.click('[data-a="muell-andere"]'); await pg.wait_for_selector('[data-a="muell-kachel"]')
             await pg.go_back(); await pg.wait_for_timeout(300)

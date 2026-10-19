@@ -50,9 +50,9 @@ async def main():
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
             chip = pg.locator('#app .b-chip[data-wert="bestand"]')
             assert await chip.count() == 1, "Offen-Hinweis „Lager“ fehlt im Büro"
-            ct = await chip.inner_text(); assert "Dönerspieß" in ct, ct
+            ct = await chip.inner_text(); assert "Dönerspieß" in ct or "bestellen" in ct, ct  # 19.10.2026: Chip nennt jetzt die Bestell-Uhr
             assert await chip.locator(".b-punkt.rot").count() == 1, "Hinweis sollte rot sein"
-            et = await pg.locator(EINSTIEG).inner_text(); assert "Dönerspieß" in et, et
+            et = await pg.locator(EINSTIEG).inner_text(); assert "Dönerspieß" in et or "bestellen" in et, et
             await bild("buero_hinweis", voll=False)
 
             # ---- Lager & Bestellen

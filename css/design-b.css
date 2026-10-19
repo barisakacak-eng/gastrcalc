@@ -188,3 +188,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
   .muellraster .ware .gerichtbild.mini { aspect-ratio: 2 / 1; } .ware-mehr { top: calc(50cqw - 48px); }
   .ware .wt { padding: 6px 10px 8px; min-height: 0; }
 }
+/* Müll: Hinweis „Eingetragen · Rückgängig“ darf die unteren Kacheln („Andere“) nicht blockieren – nur sein Knopf ist tippbar */
+.muelltoast { pointer-events: none; }
+.muelltoast button { pointer-events: auto; }
