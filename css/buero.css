@@ -1,7 +1,7 @@
 /* Büro und Ordner (Drei Ebenen, 15.10.2026, Entwickler C) – nach Vorschau-Rahmen „Büro“ und „Ordner Gesundheitsamt“.
    Alle Klassen beginnen mit „b-“ und hängen unter .buero, damit nichts aus app.css/zielbild.css überschrieben wird. Farben aus tokens.css. */
-.buero { --b-grund: #F3EEE6; display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; background: var(--b-grund); color: var(--tinte); }
-.schirm:has(> .buero) { background: #F3EEE6; }
+.buero { --b-grund: var(--papier); display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; background: var(--b-grund); color: var(--tinte); }
+.schirm:has(> .buero) { background: var(--papier); }
 .buero button { font-family: inherit; line-height: inherit; color: inherit; }
 
 /* Kopfleiste: „‹ Laden“ · Titel */
