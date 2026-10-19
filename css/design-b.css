@@ -153,3 +153,16 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .b-bereich > summary .b-zt b { font-size: calc(18rem / 17); font-weight: 800; }
 .s2willkommen { min-height: calc(100dvh - 200px); }
 .s2willkommen .s2logo { height: 110px; }
+/* Müll (Screen 4): zwei große Fotokacheln je Reihe, Heute-Betrag als rote Karte */
+.muellkopf1 { flex-direction: column; align-items: stretch; gap: 10px; }
+.heutewert { justify-content: space-between; align-items: center; border-radius: 16px; padding: 14px 18px; background: var(--b-rot-hell); color: var(--b-rot-text); border: 1px solid #F2C9C9; }
+.heutewert small { color: var(--b-rot-text); font-size: calc(16rem / 17); font-weight: 700; }
+.heutewert .zahl { font-size: calc(30rem / 17); font-weight: 800; letter-spacing: -.01em; }
+.muellraster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.muellraster .ware { border-radius: 14px; border-color: var(--b-linie); }
+.muellraster .ware .gerichtbild.mini { aspect-ratio: 4 / 3; }
+.ware-mehr { top: calc(75cqw - 48px); }
+.ware .wt { padding: 9px 12px 11px; }
+.ware .wt b { font-size: calc(16rem / 17); font-weight: 800; }
+.ware .wt small { font-size: calc(13.5rem / 17); }
+.ware.andere { min-height: 120px; border: 2px dashed var(--b-linie); border-radius: 14px; }
