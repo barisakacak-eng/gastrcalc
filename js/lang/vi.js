@@ -1036,7 +1036,7 @@ export default {
     fertigHinweis: "Tiếp theo: chụp vài hóa đơn mua hàng. Khi đó app biết giá thật của bạn.",
     rechnungen: "Chụp hóa đơn", zumCockpit: "Đến bảng điều khiển",
   },
-  schnell2: {
+  schnell2: { willkommen: "Chào mừng", willkommenText: "Quán của bạn. Số liệu của bạn. Mọi thứ trong tầm tay.",
     hilfe: "Giải thích ngắn", sprache: "Ngôn ngữ",
     laden: "Quán của bạn", namePlatzhalter: "Tên quán",
     ladenHilfe: "Loại quán cho sẵn số liệu ban đầu cho công thức, làm lạnh và dọn dẹp. Sau này đổi được hết ở văn phòng.",

@@ -7,7 +7,7 @@
 
 .karte.h-ziel { display: flex; flex-direction: column; gap: 0; padding: 16px 18px 14px; border: 1px solid var(--holz); box-shadow: var(--schatten-karte); text-align: left; width: 100%; }
 .h-zielkopf { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: calc(15rem / 17); min-height: 42px; }
-.h-zielkopf .zielsym { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #F6E6D6; color: var(--glut); flex: none; }
+.h-zielkopf .zielsym { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--kupfer-hell); color: var(--glut); flex: none; }
 .h-tempo { border-radius: 999px; padding: 6px 11px; font-size: calc(13rem / 17); font-weight: 700; white-space: nowrap; font-variant-numeric: var(--zahlen); }
 .h-tempo.gut { background: var(--eigen-hell); color: var(--eigen); }
 .h-tempo.knapp { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
@@ -16,7 +16,7 @@
 .karte.h-ziel.plus .h-riesig { color: var(--gruen); }
 .h-unter { color: var(--tinte-weich); font-size: calc(14rem / 17); }
 /* Paket 3 (16.10.2026), M15/E2: kleine Kupferzeile unter der Zielkarte – „Richtwert · Preise eintragen ›“, führt ins Büro zu den Einkaufspreisen */
-.h-richtwert { display: block; width: 100%; background: none; border: 0; text-align: left; padding: 0 6px; margin-top: -8px; min-height: 28px; color: var(--kupfer-dunkel, #8A4C20); font-size: calc(13rem / 17); font-weight: 700; }
+.h-richtwert { display: block; width: 100%; background: none; border: 0; text-align: left; padding: 0 6px; margin-top: -8px; min-height: 28px; color: var(--kupfer-dunkel, var(--kupfer-dunkel)); font-size: calc(13rem / 17); font-weight: 700; }
 .h-balken { display: block; height: 10px; border-radius: 5px; background: var(--papier-tief); overflow: hidden; }
 .h-balken i { display: block; height: 100%; background: linear-gradient(90deg, var(--salbei), var(--salbei-tief)); border-radius: 5px; }
 .h-balkenzahlen { display: flex; justify-content: space-between; font-size: calc(13rem / 17); color: var(--tinte-weich); margin-top: 6px; font-variant-numeric: var(--zahlen); }
@@ -29,7 +29,7 @@
 .ks.umsatz { background: var(--salbei-hell); color: var(--salbei-tief); }
 .ks.muell { background: var(--muell-hell); color: var(--muell); }
 .ks.kuehl { background: var(--branche-hell); color: var(--branche); }
-.ks.putz { background: #F6E6D6; color: var(--kupfer-dunkel); }
+.ks.putz { background: var(--kupfer-hell); color: var(--kupfer-dunkel); }
 .karte.h-kachel.alarm { border-color: #E5B7B3; }
 .karte.h-kachel.alarm .ks { background: var(--muell-hell); color: var(--rot); }
 .karte.h-kachel.alarm b { color: var(--rot); }

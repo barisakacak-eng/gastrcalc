@@ -1038,7 +1038,7 @@ export default {
     rechnungen: "Rechnungen fotografieren", zumCockpit: "Zum Cockpit",
   },
   // Schnellweg 2 (Entwickler E, 15.10.2026): 6 Bildschirme, kurze Wörter, Erklärung nur hinter „?“
-  schnell2: {
+  schnell2: { willkommen: "Willkommen", willkommenText: "Dein Laden. Deine Zahlen. Einfach im Griff.",
     hilfe: "Kurz erklärt", sprache: "Sprache",
     laden: "Dein Laden", namePlatzhalter: "Name des Ladens",
     ladenHilfe: "Die Laden-Art gibt Startwerte für Rezepte, Kühlung und Putzplan. Alles kannst du später im Büro ändern.",

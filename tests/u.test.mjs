@@ -26,7 +26,7 @@ test("Grundschrift folgt dem Gerät (106.25 % = 17px), nicht fest 17px", () => {
 
 test("„Müll eintragen“: Kupfer mit dunkler Schrift, kein Weiß mehr darauf", () => {
   const z = lies("zielbild.css");
-  assert.match(z, /\.knopf\.glut, \.fotofeld \.knopf\.glut, \.muellknopf \{ background: #CD8043; color: var\(--tinte\); \}/);
+  assert.match(z, /\.knopf\.glut, \.fotofeld \.knopf\.glut, \.muellknopf \{ background: var\(--glut\); color: var\(--tinte\); \}/); // 19.10.2026: Farbe über Token (Design B)
   // Kontrast Tinte #1F2A24 auf Kupfer #CD8043 >= 4,5:1
   const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
   const k = (lum("#CD8043") + 0.05) / (lum("#1F2A24") + 0.05);

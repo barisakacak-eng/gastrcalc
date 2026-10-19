@@ -19,7 +19,7 @@
 .zielkarte .riesig { font-size: clamp(calc(38rem / 17), 11vw, calc(48rem / 17)); font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--tinte); line-height: 1.1; }
 .zielkarte.plus .riesig { color: var(--eigen); }
 .zielkarte small { color: var(--tinte-weich); font-size: calc(14rem / 17); }
-.zielsym { width: 46px; height: 46px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #F6E6D6; color: var(--glut); }
+.zielsym { width: 46px; height: 46px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--kupfer-hell); color: var(--glut); }
 .zielsym .sym { width: 28px; height: 28px; }
 .monatzahl { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .monatzahl b { font-size: calc(26rem / 17); font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -32,7 +32,7 @@
 .instrumente.heute .instrument.klein { flex-direction: row; align-items: center; gap: 10px; min-height: 76px; }
 .instrument .kachelsym { width: 40px; height: 40px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--salbei-hell); color: var(--salbei-tief); flex: none; }
 .i-tonne .kachelsym { background: var(--muell-hell); color: var(--muell); }
-.i-ware .kachelsym { background: #F6E6D6; color: var(--kupfer-dunkel, #8A4C20); }
+.i-ware .kachelsym { background: var(--kupfer-hell); color: var(--kupfer-dunkel, var(--kupfer-dunkel)); }
 .i-kuehl .kachelsym { background: var(--branche-hell); color: var(--branche); }
 .instrument.klein b { font-size: calc(20rem / 17); display: block; }
 .instrument.klein small { display: block; }
@@ -97,7 +97,7 @@
 .kopfband-cockpit .unter { font-size: calc(14rem / 17); }
 .einrichtung-zeile { display: flex; flex-direction: column; gap: 2px; }
 .ez-haupt { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--holz); border-radius: var(--radius); background: var(--weiss); font: inherit; text-align: left; color: var(--tinte); }
-.ez-haupt b, .ez-haupt small { display: block; } .ez-haupt small { color: var(--kupfer-dunkel, #8A4C20); }
+.ez-haupt b, .ez-haupt small { display: block; } .ez-haupt small { color: var(--kupfer-dunkel, var(--kupfer-dunkel)); }
 .ez-haupt > .sym:last-child { margin-left: auto; }
 .ring.klein { width: 40px; height: 40px; } .ring.klein text { font-size: calc(18rem / 17); }
 .ez-mehr { align-self: flex-end; font-size: calc(13rem / 17); }
@@ -159,7 +159,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .formkachel .stepper button { width: 44px; height: 44px; min-height: 44px; min-width: 44px; border-radius: 50%; }
 .titelbild { width: 100%; aspect-ratio: 4 / 3; max-height: 220px; object-fit: cover; border-radius: var(--radius); display: block; }
 /* Abnahme 15.10.: Kontraste nach WCAG (Text 4,5:1, Symbole 3:1) */
-.knopf.glut, .fotofeld .knopf.glut, .muellknopf { background: #CD8043; color: var(--tinte); } /* W2-U: Schrift dunkel, sonst blieb bei „Müll eintragen“ Weiß auf Kupfer (3,1:1) */ /* Kupfer minimal heller: dunkle Schrift 4,8:1 statt 4,5:1 knapp darunter */
+.knopf.glut, .fotofeld .knopf.glut, .muellknopf { background: var(--glut); color: var(--tinte); } /* W2-U: Schrift dunkel, sonst blieb bei „Müll eintragen“ Weiß auf Kupfer (3,1:1) */ /* Kupfer minimal heller: dunkle Schrift 4,8:1 statt 4,5:1 knapp darunter */
 .zeileknopf .pfeil, .pfeil { color: #8F6E44; }
 .karte.zaehler .bewegung .pfeil { color: #C9D6CB; } .jetzt .pfeil { color: var(--salbei-tief); }
 /* Reinigung & Betriebsmittel (Punkt 5) */
@@ -174,7 +174,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .sprosse.an { border-color: var(--eigen); color: var(--tinte); font-weight: 700; }
 .wahl .wahlsym { width: 44px; height: 44px; border-radius: 12px; background: var(--salbei-hell); color: var(--salbei-tief); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .karte.einsicht { display: flex; flex-direction: row; gap: 12px; align-items: flex-start; }
-.einsichtsym { width: 40px; height: 40px; border-radius: 50%; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel, #8A4C20); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.einsichtsym { width: 40px; height: 40px; border-radius: 50%; background: var(--kupfer-hell, var(--kupfer-hell)); color: var(--kupfer-dunkel, var(--kupfer-dunkel)); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .karte.einsicht p { margin: 0; font-size: calc(16rem / 17); } .karte.einsicht small { display: block; color: var(--tinte-weich); font-size: calc(13.5rem / 17); margin-top: 4px; }
 /* Putzplan (HACCP-Empfehlung, 15.10.) */
 .putzplan h2.pptakt, .putzplan h3.pptakt { margin: 14px 0 6px; font-size: calc(15rem / 17); text-transform: uppercase; letter-spacing: .05em; color: var(--tinte-weich); }
@@ -225,7 +225,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .inv-gsym { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--salbei-hell); color: var(--salbei-tief); }
 .inv-gsym .sym { width: 19px; height: 19px; }
 .ort-kuehlhaus .inv-gsym, .ort-tiefkuehler .inv-gsym { background: var(--branche-hell); color: var(--branche); }
-.ort-trockenlager .inv-gsym { background: #F6E6D6; color: var(--kupfer-dunkel); }
+.ort-trockenlager .inv-gsym { background: var(--kupfer-hell); color: var(--kupfer-dunkel); }
 .inv-liste { display: flex; flex-direction: column; gap: 10px; padding: 10px 0 4px; }
 .inv-posten { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); padding: 10px; box-shadow: 0 2px 6px rgba(31,42,36,.04); }
 .inv-posten.offen { background: transparent; border-style: dashed; border-color: var(--holz-tief); box-shadow: none; }
@@ -247,7 +247,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .inv-anbruch { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 8px 0 0 64px; }
 .inv-anbruch span { font-size: calc(13rem / 17); color: var(--tinte-weich); margin-right: 2px; }
 .inv-anbruch button { min-height: 44px; min-width: 48px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--holz); background: var(--weiss); font-size: calc(16rem / 17); font-weight: 700; color: var(--tinte); }
-.inv-anbruch button.an { background: #F6E6D6; border-color: var(--glut); color: var(--kupfer-dunkel); }
+.inv-anbruch button.an { background: var(--kupfer-hell); border-color: var(--glut); color: var(--kupfer-dunkel); }
 .inv-dazu .inv-treffer { display: flex; flex-direction: column; gap: 8px; }
 .inv-dazu .zeileknopf { min-height: 52px; padding: 10px 14px; } .inv-dazu .zeileknopf small { display: block; color: var(--tinte-weich); font-size: calc(13.5rem / 17); }
 .inv-weg { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--papier-tief); }
@@ -283,10 +283,10 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 /* Ergebnis A–E */
 .inhalt.inv-ergebnis { gap: 12px; }
 .karte.inv-zaehler { background: linear-gradient(156deg, var(--salbei-tief), #395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); gap: 2px; }
-.inv-zaehler .lbl { font-size: calc(14rem / 17); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #E6EBDD; }
+.inv-zaehler .lbl { font-size: calc(14rem / 17); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--salbei-hell); }
 .inv-zaehler .riesig { font-size: clamp(calc(36rem / 17), 11vw, calc(46rem / 17)); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.karte.inv-zaehler small { color: #E6EBDD; font-size: calc(15rem / 17); } .inv-delta { color: #C7F2D0; font-weight: 700; white-space: nowrap; }
-.inv-was { margin: -2px 0 4px; padding: 10px 12px; border-radius: 0 10px 10px 0; border-left: 4px solid var(--glut); background: #F6E6D6; color: var(--tinte); font-size: calc(15rem / 17); line-height: 1.45; }
+.karte.inv-zaehler small { color: var(--salbei-hell); font-size: calc(15rem / 17); } .inv-delta { color: #C7F2D0; font-weight: 700; white-space: nowrap; }
+.inv-was { margin: -2px 0 4px; padding: 10px 12px; border-radius: 0 10px 10px 0; border-left: 4px solid var(--glut); background: var(--kupfer-hell); color: var(--tinte); font-size: calc(15rem / 17); line-height: 1.45; }
 .inv-was b { color: var(--kupfer-dunkel); }
 .inv-ue { font-size: calc(13rem / 17); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--tinte-weich); margin: 8px 0 -2px; }
 .karte.inv-rechnung { gap: 0; padding: 8px 16px; }
@@ -310,7 +310,7 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .inv-legende i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; }
 .inv-erste p { color: var(--tinte); }
 .inv-ergebnis > .leise { align-self: center; }
-.inv-delta.minus { color: #E6EBDD; }
+.inv-delta.minus { color: var(--salbei-hell); }
 /* Schmale Handys (360 px): Namen nicht mitten im Wort trennen – Bild und Knöpfe etwas kleiner, Knöpfe bleiben ≥ 44 px */
 @media (max-width: 400px) {
   .inv-posten { padding: 10px 8px; }

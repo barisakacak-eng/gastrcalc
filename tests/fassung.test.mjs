@@ -29,7 +29,7 @@ test("Fassungs-Wächter: sw.js trägt den Fingerabdruck der tatsächlich geliste
 test("Fassungs-Wächter: jede App-Datei auf der Platte steht in der Liste des Service Workers", () => {
   const dateien = new Set(JSON.parse(sw.match(/const DATEIEN = (\[[^\]]*\])/)[1]));
   const fotos = JSON.parse(sw.match(/const FOTOS_H = (\{[^}]*\})/)[1]);
-  const endungen = new Set([".js", ".css", ".png", ".svg", ".webp", ".woff2", ".webmanifest"]);
+  const endungen = new Set([".js", ".css", ".png", ".svg", ".webp", ".woff2", ".woff", ".webmanifest"]);
   const aus = new Set(["tests", "tools", "vendor", "design", "design-handoffs", "bruecke", "node_modules"]);
   const fehlt = [];
   const gehe = (dir) => {

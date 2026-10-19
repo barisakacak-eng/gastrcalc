@@ -1037,7 +1037,7 @@ export default {
     rechnungen: "Photograph invoices", zumCockpit: "To the cockpit",
   },
   // Quick setup 2 (15 Oct 2026)
-  schnell2: {
+  schnell2: { willkommen: "Welcome", willkommenText: "Your shop. Your numbers. Simply under control.",
     hilfe: "Quick help", sprache: "Language",
     laden: "Your shop", namePlatzhalter: "Shop name",
     ladenHilfe: "The shop type sets starting values for recipes, cooling and the cleaning plan. You can change everything later in the office.",

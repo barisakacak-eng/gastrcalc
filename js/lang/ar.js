@@ -1039,7 +1039,7 @@ export default {
     rechnungen: "تصوير الفواتير", zumCockpit: "إلى لوحة التحكم",
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
-  schnell2: {
+  schnell2: { willkommen: "أهلاً بك", willkommenText: "محلك. أرقامك. كل شيء تحت السيطرة.",
     hilfe: "شرح سريع", sprache: "اللغة",
     laden: "محلك", namePlatzhalter: "اسم المحل",
     ladenHilfe: "نوع المحل يعطي قيمًا أولية للوصفات والتبريد وخطة التنظيف. تغيّر كل شيء لاحقًا في المكتب.",

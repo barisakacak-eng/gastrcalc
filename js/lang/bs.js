@@ -1045,7 +1045,7 @@ export default {
     rechnungen: "Slikaj račune", zumCockpit: "Na kokpit",
   },
   // Inventura (tačka 3, Baris 15.10.: A1 + A2, rezultat A–E s objašnjenjem)
-  schnell2: {
+  schnell2: { willkommen: "Dobro došli", willkommenText: "Tvoja radnja. Tvoji brojevi. Sve pod kontrolom.",
     hilfe: "Ukratko", sprache: "Jezik",
     laden: "Tvoj lokal", namePlatzhalter: "Ime lokala",
     ladenHilfe: "Vrsta lokala daje početne vrijednosti za recepte, hlađenje i plan čišćenja. Sve možeš kasnije promijeniti u uredu.",

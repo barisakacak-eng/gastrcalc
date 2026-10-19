@@ -1042,7 +1042,7 @@ export default {
     rechnungen: "Сфотографировать счета", zumCockpit: "К обзору",
   },
   // Инвентаризация (Inventur, Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
-  schnell2: {
+  schnell2: { willkommen: "Добро пожаловать", willkommenText: "Твоё заведение. Твои цифры. Всё под контролем.",
     hilfe: "Коротко", sprache: "Язык",
     laden: "Твоё заведение", namePlatzhalter: "Название заведения",
     ladenHilfe: "Тип заведения даёт стартовые значения для рецептов, холода и плана уборки. Всё можно поменять потом в офисе.",

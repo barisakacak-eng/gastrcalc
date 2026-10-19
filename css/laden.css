@@ -81,7 +81,7 @@ body.blatt-da { overflow: hidden; }
 .grosskachel.dunkel { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
 .grosskachel.dunkel .ks { background: rgba(255,253,248,.12); color: var(--weiss); }
 .grosskachel.k-personal .ks { background: var(--branche-hell); color: var(--branche); }
-.grosskachel.k-buero .ks { background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); }
+.grosskachel.k-buero .ks { background: var(--kupfer-hell, var(--kupfer-hell)); color: var(--kupfer-dunkel); }
 .grosskachel.k-laeden .ks { background: var(--salbei-hell); color: var(--salbei-tief); }
 .ebene-blatt .sprachzeile { display: flex; flex-direction: row; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 0 16px; font: inherit; font-weight: 650; color: var(--tinte); text-align: start; }
 .sprachzeile > .sym { width: 22px; height: 22px; color: var(--tinte-weich); }
@@ -106,7 +106,7 @@ body.blatt-da { overflow: hidden; }
 
 /* Büro-Code */
 .pin-kopf { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding-top: 4px; }
-.pin-kopf .ks { width: 52px; height: 52px; border-radius: 16px; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; }
+.pin-kopf .ks { width: 52px; height: 52px; border-radius: 16px; background: var(--kupfer-hell, var(--kupfer-hell)); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; }
 .pin-kopf b { font-size: calc(20rem / 17); }
 .pin-meldung { min-height: 20px; font-size: calc(14rem / 17); color: var(--tinte-weich); font-weight: 600; }
 .pin-meldung.fehler { color: var(--rot); }
@@ -124,7 +124,7 @@ body.blatt-da { overflow: hidden; }
 .buerocode h2 { display: flex; align-items: center; gap: 8px; } .buerocode h2 .sym { width: 20px; height: 20px; }
 
 /* E5 (16.10.2026): Passwort der Sicherung (Blatt beim Teilen und Einlesen) */
-.blattkopf .pw-ks { width: 44px; height: 44px; border-radius: 12px; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.blattkopf .pw-ks { width: 44px; height: 44px; border-radius: 12px; background: var(--kupfer-hell, var(--kupfer-hell)); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .blattkopf .pw-ks + b { flex: 1; min-width: 0; }
 .pw-form { display: flex; flex-direction: column; gap: 10px; }
 .pw-feld { position: relative; }

@@ -1042,7 +1042,7 @@ export default {
     rechnungen: "Fotografo faturat", zumCockpit: "Te pasqyra",
   },
   // Inventari (Inventur, Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
-  schnell2: {
+  schnell2: { willkommen: "Mirë se vjen", willkommenText: "Lokali yt. Shifrat e tua. Gjithçka nën kontroll.",
     hilfe: "Shkurt", sprache: "Gjuha",
     laden: "Lokali yt", namePlatzhalter: "Emri i lokalit",
     ladenHilfe: "Lloji i lokalit jep vlera fillestare për recetat, ftohjen dhe planin e pastrimit. Gjithçka mund ta ndryshosh më vonë në zyrë.",

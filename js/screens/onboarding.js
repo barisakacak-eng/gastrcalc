@@ -419,11 +419,14 @@ const spracheSchnell = {
   id: "sprache",
   view: () => `
     <div class="s2sprache s2willkommen">
-      <img class="s2logo" src="icons/logo.svg" alt="" aria-hidden="true">
+      <img class="s2logo" src="icons/logo-zeichen.svg" alt="" aria-hidden="true">
+      <h1 class="s2titel-gross">${esc(t("schnell2.willkommen"))}</h1>
+      <p class="s2unterzeile">${esc(t("schnell2.willkommenText"))}</p>
       <label class="s2feldtitel" for="sprache-wahl">${esc(t("schnell2.sprache"))}</label>
       <select id="sprache-wahl" class="textfeld s2sprachwahl" data-f="sprache-wahl" dir="auto">
         ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(SPRACH_NAMEN[s] || s)}</option>`).join("")}
       </select>
+      <img class="s2kraeuter" src="bilder/ui/kraeuter.svg" alt="" aria-hidden="true">
     </div>`,
   fuss: () => `<button type="button" class="knopf" data-a="sprache" data-wert="${aktiveSprache()}">${esc(t("allgemein.weiter"))}</button>`,
   aktion: sprache.aktion,
