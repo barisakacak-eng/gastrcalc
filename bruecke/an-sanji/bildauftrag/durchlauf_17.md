@@ -2,7 +2,7 @@
 
 ## Stilblatt (gilt für jedes Foto dieser Datei)
 
-Fotorealistisches Produktfoto im Querformat 4:3. Hintergrund: ruhiges, fast weißes Off-White (#FAFBF8) ohne Muster, sehr weicher, kurzer Schatten unter dem Motiv. Licht: helles, weiches Tageslicht von links oben, natürliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 45 Grad. Motiv mittig, füllt etwa 70 % der Fläche, ringsum etwas Rand. Stil: sauber, appetitlich und ehrlich wie in einer modernen Liefer- oder Kassen-App – nicht gestylt wie im Sterne-Restaurant. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände.
+Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Ausgabe: WebP, 520 × 390 px, Qualität 72, Ziel 25–45 KB, Dateiname exakt wie angegeben (Kleinbuchstaben, Bindestriche, .webp).
 
