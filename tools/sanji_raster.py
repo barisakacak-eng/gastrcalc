@@ -14,7 +14,7 @@ src = (WURZEL / "tools" / "sanji_bildauftrag.py").read_text(encoding="utf-8").re
 exec(compile(src, "sanji_bildauftrag", "exec"), ba.__dict__); sys.argv = _argv
 
 JE_RASTER = 9
-RASTER_JE_DATEI = 2
+RASTER_JE_DATEI = 6  # 19.10. 13:25: große Blöcke (54 Fotos je Lieferung), damit weniger hin und her kopiert wird
 R0, D0 = 104, 12  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
 ROH = "https://raw.githubusercontent.com/barisakacak-eng/gastrcalc/main/bruecke/an-sanji/raster/"
 
@@ -33,13 +33,12 @@ REGELN = """## Feste Regeln (gelten für jede Lieferung)
 
 ```
 FÜR ZORO:
-1. Fertig: raster_NNN, raster_NNN
+1. Fertig: raster_NNN bis raster_NNN
 2. Datei: raster_XX.zip
-3. Felder (was wirklich zu sehen ist):
-R NNN F1 = …
-R NNN F2 = …
-(alle 9 Felder je Raster, eine Zeile pro Feld)
-4. Weiter mit: raster_YY.md (nächste Nummer)
+3. Felder (was wirklich zu sehen ist, je Raster EINE Zeile, 9 Einträge in Feldreihenfolge mit | getrennt):
+R NNN: … | … | … | … | … | … | … | … | …
+R NNN: … | … | … | … | … | … | … | … | …
+4. Weiter mit: raster_YY.md
 ```
 5. Keine kostenpflichtigen Apps oder Dienste vorschlagen."""
 
@@ -69,9 +68,13 @@ def main():
     for d in range(n_dat):
         teil = raster[d * RASTER_JE_DATEI:(d + 1) * RASTER_JE_DATEI]
         nr0 = d * RASTER_JE_DATEI + 1 + R0
-        t = [f"# Rasterauftrag {d + 1 + D0:02d} von {n_dat} – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
-             "Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten. Danach alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP "
-             f"`raster_{d + 1 + D0:02d}.zip` packen. Nicht zuschneiden, nicht umbenennen – das macht Zoro.", "", REGELN, ""]
+        t = [f"# Rasterauftrag {d + 1 + D0:02d} (letzter: {n_dat + D0:02d}) – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
+             "## Ablauf (in EINER Antwort, ohne Zwischenfragen)",
+             f"1. Für jedes der {len(teil)} Raster unten genau EIN Bild erzeugen – Prompt steht fertig im Kasten. Die Bilder NICHT einzeln im Chat zeigen oder kommentieren, nur intern erzeugen und speichern.",
+             f"2. Alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_{d + 1 + D0:02d}.zip` packen und als Download anbieten. Nicht zuschneiden, nicht umbenennen – das macht Zoro.",
+             "3. Im Chat genau EIN Übersichtsbild zeigen: alle Raster dieses Auftrags verkleinert nebeneinander (eine Kontrollcollage). Mehr Bilder nicht.",
+             "4. Dann der Kopier-Block „FÜR ZORO:“ (Regel 4). Sonst kein Text.",
+             "Reicht das Kontingent nicht für alle Raster: liefere, was fertig ist, und schreib im Block, ab welchem Raster es weitergeht.", "", REGELN, ""]
         for k, felder in enumerate(teil):
             rnr = nr0 + k
             liste = "\n".join(f"Feld {i} = {b['name'].upper()}: {b['motiv']}" for i, b in enumerate(felder, 1))

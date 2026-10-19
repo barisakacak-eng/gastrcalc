@@ -1,6 +1,11 @@
-# Rasterauftrag 19 von 30 – 18 Fotos in 2 Rasterbildern
+# Rasterauftrag 19 (letzter: 22) – 54 Fotos in 6 Rasterbildern
 
-Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten. Danach alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_19.zip` packen. Nicht zuschneiden, nicht umbenennen – das macht Zoro.
+## Ablauf (in EINER Antwort, ohne Zwischenfragen)
+1. Für jedes der 6 Raster unten genau EIN Bild erzeugen – Prompt steht fertig im Kasten. Die Bilder NICHT einzeln im Chat zeigen oder kommentieren, nur intern erzeugen und speichern.
+2. Alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_19.zip` packen und als Download anbieten. Nicht zuschneiden, nicht umbenennen – das macht Zoro.
+3. Im Chat genau EIN Übersichtsbild zeigen: alle Raster dieses Auftrags verkleinert nebeneinander (eine Kontrollcollage). Mehr Bilder nicht.
+4. Dann der Kopier-Block „FÜR ZORO:“ (Regel 4). Sonst kein Text.
+Reicht das Kontingent nicht für alle Raster: liefere, was fertig ist, und schreib im Block, ab welchem Raster es weitergeht.
 
 ## Feste Regeln (gelten für jede Lieferung)
 1. Nie verwerfen. Weicht ein Feld ab, trotzdem liefern – Zoro ordnet jedes brauchbare Foto selbst zu.
@@ -10,50 +15,125 @@ Für jedes Raster unten: genau EIN Bild erzeugen. Prompt steht fertig im Kasten.
 
 ```
 FÜR ZORO:
-1. Fertig: raster_NNN, raster_NNN
+1. Fertig: raster_NNN bis raster_NNN
 2. Datei: raster_XX.zip
-3. Felder (was wirklich zu sehen ist):
-R NNN F1 = …
-R NNN F2 = …
-(alle 9 Felder je Raster, eine Zeile pro Feld)
-4. Weiter mit: raster_YY.md (nächste Nummer)
+3. Felder (was wirklich zu sehen ist, je Raster EINE Zeile, 9 Einträge in Feldreihenfolge mit | getrennt):
+R NNN: … | … | … | … | … | … | … | … | …
+R NNN: … | … | … | … | … | … | … | … | …
+4. Weiter mit: raster_YY.md
 ```
 5. Keine kostenpflichtigen Apps oder Dienste vorschlagen.
 
-## Raster 117 → Datei `raster_117.png`
+## Raster 141 → Datei `raster_141.png`
 
 ```
 Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
-Feld 1 = SHAWARMA: Ein typisches Gericht der Familie „shawarma“, fertig serviert wie im Imbiss (sichtbar: Hähnchenspieß, Dürüm-Wrap, Salatgurke, Knoblauchsauce, Alufolie-Bogen). Eine Portion. Ein typisches Gericht dieser Familie, eine Portion, so wie ein kleiner Imbiss es über die Theke reicht.
-Feld 2 = TELLER: Ein typisches Gericht der Familie „teller“, fertig serviert wie im Imbiss (sichtbar: Dönerspieß Kalb/Pute, Eisbergsalat, Tomaten, Knoblauchsauce, Menüschale 3-teilig). Eine Portion. Ein typisches Gericht dieser Familie, eine Portion, so wie ein kleiner Imbiss es über die Theke reicht.
-Feld 3 = WRAP: Ein typisches Gericht der Familie „wrap“, fertig serviert wie im Imbiss (sichtbar: Dönerspieß Kalb/Pute, Dürüm-Wrap, Eisbergsalat, Tomaten, Zwiebeln, Kräutersauce). Eine Portion. Ein typisches Gericht dieser Familie, eine Portion, so wie ein kleiner Imbiss es über die Theke reicht.
-Feld 4 = BROT: Selbstgemachtes „brot“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale. Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.
-Feld 5 = LAHMACUN: Selbstgemachtes „lahmacun“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale. Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.
-Feld 6 = PATTY: Selbstgemachtes „patty“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale. Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.
-Feld 7 = SOSSEN: Selbstgemachtes „sossen“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale. Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.
-Feld 8 = TEIG: Selbstgemachtes „teig“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale. Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.
-Feld 9 = TOMATENSOSSE: Selbstgemachtes „tomatensosse“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale. Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.
+Feld 1 = NÜSSE GEHACKT: Nüsse gehackt als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = HÄHNCHENBRUST: Hähnchenbrust als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = HÄHNCHENKARKASSE: Hähnchenkarkasse als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = HÄHNCHENPATTY: Hähnchenpatty als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = CRÈME FRAÎCHE: Crème fraîche als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = JOGHURT NATUR: Joghurt natur als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = KRÄUTERQUARK: Kräuterquark als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = NUSS-NOUGAT-CREME: Nuss-Nougat-Creme als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = QUARK: Quark als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
 ```
 
-Belegung (nur zur Kontrolle): 1 shawarma · 2 teller · 3 wrap · 4 brot · 5 lahmacun · 6 patty · 7 sossen · 8 teig · 9 tomatensosse
+Belegung (nur zur Kontrolle): 1 Nüsse gehackt · 2 Hähnchenbrust · 3 Hähnchenkarkasse · 4 Hähnchenpatty · 5 Crème fraîche · 6 Joghurt natur · 7 Kräuterquark · 8 Nuss-Nougat-Creme · 9 Quark
 
-## Raster 118 → Datei `raster_118.png`
+## Raster 142 → Datei `raster_142.png`
 
 ```
 Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
 
 Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
-Feld 1 = APEROL: Aperol als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 2 = BRAUNER RUM: Brauner Rum als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 3 = CAMPARI: Campari als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 4 = GIN: Gin als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 5 = KORN: Korn als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 6 = OBSTLER: Obstler als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 7 = PROSECCO 0,75 L: Prosecco 0,75 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 8 = ROTWEIN OFFEN: Rotwein offen als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
-Feld 9 = SEKT 0,75 L: Sekt 0,75 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 1 = SAHNE: Sahne als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = SAHNESTEIF: Sahnesteif als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = AIOLI: Aioli als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = AJVAR: Ajvar als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = BBQ-SAUCE: BBQ-Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = BRATENSAUCE: Bratensauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = BURGERSAUCE: Burgersauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = CAESAR-DRESSING: Caesar-Dressing als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = COCKTAILSAUCE: Cocktailsauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
 ```
 
-Belegung (nur zur Kontrolle): 1 Aperol · 2 Brauner Rum · 3 Campari · 4 Gin · 5 Korn · 6 Obstler · 7 Prosecco 0,75 l · 8 Rotwein offen · 9 Sekt 0,75 l
+Belegung (nur zur Kontrolle): 1 Sahne · 2 Sahnesteif · 3 Aioli · 4 Ajvar · 5 BBQ-Sauce · 6 Bratensauce · 7 Burgersauce · 8 Caesar-Dressing · 9 Cocktailsauce
+
+## Raster 143 → Datei `raster_143.png`
+
+```
+Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
+
+Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
+Feld 1 = ERDNUSSSAUCE: Erdnusssauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = HUMMUS: Hummus als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = KARAMELLSAUCE: Karamellsauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = KETCHUP: Ketchup als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = KRÄUTERDIP: Kräuterdip als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = KÄSESAUCE: Käsesauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = PESTO GENOVESE: Pesto Genovese als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = REMOULADE: Remoulade als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = SAHNESAUCE: Sahnesauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+```
+
+Belegung (nur zur Kontrolle): 1 Erdnusssauce · 2 Hummus · 3 Karamellsauce · 4 Ketchup · 5 Kräuterdip · 6 Käsesauce · 7 Pesto Genovese · 8 Remoulade · 9 Sahnesauce
+
+## Raster 144 → Datei `raster_144.png`
+
+```
+Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
+
+Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
+Feld 1 = SAUCE HOLLANDAISE: Sauce hollandaise als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = SCHOKOSAUCE: Schokosauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = SENF: Senf als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = SOJASAUCE: Sojasauce als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = SÜSS-SAUER-SAUCE: Süß-Sauer-Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = WORCESTERSAUCE: Worcestersauce als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = KNOBLAUCHGRANULAT: Knoblauchgranulat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = JOGHURTDRESSING: Joghurtdressing als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = BLÄTTERTEIG: Blätterteig als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+```
+
+Belegung (nur zur Kontrolle): 1 Sauce hollandaise · 2 Schokosauce · 3 Senf · 4 Sojasauce · 5 Süß-Sauer-Sauce · 6 Worcestersauce · 7 Knoblauchgranulat · 8 Joghurtdressing · 9 Blätterteig
+
+## Raster 145 → Datei `raster_145.png`
+
+```
+Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
+
+Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
+Feld 1 = CROISSANTTEIGLING TK: Croissantteigling TK als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = DINKELMEHL: Dinkelmehl als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = FRISCHHEFE: Frischhefe als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = MANDELMEHL: Mandelmehl als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = MÜRBETEIG: Mürbeteig als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = PIDE-TEIG: Pide-Teig als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = TEIGTASCHEN TK: Teigtaschen TK als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = WAFFELTEIG: Waffelteig als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = WEIZENMEHL TYP 405: Weizenmehl Typ 405 als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+```
+
+Belegung (nur zur Kontrolle): 1 Croissantteigling TK · 2 Dinkelmehl · 3 Frischhefe · 4 Mandelmehl · 5 Mürbeteig · 6 Pide-Teig · 7 Teigtaschen TK · 8 Waffelteig · 9 Weizenmehl Typ 405
+
+## Raster 146 → Datei `raster_146.png`
+
+```
+Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern (je 512 × 341 px), getrennt durch durchgehende, 8 px breite, reinweiße Linien, außen ebenfalls 8 px weißer Rand. Jedes Feld zeigt GENAU EIN Motiv in der unten angegebenen Reihenfolge – zeilenweise von links oben nach rechts unten (Feld 1–3 obere Reihe, 4–6 mittlere, 7–9 untere). Das Motiv bleibt vollständig in seinem Feld, mittig, mit etwas Luft zum Rand, nichts ragt über die weißen Linien. KEIN Text, KEINE Nummern, KEINE Beschriftung, keine Logos, keine Marken, keine Personen, keine Hände. Alle 9 Felder im gleichen Stil, gleiches Licht, gleicher Holztisch: Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freigegebenen Vorlage (https://github.com/barisakacak-eng/gastrcalc/blob/main/design-handoffs/sanji/2026-10-19_richtung-b/foto-stil/originalcollage.jpeg, von Baris gewählt am 19.10.2026): Motiv auf einem warmen, geölten Holztisch, Hintergrund dunkel und unscharf mit angedeutetem grünem Kraut. Gerichte auf schlichtem dunklem Teller oder in dunkler Schale, Getränke im Glas, Rohware direkt auf Holz oder Brett. Licht: warmes, weiches Seitenlicht von links, natürliche, appetitliche Farben, nicht übersättigt. Perspektive: leichte Aufsicht von etwa 30–45 Grad. Motiv mittig, füllt etwa 75 % der Fläche, nichts angeschnitten. Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.
+
+Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:
+Feld 1 = WEIZENMEHL TYP 550: Weizenmehl Typ 550 als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 2 = BÜFFELMOZZARELLA: Büffelmozzarella als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 3 = MOZZARELLA-KUGELN: Mozzarella-Kugeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 4 = BANDNUDELN: Bandnudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 5 = LASAGNEPLATTEN: Lasagneplatten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 6 = MIE-NUDELN: Mie-Nudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 7 = REISNUDELN: Reisnudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 8 = SPAGHETTI: Spaghetti als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+Feld 9 = SUPPENNUDELN: Suppennudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht. Ware so, wie sie geliefert wird bzw. in der Küche liegt.
+```
+
+Belegung (nur zur Kontrolle): 1 Weizenmehl Typ 550 · 2 Büffelmozzarella · 3 Mozzarella-Kugeln · 4 Bandnudeln · 5 Lasagneplatten · 6 Mie-Nudeln · 7 Reisnudeln · 8 Spaghetti · 9 Suppennudeln
