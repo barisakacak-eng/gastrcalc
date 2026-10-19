@@ -419,7 +419,7 @@ const spracheSchnell = {
   id: "sprache",
   view: () => `
     <div class="s2sprache s2willkommen">
-      <img class="s2logo" src="icons/logo.svg" alt="" aria-hidden="true">
+      <img class="s2logo" src="icons/logo-zeichen.svg" alt="" aria-hidden="true">
       <label class="s2feldtitel" for="sprache-wahl">${esc(t("schnell2.sprache"))}</label>
       <select id="sprache-wahl" class="textfeld s2sprachwahl" data-f="sprache-wahl" dir="auto">
         ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(SPRACH_NAMEN[s] || s)}</option>`).join("")}

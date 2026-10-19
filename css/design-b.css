@@ -80,3 +80,43 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 /* Büro: Bereiche als weiße Karten */
 .b-bereich { background: var(--b-karte); border: 1px solid var(--b-linie); box-shadow: none; }
 .h-jetzt .los { background: var(--b-akzent); color: var(--b-text); }
+
+/* ---- Schritt 2a (19.10.2026): Laden „Heute“ 1:1 nach referenz_10_screens.png, Screen 2 ---- */
+.appleiste.ebene-kopf { background: var(--b-hintergrund); border-bottom: 0; box-shadow: none; }
+.appleiste.ebene-kopf .logo, .appleiste .logo { height: 36px; width: auto; }
+.s2willkommen .s2logo { height: 96px; margin-bottom: 8px; }
+.h-zeitzeile { text-align: center; color: var(--b-text); font-size: 14px; font-weight: 500; margin-top: -6px; }
+/* Hauptzahl-Karte: Titel weiß, Zahl groß, Balken orange, Zahlen darunter */
+.karte.h-ziel { border-radius: 16px; padding: 18px 18px 16px; box-shadow: 0 6px 18px rgba(15,61,46,.22); }
+.karte.h-ziel .h-zielkopf { font-size: 20px; font-weight: 700; min-height: 0; }
+.karte.h-ziel .h-zielkopf .zielsym { display: none; }
+.karte.h-ziel .h-riesig { font-size: 52px; letter-spacing: -.02em; margin: 6px 0 12px; }
+.karte.h-ziel .h-balken { height: 10px; border-radius: 5px; }
+.karte.h-ziel .h-balkenzahlen { color: #FFFFFF; font-weight: 600; font-size: 14px; }
+.karte.h-ziel .h-tempo { background: rgba(255,255,255,.14); color: #FFFFFF; }
+/* Kacheln: Symbol links groß, Name und Wert rechts – flach und niedrig */
+.h-kacheln { gap: 10px; }
+.karte.h-kachel { display: grid; grid-template-columns: 36px 1fr; align-items: center; column-gap: 12px; min-height: 76px; padding: 12px 14px; border-radius: 14px; box-shadow: 0 1px 4px rgba(15,23,32,.06); }
+.h-kachel .ks { width: 36px; height: 36px; }
+.h-kachel .ks .sym { width: 30px; height: 30px; stroke-width: 2.2; }
+.h-kachel small { color: var(--b-text); font-size: 13px; font-weight: 600; }
+.h-kachel b { font-size: 20px; font-weight: 800; }
+.h-kachel:has(.ks.umsatz) b { color: var(--b-gruen-ok); }
+.h-kachel:has(.ks.muell) b { color: var(--b-rot-text); }
+.karte.h-kachel.alarm { background: var(--b-karte); border-color: var(--b-linie); }
+/* Jetzt dran: Symbol als oranger Umriss, Knopf „Los →“ orange */
+.jetzt.h-jetzt { min-height: 76px; border-radius: 14px; }
+.h-jetzt .ks { background: transparent; color: var(--b-akzent); }
+.h-jetzt .ks .sym { width: 30px; height: 30px; }
+.h-jetzt .los { border-radius: 12px; min-height: 44px; padding: 0 16px; gap: 6px; }
+/* Leiste unten: ohne Kapsel, aktiver Reiter dunkel und fett */
+.tableiste { background: var(--b-karte); border-top: 1px solid var(--b-linie); }
+.tab { color: var(--b-text-leise); font-size: 11px; }
+.tab.an { color: var(--b-primaer); font-weight: 800; }
+.tab.an .ik { background: transparent; }
+.tab .sym { width: 22px; height: 22px; }
+.appleiste.ebene-kopf .logo, .appleiste .logo { height: 44px; }
+.karte.h-kachel { min-height: 88px; }
+.h-kachel small { font-size: 15px; }
+.h-kachel b { font-size: 22px; }
+.karte.h-ziel .h-riesig { font-size: 56px; }
