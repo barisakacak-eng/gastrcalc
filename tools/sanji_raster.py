@@ -13,6 +13,21 @@ import sys; _argv = sys.argv; sys.argv = ["x"]
 src = (WURZEL / "tools" / "sanji_bildauftrag.py").read_text(encoding="utf-8").replace("\nmain()\n", "\n")
 exec(compile(src, "sanji_bildauftrag", "exec"), ba.__dict__); sys.argv = _argv
 
+# Baris 19.10.2026 19:43: Getränke aus dem Ausschank (Fassbier, offene Weine, Cocktails, Spirituosen, Postmix) gar nicht malen –
+# nur Flaschen und Dosen. Marken-Logos malen wir bewusst NICHT (Markenrecht in einer verkauften App, und die Bild-KI verfälscht Logos):
+# stattdessen markentypische Form und Farbe ohne Schrift.
+AUSSCHANK = {
+    "g-cuba-libre", "g-whisky-sour", "g-glas-rotwein-0-2-l", "g-glas-weisswein-0-2-l", "g-prosecco-0-1-l", "g-helles-0-5-l", "g-mass-helles-1-0-l",
+    "g-pils-0-3-l", "g-pils-0-5-l", "g-radler-0-5-l", "g-weizen-0-5-l", "g-apfelschorle-0-3-l",
+    "d-cola-bag-in-box-postmix", "d-guinness-vom-fass", "d-helles-vom-fass", "d-koelsch-vom-fass", "d-pils-vom-fass", "d-rotwein-offen", "d-weisswein-offen",
+    "d-aperol", "d-campari", "d-gin", "d-brauner-rum", "d-weisser-rum", "d-tequila", "d-whisky", "d-wodka", "d-korn", "d-obstler", "d-kraeuterlikoer",
+    "d-prosecco-0-75-l", "d-sekt-0-75-l", "d-apfelwein", "gruppe-spirituose",
+}
+FLASCHE_FOTOS = {"g-eistee-0-33-l", "g-energydrink-0-25-l", "g-alkoholfreies-bier-0-33-l"}
+ROHWARE_GETRAENK = {"d-chai-pulver", "d-espressobohnen", "d-filterkaffee-gemahlen", "d-gruentee", "d-kakaopulver", "d-kraeutertee", "d-matcha", "d-schwarztee"}
+FLASCHE = ("„{n}“ als EINE geschlossene Flasche oder Dose in der passenden Größe, kalt beschlagen, aufrecht auf dem Holztisch – so wie sie im Getränkekühlschrank "
+           "eines Imbisses steht. Form und Farbe so, wie man diese Sorte kennt, aber OHNE Schrift, OHNE Etikett-Text, OHNE Logo, OHNE Marke.")
+
 JE_RASTER = 9
 RASTER_JE_DATEI = 12  # 19.10. 13:45: Sanji ist schnell – 108 Fotos je Lieferung
 R0, D0 = 111, 13  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
@@ -49,10 +64,11 @@ def main():
     # so trifft die Bild-KI die Reihenfolge zuverlässiger (Sanji 19.10.: Raster 001 mit abstrakten Motiven misslungen).
     def familie(z):
         m = re.search(r"zeigt bis dahin (\S+)", z["status"]); return m.group(1) if m else z["datei"].split("-")[0]
-    zeilen = [z for z in zeilen if z["status"] != "vorhanden"]
+    zeilen = [z for z in zeilen if z["status"] != "vorhanden" and z["datei"].removesuffix(".webp") not in AUSSCHANK]
     zeilen.sort(key=lambda z: ("EDGFHIABC".index(z["gruppe"][0]), familie(z), z["gruppe"], z["name"].lower()))
     fotos = [{"datei": "foto/" + (z["datei"] if z["datei"].endswith(".webp") else z["datei"] + ".webp"), "name": z["name"],
-              "motiv": (z["motiv"].split(". Keine")[0].rstrip(".") + ". " + ba.ART.get(z["gruppe"], "")).strip(), "status": z["status"]} for z in zeilen]
+              "motiv": (FLASCHE.format(n=z["name"]) if z["datei"].removesuffix(".webp") in FLASCHE_FOTOS or z["datei"].startswith("d-") and z["datei"].removesuffix(".webp") not in ROHWARE_GETRAENK
+                        else (z["motiv"].split(". Keine")[0].rstrip(".") + ". " + ba.ART.get(z["gruppe"], "")).strip()), "status": z["status"]} for z in zeilen]
     raster = [fotos[i:i + JE_RASTER] for i in range(0, len(fotos), JE_RASTER)]
     ordner = AUS / "raster"; ordner.mkdir(exist_ok=True)
     for alt in ordner.glob("*.md"): alt.unlink()
@@ -69,9 +85,9 @@ def main():
         teil = raster[d * RASTER_JE_DATEI:(d + 1) * RASTER_JE_DATEI]
         nr0 = d * RASTER_JE_DATEI + 1 + R0
         t = [f"# Rasterauftrag {d + 1 + D0:02d} (letzter: {n_dat + D0:02d}) – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
-             "## Ablauf (in EINER Antwort, ohne Zwischenfragen)",
+             "## Ablauf (ein Raster pro Antwort, ohne Zwischenfragen)",
              "0. PFLICHT: Jedes Raster ist eine EIGENE Bildgenerierung in voller Größe 1536 × 1024. NIEMALS mehrere Raster in ein Bild packen und danach zerschneiden oder vergrößern – solche Lieferungen sind unscharf und werden komplett abgelehnt (19.10.: raster_14 abgelehnt). Lieber weniger Raster liefern als ein Sammelbild. Bewährter Ablauf (19.10.): PRO ANTWORT GENAU EIN RASTER erzeugen und im Arbeitsordner speichern; Baris schreibt nur „weiter“; erst nach dem letzten Raster alle zusammen in die ZIP und dann der Block.",
-             f"1. Für jedes der {len(teil)} Raster unten genau EIN Bild erzeugen – Prompt steht fertig im Kasten. Die Bilder NICHT einzeln im Chat zeigen oder kommentieren, nur intern erzeugen und speichern.",
+             f"1. PRO ANTWORT GENAU EIN Raster erzeugen (Prompt steht fertig im Kasten, wörtlich übernehmen), als raster_NNN.png speichern und nur „raster_NNN fertig – weiter?“ schreiben. Baris antwortet „weiter“. Die Bilder nicht einzeln zeigen oder kommentieren.",
              f"2. Alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_{d + 1 + D0:02d}.zip` packen und als Download anbieten. Nicht zuschneiden, nicht umbenennen – das macht Zoro.",
              "3. Im Chat genau EIN Übersichtsbild zeigen: alle Raster dieses Auftrags verkleinert nebeneinander (eine Kontrollcollage). Mehr Bilder nicht.",
              "4. Dann der Kopier-Block „FÜR ZORO:“ (Regel 4). Sonst kein Text.",
