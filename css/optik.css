@@ -19,7 +19,7 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .hinweis, .marke, .karte h2, .zeile .oben small, .zeileknopf small,
 .kachel small, .instrument small, .zahlenraster small { color: var(--tinte-weich); }
 .kopfband { background: linear-gradient(145deg,var(--salbei-tief) 2%,#395544 100%); color: var(--weiss); border-radius: 0 0 var(--radius-gross) var(--radius-gross); box-shadow: 0 12px 26px rgba(31,42,36,.16); }
-.kopfband .unter { color: #E6EBDD; }
+.kopfband .unter { color: var(--salbei-hell); }
 .kopfband h1 { letter-spacing: -.03em; }
 .kopfzeile .schrittzahl { color: var(--tinte-weich); }
 
@@ -31,14 +31,14 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .kachel { padding: 14px; gap: 8px; }
 .kachel b { font-size: calc(17rem / 17); line-height: 1.36; }
 .karte.dunkel, .karte.zaehler { background: linear-gradient(156deg,var(--salbei-tief),#395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); }
-.karte.dunkel h2, .karte.zaehler h2 { color: #E6EBDD; }
+.karte.dunkel h2, .karte.zaehler h2 { color: var(--salbei-hell); }
 .karte.dunkel .gross, .karte .gross, .karte.zaehler .riesig,
 .instrument b, .mid, .preisheute, .zahlenraster b, .summenzeile .wert,
 .betrag input, .zahlfeld input, .muellwert { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.023em; }
 .karte .gross, .karte.zaehler .riesig { font-size: clamp(calc(35rem / 17),9.5vw,calc(45rem / 17)); font-weight: 800; line-height: 1.12; }
-.karte.zaehler .lbl { color: #E6EBDD; font-size: calc(15rem / 17); }
-.karte.zaehler small { color: #E6EBDD; font-size: calc(15rem / 17); }
-.karte.zaehler small.fein { color: #E6EBDD; }
+.karte.zaehler .lbl { color: var(--salbei-hell); font-size: calc(15rem / 17); }
+.karte.zaehler small { color: var(--salbei-hell); font-size: calc(15rem / 17); }
+.karte.zaehler small.fein { color: var(--salbei-hell); }
 .karte.zaehler.minus .riesig { color: #FFD8CB; }
 .karte.zaehler.plus .riesig { color: #C7F2D0; }
 .karte.zaehler.grau .riesig { color: #E9DDCB; }

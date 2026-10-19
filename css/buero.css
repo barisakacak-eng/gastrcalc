@@ -34,7 +34,7 @@
 .b-ordnerkachel small { font-size: calc(12.5rem / 17); color: var(--tinte-weich); display: flex; align-items: center; gap: 5px; margin-top: auto; }
 .b-ks { width: 42px; height: 42px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--papier); color: var(--salbei-tief); }
 .b-ks.amt { background: var(--eigen-hell); color: var(--eigen); }
-.b-ks.steuer { background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); }
+.b-ks.steuer { background: var(--kupfer-hell, var(--kupfer-hell)); color: var(--kupfer-dunkel); }
 .b-ks.buch { background: var(--branche-hell); color: var(--branche); }
 
 /* Listen */
@@ -61,7 +61,7 @@ button.b-zeile:active { background: var(--papier); }
 /* Sperre (Büro-Code) */
 .b-sperre { align-items: center; text-align: center; justify-content: center; gap: 16px; padding-top: 48px; }
 .b-sperre h1 { font-size: calc(22rem / 17); margin: 0; }
-.b-sperrsym { width: 72px; height: 72px; border-radius: 22px; background: var(--kupfer-hell, #F6E6D6); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; }
+.b-sperrsym { width: 72px; height: 72px; border-radius: 22px; background: var(--kupfer-hell, var(--kupfer-hell)); color: var(--kupfer-dunkel); display: inline-flex; align-items: center; justify-content: center; }
 .b-sperrsym .sym { width: 36px; height: 36px; }
 .b-codefeld { width: 100%; max-width: 240px; min-height: 64px; text-align: center; font: inherit; font-size: calc(32rem / 17); letter-spacing: .5em; padding: 8px 0 8px .5em; border: 2px solid var(--holz); border-radius: var(--radius); background: var(--weiss); color: var(--tinte); }
 .b-codefeld:focus { outline: 3px solid var(--fokus); outline-offset: 2px; border-color: var(--fokus); }

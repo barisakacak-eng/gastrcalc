@@ -1,0 +1,82 @@
+/* Design B „Klar & Modern“ – Sanji, von Baris gewählt 19.10.2026. Vorlage: design-handoffs/sanji/2026-10-19_richtung-b/
+   Schritt 1 (Grundsystem): wird als letzte Datei geladen und legt die neuen Werte über die bisherigen Token-Namen.
+   So wechselt die ganze App auf einmal, und Entfernen dieser einen Datei stellt „Kräuter & Kupfer“ wieder her. */
+
+/* Manrope (SIL OFL 1.1, fonts/Manrope-LICENSE.txt), lokal – keine Verbindung nach außen */
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("../fonts/Manrope-Variable.woff") format("woff"); }
+
+:root {
+  /* Sanjis Werte (paket/tokens.css) */
+  --b-primaer: #0F3D2E; --b-primaer-hell: #E5F2EB; --b-akzent: #FF7A3D; --b-akzent-hell: #FFE6D9;
+  --b-hintergrund: #FAFBF8; --b-karte: #FFFFFF; --b-text: #0F1720; --b-text-leise: #52616A; --b-linie: #DCE5E0;
+  --b-rot: #D64545; --b-rot-hell: #FCEAEA; --b-rot-text: #B4232C; --b-gelb: #F4B400; --b-gelb-hell: #FFF4CE; --b-gelb-text: #715000; --b-gruen-ok: #187A4C;
+
+  /* bisherige Namen → Design B */
+  --papier: var(--b-hintergrund);
+  --papier-tief: #EEF2EF;            /* Flächen-Ton zwischen Hintergrund und Linie (abgeleitet) */
+  --weiss: var(--b-karte);
+  --tinte: var(--b-text);
+  --tinte-weich: var(--b-text-leise);
+  --salbei: var(--b-gruen-ok);
+  --salbei-tief: var(--b-primaer);
+  --salbei-hell: var(--b-primaer-hell);
+  --holz: var(--b-linie);
+  --holz-tief: #C3D0C8;              /* abgeleitet: kräftigere Linie */
+  --lehm: var(--b-text-leise);
+  --glut: var(--b-akzent);
+  --aktion: var(--b-akzent);
+  --aktion-text: var(--b-text);
+  --kupfer-dunkel: #9A3F12;          /* abgeleitet: lesbarer Text auf Akzent hell */
+  --kupfer-hell: var(--b-akzent-hell);
+  --gelb: var(--b-gelb);
+  --rot: var(--b-rot-text);          /* Text-Rot (AA); Flächen nutzen --b-rot */
+  --gruen: var(--b-gruen-ok);
+  --eigen: var(--b-gruen-ok);
+  --eigen-hell: var(--b-primaer-hell);
+  --geschaetzt-hell: var(--b-gelb-hell);
+  --geschaetzt-text: var(--b-gelb-text);
+  --muell: var(--b-rot-text);
+  --muell-hell: var(--b-rot-hell);
+  --fokus: var(--b-primaer);
+  --kurve-ist: var(--b-primaer-hell);
+
+  --radius: 14px;
+  --radius-klein: 8px;
+  --radius-gross: 18px;
+  --schatten-karte: 0 2px 10px rgba(15,23,32,.07);
+  --schatten-knopf: 0 2px 6px rgba(15,23,32,.09);
+  --schrift: "Manrope", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+body { font-family: var(--schrift); background: var(--papier); color: var(--tinte); }
+
+/* Hauptknopf: Akzent-Orange mit dunkler Schrift (6,96 : 1), zweiter Knopf weiß mit Linie */
+.knopf, .fotofeld .knopf { background: var(--b-akzent); color: var(--b-text); font-weight: 800; }
+.knopf:disabled { background: var(--papier-tief); color: var(--tinte-weich); }
+.knopf.zweit { background: var(--b-karte); color: var(--b-primaer); border: 1.5px solid var(--b-linie); }
+
+/* Laden „Heute“: Hauptzahl-Karte in Dunkelgrün, weiße Schrift (12,16 : 1) */
+.karte.h-ziel { background: var(--b-primaer); color: #FFFFFF; border-color: var(--b-primaer); }
+.karte.h-ziel .h-zielkopf, .karte.h-ziel .h-riesig, .karte.h-ziel.plus .h-riesig { color: #FFFFFF; }
+.karte.h-ziel .h-riesig.leicht { color: #E5F2EB; }
+.karte.h-ziel .h-unter, .karte.h-ziel .h-balkenzahlen { color: #CFE3D8; }
+.karte.h-ziel .h-balken { background: rgba(255,255,255,.18); }
+.karte.h-ziel .h-balken i { background: var(--b-akzent); }
+.h-zielkopf .zielsym { background: rgba(255,255,255,.12); color: var(--b-akzent); }
+
+/* Kacheln: weiße Karten, Symbole ohne Farbfläche */
+.karte.h-kachel { background: var(--b-karte); border-color: var(--b-linie); }
+.h-kachel .ks { background: transparent !important; width: 32px; height: 32px; }
+.ks.umsatz { color: var(--b-gruen-ok); } .ks.muell { color: var(--b-rot); } .ks.kuehl { color: #2B6CB0; } .ks.putz { color: var(--b-text); }
+.karte.h-kachel.alarm { border-color: #F2B8B8; background: var(--b-rot-hell); }
+
+/* Jetzt dran: weiße Karte mit Linie, Knopf rechts in Orange */
+.jetzt.h-jetzt { background: var(--b-karte); border: 1px solid var(--b-linie); }
+.h-jetzt .ks { background: var(--b-akzent-hell); color: var(--kupfer-dunkel); }
+
+/* Leiste unten: aktiver Reiter Dunkelgrün */
+.tab.an { color: var(--b-primaer); }
+.tab.an .ik { background: var(--b-primaer-hell); }
+
+/* Büro: Bereiche als weiße Karten */
+.b-bereich { background: var(--b-karte); border: 1px solid var(--b-linie); box-shadow: none; }
+.h-jetzt .los { background: var(--b-akzent); color: var(--b-text); }
