@@ -1,6 +1,7 @@
 # Rasterauftrag 17 (letzter: 18) – 108 Fotos in 12 Rasterbildern
 
 ## Ablauf (in EINER Antwort, ohne Zwischenfragen)
+0. PFLICHT: Jedes Raster ist eine EIGENE Bildgenerierung in voller Größe 1536 × 1024. NIEMALS mehrere Raster in ein Bild packen und danach zerschneiden oder vergrößern – solche Lieferungen sind unscharf und werden komplett abgelehnt (19.10.: raster_14 abgelehnt). Lieber weniger Raster liefern als ein Sammelbild.
 1. Für jedes der 12 Raster unten genau EIN Bild erzeugen – Prompt steht fertig im Kasten. Die Bilder NICHT einzeln im Chat zeigen oder kommentieren, nur intern erzeugen und speichern.
 2. Alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_17.zip` packen und als Download anbieten. Nicht zuschneiden, nicht umbenennen – das macht Zoro.
 3. Im Chat genau EIN Übersichtsbild zeigen: alle Raster dieses Auftrags verkleinert nebeneinander (eine Kontrollcollage). Mehr Bilder nicht.

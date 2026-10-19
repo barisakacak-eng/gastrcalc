@@ -70,6 +70,7 @@ def main():
         nr0 = d * RASTER_JE_DATEI + 1 + R0
         t = [f"# Rasterauftrag {d + 1 + D0:02d} (letzter: {n_dat + D0:02d}) – {sum(len(x) for x in teil)} Fotos in {len(teil)} Rasterbildern", "",
              "## Ablauf (in EINER Antwort, ohne Zwischenfragen)",
+             "0. PFLICHT: Jedes Raster ist eine EIGENE Bildgenerierung in voller Größe 1536 × 1024. NIEMALS mehrere Raster in ein Bild packen und danach zerschneiden oder vergrößern – solche Lieferungen sind unscharf und werden komplett abgelehnt (19.10.: raster_14 abgelehnt). Lieber weniger Raster liefern als ein Sammelbild.",
              f"1. Für jedes der {len(teil)} Raster unten genau EIN Bild erzeugen – Prompt steht fertig im Kasten. Die Bilder NICHT einzeln im Chat zeigen oder kommentieren, nur intern erzeugen und speichern.",
              f"2. Alle Rasterbilder als PNG mit dem angegebenen Namen in EINE ZIP `raster_{d + 1 + D0:02d}.zip` packen und als Download anbieten. Nicht zuschneiden, nicht umbenennen – das macht Zoro.",
              "3. Im Chat genau EIN Übersichtsbild zeigen: alle Raster dieses Auftrags verkleinert nebeneinander (eine Kontrollcollage). Mehr Bilder nicht.",
