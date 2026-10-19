@@ -1,0 +1,22 @@
+# Getränkefotos aus Open Food Facts holen (19.10.2026) – nur von Hand gestartet, schreibt auf den Zweig getraenke-fotos (nicht live).
+name: Getraenkefotos
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  abruf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fotos holen
+        run: python3 tools/getraenke/abruf.py
+      - name: Auf Zweig getraenke-fotos sichern
+        run: |
+          git config user.name "gastrocalc-bot"
+          git config user.email "gastrocalc-bot@users.noreply.github.com"
+          git checkout -B getraenke-fotos
+          git add tools/getraenke/roh tools/getraenke/ergebnis.csv
+          git commit -m "Getränkefotos aus Open Food Facts (CC BY-SA 3.0)" || echo "nichts neu"
+          git push -f origin getraenke-fotos
