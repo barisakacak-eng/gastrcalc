@@ -3,7 +3,7 @@ genau das – ein Raster aus 3 × 3 gleich großen Feldern pro Bild, in fester R
 tools/raster_schneiden.py in die einzelnen App-Fotos. Ein Bild = 9 Fotos, ein Auftrag (Datei) = 2 Raster = 18 Fotos.
 Aufruf: node tools/bildliste.mjs && python3 tools/sanji_raster.py
 Schreibt: bruecke/an-sanji/raster/raster_XX.md, bruecke/an-sanji/raster/belegung.csv, bruecke/an-sanji/RASTERAUFTRAG.md"""
-import csv, pathlib, importlib.util
+import csv, re, pathlib, importlib.util
 
 WURZEL = pathlib.Path(__file__).resolve().parent.parent
 AUS = WURZEL / "bruecke" / "an-sanji"
@@ -27,9 +27,14 @@ RASTER_REGEL = ("Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt 
 
 def main():
     zeilen = list(csv.DictReader(open(AUS / "bildliste.csv", encoding="utf-8"), delimiter=";"))
-    zeilen.sort(key=lambda z: (z["status"] == "vorhanden", int(z["prio"]), z["gruppe"], z["datei"]))
+    # Ähnliche Motive zusammen (alle Pizzen in ein Raster usw.), konkrete Gerichte/Waren zuerst, abstrakte Bereichs-Bilder zuletzt –
+    # so trifft die Bild-KI die Reihenfolge zuverlässiger (Sanji 19.10.: Raster 001 mit abstrakten Motiven misslungen).
+    def familie(z):
+        m = re.search(r"zeigt bis dahin (\S+)", z["status"]); return m.group(1) if m else z["datei"].split("-")[0]
+    zeilen = [z for z in zeilen if z["status"] != "vorhanden"]
+    zeilen.sort(key=lambda z: ("EDGFHIABC".index(z["gruppe"][0]), familie(z), z["gruppe"], z["name"].lower()))
     fotos = [{"datei": "foto/" + (z["datei"] if z["datei"].endswith(".webp") else z["datei"] + ".webp"), "name": z["name"],
-              "motiv": (z["motiv"].split(". Keine")[0] + ". " + ba.ART.get(z["gruppe"], "")).strip(), "status": z["status"]} for z in zeilen]
+              "motiv": (z["motiv"].split(". Keine")[0].rstrip(".") + ". " + ba.ART.get(z["gruppe"], "")).strip(), "status": z["status"]} for z in zeilen]
     raster = [fotos[i:i + JE_RASTER] for i in range(0, len(fotos), JE_RASTER)]
     ordner = AUS / "raster"; ordner.mkdir(exist_ok=True)
     for alt in ordner.glob("*.md"): alt.unlink()
@@ -50,9 +55,9 @@ def main():
              f"`raster_{d + 1:02d}.zip` packen und Block „FÜR ZORO:“ (fertig / ZIP-Name / was fehlt). Nicht zuschneiden, nicht umbenennen – das macht Zoro.", ""]
         for k, felder in enumerate(teil):
             rnr = nr0 + k
-            liste = " ".join(f"Feld {i}: {b['motiv']}" for i, b in enumerate(felder, 1))
+            liste = "\n".join(f"Feld {i} = {b['name'].upper()}: {b['motiv']}" for i, b in enumerate(felder, 1))
             if len(felder) < JE_RASTER: liste += f" Felder {len(felder) + 1}–9: leer, nur dunkler Holztisch."
-            t += [f"## Raster {rnr:03d} → Datei `raster_{rnr:03d}.png`", "", "```", RASTER_REGEL + ba.STIL_FOTO, "", liste, "```", "",
+            t += [f"## Raster {rnr:03d} → Datei `raster_{rnr:03d}.png`", "", "```", RASTER_REGEL + ba.STIL_FOTO, "", "Belegung – genau diese 9 Motive, genau in dieser Reihenfolge, nichts ersetzen oder ergänzen:", liste, "```", "",
                   "Belegung (nur zur Kontrolle): " + " · ".join(f"{i} {b['name']}" for i, b in enumerate(felder, 1)), ""]
         (ordner / f"raster_{d + 1:02d}.md").write_text("\n".join(t), encoding="utf-8")
         index.append(f"- Auftrag {d + 1:02d}: {ROH}raster_{d + 1:02d}.md – {teil[0][0]['name']} … {teil[-1][-1]['name']}")
