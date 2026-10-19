@@ -191,3 +191,11 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 /* Müll: Hinweis „Eingetragen · Rückgängig“ darf die unteren Kacheln („Andere“) nicht blockieren – nur sein Knopf ist tippbar */
 .muelltoast { pointer-events: none; }
 .muelltoast button { pointer-events: auto; }
+/* Kühlung (Screen 5): Kühlstellen als eigene Zeilen, Temperatur groß, grün = ok, rot = Abweichung */
+.kuehlliste { display: flex; flex-direction: column; gap: 10px; }
+.kuehlliste .zeileknopf { border: 1px solid var(--b-linie); border-radius: 14px; background: var(--b-karte); min-height: 76px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(15,23,32,.05); }
+.kuehlliste .kwert { font-weight: 800; white-space: nowrap; font-size: calc(22rem / 17); text-align: right; letter-spacing: -.01em; }
+.kuehlliste .kwert.ok { color: var(--b-gruen-ok); }
+.kuehlliste .kwert.rot { color: var(--b-rot-text); }
+.kuehlliste .kwert small { display: block; font-weight: 500; font-size: calc(12rem / 17); letter-spacing: 0; }
+.kuehlliste .zeileknopf:has(.kwert.rot) { background: var(--b-rot-hell); border-color: #F2C9C9; }

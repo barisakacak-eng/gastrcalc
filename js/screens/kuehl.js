@@ -82,9 +82,9 @@ export function kuehlView(stand) {
       <div class="karte">
         <h2>${esc(t("kuehl.stellen"))}</h2>
         <p class="hinweis">${esc(t("kuehl.stellenTippen"))}</p>
-        <div class="liste eng">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
+        <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
           <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(kn(k))}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
-            <span class="${m ? (m.abweichung ? "rot" : "") : "marke"}" style="font-weight:700;white-space:nowrap">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke" style="display:block;font-weight:400">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitOderStrich(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
+            <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitOderStrich(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
         ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
       </div>
