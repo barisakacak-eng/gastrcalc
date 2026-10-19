@@ -58,32 +58,32 @@ Stilblatt anwenden. Motiv: Trinkhalm, leer, ein Stück bzw. kleiner Stapel, ohne
 
 **29-13 · `foto/laden-asia.webp`** – Asia-Imbiss (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Asia-Imbiss. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Asia-Imbiss. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-14 · `foto/laden-baeckerei.webp`** – Bäckerei & Börek (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Bäckerei & Börek. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Bäckerei & Börek. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-15 · `foto/laden-cafe.webp`** – Café & Bistro (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Café & Bistro. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Café & Bistro. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-16 · `foto/laden-doener.webp`** – Döner & Grill (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Döner & Grill. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Döner & Grill. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-17 · `foto/laden-foodtruck.webp`** – Foodtruck (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Foodtruck. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Foodtruck. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-18 · `foto/laden-imbiss.webp`** – Imbiss, Burger, Pommes (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Imbiss, Burger, Pommes. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Imbiss, Burger, Pommes. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-19 · `foto/laden-kiosk.webp`** – Kiosk mit warmer Küche (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Kiosk mit warmer Küche. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Kiosk mit warmer Küche. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **29-20 · `foto/laden-pizza.webp`** – Pizza & Pasta (A Laden-Art, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Pizza & Pasta. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Pizza & Pasta. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.

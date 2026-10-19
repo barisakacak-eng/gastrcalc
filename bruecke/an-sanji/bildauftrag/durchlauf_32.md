@@ -74,16 +74,16 @@ Stilblatt anwenden. Motiv: Menüschale, leer, ein Stück bzw. kleiner Stapel, oh
 
 **32-17 · `foto/k-kuehlschrank-foto.webp`** – Kühlschrank (H Kühlung, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Kühlschrank in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.
+Stilblatt anwenden. Motiv: Kühlschrank in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.
 
 **32-18 · `foto/k-saladette-foto.webp`** – Saladette / Kühltheke (H Kühlung, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Saladette / Kühltheke in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.
+Stilblatt anwenden. Motiv: Saladette / Kühltheke in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.
 
 **32-19 · `foto/k-tiefkuehler-foto.webp`** – Tiefkühltruhe (H Kühlung, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Tiefkühltruhe in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.
+Stilblatt anwenden. Motiv: Tiefkühltruhe in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.
 
 **32-20 · `foto/k-warmhalter-foto.webp`** – Warmhaltetheke / Bain-Marie (H Kühlung, neu im Stil B (vorhanden))
 
-Stilblatt anwenden. Motiv: Warmhaltetheke / Bain-Marie in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.
+Stilblatt anwenden. Motiv: Warmhaltetheke / Bain-Marie in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.

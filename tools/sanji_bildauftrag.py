@@ -16,14 +16,14 @@ STIL_FOTO = ("Fotorealistisches Produktfoto im Querformat 4:3, im Stil der freig
              "Keine Schrift, keine Logos, keine Marken, keine Etiketten, keine Personen, keine Hände, keine weißen Ränder.")
 
 ART = {
-    "A Laden-Art": "Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).",
+    "A Laden-Art": "Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.",
     "B Bereich": "Stillleben aus 3–5 typischen Dingen dieses Bereichs, locker gruppiert.",
     "C Warengruppe": "3–4 typische Waren dieser Gruppe nebeneinander.",
     "D Gericht-Familie": "Ein typisches Gericht dieser Familie, eine Portion, so wie ein kleiner Imbiss es über die Theke reicht.",
     "E Gericht": "Eine Portion, so wie ein kleiner Imbiss sie über die Theke reicht – in der typischen Verpackung oder auf einfachem Teller.",
     "F Artikel": "Ware so, wie sie geliefert wird bzw. in der Küche liegt.",
     "G Selbst gemacht": "Selbst zubereitet in einer Edelstahl- oder Kunststoff-Gastronorm-Schale.",
-    "H Kühlung": "Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.",
+    "H Kühlung": "Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.",
     "I Müll": "Sachlich und sauber fotografiert, nicht eklig.",
 }
 

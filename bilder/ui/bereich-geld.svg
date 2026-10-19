@@ -1,2 +1,6 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<svg baseProfile="full" height="64" version="1.1" viewBox="0 0 64 64" width="64" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs /><rect fill="#187A4C" height="14" rx="2" ry="2" stroke="none" stroke-width="0" width="9" x="6" y="39" /><rect fill="#187A4C" height="24" rx="2" ry="2" stroke="none" stroke-width="0" width="9" x="20" y="29" /><rect fill="#187A4C" height="36" rx="2" ry="2" stroke="none" stroke-width="0" width="9" x="34" y="17" /><circle cx="47" cy="15" fill="#E5F2EB" r="12" stroke="#187A4C" stroke-width="3" /><line stroke="#187A4C" stroke-linecap="round" stroke-width="3" x1="39" x2="55" y1="15" y2="15" /></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<rect width="64" height="64" rx="14" fill="#E5F2EB"/>
+<g fill="#187A4C"><rect x="12" y="38" width="9" height="13" rx="2"/><rect x="26" y="30" width="9" height="21" rx="2"/><rect x="40" y="20" width="9" height="31" rx="2"/></g>
+<path d="M13 28l12-8 10 3 13-12" fill="none" stroke="#0F3D2E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="48" cy="12" r="9" fill="#FF7A3D"/><path d="M51 8a4 4 0 1 0 0 8M45 11h7M45 14h7" stroke="#0F1720" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+</svg>

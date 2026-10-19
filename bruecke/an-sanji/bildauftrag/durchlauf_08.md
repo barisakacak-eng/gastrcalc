@@ -58,11 +58,11 @@ Stilblatt anwenden. Motiv: Selbstgemachtes „tomatensosse“ in der Küche, roh
 
 **08-13 · `foto/k-getraenkekuehler-foto.webp`** – Getränkekühlschrank mit Glastür (H Kühlung, fehlt)
 
-Stilblatt anwenden. Motiv: Getränkekühlschrank mit Glastür in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.
+Stilblatt anwenden. Motiv: Getränkekühlschrank mit Glastür in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.
 
 **08-14 · `foto/k-kuehlraum-foto.webp`** – Kühlraum (begehbar) (H Kühlung, fehlt)
 
-Stilblatt anwenden. Motiv: Kühlraum (begehbar) in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund darf eine helle, unscharfe Imbissküche sein.
+Stilblatt anwenden. Motiv: Kühlraum (begehbar) in einem Imbiss, Gerät gut erkennbar, Tür geschlossen, ohne Marke. Gastronomie-Gerät frontal leicht seitlich, Tür geschlossen, Edelstahl/weiß, ohne Marke; Hintergrund eine unscharfe Imbissküche.
 
 **08-15 · `foto/m-frittieroel.webp`** – Altöl-Kanister (I Müll, fehlt)
 

@@ -1,2 +1,7 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<svg baseProfile="full" height="64" version="1.1" viewBox="0 0 64 64" width="64" xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink"><defs /><line stroke="#F4B400" stroke-linecap="round" stroke-width="4" x1="9" x2="9" y1="7" y2="55" /><line stroke="#F4B400" stroke-linecap="round" stroke-width="4" x1="17" x2="17" y1="7" y2="55" /><line stroke="#F4B400" stroke-linecap="round" stroke-width="4" x1="28" x2="28" y1="7" y2="55" /><line stroke="#F4B400" stroke-linecap="round" stroke-width="4" x1="40" x2="40" y1="7" y2="55" /><path d="M 42 12 L 58 12 L 58 36 L 50 45 L 42 36 Z" fill="#E5F2EB" stroke="#F4B400" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" /></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<rect width="64" height="64" rx="14" fill="#FFF4D6"/>
+<path d="M29 14h19l6 7v18L36 55 15 34z" fill="#F4B400" stroke="#0F1720" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="44" cy="23" r="3" fill="#FFFDF8"/>
+<path d="M13 11v19M8 11v10a5 5 0 0 0 10 0V11M25 11v19M21 11c8 0 8 12 0 12" fill="none" stroke="#0F3D2E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M32 38h14" stroke="#0F1720" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

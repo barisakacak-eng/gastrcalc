@@ -1,5 +1,7 @@
 # Bildauftrag an Sanji – Design B „Klar & Modern“ (erzeugt 19.10.2026)
 
+> **Ab 19.10.2026, 03:15: Fotos werden als Raster bestellt – siehe RASTERAUFTRAG.md. Die Durchlauf-Dateien unten gelten nur noch als Motivbeschreibung.**
+
 Erzeugt mit `node tools/bildliste.mjs && python3 tools/sanji_bildauftrag.py` aus den echten App-Daten. Nicht von Hand ändern.
 
 Umfang: **41 Oberflächen-Grafiken** (Teil 1) und **651 Fotos** (Teil 2: 572 fehlen, 79 sind vorhanden und werden zuletzt im Stil B neu gemacht), aufgeteilt in **33 Durchläufe zu je 20 Bildern**.
