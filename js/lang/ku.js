@@ -1036,7 +1036,7 @@ export default {
     rechnungen: "Wêneyê fatûreyan bikişîne", zumCockpit: "Here panelê",
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
-  schnell2: {
+  schnell2: { willkommen: "Bi xêr hatî", willkommenText: "Dikana te. Hejmarên te. Her tişt di destê te de.",
     hilfe: "Bi kurtî", sprache: "Ziman",
     laden: "Dikana te", namePlatzhalter: "Navê dikanê",
     ladenHilfe: "Cureya dikanê ji bo reçete, sarkirin û plana paqijiyê nirxên destpêkê dide. Paşê her tiştî di ofîsê de diguherînî.",

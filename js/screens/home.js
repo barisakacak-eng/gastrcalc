@@ -63,11 +63,12 @@ function kachelTexte(stand, ks, H) {
 }
 function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
-  const kachel = (cls, symbol, key, wert, ziel, alarm) => `<button type="button" class="karte h-kachel ${alarm ? "alarm" : ""}" ${ziel}><span class="ks ${cls}">${sym(symbol)}</span><span><small>${esc(t(key))}</small><b>${wert}</b></span></button>`;
-  return kachel("umsatz", "chart-column", "heute.kachel.umsatz", w.umsatz === null ? "–" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatz"')
-    + kachel("muell", "trash-2", "heute.kachel.muell", w.muell === null ? "–" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"')
-    + kachel("kuehl", "snowflake", "heute.kachel.kuehlung", esc(w.kuehl.wert), 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm)
-    + kachel("putz", "spray-can", "heute.kachel.putzen", esc(w.putz.wert), 'data-a="nav" data-wert="putzplan"', w.putz.alarm);
+  // Leere Kachel zeigt ihren ersten Handgriff (+ in Orange, Text für Vorlesehilfen) statt „–“ – 15-Wörter-Regel bleibt (Entrümpelung Punkt 5, freigegeben 18.10.2026; Design B Screen 3)
+  const kachel = (cls, symbol, key, wert, ziel, alarm, handgriff) => `<button type="button" class="karte h-kachel ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel}${handgriff ? ` aria-label="${esc(t(key))}: ${esc(handgriff)}"` : ""}><span class="ks ${cls}">${sym(symbol)}</span><span><small>${esc(t(key))}</small>${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b>${wert}</b>`}</span></button>`;
+  return kachel("umsatz", "chart-column", "heute.kachel.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatz"', false, w.umsatz === null && t("schnellknopf.umsatz"))
+    + kachel("muell", "trash-2", "heute.kachel.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
+    + kachel("kuehl", "snowflake", "heute.kachel.kuehlung", esc(w.kuehl.wert), 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, w.kuehl.wert === "–" && t("schnellknopf.kuehl"))
+    + kachel("putz", "spray-can", "heute.kachel.putzen", esc(w.putz.wert), 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
 }
 function jetztKarte(d) {
   return `<button type="button" class="jetzt h-jetzt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><small>${esc(t("heute.jetztDran"))}</small><b>${esc(d.titel)}</b></span><span class="los">${esc(d.knopf)}</span></button>`;

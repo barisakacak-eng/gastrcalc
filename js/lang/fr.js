@@ -1036,7 +1036,7 @@ export default {
     fertigHinweis: "Ensuite : prends en photo quelques factures d’achat. Comme ça, l’appli connaît tes vrais prix.",
     rechnungen: "Photographier des factures", zumCockpit: "Vers le tableau de bord",
   },
-  schnell2: {
+  schnell2: { willkommen: "Bienvenue", willkommenText: "Ton commerce. Tes chiffres. Tout sous contrôle.",
     hilfe: "En bref", sprache: "Langue",
     laden: "Ton commerce", namePlatzhalter: "Nom du commerce",
     ladenHilfe: "Le type de commerce donne des valeurs de départ pour recettes, froid et nettoyage. Tu peux tout changer plus tard au bureau.",

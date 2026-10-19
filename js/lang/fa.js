@@ -1036,7 +1036,7 @@ export default {
     rechnungen: "عکس از فاکتورها", zumCockpit: "برو به داشبورد",
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
-  schnell2: {
+  schnell2: { willkommen: "خوش آمدید", willkommenText: "مغازه‌ات. عددهایت. همه‌چیز زیر کنترل.",
     hilfe: "توضیح کوتاه", sprache: "زبان",
     laden: "مغازه‌ی تو", namePlatzhalter: "نام مغازه",
     ladenHilfe: "نوع مغازه برای دستور پخت، سرمایش و برنامه‌ی نظافت عدد اولیه می‌دهد. همه را بعداً در دفتر عوض می‌کنی.",

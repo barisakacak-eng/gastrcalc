@@ -1038,7 +1038,7 @@ export default {
     rechnungen: "Faturaların fotoğrafını çek", zumCockpit: "Kokpite git",
   },
   // Hızlı kurulum 2 (15.10.2026)
-  schnell2: {
+  schnell2: { willkommen: "Hoş geldin", willkommenText: "Dükkânın. Rakamların. Her şey kontrolünde.",
     hilfe: "Kısaca", sprache: "Dil",
     laden: "Dükkânın", namePlatzhalter: "Dükkânın adı",
     ladenHilfe: "Dükkân türü tarifler, soğutma ve temizlik planı için başlangıç değerleri verir. Hepsini sonra büroda değiştirebilirsin.",

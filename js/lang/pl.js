@@ -1043,7 +1043,7 @@ export default {
     rechnungen: "Zrób zdjęcia faktur", zumCockpit: "Do kokpitu",
   },
   // Inwentaryzacja (punkt 3)
-  schnell2: {
+  schnell2: { willkommen: "Witaj", willkommenText: "Twój lokal. Twoje liczby. Wszystko pod kontrolą.",
     hilfe: "W skrócie", sprache: "Język",
     laden: "Twój lokal", namePlatzhalter: "Nazwa lokalu",
     ladenHilfe: "Rodzaj lokalu daje wartości startowe dla przepisów, chłodzenia i planu sprzątania. Wszystko zmienisz potem w biurze.",

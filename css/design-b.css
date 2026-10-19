@@ -120,3 +120,36 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .h-kachel small { font-size: calc(15rem / 17); }
 .h-kachel b { font-size: calc(22rem / 17); }
 .karte.h-ziel .h-riesig { font-size: calc(56rem / 17); }
+/* Leere Kachel: erster Handgriff statt „–“ (Screen 3) */
+.h-kachel b.handgriff { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-top: 4px; border-radius: 50%; border: 2px solid var(--b-akzent); color: var(--kupfer-dunkel); }
+.h-kachel b.handgriff .sym { width: 18px; height: 18px; stroke-width: 2.6; }
+/* Willkommen (Screen 1): großes Logo, Titel, Unterzeile, Kräuter unten */
+.s2willkommen .s2titel-gross { margin: 4px 0 0; font-size: calc(30rem / 17); font-weight: 800; color: var(--b-text); text-align: center; }
+.s2willkommen .s2unterzeile { margin: 0 0 18px; font-size: calc(17rem / 17); color: var(--b-text-leise); text-align: center; line-height: 1.4; max-width: 18em; }
+.s2willkommen .s2sprachwahl { box-shadow: 0 2px 10px rgba(15,23,32,.07); border-color: var(--b-linie); }
+.s2willkommen .s2kraeuter { width: 100%; max-width: 390px; margin-top: auto; opacity: .9; pointer-events: none; }
+/* ---- Schritt 2b (19.10.2026): Putzen, Büro, Kühlung, Müll nach Referenz 04–08 ---- */
+/* Putzen: ruhige weiße Zeilen, Überfälliges nur als rote Unterzeile; Haken grün */
+.aufgabe { border: 1px solid var(--b-linie); box-shadow: 0 1px 4px rgba(15,23,32,.05); min-height: 64px; border-radius: 14px; }
+.aufgabe.ueberfaellig { border: 1px solid var(--b-linie); border-left: 4px solid var(--b-rot); }
+.aufgabe .box { border-radius: 8px; width: 32px; height: 32px; border-color: #B8C4BD; }
+.aufgabe.erledigt { background: var(--b-karte); border-color: var(--b-linie); }
+.aufgabe.erledigt .box { background: var(--b-gruen-ok); border-color: var(--b-gruen-ok); }
+.karte.ringkopf { border: 1px solid var(--b-linie); }
+/* Büro: Ordner als große farbige Kacheln mit Status-Pille */
+.b-ordnerkachel { align-items: center !important; text-align: center; min-height: 128px; border: 1px solid var(--b-linie) !important; }
+.b-ordnerkachel .b-ks { width: 52px; height: 52px; border-radius: 14px; }
+.b-ordnerkachel .b-ks .sym { width: 28px; height: 28px; }
+.b-ordnerkachel small { margin-top: auto; padding: 4px 10px; border-radius: 999px; background: var(--papier-tief); color: var(--b-text); font-weight: 700; }
+.b-ordnerkachel small .b-punkt { display: none; }
+.b-ordnerkachel:has(.b-punkt.rot) small { background: var(--b-rot-text); color: #FFFFFF; }
+.b-ordnerkachel:has(.b-punkt.gelb) small { background: var(--b-gelb); color: var(--b-text); }
+.b-ordnerkachel:has(.b-punkt.gruen) small { background: var(--b-primaer-hell); color: var(--b-gruen-ok); }
+.b-ks.amt { background: var(--b-rot-hell); color: var(--b-rot-text); }
+.b-ks.steuer { background: var(--b-gelb-hell); color: var(--b-gelb-text); }
+.b-ks.buch { background: #EEF2EF; color: var(--b-text-leise); }
+.b-chip { border-color: var(--b-linie); }
+.b-bereich { border-radius: 14px; }
+.b-bereich > summary .b-zt b { font-size: calc(18rem / 17); font-weight: 800; }
+.s2willkommen { min-height: calc(100dvh - 200px); }
+.s2willkommen .s2logo { height: 110px; }

@@ -1044,7 +1044,7 @@ export default {
     rechnungen: "Fotografiază facturi", zumCockpit: "La cockpit",
   },
   // Inventar (punctul 3)
-  schnell2: {
+  schnell2: { willkommen: "Bun venit", willkommenText: "Localul tău. Cifrele tale. Totul sub control.",
     hilfe: "Pe scurt", sprache: "Limba",
     laden: "Localul tău", namePlatzhalter: "Numele localului",
     ladenHilfe: "Tipul localului dă valori de start pentru rețete, răcire și planul de curățenie. Poți schimba totul mai târziu în birou.",

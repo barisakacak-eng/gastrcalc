@@ -1037,7 +1037,7 @@ export default {
     fertigHinweis: "Prossimo passo: fotografa un paio di fatture d'acquisto. Così l'app conosce i tuoi prezzi veri.",
     rechnungen: "Fotografa fatture", zumCockpit: "Al cruscotto",
   },
-  schnell2: {
+  schnell2: { willkommen: "Benvenuto", willkommenText: "Il tuo locale. I tuoi numeri. Tutto sotto controllo.",
     hilfe: "In breve", sprache: "Lingua",
     laden: "Il tuo locale", namePlatzhalter: "Nome del locale",
     ladenHilfe: "Il tipo di locale dà valori di partenza per ricette, frigo e pulizie. Puoi cambiare tutto dopo in ufficio.",
