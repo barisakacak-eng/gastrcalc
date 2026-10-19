@@ -1,9 +1,9 @@
 # BILDLISTE GastroCalc – alle Bilder, die die App braucht
 Stand 19.10.2026 · erzeugt aus den App-Daten mit `node tools/bildliste.mjs` (nicht von Hand ändern, neu erzeugen) · gepflegt von Zoro · für Sanji und Baris
 
-Insgesamt **651 Bilder**, davon **86 vorhanden**, **565 fehlen** – 347 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 218 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
-Fehlend nach Prio: Prio 1 = 153 · Prio 2 = 201 · Prio 3 = 211.
-Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 19 · C Warengruppe: 11 · D Gericht-Familie: 11 · E Gericht: 112 · F Artikel: 401 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
+Insgesamt **651 Bilder**, davon **94 vorhanden**, **557 fehlen** – 342 davon zeigen bis dahin ein ähnliches Sammelbild (Status „zeigt bis dahin …“), 215 zeigen nur ein Piktogramm. Ein fehlendes Einzelbild ist also nie ein Loch, aber oft ungenau (Beispiel heute: „Dönerspieß Kalb/Pute“ zeigt den Hähnchenspieß).
+Fehlend nach Prio: Prio 1 = 148 · Prio 2 = 199 · Prio 3 = 210.
+Fehlend je Gruppe: A Laden-Art: 1 · B Bereich: 17 · C Warengruppe: 11 · D Gericht-Familie: 10 · E Gericht: 108 · F Artikel: 400 · G Selbst gemacht: 6 · H Kühlung: 2 · I Müll: 2.
 Die gleiche Liste als Tabelle: `bruecke/an-sanji/bildliste.csv` (Spalten: prio;gruppe;datei;name;status;motiv).
 
 ## Was drauf soll – was du (Sanji) entscheidest
@@ -42,7 +42,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | B Bereich | `bereich-beilagen.webp` | Beilagen & Sättigung | fehlt | Typische Auswahl des Bereichs „Beilagen & Sättigung“ als Stillleben, 3–5 Dinge, Draufsicht.
 1 | B Bereich | `bereich-doener.webp` | Döner & Kebab | fehlt | Typische Auswahl des Bereichs „Döner & Kebab“ als Stillleben, 3–5 Dinge, Draufsicht.
 1 | B Bereich | `bereich-grundzutaten.webp` | Grundzutaten & Gewürze | fehlt | Typische Auswahl des Bereichs „Grundzutaten & Gewürze“ als Stillleben, 3–5 Dinge, Draufsicht.
-1 | B Bereich | `bereich-salat.webp` | Salate & Bowls | fehlt | Typische Auswahl des Bereichs „Salate & Bowls“ als Stillleben, 3–5 Dinge, Draufsicht.
+1 | B Bereich | `bereich-salat.webp` | Salate & Bowls | vorhanden | Typische Auswahl des Bereichs „Salate & Bowls“ als Stillleben, 3–5 Dinge, Draufsicht.
 1 | B Bereich | `bereich-verpackung.webp` | Verpackung & Einweg | fehlt | Typische Auswahl des Bereichs „Verpackung & Einweg“ als Stillleben, 3–5 Dinge, Draufsicht.
 1 | C Warengruppe | `gruppe-fisch.webp` | Fisch & Meeresfrüchte | fehlt | Sinnbild der Warengruppe „Fisch & Meeresfrüchte“: 3–4 typische Waren nebeneinander, Draufsicht.
 1 | C Warengruppe | `gruppe-fleisch.webp` | Fleisch & Wurst | fehlt | Sinnbild der Warengruppe „Fleisch & Wurst“: 3–4 typische Waren nebeneinander, Draufsicht.
@@ -69,7 +69,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | D Gericht-Familie | `g-doener-teller.webp` | doener-teller | vorhanden | Ein typisches Gericht der Familie „doener-teller“, fertig serviert wie im Imbiss (sichtbar: Dönerspieß Kalb/Pute, Eisbergsalat, Tomaten, Zwiebeln, Weißkohl, Knoblauchsauce). Eine Portion.
 1 | D Gericht-Familie | `g-extra.webp` | extra | fehlt | Ein typisches Gericht der Familie „extra“, fertig serviert wie im Imbiss. Eine Portion.
 1 | D Gericht-Familie | `g-falafel.webp` | falafel | vorhanden | Ein typisches Gericht der Familie „falafel“, fertig serviert wie im Imbiss (sichtbar: Falafelbällchen, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Kräutersauce, Dönertüte). Eine Portion.
-1 | D Gericht-Familie | `g-falafel-box.webp` | falafel-box | fehlt | Ein typisches Gericht der Familie „falafel-box“, fertig serviert wie im Imbiss (sichtbar: Falafelbällchen, Pommes frites, Kräutersauce, Pommesschale). Eine Portion.
+1 | D Gericht-Familie | `g-falafel-box.webp` | falafel-box | vorhanden | Ein typisches Gericht der Familie „falafel-box“, fertig serviert wie im Imbiss (sichtbar: Falafelbällchen, Pommes frites, Kräutersauce, Pommesschale). Eine Portion.
 1 | D Gericht-Familie | `g-falafel-teller.webp` | falafel-teller | vorhanden | Ein typisches Gericht der Familie „falafel-teller“, fertig serviert wie im Imbiss (sichtbar: Falafelbällchen, Eisbergsalat, Tomaten, Salatgurke, Kräutersauce, Menüschale 3-teilig). Eine Portion.
 1 | D Gericht-Familie | `g-falafel-wrap.webp` | falafel-wrap | vorhanden | Ein typisches Gericht der Familie „falafel-wrap“, fertig serviert wie im Imbiss (sichtbar: Falafelbällchen, Dürüm-Wrap, Eisbergsalat, Tomaten, Kräutersauce, Alufolie-Bogen). Eine Portion.
 1 | D Gericht-Familie | `g-fingerfood.webp` | fingerfood | vorhanden | Ein typisches Gericht der Familie „fingerfood“, fertig serviert wie im Imbiss (sichtbar: Fingerfood-Schale). Eine Portion.
@@ -110,7 +110,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-falafel-dueruem.webp` | Falafel-Dürüm | fehlt – zeigt bis dahin g-falafel | „Falafel-Dürüm“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Falafelbällchen, Dürüm-Wrap, Eisbergsalat, Tomaten, Kräutersauce.
 1 | E Gericht | `g-gemischter-salat-klein.webp` | Gemischter Salat klein | fehlt – zeigt bis dahin g-salat | „Gemischter Salat klein“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Tomaten, Salatgurke, Möhren, Joghurtdressing.
 1 | E Gericht | `g-gemischtes-gemuese.webp` | Gemischtes Gemüse | fehlt – zeigt bis dahin g-gemuese | „Gemischtes Gemüse“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mischgemüse TK, Butter.
-1 | E Gericht | `g-griechischer-salat.webp` | Griechischer Salat | fehlt – zeigt bis dahin g-salat | „Griechischer Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Tomaten, Salatgurke, Rote Zwiebeln, Oliven, Feta.
+1 | E Gericht | `g-griechischer-salat.webp` | Griechischer Salat | vorhanden | „Griechischer Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Tomaten, Salatgurke, Rote Zwiebeln, Oliven, Feta.
 1 | E Gericht | `g-haehnchendoener.webp` | Hähnchendöner | fehlt – zeigt bis dahin g-doener | „Hähnchendöner“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenspieß, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Zwiebeln, Joghurtsauce.
 1 | E Gericht | `g-hausgemachte-limonade-0-4-l.webp` | Hausgemachte Limonade 0,4 l | fehlt – zeigt bis dahin d-limo | „Hausgemachte Limonade 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hausgemachte Limonade, Zitronen, Minze, Trinkhalm.
 1 | E Gericht | `g-kartoffelknoedel-2-stueck.webp` | Kartoffelknödel (2 Stück) | fehlt – zeigt bis dahin g-pommes | „Kartoffelknödel (2 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kartoffelknödel.
@@ -120,7 +120,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | E Gericht | `g-orangensaft-0-2-l.webp` | Orangensaft 0,2 l | fehlt – zeigt bis dahin d-limo | „Orangensaft 0,2 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Orangensaft.
 1 | E Gericht | `g-poke-bowl-lachs.webp` | Poke Bowl Lachs | fehlt – zeigt bis dahin g-salat | „Poke Bowl Lachs“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Quinoa, Räucherlachs, Avocado, Möhren, Babyspinat.
 1 | E Gericht | `g-pommes-frites-beilage.webp` | Pommes frites (Beilage) | vorhanden | „Pommes frites (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pommes frites.
-1 | E Gericht | `g-reis-beilage.webp` | Reis (Beilage) | fehlt – zeigt bis dahin g-reis | „Reis (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Langkornreis.
+1 | E Gericht | `g-reis-beilage.webp` | Reis (Beilage) | vorhanden | „Reis (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Langkornreis.
 1 | E Gericht | `g-spaetzle-beilage.webp` | Spätzle (Beilage) | fehlt – zeigt bis dahin g-pommes | „Spätzle (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Spätzle, Butter.
 1 | E Gericht | `g-sucuk-sandwich.webp` | Sucuk-Sandwich | fehlt – zeigt bis dahin g-sucuk | „Sucuk-Sandwich“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Sucuk, Dönerbrot / Fladen, Tomaten, Zwiebeln, Scharfe Sauce.
 1 | E Gericht | `g-thunfischsalat.webp` | Thunfischsalat | fehlt – zeigt bis dahin g-salat | „Thunfischsalat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Thunfisch (Dose), Mais, Tomaten, Joghurtdressing.
@@ -160,7 +160,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 1 | F Artikel | `r-cocktailtomaten.webp` | Cocktailtomaten | fehlt – zeigt bis dahin r-tomate | Cocktailtomaten als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-couscous.webp` | Couscous | fehlt – zeigt bis dahin r-reis | Couscous als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-croutons.webp` | Croutons | fehlt | Croutons als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
-1 | F Artikel | `r-doenerbrot-fladen.webp` | Dönerbrot / Fladen | fehlt – zeigt bis dahin r-fladenbrot | Dönerbrot / Fladen als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
+1 | F Artikel | `r-doenerbrot-fladen.webp` | Dönerbrot / Fladen | vorhanden | Dönerbrot / Fladen als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-doenergewuerz.webp` | Dönergewürz | fehlt – zeigt bis dahin r-gewuerz | Dönergewürz als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-doenerspiess-kalb-pute.webp` | Dönerspieß Kalb/Pute | fehlt – zeigt bis dahin r-haehnchenspiess | Dönerspieß Kalb/Pute als Rohware, lose Ware, eine Handvoll bzw. Portion; so, wie es beim Großhändler oder in der Küche aussieht.
 1 | F Artikel | `r-dueruem-wrap.webp` | Dürüm-Wrap | fehlt – zeigt bis dahin r-yufka | Dürüm-Wrap als Rohware, ein einzelnes Stück; so, wie es beim Großhändler oder in der Küche aussieht.
@@ -265,7 +265,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 2 | E Gericht | `g-bratwurst-im-broetchen.webp` | Bratwurst im Brötchen | fehlt – zeigt bis dahin g-wurst | „Bratwurst im Brötchen“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Bratwurst, Brötchen, Ketchup.
 2 | E Gericht | `g-canape-lachs.webp` | Canapé Lachs | fehlt – zeigt bis dahin g-fingerfood | „Canapé Lachs“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Canapé-Böden, Lachstatar, Frischkäse.
 2 | E Gericht | `g-cheeseburger-classic.webp` | Cheeseburger Classic | fehlt – zeigt bis dahin g-burger | „Cheeseburger Classic“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rinderpatty 150 g, Burger-Bun, Cheddar-Scheiben, Eisbergsalat, Tomaten, Rote Zwiebeln.
-2 | E Gericht | `g-chicken-nuggets-6-stueck.webp` | Chicken Nuggets (6 Stück) | fehlt – zeigt bis dahin g-fingerfood | „Chicken Nuggets (6 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchen-Nuggets, Mayonnaise.
+2 | E Gericht | `g-chicken-nuggets-6-stueck.webp` | Chicken Nuggets (6 Stück) | vorhanden | „Chicken Nuggets (6 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchen-Nuggets, Mayonnaise.
 2 | E Gericht | `g-chickenburger.webp` | Chickenburger | fehlt – zeigt bis dahin g-burger | „Chickenburger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenpatty, Brioche-Bun, Eisbergsalat, Tomaten, Mayonnaise.
 2 | E Gericht | `g-currywurst-einzeln.webp` | Currywurst einzeln | fehlt – zeigt bis dahin g-currywurst | „Currywurst einzeln“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Currywurst, Currysauce, Currypulver, Holzgabel.
 2 | E Gericht | `g-currywurst-mit-pommes.webp` | Currywurst mit Pommes | vorhanden | „Currywurst mit Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Currywurst, Currysauce, Pommes frites, Currypulver, Holzgabel.
@@ -278,7 +278,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 2 | E Gericht | `g-gebratene-nudeln-mit-haehnchen.webp` | Gebratene Nudeln mit Hähnchen | fehlt – zeigt bis dahin g-nudeln | „Gebratene Nudeln mit Hähnchen“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mie-Nudeln, Hähnchenbrust, Paprika, Möhren, Sojasprossen, Sojasauce.
 2 | E Gericht | `g-gebratener-reis-mit-ei.webp` | Gebratener Reis mit Ei | fehlt – zeigt bis dahin g-reis | „Gebratener Reis mit Ei“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Jasminreis, Eier, Möhren, Frühlingszwiebeln, Sojasauce.
 2 | E Gericht | `g-gemuesesticks-mit-hummus.webp` | Gemüsesticks mit Hummus | fehlt – zeigt bis dahin g-gemuese | „Gemüsesticks mit Hummus“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rohkost-Sticks, Hummus.
-2 | E Gericht | `g-haehnchenbrust-mit-gemuese.webp` | Hähnchenbrust mit Gemüse | fehlt – zeigt bis dahin g-gemuese | „Hähnchenbrust mit Gemüse“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenbrust, Grüne Bohnen, Kartoffeln, Bratenfond, Rapsöl.
+2 | E Gericht | `g-haehnchenbrust-mit-gemuese.webp` | Hähnchenbrust mit Gemüse | vorhanden | „Hähnchenbrust mit Gemüse“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenbrust, Grüne Bohnen, Kartoffeln, Bratenfond, Rapsöl.
 2 | E Gericht | `g-haehnchenspiess-mit-dip.webp` | Hähnchenspieß mit Dip | fehlt – zeigt bis dahin g-adana | „Hähnchenspieß mit Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenspieß, Kräuterdip.
 2 | E Gericht | `g-kaesespiess.webp` | Käsespieß | fehlt – zeigt bis dahin g-adana | „Käsespieß“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Käsewürfel, Weintrauben, Cocktailspieß.
 2 | E Gericht | `g-lachsfilet-gebraten.webp` | Lachsfilet gebraten | fehlt – zeigt bis dahin g-fleischgericht | „Lachsfilet gebraten“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Lachsfilet, Brokkoli, Kartoffeln, Sauce hollandaise, Butterschmalz.
@@ -473,7 +473,7 @@ Prio | Gruppe | Datei | Name in der App | Status | Motiv
 3 | B Bereich | `bereich-fruehstueck.webp` | Frühstück & Backwaren | fehlt | Typische Auswahl des Bereichs „Frühstück & Backwaren“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | B Bereich | `bereich-kaffee.webp` | Kaffee & Heißgetränke | fehlt | Typische Auswahl des Bereichs „Kaffee & Heißgetränke“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | B Bereich | `bereich-kuchen.webp` | Kuchen & Konditorei | fehlt | Typische Auswahl des Bereichs „Kuchen & Konditorei“ als Stillleben, 3–5 Dinge, Draufsicht.
-3 | B Bereich | `bereich-suppe.webp` | Suppen & Eintöpfe | fehlt | Typische Auswahl des Bereichs „Suppen & Eintöpfe“ als Stillleben, 3–5 Dinge, Draufsicht.
+3 | B Bereich | `bereich-suppe.webp` | Suppen & Eintöpfe | vorhanden | Typische Auswahl des Bereichs „Suppen & Eintöpfe“ als Stillleben, 3–5 Dinge, Draufsicht.
 3 | E Gericht | `g-affogato.webp` | Affogato | fehlt – zeigt bis dahin g-eis | „Affogato“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eismix Vanille, Espressobohnen, Dessertglas.
 3 | E Gericht | `g-alkoholfreies-bier-0-33-l.webp` | Alkoholfreies Bier 0,33 l | fehlt – zeigt bis dahin g-bier | „Alkoholfreies Bier 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pils alkoholfrei 0,33 l.
 3 | E Gericht | `g-aperol-spritz.webp` | Aperol Spritz | fehlt | „Aperol Spritz“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Aperol, Prosecco 0,75 l, Sodawasser, Orangen.
