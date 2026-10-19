@@ -132,18 +132,18 @@ prio;gruppe;datei;name;status;motiv
 1;F Artikel;r-croutons.webp;Croutons;fehlt;Croutons als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-doenerbrot-fladen.webp;Dönerbrot / Fladen;vorhanden;Dönerbrot / Fladen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-doenergewuerz.webp;Dönergewürz;fehlt – zeigt bis dahin r-gewuerz;Dönergewürz als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-doenerspiess-kalb-pute.webp;Dönerspieß Kalb/Pute;fehlt – zeigt bis dahin r-haehnchenspiess;Dönerspieß Kalb/Pute als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-doenerspiess-kalb-pute.webp;Dönerspieß Kalb/Pute;vorhanden;Dönerspieß Kalb/Pute als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-dueruem-wrap.webp;Dürüm-Wrap;fehlt – zeigt bis dahin r-yufka;Dürüm-Wrap als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-eisbergsalat.webp;Eisbergsalat;fehlt – zeigt bis dahin r-salat;Eisbergsalat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-falafelbaellchen.webp;Falafelbällchen;fehlt – zeigt bis dahin r-falafel-tk;Falafelbällchen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-eisbergsalat.webp;Eisbergsalat;vorhanden;Eisbergsalat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-falafelbaellchen.webp;Falafelbällchen;vorhanden;Falafelbällchen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-feldsalat.webp;Feldsalat;fehlt – zeigt bis dahin r-salat;Feldsalat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-feta.webp;Feta;vorhanden;Feta als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-gyrosfleisch.webp;Gyrosfleisch;fehlt – zeigt bis dahin r-doenerspiess;Gyrosfleisch als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-haehnchenspiess.webp;Hähnchenspieß;vorhanden;Hähnchenspieß als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-halloumi.webp;Halloumi;fehlt – zeigt bis dahin r-pizzakaese;Halloumi als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-hirtenkaese-feta.webp;Hirtenkäse / Feta;fehlt – zeigt bis dahin r-feta;Hirtenkäse / Feta als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-hirtenkaese-feta.webp;Hirtenkäse / Feta;vorhanden;Hirtenkäse / Feta als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-joghurtdressing.webp;Joghurtdressing;fehlt – zeigt bis dahin r-knoblauchsauce;Joghurtdressing als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-joghurtsauce.webp;Joghurtsauce;fehlt – zeigt bis dahin r-knoblauchsauce;Joghurtsauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-joghurtsauce.webp;Joghurtsauce;vorhanden;Joghurtsauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-kartoffelgratin.webp;Kartoffelgratin;fehlt – zeigt bis dahin r-pommes-tk;Kartoffelgratin als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-kartoffelknoedel.webp;Kartoffelknödel;fehlt – zeigt bis dahin r-pommes-tk;Kartoffelknödel als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-kichererbsen.webp;Kichererbsen;vorhanden;Kichererbsen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -162,19 +162,19 @@ prio;gruppe;datei;name;status;motiv
 1;F Artikel;r-oliven.webp;Oliven;vorhanden;Oliven als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-oregano.webp;Oregano;fehlt – zeigt bis dahin r-gewuerz;Oregano als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-paprika-edelsuess.webp;Paprika edelsüß;fehlt – zeigt bis dahin r-paprika;Paprika edelsüß als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-peperoni-eingelegt.webp;Peperoni eingelegt;fehlt – zeigt bis dahin r-peperoni;Peperoni eingelegt als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-peperoni-eingelegt.webp;Peperoni eingelegt;vorhanden;Peperoni eingelegt als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-petersilie.webp;Petersilie;vorhanden;Petersilie als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-pide-brot.webp;Pide-Brot;vorhanden;Pide-Brot als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-pide-teig.webp;Pide-Teig;fehlt – zeigt bis dahin r-mehl;Pide-Teig als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-putenbrustschinken.webp;Putenbrustschinken;fehlt – zeigt bis dahin r-schinken;Putenbrustschinken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-putenstreifen.webp;Putenstreifen;fehlt – zeigt bis dahin r-haehnchen;Putenstreifen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-putenstreifen.webp;Putenstreifen;vorhanden;Putenstreifen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-quinoa.webp;Quinoa;fehlt;Quinoa als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-raeucherlachs.webp;Räucherlachs;fehlt;Räucherlachs als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-romanasalat.webp;Romanasalat;fehlt – zeigt bis dahin r-salat;Romanasalat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-rotkohl.webp;Rotkohl;vorhanden;Rotkohl als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-salatgurke.webp;Salatgurke;fehlt – zeigt bis dahin r-gurke;Salatgurke als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-salatgurke.webp;Salatgurke;vorhanden;Salatgurke als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-sauerkraut.webp;Sauerkraut;fehlt;Sauerkraut als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-scharfe-sauce.webp;Scharfe Sauce;fehlt – zeigt bis dahin r-scharfe-sosse;Scharfe Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-scharfe-sauce.webp;Scharfe Sauce;vorhanden;Scharfe Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-semmelknoedel.webp;Semmelknödel;fehlt;Semmelknödel als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-sonnenblumenoel.webp;Sonnenblumenöl;fehlt – zeigt bis dahin r-oel;Sonnenblumenöl als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-spaetzle.webp;Spätzle;fehlt;Spätzle als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -183,14 +183,14 @@ prio;gruppe;datei;name;status;motiv
 1;F Artikel;r-suesskartoffel-pommes.webp;Süßkartoffel-Pommes;fehlt – zeigt bis dahin r-pommes-tk;Süßkartoffel-Pommes als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-suesskartoffeln.webp;Süßkartoffeln;fehlt – zeigt bis dahin r-pommes-tk;Süßkartoffeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-thymian.webp;Thymian;fehlt – zeigt bis dahin r-gewuerz;Thymian als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-tomaten.webp;Tomaten;fehlt – zeigt bis dahin r-tomate;Tomaten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-tomaten.webp;Tomaten;vorhanden;Tomaten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-truthahnsalami.webp;Truthahnsalami;fehlt – zeigt bis dahin r-salami;Truthahnsalami als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-weinessig.webp;Weinessig;fehlt;Weinessig als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-weisskohl.webp;Weißkohl;vorhanden;Weißkohl als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-worcestersauce.webp;Worcestersauce;fehlt – zeigt bis dahin r-ketchup-mayo;Worcestersauce als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-yufka-teigblatt.webp;Yufka-Teigblatt;fehlt – zeigt bis dahin r-yufka;Yufka-Teigblatt als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-zwiebelgranulat.webp;Zwiebelgranulat;fehlt – zeigt bis dahin r-zwiebel;Zwiebelgranulat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-zwiebeln.webp;Zwiebeln;fehlt – zeigt bis dahin r-zwiebel;Zwiebeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-zwiebeln.webp;Zwiebeln;vorhanden;Zwiebeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;v-alufolie-bogen.webp;Alufolie-Bogen;fehlt – zeigt bis dahin v-alufolie;Alufolie-Bogen, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
 1;F Artikel;v-alufolie-rolle.webp;Alufolie (Rolle);fehlt – zeigt bis dahin v-alufolie;Alufolie (Rolle), leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
 1;F Artikel;v-beilagenschale.webp;Beilagenschale;fehlt;Beilagenschale, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
@@ -304,7 +304,7 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-cracker.webp;Cracker;fehlt;Cracker als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currypaste.webp;Currypaste;fehlt;Currypaste als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currypulver.webp;Currypulver;fehlt – zeigt bis dahin r-gewuerz;Currypulver als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-currysauce.webp;Currysauce;fehlt – zeigt bis dahin r-ketchup-mayo;Currysauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-currysauce.webp;Currysauce;vorhanden;Currysauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currywurst.webp;Currywurst;fehlt – zeigt bis dahin r-wurst;Currywurst als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currywurst-vegan.webp;Currywurst vegan;fehlt – zeigt bis dahin r-wurst;Currywurst vegan als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-dorade-ganz.webp;Dorade ganz;fehlt;Dorade ganz als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -333,7 +333,7 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-hummus.webp;Hummus;fehlt – zeigt bis dahin r-ketchup-mayo;Hummus als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-ingwer.webp;Ingwer;fehlt;Ingwer als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-jakobsmuscheln.webp;Jakobsmuscheln;fehlt;Jakobsmuscheln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-jalapenos.webp;Jalapeños;fehlt – zeigt bis dahin r-peperoni;Jalapeños als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-jalapenos.webp;Jalapeños;vorhanden;Jalapeños als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-jasminreis.webp;Jasminreis;fehlt – zeigt bis dahin r-reis;Jasminreis als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kaesesauce.webp;Käsesauce;fehlt – zeigt bis dahin r-ketchup-mayo;Käsesauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kaesewuerfel.webp;Käsewürfel;fehlt – zeigt bis dahin r-pizzakaese;Käsewürfel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -355,7 +355,7 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-mie-nudeln.webp;Mie-Nudeln;fehlt – zeigt bis dahin r-nudeln;Mie-Nudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mini-frikadellen.webp;Mini-Frikadellen;fehlt;Mini-Frikadellen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mini-quiche.webp;Mini-Quiche;fehlt;Mini-Quiche als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-moehren.webp;Möhren;fehlt;Möhren als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-moehren.webp;Möhren;vorhanden;Möhren als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mozzarella.webp;Mozzarella;vorhanden;Mozzarella als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mozzarella-kugeln.webp;Mozzarella-Kugeln;fehlt – zeigt bis dahin r-mozzarella;Mozzarella-Kugeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mozzarella-sticks-tk.webp;Mozzarella-Sticks TK;fehlt – zeigt bis dahin r-fingerfood-tk;Mozzarella-Sticks TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.

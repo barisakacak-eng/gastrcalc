@@ -15,7 +15,7 @@ exec(compile(src, "sanji_bildauftrag", "exec"), ba.__dict__); sys.argv = _argv
 
 JE_RASTER = 9
 RASTER_JE_DATEI = 2
-R0, D0 = 102, 11  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
+R0, D0 = 104, 12  # Serie 2 (nach Lieferung 11 weitergezählt)  # alt: Serie 2 (19.10. 03:40): Nummern ab raster_101 / Auftrag 11, damit nichts mit Serie 1 verwechselt wird
 ROH = "https://raw.githubusercontent.com/barisakacak-eng/gastrcalc/main/bruecke/an-sanji/raster/"
 
 RASTER_REGEL = ("Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt in ein Raster aus 3 Spalten und 3 Reihen mit 9 gleich großen Feldern "
@@ -27,7 +27,7 @@ RASTER_REGEL = ("Erzeuge EIN Bild im Querformat 1536 × 1024 px. Teile es exakt 
 
 REGELN = """## Feste Regeln (gelten für jede Lieferung)
 1. Nie verwerfen. Weicht ein Feld ab, trotzdem liefern – Zoro ordnet jedes brauchbare Foto selbst zu.
-2. Jedes Motiv nur EINMAL. Nichts wiederholen, was in einem früheren Raster schon vorkam (Döner-Wrap, Döner-Box, Falafel-Wrap, Margherita, Salami, Gemüse-Pizza, Pommes, Currywurst, Schnitzel, Nuggets, Bowls, Griechischer Salat, Pasta, Reis, Suppe, Fladenbrot, Cola, Orangensaft, Sprite, Tee, Kaffee, Wasser, Cappuccino, Limonade, Brötchen, Penne, Kichererbsen, Reibekäse, Tomatensauce, Mayo, Kräutersauce sind fertig).
+2. Jedes Motiv nur EINMAL. Nichts wiederholen, was in einem früheren Raster schon vorkam (Döner-Wrap, Döner-Box, Falafel-Wrap, Margherita, Salami, Gemüse-Pizza, Pommes, Currywurst, Schnitzel, Nuggets, Bowls, Griechischer Salat, Pasta, Reis, Suppe, Fladenbrot, Cola, Orangensaft, Sprite, Tee, Kaffee, Wasser, Cappuccino, Limonade, Brötchen, Penne, Kichererbsen, Reibekäse, Tomatensauce, Mayo, Kräutersauce, Döner- und Hähnchenfleisch, Falafel, Eisberg, Rotkohl, Tomate, Zwiebel, Gurke, Möhre, Joghurt-/Knoblauch-/scharfe/Currysauce, Feta, Jalapeños, Oliven, Peperoni, Mais sind fertig).
 3. Lieber ein anderes Motiv aus DIESER Liste als ein Lieblingsgericht von dir.
 4. Kopier-Regel: Deine Antwort endet mit GENAU EINEM Codeblock, den Baris unverändert an Zoro weitergibt – ohne Tabelle, ohne Text außerhalb. Form:
 
