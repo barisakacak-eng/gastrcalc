@@ -10,7 +10,7 @@ Am Ende: alle Dateien als EINE ZIP `bilder_durchlauf_01.zip` (Ordner wie die Dat
 
 **01-01 · `foto/laden-anders.webp`** – Etwas anderes (A Laden-Art, fehlt)
 
-Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Etwas anderes. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; Hintergrund darf hier ein echter, unscharfer Laden sein (Ausnahme vom Off-White).
+Stilblatt anwenden. Motiv: Außen- oder Thekenansicht eines kleinen, inhabergeführten Ladens: Etwas anderes. Keine Schrift, kein Logo, keine Personen. Außenansicht der Theke bzw. des Ladens als freundliches, aufgeräumtes Foto; der Hintergrund darf hier ein echter, unscharfer Laden sein.
 
 **01-02 · `foto/bereich-alkoholfrei.webp`** – Alkoholfreie Getränke (B Bereich, fehlt)
 
