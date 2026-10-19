@@ -8,7 +8,7 @@ _sw = (APP / "sw.js").read_text(); _m = re.search(r'const V = "(\d{4}-\d{2}-\d{2
 _heute = datetime.date.today().isoformat(); _n = int(_m.group(2)) + 1 if _m and _m.group(1) == _heute else 1
 (APP / "js" / "fassung.js").write_text(f'// Wird von tools/sw_liste.py geschrieben – nicht von Hand ändern.\nexport const FASSUNG = "{_heute}.{_n}";\n')
 for p in sorted(APP.rglob("*")):
-    if p.is_file() and p.suffix in (".js", ".css", ".png", ".svg", ".webp", ".woff2", ".webmanifest") and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js" and not any(t.startswith(".") for t in p.relative_to(APP).parts) and not ({"design", "bruecke", "node_modules"} & set(p.parts)):
+    if p.is_file() and p.suffix in (".js", ".css", ".png", ".svg", ".webp", ".woff2", ".webmanifest") and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js" and not any(t.startswith(".") for t in p.relative_to(APP).parts) and not ({"design", "design-handoffs", "bruecke", "node_modules"} & set(p.parts)):
         rel = p.relative_to(APP).as_posix()
         if rel.startswith("js/lang/") and p.stem not in ("de", "tr", "en"): continue  # weitere Sprachen: erst beim Wählen laden und dann zwischenspeichern
         if rel.startswith("foto/"): fotos[rel] = hashlib.sha1(p.read_bytes()).hexdigest()[:8]; continue  # Fotos: eigener Cache, nur Geändertes neu laden
