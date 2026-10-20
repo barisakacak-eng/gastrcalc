@@ -1,7 +1,12 @@
 // Richtpreise (17.10.2026): Testdaten für Einkaufspreise, damit man die App mit realistischen Zahlen durchspielen kann.
 // Rein rechnend, keine Oberfläche. Ein Richtpreis ist nie still: Status „richtpreis“, Marke am Artikel, Eintrag im Preisverlauf
 // mit herkunft „richtpreis“ – überall als Schätzung (≈). Ein eigener Preis des Wirts wird nie angefasst und ersetzt den Richtpreis.
-import { RICHTPREIS_INDEX, STAND } from "./data/richtpreise.js";
+import { RICHTPREIS_INDEX as ERZEUGT, STAND } from "./data/richtpreise.js";
+import { RICHTPREIS_NACHTRAG, RICHTPREIS_ALIAS } from "./data/richtpreise_nachtrag.js";
+// 20.10.2026: erzeugte Daten + Nachtrag (von Hand, mit Quellen) + Aliasse für gleiche Ware unter anderem Katalognamen
+const RICHTPREIS_INDEX = { ...ERZEUGT, ...Object.fromEntries(RICHTPREIS_NACHTRAG.map((r) => [r.name, r])) };
+for (const [kat, ziel] of Object.entries(RICHTPREIS_ALIAS)) if (!RICHTPREIS_INDEX[kat] && RICHTPREIS_INDEX[ziel]) RICHTPREIS_INDEX[kat] = RICHTPREIS_INDEX[ziel];
+export const richtpreisFuer = (name) => RICHTPREIS_INDEX[name] || null;
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisJeBasis, istRichtpreis } from "./engine.js";
 import { heute } from "./util.js";

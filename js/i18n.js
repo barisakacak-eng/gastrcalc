@@ -24,6 +24,9 @@ export function setzeSprache(code, danach) {
   if (!TABELLEN[code]) { ladeSprache(code).then((ok) => { if (ok) { setzeSprache(code); if (danach) danach(); } }); return; }
   aktiv = code;
   if (typeof document !== "undefined") { document.documentElement.lang = aktiv; document.documentElement.dir = RTL.has(aktiv) ? "rtl" : "ltr"; }
+  // 20.10.2026 (Laden-Test): auch bei schon geladener Sprache neu zeichnen – sonst blieb der Willkommen-Bildschirm deutsch,
+  // und „Weiter“ (trägt die Sprache vom letzten Zeichnen) setzte auf Deutsch zurück.
+  if (danach) danach();
 }
 export const sprache = () => aktiv;
 

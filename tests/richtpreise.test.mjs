@@ -148,3 +148,10 @@ test("Inventur: Wert mit Richtpreis ist ≈ und bleibt nach dem Abschluss markie
   art(s, "Dönerspieß Kalb/Pute").preis = 99; // späterer Wirt-Preis ändert die abgeschlossene Inventur nicht
   assert.deepEqual(I.inventurWert(s, inv).richtpreis, ["Dönerspieß Kalb/Pute"]);
 });
+
+// Konkurrenz-Lehren 20.10.2026: Nachtrag und Alias – gleiche Ware unter anderem Katalognamen bekommt den belegten Richtpreis
+test("Richtpreis-Alias: Joghurt natur = Joghurt", async () => {
+  const { richtpreisFuer } = await import("../js/richtpreise.js");
+  assert.equal(richtpreisFuer("Joghurt natur")?.preis, richtpreisFuer("Joghurt")?.preis);
+  assert.equal(richtpreisFuer("Gibt es nicht"), null);
+});

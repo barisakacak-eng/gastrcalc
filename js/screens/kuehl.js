@@ -1,3 +1,4 @@
+// 20.10.2026 (Laden-Test, Arabisch): Temperaturen stehen in einer Links-nach-rechts-Isolierung (U+2066 … U+2069), sonst zeigte RTL „C° 7,0 ≥“ statt „≤ 7,0 °C“.
 // Etappe 4: Kühlkontrolle – Einrichtung der Kühlstellen, der Rundgang, das Monatsblatt.
 // Regeln aus der Vorprüfung des Gremiums: Grenzen setzt der Betrieb (die App nennt nur Anhaltspunkte), kein Wert ist vorbelegt,
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
@@ -43,7 +44,7 @@ export function kuehlZurueck() { // Zurück-Geste: eine Ebene hoch; true = behan
 
 const artName = (a) => t("kuehl.arten." + a);
 // Grenzen einer Stelle als Text; ohne eigene Grenze gilt der Standard (Etappe 5), das steht dann dabei.
-const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `≥ ${fmtZahl(g.min, 1)} °C` : "", typeof g.max === "number" ? `≤ ${fmtZahl(g.max, 1)} °C` : ""].filter(Boolean).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
+const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `\u2066≥\u00a0${fmtZahl(g.min, 1)}\u00a0°C\u2069` : "", typeof g.max === "number" ? `\u2066≤\u00a0${fmtZahl(g.max, 1)}\u00a0°C\u2069` : ""].filter(Boolean).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
 const kuerzelVon = (stand, id) => stand.personen.find((p) => p.id === id)?.kuerzel || "";
 const zeitOderStrich = (iso) => (iso ? zeitKurz(iso) : "–"); // W2-H: Nachtrag ohne Uhrzeit. Trennung 2 (17.10.2026): Uhrzeit aus js/anzeige_text.js
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
@@ -85,7 +86,7 @@ export function kuehlView(stand) {
         <p class="hinweis">${esc(t("kuehl.stellenTippen"))}</p>
         <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
           <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(kn(k))}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
-            <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `${fmtZahl(m.wert, 1)} °C` : "–"}<small class="marke">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitOderStrich(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
+            <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : "–"}<small class="marke">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitOderStrich(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
         <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
         ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
       </div>
@@ -161,8 +162,8 @@ function rundgangView(stand) {
       <div class="liste">${stellen.map((x) => { const m = r.messungen.find((y) => y.stelle === x.id); const letzte = letzteMessung(stand, x.id); return `
         <button type="button" class="wahl ${m ? "an" : ""} ${m?.abweichung ? "warnung" : ""}" data-a="station" data-id="${esc(x.id)}">
           <span class="haken">${m ? (m.abweichung ? "!" : "✓") : ""}</span>
-          <span class="fuell"><b>${esc(kn(x))}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} ${fmtZahl(letzte.wert, 1)} °C` : ""}</small></span>
-          <span style="font-weight:800;white-space:nowrap" class="${m?.abweichung ? "rot" : ""}">${m ? (typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(t("kuehl.nichtGemessenKurz"))) : "›"}</span>
+          <span class="fuell"><b>${esc(kn(x))}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : ""}</small></span>
+          <span style="font-weight:800;white-space:nowrap" class="${m?.abweichung ? "rot" : ""}">${m ? (typeof m.wert === "number" ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : esc(t("kuehl.nichtGemessenKurz"))) : "›"}</span>
         </button>`; }).join("")}</div>
       <p class="hinweis mitte">${esc(t("kuehl.rundgangStand", fertig, stellen.length))}${fertig && fertig < stellen.length ? ` · ${esc(t("kuehl.teilAbschlussHinweis"))}` : ""}</p>
       ${fertig > 0 ? `<button type="button" class="knopf glut" data-a="rundgang-abschluss">${esc(fertig === stellen.length ? t("kuehl.abschliessen") : t("kuehl.teilAbschliessen", fertig))}</button>` : ""}
@@ -247,7 +248,7 @@ function blattView(stand) {
       <div class="monatsblatt">${mb.tage.filter((tg) => tg.status !== "vorher" && tg.status !== "zukunft").slice().reverse().map((tg) => `
         <div class="blattzeile ${tg.status}">
           <span class="datum">${esc(datumLesbar(tg.datum).slice(0, 6))}</span>
-          ${tg.messungen.length ? tg.messungen.map((m) => { const weg = (stand.schwund || []).filter((e) => e.messung === m.id && !e.storniert); const erl = m.abweichung && m.nachkontrolle ? nachkontrolleErledigt(stand, m) : null; const gm = [typeof m.min === "number" ? `≥ ${fmtZahl(m.min, 1)}` : "", typeof m.max === "number" ? `≤ ${fmtZahl(m.max, 1)}` : ""].filter(Boolean).join(" · "); return `<span class="messung ${m.abweichung ? "rot" : ""}">${typeof m.wert === "number" ? `${fmtZahl(m.wert, 1)} °C` : esc(grundText(m.grund))} <small>${esc(zeitOderStrich(m.zeit))}${gm ? ` · ${esc(gm)}${m.grenzeStandard ? " (" + esc(t("kuehl.standard")) + ")" : ""}` : ""}${m.von ? " · " + esc(kuerzelVon(stand, m.von)) : ""}${m.nacherfasst ? " · " + esc(t("kuehl.nacherfasst")) + (m.quelle ? " (" + esc(t("kuehl.quellen." + m.quelle)) + ")" : "") : ""}</small>
+          ${tg.messungen.length ? tg.messungen.map((m) => { const weg = (stand.schwund || []).filter((e) => e.messung === m.id && !e.storniert); const erl = m.abweichung && m.nachkontrolle ? nachkontrolleErledigt(stand, m) : null; const gm = [typeof m.min === "number" ? `≥ ${fmtZahl(m.min, 1)}` : "", typeof m.max === "number" ? `≤ ${fmtZahl(m.max, 1)}` : ""].filter(Boolean).join(" · "); return `<span class="messung ${m.abweichung ? "rot" : ""}">${typeof m.wert === "number" ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : esc(grundText(m.grund))} <small>${esc(zeitOderStrich(m.zeit))}${gm ? ` · ${esc(gm)}${m.grenzeStandard ? " (" + esc(t("kuehl.standard")) + ")" : ""}` : ""}${m.von ? " · " + esc(kuerzelVon(stand, m.von)) : ""}${m.nacherfasst ? " · " + esc(t("kuehl.nacherfasst")) + (m.quelle ? " (" + esc(t("kuehl.quellen." + m.quelle)) + ")" : "") : ""}</small>
             ${m.abweichung ? `<small class="rot">${esc((m.massnahmen || []).map((x) => t("kuehl.massnahmen." + x)).join(", "))}${m.notiz ? " – " + esc(m.notiz) : ""}${weg.length ? " · " + esc(t("kuehl.weggeworfenKurz")) + ": " + esc(weg.map((e) => `${e.ref?.name || "?"} ${fmtZahl(e.menge, e.einheit === "stk" ? 0 : 2)} ${e.einheit === "stk" ? t("allgemein.stueck") : e.einheit}`).join(", ")) : ""}${m.nachkontrolle ? " · " + esc(t("kuehl.nachkontrolle")) + ": " + esc(t("kuehl.nachkontrollen." + m.nachkontrolle.art)) + (erl ? " – " + esc(t("kuehl.erledigt", zeitOderStrich(erl.zeit), fmtZahl(erl.wert, 1))) : " – " + esc(t("kuehl.offenKurz"))) : ""}</small>` : ""}</span>`; }).join("")
             : `<span class="messung marke">${esc(t("kuehl.status." + tg.status))}</span>`}
         </div>`).join("")}</div>
