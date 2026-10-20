@@ -443,6 +443,7 @@ export function ergebnisView(stand, { inApp = false } = {}) {
       <div class="gross">${fmtEuro(k.last.gesamt)}${k.last.offen ? `<span class="abzeichen">${esc(t("zusammenfassung.unvollstaendig"))}</span>` : ""}</div>
       <div class="summenzeile"><span>${esc(t("zusammenfassung.fix"))}</span><span class="wert">${fmtEuro(k.last.fixJeOffen)}</span></div>
       <div class="summenzeile"><span>${esc(t("zusammenfassung.loehne"))}</span><span class="wert">${k.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(k.last.lohn)}</span></div>
+      <button type="button" class="summenzeile zeilentipp" data-a="bearbeiten" data-schritt="lohn"><span>${esc(t("start.eigenerLohn"))}</span><span class="wert">${k.last.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : `${k.last.eigen.status === "geschaetzt" ? "≈ " : ""}${fmtEuro(k.last.eigen.betrag)}${k.last.eigen.status === "geschaetzt" ? ` <span class="marke geschaetzt">${esc(t("allgemein.schaetzung"))}</span>` : ""}`} ›</span></button>
       ${reinigungZeile(k.last.reinigung)}
     </div>
     <p class="hinweis">${esc(t("ergebnis.lesehilfe"))}</p>`;

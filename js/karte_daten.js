@@ -186,3 +186,19 @@ export function gerichtFotoSetzen(stand, id, meta, { geraet = null, jetzt = new 
   stand.uploads.push({ id: "u-" + jetzt.getTime().toString(36), zweck: "gericht", erfasst: jetzt.toISOString(), geraet, status: "abgelegt", datei: meta, ref: g.id });
   g.foto = meta.id; g.fotoMeta = meta; return g;
 }
+
+// Brot zum Adana-Teller (Baris 20.10.2026: „je nach Betrieb immer unterschiedlich“ → einmal fragen). Die Antwort ersetzt das Brot in jedem Gericht,
+// das aus der Vorlage „Adana-Spieß“ stammt, und wird am Stand gemerkt (keine zweite Frage). Wahl: pide | pideHalb | fladen | kein.
+export const ADANA_BROT = { pide: { name: "Pide-Brot", menge: 1 }, pideHalb: { name: "Pide-Brot", menge: 0.5 }, fladen: { name: "Dürüm-Wrap", menge: 1 }, kein: null };
+const BROTE = new Set(["Pide-Brot", "Dürüm-Wrap", "Dönerbrot / Fladen"]);
+export const adanaGerichte = (stand) => (stand.gerichte || []).filter((g) => g.vorlageName === "Adana-Spieß");
+export const adanaBrotOffen = (stand) => !stand.adanaBrot && adanaGerichte(stand).length > 0;
+export function adanaBrotSetzen(stand, wahl) {
+  if (!(wahl in ADANA_BROT)) return false;
+  const b = ADANA_BROT[wahl];
+  for (const g of adanaGerichte(stand)) {
+    g.zutaten = g.zutaten.filter((z) => !BROTE.has(z.name));
+    if (b) g.zutaten.push({ name: b.name, menge: b.menge, einheit: "stk" });
+  }
+  stand.adanaBrot = wahl; return true;
+}

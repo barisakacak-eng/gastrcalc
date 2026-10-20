@@ -24,7 +24,7 @@ export function selbstAnwenden(stand, ids = selbstGewaehlt(stand)) {
     if (an) {
       if (a.herkunft !== "selbst") { a.gekauftVorher = a.preis !== null && a.herkunft !== "selbst" ? { preis: a.preis, packung: a.packung, preisBasis: a.preisBasis } : a.gekauftVorher || null; }
       a.herkunft = "selbst";
-      if (!a.rezept || a.rezept.quelle === "baukasten") a.rezept = { zutaten: r.zutaten.map((z) => ({ ...z })), ausbeute: { ...r.ausbeute }, arbeitMin: r.arbeitMin, quelle: "baukasten" };
+      if (!a.rezept || a.rezept.quelle === "baukasten") a.rezept = { zutaten: r.zutaten.map((z) => ({ ...z })), ausbeute: { ...r.ausbeute }, arbeitMin: r.arbeitMin, quelle: "baukasten", ...(r.stueck ? { stueck: { ...r.stueck } } : {}) };
     } else if (a.herkunft === "selbst") {
       a.herkunft = "gekauft";
       const v = a.gekauftVorher; a.preis = v?.preis ?? null; a.packung = v?.packung || { menge: null, einheit: a.einheit }; a.preisBasis = v?.preisBasis || "netto"; a.status = a.preis === null ? "offen" : "bekannt";

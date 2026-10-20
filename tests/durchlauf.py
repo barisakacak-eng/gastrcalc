@@ -259,7 +259,7 @@ async def main():
             # eigene Grenze setzen
             await pg.click('[data-a="kuehl-start"]'); await pg.click('[data-a="kuehl-einrichtung"]'); await bild("kuehl-einrichtung-standard")
             await pg.fill(f'[data-f="stelle-max:{kids[0]}"]', "4"); await pg.locator(f'[data-f="stelle-max:{kids[0]}"]').blur(); await pg.wait_for_timeout(200)
-            html = await pg.content(); assert "≤ 4,0 °C" in html and "(Standard)" not in html.split("≤ 4,0 °C")[1][:30]
+            html = (await pg.content()).replace("\u00a0", " ").replace("&nbsp;", " ").replace("\u2066", "").replace("\u2069", ""); assert "≤ 4,0 °C" in html and "(Standard)" not in html.split("≤ 4,0 °C")[1][:30]
             await pg.click('[data-a="kuehl-einrichtung-fertig"]')
             # ---- Mehr: Zähler-Einstellungen
             await geh("einstellungen"); await bild("mehr")

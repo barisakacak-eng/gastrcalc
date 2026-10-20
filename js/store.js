@@ -725,7 +725,7 @@ function journalPruefen(b, sid, j, arr, tief, out) {
 // Kein Bildschirm muss etwas melden. Ein Müll- oder Umsatz-Eintrag ändert keinen Bereich. Erster Fingerabdruck (nach dem Update) = kein Zeitstempel.
 export const BEREICHE = {
   kosten: ["kosten", "kostenKategorienGeprueft", "team"],
-  gerichte: ["gerichte", "selbst", "selbstAutoArt"],
+  gerichte: ["gerichte", "selbst", "selbstAutoArt", "adanaBrot"], // 20.10.2026: Antwort auf die Brot-Frage zum Adana
   artikel: ["artikel"],
   betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt"],
   kuehl: ["kuehlstellen", "kuehl"],

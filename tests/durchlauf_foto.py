@@ -20,8 +20,8 @@ async def main():
             b = await p.chromium.launch()
             VID = os.environ.get("DURCHLAUF_VIDEO")
             ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE",
-            await ctx.add_init_script(path=__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "hilfe", "aufklappen.js"))  # Büro-Bereiche offen (19.10.2026)
                                       **({"record_video_dir": VID, "record_video_size": {"width": 390, "height": 844}} if VID else {}))
+            await ctx.add_init_script(path=__import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "hilfe", "aufklappen.js"))  # Büro-Bereiche offen (19.10.2026)
             pg = await ctx.new_page()
             pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
             pg.on("pageerror", lambda e: fehler.append(str(e)))
@@ -43,7 +43,7 @@ async def main():
             await pg.fill('[data-f="betrieb.name"]', "Döner Haus"); await klick('[data-a="laden-art"][data-wert="doener"]')
             await bild("laden-gewaehlt"); await klick('[data-a="weiter"]')
             # 2b „Was macht ihr selbst?“ fragt der Schnellweg 2 nicht mehr: Vorauswahl nach Laden-Art still (Dönerladen: Teig, Brot, Lahmacun, Soßen)
-            s = await stand(); assert len(s["selbst"]) == 4, f"Vorauswahl Dönerladen: {s.get('selbst')}"
+            s = await stand(); assert len(s["selbst"]) == 5, f"Vorauswahl Dönerladen (seit 20.10.2026 mit Adana): {s.get('selbst')}"
             # 3 Speisekarte fotografieren (Galerie-Eingang: setInputFiles; der Kamera-Eingang hat capture)
             await pg.wait_for_selector('input[data-f="foto"][data-zweck="speisekarte"]', state="attached"); await bild("karte-foto")
             assert await pg.locator('input[data-f="foto"][capture]').count() == 1, "Kamera-Eingang fehlt"

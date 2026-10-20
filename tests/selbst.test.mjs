@@ -29,9 +29,9 @@ test("Zwischenrezepte: Artikel im Katalog, Rohstoffe im Katalog, eine Stufe tief
 });
 
 test("Vorauswahl je Laden-Art", () => {
-  assert.deepEqual(vorauswahlFuer("doener").sort(), ["brot", "lahmacun", "sossen", "teig"]);
+  assert.deepEqual(vorauswahlFuer("doener").sort(), ["adana", "brot", "lahmacun", "sossen", "teig"]); // 20.10.2026: Adana selbst aus Lammhack
   assert.ok(vorauswahlFuer("imbiss").includes("patty"));
-  assert.equal(kachelnFuer("anders").length, SELBST_KACHELN.length);
+  assert.equal(kachelnFuer("anders").length, SELBST_KACHELN.filter((k) => !k.still).length);
   const s = laden(); assert.deepEqual(selbstGewaehlt(s), vorauswahlFuer("doener"));
 });
 
@@ -104,4 +104,21 @@ test("Ansatz: Zutat tauschen, Teig gesamt und Ballengewicht", async () => {
   kd.selbstAusbeuteArt(s, "Pide-Teig", "stueck", "2026-10-20");
   kd.selbstFeldSetzen(s, "Pide-Teig", "masse", 1750, "2026-10-20"); kd.selbstFeldSetzen(s, "Pide-Teig", "gewicht", 275, "2026-10-20");
   assert.equal(r.stueck.anzahl, 6); assert.deepEqual(r.ausbeute, { menge: 1750, einheit: "g" });
+});
+
+test("Adana selbst aus Lammhack: Startwerte, 13 Spieße à 104 g, Gericht rechnet je Spieß", () => {
+  const s = laden(); selbstAnwenden(s, ["adana"]);
+  const a = s.artikel.find((x) => x.name === "Adana-Spieß");
+  assert.equal(a.herkunft, "selbst"); assert.equal(a.rezept.stueck.gewicht, 104); assert.equal(a.rezept.stueck.anzahl, 13);
+  assert.ok(a.rezept.zutaten.some((z) => z.name === "Lammhackfleisch" && z.menge === 1000));
+});
+
+test("Adana-Brot: einmal wählen, ersetzt das Brot im Adana-Gericht", async () => {
+  const kd = await import("../js/karte_daten.js");
+  const s = { gerichte: [{ vorlageName: "Adana-Spieß", zutaten: [{ name: "Adana-Spieß", menge: 2, einheit: "stk" }, { name: "Pide-Brot", menge: 1, einheit: "stk" }] }, { vorlageName: "Döner Kebab", zutaten: [{ name: "Dönerbrot / Fladen", menge: 1, einheit: "stk" }] }] };
+  assert.equal(kd.adanaBrotOffen(s), true);
+  kd.adanaBrotSetzen(s, "pideHalb");
+  assert.deepEqual(s.gerichte[0].zutaten.find((z) => z.name === "Pide-Brot"), { name: "Pide-Brot", menge: 0.5, einheit: "stk" });
+  assert.equal(s.gerichte[1].zutaten.length, 1, "Döner bleibt unberührt"); assert.equal(kd.adanaBrotOffen(s), false);
+  kd.adanaBrotSetzen(s, "kein"); assert.ok(!s.gerichte[0].zutaten.some((z) => z.name === "Pide-Brot"));
 });

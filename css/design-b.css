@@ -325,3 +325,5 @@ span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
 .sz-tauschbar .sz-pfeil { color: var(--b-text-leise); font-size: .8em; }
 select.sz-tausch { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 1rem; }
 .sz-tauschbar:focus-within { outline: 2px solid var(--b-akzent); outline-offset: 2px; border-radius: 4px; }
+/* 20.10.2026: Summenzeile als Knopf (eigener Lohn im Ergebnis) – sieht aus wie die Zeilen darüber */
+button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--b-linie); font: inherit; color: inherit; text-align: start; cursor: pointer; min-height: 44px; }

@@ -141,7 +141,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   });
   s.gerichte.forEach((g, i) => { g.plu = String(101 + i); }); // E7 (17.10.2026): Kassen-Artikelnummer im Beispiel
   fehlendeRezepteErgaenzen(s);
-  selbstAnwenden(s, vorauswahlFuer("doener")); s.selbstAutoArt = "doener";
+  selbstAnwenden(s, vorauswahlFuer("doener").filter((k) => k !== "adana")); s.selbstAutoArt = "doener"; // 20.10.2026: Adana bleibt im Beispiel gekauft (Ladenhüter mit totem Lager)
   s.artikel = artikelAusGerichten(s);
   if (BRANCHENWERTE.werte.length) branchenwerteAnwenden(s, BRANCHENWERTE.werte, { datum: start });
   s.branchenVersion = BRANCHENWERTE.version;
