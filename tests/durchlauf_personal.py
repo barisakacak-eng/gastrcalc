@@ -31,7 +31,7 @@ async def main():
             await schnellstart.code_setzen(pg, "1234"); await bild("code-gesetzt")
             pruefe(await pg.locator('#app [data-a="pin-setzen"] .b-wert.plus').count() == 1, "Büro zeigt den Code nicht als gesetzt")
             # ---- Putzplan übernehmen und eine Aufgabe abhaken
-            await nav_hilfe.geh(pg, "putzplan"); await pg.click('[data-a="pp-uebernehmen"]'); await pg.wait_for_selector('[data-a="pp-haken"]')
+            await nav_hilfe.geh(pg, "putzplan"); await pg.wait_for_selector('[data-a="pp-haken"]')  # Laden-Umbau (20.10.2026): Plan nach Laden-Art kommt beim Betreten
             pruefe(await pg.evaluate("!!window.__gastrocalc.stand.putzplan?.aktiv"), "Putzplan nicht aktiv nach Übernehmen")
             vorher = await putzlog(); await pg.locator('[data-a="pp-haken"]').first.click(); await pg.wait_for_timeout(300)
             pruefe(await putzlog() == vorher + 1, f"putzlog wächst nicht: {vorher} → {await putzlog()}")

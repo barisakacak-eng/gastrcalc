@@ -53,15 +53,16 @@ function kachelHtml(stand, x, zaehl, frisch) {
   const m = standardMenge(stand, x); const k = muellSchluessel(x); const n = zaehl[k] || 0;
   const daten = `data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"`;
   return `<div class="karte ware ${frisch === k ? "frisch" : ""}" data-k="${esc(k)}">
-    <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten}>${bildFuer(stand, x)}<span class="wt"><b>${esc(zeigName(x))}</b><small>${esc(mengeText(m.menge, m.einheit))}</small></span></button>
+    <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten} aria-label="${esc(zeigName(x))} · ${esc(mengeText(m.menge, m.einheit))}">${bildFuer(stand, x)}<span class="wt"><b>${esc(zeigName(x))}</b></span></button>
     ${n ? `<span class="zaehler zahl">${n}×</span>` : ""}${frisch === k ? `<span class="haken">${sym("check")}</span>` : ""}
     <button type="button" class="ware-mehr" data-a="muell-detail" ${daten} aria-label="${esc(t("muell1.menge"))}">…</button>
   </div>`;
 }
+// Laden-Umbau (20.10.2026): Kopf als rote Summenleiste „Müll heute · x €“ (an einem Vortag: „Müll · TT.MM.“)
 function pilleHtml(stand, D) {
   const h = muellHeute(stand, D);
   const zahl = personalAktiv() ? `${fmtZahl(h.anzahl)}×` : fmtEuro(h.wert, { dezimal: 2 });
-  return `<span class="heutewert" id="muell-heute"><small>${esc(D === heute() ? t("tag.titel") : datumLesbar(D).slice(0, 6))}</small><span class="zahl">${zahl}</span></span>`;
+  return `<div class="heutewert muellsumme" id="muell-heute"><h1>${esc(D === heute() ? t("heute.kachel.muell") : `${t("muell1.titel")} · ${datumLesbar(D).slice(0, 6)}`)}</h1><span class="zahl">${zahl}</span></div>`;
 }
 function toastHtml() {
   if (!zuletzt || Date.now() - zuletzt.zeit > TOAST_MS) return "";
@@ -81,8 +82,7 @@ function rasterView(stand, D, nach) {
   const kacheln = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true }); const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell1">
-    <div class="muellkopf1"><h1>${esc(t("muell1.titel"))}</h1>${pilleHtml(stand, D)}</div>
-    <p class="muell-anleitung">${esc(t("muell1.anleitung"))}</p>
+    <div class="muellkopf1">${pilleHtml(stand, D)}</div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
     ${kacheln.length ? `<div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
       <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>`

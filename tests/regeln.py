@@ -1,6 +1,6 @@
 """Paket 7 (16.10.2026): Regelprüfung im Browser – macht die verbindlichen Vorgaben der App messbar.
 Schnellstart (Deutsch, Dönerladen, Karte „Später“, 1 Kühlschrank + 1 Tiefkühler, Kosten leer) in 390×844 und 360×780, dann je Bildschirm:
-  woerter      sichtbarer fester Text ohne Zahlen, Datum, Einheiten, Gericht-/Kühlstellen-/Sprachnamen, ohne Leiste unten (Laden ≤ 15, Personal ≤ 10, Büro ≤ 120)
+  woerter      sichtbarer fester Text ohne Zahlen, Datum, Einheiten, Gericht-/Kühlstellen-/Sprachnamen, Putzaufgaben, ohne Leiste unten (Laden ≤ 15, Personal ≤ 10, Büro ≤ 120)
   scroll       Seitenhöhe gegen Viewport (Laden scrollt nicht; Ausnahme Karte > 8 Gerichte, Putzliste > 6 Aufgaben)
   knopfhoehe   Hauptknopf (.knopf.glut) ≥ 64 px; dazu die Zahl der Knöpfe mit Klasse knopf/glut
   absaetze     Erklärabsätze (p, small, .hinweis, .fein, .unter, li) mit ≥ 12 Wörtern im Laden: 0
@@ -47,7 +47,7 @@ MESSEN_JS = r"""
   // sichtbare Textknoten
   const texte = []; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let n; while ((n = w.nextNode())) { const t = n.textContent.replace(/\s+/g, " ").trim(); if (!t) continue; const p = n.parentElement;
-    if (!p || inLeiste(p) || p.closest("script,style") || !sichtbar(p)) continue; texte.push(t); }
+    if (!p || inLeiste(p) || p.closest("script,style") || p.closest(".aufgabe .atext b, .phinweis") || !sichtbar(p)) continue; texte.push(t); } // Laden-Umbau (20.10.2026): Putzaufgaben zählen wie Gerichtnamen nicht
   const ganz = texte.join(" ");
   const wortliste = ganz.split(/\s+/).map(token).filter(istWort);
   // Knöpfe
@@ -138,8 +138,12 @@ async def lauf(b, breite, hoehe, fehler):
         # ---- Laden
         for ziel, name in (("start", "heute"), ("muell", "muell"), ("kuehl", "kuehlung"), ("putzplan", "putzen"), ("karte", "karte")):
             await nav_hilfe.geh(pg, ziel)
-            zusatz = {"gerichte": len(stand["gerichte"])} if name == "karte" else {"plan": False, "aufgaben": 0} if name == "putzen" else {}
+            zusatz = {"gerichte": len(stand["gerichte"])} if name == "karte" else {"plan": True, "aufgaben": await pg.locator('[data-a="pp-haken"]').count()} if name == "putzen" else {}  # Laden-Umbau (20.10.2026): Plan nach Laden-Art gleich da
             await schirm(name, "laden", zusatz=zusatz)
+        # Laden-Umbau (20.10.2026): „Umsatz heute“ (Feld auf Heute) und „Tag abschließen“
+        await nav_hilfe.geh(pg, "start"); await pg.click('#app [data-a="nav"][data-wert="umsatzheute"]'); await pg.wait_for_selector('[data-f="ul-umsatz"]')
+        await schirm("umsatz-heute", "laden")
+        await nav_hilfe.geh(pg, "abschluss"); await schirm("abschluss", "laden")
         await nav_hilfe.geh(pg, "start"); await nav_hilfe.menue(pg)
         await schirm("menue", "laden", wurzel="#ebene-huelle .blatt-menue")
         await pg.click('#ebene-huelle button[data-a="blatt-zu"]'); await pg.wait_for_timeout(200)
@@ -156,7 +160,7 @@ async def lauf(b, breite, hoehe, fehler):
         await pg.locator("#ebene-huelle .blatt-pin").wait_for(state="detached", timeout=20000); await pg.wait_for_timeout(300)
         assert await nav_hilfe.modus(pg) == "laden"
         # ---- Putzen mit übernommenem Plan (Vorschlag für den Dönerladen)
-        await nav_hilfe.geh(pg, "putzplan"); await pg.click('[data-a="pp-uebernehmen"]'); await pg.wait_for_selector('[data-a="pp-haken"]')
+        await nav_hilfe.geh(pg, "putzplan"); await pg.wait_for_selector('[data-a="pp-haken"]')  # Laden-Umbau (20.10.2026): kein „Plan übernehmen“ mehr im Laden
         aufgaben = await pg.locator('[data-a="pp-haken"]').count()
         await schirm("putzen-plan", "laden", zusatz={"plan": True, "aufgaben": aufgaben})
     finally:

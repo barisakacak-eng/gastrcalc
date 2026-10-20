@@ -142,7 +142,7 @@ test("M7: Geschäftstag bis 4 Uhr – Umsatz um 01:30 auf dem Vortag, Monatswech
 });
 
 // ---------- M15 + E2 ----------
-test("M15/E2: ohne Einkaufspreise gilt der Branchen-Richtwert 32 % als Schätzung, mit Quelle; Karte und Belege gehen vor", () => {
+test("M15/E2: ohne Einkaufspreise gilt der Branchen-Richtwert 32 % als Schätzung, mit Quelle; Karte und Belege gehen vor", async () => {
   assert.equal(E.RICHTWERT_WARENEINSATZ.quote, 0.32); assert.equal(E.RICHTWERT_WARENEINSATZ.min, 0.23); assert.equal(E.RICHTWERT_WARENEINSATZ.max, 0.41);
   assert.match(E.RICHTWERT_WARENEINSATZ.quelle, /BMF-Richtsatzsammlung Kalenderjahr 2025/); assert.equal(E.RICHTWERT_WARENEINSATZ.stand, "2026-10-16");
   const b = laden(); b.gerichte = []; b.artikel = []; umsatz(b, "2026-10-12", 1070);
@@ -160,7 +160,11 @@ test("M15/E2: ohne Einkaufspreise gilt der Branchen-Richtwert 32 % als Schätzun
   // Laden: „≈“ vor der Zahl und Kupferzeile zur Einkaufspreis-Seite; mit Karte und eigenem Lohn keine Zeile
   navKontext(b, { betriebe: [b] });
   const html = startView(b, { wurzel: { betriebe: [b], letzteSicherung: new Date().toISOString() }, jetzt: um(10) });
-  assert.ok(html.includes('class="h-richtwert" data-a="nav" data-wert="preise"') && html.includes("Richtwert · Preise eintragen ›"));
+  // Laden-Umbau (20.10.2026): die Richtwert-Zeile ist aus dem Laden ins Büro gezogen – dort „· Richtwert“ am Monat und der Weg zu den Einkaufspreisen
+  assert.ok(!html.includes("h-richtwert"), "keine Richtwert-Zeile im Laden");
+  const { bueroView } = await import("../js/screens/buero.js");
+  const bh = bueroView(b, { betriebe: [b], modus: "buero" }, {});
+  assert.ok(bh.includes("Richtwert") && bh.includes('data-schritt="preise"'), "Büro: Richtwert-Hinweis und Weg zu den Einkaufspreisen");
   assert.ok(!html.includes("BMF"), "Quelle nur im Büro und hinter dem ?");
   const f = laden(); f.betrieb.steuerSatz = 0.07; umsatz(f, "2026-10-12", 1070); umsatz(f, "2026-10-11", 1070);
   f.lieferungen.push({ id: "l1", datum: "2026-10-11", erfasst: "x", basis: "netto", summeNetto: 900, zeilen: [], storniert: false }); // Stufe 3

@@ -1426,4 +1426,8 @@ export default {
     frage1: "¿Cómo llega?", frage2: "¿Cuánto hay dentro?", kostet: { karton: "¿Cuánto cuesta la caja?", kiste: "¿Cuánto cuesta la caja de plástico?", beutel: "¿Cuánto cuesta la bolsa?", packung: "¿Cuánto cuesta el paquete?", kanister: "¿Cuánto cuesta la garrafa?", eimer: "¿Cuánto cuesta el cubo?", sack: "¿Cuánto cuesta el saco?", flasche: "¿Cuánto cuesta la botella?", dose: "¿Cuánto cuesta la lata?", lose: "¿Cuánto cuesta?" },
     ohneMwst: "sin IVA", mitMwst: "con IVA", ergebnis: { stk: "Una pieza", kg: "1 kg", l: "1 litro" }, mehr: "Más", mehrArten: "Otros tipos",
     mwstHinweis: "Mayorista: casi siempre sin IVA. Supermercado: con IVA. La app calcula sin IVA.", keineWaren: "Aún no hay productos. Primero elige platos y recetas.", raus: "¿Qué sale?", masse: "Masa total", einStueck: "Una pieza", tauschen: "toca para cambiar" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Ventas", stimmt: (b) => `¿Es correcto? ${b}`, ja: "Sí", aendern: "Cambiar", rundgangStarten: "Empezar ronda",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Última fuera del móvil: hoy" : n === 1 ? "Última fuera del móvil: hace 1 día" : `Última fuera del móvil: hace ${n} días`, nieWeg: "Aún no hay copia fuera del móvil", mitPasswort: "Con contraseña", ohneFotos: "Sin fotos (pequeña, para correo)",
+      verschicken: "Enviar copia", woFrage: "¿Dónde está ahora?", woanders: "Otro dispositivo, correo, nube", nurHandy: "Solo en este móvil", nurHandyMeldung: "El aviso sigue: el archivo está solo en este móvil.", gezaehlt: "Copia contada. Aviso reiniciado." } },
 };

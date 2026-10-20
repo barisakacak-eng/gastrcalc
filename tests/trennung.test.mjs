@@ -187,6 +187,7 @@ test("Trennung: alle Ansichten auf dem Beispiel-Laden zeichnen, ohne den Stand z
     getraenke: async () => (await import("../js/screens/getraenke.js")).getraenkeView(s), // Getränke (18.10.2026)
     lieferanten: async () => (await import("../js/screens/lieferanten.js")).lieferantenView(s), // Lieferanten (18.10.2026)
     laeden: async () => (await import("../js/screens/laeden.js")).laedenView(w), // Eigentümer-Ebene (18.10.2026)
+    umsatzheute: async () => (await import("../js/screens/umsatz_laden.js")).umsatzLadenView(s), // Laden-Umbau (20.10.2026)
   };
   for (const [name, f] of Object.entries(ansichten)) {
     navKontext(s, w, name); const vorher = JSON.stringify(w);

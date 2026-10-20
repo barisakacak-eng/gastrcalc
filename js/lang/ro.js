@@ -1433,4 +1433,8 @@ export default {
     frage1: "Cum vine?", frage2: "Cât e înăuntru?", kostet: { karton: "Cât costă cutia?", kiste: "Cât costă lada?", beutel: "Cât costă punga?", packung: "Cât costă pachetul?", kanister: "Cât costă canistra?", eimer: "Cât costă găleata?", sack: "Cât costă sacul?", flasche: "Cât costă sticla?", dose: "Cât costă doza?", lose: "Cât costă?" },
     ohneMwst: "fără TVA", mitMwst: "cu TVA", ergebnis: { stk: "O bucată", kg: "1 kg", l: "1 litru" }, mehr: "Mai mult", mehrArten: "Alte tipuri",
     mwstHinweis: "Angro: de obicei fără TVA. Supermarket: cu TVA. Aplicația calculează fără TVA.", keineWaren: "Încă nu sunt mărfuri. Alege întâi preparatele și rețetele.", raus: "Ce iese?", masse: "Aluat total", einStueck: "O bucată", tauschen: "atinge pentru a schimba" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Încasări", stimmt: (b) => `E corect? ${b}`, ja: "Da", aendern: "Schimbă", rundgangStarten: "Pornește runda",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Ultima în afara telefonului: azi" : n === 1 ? "Ultima în afara telefonului: acum 1 zi" : `Ultima în afara telefonului: acum ${n} zile`, nieWeg: "Încă nicio copie în afara telefonului", mitPasswort: "Cu parolă", ohneFotos: "Fără poze (mică, pentru e-mail)",
+      verschicken: "Trimite copia", woFrage: "Unde este acum?", woanders: "Alt dispozitiv, e-mail, cloud", nurHandy: "Doar pe acest telefon", nurHandyMeldung: "Memento-ul rămâne: fișierul e doar pe acest telefon.", gezaehlt: "Copie numărată. Memento resetat." } },
 };

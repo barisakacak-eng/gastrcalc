@@ -1434,4 +1434,8 @@ export default {
     frage1: "Kako dolazi?", frage2: "Koliko je unutra?", kostet: { karton: "Koliko košta kutija?", kiste: "Koliko košta gajba?", beutel: "Koliko košta kesa?", packung: "Koliko košta pakovanje?", kanister: "Koliko košta kanister?", eimer: "Koliko košta kanta?", sack: "Koliko košta vreća?", flasche: "Koliko košta flaša?", dose: "Koliko košta konzerva?", lose: "Koliko košta?" },
     ohneMwst: "bez PDV-a", mitMwst: "sa PDV-om", ergebnis: { stk: "Jedan komad", kg: "1 kg", l: "1 litar" }, mehr: "Više", mehrArten: "Druge vrste",
     mwstHinweis: "Veleprodaja: obično bez PDV-a. Supermarket: sa PDV-om. Aplikacija računa bez PDV-a.", keineWaren: "Još nema robe. Prvo odaberi jela i recepte.", raus: "Šta izlazi?", masse: "Ukupno tijesto", einStueck: "Jedan komad", tauschen: "dodirni za zamjenu" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Promet", stimmt: (b) => `Je li to tačno? ${b}`, ja: "Da", aendern: "Promijeni", rundgangStarten: "Pokreni obilazak",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Zadnja van telefona: danas" : n === 1 ? "Zadnja van telefona: prije 1 dan" : `Zadnja van telefona: prije ${n} dana`, nieWeg: "Još nema kopije van telefona", mitPasswort: "Sa šifrom", ohneFotos: "Bez slika (mala, za mail)",
+      verschicken: "Pošalji kopiju", woFrage: "Gdje je sada?", woanders: "Drugi uređaj, mail, oblak", nurHandy: "Samo na ovom telefonu", nurHandyMeldung: "Podsjetnik ostaje: datoteka je samo na ovom telefonu.", gezaehlt: "Kopija uračunata. Podsjetnik poništen." } },
 };

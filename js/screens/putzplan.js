@@ -17,6 +17,8 @@ let entwurf = null;   // Plan während des Einrichtens
 let werId = (() => { try { return localStorage.getItem("gc-putz-wer") || null; } catch { return null; } })();
 const aktivePersonen = (stand) => (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false);
 const kuerzel = (stand, id) => { const p = (stand.personen || []).find((x) => x.id === id); return p ? p.kuerzel || p.name || "" : ""; };
+// Laden-Umbau (20.10.2026): gewählte Person, sonst bei genau einer Person diese (keine Auswahl nötig), sonst ohne
+const werFuer = (stand) => { const ps = aktivePersonen(stand); return ps.some((p) => p.id === werId) ? werId : ps.length === 1 ? ps[0].id : null; };
 export const putzplanZuruecksetzen = () => { ansicht = "plan"; entwurf = null; };
 export const putzplanZurueck = (stand) => { if (ansicht !== "plan" && planVon(stand)?.aktiv) { ansicht = "plan"; entwurf = null; return true; } return false; };
 
@@ -50,21 +52,20 @@ const statusText = (a) => {
   return a.letzte ? t("putzplan.zuletzt", datumLesbar(a.letzte.datum).slice(0, 6)) : t("putzplan.faellig");
 };
 
-function planView(stand) {
+// Laden-Umbau (20.10.2026): im Laden Kopf „Putzen x / y“ und die Liste zum Abhaken – ohne Ring, Status-Unterzeilen und Stufen-Marken.
+// Rot (überfällig) zeigt die Zeile selbst. Wer abhakt (Kürzel), Nachweis und Anpassen bleiben; im Büro (buero: true) wie bisher mit Status.
+function planView(stand, { buero = false } = {}) {
   const g = planGruppen(stand); const personen = aktivePersonen(stand);
-  const r = 24, u = 2 * Math.PI * r;
-  const zeile = (a) => `<button type="button" class="aufgabe ${a.status}" data-a="pp-haken" data-id="${a.id}" aria-pressed="${a.status === "erledigt"}">
-      <span class="box">${a.status === "erledigt" ? sym("check") : ""}</span><span class="atext"><b>${esc(text(a))}</b><small>${esc(statusText(a))}</small>${a.stufe === "pflicht" ? stufeMarke(a) : ""}</span></button>`;
-  const block = (key, xs, nurFaellig) => { const zeig = xs.filter((a) => a.status !== "spaeter" && (!nurFaellig || a.status !== "erledigt" || a.letzte?.datum === heute())); return zeig.length ? `<h2 class="pptakt">${esc(t("putzplan.gruppe." + key))}</h2><div class="planliste">${zeig.map(zeile).join("")}</div>` : ""; };
-  return `<div class="kopfband"><h1>${esc(t("putzplan.titel"))}</h1><div class="unter">${esc(stand.betrieb.name || "")}${stand.betrieb.name ? " · " : ""}${esc(datumLesbar(heute()))}</div></div>
+  const zeile = (a) => `<button type="button" class="aufgabe ${a.status}" data-a="pp-haken" data-id="${a.id}" aria-pressed="${a.status === "erledigt"}" aria-label="${esc(text(a))} · ${esc(statusText(a))}">
+      <span class="box">${a.status === "erledigt" ? sym("check") : ""}</span><span class="atext"><b>${esc(text(a))}</b>${buero ? `<small>${esc(statusText(a))}</small>${a.stufe === "pflicht" ? stufeMarke(a) : ""}` : ""}</span></button>`;
+  const block = (key, xs, nurFaellig) => { const zeig = xs.filter((a) => a.status !== "spaeter" && (!nurFaellig || a.status !== "erledigt" || a.letzte?.datum === heute())); return zeig.length ? `${key === "tag" && !buero ? "" : `<h2 class="pptakt">${esc(t("putzplan.gruppe." + key))}</h2>`}<div class="planliste">${zeig.map(zeile).join("")}</div>` : ""; };
+  return `<div class="kopfband putzkopf"><h1>${esc(t(buero ? "putzplan.titel" : "ebene.tabs.putzplan"))} <span class="zahl">\u2066${g.erledigt} / ${g.gesamt}\u2069</span></h1></div>
     <div class="inhalt putzplan">
-      <div class="karte ringkopf"><svg width="60" height="60" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="${r}" fill="none" stroke="var(--papier-tief)" stroke-width="7"/><circle cx="30" cy="30" r="${r}" fill="none" stroke="var(--eigen)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(u * (g.gesamt ? g.erledigt / g.gesamt : 0)).toFixed(1)} ${u.toFixed(1)}" transform="rotate(-90 30 30)"/></svg>
-        <div><b>${esc(g.offen ? t("putzplan.heuteOffen", g.offen) : t("putzplan.allesErledigt"))}</b><small>${esc(g.ueberfaellig ? t("putzplan.ueberfaelligZahl", g.ueberfaellig) : t("putzplan.stand", g.erledigt, g.gesamt))}</small></div></div>
-      ${personen.length ? `<div class="werabhakt"><small>${esc(t("putzplan.wer"))}</small><div class="chips">${personen.map((p) => `<button type="button" class="chip ${werId === p.id ? "an" : ""}" data-a="pp-wer" data-id="${esc(p.id)}">${esc(p.kuerzel || p.name || "?")}</button>`).join("")}</div></div>` : ""}
+      ${personen.length > 1 ? `<div class="werabhakt"><div class="chips">${personen.map((p) => `<button type="button" class="chip klein ${werId === p.id ? "an" : ""}" data-a="pp-wer" data-id="${esc(p.id)}" aria-label="${esc(t("putzplan.wer"))} ${esc(p.kuerzel || p.name || "?")}">${esc(p.kuerzel || p.name || "?")}</button>`).join("")}</div></div>` : ""}
       ${block("tag", g.tag, false)}${block("woche", g.woche, true)}${block("monat", g.monat, true)}${block("spaeter", g.spaeter, true)}
       ${g.hinweise.length ? `<div class="karte"><h2>${esc(t("putzplan.gruppe.nach"))}</h2>${g.hinweise.map((a) => `<p class="phinweis">• ${esc(text(a))}</p>`).join("")}</div>` : ""}
       <button type="button" class="knopf zweit" data-a="pp-ansicht" data-wert="nachweis">${esc(t("putzplan.nachweis"))}</button>
-      ${personalAktiv() ? "" : `<button type="button" class="leise" data-a="pp-ansicht" data-wert="einrichten">${esc(t("putzplan.anpassen"))}</button>`}
+      ${buero && !personalAktiv() ? `<button type="button" class="leise" data-a="pp-ansicht" data-wert="einrichten">${esc(t("putzplan.anpassen"))}</button>` : ""}
     </div>${nav("putzplan")}`;
 }
 
@@ -82,14 +83,18 @@ function nachweisView(stand) {
     </div>`;
 }
 
-export function putzplanView(stand) {
+// buero: true = Büro-Modus (Einrichten, Anpassen, Status je Aufgabe). Im Laden gibt es keine Einrichtung: app.js legt beim Betreten still den
+// Vorschlag nach Laden-Art an (putzplan.js planSicherstellen); fehlt er trotzdem (Personal, alter Stand), zeigt der Laden nur den Chef-Hinweis.
+export function putzplanView(stand, { buero = false } = {}) {
+  if (!buero && ansicht === "einrichten") { ansicht = "plan"; entwurf = null; }
+  if (!buero && !planVon(stand)?.aktiv) return `<div class="kopfband"><h1>${esc(t("ebene.tabs.putzplan"))}</h1></div><div class="inhalt putzplan"><div class="karte"><p class="hinweis">${sym("lock")} ${esc(t("sicherheit.chefRichtetEin"))}</p></div></div>${nav("putzplan")}`;
   if (personalAktiv()) { // W2-S (p02 K2): kein Einrichten im Personal-Modus – ohne Plan nur der Hinweis
     if (ansicht === "einrichten") { ansicht = "plan"; entwurf = null; }
     if (!planVon(stand)?.aktiv) return `<div class="kopfband"><h1>${esc(t("putzplan.titel"))}</h1></div><div class="inhalt putzplan"><div class="karte"><p class="hinweis">${sym("lock")} ${esc(t("sicherheit.chefRichtetEin"))}</p></div></div>${nav("putzplan")}`;
   }
   if (!planVon(stand)?.aktiv || ansicht === "einrichten") return einrichtenView(stand) + nav("putzplan");
   if (ansicht === "nachweis") return nachweisView(stand) + nav("putzplan");
-  return planView(stand);
+  return planView(stand, { buero });
 }
 
 // true = neu zeichnen, "speichern" = sofort sichern
@@ -99,7 +104,7 @@ export function putzplanAktion(name, el, stand) {
   if (name === "pp-aufgabe") { const id = el.dataset.id; entwurf.aus = entwurf.aus.includes(id) ? entwurf.aus.filter((x) => x !== id) : [...entwurf.aus, id]; return true; }
   if (name === "pp-uebernehmen") { planUebernehmen(stand, entwurf); entwurf = null; /* W2-H: Änderung gilt ab heute (Verlauf) */ ansicht = "plan"; return "speichern"; }
   if (name === "pp-haken") { const a = planGruppen(stand); const x = [...a.tag, ...a.woche, ...a.monat, ...a.spaeter].find((y) => y.id === el.dataset.id); if (!x) return false;
-    if (x.status === "erledigt" && x.letzte?.datum === heute()) zuruecknehmen(stand, x.id, heute(), { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); /* W2-H: wer zurücknimmt */ else abhaken(stand, x.id, { von: aktivePersonen(stand).some((p) => p.id === werId) ? werId : null }); return "speichern"; }
+    if (x.status === "erledigt" && x.letzte?.datum === heute()) zuruecknehmen(stand, x.id, heute(), { von: werFuer(stand) }); /* W2-H: wer zurücknimmt */ else abhaken(stand, x.id, { von: werFuer(stand) }); return "speichern"; }
   if (name === "pp-wer") { werId = el.dataset.id; try { localStorage.setItem("gc-putz-wer", werId); } catch { /* egal */ } return true; }
   if (name === "pp-spaeter") { putzplanSpaeterSetzen(stand, heute()); return "zurueck"; }
   if (name === "pp-drucken") { setTimeout(() => window.print(), 50); return false; }

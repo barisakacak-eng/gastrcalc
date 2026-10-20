@@ -418,3 +418,69 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 .ep-n { overflow-wrap: break-word; }
 .ep-rp { display: grid; gap: 12px; }
 .ep-rp:not(:has(*)) { display: none; }
+
+/* ---- Laden-Umbau (20.10.2026): höchstens 15 Wörter, eine Haupthandlung je Bildschirm (Entwurf laden-entwuerfe.html, freigegeben) ---- */
+/* Heute: „Jetzt dran“ als großer oranger Knopf, darunter eine schmale Reihe aus vier gleich großen Feldern */
+.jetzt.h-jetzt.h-haupt, .jetzt.h-jetzt.h-haupt.normal, .jetzt.h-jetzt.h-haupt.dunkel { background: var(--b-akzent); color: var(--b-text); border: 0; min-height: 84px; border-radius: 16px; box-shadow: var(--schatten-knopf); }
+.h-haupt .ks, .h-haupt.dunkel .ks { background: transparent; color: var(--b-text); }
+.h-haupt .h-jetzt-text small, .h-haupt.dunkel .h-jetzt-text small { color: var(--b-text); font-weight: 700; }
+.h-haupt .h-jetzt-text b { font-size: calc(21rem / 17); font-weight: 800; }
+.h-haupt .h-pfeil { width: 28px; height: 28px; flex: none; stroke-width: 2.6; }
+.jetzt.h-jetzt.h-haupt.rot { background: var(--b-rot-text); color: var(--b-karte); }
+.h-haupt.rot .ks, .h-haupt.rot .h-jetzt-text small { color: var(--b-karte); }
+.h-kacheln.h-reihe { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.karte.h-kachel.h-feld { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 72px; padding: 8px 4px; text-align: center; border-radius: 12px; }
+.h-feld b, .h-feld b.zahl { font-size: calc(17rem / 17); font-weight: 800; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.h-feld b .sym { width: 22px; height: 22px; stroke-width: 2.8; color: var(--b-gruen-ok); vertical-align: middle; }
+.h-feld small { font-size: calc(13rem / 17); font-weight: 600; color: var(--b-text-leise); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.h-feld b.handgriff { width: 28px; height: 28px; margin-top: 0; }
+.h-feld.umsatz b.zahl { color: var(--b-gruen-ok); } .h-feld.muell b.zahl { color: var(--b-rot-text); }
+.karte.h-kachel.h-feld.alarm { border-color: var(--b-rot); background: var(--b-rot-hell); } .h-feld.alarm b { color: var(--b-rot-text); }
+@media (max-width: 370px) { .h-feld b, .h-feld b.zahl { font-size: calc(15rem / 17); } .h-feld small { font-size: calc(12rem / 17); } }
+
+/* Umsatz heute (Laden): ein großes Zahlfeld, Untertitel „aus der Kasse“, ein Knopf; Rückfrage über 100.000 € im selben Bildschirm */
+.inhalt.umsatz-laden { padding: 18px 16px 110px; gap: 16px; }
+.ul-kopf h1 { font-size: calc(28rem / 17); font-weight: 800; margin: 0; } .ul-kopf small { display: block; color: var(--b-text-leise); font-size: calc(16rem / 17); font-weight: 600; margin-top: 2px; }
+.ul-feld { display: flex; align-items: baseline; gap: 10px; background: var(--b-karte); border: 2px solid var(--b-linie); border-radius: 16px; padding: 14px 18px; }
+.ul-feld:focus-within { border-color: var(--b-primaer); }
+.ul-feld input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: calc(46rem / 17); font-weight: 800; letter-spacing: -.02em; font-variant-numeric: var(--zahlen); outline: none; text-align: end; color: var(--b-text); }
+.ul-feld .einheit { font-size: calc(28rem / 17); font-weight: 700; color: var(--b-text-leise); }
+.karte.ul-frage { display: flex; flex-direction: column; gap: 12px; border: 2px solid var(--b-gelb); background: var(--b-gelb-hell); }
+.ul-frage b { font-size: calc(22rem / 17); font-weight: 800; color: var(--b-text); }
+.umsatz-laden .knopf.glut, .abschluss-laden .knopf.glut, .kuehl-laden .knopf.glut { min-height: 64px; }
+
+/* Müll: Kopf als rote Summenleiste „Müll heute · x €“ */
+.heutewert.muellsumme { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--b-rot-text); color: var(--b-karte); border: 0; border-radius: 14px; padding: 12px 18px; }
+.muellsumme h1 { margin: 0; font-size: calc(19rem / 17); font-weight: 800; color: var(--b-karte); }
+.muellsumme .zahl { color: var(--b-karte); white-space: nowrap; }
+.muellraster .ware .wt { min-height: 0; }
+
+/* Kühlung: Kopf, Karte „Heute gemessen x / y“ mit Knopf, Stellen mit Wert; Grenze nur bei Abweichung */
+.kopfband.kuehlkopf, .kopfband.putzkopf { padding-bottom: 14px; }
+.karte.kuehlstand { display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--b-linie); }
+.kuehlstand .ks-zeile { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: calc(17rem / 17); font-weight: 700; }
+.kuehlstand .ks-zeile b { font-size: calc(30rem / 17); font-weight: 800; }
+.kuehlstand.fertig .ks-zeile b { color: var(--b-gruen-ok); }
+.kuehlliste .zeileknopf.abw { border-color: var(--b-rot); background: var(--b-rot-hell); }
+.kuehlliste .zeileknopf small.rot { color: var(--b-rot-text); font-weight: 700; }
+.chips.rg-wer { justify-content: center; }
+
+/* Putzen: Kopf „Putzen x / y“ */
+.putzkopf h1 .zahl { font-variant-numeric: var(--zahlen); margin-inline-start: 8px; }
+
+/* Tag abschließen: drei antippbare Zeilen und ein Knopf */
+.karte.ab-liste { padding: 4px 0; }
+.ab-zeile { display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-height: 64px; border-bottom: 1px solid var(--b-linie); }
+.ab-zeile:last-child { border-bottom: 0; }
+.ab-zeile > span:first-child { flex: 1; min-width: 0; } .ab-zeile b { display: block; font-size: calc(17rem / 17); } .ab-zeile small { color: var(--b-text-leise); }
+.ab-wert { font-size: calc(20rem / 17); font-weight: 800; white-space: nowrap; margin-inline-start: auto; }
+.ab-zeile > span:first-child { flex: 1 1 auto; }
+.ab-wert .rot { color: var(--b-rot-text); } .ab-wert .gruen { color: var(--b-gruen-ok); }
+.ab-zeile.offen .ab-wert { color: var(--b-text-leise); }
+
+/* Sicherung (Büro-Blatt): Stand, zwei Schalter, ein Knopf; danach „Wo liegt sie jetzt?“ */
+.pw-letzte { font-weight: 700; color: var(--b-text); margin: 0 0 4px; } .pw-letzte.rot { color: var(--b-rot-text); }
+.pw-schalter .oben { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pw-schalter .name { font-weight: 700; }
+.blatt-sicherungort .knopf { margin-top: 10px; }
+.hilfe-mehr { margin-top: 8px; color: var(--b-text-leise); }

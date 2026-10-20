@@ -18,6 +18,9 @@ import { startView, einstellungenView, karteView } from "./screens/home.js";
 import { listenView, tagAktion, tagZuruecksetzen, tagWertUebernehmen } from "./screens/tag.js";
 import { parseTemperatur } from "./util.js"; // Trennung (17.10.2026)
 import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } from "./screens/putzplan.js";
+import { planSicherstellen } from "./putzplan.js"; // Laden-Umbau (20.10.2026): Putzplan im Laden ohne Geräte-Auswahl
+import { umsatzLadenView, umsatzLadenAktion, umsatzLadenEingabe, umsatzLadenZuruecksetzen, umsatzLadenKennung } from "./screens/umsatz_laden.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden
+import { sicherungStufe, sicherungOrtSetzen } from "./sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Wo liegt sie jetzt?“
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
@@ -26,7 +29,7 @@ import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: �
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt } from "./modus.js"; // W2-S: Sperrliste Personal
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
@@ -62,7 +65,7 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, kuehlWareZuruecksetzen]; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, umsatzLadenZuruecksetzen, kuehlWareZuruecksetzen]; // Laden-Umbau (20.10.2026): umsatzLadenZuruecksetzen; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -98,7 +101,7 @@ function sofortSpeichern(w) { personNachtragen(); return sofortSpeichernStore(w)
 // ---------- Zeichnen ----------
 
 function schirmKennung() {
-  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ansicht === "getraenke" ? getraenkeKennung() : ansicht === "kuehlware" ? kuehlWareKennung() : ansicht === "lieferanten" ? lieferantenKennung() : ""; // Lieferanten (18.10.2026); E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
+  const unter = ansicht === "karte" ? karteLadenKennung() : ansicht === "kuehl" ? kuehlKennung() : ansicht === "muell" ? muellKennung() : ansicht === "beleg" ? belegKennung() : ansicht === "abschluss" ? abschlussKennung() : ansicht === "kartefoto" ? fotoKennung() : ansicht === "inventur" ? inventurKennung() : ansicht === "verkauf" ? verkaufKennung() : ansicht === "bestand" ? bestandKennung() : ansicht === "aktionen" ? aktionenKennung() : ansicht === "getraenke" ? getraenkeKennung() : ansicht === "kuehlware" ? kuehlWareKennung() : ansicht === "lieferanten" ? lieferantenKennung() : ansicht === "umsatzheute" ? umsatzLadenKennung() : ""; // Lieferanten (18.10.2026); E7; Bestand (17.10.2026); Stufe 1 (17.10.2026)
   return stand.phase === "onboarding" ? `ob:${stand.id}:${stand.weg}:${stand.schritt}:${fotoKennung()}` : `app:${stand.id}:${ansicht}${unter ? ":" + unter : ""}`;
 }
 
@@ -132,8 +135,9 @@ function zeichne() {
         : ansicht === "muell" ? muellView(stand)
         : ansicht === "umsatz" ? umsatzView(stand)
         : ansicht === "listen" ? listenView(stand)
-        : ansicht === "kuehl" ? kuehlView(stand)
-        : ansicht === "putzplan" ? putzplanView(stand)
+        : ansicht === "kuehl" ? kuehlView(stand, { buero: modus(wurzel) === "buero" }) // Laden-Umbau (20.10.2026): Monatsblatt, Einrichtung, 7-Tage-Lücken nur im Büro
+        : ansicht === "putzplan" ? putzplanView(stand, { buero: modus(wurzel) === "buero" }) // Laden-Umbau (20.10.2026): Einrichten und Anpassen nur im Büro
+        : ansicht === "umsatzheute" ? umsatzLadenView(stand) // Laden-Umbau (20.10.2026)
         : ansicht === "laeden" ? laedenView(wurzel)
         : ansicht === "beleg" ? belegView(stand)
         : ansicht === "abschluss" ? abschlussView(stand)
@@ -321,14 +325,17 @@ function meldung(text) {
 // W2-D: Sicherung als ZIP mit allen Fotos und Belegen; die Größe steht in der Meldung.
 // E5 (16.10.2026): passwort = Text → Datei verschlüsselt (.gcs.zip); null → wie bisher. Das Passwort wird hier nur durchgereicht, nie gespeichert.
 const groesseText = (n) => n >= 1048576 ? `${(n / 1048576).toFixed(1).replace(".", ",")} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
-async function sicherungTeilen(passwort = null) {
-  let datei0; try { datei0 = await exportDatei(wurzel, { passwort }); } catch (e) { console.warn(e); meldung(t("einstellungen.importFehler")); return; }
+// Laden-Umbau (20.10.2026): mitAblage = false → „Ohne Fotos (klein, für Mail)“. Nach Teilen oder Download fragt das Blatt „Wo liegt sie jetzt?“;
+// erst die Antwort „Anderes Gerät, Mail, Cloud“ zählt als Sicherung (sicherungOrtSetzen). „Nur auf diesem Handy“ lässt die Erinnerung weiterlaufen.
+async function sicherungTeilen(passwort = null, { mitAblage = true } = {}) {
+  let datei0; try { datei0 = await exportDatei(wurzel, { passwort, mitAblage }); } catch (e) { console.warn(e); meldung(t("einstellungen.importFehler")); return; }
   const { blob, name, fingerabdruck, groesse, verschluesselt } = datei0;
   ereignisAnzahl += 1;
-  const gelungen = () => { // erst nach Teilen oder Download zählt die Sicherung
-    wurzel.letzteSicherung = new Date().toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel); wurzel.letzteSicherungGroesse = groesse;
+  const gelungen = () => { // erst nach Teilen oder Download – und dann erst nach der Antwort auf „Wo liegt sie jetzt?“
+    wurzel.letzteSicherungGroesse = groesse;
     meldung(t("einstellungen.exportOk", wurzel.betriebe.length) + ` · ${groesseText(groesse)}` + (fingerabdruck ? ` · ${fingerabdruck}` : ` · ${t("einstellungen.ohnePruefsumme")}`) + ` · ${t(verschluesselt ? "passwort.mit" : "passwort.ohneKurz")}`);
     sofortSpeichern(wurzel); zeichne();
+    if (!blattOffen()) history.pushState({ blatt: true }, ""); ortFrageZeigen();
   };
   const datei = new File([blob], name, { type: "application/zip" });
   if (navigator.canShare && navigator.canShare({ files: [datei] })) {
@@ -439,7 +446,7 @@ function mitCode(zweck, ziel, weiter) {
 }
 
 // Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
-const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
+const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "sicherung-pw-schalter", "sicherung-fotos-schalter", "sicherung-ort", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
 async function ebeneAktion(name, el) {
   if (name === "menue-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); menueZeigen(stand, wurzel); return true; }
   if (name === "menue-zurueck") { menueZeigen(stand, wurzel); return true; }
@@ -479,14 +486,22 @@ async function ebeneAktion(name, el) {
   }
   if (name === "pin-setzen") { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); return true; }
   // E5 (16.10.2026): „Sicherung“ öffnet erst das Passwort-Blatt; geteilt wird mit oder ohne Passwort
-  if (name === "export") { if (!blattOffen()) history.pushState({ blatt: true }, ""); passwortStarten("teilen"); return true; }
+  if (name === "export") { if (!blattOffen()) history.pushState({ blatt: true }, ""); passwortStarten("teilen", { tage: sicherungStufe(wurzel)?.tage ?? null }); return true; }
+  if (name === "sicherung-pw-schalter") { sicherungSchalter("passwort"); return true; } // Laden-Umbau (20.10.2026)
+  if (name === "sicherung-fotos-schalter") { sicherungSchalter("fotos"); return true; }
+  if (name === "sicherung-ort") { // Laden-Umbau (20.10.2026): nur „woanders“ setzt die Erinnerung zurück
+    const gezaehlt = sicherungOrtSetzen(wurzel, el.dataset.wert);
+    blattSchliessen(); meldung(t(gezaehlt ? "ladenSchirm.sicherung.gezaehlt" : "ladenSchirm.sicherung.nurHandyMeldung"));
+    ereignis("sicherung-ort", { ort: el.dataset.wert === "woanders" ? "woanders" : "handy" }); await sofortSpeichern(wurzel); zeichne(); return true;
+  }
   if (name === "passwort-zeigen") { passwortZeigen(); return true; }
   if (name === "sicherung-ohne") { blattSchliessen(); await sicherungTeilen(null); return true; }
+  if (name === "sicherung-teilen" && !sicherungWahl().mitPasswort) { const w = sicherungWahl(); blattSchliessen(); await sicherungTeilen(null, { mitAblage: !w.ohneFotos }); return true; } // Schalter „Mit Passwort“ aus
   if (name === "sicherung-teilen" || name === "sicherung-einlesen") {
     const p = passwortWert();
     if (!passwortGueltig(p)) { passwortMeldung(t("passwort.zuKurz")); return true; }
     passwortMeldung("", { laeuft: true }); // PBKDF2 rechnet – kein zweiter Tipp
-    if (name === "sicherung-teilen") { blattSchliessen(); await sicherungTeilen(p); return true; }
+    if (name === "sicherung-teilen") { const w = sicherungWahl(); blattSchliessen(); await sicherungTeilen(p, { mitAblage: !w.ohneFotos }); return true; }
     if (!einleseDatei) { blattSchliessen(); return true; }
     await sicherungEinlesen(einleseDatei, p); return true;
   }
@@ -574,6 +589,8 @@ async function aufKlick(ev) {
     if ((ziel === "aktionen" || ziel === "tafel") && aktionenAbschliessen(stand)) speichern(wurzel); // Aktion planen (18.10.2026): Bilanz beendeter Aktionen festhalten
     if (ziel === "tafel") { const sp = tafelEinstellung(stand).sprache; if (!spracheGeladen(sp)) ladeSprache(sp).then(() => { if (ansicht === "tafel") zeichne(); }); } // Menütafel (18.10.2026)
     if (ziel === "kuehlware") kuehlWareZuruecksetzen(); // Trennung (17.10.2026), Punkt 4
+    if (ziel === "umsatzheute") { if (ansicht !== "umsatzheute") herkunft = ansicht; umsatzLadenZuruecksetzen(); } // Laden-Umbau (20.10.2026)
+    if (ziel === "putzplan" && modus(wurzel) === "laden" && planSicherstellen(stand)) { ereignis("putzplan-vorschlag", { laden: stand.id }); speichern(wurzel); } // Laden-Umbau (20.10.2026): Vorschlag nach Laden-Art still übernehmen
     if (ziel === "karte" && ansicht !== "karte") karteLadenZuruecksetzen(); // B: Laden-Karte frisch (Filter „Alle“, Blatt zu)
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
@@ -582,7 +599,7 @@ async function aufKlick(ev) {
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
-  if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") kuehlAktion("kuehl-rundgang", el, stand, wurzel); return zeichne(); }
+  if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") { kuehlAktion(modus(wurzel) === "buero" ? "kuehl-rundgang" : "kuehl-rundgang-los", el, stand, wurzel); speichern(wurzel); } return zeichne(); } // Laden-Umbau (20.10.2026): im Laden direkt zur ersten Stelle
   if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
   if (name === "laden-loeschen") { if (wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // W2-S: mit Büro-Code
@@ -623,6 +640,13 @@ async function aufKlick(ev) {
     if (r) { speichern(wurzel); if (name === "muell-weg-damit") ereignis("schwund-eintrag", { laden: stand.id }); if (r.meldung) meldung(r.meldung); zeichne(); }
   }
   if (ansicht === "umsatz") { if (umsatzAktion(name, el)) zeichne(); }
+  if (ansicht === "umsatzheute") { // Laden-Umbau (20.10.2026): „Umsatz heute“ – Speichern, Rückfrage über 100.000 €
+    const r = umsatzLadenAktion(name, el, stand, wurzel); if (!r) return;
+    if (r === "zeichnen") { zeichne(); root.querySelector('[data-f="ul-umsatz"]')?.focus(); return; }
+    if (r.meldung) { meldung(r.meldung); return; }
+    if (r.gespeichert) { ereignis("umsatz-laden", { laden: stand.id }); meldung(t("tag.gespeichert")); await sofortSpeichern(wurzel); ansicht = herkunft === "abschluss" ? "abschluss" : startAnsicht(wurzel); return zeichne(); }
+    return;
+  }
   if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)
     const r = karteLadenAktion(name, el, stand);
     if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
@@ -732,6 +756,8 @@ root.addEventListener("input", (ev) => {
     return; // Entwurf, noch nichts zu speichern
   } else if (ansicht === "kartefoto") {
     neu = kartePruefenEingabe(el.dataset.f, el.value);
+  } else if (ansicht === "umsatzheute") { // Laden-Umbau (20.10.2026): nur merken – gespeichert wird mit „Speichern“
+    umsatzLadenEingabe(el.dataset.f, el.value); return;
   } else if (ansicht === "umsatz" || ansicht === "abschluss") {
     neu = umsatzEingabe(el.dataset.f, el.value, stand, wurzel);
   } else if (ansicht === "muell") {
@@ -865,6 +891,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "lieferanten" && lieferantenZurueck()) { /* Lieferanten (18.10.2026): Formular bzw. Zuordnung schließen */ }
     else if (ansicht === "kuehlware" && kuehlWareZurueck()) { /* Trennung (17.10.2026): offene Entscheidung schließen */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
+    else if (ansicht === "umsatzheute") { umsatzLadenZuruecksetzen(); ansicht = herkunft === "abschluss" ? "abschluss" : anfang; } // Laden-Umbau (20.10.2026)
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro
     else if (ansicht === "karte" && karteLadenZurueck()) { /* erst das Preis-Blatt schließen */ }

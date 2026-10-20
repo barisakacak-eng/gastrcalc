@@ -1432,4 +1432,8 @@ export default {
     frage1: "Jak przychodzi?", frage2: "Ile jest w środku?", kostet: { karton: "Ile kosztuje karton?", kiste: "Ile kosztuje skrzynka?", beutel: "Ile kosztuje worek?", packung: "Ile kosztuje opakowanie?", kanister: "Ile kosztuje kanister?", eimer: "Ile kosztuje wiadro?", sack: "Ile kosztuje duży worek?", flasche: "Ile kosztuje butelka?", dose: "Ile kosztuje puszka?", lose: "Ile to kosztuje?" },
     ohneMwst: "bez VAT", mitMwst: "z VAT", ergebnis: { stk: "Jedna sztuka", kg: "1 kg", l: "1 litr" }, mehr: "Więcej", mehrArten: "Inne rodzaje",
     mwstHinweis: "Hurtownia: zwykle bez VAT. Supermarket: z VAT. Aplikacja liczy bez VAT.", keineWaren: "Jeszcze brak towarów. Najpierw wybierz dania i przepisy.", raus: "Co wychodzi?", masse: "Ciasto razem", einStueck: "Jedna sztuka", tauschen: "stuknij, aby zamienić" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Utarg", stimmt: (b) => `Czy to się zgadza? ${b}`, ja: "Tak", aendern: "Zmień", rundgangStarten: "Zacznij obchód",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Ostatnia poza telefonem: dziś" : n === 1 ? "Ostatnia poza telefonem: 1 dzień temu" : `Ostatnia poza telefonem: ${n} dni temu`, nieWeg: "Jeszcze brak kopii poza telefonem", mitPasswort: "Z hasłem", ohneFotos: "Bez zdjęć (mała, do maila)",
+      verschicken: "Wyślij kopię", woFrage: "Gdzie jest teraz?", woanders: "Inne urządzenie, mail, chmura", nurHandy: "Tylko na tym telefonie", nurHandyMeldung: "Przypomnienie zostaje: plik jest tylko na tym telefonie.", gezaehlt: "Kopia zaliczona. Przypomnienie wyzerowane." } },
 };

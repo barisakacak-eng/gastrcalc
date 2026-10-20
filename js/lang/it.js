@@ -1427,4 +1427,8 @@ export default {
     frage1: "Come arriva?", frage2: "Quanto c'è dentro?", kostet: { karton: "Quanto costa il cartone?", kiste: "Quanto costa la cassa?", beutel: "Quanto costa la busta?", packung: "Quanto costa la confezione?", kanister: "Quanto costa la tanica?", eimer: "Quanto costa il secchio?", sack: "Quanto costa il sacco?", flasche: "Quanto costa la bottiglia?", dose: "Quanto costa la lattina?", lose: "Quanto costa?" },
     ohneMwst: "senza IVA", mitMwst: "con IVA", ergebnis: { stk: "Un pezzo", kg: "1 kg", l: "1 litro" }, mehr: "Altro", mehrArten: "Altri tipi",
     mwstHinweis: "Ingrosso: di solito senza IVA. Supermercato: con IVA. L'app calcola senza IVA.", keineWaren: "Ancora nessun prodotto. Prima scegli piatti e ricette.", raus: "Cosa ne esce?", masse: "Impasto totale", einStueck: "Un pezzo", tauschen: "tocca per cambiare" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Incasso", stimmt: (b) => `È giusto? ${b}`, ja: "Sì", aendern: "Cambia", rundgangStarten: "Avvia giro",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Ultimo fuori dal telefono: oggi" : n === 1 ? "Ultimo fuori dal telefono: 1 giorno fa" : `Ultimo fuori dal telefono: ${n} giorni fa`, nieWeg: "Ancora nessun backup fuori dal telefono", mitPasswort: "Con password", ohneFotos: "Senza foto (piccolo, per e-mail)",
+      verschicken: "Invia backup", woFrage: "Dove si trova ora?", woanders: "Altro dispositivo, e-mail, cloud", nurHandy: "Solo su questo telefono", nurHandyMeldung: "Il promemoria resta: il file è solo su questo telefono.", gezaehlt: "Backup contato. Promemoria azzerato." } },
 };

@@ -1414,4 +1414,8 @@ export default {
     frage1: "Nasıl geliyor?", frage2: "İçinde ne kadar var?", kostet: { karton: "Koli kaç para?", kiste: "Kasa kaç para?", beutel: "Poşet kaç para?", packung: "Paket kaç para?", kanister: "Bidon kaç para?", eimer: "Kova kaç para?", sack: "Çuval kaç para?", flasche: "Şişe kaç para?", dose: "Kutu kaç para?", lose: "Kaç para?" },
     ohneMwst: "KDV hariç", mitMwst: "KDV dahil", ergebnis: { stk: "Bir adet", kg: "1 kg", l: "1 litre" }, mehr: "Daha fazla", mehrArten: "Diğer türler",
     mwstHinweis: "Toptancı: çoğu zaman KDV hariç. Market: KDV dahil. Uygulama KDV hariç hesaplar.", keineWaren: "Henüz mal yok. Önce yemekleri ve tarifleri seç.", raus: "Ne çıkıyor?", masse: "Toplam hamur", einStueck: "Bir adet", tauschen: "değiştirmek için dokun" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Ciro", stimmt: (b) => `Doğru mu? ${b}`, ja: "Evet", aendern: "Değiştir", rundgangStarten: "Turu başlat",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Telefondan son çıkan: bugün" : n === 1 ? "Telefondan son çıkan: 1 gün önce" : `Telefondan son çıkan: ${n} gün önce`, nieWeg: "Telefondan henüz yedek çıkmadı", mitPasswort: "Şifreli", ohneFotos: "Fotoğrafsız (küçük, e-posta için)",
+      verschicken: "Yedeği gönder", woFrage: "Şimdi nerede?", woanders: "Başka cihaz, e-posta, bulut", nurHandy: "Sadece bu telefonda", nurHandyMeldung: "Hatırlatma kalır: dosya sadece bu telefonda.", gezaehlt: "Yedek sayıldı. Hatırlatma sıfırlandı." } },
 };

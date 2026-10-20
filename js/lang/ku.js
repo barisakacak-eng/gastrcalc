@@ -1425,4 +1425,8 @@ export default {
     frage1: "Çawa tê?", frage2: "Çiqas tê de heye?", kostet: { karton: "Kartûn bi çiqasî ye?", kiste: "Qutî bi çiqasî ye?", beutel: "Kîsik bi çiqasî ye?", packung: "Pakêt bi çiqasî ye?", kanister: "Bîdon bi çiqasî ye?", eimer: "Satil bi çiqasî ye?", sack: "Çewal bi çiqasî ye?", flasche: "Şûşe bi çiqasî ye?", dose: "Qutîk bi çiqasî ye?", lose: "Bi çiqasî ye?" },
     ohneMwst: "bê bac", mitMwst: "bi bac", ergebnis: { stk: "Yek parçe", kg: "1 kg", l: "1 lître" }, mehr: "Zêdetir", mehrArten: "Cureyên din",
     mwstHinweis: "Firoşgeha mezin: pir caran bê bac. Supermarket: bi bac. Sepan bê bac hesab dike.", keineWaren: "Hîn mal tune. Pêşî xwarin û reçeteyan hilbijêre.", raus: "Çi derdikeve?", masse: "Hevîr bi tevahî", einStueck: "Yek parçe", tauschen: "ji bo guhertinê bitikîne" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Firotin", stimmt: (b) => `Ev rast e? ${b}`, ja: "Erê", aendern: "Biguherîne", rundgangStarten: "Gerê dest pê bike",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Ya dawî ji telefonê derket: îro" : n === 1 ? "Ya dawî ji telefonê derket: 1 roj berê" : `Ya dawî ji telefonê derket: ${n} roj berê`, nieWeg: "Hêj tu kopî ji telefonê derneketiye", mitPasswort: "Bi şîfre", ohneFotos: "Bê wêne (biçûk, ji bo e-nameyê)",
+      verschicken: "Kopiyê bişîne", woFrage: "Niha li ku ye?", woanders: "Amûrek din, e-name, ewr", nurHandy: "Tenê li ser vê telefonê", nurHandyMeldung: "Bîranîn dimîne: pel tenê li ser vê telefonê ye.", gezaehlt: "Kopî hate hesibandin. Bîranîn ji nû ve dest pê kir." } },
 };

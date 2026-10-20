@@ -98,8 +98,7 @@ async def main():
             z1 = await zaehler(); assert z1["quelle"] == "karte" and z1["rp"] and z1["geschaetzt"], z1
             await nav_hilfe.geh(pg, "start"); await pg.wait_for_selector(".h-ziel")
             riesig = await pg.inner_text(".h-riesig"); assert riesig.startswith("≈"), riesig
-            assert await pg.locator(".h-richtwert").count() == 1, "Zeile „Richtwert · Preise eintragen ›“ fehlt"
-            assert "Richtwert" in await pg.inner_text(".h-richtwert")
+            assert await pg.locator(".h-richtwert").count() == 0, "Laden-Umbau (20.10.2026): Richtwert-Zeile wohnt im Büro, nicht im Laden"
             await bild("cockpit")
 
             # ---- Gerichte im Vergleich: Wareneinsatz mit ≈

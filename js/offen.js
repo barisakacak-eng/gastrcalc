@@ -94,6 +94,8 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   const schaetz = wareneinsatzSicherheit(stand).zaehl?.schaetzung || 0;
   if (schaetz > 0 && stand.waageVorschlag !== H) add("waage", t("heute.offen.waage", schaetz), { aktion: "waage-vorschlag" });
   if (!stand.putzplan?.aktiv && !(stand.putzplanSpaeter && stand.putzplanSpaeter > tagPlus(H, -7))) add("putzplan", t("heute.offen.putzplan"), { aktion: "nav", wert: "putzplan" });
+  // Laden-Umbau (20.10.2026): Lücken der Kühlmessung (letzte 7 Tage) stehen nicht mehr im Laden, sondern hier
+  { const ks = kuehlStatus(stand); if (ks.eingerichtet && ks.fehlt7) add("kuehlLuecken", t("kuehl.luecken7", ks.fehlt7), { aktion: "nav", wert: "kuehl" }); }
   const s = sicherungStufe(wurzel, jetzt.getTime());
   if (s?.stufe) add("sicherung", s.tage === null ? t("heute.offen.sicherungNie") : t("heute.offen.sicherung", s.tage), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });
   // W2-H (p03 H1/H2): Abweichungen der letzten 30 Tage ohne Abschluss (Ware-Entscheidung oder pünktliche Nachkontrolle fehlt; auch „verspätet“)

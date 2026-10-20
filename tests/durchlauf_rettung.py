@@ -122,6 +122,7 @@ async def main():
             await pg.fill('#ebene-huelle [data-f="passwort"]', "laden2026")
             async with pg.expect_download() as dl: await pg.click('#ebene-huelle [data-a="sicherung-teilen"]')
             datei = OUT / "rett_sicherung.gcs.zip"; await (await dl.value).save_as(str(datei)); await pg.wait_for_timeout(400)
+            await pg.wait_for_selector("#ebene-huelle .blatt-sicherungort"); await pg.click('#ebene-huelle [data-a="sicherung-ort"][data-wert="woanders"]'); await pg.wait_for_timeout(300)  # Laden-Umbau (20.10.2026)
             await nav_hilfe.zum_laden(pg); await pg.wait_for_timeout(300)
             pin_vorher = await pg.evaluate("window.__gastrocalc.wurzel.bueroPin")
             # kaputter Stand: der Bildschirm lässt sich nicht mehr zeichnen

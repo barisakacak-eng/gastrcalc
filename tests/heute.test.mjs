@@ -96,14 +96,16 @@ test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruc
   const inhalt = html.slice(0, html.indexOf("</div>\n    <header") > 0 ? html.indexOf("</div>\n    <header") : html.length);
   assert.equal((inhalt.match(/class="jetzt /g) || []).length, 1);
   for (const weg of ["ring", "spruch", "monatkarte", "einrichtung", "abzeichen"]) assert.ok(!inhalt.includes(weg), weg);
-  // Paket 3 (16.10.2026), M15/E2: „≈“ vor der großen Zahl ist erlaubt (Richtwert), die Kupferzeile „Richtwert · Preise eintragen ›“ zählt getrennt (≤ 3 Wörter)
-  const richtwert = inhalt.match(/<button type="button" class="h-richtwert"[^>]*>(.*?)<\/button>/)?.[1] || "";
-  const ohne = inhalt.replace(/<button type="button" class="h-richtwert"[^>]*>.*?<\/button>/, "");
+  // Paket 3 (16.10.2026), M15/E2: „≈“ vor der großen Zahl ist erlaubt (Richtwert). Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“
+  // steht nicht mehr im Laden (Weg im Büro: Bereich Geld „· Richtwert“ und Ware → Einkaufspreise)
   const zaehlen = (h) => h.replace(/<div class="h-zeitzeile">.*?<\/div>/s, "").replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").split(/\s+/).filter((w) => w && !/[0-9€–·%/≈›]/.test(w) && !["Saladette"].includes(w));
-  const woerter = zaehlen(ohne);
+  const woerter = zaehlen(inhalt);
   assert.ok(woerter.length <= 15, `${woerter.length} Wörter: ${woerter.join(" ")}`);
-  assert.ok(zaehlen(richtwert).length <= 3, richtwert);
-  assert.ok(inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: Richtwert-Zeile und ≈ vor der Zahl");
+  assert.ok(!inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: ≈ vor der Zahl, keine Richtwert-Zeile im Laden");
+  // eine Haupthandlung: „Jetzt dran“ ist der große Knopf, die vier Felder sind eine Reihe darunter; Umsatz führt in den Laden-Bildschirm „Umsatz heute“
+  assert.ok(inhalt.indexOf("h-haupt") < inhalt.indexOf("h-reihe"), "Jetzt dran vor der Reihe");
+  assert.equal((inhalt.match(/class="karte h-kachel h-feld/g) || []).length, 4);
+  assert.ok(inhalt.includes('data-wert="umsatzheute"'), "Umsatz-Feld → Umsatz heute (Laden)");
 });
 
 test("Preis-Blatt: preisAmpel = Ampel und DB der Kalkulation; −/+ in 10-Cent-Schritten; Speichern setzt den Bruttopreis", () => {

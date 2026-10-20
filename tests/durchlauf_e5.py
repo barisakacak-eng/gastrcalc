@@ -67,14 +67,21 @@ async def main():
                 assert zf.read("sicherung.enc")[:4] == b"GCS1"; assert "GastroCalc" in zf.read("LIESMICH.txt").decode()
             await pg.wait_for_timeout(300); meld = await pg.inner_text(".meldung"); assert "mit Passwort" in meld, meld
             assert await pg.locator("#ebene-huelle .blatt-passwort").count() == 0
+            # Laden-Umbau (20.10.2026): danach „Wo liegt sie jetzt?“ – „Nur auf diesem Handy“ zählt nicht als Sicherung
+            await pg.wait_for_selector("#ebene-huelle .blatt-sicherungort"); await pg.screenshot(path=str(OUT / "e5_wo_liegt_sie.png"), full_page=False)
+            await pg.click('#ebene-huelle [data-a="sicherung-ort"][data-wert="handy"]'); await pg.wait_for_timeout(300)
+            assert await pg.evaluate("window.__gastrocalc.wurzel.letzteSicherung") is None, "Nur auf diesem Handy darf die Erinnerung nicht zurücksetzen"
             assert "laden2026" not in await pg.evaluate("JSON.stringify(window.__gastrocalc.wurzel) + JSON.stringify(Object.entries(localStorage))")
             # ---- Ohne Passwort teilen → gewöhnliche .zip wie bisher
             await pg.click('#app [data-a="export"]'); await pg.wait_for_selector("#ebene-huelle .blatt-passwort")
-            async with pg.expect_download() as dl2: await pg.click('#ebene-huelle [data-a="sicherung-ohne"]')
+            await pg.click('#ebene-huelle [data-a="sicherung-pw-schalter"]')  # Laden-Umbau (20.10.2026): Passwort vorgewählt, Schalter aus = ohne Passwort
+            async with pg.expect_download() as dl2: await pg.click('#ebene-huelle [data-a="sicherung-teilen"]')
             d2 = await dl2.value; offen = OUT / "e5_export.zip"; await d2.save_as(str(offen))
             assert d2.suggested_filename.endswith(".zip") and not d2.suggested_filename.endswith(".gcs.zip")
             with zipfile.ZipFile(offen) as zf: assert "gastrocalc-sicherung.json" in zf.namelist()
             await pg.wait_for_timeout(300); meld = await pg.inner_text(".meldung"); assert "ohne Passwort" in meld, meld
+            await pg.wait_for_selector("#ebene-huelle .blatt-sicherungort"); await pg.click('#ebene-huelle [data-a="sicherung-ort"][data-wert="woanders"]'); await pg.wait_for_timeout(300)
+            assert await pg.evaluate("!!window.__gastrocalc.wurzel.letzteSicherung"), "Anderes Gerät zählt als Sicherung"
             # ---- Einlesen der verschlüsselten Datei: Passwort-Blatt, falsch → bleibt offen, richtig → Import-Rückfrage
             pg.on("dialog", lambda dd: (dialoge.append(dd.message), asyncio.ensure_future(dd.dismiss())))
             await nav_hilfe.geh(pg, "einstellungen")

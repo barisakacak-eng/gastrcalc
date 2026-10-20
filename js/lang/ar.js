@@ -1428,4 +1428,8 @@ export default {
     frage1: "كيف يصل؟", frage2: "كم في داخله؟", kostet: { karton: "كم سعر الكرتونة؟", kiste: "كم سعر الصندوق؟", beutel: "كم سعر الكيس؟", packung: "كم سعر العبوة؟", kanister: "كم سعر الجالون؟", eimer: "كم سعر السطل؟", sack: "كم سعر الشوال؟", flasche: "كم سعر القنينة؟", dose: "كم سعر العلبة؟", lose: "كم السعر؟" },
     ohneMwst: "بدون ضريبة", mitMwst: "مع الضريبة", ergebnis: { stk: "قطعة واحدة", kg: "1 كغ", l: "1 لتر" }, mehr: "المزيد", mehrArten: "أنواع أخرى",
     mwstHinweis: "الجملة: غالباً بدون ضريبة. السوبرماركت: مع الضريبة. التطبيق يحسب بدون ضريبة.", keineWaren: "لا توجد أصناف بعد. اختر الأطباق والوصفات أولاً.", raus: "ماذا يخرج؟", masse: "العجين كله", einStueck: "قطعة واحدة", tauschen: "اضغط للتبديل" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "المبيعات", stimmt: (b) => `هل هذا صحيح؟ ${b}`, ja: "نعم", aendern: "تغيير", rundgangStarten: "ابدأ الجولة",
+    sicherung: { letzteWeg: (n) => n === 0 ? "آخر نسخة خارج الهاتف: اليوم" : n === 1 ? "آخر نسخة خارج الهاتف: قبل يوم" : `آخر نسخة خارج الهاتف: قبل ${n} يوم`, nieWeg: "لا توجد نسخة خارج الهاتف بعد", mitPasswort: "بكلمة مرور", ohneFotos: "بدون صور (صغيرة، للبريد)",
+      verschicken: "إرسال النسخة", woFrage: "أين هي الآن؟", woanders: "جهاز آخر، بريد، سحابة", nurHandy: "على هذا الهاتف فقط", nurHandyMeldung: "يبقى التذكير: الملف على هذا الهاتف فقط.", gezaehlt: "تم احتساب النسخة. أُعيد ضبط التذكير." } },
 };

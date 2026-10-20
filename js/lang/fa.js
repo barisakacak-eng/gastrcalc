@@ -1425,4 +1425,8 @@ export default {
     frage1: "چطور می‌آید؟", frage2: "داخلش چقدر است؟", kostet: { karton: "قیمت کارتن چند است؟", kiste: "قیمت جعبه چند است؟", beutel: "قیمت کیسه چند است؟", packung: "قیمت بسته چند است؟", kanister: "قیمت گالن چند است؟", eimer: "قیمت سطل چند است؟", sack: "قیمت گونی چند است؟", flasche: "قیمت بطری چند است؟", dose: "قیمت قوطی چند است؟", lose: "قیمت چند است؟" },
     ohneMwst: "بدون مالیات", mitMwst: "با مالیات", ergebnis: { stk: "یک عدد", kg: "۱ کیلو", l: "۱ لیتر" }, mehr: "بیشتر", mehrArten: "انواع دیگر",
     mwstHinweis: "عمده‌فروشی: معمولاً بدون مالیات. سوپرمارکت: با مالیات. برنامه بدون مالیات حساب می‌کند.", keineWaren: "هنوز کالایی نیست. اول غذاها و دستورها را انتخاب کن.", raus: "چه درمی‌آید؟", masse: "کل خمیر", einStueck: "یک عدد", tauschen: "برای عوض کردن بزن" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "فروش", stimmt: (b) => `درست است؟ ${b}`, ja: "بله", aendern: "تغییر", rundgangStarten: "شروع دور",
+    sicherung: { letzteWeg: (n) => n === 0 ? "آخرین نسخه بیرون از گوشی: امروز" : n === 1 ? "آخرین نسخه بیرون از گوشی: ۱ روز پیش" : `آخرین نسخه بیرون از گوشی: ${n} روز پیش`, nieWeg: "هنوز نسخه‌ای بیرون از گوشی نیست", mitPasswort: "با رمز", ohneFotos: "بدون عکس (کوچک، برای ایمیل)",
+      verschicken: "فرستادن پشتیبان", woFrage: "الان کجاست؟", woanders: "دستگاه دیگر، ایمیل، فضای ابری", nurHandy: "فقط روی این گوشی", nurHandyMeldung: "یادآوری می‌ماند: فایل فقط روی این گوشی است.", gezaehlt: "پشتیبان ثبت شد. یادآوری از نو شروع شد." } },
 };

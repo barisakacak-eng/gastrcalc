@@ -119,7 +119,7 @@ async def main():
             p_cd = next(x for x in (await stand())["personen"] if x["id"] == "bsp-p-cd"); assert p_cd["entfernt"] is True and p_cd["ausgeschieden"] == "2026-10-19", p_cd
             t = await text(); assert "Ausgeschieden: CD (ausgeschieden am 19.10.2026)" in t and "Alte Einträge und Nachweise mit dem Kürzel bleiben" in t, t[:1500]
             await pg.locator('#app [data-ausgeschieden]').first.scroll_into_view_if_needed(); await bild("ausgeschieden", voll=False)
-            await tipp('#app [data-a="kuehl-einrichtung-fertig"]'); await nav_hilfe.geh(pg, "kuehl"); await tipp('#app [data-a="kuehl-rundgang"]')
+            await tipp('#app [data-a="kuehl-einrichtung-fertig"]'); await tipp('#app [data-a="kuehl-rundgang"]')  # Laden-Umbau (20.10.2026): Personenwahl mit Datum im Büro
             wahl = [x.strip() for x in await pg.locator('#app [data-a="start-von"]').all_inner_texts()]
             assert "AB" in wahl and "CD" not in wahl, wahl
             await bild("rundgang_ohne_cd", voll=False)

@@ -93,6 +93,7 @@ export function bueroView(stand, wurzel, extra = {}) {
       ${bereich("laden", "store", t("buero.abschnitt.einrichten"), `${t("buero.einrichten.einrichtung")} ${e.prozent} %`, false, `
         ${zeile(e.naechster ? e.naechster.ziel : { aktion: "nav", wert: "buero" }, "store", t("buero.einrichten.einrichtung"), "", `<span class="b-wert zahl">${e.prozent} %</span>`)}
         ${zeile({ aktion: "kuehl-einrichtung-oeffnen" }, "snowflake", t("buero.einrichten.kuehl"), "")}
+        ${zeile({ aktion: "nav", wert: "kuehl" }, "clipboard-list", t("kuehl.blatt"), t("kuehl.blattKurz"))}
         ${zeile({ aktion: "nav", wert: "putzplan" }, "spray-can", t("buero.einrichten.putzplan"), "")}
         ${zeile({ aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" }, "calculator", t("buero.karte.kosten"), "")}
         ${zeile({ aktion: "nav", wert: "laeden" }, "store", t("buero.einrichten.laeden"), "")}

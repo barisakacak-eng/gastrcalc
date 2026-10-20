@@ -1,6 +1,6 @@
 // Etappe 5: „Tag abschließen" – drei Haken (Umsatz, Müll, Kühlung), dann die Bilanz des Tages. Das Abendritual.
 import { t } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl, heute as kalendertag, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); Kühlung bleibt am Kalendertag
+import { esc, fmtEuro, fmtZahl, heute as kalendertag, heuteGeschaeft as heute } from "../util.js"; // Paket 3 (16.10.2026), M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); Kühlung bleibt am Kalendertag
 import { tagAbschliessen } from "../zaehler.js";
 import { abschlussHaken, tagesBilanz } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026)
 import { nav } from "./nav.js";
@@ -11,24 +11,23 @@ let bilanz = null; // nach dem Abschluss: die Bilanz-Ansicht (flüchtig)
 export const abschlussKennung = () => (bilanz ? "bilanz" : "haken");
 export function abschlussZuruecksetzen() { bilanz = null; }
 
+// Laden-Umbau (20.10.2026): drei Zeilen (Umsatz aus der Kasse mit Betrag, Müll ✓/–, Kühlung x / y – rot, wenn offen) und ein Knopf.
+// Jede Zeile ist antippbar (Umsatz → „Umsatz heute“, Müll → Müll, Kühlung → Rundgang). Was passiert, wenn etwas fehlt, steht hinter „?“.
 export function abschlussView(stand) {
   const H = heute();
   if (bilanz) return bilanzView(stand, H);
   const hk = abschlussHaken(stand, H); const u = hk.umsatz; const ab = hk.schon; // Trennung 2 (17.10.2026): Haken aus js/laden_zahlen.js
-  const sw = { anzahl: hk.muell.anzahl, muellwert: hk.muell.wert, ohneWert: hk.muell.ohneWert }; const ks = { eingerichtet: hk.kuehl.eingerichtet, heuteGemessen: hk.kuehl.gemessen, stellen: hk.kuehl.stellen };
-  const hak = (ok, n) => `<span class="hak ${ok ? "" : "offen"}">${ok ? "✓" : n}</span>`;
+  const k = hk.kuehl; const kuehlOffen = k.eingerichtet && !k.fertig;
+  const zeile = (attr, titel, unter, wert, cls = "") => `<button type="button" class="zeileknopf ab-zeile ${cls}" ${attr}><span><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span><span class="ab-wert zahl">${wert}</span><span class="pfeil">›</span></button>`;
   return `
-    <div class="kopfband"><h1>${esc(t("abschluss.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
-    <div class="inhalt">
+    <div class="kopfband"><h1>${esc(t("abschluss.titel"))}</h1></div>
+    <div class="inhalt abschluss-laden">
       ${ab ? `<div class="tipp">${esc(t("abschluss.schon", zeitKurz(ab.erfasst)))}</div>` : ""}
-      <div class="karte">
-        <div class="hakzeile">${hak(!!u, 1)}<div><b>${esc(t("abschluss.umsatz"))}</b><small class="marke">${esc(t("abschluss.umsatzKurz"))} · ${esc(t("zaehler.umsatzBasis.brutto"))}</small></div></div>
-        <div class="zahlfeld klein"><input inputmode="decimal" data-f="umsatz" value="${esc(wertAnzeige(u?.umsatz ?? null))}" placeholder="0,00" aria-label="${esc(t("tag.umsatz"))}"><span class="einheit">€</span></div>
-        ${u ? "" : `<small class="marke">${esc(t("abschluss.ohneUmsatz"))}</small>`}
+      <div class="karte ab-liste">
+        ${zeile('data-a="nav" data-wert="umsatzheute"', t("heute.kachel.umsatz"), t("abschluss.umsatzKurz"), u ? esc(fmtEuro(u.umsatz, { dezimal: 2 })) : "–", u ? "" : "offen")}
+        ${zeile('data-a="nav" data-wert="muell"', t("ebene.tabs.muell"), "", hk.muell.anzahl > 0 ? `<span class="gruen">✓</span>` : "–")}
+        ${zeile(`data-a="${k.eingerichtet ? "kuehl-rundgang-start" : "kuehl-einrichtung-oeffnen"}" data-offen="0"`, t("ebene.tabs.kuehl"), "", k.eingerichtet ? `<span class="${kuehlOffen ? "rot" : "gruen"}">\u2066${k.gemessen} / ${k.stellen}\u2069</span>` : "–", kuehlOffen ? "warn" : "")}
       </div>
-      <button type="button" class="zeileknopf" data-a="nav" data-wert="muell"><span class="hakzeile">${hak(sw.anzahl > 0, 2)}<span><b>${esc(t("abschluss.muell"))}: ${sw.anzahl ? fmtEuro(sw.muellwert, { dezimal: 2 }) : esc(t("abschluss.muellLeer"))}</b><small>${sw.ohneWert ? esc(t("listen.ohneWert", sw.ohneWert)) : ""}</small></span></span><span class="pfeil">›</span></button>
-      <button type="button" class="zeileknopf ${ks.eingerichtet && ks.heuteGemessen < ks.stellen ? "warn" : ""}" data-a="${ks.eingerichtet ? "kuehl-rundgang-start" : "kuehl-einrichtung-oeffnen"}" data-offen="0"><span class="hakzeile">${hak(ks.eingerichtet && ks.heuteGemessen >= ks.stellen, 3)}<span><b>${esc(ks.eingerichtet ? (ks.heuteGemessen >= ks.stellen ? t("abschluss.kuehlOk") : t("abschluss.kuehlFehlt", ks.heuteGemessen, ks.stellen)) : t("abschluss.kuehlNicht"))}</b></span></span><span class="pfeil">›</span></button>
-      <p class="hinweis">${esc(t("abschluss.hinweis"))}</p>
       <button type="button" class="knopf glut" data-a="abschluss-fertig">${esc(t("abschluss.knopf"))}</button>
     </div>
     ${nav("start")}`;

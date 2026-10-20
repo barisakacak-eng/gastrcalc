@@ -93,3 +93,13 @@ export function planUebernehmen(stand, entwurf, datum = heute(), jetzt = new Dat
   }
   stand.putzplan = neu; return neu;
 }
+
+// Laden-Umbau (20.10.2026): Im Laden gibt es keine Geräte-Auswahl mehr. Ohne aktiven Plan wird still der Vorschlag nach Laden-Art
+// (GERAETE_JE_ART, dazu die Kühlstellen) übernommen – wie „Plan übernehmen“ in der Einrichtung. Ändern geht im Büro (Einrichtung).
+// Rückgabe: true = Plan neu angelegt (speichern), false = es gab schon einen.
+export function planSicherstellen(stand, datum = heute()) {
+  if (planVon(stand)?.aktiv) return false;
+  const alt = planVon(stand);
+  planUebernehmen(stand, alt && Array.isArray(alt.geraete) && alt.geraete.length ? { ...alt, aus: [...(alt.aus || [])] } : planVorschlag(stand), datum);
+  return true;
+}

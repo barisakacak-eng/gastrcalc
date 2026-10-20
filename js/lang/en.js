@@ -1413,4 +1413,8 @@ export default {
     frage1: "How does it come?", frage2: "How much is inside?", kostet: { karton: "What does the box cost?", kiste: "What does the crate cost?", beutel: "What does the bag cost?", packung: "What does the pack cost?", kanister: "What does the canister cost?", eimer: "What does the bucket cost?", sack: "What does the sack cost?", flasche: "What does the bottle cost?", dose: "What does the can cost?", lose: "What does it cost?" },
     ohneMwst: "without VAT", mitMwst: "with VAT", ergebnis: { stk: "One piece", kg: "1 kg", l: "1 litre" }, mehr: "More", mehrArten: "More types",
     mwstHinweis: "Wholesale: usually without VAT. Supermarket: with VAT. The app calculates without VAT.", keineWaren: "No items yet. First choose dishes and recipes.", raus: "What comes out?", masse: "Total dough", einStueck: "One piece", tauschen: "tap to swap" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Sales", stimmt: (b) => `Is that right? ${b}`, ja: "Yes", aendern: "Change", rundgangStarten: "Start round",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Last one off the phone: today" : n === 1 ? "Last one off the phone: 1 day ago" : `Last one off the phone: ${n} days ago`, nieWeg: "No backup off the phone yet", mitPasswort: "With password", ohneFotos: "Without photos (small, for email)",
+      verschicken: "Send backup", woFrage: "Where is it now?", woanders: "Other device, email, cloud", nurHandy: "Only on this phone", nurHandyMeldung: "The reminder stays: the file is only on this phone.", gezaehlt: "Backup counted. Reminder reset." } },
 };

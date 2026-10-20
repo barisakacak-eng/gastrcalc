@@ -19,6 +19,7 @@ import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
 import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
+import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
 
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank";
@@ -51,7 +52,11 @@ const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : 
 
 // ---------- Hauptansicht ----------
 const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit.chefRichtetEin"))}</p>`; // W2-S: statt Einrichtung im Personal-Modus
-export function kuehlView(stand) {
+// Laden-Umbau (20.10.2026): im Laden nur Kopf „Kühlung“, Karte „Heute gemessen x / y“ mit „Rundgang starten“ und die Stellen mit ihrem Wert.
+// Die Grenze einer Stelle steht nur, wenn ihr letzter Wert außerhalb lag (sonst nach dem Antippen im Messfeld). Dauerhinweise (Lücken der
+// letzten 7 Tage, „Eine Stelle antippen …“, Verantwortung) stehen im Büro bzw. hinter „?“. Im Büro (buero: true) bleiben Monatsblatt,
+// Einrichtung und der 7-Tage-Hinweis auf dieser Seite.
+export function kuehlView(stand, { buero = false } = {}) {
   const pers = personalAktiv(); // W2-S (p02 K2): Einrichtung, Grenzen, Verwerfen und Vortage gibt es im Personal-Modus nicht
   if (pers && ansicht === "einrichtung") ansicht = "start";
   if (ansicht === "einrichtung") return einrichtungView(stand);
@@ -60,37 +65,29 @@ export function kuehlView(stand) {
   const st = kuehlStatus(stand);
   const offen = rundgangOffen(stand);
   const nk = offeneNachkontrollen(stand);
-  const H = heute();
+  const fertig = st.eingerichtet && st.heuteGemessen >= st.stellen && !offen;
   return `
-    <div class="kopfband"><h1>${esc(t("kuehl.titel"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(datumLesbar(H))}</div></div>
-    <div class="inhalt">
+    <div class="kopfband kuehlkopf"><h1>${esc(t("ebene.tabs.kuehl"))}</h1></div>
+    <div class="inhalt kuehl-laden">
       ${!st.eingerichtet ? `
       <div class="karte">
         <h2>${esc(t("kuehl.einrichtenTitel"))}</h2>
-        ${pers ? chefHinweis() : `<p class="hinweis">${esc(t("kuehl.einrichtenText"))}</p>
-        <button type="button" class="knopf glut" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichten"))}</button>`}
+        ${pers ? chefHinweis() : `<button type="button" class="knopf glut" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichten"))}</button>`}
       </div>` : `
       ${!st.bereit ? `<div class="karte hinweisgelb"><div>${esc(t("kuehl.grenzenFehlen"))}</div>${pers ? chefHinweis() : `<button type="button" class="knopf zweit" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}</div>` : ""}
-      <div class="karte">
-        <h2>${esc(t("kuehl.heute"))}</h2>
-        <div class="gross">${st.heuteGemessen} / ${st.stellen}</div>
-        <div class="hinweis">${esc(t(st.heuteGemessen >= st.stellen ? "kuehl.heuteFertig" : st.heuteGemessen ? "kuehl.heuteTeils" : "kuehl.heuteOffen"))}</div>
-        ${st.bereit ? `<button type="button" class="knopf ${st.heuteGemessen >= st.stellen && !offen ? "zweit" : "glut"}" data-a="kuehl-rundgang">${esc(t(offen ? "kuehl.weiterRundgang" : "kuehl.starten"))}</button>` : ""}
-        ${st.fehlt7 ? `<span class="marke offen">${esc(t("kuehl.luecken7", st.fehlt7))}</span>` : ""}
+      <div class="karte kuehlstand ${fertig ? "fertig" : ""}">
+        <div class="ks-zeile"><span>${esc(t("kuehl.heute"))}</span><b class="zahl">\u2066${st.heuteGemessen} / ${st.stellen}\u2069</b></div>
+        ${st.bereit ? `<button type="button" class="knopf ${fertig ? "zweit" : "glut"}" data-a="${buero ? "kuehl-rundgang" : "kuehl-rundgang-los"}">${esc(t(offen ? "kuehl.weiterRundgang" : "ladenSchirm.rundgangStarten"))}</button>` : ""}
+        ${buero && st.fehlt7 ? `<span class="marke offen">${esc(t("kuehl.luecken7", st.fehlt7))}</span>` : ""}
       </div>
       ${nk.length ? `<div class="karte hinweisgelb"><h2>${esc(t("kuehl.nachkontrollenTitel"))}</h2>
-        ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">${fmtZahl(x.messung.wert, 1)} °C · ${esc(zeitOderStrich(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitOderStrich(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}
-        <span class="marke">${esc(t("kuehl.nachkontrolleHinweis"))}</span></div>` : ""}
-      <div class="karte">
-        <h2>${esc(t("kuehl.stellen"))}</h2>
-        <p class="hinweis">${esc(t("kuehl.stellenTippen"))}</p>
-        <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
-          <button type="button" class="zeileknopf" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"}>${stelleBild(k)}<span><b>${esc(kn(k))}</b><small>${esc(artName(k.art))} · ${esc(grenzen(k))}</small></span>
-            <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : "–"}<small class="marke">${m ? esc(datumLesbar(m.datum)) + " " + esc(zeitOderStrich(m.zeit)) : ""}</small></span></button>`; }).join("")}</div>
-        <button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
-        ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
-      </div>
-      ${einklappen("kuehl-haftung", t("kuehl.haftungTitel"), `<p class="hinweis">${esc(t("kuehl.haftung"))}</p>`)}`}
+        ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">\u2066${fmtZahl(x.messung.wert, 1)}\u00a0°C\u2069 · ${esc(zeitOderStrich(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitOderStrich(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}</div>` : ""}
+      <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
+        <button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.abweichung ? `<small class="rot">${esc(grenzen(k))}</small>` : ""}</span>
+          <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : "–"}</span></button>`; }).join("")}</div>
+      ${buero ? `<button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
+      ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
+      ${einklappen("kuehl-haftung", t("kuehl.haftungTitel"), `<p class="hinweis">${esc(t("kuehl.haftung"))}</p>`)}` : ""}`}
     </div>
     ${nav("kuehl")}`;
 }
@@ -158,6 +155,7 @@ function rundgangView(stand) {
   return `
     <div class="kopfband"><h1>${esc(t("kuehl.rundgang"))}</h1><div class="unter">${esc(datumLesbar(r.datum))}${r.von ? ` · ${esc(kuerzelVon(stand, r.von))}` : ""}${r.nacherfasst ? ` · ${esc(t("kuehl.nacherfasst"))}` : ""}</div></div>
     <div class="inhalt">
+      ${personenWahl(stand, r)}
       ${k ? stationView(stand, r, k) : `
       <div class="liste">${stellen.map((x) => { const m = r.messungen.find((y) => y.stelle === x.id); const letzte = letzteMessung(stand, x.id); return `
         <button type="button" class="wahl ${m ? "an" : ""} ${m?.abweichung ? "warnung" : ""}" data-a="station" data-id="${esc(x.id)}">
@@ -171,6 +169,13 @@ function rundgangView(stand) {
       ${personalAktiv() ? "" : `<button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}`}
     </div>
     ${nav("kuehl", { schnell: false })}`;
+}
+
+// Laden-Umbau (20.10.2026): wer misst, ist vorbelegt; bei mehreren Personen hier mit einem Tipp änderbar (Kürzel, keine Wörter)
+function personenWahl(stand, r) {
+  const ps = stand.personen.filter((p) => !p.entfernt && p.aktiv !== false);
+  if (ps.length < 2 || r.messungen.length || personalAktiv()) return ""; // Personal: die Schicht-Person misst
+  return `<div class="chips rg-wer">${ps.map((p) => `<button type="button" class="chip klein ${r.von === p.id ? "an" : ""}" data-a="rg-von" data-id="${esc(p.id)}" aria-pressed="${r.von === p.id}">${esc(p.kuerzel)}</button>`).join("")}</div>`;
 }
 
 function rundgangStartView(stand) {
@@ -268,6 +273,15 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "kuehl-einrichtung-fertig") { kuehlEingerichtetSetzen(stand); ansicht = "start"; return true; }
   if (name === "kuehl-start") { ansicht = "start"; station = null; form = null; return true; }
   if (name === "kuehl-rundgang") { if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = null; return true; } // W2-S: Personal ohne Einrichtung
+  // Laden-Umbau (20.10.2026): „Rundgang starten“ im Laden – Name des Messenden vorbelegt (letzter bzw. erste Person), heute, sofort die erste
+  // Stelle ohne Wert. Läuft schon ein Rundgang, geht es an seiner ersten offenen Stelle weiter. Wer misst, lässt sich oben im Rundgang mit einem Tipp ändern (personenWahl).
+  if (name === "kuehl-rundgang-los") {
+    if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; }
+    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von: kuehlWerVorschlag(stand), datum: heute() });
+    ansicht = "rundgang"; startVon = null; startNach = null; startStelle = null;
+    station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null;
+    return true;
+  }
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
@@ -295,6 +309,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     return true;
   }
   if (!r) return false;
+  if (name === "rg-von") return rundgangVonSetzen(stand, r, el.dataset.id || null);
   if (name === "station") { station = el.dataset.id; const m = r.messungen.find((x) => x.stelle === station); form = leeresForm(); form.k = aktiveStellen(stand).find((x) => x.id === station); if (m) { form.wert = m.wert; form.wertText = wertAnzeige(m.wert); form.grund = m.grund; form.massnahmen = [...m.massnahmen]; form.notiz = m.notiz; form.nachkontrolle = m.nachkontrolle || "h2"; form.weg = (m.weg || []).map((w) => ({ ...w })); } return true; }
   if (name === "station-zu") { station = null; form = null; return true; }
   if (name === "rundgang-verwerfen") { if (!confirm(t("kuehl.verwerfenFrage"))) return false; rundgangVerwerfen(stand, r.id); station = null; form = null; ansicht = "start"; return true; }

@@ -1431,4 +1431,8 @@ export default {
     frage1: "Si vjen?", frage2: "Sa ka brenda?", kostet: { karton: "Sa kushton kutia?", kiste: "Sa kushton arka?", beutel: "Sa kushton qesja?", packung: "Sa kushton paketa?", kanister: "Sa kushton bidoni?", eimer: "Sa kushton kova?", sack: "Sa kushton thesi?", flasche: "Sa kushton shishja?", dose: "Sa kushton kanaçja?", lose: "Sa kushton?" },
     ohneMwst: "pa TVSH", mitMwst: "me TVSH", ergebnis: { stk: "Një copë", kg: "1 kg", l: "1 litër" }, mehr: "Më shumë", mehrArten: "Lloje të tjera",
     mwstHinweis: "Shumicë: zakonisht pa TVSH. Supermarket: me TVSH. Aplikacioni llogarit pa TVSH.", keineWaren: "Ende s'ka mallra. Zgjidh fillimisht gatimet dhe recetat.", raus: "Çfarë del?", masse: "Brumi gjithsej", einStueck: "Një copë", tauschen: "prek për ta ndërruar" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Xhiro", stimmt: (b) => `A është e saktë? ${b}`, ja: "Po", aendern: "Ndrysho", rundgangStarten: "Nis raundin",
+    sicherung: { letzteWeg: (n) => n === 0 ? "E fundit jashtë telefonit: sot" : n === 1 ? "E fundit jashtë telefonit: 1 ditë më parë" : `E fundit jashtë telefonit: ${n} ditë më parë`, nieWeg: "Ende asnjë kopje jashtë telefonit", mitPasswort: "Me fjalëkalim", ohneFotos: "Pa foto (e vogël, për email)",
+      verschicken: "Dërgo kopjen", woFrage: "Ku është tani?", woanders: "Pajisje tjetër, email, cloud", nurHandy: "Vetëm në këtë telefon", nurHandyMeldung: "Kujtesa mbetet: skedari është vetëm në këtë telefon.", gezaehlt: "Kopja u numërua. Kujtesa u rivendos." } },
 };

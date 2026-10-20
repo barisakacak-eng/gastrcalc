@@ -13,7 +13,7 @@ import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
 import { PASSWORT_MIN } from "../schluessel.js"; // E5 (16.10.2026): Passwort der Sicherung
 
 let huelle = null;
-let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort" | "rettung" | "rettungscode"
+let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort" | "rettung" | "rettungscode" | "sicherungort" (Laden-Umbau 20.10.2026)
 let pin = null;       // { zweck: "buero" | "personal" | "setzen" | "loeschen" | "ladenLoeschen", ziel, eingabe, erste, meldung, fehler, wurzel }
 let uhr = null;       // Restzeit der Wartezeit sekündlich nachführen (W2-S)
 let rett = null;      // Rettung (17.10.2026): { ziel } – wohin es nach dem Rettungscode geht. Der Code selbst steht nur im Blatt, nie hier
@@ -32,7 +32,7 @@ export const pinOffen = () => offen === "pin";
 
 function zeigen(art, html) {
   const h = ebeneHuelle(); const neu = offen !== art && !offen;
-  h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "rettung" || art === "rettungscode" ? t("rettung.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
+  h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "sicherungort" ? t("ladenSchirm.sicherung.woFrage") : art === "rettung" || art === "rettungscode" ? t("rettung.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
   h.classList.add("da"); document.body.classList.add("blatt-da"); offen = art;
   h.querySelector(".ebene-blatt button")?.focus({ preventScroll: true });
 }
@@ -72,11 +72,19 @@ export function laedenZeigen(wurzel) {
 }
 
 // ---------- Hilfe „?" ----------
+// Laden-Umbau (20.10.2026): was im Laden nicht mehr dauernd steht, steht hier hinter „?“ (vorhandene Texte, nichts gelöscht)
+const HILFE_MEHR = {
+  muell: ["muell1.anleitung"],
+  kuehl: ["kuehl.stellenTippen", "kuehl.einrichtenText", "kuehl.haftung"],
+  putzplan: ["putzplan.erklaerung", "putzplan.quellenHinweis"],
+  abschluss: ["abschluss.ohneUmsatz", "abschluss.hinweis"],
+};
 const HILFE = ["start", "muell", "kuehl", "putzplan", "karte", "abschluss", "laeden", "personal", "buero"];
 export function hilfeZeigen(ansicht) {
   const k = HILFE.includes(ansicht) ? ansicht : "allgemein";
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
-  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="ks">${sym("circle-help")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p></div>
+  const mehr = (HILFE_MEHR[k] || []).map((key) => `<p class="hilfe-mehr">${esc(t(key))}</p>`).join("");
+  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="ks">${sym("circle-help")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}</div>
     <button type="button" class="knopf" data-a="blatt-zu">OK</button>`);
 }
 
@@ -179,21 +187,46 @@ export function rettungscodeZeigen(code, ziel = null) {
 // zweck "teilen": Blatt vor dem Teilen (Hauptknopf „Sicherung teilen“, leiser Knopf „Ohne Passwort teilen“).
 // zweck "einlesen": Datei ist verschlüsselt, Passwort abfragen (Knopf „Einlesen“). Das Passwort wird nie gespeichert – es steht nur im Feld.
 export const passwortOffen = () => offen === "passwort";
-export function passwortStarten(zweck) {
-  pw = { zweck, sichtbar: false };
+// Laden-Umbau (20.10.2026), zweck "teilen": Kopf „Sicherung“, „Letzte vom Handy weg: vor n Tagen“, Schalter „Mit Passwort“ (vorgewählt –
+// wer ihn ausschaltet, teilt ohne Passwort), Schalter „Ohne Fotos (klein, für Mail)“, ein Knopf „Sicherung verschicken“.
+// extra.tage: Tage seit der letzten Sicherung, die vom Handy weg ist (null = noch nie).
+export function passwortStarten(zweck, extra = {}) {
+  pw = { zweck, sichtbar: false, mitPasswort: true, ohneFotos: false };
   const einlesen = zweck === "einlesen";
+  const schalter = (a, an, text) => `<div class="zeile pw-schalter"><div class="oben"><div class="name">${esc(text)}</div><button type="button" class="schalter ${an ? "an" : ""}" data-a="${a}" aria-pressed="${an}" aria-label="${esc(text)}"></button></div></div>`;
+  const feld = `<div class="pw-feld"><input class="textfeld" type="password" inputmode="text" minlength="${PASSWORT_MIN}" autocomplete="${einlesen ? "current-password" : "new-password"}" data-f="passwort" placeholder="${esc(t("passwort.feld"))}" aria-label="${esc(t("passwort.feld"))}">
+        <button type="button" class="ikonknopf pw-auge" data-a="passwort-zeigen" aria-label="${esc(t("passwort.zeigen"))}" aria-pressed="false">${sym("eye")}</button></div>`;
   zeigen("passwort", `<div class="blattkopf nur"><span class="ks pw-ks">${sym("key-round")}</span><b>${esc(t(einlesen ? "passwort.titelEinlesen" : "passwort.titel"))}</b>
       <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
     <form class="pw-form" autocomplete="off">
-      <div class="pw-feld"><input class="textfeld" type="password" inputmode="text" minlength="${PASSWORT_MIN}" autocomplete="${einlesen ? "current-password" : "new-password"}" data-f="passwort" placeholder="${esc(t("passwort.feld"))}" aria-label="${esc(t("passwort.feld"))}">
-        <button type="button" class="ikonknopf pw-auge" data-a="passwort-zeigen" aria-label="${esc(t("passwort.zeigen"))}" aria-pressed="false">${sym("eye")}</button></div>
+      ${einlesen ? feld : `<p class="pw-letzte ${extra.tage === null || extra.tage >= 7 ? "rot" : ""}">${esc(extra.tage === null || extra.tage === undefined ? t("ladenSchirm.sicherung.nieWeg") : t("ladenSchirm.sicherung.letzteWeg", extra.tage))}</p>
+      ${schalter("sicherung-pw-schalter", true, t("ladenSchirm.sicherung.mitPasswort"))}
+      <div class="pw-mit">${feld}</div>`}
       <small class="pin-meldung" role="status" aria-live="polite"></small>
-      ${einlesen ? "" : `<p class="hinweis pw-hinweis">${esc(t("passwort.hinweis"))}</p>`}
-      <button type="submit" class="knopf" data-a="${einlesen ? "sicherung-einlesen" : "sicherung-teilen"}">${esc(t(einlesen ? "passwort.einlesen" : "passwort.teilen"))}</button>
-      ${einlesen ? "" : `<button type="button" class="leise" data-a="sicherung-ohne">${esc(t("passwort.ohne"))}</button>`}
+      ${einlesen ? "" : `<p class="hinweis pw-hinweis">${esc(t("passwort.hinweis"))}</p>
+      ${schalter("sicherung-fotos-schalter", false, t("ladenSchirm.sicherung.ohneFotos"))}`}
+      <button type="submit" class="knopf" data-a="${einlesen ? "sicherung-einlesen" : "sicherung-teilen"}">${esc(t(einlesen ? "passwort.einlesen" : "ladenSchirm.sicherung.verschicken"))}</button>
     </form>`);
   const f = huelle.querySelector(".pw-form"); f.addEventListener("submit", (ev) => ev.preventDefault()); // Enter = Hauptknopf (Klick-Weiche in app.js)
   f.querySelector('[data-f="passwort"]').focus({ preventScroll: true });
+}
+// Schalter im Sicherungs-Blatt: nur Knopf und Feld umstellen, kein Neuzeichnen. Rückgabe: Zustand { mitPasswort, ohneFotos }.
+export function sicherungSchalter(art) {
+  if (!pw || offen !== "passwort" || pw.zweck !== "teilen") return null;
+  if (art === "passwort") pw.mitPasswort = !pw.mitPasswort; else if (art === "fotos") pw.ohneFotos = !pw.ohneFotos;
+  const k = huelle.querySelector(`[data-a="${art === "passwort" ? "sicherung-pw-schalter" : "sicherung-fotos-schalter"}"]`);
+  const an = art === "passwort" ? pw.mitPasswort : pw.ohneFotos;
+  if (k) { k.classList.toggle("an", an); k.setAttribute("aria-pressed", String(an)); }
+  if (art === "passwort") { const m = huelle.querySelector(".pw-mit"); if (m) m.classList.toggle("versteckt", !pw.mitPasswort); passwortMeldung(""); if (pw.mitPasswort) huelle.querySelector('[data-f="passwort"]')?.focus({ preventScroll: true }); }
+  return { mitPasswort: pw.mitPasswort, ohneFotos: pw.ohneFotos };
+}
+export const sicherungWahl = () => (pw && pw.zweck === "teilen" ? { mitPasswort: pw.mitPasswort, ohneFotos: pw.ohneFotos } : { mitPasswort: true, ohneFotos: false });
+// Nach dem Teilen/Herunterladen: einmal fragen, wo die Datei jetzt liegt. Nur „Anderes Gerät, Mail, Cloud“ zählt als Sicherung (app.js).
+export const ortFrageOffen = () => offen === "sicherungort";
+export function ortFrageZeigen() {
+  zeigen("sicherungort", `<div class="hilfe-inhalt"><span class="ks">${sym("package")}</span><b>${esc(t("ladenSchirm.sicherung.woFrage"))}</b></div>
+    <button type="button" class="knopf" data-a="sicherung-ort" data-wert="woanders">${esc(t("ladenSchirm.sicherung.woanders"))}</button>
+    <button type="button" class="knopf zweit" data-a="sicherung-ort" data-wert="handy">${esc(t("ladenSchirm.sicherung.nurHandy"))}</button>`);
 }
 // Wert aus dem Feld (nur im Moment des Teilens/Einlesens gelesen)
 export const passwortWert = () => (offen === "passwort" ? huelle?.querySelector('[data-f="passwort"]')?.value ?? "" : "");

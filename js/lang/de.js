@@ -1372,4 +1372,8 @@ export default {
     frage1: "Wie kommt es?", frage2: "Wie viel ist drin?", kostet: { karton: "Was kostet der Karton?", kiste: "Was kostet die Kiste?", beutel: "Was kostet der Beutel?", packung: "Was kostet die Packung?", kanister: "Was kostet der Kanister?", eimer: "Was kostet der Eimer?", sack: "Was kostet der Sack?", flasche: "Was kostet die Flasche?", dose: "Was kostet die Dose?", lose: "Was kostet es?" },
     ohneMwst: "ohne MwSt", mitMwst: "mit MwSt", ergebnis: { stk: "Ein Stück", kg: "1 kg", l: "1 Liter" }, mehr: "Mehr", mehrArten: "Weitere Arten",
     mwstHinweis: "Großhandel: meist ohne MwSt. Supermarkt: mit MwSt. Die App rechnet ohne MwSt.", keineWaren: "Noch keine Waren. Erst Gerichte und Rezepte wählen.", raus: "Was kommt raus?", masse: "Teig gesamt", einStueck: "Ein Stück", tauschen: "antippen zum Tauschen" },
+  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  ladenSchirm: { umsatz: "Umsatz", stimmt: (b) => `Stimmt das? ${b}`, ja: "Ja", aendern: "Ändern", rundgangStarten: "Rundgang starten",
+    sicherung: { letzteWeg: (n) => n === 0 ? "Letzte vom Handy weg: heute" : n === 1 ? "Letzte vom Handy weg: vor 1 Tag" : `Letzte vom Handy weg: vor ${n} Tagen`, nieWeg: "Noch keine Sicherung vom Handy weg", mitPasswort: "Mit Passwort", ohneFotos: "Ohne Fotos (klein, für Mail)",
+      verschicken: "Sicherung verschicken", woFrage: "Wo liegt sie jetzt?", woanders: "Anderes Gerät, Mail, Cloud", nurHandy: "Nur auf diesem Handy", nurHandyMeldung: "Die Erinnerung bleibt: die Datei liegt nur auf diesem Handy.", gezaehlt: "Sicherung gezählt. Erinnerung zurückgesetzt." } },
 };

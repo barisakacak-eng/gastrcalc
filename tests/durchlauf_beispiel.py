@@ -66,6 +66,7 @@ async def main():
             for k in ["Kühlschrank", "Kühlschrank 2", "Tiefkühler", "Saladette"]: assert k in t, (k, t[:500])
             assert "°C" in t, t[:500]
             await bild("kuehl", True)
+            await nav_hilfe.ins_buero(pg); await tipp('#app [data-a="nav"][data-wert="kuehl"]')  # Laden-Umbau (20.10.2026): Monatsblatt wohnt im Büro
             await tipp('#app [data-a="kuehl-blatt"]'); t = await text()
             assert "°C" in t or "9,4" in t, t[:500]
             await bild("kuehl_blatt", True)

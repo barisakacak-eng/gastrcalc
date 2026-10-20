@@ -1,6 +1,7 @@
 // Trennung 2 (17.10.2026): Zahlen für die Laden-Bildschirme „Heute“ und „Tag abschließen“ – ohne Text und ohne HTML.
 // Vorher in js/screens/home.js (heuteZielWerte, heuteKachelWerte) und js/screens/abschluss.js (Haken, Bilanz, Vergleiche).
-import { heute } from "./util.js";
+import { heute, heuteGeschaeft, parseZahl } from "./util.js";
+import { tagesnotizSetzen, tagesnotizenFestschreiben, aktiveStellen } from "./engine.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ und Kühl-Rundgang im Laden
 import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichung, tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { zaehler, monatsZiel, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
@@ -68,4 +69,45 @@ export function tagesBilanz(stand, H, K = heute()) {
     rundgaenge: (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === K).length,
     vergleich, tonne, restTage,
   };
+}
+
+// ---------- Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden ----------
+// Eine Zahl aus der Kasse (brutto, wie die Kasse sie druckt), ein Knopf. Gespeichert wird genau wie die Tagesumsatz-Eingabe im Büro
+// (tagesnotizSetzen + festschreiben, Geschäftstag bis 4 Uhr). Über UMSATZ_RUECKFRAGE_AB fragt der Bildschirm einmal nach (Tippfehler-Schutz),
+// statt still zu speichern – die Grenze ist eine Plausibilitätsgrenze für einen Imbiss-Tag, keine Rechenregel.
+export const UMSATZ_RUECKFRAGE_AB = 100000;
+// Rückgabe: { status: "leer" | "ungueltig" | "rueckfrage" | "ok", betrag }
+export function umsatzHeutePruefen(eingabe, { bestaetigt = false } = {}) {
+  if (eingabe === null || eingabe === undefined || String(eingabe).trim() === "") return { status: "leer", betrag: null };
+  const n = parseZahl(eingabe);
+  if (n === null) return { status: "ungueltig", betrag: null };
+  if (n > UMSATZ_RUECKFRAGE_AB && !bestaetigt) return { status: "rueckfrage", betrag: n };
+  return { status: "ok", betrag: n };
+}
+// Speichert den Tagesumsatz für den Geschäftstag (Standard: heute bis 4 Uhr). Rückgabe: der gültige Eintrag.
+export function umsatzHeuteSpeichern(stand, betrag, { datum = heuteGeschaeft(), geraet = null } = {}) {
+  tagesnotizSetzen(stand, datum, betrag, { nacherfasst: datum !== heuteGeschaeft(), geraet });
+  tagesnotizenFestschreiben(stand);
+  return umsatzEintrag(stand, datum);
+}
+
+// Kühl-Rundgang im Laden: wer misst, ist vorbelegt – die Person des letzten Rundgangs, sonst die erste aktive Person (in der Regel
+// der Inhaber, der beim Einrichten zuerst eingetragen wird), ohne Personen null. Ausgeschiedene und entfernte zählen nie.
+export function kuehlWerVorschlag(stand) {
+  const aktiv = (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false && !p.ausgeschieden);
+  if (!aktiv.length) return null;
+  const letzte = [...(stand.rundgaenge || [])].filter((r) => r.von && !r.verworfen).sort((a, b) => String(a.gestartet || "").localeCompare(String(b.gestartet || ""))).pop();
+  return letzte && aktiv.some((p) => p.id === letzte.von) ? letzte.von : aktiv[0].id;
+}
+// Erste Stelle im Rundgang, die noch keinen Wert hat (in der Reihenfolge der Einrichtung); alle gemessen = null.
+export function kuehlNaechsteStelle(stand, r) {
+  if (!r) return null;
+  const k = aktiveStellen(stand).find((x) => !r.messungen.some((m) => m.stelle === x.id));
+  return k ? k.id : null;
+}
+// Wer misst, lässt sich im offenen Rundgang ändern (nur aktive Personen; nach dem Abschluss nicht mehr). Rückgabe: true = geändert.
+export function rundgangVonSetzen(stand, r, von) {
+  if (!r || r.abgeschlossen || !(stand.rundgaenge || []).includes(r)) return false;
+  if (von !== null && !(stand.personen || []).some((p) => p.id === von && !p.entfernt && p.aktiv !== false)) return false;
+  r.von = von; return true;
 }

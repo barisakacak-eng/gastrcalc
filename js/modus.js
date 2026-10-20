@@ -8,7 +8,7 @@ export function modus(wurzel) { return MODI.includes(wurzel?.modus) ? wurzel.mod
 // Laden-Leiste unten: genau diese fünf Reiter, in dieser Reihenfolge.
 export const LADEN_TABS = ["start", "muell", "kuehl", "putzplan", "karte"];
 // Im Laden erreichbar: die Reiter plus das, was das Menü-Blatt öffnet.
-export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto"]; // Laden wechseln geht im Blatt; „Alle Läden" mit Zahlen wohnt im Büro
+export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto", "umsatzheute"]; // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden // Laden wechseln geht im Blatt; „Alle Läden" mit Zahlen wohnt im Büro
 // Personal: drei Kacheln, sonst nichts.
 export const PERSONAL_ANSICHTEN = ["personal", "muell", "kuehl", "putzplan"];
 
@@ -43,7 +43,7 @@ export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESS
 // Nachtragen für Vortage, Putzplan einrichten, Sprache dauerhaft, Code, Laden löschen. („Alles löschen" auf der Fehlerseite geht mit Code.) Die Knöpfe fehlen dort, app.js weist sie zusätzlich ab.
 const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffnen", "kuehl-einrichtung-fertig", "kuehl-keine", "kuehl-takt", "kuehl-ruhetag",
   "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "muell1-nachtragen",
-  "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter",
+  "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter", "rg-von", // Laden-Umbau (20.10.2026)
   "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export",
   "rettung-neu"]); // Rettung (17.10.2026): kein neuer Rettungscode; „Code vergessen?“ nur am Schloss (rettungErlaubt in rettung.js, app.js prüft)
 // heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.

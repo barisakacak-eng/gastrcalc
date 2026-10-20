@@ -14,6 +14,7 @@ import { bueroCodeKarte } from "./ebene.js"; // Drei Ebenen (A): Büro-Code in d
 import { einrichtungStand } from "../einrichtung.js";
 import { sym } from "../symbole.js";
 import { datumLesbar, monatName } from "./tag.js";
+import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
 
 // Drei Ebenen (15.10.2026, Entwickler B): Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
@@ -26,8 +27,8 @@ export function startView(stand, extra = {}) {
     <div class="inhalt cockpit heute-laden">
       <div class="h-zeitzeile">${esc(stand.betrieb.name || t("menue.deinLaden"))} · ${esc(tagKurz(H))}</div>
       ${heuteZielKarte(stand, z, H)}
-      <div class="h-kacheln">${heuteKachelnLaden(stand, ks, H)}</div>
       ${dran ? jetztKarte(dran) : ""}
+      <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
     ${nav("start")}`;
@@ -48,30 +49,34 @@ function heuteZielKarte(stand, z, H) {
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
     ${m.ziel === null ? `<span class="h-unter">${esc(t("heute.ohneKosten"))}</span>`
       : `<span class="h-balken" aria-hidden="true"><i style="width:${Math.round(w.anteil * 100)}%"></i></span><span class="h-balkenzahlen"><span>${fmtEuro(m.umsatz, { dezimal: 0 })}</span><span>${fmtEuro(w.marke, { dezimal: 0 })}</span></span>`}
-  </button>${m.richtwertWare ? `<button type="button" class="h-richtwert" data-a="nav" data-wert="preise">${esc(t("cockpit.richtwertZeile"))}</button>` : ""}`;
+  </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
 
 // Vier Kacheln: Symbol + Zahl. Kühlung zeigt den schlechtesten Wert (rot) oder „OK“ oder „2 offen“; Putzen erledigt/gesamt heute.
 // Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
+// Laden-Umbau (20.10.2026): eine schmale Reihe aus vier gleich großen Feldern – oben Zahl, Haken oder „+“, darunter ein Wort.
+// Kühlung zeigt den schlechtesten Wert (rot), einen Haken (alles gemessen) oder die Zahl offener Stellen; Putzen erledigt/gesamt.
+// Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
 function kachelTexte(stand, ks, H) {
   const w = heuteKachelZahlen(stand, ks, H);
   const k = w.kuehl;
-  const kuehl = !k ? { wert: "–", alarm: false } : k.art === "abweichung" ? { wert: `${fmtZahl(k.wert, Number.isInteger(k.wert) ? 0 : 1)} °C`, alarm: true }
-    : k.art === "ok" ? { wert: t("heute.ok"), alarm: false } : k.art === "ruhetag" ? { wert: t("kuehl.status.ruhetag"), alarm: false } : { wert: t("heute.offenN", k.anzahl), alarm: false, offen: true };
-  const putz = w.putz ? { wert: `${w.putz.erledigt} / ${w.putz.gesamt}`, alarm: w.putz.alarm } : { wert: "–", alarm: false };
+  const kuehl = !k ? { wert: "–", alarm: false } : k.art === "abweichung" ? { wert: `\u2066${fmtZahl(k.wert, Number.isInteger(k.wert) ? 0 : 1)}\u00a0°C\u2069`, alarm: true }
+    : k.art === "ok" ? { wert: sym("check"), alarm: false, html: true } : k.art === "ruhetag" ? { wert: "–", alarm: false } : { wert: String(k.anzahl), alarm: false, offen: true };
+  const putz = w.putz ? { wert: `\u2066${w.putz.erledigt}/${w.putz.gesamt}\u2069`, alarm: w.putz.alarm } : { wert: "–", alarm: false };
   return { umsatz: w.umsatz, muell: w.muell, kuehl, putz };
 }
 function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
-  // Leere Kachel zeigt ihren ersten Handgriff (+ in Orange, Text für Vorlesehilfen) statt „–“ – 15-Wörter-Regel bleibt (Entrümpelung Punkt 5, freigegeben 18.10.2026; Design B Screen 3)
-  const kachel = (cls, symbol, key, wert, ziel, alarm, handgriff) => `<button type="button" class="karte h-kachel ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel}${handgriff ? ` aria-label="${esc(t(key))}: ${esc(handgriff)}"` : ""}><span class="ks ${cls}">${sym(symbol)}</span><span><small>${esc(t(key))}</small>${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b>${wert}</b>`}</span></button>`;
-  return kachel("umsatz", "chart-column", "heute.kachel.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatz"', false, w.umsatz === null && t("schnellknopf.umsatz"))
-    + kachel("muell", "trash-2", "heute.kachel.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
-    + kachel("kuehl", "snowflake", "heute.kachel.kuehlung", esc(w.kuehl.wert), 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, w.kuehl.wert === "–" && t("schnellknopf.kuehl"))
-    + kachel("putz", "spray-can", "heute.kachel.putzen", esc(w.putz.wert), 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
+  // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
+  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel}${handgriff ? ` aria-label="${esc(t(wortKey))}: ${esc(handgriff)}"` : ""}>${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`;
+  return feld("umsatz", "ladenSchirm.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatzheute"', false, w.umsatz === null && t("schnellknopf.umsatz"))
+    + feld("muell", "ebene.tabs.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
+    + feld("kuehl", "ebene.tabs.kuehl", w.kuehl.wert, 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, !ks.eingerichtet && t("schnellknopf.kuehl"), w.kuehl.html || w.kuehl.alarm)
+    + feld("putz", "ebene.tabs.putzplan", w.putz.wert, 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
 }
+// Laden-Umbau (20.10.2026): „Jetzt dran“ ist die eine Haupthandlung – ein großer oranger Knopf (ohne eigenen „Los“-Knopf).
 function jetztKarte(d) {
-  return `<button type="button" class="jetzt h-jetzt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><small>${esc(t("heute.jetztDran"))}</small><b>${esc(d.titel)}</b></span><span class="los">${esc(d.knopf)}</span></button>`;
+  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><small>${esc(t("heute.jetztDran"))}</small><b>${esc(d.titel)}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
 }
 
 // Schmale Zeile auf anderen Seiten, solange ein offener Schritt die Seite betrifft
@@ -170,6 +175,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
       </div>
       <div class="karte" id="sicherung">
         <h2>${esc(t("einstellungen.sicherung"))}</h2>
+        ${(() => { const tg = sicherungStufe(wurzel)?.tage ?? null; return `<p class="pw-letzte ${tg === null || tg >= 7 ? "rot" : ""}">${esc(tg === null ? t("ladenSchirm.sicherung.nieWeg") : t("ladenSchirm.sicherung.letzteWeg", tg))}</p>`; })()}
         <p class="hinweis">${esc(t("einstellungen.sicherungText"))}</p>
         <p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>

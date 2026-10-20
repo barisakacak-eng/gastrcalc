@@ -147,7 +147,7 @@ async def main():
             await pg.wait_for_selector(".cockpit")
             # ---- Cockpit
             await bild("cockpit-leer")
-            html = await pg.content(); assert "Bis null fehlen" in html and "Umsatz heute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro
+            html = await pg.content(); assert "Bis null fehlen" in html and "umsatzheute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro
             z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
             assert z["stufe"] == 2 and z["keinUmsatz"] and z["quote"] > 0.05, {k: z[k] for k in ("stufe", "keinUmsatz", "quote")}
             # Drei Ebenen: fünf Reiter unten, kein Schnellknopf; ☰ öffnet ein Blatt mit großen Kacheln, ohne den Bildschirm neu zu zeichnen
@@ -214,7 +214,7 @@ async def main():
             await geh("listen"); html = await pg.content(); assert "Am meisten weg" in html and "muellkarte" in html; await bild("listen-muell-statistik")
             # ---- Cockpit mit Zahlen
             await geh("start"); await bild("cockpit-mit-zahlen")
-            html = await pg.content(); assert "Müll heute" in html and "1.850" in html
+            html = await pg.content(); assert "h-feld muell" in html and "1.850" in html  # Laden-Umbau (20.10.2026): Feld „Müll“ in der Reihe
             # ---- Beleg einlesen
             await geh("beleg"); await bild("beleg-leer"); await pg.click('[data-a="beleg-text-zeigen"]'); await pg.wait_for_selector('[data-f="beleg-text"]')
             assert await pg.locator('[data-a="beleg-zerlegen"]').is_disabled()
@@ -253,9 +253,9 @@ async def main():
             # ---- Kühlkontrolle mit Standardgrenzen
             await geh("kuehl"); await bild("kuehl-start")
             html = await pg.content(); assert "Standard" in html, "Standardgrenze nicht sichtbar"
-            await pg.click('[data-a="kuehl-rundgang"]'); await pg.click('[data-a="rundgang-start"]')
+            await pg.click('[data-a="kuehl-rundgang-los"]'); await pg.wait_for_selector('[data-f="station-wert"]')  # Laden-Umbau (20.10.2026): direkt an der ersten Stelle
             kids = await pg.evaluate("window.__gastrocalc.stand.kuehlstellen.filter(k => !k.archiviert).map(k => k.id)")
-            await pg.click(f'[data-a="station"][data-id="{kids[0]}"]'); await pg.fill('[data-f="station-wert"]', "8,5"); await pg.wait_for_timeout(200)
+            await pg.fill('[data-f="station-wert"]', "8,5"); await pg.wait_for_timeout(200)
             await bild("kuehl-abweichung-standard")
             assert await pg.locator('[data-a="station-speichern"]').is_disabled(), "8,5 °C über Standard 7 muss Abweichung sein"
             await pg.click('[data-a="massnahme"][data-wert="tuer"]'); await pg.click('[data-a="station-speichern"]')
@@ -263,20 +263,23 @@ async def main():
             await pg.wait_for_timeout(300)  # W2-H: nach der letzten Stelle schließt sich der Rundgang selbst
             assert await pg.locator('[data-a="rundgang-abschluss"]').count() == 0, "Rundgang hätte sich selbst schließen sollen"
             s = await stand(); assert len(s["messungen"]) == 2 and s["messungen"][0]["abweichung"] and s["messungen"][0]["grenzeStandard"] and s["messungen"][0]["max"] == 7, s["messungen"]
-            await pg.click('[data-a="kuehl-blatt"]'); await bild("kuehl-blatt")
-            # eigene Grenze setzen
-            await pg.click('[data-a="kuehl-start"]'); await pg.click('[data-a="kuehl-einrichtung"]'); await bild("kuehl-einrichtung-standard")
+            # eigene Grenze setzen und Monatsblatt – Laden-Umbau (20.10.2026): beides im Büro
+            await nav_hilfe.ins_buero(pg); await pg.evaluate("document.querySelectorAll('details').forEach(d => d.open = true)")
+            await pg.click('#app [data-a="kuehl-einrichtung-oeffnen"]'); await bild("kuehl-einrichtung-standard")
             await pg.fill(f'[data-f="stelle-max:{kids[0]}"]', "4"); await pg.locator(f'[data-f="stelle-max:{kids[0]}"]').blur(); await pg.wait_for_timeout(200)
-            html = (await pg.content()).replace("\u00a0", " ").replace("&nbsp;", " ").replace("\u2066", "").replace("\u2069", ""); assert "≤ 4,0 °C" in html and "(Standard)" not in html.split("≤ 4,0 °C")[1][:30]
-            await pg.click('[data-a="kuehl-einrichtung-fertig"]')
+            html = (await pg.inner_text("#app")).replace("\u00a0", " ").replace("\u2066", "").replace("\u2069", ""); assert "≤ 4,0 °C" in html and "(Standard)" not in html.split("≤ 4,0 °C")[1][:30], html[:400]  # 20.10.2026: Temperaturen mit geschütztem Leerzeichen und LTR-Isolierung
+            await pg.click('[data-a="kuehl-einrichtung-fertig"]'); await pg.click('[data-a="kuehl-blatt"]'); await bild("kuehl-blatt")
             # ---- Mehr: Zähler-Einstellungen
             await geh("einstellungen"); await bild("mehr")
             await pg.fill('[data-f="warenQuote"]', "35"); await pg.locator('[data-f="warenQuote"]').blur(); await pg.wait_for_timeout(200)
             s = await stand(); assert abs(s["verkauf"]["warenQuote"] - 0.35) < 1e-9
             # Export: Schema 4 mit Prüfsumme
             await pg.click('[data-a="export"]'); await pg.wait_for_selector("#ebene-huelle .blatt-passwort")  # E5 (16.10.2026): erst das Passwort-Blatt
-            async with pg.expect_download() as dl: await pg.click('[data-a="sicherung-ohne"]')
+            await pg.click('#ebene-huelle [data-a="sicherung-pw-schalter"]')  # Laden-Umbau (20.10.2026): Passwort ist vorgewählt – Schalter aus
+            async with pg.expect_download() as dl: await pg.click('#ebene-huelle [data-a="sicherung-teilen"]')
             d = await dl.value; pfad = OUT / "export.zip"; await d.save_as(str(pfad))  # W2-D: Sicherung als ZIP mit Fotos
+            await pg.wait_for_selector("#ebene-huelle .blatt-sicherungort"); await pg.click('#ebene-huelle [data-a="sicherung-ort"][data-wert="woanders"]'); await pg.wait_for_timeout(300)
+            assert await pg.evaluate("!!window.__gastrocalc.wurzel.letzteSicherung"), "Anderes Gerät zählt als Sicherung"
             import zipfile
             with zipfile.ZipFile(pfad) as zf: roh = zf.read("gastrocalc-sicherung.json").decode()
             kopf, inhalt = roh.split("\n", 1); kopfd = json.loads(kopf); daten = json.loads(inhalt)
