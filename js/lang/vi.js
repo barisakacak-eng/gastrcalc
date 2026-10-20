@@ -1421,4 +1421,9 @@ export default {
       kopf: ["Cửa hàng", "Doanh thu", "Chi phí nguyên liệu", "Bỏ đi", "Nghi hao hụt", "Việc còn mở", "Đến hòa vốn", "Giá trị kho", "Đặt hàng"], laden: "Cửa hàng", vergleich: "So sánh", vergleichInfo: "Xếp hạng chỉ giữa các cửa hàng có cùng cơ sở dữ liệu.",
       trend: "Xu hướng so với kỳ trước", daten: "Cơ sở dữ liệu", fehlt: "Chưa đủ", tage: "ngày", quelle: "Nguồn chi phí nguyên liệu", fuss: "GastroCalc · Báo cáo chủ. Số liệu từ các mục nhập trong ứng dụng – không phải kế toán, không phải dữ liệu máy tính tiền." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Chạm vào một món hàng và nhập giá bạn trả.", fortschritt: (a, b) => `${a} / ${b} xong`, fehlt: "thiếu", filterFehlt: (n) => `Thiếu (${n})`, filterAlle: (n) => `Tất cả (${n})`, selbst: "tự làm",
+    frage1: "Hàng đến dạng gì?", frage2: "Bên trong có bao nhiêu?", kostet: { karton: "Một thùng giá bao nhiêu?", kiste: "Một két giá bao nhiêu?", beutel: "Một túi giá bao nhiêu?", packung: "Một gói giá bao nhiêu?", kanister: "Một can giá bao nhiêu?", eimer: "Một xô giá bao nhiêu?", sack: "Một bao giá bao nhiêu?", flasche: "Một chai giá bao nhiêu?", dose: "Một lon giá bao nhiêu?", lose: "Giá bao nhiêu?" },
+    ohneMwst: "chưa VAT", mitMwst: "có VAT", ergebnis: { stk: "Một cái", kg: "1 kg", l: "1 lít" }, mehr: "Thêm", mehrArten: "Loại khác",
+    mwstHinweis: "Bán sỉ: thường chưa VAT. Siêu thị: có VAT. Ứng dụng tính chưa VAT.", keineWaren: "Chưa có hàng. Hãy chọn món và công thức trước.", raus: "Ra được gì?", masse: "Tổng bột", einStueck: "Một cái", tauschen: "chạm để đổi" },
 };

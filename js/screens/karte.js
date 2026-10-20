@@ -1,6 +1,7 @@
 // Etappe 2: Karte wählen, Rezepte prüfen, Einkaufspreise, Verkaufspreise, Ergebnis.
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
-import { sym } from "../symbole.js";
+import { sym, SYMBOLE } from "../symbole.js";
+import { wareBildQuelle } from "../bilder.js"; // Einkaufspreise als Bilderwand (20.10.2026): dieselbe Fotozuordnung wie Müll und Inventur
 import { gerichtBild } from "./vergleich.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, einheitLabel, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
@@ -9,8 +10,8 @@ import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
 import { zwischenrezept } from "../data/zwischen.js";
 import { rezeptStempel, quelleVon, waageFragen, schnellwahl, familieAnpassen, geldSatz } from "../rezept_quelle.js";
-import { kalkulation, garverlustAnteil, preisJeBasis, gebindePreise, istRichtpreis, selbstWerte, zwischenpreis } from "../engine.js";
-import { einklappen, offeneKlappen } from "./bausteine.js";
+import { kalkulation, garverlustAnteil, preisJeBasis, gebindePreise, istRichtpreis, preisGeschaetzt, selbstWerte } from "../engine.js";
+import { einklappen } from "./bausteine.js";
 // Trennung (17.10.2026): alle Schreibvorgänge dieser Schritte laufen über js/karte_daten.js
 import { gerichtAusVorlage, gerichtAusVorlageAnlegen, gerichtEigenAnlegen, gerichtEntfernen, gerichtNameSetzen, gerichtKlasseSetzen, gerichtZeitSchritt, rezeptAngepasst,
   zutatMengeSetzen, zutatEntfernen, zutatEinheitSetzen, zutatAusKatalog, zutatFrei, verkaufspreisSetzen, mengeTagSetzen, bestellungenTagSetzen, zielgewinnSetzen,
@@ -30,7 +31,7 @@ let waage = null;          // Waage-Check (Punkt 7): { gid, fragen[], k, wert, m
 let stempelInfo = false;   // Erklärung zum Stempel aufgeklappt
 let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
 // Paket 2 (16.10.2026): Ladenwechsel, Einlesen, „Alles löschen“ – der flüchtige Zustand gehört zum alten Laden (zentrale Liste in app.js)
-export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatSuche = ""; eigenesText = ""; waage = null; stempelInfo = false; weitereOffen = false; zwischenOffen = new Set(); mehrArten = new Set(); }
+export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatSuche = ""; eigenesText = ""; waage = null; stempelInfo = false; weitereOffen = false; zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; offeneWare = null; filterWahl = null; }
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 
@@ -215,131 +216,222 @@ export const rezepte = {
   zurueck(stand) { if (waage && !waage.fertig) { waage = null; return true; } if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; artikelAbgleichen(stand); return true; },
 };
 
-// ---------- Schritt: Einkaufspreise mit Gebinde (Etappe 5, Variante C: was kaufst du, was ist drin, was kostet es) ----------
+// ---------- Schritt: Einkaufspreise als Bilderwand (20.10.2026, Entwurf „Bilder-Raster“ von Baris freigegeben) ----------
+// Liste = Fotos der Waren, drei je Reihe, rot = Preis fehlt. Antippen öffnet unter dem Raster ein Blatt mit drei Fragen
+// (Wie kommt es? Wie viel ist drin? Was kostet es?). Felder und data-f/data-a-Namen sind dieselben wie vorher (Variante C) –
+// Tests und Belegübernahme hängen daran. Geändert ist nur die Darstellung, nicht die Daten oder die Rechnung.
 const GEBINDE_WAHL = ["karton", "kiste", "beutel", "packung", "kanister", "eimer", "sack", "flasche", "dose", "lose"];
-const GEBINDE_KURZ = ["karton", "kiste", "beutel", "packung", "lose"]; // die fünf häufigsten; der Rest hinter „mehr"
+const GEBINDE_KURZ = ["karton", "kiste", "sack", "beutel"]; // vier Bild-Kacheln; der Rest hinter „…"
 let zwischenOffen = new Set(); // Artikel, bei denen die Zwischengröße eingeblendet ist (flüchtig)
 let mehrArten = new Set();     // Artikel, bei denen alle Gebindearten gezeigt werden (flüchtig)
 let rpQuelleOffen = false;     // Richtpreise (17.10.2026): Satz zu Quelle und Methode aufgeklappt (flüchtig)
+let offeneWare = null;         // Name der Ware im Blatt (flüchtig)
+let filterWahl = null;         // "fehlt" | "alle" | null = Start: „Fehlt“, wenn etwas fehlt, sonst „Alle“ (flüchtig)
 // Trennung 2 (17.10.2026): gebindeSatz wohnt in js/anzeige_text.js
 import { gebindeSatz } from "../anzeige_text.js";
 
-// Selbst gemachtes Teil (Punkt 2; 19.10.2026 echtes Unterrezept): Warenwert je Ansatz, je kg, je Stück und je 50 g – und der Ansatz
-// lässt sich hier selbst eintragen (Zutaten, Mengen, Ausbeute als Gewicht oder „6 Ballen à 275 g“, Minuten). Danach zählt er als „dein Ansatz“.
+// Gebinde als Linien-Symbole (Lucide-Stil: 24er Raster, runde Enden). Karton = Lucide „package“, die anderen schlicht gezeichnet.
+const GEBINDE_SYM = {
+  karton: SYMBOLE.package,
+  kiste: '<rect x="3" y="7" width="18" height="12" rx="1.5"/><path d="M3 11h18"/><path d="M8 7v4"/><path d="M16 7v4"/>',
+  sack: '<path d="M9 4h6l-1.5 3.2c3 1.8 4.5 4.8 4.5 8.3 0 3.3-2.7 5.5-6 5.5s-6-2.2-6-5.5c0-3.5 1.5-6.5 4.5-8.3z"/><path d="M10.5 7.2h3"/>',
+  beutel: '<path d="M6 6h12v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M6 10h12"/><path d="M6 3h12v3H6z"/>',
+  packung: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6"/><path d="M9 13h6"/>',
+  kanister: '<path d="M7 7h7l4 4v9a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><path d="M14 3h3v4"/><path d="M10 11h4"/>',
+  eimer: '<path d="M5 9h14l-1.6 11.1a1 1 0 0 1-1 .9H7.6a1 1 0 0 1-1-.9z"/><path d="M5 9a7 6 0 0 1 14 0"/>',
+  flasche: '<path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3z"/><path d="M8 13h8"/>',
+  dose: '<ellipse cx="12" cy="5" rx="6" ry="2"/><path d="M6 5v14c0 1.1 2.7 2 6 2s6-.9 6-2V5"/><path d="M6 12c0 1.1 2.7 2 6 2s6-.9 6-2"/>',
+  lose: '<circle cx="8" cy="16" r="3"/><circle cx="16" cy="16" r="3"/><circle cx="12" cy="8.5" r="3"/>',
+};
+const gebindeSym = (art) => `<svg class="sym ep-gsym" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${GEBINDE_SYM[art] || GEBINDE_SYM.packung}</svg>`;
+// Foto der Ware aus der vorhandenen Zuordnung (js/bilder.js). Ohne Foto: neutrale Fläche mit dem Linien-Piktogramm, kein Text.
+function wareBild(x, klasse) {
+  const q = wareBildQuelle(x);
+  return q.foto ? `<img class="${klasse}" src="foto/${q.foto}.webp" alt="" loading="lazy" decoding="async">`
+    : `<span class="${klasse} ep-ohne" aria-hidden="true"><img src="bilder/${q.pikto}.svg" alt="" loading="lazy" decoding="async"></span>`;
+}
+
+// Selbst gemachtes Teil (Punkt 2; 19.10.2026 echtes Unterrezept). „Machen wir selbst“ auch ohne Vorlage: Soßen und Dips, Patties/Köfte/Falafel – nicht Mehl, Dosen, Essig oder Würste
 const ZWISCHEN_ARTEN = ["beutel", "packung", "dose", "flasche", "karton"]; // Teil 2: Art der inneren Packung wählbar
-// „Machen wir selbst“ auch ohne Vorlage: Soßen und Dips, Patties/Köfte/Falafel – nicht Mehl, Dosen, Essig oder Würste
 const SELBST_NICHT = new Set(["Pizzatomaten (Dose)", "Tomatenmark", "Kokosmilch", "Balsamico", "Weinessig", "Worcestersauce", "Sojasauce", "Currypaste", "Bratenfond", "Senf", "Ketchup"]);
 // 20.10.2026 (Baris): jede Teigsorte und jedes Brot ist selbst herstellbar (Dürüm, Fladen, Pide, Buns, Brötchen …) – Rohstoffe und TK-Ware nicht
 const TEIG_SELBST = /teig|brot|fladen|wrap|bun\b|brötchen|baguette|brezel|yufka|knödel|spätzle|gnocchi/i, TEIG_NICHT = /mehl|hefe|\bTK\b|pulver|stärke|grieß|teigling|teigtaschen/i;
 const selbstMoeglich = (a) => !SELBST_NICHT.has(a.name) && ((a.gruppe === "teig" && TEIG_SELBST.test(a.name) && !TEIG_NICHT.test(a.name)) || a.gruppe === "sauce" || (a.gruppe === "fleisch" && /patty|frikadell|adana|falafel|schnitzel|köfte|kofte|quiche/i.test(a.name)));
 const geld = (x) => fmtEuro(x, { dezimal: x < 0.095 ? 3 : 2 });
+const istSelbst = (a) => a.herkunft === "selbst" && !!a.rezept;
+
+// Preis je Basiseinheit für Kachel und Ergebnis: { wert, einheit: "stk" | "kg" | "l" } oder null (= fehlt).
+// Selbst gemacht in Stück (Pizzaballen): je Stück; sonst je kg / je Liter / je Stück nach der Packung (Rechnung aus engine.js).
+function preisJe(a) {
+  const pj = preisJeBasis(a); if (pj === null) return null;
+  if (istSelbst(a) && a.rezept.stueck?.anzahl > 0) { const w = selbstWerte(a); if (w?.jeStueck !== null && w?.jeStueck !== undefined) return { wert: w.jeStueck, einheit: "stk" }; }
+  const basis = EINHEITEN[a.packung?.einheit]?.basis || basisVon(a.einheit);
+  return basis === "stk" ? { wert: pj, einheit: "stk" } : { wert: pj * 1000, einheit: basis === "ml" ? "l" : "kg" };
+}
+const einheitWort = (e) => (e === "stk" ? t("allgemein.stueck") : einheitLabel(e));
+const geldGenau = (x) => fmtEuro(x, { dezimal: x < 0.1 ? 3 : 2 });
+const ergebnisEinheit = (a) => { const b = basisVon(a.einheit); return b === "g" ? "kg" : b === "ml" ? "l" : "stk"; };
+
+function kachel(a) {
+  const p = preisJe(a); const fehlt = p === null; const ca = !fehlt && preisGeschaetzt(a); const auf = offeneWare === a.name;
+  return `<button type="button" class="ep-kachel${fehlt ? " fehlt" : ""}${auf ? " auf" : ""}" data-a="ep-auf" data-name="${esc(a.name)}" aria-expanded="${auf}">
+    ${wareBild(a, "ep-bild")}${istSelbst(a) ? `<span class="ep-marke selbst">${esc(t("pw.selbst"))}</span>` : ""}${ca ? `<span class="ep-marke ca" aria-label="${esc(t("allgemein.schaetzung"))}">≈</span>` : ""}
+    <span class="ep-n">${esc(artikelText(a.name))}</span><span class="ep-p">${fehlt ? esc(t("pw.fehlt")) : `<bdi dir="ltr">${esc(`${geldGenau(p.wert)}/${einheitWort(p.einheit)}`)}</bdi>`}</span></button>`;
+}
+
+// Großes Ergebnis im Blatt („Ein Stück 0,53 €“). Wird beim Tippen an Ort und Stelle ersetzt (Feld behält den Fokus).
+function ergebnisGekauft(a) {
+  const p = preisJe(a); const rp = p !== null && istRichtpreis(a);
+  const basis = basisVon(a.einheit); const g = a.gebinde || { art: "packung", zwischen: null };
+  const pz = gebindePreise(a); const sg = Number(a.stueckGewicht) > 0 ? Number(a.stueckGewicht) : null;
+  const neben = p === null || !sg ? "" : basis === "stk" ? t("gebinde.jeEinheit", fmtEuro(p.wert / sg * 1000, { dezimal: 2 }), "kg").replace(/^=\s*/, "") : t("selbst.jeStueck", fmtEuro(preisJeBasis(a) * sg, { dezimal: preisJeBasis(a) * sg < 0.1 ? 3 : 2 }));
+  const unter = p === null ? "" : [gebindeSatz(a), neben, pz.zwischen !== null && g.zwischen ? t("gebinde.jeZwischen", fmtEuro(pz.zwischen, { dezimal: 2 }), t("gebinde.arten." + g.zwischen.art)) : ""].filter(Boolean).join(" · ");
+  return `<div class="ep-ergebnis${p === null ? " leer" : ""}" aria-live="polite"><span>${esc(t("pw.ergebnis." + (p ? p.einheit : ergebnisEinheit(a))))}</span><b>${p === null ? "–" : `<bdi dir="ltr">${rp ? "≈ " : ""}${esc(fmtEuro(p.wert, { dezimal: p.wert < 0.1 ? 4 : p.wert < 1 ? 3 : 2 }))}</bdi>`}</b>${unter ? `<small>${esc((rp ? "≈ " : "") + unter)}</small>` : ""}</div>`;
+}
+function ergebnisSelbst(a) {
+  const r = a.rezept; const p = preisJe(a); const ca = p !== null && preisGeschaetzt(a);
+  const st = r.stueck; const anzahl = st?.anzahl > 0 ? st.anzahl : null;
+  const links = anzahl && st.gewicht > 0 ? t("selbst.ergibtStueck", anzahl, Math.round((st.masse ?? anzahl * st.gewicht) - anzahl * st.gewicht)) : t("pw.ergebnis." + (p ? p.einheit : ergebnisEinheit(a)));
+  const fehlt = (a.zwischenFehlt || []).filter((x) => x !== "rezept");
+  const warum = p !== null ? "" : !(r.ausbeute?.menge > 0) ? t("selbst.ausbeuteFehlt") : fehlt.length ? t("selbst.fehlt", fehlt.map(artikelText).join(", ")) : t("selbst.mengeFehlt");
+  return `<div class="ep-ergebnis${p === null ? " leer" : ""}" aria-live="polite"><span>${esc(links)}</span><b>${p === null ? "–" : `<bdi dir="ltr">${ca ? "≈ " : ""}${esc(geld(p.wert))}</bdi>`}</b>${warum ? `<small>${esc(warum)}</small>` : ""}</div>`;
+}
 function selbstWerteText(a) {
   const w = selbstWerte(a); if (!w) return "";
   const rp = a.zwischenRichtpreis ? "≈ " : "";
   return rp + [t("selbst.jeAnsatz", geld(w.ansatz)), w.jeKg !== null ? t("gebinde.jeEinheit", geld(w.jeKg), w.basis === "ml" ? "l" : "kg").replace(/^=\s*/, "") : null,
     w.jeStueck !== null ? t("selbst.jeStueck", geld(w.jeStueck)) : null, w.je50 !== null ? t("selbst.je50", geld(w.je50)) : null].filter(Boolean).join(" · ");
 }
-function selbstEditor(a, alle) {
-  const r = a.rezept; const n = esc(a.name); const z = zwischenpreis(a, Object.fromEntries(alle.map((x) => [x.name, x])));
-  const wertVon = Object.fromEntries((z.teile || []).map((x) => [x.name, x.wert]));
+const frage = (nr, text) => `<h2 class="ep-frage"><i aria-hidden="true">${nr}</i>${esc(text)}</h2>`;
+function blattKopf(a, unter) {
+  return `<div class="ep-kopf">${wareBild(a, "ep-kopfbild")}<div><b>${esc(artikelText(a.name))}</b>${unter ? `<small>${unter}</small>` : ""}</div></div>`;
+}
+
+function blattGekauft(a) {
+  const n = esc(a.name); const basis = basisVon(a.einheit); const gv = a.garverlust ? garverlustAnteil(a) : null;
+  const g = a.gebinde || { art: "packung", zwischen: null }; const artName = t("gebinde.arten." + g.art);
+  const st = basis !== "stk" ? g.stueck || null : null; // Teil 2 (19.10.2026): Gebinde in Stück („Karton 40 Stück à 250 g“)
+  const rp = preisJeBasis(a) !== null && istRichtpreis(a);
+  const alleArten = mehrArten.has(a.name);
+  const arten = alleArten ? GEBINDE_WAHL : [...GEBINDE_KURZ, ...(GEBINDE_KURZ.includes(g.art) ? [] : [g.art])];
+  const zArt = g.zwischen?.art || g.zwischenArt || "beutel"; const zOffen = zwischenOffen.has(a.name) || !!g.zwischen;
+  const selbstKnopf = zwischenrezept(a.name) ? "selbst-an" : selbstMoeglich(a) ? "selbst-eigen-an" : null;
+  const einheiten = basis === "stk" ? EINHEITEN_JE_BASIS.stk : [...EINHEITEN_JE_BASIS[basis], "stk"];
+  const mehr = `
+    ${basis === "stk" ? `<div class="feldzeile"><label>${esc(t("gebinde.stueckGewichtFrage"))}</label><div class="packung"><input inputmode="decimal" data-f="stueckGewicht:${n}" value="${esc(wertAnzeige(a.stueckGewicht ?? null))}" placeholder="${esc(t("gebinde.optional"))}" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(t("selbst.gJeStueck"))}</span></div></div>` : ""}
+    ${zOffen ? `<div class="feldzeile"><label>${esc(t("gebinde.zwischenAnzahl", artName, t("gebinde.arten." + zArt)))}</label>
+      <div class="chips">${ZWISCHEN_ARTEN.map((x) => `<button type="button" class="chip klein ${zArt === x ? "an" : ""}" data-a="zwischen-art" data-name="${n}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}</div>
+      <div class="packung"><input inputmode="decimal" data-f="zwischen:${n}" value="${esc(wertAnzeige(g.zwischen?.anzahl ?? null))}" placeholder="4" aria-label="${esc(t("gebinde.zwischen"))}"><span class="einheit">${esc(t("gebinde.arten." + zArt))}</span>
+      <button type="button" class="leise" data-a="zwischen-weg" data-name="${n}">${esc(t("gebinde.zwischenWeg"))}</button></div></div>`
+      : `<button type="button" class="leise" data-a="zwischen-auf" data-name="${n}">${esc(t("gebinde.zwischen"))}</button>`}
+    ${gv ? `<div class="unterzeile"><span class="marke ${gv.status === "geschaetzt" ? "geschaetzt" : ""}">${esc(t("preise.garverlust", fmtZahl(gv.wert * 100, 0), t(gv.status === "gemessen" ? "preise.gemessen" : "allgemein.schaetzung")))}</span>
+      <button type="button" class="leise" data-a="messen" data-name="${n}">${esc(t("preise.messen"))}</button></div>
+      ${a.garverlust.messen ? `<div class="packung"><input inputmode="decimal" data-f="roh:${n}" value="${esc(wertAnzeige(a.garverlust.roh))}" placeholder="${esc(t("preise.roh"))}"><span class="einheit">g</span>
+        <span class="einheit">→</span><input inputmode="decimal" data-f="gar:${n}" value="${esc(wertAnzeige(a.garverlust.gar))}" placeholder="${esc(t("preise.gar"))}"><span class="einheit">g</span></div>` : ""}` : ""}
+    <p class="hinweis">${esc(t("pw.mwstHinweis"))}</p>`;
+  return `<section class="ep-blatt" aria-label="${n}">
+    ${blattKopf(a, rp ? `<span class="marke geschaetzt">${esc(t("preise.richtpreis.marke"))}</span>` : "")}
+    ${a.preis === 0 ? `<p class="tipp">${esc(t("preise.preisNull"))}</p>` : ""}
+    ${frage(1, t("pw.frage1"))}
+    <div class="ep-gebinde">${arten.map((x) => `<button type="button" class="ep-geb${g.art === x ? " an" : ""}" data-a="gebinde-art" data-name="${n}" data-wert="${x}" aria-pressed="${g.art === x}">${gebindeSym(x)}<span>${esc(t("gebinde.arten." + x))}</span></button>`).join("")}${alleArten ? "" : `<button type="button" class="ep-geb ep-geb-mehr" data-a="gebinde-mehr" data-name="${n}" aria-label="${esc(t("pw.mehrArten"))}"><span aria-hidden="true">…</span></button>`}</div>
+    ${frage(2, t("pw.frage2"))}
+    <div class="ep-reihe">
+      ${st ? `<span class="stk-reihe"><input class="ep-zahl" inputmode="decimal" data-f="stk-anzahl:${n}" value="${esc(wertAnzeige(st.anzahl))}" placeholder="40" aria-label="${esc(t("selbst.anzahl"))}"><span class="einheit">${esc(t("allgemein.stueck"))} ×</span>
+        <input class="ep-zahl" inputmode="decimal" data-f="stk-gewicht:${n}" value="${esc(wertAnzeige(st.gewicht))}" placeholder="250" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(basis === "ml" ? t("gebinde.mlJeStueck") : t("selbst.gJeStueck"))}</span></span>`
+        : `<input class="ep-zahl" inputmode="decimal" data-f="packung:${n}" value="${esc(wertAnzeige(a.packung?.menge))}" placeholder="0" aria-label="${esc(t("pw.frage2"))}">`}
+      <div class="seg">${einheiten.map((e) => { const an = e === "stk" && basis !== "stk" ? !!st : !st && a.packung?.einheit === e; return `<button type="button" class="${an ? "an" : ""}" aria-pressed="${an}" data-a="packung-einheit" data-name="${n}" data-wert="${e}">${esc(einheitLabel(e))}</button>`; }).join("")}</div>
+    </div>
+    ${frage(3, t("pw.kostet." + g.art))}
+    <div class="ep-reihe">
+      <span class="ep-euro"><input class="ep-zahl" inputmode="decimal" data-f="preis:${n}" value="${esc(wertAnzeige(a.preis))}" placeholder="0,00" aria-label="${esc(t("pw.kostet." + g.art))}"><span class="einheit">€</span></span>
+      <div class="seg">${["netto", "brutto"].map((b) => { const an = (a.preisBasis || "netto") === b; return `<button type="button" class="${an ? "an" : ""}" aria-pressed="${an}" data-a="preis-basis" data-name="${n}" data-wert="${b}">${esc(t(b === "netto" ? "pw.ohneMwst" : "pw.mitMwst"))}</button>`; }).join("")}</div>
+    </div>
+    ${ergebnisGekauft(a)}
+    ${einklappen("ep-mehr:" + a.name, t("pw.mehr"), mehr)}
+    ${selbstKnopf ? `<button type="button" class="leise" data-a="${selbstKnopf}" data-name="${n}">${esc(t("selbst.machenSelbst"))}</button>` : ""}
+  </section>`;
+}
+
+function blattSelbst(a, alle) {
+  const r = a.rezept; const n = esc(a.name); const eigen = r.quelle === "eigen"; const vorlage = !!zwischenrezept(a.name);
   const stueck = !!r.stueck; const gEinheit = r.ausbeute?.einheit === "ml" || r.ausbeute?.einheit === "l" ? r.ausbeute.einheit : "g";
+  const index = Object.fromEntries(alle.map((x) => [x.name, x]));
   const schon = new Set(r.zutaten.map((x) => x.name));
   const opt = (x) => `<option value="${esc(x)}">${esc(artikelText(x))}</option>`;
   const eigene = alle.filter((x) => x.herkunft !== "selbst" && !schon.has(x.name) && x.name !== a.name).map((x) => x.name).sort((p, q) => artikelText(p).localeCompare(artikelText(q)));
   const katalog = [...new Set(Object.values(KATALOG).flatMap((k) => k.produkte.map((p) => p.n)))].filter((x) => !schon.has(x) && !eigene.includes(x) && x !== a.name && PRODUKT_INDEX[x]?.g !== "verpackung" && PRODUKT_INDEX[x]?.g !== "getraenk").sort((p, q) => artikelText(p).localeCompare(artikelText(q)));
-  return `<div class="sz">
-    <div class="sz-titel">${esc(t("selbst.zutaten"))}</div>
-    ${r.zutaten.length ? r.zutaten.map((x, i) => `<div class="sz-zeile"><label class="sz-name sz-tauschbar"><span>${esc(artikelText(x.name))} <span class="sz-pfeil" aria-hidden="true">▾</span></span><select class="sz-tausch" data-f="sz-tausch#${i}:${n}" aria-label="${esc(t("selbst.tauschen") + ": " + artikelText(x.name))}"><option value="${esc(x.name)}" selected>${esc(artikelText(x.name))}</option>
-        ${eigene.length ? `<optgroup label="${esc(t("selbst.deineWaren"))}">${eigene.map(opt).join("")}</optgroup>` : ""}<optgroup label="${esc(t("selbst.alleWaren"))}">${katalog.map(opt).join("")}</optgroup></select></label>
-      <input inputmode="decimal" data-f="sz-menge#${i}:${n}" value="${esc(wertAnzeige(x.menge))}" placeholder="0" aria-label="${esc(t("preise.menge") + " " + artikelText(x.name))}"><span class="einheit">${esc(einheitLabel(x.einheit))}</span>
-      <span class="sz-wert">${wertVon[x.name] !== undefined ? esc(geld(wertVon[x.name])) : "–"}</span>
-      <button type="button" class="sz-weg" data-a="sz-weg" data-name="${n}" data-i="${i}" aria-label="${esc(t("selbst.weg"))}">×</button></div>`).join("") : `<p class="hinweis">${esc(t("selbst.leer"))}</p>`}
-    <select class="sz-neu" data-f="sz-neu:${n}" aria-label="${esc(t("selbst.zutatDazu"))}"><option value="">${esc(t("selbst.zutatDazu"))}</option>
-      ${eigene.length ? `<optgroup label="${esc(t("selbst.deineWaren"))}">${eigene.map(opt).join("")}</optgroup>` : ""}<optgroup label="${esc(t("selbst.alleWaren"))}">${katalog.map(opt).join("")}</optgroup></select>
-    <div class="sz-titel">${esc(t("selbst.ergibt"))}</div>
-    <div class="seg klein">${["gewicht", "stueck"].map((x) => `<button type="button" class="${(x === "stueck") === stueck ? "an" : ""}" data-a="sz-art" data-name="${n}" data-wert="${x}">${esc(t("selbst.als." + x))}</button>`).join("")}</div>
-    ${stueck ? `<div class="packung"><input inputmode="decimal" data-f="sz-masse:${n}" value="${esc(wertAnzeige(r.stueck.masse ?? (r.stueck.anzahl > 0 && r.stueck.gewicht > 0 ? r.stueck.anzahl * r.stueck.gewicht : null)))}" placeholder="1650" aria-label="${esc(t("selbst.masse"))}"><span class="einheit">${esc(t("selbst.masse"))}</span></div>
-      <div class="packung"><input inputmode="decimal" data-f="sz-gewicht:${n}" value="${esc(wertAnzeige(r.stueck.gewicht))}" placeholder="275" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(t("selbst.gJeStueck"))}</span></div>
-      ${r.stueck.anzahl > 0 && r.stueck.gewicht > 0 ? `<p class="hinweis sz-stueck">${esc(t("selbst.ergibtStueck", r.stueck.anzahl, Math.round((r.stueck.masse ?? r.stueck.anzahl * r.stueck.gewicht) - r.stueck.anzahl * r.stueck.gewicht)))}</p>` : ""}`
-      : `<div class="packung"><input inputmode="decimal" data-f="sz-ausbeute:${n}" value="${esc(wertAnzeige(r.ausbeute?.menge))}" placeholder="1650" aria-label="${esc(t("selbst.ergibt"))}"><span class="einheit">${esc(einheitLabel(gEinheit))}</span></div>`}
+  const gruppen = `${eigene.length ? `<optgroup label="${esc(t("selbst.deineWaren"))}">${eigene.map(opt).join("")}</optgroup>` : ""}<optgroup label="${esc(t("selbst.alleWaren"))}">${katalog.map(opt).join("")}</optgroup>`;
+  const zutatBild = (name) => wareBild({ name, gruppe: index[name]?.gruppe || PRODUKT_INDEX[name]?.g || "" }, "ep-zbild");
+  const werte = selbstWerteText(a);
+  const mehr = `
     <div class="packung"><input inputmode="decimal" data-f="sz-arbeit:${n}" value="${esc(wertAnzeige(r.arbeitMin || null))}" placeholder="20" aria-label="${esc(t("selbst.arbeit"))}"><span class="einheit">${esc(t("selbst.arbeit"))}</span></div>
-  </div>`;
-}
-function selbstZeile(a, alle = []) {
-  const r = a.rezept; const ok = preisJeBasis(a) !== null; const eigen = r.quelle === "eigen";
-  const fehlt = (a.zwischenFehlt || []).filter((x) => x !== "rezept");
-  const z = ok ? null : zwischenpreis(a, Object.fromEntries(alle.map((x) => [x.name, x])));
-  const vorlage = !!zwischenrezept(a.name);
-  return `<div class="zeile selbst ${ok ? "an" : "offen"}">
-    <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(t("selbst.gemacht"))} · ${esc(t(eigen ? "selbst.deinAnsatz" : "rezepte.startwerte"))}</small></div><span class="marke ${ok ? (eigen ? "" : "geschaetzt") : "offen"}">${esc(ok ? t("selbst.errechnet") : t("allgemein.offen"))}</span></div>
-    ${ok ? `<div class="ergebnis">${esc(selbstWerteText(a))}</div>`
-      : `<p class="tipp">${esc(!(r.ausbeute?.menge > 0) ? t("selbst.ausbeuteFehlt") : fehlt.length ? t("selbst.fehlt", fehlt.map(artikelText).join(", ")) : t("selbst.mengeFehlt"))}${z?.bisher > 0 ? " · " + esc(t("selbst.bisher", geld(z.bisher))) : ""}</p>`}
+    ${werte ? `<p class="ep-werte">${esc(werte)}</p>` : ""}
     ${eigen ? "" : `<p class="hinweis">${esc(t("selbst.einmalWiegen"))}</p>`}
-    ${einklappen("selbst:" + a.name, t("selbst.bearbeiten"), selbstEditor(a, alle))}
-    <button type="button" class="leise" data-a="${vorlage ? "selbst-aus" : "selbst-eigen-aus"}" data-name="${esc(a.name)}">${esc(t("selbst.dochKaufen"))}</button></div>`;
+    <button type="button" class="leise" data-a="${vorlage ? "selbst-aus" : "selbst-eigen-aus"}" data-name="${n}">${esc(t("selbst.dochKaufen"))}</button>`;
+  return `<section class="ep-blatt sz" aria-label="${n}">
+    ${blattKopf(a, esc(t("selbst.gemacht")) + " · " + esc(t(eigen ? "selbst.deinAnsatz" : "rezepte.startwerte")))}
+    ${frage(1, t("selbst.zutaten"))}
+    <div class="ep-zutaten">
+      ${r.zutaten.length ? r.zutaten.map((x, i) => `<div class="ep-zut">${zutatBild(x.name)}
+        <label class="sz-name sz-tauschbar"><span>${esc(artikelText(x.name))} <span class="sz-pfeil" aria-hidden="true">▾</span></span>${i === 0 ? `<small>${esc(t("pw.tauschen"))}</small>` : ""}<select class="sz-tausch" data-f="sz-tausch#${i}:${n}" aria-label="${esc(t("selbst.tauschen") + ": " + artikelText(x.name))}"><option value="${esc(x.name)}" selected>${esc(artikelText(x.name))}</option>${gruppen}</select></label>
+        <span class="ep-zmenge"><input inputmode="decimal" data-f="sz-menge#${i}:${n}" value="${esc(wertAnzeige(x.menge))}" placeholder="0" aria-label="${esc(t("preise.menge") + " " + artikelText(x.name))}"><span class="einheit">${esc(einheitLabel(x.einheit))}</span></span>
+        <button type="button" class="sz-weg" data-a="sz-weg" data-name="${n}" data-i="${i}" aria-label="${esc(t("selbst.weg"))}">×</button></div>`).join("") : `<p class="hinweis">${esc(t("selbst.leer"))}</p>`}
+      <label class="ep-plus"><span>${esc(t("selbst.zutatDazu"))}</span><select class="sz-neu" data-f="sz-neu:${n}" aria-label="${esc(t("selbst.zutatDazu"))}"><option value="">${esc(t("selbst.zutatDazu"))}</option>${gruppen}</select></label>
+    </div>
+    ${frage(2, t("pw.raus"))}
+    <div class="seg">${["gewicht", "stueck"].map((x) => { const an = (x === "stueck") === stueck; return `<button type="button" class="${an ? "an" : ""}" aria-pressed="${an}" data-a="sz-art" data-name="${n}" data-wert="${x}">${esc(t("selbst.als." + x))}</button>`; }).join("")}</div>
+    ${stueck ? `<div class="ep-teig">
+        <label><span>${esc(t("pw.masse"))}</span><span class="ep-tfeld"><input inputmode="decimal" data-f="sz-masse:${n}" value="${esc(wertAnzeige(r.stueck.masse ?? (r.stueck.anzahl > 0 && r.stueck.gewicht > 0 ? r.stueck.anzahl * r.stueck.gewicht : null)))}" placeholder="1650"><span class="einheit">g</span></span></label>
+        <label><span>${esc(t("pw.einStueck"))}</span><span class="ep-tfeld"><input inputmode="decimal" data-f="sz-gewicht:${n}" value="${esc(wertAnzeige(r.stueck.gewicht))}" placeholder="275"><span class="einheit">g</span></span></label></div>`
+      : `<div class="ep-reihe"><input class="ep-zahl" inputmode="decimal" data-f="sz-ausbeute:${n}" value="${esc(wertAnzeige(r.ausbeute?.menge))}" placeholder="1650" aria-label="${esc(t("pw.raus"))}"><span class="einheit">${esc(einheitLabel(gEinheit))}</span></div>`}
+    ${ergebnisSelbst(a)}
+    ${einklappen("ep-mehr:" + a.name, t("pw.mehr"), mehr)}
+  </section>`;
 }
 
-function artikelZeile(a, alle = []) {
-  if (a.herkunft === "selbst" && a.rezept) return selbstZeile(a, alle);
-  const ok = preisJeBasis(a) !== null; const basis = basisVon(a.einheit); const gv = a.garverlust ? garverlustAnteil(a) : null;
-  const g = a.gebinde || { art: "packung", zwischen: null }; const artName = t("gebinde.arten." + g.art);
-  const p = gebindePreise(a); const einheitBasis = basis === "g" ? "kg" : basis === "ml" ? "l" : t("allgemein.stueck");
-  const jeBasis = p.jeEinheit === null ? null : basis === "stk" ? p.jeEinheit : preisJeBasis(a) * 1000;
-  const zOffen = zwischenOffen.has(a.name) || !!g.zwischen;
-  const st = basis !== "stk" ? g.stueck || null : null; const sg = Number(a.stueckGewicht) > 0 ? Number(a.stueckGewicht) : null; // Teil 2 (19.10.2026): Gebinde in Stück
-  const neben = jeBasis === null || !sg ? "" : basis === "stk" ? t("gebinde.jeEinheit", fmtEuro(jeBasis / sg * 1000, { dezimal: 2 }), "kg") : t("selbst.jeStueck", fmtEuro(preisJeBasis(a) * sg, { dezimal: preisJeBasis(a) * sg < 0.1 ? 3 : 2 }));
-  const rp = ok && istRichtpreis(a); // Richtpreise (17.10.2026): ≈ und Herkunft „Richtpreis“ (Marke wie bei Schätzungen)
-  return `<div class="zeile ${ok ? "an" : "offen"}">
-    <div class="oben"><div class="name">${esc(artikelText(a.name))}<small>${esc(ok ? (rp ? "≈ " : "") + gebindeSatz(a) + (rp ? " · " + t("preise.richtpreis.marke") : "") : a.preis === 0 ? t("preise.preisNull") : t("allgemein.offen"))}</small></div><span class="marke ${rp ? "geschaetzt" : ok ? "" : "offen"}">${esc(rp ? t("preise.richtpreis.marke") : ok ? t("allgemein.bekannt") : t("allgemein.offen"))}</span></div>
-    ${zwischenrezept(a.name) ? `<button type="button" class="leise" data-a="selbst-an" data-name="${esc(a.name)}">${esc(t("selbst.machenSelbst"))}</button>` : selbstMoeglich(a) ? `<button type="button" class="leise" data-a="selbst-eigen-an" data-name="${esc(a.name)}">${esc(t("selbst.machenSelbst"))}</button>` : ""}
-    <div class="chips">${(mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? GEBINDE_WAHL : GEBINDE_KURZ).map((x) => `<button type="button" class="chip klein ${g.art === x ? "an" : ""}" data-a="gebinde-art" data-name="${esc(a.name)}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}${mehrArten.has(a.name) || !GEBINDE_KURZ.includes(g.art) ? "" : `<button type="button" class="chip klein" data-a="gebinde-mehr" data-name="${esc(a.name)}">…</button>`}</div>
-    <div class="feldzeile"><label>${esc(t("gebinde.inhalt", artName))}</label>
-      <div class="packung">
-        <div class="periode">${(basis === "stk" ? EINHEITEN_JE_BASIS.stk : [...EINHEITEN_JE_BASIS[basis], "stk"]).map((e) => `<button type="button" class="${(e === "stk" && basis !== "stk" ? !!st : !st && a.packung?.einheit === e) ? "an" : ""}" data-a="packung-einheit" data-name="${esc(a.name)}" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div>
-        ${st ? `<span class="stk-reihe"><input inputmode="decimal" data-f="stk-anzahl:${esc(a.name)}" value="${esc(wertAnzeige(st.anzahl))}" placeholder="40" aria-label="${esc(t("selbst.anzahl"))}"><span class="einheit">${esc(t("allgemein.stueck"))} ×</span>
-        <input inputmode="decimal" data-f="stk-gewicht:${esc(a.name)}" value="${esc(wertAnzeige(st.gewicht))}" placeholder="250" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(basis === "ml" ? t("gebinde.mlJeStueck") : t("selbst.gJeStueck"))}</span></span>`
-        : `<input inputmode="decimal" data-f="packung:${esc(a.name)}" value="${esc(wertAnzeige(a.packung?.menge))}" placeholder="${esc(t("preise.menge"))}" aria-label="${esc(t("preise.menge"))}">`}
-      </div></div>
-    ${basis === "stk" ? `<div class="feldzeile"><label>${esc(t("gebinde.stueckGewichtFrage"))}</label><div class="packung"><input inputmode="decimal" data-f="stueckGewicht:${esc(a.name)}" value="${esc(wertAnzeige(a.stueckGewicht ?? null))}" placeholder="${esc(t("gebinde.optional"))}" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(t("selbst.gJeStueck"))}</span></div></div>` : ""}
-    <div class="feldzeile"><label>${esc(t("gebinde.preis", artName))}</label>
-      <div class="packung">
-        <input inputmode="decimal" data-f="preis:${esc(a.name)}" value="${esc(wertAnzeige(a.preis))}" placeholder="${esc(t("preise.preis"))}" aria-label="${esc(t("preise.preis"))}"><span class="einheit">€</span>
-        <div class="seg klein">${["netto", "brutto"].map((b) => `<button type="button" class="${(a.preisBasis || "netto") === b ? "an" : ""}" data-a="preis-basis" data-name="${esc(a.name)}" data-wert="${b}">${esc(t("gebinde." + b))}</button>`).join("")}</div>
-      </div></div>
-    ${jeBasis !== null ? `<div class="ergebnis">${rp ? "≈ " : ""}${esc(t("gebinde.jeEinheit", fmtEuro(jeBasis, { dezimal: jeBasis < 0.1 ? 4 : jeBasis < 1 ? 3 : 2 }), einheitBasis))}${neben ? " · " + esc(neben) : ""}${p.zwischen !== null && g.zwischen ? ` · ${esc(t("gebinde.jeZwischen", fmtEuro(p.zwischen, { dezimal: 2 }), t("gebinde.arten." + g.zwischen.art)))}` : ""}</div>` : ""}
-    ${zOffen ? `<div class="feldzeile"><label>${esc(t("gebinde.zwischenAnzahl", artName, t("gebinde.arten." + (g.zwischen?.art || g.zwischenArt || "beutel"))))}</label>
-      <div class="chips">${ZWISCHEN_ARTEN.map((x) => `<button type="button" class="chip klein ${(g.zwischen?.art || g.zwischenArt || "beutel") === x ? "an" : ""}" data-a="zwischen-art" data-name="${esc(a.name)}" data-wert="${x}">${esc(t("gebinde.arten." + x))}</button>`).join("")}</div>
-      <div class="packung"><input inputmode="decimal" data-f="zwischen:${esc(a.name)}" value="${esc(wertAnzeige(g.zwischen?.anzahl ?? null))}" placeholder="4" aria-label="${esc(t("gebinde.zwischen"))}"><span class="einheit">${esc(t("gebinde.arten." + (g.zwischen?.art || g.zwischenArt || "beutel")))}</span>
-      <button type="button" class="leise" data-a="zwischen-weg" data-name="${esc(a.name)}">${esc(t("gebinde.zwischenWeg"))}</button></div></div>`
-      : `<button type="button" class="leise" data-a="zwischen-auf" data-name="${esc(a.name)}">${esc(t("gebinde.zwischen"))}</button>`}
-    ${gv ? `<div class="unterzeile"><span class="marke ${gv.status === "geschaetzt" ? "geschaetzt" : ""}">${esc(t("preise.garverlust", fmtZahl(gv.wert * 100, 0), t(gv.status === "gemessen" ? "preise.gemessen" : "allgemein.schaetzung")))}</span>
-      <button type="button" class="leise" data-a="messen" data-name="${esc(a.name)}">${esc(t("preise.messen"))}</button></div>
-      ${a.garverlust.messen ? `<div class="packung"><input inputmode="decimal" data-f="roh:${esc(a.name)}" value="${esc(wertAnzeige(a.garverlust.roh))}" placeholder="${esc(t("preise.roh"))}"><span class="einheit">g</span>
-        <span class="einheit">→</span><input inputmode="decimal" data-f="gar:${esc(a.name)}" value="${esc(wertAnzeige(a.garverlust.gar))}" placeholder="${esc(t("preise.gar"))}"><span class="einheit">g</span></div>` : ""}` : ""}
-  </div>`;
+// Blatt-Ergebnis nach einer Eingabe neu setzen, ohne den Bildschirm neu zu zeichnen (Tastatur bleibt, Fokus bleibt).
+function ergebnisNeu(stand, name) {
+  if (typeof document === "undefined") return;
+  const alt = document.querySelector("#app .ep-blatt .ep-ergebnis"); const a = (stand.artikel || []).find((x) => x.name === name);
+  if (!alt || !a || name !== offeneWare) return;
+  alt.insertAdjacentHTML("afterend", istSelbst(a) ? ergebnisSelbst(a) : ergebnisGekauft(a)); alt.remove();
 }
+// Nach dem Zeichnen sanft zum Blatt bzw. zurück zur Kachel scrollen
+const hinScrollen = (sel) => { if (typeof document !== "undefined") setTimeout(() => document.querySelector(sel)?.scrollIntoView({ block: sel.includes("ep-blatt") ? "start" : "center", behavior: "smooth" }), 30); };
 
 export const preise = {
   id: "preise",
   view(stand) {
     // Trennung (17.10.2026): Zeichnen schreibt nicht mehr – gespeichert wird beim Betreten des Schritts (beimBetreten) und bei jeder Eingabe
     const artikel = artikelVorschau(stand).filter((a) => a.benutzt !== false);
-    const gruppen = [...new Set(artikel.map((a) => a.gruppe))];
-    const rpAktiv = richtpreiseAktiv({ artikel }); // Richtpreise (17.10.2026): zählen nicht als eingetragen
-    const fertig = artikel.filter((a) => preisJeBasis(a) !== null).length - rpAktiv;
+    const rpAktiv = richtpreiseAktiv({ artikel }); // Richtpreise (17.10.2026)
     const rpMoeglich = richtpreiseMoeglich({ artikel });
-    return `
-      <h1 class="frage">${esc(t("preise.frage"))}</h1>
-      <p class="hinweis">${esc(t("preise.hinweis"))} ${esc(t("gebinde.basisHinweis"))}</p>
-      <p class="tipp">${esc(t("preise.stand", fertig, artikel.length))}${rpAktiv ? " · " + esc(t("preise.richtpreis.aktiv", rpAktiv)) : ""}</p>
+    const fehlend = artikel.filter((a) => preisJe(a) === null);
+    const fertig = artikel.length - fehlend.length; const pct = artikel.length ? Math.round(fertig / artikel.length * 100) : 0;
+    const filter = fehlend.length && filterWahl !== "alle" ? "fehlt" : "alle";
+    const offen = offeneWare ? artikel.find((a) => a.name === offeneWare) || null : null;
+    const raster = (liste) => `<div class="ep-raster">${liste.map(kachel).join("")}</div>`;
+    const gruppen = [...new Set(artikel.map((a) => a.gruppe))];
+    // Gruppen nur in „Alle“ (lange Liste zum Überfliegen); „Fehlt“ ist eine kurze Aufgabenliste ohne Überschriften
+    const wand = filter === "fehlt" ? raster(fehlend) : gruppen.length > 1 ? gruppen.map((gr) => `<h2 class="ep-gruppe">${esc(t("warengruppen." + gr))}</h2>${raster(artikel.filter((a) => a.gruppe === gr))}`).join("") : raster(artikel);
+    // Richtpreise (17.10.2026) stehen seit 20.10.2026 unter der Bilderwand: auf kleinen Handys sind sonst keine Fotos im ersten Blick
+    const rpBlock = `
       ${rpMoeglich ? `<button type="button" class="knopf zweit" data-a="richtpreise-ein">${esc(t("preise.richtpreis.knopf"))}</button>
       <p class="hinweis">${esc(t("preise.richtpreis.satz"))}</p>` : ""}
       ${rpAktiv ? `<button type="button" class="leise" data-a="richtpreise-weg">${esc(t("preise.richtpreis.entfernen"))}</button>` : ""}
       ${rpMoeglich || rpAktiv ? `<button type="button" class="leise" data-a="richtpreise-quelle" aria-expanded="${rpQuelleOffen}">${esc(t("preise.richtpreis.quelleAuf"))}</button>${rpQuelleOffen ? `<p class="hinweis">${esc(t("preise.richtpreis.quelle"))}</p>` : ""}` : ""}
-      ${gruppen.map((gr) => `<div class="gruppe">${esc(t("warengruppen." + gr))}</div><div class="liste">${artikel.filter((a) => a.gruppe === gr).map((a) => artikelZeile(a, artikel)).join("")}</div>`).join("")}
-      <p class="hinweis">${esc(t("gebinde.lieferungSpaeter"))}</p>`;
+`;
+    const chip = (wert, text, aus) => `<button type="button" class="chip klein${filter === wert ? " an" : ""}" data-a="ep-filter" data-wert="${wert}" aria-pressed="${filter === wert}"${aus ? " disabled" : ""}>${esc(text)}</button>`;
+    return `
+      <h1 class="frage">${esc(t("preise.frage"))}</h1>
+      ${artikel.length ? `<div class="ep-fort"><div class="ep-fort-zeile"><b>${esc(t("pw.fortschritt", fertig, artikel.length))}</b><span>${pct} %</span></div><div class="ep-balken" aria-hidden="true"><i style="width:${pct}%"></i></div>${rpAktiv ? `<small>${esc(t("preise.richtpreis.aktiv", rpAktiv))}</small>` : ""}</div>` : `<p class="hinweis">${esc(t("pw.keineWaren"))}</p>`}
+      ${artikel.length ? `<div class="ep-filter" role="group">${chip("fehlt", t("pw.filterFehlt", fehlend.length), !fehlend.length)}${chip("alle", t("pw.filterAlle", artikel.length), false)}</div>
+      <p class="hinweis ep-tipp">${esc(t("pw.hinweis"))}</p>
+      <div class="ep-wand${offen ? " gedimmt" : ""}">${wand}</div>` : ""}
+      ${offen ? "" : `<div class="ep-rp">${rpBlock}</div>`}
+      ${offen ? (istSelbst(offen) ? blattSelbst(offen, artikel) : blattGekauft(offen)) : ""}`;
   },
-  fuss() { return knopfWeiter(); },
+  fuss(stand) { return offeneWare && (stand.artikel || []).some((a) => a.name === offeneWare) ? `<button type="button" class="knopf" data-a="ep-zu">${esc(t("allgemein.fertig"))}</button>` : knopfWeiter(); },
   beimBetreten(stand) { artikelAbgleichen(stand); }, // Trennung (17.10.2026): vorher im Zeichnen
   // Trennung (17.10.2026): vorher glich das Zeichnen die Artikelliste ab und speicherte sie. Jetzt geschieht das vor und nach jeder
   // Eingabe und Handlung dieses Schritts – gespeichert wird also dasselbe wie vorher, nur nicht mehr beim Anzeigen.
@@ -349,24 +441,29 @@ export const preise = {
     if (art.startsWith("sz-tausch#")) { selbstZutatTauschen(stand, name, Number(art.split("#")[1]), wert, heute()); artikelAbgleichen(stand); return true; } // 20.10.2026: Zutat tauschen
     if (art.startsWith("sz-")) { // Selbst gemacht (19.10.2026): Ansatz bearbeiten; neue Zutat zeichnet neu, Zahlen nicht (Fokus bleibt)
       const neu = art === "sz-neu"; selbstFeldSetzen(stand, name, art.slice(3), neu ? wert : parseZahl(wert), heute());
-      artikelAbgleichen(stand); return neu;
+      artikelAbgleichen(stand); if (!neu) ergebnisNeu(stand, name); return neu;
     }
     artikelFeldSetzen(stand, name, art, parseZahl(wert), heute());
-    artikelAbgleichen(stand);
+    artikelAbgleichen(stand); ergebnisNeu(stand, name);
   },
   aktion(name, el, stand, ctx) { artikelAbgleichen(stand); const r = preisAktion(name, el, stand, ctx); artikelAbgleichen(stand); return r; },
-  beimVerlassen() { zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; },
+  zurueck() { if (!offeneWare) return false; const war = offeneWare; offeneWare = null; hinScrollen(`.ep-kachel[data-name="${cssName(war)}"]`); return true; }, // Zurück-Geste schließt zuerst das Blatt
+  beimVerlassen() { zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; offeneWare = null; filterWahl = null; },
 };
+const cssName = (n) => (typeof CSS !== "undefined" && CSS.escape ? CSS.escape(n) : String(n).replace(/["\\]/g, "\\$&"));
 function preisAktion(name, el, stand, ctx) {
     if (name === "richtpreise-ein") { const r = richtpreiseEinsetzen(stand); ctx?.meldung?.(t("preise.richtpreis.meldung", r.gesetzt, r.ohneRichtpreis.length)); return true; } // Richtpreise (17.10.2026)
     if (name === "richtpreise-weg") { const r = richtpreiseEntfernen(stand); ctx?.meldung?.(t("preise.richtpreis.entfernt", r.entfernt)); return true; }
     if (name === "richtpreise-quelle") { rpQuelleOffen = !rpQuelleOffen; return true; }
+    if (name === "ep-filter") { filterWahl = el.dataset.wert === "fehlt" ? "fehlt" : "alle"; return true; }
+    if (name === "ep-zu") { const war = offeneWare; offeneWare = null; if (war) hinScrollen(`.ep-kachel[data-name="${cssName(war)}"]`); return true; }
     const a = stand.artikel.find((x) => x.name === el.dataset.name); if (!a) return false;
+    if (name === "ep-auf") { offeneWare = a.name; hinScrollen(".ep-blatt"); return true; }
     if (name === "selbst-an" || name === "selbst-aus") {
       const kachel = zwischenrezept(a.name)?.kachel; if (!kachel) return false;
       selbstUmschalten(stand, kachel, name === "selbst-an"); return true;
     }
-    if (name === "selbst-eigen-an" || name === "selbst-eigen-aus") { const an = name === "selbst-eigen-an"; const r = selbstEigenUmschalten(stand, a.name, an); if (an) offeneKlappen.add("selbst:" + a.name); return r; }
+    if (name === "selbst-eigen-an" || name === "selbst-eigen-aus") return selbstEigenUmschalten(stand, a.name, name === "selbst-eigen-an");
     if (name === "sz-weg") return selbstZutatEntfernen(stand, a.name, Number(el.dataset.i), heute());
     if (name === "sz-art") return selbstAusbeuteArt(stand, a.name, el.dataset.wert, heute());
     if (name === "packung-einheit") return packungEinheitSetzen(stand, a.name, el.dataset.wert);

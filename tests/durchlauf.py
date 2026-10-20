@@ -106,7 +106,14 @@ async def main():
             await pg.click('[data-a="rezept-auf"] >> nth=0'); await pg.fill('[data-f="zutat:0"]', "200"); await pg.click('[data-a="rezept-zu"]'); await pg.click('[data-a="weiter"]')
             # ---- Einkaufspreise mit Gebinde (Variante C)
             await bild("preise-gebinde")
+            # 20.10.2026: Bilderwand – Filter „Alle“, Kachel antippen öffnet das Blatt, „Fertig“ schließt es
+            if await pg.locator('[data-a="ep-filter"][data-wert="alle"]').count(): await pg.click('[data-a="ep-filter"][data-wert="alle"]')
+            async def auf(name):
+                if await pg.locator(f'.ep-blatt [data-f="preis:{name}"]').count(): return
+                if await pg.locator('.fuss [data-a="ep-zu"]').count(): await pg.click('.fuss [data-a="ep-zu"]'); await pg.wait_for_timeout(120)
+                await pg.click(f'.ep-kachel[data-name="{name}"]'); await pg.wait_for_selector(f'.ep-blatt [data-f="preis:{name}"]')
             async def preis(name, menge, einheit, p, art=None, basis=None, zwischen=None):
+                await auf(name)
                 if art: await pg.click(f'[data-a="gebinde-art"][data-name="{name}"][data-wert="{art}"]')
                 await pg.click(f'[data-a="packung-einheit"][data-name="{name}"][data-wert="{einheit}"]')
                 await pg.fill(f'[data-f="packung:{name}"]', menge)
@@ -117,7 +124,7 @@ async def main():
             await preis("Dönerspieß Kalb/Pute", "10", "kg", "74,50", art="karton")
             await preis("Dönerbrot / Fladen", "200", "stk", "60", art="karton", zwischen="4")
             await preis("Tomaten", "6", "kg", "9,60", art="kiste")
-            await bild("preise-falafel-kette")
+            await auf("Dönerbrot / Fladen"); await bild("preise-falafel-kette")
             s = await stand(); brot = next(a for a in s["artikel"] if a["name"] == "Dönerbrot / Fladen")
             assert brot["gebinde"]["art"] == "karton" and brot["gebinde"]["zwischen"]["anzahl"] == 4 and brot["packung"]["menge"] == 200, brot
             html = await pg.content(); assert "Karton à 4 Beutel à 200 Stück" in html or "Karton à 4 Beutel à 50 Stück" in html, "Gebindesatz fehlt"
@@ -128,7 +135,8 @@ async def main():
                 await preis(nm, "10", {"kg": "kg", "l": "l"}.get(e, "stk"), "20")
             # Cola brutto vom Supermarkt
             if await pg.locator('[data-a="preis-basis"][data-name="Cola 0,33 l"]').count():
-                await pg.click('[data-a="preis-basis"][data-name="Cola 0,33 l"][data-wert="brutto"]')
+                await auf("Cola 0,33 l"); await pg.click('[data-a="preis-basis"][data-name="Cola 0,33 l"][data-wert="brutto"]')
+            if await pg.locator('.fuss [data-a="ep-zu"]').count(): await pg.click('.fuss [data-a="ep-zu"]'); await pg.wait_for_timeout(120)
             await pg.click('[data-a="weiter"]')
             ids = await pg.evaluate("window.__gastrocalc.stand.gerichte.map(g => g.id)")
             for i, gid in enumerate(ids): await pg.fill(f'[data-f="preis:{gid}"]', ["7,50", "8", "12,90", "2,50"][i % 4])

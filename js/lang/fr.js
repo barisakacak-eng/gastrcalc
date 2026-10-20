@@ -1421,4 +1421,9 @@ export default {
       kopf: ["Commerce", "Chiffre d'affaires", "Coût matière", "Jeté", "Soupçon de perte", "Obligations ouvertes", "Jusqu'à zéro", "Valeur du stock", "Commander"], laden: "Commerce", vergleich: "Comparaison", vergleichInfo: "Classement uniquement entre commerces ayant la même base de données.",
       trend: "Tendance par rapport à la période précédente", daten: "Base de données", fehlt: "Incomplet", tage: "jours", quelle: "Source coût matière", fuss: "GastroCalc · Rapport du propriétaire. Chiffres tirés des saisies de l'appli – ni comptabilité, ni données de caisse." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Touche un produit et note ce que tu paies.", fortschritt: (a, b) => `${a} sur ${b} prêts`, fehlt: "manque", filterFehlt: (n) => `Manquants (${n})`, filterAlle: (n) => `Tous (${n})`, selbst: "maison",
+    frage1: "Comment arrive-t-il ?", frage2: "Combien y a-t-il dedans ?", kostet: { karton: "Combien coûte le carton ?", kiste: "Combien coûte la caisse ?", beutel: "Combien coûte le sachet ?", packung: "Combien coûte le paquet ?", kanister: "Combien coûte le bidon ?", eimer: "Combien coûte le seau ?", sack: "Combien coûte le sac ?", flasche: "Combien coûte la bouteille ?", dose: "Combien coûte la boîte ?", lose: "Combien ça coûte ?" },
+    ohneMwst: "sans TVA", mitMwst: "avec TVA", ergebnis: { stk: "Une pièce", kg: "1 kg", l: "1 litre" }, mehr: "Plus", mehrArten: "Autres types",
+    mwstHinweis: "Grossiste : souvent sans TVA. Supermarché : avec TVA. L'appli calcule sans TVA.", keineWaren: "Pas encore de produits. Choisis d'abord les plats et les recettes.", raus: "Qu'est-ce qui en sort ?", masse: "Pâte totale", einStueck: "Une pièce", tauschen: "touche pour changer" },
 };

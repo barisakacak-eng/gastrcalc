@@ -1420,4 +1420,9 @@ export default {
       kopf: ["Dikan", "Dahat", "Mesrefa malê", "Avêtî", "Guman a kêmbûnê", "Erkên vekirî", "Heta sifir", "Nirxa depoyê", "Sipariş"], laden: "Dikan", vergleich: "Berawirdkirin", vergleichInfo: "Rêz tenê di navbera dikanên bi heman bingeha daneyan.",
       trend: "Meyl li gorî dema berê", daten: "Bingeha daneyan", fehlt: "Netemam", tage: "roj", quelle: "Çavkaniya mesrefa malê", fuss: "GastroCalc · Rapora xwediyê. Hejmar ji tomarên sepanê – ne hesabdarî, ne daneyên kaseyê." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Li ser malekê bitikîne û tiştê ku tu didî binivîse.", fortschritt: (a, b) => `${a} ji ${b} amade`, fehlt: "kêm", filterFehlt: (n) => `Kêm (${n})`, filterAlle: (n) => `Hemû (${n})`, selbst: "bi xwe",
+    frage1: "Çawa tê?", frage2: "Çiqas tê de heye?", kostet: { karton: "Kartûn bi çiqasî ye?", kiste: "Qutî bi çiqasî ye?", beutel: "Kîsik bi çiqasî ye?", packung: "Pakêt bi çiqasî ye?", kanister: "Bîdon bi çiqasî ye?", eimer: "Satil bi çiqasî ye?", sack: "Çewal bi çiqasî ye?", flasche: "Şûşe bi çiqasî ye?", dose: "Qutîk bi çiqasî ye?", lose: "Bi çiqasî ye?" },
+    ohneMwst: "bê bac", mitMwst: "bi bac", ergebnis: { stk: "Yek parçe", kg: "1 kg", l: "1 lître" }, mehr: "Zêdetir", mehrArten: "Cureyên din",
+    mwstHinweis: "Firoşgeha mezin: pir caran bê bac. Supermarket: bi bac. Sepan bê bac hesab dike.", keineWaren: "Hîn mal tune. Pêşî xwarin û reçeteyan hilbijêre.", raus: "Çi derdikeve?", masse: "Hevîr bi tevahî", einStueck: "Yek parçe", tauschen: "ji bo guhertinê bitikîne" },
 };

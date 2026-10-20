@@ -1427,4 +1427,9 @@ export default {
       kopf: ["Lokal", "Obrót", "Koszt towaru", "Wyrzucone", "Podejrzenie ubytku", "Otwarte obowiązki", "Do zera", "Wartość magazynu", "Zamówić"], laden: "Lokal", vergleich: "Porównanie", vergleichInfo: "Ranking tylko między lokalami o tej samej bazie danych.",
       trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCalc · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Stuknij towar i wpisz, ile płacisz.", fortschritt: (a, b) => `${a} z ${b} gotowe`, fehlt: "brak", filterFehlt: (n) => `Brak (${n})`, filterAlle: (n) => `Wszystkie (${n})`, selbst: "własne",
+    frage1: "Jak przychodzi?", frage2: "Ile jest w środku?", kostet: { karton: "Ile kosztuje karton?", kiste: "Ile kosztuje skrzynka?", beutel: "Ile kosztuje worek?", packung: "Ile kosztuje opakowanie?", kanister: "Ile kosztuje kanister?", eimer: "Ile kosztuje wiadro?", sack: "Ile kosztuje duży worek?", flasche: "Ile kosztuje butelka?", dose: "Ile kosztuje puszka?", lose: "Ile to kosztuje?" },
+    ohneMwst: "bez VAT", mitMwst: "z VAT", ergebnis: { stk: "Jedna sztuka", kg: "1 kg", l: "1 litr" }, mehr: "Więcej", mehrArten: "Inne rodzaje",
+    mwstHinweis: "Hurtownia: zwykle bez VAT. Supermarket: z VAT. Aplikacja liczy bez VAT.", keineWaren: "Jeszcze brak towarów. Najpierw wybierz dania i przepisy.", raus: "Co wychodzi?", masse: "Ciasto razem", einStueck: "Jedna sztuka", tauschen: "stuknij, aby zamienić" },
 };

@@ -57,9 +57,17 @@ async def main():
             assert await pg.locator('[data-a="richtpreise-weg"]').count() == 0, "Entfernen nur, wenn Richtpreise aktiv sind"
             # Schnellstart Döner macht Fladen und Knoblauchsauce „selbst“ – deren Rohstoffe (Mehl, Hefe, Joghurt …) haben keinen Richtpreis.
             # Der Wirt stellt beide auf „doch kaufen“, dann greifen die Richtpreise für Fladen und Sauce.
-            for name in ["Dönerbrot / Fladen", "Knoblauchsauce"]: await tipp(f'[data-a="selbst-aus"][data-name="{name}"]')
+            # 20.10.2026: Bilderwand – Filter „Alle“, Kachel antippen öffnet das Blatt, „Fertig“ schließt es („Mehr“ klappt die Testhilfe auf)
+            await tipp('[data-a="ep-filter"][data-wert="alle"]')
+            async def blatt(name):
+                if await pg.locator('.fuss [data-a="ep-zu"]').count(): await tipp('.fuss [data-a="ep-zu"]')
+                await tipp(f'.ep-kachel[data-name="{name}"]'); assert await pg.locator(f'.ep-blatt[aria-label="{name}"]').count() == 1, name
+            async def zu(): await tipp('.fuss [data-a="ep-zu"]'); assert await pg.locator(".ep-blatt").count() == 0
+            for name in ["Dönerbrot / Fladen", "Knoblauchsauce"]: await blatt(name); await tipp(f'[data-a="selbst-aus"][data-name="{name}"]'); await zu()
+            await blatt("Eisbergsalat")
             await pg.fill('[data-f="packung:Eisbergsalat"]', "10")
             f = pg.locator('[data-f="preis:Eisbergsalat"]'); await f.fill("13,50"); await f.blur(); await pg.wait_for_timeout(200)
+            await zu()
             z0 = await zaehler(); assert z0["quelle"] == "richtwert", z0  # ohne Richtpreise fehlt dem Döner noch fast alles
             await bild("preise_vorher")
 
@@ -71,10 +79,16 @@ async def main():
             assert eis["preis"] == 13.5 and eis["status"] == "bekannt" and "richtpreis" not in eis, eis
             d = next(a for a in s["artikel"] if a["name"] == "Dönerspieß Kalb/Pute")
             assert d["status"] == "richtpreis" and d["preis"] == 15.62 and d["packung"] == {"menge": 1, "einheit": "kg"}, d
-            zeile = await pg.inner_text('.zeile:has([data-f="preis:Dönerspieß Kalb/Pute"])')
+            await tipp('[data-a="ep-filter"][data-wert="alle"]')
+            assert await pg.locator('.ep-kachel[data-name="Dönerspieß Kalb/Pute"] .ep-marke.ca').count() == 1, "Kachel mit Richtpreis ohne ≈"
+            assert await pg.locator('.ep-kachel[data-name="Eisbergsalat"] .ep-marke.ca').count() == 0, "eigener Preis: Kachel ohne ≈"
+            await blatt("Dönerspieß Kalb/Pute")
+            zeile = await pg.inner_text('.ep-blatt')
             assert "≈" in zeile and "Richtpreis" in zeile, zeile
-            assert await pg.locator('.zeile:has([data-f="preis:Dönerspieß Kalb/Pute"]) .oben .marke.geschaetzt').count() == 1
-            assert "≈" not in await pg.inner_text('.zeile:has([data-f="preis:Eisbergsalat"])'), "eigener Preis ohne ≈"
+            assert await pg.locator('.ep-blatt .ep-kopf .marke.geschaetzt').count() == 1
+            await blatt("Eisbergsalat")
+            assert "≈" not in await pg.inner_text('.ep-blatt'), "eigener Preis ohne ≈"
+            await zu()
             assert await pg.locator('[data-a="richtpreise-weg"]').count() == 1
             await tipp('[data-a="richtpreise-quelle"]'); assert "17.10.2026" in await pg.inner_text("#app")
             await bild("preise_nachher", True)

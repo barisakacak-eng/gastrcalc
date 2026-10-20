@@ -1422,4 +1422,9 @@ export default {
       kopf: ["Locale", "Incasso", "Costo merce", "Buttato", "Sospetto di perdita", "Obblighi aperti", "Fino a zero", "Valore magazzino", "Ordinare"], laden: "Locale", vergleich: "Confronto", vergleichInfo: "Classifica solo tra locali con la stessa base dati.",
       trend: "Andamento rispetto al periodo precedente", daten: "Base dati", fehlt: "Incompleto", tage: "giorni", quelle: "Fonte costo merce", fuss: "GastroCalc · Rapporto del proprietario. Cifre dalle registrazioni dell'app – non contabilità, non dati di cassa." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Tocca un prodotto e scrivi quanto paghi.", fortschritt: (a, b) => `${a} di ${b} pronti`, fehlt: "manca", filterFehlt: (n) => `Mancano (${n})`, filterAlle: (n) => `Tutti (${n})`, selbst: "fatto da noi",
+    frage1: "Come arriva?", frage2: "Quanto c'è dentro?", kostet: { karton: "Quanto costa il cartone?", kiste: "Quanto costa la cassa?", beutel: "Quanto costa la busta?", packung: "Quanto costa la confezione?", kanister: "Quanto costa la tanica?", eimer: "Quanto costa il secchio?", sack: "Quanto costa il sacco?", flasche: "Quanto costa la bottiglia?", dose: "Quanto costa la lattina?", lose: "Quanto costa?" },
+    ohneMwst: "senza IVA", mitMwst: "con IVA", ergebnis: { stk: "Un pezzo", kg: "1 kg", l: "1 litro" }, mehr: "Altro", mehrArten: "Altri tipi",
+    mwstHinweis: "Ingrosso: di solito senza IVA. Supermercato: con IVA. L'app calcola senza IVA.", keineWaren: "Ancora nessun prodotto. Prima scegli piatti e ricette.", raus: "Cosa ne esce?", masse: "Impasto totale", einStueck: "Un pezzo", tauschen: "tocca per cambiare" },
 };

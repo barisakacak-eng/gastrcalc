@@ -1421,4 +1421,9 @@ export default {
       kopf: ["Local", "Ventas", "Coste de mercancía", "Tirado", "Sospecha de merma", "Obligaciones abiertas", "Hasta cero", "Valor del almacén", "Pedir"], laden: "Local", vergleich: "Comparación", vergleichInfo: "Clasificación solo entre locales con la misma base de datos.",
       trend: "Tendencia frente al periodo anterior", daten: "Base de datos", fehlt: "Incompleto", tage: "días", quelle: "Origen coste de mercancía", fuss: "GastroCalc · Informe del propietario. Cifras de los registros de la app – no es contabilidad ni datos de caja." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Toca un producto y escribe lo que pagas.", fortschritt: (a, b) => `${a} de ${b} listos`, fehlt: "falta", filterFehlt: (n) => `Faltan (${n})`, filterAlle: (n) => `Todos (${n})`, selbst: "casero",
+    frage1: "¿Cómo llega?", frage2: "¿Cuánto hay dentro?", kostet: { karton: "¿Cuánto cuesta la caja?", kiste: "¿Cuánto cuesta la caja de plástico?", beutel: "¿Cuánto cuesta la bolsa?", packung: "¿Cuánto cuesta el paquete?", kanister: "¿Cuánto cuesta la garrafa?", eimer: "¿Cuánto cuesta el cubo?", sack: "¿Cuánto cuesta el saco?", flasche: "¿Cuánto cuesta la botella?", dose: "¿Cuánto cuesta la lata?", lose: "¿Cuánto cuesta?" },
+    ohneMwst: "sin IVA", mitMwst: "con IVA", ergebnis: { stk: "Una pieza", kg: "1 kg", l: "1 litro" }, mehr: "Más", mehrArten: "Otros tipos",
+    mwstHinweis: "Mayorista: casi siempre sin IVA. Supermercado: con IVA. La app calcula sin IVA.", keineWaren: "Aún no hay productos. Primero elige platos y recetas.", raus: "¿Qué sale?", masse: "Masa total", einStueck: "Una pieza", tauschen: "toca para cambiar" },
 };

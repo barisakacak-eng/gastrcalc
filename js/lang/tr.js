@@ -1409,4 +1409,9 @@ export default {
       kopf: ["Dükkân", "Ciro", "Mal maliyeti", "Atılan", "Fire şüphesi", "Açık görevler", "Sıfıra kadar", "Depo değeri", "Sipariş"], laden: "Dükkân", vergleich: "Karşılaştırma", vergleichInfo: "Sıralama yalnızca aynı veri tabanına sahip dükkânlar arasında.",
       trend: "Önceki döneme göre eğilim", daten: "Veri tabanı", fehlt: "Eksik", tage: "gün", quelle: "Mal maliyeti kaynağı", fuss: "GastroCalc · Sahip raporu. Rakamlar uygulamadaki kayıtlardan – muhasebe değil, kasa verisi değil." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Bir malı seç, ödediğin fiyatı yaz.", fortschritt: (a, b) => `${a} / ${b} tamam`, fehlt: "eksik", filterFehlt: (n) => `Eksik (${n})`, filterAlle: (n) => `Hepsi (${n})`, selbst: "kendimiz",
+    frage1: "Nasıl geliyor?", frage2: "İçinde ne kadar var?", kostet: { karton: "Koli kaç para?", kiste: "Kasa kaç para?", beutel: "Poşet kaç para?", packung: "Paket kaç para?", kanister: "Bidon kaç para?", eimer: "Kova kaç para?", sack: "Çuval kaç para?", flasche: "Şişe kaç para?", dose: "Kutu kaç para?", lose: "Kaç para?" },
+    ohneMwst: "KDV hariç", mitMwst: "KDV dahil", ergebnis: { stk: "Bir adet", kg: "1 kg", l: "1 litre" }, mehr: "Daha fazla", mehrArten: "Diğer türler",
+    mwstHinweis: "Toptancı: çoğu zaman KDV hariç. Market: KDV dahil. Uygulama KDV hariç hesaplar.", keineWaren: "Henüz mal yok. Önce yemekleri ve tarifleri seç.", raus: "Ne çıkıyor?", masse: "Toplam hamur", einStueck: "Bir adet", tauschen: "değiştirmek için dokun" },
 };

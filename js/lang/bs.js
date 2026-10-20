@@ -1429,4 +1429,9 @@ export default {
       kopf: ["Radnja", "Promet", "Trošak robe", "Bačeno", "Sumnja na manjak", "Otvorene obaveze", "Do nule", "Vrijednost zalihe", "Naručiti"], laden: "Radnja", vergleich: "Poređenje", vergleichInfo: "Rang samo između radnji s istom bazom podataka.",
       trend: "Trend prema prethodnom periodu", daten: "Baza podataka", fehlt: "Nepotpuno", tage: "dana", quelle: "Izvor troška robe", fuss: "GastroCalc · Izvještaj za vlasnika. Brojevi iz unosa u aplikaciji – nije knjigovodstvo, nisu podaci kase." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Dodirni robu i upiši koliko plaćaš.", fortschritt: (a, b) => `${a} od ${b} gotovo`, fehlt: "nedostaje", filterFehlt: (n) => `Nedostaje (${n})`, filterAlle: (n) => `Sve (${n})`, selbst: "naše",
+    frage1: "Kako dolazi?", frage2: "Koliko je unutra?", kostet: { karton: "Koliko košta kutija?", kiste: "Koliko košta gajba?", beutel: "Koliko košta kesa?", packung: "Koliko košta pakovanje?", kanister: "Koliko košta kanister?", eimer: "Koliko košta kanta?", sack: "Koliko košta vreća?", flasche: "Koliko košta flaša?", dose: "Koliko košta konzerva?", lose: "Koliko košta?" },
+    ohneMwst: "bez PDV-a", mitMwst: "sa PDV-om", ergebnis: { stk: "Jedan komad", kg: "1 kg", l: "1 litar" }, mehr: "Više", mehrArten: "Druge vrste",
+    mwstHinweis: "Veleprodaja: obično bez PDV-a. Supermarket: sa PDV-om. Aplikacija računa bez PDV-a.", keineWaren: "Još nema robe. Prvo odaberi jela i recepte.", raus: "Šta izlazi?", masse: "Ukupno tijesto", einStueck: "Jedan komad", tauschen: "dodirni za zamjenu" },
 };

@@ -1367,4 +1367,9 @@ export default {
       kopf: ["Laden", "Umsatz", "Wareneinsatz", "Weggeworfen", "Schwund-Verdacht", "Pflichten offen", "Bis null", "Lager-Wert", "Bestellen"], laden: "Laden", vergleich: "Vergleich", vergleichInfo: "Rang nur zwischen Läden mit gleicher Datenbasis.",
       trend: "Trend zum Vorzeitraum", daten: "Datenbasis", fehlt: "Unvollständig", tage: "Tage", quelle: "Quelle Wareneinsatz", fuss: "GastroCalc · Eigentümer-Bericht. Kennzahlen aus den Einträgen der App – keine Buchhaltung, keine Kassendaten." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Tipp eine Ware an und trag ein, was du zahlst.", fortschritt: (a, b) => `${a} von ${b} fertig`, fehlt: "fehlt", filterFehlt: (n) => `Fehlt (${n})`, filterAlle: (n) => `Alle (${n})`, selbst: "selbst",
+    frage1: "Wie kommt es?", frage2: "Wie viel ist drin?", kostet: { karton: "Was kostet der Karton?", kiste: "Was kostet die Kiste?", beutel: "Was kostet der Beutel?", packung: "Was kostet die Packung?", kanister: "Was kostet der Kanister?", eimer: "Was kostet der Eimer?", sack: "Was kostet der Sack?", flasche: "Was kostet die Flasche?", dose: "Was kostet die Dose?", lose: "Was kostet es?" },
+    ohneMwst: "ohne MwSt", mitMwst: "mit MwSt", ergebnis: { stk: "Ein Stück", kg: "1 kg", l: "1 Liter" }, mehr: "Mehr", mehrArten: "Weitere Arten",
+    mwstHinweis: "Großhandel: meist ohne MwSt. Supermarkt: mit MwSt. Die App rechnet ohne MwSt.", keineWaren: "Noch keine Waren. Erst Gerichte und Rezepte wählen.", raus: "Was kommt raus?", masse: "Teig gesamt", einStueck: "Ein Stück", tauschen: "antippen zum Tauschen" },
 };

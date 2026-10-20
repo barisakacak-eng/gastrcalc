@@ -1408,4 +1408,9 @@ export default {
       kopf: ["Shop", "Sales", "Food cost", "Thrown away", "Suspected loss", "Duties open", "To zero", "Stock value", "Order"], laden: "Shop", vergleich: "Comparison", vergleichInfo: "Rank only between shops with the same data basis.",
       trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCalc · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Tap an item and enter what you pay.", fortschritt: (a, b) => `${a} of ${b} done`, fehlt: "missing", filterFehlt: (n) => `Missing (${n})`, filterAlle: (n) => `All (${n})`, selbst: "homemade",
+    frage1: "How does it come?", frage2: "How much is inside?", kostet: { karton: "What does the box cost?", kiste: "What does the crate cost?", beutel: "What does the bag cost?", packung: "What does the pack cost?", kanister: "What does the canister cost?", eimer: "What does the bucket cost?", sack: "What does the sack cost?", flasche: "What does the bottle cost?", dose: "What does the can cost?", lose: "What does it cost?" },
+    ohneMwst: "without VAT", mitMwst: "with VAT", ergebnis: { stk: "One piece", kg: "1 kg", l: "1 litre" }, mehr: "More", mehrArten: "More types",
+    mwstHinweis: "Wholesale: usually without VAT. Supermarket: with VAT. The app calculates without VAT.", keineWaren: "No items yet. First choose dishes and recipes.", raus: "What comes out?", masse: "Total dough", einStueck: "One piece", tauschen: "tap to swap" },
 };

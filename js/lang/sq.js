@@ -1426,4 +1426,9 @@ export default {
       kopf: ["Lokali", "Xhiro", "Kosto e mallit", "Hedhur", "Dyshim për humbje", "Detyrime të hapura", "Deri në zero", "Vlera e magazinës", "Porosit"], laden: "Lokali", vergleich: "Krahasim", vergleichInfo: "Renditje vetëm midis lokaleve me të njëjtën bazë të dhënash.",
       trend: "Prirja ndaj periudhës së mëparshme", daten: "Baza e të dhënave", fehlt: "E paplotë", tage: "ditë", quelle: "Burimi i kostos së mallit", fuss: "GastroCalc · Raporti i pronarit. Shifra nga regjistrimet e aplikacionit – jo kontabilitet, jo të dhëna arke." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Prek një mall dhe shkruaj sa paguan.", fortschritt: (a, b) => `${a} nga ${b} gati`, fehlt: "mungon", filterFehlt: (n) => `Mungojnë (${n})`, filterAlle: (n) => `Të gjitha (${n})`, selbst: "vetë",
+    frage1: "Si vjen?", frage2: "Sa ka brenda?", kostet: { karton: "Sa kushton kutia?", kiste: "Sa kushton arka?", beutel: "Sa kushton qesja?", packung: "Sa kushton paketa?", kanister: "Sa kushton bidoni?", eimer: "Sa kushton kova?", sack: "Sa kushton thesi?", flasche: "Sa kushton shishja?", dose: "Sa kushton kanaçja?", lose: "Sa kushton?" },
+    ohneMwst: "pa TVSH", mitMwst: "me TVSH", ergebnis: { stk: "Një copë", kg: "1 kg", l: "1 litër" }, mehr: "Më shumë", mehrArten: "Lloje të tjera",
+    mwstHinweis: "Shumicë: zakonisht pa TVSH. Supermarket: me TVSH. Aplikacioni llogarit pa TVSH.", keineWaren: "Ende s'ka mallra. Zgjidh fillimisht gatimet dhe recetat.", raus: "Çfarë del?", masse: "Brumi gjithsej", einStueck: "Një copë", tauschen: "prek për ta ndërruar" },
 };

@@ -1428,4 +1428,9 @@ export default {
       kopf: ["Local", "Încasări", "Costul mărfii", "Aruncat", "Suspiciune de pierdere", "Obligații deschise", "Până la zero", "Valoarea stocului", "Comandă"], laden: "Local", vergleich: "Comparație", vergleichInfo: "Clasament doar între localuri cu aceeași bază de date.",
       trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCalc · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
   },
+  // Einkaufspreise als Bilderwand (20.10.2026)
+  pw: { hinweis: "Atinge o marfă și scrie cât plătești.", fortschritt: (a, b) => `${a} din ${b} gata`, fehlt: "lipsă", filterFehlt: (n) => `Lipsă (${n})`, filterAlle: (n) => `Toate (${n})`, selbst: "făcut de noi",
+    frage1: "Cum vine?", frage2: "Cât e înăuntru?", kostet: { karton: "Cât costă cutia?", kiste: "Cât costă lada?", beutel: "Cât costă punga?", packung: "Cât costă pachetul?", kanister: "Cât costă canistra?", eimer: "Cât costă găleata?", sack: "Cât costă sacul?", flasche: "Cât costă sticla?", dose: "Cât costă doza?", lose: "Cât costă?" },
+    ohneMwst: "fără TVA", mitMwst: "cu TVA", ergebnis: { stk: "O bucată", kg: "1 kg", l: "1 litru" }, mehr: "Mai mult", mehrArten: "Alte tipuri",
+    mwstHinweis: "Angro: de obicei fără TVA. Supermarket: cu TVA. Aplicația calculează fără TVA.", keineWaren: "Încă nu sunt mărfuri. Alege întâi preparatele și rețetele.", raus: "Ce iese?", masse: "Aluat total", einStueck: "O bucată", tauschen: "atinge pentru a schimba" },
 };

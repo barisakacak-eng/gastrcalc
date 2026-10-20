@@ -327,3 +327,94 @@ select.sz-tausch { position: absolute; inset: 0; width: 100%; height: 100%; opac
 .sz-tauschbar:focus-within { outline: 2px solid var(--b-akzent); outline-offset: 2px; border-radius: 4px; }
 /* 20.10.2026: Summenzeile als Knopf (eigener Lohn im Ergebnis) – sieht aus wie die Zeilen darüber */
 button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--b-linie); font: inherit; color: inherit; text-align: start; cursor: pointer; min-height: 44px; }
+
+/* 20.10.2026: Einkaufspreise als Bilderwand (Entwurf „Bilder-Raster“, von Baris freigegeben). Klassen „ep-“, Farben aus den Token oben.
+   Raster: drei Kacheln je Reihe (auch auf 360 px), unter 330 px zwei – Spalten schrumpfen (minmax 0), kein Überlauf. */
+.ep-fort { display: grid; gap: calc(6rem/17); }
+.ep-fort-zeile { display: flex; justify-content: space-between; gap: 8px; font-size: calc(15rem/17); font-variant-numeric: var(--zahlen); }
+.ep-fort small { color: var(--b-text-leise); font-size: calc(13rem/17); }
+.ep-balken { height: 8px; border-radius: 4px; background: var(--b-linie); overflow: hidden; }
+.ep-balken i { display: block; height: 100%; background: var(--b-gruen-ok); border-radius: inherit; }
+.ep-filter { display: flex; gap: 8px; flex-wrap: wrap; }
+.ep-filter .chip[disabled] { opacity: .5; }
+.ep-tipp { margin-top: -8px; font-size: calc(14rem/17); }
+.ep-wand { display: grid; gap: 10px; transition: opacity var(--bewegung); }
+.ep-wand.gedimmt { opacity: .45; }
+.ep-gruppe { font-size: calc(12rem/17); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--b-text-leise); margin: 6px 2px -2px; }
+.ep-raster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 329px) { .ep-raster { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ep-kachel { position: relative; display: flex; flex-direction: column; min-width: 0; padding: 0; overflow: hidden; text-align: start; background: var(--b-karte); color: var(--b-text);
+  border: 1px solid var(--b-linie); border-radius: var(--radius); font: inherit; cursor: pointer; }
+.ep-kachel.fehlt { border: 2px solid var(--b-rot); }
+.ep-kachel.auf { outline: 3px solid var(--b-akzent); outline-offset: 1px; }
+.ep-kachel:focus-visible { outline: 3px solid var(--fokus); outline-offset: 2px; }
+.ep-bild { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--papier-tief); }
+.ep-ohne { display: grid; place-items: center; }
+.ep-ohne img { width: 56%; height: auto; opacity: .9; }
+.ep-n { padding: 5px 7px 0; font-size: calc(12.5rem/17); font-weight: 700; line-height: 1.2; min-height: 2.5em; overflow-wrap: anywhere; -webkit-hyphens: auto; hyphens: auto; }
+.ep-p { padding: 2px 7px 7px; font-size: calc(13rem/17); font-weight: 800; font-variant-numeric: var(--zahlen); overflow-wrap: anywhere; }
+.ep-kachel.fehlt .ep-p { color: var(--b-rot-text); }
+.ep-marke { position: absolute; top: 5px; inset-inline-end: 5px; border-radius: 999px; padding: 1px 7px; font-size: calc(12rem/17); font-weight: 800; line-height: 1.5; }
+.ep-marke.ca { background: var(--b-gelb-hell); color: var(--b-gelb-text); }
+.ep-marke.selbst { inset-inline-end: auto; inset-inline-start: 5px; background: var(--b-primaer-hell); color: var(--b-primaer); }
+.ep-marke.selbst ~ .ep-marke.ca { inset-inline-end: 5px; }
+
+/* Blatt unter dem Raster */
+.ep-blatt { display: grid; gap: 12px; margin: 0 -20px; padding: 16px 20px 20px; background: var(--b-karte); border: 1px solid var(--b-linie); border-bottom: 0;
+  border-radius: var(--radius-gross) var(--radius-gross) 0 0; box-shadow: var(--schatten-karte); scroll-margin-top: 12px; }
+.ep-kopf { display: flex; gap: 12px; align-items: center; }
+.ep-kopf > div { display: grid; gap: 2px; min-width: 0; }
+.ep-kopf b { font-size: calc(19rem/17); line-height: 1.2; overflow-wrap: anywhere; }
+.ep-kopf small { color: var(--b-text-leise); font-size: calc(13rem/17); }
+.ep-kopfbild { width: 56px; height: 56px; flex: none; border-radius: var(--radius-klein); object-fit: cover; background: var(--papier-tief); }
+.ep-kopfbild.ep-ohne img { width: 70%; }
+.ep-frage { display: flex; gap: 8px; align-items: center; margin: 4px 0 0; font-size: calc(16rem/17); font-weight: 800; }
+.ep-frage i { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--b-primaer); color: var(--weiss); font-style: normal; font-size: calc(13rem/17); }
+.ep-gebinde { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.ep-geb { display: grid; justify-items: center; align-content: center; gap: 2px; min-height: 64px; padding: 6px 2px; border: 2px solid var(--b-linie); border-radius: var(--radius-klein);
+  background: var(--b-karte); color: var(--b-text); font: inherit; font-size: calc(12rem/17); font-weight: 700; line-height: 1.15; overflow-wrap: anywhere; text-align: center; cursor: pointer; }
+.ep-geb.an { border-color: var(--b-primaer); background: var(--b-primaer-hell); }
+.ep-geb .ep-gsym { width: 28px; height: 28px; color: var(--b-primaer); }
+.ep-geb-mehr { font-size: calc(22rem/17); color: var(--b-text-leise); }
+.ep-reihe { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ep-zahl { width: 5.2em; min-width: 0; min-height: 48px; padding: 4px 0; border: 0; border-bottom: 2px solid var(--b-primaer); background: transparent; outline: none;
+  font-size: calc(24rem/17); font-weight: 800; font-variant-numeric: var(--zahlen); }
+.ep-zahl:focus { border-bottom-color: var(--b-akzent); }
+.ep-zahl::placeholder { color: var(--holz-tief); font-weight: 600; }
+.ep-euro { display: inline-flex; align-items: baseline; gap: 4px; }
+.ep-euro .einheit, .ep-reihe .einheit { color: var(--b-text-leise); font-weight: 700; }
+.ep-reihe .stk-reihe .ep-zahl { width: 3.4em !important; font-size: calc(20rem/17); }
+.ep-reihe .seg button { min-height: 44px; }
+.ep-ergebnis { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 10px; padding: 12px 14px; border-radius: var(--radius); background: var(--b-primaer-hell); }
+.ep-ergebnis > span { font-weight: 700; overflow-wrap: anywhere; }
+.ep-ergebnis b { font-size: calc(26rem/17); font-weight: 800; color: var(--b-gruen-ok); font-variant-numeric: var(--zahlen); white-space: nowrap; }
+.ep-ergebnis small { grid-column: 1 / -1; color: var(--b-text-leise); font-size: calc(13rem/17); overflow-wrap: anywhere; }
+.ep-ergebnis.leer { background: var(--papier-tief); }
+.ep-ergebnis.leer b { color: var(--b-text-leise); }
+.ep-blatt .einklapp { margin-top: 0; }
+.ep-blatt .einklapp-inhalt { display: grid; gap: 10px; }
+.ep-blatt > .leise { justify-self: center; }
+.ep-werte { font-size: calc(14rem/17); font-variant-numeric: var(--zahlen); }
+
+/* Selbst gemacht im Blatt */
+.ep-zutaten { display: grid; gap: 8px; }
+.ep-zut { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto 36px; gap: 8px; align-items: center; }
+.ep-zbild { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: var(--papier-tief); }
+.ep-zut .sz-name { font-size: calc(15rem/17); font-weight: 700; line-height: 1.25; }
+.ep-zut .sz-name small { display: block; color: var(--b-text-leise); font-weight: 600; font-size: calc(12rem/17); }
+.ep-zmenge { display: inline-flex; align-items: baseline; gap: 4px; }
+.ep-zmenge input { width: calc(64rem/17); min-height: 44px; border: 0; border-bottom: 2px solid var(--b-primaer); background: transparent; text-align: end; font-size: calc(17rem/17); font-weight: 700; font-variant-numeric: var(--zahlen); outline: none; }
+.ep-zmenge .einheit { color: var(--b-text-leise); font-weight: 600; font-size: calc(14rem/17); }
+.ep-plus { position: relative; display: block; min-height: 48px; padding: 12px; border: 2px dashed var(--b-linie); border-radius: var(--radius-klein); text-align: center; font-weight: 700; color: var(--b-text-leise); cursor: pointer; }
+.ep-plus select.sz-neu { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; opacity: 0; cursor: pointer; }
+.ep-plus:focus-within { outline: 2px solid var(--b-akzent); outline-offset: 2px; }
+.ep-teig { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ep-teig label { display: grid; gap: 2px; padding: 10px 12px; border-radius: var(--radius-klein); background: var(--papier-tief); color: var(--b-text-leise); font-size: calc(13rem/17); font-weight: 700; }
+.ep-tfeld { display: flex; align-items: baseline; gap: 4px; min-width: 0; }
+.ep-tfeld input { width: 100%; min-width: 0; min-height: 44px; border: 0; border-bottom: 2px solid var(--b-primaer); background: transparent; outline: none; color: var(--b-text);
+  font-size: calc(22rem/17); font-weight: 800; font-variant-numeric: var(--zahlen); }
+.ep-tfeld .einheit { color: var(--b-text-leise); }
+.ep-blatt > .seg { justify-self: start; }
+.ep-n { overflow-wrap: break-word; }
+.ep-rp { display: grid; gap: 12px; }
+.ep-rp:not(:has(*)) { display: none; }
