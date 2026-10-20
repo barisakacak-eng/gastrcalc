@@ -20,7 +20,7 @@ async def main():
               kl.vorschlaegeUebernehmen(s, kl.vorschlaegeAusText(t, s).map(v => ({...v, an: true}))); s.artikel = e.artikelAusGerichten(s);
               w.betriebe.push(s); w.aktiv = s.id; await st.sofortSpeichern(w);
             }""", lang)
-            await pg.reload(); await pg.wait_for_timeout(1000)
+            await pg.reload(); await pg.wait_for_function("() => window.__gastrocalc && window.__gastrocalc.wurzel", timeout=15000); await pg.wait_for_timeout(300)  # 20.10.2026: auf die App warten statt fester Sekunde (Türkisch lädt länger)
             await nav_hilfe.ins_buero(pg)  # Rezepte wohnen im Büro
             await pg.click('#app [data-a="bearbeiten"][data-schritt="rezepte"] >> nth=0'); await pg.wait_for_timeout(400)
             await pg.screenshot(path=S+f"w_{lang}_1liste.png")
