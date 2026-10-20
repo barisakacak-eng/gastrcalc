@@ -135,3 +135,24 @@ test("Druckdokument: escaped, Kopf, Tabellen, Unterschrift", () => {
   assert.match(h, /^<!doctype html>/); assert.match(h, /Ordner &lt;Amt&gt;/); assert.match(h, /Döner &amp; Co/); assert.match(h, /<tr class="warn"><td>&lt;b&gt;<\/td><td class="r">9<\/td>/);
   assert.match(h, /<tfoot>/); assert.match(h, /Keine Einträge/); assert.match(h, /@page \{ size: A4/); assert.ok(!h.includes("<script"));
 });
+
+// Konkurrenz-Lehren 20.10.2026: Beleg-Nr. fest, Storno im Folgemonat sichtbar, Gutschrift mit negativer Steuer
+const lief = (id, datum, erfasst, netto) => ({ id, datum, erfasst, lieferant: "L", rechnungNr: id, summeNetto: netto, summeBrutto: Math.round(netto * 107) / 100, zeilen: [{ name: "x", netto, steuersatz: 0.07 }], storniert: false });
+test("Beleg-Nr. bleibt bei Nachtrag und Rücknahme fest", () => {
+  const s = leererBetrieb(); const z = { von: "2026-09-01", bis: "2026-09-30" };
+  s.lieferungen = [lief("a", "2026-09-03", "2026-09-03T10:00:00Z", 100), lief("b", "2026-09-10", "2026-09-10T10:00:00Z", 200)];
+  const vorher = Object.fromEntries(St.belege(s, z).zeilen.map((x) => [x.id, x.belegNr]));
+  s.lieferungen.push(lief("c", "2026-09-05", "2026-09-28T10:00:00Z", 50)); s.lieferungen[0].storniert = true;
+  const nach = Object.fromEntries(St.belege(s, z).zeilen.map((x) => [x.id, x.belegNr]));
+  assert.equal(nach.b, vorher.b); assert.equal(nach.c, "2026-09-003");
+});
+test("Rücknahme im Folgemonat steht im Paket des Folgemonats", () => {
+  const s = leererBetrieb(); s.lieferungen = [{ ...lief("x", "2026-08-20", "2026-08-20T10:00:00Z", 100), storniert: true, storniertZeit: "2026-09-05T10:00:00Z" }];
+  assert.equal(St.aenderungen(s, { von: "2026-09-01", bis: "2026-09-30" }).anzahl, 1);
+  assert.equal(St.aenderungen(s, { von: "2026-08-01", bis: "2026-08-31" }).anzahl, 1);
+});
+test("Gutschrift trägt negative Umsatzsteuer und geht auf", () => {
+  const s = leererBetrieb(); s.lieferungen = [lief("g", "2026-09-02", "2026-09-02T10:00:00Z", -100), lief("h", "2026-09-02", "2026-09-02T11:00:00Z", 100)];
+  const b = St.belege(s, { von: "2026-09-01", bis: "2026-09-30" });
+  assert.equal(b.zeilen.find((x) => x.id === "g").ust7, -7); assert.equal(b.ust7, 0); assert.equal(b.pruefen, 0);
+});

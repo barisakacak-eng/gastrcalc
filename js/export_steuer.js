@@ -65,20 +65,23 @@ export function tagesumsaetze(stand, z) {
 
 // Rücknahmen und Korrekturen des Monats (W2-T, Prüfung p04 Nr. 3): Tagesnotizen, Warenbelege, Kostenbelege – nichts verschwindet still.
 // vorgang "ersetzt" (neuer Wert steht dabei) oder "storniert" (zurückgenommen); zeit = Zeitpunkt der Änderung (ISO).
+// 20.10.2026 (Konkurrenz-Lehren, Export F3): Eine Rücknahme im Folgemonat für einen Beleg des Vormonats steht auch im Paket des Monats,
+// in dem sie geschah – sonst erfährt der Steuerberater nie davon, wenn der Vormonat schon abgegeben war.
+const rueckIm = (x, z) => imZeitraum(x.datum, z) || (typeof x.storniertZeit === "string" && imZeitraum(heute(new Date(x.storniertZeit)), z));
 export function aenderungen(stand, z) {
   const zeilen = []; const notizen = stand.tagesnotizen || [];
   for (const n of notizen) {
-    if (!n.storniert || typeof n.umsatz !== "number" || !imZeitraum(n.datum, z)) continue;
+    if (!n.storniert || typeof n.umsatz !== "number" || !rueckIm(n, z)) continue;
     const nach = typeof n.ersetzt === "string" ? notizen.find((x) => x.id === n.ersetzt && typeof x.umsatz === "number") : null;
     zeilen.push({ datum: n.datum, art: "notiz", vorgang: nach ? "ersetzt" : "storniert", text: "", alt: n.umsatz, neu: nach ? nach.umsatz : null, basis: "brutto", zeit: n.storniertZeit || null });
   }
   for (const l of stand.lieferungen || []) {
-    if (!l.storniert || !imZeitraum(l.datum, z)) continue;
+    if (!l.storniert || !rueckIm(l, z)) continue;
     const br = typeof l.summeBrutto === "number";
     zeilen.push({ datum: l.datum, art: "lieferung", vorgang: "storniert", text: [l.rechnungNr, l.lieferant].filter(Boolean).join(" · "), alt: br ? l.summeBrutto : (typeof l.summeNetto === "number" ? l.summeNetto : null), neu: null, basis: br ? "brutto" : "netto", zeit: l.storniertZeit || null });
   }
   for (const k of stand.kostenbelege || []) {
-    if (!k.storniert || !imZeitraum(k.datum, z)) continue;
+    if (!k.storniert || !rueckIm(k, z)) continue;
     zeilen.push({ datum: k.datum, art: "kosten", vorgang: "storniert", text: [k.rechnungNr, k.lieferant].filter(Boolean).join(" · "), stelle: k.stelle, alt: k.betrag, neu: null, basis: k.basis === "brutto" ? "brutto" : "netto", zeit: k.storniertZeit || null });
   }
   zeilen.sort((a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.zeit || "").localeCompare(String(b.zeit || "")));
@@ -126,7 +129,8 @@ function lieferungSteuer(l, netto, pfand) {
   const ust = { 0.07: null, 0.19: null };
   if (brutto === null) return { brutto, ust, hinweis: "ohneBrutto" };
   if (!zl.length || zl.some((r) => !SAETZE.includes(r.steuersatz))) return { brutto, ust, hinweis: "ohneSatz" };
-  const gesamt = rund2(brutto - netto - pfand); if (gesamt < -0.005) return { brutto, ust, hinweis: "pruefen" };
+  // 20.10.2026 (Export F2): Gutschrift/Retoure mit negativem Brutto trägt negative Steuer – das Vorzeichen muss zum Brutto passen, nicht immer ≥ 0 sein
+  const gesamt = rund2(brutto - netto - pfand); if (gesamt * (brutto < 0 ? -1 : 1) < -0.005) return { brutto, ust, hinweis: "pruefen" };
   const saetze = [...new Set(zl.map((r) => r.steuersatz))];
   // Ein Satz auf dem Beleg: die Steuer ist Brutto − Netto − Pfand, genau wie auf der Rechnung
   if (saetze.length === 1) { ust[saetze[0]] = gesamt; return { brutto, ust, hinweis: null }; }
@@ -157,7 +161,14 @@ export function belege(stand, z) {
   zeilen.sort(nachDatum);
   // Paket C (19.10.2026): fortlaufende Beleg-Nr. je Monat (JJJJ-MM-001 …) – dieselbe Nummer schreibt der Inhaber auf den Beleg;
   // Kleinbetrag (Brutto bis 250 €, § 33 UStDV) wird markiert, weil dort weniger Rechnungsangaben genügen.
-  zeilen.forEach((x, i) => { x.belegNr = `${String(z.von).slice(0, 7)}-${String(i + 1).padStart(3, "0")}`; x.klein = typeof x.brutto === "number" && x.brutto > 0 && x.brutto <= 250; });
+  // 20.10.2026 (Export F1): Die Nummer ist fest. Gezählt wird in der Reihenfolge der Erfassung über alle Belege des Monats, auch zurückgenommene –
+  // ein Nachtrag mit früherem Datum bekommt die nächste freie Nummer, eine Rücknahme hinterlässt eine Lücke. Was der Inhaber schon auf
+  // das Papier geschrieben hat, verschiebt sich nie.
+  const nrVon = new Map();
+  [...(stand.lieferungen || []), ...(stand.kostenbelege || [])].filter((x) => imZeitraum(x.datum, z))
+    .sort((a, b) => String(a.erfasst || a.datum || "").localeCompare(String(b.erfasst || b.datum || "")) || String(a.datum || "").localeCompare(String(b.datum || "")) || String(a.id || "").localeCompare(String(b.id || "")))
+    .forEach((x, i) => nrVon.set(x.id, i + 1));
+  zeilen.forEach((x) => { x.belegNr = `${String(z.von).slice(0, 7)}-${String(nrVon.get(x.id) || 0).padStart(3, "0")}`; x.klein = typeof x.brutto === "number" && x.brutto > 0 && x.brutto <= 250; });
   const sum = (f) => rund2(zeilen.reduce((s, x) => s + (typeof x[f] === "number" ? x[f] : 0), 0));
   return { zeilen, netto: sum("netto"), ust7: sum("ust7"), ust19: sum("ust19"), pfand: sum("pfand"), brutto: sum("brutto"), anzahl: zeilen.length,
     ohneBrutto: zeilen.filter((x) => x.brutto === null).length, ohneNetto: zeilen.filter((x) => x.netto === null).length, pruefen: zeilen.filter((x) => x.hinweis).length };

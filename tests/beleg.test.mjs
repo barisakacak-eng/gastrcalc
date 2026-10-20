@@ -308,7 +308,7 @@ test("preisJeEinheit: netto je kg, brutto nur mit bekanntem Steuersatz, Stückwa
   assert.deepEqual(preisJeEinheit(e.zeilen[0]), { preis: 0.99, einheit: "kg" });
   assert.deepEqual(preisJeEinheit(e.zeilen[0], "brutto"), { preis: 0.93, einheit: "kg" });
   assert.deepEqual(preisJeEinheit({ ...e.zeilen[0], steuersatz: null }, "brutto"), { preis: null, einheit: null });
-  assert.deepEqual(preisJeEinheit(e.zeilen[1]), { preis: 0.14, einheit: "stk" });
+  assert.deepEqual(preisJeEinheit(e.zeilen[1]), { preis: 0.143, einheit: "stk" });
   assert.deepEqual(preisJeEinheit(e.zeilen[2]), { preis: 0.89, einheit: "stk" });
 });
 
@@ -362,4 +362,17 @@ test("Schwadron U3: Inhalt einer Belegzeile von Hand korrigieren (bleibt auch be
   const l = SF_L.zeileInhaltSetzen(z, 7.92, "l"); assert.deepEqual(l.inhalt, { anzahl: 1, groesse: 7.92, einheit: "l" });
   assert.equal(SF_L.inhaltFuerArtikel(l, SF_art("Cola 0,33 l", "stk", 24)), l, "von Hand eingetragen gewinnt");
   assert.equal(SF_L.zeileInhaltSetzen(z, 0, "stk"), null); assert.equal(SF_L.zeileInhaltSetzen(z, 3, "kiste"), null);
+});
+
+// Konkurrenz-Lehren 20.10.2026: Stückzahl, „×“ und Einheiten in jeder Schreibweise; nie still Menge 1 raten
+test("Belegschreibweisen: 30 St., ×, KG, Ltr, gr", () => {
+  const z = (t) => belegZerlegen(t).zeilen[0];
+  assert.deepEqual(z("4089012 Fladenbrot 30 St 4 13,50 54,00 B").inhalt, { anzahl: 30, groesse: null, einheit: "stk" });
+  assert.deepEqual(z("Pizzakarton 32x32 100 Stk. 1 14,50 14,50").inhalt, { anzahl: 100, groesse: null, einheit: "stk" });
+  assert.deepEqual(z("Reis 6 × 2,5 kg 2 18,00 36,00").inhalt, { anzahl: 6, groesse: 2.5, einheit: "kg" });
+  assert.equal(z("Dönerfleisch 10 KG 1 62,50 62,50").inhalt.einheit, "kg");
+  assert.deepEqual(z("Öl 10 Ltr 1 21,90 21,90").inhalt, { anzahl: 1, groesse: 10, einheit: "l" });
+  assert.deepEqual(z("Kreuzkümmel 500 gr 1 4,20 4,20").inhalt, { anzahl: 1, groesse: 500, einheit: "g" });
+  const u = z("4034568 Ayran 20x250ml 3 9,8 29,40");
+  assert.ok(u.frage, "lose Zahl vor dem Preis: Frage statt still Menge 1");
 });

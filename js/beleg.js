@@ -152,7 +152,7 @@ function inhaltAusName(str) {
   if (m) { anzahl = Number(m[1]); groesse = parseZahl(m[2]); einheit = EINHEIT[m[3]]; amAnfang = m.index === 0; treffer = m[0]; rest = rest.replace(m[0], " "); }
   m = /(?<![\d,.])(\d+)er(?![A-Za-z])/.exec(rest);
   if (m && anzahl === null) { anzahl = Number(m[1]); rest = rest.replace(m[0], " "); }
-  m = /(?<![\d,.])(\d+)\s*(Stück|Stck|Stk|ST|Fl\.?)(?=\s|$)/.exec(rest);
+  m = /(?<![\d,.])(\d+)\s*(Stück|Stueck|Stck|Stk|St|Fl)\.?(?=\s|$)/i.exec(rest); // 20.10.2026: auch „30 St“, „30 St.“, „30 stk“
   let zaehl = false; // Schwadron 18.10.2026, H2: Anzahl kommt aus „24 Stk“ (Zähleinheit), nicht aus „24x0,33l“
   if (m && anzahl === null) { anzahl = Number(m[1]); zaehl = true; rest = rest.replace(m[0], " "); }
   m = /\bca\.?\s*(\d+(?:[,.]\d+)?)\s*(kg|g)(?![A-Za-z])/i.exec(rest);
@@ -242,6 +242,15 @@ function zusammenfuegen(lines) {
   return lines.reduce((acc, l) => acc === null ? l : (/[A-Za-zÄÖÜäöüß]-$/.test(acc) && /^[a-zäöüß]/.test(l) ? acc.slice(0, -1) + l : acc + " " + l), null);
 }
 
+// Konkurrenz-Lehren 20.10.2026 (Beleg-Stresstest F2/F4): Schreibweisen vereinheitlichen, bevor die Regeln greifen.
+// „×“/„✕“ → „x“; Einheiten hinter einer Zahl in jeder Schreibweise → kg, g, l, ml, cl („10 KG“, „1KG“, „500 gr“, „10 Ltr“, „10 Liter“, „250 ML“).
+// Nur direkt hinter einer Ziffer, damit Wörter im Namen („Gr. Schale“, „Liter-Flasche“) unberührt bleiben.
+function schreibweise(z) {
+  return z.replace(/[×✕✖]/g, "x")
+    .replace(/(\d)\s*(?:liter|ltr)\.?(?![A-Za-zÄÖÜäöüß])/gi, "$1 l")
+    .replace(/(\d)\s*gr\.?(?![A-Za-zÄÖÜäöüß])/gi, "$1 g")
+    .replace(/(\d)\s*(kg|ml|cl)(?![A-Za-zÄÖÜäöüß])/gi, (_, d, e) => `${d} ${e.toLowerCase()}`);
+}
 function frage(art, text, optionen) { return { art, text, optionen }; }
 
 // Eine Zeilengruppe (eine Belegzeile, ggf. über mehrere Textzeilen) zerlegen. ctx: { hatPreise, zeichen }.
@@ -315,7 +324,14 @@ function gruppeZerlegen(lines, ctx) {
       if (!kopf.nr && mengeInfo !== null && /^\d{1,3}$/.test(tokens[start] ?? "") && RE_WORT.test(tokens[start + 1] ?? "") && (tokens[start + 1] ?? "").length >= 2 && start + 1 < nameEnde) start += 1;
     } else if (preise.length === 1) {
       const p = preise[0];
-      if (menge === null) { menge = 1; einzel = gesamt = p.wert; jeKg = p.jeKg; }
+      if (menge === null) {
+        menge = 1; einzel = gesamt = p.wert; jeKg = p.jeKg;
+        // 20.10.2026 (Beleg-Stresstest F3): Bleibt links vom Preis eine lose Zahl oder „???“ übrig („3 9,8 29,40“), fehlt etwas – nicht still Menge 1 raten
+        const lose = tokens.slice(start, p.idx ?? tokens.length).slice(-2).some((t) => /^\?+$/.test(t) || /^\d+[,.]\d$/.test(t));
+        if (lose) fr = frage("menge", `„${fmt(p.wert)}“: Menge oder Einzelpreis nicht lesbar – ist das 1 Gebinde?`, [
+          { text: `1 Gebinde für ${fmt(p.wert)}`, wert: { menge: 1, einzelpreis: p.wert } },
+        ]);
+      }
       else {
         einzel = p.wert; gesamt = r2(menge * p.wert); jeKg = p.jeKg;
         fr = frage("preis", `„${menge} … ${fmt(p.wert)}“: ist ${fmt(p.wert)} der Preis je Gebinde oder der Zeilenwert?`, [
@@ -444,7 +460,7 @@ function bekanntZuordnen(name, bekannt) {
 }
 
 export function belegZerlegen(text, { bekannt = [] } = {}) {
-  const lines = String(text ?? "").split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  const lines = String(text ?? "").split(/\r?\n/).map((s) => schreibweise(s.trim())).filter(Boolean);
   const fuss = { zeichen: {}, netto: null, brutto: null, summe: null, inkl: false, zzgl: false };
   const gruppen = [], uebrig = [];
   let g = null, uebersprungen = 0;
@@ -521,7 +537,7 @@ export function zeileAnwenden(zeile, wert) {
 export function preisJeEinheit(zeile, basis = zeile.basis ?? "netto") {
   const n = () => ({ preis: null, einheit: null });
   if (!zeile || zeile.gesamt === null || !zeile.menge) return n();
-  let jeGebinde = zeile.gesamt / Math.abs(zeile.menge);
+  let jeGebinde = Math.abs(zeile.gesamt) / Math.abs(zeile.menge); // 20.10.2026: Retoure → Preis bleibt positiv
   if (basis === "brutto") { if (zeile.steuersatz === null || zeile.steuersatz === undefined) return n(); jeGebinde /= 1 + zeile.steuersatz; }
   else if (basis !== "netto") return n();
   const { anzahl, groesse, einheit } = zeile.inhalt ?? leer();
@@ -530,7 +546,7 @@ export function preisJeEinheit(zeile, basis = zeile.basis ?? "netto") {
     const basisEinheit = einheit === "kg" || einheit === "g" ? "kg" : "l";
     return { preis: r2(jeGebinde / ((anzahl ?? 1) * groesse * faktor[einheit])), einheit: basisEinheit };
   }
-  if (anzahl !== null) return { preis: r2(jeGebinde / anzahl), einheit: "stk" };
+  if (anzahl !== null) { const je = jeGebinde / anzahl; return { preis: je < 1 ? Math.round(je * 10000) / 10000 : r2(je), einheit: "stk" }; } // 20.10.2026: kleine Stückpreise (Servietten 0,0089 €) nicht auf Cent runden
   if (zeile.gebinde === "stueck") return { preis: r2(jeGebinde), einheit: "stk" };
   return n();
 }
