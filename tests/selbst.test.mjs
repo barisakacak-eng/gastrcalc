@@ -93,3 +93,15 @@ test("Pilotkarte mit „Teig selbst“: alle Teig-Gerichte nutzen das Zwischenpr
   for (const g of teig) assert.ok(g.zutaten.some((z) => ["Pizzateig", "Pide-Teig"].includes(z.name)), g.name + ": " + g.zutaten.map((z) => z.name).join(", "));
   console.log("Teig-Gerichte im Pilot:", teig.length);
 });
+
+// 20.10.2026 (Baris): Zutaten tauschbar, Teig gesamt + Gewicht je Ballen → Stückzahl und Rest
+test("Ansatz: Zutat tauschen, Teig gesamt und Ballengewicht", async () => {
+  const kd = await import("../js/karte_daten.js");
+  const s = { artikel: [{ name: "Pide-Teig", einheit: "kg", herkunft: "selbst", rezept: { zutaten: [{ name: "Weizenmehl Typ 550", menge: 1000, einheit: "g" }, { name: "Sonnenblumenöl", menge: 30, einheit: "ml" }], ausbeute: { menge: 1650, einheit: "g" }, arbeitMin: 20, quelle: "baukasten" } }] };
+  assert.equal(kd.selbstZutatTauschen(s, "Pide-Teig", 0, "Weizenmehl Typ 405", "2026-10-20"), true);
+  const r = s.artikel[0].rezept; assert.equal(r.zutaten[0].name, "Weizenmehl Typ 405"); assert.equal(r.zutaten[0].menge, 1000); assert.equal(r.quelle, "eigen");
+  assert.equal(kd.selbstZutatTauschen(s, "Pide-Teig", 0, "Sonnenblumenöl", "2026-10-20"), false, "keine doppelte Zutat");
+  kd.selbstAusbeuteArt(s, "Pide-Teig", "stueck", "2026-10-20");
+  kd.selbstFeldSetzen(s, "Pide-Teig", "masse", 1750, "2026-10-20"); kd.selbstFeldSetzen(s, "Pide-Teig", "gewicht", 275, "2026-10-20");
+  assert.equal(r.stueck.anzahl, 6); assert.deepEqual(r.ausbeute, { menge: 1750, einheit: "g" });
+});

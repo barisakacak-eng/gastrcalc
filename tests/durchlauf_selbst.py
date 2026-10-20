@@ -1,6 +1,6 @@
 """„Go beide“ (19.10.2026): Browser-Durchlauf selbst gemacht + Gebinde in Stück, Handy 390×844 mit Touch.
 Schnellstart Döner → Pizza und Lahmacun auf die Karte (direkt im Stand) → Büro: Einkaufspreise → Pizzateig: „Ansatz eintragen“ aufklappen,
-Zutat dazu, Menge, Ausbeute als 6 Stück × 275 g, Minuten → Wert je Ansatz/kg/Stück/50 g steht → Mehl-Preis eintragen → Werte da →
+Zutat dazu, Menge, Ausbeute als 1650 g Teig gesamt, 275 g je Stück (= 6 Stück), Minuten → Wert je Ansatz/kg/Stück/50 g steht → Mehl-Preis eintragen → Werte da →
 eine gekaufte Ware „Stück“ wählen: 40 × 250 g → Inhalt 10 000 g, Preis je Stück steht. Kein waagrechter Überlauf, keine Konsolenfehler.
 Start: python3 tests/durchlauf_selbst.py (Port DURCHLAUF_PORT oder 8783). Bilder: /home/claude/audit/shots/selbst_*.png. Exit 1 bei Fehler."""
 import asyncio, sys, os, pathlib, traceback
@@ -49,7 +49,7 @@ async def main():
             assert await zeile.locator("details[open]").count(), "Editor nach neuer Zutat zu"
             await tippe("sz-menge#0:Pizzateig", "1000")
             await zeile.locator('[data-a="sz-art"][data-wert="stueck"]').tap(); await pg.wait_for_timeout(300)
-            await tippe("sz-anzahl:Pizzateig", "6"); await tippe("sz-gewicht:Pizzateig", "275"); await tippe("sz-arbeit:Pizzateig", "20")
+            await tippe("sz-masse:Pizzateig", "1650"); await tippe("sz-gewicht:Pizzateig", "275"); await tippe("sz-arbeit:Pizzateig", "20")
             a = await art("Pizzateig")
             assert a["rezept"]["quelle"] == "eigen" and a["rezept"]["ausbeute"] == {"menge": 1650, "einheit": "g"}, a["rezept"]
             # Mehlpreis: 15 € je 25 kg

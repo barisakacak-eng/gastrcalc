@@ -350,7 +350,7 @@ export default {
     // Selbst gemacht als Unterrezept (19.10.2026)
     deinAnsatz: "dein Ansatz", bearbeiten: "Ansatz eintragen", zutaten: "Was kommt rein?", zutatDazu: "+ Zutat dazu", deineWaren: "Deine Waren", alleWaren: "Alle Waren",
     leer: "Noch keine Zutaten. Wähle unten die erste.", weg: "Zutat entfernen", ergibt: "Das ergibt", als: { gewicht: "Gewicht", stueck: "Stück" },
-    anzahl: "Wie viele Stück?", gewicht: "Gramm je Stück", gJeStueck: "g je Stück", arbeit: "Minuten Arbeit",
+    anzahl: "Wie viele Stück?", gewicht: "Gramm je Stück", gJeStueck: "g je Stück", masse: "g Teig gesamt", tauschen: "Zutat tauschen", ergibtStueck: (n, r) => `= ${n} Stück` + (r > 0 ? ` · Rest ${r} g` : ""), arbeit: "Minuten Arbeit",
     jeAnsatz: (x) => `${x} je Ansatz`, jeStueck: (x) => `${x} je Stück`, je50: (x) => `${x} je 50 g`, bisher: (x) => `bisher ${x}`,
     ausbeuteFehlt: "Preis offen. Trag ein, was ein Ansatz ergibt.", mengeFehlt: "Preis offen. Bei einer Zutat fehlt die Menge.",
     einmalWiegen: "Startwerte. Wieg deinen Ansatz einmal ab und trag ihn hier ein, dann stimmt der Wert je Stück." },

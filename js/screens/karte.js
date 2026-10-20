@@ -15,7 +15,7 @@ import { einklappen, offeneKlappen } from "./bausteine.js";
 import { gerichtAusVorlage, gerichtAusVorlageAnlegen, gerichtEigenAnlegen, gerichtEntfernen, gerichtNameSetzen, gerichtKlasseSetzen, gerichtZeitSchritt, rezeptAngepasst,
   zutatMengeSetzen, zutatEntfernen, zutatEinheitSetzen, zutatAusKatalog, zutatFrei, verkaufspreisSetzen, mengeTagSetzen, bestellungenTagSetzen, zielgewinnSetzen,
   artikelAbgleichen, artikelVorschau, artikelFeldSetzen, packungEinheitSetzen, gebindeArtSetzen, preisBasisSetzen, zwischenEntfernen, garverlustMessenUmschalten, selbstUmschalten,
-  selbstFeldSetzen, selbstZutatEntfernen, selbstAusbeuteArt, selbstEigenUmschalten, zwischenArtSetzen } from "../karte_daten.js";
+  selbstFeldSetzen, selbstZutatEntfernen, selbstZutatTauschen, selbstAusbeuteArt, selbstEigenUmschalten, zwischenArtSetzen } from "../karte_daten.js";
 import { richtpreiseEinsetzen, richtpreiseEntfernen, richtpreiseAktiv, richtpreiseMoeglich } from "../richtpreise.js"; // Richtpreise (17.10.2026)
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
@@ -229,7 +229,9 @@ import { gebindeSatz } from "../anzeige_text.js";
 const ZWISCHEN_ARTEN = ["beutel", "packung", "dose", "flasche", "karton"]; // Teil 2: Art der inneren Packung wählbar
 // „Machen wir selbst“ auch ohne Vorlage: Soßen und Dips, Patties/Köfte/Falafel – nicht Mehl, Dosen, Essig oder Würste
 const SELBST_NICHT = new Set(["Pizzatomaten (Dose)", "Tomatenmark", "Kokosmilch", "Balsamico", "Weinessig", "Worcestersauce", "Sojasauce", "Currypaste", "Bratenfond", "Senf", "Ketchup"]);
-const selbstMoeglich = (a) => !SELBST_NICHT.has(a.name) && (a.gruppe === "sauce" || (a.gruppe === "fleisch" && /patty|frikadell|adana|falafel|schnitzel|köfte|kofte|quiche/i.test(a.name)));
+// 20.10.2026 (Baris): jede Teigsorte und jedes Brot ist selbst herstellbar (Dürüm, Fladen, Pide, Buns, Brötchen …) – Rohstoffe und TK-Ware nicht
+const TEIG_SELBST = /teig|brot|fladen|wrap|bun\b|brötchen|baguette|brezel|yufka|knödel|spätzle|gnocchi/i, TEIG_NICHT = /mehl|hefe|\bTK\b|pulver|stärke|grieß|teigling|teigtaschen/i;
+const selbstMoeglich = (a) => !SELBST_NICHT.has(a.name) && ((a.gruppe === "teig" && TEIG_SELBST.test(a.name) && !TEIG_NICHT.test(a.name)) || a.gruppe === "sauce" || (a.gruppe === "fleisch" && /patty|frikadell|adana|falafel|schnitzel|köfte|kofte|quiche/i.test(a.name)));
 const geld = (x) => fmtEuro(x, { dezimal: x < 0.095 ? 3 : 2 });
 function selbstWerteText(a) {
   const w = selbstWerte(a); if (!w) return "";
@@ -242,21 +244,23 @@ function selbstEditor(a, alle) {
   const wertVon = Object.fromEntries((z.teile || []).map((x) => [x.name, x.wert]));
   const stueck = !!r.stueck; const gEinheit = r.ausbeute?.einheit === "ml" || r.ausbeute?.einheit === "l" ? r.ausbeute.einheit : "g";
   const schon = new Set(r.zutaten.map((x) => x.name));
+  const opt = (x) => `<option value="${esc(x)}">${esc(artikelText(x))}</option>`;
   const eigene = alle.filter((x) => x.herkunft !== "selbst" && !schon.has(x.name) && x.name !== a.name).map((x) => x.name).sort((p, q) => artikelText(p).localeCompare(artikelText(q)));
   const katalog = [...new Set(Object.values(KATALOG).flatMap((k) => k.produkte.map((p) => p.n)))].filter((x) => !schon.has(x) && !eigene.includes(x) && x !== a.name && PRODUKT_INDEX[x]?.g !== "verpackung" && PRODUKT_INDEX[x]?.g !== "getraenk").sort((p, q) => artikelText(p).localeCompare(artikelText(q)));
-  const opt = (x) => `<option value="${esc(x)}">${esc(artikelText(x))}</option>`;
   return `<div class="sz">
     <div class="sz-titel">${esc(t("selbst.zutaten"))}</div>
-    ${r.zutaten.length ? r.zutaten.map((x, i) => `<div class="sz-zeile"><span class="sz-name">${esc(artikelText(x.name))}</span>
-      <input inputmode="decimal" data-f="sz-menge#${i}:${n}" value="${esc(wertAnzeige(x.menge))}" placeholder="${esc(t("preise.menge"))}" aria-label="${esc(t("preise.menge") + " " + artikelText(x.name))}"><span class="einheit">${esc(einheitLabel(x.einheit))}</span>
+    ${r.zutaten.length ? r.zutaten.map((x, i) => `<div class="sz-zeile"><label class="sz-name sz-tauschbar"><span>${esc(artikelText(x.name))} <span class="sz-pfeil" aria-hidden="true">▾</span></span><select class="sz-tausch" data-f="sz-tausch#${i}:${n}" aria-label="${esc(t("selbst.tauschen") + ": " + artikelText(x.name))}"><option value="${esc(x.name)}" selected>${esc(artikelText(x.name))}</option>
+        ${eigene.length ? `<optgroup label="${esc(t("selbst.deineWaren"))}">${eigene.map(opt).join("")}</optgroup>` : ""}<optgroup label="${esc(t("selbst.alleWaren"))}">${katalog.map(opt).join("")}</optgroup></select></label>
+      <input inputmode="decimal" data-f="sz-menge#${i}:${n}" value="${esc(wertAnzeige(x.menge))}" placeholder="0" aria-label="${esc(t("preise.menge") + " " + artikelText(x.name))}"><span class="einheit">${esc(einheitLabel(x.einheit))}</span>
       <span class="sz-wert">${wertVon[x.name] !== undefined ? esc(geld(wertVon[x.name])) : "–"}</span>
       <button type="button" class="sz-weg" data-a="sz-weg" data-name="${n}" data-i="${i}" aria-label="${esc(t("selbst.weg"))}">×</button></div>`).join("") : `<p class="hinweis">${esc(t("selbst.leer"))}</p>`}
     <select class="sz-neu" data-f="sz-neu:${n}" aria-label="${esc(t("selbst.zutatDazu"))}"><option value="">${esc(t("selbst.zutatDazu"))}</option>
       ${eigene.length ? `<optgroup label="${esc(t("selbst.deineWaren"))}">${eigene.map(opt).join("")}</optgroup>` : ""}<optgroup label="${esc(t("selbst.alleWaren"))}">${katalog.map(opt).join("")}</optgroup></select>
     <div class="sz-titel">${esc(t("selbst.ergibt"))}</div>
     <div class="seg klein">${["gewicht", "stueck"].map((x) => `<button type="button" class="${(x === "stueck") === stueck ? "an" : ""}" data-a="sz-art" data-name="${n}" data-wert="${x}">${esc(t("selbst.als." + x))}</button>`).join("")}</div>
-    ${stueck ? `<div class="packung stk-reihe"><input inputmode="decimal" data-f="sz-anzahl:${n}" value="${esc(wertAnzeige(r.stueck.anzahl))}" placeholder="6" aria-label="${esc(t("selbst.anzahl"))}"><span class="einheit">${esc(t("allgemein.stueck"))} ×</span>
-      <input inputmode="decimal" data-f="sz-gewicht:${n}" value="${esc(wertAnzeige(r.stueck.gewicht))}" placeholder="275" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(t("selbst.gJeStueck"))}</span></div>`
+    ${stueck ? `<div class="packung"><input inputmode="decimal" data-f="sz-masse:${n}" value="${esc(wertAnzeige(r.stueck.masse ?? (r.stueck.anzahl > 0 && r.stueck.gewicht > 0 ? r.stueck.anzahl * r.stueck.gewicht : null)))}" placeholder="1650" aria-label="${esc(t("selbst.masse"))}"><span class="einheit">${esc(t("selbst.masse"))}</span></div>
+      <div class="packung"><input inputmode="decimal" data-f="sz-gewicht:${n}" value="${esc(wertAnzeige(r.stueck.gewicht))}" placeholder="275" aria-label="${esc(t("selbst.gewicht"))}"><span class="einheit">${esc(t("selbst.gJeStueck"))}</span></div>
+      ${r.stueck.anzahl > 0 && r.stueck.gewicht > 0 ? `<p class="hinweis sz-stueck">${esc(t("selbst.ergibtStueck", r.stueck.anzahl, Math.round((r.stueck.masse ?? r.stueck.anzahl * r.stueck.gewicht) - r.stueck.anzahl * r.stueck.gewicht)))}</p>` : ""}`
       : `<div class="packung"><input inputmode="decimal" data-f="sz-ausbeute:${n}" value="${esc(wertAnzeige(r.ausbeute?.menge))}" placeholder="1650" aria-label="${esc(t("selbst.ergibt"))}"><span class="einheit">${esc(einheitLabel(gEinheit))}</span></div>`}
     <div class="packung"><input inputmode="decimal" data-f="sz-arbeit:${n}" value="${esc(wertAnzeige(r.arbeitMin || null))}" placeholder="20" aria-label="${esc(t("selbst.arbeit"))}"><span class="einheit">${esc(t("selbst.arbeit"))}</span></div>
   </div>`;
@@ -342,6 +346,7 @@ export const preise = {
   eingabe(feld, wert, stand) {
     const [art, ...rest] = feld.split(":"); const name = rest.join(":");
     artikelAbgleichen(stand);
+    if (art.startsWith("sz-tausch#")) { selbstZutatTauschen(stand, name, Number(art.split("#")[1]), wert, heute()); artikelAbgleichen(stand); return true; } // 20.10.2026: Zutat tauschen
     if (art.startsWith("sz-")) { // Selbst gemacht (19.10.2026): Ansatz bearbeiten; neue Zutat zeichnet neu, Zahlen nicht (Fokus bleibt)
       const neu = art === "sz-neu"; selbstFeldSetzen(stand, name, art.slice(3), neu ? wert : parseZahl(wert), heute());
       artikelAbgleichen(stand); return neu;

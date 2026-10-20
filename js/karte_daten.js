@@ -110,8 +110,11 @@ export function selbstUmschalten(stand, kachel, an) {
 const eigenMachen = (r, datum) => { r.quelle = "eigen"; if (datum) r.gewogenAm = datum; };
 const basisEinheit = (e) => (e === "kg" || e === "g" ? "g" : e === "l" || e === "ml" ? "ml" : "stk");
 // Ausbeute aus Stückzahl × Stückgewicht: 6 Ballen à 275 g = 1650 g. Nur Stückzahl → Ausbeute in Stück.
+// 20.10.2026 (Baris): „Wie viel ist die Gesamtmasse, wie schwer ist ein Ballen – daraus der Rest.“ Mit Teig gesamt und Gewicht je Stück
+// folgt die Stückzahl (abgerundet, der Rest bleibt Teig). Ausbeute ist dann der ganze Teig, Warenwert je Stück = je Gramm × Ballengewicht.
 function stueckAusbeute(r) {
   const s = r.stueck; if (!s) return;
+  if (s.masse > 0 && s.gewicht > 0) { s.anzahl = Math.floor(s.masse / s.gewicht + 1e-9) || null; r.ausbeute = { menge: s.masse, einheit: "g" }; return; }
   if (s.anzahl > 0 && s.gewicht > 0) r.ausbeute = { menge: Math.round(s.anzahl * s.gewicht * 100) / 100, einheit: "g" };
   else if (s.anzahl > 0) r.ausbeute = { menge: s.anzahl, einheit: "stk" };
 }
@@ -127,9 +130,18 @@ export function selbstFeldSetzen(stand, name, feld, roh, datum) {
   const wert = typeof roh === "number" ? roh : null;
   if (art === "menge") { const z = r.zutaten[Number(idx)]; if (!z) return false; z.menge = wert; }
   else if (art === "ausbeute") { r.ausbeute = { menge: wert, einheit: r.ausbeute?.einheit && r.ausbeute.einheit !== "stk" ? r.ausbeute.einheit : basisEinheit(a.einheit) === "ml" ? "ml" : "g" }; delete r.stueck; }
-  else if (art === "anzahl" || art === "gewicht") { r.stueck ??= { anzahl: null, gewicht: null }; r.stueck[art] = wert > 0 ? wert : null; stueckAusbeute(r); }
+  else if (art === "anzahl" || art === "gewicht" || art === "masse") { r.stueck ??= { anzahl: null, gewicht: null }; r.stueck[art] = wert > 0 ? wert : null; if (art === "anzahl") delete r.stueck.masse; stueckAusbeute(r); }
   else if (art === "arbeit") r.arbeitMin = wert > 0 ? wert : 0;
   else return false;
+  eigenMachen(r, datum); return true;
+}
+// 20.10.2026 (Baris): Zutaten sind austauschbar – „Weizenmehl Typ 550“ ist nur ein Startwert. Menge bleibt, die Einheit folgt der neuen Ware
+// (Gramm, Milliliter oder Stück), wenn sie nicht passt.
+export function selbstZutatTauschen(stand, name, i, neuName, datum) {
+  const r = artikel(stand, name)?.rezept; const z = r?.zutaten?.[i]; if (!z || !neuName || neuName === z.name || neuName === name) return false;
+  if (r.zutaten.some((x, j) => j !== i && x.name === neuName)) return false;
+  const e = basisEinheit(artikel(stand, neuName)?.einheit || PRODUKT_INDEX[neuName]?.e || "g");
+  z.name = neuName; if (basisEinheit(z.einheit) !== e) { z.einheit = e; z.menge = null; }
   eigenMachen(r, datum); return true;
 }
 export function selbstZutatEntfernen(stand, name, i, datum) {

@@ -320,3 +320,8 @@ span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
 .kuehlliste .zeileknopf > .kwert { flex: 0 0 auto; }
 .kuehlliste .zeileknopf b { word-break: normal; overflow-wrap: anywhere; }
 @media (max-width: 380px) { .kuehlliste .kwert small { white-space: normal; max-width: 6.5em; margin-inline-start: auto; } }
+/* 20.10.2026: Zutat im Ansatz antippen = tauschen. Der Name bleibt ganz lesbar (bricht um), das Auswahlfeld liegt unsichtbar darüber. */
+.sz-tauschbar { position: relative; display: block; min-width: 0; cursor: pointer; }
+.sz-tauschbar .sz-pfeil { color: var(--b-text-leise); font-size: .8em; }
+select.sz-tausch { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 1rem; }
+.sz-tauschbar:focus-within { outline: 2px solid var(--b-akzent); outline-offset: 2px; border-radius: 4px; }
