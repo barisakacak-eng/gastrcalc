@@ -1127,6 +1127,7 @@ export default {
       personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
   heute: {
+    zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },
     tempoGut: (d) => `În plan · ${d}`, tempoKnapp: (b) => `${b} / zi necesar`, ohneKosten: "Lipsesc costurile fixe",
     kachel: { umsatz: "Încasări azi", muell: "Deșeuri azi", kuehlung: "Răcire", putzen: "Curățenie" },

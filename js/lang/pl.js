@@ -1126,6 +1126,7 @@ export default {
       personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   heute: {
+    zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
     tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",
     kachel: { umsatz: "Utarg dziś", muell: "Odpady dziś", kuehlung: "Chłodzenie", putzen: "Sprzątanie" },

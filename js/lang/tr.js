@@ -1122,6 +1122,7 @@ export default {
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân „Bugün“ ve „Ofiste açık“
   heute: {
+    zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
     tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",
     kachel: { umsatz: "Bugünkü ciro", muell: "Bugünkü çöp", kuehlung: "Soğutma", putzen: "Temizlik" },

@@ -1128,6 +1128,7 @@ export default {
       personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
   heute: {
+    zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
     tempoGut: (d) => `Po planu · ${d}`, tempoKnapp: (b) => `Treba ${b} / dan`, ohneKosten: "Fale fiksni troškovi",
     kachel: { umsatz: "Promet danas", muell: "Otpad danas", kuehlung: "Hlađenje", putzen: "Čišćenje" },

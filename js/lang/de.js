@@ -1129,6 +1129,7 @@ export default {
       buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
   heute: {
+    zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },
     tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",
     kachel: { umsatz: "Umsatz heute", muell: "Müll heute", kuehlung: "Kühlung", putzen: "Putzen" },

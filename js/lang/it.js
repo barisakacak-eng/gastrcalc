@@ -1121,6 +1121,7 @@ export default {
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
   heute: {
+    zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
     tempoGut: (d) => `In linea · ${d}`, tempoKnapp: (b) => `Servono ${b} / giorno`, ohneKosten: "Mancano i costi fissi",
     kachel: { umsatz: "Incasso oggi", muell: "Scarti oggi", kuehlung: "Frigo", putzen: "Pulizie" },

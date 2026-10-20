@@ -1119,6 +1119,7 @@ export default {
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   heute: {
+    zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
     tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",
     kachel: { umsatz: "Firotina îro", muell: "Çopa îro", kuehlung: "Sarkirin", putzen: "Paqijî" },

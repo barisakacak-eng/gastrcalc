@@ -490,3 +490,25 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 .putzplan .pzeile .aufgabe { flex: 1 1 0; min-width: 0; }
 .putzplan .pmehr { flex: 0 0 48px; min-height: 48px; border: 1px solid var(--b-linie); border-radius: 14px; background: var(--b-karte); color: var(--b-text-leise); display: flex; align-items: center; justify-content: center; }
 .putzplan .pdetail { margin: -2px 4px 10px; color: var(--b-text-leise); font-size: .95rem; line-height: 1.35; }
+
+/* Heute nach Sanjis HTML-Entwurf C (Baris 20.10.2026): Kopf links/rechts, Lorbeer, Kursdiagramm, Kupferlinie, farbige Kachelzahlen */
+.heute-laden .h-kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin: 0 2px 14px; }
+.heute-laden .h-eyebrow { letter-spacing: .14em; font-size: calc(11rem / 17); font-weight: 800; color: var(--b-primaer); text-transform: uppercase; }
+.heute-laden .h-ladenname { font-size: calc(18rem / 17); font-weight: 800; color: var(--b-text); overflow-wrap: anywhere; }
+.heute-laden .h-datum { font-size: calc(13rem / 17); font-weight: 650; color: var(--b-text-leise); white-space: nowrap; }
+.karte.h-ziel.h-ziel-kurs { position: relative; overflow: hidden; border-radius: 18px; padding: 22px 20px 14px; box-shadow: 0 9px 24px rgba(15,61,46,.16); text-align: left; display: block; width: 100%; }
+.h-ziel-kurs .h-lorbeer { position: absolute; width: 44px; height: 60px; right: 12px; top: 6px; color: var(--b-primaer-hell); opacity: .5; pointer-events: none; }
+.h-ziel-kurs .h-zielkopf, .h-ziel-kurs .h-riesig, .h-ziel-kurs .h-tempo-zeile { display: block; position: relative; }
+.karte.h-ziel.h-ziel-kurs .h-riesig { margin: 6px 0 4px; }
+.h-ziel-kurs .h-tempo-zeile { color: var(--b-primaer-hell); font-size: calc(12rem / 17); font-weight: 600; }
+.h-ziel-kurs .h-kurs { display: block; width: 100%; height: 150px; margin: 10px 0 0; overflow: visible; }
+.h-kurs .h-kurs-achse { stroke: #FFFFFF; stroke-opacity: .18; stroke-width: 1; }
+.h-kurs .h-kurs-ziel { stroke: var(--b-akzent); stroke-dasharray: 4 4; stroke-width: 1.6; }
+.h-kurs .h-kurs-ziellabel { fill: var(--b-akzent); font-weight: 700; font-size: calc(13rem / 17); font-family: inherit; }
+.h-kurs .h-kurs-flaeche { fill: var(--b-primaer-hell); fill-opacity: .22; }
+.h-kurs .h-kurs-linie { fill: none; stroke: var(--b-akzent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.h-kurs .h-kurs-punkt { fill: var(--b-akzent); stroke: #FFFFFF; stroke-width: 3; }
+.h-kurs .h-kurs-tag { fill: #FFFFFF; font-size: calc(13rem / 17); font-family: inherit; }
+.heute-laden .h-kupfer { display: block; width: 300px; max-width: 100%; height: 5px; margin: 8px auto 14px; }
+.heute-laden .h-feld.umsatz:not(.leer) .zahl { color: var(--b-gruen-ok); }
+.heute-laden .h-feld.muell:not(.leer) .zahl { color: var(--b-rot-text); }

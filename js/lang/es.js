@@ -1120,6 +1120,7 @@ export default {
       personal: "Anota desperdicio, mide el frío, marca la limpieza. Volver solo con el código de oficina.",
       buero: "Aquí están todas las cuentas, listas y ajustes. Las carpetas se las das a la inspección, al asesor fiscal o al contable." } },
   heute: {
+    zielLinie: "cero + beneficio objetivo",
     stufe: { bisNull: "Para llegar a cero faltan", bisZiel: "Hasta el objetivo", ueberZiel: "Por encima del objetivo" },
     tempoGut: (d) => `En plan · ${d}`, tempoKnapp: (b) => `Hacen falta ${b} / día`, ohneKosten: "Faltan gastos fijos",
     kachel: { umsatz: "Ventas hoy", muell: "Basura hoy", kuehlung: "Frío", putzen: "Limpieza" },

@@ -1121,6 +1121,7 @@ export default {
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   heute: {
+    zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break even", bisZiel: "Left to target", ueberZiel: "Above target" },
     tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
     kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },

@@ -1120,6 +1120,7 @@ export default {
       personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
   heute: {
+    zielLinie: "hòa vốn + lãi mục tiêu",
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },
     tempoGut: (d) => `Đúng kế hoạch · ${d}`, tempoKnapp: (b) => `Cần ${b} / ngày`, ohneKosten: "Thiếu chi phí cố định",
     kachel: { umsatz: "Doanh thu hôm nay", muell: "Rác hôm nay", kuehlung: "Làm lạnh", putzen: "Dọn dẹp" },

@@ -1120,6 +1120,7 @@ export default {
       personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau.",
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
   heute: {
+    zielLinie: "zéro + bénéfice visé",
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },
     tempoGut: (d) => `Dans les temps · ${d}`, tempoKnapp: (b) => `${b} / jour nécessaires`, ohneKosten: "Frais fixes manquants",
     kachel: { umsatz: "Ventes du jour", muell: "Déchets du jour", kuehlung: "Froid", putzen: "Nettoyage" },

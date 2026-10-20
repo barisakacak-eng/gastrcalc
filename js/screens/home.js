@@ -25,8 +25,9 @@ export function startView(stand, extra = {}) {
   const dran = jetztDran(stand, extra.wurzel, { jetzt: extra.jetzt || new Date() });
   return `
     <div class="inhalt cockpit heute-laden">
-      <div class="h-zeitzeile">${esc(stand.betrieb.name || t("menue.deinLaden"))} · ${esc(tagKurz(H))}</div>
+      <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
+      ${KUPFERLINIE}
       ${dran ? jetztKarte(dran) : ""}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
@@ -44,13 +45,38 @@ function zielTexte(stand, z, H) {
 }
 function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
-  return `<button type="button" class="karte h-ziel ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz">
-    <span class="h-zielkopf"><span>${esc(t("heute.stufe." + w.stufe))}</span>${w.tempo ? `<span class="h-tempo ${w.tempo.art}">${esc(w.tempo.text)}</span>` : `<span class="zielsym">${sym("target")}</span>`}</span>
+  // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
+  // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
+  return `<button type="button" class="karte h-ziel h-ziel-kurs ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz">
+    ${LORBEER}
+    <span class="h-zielkopf"><span>${esc(t("heute.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
-    ${m.ziel === null ? `<span class="h-unter">${esc(t("heute.ohneKosten"))}</span>`
-      : `<span class="h-balken" aria-hidden="true"><i style="width:${Math.round(w.anteil * 100)}%"></i></span><span class="h-balkenzahlen"><span>${fmtEuro(m.umsatz, { dezimal: 0 })}</span><span>${fmtEuro(w.marke, { dezimal: 0 })}</span></span>`}
+    ${w.tempo ? `<span class="h-tempo-zeile ${w.tempo.art}">${esc(w.tempo.text)}</span>` : ""}
+    ${m.ziel === null ? `<span class="h-unter">${esc(t("heute.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
+
+// Kursdiagramm der Zielkarte (Sanji-Entwurf 20.10.2026): x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
+// Daten aus monatsZiel (m.tage: kumuliert bis heute) – die Oberfläche rechnet nichts Neues, sie zeichnet nur.
+export function kursDiagramm(m, marke, z) {
+  const alle = z?.tage || []; const n = Math.max(2, alle.length); const ist = (m.tage || []).filter((x) => x.umsatz !== null || x.kumuliert > 0);
+  const W = 312, X0 = 4, Y0 = 142, HH = 126;
+  const max = Math.max(marke || 0, ...(m.tage || []).map((x) => x.kumuliert || 0), 1) * 1.12;
+  const idx = (d) => Math.max(0, alle.findIndex((x) => x.datum === d));
+  const X = (i) => (X0 + i / (n - 1) * W).toFixed(1), Y = (v) => (Y0 - v / max * HH).toFixed(1);
+  const tage = m.tage || []; const pfad = tage.map((x, i) => `${i ? "L" : "M"}${X(idx(x.datum))},${Y(x.kumuliert || 0)}`).join(" ");
+  const letzt = tage[tage.length - 1]; const yz = Y(marke || 0);
+  const tag = (d) => (d ? datumLesbar(d).slice(0, 6) : "");
+  return `<svg class="h-kurs" viewBox="0 0 320 165" preserveAspectRatio="none" role="img" aria-label="${esc(t("heute.zielLinie"))}">
+    <line class="h-kurs-ziel" x1="4" x2="316" y1="${yz}" y2="${yz}"/><text class="h-kurs-ziellabel" x="308" y="${(Number(yz) - 7).toFixed(1)}" text-anchor="end">${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</text>
+    <line class="h-kurs-achse" x1="4" x2="316" y1="142" y2="142"/>
+    ${tage.length && ist.length ? `<path class="h-kurs-flaeche" d="${pfad} L${X(idx(letzt.datum))},142 L${X(idx(tage[0].datum))},142 Z"/><path class="h-kurs-linie" d="${pfad}"/><circle class="h-kurs-punkt" cx="${X(idx(letzt.datum))}" cy="${Y(letzt.kumuliert || 0)}" r="5"/>` : ""}
+    <text class="h-kurs-tag" x="4" y="161">\u2066${esc(tag(alle[0]?.datum))}\u2069</text><text class="h-kurs-tag" x="316" y="161" text-anchor="end">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</text>
+  </svg>`;
+}
+// Lorbeer und Kupferlinie aus Sanjis Entwurf (inline-SVG, Farben aus den Tokens)
+const LORBEER = `<svg class="h-lorbeer" viewBox="0 0 44 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 53 C4 40 4 23 14 7"/><path d="M32 53 C40 40 40 23 30 7"/></g><g fill="currentColor"><ellipse cx="8" cy="42" rx="3" ry="7" transform="rotate(-34 8 42)"/><ellipse cx="6" cy="31" rx="3" ry="7" transform="rotate(-12 6 31)"/><ellipse cx="9" cy="20" rx="3" ry="7" transform="rotate(19 9 20)"/><ellipse cx="15" cy="11" rx="2.5" ry="6" transform="rotate(39 15 11)"/><ellipse cx="36" cy="42" rx="3" ry="7" transform="rotate(34 36 42)"/><ellipse cx="38" cy="31" rx="3" ry="7" transform="rotate(12 38 31)"/><ellipse cx="35" cy="20" rx="3" ry="7" transform="rotate(-19 35 20)"/><ellipse cx="29" cy="11" rx="2.5" ry="6" transform="rotate(-39 29 11)"/></g></svg>`;
+const KUPFERLINIE = `<svg class="h-kupfer" viewBox="0 0 300 5" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="h-kupfer-v" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--b-akzent)" stop-opacity="0"/><stop offset=".18" stop-color="var(--b-akzent)" stop-opacity=".65"/><stop offset=".5" stop-color="var(--b-akzent)"/><stop offset=".82" stop-color="var(--b-akzent)" stop-opacity=".65"/><stop offset="1" stop-color="var(--b-akzent)" stop-opacity="0"/></linearGradient></defs><rect x="0" y="2" width="300" height="1.5" rx=".75" fill="url(#h-kupfer-v)"/></svg>`;
 
 // Vier Kacheln: Symbol + Zahl. Kühlung zeigt den schlechtesten Wert (rot) oder „OK“ oder „2 offen“; Putzen erledigt/gesamt heute.
 // Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.

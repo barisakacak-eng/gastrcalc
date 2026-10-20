@@ -1125,6 +1125,7 @@ export default {
       personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
   heute: {
+    zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
     tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",
     kachel: { umsatz: "Xhiroja sot", muell: "Mbeturina sot", kuehlung: "Ftohja", putzen: "Pastrimi" },
