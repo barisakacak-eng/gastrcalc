@@ -390,7 +390,7 @@ export default {
     belegeInfo: "IVA solo dove l'aliquota è stata riconosciuta sul documento. Netto + IVA + cauzione = lordo.",
     aenderungen: "Modifiche e annullamenti", aenderungenInfo: "Nulla viene cancellato: voci del mese modificate e annullate.", aenderungenKeine: "Nessuna modifica nel mese", datei: "Aenderungen",
     aart: { notiz: "Incasso giornaliero (nota)", lieferung: "Documento merce", kosten: "Documento costi" }, vorgang: { ersetzt: "modificato", storniert: "annullato" },
-    schwundOffen: (n) => `incompleto: ${n} senza prezzo`, eigen: (e) => `Consumo proprio a parte: ${e}`,
+    schwundOffen: (n) => `incompleto: ${n} senza prezzo`, eigen: (e) => `Consumo proprio a parte: ${e}`, eigenJahr: (e, j, p) => `Consumo proprio ${j} a oggi: ${e} netto · Forfait 2026: ${p} a persona. Quale metodo conviene lo decide il tuo consulente fiscale.`,
     fuss: "Documento di lavoro per la preparazione, non è un libro cassa né contabilità. Gli incassi giornalieri sono note dell'app, vale la cassa (rapporto Z). Netto o lordo è indicato nell'intestazione della colonna. Le voci vengono solo aggiunte, le modifiche sono nell'ultima sezione. * = aggiunto dopo.",
     kopf: { umsatz: ["Data", "Lordo € (nota)", "Aggiunto dopo", "modificato (prima €)", "Contrassegno"],
       belege: ["Data", "N. fattura", "Fornitore", "Centro di costo", "Netto €", "IVA 7 % €", "IVA 19 % €", "Cauzione €", "Lordo €", "di cui materiali d'uso €", "Nota"],

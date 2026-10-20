@@ -390,7 +390,7 @@ export default {
     belegeInfo: "VAT chỉ khi thuế suất được nhận ra trên chứng từ. Ròng + VAT + tiền cọc = gộp.",
     aenderungen: "Thay đổi và hủy", aenderungenInfo: "Không xóa gì: các mục đã đổi và đã hủy trong tháng.", aenderungenKeine: "Không có thay đổi trong tháng", datei: "Aenderungen",
     aart: { notiz: "Doanh thu ngày (ghi chú)", lieferung: "Chứng từ hàng", kosten: "Chứng từ chi phí" }, vorgang: { ersetzt: "đã đổi", storniert: "đã hủy" },
-    schwundOffen: (n) => `chưa đủ: ${n} không có giá`, eigen: (e) => `Tự dùng riêng: ${e}`,
+    schwundOffen: (n) => `chưa đủ: ${n} không có giá`, eigen: (e) => `Tự dùng riêng: ${e}`, eigenJahr: (e, j, p) => `Tự dùng ${j} đến nay: ${e} chưa thuế · Mức khoán 2026: ${p} mỗi người. Cách nào có lợi hơn do cố vấn thuế của bạn quyết định.`,
     fuss: "Tài liệu làm việc để chuẩn bị, không phải sổ quỹ và không phải sổ sách kế toán. Doanh thu ngày là ghi chú từ ứng dụng, máy tính tiền (báo cáo Z) mới có giá trị. Ròng hay gộp ghi ở tiêu đề cột. Mục chỉ được thêm vào, thay đổi nằm ở phần cuối. * = nhập sau.",
     kopf: { umsatz: ["Ngày", "Gộp € (ghi chú)", "Nhập sau", "đã đổi (trước €)", "Đánh dấu"],
       belege: ["Ngày", "Số hóa đơn", "Nhà cung cấp", "Nơi chi phí", "Ròng €", "VAT 7 % €", "VAT 19 % €", "Tiền cọc €", "Gộp €", "trong đó vật tư €", "Ghi chú"],

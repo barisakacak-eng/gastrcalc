@@ -126,7 +126,9 @@ export function schwund(stand, z) {
     .map((e) => ({ datum: e.datum, art: e.art, name: e.art === "eimer" ? (e.ref?.name || "") : (e.ref?.name || ""), menge: Number(e.menge) || 0, einheit: e.einheit || "", wert: schwundWert(e, stand), vorgang: SCHWUND_ARTEN[e.art] || 1, grund: e.grund || "" }));
   // 20.10.2026 (Export-Test F4/F5): Die Summenzeile passt zu den Zeilen – gerundet wie gedruckt, Müll (Vorgang 1) und Eigenverbrauch (Vorgang 3) getrennt
   const summe = (v) => rund2(zeilen.filter((x) => x.vorgang === v && typeof x.wert === "number").reduce((s, x) => s + rund2(x.wert), 0));
-  return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen, summeMuell: summe(1), summeEigen: summe(3) };
+  // P1 (20.10.2026): Eigenverbrauch im Kalenderjahr bis Zeitraum-Ende, zum Vergleich mit dem Pauschbetrag (nur Anzeige)
+  const jahr = String(z.bis).slice(0, 4); const eigenJahr = rund2(schwundAuswertung(stand, { von: jahr + "-01-01", bis: z.bis }).eigen.waren || 0);
+  return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen, summeMuell: summe(1), summeEigen: summe(3), eigenJahr, jahr };
 }
 
 // Belege (W2-T, Prüfung p04 Nr. 5 und 6): eingelesene Lieferungen und Kostenbelege. Keine erfundene Vorsteuer:

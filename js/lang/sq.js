@@ -395,7 +395,7 @@ export default {
     belegeInfo: "TVSH vetëm ku norma u njoh në dokument. Neto + TVSH + depozitë = bruto.",
     aenderungen: "Ndryshime dhe anulime", aenderungenInfo: "Asgjë nuk fshihet: hyrjet e ndryshuara dhe të anuluara të muajit.", aenderungenKeine: "Asnjë ndryshim këtë muaj", datei: "Aenderungen",
     aart: { notiz: "Shitja ditore (shënim)", lieferung: "Dokument malli", kosten: "Dokument kostoje" }, vorgang: { ersetzt: "ndryshuar", storniert: "anuluar" },
-    schwundOffen: (n) => `jo i plotë: ${n} pa çmim`, eigen: (e) => `Konsum vetjak veçmas: ${e}`,
+    schwundOffen: (n) => `jo i plotë: ${n} pa çmim`, eigen: (e) => `Konsum vetjak veçmas: ${e}`, eigenJahr: (e, j, p) => `Konsum vetjak ${j} deri sot: ${e} neto · Shuma fikse 2026: ${p} për person. Cila metodë është më e leverdishme e vendos këshilltari yt tatimor.`,
     fuss: "Dokument pune për përgatitje, jo libër arke dhe jo kontabilitet. Shitjet ditore janë shënime nga aplikacioni, vlen arka (raporti Z). Neto ose bruto shkruhet në krye të kolonës. Hyrjet vetëm shtohen, ndryshimet janë në pjesën e fundit. * = shtuar më vonë.",
     kopf: { umsatz: ["Data", "Bruto € (shënim)", "Shtuar më vonë", "ndryshuar (më parë €)", "Shenjë"],
       belege: ["Data", "Nr. fature", "Furnizuesi", "Qendra e kostos", "Neto €", "TVSH 7 % €", "TVSH 19 % €", "Depozitë €", "Bruto €", "prej tyre materiale pune €", "Shënim"],

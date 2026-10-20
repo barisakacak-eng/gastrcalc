@@ -390,7 +390,7 @@ export default {
     belegeInfo: "KDV sadece oranı fişte tanındıysa. Net + KDV + depozito = brüt.",
     aenderungen: "Değişiklikler ve geri almalar", aenderungenInfo: "Hiçbir şey silinmez: ayın değiştirilen ve geri alınan kayıtları.", aenderungenKeine: "Bu ay değişiklik yok", datei: "Degisiklikler",
     aart: { notiz: "Günlük ciro (not)", lieferung: "Mal fişi", kosten: "Gider fişi" }, vorgang: { ersetzt: "değiştirildi", storniert: "geri alındı" },
-    schwundOffen: (n) => `eksik: ${n} fiyatsız`, eigen: (e) => `Kendi tüketim ayrıca: ${e}`,
+    schwundOffen: (n) => `eksik: ${n} fiyatsız`, eigen: (e) => `Kendi tüketim ayrıca: ${e}`, eigenJahr: (e, j, p) => `Kendi tüketim ${j} bugüne kadar: ${e} net · 2026 götürü tutar: kişi başı ${p}. Hangi yöntemin daha uygun olduğunu vergi danışmanın belirler.`,
     fuss: "Hazırlık için çalışma belgesi; kasa defteri ve muhasebe değildir. Günlük cirolar uygulamadan not, geçerli olan kasa (Z raporu). Net veya brüt sütun başlığında yazar. Kayıtlar sadece eklenir, değişiklikler son bölümde. * = sonradan girildi.",
     kopf: { umsatz: ["Tarih", "Brüt € (not)", "Sonradan", "değişti (önceki €)", "İşaret"],
       belege: ["Tarih", "Fatura no", "Tedarikçi", "Gider yeri", "Net €", "KDV %7 €", "KDV %19 €", "Depozito €", "Brüt €", "işletme malzemesi €", "Not"],

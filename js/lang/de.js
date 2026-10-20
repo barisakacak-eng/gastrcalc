@@ -396,7 +396,7 @@ export default {
     belegeInfo: "Umsatzsteuer nur, wo der Satz auf dem Beleg erkannt wurde. Netto + USt + Pfand = Brutto.",
     aenderungen: "Änderungen und Rücknahmen", aenderungenInfo: "Nichts wird gelöscht: geänderte und zurückgenommene Einträge des Monats.", aenderungenKeine: "Keine Änderungen im Monat", datei: "Aenderungen",
     aart: { notiz: "Tagesumsatz (Notiz)", lieferung: "Warenbeleg", kosten: "Kostenbeleg" }, vorgang: { ersetzt: "geändert", storniert: "zurückgenommen" },
-    schwundOffen: (n) => `unvollständig: ${n} ohne Preis`, eigen: (e) => `Eigenverbrauch extra: ${e}`,
+    schwundOffen: (n) => `unvollständig: ${n} ohne Preis`, eigen: (e) => `Eigenverbrauch extra: ${e}`, eigenJahr: (e, j, p) => `Eigenverbrauch ${j} bis heute: ${e} netto · Pauschbetrag 2026: ${p} je Person. Welche Methode günstiger ist, klärt dein Steuerberater.`,
     fuss: "Arbeitsunterlage zur Vorbereitung, kein Kassenbuch und keine Buchführung. Tagesumsätze sind Notizen aus der App, maßgeblich ist die Kasse (Z-Bon). Netto oder brutto steht im Spaltenkopf. Einträge werden nur angehängt, Änderungen stehen im letzten Abschnitt. * = nachgetragen.",
     kopf: { umsatz: ["Datum", "Brutto € (Notiz)", "Nachgetragen", "geändert (Vorwert €)", "Kennzeichnung"],
       belege: ["Datum", "Rechnungs-Nr", "Lieferant", "Kostenstelle", "Netto €", "USt 7 % €", "USt 19 % €", "Pfand €", "Brutto €", "davon Betriebsmittel €", "Hinweis"],

@@ -390,7 +390,7 @@ export default {
     belegeInfo: "IVA solo donde se reconoció el tipo en el justificante. Neto + IVA + depósito = bruto.",
     aenderungen: "Cambios y anulaciones", aenderungenInfo: "No se borra nada: entradas del mes cambiadas y anuladas.", aenderungenKeine: "Sin cambios este mes", datei: "Aenderungen",
     aart: { notiz: "Venta diaria (nota)", lieferung: "Justificante de mercancía", kosten: "Justificante de gasto" }, vorgang: { ersetzt: "cambiado", storniert: "anulado" },
-    schwundOffen: (n) => `incompleto: ${n} sin precio`, eigen: (e) => `Consumo propio aparte: ${e}`,
+    schwundOffen: (n) => `incompleto: ${n} sin precio`, eigen: (e) => `Consumo propio aparte: ${e}`, eigenJahr: (e, j, p) => `Consumo propio ${j} hasta hoy: ${e} neto · Tarifa plana 2026: ${p} por persona. Tu asesor fiscal decide qué método conviene más.`,
     fuss: "Documento de trabajo para preparar, no es libro de caja ni contabilidad. Las ventas diarias son notas de la app, vale la caja (informe Z). Neto o bruto figura en la cabecera de la columna. Las entradas solo se añaden, los cambios están en la última sección. * = añadido después.",
     kopf: { umsatz: ["Fecha", "Bruto € (nota)", "Añadido después", "cambiado (anterior €)", "Marca"],
       belege: ["Fecha", "N.º factura", "Proveedor", "Centro de coste", "Neto €", "IVA 7 % €", "IVA 19 % €", "Depósito €", "Bruto €", "de ello material de uso €", "Nota"],

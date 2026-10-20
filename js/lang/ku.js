@@ -389,7 +389,7 @@ export default {
     belegeInfo: "Bac tenê ku rêje li ser belgeyê hat naskirin. Net + bac + depozîto = brut.",
     aenderungen: "Guhertin û vegerandin", aenderungenInfo: "Tiştek nayê jêbirin: tomarên mehê yên guherandî û vegerandî.", aenderungenKeine: "Vê mehê guhertin tune", datei: "Aenderungen",
     aart: { notiz: "Firotina rojê (not)", lieferung: "Belgeya malan", kosten: "Belgeya lêçûnê" }, vorgang: { ersetzt: "hat guhertin", storniert: "hat vegerandin" },
-    schwundOffen: (n) => `kêm: ${n} bê biha`, eigen: (e) => `Bikaranîna xwe cuda: ${e}`,
+    schwundOffen: (n) => `kêm: ${n} bê biha`, eigen: (e) => `Bikaranîna xwe cuda: ${e}`, eigenJahr: (e, j, p) => `Bikaranîna xwe ${j} heta îro: ${e} net · Tevahiya sabît 2026: ${p} ji bo her kesî. Kîjan rêbaz baştir e, şêwirmendê te yê bacê biryar dide.`,
     fuss: "Belgeya karê ji bo amadekariyê, ne deftera kasê û ne hesabdarî. Firotinên rojê notên sepanê ne, kasa (raporta Z) derbasdar e. Net an brut di serê stûnê de ye. Tomar tenê tên zêdekirin, guhertin di beşa dawî de ne. * = paşê hat nivîsîn.",
     kopf: { umsatz: ["Dîrok", "Brut € (not)", "Paşê hat nivîsîn", "guherî (nirxa berê €)", "Nîşan"],
       belege: ["Dîrok", "Hejmara fatûreyê", "Pêşkêşker", "Navenda lêçûnê", "Net €", "Bac 7 % €", "Bac 19 % €", "Depozîto €", "Brut €", "ji wê alavên kar €", "Têbînî"],

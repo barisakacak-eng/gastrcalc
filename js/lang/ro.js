@@ -396,7 +396,7 @@ export default {
     belegeInfo: "TVA doar unde cota a fost recunoscută pe document. Net + TVA + garanție = brut.",
     aenderungen: "Modificări și anulări", aenderungenInfo: "Nimic nu se șterge: intrările modificate și anulate ale lunii.", aenderungenKeine: "Nicio modificare luna aceasta", datei: "Aenderungen",
     aart: { notiz: "Vânzare zilnică (notă)", lieferung: "Document marfă", kosten: "Document cost" }, vorgang: { ersetzt: "modificat", storniert: "anulat" },
-    schwundOffen: (n) => `incomplet: ${n} fără preț`, eigen: (e) => `Consum propriu separat: ${e}`,
+    schwundOffen: (n) => `incomplet: ${n} fără preț`, eigen: (e) => `Consum propriu separat: ${e}`, eigenJahr: (e, j, p) => `Consum propriu ${j} până azi: ${e} net · Forfetar 2026: ${p} de persoană. Ce metodă e mai avantajoasă decide consultantul tău fiscal.`,
     fuss: "Document de lucru pentru pregătire, nu registru de casă și nu contabilitate. Vânzările zilnice sunt note din aplicație, valabilă e casa (raport Z). Net sau brut scrie în capul coloanei. Intrările doar se adaugă, modificările sunt în ultima secțiune. * = adăugat ulterior.",
     kopf: { umsatz: ["Data", "Brut € (notă)", "Adăugat ulterior", "modificat (anterior €)", "Marcaj"],
       belege: ["Data", "Nr. factură", "Furnizor", "Centru de cost", "Net €", "TVA 7 % €", "TVA 19 % €", "Garanție €", "Brut €", "din care consumabile €", "Observație"],

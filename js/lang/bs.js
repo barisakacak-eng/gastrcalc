@@ -397,7 +397,7 @@ export default {
     belegeInfo: "PDV samo gdje je stopa prepoznata na računu. Neto + PDV + kaucija = bruto.",
     aenderungen: "Izmjene i poništenja", aenderungenInfo: "Ništa se ne briše: izmijenjeni i poništeni unosi mjeseca.", aenderungenKeine: "Nema izmjena ovaj mjesec", datei: "Aenderungen",
     aart: { notiz: "Dnevni promet (bilješka)", lieferung: "Račun za robu", kosten: "Račun troška" }, vorgang: { ersetzt: "izmijenjeno", storniert: "poništeno" },
-    schwundOffen: (n) => `nepotpuno: ${n} bez cijene`, eigen: (e) => `Vlastita potrošnja posebno: ${e}`,
+    schwundOffen: (n) => `nepotpuno: ${n} bez cijene`, eigen: (e) => `Vlastita potrošnja posebno: ${e}`, eigenJahr: (e, j, p) => `Vlastita potrošnja ${j} do danas: ${e} neto · Paušal 2026: ${p} po osobi. Koja metoda je povoljnija, odlučuje tvoj poreski savjetnik.`,
     fuss: "Radni dokument za pripremu, nije blagajnička knjiga ni knjigovodstvo. Dnevni prometi su bilješke iz aplikacije, važi kasa (Z-izvještaj). Neto ili bruto piše u zaglavlju kolone. Unosi se samo dodaju, izmjene su u zadnjem dijelu. * = naknadno uneseno.",
     kopf: { umsatz: ["Datum", "Bruto € (bilješka)", "Naknadno", "izmijenjeno (prije €)", "Oznaka"],
       belege: ["Datum", "Br. računa", "Dobavljač", "Mjesto troška", "Neto €", "PDV 7 % €", "PDV 19 % €", "Kaucija €", "Bruto €", "od toga potrošni materijal €", "Napomena"],

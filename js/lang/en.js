@@ -389,7 +389,7 @@ export default {
     belegeInfo: "VAT only where the rate was recognised on the receipt. Net + VAT + deposit = gross.",
     aenderungen: "Changes and reversals", aenderungenInfo: "Nothing is deleted: changed and reversed entries of the month.", aenderungenKeine: "No changes this month", datei: "Changes",
     aart: { notiz: "Daily sales (note)", lieferung: "Goods receipt", kosten: "Cost receipt" }, vorgang: { ersetzt: "changed", storniert: "reversed" },
-    schwundOffen: (n) => `incomplete: ${n} without price`, eigen: (e) => `Own consumption extra: ${e}`,
+    schwundOffen: (n) => `incomplete: ${n} without price`, eigen: (e) => `Own consumption extra: ${e}`, eigenJahr: (e, j, p) => `Own consumption ${j} to date: ${e} net · 2026 flat rate: ${p} per person. Your tax adviser decides which method is better.`,
     fuss: "Working paper for preparation, not a cash book and not bookkeeping. Daily sales are notes from the app; the till (Z report) counts. Net or gross is in the column header. Entries are only added; changes are in the last section. * = added later.",
     kopf: { umsatz: ["Date", "Gross € (note)", "Added later", "changed (previous €)", "Marking"],
       belege: ["Date", "Invoice no", "Supplier", "Cost centre", "Net €", "VAT 7 % €", "VAT 19 % €", "Deposit €", "Gross €", "of which supplies €", "Note"],

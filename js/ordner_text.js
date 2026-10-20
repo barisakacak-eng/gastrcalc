@@ -7,6 +7,7 @@ import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, AMT_TEILE } from "./export_
 import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe } from "./export_steuer.js";
 import de from "./lang/de.js"; // W2-T: feste deutsche Kennzeichnung der Umsatz-Notizen in jeder App-Sprache
 import { imTakt } from "./takt.js";
+import { PAUSCHBETRAG_EIGEN_2026 } from "./engine.js"; // P1 (20.10.2026)
 import { monatName } from "./anzeige_text.js";
 
 // Beispiel-Laden (17.10.2026): Kennzeichnung in Druck- und CSV-Kopf (null = echter Laden) – immer auch deutsch, wie die Umsatz-Kennung
@@ -188,7 +189,7 @@ export function paketDokument(stand, p) {
   if (p.personal) { const je = Object.entries(p.personal.jePerson).map(([k, v]) => `${k || "–"}: ${fmtZahl(v.anzahl)} · ${euro(v.sachbezug)}`).join(" · ");
     a.push({ titel: t("ordner.teil.personal"), info: [t("ordner.dok.svev"), je, p.personal.ohnePerson ? t("ordnerT.personalOhne", p.personal.ohnePerson) : ""].filter(Boolean).join(" · "), warn: !!p.personal.ohnePerson, kopf: kopfVon("personal").slice(0, 7), rechts: [4, 5, 6],
       zeilen: p.personal.zeilen.map((x) => ({ warn: !x.person, zellen: [datumDe(x.datum), !x.person ? "–" : !x.personAus ? x.person : x.personAusAm ? n.ausgeschiedenAm(x.person, x.personAusAm) : n.ausgeschieden(x.person), x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)] })), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") }); }
-  if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: [t("ordner.dok.netto"), p.schwund.eigen?.anzahl ? t("ordnerT.eigen", euro(p.schwund.eigen.waren)) : ""].filter(Boolean).join(" · "), warn: !!p.schwund.ohneWert, kopf: t("ordnerT.druck.schwund"), rechts: [3, 4],
+  if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: [t("ordner.dok.netto"), p.schwund.eigen?.anzahl ? t("ordnerT.eigen", euro(p.schwund.eigen.waren)) : "", p.schwund.eigenJahr && p.schwund.jahr === "2026" ? t("ordnerT.eigenJahr", euro(p.schwund.eigenJahr), p.schwund.jahr, euro(PAUSCHBETRAG_EIGEN_2026)) : ""].filter(Boolean).join(" · "), warn: !!p.schwund.ohneWert, kopf: t("ordnerT.druck.schwund"), rechts: [3, 4],
     zeilen: p.schwund.zeilen.map((x) => [datumDe(x.datum), n.art(x.art), x.name || "–", `${fmtZahl(x.menge, x.einheit === "stk" || x.einheit === "portion" ? 0 : 2)} ${x.einheit === "portion" ? t("tag.portionen") : x.einheit === "stk" ? t("allgemein.stueck") : x.einheit}`, x.wert === null ? t("tag.keinPreis") : euro(x.wert)]),
     summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", (p.schwund.ohneWert ? `${euro(p.schwund.summeMuell)} (${t("ordnerT.schwundOffen", p.schwund.ohneWert)})` : euro(p.schwund.summeMuell)) + (p.schwund.summeEigen ? ` · ${t("ordnerT.eigen", euro(p.schwund.summeEigen))}` : "")] : null, leer: t("ordner.zeile.keine") });
   if (p.belege) a.push({ titel: t("ordner.teil.belege"), info: t("ordnerT.belegeInfo"), warn: !!p.belege.pruefen, kopf: [t("ordnerC.belegNr"), ...t("ordnerT.druck.belege")], rechts: [4, 5, 6, 7, 8],

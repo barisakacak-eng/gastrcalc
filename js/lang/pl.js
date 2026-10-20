@@ -395,7 +395,7 @@ export default {
     belegeInfo: "VAT tylko tam, gdzie stawka rozpoznana na dowodzie. Netto + VAT + kaucja = brutto.",
     aenderungen: "Zmiany i cofnięcia", aenderungenInfo: "Nic nie jest usuwane: zmienione i cofnięte wpisy miesiąca.", aenderungenKeine: "Brak zmian w miesiącu", datei: "Aenderungen",
     aart: { notiz: "Obrót dzienny (notatka)", lieferung: "Dowód towarowy", kosten: "Dowód kosztowy" }, vorgang: { ersetzt: "zmieniono", storniert: "cofnięto" },
-    schwundOffen: (n) => `niepełne: ${n} bez ceny`, eigen: (e) => `Zużycie własne osobno: ${e}`,
+    schwundOffen: (n) => `niepełne: ${n} bez ceny`, eigen: (e) => `Zużycie własne osobno: ${e}`, eigenJahr: (e, j, p) => `Zużycie własne ${j} do dziś: ${e} netto · Ryczałt 2026: ${p} na osobę. Która metoda jest korzystniejsza, decyduje twój doradca podatkowy.`,
     fuss: "Dokument roboczy do przygotowania, nie książka kasowa i nie księgowość. Obroty dzienne to notatki z aplikacji, ważna jest kasa (raport Z). Netto lub brutto podano w nagłówku kolumny. Wpisy są tylko dodawane, zmiany są w ostatniej części. * = dopisane później.",
     kopf: { umsatz: ["Data", "Brutto € (notatka)", "Dopisane", "zmienione (poprzednio €)", "Oznaczenie"],
       belege: ["Data", "Nr faktury", "Dostawca", "Miejsce kosztów", "Netto €", "VAT 7 % €", "VAT 19 % €", "Kaucja €", "Brutto €", "w tym środki eksploatacyjne €", "Uwaga"],

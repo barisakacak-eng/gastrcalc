@@ -390,7 +390,7 @@ export default {
     belegeInfo: "TVA seulement si le taux a été reconnu sur la pièce. Net + TVA + consigne = brut.",
     aenderungen: "Modifications et annulations", aenderungenInfo: "Rien n'est effacé : entrées du mois modifiées et annulées.", aenderungenKeine: "Aucune modification ce mois", datei: "Aenderungen",
     aart: { notiz: "Ventes du jour (note)", lieferung: "Pièce marchandise", kosten: "Pièce de frais" }, vorgang: { ersetzt: "modifié", storniert: "annulé" },
-    schwundOffen: (n) => `incomplet : ${n} sans prix`, eigen: (e) => `Consommation propre à part : ${e}`,
+    schwundOffen: (n) => `incomplet : ${n} sans prix`, eigen: (e) => `Consommation propre à part : ${e}`, eigenJahr: (e, j, p) => `Consommation propre ${j} à ce jour : ${e} net · Forfait 2026 : ${p} par personne. Ton conseiller fiscal décide quelle méthode est la plus avantageuse.`,
     fuss: "Document de travail pour la préparation, ni livre de caisse ni comptabilité. Les ventes du jour sont des notes de l'appli, la caisse (ticket Z) fait foi. Net ou brut figure dans l'en-tête de colonne. Les entrées sont seulement ajoutées, les modifications sont dans la dernière partie. * = ajouté après.",
     kopf: { umsatz: ["Date", "Brut € (note)", "Ajouté après", "modifié (avant €)", "Mention"],
       belege: ["Date", "N° facture", "Fournisseur", "Centre de coût", "Net €", "TVA 7 % €", "TVA 19 % €", "Consigne €", "Brut €", "dont consommables €", "Remarque"],
