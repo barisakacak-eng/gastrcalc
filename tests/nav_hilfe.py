@@ -7,6 +7,8 @@ BLATT = ("abschluss",)
 
 
 async def modus(pg):
+    # 20.10.2026: nach einem Sprachwechsel lädt die App sich teils ein zweites Mal neu – erst fragen, wenn sie wieder bereit ist
+    await pg.wait_for_function("() => window.__gastrocalc && window.__gastrocalc.wurzel", timeout=15000)
     return await pg.evaluate("window.__gastrocalc.wurzel.modus || 'laden'")
 
 
