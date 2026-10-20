@@ -17,4 +17,8 @@ export const RICHTPREIS_NACHTRAG = [
   {"name":"Weizenmehl Typ 550","einheit":"kg","preis":1.0203,"min":1.16,"max":1.24,"methode":"Einzelhandel −15 %","quellen":["https://www.ebay.de/p/2297136522"],"abruf":"2026-10-20"},
   // 25 kg 29,99 / 33,84 / 34,88 / 40,26 €, 1 kg 1,49 € → Mittel 1,4098 €/kg × 0,85
   {"name":"Pizzamehl Typ 00","einheit":"kg","preis":1.1983,"min":1.20,"max":1.61,"methode":"Einzelhandel −15 %","quellen":["https://www.ebay.de/p/1271304463","https://www.ebay.de/p/20024853060","https://www.knuspr.de/en-DE/118152-friessinger-pizza-flour-type-00"],"abruf":"2026-10-20"},
+  // Pfeffer schwarz (20.10.2026, Projektstand „Pfeffer-Richtpreis fehlt“ – Adana zeigte „Preis fehlt“): 1 kg ganze Körner, eBay-Angebote
+  // 17,80 / 18,99 / 17,98 € und 12,99 + 4,99 Versand = 17,98 € → Mittel 18,1875 €/kg × 0,85. Gemahlen kostet im Handel ähnlich je kg.
+  // Die Angebote stehen als „ähnliche Artikel“ auf der unten verlinkten Seite (deren Hauptartikel ist grüner Pfeffer, ausverkauft).
+  {"name":"Pfeffer schwarz","einheit":"kg","preis":15.4594,"min":17.80,"max":18.99,"methode":"Einzelhandel −15 %","quellen":["https://www.ebay.de/p/1250642348"],"abruf":"2026-10-20"},
 ];

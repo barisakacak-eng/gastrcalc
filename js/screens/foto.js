@@ -175,7 +175,7 @@ export function kartePruefenView() {
   return `
     <h1 class="frage">${esc(t("foto.pruefenFrage", vorschlaege.length))}</h1>
     <p class="hinweis">${esc(t(pr.length ? "foto.pruefenHinweisKurz" : "foto.pruefenHinweisAlle"))}</p>
-    ${pr.length ? `<h2 class="fvgrp">${esc(t("foto.gruppePruefen", pr.length))}</h2>
+    ${pr.length ? `<h2 class="fvgrp">${esc(t("foto.gruppePruefen", pr.filter((v) => v.an && grund(v)).length))}</h2>
     <div class="fvliste offen">${pr.map((v) => `<div class="fvz ${v.an ? "" : "aus"} karte-${(punkt(v) || "ok").replace("grau", "ok")}">
       <div class="fvkopf"><span class="fvgrund">${esc(t(v.an ? { preis: "foto.preisFehltKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", zweiPreise: "foto.zweiPreiseKurz", rezept: "foto.rezeptBestaetigen" }[grund(v) || ""] || "foto.erledigt" : "foto.weggelassen"))}</span>
         ${v.an ? "" : `<button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-label="${esc(t("foto.zurueckholen"))}: ${esc(v.name)}">↺</button>`}</div>

@@ -205,7 +205,7 @@ function stationView(stand, r, k) {
     <div class="karte formular">
       <h2>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></h2>
       ${f.grund ? "" : `
-      <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" placeholder="°C" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
+      <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       <span class="marke">${letzte ? esc(t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : esc(t("kuehl.ersteMessung"))}${k.art === "tk" ? ` · ${esc(t("kuehl.minusHinweis"))}` : ""}</span>
       ${typeof wert === "number" && abw ? `<div class="karte hinweisrot"><b>${esc(t("kuehl.ausserhalb"))}</b>
         <h2>${esc(t("kuehl.massnahme"))}</h2>
