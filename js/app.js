@@ -371,7 +371,7 @@ async function sicherungUebernehmen(gelesen) {
     await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme, fotos: fotos.neu, fotosKaputt: fotos.kaputt, beide: r.beide, zukunft: r.zukunft, konflikte: r.konflikte });
     ereignisAnzahl = (await alleEreignisse()).length;
     ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start";
-    const zusatz = [fotos.neu ? t("w2d.importFotos", fotos.neu) : "", fotos.kaputt ? t("w2d.importFotosKaputt", fotos.kaputt) : "", r.zukunft ? t("w2d.importZukunft", r.zukunft) : "", r.beide.length ? t("w2d.importBeide") : ""].filter(Boolean).join(" ");
+    const zusatz = [fotos.neu ? t("w2d.importFotos", fotos.neu) : "", fotos.kaputt ? t("w2d.importFotosKaputt", fotos.kaputt) : "", r.zukunft ? t("w2d.importZukunft", r.zukunft) : "", r.beide.length ? t("w2d.importBeide") : "", !wurzel.bueroPin ? t("w2d.importOhneCode") : ""].filter(Boolean).join(" ");
     meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme") + (zusatz ? " " + zusatz : "")); zeichne();
   } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
 }

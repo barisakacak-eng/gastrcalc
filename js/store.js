@@ -16,7 +16,7 @@ import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
-import { GEBINDE_ARTEN } from "./engine.js";
+import { GEBINDE_ARTEN, istRichtpreis } from "./engine.js";
 import { getraenkGerichtMigrieren, getraenkArtikelMigrieren } from "./getraenk_feld.js"; // Getränke (18.10.2026): Größe, Gebinde, Marke, Pfand, Lieferant
 import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber, lieferantenEntdoppeln } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, aus Beleg-Namen angelegt
 import { LAND_CODES } from "./feiertage.js"; // Feiertage (18.10.2026)
@@ -1032,8 +1032,11 @@ export const _speicherInnen = () => ({ teile: teileH.size, gueltig: bekanntGuelt
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
 // Beispiel-Laden (17.10.2026): zählt nicht – erfundene Einträge machen keine Sicherung fällig.
+// 20.10.2026 (Sicherungs-Test, Fund 3): auch Einrichtungsarbeit zählt – jeder Artikel mit eigenem Preis. Sonst kam die Erinnerung nie,
+// solange jemand nur Karte und Preise einträgt (100 Artikel, 0 Journal-Einträge = Stufe null).
+const eigenePreise = (b) => (b.artikel || []).filter((a) => typeof a.preis === "number" && a.preis > 0 && !istRichtpreis(a)).length;
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length + (b.verkaeufe || []).length, 0); // E7 (17.10.2026): Verkäufe zählen mit
+  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + eigenePreise(b) + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length + (b.verkaeufe || []).length, 0); // E7 (17.10.2026): Verkäufe zählen mit
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).

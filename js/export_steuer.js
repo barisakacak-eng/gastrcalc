@@ -22,10 +22,19 @@ export const datumDe = (iso) => { if (typeof iso !== "string" || !/^\d{4}-\d{2}-
 // Eine Zelle: Zahl (typeof number) → Dezimalkomma; Text → Formelschutz und Anführungszeichen, wenn nötig
 export function csvZelle(v, dezimal = 2) {
   if (v === null || v === undefined) return "";
+  if (typeof v === "object" && typeof v.roh === "string") return v.roh; // csvCode: schon fertig maskiert
   if (typeof v === "number") return zahlDe(v, dezimal);
   let s = String(v);
   if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   return /[";\r\n]/.test(s) || /^\s|\s$/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+// 20.10.2026 (Export-Test F9): Nummern wie „0012345“, „1E5“ oder sehr lange Ziffernfolgen verfälscht Excel (führende Null weg, Zehnerpotenz).
+// Solche Codes stehen als ="…" in der Zelle – Excel zeigt dann genau den Text. Nur für harmlose Zeichen (Ziffern, Buchstaben, . - /), sonst normaler Text.
+export function csvCode(v) {
+  if (v === null || v === undefined || v === "") return "";
+  const s = String(v);
+  if (/^[0-9A-Za-z.\-\/]+$/.test(s) && (/^0\d/.test(s) || /^\d+[eE]\d+$/.test(s) || /^\d{12,}$/.test(s))) return { roh: `"=""${s}"""` };
+  return s;
 }
 // kopf: ["Datum", …]; zeilen: [[…], …]; dezimal je Spalte optional (Standard 2)
 export function csvText(kopf, zeilen, { dezimal = [] } = {}) {
@@ -115,7 +124,9 @@ export function schwund(stand, z) {
   const a = schwundAuswertung(stand, z);
   const zeilen = (stand.schwund || []).filter((e) => !e.storniert && imZeitraum(e.datum, z) && (SCHWUND_ARTEN[e.art] || 1) !== 2).sort(nachDatum)
     .map((e) => ({ datum: e.datum, art: e.art, name: e.art === "eimer" ? (e.ref?.name || "") : (e.ref?.name || ""), menge: Number(e.menge) || 0, einheit: e.einheit || "", wert: schwundWert(e, stand), vorgang: SCHWUND_ARTEN[e.art] || 1, grund: e.grund || "" }));
-  return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen };
+  // 20.10.2026 (Export-Test F4/F5): Die Summenzeile passt zu den Zeilen – gerundet wie gedruckt, Müll (Vorgang 1) und Eigenverbrauch (Vorgang 3) getrennt
+  const summe = (v) => rund2(zeilen.filter((x) => x.vorgang === v && typeof x.wert === "number").reduce((s, x) => s + rund2(x.wert), 0));
+  return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen, summeMuell: summe(1), summeEigen: summe(3) };
 }
 
 // Belege (W2-T, Prüfung p04 Nr. 5 und 6): eingelesene Lieferungen und Kostenbelege. Keine erfundene Vorsteuer:
@@ -139,6 +150,13 @@ function lieferungSteuer(l, netto, pfand) {
   ust[0.07] = u7; ust[0.19] = rund2(gesamt - u7); // Rundungscent in den 19-%-Teil, damit die Zeile aufgeht
   return { brutto, ust, hinweis: null };
 }
+// 20.10.2026 (Prüfgremium): Ein Beleg, der mehr als 7 Tage nach seinem Datum erfasst wurde, trägt den Tag der Erfassung – der Steuerberater sieht so,
+// warum er im Paket steht, das er vielleicht schon hatte. Liefert das Erfassungsdatum (JJJJ-MM-TT) oder null.
+function nachtrag(x) {
+  if (typeof x.erfasst !== "string" || typeof x.datum !== "string") return null;
+  const e = heute(new Date(x.erfasst)); const grenze = new Date(x.datum + "T12:00:00"); grenze.setDate(grenze.getDate() + 7);
+  return e > heute(grenze) ? e : null;
+}
 export function belege(stand, z) {
   const zeilen = [];
   for (const l of stand.lieferungen || []) {
@@ -146,7 +164,7 @@ export function belege(stand, z) {
     const teile = lieferungTeile(l);
     const netto = rund2(typeof l.summeNetto === "number" ? l.summeNetto : teile.ware + teile.betriebsmittel); const pfand = rund2(Number(l.pfand) || 0);
     const st = lieferungSteuer(l, netto, pfand);
-    zeilen.push({ datum: l.datum, quelle: "lieferung", rechnungNr: l.rechnungNr || null, lieferant: l.lieferant || "", stelle: "ware", netto, ust7: st.ust[0.07], ust19: st.ust[0.19], pfand, brutto: st.brutto, betriebsmittel: rund2(teile.betriebsmittel), hinweis: st.hinweis, id: l.id });
+    zeilen.push({ nachgetragen: nachtrag(l), datum: l.datum, quelle: "lieferung", rechnungNr: l.rechnungNr || null, lieferant: l.lieferant || "", stelle: "ware", netto, ust7: st.ust[0.07], ust19: st.ust[0.19], pfand, brutto: st.brutto, betriebsmittel: rund2(teile.betriebsmittel), hinweis: st.hinweis, id: l.id });
   }
   for (const k of stand.kostenbelege || []) {
     if (k.storniert || !imZeitraum(k.datum, z)) continue;
@@ -156,7 +174,7 @@ export function belege(stand, z) {
     if (satz === null) { if (k.basis === "brutto") brutto = rund2(k.betrag); else netto = rund2(k.betrag); }
     else if (k.basis === "brutto") { brutto = rund2(k.betrag); netto = rund2(k.betrag / (1 + satz)); ust = rund2(brutto - netto); }
     else { netto = rund2(k.betrag); ust = rund2(k.betrag * satz); brutto = rund2(netto + ust); }
-    zeilen.push({ datum: k.datum, quelle: "kosten", rechnungNr: k.rechnungNr || null, lieferant: k.lieferant || "", stelle: k.stelle, netto, ust7: satz === 0.07 ? ust : null, ust19: satz === 0.19 ? ust : null, pfand: 0, brutto, betriebsmittel: 0, hinweis: satz === null ? "ohneSatz" : null, verteilung: k.verteilung, id: k.id });
+    zeilen.push({ nachgetragen: nachtrag(k), datum: k.datum, quelle: "kosten", rechnungNr: k.rechnungNr || null, lieferant: k.lieferant || "", stelle: k.stelle, netto, ust7: satz === 0.07 ? ust : null, ust19: satz === 0.19 ? ust : null, pfand: 0, brutto, betriebsmittel: 0, hinweis: satz === null ? "ohneSatz" : null, verteilung: k.verteilung, id: k.id });
   }
   zeilen.sort(nachDatum);
   // Paket C (19.10.2026): fortlaufende Beleg-Nr. je Monat (JJJJ-MM-001 …) – dieselbe Nummer schreibt der Inhaber auf den Beleg;
@@ -255,7 +273,7 @@ export function teilCsv(p, teil, kopf, namen = {}) {
   const wer = (x) => (!x.person ? "" : !x.personAus ? x.person : x.personAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.person, x.personAusAm) : n("ausgeschieden", x.person)); // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
   if (teil === "personal") return csvText(kopf, p.personal.zeilen.map((x) => [datumDe(x.datum), wer(x), x.gericht, n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 0, 0, 2, 2, 2] });
   if (teil === "schwund") return csvText(kopf, p.schwund.zeilen.map((x) => [datumDe(x.datum), n("art", x.art), x.name, x.menge, x.einheit, x.wert, x.grund]), { dezimal: [0, 0, 0, 2, 0, 2] });
-  if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [x.belegNr, datumDe(x.datum), x.rechnungNr || "", x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, x.hinweis ? n("hinweis", x.hinweis) : x.klein && namen.kleinbetrag ? namen.kleinbetrag() : ""]));
+  if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [x.belegNr, datumDe(x.datum), csvCode(x.rechnungNr), x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, [x.hinweis ? n("hinweis", x.hinweis) : x.klein && namen.kleinbetrag ? namen.kleinbetrag() : "", x.nachgetragen && namen.nachgetragen ? namen.nachgetragen(datumDe(x.nachgetragen)) : ""].filter(Boolean).join(" · ")]));
   if (teil === "inventur") return csvText(kopf, p.inventur.zeilen.map((x) => [datumDe(x.datum), x.wert, x.gezaehlt, x.ohnePreis]), { dezimal: [0, 2, 0, 0] });
   if (teil === "reinigung") return csvText(kopf, p.reinigung.zeilen.map((x) => [datumDe(x.datum), x.lieferant, x.artikel, x.netto]));
   if (teil === "kosten") return csvText(kopf, p.kosten.zeilen.map((x) => [n("posten", x.posten), x.betrag, n("periode", x.periode), n("basis", x.basis), x.jeMonat, n("pstatus", x.status)]));

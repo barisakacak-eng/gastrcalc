@@ -485,3 +485,4 @@ svg.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; s
 .sym.gross { width: 28px; height: 28px; } .sym.klein { width: 18px; height: 18px; }
 .menueknopf .sym, .fab .sym { width: 26px; height: 26px; }
 .instrument .kopfzeile { display: flex; align-items: center; gap: 6px; }
+

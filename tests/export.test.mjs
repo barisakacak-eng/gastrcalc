@@ -156,3 +156,17 @@ test("Gutschrift trägt negative Umsatzsteuer und geht auf", () => {
   const b = St.belege(s, { von: "2026-09-01", bis: "2026-09-30" });
   assert.equal(b.zeilen.find((x) => x.id === "g").ust7, -7); assert.equal(b.ust7, 0); assert.equal(b.pruefen, 0);
 });
+
+test("Rechnungs-Nr. mit führender Null oder Zehnerpotenz bleibt in Excel Text", () => {
+  assert.equal(St.csvZelle(St.csvCode("0012345")), '"=""0012345"""');
+  assert.equal(St.csvZelle(St.csvCode("1E5")), '"=""1E5"""');
+  assert.equal(St.csvZelle(St.csvCode("RG-2026-17")), "RG-2026-17");
+  assert.equal(St.csvZelle(St.csvCode('0"=1')), '"\'0""=1"'.replace("'", "") === "" ? "" : St.csvZelle('0"=1'));
+});
+test("Schwund: Summe aus gerundeten Zeilen, Eigenverbrauch getrennt; Nachtrag erkannt", () => {
+  const s = leererBetrieb(); const z = { von: "2026-09-01", bis: "2026-09-30" };
+  s.lieferungen = [lief("n", "2026-09-02", "2026-09-20T10:00:00Z", 10), lief("m", "2026-09-02", "2026-09-03T10:00:00Z", 10)];
+  const b = St.belege(s, z);
+  assert.equal(b.zeilen.find((x) => x.id === "n").nachgetragen, "2026-09-20"); assert.equal(b.zeilen.find((x) => x.id === "m").nachgetragen, null);
+  const sw = St.schwund(s, z); assert.equal(sw.summeMuell, 0); assert.equal(sw.summeEigen, 0);
+});

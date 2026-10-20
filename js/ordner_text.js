@@ -81,7 +81,7 @@ export function paketUnter(teil, p) {
 }
 
 // ---------- Dokumente (übersetzt) ----------
-const NAMEN = () => ({ kleinbetrag: () => t("ordnerC.kleinbetrag"),
+const NAMEN = () => ({ kleinbetrag: () => t("ordnerC.kleinbetrag"), nachgetragen: (d) => t("ordnerC.nachgetragen", d),
   ja: () => t("allgemein.ja"),
   grund: (g) => (!g ? "" : GRUENDE.includes(g) ? t("amtW2.nichtGemessen", t("kuehl.gruende." + g)) : t("ordner.dok.nichtGemessen")),
   massnahme: (m) => t("kuehl.massnahmen." + m),
@@ -190,9 +190,9 @@ export function paketDokument(stand, p) {
       zeilen: p.personal.zeilen.map((x) => ({ warn: !x.person, zellen: [datumDe(x.datum), !x.person ? "–" : !x.personAus ? x.person : x.personAusAm ? n.ausgeschiedenAm(x.person, x.personAusAm) : n.ausgeschieden(x.person), x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)] })), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") }); }
   if (p.schwund) a.push({ titel: t("ordner.teil.schwund"), info: [t("ordner.dok.netto"), p.schwund.eigen?.anzahl ? t("ordnerT.eigen", euro(p.schwund.eigen.waren)) : ""].filter(Boolean).join(" · "), warn: !!p.schwund.ohneWert, kopf: t("ordnerT.druck.schwund"), rechts: [3, 4],
     zeilen: p.schwund.zeilen.map((x) => [datumDe(x.datum), n.art(x.art), x.name || "–", `${fmtZahl(x.menge, x.einheit === "stk" || x.einheit === "portion" ? 0 : 2)} ${x.einheit === "portion" ? t("tag.portionen") : x.einheit === "stk" ? t("allgemein.stueck") : x.einheit}`, x.wert === null ? t("tag.keinPreis") : euro(x.wert)]),
-    summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", p.schwund.ohneWert ? `${euro(p.schwund.muellwert)} (${t("ordnerT.schwundOffen", p.schwund.ohneWert)})` : euro(p.schwund.muellwert)] : null, leer: t("ordner.zeile.keine") });
+    summe: p.schwund.zeilen.length ? [t("ordner.dok.summe"), "", "", "", (p.schwund.ohneWert ? `${euro(p.schwund.summeMuell)} (${t("ordnerT.schwundOffen", p.schwund.ohneWert)})` : euro(p.schwund.summeMuell)) + (p.schwund.summeEigen ? ` · ${t("ordnerT.eigen", euro(p.schwund.summeEigen))}` : "")] : null, leer: t("ordner.zeile.keine") });
   if (p.belege) a.push({ titel: t("ordner.teil.belege"), info: t("ordnerT.belegeInfo"), warn: !!p.belege.pruefen, kopf: [t("ordnerC.belegNr"), ...t("ordnerT.druck.belege")], rechts: [4, 5, 6, 7, 8],
-    zeilen: p.belege.zeilen.map((x) => ({ warn: !!x.hinweis, zellen: [x.belegNr, datumDe(x.datum), x.rechnungNr || "", `${x.lieferant || "–"} · ${n.stelle(x.stelle)}${x.hinweis ? " · " + n.hinweis(x.hinweis) : x.klein ? " · " + t("ordnerC.kleinbetrag") : ""}`, leerOder(x.netto), leerOder(x.ust7), leerOder(x.ust19), x.pfand ? euro(x.pfand) : "", leerOder(x.brutto)] })),
+    zeilen: p.belege.zeilen.map((x) => ({ warn: !!x.hinweis, zellen: [x.belegNr, datumDe(x.datum), x.rechnungNr || "", `${x.lieferant || "–"} · ${n.stelle(x.stelle)}${x.hinweis ? " · " + n.hinweis(x.hinweis) : x.klein ? " · " + t("ordnerC.kleinbetrag") : ""}${x.nachgetragen ? " · " + t("ordnerC.nachgetragen", datumDe(x.nachgetragen)) : ""}`, leerOder(x.netto), leerOder(x.ust7), leerOder(x.ust19), x.pfand ? euro(x.pfand) : "", leerOder(x.brutto)] })),
     summe: p.belege.anzahl ? [t("ordner.dok.summe"), "", "", "", euro(p.belege.netto), euro(p.belege.ust7), euro(p.belege.ust19), euro(p.belege.pfand), euro(p.belege.brutto)] : null, leer: t("ordner.zeile.belegeKeine") });
   if (p.inventur) a.push({ titel: t("ordner.teil.inventur"), kopf: kopfVon("inventur"), rechts: [1, 2, 3],
     zeilen: p.inventur.zeilen.map((x) => ({ warn: !x.vorher && (x.ohnePreis > 0 || !(x.wert > 0)), zellen: [datumDe(x.datum) + (x.vorher ? ` (${t("ordner.dok.vormonat")})` : ""), x.wert === null ? t("ordnerT.wertFehlt") : euro(x.wert), fmtZahl(x.gezaehlt), fmtZahl(x.ohnePreis)] })), leer: t("ordner.zeile.inventurKeine") });

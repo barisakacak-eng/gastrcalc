@@ -306,3 +306,17 @@ span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
 .stk-reihe { display: flex; flex-basis: 100%; flex-wrap: nowrap; align-items: center; gap: calc(6rem/17); }
 .stk-reihe input { width: calc(72rem/17) !important; min-width: 0; }
 .stk-reihe .einheit { white-space: nowrap; }
+
+/* 20.10.2026 (Laden-Test, 360-px-Handys): Rasterspalten dürfen schrumpfen (minmax 0) – sonst schob ein langes Wort die Kachel über den Rand
+   (Türkisch bis 378 px bei 360 px). Lange Wörter trennen mit Bindestrich nach der Sprache der Seite (html lang), statt mitten im Wort
+   abzubrechen („Kühlschran/k“ → „Kühl-schrank“). */
+.kacheln, .h-kacheln, .zweier { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dreier { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.karte.h-kachel { grid-template-columns: 36px minmax(0, 1fr); }
+.h-kachel > *, .kachel > * { min-width: 0; }
+.kopfband h1, .kopfband .unter, .zeile .name, .wahl span, .zeileknopf b, .zeileknopf small, .karte .name, .kachel b, .kachel small, .h-kachel b, .h-kachel small, .chip, .summenzeile span, .fuell b, .fuell small { -webkit-hyphens: auto; hyphens: auto; }
+/* 20.10.2026: Kühlstellen-Zeile auf schmalen Handys – Name nimmt den Platz, Messzeit bricht in zwei Zeilen, Name bleibt ganz */
+.kuehlliste .zeileknopf > span:has(> b) { min-width: 0; flex: 1 1 0; }
+.kuehlliste .zeileknopf > .kwert { flex: 0 0 auto; }
+.kuehlliste .zeileknopf b { word-break: normal; overflow-wrap: anywhere; }
+@media (max-width: 380px) { .kuehlliste .kwert small { white-space: normal; max-width: 6.5em; margin-inline-start: auto; } }

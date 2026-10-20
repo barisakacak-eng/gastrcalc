@@ -1,5 +1,6 @@
 // Putzplan-Bildschirm (Baris 15.10.2026, 12:43: HACCP-Grundreinigung als Empfehlung, wenn die Einrichtung fertig ist).
 // Drei Ansichten: einrichten (Geräte und Aufgaben wählen), plan (heute abhaken), nachweis (Liste für die Kontrolle, druckbar).
+import { PUTZ_TEXTE } from "../data/putzplan_texte.js";
 import { t, sprache } from "../i18n.js";
 import { esc, heute } from "../util.js";
 import { AUFGABEN, GERAETE, TAKT_TAGE } from "../data/putzplan.js";
@@ -19,7 +20,7 @@ const kuerzel = (stand, id) => { const p = (stand.personen || []).find((x) => x.
 export const putzplanZuruecksetzen = () => { ansicht = "plan"; entwurf = null; };
 export const putzplanZurueck = (stand) => { if (ansicht !== "plan" && planVon(stand)?.aktiv) { ansicht = "plan"; entwurf = null; return true; } return false; };
 
-const text = (a) => a.text[sprache()] || a.text.de;
+const text = (a) => a.text[sprache()] || PUTZ_TEXTE[sprache()]?.[a.id] || a.text.de; // 20.10.2026: 15 weitere Sprachen
 // Paket 6 (17.10.2026): Begründung wie der Titel in der aktiven Sprache (sonst Deutsch); alte Form (Text) bleibt lesbar
 const warum = (a) => (typeof a.warum === "string" ? a.warum : a.warum?.[sprache()] || a.warum?.de || "");
 const stufeMarke = (a) => `<span class="pstufe ${a.stufe}">${esc(t("putzplan.stufe." + a.stufe))}</span>`;

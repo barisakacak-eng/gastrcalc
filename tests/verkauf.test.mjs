@@ -311,7 +311,9 @@ test("E7 Zusammenführen zweier Fenster/Handys: Verkäufe nach Kennung vereinigt
   const v = wA.betriebe[0].verkaeufe;
   assert.equal(v.length, 2); assert.equal(v.find((x) => x.datum === "2026-10-01").storniert, true, "Storno gewinnt");
   assert.equal(v.find((x) => x.datum === "2026-10-02").menge, 2);
-  assert.equal(st.eintraegeZaehlen(wA), 2);
+  // 20.10.2026: Artikel mit eigenem Preis zählen seit heute mit (Einrichtung) – hier nur die zwei Verkäufe prüfen
+  const ohnePreise = structuredClone(wA); for (const b of ohnePreise.betriebe) b.artikel = [];
+  assert.equal(st.eintraegeZaehlen(ohnePreise), 2);
   assert.equal(st.eintraegeZaehlen({ betriebe: [beispielLaden(H)] }), 0, "Beispiel zählt weiterhin nicht");
 });
 
@@ -488,4 +490,10 @@ test("Schwadron N4: fehlen im Inventur-Zeitraum Verkaufstage, gibt es keinen Sch
   assert.equal(f.status, "verkaufFehlt"); assert.equal(a.schwund.anzahl, 0); assert.deepEqual(a.tageOhneVerkauf, ["2026-10-12"]);
   vk.handVerkaufSetzen(b, "2026-10-12", "g1", 5); // Verkäufe nachgetragen → jetzt ist es ein Verdacht
   assert.equal(vk.abgleichInventur(b).zeilen.find((x) => x.name === "Fleisch").status, "schwund");
+});
+
+test("Sicherungs-Erinnerung zählt Einrichtungsarbeit (Artikel mit eigenem Preis), Richtpreise nicht", () => {
+  const w = st.leereWurzel(); const b = st.leererBetrieb(); w.betriebe.push(b);
+  b.artikel = [{ name: "A", preis: 2, packung: { menge: 1, einheit: "kg" } }, { name: "B", preis: null }, { name: "C", preis: 3, richtpreis: { preis: 3, menge: 1, einheit: "kg" }, packung: { menge: 1, einheit: "kg" } }];
+  assert.equal(st.eintraegeZaehlen(w), 1);
 });
