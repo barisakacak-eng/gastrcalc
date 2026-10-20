@@ -16,7 +16,7 @@ import { einklappen } from "./bausteine.js";
 import { gerichtAusVorlage, gerichtAusVorlageAnlegen, gerichtEigenAnlegen, gerichtEntfernen, gerichtNameSetzen, gerichtKlasseSetzen, gerichtZeitSchritt, rezeptAngepasst,
   zutatMengeSetzen, zutatEntfernen, zutatEinheitSetzen, zutatAusKatalog, zutatFrei, verkaufspreisSetzen, mengeTagSetzen, bestellungenTagSetzen, zielgewinnSetzen,
   artikelAbgleichen, artikelVorschau, artikelFeldSetzen, packungEinheitSetzen, gebindeArtSetzen, preisBasisSetzen, zwischenEntfernen, garverlustMessenUmschalten, selbstUmschalten,
-  selbstFeldSetzen, selbstZutatEntfernen, selbstZutatTauschen, selbstAusbeuteArt, selbstEigenUmschalten, zwischenArtSetzen } from "../karte_daten.js";
+  selbstFeldSetzen, selbstZutatEntfernen, selbstZutatTauschen, adanaBrotOffen, adanaBrotSetzen, ADANA_BROT, selbstAusbeuteArt, selbstEigenUmschalten, zwischenArtSetzen } from "../karte_daten.js";
 import { richtpreiseEinsetzen, richtpreiseEntfernen, richtpreiseAktiv, richtpreiseMoeglich } from "../richtpreise.js"; // Richtpreise (17.10.2026)
 
 const KLASSEN = ["getraenk", "kleinigkeit", "haupt", "gross"];
@@ -163,6 +163,8 @@ export const rezepte = {
     return `
       <h1 class="frage">${esc(t("rezepte.frage"))}</h1>
       <p class="hinweis">${esc(t("rezepte.hinweis"))}</p>
+      ${adanaBrotOffen(stand) ? `<div class="karte adanabrot"><b>${esc(t("adanaBrot.frage"))}</b>
+        <div class="chips">${Object.keys(ADANA_BROT).map((w) => `<button type="button" class="chip" data-a="adana-brot" data-wert="${w}">${esc(t("adanaBrot." + w))}</button>`).join("")}</div></div>` : ""}
       <div class="liste">
         ${stand.gerichte.map((x) => `<button type="button" class="zeileknopf" data-a="rezept-auf" data-id="${esc(x.id)}">${gerichtBild(x).replace('class="gerichtbild', 'class="gerichtbild mini')}
           <span><b>${esc(x.name)}</b><small>${esc(t("rezepte.zusammenfassung", x.zutaten.length, x.zeit))}${(() => { const st = rezeptStempel(x).stufe; return st ? ` · ${esc(t("stempel." + st))}` : ""; })()}${x.zutaten.length === 0 ? ` · ${esc(t("rezepte.leer"))}` : ""}</small></span><span class="pfeil">›</span></button>`).join("")}
@@ -179,6 +181,7 @@ export const rezepte = {
     else if (feld.startsWith("zutat:")) zutatMengeSetzen(stand, g.id, Number(feld.slice(6)), parseZahl(wert), heute());
   },
   aktion(name, el, stand) {
+    if (name === "adana-brot") { adanaBrotSetzen(stand, el.dataset.wert); artikelAbgleichen(stand); return true; } // 20.10.2026: einmal fragen
     if (name === "rezept-auf") { offenesGericht = el.dataset.id; zutatSuche = ""; waage = null; stempelInfo = false; return true; }
     if (name === "rezept-zu") { offenesGericht = null; zutatSuche = ""; waage = null; stempelInfo = false; artikelAbgleichen(stand); return true; }
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return false;

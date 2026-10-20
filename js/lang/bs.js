@@ -1438,4 +1438,5 @@ export default {
   ladenSchirm: { umsatz: "Promet", stimmt: (b) => `Je li to tačno? ${b}`, ja: "Da", aendern: "Promijeni", rundgangStarten: "Pokreni obilazak",
     sicherung: { letzteWeg: (n) => n === 0 ? "Zadnja van telefona: danas" : n === 1 ? "Zadnja van telefona: prije 1 dan" : `Zadnja van telefona: prije ${n} dana`, nieWeg: "Još nema kopije van telefona", mitPasswort: "Sa šifrom", ohneFotos: "Bez slika (mala, za mail)",
       verschicken: "Pošalji kopiju", woFrage: "Gdje je sada?", woanders: "Drugi uređaj, mail, oblak", nurHandy: "Samo na ovom telefonu", nurHandyMeldung: "Podsjetnik ostaje: datoteka je samo na ovom telefonu.", gezaehlt: "Kopija uračunata. Podsjetnik poništen." } },
+  adanaBrot: { frage: "Koji hljeb dajete uz adanu?", pide: "Cijela pita", pideHalb: "Pola pite", fladen: "Dürüm / lavaš", kein: "Bez hljeba" }, // 20.10.2026
 };

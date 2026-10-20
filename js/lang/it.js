@@ -1431,4 +1431,5 @@ export default {
   ladenSchirm: { umsatz: "Incasso", stimmt: (b) => `È giusto? ${b}`, ja: "Sì", aendern: "Cambia", rundgangStarten: "Avvia giro",
     sicherung: { letzteWeg: (n) => n === 0 ? "Ultimo fuori dal telefono: oggi" : n === 1 ? "Ultimo fuori dal telefono: 1 giorno fa" : `Ultimo fuori dal telefono: ${n} giorni fa`, nieWeg: "Ancora nessun backup fuori dal telefono", mitPasswort: "Con password", ohneFotos: "Senza foto (piccolo, per e-mail)",
       verschicken: "Invia backup", woFrage: "Dove si trova ora?", woanders: "Altro dispositivo, e-mail, cloud", nurHandy: "Solo su questo telefono", nurHandyMeldung: "Il promemoria resta: il file è solo su questo telefono.", gezaehlt: "Backup contato. Promemoria azzerato." } },
+  adanaBrot: { frage: "Che pane servite con l'adana?", pide: "Pide intero", pideHalb: "Mezzo pide", fladen: "Dürüm / lavash", kein: "Senza pane" }, // 20.10.2026
 };

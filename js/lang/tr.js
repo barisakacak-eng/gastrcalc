@@ -1418,4 +1418,5 @@ export default {
   ladenSchirm: { umsatz: "Ciro", stimmt: (b) => `Doğru mu? ${b}`, ja: "Evet", aendern: "Değiştir", rundgangStarten: "Turu başlat",
     sicherung: { letzteWeg: (n) => n === 0 ? "Telefondan son çıkan: bugün" : n === 1 ? "Telefondan son çıkan: 1 gün önce" : `Telefondan son çıkan: ${n} gün önce`, nieWeg: "Telefondan henüz yedek çıkmadı", mitPasswort: "Şifreli", ohneFotos: "Fotoğrafsız (küçük, e-posta için)",
       verschicken: "Yedeği gönder", woFrage: "Şimdi nerede?", woanders: "Başka cihaz, e-posta, bulut", nurHandy: "Sadece bu telefonda", nurHandyMeldung: "Hatırlatma kalır: dosya sadece bu telefonda.", gezaehlt: "Yedek sayıldı. Hatırlatma sıfırlandı." } },
+  adanaBrot: { frage: "Adana'nın yanında hangi ekmek var?", pide: "Bütün pide", pideHalb: "Yarım pide", fladen: "Dürüm / lavaş", kein: "Ekmek yok" }, // 20.10.2026
 };

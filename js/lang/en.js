@@ -1417,4 +1417,5 @@ export default {
   ladenSchirm: { umsatz: "Sales", stimmt: (b) => `Is that right? ${b}`, ja: "Yes", aendern: "Change", rundgangStarten: "Start round",
     sicherung: { letzteWeg: (n) => n === 0 ? "Last one off the phone: today" : n === 1 ? "Last one off the phone: 1 day ago" : `Last one off the phone: ${n} days ago`, nieWeg: "No backup off the phone yet", mitPasswort: "With password", ohneFotos: "Without photos (small, for email)",
       verschicken: "Send backup", woFrage: "Where is it now?", woanders: "Other device, email, cloud", nurHandy: "Only on this phone", nurHandyMeldung: "The reminder stays: the file is only on this phone.", gezaehlt: "Backup counted. Reminder reset." } },
+  adanaBrot: { frage: "Which bread do you serve with Adana?", pide: "Whole pide", pideHalb: "Half pide", fladen: "Dürüm / lavash", kein: "No bread" }, // 20.10.2026
 };

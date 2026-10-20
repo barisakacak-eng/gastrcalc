@@ -1429,4 +1429,5 @@ export default {
   ladenSchirm: { umsatz: "Firotin", stimmt: (b) => `Ev rast e? ${b}`, ja: "Erê", aendern: "Biguherîne", rundgangStarten: "Gerê dest pê bike",
     sicherung: { letzteWeg: (n) => n === 0 ? "Ya dawî ji telefonê derket: îro" : n === 1 ? "Ya dawî ji telefonê derket: 1 roj berê" : `Ya dawî ji telefonê derket: ${n} roj berê`, nieWeg: "Hêj tu kopî ji telefonê derneketiye", mitPasswort: "Bi şîfre", ohneFotos: "Bê wêne (biçûk, ji bo e-nameyê)",
       verschicken: "Kopiyê bişîne", woFrage: "Niha li ku ye?", woanders: "Amûrek din, e-name, ewr", nurHandy: "Tenê li ser vê telefonê", nurHandyMeldung: "Bîranîn dimîne: pel tenê li ser vê telefonê ye.", gezaehlt: "Kopî hate hesibandin. Bîranîn ji nû ve dest pê kir." } },
+  adanaBrot: { frage: "Li cem we bi Adanayê re kîjan nan heye?", pide: "Pîdeya tevahî", pideHalb: "Nîvê pîdeyê", fladen: "Dürüm / lavaş", kein: "Bê nan" }, // 20.10.2026
 };

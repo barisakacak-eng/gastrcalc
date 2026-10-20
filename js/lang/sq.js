@@ -1435,4 +1435,5 @@ export default {
   ladenSchirm: { umsatz: "Xhiro", stimmt: (b) => `A është e saktë? ${b}`, ja: "Po", aendern: "Ndrysho", rundgangStarten: "Nis raundin",
     sicherung: { letzteWeg: (n) => n === 0 ? "E fundit jashtë telefonit: sot" : n === 1 ? "E fundit jashtë telefonit: 1 ditë më parë" : `E fundit jashtë telefonit: ${n} ditë më parë`, nieWeg: "Ende asnjë kopje jashtë telefonit", mitPasswort: "Me fjalëkalim", ohneFotos: "Pa foto (e vogël, për email)",
       verschicken: "Dërgo kopjen", woFrage: "Ku është tani?", woanders: "Pajisje tjetër, email, cloud", nurHandy: "Vetëm në këtë telefon", nurHandyMeldung: "Kujtesa mbetet: skedari është vetëm në këtë telefon.", gezaehlt: "Kopja u numërua. Kujtesa u rivendos." } },
+  adanaBrot: { frage: "Çfarë buke jepni me adanën?", pide: "Pide e plotë", pideHalb: "Gjysmë pide", fladen: "Dürüm / lavash", kein: "Pa bukë" }, // 20.10.2026
 };

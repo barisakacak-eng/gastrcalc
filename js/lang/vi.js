@@ -1430,4 +1430,5 @@ export default {
   ladenSchirm: { umsatz: "Doanh thu", stimmt: (b) => `Đúng không? ${b}`, ja: "Có", aendern: "Sửa", rundgangStarten: "Bắt đầu đi đo",
     sicherung: { letzteWeg: (n) => n === 0 ? "Bản cuối ra khỏi điện thoại: hôm nay" : n === 1 ? "Bản cuối ra khỏi điện thoại: 1 ngày trước" : `Bản cuối ra khỏi điện thoại: ${n} ngày trước`, nieWeg: "Chưa có bản sao lưu nào ngoài điện thoại", mitPasswort: "Có mật khẩu", ohneFotos: "Không ảnh (nhỏ, để gửi mail)",
       verschicken: "Gửi bản sao lưu", woFrage: "Giờ nó ở đâu?", woanders: "Thiết bị khác, mail, đám mây", nurHandy: "Chỉ trên điện thoại này", nurHandyMeldung: "Lời nhắc vẫn còn: tệp chỉ ở trên điện thoại này.", gezaehlt: "Đã tính bản sao lưu. Lời nhắc được đặt lại." } },
+  adanaBrot: { frage: "Quán bạn ăn Adana kèm bánh mì nào?", pide: "Nguyên bánh pide", pideHalb: "Nửa bánh pide", fladen: "Dürüm / lavash", kein: "Không bánh mì" }, // 20.10.2026
 };

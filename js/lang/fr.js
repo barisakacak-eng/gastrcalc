@@ -1430,4 +1430,5 @@ export default {
   ladenSchirm: { umsatz: "Ventes", stimmt: (b) => `C’est juste ? ${b}`, ja: "Oui", aendern: "Modifier", rundgangStarten: "Lancer la tournée",
     sicherung: { letzteWeg: (n) => n === 0 ? "Dernière hors du téléphone : aujourd’hui" : n === 1 ? "Dernière hors du téléphone : il y a 1 jour" : `Dernière hors du téléphone : il y a ${n} jours`, nieWeg: "Pas encore de sauvegarde hors du téléphone", mitPasswort: "Avec mot de passe", ohneFotos: "Sans photos (petit, pour e-mail)",
       verschicken: "Envoyer la sauvegarde", woFrage: "Où est-elle maintenant ?", woanders: "Autre appareil, e-mail, cloud", nurHandy: "Seulement sur ce téléphone", nurHandyMeldung: "Le rappel reste : le fichier est seulement sur ce téléphone.", gezaehlt: "Sauvegarde comptée. Rappel remis à zéro." } },
+  adanaBrot: { frage: "Quel pain servez-vous avec l'adana ?", pide: "Pide entier", pideHalb: "Demi-pide", fladen: "Dürüm / lavash", kein: "Sans pain" }, // 20.10.2026
 };

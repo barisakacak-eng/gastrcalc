@@ -1437,4 +1437,5 @@ export default {
   ladenSchirm: { umsatz: "Încasări", stimmt: (b) => `E corect? ${b}`, ja: "Da", aendern: "Schimbă", rundgangStarten: "Pornește runda",
     sicherung: { letzteWeg: (n) => n === 0 ? "Ultima în afara telefonului: azi" : n === 1 ? "Ultima în afara telefonului: acum 1 zi" : `Ultima în afara telefonului: acum ${n} zile`, nieWeg: "Încă nicio copie în afara telefonului", mitPasswort: "Cu parolă", ohneFotos: "Fără poze (mică, pentru e-mail)",
       verschicken: "Trimite copia", woFrage: "Unde este acum?", woanders: "Alt dispozitiv, e-mail, cloud", nurHandy: "Doar pe acest telefon", nurHandyMeldung: "Memento-ul rămâne: fișierul e doar pe acest telefon.", gezaehlt: "Copie numărată. Memento resetat." } },
+  adanaBrot: { frage: "Ce pâine serviți la adana?", pide: "Pide întreg", pideHalb: "Jumătate de pide", fladen: "Dürüm / lavaș", kein: "Fără pâine" }, // 20.10.2026
 };

@@ -1430,4 +1430,5 @@ export default {
   ladenSchirm: { umsatz: "Ventas", stimmt: (b) => `¿Es correcto? ${b}`, ja: "Sí", aendern: "Cambiar", rundgangStarten: "Empezar ronda",
     sicherung: { letzteWeg: (n) => n === 0 ? "Última fuera del móvil: hoy" : n === 1 ? "Última fuera del móvil: hace 1 día" : `Última fuera del móvil: hace ${n} días`, nieWeg: "Aún no hay copia fuera del móvil", mitPasswort: "Con contraseña", ohneFotos: "Sin fotos (pequeña, para correo)",
       verschicken: "Enviar copia", woFrage: "¿Dónde está ahora?", woanders: "Otro dispositivo, correo, nube", nurHandy: "Solo en este móvil", nurHandyMeldung: "El aviso sigue: el archivo está solo en este móvil.", gezaehlt: "Copia contada. Aviso reiniciado." } },
+  adanaBrot: { frage: "¿Qué pan servís con el adana?", pide: "Pide entero", pideHalb: "Medio pide", fladen: "Dürüm / lavash", kein: "Sin pan" }, // 20.10.2026
 };

@@ -1376,4 +1376,5 @@ export default {
   ladenSchirm: { umsatz: "Umsatz", stimmt: (b) => `Stimmt das? ${b}`, ja: "Ja", aendern: "Ändern", rundgangStarten: "Rundgang starten",
     sicherung: { letzteWeg: (n) => n === 0 ? "Letzte vom Handy weg: heute" : n === 1 ? "Letzte vom Handy weg: vor 1 Tag" : `Letzte vom Handy weg: vor ${n} Tagen`, nieWeg: "Noch keine Sicherung vom Handy weg", mitPasswort: "Mit Passwort", ohneFotos: "Ohne Fotos (klein, für Mail)",
       verschicken: "Sicherung verschicken", woFrage: "Wo liegt sie jetzt?", woanders: "Anderes Gerät, Mail, Cloud", nurHandy: "Nur auf diesem Handy", nurHandyMeldung: "Die Erinnerung bleibt: die Datei liegt nur auf diesem Handy.", gezaehlt: "Sicherung gezählt. Erinnerung zurückgesetzt." } },
+  adanaBrot: { frage: "Welches Brot gibt es bei euch zum Adana?", pide: "Ganzes Pide", pideHalb: "Halbes Pide", fladen: "Dürüm / Lavash", kein: "Kein Brot" }, // 20.10.2026
 };

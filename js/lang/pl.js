@@ -1436,4 +1436,5 @@ export default {
   ladenSchirm: { umsatz: "Utarg", stimmt: (b) => `Czy to się zgadza? ${b}`, ja: "Tak", aendern: "Zmień", rundgangStarten: "Zacznij obchód",
     sicherung: { letzteWeg: (n) => n === 0 ? "Ostatnia poza telefonem: dziś" : n === 1 ? "Ostatnia poza telefonem: 1 dzień temu" : `Ostatnia poza telefonem: ${n} dni temu`, nieWeg: "Jeszcze brak kopii poza telefonem", mitPasswort: "Z hasłem", ohneFotos: "Bez zdjęć (mała, do maila)",
       verschicken: "Wyślij kopię", woFrage: "Gdzie jest teraz?", woanders: "Inne urządzenie, mail, chmura", nurHandy: "Tylko na tym telefonie", nurHandyMeldung: "Przypomnienie zostaje: plik jest tylko na tym telefonie.", gezaehlt: "Kopia zaliczona. Przypomnienie wyzerowane." } },
+  adanaBrot: { frage: "Jaki chleb podajecie do adany?", pide: "Całe pide", pideHalb: "Pół pide", fladen: "Dürüm / lawasz", kein: "Bez chleba" }, // 20.10.2026
 };
