@@ -5,7 +5,7 @@ import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
 import { t, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen } from "./i18n.js";
-import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen } from "./ablage.js"; // W2-D: ablageZuruecklegen
+import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen, beiAblageFehler } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
 import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
@@ -936,6 +936,8 @@ async function serviceWorkerStarten() {
   } catch (e) { console.warn("Kein Service Worker:", e); offlineStand = "keinSw"; }
 }
 
+const speicherFehlerZeigen = (art) => { speicherProblem = art; meldung(t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen")); zeichne(); };
+beiAblageFehler(speicherFehlerZeigen); // 20.10.2026: auch ein Foto, das nicht auf das Gerät passt, zeigt das Banner
 beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen")); zeichne(); });
 // Paket 2 (16.10.2026): ein zweites Fenster derselben Fassung hat geschrieben (store.js, Generationszähler). store.js hat die eigenen
 // Änderungen in den frischen Stand gemischt und geschrieben (zusammengefuehrt: true) – oder aufgegeben (false: eigene Kopie verworfen).

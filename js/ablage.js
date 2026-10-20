@@ -9,6 +9,11 @@
 
 import { uid } from "./util.js";
 
+// 20.10.2026 (Sicherungs-Test, Fund 1): Konnte ein Foto nicht auf dem Gerät abgelegt werden (Speicher voll), lebte es nur bis zum Neustart –
+// ohne Meldung. Jetzt meldet die Ablage es über denselben Weg wie der Speicher (Banner „Speichern fehlgeschlagen“, app.js).
+let ablageFehler = null;
+export function beiAblageFehler(fn) { ablageFehler = fn; }
+
 const DB_NAME = "gastrocalc-dateien";
 const DB_VERSION = 1;
 const MAX_BYTES = 15 * 1024 * 1024;
@@ -31,7 +36,7 @@ function lokalOrt() {
       if (!fluechtig) {
         for (let versuch = 0; versuch < 2; versuch++) {
           try { await tx("readwrite", (s) => s.put(blob, id)); return; }
-          catch (e) { db = null; if (versuch) { console.warn("Ablage auf dem Gerät nicht möglich, diese Datei nur in dieser Sitzung:", e); } } // iOS trennt die Verbindung manchmal: einmal neu öffnen
+          catch (e) { db = null; if (versuch) { console.warn("Ablage auf dem Gerät nicht möglich, diese Datei nur in dieser Sitzung:", e); try { ablageFehler?.("speichern"); } catch (_) {} } } // iOS trennt die Verbindung manchmal: einmal neu öffnen
         }
       }
       speicher.set(id, blob);
