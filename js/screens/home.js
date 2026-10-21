@@ -28,8 +28,8 @@ export function startView(stand, extra = {}) {
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
       ${KUPFERLINIE}
-      ${dran ? jetztKarte(dran) : ""}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
+      ${dran ? jetztKarte(dran) : ""}
       ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
     ${nav("start")}`;
