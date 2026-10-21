@@ -269,3 +269,73 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 
 /* 360px Müll-Scrollfix */
 @media(max-width:375px){.inhalt.muell1{padding-top:3px}}
+
+/* Paket 6: Editorial-Kopf + echte lokale Typografie, Referenz 01_Heute, 21.10.2026.
+   DM Serif Display: SIL Open Font License 1.1, Lizenz unter fonts/DMSerifDisplay-OFL.txt.
+   Die TTF wird als lokaler Bestandteil des PWAs gecacht; kein Google-Fonts-Netzabruf. */
+@font-face{
+  font-family:"DM Serif Display";
+  src:url("../fonts/DMSerifDisplay-Regular.ttf") format("truetype");
+  font-style:normal;font-weight:400;font-display:swap;
+}
+:root{
+  --gc-display:"DM Serif Display",Georgia,serif;
+}
+/* Heller Kopf statt hoher harter Toolbar – funktionale Menütaste und Hilfe bleiben. */
+.appleiste.ebene-kopf.laden{
+  min-height:62px;
+  padding-inline:10px;
+  background:transparent;
+  border-bottom:0;
+  box-shadow:none;
+}
+.ebene-kopf.laden .ikonknopf{
+  width:52px;height:52px;
+  color:var(--gc-deep);
+  border-radius:50%;
+}
+.ebene-kopf.laden .ikonknopf.hilfe{
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  box-shadow:0 3px 12px rgba(70,50,31,.06);
+}
+.ebene-kopf.laden .logo{
+  height:36px;max-height:36px;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.6));
+}
+/* Editorial-Überschriften: die gleiche Serifenfamilie auf allen fünf Seiten. */
+.h-ladenname{font-family:var(--gc-display);font-size:1.625rem;line-height:1.2}
+.h-datum{font-size:0.8125rem;font-weight:600}
+.kopfband h1,.kl-kopf h1,.muellsumme h1{font-family:var(--gc-display);letter-spacing:-.02em}
+.kl-gn,.putzplan .aufgabe .atext>b,.kuehlliste .zeileknopf b{font-family:var(--gc-display)}
+/* Foto über vorhandene lokale Speisen: keine Fremddatei, kein Marken-/Ladenfoto.
+   Die offene rechte Food-Komposition ersetzt den industriellen Grill mit Messer. */
+.karte.h-ziel.h-ziel-kurs{
+  background-image:
+    linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
+    linear-gradient(90deg,rgba(19,40,27,.95) 0%,rgba(19,40,27,.73) 42%,rgba(19,40,27,.16) 100%),
+    url("../foto/g-doener-kebab.webp");
+  background-position:center,center,65% center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  border:1px solid rgba(255,255,255,.28);
+}
+.karte.h-ziel .h-zielkopf{font-family:var(--gc-display);font-size:1.375rem}
+.h-jetzt-text b{font-family:var(--gc-display);font-size:1.375rem}
+.h-jetzt .ks{box-shadow:inset 0 0 0 1px rgba(166,73,36,.08)}
+/* Bildkarten dürfen nicht wie Tabellenzellen wirken. */
+.kl-gericht .gerichtbild,.kuehlliste .zeileknopf img.gerichtbild.mini{
+  border:1px solid rgba(255,255,255,.38);
+}
+.karte.kl-gericht{
+  box-shadow:0 7px 22px rgba(84,59,31,.075);
+}
+@media(max-width:375px){
+  .appleiste.ebene-kopf.laden{min-height:58px}
+  .h-ladenname{font-size:1.4375rem}
+  .karte.h-ziel.h-ziel-kurs{background-position:center,center,68% center}
+}
+/* Sorgsam mit Bewegung: sichtbare Rückmeldung ohne permanente Effekte. */
+@media(prefers-reduced-motion:reduce){
+ .ebene-kopf.laden .ikonknopf,.karte.h-ziel.h-ziel-kurs{transition:none!important}
+}
