@@ -72,5 +72,14 @@ export function wareBildQuelle(x) {
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
   const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
   const foto = fotoFuer(n, x.name);
-  return foto ? { foto } : { pikto: /zitrone|salatmix/.test(n) ? "w-ware" : n };
+  if (foto) return { foto };
+  // Facelift 1.0: Burger-Rohwaren erhalten eigene lokale, lizenzfreie Piktogramme,
+  // falls der Betrieb noch kein Produktfoto besitzt (bestehende Food-Fotos haben Vorrang).
+  const burgerPikto = [
+    [/\bpatty\b|burgerfleisch|burger-patty/i, "r-patty"],
+    [/burgerbr[öo]tchen|burger[ -]?bun|hamburgerbr[öo]tchen/i, "r-burgerbroetchen"],
+    [/cheddar/i, "r-cheddar"],
+    [/burgersauce|burger[ -]?so(ß|ss)e|burgerdressing/i, "r-sauce"]
+  ].find(([re]) => re.test(x.name || ""));
+  return { pikto: burgerPikto ? burgerPikto[1] : /zitrone|salatmix/.test(n) ? "w-ware" : n };
 }
