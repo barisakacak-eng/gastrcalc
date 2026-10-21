@@ -44,3 +44,16 @@
 ### IDEE – NICHT IM ENTWURF
 
 Keine.
+
+
+## 22.10.2026 – drei Nutzenversprechen und Freitag-Umsteuerung
+
+- **Kapitän bestätigt neue Produktrichtung:** Geld pro Tag/Gericht, weniger Müll und gebundenes Lagergeld, Papierkram vorbereiten. **Döner- und Burgerläden zuerst**.
+- **Priorität:** L1 → L2/Station → L5 → L6 → B1/Ordner/Inventur → L3 → L4 → P1.
+- **NEU – Felder lt. Zoro 22.10.:** `nutzen` (nur gemessene, belegte Summen; sonst „Messung läuft seit …“) und `hinweis` (geprüfte Steueraussage, Fundstelle, 25 Wörter, Disclaimer). Keine eigenen Berechnungen oder Steuerbehauptungen durch Sanji.
+- **PIN/Codes testweise aus** baut Zoro. **DATEV, Menütafel, Aktionen, Kasse, Getränke-Feinheiten, weitere Sprachen** bleiben geparkt.
+- **Visual-Vertrag aktualisiert durch Kapitänsentscheidungen 21./22.10.:** aktuelle fünf Facelift-1.0-Referenzen und die drei Nutzenversprechen haben bei Widerspruch Vorrang vor altem Stand/Design B. Kein Merge ohne Go.
+- **Bestehende Piktogramme wiederverwenden**, Burger-Rohwaren ergänzen; keine externen KI-Food-Fotos.
+- **Keine Doppelrecherche**: Franky prüft Steuern, Zoro Rechenkern, Sanji UI.
+- **Entscheidungsvorlage und Versprechen-Abgleich:** [docs/sanji-facelift-versprechen-2026-10-22.md](sanji-facelift-versprechen-2026-10-22.md). Enthält zwei umsetzbare Ansätze für L1 und B1, Zoro-Schnittstellen, Wortbudget-Konflikt und Freigabebedingungen.
+- **PR #5** bleibt produktiver Facelift-Branch, dieser Protokoll-Branch archiviert nur Entscheidungen; keine App-Funktionsänderung vom 22.10. implementiert.
