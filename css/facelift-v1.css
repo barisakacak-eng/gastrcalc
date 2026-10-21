@@ -457,3 +457,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   .kl-nutzen b{font-size:0.875rem}
   .kl-nutzen small{font-size:0.75rem}
 }
+
+/* Paket 7 Browserabnahme: 15 px weniger Höhe bei 390 px, ohne kleinere Tippflächen. */
+.muellraster .ware img.gerichtbild.mini{aspect-ratio:2/1}
