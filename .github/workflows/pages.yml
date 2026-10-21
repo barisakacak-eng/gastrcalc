@@ -55,7 +55,7 @@ jobs:
         if: always() && github.event_name == 'pull_request'
         run: |
           mkdir -p tests/facelift-artifacts
-          find ../audit/regeln -maxdepth 1 -name '*.png' -exec cp {} tests/facelift-artifacts/ \\; 2>/dev/null || true
+          if test -d ../audit/regeln; then find ../audit/regeln -maxdepth 1 -name '*.png' -print0 | xargs -0 -r -I{} cp "{}" tests/facelift-artifacts/; fi
           if test -f tests/regeln_stand.json; then cp tests/regeln_stand.json tests/facelift-artifacts/; fi
       - name: Facelift Browser-Screenshots sichern
         if: always() && github.event_name == 'pull_request'
