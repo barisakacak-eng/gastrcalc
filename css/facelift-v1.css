@@ -162,3 +162,107 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   .h-feld small{font-size:0.75rem}
 }
 @media(prefers-reduced-motion:reduce){.karte,.h-jetzt,.kl-blatt{transition:none!important;animation:none!important}}
+
+/* Facelift 1.0 – Paket 5: Bildführung und Premium-Feinschliff (21.10.2026). */
+/* HELLES EDITORIAL: Essen wieder sichtbar statt vollständig dunkel überlagert. */
+.karte.h-ziel.h-ziel-kurs{
+ background-image:
+   linear-gradient(0deg,rgba(15,34,23,.69) 0%,rgba(15,34,23,.12) 55%,transparent 100%),
+   linear-gradient(90deg,rgba(18,40,28,.86) 0%,rgba(18,40,28,.58) 47%,rgba(18,40,28,.04) 100%),
+   url('../foto/hero-doenergrill.webp');
+ background-position:center,center,center;
+ background-size:cover;
+ background-repeat:no-repeat;
+}
+.karte.h-ziel .h-zielkopf{font-size:1.1875rem;letter-spacing:-.012em}
+.karte.h-ziel .h-riesig{text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.h-kurs-linie{stroke:#FFF7EA;stroke-width:3.3}
+.h-kurs-flaeche{fill:rgba(184,217,184,.34)}
+.h-kurs-punkt{fill:#E78C4B;stroke:var(--gc-white)}
+.h-kurs-ziel{stroke:#F3C894}
+.h-kurs-tag,.h-kurs-ziellabel{paint-order:stroke;stroke:rgba(27,48,29,.58);stroke-width:2}
+.h-kupfer{opacity:.62}
+.h-feld .zahl{font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+.h-feld .zahl .sym{width:1.45rem;height:1.45rem}
+.karte.h-kachel.h-feld{background:linear-gradient(155deg,var(--gc-white),var(--gc-paper));border-radius:17px}
+.jetzt.h-jetzt{position:relative;overflow:hidden;gap:13px;padding:12px 14px;transition:transform .18s ease,box-shadow .18s ease}
+.h-jetzt .ks{width:49px;height:49px;background:var(--gc-copper-light);border:1px solid rgba(166,73,36,.16)}
+.h-jetzt .ks .sym{width:27px;height:27px}
+.h-jetzt .h-pfeil{width:45px;height:45px;flex:none;stroke-width:2.4}
+.jetzt.h-jetzt:active{transform:scale(.99)}
+/* Kühlung: echte lokale Kühlstellen-Fotos waren bereits im Rechenkern-View vorhanden;
+   die Fotoform wurde nun für das Facelift vereinheitlicht, ohne Zuordnung zu verändern. */
+.kuehl-laden{gap:13px}
+.kuehl-laden .kuehlstand{
+ background:linear-gradient(125deg,var(--gc-white),var(--gc-paper));
+ border:1px solid var(--gc-line);
+ border-radius:20px;
+ padding:14px;
+ box-shadow:var(--gc-shadow);
+}
+.kuehlstand .ks-zeile{align-items:baseline;gap:10px}
+.kuehlstand .ks-zeile>span{font-weight:750;color:var(--gc-muted)}
+.kuehlstand .ks-zeile .zahl{font-family:var(--gc-display);font-weight:400;font-size:1.875rem;color:var(--gc-deep)}
+.kuehlliste .zeileknopf{
+ display:grid;
+ grid-template-columns:72px minmax(0,1fr) auto;
+ align-items:center;
+ column-gap:12px;
+ min-height:92px;
+ padding:9px;
+ border-radius:19px;
+}
+.kuehlliste .zeileknopf img.gerichtbild.mini{
+ display:block;
+ width:72px;
+ height:72px;
+ border-radius:13px;
+ object-fit:cover;
+ margin:0;
+ background:var(--gc-tint);
+}
+.kuehlliste .zeileknopf img.pikto{object-fit:contain;padding:9px}
+.kuehlliste .zeileknopf>span:has(>b){min-width:0;display:grid;gap:3px}
+.kuehlliste .zeileknopf b{font-size:1.125rem;line-height:1.2;overflow-wrap:anywhere}
+.kuehlliste .kwert{font-size:1.5rem;letter-spacing:-.04em;white-space:nowrap;text-align:end}
+.kuehlliste .kwert.rot{color:var(--gc-red)}
+.kuehlliste .zeileknopf:has(.kwert.rot){border-color:rgba(170,60,50,.28)}
+/* Putzen: helle großzügige Arbeitszeilen, eindeutiger Check ohne neue Daten. */
+.putzplan .planliste{gap:9px}
+.putzplan .pzeile{display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:center;border-radius:19px;min-height:73px}
+.putzplan .aufgabe{display:flex;align-items:center;gap:12px;min-height:71px;text-align:start}
+.putzplan .aufgabe .atext{min-width:0}
+.putzplan .aufgabe .atext>b{font-size:1.125rem;font-weight:400}
+.putzplan .aufgabe .box{width:32px;height:32px;flex:none;border-radius:50%}
+.putzplan .pmehr{border-radius:50%;width:48px;height:48px;display:grid;place-items:center}
+.putzplan .pzeile:has(.aufgabe.erledigt){background:linear-gradient(90deg,var(--gc-green-light),var(--gc-white) 48%)}
+/* Karte: Food-Fotos dominieren, Ampel ist Information und bleibt aus vorhandener Logik. */
+.kl-raster{gap:12px}
+.karte.kl-gericht{min-height:124px;gap:2px;padding:8px;border-radius:20px}
+.kl-gericht .gerichtbild{width:118px;height:108px;border-radius:14px}
+.kl-gt{padding-inline:11px}
+.kl-gn{font-size:1.3125rem}
+.kl-gp{margin-top:11px;gap:10px}
+.kl-punkt{width:13px;height:13px}
+.kl-gericht.rotrand{border-color:rgba(170,60,50,.35)}
+/* Foto-Raster im Müll: Behälterform und lesbare Mengen. */
+.muellraster .ware{border-radius:19px;background:var(--gc-white)}
+.muellraster .ware .wt{min-height:48px}
+.muellraster .ware .wt b{font-size:1.125rem}
+.muellraster .ware .wt small{color:var(--gc-muted)}
+/* Komfort: sanfte Rückmeldung ohne unnötige Bewegung. */
+@media(prefers-reduced-motion:no-preference){
+ .kuehlliste .zeileknopf,.kl-gericht,.muellraster .ware{transition:box-shadow .18s ease,transform .18s ease}
+ .kuehlliste .zeileknopf:active,.kl-gericht:active,.muellraster .ware:active{transform:scale(.989)}
+}
+@media(max-width:375px){
+ .kuehlliste .zeileknopf{grid-template-columns:60px minmax(0,1fr) auto;gap:8px;min-height:78px;padding:7px}
+ .kuehlliste .zeileknopf img.gerichtbild.mini{width:60px;height:60px;border-radius:11px}
+ .kuehlliste .zeileknopf b{font-size:1rem}
+ .kuehlliste .kwert{font-size:1.25rem}
+ .karte.kl-gericht{min-height:112px}
+ .kl-gericht .gerichtbild{width:96px;height:96px}
+ .kl-gn{font-size:1.125rem}
+ .putzplan .pzeile{min-height:68px}
+}
+/* Kein dekoratives Scrollen, das auf kurzen Handys Eingaben verdeckt. */
