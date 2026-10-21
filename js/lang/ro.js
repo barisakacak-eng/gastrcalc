@@ -497,6 +497,9 @@ export default {
     seite: ["Pagina", "din"],
     buero: (n) => `Abateri de răcire: ${n} – lipsește decizia despre marfă sau controlul ulterior`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Ușă deschisă", "eingeraeumt": "Marfă adăugată", "eingestellt": "Reglaj schimbat", "umgeraeumt": "Alimente mutate", "stecker": "Ștecher verificat", "chef": "Șef sunat", "techniker": "Tehnician chemat", "weggeworfen": "Alimente aruncate"}, heute: "Măsurat azi", starten: "Pornește runda", fortsetzen: "Continuă runda", ganz: "Tot conținutul" },
+
   kuehl: {
     titel: "Controlul răcirii",
     nav: "Răcire",

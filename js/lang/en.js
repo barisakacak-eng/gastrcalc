@@ -490,6 +490,9 @@ export default {
     seite: ["Page", "of"],
     buero: (n) => (n === 1 ? "1 cooling deviation: food decision or re-check missing" : `${n} cooling deviations: food decision or re-check missing`),
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Door open", "eingeraeumt": "Stock added", "eingestellt": "Setting adjusted", "umgeraeumt": "Food moved", "stecker": "Plug checked", "chef": "Owner called", "techniker": "Technician called", "weggeworfen": "Food discarded"}, heute: "Measured today", starten: "Start round", fortsetzen: "Continue round", ganz: "Whole contents" },
+
   kuehl: {
     titel: "Fridge check",
     nav: "Cooling",
