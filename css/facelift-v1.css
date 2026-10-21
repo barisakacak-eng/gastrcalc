@@ -152,4 +152,13 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .kl-gn{font-size:1.0625rem}
 .muellsumme h1{font-size:1.4375rem}
 }
+/* CI-Regeln: Mindest-Schriftgröße, Hauptknopf und kompakte Müll-Ansicht. */
+.h-feld small{font-size:0.75rem}
+.knopf.glut,.knopf:not(.zweit):not(.weich):not(.warn){min-height:64px}
+@media(max-width:375px){
+  .inhalt.muell1{gap:8px;padding-top:7px}
+  .heutewert.muellsumme{min-height:68px;padding-block:9px}
+  .muellraster{gap:7px}
+  .h-feld small{font-size:0.75rem}
+}
 @media(prefers-reduced-motion:reduce){.karte,.h-jetzt,.kl-blatt{transition:none!important;animation:none!important}}
