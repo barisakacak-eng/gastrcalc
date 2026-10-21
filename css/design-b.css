@@ -512,3 +512,65 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 .heute-laden .h-kupfer { display: block; width: 300px; max-width: 100%; height: 5px; margin: 8px auto 14px; }
 .heute-laden .h-feld.umsatz:not(.leer) .zahl { color: var(--b-gruen-ok); }
 .heute-laden .h-feld.muell:not(.leer) .zahl { color: var(--b-rot-text); }
+
+/* L2 Müll v1 – 21.10.2026. NEU: ausschließlich auf L2 begrenzte Layout-Klassen.
+   Farben, Schrift, Schatten, Radien und Maße 8/10/12/14/16/18/20/24/48/56/64/96
+   stammen aus diesem Stylesheet, personal.css und laden.css. Keine neuen Farbwerte.
+   NEU: flexibles 2×3-Raster in der freien Schirmhöhe statt fester Foto-Höhen;
+   dadurch bleiben alle sechs Tippflächen auch bei 360×780 im Bild.
+   NEU: Stations-Vollfläche und 700px-Umbruch: ab Tabletbreite 3×2 statt 2×3.
+   Das ist nur Layout innerhalb der PWA, keine Browser-Kiosk-/Waagenfunktion. */
+.schirm:has(> .l2-raster-start) { height: 100dvh; min-height: 100dvh; }
+.schirm > .inhalt.l2-raster-start { flex: 1; min-height: 0; gap: 12px; padding: 12px 16px calc(96px + env(safe-area-inset-bottom, 0px)); }
+.l2-muell .muellkopf1 { display: grid; grid-template-columns: minmax(0, 1fr) 48px; align-items: center; gap: 12px; padding: 0; flex: none; }
+.l2-muell .muellsumme { min-width: 0; min-height: 64px; border-radius: var(--radius); padding: 12px 16px; background: var(--b-primaer); color: var(--b-karte); }
+.l2-muell .muellsumme h1 { font-size: calc(22rem / 17); color: var(--b-karte); }
+.l2-muell .muellsumme .zahl { font-size: calc(24rem / 17); color: var(--b-karte); }
+.l2-modus { width: 48px; height: 48px; border: 1px solid var(--b-linie); border-radius: var(--radius); background: var(--b-karte); color: var(--b-primaer); display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.l2-muell .muellraster { flex: 1; min-height: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.l2-muell .muellraster .ware { min-width: 0; min-height: 0; height: 100%; border-radius: var(--radius); border-color: var(--b-linie); background: var(--b-karte); }
+.l2-muell .ware-tipp { min-width: 0; min-height: 48px; height: 100%; }
+.l2-muell .muellraster .ware .gerichtbild.mini { flex: 1; min-height: 0; height: 0; width: 100%; aspect-ratio: auto; object-fit: cover; }
+.l2-muell .muellraster .ware .gerichtbild.mini.pikto { object-fit: contain; }
+.l2-muell .ware .wt { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px; padding: 10px 12px; }
+.l2-muell .ware .wt b { flex: 1; min-width: 0; font-size: calc(16rem / 17); line-height: 1.2; }
+.l2-muell .ware .wt .l2-standard { flex: none; margin: 0; font-size: calc(12rem / 17); font-weight: 700; color: var(--b-text-leise); white-space: nowrap; }
+.l2-muell .ware .wt .l2-standard span { margin-inline-start: 2px; }
+.l2-muell .ware-mehr { top: auto; bottom: 56px; inset-inline-end: 0; width: 48px; height: 48px; }
+.l2-muell .ware-mehr::before { background: var(--b-karte); color: var(--b-text); box-shadow: var(--schatten-karte); }
+.l2-muell .ware.frisch { outline-color: var(--b-gruen-ok); }
+.l2-muell .ware .haken { background: var(--b-primaer); color: var(--b-karte); }
+.l2-muell .ware .zaehler { background: var(--b-karte); color: var(--b-primaer); }
+.l2-muell .ware.andere { min-height: 48px; height: 100%; border: 1px solid var(--b-linie); border-radius: var(--radius); background: var(--b-primaer-hell); color: var(--b-primaer); }
+.l2-muell .ware.andere b { font-size: calc(16rem / 17); color: var(--b-primaer); }
+.l2-muell .ware.andere .rund { background: var(--b-karte); color: var(--b-primaer); border-color: var(--b-linie); }
+.l2-muell .ware.andere.einzeln { height: auto; flex: 1; }
+.l2-fuss { flex: none; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.l2-rueckplatz { flex: 1; min-width: 0; display: flex; justify-content: flex-end; }
+.muelltoast.l2-ruecknahme { position: static; inset: auto; width: auto; max-width: 100%; margin: 0; min-height: 56px; padding: 10px 16px; border: 1px solid var(--b-linie); border-radius: var(--radius); background: var(--b-primaer-hell); color: var(--b-primaer); box-shadow: none; pointer-events: auto; font: inherit; font-weight: 800; gap: 8px; animation: none; }
+.l2-waage { display: none; }
+.l2-station { position: fixed; inset: 0; z-index: 50; overflow: auto; background: var(--b-hintergrund); color: var(--b-text); }
+.l2-station > .inhalt.l2-muell { padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
+.l2-station > .inhalt.l2-raster-start { height: 100dvh; min-height: 0; gap: 12px; }
+.l2-station .l2-waage { min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 10px 16px; border: 1px dashed var(--b-linie); border-radius: var(--radius); color: var(--b-text-leise); }
+.l2-station .l2-waage .zahl { font-size: calc(24rem / 17); font-weight: 800; white-space: nowrap; }
+.l2-muell button, .l2-muell input, .l2-muell .chip, .l2-muell .leise { min-height: 48px; }
+.l2-muell .chip { min-width: 48px; }
+.l2-muell .knopf.glut { min-height: 64px; }
+.l2-detail .auswahlkarte { min-height: 96px; }
+.l2-suche .l2-zurueck { align-self: stretch; }
+@media (min-width: 700px) {
+  .l2-station > .inhalt.l2-muell { padding-inline: 24px; }
+  .l2-station .muellraster { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .l2-station .ware .wt { min-height: 64px; padding: 12px 16px; }
+  .l2-station .ware-mehr { bottom: 64px; }
+  .l2-station .ware .wt b { font-size: calc(22rem / 17); }
+  .l2-station .ware .wt .l2-standard { font-size: calc(16rem / 17); }
+}
+@media (max-width: 389px) {
+  /* NEU: 389px-Grenze nur für L2, damit 360px-Geräte dieselben großen Ziele behalten. */
+  .schirm > .inhalt.l2-raster-start { padding-inline: 12px; gap: 10px; }
+  .l2-muell .muellraster { gap: 10px; }
+  .l2-muell .ware .wt { padding-inline: 10px; gap: 4px; }
+  .l2-muell .ware .wt b { font-size: calc(15rem / 17); }
+}
