@@ -339,3 +339,43 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 @media(prefers-reduced-motion:reduce){
  .ebene-kopf.laden .ikonknopf,.karte.h-ziel.h-ziel-kurs{transition:none!important}
 }
+
+/* Paket 6.1: CSS-Spezifität aus altem Design-B ausgleichen.
+   Die Aufgabenkarte ist im freigegebenen Zielbild WEISS. Kritische Aufgaben
+   behalten eine sichtbare rote Seitenmarkierung, statt unsichtbar zu werden. */
+.jetzt.h-jetzt.h-haupt,
+.jetzt.h-jetzt.h-haupt.normal,
+.jetzt.h-jetzt.h-haupt.dunkel,
+.jetzt.h-jetzt.h-haupt.rot{
+  background:var(--gc-white);
+  color:var(--gc-text);
+  border:1px solid var(--gc-line);
+  min-height:84px;
+  border-radius:20px;
+  box-shadow:var(--gc-shadow);
+}
+.jetzt.h-jetzt.h-haupt.rot{
+  border-left:4px solid var(--gc-red);
+}
+.h-haupt .ks,.h-haupt.dunkel .ks,
+.h-haupt.rot .ks{
+  color:var(--gc-copper);
+  background:var(--gc-copper-light);
+}
+.h-haupt.rot .ks{color:var(--gc-red);background:var(--gc-red-light)}
+.h-haupt .h-jetzt-text small,
+.h-haupt.dunkel .h-jetzt-text small,
+.h-haupt.rot .h-jetzt-text small{
+  color:var(--gc-copper);
+}
+.h-haupt.rot .h-jetzt-text small{color:var(--gc-red)}
+.h-haupt .h-jetzt-text b{font:400 1.375rem/1.2 var(--gc-display);color:var(--gc-text)}
+.h-haupt .h-pfeil{background:var(--gc-copper);color:#fff;padding:10px;border-radius:50%;width:46px;height:46px;flex:none}
+.karte.h-ziel svg.h-kurs .h-kurs-ziellabel{fill:#fff;font-weight:800;stroke:rgba(20,45,29,.54);stroke-width:2;paint-order:stroke}
+/* Der aktuelle Schnellstart hat sechs Fotokacheln; leicht reduzierte vertikale
+   Abstände vermeiden bei 360x780 zusätzliche 5px Überlauf durch die Serifenschrift. */
+@media(max-width:375px){
+ .inhalt.muell1{padding-top:0;gap:4px}
+ .muellraster{gap:5px}
+ .heutewert.muellsumme{min-height:64px;padding-block:7px}
+}
