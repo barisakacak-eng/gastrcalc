@@ -496,6 +496,9 @@ export default {
     seite: ["Faqja", "nga"],
     buero: (n) => `${n} devijime ftohjeje: mungon vendimi për mallin ose kontrolli i dytë`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Dera hapur", "eingeraeumt": "Mall i shtuar", "eingestellt": "Cilësim i ndryshuar", "umgeraeumt": "Ushqimi zhvendosur", "stecker": "Spina kontrolluar", "chef": "Shefi telefonuar", "techniker": "Tekniku thirrur", "weggeworfen": "Ushqimi hedhur"} },
+
   kuehl: {
     titel: "Kontrolli i frigoriferëve",
     nav: "Frigoriferët",

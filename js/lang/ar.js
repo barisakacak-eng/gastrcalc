@@ -493,6 +493,9 @@ export default {
     seite: ["صفحة", "من"],
     buero: (n) => `${n} انحرافات تبريد: ينقص قرار البضاعة أو القياس اللاحق`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "الباب مفتوح", "eingeraeumt": "إضافة مخزون", "eingestellt": "ضبط الإعداد", "umgeraeumt": "نقل الطعام", "stecker": "فحص القابس", "chef": "الاتصال بالمسؤول", "techniker": "الاتصال بالفني", "weggeworfen": "رمي الطعام"} },
+
   kuehl: {
     titel: "فحص التبريد",
     nav: "التبريد",

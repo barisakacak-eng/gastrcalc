@@ -491,6 +491,9 @@ export default {
     seite: ["Trang", "/"],
     buero: (n) => `${n} sai lệch làm lạnh: thiếu quyết định về hàng hoặc đo lại`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Cửa mở", "eingeraeumt": "Thêm hàng", "eingestellt": "Đổi cài đặt", "umgeraeumt": "Chuyển thực phẩm", "stecker": "Kiểm tra phích", "chef": "Gọi chủ quán", "techniker": "Gọi kỹ thuật", "weggeworfen": "Bỏ thực phẩm"} },
+
   kuehl: {
     titel: "Kiểm tra nhiệt độ lạnh",
     nav: "Nhiệt độ",

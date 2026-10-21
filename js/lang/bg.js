@@ -496,6 +496,9 @@ export default {
     seite: ["Страница", "от"],
     buero: (n) => `${n} отклонения в охлаждането: липсва решение за стоката или контролно измерване`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Отворена врата", "eingeraeumt": "Добавена стока", "eingestellt": "Променена настройка", "umgeraeumt": "Преместена храна", "stecker": "Проверен щепсел", "chef": "Обаждане на шефа", "techniker": "Повикан техник", "weggeworfen": "Изхвърлена храна"} },
+
   kuehl: {
     titel: "Контрол на охлаждането",
     nav: "Охлаждане",

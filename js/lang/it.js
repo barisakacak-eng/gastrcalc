@@ -491,6 +491,9 @@ export default {
     seite: ["Pagina", "di"],
     buero: (n) => (n === 1 ? "1 scostamento del freddo: manca la decisione sulla merce o il controllo" : `${n} scostamenti del freddo: manca la decisione sulla merce o il controllo`),
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Porta aperta", "eingeraeumt": "Merce aggiunta", "eingestellt": "Impostazione modificata", "umgeraeumt": "Alimenti spostati", "stecker": "Spina controllata", "chef": "Titolare chiamato", "techniker": "Tecnico chiamato", "weggeworfen": "Alimenti buttati"} },
+
   kuehl: {
     titel: "Controllo frigo",
     nav: "Frigo",
