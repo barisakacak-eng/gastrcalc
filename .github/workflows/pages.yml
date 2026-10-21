@@ -46,8 +46,6 @@ jobs:
             if python tests/regeln.py > regeln.txt 2>&1; then grep -E "Verletzungen" regeln.txt | while read -r l; do echo "::notice::regeln: $l"; done; exit 0; fi
             grep -E "Error|assert|Timeout|Fehler" regeln.txt | tail -8 | while read -r l; do echo "::warning::regeln Versuch $versuch: $l"; done
           done
-          echo "SANJI REGELDIAGNOSE:"
-          tail -130 regeln.txt
           exit 1
       - name: Personal-Durchlauf
         run: |
