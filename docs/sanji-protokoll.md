@@ -57,3 +57,12 @@ Keine.
 - **Keine Doppelrecherche**: Franky prüft Steuern, Zoro Rechenkern, Sanji UI.
 - **Entscheidungsvorlage und Versprechen-Abgleich:** [docs/sanji-facelift-versprechen-2026-10-22.md](sanji-facelift-versprechen-2026-10-22.md). Enthält zwei umsetzbare Ansätze für L1 und B1, Zoro-Schnittstellen, Wortbudget-Konflikt und Freigabebedingungen.
 - **PR #5** bleibt produktiver Facelift-Branch, dieser Protokoll-Branch archiviert nur Entscheidungen; keine App-Funktionsänderung vom 22.10. implementiert.
+
+
+## 22.10.2026 – Facelift B/C freigegeben
+
+- **Design 1.0 freigegeben:** B „Waste zu Gewinn“ als BILDSPRACHE UND BEDIENBASIS, C „Chef-Autopilot“ nur als Ordner-/Büro-/Einstellungs-Erweiterung. Maßstab ist die von Baris bestätigte Kombination aus B + C. Keine fiktiven Papier-Automationen, Steueransprüche oder Fantasie-Ersparnisse aus den KI-Konzeptbildern übernehmen.
+- **Direkt implementiert:** `sanji/facelift-1-0-integration`, [PR #5](https://github.com/barisakacak-eng/gastrcalc/pull/5). In `css/facelift-v1.css`: L2 mit grünem Tageswert und 3 Premium-Fotospalten; Mengen in den echten Rohwaren-/Gerichtskacheln (früheres Paket 7); B1 mit 3 echten Ordner-Statuszeilen, vier bestehenden Funktionsbereichen und übersichtlicheren Einstellungs-/Inventur-Karten. Handlungen bleiben gleich. Die Marge in L5 ist ebenfalls bereits direkt aus dem Rechenkern sichtbar.
+- **Werbepsychologie:** Das grüne Hero signalisiert Kontrolle, aber **niemals fiktive Einsparungen**. L2 vermittelt „Erfassen verhindert Blindflug“; L5 „was nach Kosten bleibt“; B1 „ich finde meine Unterlagen“. Zoros Nutzen-Schema und Frankys Steuerhinweise kommen später, nicht heute erfunden.
+- **Praxischeck:** echte Playwright-Browseraufnahme aus GitHub Actions, Handy 390x844 und 360x780. Ein Screenshot für den Kapitän, kein ständiges ZIP. Foto- und Piktogramm-Dateien sind lokal, keine Online-Dienste. Schrift DM Serif bereits OFL-lokal.
+- **Freitag:** Kein Direktauftrag an Zoro. PR-Files und dieser Protokollpunkt reichen als Sammelstand, nur finalen Teststatus/Fassung nach CI eintragen. Kein Merge auf `main` ohne Go.
