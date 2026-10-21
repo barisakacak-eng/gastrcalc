@@ -102,8 +102,8 @@ test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruc
   const woerter = zaehlen(inhalt);
   assert.ok(woerter.length <= 15, `${woerter.length} Wörter: ${woerter.join(" ")}`);
   assert.ok(!inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: ≈ vor der Zahl, keine Richtwert-Zeile im Laden");
-  // eine Haupthandlung: „Jetzt dran“ ist der große Knopf, die vier Felder sind eine Reihe darunter; Umsatz führt in den Laden-Bildschirm „Umsatz heute“
-  assert.ok(inhalt.indexOf("h-haupt") < inhalt.indexOf("h-reihe"), "Jetzt dran vor der Reihe");
+  // Facelift 1.0 (Baris 21.10.): vier Messfelder direkt unter der Zielkarte, danach eine Haupthandlung „Jetzt dran“; Umsatz führt weiter zu „Umsatz heute“.
+  assert.ok(inhalt.indexOf("h-reihe") < inhalt.indexOf("h-haupt"), "Facelift 1.0: Kennzahlen vor Jetzt dran");
   assert.equal((inhalt.match(/class="karte h-kachel h-feld/g) || []).length, 4);
   assert.ok(inhalt.includes('data-wert="umsatzheute"'), "Umsatz-Feld → Umsatz heute (Laden)");
 });
