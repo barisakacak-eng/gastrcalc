@@ -497,7 +497,7 @@ export default {
     buero: (n) => `Отклонений охлаждения: ${n} – нет решения по товару или контрольного замера`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "Дверь открыта", "eingeraeumt": "Добавлен товар", "eingestellt": "Изменена настройка", "umgeraeumt": "Продукты перемещены", "stecker": "Вилка проверена", "chef": "Звонок руководителю", "techniker": "Вызван техник", "weggeworfen": "Продукты выброшены"} },
+  l3: { massnahmen: {"tuer": "Дверь открыта", "eingeraeumt": "Добавлен товар", "eingestellt": "Изменена настройка", "umgeraeumt": "Продукты перемещены", "stecker": "Вилка проверена", "chef": "Звонок руководителю", "techniker": "Вызван техник", "weggeworfen": "Продукты выброшены"}, heute: "Замерено сегодня", starten: "Начать обход", fortsetzen: "Продолжить обход", ganz: "Всё содержимое" },
 
   kuehl: {
     titel: "Контроль холодильников",

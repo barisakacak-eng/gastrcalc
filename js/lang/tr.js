@@ -492,7 +492,7 @@ export default {
     buero: (n) => `${n} soğutma sapması: mal kararı veya kontrol ölçümü eksik`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "Kapı açıktı", "eingeraeumt": "Ürün yerleştirildi", "eingestellt": "Ayar değiştirildi", "umgeraeumt": "Ürünler taşındı", "stecker": "Fiş kontrolü", "chef": "Patron arandı", "techniker": "Teknisyen arandı", "weggeworfen": "Ürün atıldı"} },
+  l3: { massnahmen: {"tuer": "Kapı açıktı", "eingeraeumt": "Ürün yerleştirildi", "eingestellt": "Ayar değiştirildi", "umgeraeumt": "Ürünler taşındı", "stecker": "Fiş kontrolü", "chef": "Patron arandı", "techniker": "Teknisyen arandı", "weggeworfen": "Ürün atıldı"}, heute: "Bugün ölçülen", starten: "Turu başlat", fortsetzen: "Tura devam et", ganz: "Tüm içerik" },
 
   kuehl: {
     titel: "Soğutma kontrolü",

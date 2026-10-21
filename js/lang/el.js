@@ -492,7 +492,7 @@ export default {
     buero: (n) => `${n} αποκλίσεις ψύξης: λείπει απόφαση για το εμπόρευμα ή επανέλεγχος`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "Ανοιχτή πόρτα", "eingeraeumt": "Προσθήκη προϊόντων", "eingestellt": "Αλλαγή ρύθμισης", "umgeraeumt": "Μεταφορά τροφίμων", "stecker": "Έλεγχος πρίζας", "chef": "Κλήση υπεύθυνου", "techniker": "Κλήση τεχνικού", "weggeworfen": "Απόρριψη τροφίμων"} },
+  l3: { massnahmen: {"tuer": "Ανοιχτή πόρτα", "eingeraeumt": "Προσθήκη προϊόντων", "eingestellt": "Αλλαγή ρύθμισης", "umgeraeumt": "Μεταφορά τροφίμων", "stecker": "Έλεγχος πρίζας", "chef": "Κλήση υπεύθυνου", "techniker": "Κλήση τεχνικού", "weggeworfen": "Απόρριψη τροφίμων"}, heute: "Μετρήθηκαν σήμερα", starten: "Έναρξη γύρου", fortsetzen: "Συνέχισε τον γύρο", ganz: "Όλο το περιεχόμενο" },
 
   kuehl: {
     titel: "Έλεγχος ψύξης",

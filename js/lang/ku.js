@@ -491,7 +491,7 @@ export default {
     buero: (n) => `${n} cudabûnên sarkirinê: biryara malî an pîvana kontrolê kêm e`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "Derî vekirî", "eingeraeumt": "Mal hat danîn", "eingestellt": "Mîheng guhert", "umgeraeumt": "Xwarin hat guhastin", "stecker": "Fîş hat kontrolkirin", "chef": "Bangî patron kir", "techniker": "Bangî teknîker kir", "weggeworfen": "Xwarin hat avêtin"} },
+  l3: { massnahmen: {"tuer": "Derî vekirî", "eingeraeumt": "Mal hat danîn", "eingestellt": "Mîheng guhert", "umgeraeumt": "Xwarin hat guhastin", "stecker": "Fîş hat kontrolkirin", "chef": "Bangî patron kir", "techniker": "Bangî teknîker kir", "weggeworfen": "Xwarin hat avêtin"}, heute: "Îro hate pîvandin", starten: "Gerê dest pê bike", fortsetzen: "Gera kontrolê bidomîne", ganz: "Hemû naverok" },
 
   kuehl: {
     titel: "Kontrola sarkeran",

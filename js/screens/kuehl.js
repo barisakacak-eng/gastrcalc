@@ -119,13 +119,13 @@ function ladenStart(stand, st, offen, nk) {
   const nach = k ? nk.find((x) => x.messung.stelle === k.id) : null;
   const fertig = st.eingerichtet && st.heuteGemessen >= st.stellen && !offen;
   return `<div class="inhalt l3-laden l3-start">
-    <div class="l3-fortschritt"><h1>${esc(t(st.eingerichtet ? "kuehl.heute" : "ebene.tabs.kuehl"))}</h1>
+    <div class="l3-fortschritt"><h1>${esc(t(st.eingerichtet ? "l3.heute" : "ebene.tabs.kuehl"))}</h1>
       ${st.eingerichtet ? `<b class="zahl">\u2066${st.heuteGemessen} / ${st.stellen}\u2069</b>` : sym("lock")}</div>
     ${k ? `<div class="l3-stelle kuehlliste"><button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">
       ${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.abweichung ? `<small class="rot">${esc(l3Grenzen(k))}</small>` : ""}${nach ? `<small class="l3-nach ${nach.ueberfaellig ? "rot" : ""}" aria-label="${esc(t(nach.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.nachkontrolle"))}">${sym("clock")}${esc(nach.faellig ? datumLesbar(nach.faellig.slice(0, 10)) + " · " + zeitOderStrich(nach.faellig) : t("kuehl.nachkontrollen.naechste"))}</small>` : ""}</span>
       <span class="kwert ${m?.abweichung ? "rot" : ""}">${esc(l3Wert(m))}</span></button>
       ${l3Seiten("l3-stelle", stelleSeite, stellen.length)}</div>` : ""}
-    ${st.bereit ? `<button type="button" class="knopf glut" data-a="kuehl-rundgang-los">${fertig ? sym("check") : ""}${esc(t(offen ? "kuehl.weiterRundgang" : "ladenSchirm.rundgangStarten"))}</button>` : `<button type="button" class="knopf glut" data-a="${personalAktiv() ? "schloss" : "modus"}" data-wert="buero">${sym("lock")}${esc(t("ebene.zumBuero"))}</button>`}
+    ${st.bereit ? `<button type="button" class="knopf glut" data-a="kuehl-rundgang-los">${fertig ? sym("check") : ""}${esc(t(offen ? "l3.fortsetzen" : "l3.starten"))}</button>` : `<button type="button" class="knopf glut" data-a="${personalAktiv() ? "schloss" : "modus"}" data-wert="buero">${sym("lock")}${esc(t("ebene.zumBuero"))}</button>`}
     </div>${nav("kuehl")}`;
 }
 function ladenRundgang(stand) {
@@ -146,9 +146,10 @@ function ladenRundgang(stand) {
     inhalt = `<h2>${esc(t("kuehl.nichtGemessenKurz"))}</h2><div class="l3-auswahl">${NICHT_GEMESSEN.map((g) => `<button type="button" class="wahl ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}" aria-pressed="${f.grund === g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>
       <button type="button" class="knopf glut" data-a="station-speichern" ${f.grund ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>`;
   } else if (messSchritt === "massnahme") {
-    const teile = MASSNAHMEN.slice(massSeite * 4, massSeite * 4 + 4);
+    const proSeite = ["ku", "vi"].includes(sprache()) ? 2 : 4; // NEU: lange Sprachfassungen auf zwei Maßnahmen begrenzen
+    const teile = MASSNAHMEN.slice(massSeite * proSeite, massSeite * proSeite + proSeite);
     inhalt = `<h2>${esc(t("kuehl.massnahme"))}</h2><div class="l3-auswahl l3-massnahmen">${teile.map((m) => `<button type="button" class="wahl ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}" aria-pressed="${f.massnahmen.includes(m)}" aria-label="${esc(t("kuehl.massnahmen." + m))}">${f.massnahmen.includes(m) ? sym("check") : ""}${esc(t("l3.massnahmen." + m))}</button>`).join("")}</div>
-      ${l3Seiten("l3-mass-seite", massSeite, Math.ceil(MASSNAHMEN.length / 4))}<button type="button" class="knopf glut" data-a="l3-weiter" ${f.massnahmen.length ? "" : "disabled"}>${esc(t("allgemein.weiter"))}</button>`;
+      ${l3Seiten("l3-mass-seite", massSeite, Math.ceil(MASSNAHMEN.length / proSeite))}<button type="button" class="knopf glut" data-a="l3-weiter" ${f.massnahmen.length ? "" : "disabled"}>${esc(t("allgemein.weiter"))}</button>`;
   } else if (messSchritt === "nachkontrolle") {
     inhalt = `<h2>${esc(t("kuehl.nachkontrolle"))}</h2><div class="l3-auswahl">${["h1", "h2", "naechste"].map((n) => `<button type="button" class="wahl ${f.nachkontrolle === n ? "an" : ""}" data-a="nachkontrolle" data-wert="${n}" aria-pressed="${f.nachkontrolle === n}">${esc(t("kuehl.nachkontrollen." + n))}</button>`).join("")}</div>
       <button type="button" class="knopf glut" data-a="station-speichern" ${kuehlFormGueltig() ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>`;
@@ -157,7 +158,7 @@ function ladenRundgang(stand) {
     inhalt = `<h2>${esc(t("kuehl.wegTitel"))}</h2>${w ? `<div class="zeileknopf"><span>${esc(artikelText(w.name))} · ${esc(fmtZahl(w.menge, 2))} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}</span>${l3Knopf("weg-weg", "x", t("muell.zuruecknehmen"), `data-i="${wegSeite}"`)}</div>${l3Seiten("l3-weg-seite", wegSeite, f.weg.length)}` : ""}
       <input class="textfeld" data-f="weg-name" value="${esc(artikelText(f.wegName))}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off">
       <div class="neu"><input class="textfeld" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"><span>${esc(einheit === "stk" ? t("allgemein.stueck") : einheit)}</span>${l3Knopf("weg-hinzu", "plus", t("allgemein.hinzufuegen"))}</div>
-      <button type="button" class="wahl" data-a="weg-alles">${esc(t("kuehl.wegAlles", kn(k)))}</button>
+      ${f.weg.length ? "" : `<button type="button" class="wahl" data-a="weg-alles">${esc(t("l3.ganz"))}</button>`}
       <button type="button" class="knopf glut" data-a="l3-weiter">${esc(t("allgemein.weiter"))}</button>`;
   } else {
     inhalt = `${l3Personen(stand, r)}<div class="l3-messbild">${stelleBild(k)}<span>${esc(l3Grenzen(k))}</span></div>

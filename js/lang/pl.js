@@ -497,7 +497,7 @@ export default {
     buero: (n) => `Odchylenia chłodzenia: ${n} – brak decyzji o towarze lub pomiaru kontrolnego`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "Otwarte drzwi", "eingeraeumt": "Dołożono towar", "eingestellt": "Zmieniono ustawienie", "umgeraeumt": "Przeniesiono żywność", "stecker": "Sprawdzono wtyczkę", "chef": "Telefon do szefa", "techniker": "Wezwano technika", "weggeworfen": "Wyrzucono żywność"} },
+  l3: { massnahmen: {"tuer": "Otwarte drzwi", "eingeraeumt": "Dołożono towar", "eingestellt": "Zmieniono ustawienie", "umgeraeumt": "Przeniesiono żywność", "stecker": "Sprawdzono wtyczkę", "chef": "Telefon do szefa", "techniker": "Wezwano technika", "weggeworfen": "Wyrzucono żywność"}, heute: "Zmierzone dziś", starten: "Zacznij obchód", fortsetzen: "Kontynuuj obchód", ganz: "Cała zawartość" },
 
   kuehl: {
     titel: "Kontrola chłodzenia",

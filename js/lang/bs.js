@@ -499,7 +499,7 @@ export default {
     buero: (n) => `${n} odstupanja hlađenja: nedostaje odluka o robi ili kontrolno mjerenje`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "Otvorena vrata", "eingeraeumt": "Dodana roba", "eingestellt": "Promijenjena postavka", "umgeraeumt": "Hrana premještena", "stecker": "Utikač provjeren", "chef": "Šef pozvan", "techniker": "Tehničar pozvan", "weggeworfen": "Hrana bačena"} },
+  l3: { massnahmen: {"tuer": "Otvorena vrata", "eingeraeumt": "Dodana roba", "eingestellt": "Promijenjena postavka", "umgeraeumt": "Hrana premještena", "stecker": "Utikač provjeren", "chef": "Šef pozvan", "techniker": "Tehničar pozvan", "weggeworfen": "Hrana bačena"}, heute: "Danas izmjereno", starten: "Pokreni obilazak", fortsetzen: "Nastavi obilazak", ganz: "Sav sadržaj" },
 
   kuehl: {
     titel: "Kontrola hlađenja",

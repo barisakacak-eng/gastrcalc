@@ -491,7 +491,7 @@ export default {
     buero: (n) => `${n} انحراف سرمایش: تصمیم درباره‌ی کالا یا اندازه‌گیری دوباره کم است`,
   },
   // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
-  l3: { massnahmen: {"tuer": "در باز", "eingeraeumt": "افزودن کالا", "eingestellt": "تنظیم دوباره", "umgeraeumt": "جابه‌جایی مواد", "stecker": "بررسی دوشاخه", "chef": "تماس با مسئول", "techniker": "تماس با تعمیرکار", "weggeworfen": "دورریختن مواد"} },
+  l3: { massnahmen: {"tuer": "در باز", "eingeraeumt": "افزودن کالا", "eingestellt": "تنظیم دوباره", "umgeraeumt": "جابه‌جایی مواد", "stecker": "بررسی دوشاخه", "chef": "تماس با مسئول", "techniker": "تماس با تعمیرکار", "weggeworfen": "دورریختن مواد"}, heute: "امروز اندازه گرفته شد", starten: "شروع دور", fortsetzen: "ادامه‌ی دور چک", ganz: "همه محتویات" },
 
   kuehl: {
     titel: "کنترل دمای یخچال‌ها",

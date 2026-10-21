@@ -516,7 +516,8 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 /* L3 Kühlung – Sanji */
 /* NEU: .l3-* grenzt die kurze Laden-Folge ab. Maße wiederverwendet aus .kuehlliste,
    .h-ziel, .aufgabe, .knopf und Tokens; keine neuen Farben, Schriften oder Rundungen.
-   Eine Kühlstelle je Seite hält beliebig lange Listen und Abweichungen übersichtlich. */
+   Eine Kühlstelle je Seite hält beliebig lange Listen und Abweichungen übersichtlich.
+   NEU: Fortschrittszahl mit calc(48rem / 17), damit der Stand wie auf Heute sofort lesbar ist. */
 .l3-laden { gap: 16px; min-width: 0; padding-top: 20px; }
 .l3-fortschritt { padding: 20px; border-radius: var(--radius-gross); background: var(--b-primaer); color: var(--b-karte); text-align: center; }
 .l3-fortschritt h1 { font-size: calc(17rem / 17); font-weight: 600; margin: 0 0 10px; }
