@@ -46,17 +46,23 @@ jobs:
             if python tests/regeln.py > regeln.txt 2>&1; then grep -E "Verletzungen" regeln.txt | while read -r l; do echo "::notice::regeln: $l"; done; exit 0; fi
             grep -E "Error|assert|Timeout|Fehler" regeln.txt | tail -8 | while read -r l; do echo "::warning::regeln Versuch $versuch: $l"; done
           done
+          echo "SANJI Bildschirm-Diagnose:"
+          tail -110 regeln.txt
           exit 1
       # Facelift-Abnahme: echte Browser-Aufnahmen der App statt KI-Mockups.
       # Nur Pull Requests: kein Einfluss auf den Live-Deploy.
+      - name: Facelift Browser-Screenshots vorbereiten
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          mkdir -p tests/facelift-artifacts
+          find ../audit/regeln -maxdepth 1 -name '*.png' -exec cp {} tests/facelift-artifacts/ \\; 2>/dev/null || true
+          if test -f tests/regeln_stand.json; then cp tests/regeln_stand.json tests/facelift-artifacts/; fi
       - name: Facelift Browser-Screenshots sichern
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: facelift-browser-${{ github.run_id }}
-          path: |
-            ../audit/regeln/*.png
-            tests/regeln_stand.json
+          path: tests/facelift-artifacts/
           if-no-files-found: ignore
           retention-days: 14
       - name: Personal-Durchlauf
