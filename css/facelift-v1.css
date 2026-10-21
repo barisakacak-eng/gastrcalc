@@ -1,0 +1,155 @@
+/* Sanji Facelift 1.0: produktive visuelle Schicht, 21.10.2026.
+   Grundlage: freigegebene fünf Zielreferenzen (Editorial / Atelier / Modern Natural).
+   Rechenregeln, Events, HTML-Datenattribute und Navigation bleiben unverändert.
+   Die Referenzschrift DM Serif Display ist noch NICHT als Fontdatei im Repo;
+   daher Georgia als Offline-Zwischenschrift. Deaktivieren: Link aus index.html entfernen. */
+:root{
+--gc-cream:#F8F0E5;--gc-paper:#FFF9F1;--gc-white:#FFFEFA;--gc-tint:#F2E4D3;
+--gc-text:#242C24;--gc-muted:#625F57;--gc-line:#E9DCCD;--gc-green:#245B3E;
+--gc-deep:#16452E;--gc-green-light:#E4F2E6;--gc-copper:#A64924;
+--gc-copper-light:#F8DDCA;--gc-yellow:#755219;--gc-yellow-light:#FFF0D0;
+--gc-red:#AA3C32;--gc-red-light:#FCE5E0;
+--gc-display:"DM Serif Display",Georgia,"Times New Roman",serif;
+--gc-ui:"Manrope",system-ui,-apple-system,sans-serif;
+--gc-shadow:0 7px 22px rgba(81,54,28,.075);
+--b-primaer:var(--gc-deep);--b-primaer-hell:var(--gc-green-light);
+--b-akzent:var(--gc-copper);--b-akzent-hell:var(--gc-copper-light);
+--b-hintergrund:var(--gc-cream);--b-karte:var(--gc-white);
+--b-text:var(--gc-text);--b-text-leise:var(--gc-muted);--b-linie:var(--gc-line);
+--b-gruen-ok:var(--gc-green);--b-rot:var(--gc-red);--b-rot-text:var(--gc-red);
+--b-rot-hell:var(--gc-red-light);--b-gelb:var(--gc-yellow);
+--b-gelb-hell:var(--gc-yellow-light);--b-gelb-text:var(--gc-yellow);
+--papier:var(--gc-cream);--papier-tief:var(--gc-tint);--weiss:var(--gc-white);
+--tinte:var(--gc-text);--tinte-weich:var(--gc-muted);
+--salbei:var(--gc-green);--salbei-tief:var(--gc-deep);
+--salbei-hell:var(--gc-green-light);--holz:var(--gc-line);
+--holz-tief:#CBB9A3;--lehm:var(--gc-muted);
+--glut:var(--gc-copper);--aktion:var(--gc-copper);--aktion-text:#FFFFFF;
+--kupfer-dunkel:var(--gc-copper);--kupfer-hell:var(--gc-copper-light);
+--rot:var(--gc-red);--gruen:var(--gc-green);--eigen:var(--gc-green);
+--eigen-hell:var(--gc-green-light);--muell:var(--gc-red);
+--muell-hell:var(--gc-red-light);--fokus:var(--gc-deep);
+--radius:17px;--radius-gross:23px;
+--schatten-karte:var(--gc-shadow);
+--schatten-knopf:0 6px 12px rgba(81,54,28,.11);
+--schrift:var(--gc-ui);
+}
+html,body{background:var(--gc-cream);color:var(--gc-text)}
+body{background-image:radial-gradient(ellipse 340px 230px at 100% 0%,rgba(153,178,131,.11),transparent 82%);background-attachment:fixed}
+button,input,select,textarea{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gc-copper);outline-offset:2px}
+.karte,.kachel,.zeile,.b-bereich,.einklapp{border-radius:var(--radius)}
+.karte{box-shadow:var(--gc-shadow)}
+.kopfband h1,.kl-kopf h1,.putzkopf h1,.muellkopf1 h1,.inhalt>h1,.karte>h2,.kopfband .frage{font-family:var(--gc-display);font-weight:400;letter-spacing:-.025em}
+.kopfband h1,.kl-kopf h1,.putzkopf h1{font-size:clamp(30px,8vw,40px);line-height:1.1}
+.kopfband{padding-top:18px}
+.kopfband .unter{line-height:1.4}
+.appleiste.ebene-kopf{background:var(--gc-paper);border-bottom:1px solid var(--gc-line)}
+.appleiste.ebene-kopf.laden{min-height:70px}
+.ebene-kopf .ikonknopf{border-radius:50%;color:var(--gc-deep)}
+.ebene-kopf .ikonknopf.hilfe{background:var(--gc-white);color:var(--gc-deep);border:1px solid var(--gc-line)}
+.appleiste.ebene-kopf .logo{max-height:40px}
+.tableiste{background:var(--gc-white);border-top:1px solid var(--gc-line);box-shadow:0 -8px 24px rgba(81,54,28,.08);border-radius:22px 22px 0 0;padding-top:8px}
+.tab{color:var(--gc-muted);min-height:60px;font-weight:650}
+.tab.an{color:var(--gc-copper);font-weight:800}
+.tab.an .ik{background:transparent}
+.tab.an .sym{stroke-width:2.6}
+.tab .ik{min-height:32px}
+.tab .punkt{background:var(--gc-copper)}
+.knopf.glut,.knopf:not(.zweit):not(.weich):not(.warn),.s2fotoknopf,.kl-speichern{background:var(--gc-copper);color:#FFFFFF;min-height:60px;border-radius:16px;border-color:var(--gc-copper);font-weight:800;box-shadow:0 6px 14px rgba(166,73,36,.18)}
+.knopf.zweit{background:var(--gc-white);color:var(--gc-deep);border:1px solid var(--gc-line);border-radius:15px}
+.chip.an,.kl-segment button.an{background:var(--gc-copper);border-color:var(--gc-copper);color:#FFFFFF}
+.chip:not(.an){background:var(--gc-white);border-color:var(--gc-line)}
+/* L1 Heute: echte Ziel-/Verlaufdaten, vorhandene SVG-Kurve */
+.inhalt.heute-laden{gap:13px;padding-top:12px}
+.h-kopf{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 3px}
+.h-ladenname{font:400 24px/1.1 var(--gc-display);color:var(--gc-text)}
+.h-datum{font-size:12px;color:var(--gc-muted);font-weight:650}
+.karte.h-ziel.h-ziel-kurs{position:relative;min-height:290px;overflow:hidden;background:linear-gradient(90deg,rgba(17,52,35,.94),rgba(19,53,35,.80)),url('../foto/hero-doenergrill.webp') center/cover no-repeat;border:1px solid rgba(255,255,255,.13);border-radius:24px;padding:22px 18px 15px;box-shadow:0 11px 23px rgba(28,71,46,.2)}
+.karte.h-ziel .h-zielkopf{font:400 19px/1.2 var(--gc-display);color:#FFF}
+.karte.h-ziel .h-riesig{font:800 clamp(38px,12vw,51px)/1.05 var(--gc-ui);letter-spacing:-.045em;margin:10px 0 8px;white-space:nowrap}
+.karte.h-ziel .h-riesig.leicht{color:#E4F2E6}
+.h-tempo-zeile{display:block;font-size:12px;color:#FFF9F1;margin-bottom:5px}
+.h-tempo-zeile.knapp{color:#FFF0D0}
+.h-lorbeer{position:absolute;top:8px;right:10px;width:44px;height:60px;opacity:.52;color:#D9E7D5;pointer-events:none}
+.h-kurs{display:block;width:100%;max-height:165px;margin-top:4px;overflow:visible}
+.h-kurs-achse{stroke:rgba(255,255,255,.36);stroke-width:1}
+.h-kurs-ziel{stroke:#F0B174;stroke-width:1.6;stroke-dasharray:5 5}
+.h-kurs-ziellabel{fill:#FFF9F1;font:700 11px var(--gc-ui)}
+.h-kurs-linie{fill:none;stroke:#F3B681;stroke-width:3;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.h-kurs-flaeche{fill:rgba(225,239,220,.21);stroke:none}
+.h-kurs-punkt{fill:#B9602C;stroke:#FFF;stroke-width:2.5}
+.h-kurs-tag{fill:#FFF9F1;font:600 11px var(--gc-ui)}
+.h-kupfer{display:block;width:86%;height:5px;margin:0 auto}
+.h-kacheln.h-reihe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.karte.h-kachel.h-feld{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-width:0;min-height:84px;padding:9px 3px;background:var(--gc-white);border:1px solid var(--gc-line);border-radius:15px;box-shadow:var(--gc-shadow);text-align:center}
+.h-feld .zahl{font-size:clamp(14px,3.9vw,19px);line-height:1.2;font-weight:800;white-space:nowrap}
+.h-feld small{font-size:11px;color:var(--gc-muted);font-weight:650;white-space:nowrap}
+.h-feld.umsatz .zahl{color:var(--gc-green)}
+.h-feld.muell .zahl{color:var(--gc-red)}
+.h-feld.alarm{background:var(--gc-red-light)}
+.jetzt.h-jetzt{background:var(--gc-white);min-height:76px;border-radius:19px;border:1px solid var(--gc-line);box-shadow:var(--gc-shadow)}
+.h-jetzt .ks{border-radius:13px;background:var(--gc-copper-light);color:var(--gc-copper)}
+.h-jetzt-text b{font:400 20px/1.2 var(--gc-display)}
+.h-jetzt-text small{color:var(--gc-muted)}
+.h-jetzt .h-pfeil{border-radius:50%;background:var(--gc-copper);padding:8px;color:#FFF;width:43px;height:43px}
+/* L2 Müll: vorhandene Fotos/Mengen/Undo, keine neuen Kennzahlen */
+.inhalt.muell1{gap:13px;padding-top:14px}
+.heutewert.muellsumme{border:1px solid var(--gc-line);background:linear-gradient(110deg,var(--gc-white),var(--gc-copper-light));border-radius:21px;min-height:80px;color:var(--gc-text);padding:13px 18px}
+.muellsumme h1{font:400 clamp(22px,7vw,29px)/1.12 var(--gc-display);color:var(--gc-text);margin:0}
+.muellsumme .zahl{font-size:clamp(25px,8vw,35px);color:var(--gc-red)}
+.muellraster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.muellraster .ware{border-radius:18px;border:1px solid var(--gc-line);overflow:hidden;box-shadow:var(--gc-shadow)}
+.muellraster .ware img.gerichtbild.mini{display:block;width:100%;object-fit:cover;aspect-ratio:4/3;border-radius:0}
+.ware .wt{padding:10px 12px 12px}
+.ware .wt b{font:400 17px/1.13 var(--gc-display)}
+.ware-mehr{border-radius:50%;background:var(--gc-white);color:var(--gc-deep);border:1px solid var(--gc-line)}
+.ware .zaehler{background:var(--gc-deep);color:var(--gc-white);font-weight:850}
+.ware.andere{border:1px solid var(--gc-line);background:var(--gc-copper-light)}
+/* L3 Kühlung: Statuslogik unverändert, keine erfundenen Solltemperaturen */
+.kuehlliste{gap:10px}
+.kuehlliste .zeileknopf{border:1px solid var(--gc-line);border-radius:18px;padding:12px 15px;min-height:86px;background:var(--gc-white);box-shadow:var(--gc-shadow)}
+.kuehlliste .zeileknopf b{font:400 19px/1.15 var(--gc-display)}
+.kuehlliste .kwert{font-size:clamp(20px,6vw,27px);color:var(--gc-text)}
+.kuehlliste .kwert.ok{color:var(--gc-green)}
+.kuehlliste .kwert.rot{color:var(--gc-red)}
+.kuehlliste .zeileknopf:has(.kwert.rot){background:var(--gc-red-light)}
+/* L4 Putzen */
+.putzkopf h1{font-family:var(--gc-display)}
+.putzplan .planliste{display:grid;gap:8px}
+.putzplan .pzeile{border:1px solid var(--gc-line);background:var(--gc-white);border-radius:17px;overflow:hidden;box-shadow:var(--gc-shadow)}
+.putzplan .aufgabe{min-height:69px;box-shadow:none;border:0;background:transparent}
+.putzplan .aufgabe b{font:400 18px/1.2 var(--gc-display)}
+.putzplan .aufgabe .box{border-radius:50%;border:2px solid #CABDAD;width:30px;height:30px}
+.putzplan .aufgabe.erledigt .box{background:var(--gc-green);border-color:var(--gc-green);color:#FFF}
+.putzplan .pmehr{min-height:48px;min-width:48px}
+/* L5 Karte: bestehende Preise & Ampel; statt Fotoraster nun Premium-Liste */
+.inhalt.kartelaeden{gap:12px}
+.kl-kopf h1{font:400 clamp(28px,8vw,39px)/1.1 var(--gc-display)}
+.kl-segment{border-radius:18px;background:var(--gc-tint)}
+.kl-segment button{border-radius:14px;min-height:49px}
+.kl-raster{display:grid;grid-template-columns:1fr;gap:11px}
+.karte.kl-gericht{display:flex;align-items:center;min-height:120px;border:1px solid var(--gc-line);border-radius:19px;background:var(--gc-white);box-shadow:var(--gc-shadow);padding:8px;text-align:start}
+.kl-gericht .gerichtbild{width:108px;height:100px;object-fit:cover;aspect-ratio:auto;flex:none;border-radius:13px}
+.kl-gt{display:block;flex:1;min-width:0;padding:3px 9px 3px 12px}
+.kl-gn{font:400 19px/1.15 var(--gc-display);white-space:normal}
+.kl-gp{margin-top:8px}
+.kl-gp b{font:800 21px/1.2 var(--gc-ui)}
+.kl-punkt{box-shadow:none}
+.kl-punkt.g{background:var(--gc-green)}
+.kl-punkt.r{background:var(--gc-red)}
+.kl-punkt.y{background:#C48A22}
+/* Eingabeblätter: bestehende Events/Buttons bleiben */
+.ebene-blatt,.kl-blatt,.blatt{border-radius:25px 25px 0 0;background:var(--gc-paper);box-shadow:0 -13px 32px rgba(72,50,25,.14)}
+.auswahlkarte,.mengekarte,.formular{border-radius:20px}
+.textfeld,.betrag input,.zahlfeld input,.kl-gross input{color:var(--gc-text)}
+@media(max-width:375px){
+.karte.h-ziel.h-ziel-kurs{min-height:276px;padding:19px 15px 13px}
+.h-kacheln.h-reihe{gap:5px}
+.karte.h-kachel.h-feld{padding-left:2px;padding-right:2px}
+.h-feld small{font-size:10px}
+.kl-gericht .gerichtbild{width:87px;height:95px}
+.kl-gn{font-size:17px}
+.muellsumme h1{font-size:23px}
+}
+@media(prefers-reduced-motion:reduce){.karte,.h-jetzt,.kl-blatt{transition:none!important;animation:none!important}}
