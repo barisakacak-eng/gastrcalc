@@ -53,7 +53,7 @@ function kachelHtml(stand, x, zaehl, frisch) {
   const m = standardMenge(stand, x); const k = muellSchluessel(x); const n = zaehl[k] || 0;
   const daten = `data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"`;
   return `<div class="karte ware ${frisch === k ? "frisch" : ""}" data-k="${esc(k)}">
-    <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten} aria-label="${esc(zeigName(x))} · ${esc(mengeText(m.menge, m.einheit))}">${bildFuer(stand, x)}<span class="wt"><b>${esc(zeigName(x))}</b></span></button>
+    <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten} aria-label="${esc(zeigName(x))} · ${esc(mengeText(m.menge, m.einheit))}">${bildFuer(stand, x)}<span class="wt"><b>${esc(zeigName(x))}</b><small class="muell-ueblich">${esc(mengeText(m.menge, m.einheit))}</small></span></button>
     ${n ? `<span class="zaehler zahl">${n}×</span>` : ""}${frisch === k ? `<span class="haken">${sym("check")}</span>` : ""}
     <button type="button" class="ware-mehr" data-a="muell-detail" ${daten} aria-label="${esc(t("muell1.menge"))}">…</button>
   </div>`;
