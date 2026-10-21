@@ -16,7 +16,7 @@ import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
-import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
+import { personalAktiv, personalVon } from "./personal.js"; // D: im Personal-Modus kein Euro
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
@@ -366,14 +366,14 @@ export function kuehlAktion(name, el, stand, wurzel) {
   // Stelle ohne Wert. Läuft schon ein Rundgang, geht es an seiner ersten offenen Stelle weiter. Wer misst, lässt sich oben im Rundgang mit einem Tipp ändern (personenWahl).
   if (name === "kuehl-rundgang-los") {
     if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; }
-    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von: kuehlWerVorschlag(stand), datum: heute() });
+    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von: personalAktiv() ? personalVon(stand) : kuehlWerVorschlag(stand), datum: heute() });
     messSchritt = "wert"; massSeite = 0;
     ansicht = "rundgang"; startVon = null; startNach = null; startStelle = null;
     station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null;
     return true;
   }
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false;
-    if (!imBuero) { const k = aktiveStellen(stand).find((x) => x.id === el.dataset.id); if (!k) return false; rundgangStarten(stand, { von: kuehlWerVorschlag(stand), datum: heute(), einzel: k.id }); ansicht = "rundgang"; station = k.id; form = { ...leeresForm(), k }; messSchritt = "wert"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
+    if (!imBuero) { const k = aktiveStellen(stand).find((x) => x.id === el.dataset.id); if (!k) return false; rundgangStarten(stand, { von: personalAktiv() ? personalVon(stand) : kuehlWerVorschlag(stand), datum: heute(), einzel: k.id }); ansicht = "rundgang"; station = k.id; form = { ...leeresForm(), k }; messSchritt = "wert"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
   if (name === "blatt-monat") { blattMonat = Number(el.dataset.wert); return true; }
@@ -388,7 +388,15 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) return false; personAnlegen(stand, k); neuKuerzel = ""; return true; }
   if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("amtW2.personWegFrage", p.kuerzel))) return false; return personEntfernen(stand, p.id, heute()); } // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
   // Rundgang starten
-  if (name === "start-von") { startVon = el.dataset.id; return true; }
+  if (name === "start-von") { startVon = el.dataset.id;
+    // app.js ruft beim Einstieg vom Personal-Start erst kuehl-rundgang, dann start-von auf.
+    // Dort ist die Schicht-Person bereits gewählt: direkt messen, keine zweite Namensfrage.
+    if (personalAktiv() && ansicht === "rundgang" && !r && kuehlBereit(stand)) {
+      const offen = rundgangStarten(stand, { von: startVon || null, datum: heute() });
+      station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null; messSchritt = "wert";
+    }
+    return true;
+  }
   if (name === "start-datum") { startNach = el.dataset.wert; return true; }
   if (name === "rundgang-start") {
     if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } // W2-S
