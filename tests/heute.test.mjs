@@ -124,7 +124,8 @@ test("Preis-Blatt: preisAmpel = Ampel und DB der Kalkulation; −/+ in 10-Cent-S
   navKontext(s, wurzelVon(s)); karteLadenZuruecksetzen();
   const html = karteLadenView(s);
   assert.equal((html.match(/data-a="kl-auf"/g) || []).length, 2);
-  for (const weg of ["Wareneinsatz", "Rezept", "Selbstkosten", "%"]) assert.ok(!html.replace(/<[^>]+>/g, "").includes(weg), weg);
+  for (const weg of ["Wareneinsatz", "Rezept", "Selbstkosten"]) assert.ok(!html.replace(/<[^>]+>/g, "").includes(weg), weg);
+  assert.ok(html.includes("kl-nutzen"), "Facelift 1.0: Betrag und Margen-Prozent direkt in der Gerichtskarte");
   const el = (d) => ({ dataset: d });
   assert.equal(karteLadenAktion("kl-auf", el({ id: "a" }), s), true);
   assert.equal(karteLadenAktion("kl-plus", el({}), s), "blatt"); karteLadenAktion("kl-plus", el({}), s); karteLadenAktion("kl-minus", el({}), s);
