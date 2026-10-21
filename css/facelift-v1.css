@@ -645,3 +645,70 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 @media(prefers-reduced-motion:reduce){
  .buero .b-bereich > summary .b-pfeil{transition:none!important}
 }
+
+/* Paket 8B: verbindliche B-Bildsprache für L2 Müll.
+   Daten bleiben die echten Tages-Einträge; keine erfundene Einsparung. */
+.inhalt.muell1 .heutewert.muellsumme{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:101px;
+  padding:16px 18px;
+  border-radius:21px;
+  border:1px solid rgba(255,255,255,.3);
+  color:var(--gc-white);
+  background:
+    linear-gradient(90deg,rgba(23,64,42,.97) 0%,rgba(28,75,48,.92) 62%,rgba(28,75,48,.72) 100%),
+    url("../foto/r-tomate.webp") center/cover;
+  box-shadow:0 10px 22px rgba(26,67,43,.14);
+}
+.inhalt.muell1 .muellsumme h1{
+  font:400 1.375rem/1.1 var(--gc-display);
+  color:var(--gc-white)
+}
+.inhalt.muell1 .muellsumme .zahl{
+  font:800 1.875rem/1.12 var(--gc-ui);
+  color:var(--gc-white);
+  font-variant-numeric:tabular-nums
+}
+/* Drei Fotospalten wie B: große Klickfläche, kurzes Etikett plus übliche Menge. */
+.inhalt.muell1 .muellraster{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.inhalt.muell1 .muellraster .ware{
+  min-width:0;
+  border-radius:15px;
+  box-shadow:0 4px 12px rgba(74,53,29,.075)
+}
+.inhalt.muell1 .muellraster .ware .gerichtbild.mini{
+  display:block;
+  aspect-ratio:4/3;
+  border-radius:0;
+  object-fit:cover;
+}
+.inhalt.muell1 .muellraster .ware .wt{
+  min-height:50px;
+  padding:6px 7px;
+  gap:2px;
+}
+.inhalt.muell1 .muellraster .ware .wt b{
+  font:400 .9375rem/1.14 var(--gc-display);
+  overflow-wrap:anywhere
+}
+.inhalt.muell1 .muellraster .ware .wt small{
+  font:650 .75rem/1.15 var(--gc-ui)
+}
+.inhalt.muell1 .muellraster .ware-mehr{
+  width:44px;height:44px;
+}
+@media(max-width:375px){
+  .inhalt.muell1 .heutewert.muellsumme{min-height:87px;padding:11px 13px}
+  .inhalt.muell1 .muellsumme h1{font-size:1.25rem}
+  .inhalt.muell1 .muellsumme .zahl{font-size:1.5625rem}
+  .inhalt.muell1 .muellraster{gap:6px}
+  .inhalt.muell1 .muellraster .ware .gerichtbild.mini{aspect-ratio:1.45}
+  .inhalt.muell1 .muellraster .ware .wt{min-height:47px;padding:4px 5px}
+  .inhalt.muell1 .muellraster .ware .wt b{font-size:.875rem}
+}
