@@ -266,3 +266,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
  .putzplan .pzeile{min-height:68px}
 }
 /* Kein dekoratives Scrollen, das auf kurzen Handys Eingaben verdeckt. */
+
+/* 360px Müll-Scrollfix */
+@media(max-width:375px){.inhalt.muell1{padding-top:3px}}
