@@ -379,3 +379,81 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
  .muellraster{gap:5px}
  .heutewert.muellsumme{min-height:64px;padding-block:7px}
 }
+
+/* Paket 7 (22.10.2026): Nutzen in einem Blick – Müllmenge + was pro Gericht bleibt.
+   UI-only: Werte kommen aus bestehenden Modulen muell.js und engine.preisAmpel.
+   Keine neuen Kennzahlen, keine Änderung der Grenzwerte. */
+.muellraster .ware .wt{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  min-height:55px;
+  padding:7px 10px 8px;
+}
+.muellraster .ware .wt b{
+  display:block;
+  font:400 1.0625rem/1.17 var(--gc-display);
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+.muellraster .ware .wt .muell-ueblich{
+  display:block;
+  font:700 0.75rem/1.2 var(--gc-ui);
+  color:var(--gc-muted);
+  font-variant-numeric:tabular-nums;
+}
+.muellraster .ware .gerichtbild.mini{
+  aspect-ratio:16/9;
+  width:100%;
+  object-fit:cover;
+}
+.kl-gt{display:flex;flex-direction:column;justify-content:center;align-self:stretch;gap:4px}
+.kl-gn{line-height:1.14}
+.kl-gp{margin-top:3px;display:flex;align-items:center;justify-content:space-between}
+.kl-nutzen{
+  display:flex;
+  gap:8px;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-top:3px;
+  color:var(--gc-green);
+  font-variant-numeric:tabular-nums;
+}
+.kl-nutzen b{font:800 1.0625rem/1.25 var(--gc-ui);white-space:nowrap}
+.kl-nutzen small{font:800 0.75rem/1.25 var(--gc-ui);white-space:nowrap}
+.kl-gericht.a-rot .kl-nutzen{color:var(--gc-red)}
+.kl-gericht.a-gelb .kl-nutzen{color:var(--gc-yellow)}
+.kl-gericht.a-grau .kl-nutzen,.kl-nutzen.ohne-wert{color:var(--gc-muted)}
+.kl-nutzen-balken{
+  display:block;
+  height:4px;
+  width:100%;
+  border-radius:99px;
+  background:var(--gc-tint);
+  overflow:hidden;
+  margin-top:2px;
+}
+.kl-nutzen-balken i{
+  display:block;
+  height:100%;
+  background:var(--gc-green);
+  border-radius:99px;
+}
+.kl-nutzen-balken.a-rot i{background:var(--gc-red)}
+.kl-nutzen-balken.a-gelb i{background:var(--gc-yellow)}
+.kl-nutzen-balken.a-grau i{background:var(--gc-muted)}
+.karte.kl-gericht{min-height:137px}
+.kl-gericht .gerichtbild{height:120px}
+@media(max-width:375px){
+  .muellraster .ware .gerichtbild.mini{aspect-ratio:2/1}
+  .muellraster .ware .wt{min-height:51px;gap:2px;padding:5px 8px}
+  .muellraster .ware .wt b{font-size:0.9375rem}
+  .muellraster .ware .wt .muell-ueblich{font-size:0.75rem}
+  .karte.kl-gericht{min-height:123px}
+  .kl-gericht .gerichtbild{height:106px;width:94px}
+  .kl-gt{gap:2px;padding-inline:8px}
+  .kl-nutzen{gap:3px}
+  .kl-nutzen b{font-size:0.875rem}
+  .kl-nutzen small{font-size:0.75rem}
+}
