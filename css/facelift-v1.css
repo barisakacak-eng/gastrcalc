@@ -722,7 +722,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   background:transparent;
   border:0;
   color:transparent;
-  font-size:0;
+  font-size:.75rem;
   box-shadow:none;
 }
 .inhalt.muell1 .muellraster .ware .ware-mehr::before{
