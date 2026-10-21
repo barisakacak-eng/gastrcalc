@@ -557,6 +557,7 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 .l2-muell button, .l2-muell input, .l2-muell .chip, .l2-muell .leise { min-height: 48px; }
 .l2-muell .chip { min-width: 48px; }
 .l2-muell .knopf.glut { min-height: 64px; }
+.schirm > .inhalt.l2-detail, .schirm > .inhalt.l2-suche { padding-bottom: 24px; }
 .l2-detail .auswahlkarte { min-height: 96px; }
 .l2-suche .l2-zurueck { align-self: stretch; }
 @media (min-width: 700px) {

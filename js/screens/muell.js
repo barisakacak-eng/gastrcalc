@@ -82,7 +82,7 @@ export function muellView(stand) {
   const unten = pers ? "" : nav("muell", { schnell: false });
   const inhalt = ansicht === "eingabe" ? (auswahlOffen ? eingabeView(stand, D) : formView(stand, D)) : rasterView(stand, D, nach);
   // Vollfläche innerhalb der PWA. Kein Browser-Kiosk, keine neue Geräte- oder Waagenfunktion.
-  return station ? `<section class="l2-station" aria-label="${esc(t("muell1.station"))}">${inhalt}</section>` : oben + inhalt + unten;
+  return station ? `<section class="l2-station" aria-label="${esc(t("muell1.station"))}">${inhalt}</section>` : oben + inhalt + (ansicht === "eingabe" ? "" : unten);
 }
 
 function rasterView(stand, D, nach) {
@@ -192,10 +192,10 @@ function formView(stand, D) {
       <div class="stepper gross"><button type="button" data-a="muell-d" data-d="-1" aria-label="−">−</button><div class="wert"><input inputmode="decimal" data-f="muell-menge" value="${esc(wertAnzeige(w.menge))}" aria-label="${esc(t("muell1.menge"))}"> <small>${esc(einheitText)}</small></div><button type="button" data-a="muell-d" data-d="1" aria-label="+">+</button></div>
       <div class="chips">${chipsFuer(w).map((c) => `<button type="button" class="chip ${w.menge === c ? "an" : ""}" data-a="muell-chip" data-wert="${c}">${esc(fmtZahl(c, c < 1 ? 1 : 0))} ${esc(w.typ === "gericht" ? "" : einheitLabel(einheit))}</button>`).join("")}${ganze ? `<button type="button" class="chip" data-a="muell-chip" data-wert="${ganze}">${esc(t("muell.ganzePackung"))}</button>` : ""}</div>
       ${w.typ === "artikel" && (basis === "g" || basis === "ml") ? `<div class="periode">${(basis === "g" ? ["g", "kg"] : ["ml", "l"]).map((e) => `<button type="button" class="${w.einheit === e ? "an" : ""}" data-a="muell-einheit" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div>` : ""}
-      ${pers ? "" : `<p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(`≈ ${fmtEuro(personalWert, { dezimal: 2 })}`) : wert !== null ? esc(`≈ ${fmtEuro(wert, { dezimal: 2 })}`) : `<span class="leise-text">${esc(t("tag.keinPreis"))}</span>`) : ""}</p>`}
+      ${pers ? "" : `<p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(`≈ ${fmtEuro(personalWert, { dezimal: 2 })}`) : wert !== null ? esc(`≈ ${fmtEuro(wert, { dezimal: 2 })}`) : `<span class="leise-text">—</span>`) : ""}</p>`}
     </div>
     <div class="zweier formkacheln">
-      <label class="karte formkachel fotokachel-muell ${foto ? "an" : ""}"><span class="kachelsym">${sym(foto ? "check" : "camera")}</span><b>${esc(foto ? t("muell.fotoDabei") : t("muell.foto"))}</b>
+      <label class="karte formkachel fotokachel-muell ${foto ? "an" : ""}"><span class="kachelsym">${sym(foto ? "check" : "camera")}</span><b>${esc(t("muell.foto"))}</b>
         <input type="file" accept="image/*" capture="environment" data-f="muell-foto" class="versteckt"></label>
       ${w.typ === "gericht" ? `<button type="button" class="karte formkachel personalkachel ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="kachelsym">${sym(w.personal ? "check" : "chef-hat")}</span><b>${esc(t("muell1.personalessen"))}</b></button>` : ""}
     </div>
