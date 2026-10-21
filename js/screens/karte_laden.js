@@ -35,8 +35,25 @@ export function karteLadenView(stand) {
   if (filter === "billig" && !billig) filter = "alle";
   const sicht = filter === "billig" ? liste.filter(zuBillig) : liste;
   const zeig = alle ? sicht : sicht.slice(0, ERSTE);
-  const kachel = (x) => `<button type="button" class="karte kl-gericht ${x.z.ampel === "rot" ? "rotrand" : ""}" data-a="kl-auf" data-id="${esc(x.g.id)}">
-      ${gerichtBild(x.g)}<span class="kl-gt"><span class="kl-gn">${esc(x.g.name)}</span><span class="kl-gp"><b>${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}</b><i class="kl-punkt ${PUNKT[x.z.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + x.z.ampel))}"></i></span></span></button>`;
+  // Facelift 1.0: das eigentliche Versprechen direkt sichtbar – was nach ALLEN Kosten je Portion bleibt.
+  // Gewinn, Quote und Ampel stammen vollständig aus engine.preisAmpel, niemals aus eigenem Bildschirm-Rechnen.
+  // Grau bleibt grau, wenn die Kalkulationsgrundlage fehlt; fremde Schätzwerte werden mit ≈ markiert.
+  const unsicher = kalkulation(stand).geschaetzt;
+  const kachel = (x) => {
+    const a = preisAmpel(x.z, x.z.preisBrutto);
+    const valid = a.gewinn !== null && a.quote !== null;
+    const unscharf = unsicher || x.z.warenGeschaetzt || x.z.warenRichtpreis;
+    const betrag = valid ? `${unscharf ? "≈ " : ""}${fmtEuro(a.gewinn, { dezimal: 2 })}` : "–";
+    const prozent = valid ? `${unscharf ? "≈ " : ""}${fmtZahl(Math.round(a.quote * 100), 0)} %` : "–";
+    const breitenProzent = valid ? Math.max(0, Math.min(100, Math.round(a.quote * 100))) : 0; // nur Balkenbreite für die Anzeige
+    return `<button type="button" class="karte kl-gericht a-${a.ampel} ${a.ampel === "rot" ? "rotrand" : ""}" data-a="kl-auf" data-id="${esc(x.g.id)}" aria-label="${esc(x.g.name)}, ${esc(t("kartelaeden.preis"))} ${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}, ${esc(t("kartelaeden.bleibt"))} ${betrag}, ${prozent}, ${esc(t("kartelaeden.ampel." + a.ampel))}">
+      ${gerichtBild(x.g)}<span class="kl-gt">
+        <span class="kl-gn">${esc(x.g.name)}</span>
+        <span class="kl-gp"><b>${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}</b><i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></span>
+        <span class="kl-nutzen ${valid ? "hat-wert" : "ohne-wert"}"><b>${betrag}</b><small>${prozent}</small></span>
+        <span class="kl-nutzen-balken a-${a.ampel}" aria-hidden="true"><i style="width:${breitenProzent}%"></i></span>
+      </span></button>`;
+  };
   return `
     <div class="inhalt kartelaeden">
       <div class="kl-kopf"><h1>${esc(t("kartelaeden.titel"))}</h1><small>${esc(t("kartelaeden.anzahl", liste.length))}</small></div>
