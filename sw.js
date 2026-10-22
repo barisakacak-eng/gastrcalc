@@ -1,7 +1,7 @@
 // Service Worker: alle App-Dateien einer Fassung werden in EINEN Cache mit Fassungsnamen gelegt – ganz oder gar nicht.
 // Die Seite liest nur aus dem Cache ihrer eigenen Fassung, nie gemischt. Eine neue Fassung wartet, bis die Seite sie
 // ausdrücklich übernimmt (Hinweis auf der Startseite), dann genau ein Neuladen. (Vorprüfung Gremium, Posten 1.)
-const V = "2026-10-22.07";
+const V = "2026-10-22.08";
 const NAME = "gc-" + V;
 // Fremdbausteine (Texterkennung ~9 MB, PDF-Leser ~1,4 MB) werden nicht bei jeder Fassung neu geladen, sondern beim ersten
 // Gebrauch in einen eigenen, fassungsunabhängigen Cache gelegt – danach offline verfügbar. Neuer Name nur bei neuen Bausteinen.
