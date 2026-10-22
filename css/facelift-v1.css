@@ -745,3 +745,17 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   overflow-wrap:break-word;
   word-break:normal;
 }
+
+/* Sanji · Pilot-Bildwelt 22.10.2026: echte Premium-WebP für beide Ladenarten */
+.heute-laden.pilot-doener .karte.h-ziel.h-ziel-kurs{
+  background-image:
+    linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
+    linear-gradient(90deg,rgba(19,40,27,.93) 0%,rgba(19,40,27,.70) 42%,rgba(19,40,27,.14) 100%),
+    url("../foto/g-doener.webp");
+}
+.heute-laden.pilot-burger .karte.h-ziel.h-ziel-kurs{
+  background-image:
+    linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
+    linear-gradient(90deg,rgba(19,40,27,.93) 0%,rgba(19,40,27,.66) 42%,rgba(19,40,27,.10) 100%),
+    url("../foto/g-burger.webp");
+}
