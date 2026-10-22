@@ -36,6 +36,9 @@ export function abschlussView(stand) {
 function bilanzView(stand, H) {
   const b = tagesBilanz(stand, H, kalendertag()); // Trennung 2 (17.10.2026): alle Zahlen aus js/laden_zahlen.js, hier nur Texte
   const { z, vor, nach, besser, netto, bleibt, rundgaenge, restTage } = b; const u = b.umsatz;
+  // Facelift: dieselbe Zahl verständlich zeigen – negativer Zähler ist noch zu deckender Betrag, KEIN Verlust.
+  const zielLabel = nach < 0 ? t("heute.bisNullFehlen") : t("heute.ueberNull");
+  const zielWert = `${nach >= 0 ? "+ " : ""}${fmtEuro(Math.abs(nach))}`;
   const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert }; const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen };
   const tag = t("abschluss.tage." + b.vergleich.wochentag);
   const v = b.vergleich;
@@ -46,8 +49,8 @@ function bilanzView(stand, H) {
     <div class="kopfband ab-kopf ab-ergebnis-kopf"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
     <div class="inhalt ab-bilanz">
       <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">
-        <small class="lbl">${esc(t("abschluss.zaehlerHeute"))}</small>
-        <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil" aria-hidden="true">→</span><span class="riesig">${nach >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(nach))}</span></span>
+        <small class="lbl">${esc(zielLabel)}</small>
+        <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil" aria-hidden="true">→</span><span class="riesig">${zielWert}</span></span>
         <small class="ab-verlauf ${besser >= 0 ? "positiv" : "negativ"}">${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
         <small class="fein">${esc(t("cockpit.kalkulatorisch"))}</small>
       </div>
