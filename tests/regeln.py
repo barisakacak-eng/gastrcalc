@@ -11,7 +11,7 @@ Schreibt tests/regeln_stand.json und eine Zusammenfassung auf die Konsole. Bekan
 Start: python3 tests/regeln.py   (Webserver Port 8797; REGELN_OUT setzt den Ordner für Bilder)"""
 import asyncio, json, os, pathlib, re, subprocess, sys, time
 from playwright.async_api import async_playwright
-import nav_hilfe, schnellstart
+import nav_hilfe, schnellstart, pilot_karten_browser
 
 APP = schnellstart.APP
 TESTS = APP / "tests"
@@ -201,6 +201,7 @@ def main():
                 b = await p.chromium.launch()
                 for breite, hoehe in VIEWPORTS:
                     s, f = await lauf(b, breite, hoehe, fehler); stand[f"{breite}x{hoehe}"] = s; befunde.extend(f)
+                await pilot_karten_browser.run(b, PORT, OUT)
                 await b.close()
         asyncio.run(alles())
     finally:
