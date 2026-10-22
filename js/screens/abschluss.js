@@ -54,9 +54,12 @@ function bilanzView(stand, H) {
       <div class="karte ab-zahlen">
         <div class="summenzeile"><span>${esc(t("abschluss.umsatzNetto"))}</span><span class="wert">${u ? fmtEuro(netto) : "–"}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.bleibt"))}</span><span class="wert">${u ? fmtEuro(bleibt) : "–"}</span></div>
+        <details class="ab-details">
+          <summary>${esc(t("start.mehr"))}<span aria-hidden="true">⌄</span></summary>
         <div class="summenzeile"><span>${esc(t("abschluss.fixTag"))}</span><span class="wert">− ${fmtEuro(z.tageskosten)}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.tonne"))}</span><span class="wert rot">${sw.anzahl ? "− " + fmtEuro(sw.muellwert, { dezimal: 2 }) : "–"}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.kuehl"))}</span><span class="wert ${ks.eingerichtet && ks.heuteGemessen >= ks.stellen ? "gruen" : ""}">${ks.eingerichtet ? `${ks.heuteGemessen}/${ks.stellen} · ${esc(t("abschluss.rundgaenge", rundgaenge))}` : "–"}</span></div>
+        </details>
       </div>
       <div class="jetzt still ab-vergleich ${v.art}"><span><b>${esc(vergleich)}</b>${tonne ? `<small>${esc(tonne)}</small>` : ""}</span></div>
       <button type="button" class="knopf glut ab-zurueck" data-a="nav" data-wert="start">${esc(t("abschluss.zumCockpit"))}</button>
