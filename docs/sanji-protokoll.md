@@ -85,3 +85,20 @@ Keine.
 - **Offline:** `sw.js` mit aktualisiertem Hash für alle zwölf WebP-Dateien; `tools/sw_liste.py` wurde so geschützt, dass bei künftigen Regenerationen die lokale DM-Serif-TTF nicht wieder aus der Offline-Dateiliste verschwindet.
 - **Tests:** `tests/pilotbilder.test.mjs` sichert Zuordnungen, `tests/heute.test.mjs` sichert die Ladenart des Hero-Bilds. Der endgültige CI-Stand wird im PR dokumentiert, keine Tests der Rechenlogik abgeschwächt. `main`/Live unverändert, kein Go.
 - **Effizienz:** Keine Zwischenkonzeptgrafik, keine neue Bildtafelfassung, nur direkt nutzbare Bilddateien im Branch. Zoro erhält bis Freitag keine Nachricht.
+
+
+## 22.10.2026 – Paket 9: echte Müllstation + Premium-Karte
+
+**Freigabegrundlage:** B = klare, warme Premium-Bildwelt für die Schicht; C = geordnete Büro-/Einstellungsebene. Nicht zurück zu alten Motiven.
+
+**Direkt umgesetzt (PR #5, Branch `sanji/facelift-1-0-integration`):**
+- L2 Müllstation als echte Vollbildansicht mit 5 häufigen Waren + Andere, dem vorhandenen Müll-Rechenkern, Tipp, Mengenblatt und Rückgängig. Kein Euro/keine Leiste, „— kg“ ist absichtlich nicht aktiv.
+- In `js/screens/muell.js` und `css/facelift-v1.css` bestehende Premium-Fotoauswahl wiederverwendet. Station kein getrennter Datenbestand.
+- L5 Karte: größere lokale Gerichts-Fotos, echte Marge/Restbetrag aus Rechenkern, keine neuen Kennzahlen.
+- Nach echtem Browservergleich wurden doppelte Ellipsen auf dem Mengenknopf beseitigt. Screenshot im Sanji-Chat `Sanji_2026-10-22_Muellstation_Facelift_Live.png`, 390 × 844 Browsergröße (exportiert mit 2× Gerätedichte).
+- Tests `tests/muellstation.test.mjs` und Browser-Prüflauf `tests/regeln.py` ergänzt. Fassung 2026-10-22.07, Offline-Dateifingerabdruck `ef01d59c0531`.
+- 635 bestandene Node-Tests, drei alte fachliche Tests noch rot. **Nicht nach main mergen**, bis sie geklärt sind und der Kapitän ausdrücklich freigibt.
+
+**Versprechen-Abgleich:** L2 Müllstation → weniger Lebensmittel wegwerfen: teilweise (Erfassung, keine belegte Ersparnis); L5 Karte → erkennen, welches Gericht Geld bringt: ja bei vollständig belegten Kalkulationswerten, sonst graue/ungefähre Anzeige. Keine Steuerintegration ohne Franky.
+
+**Offen:** Mit Pilotdaten befüllte Premium-Gerichtskarten als realen Browser-Screenshot abnehmen; aktuelle Browser-Testkarte hat noch keine Gerichte. Zoro bekommt vor Freitag keine einzelne Nachricht.
