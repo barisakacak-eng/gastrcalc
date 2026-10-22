@@ -123,3 +123,12 @@ Keine.
 - Fassung `2026-10-22.10`, Offline-Dateifingerabdruck `d13c2839c5bb` aus Node-Lauf, temporärer Test entfernt. 635 Node-Tests bestanden, drei alte Fachtests rot; zusätzlicher SW-Hash-Fehler der Zwischenfassung mit oben stehendem Hash behoben (Final-Head-Test muss noch laufen).
 - Versprechen-Abgleich: L6 dient dem Versprechen (1) und zeigt die tägliche Zählerbewegung. **Teilweise**, weil Umsatzentwicklung/Schätzgrundlagen nicht mit sicherem Profit gleichgesetzt werden dürfen; Disclaimer auf dem Screen sichtbar.
 - Keine neue ZIP, keine Meldung an Zoro vor Freitag, `main` unverändert, kein Merge ohne Go und grüne Checks.
+
+
+## 22.10.2026 – L6: positiver Abstand bis null
+
+- Keine Doppelarbeit: L6 Premium-Abschluss war bereits im Facelift-Branch fertig. Sanji hat die vorher nur optional gezeigte letzte Bilanzfassung direkt im echten Browser bei 390/360 überprüft.
+- **Fachlich fair und psychologisch klar:** Der negative Monats-Zähler ist kein automatisch verdientes Minus. `js/screens/abschluss.js` zeigt nun bei negativem Stand `heute.bisNullFehlen` und den **Betrag ohne Minus**; über null `heute.ueberNull` mit Plus. `vor` und `nach` stammen unverändert aus `tagesBilanz()`, keine Rechenregel geändert. Kalkulatorisch-Disclaimer bleibt.
+- `tests/abschluss_browser.py` prüft explizit das neue Label und dass „noch zu deckender Betrag“ nicht negativ als Hauptzahl erscheint. Der Screenshot erhält außerhalb der App ein klares Beispiel-Datenetikett; die Testwerte sind künstlich.
+- **Stand vor Abschlussprüfung:** Fassung `2026-10-22.11`, laufender GitHub-Prüflauf [39778035649](https://github.com/barisakacak-eng/gastrcalc/actions/runs/39778035649). Der einmalige L6-Test ist dafür aktiviert und muss nach der Abnahme wieder optional werden. Die Offline-Prüfsumme ist nach CSS/JS-Korrekturen anhand der tatsächlich gelisteten Dateien neu einzutragen.
+- Versprechen 1: Abstand zur Kostendeckung auf einen Blick **ja**; echte Gewinnaussage **teilweise**, weil einige Kosten modelliert/geschätzt bleiben. Eine einzige Haupthandlung, weiterhin ohne Steuer-/Franky-Automatik. Kein Merge und keine zusätzliche ZIP.
