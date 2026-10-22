@@ -23,8 +23,12 @@ import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.20
 export function startView(stand, extra = {}) {
   const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand); // Kühl-Kachel bleibt am Kalendertag (kuehlStatus intern)
   const dran = jetztDran(stand, extra.wurzel, { jetzt: extra.jetzt || new Date() });
+  // Nur die Bildwelt folgt der echten Ladenart: Döner und Smash Burger sind beide Pilotbetriebe.
+  const burgerPilot = stand.ladenArt === "imbiss" ||
+    (stand.ladenArt !== "doener" && Array.isArray(stand.betrieb?.kuechen) && stand.betrieb.kuechen.includes("burger"));
+
   return `
-    <div class="inhalt cockpit heute-laden">
+    <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"}">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
       ${KUPFERLINIE}
