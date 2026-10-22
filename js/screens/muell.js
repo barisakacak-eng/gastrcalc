@@ -73,8 +73,9 @@ function toastHtml() {
 
 export function muellView(stand) {
   const D = tagGewaehlt(); const nach = D !== heute(); const pers = personalAktiv();
-  const oben = pers ? personalLeiste(true) : "";
-  const unten = pers ? "" : nav("muell", { schnell: false });
+  const stationDetail = ansicht === "eingabe" && rueckkehr === "station";
+  const oben = pers && !stationDetail ? personalLeiste(true) : "";
+  const unten = pers || stationDetail ? "" : nav("muell", { schnell: false });
   if (ansicht === "station") return stationView(stand, D);
   if (ansicht === "eingabe") return oben + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog">${eingabeView(stand, D)}</div>` : "") + unten;
   return oben + rasterView(stand, D, nach) + unten;
@@ -195,10 +196,10 @@ function eingabeView(stand, D) {
 
 // ---------- Detail: Menge · Foto · Personalessen · ein Knopf (ohne Untertitel in drei Sprachen) ----------
 function formView(stand, D) {
-  const w = wahl; const pers = personalAktiv();
+  const w = wahl; const pers = personalAktiv(); const ohneEuro = pers || rueckkehr === "station";
   const { einheit, basis, ganze, wert, personalWert } = muellFormWerte(stand, w, D, { personal: pers }); // Trennung 2 (17.10.2026)
   const einheitText = w?.typ === "gericht" ? t("muell.teller") : einheitLabel(einheit);
-  return `<div class="inhalt muellform">
+  return `<div class="inhalt muellform ${rueckkehr === "station" ? "muell-station-detail" : ""}">
     <button type="button" class="karte auswahlkarte ${w ? "gewaehlt" : ""}" data-a="muell-auswahl">
       <span class="auswahlsym">${w && w.typ !== "eimer" ? bildFuer(stand, w) : sym(w?.typ === "eimer" ? "scale" : "trash-2", "gross")}</span>
       <span><b>${esc(w ? (w.typ === "eimer" ? t("muell.eimer") : zeigName(w)) : t("muell.auswaehlen"))}</b>${w ? `<small>${esc(t("muell.aendern"))}</small>` : ""}</span>${sym("chevron-right")}</button>
@@ -206,7 +207,7 @@ function formView(stand, D) {
       <div class="stepper gross"><button type="button" data-a="muell-d" data-d="-1" aria-label="−">−</button><div class="wert"><input inputmode="decimal" data-f="muell-menge" value="${esc(wertAnzeige(w.menge))}" aria-label="${esc(t("muell1.menge"))}"> <small>${esc(einheitText)}</small></div><button type="button" data-a="muell-d" data-d="1" aria-label="+">+</button></div>
       <div class="chips">${chipsFuer(w).map((c) => `<button type="button" class="chip ${w.menge === c ? "an" : ""}" data-a="muell-chip" data-wert="${c}">${esc(fmtZahl(c, c < 1 ? 1 : 0))} ${esc(w.typ === "gericht" ? "" : einheitLabel(einheit))}</button>`).join("")}${ganze ? `<button type="button" class="chip" data-a="muell-chip" data-wert="${ganze}">${esc(t("muell.ganzePackung"))}</button>` : ""}</div>
       ${w.typ === "artikel" && (basis === "g" || basis === "ml") ? `<div class="periode">${(basis === "g" ? ["g", "kg"] : ["ml", "l"]).map((e) => `<button type="button" class="${w.einheit === e ? "an" : ""}" data-a="muell-einheit" data-wert="${e}">${esc(einheitLabel(e))}</button>`).join("")}</div>` : ""}
-      ${pers ? "" : `<p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : `<span class="leise-text">${esc(t("tag.keinPreis"))}</span>`) : ""}</p>`}
+      ${ohneEuro ? "" : `<p class="muellwert">${w.menge > 0 ? (personalWert !== null ? esc(t("muell.personalWert", fmtEuro(personalWert, { dezimal: 2 }))) : wert !== null ? esc(t("muell.inDerTonne", fmtEuro(wert, { dezimal: 2 }))) : `<span class="leise-text">${esc(t("tag.keinPreis"))}</span>`) : ""}</p>`}
     </div>
     <div class="zweier formkacheln">
       <label class="karte formkachel fotokachel-muell ${foto ? "an" : ""}"><span class="kachelsym">${sym(foto ? "check" : "camera")}</span><b>${esc(foto ? t("muell.fotoDabei") : t("muell.foto"))}</b>
