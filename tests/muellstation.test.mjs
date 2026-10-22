@@ -35,6 +35,10 @@ test("Station nutzt exakt dieselben Müll-Einträge und kehrt nach Mengenblatt z
   assert.match(muellView(s), /muelltoast/);
   assert.equal(muellAktion("muell-detail",k,s),true);
   assert.equal(muellAnsicht(),"eingabe");
+  const detail=muellView(s);
+  assert.match(detail, /muell-station-detail/);
+  assert.doesNotMatch(detail, /€|\\bEUR\\b/);
+  assert.doesNotMatch(detail, /class="tableiste"/);
   assert.equal(muellAktion("muell-start",{},s),true);
   assert.equal(muellAnsicht(),"station");
   assert.equal(muellZurueck(),true);
