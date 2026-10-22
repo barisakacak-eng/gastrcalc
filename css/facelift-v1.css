@@ -759,3 +759,226 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
     linear-gradient(90deg,rgba(19,40,27,.93) 0%,rgba(19,40,27,.66) 42%,rgba(19,40,27,.10) 100%),
     url("../foto/g-burger.webp");
 }
+
+/* Paket 9: Premium-Bildwelt in L2 Station und L5 Gerichtskarten. */
+/* Vollbild für einen fest montierten Touchscreen über dem Mülleimer.
+   Echte Artikelbilder/Mengen, Personalansicht ohne Euro, deaktivierte Waage. */
+.schirm:has(> .muell-station){background:var(--gc-cream);min-height:100dvh}
+.inhalt.muell-station{
+  position:fixed;
+  inset:0;
+  box-sizing:border-box;
+  z-index:60;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  width:100%;
+  max-width:none;
+  max-height:100dvh;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(22px + env(safe-area-inset-bottom,0px));
+  background:radial-gradient(ellipse 450px 320px at 85% -2%,rgba(76,107,85,.14),transparent 80%),var(--gc-cream);
+  color:var(--gc-text);
+}
+.muell-station-kopf{
+  display:grid;
+  grid-template-columns:56px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  min-height:72px;
+}
+.muell-station-kopf h1{
+  margin:0;
+  font:400 clamp(1.65rem,7vw,2.3rem)/1.04 var(--gc-display);
+  letter-spacing:-.02em;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.muell-station-zu{
+  width:56px;height:56px;
+  display:grid;place-items:center;
+  border:1px solid var(--gc-line);
+  border-radius:17px;
+  color:var(--gc-deep);
+  background:var(--gc-white);
+  box-shadow:var(--gc-shadow);
+}
+.muell-station-zu .sym{width:26px;height:26px}
+.muell-station-waage{
+  display:grid;
+  gap:1px;
+  justify-items:end;
+  padding:8px 11px;
+  border:1px solid var(--gc-line);
+  border-radius:15px;
+  background:var(--gc-white);
+  color:var(--gc-muted);
+}
+.muell-station-waage strong{
+  font:800 1.42rem/1.16 var(--gc-ui);
+  letter-spacing:-.03em;
+  color:var(--gc-muted);
+  white-space:nowrap;
+}
+.muell-station-waage small{font:.75rem/1.2 var(--gc-ui);white-space:nowrap}
+.muell-station-raster{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-content:start;
+  gap:13px!important;
+  padding-bottom:8px;
+}
+.muell-station-raster .ware{
+  min-width:0;
+  overflow:hidden;
+  border-radius:19px!important;
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  box-shadow:var(--gc-shadow);
+}
+.muell-station-raster .ware-tipp{min-height:174px}
+.muell-station-raster .ware .gerichtbild.mini{
+  width:100%;height:auto;
+  aspect-ratio:5/3!important;
+  padding:0;
+  object-fit:cover;
+  background:var(--gc-green-light);
+}
+.muell-station-raster .ware .gerichtbild.mini.pikto{object-fit:contain;padding:13px}
+.muell-station-raster .ware .wt{
+  min-height:56px!important;
+  padding:9px 11px!important;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+.muell-station-raster .ware .wt b{
+  font:400 1.2rem/1.08 var(--gc-display)!important;
+  color:var(--gc-text);
+  overflow-wrap:anywhere;
+}
+.muell-station-raster .ware .wt small{
+  font:750 .875rem/1.18 var(--gc-ui)!important;
+  color:var(--gc-muted)
+}
+.muell-station-raster .ware .ware-mehr{
+  top:6px!important;right:5px!important;
+  width:48px!important;height:48px!important;
+}
+.muell-station-raster .ware .zaehler{
+  top:8px;left:8px;
+  padding:4px 10px;
+  background:var(--gc-white);
+  color:var(--gc-deep);
+  font-size:.875rem
+}
+.muell-station-raster .ware.andere{
+  min-height:174px;
+  border:2px dashed var(--gc-line);
+  background:var(--gc-paper);
+  box-shadow:none;
+  align-items:center;
+  justify-content:center;
+}
+.muell-station-raster .ware.andere b{font:400 1.2rem var(--gc-display)}
+.muell-station-raster .ware.andere .rund{width:56px;height:56px}
+.schirm:has(.muell-station) .muelltoast{
+  z-index:80;
+  bottom:calc(16px + env(safe-area-inset-bottom,0px));
+}
+/* Einziger zusätzlicher Weg vom normalen Müllbildschirm in die Vollbildstation. */
+.muellkopf1 .muell-station-start{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-width:83px;
+  height:56px;
+  padding:0 9px;
+  border:1px solid var(--gc-line);
+  border-radius:15px;
+  background:var(--gc-white);
+  color:var(--gc-deep);
+  box-shadow:var(--gc-shadow);
+  font:750 .8rem/1.2 var(--gc-ui);
+}
+.muell-station-start .sym{width:18px;height:18px;flex:none}
+/* Speisekarte: große echte Premium-Fotos, Margeninformation bewusst daneben.
+   Keine zweite CTA: Tippen öffnet wie bisher das Preis-Blatt. */
+.kartelaeden .kl-raster{gap:12px}
+.kartelaeden .kl-gericht{
+  display:grid;
+  grid-template-columns: minmax(110px,34%) minmax(0,1fr);
+  gap:0;
+  align-items:stretch;
+  min-height:145px;
+  padding:7px;
+  border-radius:22px;
+  overflow:hidden;
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  box-shadow:0 7px 20px rgba(81,54,28,.085);
+}
+.kartelaeden .kl-gericht .gerichtbild{
+  width:100%;
+  height:100%;
+  min-height:130px;
+  max-height:174px;
+  object-fit:cover;
+  object-position:center;
+  border:0;
+  border-radius:16px;
+  align-self:stretch;
+  margin:0;
+  background:var(--gc-tint);
+}
+.kartelaeden .kl-gericht .gerichtbild.pikto{
+  object-fit:contain;
+  padding:14px;
+  background:var(--gc-green-light);
+}
+.kartelaeden .kl-gt{
+  min-width:0;
+  padding:9px 9px 9px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-self:stretch;
+  gap:8px;
+}
+.kartelaeden .kl-gn{
+  font:400 1.25rem/1.11 var(--gc-display);
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+.kartelaeden .kl-gp{display:flex;align-items:center;justify-content:space-between;margin:0}
+.kartelaeden .kl-gp b{font:850 1.28rem/1.1 var(--gc-ui)}
+.kartelaeden .kl-nutzen{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:1px}
+.kartelaeden .kl-nutzen b{font-size:1rem;letter-spacing:-.02em}
+.kartelaeden .kl-nutzen small{font-size:.75rem}
+.kartelaeden .kl-nutzen-balken{height:5px;margin-top:0}
+.kartelaeden .kl-gericht.a-rot{border-color:rgba(170,60,50,.26)}
+.kartelaeden .kl-gericht:active{transform:scale(.993)}
+.kartelaeden .kl-gericht:focus-visible{outline:3px solid var(--gc-copper);outline-offset:2px}
+@media(max-width:375px){
+  .muellkopf1 .muell-station-start{min-width:64px;padding-inline:6px;font-size:.75rem}
+  .muell-station-kopf{gap:6px;grid-template-columns:56px minmax(0,1fr) auto}
+  .muell-station-kopf h1{font-size:1.48rem}
+  .muell-station-waage{padding:6px 8px}
+  .muell-station-waage strong{font-size:1.25rem}
+  .muell-station-raster{gap:8px!important}
+  .muell-station-raster .ware-tipp{min-height:158px}
+  .muell-station-raster .ware .wt{padding:6px 8px!important}
+  .muell-station-raster .ware .wt b{font-size:1.03rem!important}
+  .kartelaeden .kl-gericht{grid-template-columns:minmax(100px,33%) minmax(0,1fr);min-height:135px}
+  .kartelaeden .kl-gericht .gerichtbild{min-height:119px;max-height:155px}
+  .kartelaeden .kl-gt{padding:7px 5px 7px 9px;gap:6px}
+  .kartelaeden .kl-gn{font-size:1.125rem}
+  .kartelaeden .kl-gp b{font-size:1.08rem}
+  .kartelaeden .kl-nutzen b{font-size:.875rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .kartelaeden .kl-gericht,.muell-station-raster .ware{transition:none!important;animation:none!important}
+}
