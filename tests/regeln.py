@@ -201,7 +201,8 @@ def main():
                 b = await p.chromium.launch()
                 for breite, hoehe in VIEWPORTS:
                     s, f = await lauf(b, breite, hoehe, fehler); stand[f"{breite}x{hoehe}"] = s; befunde.extend(f)
-                await pilot_karten_browser.run(b, PORT, OUT)
+                if os.environ.get("SANJI_PILOT_BILDER") == "1":
+                    await pilot_karten_browser.run(b, PORT, OUT)
                 await b.close()
         asyncio.run(alles())
     finally:
