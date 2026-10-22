@@ -24,7 +24,13 @@ export function fotoName(g) {
   // Ein altes Foto namens "Döner Kebab" zeigt in Wirklichkeit einen Wrap/Dürüm.
   // Türkischer Döner im Brot erhält daher immer das fachlich richtige Brot-Motiv.
   const nameFoto = "g-" + fotoSlug(g.name);
-  const kandidaten = [nameFoto === "g-doener-kebab" ? "g-doener" : nameFoto]; // 17.10.2026: Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
+  const pilotGericht = [
+    [/dopp(?:el|le).*smash|double.*smash/i, "g-double-smash-burger"],
+    [/cheese.?burger/i, "g-cheeseburger"],
+    [/burger.*men[üu]/i, "g-burger-menue"]
+  ].find(([re]) => re.test(g.name || ""));
+  const kandidaten = [...(pilotGericht ? [pilotGericht[1]] : []),
+    nameFoto === "g-doener-kebab" ? "g-doener" : nameFoto]; // 17.10.2026: Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
   if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk|^d-/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
   if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   if (f) kandidaten.push(FOTO[f] || "g-" + f);
@@ -73,9 +79,9 @@ export function wareBildQuelle(x) {
   if (FOTOS.has(eigen)) return { foto: eigen };
   // PILOTBURGER: ein sachlich falsches Foto ist schlechter als ein klares Piktogramm.
   // Cheddar sind Scheiben (nicht geriebener Pizzakäse); Burgersoße ist keine Ketchup-/Mayoflasche.
-  if (/cheddar/i.test(x.name || "")) return { pikto: "r-cheddar" };
-  if (/burger\s*so(ß|ss)e|burger\s*sauce|burgersauce|burgerdressing/i.test(x.name || "")) return { pikto: "r-sauce" };
-  if (/pickles|essig\s*gurken|gewürz\s*gurken/i.test(x.name || "")) return { pikto: "r-pickles" };
+  if (/cheddar/i.test(x.name || "")) return FOTOS.has("r-cheddar") ? { foto: "r-cheddar" } : { pikto: "r-cheddar" };
+  if (/burger\s*so(ß|ss)e|burger\s*sauce|burgersauce|burgerdressing/i.test(x.name || "")) return FOTOS.has("r-burgersauce") ? { foto: "r-burgersauce" } : { pikto: "r-sauce" };
+  if (/pickles|essig\s*gurken|gewürz\s*gurken/i.test(x.name || "")) return FOTOS.has("r-pickles") ? { foto: "r-pickles" } : { pikto: "r-pickles" };
   if (x.gruppe === "getraenk") return { foto: (GETRAENK.find(([re, n]) => re.test(x.name) && FOTOS.has(n)) || [])[1] || "g-getraenk" };
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
   const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
