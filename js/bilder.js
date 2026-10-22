@@ -25,6 +25,8 @@ export function fotoName(g) {
   // Türkischer Döner im Brot erhält daher immer das fachlich richtige Brot-Motiv.
   const nameFoto = "g-" + fotoSlug(g.name);
   const pilotGericht = [
+    [/d[öo]ner[ -]?teller/i, "g-doener-teller"],
+    [/d[öo]ner[ -]?box/i, "g-doener-box"],
     [/dopp(?:el|le).*smash|double.*smash/i, "g-double-smash-burger"],
     [/cheese.?burger/i, "g-cheeseburger"],
     [/smash.?burger/i, "g-burger"],
