@@ -50,13 +50,13 @@ const zeigName = (x) => (x && x.typ === "artikel" ? artikelText(x.name) : x?.nam
 const bildFuer = (stand, x) => (x.typ === "gericht" ? thumb(stand, x.id) : wareBild(x));
 
 // ---------- Foto-Raster ----------
-function kachelHtml(stand, x, zaehl, frisch) {
+function kachelHtml(stand, x, zaehl, frisch, station = false) {
   const m = standardMenge(stand, x); const k = muellSchluessel(x); const n = zaehl[k] || 0;
   const daten = `data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}"`;
   return `<div class="karte ware ${frisch === k ? "frisch" : ""}" data-k="${esc(k)}">
     <button type="button" class="ware-tipp" data-a="muell-tipp" ${daten} aria-label="${esc(zeigName(x))} · ${esc(mengeText(m.menge, m.einheit))}">${bildFuer(stand, x)}<span class="wt"><b>${esc(zeigName(x))}</b><small class="muell-ueblich">${esc(mengeText(m.menge, m.einheit))}</small></span></button>
     ${n ? `<span class="zaehler zahl">${n}×</span>` : ""}${frisch === k ? `<span class="haken">${sym("check")}</span>` : ""}
-    <button type="button" class="ware-mehr" data-a="muell-detail" ${daten} aria-label="${esc(t("muell1.menge"))}">…</button>
+    <button type="button" class="ware-mehr" data-a="muell-detail" ${daten} aria-label="${esc(t("muell1.menge"))}">${station ? "" : "…"}</button>
   </div>`;
 }
 // Laden-Umbau (20.10.2026): Kopf als rote Summenleiste „Müll heute · x €“ (an einem Vortag: „Müll · TT.MM.“)
@@ -107,7 +107,7 @@ function stationView(stand, D) {
       <div class="muell-station-waage" aria-disabled="true" aria-label="— kg"><strong>— kg</strong></div>
     </div>
     <div class="muellraster muell-station-raster">
-      ${waren.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
+      ${waren.map((x) => kachelHtml(stand, x, zaehl, frisch, true)).join("")}
       <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>
     </div>
   </div>${toastHtml()}`;
@@ -119,7 +119,7 @@ export function muellTippZeigen(root, stand) {
   const raster = root.querySelector(".muellraster"); if (!raster) return false;
   for (const alt of raster.querySelectorAll(".ware.frisch")) { alt.classList.remove("frisch"); alt.querySelector(".haken")?.remove(); }
   const ziel = zuletzt ? raster.querySelector(`.ware[data-k="${CSS.escape(zuletzt.schluessel)}"]`) : null;
-  if (ziel) { const x = kachelDaten(ziel.querySelector("[data-a='muell-tipp']"), stand); if (x) ziel.outerHTML = kachelHtml(stand, x, zaehl, zuletzt.schluessel); }
+  if (ziel) { const x = kachelDaten(ziel.querySelector("[data-a='muell-tipp']"), stand); if (x) ziel.outerHTML = kachelHtml(stand, x, zaehl, zuletzt.schluessel, ansicht === "station"); }
   const p = root.querySelector("#muell-heute"); if (p) p.outerHTML = pilleHtml(stand, D);
   root.querySelector(".muelltoast")?.remove();
   const html = toastHtml(); if (html) raster.closest(".inhalt").insertAdjacentHTML("afterend", html);
@@ -130,7 +130,7 @@ export function muellTippZeigen(root, stand) {
 // Rückgängig aus dem Hinweis: stornieren, Kachel und Zahl auffrischen
 export function muellZurueckZeigen(root, stand) {
   const raster = root.querySelector(".muellraster"); const D = tagGewaehlt(); const zaehl = tippsHeute(stand, D);
-  if (raster) for (const w of raster.querySelectorAll(".ware[data-k]")) { if (!w.classList.contains("frisch") && !w.querySelector(".zaehler")) continue; const x = kachelDaten(w.querySelector("[data-a='muell-tipp']"), stand); if (x) w.outerHTML = kachelHtml(stand, x, zaehl, null); }
+  if (raster) for (const w of raster.querySelectorAll(".ware[data-k]")) { if (!w.classList.contains("frisch") && !w.querySelector(".zaehler")) continue; const x = kachelDaten(w.querySelector("[data-a='muell-tipp']"), stand); if (x) w.outerHTML = kachelHtml(stand, x, zaehl, null, ansicht === "station"); }
   const p = root.querySelector("#muell-heute"); if (p) p.outerHTML = pilleHtml(stand, D);
   root.querySelector(".muelltoast")?.remove();
 }
