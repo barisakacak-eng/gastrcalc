@@ -37,6 +37,20 @@ async def run(browser, port, out):
                 assert details["breite"]<=width,(art,width,"Querscroll",details["breite"])
                 assert len(details["waren"])==4,(art,"nicht vier",details["waren"])
                 assert all(x["geladen"] and x["gewinn"] and not x["zuBreit"] for x in details["waren"]),details
+                erwartet = {
+                  "Döner im Brot":"g-doener.webp",
+                  "Dönerteller":"g-doener-teller.webp",
+                  "Dürüm":"g-duerum.webp",
+                  "Döner Box":"g-doener-box.webp",
+                  "Smash Burger":"g-burger.webp",
+                  "Cheeseburger":"g-cheeseburger.webp",
+                  "Doppel-Smash-Burger":"g-double-smash-burger.webp",
+                  "Burger Menü":"g-burger-menue.webp"
+                }
+                for x in details["waren"]:
+                    assert x["bild"] == "foto/" + erwartet[x["name"]], (art, x)
+                    assert x["gewinn"] != "–", (art, x)
+
                 print("SANJI_PILOTKARTE",art,width,details)
                 await page.screenshot(path=str(out/f"pilot_karte_{art}_{width}x{height}.png"),full_page=False)
     finally:
