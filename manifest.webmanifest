@@ -1,16 +1,30 @@
 {
-  "name": "GastroCalc",
-  "short_name": "GastroCalc",
+  "name": "GastroCash",
+  "short_name": "GastroCash",
   "description": "Kalkulation, Abfall und Hygienedokumentation für den Laden an der Ecke. Testfassung.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#FAFBF8",
-  "theme_color": "#0F3D2E",
+  "background_color": "#F5EDE2",
+  "theme_color": "#22301F",
   "lang": "de",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
