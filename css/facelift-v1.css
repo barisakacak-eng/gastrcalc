@@ -982,3 +982,20 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 @media(prefers-reduced-motion:reduce){
   .kartelaeden .kl-gericht,.muell-station-raster .ware{transition:none!important;animation:none!important}
 }
+
+/* Müllstation-Mengenblatt bleibt ein echtes Vollbild ohne Geldanzeige/Navigation. */
+.inhalt.muellform.muell-station-detail{
+  position:fixed;
+  inset:0;
+  box-sizing:border-box;
+  z-index:60;
+  width:100%;
+  max-width:none;
+  max-height:100dvh;
+  overflow-y:auto;
+  padding:calc(20px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px));
+  background:var(--gc-cream);
+}
+.muell-station-detail .muellhaupt{min-height:64px}
+.muell-station-detail .auswahlkarte{min-height:80px}
+.muell-station-detail .leise{min-height:56px}
