@@ -66,3 +66,12 @@ Keine.
 - **Werbepsychologie:** Das grüne Hero signalisiert Kontrolle, aber **niemals fiktive Einsparungen**. L2 vermittelt „Erfassen verhindert Blindflug“; L5 „was nach Kosten bleibt“; B1 „ich finde meine Unterlagen“. Zoros Nutzen-Schema und Frankys Steuerhinweise kommen später, nicht heute erfunden.
 - **Praxischeck:** echte Playwright-Browseraufnahme aus GitHub Actions, Handy 390x844 und 360x780. Ein Screenshot für den Kapitän, kein ständiges ZIP. Foto- und Piktogramm-Dateien sind lokal, keine Online-Dienste. Schrift DM Serif bereits OFL-lokal.
 - **Freitag:** Kein Direktauftrag an Zoro. PR-Files und dieser Protokollpunkt reichen als Sammelstand, nur finalen Teststatus/Fassung nach CI eintragen. Kein Merge auf `main` ohne Go.
+
+
+## 22.10.2026 – Pilotgalerie: reale Bildzuordnung korrigiert
+
+- **Direkte Umsetzung:** PR #5 im Branch `sanji/facelift-1-0-integration`. `js/data/fotos.js` aktiviert 5 vorhandene, visuell kontrollierte Pilotfotos: Burger-Bun, Vollkorn-Bun, Eisbergsalat, Salatgurke, Pide-Brot. Die 229 echten Bilder im Offlinekatalog sind nicht automatisch gleichbedeutend mit freigegebener Bildsprache; übrige Altbilder nicht blind freischalten.
+- **Motiv-Schutz:** `js/bilder.js` vermeidet Wrap-Foto für „Döner Kebab“; Burgerbun bekommt das passende Foto; Cheddar, Burgersoße und Pickles bekommen erkennbare SVG statt falscher Pizzakäse-/Flaschen-Fotos. `bilder/r-pickles.svg` ergänzt. `css/facelift-v1.css` nutzt für den Heute-Hero ein Döner-im-Brot-Foto, nicht den irreführend beschrifteten Dürüm.
+- **Tests:** `tests/pilotbilder.test.mjs` schützt Bildwahl und Existenz der lokalen Assets; der Offline-Fingerabdruck und Service Worker wurden angeglichen. **Keine Rechenlogik und keine neuen Kennzahlen.**
+- **Noch OFFEN:** Die vom Kapitän zuletzt bestätigten korrigierten Foto-Originalmotive für Döner, Teller und die Smash-Burger-Produkte sind bisher nicht als eigenständige WebP im GitHub-Branch enthalten. Die aktuellen vorhandenen Familienfotos sind nur ein fachlich passender Zwischenstand, nicht als 1:1-Übernahme der Referenz ausgeben. Dafür Ziel-Dateien `foto/g-doener.webp`, `foto/g-doener-teller.webp`, `foto/g-smash-burger.webp`, `foto/r-fladenbrot.webp` aus freigegebenen Einzelmotiven ersetzen/ergänzen; danach Bilddateien und `js/data/fotos.js`/`sw.js` prüfen. Keine weiteren Konzepttafeln.
+- **GitHub-Aufräumen:** `main` bleibt unverändert. Die neue Bild-UI wird nicht veröffentlicht, solange fachliche Tests rot sind; Zoro bekommt vor Freitag keinen Auftrag.
