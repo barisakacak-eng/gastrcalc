@@ -70,6 +70,10 @@ export function bueroView(stand, wurzel, extra = {}) {
     <div class="b-inhalt">
       ${erster ? `<div class="b-offen">${chip(erster)}${rest.length ? `<details class="b-offen-mehr"><summary class="b-chip b-mehr">+ ${rest.length}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}</div>` : ""}
       <div class="b-ordner">${kachel("amt", "shield-check", k.amt)}${kachel("steuer", "calculator", k.steuer)}${kachel("buch", "receipt", k.buch)}</div>
+      <div class="b-werkzeuge">
+        ${zeile({ aktion: "nav", wert: "einstellungen" }, "settings", t("buero.einrichten.einstellungen"), "")}
+        ${zeile({ aktion: "export" }, "download", t("buero.einrichten.sicherung"), "")}
+      </div>
       <div class="b-bereiche">
       ${bereich("geld", "trending-up", t("buero.abschnitt.geld"), t("buero.zahlen.monatUnter", monatName(H)), false, `
         ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("zaehler.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}
@@ -97,9 +101,8 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${zeile({ aktion: "nav", wert: "putzplan" }, "spray-can", t("buero.einrichten.putzplan"), "")}
         ${zeile({ aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" }, "calculator", t("buero.karte.kosten"), "")}
         ${zeile({ aktion: "nav", wert: "laeden" }, "store", t("buero.einrichten.laeden"), "")}
-        ${zeile({ aktion: "export" }, "download", t("buero.einrichten.sicherung"), "")}
         ${zeile({ aktion: "pin-setzen" }, "lock", t("buero.einrichten.code"), "", `<span class="b-wert ${codeAn ? "plus" : ""}">${esc(t(codeAn ? "buero.einrichten.codeAn" : "buero.einrichten.codeAus"))}</span>`)}
-        ${zeile({ aktion: "nav", wert: "einstellungen" }, "settings", t("buero.einrichten.einstellungen"), "")}`)}
+        `)}
       </div>
     </div></div>`;
 }

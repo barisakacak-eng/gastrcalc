@@ -1122,7 +1122,7 @@ export default {
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   heute: {
     zielLinie: "zero + target profit",
-    stufe: { bisNull: "Left to break even", bisZiel: "Left to target", ueberZiel: "Above target" },
+    stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },
     tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
     kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },
     ok: "OK", offenN: (n) => `${n} open`, jetztDran: "Up next",

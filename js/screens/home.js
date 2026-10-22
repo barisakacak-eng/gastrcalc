@@ -15,6 +15,7 @@ import { einrichtungStand } from "../einrichtung.js";
 import { sym } from "../symbole.js";
 import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
+import { bueroKopf } from "./buero.js";
 
 // Drei Ebenen (15.10.2026, Entwickler B): Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
@@ -51,11 +52,11 @@ function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
   // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
-  return `<button type="button" class="karte h-ziel h-ziel-kurs ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz">
+  return `<button type="button" class="karte h-ziel h-ziel-kurs ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
     <span class="h-zielkopf"><span>${esc(t("heute.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
-    ${w.tempo ? `<span class="h-tempo-zeile ${w.tempo.art}">${esc(w.tempo.text)}</span>` : ""}
+    ${m.geschaetzt && w.zahl !== null ? `<span class="h-schaetzung">${esc(t("allgemein.schaetzung"))}</span>` : ""}
     ${m.ziel === null ? `<span class="h-unter">${esc(t("heute.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
@@ -106,7 +107,7 @@ function heuteKachelnLaden(stand, ks, H) {
 }
 // Laden-Umbau (20.10.2026): „Jetzt dran“ ist die eine Haupthandlung – ein großer oranger Knopf (ohne eigenen „Los“-Knopf).
 function jetztKarte(d) {
-  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><small>${esc(t("heute.jetztDran"))}</small><b>${esc(d.titel)}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
+  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b>${esc(d.titel)}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
 }
 
 // Schmale Zeile auf anderen Seiten, solange ein offener Schritt die Seite betrifft
@@ -163,8 +164,11 @@ export function karteView(stand) {
 export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
   const m = monatsLast(stand); const q = warenQuote(stand); const st = umsatzSteuerSatz(stand);
   return `
+    <div class="buero b-einstellungen">
+    ${bueroKopf({ ziel: "buero", text: t("buero.titel") }, t("einstellungen.titel"))}
     <div class="kopfband"><h1>${esc(t("einstellungen.titel"))}</h1><div class="unter">${esc(t("einstellungen.fassung"))}${extra.fassung ? ` · ${esc(extra.fassung)}` : ""}</div></div>
-    <div class="inhalt">
+    <div class="inhalt einstellungen-inhalt">
+      <button type="button" class="knopf zweit b-sicherung-link" data-a="nav" data-wert="einstellungen" data-anker="sicherung">${sym("download")} ${esc(t("einstellungen.sicherung"))}</button>
       <div class="karte">
         ${[["karte", "start.karteTitel"], ["laeden", "laeden.titel"], ["listen", "listen.titel"], ["beleg", "beleg.belege"]].map(([a, k]) => `<button type="button" class="zeileknopf" data-a="nav" data-wert="${a}"><b>${esc(t(k))}</b><span class="pfeil">›</span></button>`).join("")}
       </div>
@@ -224,5 +228,5 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button>
       </div>
     </div>
-    ${nav("einstellungen")}`;
+    </div>`;
 }

@@ -6,7 +6,7 @@ on:
     paths-ignore: ["bruecke/**"]   # Briefkasten Zoro ⇄ Sanji: löst keine neue Veröffentlichung aus
   # 18.10.2026: Vorschläge von Gemini/Jules kommen als Pull Request – Tests laufen mit, veröffentlicht wird nur von main
   pull_request:
-    branches: [main]
+    branches: [main, sanji/facelift-1-0-integration]
   workflow_dispatch:
 permissions:
   contents: read
@@ -49,6 +49,9 @@ jobs:
           echo "SANJI Bildschirm-Diagnose:"
           tail -110 regeln.txt
           exit 1
+      - name: Beide Piloten, Sprachen, Sicherung und Offline
+        if: github.event_name == 'pull_request' && github.base_ref == 'sanji/facelift-1-0-integration'
+        run: python tests/work_integration_browser.py
       # Facelift-Abnahme: echte Browser-Aufnahmen der App statt KI-Mockups.
       # Nur Pull Requests: kein Einfluss auf den Live-Deploy.
       - name: Facelift Browser-Screenshots vorbereiten
@@ -74,7 +77,7 @@ jobs:
           exit 1
   deploy:
     needs: [test, regeln]
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
