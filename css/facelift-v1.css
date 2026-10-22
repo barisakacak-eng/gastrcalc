@@ -1190,3 +1190,38 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 @media(prefers-reduced-motion:reduce){
  .abschluss-laden .ab-zeile{transition:none!important}
 }
+
+/* Paket 11.1: Details nur bei Bedarf, Hauptknopf auf dem ersten Bildschirm. */
+.ab-bilanz .ab-zahlen .ab-details{
+  margin:0;
+  padding:0;
+  border-top:1px solid var(--gc-line);
+}
+.ab-bilanz .ab-details summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:49px;
+  padding:11px 1px;
+  cursor:pointer;
+  color:var(--gc-deep);
+  font:800 .875rem/1.25 var(--gc-ui);
+  list-style:none;
+}
+.ab-bilanz .ab-details summary::-webkit-details-marker{display:none}
+.ab-bilanz .ab-details summary span{font-size:1.5rem;line-height:1;transition:transform .15s}
+.ab-bilanz .ab-details[open] summary span{transform:rotate(180deg)}
+.ab-bilanz .ab-details summary:focus-visible{outline:3px solid var(--gc-copper);outline-offset:3px}
+.ab-bilanz .ab-details .summenzeile:last-child{border-bottom:0}
+.ab-bilanz .ab-hero{min-height:190px;gap:7px;padding-block:18px}
+.ab-bilanz .ab-hero .ab-verlauf{padding:6px 9px;font-size:.7875rem}
+.ab-bilanz .ab-zahlen .summenzeile{min-height:43px;padding:7px 0}
+.ab-bilanz .ab-vergleich{padding:11px 12px}
+.ab-bilanz{gap:10px!important}
+@media(max-width:375px){
+  .ab-bilanz .ab-hero{min-height:177px}
+  .ab-bilanz .ab-details summary{min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ab-bilanz .ab-details summary span{transition:none!important}
+}
