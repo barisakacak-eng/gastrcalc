@@ -37,7 +37,7 @@ function bilanzView(stand, H) {
   const b = tagesBilanz(stand, H, kalendertag()); // Trennung 2 (17.10.2026): alle Zahlen aus js/laden_zahlen.js, hier nur Texte
   const { z, vor, nach, besser, netto, bleibt, rundgaenge, restTage } = b; const u = b.umsatz;
   // Facelift: dieselbe Zahl verständlich zeigen – negativer Zähler ist noch zu deckender Betrag, KEIN Verlust.
-  const zielLabel = nach < 0 ? t("heute.bisNullFehlen") : t("heute.ueberNull");
+  const zielLabel = nach < 0 ? t("cockpit.bisNullFehlen") : t("cockpit.ueberNull");
   const zielWert = `${nach >= 0 ? "+ " : ""}${fmtEuro(Math.abs(nach))}`;
   const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert }; const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen };
   const tag = t("abschluss.tage." + b.vergleich.wochentag);
