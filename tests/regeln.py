@@ -203,7 +203,7 @@ def main():
                     s, f = await lauf(b, breite, hoehe, fehler); stand[f"{breite}x{hoehe}"] = s; befunde.extend(f)
                 if os.environ.get("SANJI_PILOT_BILDER") == "1":
                     await pilot_karten_browser.run(b, PORT, OUT)
-                if os.environ.get("SANJI_ABSCHLUSS_BILDER","0") == "1":
+                if os.environ.get("SANJI_ABSCHLUSS_BILDER","1") == "1":
                     await abschluss_browser.run(b, PORT, OUT)
                 await b.close()
         asyncio.run(alles())
