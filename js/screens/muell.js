@@ -24,7 +24,8 @@ export function wareBild(x) {
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 import { datumLesbar, tagGewaehlt, eintragName, tagLesbar } from "./tag.js";
 
-let ansicht = "start";   // "start" (Foto-Raster) | "eingabe" (Detail: Menge, Foto, Personalessen)
+let ansicht = "start";   // "start" (Foto-Raster) | "station" (Vollbild ohne Euro/Leiste) | "eingabe" (Detail)
+let rueckkehr = "start"; // Detail-Eingabe kehrt bei der Müll-Station zu deren Vollbild zurück
 let suche = "";
 let wahl = null;         // Detail: { typ: "gericht"|"artikel"|"eimer", id?, name, menge, einheit, packung?, personal }
 let zuletzt = null;      // { ids, schluessel, text, zeit } – gerade eingetragen, mit „Rückgängig"
@@ -36,9 +37,9 @@ const TOAST_MS = 5000;
 const RASTER = 5;         // Design B (19.10.2026): 5 Fotos + „Andere" = 2 × 3, passt ohne Scrollen
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
-export function muellZuruecksetzen() { ansicht = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
+export function muellZuruecksetzen() { ansicht = "start"; rueckkehr = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
 export function muellFotoSetzen(eintrag) { foto = eintrag; }
-export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = "start"; return true; } if (ansicht !== "start") { ansicht = "start"; wahl = null; return true; } return false; }
+export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = "start"; return true; } if (ansicht !== "start") { ansicht = ansicht === "eingabe" ? rueckkehr : "start"; wahl = null; return true; } return false; }
 export const muellAnsicht = () => ansicht;
 
 const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Paket 3, M7: Geschäftstage
@@ -74,6 +75,7 @@ export function muellView(stand) {
   const D = tagGewaehlt(); const nach = D !== heute(); const pers = personalAktiv();
   const oben = pers ? personalLeiste(true) : "";
   const unten = pers ? "" : nav("muell", { schnell: false });
+  if (ansicht === "station") return stationView(stand, D);
   if (ansicht === "eingabe") return oben + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog">${eingabeView(stand, D)}</div>` : "") + unten;
   return oben + rasterView(stand, D, nach) + unten;
 }
@@ -82,12 +84,31 @@ function rasterView(stand, D, nach) {
   const kacheln = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true }); const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell1">
-    <div class="muellkopf1">${pilleHtml(stand, D)}</div>
+    <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell1.station"))}">${sym("maximize")}<span>${esc(t("muell1.station"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
     ${kacheln.length ? `<div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
       <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>`
     : `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div>${personalAktiv() ? "" : `<button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button>`}</div>
       <button type="button" class="karte ware andere einzeln" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>`}
+  </div>${toastHtml()}`;
+}
+
+// Dieselben Daten und Schreibfunktionen wie L2: kein zweiter Zähler, keine Rechenlogik.
+// Station am Mülleimer: kein Euro, keine untere Navigation, Waage bewusst inaktiv.
+function stationView(stand, D) {
+  const waren = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true });
+  const zaehl = tippsHeute(stand, D);
+  const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
+  return `<div class="inhalt muell-station">
+    <div class="muell-station-kopf">
+      <button type="button" class="muell-station-zu" data-a="muell-station-zu" aria-label="${esc(t("allgemein.zurueck"))}">${sym("x")}</button>
+      <h1>${esc(t("muell1.station"))}</h1>
+      <div class="muell-station-waage" aria-label="${esc(t("muell1.waage"))}: ${esc(t("muell1.inaktiv"))}"><strong>— kg</strong><small>${esc(t("muell1.inaktiv"))}</small></div>
+    </div>
+    <div class="muellraster muell-station-raster">
+      ${waren.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
+      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>
+    </div>
   </div>${toastHtml()}`;
 }
 
@@ -225,11 +246,13 @@ export function muellTippZurueck(stand, ids) { const n = muellStornieren(stand, 
 
 export function muellAktion(name, el, stand) {
   const D = tagGewaehlt();
-  if (name === "muell-eingabe" || name === "muell-andere") { ansicht = "eingabe"; wahl = null; suche = ""; foto = null; auswahlOffen = true; return true; }
-  if (name === "muell-detail") { const w = wahlAus(el, stand); if (!w) return false; wahl = w; ansicht = "eingabe"; auswahlOffen = false; foto = null; return true; }
-  if (name === "muell-start") { ansicht = "start"; wahl = null; auswahlOffen = false; return true; }
+  if (name === "muell-station-auf") { ansicht = "station"; rueckkehr = "station"; return true; }
+  if (name === "muell-station-zu") { ansicht = "start"; rueckkehr = "start"; return true; }
+  if (name === "muell-eingabe" || name === "muell-andere") { rueckkehr = ansicht === "station" ? "station" : "start"; ansicht = "eingabe"; wahl = null; suche = ""; foto = null; auswahlOffen = true; return true; }
+  if (name === "muell-detail") { const w = wahlAus(el, stand); if (!w) return false; wahl = w; rueckkehr = ansicht === "station" ? "station" : "start"; ansicht = "eingabe"; auswahlOffen = false; foto = null; return true; }
+  if (name === "muell-start") { ansicht = rueckkehr; wahl = null; auswahlOffen = false; return true; }
   if (name === "muell-auswahl") { auswahlOffen = true; suche = ""; return true; }
-  if (name === "muell-auswahl-zu") { auswahlOffen = false; if (!wahl) ansicht = "start"; return true; }
+  if (name === "muell-auswahl-zu") { auswahlOffen = false; if (!wahl) ansicht = rueckkehr; return true; }
   if (name === "muell-kachel") { const w = wahlAus(el, stand); if (!w) return false; wahl = w; auswahlOffen = false; return true; }
   if (!wahl) return false;
   if (name === "muell-d") { const s = wahl.typ === "gericht" || wahl.einheit === "stk" ? 1 : wahl.einheit === "g" || wahl.einheit === "ml" ? 50 : 0.1; wahl.menge = Math.max(0, Math.round(((Number(wahl.menge) || 0) + Number(el.dataset.d) * s) * 100) / 100) || null; return true; }
@@ -253,7 +276,7 @@ export function muellAktion(name, el, stand) {
     schwundNachweisSetzen(stand, ids, { foto: foto ? foto.id : null, von }); // Foto als Nachweis, Person im Personal-Modus
     foto = null;
     zuletzt = { ids: ids.join(","), schluessel: e.art === "eimer" ? "eimer" : muellSchluessel(e), text: `${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} · ${e.art === "eimer" ? fmtZahl(e.gewogen, 1) + " kg" : mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
-    wahl = null; ansicht = "start"; suche = "";
+    wahl = null; ansicht = rueckkehr; suche = "";
     return true;
   }
   return false;
