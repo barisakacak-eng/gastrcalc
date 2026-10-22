@@ -40,6 +40,7 @@ Die Testuhr wird vom Node-Testkontext automatisch zurückgesetzt. Assertions, fa
 - Einstellungen: derselbe Büro-Rahmen, eindeutiger Rückweg und direkter Sprung zur Sicherung mit vorhandener Navigation, ohne zusätzliche Browser-Hashroute. Vorhandene Status- und Fehlermeldungen bleiben erhalten.
 - Ordner: wichtige Export-, Zeitraum- und Vorschauknöpfe mindestens 56 px; lange Texte können umbrechen. „Drucken / PDF“ beschreibt den tatsächlichen Druckweg. Bei einer leeren Prüfliste kein falsches „Alles vollständig“.
 - Premium-Fotos, Piktogramme, Mapping und lokale Schriften sind bytegleich zur Ausgangsfassung. Keine neuen Food-Fotos. Eigene Wirtsfotos behalten Vorrang; zusätzlicher Regressionstest für beide Piloten.
+- Visuelle Schlussprüfung: Innenabstände der Einstellungs-Karten gegen den Büro-Reset geschützt, Einstellungszeilen ohne doppelte Kartenrahmen, lange Zahlenzeilen umbrechbar.
 - Workflow: PRs gegen den Facelift-Branch erhalten Prüfungen. Der Deploy-Job ist zusätzlich ausdrücklich auf `refs/heads/main` begrenzt, auch bei manuellem Workflowstart. Diese Sitzung startet keinen Deploy.
 
 ## Geänderte Dateien (gegenüber dem Ausgangs-Commit)
@@ -53,6 +54,7 @@ Die Testuhr wird vom Node-Testkontext automatisch zurückgesetzt. Assertions, fa
 
 - `TZ=UTC npx --yes --package=node@22 node --test tests/*.mjs`: 644 Tests, **639 bestanden, 0 fehlgeschlagen, 5 übersprungen**.
 - Derselbe vollständige Lauf mit `TZ=Europe/Berlin`: **639 bestanden, 0 fehlgeschlagen, 5 übersprungen**.
+- Die fünf bereits vorgesehenen Auslassungen benötigen externe/lokale Beleg-Testzeilen, Pilot-Kartenfotos, Karten-/Rezeptdaten bzw. eine Preis-CSV. Diese Fixtures liegen im öffentlichen Repo nicht vollständig vor; nicht als geprüfte Fälle gezählt.
 - `node tools/sprachpruefung.mjs`: alle 18 Tabellen strukturell vollständig. Keine neue Sprache; DE/TR/EN im Browser geprüft, keine Muttersprachlerfreigabe aller 18 behauptet.
 - `python3 tests/regeln.py`: 390×844 / 360×780, **0 neue und 0 bekannte Verstöße**.
 - `python3 tests/durchlauf_personal.py`: bestanden.
@@ -60,7 +62,7 @@ Die Testuhr wird vom Node-Testkontext automatisch zurückgesetzt. Assertions, fa
 - Zusätzlich je Pilot: Umsatz speichern, Müll erfassen und zurücknehmen, Inventur zählen/pausieren, Tagesabschluss ausführen, vollständige ZIP herunterladen und in einem zweiten frischen Browserkontext wiederherstellen. Ungültiger ZIP-Import lässt die Fachdaten unverändert. Anschließender Offline-Neustart behält Gerichte, Artikel, Tagesnotiz, Müll, Inventur und Abschluss.
 - Nach dem Neustart ergänzte Rezeptfamilien und Schema-Standardfelder sind reguläre Startnormalisierung, kein Datenverlust. Die Testvorbereitung verwendet dieselbe Rezept-Zuordnung; die verglichenen Fachdaten werden nicht weggefiltert.
 - Geprüft: geladene korrekte Premium-Gerichtsfotos und Margenanzeige, horizontales Überlaufen, kurze L1 einschließlich Navigation (Daten wie Ladenname/Datum ausgenommen), genau eine Hauptaktion, Hauptknopf oberhalb der Navigation, Ordner-/Einstellungsknöpfe ≥56 px, Vorschauen, echte CSV-Downloads, Rückwege und JavaScript-Fehler.
-- Offline-Fassung **2026-10-22.13**, Fingerabdruck **fc719c902e7b**, 270 App-Dateien / 235 unveränderte Fotos. Manifest mit `tools/sw_liste.py` erzeugt; `git diff --check` bestanden.
+- Offline-Fassung **2026-10-22.14**, Fingerabdruck **d25c46e104b9**, 270 App-Dateien / 235 unveränderte Fotos. Manifest mit `tools/sw_liste.py` erzeugt; `git diff --check` bestanden.
 
 Prüfartefakte sind echte Browseraufnahmen mit ausschließlich fiktiven Beispieldaten und werden nicht als Produktdateien eingecheckt.
 

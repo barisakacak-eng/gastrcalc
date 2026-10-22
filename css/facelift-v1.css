@@ -1252,8 +1252,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .b-einstellungen .kopfband{padding-top:20px}
 .b-einstellungen .einstellungen-inhalt{padding-bottom:32px;gap:16px}
 .b-einstellungen .karte{border:1px solid var(--gc-line);border-radius:19px;background:var(--gc-white);box-shadow:var(--gc-shadow)}
+.b-einstellungen .einstellungen-inhalt>.karte{padding:16px!important}
+.b-einstellungen .einstellungen-inhalt>.karte:first-of-type{padding:0!important}
+.b-einstellungen .einstellungen-inhalt>.karte h2{margin:0 0 12px;font-size:1.1875rem;line-height:1.3}
+.b-einstellungen .karte .zeileknopf{border:0;border-bottom:1px solid var(--gc-line);border-radius:0;box-shadow:none;background:transparent}
+.b-einstellungen .karte .zeileknopf:last-child{border-bottom:0}
 .b-einstellungen #sicherung{scroll-margin-top:80px}
-.b-einstellungen .summenzeile{gap:12px}
+.b-einstellungen .summenzeile{gap:8px 12px;flex-wrap:wrap}
+.b-einstellungen .summenzeile>.wert{margin-inline-start:auto;white-space:normal}
 .b-einstellungen .summenzeile>span:first-child{min-width:0;overflow-wrap:anywhere}
 .b-einstellungen .chips{gap:8px}
 .b-einstellungen .schalter{min-height:56px;min-width:56px;border-radius:28px}
