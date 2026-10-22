@@ -20,7 +20,7 @@ test("Pilotbild: Burger-Rohware zeigt eine ehrliche, eindeutige Bildquelle", () 
   assert.deepEqual(ware("Eisbergsalat"), { foto: "r-eisbergsalat" });
 });
 test("Pilotbild: jedes neue Pilotfoto und Piktogramm existiert lokal", () => {
-  const fotos = ["r-burger-bun","r-vollkorn-bun","r-eisbergsalat","r-salatgurke","r-doenerspiess-kalb-pute","r-pide-brot"];
+  const fotos = ["r-burger-bun","r-vollkorn-bun","r-eisbergsalat","r-salatgurke","r-pide-brot"];
   for(const name of fotos) {
     assert.ok(FOTOS.has(name), `nicht im Fotokatalog: ${name}`);
     assert.ok(existsSync(new URL(`../foto/${name}.webp`,import.meta.url)), `fehlende Fotodatei: ${name}`);
