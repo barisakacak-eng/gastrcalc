@@ -178,3 +178,11 @@ test("Jetzt dran 6 (19.10.2026): Einkaufspreise, dann Rezepte – nicht in Haupt
   s.gerichte[0].rezeptQuelle = "eigen"; assert.equal(jetztDran(s, null, { jetzt: um(10) }), null);
   s.beispiel = true; s.gerichte[0].rezeptQuelle = null; assert.equal(jetztDran(s, null, { jetzt: um(10) }), null, "Beispiel-Laden");
 });
+
+test("Facelift-Piloten: Hero richtet sich nach Döner- oder Burger-Ladenart", () => {
+  const d = laden(); d.ladenArt = "doener";
+  assert.match(startView(d, { wurzel: wurzelVon(d) }), /heute-laden pilot-doener/);
+  const b = laden(); b.ladenArt = "imbiss"; b.betrieb.kuechen = ["burger"];
+  assert.match(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-burger/);
+  assert.doesNotMatch(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-doener/);
+});
