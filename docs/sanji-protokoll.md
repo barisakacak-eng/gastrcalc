@@ -113,3 +113,13 @@ Keine.
 - Wiederverwendbare isolierte Browsertestdaten `tests/bilder/pilot/visuelle_testdaten_2026-10-22.json`, `tests/pilot_karten_browser.py`. Start nur bei `SANJI_PILOT_BILDER=1`, um normale CI schnell zu halten. Diese Beispiele niemals in einen Kundenbetrieb übernehmen.
 - Fassung `2026-10-22.08`, Offline-Fingerabdruck `13e2a2d6adc5`. Keine Rechenlogik geändert, `main` und Live-App nicht verändert, alles liegt in PR #5 bis Freigabe.
 - Versprechen-Abgleich: L5 Karte → 1 (welches Gericht Geld bringt): ja mit verlässlichen Eingaben, Testwerte ≈. L2 Müllstation → 2: Erfassung ja, belegte Ersparnis offen. B1 Büro → 3: geordnet, echte Automationsbelege offen.
+
+
+## 22.10.2026 – Paket 11: L6 Tag abschließen
+
+- Direkt umgesetzt im PR #5, Branch `sanji/facelift-1-0-integration`. `js/screens/abschluss.js`: Drei antippbare Statuskarten vor Abschluss, danach echter Zähler gestern/heute, vorhandene Bilanzwerte und korrekter Vergleich Umsatz mit dem selben Wochentag letzte Woche. Kein Gewinn behauptet. Drei Detailwerte (Fixkosten, Müll, Kühlung) sind unter dem vorhandenen Sprachschlüssel `start.mehr` als aufklappbare Details erhalten.
+- `css/facelift-v1.css`: warme B-Premium-Bilanz (grüne Zielkarte, weiße Kurzbilanz, ruhige Vorwochenkarte, orangefarbene Rückkehraktion), je 390x844 / 360x780. Vor dem Abschluss ein Hauptknopf, kein neuer Büro-/Steuerprozess.
+- Erster echter Browser-Lauf vor Einklappen zeigte, dass die Rückkehraktion unterhalb des Viewports lag. Deshalb das Detail-Einklappen und kompakteres Layout in der finalen Fassung implementiert. **Letzte visuelle Fassung noch nicht durch Browserlauf verifiziert**: GitHub Actions installierte Playwright/Chromium ungewöhnlich lange, Läufe bei weiteren Commits abgebrochen. Der Test ist vorbereitet in `tests/abschluss_browser.py` und optional über `SANJI_ABSCHLUSS_BILDER=1` in `tests/regeln.py` ausführbar. Keine falsche Abnahme melden.
+- Fassung `2026-10-22.10`, Offline-Dateifingerabdruck `d13c2839c5bb` aus Node-Lauf, temporärer Test entfernt. 635 Node-Tests bestanden, drei alte Fachtests rot; zusätzlicher SW-Hash-Fehler der Zwischenfassung mit oben stehendem Hash behoben (Final-Head-Test muss noch laufen).
+- Versprechen-Abgleich: L6 dient dem Versprechen (1) und zeigt die tägliche Zählerbewegung. **Teilweise**, weil Umsatzentwicklung/Schätzgrundlagen nicht mit sicherem Profit gleichgesetzt werden dürfen; Disclaimer auf dem Screen sichtbar.
+- Keine neue ZIP, keine Meldung an Zoro vor Freitag, `main` unverändert, kein Merge ohne Go und grüne Checks.
