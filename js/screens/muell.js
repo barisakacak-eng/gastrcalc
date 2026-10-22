@@ -39,7 +39,7 @@ const RASTER = 5;         // Design B (19.10.2026): 5 Fotos + „Andere" = 2 × 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
 export function muellZuruecksetzen() { ansicht = "start"; rueckkehr = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
 export function muellFotoSetzen(eintrag) { foto = eintrag; }
-export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = "start"; return true; } if (ansicht !== "start") { ansicht = ansicht === "eingabe" ? rueckkehr : "start"; wahl = null; return true; } return false; }
+export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = rueckkehr; return true; } if (ansicht !== "start") { ansicht = ansicht === "eingabe" ? rueckkehr : "start"; wahl = null; return true; } return false; }
 export const muellAnsicht = () => ansicht;
 
 const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Paket 3, M7: Geschäftstage
