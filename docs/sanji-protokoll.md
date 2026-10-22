@@ -102,3 +102,14 @@ Keine.
 **Versprechen-Abgleich:** L2 Müllstation → weniger Lebensmittel wegwerfen: teilweise (Erfassung, keine belegte Ersparnis); L5 Karte → erkennen, welches Gericht Geld bringt: ja bei vollständig belegten Kalkulationswerten, sonst graue/ungefähre Anzeige. Keine Steuerintegration ohne Franky.
 
 **Offen:** Mit Pilotdaten befüllte Premium-Gerichtskarten als realen Browser-Screenshot abnehmen; aktuelle Browser-Testkarte hat noch keine Gerichte. Zoro bekommt vor Freitag keine einzelne Nachricht.
+
+
+## 22.10.2026 – Paket 10: befüllte Pilotkarten sichtbar und geprüft
+
+**Kapitäns-Go: Döner und Smash Burger parallel priorisieren, bisherige Premium-Bildwelt 1:1 erhalten.**
+- Echte Playwright-Screenshots mit 4 Dönergerichten + 4 Smash-Burger-Gerichten bei 390×844 und 360×780. Keine Entwurfsgrafiken: `Sanji_2026-10-22_Doppelpilloten_Karte_Echt.png` im Chat (zwei echte App-Aufnahmen nebeneinander, Hinweis BEISPIELDATEN separat davor). Browser-Quelle: [Actions-Lauf 39760842660](https://github.com/barisakacak-eng/gastrcalc/actions/runs/39760842660), Archiv `facelift-browser-39760842660`, Bilder `pilot_karte_doener_390x844.png`, `pilot_karte_burger_390x844.png` und ihre 360er Varianten.
+- Bemerkt und **direkt korrigiert**: Dönerteller zeigte im fertigen Karten-Raster den Brot-Döner, weil ohne `rezeptFamilie` die Name→Bild-Zuordnung nicht griff. Jetzt `js/bilder.js`: Dönerteller und Döner Box explizit zu ihren Premium-WebP. Regression in `tests/pilotbilder.test.mjs`.
+- Karte zeigt echte engine-basierte Margen-Ampel, Preis und `≈`-Restbetrag, bei fehlenden echten Betriebskosten kein Anspruch auf reale Einsparung.
+- Wiederverwendbare isolierte Browsertestdaten `tests/bilder/pilot/visuelle_testdaten_2026-10-22.json`, `tests/pilot_karten_browser.py`. Start nur bei `SANJI_PILOT_BILDER=1`, um normale CI schnell zu halten. Diese Beispiele niemals in einen Kundenbetrieb übernehmen.
+- Fassung `2026-10-22.08`, Offline-Fingerabdruck `13e2a2d6adc5`. Keine Rechenlogik geändert, `main` und Live-App nicht verändert, alles liegt in PR #5 bis Freigabe.
+- Versprechen-Abgleich: L5 Karte → 1 (welches Gericht Geld bringt): ja mit verlässlichen Eingaben, Testwerte ≈. L2 Müllstation → 2: Erfassung ja, belegte Ersparnis offen. B1 Büro → 3: geordnet, echte Automationsbelege offen.
