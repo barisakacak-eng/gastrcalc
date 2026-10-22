@@ -14,9 +14,10 @@ export function brandHeader() {
   const brand=document.createElement('span');
   brand.className='gc-brand';brand.setAttribute('aria-label','GastroCash');
   brand.innerHTML=mascotMarkup('neutral')+'<span class="gc-brand-name">Gastro<strong>Cash</strong></span>';
+  // Der Kopf ist bereits mit Navigation belegt: nur bei ausreichend Platz anzeigen.
   header.prepend(brand);
 }
 if(typeof document!=='undefined'){
-  const ready=()=>{brandHeader();const app=document.getElementById('app');if(app){new MutationObserver(()=>brandHeader()).observe(app,{childList:true,subtree:true});}};
+  const ready=()=>{brandHeader();const app=document.getElementById('app');if(app){let pending=false;new MutationObserver(()=>{if(pending)return;pending=true;queueMicrotask(()=>{pending=false;brandHeader();});}).observe(app,{childList:true});}};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
 }
