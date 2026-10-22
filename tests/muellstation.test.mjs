@@ -1,0 +1,42 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { leererBetrieb } from "../js/store.js";
+import { personalKontext } from "../js/screens/personal.js";
+import { muellView, muellAktion, muellZuruecksetzen, muellZurueck, muellTipp, muellAnsicht } from "../js/screens/muell.js";
+const laden = () => {
+  const s = leererBetrieb(); s.phase = "app";
+  s.gerichte = [{ id: "burger1", name: "Smash Burger", klasse: "haupt", preis: 9, zutaten: [] }];
+  s.artikel = [{ name: "Burgerbrötchen", gruppe: "brot", einheit: "stk", packung: { menge: 10, einheit: "stk" }, preis: 3, benutzt: true }];
+  return s;
+};
+test("Müll-Station ist wirklich Vollbild: weder Euro noch Laden-Navigation", () => {
+  personalKontext({modus:"laden"}); muellZuruecksetzen();
+  const s = laden();
+  assert.match(muellView(s), /data-a="muell-station-auf"/);
+  assert.equal(muellAktion("muell-station-auf",{},s),true);
+  const h=muellView(s);
+  assert.match(h, /class="inhalt muell-station"/);
+  assert.match(h, /— kg/);
+  assert.match(h, /muell-station-raster/);
+  assert.match(h, /data-a="muell-tipp"/);
+  assert.doesNotMatch(h, /€|\bEUR\b/);
+  assert.doesNotMatch(h, /data-a="nav"/);
+  assert.ok(!h.includes('class="tableiste"'));
+  assert.equal(muellAnsicht(),"station");
+  assert.equal(muellAktion("muell-station-zu",{},s),true);
+  assert.equal(muellAnsicht(),"start");
+});
+test("Station nutzt exakt dieselben Müll-Einträge und kehrt nach Mengenblatt zurück", () => {
+  personalKontext({modus:"laden"}); muellZuruecksetzen();
+  const s=laden(); muellAktion("muell-station-auf",{},s);
+  const k = { dataset: { typ: "artikel", id: "", name: "Burgerbrötchen" } };
+  const result=muellTipp(k,s);
+  assert.ok(result?.eintrag && s.schwund.length===1);
+  assert.match(muellView(s), /muelltoast/);
+  assert.equal(muellAktion("muell-detail",k,s),true);
+  assert.equal(muellAnsicht(),"eingabe");
+  assert.equal(muellAktion("muell-start",{},s),true);
+  assert.equal(muellAnsicht(),"station");
+  assert.equal(muellZurueck(),true);
+  assert.equal(muellAnsicht(),"start");
+});
