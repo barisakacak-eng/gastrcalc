@@ -314,7 +314,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
   background-image:
     linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
     linear-gradient(90deg,rgba(19,40,27,.95) 0%,rgba(19,40,27,.73) 42%,rgba(19,40,27,.16) 100%),
-    url("../foto/g-doener-kebab.webp");
+    url("../foto/g-doener.webp");
   background-position:center,center,65% center;
   background-size:cover;
   background-repeat:no-repeat;
