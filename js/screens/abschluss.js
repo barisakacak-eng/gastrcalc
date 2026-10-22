@@ -20,13 +20,13 @@ export function abschlussView(stand) {
   const k = hk.kuehl; const kuehlOffen = k.eingerichtet && !k.fertig;
   const zeile = (attr, titel, unter, wert, cls = "") => `<button type="button" class="zeileknopf ab-zeile ${cls}" ${attr}><span><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span><span class="ab-wert zahl">${wert}</span><span class="pfeil">›</span></button>`;
   return `
-    <div class="kopfband"><h1>${esc(t("abschluss.titel"))}</h1></div>
+    <div class="kopfband ab-kopf"><h1>${esc(t("abschluss.titel"))}</h1></div>
     <div class="inhalt abschluss-laden">
       ${ab ? `<div class="tipp">${esc(t("abschluss.schon", zeitKurz(ab.erfasst)))}</div>` : ""}
-      <div class="karte ab-liste">
-        ${zeile('data-a="nav" data-wert="umsatzheute"', t("heute.kachel.umsatz"), t("abschluss.umsatzKurz"), u ? esc(fmtEuro(u.umsatz, { dezimal: 2 })) : "–", u ? "" : "offen")}
-        ${zeile('data-a="nav" data-wert="muell"', t("ebene.tabs.muell"), "", hk.muell.anzahl > 0 ? `<span class="gruen">✓</span>` : "–")}
-        ${zeile(`data-a="${k.eingerichtet ? "kuehl-rundgang-start" : "kuehl-einrichtung-oeffnen"}" data-offen="0"`, t("ebene.tabs.kuehl"), "", k.eingerichtet ? `<span class="${kuehlOffen ? "rot" : "gruen"}">\u2066${k.gemessen} / ${k.stellen}\u2069</span>` : "–", kuehlOffen ? "warn" : "")}
+      <div class="karte ab-liste" role="group" aria-label="${esc(t("abschluss.titel"))}">
+        ${zeile('data-a="nav" data-wert="umsatzheute"', t("heute.kachel.umsatz"), t("abschluss.umsatzKurz"), u ? esc(fmtEuro(u.umsatz, { dezimal: 2 })) : "–", u ? "fertig" : "offen")}
+        ${zeile('data-a="nav" data-wert="muell"', t("ebene.tabs.muell"), "", hk.muell.anzahl > 0 ? `<span class="gruen">✓</span>` : "–", hk.muell.anzahl > 0 ? "fertig" : "neutral")}
+        ${zeile(`data-a="${k.eingerichtet ? "kuehl-rundgang-start" : "kuehl-einrichtung-oeffnen"}" data-offen="0"`, t("ebene.tabs.kuehl"), "", k.eingerichtet ? `<span class="${kuehlOffen ? "rot" : "gruen"}">\u2066${k.gemessen} / ${k.stellen}\u2069</span>` : "–", kuehlOffen ? "warn" : k.fertig ? "fertig" : "neutral")}
       </div>
       <button type="button" class="knopf glut" data-a="abschluss-fertig">${esc(t("abschluss.knopf"))}</button>
     </div>
@@ -43,24 +43,23 @@ function bilanzView(stand, H) {
   const tn = b.tonne;
   const tonne = !tn ? "" : tn.art === "gleich" ? t("abschluss.tonneGleich") : tn.art === "mehr" ? t("abschluss.tonneMehr", fmtEuro(tn.differenz, { dezimal: 2 })) : t("abschluss.tonneWeniger", fmtEuro(tn.differenz, { dezimal: 2 }));
   return `
-    <div class="kopfband"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
-    <div class="inhalt">
-      <img class="abschluss-pokal" src="bilder/ui/pokal.svg" alt="" aria-hidden="true">
-      <div class="karte dunkel zaehler ${nach >= 0 ? "plus" : "minus"}">
+    <div class="kopfband ab-kopf ab-ergebnis-kopf"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
+    <div class="inhalt ab-bilanz">
+      <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">
         <small class="lbl">${esc(t("abschluss.zaehlerHeute"))}</small>
-        <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil">→</span><span class="riesig">${nach >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(nach))}</span></span>
-        <small>${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
+        <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil" aria-hidden="true">→</span><span class="riesig">${nach >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(nach))}</span></span>
+        <small class="ab-verlauf ${besser >= 0 ? "positiv" : "negativ"}">${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
         <small class="fein">${esc(t("cockpit.kalkulatorisch"))}</small>
       </div>
-      <div class="karte">
+      <div class="karte ab-zahlen">
         <div class="summenzeile"><span>${esc(t("abschluss.umsatzNetto"))}</span><span class="wert">${u ? fmtEuro(netto) : "–"}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.bleibt"))}</span><span class="wert">${u ? fmtEuro(bleibt) : "–"}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.fixTag"))}</span><span class="wert">− ${fmtEuro(z.tageskosten)}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.tonne"))}</span><span class="wert rot">${sw.anzahl ? "− " + fmtEuro(sw.muellwert, { dezimal: 2 }) : "–"}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.kuehl"))}</span><span class="wert ${ks.eingerichtet && ks.heuteGemessen >= ks.stellen ? "gruen" : ""}">${ks.eingerichtet ? `${ks.heuteGemessen}/${ks.stellen} · ${esc(t("abschluss.rundgaenge", rundgaenge))}` : "–"}</span></div>
       </div>
-      <div class="jetzt still"><span><b>${esc(vergleich)}</b>${tonne ? `<small>${esc(tonne)}</small>` : ""}</span></div>
-      <button type="button" class="knopf" data-a="nav" data-wert="start">${esc(t("abschluss.zumCockpit"))}</button>
+      <div class="jetzt still ab-vergleich ${v.art}"><span><b>${esc(vergleich)}</b>${tonne ? `<small>${esc(tonne)}</small>` : ""}</span></div>
+      <button type="button" class="knopf glut ab-zurueck" data-a="nav" data-wert="start">${esc(t("abschluss.zumCockpit"))}</button>
     </div>
     ${nav("start")}`;
 }
