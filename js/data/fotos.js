@@ -2,6 +2,8 @@
 // Stand 15.10.2026: 38 Fotos aus Sanjis drei Bildbögen (mit ChatGPT erzeugt, Nutzung in der App durch Baris), von Zoro zugeschnitten.
 // Neue Fotos: Datei nach foto/ legen und den Namen hier eintragen. Eigene Fotos des Wirts je Gericht gehen vor (bleiben auf dem Gerät).
 export const FOTOS = new Set([
+  // Sanji 22.10.: freigegebene Premium-Einzelmotive für beide Pilot-Ladentypen.
+  "g-cheeseburger", "g-double-smash-burger", "g-burger-menue", "r-cheddar", "r-burgersauce", "r-pickles",
   // Sanji 22.10.: weitere bereits vorhandene, visuell geprüfte Pilot-Motive aktivieren; Dateien sind schon offline im SW-Catalog.
   "r-burger-bun", "r-vollkorn-bun", "r-eisbergsalat", "r-salatgurke",  "r-pide-brot",
   // 17.10.2026 Sanji Bildpaket 01 (Getränke, Prio 1, von Baris freigegebener Stil, von Zoro geprüft)
