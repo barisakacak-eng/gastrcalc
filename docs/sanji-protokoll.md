@@ -132,3 +132,11 @@ Keine.
 - `tests/abschluss_browser.py` prüft explizit das neue Label und dass „noch zu deckender Betrag“ nicht negativ als Hauptzahl erscheint. Der Screenshot erhält außerhalb der App ein klares Beispiel-Datenetikett; die Testwerte sind künstlich.
 - **Stand vor Abschlussprüfung:** Fassung `2026-10-22.11`, laufender GitHub-Prüflauf [39778035649](https://github.com/barisakacak-eng/gastrcalc/actions/runs/39778035649). Der einmalige L6-Test ist dafür aktiviert und muss nach der Abnahme wieder optional werden. Die Offline-Prüfsumme ist nach CSS/JS-Korrekturen anhand der tatsächlich gelisteten Dateien neu einzutragen.
 - Versprechen 1: Abstand zur Kostendeckung auf einen Blick **ja**; echte Gewinnaussage **teilweise**, weil einige Kosten modelliert/geschätzt bleiben. Eine einzige Haupthandlung, weiterhin ohne Steuer-/Franky-Automatik. Kein Merge und keine zusätzliche ZIP.
+
+
+### L6 Prüfabschluss, 22.10.2026
+- Echte Browserprüfung **bestanden** im Lauf [39778827930](https://github.com/barisakacak-eng/gastrcalc/actions/runs/39778827930), Test `SANJI_ABSCHLUSS_BILDER=1`. Screenshot als EIN Bild `Sanji_2026-10-22_L6_Tagabschluss_Live.png` am 22.10. von Sanji aus der GitHub-Browseraufnahme erstellt; 390×844, „BROWSERTEST · BEISPIELDATEN“ außerhalb der App deutlich markiert.
+- Erkenntnis aus echter Aufnahme: `Zähler heute −98€` klingt nach Verlust, obwohl `98€` bis zur Kostendeckung fehlen; Label korrigiert auf **`Bis null fehlen 98€`**, ohne eine Berechnungsregel zu ändern. Vorher/nachher, Fortschritt und `kalkulatorisch, kein Kontostand` bleiben erhalten.
+- Visueller Fehler des ersten Tests (technischer Schlüssel statt Label) ebenfalls behoben: `cockpit.bisNullFehlen` statt `heute.bisNullFehlen`; auch `cockpit.ueberNull`. Browser prüft Text.
+- Finale Version `2026-10-22.11`, Service-Worker Fingerabdruck `3f2cee1d3f3e`, temporären Prüfer entfernt, aufwendiger L6-Browsertest danach wieder optional geschaltet. Node-Final-Head 635 Tests bestanden, 5 übersprungen und nur die **3 bekannten fachlichen Rotfälle** (Aktionen/Haltbarkeit, Zweitlieferant, Büro-Menütafel). `main` unverändert, **kein Merge** ohne Go.
+- Versprechen-Abgleich L6: in einem Blick **ja** für Fortschritt zur Kostendeckung; **teilweise** für tatsächlich verdientes Geld, weil Schätzwerte möglich. Keine zusätzliche ZIP und kein eigener Auftrag an Zoro vor Freitag.
