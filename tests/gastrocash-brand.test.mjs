@@ -26,6 +26,7 @@ test('Markenpaket nutzt nur lokale Dateien und respektiert reduzierte Bewegung',
   assert.match(css,/prefers-reduced-motion:no-preference/);
   assert.doesNotMatch(css,/@import|https?:\/\//);
   const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
-  assert.match(html,/js\/gastrocash-brand\.js/);
+  const nav=fs.readFileSync(new URL("../js/screens/nav.js",import.meta.url),"utf8");
+  assert.match(nav,/mascotMarkup/);
   assert.match(html,/css\/gastrocash-brand\.css/);
 });
