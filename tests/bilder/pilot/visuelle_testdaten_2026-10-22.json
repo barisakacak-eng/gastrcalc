@@ -1,0 +1,344 @@
+{
+  "meta": "NUR Browser-Screenshots – fiktive Demonstrationspreise, kein Pilotbetrieb",
+  "items": [
+    {
+      "name": "Dönerfleisch",
+      "gruppe": "fleisch",
+      "einheit": "kg",
+      "packung": {
+        "menge": 10,
+        "einheit": "kg"
+      },
+      "preis": 89,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Fladenbrot",
+      "gruppe": "brot",
+      "einheit": "stk",
+      "packung": {
+        "menge": 30,
+        "einheit": "stk"
+      },
+      "preis": 24,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Salat",
+      "gruppe": "gemuese",
+      "einheit": "kg",
+      "packung": {
+        "menge": 5,
+        "einheit": "kg"
+      },
+      "preis": 8,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Tomaten",
+      "gruppe": "gemuese",
+      "einheit": "kg",
+      "packung": {
+        "menge": 5,
+        "einheit": "kg"
+      },
+      "preis": 13,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Yufka",
+      "gruppe": "brot",
+      "einheit": "stk",
+      "packung": {
+        "menge": 30,
+        "einheit": "stk"
+      },
+      "preis": 24,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Burger Patty",
+      "gruppe": "fleisch",
+      "einheit": "kg",
+      "packung": {
+        "menge": 10,
+        "einheit": "kg"
+      },
+      "preis": 96,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Burgerbrötchen",
+      "gruppe": "brot",
+      "einheit": "stk",
+      "packung": {
+        "menge": 24,
+        "einheit": "stk"
+      },
+      "preis": 21,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Cheddar",
+      "gruppe": "kaese",
+      "einheit": "kg",
+      "packung": {
+        "menge": 1,
+        "einheit": "kg"
+      },
+      "preis": 18,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Pickles",
+      "gruppe": "gemuese",
+      "einheit": "kg",
+      "packung": {
+        "menge": 1,
+        "einheit": "kg"
+      },
+      "preis": 13,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Burgersoße",
+      "gruppe": "sosse",
+      "einheit": "l",
+      "packung": {
+        "menge": 2,
+        "einheit": "l"
+      },
+      "preis": 12,
+      "preisBasis": "netto",
+      "benutzt": true
+    },
+    {
+      "name": "Pommes",
+      "gruppe": "beilagen",
+      "einheit": "kg",
+      "packung": {
+        "menge": 10,
+        "einheit": "kg"
+      },
+      "preis": 30,
+      "preisBasis": "netto",
+      "benutzt": true
+    }
+  ],
+  "doener": [
+    {
+      "id": "d1",
+      "name": "Döner im Brot",
+      "preis": 8.5,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Dönerfleisch",
+          "menge": 180,
+          "einheit": "g"
+        },
+        {
+          "name": "Fladenbrot",
+          "menge": 1,
+          "einheit": "stk"
+        },
+        {
+          "name": "Salat",
+          "menge": 40,
+          "einheit": "g"
+        }
+      ]
+    },
+    {
+      "id": "d2",
+      "name": "Dönerteller",
+      "preis": 12.5,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Dönerfleisch",
+          "menge": 220,
+          "einheit": "g"
+        },
+        {
+          "name": "Pommes",
+          "menge": 170,
+          "einheit": "g"
+        },
+        {
+          "name": "Tomaten",
+          "menge": 40,
+          "einheit": "g"
+        }
+      ]
+    },
+    {
+      "id": "d3",
+      "name": "Dürüm",
+      "preis": 9.5,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Dönerfleisch",
+          "menge": 170,
+          "einheit": "g"
+        },
+        {
+          "name": "Yufka",
+          "menge": 1,
+          "einheit": "stk"
+        },
+        {
+          "name": "Salat",
+          "menge": 35,
+          "einheit": "g"
+        }
+      ]
+    },
+    {
+      "id": "d4",
+      "name": "Döner Box",
+      "preis": 8,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Dönerfleisch",
+          "menge": 160,
+          "einheit": "g"
+        },
+        {
+          "name": "Pommes",
+          "menge": 150,
+          "einheit": "g"
+        }
+      ]
+    }
+  ],
+  "burger": [
+    {
+      "id": "b1",
+      "name": "Smash Burger",
+      "preis": 9.9,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Burger Patty",
+          "menge": 120,
+          "einheit": "g"
+        },
+        {
+          "name": "Burgerbrötchen",
+          "menge": 1,
+          "einheit": "stk"
+        },
+        {
+          "name": "Burgersoße",
+          "menge": 25,
+          "einheit": "ml"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "name": "Cheeseburger",
+      "preis": 10.9,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Burger Patty",
+          "menge": 120,
+          "einheit": "g"
+        },
+        {
+          "name": "Burgerbrötchen",
+          "menge": 1,
+          "einheit": "stk"
+        },
+        {
+          "name": "Cheddar",
+          "menge": 30,
+          "einheit": "g"
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "name": "Doppel-Smash-Burger",
+      "preis": 14.9,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Burger Patty",
+          "menge": 240,
+          "einheit": "g"
+        },
+        {
+          "name": "Burgerbrötchen",
+          "menge": 1,
+          "einheit": "stk"
+        },
+        {
+          "name": "Cheddar",
+          "menge": 40,
+          "einheit": "g"
+        }
+      ]
+    },
+    {
+      "id": "b4",
+      "name": "Burger Menü",
+      "preis": 15.5,
+      "klasse": "haupt",
+      "steuer": 0.07,
+      "zeit": 5,
+      "mengeTag": 35,
+      "zutaten": [
+        {
+          "name": "Burger Patty",
+          "menge": 120,
+          "einheit": "g"
+        },
+        {
+          "name": "Burgerbrötchen",
+          "menge": 1,
+          "einheit": "stk"
+        },
+        {
+          "name": "Pommes",
+          "menge": 180,
+          "einheit": "g"
+        }
+      ]
+    }
+  ]
+}
