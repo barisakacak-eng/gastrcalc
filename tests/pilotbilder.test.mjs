@@ -7,6 +7,8 @@ import { FOTOS } from "../js/data/fotos.js";
 test("Pilotbild: Döner im Brot darf nicht als Dürüm dargestellt sein", () => {
   assert.equal(fotoName({ name: "Döner Kebab", rezeptFamilie: "doener" }), "g-doener");
   assert.equal(fotoName({ name: "Döner Teller", rezeptFamilie: "doener-teller" }), "g-doener-teller");
+  assert.equal(fotoName({ name: "Dönerteller" }), "g-doener-teller", "Pilotkarte ohne Rezeptfamilie");
+  assert.equal(fotoName({ name: "Döner Box" }), "g-doener-box", "Box statt Brot-Döner");
 });
 test("Pilotbild: Burger-Rohware zeigt eine ehrliche, eindeutige Bildquelle", () => {
   const ware = (name) => wareBildQuelle({ name, gruppe: "ware" });
