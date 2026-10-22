@@ -75,3 +75,13 @@ Keine.
 - **Tests:** `tests/pilotbilder.test.mjs` schützt Bildwahl und Existenz der lokalen Assets; der Offline-Fingerabdruck und Service Worker wurden angeglichen. **Keine Rechenlogik und keine neuen Kennzahlen.**
 - **Noch OFFEN:** Die vom Kapitän zuletzt bestätigten korrigierten Foto-Originalmotive für Döner, Teller und die Smash-Burger-Produkte sind bisher nicht als eigenständige WebP im GitHub-Branch enthalten. Die aktuellen vorhandenen Familienfotos sind nur ein fachlich passender Zwischenstand, nicht als 1:1-Übernahme der Referenz ausgeben. Dafür Ziel-Dateien `foto/g-doener.webp`, `foto/g-doener-teller.webp`, `foto/g-smash-burger.webp`, `foto/r-fladenbrot.webp` aus freigegebenen Einzelmotiven ersetzen/ergänzen; danach Bilddateien und `js/data/fotos.js`/`sw.js` prüfen. Keine weiteren Konzepttafeln.
 - **GitHub-Aufräumen:** `main` bleibt unverändert. Die neue Bild-UI wird nicht veröffentlicht, solange fachliche Tests rot sind; Zoro bekommt vor Freitag keinen Auftrag.
+
+
+## 22.10.2026 – Freigegebene Premium-Pilotfotos direkt im App-Branch
+
+- **Freigabequelle:** Baris' bestätigte korrigierte Bildtafel vom 22.10. (Dönerbrot statt Gyros/Pita, Dönerteller mit Fleisch statt Salat-Bowl). Die 12 Motive wurden **aus den tatsächlich freigegebenen Original-Galeriebildern** separat als 520×390 WebP exportiert, nicht neu per KI halluziniert.
+- **Binärdateien in GitHub PR #5:** `foto/g-doener.webp`, `foto/g-doener-teller.webp`, `foto/g-burger.webp`, `foto/g-cheeseburger.webp`, `foto/g-double-smash-burger.webp`, `foto/g-burger-menue.webp`, `foto/r-fladenbrot.webp`, `foto/r-burger-bun.webp`, `foto/r-patty.webp`, `foto/r-cheddar.webp`, `foto/r-burgersauce.webp`, `foto/r-pickles.webp`. Bestehende 9 wurden ersetzt, neue 3 ergänzt.
+- **Echte App-Verknüpfung:** `js/data/fotos.js` lässt neue Bilder zu. `js/bilder.js` ordnet Cheeseburger, Double/Doppel Smash, Burger-Menü, Burgersoße, Cheddar und Pickles ihren echten Bildern zu. `js/screens/home.js` wählt anhand vorhandener `stand.ladenArt` und `stand.betrieb.kuechen` zwischen `pilot-doener` und `pilot-burger`; `css/facelift-v1.css` zeigt den zutreffenden echten Hero.
+- **Offline:** `sw.js` mit aktualisiertem Hash für alle zwölf WebP-Dateien; `tools/sw_liste.py` wurde so geschützt, dass bei künftigen Regenerationen die lokale DM-Serif-TTF nicht wieder aus der Offline-Dateiliste verschwindet.
+- **Tests:** `tests/pilotbilder.test.mjs` sichert Zuordnungen, `tests/heute.test.mjs` sichert die Ladenart des Hero-Bilds. Der endgültige CI-Stand wird im PR dokumentiert, keine Tests der Rechenlogik abgeschwächt. `main`/Live unverändert, kein Go.
+- **Effizienz:** Keine Zwischenkonzeptgrafik, keine neue Bildtafelfassung, nur direkt nutzbare Bilddateien im Branch. Zoro erhält bis Freitag keine Nachricht.
