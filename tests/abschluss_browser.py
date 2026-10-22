@@ -34,13 +34,18 @@ async def run(browser, port, out):
               nach:document.querySelector(".ab-bilanz .riesig")?.innerText,
               tagesvergleich:document.querySelector(".ab-vergleich")?.innerText,
               knopfhoehe:document.querySelector(".ab-zurueck")?.getBoundingClientRect().height,
-              bilanz:document.querySelectorAll(".ab-zahlen .summenzeile").length
+              bilanz:document.querySelectorAll(".ab-zahlen .summenzeile").length,
+              mehr:!!document.querySelector(".ab-details:not([open])"),
+              knopf_bottom:Math.round(document.querySelector(".ab-zurueck").getBoundingClientRect().bottom),
+              nav_top:Math.round(document.querySelector(".tableiste").getBoundingClientRect().top)
             })""")
             assert info["breite"]<=width,info
             assert info["vor"] and info["nach"],info
             assert info["bilanz"]==5,info
             assert info["tagesvergleich"],info
             assert info["knopfhoehe"]>=56,info
+            assert info["mehr"],info
+            assert info["knopf_bottom"]<=info["nav_top"]+3,info
             print("SANJI_L6",width,info)
             # Kennzeichnung NUR für den Browser-Test, außerhalb des Kundenbildschirms.
             await pg.screenshot(path=str(out/f"sanji_abschluss_bilanz_{width}x{height}.png"),full_page=False)
