@@ -32,6 +32,7 @@ async def run(browser, port, out):
               breite:document.documentElement.scrollWidth,
               vor:document.querySelector(".ab-bilanz .alt")?.innerText,
               nach:document.querySelector(".ab-bilanz .riesig")?.innerText,
+              label:document.querySelector(".ab-bilanz .lbl")?.innerText,
               tagesvergleich:document.querySelector(".ab-vergleich")?.innerText,
               knopfhoehe:document.querySelector(".ab-zurueck")?.getBoundingClientRect().height,
               bilanz:document.querySelectorAll(".ab-zahlen .summenzeile").length,
@@ -41,6 +42,8 @@ async def run(browser, port, out):
             })""")
             assert info["breite"]<=width,info
             assert info["vor"] and info["nach"],info
+            assert "Bis null fehlen" in info["label"],info
+            assert not info["nach"].strip().startswith(("−","-")),info # Zahl ist Abstand bis null, kein angeblicher Verlust
             assert info["bilanz"]==5,info
             assert info["tagesvergleich"],info
             assert info["knopfhoehe"]>=56,info
