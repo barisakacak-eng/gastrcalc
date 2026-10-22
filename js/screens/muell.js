@@ -84,7 +84,7 @@ function rasterView(stand, D, nach) {
   const kacheln = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true }); const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell1">
-    <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell1.station"))}">${sym("maximize")}<span>${esc(t("muell1.station"))}</span></button></div>
+    <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell1.station"))}">${sym("scale")}<span>${esc(t("muell1.station"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
     ${kacheln.length ? `<div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
       <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>`
