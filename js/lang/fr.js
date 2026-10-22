@@ -491,6 +491,9 @@ export default {
     seite: ["Page", "sur"],
     buero: (n) => (n === 1 ? "1 écart de froid : décision sur la marchandise ou contrôle manquant" : `${n} écarts de froid : décision sur la marchandise ou contrôle manquant`),
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Porte ouverte", "eingeraeumt": "Stock ajouté", "eingestellt": "Réglage modifié", "umgeraeumt": "Aliments déplacés", "stecker": "Prise vérifiée", "chef": "Responsable appelé", "techniker": "Technicien appelé", "weggeworfen": "Aliments jetés"}, heute: "Consigné aujourd’hui", starten: "Lancer la tournée", fortsetzen: "Reprendre la tournée", ganz: "Tout le contenu" },
+
   kuehl: {
     titel: "Contrôle du froid",
     nav: "Froid",

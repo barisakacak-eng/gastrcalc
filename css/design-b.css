@@ -512,3 +512,42 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 .heute-laden .h-kupfer { display: block; width: 300px; max-width: 100%; height: 5px; margin: 8px auto 14px; }
 .heute-laden .h-feld.umsatz:not(.leer) .zahl { color: var(--b-gruen-ok); }
 .heute-laden .h-feld.muell:not(.leer) .zahl { color: var(--b-rot-text); }
+
+/* L3 Kühlung – Sanji */
+/* NEU: .l3-* grenzt die kurze Laden-Folge ab. Maße wiederverwendet aus .kuehlliste,
+   .h-ziel, .aufgabe, .knopf und Tokens; keine neuen Farben, Schriften oder Rundungen.
+   Eine Kühlstelle je Seite hält beliebig lange Listen und Abweichungen übersichtlich.
+   NEU: Fortschrittszahl mit calc(48rem / 17), damit der Stand wie auf Heute sofort lesbar ist. */
+.l3-laden { gap: 16px; min-width: 0; padding-top: 20px; }
+.l3-fortschritt { padding: 20px; border-radius: var(--radius-gross); background: var(--b-primaer); color: var(--b-karte); text-align: center; }
+.l3-fortschritt h1 { font-size: calc(17rem / 17); font-weight: 600; margin: 0 0 10px; }
+.l3-fortschritt > .zahl { font-size: calc(48rem / 17); line-height: 1.1; font-weight: 800; }
+.l3-laden .knopf { min-height: 64px; margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.l3-laden .ikonknopf { width: 48px; min-width: 48px; height: 48px; min-height: 48px; flex-shrink: 0; padding: 0; border: 1px solid var(--b-linie); border-radius: var(--radius-klein); background: var(--b-karte); color: var(--b-primaer); display: inline-flex; align-items: center; justify-content: center; }
+.l3-laden .wahl { min-height: 64px; padding: 14px 16px; margin: 0; border-radius: var(--radius); font-size: calc(17rem / 17); }
+.l3-laden .textfeld { min-height: 48px; min-width: 0; width: 100%; }
+.l3-stelle { gap: 10px; }
+.l3-stelle .zeileknopf { min-height: 128px; box-shadow: none; }
+.l3-stelle .gerichtbild.mini { width: 72px; height: 72px; }
+.l3-stelle .kwert { font-size: calc(24rem / 17); color: var(--b-primaer); }
+.l3-stelle .kwert.rot { color: var(--b-rot-text); }
+.l3-stelle small { font-size: calc(14rem / 17); }
+.l3-nach { display: flex; align-items: center; gap: 4px; }
+.l3-nach .sym { width: 16px; height: 16px; }
+.l3-seiten { display: flex; justify-content: space-between; gap: 12px; }
+.l3-kopf { display: flex; align-items: center; gap: 12px; }
+.l3-kopf h1 { font-size: calc(22rem / 17); min-width: 0; overflow-wrap: anywhere; margin: 0; }
+body[data-modus] .schirm > .inhalt.l3-messen { padding-bottom: 24px; }
+.l3-messen h2 { font-size: calc(22rem / 17); margin: 0; }
+.l3-auswahl { display: flex; flex-direction: column; gap: 10px; }
+.l3-massnahmen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.l3-massnahmen .wahl { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; min-height: 96px; }
+.l3-messbild { display: flex; align-items: center; justify-content: center; gap: 16px; color: var(--b-text-leise); }
+.l3-messbild .gerichtbild.mini { width: 96px; height: 96px; }
+.l3-laden .rg-wer { margin: 0; gap: 10px; }
+.l3-laden .rg-wer .chip { min-width: 48px; min-height: 48px; }
+.l3-laden .neu { min-width: 0; }
+.l3-laden .neu .textfeld { flex: 1; width: 0; }
+body[data-modus="personal"] .l3-messen { padding-top: 20px; }
+
+[dir="rtl"] .l3-seiten .sym, [dir="rtl"] .l3-kopf .ikonknopf .sym { transform: scaleX(-1); }
