@@ -27,6 +27,7 @@ export function fotoName(g) {
   const pilotGericht = [
     [/dopp(?:el|le).*smash|double.*smash/i, "g-double-smash-burger"],
     [/cheese.?burger/i, "g-cheeseburger"],
+    [/smash.?burger/i, "g-burger"],
     [/burger.*men[üu]/i, "g-burger-menue"]
   ].find(([re]) => re.test(g.name || ""));
   const kandidaten = [...(pilotGericht ? [pilotGericht[1]] : []),
