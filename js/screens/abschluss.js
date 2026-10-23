@@ -5,6 +5,7 @@ import { tagAbschliessen } from "../zaehler.js";
 import { abschlussHaken, tagesBilanz } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026)
 import { nav } from "./nav.js";
 import { zeitKurz } from "./tag.js";
+import { mascotMarkup, mascotResultState } from "../gastrocash-brand.js";
 
 let bilanz = null; // nach dem Abschluss: die Bilanz-Ansicht (flüchtig)
 
@@ -43,12 +44,13 @@ function bilanzView(stand, H) {
   const tag = t("abschluss.tage." + b.vergleich.wochentag);
   const v = b.vergleich;
   const vergleich = v.art === "kein" ? t("abschluss.keinVergleich") : v.art === "gleich" ? t("abschluss.gleich", tag) : v.art === "besser" ? t("abschluss.besser", tag, fmtEuro(v.differenz)) : t("abschluss.schlechter", tag, fmtEuro(v.differenz));
+  const mascotState = mascotResultState({ aboveZero: nach >= 0, delta: besser, incomplete: !!z.unvollstaendig });
   const tn = b.tonne;
   const tonne = !tn ? "" : tn.art === "gleich" ? t("abschluss.tonneGleich") : tn.art === "mehr" ? t("abschluss.tonneMehr", fmtEuro(tn.differenz, { dezimal: 2 })) : t("abschluss.tonneWeniger", fmtEuro(tn.differenz, { dezimal: 2 }));
   return `
     <div class="kopfband ab-kopf ab-ergebnis-kopf"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
     <div class="inhalt ab-bilanz">
-      <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">
+      <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">\n        <span class="gc-ab-mascot" data-state="${mascotState}">${mascotMarkup(mascotState)}</span>
         <small class="lbl">${esc(zielLabel)}</small>
         <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil" aria-hidden="true">→</span><span class="riesig">${zielWert}</span></span>
         <small class="ab-verlauf ${besser >= 0 ? "positiv" : "negativ"}">${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
