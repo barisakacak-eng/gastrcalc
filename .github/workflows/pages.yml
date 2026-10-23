@@ -92,7 +92,7 @@ jobs:
       - name: App-Dateien zusammenstellen
         run: |
           mkdir -p /tmp/seite
-          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons vendor design /tmp/seite/
+          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons vendor design assets /tmp/seite/
           echo "Dateien auf der Seite: $(find /tmp/seite -type f | wc -l)"
       - uses: actions/upload-pages-artifact@v3
         with:
