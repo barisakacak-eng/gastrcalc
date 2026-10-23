@@ -18,3 +18,12 @@
 @keyframes gc-coin{50%{transform:scale(1.08);transform-origin:80px 128px}}
 @media(max-width:360px){.gc-brand{max-width:135px;font-size:14px;gap:4px}.gc-brand .gc-bot{width:25px;height:29px}}
 @media(max-width:320px){.gc-brand{max-width:110px;font-size:12px}.gc-brand .gc-bot{width:22px;height:25px}}
+
+/* Küchenhelfer an echten Interaktionspunkten */
+.gc-help-bot{display:block;width:68px;height:76px;margin:0 auto 8px}
+.gc-help-bot .gc-bot{width:100%;height:100%;display:block}
+.ab-hero{position:relative}
+.gc-ab-mascot{position:absolute;top:12px;right:12px;width:58px;height:66px;padding:4px;border-radius:16px;background:rgba(255,253,249,.94);box-shadow:0 4px 12px rgba(34,48,31,.16);pointer-events:none}
+.gc-ab-mascot .gc-bot{display:block;width:100%;height:100%}
+.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:70px}
+@media(max-width:360px){.gc-ab-mascot{width:50px;height:57px;top:10px;right:10px}.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:60px}.gc-help-bot{width:60px;height:68px}}
