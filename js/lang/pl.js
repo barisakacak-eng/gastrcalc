@@ -6,7 +6,7 @@
 const lm = (n, a, b, c) => { const x = Math.abs(Number(n)); if (!Number.isFinite(x)) return c; if (!Number.isInteger(x)) return b; const d = x % 10, h = x % 100; return x === 1 ? a : d >= 2 && d <= 4 && (h < 12 || h > 14) ? b : c; };
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Wersja testowa" },
+  app: { name: "GastroCash", entwurf: "Wersja testowa" },
 
   allgemein: {
     weiter: "Dalej", zurueck: "Wstecz", fertig: "Gotowe", speichern: "Zapisz", abbrechen: "Anuluj", stueck: "szt.", bearbeiten: "Edytuj", zahlZuGross: (v) => `„${v}” to za dużo – maksymalnie dziesięć milionów.`, uebernehmen: "Zastosuj", zahlUngueltig: (v) => `„${v}” to nie liczba. Wpisz tylko cyfry i jeden przecinek.`,
@@ -425,11 +425,11 @@ export default {
       name: "Imię", ungueltig: "Wybierz datę do dziś.", gespeichert: "Szkolenie zapisane." },
     knopf: { pdf: "Udostępnij jako PDF", vorschau: "Podgląd", csv: "CSV", csvTeil: (t) => `${t} jako CSV`, schliessen: "Zamknij", datei: "Plik", drucken: "Drukuj / PDF",
       druckHinweis: "W oknie druku wybierz „Zapisz jako PDF” albo „Udostępnij”.", geteilt: "Dokument gotowy.", csvFertig: (n) => `${n} ${lm(n, "plik gotowy", "pliki gotowe", "plików gotowych")}.` },
-    dok: { erstellt: (d, z) => `Utworzono ${d} o ${z} w GastroCalc`, nichtGemessen: "nie zmierzono", nk: { erledigt: "Ponowna kontrola zrobiona", offen: "Ponowna kontrola otwarta" }, ware: "Towar",
+    dok: { erstellt: (d, z) => `Utworzono ${d} o ${z} w GastroCash`, nichtGemessen: "nie zmierzono", nk: { erledigt: "Ponowna kontrola zrobiona", offen: "Ponowna kontrola otwarta" }, ware: "Towar",
       basis: { netto: "netto", brutto: "brutto" }, ohneMessung: (l) => `bez pomiaru: ${l}`, keineMassnahme: "brak wpisanego działania", offeneTage: (l) => `niekompletne: ${l}`,
       ladenArt: (a) => `Lokal: ${a}`, geraete: (l) => `Sprzęt: ${l}`, takt: (n) => (n === 2 ? "Pomiar chłodzenia 2× dziennie" : "Pomiar chłodzenia 1× dziennie"), aufgaben: (n) => `${n} ${lm(n, "zadanie", "zadania", "zadań")} sprzątania w planie`,
       standardGrenze: "Limit standardowy", eigeneGrenze: "własny limit", unterschrift: ["Data, podpis lokalu", "Sprawdzone (data, podpis)"],
-      fussAmt: "Zapis kontroli własnych w GastroCalc. Wpisy nie są usuwane, tylko cofane; cofnięcia są poniżej. * = dopisano później. Ta lista nie zastępuje planu HACCP.",
+      fussAmt: "Zapis kontroli własnych w GastroCash. Wpisy nie są usuwane, tylko cofane; cofnięcia są poniżej. * = dopisano później. Ta lista nie zastępuje planu HACCP.",
       satz: (p) => `Średnia stawka VAT ${p} %`, svev: "Wartość posiłków dla personelu 2026 (SvEV): śniadanie 2,37 €, obiad i kolacja po 4,57 €", netto: "Wartość towaru netto po cenie zakupu",
       summe: "Suma", vormonat: "Stan wcześniej", monatslast: "Koszty miesięczne razem",
       fussSteuer: "Utarg dzienny to notatki z aplikacji i nie zastępuje raportu kasowego (raport Z). Kwoty netto, jeśli nie podano inaczej. * = dopisane później.",
@@ -496,6 +496,9 @@ export default {
     seite: ["Strona", "z"],
     buero: (n) => `Odchylenia chłodzenia: ${n} – brak decyzji o towarze lub pomiaru kontrolnego`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Otwarte drzwi", "eingeraeumt": "Dołożono towar", "eingestellt": "Zmieniono ustawienie", "umgeraeumt": "Przeniesiono żywność", "stecker": "Sprawdzono wtyczkę", "chef": "Telefon do szefa", "techniker": "Wezwano technika", "weggeworfen": "Wyrzucono żywność"}, heute: "Zapisane dzisiaj", starten: "Zacznij obchód", fortsetzen: "Kontynuuj obchód", ganz: "Cała zawartość" },
+
   kuehl: {
     titel: "Kontrola chłodzenia",
     nav: "Chłodzenie",
@@ -566,7 +569,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 osoba w zespole" : `${n} ${lm(n, "osoba", "osoby", "osób")} w zespole`,
     spaeter: "Dokończę później",
     haftungTitel: "Kto odpowiada?",
-    haftung: "Odpowiadasz ty: twoje granice, twoje pomiary i twoje działania należą do ciebie. GastroCalc tylko zapisuje to, co wpiszesz, i niczego nie sprawdza. Dane są tylko na tym telefonie – rób kopie sam i trzymaj je co najmniej 12 miesięcy.",
+    haftung: "Odpowiadasz ty: twoje granice, twoje pomiary i twoje działania należą do ciebie. GastroCash tylko zapisuje to, co wpiszesz, i niczego nie sprawdza. Dane są tylko na tym telefonie – rób kopie sam i trzymaj je co najmniej 12 miesięcy.",
     arten: { kuehl: "Chłodzenie", tk: "Mrożenie", warm: "Utrzymywanie na ciepło" },
     rundgang: "Obchód",
     nacherfasst: "dopisane",
@@ -925,7 +928,7 @@ export default {
     sicherungText: "Wszystkie dane są tylko na tym urządzeniu. Plikiem kopii możesz je przekazać albo przenieść na nowy telefon.",
     exportieren: "Utwórz plik kopii",
     importieren: "Wczytaj plik kopii",
-    importFehler: "To nie jest plik kopii GastroCalc.",
+    importFehler: "To nie jest plik kopii GastroCash.",
     importOk: "Wczytano.",
     loeschenAlles: "Usuń wszystko",
     loeschenFrage: "Na pewno usunąć wszystko? Tego nie da się cofnąć.",
@@ -1426,7 +1429,7 @@ export default {
     vergleich: "Porównanie", vergleichAb: "Porównanie od dwóch lokali", keineLaeden: "Brak lokalu z danymi", bericht: "Raport właściciela", datei: "Wlasciciel", drucken: "Drukuj raport", csv: "CSV", geteilt: "Raport udostępniony",
     dok: { zahlen: "Wskaźniki według lokalu", hinweis: "≈ = szacunek (ceny orientacyjne, wartość orientacyjna lub szacunek). „brak” = brak danych w okresie. Tylko lokale na tym telefonie, liczby z wpisów w aplikacji.",
       kopf: ["Lokal", "Obrót", "Koszt towaru", "Wyrzucone", "Podejrzenie ubytku", "Otwarte obowiązki", "Do zera", "Wartość magazynu", "Zamówić"], laden: "Lokal", vergleich: "Porównanie", vergleichInfo: "Ranking tylko między lokalami o tej samej bazie danych.",
-      trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCalc · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
+      trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCash · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Stuknij towar i wpisz, ile płacisz.", fortschritt: (a, b) => `${a} z ${b} gotowe`, fehlt: "brak", filterFehlt: (n) => `Brak (${n})`, filterAlle: (n) => `Wszystkie (${n})`, selbst: "własne",

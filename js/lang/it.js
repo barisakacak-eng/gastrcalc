@@ -1,7 +1,7 @@
 // Italiano – tradotto da de.js (15.10.2026). Lingua da locale, frasi brevi.
 // Italienisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
-  app: { name: "GastroCalc", entwurf: "Versione di prova" },
+  app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {
     weiter: "Avanti", zurueck: "Indietro", fertig: "Fatto", speichern: "Salva", abbrechen: "Annulla", stueck: "pz.", bearbeiten: "Modifica", zahlZuGross: (v) => `“${v}” è troppo grande – si arriva fino a dieci milioni.`, uebernehmen: "Applica", zahlUngueltig: (v) => `“${v}” non è un numero. Solo cifre e una virgola.`,
@@ -420,11 +420,11 @@ export default {
       name: "Nome", ungueltig: "Scegli una data fino a oggi.", gespeichert: "Formazione inserita." },
     knopf: { pdf: "Condividi come PDF", vorschau: "Anteprima", csv: "CSV", csvTeil: (t) => `${t} come CSV`, schliessen: "Chiudi", datei: "File", drucken: "Stampa / PDF",
       druckHinweis: "Nella finestra di stampa scegli «Salva come PDF» o «Condividi».", geteilt: "Documento pronto.", csvFertig: (n) => (n === 1 ? "1 file pronto." : `${n} file pronti.`) },
-    dok: { erstellt: (d, z) => `Creato il ${d} alle ${z} con GastroCalc`, nichtGemessen: "non misurato", nk: { erledigt: "Ricontrollo fatto", offen: "Ricontrollo da fare" }, ware: "Merce",
+    dok: { erstellt: (d, z) => `Creato il ${d} alle ${z} con GastroCash`, nichtGemessen: "non misurato", nk: { erledigt: "Ricontrollo fatto", offen: "Ricontrollo da fare" }, ware: "Merce",
       basis: { netto: "netto", brutto: "lordo" }, ohneMessung: (l) => `senza misura: ${l}`, keineMassnahme: "nessuna azione inserita", offeneTage: (l) => `non completo: ${l}`,
       ladenArt: (a) => `Locale: ${a}`, geraete: (l) => `Apparecchi: ${l}`, takt: (n) => (n === 2 ? "Misura frigo 2× al giorno" : "Misura frigo 1× al giorno"), aufgaben: (n) => `${n} compiti di pulizia nel piano`,
       standardGrenze: "Limite standard", eigeneGrenze: "limite tuo", unterschrift: ["Data, firma del locale", "Controllato (data, firma)"],
-      fussAmt: "Registrazione degli autocontrolli con GastroCalc. Le voci non vengono cancellate, solo annullate; gli annullamenti sono sotto. * = aggiunto dopo. Questa lista non sostituisce un piano HACCP.",
+      fussAmt: "Registrazione degli autocontrolli con GastroCash. Le voci non vengono cancellate, solo annullate; gli annullamenti sono sotto. * = aggiunto dopo. Questa lista non sostituisce un piano HACCP.",
       satz: (p) => `Aliquota IVA media ${p} %`, svev: "Valori dei pasti 2026 (SvEV): colazione 2,37 €, pranzo e cena 4,57 € ciascuno", netto: "Valore merce netto a prezzo d'acquisto",
       summe: "Totale", vormonat: "Prima", monatslast: "Totale del mese",
       fussSteuer: "Gli incassi del giorno sono note dall'app e non sostituiscono la chiusura di cassa (scontrino Z). Importi netti, se non indicato diversamente. * = aggiunto dopo.",
@@ -491,6 +491,9 @@ export default {
     seite: ["Pagina", "di"],
     buero: (n) => (n === 1 ? "1 scostamento del freddo: manca la decisione sulla merce o il controllo" : `${n} scostamenti del freddo: manca la decisione sulla merce o il controllo`),
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Porta aperta", "eingeraeumt": "Merce aggiunta", "eingestellt": "Impostazione modificata", "umgeraeumt": "Alimenti spostati", "stecker": "Spina controllata", "chef": "Titolare chiamato", "techniker": "Tecnico chiamato", "weggeworfen": "Alimenti buttati"}, heute: "Registrati oggi", starten: "Avvia giro", fortsetzen: "Continua il giro", ganz: "Tutto il contenuto" },
+
   kuehl: {
     titel: "Controllo frigo",
     nav: "Frigo",
@@ -561,7 +564,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 sigla nel team" : `${n} sigle nel team`,
     spaeter: "Continua dopo",
     haftungTitel: "Chi è responsabile?",
-    haftung: "La responsabilità resta tua: i tuoi limiti, le tue misure e i tuoi interventi sono tuoi. GastroCalc scrive solo quello che inserisci e non controlla niente. I dati sono solo su questo telefono – fai tu il backup e conservali almeno 12 mesi.",
+    haftung: "La responsabilità resta tua: i tuoi limiti, le tue misure e i tuoi interventi sono tuoi. GastroCash scrive solo quello che inserisci e non controlla niente. I dati sono solo su questo telefono – fai tu il backup e conservali almeno 12 mesi.",
     arten: { kuehl: "Frigo", tk: "Congelatore", warm: "Mantenimento a caldo" },
     rundgang: "Giro di controllo",
     nacherfasst: "inserito dopo",
@@ -920,7 +923,7 @@ export default {
     sicherungText: "Tutti i dati sono solo su questo dispositivo. Con il file di backup puoi passarli a qualcuno o portarli su un telefono nuovo.",
     exportieren: "Crea file di backup",
     importieren: "Carica file di backup",
-    importFehler: "Questo non è un file di backup di GastroCalc.",
+    importFehler: "Questo non è un file di backup di GastroCash.",
     importOk: "Caricato.",
     loeschenAlles: "Cancella tutto",
     loeschenFrage: "Cancellare davvero tutto? Non si può annullare.",
@@ -1421,7 +1424,7 @@ export default {
     vergleich: "Confronto", vergleichAb: "Confronto da due locali", keineLaeden: "Nessun locale con dati", bericht: "Rapporto del proprietario", datei: "Proprietario", drucken: "Stampa rapporto", csv: "CSV", geteilt: "Rapporto condiviso",
     dok: { zahlen: "Cifre per locale", hinweis: "≈ = stimato (prezzi indicativi, valore indicativo o stima). «manca» = nessun dato nel periodo. Solo locali su questo telefono, cifre dalle registrazioni dell'app.",
       kopf: ["Locale", "Incasso", "Costo merce", "Buttato", "Sospetto di perdita", "Obblighi aperti", "Fino a zero", "Valore magazzino", "Ordinare"], laden: "Locale", vergleich: "Confronto", vergleichInfo: "Classifica solo tra locali con la stessa base dati.",
-      trend: "Andamento rispetto al periodo precedente", daten: "Base dati", fehlt: "Incompleto", tage: "giorni", quelle: "Fonte costo merce", fuss: "GastroCalc · Rapporto del proprietario. Cifre dalle registrazioni dell'app – non contabilità, non dati di cassa." },
+      trend: "Andamento rispetto al periodo precedente", daten: "Base dati", fehlt: "Incompleto", tage: "giorni", quelle: "Fonte costo merce", fuss: "GastroCash · Rapporto del proprietario. Cifre dalle registrazioni dell'app – non contabilità, non dati di cassa." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Tocca un prodotto e scrivi quanto paghi.", fortschritt: (a, b) => `${a} di ${b} pronti`, fehlt: "manca", filterFehlt: (n) => `Mancano (${n})`, filterAlle: (n) => `Tutti (${n})`, selbst: "fatto da noi",

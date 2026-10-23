@@ -16,7 +16,7 @@ import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
-import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
+import { personalAktiv, personalVon } from "./personal.js"; // D: im Personal-Modus kein Euro
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
@@ -25,6 +25,7 @@ import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../la
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : "k-kuehlschrank";
   const f = { "k-theke": "k-saladette-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden
   return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">`; };
+let imBuero = false, stelleSeite = 0, massSeite = 0, wegSeite = 0, werSeite = 0, messSchritt = "wert"; // L3: nur flüchtige Anzeige, keine neuen gespeicherten Felder
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
 let station = null;             // id der Stelle, die im Rundgang gerade offen ist
 let form = null;                // Eingabe der offenen Station
@@ -36,9 +37,12 @@ let startStelle = null;         // Nachmessen einer einzelnen Stelle
 
 export const kuehlAnsicht = () => ansicht;
 export const kuehlKennung = () => `${ansicht}:${station || ""}:${rundgangOffen ? "" : ""}`; // für den Doppeltipp-Schutz: jede Ebene ist ein eigener Bildschirm
-export function kuehlZuruecksetzen() { ansicht = "start"; station = null; form = null; }
-export function kuehlZurueck() { // Zurück-Geste: eine Ebene hoch; true = behandelt
-  if (station) { station = null; form = null; return true; }
+export function kuehlZuruecksetzen() { ansicht = "start"; station = null; form = null; stelleSeite = 0; massSeite = 0; messSchritt = "wert"; }
+export function kuehlZurueck(stand) { // Zurück-Geste: eine Ebene hoch; true = behandelt
+  if (station) { if (!imBuero && messSchritt !== "wert") { messSchritt = messSchritt === "nachkontrolle" ? (form?.massnahmen.includes("weggeworfen") ? "ware" : "massnahme") : messSchritt === "ware" ? "massnahme" : "wert"; return true; }
+    // Beim direkten Personal-Einstieg gibt es vor dem ersten Eintrag nichts zu korrigieren.
+    if (personalAktiv() && stand && !rundgangOffen(stand)?.messungen.length) ansicht = "start";
+    station = null; form = null; return true; }
   if (ansicht !== "start") { ansicht = "start"; return true; }
   return false;
 }
@@ -57,15 +61,17 @@ const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit
 // letzten 7 Tage, „Eine Stelle antippen …“, Verantwortung) stehen im Büro bzw. hinter „?“. Im Büro (buero: true) bleiben Monatsblatt,
 // Einrichtung und der 7-Tage-Hinweis auf dieser Seite.
 export function kuehlView(stand, { buero = false } = {}) {
+  imBuero = buero;
   const pers = personalAktiv(); // W2-S (p02 K2): Einrichtung, Grenzen, Verwerfen und Vortage gibt es im Personal-Modus nicht
   if (pers && ansicht === "einrichtung") ansicht = "start";
   if (ansicht === "einrichtung") return einrichtungView(stand);
-  if (ansicht === "rundgang") return rundgangView(stand);
+  if (ansicht === "rundgang") return buero ? rundgangView(stand) : ladenRundgang(stand);
   if (ansicht === "blatt") return blattView(stand);
   const st = kuehlStatus(stand);
   const offen = rundgangOffen(stand);
   const nk = offeneNachkontrollen(stand);
   const fertig = st.eingerichtet && st.heuteGemessen >= st.stellen && !offen;
+  if (!buero) return ladenStart(stand, st, offen, nk);
   return `
     <div class="kopfband kuehlkopf"><h1>${esc(t("ebene.tabs.kuehl"))}</h1></div>
     <div class="inhalt kuehl-laden">
@@ -83,13 +89,87 @@ export function kuehlView(stand, { buero = false } = {}) {
       ${nk.length ? `<div class="karte hinweisgelb"><h2>${esc(t("kuehl.nachkontrollenTitel"))}</h2>
         ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">\u2066${fmtZahl(x.messung.wert, 1)}\u00a0°C\u2069 · ${esc(zeitOderStrich(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitOderStrich(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}</div>` : ""}
       <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
-        <button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.abweichung ? `<small class="rot">${esc(grenzen(k))}</small>` : ""}</span>
+        <button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.datum ? `<small>${esc(datumLesbar(m.datum))}</small>` : ""}${m?.abweichung ? `<small class="rot">${esc(grenzen(k))}</small>` : ""}</span>
           <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : "–"}</span></button>`; }).join("")}</div>
       ${buero ? `<button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
       ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
       ${einklappen("kuehl-haftung", t("kuehl.haftungTitel"), `<p class="hinweis">${esc(t("kuehl.haftung"))}</p>`)}` : ""}`}
     </div>
     ${nav("kuehl")}`;
+}
+
+
+// ---------- L3 – Sanji: Laden, eine Entscheidung je Schritt ----------
+// Alle Werte/Schreibvorgänge kommen aus den bestehenden Funktionen. Büro-Ansichten bleiben oben unverändert.
+const l3Knopf = (aktion, symbol, text, daten = "") => `<button type="button" class="ikonknopf" data-a="${aktion}" ${daten} aria-label="${esc(text)}">${sym(symbol)}</button>`;
+const l3Zurueck = (aktion) => l3Knopf(aktion, "chevron-left", t("allgemein.zurueck"));
+// NBSP und LTR-Isolierung wie bisher, keine andere Grenzregel. Kompakt nur im Laden.
+const l3Grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `≥${fmtZahl(g.min, 1)}°C` : "", typeof g.max === "number" ? `≤${fmtZahl(g.max, 1)}°C` : ""].filter(Boolean).map((x) => `\u2066${x}\u2069`).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
+function l3Personen(stand, r) {
+  const ps = stand.personen.filter((p) => !p.entfernt && p.aktiv !== false);
+  if (ps.length < 2 || r.messungen.length || personalAktiv()) return "";
+  werSeite = Math.min(werSeite, Math.ceil(ps.length / 4) - 1);
+  return `<div class="chips rg-wer">${ps.slice(werSeite * 4, werSeite * 4 + 4).map((p) => `<button type="button" class="chip klein ${r.von === p.id ? "an" : ""}" data-a="rg-von" data-id="${esc(p.id)}" aria-pressed="${r.von === p.id}">${esc(p.kuerzel)}</button>`).join("")}</div>${l3Seiten("l3-wer-seite", werSeite, Math.ceil(ps.length / 4))}`;
+}
+const l3Wert = (m) => m && typeof m.wert === "number" ? `\u2066${fmtZahl(m.wert, 1)}°C\u2069` : "—";
+function l3Seiten(aktion, seite, anzahl) {
+  if (anzahl < 2) return "";
+  return `<div class="l3-seiten">${l3Knopf(aktion, "chevron-left", t("allgemein.zurueck"), `data-wert="${(seite + anzahl - 1) % anzahl}"`)}${l3Knopf(aktion, "chevron-right", t("allgemein.weiter"), `data-wert="${(seite + 1) % anzahl}"`)}</div>`;
+}
+function ladenStart(stand, st, offen, nk) {
+  const stellen = aktiveStellen(stand); stelleSeite = Math.min(stelleSeite, Math.max(0, stellen.length - 1));
+  const k = stellen[stelleSeite]; const m = k ? messungenDerStelle(stand, k.id).at(-1) : null;
+  const nach = k ? nk.find((x) => x.messung.stelle === k.id) : null;
+  const fertig = st.eingerichtet && st.heuteGemessen >= st.stellen && !offen;
+  return `<div class="inhalt l3-laden l3-start">
+    <div class="l3-fortschritt"><h1>${esc(t(st.eingerichtet ? "l3.heute" : "ebene.tabs.kuehl"))}</h1>
+      ${st.eingerichtet ? `<b class="zahl">\u2066${st.heuteGemessen} / ${st.stellen}\u2069</b>` : sym("lock")}</div>
+    ${k ? `<div class="l3-stelle kuehlliste"><button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">
+      ${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.datum ? `<small>${esc(datumLesbar(m.datum))}</small>` : ""}${m?.abweichung ? `<small class="rot">${esc(l3Grenzen(k))}</small>` : ""}${nach ? `<small class="l3-nach ${nach.ueberfaellig ? "rot" : ""}" aria-label="${esc(t(nach.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.nachkontrolle"))}">${sym("clock")}${esc(nach.faellig ? datumLesbar(nach.faellig.slice(0, 10)) + " · " + zeitOderStrich(nach.faellig) : t("kuehl.nachkontrollen.naechste"))}</small>` : ""}</span>
+      <span class="kwert ${m?.abweichung ? "rot" : ""}">${esc(m?.grund ? grundText(m.grund) : l3Wert(m))}</span></button>
+      ${l3Seiten("l3-stelle", stelleSeite, stellen.length)}</div>` : ""}
+    ${st.bereit ? `<button type="button" class="knopf glut" data-a="kuehl-rundgang-los">${fertig ? sym("check") : ""}${esc(t(offen ? "l3.fortsetzen" : "l3.starten"))}</button>` : `<button type="button" class="knopf glut" data-a="${personalAktiv() ? "schloss" : "modus"}" data-wert="buero">${sym("lock")}${esc(t("ebene.zumBuero"))}</button>`}
+    </div>${nav("kuehl")}`;
+}
+function ladenRundgang(stand) {
+  const r = rundgangOffen(stand); if (!r) return rundgangStartView(stand); // Büro-Nacherfassung und bisheriger Start bleiben erreichbar
+  const stellen = aktiveStellen(stand); const k = station ? stellen.find((x) => x.id === station) : null;
+  // Die Übersicht bleibt für Korrekturen erreichbar. Nur eine Stelle je Seite hält auch große Betriebe knapp.
+  if (!k) {
+    stelleSeite = Math.min(stelleSeite, Math.max(0, stellen.length - 1)); const x = stellen[stelleSeite];
+    const m = x ? r.messungen.find((y) => y.stelle === x.id) : null;
+    return `<div class="inhalt l3-laden"><div class="l3-kopf">${l3Zurueck("kuehl-start")}<h1>${esc(t("kuehl.rundgang"))}</h1></div>
+      ${x ? `<button type="button" class="zeileknopf" data-a="station" data-id="${esc(x.id)}">${stelleBild(x)}<b>${esc(kn(x))}</b><span>${m ? typeof m.wert === "number" ? esc(l3Wert(m)) : esc(grundText(m.grund)) : "—"}</span></button>${l3Seiten("l3-stelle", stelleSeite, stellen.length)}` : ""}
+      <button type="button" class="knopf glut" data-a="kuehl-rundgang-los">${esc(t("kuehl.weiterRundgang"))}</button></div>${personalAktiv() ? nav("kuehl") : ""}`;
+  }
+  const f = form, abw = typeof f.wert === "number" && abweichung(k, f.wert); f.abwGezeigt = abw;
+  const kopf = `<div class="l3-kopf">${l3Zurueck("l3-zurueck")}<h1>${esc(kn(k))}</h1></div>`;
+  let inhalt = "";
+  if (messSchritt === "grund") {
+    inhalt = `<h2>${esc(t("kuehl.nichtGemessenKurz"))}</h2><div class="l3-auswahl">${NICHT_GEMESSEN.map((g) => `<button type="button" class="wahl ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}" aria-pressed="${f.grund === g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>
+      <button type="button" class="knopf glut" data-a="station-speichern" ${f.grund ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>`;
+  } else if (messSchritt === "massnahme") {
+    const proSeite = ["ku", "vi"].includes(sprache()) ? 2 : 4; // NEU: lange Sprachfassungen auf zwei Maßnahmen begrenzen
+    const teile = MASSNAHMEN.slice(massSeite * proSeite, massSeite * proSeite + proSeite);
+    inhalt = `<h2>${esc(t("kuehl.massnahme"))}</h2><div class="l3-auswahl l3-massnahmen">${teile.map((m) => `<button type="button" class="wahl ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}" aria-pressed="${f.massnahmen.includes(m)}" aria-label="${esc(t("kuehl.massnahmen." + m))}">${f.massnahmen.includes(m) ? sym("check") : ""}${esc(t("l3.massnahmen." + m))}</button>`).join("")}</div>
+      ${l3Seiten("l3-mass-seite", massSeite, Math.ceil(MASSNAHMEN.length / proSeite))}<button type="button" class="knopf glut" data-a="l3-weiter" ${f.massnahmen.length ? "" : "disabled"}>${esc(t("allgemein.weiter"))}</button>`;
+  } else if (messSchritt === "nachkontrolle") {
+    inhalt = `<h2>${esc(t("kuehl.nachkontrolle"))}</h2><div class="l3-auswahl">${["h1", "h2", "naechste"].map((n) => `<button type="button" class="wahl ${f.nachkontrolle === n ? "an" : ""}" data-a="nachkontrolle" data-wert="${n}" aria-pressed="${f.nachkontrolle === n}">${esc(t("kuehl.nachkontrollen." + n))}</button>`).join("")}</div>
+      <button type="button" class="knopf glut" data-a="station-speichern" ${kuehlFormGueltig() ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>`;
+  } else if (messSchritt === "ware") {
+    wegSeite = Math.min(wegSeite, Math.max(0, f.weg.length - 1)); const w = f.weg[wegSeite]; const a = (stand.artikel || []).find((x) => x.name === f.wegName); const einheit = a ? (a.packung?.einheit || a.einheit || "stk") : "stk";
+    inhalt = `<h2>${esc(t("kuehl.wegTitel"))}</h2>${w ? `<div class="zeileknopf"><span>${esc(artikelText(w.name))} · ${esc(fmtZahl(w.menge, 2))} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}</span>${l3Knopf("weg-weg", "x", t("muell.zuruecknehmen"), `data-i="${wegSeite}"`)}</div>${l3Seiten("l3-weg-seite", wegSeite, f.weg.length)}` : ""}
+      <input class="textfeld" data-f="weg-name" value="${esc(artikelText(f.wegName))}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off">
+      <div class="neu"><input class="textfeld" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"><span>${esc(einheit === "stk" ? t("allgemein.stueck") : einheit)}</span>${l3Knopf("weg-hinzu", "plus", t("allgemein.hinzufuegen"))}</div>
+      ${f.weg.length ? "" : `<button type="button" class="wahl" data-a="weg-alles">${esc(t("l3.ganz"))}</button>`}
+      <button type="button" class="knopf glut" data-a="l3-weiter">${esc(t("allgemein.weiter"))}</button>`;
+  } else {
+    inhalt = `${l3Personen(stand, r)}<div class="l3-messbild">${stelleBild(k)}<span>${esc(l3Grenzen(k))}</span></div>
+      <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
+      <button type="button" class="wahl" data-a="l3-grund">${esc(t("kuehl.nichtGemessenKurz"))}</button>
+      <button type="button" class="knopf glut" data-a="${abw ? "l3-weiter" : "station-speichern"}" ${typeof f.wert === "number" ? "" : "disabled"}>${esc(t(abw ? "allgemein.weiter" : "kuehl.stationFertig"))}</button>`;
+  }
+  return `<div class="inhalt l3-laden l3-messen">${kopf}${inhalt}</div>${personalAktiv() ? nav("kuehl") : ""}`;
 }
 
 // ---------- Einrichtung ----------
@@ -269,6 +349,18 @@ const leeresForm = () => ({ wert: null, wertText: "", abwGezeigt: false, grund: 
 
 export function kuehlAktion(name, el, stand, wurzel) {
   const r = rundgangOffen(stand);
+  if (name === "l3-wer-seite") { werSeite = Number(el.dataset.wert) || 0; return true; }
+  if (name === "l3-stelle") { stelleSeite = Math.max(0, Number(el.dataset.wert) || 0); return true; }
+  if (name === "l3-mass-seite") { massSeite = Number(el.dataset.wert) || 0; return true; }
+  if (name === "l3-weg-seite") { wegSeite = Number(el.dataset.wert) || 0; return true; }
+  if (name === "l3-zurueck") return kuehlZurueck(stand);
+  if (name === "l3-grund" && form) { messSchritt = "grund"; return true; }
+  if (name === "l3-weiter" && form) {
+    if (messSchritt === "wert") { if (typeof form.wert !== "number") return false; messSchritt = "massnahme"; massSeite = 0; }
+    else if (messSchritt === "massnahme") { if (!form.massnahmen.length) return false; messSchritt = form.massnahmen.includes("weggeworfen") ? "ware" : "nachkontrolle"; }
+    else if (messSchritt === "ware") messSchritt = "nachkontrolle";
+    return true;
+  }
   if (name === "kuehl-einrichtung") { ansicht = "einrichtung"; return true; }
   if (name === "kuehl-einrichtung-fertig") { kuehlEingerichtetSetzen(stand); ansicht = "start"; return true; }
   if (name === "kuehl-start") { ansicht = "start"; station = null; form = null; return true; }
@@ -277,12 +369,14 @@ export function kuehlAktion(name, el, stand, wurzel) {
   // Stelle ohne Wert. Läuft schon ein Rundgang, geht es an seiner ersten offenen Stelle weiter. Wer misst, lässt sich oben im Rundgang mit einem Tipp ändern (personenWahl).
   if (name === "kuehl-rundgang-los") {
     if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; }
-    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von: kuehlWerVorschlag(stand), datum: heute() });
+    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von: personalAktiv() ? personalVon(stand) : kuehlWerVorschlag(stand), datum: heute() });
+    messSchritt = "wert"; massSeite = 0;
     ansicht = "rundgang"; startVon = null; startNach = null; startStelle = null;
     station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null;
     return true;
   }
-  if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
+  if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false;
+    if (!imBuero) { const k = aktiveStellen(stand).find((x) => x.id === el.dataset.id); if (!k) return false; rundgangStarten(stand, { von: personalAktiv() ? personalVon(stand) : kuehlWerVorschlag(stand), datum: heute(), einzel: k.id }); ansicht = "rundgang"; station = k.id; form = { ...leeresForm(), k }; messSchritt = "wert"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
   if (name === "blatt-monat") { blattMonat = Number(el.dataset.wert); return true; }
@@ -297,7 +391,15 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) return false; personAnlegen(stand, k); neuKuerzel = ""; return true; }
   if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("amtW2.personWegFrage", p.kuerzel))) return false; return personEntfernen(stand, p.id, heute()); } // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
   // Rundgang starten
-  if (name === "start-von") { startVon = el.dataset.id; return true; }
+  if (name === "start-von") { startVon = el.dataset.id;
+    // app.js ruft beim Einstieg vom Personal-Start erst kuehl-rundgang, dann start-von auf.
+    // Dort ist die Schicht-Person bereits gewählt: direkt messen, keine zweite Namensfrage.
+    if (personalAktiv() && ansicht === "rundgang" && !r && kuehlBereit(stand)) {
+      const offen = rundgangStarten(stand, { von: startVon || null, datum: heute() });
+      station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null; messSchritt = "wert";
+    }
+    return true;
+  }
   if (name === "start-datum") { startNach = el.dataset.wert; return true; }
   if (name === "rundgang-start") {
     if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } // W2-S
@@ -310,7 +412,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
   }
   if (!r) return false;
   if (name === "rg-von") return rundgangVonSetzen(stand, r, el.dataset.id || null);
-  if (name === "station") { station = el.dataset.id; const m = r.messungen.find((x) => x.stelle === station); form = leeresForm(); form.k = aktiveStellen(stand).find((x) => x.id === station); if (m) { form.wert = m.wert; form.wertText = wertAnzeige(m.wert); form.grund = m.grund; form.massnahmen = [...m.massnahmen]; form.notiz = m.notiz; form.nachkontrolle = m.nachkontrolle || "h2"; form.weg = (m.weg || []).map((w) => ({ ...w })); } return true; }
+  if (name === "station") { messSchritt = "wert"; station = el.dataset.id; const m = r.messungen.find((x) => x.stelle === station); form = leeresForm(); form.k = aktiveStellen(stand).find((x) => x.id === station); if (m) { form.wert = m.wert; form.wertText = wertAnzeige(m.wert); form.grund = m.grund; form.massnahmen = [...m.massnahmen]; form.notiz = m.notiz; form.nachkontrolle = m.nachkontrolle || "h2"; form.weg = (m.weg || []).map((w) => ({ ...w })); } return true; }
   if (name === "station-zu") { station = null; form = null; return true; }
   if (name === "rundgang-verwerfen") { if (!confirm(t("kuehl.verwerfenFrage"))) return false; rundgangVerwerfen(stand, r.id); station = null; form = null; ansicht = "start"; return true; }
   if (name === "rundgang-abschluss") {
@@ -318,7 +420,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     station = null; form = null; ansicht = "start"; return "abgeschlossen";
   }
   if (!form) return false;
-  if (name === "station-grund") { form.grund = form.grund === el.dataset.wert ? null : el.dataset.wert; if (form.grund) form.wert = null; return true; }
+  if (name === "station-grund") { form.grund = form.grund === el.dataset.wert ? null : el.dataset.wert; if (form.grund) { form.wert = null; form.wertText = ""; } return true; }
   if (name === "massnahme") { const i = form.massnahmen.indexOf(el.dataset.wert); if (i >= 0) form.massnahmen.splice(i, 1); else form.massnahmen.push(el.dataset.wert); return true; }
   if (name === "nachkontrolle") { form.nachkontrolle = el.dataset.wert; return true; }
   if (name === "weg-artikel") { form.wegName = el.dataset.name; return true; }
@@ -333,11 +435,13 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "weg-alles") { const k = aktiveStellen(stand).find((x) => x.id === station); form.weg.push({ name: t("kuehl.inhaltVon", k.name), menge: 1, einheit: "stk", wert: null, ref: { typ: "frei", name: t("kuehl.inhaltVon", k.name) } }); return true; }
   if (name === "weg-weg") { form.weg.splice(Number(el.dataset.i), 1); return true; }
   if (name === "station-speichern") {
+    if (!kuehlFormGueltig()) return false; // auch bei programmgesteuertem Klick keine ungültige Eintragung
     const k = aktiveStellen(stand).find((x) => x.id === station); if (!k) return false;
     stationEintragen(r, k, form); // „Ware weggeworfen" wird erst beim Abschluss zu Schwund-Einträgen
     station = null; form = null;
-    if (r.einzel || rundgangVollstaendig(stand, r)) { rundgangAbschliessen( /* W2-H (p01 K3): nach der letzten Stelle schließt sich der Rundgang selbst */stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n)); ansicht = "start"; return "abgeschlossen"; } // Nachmessen einer Stelle: sofort ins Journal
-    return true;
+    if (r.einzel || rundgangVollstaendig(stand, r)) { rundgangAbschliessen( /* W2-H (p01 K3): nach der letzten Stelle schließt sich der Rundgang selbst */stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n)); ansicht = "start"; return imBuero ? "abgeschlossen" : "abgeschlossen-still"; } // Gleiche sofortige Sicherung und Ereignis, im Laden ohne zusätzliche Meldung.
+    if (!imBuero) { station = kuehlNaechsteStelle(stand, r); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null; messSchritt = "wert"; }
+    return "eingetragen";
   }
   return false;
 }
@@ -349,10 +453,11 @@ export function kuehlEingabe(feld, wert, stand) {
   if (feld.startsWith("stelle-max:") || feld.startsWith("stelle-min:")) { kuehlstelleGrenzeSetzen(stand, feld.slice(11), feld.startsWith("stelle-max:") ? "max" : "min", parseTemperatur(wert)); return false; }
   if (!form) return false;
   if (feld === "station-wert") {
+    const hatteWert = typeof form.wert === "number";
     form.wertText = wert; form.wert = parseTemperatur(wert); if (form.wert !== null) form.grund = null;
     // Nur neu zeichnen, wenn sich der Abweichungs-Zustand ändert (dann erscheinen oder verschwinden die Maßnahmen); sonst nur den Knopf schalten
     const abw = typeof form.wert === "number" && form.k ? abweichung(form.k, form.wert) : false;
-    if (abw !== form.abwGezeigt) { form.abwGezeigt = abw; return true; }
+    if ((!imBuero && hatteWert !== (typeof form.wert === "number")) || abw !== form.abwGezeigt) { form.abwGezeigt = abw; return true; }
     return "knopf";
   }
   if (feld === "station-notiz") { form.notiz = wert; return false; }

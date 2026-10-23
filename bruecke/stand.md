@@ -1,3 +1,32 @@
+# GastroCash – Entwicklungsstand 23.10.2026
+
+**Entwicklung, nicht veröffentlicht.** main und öffentliche App bleiben ohne Kapitäns-Go unverändert.
+
+- Technischer Sockel: PR #6, Produkt-Commit `5de3a476f98fd10f14b40537a67d5cf29c13a174`, Actions [39858736807](https://github.com/barisakacak-eng/gastrcalc/actions/runs/39858736807).
+- Integrationsziel: [PR #7](https://github.com/barisakacak-eng/gastrcalc/pull/7), `sanji/gastrocash-brand-b-2026-10-23`. Abschlussarbeit im eigenen Branch `work/gastrocash-completion-2026-10-23`. Finale Prüfergebnisse/Commit im PR und in den Dokumenten unten.
+- GastroCash B: lokale Wortmarke, PWA-Icons, Küchenhelfer mit fünf Gesichtern und getrennten Bewegungen. Default zwei offene Augen; bei schlechter Lage kein Erfolgsgesicht. Reduced Motion. Kein Finanz-Chat (Variante C bleibt später).
+- B/C-Facelift und alle freigegebenen Food-Fotos unverändert; Döner und Smash gleichrangig. Heute/Station/Karte/Abschluss/Büro/Ordner aus #5/#6 erhalten. L6 war bereits fertig.
+- L3 aus #4 integriert: kurze Mess-/Maßnahmen-/Waren-/Nachkontrollschritte, sofortige Sicherung bestätigter Stationen, korrekter Personal-Rückweg. Nicht-Messungen heißen dokumentiert und werden nicht als Temperatur erfunden.
+- Nutzen-Adapter vorbereitet, keine neue Mess-/Finanzlogik und noch keine Nutzen-Summe aktiviert. Lagerkapital ist kein Gewinn. Keine neue Steuerkarte.
+- Marke ändert den sichtbaren ZIP-Namen; interne Schlüssel, Sicherungsformat und Import alter GastroCalc-Dateien bleiben erhalten. Offline-Dateiliste/Fingerprint nur mit Projektwerkzeug erzeugt.
+
+## Verbindliche Übergaben
+
+1. [Freitag-Masterübergabe](an-zoro/2026-10-23_freitag_masteruebergabe.md), ursprünglicher vollständiger Eintrag erhalten, Abschluss ergänzt.
+2. [GastroCash-B-Arbeitsstand](../docs/Sanji_2026-10-23_GastroCash_B_Arbeitsstand.md).
+3. [Work-Produktreife und L3](../docs/Sanji_2026-10-23_Produktreife.md).
+4. [Erste Work-Integration](../docs/Sanji_2026-10-22_Work_Integration.md).
+
+## Zuständigkeit und Freigaben
+
+Baris entscheidet Produkt/Gestaltung und jeden späteren Merge/Release. Zoro führt Architektur/Rechenkern/Integration; Sanji ist für diesen ausdrücklichen Work-Auftrag zu Frontend-, Test- und Dokumentationsänderungen in Entwicklungsbranches autorisiert. Franky prüft Rechts-/Steuer-/Markenfragen. Kein main-Push, kein Live-Deploy durch Work.
+
+Offen: Zoros saubere Trennung Messung/Nicht-Messung in den übrigen Kern-Statuskarten; belegte Nutzen-/Hinweis-Verträge; Frankys betriebliche Hygiene-/Aufbewahrungs-/Datenschutz- und Markenprüfung; visuelle Kapitänsabnahme des Mascot. Kein blindes Zusammenführen alter PRs #2/#3/#4; Protokoll-Add/Add und Reihenfolge siehe Produktreife-Dokument.
+
+## Historischer Stand vom 16.10.2026 (unverändert archiviert)
+
+Die folgenden Rollenbeschränkungen und offenen UI-Aufträge sind historisch; für diesen Work-Auftrag gelten die oben dokumentierten jüngeren Entscheidungen.
+
 # Stand der App (gepflegt von Zoro) – 16.10.2026, 16:30
 
 Live: https://barisakacak-eng.github.io/gastrcalc/ · Fassung 2026-10-16.1 · alles bleibt auf dem Handy, keine Cloud, kein Server.

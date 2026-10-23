@@ -1100,7 +1100,7 @@ async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
   const blob = await zipBlob([{ name: SICHERUNG_JSON, daten: json }, { name: "ablage.json", daten: JSON.stringify(liste) }, ...dateien]);
   const aktiv = wurzel.betriebe.find((b) => b.id === wurzel.aktiv);
   const stamm = wurzel.betriebe.length > 1 ? `${wurzel.betriebe.length}-laeden` : (aktiv?.betrieb.name || "laden");
-  const name = `gastrocalc-${stamm.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}-${heute()}.zip`;
+  const name = `gastrocash-${stamm.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase()}-${heute()}.zip`;
   return { blob, name, fingerabdruck: sha ? sha.slice(0, 10) : null, groesse: blob.size, dateien: dateien.length };
 }
 

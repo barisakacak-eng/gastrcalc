@@ -339,7 +339,7 @@ async function sicherungTeilen(passwort = null, { mitAblage = true } = {}) {
   };
   const datei = new File([blob], name, { type: "application/zip" });
   if (navigator.canShare && navigator.canShare({ files: [datei] })) {
-    try { await navigator.share({ files: [datei], title: "GastroCalc" }); gelungen(); return; } catch (e) { if (e.name === "AbortError") return; }
+    try { await navigator.share({ files: [datei], title: "GastroCash" }); gelungen(); return; } catch (e) { if (e.name === "AbortError") return; }
   }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000); gelungen();
@@ -411,7 +411,7 @@ function dauerhaftAnfragen() {
 async function diagnoseKopieren() {
   const sp = await speicherBelegt(); const mb = (n) => (typeof n === "number" ? (n / 1048576).toFixed(1) + " MB" : "?");
   const installiert = (typeof matchMedia === "function" && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
-  const text = [`GastroCalc ${APP_FASSUNG} · Schema ${SCHEMA}`, `Browser: ${navigator.userAgent}`, `Installiert: ${installiert ? "ja" : "nein"} · Offline: ${offlineStand}`,
+  const text = [`GastroCash ${APP_FASSUNG} · Schema ${SCHEMA}`, `Browser: ${navigator.userAgent}`, `Installiert: ${installiert ? "ja" : "nein"} · Offline: ${offlineStand}`,
     `Speicher: ${speicherVerfuegbar() ? "ok" : "nicht verfügbar"} · dauerhaft: ${speicherIstDauerhaft() === null ? "?" : speicherIstDauerhaft() ? "ja" : "nein"} · belegt ${mb(sp?.belegt)} von ${mb(sp?.frei)}`,
     `Läden: ${wurzel.betriebe.length} · Einträge: ${eintraegeZaehlen(wurzel)} · Verlauf: ${ereignisAnzahl}`, `Fehlende Teile: ${(wurzel.ladeFehler || []).length} · Sprache: ${wurzel.sprache || "?"}`].join("\n");
   try { await navigator.clipboard.writeText(text); meldung(t("w2d.diagnoseKopiert")); } catch (_) { window.prompt(t("w2d.diagnose"), text); }
@@ -728,7 +728,9 @@ async function aufKlick(ev) {
     if (r) {
       zeichne();
       const feld = root.querySelector('[data-f="station-wert"]'); if (feld && !feld.value) feld.focus(); // Tastatur gleich hoch, der nächste Schritt ist Tippen
-      if (r === "abgeschlossen") { ereignis("rundgang-fertig", { laden: stand.id }); meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(wurzel); } else speichern(wurzel);
+      if (r === "abgeschlossen" || r === "abgeschlossen-still") { ereignis("rundgang-fertig", { laden: stand.id }); if (r === "abgeschlossen") meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(wurzel); }
+      else if (r === "eingetragen") await sofortSpeichern(wurzel);
+      else speichern(wurzel);
     }
   }
 }
@@ -879,7 +881,7 @@ window.addEventListener("popstate", () => {
   else if (stand.phase === "app" && m === "buero" && ansicht === "buero") { ebeneWechseln("laden", "start"); } // Büro-Start: Zurück = „‹ Laden"
   else if (stand.phase === "app" && ansicht !== anfang) {
     if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : m === "buero" ? "buero" : "umsatz";
-    else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "kuehl" && kuehlZurueck(stand)) { /* eine Ebene hoch */ }
     else if (ansicht === "putzplan" && putzplanZurueck(stand)) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }

@@ -1266,3 +1266,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .b-einstellungen .schalter::after{top:50%;transform:translateY(-50%)}
 .buero .b-frei .textfeld,.buero .b-belehrung .knopf{min-height:56px;min-width:0}
 .b-einstellungen .b-sicherung-link{justify-content:center;text-align:center}
+
+/* Work 23.10.: integrierte L3-Schritte, vorhandene B-Tokens und lokale Schrift. */
+.l3-laden .ikonknopf { width: 56px; min-width: 56px; height: 56px; min-height: 56px; }
+.l3-laden .textfeld, .l3-laden .rg-wer .chip { min-height: 56px; }
+.l3-laden .wahl, .l3-laden .zeileknopf, .l3-laden .kwert { overflow-wrap: anywhere; }
+.l3-stelle .zeileknopf > span:first-of-type { min-width: 0; flex: 1; }
+.l3-stelle .kwert { min-width: 0; max-width: 40%; white-space: normal; font-size: calc(20rem / 17); }
+.l3-laden .rg-wer .chip { min-width: 56px; }

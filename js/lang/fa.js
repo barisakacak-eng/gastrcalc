@@ -1,6 +1,6 @@
 // فارسی – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / زبان مغازه، جمله‌های کوتاه.
 export default {
-  app: { name: "GastroCalc", entwurf: "نسخه‌ی آزمایشی" },
+  app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
     weiter: "بعدی", zurueck: "برگشت", fertig: "تمام", speichern: "ذخیره", abbrechen: "لغو", stueck: "عدد", bearbeiten: "ویرایش", zahlZuGross: (v) => `«${v}» خیلی بزرگ است – تا ده میلیون می‌شود.`, uebernehmen: "تأیید", zahlUngueltig: (v) => `«${v}» عدد نیست. فقط رقم و یک ویرگول بنویس.`,
@@ -419,11 +419,11 @@ export default {
       name: "نام", ungueltig: "تاریخی تا امروز انتخاب کن.", gespeichert: "آموزش ثبت شد." },
     knopf: { pdf: "اشتراک PDF", vorschau: "پیش‌نمایش", csv: "CSV", csvTeil: (t) => `${t} به CSV`, schliessen: "بستن", datei: "فایل", drucken: "چاپ / PDF",
       druckHinweis: "در پنجره‌ی چاپ «ذخیره به PDF» یا «اشتراک» را بزن.", geteilt: "سند آماده است.", csvFertig: (n) => `${n} فایل آماده است.` },
-    dok: { erstellt: (d, z) => `ساخته شده در ${d} ساعت ${z} با GastroCalc`, nichtGemessen: "اندازه گرفته نشده", nk: { erledigt: "چک دوباره انجام شد", offen: "چک دوباره مانده" }, ware: "جنس",
+    dok: { erstellt: (d, z) => `ساخته شده در ${d} ساعت ${z} با GastroCash`, nichtGemessen: "اندازه گرفته نشده", nk: { erledigt: "چک دوباره انجام شد", offen: "چک دوباره مانده" }, ware: "جنس",
       basis: { netto: "خالص", brutto: "ناخالص" }, ohneMessung: (l) => `بدون اندازه: ${l}`, keineMassnahme: "اقدامی ثبت نشده", offeneTage: (l) => `ناقص: ${l}`,
       ladenArt: (a) => `مغازه: ${a}`, geraete: (l) => `دستگاه‌ها: ${l}`, takt: (n) => (n === 2 ? "اندازه‌ی دما 2× در روز" : "اندازه‌ی دما 1× در روز"), aufgaben: (n) => `${n} کار نظافت در برنامه`,
       standardGrenze: "حد استاندارد", eigeneGrenze: "حد خودت", unterschrift: ["تاریخ، امضای مغازه", "بررسی شد (تاریخ، امضا)"],
-      fussAmt: "ثبت خودکنترلی با GastroCalc. موارد پاک نمی‌شوند، فقط برگشت می‌خورند؛ برگشت‌ها پایین آمده‌اند. * = بعداً ثبت شده. این فهرست جای برنامه‌ی HACCP را نمی‌گیرد.",
+      fussAmt: "ثبت خودکنترلی با GastroCash. موارد پاک نمی‌شوند، فقط برگشت می‌خورند؛ برگشت‌ها پایین آمده‌اند. * = بعداً ثبت شده. این فهرست جای برنامه‌ی HACCP را نمی‌گیرد.",
       satz: (p) => `نرخ ترکیبی مالیات فروش ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): صبحانه 2,37 €، ناهار و شام هر کدام 4,57 €", netto: "ارزش خالص جنس با قیمت خرید",
       summe: "جمع", vormonat: "مانده‌ی قبل", monatslast: "کل هزینه‌ی ماه",
       fussSteuer: "فروش روزانه یادداشت‌های اپ است و جای گزارش صندوق (گزارش Z) را نمی‌گیرد. مبلغ‌ها خالص‌اند، مگر جور دیگری نوشته شده باشد. * = بعداً ثبت شده.",
@@ -490,6 +490,9 @@ export default {
     seite: ["صفحه", "از"],
     buero: (n) => `${n} انحراف سرمایش: تصمیم درباره‌ی کالا یا اندازه‌گیری دوباره کم است`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "در باز", "eingeraeumt": "افزودن کالا", "eingestellt": "تنظیم دوباره", "umgeraeumt": "جابه‌جایی مواد", "stecker": "بررسی دوشاخه", "chef": "تماس با مسئول", "techniker": "تماس با تعمیرکار", "weggeworfen": "دورریختن مواد"}, heute: "ثبت‌شده امروز", starten: "شروع دور", fortsetzen: "ادامه‌ی دور چک", ganz: "همه محتویات" },
+
   kuehl: {
     titel: "کنترل دمای یخچال‌ها",
     nav: "یخچال‌ها",
@@ -560,7 +563,7 @@ export default {
     personenKurz: (n) => `${n} اسم کوتاه در تیم`,
     spaeter: "بعداً ادامه بده",
     haftungTitel: "چه کسی مسئول است؟",
-    haftung: "مسئولیت با خودت است: حدها، اندازه‌ها و کارهایی که می‌کنی مال خودت است. GastroCalc فقط چیزی را که وارد می‌کنی می‌نویسد و چیزی را بررسی نمی‌کند. داده‌ها فقط روی همین گوشی است – خودت پشتیبان بگیر و دست‌کم 12 ماه نگهشان دار.",
+    haftung: "مسئولیت با خودت است: حدها، اندازه‌ها و کارهایی که می‌کنی مال خودت است. GastroCash فقط چیزی را که وارد می‌کنی می‌نویسد و چیزی را بررسی نمی‌کند. داده‌ها فقط روی همین گوشی است – خودت پشتیبان بگیر و دست‌کم 12 ماه نگهشان دار.",
     arten: { kuehl: "یخچال", tk: "فریزر", warm: "گرم‌نگه‌داشتن (Heißhaltung)" },
     rundgang: "دور چک",
     nacherfasst: "بعداً ثبت شده",
@@ -918,7 +921,7 @@ export default {
     sicherungText: "همه‌ی داده‌ها فقط روی همین دستگاه است. با فایل پشتیبان می‌توانی آن را به کسی بدهی یا به گوشی جدید ببری.",
     exportieren: "ساختن فایل پشتیبان",
     importieren: "خواندن فایل پشتیبان",
-    importFehler: "این فایل پشتیبان GastroCalc نیست.",
+    importFehler: "این فایل پشتیبان GastroCash نیست.",
     importOk: "خوانده شد.",
     loeschenAlles: "پاک کردن همه",
     loeschenFrage: "واقعاً همه پاک شود؟ این برگشت ندارد.",
@@ -1419,7 +1422,7 @@ export default {
     vergleich: "مقایسه", vergleichAb: "مقایسه از دو مغازه", keineLaeden: "مغازه‌ای با داده نیست", bericht: "گزارش مالک", datei: "Malek", drucken: "چاپ گزارش", csv: "CSV", geteilt: "گزارش به اشتراک گذاشته شد",
     dok: { zahlen: "شاخص‌ها به تفکیک مغازه", hinweis: "≈ = تخمینی (قیمت راهنما، مقدار راهنما یا تخمین). «ندارد» = داده‌ای در دوره نیست. فقط مغازه‌های روی این گوشی، اعداد از ثبت‌های برنامه.",
       kopf: ["مغازه", "فروش", "هزینهٔ مواد", "دورریخته", "شک به کسری", "وظایف باز", "تا صفر", "ارزش انبار", "سفارش"], laden: "مغازه", vergleich: "مقایسه", vergleichInfo: "رتبه فقط بین مغازه‌هایی با پایهٔ دادهٔ یکسان.",
-      trend: "روند نسبت به دورهٔ قبل", daten: "پایهٔ داده", fehlt: "ناقص", tage: "روز", quelle: "منبع هزینهٔ مواد", fuss: "GastroCalc · گزارش مالک. اعداد از ثبت‌های برنامه – نه حسابداری، نه دادهٔ صندوق." },
+      trend: "روند نسبت به دورهٔ قبل", daten: "پایهٔ داده", fehlt: "ناقص", tage: "روز", quelle: "منبع هزینهٔ مواد", fuss: "GastroCash · گزارش مالک. اعداد از ثبت‌های برنامه – نه حسابداری، نه دادهٔ صندوق." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "روی یک کالا بزن و قیمتی را که می‌پردازی بنویس.", fortschritt: (a, b) => `${a} از ${b} آماده`, fehlt: "ناقص", filterFehlt: (n) => `ناقص (${n})`, filterAlle: (n) => `همه (${n})`, selbst: "خودمان",

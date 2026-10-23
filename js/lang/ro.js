@@ -7,7 +7,7 @@ const de = (n) => { const x = Math.abs(Number(n)); if (!Number.isInteger(x) || x
 const nr = (n, unu, multe) => Number(n) === 1 ? `1 ${unu}` : `${n} ${de(n)}${multe}`;
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Versiune de test" },
+  app: { name: "GastroCash", entwurf: "Versiune de test" },
 
   allgemein: {
     weiter: "Mai departe", zurueck: "Înapoi", fertig: "Gata", speichern: "Salvează", abbrechen: "Anulează", stueck: "buc.", bearbeiten: "Modifică", zahlZuGross: (v) => `„${v}” e prea mare – merge până la zece milioane.`, uebernehmen: "Preia", zahlUngueltig: (v) => `„${v}” nu e un număr. Doar cifre și o virgulă.`,
@@ -426,11 +426,11 @@ export default {
       name: "Nume", ungueltig: "Alege o dată până azi.", gespeichert: "Instruire înregistrată." },
     knopf: { pdf: "Trimite ca PDF", vorschau: "Previzualizare", csv: "CSV", csvTeil: (t) => `${t} ca CSV`, schliessen: "Închide", datei: "Fișier", drucken: "Tipărește / PDF",
       druckHinweis: "În fereastra de tipărire alege „Salvează ca PDF” sau „Trimite”.", geteilt: "Document gata.", csvFertig: (n) => (n === 1 ? "1 fișier gata." : `${nr(n, "fișier", "fișiere")} gata.`) },
-    dok: { erstellt: (d, z) => `Creat pe ${d} la ${z} cu GastroCalc`, nichtGemessen: "nemăsurat", nk: { erledigt: "Recontrol făcut", offen: "Recontrol deschis" }, ware: "Marfă",
+    dok: { erstellt: (d, z) => `Creat pe ${d} la ${z} cu GastroCash`, nichtGemessen: "nemăsurat", nk: { erledigt: "Recontrol făcut", offen: "Recontrol deschis" }, ware: "Marfă",
       basis: { netto: "net", brutto: "brut" }, ohneMessung: (l) => `fără măsurare: ${l}`, keineMassnahme: "nicio măsură introdusă", offeneTage: (l) => `incomplet: ${l}`,
       ladenArt: (a) => `Local: ${a}`, geraete: (l) => `Aparate: ${l}`, takt: (n) => (n === 2 ? "Măsurare răcire 2× pe zi" : "Măsurare răcire 1× pe zi"), aufgaben: (n) => `${nr(n, "sarcină", "sarcini")} de curățenie în plan`,
       standardGrenze: "Limită standard", eigeneGrenze: "limită proprie", unterschrift: ["Data, semnătura localului", "Verificat (data, semnătura)"],
-      fussAmt: "Evidența autocontroalelor cu GastroCalc. Înregistrările nu se șterg, doar se anulează; anulările sunt mai jos. * = adăugat ulterior. Această listă nu înlocuiește un plan HACCP.",
+      fussAmt: "Evidența autocontroalelor cu GastroCash. Înregistrările nu se șterg, doar se anulează; anulările sunt mai jos. * = adăugat ulterior. Această listă nu înlocuiește un plan HACCP.",
       satz: (p) => `Cotă medie TVA ${p} %`, svev: "Valori pentru masa personalului 2026 (SvEV): mic dejun 2,37 €, prânz și cină câte 4,57 €", netto: "Valoarea mărfii net, la preț de cumpărare",
       summe: "Total", vormonat: "Situația anterioară", monatslast: "Costuri pe lună, total",
       fussSteuer: "Încasările zilnice sunt notițe din aplicație și nu înlocuiesc raportul casei (raport Z). Sume nete, dacă nu scrie altfel. * = adăugat ulterior.",
@@ -497,6 +497,9 @@ export default {
     seite: ["Pagina", "din"],
     buero: (n) => `Abateri de răcire: ${n} – lipsește decizia despre marfă sau controlul ulterior`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Ușă deschisă", "eingeraeumt": "Marfă adăugată", "eingestellt": "Reglaj schimbat", "umgeraeumt": "Alimente mutate", "stecker": "Ștecher verificat", "chef": "Șef sunat", "techniker": "Tehnician chemat", "weggeworfen": "Alimente aruncate"}, heute: "Înregistrate azi", starten: "Pornește runda", fortsetzen: "Continuă runda", ganz: "Tot conținutul" },
+
   kuehl: {
     titel: "Controlul răcirii",
     nav: "Răcire",
@@ -567,7 +570,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 persoană în echipă" : `${nr(n, "persoană", "persoane")} în echipă`,
     spaeter: "Continui mai târziu",
     haftungTitel: "Cine este responsabil?",
-    haftung: "Răspunderea rămâne a ta: limitele, măsurătorile și măsurile tale îți aparțin. GastroCalc doar notează ce treci și nu verifică nimic. Datele sunt doar pe telefonul ăsta – fă-ți singur copii și păstrează-le cel puțin 12 luni.",
+    haftung: "Răspunderea rămâne a ta: limitele, măsurătorile și măsurile tale îți aparțin. GastroCash doar notează ce treci și nu verifică nimic. Datele sunt doar pe telefonul ăsta – fă-ți singur copii și păstrează-le cel puțin 12 luni.",
     arten: { kuehl: "Răcire", tk: "Congelare", warm: "Menținere la cald" },
     rundgang: "Rundă",
     nacherfasst: "completat ulterior",
@@ -926,7 +929,7 @@ export default {
     sicherungText: "Toate datele sunt doar pe aparatul ăsta. Cu fișierul de copie le poți da mai departe sau le poți muta pe un telefon nou.",
     exportieren: "Creează fișierul de copie",
     importieren: "Încarcă fișierul de copie",
-    importFehler: "Ăsta nu e un fișier de copie GastroCalc.",
+    importFehler: "Ăsta nu e un fișier de copie GastroCash.",
     importOk: "Încărcat.",
     loeschenAlles: "Șterge tot",
     loeschenFrage: "Sigur ștergi tot? Asta nu se mai poate anula.",
@@ -1427,7 +1430,7 @@ export default {
     vergleich: "Comparație", vergleichAb: "Comparație de la două localuri", keineLaeden: "Niciun local cu date", bericht: "Raportul proprietarului", datei: "Proprietar", drucken: "Tipărește raportul", csv: "CSV", geteilt: "Raport partajat",
     dok: { zahlen: "Cifre pe local", hinweis: "≈ = estimat (prețuri orientative, valoare orientativă sau estimare). „lipsește” = fără date în perioadă. Doar localurile de pe acest telefon, cifre din înregistrările aplicației.",
       kopf: ["Local", "Încasări", "Costul mărfii", "Aruncat", "Suspiciune de pierdere", "Obligații deschise", "Până la zero", "Valoarea stocului", "Comandă"], laden: "Local", vergleich: "Comparație", vergleichInfo: "Clasament doar între localuri cu aceeași bază de date.",
-      trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCalc · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
+      trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCash · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Atinge o marfă și scrie cât plătești.", fortschritt: (a, b) => `${a} din ${b} gata`, fehlt: "lipsă", filterFehlt: (n) => `Lipsă (${n})`, filterAlle: (n) => `Toate (${n})`, selbst: "făcut de noi",

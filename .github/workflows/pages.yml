@@ -33,6 +33,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # echter Versionswechsel vom geprüften PR-6-Stand im isolierten Browser
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -50,8 +52,14 @@ jobs:
           tail -110 regeln.txt
           exit 1
       - name: Beide Piloten, Sprachen, Sicherung und Offline
-        if: github.event_name == 'pull_request' && github.base_ref == 'sanji/facelift-1-0-integration'
+        if: github.event_name == 'pull_request' && (github.base_ref == 'sanji/facelift-1-0-integration' || github.base_ref == 'work/facelift-integration-2026-10-22')
         run: python tests/work_integration_browser.py
+      - name: Betriebsalltag, Kühlung und robuste Neustarts
+        if: github.event_name == 'pull_request' && github.base_ref == 'work/facelift-integration-2026-10-22'
+        run: python tests/betriebsalltag_browser.py
+      - name: GastroCash Marke, Hilfe und PWA
+        if: github.event_name == 'pull_request' && github.base_ref == 'work/facelift-integration-2026-10-22'
+        run: python tests/gastrocash_browser.py
       # Facelift-Abnahme: echte Browser-Aufnahmen der App statt KI-Mockups.
       # Nur Pull Requests: kein Einfluss auf den Live-Deploy.
       - name: Facelift Browser-Screenshots vorbereiten
@@ -91,7 +99,7 @@ jobs:
       - name: App-Dateien zusammenstellen
         run: |
           mkdir -p /tmp/seite
-          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons vendor design /tmp/seite/
+          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons assets vendor design /tmp/seite/
           echo "Dateien auf der Seite: $(find /tmp/seite -type f | wc -l)"
       - uses: actions/upload-pages-artifact@v3
         with:

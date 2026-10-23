@@ -158,7 +158,7 @@ test("Kühlung im Laden: „Rundgang starten“ springt mit vorbelegtem Namen di
   K.kuehlZuruecksetzen();
   let html = K.kuehlView(s);
   for (const weg of ["Eine Stelle antippen", "Heute noch nicht gemessen", "ohne Messung in den letzten 7", "Du bleibst verantwortlich", "kuehl-blatt"]) assert.ok(!html.includes(weg), weg);
-  assert.ok(html.includes("Heute gemessen") && html.includes("\u20660 / 2\u2069") && html.includes("Rundgang starten") && html.includes('data-a="kuehl-rundgang-los"'));
+  assert.ok(html.includes("Heute dokumentiert") && html.includes("\u20660 / 2\u2069") && html.includes("Rundgang starten") && html.includes('data-a="kuehl-rundgang-los"'));
   assert.ok(!html.includes('<small class="rot">'), "Grenze nur bei Abweichung");
   const bh = K.kuehlView(s, { buero: true }); assert.ok(bh.includes("ohne Messung in den letzten 7") && bh.includes('data-a="kuehl-blatt"'), "Büro: 7-Tage-Lücken und Monatsblatt");
   assert.equal(LZ.kuehlWerVorschlag(s), "p1", "ohne früheren Rundgang: erste Person");
