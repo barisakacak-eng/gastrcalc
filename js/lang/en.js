@@ -1,5 +1,5 @@
 export default {
-  app: { name: "GastroCalc", entwurf: "Test version" },
+  app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
     weiter: "Next", zurueck: "Back", fertig: "Done", speichern: "Save", abbrechen: "Cancel", stueck: "pcs", bearbeiten: "Editing", zahlZuGross: (v) => `"${v}" is too large – up to ten million works.`, uebernehmen: "Apply", zahlUngueltig: (v) => `"${v}" is not a number. Digits and one decimal separator only.`,
@@ -419,11 +419,11 @@ export default {
       name: "Name", ungueltig: "Please pick a date up to today.", gespeichert: "Briefing saved." },
     knopf: { pdf: "Share as PDF", vorschau: "Preview", csv: "CSV", csvTeil: (t) => `${t} as CSV`, schliessen: "Close", datei: "File", drucken: "Print / PDF",
       druckHinweis: "In the print window choose “Save as PDF” or “Share”.", geteilt: "Document ready.", csvFertig: (n) => (n === 1 ? "1 file ready." : `${n} files ready.`) },
-    dok: { erstellt: (d, z) => `Created on ${d} at ${z} with GastroCalc`, nichtGemessen: "not measured", nk: { erledigt: "Follow-up check done", offen: "Follow-up check open" }, ware: "Goods",
+    dok: { erstellt: (d, z) => `Created on ${d} at ${z} with GastroCash`, nichtGemessen: "not measured", nk: { erledigt: "Follow-up check done", offen: "Follow-up check open" }, ware: "Goods",
       basis: { netto: "net", brutto: "gross" }, ohneMessung: (l) => `no reading: ${l}`, keineMassnahme: "no action entered", offeneTage: (l) => `incomplete: ${l}`,
       ladenArt: (a) => `Shop: ${a}`, geraete: (l) => `Equipment: ${l}`, takt: (n) => (n === 2 ? "Temperature check twice a day" : "Temperature check once a day"), aufgaben: (n) => `${n} cleaning tasks in the plan`,
       standardGrenze: "standard limit", eigeneGrenze: "own limit", unterschrift: ["Date, signature of business", "Checked (date, signature)"],
-      fussAmt: "Record of own checks made with GastroCalc. Entries are not deleted, only withdrawn; withdrawals are listed below. * = added later. This list does not replace a HACCP plan.",
+      fussAmt: "Record of own checks made with GastroCash. Entries are not deleted, only withdrawn; withdrawals are listed below. * = added later. This list does not replace a HACCP plan.",
       satz: (p) => `Blended VAT rate ${p} %`, svev: "Benefit-in-kind values 2026 (SvEV): breakfast €2.37, lunch and dinner €4.57 each", netto: "Net goods value at purchase price",
       summe: "Total", vormonat: "previous count", monatslast: "Total monthly costs",
       fussSteuer: "Daily sales are notes from the app and do not replace the till report (Z report). Amounts are net unless stated otherwise. * = entered later.",
@@ -560,7 +560,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 set of initials in the team" : `${n} initials in the team`,
     spaeter: "Continue later",
     haftungTitel: "Who is responsible?",
-    haftung: "You stay responsible: your limits, your measurements and your actions are yours. GastroCalc only writes down what you enter and checks nothing. The data lives only on this phone – back it up yourself and keep it for at least 12 months.",
+    haftung: "You stay responsible: your limits, your measurements and your actions are yours. GastroCash only writes down what you enter and checks nothing. The data lives only on this phone – back it up yourself and keep it for at least 12 months.",
     arten: { kuehl: "Chilled", tk: "Frozen", warm: "Hot holding" },
     rundgang: "Round",
     nacherfasst: "added later",
@@ -919,7 +919,7 @@ export default {
     sicherungText: "All data lives only on this device. With the backup file you can pass it on or move it to a new phone. The file is only encrypted with a password and contains your figures, wages and receipt photos. Only send it to places you trust.",
     exportieren: "Create backup file",
     importieren: "Read backup file",
-    importFehler: "That is not a GastroCalc backup file.",
+    importFehler: "That is not a GastroCash backup file.",
     importOk: "Read in.",
     loeschenAlles: "Delete everything",
     loeschenFrage: "Really delete everything? This cannot be undone.",
@@ -1407,7 +1407,7 @@ export default {
     vergleich: "Comparison", vergleichAb: "Comparison needs two shops", keineLaeden: "No shop with data", bericht: "Owner report", datei: "Owner", drucken: "Print report", csv: "CSV", geteilt: "Report shared",
     dok: { zahlen: "Figures per shop", hinweis: "≈ = estimated (guide prices, guide value or estimate). “missing” = no data in the period. Only shops on this phone, figures from the app's entries.",
       kopf: ["Shop", "Sales", "Food cost", "Thrown away", "Suspected loss", "Duties open", "To zero", "Stock value", "Order"], laden: "Shop", vergleich: "Comparison", vergleichInfo: "Rank only between shops with the same data basis.",
-      trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCalc · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
+      trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCash · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Tap an item and enter what you pay.", fortschritt: (a, b) => `${a} of ${b} done`, fehlt: "missing", filterFehlt: (n) => `Missing (${n})`, filterAlle: (n) => `All (${n})`, selbst: "homemade",
