@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { mascotMarkup } from '../js/gastrocash-brand.js';
+import { mascotMarkup, mascotResultState } from '../js/gastrocash-brand.js';
 
 test('alle fünf Mascot-Zustände sind ohne Zwinkern unterscheidbar', () => {
   const states=['neutral','freundlich','nachdenklich','ernst','erfolg'];
@@ -50,4 +50,21 @@ test('Manifest und Vektorlogos tragen GastroCash',()=>{
     assert.match(svg,/GastroCash/);
     assert.doesNotMatch(svg,/GastroCalc/);
   }
+});
+
+
+test('Tagesabschluss: schlechte Lage wird nicht lächelnd dargestellt',()=>{
+  assert.equal(mascotResultState({aboveZero:true,delta:10}),'erfolg');
+  assert.equal(mascotResultState({aboveZero:false,delta:-10}),'ernst');
+  assert.equal(mascotResultState({aboveZero:false,delta:10}),'nachdenklich');
+  assert.equal(mascotResultState({aboveZero:false,delta:0,incomplete:true}),'nachdenklich');
+  assert.equal(mascotResultState({aboveZero:false,delta:0}),'neutral');
+});
+
+test('Küchenhelfer sitzt in vorhandener Hilfe und echtem Tagesabschluss',()=>{
+  const hilfe=fs.readFileSync(new URL('../js/screens/ebene.js',import.meta.url),'utf8');
+  const abschluss=fs.readFileSync(new URL('../js/screens/abschluss.js',import.meta.url),'utf8');
+  assert.match(hilfe,/gc-help-bot/);
+  assert.match(abschluss,/gc-ab-mascot/);
+  assert.match(abschluss,/mascotResultState/);
 });
