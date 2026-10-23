@@ -1,7 +1,7 @@
 {
   "name": "GastroCash",
   "short_name": "GastroCash",
-  "description": "Kalkulation, Abfall und Hygienedokumentation für den Laden an der Ecke. Testfassung.",
+  "description": "Geld im Blick, Gerichte kalkulieren, Müll und Kontrollen dokumentieren – offline für kleine Gastrobetriebe.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
