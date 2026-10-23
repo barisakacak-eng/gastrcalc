@@ -1,7 +1,7 @@
 {
- "datum": "2026-10-23 11:39",
- "fassung": "a674090",
- "dauer_s": 46.3,
+ "datum": "2026-10-23 17:30",
+ "fassung": "11fc108",
+ "dauer_s": 52.3,
  "soll": {
   "woerter": {
    "laden": 15,
@@ -17,16 +17,14 @@
  "bildschirme": {
   "390x844": {
    "heute": {
-    "worte": 11,
+    "worte": 9,
     "wortliste": [
      "Bis",
      "null",
-     "fehlen",
      "Schätzung",
-     "Umsatz",
-     "Müll",
-     "Kühlung",
-     "Putzen",
+     "Messung",
+     "läuft",
+     "seit",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -34,17 +32,14 @@
     "texte": [
      "Döner Test",
      "Fr., 23. Okt.",
-     "Bis null fehlen",
+     "Bis null",
      "≈ 1.096 €",
      "Schätzung",
      "1.096 €",
      "⁦01.10.⁩",
      "⁦31.10.⁩",
-     "Umsatz",
-     "Müll",
+     "Messung läuft seit –",
      "2",
-     "Kühlung",
-     "Putzen",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -54,7 +49,7 @@
     "knoepfe": [
      {
       "text": "Kühlrundgang",
-      "h": 84,
+      "h": 71,
       "w": 358,
       "haupt": true,
       "kachel": false
@@ -547,10 +542,12 @@
     "ebene": "laden"
    },
    "buero": {
-    "worte": 108,
+    "worte": 117,
     "wortliste": [
      "Laden",
      "Büro",
+     "Rechtsform",
+     "eintragen",
      "Einrichtung",
      "als",
      "Nächstes",
@@ -593,6 +590,13 @@
      "Müll",
      "Schwund",
      "Personalessen",
+     "Hinweise",
+     "Steuer",
+     "und",
+     "Amt",
+     "aus",
+     "deinen",
+     "Daten",
      "Ware",
      "Noch",
      "nie",
@@ -661,8 +665,9 @@
     "texte": [
      "Laden",
      "Büro",
+     "Rechtsform eintragen",
+     "+ 2",
      "Einrichtung 14 % – als Nächstes: Speisekarte",
-     "+ 1",
      "Feste Kosten oder Löhne unvollständig",
      "Gesundheits­amt",
      "0 von 3",
@@ -682,6 +687,8 @@
      "Kasse einlesen, Ladenhüter, Schwund",
      "Listen",
      "Müll, Schwund, Personalessen",
+     "Hinweise",
+     "Steuer und Amt, aus deinen Daten",
      "Ware",
      "Noch nie gezählt",
      "Lager & Bestellen",
@@ -714,7 +721,7 @@
      "Büro-Code",
      "an"
     ],
-    "hoehe": 2555,
+    "hoehe": 2687,
     "innen": 844,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
@@ -724,7 +731,7 @@
      "text": "Oktober bisher · Richtwert War"
     },
     "tippKlein": [],
-    "tippAnzahl": 32,
+    "tippAnzahl": 34,
     "verboten": [],
     "kontrast": [
      {
@@ -852,16 +859,14 @@
   },
   "360x780": {
    "heute": {
-    "worte": 11,
+    "worte": 9,
     "wortliste": [
      "Bis",
      "null",
-     "fehlen",
      "Schätzung",
-     "Umsatz",
-     "Müll",
-     "Kühlung",
-     "Putzen",
+     "Messung",
+     "läuft",
+     "seit",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -869,17 +874,14 @@
     "texte": [
      "Döner Test",
      "Fr., 23. Okt.",
-     "Bis null fehlen",
+     "Bis null",
      "≈ 1.096 €",
      "Schätzung",
      "1.096 €",
      "⁦01.10.⁩",
      "⁦31.10.⁩",
-     "Umsatz",
-     "Müll",
+     "Messung läuft seit –",
      "2",
-     "Kühlung",
-     "Putzen",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -889,7 +891,7 @@
     "knoepfe": [
      {
       "text": "Kühlrundgang",
-      "h": 84,
+      "h": 71,
       "w": 328,
       "haupt": true,
       "kachel": false
@@ -1382,10 +1384,12 @@
     "ebene": "laden"
    },
    "buero": {
-    "worte": 108,
+    "worte": 117,
     "wortliste": [
      "Laden",
      "Büro",
+     "Rechtsform",
+     "eintragen",
      "Einrichtung",
      "als",
      "Nächstes",
@@ -1428,6 +1432,13 @@
      "Müll",
      "Schwund",
      "Personalessen",
+     "Hinweise",
+     "Steuer",
+     "und",
+     "Amt",
+     "aus",
+     "deinen",
+     "Daten",
      "Ware",
      "Noch",
      "nie",
@@ -1496,8 +1507,9 @@
     "texte": [
      "Laden",
      "Büro",
+     "Rechtsform eintragen",
+     "+ 2",
      "Einrichtung 14 % – als Nächstes: Speisekarte",
-     "+ 1",
      "Feste Kosten oder Löhne unvollständig",
      "Gesundheits­amt",
      "0 von 3",
@@ -1517,6 +1529,8 @@
      "Kasse einlesen, Ladenhüter, Schwund",
      "Listen",
      "Müll, Schwund, Personalessen",
+     "Hinweise",
+     "Steuer und Amt, aus deinen Daten",
      "Ware",
      "Noch nie gezählt",
      "Lager & Bestellen",
@@ -1549,7 +1563,7 @@
      "Büro-Code",
      "an"
     ],
-    "hoehe": 2676,
+    "hoehe": 2743,
     "innen": 780,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
@@ -1559,7 +1573,7 @@
      "text": "Oktober bisher · Richtwert War"
     },
     "tippKlein": [],
-    "tippAnzahl": 32,
+    "tippAnzahl": 34,
     "verboten": [],
     "kontrast": [
      {
@@ -1692,7 +1706,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 11,
+   "ist": 9,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -1746,7 +1760,7 @@
    "bildschirm": "heute",
    "regel": "knopfhoehe",
    "ok": true,
-   "ist": "84 px",
+   "ist": "71 px",
    "soll": "≥ 64 px",
    "hinweis": ""
   },
@@ -2196,7 +2210,7 @@
    "bildschirm": "buero",
    "regel": "woerter",
    "ok": true,
-   "ist": 108,
+   "ist": 117,
    "soll": "≤ 120",
    "hinweis": ""
   },
@@ -2304,7 +2318,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 11,
+   "ist": 9,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2358,7 +2372,7 @@
    "bildschirm": "heute",
    "regel": "knopfhoehe",
    "ok": true,
-   "ist": "84 px",
+   "ist": "71 px",
    "soll": "≥ 64 px",
    "hinweis": ""
   },
@@ -2808,7 +2822,7 @@
    "bildschirm": "buero",
    "regel": "woerter",
    "ok": true,
-   "ist": 108,
+   "ist": 117,
    "soll": "≤ 120",
    "hinweis": ""
   },

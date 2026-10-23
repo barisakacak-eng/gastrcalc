@@ -1,4 +1,6 @@
 export default {
+  // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
+  nutzen: {"start":"Measuring starts with the first waste entry","titel":"This month’s benefit","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
   app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
