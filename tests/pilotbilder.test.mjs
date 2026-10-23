@@ -1,8 +1,19 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
-import { fotoName, wareBildQuelle } from "../js/bilder.js";
+import { fotoName, wareBildQuelle, gerichtBildQuelle } from "../js/bilder.js";
 import { FOTOS } from "../js/data/fotos.js";
+
+test("Pilotbild: eigene Fotos des Wirts haben bei beiden Piloten Vorrang", () => {
+  for (const g of [
+    { name: "Döner im Brot", rezeptFamilie: "doener" },
+    { name: "Smash Burger", rezeptFamilie: "burger" }
+  ]) {
+    const q = gerichtBildQuelle({ ...g, foto: "ablage-testfoto" });
+    assert.equal(q.eigen, "ablage-testfoto");
+    assert.equal(q.foto, undefined);
+  }
+});
 
 test("Pilotbild: Döner im Brot darf nicht als Dürüm dargestellt sein", () => {
   assert.equal(fotoName({ name: "Döner Kebab", rezeptFamilie: "doener" }), "g-doener");

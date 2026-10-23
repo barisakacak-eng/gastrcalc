@@ -6,7 +6,9 @@ const sn = (n, one, many) => `${n} ${sh(n, one, many)}`;
 const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Version prove" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Version prove" },
 
   allgemein: {
     weiter: "Vazhdo", zurueck: "Mbrapa", fertig: "Gati", speichern: "Ruaj", abbrechen: "Anulo", stueck: "copë", bearbeiten: "Ndrysho", zahlZuGross: (v) => `“${v}” është shumë e madhe – deri në dhjetë milionë.`, uebernehmen: "Merre", zahlUngueltig: (v) => `“${v}” nuk është numër. Vetëm shifra dhe një presje.`,
@@ -425,11 +427,11 @@ export default {
       name: "Emri", ungueltig: "Zgjidh një datë deri sot.", gespeichert: "Trajnimi u shënua." },
     knopf: { pdf: "Ndaj si PDF", vorschau: "Pamja", csv: "CSV", csvTeil: (t) => `${t} si CSV`, schliessen: "Mbyll", datei: "Skedari", drucken: "Printo / PDF",
       druckHinweis: "Në dritaren e printimit zgjidh „Ruaj si PDF“ ose „Ndaj“.", geteilt: "Dokumenti është gati.", csvFertig: (n) => (n === 1 ? "1 skedar gati." : `${n} skedarë gati.`) },
-    dok: { erstellt: (d, z) => `Krijuar më ${d} në ${z} me GastroCalc`, nichtGemessen: "pa matur", nk: { erledigt: "Rikontrolli u bë", offen: "Rikontrolli mbetet" }, ware: "Malli",
+    dok: { erstellt: (d, z) => `Krijuar më ${d} në ${z} me GastroCash`, nichtGemessen: "pa matur", nk: { erledigt: "Rikontrolli u bë", offen: "Rikontrolli mbetet" }, ware: "Malli",
       basis: { netto: "neto", brutto: "bruto" }, ohneMessung: (l) => `pa matje: ${l}`, keineMassnahme: "asnjë masë e shënuar", offeneTage: (l) => `jo të plota: ${l}`,
       ladenArt: (a) => `Lokali: ${a}`, geraete: (l) => `Pajisjet: ${l}`, takt: (n) => (n === 2 ? "Matja e ftohjes 2× në ditë" : "Matja e ftohjes 1× në ditë"), aufgaben: (n) => `${sn(n, "detyrë", "detyra")} pastrimi në plan`,
       standardGrenze: "Kufiri standard", eigeneGrenze: "kufiri yt", unterschrift: ["Data, nënshkrimi i lokalit", "Kontrolluar (data, nënshkrimi)"],
-      fussAmt: "Regjistrim i vetëkontrolleve me GastroCalc. Regjistrimet nuk fshihen, vetëm tërhiqen; tërheqjet janë më poshtë. * = shtuar më vonë. Kjo listë nuk zëvendëson një plan HACCP.",
+      fussAmt: "Regjistrim i vetëkontrolleve me GastroCash. Regjistrimet nuk fshihen, vetëm tërhiqen; tërheqjet janë më poshtë. * = shtuar më vonë. Kjo listë nuk zëvendëson një plan HACCP.",
       satz: (p) => `TVSH mesatare ${p} %`, svev: "Vlera e ushqimit për stafin 2026 (SvEV): mëngjesi 2,37 €, dreka dhe darka nga 4,57 €", netto: "Vlera e mallit neto me çmimin e blerjes",
       summe: "Shuma", vormonat: "Gjendja më parë", monatslast: "Shpenzimet mujore gjithsej",
       fussSteuer: "Xhiroja ditore është shënim nga aplikacioni dhe nuk zëvendëson raportin e arkës (raporti Z). Shumat janë neto, nëse nuk shkruhet ndryshe. * = shtuar më vonë.",
@@ -566,7 +568,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 person në ekip" : `${n} persona në ekip`,
     spaeter: "Vazhdo më vonë",
     haftungTitel: "Kush është përgjegjës?",
-    haftung: "Përgjegjësia mbetet jotja: kufijtë, matjet dhe masat e tua janë të tuat. GastroCalc vetëm shënon atë që shkruan ti dhe nuk kontrollon asgjë. Të dhënat janë vetëm në këtë telefon – bëj kopje vetë dhe ruaji të paktën 12 muaj.",
+    haftung: "Përgjegjësia mbetet jotja: kufijtë, matjet dhe masat e tua janë të tuat. GastroCash vetëm shënon atë që shkruan ti dhe nuk kontrollon asgjë. Të dhënat janë vetëm në këtë telefon – bëj kopje vetë dhe ruaji të paktën 12 muaj.",
     arten: { kuehl: "Ftohje", tk: "Ngrirje", warm: "Mbajtje e ngrohtë" },
     rundgang: "Raundi",
     nacherfasst: "shënuar më vonë",
@@ -924,7 +926,7 @@ export default {
     sicherungText: "Të gjitha të dhënat janë vetëm në këtë pajisje. Me skedarin e kopjes mund t’i japësh dikujt ose t’i kalosh në një telefon të ri.",
     exportieren: "Krijo skedarin e kopjes",
     importieren: "Lexo skedarin e kopjes",
-    importFehler: "Ky nuk është skedar kopjeje i GastroCalc.",
+    importFehler: "Ky nuk është skedar kopjeje i GastroCash.",
     importOk: "U lexua.",
     loeschenAlles: "Fshi gjithçka",
     loeschenFrage: "Vërtet ta fshij gjithçka? Kjo nuk kthehet më mbrapa.",
@@ -1112,7 +1114,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Sot", muell: "Mbetje", kuehl: "Ftohja", putzplan: "Pastrimi", karte: "Menuja" },
     leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossCode: "Shkruaj kodin e zyrës",
-    pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën" },
+    pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Shiriti poshtë të çon te gjithçka që të duhet në lokal. Llogaritë, rregullimet dhe listat janë në zyrë.",
       start: "Dita me një shikim. Numri i madh tregon sa xhiro mungon ende deri në zero. E kuqe do të thotë: merru tani. „≈“ përpara do të thotë vlerësim (mall ose paga jote) – shpjegimi në zyrë te „Muaji dhe numëruesi“. Pa çmime blerjeje aplikacioni llogarit 32 % mall (lokale të vogla: 23–41 %, tabelat BMF 2025).",
@@ -1425,7 +1427,7 @@ export default {
     vergleich: "Krahasim", vergleichAb: "Krahasimi nga dy lokale", keineLaeden: "Asnjë lokal me të dhëna", bericht: "Raporti i pronarit", datei: "Pronari", drucken: "Printo raportin", csv: "CSV", geteilt: "Raporti u nda",
     dok: { zahlen: "Shifra për lokal", hinweis: "≈ = i vlerësuar (çmime orientuese, vlerë orientuese ose vlerësim). „mungon“ = pa të dhëna në periudhë. Vetëm lokalet në këtë telefon, shifra nga regjistrimet e aplikacionit.",
       kopf: ["Lokali", "Xhiro", "Kosto e mallit", "Hedhur", "Dyshim për humbje", "Detyrime të hapura", "Deri në zero", "Vlera e magazinës", "Porosit"], laden: "Lokali", vergleich: "Krahasim", vergleichInfo: "Renditje vetëm midis lokaleve me të njëjtën bazë të dhënash.",
-      trend: "Prirja ndaj periudhës së mëparshme", daten: "Baza e të dhënave", fehlt: "E paplotë", tage: "ditë", quelle: "Burimi i kostos së mallit", fuss: "GastroCalc · Raporti i pronarit. Shifra nga regjistrimet e aplikacionit – jo kontabilitet, jo të dhëna arke." },
+      trend: "Prirja ndaj periudhës së mëparshme", daten: "Baza e të dhënave", fehlt: "E paplotë", tage: "ditë", quelle: "Burimi i kostos së mallit", fuss: "GastroCash · Raporti i pronarit. Shifra nga regjistrimet e aplikacionit – jo kontabilitet, jo të dhëna arke." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Prek një mall dhe shkruaj sa paguan.", fortschritt: (a, b) => `${a} nga ${b} gati`, fehlt: "mungon", filterFehlt: (n) => `Mungojnë (${n})`, filterAlle: (n) => `Të gjitha (${n})`, selbst: "vetë",
@@ -1437,4 +1439,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "E fundit jashtë telefonit: sot" : n === 1 ? "E fundit jashtë telefonit: 1 ditë më parë" : `E fundit jashtë telefonit: ${n} ditë më parë`, nieWeg: "Ende asnjë kopje jashtë telefonit", mitPasswort: "Me fjalëkalim", ohneFotos: "Pa foto (e vogël, për email)",
       verschicken: "Dërgo kopjen", woFrage: "Ku është tani?", woanders: "Pajisje tjetër, email, cloud", nurHandy: "Vetëm në këtë telefon", nurHandyMeldung: "Kujtesa mbetet: skedari është vetëm në këtë telefon.", gezaehlt: "Kopja u numërua. Kujtesa u rivendos." } },
   adanaBrot: { frage: "Çfarë buke jepni me adanën?", pide: "Pide e plotë", pideHalb: "Gjysmë pide", fladen: "Dürüm / lavash", kein: "Pa bukë" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

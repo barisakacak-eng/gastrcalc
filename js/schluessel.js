@@ -13,9 +13,9 @@ const SALZ_LAENGE = 16, IV_LAENGE = 12, KOPF = 4 + SALZ_LAENGE + IV_LAENGE;
 
 // Dreisprachig, für den, der die ZIP außerhalb der App öffnet (DE/TR/EN – die drei Grundsprachen der App).
 export const LIESMICH = [
-  "Diese Sicherung ist mit einem Passwort verschlüsselt. Sie lässt sich nur in GastroCalc einlesen. Passwort nicht vergessen – ohne Passwort gibt es keinen Weg zurück.",
-  "Bu yedek bir parola ile şifrelenmiştir. Sadece GastroCalc içinde okunabilir. Parolayı unutma – parola olmadan geri dönüş yok.",
-  "This backup is encrypted with a password. It can only be read in GastroCalc. Do not forget the password – without it there is no way back.",
+  "Diese Sicherung ist mit einem Passwort verschlüsselt. Sie lässt sich nur in GastroCash einlesen. Passwort nicht vergessen – ohne Passwort gibt es keinen Weg zurück.",
+  "Bu yedek bir parola ile şifrelenmiştir. Sadece GastroCash içinde okunabilir. Parolayı unutma – parola olmadan geri dönüş yok.",
+  "This backup is encrypted with a password. It can only be read in GastroCash. Do not forget the password – without it there is no way back.",
 ].join("\n\n") + "\n";
 
 const fehler = (grund) => Object.assign(new Error(grund), { grund });

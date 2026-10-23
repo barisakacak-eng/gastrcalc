@@ -1,7 +1,9 @@
 // Ελληνικά – μετάφραση από το de.js (15.10.2026). Γλώσσα του μαγαζιού, σύντομα.
 // Griechisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
-  app: { name: "GastroCalc", entwurf: "Δοκιμαστική έκδοση" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Δοκιμαστική έκδοση" },
 
   allgemein: {
     weiter: "Επόμενο", zurueck: "Πίσω", fertig: "Έτοιμο", speichern: "Αποθήκευση", abbrechen: "Ακύρωση", stueck: "τεμ.", bearbeiten: "Επεξεργασία", zahlZuGross: (v) => `«${v}» είναι πολύ μεγάλο – έως δέκα εκατομμύρια.`, uebernehmen: "Εφαρμογή", zahlUngueltig: (v) => `«${v}» δεν είναι αριθμός. Μόνο ψηφία και ένα κόμμα.`,
@@ -420,11 +422,11 @@ export default {
       name: "Όνομα", ungueltig: "Διάλεξε ημερομηνία έως σήμερα.", gespeichert: "Η εκπαίδευση καταχωρήθηκε." },
     knopf: { pdf: "Κοινοποίηση ως PDF", vorschau: "Προεπισκόπηση", csv: "CSV", csvTeil: (t) => `${t} ως CSV`, schliessen: "Κλείσιμο", datei: "Αρχείο", drucken: "Εκτύπωση / PDF",
       druckHinweis: "Στο παράθυρο εκτύπωσης διάλεξε «Αποθήκευση ως PDF» ή «Κοινοποίηση».", geteilt: "Το έγγραφο είναι έτοιμο.", csvFertig: (n) => (n === 1 ? "1 αρχείο έτοιμο." : `${n} αρχεία έτοιμα.`) },
-    dok: { erstellt: (d, z) => `Δημιουργήθηκε ${d} στις ${z} με GastroCalc`, nichtGemessen: "δεν μετρήθηκε", nk: { erledigt: "Επανέλεγχος έγινε", offen: "Επανέλεγχος εκκρεμεί" }, ware: "Εμπόρευμα",
+    dok: { erstellt: (d, z) => `Δημιουργήθηκε ${d} στις ${z} με GastroCash`, nichtGemessen: "δεν μετρήθηκε", nk: { erledigt: "Επανέλεγχος έγινε", offen: "Επανέλεγχος εκκρεμεί" }, ware: "Εμπόρευμα",
       basis: { netto: "καθαρά", brutto: "μικτά" }, ohneMessung: (l) => `χωρίς μέτρηση: ${l}`, keineMassnahme: "δεν γράφτηκε μέτρο", offeneTage: (l) => `όχι πλήρες: ${l}`,
       ladenArt: (a) => `Μαγαζί: ${a}`, geraete: (l) => `Συσκευές: ${l}`, takt: (n) => (n === 2 ? "Μέτρηση ψύξης 2× τη μέρα" : "Μέτρηση ψύξης 1× τη μέρα"), aufgaben: (n) => `${n} εργασίες καθαριότητας στο πρόγραμμα`,
       standardGrenze: "Βασικό όριο", eigeneGrenze: "δικό σου όριο", unterschrift: ["Ημερομηνία, υπογραφή επιχείρησης", "Ελέγχθηκε (ημερομηνία, υπογραφή)"],
-      fussAmt: "Καταγραφή αυτοελέγχων με το GastroCalc. Οι εγγραφές δεν διαγράφονται, μόνο ανακαλούνται· οι ανακλήσεις είναι παρακάτω. * = καταχωρίστηκε αργότερα. Η λίστα δεν αντικαθιστά σχέδιο HACCP.",
+      fussAmt: "Καταγραφή αυτοελέγχων με το GastroCash. Οι εγγραφές δεν διαγράφονται, μόνο ανακαλούνται· οι ανακλήσεις είναι παρακάτω. * = καταχωρίστηκε αργότερα. Η λίστα δεν αντικαθιστά σχέδιο HACCP.",
       satz: (p) => `Μικτός συντελεστής ΦΠΑ ${p} %`, svev: "Αξίες παροχών σε είδος 2026 (SvEV): πρωινό 2,37 €, μεσημεριανό και βραδινό 4,57 € το καθένα", netto: "Αξία εμπορεύματος καθαρή σε τιμή αγοράς",
       summe: "Σύνολο", vormonat: "Πριν", monatslast: "Σύνολο μήνα",
       fussSteuer: "Ο ημερήσιος τζίρος είναι σημειώσεις από την εφαρμογή και δεν αντικαθιστά το δελτίο Ζ της ταμειακής. Ποσά καθαρά, αν δεν γράφει αλλιώς. * = προστέθηκε αργότερα.",
@@ -561,7 +563,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 άτομο στην ομάδα" : `${n} άτομα στην ομάδα`,
     spaeter: "Συνέχεια αργότερα",
     haftungTitel: "Ποιος είναι υπεύθυνος;",
-    haftung: "Η ευθύνη μένει σε σένα: τα όριά σου, οι μετρήσεις σου και τα μέτρα σου είναι δικά σου. Το GastroCalc γράφει μόνο ό,τι καταχωρείς και δεν ελέγχει τίποτα. Τα δεδομένα υπάρχουν μόνο σε αυτό το κινητό – κράτα αντίγραφο μόνος σου και φύλαξέ τα τουλάχιστον 12 μήνες.",
+    haftung: "Η ευθύνη μένει σε σένα: τα όριά σου, οι μετρήσεις σου και τα μέτρα σου είναι δικά σου. Το GastroCash γράφει μόνο ό,τι καταχωρείς και δεν ελέγχει τίποτα. Τα δεδομένα υπάρχουν μόνο σε αυτό το κινητό – κράτα αντίγραφο μόνος σου και φύλαξέ τα τουλάχιστον 12 μήνες.",
     arten: { kuehl: "Ψύξη", tk: "Κατάψυξη", warm: "Διατήρηση ζεστού" },
     rundgang: "Γύρος ελέγχου",
     nacherfasst: "συμπληρώθηκε αργότερα",
@@ -920,7 +922,7 @@ export default {
     sicherungText: "Όλα τα δεδομένα υπάρχουν μόνο σε αυτή τη συσκευή. Με το αρχείο αντιγράφου μπορείς να τα δώσεις σε άλλον ή να τα περάσεις σε νέο κινητό.",
     exportieren: "Δημιουργία αρχείου αντιγράφου",
     importieren: "Φόρτωση αρχείου αντιγράφου",
-    importFehler: "Αυτό δεν είναι αρχείο αντιγράφου του GastroCalc.",
+    importFehler: "Αυτό δεν είναι αρχείο αντιγράφου του GastroCash.",
     importOk: "Φορτώθηκε.",
     loeschenAlles: "Διαγραφή όλων",
     loeschenFrage: "Σίγουρα να σβηστούν όλα; Δεν γυρίζει πίσω.",
@@ -1108,7 +1110,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Σήμερα", muell: "Απορρίμματα", kuehl: "Ψύξη", putzplan: "Καθάρισμα", karte: "Μενού" },
     leiste: "Μαγαζί", menueAuf: "Άνοιγμα μενού", schliessen: "Κλείσιμο", hilfeAuf: "Βοήθεια", deinLaden: "Το μαγαζί σου", abschluss: "Κλείσιμο ημέρας", personal: "Λειτουργία προσωπικού", buero: "Γραφείο", ladenWechseln: "Αλλαγή μαγαζιού", sprache: "Γλώσσα", zumLaden: "Μαγαζί", zumBuero: "Γραφείο", schlossCode: "Βάλε τον κωδικό γραφείου",
-    pin: { titel: "Κωδικός γραφείου", neu: "Διάλεξε νέο κωδικό", nochmal: "Άλλη μία φορά", falsch: "Λάθος κωδικός", ungleich: "Δεν ταιριάζει. Διάλεξε ξανά.", gesetzt: "Ο κωδικός γραφείου αποθηκεύτηκε", entfernt: "Ο κωδικός γραφείου αφαιρέθηκε", setzen: "Όρισε κωδικό γραφείου", aendern: "Άλλαξε τον κωδικό γραφείου", entfernen: "Αφαίρεση κωδικού", ohne: "Χωρίς κωδικό μπαίνει ο καθένας στο γραφείο.", mit: "Το γραφείο προστατεύεται με κωδικό.", loeschen: "Σβήσε ψηφίο" },
+    pin: { titel: "Κωδικός γραφείου", neu: "Διάλεξε νέο κωδικό", nochmal: "Άλλη μία φορά", falsch: "Λάθος κωδικός", ungleich: "Δεν ταιριάζει. Διάλεξε ξανά.", gesetzt: "Ο κωδικός γραφείου αποθηκεύτηκε", entfernt: "Ο κωδικός γραφείου αφαιρέθηκε", setzen: "Όρισε κωδικό γραφείου", aendern: "Άλλαξε τον κωδικό γραφείου", entfernen: "Αφαίρεση κωδικού", ohne: "Χωρίς κωδικό μπαίνει ο καθένας στο γραφείο.", mit: "Το γραφείο προστατεύεται με κωδικό.", loeschen: "Σβήσε ψηφίο", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Η μπάρα κάτω οδηγεί σε ό,τι χρειάζεσαι στο μαγαζί. Υπολογισμοί, ρυθμίσεις και λίστες είναι στο γραφείο.",
       start: "Η μέρα με μια ματιά. Ο μεγάλος αριθμός δείχνει πόσος τζίρος λείπει ακόμα μέχρι το μηδέν. Κόκκινο σημαίνει: φρόντισέ το τώρα. Το «≈» μπροστά σημαίνει εκτίμηση (εμπόρευμα ή δικός σου μισθός) – εξήγηση στο γραφείο, «Μήνας & μετρητής». Χωρίς τιμές αγοράς η εφαρμογή υπολογίζει 32 % εμπόρευμα (σνακ μπαρ: 23–41 %, πίνακες BMF 2025).",
@@ -1421,7 +1423,7 @@ export default {
     vergleich: "Σύγκριση", vergleichAb: "Σύγκριση από δύο μαγαζιά", keineLaeden: "Κανένα μαγαζί με δεδομένα", bericht: "Αναφορά ιδιοκτήτη", datei: "Idioktitis", drucken: "Εκτύπωση αναφοράς", csv: "CSV", geteilt: "Η αναφορά κοινοποιήθηκε",
     dok: { zahlen: "Δείκτες ανά μαγαζί", hinweis: "≈ = εκτίμηση (ενδεικτικές τιμές, ενδεικτική τιμή ή εκτίμηση). «λείπει» = χωρίς δεδομένα στην περίοδο. Μόνο μαγαζιά σε αυτό το κινητό, αριθμοί από τις καταχωρήσεις της εφαρμογής.",
       kopf: ["Μαγαζί", "Τζίρος", "Κόστος εμπορευμάτων", "Πεταμένα", "Υποψία απώλειας", "Ανοιχτές υποχρεώσεις", "Μέχρι το μηδέν", "Αξία αποθήκης", "Παραγγελία"], laden: "Μαγαζί", vergleich: "Σύγκριση", vergleichInfo: "Κατάταξη μόνο μεταξύ μαγαζιών με την ίδια βάση δεδομένων.",
-      trend: "Τάση σε σχέση με την προηγούμενη περίοδο", daten: "Βάση δεδομένων", fehlt: "Ελλιπές", tage: "ημέρες", quelle: "Πηγή κόστους εμπορευμάτων", fuss: "GastroCalc · Αναφορά ιδιοκτήτη. Αριθμοί από τις καταχωρήσεις της εφαρμογής – όχι λογιστική, όχι δεδομένα ταμείου." },
+      trend: "Τάση σε σχέση με την προηγούμενη περίοδο", daten: "Βάση δεδομένων", fehlt: "Ελλιπές", tage: "ημέρες", quelle: "Πηγή κόστους εμπορευμάτων", fuss: "GastroCash · Αναφορά ιδιοκτήτη. Αριθμοί από τις καταχωρήσεις της εφαρμογής – όχι λογιστική, όχι δεδομένα ταμείου." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Πάτησε ένα προϊόν και γράψε τι πληρώνεις.", fortschritt: (a, b) => `${a} από ${b} έτοιμα`, fehlt: "λείπει", filterFehlt: (n) => `Λείπουν (${n})`, filterAlle: (n) => `Όλα (${n})`, selbst: "δικό μας",
@@ -1433,4 +1435,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Τελευταίο εκτός κινητού: σήμερα" : n === 1 ? "Τελευταίο εκτός κινητού: πριν 1 ημέρα" : `Τελευταίο εκτός κινητού: πριν ${n} ημέρες`, nieWeg: "Κανένα αντίγραφο εκτός κινητού ακόμα", mitPasswort: "Με κωδικό", ohneFotos: "Χωρίς φωτογραφίες (μικρό, για email)",
       verschicken: "Αποστολή αντιγράφου", woFrage: "Πού είναι τώρα;", woanders: "Άλλη συσκευή, email, cloud", nurHandy: "Μόνο σε αυτό το κινητό", nurHandyMeldung: "Η υπενθύμιση μένει: το αρχείο είναι μόνο σε αυτό το κινητό.", gezaehlt: "Το αντίγραφο μετρήθηκε. Η υπενθύμιση μηδενίστηκε." } },
   adanaBrot: { frage: "Τι ψωμί σερβίρετε με το Αδανά;", pide: "Ολόκληρη πίτα", pideHalb: "Μισή πίτα", fladen: "Ντουρούμ / λαβάς", kein: "Χωρίς ψωμί" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

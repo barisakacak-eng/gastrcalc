@@ -6,7 +6,9 @@ const pn = (n, one, few, many) => `${n} ${pl(n, one, few, many)}`;
 const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Тестова версія" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Тестова версія" },
 
   allgemein: {
     weiter: "Далі", zurueck: "Назад", fertig: "Готово", speichern: "Зберегти", abbrechen: "Скасувати", stueck: "шт.", bearbeiten: "Змінити", zahlZuGross: (v) => `«${v}» – забагато. Максимум десять мільйонів.`, uebernehmen: "Прийняти", zahlUngueltig: (v) => `«${v}» – це не число. Тільки цифри й кома.`,
@@ -425,11 +427,11 @@ export default {
       name: "Ім'я", ungueltig: "Обери дату не пізніше сьогодні.", gespeichert: "Інструктаж внесено." },
     knopf: { pdf: "Поділитися PDF", vorschau: "Перегляд", csv: "CSV", csvTeil: (t) => `${t} у CSV`, schliessen: "Закрити", datei: "Файл", drucken: "Друк / PDF",
       druckHinweis: "У вікні друку обери «Зберегти як PDF» або «Поділитися».", geteilt: "Документ готовий.", csvFertig: (n) => `Готово: ${pn(n, "файл", "файли", "файлів")}.` },
-    dok: { erstellt: (d, z) => `Створено ${d} о ${z} у GastroCalc`, nichtGemessen: "не виміряно", nk: { erledigt: "Повторний замір зроблено", offen: "Повторний замір не зроблено" }, ware: "Товар",
+    dok: { erstellt: (d, z) => `Створено ${d} о ${z} у GastroCash`, nichtGemessen: "не виміряно", nk: { erledigt: "Повторний замір зроблено", offen: "Повторний замір не зроблено" }, ware: "Товар",
       basis: { netto: "нетто", brutto: "брутто" }, ohneMessung: (l) => `без заміру: ${l}`, keineMassnahme: "дій не внесено", offeneTage: (l) => `не повністю: ${l}`,
       ladenArt: (a) => `Заклад: ${a}`, geraete: (l) => `Прилади: ${l}`, takt: (n) => (n === 2 ? "Замір холоду 2× на день" : "Замір холоду 1× на день"), aufgaben: (n) => `${pn(n, "завдання", "завдання", "завдань")} прибирання в плані`,
       standardGrenze: "Стандартна межа", eigeneGrenze: "своя межа", unterschrift: ["Дата, підпис закладу", "Перевірено (дата, підпис)"],
-      fussAmt: "Запис самоконтролю в GastroCalc. Записи не видаляються, лише скасовуються; скасування нижче. * = внесено пізніше. Цей список не замінює план HACCP.",
+      fussAmt: "Запис самоконтролю в GastroCash. Записи не видаляються, лише скасовуються; скасування нижче. * = внесено пізніше. Цей список не замінює план HACCP.",
       satz: (p) => `Змішана ставка ПДВ ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): сніданок 2,37 €, обід і вечеря по 4,57 €", netto: "Вартість товару нетто за ціною закупівлі",
       summe: "Разом", vormonat: "Було до цього", monatslast: "Усього за місяць",
       fussSteuer: "Виторг по днях – це нотатки із застосунку, вони не замінюють касовий звіт (Z-звіт). Суми нетто, якщо не вказано інше. * = внесено пізніше.",
@@ -566,7 +568,7 @@ export default {
     personenKurz: (n) => `${pn(n, "людина", "людини", "людей")} у команді`,
     spaeter: "Продовжити пізніше",
     haftungTitel: "Хто відповідає?",
-    haftung: "Відповідальність лишається на тобі: твої межі, твої заміри й твої дії – твої. GastroCalc лише записує те, що ти вносиш, і нічого не перевіряє. Дані зберігаються тільки на цьому телефоні – роби копії сам і зберігай їх щонайменше 12 місяців.",
+    haftung: "Відповідальність лишається на тобі: твої межі, твої заміри й твої дії – твої. GastroCash лише записує те, що ти вносиш, і нічого не перевіряє. Дані зберігаються тільки на цьому телефоні – роби копії сам і зберігай їх щонайменше 12 місяців.",
     arten: { kuehl: "Охолодження", tk: "Заморожування", warm: "Підігрів (гаряче зберігання)" },
     rundgang: "Обхід",
     nacherfasst: "внесено пізніше",
@@ -924,7 +926,7 @@ export default {
     sicherungText: "Усі дані зберігаються тільки на цьому пристрої. З файлом копії їх можна передати або перенести на новий телефон.",
     exportieren: "Створити файл копії",
     importieren: "Завантажити файл копії",
-    importFehler: "Це не файл копії GastroCalc.",
+    importFehler: "Це не файл копії GastroCash.",
     importOk: "Завантажено.",
     loeschenAlles: "Видалити все",
     loeschenFrage: "Точно видалити все? Скасувати буде не можна.",
@@ -1112,7 +1114,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сьогодні", muell: "Відходи", kuehl: "Холод", putzplan: "Прибирання", karte: "Меню" },
     leiste: "Заклад", menueAuf: "Відкрити меню", schliessen: "Закрити", hilfeAuf: "Допомога", deinLaden: "Твій заклад", abschluss: "Закрити день", personal: "Режим персоналу", buero: "Офіс", ladenWechseln: "Змінити заклад", sprache: "Мова", zumLaden: "Заклад", zumBuero: "Офіс", schlossCode: "Введи код офісу",
-    pin: { titel: "Код офісу", neu: "Обери новий код", nochmal: "Ще раз", falsch: "Неправильний код", ungleich: "Не збігається. Обери знову.", gesetzt: "Код офісу збережено", entfernt: "Код офісу видалено", setzen: "Встановити код офісу", aendern: "Змінити код офісу", entfernen: "Видалити код", ohne: "Без коду до офісу може зайти будь-хто.", mit: "Офіс захищений кодом.", loeschen: "Стерти цифру" },
+    pin: { titel: "Код офісу", neu: "Обери новий код", nochmal: "Ще раз", falsch: "Неправильний код", ungleich: "Не збігається. Обери знову.", gesetzt: "Код офісу збережено", entfernt: "Код офісу видалено", setzen: "Встановити код офісу", aendern: "Змінити код офісу", entfernen: "Видалити код", ohne: "Без коду до офісу може зайти будь-хто.", mit: "Офіс захищений кодом.", loeschen: "Стерти цифру", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Панель унизу веде до всього, що потрібно в закладі. Розрахунки, налаштування й списки — в офісі.",
       start: "День одним поглядом. Велике число показує, скільки виторгу ще бракує до нуля. Червоне означає: займися зараз. «≈» попереду означає оцінку (товар або твоя зарплата) – пояснення в офісі, «Місяць і лічильник». Без закупівельних цін застосунок рахує 32 % на товар (закусочні: 23–41 %, таблиці BMF 2025).",
@@ -1425,7 +1427,7 @@ export default {
     vergleich: "Порівняння", vergleichAb: "Порівняння від двох закладів", keineLaeden: "Немає закладу з даними", bericht: "Звіт власника", datei: "Vlasnyk", drucken: "Друк звіту", csv: "CSV", geteilt: "Звіт надіслано",
     dok: { zahlen: "Показники за закладами", hinweis: "≈ = оцінка (орієнтовні ціни, орієнтир або оцінка). «немає» = немає даних за період. Лише заклади на цьому телефоні, цифри із записів застосунку.",
       kopf: ["Заклад", "Виручка", "Собівартість", "Викинуто", "Підозра на нестачу", "Відкриті обов'язки", "До нуля", "Вартість складу", "Замовити"], laden: "Заклад", vergleich: "Порівняння", vergleichInfo: "Ранг лише між закладами з однаковою базою даних.",
-      trend: "Тренд до попереднього періоду", daten: "База даних", fehlt: "Неповно", tage: "днів", quelle: "Джерело собівартості", fuss: "GastroCalc · Звіт власника. Цифри із записів застосунку – не бухгалтерія, не дані каси." },
+      trend: "Тренд до попереднього періоду", daten: "База даних", fehlt: "Неповно", tage: "днів", quelle: "Джерело собівартості", fuss: "GastroCash · Звіт власника. Цифри із записів застосунку – не бухгалтерія, не дані каси." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Натисни на товар і впиши, скільки платиш.", fortschritt: (a, b) => `${a} з ${b} готово`, fehlt: "немає ціни", filterFehlt: (n) => `Немає ціни (${n})`, filterAlle: (n) => `Усі (${n})`, selbst: "своє",
@@ -1437,4 +1439,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Остання поза телефоном: сьогодні" : n === 1 ? "Остання поза телефоном: 1 день тому" : `Остання поза телефоном: ${n} дн. тому`, nieWeg: "Ще немає копії поза телефоном", mitPasswort: "З паролем", ohneFotos: "Без фото (мала, для пошти)",
       verschicken: "Надіслати копію", woFrage: "Де вона зараз?", woanders: "Інший пристрій, пошта, хмара", nurHandy: "Лише на цьому телефоні", nurHandyMeldung: "Нагадування лишається: файл лише на цьому телефоні.", gezaehlt: "Копію зараховано. Нагадування скинуто." } },
   adanaBrot: { frage: "Який хліб ви подаєте до адани?", pide: "Ціла піде", pideHalb: "Половина піде", fladen: "Дюрюм / лаваш", kein: "Без хліба" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

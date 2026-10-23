@@ -1,7 +1,9 @@
 // Italiano – tradotto da de.js (15.10.2026). Lingua da locale, frasi brevi.
 // Italienisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
-  app: { name: "GastroCalc", entwurf: "Versione di prova" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {
     weiter: "Avanti", zurueck: "Indietro", fertig: "Fatto", speichern: "Salva", abbrechen: "Annulla", stueck: "pz.", bearbeiten: "Modifica", zahlZuGross: (v) => `“${v}” è troppo grande – si arriva fino a dieci milioni.`, uebernehmen: "Applica", zahlUngueltig: (v) => `“${v}” non è un numero. Solo cifre e una virgola.`,
@@ -420,11 +422,11 @@ export default {
       name: "Nome", ungueltig: "Scegli una data fino a oggi.", gespeichert: "Formazione inserita." },
     knopf: { pdf: "Condividi come PDF", vorschau: "Anteprima", csv: "CSV", csvTeil: (t) => `${t} come CSV`, schliessen: "Chiudi", datei: "File", drucken: "Stampa / PDF",
       druckHinweis: "Nella finestra di stampa scegli «Salva come PDF» o «Condividi».", geteilt: "Documento pronto.", csvFertig: (n) => (n === 1 ? "1 file pronto." : `${n} file pronti.`) },
-    dok: { erstellt: (d, z) => `Creato il ${d} alle ${z} con GastroCalc`, nichtGemessen: "non misurato", nk: { erledigt: "Ricontrollo fatto", offen: "Ricontrollo da fare" }, ware: "Merce",
+    dok: { erstellt: (d, z) => `Creato il ${d} alle ${z} con GastroCash`, nichtGemessen: "non misurato", nk: { erledigt: "Ricontrollo fatto", offen: "Ricontrollo da fare" }, ware: "Merce",
       basis: { netto: "netto", brutto: "lordo" }, ohneMessung: (l) => `senza misura: ${l}`, keineMassnahme: "nessuna azione inserita", offeneTage: (l) => `non completo: ${l}`,
       ladenArt: (a) => `Locale: ${a}`, geraete: (l) => `Apparecchi: ${l}`, takt: (n) => (n === 2 ? "Misura frigo 2× al giorno" : "Misura frigo 1× al giorno"), aufgaben: (n) => `${n} compiti di pulizia nel piano`,
       standardGrenze: "Limite standard", eigeneGrenze: "limite tuo", unterschrift: ["Data, firma del locale", "Controllato (data, firma)"],
-      fussAmt: "Registrazione degli autocontrolli con GastroCalc. Le voci non vengono cancellate, solo annullate; gli annullamenti sono sotto. * = aggiunto dopo. Questa lista non sostituisce un piano HACCP.",
+      fussAmt: "Registrazione degli autocontrolli con GastroCash. Le voci non vengono cancellate, solo annullate; gli annullamenti sono sotto. * = aggiunto dopo. Questa lista non sostituisce un piano HACCP.",
       satz: (p) => `Aliquota IVA media ${p} %`, svev: "Valori dei pasti 2026 (SvEV): colazione 2,37 €, pranzo e cena 4,57 € ciascuno", netto: "Valore merce netto a prezzo d'acquisto",
       summe: "Totale", vormonat: "Prima", monatslast: "Totale del mese",
       fussSteuer: "Gli incassi del giorno sono note dall'app e non sostituiscono la chiusura di cassa (scontrino Z). Importi netti, se non indicato diversamente. * = aggiunto dopo.",
@@ -561,7 +563,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 sigla nel team" : `${n} sigle nel team`,
     spaeter: "Continua dopo",
     haftungTitel: "Chi è responsabile?",
-    haftung: "La responsabilità resta tua: i tuoi limiti, le tue misure e i tuoi interventi sono tuoi. GastroCalc scrive solo quello che inserisci e non controlla niente. I dati sono solo su questo telefono – fai tu il backup e conservali almeno 12 mesi.",
+    haftung: "La responsabilità resta tua: i tuoi limiti, le tue misure e i tuoi interventi sono tuoi. GastroCash scrive solo quello che inserisci e non controlla niente. I dati sono solo su questo telefono – fai tu il backup e conservali almeno 12 mesi.",
     arten: { kuehl: "Frigo", tk: "Congelatore", warm: "Mantenimento a caldo" },
     rundgang: "Giro di controllo",
     nacherfasst: "inserito dopo",
@@ -920,7 +922,7 @@ export default {
     sicherungText: "Tutti i dati sono solo su questo dispositivo. Con il file di backup puoi passarli a qualcuno o portarli su un telefono nuovo.",
     exportieren: "Crea file di backup",
     importieren: "Carica file di backup",
-    importFehler: "Questo non è un file di backup di GastroCalc.",
+    importFehler: "Questo non è un file di backup di GastroCash.",
     importOk: "Caricato.",
     loeschenAlles: "Cancella tutto",
     loeschenFrage: "Cancellare davvero tutto? Non si può annullare.",
@@ -1108,7 +1110,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Oggi", muell: "Scarti", kuehl: "Frigo", putzplan: "Pulizie", karte: "Menu" },
     leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
-    pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra" },
+    pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",
       start: "La giornata a colpo d'occhio. Il numero grande mostra quanto incasso manca ancora per arrivare a zero. Rosso vuol dire: occupatene ora. Un «≈» davanti significa stima (merce o il tuo stipendio) – spiegazione in ufficio sotto «Mese e contatore». Senza prezzi d’acquisto l’app calcola il 32 % di merce (chioschi: 23–41 %, tabelle BMF 2025).",
@@ -1421,7 +1423,7 @@ export default {
     vergleich: "Confronto", vergleichAb: "Confronto da due locali", keineLaeden: "Nessun locale con dati", bericht: "Rapporto del proprietario", datei: "Proprietario", drucken: "Stampa rapporto", csv: "CSV", geteilt: "Rapporto condiviso",
     dok: { zahlen: "Cifre per locale", hinweis: "≈ = stimato (prezzi indicativi, valore indicativo o stima). «manca» = nessun dato nel periodo. Solo locali su questo telefono, cifre dalle registrazioni dell'app.",
       kopf: ["Locale", "Incasso", "Costo merce", "Buttato", "Sospetto di perdita", "Obblighi aperti", "Fino a zero", "Valore magazzino", "Ordinare"], laden: "Locale", vergleich: "Confronto", vergleichInfo: "Classifica solo tra locali con la stessa base dati.",
-      trend: "Andamento rispetto al periodo precedente", daten: "Base dati", fehlt: "Incompleto", tage: "giorni", quelle: "Fonte costo merce", fuss: "GastroCalc · Rapporto del proprietario. Cifre dalle registrazioni dell'app – non contabilità, non dati di cassa." },
+      trend: "Andamento rispetto al periodo precedente", daten: "Base dati", fehlt: "Incompleto", tage: "giorni", quelle: "Fonte costo merce", fuss: "GastroCash · Rapporto del proprietario. Cifre dalle registrazioni dell'app – non contabilità, non dati di cassa." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Tocca un prodotto e scrivi quanto paghi.", fortschritt: (a, b) => `${a} di ${b} pronti`, fehlt: "manca", filterFehlt: (n) => `Mancano (${n})`, filterAlle: (n) => `Tutti (${n})`, selbst: "fatto da noi",
@@ -1433,4 +1435,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ultimo fuori dal telefono: oggi" : n === 1 ? "Ultimo fuori dal telefono: 1 giorno fa" : `Ultimo fuori dal telefono: ${n} giorni fa`, nieWeg: "Ancora nessun backup fuori dal telefono", mitPasswort: "Con password", ohneFotos: "Senza foto (piccolo, per e-mail)",
       verschicken: "Invia backup", woFrage: "Dove si trova ora?", woanders: "Altro dispositivo, e-mail, cloud", nurHandy: "Solo su questo telefono", nurHandyMeldung: "Il promemoria resta: il file è solo su questo telefono.", gezaehlt: "Backup contato. Promemoria azzerato." } },
   adanaBrot: { frage: "Che pane servite con l'adana?", pide: "Pide intero", pideHalb: "Mezzo pide", fladen: "Dürüm / lavash", kein: "Senza pane" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

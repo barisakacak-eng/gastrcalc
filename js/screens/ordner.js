@@ -59,7 +59,7 @@ function belehrungBlock(stand, o) {
 }
 
 const knoepfe = () => `<div class="b-unten">
-    <button type="button" class="knopf glut b-haupt" data-a="ordner-pdf">${bsym("share")} ${esc(t("ordner.knopf.pdf"))}</button>
+    <button type="button" class="knopf glut b-haupt" data-a="ordner-pdf">${bsym("file-text")} ${esc(t("ordner.knopf.drucken"))}</button>
     <div class="b-knopfreihe"><button type="button" class="knopf zweit" data-a="ordner-vorschau">${bsym("eye")} ${esc(t("ordner.knopf.vorschau"))}</button><button type="button" class="knopf zweit" data-a="ordner-csv">${bsym("download")} ${esc(t("ordner.knopf.csv"))}</button></div>
   </div>`;
 
@@ -73,7 +73,8 @@ function kopfOrdner(stand, art, symbol, unter) {
   return `<div class="b-ordnerkopf"><span class="b-ks ${art}">${bsym(symbol)}</span><div><b>${esc(t(`ordner.${art}.titel`))}</b><small>${esc(stand.betrieb?.name || t("menue.deinLaden"))} · ${esc(unter)}</small></div></div>`;
 }
 function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
-  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: von === gesamt ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(von === gesamt ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
+  const fertig = gesamt > 0 && von === gesamt;
+  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: fertig ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(!gesamt ? t("ordner.leer") : fertig ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
 }
 
 // Paket C (19.10.2026): was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“

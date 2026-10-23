@@ -1,8 +1,8 @@
 /* Sanji Facelift 1.0: produktive visuelle Schicht, 21.10.2026.
    Grundlage: freigegebene fünf Zielreferenzen (Editorial / Atelier / Modern Natural).
    Rechenregeln, Events, HTML-Datenattribute und Navigation bleiben unverändert.
-   Die Referenzschrift DM Serif Display ist noch NICHT als Fontdatei im Repo;
-   daher Georgia als Offline-Zwischenschrift. Deaktivieren: Link aus index.html entfernen. */
+   DM Serif Display und Manrope liegen lokal vor und sind offline verfügbar.
+   Deaktivieren: Link aus index.html entfernen. */
 :root{
 --gc-cream:#F8F0E5;--gc-paper:#FFF9F1;--gc-white:#FFFEFA;--gc-tint:#F2E4D3;
 --gc-text:#242C24;--gc-muted:#625F57;--gc-line:#E9DCCD;--gc-green:#245B3E;
@@ -1225,3 +1225,44 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 @media(prefers-reduced-motion:reduce){
   .ab-bilanz .ab-details summary span{transition:none!important}
 }
+
+/* Work-Integration 22.10.: vorhandene Messwerte, klare Büro-Wege und große Touchflächen. */
+.h-schaetzung{align-self:flex-start;color:var(--gc-white);font:600 .75rem/1.3 var(--gc-ui);margin:0 0 4px}
+.heute-laden .h-ladenname,.h-jetzt-text b{overflow-wrap:anywhere}
+.heute-laden .h-kopf>div:first-child{min-width:0}
+.heute-laden .h-datum{flex:none}
+.b-werkzeuge{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.b-werkzeuge .b-zeile{min-height:64px;border:1px solid var(--gc-line);border-radius:14px;background:var(--gc-white);padding:10px;gap:8px;box-shadow:var(--gc-shadow)}
+.b-werkzeuge .b-zs{width:30px;height:30px;flex:none}
+.b-werkzeuge .b-zs .sym{width:22px;height:22px}
+.b-werkzeuge .b-zt b{font-size:.875rem;overflow-wrap:anywhere}
+.b-werkzeuge .b-pfeil{display:none}
+.buero .b-segment button,.buero .b-rund,.buero .b-mini,
+.buero .b-knopfreihe .knopf,
+.buero .b-vorschau-leiste .knopf,.b-einstellungen .knopf,
+.b-einstellungen .zeileknopf,.b-einstellungen .chip{min-height:56px}
+.buero .b-rund{min-width:56px}
+.buero .b-mini{min-width:56px}
+.buero .b-zt b,.buero .b-ordnerkopf b,.b-einstellungen .knopf,
+.b-einstellungen .zeileknopf b{overflow-wrap:anywhere}
+.buero .b-ordnerkopf>div{min-width:0}
+.buero .b-monat>b{min-width:0;text-align:center;overflow-wrap:anywhere}
+.buero .b-knopfreihe>.knopf,.buero .b-vorschau-leiste>.knopf{min-width:0;white-space:normal;text-align:center;overflow-wrap:anywhere}
+.buero .ebene-kopf .zurueckzeile{min-height:56px}
+.b-einstellungen .kopfband{padding-top:20px}
+.b-einstellungen .einstellungen-inhalt{padding-bottom:32px;gap:16px}
+.b-einstellungen .karte{border:1px solid var(--gc-line);border-radius:19px;background:var(--gc-white);box-shadow:var(--gc-shadow)}
+.b-einstellungen .einstellungen-inhalt>.karte{padding:16px!important}
+.b-einstellungen .einstellungen-inhalt>.karte:first-of-type{padding:0!important}
+.b-einstellungen .einstellungen-inhalt>.karte h2{margin:0 0 12px;font-size:1.1875rem;line-height:1.3}
+.b-einstellungen .karte .zeileknopf{border:0;border-bottom:1px solid var(--gc-line);border-radius:0;box-shadow:none;background:transparent}
+.b-einstellungen .karte .zeileknopf:last-child{border-bottom:0}
+.b-einstellungen #sicherung{scroll-margin-top:80px}
+.b-einstellungen .summenzeile{gap:8px 12px;flex-wrap:wrap}
+.b-einstellungen .summenzeile>.wert{margin-inline-start:auto;white-space:normal}
+.b-einstellungen .summenzeile>span:first-child{min-width:0;overflow-wrap:anywhere}
+.b-einstellungen .chips{gap:8px}
+.b-einstellungen .schalter{min-height:56px;min-width:56px;border-radius:28px}
+.b-einstellungen .schalter::after{top:50%;transform:translateY(-50%)}
+.buero .b-frei .textfeld,.buero .b-belehrung .knopf{min-height:56px;min-width:0}
+.b-einstellungen .b-sicherung-link{justify-content:center;text-align:center}

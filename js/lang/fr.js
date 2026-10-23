@@ -1,7 +1,9 @@
 // Français – traduit de de.js (15.10.2026). Langue de boutique, courte, tutoiement.
 // Französisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Du-Form.
 export default {
-  app: { name: "GastroCalc", entwurf: "Version de test" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Version de test" },
 
   allgemein: {
     weiter: "Suivant", zurueck: "Retour", fertig: "Terminé", speichern: "Enregistrer", abbrechen: "Annuler", stueck: "pièce", bearbeiten: "Modifier", zahlZuGross: (v) => `« ${v} » est trop grand – jusqu’à dix millions, ça passe.`, uebernehmen: "Valider", zahlUngueltig: (v) => `« ${v} » n’est pas un nombre. Uniquement des chiffres et une virgule.`,
@@ -420,11 +422,11 @@ export default {
       name: "Nom", ungueltig: "Choisis une date jusqu’à aujourd’hui.", gespeichert: "Formation enregistrée." },
     knopf: { pdf: "Partager en PDF", vorschau: "Aperçu", csv: "CSV", csvTeil: (t) => `${t} en CSV`, schliessen: "Fermer", datei: "Fichier", drucken: "Imprimer / PDF",
       druckHinweis: "Dans la fenêtre d’impression, choisis « Enregistrer en PDF » ou « Partager ».", geteilt: "Document prêt.", csvFertig: (n) => (n === 1 ? "1 fichier prêt." : `${n} fichiers prêts.`) },
-    dok: { erstellt: (d, z) => `Créé le ${d} à ${z} avec GastroCalc`, nichtGemessen: "non mesuré", nk: { erledigt: "Contre-mesure faite", offen: "Contre-mesure à faire" }, ware: "Marchandise",
+    dok: { erstellt: (d, z) => `Créé le ${d} à ${z} avec GastroCash`, nichtGemessen: "non mesuré", nk: { erledigt: "Contre-mesure faite", offen: "Contre-mesure à faire" }, ware: "Marchandise",
       basis: { netto: "HT", brutto: "TTC" }, ohneMessung: (l) => `sans mesure : ${l}`, keineMassnahme: "aucune action saisie", offeneTage: (l) => `incomplet : ${l}`,
       ladenArt: (a) => `Commerce : ${a}`, geraete: (l) => `Appareils : ${l}`, takt: (n) => (n === 2 ? "Mesure du froid 2× par jour" : "Mesure du froid 1× par jour"), aufgaben: (n) => `${n} tâches de nettoyage au plan`,
       standardGrenze: "Limite standard", eigeneGrenze: "limite perso", unterschrift: ["Date, signature du commerce", "Contrôlé (date, signature)"],
-      fussAmt: "Enregistrement des autocontrôles avec GastroCalc. Les entrées ne sont pas effacées, seulement annulées ; les annulations figurent plus bas. * = ajouté plus tard. Cette liste ne remplace pas un plan HACCP.",
+      fussAmt: "Enregistrement des autocontrôles avec GastroCash. Les entrées ne sont pas effacées, seulement annulées ; les annulations figurent plus bas. * = ajouté plus tard. Cette liste ne remplace pas un plan HACCP.",
       satz: (p) => `Taux moyen de TVA ${p} %`, svev: "Avantages en nature 2026 (SvEV) : petit-déjeuner 2,37 €, déjeuner et dîner 4,57 € chacun", netto: "Valeur marchandise HT au prix d’achat",
       summe: "Total", vormonat: "Avant", monatslast: "Total du mois",
       fussSteuer: "Les ventes du jour sont des notes de l’appli et ne remplacent pas le ticket Z de la caisse. Montants HT sauf mention contraire. * = ajouté après.",
@@ -561,7 +563,7 @@ export default {
     personenKurz: (n) => n <= 1 ? `${n} initiale dans l’équipe` : `${n} initiales dans l’équipe`,
     spaeter: "Continuer plus tard",
     haftungTitel: "Qui est responsable ?",
-    haftung: "Tu restes responsable : tes limites, tes mesures et tes actions t’appartiennent. GastroCalc note seulement ce que tu remplis et ne vérifie rien. Les données sont seulement sur ce téléphone – sauvegarde-les toi-même et garde-les au moins 12 mois.",
+    haftung: "Tu restes responsable : tes limites, tes mesures et tes actions t’appartiennent. GastroCash note seulement ce que tu remplis et ne vérifie rien. Les données sont seulement sur ce téléphone – sauvegarde-les toi-même et garde-les au moins 12 mois.",
     arten: { kuehl: "Froid", tk: "Surgelé", warm: "Maintien au chaud" },
     rundgang: "Tournée",
     nacherfasst: "rattrapé",
@@ -919,7 +921,7 @@ export default {
     sicherungText: "Toutes les données sont seulement sur cet appareil. Avec le fichier de sauvegarde, tu peux les transmettre ou les mettre sur un nouveau téléphone.",
     exportieren: "Créer un fichier de sauvegarde",
     importieren: "Charger un fichier de sauvegarde",
-    importFehler: "Ce n’est pas un fichier de sauvegarde GastroCalc.",
+    importFehler: "Ce n’est pas un fichier de sauvegarde GastroCash.",
     importOk: "Chargé.",
     loeschenAlles: "Tout supprimer",
     loeschenFrage: "Vraiment tout supprimer ? Impossible de revenir en arrière.",
@@ -1107,7 +1109,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Aujourd'hui", muell: "Déchets", kuehl: "Froid", putzplan: "Nettoyage", karte: "Carte" },
     leiste: "Commerce", menueAuf: "Ouvrir le menu", schliessen: "Fermer", hilfeAuf: "Aide", deinLaden: "Ton commerce", abschluss: "Clôturer la journée", personal: "Mode équipe", buero: "Bureau", ladenWechseln: "Changer de commerce", sprache: "Langue", zumLaden: "Commerce", zumBuero: "Bureau", schlossCode: "Saisis le code bureau",
-    pin: { titel: "Code bureau", neu: "Choisis un nouveau code", nochmal: "Encore une fois", falsch: "Code erroné", ungleich: "Pas identique. Choisis à nouveau.", gesetzt: "Code bureau enregistré", entfernt: "Code bureau supprimé", setzen: "Définir le code bureau", aendern: "Changer le code bureau", entfernen: "Supprimer le code", ohne: "Sans code, tout le monde entre au bureau.", mit: "Le bureau est protégé par un code.", loeschen: "Effacer le chiffre" },
+    pin: { titel: "Code bureau", neu: "Choisis un nouveau code", nochmal: "Encore une fois", falsch: "Code erroné", ungleich: "Pas identique. Choisis à nouveau.", gesetzt: "Code bureau enregistré", entfernt: "Code bureau supprimé", setzen: "Définir le code bureau", aendern: "Changer le code bureau", entfernen: "Supprimer le code", ohne: "Sans code, tout le monde entre au bureau.", mit: "Le bureau est protégé par un code.", loeschen: "Effacer le chiffre", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "La barre du bas mène à tout ce qu'il te faut au commerce. Calculs, réglages et listes sont au bureau.",
       start: "La journée en un coup d'œil. Le grand chiffre montre combien de chiffre d'affaires manque encore pour atteindre zéro. Rouge veut dire : agis maintenant. Un « ≈ » devant signifie une estimation (marchandise ou ton salaire) – explication au bureau sous « Mois et compteur ». Sans prix d’achat, l’appli compte 32 % de marchandise (snacks : 23–41 %, tables BMF 2025).",
@@ -1420,7 +1422,7 @@ export default {
     vergleich: "Comparaison", vergleichAb: "Comparaison à partir de deux commerces", keineLaeden: "Aucun commerce avec des données", bericht: "Rapport du propriétaire", datei: "Proprietaire", drucken: "Imprimer le rapport", csv: "CSV", geteilt: "Rapport partagé",
     dok: { zahlen: "Chiffres par commerce", hinweis: "≈ = estimé (prix indicatifs, valeur indicative ou estimation). « manque » = pas de données sur la période. Seulement les commerces sur ce téléphone, chiffres tirés des saisies de l'appli.",
       kopf: ["Commerce", "Chiffre d'affaires", "Coût matière", "Jeté", "Soupçon de perte", "Obligations ouvertes", "Jusqu'à zéro", "Valeur du stock", "Commander"], laden: "Commerce", vergleich: "Comparaison", vergleichInfo: "Classement uniquement entre commerces ayant la même base de données.",
-      trend: "Tendance par rapport à la période précédente", daten: "Base de données", fehlt: "Incomplet", tage: "jours", quelle: "Source coût matière", fuss: "GastroCalc · Rapport du propriétaire. Chiffres tirés des saisies de l'appli – ni comptabilité, ni données de caisse." },
+      trend: "Tendance par rapport à la période précédente", daten: "Base de données", fehlt: "Incomplet", tage: "jours", quelle: "Source coût matière", fuss: "GastroCash · Rapport du propriétaire. Chiffres tirés des saisies de l'appli – ni comptabilité, ni données de caisse." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Touche un produit et note ce que tu paies.", fortschritt: (a, b) => `${a} sur ${b} prêts`, fehlt: "manque", filterFehlt: (n) => `Manquants (${n})`, filterAlle: (n) => `Tous (${n})`, selbst: "maison",
@@ -1432,4 +1434,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Dernière hors du téléphone : aujourd’hui" : n === 1 ? "Dernière hors du téléphone : il y a 1 jour" : `Dernière hors du téléphone : il y a ${n} jours`, nieWeg: "Pas encore de sauvegarde hors du téléphone", mitPasswort: "Avec mot de passe", ohneFotos: "Sans photos (petit, pour e-mail)",
       verschicken: "Envoyer la sauvegarde", woFrage: "Où est-elle maintenant ?", woanders: "Autre appareil, e-mail, cloud", nurHandy: "Seulement sur ce téléphone", nurHandyMeldung: "Le rappel reste : le fichier est seulement sur ce téléphone.", gezaehlt: "Sauvegarde comptée. Rappel remis à zéro." } },
   adanaBrot: { frage: "Quel pain servez-vous avec l'adana ?", pide: "Pide entier", pideHalb: "Demi-pide", fladen: "Dürüm / lavash", kein: "Sans pain" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

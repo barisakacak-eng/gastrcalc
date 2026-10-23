@@ -1,6 +1,8 @@
 // فارسی – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / زبان مغازه، جمله‌های کوتاه.
 export default {
-  app: { name: "GastroCalc", entwurf: "نسخه‌ی آزمایشی" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
     weiter: "بعدی", zurueck: "برگشت", fertig: "تمام", speichern: "ذخیره", abbrechen: "لغو", stueck: "عدد", bearbeiten: "ویرایش", zahlZuGross: (v) => `«${v}» خیلی بزرگ است – تا ده میلیون می‌شود.`, uebernehmen: "تأیید", zahlUngueltig: (v) => `«${v}» عدد نیست. فقط رقم و یک ویرگول بنویس.`,
@@ -419,11 +421,11 @@ export default {
       name: "نام", ungueltig: "تاریخی تا امروز انتخاب کن.", gespeichert: "آموزش ثبت شد." },
     knopf: { pdf: "اشتراک PDF", vorschau: "پیش‌نمایش", csv: "CSV", csvTeil: (t) => `${t} به CSV`, schliessen: "بستن", datei: "فایل", drucken: "چاپ / PDF",
       druckHinweis: "در پنجره‌ی چاپ «ذخیره به PDF» یا «اشتراک» را بزن.", geteilt: "سند آماده است.", csvFertig: (n) => `${n} فایل آماده است.` },
-    dok: { erstellt: (d, z) => `ساخته شده در ${d} ساعت ${z} با GastroCalc`, nichtGemessen: "اندازه گرفته نشده", nk: { erledigt: "چک دوباره انجام شد", offen: "چک دوباره مانده" }, ware: "جنس",
+    dok: { erstellt: (d, z) => `ساخته شده در ${d} ساعت ${z} با GastroCash`, nichtGemessen: "اندازه گرفته نشده", nk: { erledigt: "چک دوباره انجام شد", offen: "چک دوباره مانده" }, ware: "جنس",
       basis: { netto: "خالص", brutto: "ناخالص" }, ohneMessung: (l) => `بدون اندازه: ${l}`, keineMassnahme: "اقدامی ثبت نشده", offeneTage: (l) => `ناقص: ${l}`,
       ladenArt: (a) => `مغازه: ${a}`, geraete: (l) => `دستگاه‌ها: ${l}`, takt: (n) => (n === 2 ? "اندازه‌ی دما 2× در روز" : "اندازه‌ی دما 1× در روز"), aufgaben: (n) => `${n} کار نظافت در برنامه`,
       standardGrenze: "حد استاندارد", eigeneGrenze: "حد خودت", unterschrift: ["تاریخ، امضای مغازه", "بررسی شد (تاریخ، امضا)"],
-      fussAmt: "ثبت خودکنترلی با GastroCalc. موارد پاک نمی‌شوند، فقط برگشت می‌خورند؛ برگشت‌ها پایین آمده‌اند. * = بعداً ثبت شده. این فهرست جای برنامه‌ی HACCP را نمی‌گیرد.",
+      fussAmt: "ثبت خودکنترلی با GastroCash. موارد پاک نمی‌شوند، فقط برگشت می‌خورند؛ برگشت‌ها پایین آمده‌اند. * = بعداً ثبت شده. این فهرست جای برنامه‌ی HACCP را نمی‌گیرد.",
       satz: (p) => `نرخ ترکیبی مالیات فروش ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): صبحانه 2,37 €، ناهار و شام هر کدام 4,57 €", netto: "ارزش خالص جنس با قیمت خرید",
       summe: "جمع", vormonat: "مانده‌ی قبل", monatslast: "کل هزینه‌ی ماه",
       fussSteuer: "فروش روزانه یادداشت‌های اپ است و جای گزارش صندوق (گزارش Z) را نمی‌گیرد. مبلغ‌ها خالص‌اند، مگر جور دیگری نوشته شده باشد. * = بعداً ثبت شده.",
@@ -560,7 +562,7 @@ export default {
     personenKurz: (n) => `${n} اسم کوتاه در تیم`,
     spaeter: "بعداً ادامه بده",
     haftungTitel: "چه کسی مسئول است؟",
-    haftung: "مسئولیت با خودت است: حدها، اندازه‌ها و کارهایی که می‌کنی مال خودت است. GastroCalc فقط چیزی را که وارد می‌کنی می‌نویسد و چیزی را بررسی نمی‌کند. داده‌ها فقط روی همین گوشی است – خودت پشتیبان بگیر و دست‌کم 12 ماه نگهشان دار.",
+    haftung: "مسئولیت با خودت است: حدها، اندازه‌ها و کارهایی که می‌کنی مال خودت است. GastroCash فقط چیزی را که وارد می‌کنی می‌نویسد و چیزی را بررسی نمی‌کند. داده‌ها فقط روی همین گوشی است – خودت پشتیبان بگیر و دست‌کم 12 ماه نگهشان دار.",
     arten: { kuehl: "یخچال", tk: "فریزر", warm: "گرم‌نگه‌داشتن (Heißhaltung)" },
     rundgang: "دور چک",
     nacherfasst: "بعداً ثبت شده",
@@ -918,7 +920,7 @@ export default {
     sicherungText: "همه‌ی داده‌ها فقط روی همین دستگاه است. با فایل پشتیبان می‌توانی آن را به کسی بدهی یا به گوشی جدید ببری.",
     exportieren: "ساختن فایل پشتیبان",
     importieren: "خواندن فایل پشتیبان",
-    importFehler: "این فایل پشتیبان GastroCalc نیست.",
+    importFehler: "این فایل پشتیبان GastroCash نیست.",
     importOk: "خوانده شد.",
     loeschenAlles: "پاک کردن همه",
     loeschenFrage: "واقعاً همه پاک شود؟ این برگشت ندارد.",
@@ -1106,7 +1108,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "امروز", muell: "دورریز", kuehl: "سرمایش", putzplan: "نظافت", karte: "منو" },
     leiste: "مغازه", menueAuf: "باز کردن منو", schliessen: "بستن", hilfeAuf: "راهنما", deinLaden: "مغازهٔ تو", abschluss: "بستن روز", personal: "حالت کارکنان", buero: "دفتر", ladenWechseln: "عوض کردن مغازه", sprache: "زبان", zumLaden: "مغازه", zumBuero: "دفتر", schlossCode: "رمز دفتر را وارد کن",
-    pin: { titel: "رمز دفتر", neu: "رمز تازه انتخاب کن", nochmal: "یک بار دیگر", falsch: "رمز اشتباه", ungleich: "یکی نیست. دوباره انتخاب کن.", gesetzt: "رمز دفتر ذخیره شد", entfernt: "رمز دفتر برداشته شد", setzen: "تعیین رمز دفتر", aendern: "تغییر رمز دفتر", entfernen: "برداشتن رمز", ohne: "بدون رمز هر کسی وارد دفتر می‌شود.", mit: "دفتر با رمز محافظت می‌شود.", loeschen: "پاک کردن رقم" },
+    pin: { titel: "رمز دفتر", neu: "رمز تازه انتخاب کن", nochmal: "یک بار دیگر", falsch: "رمز اشتباه", ungleich: "یکی نیست. دوباره انتخاب کن.", gesetzt: "رمز دفتر ذخیره شد", entfernt: "رمز دفتر برداشته شد", setzen: "تعیین رمز دفتر", aendern: "تغییر رمز دفتر", entfernen: "برداشتن رمز", ohne: "بدون رمز هر کسی وارد دفتر می‌شود.", mit: "دفتر با رمز محافظت می‌شود.", loeschen: "پاک کردن رقم", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "نوار پایین تو را به هر چیزی که در مغازه لازم داری می‌برد. حساب‌ها، تنظیمات و فهرست‌ها در دفتر هستند.",
       start: "روز در یک نگاه. عدد بزرگ نشان می‌دهد تا صفر چقدر فروش کم است. قرمز یعنی: همین حالا رسیدگی کن. اگر «≈» جلوی عدد باشد، تخمین است (کالا یا دستمزد خودت) – توضیح در دفتر زیر «ماه و شمارنده». بدون قیمت خرید، برنامه با ۳۲٪ هزینه کالا حساب می‌کند (اغذیه‌فروشی: ۲۳–۴۱٪، جداول BMF ۲۰۲۵).",
@@ -1419,7 +1421,7 @@ export default {
     vergleich: "مقایسه", vergleichAb: "مقایسه از دو مغازه", keineLaeden: "مغازه‌ای با داده نیست", bericht: "گزارش مالک", datei: "Malek", drucken: "چاپ گزارش", csv: "CSV", geteilt: "گزارش به اشتراک گذاشته شد",
     dok: { zahlen: "شاخص‌ها به تفکیک مغازه", hinweis: "≈ = تخمینی (قیمت راهنما، مقدار راهنما یا تخمین). «ندارد» = داده‌ای در دوره نیست. فقط مغازه‌های روی این گوشی، اعداد از ثبت‌های برنامه.",
       kopf: ["مغازه", "فروش", "هزینهٔ مواد", "دورریخته", "شک به کسری", "وظایف باز", "تا صفر", "ارزش انبار", "سفارش"], laden: "مغازه", vergleich: "مقایسه", vergleichInfo: "رتبه فقط بین مغازه‌هایی با پایهٔ دادهٔ یکسان.",
-      trend: "روند نسبت به دورهٔ قبل", daten: "پایهٔ داده", fehlt: "ناقص", tage: "روز", quelle: "منبع هزینهٔ مواد", fuss: "GastroCalc · گزارش مالک. اعداد از ثبت‌های برنامه – نه حسابداری، نه دادهٔ صندوق." },
+      trend: "روند نسبت به دورهٔ قبل", daten: "پایهٔ داده", fehlt: "ناقص", tage: "روز", quelle: "منبع هزینهٔ مواد", fuss: "GastroCash · گزارش مالک. اعداد از ثبت‌های برنامه – نه حسابداری، نه دادهٔ صندوق." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "روی یک کالا بزن و قیمتی را که می‌پردازی بنویس.", fortschritt: (a, b) => `${a} از ${b} آماده`, fehlt: "ناقص", filterFehlt: (n) => `ناقص (${n})`, filterAlle: (n) => `همه (${n})`, selbst: "خودمان",
@@ -1431,4 +1433,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "آخرین نسخه بیرون از گوشی: امروز" : n === 1 ? "آخرین نسخه بیرون از گوشی: ۱ روز پیش" : `آخرین نسخه بیرون از گوشی: ${n} روز پیش`, nieWeg: "هنوز نسخه‌ای بیرون از گوشی نیست", mitPasswort: "با رمز", ohneFotos: "بدون عکس (کوچک، برای ایمیل)",
       verschicken: "فرستادن پشتیبان", woFrage: "الان کجاست؟", woanders: "دستگاه دیگر، ایمیل، فضای ابری", nurHandy: "فقط روی این گوشی", nurHandyMeldung: "یادآوری می‌ماند: فایل فقط روی این گوشی است.", gezaehlt: "پشتیبان ثبت شد. یادآوری از نو شروع شد." } },
   adanaBrot: { frage: "کنار آدانا چه نانی می‌دهید؟", pide: "پیده کامل", pideHalb: "نصف پیده", fladen: "دوروم / لواش", kein: "بدون نان" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

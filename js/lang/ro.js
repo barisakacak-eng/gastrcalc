@@ -7,7 +7,9 @@ const de = (n) => { const x = Math.abs(Number(n)); if (!Number.isInteger(x) || x
 const nr = (n, unu, multe) => Number(n) === 1 ? `1 ${unu}` : `${n} ${de(n)}${multe}`;
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Versiune de test" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Versiune de test" },
 
   allgemein: {
     weiter: "Mai departe", zurueck: "Înapoi", fertig: "Gata", speichern: "Salvează", abbrechen: "Anulează", stueck: "buc.", bearbeiten: "Modifică", zahlZuGross: (v) => `„${v}” e prea mare – merge până la zece milioane.`, uebernehmen: "Preia", zahlUngueltig: (v) => `„${v}” nu e un număr. Doar cifre și o virgulă.`,
@@ -426,11 +428,11 @@ export default {
       name: "Nume", ungueltig: "Alege o dată până azi.", gespeichert: "Instruire înregistrată." },
     knopf: { pdf: "Trimite ca PDF", vorschau: "Previzualizare", csv: "CSV", csvTeil: (t) => `${t} ca CSV`, schliessen: "Închide", datei: "Fișier", drucken: "Tipărește / PDF",
       druckHinweis: "În fereastra de tipărire alege „Salvează ca PDF” sau „Trimite”.", geteilt: "Document gata.", csvFertig: (n) => (n === 1 ? "1 fișier gata." : `${nr(n, "fișier", "fișiere")} gata.`) },
-    dok: { erstellt: (d, z) => `Creat pe ${d} la ${z} cu GastroCalc`, nichtGemessen: "nemăsurat", nk: { erledigt: "Recontrol făcut", offen: "Recontrol deschis" }, ware: "Marfă",
+    dok: { erstellt: (d, z) => `Creat pe ${d} la ${z} cu GastroCash`, nichtGemessen: "nemăsurat", nk: { erledigt: "Recontrol făcut", offen: "Recontrol deschis" }, ware: "Marfă",
       basis: { netto: "net", brutto: "brut" }, ohneMessung: (l) => `fără măsurare: ${l}`, keineMassnahme: "nicio măsură introdusă", offeneTage: (l) => `incomplet: ${l}`,
       ladenArt: (a) => `Local: ${a}`, geraete: (l) => `Aparate: ${l}`, takt: (n) => (n === 2 ? "Măsurare răcire 2× pe zi" : "Măsurare răcire 1× pe zi"), aufgaben: (n) => `${nr(n, "sarcină", "sarcini")} de curățenie în plan`,
       standardGrenze: "Limită standard", eigeneGrenze: "limită proprie", unterschrift: ["Data, semnătura localului", "Verificat (data, semnătura)"],
-      fussAmt: "Evidența autocontroalelor cu GastroCalc. Înregistrările nu se șterg, doar se anulează; anulările sunt mai jos. * = adăugat ulterior. Această listă nu înlocuiește un plan HACCP.",
+      fussAmt: "Evidența autocontroalelor cu GastroCash. Înregistrările nu se șterg, doar se anulează; anulările sunt mai jos. * = adăugat ulterior. Această listă nu înlocuiește un plan HACCP.",
       satz: (p) => `Cotă medie TVA ${p} %`, svev: "Valori pentru masa personalului 2026 (SvEV): mic dejun 2,37 €, prânz și cină câte 4,57 €", netto: "Valoarea mărfii net, la preț de cumpărare",
       summe: "Total", vormonat: "Situația anterioară", monatslast: "Costuri pe lună, total",
       fussSteuer: "Încasările zilnice sunt notițe din aplicație și nu înlocuiesc raportul casei (raport Z). Sume nete, dacă nu scrie altfel. * = adăugat ulterior.",
@@ -567,7 +569,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 persoană în echipă" : `${nr(n, "persoană", "persoane")} în echipă`,
     spaeter: "Continui mai târziu",
     haftungTitel: "Cine este responsabil?",
-    haftung: "Răspunderea rămâne a ta: limitele, măsurătorile și măsurile tale îți aparțin. GastroCalc doar notează ce treci și nu verifică nimic. Datele sunt doar pe telefonul ăsta – fă-ți singur copii și păstrează-le cel puțin 12 luni.",
+    haftung: "Răspunderea rămâne a ta: limitele, măsurătorile și măsurile tale îți aparțin. GastroCash doar notează ce treci și nu verifică nimic. Datele sunt doar pe telefonul ăsta – fă-ți singur copii și păstrează-le cel puțin 12 luni.",
     arten: { kuehl: "Răcire", tk: "Congelare", warm: "Menținere la cald" },
     rundgang: "Rundă",
     nacherfasst: "completat ulterior",
@@ -926,7 +928,7 @@ export default {
     sicherungText: "Toate datele sunt doar pe aparatul ăsta. Cu fișierul de copie le poți da mai departe sau le poți muta pe un telefon nou.",
     exportieren: "Creează fișierul de copie",
     importieren: "Încarcă fișierul de copie",
-    importFehler: "Ăsta nu e un fișier de copie GastroCalc.",
+    importFehler: "Ăsta nu e un fișier de copie GastroCash.",
     importOk: "Încărcat.",
     loeschenAlles: "Șterge tot",
     loeschenFrage: "Sigur ștergi tot? Asta nu se mai poate anula.",
@@ -1114,7 +1116,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Azi", muell: "Deșeuri", kuehl: "Răcire", putzplan: "Curățenie", karte: "Meniu" },
     leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossCode: "Introdu codul de birou",
-    pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra" },
+    pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Bara de jos duce la tot ce îți trebuie în local. Calculele, configurarea și listele sunt în birou.",
       start: "Ziua dintr-o privire. Numărul mare arată cât încasări mai lipsesc până la zero. Roșu înseamnă: ocupă-te acum. Un „≈” în față înseamnă estimare (marfă sau salariul tău) – explicația la birou, sub „Lună și contor”. Fără prețuri de achiziție aplicația calculează cu 32 % marfă (fast-food: 23–41 %, tabele BMF 2025).",
@@ -1427,7 +1429,7 @@ export default {
     vergleich: "Comparație", vergleichAb: "Comparație de la două localuri", keineLaeden: "Niciun local cu date", bericht: "Raportul proprietarului", datei: "Proprietar", drucken: "Tipărește raportul", csv: "CSV", geteilt: "Raport partajat",
     dok: { zahlen: "Cifre pe local", hinweis: "≈ = estimat (prețuri orientative, valoare orientativă sau estimare). „lipsește” = fără date în perioadă. Doar localurile de pe acest telefon, cifre din înregistrările aplicației.",
       kopf: ["Local", "Încasări", "Costul mărfii", "Aruncat", "Suspiciune de pierdere", "Obligații deschise", "Până la zero", "Valoarea stocului", "Comandă"], laden: "Local", vergleich: "Comparație", vergleichInfo: "Clasament doar între localuri cu aceeași bază de date.",
-      trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCalc · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
+      trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCash · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Atinge o marfă și scrie cât plătești.", fortschritt: (a, b) => `${a} din ${b} gata`, fehlt: "lipsă", filterFehlt: (n) => `Lipsă (${n})`, filterAlle: (n) => `Toate (${n})`, selbst: "făcut de noi",
@@ -1439,4 +1441,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ultima în afara telefonului: azi" : n === 1 ? "Ultima în afara telefonului: acum 1 zi" : `Ultima în afara telefonului: acum ${n} zile`, nieWeg: "Încă nicio copie în afara telefonului", mitPasswort: "Cu parolă", ohneFotos: "Fără poze (mică, pentru e-mail)",
       verschicken: "Trimite copia", woFrage: "Unde este acum?", woanders: "Alt dispozitiv, e-mail, cloud", nurHandy: "Doar pe acest telefon", nurHandyMeldung: "Memento-ul rămâne: fișierul e doar pe acest telefon.", gezaehlt: "Copie numărată. Memento resetat." } },
   adanaBrot: { frage: "Ce pâine serviți la adana?", pide: "Pide întreg", pideHalb: "Jumătate de pide", fladen: "Dürüm / lavaș", kein: "Fără pâine" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

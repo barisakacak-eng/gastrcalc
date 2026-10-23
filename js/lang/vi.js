@@ -1,7 +1,9 @@
 // Tiếng Việt – dịch từ de.js (15.10.2026). Ngôn ngữ trong quán, ngắn gọn, xưng "bạn".
 // Vietnamesisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Anrede „bạn“.
 export default {
-  app: { name: "GastroCalc", entwurf: "Bản dùng thử" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Bản dùng thử" },
 
   allgemein: {
     weiter: "Tiếp", zurueck: "Quay lại", fertig: "Xong", speichern: "Lưu", abbrechen: "Hủy", stueck: "cái", bearbeiten: "Sửa", zahlZuGross: (v) => `“${v}” lớn quá – tối đa mười triệu.`, uebernehmen: "Áp dụng", zahlUngueltig: (v) => `“${v}” không phải là số. Chỉ nhập chữ số và một dấu phẩy.`,
@@ -420,11 +422,11 @@ export default {
       name: "Tên", ungueltig: "Hãy chọn ngày đến hôm nay.", gespeichert: "Đã ghi buổi hướng dẫn." },
     knopf: { pdf: "Chia sẻ dạng PDF", vorschau: "Xem trước", csv: "CSV", csvTeil: (t) => `${t} dạng CSV`, schliessen: "Đóng", datei: "Tệp", drucken: "In / PDF",
       druckHinweis: "Trong cửa sổ in, chọn “Lưu thành PDF” hoặc “Chia sẻ”.", geteilt: "Tài liệu đã sẵn sàng.", csvFertig: (n) => `${n} tệp đã sẵn sàng.` },
-    dok: { erstellt: (d, z) => `Tạo ngày ${d} lúc ${z} bằng GastroCalc`, nichtGemessen: "chưa đo", nk: { erledigt: "Đã đo lại", offen: "Chưa đo lại" }, ware: "Hàng",
+    dok: { erstellt: (d, z) => `Tạo ngày ${d} lúc ${z} bằng GastroCash`, nichtGemessen: "chưa đo", nk: { erledigt: "Đã đo lại", offen: "Chưa đo lại" }, ware: "Hàng",
       basis: { netto: "chưa thuế", brutto: "có thuế" }, ohneMessung: (l) => `chưa đo: ${l}`, keineMassnahme: "chưa ghi cách xử lý", offeneTage: (l) => `chưa đủ: ${l}`,
       ladenArt: (a) => `Quán: ${a}`, geraete: (l) => `Thiết bị: ${l}`, takt: (n) => (n === 2 ? "Đo nhiệt độ 2× mỗi ngày" : "Đo nhiệt độ 1× mỗi ngày"), aufgaben: (n) => `${n} việc dọn dẹp trong lịch`,
       standardGrenze: "Giới hạn chuẩn", eigeneGrenze: "giới hạn riêng", unterschrift: ["Ngày, chữ ký của quán", "Đã kiểm tra (ngày, chữ ký)"],
-      fussAmt: "Ghi chép tự kiểm tra bằng GastroCalc. Các mục không bị xóa, chỉ bị rút lại; phần rút lại ở bên dưới. * = nhập bổ sung. Danh sách này không thay thế kế hoạch HACCP.",
+      fussAmt: "Ghi chép tự kiểm tra bằng GastroCash. Các mục không bị xóa, chỉ bị rút lại; phần rút lại ở bên dưới. * = nhập bổ sung. Danh sách này không thay thế kế hoạch HACCP.",
       satz: (p) => `Thuế suất trung bình ${p} %`, svev: "Giá trị bữa ăn 2026 (SvEV): bữa sáng 2,37 €, bữa trưa và tối mỗi bữa 4,57 €", netto: "Tiền hàng chưa thuế theo giá mua",
       summe: "Tổng", vormonat: "Trước đó", monatslast: "Tổng tháng",
       fussSteuer: "Doanh thu ngày là ghi chú từ app, không thay cho phiếu Z của máy tính tiền. Số tiền chưa thuế nếu không ghi khác. * = ghi bổ sung.",
@@ -561,7 +563,7 @@ export default {
     personenKurz: (n) => `${n} tên viết tắt trong nhóm`,
     spaeter: "Làm tiếp sau",
     haftungTitel: "Ai chịu trách nhiệm?",
-    haftung: "Bạn vẫn là người chịu trách nhiệm: giới hạn, các lần đo và cách xử lý là của bạn. GastroCalc chỉ ghi lại những gì bạn điền và không kiểm tra gì. Dữ liệu chỉ nằm trên điện thoại này – hãy tự sao lưu và giữ ít nhất 12 tháng.",
+    haftung: "Bạn vẫn là người chịu trách nhiệm: giới hạn, các lần đo và cách xử lý là của bạn. GastroCash chỉ ghi lại những gì bạn điền và không kiểm tra gì. Dữ liệu chỉ nằm trên điện thoại này – hãy tự sao lưu và giữ ít nhất 12 tháng.",
     arten: { kuehl: "Đồ lạnh", tk: "Đồ đông", warm: "Giữ nóng" },
     rundgang: "Vòng đo",
     nacherfasst: "ghi bù",
@@ -919,7 +921,7 @@ export default {
     sicherungText: "Mọi dữ liệu chỉ nằm trên thiết bị này. Với file sao lưu, bạn có thể gửi cho người khác hoặc chuyển sang điện thoại mới.",
     exportieren: "Tạo file sao lưu",
     importieren: "Nạp file sao lưu",
-    importFehler: "Đây không phải file sao lưu của GastroCalc.",
+    importFehler: "Đây không phải file sao lưu của GastroCash.",
     importOk: "Đã nạp.",
     loeschenAlles: "Xóa hết",
     loeschenFrage: "Thật sự xóa hết? Không hoàn tác được.",
@@ -1107,7 +1109,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hôm nay", muell: "Rác", kuehl: "Làm lạnh", putzplan: "Dọn dẹp", karte: "Thực đơn" },
     leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
-    pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số" },
+    pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Thanh bên dưới dẫn đến mọi thứ bạn cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",
       start: "Cả ngày trong một cái nhìn. Con số lớn cho biết còn thiếu bao nhiêu doanh thu để hòa vốn. Màu đỏ nghĩa là: xử lý ngay. Có „≈“ phía trước nghĩa là số ước tính (nguyên liệu hoặc lương của bạn) – giải thích trong văn phòng, mục „Tháng và bộ đếm“. Chưa có giá mua thì ứng dụng tính 32 % nguyên liệu (quán ăn nhanh: 23–41 %, bảng BMF 2025).",
@@ -1420,7 +1422,7 @@ export default {
     vergleich: "So sánh", vergleichAb: "So sánh từ hai cửa hàng", keineLaeden: "Không có cửa hàng nào có dữ liệu", bericht: "Báo cáo chủ", datei: "Chu", drucken: "In báo cáo", csv: "CSV", geteilt: "Đã chia sẻ báo cáo",
     dok: { zahlen: "Chỉ số theo cửa hàng", hinweis: "≈ = ước tính (giá tham khảo, giá trị tham khảo hoặc ước tính). „thiếu“ = không có dữ liệu trong kỳ. Chỉ các cửa hàng trên điện thoại này, số liệu từ các mục nhập trong ứng dụng.",
       kopf: ["Cửa hàng", "Doanh thu", "Chi phí nguyên liệu", "Bỏ đi", "Nghi hao hụt", "Việc còn mở", "Đến hòa vốn", "Giá trị kho", "Đặt hàng"], laden: "Cửa hàng", vergleich: "So sánh", vergleichInfo: "Xếp hạng chỉ giữa các cửa hàng có cùng cơ sở dữ liệu.",
-      trend: "Xu hướng so với kỳ trước", daten: "Cơ sở dữ liệu", fehlt: "Chưa đủ", tage: "ngày", quelle: "Nguồn chi phí nguyên liệu", fuss: "GastroCalc · Báo cáo chủ. Số liệu từ các mục nhập trong ứng dụng – không phải kế toán, không phải dữ liệu máy tính tiền." },
+      trend: "Xu hướng so với kỳ trước", daten: "Cơ sở dữ liệu", fehlt: "Chưa đủ", tage: "ngày", quelle: "Nguồn chi phí nguyên liệu", fuss: "GastroCash · Báo cáo chủ. Số liệu từ các mục nhập trong ứng dụng – không phải kế toán, không phải dữ liệu máy tính tiền." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Chạm vào một món hàng và nhập giá bạn trả.", fortschritt: (a, b) => `${a} / ${b} xong`, fehlt: "thiếu", filterFehlt: (n) => `Thiếu (${n})`, filterAlle: (n) => `Tất cả (${n})`, selbst: "tự làm",
@@ -1432,4 +1434,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Bản cuối ra khỏi điện thoại: hôm nay" : n === 1 ? "Bản cuối ra khỏi điện thoại: 1 ngày trước" : `Bản cuối ra khỏi điện thoại: ${n} ngày trước`, nieWeg: "Chưa có bản sao lưu nào ngoài điện thoại", mitPasswort: "Có mật khẩu", ohneFotos: "Không ảnh (nhỏ, để gửi mail)",
       verschicken: "Gửi bản sao lưu", woFrage: "Giờ nó ở đâu?", woanders: "Thiết bị khác, mail, đám mây", nurHandy: "Chỉ trên điện thoại này", nurHandyMeldung: "Lời nhắc vẫn còn: tệp chỉ ở trên điện thoại này.", gezaehlt: "Đã tính bản sao lưu. Lời nhắc được đặt lại." } },
   adanaBrot: { frage: "Quán bạn ăn Adana kèm bánh mì nào?", pide: "Nguyên bánh pide", pideHalb: "Nửa bánh pide", fladen: "Dürüm / lavash", kein: "Không bánh mì" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

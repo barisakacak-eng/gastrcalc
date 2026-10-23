@@ -6,7 +6,9 @@
 const br = (n, eden, mnogo) => Number(n) === 1 ? `1 ${eden}` : `${n} ${mnogo}`;
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Тестова версия" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Тестова версия" },
 
   allgemein: {
     weiter: "Напред", zurueck: "Назад", fertig: "Готово", speichern: "Запази", abbrechen: "Отказ", stueck: "бр.", bearbeiten: "Редактирай", zahlZuGross: (v) => `„${v}“ е твърде голямо – до десет милиона става.`, uebernehmen: "Приеми", zahlUngueltig: (v) => `„${v}“ не е число. Само цифри и една запетая.`,
@@ -425,11 +427,11 @@ export default {
       name: "Име", ungueltig: "Избери дата до днес.", gespeichert: "Инструктажът е записан." },
     knopf: { pdf: "Сподели като PDF", vorschau: "Преглед", csv: "CSV", csvTeil: (t) => `${t} като CSV`, schliessen: "Затвори", datei: "Файл", drucken: "Печат / PDF",
       druckHinweis: "В прозореца за печат избери „Запази като PDF“ или „Сподели“.", geteilt: "Документът е готов.", csvFertig: (n) => (n === 1 ? "1 файл е готов." : `${n} файла са готови.`) },
-    dok: { erstellt: (d, z) => `Създадено на ${d} в ${z} с GastroCalc`, nichtGemessen: "не е измерено", nk: { erledigt: "Повторна проверка направена", offen: "Повторна проверка предстои" }, ware: "Стока",
+    dok: { erstellt: (d, z) => `Създадено на ${d} в ${z} с GastroCash`, nichtGemessen: "не е измерено", nk: { erledigt: "Повторна проверка направена", offen: "Повторна проверка предстои" }, ware: "Стока",
       basis: { netto: "нето", brutto: "бруто" }, ohneMessung: (l) => `без измерване: ${l}`, keineMassnahme: "няма въведена мярка", offeneTage: (l) => `непълни: ${l}`,
       ladenArt: (a) => `Обект: ${a}`, geraete: (l) => `Уреди: ${l}`, takt: (n) => (n === 2 ? "Измерване на охлаждането 2× дневно" : "Измерване на охлаждането 1× дневно"), aufgaben: (n) => `${br(n, "задача", "задачи")} за почистване в графика`,
       standardGrenze: "Стандартна граница", eigeneGrenze: "собствена граница", unterschrift: ["Дата, подпис на обекта", "Проверено (дата, подпис)"],
-      fussAmt: "Запис на собствения контрол с GastroCalc. Записите не се изтриват, само се отменят; отмените са по-долу. * = добавено по-късно. Този списък не заменя HACCP план.",
+      fussAmt: "Запис на собствения контрол с GastroCash. Записите не се изтриват, само се отменят; отмените са по-долу. * = добавено по-късно. Този списък не заменя HACCP план.",
       satz: (p) => `Среден ДДС ${p} %`, svev: "Стойност на храната за персонала 2026 (SvEV): закуска 2,37 €, обяд и вечеря по 4,57 €", netto: "Стойност на стоката нето по доставна цена",
       summe: "Сума", vormonat: "Предишно състояние", monatslast: "Месечни разходи общо",
       fussSteuer: "Дневният оборот е бележка от приложението и не замества касовия отчет (Z-отчет). Сумите са нето, ако не е казано друго. * = добавено по-късно.",
@@ -566,7 +568,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 човек в екипа" : `${n} души в екипа`,
     spaeter: "Ще продължа по-късно",
     haftungTitel: "Кой отговаря?",
-    haftung: "Отговорността остава твоя: границите, меренията и мерките са твои. GastroCalc само записва каквото въведеш и нищо не проверява. Данните са само на този телефон – прави си копия сам и ги пази поне 12 месеца.",
+    haftung: "Отговорността остава твоя: границите, меренията и мерките са твои. GastroCash само записва каквото въведеш и нищо не проверява. Данните са само на този телефон – прави си копия сам и ги пази поне 12 месеца.",
     arten: { kuehl: "Охлаждане", tk: "Замразяване", warm: "Топло съхранение" },
     rundgang: "Обиколка",
     nacherfasst: "дописано",
@@ -925,7 +927,7 @@ export default {
     sicherungText: "Всички данни са само на това устройство. С файла с копието можеш да ги дадеш на някого или да ги пренесеш на нов телефон.",
     exportieren: "Създай файл с копие",
     importieren: "Зареди файл с копие",
-    importFehler: "Това не е файл с копие от GastroCalc.",
+    importFehler: "Това не е файл с копие от GastroCash.",
     importOk: "Заредено.",
     loeschenAlles: "Изтрий всичко",
     loeschenFrage: "Наистина ли да изтрия всичко? Това не може да се върне.",
@@ -1113,7 +1115,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Днес", muell: "Отпадъци", kuehl: "Охлаждане", putzplan: "Почистване", karte: "Меню" },
     leiste: "Обект", menueAuf: "Отвори менюто", schliessen: "Затвори", hilfeAuf: "Помощ", deinLaden: "Твоят обект", abschluss: "Приключи деня", personal: "Режим персонал", buero: "Офис", ladenWechseln: "Смени обекта", sprache: "Език", zumLaden: "Обект", zumBuero: "Офис", schlossCode: "Въведи кода за офиса",
-    pin: { titel: "Код за офиса", neu: "Избери нов код", nochmal: "Още веднъж", falsch: "Грешен код", ungleich: "Не съвпада. Избери отново.", gesetzt: "Кодът за офиса е запазен", entfernt: "Кодът за офиса е премахнат", setzen: "Задай код за офиса", aendern: "Смени кода за офиса", entfernen: "Премахни кода", ohne: "Без код всеки влиза в офиса.", mit: "Офисът е защитен с код.", loeschen: "Изтрий цифра" },
+    pin: { titel: "Код за офиса", neu: "Избери нов код", nochmal: "Още веднъж", falsch: "Грешен код", ungleich: "Не съвпада. Избери отново.", gesetzt: "Кодът за офиса е запазен", entfernt: "Кодът за офиса е премахнат", setzen: "Задай код за офиса", aendern: "Смени кода за офиса", entfernen: "Премахни кода", ohne: "Без код всеки влиза в офиса.", mit: "Офисът е защитен с код.", loeschen: "Изтрий цифра", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Лентата долу води до всичко, което ти трябва в обекта. Сметки, настройки и списъци има в офиса.",
       start: "Денят с един поглед. Голямото число показва колко оборот още липсва до нулата. Червено значи: погрижи се сега. „≈“ отпред означава оценка (ориентир за стока или твоята заплата) – обяснение в офиса под „Месец и брояч“. Без покупни цени приложението смята с 32 % стока (снекбарове: 23–41 %, таблици BMF 2025).",
@@ -1426,7 +1428,7 @@ export default {
     vergleich: "Сравнение", vergleichAb: "Сравнение от два обекта", keineLaeden: "Няма обект с данни", bericht: "Отчет за собственика", datei: "Sobstvenik", drucken: "Печат на отчета", csv: "CSV", geteilt: "Отчетът е споделен",
     dok: { zahlen: "Показатели по обекти", hinweis: "≈ = оценка (ориентировъчни цени, ориентир или оценка). „липсва“ = няма данни в периода. Само обекти на този телефон, числата са от записите в приложението.",
       kopf: ["Обект", "Оборот", "Разход за стока", "Изхвърлено", "Съмнение за загуба", "Отворени задължения", "До нула", "Стойност на склада", "Поръчка"], laden: "Обект", vergleich: "Сравнение", vergleichInfo: "Класиране само между обекти с еднаква база данни.",
-      trend: "Тенденция спрямо предходния период", daten: "База данни", fehlt: "Непълно", tage: "дни", quelle: "Източник разход за стока", fuss: "GastroCalc · Отчет за собственика. Числата са от записите в приложението – не е счетоводство, не са касови данни." },
+      trend: "Тенденция спрямо предходния период", daten: "База данни", fehlt: "Непълно", tage: "дни", quelle: "Източник разход за стока", fuss: "GastroCash · Отчет за собственика. Числата са от записите в приложението – не е счетоводство, не са касови данни." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Докосни стока и впиши колко плащаш.", fortschritt: (a, b) => `${a} от ${b} готови`, fehlt: "липсва", filterFehlt: (n) => `Липсват (${n})`, filterAlle: (n) => `Всички (${n})`, selbst: "наше",
@@ -1438,4 +1440,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Последно извън телефона: днес" : n === 1 ? "Последно извън телефона: преди 1 ден" : `Последно извън телефона: преди ${n} дни`, nieWeg: "Още няма копие извън телефона", mitPasswort: "С парола", ohneFotos: "Без снимки (малко, за имейл)",
       verschicken: "Изпрати копието", woFrage: "Къде е сега?", woanders: "Друго устройство, имейл, облак", nurHandy: "Само на този телефон", nurHandyMeldung: "Напомнянето остава: файлът е само на този телефон.", gezaehlt: "Копието е отчетено. Напомнянето е нулирано." } },
   adanaBrot: { frage: "Какъв хляб давате към адана?", pide: "Цяла пиде", pideHalb: "Половин пиде", fladen: "Дюрюм / лаваш", kein: "Без хляб" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

@@ -48,7 +48,7 @@ test("E5: exportDatei ohne Passwort ist byteidentisch mit dem bisherigen Export 
     gleich = Buffer.compare(Buffer.from(await bytes(alt.blob)), Buffer.from(await bytes(nachbau))) === 0;
   }
   assert.equal(gleich, true, "ohne Passwort: dieselben Bytes wie der Export vor E5");
-  assert.equal(alt.verschluesselt, false); assert.match(alt.name, /^gastrocalc-nord-\d{4}-\d{2}-\d{2}\.zip$/);
+  assert.equal(alt.verschluesselt, false); assert.match(alt.name, /^gastrocash-nord-\d{4}-\d{2}-\d{2}\.zip$/);
   const neu = await st.exportDatei(w, { passwort: null }); assert.equal(neu.verschluesselt, false); assert.equal(neu.name, alt.name);
 });
 
@@ -56,11 +56,11 @@ test("E5: mit Passwort → ZIP mit genau sicherung.enc und LIESMICH.txt, Endung 
   idbAttrappe(); await st.laden();
   const w = st.leereWurzel(); const b = laden1(); w.betriebe.push(b); w.aktiv = b.id;
   const r = await st.exportDatei(w, { passwort: "laden2026" });
-  assert.equal(r.verschluesselt, true); assert.match(r.name, /^gastrocalc-nord-\d{4}-\d{2}-\d{2}\.gcs\.zip$/);
+  assert.equal(r.verschluesselt, true); assert.match(r.name, /^gastrocash-nord-\d{4}-\d{2}-\d{2}\.gcs\.zip$/);
   const e = await zip.zipLesen(r.blob);
   assert.deepEqual(e.map((x) => x.name).sort(), ["LIESMICH.txt", "sicherung.enc"]);
   const lies = new TextDecoder().decode(await e.find((x) => x.name === "LIESMICH.txt").bytes());
-  assert.ok(lies.includes("GastroCalc") && lies.includes("Passwort") && lies.includes("password") && lies.includes("parola"), "LIESMICH dreisprachig");
+  assert.ok(lies.includes("GastroCash") && lies.includes("Passwort") && lies.includes("password") && lies.includes("parola"), "LIESMICH dreisprachig mit aktueller Marke");
   const enc = await e.find((x) => x.name === "sicherung.enc").bytes(); assert.equal(K.istVerschluesselt(enc), true);
   // Klartext darf nirgends in der Datei stehen
   const roh = new TextDecoder("latin1").decode(await bytes(r.blob)); assert.ok(!roh.includes("gastrocalc-sicherung") && !roh.includes("Nord"));
