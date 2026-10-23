@@ -28,7 +28,7 @@ import { karteZuruecksetzen } from "./screens/karte.js"; // Paket 2: Zurücksetz
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
-import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt } from "./modus.js"; // W2-S: Sperrliste Personal
+import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt, codeAktiv, testphaseOhneCode, testphaseSetzen } from "./modus.js"; // W2-S: Sperrliste Personal
 import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
@@ -422,7 +422,7 @@ async function diagnoseKopieren() {
 // ---------- Ebenen: Laden · Personal · Büro (Entwickler A) ----------
 
 function ebeneWechseln(m, ziel) {
-  if (m === "personal" && !pinGesetzt(wurzel)) return; // W2-S: Personal nur mit Büro-Code
+  if (m === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) return; // W2-S: Personal nur mit Büro-Code – außer in der Testphase ohne Code
   if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
   modusSetzen(wurzel, m); blattSchliessen();
   ansicht = ziel === "preise" ? "buero" : (ziel || startAnsicht(wurzel)); // Paket 3 (16.10.2026): Nav-Ziel „preise“ = Büro, dann der Schritt Einkaufspreise
@@ -434,14 +434,14 @@ function ebeneWechseln(m, ziel) {
 }
 // Laden → Büro: mit Code, wenn einer gesetzt ist (Einstellung im Büro), sonst direkt.
 function bueroBetreten(ziel = "buero") {
-  if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel, wurzel); return; }
+  if (codeAktiv(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel, wurzel); return; }
   ebeneWechseln("buero", ziel);
 }
 // Personal → Laden: nur mit Code (W2-S – das 2-Sekunden-Schloss gibt es nicht mehr).
 function personalVerlassen() { ebeneWechseln("laden", "start"); }
 // W2-S (p07 M6): Löschen verlangt den Büro-Code, wenn einer gesetzt ist.
 function mitCode(zweck, ziel, weiter) {
-  if (!pinGesetzt(wurzel)) return weiter();
+  if (!codeAktiv(wurzel)) return weiter();
   if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten(zweck, ziel, wurzel);
 }
 
@@ -480,7 +480,7 @@ async function ebeneAktion(name, el) {
   }
   if (name === "rettung-ok") { const z = rettungZiel(); if (modus(wurzel) === "personal" && z?.rettung?.zweck !== "personal") return true; blattSchliessen(); nachCodeGesetzt(z); return true; }
   if (name === "rettung-neu") { // im Büro: neuen Rettungscode anlegen (der alte gilt nicht mehr) – auch der Offen-Hinweis für ältere Läden
-    if (modus(wurzel) !== "buero" || !pinGesetzt(wurzel)) return true;
+    if (modus(wurzel) !== "buero" || !codeAktiv(wurzel)) return true;
     const code = await rettungAnlegen(wurzel); await sofortSpeichern(wurzel);
     if (!blattOffen()) history.pushState({ blatt: true }, ""); rettungscodeZeigen(code, null); return true;
   }
@@ -505,16 +505,17 @@ async function ebeneAktion(name, el) {
     if (!einleseDatei) { blattSchliessen(); return true; }
     await sicherungEinlesen(einleseDatei, p); return true;
   }
+  if (name === "testphase-code") { testphaseSetzen(wurzel, !testphaseOhneCode(wurzel)); meldung(t(testphaseOhneCode(wurzel) ? "ebene.pin.testphaseAn" : "ebene.pin.testphaseAus")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "modus") {
     const m = el.dataset.wert;
     if (m === "buero") bueroBetreten();
-    else if (m === "personal") { if (pinGesetzt(wurzel)) ebeneWechseln("personal", "personal"); else { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", "personal", wurzel, t("sicherheit.personalBrauchtCode")); } } // W2-S: erst Code festlegen
+    else if (m === "personal") { if (pinGesetzt(wurzel) || testphaseOhneCode(wurzel)) ebeneWechseln("personal", "personal"); else { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("setzen", "personal", wurzel, t("sicherheit.personalBrauchtCode")); } } // W2-S: erst Code festlegen
     else if (m === "laden" && modus(wurzel) === "buero") ebeneWechseln("laden", "start");
     return true;
   }
   if (name === "schloss") { // Personal: Tipp aufs Schloss → immer der Code (W2-S). Ohne Code gibt es keinen Personal-Modus (alter Stand: gleich zurück).
-    if (pinGesetzt(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("personal", null, wurzel); } else personalVerlassen();
+    if (codeAktiv(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("personal", null, wurzel); } else personalVerlassen();
     return true;
   }
   return false;

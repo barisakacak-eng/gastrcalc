@@ -6,7 +6,7 @@ import { t, sprache, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
 import { esc } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
-import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText } from "../modus.js";
+import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText, testphaseOhneCode } from "../modus.js";
 import { rettungGesetzt, rettungErlaubt, rettungAnlegen, rettungBloecke, RETTUNG_LAENGE } from "../rettung.js"; // Rettung (17.10.2026)
 import { nav } from "./nav.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
@@ -250,8 +250,9 @@ export function passwortMeldung(text, { laeuft = false } = {}) {
 
 // Karte „Büro-Code" für Büro-Start und Einstellungen
 export function bueroCodeKarte(wurzel) {
-  const da = pinGesetzt(wurzel);
-  return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(da ? "ebene.pin.mit" : "sicherheit.ohneCode"))}</p>
+  const da = pinGesetzt(wurzel); const tp = testphaseOhneCode(wurzel);
+  return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(tp ? "ebene.pin.testphase" : da ? "ebene.pin.mit" : "sicherheit.ohneCode"))}</p>
+    <button type="button" class="knopf zweit" data-a="testphase-code">${esc(t(tp ? "ebene.pin.testphaseAus" : "ebene.pin.testphaseAn"))}</button>
     <button type="button" class="knopf zweit" data-a="pin-setzen">${esc(t(da ? "ebene.pin.aendern" : "ebene.pin.setzen"))}</button>
     ${da ? `<button type="button" class="leise" data-a="rettung-neu">${esc(t(rettungGesetzt(wurzel) ? "rettung.neuAnlegen" : "rettung.anlegen"))}</button>` : ""}
     ${da ? `<button type="button" class="leise" data-a="pin-entfernen">${esc(t("ebene.pin.entfernen"))}</button>` : ""}</div>`;
