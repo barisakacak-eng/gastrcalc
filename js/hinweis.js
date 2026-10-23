@@ -36,7 +36,7 @@ export const HINWEISE = [
   // Noch ungeprüft (Franky 23.10.2026, Rückfragen offen): nicht in der App sichtbar, bis Quelle gelesen.
   { id: "trinkgeld", titel: "Trinkgeld für Personal", satz: "Trinkgeld, das Gäste deinem Personal geben, ist für das Personal steuerfrei, auch per Karte, wenn es weitergegeben wird. Mit deinem Steuerberater klären.", quelle: "§ 3 Nr. 51 EStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "mitarbeiter", belege: ["Trinkgeld-Liste"], geprueft: false, pruefung: "", register: "12.12" },
   { id: "gutschein", titel: "Gutscheine richtig buchen", satz: "Gutscheine für Speisen und Getränke werden meist erst beim Einlösen versteuert. Gutschein-Liste führen und mit deinem Steuerberater klären.", quelle: "§ 3 Abs. 13–15 UStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "belege", belege: ["Gutschein-Liste"], geprueft: false, pruefung: "", register: "01.05" },
-  { id: "pfand", titel: "Pfand mit 19 %", satz: "Pfand auf Getränkeflaschen wird wie das Getränk mit 19 % versteuert. In der Kasse trennen und mit deinem Steuerberater klären.", quelle: "UStAE 10.1", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "belege", belege: ["Pfand-Journal"], geprueft: false, pruefung: "", register: "01.06" },
+  { id: "pfand", titel: "Pfand wie das Getränk", satz: "Pfand auf Flaschen bekommt denselben Steuersatz wie das Getränk darin, meist 19 %. In der Kasse trennen und mit deinem Steuerberater klären.", quelle: "UStAE 10.1 Abs. 8", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "belege", belege: ["Pfand-Journal"], geprueft: false, pruefung: "", register: "01.06" },
 ];
 
 export const hinweisMitId = (id) => HINWEISE.find((h) => h.id === id) || null;
