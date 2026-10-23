@@ -50,7 +50,7 @@ function bilanzView(stand, H) {
   return `
     <div class="kopfband ab-kopf ab-ergebnis-kopf"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
     <div class="inhalt ab-bilanz">
-      <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">\n        <span class="gc-ab-mascot" data-state="${mascotState}">${mascotMarkup(mascotState)}</span>
+      <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">\n        <span class="gc-ab-mascot" data-state="${mascotState}">${mascotMarkup(mascotState, mascotState === "erfolg" ? "celebrate" : mascotState === "nachdenklich" ? "turn" : mascotState === "neutral" ? "idle" : "none")}</span>
         <small class="lbl">${esc(zielLabel)}</small>
         <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil" aria-hidden="true">→</span><span class="riesig">${zielWert}</span></span>
         <small class="ab-verlauf ${besser >= 0 ? "positiv" : "negativ"}">${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
