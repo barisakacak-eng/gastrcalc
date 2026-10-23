@@ -22,13 +22,13 @@ test('unbekannter Zustand fällt neutral zurück; keine HTML-Injektion',()=>{
   assert.equal(mascotMarkup('<img onerror=alert(1)>'),mascotMarkup('neutral'));
 });
 test('Markenpaket nutzt nur lokale Dateien und respektiert reduzierte Bewegung',()=>{
-  const css=fs.readFileSync(new URL('../css/gastrocash-brand.css',import.meta.url),'utf8');
+  const css=fs.readFileSync(new URL('../css/optik.css',import.meta.url),'utf8');
   assert.match(css,/prefers-reduced-motion:no-preference/);
   assert.doesNotMatch(css,/@import|https?:\/\//);
   const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const nav=fs.readFileSync(new URL("../js/screens/nav.js",import.meta.url),"utf8");
   assert.match(nav,/mascotMarkup/);
-  assert.match(html,/css\/gastrocash-brand\.css/);
+  assert.doesNotMatch(html,/css\/gastrocash-brand\.css/);
 });
 
 
