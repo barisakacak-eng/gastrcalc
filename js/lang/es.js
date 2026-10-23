@@ -491,6 +491,9 @@ export default {
     seite: ["Página", "de"],
     buero: (n) => (n === 1 ? "1 desviación de frío: falta decisión sobre la mercancía o control posterior" : `${n} desviaciones de frío: falta decisión sobre la mercancía o control posterior`),
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Puerta abierta", "eingeraeumt": "Mercancía añadida", "eingestellt": "Ajuste cambiado", "umgeraeumt": "Alimentos trasladados", "stecker": "Enchufe revisado", "chef": "Responsable avisado", "techniker": "Técnico avisado", "weggeworfen": "Alimentos desechados"}, heute: "Registros de hoy", starten: "Empezar ronda", fortsetzen: "Seguir la ronda", ganz: "Todo el contenido" },
+
   kuehl: {
     titel: "Control de frío",
     nav: "Frío",

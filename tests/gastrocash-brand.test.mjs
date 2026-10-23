@@ -29,6 +29,10 @@ test('Markenpaket nutzt nur lokale Dateien und respektiert reduzierte Bewegung',
   const nav=fs.readFileSync(new URL("../js/screens/nav.js",import.meta.url),"utf8");
   assert.match(nav,/mascotMarkup/);
   assert.doesNotMatch(html,/css\/gastrocash-brand\.css/);
+  assert.match(html,/href="css\/optik\.css"/);
+  assert.match(css,/\.gc-brand\s*\{/);
+  const workflow=fs.readFileSync(new URL('../.github/workflows/pages.yml',import.meta.url),'utf8');
+  assert.match(workflow,/cp -r[^\n]*\bassets\b[^\n]*\/tmp\/seite\//,'lokale Markenassets auch in späterem Pages-Paket erhalten');
 });
 
 
@@ -74,7 +78,8 @@ test('Bewegungen sind von Emotionen getrennt und unbekannte Bewegung fällt sich
   assert.match(mascotMarkup('freundlich','thumb'),/gc-motion--thumb/);
   assert.match(mascotMarkup('nachdenklich','turn'),/gc-motion--turn/);
   assert.match(mascotMarkup('erfolg','celebrate'),/gc-motion--celebrate/);
-  assert.match(mascotMarkup('neutral','irgendwas'),/gc-motion--none/);
+  assert.match(mascotMarkup('neutral','irgendwas'),/data-gc-motion="none"/);
+  assert.doesNotMatch(mascotMarkup('neutral','irgendwas'),/gc-motion--none|gc-bot--neutral/);
   const blink=mascotMarkup('neutral','idle');
   const eyes=blink.match(/class="gc-bot-eyes"[^>]*>(.*?)<\/g>/)?.[1]||'';
   assert.equal((eyes.match(/<circle /g)||[]).length,2,'Blinzeln bleibt beidäugig, kein Zwinkern');

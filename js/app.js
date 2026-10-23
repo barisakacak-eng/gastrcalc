@@ -728,7 +728,9 @@ async function aufKlick(ev) {
     if (r) {
       zeichne();
       const feld = root.querySelector('[data-f="station-wert"]'); if (feld && !feld.value) feld.focus(); // Tastatur gleich hoch, der nächste Schritt ist Tippen
-      if (r === "abgeschlossen") { ereignis("rundgang-fertig", { laden: stand.id }); meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(wurzel); } else speichern(wurzel);
+      if (r === "abgeschlossen" || r === "abgeschlossen-still") { ereignis("rundgang-fertig", { laden: stand.id }); if (r === "abgeschlossen") meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(wurzel); }
+      else if (r === "eingetragen") await sofortSpeichern(wurzel);
+      else speichern(wurzel);
     }
   }
 }
@@ -879,7 +881,7 @@ window.addEventListener("popstate", () => {
   else if (stand.phase === "app" && m === "buero" && ansicht === "buero") { ebeneWechseln("laden", "start"); } // Büro-Start: Zurück = „‹ Laden"
   else if (stand.phase === "app" && ansicht !== anfang) {
     if (ansicht === "listen") ansicht = herkunft && herkunft !== "listen" ? herkunft : m === "buero" ? "buero" : "umsatz";
-    else if (ansicht === "kuehl" && kuehlZurueck()) { /* eine Ebene hoch */ }
+    else if (ansicht === "kuehl" && kuehlZurueck(stand)) { /* eine Ebene hoch */ }
     else if (ansicht === "putzplan" && putzplanZurueck(stand)) { /* eine Ebene hoch */ }
     else if (ansicht === "muell" && muellZurueck()) { /* eine Ebene hoch */ }
     else if (ansicht === "beleg" && belegZurueck()) { /* eine Ebene hoch */ }

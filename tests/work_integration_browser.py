@@ -18,6 +18,7 @@ async def kontext(browser, fehler):
     await pg.clock.install(time=ZEIT)
     pg.on("pageerror", lambda e: fehler.append(str(e)))
     pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" else None)
+    pg.on("response", lambda r: fehler.append(f"HTTP {r.status} {r.url}") if r.status >= 400 else None)
     pg.on("dialog", lambda d: asyncio.create_task(d.accept()))
     return ctx, pg
 
@@ -43,9 +44,10 @@ async def heute(pg, art):
     assert await pg.locator('.h-schaetzung').count()==1
     assert await pg.locator('.h-haupt').count()<=1
     # Sichtbare feste Wörter einschließlich der unteren Navigation. Geschäftsnamen/Datum und SVG-Zahlen sind Daten.
+    # Die Wortmarke ersetzt das bisherige Bildlogo und ist wie dessen Alt-Text kein Handlungstext.
     words = await pg.evaluate(r"""() => {
       const w=document.createTreeWalker(document.querySelector('#app'),NodeFilter.SHOW_TEXT);let n;const out=[];
-      while(n=w.nextNode()) {const p=n.parentElement;if(p.closest('.h-kopf,svg,script,style')||!p.getClientRects().length)continue;
+      while(n=w.nextNode()) {const p=n.parentElement;if(p.closest('.h-kopf,.gc-brand,svg,script,style')||!p.getClientRects().length)continue;
         out.push(...(n.textContent.match(/\p{L}[\p{L}'’-]*/gu)||[]).filter(x=>!['€','kg','g','ml','l','°C'].includes(x)));}
       return out;
     }""")

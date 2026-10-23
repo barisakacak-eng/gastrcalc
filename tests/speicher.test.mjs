@@ -194,7 +194,7 @@ test("Sicherungsdatei: gleiches Format, Prüfsumme über die zweite Zeile, Einle
   const sha = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(inhalt)))].map((x) => x.toString(16).padStart(2, "0")).join("");
   assert.equal(kopf.sha256, sha); assert.equal(fingerabdruck, sha.slice(0, 10));
   const d = JSON.parse(inhalt); assert.deepEqual(Object.keys(d), ["exportiert", "geraet", "fassung", "wurzel", "ereignisse"]);
-  assert.match(name, /^gastrocalc-test-doner-\d{4}-\d{2}-\d{2}\.zip$/);
+  assert.match(name, /^gastrocash-test-doner-\d{4}-\d{2}-\d{2}\.zip$/);
   const imp = await st.importDatei(text);
   assert.equal(imp.pruefsumme, "ok");
   assert.equal(json(imp.wurzel), json(erwartet(d.wurzel)));

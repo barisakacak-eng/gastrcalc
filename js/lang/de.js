@@ -497,6 +497,9 @@ export default {
     seite: ["Seite", "von"],
     buero: (n) => (n === 1 ? "1 Kühl-Abweichung: Ware oder Nachkontrolle fehlt" : `${n} Kühl-Abweichungen: Ware oder Nachkontrolle fehlt`),
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Tür offen", "eingeraeumt": "Viel eingeräumt", "eingestellt": "Neu eingestellt", "umgeraeumt": "Ware umgeräumt", "stecker": "Stecker geprüft", "chef": "Chef angerufen", "techniker": "Techniker gerufen", "weggeworfen": "Ware weggeworfen"}, heute: "Heute dokumentiert", starten: "Rundgang starten", fortsetzen: "Rundgang fortsetzen", ganz: "Ganzer Inhalt" },
+
   kuehl: {
     titel: "Kühlkontrolle",
     nav: "Kühlung",

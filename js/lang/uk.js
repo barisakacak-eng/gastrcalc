@@ -496,6 +496,9 @@ export default {
     seite: ["Сторінка", "з"],
     buero: (n) => `Відхилень охолодження: ${n} – немає рішення щодо товару або контрольного заміру`,
   },
+  // L3 – Sanji: kurze Auswahl; vollständige Bezeichnungen bleiben in kuehl.massnahmen.
+  l3: { massnahmen: {"tuer": "Двері відчинені", "eingeraeumt": "Додано товар", "eingestellt": "Змінено налаштування", "umgeraeumt": "Продукти переміщено", "stecker": "Вилку перевірено", "chef": "Дзвінок керівнику", "techniker": "Викликано техніка", "weggeworfen": "Продукти викинуто"}, heute: "Записано сьогодні", starten: "Почати обхід", fortsetzen: "Продовжити обхід", ganz: "Увесь вміст" },
+
   kuehl: {
     titel: "Контроль холодильників",
     nav: "Холодильники",
