@@ -20,7 +20,7 @@ export function tabLeiste(aktiv, stand) {
   return `<nav class="tableiste" aria-label="${esc(t("ebene.leiste"))}">${LADEN_TABS.map((id) => `<button type="button" class="tab ${aktiv === id ? "an" : ""}" data-a="nav" data-wert="${id}"${aktiv === id ? ' aria-current="page"' : ""}><span class="ik">${sym(TAB_SYM[id])}${punkt === id ? '<i class="punkt" aria-hidden="true"></i>' : ""}</span><span class="tabname">${esc(t("ebene.tabs." + id))}</span></button>`).join("")}</nav>`;
 }
 
-const logo = `<span class="gc-brand" aria-label="GastroCash">${mascotMarkup("neutral", "idle")}<span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
+const logo = (zustand = "neutral", bewegung = "idle") => `<span class="gc-brand" aria-label="GastroCash">${mascotMarkup(zustand, bewegung)}<span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
 const hilfeKnopf = () => `<button type="button" class="ikonknopf hilfe" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${sym("circle-help")}</button>`;
 
 // nav(aktiv): Kopfleiste (+ Leiste unten im Laden). Zweites Argument nur noch aus Verträglichkeit ({ schnell } hat keine Wirkung mehr).
@@ -30,7 +30,7 @@ export function nav(aktiv, _alt = {}) {
     const zurueck = ansicht !== "personal" ? `<button type="button" class="ikonknopf zurueckknopf" data-a="nav" data-wert="personal" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button>` : "<span></span>";
     // W2-S: Personal gibt es nur mit Büro-Code – das Schloss fragt immer nach dem Code (kein 2-Sekunden-Druck mehr)
     const schloss = `<button type="button" class="schlossknopf" data-a="schloss" aria-label="${esc(t("ebene.schlossCode"))}"><svg class="schlossring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/></svg>${sym("lock")}</button>`;
-    return `<header class="appleiste ebene-kopf personal">${zurueck}${logo}${schloss}</header>`;
+    return `<header class="appleiste ebene-kopf personal">${zurueck}${logo()}${schloss}</header>`;
   }
   if (m === "buero") {
     const start = ansicht === "buero";
@@ -40,5 +40,5 @@ export function nav(aktiv, _alt = {}) {
   }
   const tab = LADEN_TABS.includes(ansicht) ? ansicht : LADEN_TABS.includes(aktiv) ? aktiv : null;
   const menue = `<button type="button" class="ikonknopf menueknopf" data-a="menue-auf" aria-label="${esc(t("ebene.menueAuf"))}" aria-haspopup="dialog">${sym("menu")}</button>`;
-  return `<header class="appleiste ebene-kopf laden">${menue}${logo}${hilfeKnopf()}</header>${tabLeiste(tab, stand)}`;
+  return `<header class="appleiste ebene-kopf laden">${menue}${logo(_alt.mascot || "neutral", _alt.mascot ? "none" : "idle")}${hilfeKnopf()}</header>${tabLeiste(tab, stand)}`;
 }

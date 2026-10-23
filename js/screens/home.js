@@ -16,6 +16,7 @@ import { sym } from "../symbole.js";
 import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
 import { bueroKopf } from "./buero.js";
+import { nutzenStand } from "../nutzen.js";
 
 // Drei Ebenen (15.10.2026, Entwickler B): Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
@@ -24,20 +25,32 @@ import { bueroKopf } from "./buero.js";
 export function startView(stand, extra = {}) {
   const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand); // Kühl-Kachel bleibt am Kalendertag (kuehlStatus intern)
   const dran = jetztDran(stand, extra.wurzel, { jetzt: extra.jetzt || new Date() });
+  const nutzen = nutzenStand(stand, H);
   // Nur die Bildwelt folgt der echten Ladenart: Döner und Smash Burger sind beide Pilotbetriebe.
   const burgerPilot = stand.ladenArt === "imbiss" ||
     (stand.ladenArt !== "doener" && Array.isArray(stand.betrieb?.kuechen) && stand.betrieb.kuechen.includes("burger"));
 
   return `
-    <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"}">
+    <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
-      ${KUPFERLINIE}
+      ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${dran ? jetztKarte(dran) : ""}
-      ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
-    ${nav("start")}`;
+    ${nav("start", { mascot: nutzen.summe > 0 ? "freundlich" : "neutral" })}`;
+}
+// Vertrag von Zoro: summe ist bereits ausschließlich gemessen. Schätzungen niemals addieren.
+// Ohne Messung auch dann keine Zahl, wenn ein geschätzter Posten vorliegt.
+export function nutzenKarte(nutzen) {
+  if (nutzen.leer) return `<section class="karte h-nutzen h-nutzen-leer" aria-label="${esc(t("nutzen.titel"))}"><span data-t="nutzen.laueft">${esc(t("nutzen.laueft", nutzen.ab ? datumLesbar(nutzen.ab) : "–"))}</span></section>`;
+  const symbole = { muell: "trash-2", preis: "receipt", lager: "package", papier: "file-text" };
+  const geschaetzte = nutzen.posten.filter((p) => !p.gemessen && typeof p.euro === "number" && p.euro > 0);
+  return `<section class="karte h-nutzen ${nutzen.summe > 0 ? "h-nutzen-plus" : "h-nutzen-null"}" aria-label="${esc(t("nutzen.titel"))}" aria-description="${esc(nutzen.posten.filter((p) => p.gemessen).map((p) => p.quelle).join(" · "))}">
+    <span class="h-nutzen-titel" data-t="nutzen.titel">${esc(t("nutzen.titel"))}</span>
+    <b class="h-nutzen-summe">${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}</b>
+    ${geschaetzte.length ? `<div class="h-nutzen-posten">${geschaetzte.map((p) => `<span class="h-nutzen-geschaetzt" aria-label="${esc(t("nutzen.art." + p.art))}: ≈ ${esc(fmtEuro(p.euro, { dezimal: 2 }))}" aria-description="${esc(p.quelle)}" title="${esc(p.quelle)}">${sym(symbole[p.art])}<span>≈ ${esc(fmtEuro(p.euro, { dezimal: 2 }))}</span></span>`).join("")}</div>` : ""}
+  </section>`;
 }
 const tagKurz = (H) => { const [j, m, d] = H.split("-").map(Number); try { return new Date(j, m - 1, d).toLocaleDateString(sprache() === "en" ? "en-GB" : sprache(), { weekday: "short", day: "numeric", month: "short" }); } catch { return datumLesbar(H); } };
 
@@ -54,10 +67,10 @@ function heuteZielKarte(stand, z, H) {
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
   return `<button type="button" class="karte h-ziel h-ziel-kurs ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
-    <span class="h-zielkopf"><span>${esc(t("heute.stufe." + w.stufe))}</span></span>
+    <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
     ${m.geschaetzt && w.zahl !== null ? `<span class="h-schaetzung">${esc(t("allgemein.schaetzung"))}</span>` : ""}
-    ${m.ziel === null ? `<span class="h-unter">${esc(t("heute.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
+    ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
 
@@ -81,7 +94,6 @@ export function kursDiagramm(m, marke, z) {
 }
 // Lorbeer und Kupferlinie aus Sanjis Entwurf (inline-SVG, Farben aus den Tokens)
 const LORBEER = `<svg class="h-lorbeer" viewBox="0 0 44 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 53 C4 40 4 23 14 7"/><path d="M32 53 C40 40 40 23 30 7"/></g><g fill="currentColor"><ellipse cx="8" cy="42" rx="3" ry="7" transform="rotate(-34 8 42)"/><ellipse cx="6" cy="31" rx="3" ry="7" transform="rotate(-12 6 31)"/><ellipse cx="9" cy="20" rx="3" ry="7" transform="rotate(19 9 20)"/><ellipse cx="15" cy="11" rx="2.5" ry="6" transform="rotate(39 15 11)"/><ellipse cx="36" cy="42" rx="3" ry="7" transform="rotate(34 36 42)"/><ellipse cx="38" cy="31" rx="3" ry="7" transform="rotate(12 38 31)"/><ellipse cx="35" cy="20" rx="3" ry="7" transform="rotate(-19 35 20)"/><ellipse cx="29" cy="11" rx="2.5" ry="6" transform="rotate(-39 29 11)"/></g></svg>`;
-const KUPFERLINIE = `<svg class="h-kupfer" viewBox="0 0 300 5" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="h-kupfer-v" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--b-akzent)" stop-opacity="0"/><stop offset=".18" stop-color="var(--b-akzent)" stop-opacity=".65"/><stop offset=".5" stop-color="var(--b-akzent)"/><stop offset=".82" stop-color="var(--b-akzent)" stop-opacity=".65"/><stop offset="1" stop-color="var(--b-akzent)" stop-opacity="0"/></linearGradient></defs><rect x="0" y="2" width="300" height="1.5" rx=".75" fill="url(#h-kupfer-v)"/></svg>`;
 
 // Vier Kacheln: Symbol + Zahl. Kühlung zeigt den schlechtesten Wert (rot) oder „OK“ oder „2 offen“; Putzen erledigt/gesamt heute.
 // Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
@@ -99,7 +111,8 @@ function kachelTexte(stand, ks, H) {
 function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
   // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
-  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel}${handgriff ? ` aria-label="${esc(t(wortKey))}: ${esc(handgriff)}"` : ""}>${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`;
+  const symbole = { umsatz: "wallet", muell: "trash-2", kuehl: "snowflake", putz: "spray-can" };
+  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}</button>`;
   return feld("umsatz", "ladenSchirm.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatzheute"', false, w.umsatz === null && t("schnellknopf.umsatz"))
     + feld("muell", "ebene.tabs.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
     + feld("kuehl", "ebene.tabs.kuehl", w.kuehl.wert, 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, !ks.eingerichtet && t("schnellknopf.kuehl"), w.kuehl.html || w.kuehl.alarm)
@@ -107,7 +120,7 @@ function heuteKachelnLaden(stand, ks, H) {
 }
 // Laden-Umbau (20.10.2026): „Jetzt dran“ ist die eine Haupthandlung – ein großer oranger Knopf (ohne eigenen „Los“-Knopf).
 function jetztKarte(d) {
-  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b>${esc(d.titel)}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
+  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b data-t="nutzen.aktion.${esc(d.id)}">${esc(t("nutzen.aktion." + d.id))}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
 }
 
 // Schmale Zeile auf anderen Seiten, solange ein offener Schritt die Seite betrifft
