@@ -43,9 +43,10 @@ async def heute(pg, art):
     assert await pg.locator('.h-schaetzung').count()==1
     assert await pg.locator('.h-haupt').count()<=1
     # Sichtbare feste Wörter einschließlich der unteren Navigation. Geschäftsnamen/Datum und SVG-Zahlen sind Daten.
+    # Die Wortmarke GastroCash (.gc-brand) ist ein Logo wie der Geschäftsname, kein Lesetext – Entscheidung Zoro 23.10.2026, Baris bestätigt noch.
     words = await pg.evaluate(r"""() => {
       const w=document.createTreeWalker(document.querySelector('#app'),NodeFilter.SHOW_TEXT);let n;const out=[];
-      while(n=w.nextNode()) {const p=n.parentElement;if(p.closest('.h-kopf,svg,script,style')||!p.getClientRects().length)continue;
+      while(n=w.nextNode()) {const p=n.parentElement;if(p.closest('.h-kopf,.gc-brand,svg,script,style')||!p.getClientRects().length)continue;
         out.push(...(n.textContent.match(/\p{L}[\p{L}'’-]*/gu)||[]).filter(x=>!['€','kg','g','ml','l','°C'].includes(x)));}
       return out;
     }""")

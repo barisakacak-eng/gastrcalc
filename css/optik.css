@@ -210,8 +210,11 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .gc-bot-head,.gc-bot-thumb,.gc-bot-body{transform-box:fill-box;transform-origin:center}
 .gc-bot-thumb{opacity:0}
 .gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{opacity:1}
+/* Grundstellung aller fünf Gesichter (neutral, freundlich, erfolg: gerade); nachdenklich und ernst neigen den Kopf */
+.gc-bot--neutral .gc-bot-head,.gc-bot--freundlich .gc-bot-head,.gc-bot--erfolg .gc-bot-head{transform:none}
 .gc-bot--nachdenklich .gc-bot-head{transform:rotate(-7deg)}
 .gc-bot--ernst .gc-bot-head{transform:rotate(3deg)}
+.gc-motion--none .gc-bot-eyes,.gc-motion--none .gc-bot-body,.gc-motion--none .gc-bot-head{animation:none}
 @media(prefers-reduced-motion:no-preference){
 .gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{animation:gc-thumb .8s ease-out 1}
 .gc-motion--celebrate .gc-bot-coin{animation:gc-coin .8s ease-out 1}
