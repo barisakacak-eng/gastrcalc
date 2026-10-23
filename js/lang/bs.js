@@ -8,7 +8,7 @@ const pl = (n, jedan, dva, pet) => {
 };
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Test verzija" },
+  app: { name: "GastroCash", entwurf: "Test verzija" },
 
   allgemein: {
     weiter: "Dalje", zurueck: "Nazad", fertig: "Gotovo", speichern: "Sačuvaj", abbrechen: "Odustani", stueck: "kom.", bearbeiten: "Uredi", zahlZuGross: (v) => `„${v}“ je previše – ide do deset miliona.`, uebernehmen: "Preuzmi", zahlUngueltig: (v) => `„${v}“ nije broj. Samo brojke i jedan zarez.`,
@@ -427,11 +427,11 @@ export default {
       name: "Ime", ungueltig: "Odaberi datum do danas.", gespeichert: "Obuka upisana." },
     knopf: { pdf: "Podijeli kao PDF", vorschau: "Pregled", csv: "CSV", csvTeil: (t) => `${t} kao CSV`, schliessen: "Zatvori", datei: "Datoteka", drucken: "Štampaj / PDF",
       druckHinweis: "U prozoru za štampu odaberi „Sačuvaj kao PDF“ ili „Podijeli“.", geteilt: "Dokument spreman.", csvFertig: (n) => `${n} ${pl(n, "datoteka spremna", "datoteke spremne", "datoteka spremno")}.` },
-    dok: { erstellt: (d, z) => `Napravljeno ${d} u ${z} sa GastroCalc`, nichtGemessen: "nije izmjereno", nk: { erledigt: "Ponovna kontrola urađena", offen: "Ponovna kontrola otvorena" }, ware: "Roba",
+    dok: { erstellt: (d, z) => `Napravljeno ${d} u ${z} sa GastroCash`, nichtGemessen: "nije izmjereno", nk: { erledigt: "Ponovna kontrola urađena", offen: "Ponovna kontrola otvorena" }, ware: "Roba",
       basis: { netto: "neto", brutto: "bruto" }, ohneMessung: (l) => `bez mjerenja: ${l}`, keineMassnahme: "nije upisana mjera", offeneTage: (l) => `nije kompletno: ${l}`,
       ladenArt: (a) => `Lokal: ${a}`, geraete: (l) => `Uređaji: ${l}`, takt: (n) => (n === 2 ? "Mjerenje hlađenja 2× dnevno" : "Mjerenje hlađenja 1× dnevno"), aufgaben: (n) => `${n} ${pl(n, "zadatak", "zadatka", "zadataka")} čišćenja u planu`,
       standardGrenze: "Standardna granica", eigeneGrenze: "vlastita granica", unterschrift: ["Datum, potpis lokala", "Kontrolisano (datum, potpis)"],
-      fussAmt: "Zapis vlastitih kontrola s GastroCalc. Unosi se ne brišu, samo povlače; povlačenja su ispod. * = naknadno uneseno. Ova lista ne zamjenjuje HACCP plan.",
+      fussAmt: "Zapis vlastitih kontrola s GastroCash. Unosi se ne brišu, samo povlače; povlačenja su ispod. * = naknadno uneseno. Ova lista ne zamjenjuje HACCP plan.",
       satz: (p) => `Prosječna stopa PDV-a ${p} %`, svev: "Vrijednost obroka za osoblje 2026 (SvEV): doručak 2,37 €, ručak i večera po 4,57 €", netto: "Vrijednost robe neto po nabavnoj cijeni",
       summe: "Ukupno", vormonat: "Stanje prije", monatslast: "Mjesečni trošak ukupno",
       fussSteuer: "Dnevni promet su bilješke iz aplikacije i ne zamjenjuju izvještaj kase (Z-izvještaj). Iznosi su neto, ako nije drugačije navedeno. * = naknadno upisano.",
@@ -568,7 +568,7 @@ export default {
     personenKurz: (n) => `${n} ${pl(n, "inicijal", "inicijala", "inicijala")} u timu`,
     spaeter: "Nastavi kasnije",
     haftungTitel: "Ko je odgovoran?",
-    haftung: "Ti ostaješ odgovoran: tvoje granice, tvoja mjerenja i tvoje mjere pripadaju tebi. GastroCalc samo zapisuje ono što upišeš i ništa ne provjerava. Podaci su samo na ovom telefonu – sam napravi sigurnosnu kopiju i čuvaj ih najmanje 12 mjeseci.",
+    haftung: "Ti ostaješ odgovoran: tvoje granice, tvoja mjerenja i tvoje mjere pripadaju tebi. GastroCash samo zapisuje ono što upišeš i ništa ne provjerava. Podaci su samo na ovom telefonu – sam napravi sigurnosnu kopiju i čuvaj ih najmanje 12 mjeseci.",
     arten: { kuehl: "Hlađenje", tk: "Zamrzavanje", warm: "Držanje toplog" },
     rundgang: "Obilazak",
     nacherfasst: "upisano naknadno",
@@ -927,7 +927,7 @@ export default {
     sicherungText: "Svi podaci su samo na ovom uređaju. S fajlom sigurnosne kopije možeš ih proslijediti ili prebaciti na novi telefon.",
     exportieren: "Napravi fajl sigurnosne kopije",
     importieren: "Učitaj fajl sigurnosne kopije",
-    importFehler: "Ovo nije fajl sigurnosne kopije iz GastroCalc-a.",
+    importFehler: "Ovo nije fajl sigurnosne kopije iz GastroCash-a.",
     importOk: "Učitano.",
     loeschenAlles: "Obriši sve",
     loeschenFrage: "Stvarno sve obrisati? To se ne može vratiti.",
@@ -1428,7 +1428,7 @@ export default {
     vergleich: "Poređenje", vergleichAb: "Poređenje od dvije radnje", keineLaeden: "Nema radnje s podacima", bericht: "Izvještaj za vlasnika", datei: "Vlasnik", drucken: "Štampaj izvještaj", csv: "CSV", geteilt: "Izvještaj podijeljen",
     dok: { zahlen: "Pokazatelji po radnji", hinweis: "≈ = procijenjeno (orijentacione cijene, orijentir ili procjena). „nedostaje“ = nema podataka u periodu. Samo radnje na ovom telefonu, brojevi iz unosa u aplikaciji.",
       kopf: ["Radnja", "Promet", "Trošak robe", "Bačeno", "Sumnja na manjak", "Otvorene obaveze", "Do nule", "Vrijednost zalihe", "Naručiti"], laden: "Radnja", vergleich: "Poređenje", vergleichInfo: "Rang samo između radnji s istom bazom podataka.",
-      trend: "Trend prema prethodnom periodu", daten: "Baza podataka", fehlt: "Nepotpuno", tage: "dana", quelle: "Izvor troška robe", fuss: "GastroCalc · Izvještaj za vlasnika. Brojevi iz unosa u aplikaciji – nije knjigovodstvo, nisu podaci kase." },
+      trend: "Trend prema prethodnom periodu", daten: "Baza podataka", fehlt: "Nepotpuno", tage: "dana", quelle: "Izvor troška robe", fuss: "GastroCash · Izvještaj za vlasnika. Brojevi iz unosa u aplikaciji – nije knjigovodstvo, nisu podaci kase." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Dodirni robu i upiši koliko plaćaš.", fortschritt: (a, b) => `${a} od ${b} gotovo`, fehlt: "nedostaje", filterFehlt: (n) => `Nedostaje (${n})`, filterAlle: (n) => `Sve (${n})`, selbst: "naše",
