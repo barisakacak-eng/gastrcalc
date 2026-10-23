@@ -33,8 +33,8 @@ export function ebeneWiederherstellen(wurzel) {
   const alt = lies(SCHLUESSEL.pinAlt);
   if (alt !== null) { if (wurzel.bueroPin === undefined && pinWertGueltig(alt)) wurzel.bueroPin = alt; merke(SCHLUESSEL.pinAlt, null); }
   if (!MODI.includes(wurzel.modus)) { const m = lies(SCHLUESSEL.modus); if (MODI.includes(m)) wurzel.modus = m; }
-  if (wurzel.modus === "buero" && pinGesetzt(wurzel)) modusSetzen(wurzel, "laden");
-  if (wurzel.modus === "personal" && !pinGesetzt(wurzel)) modusSetzen(wurzel, "laden");
+  if (wurzel.modus === "buero" && codeAktiv(wurzel)) modusSetzen(wurzel, "laden");
+  if (wurzel.modus === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) modusSetzen(wurzel, "laden");
 }
 // „Alles löschen": auch den Spiegel vergessen.
 export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESSEL.pinAlt, null); }
@@ -88,6 +88,11 @@ const ALT = /^[0-9a-f]{64}$/;
 const NEU = /^(pbkdf2|salz)\$([1-9][0-9]{0,7})\$([0-9a-f]{32})\$([0-9a-f]{64})$/;
 export const pinWertGueltig = (v) => typeof v === "string" && (ALT.test(v) || NEU.test(v));
 export const pinGesetzt = (wurzel) => pinWertGueltig(wurzel?.bueroPin);
+// Testphase ohne Code (Baris 21.10.2026): Bis der Pilot in größerer Zahl läuft, muss niemand ständig Codes eintippen.
+// Der gespeicherte Büro-Code bleibt erhalten; der Schalter setzt ihn nur außer Kraft. Personal-Modus geht in der Testphase auch ohne Code.
+export const testphaseOhneCode = (wurzel) => wurzel?.testphase?.ohneCode === true;
+export const codeAktiv = (wurzel) => pinGesetzt(wurzel) && !testphaseOhneCode(wurzel);
+export function testphaseSetzen(wurzel, an) { if (!wurzel) return false; const vorher = testphaseOhneCode(wurzel); wurzel.testphase = { ...(wurzel.testphase || {}), ohneCode: !!an }; return vorher !== !!an; }
 export const pinGueltig = (pin) => /^[0-9]{4}$/.test(String(pin ?? ""));
 export const pinVeraltet = (wurzel) => typeof wurzel?.bueroPin === "string" && ALT.test(wurzel.bueroPin);
 

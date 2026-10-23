@@ -61,3 +61,19 @@ test("Neustart: Büro mit Code geht zurück in den Laden, Personal bleibt", asyn
   const c = { modus: "personal", bueroPin: null }; M.ebeneWiederherstellen(c); assert.equal(c.modus, "laden"); // W2-S: Personal nur mit Code
   const d = { modus: "personal" }; await M.pinSetzen(d, "2222"); M.ebeneWiederherstellen(d); assert.equal(d.modus, "personal");
 });
+
+// Testphase ohne Code (Baris 21.10.2026, gebaut 23.10.2026): Schalter setzt den Code außer Kraft, löscht ihn aber nicht.
+test("Testphase ohne Code: aus = Standard; an = Code bleibt gespeichert, aber nicht aktiv; Personal geht ohne Code", async () => {
+  const w = { modus: "laden", bueroPin: null };
+  assert.equal(M.testphaseOhneCode(w), false); assert.equal(M.codeAktiv(w), false);
+  await M.pinSetzen(w, "4711"); assert.equal(M.codeAktiv(w), true);
+  assert.equal(M.testphaseSetzen(w, true), true); assert.equal(M.testphaseSetzen(w, true), false, "zweimal an = keine Änderung");
+  assert.equal(M.testphaseOhneCode(w), true); assert.equal(M.pinGesetzt(w), true, "Code bleibt gespeichert"); assert.equal(M.codeAktiv(w), false, "aber außer Kraft");
+  // Neustart: Büro bleibt in der Testphase offen, Personal bleibt auch ohne Code erreichbar
+  const b = { modus: "buero", bueroPin: w.bueroPin, testphase: { ohneCode: true } }; M.ebeneWiederherstellen(b); assert.equal(b.modus, "buero");
+  const p = { modus: "personal", bueroPin: null, testphase: { ohneCode: true } }; M.ebeneWiederherstellen(p); assert.equal(p.modus, "personal");
+  // wieder aus: alles wie vorher
+  assert.equal(M.testphaseSetzen(w, false), true); assert.equal(M.codeAktiv(w), true);
+  const b2 = { modus: "buero", bueroPin: w.bueroPin, testphase: { ohneCode: false } }; M.ebeneWiederherstellen(b2); assert.equal(b2.modus, "laden");
+  assert.equal(M.testphaseSetzen(null, true), false);
+});

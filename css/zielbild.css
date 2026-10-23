@@ -350,3 +350,14 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 
 /* W2-U: Müll-Schnellmengen 1/2/5 mindestens 44 px breit (vorher 41) */
 .mengekarte .chips .chip { min-width: 44px; }
+
+/* Hinweis-Karten im Büro (23.10.2026) */
+.hinweise .pflicht { display: flex; gap: 6px; align-items: flex-start; color: var(--tinte-weich); margin: 0 0 10px; }
+.hinweiskarte { display: grid; gap: 8px; }
+.hinweiskarte.spaeter { opacity: .75; }
+.hinweiskarte .hk-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.hinweiskarte p { margin: 0; }
+.hinweiskarte .hk-quelle { color: var(--tinte-weich); }
+.hinweiskarte .hk-knoepfe { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hinweiskarte .hk-knoepfe .knopf { min-width: 0; }
+.hinweiskarte .hk-knoepfe .knopf:first-child { grid-column: 1 / -1; }
