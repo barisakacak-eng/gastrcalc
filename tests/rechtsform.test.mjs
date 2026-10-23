@@ -32,6 +32,14 @@ test("Karte Sachentnahme nur für Einzelunternehmen, GbR, KG/OHG – nie für Gm
   assert.ok(ids().includes("steuer_sieben"), "Karten für alle bleiben");
 });
 
+test("GmbH-Karten nur für GmbH und UG, nie für Personen oder unbekannt", () => {
+  const s = laden(); const ids = () => hinweiseFuer(s).map((h) => h.id);
+  const gmbh = ["gmbh_chefessen", "gmbh_bilanz", "gmbh_gewerbesteuer"];
+  for (const g of gmbh) assert.ok(!ids().includes(g), g + " unbekannt");
+  rechtsformSetzen(s, "einzel"); for (const g of gmbh) assert.ok(!ids().includes(g), g + " einzel");
+  for (const r of KAPITAL) { rechtsformSetzen(s, r); for (const g of gmbh) assert.ok(ids().includes(g), g + " " + r); assert.ok(!ids().includes("sachentnahme")); }
+});
+
 test("jede Karte nennt rechtsformen; passtZurRechtsform ohne Feld = alle", () => {
   for (const h of HINWEISE) assert.ok(h.rechtsformen === "alle" || Array.isArray(h.rechtsformen), h.id);
   assert.equal(passtZurRechtsform({ titel: "x" }, laden()), true);
