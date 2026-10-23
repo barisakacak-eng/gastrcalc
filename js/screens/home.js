@@ -44,7 +44,7 @@ export function startView(stand, extra = {}) {
 // Vertrag von Zoro: summe ist bereits ausschließlich gemessen. Schätzungen niemals addieren.
 // Ohne Messung auch dann keine Zahl, wenn ein geschätzter Posten vorliegt.
 export function nutzenKarte(nutzen) {
-  if (nutzen.leer) return `<section class="karte h-nutzen h-nutzen-leer" aria-label="${esc(t("nutzen.titel"))}"><span data-t="nutzen.laueft">${esc(t("nutzen.laueft", nutzen.ab ? datumLesbar(nutzen.ab) : "–"))}</span></section>`;
+  if (nutzen.leer) return `<section class="karte h-nutzen h-nutzen-leer" aria-label="${esc(t("nutzen.titel"))}"><span data-t="nutzen.laueft">${esc(nutzen.ab ? t("nutzen.laueft", datumLesbar(nutzen.ab)) : t("nutzen.start"))}</span></section>`;
   const symbole = { muell: "trash-2", preis: "receipt", lager: "package", papier: "file-text" };
   const geschaetzte = nutzen.posten.filter((p) => !p.gemessen && typeof p.euro === "number" && p.euro > 0);
   return `<section class="karte h-nutzen ${nutzen.summe > 0 ? "h-nutzen-plus" : "h-nutzen-null"}" aria-label="${esc(t("nutzen.titel"))}" aria-description="${esc(nutzen.posten.filter((p) => p.gemessen).map((p) => p.quelle).join(" · "))}">
