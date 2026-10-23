@@ -30,3 +30,24 @@ test('Markenpaket nutzt nur lokale Dateien und respektiert reduzierte Bewegung',
   assert.match(nav,/mascotMarkup/);
   assert.match(html,/css\/gastrocash-brand\.css/);
 });
+
+
+test('sichtbare Kernmarke ist in allen 18 Sprachen GastroCash',()=>{
+  const codes=['de','tr','en','ar','fa','ku','pl','ro','bg','ru','uk','sq','bs','el','it','es','fr','vi'];
+  for(const code of codes){
+    const txt=fs.readFileSync(new URL('../js/lang/'+code+'.js',import.meta.url),'utf8');
+    assert.doesNotMatch(txt,/GastroCalc/,'alte Marke in '+code);
+    assert.match(txt,/GastroCash/,'neue Marke fehlt in '+code);
+  }
+});
+
+test('Manifest und Vektorlogos tragen GastroCash',()=>{
+  const manifest=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
+  assert.equal(manifest.name,'GastroCash');
+  assert.equal(manifest.short_name,'GastroCash');
+  for(const p of ['../icons/logo.svg','../icons/logo-zeichen.svg','../assets/brand/gastrocash-logo.svg']){
+    const svg=fs.readFileSync(new URL(p,import.meta.url),'utf8');
+    assert.match(svg,/GastroCash/);
+    assert.doesNotMatch(svg,/GastroCalc/);
+  }
+});
