@@ -79,3 +79,18 @@ test('Bewegungen sind von Emotionen getrennt und unbekannte Bewegung fällt sich
   const eyes=blink.match(/class="gc-bot-eyes"[^>]*>(.*?)<\/g>/)?.[1]||'';
   assert.equal((eyes.match(/<circle /g)||[]).length,2,'Blinzeln bleibt beidäugig, kein Zwinkern');
 });
+
+
+test('PWA-Icons sind echte GastroCash-PNGs in den erwarteten Größen',()=>{
+  const expected=[['icon-180.png',180],['icon-192.png',192],['icon-512.png',512],['icon-maskable-512.png',512]];
+  const bufs=[];
+  for(const [name,size] of expected){
+    const b=fs.readFileSync(new URL('../icons/'+name,import.meta.url));
+    assert.equal(b.subarray(0,8).toString('hex'),'89504e470d0a1a0a',name+' ist kein PNG');
+    assert.equal(b.readUInt32BE(16),size,name+' Breite');
+    assert.equal(b.readUInt32BE(20),size,name+' Höhe');
+    assert.ok(b.length>1000,name+' ist verdächtig leer');
+    bufs.push(b);
+  }
+  assert.notDeepEqual(bufs[2],bufs[3],'Maskable-Icon braucht eigenen Sicherheitsrand');
+});
