@@ -23,7 +23,7 @@ async def pruefe_nutzen(pg, art, lang, width, out, pruefe_heute):
               } else if(fall!=='ohne-beginn')s.schwund=[{id:'nutzen-test',datum:tag(-4),art:'rohware',wert:10,storniert:false}];
               if(['nur-geschaetzt','gemessen'].includes(fall))s.betrieb.nutzen={papierMinutenVorher:120,stundensatz:30};
               const n=nutzenStand(s,H);window.__gastrocalc.zeichne();
-              return {summe:n.summe,geschaetzt:n.geschaetzt,leer:n.leer,text:t('nutzen.laueft',n.ab?datumLesbar(n.ab):'–')};
+              return {summe:n.summe,geschaetzt:n.geschaetzt,leer:n.leer,text:n.ab?t('nutzen.laueft',datumLesbar(n.ab)):t('nutzen.start')};
             }""",fall)
             await pruefe_heute()
             karte=pg.locator('.h-nutzen')
