@@ -20,7 +20,7 @@ export function tabLeiste(aktiv, stand) {
   return `<nav class="tableiste" aria-label="${esc(t("ebene.leiste"))}">${LADEN_TABS.map((id) => `<button type="button" class="tab ${aktiv === id ? "an" : ""}" data-a="nav" data-wert="${id}"${aktiv === id ? ' aria-current="page"' : ""}><span class="ik">${sym(TAB_SYM[id])}${punkt === id ? '<i class="punkt" aria-hidden="true"></i>' : ""}</span><span class="tabname">${esc(t("ebene.tabs." + id))}</span></button>`).join("")}</nav>`;
 }
 
-const logo = `<span class="gc-brand" aria-label="GastroCash">${mascotMarkup("neutral")}<span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
+const logo = `<span class="gc-brand" aria-label="GastroCash">${mascotMarkup("neutral", "idle")}<span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
 const hilfeKnopf = () => `<button type="button" class="ikonknopf hilfe" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${sym("circle-help")}</button>`;
 
 // nav(aktiv): Kopfleiste (+ Leiste unten im Laden). Zweites Argument nur noch aus Verträglichkeit ({ schnell } hat keine Wirkung mehr).
