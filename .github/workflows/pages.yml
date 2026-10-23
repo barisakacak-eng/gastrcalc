@@ -6,7 +6,7 @@ on:
     paths-ignore: ["bruecke/**"]   # Briefkasten Zoro ⇄ Sanji: löst keine neue Veröffentlichung aus
   # 18.10.2026: Vorschläge von Gemini/Jules kommen als Pull Request – Tests laufen mit, veröffentlicht wird nur von main
   pull_request:
-    branches: [main, sanji/facelift-1-0-integration]
+    branches: [main, sanji/facelift-1-0-integration, work/facelift-integration-2026-10-22]
   workflow_dispatch:
 permissions:
   contents: read
