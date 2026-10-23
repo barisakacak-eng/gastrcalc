@@ -2,6 +2,7 @@
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, SPRACH_NAMEN, sprache } from "../i18n.js";
+import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform (23.10.2026)
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
 import { jetztDran } from "../offen.js";
@@ -193,6 +194,8 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
           <span class="marke">${esc(t("zaehler.steuerHinweis"))} ${esc(t("zaehler.steuerQuelle." + st.quelle))}.</span></div>
         <div class="zeile"><div class="oben"><div class="name">${esc(t("einstellungen.kleinunternehmer"))}<small>${esc(t("einstellungen.kleinunternehmerHinweis"))}</small></div>
           <button type="button" class="schalter ${stand.betrieb.kleinunternehmer ? "an" : ""}" data-a="kleinunternehmer" aria-pressed="${!!stand.betrieb.kleinunternehmer}" aria-label="${esc(t("einstellungen.kleinunternehmer"))}"></button></div></div>
+        <div class="zeile rechtsform"><div class="oben"><div class="name">${esc(t("rechtsform.titel"))}<small>${esc(t("rechtsform.hinweis"))}</small></div></div>
+          <div class="chips">${RECHTSFORMEN.map((r) => `<button type="button" class="chip ${rechtsform(stand) === r ? "an" : ""}" data-a="rechtsform" data-wert="${r}" aria-pressed="${rechtsform(stand) === r}">${esc(t("rechtsform.namen." + r))}</button>`).join("")}</div></div>
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.sprache"))}</h2>

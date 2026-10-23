@@ -60,6 +60,7 @@ import { aktionenAbschliessen } from "./aktion_plan.js"; // Aktion planen (18.10
 import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Menütafel (18.10.2026): Büro „Menütafel“
 import { hinweiseView } from "./screens/hinweise.js"; // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
+import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
@@ -508,6 +509,7 @@ async function ebeneAktion(name, el) {
     if (!einleseDatei) { blattSchliessen(); return true; }
     await sicherungEinlesen(einleseDatei, p); return true;
   }
+  if (name === "rechtsform") { if (rechtsformSetzen(stand, el.dataset.wert)) { ereignis("rechtsform", { laden: stand.id, wert: el.dataset.wert }); meldung(t("rechtsform.gesetzt")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Rechtsform (23.10.2026)
   if (name === "hinweis-status") { if (hinweisStatusSetzen(stand, el.dataset.id, el.dataset.status)) { ereignis("hinweis-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); meldung(t(el.dataset.status === "erledigt" ? "hinweise.erledigtMeldung" : "hinweise.spaeterMeldung")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Hinweis-Karten (23.10.2026)
   if (name === "testphase-code") { testphaseSetzen(wurzel, !testphaseOhneCode(wurzel)); meldung(t(testphaseOhneCode(wurzel) ? "ebene.pin.testphaseAn" : "ebene.pin.testphaseAus")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }

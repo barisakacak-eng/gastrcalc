@@ -3,6 +3,7 @@
 // gefüllt hat (Einrichtungsring, Kostenlücken, Waage-Vorschlag, graue Gerichte, Hinweise, neue Fassung …), liefert offenImBuero()
 // als Liste für die Büro-Startseite. Reine Logik, kein HTML.
 import { t, artikelText } from "./i18n.js";
+import { rechtsformBekannt } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { kuehlstelleAnzeige } from "./kuehlname.js"; // Paket 6 (17.10.2026)
 import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
 import { kuehlStatus, offeneNachkontrollen, kalkulation, schwundOhneWert, aktiveStellen, letzteMessung, tagPlus, rundgangAbweichungen, rundgangOffen, offeneWareEntscheidungen, ruhetageAm, wochentag } from "./engine.js"; // W2-H: rundgangAbweichungen, abweichungStand
@@ -86,6 +87,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   { const u = haltbarUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), kalenderTag: heute(jetzt) }); if (u) out.push({ id: "haltbar", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Stufe 1 (17.10.2026)
   // Aktion planen (18.10.2026): Satz zur laufenden Aktion – nur, wenn Haltbarkeit nichts sagt (ein Hinweis je Bereich „Aktionen & Haltbarkeit“)
   if (!out.some((x) => x.id === "haltbar")) { const u = aktionUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "aktion", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); }
+  if (!rechtsformBekannt(stand)) add("rechtsform", t("rechtsform.offen"), { aktion: "nav", wert: "einstellungen" }); // Rechtsform (23.10.2026): ohne sie passen die Steuer-Hinweise nicht
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
   const z = zaehlerImTakt(stand, heuteGeschaeft(jetzt)); // W2-D; Paket 3, M7: Zähler nach Geschäftstag
