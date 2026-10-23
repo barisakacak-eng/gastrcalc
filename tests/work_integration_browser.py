@@ -4,6 +4,7 @@ Start: python3 tests/work_integration_browser.py. Ausschließlich frische Browse
 import asyncio, datetime, json, os, pathlib, re, tempfile
 from playwright.async_api import async_playwright
 import schnellstart, nav_hilfe
+from nutzen_browser import pruefe_nutzen
 
 PORT = int(os.environ.get("WORK_PORT", "8803"))
 OUT = pathlib.Path(os.environ.get("WORK_OUT", schnellstart.APP.parent / "audit" / "regeln"))
@@ -43,7 +44,7 @@ async def heute(pg, art):
     assert await pg.locator('.h-schaetzung').count()==1
     assert await pg.locator('.h-haupt').count()<=1
     # Sichtbare feste Wörter einschließlich der unteren Navigation. Geschäftsnamen/Datum und SVG-Zahlen sind Daten.
-    # Die Wortmarke GastroCash (.gc-brand) ist ein Logo wie der Geschäftsname, kein Lesetext – Entscheidung Zoro 23.10.2026, Baris bestätigt noch.
+    # Wortmarke zählt als Logo nicht mit: ausdrückliche Freigabe im Auftrag vom 23.10., 13:30.
     words = await pg.evaluate(r"""() => {
       const w=document.createTreeWalker(document.querySelector('#app'),NodeFilter.SHOW_TEXT);let n;const out=[];
       while(n=w.nextNode()) {const p=n.parentElement;if(p.closest('.h-kopf,.gc-brand,svg,script,style')||!p.getClientRects().length)continue;
@@ -164,6 +165,7 @@ async def pilot(browser, art, temp):
             for width,height in ((390,844),(360,780)):
                 await pg.set_viewport_size({'width':width,'height':height})
                 await heute(pg,art)
+                await pruefe_nutzen(pg,art,lang,width,OUT,lambda: heute(pg,art))
                 if lang=='de' and width==390:await pg.screenshot(path=str(OUT/f'work_heute_{art}.png'))
                 await nav_hilfe.geh(pg,'karte')
                 pics=await pg.locator('.kl-gericht img.gerichtbild').evaluate_all('(xs)=>xs.map(x=>({src:x.getAttribute("src"),ok:x.complete&&x.naturalWidth>0}))')

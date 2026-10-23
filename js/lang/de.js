@@ -1,5 +1,7 @@
 // Leitsprache. Küchensprache: kurze Sätze, keine Fachbegriffe. Jede andere Sprache wird aus dieser Tabelle übersetzt.
 export default {
+  // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
+  nutzen: {"titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Testfassung" },
 
   allgemein: {
