@@ -1,6 +1,8 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
-  app: { name: "GastroCalc", entwurf: "Guhertoya ceribandinê" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
     weiter: "Pêş de", zurueck: "Paş de", fertig: "Qediya", speichern: "Tomar bike", abbrechen: "Betal bike", stueck: "hebe", bearbeiten: "Biguherîne", zahlZuGross: (v) => `“${v}” pir mezin e – heta deh milyonan dibe.`, uebernehmen: "Bipejirîne", zahlUngueltig: (v) => `“${v}” ne hejmar e. Tenê reqam û yek bêhnok binivîse.`,
@@ -419,11 +421,11 @@ export default {
       name: "Nav", ungueltig: "Dîrokekê heta îro hilbijêre.", gespeichert: "Perwerde hat tomarkirin." },
     knopf: { pdf: "Wek PDF parve bike", vorschau: "Pêşdîtin", csv: "CSV", csvTeil: (t) => `${t} wek CSV`, schliessen: "Bigire", datei: "Pel", drucken: "Çap / PDF",
       druckHinweis: "Di pencereya çapê de “Wek PDF tomar bike” an “Parve bike” hilbijêre.", geteilt: "Belge amade ye.", csvFertig: (n) => `${n} pel amade ne.` },
-    dok: { erstellt: (d, z) => `Di ${d} de saet ${z} bi GastroCalc hat çêkirin`, nichtGemessen: "nehat pîvandin", nk: { erledigt: "Kontrola duyem qediya", offen: "Kontrola duyem vekirî ye" }, ware: "Mal",
+    dok: { erstellt: (d, z) => `Di ${d} de saet ${z} bi GastroCash hat çêkirin`, nichtGemessen: "nehat pîvandin", nk: { erledigt: "Kontrola duyem qediya", offen: "Kontrola duyem vekirî ye" }, ware: "Mal",
       basis: { netto: "net", brutto: "brût" }, ohneMessung: (l) => `bê pîvandin: ${l}`, keineMassnahme: "tedbîr nehatiye nivîsandin", offeneTage: (l) => `ne temam: ${l}`,
       ladenArt: (a) => `Dikan: ${a}`, geraete: (l) => `Amûr: ${l}`, takt: (n) => (n === 2 ? "Pîvandina sarkirinê 2× di rojê de" : "Pîvandina sarkirinê 1× di rojê de"), aufgaben: (n) => `${n} karên paqijiyê di planê de`,
       standardGrenze: "Sînorê standard", eigeneGrenze: "sînorê xwe", unterschrift: ["Dîrok, îmzeya dikanê", "Hat kontrolkirin (dîrok, îmze)"],
-      fussAmt: "Tomara kontrola xwe bi GastroCalc. Tomar nayên jêbirin, tenê paşve tên kişandin; paşvekirin li jêr in. * = paşê hat nivîsîn. Ev lîste şûna plana HACCP nagire.",
+      fussAmt: "Tomara kontrola xwe bi GastroCash. Tomar nayên jêbirin, tenê paşve tên kişandin; paşvekirin li jêr in. * = paşê hat nivîsîn. Ev lîste şûna plana HACCP nagire.",
       satz: (p) => `Rêjeya tevlihev a baca firotinê ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): taştê 2,37 €, nîvro û êvar her yek 4,57 €", netto: "Nirxa malê ya net bi bihayê kirînê",
       summe: "Giştî", vormonat: "Rewşa berê", monatslast: "Lêçûna mehê ya giştî",
       fussSteuer: "Firotina rojane notên sepanê ne û cihê rapora kasê (rapora Z) nagirin. Mîqdar net in, heke tiştekî din nehatibe gotin. * = paşê hat zêdekirin.",
@@ -560,7 +562,7 @@ export default {
     personenKurz: (n) => `${n} kurtenav di tîmê de`,
     spaeter: "Paşê bidomîne",
     haftungTitel: "Kî berpirsiyar e?",
-    haftung: "Berpirsiyarî li ser te dimîne: sînor, pîvandin û tedbîrên te yên te ne. GastroCalc tenê ya ku tu dinivîsî tomar dike û tiştekî kontrol nake. Dane tenê li ser vê telefonê ne – bi xwe kopiya ewlehiyê bigire û herî kêm 12 mehan biparêze.",
+    haftung: "Berpirsiyarî li ser te dimîne: sînor, pîvandin û tedbîrên te yên te ne. GastroCash tenê ya ku tu dinivîsî tomar dike û tiştekî kontrol nake. Dane tenê li ser vê telefonê ne – bi xwe kopiya ewlehiyê bigire û herî kêm 12 mehan biparêze.",
     arten: { kuehl: "Sarker", tk: "Cemidok", warm: "Germ-hilgirtin (Heißhaltung)" },
     rundgang: "Gera kontrolê",
     nacherfasst: "paşê hatiye nivîsandin",
@@ -918,7 +920,7 @@ export default {
     sicherungText: "Hemû dane tenê li ser vê amûrê ne. Bi dosyaya kopiya ewlehiyê tu dikarî wan bidî yekî din an bibî telefoneke nû.",
     exportieren: "Dosyaya kopiya ewlehiyê çêke",
     importieren: "Dosyaya kopiya ewlehiyê bixwîne",
-    importFehler: "Ev ne dosyaya kopiya ewlehiyê ya GastroCalc e.",
+    importFehler: "Ev ne dosyaya kopiya ewlehiyê ya GastroCash e.",
     importOk: "Hate xwendin.",
     loeschenAlles: "Her tiştî jê bibe",
     loeschenFrage: "Bi rastî her tiştî jê bibe? Ev nayê paşvekirin.",
@@ -1106,7 +1108,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Îro", muell: "Çop", kuehl: "Sarkirin", putzplan: "Paqijî", karte: "Menû" },
     leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
-    pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe" },
+    pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",
       start: "Roj bi nêrînekê. Hejmara mezin nîşan dide ka heta sifirê çiqas firotin hîn kêm e. Sor tê wateya: niha lê binêre. Heke „≈“ li pêş be, hejmar texmîn e (mal an mûçeya te) – ravekirin di ofîsê de di bin „Meh û jimêr“ de. Bê bihayên kirînê sepan bi 32 % malê dihesibîne (xwarinxaneyên biçûk: 23–41 %, tabloyên BMF 2025).",
@@ -1419,7 +1421,7 @@ export default {
     vergleich: "Berawirdkirin", vergleichAb: "Berawirdkirin ji du dikanan", keineLaeden: "Dikaneke bi dane tune", bericht: "Rapora xwediyê", datei: "Xwedi", drucken: "Raporê çap bike", csv: "CSV", geteilt: "Rapor hat parvekirin",
     dok: { zahlen: "Hejmar li gorî dikanê", hinweis: "≈ = texmînî (bihayên rêber, nirxa rêber an texmîn). „kêm e“ = di demê de dane tune. Tenê dikanên li ser vê telefonê, hejmar ji tomarên sepanê.",
       kopf: ["Dikan", "Dahat", "Mesrefa malê", "Avêtî", "Guman a kêmbûnê", "Erkên vekirî", "Heta sifir", "Nirxa depoyê", "Sipariş"], laden: "Dikan", vergleich: "Berawirdkirin", vergleichInfo: "Rêz tenê di navbera dikanên bi heman bingeha daneyan.",
-      trend: "Meyl li gorî dema berê", daten: "Bingeha daneyan", fehlt: "Netemam", tage: "roj", quelle: "Çavkaniya mesrefa malê", fuss: "GastroCalc · Rapora xwediyê. Hejmar ji tomarên sepanê – ne hesabdarî, ne daneyên kaseyê." },
+      trend: "Meyl li gorî dema berê", daten: "Bingeha daneyan", fehlt: "Netemam", tage: "roj", quelle: "Çavkaniya mesrefa malê", fuss: "GastroCash · Rapora xwediyê. Hejmar ji tomarên sepanê – ne hesabdarî, ne daneyên kaseyê." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Li ser malekê bitikîne û tiştê ku tu didî binivîse.", fortschritt: (a, b) => `${a} ji ${b} amade`, fehlt: "kêm", filterFehlt: (n) => `Kêm (${n})`, filterAlle: (n) => `Hemû (${n})`, selbst: "bi xwe",
@@ -1431,4 +1433,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ya dawî ji telefonê derket: îro" : n === 1 ? "Ya dawî ji telefonê derket: 1 roj berê" : `Ya dawî ji telefonê derket: ${n} roj berê`, nieWeg: "Hêj tu kopî ji telefonê derneketiye", mitPasswort: "Bi şîfre", ohneFotos: "Bê wêne (biçûk, ji bo e-nameyê)",
       verschicken: "Kopiyê bişîne", woFrage: "Niha li ku ye?", woanders: "Amûrek din, e-name, ewr", nurHandy: "Tenê li ser vê telefonê", nurHandyMeldung: "Bîranîn dimîne: pel tenê li ser vê telefonê ye.", gezaehlt: "Kopî hate hesibandin. Bîranîn ji nû ve dest pê kir." } },
   adanaBrot: { frage: "Li cem we bi Adanayê re kîjan nan heye?", pide: "Pîdeya tevahî", pideHalb: "Nîvê pîdeyê", fladen: "Dürüm / lavaş", kein: "Bê nan" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

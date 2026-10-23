@@ -11,7 +11,7 @@ Schreibt tests/regeln_stand.json und eine Zusammenfassung auf die Konsole. Bekan
 Start: python3 tests/regeln.py   (Webserver Port 8797; REGELN_OUT setzt den Ordner für Bilder)"""
 import asyncio, json, os, pathlib, re, subprocess, sys, time
 from playwright.async_api import async_playwright
-import nav_hilfe, schnellstart
+import nav_hilfe, schnellstart, pilot_karten_browser, abschluss_browser
 
 APP = schnellstart.APP
 TESTS = APP / "tests"
@@ -140,6 +140,16 @@ async def lauf(b, breite, hoehe, fehler):
             await nav_hilfe.geh(pg, ziel)
             zusatz = {"gerichte": len(stand["gerichte"])} if name == "karte" else {"plan": True, "aufgaben": await pg.locator('[data-a="pp-haken"]').count()} if name == "putzen" else {}  # Laden-Umbau (20.10.2026): Plan nach Laden-Art gleich da
             await schirm(name, "laden", zusatz=zusatz)
+            if name == "muell":
+                # Echte Browser-Abnahme der neuen Müll-Station: eine Aufnahme, keine Demo-Zahlen.
+                await pg.click('#app [data-a="muell-station-auf"]')
+                await pg.wait_for_selector(".muell-station")
+                assert "€" not in await pg.locator(".muell-station").inner_text()
+                assert await pg.locator(".tableiste").count() == 0
+                assert await pg.locator(".muell-station-raster [data-a='muell-tipp']").count() > 0
+                await bild("muell-station")
+                await pg.click('#app [data-a="muell-station-zu"]')
+                await pg.wait_for_selector(".muell1")
         # Laden-Umbau (20.10.2026): „Umsatz heute“ (Feld auf Heute) und „Tag abschließen“
         await nav_hilfe.geh(pg, "start"); await pg.click('#app [data-a="nav"][data-wert="umsatzheute"]'); await pg.wait_for_selector('[data-f="ul-umsatz"]')
         await schirm("umsatz-heute", "laden")
@@ -191,6 +201,10 @@ def main():
                 b = await p.chromium.launch()
                 for breite, hoehe in VIEWPORTS:
                     s, f = await lauf(b, breite, hoehe, fehler); stand[f"{breite}x{hoehe}"] = s; befunde.extend(f)
+                if os.environ.get("SANJI_PILOT_BILDER") == "1":
+                    await pilot_karten_browser.run(b, PORT, OUT)
+                if os.environ.get("SANJI_ABSCHLUSS_BILDER","0") == "1":
+                    await abschluss_browser.run(b, PORT, OUT)
                 await b.close()
         asyncio.run(alles())
     finally:

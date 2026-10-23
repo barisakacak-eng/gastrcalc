@@ -3,7 +3,9 @@
 const pl = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : (n === 0 || (n % 100 >= 3 && n % 100 <= 10)) ? `${n} ${few}` : `${n} ${many}`;
 
 export default {
-  app: { name: "GastroCalc", entwurf: "نسخة تجريبية" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "نسخة تجريبية" },
 
   allgemein: {
     weiter: "التالي", zurueck: "رجوع", fertig: "تم", speichern: "حفظ", abbrechen: "إلغاء", stueck: "قطعة", bearbeiten: "تعديل", zahlZuGross: (v) => `«${v}» كبير جدًا – الحد عشرة ملايين.`, uebernehmen: "اعتماد", zahlUngueltig: (v) => `«${v}» ليس رقمًا. اكتب أرقامًا فقط وفاصلة واحدة.`,
@@ -422,11 +424,11 @@ export default {
       name: "الاسم", ungueltig: "اختر تاريخًا حتى اليوم.", gespeichert: "تم تسجيل التدريب." },
     knopf: { pdf: "شارك كـ PDF", vorschau: "معاينة", csv: "CSV", csvTeil: (t) => `${t} كـ CSV`, schliessen: "إغلاق", datei: "ملف", drucken: "طباعة / PDF",
       druckHinweis: "في نافذة الطباعة اختر «حفظ كـ PDF» أو «مشاركة».", geteilt: "المستند جاهز.", csvFertig: (n) => `جاهز: ${pl(n, "ملف واحد", "ملفان", "ملفات", "ملفًا")}.` },
-    dok: { erstellt: (d, z) => `أُنشئ في ${d} الساعة ${z} بواسطة GastroCalc`, nichtGemessen: "لم يُقَس", nk: { erledigt: "إعادة الفحص تمت", offen: "إعادة الفحص مفتوحة" }, ware: "البضاعة",
+    dok: { erstellt: (d, z) => `أُنشئ في ${d} الساعة ${z} بواسطة GastroCash`, nichtGemessen: "لم يُقَس", nk: { erledigt: "إعادة الفحص تمت", offen: "إعادة الفحص مفتوحة" }, ware: "البضاعة",
       basis: { netto: "صافي", brutto: "إجمالي" }, ohneMessung: (l) => `بدون قياس: ${l}`, keineMassnahme: "لم يُسجَّل إجراء", offeneTage: (l) => `غير كامل: ${l}`,
       ladenArt: (a) => `المحل: ${a}`, geraete: (l) => `الأجهزة: ${l}`, takt: (n) => (n === 2 ? "قياس التبريد 2× يوميًا" : "قياس التبريد 1× يوميًا"), aufgaben: (n) => `في الخطة: ${pl(n, "مهمة تنظيف واحدة", "مهمتا تنظيف", "مهام تنظيف", "مهمة تنظيف")}`,
       standardGrenze: "الحد القياسي", eigeneGrenze: "حد خاص", unterschrift: ["التاريخ، توقيع المحل", "تم الفحص (التاريخ، التوقيع)"],
-      fussAmt: "سجل الرقابة الذاتية مع GastroCalc. الإدخالات لا تُحذف، بل يُتراجع عنها فقط؛ التراجعات في الأسفل. * = أُضيف لاحقًا. هذه القائمة لا تحل محل خطة HACCP.",
+      fussAmt: "سجل الرقابة الذاتية مع GastroCash. الإدخالات لا تُحذف، بل يُتراجع عنها فقط؛ التراجعات في الأسفل. * = أُضيف لاحقًا. هذه القائمة لا تحل محل خطة HACCP.",
       satz: (p) => `نسبة ضريبة المبيعات المختلطة ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): فطور 2,37 €، غداء وعشاء 4,57 € لكل منهما", netto: "قيمة البضاعة صافي بسعر الشراء",
       summe: "المجموع", vormonat: "الرصيد السابق", monatslast: "مجموع تكاليف الشهر",
       fussSteuer: "المبيعات اليومية ملاحظات من التطبيق ولا تحل محل تقرير الصندوق (تقرير Z). المبالغ صافية ما لم يُذكر غير ذلك. * = أُدخل لاحقًا.",
@@ -563,7 +565,7 @@ export default {
     personenKurz: (n) => n === 1 ? "اختصار واحد في الفريق" : `اختصارات في الفريق: ${n}`,
     spaeter: "أكمل لاحقًا",
     haftungTitel: "من المسؤول؟",
-    haftung: "أنت تبقى المسؤول: حدودك وقياساتك وإجراءاتك ملكك. GastroCalc يكتب فقط ما تدخله، ولا يفحص شيئًا. البيانات موجودة فقط على هذا الهاتف – احفظها بنفسك واحتفظ بها 12 شهرًا على الأقل.",
+    haftung: "أنت تبقى المسؤول: حدودك وقياساتك وإجراءاتك ملكك. GastroCash يكتب فقط ما تدخله، ولا يفحص شيئًا. البيانات موجودة فقط على هذا الهاتف – احفظها بنفسك واحتفظ بها 12 شهرًا على الأقل.",
     arten: { kuehl: "تبريد", tk: "تجميد", warm: "حفظ ساخن (Heißhaltung)" },
     rundgang: "جولة القياس",
     nacherfasst: "مُدخل لاحقًا",
@@ -921,7 +923,7 @@ export default {
     sicherungText: "كل البيانات موجودة فقط على هذا الجهاز. بملف النسخة الاحتياطية يمكنك أن تعطيها لغيرك أو تنقلها إلى هاتف جديد.",
     exportieren: "إنشاء ملف نسخة احتياطية",
     importieren: "قراءة ملف نسخة احتياطية",
-    importFehler: "هذا ليس ملف نسخة احتياطية من GastroCalc.",
+    importFehler: "هذا ليس ملف نسخة احتياطية من GastroCash.",
     importOk: "تمت القراءة.",
     loeschenAlles: "حذف كل شيء",
     loeschenFrage: "فعلًا حذف كل شيء؟ لا يمكن التراجع عن هذا.",
@@ -1109,7 +1111,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "اليوم", muell: "الهدر", kuehl: "التبريد", putzplan: "التنظيف", karte: "القائمة" },
     leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
-    pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم" },
+    pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "الشريط في الأسفل يأخذك إلى كل ما تحتاجه في المحل. الحسابات والإعداد والقوائم في المكتب.",
       start: "يومك بنظرة واحدة. الرقم الكبير يبيّن كم ينقص من المبيعات حتى نقطة الصفر. الأحمر يعني: اهتم الآن. إذا سبق الرقم „≈“ فهو تقدير (للبضاعة أو أجرك) – الشرح في المكتب تحت „الشهر والعداد“. بدون أسعار شراء يحسب التطبيق 32 % تكلفة بضاعة (مطاعم سريعة: 23–41 %، جداول BMF 2025).",
@@ -1422,7 +1424,7 @@ export default {
     vergleich: "مقارنة", vergleichAb: "المقارنة تحتاج محلّين", keineLaeden: "لا محل فيه بيانات", bericht: "تقرير المالك", datei: "Malek", drucken: "طباعة التقرير", csv: "CSV", geteilt: "تمت مشاركة التقرير",
     dok: { zahlen: "الأرقام لكل محل", hinweis: "≈ = تقديري (أسعار إرشادية أو قيمة إرشادية أو تقدير). „ناقص“ = لا بيانات في الفترة. فقط المحلات على هذا الهاتف، الأرقام من إدخالات التطبيق.",
       kopf: ["المحل", "المبيعات", "تكلفة البضاعة", "المرمي", "اشتباه نقص", "واجبات مفتوحة", "حتى الصفر", "قيمة المخزون", "الطلب"], laden: "المحل", vergleich: "مقارنة", vergleichInfo: "الترتيب فقط بين المحلات ذات قاعدة البيانات نفسها.",
-      trend: "الاتجاه مقارنة بالفترة السابقة", daten: "قاعدة البيانات", fehlt: "ناقص", tage: "أيام", quelle: "مصدر تكلفة البضاعة", fuss: "GastroCalc · تقرير المالك. الأرقام من إدخالات التطبيق – ليست محاسبة ولا بيانات كاشير." },
+      trend: "الاتجاه مقارنة بالفترة السابقة", daten: "قاعدة البيانات", fehlt: "ناقص", tage: "أيام", quelle: "مصدر تكلفة البضاعة", fuss: "GastroCash · تقرير المالك. الأرقام من إدخالات التطبيق – ليست محاسبة ولا بيانات كاشير." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "اضغط على صنف واكتب ما تدفعه.", fortschritt: (a, b) => `${a} من ${b} جاهز`, fehlt: "ناقص", filterFehlt: (n) => `ناقص (${n})`, filterAlle: (n) => `الكل (${n})`, selbst: "صنع يدوي",
@@ -1434,4 +1436,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "آخر نسخة خارج الهاتف: اليوم" : n === 1 ? "آخر نسخة خارج الهاتف: قبل يوم" : `آخر نسخة خارج الهاتف: قبل ${n} يوم`, nieWeg: "لا توجد نسخة خارج الهاتف بعد", mitPasswort: "بكلمة مرور", ohneFotos: "بدون صور (صغيرة، للبريد)",
       verschicken: "إرسال النسخة", woFrage: "أين هي الآن؟", woanders: "جهاز آخر، بريد، سحابة", nurHandy: "على هذا الهاتف فقط", nurHandyMeldung: "يبقى التذكير: الملف على هذا الهاتف فقط.", gezaehlt: "تم احتساب النسخة. أُعيد ضبط التذكير." } },
   adanaBrot: { frage: "أي خبز تقدّمون مع الأضنة؟", pide: "بيدا كاملة", pideHalb: "نصف بيدا", fladen: "دُرُم / لواش", kein: "بدون خبز" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

@@ -1,6 +1,8 @@
 // Leitsprache. Küchensprache: kurze Sätze, keine Fachbegriffe. Jede andere Sprache wird aus dieser Tabelle übersetzt.
 export default {
-  app: { name: "GastroCalc", entwurf: "Testfassung" },
+  // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag","titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Testfassung" },
 
   allgemein: {
     weiter: "Weiter", zurueck: "Zurück", fertig: "Fertig", speichern: "Speichern", abbrechen: "Abbrechen", stueck: "Stück", bearbeiten: "Bearbeiten", zahlZuGross: (v) => `„${v}“ ist zu groß – bis zehn Millionen geht.`, uebernehmen: "Übernehmen", zahlUngueltig: (v) => `„${v}“ ist keine Zahl. Bitte nur Ziffern und ein Komma.`,
@@ -426,11 +428,11 @@ export default {
       name: "Name", ungueltig: "Bitte ein Datum bis heute wählen.", gespeichert: "Belehrung eingetragen." },
     knopf: { pdf: "Als PDF teilen", vorschau: "Vorschau", csv: "CSV", csvTeil: (t) => `${t} als CSV`, schliessen: "Schließen", datei: "Datei", drucken: "Drucken / PDF",
       druckHinweis: "Im Druckfenster „Als PDF sichern“ oder „Teilen“ wählen.", geteilt: "Dokument bereit.", csvFertig: (n) => (n === 1 ? "1 Datei bereit." : `${n} Dateien bereit.`) },
-    dok: { erstellt: (d, z) => `Erstellt am ${d} um ${z} mit GastroCalc`, nichtGemessen: "nicht gemessen", nk: { erledigt: "Nachkontrolle erledigt", offen: "Nachkontrolle offen" }, ware: "Ware",
+    dok: { erstellt: (d, z) => `Erstellt am ${d} um ${z} mit GastroCash`, nichtGemessen: "nicht gemessen", nk: { erledigt: "Nachkontrolle erledigt", offen: "Nachkontrolle offen" }, ware: "Ware",
       basis: { netto: "netto", brutto: "brutto" }, ohneMessung: (l) => `ohne Messung: ${l}`, keineMassnahme: "keine Maßnahme eingetragen", offeneTage: (l) => `nicht vollständig: ${l}`,
       ladenArt: (a) => `Laden: ${a}`, geraete: (l) => `Geräte: ${l}`, takt: (n) => (n === 2 ? "Kühlmessung 2× täglich" : "Kühlmessung 1× täglich"), aufgaben: (n) => `${n} Reinigungsaufgaben im Plan`,
       standardGrenze: "Standardgrenze", eigeneGrenze: "eigene Grenze", unterschrift: ["Datum, Unterschrift Betrieb", "Kontrolliert (Datum, Unterschrift)"],
-      fussAmt: "Aufzeichnung der Eigenkontrollen mit GastroCalc. Einträge werden nicht gelöscht, nur zurückgenommen; Rücknahmen stehen unten. * = nachgetragen. Diese Liste ersetzt kein HACCP-Konzept.",
+      fussAmt: "Aufzeichnung der Eigenkontrollen mit GastroCash. Einträge werden nicht gelöscht, nur zurückgenommen; Rücknahmen stehen unten. * = nachgetragen. Diese Liste ersetzt kein HACCP-Konzept.",
       satz: (p) => `Mischsatz Umsatzsteuer ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): Frühstück 2,37 €, Mittag und Abend je 4,57 €", netto: "Warenwert netto zum Einkaufspreis",
       summe: "Summe", vormonat: "Stand davor", monatslast: "Monatslast gesamt",
       fussSteuer: "Tagesumsätze sind Notizen aus der App und ersetzen nicht den Kassenbericht (Z-Bon). Beträge netto, wenn nicht anders angegeben. * = nachgetragen.",
@@ -567,7 +569,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 Kürzel im Team" : `${n} Kürzel im Team`,
     spaeter: "Später weitermachen",
     haftungTitel: "Wer ist verantwortlich?",
-    haftung: "Du bleibst verantwortlich: Deine Grenzen, deine Messungen und deine Maßnahmen gehören dir. GastroCalc schreibt nur auf, was du einträgst, und prüft nichts. Die Daten liegen nur auf diesem Handy – sichere sie selbst und bewahre sie mindestens 12 Monate auf.",
+    haftung: "Du bleibst verantwortlich: Deine Grenzen, deine Messungen und deine Maßnahmen gehören dir. GastroCash schreibt nur auf, was du einträgst, und prüft nichts. Die Daten liegen nur auf diesem Handy – sichere sie selbst und bewahre sie mindestens 12 Monate auf.",
     arten: { kuehl: "Kühlung", tk: "Tiefkühlung", warm: "Warmhalten (Heißhaltung)" },
     rundgang: "Rundgang",
     nacherfasst: "nachgetragen",
@@ -926,7 +928,7 @@ export default {
     sicherungText: "Alle Daten liegen nur auf diesem Gerät. Mit der Sicherungsdatei kannst du sie weitergeben oder auf ein neues Handy holen. Die Datei ist nur mit Passwort verschlüsselt und enthält deine Zahlen, Löhne und Belegfotos. Schick sie nur an Orte, denen du vertraust.",
     exportieren: "Sicherungsdatei erstellen",
     importieren: "Sicherungsdatei einlesen",
-    importFehler: "Das ist keine Sicherungsdatei von GastroCalc.",
+    importFehler: "Das ist keine Sicherungsdatei von GastroCash.",
     importOk: "Eingelesen.",
     loeschenAlles: "Alles löschen",
     loeschenFrage: "Wirklich alles löschen? Das lässt sich nicht rückgängig machen.",
@@ -1115,7 +1117,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Heute", muell: "Müll", kuehl: "Kühlung", putzplan: "Putzen", karte: "Karte" },
     leiste: "Laden", menueAuf: "Menü öffnen", schliessen: "Schließen", hilfeAuf: "Hilfe", deinLaden: "Dein Laden", abschluss: "Tag abschließen", personal: "Personal-Modus", buero: "Büro", ladenWechseln: "Laden wechseln", sprache: "Sprache", zumLaden: "Laden", zumBuero: "Büro", schlossCode: "Büro-Code eingeben",
-    pin: { titel: "Büro-Code", neu: "Neuen Code wählen", nochmal: "Noch einmal", falsch: "Falscher Code", ungleich: "Nicht gleich. Bitte neu wählen.", gesetzt: "Büro-Code gespeichert", entfernt: "Büro-Code entfernt", setzen: "Büro-Code festlegen", aendern: "Büro-Code ändern", entfernen: "Code entfernen", ohne: "Ohne Code kommt jeder ins Büro.", mit: "Das Büro ist mit einem Code geschützt.", loeschen: "Ziffer löschen" },
+    pin: { titel: "Büro-Code", neu: "Neuen Code wählen", nochmal: "Noch einmal", falsch: "Falscher Code", ungleich: "Nicht gleich. Bitte neu wählen.", gesetzt: "Büro-Code gespeichert", entfernt: "Büro-Code entfernt", setzen: "Büro-Code festlegen", aendern: "Büro-Code ändern", entfernen: "Code entfernen", ohne: "Ohne Code kommt jeder ins Büro.", mit: "Das Büro ist mit einem Code geschützt.", loeschen: "Ziffer löschen", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" },
     hilfeText: {
       allgemein: "Die Leiste unten führt zu allem, was du im Laden brauchst. Rechnen, Einrichten und Listen findest du im Büro.",
       start: "Der Tag auf einen Blick. Die große Zahl zeigt, wie viel Umsatz bis null noch fehlt. Rot heißt: jetzt kümmern. Steht „≈“ davor, ist die Zahl geschätzt (Richtwert für Ware oder eigenen Lohn) – Erklärung im Büro unter „Monat & Zähler“. Ohne Einkaufspreise rechnet die App mit 32 % Wareneinsatz (Imbisse: 23–41 %, BMF-Richtsatzsammlung 2025).",
@@ -1366,7 +1368,7 @@ export default {
     vergleich: "Vergleich", vergleichAb: "Vergleich ab zwei Läden", keineLaeden: "Kein Laden mit Daten", bericht: "Eigentümer-Bericht", datei: "Eigentuemer", drucken: "Bericht drucken", csv: "CSV", geteilt: "Bericht geteilt",
     dok: { zahlen: "Kennzahlen je Laden", hinweis: "≈ = geschätzt (Richtpreise, Richtwert oder Schätzung). „fehlt“ = keine Daten im Zeitraum. Nur Läden auf diesem Handy, Zahlen aus den Einträgen der App.",
       kopf: ["Laden", "Umsatz", "Wareneinsatz", "Weggeworfen", "Schwund-Verdacht", "Pflichten offen", "Bis null", "Lager-Wert", "Bestellen"], laden: "Laden", vergleich: "Vergleich", vergleichInfo: "Rang nur zwischen Läden mit gleicher Datenbasis.",
-      trend: "Trend zum Vorzeitraum", daten: "Datenbasis", fehlt: "Unvollständig", tage: "Tage", quelle: "Quelle Wareneinsatz", fuss: "GastroCalc · Eigentümer-Bericht. Kennzahlen aus den Einträgen der App – keine Buchhaltung, keine Kassendaten." },
+      trend: "Trend zum Vorzeitraum", daten: "Datenbasis", fehlt: "Unvollständig", tage: "Tage", quelle: "Quelle Wareneinsatz", fuss: "GastroCash · Eigentümer-Bericht. Kennzahlen aus den Einträgen der App – keine Buchhaltung, keine Kassendaten." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Tipp eine Ware an und trag ein, was du zahlst.", fortschritt: (a, b) => `${a} von ${b} fertig`, fehlt: "fehlt", filterFehlt: (n) => `Fehlt (${n})`, filterAlle: (n) => `Alle (${n})`, selbst: "selbst",
@@ -1378,4 +1380,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Letzte vom Handy weg: heute" : n === 1 ? "Letzte vom Handy weg: vor 1 Tag" : `Letzte vom Handy weg: vor ${n} Tagen`, nieWeg: "Noch keine Sicherung vom Handy weg", mitPasswort: "Mit Passwort", ohneFotos: "Ohne Fotos (klein, für Mail)",
       verschicken: "Sicherung verschicken", woFrage: "Wo liegt sie jetzt?", woanders: "Anderes Gerät, Mail, Cloud", nurHandy: "Nur auf diesem Handy", nurHandyMeldung: "Die Erinnerung bleibt: die Datei liegt nur auf diesem Handy.", gezaehlt: "Sicherung gezählt. Erinnerung zurückgesetzt." } },
   adanaBrot: { frage: "Welches Brot gibt es bei euch zum Adana?", pide: "Ganzes Pide", pideHalb: "Halbes Pide", fladen: "Dürüm / Lavash", kein: "Kein Brot" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } }, // Rechtsform (23.10.2026)
 };

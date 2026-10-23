@@ -1,0 +1,1268 @@
+/* Sanji Facelift 1.0: produktive visuelle Schicht, 21.10.2026.
+   Grundlage: freigegebene fünf Zielreferenzen (Editorial / Atelier / Modern Natural).
+   Rechenregeln, Events, HTML-Datenattribute und Navigation bleiben unverändert.
+   DM Serif Display und Manrope liegen lokal vor und sind offline verfügbar.
+   Deaktivieren: Link aus index.html entfernen. */
+:root{
+--gc-cream:#F8F0E5;--gc-paper:#FFF9F1;--gc-white:#FFFEFA;--gc-tint:#F2E4D3;
+--gc-text:#242C24;--gc-muted:#625F57;--gc-line:#E9DCCD;--gc-green:#245B3E;
+--gc-deep:#16452E;--gc-green-light:#E4F2E6;--gc-copper:#A64924;
+--gc-copper-light:#F8DDCA;--gc-yellow:#755219;--gc-yellow-light:#FFF0D0;
+--gc-red:#AA3C32;--gc-red-light:#FCE5E0;
+--gc-display:"DM Serif Display",Georgia,"Times New Roman",serif;
+--gc-ui:"Manrope",system-ui,-apple-system,sans-serif;
+--gc-shadow:0 7px 22px rgba(81,54,28,.075);
+--b-primaer:var(--gc-deep);--b-primaer-hell:var(--gc-green-light);
+--b-akzent:var(--gc-copper);--b-akzent-hell:var(--gc-copper-light);
+--b-hintergrund:var(--gc-cream);--b-karte:var(--gc-white);
+--b-text:var(--gc-text);--b-text-leise:var(--gc-muted);--b-linie:var(--gc-line);
+--b-gruen-ok:var(--gc-green);--b-rot:var(--gc-red);--b-rot-text:var(--gc-red);
+--b-rot-hell:var(--gc-red-light);--b-gelb:var(--gc-yellow);
+--b-gelb-hell:var(--gc-yellow-light);--b-gelb-text:var(--gc-yellow);
+--papier:var(--gc-cream);--papier-tief:var(--gc-tint);--weiss:var(--gc-white);
+--tinte:var(--gc-text);--tinte-weich:var(--gc-muted);
+--salbei:var(--gc-green);--salbei-tief:var(--gc-deep);
+--salbei-hell:var(--gc-green-light);--holz:var(--gc-line);
+--holz-tief:#CBB9A3;--lehm:var(--gc-muted);
+--glut:var(--gc-copper);--aktion:var(--gc-copper);--aktion-text:#FFFFFF;
+--kupfer-dunkel:var(--gc-copper);--kupfer-hell:var(--gc-copper-light);
+--rot:var(--gc-red);--gruen:var(--gc-green);--eigen:var(--gc-green);
+--eigen-hell:var(--gc-green-light);--muell:var(--gc-red);
+--muell-hell:var(--gc-red-light);--fokus:var(--gc-deep);
+--radius:17px;--radius-gross:23px;
+--schatten-karte:var(--gc-shadow);
+--schatten-knopf:0 6px 12px rgba(81,54,28,.11);
+--schrift:var(--gc-ui);
+}
+html,body{background:var(--gc-cream);color:var(--gc-text)}
+body{background-image:radial-gradient(ellipse 340px 230px at 100% 0%,rgba(153,178,131,.11),transparent 82%);background-attachment:fixed}
+button,input,select,textarea{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gc-copper);outline-offset:2px}
+.karte,.kachel,.zeile,.b-bereich,.einklapp{border-radius:var(--radius)}
+.karte{box-shadow:var(--gc-shadow)}
+.kopfband h1,.kl-kopf h1,.putzkopf h1,.muellkopf1 h1,.inhalt>h1,.karte>h2,.kopfband .frage{font-family:var(--gc-display);font-weight:400;letter-spacing:-.025em}
+.kopfband h1,.kl-kopf h1,.putzkopf h1{font-size:clamp(1.875rem,8vw,2.5rem);line-height:1.1}
+.kopfband{padding-top:18px}
+.kopfband .unter{line-height:1.4}
+.appleiste.ebene-kopf{background:var(--gc-paper);border-bottom:1px solid var(--gc-line)}
+.appleiste.ebene-kopf.laden{min-height:70px}
+.ebene-kopf .ikonknopf{border-radius:50%;color:var(--gc-deep)}
+.ebene-kopf .ikonknopf.hilfe{background:var(--gc-white);color:var(--gc-deep);border:1px solid var(--gc-line)}
+.appleiste.ebene-kopf .logo{max-height:40px}
+.tableiste{background:var(--gc-white);border-top:1px solid var(--gc-line);box-shadow:0 -8px 24px rgba(81,54,28,.08);border-radius:22px 22px 0 0;padding-top:8px}
+.tab{color:var(--gc-muted);min-height:60px;font-weight:650}
+.tab.an{color:var(--gc-copper);font-weight:800}
+.tab.an .ik{background:transparent}
+.tab.an .sym{stroke-width:2.6}
+.tab .ik{min-height:32px}
+.tab .punkt{background:var(--gc-copper)}
+.knopf.glut,.knopf:not(.zweit):not(.weich):not(.warn),.s2fotoknopf,.kl-speichern{background:var(--gc-copper);color:#FFFFFF;min-height:60px;border-radius:16px;border-color:var(--gc-copper);font-weight:800;box-shadow:0 6px 14px rgba(166,73,36,.18)}
+.knopf.zweit{background:var(--gc-white);color:var(--gc-deep);border:1px solid var(--gc-line);border-radius:15px}
+.chip.an,.kl-segment button.an{background:var(--gc-copper);border-color:var(--gc-copper);color:#FFFFFF}
+.chip:not(.an){background:var(--gc-white);border-color:var(--gc-line)}
+/* L1 Heute: echte Ziel-/Verlaufdaten, vorhandene SVG-Kurve */
+.inhalt.heute-laden{gap:13px;padding-top:12px}
+.h-kopf{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 3px}
+.h-ladenname{font:400 1.5rem/1.1 var(--gc-display);color:var(--gc-text)}
+.h-datum{font-size:0.75rem;color:var(--gc-muted);font-weight:650}
+.karte.h-ziel.h-ziel-kurs{position:relative;min-height:290px;overflow:hidden;background:linear-gradient(90deg,rgba(17,52,35,.94),rgba(19,53,35,.80)),url('../foto/hero-doenergrill.webp') center/cover no-repeat;border:1px solid rgba(255,255,255,.13);border-radius:24px;padding:22px 18px 15px;box-shadow:0 11px 23px rgba(28,71,46,.2)}
+.karte.h-ziel .h-zielkopf{font:400 1.1875rem/1.2 var(--gc-display);color:#FFF}
+.karte.h-ziel .h-riesig{font:800 clamp(2.375rem,12vw,3.1875rem)/1.05 var(--gc-ui);letter-spacing:-.045em;margin:10px 0 8px;white-space:nowrap}
+.karte.h-ziel .h-riesig.leicht{color:#E4F2E6}
+.h-tempo-zeile{display:block;font-size:0.75rem;color:#FFF9F1;margin-bottom:5px}
+.h-tempo-zeile.knapp{color:#FFF0D0}
+.h-lorbeer{position:absolute;top:8px;right:10px;width:44px;height:60px;opacity:.52;color:#D9E7D5;pointer-events:none}
+.h-kurs{display:block;width:100%;max-height:165px;margin-top:4px;overflow:visible}
+.h-kurs-achse{stroke:rgba(255,255,255,.36);stroke-width:1}
+.h-kurs-ziel{stroke:#F0B174;stroke-width:1.6;stroke-dasharray:5 5}
+.h-kurs-ziellabel{fill:#FFF9F1;font:700 0.6875rem var(--gc-ui)}
+.h-kurs-linie{fill:none;stroke:#F3B681;stroke-width:3;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.h-kurs-flaeche{fill:rgba(225,239,220,.21);stroke:none}
+.h-kurs-punkt{fill:#B9602C;stroke:#FFF;stroke-width:2.5}
+.h-kurs-tag{fill:#FFF9F1;font:600 0.6875rem var(--gc-ui)}
+.h-kupfer{display:block;width:86%;height:5px;margin:0 auto}
+.h-kacheln.h-reihe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.karte.h-kachel.h-feld{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-width:0;min-height:84px;padding:9px 3px;background:var(--gc-white);border:1px solid var(--gc-line);border-radius:15px;box-shadow:var(--gc-shadow);text-align:center}
+.h-feld .zahl{font-size:clamp(0.875rem,3.9vw,1.1875rem);line-height:1.2;font-weight:800;white-space:nowrap}
+.h-feld small{font-size:0.6875rem;color:var(--gc-muted);font-weight:650;white-space:nowrap}
+.h-feld.umsatz .zahl{color:var(--gc-green)}
+.h-feld.muell .zahl{color:var(--gc-red)}
+.h-feld.alarm{background:var(--gc-red-light)}
+.jetzt.h-jetzt{background:var(--gc-white);min-height:76px;border-radius:19px;border:1px solid var(--gc-line);box-shadow:var(--gc-shadow)}
+.h-jetzt .ks{border-radius:13px;background:var(--gc-copper-light);color:var(--gc-copper)}
+.h-jetzt-text b{font:400 1.25rem/1.2 var(--gc-display)}
+.h-jetzt-text small{color:var(--gc-muted)}
+.h-jetzt .h-pfeil{border-radius:50%;background:var(--gc-copper);padding:8px;color:#FFF;width:43px;height:43px}
+/* L2 Müll: vorhandene Fotos/Mengen/Undo, keine neuen Kennzahlen */
+.inhalt.muell1{gap:13px;padding-top:14px}
+.heutewert.muellsumme{border:1px solid var(--gc-line);background:linear-gradient(110deg,var(--gc-white),var(--gc-copper-light));border-radius:21px;min-height:80px;color:var(--gc-text);padding:13px 18px}
+.muellsumme h1{font:400 clamp(1.375rem,7vw,1.8125rem)/1.12 var(--gc-display);color:var(--gc-text);margin:0}
+.muellsumme .zahl{font-size:clamp(1.5625rem,8vw,2.1875rem);color:var(--gc-red)}
+.muellraster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.muellraster .ware{border-radius:18px;border:1px solid var(--gc-line);overflow:hidden;box-shadow:var(--gc-shadow)}
+.muellraster .ware img.gerichtbild.mini{display:block;width:100%;object-fit:cover;aspect-ratio:4/3;border-radius:0}
+.ware .wt{padding:10px 12px 12px}
+.ware .wt b{font:400 1.0625rem/1.13 var(--gc-display)}
+.ware-mehr{border-radius:50%;background:var(--gc-white);color:var(--gc-deep);border:1px solid var(--gc-line)}
+.ware .zaehler{background:var(--gc-deep);color:var(--gc-white);font-weight:850}
+.ware.andere{border:1px solid var(--gc-line);background:var(--gc-copper-light)}
+/* L3 Kühlung: Statuslogik unverändert, keine erfundenen Solltemperaturen */
+.kuehlliste{gap:10px}
+.kuehlliste .zeileknopf{border:1px solid var(--gc-line);border-radius:18px;padding:12px 15px;min-height:86px;background:var(--gc-white);box-shadow:var(--gc-shadow)}
+.kuehlliste .zeileknopf b{font:400 1.1875rem/1.15 var(--gc-display)}
+.kuehlliste .kwert{font-size:clamp(1.25rem,6vw,1.6875rem);color:var(--gc-text)}
+.kuehlliste .kwert.ok{color:var(--gc-green)}
+.kuehlliste .kwert.rot{color:var(--gc-red)}
+.kuehlliste .zeileknopf:has(.kwert.rot){background:var(--gc-red-light)}
+/* L4 Putzen */
+.putzkopf h1{font-family:var(--gc-display)}
+.putzplan .planliste{display:grid;gap:8px}
+.putzplan .pzeile{border:1px solid var(--gc-line);background:var(--gc-white);border-radius:17px;overflow:hidden;box-shadow:var(--gc-shadow)}
+.putzplan .aufgabe{min-height:69px;box-shadow:none;border:0;background:transparent}
+.putzplan .aufgabe b{font:400 1.125rem/1.2 var(--gc-display)}
+.putzplan .aufgabe .box{border-radius:50%;border:2px solid #CABDAD;width:30px;height:30px}
+.putzplan .aufgabe.erledigt .box{background:var(--gc-green);border-color:var(--gc-green);color:#FFF}
+.putzplan .pmehr{min-height:48px;min-width:48px}
+/* L5 Karte: bestehende Preise & Ampel; statt Fotoraster nun Premium-Liste */
+.inhalt.kartelaeden{gap:12px}
+.kl-kopf h1{font:400 clamp(1.75rem,8vw,2.4375rem)/1.1 var(--gc-display)}
+.kl-segment{border-radius:18px;background:var(--gc-tint)}
+.kl-segment button{border-radius:14px;min-height:49px}
+.kl-raster{display:grid;grid-template-columns:1fr;gap:11px}
+.karte.kl-gericht{display:flex;align-items:center;min-height:120px;border:1px solid var(--gc-line);border-radius:19px;background:var(--gc-white);box-shadow:var(--gc-shadow);padding:8px;text-align:start}
+.kl-gericht .gerichtbild{width:108px;height:100px;object-fit:cover;aspect-ratio:auto;flex:none;border-radius:13px}
+.kl-gt{display:block;flex:1;min-width:0;padding:3px 9px 3px 12px}
+.kl-gn{font:400 1.1875rem/1.15 var(--gc-display);white-space:normal}
+.kl-gp{margin-top:8px}
+.kl-gp b{font:800 1.3125rem/1.2 var(--gc-ui)}
+.kl-punkt{box-shadow:none}
+.kl-punkt.g{background:var(--gc-green)}
+.kl-punkt.r{background:var(--gc-red)}
+.kl-punkt.y{background:#C48A22}
+/* Eingabeblätter: bestehende Events/Buttons bleiben */
+.ebene-blatt,.kl-blatt,.blatt{border-radius:25px 25px 0 0;background:var(--gc-paper);box-shadow:0 -13px 32px rgba(72,50,25,.14)}
+.auswahlkarte,.mengekarte,.formular{border-radius:20px}
+.textfeld,.betrag input,.zahlfeld input,.kl-gross input{color:var(--gc-text)}
+@media(max-width:375px){
+.karte.h-ziel.h-ziel-kurs{min-height:276px;padding:19px 15px 13px}
+.h-kacheln.h-reihe{gap:5px}
+.karte.h-kachel.h-feld{padding-left:2px;padding-right:2px}
+.h-feld small{font-size:0.625rem}
+.kl-gericht .gerichtbild{width:87px;height:95px}
+.kl-gn{font-size:1.0625rem}
+.muellsumme h1{font-size:1.4375rem}
+}
+/* CI-Regeln: Mindest-Schriftgröße, Hauptknopf und kompakte Müll-Ansicht. */
+.h-feld small{font-size:0.75rem}
+.knopf.glut,.knopf:not(.zweit):not(.weich):not(.warn){min-height:64px}
+@media(max-width:375px){
+  .inhalt.muell1{gap:8px;padding-top:7px}
+  .heutewert.muellsumme{min-height:68px;padding-block:9px}
+  .muellraster{gap:7px}
+  .h-feld small{font-size:0.75rem}
+}
+@media(prefers-reduced-motion:reduce){.karte,.h-jetzt,.kl-blatt{transition:none!important;animation:none!important}}
+
+/* Facelift 1.0 – Paket 5: Bildführung und Premium-Feinschliff (21.10.2026). */
+/* HELLES EDITORIAL: Essen wieder sichtbar statt vollständig dunkel überlagert. */
+.karte.h-ziel.h-ziel-kurs{
+ background-image:
+   linear-gradient(0deg,rgba(15,34,23,.69) 0%,rgba(15,34,23,.12) 55%,transparent 100%),
+   linear-gradient(90deg,rgba(18,40,28,.86) 0%,rgba(18,40,28,.58) 47%,rgba(18,40,28,.04) 100%),
+   url('../foto/hero-doenergrill.webp');
+ background-position:center,center,center;
+ background-size:cover;
+ background-repeat:no-repeat;
+}
+.karte.h-ziel .h-zielkopf{font-size:1.1875rem;letter-spacing:-.012em}
+.karte.h-ziel .h-riesig{text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.h-kurs-linie{stroke:#FFF7EA;stroke-width:3.3}
+.h-kurs-flaeche{fill:rgba(184,217,184,.34)}
+.h-kurs-punkt{fill:#E78C4B;stroke:var(--gc-white)}
+.h-kurs-ziel{stroke:#F3C894}
+.h-kurs-tag,.h-kurs-ziellabel{paint-order:stroke;stroke:rgba(27,48,29,.58);stroke-width:2}
+.h-kupfer{opacity:.62}
+.h-feld .zahl{font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+.h-feld .zahl .sym{width:1.45rem;height:1.45rem}
+.karte.h-kachel.h-feld{background:linear-gradient(155deg,var(--gc-white),var(--gc-paper));border-radius:17px}
+.jetzt.h-jetzt{position:relative;overflow:hidden;gap:13px;padding:12px 14px;transition:transform .18s ease,box-shadow .18s ease}
+.h-jetzt .ks{width:49px;height:49px;background:var(--gc-copper-light);border:1px solid rgba(166,73,36,.16)}
+.h-jetzt .ks .sym{width:27px;height:27px}
+.h-jetzt .h-pfeil{width:45px;height:45px;flex:none;stroke-width:2.4}
+.jetzt.h-jetzt:active{transform:scale(.99)}
+/* Kühlung: echte lokale Kühlstellen-Fotos waren bereits im Rechenkern-View vorhanden;
+   die Fotoform wurde nun für das Facelift vereinheitlicht, ohne Zuordnung zu verändern. */
+.kuehl-laden{gap:13px}
+.kuehl-laden .kuehlstand{
+ background:linear-gradient(125deg,var(--gc-white),var(--gc-paper));
+ border:1px solid var(--gc-line);
+ border-radius:20px;
+ padding:14px;
+ box-shadow:var(--gc-shadow);
+}
+.kuehlstand .ks-zeile{align-items:baseline;gap:10px}
+.kuehlstand .ks-zeile>span{font-weight:750;color:var(--gc-muted)}
+.kuehlstand .ks-zeile .zahl{font-family:var(--gc-display);font-weight:400;font-size:1.875rem;color:var(--gc-deep)}
+.kuehlliste .zeileknopf{
+ display:grid;
+ grid-template-columns:72px minmax(0,1fr) auto;
+ align-items:center;
+ column-gap:12px;
+ min-height:92px;
+ padding:9px;
+ border-radius:19px;
+}
+.kuehlliste .zeileknopf img.gerichtbild.mini{
+ display:block;
+ width:72px;
+ height:72px;
+ border-radius:13px;
+ object-fit:cover;
+ margin:0;
+ background:var(--gc-tint);
+}
+.kuehlliste .zeileknopf img.pikto{object-fit:contain;padding:9px}
+.kuehlliste .zeileknopf>span:has(>b){min-width:0;display:grid;gap:3px}
+.kuehlliste .zeileknopf b{font-size:1.125rem;line-height:1.2;overflow-wrap:anywhere}
+.kuehlliste .kwert{font-size:1.5rem;letter-spacing:-.04em;white-space:nowrap;text-align:end}
+.kuehlliste .kwert.rot{color:var(--gc-red)}
+.kuehlliste .zeileknopf:has(.kwert.rot){border-color:rgba(170,60,50,.28)}
+/* Putzen: helle großzügige Arbeitszeilen, eindeutiger Check ohne neue Daten. */
+.putzplan .planliste{gap:9px}
+.putzplan .pzeile{display:grid;grid-template-columns:minmax(0,1fr) 48px;align-items:center;border-radius:19px;min-height:73px}
+.putzplan .aufgabe{display:flex;align-items:center;gap:12px;min-height:71px;text-align:start}
+.putzplan .aufgabe .atext{min-width:0}
+.putzplan .aufgabe .atext>b{font-size:1.125rem;font-weight:400}
+.putzplan .aufgabe .box{width:32px;height:32px;flex:none;border-radius:50%}
+.putzplan .pmehr{border-radius:50%;width:48px;height:48px;display:grid;place-items:center}
+.putzplan .pzeile:has(.aufgabe.erledigt){background:linear-gradient(90deg,var(--gc-green-light),var(--gc-white) 48%)}
+/* Karte: Food-Fotos dominieren, Ampel ist Information und bleibt aus vorhandener Logik. */
+.kl-raster{gap:12px}
+.karte.kl-gericht{min-height:124px;gap:2px;padding:8px;border-radius:20px}
+.kl-gericht .gerichtbild{width:118px;height:108px;border-radius:14px}
+.kl-gt{padding-inline:11px}
+.kl-gn{font-size:1.3125rem}
+.kl-gp{margin-top:11px;gap:10px}
+.kl-punkt{width:13px;height:13px}
+.kl-gericht.rotrand{border-color:rgba(170,60,50,.35)}
+/* Foto-Raster im Müll: Behälterform und lesbare Mengen. */
+.muellraster .ware{border-radius:19px;background:var(--gc-white)}
+.muellraster .ware .wt{min-height:48px}
+.muellraster .ware .wt b{font-size:1.125rem}
+.muellraster .ware .wt small{color:var(--gc-muted)}
+/* Komfort: sanfte Rückmeldung ohne unnötige Bewegung. */
+@media(prefers-reduced-motion:no-preference){
+ .kuehlliste .zeileknopf,.kl-gericht,.muellraster .ware{transition:box-shadow .18s ease,transform .18s ease}
+ .kuehlliste .zeileknopf:active,.kl-gericht:active,.muellraster .ware:active{transform:scale(.989)}
+}
+@media(max-width:375px){
+ .kuehlliste .zeileknopf{grid-template-columns:60px minmax(0,1fr) auto;gap:8px;min-height:78px;padding:7px}
+ .kuehlliste .zeileknopf img.gerichtbild.mini{width:60px;height:60px;border-radius:11px}
+ .kuehlliste .zeileknopf b{font-size:1rem}
+ .kuehlliste .kwert{font-size:1.25rem}
+ .karte.kl-gericht{min-height:112px}
+ .kl-gericht .gerichtbild{width:96px;height:96px}
+ .kl-gn{font-size:1.125rem}
+ .putzplan .pzeile{min-height:68px}
+}
+/* Kein dekoratives Scrollen, das auf kurzen Handys Eingaben verdeckt. */
+
+/* 360px Müll-Scrollfix */
+@media(max-width:375px){.inhalt.muell1{padding-top:3px}}
+
+/* Paket 6: Editorial-Kopf + echte lokale Typografie, Referenz 01_Heute, 21.10.2026.
+   DM Serif Display: SIL Open Font License 1.1, Lizenz unter fonts/DMSerifDisplay-OFL.txt.
+   Die TTF wird als lokaler Bestandteil des PWAs gecacht; kein Google-Fonts-Netzabruf. */
+@font-face{
+  font-family:"DM Serif Display";
+  src:url("../fonts/DMSerifDisplay-Regular.ttf") format("truetype");
+  font-style:normal;font-weight:400;font-display:swap;
+}
+:root{
+  --gc-display:"DM Serif Display",Georgia,serif;
+}
+/* Heller Kopf statt hoher harter Toolbar – funktionale Menütaste und Hilfe bleiben. */
+.appleiste.ebene-kopf.laden{
+  min-height:62px;
+  padding-inline:10px;
+  background:transparent;
+  border-bottom:0;
+  box-shadow:none;
+}
+.ebene-kopf.laden .ikonknopf{
+  width:52px;height:52px;
+  color:var(--gc-deep);
+  border-radius:50%;
+}
+.ebene-kopf.laden .ikonknopf.hilfe{
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  box-shadow:0 3px 12px rgba(70,50,31,.06);
+}
+.ebene-kopf.laden .logo{
+  height:36px;max-height:36px;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.6));
+}
+/* Editorial-Überschriften: die gleiche Serifenfamilie auf allen fünf Seiten. */
+.h-ladenname{font-family:var(--gc-display);font-size:1.625rem;line-height:1.2}
+.h-datum{font-size:0.8125rem;font-weight:600}
+.kopfband h1,.kl-kopf h1,.muellsumme h1{font-family:var(--gc-display);letter-spacing:-.02em}
+.kl-gn,.putzplan .aufgabe .atext>b,.kuehlliste .zeileknopf b{font-family:var(--gc-display)}
+/* Foto über vorhandene lokale Speisen: keine Fremddatei, kein Marken-/Ladenfoto.
+   Die offene rechte Food-Komposition ersetzt den industriellen Grill mit Messer. */
+.karte.h-ziel.h-ziel-kurs{
+  background-image:
+    linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
+    linear-gradient(90deg,rgba(19,40,27,.95) 0%,rgba(19,40,27,.73) 42%,rgba(19,40,27,.16) 100%),
+    url("../foto/g-doener.webp");
+  background-position:center,center,65% center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  border:1px solid rgba(255,255,255,.28);
+}
+.karte.h-ziel .h-zielkopf{font-family:var(--gc-display);font-size:1.375rem}
+.h-jetzt-text b{font-family:var(--gc-display);font-size:1.375rem}
+.h-jetzt .ks{box-shadow:inset 0 0 0 1px rgba(166,73,36,.08)}
+/* Bildkarten dürfen nicht wie Tabellenzellen wirken. */
+.kl-gericht .gerichtbild,.kuehlliste .zeileknopf img.gerichtbild.mini{
+  border:1px solid rgba(255,255,255,.38);
+}
+.karte.kl-gericht{
+  box-shadow:0 7px 22px rgba(84,59,31,.075);
+}
+@media(max-width:375px){
+  .appleiste.ebene-kopf.laden{min-height:58px}
+  .h-ladenname{font-size:1.4375rem}
+  .karte.h-ziel.h-ziel-kurs{background-position:center,center,68% center}
+}
+/* Sorgsam mit Bewegung: sichtbare Rückmeldung ohne permanente Effekte. */
+@media(prefers-reduced-motion:reduce){
+ .ebene-kopf.laden .ikonknopf,.karte.h-ziel.h-ziel-kurs{transition:none!important}
+}
+
+/* Paket 6.1: CSS-Spezifität aus altem Design-B ausgleichen.
+   Die Aufgabenkarte ist im freigegebenen Zielbild WEISS. Kritische Aufgaben
+   behalten eine sichtbare rote Seitenmarkierung, statt unsichtbar zu werden. */
+.jetzt.h-jetzt.h-haupt,
+.jetzt.h-jetzt.h-haupt.normal,
+.jetzt.h-jetzt.h-haupt.dunkel,
+.jetzt.h-jetzt.h-haupt.rot{
+  background:var(--gc-white);
+  color:var(--gc-text);
+  border:1px solid var(--gc-line);
+  min-height:84px;
+  border-radius:20px;
+  box-shadow:var(--gc-shadow);
+}
+.jetzt.h-jetzt.h-haupt.rot{
+  border-left:4px solid var(--gc-red);
+}
+.h-haupt .ks,.h-haupt.dunkel .ks,
+.h-haupt.rot .ks{
+  color:var(--gc-copper);
+  background:var(--gc-copper-light);
+}
+.h-haupt.rot .ks{color:var(--gc-red);background:var(--gc-red-light)}
+.h-haupt .h-jetzt-text small,
+.h-haupt.dunkel .h-jetzt-text small,
+.h-haupt.rot .h-jetzt-text small{
+  color:var(--gc-copper);
+}
+.h-haupt.rot .h-jetzt-text small{color:var(--gc-red)}
+.h-haupt .h-jetzt-text b{font:400 1.375rem/1.2 var(--gc-display);color:var(--gc-text)}
+.h-haupt .h-pfeil{background:var(--gc-copper);color:#fff;padding:10px;border-radius:50%;width:46px;height:46px;flex:none}
+.karte.h-ziel svg.h-kurs .h-kurs-ziellabel{fill:#fff;font-weight:800;stroke:rgba(20,45,29,.54);stroke-width:2;paint-order:stroke}
+/* Der aktuelle Schnellstart hat sechs Fotokacheln; leicht reduzierte vertikale
+   Abstände vermeiden bei 360x780 zusätzliche 5px Überlauf durch die Serifenschrift. */
+@media(max-width:375px){
+ .inhalt.muell1{padding-top:0;gap:4px}
+ .muellraster{gap:5px}
+ .heutewert.muellsumme{min-height:64px;padding-block:7px}
+}
+
+/* Paket 7 (22.10.2026): Nutzen in einem Blick – Müllmenge + was pro Gericht bleibt.
+   UI-only: Werte kommen aus bestehenden Modulen muell.js und engine.preisAmpel.
+   Keine neuen Kennzahlen, keine Änderung der Grenzwerte. */
+.muellraster .ware .wt{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  min-height:55px;
+  padding:7px 10px 8px;
+}
+.muellraster .ware .wt b{
+  display:block;
+  font:400 1.0625rem/1.17 var(--gc-display);
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+.muellraster .ware .wt .muell-ueblich{
+  display:block;
+  font:700 0.75rem/1.2 var(--gc-ui);
+  color:var(--gc-muted);
+  font-variant-numeric:tabular-nums;
+}
+.muellraster .ware .gerichtbild.mini{
+  aspect-ratio:16/9;
+  width:100%;
+  object-fit:cover;
+}
+.kl-gt{display:flex;flex-direction:column;justify-content:center;align-self:stretch;gap:4px}
+.kl-gn{line-height:1.14}
+.kl-gp{margin-top:3px;display:flex;align-items:center;justify-content:space-between}
+.kl-nutzen{
+  display:flex;
+  gap:8px;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-top:3px;
+  color:var(--gc-green);
+  font-variant-numeric:tabular-nums;
+}
+.kl-nutzen b{font:800 1.0625rem/1.25 var(--gc-ui);white-space:nowrap}
+.kl-nutzen small{font:800 0.75rem/1.25 var(--gc-ui);white-space:nowrap}
+.kl-gericht.a-rot .kl-nutzen{color:var(--gc-red)}
+.kl-gericht.a-gelb .kl-nutzen{color:var(--gc-yellow)}
+.kl-gericht.a-grau .kl-nutzen,.kl-nutzen.ohne-wert{color:var(--gc-muted)}
+.kl-nutzen-balken{
+  display:block;
+  height:4px;
+  width:100%;
+  border-radius:99px;
+  background:var(--gc-tint);
+  overflow:hidden;
+  margin-top:2px;
+}
+.kl-nutzen-balken i{
+  display:block;
+  height:100%;
+  background:var(--gc-green);
+  border-radius:99px;
+}
+.kl-nutzen-balken.a-rot i{background:var(--gc-red)}
+.kl-nutzen-balken.a-gelb i{background:var(--gc-yellow)}
+.kl-nutzen-balken.a-grau i{background:var(--gc-muted)}
+.karte.kl-gericht{min-height:137px}
+.kl-gericht .gerichtbild{height:120px}
+@media(max-width:375px){
+  .muellraster .ware .gerichtbild.mini{aspect-ratio:2/1}
+  .muellraster .ware .wt{min-height:51px;gap:2px;padding:5px 8px}
+  .muellraster .ware .wt b{font-size:0.9375rem}
+  .muellraster .ware .wt .muell-ueblich{font-size:0.75rem}
+  .karte.kl-gericht{min-height:123px}
+  .kl-gericht .gerichtbild{height:106px;width:94px}
+  .kl-gt{gap:2px;padding-inline:8px}
+  .kl-nutzen{gap:3px}
+  .kl-nutzen b{font-size:0.875rem}
+  .kl-nutzen small{font-size:0.75rem}
+}
+
+/* Paket 7 Browserabnahme: 15 px weniger Höhe bei 390 px, ohne kleinere Tippflächen. */
+.muellraster .ware img.gerichtbild.mini{aspect-ratio:2/1}
+
+/* Paket 8 · B Basis + C Büro/Ordnung – vom Kapitän freigegeben 22.10.2026 */
+/* Nur Optik auf reale Funktionen. Keine Versprechen über automatische Belegverarbeitung. */
+.buero{
+  --b-grund:var(--gc-cream);
+  background:radial-gradient(ellipse 260px 200px at 100% 3%,rgba(36,91,62,.065),transparent 80%),var(--gc-cream);
+}
+.schirm:has(> .buero){background:var(--gc-cream)}
+.buero .appleiste.ebene-kopf.buero{
+  background:var(--gc-paper);
+  border-bottom:1px solid var(--gc-line);
+  min-height:64px;
+  box-shadow:0 3px 12px rgba(74,53,29,.035)
+}
+.buero .ebene-kopf .kopftitel,
+.buero .b-titel{
+  font:400 1.5rem/1.2 var(--gc-display);
+  color:var(--gc-text);
+  letter-spacing:-.025em
+}
+.buero .b-inhalt{
+  gap:15px;
+  width:100%;
+  max-width:640px;
+  padding:18px 16px 36px;
+}
+.buero .b-offen{gap:8px}
+.buero .b-chip{
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  border-radius:15px;
+  min-height:56px;
+  box-shadow:var(--gc-shadow);
+  color:var(--gc-text);
+  font-weight:700;
+}
+.buero .b-chip .b-punkt{width:11px;height:11px}
+/* Drei amtliche Ordner: echte Daten/Status, nicht die Fantasie-Ordner der Konzeptgrafik. */
+.buero .b-ordner{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:0;
+  margin-top:5px;
+}
+.buero .karte.b-ordnerkachel{
+  position:relative;
+  display:grid!important;
+  grid-template-columns:56px minmax(0,1fr) 24px;
+  grid-template-rows:minmax(21px,auto) minmax(23px,auto);
+  gap:3px 14px!important;
+  align-items:center;
+  min-height:90px;
+  padding:12px 15px!important;
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  border-radius:20px;
+  box-shadow:var(--gc-shadow);
+  text-align:left;
+}
+.buero .b-ordnerkachel .b-ks{
+  grid-column:1;grid-row:1/3;
+  width:56px;height:56px;
+  border-radius:16px;
+  background:var(--gc-green-light);
+  color:var(--gc-deep);
+}
+.buero .b-ordnerkachel .b-ks .sym{width:27px;height:27px}
+.buero .b-ordnerkachel .b-ks.steuer{background:var(--gc-copper-light);color:var(--gc-copper)}
+.buero .b-ordnerkachel .b-ks.buch{background:var(--gc-tint);color:var(--gc-deep)}
+.buero .b-ordnerkachel>b{
+  grid-column:2;grid-row:1;
+  font:400 1.25rem/1.16 var(--gc-display);
+  color:var(--gc-text);
+  overflow-wrap:anywhere;
+}
+.buero .b-ordnerkachel>small{
+  grid-column:2;grid-row:2;
+  display:flex;align-items:center;gap:8px;
+  margin:0;
+  font:650 .8125rem/1.35 var(--gc-ui);
+  color:var(--gc-muted);
+  white-space:normal;
+}
+.buero .b-ordnerkachel .b-punkt{width:9px;height:9px}
+.buero .b-ordnerkachel:after{
+  content:"";
+  grid-column:3;grid-row:1/3;
+  width:9px;height:9px;
+  border-top:2px solid var(--gc-muted);
+  border-right:2px solid var(--gc-muted);
+  transform:rotate(45deg);
+  justify-self:center;
+}
+/* C-Erweiterung: echte Buchungs-/Lager-/Karten-/Einrichtungswege ordentlich gruppiert. */
+.buero .b-bereiche{
+  display:flex;flex-direction:column;gap:10px;
+  margin-top:6px;
+}
+.buero .b-bereich{
+  overflow:hidden;
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  border-radius:19px;
+  box-shadow:var(--gc-shadow);
+}
+.buero .b-bereich > summary{
+  min-height:78px;
+  display:flex;align-items:center;gap:13px;
+  padding:12px 14px;
+  background:var(--gc-white);
+  list-style:none;
+}
+.buero .b-bereich > summary .b-zs{
+  width:48px;height:48px;
+  background:var(--gc-green-light);
+  color:var(--gc-deep);
+  border-radius:14px;
+}
+.buero .b-bereich[data-bereich="ware"] > summary .b-zs{background:var(--gc-tint);color:var(--gc-deep)}
+.buero .b-bereich[data-bereich="karte"] > summary .b-zs{background:var(--gc-copper-light);color:var(--gc-copper)}
+.buero .b-bereich[data-bereich="laden"] > summary .b-zs{background:var(--gc-paper);color:var(--gc-copper)}
+.buero .b-bereich > summary .b-zt b{
+  font:400 1.1875rem/1.2 var(--gc-display);
+  color:var(--gc-text);
+}
+.buero .b-bereich > summary .b-zt small{
+  margin-top:3px;
+  font:600 .78125rem/1.35 var(--gc-ui);
+  color:var(--gc-muted);
+}
+.buero .b-bereich > summary .b-pfeil{width:20px!important;height:20px!important}
+.buero .b-bereich[open] > summary{
+  background:linear-gradient(90deg,var(--gc-green-light),var(--gc-white) 70%);
+  border-bottom:1px solid var(--gc-line);
+}
+.buero .b-bereich > .b-liste{background:var(--gc-paper);border:0!important}
+.buero .b-bereich .b-liste .b-zeile{
+  min-height:64px;
+  padding:12px 15px;
+  border-bottom:1px solid var(--gc-line);
+}
+.buero .b-bereich .b-liste .b-zt b{font-size:.9375rem}
+.buero .b-bereich .b-liste .b-zs{background:var(--gc-white)}
+.buero .b-bereich button:focus-visible,.buero .b-ordnerkachel:focus-visible,.buero summary:focus-visible{
+  outline:3px solid var(--gc-copper);outline-offset:2px
+}
+/* Einzelne Ordner: ruhigere Header und Statusliste */
+.buero .b-ordnerkopf{gap:14px;margin-bottom:6px}
+.buero .b-ordnerkopf b{font:400 1.625rem/1.1 var(--gc-display)}
+.buero .b-ordnerkopf .b-ks{background:var(--gc-green-light)}
+.buero .b-segment{border-radius:15px;background:var(--gc-tint)}
+.buero .b-segment button{min-height:48px;border-radius:12px}
+.buero .b-segment button.an{background:var(--gc-deep);color:var(--gc-white)!important}
+.buero .b-stand{border-radius:19px}
+.buero .b-zs{border-radius:12px}
+.buero .b-haupt{min-height:64px!important;border-radius:16px}
+/* Inventur: echte Messung/Menge – kein erfundenes Haltbarkeitsdatum. */
+.inv-start .inv-startknopf{border-radius:20px;min-height:88px}
+.inv-start .karte,.inv-listeseite .karte,.inv-listeseite .inv-posten{
+  border:1px solid var(--gc-line);
+  border-radius:19px;
+  background:var(--gc-white);
+  box-shadow:var(--gc-shadow);
+}
+.inv-listeseite .inv-zusammen{
+  background:linear-gradient(100deg,var(--gc-green-light),var(--gc-white));
+  padding:14px;
+}
+.inv-listeseite .inv-summe b{color:var(--gc-deep);font-variant-numeric:tabular-nums}
+.inv-listeseite .inv-balken{background:var(--gc-tint);border-radius:99px;overflow:hidden}
+.inv-listeseite .inv-balken i{background:var(--gc-green);border-radius:99px}
+.inv-listeseite .inv-posten{overflow:hidden}
+.inv-listeseite .inv-posten .inv-auf{min-height:65px}
+.inv-listeseite .inv-posten .inv-text b{font-weight:750}
+.inv-listeseite .inv-gruppenkopf{color:var(--gc-deep)}
+@media(max-width:375px){
+  .buero .b-inhalt{padding-inline:12px}
+  .buero .karte.b-ordnerkachel{grid-template-columns:50px minmax(0,1fr) 18px;padding:10px 12px!important;gap:2px 11px!important}
+  .buero .b-ordnerkachel .b-ks{width:50px;height:50px}
+  .buero .b-bereich > summary{padding:10px 11px;gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .buero .b-bereich > summary .b-pfeil{transition:none!important}
+}
+
+/* Paket 8B: verbindliche B-Bildsprache für L2 Müll.
+   Daten bleiben die echten Tages-Einträge; keine erfundene Einsparung. */
+.inhalt.muell1 .heutewert.muellsumme{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:101px;
+  padding:16px 18px;
+  border-radius:21px;
+  border:1px solid rgba(255,255,255,.3);
+  color:var(--gc-white);
+  background:
+    linear-gradient(90deg,rgba(23,64,42,.97) 0%,rgba(28,75,48,.92) 62%,rgba(28,75,48,.72) 100%),
+    url("../foto/r-tomate.webp") center/cover;
+  box-shadow:0 10px 22px rgba(26,67,43,.14);
+}
+.inhalt.muell1 .muellsumme h1{
+  font:400 1.375rem/1.1 var(--gc-display);
+  color:var(--gc-white)
+}
+.inhalt.muell1 .muellsumme .zahl{
+  font:800 1.875rem/1.12 var(--gc-ui);
+  color:var(--gc-white);
+  font-variant-numeric:tabular-nums
+}
+/* Drei Fotospalten wie B: große Klickfläche, kurzes Etikett plus übliche Menge. */
+.inhalt.muell1 .muellraster{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.inhalt.muell1 .muellraster .ware{
+  min-width:0;
+  border-radius:15px;
+  box-shadow:0 4px 12px rgba(74,53,29,.075)
+}
+.inhalt.muell1 .muellraster .ware .gerichtbild.mini{
+  display:block;
+  aspect-ratio:4/3;
+  border-radius:0;
+  object-fit:cover;
+}
+.inhalt.muell1 .muellraster .ware .wt{
+  min-height:50px;
+  padding:6px 7px;
+  gap:2px;
+}
+.inhalt.muell1 .muellraster .ware .wt b{
+  font:400 .9375rem/1.14 var(--gc-display);
+  overflow-wrap:anywhere
+}
+.inhalt.muell1 .muellraster .ware .wt small{
+  font:650 .75rem/1.15 var(--gc-ui)
+}
+.inhalt.muell1 .muellraster .ware-mehr{
+  width:44px;height:44px;
+}
+@media(max-width:375px){
+  .inhalt.muell1 .heutewert.muellsumme{min-height:87px;padding:11px 13px}
+  .inhalt.muell1 .muellsumme h1{font-size:1.25rem}
+  .inhalt.muell1 .muellsumme .zahl{font-size:1.5625rem}
+  .inhalt.muell1 .muellraster{gap:6px}
+  .inhalt.muell1 .muellraster .ware .gerichtbild.mini{aspect-ratio:1.45}
+  .inhalt.muell1 .muellraster .ware .wt{min-height:47px;padding:4px 5px}
+  .inhalt.muell1 .muellraster .ware .wt b{font-size:.875rem}
+}
+
+/* Paket 8C – Mikrodetails im echten Müll-Browserbild */
+.inhalt.muell1 .muellraster .ware:not(.andere) .ware-mehr{
+  top:5px;
+  right:5px;
+  width:44px;
+  height:44px;
+  background:transparent;
+  border:0;
+  color:transparent;
+  font-size:.75rem;
+  box-shadow:none;
+}
+.inhalt.muell1 .muellraster .ware .ware-mehr::before{
+  content:"•••";
+  width:30px;
+  height:27px;
+  display:grid;
+  place-items:center;
+  background:var(--gc-white);
+  color:var(--gc-deep);
+  border:1px solid var(--gc-line);
+  box-shadow:0 2px 7px rgba(31,42,36,.13);
+  border-radius:99px;
+  font:700 .5625rem/1 var(--gc-ui);
+  letter-spacing:0;
+}
+.inhalt.muell1 .muellraster .ware .wt b{
+  font-size:.875rem;
+  hyphens:auto;
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+
+/* Sanji · Pilot-Bildwelt 22.10.2026: echte Premium-WebP für beide Ladenarten */
+.heute-laden.pilot-doener .karte.h-ziel.h-ziel-kurs{
+  background-image:
+    linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
+    linear-gradient(90deg,rgba(19,40,27,.93) 0%,rgba(19,40,27,.70) 42%,rgba(19,40,27,.14) 100%),
+    url("../foto/g-doener.webp");
+}
+.heute-laden.pilot-burger .karte.h-ziel.h-ziel-kurs{
+  background-image:
+    linear-gradient(0deg,rgba(22,44,29,.54),rgba(22,44,29,0) 66%),
+    linear-gradient(90deg,rgba(19,40,27,.93) 0%,rgba(19,40,27,.66) 42%,rgba(19,40,27,.10) 100%),
+    url("../foto/g-burger.webp");
+}
+
+/* Paket 9: Premium-Bildwelt in L2 Station und L5 Gerichtskarten. */
+/* Vollbild für einen fest montierten Touchscreen über dem Mülleimer.
+   Echte Artikelbilder/Mengen, Personalansicht ohne Euro, deaktivierte Waage. */
+.schirm:has(> .muell-station){background:var(--gc-cream);min-height:100dvh}
+.inhalt.muell-station{
+  position:fixed;
+  inset:0;
+  box-sizing:border-box;
+  z-index:60;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  width:100%;
+  max-width:none;
+  max-height:100dvh;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(22px + env(safe-area-inset-bottom,0px));
+  background:radial-gradient(ellipse 450px 320px at 85% -2%,rgba(76,107,85,.14),transparent 80%),var(--gc-cream);
+  color:var(--gc-text);
+}
+.muell-station-kopf{
+  display:grid;
+  grid-template-columns:56px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  min-height:72px;
+}
+.muell-station-kopf h1{
+  margin:0;
+  font:400 clamp(1.65rem,7vw,2.3rem)/1.04 var(--gc-display);
+  letter-spacing:-.02em;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.muell-station-zu{
+  width:56px;height:56px;
+  display:grid;place-items:center;
+  border:1px solid var(--gc-line);
+  border-radius:17px;
+  color:var(--gc-deep);
+  background:var(--gc-white);
+  box-shadow:var(--gc-shadow);
+}
+.muell-station-zu .sym{width:26px;height:26px}
+.muell-station-waage{
+  display:grid;
+  gap:1px;
+  justify-items:end;
+  padding:8px 11px;
+  border:1px solid var(--gc-line);
+  border-radius:15px;
+  background:var(--gc-white);
+  color:var(--gc-muted);
+}
+.muell-station-waage strong{
+  font:800 1.42rem/1.16 var(--gc-ui);
+  letter-spacing:-.03em;
+  color:var(--gc-muted);
+  white-space:nowrap;
+}
+.muell-station-waage small{font:.75rem/1.2 var(--gc-ui);white-space:nowrap}
+.muell-station-raster{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-content:start;
+  gap:13px!important;
+  padding-bottom:8px;
+}
+.muell-station-raster .ware{
+  min-width:0;
+  overflow:hidden;
+  border-radius:19px!important;
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  box-shadow:var(--gc-shadow);
+}
+.muell-station-raster .ware-tipp{min-height:174px}
+.muell-station-raster .ware .gerichtbild.mini{
+  width:100%;height:auto;
+  aspect-ratio:5/3!important;
+  padding:0;
+  object-fit:cover;
+  background:var(--gc-green-light);
+}
+.muell-station-raster .ware .gerichtbild.mini.pikto{object-fit:contain;padding:13px}
+.muell-station-raster .ware .wt{
+  min-height:56px!important;
+  padding:9px 11px!important;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+.muell-station-raster .ware .wt b{
+  font:400 1.2rem/1.08 var(--gc-display)!important;
+  color:var(--gc-text);
+  overflow-wrap:anywhere;
+}
+.muell-station-raster .ware .wt small{
+  font:750 .875rem/1.18 var(--gc-ui)!important;
+  color:var(--gc-muted)
+}
+.muell-station-raster .ware .ware-mehr{
+  top:6px!important;right:5px!important;
+  width:48px!important;height:48px!important;
+}
+.muell-station-raster .ware .zaehler{
+  top:8px;left:8px;
+  padding:4px 10px;
+  background:var(--gc-white);
+  color:var(--gc-deep);
+  font-size:.875rem
+}
+.muell-station-raster .ware.andere{
+  min-height:174px;
+  border:2px dashed var(--gc-line);
+  background:var(--gc-paper);
+  box-shadow:none;
+  align-items:center;
+  justify-content:center;
+}
+.muell-station-raster .ware.andere b{font:400 1.2rem var(--gc-display)}
+.muell-station-raster .ware.andere .rund{width:56px;height:56px}
+.schirm:has(.muell-station) .muelltoast{
+  z-index:80;
+  bottom:calc(16px + env(safe-area-inset-bottom,0px));
+}
+/* Einziger zusätzlicher Weg vom normalen Müllbildschirm in die Vollbildstation. */
+.muellkopf1 .muell-station-start{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-width:83px;
+  height:56px;
+  padding:0 9px;
+  border:1px solid var(--gc-line);
+  border-radius:15px;
+  background:var(--gc-white);
+  color:var(--gc-deep);
+  box-shadow:var(--gc-shadow);
+  font:750 .8rem/1.2 var(--gc-ui);
+}
+.muell-station-start .sym{width:18px;height:18px;flex:none}
+/* Speisekarte: große echte Premium-Fotos, Margeninformation bewusst daneben.
+   Keine zweite CTA: Tippen öffnet wie bisher das Preis-Blatt. */
+.kartelaeden .kl-raster{gap:12px}
+.kartelaeden .kl-gericht{
+  display:grid;
+  grid-template-columns: minmax(110px,34%) minmax(0,1fr);
+  gap:0;
+  align-items:stretch;
+  min-height:145px;
+  padding:7px;
+  border-radius:22px;
+  overflow:hidden;
+  background:var(--gc-white);
+  border:1px solid var(--gc-line);
+  box-shadow:0 7px 20px rgba(81,54,28,.085);
+}
+.kartelaeden .kl-gericht .gerichtbild{
+  width:100%;
+  height:100%;
+  min-height:130px;
+  max-height:174px;
+  object-fit:cover;
+  object-position:center;
+  border:0;
+  border-radius:16px;
+  align-self:stretch;
+  margin:0;
+  background:var(--gc-tint);
+}
+.kartelaeden .kl-gericht .gerichtbild.pikto{
+  object-fit:contain;
+  padding:14px;
+  background:var(--gc-green-light);
+}
+.kartelaeden .kl-gt{
+  min-width:0;
+  padding:9px 9px 9px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-self:stretch;
+  gap:8px;
+}
+.kartelaeden .kl-gn{
+  font:400 1.25rem/1.11 var(--gc-display);
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+.kartelaeden .kl-gp{display:flex;align-items:center;justify-content:space-between;margin:0}
+.kartelaeden .kl-gp b{font:850 1.28rem/1.1 var(--gc-ui)}
+.kartelaeden .kl-nutzen{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:1px}
+.kartelaeden .kl-nutzen b{font-size:1rem;letter-spacing:-.02em}
+.kartelaeden .kl-nutzen small{font-size:.75rem}
+.kartelaeden .kl-nutzen-balken{height:5px;margin-top:0}
+.kartelaeden .kl-gericht.a-rot{border-color:rgba(170,60,50,.26)}
+.kartelaeden .kl-gericht:active{transform:scale(.993)}
+.kartelaeden .kl-gericht:focus-visible{outline:3px solid var(--gc-copper);outline-offset:2px}
+@media(max-width:375px){
+  .muellkopf1 .muell-station-start{min-width:64px;padding-inline:6px;font-size:.75rem}
+  .muell-station-kopf{gap:6px;grid-template-columns:56px minmax(0,1fr) auto}
+  .muell-station-kopf h1{font-size:1.48rem}
+  .muell-station-waage{padding:6px 8px}
+  .muell-station-waage strong{font-size:1.25rem}
+  .muell-station-raster{gap:8px!important}
+  .muell-station-raster .ware-tipp{min-height:158px}
+  .muell-station-raster .ware .wt{padding:6px 8px!important}
+  .muell-station-raster .ware .wt b{font-size:1.03rem!important}
+  .kartelaeden .kl-gericht{grid-template-columns:minmax(100px,33%) minmax(0,1fr);min-height:135px}
+  .kartelaeden .kl-gericht .gerichtbild{min-height:119px;max-height:155px}
+  .kartelaeden .kl-gt{padding:7px 5px 7px 9px;gap:6px}
+  .kartelaeden .kl-gn{font-size:1.125rem}
+  .kartelaeden .kl-gp b{font-size:1.08rem}
+  .kartelaeden .kl-nutzen b{font-size:.875rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .kartelaeden .kl-gericht,.muell-station-raster .ware{transition:none!important;animation:none!important}
+}
+
+/* Müllstation-Mengenblatt bleibt ein echtes Vollbild ohne Geldanzeige/Navigation. */
+.inhalt.muellform.muell-station-detail{
+  position:fixed;
+  inset:0;
+  box-sizing:border-box;
+  z-index:60;
+  width:100%;
+  max-width:none;
+  max-height:100dvh;
+  overflow-y:auto;
+  padding:calc(20px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px));
+  background:var(--gc-cream);
+}
+.muell-station-detail .muellhaupt{min-height:64px}
+.muell-station-detail .auswahlkarte{min-height:80px}
+.muell-station-detail .leise{min-height:56px}
+
+/* Paket 11 – Tag abschließen: warme B-Premium-Bilanz, 22.10.2026 */
+/* Ein Ritual am Schichtende: drei Aufgaben, eine Handlung – keine erfundenen Ersparnisse. */
+.ab-kopf{padding-top:14px;padding-bottom:8px}
+.ab-kopf h1{font:400 clamp(1.75rem,8.2vw,2.2rem)/1.09 var(--gc-display);color:var(--gc-text)}
+.ab-kopf .unter{font:650 .8125rem/1.4 var(--gc-ui);color:var(--gc-muted)}
+.inhalt.abschluss-laden{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  padding:12px 17px calc(98px + env(safe-area-inset-bottom,0px));
+  min-width:0;
+}
+.abschluss-laden .ab-liste{
+  display:grid;
+  gap:9px;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  padding:0;
+}
+.abschluss-laden .ab-zeile{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto 18px;
+  gap:9px;
+  align-items:center;
+  min-height:90px;
+  padding:13px 13px 13px 19px;
+  border-radius:19px;
+  border:1px solid var(--gc-line);
+  background:var(--gc-white);
+  box-shadow:var(--gc-shadow);
+  color:var(--gc-text);
+  text-align:left;
+}
+.abschluss-laden .ab-zeile:before{
+  content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;
+  border-radius:0 5px 5px 0;
+  background:var(--gc-line);
+}
+.abschluss-laden .ab-zeile.fertig:before{background:var(--gc-green)}
+.abschluss-laden .ab-zeile.offen:before,
+.abschluss-laden .ab-zeile.warn:before{background:var(--gc-yellow)}
+.abschluss-laden .ab-zeile span:first-child{display:flex;flex-direction:column;min-width:0;gap:4px}
+.abschluss-laden .ab-zeile b{font:400 1.25rem/1.12 var(--gc-display);color:var(--gc-text)}
+.abschluss-laden .ab-zeile small{font:650 .75rem/1.3 var(--gc-ui);color:var(--gc-muted)}
+.abschluss-laden .ab-zeile .ab-wert{
+  text-align:right;
+  font:800 1.125rem/1.2 var(--gc-ui);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  color:var(--gc-deep);
+}
+.abschluss-laden .ab-zeile.warn .ab-wert{color:var(--gc-red)}
+.abschluss-laden .ab-zeile.offen .ab-wert,
+.abschluss-laden .ab-zeile.neutral .ab-wert{color:var(--gc-muted)}
+.abschluss-laden .ab-zeile .pfeil{font-size:1.6rem;color:var(--gc-copper)}
+.abschluss-laden .ab-zeile:active{transform:scale(.992)}
+.abschluss-laden .knopf.glut{
+  min-height:64px;
+  margin-top:3px;
+  border-radius:20px;
+  font:800 1.125rem/1.2 var(--gc-ui);
+  background:var(--gc-copper);color:#fff;
+  box-shadow:0 8px 17px rgba(166,73,36,.19)
+}
+.abschluss-laden .tipp{font-size:.8125rem;line-height:1.35}
+
+/* BILANZ: große Veränderung, danach kompakte Werte und fairer Vorwochenvergleich */
+.inhalt.ab-bilanz{
+  display:flex;flex-direction:column;gap:14px;
+  padding:8px 16px calc(95px + env(safe-area-inset-bottom,0px));
+  width:100%;min-width:0;
+}
+.ab-bilanz .karte.ab-hero{
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;isolation:isolate;overflow:hidden;
+  padding:22px 19px 20px;
+  border-radius:24px;
+  min-height:219px;
+  background:
+    radial-gradient(circle at 104% -24%,rgba(228,242,230,.2) 0,rgba(228,242,230,0) 55%),
+    linear-gradient(145deg,var(--gc-deep),var(--gc-green));
+  border:1px solid rgba(255,255,255,.13);
+  color:var(--gc-white);
+  box-shadow:0 12px 25px rgba(30,70,46,.17);
+}
+.ab-bilanz .ab-hero .lbl{
+  font:750 .8125rem/1.2 var(--gc-ui);color:var(--gc-green-light);
+  letter-spacing:.015em;text-transform:none;
+}
+.ab-bilanz .ab-hero .bewegung{
+  display:grid;grid-template-columns:minmax(0,1fr);
+  gap:4px;justify-content:start;
+  align-items:start;
+}
+.ab-bilanz .ab-hero .alt{
+  font:700 1rem/1.2 var(--gc-ui);
+  color:var(--gc-green-light);
+  text-decoration:line-through;
+  text-decoration-color:rgba(255,255,255,.44);
+  text-decoration-thickness:1px;
+  overflow-wrap:anywhere
+}
+.ab-bilanz .ab-hero .bewegung .pfeil{display:none}
+.ab-bilanz .ab-hero .riesig{
+  font:850 clamp(2.15rem,9.4vw,2.7rem)/1.08 var(--gc-ui);
+  color:var(--gc-white);
+  font-variant-numeric:tabular-nums;letter-spacing:-.045em;
+  overflow-wrap:anywhere;
+}
+.ab-bilanz .ab-hero.plus .riesig{color:var(--gc-white)}
+.ab-bilanz .ab-hero.minus .riesig{color:#FFF0D0}
+.ab-bilanz .ab-hero .ab-verlauf{
+  align-self:flex-start;
+  display:block;
+  padding:8px 10px;
+  border-radius:12px;
+  font:750 .825rem/1.35 var(--gc-ui);
+  color:var(--gc-deep);
+  background:var(--gc-green-light);
+  max-width:100%;
+}
+.ab-bilanz .ab-hero .ab-verlauf.negativ{background:var(--gc-yellow-light);color:var(--gc-yellow)}
+.ab-bilanz .ab-hero .fein{color:var(--gc-green-light);font:600 .75rem/1.3 var(--gc-ui)}
+.ab-bilanz .ab-zahlen{
+  padding:5px 15px;
+  border:1px solid var(--gc-line);
+  background:var(--gc-white);
+  border-radius:21px;
+  box-shadow:var(--gc-shadow)
+}
+.ab-bilanz .ab-zahlen .summenzeile{
+  padding:10px 0;
+  min-height:45px;
+  gap:9px;
+  border-bottom:1px solid var(--gc-line);
+  align-items:center;
+}
+.ab-bilanz .ab-zahlen .summenzeile:last-child{border-bottom:none}
+.ab-bilanz .ab-zahlen .summenzeile span:first-child{
+  font:650 .875rem/1.2 var(--gc-ui);
+  color:var(--gc-muted);
+}
+.ab-bilanz .ab-zahlen .summenzeile .wert{
+  font:800 .925rem/1.25 var(--gc-ui);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+  color:var(--gc-deep);text-align:right
+}
+.ab-bilanz .ab-zahlen .summenzeile .wert.rot{color:var(--gc-red)}
+.ab-bilanz .ab-vergleich{
+  padding:13px 16px;
+  display:block;
+  border-radius:18px;
+  border:1px solid var(--gc-line);
+  background:var(--gc-paper);
+  box-shadow:0 4px 12px rgba(81,54,28,.05);
+  color:var(--gc-text);
+}
+.ab-bilanz .ab-vergleich.besser{border-left:4px solid var(--gc-green)}
+.ab-bilanz .ab-vergleich.schlechter{border-left:4px solid var(--gc-yellow)}
+.ab-bilanz .ab-vergleich b{
+  font:750 .875rem/1.4 var(--gc-ui);
+  color:var(--gc-text);
+  overflow-wrap:anywhere;
+}
+.ab-bilanz .ab-vergleich small{
+  display:block;margin-top:4px;
+  font:650 .75rem/1.35 var(--gc-ui);
+  color:var(--gc-muted)
+}
+.ab-bilanz .knopf.ab-zurueck{
+  min-height:60px;
+  margin:0;
+  border-radius:17px;
+  background:var(--gc-copper);color:#fff;
+  font-weight:800;
+}
+@media(max-width:375px){
+ .inhalt.abschluss-laden{padding-inline:12px;gap:12px}
+ .abschluss-laden .ab-zeile{min-height:82px;padding:11px 10px 11px 15px}
+ .abschluss-laden .ab-zeile b{font-size:1.125rem}
+ .abschluss-laden .ab-zeile .ab-wert{font-size:1rem}
+ .inhalt.ab-bilanz{gap:10px;padding-inline:12px}
+ .ab-bilanz .karte.ab-hero{min-height:200px;padding:17px 14px}
+ .ab-bilanz .ab-hero .riesig{font-size:2.05rem}
+ .ab-bilanz .ab-zahlen .summenzeile{min-height:42px;padding:8px 0}
+}
+@media(prefers-reduced-motion:reduce){
+ .abschluss-laden .ab-zeile{transition:none!important}
+}
+
+/* Paket 11.1: Details nur bei Bedarf, Hauptknopf auf dem ersten Bildschirm. */
+.ab-bilanz .ab-zahlen .ab-details{
+  margin:0;
+  padding:0;
+  border-top:1px solid var(--gc-line);
+}
+.ab-bilanz .ab-details summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:49px;
+  padding:11px 1px;
+  cursor:pointer;
+  color:var(--gc-deep);
+  font:800 .875rem/1.25 var(--gc-ui);
+  list-style:none;
+}
+.ab-bilanz .ab-details summary::-webkit-details-marker{display:none}
+.ab-bilanz .ab-details summary span{font-size:1.5rem;line-height:1;transition:transform .15s}
+.ab-bilanz .ab-details[open] summary span{transform:rotate(180deg)}
+.ab-bilanz .ab-details summary:focus-visible{outline:3px solid var(--gc-copper);outline-offset:3px}
+.ab-bilanz .ab-details .summenzeile:last-child{border-bottom:0}
+.ab-bilanz .ab-hero{min-height:190px;gap:7px;padding-block:18px}
+.ab-bilanz .ab-hero .ab-verlauf{padding:6px 9px;font-size:.7875rem}
+.ab-bilanz .ab-zahlen .summenzeile{min-height:43px;padding:7px 0}
+.ab-bilanz .ab-vergleich{padding:11px 12px}
+.ab-bilanz{gap:10px!important}
+@media(max-width:375px){
+  .ab-bilanz .ab-hero{min-height:177px}
+  .ab-bilanz .ab-details summary{min-height:46px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ab-bilanz .ab-details summary span{transition:none!important}
+}
+
+/* Work-Integration 22.10.: vorhandene Messwerte, klare Büro-Wege und große Touchflächen. */
+.h-schaetzung{align-self:flex-start;color:var(--gc-white);font:600 .75rem/1.3 var(--gc-ui);margin:0 0 4px}
+.heute-laden .h-ladenname,.h-jetzt-text b{overflow-wrap:anywhere}
+.heute-laden .h-kopf>div:first-child{min-width:0}
+.heute-laden .h-datum{flex:none}
+.b-werkzeuge{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.b-werkzeuge .b-zeile{min-height:64px;border:1px solid var(--gc-line);border-radius:14px;background:var(--gc-white);padding:10px;gap:8px;box-shadow:var(--gc-shadow)}
+.b-werkzeuge .b-zs{width:30px;height:30px;flex:none}
+.b-werkzeuge .b-zs .sym{width:22px;height:22px}
+.b-werkzeuge .b-zt b{font-size:.875rem;overflow-wrap:anywhere}
+.b-werkzeuge .b-pfeil{display:none}
+.buero .b-segment button,.buero .b-rund,.buero .b-mini,
+.buero .b-knopfreihe .knopf,
+.buero .b-vorschau-leiste .knopf,.b-einstellungen .knopf,
+.b-einstellungen .zeileknopf,.b-einstellungen .chip{min-height:56px}
+.buero .b-rund{min-width:56px}
+.buero .b-mini{min-width:56px}
+.buero .b-zt b,.buero .b-ordnerkopf b,.b-einstellungen .knopf,
+.b-einstellungen .zeileknopf b{overflow-wrap:anywhere}
+.buero .b-ordnerkopf>div{min-width:0}
+.buero .b-monat>b{min-width:0;text-align:center;overflow-wrap:anywhere}
+.buero .b-knopfreihe>.knopf,.buero .b-vorschau-leiste>.knopf{min-width:0;white-space:normal;text-align:center;overflow-wrap:anywhere}
+.buero .ebene-kopf .zurueckzeile{min-height:56px}
+.b-einstellungen .kopfband{padding-top:20px}
+.b-einstellungen .einstellungen-inhalt{padding-bottom:32px;gap:16px}
+.b-einstellungen .karte{border:1px solid var(--gc-line);border-radius:19px;background:var(--gc-white);box-shadow:var(--gc-shadow)}
+.b-einstellungen .einstellungen-inhalt>.karte{padding:16px!important}
+.b-einstellungen .einstellungen-inhalt>.karte:first-of-type{padding:0!important}
+.b-einstellungen .einstellungen-inhalt>.karte h2{margin:0 0 12px;font-size:1.1875rem;line-height:1.3}
+.b-einstellungen .karte .zeileknopf{border:0;border-bottom:1px solid var(--gc-line);border-radius:0;box-shadow:none;background:transparent}
+.b-einstellungen .karte .zeileknopf:last-child{border-bottom:0}
+.b-einstellungen #sicherung{scroll-margin-top:80px}
+.b-einstellungen .summenzeile{gap:8px 12px;flex-wrap:wrap}
+.b-einstellungen .summenzeile>.wert{margin-inline-start:auto;white-space:normal}
+.b-einstellungen .summenzeile>span:first-child{min-width:0;overflow-wrap:anywhere}
+.b-einstellungen .chips{gap:8px}
+.b-einstellungen .schalter{min-height:56px;min-width:56px;border-radius:28px}
+.b-einstellungen .schalter::after{top:50%;transform:translateY(-50%)}
+.buero .b-frei .textfeld,.buero .b-belehrung .knopf{min-height:56px;min-width:0}
+.b-einstellungen .b-sicherung-link{justify-content:center;text-align:center}

@@ -1,5 +1,7 @@
 export default {
-  app: { name: "GastroCalc", entwurf: "Test version" },
+  // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
+  nutzen: {"start":"Starts with first waste entry","titel":"This month’s benefit","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
+  app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
     weiter: "Next", zurueck: "Back", fertig: "Done", speichern: "Save", abbrechen: "Cancel", stueck: "pcs", bearbeiten: "Editing", zahlZuGross: (v) => `"${v}" is too large – up to ten million works.`, uebernehmen: "Apply", zahlUngueltig: (v) => `"${v}" is not a number. Digits and one decimal separator only.`,
@@ -419,11 +421,11 @@ export default {
       name: "Name", ungueltig: "Please pick a date up to today.", gespeichert: "Briefing saved." },
     knopf: { pdf: "Share as PDF", vorschau: "Preview", csv: "CSV", csvTeil: (t) => `${t} as CSV`, schliessen: "Close", datei: "File", drucken: "Print / PDF",
       druckHinweis: "In the print window choose “Save as PDF” or “Share”.", geteilt: "Document ready.", csvFertig: (n) => (n === 1 ? "1 file ready." : `${n} files ready.`) },
-    dok: { erstellt: (d, z) => `Created on ${d} at ${z} with GastroCalc`, nichtGemessen: "not measured", nk: { erledigt: "Follow-up check done", offen: "Follow-up check open" }, ware: "Goods",
+    dok: { erstellt: (d, z) => `Created on ${d} at ${z} with GastroCash`, nichtGemessen: "not measured", nk: { erledigt: "Follow-up check done", offen: "Follow-up check open" }, ware: "Goods",
       basis: { netto: "net", brutto: "gross" }, ohneMessung: (l) => `no reading: ${l}`, keineMassnahme: "no action entered", offeneTage: (l) => `incomplete: ${l}`,
       ladenArt: (a) => `Shop: ${a}`, geraete: (l) => `Equipment: ${l}`, takt: (n) => (n === 2 ? "Temperature check twice a day" : "Temperature check once a day"), aufgaben: (n) => `${n} cleaning tasks in the plan`,
       standardGrenze: "standard limit", eigeneGrenze: "own limit", unterschrift: ["Date, signature of business", "Checked (date, signature)"],
-      fussAmt: "Record of own checks made with GastroCalc. Entries are not deleted, only withdrawn; withdrawals are listed below. * = added later. This list does not replace a HACCP plan.",
+      fussAmt: "Record of own checks made with GastroCash. Entries are not deleted, only withdrawn; withdrawals are listed below. * = added later. This list does not replace a HACCP plan.",
       satz: (p) => `Blended VAT rate ${p} %`, svev: "Benefit-in-kind values 2026 (SvEV): breakfast €2.37, lunch and dinner €4.57 each", netto: "Net goods value at purchase price",
       summe: "Total", vormonat: "previous count", monatslast: "Total monthly costs",
       fussSteuer: "Daily sales are notes from the app and do not replace the till report (Z report). Amounts are net unless stated otherwise. * = entered later.",
@@ -560,7 +562,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 set of initials in the team" : `${n} initials in the team`,
     spaeter: "Continue later",
     haftungTitel: "Who is responsible?",
-    haftung: "You stay responsible: your limits, your measurements and your actions are yours. GastroCalc only writes down what you enter and checks nothing. The data lives only on this phone – back it up yourself and keep it for at least 12 months.",
+    haftung: "You stay responsible: your limits, your measurements and your actions are yours. GastroCash only writes down what you enter and checks nothing. The data lives only on this phone – back it up yourself and keep it for at least 12 months.",
     arten: { kuehl: "Chilled", tk: "Frozen", warm: "Hot holding" },
     rundgang: "Round",
     nacherfasst: "added later",
@@ -919,7 +921,7 @@ export default {
     sicherungText: "All data lives only on this device. With the backup file you can pass it on or move it to a new phone. The file is only encrypted with a password and contains your figures, wages and receipt photos. Only send it to places you trust.",
     exportieren: "Create backup file",
     importieren: "Read backup file",
-    importFehler: "That is not a GastroCalc backup file.",
+    importFehler: "That is not a GastroCash backup file.",
     importOk: "Read in.",
     loeschenAlles: "Delete everything",
     loeschenFrage: "Really delete everything? This cannot be undone.",
@@ -1107,7 +1109,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Today", muell: "Waste", kuehl: "Fridges", putzplan: "Cleaning", karte: "Menu" },
     leiste: "Shop", menueAuf: "Open menu", schliessen: "Close", hilfeAuf: "Help", deinLaden: "Your shop", abschluss: "Close the day", personal: "Staff mode", buero: "Office", ladenWechseln: "Switch shop", sprache: "Language", zumLaden: "Shop", zumBuero: "Office", schlossCode: "Enter office code",
-    pin: { titel: "Office code", neu: "Choose a new code", nochmal: "Once more", falsch: "Wrong code", ungleich: "Doesn't match. Choose again.", gesetzt: "Office code saved", entfernt: "Office code removed", setzen: "Set office code", aendern: "Change office code", entfernen: "Remove code", ohne: "Without a code, anyone can open the office.", mit: "The office is protected by a code.", loeschen: "Delete digit" },
+    pin: { titel: "Office code", neu: "Choose a new code", nochmal: "Once more", falsch: "Wrong code", ungleich: "Doesn't match. Choose again.", gesetzt: "Office code saved", entfernt: "Office code removed", setzen: "Set office code", aendern: "Change office code", entfernen: "Remove code", ohne: "Without a code, anyone can open the office.", mit: "The office is protected by a code.", loeschen: "Delete digit", testphase: "Test phase: no code. Anyone can enter the office and staff mode. Switch back on before the big pilot.", testphaseAn: "Turn on test phase without code", testphaseAus: "Turn the code back on" },
     hilfeText: {
       allgemein: "The bar at the bottom leads to everything you need in the shop. Costs, setup and lists live in the office.",
       start: "Your day at a glance. The big number shows how much revenue is still missing to break even. Red means: act now. An “≈” in front means the number is an estimate (benchmark for goods or your own wage) – explained in the office under “Month & counter”. Without purchase prices the app uses 32 % cost of goods (snack bars: 23–41 %, BMF benchmark tables 2025).",
@@ -1122,7 +1124,7 @@ export default {
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   heute: {
     zielLinie: "zero + target profit",
-    stufe: { bisNull: "Left to break even", bisZiel: "Left to target", ueberZiel: "Above target" },
+    stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },
     tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
     kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },
     ok: "OK", offenN: (n) => `${n} open`, jetztDran: "Up next",
@@ -1407,7 +1409,7 @@ export default {
     vergleich: "Comparison", vergleichAb: "Comparison needs two shops", keineLaeden: "No shop with data", bericht: "Owner report", datei: "Owner", drucken: "Print report", csv: "CSV", geteilt: "Report shared",
     dok: { zahlen: "Figures per shop", hinweis: "≈ = estimated (guide prices, guide value or estimate). “missing” = no data in the period. Only shops on this phone, figures from the app's entries.",
       kopf: ["Shop", "Sales", "Food cost", "Thrown away", "Suspected loss", "Duties open", "To zero", "Stock value", "Order"], laden: "Shop", vergleich: "Comparison", vergleichInfo: "Rank only between shops with the same data basis.",
-      trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCalc · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
+      trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCash · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Tap an item and enter what you pay.", fortschritt: (a, b) => `${a} of ${b} done`, fehlt: "missing", filterFehlt: (n) => `Missing (${n})`, filterAlle: (n) => `All (${n})`, selbst: "homemade",
@@ -1419,4 +1421,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Last one off the phone: today" : n === 1 ? "Last one off the phone: 1 day ago" : `Last one off the phone: ${n} days ago`, nieWeg: "No backup off the phone yet", mitPasswort: "With password", ohneFotos: "Without photos (small, for email)",
       verschicken: "Send backup", woFrage: "Where is it now?", woanders: "Other device, email, cloud", nurHandy: "Only on this phone", nurHandyMeldung: "The reminder stays: the file is only on this phone.", gezaehlt: "Backup counted. Reminder reset." } },
   adanaBrot: { frage: "Which bread do you serve with Adana?", pide: "Whole pide", pideHalb: "Half pide", fladen: "Dürüm / lavash", kein: "No bread" }, // 20.10.2026
+  hinweise: { einstieg: "Tips", einstiegUnter: "Tax and office, from your data", einstiegNeu: (n) => `${n} new ${n === 1 ? "tip" : "tips"}`, titel: "Tips", unter: "From your data. General, not advice.", pflicht: "General information, not tax advice – check with your tax adviser.", leer: "No tip right now. More data brings more tips.", quelle: "Source", belege: "Prepare receipts", spaeterKnopf: "Later", spaeter: "later", erledigt: "Done", erledigtMeldung: "Tip done", spaeterMeldung: "Tip moved back" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Legal form", hinweis: "It is on your trade registration or in your imprint.", offen: "Enter legal form", gesetzt: "Legal form saved", namen: { einzel: "Sole proprietorship", gbr: "GbR", gmbh: "GmbH", ug: "UG (limited liability)", kg_ohg: "KG or OHG", unbekannt: "I don’t know" } }, // Rechtsform (23.10.2026)
 };

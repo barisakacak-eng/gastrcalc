@@ -6,7 +6,9 @@
 const lm = (n, a, b, c) => { const x = Math.abs(Number(n)); if (!Number.isFinite(x)) return c; if (!Number.isInteger(x)) return b; const d = x % 10, h = x % 100; return x === 1 ? a : d >= 2 && d <= 4 && (h < 12 || h > 14) ? b : c; };
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Wersja testowa" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Wersja testowa" },
 
   allgemein: {
     weiter: "Dalej", zurueck: "Wstecz", fertig: "Gotowe", speichern: "Zapisz", abbrechen: "Anuluj", stueck: "szt.", bearbeiten: "Edytuj", zahlZuGross: (v) => `„${v}” to za dużo – maksymalnie dziesięć milionów.`, uebernehmen: "Zastosuj", zahlUngueltig: (v) => `„${v}” to nie liczba. Wpisz tylko cyfry i jeden przecinek.`,
@@ -425,11 +427,11 @@ export default {
       name: "Imię", ungueltig: "Wybierz datę do dziś.", gespeichert: "Szkolenie zapisane." },
     knopf: { pdf: "Udostępnij jako PDF", vorschau: "Podgląd", csv: "CSV", csvTeil: (t) => `${t} jako CSV`, schliessen: "Zamknij", datei: "Plik", drucken: "Drukuj / PDF",
       druckHinweis: "W oknie druku wybierz „Zapisz jako PDF” albo „Udostępnij”.", geteilt: "Dokument gotowy.", csvFertig: (n) => `${n} ${lm(n, "plik gotowy", "pliki gotowe", "plików gotowych")}.` },
-    dok: { erstellt: (d, z) => `Utworzono ${d} o ${z} w GastroCalc`, nichtGemessen: "nie zmierzono", nk: { erledigt: "Ponowna kontrola zrobiona", offen: "Ponowna kontrola otwarta" }, ware: "Towar",
+    dok: { erstellt: (d, z) => `Utworzono ${d} o ${z} w GastroCash`, nichtGemessen: "nie zmierzono", nk: { erledigt: "Ponowna kontrola zrobiona", offen: "Ponowna kontrola otwarta" }, ware: "Towar",
       basis: { netto: "netto", brutto: "brutto" }, ohneMessung: (l) => `bez pomiaru: ${l}`, keineMassnahme: "brak wpisanego działania", offeneTage: (l) => `niekompletne: ${l}`,
       ladenArt: (a) => `Lokal: ${a}`, geraete: (l) => `Sprzęt: ${l}`, takt: (n) => (n === 2 ? "Pomiar chłodzenia 2× dziennie" : "Pomiar chłodzenia 1× dziennie"), aufgaben: (n) => `${n} ${lm(n, "zadanie", "zadania", "zadań")} sprzątania w planie`,
       standardGrenze: "Limit standardowy", eigeneGrenze: "własny limit", unterschrift: ["Data, podpis lokalu", "Sprawdzone (data, podpis)"],
-      fussAmt: "Zapis kontroli własnych w GastroCalc. Wpisy nie są usuwane, tylko cofane; cofnięcia są poniżej. * = dopisano później. Ta lista nie zastępuje planu HACCP.",
+      fussAmt: "Zapis kontroli własnych w GastroCash. Wpisy nie są usuwane, tylko cofane; cofnięcia są poniżej. * = dopisano później. Ta lista nie zastępuje planu HACCP.",
       satz: (p) => `Średnia stawka VAT ${p} %`, svev: "Wartość posiłków dla personelu 2026 (SvEV): śniadanie 2,37 €, obiad i kolacja po 4,57 €", netto: "Wartość towaru netto po cenie zakupu",
       summe: "Suma", vormonat: "Stan wcześniej", monatslast: "Koszty miesięczne razem",
       fussSteuer: "Utarg dzienny to notatki z aplikacji i nie zastępuje raportu kasowego (raport Z). Kwoty netto, jeśli nie podano inaczej. * = dopisane później.",
@@ -566,7 +568,7 @@ export default {
     personenKurz: (n) => n === 1 ? "1 osoba w zespole" : `${n} ${lm(n, "osoba", "osoby", "osób")} w zespole`,
     spaeter: "Dokończę później",
     haftungTitel: "Kto odpowiada?",
-    haftung: "Odpowiadasz ty: twoje granice, twoje pomiary i twoje działania należą do ciebie. GastroCalc tylko zapisuje to, co wpiszesz, i niczego nie sprawdza. Dane są tylko na tym telefonie – rób kopie sam i trzymaj je co najmniej 12 miesięcy.",
+    haftung: "Odpowiadasz ty: twoje granice, twoje pomiary i twoje działania należą do ciebie. GastroCash tylko zapisuje to, co wpiszesz, i niczego nie sprawdza. Dane są tylko na tym telefonie – rób kopie sam i trzymaj je co najmniej 12 miesięcy.",
     arten: { kuehl: "Chłodzenie", tk: "Mrożenie", warm: "Utrzymywanie na ciepło" },
     rundgang: "Obchód",
     nacherfasst: "dopisane",
@@ -925,7 +927,7 @@ export default {
     sicherungText: "Wszystkie dane są tylko na tym urządzeniu. Plikiem kopii możesz je przekazać albo przenieść na nowy telefon.",
     exportieren: "Utwórz plik kopii",
     importieren: "Wczytaj plik kopii",
-    importFehler: "To nie jest plik kopii GastroCalc.",
+    importFehler: "To nie jest plik kopii GastroCash.",
     importOk: "Wczytano.",
     loeschenAlles: "Usuń wszystko",
     loeschenFrage: "Na pewno usunąć wszystko? Tego nie da się cofnąć.",
@@ -1113,7 +1115,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Dziś", muell: "Odpady", kuehl: "Chłodzenie", putzplan: "Sprzątanie", karte: "Menu" },
     leiste: "Lokal", menueAuf: "Otwórz menu", schliessen: "Zamknij", hilfeAuf: "Pomoc", deinLaden: "Twój lokal", abschluss: "Zamknij dzień", personal: "Tryb personelu", buero: "Biuro", ladenWechseln: "Zmień lokal", sprache: "Język", zumLaden: "Lokal", zumBuero: "Biuro", schlossCode: "Wpisz kod biura",
-    pin: { titel: "Kod biura", neu: "Wybierz nowy kod", nochmal: "Jeszcze raz", falsch: "Zły kod", ungleich: "Nie zgadza się. Wybierz ponownie.", gesetzt: "Kod biura zapisany", entfernt: "Kod biura usunięty", setzen: "Ustaw kod biura", aendern: "Zmień kod biura", entfernen: "Usuń kod", ohne: "Bez kodu każdy wejdzie do biura.", mit: "Biuro jest chronione kodem.", loeschen: "Usuń cyfrę" },
+    pin: { titel: "Kod biura", neu: "Wybierz nowy kod", nochmal: "Jeszcze raz", falsch: "Zły kod", ungleich: "Nie zgadza się. Wybierz ponownie.", gesetzt: "Kod biura zapisany", entfernt: "Kod biura usunięty", setzen: "Ustaw kod biura", aendern: "Zmień kod biura", entfernen: "Usuń kod", ohne: "Bez kodu każdy wejdzie do biura.", mit: "Biuro jest chronione kodem.", loeschen: "Usuń cyfrę", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Pasek na dole prowadzi do wszystkiego, czego potrzebujesz w lokalu. Liczenie, ustawienia i listy są w biurze.",
       start: "Dzień w skrócie. Duża liczba pokazuje, ile obrotu brakuje do zera. Czerwone znaczy: zajmij się tym teraz. „≈” z przodu oznacza szacunek (towar lub twoja pensja) – wyjaśnienie w biurze pod „Miesiąc i licznik”. Bez cen zakupu aplikacja liczy 32 % towaru (bary: 23–41 %, tabele BMF 2025).",
@@ -1426,7 +1428,7 @@ export default {
     vergleich: "Porównanie", vergleichAb: "Porównanie od dwóch lokali", keineLaeden: "Brak lokalu z danymi", bericht: "Raport właściciela", datei: "Wlasciciel", drucken: "Drukuj raport", csv: "CSV", geteilt: "Raport udostępniony",
     dok: { zahlen: "Wskaźniki według lokalu", hinweis: "≈ = szacunek (ceny orientacyjne, wartość orientacyjna lub szacunek). „brak” = brak danych w okresie. Tylko lokale na tym telefonie, liczby z wpisów w aplikacji.",
       kopf: ["Lokal", "Obrót", "Koszt towaru", "Wyrzucone", "Podejrzenie ubytku", "Otwarte obowiązki", "Do zera", "Wartość magazynu", "Zamówić"], laden: "Lokal", vergleich: "Porównanie", vergleichInfo: "Ranking tylko między lokalami o tej samej bazie danych.",
-      trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCalc · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
+      trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCash · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Stuknij towar i wpisz, ile płacisz.", fortschritt: (a, b) => `${a} z ${b} gotowe`, fehlt: "brak", filterFehlt: (n) => `Brak (${n})`, filterAlle: (n) => `Wszystkie (${n})`, selbst: "własne",
@@ -1438,4 +1440,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ostatnia poza telefonem: dziś" : n === 1 ? "Ostatnia poza telefonem: 1 dzień temu" : `Ostatnia poza telefonem: ${n} dni temu`, nieWeg: "Jeszcze brak kopii poza telefonem", mitPasswort: "Z hasłem", ohneFotos: "Bez zdjęć (mała, do maila)",
       verschicken: "Wyślij kopię", woFrage: "Gdzie jest teraz?", woanders: "Inne urządzenie, mail, chmura", nurHandy: "Tylko na tym telefonie", nurHandyMeldung: "Przypomnienie zostaje: plik jest tylko na tym telefonie.", gezaehlt: "Kopia zaliczona. Przypomnienie wyzerowane." } },
   adanaBrot: { frage: "Jaki chleb podajecie do adany?", pide: "Całe pide", pideHalb: "Pół pide", fladen: "Dürüm / lawasz", kein: "Bez chleba" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

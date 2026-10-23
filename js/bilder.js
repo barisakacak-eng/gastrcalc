@@ -21,7 +21,19 @@ const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger",
   beilagen: "g-pommes", alkoholfrei: "g-getraenk", suppe: "g-suppe", kuchen: "g-kuchen", kaffee: "g-kaffee", fruehstueck: "g-fruehstueck", eis: "g-eis", bier: "g-bier", fleischgericht: "g-fleischgericht" };
 export function fotoName(g) {
   const f = g.rezeptFamilie || "";
-  const kandidaten = ["g-" + fotoSlug(g.name)]; // 17.10.2026: Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
+  // Ein altes Foto namens "Döner Kebab" zeigt in Wirklichkeit einen Wrap/Dürüm.
+  // Türkischer Döner im Brot erhält daher immer das fachlich richtige Brot-Motiv.
+  const nameFoto = "g-" + fotoSlug(g.name);
+  const pilotGericht = [
+    [/d[öo]ner[ -]?teller/i, "g-doener-teller"],
+    [/d[öo]ner[ -]?box/i, "g-doener-box"],
+    [/dopp(?:el|le).*smash|double.*smash/i, "g-double-smash-burger"],
+    [/cheese.?burger/i, "g-cheeseburger"],
+    [/smash.?burger/i, "g-burger"],
+    [/burger.*men[üu]/i, "g-burger-menue"]
+  ].find(([re]) => re.test(g.name || ""));
+  const kandidaten = [...(pilotGericht ? [pilotGericht[1]] : []),
+    nameFoto === "g-doener-kebab" ? "g-doener" : nameFoto]; // 17.10.2026: Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
   if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk|^d-/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
   if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   if (f) kandidaten.push(FOTO[f] || "g-" + f);
@@ -60,7 +72,7 @@ const GETRAENK = [[/ayran/i, "g-ayran"], [/cola|fanta|sprite|dose/i, "d-cola"], 
 const R_ALIAS = { "w-doenerfleisch": (n) => /h[äa]hnchen|pute/i.test(n) ? "r-haehnchenspiess" : /geschnitten|kg|gegart/i.test(n) ? "r-doener-geschnitten" : "r-doenerspiess",
   "w-kohl": (n) => /wei(ß|ss)/i.test(n) ? "r-weisskohl" : "r-rotkohl", "w-kaese": (n) => /mozzarella/i.test(n) && !/gerieben/i.test(n) ? "r-mozzarella" : "r-pizzakaese",
   "w-ei": () => "r-eier", "w-sosse": (n) => /knoblauch|joghurt|wei(ß|ss)/i.test(n) ? "r-knoblauchsauce" : /scharf|chili|acı/i.test(n) ? "r-scharfe-sosse" : "r-ketchup-mayo",
-  "w-brot": (n) => /yufka|wrap|d[üu]r[üu]m|lavash|tortilla/i.test(n) ? "r-yufka" : /bun|br[öo]tchen/i.test(n) ? "r-buns" : "r-fladenbrot",
+  "w-brot": (n) => /yufka|wrap|d[üu]r[üu]m|lavash|tortilla/i.test(n) ? "r-yufka" : /vollkorn.*(bun|br[öo]tchen)/i.test(n) ? "r-vollkorn-bun" : /burger.*(bun|br[öo]tchen)|\bbun\b/i.test(n) ? "r-burger-bun" : /br[öo]tchen/i.test(n) ? "r-buns" : "r-fladenbrot",
   "w-falafel": () => "r-falafel-tk", "w-mehl": (n) => /pizza/i.test(n) ? "r-pizzateig" : /lahmacun/i.test(n) ? "r-lahmacun-teig" : "r-mehl", "w-hack": (n) => /patty/i.test(n) ? "r-patty" : "r-hack" };
 const fotoFuer = (n, name) => { const kand = n.startsWith("v-") ? n : R_ALIAS[n] ? R_ALIAS[n](name) : "r-" + n.slice(2); return FOTOS.has(kand) ? kand : null; };
 // Trennung 2 (17.10.2026): Bildquelle einer Ware ohne HTML – { foto } (foto/<name>.webp) oder { pikto } (bilder/<name>.svg).
@@ -68,9 +80,23 @@ export function wareBildQuelle(x) {
   // 17.10.2026: Einzelbild je Artikel zuerst (Bildliste: r-/v-/d- + fotoSlug(Name)), dann Sammelbild, dann Piktogramm
   const eigen = (x.gruppe === "verpackung" ? "v-" : x.gruppe === "getraenk" || x.gruppe === "spirituose" ? "d-" : "r-") + fotoSlug(x.name);
   if (FOTOS.has(eigen)) return { foto: eigen };
+  // PILOTBURGER: ein sachlich falsches Foto ist schlechter als ein klares Piktogramm.
+  // Cheddar sind Scheiben (nicht geriebener Pizzakäse); Burgersoße ist keine Ketchup-/Mayoflasche.
+  if (/cheddar/i.test(x.name || "")) return FOTOS.has("r-cheddar") ? { foto: "r-cheddar" } : { pikto: "r-cheddar" };
+  if (/burger\s*so(ß|ss)e|burger\s*sauce|burgersauce|burgerdressing/i.test(x.name || "")) return FOTOS.has("r-burgersauce") ? { foto: "r-burgersauce" } : { pikto: "r-sauce" };
+  if (/pickles|essig\s*gurken|gewürz\s*gurken/i.test(x.name || "")) return FOTOS.has("r-pickles") ? { foto: "r-pickles" } : { pikto: "r-pickles" };
   if (x.gruppe === "getraenk") return { foto: (GETRAENK.find(([re, n]) => re.test(x.name) && FOTOS.has(n)) || [])[1] || "g-getraenk" };
   const liste = x.gruppe === "verpackung" ? VERP : WARE;
   const n = (liste.find(([re]) => re.test(x.name)) || [])[1] || "w-ware";
   const foto = fotoFuer(n, x.name);
-  return foto ? { foto } : { pikto: /zitrone|salatmix/.test(n) ? "w-ware" : n };
+  if (foto) return { foto };
+  // Facelift 1.0: Burger-Rohwaren erhalten eigene lokale, lizenzfreie Piktogramme,
+  // falls der Betrieb noch kein Produktfoto besitzt (bestehende Food-Fotos haben Vorrang).
+  const burgerPikto = [
+    [/\bpatty\b|burgerfleisch|burger-patty/i, "r-patty"],
+    [/burgerbr[öo]tchen|burger[ -]?bun|hamburgerbr[öo]tchen/i, "r-burgerbroetchen"],
+    [/cheddar/i, "r-cheddar"],
+    [/burgersauce|burger[ -]?so(ß|ss)e|burgerdressing/i, "r-sauce"]
+  ].find(([re]) => re.test(x.name || ""));
+  return { pikto: burgerPikto ? burgerPikto[1] : /zitrone|salatmix/.test(n) ? "w-ware" : n };
 }

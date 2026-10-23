@@ -222,7 +222,9 @@ test("Speichern, Sicherung und Zusammenführen: Aktionen beider Handys bleiben, 
   T.tafelSetzen(c2.betriebe[0], "sprache", "en"); st.zusammenfuehren(c1, c2); assert.equal(c1.betriebe[0].tafel.sprache, "en");
 });
 
-test("Oberfläche: Büro-Kachel für alle, Bereich mit Vorschau/Einstellungen/Teilen und Kassen-Hinweis; Laden und Personal ohne Tafel", async () => {
+test("Oberfläche: Büro-Kachel für alle, Bereich mit Vorschau/Einstellungen/Teilen und Kassen-Hinweis; Laden und Personal ohne Tafel", async (ctx) => {
+  // Bildschirm und Beispieldaten müssen denselben Geschäftstag verwenden.
+  ctx.mock.timers.enable({ apis: ["Date"], now: new Date(`${H}T12:00:00`) });
   const { bueroView } = await import("../js/screens/buero.js");
   const { tafelView, tafelAktion, tafelEingabe } = await import("../js/screens/tafel.js");
   const { navZiel, ansichtErlaubt, personalGesperrt } = await import("../js/modus.js");

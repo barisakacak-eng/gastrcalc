@@ -6,7 +6,9 @@ const pn = (n, one, few, many) => `${n} ${pl(n, one, few, many)}`;
 const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export default {
-  app: { name: "GastroCalc", entwurf: "Тестовая версия" },
+  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  app: { name: "GastroCash", entwurf: "Тестовая версия" },
 
   allgemein: {
     weiter: "Дальше", zurueck: "Назад", fertig: "Готово", speichern: "Сохранить", abbrechen: "Отмена", stueck: "шт.", bearbeiten: "Изменить", zahlZuGross: (v) => `«${v}» – слишком много. Максимум десять миллионов.`, uebernehmen: "Принять", zahlUngueltig: (v) => `«${v}» – это не число. Только цифры и запятая.`,
@@ -425,11 +427,11 @@ export default {
       name: "Имя", ungueltig: "Выбери дату не позже сегодня.", gespeichert: "Инструктаж внесён." },
     knopf: { pdf: "Поделиться PDF", vorschau: "Просмотр", csv: "CSV", csvTeil: (t) => `${t} в CSV`, schliessen: "Закрыть", datei: "Файл", drucken: "Печать / PDF",
       druckHinweis: "В окне печати выбери «Сохранить как PDF» или «Поделиться».", geteilt: "Документ готов.", csvFertig: (n) => `Готово: ${pn(n, "файл", "файла", "файлов")}.` },
-    dok: { erstellt: (d, z) => `Создано ${d} в ${z} в GastroCalc`, nichtGemessen: "не измерено", nk: { erledigt: "Повторный замер сделан", offen: "Повторный замер не сделан" }, ware: "Товар",
+    dok: { erstellt: (d, z) => `Создано ${d} в ${z} в GastroCash`, nichtGemessen: "не измерено", nk: { erledigt: "Повторный замер сделан", offen: "Повторный замер не сделан" }, ware: "Товар",
       basis: { netto: "нетто", brutto: "брутто" }, ohneMessung: (l) => `без замера: ${l}`, keineMassnahme: "меры не внесены", offeneTage: (l) => `не полностью: ${l}`,
       ladenArt: (a) => `Заведение: ${a}`, geraete: (l) => `Приборы: ${l}`, takt: (n) => (n === 2 ? "Замер холода 2× в день" : "Замер холода 1× в день"), aufgaben: (n) => `${pn(n, "задача", "задачи", "задач")} уборки в плане`,
       standardGrenze: "Стандартный предел", eigeneGrenze: "свой предел", unterschrift: ["Дата, подпись заведения", "Проверено (дата, подпись)"],
-      fussAmt: "Запись самоконтроля в GastroCalc. Записи не удаляются, только отменяются; отмены указаны ниже. * = внесено позже. Этот список не заменяет план HACCP.",
+      fussAmt: "Запись самоконтроля в GastroCash. Записи не удаляются, только отменяются; отмены указаны ниже. * = внесено позже. Этот список не заменяет план HACCP.",
       satz: (p) => `Смешанная ставка НДС ${p} %`, svev: "Sachbezugswerte 2026 (SvEV): завтрак 2,37 €, обед и ужин по 4,57 €", netto: "Стоимость товара нетто по цене закупки",
       summe: "Итого", vormonat: "Было до этого", monatslast: "Всего за месяц",
       fussSteuer: "Выручка по дням – это заметки из приложения, они не заменяют кассовый отчёт (Z-отчёт). Суммы нетто, если не указано иное. * = внесено позже.",
@@ -566,7 +568,7 @@ export default {
     personenKurz: (n) => `${pn(n, "человек", "человека", "человек")} в команде`,
     spaeter: "Продолжить позже",
     haftungTitel: "Кто отвечает?",
-    haftung: "Ответственность остаётся на тебе: твои границы, твои замеры и твои меры – твои. GastroCalc только записывает то, что ты вносишь, и ничего не проверяет. Данные хранятся только на этом телефоне – делай копии сам и храни их не меньше 12 месяцев.",
+    haftung: "Ответственность остаётся на тебе: твои границы, твои замеры и твои меры – твои. GastroCash только записывает то, что ты вносишь, и ничего не проверяет. Данные хранятся только на этом телефоне – делай копии сам и храни их не меньше 12 месяцев.",
     arten: { kuehl: "Охлаждение", tk: "Заморозка", warm: "Подогрев (горячее хранение)" },
     rundgang: "Обход",
     nacherfasst: "внесено позже",
@@ -924,7 +926,7 @@ export default {
     sicherungText: "Все данные хранятся только на этом устройстве. С файлом копии их можно передать или перенести на новый телефон.",
     exportieren: "Создать файл копии",
     importieren: "Загрузить файл копии",
-    importFehler: "Это не файл копии GastroCalc.",
+    importFehler: "Это не файл копии GastroCash.",
     importOk: "Загружено.",
     loeschenAlles: "Удалить всё",
     loeschenFrage: "Точно удалить всё? Отменить будет нельзя.",
@@ -1112,7 +1114,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сегодня", muell: "Отходы", kuehl: "Холод", putzplan: "Уборка", karte: "Меню" },
     leiste: "Заведение", menueAuf: "Открыть меню", schliessen: "Закрыть", hilfeAuf: "Помощь", deinLaden: "Твоё заведение", abschluss: "Закрыть день", personal: "Режим персонала", buero: "Офис", ladenWechseln: "Сменить заведение", sprache: "Язык", zumLaden: "Заведение", zumBuero: "Офис", schlossCode: "Введи код офиса",
-    pin: { titel: "Код офиса", neu: "Выбери новый код", nochmal: "Ещё раз", falsch: "Неверный код", ungleich: "Не совпадает. Выбери заново.", gesetzt: "Код офиса сохранён", entfernt: "Код офиса удалён", setzen: "Задать код офиса", aendern: "Изменить код офиса", entfernen: "Удалить код", ohne: "Без кода в офис может войти любой.", mit: "Офис защищён кодом.", loeschen: "Стереть цифру" },
+    pin: { titel: "Код офиса", neu: "Выбери новый код", nochmal: "Ещё раз", falsch: "Неверный код", ungleich: "Не совпадает. Выбери заново.", gesetzt: "Код офиса сохранён", entfernt: "Код офиса удалён", setzen: "Задать код офиса", aendern: "Изменить код офиса", entfernen: "Удалить код", ohne: "Без кода в офис может войти любой.", mit: "Офис защищён кодом.", loeschen: "Стереть цифру", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Панель внизу ведёт ко всему, что нужно в заведении. Расчёты, настройки и списки находятся в офисе.",
       start: "День одним взглядом. Большое число показывает, сколько выручки ещё не хватает до нуля. Красное значит: займись сейчас. «≈» впереди означает оценку (товар или твоя зарплата) – объяснение в офисе, «Месяц и счётчик». Без закупочных цен приложение считает 32 % на товар (закусочные: 23–41 %, таблицы BMF 2025).",
@@ -1425,7 +1427,7 @@ export default {
     vergleich: "Сравнение", vergleichAb: "Сравнение от двух точек", keineLaeden: "Нет точки с данными", bericht: "Отчёт владельца", datei: "Vladelec", drucken: "Печать отчёта", csv: "CSV", geteilt: "Отчёт отправлен",
     dok: { zahlen: "Показатели по точкам", hinweis: "≈ = оценка (ориентировочные цены, ориентир или оценка). «нет данных» = нет данных за период. Только точки на этом телефоне, цифры из записей приложения.",
       kopf: ["Точка", "Выручка", "Себестоимость", "Выброшено", "Подозрение на недостачу", "Открытые обязанности", "До нуля", "Стоимость склада", "Заказать"], laden: "Точка", vergleich: "Сравнение", vergleichInfo: "Ранг только между точками с одинаковой базой данных.",
-      trend: "Тренд к прошлому периоду", daten: "База данных", fehlt: "Неполно", tage: "дней", quelle: "Источник себестоимости", fuss: "GastroCalc · Отчёт владельца. Цифры из записей приложения – не бухгалтерия, не данные кассы." },
+      trend: "Тренд к прошлому периоду", daten: "База данных", fehlt: "Неполно", tage: "дней", quelle: "Источник себестоимости", fuss: "GastroCash · Отчёт владельца. Цифры из записей приложения – не бухгалтерия, не данные кассы." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Нажми на товар и впиши, сколько платишь.", fortschritt: (a, b) => `${a} из ${b} готово`, fehlt: "нет цены", filterFehlt: (n) => `Нет цены (${n})`, filterAlle: (n) => `Все (${n})`, selbst: "своё",
@@ -1437,4 +1439,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Последняя вне телефона: сегодня" : n === 1 ? "Последняя вне телефона: 1 день назад" : `Последняя вне телефона: ${n} дн. назад`, nieWeg: "Пока нет копии вне телефона", mitPasswort: "С паролем", ohneFotos: "Без фото (маленькая, для почты)",
       verschicken: "Отправить копию", woFrage: "Где она сейчас?", woanders: "Другое устройство, почта, облако", nurHandy: "Только на этом телефоне", nurHandyMeldung: "Напоминание остаётся: файл только на этом телефоне.", gezaehlt: "Копия засчитана. Напоминание сброшено." } },
   adanaBrot: { frage: "Какой хлеб вы подаёте к адане?", pide: "Целая пиде", pideHalb: "Половина пиде", fladen: "Дюрюм / лаваш", kein: "Без хлеба" }, // 20.10.2026
+  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

@@ -102,8 +102,8 @@ test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruc
   const woerter = zaehlen(inhalt);
   assert.ok(woerter.length <= 15, `${woerter.length} Wörter: ${woerter.join(" ")}`);
   assert.ok(!inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: ≈ vor der Zahl, keine Richtwert-Zeile im Laden");
-  // eine Haupthandlung: „Jetzt dran“ ist der große Knopf, die vier Felder sind eine Reihe darunter; Umsatz führt in den Laden-Bildschirm „Umsatz heute“
-  assert.ok(inhalt.indexOf("h-haupt") < inhalt.indexOf("h-reihe"), "Jetzt dran vor der Reihe");
+  // Facelift 1.0 (Baris 21.10.): vier Messfelder direkt unter der Zielkarte, danach eine Haupthandlung „Jetzt dran“; Umsatz führt weiter zu „Umsatz heute“.
+  assert.ok(inhalt.indexOf("h-reihe") < inhalt.indexOf("h-haupt"), "Facelift 1.0: Kennzahlen vor Jetzt dran");
   assert.equal((inhalt.match(/class="karte h-kachel h-feld/g) || []).length, 4);
   assert.ok(inhalt.includes('data-wert="umsatzheute"'), "Umsatz-Feld → Umsatz heute (Laden)");
 });
@@ -124,7 +124,8 @@ test("Preis-Blatt: preisAmpel = Ampel und DB der Kalkulation; −/+ in 10-Cent-S
   navKontext(s, wurzelVon(s)); karteLadenZuruecksetzen();
   const html = karteLadenView(s);
   assert.equal((html.match(/data-a="kl-auf"/g) || []).length, 2);
-  for (const weg of ["Wareneinsatz", "Rezept", "Selbstkosten", "%"]) assert.ok(!html.replace(/<[^>]+>/g, "").includes(weg), weg);
+  for (const weg of ["Wareneinsatz", "Rezept", "Selbstkosten"]) assert.ok(!html.replace(/<[^>]+>/g, "").includes(weg), weg);
+  assert.ok(html.includes("kl-nutzen"), "Facelift 1.0: Betrag und Margen-Prozent direkt in der Gerichtskarte");
   const el = (d) => ({ dataset: d });
   assert.equal(karteLadenAktion("kl-auf", el({ id: "a" }), s), true);
   assert.equal(karteLadenAktion("kl-plus", el({}), s), "blatt"); karteLadenAktion("kl-plus", el({}), s); karteLadenAktion("kl-minus", el({}), s);
@@ -176,4 +177,12 @@ test("Jetzt dran 6 (19.10.2026): Einkaufspreise, dann Rezepte – nicht in Haupt
   assert.equal(jetztDran(s, null, { jetzt: um(10) })?.id, "rezepte");
   s.gerichte[0].rezeptQuelle = "eigen"; assert.equal(jetztDran(s, null, { jetzt: um(10) }), null);
   s.beispiel = true; s.gerichte[0].rezeptQuelle = null; assert.equal(jetztDran(s, null, { jetzt: um(10) }), null, "Beispiel-Laden");
+});
+
+test("Facelift-Piloten: Hero richtet sich nach Döner- oder Burger-Ladenart", () => {
+  const d = laden(); d.ladenArt = "doener";
+  assert.match(startView(d, { wurzel: wurzelVon(d) }), /heute-laden pilot-doener/);
+  const b = laden(); b.ladenArt = "imbiss"; b.betrieb.kuechen = ["burger"];
+  assert.match(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-burger/);
+  assert.doesNotMatch(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-doener/);
 });

@@ -1,6 +1,8 @@
 // Türkçe. Mutfak dili: kısa cümleler, terim yok. Almanca tablodan çevrildi (Etap 1).
 export default {
-  app: { name: "GastroCalc", entwurf: "Deneme sürümü" },
+  // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
+  nutzen: {"start":"İlk çöp kaydıyla başlar","titel":"Bu ay kazandırdığı","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
+  app: { name: "GastroCash", entwurf: "Deneme sürümü" },
 
   allgemein: {
     weiter: "Devam", zurueck: "Geri", fertig: "Bitti", speichern: "Kaydet", abbrechen: "Vazgeç", stueck: "adet", bearbeiten: "Düzenle", zahlZuGross: (v) => `“${v}” çok büyük – on milyona kadar olur.`, uebernehmen: "Uygula", zahlUngueltig: (v) => `“${v}” bir sayı değil. Yalnızca rakam ve bir virgül.`,
@@ -420,11 +422,11 @@ export default {
       name: "İsim", ungueltig: "Lütfen bugüne kadar bir tarih seç.", gespeichert: "Eğitim kaydedildi." },
     knopf: { pdf: "PDF olarak paylaş", vorschau: "Önizleme", csv: "CSV", csvTeil: (t) => `${t} CSV olarak`, schliessen: "Kapat", datei: "Dosya", drucken: "Yazdır / PDF",
       druckHinweis: "Yazdırma penceresinde „PDF olarak kaydet” veya „Paylaş” seç.", geteilt: "Belge hazır.", csvFertig: (n) => `${n} dosya hazır.` },
-    dok: { erstellt: (d, z) => `${d} ${z} tarihinde GastroCalc ile oluşturuldu`, nichtGemessen: "ölçülmedi", nk: { erledigt: "Kontrol ölçümü yapıldı", offen: "Kontrol ölçümü açık" }, ware: "Mal",
+    dok: { erstellt: (d, z) => `${d} ${z} tarihinde GastroCash ile oluşturuldu`, nichtGemessen: "ölçülmedi", nk: { erledigt: "Kontrol ölçümü yapıldı", offen: "Kontrol ölçümü açık" }, ware: "Mal",
       basis: { netto: "net", brutto: "brüt" }, ohneMessung: (l) => `ölçüm yok: ${l}`, keineMassnahme: "önlem girilmedi", offeneTage: (l) => `eksik günler: ${l}`,
       ladenArt: (a) => `Dükkan: ${a}`, geraete: (l) => `Cihazlar: ${l}`, takt: (n) => (n === 2 ? "Soğutma ölçümü günde 2 kez" : "Soğutma ölçümü günde 1 kez"), aufgaben: (n) => `Planda ${n} temizlik görevi`,
       standardGrenze: "standart sınır", eigeneGrenze: "kendi sınırı", unterschrift: ["Tarih, işletme imzası", "Kontrol eden (tarih, imza)"],
-      fussAmt: "GastroCalc ile öz denetim kaydı. Kayıtlar silinmez, sadece geri alınır; geri alınanlar aşağıda. * = sonradan girildi. Bu liste HACCP planının yerini tutmaz.",
+      fussAmt: "GastroCash ile öz denetim kaydı. Kayıtlar silinmez, sadece geri alınır; geri alınanlar aşağıda. * = sonradan girildi. Bu liste HACCP planının yerini tutmaz.",
       satz: (p) => `Karma KDV oranı %${p}`, svev: "2026 ayni yardım değerleri (SvEV): kahvaltı 2,37 €, öğle ve akşam 4,57 €", netto: "Alış fiyatıyla net mal değeri",
       summe: "Toplam", vormonat: "önceki durum", monatslast: "Aylık toplam yük",
       fussSteuer: "Günlük ciro uygulamadaki notlardır, kasa raporunun (Z raporu) yerini tutmaz. Aksi belirtilmedikçe tutarlar nettir. * = sonradan girildi.",
@@ -561,7 +563,7 @@ export default {
     personenKurz: (n) => `Ekipte ${n} kısaltma`,
     spaeter: "Sonra devam et",
     haftungTitel: "Kim sorumlu?",
-    haftung: "Sorumluluk sende kalır: sınırların, ölçümlerin ve önlemlerin sana aittir. GastroCalc yalnızca girdiğini yazar, hiçbir şeyi denetlemez. Veriler yalnızca bu telefonda – kendin yedekle ve en az 12 ay sakla.",
+    haftung: "Sorumluluk sende kalır: sınırların, ölçümlerin ve önlemlerin sana aittir. GastroCash yalnızca girdiğini yazar, hiçbir şeyi denetlemez. Veriler yalnızca bu telefonda – kendin yedekle ve en az 12 ay sakla.",
     arten: { kuehl: "Soğutma", tk: "Derin dondurucu", warm: "Sıcak tutma" },
     rundgang: "Tur",
     nacherfasst: "sonradan girildi",
@@ -920,7 +922,7 @@ export default {
     sicherungText: "Bütün veriler sadece bu cihazda. Yedek dosyasıyla başkasına verebilir ya da yeni telefona taşıyabilirsin. Dosya sadece parolayla şifrelenir; rakamlarını, maaşları ve fiş fotoğraflarını içerir. Sadece güvendiğin yerlere gönder.",
     exportieren: "Yedek dosyası oluştur",
     importieren: "Yedek dosyası yükle",
-    importFehler: "Bu bir GastroCalc yedek dosyası değil.",
+    importFehler: "Bu bir GastroCash yedek dosyası değil.",
     importOk: "Yüklendi.",
     loeschenAlles: "Her şeyi sil",
     loeschenFrage: "Gerçekten her şey silinsin mi? Geri alınamaz.",
@@ -1108,7 +1110,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Bugün", muell: "Çöp", kuehl: "Soğutma", putzplan: "Temizlik", karte: "Yemekler" },
     leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
-    pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil" },
+    pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil", testphase: "Deneme aşaması: kodsuz. Herkes büroya ve personel moduna girer. Büyük pilottan önce tekrar aç.", testphaseAn: "Kodsuz deneme aşamasını aç", testphaseAus: "Kodu tekrar aç" },
     hilfeText: {
       allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",
       start: "Günün özeti. Büyük sayı, sıfıra kadar ne kadar ciro eksik olduğunu gösterir. Kırmızı: şimdi ilgilen. Önünde „≈“ varsa sayı tahminidir (mal veya kendi maaşın için) – açıklama ofiste „Ay ve sayaç“ altında. Alış fiyatı yoksa uygulama %32 mal payıyla hesaplar (büfeler: %23–41, BMF 2025 sektör tablosu).",
@@ -1408,7 +1410,7 @@ export default {
     vergleich: "Karşılaştırma", vergleichAb: "Karşılaştırma için iki dükkân gerekir", keineLaeden: "Verisi olan dükkân yok", bericht: "Sahip raporu", datei: "Sahip", drucken: "Raporu yazdır", csv: "CSV", geteilt: "Rapor paylaşıldı",
     dok: { zahlen: "Dükkân başına rakamlar", hinweis: "≈ = tahmini (kılavuz fiyat, kılavuz değer veya tahmin). „eksik“ = dönemde veri yok. Yalnızca bu telefondaki dükkânlar, rakamlar uygulamadaki kayıtlardan.",
       kopf: ["Dükkân", "Ciro", "Mal maliyeti", "Atılan", "Fire şüphesi", "Açık görevler", "Sıfıra kadar", "Depo değeri", "Sipariş"], laden: "Dükkân", vergleich: "Karşılaştırma", vergleichInfo: "Sıralama yalnızca aynı veri tabanına sahip dükkânlar arasında.",
-      trend: "Önceki döneme göre eğilim", daten: "Veri tabanı", fehlt: "Eksik", tage: "gün", quelle: "Mal maliyeti kaynağı", fuss: "GastroCalc · Sahip raporu. Rakamlar uygulamadaki kayıtlardan – muhasebe değil, kasa verisi değil." },
+      trend: "Önceki döneme göre eğilim", daten: "Veri tabanı", fehlt: "Eksik", tage: "gün", quelle: "Mal maliyeti kaynağı", fuss: "GastroCash · Sahip raporu. Rakamlar uygulamadaki kayıtlardan – muhasebe değil, kasa verisi değil." },
   },
   // Einkaufspreise als Bilderwand (20.10.2026)
   pw: { hinweis: "Bir malı seç, ödediğin fiyatı yaz.", fortschritt: (a, b) => `${a} / ${b} tamam`, fehlt: "eksik", filterFehlt: (n) => `Eksik (${n})`, filterAlle: (n) => `Hepsi (${n})`, selbst: "kendimiz",
@@ -1420,4 +1422,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Telefondan son çıkan: bugün" : n === 1 ? "Telefondan son çıkan: 1 gün önce" : `Telefondan son çıkan: ${n} gün önce`, nieWeg: "Telefondan henüz yedek çıkmadı", mitPasswort: "Şifreli", ohneFotos: "Fotoğrafsız (küçük, e-posta için)",
       verschicken: "Yedeği gönder", woFrage: "Şimdi nerede?", woanders: "Başka cihaz, e-posta, bulut", nurHandy: "Sadece bu telefonda", nurHandyMeldung: "Hatırlatma kalır: dosya sadece bu telefonda.", gezaehlt: "Yedek sayıldı. Hatırlatma sıfırlandı." } },
   adanaBrot: { frage: "Adana'nın yanında hangi ekmek var?", pide: "Bütün pide", pideHalb: "Yarım pide", fladen: "Dürüm / lavaş", kein: "Ekmek yok" }, // 20.10.2026
+  hinweise: { einstieg: "İpuçları", einstiegUnter: "Vergi ve daire, senin verilerinden", einstiegNeu: (n) => `${n} yeni ipucu`, titel: "İpuçları", unter: "Senin verilerinden. Genel bilgi, danışmanlık değil.", pflicht: "Genel bilgi, vergi danışmanlığı değil – mali müşavirinle görüş.", leer: "Şu an ipucu yok. Daha fazla veriyle ipuçları gelir.", quelle: "Kaynak", belege: "Belgeleri hazırla", spaeterKnopf: "Sonra", spaeter: "sonra", erledigt: "Tamam", erledigtMeldung: "İpucu tamamlandı", spaeterMeldung: "İpucu sonraya alındı" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Şirket türü", hinweis: "İşyeri kaydında (Gewerbeanmeldung) veya künyede yazar.", offen: "Şirket türünü gir", gesetzt: "Şirket türü kaydedildi", namen: { einzel: "Şahıs işletmesi", gbr: "GbR", gmbh: "GmbH", ug: "UG (sınırlı sorumlu)", kg_ohg: "KG veya OHG", unbekannt: "Bilmiyorum" } }, // Rechtsform (23.10.2026)
 };

@@ -216,7 +216,9 @@ test("Migration alter Aktionen: Laufzeit bleibt, ende „datum“; „bis Ware w
   st.zusammenfuehren(D2, C); const y = D2.betriebe[0].aktionen.find((z) => z.id === a.id); assert.equal(y.entfernt, true); assert.ok(y.bilanz, "Bilanz kommt mit");
 });
 
-test("Bildschirm „Aktionen & Haltbarkeit“: Plan mit Vorschlag, Begründung und änderbarem Zeitraum; laufende Aktion mit Fortschritt; Personal gesperrt", async () => {
+test("Bildschirm „Aktionen & Haltbarkeit“: Plan mit Vorschlag, Begründung und änderbarem Zeitraum; laufende Aktion mit Fortschritt; Personal gesperrt", async (ctx) => {
+  // Bildschirm und Beispieldaten müssen denselben Geschäftstag verwenden.
+  ctx.mock.timers.enable({ apis: ["Date"], now: new Date(`${H}T12:00:00`) });
   const akt = await import("../js/screens/aktionen.js"); const { personalGesperrt } = await import("../js/modus.js");
   akt.aktionenZuruecksetzen();
   const s = beispielLaden(H); const vor = JSON.stringify(s);

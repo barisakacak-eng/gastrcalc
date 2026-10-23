@@ -146,7 +146,9 @@ test("Bestellvorschlag: Ruhetage zählen nicht als Bedarf und nicht als Lieferta
   assert.equal(mit.gebinde, ohne.gebinde); assert.ok(mit.bestellenAm < ohne.bestellenAm, `${mit.bestellenAm} < ${ohne.bestellenAm}`);
 });
 
-test("Zweitlieferant: reicht die Ware nicht bis zur Lieferung und kommt der Zweitlieferant früher, steht er dabei", () => {
+test("Zweitlieferant: reicht die Ware nicht bis zur Lieferung und kommt der Zweitlieferant früher, steht er dabei", (ctx) => {
+  // Bildschirm und Beispieldaten müssen denselben Geschäftstag verwenden.
+  ctx.mock.timers.enable({ apis: ["Date"], now: new Date(`${MO}T12:00:00`) });
   const s = laden(); setze(s, { tage: [5], uhr: "18:00", tageVorher: 1 }); // Metro nur Fr
   const z = L.lieferantAnlegen(s, { name: "Markt um die Ecke", art: "supermarkt", modus: "abholung", tage: [2] }).lieferant;
   L.artikelLieferantSetzen(s, "Fleisch", { zweit: z.id });
