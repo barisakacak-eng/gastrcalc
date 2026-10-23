@@ -68,3 +68,14 @@ test('Küchenhelfer sitzt in vorhandener Hilfe und echtem Tagesabschluss',()=>{
   assert.match(abschluss,/gc-ab-mascot/);
   assert.match(abschluss,/mascotResultState/);
 });
+
+
+test('Bewegungen sind von Emotionen getrennt und unbekannte Bewegung fällt sicher zurück',()=>{
+  assert.match(mascotMarkup('freundlich','thumb'),/gc-motion--thumb/);
+  assert.match(mascotMarkup('nachdenklich','turn'),/gc-motion--turn/);
+  assert.match(mascotMarkup('erfolg','celebrate'),/gc-motion--celebrate/);
+  assert.match(mascotMarkup('neutral','irgendwas'),/gc-motion--none/);
+  const blink=mascotMarkup('neutral','idle');
+  const eyes=blink.match(/class="gc-bot-eyes"[^>]*>(.*?)<\/g>/)?.[1]||'';
+  assert.equal((eyes.match(/<circle /g)||[]).length,2,'Blinzeln bleibt beidäugig, kein Zwinkern');
+});
