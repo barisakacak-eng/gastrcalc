@@ -7,15 +7,21 @@
 .appleiste.ebene-kopf.buero>.gc-brand{display:none} /* Büro-Kopf behält Zurück und Bereichstitel */
 .gc-bot-head,.gc-bot-thumb,.gc-bot-body{transform-box:fill-box;transform-origin:center}
 .gc-bot-thumb{opacity:0}
-.gc-bot--freundlich .gc-bot-thumb,.gc-bot--erfolg .gc-bot-thumb{opacity:1}
+.gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{opacity:1}
 .gc-bot--nachdenklich .gc-bot-head{transform:rotate(-7deg)}
 .gc-bot--ernst .gc-bot-head{transform:rotate(3deg)}
 @media(prefers-reduced-motion:no-preference){
-.gc-bot--freundlich .gc-bot-thumb,.gc-bot--erfolg .gc-bot-thumb{animation:gc-thumb .8s ease-out 1}
-.gc-bot--erfolg .gc-bot-coin{animation:gc-coin .8s ease-out 1}
+.gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{animation:gc-thumb .8s ease-out 1}
+.gc-motion--celebrate .gc-bot-coin{animation:gc-coin .8s ease-out 1}
+.gc-motion--celebrate .gc-bot-body{animation:gc-celebrate .75s ease-out 1}
+.gc-motion--turn .gc-bot-head{animation:gc-turn .8s ease-in-out 1}
+.gc-motion--idle .gc-bot-eyes{transform-box:fill-box;transform-origin:center;animation:gc-blink 2.4s ease-in-out 1}
 }
 @keyframes gc-thumb{from{transform:rotate(-18deg)}to{transform:rotate(0)}}
 @keyframes gc-coin{50%{transform:scale(1.08);transform-origin:80px 128px}}
+@keyframes gc-celebrate{45%{transform:translateY(-5px)}}
+@keyframes gc-turn{35%{transform:rotate(-10deg)}70%{transform:rotate(7deg)}}
+@keyframes gc-blink{0%,44%,52%,100%{transform:scaleY(1)}48%{transform:scaleY(.08)}}
 @media(max-width:360px){.gc-brand{max-width:135px;font-size:14px;gap:4px}.gc-brand .gc-bot{width:25px;height:29px}}
 @media(max-width:320px){.gc-brand{max-width:110px;font-size:12px}.gc-brand .gc-bot{width:22px;height:25px}}
 
