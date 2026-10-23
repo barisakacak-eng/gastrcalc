@@ -197,3 +197,45 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 @media print {
   .karte, .instrument, .zeile, .blattzeile { box-shadow: none; border-color: var(--holz-tief); }
 }
+
+
+/* GastroCash B – Marke und Küchenhelfer; 23.10.2026. Keine Rechenlogik. */
+/* GastroCash B: lokale Marke, ohne Einfluss auf Rechenkern oder Bedienaktionen. */
+.gc-brand{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;max-width:180px;flex:0 1 auto;color:#22301F;font:400 1rem/1.1 system-ui,-apple-system,sans-serif;white-space:nowrap}
+.gc-brand-name{min-width:0;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.025em}
+.gc-brand-name strong{font-weight:850}
+.gc-brand .gc-bot{width:30px;height:34px;flex:none}
+.appleiste.ebene-kopf.laden>.gc-brand,.appleiste.ebene-kopf.personal>.gc-brand{margin-inline:auto}
+.appleiste.ebene-kopf.buero>.gc-brand{display:none} /* Büro-Kopf behält Zurück und Bereichstitel */
+.gc-bot-head,.gc-bot-thumb,.gc-bot-body{transform-box:fill-box;transform-origin:center}
+.gc-bot-thumb{opacity:0}
+.gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{opacity:1}
+/* Grundstellung aller fünf Gesichter (neutral, freundlich, erfolg: gerade); nachdenklich und ernst neigen den Kopf */
+.gc-bot--neutral .gc-bot-head,.gc-bot--freundlich .gc-bot-head,.gc-bot--erfolg .gc-bot-head{transform:none}
+.gc-bot--nachdenklich .gc-bot-head{transform:rotate(-7deg)}
+.gc-bot--ernst .gc-bot-head{transform:rotate(3deg)}
+.gc-motion--none .gc-bot-eyes,.gc-motion--none .gc-bot-body,.gc-motion--none .gc-bot-head{animation:none}
+@media(prefers-reduced-motion:no-preference){
+.gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{animation:gc-thumb .8s ease-out 1}
+.gc-motion--celebrate .gc-bot-coin{animation:gc-coin .8s ease-out 1}
+.gc-motion--celebrate .gc-bot-body{animation:gc-celebrate .75s ease-out 1}
+.gc-motion--turn .gc-bot-head{animation:gc-turn .8s ease-in-out 1}
+.gc-motion--idle .gc-bot-eyes{transform-box:fill-box;transform-origin:center;animation:gc-blink 2.4s ease-in-out 1}
+}
+@keyframes gc-thumb{from{transform:rotate(-18deg)}to{transform:rotate(0)}}
+@keyframes gc-coin{50%{transform:scale(1.08);transform-origin:80px 128px}}
+@keyframes gc-celebrate{45%{transform:translateY(-5px)}}
+@keyframes gc-turn{35%{transform:rotate(-10deg)}70%{transform:rotate(7deg)}}
+@keyframes gc-blink{0%,44%,52%,100%{transform:scaleY(1)}48%{transform:scaleY(.08)}}
+@media(max-width:360px){.gc-brand{max-width:135px;font-size:.875rem;gap:4px}.gc-brand .gc-bot{width:25px;height:29px}}
+@media(max-width:320px){.gc-brand{max-width:110px;font-size:.75rem}.gc-brand .gc-bot{width:22px;height:25px}}
+
+/* Küchenhelfer an echten Interaktionspunkten */
+.gc-help-bot{display:block;width:68px;height:76px;margin:0 auto 8px}
+.gc-help-bot .gc-bot{width:100%;height:100%;display:block}
+.ab-hero{position:relative}
+.gc-ab-mascot{position:absolute;top:12px;right:12px;width:58px;height:66px;padding:4px;border-radius:16px;background:rgba(255,253,249,.94);box-shadow:0 4px 12px rgba(34,48,31,.16);pointer-events:none}
+.gc-ab-mascot .gc-bot{display:block;width:100%;height:100%}
+.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:70px}
+@media(max-width:360px){.gc-ab-mascot{width:50px;height:57px;top:10px;right:10px}.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:60px}.gc-help-bot{width:60px;height:68px}}
+

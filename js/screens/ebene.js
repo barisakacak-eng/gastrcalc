@@ -10,7 +10,8 @@ import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch,
 import { rettungGesetzt, rettungErlaubt, rettungAnlegen, rettungBloecke, RETTUNG_LAENGE } from "../rettung.js"; // Rettung (17.10.2026)
 import { nav } from "./nav.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
-import { PASSWORT_MIN } from "../schluessel.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { PASSWORT_MIN } from "../schluessel.js";
+import { mascotMarkup } from "../gastrocash-brand.js"; // E5 (16.10.2026): Passwort der Sicherung
 
 let huelle = null;
 let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort" | "rettung" | "rettungscode" | "sicherungort" (Laden-Umbau 20.10.2026)
@@ -84,7 +85,7 @@ export function hilfeZeigen(ansicht) {
   const k = HILFE.includes(ansicht) ? ansicht : "allgemein";
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
   const mehr = (HILFE_MEHR[k] || []).map((key) => `<p class="hilfe-mehr">${esc(t(key))}</p>`).join("");
-  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="ks">${sym("circle-help")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}</div>
+  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="gc-help-bot">${mascotMarkup(k === "start" || k === "karte" ? "freundlich" : "neutral", k === "start" || k === "karte" ? "thumb" : "idle")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}</div>
     <button type="button" class="knopf" data-a="blatt-zu">OK</button>`);
 }
 

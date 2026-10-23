@@ -1,7 +1,7 @@
 {
- "datum": "2026-10-20 14:42",
- "fassung": "a8d40e3",
- "dauer_s": 42.3,
+ "datum": "2026-10-23 11:39",
+ "fassung": "a674090",
+ "dauer_s": 46.3,
  "soll": {
   "woerter": {
    "laden": 15,
@@ -17,38 +17,43 @@
  "bildschirme": {
   "390x844": {
    "heute": {
-    "worte": 10,
+    "worte": 11,
     "wortliste": [
      "Bis",
      "null",
      "fehlen",
-     "Jetzt",
-     "dran",
-     "Kühlrundgang",
+     "Schätzung",
      "Umsatz",
      "Müll",
      "Kühlung",
-     "Putzen"
+     "Putzen",
+     "Kühlrundgang",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
-     "Döner Test · Di., 20. Okt.",
+     "Döner Test",
+     "Fr., 23. Okt.",
      "Bis null fehlen",
-     "≈ 1.462 €",
-     "0 €",
-     "1.462 €",
-     "Jetzt dran",
-     "Kühlrundgang",
+     "≈ 1.096 €",
+     "Schätzung",
+     "1.096 €",
+     "⁦01.10.⁩",
+     "⁦31.10.⁩",
      "Umsatz",
      "Müll",
      "2",
      "Kühlung",
-     "Putzen"
+     "Putzen",
+     "Kühlrundgang",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 844,
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Jetzt dranKühlrundgang",
+      "text": "Kühlrundgang",
       "h": 84,
       "w": 358,
       "haupt": true,
@@ -58,8 +63,8 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 13,
-     "text": "Jetzt dran"
+     "px": 12.75,
+     "text": "Schätzung"
     },
     "tippKlein": [],
     "tippAnzahl": 13,
@@ -67,48 +72,61 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "muell": {
-    "worte": 3,
+    "worte": 8,
     "wortliste": [
      "Müll",
      "heute",
-     "Andere"
+     "Eimer",
+     "gewogen",
+     "Stück",
+     "Andere",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Müll heute",
      "0,00 €",
+     "Eimer gewogen",
      "Pizzateig",
+     "250 g",
      "…",
      "Pide-Teig",
+     "250 g",
      "…",
      "Lahmacun-Teig",
+     "250 g",
      "…",
      "Dönerbrot / Fladen",
+     "1 Stück",
      "…",
      "Knoblauchsauce",
+     "250 g",
      "…",
-     "Andere"
+     "Andere",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 844,
     "innen": 844,
@@ -116,44 +134,46 @@
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 13.5,
-     "text": "Andere"
+     "px": 12.75,
+     "text": "250 g"
     },
     "tippKlein": [],
-    "tippAnzahl": 18,
+    "tippAnzahl": 19,
     "verboten": [],
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "kuehlung": {
-    "worte": 5,
+    "worte": 7,
     "wortliste": [
      "Kühlung",
      "Heute",
      "gemessen",
      "Rundgang",
-     "starten"
+     "starten",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Kühlung",
@@ -163,7 +183,9 @@
      "Kühlschrank",
      "–",
      "Tiefkühler",
-     "–"
+     "–",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 844,
     "innen": 844,
@@ -171,7 +193,7 @@
      {
       "text": "Rundgang starten",
       "h": 64,
-      "w": 324,
+      "w": 320,
       "haupt": true,
       "kachel": false
      }
@@ -188,85 +210,72 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "putzen": {
-    "worte": 8,
+    "worte": 3,
     "wortliste": [
      "Putzen",
-     "Nach",
-     "jeder",
-     "Benutzung",
-     "Liste",
-     "für",
-     "die",
-     "Kontrolle"
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Putzen",
      "⁦0 / 9⁩",
-     "Nach jeder Benutzung",
-     "Liste für die Kontrolle"
+     "Gastro",
+     "Cash"
     ],
-    "hoehe": 1210,
+    "hoehe": 974,
     "innen": 844,
-    "knoepfe": [
-     {
-      "text": "Liste für die Kontrolle",
-      "h": 59.2,
-      "w": 350,
-      "haupt": false,
-      "kachel": false
-     }
-    ],
-    "anzahlKnoepfe": 1,
+    "knoepfe": [],
+    "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 15,
-     "text": "Nach jeder Benutzung"
+     "px": 17,
+     "text": "GastroCash"
     },
     "tippKlein": [],
-    "tippAnzahl": 17,
+    "tippAnzahl": 25,
     "verboten": [],
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
@@ -274,7 +283,7 @@
     "aufgaben": 9
    },
    "karte": {
-    "worte": 7,
+    "worte": 9,
     "wortliste": [
      "Karte",
      "Gerichte",
@@ -282,20 +291,24 @@
      "keine",
      "Gerichte",
      "Karte",
-     "fotografieren"
+     "fotografieren",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Karte",
      "0 Gerichte",
      "Noch keine Gerichte",
-     "Karte fotografieren"
+     "Karte fotografieren",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 844,
     "innen": 844,
     "knoepfe": [
      {
       "text": "Karte fotografieren",
-      "h": 57.2,
+      "h": 64,
       "w": 324,
       "haupt": true,
       "kachel": false
@@ -313,43 +326,47 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      }
     ],
     "ebene": "laden",
     "gerichte": 0
    },
    "umsatz-heute": {
-    "worte": 6,
+    "worte": 8,
     "wortliste": [
      "Umsatz",
      "heute",
      "Aus",
      "der",
      "Kasse",
-     "Speichern"
+     "Speichern",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Umsatz heute",
      "Aus der Kasse",
      "€",
-     "Speichern"
+     "Speichern",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 844,
     "innen": 844,
@@ -374,29 +391,29 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "abschluss": {
-    "worte": 11,
+    "worte": 13,
     "wortliste": [
      "Tag",
      "abschließen",
@@ -408,7 +425,9 @@
      "Müll",
      "Kühlung",
      "Tag",
-     "abschließen"
+     "abschließen",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Tag abschließen",
@@ -422,7 +441,9 @@
      "Kühlung",
      "⁦0 / 2⁩",
      "›",
-     "Tag abschließen"
+     "Tag abschließen",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 844,
     "innen": 844,
@@ -430,7 +451,7 @@
      {
       "text": "Tag abschließen",
       "h": 64,
-      "w": 350,
+      "w": 356,
       "haupt": true,
       "kachel": false
      }
@@ -438,7 +459,7 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 15,
+     "px": 12.75,
      "text": "Aus der Kasse"
     },
     "tippKlein": [],
@@ -447,23 +468,23 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
@@ -504,23 +525,23 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
@@ -545,6 +566,8 @@
      "Buchhalter",
      "noch",
      "leer",
+     "Einstellungen",
+     "Sicherung",
      "Geld",
      "bisher",
      "Monat",
@@ -632,10 +655,8 @@
      "Feste",
      "Kosten",
      "Läden",
-     "Sicherung",
      "Büro-Code",
-     "an",
-     "Einstellungen"
+     "an"
     ],
     "texte": [
      "Laden",
@@ -649,6 +670,8 @@
      "September",
      "Buch­halter",
      "noch leer",
+     "Einstellungen",
+     "Sicherung",
      "Geld",
      "Oktober bisher",
      "Monat & Zähler",
@@ -688,19 +711,17 @@
      "Putzplan bearbeiten",
      "Feste Kosten",
      "Läden",
-     "Sicherung",
      "Büro-Code",
-     "an",
-     "Einstellungen"
+     "an"
     ],
-    "hoehe": 2299,
+    "hoehe": 2555,
     "innen": 844,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 12.5,
-     "text": "0 von 3"
+     "px": 13,
+     "text": "Oktober bisher · Richtwert War"
     },
     "tippKlein": [],
     "tippAnzahl": 32,
@@ -708,18 +729,20 @@
     "kontrast": [
      {
       "text": "Laden",
-      "verhaeltnis": 17.37
+      "verhaeltnis": 13.74
      },
      {
       "text": "Büro",
-      "verhaeltnis": 17.37
+      "verhaeltnis": 13.74
      }
     ],
     "ebene": "buero"
    },
    "personal": {
-    "worte": 5,
+    "worte": 7,
     "wortliste": [
+     "Gastro",
+     "Cash",
      "Hallo",
      "Müll",
      "Kühlung",
@@ -727,9 +750,11 @@
      "Putzen"
     ],
     "texte": [
+     "Gastro",
+     "Cash",
      "?",
      "Hallo",
-     "Dienstag, 20. Oktober",
+     "Freitag, 23. Oktober",
      "Müll",
      "Kühlung",
      "2 offen",
@@ -765,7 +790,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Dienstag, 20. Oktober"
+     "text": "Freitag, 23. Oktober"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -774,63 +799,50 @@
     "ebene": "personal"
    },
    "putzen-plan": {
-    "worte": 8,
+    "worte": 3,
     "wortliste": [
      "Putzen",
-     "Nach",
-     "jeder",
-     "Benutzung",
-     "Liste",
-     "für",
-     "die",
-     "Kontrolle"
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Putzen",
      "⁦0 / 9⁩",
-     "Nach jeder Benutzung",
-     "Liste für die Kontrolle"
+     "Gastro",
+     "Cash"
     ],
-    "hoehe": 1210,
+    "hoehe": 974,
     "innen": 844,
-    "knoepfe": [
-     {
-      "text": "Liste für die Kontrolle",
-      "h": 59.2,
-      "w": 350,
-      "haupt": false,
-      "kachel": false
-     }
-    ],
-    "anzahlKnoepfe": 1,
+    "knoepfe": [],
+    "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 15,
-     "text": "Nach jeder Benutzung"
+     "px": 17,
+     "text": "GastroCash"
     },
     "tippKlein": [],
-    "tippAnzahl": 17,
+    "tippAnzahl": 25,
     "verboten": [],
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
@@ -840,38 +852,43 @@
   },
   "360x780": {
    "heute": {
-    "worte": 10,
+    "worte": 11,
     "wortliste": [
      "Bis",
      "null",
      "fehlen",
-     "Jetzt",
-     "dran",
-     "Kühlrundgang",
+     "Schätzung",
      "Umsatz",
      "Müll",
      "Kühlung",
-     "Putzen"
+     "Putzen",
+     "Kühlrundgang",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
-     "Döner Test · Di., 20. Okt.",
+     "Döner Test",
+     "Fr., 23. Okt.",
      "Bis null fehlen",
-     "≈ 1.462 €",
-     "0 €",
-     "1.462 €",
-     "Jetzt dran",
-     "Kühlrundgang",
+     "≈ 1.096 €",
+     "Schätzung",
+     "1.096 €",
+     "⁦01.10.⁩",
+     "⁦31.10.⁩",
      "Umsatz",
      "Müll",
      "2",
      "Kühlung",
-     "Putzen"
+     "Putzen",
+     "Kühlrundgang",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 780,
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Jetzt dranKühlrundgang",
+      "text": "Kühlrundgang",
       "h": 84,
       "w": 328,
       "haupt": true,
@@ -881,8 +898,8 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 12,
-     "text": "Umsatz"
+     "px": 12.75,
+     "text": "Schätzung"
     },
     "tippKlein": [],
     "tippAnzahl": 13,
@@ -890,48 +907,61 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "muell": {
-    "worte": 3,
+    "worte": 8,
     "wortliste": [
      "Müll",
      "heute",
-     "Andere"
+     "Eimer",
+     "gewogen",
+     "Stück",
+     "Andere",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Müll heute",
      "0,00 €",
+     "Eimer gewogen",
      "Pizzateig",
+     "250 g",
      "…",
      "Pide-Teig",
+     "250 g",
      "…",
      "Lahmacun-Teig",
+     "250 g",
      "…",
      "Dönerbrot / Fladen",
+     "1 Stück",
      "…",
      "Knoblauchsauce",
+     "250 g",
      "…",
-     "Andere"
+     "Andere",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 780,
     "innen": 780,
@@ -939,44 +969,46 @@
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 13.5,
-     "text": "Andere"
+     "px": 12.75,
+     "text": "Eimer gewogen"
     },
     "tippKlein": [],
-    "tippAnzahl": 18,
+    "tippAnzahl": 19,
     "verboten": [],
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "kuehlung": {
-    "worte": 5,
+    "worte": 7,
     "wortliste": [
      "Kühlung",
      "Heute",
      "gemessen",
      "Rundgang",
-     "starten"
+     "starten",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Kühlung",
@@ -986,7 +1018,9 @@
      "Kühlschrank",
      "–",
      "Tiefkühler",
-     "–"
+     "–",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 780,
     "innen": 780,
@@ -994,7 +1028,7 @@
      {
       "text": "Rundgang starten",
       "h": 64,
-      "w": 294,
+      "w": 290,
       "haupt": true,
       "kachel": false
      }
@@ -1002,8 +1036,8 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 17,
-     "text": "Heute gemessen"
+     "px": 14.875,
+     "text": "GastroCash"
     },
     "tippKlein": [],
     "tippAnzahl": 10,
@@ -1011,85 +1045,72 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "putzen": {
-    "worte": 8,
+    "worte": 3,
     "wortliste": [
      "Putzen",
-     "Nach",
-     "jeder",
-     "Benutzung",
-     "Liste",
-     "für",
-     "die",
-     "Kontrolle"
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Putzen",
      "⁦0 / 9⁩",
-     "Nach jeder Benutzung",
-     "Liste für die Kontrolle"
+     "Gastro",
+     "Cash"
     ],
-    "hoehe": 1228,
+    "hoehe": 972,
     "innen": 780,
-    "knoepfe": [
-     {
-      "text": "Liste für die Kontrolle",
-      "h": 59.2,
-      "w": 320,
-      "haupt": false,
-      "kachel": false
-     }
-    ],
-    "anzahlKnoepfe": 1,
+    "knoepfe": [],
+    "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 15,
-     "text": "Nach jeder Benutzung"
+     "px": 14.875,
+     "text": "GastroCash"
     },
     "tippKlein": [],
-    "tippAnzahl": 17,
+    "tippAnzahl": 25,
     "verboten": [],
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
@@ -1097,7 +1118,7 @@
     "aufgaben": 9
    },
    "karte": {
-    "worte": 7,
+    "worte": 9,
     "wortliste": [
      "Karte",
      "Gerichte",
@@ -1105,20 +1126,24 @@
      "keine",
      "Gerichte",
      "Karte",
-     "fotografieren"
+     "fotografieren",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Karte",
      "0 Gerichte",
      "Noch keine Gerichte",
-     "Karte fotografieren"
+     "Karte fotografieren",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 780,
     "innen": 780,
     "knoepfe": [
      {
       "text": "Karte fotografieren",
-      "h": 57.2,
+      "h": 64,
       "w": 294,
       "haupt": true,
       "kachel": false
@@ -1136,43 +1161,47 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      }
     ],
     "ebene": "laden",
     "gerichte": 0
    },
    "umsatz-heute": {
-    "worte": 6,
+    "worte": 8,
     "wortliste": [
      "Umsatz",
      "heute",
      "Aus",
      "der",
      "Kasse",
-     "Speichern"
+     "Speichern",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Umsatz heute",
      "Aus der Kasse",
      "€",
-     "Speichern"
+     "Speichern",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 780,
     "innen": 780,
@@ -1188,8 +1217,8 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 16,
-     "text": "Aus der Kasse"
+     "px": 14.875,
+     "text": "GastroCash"
     },
     "tippKlein": [],
     "tippAnzahl": 9,
@@ -1197,29 +1226,29 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "abschluss": {
-    "worte": 11,
+    "worte": 13,
     "wortliste": [
      "Tag",
      "abschließen",
@@ -1231,7 +1260,9 @@
      "Müll",
      "Kühlung",
      "Tag",
-     "abschließen"
+     "abschließen",
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Tag abschließen",
@@ -1245,7 +1276,9 @@
      "Kühlung",
      "⁦0 / 2⁩",
      "›",
-     "Tag abschließen"
+     "Tag abschließen",
+     "Gastro",
+     "Cash"
     ],
     "hoehe": 780,
     "innen": 780,
@@ -1253,7 +1286,7 @@
      {
       "text": "Tag abschließen",
       "h": 64,
-      "w": 320,
+      "w": 336,
       "haupt": true,
       "kachel": false
      }
@@ -1261,7 +1294,7 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 15,
+     "px": 12.75,
      "text": "Aus der Kasse"
     },
     "tippKlein": [],
@@ -1270,23 +1303,23 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
@@ -1327,23 +1360,23 @@
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
@@ -1368,6 +1401,8 @@
      "Buchhalter",
      "noch",
      "leer",
+     "Einstellungen",
+     "Sicherung",
      "Geld",
      "bisher",
      "Monat",
@@ -1455,10 +1490,8 @@
      "Feste",
      "Kosten",
      "Läden",
-     "Sicherung",
      "Büro-Code",
-     "an",
-     "Einstellungen"
+     "an"
     ],
     "texte": [
      "Laden",
@@ -1472,6 +1505,8 @@
      "September",
      "Buch­halter",
      "noch leer",
+     "Einstellungen",
+     "Sicherung",
      "Geld",
      "Oktober bisher",
      "Monat & Zähler",
@@ -1511,19 +1546,17 @@
      "Putzplan bearbeiten",
      "Feste Kosten",
      "Läden",
-     "Sicherung",
      "Büro-Code",
-     "an",
-     "Einstellungen"
+     "an"
     ],
-    "hoehe": 2421,
+    "hoehe": 2676,
     "innen": 780,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 12.5,
-     "text": "0 von 3"
+     "px": 13,
+     "text": "Oktober bisher · Richtwert War"
     },
     "tippKlein": [],
     "tippAnzahl": 32,
@@ -1531,18 +1564,20 @@
     "kontrast": [
      {
       "text": "Laden",
-      "verhaeltnis": 17.37
+      "verhaeltnis": 13.74
      },
      {
       "text": "Büro",
-      "verhaeltnis": 17.37
+      "verhaeltnis": 13.74
      }
     ],
     "ebene": "buero"
    },
    "personal": {
-    "worte": 5,
+    "worte": 7,
     "wortliste": [
+     "Gastro",
+     "Cash",
      "Hallo",
      "Müll",
      "Kühlung",
@@ -1550,9 +1585,11 @@
      "Putzen"
     ],
     "texte": [
+     "Gastro",
+     "Cash",
      "?",
      "Hallo",
-     "Dienstag, 20. Oktober",
+     "Freitag, 23. Oktober",
      "Müll",
      "Kühlung",
      "2 offen",
@@ -1588,7 +1625,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Dienstag, 20. Oktober"
+     "text": "Freitag, 23. Oktober"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -1597,63 +1634,50 @@
     "ebene": "personal"
    },
    "putzen-plan": {
-    "worte": 8,
+    "worte": 3,
     "wortliste": [
      "Putzen",
-     "Nach",
-     "jeder",
-     "Benutzung",
-     "Liste",
-     "für",
-     "die",
-     "Kontrolle"
+     "Gastro",
+     "Cash"
     ],
     "texte": [
      "Putzen",
      "⁦0 / 9⁩",
-     "Nach jeder Benutzung",
-     "Liste für die Kontrolle"
+     "Gastro",
+     "Cash"
     ],
-    "hoehe": 1228,
+    "hoehe": 972,
     "innen": 780,
-    "knoepfe": [
-     {
-      "text": "Liste für die Kontrolle",
-      "h": 59.2,
-      "w": 320,
-      "haupt": false,
-      "kachel": false
-     }
-    ],
-    "anzahlKnoepfe": 1,
+    "knoepfe": [],
+    "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 15,
-     "text": "Nach jeder Benutzung"
+     "px": 14.875,
+     "text": "GastroCash"
     },
     "tippKlein": [],
-    "tippAnzahl": 17,
+    "tippAnzahl": 25,
     "verboten": [],
     "kontrast": [
      {
       "text": "Heute",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Müll",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Kühlung",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      },
      {
       "text": "Putzen",
-      "verhaeltnis": 12.16
+      "verhaeltnis": 5.78
      },
      {
       "text": "Karte",
-      "verhaeltnis": 6.41
+      "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
@@ -1668,7 +1692,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 10,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -1694,395 +1718,395 @@
    "viewport": "390x844",
    "bildschirm": "heute",
    "regel": "schrift",
+   "ok": true,
+   "ist": 12.75,
+   "soll": "≥ 12 px",
+   "hinweis": "Schätzung"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "heute",
+   "regel": "tippflaeche",
+   "ok": true,
+   "ist": 0,
+   "soll": "0 unter 44 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "heute",
+   "regel": "kontrast",
+   "ok": true,
+   "ist": 5.78,
+   "soll": "≥ 4.5:1",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "heute",
+   "regel": "knopfhoehe",
+   "ok": true,
+   "ist": "84 px",
+   "soll": "≥ 64 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "heute",
+   "regel": "verboten",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "woerter",
+   "ok": true,
+   "ist": 8,
+   "soll": "≤ 15",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "scroll",
+   "ok": true,
+   "ist": "844 px",
+   "soll": "≤ 844 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "absaetze",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "schrift",
+   "ok": true,
+   "ist": 12.75,
+   "soll": "≥ 12 px",
+   "hinweis": "250 g"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "tippflaeche",
+   "ok": true,
+   "ist": 0,
+   "soll": "0 unter 44 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "kontrast",
+   "ok": true,
+   "ist": 5.78,
+   "soll": "≥ 4.5:1",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "muell",
+   "regel": "verboten",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "woerter",
+   "ok": true,
+   "ist": 7,
+   "soll": "≤ 15",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "scroll",
+   "ok": true,
+   "ist": "844 px",
+   "soll": "≤ 844 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "absaetze",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "schrift",
+   "ok": true,
+   "ist": 17,
+   "soll": "≥ 12 px",
+   "hinweis": "Heute gemessen"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "tippflaeche",
+   "ok": true,
+   "ist": 0,
+   "soll": "0 unter 44 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "kontrast",
+   "ok": true,
+   "ist": 5.78,
+   "soll": "≥ 4.5:1",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "knopfhoehe",
+   "ok": true,
+   "ist": "64 px",
+   "soll": "≥ 64 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "kuehlung",
+   "regel": "verboten",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "woerter",
+   "ok": true,
+   "ist": 3,
+   "soll": "≤ 15",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "scroll",
+   "ok": true,
+   "ist": "974 px",
+   "soll": "≤ 844 px",
+   "hinweis": "Ausnahme nach Regel"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "absaetze",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "schrift",
+   "ok": true,
+   "ist": 17,
+   "soll": "≥ 12 px",
+   "hinweis": "GastroCash"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "tippflaeche",
+   "ok": true,
+   "ist": 0,
+   "soll": "0 unter 44 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "kontrast",
+   "ok": true,
+   "ist": 5.78,
+   "soll": "≥ 4.5:1",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "putzen",
+   "regel": "verboten",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "woerter",
+   "ok": true,
+   "ist": 9,
+   "soll": "≤ 15",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "scroll",
+   "ok": true,
+   "ist": "844 px",
+   "soll": "≤ 844 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "absaetze",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "schrift",
+   "ok": true,
+   "ist": 14,
+   "soll": "≥ 12 px",
+   "hinweis": "0 Gerichte"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "tippflaeche",
+   "ok": true,
+   "ist": 0,
+   "soll": "0 unter 44 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "kontrast",
+   "ok": true,
+   "ist": 5.78,
+   "soll": "≥ 4.5:1",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "knopfhoehe",
+   "ok": true,
+   "ist": "64 px",
+   "soll": "≥ 64 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "karte",
+   "regel": "verboten",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "woerter",
+   "ok": true,
+   "ist": 8,
+   "soll": "≤ 15",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "scroll",
+   "ok": true,
+   "ist": "844 px",
+   "soll": "≤ 844 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "absaetze",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "schrift",
+   "ok": true,
+   "ist": 16,
+   "soll": "≥ 12 px",
+   "hinweis": "Aus der Kasse"
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "tippflaeche",
+   "ok": true,
+   "ist": 0,
+   "soll": "0 unter 44 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "kontrast",
+   "ok": true,
+   "ist": 5.78,
+   "soll": "≥ 4.5:1",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "knopfhoehe",
+   "ok": true,
+   "ist": "64 px",
+   "soll": "≥ 64 px",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "umsatz-heute",
+   "regel": "verboten",
+   "ok": true,
+   "ist": 0,
+   "soll": "0",
+   "hinweis": ""
+  },
+  {
+   "viewport": "390x844",
+   "bildschirm": "abschluss",
+   "regel": "woerter",
    "ok": true,
    "ist": 13,
-   "soll": "≥ 12 px",
-   "hinweis": "Jetzt dran"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "heute",
-   "regel": "tippflaeche",
-   "ok": true,
-   "ist": 0,
-   "soll": "0 unter 44 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "heute",
-   "regel": "kontrast",
-   "ok": true,
-   "ist": 6.41,
-   "soll": "≥ 4.5:1",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "heute",
-   "regel": "knopfhoehe",
-   "ok": true,
-   "ist": "84 px",
-   "soll": "≥ 64 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "heute",
-   "regel": "verboten",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "woerter",
-   "ok": true,
-   "ist": 3,
-   "soll": "≤ 15",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "scroll",
-   "ok": true,
-   "ist": "844 px",
-   "soll": "≤ 844 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "absaetze",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "schrift",
-   "ok": true,
-   "ist": 13.5,
-   "soll": "≥ 12 px",
-   "hinweis": "Andere"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "tippflaeche",
-   "ok": true,
-   "ist": 0,
-   "soll": "0 unter 44 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "kontrast",
-   "ok": true,
-   "ist": 6.41,
-   "soll": "≥ 4.5:1",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "muell",
-   "regel": "verboten",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "woerter",
-   "ok": true,
-   "ist": 5,
-   "soll": "≤ 15",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "scroll",
-   "ok": true,
-   "ist": "844 px",
-   "soll": "≤ 844 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "absaetze",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "schrift",
-   "ok": true,
-   "ist": 17,
-   "soll": "≥ 12 px",
-   "hinweis": "Heute gemessen"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "tippflaeche",
-   "ok": true,
-   "ist": 0,
-   "soll": "0 unter 44 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "kontrast",
-   "ok": true,
-   "ist": 6.41,
-   "soll": "≥ 4.5:1",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "knopfhoehe",
-   "ok": true,
-   "ist": "64 px",
-   "soll": "≥ 64 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "kuehlung",
-   "regel": "verboten",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "woerter",
-   "ok": true,
-   "ist": 8,
-   "soll": "≤ 15",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "scroll",
-   "ok": true,
-   "ist": "1210 px",
-   "soll": "≤ 844 px",
-   "hinweis": "Ausnahme nach Regel"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "absaetze",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "schrift",
-   "ok": true,
-   "ist": 15,
-   "soll": "≥ 12 px",
-   "hinweis": "Nach jeder Benutzung"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "tippflaeche",
-   "ok": true,
-   "ist": 0,
-   "soll": "0 unter 44 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "kontrast",
-   "ok": true,
-   "ist": 6.41,
-   "soll": "≥ 4.5:1",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "putzen",
-   "regel": "verboten",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "woerter",
-   "ok": true,
-   "ist": 7,
-   "soll": "≤ 15",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "scroll",
-   "ok": true,
-   "ist": "844 px",
-   "soll": "≤ 844 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "absaetze",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "schrift",
-   "ok": true,
-   "ist": 14,
-   "soll": "≥ 12 px",
-   "hinweis": "0 Gerichte"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "tippflaeche",
-   "ok": true,
-   "ist": 0,
-   "soll": "0 unter 44 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "kontrast",
-   "ok": true,
-   "ist": 6.41,
-   "soll": "≥ 4.5:1",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "knopfhoehe",
-   "ok": false,
-   "ist": "57.2 px",
-   "soll": "≥ 64 px",
-   "hinweis": "Karte fotografieren 57.2"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "karte",
-   "regel": "verboten",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "woerter",
-   "ok": true,
-   "ist": 6,
-   "soll": "≤ 15",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "scroll",
-   "ok": true,
-   "ist": "844 px",
-   "soll": "≤ 844 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "absaetze",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "schrift",
-   "ok": true,
-   "ist": 16,
-   "soll": "≥ 12 px",
-   "hinweis": "Aus der Kasse"
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "tippflaeche",
-   "ok": true,
-   "ist": 0,
-   "soll": "0 unter 44 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "kontrast",
-   "ok": true,
-   "ist": 6.41,
-   "soll": "≥ 4.5:1",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "knopfhoehe",
-   "ok": true,
-   "ist": "64 px",
-   "soll": "≥ 64 px",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "umsatz-heute",
-   "regel": "verboten",
-   "ok": true,
-   "ist": 0,
-   "soll": "0",
-   "hinweis": ""
-  },
-  {
-   "viewport": "390x844",
-   "bildschirm": "abschluss",
-   "regel": "woerter",
-   "ok": true,
-   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2109,7 +2133,7 @@
    "bildschirm": "abschluss",
    "regel": "schrift",
    "ok": true,
-   "ist": 15,
+   "ist": 12.75,
    "soll": "≥ 12 px",
    "hinweis": "Aus der Kasse"
   },
@@ -2127,7 +2151,7 @@
    "bildschirm": "abschluss",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2190,7 +2214,7 @@
    "bildschirm": "personal",
    "regel": "woerter",
    "ok": true,
-   "ist": 5,
+   "ist": 7,
    "soll": "≤ 10",
    "hinweis": ""
   },
@@ -2217,7 +2241,7 @@
    "bildschirm": "putzen-plan",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 3,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2226,7 +2250,7 @@
    "bildschirm": "putzen-plan",
    "regel": "scroll",
    "ok": true,
-   "ist": "1210 px",
+   "ist": "974 px",
    "soll": "≤ 844 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -2244,9 +2268,9 @@
    "bildschirm": "putzen-plan",
    "regel": "schrift",
    "ok": true,
-   "ist": 15,
+   "ist": 17,
    "soll": "≥ 12 px",
-   "hinweis": "Nach jeder Benutzung"
+   "hinweis": "GastroCash"
   },
   {
    "viewport": "390x844",
@@ -2262,7 +2286,7 @@
    "bildschirm": "putzen-plan",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2280,7 +2304,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 10,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2307,9 +2331,9 @@
    "bildschirm": "heute",
    "regel": "schrift",
    "ok": true,
-   "ist": 12,
+   "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Umsatz"
+   "hinweis": "Schätzung"
   },
   {
    "viewport": "360x780",
@@ -2325,7 +2349,7 @@
    "bildschirm": "heute",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2352,7 +2376,7 @@
    "bildschirm": "muell",
    "regel": "woerter",
    "ok": true,
-   "ist": 3,
+   "ist": 8,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2379,9 +2403,9 @@
    "bildschirm": "muell",
    "regel": "schrift",
    "ok": true,
-   "ist": 13.5,
+   "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Andere"
+   "hinweis": "Eimer gewogen"
   },
   {
    "viewport": "360x780",
@@ -2397,7 +2421,7 @@
    "bildschirm": "muell",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2415,7 +2439,7 @@
    "bildschirm": "kuehlung",
    "regel": "woerter",
    "ok": true,
-   "ist": 5,
+   "ist": 7,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2442,9 +2466,9 @@
    "bildschirm": "kuehlung",
    "regel": "schrift",
    "ok": true,
-   "ist": 17,
+   "ist": 14.875,
    "soll": "≥ 12 px",
-   "hinweis": "Heute gemessen"
+   "hinweis": "GastroCash"
   },
   {
    "viewport": "360x780",
@@ -2460,7 +2484,7 @@
    "bildschirm": "kuehlung",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2487,7 +2511,7 @@
    "bildschirm": "putzen",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 3,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2496,7 +2520,7 @@
    "bildschirm": "putzen",
    "regel": "scroll",
    "ok": true,
-   "ist": "1228 px",
+   "ist": "972 px",
    "soll": "≤ 780 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -2514,9 +2538,9 @@
    "bildschirm": "putzen",
    "regel": "schrift",
    "ok": true,
-   "ist": 15,
+   "ist": 14.875,
    "soll": "≥ 12 px",
-   "hinweis": "Nach jeder Benutzung"
+   "hinweis": "GastroCash"
   },
   {
    "viewport": "360x780",
@@ -2532,7 +2556,7 @@
    "bildschirm": "putzen",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2550,7 +2574,7 @@
    "bildschirm": "karte",
    "regel": "woerter",
    "ok": true,
-   "ist": 7,
+   "ist": 9,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2595,7 +2619,7 @@
    "bildschirm": "karte",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2603,10 +2627,10 @@
    "viewport": "360x780",
    "bildschirm": "karte",
    "regel": "knopfhoehe",
-   "ok": false,
-   "ist": "57.2 px",
+   "ok": true,
+   "ist": "64 px",
    "soll": "≥ 64 px",
-   "hinweis": "Karte fotografieren 57.2"
+   "hinweis": ""
   },
   {
    "viewport": "360x780",
@@ -2622,7 +2646,7 @@
    "bildschirm": "umsatz-heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 6,
+   "ist": 8,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2649,9 +2673,9 @@
    "bildschirm": "umsatz-heute",
    "regel": "schrift",
    "ok": true,
-   "ist": 16,
+   "ist": 14.875,
    "soll": "≥ 12 px",
-   "hinweis": "Aus der Kasse"
+   "hinweis": "GastroCash"
   },
   {
    "viewport": "360x780",
@@ -2667,7 +2691,7 @@
    "bildschirm": "umsatz-heute",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2694,7 +2718,7 @@
    "bildschirm": "abschluss",
    "regel": "woerter",
    "ok": true,
-   "ist": 11,
+   "ist": 13,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2721,7 +2745,7 @@
    "bildschirm": "abschluss",
    "regel": "schrift",
    "ok": true,
-   "ist": 15,
+   "ist": 12.75,
    "soll": "≥ 12 px",
    "hinweis": "Aus der Kasse"
   },
@@ -2739,7 +2763,7 @@
    "bildschirm": "abschluss",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2802,7 +2826,7 @@
    "bildschirm": "personal",
    "regel": "woerter",
    "ok": true,
-   "ist": 5,
+   "ist": 7,
    "soll": "≤ 10",
    "hinweis": ""
   },
@@ -2829,7 +2853,7 @@
    "bildschirm": "putzen-plan",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 3,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2838,7 +2862,7 @@
    "bildschirm": "putzen-plan",
    "regel": "scroll",
    "ok": true,
-   "ist": "1228 px",
+   "ist": "972 px",
    "soll": "≤ 780 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -2856,9 +2880,9 @@
    "bildschirm": "putzen-plan",
    "regel": "schrift",
    "ok": true,
-   "ist": 15,
+   "ist": 14.875,
    "soll": "≥ 12 px",
-   "hinweis": "Nach jeder Benutzung"
+   "hinweis": "GastroCash"
   },
   {
    "viewport": "360x780",
@@ -2874,7 +2898,7 @@
    "bildschirm": "putzen-plan",
    "regel": "kontrast",
    "ok": true,
-   "ist": 6.41,
+   "ist": 5.78,
    "soll": "≥ 4.5:1",
    "hinweis": ""
   },
@@ -2899,6 +2923,11 @@
  ],
  "de_js": [],
  "neueVerletzungen": [],
- "ausnahmenOhneBefund": [],
+ "ausnahmenOhneBefund": [
+  [
+   "karte",
+   "knopfhoehe"
+  ]
+ ],
  "konsolenfehler": []
 }
