@@ -156,3 +156,22 @@ Keine.
 - Detailbefund, Dateiliste und Integrationsreihenfolge: [Work-Integration](Sanji_2026-10-22_Work_Integration.md). Diesen Work-PR zuerst in den Facelift-Branch prüfen; PR #2/#4 nicht blind zusätzlich übernehmen. Veröffentlichung erst nach eigenständigem Review, grünen Checks und ausdrücklichem Kapitäns-Go.
 
 - Visuelle Schlusskorrektur in derselben Work-Lieferung: Einstellungen mit geschützten Karten-Innenabständen, ruhigen Zeilentrennern und umbrechenden Wertezeilen; erneut als echte Browseransicht geprüft. Die fünf schon vorhandenen Node-Auslassungen benötigen externe/lokale Testfixtures.
+
+
+## 23.10.2026 – Work Mission 2: L3 in die geprüfte Produktfassung integrieren
+
+- Grundlage PR #6 `5de3a47`; neuer Branch `work/product-readiness-2026-10-23`, Ziel ausschließlich der PR-6-Entwicklungsbranch. PR #2–#6 seit dem Work-Abschluss unverändert; keine neuen Reviews/Beschlüsse.
+- L2 ist im freigegebenen Premium-Facelift weiterentwickelt; alten CSS-/Stationscode nicht darüberkopiert. L3-Patch aus PR #4 übernommen und mit B/C verbunden, ohne Rechenkernänderung.
+- L3: bestätigte Stationen/Abschluss sofort sichern, Abschlussereignis auch ohne Toast; Nachkontrolle-Zurück führt wieder zur Ware. Leerer Personal-Rundgang ohne zusätzliche leere Korrekturübersicht. „Heute dokumentiert“, letzte Dokumentation mit Datum und echtem Nicht-Messungsgrund; keine Temperatur erfunden. ≥56px Touchflächen, DE/TR/EN und lange türkische Namen.
+- Technischer Nutzen-Adapter mit getrennten Statuswerten und Lagerkapital, ohne Summenberechnung; noch nicht in L1 aktiviert. Zoros belegte Regeln/Quellen fehlen weiterhin.
+- Add/Add in `docs/sanji-protokoll.md` tatsächlich mit merge-tree reproduziert. Das komplette bisherige Protokoll bleibt als Präfix erhalten; drei fehlende Übergabedokumente aus #3 bytegleich ergänzt. Keine fremde Arbeit überschrieben, kein PR gemergt/geschlossen.
+- Gezielte Arbeitstags- und Robustheitsprüfung sowie Quellen mit Sicherheit, Datum und Produktfolge: [Produktreife-Bericht](Sanji_2026-10-23_Produktreife.md). Finale GitHub-Actions-Abnahme im zugehörigen Entwicklungs-PR. Keine neuen Bilder, Frameworks, externen Dienste, Steuertexte oder Rechenregeln.
+- Offen Zoro: statusübergreifende Bedeutung von Nicht-Messungen; belastbarer Nutzen-Vertrag (Zeitraum, Nachweise, Doppelzählung, Lagerkapital). Offen Franky: betriebliche Kühl-/Putzvorgaben, Aufbewahrungs-/Exportprüfung, Datenschutz und spätere Nutzenwerbung. Für den Kapitän: L3 und Integrationsreihenfolge prüfen; späteres Merge-/Release-Go bleibt separat.
+
+
+## 23.10.2026 – GastroCash-Abschluss im bestehenden PR #7
+
+- Jüngste Freitag-Masterübergabe vollständig gelesen und unverändert mit Ergänzung erhalten. Die begonnene L3-/Work-Arbeit ist jetzt mit dem GastroCash-B-Stand verbunden; Abschlussbranch `work/gastrocash-completion-2026-10-23`, Ziel bestehender PR #7.
+- Stale CSS-Referenz und unbenutzte Mascot-Klassen repariert, Markentest auf `optik.css`, Sicherungsnamen-Test auf GastroCash. Datenformat/alte Importe und alle Food-/Font-Assets bleiben erhalten. Alle vier historischen 404 waren dieselbe fehlende Brand-CSS-Datei; mit tatsächlichen URLs reproduziert. Markenordner im späteren Pages-Paket ergänzt.
+- Lokale Endprüfung: UTC/Berlin je 655 bestanden, 0 Fehler, 5 bestehende Auslassungen; Regeln/Personal und 12er-Matrix grün. Zwei vollständige Arbeitstage mit echtem Versionswechsel, ganzem Offline-Browserneustart, alten/neuen Sicherungen und eigenem Foto bestanden. Marken-/Hilfe-/Personal-Prüfung in DE/TR/EN bei 390/360 einschließlich Reduced Motion, Manifest und Installierbarkeit bestanden; keine HTTP-/JS-Fehler.
+- Brücke und GastroCash-/Work-Dokumente aktualisiert. Finale SHAs/Fassung/Fingerprint und Actions-Lauf im aktualisierten PR #7. Kein Merge, kein Deploy, keine Rechenkernänderung. Offen bleiben die im Masterabschluss genannten fachlichen/visuellen Freigaben und Markenprüfung.
