@@ -13,9 +13,13 @@ test("jede Karte hält den Vertrag: ≤ 25 Wörter, ≤ 4 Wörter Titel, Steuerb
   assert.equal(new Set(HINWEISE.map((h) => h.id)).size, HINWEISE.length, "ids eindeutig");
 });
 
-test("in der App ist die Liste leer, solange keine Karte geprüft ist (keine ungeprüfte Steuerkarte)", () => {
-  const s = mitPersonal(laden());
-  assert.equal(hinweiseFuer(s).length, HINWEISE.filter((h) => h.geprueft).length);
+test("in der App erscheinen nur geprüfte Karten mit Prüfdatum; ungeprüfte nie", () => {
+  const s = mitPersonal(laden()); for (let i = 1; i <= 5; i++) s.abschluesse.push({ id: "a" + i, datum: "2026-10-0" + i });
+  s.inventuren = [{ id: "i1", datum: "2026-10-01", abgeschlossen: "2026-10-01T20:00:00.000Z", posten: {} }]; s.kostenbelege = [{ id: "kb", stelle: "strom", betrag: 50 }];
+  const l = hinweiseFuer(s);
+  assert.ok(l.length >= 5); for (const h of l) { assert.equal(h.geprueft, true); assert.match(h.pruefung, /^2026-\d{2}-\d{2} /); }
+  assert.ok(!l.some((h) => ["trinkgeld", "gutschein", "pfand"].includes(h.id)), "ungeprüfte Karten bleiben unsichtbar");
+  assert.equal(hinweiseFuer(laden()).length, 0, "leerer Laden: keine Karte");
 });
 
 test("Auslöser mitarbeiter: nur aktive, nicht entfernte Personen", () => {
@@ -35,7 +39,7 @@ test("Auslöser personalessen, menue, inventur, abschluesse5, belege aus echten 
 
 test("ausgelöste Karten mit nurGeprueft: false; nicht ausgelöste fehlen; Reihenfolge nach Register-Nummer", () => {
   const s = mitPersonal(laden()); const l = hinweiseFuer(s, { nurGeprueft: false });
-  assert.ok(l.some((h) => h.id === "berufskleidung")); assert.ok(!l.some((h) => h.id === "menue_aufteilen"));
+  assert.ok(l.some((h) => h.id === "berufskleidung")); assert.ok(!l.some((h) => h.id === "menue_aufteilen")); assert.ok(!l.some((h) => h.id === "steuer_sieben"), "ohne 5 Abschlüsse keine Kassenkarte");
   for (const h of l) { assert.equal(h.status, "neu"); assert.equal(h.knopf, KNOPF); }
   const nummern = l.map((h) => h.register); assert.deepEqual(nummern, [...nummern].sort());
 });
@@ -64,4 +68,5 @@ test("hinweisPruefen erkennt Verstöße: zu lang, ohne Steuerberater-Hinweis, ve
   assert.ok(hinweisPruefen(zuLang).some((f) => /Wörter/.test(f)));
   assert.ok(hinweisPruefen({ ...hinweisMitId("gwg"), satz: "So sparst du Geld." }).length >= 2);
   assert.ok(hinweisPruefen({ ...hinweisMitId("gwg"), titel: "Das ist rechtssicher und gut" }).some((f) => /verboten|titel/.test(f)));
+  assert.ok(hinweisPruefen({ ...hinweisMitId("gwg"), pruefung: "" }).some((f) => /Prüfdatum/.test(f)), "geprüft nur mit Datum");
 });

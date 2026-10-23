@@ -13,6 +13,7 @@ import { offenImBuero, zaehlerImTakt, einrichtungImTakt } from "../offen.js"; //
 import { pinGesetzt } from "../modus.js";
 import { belehrungen } from "../export_amt.js";
 import { ordnerKachelStand } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
+import { hinweiseAnzahl } from "../hinweis.js"; // Hinweis-Karten (23.10.2026)
 import { monatName, datumLesbar } from "./tag.js";
 import { verkaufSichtbar } from "../verkauf.js"; // E7 (17.10.2026): Einstieg „Verkauf je Gericht“ nur mit Schalter oder im Beispiel-Laden
 import { bestandUhrzeit, lieferUhrzeit } from "../bestand.js"; // Lieferanten (18.10.2026): lieferUhrzeit als Unterzeile „Lieferanten“ // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit
@@ -30,6 +31,7 @@ const EXTRA = {
   "eye": '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
   "chevron-left": '<path d="m15 18-6-6 6-6"/>',
   "tv": '<rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>', // Menütafel (18.10.2026)
+  "lightbulb": '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>', // Hinweise (23.10.2026)
   "cup-soda": '<path d="m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8"/><path d="M5 8h14"/><path d="M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/><path d="m12 8 1-6h2"/>', // Getränke (18.10.2026)
 };
 export const bsym = (name, klasse = "") => EXTRA[name] ? `<svg class="sym ${klasse}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${EXTRA[name]}</svg>` : sym(name, klasse);
@@ -79,7 +81,8 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("zaehler.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}
         ${zeile({ aktion: "nav", wert: "vergleich" }, "chart-column", t("buero.zahlen.vergleich"), t("buero.zahlen.vergleichUnter"))}
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
-        ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}`, monatWert)}
+        ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}
+        ${zeile({ aktion: "nav", wert: "hinweise" }, "lightbulb", t("hinweise.einstieg"), hinweiseAnzahl(stand) ? t("hinweise.einstiegNeu", hinweiseAnzahl(stand)) : t("hinweise.einstiegUnter"))}`, monatWert)}
       ${bereich("ware", "package", t("buero.abschnitt.ware"), ware?.text || (inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie")), bu?.ton === "rot", `
         ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bu?.text || t("bestand.einstiegUnter"))}
         ${zeile({ aktion: "nav", wert: "inventur" }, "clipboard-list", t("buero.zahlen.inventur"), inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie"))}
