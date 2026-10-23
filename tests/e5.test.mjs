@@ -60,7 +60,7 @@ test("E5: mit Passwort → ZIP mit genau sicherung.enc und LIESMICH.txt, Endung 
   const e = await zip.zipLesen(r.blob);
   assert.deepEqual(e.map((x) => x.name).sort(), ["LIESMICH.txt", "sicherung.enc"]);
   const lies = new TextDecoder().decode(await e.find((x) => x.name === "LIESMICH.txt").bytes());
-  assert.ok(lies.includes("GastroCalc") && lies.includes("Passwort") && lies.includes("password") && lies.includes("parola"), "LIESMICH dreisprachig");
+  assert.ok(lies.includes("GastroCash") && lies.includes("Passwort") && lies.includes("password") && lies.includes("parola"), "LIESMICH dreisprachig mit aktueller Marke");
   const enc = await e.find((x) => x.name === "sicherung.enc").bytes(); assert.equal(K.istVerschluesselt(enc), true);
   // Klartext darf nirgends in der Datei stehen
   const roh = new TextDecoder("latin1").decode(await bytes(r.blob)); assert.ok(!roh.includes("gastrocalc-sicherung") && !roh.includes("Nord"));
