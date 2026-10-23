@@ -38,6 +38,7 @@ export function startView(stand, extra = {}) {
       ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${dran ? jetztKarte(dran) : ""}
+      ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
     ${nav("start", { mascot: nutzen.summe > 0 ? "freundlich" : "neutral" })}`;
 }
