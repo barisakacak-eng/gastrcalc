@@ -103,7 +103,8 @@ test("personalZahlen: offene Kühlung und Putzstand ohne Euro", () => {
 test("heuteZiel: große Zahl, Balken und Tempo passen zu monatsZiel", () => {
   const s = laden(); const z = Z.zaehler(s, { datum: H }); const w = LZ.heuteZiel(s, z, H); const m = Z.monatsZiel(s, z, H);
   assert.ok(["bisNull", "bisZiel", "ueberZiel"].includes(w.stufe));
-  if (m.ziel !== null) assert.equal(w.zahl, m.stufe === "bisNull" ? m.fehltNull : m.stufe === "bisZiel" ? m.fehlt : m.darueber);
+  // Variante A (24.10.2026): Monatsblick – bis null = Nullpunkt − Monatsumsatz, zum Ziel = Ziel − Umsatz, über Ziel = Umsatz − Ziel
+  if (m.ziel !== null) assert.equal(w.zahl, w.stufe === "bisNull" ? m.nullpunkt - m.umsatz : w.stufe === "bisZiel" ? m.ziel - m.umsatz : m.umsatz - m.ziel);
   assert.ok(w.anteil >= 0 && w.anteil <= 1);
   assert.ok(w.tempo === null || ["gut", "knapp"].includes(w.tempo.art));
 });

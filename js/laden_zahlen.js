@@ -11,9 +11,12 @@ import { planGruppen } from "./putzplan.js";
 // tempo: { art: "gut", am } (Ziel erreicht am …) | { art: "knapp", proTag } (so viel pro Tag nötig) | null. m = monatsZiel().
 export function heuteZiel(stand, z, H) {
   const m = monatsZiel(stand, z, H);
-  const stufe = m.stufe === "ohne" ? "bisNull" : m.stufe;
-  const zahl = m.ziel === null ? null : m.stufe === "bisNull" ? m.fehltNull : m.stufe === "bisZiel" ? m.fehlt : m.darueber;
-  const marke = m.ziel === null ? null : m.stufe === "bisNull" ? m.umsatz + (m.fehltNull || 0) : m.ziel;
+  // Baris 24.10.2026, Variante A: immer der Monatsblick. Erst „bis null“ (Umsatz bis zum Monats-Nullpunkt), dann „zum Ziel“, dann „über Ziel“.
+  // Vorher wechselte die Zahl am Tag zwischen Monats- und Tagesstand (Gremium 1, Blocker 3).
+  const u = m.umsatz || 0;
+  const stufe = m.ziel === null ? "bisNull" : u < m.nullpunkt ? "bisNull" : u < m.ziel ? "bisZiel" : "ueberZiel";
+  const zahl = m.ziel === null ? null : stufe === "bisNull" ? m.nullpunkt - u : stufe === "bisZiel" ? m.ziel - u : u - m.ziel;
+  const marke = m.ziel === null ? null : stufe === "bisNull" ? m.nullpunkt : m.ziel;
   const anteil = marke ? Math.max(0, Math.min(1, m.umsatz / marke)) : 0;
   const tempo = m.erreichtAm ? { art: "gut", am: m.erreichtAm } : m.proTagNoetig ? { art: "knapp", proTag: m.proTagNoetig } : null;
   return { m, stufe, zahl, marke, anteil, tempo };

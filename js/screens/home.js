@@ -67,10 +67,10 @@ function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
   // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
-  return `<button type="button" class="karte h-ziel h-ziel-kurs ${m.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
+  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
-    <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
+    <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
     ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
     ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)

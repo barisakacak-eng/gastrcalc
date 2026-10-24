@@ -2,7 +2,7 @@
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute as kalendertag, heuteGeschaeft as heute } from "../util.js"; // Paket 3 (16.10.2026), M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); Kühlung bleibt am Kalendertag
 import { tagAbschliessen } from "../zaehler.js";
-import { abschlussHaken, tagesBilanz } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026)
+import { abschlussHaken, tagesBilanz, heuteZiel } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026)
 import { nav } from "./nav.js";
 import { zeitKurz } from "./tag.js";
 import { mascotMarkup, mascotResultState } from "../gastrocash-brand.js";
@@ -38,8 +38,10 @@ function bilanzView(stand, H) {
   const b = tagesBilanz(stand, H, kalendertag()); // Trennung 2 (17.10.2026): alle Zahlen aus js/laden_zahlen.js, hier nur Texte
   const { z, vor, nach, besser, netto, bleibt, rundgaenge, restTage } = b; const u = b.umsatz;
   // Facelift: dieselbe Zahl verständlich zeigen – negativer Zähler ist noch zu deckender Betrag, KEIN Verlust.
-  const zielLabel = nach < 0 ? t("cockpit.bisNullFehlen") : t("cockpit.ueberNull");
-  const zielWert = `${nach >= 0 ? "+ " : ""}${fmtEuro(Math.abs(nach))}`;
+  // Baris 24.10.2026 (Variante A): dieselbe Monatszahl wie auf Heute – „bis null“, „zum Ziel“ oder „über Ziel“, nie der Tagesstand
+  const hz = heuteZiel(stand, z, H);
+  const zielLabel = t("nutzen.stufe." + hz.stufe);
+  const zielWert = hz.zahl === null ? "–" : `${hz.stufe === "ueberZiel" ? "+ " : ""}${hz.m.geschaetzt ? "≈ " : ""}${fmtEuro(hz.zahl, { dezimal: 0 })}`;
   const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert }; const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen, nachkontrollen: b.kuehl.nachkontrollen || 0 };
   const tag = t("abschluss.tage." + b.vergleich.wochentag);
   const v = b.vergleich;
@@ -50,9 +52,9 @@ function bilanzView(stand, H) {
   return `
     <div class="kopfband ab-kopf ab-ergebnis-kopf"><h1>${esc(t("abschluss.geschafft"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(H.split("-").reverse().join("."))}</div></div>
     <div class="inhalt ab-bilanz">
-      <div class="karte dunkel zaehler ab-hero ${nach >= 0 ? "plus" : "minus"}">\n        <span class="gc-ab-mascot" data-state="${mascotState}">${mascotMarkup(mascotState, mascotState === "erfolg" ? "celebrate" : mascotState === "nachdenklich" ? "turn" : mascotState === "neutral" ? "idle" : "none")}</span>
+      <div class="karte dunkel zaehler ab-hero ${hz.stufe !== "bisNull" ? "plus" : "minus"}">\n        <span class="gc-ab-mascot" data-state="${mascotState}">${mascotMarkup(mascotState, mascotState === "erfolg" ? "celebrate" : mascotState === "nachdenklich" ? "turn" : mascotState === "neutral" ? "idle" : "none")}</span>
         <small class="lbl">${esc(zielLabel)}</small>
-        <span class="bewegung"><span class="alt">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</span><span class="pfeil" aria-hidden="true">→</span><span class="riesig">${zielWert}</span></span>
+        <span class="bewegung"><span class="riesig">${zielWert}</span></span>
         <small class="ab-verlauf ${besser >= 0 ? "positiv" : "negativ"}">${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
         <small class="fein">${esc(t("cockpit.kalkulatorisch"))}</small>
       </div>

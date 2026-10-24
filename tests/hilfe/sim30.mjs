@@ -259,8 +259,12 @@ function pruefen(D, { nachInventur = null } = {}) {
   // Wahrheit: Wareneinsatz = Wert des echten Verbrauchs seit Monatsanfang (Wahrheitsbestand zu aktuellen Preisen)
   const hz = LZ.heuteZiel(s, z, D); scan(hz, "heuteZiel");
   VERLAUF.push({ D, stufe: z.stufe, stand: r2(z.stand), ware: r2(z.ware), quoteEff: r2(z.quoteEff), monatsende: z.monatsende === null ? null : r2(z.monatsende), nullTag: z.nullTag, ziel: hz.stufe, tempo: hz.tempo, umsatzNetto: r2(z.umsatzNetto), kosten: r2(z.kosten), muell: r2(z.muell) });
-  if (hz.stufe === "bisNull" && z.stand >= 0 && !z.keinUmsatz) befund("ziel-stufe", "mittel", `Zielkarte „bis null“ obwohl Zähler im Plus (${r2(z.stand)})`);
-  if (hz.stufe !== "bisNull" && z.stand < 0) befund("ziel-stufe2", "mittel", `Zielkarte „${hz.stufe}“ obwohl Zähler im Minus (${r2(z.stand)})`);
+  // Baris 24.10.2026 (Variante A): die Zielkarte zeigt den Monatsblick – Stufe folgt Monatsumsatz gegen Monats-Nullpunkt und Ziel, nicht dem Tagesstand des Zählers
+  if (hz.m.ziel !== null) {
+    const u = hz.m.umsatz || 0; const soll = u < hz.m.nullpunkt ? "bisNull" : u < hz.m.ziel ? "bisZiel" : "ueberZiel";
+    if (hz.stufe !== soll) befund("ziel-stufe", "mittel", `Zielkarte „${hz.stufe}“, Monatsumsatz ${r2(u)} spricht für „${soll}“`);
+    if (!(hz.zahl >= 0)) befund("ziel-zahl", "mittel", `Zielkarte mit negativer Zahl ${r2(hz.zahl)}`);
+  }
   { const tage = [...kassenTag.values()].filter((t) => t.datum.slice(0, 7) === D.slice(0, 7) && t.datum <= D); const schnitt = tage.length ? tage.reduce((a, t) => a + t.summe, 0) / tage.length : null;
     if (hz.tempo?.art === "knapp" && schnitt && hz.tempo.proTag > 2.5 * schnitt) befund("ziel-protag", "hoch", `Laden „Heute“: „${Math.round(hz.tempo.proTag)} € / Tag nötig“ bei Ø ${Math.round(schnitt)} € Tagesumsatz (Stufe ${z.stufe}, quoteEff ${r2(z.quoteEff)}, Einkauf heute ${einkaufTage.has(D) ? "ja" : "nein"})`); }
   if (hz.anteil < 0 || hz.anteil > 1) befund("ziel-anteil", "mittel", `Balken-Anteil ${hz.anteil}`);
