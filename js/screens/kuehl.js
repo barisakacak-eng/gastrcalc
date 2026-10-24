@@ -336,6 +336,9 @@ export function kuehlAktion(name, el, stand, wurzel) {
     const k = aktiveStellen(stand).find((x) => x.id === station); if (!k) return false;
     stationEintragen(r, k, form); // „Ware weggeworfen" wird erst beim Abschluss zu Schwund-Einträgen
     station = null; form = null;
+    if (!r.einzel && !rundgangVollstaendig(stand, r)) { // Gremium 1 (24.10.2026): nach dem Speichern direkt die nächste offene Stelle, kein Umweg über die Übersicht
+      station = kuehlNaechsteStelle(stand, r); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null; return true;
+    }
     if (r.einzel || rundgangVollstaendig(stand, r)) { rundgangAbschliessen( /* W2-H (p01 K3): nach der letzten Stelle schließt sich der Rundgang selbst */stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n)); ansicht = "start"; return "abgeschlossen"; } // Nachmessen einer Stelle: sofort ins Journal
     return true;
   }

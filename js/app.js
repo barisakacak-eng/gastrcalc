@@ -284,7 +284,7 @@ async function fertig(ziel = "start") {
     stand.phase = "app"; stand.rueckkehr = null; delete stand.neuAus;
     if (ziel === "vorlagen") { // Gremium 1 (24.10.2026): Karte aus Vorlagen gleich nach der Einrichtung – die Schritte Karte → Rezepte → Preise, zurück auf Heute
       ansicht = "start"; await ereignis("onboarding-fertig", { laden: stand.id }); dauerhaftAnfragen(); await sofortSpeichern(wurzel);
-      wechselt = false; bearbeiten("karte", "preise"); zeichne(); return;
+      wechselt = false; bearbeiten("karte", "verkauf"); zeichne(); return; // bis Verkaufspreise (Nachtest Gremium 1: „preise“ = Einkaufspreise, danach fehlten die Verkaufspreise)
     }
     { const nz = navZiel(wurzel, ziel); if (nz.buero) modusSetzen(wurzel, "buero"); ansicht = nz.ansicht; } // Einrichtung macht der Inhaber: „Beleg fotografieren" am Ende führt ins Büro
     await ereignis("onboarding-fertig", { laden: stand.id });

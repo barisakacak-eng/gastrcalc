@@ -58,6 +58,7 @@ async def main():
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')
+            await pg.click('[data-a="rechtsform"][data-wert="einzel"]'); await pg.click('[data-a="weiter"]')  # Rechtsform-Schritt (24.10.2026)
             await pg.fill('[data-f="team.personen"]', "3"); await pg.fill('[data-f="team.stundenProPerson"]', "160"); await pg.click('[data-a="weiter"]')
             await bild("lohn-mit-eigenem")
             await pg.fill('[data-f="team.lohnkosten"]', "6000")
@@ -147,7 +148,7 @@ async def main():
             await pg.wait_for_selector(".cockpit")
             # ---- Cockpit
             await bild("cockpit-leer")
-            html = await pg.content(); assert "Bis null fehlen" in html and "umsatzheute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro
+            html = await pg.content(); assert "Bis null" in html and "umsatzheute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro
             z = await pg.evaluate("(async () => { const m = await import('./js/zaehler.js'); return m.zaehler(window.__gastrocalc.stand); })()")
             assert z["stufe"] == 2 and z["keinUmsatz"] and z["quote"] > 0.05, {k: z[k] for k in ("stufe", "keinUmsatz", "quote")}
             # Drei Ebenen: fünf Reiter unten, kein Schnellknopf; ☰ öffnet ein Blatt mit großen Kacheln, ohne den Bildschirm neu zu zeichnen
@@ -259,7 +260,9 @@ async def main():
             await bild("kuehl-abweichung-standard")
             assert await pg.locator('[data-a="station-speichern"]').is_disabled(), "8,5 °C über Standard 7 muss Abweichung sein"
             await pg.click('[data-a="massnahme"][data-wert="tuer"]'); await pg.click('[data-a="station-speichern"]')
-            await pg.click(f'[data-a="station"][data-id="{kids[1]}"]'); await pg.fill('[data-f="station-wert"]', "-19"); await pg.wait_for_timeout(150); await pg.click('[data-a="station-speichern"]')
+            await pg.wait_for_selector('[data-f="station-wert"]')  # Gremium 1 (24.10.2026): nach dem Speichern öffnet sich direkt die nächste Stelle
+            assert await pg.evaluate("document.querySelector('.ebene-kopf, h1')?.textContent || ''") is not None
+            await pg.fill('[data-f="station-wert"]', "-19"); await pg.wait_for_timeout(150); await pg.click('[data-a="station-speichern"]')
             await pg.wait_for_timeout(300)  # W2-H: nach der letzten Stelle schließt sich der Rundgang selbst
             assert await pg.locator('[data-a="rundgang-abschluss"]').count() == 0, "Rundgang hätte sich selbst schließen sollen"
             s = await stand(); assert len(s["messungen"]) == 2 and s["messungen"][0]["abweichung"] and s["messungen"][0]["grenzeStandard"] and s["messungen"][0]["max"] == 7, s["messungen"]

@@ -27,7 +27,7 @@ export function abschlussView(stand) {
       <div class="karte ab-liste" role="group" aria-label="${esc(t("abschluss.titel"))}">
         ${zeile('data-a="nav" data-wert="umsatzheute"', t("heute.kachel.umsatz"), t("abschluss.umsatzKurz"), u ? esc(fmtEuro(u.umsatz, { dezimal: 2 })) : "–", u ? "fertig" : "offen")}
         ${zeile('data-a="nav" data-wert="muell"', t("ebene.tabs.muell"), "", hk.muell.anzahl > 0 ? `<span class="gruen">✓</span>` : "–", hk.muell.anzahl > 0 ? "fertig" : "neutral")}
-        ${zeile(`data-a="${k.eingerichtet ? "kuehl-rundgang-start" : "kuehl-einrichtung-oeffnen"}" data-offen="0"`, t("ebene.tabs.kuehl"), "", k.eingerichtet ? `<span class="${kuehlOffen ? "rot" : "gruen"}">\u2066${k.gemessen} / ${k.stellen}\u2069</span>` : "–", kuehlOffen ? "warn" : k.fertig ? "fertig" : "neutral")}
+        ${zeile(`data-a="${k.eingerichtet ? "kuehl-rundgang-start" : "kuehl-einrichtung-oeffnen"}" data-offen="0"`, t("ebene.tabs.kuehl"), "", k.eingerichtet ? `<span class="${kuehlOffen ? "rot" : "gruen"}">\u2066${k.gemessen} / ${k.stellen}\u2069${k.nachkontrollen > 0 ? ` · ${esc(t("abschluss.nachkontrolle", k.nachkontrollen))}` : ""}</span>` : "–", kuehlOffen ? "warn" : k.fertig ? "fertig" : "neutral")}
       </div>
       <button type="button" class="knopf glut" data-a="abschluss-fertig">${esc(t("abschluss.knopf"))}</button>
     </div>
