@@ -1423,5 +1423,3 @@ export default {
   hinweise: { einstieg: "Tips", einstiegUnter: "Tax and office, from your data", einstiegNeu: (n) => `${n} new ${n === 1 ? "tip" : "tips"}`, titel: "Tips", unter: "From your data. General, not advice.", pflicht: "General information, not tax advice – check with your tax adviser.", leer: "No tip right now. More data brings more tips.", quelle: "Source", belege: "Prepare receipts", spaeterKnopf: "Later", spaeter: "later", erledigt: "Done", erledigtMeldung: "Tip done", spaeterMeldung: "Tip moved back" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Legal form", hinweis: "It is on your trade registration or in your imprint. e.K. counts as sole proprietorship, GmbH & Co. KG as KG.", offen: "Enter legal form", gesetzt: "Legal form saved", namen: { einzel: "Sole proprietor\u00ADship", gbr: "GbR", gmbh: "GmbH", ug: "UG (limited liability)", kg_ohg: "KG or OHG", unbekannt: "I don’t know" } }, // Rechtsform (23.10.2026)
 };
-
-// Sanji: Texte nur für die Design-Abnahme; keine neuen App-Funktionen.

@@ -1424,5 +1424,3 @@ export default {
   hinweise: { einstieg: "İpuçları", einstiegUnter: "Vergi ve daire, senin verilerinden", einstiegNeu: (n) => `${n} yeni ipucu`, titel: "İpuçları", unter: "Senin verilerinden. Genel bilgi, danışmanlık değil.", pflicht: "Genel bilgi, vergi danışmanlığı değil – mali müşavirinle görüş.", leer: "Şu an ipucu yok. Daha fazla veriyle ipuçları gelir.", quelle: "Kaynak", belege: "Belgeleri hazırla", spaeterKnopf: "Sonra", spaeter: "sonra", erledigt: "Tamam", erledigtMeldung: "İpucu tamamlandı", spaeterMeldung: "İpucu sonraya alındı" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Şirket türü", hinweis: "İşyeri kaydında (Gewerbeanmeldung) veya künyede yazar. e.K. şahıs işletmesi sayılır, GmbH & Co. KG ise KG.", offen: "Şirket türünü gir", gesetzt: "Şirket türü kaydedildi", namen: { einzel: "Şahıs işletmesi", gbr: "GbR", gmbh: "GmbH", ug: "UG (sınırlı sorumlu)", kg_ohg: "KG veya OHG", unbekannt: "Bilmiyorum" } }, // Rechtsform (23.10.2026)
 };
-
-// Sanji: Texte nur für die Design-Abnahme; keine neuen App-Funktionen.
