@@ -744,6 +744,7 @@ export default {
     gerichtWegKurz: "Hazır yemek, geri gelen tabak, yanlış sipariş",
     rohwareWeg: "Ham madde atıldı",
     rohwareKurz: "Domates, et, ekmek – tarihi geçmiş veya bozulmuş",
+    uebrig: "Artan", uebrigHinweis: "Hazırlanıp satılmayanlar",
     eimer: "Kova tartıldı",
     eimerKurz: "Yalnızca ağırlık, gerisini uygulama hesaplar",
     personal: "Personel yemeği",

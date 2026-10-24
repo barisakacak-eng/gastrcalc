@@ -746,6 +746,7 @@ export default {
     gerichtWegKurz: "أكل جاهز، صحن رجع، طلب خاطئ",
     rohwareWeg: "مواد خام مرمية",
     rohwareKurz: "طماطم، لحم، خبز – منتهي الصلاحية أو فاسد",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "وزن السطل",
     eimerKurz: "الوزن فقط، والتطبيق يحسب الباقي",
     personal: "أكل الطاقم",

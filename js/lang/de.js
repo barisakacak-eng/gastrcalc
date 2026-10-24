@@ -750,6 +750,7 @@ export default {
     gerichtWegKurz: "Fertiges Essen, Teller zurück, Fehlbestellung",
     rohwareWeg: "Rohware weg",
     rohwareKurz: "Tomaten, Fleisch, Brot – abgelaufen oder verdorben",
+    uebrig: "Übrig geblieben", uebrigHinweis: "Was fertig war und nicht verkauft wurde",
     eimer: "Eimer gewogen",
     eimerKurz: "Nur das Gewicht, die App rechnet den Rest",
     personal: "Personalessen",

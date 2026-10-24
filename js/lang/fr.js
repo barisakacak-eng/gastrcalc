@@ -744,6 +744,7 @@ export default {
     gerichtWegKurz: "Plat prêt, assiette revenue, erreur de commande",
     rohwareWeg: "Produit brut jeté",
     rohwareKurz: "Tomates, viande, pain – périmé ou abîmé",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Seau pesé",
     eimerKurz: "Seulement le poids, l’appli calcule le reste",
     personal: "Repas du personnel",

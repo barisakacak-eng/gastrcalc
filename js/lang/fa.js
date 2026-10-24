@@ -743,6 +743,7 @@ export default {
     gerichtWegKurz: "غذای آماده، بشقاب برگشتی، سفارش اشتباه",
     rohwareWeg: "مواد خام دور ریخته شد",
     rohwareKurz: "گوجه، گوشت، نان – تاریخ‌گذشته یا خراب",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "وزن سطل",
     eimerKurz: "فقط وزن، بقیه را اپ حساب می‌کند",
     personal: "غذای پرسنل",

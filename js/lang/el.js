@@ -744,6 +744,7 @@ export default {
     gerichtWegKurz: "Έτοιμο φαγητό, πιάτο που γύρισε, λάθος παραγγελία",
     rohwareWeg: "Πρώτη ύλη πετάχτηκε",
     rohwareKurz: "Ντομάτες, κρέας, ψωμί – έληξαν ή χάλασαν",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Ζυγίστηκε κάδος",
     eimerKurz: "Μόνο το βάρος, τα υπόλοιπα τα βγάζει η εφαρμογή",
     personal: "Φαγητό προσωπικού",
