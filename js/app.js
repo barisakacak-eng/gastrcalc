@@ -282,6 +282,10 @@ async function fertig(ziel = "start") {
   if (wechselt) return; wechselt = true;
   try {
     stand.phase = "app"; stand.rueckkehr = null; delete stand.neuAus;
+    if (ziel === "vorlagen") { // Gremium 1 (24.10.2026): Karte aus Vorlagen gleich nach der Einrichtung – die Schritte Karte → Rezepte → Preise, zurück auf Heute
+      ansicht = "start"; await ereignis("onboarding-fertig", { laden: stand.id }); dauerhaftAnfragen(); await sofortSpeichern(wurzel);
+      wechselt = false; bearbeiten("karte", "preise"); zeichne(); return;
+    }
     { const nz = navZiel(wurzel, ziel); if (nz.buero) modusSetzen(wurzel, "buero"); ansicht = nz.ansicht; } // Einrichtung macht der Inhaber: „Beleg fotografieren" am Ende führt ins Büro
     await ereignis("onboarding-fertig", { laden: stand.id });
     const pinWunsch = !!stand.pinFestlegen; delete stand.pinFestlegen; // W2-S (p07 H1): „Büro-PIN festlegen" öffnet gleich das PIN-Blatt
@@ -509,7 +513,7 @@ async function ebeneAktion(name, el) {
     if (!einleseDatei) { blattSchliessen(); return true; }
     await sicherungEinlesen(einleseDatei, p); return true;
   }
-  if (name === "rechtsform") { if (rechtsformSetzen(stand, el.dataset.wert)) { ereignis("rechtsform", { laden: stand.id, wert: el.dataset.wert }); meldung(t("rechtsform.gesetzt")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Rechtsform (23.10.2026)
+  if (name === "rechtsform" && stand.phase === "app") { if (rechtsformSetzen(stand, el.dataset.wert)) { ereignis("rechtsform", { laden: stand.id, wert: el.dataset.wert }); meldung(t("rechtsform.gesetzt")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Rechtsform (23.10.2026)
   if (name === "hinweis-status") { if (hinweisStatusSetzen(stand, el.dataset.id, el.dataset.status)) { ereignis("hinweis-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); meldung(t(el.dataset.status === "erledigt" ? "hinweise.erledigtMeldung" : "hinweise.spaeterMeldung")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Hinweis-Karten (23.10.2026)
   if (name === "testphase-code") { testphaseSetzen(wurzel, !testphaseOhneCode(wurzel)); meldung(t(testphaseOhneCode(wurzel) ? "ebene.pin.testphaseAn" : "ebene.pin.testphaseAus")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }

@@ -3,6 +3,7 @@
 // Gastronomie plus „unbekannt“ – nicht mehr (Verteilung belegt Franky, Doc „GastroCash Rechtsformen Imbiss 23.10.2026“).
 // Rein: liest und schreibt nur stand.betrieb.rechtsform (Bereich betrieb).
 export const RECHTSFORMEN = ["einzel", "gbr", "gmbh", "ug", "kg_ohg", "unbekannt"];
+// GmbH & Co. KG ist für Einkommen- und Gewerbesteuer Personengesellschaft (§ 11 Abs. 1 Satz 3 Nr. 1 GewStG) und wird als kg_ohg geführt; e.K. als einzel (Gremium 3, 24.10.2026).
 export const PERSONEN = ["einzel", "gbr", "kg_ohg"]; // Inhaber versteuert selbst: Sachentnahme, Gewerbesteuer-Freibetrag (§ 11 GewStG) – Belege Franky
 export const KAPITAL = ["gmbh", "ug"];               // eigene Steuerpflicht der Gesellschaft: Geschäftsführergehalt statt Entnahme
 

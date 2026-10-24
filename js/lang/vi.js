@@ -2,7 +2,7 @@
 // Vietnamesisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Anrede „bạn“.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Bản dùng thử" },
 
   allgemein: {
@@ -842,7 +842,7 @@ export default {
     fixTag: "Chi phí cố định trong ngày",
     tonne: "Rác",
     kuehl: "Nhiệt độ lạnh",
-    rundgaenge: (n) => `${n} vòng đo`,
+    rundgaenge: (n) => `${n} vòng đo`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
     besser: (tag, b) => `${tag} này tốt hơn ${tag} tuần trước: doanh thu nhiều hơn ${b}.`,
     schlechter: (tag, b) => `${tag} này yếu hơn ${tag} tuần trước: doanh thu ít hơn ${b}.`,
     gleich: (tag) => `${tag} này giống ${tag} tuần trước.`,
@@ -1046,7 +1046,7 @@ export default {
     laden: "Quán của bạn", namePlatzhalter: "Tên quán",
     ladenHilfe: "Loại quán cho sẵn số liệu ban đầu cho công thức, làm lạnh và dọn dẹp. Sau này đổi được hết ở văn phòng.",
     allesGenau: "Cài đặt chi tiết",
-    karte: "Thực đơn của bạn", karteFoto: "Chụp thực đơn", karteGalerie: "Ảnh hoặc PDF", spaeter: "Để sau",
+    karte: "Thực đơn của bạn", karteFoto: "Chụp thực đơn", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Ảnh hoặc PDF", spaeter: "Để sau",
     karteHilfe: "App đọc món và giá từ ảnh. Món quán tự làm thì bạn nhập ở văn phòng, mục Công thức.",
     kuehl: "Làm lạnh", arten: { kuehlschrank: "Tủ lạnh", saladette: "Tủ salad", tiefkuehler: "Tủ đông", warmhalter: "Tủ giữ nóng" },
     kuehlHilfe: "Sau này bạn ghi nhiệt độ cho từng thiết bị. Tên thì đổi ở văn phòng.",
@@ -1435,5 +1435,5 @@ export default {
       verschicken: "Gửi bản sao lưu", woFrage: "Giờ nó ở đâu?", woanders: "Thiết bị khác, mail, đám mây", nurHandy: "Chỉ trên điện thoại này", nurHandyMeldung: "Lời nhắc vẫn còn: tệp chỉ ở trên điện thoại này.", gezaehlt: "Đã tính bản sao lưu. Lời nhắc được đặt lại." } },
   adanaBrot: { frage: "Quán bạn ăn Adana kèm bánh mì nào?", pide: "Nguyên bánh pide", pideHalb: "Nửa bánh pide", fladen: "Dürüm / lavash", kein: "Không bánh mì" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

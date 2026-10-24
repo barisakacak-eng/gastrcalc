@@ -7,7 +7,7 @@ const br = (n, eden, mnogo) => Number(n) === 1 ? `1 ${eden}` : `${n} ${mnogo}`;
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Тестова версия" },
 
   allgemein: {
@@ -848,7 +848,7 @@ export default {
     fixTag: "Постоянни разходи за деня",
     tonne: "Кофа",
     kuehl: "Охлаждане",
-    rundgaenge: (n) => n === 1 ? "1 обиколка" : `${n} обиколки`,
+    rundgaenge: (n) => n === 1 ? "1 обиколка" : `${n} обиколки`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
     besser: (tag, b) => `${tag}: с ${b} повече оборот от миналата седмица.`,
     schlechter: (tag, b) => `${tag}: с ${b} по-малко оборот от миналата седмица.`,
     gleich: (tag) => `${tag}: колкото миналата седмица.`,
@@ -1053,7 +1053,7 @@ export default {
     laden: "Твоят обект", namePlatzhalter: "Име на обекта",
     ladenHilfe: "Видът на обекта дава начални стойности за рецепти, охлаждане и график за почистване. Всичко можеш да смениш после в офиса.",
     allesGenau: "Настрой всичко точно",
-    karte: "Твоето меню", karteFoto: "Снимай менюто", karteGalerie: "Снимки или PDF", spaeter: "По-късно",
+    karte: "Твоето меню", karteFoto: "Снимай менюто", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Снимки или PDF", spaeter: "По-късно",
     karteHilfe: "Приложението чете ястията и цените от снимката. Каквото правите сами, настройваш в офиса в Рецепти.",
     kuehl: "Охлаждане", arten: { kuehlschrank: "Хладилник", saladette: "Саладета", tiefkuehler: "Фризер", warmhalter: "Топла витрина" },
     kuehlHilfe: "За всеки уред после въвеждаш температурата. Имената сменяш в офиса.",
@@ -1441,5 +1441,5 @@ export default {
       verschicken: "Изпрати копието", woFrage: "Къде е сега?", woanders: "Друго устройство, имейл, облак", nurHandy: "Само на този телефон", nurHandyMeldung: "Напомнянето остава: файлът е само на този телефон.", gezaehlt: "Копието е отчетено. Напомнянето е нулирано." } },
   adanaBrot: { frage: "Какъв хляб давате към адана?", pide: "Цяла пиде", pideHalb: "Половин пиде", fladen: "Дюрюм / лаваш", kein: "Без хляб" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

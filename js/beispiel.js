@@ -113,7 +113,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   const offen = (d) => wochentag(d) !== 0;
   const s = leererBetrieb();
   Object.assign(s, { id: "bsp-laden-" + heute, angelegt: zeit(start, 8), phase: "app", weg: "schnell", schritt: 5, schrittId: "fertig-schnell", beispiel: true, ladenArt: "doener" });
-  s.betrieb = { ...s.betrieb, name: String(name).slice(0, 40), format: "imbiss", kuechen: ["doener"], tageProWoche: 6,
+  s.betrieb = { ...s.betrieb, name: String(name).slice(0, 40), format: "imbiss", kuechen: ["doener"], rechtsform: "einzel", tageProWoche: 6,
     reinigung: { wer: "selbst", firmaBetrag: null, minutenTag: 45, durch: "team", mittelSchaetzung: 45, basis: "brutto" } };
   // Beispiel-Laden (17.10.2026): Kosten je Monat (Beispielbeträge)
   s.team = { personen: 2, stundenProPerson: 160, lohnkosten: 6200, eigenerLohn: 3000, eigenerLohnStatus: "eigen" };

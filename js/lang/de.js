@@ -1,7 +1,7 @@
 // Leitsprache. Küchensprache: kurze Sätze, keine Fachbegriffe. Jede andere Sprache wird aus dieser Tabelle übersetzt.
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag","titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag","titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Testfassung" },
 
   allgemein: {
@@ -398,7 +398,7 @@ export default {
     belegeInfo: "Umsatzsteuer nur, wo der Satz auf dem Beleg erkannt wurde. Netto + USt + Pfand = Brutto.",
     aenderungen: "Änderungen und Rücknahmen", aenderungenInfo: "Nichts wird gelöscht: geänderte und zurückgenommene Einträge des Monats.", aenderungenKeine: "Keine Änderungen im Monat", datei: "Aenderungen",
     aart: { notiz: "Tagesumsatz (Notiz)", lieferung: "Warenbeleg", kosten: "Kostenbeleg" }, vorgang: { ersetzt: "geändert", storniert: "zurückgenommen" },
-    schwundOffen: (n) => `unvollständig: ${n} ohne Preis`, eigen: (e) => `Eigenverbrauch extra: ${e}`, eigenJahr: (e, j, p) => `Eigenverbrauch ${j} bis heute: ${e} netto · Pauschbetrag 2026: ${p} je Person. Welche Methode günstiger ist, klärt dein Steuerberater.`,
+    schwundOffen: (n) => `unvollständig: ${n} ohne Preis`, eigen: (e) => `Eigenverbrauch extra: ${e}`, eigenJahr: (e, j, p) => `Eigenverbrauch ${j} bis heute: ${e} netto · Pauschbetrag 2026: ${p} je Person. Welche Methode gilt, klärt dein Steuerberater.`,
     fuss: "Arbeitsunterlage zur Vorbereitung, kein Kassenbuch und keine Buchführung. Tagesumsätze sind Notizen aus der App, maßgeblich ist die Kasse (Z-Bon). Netto oder brutto steht im Spaltenkopf. Einträge werden nur angehängt, Änderungen stehen im letzten Abschnitt. * = nachgetragen.",
     kopf: { umsatz: ["Datum", "Brutto € (Notiz)", "Nachgetragen", "geändert (Vorwert €)", "Kennzeichnung"],
       belege: ["Datum", "Rechnungs-Nr", "Lieferant", "Kostenstelle", "Netto €", "USt 7 % €", "USt 19 % €", "Pfand €", "Brutto €", "davon Betriebsmittel €", "Hinweis"],
@@ -849,7 +849,7 @@ export default {
     fixTag: "Fixkosten des Tages",
     tonne: "Tonne",
     kuehl: "Kühlung",
-    rundgaenge: (n) => n === 1 ? "1 Rundgang" : `${n} Rundgänge`,
+    rundgaenge: (n) => n === 1 ? "1 Rundgang" : `${n} Rundgänge`, nachkontrolle: (n) => `${n} nachmessen`,
     besser: (tag, b) => `${tag} war besser als letzten ${tag}: ${b} mehr Umsatz.`,
     schlechter: (tag, b) => `${tag} war schwächer als letzten ${tag}: ${b} weniger Umsatz.`,
     gleich: (tag) => `${tag} war wie letzten ${tag}.`,
@@ -1054,7 +1054,7 @@ export default {
     laden: "Dein Laden", namePlatzhalter: "Name des Ladens",
     ladenHilfe: "Die Laden-Art gibt Startwerte für Rezepte, Kühlung und Putzplan. Alles kannst du später im Büro ändern.",
     allesGenau: "Alles genau einrichten",
-    karte: "Deine Karte", karteFoto: "Karte fotografieren", karteGalerie: "Fotos oder PDF", spaeter: "Später",
+    karte: "Deine Karte", karteFoto: "Karte fotografieren", karteVorlagen: "Aus Vorlagen wählen", karteGalerie: "Fotos oder PDF", spaeter: "Später",
     karteHilfe: "Die App liest Gerichte und Preise vom Foto. Was ihr selbst macht, stellst du im Büro unter Rezepte ein.",
     kuehl: "Kühlung", arten: { kuehlschrank: "Kühlschrank", saladette: "Saladette", tiefkuehler: "Tiefkühler", warmhalter: "Warmhalter" },
     kuehlHilfe: "Für jedes Gerät trägst du später die Temperatur ein. Namen änderst du im Büro.",
@@ -1140,7 +1140,7 @@ export default {
       putzen: (n) => n === 1 ? "1 Aufgabe überfällig" : `${n} Aufgaben überfällig`, sicherung: "Sicherung machen", sichern: "Sichern", abschluss: "Tag abschließen", los: "Los" },
     offen: { fassung: "Neue App-Fassung liegt bereit", einrichtung: (p, s) => `Einrichtung ${p} % – als Nächstes: ${s}`, kosten: "Feste Kosten oder Löhne unvollständig",
       karteGrau: (n) => n === 1 ? "1 Gericht ohne Preis oder Rezept" : `${n} Gerichte ohne Preis oder Rezept`, waage: (n) => n === 1 ? "1 Rezept geschätzt – einmal abwiegen" : `${n} Rezepte geschätzt – einmal abwiegen`,
-      putzplan: "Putzplan einrichten (HACCP-Empfehlung)", sicherung: (n) => `Letzte Sicherung vor ${n} ${n === 1 ? "Tag" : "Tagen"}`, sicherungNie: "Noch keine Sicherung",
+      putzplan: "Putzplan einrichten", sicherung: (n) => `Letzte Sicherung vor ${n} ${n === 1 ? "Tag" : "Tagen"}`, sicherungNie: "Noch keine Sicherung",
       muellOhneWert: (n) => n === 1 ? "1 Müll-Eintrag ohne Wert" : `${n} Müll-Einträge ohne Wert` },
   },
   ordnerC: { titel: "Inhalt und Beilagen", kopf: ["Nr.", "Unterlage", "Liefert", "Stand"], app: "App", du: "Du", liegtBei: "liegt bei", beilegen: "bitte beilegen", pruefen: "prüfen", fehlt: "fehlt", notiz: "Notiz – kein Z-Bon", hinweis: "Zusammenstellung des Inhabers, kein Buchhaltungsergebnis. Tageswerte aus der App sind Notizen – kein Z-Bon.", karteTitel: "Das legst du selbst bei", kleinbetrag: "Kleinbetrag bis 250 €", nachgetragen: (d) => `nachgetragen am ${d}`, belegNr: "Beleg-Nr.", teile: { zbon: "Z-Bons aller Öffnungstage aus der Kasse", karten: "Kartenabrechnungen und Lieferportal-Abrechnungen", bank: "Bankauszüge aller Konten", fapost: "Post vom Finanzamt und offene Fragen", rechnungen: "Eingangsrechnungen im Original oder als Foto, sortiert nach Beleg-Nr.", ausgang: "Ausgangsrechnungen (z. B. Catering), fortlaufend nummeriert", vertraege: "Neue Verträge und Anschaffungen mit Rechnung", lieferscheine: "Lieferscheine (Rückverfolgbarkeit)", ifsg: "Bescheinigungen nach § 43 Infektionsschutzgesetz", schaedling: "Schädlingskontrolle und Bericht der Fachfirma", haccp: "HACCP-Konzept nach Vorlage deines Amts" } }, // Paket C (19.10.2026)
@@ -1381,5 +1381,5 @@ export default {
       verschicken: "Sicherung verschicken", woFrage: "Wo liegt sie jetzt?", woanders: "Anderes Gerät, Mail, Cloud", nurHandy: "Nur auf diesem Handy", nurHandyMeldung: "Die Erinnerung bleibt: die Datei liegt nur auf diesem Handy.", gezaehlt: "Sicherung gezählt. Erinnerung zurückgesetzt." } },
   adanaBrot: { frage: "Welches Brot gibt es bei euch zum Adana?", pide: "Ganzes Pide", pideHalb: "Halbes Pide", fladen: "Dürüm / Lavash", kein: "Kein Brot" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" }, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } }, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } }, // Rechtsform (23.10.2026)
 };

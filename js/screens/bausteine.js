@@ -14,7 +14,7 @@ export function einklappen(schluessel, titel, inhalt) {
 }
 export function ring(prozent, klein = false) {
   const r = 26, u = 2 * Math.PI * r;
-  return `<svg class="ring ${klein ? "klein" : ""}" viewBox="0 0 64 64" role="img" aria-label="${prozent} %"><circle class="ring-grund" cx="32" cy="32" r="${r}"/><circle class="ring-wert" cx="32" cy="32" r="${r}" stroke-dasharray="${(u * prozent / 100).toFixed(1)} ${u.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">${prozent}</text></svg>`;
+  return `<svg class="ring ${klein ? "klein" : ""}" viewBox="0 0 64 64" role="img" aria-label="${prozent} %"><circle class="ring-grund" cx="32" cy="32" r="${r}"/><circle class="ring-wert" cx="32" cy="32" r="${r}" stroke-dasharray="${(u * prozent / 100).toFixed(1)} ${u.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">${prozent}<tspan class="ring-prozent">%</tspan></text></svg>`;
 }
 export function bueroRing(prozent, { groesse = 26, dicke = 4, farbe = "var(--salbei-tief)", text = false } = {}) {
   const r = (groesse - dicke) / 2; const u = 2 * Math.PI * r; const p = Math.max(0, Math.min(100, prozent || 0));

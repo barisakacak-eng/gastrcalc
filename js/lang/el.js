@@ -2,7 +2,7 @@
 // Griechisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Δοκιμαστική έκδοση" },
 
   allgemein: {
@@ -843,7 +843,7 @@ export default {
     fixTag: "Πάγια της ημέρας",
     tonne: "Κάδος",
     kuehl: "Ψύξη",
-    rundgaenge: (n) => n === 1 ? "1 γύρος" : `${n} γύροι`,
+    rundgaenge: (n) => n === 1 ? "1 γύρος" : `${n} γύροι`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
     besser: (tag, b) => `${tag}: ${b} περισσότερος τζίρος από την ίδια μέρα την προηγούμενη εβδομάδα.`,
     schlechter: (tag, b) => `${tag}: ${b} λιγότερος τζίρος από την ίδια μέρα την προηγούμενη εβδομάδα.`,
     gleich: (tag) => `${tag}: ίδιο με την ίδια μέρα την προηγούμενη εβδομάδα.`,
@@ -1047,7 +1047,7 @@ export default {
     laden: "Το μαγαζί σου", namePlatzhalter: "Όνομα μαγαζιού",
     ladenHilfe: "Το είδος του μαγαζιού δίνει αρχικές τιμές για συνταγές, ψύξη και καθαριότητα. Όλα αλλάζουν μετά στο γραφείο.",
     allesGenau: "Ρύθμισε τα πάντα αναλυτικά",
-    karte: "Το μενού σου", karteFoto: "Φωτογράφισε το μενού", karteGalerie: "Φωτογραφίες ή PDF", spaeter: "Αργότερα",
+    karte: "Το μενού σου", karteFoto: "Φωτογράφισε το μενού", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Φωτογραφίες ή PDF", spaeter: "Αργότερα",
     karteHilfe: "Η εφαρμογή διαβάζει πιάτα και τιμές από τη φωτογραφία. Ό,τι φτιάχνετε μόνοι σας το βάζεις στο γραφείο στις Συνταγές.",
     kuehl: "Ψύξη", arten: { kuehlschrank: "Ψυγείο", saladette: "Σαλατιέρα", tiefkuehler: "Καταψύκτης", warmhalter: "Θερμοθάλαμος" },
     kuehlHilfe: "Για κάθε συσκευή γράφεις μετά τη θερμοκρασία. Τα ονόματα τα αλλάζεις στο γραφείο.",
@@ -1436,5 +1436,5 @@ export default {
       verschicken: "Αποστολή αντιγράφου", woFrage: "Πού είναι τώρα;", woanders: "Άλλη συσκευή, email, cloud", nurHandy: "Μόνο σε αυτό το κινητό", nurHandyMeldung: "Η υπενθύμιση μένει: το αρχείο είναι μόνο σε αυτό το κινητό.", gezaehlt: "Το αντίγραφο μετρήθηκε. Η υπενθύμιση μηδενίστηκε." } },
   adanaBrot: { frage: "Τι ψωμί σερβίρετε με το Αδανά;", pide: "Ολόκληρη πίτα", pideHalb: "Μισή πίτα", fladen: "Ντουρούμ / λαβάς", kein: "Χωρίς ψωμί" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

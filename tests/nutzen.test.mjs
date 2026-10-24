@@ -53,9 +53,15 @@ test("Vergleichswoche ohne Einträge: nicht gemessen (keine Erfassung ist kein E
   const p = postenMuell(s, tag(AB, 30), AB); assert.equal(p.gemessen, false); assert.equal(p.euro, null);
 });
 
-test("unbewertete Einträge (wert null) zählen als Erfassung, aber nicht in Euro", () => {
+test("unbewertete Einträge (wert null) sind keine Messung: Woche nur mit null-Einträgen bleibt „läuft“ (Gremium 2, 24.10.2026)", () => {
   const s = laden(); for (let i = 0; i < 14; i++) muell(s, tag(AB, i), 7); for (let i = 14; i < 21; i++) muell(s, tag(AB, i), null);
-  const p = postenMuell(s, tag(AB, 20), AB); assert.equal(p.gemessen, true); assert.equal(p.euro, 49);
+  const p = postenMuell(s, tag(AB, 20), AB); assert.equal(p.gemessen, false); assert.equal(p.euro, null); assert.equal(p.stand, "laeuft");
+  muell(s, tag(AB, 20), 2); const q = postenMuell(s, tag(AB, 20), AB); assert.equal(q.gemessen, true); assert.equal(q.euro, 47, "ein bewerteter Eintrag zählt, die unbewerteten nicht");
+});
+
+test("Ausgangswert ohne bewerteten Eintrag (nur Tagesabschlüsse): nie gemessen, nie 0 € als Ergebnis", () => {
+  const s = laden(); s.abschluesse.push({ id: "a1", datum: AB }); for (let i = 14; i < 21; i++) muell(s, tag(AB, i), 12);
+  const p = postenMuell(s, tag(AB, 20), AB); assert.equal(p.gemessen, false); assert.equal(p.stand, "fehlt");
 });
 
 test("Papierkram: ohne Vorher-Schätzung fehlt, mit Schätzung ≈-Posten ohne Einfluss auf die Summe", () => {

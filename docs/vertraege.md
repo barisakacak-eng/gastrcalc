@@ -1,4 +1,4 @@
-# Datenverträge GastroCash (Stand 23.10.2026, Zoro)
+# Datenverträge GastroCash (Stand 24.10.2026, Zoro)
 
 Diese Datei ist die einzige Quelle für die Felder, gegen die Oberfläche (Sanji) und Inhalte (Franky) gebaut werden. Änderungen nur durch Zoro, mit Datum. Rechenwerk: `js/nutzen.js`, `js/hinweis.js`; Tests: `tests/nutzen.test.mjs`, `tests/hinweis.test.mjs`.
 
@@ -48,16 +48,20 @@ Allgemeine Hinweise aus dem Steuer-Register, ausgelöst durch Daten, die die App
   knopf:     "Belege bereitlegen",
   belege:    string[],             // Stichworte für den Belege-Bildschirm
   status:    "neu" | "erledigt" | "spaeter",
-  geprueft:  boolean               // true erst nach Quellenprüfung durch Zoro; die App zeigt nur geprüfte Karten
+  rechtsformen: "alle" | string[], // z. B. ["gmbh", "ug"]; Karte erscheint nur, wenn stand.betrieb.rechtsform passt (js/rechtsform.js)
+  ausloeser: string,               // Schlüssel aus AUSLOESER in js/hinweis.js (mitarbeiter, menue, inventur, abschluesse5, belege, manuell)
+  register:  string,               // Nummer im Steuer-Register (Franky)
+  geprueft:  boolean,              // true erst nach Quellenprüfung durch Zoro; die App zeigt nur geprüfte Karten
+  pruefung:  string                // "JJJJ-MM-TT was gelesen wurde"; Pflicht, wenn geprueft true
 }
 ```
 
 Regeln:
 - `hinweiseFuer(stand)` liefert nur Karten mit `geprueft: true`, deren Auslöser zutrifft und deren Status nicht „erledigt“ ist. `{ nurGeprueft: false }` liefert alle (für Tests und Entwürfe).
-- Auslöser kommen nur aus vorhandenen App-Daten: `mitarbeiter > 0`, `personalessen vorhanden`, `menue vorhanden` (gelernte Kassen-Menüs), `inventur vorhanden`, `tagesabschluesse >= 5`, `beleg mit Stichwort`, sonst „manuell“.
-- Status liegt in `stand.hinweise = [{ id, status, zeit }]` (Bereich `betrieb`, wird beim Zusammenführen vereinigt, jüngste Zeit gewinnt). Schreiben nur über `hinweisStatusSetzen(stand, id, status)`.
+- Auslöser kommen nur aus vorhandenen App-Daten: `mitarbeiter > 0`, `personalessen vorhanden`, `menue vorhanden` (gelernte Kassen-Menüs), `inventur vorhanden`, `tagesabschluesse >= 5`, `belege` (mindestens eine Lieferung oder ein Kostenbeleg, kein Stichwort-Abgleich), sonst „manuell“.
+- Status liegt in `stand.betrieb.hinweise = [{ id, status, zeit }]` (Bereich `betrieb`, wird beim Zusammenführen vereinigt, jüngste Zeit gewinnt). Schreiben nur über `hinweisStatusSetzen(stand, id, status)`.
 - Pflichtzeile in der Oberfläche: „Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.“
-- Inhalt kommt aus Frankys Register; jede Karte wird vor `geprueft: true` von Zoro an der Primärquelle geprüft (Quellenprüfung 24.10.2026).
+- Inhalt kommt aus Frankys Register; jede Karte wird vor `geprueft: true` von Zoro an der Primärquelle geprüft (Quellenprüfung 23./24.10.2026, Gremium 3 am 24.10.2026).
 
 ## 3. Verboten in beiden Verträgen
-Wörter: rechtssicher, steuersicher, betriebsprüfungsfest, GoBD-konform, revolutionär, disruptiv, Marktführer, KI-Steuerberater. Erfundene Beträge. Rechenregeln außerhalb des Rechenwerks.
+Wörter: rechtssicher, steuersicher, betriebsprüfungsfest, GoBD-konform, revolutionär, disruptiv, Marktführer, KI-Steuerberater, lückenlos, zertifiziert, manipulationssicher, HACCP-konform, „so sparst“ (Liste = VERBOTEN in js/hinweis.js). Keine Wirkungsbehauptung („hat dir gebracht“) ohne Beleg der Ursache. Erfundene Beträge. Rechenregeln außerhalb des Rechenwerks.

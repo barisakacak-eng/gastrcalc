@@ -1,6 +1,6 @@
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"Starts with first waste entry","titel":"This month’s benefit","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
+  nutzen: {"start":"Starts with first waste entry","titel":"Less loss since start","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
   app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
@@ -842,7 +842,7 @@ export default {
     fixTag: "Fixed costs of the day",
     tonne: "Bin",
     kuehl: "Cooling",
-    rundgaenge: (n) => n === 1 ? "1 round" : `${n} rounds`,
+    rundgaenge: (n) => n === 1 ? "1 round" : `${n} rounds`, nachkontrolle: (n) => `${n} to re-check`,
     besser: (tag, b) => `${tag} was better than last ${tag}: ${b} more takings.`,
     schlechter: (tag, b) => `${tag} was weaker than last ${tag}: ${b} less takings.`,
     gleich: (tag) => `${tag} was like last ${tag}.`,
@@ -1047,7 +1047,7 @@ export default {
     laden: "Your shop", namePlatzhalter: "Shop name",
     ladenHilfe: "The shop type sets starting values for recipes, cooling and the cleaning plan. You can change everything later in the office.",
     allesGenau: "Set up everything in detail",
-    karte: "Your menu", karteFoto: "Photograph menu", karteGalerie: "Photos or PDF", spaeter: "Later",
+    karte: "Your menu", karteFoto: "Photograph menu", karteVorlagen: "Choose from templates", karteGalerie: "Photos or PDF", spaeter: "Later",
     karteHilfe: "The app reads dishes and prices from the photo. What you make yourselves is set in the office under Recipes.",
     kuehl: "Cooling", arten: { kuehlschrank: "Fridge", saladette: "Prep fridge", tiefkuehler: "Freezer", warmhalter: "Food warmer" },
     kuehlHilfe: "You will enter the temperature for each unit later. Rename them in the office.",
@@ -1422,5 +1422,5 @@ export default {
       verschicken: "Send backup", woFrage: "Where is it now?", woanders: "Other device, email, cloud", nurHandy: "Only on this phone", nurHandyMeldung: "The reminder stays: the file is only on this phone.", gezaehlt: "Backup counted. Reminder reset." } },
   adanaBrot: { frage: "Which bread do you serve with Adana?", pide: "Whole pide", pideHalb: "Half pide", fladen: "Dürüm / lavash", kein: "No bread" }, // 20.10.2026
   hinweise: { einstieg: "Tips", einstiegUnter: "Tax and office, from your data", einstiegNeu: (n) => `${n} new ${n === 1 ? "tip" : "tips"}`, titel: "Tips", unter: "From your data. General, not advice.", pflicht: "General information, not tax advice – check with your tax adviser.", leer: "No tip right now. More data brings more tips.", quelle: "Source", belege: "Prepare receipts", spaeterKnopf: "Later", spaeter: "later", erledigt: "Done", erledigtMeldung: "Tip done", spaeterMeldung: "Tip moved back" }, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Legal form", hinweis: "It is on your trade registration or in your imprint.", offen: "Enter legal form", gesetzt: "Legal form saved", namen: { einzel: "Sole proprietorship", gbr: "GbR", gmbh: "GmbH", ug: "UG (limited liability)", kg_ohg: "KG or OHG", unbekannt: "I don’t know" } }, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Legal form", hinweis: "It is on your trade registration or in your imprint. e.K. counts as sole proprietorship, GmbH & Co. KG as KG.", offen: "Enter legal form", gesetzt: "Legal form saved", namen: { einzel: "Sole proprietor\u00ADship", gbr: "GbR", gmbh: "GmbH", ug: "UG (limited liability)", kg_ohg: "KG or OHG", unbekannt: "I don’t know" } }, // Rechtsform (23.10.2026)
 };

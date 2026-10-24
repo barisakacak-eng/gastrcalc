@@ -209,7 +209,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <div class="zeile"><div class="oben"><div class="name">${esc(t("einstellungen.kleinunternehmer"))}<small>${esc(t("einstellungen.kleinunternehmerHinweis"))}</small></div>
           <button type="button" class="schalter ${stand.betrieb.kleinunternehmer ? "an" : ""}" data-a="kleinunternehmer" aria-pressed="${!!stand.betrieb.kleinunternehmer}" aria-label="${esc(t("einstellungen.kleinunternehmer"))}"></button></div></div>
         <div class="zeile rechtsform"><div class="oben"><div class="name">${esc(t("rechtsform.titel"))}<small>${esc(t("rechtsform.hinweis"))}</small></div></div>
-          <div class="chips">${RECHTSFORMEN.map((r) => `<button type="button" class="chip ${rechtsform(stand) === r ? "an" : ""}" data-a="rechtsform" data-wert="${r}" aria-pressed="${rechtsform(stand) === r}">${esc(t("rechtsform.namen." + r))}</button>`).join("")}</div></div>
+          <div class="kacheln rechtsformwahl" role="group" aria-label="${esc(t("rechtsform.titel"))}">${RECHTSFORMEN.map((r) => `<button type="button" class="kachel ${rechtsform(stand) === r ? "an" : ""}" data-a="rechtsform" data-wert="${r}" aria-pressed="${rechtsform(stand) === r}"><b>${esc(t("rechtsform.namen." + r))}</b></button>`).join("")}</div></div>
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.sprache"))}</h2>

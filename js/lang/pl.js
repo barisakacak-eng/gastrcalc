@@ -7,7 +7,7 @@ const lm = (n, a, b, c) => { const x = Math.abs(Number(n)); if (!Number.isFinite
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Wersja testowa" },
 
   allgemein: {
@@ -848,7 +848,7 @@ export default {
     fixTag: "Koszty stałe dnia",
     tonne: "Kosz",
     kuehl: "Chłodzenie",
-    rundgaenge: (n) => n === 1 ? "1 obchód" : `${n} ${lm(n, "obchód", "obchody", "obchodów")}`,
+    rundgaenge: (n) => n === 1 ? "1 obchód" : `${n} ${lm(n, "obchód", "obchody", "obchodów")}`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
     besser: (tag, b) => `${tag}: o ${b} więcej utargu niż tydzień temu.`,
     schlechter: (tag, b) => `${tag}: o ${b} mniej utargu niż tydzień temu.`,
     gleich: (tag) => `${tag}: tak samo jak tydzień temu.`,
@@ -1053,7 +1053,7 @@ export default {
     laden: "Twój lokal", namePlatzhalter: "Nazwa lokalu",
     ladenHilfe: "Rodzaj lokalu daje wartości startowe dla przepisów, chłodzenia i planu sprzątania. Wszystko zmienisz potem w biurze.",
     allesGenau: "Ustaw wszystko dokładnie",
-    karte: "Twoja karta", karteFoto: "Zrób zdjęcie karty", karteGalerie: "Zdjęcia lub PDF", spaeter: "Później",
+    karte: "Twoja karta", karteFoto: "Zrób zdjęcie karty", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Zdjęcia lub PDF", spaeter: "Później",
     karteHilfe: "Aplikacja czyta dania i ceny ze zdjęcia. To, co robicie sami, ustawisz w biurze w Przepisach.",
     kuehl: "Chłodzenie", arten: { kuehlschrank: "Lodówka", saladette: "Saladetta", tiefkuehler: "Zamrażarka", warmhalter: "Podgrzewacz" },
     kuehlHilfe: "Dla każdego urządzenia wpiszesz potem temperaturę. Nazwy zmienisz w biurze.",
@@ -1441,5 +1441,5 @@ export default {
       verschicken: "Wyślij kopię", woFrage: "Gdzie jest teraz?", woanders: "Inne urządzenie, mail, chmura", nurHandy: "Tylko na tym telefonie", nurHandyMeldung: "Przypomnienie zostaje: plik jest tylko na tym telefonie.", gezaehlt: "Kopia zaliczona. Przypomnienie wyzerowane." } },
   adanaBrot: { frage: "Jaki chleb podajecie do adany?", pide: "Całe pide", pideHalb: "Pół pide", fladen: "Dürüm / lawasz", kein: "Bez chleba" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

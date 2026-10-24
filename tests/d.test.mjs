@@ -187,3 +187,19 @@ test("Inventur-Kurzwert wie inventurWert", async () => {
     assert.ok(Math.abs(k.summe - w.summe) < 1e-6); assert.equal(k.gezaehlt, w.gezaehlt); assert.deepEqual([...k.ohnePreis].sort(), [...w.ohnePreis].sort()); }
   assert.ok(n > 0, "Testdaten enthalten abgeschlossene Inventuren");
 });
+
+// Gremium 2 (24.10.2026): Hinweis-Status zweier Handys wird je Karte vereinigt, jüngste Zeit gewinnt (Vertrag Abschnitt 2)
+test("verschmelzen vereinigt betrieb.hinweise je Karte, auch wenn der Bereich betrieb vom anderen Handy kommt", () => {
+  const jetzt = Date.parse("2026-10-24T12:00:00Z");
+  const a = laden1(); a.betrieb.hinweise = [{ id: "gwg", status: "erledigt", zeit: "2026-10-24T08:00:00Z" }, { id: "belehrung", status: "spaeter", zeit: "2026-10-24T07:00:00Z" }];
+  a.stammZeit = { betrieb: "2026-10-24T08:00:00Z" };
+  const b = structuredClone(a); b.betrieb.name = "B"; b.betrieb.hinweise = [{ id: "berufskleidung", status: "erledigt", zeit: "2026-10-24T09:00:00Z" }, { id: "belehrung", status: "erledigt", zeit: "2026-10-24T09:30:00Z" }];
+  b.stammZeit = { betrieb: "2026-10-24T09:30:00Z" };
+  const m = st.verschmelzen(a, b, { jetzt });
+  assert.equal(m.betrieb.name, "B");
+  const st2 = Object.fromEntries(m.betrieb.hinweise.map((h) => [h.id, h.status]));
+  assert.deepEqual(st2, { belehrung: "erledigt", berufskleidung: "erledigt", gwg: "erledigt" });
+  // kaputte Daten beim Laden: migrierenBetrieb räumt auf
+  const k = laden1(); k.betrieb.hinweise = "x"; k.betrieb.rechtsform = "ag"; st.migrierenBetrieb(k);
+  assert.deepEqual(k.betrieb.hinweise, []); assert.equal(k.betrieb.rechtsform, undefined);
+});

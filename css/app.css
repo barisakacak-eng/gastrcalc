@@ -444,6 +444,7 @@ button.kachel { cursor: pointer; }
 .einrichtung-kopf b, .einrichtung-kopf small { display: block; }
 svg.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; stroke-width: 7; } .ring-grund { stroke: var(--holz); } .ring-wert { stroke: var(--glut); stroke-linecap: round; }
 .ring text { font: 700 calc(16rem / 17) var(--schrift); fill: var(--tinte); }
+.ring .ring-prozent { font-size: 0.6em; font-weight: 600; }
 .schrittzeile { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 44px; }
 .schrittzeile.fertig { color: var(--tinte-weich); } .schrittzeile .zeileknopf { flex: 1; }
 .schrittzeile .anteil { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--glut); font-size: calc(11rem / 17); flex: none; }

@@ -40,7 +40,7 @@ function bilanzView(stand, H) {
   // Facelift: dieselbe Zahl verständlich zeigen – negativer Zähler ist noch zu deckender Betrag, KEIN Verlust.
   const zielLabel = nach < 0 ? t("cockpit.bisNullFehlen") : t("cockpit.ueberNull");
   const zielWert = `${nach >= 0 ? "+ " : ""}${fmtEuro(Math.abs(nach))}`;
-  const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert }; const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen };
+  const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert }; const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen, nachkontrollen: b.kuehl.nachkontrollen || 0 };
   const tag = t("abschluss.tage." + b.vergleich.wochentag);
   const v = b.vergleich;
   const vergleich = v.art === "kein" ? t("abschluss.keinVergleich") : v.art === "gleich" ? t("abschluss.gleich", tag) : v.art === "besser" ? t("abschluss.besser", tag, fmtEuro(v.differenz)) : t("abschluss.schlechter", tag, fmtEuro(v.differenz));
@@ -63,7 +63,7 @@ function bilanzView(stand, H) {
           <summary>${esc(t("start.mehr"))}<span aria-hidden="true">⌄</span></summary>
         <div class="summenzeile"><span>${esc(t("abschluss.fixTag"))}</span><span class="wert">− ${fmtEuro(z.tageskosten)}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.tonne"))}</span><span class="wert rot">${sw.anzahl ? "− " + fmtEuro(sw.muellwert, { dezimal: 2 }) : "–"}</span></div>
-        <div class="summenzeile"><span>${esc(t("abschluss.kuehl"))}</span><span class="wert ${ks.eingerichtet && ks.heuteGemessen >= ks.stellen ? "gruen" : ""}">${ks.eingerichtet ? `${ks.heuteGemessen}/${ks.stellen} · ${esc(t("abschluss.rundgaenge", rundgaenge))}` : "–"}</span></div>
+        <div class="summenzeile"><span>${esc(t("abschluss.kuehl"))}</span><span class="wert ${ks.eingerichtet && ks.heuteGemessen >= ks.stellen ? (ks.nachkontrollen > 0 ? "rot" : "gruen") : ""}">${ks.eingerichtet ? `${ks.heuteGemessen}/${ks.stellen} · ${esc(ks.nachkontrollen > 0 ? t("abschluss.nachkontrolle", ks.nachkontrollen) : t("abschluss.rundgaenge", rundgaenge))}` : "–"}</span></div>
         </details>
       </div>
       <div class="jetzt still ab-vergleich ${v.art}"><span><b>${esc(vergleich)}</b>${tonne ? `<small>${esc(tonne)}</small>` : ""}</span></div>

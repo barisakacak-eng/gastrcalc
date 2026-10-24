@@ -1,4 +1,4 @@
-// Euro-Zähler „Das hat dir GastroCash diesen Monat gebracht“ (Vertrag docs/vertraege.md Abschnitt 1, Zoro 23.10.2026).
+// Euro-Zähler „Weniger Verlust seit Start“ (Titel 24.10.2026 nach Gremium 3: keine Wirkungsbehauptung, § 5 UWG; vorher „Diesen Monat gebracht“) (Vertrag docs/vertraege.md Abschnitt 1, Zoro 23.10.2026).
 // Rein: liest den Stand, schreibt nichts, gibt kein HTML zurück. Nur Gemessenes zählt in die Summe; nichts wird erfunden.
 // Leitsatz: vorne wird verdient, hinten bleibt das Geld – der Zähler zeigt beides, aber nur mit Beleg.
 import { heuteGeschaeft } from "./util.js";
@@ -21,12 +21,13 @@ export function messbeginn(stand) {
 }
 
 function muellWert(stand, von, bis) {
-  let s = 0, n = 0;
+  let s = 0, n = 0, u = 0;
   for (const e of stand.schwund || []) {
     if (!istMuell(e) || e.datum < von || e.datum > bis) continue;
-    const w = eintragWert(e, stand); n += 1; if (w !== null) s += w;
+    const w = eintragWert(e, stand); if (w === null) { u += 1; continue; } // Gremium 2 (24.10.2026): unbewertete Einträge zählen nicht als Messung
+    n += 1; s += w;
   }
-  return { wert: s, anzahl: n };
+  return { wert: s, anzahl: n, unbewertet: u };
 }
 
 // Posten Müll: Ausgangswert (Wochenmittel der ersten 14 Tage) gegen die letzte Woche. Gemessen erst mit vollem Ausgangswert.
@@ -38,6 +39,7 @@ export function postenMuell(stand, H, ab) {
   const basis = muellWert(stand, ab, basisEnde);
   const basisWoche = basis.wert / (AUSGANGSWERT_TAGE / 7);
   const woche = muellWert(stand, tagPlus(H, -6), H);
+  if (basis.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "fehlt", quelle: "Ausgangswert ohne bewerteten Müll-Eintrag" }; // Gremium 2: Basis 0 € ist keine Messung
   if (tag < AUSGANGSWERT_TAGE + 7 || woche.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "laeuft", quelle: `Ausgangswert ${rund(basisWoche)} € je Woche, Vergleichswoche läuft` };
   const nutzen = Math.max(0, rund(basisWoche - woche.wert));
   return { art: "muell", euro: nutzen, gemessen: true, stand: "gemessen", quelle: `Müll je Woche: ${rund(basisWoche)} € am Anfang, ${rund(woche.wert)} € zuletzt` };

@@ -5,6 +5,7 @@ import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
+import { RECHTSFORMEN, rechtsform, rechtsformSetzen } from "../rechtsform.js"; // Rechtsform-Schritt nach Sanjis Entwurf (24.10.2026)
 import { t, SPRACHEN, SPRACH_NAMEN, sprache as aktiveSprache } from "../i18n.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige } from "../util.js";
@@ -13,7 +14,7 @@ import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
 import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard, satzStandard } from "../data/kosten.js";
 // Trennung (17.10.2026): alle Schreibvorgänge der Einrichtung laufen über js/stamm.js
-import { schrittSetzen, einrichtungWegSetzen, schnellErgebnisSetzen, schnellFertig, betriebNameSetzen, betriebFormatSetzen, kuecheUmschalten, betriebTageAendern, betriebMonateAendern,
+import { schrittSetzen, einrichtungWegSetzen, schnellErgebnisSetzen, schnellFertig, karteWegSetzen, betriebNameSetzen, betriebFormatSetzen, kuecheUmschalten, betriebTageAendern, betriebMonateAendern,
   ladenArtSetzen, teamFeldSetzen, lohnkostenSetzen, lohnkostenOffen, eigenerLohnSetzen, eigenerLohnOffen, kostenBetragSetzen, kostenPostenUmschalten, kostenPeriodeSetzen,
   kostenPostenOffen, kostenBasisSetzen, kostenSatzSetzen, kostenKategorieGeprueft, kostenSchnellSetzen, kanalUmschalten, portalAnlegen, portalEntfernen, portalBasisSetzen,
   portalFeldSetzen, reinigungAendern, reinigungMinutenAendern, kuehlstelleAnlegen, kuehlstelleArtWaehlen, kuehlstelleNameSetzen, kuehlstelleWegnehmen, kuehlEingerichtetSetzen } from "../stamm.js";
@@ -110,6 +111,23 @@ const betrieb = {
       if (el.dataset.feld === "monate") betriebMonateAendern(stand, d);
       return true;
     }
+  },
+};
+
+// Rechtsform (24.10.2026, Entwurf Sanji PR #14): sechs Kacheln, „Weiß ich nicht“ geht direkt weiter. Steuert die Hinweis-Karten im Büro.
+const rechtsformKacheln = (stand) => `<div class="kacheln rechtsformwahl" role="group" aria-label="${esc(t("rechtsform.titel"))}">${RECHTSFORMEN.map((r) => `<button type="button" class="kachel ${stand.betrieb?.rechtsform === r ? "an" : ""}" aria-pressed="${stand.betrieb?.rechtsform === r}" data-a="rechtsform" data-wert="${r}"><b>${esc(t("rechtsform.namen." + r))}</b></button>`).join("")}</div>`;
+const rechtsformSchritt = {
+  id: "rechtsform",
+  view: (stand) => `
+    <h1 class="frage">${esc(t("rechtsform.titel"))}</h1>
+    <p class="hinweis">${esc(t("rechtsform.hinweis"))}</p>
+    ${rechtsformKacheln(stand)}`,
+  fuss: (stand) => (stand.betrieb?.rechtsform ? knopfWeiter() : ""),
+  aktion(name, el, stand, ctx) {
+    if (name !== "rechtsform") return false;
+    rechtsformSetzen(stand, el.dataset.wert);
+    if (el.dataset.wert === "unbekannt") ctx.weiter("uebersprungen");
+    return true;
   },
 };
 
@@ -348,7 +366,7 @@ export const reinigungSchritt = {
   },
 };
 
-export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
+export const SCHRITTE = [sprache, format, kueche, betrieb, rechtsformSchritt, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 // 17.10.2026 Fehler F1: Ohne Gerichte zeigten „Rezepte“ und „Einkaufspreise“ (Büro, Speisekarte) eine leere Seite mit „Übernehmen“, das nichts übernahm.
 // Dann zuerst die Gerichte-Auswahl mit den Vorlagen öffnen; danach geht es weiter bis zum gewünschten Schritt.
@@ -471,10 +489,11 @@ const karteSchnell = {
       <label class="leise s2galerie">${esc(t("schnell2.karteGalerie"))}
         <input type="file" accept="image/*,application/pdf,.pdf" multiple data-f="foto" data-zweck="speisekarte" class="dateifeld"></label>`;
   },
-  fuss: () => karteFussKnopf(`<button type="button" class="knopf zweit" data-a="weiter">${esc(t("schnell2.spaeter"))}</button>`),
+  fuss: () => karteFussKnopf(`<button type="button" class="knopf zweit" data-a="karte-vorlagen">${esc(t("schnell2.karteVorlagen"))}</button><button type="button" class="leise" data-a="weiter">${esc(t("schnell2.spaeter"))}</button>`), // Gremium 1 (24.10.2026): dritter Weg „Aus Vorlagen wählen“ sichtbar
   eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
   aktion(name, el, stand, ctx) {
     if (hilfeAktion(name, el)) return true;
+    if (name === "karte-vorlagen") { karteWegSetzen(stand, "vorlagen"); ctx.weiter(); return true; } // am Ende der Einrichtung öffnet sich die Vorlagen-Auswahl
     if (name === "fv-uebernehmen") { selbstStandard(stand); schnellErgebnisSetzen(stand, karteUebernehmen(stand)); ctx.weiter(); return true; }
     return kartePruefenAktion(name, el);
   },
@@ -551,6 +570,9 @@ const geld = {
       <div class="s2putz"><b>${esc(t("schnell2.putzt"))}</b>
         <div class="chips">${["selbst", "firma", "beides"].map((w) => `<button type="button" class="chip ${r.wer === w ? "an" : ""}" data-a="rein-wer" data-wert="${w}" aria-pressed="${r.wer === w}">${esc(t("schnell2.wer." + w))}</button>`).join("")}</div>
         ${r.wer === "firma" || r.wer === "beides" ? `<div class="s2geld">${feld("rein-firma", t("schnell2.firma"), r.firmaBetrag, null)}</div>` : ""}
+      </div>
+      <div class="s2putz s2rechtsform"><b>${esc(t("rechtsform.titel"))}</b>
+        <div class="chips">${RECHTSFORMEN.map((w) => `<button type="button" class="chip ${stand.betrieb?.rechtsform === w ? "an" : ""}" data-a="rechtsform" data-wert="${w}" aria-pressed="${stand.betrieb?.rechtsform === w}">${esc(t("rechtsform.namen." + w))}</button>`).join("")}</div>
       </div>`;
   },
   fuss: () => knopfWeiter(),
@@ -560,6 +582,7 @@ const geld = {
   },
   aktion(name, el, stand) {
     if (hilfeAktion(name, el)) return true;
+    if (name === "rechtsform") { rechtsformSetzen(stand, el.dataset.wert); return true; } // Schnellweg bleibt bei 6 Bildschirmen (24.10.2026)
     if (name === "rein-wer") return reinigungSchritt.aktion(name, el, stand);
   },
 };
@@ -578,12 +601,14 @@ const fertigSchnell = {
       </div>`;
   },
   fuss: (stand) => stand && !stand.gerichte.length
-    ? `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("schnell2.karteFoto"))}</button>`
+    ? (stand.karteWeg === "vorlagen"
+      ? `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="vorlagen">${esc(t("schnell2.karteVorlagen"))}</button><button type="button" class="leise" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("schnell2.karteFoto"))}</button>`
+      : `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("schnell2.karteFoto"))}</button><button type="button" class="leise" data-a="ob-fertig" data-ziel="vorlagen">${esc(t("schnell2.karteVorlagen"))}</button>`) // Gremium 1 (24.10.2026): beide Wege sichtbar
     : `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="start">${esc(t("schnell2.los"))}</button>`,
   aktion(name, el, stand, ctx) {
     if (name !== "ob-fertig") return false;
     schnellFertig(stand, { pin: !!el.dataset.pin }); // W2-S: app.js (fertig) öffnet mit pinFestlegen gleich das PIN-Blatt
-    ctx.fertig(["kartefoto", "buero"].includes(el.dataset.ziel) ? el.dataset.ziel : "start");
+    ctx.fertig(["kartefoto", "buero", "vorlagen"].includes(el.dataset.ziel) ? el.dataset.ziel : "start");
     return false;
   },
 };

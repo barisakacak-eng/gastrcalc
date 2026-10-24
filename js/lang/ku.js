@@ -1,7 +1,7 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
@@ -841,7 +841,7 @@ export default {
     fixTag: "Lêçûnên sabît ên rojê",
     tonne: "Zibil",
     kuehl: "Sarker",
-    rundgaenge: (n) => `${n} ger`,
+    rundgaenge: (n) => `${n} ger`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
     besser: (tag, b) => `${tag}: ji ya hefteya borî baştir bû, ${b} zêdetir firotin.`,
     schlechter: (tag, b) => `${tag}: ji ya hefteya borî qelstir bû, ${b} kêmtir firotin.`,
     gleich: (tag) => `${tag}: wek ya hefteya borî bû.`,
@@ -1046,7 +1046,7 @@ export default {
     laden: "Dikana te", namePlatzhalter: "Navê dikanê",
     ladenHilfe: "Cureya dikanê ji bo reçete, sarkirin û plana paqijiyê nirxên destpêkê dide. Paşê her tiştî di ofîsê de diguherînî.",
     allesGenau: "Her tiştî bi hûrgilî saz bike",
-    karte: "Menûya te", karteFoto: "Wêneyê menûyê bikişîne", karteGalerie: "Wêne an PDF", spaeter: "Paşê",
+    karte: "Menûya te", karteFoto: "Wêneyê menûyê bikişîne", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Wêne an PDF", spaeter: "Paşê",
     karteHilfe: "Sepan xwarin û bihayan ji wêneyê dixwîne. Tiştên ku hûn bi xwe çêdikin, di ofîsê de li bin “Reçete” saz bike.",
     kuehl: "Sarkirin", arten: { kuehlschrank: "Sarinc", saladette: "Sarinca salatayê", tiefkuehler: "Cemidok", warmhalter: "Germker" },
     kuehlHilfe: "Ji bo her amûrekê paşê germahiyê dinivîsî. Navan di ofîsê de diguherînî.",
@@ -1434,5 +1434,5 @@ export default {
       verschicken: "Kopiyê bişîne", woFrage: "Niha li ku ye?", woanders: "Amûrek din, e-name, ewr", nurHandy: "Tenê li ser vê telefonê", nurHandyMeldung: "Bîranîn dimîne: pel tenê li ser vê telefonê ye.", gezaehlt: "Kopî hate hesibandin. Bîranîn ji nû ve dest pê kir." } },
   adanaBrot: { frage: "Li cem we bi Adanayê re kîjan nan heye?", pide: "Pîdeya tevahî", pideHalb: "Nîvê pîdeyê", fladen: "Dürüm / lavaş", kein: "Bê nan" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

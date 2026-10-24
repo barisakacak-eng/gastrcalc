@@ -254,6 +254,9 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
                    satz: [19, 7, 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) }));
   if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
+  // Gremium 2 (24.10.2026): Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
+  s.betrieb.hinweise = hinweiseSauber(s.betrieb.hinweise);
+  if (s.betrieb.rechtsform !== undefined && !["einzel", "gbr", "gmbh", "ug", "kg_ohg", "unbekannt"].includes(s.betrieb.rechtsform)) delete s.betrieb.rechtsform;
   if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage (18.10.2026): Bundesland des Ladens (optional)
   if (s.betrieb.feiertagOffen !== false) delete s.betrieb.feiertagOffen;      // Standard: an Feiertagen offen wie an einem normalen Wochentag
   if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
@@ -393,6 +396,18 @@ function bilanzSauber(b) {
   return { von: tagOder(b.von), bis: tagOder(b.bis), tage, vergleichbar: zahlOder(b.vergleichbar, 0, 10000) ?? 0, verkauft: zahlOder(b.verkauft, 0), vorher: zahlOder(b.vorher, 0), mehrAnteil: zahlOder(b.mehrAnteil, -1, 1000),
     rohertrag: zahlOder(b.rohertrag), rohertragVorher: zahlOder(b.rohertragVorher), geschaetzt: b.geschaetzt === true, erstellt: typeof b.erstellt === "string" ? b.erstellt : null };
 }
+// Hinweis-Status: nur gültige Einträge, ein Eintrag je Karte (jüngste Zeit gewinnt) – Gremium 2 (24.10.2026)
+function hinweiseSauber(liste) {
+  const m = new Map();
+  for (const e of Array.isArray(liste) ? liste : []) {
+    if (!istObjekt(e) || typeof e.id !== "string" || !["neu", "spaeter", "erledigt"].includes(e.status)) continue;
+    const zeit = typeof e.zeit === "string" ? e.zeit : "";
+    const alt = m.get(e.id); if (!alt || zeit > alt.zeit) m.set(e.id, { id: e.id, status: e.status, zeit });
+  }
+  return [...m.values()].sort((x, y) => x.id.localeCompare(y.id));
+}
+export const hinweiseVereinigen = (a, b) => hinweiseSauber([...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]);
+
 function aktionenSauber(liste) {
   return mitId(Array.isArray(liste) ? liste : []).map((a) => {
     const ende = a.ende === "ware" ? "ware" : "datum"; const plan = planSauber(a.plan), bilanz = bilanzSauber(a.bilanz);
@@ -1285,6 +1300,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     if (a === "lieferanten") { basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten (18.10.2026)
       if (lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); } // Prüfgremium 18.10.2026 (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
     if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
+    if (a === "betrieb" && istObjekt(basis.betrieb)) basis.betrieb.hinweise = hinweiseVereinigen(lokal.betrieb?.hinweise, fremd.betrieb?.hinweise); // Vertrag Abschnitt 2: je Karte jüngste Zeit gewinnt (Gremium 2, 24.10.2026)
     const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
     if (w.beide) bericht.beide.push(a);
     abgleichMerken(basis, a, w.hF);

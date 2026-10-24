@@ -457,10 +457,10 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
     }
     const preisBrutto = typeof x.preis === "number" ? x.preis : null;
     const preisNetto = preisBrutto === null ? null : preisBrutto / (1 + mwst);
-    const { ampel, db } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto);
+    const { ampel, db, gewinn: ampelGewinn, quote: ampelQuote } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto); // Gremium 2 (24.10.2026): eine Rechnung für Ampel und Anzeige
     return { id: x.id, name: x.name, klasse: x.klasse, menge: x.menge, waren: w.vollstaendig ? w.waren : null, warenFehlt: w.fehlt, warenGeschaetzt: w.geschaetzt, warenRichtpreis: w.richtpreis,
       fix, zeit, sk, mwst, preisBrutto, preisNetto, zielNetto, zielBrutto, zielAufschlag, zielStufe: ziel.stufe, portalBrutto, portalStufe, portalName: portal?.name || null, portalBasis: portal ? basisFuerRechnung(portal.basis) : null, portalBasisUnbekannt: portal ? portal.basis !== "netto" && portal.basis !== "brutto" : false, ampel, db,
-      wareneinsatzAnteil: preisNetto > 0 && w.vollstaendig ? w.waren / preisNetto : null };
+      wareneinsatzAnteil: preisNetto > 0 && w.vollstaendig ? w.waren / preisNetto : null, ampelGewinn, ampelQuote };
   });
   const zaehl = { gruen: 0, gelb: 0, rot: 0, grau: 0 };
   for (const z of zeilen) zaehl[z.ampel] += 1;

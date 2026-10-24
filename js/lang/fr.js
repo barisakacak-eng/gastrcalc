@@ -2,7 +2,7 @@
 // Französisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Du-Form.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Diesen Monat gebracht","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Version de test" },
 
   allgemein: {
@@ -842,7 +842,7 @@ export default {
     fixTag: "Frais fixes du jour",
     tonne: "Poubelle",
     kuehl: "Froid",
-    rundgaenge: (n) => n <= 1 ? `${n} tournée` : `${n} tournées`,
+    rundgaenge: (n) => n <= 1 ? `${n} tournée` : `${n} tournées`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
     besser: (tag, b) => `Ce ${tag} a été meilleur que ${tag} dernier : ${b} de CA en plus.`,
     schlechter: (tag, b) => `Ce ${tag} a été plus faible que ${tag} dernier : ${b} de CA en moins.`,
     gleich: (tag) => `Ce ${tag} a été comme ${tag} dernier.`,
@@ -1046,7 +1046,7 @@ export default {
     laden: "Ton commerce", namePlatzhalter: "Nom du commerce",
     ladenHilfe: "Le type de commerce donne des valeurs de départ pour recettes, froid et nettoyage. Tu peux tout changer plus tard au bureau.",
     allesGenau: "Tout régler en détail",
-    karte: "Ta carte", karteFoto: "Photographier la carte", karteGalerie: "Photos ou PDF", spaeter: "Plus tard",
+    karte: "Ta carte", karteFoto: "Photographier la carte", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Photos ou PDF", spaeter: "Plus tard",
     karteHilfe: "L’appli lit plats et prix sur la photo. Ce que vous faites vous-mêmes se règle au bureau, sous Recettes.",
     kuehl: "Froid", arten: { kuehlschrank: "Frigo", saladette: "Saladette", tiefkuehler: "Congélateur", warmhalter: "Chauffe-plats" },
     kuehlHilfe: "Pour chaque appareil, tu saisis plus tard la température. Les noms se changent au bureau.",
@@ -1435,5 +1435,5 @@ export default {
       verschicken: "Envoyer la sauvegarde", woFrage: "Où est-elle maintenant ?", woanders: "Autre appareil, e-mail, cloud", nurHandy: "Seulement sur ce téléphone", nurHandyMeldung: "Le rappel reste : le fichier est seulement sur ce téléphone.", gezaehlt: "Sauvegarde comptée. Rappel remis à zéro." } },
   adanaBrot: { frage: "Quel pain servez-vous avec l'adana ?", pide: "Pide entier", pideHalb: "Demi-pide", fladen: "Dürüm / lavash", kein: "Sans pain" }, // 20.10.2026
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzelunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungsbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
 };

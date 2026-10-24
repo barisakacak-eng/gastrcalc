@@ -11,8 +11,8 @@ export function gerichteVergleich(stand, modus = "db") {
     const g = stand.gerichte.find((x) => x.id === z.id);
     const db = z.preisNetto !== null && z.waren !== null ? z.preisNetto - z.waren : null;
     const marge = db !== null && z.preisNetto > 0 ? db / z.preisNetto : null;
-    const gewinn = z.sk !== null && z.sk !== undefined && z.preisNetto !== null ? z.preisNetto - z.sk : null; // Perfektionswoche 24.10.2026: Gewinn nach allen Kosten, wie die Ampel
-    const quote = gewinn !== null && z.preisNetto > 0 ? gewinn / z.preisNetto : null;
+    const gewinn = typeof z.ampelGewinn === "number" ? z.ampelGewinn : null; // Gremium 2 (24.10.2026): centgerundet wie die Ampel, nie zwei Rechnungen
+    const quote = typeof z.ampelQuote === "number" ? z.ampelQuote : null;
     return { z, g, db, marge, gewinn, quote, ampel: z.ampel || "grau", geschaetzt: rezeptStempel(g).stufe === "schaetzung" || !!z.warenRichtpreis, // Richtpreise (17.10.2026): Wareneinsatz mit Richtpreis = ≈
       wareHoch: !!wareneinsatzWarnung(z.wareneinsatzAnteil), balken: Math.max(0, Math.min(100, Math.round(marge * 100))) };
   });

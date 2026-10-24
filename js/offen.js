@@ -87,7 +87,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   { const u = haltbarUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), kalenderTag: heute(jetzt) }); if (u) out.push({ id: "haltbar", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Stufe 1 (17.10.2026)
   // Aktion planen (18.10.2026): Satz zur laufenden Aktion – nur, wenn Haltbarkeit nichts sagt (ein Hinweis je Bereich „Aktionen & Haltbarkeit“)
   if (!out.some((x) => x.id === "haltbar")) { const u = aktionUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "aktion", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); }
-  if (!rechtsformBekannt(stand)) add("rechtsform", t("rechtsform.offen"), { aktion: "nav", wert: "einstellungen" }); // Rechtsform (23.10.2026): ohne sie passen die Steuer-Hinweise nicht
+  if (!rechtsformBekannt(stand) && stand.betrieb?.rechtsform !== "unbekannt") add("rechtsform", t("rechtsform.offen"), { aktion: "nav", wert: "einstellungen" }); // Rechtsform (23.10.2026): ohne sie passen die Steuer-Hinweise nicht; „Weiß ich nicht“ ist eine Antwort, kein Dauer-Hinweis (Gremium 2, 24.10.2026) – nicht
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   if (e.prozent < 100 && e.naechster) add("einrichtung", t("heute.offen.einrichtung", e.prozent, t("einrichtung.schritte." + e.naechster.id)), e.naechster.ziel);
   const z = zaehlerImTakt(stand, heuteGeschaeft(jetzt)); // W2-D; Paket 3, M7: Zähler nach Geschäftstag

@@ -27,6 +27,7 @@ jobs:
       # 18.10.2026: Tests in zwei Zeitzonen – der Laden lebt in deutscher Zeit, der Testrechner in UTC
       - run: TZ=UTC node --test tests/*.mjs
       - run: TZ=Europe/Berlin node --test tests/*.mjs
+      - run: node tools/sprachpruefung.mjs
   # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser. Seit 17.10. mittags blockierend
   # (5 stabile Läufe): neue Regelverstöße oder ein kaputter Personal-Modus gehen nicht mehr live.
   regeln:
@@ -92,7 +93,7 @@ jobs:
       - name: App-Dateien zusammenstellen
         run: |
           mkdir -p /tmp/seite
-          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons vendor design assets /tmp/seite/
+          cp -r index.html sw.js manifest.webmanifest LIZENZEN-SYMBOLE.txt README.md js css bilder foto fonts icons vendor assets /tmp/seite/
           echo "Dateien auf der Seite: $(find /tmp/seite -type f | wc -l)"
       - uses: actions/upload-pages-artifact@v3
         with:

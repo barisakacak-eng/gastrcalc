@@ -1,7 +1,7 @@
 // Türkçe. Mutfak dili: kısa cümleler, terim yok. Almanca tablodan çevrildi (Etap 1).
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"İlk çöp kaydıyla başlar","titel":"Bu ay kazandırdığı","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
+  nutzen: {"start":"İlk çöp kaydıyla başlar","titel":"Başlangıçtan beri daha az kayıp","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
   app: { name: "GastroCash", entwurf: "Deneme sürümü" },
 
   allgemein: {
@@ -843,7 +843,7 @@ export default {
     fixTag: "Günün sabit gideri",
     tonne: "Çöp",
     kuehl: "Soğutma",
-    rundgaenge: (n) => n === 1 ? "1 tur" : `${n} tur`,
+    rundgaenge: (n) => n === 1 ? "1 tur" : `${n} tur`, nachkontrolle: (n) => `${n} tekrar ölç`,
     besser: (tag, b) => `${tag} geçen ${tag} gününden iyiydi: ${b} daha fazla ciro.`,
     schlechter: (tag, b) => `${tag} geçen ${tag} gününden zayıftı: ${b} daha az ciro.`,
     gleich: (tag) => `${tag} geçen ${tag} gibiydi.`,
@@ -1048,7 +1048,7 @@ export default {
     laden: "Dükkânın", namePlatzhalter: "Dükkânın adı",
     ladenHilfe: "Dükkân türü tarifler, soğutma ve temizlik planı için başlangıç değerleri verir. Hepsini sonra büroda değiştirebilirsin.",
     allesGenau: "Her şeyi ayrıntılı kur",
-    karte: "Menün", karteFoto: "Menüyü fotoğrafla", karteGalerie: "Fotoğraf veya PDF", spaeter: "Sonra",
+    karte: "Menün", karteFoto: "Menüyü fotoğrafla", karteVorlagen: "Şablondan seç", karteGalerie: "Fotoğraf veya PDF", spaeter: "Sonra",
     karteHilfe: "Uygulama yemekleri ve fiyatları fotoğraftan okur. Kendiniz yaptıklarınızı büroda Tarifler bölümünde ayarlarsın.",
     kuehl: "Soğutma", arten: { kuehlschrank: "Buzdolabı", saladette: "Saladet", tiefkuehler: "Derin dondurucu", warmhalter: "Sıcak tutucu" },
     kuehlHilfe: "Her cihaz için sıcaklığı sonra girersin. İsimleri büroda değiştirirsin.",
@@ -1423,5 +1423,5 @@ export default {
       verschicken: "Yedeği gönder", woFrage: "Şimdi nerede?", woanders: "Başka cihaz, e-posta, bulut", nurHandy: "Sadece bu telefonda", nurHandyMeldung: "Hatırlatma kalır: dosya sadece bu telefonda.", gezaehlt: "Yedek sayıldı. Hatırlatma sıfırlandı." } },
   adanaBrot: { frage: "Adana'nın yanında hangi ekmek var?", pide: "Bütün pide", pideHalb: "Yarım pide", fladen: "Dürüm / lavaş", kein: "Ekmek yok" }, // 20.10.2026
   hinweise: { einstieg: "İpuçları", einstiegUnter: "Vergi ve daire, senin verilerinden", einstiegNeu: (n) => `${n} yeni ipucu`, titel: "İpuçları", unter: "Senin verilerinden. Genel bilgi, danışmanlık değil.", pflicht: "Genel bilgi, vergi danışmanlığı değil – mali müşavirinle görüş.", leer: "Şu an ipucu yok. Daha fazla veriyle ipuçları gelir.", quelle: "Kaynak", belege: "Belgeleri hazırla", spaeterKnopf: "Sonra", spaeter: "sonra", erledigt: "Tamam", erledigtMeldung: "İpucu tamamlandı", spaeterMeldung: "İpucu sonraya alındı" }, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Şirket türü", hinweis: "İşyeri kaydında (Gewerbeanmeldung) veya künyede yazar.", offen: "Şirket türünü gir", gesetzt: "Şirket türü kaydedildi", namen: { einzel: "Şahıs işletmesi", gbr: "GbR", gmbh: "GmbH", ug: "UG (sınırlı sorumlu)", kg_ohg: "KG veya OHG", unbekannt: "Bilmiyorum" } }, // Rechtsform (23.10.2026)
+  rechtsform: { titel: "Şirket türü", hinweis: "İşyeri kaydında (Gewerbeanmeldung) veya künyede yazar. e.K. şahıs işletmesi sayılır, GmbH & Co. KG ise KG.", offen: "Şirket türünü gir", gesetzt: "Şirket türü kaydedildi", namen: { einzel: "Şahıs işletmesi", gbr: "GbR", gmbh: "GmbH", ug: "UG (sınırlı sorumlu)", kg_ohg: "KG veya OHG", unbekannt: "Bilmiyorum" } }, // Rechtsform (23.10.2026)
 };

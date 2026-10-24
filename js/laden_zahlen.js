@@ -46,7 +46,7 @@ export const istRuhetag = (stand, K = heute()) => ruhetageAm(stand, K).includes(
 export function abschlussHaken(stand, H) {
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H }); const ks = kuehlStatus(stand);
   return { umsatz: u, muell: { anzahl: sw.anzahl, wert: sw.muellwert, ohneWert: sw.ohneWert },
-    kuehl: { eingerichtet: ks.eingerichtet, gemessen: ks.heuteGemessen, stellen: ks.stellen, fertig: ks.eingerichtet && ks.heuteGemessen >= ks.stellen },
+    kuehl: { eingerichtet: ks.eingerichtet, gemessen: ks.heuteGemessen, stellen: ks.stellen, nachkontrollen: ks.nachkontrollen || 0, fertig: ks.eingerichtet && ks.heuteGemessen >= ks.stellen && !(ks.nachkontrollen > 0) }, // Gremium 1 (24.10.2026): offene Nachkontrolle = nicht fertig
     schon: abschlussVon(stand, H) };
 }
 

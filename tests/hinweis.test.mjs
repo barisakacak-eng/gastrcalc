@@ -18,7 +18,7 @@ test("in der App erscheinen nur geprüfte Karten mit Prüfdatum; ungeprüfte nie
   s.inventuren = [{ id: "i1", datum: "2026-10-01", abgeschlossen: "2026-10-01T20:00:00.000Z", posten: {} }]; s.kostenbelege = [{ id: "kb", stelle: "strom", betrag: 50 }];
   const l = hinweiseFuer(s);
   assert.ok(l.length >= 5); for (const h of l) { assert.equal(h.geprueft, true); assert.match(h.pruefung, /^2026-\d{2}-\d{2} /); }
-  assert.ok(!l.some((h) => ["trinkgeld", "gutschein", "pfand"].includes(h.id)), "ungeprüfte Karten bleiben unsichtbar");
+  assert.ok(!l.some((h) => ["bewirtung", "pfand"].includes(h.id)), "ungeprüfte Karten bleiben unsichtbar (24.10.2026: bewirtung und pfand ohne Originallesung)");
   assert.equal(hinweiseFuer(laden()).length, 0, "leerer Laden: keine Karte");
 });
 
@@ -69,4 +69,33 @@ test("hinweisPruefen erkennt Verstöße: zu lang, ohne Steuerberater-Hinweis, ve
   assert.ok(hinweisPruefen({ ...hinweisMitId("gwg"), satz: "So sparst du Geld." }).length >= 2);
   assert.ok(hinweisPruefen({ ...hinweisMitId("gwg"), titel: "Das ist rechtssicher und gut" }).some((f) => /verboten|titel/.test(f)));
   assert.ok(hinweisPruefen({ ...hinweisMitId("gwg"), pruefung: "" }).some((f) => /Prüfdatum/.test(f)), "geprüft nur mit Datum");
+});
+
+// Gremium 2 (24.10.2026): kaputte Importdaten dürfen die Hinweise nicht sprengen
+test("hinweiseFuer und hinweisStatusSetzen überleben kaputte hinweise-Daten", async () => {
+  const { hinweisStatusSetzen } = await import("../js/hinweis.js");
+  for (const kaputt of ["x", {}, 5, null]) {
+    const s = laden(); s.betrieb.hinweise = kaputt;
+    assert.doesNotThrow(() => hinweiseFuer(s));
+    assert.doesNotThrow(() => hinweisStatusSetzen(s, "gwg", "erledigt"));
+    assert.ok(Array.isArray(s.betrieb.hinweise));
+  }
+});
+
+// 24.10.2026: Karten in en und tr vollständig, gleiche Regeln wie Deutsch (Satzlänge, Steuerberater-Satz, verbotene Wörter)
+test("Hinweis-Texte en/tr: jede geprüfte Karte übersetzt, höchstens 25 Wörter, Steuerberater-Satz, keine verbotenen Wörter", async () => {
+  const { HINWEIS_TEXTE, hinweisAnzeige } = await import("../js/data/hinweis_texte.js");
+  const verboten = /rechtssicher|steuersicher|betriebsprüfungsfest|gobd|revolution|disrupt|marktführer|lückenlos|zertifiziert|manipulationssicher|haccp/i;
+  for (const [sp, pflicht] of [["en", /tax advisor/i], ["tr", /mali müşavir/i]]) {
+    for (const h of HINWEISE) {
+      const x = HINWEIS_TEXTE[sp][h.id]; assert.ok(x, `${sp}: ${h.id} fehlt`);
+      assert.ok(x.satz.split(/\s+/).length <= 27, `${sp} ${h.id}: ${x.satz.split(/\s+/).length} Wörter`);
+      assert.match(x.satz, pflicht, `${sp} ${h.id}: Steuerberater-Satz fehlt`);
+      assert.ok(!verboten.test(x.titel + " " + x.satz), `${sp} ${h.id}: verbotenes Wort`);
+      assert.ok(x.titel.split(/\s+/).length <= 5, `${sp} ${h.id}: Titel zu lang`);
+      const a = hinweisAnzeige(h, sp); assert.equal(a.quelle, h.quelle); assert.equal(a.titel, x.titel);
+    }
+    assert.equal(Object.keys(HINWEIS_TEXTE[sp]).length, HINWEISE.length, `${sp}: verwaiste Übersetzungen`);
+  }
+  assert.equal(hinweisAnzeige(HINWEISE[0], "xx").titel, HINWEISE[0].titel, "unbekannte Sprache → Deutsch");
 });

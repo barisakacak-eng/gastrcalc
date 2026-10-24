@@ -13,7 +13,8 @@ export function schrittSetzen(stand, nummer, id) { stand.schritt = nummer; stand
 export function einrichtungWegSetzen(stand, weg, nummer, id) { stand.weg = weg; schrittSetzen(stand, nummer, id); }
 export function schnellErgebnisSetzen(stand, ergebnis) { stand.schnellErgebnis = ergebnis; }
 // Fertig-Schritt des Schnellwegs: Ergebnis vergessen; pin = „Büro-PIN festlegen“ gewünscht (app.js öffnet dann das PIN-Blatt)
-export function schnellFertig(stand, { pin = false } = {}) { delete stand.schnellErgebnis; if (pin) stand.pinFestlegen = true; }
+export function schnellFertig(stand, { pin = false } = {}) { delete stand.schnellErgebnis; delete stand.karteWeg; if (pin) stand.pinFestlegen = true; }
+export const karteWegSetzen = (stand, weg) => { if (weg) stand.karteWeg = weg; else delete stand.karteWeg; }; // Gremium 1 (24.10.2026): Wunsch „Aus Vorlagen wählen“ bis zum Ende der Einrichtung merken
 export const einrichtungFertigSetzen = (stand) => { stand.einrichtungFertig = true; };
 export const kuehlKeineSetzen = (stand) => { stand.kuehl.keine = true; };
 export const branchenMeldungQuittieren = (stand) => { delete stand.branchenMeldung; };
