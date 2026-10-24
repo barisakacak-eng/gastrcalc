@@ -371,7 +371,7 @@ export default {
     offen: { karte: () => "Снимай менюто", preise: (n) => `${br(n, "ястие", "ястия")} без цена`, rezepte: (n) => `${br(n, "ястие", "ястия")} без рецепта`, kosten: (n) => `${br(n, "задължителна позиция отворена", "задължителни позиции отворени")} (наем, персонал, твоята заплата, ток/газ)`,
       einkauf: (n) => `${br(n, "съставка", "съставки")} без покупна цена – една снимка на фактура ги попълва`, kuehlung: () => "Добави хладилна точка", sicherung: () => "Последното копие е по-старо от 7 дни" } },
   vergleich: { wareHoch: (q) => `${q} % – високо`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Направи своя снимка", fotoGespeichert: "Снимката е запазена. Остава на този телефон.",  titel: "Ястия в сравнение", unter: "Кои ястия ти носят най-много?", tab: { db: "Остава на брой", marge: "Rohgewinn %" }, ware: "Разход за стока", db: "Остава ти на брой", marge: "Rohgewinn (nach Ware)", leer: "Въведи продажни и покупни цени и тук ще видиш кои ястия носят най-много.", ohneZahlen: (n) => (n === 1 ? "1 ястие още без цифри" : `${n} ястия още без цифри`), einkaufFehlt: "Липсват покупни цени", hinweis: "Стойностите са приблизителни и може да се различават според съставките и цените. Всички суми са без ДДС, освен продажната цена.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */ },
+    eigenesFoto: "Направи своя снимка", fotoGespeichert: "Снимката е запазена. Остава на този телефон.",  titel: "Ястия в сравнение", unter: "Кои ястия ти носят най-много?", tab: { db: "Остава на брой", marge: "Rohgewinn %" }, ware: "Разход за стока", db: "Остава ти на брой", marge: "Rohgewinn (nach Ware)", leer: "Въведи продажни и покупни цени и тук ще видиш кои ястия носят най-много.", ohneZahlen: (n) => (n === 1 ? "1 ястие още без цифри" : `${n} ястия още без цифри`), einkaufFehlt: "Липсват покупни цени", hinweis: "Стойностите са приблизителни и може да се различават според съставките и цените. Всички суми са без ДДС, освен продажната цена.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
   buero: { titel: "Офис", zurueck: "Обект",
     abschnitt: { geld: "Пари", ware: "Стока", kartePreise: "Меню и цени", offen: "За вършене", ordner: "Папки за предаване", zahlen: "Числа", karte: "Меню и покупки", einrichten: "Настрой обекта" },
     offen: { einrichtung: "Настройка", kosten: (n) => (n === 1 ? "Постоянни разходи: липсва 1" : `Постоянни разходи: липсват ${n}`), billig: (n) => (n === 1 ? "1 цена е твърде ниска" : `${n} цени са твърде ниски`),
@@ -758,7 +758,6 @@ export default {
     tippen: "Докосни = 1 чиния в кофата",
     tippenPersonal: "Докосни = 1 хранене",
     fuenf: "+5",
-    rueckgaengig: "Отмени",
     eingetragen: (n, k) => `${n} в кофата (${k}× днес)`,
     personalEingetragen: (n) => `${n} въведено като храна за персонала`,
     keineGerichte: "Още няма ястия в менюто. Първо направи менюто.",

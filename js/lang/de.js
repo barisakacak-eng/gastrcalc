@@ -371,7 +371,7 @@ export default {
     offen: { karte: () => "Speisekarte fotografieren", preise: (n) => `${n} Gerichte ohne Preis`, rezepte: (n) => `${n} Gerichte ohne Rezept`, kosten: (n) => `${n} Pflichtposten offen (Miete, Personal, eigener Lohn, Strom/Gas)`,
       einkauf: (n) => `${n} Zutaten ohne Einkaufspreis – ein Rechnungsfoto füllt das`, kuehlung: () => "Kühlstelle anlegen", sicherung: () => "Letzte Sicherung älter als 7 Tage" } },
   vergleich: { wareHoch: (q) => `${q} % – hoch`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Bleibt pro Stück", marge: "Rohgewinn %" }, ware: "Wareneinsatz", db: "Bleibt dir pro Stück", marge: "Rohgewinn (nach Ware)", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" },
+    eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Bleibt pro Stück", marge: "Rohgewinn %" }, ware: "Wareneinsatz", db: "Bleibt dir pro Stück", marge: "Rohgewinn (nach Ware)", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen", ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Büro", zurueck: "Laden",
     abschnitt: { geld: "Geld", ware: "Ware", kartePreise: "Karte & Preise", offen: "Offen", ordner: "Ordner zum Abgeben", zahlen: "Zahlen", karte: "Karte & Einkauf", einrichten: "Laden einrichten" },
@@ -759,7 +759,6 @@ export default {
     tippen: "Tippen = 1 Teller weg",
     tippenPersonal: "Tippen = 1 Mahlzeit",
     fuenf: "+5",
-    rueckgaengig: "Rückgängig",
     eingetragen: (n, k) => `${n} weg (${k}× heute)`,
     personalEingetragen: (n) => `${n} als Personalessen eingetragen`,
     keineGerichte: "Noch keine Gerichte auf der Karte. Leg erst die Karte an.",

@@ -37,5 +37,6 @@ export function vergleichView(stand) {
       ${mit.length ? mit.map(karte).join("") : `<div class="karte leer"><div>${esc(t("vergleich.leer"))}</div><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="preise">${esc(t("start.preiseAendern"))}</button></div>`}
       ${ohne.length ? `<div class="karte"><h2>${esc(t("vergleich.ohneZahlen", ohne.length))}</h2>${ohne.map((x) => `<div class="vk-ohne">${esc(x.z.name)} · <small>${esc(x.z.preisBrutto === null ? t("ergebnis.preisFehlt") : t("vergleich.einkaufFehlt"))}</small></div>`).join("")}</div>` : ""}
       ${geschaetzt ? `<p class="hinweis geschaetzt-hinweis">≈ ${esc(t("vergleich.hinweis"))}</p>` : ""}
+      ${mit.length ? `<p class="hinweis">${esc(t("vergleich.ampelLegende"))}</p>` : ""}
     </div>${nav("vergleich")}`;
 }

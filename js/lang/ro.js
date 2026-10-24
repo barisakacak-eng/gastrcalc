@@ -372,7 +372,7 @@ export default {
     offen: { karte: () => "Fotografiază meniul", preise: (n) => `${nr(n, "preparat", "preparate")} fără preț`, rezepte: (n) => `${nr(n, "preparat", "preparate")} fără rețetă`, kosten: (n) => `${nr(n, "poziție obligatorie deschisă", "poziții obligatorii deschise")} (chirie, personal, salariul tău, curent/gaz)`,
       einkauf: (n) => `${nr(n, "ingredient", "ingrediente")} fără preț de cumpărare – o poză cu factura le completează`, kuehlung: () => "Adaugă un punct de răcire", sicherung: () => "Ultima copie e mai veche de 7 zile" } },
   vergleich: { wareHoch: (q) => `${q} % – ridicat`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Rohgewinn %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Rohgewinn (nach Ware)", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */ },
+    eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Rohgewinn %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Rohgewinn (nach Ware)", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
   buero: { titel: "Birou", zurueck: "Local",
     abschnitt: { geld: "Bani", ware: "Marfă", kartePreise: "Meniu și prețuri", offen: "De făcut", ordner: "Dosare de predat", zahlen: "Cifre", karte: "Meniu și cumpărături", einrichten: "Configurează localul" },
     offen: { einrichtung: "Configurare", kosten: (n) => (n === 1 ? "Costuri fixe: lipsește 1" : `Costuri fixe: lipsesc ${n}`), billig: (n) => (n === 1 ? "1 preț prea mic" : `${nr(n, "preț", "prețuri")} prea mici`),
@@ -759,7 +759,6 @@ export default {
     tippen: "Atinge = 1 farfurie aruncată",
     tippenPersonal: "Atinge = 1 masă",
     fuenf: "+5",
-    rueckgaengig: "Anulează",
     eingetragen: (n, k) => `${n} aruncat (${k}× azi)`,
     personalEingetragen: (n) => `${n} trecut ca masa personalului`,
     keineGerichte: "Încă niciun preparat în meniu. Fă întâi meniul.",

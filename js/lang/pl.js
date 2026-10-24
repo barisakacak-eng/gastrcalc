@@ -371,7 +371,7 @@ export default {
     offen: { karte: () => "Zrób zdjęcie karty dań", preise: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez ceny`, rezepte: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez przepisu`, kosten: (n) => `${n} ${lm(n, "ważna pozycja otwarta", "ważne pozycje otwarte", "ważnych pozycji otwartych")} (czynsz, personel, własna pensja, prąd/gaz)`,
       einkauf: (n) => `${n} ${lm(n, "składnik", "składniki", "składników")} bez ceny zakupu – zdjęcie faktury to uzupełni`, kuehlung: () => "Dodaj punkt chłodzenia", sicherung: () => "Ostatnia kopia starsza niż 7 dni" } },
   vergleich: { wareHoch: (q) => `${q} % – wysoko`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Zrób własne zdjęcie", fotoGespeichert: "Zdjęcie zapisane. Zostaje na tym telefonie.",  titel: "Porównanie dań", unter: "Które dania dają ci najwięcej?", tab: { db: "Zostaje na sztuce", marge: "Rohgewinn %" }, ware: "Koszt towaru", db: "Zostaje ci na sztuce", marge: "Rohgewinn (nach Ware)", leer: "Wpisz ceny sprzedaży i zakupu, wtedy zobaczysz tu, które dania dają najwięcej.", ohneZahlen: (n) => (n === 1 ? "1 danie jeszcze bez liczb" : `${n} ${lm(n, "danie", "dania", "dań")} jeszcze bez liczb`), einkaufFehlt: "Brak cen zakupu", hinweis: "Wartości są szacunkowe i mogą się różnić zależnie od składników i cen. Wszystkie kwoty bez VAT, poza ceną sprzedaży.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */ },
+    eigenesFoto: "Zrób własne zdjęcie", fotoGespeichert: "Zdjęcie zapisane. Zostaje na tym telefonie.",  titel: "Porównanie dań", unter: "Które dania dają ci najwięcej?", tab: { db: "Zostaje na sztuce", marge: "Rohgewinn %" }, ware: "Koszt towaru", db: "Zostaje ci na sztuce", marge: "Rohgewinn (nach Ware)", leer: "Wpisz ceny sprzedaży i zakupu, wtedy zobaczysz tu, które dania dają najwięcej.", ohneZahlen: (n) => (n === 1 ? "1 danie jeszcze bez liczb" : `${n} ${lm(n, "danie", "dania", "dań")} jeszcze bez liczb`), einkaufFehlt: "Brak cen zakupu", hinweis: "Wartości są szacunkowe i mogą się różnić zależnie od składników i cen. Wszystkie kwoty bez VAT, poza ceną sprzedaży.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
   buero: { titel: "Biuro", zurueck: "Lokal",
     abschnitt: { geld: "Pieniądze", ware: "Towar", kartePreise: "Karta i ceny", offen: "Do zrobienia", ordner: "Teczki do oddania", zahlen: "Liczby", karte: "Karta i zakupy", einrichten: "Ustaw lokal" },
     offen: { einrichtung: "Konfiguracja", kosten: (n) => `Stałe koszty: brak ${n}`, billig: (n) => `Za tanio: ${n} ${lm(n, "cena", "ceny", "cen")}`,
@@ -758,7 +758,6 @@ export default {
     tippen: "Dotknij = 1 talerz do kosza",
     tippenPersonal: "Dotknij = 1 posiłek",
     fuenf: "+5",
-    rueckgaengig: "Cofnij",
     eingetragen: (n, k) => `${n} do kosza (${k}× dziś)`,
     personalEingetragen: (n) => `${n} wpisane jako posiłek pracowniczy`,
     keineGerichte: "Jeszcze brak dań w karcie. Najpierw utwórz kartę.",

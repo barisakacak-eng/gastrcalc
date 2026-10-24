@@ -52,7 +52,7 @@ export const karte = {
       const l = liste.filter((v) => v.bereich === b && (!q || v.name.toLowerCase().includes(q) || gerichtText(v.name).toLowerCase().includes(q)));
       if (!l.length) return "";
       return `<div class="gruppe">${esc(t("bereiche." + b))}</div><div class="liste eng">${l.map((v) => `
-          <button type="button" class="wahl ${gewaehlt.has(v.name) ? "an" : ""}" data-a="vorlage" data-name="${esc(v.name)}" data-bereich="${esc(b)}">
+          <button type="button" class="wahl ${gewaehlt.has(v.name) ? "an" : ""}" aria-pressed="${gewaehlt.has(v.name)}" data-a="vorlage" data-name="${esc(v.name)}" data-bereich="${esc(b)}">
             <span class="haken" aria-hidden="true">${gewaehlt.has(v.name) ? "✓" : ""}</span><span>${esc(gerichtText(v.name))}</span></button>`).join("")}</div>`;
     }).join("");
     const art = ladenArtVon(stand);

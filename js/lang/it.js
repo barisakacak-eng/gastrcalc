@@ -366,7 +366,7 @@ export default {
     offen: { karte: () => "Fotografa il menù", preise: (n) => `${n} ${n === 1 ? "piatto" : "piatti"} senza prezzo`, rezepte: (n) => `${n} ${n === 1 ? "piatto" : "piatti"} senza ricetta`, kosten: (n) => `${n} ${n === 1 ? "voce obbligatoria aperta" : "voci obbligatorie aperte"} (affitto, personale, tuo stipendio, luce/gas)`,
       einkauf: (n) => `${n} ${n === 1 ? "ingrediente" : "ingredienti"} senza prezzo d'acquisto – una foto della fattura lo compila`, kuehlung: () => "Aggiungi un apparecchio frigo", sicherung: () => "Ultimo backup più vecchio di 7 giorni" } },
   vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Rohgewinn %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Rohgewinn (nach Ware)", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */ },
+    eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Rohgewinn %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Rohgewinn (nach Ware)", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
   buero: { titel: "Ufficio", zurueck: "Locale",
     abschnitt: { geld: "Soldi", ware: "Merce", kartePreise: "Menù e prezzi", offen: "Da fare", ordner: "Cartelle da consegnare", zahlen: "Numeri", karte: "Menu & acquisti", einrichten: "Imposta il locale" },
     offen: { einrichtung: "Impostazione", kosten: (n) => (n === 1 ? "Costi fissi: ne manca 1" : `Costi fissi: ne mancano ${n}`), billig: (n) => (n === 1 ? "1 prezzo troppo basso" : `${n} prezzi troppo bassi`),
@@ -753,7 +753,6 @@ export default {
     tippen: "Tocco = 1 piatto buttato",
     tippenPersonal: "Tocco = 1 pasto",
     fuenf: "+5",
-    rueckgaengig: "Annulla",
     eingetragen: (n, k) => `${n} buttato (${k}× oggi)`,
     personalEingetragen: (n) => `${n} inserito come pasto del personale`,
     keineGerichte: "Ancora nessun piatto nel menù. Prima crea il menù.",

@@ -364,7 +364,7 @@ export default {
     offen: { karte: () => "Take a photo of the menu", preise: (n) => `${n} dishes without a price`, rezepte: (n) => `${n} dishes without a recipe`, kosten: (n) => `${n} required items open (rent, staff, your own pay, power/gas)`,
       einkauf: (n) => `${n} ingredients without purchase price – a receipt photo fills this`, kuehlung: () => "Add a cooling unit", sicherung: () => "Last backup older than 7 days" } },
   vergleich: { wareHoch: (q) => `${q} % – high`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Kept per item", marge: "Gross profit %" }, ware: "Cost of goods", db: "You keep per item", marge: "Gross profit (after goods)", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price.", nachKosten: "After all costs", nachKostenFehlt: "Costs missing" },
+    eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Kept per item", marge: "Gross profit %" }, ware: "Cost of goods", db: "You keep per item", marge: "Gross profit (after goods)", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price.", nachKosten: "After all costs", nachKostenFehlt: "Costs missing", ampelLegende: "Traffic light after all costs: red below 10 %, green from 19 % of net price (≈ based on BMF benchmark figures, data year 2024)." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Office", zurueck: "Shop",
     abschnitt: { geld: "Money", ware: "Stock", kartePreise: "Menu & prices", offen: "To do", ordner: "Folders to hand in", zahlen: "Numbers", karte: "Menu & purchasing", einrichten: "Set up the shop" },
@@ -752,7 +752,6 @@ export default {
     tippen: "Tap = 1 plate binned",
     tippenPersonal: "Tap = 1 meal",
     fuenf: "+5",
-    rueckgaengig: "Undo",
     eingetragen: (n, k) => `${n} binned (${k}× today)`,
     personalEingetragen: (n) => `${n} entered as staff meal`,
     keineGerichte: "No dishes on the menu yet. Set up the menu first.",

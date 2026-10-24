@@ -365,7 +365,7 @@ export default {
     offen: { karte: () => "Menü kartının fotoğrafını çek", preise: (n) => `${n} yemeğin fiyatı yok`, rezepte: (n) => `${n} yemeğin tarifi yok`, kosten: (n) => `${n} zorunlu kalem açık (kira, personel, kendi maaşın, elektrik/gaz)`,
       einkauf: (n) => `${n} malzemenin alış fiyatı yok – bir fatura fotoğrafı doldurur`, kuehlung: () => "Soğutma yeri ekle", sicherung: () => "Son yedek 7 günden eski" } },
   vergleich: { wareHoch: (q) => `%${q} – yüksek`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Adet başı kalan", marge: "Brüt kâr %" }, ware: "Malzeme maliyeti", db: "Adet başı sana kalan", marge: "Brüt kâr (mal sonrası)", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir.", nachKosten: "Tüm maliyetlerden sonra", nachKostenFehlt: "Maliyetler eksik" },
+    eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Adet başı kalan", marge: "Brüt kâr %" }, ware: "Malzeme maliyeti", db: "Adet başı sana kalan", marge: "Brüt kâr (mal sonrası)", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir.", nachKosten: "Tüm maliyetlerden sonra", nachKostenFehlt: "Maliyetler eksik", ampelLegende: "Tüm maliyetlerden sonra ışık: net fiyatın % 10 altı kırmızı, % 19 ve üstü yeşil (≈ BMF kılavuz oranlarına göre, veri yılı 2024)." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: { titel: "Ofis", zurueck: "Dükkan",
     abschnitt: { geld: "Para", ware: "Mal", kartePreise: "Menü ve fiyatlar", offen: "Açık işler", ordner: "Teslim dosyaları", zahlen: "Rakamlar", karte: "Menü ve alım", einrichten: "Dükkanı kur" },
@@ -753,7 +753,6 @@ export default {
     tippen: "Dokun = 1 tabak atıldı",
     tippenPersonal: "Dokun = 1 öğün",
     fuenf: "+5",
-    rueckgaengig: "Geri al",
     eingetragen: (n, k) => `${n} atıldı (bugün ${k}×)`,
     personalEingetragen: (n) => `${n} personel yemeği olarak girildi`,
     keineGerichte: "Menüde henüz yemek yok. Önce menüyü kur.",

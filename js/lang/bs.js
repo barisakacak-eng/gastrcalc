@@ -373,7 +373,7 @@ export default {
     offen: { karte: () => "Slikaj jelovnik", preise: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez cijene`, rezepte: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez recepta`, kosten: (n) => `${n} ${pl(n, "obavezna stavka otvorena", "obavezne stavke otvorene", "obaveznih stavki otvoreno")} (kirija, osoblje, tvoja plata, struja/plin)`,
       einkauf: (n) => `${n} ${pl(n, "sastojak", "sastojka", "sastojaka")} bez nabavne cijene – jedna slika računa to popuni`, kuehlung: () => "Dodaj rashladni uređaj", sicherung: () => "Zadnja kopija starija od 7 dana" } },
   vergleich: { wareHoch: (q) => `${q} % – visoko`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Rohgewinn %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Rohgewinn (nach Ware)", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */ },
+    eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Rohgewinn %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Rohgewinn (nach Ware)", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
   buero: { titel: "Ured", zurueck: "Lokal",
     abschnitt: { geld: "Novac", ware: "Roba", kartePreise: "Meni i cijene", offen: "Za uraditi", ordner: "Fascikle za predaju", zahlen: "Brojke", karte: "Jelovnik i nabavka", einrichten: "Podesi lokal" },
     offen: { einrichtung: "Podešavanje", kosten: (n) => `Fiksni troškovi: fali ${n}`, billig: (n) => `Prejeftino: ${n} ${pl(n, "cijena", "cijene", "cijena")}`,
@@ -760,7 +760,6 @@ export default {
     tippen: "Dodir = 1 tanjir bačen",
     tippenPersonal: "Dodir = 1 obrok",
     fuenf: "+5",
-    rueckgaengig: "Poništi",
     eingetragen: (n, k) => `${n} bačeno (${k}× danas)`,
     personalEingetragen: (n) => `${n} upisano kao hrana za osoblje`,
     keineGerichte: "Još nema jela na jelovniku. Prvo napravi jelovnik.",
