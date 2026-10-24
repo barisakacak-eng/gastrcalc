@@ -236,7 +236,7 @@ test("Oberfläche: Büro-Kachel für alle, Bereich mit Vorschau/Einstellungen/Te
   assert.equal((html.match(/<iframe/g) || []).length, 3); assert.equal(html.split("Preise auf Tafel und Kasse").length, 2);
   assert.ok(!/undefined|NaN|tafel\.[a-z]/.test(html), html.match(/undefined|NaN|tafel\.[a-z.]+/)?.[0]);
   // nur vorhandene CSS-Klassen im Büro
-  const css = ["app", "buero", "zielbild", "optik", "laden", "heute"].map((n) => fs.readFileSync(path.join(HIER, "..", "css", n + ".css"), "utf8")).join("\n");
+  const css = ["app", "buero", "zielbild", "optik", "laden", "heute", "zeki"].map((n) => fs.readFileSync(path.join(HIER, "..", "css", n + ".css"), "utf8")).join("\n");
   const klassen = new Set([...html.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean));
   for (const k of klassen) assert.ok(new RegExp("\\." + k.replace(/[-]/g, "\\-") + "(?![\\w-])").test(css), "Klasse ohne CSS: " + k);
   // Handlungen
