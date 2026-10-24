@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rechtsform – zwei Bildschirme, 390 × 844</title>
+<link rel="stylesheet" href="../../css/tokens.css">
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;background:var(--papier-tief);color:var(--tinte);font:17px var(--schrift);display:flex;flex-wrap:wrap;gap:24px}article{width:390px;height:844px;background:var(--papier);border-radius:var(--radius-gross);padding:24px;display:flex;flex-direction:column}header{display:flex;align-items:center;justify-content:space-between;min-height:44px;color:var(--tinte-weich)}h1{font-size:32px;margin:40px 0 12px}p{color:var(--tinte-weich);line-height:1.5;margin:0 0 24px}.auswahl{display:grid;grid-template-columns:1fr 1fr;gap:10px}button{font:inherit;color:inherit;cursor:pointer}.kachel{min-height:100px;border:2px solid var(--holz);border-radius:var(--radius);background:var(--weiss);padding:14px;text-align:left;display:flex;flex-direction:column;gap:12px;justify-content:space-between;overflow-wrap:anywhere}.kachel[aria-pressed=true]{background:var(--salbei-hell);border-color:var(--salbei-tief);box-shadow:inset 4px 0 0 var(--salbei-tief)}.zeichen{align-self:flex-end;height:20px;font-weight:700;color:var(--salbei-tief)}footer{margin-top:auto}.weiter{width:100%;min-height:64px;border:0;border-radius:var(--radius);background:var(--glut);font-weight:700}.laden{padding:20px;border-radius:var(--radius);border:2px solid var(--holz);background:var(--weiss);margin-top:24px}.laden h1{margin:0 0 12px;font-size:24px}.laden .kachel{min-height:90px}.zurueck{border:0;background:none;min-width:44px;min-height:44px;text-align:left;font-size:24px}button:focus-visible{outline:3px solid var(--fokus);outline-offset:3px}
+</style>
+<article aria-label="Onboarding">
+ <header><button class="zurueck" aria-label="Zurück">‹</button><span aria-label="Einrichtung">● ● ○ ○ ○ ○ ○</span></header>
+ <h1>Rechtsform</h1><p>Siehe Gewerbeanmeldung oder Impressum.</p>
+ <div class="auswahl" role="group" aria-label="Rechtsform">
+  <button class="kachel" aria-pressed="true"><span class="zeichen" aria-hidden="true">✓</span><b>Einzelunternehmen</b></button>
+  <button class="kachel" aria-pressed="false"><span class="zeichen" aria-hidden="true"></span><b>GbR</b></button>
+  <button class="kachel" aria-pressed="false"><span class="zeichen" aria-hidden="true"></span><b>GmbH</b></button>
+  <button class="kachel" aria-pressed="false" aria-label="UG (haftungsbeschränkt)"><span class="zeichen" aria-hidden="true"></span><b>UG</b></button>
+  <button class="kachel" aria-pressed="false" aria-label="KG oder OHG"><span class="zeichen" aria-hidden="true"></span><b>KG/OHG</b></button>
+  <button class="kachel" aria-pressed="false"><span class="zeichen" aria-hidden="true"></span><b>Weiß ich nicht</b></button>
+ </div><footer><button class="weiter">Weiter</button></footer>
+</article>
+<article aria-label="Einstellungen">
+ <header><button class="zurueck" aria-label="Zurück">‹</button><b>Einstellungen</b><span></span></header>
+ <section class="laden"><h1>Laden</h1><b>Rechtsform</b><p>Siehe Gewerbeanmeldung oder Impressum.</p>
+ <div class="auswahl" role="group" aria-label="Rechtsform">
+  <button class="kachel" aria-pressed="false"><span class="zeichen" aria-hidden="true"></span><b>Einzelunternehmen</b></button>
+  <button class="kachel" aria-pressed="false"><span class="zeichen" aria-hidden="true"></span><b>GbR</b></button>
+  <button class="kachel" aria-pressed="true"><span class="zeichen" aria-hidden="true">✓</span><b>GmbH</b></button>
+  <button class="kachel" aria-pressed="false" aria-label="UG (haftungsbeschränkt)"><span class="zeichen" aria-hidden="true"></span><b>UG</b></button>
+  <button class="kachel" aria-pressed="false" aria-label="KG oder OHG"><span class="zeichen" aria-hidden="true"></span><b>KG/OHG</b></button>
+  <button class="kachel" aria-pressed="false"><span class="zeichen" aria-hidden="true"></span><b>Weiß ich nicht</b></button>
+ </div></section>
+</article>
+<script>
+document.querySelectorAll('.auswahl').forEach(gruppe=>gruppe.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gruppe.querySelectorAll('button').forEach(k=>{k.setAttribute('aria-pressed',String(k===b));k.querySelector('.zeichen').textContent=k===b?'✓':''})}));
+</script>
+</html>
