@@ -1,4 +1,5 @@
 // Trennung (17.10.2026): Schreib-Funktionen für Speisekarte, Rezepte, Verkaufspreise und Einkaufspreise (Artikel).
+import { gerichtText } from "./i18n.js"; // Perfektionswoche 24.10.2026
 // Vorher schrieben js/screens/karte.js, foto.js, beleg.js und karte_laden.js diese Felder selbst. Felder und Regeln sind unverändert.
 import { uid } from "./util.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
@@ -15,7 +16,7 @@ export function artikelVorschau(stand) { return artikelAusGerichten({ ...stand, 
 // ---------- Gerichte ----------
 export function gerichtAusVorlage(v) { // 17.10.2026 Fehler F1 (vorher screens/karte.js)
   const zutaten = v.zutaten.map(([name, menge, einheit]) => ({ name, menge, einheit }));
-  return { id: uid(), name: v.name, vorlageName: v.name, bereich: v.bereich, klasse: klasseFuerBereich(v.bereich), zeit: v.zeit, vorlage: true,
+  return { id: uid(), name: gerichtText(v.name) /* Perfektionswoche 24.10.2026: Name in der aktiven Sprache, vorlageName bleibt deutsch */, vorlageName: v.name, bereich: v.bereich, klasse: klasseFuerBereich(v.bereich), zeit: v.zeit, vorlage: true,
     zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten), rezeptFamilie: rezeptBauen(v.name)?.familie || null };
 }
 export function gerichtAusVorlageAnlegen(stand, v) { const g = gerichtAusVorlage(v); stand.gerichte.push(g); return g; }

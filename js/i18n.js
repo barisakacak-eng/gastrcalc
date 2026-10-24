@@ -2,7 +2,7 @@
 import de from "./lang/de.js";
 import tr from "./lang/tr.js";
 import en from "./lang/en.js";
-import { artikelAnzeige } from "./data/artikelnamen.js";
+import { artikelAnzeige, gerichtAnzeige } from "./data/artikelnamen.js";
 
 // Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
 // wenn jemand sie wählt (15.10.2026: 18 Sprachen, die App bleibt trotzdem klein und schnell).
@@ -74,3 +74,4 @@ export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === 
 
 // Paket 6 (17.10.2026): Katalog-Artikelname in der aktiven Sprache – nur Anzeige, gespeichert bleibt der deutsche Name.
 export const artikelText = (name) => artikelAnzeige(name, aktiv);
+export const gerichtText = (name) => gerichtAnzeige(name, aktiv); // Perfektionswoche 24.10.2026: Vorlagen-Namen

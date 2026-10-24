@@ -8,6 +8,7 @@
 const A = (tr, en) => ({ tr, en });
 
 export const ARTIKELNAMEN = {
+
   // ── Döner & Kebab ──
   "Dönerspieß Kalb/Pute": A("Döner eti (dana/hindi)", "Döner spit (veal/turkey)"),
   "Hähnchenspieß": A("Tavuk döner", "Chicken döner spit"),
@@ -485,6 +486,48 @@ export const ARTIKELNAMEN = {
 export function artikelAnzeige(name, sprache) {
   if (!name || !sprache || sprache === "de") return name;
   const e = ARTIKELNAMEN[name];
+  if (!e) return name;
+  return e[sprache] || e.en || name;
+}
+
+// Gericht-Vorlagen (Perfektionswoche 24.10.2026): Anzeige im Vorlagen-Wähler; das Gericht bekommt beim Anlegen den Namen in der
+// aktiven Sprache (Wirt darf umbenennen), vorlageName bleibt deutsch für Fotos und Rezept-Baukasten. Pilot-Bereiche zuerst, Rest folgt (Franky).
+export const GERICHTNAMEN = {
+  // Perfektionswoche 24.10.2026: Anzeige im Vorlagen-Wähler; das Gericht bekommt beim Anlegen den Namen in der
+  //    aktiven Sprache (Wirt darf umbenennen), vorlageName bleibt deutsch für Fotos und Rezept-Baukasten. Pilot-Bereiche zuerst.
+  "Döner Kebab": A("Ekmek arası döner", "Döner kebab in bread"), "Dürüm Döner": A("Dürüm döner", "Döner wrap"),
+  "Dönerteller": A("Döner tabağı", "Döner plate"), "Hähnchendöner": A("Tavuk döner (ekmek arası)", "Chicken döner in bread"),
+  "Falafel-Dürüm": A("Falafel dürüm", "Falafel wrap"), "Lahmacun": A("Lahmacun", "Lahmacun"), "Adana-Spieß": A("Adana kebap", "Adana kebab"),
+  "Sucuk-Sandwich": A("Sucuklu sandviç", "Sucuk sandwich"), "Dürüm Hähnchen": A("Tavuk dürüm", "Chicken wrap"),
+  "Dönerbox": A("Döner box (patatesli)", "Döner box with fries"), "Dönerteller Hähnchen": A("Tavuk döner tabağı", "Chicken döner plate"),
+  "Falafel-Teller": A("Falafel tabağı", "Falafel plate"), "Halloumi-Dürüm": A("Hellim dürüm", "Halloumi wrap"),
+  "Vegetarischer Döner": A("Vejetaryen döner", "Vegetarian döner"), "Pide mit Käse": A("Peynirli pide", "Pide with cheese"),
+  "Pide mit Hackfleisch": A("Kıymalı pide", "Pide with minced meat"), "Lahmacun mit Dönerfleisch": A("Dönerli lahmacun", "Lahmacun with döner meat"),
+  "Pommes mit Sauce": A("Soslu patates", "Fries with sauce"), "Kinder-Döner": A("Çocuk döner", "Kids döner"),
+  "Cheeseburger Classic": A("Cheeseburger klasik", "Classic cheeseburger"), "Doppel-Cheeseburger": A("Çift cheeseburger", "Double cheeseburger"),
+  "Bacon Burger": A("Bacon burger", "Bacon burger"), "Chickenburger": A("Tavuk burger", "Chicken burger"), "Veggie-Burger": A("Vejetaryen burger", "Veggie burger"),
+  "Pulled-Pork-Burger": A("Pulled pork burger", "Pulled pork burger"), "Pommes mit Dip": A("Soslu patates kızartması", "Fries with dip"),
+  "Smash Burger Single": A("Smash burger tek", "Smash burger single"), "Smash Burger Double": A("Smash burger çift", "Smash burger double"),
+  "Smash Burger Bacon": A("Smash burger bacon", "Smash burger bacon"), "Smash Burger Jalapeño": A("Smash burger jalapeño", "Smash burger jalapeño"),
+  "Crispy Chicken Burger": A("Çıtır tavuk burger", "Crispy chicken burger"), "Cheese Fries": A("Peynirli patates", "Cheese fries"),
+  "Pommes mit Ketchup": A("Ketçaplı patates", "Fries with ketchup"),
+  "Currywurst mit Pommes": A("Currywurst patatesli", "Currywurst with fries"), "Currywurst einzeln": A("Currywurst tek", "Currywurst only"),
+  "Pommes klein": A("Küçük patates", "Small fries"), "Pommes groß": A("Büyük patates", "Large fries"), "Bratwurst im Brötchen": A("Ekmek arası sosis", "Bratwurst in a roll"),
+  "Schnitzel mit Pommes": A("Şnitzel patatesli", "Schnitzel with fries"), "Chicken Nuggets (6 Stück)": A("Tavuk nugget (6 adet)", "Chicken nuggets (6 pcs)"),
+  "Frikadelle im Brötchen": A("Ekmek arası köfte", "Meatball in a roll"),
+  "Pommes frites (Beilage)": A("Patates kızartması (yan)", "French fries (side)"), "Kroketten (Beilage)": A("Kroket (yan)", "Croquettes (side)"),
+  "Reis (Beilage)": A("Pilav (yan)", "Rice (side)"), "Spätzle (Beilage)": A("Spätzle (yan)", "Spätzle (side)"), "Kartoffelknödel (2 Stück)": A("Patates köftesi (2 adet)", "Potato dumplings (2 pcs)"),
+  "Gemischtes Gemüse": A("Karışık sebze", "Mixed vegetables"), "Kartoffelsalat": A("Patates salatası", "Potato salad"),
+  "Cola 0,33 l": A("Kola 0,33 l", "Cola 0.33 l"), "Mineralwasser 0,25 l": A("Maden suyu 0,25 l", "Mineral water 0.25 l"), "Apfelschorle 0,3 l": A("Elma şorle 0,3 l", "Apple spritzer 0.3 l"),
+  "Orangensaft 0,2 l": A("Portakal suyu 0,2 l", "Orange juice 0.2 l"), "Eistee 0,33 l": A("Buzlu çay 0,33 l", "Iced tea 0.33 l"), "Hausgemachte Limonade 0,4 l": A("Ev yapımı limonata 0,4 l", "Homemade lemonade 0.4 l"),
+  "Energydrink 0,25 l": A("Enerji içeceği 0,25 l", "Energy drink 0.25 l"),
+  "Gemischter Salat klein": A("Küçük karışık salata", "Small mixed salad"), "Caesar Salad": A("Sezar salata", "Caesar salad"), "Griechischer Salat": A("Yunan salatası", "Greek salad"),
+  "Thunfischsalat": A("Ton balıklı salata", "Tuna salad"), "Poke Bowl Lachs": A("Somonlu poke bowl", "Salmon poke bowl"), "Couscous-Salat": A("Kuskus salatası", "Couscous salad"),
+};
+
+export function gerichtAnzeige(name, sprache) {
+  if (!name || !sprache || sprache === "de") return name;
+  const e = GERICHTNAMEN[name];
   if (!e) return name;
   return e[sprache] || e.en || name;
 }

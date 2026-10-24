@@ -20,6 +20,7 @@ const NAME_FOTO = [[/adana|urfa|spie(ß|ss)/i, "g-adana", "g-koefte"], [/lasagne
 const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger", currywurst: "g-currywurst", asia: "g-asia-reis", salat: "g-salat", fingerfood: "g-fingerfood",
   beilagen: "g-pommes", alkoholfrei: "g-getraenk", suppe: "g-suppe", kuchen: "g-kuchen", kaffee: "g-kaffee", fruehstueck: "g-fruehstueck", eis: "g-eis", bier: "g-bier", fleischgericht: "g-fleischgericht" };
 export function fotoName(g) {
+  g = { ...g, name: g.vorlageName || g.name }; // Perfektionswoche 24.10.2026: Fotos hängen am deutschen Vorlagennamen, auch wenn der Wirt türkisch oder englisch benennt
   const f = g.rezeptFamilie || "";
   // Ein altes Foto namens "Döner Kebab" zeigt in Wirklichkeit einen Wrap/Dürüm.
   // Türkischer Döner im Brot erhält daher immer das fachlich richtige Brot-Motiv.
