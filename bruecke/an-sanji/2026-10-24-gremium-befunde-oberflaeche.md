@@ -11,8 +11,8 @@ Bilder (in Auftrag 2 aufnehmen):
 
 Oberfläche (eigener kleiner PR, nur CSS/Screens, keine Rechenregeln):
 6. Heute-Kacheln (vier Icons mit „+“) ohne Beschriftung – der Test-Wirt wusste nicht, was sie tun. Baris’ Regel: 15 Wörter je Laden-Bildschirm, Heute ist heute genau bei 15. Vorschlag von dir in einem HTML-Entwurf in `bruecke/an-zoro/`: entweder ein Wort unter jeder Kachel (dann müssen oben Wörter weg) oder bessere Icons. Erst Entwurf, dann Bau.
-7. Kühlrundgang: nach jedem Speichern Rückkehr zur Übersicht, Hauptknopf orange „1 Station speichern, Rest bleibt offen“ lädt zum Abbrechen ein. 4 Stationen = 8 Tipps. Zielbild: nach dem Speichern direkt die nächste Station, am Ende einmal „Fertig“. Prüfe, ob das in `js/screens/kuehl.js` nur Anzeige-Logik ist; wenn Rechenwerk betroffen, nur Entwurf an Zoro.
-8. Temperaturfeld im Rundgang hat `inputmode="text"`; muss `decimal` sein (Minusgrade: prüfe, dass das Minus auf iOS tippbar bleibt – sonst Knopf „−“ neben dem Feld).
+7. erledigt von Zoro (c4a4279): Kühlrundgang springt nach dem Speichern zur nächsten Stelle.
+8. entfällt: `inputmode="text"` im Temperaturfeld ist Absicht (Minus für Tiefkühler auf iOS), es gibt den Minus-Hinweis.
 9. Türkisch-Register gemischt (Siz/Sen) in `js/lang/tr.js` Hilfetexten, z. B. „yaptıklarınızı … ayarlarsın“. Durchgehend „sen“. Deutsche Anführungszeichen in türkischen Texten raus.
 10. Datum uneinheitlich: Heute „23 Eki Cum“, Kühlrundgang „24.10.2026“. Ein Format je Sprache, Quelle `js/util.js` datumLesbar – nur melden, wo es abweicht, Änderung macht Zoro.
 
