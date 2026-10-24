@@ -62,7 +62,7 @@ function kachelHtml(stand, x, zaehl, frisch, station = false) {
 // Laden-Umbau (20.10.2026): Kopf als rote Summenleiste „Müll heute · x €“ (an einem Vortag: „Müll · TT.MM.“)
 function pilleHtml(stand, D) {
   const h = muellHeute(stand, D);
-  const zahl = personalAktiv() ? `${fmtZahl(h.anzahl)}×` : fmtEuro(h.wert, { dezimal: 2 });
+  const zahl = personalAktiv() ? `${fmtZahl(h.anzahl)}×` : h.anzahl > 0 && h.offen === h.anzahl ? "–" : fmtEuro(h.wert, { dezimal: 2 }); // Gremium 1 (24.10.2026): nur unbewertete Einträge → „–“ statt 0,00 €
   return `<div class="heutewert muellsumme" id="muell-heute"><h1>${esc(D === heute() ? t("heute.kachel.muell") : `${t("muell1.titel")} · ${datumLesbar(D).slice(0, 6)}`)}</h1><span class="zahl">${zahl}</span></div>`;
 }
 function toastHtml() {

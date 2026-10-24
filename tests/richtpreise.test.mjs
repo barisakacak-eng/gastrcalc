@@ -21,7 +21,9 @@ const A = (name, gruppe, einheit, menge, preis, packEinheit = einheit) => ({ nam
 function laden() {
   const s = leererBetrieb(); s.betrieb.name = "Test"; s.betrieb.format = "imbiss"; s.betrieb.kuechen = ["doener"]; s.ladenArt = "doener";
   s.gerichte.push({ ...gerichtAusVorlage(vorlage("Döner Kebab")), preis: 7.5 });
-  s.artikel = artikelAusGerichten(s); return s;
+  s.artikel = artikelAusGerichten(s);
+  s.artikel.push({ name: "Vollkorn-Bun", gruppe: "teig", einheit: "stk", packung: { menge: null, einheit: "stk" }, preis: null, preisBasis: "netto", preisHistorie: [], status: "offen" }); // 24.10.2026: Artikel ohne Richtpreis (Eisbergsalat hat seit dem Nachtrag einen)
+  return s;
 }
 const art = (s, n) => s.artikel.find((a) => a.name === n);
 
@@ -42,7 +44,7 @@ test("Einsetzen füllt nur leere Preise, eigene bleiben unangetastet", () => {
   const r = richtpreiseEinsetzen(s, { datum: "2026-10-17" });
   assert.equal(JSON.stringify(art(s, "Tomaten")), vorher, "eigener Preis nie angefasst");
   assert.equal(r.uebersprungenEigen, 1);
-  assert.deepEqual(r.ohneRichtpreis, ["Eisbergsalat"]);
+  assert.deepEqual(r.ohneRichtpreis, ["Vollkorn-Bun"]);
   assert.equal(r.gesetzt, s.artikel.length - 2);
   const d = art(s, "Dönerspieß Kalb/Pute");
   assert.equal(d.status, "richtpreis"); assert.equal(d.preisBasis, "netto"); assert.ok(istRichtpreis(d));
@@ -78,7 +80,7 @@ test("Einheiten: g/kg und Stück werden richtig umgerechnet, kg gegen Stück nic
 
 test("Gericht mit Richtpreis: Wareneinsatz geschätzt (≈), Quote geschätzt, Cockpit zeigt Richtwert-Zeile", () => {
   const s = laden();
-  Object.assign(art(s, "Eisbergsalat"), { preis: 13.5, packung: { menge: 10, einheit: "kg" }, status: "bekannt" }); // Wirt-Preis
+  Object.assign(art(s, "Vollkorn-Bun"), { preis: 13.5, packung: { menge: 10, einheit: "kg" }, status: "bekannt" }); // Wirt-Preis
   const idx = () => Object.fromEntries(s.artikel.map((a) => [a.name, a]));
   assert.equal(warenGericht(s.gerichte[0], idx()).vollstaendig, false);
   richtpreiseEinsetzen(s);
@@ -106,7 +108,7 @@ test("Wirt-Preis ersetzt den Richtpreis: Kennzeichnung weg, keine Preisänderung
   assert.deepEqual(aend.map((x) => [x.name, x.alt]), [["Zwiebeln", null]]);
   // Gericht nur noch mit eigenen Preisen → nicht mehr geschätzt (Rezept-Startwerte zählen dort nicht)
   const s2 = laden(); richtpreiseEinsetzen(s2);
-  for (const a of s2.artikel) if (istRichtpreis(a)) a.preis = a.preis + 0.01; Object.assign(art(s2, "Eisbergsalat"), { preis: 13.5, packung: { menge: 10, einheit: "kg" } });
+  for (const a of s2.artikel) if (istRichtpreis(a)) a.preis = a.preis + 0.01; Object.assign(art(s2, "Vollkorn-Bun"), { preis: 13.5, packung: { menge: 10, einheit: "kg" } });
   const w = warenGericht(s2.gerichte[0], Object.fromEntries(s2.artikel.map((a) => [a.name, a])));
   assert.equal(w.richtpreis, false); assert.equal(richtpreiseAktiv(s2), 0);
 });
@@ -118,7 +120,7 @@ test("Entfernen nimmt nur unveränderte Richtpreise zurück", () => {
   assert.equal(art(s, "Weißkohl").preis, 7);
   art(s, "Tomaten").preis = 2.5; // vom Wirt geändert
   const r = richtpreiseEntfernen(s);
-  assert.equal(r.behalten, 1); assert.equal(r.entfernt, s.artikel.length - 2, "alle außer Eisbergsalat (kein Richtpreis) und Tomaten (geändert)");
+  assert.equal(r.behalten, 1); assert.equal(r.entfernt, s.artikel.length - 2, "alle außer Vollkorn-Bun (kein Richtpreis) und Tomaten (geändert)");
   assert.equal(art(s, "Tomaten").preis, 2.5); assert.equal(art(s, "Tomaten").richtpreis, undefined);
   const d = art(s, "Dönerspieß Kalb/Pute"); assert.equal(d.preis, null); assert.equal(d.status, "offen"); assert.equal(d.richtpreis, undefined);
   assert.ok(!d.preisHistorie.some((h) => h.herkunft === "richtpreis"));
@@ -132,7 +134,7 @@ test("Einrichtung: Richtpreise zählen beim Schritt Einkaufspreise nicht als erl
   assert.equal(schritt().anteil, 0);
   richtpreiseEinsetzen(s);
   assert.equal(schritt().anteil, 0, "nur Richtpreise: 0 %"); assert.equal(schritt().fertig, false);
-  Object.assign(art(s, "Eisbergsalat"), { preis: 13.5, packung: { menge: 10, einheit: "kg" } });
+  Object.assign(art(s, "Vollkorn-Bun"), { preis: 13.5, packung: { menge: 10, einheit: "kg" } });
   const n = s.artikel.filter((a) => a.benutzt !== false).length;
   assert.equal(schritt().anteil, 1 / n, "nur der eigene Preis zählt"); assert.equal(schritt().rest, n - 1);
 });

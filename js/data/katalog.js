@@ -527,7 +527,7 @@ export const VORLAGEN = {
       ["Eisbergsalat", 20, "g"], ["Burgerbox", 1, "stk"]]),
     V("Chickenburger", 7, [["Hähnchenpatty", 1, "stk"], ["Brioche-Bun", 1, "stk"],
       ["Eisbergsalat", 25, "g"], ["Tomaten", 25, "g"], ["Mayonnaise", 20, "g"], ["Burgerbox", 1, "stk"]]),
-    V("Veggie-Burger", 6, [["Veggie-Patty", 1, "stk"], ["Vollkorn-Bun", 1, "stk"],
+    V("Veggie-Burger", 6, [["Veggie-Patty", 1, "stk"], ["Burger-Bun", 1, "stk"],
       ["Eisbergsalat", 25, "g"], ["Tomaten", 25, "g"], ["Avocado", 0.3, "stk"],
       ["Burgersauce", 20, "g"], ["Burgerbox", 1, "stk"]]),
     // Perfektionswoche 24.10.2026: Smashburger-Karte als Startwerte (≈) – dünne Patties aus Rinderhack, doppelt, Fries, Dips.
