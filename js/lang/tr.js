@@ -168,7 +168,7 @@ export default {
   },
   preise: {
     richtpreis: { knopf: "Tavsiye fiyatları ekle", satz: "Eksik fiyatları bölgedeki ortalama değerlerle doldurur (Ekim 2026 itibarıyla). Kendi fiyatların kalır.", meldung: (n, m) => `${n} fiyat eklendi · ${m} tavsiye fiyatı yok`, entfernen: "Tavsiye fiyatlarını kaldır", entfernt: (n) => `${n} tavsiye fiyatı kaldırıldı`, marke: "Tavsiye fiyatı", aktiv: (n) => `${n} tavsiye fiyatı etkin`, quelleAuf: "Tavsiye fiyatları nereden geliyor?", quelle: "Toptancı ve üreticilerin internet fiyatları, 17.10.2026 tarihinde alındı; yalnızca market fiyatı bulunanlardan %15 düşüldü. Test değerleri, teklif değil.", inventur: "≈ Bazı fiyatlar tavsiye fiyatıdır, bu yüzden euro tutarları yaklaşıktır." },
-    preisNull: "Fiyat 0 € – doğru mu? „Fiyat yok“ sayılır.", // Paket 3 (16.10.2026), M3
+    preisNull: "Fiyat 0 € – doğru mu? “Fiyat yok“ sayılır.", // Paket 3 (16.10.2026), M3
     frage: "Alırken ne ödüyorsun?",
     hinweis: "Her ürün için aldığın paket ve fiyatı – KDV hariç, tedarikçi faturasında yazdığı gibi. Tahmini fiyatlar sadece başlangıç – senin gerçek fiyatın daha önemli. Eksik olanı açık bırak.",
     stand: (a, b) => `${b} fiyattan ${a} tanesi girildi`,
@@ -421,7 +421,7 @@ export default {
       status: { ok: "güncel", bald: "yakında", ueberfaellig: "süresi geçti", fehlt: "eksik" }, am: (name) => `${name} için eğitim tarihi`, erst: "İlk eğitim", folge: "Tekrar eğitimi",
       name: "İsim", ungueltig: "Lütfen bugüne kadar bir tarih seç.", gespeichert: "Eğitim kaydedildi." },
     knopf: { pdf: "PDF olarak paylaş", vorschau: "Önizleme", csv: "CSV", csvTeil: (t) => `${t} CSV olarak`, schliessen: "Kapat", datei: "Dosya", drucken: "Yazdır / PDF",
-      druckHinweis: "Yazdırma penceresinde „PDF olarak kaydet” veya „Paylaş” seç.", geteilt: "Belge hazır.", csvFertig: (n) => `${n} dosya hazır.` },
+      druckHinweis: "Yazdırma penceresinde “PDF olarak kaydet” veya “Paylaş” seç.", geteilt: "Belge hazır.", csvFertig: (n) => `${n} dosya hazır.` },
     dok: { erstellt: (d, z) => `${d} ${z} tarihinde GastroCash ile oluşturuldu`, nichtGemessen: "ölçülmedi", nk: { erledigt: "Kontrol ölçümü yapıldı", offen: "Kontrol ölçümü açık" }, ware: "Mal",
       basis: { netto: "net", brutto: "brüt" }, ohneMessung: (l) => `ölçüm yok: ${l}`, keineMassnahme: "önlem girilmedi", offeneTage: (l) => `eksik günler: ${l}`,
       ladenArt: (a) => `Dükkan: ${a}`, geraete: (l) => `Cihazlar: ${l}`, takt: (n) => (n === 2 ? "Soğutma ölçümü günde 2 kez" : "Soğutma ölçümü günde 1 kez"), aufgaben: (n) => `Planda ${n} temizlik görevi`,
@@ -470,7 +470,7 @@ export default {
     ausgeschiedenAm: (k, d) => `${k} (ayrıldı ${d})`,
     ausgeschiedeneListe: (liste) => `Ayrılanlar: ${liste}`, personAltHinweis: "Ayrılan kişi artık hiçbir seçimde görünmez. Kısaltmayla eski kayıtlar ve belgeler resmî daire ve vergi için kalır.", // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
     statusAusgeschieden: "ayrıldı",
-    personWegFrage: (k) => `„${k}“ artık ekipte değil mi? Kısaltma eski kayıtlarda „ayrıldı“ notuyla kalır.`,
+    personWegFrage: (k) => `“${k}“ artık ekipte değil mi? Kısaltma eski kayıtlarda “ayrıldı“ notuyla kalır.`,
     rueckTitel: "Geri alındı / değişti",
     rueckLeer: "Geri alınan veya değişen bir şey yok.",
     rueckKopf: ["No.", "Ne zaman", "Alan", "Kayıt", "Kim"],
@@ -501,7 +501,7 @@ export default {
     grenzeStandard: "Standart (7 °C) – malın için sınırı kontrol et.",
     obFrage: "Kaç soğutucun var?",
     obHinweis: "Buzdolapları, derin dondurucular, soğuk oda, sıcak tutma. İsme dokunup değiştirebilirsin.",
-    obKeine: "Soğutucu yok – sonra „Daha fazla“ bölümünden ekle",
+    obKeine: "Soğutucu yok – sonra “Daha fazla“ bölümünden ekle",
     obName: (n) => `Buzdolabı ${n}`,
     obNameTk: "Derin dondurucu",
     obNameWarm: "Sıcak tutma",
@@ -509,7 +509,7 @@ export default {
     nochNicht: "Henüz kurulmadı. Sabah iki dakika, kontrol çizelgesi kendiliğinden yazılır.",
     kurz: (a, b) => `Bugün ${b} noktadan ${a} ölçüldü`,
     einrichtenTitel: "Soğutucuları ekle",
-    einrichtenText: "Buzdolaplarını, derin dondurucuları ve sıcak tutma ünitelerini sizin dediğiniz adla gir. Her nokta hijyen planından kendi sınırını alır. Sonrasında tur iki dakika sürer.",
+    einrichtenText: "Buzdolaplarını, derin dondurucuları ve sıcak tutma ünitelerini senin dediğin adla gir. Her nokta hijyen planından kendi sınırını alır. Sonrasında tur iki dakika sürer.",
     einrichten: "Soğutma noktaları ekle",
     einrichtungAendern: "Noktaları ve ekibi değiştir",
     grenzenFehlen: "En az bir noktanın adı yok. Bir ad ver, tur başlasın.",
@@ -541,7 +541,7 @@ export default {
     erledigt: (z, w) => `${z} saatinde ${w} °C ile tamamlandı`,
     offenKurz: "hâlâ açık",
     tempUngueltig: (v) => `“${v}” bir sıcaklık değil. −100 ile 300 arası sayı, eksi “-” ile.`,
-    stellenHinweis: "Cihaza sizin dediğiniz adı ver – yeni gelen de tanımalı. Sıra, turdaki gibi.",
+    stellenHinweis: "Cihaza senin dediğin adı ver – yeni gelen de tanımalı. Sıra, turdaki gibi.",
     namePlatzhalter: "örn. ön tezgâh, bodrum dondurucu",
     hoechstens: "en fazla",
     mindestens: "en az",
@@ -610,7 +610,7 @@ export default {
   reinigung: { basis: { brutto: "KDV dahil (brüt)", netto: "KDV hariç (net)" }, frage: "Sende temizliği kim yapıyor?", hinweis: "Dükkan, ızgara, mutfak, tuvalet.",
     wer: { firma: "Temizlik firması", selbst: "Kendimiz", beides: "İkisi de" }, werHinweis: { firma: "Dışarıdan gelir, her ay ödenir", selbst: "Ekip ya da kapanıştan sonra sen", beides: "Firma büyük temizliğe, siz her gün" },
     minutenFrage: "Günde toplam ne kadar?", minuten: (m) => `${m} dk`, durchFrage: "Çoğunlukla kim yapıyor?", durch: { team: "Ekip", inhaber: "Ben (sahibi)" },
-    einsichtEuro: (m, e) => `Günde ${m} dk temizlik yapıyorsunuz. Bu ayda yaklaşık ≈ ${e} maaş eder.`, einsichtStunden: (m, h) => `Günde ${m} dk temizlik yapıyorsunuz. Bu ayda yaklaşık ${h} saat eder.`,
+    einsichtEuro: (m, e) => `Günde ${m} dk temizlik yapıyorsun. Bu ayda yaklaşık ≈ ${e} maaş eder.`, einsichtStunden: (m, h) => `Günde ${m} dk temizlik yapıyorsun. Bu ayda yaklaşık ${h} saat eder.`,
     nichtDoppelt: "Zaten personel giderinde var, iki kez sayılmaz.", inhaberZeit: "Hesaptan para çıkmaz ama senin zamanın. Gider olarak sayılmaz.",
     firmaFrage: "Firmaya ayda ne ödüyorsun?", jeMonat: "€ / ay", mittelFrage: "Temizlik malzemesi, çöp poşeti, eldiven – ayda yaklaşık?", mittelHinweis: "Bilmiyor musun? Boş bırak. Uygulama sonra fişlerinden hesaplar.",
     zeile: "Temizlik ve sarf malzemesi", stufe: { offen: "henüz açık", schaetzung: "≈ tahmini", beleg: "fişlerden", inventur: "✓ sayımdan" },
@@ -1025,7 +1025,7 @@ export default {
 
   schnell: {
     ladenArtFrage: "Nasıl bir dükkânsın?", ladenArtHinweis: "Dükkân türünü seç, her şeyi senin için en iyi şekilde kuralım.", ladenName: "Dükkânının adı ne?", 
-    selbstFrage: "Neleri kendiniz yapıyorsunuz?", selbstHinweis: "Kendiniz yaptıklarınıza dokun. Gerisini hazır alıyorsunuz.", selbstRest: "Şimdi miktar gerekmiyor. Uygulama başlangıç değerleri kullanır, sonra düzeltirsin.", selbstKacheln: { teig: "Pizza ve pide hamuru", brot: "Ekmek / pide ekmeği", lahmacun: "Lahmacun hamuru", sossen: "Soslar (sarımsak, otlu)", patty: "Burger köftesi", tomatensosse: "Pizza sosu" }, 
+    selbstFrage: "Neleri kendin yapıyorsun?", selbstHinweis: "Kendin yaptıklarına dokun. Gerisini hazır alıyorsun.", selbstRest: "Şimdi miktar gerekmiyor. Uygulama başlangıç değerleri kullanır, sonra düzeltirsin.", selbstKacheln: { teig: "Pizza ve pide hamuru", brot: "Ekmek / pide ekmeği", lahmacun: "Lahmacun hamuru", sossen: "Soslar (sarımsak, otlu)", patty: "Burger köftesi", tomatensosse: "Pizza sosu" }, 
     ladenFrage: "Dükkanının adı ne ve ne satıyorsun?",
     arten: { doener: "Döner & ızgara", imbiss: "Büfe, burger, patates", pizza: "Pizza & makarna", asia: "Asya büfesi", foodtruck: "Yemek kamyonu", baeckerei: "Fırın & börek", cafe: "Kafe & bistro", kiosk: "Sıcak mutfaklı büfe", anders: "Başka bir şey" },
     genau: "Her şeyi adım adım kur (daha uzun sürer)",
@@ -1049,7 +1049,7 @@ export default {
     ladenHilfe: "Dükkân türü tarifler, soğutma ve temizlik planı için başlangıç değerleri verir. Hepsini sonra büroda değiştirebilirsin.",
     allesGenau: "Her şeyi ayrıntılı kur",
     karte: "Menün", karteFoto: "Menüyü fotoğrafla", karteVorlagen: "Şablondan seç", karteGalerie: "Fotoğraf veya PDF", spaeter: "Sonra",
-    karteHilfe: "Uygulama yemekleri ve fiyatları fotoğraftan okur. Kendiniz yaptıklarınızı büroda Tarifler bölümünde ayarlarsın.",
+    karteHilfe: "Uygulama yemekleri ve fiyatları fotoğraftan okur. Kendin yaptıklarını büroda Tarifler bölümünde ayarlarsın.",
     kuehl: "Soğutma", arten: { getraenke: "İçecek dolabı", kuehlschrank: "Buzdolabı", saladette: "Saladet", tiefkuehler: "Derin dondurucu", warmhalter: "Sıcak tutucu" },
     kuehlHilfe: "Her cihaz için sıcaklığı sonra girersin. İsimleri büroda değiştirirsin.",
     geld: "Aylık giderler", miete: "Kira", personal: "Personel", eigen: "Senin maaşın", strom: "Elektrik",
@@ -1077,7 +1077,7 @@ export default {
     leer: "Henüz ürün yok. Önce menünü tarifleriyle gir ya da bir alış fişi oku, liste kendiliğinden dolar.",
     zurListe: "Listeye dön", vonIn: (ort, k, n) => `${ort} · ${k} / ${n}`, gesamt: (k, n) => `${k} / ${n}`,
     zaehltIn: "Sayım birimi:", letztesMal: (x, e) => `Geçen sefer: ${x} × ${e}`, ganz: (e) => `tam ${e}`, voll: "tam",
-    teilHinweis: "Biraz açılmış mı? ¼, ½ veya ¾ seç. Aşağı yukarı yeter.", wert: "Değer", spaeter: "Sonra", weiter: "İleri ›", geschafft: "Hepsi bitti. Listeyi kontrol et ve „Sayım bitti“ye dokun.",
+    teilHinweis: "Biraz açılmış mı? ¼, ½ veya ¾ seç. Aşağı yukarı yeter.", wert: "Değer", spaeter: "Sonra", weiter: "İleri ›", geschafft: "Hepsi bitti. Listeyi kontrol et ve “Sayım bitti“ye dokun.",
     fertigTitel: "Sayım bitti", wareImLaden: "Dükkândaki mal", wasHeisst: "Bu ne demek?",
     wareText: "Şu anda dükkânında mal olarak bu kadar para duruyor: sayılan paketler çarpı paket başına alış fiyatı, KDV hariç.",
     gezaehltZeile: (n) => `${n} ürün sayıldı`, vorherZeile: (d, w) => `son sayım ${d}: ${w}`,
@@ -1107,13 +1107,13 @@ export default {
     lueckeGut: "Güzel. Ya porsiyonlar küçük ya da menüde gerçekte kullandığınızdan büyük miktarlar yazıyor. Tarifleri kontrol et, uygulama daha doğru hesaplasın.",
     gerichteKnopf: "Hangi yemekler en çok kazandırıyor?", zurUebersicht: "Sayım özetine dön",
   },
-  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
+  // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem “?“
   ebene: { tabs: { start: "Bugün", muell: "Çöp", kuehl: "Soğutma", putzplan: "Temizlik", karte: "Yemekler" },
     leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
     pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil", testphase: "Deneme aşaması: kodsuz. Herkes büroya ve personel moduna girer. Büyük pilottan önce tekrar aç.", testphaseAn: "Kodsuz deneme aşamasını aç", testphaseAus: "Kodu tekrar aç" },
     hilfeText: {
       allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",
-      start: "Günün özeti. Büyük sayı, sıfıra kadar ne kadar ciro eksik olduğunu gösterir. Kırmızı: şimdi ilgilen. Önünde „≈“ varsa sayı tahminidir (mal veya kendi maaşın için) – açıklama ofiste „Ay ve sayaç“ altında. Alış fiyatı yoksa uygulama %32 mal payıyla hesaplar (büfeler: %23–41, BMF 2025 sektör tablosu).",
+      start: "Günün özeti. Büyük sayı, sıfıra kadar ne kadar ciro eksik olduğunu gösterir. Kırmızı: şimdi ilgilen. Önünde “≈“ varsa sayı tahminidir (mal veya kendi maaşın için) – açıklama ofiste “Ay ve sayaç“ altında. Alış fiyatı yoksa uygulama %32 mal payıyla hesaplar (büfeler: %23–41, BMF 2025 sektör tablosu).",
       muell: "Atılan ürüne dokun. Hemen ardından geri alabilirsin. Listeler ve tutarlar büroda.",
       kuehl: "Her soğutucuyu ölç ve değeri gir. Çok yüksekse ne yaptığını yaz ve sonra tekrar ölç.",
       putzplan: "Bugün temizlenenleri işaretle. İşaretle, liste güncel olsun. Planı ofiste değiştirirsin.",
@@ -1122,7 +1122,7 @@ export default {
       laeden: "Burada dükkânların arasında geçiş yaparsın. Her dükkânın kendi rakamları var.",
       personal: "Çöp gir, soğutmayı ölç, temizliği işaretle. Geri dönüş sadece büro koduyla.",
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
-  // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân „Bugün“ ve „Ofiste açık“
+  // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân “Bugün“ ve “Ofiste açık“
   heute: {
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
@@ -1194,7 +1194,7 @@ export default {
       uebernommen: (n, tage) => `${tage} gün için ${n} kalem alındı`, nichtsNeu: "Yeni bir şey yok – hepsi zaten vardı.",
     },
   },
-  // Bestand (17.10.2026): Büro „Depo ve sipariş“
+  // Bestand (17.10.2026): Büro “Depo ve sipariş“
   bestand: {
     nichtsDringend: (d) => d ? `Bugün acil bir şey yok. Sonraki sipariş en geç ${d}` : "Bugün acil bir şey yok.", // Schwadron 18.10.2026, N1
     einstieg: "Depo ve sipariş", einstiegUnter: "Ne var, ne sipariş etmelisin",
@@ -1217,7 +1217,7 @@ export default {
     speichern: "Kaydet", zu: "Kapat", gespeichert: "Kaydedildi", ungueltig: "Bir sayı doğru değil – lütfen kontrol et.", nichtsGeaendert: "Değişiklik yok",
     uhr: { heute: (n) => `Bugün sipariş et: ${n} ürün`, morgen: (n) => `Yarın sipariş et: ${n} ürün`, reicht: (name, n) => `${name} ≈ ${n} gün daha yeter`, fastAlle: (name) => `${name} bitmek üzere`, mindest: (name) => `${name} en az stokun altında – sipariş et`, knopf: "Sipariş et" },
   },
-  // Stufe 1 (17.10.2026): Büro „Kampanya ve raf ömrü“ ve fişte son kullanma tarihi
+  // Stufe 1 (17.10.2026): Büro “Kampanya ve raf ömrü“ ve fişte son kullanma tarihi
   aktionen: {
     einstieg: "Kampanya ve raf ömrü", einstiegUnter: "Ne bitiyor, hangi kampanya kazandırır",
     titel: "Kampanya ve raf ömrü", unter: "Öneriler – karar senin.", allesGut: "Yakında tarihi geçen bir şey yok.",
@@ -1230,7 +1230,7 @@ export default {
     lohntNicht: (ware) => `${ware}: İndirim çok küçük olur – normal sat.`, ohneGericht: (ware) => `${ware}: Bu ürünü fiyatı ve tarifi olan hiçbir yemek kullanmıyor.`,
     teilen: "Metni paylaş", kopiert: "Kopyalandı – şimdi WhatsApp'a yapıştır.", geteilt: "Paylaşıldı",
     wasLaeuft: "Son kullanma tarihi: sonra kullanma, kampanyada da. TETT: en az bu tarihe kadar dayanır – sonra kendin kontrol et. Kalan miktarı uygulama stoktan ve tüketimden hesaplar, önce en eski teslimat.",
-    wasAbverkauf: "Toplam indirim en fazla ürünün değeri kadar, fiyat da mal maliyetinin üstünde kalır. „Kampanya kazandırır“: kampanya bu porsiyonları ek olarak satarsa geçerli.",
+    wasAbverkauf: "Toplam indirim en fazla ürünün değeri kadar, fiyat da mal maliyetinin üstünde kalır. “Kampanya kazandırır“: kampanya bu porsiyonları ek olarak satarsa geçerli.",
     kombiTitel: "Menü kampanyası", kombiLeer: "Menü için fiyatı ve tarifi olan en az 2 yemek gerekir.", kombiWahl: "2 ile 4 yemek seç.", kombiVorschlaege: "Öneriler", rechnen: "Hesapla", leeren: "Yeniden seç",
     grund: { renner: "En çok satan", abverkauf: (ware) => `${ware} tarihi dolmadan`, ladenhueter: "az satanla", zweites: "ikinci ana yemek" },
     einzeln: (preis) => `Tek tek ${preis}`, ware: (euro, prozent) => `Mal ${euro} (%${prozent})`,
@@ -1239,22 +1239,22 @@ export default {
     mehr: (n) => `her 10 satışta ${n} menü daha gerekir`, mehrNie: "çok az kalır",
     warnung: (quote, grenze) => `Mal %${quote} – rehber değerin %${grenze} üstünde`, amBoden: "maldan ucuz değil", nichtMoeglich: "olmaz – fiyat malın altında kalır",
     fehlt: "Fiyatı veya tarifi olmayan yemekler sayılmaz.", kasse: "Afişteki ve kasadaki fiyat aynı olmalı.",
-    wasKombi: "Sana kalan = KDV'siz fiyat eksi mal. Temkinli, normal, güçlü = %5, %10, %15 indirim, 50 sente yuvarlanır – uygulamanın önerisi, sektör değeri değil. „Daha gerekir“: tek tek satıştaki kadar kalması için ek olarak kaç menü satman gerektiği.",
+    wasKombi: "Sana kalan = KDV'siz fiyat eksi mal. Temkinli, normal, güçlü = %5, %10, %15 indirim, 50 sente yuvarlanır – uygulamanın önerisi, sektör değeri değil. “Daha gerekir“: tek tek satıştaki kadar kalması için ek olarak kaç menü satman gerektiği.",
     beleg: { titel: "Raf ömrü (isteğe bağlı)", unter: "Paketteki tarih – uygulama zamanında uyarır.", auf: "Tarih gir", anzahl: (n) => `${n} tarih girildi`,
       mhd: "TETT", verbrauch: "Son kullanma", datum: "Tarih", speichern: "Kaydet", zu: "Kapat", gespeichert: "Kaydedildi", nichts: "Değişiklik yok" },
     wt: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
     uhr: { heute: (ware) => `${ware} bugün kullan`, morgen: (ware) => `${ware} yarına kadar kullan`, vorbei: (ware) => `${ware}: son kullanma tarihi geçti – kullanma`, vorbeiMehrere: (n) => `${n} ürün: son kullanma tarihi geçti – kullanma`, mehrere: (n) => `${n} ürünü yarına kadar kullan`, mehrereHeute: (n) => `${n} ürünü bugün kullan`,
       bis: (ware, tag) => `${ware} ${tag} gününe kadar kullan`, aktion: (ware, tag) => `${ware}: ${tag} gününe kadar kampanya kazandırır`, mhdVorbei: (ware) => `${ware}: TETT geçti – kontrol et`, knopf: "Bak" },
   },
-  // Trennung (17.10.2026), Punkt 4: Büro „Ware nach Kühl-Abweichung“
+  // Trennung (17.10.2026), Punkt 4: Büro “Ware nach Kühl-Abweichung“
   kuehlWare: { titel: "Sıcaklık sorunundan sonra mal", unter: "Mala ne oldu?", leer: "Açık sapma yok. Hepsi karara bağlandı.", wegwerfen: "Atıldı", behalten: "Saklandı", wegFrage: "Ne atıldı?", wegLeer: "Henüz mal girilmedi.", wegSpeichern: "Çöp olarak kaydet", wert: "Malın değeri", grundFrage: "Neden saklandı?", grundPlatzhalter: "örn. hemen diğer buzdolabına kondu", grundSpeichern: "Gerekçeyi kaydet", abbrechen: "Vazgeç", gebucht: "Çöp olarak kaydedildi.", behaltenOk: "Kaydedildi.", grundKurz: "Lütfen kısaca gerekçe yaz." },
-  // Menütafel (18.10.2026): Büro „Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
+  // Menütafel (18.10.2026): Büro “Menütafel“ und Inhalt der Tafel-Datei (inhalt: in der Sprache, die der Wirt für die Tafel wählt)
   tafel: {
     einstieg: "Menü panosu", einstiegUnter: "Televizyon için menü ve kampanyalar", titel: "Menü panosu", unter: "Dükkândaki televizyon veya tablet için dosya", vorschau: "Önizleme", seiten: (n) => `${n} sayfa`,
     einstellungen: "Ayarlar", wechsel: "Sayfa değişimi", sekunden: (n) => `${n} sn`, gruppen: "Panoda ne olsun?", aktionenZeigen: "Kampanyaları göster", sprache: "Panonun dili", teilen: "Pano dosyasını paylaş",
     kasse: "Panodaki ve kasadaki fiyat aynı olmalı.", geteilt: "Dosya paylaşıldı.", geladen: "Dosya kaydedildi.", fehler: "Olmadı. Lütfen tekrar dene.", hinweisTitel: "Lütfen kontrol et",
-    hinweis: { mengeFehlt: (name) => `${name}: miktar yok (ör. 0,33 l). „İçecekler“ bölümünde gir – içeceklerde zorunlu.`, mengeAnders: (name) => `${name}: ad ve boyut uyuşmuyor – „İçecekler“deki boyut geçerli.`, ohnePreis: (name) => `${name}: fiyat yok – panoda görünmez.`, aktionOhneGericht: (name) => `Kampanya ${name}: bir yemek eksik – panoda görünmez.` },
-    leer: "Henüz fiyatlı yemek yok. Önce menüyü doldur.", aktionenTitel: "Panodaki kampanyalar", aktionenLeer: "Kampanya yok. „Kampanya ve raf ömrü“ bölümünden ekle.", beenden: "Bitir", beendet: "Kampanya bitti.", uebernehmen: "Panoya ekle", uebernommen: "Panoda – fiyatı kasaya da gir.",
+    hinweis: { mengeFehlt: (name) => `${name}: miktar yok (ör. 0,33 l). “İçecekler“ bölümünde gir – içeceklerde zorunlu.`, mengeAnders: (name) => `${name}: ad ve boyut uyuşmuyor – “İçecekler“deki boyut geçerli.`, ohnePreis: (name) => `${name}: fiyat yok – panoda görünmez.`, aktionOhneGericht: (name) => `Kampanya ${name}: bir yemek eksik – panoda görünmez.` },
+    leer: "Henüz fiyatlı yemek yok. Önce menüyü doldur.", aktionenTitel: "Panodaki kampanyalar", aktionenLeer: "Kampanya yok. “Kampanya ve raf ömrü“ bölümünden ekle.", beenden: "Bitir", beendet: "Kampanya bitti.", uebernehmen: "Panoya ekle", uebernommen: "Panoda – fiyatı kasaya da gir.",
     was: "Dosya internetsiz çalışır. Televizyonda tarayıcıda aç, tam ekran için bir kez dokun. Süresi biten kampanyalar kendiliğinden kaybolur. Her fiyat değişikliğinden sonra yeniden paylaş.",
     inhalt: { gruppen: { speisen: "Yemekler", beilagen: "Yan ürünler ve atıştırmalık", getraenke: "İçecekler" }, aktion: "Kampanya", statt: (p) => `yerine ${p}`, bis: (d) => `${d} tarihine kadar`, abBis: (v, b) => `${v} – ${b}`, ab: (d) => `${d} itibarıyla`, solange: "stoklar tükenene kadar", solangeBis: (d) => `stoklar tükenene kadar, en geç ${d}`, stand: (d) => `Güncel: ${d}`, endpreise: "Euro cinsinden son fiyatlar, KDV dahil", endpreiseOhne: "Euro cinsinden son fiyatlar", leer: "Menü yakında." },
   },
@@ -1342,7 +1342,7 @@ export default {
     preis: "Satış fiyatı (€)",
     ausKatalog: "Katalogdan",
     anlegen: "Ekle",
-    angelegt: "İçecek eklendi. Alış fiyatını „Alış fiyatları“nda gir.",
+    angelegt: "İçecek eklendi. Alış fiyatını “Alış fiyatları“nda gir.",
     fehler: { name: "Lütfen bir ad gir.", doppelt: "Bu ad zaten var.", menge: "Boyutu kontrol et, ör. 0,33.", quelle: "Büyük ambalaj seç.", quelleEinheit: "Büyük ambalaj litre olarak tutulmalı.", schankverlust: "Dökme kaybı %0 ile %50 arası.", pfand: "Depozitoyu kontrol et, ör. 0,15.", flasche: "Boyutu kontrol et, ör. 1,5.", gericht: "İçecek bulunamadı.", preis: "Fiyatı kontrol et, ör. 2,50." },
     was: "Boyut panoda ve fiyat listesinde yazar – içeceklerde zorunlu. Açık servis: bardak başı mal = litre fiyatı × servis, dökme kaybıyla. Stok ve sipariş litre ile hesaplanır.",
   },
@@ -1354,7 +1354,7 @@ export default {
     titel: "Tedarikçiler", unter: "Ne zaman getirirler, nasıl sipariş verirsin.",
     listeTitel: "Tedarikçilerin", leer: "Henüz tedarikçi yok. İlk fişle kendiliğinden gelir – ya da bir tane ekle.",
     neu: "Yeni tedarikçi", zuordnen: "Malları ata", zumLager: "Depo ve siparişe", aendern: "Değiştir",
-    was: "Teslim günleri varsa sipariş, bir sonraki teslimden sonrakine kadar yeter, artı yedek. Sipariş son saati ve kapalı günler hesaba katılır. Teslim günü yoksa „Depo ve sipariş“teki gün sayısı geçerlidir.",
+    was: "Teslim günleri varsa sipariş, bir sonraki teslimden sonrakine kadar yeter, artı yedek. Sipariş son saati ve kapalı günler hesaba katılır. Teslim günü yoksa “Depo ve sipariş“teki gün sayısı geçerlidir.",
     art: { grosshandel: "Toptancı / Cash & Carry", lieferdienst: "Teslimat servisi", supermarkt: "Süpermarket", getraenke: "İçecek bayisi", baeckerei: "Fırın", sonstiges: "Diğer" },
     modus: { lieferung: "Teslimat", abholung: "Kendim alırım" },
     weg: { whatsapp: "WhatsApp", telefon: "Telefon", mail: "E-posta", webshop: "Web mağaza", vorort: "Yerinde" },
@@ -1366,13 +1366,13 @@ export default {
     naechste: (tag, bis) => `Sonraki teslim ${tag}, sipariş en geç ${bis}`, naechsteAbholung: (tag) => `Sonraki alım ${tag}`,
     mindestKurz: (euro) => `en az ${euro}`, waren: (n) => `${n} mal`,
     neuTitel: "Yeni tedarikçi", aendernTitel: "Tedarikçiyi değiştir", name: "Ad", namePlatz: "ör. toptancı", artFrage: "Nasıl bir tedarikçi?", modusFrage: "O mu getirir, sen mi alırsın?",
-    tage: "Teslim günleri", tageAbholung: "Hangi günler alırsın?", tageHinweis: "Sipariş bir sonraki teslime kadar yeter, artı yedek.", ohneTageHinweis: "Teslim günü yoksa uygulama „Depo ve sipariş“teki gün sayısıyla hesaplar.",
+    tage: "Teslim günleri", tageAbholung: "Hangi günler alırsın?", tageHinweis: "Sipariş bir sonraki teslime kadar yeter, artı yedek.", ohneTageHinweis: "Teslim günü yoksa uygulama “Depo ve sipariş“teki gün sayısıyla hesaplar.",
     schluss: "Sipariş son saati", schlussHinweis: "Sipariş tedarikçide en geç ne zaman olmalı? Saat ör. 18:00.",
     lieferzeit: "Teslim süresi, gün (sabit gün yoksa)", mindest: "En az sipariş tutarı, € (net)",
     wegFrage: "Nasıl sipariş verirsin?", kundennummer: "Müşteri numarası", notiz: "Not", notizPlatz: "ör. boşları geri ver",
     datenschutz: "Numara, adres, müşteri numarası ve not sadece bu telefonda ve yedeğinde kalır. Resmî daire veya mali müşavir listelerinde yer almaz.",
-    warenListe: (liste) => `Mallar: ${liste}.`, zweitListe: (liste) => `İkinci tedarikçi: ${liste}.`, keineWaren: "Henüz mal yok. „Malları ata“ altında ata.",
-    anlegen: "Ekle", speichern: "Kaydet", abbrechen: "Vazgeç", entfernen: "Tedarikçiyi kaldır", entfernenFrage: (n) => `„${n}“ kaldırılsın mı? Eski fişler olduğu gibi kalır.`,
+    warenListe: (liste) => `Mallar: ${liste}.`, zweitListe: (liste) => `İkinci tedarikçi: ${liste}.`, keineWaren: "Henüz mal yok. “Malları ata“ altında ata.",
+    anlegen: "Ekle", speichern: "Kaydet", abbrechen: "Vazgeç", entfernen: "Tedarikçiyi kaldır", entfernenFrage: (n) => `“${n}“ kaldırılsın mı? Eski fişler olduğu gibi kalır.`,
     entfernt: "Tedarikçi kaldırıldı.", angelegt: "Tedarikçi eklendi.", gespeichert: "Kaydedildi.",
     haupt: "Ana tedarikçi", zweit: "İkinci tedarikçi", keiner: "yok", wieBeleg: (n) => `son fişteki gibi (${n})`, jetzt: (n) => `şu an: ${n}`, ohne: "tedarikçisiz",
     zuordnenHinweis: "Seçim yoksa son fişteki tedarikçi geçerlidir. İkinci tedarikçi, bir mal teslimden önce biterse yardımcı olur.", fertig: "Tamam",
@@ -1408,7 +1408,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: mal maliyeti ${b} dükkânından ${p} puan yüksek`, minus: (l, e) => `${l}: sıfıra ${e}`, umsatzFehlt: (l, n) => `${l}: ${n} gün ciro girilmedi`, bestellen: (l, n) => `${l}: bugün ${n} ürün sipariş et`,
       inventurFehlt: (l) => `${l}: henüz sayım yok`, umsatzKeiner: (l) => `${l}: bu dönemde ciro yok`, gut: "Tüm dükkânlar: açık bir şey yok" },
     vergleich: "Karşılaştırma", vergleichAb: "Karşılaştırma için iki dükkân gerekir", keineLaeden: "Verisi olan dükkân yok", bericht: "Sahip raporu", datei: "Sahip", drucken: "Raporu yazdır", csv: "CSV", geteilt: "Rapor paylaşıldı",
-    dok: { zahlen: "Dükkân başına rakamlar", hinweis: "≈ = tahmini (kılavuz fiyat, kılavuz değer veya tahmin). „eksik“ = dönemde veri yok. Yalnızca bu telefondaki dükkânlar, rakamlar uygulamadaki kayıtlardan.",
+    dok: { zahlen: "Dükkân başına rakamlar", hinweis: "≈ = tahmini (kılavuz fiyat, kılavuz değer veya tahmin). “eksik“ = dönemde veri yok. Yalnızca bu telefondaki dükkânlar, rakamlar uygulamadaki kayıtlardan.",
       kopf: ["Dükkân", "Ciro", "Mal maliyeti", "Atılan", "Fire şüphesi", "Açık görevler", "Sıfıra kadar", "Depo değeri", "Sipariş"], laden: "Dükkân", vergleich: "Karşılaştırma", vergleichInfo: "Sıralama yalnızca aynı veri tabanına sahip dükkânlar arasında.",
       trend: "Önceki döneme göre eğilim", daten: "Veri tabanı", fehlt: "Eksik", tage: "gün", quelle: "Mal maliyeti kaynağı", fuss: "GastroCash · Sahip raporu. Rakamlar uygulamadaki kayıtlardan – muhasebe değil, kasa verisi değil." },
   },
@@ -1417,7 +1417,7 @@ export default {
     frage1: "Nasıl geliyor?", frage2: "İçinde ne kadar var?", kostet: { karton: "Koli kaç para?", kiste: "Kasa kaç para?", beutel: "Poşet kaç para?", packung: "Paket kaç para?", kanister: "Bidon kaç para?", eimer: "Kova kaç para?", sack: "Çuval kaç para?", flasche: "Şişe kaç para?", dose: "Kutu kaç para?", lose: "Kaç para?" },
     ohneMwst: "KDV hariç", mitMwst: "KDV dahil", ergebnis: { stk: "Bir adet", kg: "1 kg", l: "1 litre" }, mehr: "Daha fazla", mehrArten: "Diğer türler",
     mwstHinweis: "Toptancı: çoğu zaman KDV hariç. Market: KDV dahil. Uygulama KDV hariç hesaplar.", keineWaren: "Henüz mal yok. Önce yemekleri ve tarifleri seç.", raus: "Ne çıkıyor?", masse: "Toplam hamur", einStueck: "Bir adet", tauschen: "değiştirmek için dokun" },
-  // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit „Wo liegt sie jetzt?“
+  // Laden-Umbau (20.10.2026): “Umsatz heute“ im Laden, Kühl-Rundgang, Sicherung mit “Wo liegt sie jetzt?“
   ladenSchirm: { umsatz: "Ciro", stimmt: (b) => `Doğru mu? ${b}`, ja: "Evet", aendern: "Değiştir", rundgangStarten: "Turu başlat",
     sicherung: { letzteWeg: (n) => n === 0 ? "Telefondan son çıkan: bugün" : n === 1 ? "Telefondan son çıkan: 1 gün önce" : `Telefondan son çıkan: ${n} gün önce`, nieWeg: "Telefondan henüz yedek çıkmadı", mitPasswort: "Şifreli", ohneFotos: "Fotoğrafsız (küçük, e-posta için)",
       verschicken: "Yedeği gönder", woFrage: "Şimdi nerede?", woanders: "Başka cihaz, e-posta, bulut", nurHandy: "Sadece bu telefonda", nurHandyMeldung: "Hatırlatma kalır: dosya sadece bu telefonda.", gezaehlt: "Yedek sayıldı. Hatırlatma sıfırlandı." } },
