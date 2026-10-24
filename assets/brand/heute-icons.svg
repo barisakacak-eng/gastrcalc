@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- GastroCash: 24 × 24, Strich 1.8, runde Enden, nur currentColor. -->
+  <symbol id="heute" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></g></symbol>
+  <symbol id="umsatz" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 5.5a7 7 0 1 0 0 13M4 10h9M4 14h8M19 4v6m-3-3h6"/></g></symbol>
+  <symbol id="muell" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></g></symbol>
+  <symbol id="kuehlung" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M3.34 7l17.32 10M3.34 17 20.66 7M9 4l3 3 3-3M9 20l3-3 3 3M3.6 10.6l4.1-1.1-1.1-4.1M17.4 18.6l-1.1-4.1 4.1-1.1M3.6 13.4l4.1 1.1-1.1 4.1M17.4 5.4l-1.1 4.1 4.1 1.1"/></g></symbol>
+  <symbol id="putzen" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7v4H7zM8 7l-4 6v8h12v-8l-4-6M14 4h4M19 3h2M20 7h2M18 10l2 1M5 14h10"/></g></symbol>
+  <symbol id="karte" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a2 2 0 0 1 2 2v16H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM7 3v18M11 8h5M11 12h5M11 16h3"/></g></symbol>
+</svg>
