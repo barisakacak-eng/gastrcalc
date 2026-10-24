@@ -71,7 +71,7 @@ function heuteZielKarte(stand, z, H) {
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${m.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
-    ${m.geschaetzt && w.zahl !== null ? `<span class="h-schaetzung">${esc(t("allgemein.schaetzung"))}</span>` : ""}
+    ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
     ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }

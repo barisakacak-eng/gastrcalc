@@ -41,7 +41,7 @@ async def layout(pg, label, controls=""):
 async def heute(pg, art):
     await nav_hilfe.geh(pg,"start")
     assert await pg.locator('.heute-laden.pilot-'+art).count()==1
-    assert await pg.locator('.h-schaetzung').count()==1
+    assert await pg.locator('.h-schaetzung').count()<=1  # 24.10.2026: Wort „Schätzung“ im Laden entfallen, ≈ vor der Zahl bleibt
     assert await pg.locator('.h-haupt').count()<=1
     # Sichtbare feste Wörter einschließlich der unteren Navigation. Geschäftsnamen/Datum und SVG-Zahlen sind Daten.
     # Wortmarke zählt als Logo nicht mit: ausdrückliche Freigabe im Auftrag vom 23.10., 13:30.

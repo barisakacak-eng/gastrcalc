@@ -1,6 +1,6 @@
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"From first waste entry","titel":"Less loss since start","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
+  nutzen: {"start":"Starts with waste","titel":"Less loss","laueft": (ab) => `Measuring since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Temperatures","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
   app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
