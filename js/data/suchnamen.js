@@ -118,6 +118,8 @@ export const SUCHNAMEN = {
   "Basilikum": ["fesleğen", "reyhan", "basil"],
   "Rote Zwiebeln": ["kırmızı soğan", "mor soğan", "soğan", "red onion", "onion"],
   "Gewürzgurken": ["turşu", "salatalık turşusu", "kornişon", "pickles", "gherkins"],
+  "Jalapeños": ["jalapeno", "acı biber", "chili", "hot peppers"], // Perfektionswoche 24.10.2026
+  "Halloumi": ["hellim", "hellim peyniri", "grillkäse", "grill cheese"],
   "Avocado": ["avokado"],
   "Gurkensalat": ["salatalık salatası", "cucumber salad"],
   "Krautsalat": ["lahana salatası", "coleslaw"],

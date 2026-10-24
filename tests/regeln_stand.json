@@ -1,7 +1,7 @@
 {
- "datum": "2026-10-23 17:30",
- "fassung": "11fc108",
- "dauer_s": 52.3,
+ "datum": "2026-10-24 02:14",
+ "fassung": "f903c75",
+ "dauer_s": 51.0,
  "soll": {
   "woerter": {
    "laden": 15,
@@ -17,14 +17,16 @@
  "bildschirme": {
   "390x844": {
    "heute": {
-    "worte": 9,
+    "worte": 11,
     "wortliste": [
      "Bis",
      "null",
      "Schätzung",
      "Messung",
-     "läuft",
-     "seit",
+     "startet",
+     "beim",
+     "ersten",
+     "Müll-Eintrag",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -38,7 +40,7 @@
      "1.096 €",
      "⁦01.10.⁩",
      "⁦31.10.⁩",
-     "Messung läuft seit –",
+     "Messung startet beim ersten Müll-Eintrag",
      "2",
      "Kühlrundgang",
      "Gastro",
@@ -761,7 +763,7 @@
      "Cash",
      "?",
      "Hallo",
-     "Freitag, 23. Oktober",
+     "Samstag, 24. Oktober",
      "Müll",
      "Kühlung",
      "2 offen",
@@ -797,7 +799,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Freitag, 23. Oktober"
+     "text": "Samstag, 24. Oktober"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -859,14 +861,16 @@
   },
   "360x780": {
    "heute": {
-    "worte": 9,
+    "worte": 11,
     "wortliste": [
      "Bis",
      "null",
      "Schätzung",
      "Messung",
-     "läuft",
-     "seit",
+     "startet",
+     "beim",
+     "ersten",
+     "Müll-Eintrag",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -880,7 +884,7 @@
      "1.096 €",
      "⁦01.10.⁩",
      "⁦31.10.⁩",
-     "Messung läuft seit –",
+     "Messung startet beim ersten Müll-Eintrag",
      "2",
      "Kühlrundgang",
      "Gastro",
@@ -1603,7 +1607,7 @@
      "Cash",
      "?",
      "Hallo",
-     "Freitag, 23. Oktober",
+     "Samstag, 24. Oktober",
      "Müll",
      "Kühlung",
      "2 offen",
@@ -1639,7 +1643,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Freitag, 23. Oktober"
+     "text": "Samstag, 24. Oktober"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -1706,7 +1710,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 9,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2318,7 +2322,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 9,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },

@@ -361,3 +361,6 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .hinweiskarte .hk-knoepfe { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .hinweiskarte .hk-knoepfe .knopf { min-width: 0; }
 .hinweiskarte .hk-knoepfe .knopf:first-child { grid-column: 1 / -1; }
+/* Vergleich: Gewinn nach allen Kosten mit Ampelpunkt (24.10.2026) */
+.vk-ampel .punkt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; background: var(--weggelassen); vertical-align: middle; }
+.vk-ampel .punkt.rot { background: var(--rot); } .vk-ampel .punkt.gelb { background: var(--gelb); } .vk-ampel .punkt.gruen { background: var(--gruen); }

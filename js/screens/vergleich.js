@@ -28,7 +28,8 @@ export function vergleichView(stand) {
         <div class="vk-zeile ${x.wareHoch ? "minus" : ""}"><span>${esc(t("vergleich.ware"))}</span><span>${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.z.waren, { dezimal: 2 })}${x.wareHoch ? ` · ${esc(t("vergleich.wareHoch", fmtZahl(x.z.wareneinsatzAnteil * 100, 0)))}` : ""}</span></div>
         <div class="vk-zeile ${x.db < 0 ? "minus" : ""}"><span>${esc(t("vergleich.db"))}</span><span>${fmtEuro(x.db, { dezimal: 2 })}</span></div>
         <div class="vk-zeile ${x.marge < 0 ? "minus" : ""}"><span>${esc(t("vergleich.marge"))}</span><span>${fmtZahl(x.marge * 100, 0)} %</span></div>
-        <span class="vk-balken"><i class="${x.marge < 0.5 ? "knapp" : ""}" style="width:${x.balken}%"></i></span>
+        <div class="vk-zeile vk-ampel ${x.ampel}"><span>${esc(t("vergleich.nachKosten"))}</span><span><i class="punkt ${x.ampel}" aria-hidden="true"></i> ${x.quote === null ? esc(t("vergleich.nachKostenFehlt")) : `${fmtZahl(x.quote * 100, 0)} %`}</span></div>
+        <span class="vk-balken"><i class="${x.ampel === "rot" ? "knapp" : ""}" style="width:${x.balken}%"></i></span>
       </div></div>`;
   return `<div class="kopfband"><h1>${esc(t("vergleich.titel"))}</h1><div class="unter">${esc(t("vergleich.unter"))}</div></div>
     <div class="inhalt vergleich">
