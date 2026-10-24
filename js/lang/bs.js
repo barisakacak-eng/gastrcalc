@@ -751,6 +751,7 @@ export default {
     gerichtWegKurz: "Gotova hrana, vraćen tanjir, pogrešna narudžba",
     rohwareWeg: "Sirovina bačena",
     rohwareKurz: "Paradajz, meso, hljeb – istekao rok ili pokvareno",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Kanta izvagana",
     eimerKurz: "Samo težina, aplikacija računa ostalo",
     personal: "Hrana za osoblje",

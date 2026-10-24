@@ -743,6 +743,7 @@ export default {
     gerichtWegKurz: "Finished food, plate came back, wrong order",
     rohwareWeg: "Raw goods binned",
     rohwareKurz: "Tomatoes, meat, bread – expired or spoiled",
+    uebrig: "Left over", uebrigHinweis: "What was ready but not sold",
     eimer: "Bucket weighed",
     eimerKurz: "Only the weight, the app does the rest",
     personal: "Staff meal",

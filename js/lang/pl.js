@@ -749,6 +749,7 @@ export default {
     gerichtWegKurz: "Gotowe jedzenie, zwrot z talerza, złe zamówienie",
     rohwareWeg: "Surowiec do kosza",
     rohwareKurz: "Pomidory, mięso, chleb – przeterminowane albo zepsute",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Zważone wiadro",
     eimerKurz: "Tylko waga, resztę liczy aplikacja",
     personal: "Posiłek pracowniczy",

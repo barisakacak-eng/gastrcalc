@@ -744,6 +744,7 @@ export default {
     gerichtWegKurz: "Món đã làm, đĩa bị trả lại, đặt nhầm",
     rohwareWeg: "Bỏ nguyên liệu sống",
     rohwareKurz: "Cà chua, thịt, bánh mì – hết hạn hoặc bị hư",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Cân xô rác",
     eimerKurz: "Chỉ cân nặng, app tính phần còn lại",
     personal: "Bữa ăn nhân viên",

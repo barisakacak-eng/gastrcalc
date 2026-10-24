@@ -750,6 +750,7 @@ export default {
     gerichtWegKurz: "Mâncare gata, farfurie returnată, comandă greșită",
     rohwareWeg: "Materie primă aruncată",
     rohwareKurz: "Roșii, carne, pâine – expirate sau stricate",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Găleată cântărită",
     eimerKurz: "Doar greutatea, restul îl calculează aplicația",
     personal: "Masa personalului",

@@ -749,6 +749,7 @@ export default {
     gerichtWegKurz: "Готова храна, върната чиния, грешна поръчка",
     rohwareWeg: "Суровина в кофата",
     rohwareKurz: "Домати, месо, хляб – с изтекъл срок или развалени",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Претеглена кофа",
     eimerKurz: "Само теглото, останалото го смята приложението",
     personal: "Храна за персонала",

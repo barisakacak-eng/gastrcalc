@@ -148,3 +148,6 @@ body.blatt-da { overflow: hidden; }
 [dir="rtl"] .zurueckzeile .sym, [dir="rtl"] .zurueckknopf .sym, [dir="rtl"] .blattkopf.nur .ikonknopf .sym, [dir="rtl"] .sprachzeile .sz-wert .sym { transform: scaleX(-1); }
 @media (prefers-reduced-motion: reduce) { .ebene-blatt.rein, .pin-punkte.wackeln { animation: none; } .schlossknopf.haelt circle { transition-duration: 2s; } }
 @media print { .tableiste, #ebene-huelle { display: none !important; } }
+
+/* „Übrig geblieben“ (24.10.2026): Hinweiszeile statt der inaktiven Waage */
+.muell-station-hinweis { grid-column: 1 / -1; margin: 2px 0 0; color: var(--tinte-weich); font-size: calc(15rem / 17); line-height: 1.3; }

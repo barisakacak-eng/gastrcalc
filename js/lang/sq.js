@@ -749,6 +749,7 @@ export default {
     gerichtWegKurz: "Ushqim i gatshëm, pjatë e kthyer, porosi e gabuar",
     rohwareWeg: "Lëndë e parë në kosh",
     rohwareKurz: "Domate, mish, bukë – e skaduar ose e prishur",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Peshova koshin",
     eimerKurz: "Vetëm pesha, pjesën tjetër e llogarit aplikacioni",
     personal: "Ushqimi i stafit",

@@ -743,6 +743,7 @@ export default {
     gerichtWegKurz: "Xwarina amade, teyfika vegeriyayî, sîparîşa şaş",
     rohwareWeg: "Malê xav hate avêtin",
     rohwareKurz: "Bacanên sor, goşt, nan – dema wê derbas bûye an xera bûye",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Satil hate kişandin",
     eimerKurz: "Tenê giranî, app yên din hesab dike",
     personal: "Xwarina karkeran",

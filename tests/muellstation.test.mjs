@@ -16,7 +16,7 @@ test("Müll-Station ist wirklich Vollbild: weder Euro noch Laden-Navigation", ()
   assert.equal(muellAktion("muell-station-auf",{},s),true);
   const h=muellView(s);
   assert.match(h, /class="inhalt muell-station"/);
-  assert.match(h, /— kg/);
+  assert.match(h, /muell-station-hinweis/); // 24.10.2026: „Übrig geblieben“ statt Waage
   assert.match(h, /muell-station-raster/);
   assert.match(h, /data-a="muell-tipp"/);
   assert.doesNotMatch(h, /€|\bEUR\b/);
@@ -43,4 +43,14 @@ test("Station nutzt exakt dieselben Müll-Einträge und kehrt nach Mengenblatt z
   assert.equal(muellAnsicht(),"station");
   assert.equal(muellZurueck(),true);
   assert.equal(muellAnsicht(),"start");
+});
+
+// Baris 24.10.2026: „Übrig geblieben“ ersetzt „Eimer wiegen“ – Tipp in der Station markiert den Eintrag, zählt einmal, Euro bleibt im Rechenwerk
+import { muellTippEintragen } from "../js/muell.js";
+test("Übrig geblieben: Eintrag aus der Station trägt uebrig: true, normaler Tipp nicht", () => {
+  const s = laden(); const g = s.gerichte[0]; assert.ok(g, "Testladen hat ein Gericht");
+  const a = muellTippEintragen(s, { typ: "gericht", id: g.id, name: g.name }, { datum: "2026-10-24", uebrig: true });
+  const b = muellTippEintragen(s, { typ: "gericht", id: g.id, name: g.name }, { datum: "2026-10-24" });
+  assert.equal(a.uebrig, true); assert.equal(b.uebrig, undefined);
+  assert.equal(s.schwund.filter((e) => e.datum === "2026-10-24").length, 2, "keine Doppelzählung, zwei Tipps = zwei Einträge");
 });

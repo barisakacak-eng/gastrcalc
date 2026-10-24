@@ -744,6 +744,7 @@ export default {
     gerichtWegKurz: "Comida hecha, plato devuelto, pedido equivocado",
     rohwareWeg: "Género crudo tirado",
     rohwareKurz: "Tomates, carne, pan: caducado o estropeado",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Cubo pesado",
     eimerKurz: "Solo el peso, la app calcula el resto",
     personal: "Comida del personal",

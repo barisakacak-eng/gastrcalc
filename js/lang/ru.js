@@ -749,6 +749,7 @@ export default {
     gerichtWegKurz: "Готовая еда, тарелку вернули, ошибка в заказе",
     rohwareWeg: "Сырьё в мусор",
     rohwareKurz: "Помидоры, мясо, хлеб – просрочено или испортилось",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Взвесил ведро",
     eimerKurz: "Только вес, остальное посчитает приложение",
     personal: "Еда для персонала",

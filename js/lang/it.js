@@ -744,6 +744,7 @@ export default {
     gerichtWegKurz: "Cibo pronto, piatto tornato indietro, ordine sbagliato",
     rohwareWeg: "Materia prima buttata",
     rohwareKurz: "Pomodori, carne, pane – scaduti o andati a male",
+    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
     eimer: "Bidone pesato",
     eimerKurz: "Solo il peso, il resto lo calcola l'app",
     personal: "Pasto del personale",

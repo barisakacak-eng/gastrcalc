@@ -195,12 +195,12 @@ export function standardMenge(stand, x) {
 }
 
 // Ein Tipp = ein Eintrag mit der üblichen Menge. von = Person (Personal-Modus), sonst ohne.
-export function muellTippEintragen(stand, x, { datum = heuteGeschaeft(), von = null } = {}) {
+export function muellTippEintragen(stand, x, { datum = heuteGeschaeft(), von = null, uebrig = false } = {}) { // uebrig: abends nicht Verkauftes (Baris 24.10.2026, ersetzt „Eimer wiegen“)
   let e = null;
   if (x.typ === "gericht") { const g = (stand.gerichte || []).find((y) => y.id === x.id); if (!g) return null; e = gerichtWeg(stand, g, { datum, anzahl: 1 }); }
   else { const a = (stand.artikel || []).find((y) => y.name === x.name); if (!a) return null; const m = standardMenge(stand, x); e = rohwareWeg(stand, a, { datum, menge: m.menge, einheit: m.einheit }); }
   if (!e) return null;
-  e.tipp = true; if (von) e.von = von;
+  e.tipp = true; if (von) e.von = von; if (uebrig) e.uebrig = true;
   return e;
 }
 

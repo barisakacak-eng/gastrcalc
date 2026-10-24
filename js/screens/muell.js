@@ -85,7 +85,7 @@ function rasterView(stand, D, nach) {
   const kacheln = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true }); const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell1">
-    <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.eimer"))}">${sym("scale")}<span>${esc(t("muell.eimer"))}</span></button></div>
+    <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.uebrig"))}">${sym("moon")}<span>${esc(t("muell.uebrig"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
     ${kacheln.length ? `<div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
       <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>`
@@ -95,7 +95,7 @@ function rasterView(stand, D, nach) {
 }
 
 // Dieselben Daten und Schreibfunktionen wie L2: kein zweiter Zähler, keine Rechenlogik.
-// Station am Mülleimer: kein Euro, keine untere Navigation, Waage bewusst inaktiv.
+// „Übrig geblieben“ (Baris 24.10.2026, ersetzt die Eimer-Waage): abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
 function stationView(stand, D) {
   const waren = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true });
   const zaehl = tippsHeute(stand, D);
@@ -103,8 +103,8 @@ function stationView(stand, D) {
   return `<div class="inhalt muell-station">
     <div class="muell-station-kopf">
       <button type="button" class="muell-station-zu" data-a="muell-station-zu" aria-label="${esc(t("allgemein.zurueck"))}">${sym("x")}</button>
-      <h1>${esc(t("muell1.titel"))}</h1>
-      <div class="muell-station-waage" aria-disabled="true" aria-label="— kg"><strong>— kg</strong></div>
+      <h1>${esc(t("muell.uebrig"))}</h1>
+      <p class="muell-station-hinweis">${esc(t("muell.uebrigHinweis"))}</p>
     </div>
     <div class="muellraster muell-station-raster">
       ${waren.map((x) => kachelHtml(stand, x, zaehl, frisch, true)).join("")}
@@ -238,7 +238,7 @@ export function muellTipp(el, stand) {
   const k = muellSchluessel(x); const jetzt = Date.now();
   if (letzterTipp.id === "tipp:" + k && jetzt - letzterTipp.zeit < 350) return false;
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
-  const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand) });
+  const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station" });
   if (!e) return false;
   zuletzt = { ids: e.id, schluessel: k, text: `${zeigName(x)} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
   return { eintrag: e };
