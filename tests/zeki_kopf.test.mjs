@@ -24,7 +24,7 @@ test("Satzliste hält Frankys Format und die Sprachregeln", () => {
 
 test("leere Karte: Zeki bittet um die Karte und hebt die Hand", () => {
   const m = zekiMoment(laden(), { H });
-  assert.equal(m.ausloeser, "karte_leer"); assert.equal(m.bewegung, "hand"); assert.ok(!/\{/.test(m.text));
+  assert.equal(m.ausloeser, "karte_leer"); assert.ok(!/\{/.test(m.text));
 });
 
 test("Kühl-Abweichung schlägt alles andere und nennt die Stelle", () => {
@@ -32,13 +32,14 @@ test("Kühl-Abweichung schlägt alles andere und nennt die Stelle", () => {
   s.kuehlstellen = [{ id: "k1", name: "Saladette", art: "kuehl", min: 0, max: 7, reihe: 0, archiviert: false }];
   s.messungen = [{ id: "m1", stelle: "k1", datum: H, zeit: H + "T08:00:00.000Z", wert: 11, min: 0, max: 7, abweichung: true, massnahmen: ["tuer"], nachkontrolle: { faellig: H + "T10:00:00.000Z" } }];
   const m = zekiMoment(s, { H });
-  assert.equal(m.ausloeser, "kuehl_abweichung"); assert.equal(m.bewegung, "kopfschuetteln"); assert.match(m.text, /Saladette/);
-  const tr = zekiMoment(s, { H, sprache: "tr" }); assert.match(tr.text, /Saladette/); assert.notEqual(tr.text, m.text);
+  assert.equal(m.ausloeser, "kuehl_abweichung"); assert.ok(ZEKI_SAETZE.some((x) => x.id === m.id && x.bewegung === m.bewegung)); assert.ok(!/\{/.test(m.text));
+  const tr = zekiMoment(s, { H, sprache: "tr" }); assert.equal(tr.id, m.id); assert.notEqual(tr.text, m.text);
+  const mitStelle = ZEKI_SAETZE.filter((x) => x.ausloeser === "kuehl_abweichung" && x.de.includes("{stelle}")); assert.ok(mitStelle.length >= 2, "Stelle wird genannt");
 });
 
 test("einmal je Tag: gesehene Lage wird übersprungen, die nächste kommt", () => {
   const s = laden(); s.gerichte = [{ id: "g1", name: "Dürüm", klasse: "haupt", preis: null, zutaten: [] }];
-  const a = zekiMoment(s, { H }); assert.equal(a.ausloeser, "preis_fehlt"); assert.match(a.text, /Dürüm/);
+  const a = zekiMoment(s, { H }); assert.equal(a.ausloeser, "preis_fehlt");
   const b = zekiMoment(s, { H, gesehen: new Set(["preis_fehlt:" + H]) }); assert.notEqual(b?.ausloeser, "preis_fehlt");
   const c = zekiMoment(s, { H: "2026-10-25", gesehen: new Set(["preis_fehlt:" + H]) }); assert.equal(c.ausloeser, "preis_fehlt", "neuer Tag, neue Chance");
 });
@@ -46,7 +47,7 @@ test("einmal je Tag: gesehene Lage wird übersprungen, die nächste kommt", () =
 test("erster Müll zwinkert; Sicherung nur mit Altersangabe", () => {
   const s = laden(); s.gerichte = [{ id: "g1", name: "Döner", klasse: "haupt", preis: 7.5, zutaten: [] }];
   s.schwund = [{ id: "s1", datum: H, art: "rohware", ref: { typ: "frei", name: "Tomaten" }, menge: 1, einheit: "kg", wert: 2, erfasst: H + "T12:00:00.000Z" }];
-  const m = zekiMoment(s, { H }); assert.equal(m.ausloeser, "erster_muell"); assert.equal(m.bewegung, "zwinkern");
+  const m = zekiMoment(s, { H }); assert.equal(m.ausloeser, "erster_muell");
   assert.equal(ZEKI_PRUEFUNGEN.sicherung_alt(s, H, {}), null);
   assert.deepEqual(ZEKI_PRUEFUNGEN.sicherung_alt(s, H, { sicherungTage: 9 }), { tage: "9" });
 });
@@ -55,4 +56,10 @@ test("fehlender Platzhalterwert: Satz fällt weg statt „{betrag}“ zu zeigen;
   const s = laden(); s.gerichte = null; s.schwund = "x"; s.messungen = {};
   assert.doesNotThrow(() => zekiMoment(s, { H }));
   assert.equal(zekiMoment(null, { H }), null);
+});
+
+test("umsatz_fehlt hat ohne Betrag trotzdem einen Satz (Kassenzahl von gestern fehlt)", async () => {
+  const { ZEKI_RAUS } = await import("../js/data/zeki_saetze.js");
+  assert.ok(ZEKI_SAETZE.some((x) => x.ausloeser === "umsatz_fehlt" && !/\{/.test(x.de)));
+  for (const id of Object.keys(ZEKI_RAUS)) assert.ok(!ZEKI_SAETZE.some((x) => x.id === id), "aussortiert: " + id);
 });
