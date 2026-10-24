@@ -1,0 +1,44 @@
+/* Zeki: ausschließlich transform und opacity. Alle Auswahlregeln bleiben in der jeweiligen Figur. */
+.zeki{display:block;overflow:visible;isolation:isolate;flex:none}
+.zeki [data-zeki-teil],.zeki [id]{transform-box:view-box}
+.zeki [data-zeki-teil="kopf"],.zeki #kopf{transform-origin:114px 149px}
+.zeki [data-zeki-teil="arm-r"],.zeki #arm-r{transform-origin:169px 157px}
+.zeki [data-zeki-teil="auge-l"],.zeki #auge-l{transform-origin:88px 81px}
+.zeki [data-zeki-teil="auge-r"],.zeki #auge-r{transform-origin:140.5px 81px}
+.zeki [data-zeki-teil="zeki"],.zeki #zeki{transform-origin:114px 301px}
+.zeki--neutral [data-zeki-teil="mund-neutral"]{opacity:1}
+.zeki--freude [data-zeki-teil="mund-neutral"],.zeki--nachdenklich [data-zeki-teil="mund-neutral"],.zeki--warnung [data-zeki-teil="mund-neutral"]{opacity:0}
+.zeki--freude [data-zeki-teil="mund-grinsen"],.zeki--nachdenklich [data-zeki-teil="mund-denken"],.zeki--warnung [data-zeki-teil="mund-warnung"]{opacity:1}
+.zeki--nachdenklich [data-zeki-teil="auge-l"],.zeki--nachdenklich [data-zeki-teil="auge-r"]{transform:translateY(-2px)}
+.zeki--warnung [data-zeki-teil="auge-l"],.zeki--warnung [data-zeki-teil="auge-r"]{transform:scaleY(.7)}
+.zeki--zwinkern [data-zeki-teil="auge-r"]{animation:zeki-auge-zu .7s ease-in-out both}
+.zeki--zwinkern [data-zeki-teil="lid-r"]{animation:zeki-lid .7s ease-in-out both}
+.zeki--grinsen [data-zeki-teil="mund-neutral"],.zeki--grinsen [data-zeki-teil="mund-denken"],.zeki--grinsen [data-zeki-teil="mund-warnung"]{animation:zeki-aus 1s ease-in-out both}
+.zeki--grinsen [data-zeki-teil="mund-grinsen"]{animation:zeki-ein 1s ease-in-out both}
+.zeki--grinsen [data-zeki-teil="auge-l"],.zeki--grinsen [data-zeki-teil="auge-r"]{animation:zeki-freudenaugen 1s ease-in-out both}
+.zeki--hand [data-zeki-teil="arm-r"]{animation:zeki-winken 1.2s ease-in-out both}
+.zeki--nicken [data-zeki-teil="kopf"]{animation:zeki-nicken 1s ease-in-out both}
+.zeki--kopfschuetteln [data-zeki-teil="kopf"]{animation:zeki-nein 1s ease-in-out both}
+.zeki--atmen [data-zeki-teil="zeki"]{animation:zeki-atmen 3.6s ease-in-out infinite}
+@keyframes zeki-auge-zu{0%,22%,58%,100%{transform:scaleY(1);opacity:1}32%,48%{transform:scaleY(.06);opacity:0}}
+@keyframes zeki-lid{0%,22%,58%,100%{opacity:0}32%,48%{opacity:1}}
+@keyframes zeki-aus{0%,100%{opacity:1}20%,80%{opacity:0}}
+@keyframes zeki-ein{0%,100%{opacity:0}20%,80%{opacity:1}}
+@keyframes zeki-freudenaugen{0%,100%{transform:scaleY(1)}25%,75%{transform:scaleY(.72)}}
+@keyframes zeki-winken{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-128deg)}39%{transform:rotate(-108deg)}53%{transform:rotate(-132deg)}67%{transform:rotate(-108deg)}81%{transform:rotate(-128deg)}}
+@keyframes zeki-nicken{0%,48%,100%{transform:translateY(0) rotate(0deg)}23%,73%{transform:translateY(2px) rotate(7deg)}}
+@keyframes zeki-nein{0%,100%{transform:rotate(0deg)}18%,60%{transform:rotate(-8deg)}39%,80%{transform:rotate(8deg)}}
+@keyframes zeki-atmen{0%,100%{transform:scale(1)}50%{transform:scale(1.008,1.012)}}
+/* Vergleich zeigt ausschließlich die Pose des Originals; wird beim ersten Abspielen entfernt. */
+.zeki--referenz [data-zeki-teil="auge-r"]{opacity:0}
+.zeki--referenz [data-zeki-teil="lid-r"],.zeki--referenz [data-zeki-teil="mund-grinsen"]{opacity:1}
+.zeki--referenz [data-zeki-teil="mund-neutral"]{opacity:0}
+/* Alte Bewegungsregeln der vorherigen Figur greifen auf Zeki nicht mehr. */
+.gc-bot.zeki .gc-bot-eyes,.gc-bot.zeki .gc-bot-head,.gc-bot.zeki .gc-bot-body{animation:none}
+@media(prefers-reduced-motion:reduce){
+  .zeki [data-zeki-teil]{animation:none!important;transform:none!important}
+  .zeki--zwinkern [data-zeki-teil="auge-r"]{opacity:0}
+  .zeki--zwinkern [data-zeki-teil="lid-r"]{opacity:1}
+  .zeki--grinsen [data-zeki-teil="mund-neutral"],.zeki--grinsen [data-zeki-teil="mund-denken"],.zeki--grinsen [data-zeki-teil="mund-warnung"]{opacity:0}
+  .zeki--grinsen [data-zeki-teil="mund-grinsen"]{opacity:1}
+}
