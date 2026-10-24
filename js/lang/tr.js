@@ -1,7 +1,7 @@
 // Türkçe. Mutfak dili: kısa cümleler, terim yok. Almanca tablodan çevrildi (Etap 1).
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"İlk çöp kaydıyla başlar","titel":"Başlangıçtan beri daha az kayıp","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
+  nutzen: {"start":"İlk çöp kaydından itibaren","titel":"Başlangıçtan beri daha az kayıp","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
   app: { name: "GastroCash", entwurf: "Deneme sürümü" },
 
   allgemein: {
@@ -1049,7 +1049,7 @@ export default {
     allesGenau: "Her şeyi ayrıntılı kur",
     karte: "Menün", karteFoto: "Menüyü fotoğrafla", karteVorlagen: "Şablondan seç", karteGalerie: "Fotoğraf veya PDF", spaeter: "Sonra",
     karteHilfe: "Uygulama yemekleri ve fiyatları fotoğraftan okur. Kendiniz yaptıklarınızı büroda Tarifler bölümünde ayarlarsın.",
-    kuehl: "Soğutma", arten: { kuehlschrank: "Buzdolabı", saladette: "Saladet", tiefkuehler: "Derin dondurucu", warmhalter: "Sıcak tutucu" },
+    kuehl: "Soğutma", arten: { getraenke: "İçecek dolabı", kuehlschrank: "Buzdolabı", saladette: "Saladet", tiefkuehler: "Derin dondurucu", warmhalter: "Sıcak tutucu" },
     kuehlHilfe: "Her cihaz için sıcaklığı sonra girersin. İsimleri büroda değiştirirsin.",
     geld: "Aylık giderler", miete: "Kira", personal: "Personel", eigen: "Senin maaşın", strom: "Elektrik",
     geldHilfe: "Yaklaşık yeter, boş da bırakabilirsin. Faturaları sonra büroda fotoğraflarsın.",

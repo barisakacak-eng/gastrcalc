@@ -1,7 +1,7 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "Her tiştî bi hûrgilî saz bike",
     karte: "Menûya te", karteFoto: "Wêneyê menûyê bikişîne", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Wêne an PDF", spaeter: "Paşê",
     karteHilfe: "Sepan xwarin û bihayan ji wêneyê dixwîne. Tiştên ku hûn bi xwe çêdikin, di ofîsê de li bin “Reçete” saz bike.",
-    kuehl: "Sarkirin", arten: { kuehlschrank: "Sarinc", saladette: "Sarinca salatayê", tiefkuehler: "Cemidok", warmhalter: "Germker" },
+    kuehl: "Sarkirin", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Sarinc", saladette: "Sarinca salatayê", tiefkuehler: "Cemidok", warmhalter: "Germker" },
     kuehlHilfe: "Ji bo her amûrekê paşê germahiyê dinivîsî. Navan di ofîsê de diguherînî.",
     geld: "Lêçûn di mehê de", miete: "Kirê", personal: "Karker", eigen: "Meaşê te", strom: "Elektrîk",
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",

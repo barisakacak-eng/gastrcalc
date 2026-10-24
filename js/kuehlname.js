@@ -8,7 +8,7 @@ import de from "./lang/de.js";
 import tr from "./lang/tr.js";
 import en from "./lang/en.js";
 
-export const KUEHL_TYP_SCHLUESSEL = ["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"];
+export const KUEHL_TYP_SCHLUESSEL = ["getraenke", "kuehlschrank", "saladette", "tiefkuehler", "warmhalter"]; // Baris 24.10.2026: Getränkekühlschrank und Kühlschrank (Lebensmittel) getrennt
 export const TYP_AUS_ART = { kuehl: "kuehlschrank", tk: "tiefkuehler", warm: "warmhalter" };
 
 // Alle bekannten Standardnamen je Typ (ohne Nummer), klein geschrieben.

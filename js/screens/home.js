@@ -87,12 +87,13 @@ export function kursDiagramm(m, marke, z) {
   const tage = m.tage || []; const pfad = tage.map((x, i) => `${i ? "L" : "M"}${X(idx(x.datum))},${Y(x.kumuliert || 0)}`).join(" ");
   const letzt = tage[tage.length - 1]; const yz = Y(marke || 0);
   const tag = (d) => (d ? datumLesbar(d).slice(0, 6) : "");
-  return `<svg class="h-kurs" viewBox="0 0 320 165" preserveAspectRatio="none" role="img" aria-label="${esc(t("heute.zielLinie"))}">
-    <line class="h-kurs-ziel" x1="4" x2="316" y1="${yz}" y2="${yz}"/><text class="h-kurs-ziellabel" x="308" y="${(Number(yz) - 7).toFixed(1)}" text-anchor="end">${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</text>
+  // Baris 24.10.2026: Texte nicht mehr im gestreckten SVG (preserveAspectRatio none verzerrte Zahlen und Datum), sondern als HTML darüber.
+  const zielProzent = ((165 - Number(yz)) / 165 * 100).toFixed(1);
+  return `<span class="h-kurswrap"><svg class="h-kurs" viewBox="0 0 320 165" preserveAspectRatio="none" role="img" aria-label="${esc(t("heute.zielLinie"))}">
+    <line class="h-kurs-ziel" x1="4" x2="316" y1="${yz}" y2="${yz}"/>
     <line class="h-kurs-achse" x1="4" x2="316" y1="142" y2="142"/>
     ${tage.length && ist.length ? `<path class="h-kurs-flaeche" d="${pfad} L${X(idx(letzt.datum))},142 L${X(idx(tage[0].datum))},142 Z"/><path class="h-kurs-linie" d="${pfad}"/><circle class="h-kurs-punkt" cx="${X(idx(letzt.datum))}" cy="${Y(letzt.kumuliert || 0)}" r="5"/>` : ""}
-    <text class="h-kurs-tag" x="4" y="161">\u2066${esc(tag(alle[0]?.datum))}\u2069</text><text class="h-kurs-tag" x="316" y="161" text-anchor="end">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</text>
-  </svg>`;
+  </svg><span class="h-kurs-ziellabel" style="bottom:calc(${zielProzent}% + 3px)">${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</span><span class="h-kurs-tag links">\u2066${esc(tag(alle[0]?.datum))}\u2069</span><span class="h-kurs-tag rechts">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</span></span>`;
 }
 // Lorbeer und Kupferlinie aus Sanjis Entwurf (inline-SVG, Farben aus den Tokens)
 const LORBEER = `<svg class="h-lorbeer" viewBox="0 0 44 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 53 C4 40 4 23 14 7"/><path d="M32 53 C40 40 40 23 30 7"/></g><g fill="currentColor"><ellipse cx="8" cy="42" rx="3" ry="7" transform="rotate(-34 8 42)"/><ellipse cx="6" cy="31" rx="3" ry="7" transform="rotate(-12 6 31)"/><ellipse cx="9" cy="20" rx="3" ry="7" transform="rotate(19 9 20)"/><ellipse cx="15" cy="11" rx="2.5" ry="6" transform="rotate(39 15 11)"/><ellipse cx="36" cy="42" rx="3" ry="7" transform="rotate(34 36 42)"/><ellipse cx="38" cy="31" rx="3" ry="7" transform="rotate(12 38 31)"/><ellipse cx="35" cy="20" rx="3" ry="7" transform="rotate(-19 35 20)"/><ellipse cx="29" cy="11" rx="2.5" ry="6" transform="rotate(-39 29 11)"/></g></svg>`;
@@ -114,7 +115,7 @@ function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
   // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
   const symbole = { umsatz: "wallet", muell: "trash-2", kuehl: "snowflake", putz: "spray-can" };
-  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}</button>`;
+  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`; // Baris 24.10.2026: ein Wort unter jedem Icon
   return feld("umsatz", "ladenSchirm.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatzheute"', false, w.umsatz === null && t("schnellknopf.umsatz"))
     + feld("muell", "ebene.tabs.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
     + feld("kuehl", "ebene.tabs.kuehl", w.kuehl.wert, 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, !ks.eingerichtet && t("schnellknopf.kuehl"), w.kuehl.html || w.kuehl.alarm)

@@ -4,7 +4,7 @@ const pl = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : (n === 0 
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "نسخة تجريبية" },
 
   allgemein: {
@@ -1051,7 +1051,7 @@ export default {
     allesGenau: "إعداد كل شيء بالتفصيل",
     karte: "قائمتك", karteFoto: "صوّر القائمة", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "صور أو PDF", spaeter: "لاحقًا",
     karteHilfe: "التطبيق يقرأ الأطباق والأسعار من الصورة. ما تحضّرونه بأنفسكم تضبطه في المكتب تحت «الوصفات».",
-    kuehl: "التبريد", arten: { kuehlschrank: "ثلاجة", saladette: "ثلاجة السلطات", tiefkuehler: "فريزر", warmhalter: "حافظة حرارة" },
+    kuehl: "التبريد", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "ثلاجة", saladette: "ثلاجة السلطات", tiefkuehler: "فريزر", warmhalter: "حافظة حرارة" },
     kuehlHilfe: "لكل جهاز تُدخل الحرارة لاحقًا. الأسماء تغيّرها في المكتب.",
     geld: "التكاليف في الشهر", miete: "الإيجار", personal: "الموظفون", eigen: "راتبك", strom: "الكهرباء",
     geldHilfe: "التقريب يكفي، ويمكن تركه فارغًا. الفواتير تصوّرها لاحقًا في المكتب.",

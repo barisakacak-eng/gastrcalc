@@ -8,7 +8,7 @@ const nr = (n, unu, multe) => Number(n) === 1 ? `1 ${unu}` : `${n} ${de(n)}${mul
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Versiune de test" },
 
   allgemein: {
@@ -1055,7 +1055,7 @@ export default {
     allesGenau: "Configurează totul exact",
     karte: "Meniul tău", karteFoto: "Fotografiază meniul", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Poze sau PDF", spaeter: "Mai târziu",
     karteHilfe: "Aplicația citește preparatele și prețurile din poză. Ce faceți voi singuri setezi în birou, la Rețete.",
-    kuehl: "Răcire", arten: { kuehlschrank: "Frigider", saladette: "Saladetă", tiefkuehler: "Congelator", warmhalter: "Încălzitor" },
+    kuehl: "Răcire", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigider", saladette: "Saladetă", tiefkuehler: "Congelator", warmhalter: "Încălzitor" },
     kuehlHilfe: "Pentru fiecare aparat introduci mai târziu temperatura. Numele le schimbi în birou.",
     geld: "Costuri pe lună", miete: "Chirie", personal: "Personal", eigen: "Salariul tău", strom: "Curent",
     geldHilfe: "Aproximativ e destul, poți lăsa și gol. Facturile le fotografiezi mai târziu în birou.",

@@ -2,7 +2,7 @@
 // Vietnamesisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Anrede „bạn“.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Bản dùng thử" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "Cài đặt chi tiết",
     karte: "Thực đơn của bạn", karteFoto: "Chụp thực đơn", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Ảnh hoặc PDF", spaeter: "Để sau",
     karteHilfe: "App đọc món và giá từ ảnh. Món quán tự làm thì bạn nhập ở văn phòng, mục Công thức.",
-    kuehl: "Làm lạnh", arten: { kuehlschrank: "Tủ lạnh", saladette: "Tủ salad", tiefkuehler: "Tủ đông", warmhalter: "Tủ giữ nóng" },
+    kuehl: "Làm lạnh", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Tủ lạnh", saladette: "Tủ salad", tiefkuehler: "Tủ đông", warmhalter: "Tủ giữ nóng" },
     kuehlHilfe: "Sau này bạn ghi nhiệt độ cho từng thiết bị. Tên thì đổi ở văn phòng.",
     geld: "Chi phí mỗi tháng", miete: "Tiền thuê", personal: "Nhân viên", eigen: "Lương của bạn", strom: "Tiền điện",
     geldHilfe: "Ghi khoảng chừng là đủ, để trống cũng được. Hóa đơn thì chụp sau ở văn phòng.",

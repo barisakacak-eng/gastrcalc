@@ -9,7 +9,7 @@ const pl = (n, jedan, dva, pet) => {
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Test verzija" },
 
   allgemein: {
@@ -1056,7 +1056,7 @@ export default {
     allesGenau: "Podesi sve tačno",
     karte: "Tvoj jelovnik", karteFoto: "Slikaj jelovnik", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Slike ili PDF", spaeter: "Kasnije",
     karteHilfe: "Aplikacija čita jela i cijene sa slike. Šta pravite sami, podesiš u uredu pod Recepti.",
-    kuehl: "Hlađenje", arten: { kuehlschrank: "Frižider", saladette: "Saladeta", tiefkuehler: "Zamrzivač", warmhalter: "Grijač" },
+    kuehl: "Hlađenje", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frižider", saladette: "Saladeta", tiefkuehler: "Zamrzivač", warmhalter: "Grijač" },
     kuehlHilfe: "Za svaki uređaj kasnije upisuješ temperaturu. Imena mijenjaš u uredu.",
     geld: "Troškovi mjesečno", miete: "Kirija", personal: "Osoblje", eigen: "Tvoja plata", strom: "Struja",
     geldHilfe: "Otprilike je dovoljno, može i prazno. Račune slikaš kasnije u uredu.",

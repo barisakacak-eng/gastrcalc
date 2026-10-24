@@ -7,7 +7,7 @@ const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase()
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Version prove" },
 
   allgemein: {
@@ -1054,7 +1054,7 @@ export default {
     allesGenau: "Rregullo gjithçka me saktësi",
     karte: "Menyja jote", karteFoto: "Fotografo menynë", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Foto ose PDF", spaeter: "Më vonë",
     karteHilfe: "Aplikacioni lexon pjatat dhe çmimet nga foto. Çfarë bëni vetë, e vendos në zyrë te Recetat.",
-    kuehl: "Ftohja", arten: { kuehlschrank: "Frigorifer", saladette: "Saladeta", tiefkuehler: "Ngrirës", warmhalter: "Ngrohës" },
+    kuehl: "Ftohja", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigorifer", saladette: "Saladeta", tiefkuehler: "Ngrirës", warmhalter: "Ngrohës" },
     kuehlHilfe: "Për çdo pajisje shkruan më vonë temperaturën. Emrat i ndryshon në zyrë.",
     geld: "Shpenzimet në muaj", miete: "Qiraja", personal: "Stafi", eigen: "Rroga jote", strom: "Rryma",
     geldHilfe: "Përafërsisht mjafton, mund ta lësh edhe bosh. Faturat i fotografon më vonë në zyrë.",

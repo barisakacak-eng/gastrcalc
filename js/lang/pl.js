@@ -7,7 +7,7 @@ const lm = (n, a, b, c) => { const x = Math.abs(Number(n)); if (!Number.isFinite
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Wersja testowa" },
 
   allgemein: {
@@ -1054,7 +1054,7 @@ export default {
     allesGenau: "Ustaw wszystko dokładnie",
     karte: "Twoja karta", karteFoto: "Zrób zdjęcie karty", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Zdjęcia lub PDF", spaeter: "Później",
     karteHilfe: "Aplikacja czyta dania i ceny ze zdjęcia. To, co robicie sami, ustawisz w biurze w Przepisach.",
-    kuehl: "Chłodzenie", arten: { kuehlschrank: "Lodówka", saladette: "Saladetta", tiefkuehler: "Zamrażarka", warmhalter: "Podgrzewacz" },
+    kuehl: "Chłodzenie", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Lodówka", saladette: "Saladetta", tiefkuehler: "Zamrażarka", warmhalter: "Podgrzewacz" },
     kuehlHilfe: "Dla każdego urządzenia wpiszesz potem temperaturę. Nazwy zmienisz w biurze.",
     geld: "Koszty w miesiącu", miete: "Czynsz", personal: "Personel", eigen: "Twoja pensja", strom: "Prąd",
     geldHilfe: "Wystarczy mniej więcej, można też zostawić puste. Rachunki sfotografujesz potem w biurze.",

@@ -2,7 +2,7 @@
 // Italienisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "Imposta tutto nel dettaglio",
     karte: "Il tuo menu", karteFoto: "Fotografa il menu", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Foto o PDF", spaeter: "Dopo",
     karteHilfe: "L'app legge piatti e prezzi dalla foto. Quello che fate voi lo imposti in ufficio sotto Ricette.",
-    kuehl: "Frigo", arten: { kuehlschrank: "Frigorifero", saladette: "Saladette", tiefkuehler: "Congelatore", warmhalter: "Scaldavivande" },
+    kuehl: "Frigo", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigorifero", saladette: "Saladette", tiefkuehler: "Congelatore", warmhalter: "Scaldavivande" },
     kuehlHilfe: "Per ogni apparecchio inserisci poi la temperatura. I nomi li cambi in ufficio.",
     geld: "Costi al mese", miete: "Affitto", personal: "Personale", eigen: "Il tuo stipendio", strom: "Luce",
     geldHilfe: "Basta più o meno, puoi anche lasciare vuoto. Le bollette le fotografi dopo in ufficio.",

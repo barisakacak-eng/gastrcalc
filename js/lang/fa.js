@@ -1,7 +1,7 @@
 // فارسی – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / زبان مغازه، جمله‌های کوتاه.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "همه را دقیق تنظیم کن",
     karte: "منوی تو", karteFoto: "از منو عکس بگیر", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "عکس یا PDF", spaeter: "بعداً",
     karteHilfe: "اپ غذاها و قیمت‌ها را از عکس می‌خواند. چیزهایی را که خودتان درست می‌کنید در دفتر زیر «دستور پخت‌ها» تنظیم کن.",
-    kuehl: "سرمایش", arten: { kuehlschrank: "یخچال", saladette: "یخچال سالاد", tiefkuehler: "فریزر", warmhalter: "گرم‌نگه‌دار" },
+    kuehl: "سرمایش", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "یخچال", saladette: "یخچال سالاد", tiefkuehler: "فریزر", warmhalter: "گرم‌نگه‌دار" },
     kuehlHilfe: "برای هر دستگاه بعداً دما را وارد می‌کنی. نام‌ها را در دفتر عوض می‌کنی.",
     geld: "هزینه در ماه", miete: "اجاره", personal: "پرسنل", eigen: "حقوق خودت", strom: "برق",
     geldHilfe: "تقریبی کافی است، خالی هم می‌شود. از فاکتورها بعداً در دفتر عکس می‌گیری.",

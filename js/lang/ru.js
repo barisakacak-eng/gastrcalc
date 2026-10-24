@@ -7,7 +7,7 @@ const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase()
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Тестовая версия" },
 
   allgemein: {
@@ -1054,7 +1054,7 @@ export default {
     allesGenau: "Настроить всё подробно",
     karte: "Твоё меню", karteFoto: "Сфотографировать меню", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Фото или PDF", spaeter: "Потом",
     karteHilfe: "Приложение читает блюда и цены с фото. Что вы делаете сами, укажешь в офисе в разделе «Рецепты».",
-    kuehl: "Холод", arten: { kuehlschrank: "Холодильник", saladette: "Саладетта", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
+    kuehl: "Холод", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Холодильник", saladette: "Саладетта", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
     kuehlHilfe: "Для каждого прибора потом вносишь температуру. Названия меняешь в офисе.",
     geld: "Расходы в месяц", miete: "Аренда", personal: "Персонал", eigen: "Твоя зарплата", strom: "Электричество",
     geldHilfe: "Примерно – уже хорошо, можно и пусто. Счета сфотографируешь потом в офисе.",

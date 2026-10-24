@@ -101,3 +101,10 @@
 .kl-bleibt .kl-punkt { box-shadow: none; }
 .knopf.kl-speichern { min-height: 60px; color: var(--tinte); box-shadow: var(--schatten-knopf); }
 .knopf.kl-speichern:disabled { opacity: .5; }
+
+/* Baris 24.10.2026: Diagramm-Texte als HTML über dem gestreckten SVG – keine verzerrten Zahlen mehr */
+.h-kurswrap { position: relative; display: block; width: 100%; }
+.h-kurswrap .h-kurs { display: block; width: 100%; }
+.h-kurswrap .h-kurs-ziellabel { position: absolute; right: 6px; color: #FFF9F1; font: 800 0.75rem var(--gc-ui, var(--schrift)); text-shadow: 0 0 2px rgba(20,45,29,.7), 0 0 2px rgba(20,45,29,.7); pointer-events: none; }
+.h-kurswrap .h-kurs-tag { position: absolute; bottom: 0; color: #FFF9F1; font: 600 0.75rem var(--gc-ui, var(--schrift)); text-shadow: 0 0 2px rgba(27,48,29,.7); pointer-events: none; }
+.h-kurswrap .h-kurs-tag.links { left: 6px; } .h-kurswrap .h-kurs-tag.rechts { right: 6px; }

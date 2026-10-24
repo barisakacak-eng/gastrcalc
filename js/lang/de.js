@@ -1,7 +1,7 @@
 // Leitsprache. Küchensprache: kurze Sätze, keine Fachbegriffe. Jede andere Sprache wird aus dieser Tabelle übersetzt.
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag","titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag","titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Testfassung" },
 
   allgemein: {
@@ -1055,7 +1055,7 @@ export default {
     allesGenau: "Alles genau einrichten",
     karte: "Deine Karte", karteFoto: "Karte fotografieren", karteVorlagen: "Aus Vorlagen wählen", karteGalerie: "Fotos oder PDF", spaeter: "Später",
     karteHilfe: "Die App liest Gerichte und Preise vom Foto. Was ihr selbst macht, stellst du im Büro unter Rezepte ein.",
-    kuehl: "Kühlung", arten: { kuehlschrank: "Kühlschrank", saladette: "Saladette", tiefkuehler: "Tiefkühler", warmhalter: "Warmhalter" },
+    kuehl: "Kühlung", arten: { getraenke: "Getränkekühlschrank", kuehlschrank: "Kühlschrank", saladette: "Saladette", tiefkuehler: "Tiefkühler", warmhalter: "Warmhalter" },
     kuehlHilfe: "Für jedes Gerät trägst du später die Temperatur ein. Namen änderst du im Büro.",
     geld: "Kosten im Monat", miete: "Miete", personal: "Personal", eigen: "Dein Lohn", strom: "Strom",
     geldHilfe: "Ungefähr reicht, leer lassen geht auch. Rechnungen fotografierst du später im Büro.",

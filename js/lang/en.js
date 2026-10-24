@@ -1,6 +1,6 @@
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"Starts with first waste entry","titel":"Less loss since start","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
+  nutzen: {"start":"From first waste entry","titel":"Less loss since start","laueft": (ab) => `Measurement running since ${ab}`,"stufe":{"bisNull":"To break-even","bisZiel":"To target","ueberZiel":"Above target"},"ohneKosten":"Costs missing","art":{"muell":"Waste","preis":"Price","lager":"Stock","papier":"Paperwork"},"aktion":{"kuehlAlarm":"Re-check","rundgangOffen":"Continue round","rundgang":"Fridge round","putzen":"Clean","sicherung":"Back up","abschluss":"Close day","selbst":"Enter batch","einkauf":"Enter purchase prices","rezepte":"Weigh recipes"}},
   app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "Set up everything in detail",
     karte: "Your menu", karteFoto: "Photograph menu", karteVorlagen: "Choose from templates", karteGalerie: "Photos or PDF", spaeter: "Later",
     karteHilfe: "The app reads dishes and prices from the photo. What you make yourselves is set in the office under Recipes.",
-    kuehl: "Cooling", arten: { kuehlschrank: "Fridge", saladette: "Prep fridge", tiefkuehler: "Freezer", warmhalter: "Food warmer" },
+    kuehl: "Cooling", arten: { getraenke: "Drinks fridge", kuehlschrank: "Fridge", saladette: "Prep fridge", tiefkuehler: "Freezer", warmhalter: "Food warmer" },
     kuehlHilfe: "You will enter the temperature for each unit later. Rename them in the office.",
     geld: "Monthly costs", miete: "Rent", personal: "Staff", eigen: "Your pay", strom: "Electricity",
     geldHilfe: "Roughly is fine, empty is fine too. Photograph bills later in the office.",

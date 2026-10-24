@@ -2,7 +2,7 @@
 // Griechisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Δοκιμαστική έκδοση" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "Ρύθμισε τα πάντα αναλυτικά",
     karte: "Το μενού σου", karteFoto: "Φωτογράφισε το μενού", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Φωτογραφίες ή PDF", spaeter: "Αργότερα",
     karteHilfe: "Η εφαρμογή διαβάζει πιάτα και τιμές από τη φωτογραφία. Ό,τι φτιάχνετε μόνοι σας το βάζεις στο γραφείο στις Συνταγές.",
-    kuehl: "Ψύξη", arten: { kuehlschrank: "Ψυγείο", saladette: "Σαλατιέρα", tiefkuehler: "Καταψύκτης", warmhalter: "Θερμοθάλαμος" },
+    kuehl: "Ψύξη", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Ψυγείο", saladette: "Σαλατιέρα", tiefkuehler: "Καταψύκτης", warmhalter: "Θερμοθάλαμος" },
     kuehlHilfe: "Για κάθε συσκευή γράφεις μετά τη θερμοκρασία. Τα ονόματα τα αλλάζεις στο γραφείο.",
     geld: "Έξοδα τον μήνα", miete: "Ενοίκιο", personal: "Προσωπικό", eigen: "Ο μισθός σου", strom: "Ρεύμα",
     geldHilfe: "Περίπου αρκεί, μπορείς και να το αφήσεις κενό. Τους λογαριασμούς τους φωτογραφίζεις μετά στο γραφείο.",

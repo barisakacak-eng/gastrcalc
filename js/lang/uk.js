@@ -7,7 +7,7 @@ const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase()
 
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Тестова версія" },
 
   allgemein: {
@@ -1054,7 +1054,7 @@ export default {
     allesGenau: "Налаштувати все докладно",
     karte: "Твоє меню", karteFoto: "Сфотографувати меню", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Фото або PDF", spaeter: "Потім",
     karteHilfe: "Застосунок читає страви й ціни з фото. Що ви робите самі, вкажеш в офісі в розділі «Рецепти».",
-    kuehl: "Холод", arten: { kuehlschrank: "Холодильник", saladette: "Саладета", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
+    kuehl: "Холод", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Холодильник", saladette: "Саладета", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
     kuehlHilfe: "Для кожного приладу потім вносиш температуру. Назви змінюєш в офісі.",
     geld: "Витрати на місяць", miete: "Оренда", personal: "Персонал", eigen: "Твоя зарплата", strom: "Електрика",
     geldHilfe: "Приблизно – вже добре, можна й порожнім. Рахунки сфотографуєш потім в офісі.",

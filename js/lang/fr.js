@@ -2,7 +2,7 @@
 // Französisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Du-Form.
 export default {
   // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Messung startet beim ersten Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust seit Start","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Version de test" },
 
   allgemein: {
@@ -1048,7 +1048,7 @@ export default {
     allesGenau: "Tout régler en détail",
     karte: "Ta carte", karteFoto: "Photographier la carte", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Photos ou PDF", spaeter: "Plus tard",
     karteHilfe: "L’appli lit plats et prix sur la photo. Ce que vous faites vous-mêmes se règle au bureau, sous Recettes.",
-    kuehl: "Froid", arten: { kuehlschrank: "Frigo", saladette: "Saladette", tiefkuehler: "Congélateur", warmhalter: "Chauffe-plats" },
+    kuehl: "Froid", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigo", saladette: "Saladette", tiefkuehler: "Congélateur", warmhalter: "Chauffe-plats" },
     kuehlHilfe: "Pour chaque appareil, tu saisis plus tard la température. Les noms se changent au bureau.",
     geld: "Frais par mois", miete: "Loyer", personal: "Personnel", eigen: "Ton salaire", strom: "Électricité",
     geldHilfe: "À peu près suffit, tu peux aussi laisser vide. Les factures, tu les photographies plus tard au bureau.",
