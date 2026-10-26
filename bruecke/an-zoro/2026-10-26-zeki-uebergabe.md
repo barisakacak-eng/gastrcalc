@@ -136,3 +136,7 @@ Die SVG-Front bleibt skalierbar. Bewegungsbilder haben 256 × 318 Bildpunkte pro
 - `bruecke/an-zoro/2026-10-26-zeki-uebergabe.md` (A): Verbindliche Schnittstelle, Dateiliste, Freigabe, Grenzen und Prüfstand dieser Lieferung.
 
 - `tools/zeki_marke.py` (A): Erzeugt die statischen Marken-SVGs und gemeinsamen Zustand-Klassen nach dem Rendern.
+
+## Aktueller GitHub-Status nach Abschluss
+
+GitHub meldet PR #16 als nicht direkt zusammenführbar (mergeable=false). Die sichtbaren Darstellungs-Commits sind gesichert, aber Konfliktauflösung mit der neueren main-Fassung und der rote Berlin-Speichertest bleiben vor einer Übernahme offen. Daher keine unmittelbare Merge-Freigabe. Geschützte Zeki-Sätze und Rechenlogik nicht durch den älteren Branchstand ersetzen.
