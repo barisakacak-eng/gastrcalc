@@ -204,8 +204,11 @@ test("deal: Kombi-Teile sortiert (Haupt, Kleinigkeit, Getränk) und Auswahl bere
 test("ordner_text: Zeitraum, Kachelstand, Zeilen-Texte, Hinweis, Druckmodelle, CSV", () => {
   const s = laden();
   assert.equal(OT.amtZeitraumVon(undefined, "2026-10-17").art, "monat");
-  assert.equal(OT.paketZeitVon({}, "steuer", "2026-10-17").monat, "2026-09");
-  assert.equal(OT.paketZeitVon({ steuer: "2026-07" }, "steuer", "2026-10-17").monat, "2026-07");
+  assert.equal(OT.paketZeitVon({}, "buch", "2026-10-17").monat, "2026-09");
+  assert.equal(OT.paketZeitVon({ buch: "2026-07" }, "buch", "2026-10-17").monat, "2026-07");
+  // Steuerberater = Jahr (26.10.2026)
+  assert.deepEqual(OT.paketZeitVon({}, "steuer", "2026-10-17"), { von: "2026-01-01", bis: "2026-10-17", monat: "2026", jahr: 2026 });
+  assert.equal(OT.paketZeitVon({ steuer: "2025" }, "steuer", "2026-10-17").bis, "2025-12-31");
   assert.equal(OT.monatLang("2026-10-01"), "Oktober 2026");
   assert.match(OT.zeitraumText({ art: "frei", von: "2026-10-01", bis: "2026-10-05" }), /01\.10\.2026 – 05\.10\.2026/);
   const k = OT.ordnerKachelStand(s, { datum: H }); for (const x of ["amt", "steuer", "buch"]) assert.ok(["gruen", "gelb", "rot", "grau"].includes(k[x].farbe), x);
@@ -214,7 +217,7 @@ test("ordner_text: Zeitraum, Kachelstand, Zeilen-Texte, Hinweis, Druckmodelle, C
   assert.ok(OT.amtDokument(s, E2).abschnitte.length >= 5);
   assert.match(OT.beispielKopf(s), /BEISPIEL/); assert.equal(OT.beispielKopf({}), null);
   assert.match(OT.dateiName({ betrieb: { name: "Döner Ünal" } }, "kuehl", { von: "2026-10-01", bis: "2026-10-31" }), /^Doner_Unal_kuehl_2026-10-01_2026-10-31\.csv$/);
-  const d = OT.csvDateien(s, "ordner-steuer", null, { paketMonat: { steuer: H.slice(0, 7) } }); assert.ok(d.length > 0 && d.every((f) => f.name.includes(H.slice(0, 7))));
+  const d = OT.csvDateien(s, "ordner-buch", null, { paketMonat: { buch: H.slice(0, 7) } }); assert.ok(d.length > 0 && d.every((f) => f.name.includes(H.slice(0, 7))));
   assert.match(OT.dokumentFuer(s, "ordner-buch"), /<html/i);
   assert.equal(typeof OT.paketUnter("belege", { belege: { anzahl: 0 } }), "string");
 });

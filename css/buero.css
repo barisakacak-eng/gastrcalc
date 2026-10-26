@@ -148,3 +148,13 @@ button.b-zeile:active { background: var(--papier); }
 .b-offen-mehr > summary { list-style: none; cursor: pointer; }
 .b-offen-mehr > summary::-webkit-details-marker { display: none; }
 @media (prefers-reduced-motion: reduce) { .b-bereich > summary .b-pfeil { transition: none; } }
+/* Ordner getrennt (26.10.2026): Abhakliste „Legst du selbst dazu“ und „Fragen an dich“ */
+.b-beilagenliste{display:flex;flex-direction:column;margin-top:6px}
+.b-beilage{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 0;border:0;border-top:1px solid var(--b-linie,#e2d6c4);background:none;text-align:left;font:inherit;color:inherit;width:100%}
+.b-beilage:first-child{border-top:0}
+.b-kasten{flex:none;width:24px;height:24px;border:2px solid var(--b-gruen,#4C6B55);border-radius:6px;display:grid;place-items:center;font-weight:800;color:#fff}
+.b-beilage.an .b-kasten{background:var(--b-gruen,#4C6B55)}
+.b-fragen{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;border:0}
+.b-fragen span{flex:1;display:flex;flex-direction:column}
+.karte.b-fragen{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;padding:14px 16px}
+.karte.b-beilagen{padding:14px 16px}

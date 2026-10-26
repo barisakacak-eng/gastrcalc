@@ -241,7 +241,13 @@ export function festeKosten(stand, z) {
 // art "steuer": was der Steuerberater zum Monatsende braucht; art "buch": was der Buchhalter verbucht.
 // Vollständigkeit (W2-T, Prüfung p04 Nr. 2): nur Belege, Kosten und Listen zählen. Tagesumsätze sind Notizen (Stand "notiz"),
 // maßgeblich ist die Kasse – sie machen den Ordner nie „vollständig“.
-export const TEILE = { steuer: ["umsatz", "personal", "schwund", "belege", "inventur", "reinigung"], buch: ["umsatz", "belege", "kosten"] };
+// Ordner getrennt (Baris Ja 26.10.2026): Buchhalter = jeden Monat alles zum Buchen; Steuerberater = einmal im Jahr alles zum Abschluss.
+export const TEILE = { steuer: ["inventur", "schwund", "personal"], buch: ["umsatz", "belege", "kosten", "personal", "reinigung"] };
+// Jahr des Steuerberater-Pakets: 1.1. bis 31.12. (laufendes Jahr bis heute). monat trägt das Jahr ("JJJJ"), damit Vergleiche gleich bleiben.
+export function jahrVon(jahr, H = heute()) {
+  const j = String(jahr); const bis = j === H.slice(0, 4) ? H : `${j}-12-31`;
+  return { von: `${j}-01-01`, bis, monat: j, jahr: Number(j) };
+}
 export function monatsPaket(stand, z, art = "steuer") {
   const teile = TEILE[art] || TEILE.steuer; const p = { art, zeitraum: { von: z.von, bis: z.bis }, teile };
   if (teile.includes("umsatz")) p.umsatz = tagesumsaetze(stand, z);
@@ -253,7 +259,7 @@ export function monatsPaket(stand, z, art = "steuer") {
   if (teile.includes("kosten")) p.kosten = festeKosten(stand, z);
   p.aenderungen = aenderungen(stand, z);
   p.stand = Object.fromEntries(teile.map((t) => [t, teilStand(p, t)]));
-  p.pruefTeile = teile.filter((t) => t !== "umsatz");
+  p.pruefTeile = teile.filter((t) => !["umsatz", "personal", "reinigung"].includes(t)); // 26.10.2026: Personalessen und Reinigungsmittel sind Zusatz – leer zählt nicht als „fertig“
   p.vollstaendig = p.pruefTeile.filter((t) => p.stand[t] === "ok").length;
   return p;
 }

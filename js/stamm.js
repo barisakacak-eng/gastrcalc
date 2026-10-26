@@ -158,3 +158,12 @@ export function vonNachtragen(stand, von, ab) {
 export function uploadAnlegen(stand, eintrag) { stand.uploads.push(eintrag); return eintrag; }
 // Stand eines Uploads fortschreiben (status, auswertung, ergebnis, zweck) – nur diese Felder
 export function uploadAendern(u, felder) { if (!u) return null; for (const k of ["status", "auswertung", "ergebnis", "zweck"]) if (k in felder) u[k] = felder[k]; return u; }
+
+// Ordner (26.10.2026): „Legst du selbst dazu“ – abgehakt heißt nur „liegt bereit“. Schlüssel art:zeitraum (z. B. "buch:2026-09", "steuer:2026").
+export function beilageBereitSchalten(stand, art, zeitraum, id) {
+  if (!stand?.betrieb || !art || !zeitraum || !id) return false;
+  const k = `${art}:${zeitraum}`; const alle = (stand.betrieb.beilagenBereit ??= {}); const liste = new Set(alle[k] || []);
+  if (liste.has(id)) liste.delete(id); else liste.add(id);
+  alle[k] = [...liste]; return liste.has(id);
+}
+export const beilagenBereit = (stand, art, zeitraum) => new Set(stand?.betrieb?.beilagenBereit?.[`${art}:${zeitraum}`] || []);

@@ -74,7 +74,7 @@ test("Beispiel-Laden: Amt-Ordner vollständig ohne Nachträge; Exporte tragen BE
   assert.ok(o.teile.putz.tage > 0);
   const html = druckHtml(amtDokument(s, o));
   assert.match(html, /BEISPIEL – keine echten Daten/);
-  const p = monatsPaket(s, monatVon("2026-09-01"), "steuer");
+  const p = monatsPaket(s, monatVon("2026-09-01"), "buch"); // Ordner getrennt 26.10.2026: Umsatz, Personal, Belege beim Buchhalter
   assert.ok(p.umsatz.tage > 0 && p.personal.zeilen.length > 0 && p.belege.anzahl > 0, "Vormonat mit Zahlen");
   assert.match(druckHtml(paketDokument(s, p)), /BEISPIEL – keine echten Daten/);
   // Dateien so, wie die App sie teilt (Datum = heute): jede CSV beginnt mit der Kennzeichnung

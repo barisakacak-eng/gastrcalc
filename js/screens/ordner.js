@@ -4,8 +4,9 @@
 // Daten kommen rein rechnend aus js/export_amt.js und js/export_steuer.js, Texte und Druckmodelle aus js/ordner_text.js (Trennung 2, 17.10.2026);
 // hier stehen nur Aufbau, Zeitraum-Wahl und Teilen/Drucken.
 import { t } from "../i18n.js";
+import { hinweiseFuer } from "../hinweis.js"; // Fragen an dich (26.10.2026)
 import { esc, heute } from "../util.js";
-import { personAnlegen } from "../stamm.js"; // Trennung (17.10.2026)
+import { personAnlegen, beilageBereitSchalten, beilagenBereit } from "../stamm.js"; // Trennung (17.10.2026)
 import { ordnerAmt, zeitraumFuer, belehrungEintragen } from "../export_amt.js";
 import { monatsPaket, monatPlus, datumDe } from "../export_steuer.js";
 import { BEILAGEN, amtZeitraumVon, paketZeitVon, monatLang, amtUnter, amtHinweis, paketUnter, dateiName, csvDateien as csvDateienR, dokumentFuer as dokumentFuerR } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
@@ -15,7 +16,7 @@ import { bueroRing as ring, dateienTeilen } from "./bausteine.js"; // Trennung (
 
 // ---------- Zustand ----------
 let amtZeit = { art: "monat", von: null, bis: null };
-let paketMonat = { steuer: null, buch: null };  // "JJJJ-MM"; null = Vormonat
+let paketMonat = { steuer: null, buch: null };  // buch "JJJJ-MM" (null = Vormonat), steuer "JJJJ" (null = laufendes Jahr; 26.10.2026)
 let belehrungAuf = false;
 const belDatum = {};          // personId → gewähltes Datum (Feld), Standard heute
 let personNeu = "";
@@ -78,7 +79,16 @@ function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
 }
 
 // Paket C (19.10.2026): was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“
-const beilagenKarte = (art) => `<div class="karte b-beilagen"><b>${esc(t("ordnerC.karteTitel"))}</b><ul>${(BEILAGEN[art] || []).map((b) => `<li>${esc(t("ordnerC.teile." + b))}</li>`).join("")}</ul>${art === "amt" ? "" : `<small class="b-leise">${esc(t("ordnerC.hinweis"))}</small>`}</div>`;
+// 26.10.2026: beim Steuerberater/Buchhalter als Abhakliste – abgehakt heißt nur „liegt bereit“ (je Zeitraum gemerkt).
+const beilagenKarte = (art, stand = null, zeitraum = null) => {
+  const bereit = stand && zeitraum ? beilagenBereit(stand, art, zeitraum) : null;
+  const zeile = (b) => bereit ? `<button type="button" class="b-beilage ${bereit.has(b) ? "an" : ""}" data-a="beilage-bereit" data-wert="${esc(b)}" aria-pressed="${bereit.has(b)}"><span class="b-kasten" aria-hidden="true">${bereit.has(b) ? "✓" : ""}</span><span>${esc(t("ordnerC.teile." + b))}</span></button>` : `<li>${esc(t("ordnerC.teile." + b))}</li>`;
+  const liste = (BEILAGEN[art] || []).map(zeile).join("");
+  return `<div class="karte b-beilagen"><b>${esc(t(bereit ? "ordnerC.selbstTitel" : "ordnerC.karteTitel"))}</b>${bereit ? `<div class="b-beilagenliste">${liste}</div>` : `<ul>${liste}</ul>`}${art === "amt" ? "" : `<small class="b-leise">${esc(t("ordnerC.hinweis"))}</small>`}</div>`;
+};
+// Steuerberater: offene Hinweis-Karten als „Fragen an dich“ (Weg zum Bildschirm Hinweise)
+const fragenKarte = (stand) => { let n = 0; try { n = hinweiseFuer(stand).filter((h) => h.status === "neu" || h.status === "offen").length; } catch { n = 0; }
+  return `<button type="button" class="karte b-fragen" data-a="nav" data-wert="hinweise">${bsym("circle-help")}<span><b>${esc(t("ordnerC.fragenTitel"))}</b><small>${esc(t("ordnerC.fragenUnter", n))}</small></span>${bsym("chevron-right")}</button>`; };
 
 // ---------- Gesundheitsamt ----------
 export function ordnerAmtView(stand) {
@@ -109,14 +119,15 @@ const TEIL_SYM = { umsatz: "trending-up", personal: "users", schwund: "trash-2",
 
 export function ordnerPaketView(stand, art) {
   const H = heute(); const z = paketZeit(art, H); const p = monatsPaket(stand, z, art);
-  const istAktuell = z.monat >= H.slice(0, 7);
+  const istAktuell = art === "steuer" ? z.monat >= H.slice(0, 4) : z.monat >= H.slice(0, 7);
   return `<div class="buero">${bueroKopf({ ziel: "buero", text: t("buero.titel") }, "")}
     <div class="b-inhalt b-ordnerseite">
       ${kopfOrdner(stand, art, art === "steuer" ? "calculator" : "receipt", t(`ordner.${art}.unter`))}
-      <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t("ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t("ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
-      ${standKarte(p.vollstaendig, p.pruefTeile.length, t("ordnerT.kasse"), t("ordnerT.allesDa"))}
+      <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.vorJahr" : "ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(art === "steuer" ? t("ordner.zeit.jahr", z.jahr) : monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.nachJahr" : "ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
+      ${standKarte(p.vollstaendig, p.pruefTeile.length, art === "steuer" ? "" : t("ordnerT.kasse"), t("ordnerT.allesDa"))}
       <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
-      ${beilagenKarte(art)}
+      ${art === "steuer" ? fragenKarte(stand) : ""}
+      ${beilagenKarte(art, stand, z.monat)}
       ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
@@ -137,7 +148,10 @@ const teilen = dateienTeilen; // Trennung (17.10.2026): gemeinsames Teilen (./ba
 export async function ordnerAktion(name, el, stand, ansicht) {
   const H = heute();
   if (name === "ordner-zeit") { amtZeit = { art: el.dataset.wert, von: amtZeit.von, bis: amtZeit.bis }; if (amtZeit.art === "frei" && !amtZeit.von) { const z = zeitraumFuer("monat", { datum: H }); amtZeit.von = z.von; amtZeit.bis = H; } return true; }
-  if (name === "ordner-monat") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const jetzt = paketZeit(art, H).monat; const neu = monatPlus(jetzt, Number(el.dataset.wert) || 0); if (neu > H.slice(0, 7)) return false; paketMonat[art] = neu; return true; }
+  if (name === "ordner-monat") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const jetzt = paketZeit(art, H).monat; const d = Number(el.dataset.wert) || 0;
+    if (art === "steuer") { const neu = String(Number(jetzt) + d); if (neu > H.slice(0, 4)) return false; paketMonat.steuer = neu; return true; } // Steuerberater: Jahr (26.10.2026)
+    const neu = monatPlus(jetzt, d); if (neu > H.slice(0, 7)) return false; paketMonat[art] = neu; return true; }
+  if (name === "beilage-bereit") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; beilageBereitSchalten(stand, art, paketZeit(art, H).monat, el.dataset.wert); return { speichern: true }; }
   if (name === "ordner-belehrung") { belehrungAuf = !belehrungAuf; return true; }
   if (name === "bel-eintragen") {
     const id = el.dataset.id; const e = belehrungEintragen(stand, id, { datum: belDatum[id] || H, art: el.dataset.wert });
