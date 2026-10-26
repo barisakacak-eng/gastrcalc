@@ -1056,6 +1056,7 @@ export default {
     geldHilfe: "Yaklaşık yeter, boş da bırakabilirsin. Faturaları sonra büroda fotoğraflarsın.",
     putzt: "Kim temizliyor?", wer: { selbst: "Biz", firma: "Firma", beides: "İkisi de" }, firma: "Firma",
     fertig: "Tamam!", eingerichtet: "kuruldu", los: "Başlayalım", pin: "Büro kodunu belirle",
+    zeki: { hallo: "Selam usta! Ben Zeki.", rolle: "Sana yardım ederim – önde dükkânda, arkada büroda.", "laden-schnell": "Dükkânının adı ne? Ne satıyorsun?", "karte-foto": "Menünün fotoğrafını çek. Yemekleri ve fiyatları ben okurum.", "kuehl-schnell": "Hangi soğutucuların var? Artıya bas yeter.", geld: "Dükkân ayda kaça mal oluyor? Aşağı yukarı yeter.", fertig: "Süper usta! Artık hep yanındayım." },
   },
   // Envanter sayımı (Punkt 3)
   inventur: {

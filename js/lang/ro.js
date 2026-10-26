@@ -1062,6 +1062,7 @@ export default {
     geldHilfe: "Aproximativ e destul, poți lăsa și gol. Facturile le fotografiezi mai târziu în birou.",
     putzt: "Cine face curat?", wer: { selbst: "Noi", firma: "Firmă", beides: "Amândouă" }, firma: "Firmă",
     fertig: "Gata!", eingerichtet: "configurat", los: "Hai să începem", pin: "Setează PIN-ul de birou",
+    zeki: { hallo: "Salut, șefu'! Eu sunt Zeki.", rolle: "Te ajut – în față în local, în spate la birou.", "laden-schnell": "Cum se numește localul tău? Și ce vinzi?", "karte-foto": "Fotografiază meniul. Eu citesc preparatele și prețurile.", "kuehl-schnell": "Ce frigidere ai? Apasă doar pe plus.", geld: "Cât costă localul pe lună? Aproximativ e de ajuns.", fertig: "Super, șefu'! De acum sunt mereu aici." },
   },
   inventur: {
     menue: "Inventar", titel: "Inventar", titelMonat: (m) => `Inventar – ${m}`,

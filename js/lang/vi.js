@@ -1055,6 +1055,7 @@ export default {
     geldHilfe: "Ghi khoảng chừng là đủ, để trống cũng được. Hóa đơn thì chụp sau ở văn phòng.",
     putzt: "Ai dọn dẹp?", wer: { selbst: "Chúng tôi", firma: "Công ty", beides: "Cả hai" }, firma: "Công ty",
     fertig: "Xong!", eingerichtet: "đã cài đặt", los: "Bắt đầu", pin: "Đặt mã văn phòng",
+    zeki: { hallo: "Chào sếp! Tôi là Zeki.", rolle: "Tôi giúp bạn – phía trước ở quán, phía sau ở văn phòng.", "laden-schnell": "Quán của bạn tên gì? Và bạn bán gì?", "karte-foto": "Chụp ảnh thực đơn. Tôi đọc món và giá.", "kuehl-schnell": "Bạn có những tủ lạnh nào? Chỉ cần bấm dấu cộng.", geld: "Quán tốn bao nhiêu mỗi tháng? Ước chừng là đủ.", fertig: "Tuyệt, sếp! Từ giờ tôi luôn ở đây." },
   },
   // Kiểm kho
   inventur: {

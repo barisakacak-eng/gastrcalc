@@ -1055,6 +1055,7 @@ export default {
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",
     putzt: "Kî paqij dike?", wer: { selbst: "Em", firma: "Şîrket", beides: "Her du" }, firma: "Şîrket",
     fertig: "Qediya!", eingerichtet: "hat sazkirin", los: "Em dest pê bikin", pin: "PIN-a ofîsê diyar bike",
+    zeki: { hallo: "Silav serok! Ez Zekî me.", rolle: "Ez alîkariya te dikim – li pêş di dikanê de, li paş di ofîsê de.", "laden-schnell": "Navê dikana te çi ye? Û tu çi difroşî?", "karte-foto": "Wêneyê menûya xwe bikişîne. Ez xwarin û bihayan dixwînim.", "kuehl-schnell": "Sarincokên te çi ne? Tenê li + bitikîne.", geld: "Dikan mehê çiqas lê dikeve? Texmînî bes e.", fertig: "Pir baş, serok! Ji niha pê ve ez her tim li vir im." },
   },
   inventur: {
     menue: "Hejmartina malê", titel: "Hejmartina malê", titelMonat: (m) => `Hejmartina malê ${m}`,

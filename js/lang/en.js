@@ -1055,6 +1055,7 @@ export default {
     geldHilfe: "Roughly is fine, empty is fine too. Photograph bills later in the office.",
     putzt: "Who cleans?", wer: { selbst: "We do", firma: "A company", beides: "Both" }, firma: "Cleaning company",
     fertig: "Done!", eingerichtet: "set up", los: "Let's go", pin: "Set office PIN",
+    zeki: { hallo: "Hi boss! I'm Zeki.", rolle: "I help you – up front in the shop and in the back office.", "laden-schnell": "What's your shop called? And what do you sell?", "karte-foto": "Snap your menu. I'll read dishes and prices.", "kuehl-schnell": "Which fridges do you have? Just tap plus.", geld: "What does the shop cost per month? Roughly is fine.", fertig: "Great, boss! From now on I'm always here." },
   },
   // Stocktake (Punkt 3)
   inventur: {

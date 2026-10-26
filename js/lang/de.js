@@ -1062,6 +1062,10 @@ export default {
     geldHilfe: "Ungefähr reicht, leer lassen geht auch. Rechnungen fotografierst du später im Büro.",
     putzt: "Wer putzt?", wer: { selbst: "Wir", firma: "Firma", beides: "Beides" }, firma: "Firma",
     fertig: "Fertig!", eingerichtet: "eingerichtet", los: "Los geht's", pin: "Büro-PIN festlegen",
+    zeki: { hallo: "Selam, Chef! Ich bin Zeki.", rolle: "Ich helf dir – vorne im Laden, hinten im Büro.",
+      "laden-schnell": "Wie heißt dein Laden? Und was verkaufst du?", "karte-foto": "Fotografier deine Karte. Ich lese Gerichte und Preise.",
+      "kuehl-schnell": "Welche Kühlgeräte hast du? Drück einfach Plus.", geld: "Was kostet der Laden im Monat? Ungefähr reicht.",
+      fertig: "Stark, Chef! Ab jetzt bin ich immer da." },
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
   inventur: {
