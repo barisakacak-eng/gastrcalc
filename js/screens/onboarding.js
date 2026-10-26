@@ -589,6 +589,7 @@ const geld = {
 };
 
 // Fertig: großer Haken, Einrichtungsring, EIN Hauptknopf (ohne Gerichte: Karte fotografieren, sonst „Los geht's“), leise „Büro-PIN festlegen“.
+// 26.10.2026: Ring nur bei mehr als 0 % – kein „0 % eingerichtet“ direkt nach „Fertig!“
 const fertigSchnell = {
   id: "fertig-schnell",
   view(stand) {
@@ -597,7 +598,7 @@ const fertigSchnell = {
       <div class="s2fertig">
         <span class="s2haken" aria-hidden="true">${sym("check")}</span>
         <h1 class="frage" dir="auto">${esc(t("schnell2.fertig"))}</h1>
-        <div class="s2ring">${ring(e.prozent)}<span>${esc(t("schnell2.eingerichtet"))}</span></div>
+        ${e.prozent > 0 ? `<div class="s2ring">${ring(e.prozent)}<span>${esc(t("schnell2.eingerichtet"))}</span></div>` : ""}
         <button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>
       </div>`;
   },

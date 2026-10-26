@@ -98,3 +98,7 @@
   .s2kuehlzeile { grid-template-columns: 60px 1fr; }
   .s2kuehlzeile .s2zaehler { grid-column: 1 / -1; justify-self: end; }
 }
+
+/* 26.10.2026: Rechtsformen sind lang („UG (haftungsbeschränkt)“) – zwei Spalten, eckiger, sauberer Umbruch statt „Einzelunternehm-en“ */
+.s2rechtsform .chips { grid-template-columns: repeat(2, 1fr); }
+.s2rechtsform .chip { border-radius: 14px; font-size: calc(15rem / 17); line-height: 1.25; hyphens: auto; overflow-wrap: normal; word-break: normal; }
