@@ -39,7 +39,7 @@ test("Umsatz-Export: nur Brutto-Notiz mit Kennzeichnung, kein Mischsatz, nie vol
   assert.equal(csv, "﻿D;B;N;G;K\r\n01.09.2026;937,13;;;Notiz – kein Z-Bon, nicht für die Buchung\r\n");
   assert.equal(p.stand.umsatz, "notiz"); assert.equal(p.vollstaendig, 0);
   const k = ordnerKachelStand(s, { datum: "2026-10-15" }); assert.notEqual(k.buch.farbe, "gruen"); assert.notEqual(k.steuer.farbe, "gruen");
-  const html = druckHtml(paketDokument(s, St.monatsPaket(s, Z, "steuer")));
+  const html = druckHtml(paketDokument(s, St.monatsPaket(s, Z, "buch"))); // Umsatz-Notiz steht seit 26.10.2026 im Buchhalter-Paket
   assert.match(html, /kein Z-Bon, nicht für die Buchung/); assert.ok(!/Mischsatz/.test(html)); assert.ok(!/Beträge netto, wenn nicht anders/.test(html));
 });
 

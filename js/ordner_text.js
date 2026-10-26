@@ -4,7 +4,7 @@
 import { t, sprache } from "./i18n.js";
 import { fmtEuro, fmtZahl, heute } from "./util.js";
 import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, AMT_TEILE } from "./export_amt.js";
-import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe } from "./export_steuer.js";
+import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe, jahrVon } from "./export_steuer.js";
 import de from "./lang/de.js"; // W2-T: feste deutsche Kennzeichnung der Umsatz-Notizen in jeder App-Sprache
 import { imTakt } from "./takt.js";
 import { PAUSCHBETRAG_EIGEN_2026 } from "./engine.js"; // P1 (20.10.2026)
@@ -29,18 +29,19 @@ export function zeitraumText(z) {
   return `${datumDe(z.von)} – ${datumDe(z.bis)}`;
 }
 // Monat des Steuer-/Buchhalter-Pakets: gewählter Monat ("JJJJ-MM") oder der Vormonat
-export const paketZeitVon = (paketMonat = {}, art, H = heute()) => monatVon((paketMonat?.[art] || monatPlus(H.slice(0, 7), -1)) + "-01");
+export const paketZeitVon = (paketMonat = {}, art, H = heute()) => (art === "steuer" ? jahrVon(paketMonat?.steuer || H.slice(0, 4), H) : monatVon((paketMonat?.[art] || monatPlus(H.slice(0, 7), -1)) + "-01")); // Steuerberater: Jahr (26.10.2026)
 
 
 // ---------- Kachelstand für die Büro-Startseite ----------
 export function ordnerKachelStand(stand, { datum: H = heute() } = {}) {
   const a = ordnerAmt(stand, zeitraumFuer("monat", { datum: H }), { datum: H });
   const vm = monatVon(monatPlus(H.slice(0, 7), -1) + "-01");
-  const s = imTakt(stand, "paket:steuer:" + vm.von, () => monatsPaket(stand, vm, "steuer")); const b = imTakt(stand, "paket:buch:" + vm.von, () => monatsPaket(stand, vm, "buch")); // W2-T-Regeln, je Bild einmal gerechnet
+  const jz = jahrVon(H.slice(0, 4), H);
+  const s = imTakt(stand, "paket:steuer:" + jz.von, () => monatsPaket(stand, jz, "steuer")); const b = imTakt(stand, "paket:buch:" + vm.von, () => monatsPaket(stand, vm, "buch")); // W2-T-Regeln, je Bild einmal gerechnet
   return {
     amt: { farbe: a.vollstaendig === a.gesamt ? "gruen" : a.vollstaendig ? "gelb" : "rot", text: t("ordner.kachelVon", a.vollstaendig, a.gesamt) },
     // W2-T: grün nur durch Belege, Kosten und Listen – getippte Umsätze machen keinen Ordner fertig (Prüfung p04 Nr. 2)
-    steuer: { farbe: s.vollstaendig === s.pruefTeile.length ? "gruen" : s.vollstaendig || s.umsatz.tage ? "gelb" : "grau", text: monatName(vm.von) },
+    steuer: { farbe: s.vollstaendig === s.pruefTeile.length ? "gruen" : s.vollstaendig ? "gelb" : "grau", text: t("ordner.zeit.jahr", jz.jahr) },
     buch: { farbe: b.vollstaendig === b.pruefTeile.length ? "gruen" : b.vollstaendig || b.umsatz.tage ? "gelb" : "grau",
       text: b.vollstaendig === b.pruefTeile.length ? t("ordner.bereit") : b.vollstaendig || b.umsatz.tage || b.belege.anzahl ? t("ordner.kachelVon", b.vollstaendig, b.pruefTeile.length) : t("ordner.leer") },
   };
@@ -129,7 +130,8 @@ const kopfVon = (teil) => (KOPF_W2[teil] ? KOPF_W2[teil]() : teil === "belege" ?
 
 // Paket C (19.10.2026): Was der Inhaber selbst beilegt (Originale aus Kasse, Bank, Lieferant, Amt) – je Ordner.
 // Grundlage: Kanzlei-Pendelordner und Behörden-Merkblätter (Recherche 19.10.2026, Projekt-Dokument „GastroCalc Recherche 1“).
-export const BEILAGEN = { steuer: ["zbon", "karten", "bank", "fapost"], buch: ["rechnungen", "ausgang", "vertraege"], amt: ["lieferscheine", "ifsg", "schaedling", "haccp"] };
+// 26.10.2026 getrennt: Monatliches zum Buchhalter, Jährliches zum Steuerberater (Grundlage zusätzlich Frankys Checkliste vom 24.10.2026 – nur Zweitquellen, vor dem Pilot mit einem Steuerberater klären).
+export const BEILAGEN = { buch: ["zbon", "karten", "bank", "rechnungen", "ausgang", "arbeitszeiten", "bewirtung"], steuer: ["geraete", "darlehen", "vertraege", "kassenzaehl", "fapost"], amt: ["lieferscheine", "ifsg", "schaedling", "haccp"] };
 // Erster Abschnitt jedes Ordners: Inhalt (was die App liefert, mit Stand) und Beilagen (was du beilegst). dok = fertiges Druckmodell.
 export function inhaltAbschnitt(dok, art) {
   const zeilen = []; let nr = 0;
@@ -203,7 +205,7 @@ export function paketDokument(stand, p) {
     zeilen: p.kosten.zeilen.map((x) => ({ warn: x.status === "geschaetzt", zellen: [n.posten(x.posten) + (x.status === "geschaetzt" ? ` (${n.pstatus(x.status)})` : ""), euro(x.betrag), n.periode(x.periode), n.basis(x.basis), euro(x.jeMonat)] })), leer: t("ordner.zeile.kostenKeine") });
   a.push({ titel: t("ordnerT.aenderungen"), info: t("ordnerT.aenderungenInfo"), kopf: t("ordnerT.druck.aenderungen"), rechts: [4, 5],
     zeilen: p.aenderungen.zeilen.map((x) => [datumDe(x.datum), n.aart(x.art), n.vorgang(x.vorgang), x.art === "kosten" ? [n.stelle(x.stelle), x.text].filter(Boolean).join(" · ") : (x.text || "–"), x.alt === null ? "–" : `${euro(x.alt)} ${n.basis(x.basis)}`, x.neu === null ? "–" : euro(x.neu), zeitDe(x.zeit)]), leer: t("ordnerT.aenderungenKeine") });
-  return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", beispiel: beispielKopf(stand), zeitraum: monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordnerT.fuss") };
+  return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", beispiel: beispielKopf(stand), zeitraum: art === "steuer" ? t("ordner.zeit.jahr", Number(p.zeitraum.von.slice(0, 4))) : monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordnerT.fuss") };
 }
 
 // Dateien (CSV) je Teil

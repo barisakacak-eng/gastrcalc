@@ -117,16 +117,19 @@ test("Monatspaket Steuerberater/Buchhalter: Umsatz netto, Sachbezug, Schwund, Be
   s.lieferungen = [{ id: "l", datum: "2026-09-05", lieferant: "Metro", summeNetto: 100, summeBrutto: 110, zeilen: [{ name: "Tomaten", netto: 80 }, { name: "Spülmittel 5 l", netto: 20 }], storniert: false }];
   s.kostenbelege = [{ id: "k", datum: "2026-09-06", stelle: "strom", betrag: 119, basis: "brutto", satz: 0.19, verteilung: "monatlich", lieferant: "SW", storniert: false }];
   s.inventuren = [{ id: "i", datum: "2026-09-30", abgeschlossen: "x", posten: {}, ausgeblendet: [], wert: 412.37 }];
-  const z = St.monatVon("2026-09-01"); const p = St.monatsPaket(s, z, "steuer");
+  const z = St.monatVon("2026-09-01"); const p0 = St.monatsPaket(s, z, "buch"); const ps = St.monatsPaket(s, z, "steuer"); // getrennt 26.10.2026
+  const p = { ...p0, schwund: ps.schwund, inventur: ps.inventur, stand: { ...p0.stand, schwund: ps.stand.schwund, inventur: ps.stand.inventur } };
+  assert.deepEqual(St.TEILE.buch, ["umsatz", "belege", "kosten", "personal", "reinigung"]); assert.deepEqual(St.TEILE.steuer, ["inventur", "schwund", "personal"]);
   assert.equal(p.umsatz.tage, 1); assert.equal(p.umsatz.zeilen[0].brutto, 214); assert.equal(p.umsatz.zeilen[0].netto, undefined, "W2-T: keine Steuer aus dem Mischsatz"); assert.equal(p.stand.umsatz, "notiz");
   assert.equal(p.personal.sachbezug, 4.74); assert.equal(p.personal.zeilen[0].person, "Ayşe");
   assert.equal(p.schwund.muellwert, 2.5); assert.equal(p.schwund.ohneWert, 1); assert.equal(p.stand.schwund, "luecke");
   assert.equal(p.belege.anzahl, 2); assert.equal(p.belege.netto, 200); assert.equal(p.stand.belege, "pruefen", "W2-T: Lieferung ohne erkannten Satz"); assert.equal(p.belege.zeilen[0].betriebsmittel, 20);
   assert.equal(p.reinigung.netto, 20); assert.equal(p.inventur.zeilen[0].wert, 412.37); assert.equal(p.stand.inventur, "ok");
-  assert.equal(p.vollstaendig, 3); assert.deepEqual(p.pruefTeile, ["personal", "schwund", "belege", "inventur", "reinigung"]);
+  assert.deepEqual(p0.pruefTeile, ["belege", "kosten"]); assert.deepEqual(ps.pruefTeile, ["inventur", "schwund"]);
+  assert.equal(ps.vollstaendig, 1, "Steuer: Inventur ok, Schwund Lücke");
   const csv = St.teilCsv(p, "umsatz", ["Datum", "Brutto", "Nach", "Vorwert", "Kennung"]);
   assert.equal(csv, "﻿Datum;Brutto;Nach;Vorwert;Kennung\r\n01.09.2026;214,00;;;notiz\r\n");
-  const b = St.monatsPaket(s, z, "buch"); assert.deepEqual(b.teile, ["umsatz", "belege", "kosten"]); assert.equal(b.personal, undefined);
+  assert.equal(ps.umsatz, undefined, "Umsatz-Notizen nur beim Buchhalter"); assert.equal(p0.inventur, undefined, "Inventur nur beim Steuerberater");
   assert.equal(St.monatsPaket(s, St.monatVon("2026-08-01"), "steuer").stand.inventur, "luecke");
 });
 
@@ -169,4 +172,17 @@ test("Schwund: Summe aus gerundeten Zeilen, Eigenverbrauch getrennt; Nachtrag er
   const b = St.belege(s, z);
   assert.equal(b.zeilen.find((x) => x.id === "n").nachgetragen, "2026-09-20"); assert.equal(b.zeilen.find((x) => x.id === "m").nachgetragen, null);
   const sw = St.schwund(s, z); assert.equal(sw.summeMuell, 0); assert.equal(sw.summeEigen, 0);
+});
+
+test("Ordner getrennt: Abhakliste „Legst du selbst dazu“ je Zeitraum, Steuerberater zeigt Jahr und Fragen (26.10.2026)", async () => {
+  const { beilageBereitSchalten, beilagenBereit } = await import("../js/stamm.js");
+  const { BEILAGEN } = await import("../js/ordner_text.js");
+  const s = leererBetrieb();
+  assert.ok(BEILAGEN.buch.includes("bank") && BEILAGEN.steuer.includes("darlehen") && !BEILAGEN.steuer.includes("zbon"));
+  assert.equal(beilageBereitSchalten(s, "buch", "2026-09", "bank"), true);
+  assert.ok(beilagenBereit(s, "buch", "2026-09").has("bank")); assert.equal(beilagenBereit(s, "buch", "2026-10").size, 0, "je Monat getrennt");
+  assert.equal(beilageBereitSchalten(s, "buch", "2026-09", "bank"), false);
+  const { ordnerPaketView } = await import("../js/screens/ordner.js");
+  const html = ordnerPaketView(s, "steuer");
+  assert.match(html, /data-a="beilage-bereit"/); assert.match(html, /data-wert="hinweise"/); assert.match(html, new RegExp(String(new Date().getFullYear())));
 });
