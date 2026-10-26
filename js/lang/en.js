@@ -1108,7 +1108,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Today", muell: "Waste", kuehl: "Fridges", putzplan: "Cleaning", karte: "Menu" },
-    leiste: "Shop", menueAuf: "Open menu", schliessen: "Close", hilfeAuf: "Help", deinLaden: "Your shop", abschluss: "Close the day", personal: "Staff mode", buero: "Office", ladenWechseln: "Switch shop", sprache: "Language", zumLaden: "Shop", zumBuero: "Office", schlossCode: "Enter office code",
+    leiste: "Shop", menueAuf: "Open menu", schliessen: "Close", hilfeAuf: "Help", zekiFragen: "Ask Zeki", deinLaden: "Your shop", abschluss: "Close the day", personal: "Staff mode", buero: "Office", ladenWechseln: "Switch shop", sprache: "Language", zumLaden: "Shop", zumBuero: "Office", schlossCode: "Enter office code",
     pin: { titel: "Office code", neu: "Choose a new code", nochmal: "Once more", falsch: "Wrong code", ungleich: "Doesn't match. Choose again.", gesetzt: "Office code saved", entfernt: "Office code removed", setzen: "Set office code", aendern: "Change office code", entfernen: "Remove code", ohne: "Without a code, anyone can open the office.", mit: "The office is protected by a code.", loeschen: "Delete digit", testphase: "Test phase: no code. Anyone can enter the office and staff mode. Switch back on before the big pilot.", testphaseAn: "Turn on test phase without code", testphaseAus: "Turn the code back on" },
     hilfeText: {
       allgemein: "The bar at the bottom leads to everything you need in the shop. Costs, setup and lists live in the office.",

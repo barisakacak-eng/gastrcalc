@@ -1108,7 +1108,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "امروز", muell: "دورریز", kuehl: "سرمایش", putzplan: "نظافت", karte: "منو" },
-    leiste: "مغازه", menueAuf: "باز کردن منو", schliessen: "بستن", hilfeAuf: "راهنما", deinLaden: "مغازهٔ تو", abschluss: "بستن روز", personal: "حالت کارکنان", buero: "دفتر", ladenWechseln: "عوض کردن مغازه", sprache: "زبان", zumLaden: "مغازه", zumBuero: "دفتر", schlossCode: "رمز دفتر را وارد کن",
+    leiste: "مغازه", menueAuf: "باز کردن منو", schliessen: "بستن", hilfeAuf: "راهنما", zekiFragen: "از زکی بپرس", deinLaden: "مغازهٔ تو", abschluss: "بستن روز", personal: "حالت کارکنان", buero: "دفتر", ladenWechseln: "عوض کردن مغازه", sprache: "زبان", zumLaden: "مغازه", zumBuero: "دفتر", schlossCode: "رمز دفتر را وارد کن",
     pin: { titel: "رمز دفتر", neu: "رمز تازه انتخاب کن", nochmal: "یک بار دیگر", falsch: "رمز اشتباه", ungleich: "یکی نیست. دوباره انتخاب کن.", gesetzt: "رمز دفتر ذخیره شد", entfernt: "رمز دفتر برداشته شد", setzen: "تعیین رمز دفتر", aendern: "تغییر رمز دفتر", entfernen: "برداشتن رمز", ohne: "بدون رمز هر کسی وارد دفتر می‌شود.", mit: "دفتر با رمز محافظت می‌شود.", loeschen: "پاک کردن رقم", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "نوار پایین تو را به هر چیزی که در مغازه لازم داری می‌برد. حساب‌ها، تنظیمات و فهرست‌ها در دفتر هستند.",
