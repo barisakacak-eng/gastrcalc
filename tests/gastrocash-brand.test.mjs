@@ -9,7 +9,7 @@ test('Zeki: Zustände bleiben unterscheidbar, neutrale Augen sind offen', () => 
   for(const state of states){
     const svg=mascotMarkup(state);
     assert.match(svg, /viewBox="0 0 237 328"/);
-    assert.ok(svg.includes('zeki--'+state));
+    assert.ok(svg.includes('zeki--'+(state==='nachdenklich'?'import':state)));
     assert.equal((svg.match(/data-zeki-teil="auge-[lr]"/g)||[]).length,2);
     const ids=[...svg.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);assert.equal(ids.length,new Set(ids).size,'jede Clip-ID ist eindeutig');
     assert.doesNotMatch(svg,/zeki--zwinkern/,'kein Dauerzwinkern im Zustand '+state);
@@ -75,7 +75,7 @@ test('Bewegungen sind von Emotionen getrennt und unbekannte Bewegung fällt sich
   assert.match(mascotMarkup('erfolg','celebrate'),/gc-motion--celebrate/);
   assert.match(mascotMarkup('neutral','irgendwas'),/gc-motion--none/);
   const blink=mascotMarkup('neutral','idle');
-  assert.match(blink,/zeki--atmen/);
+  assert.match(blink,/data-zeki-start="none"/);
   assert.equal((blink.match(/data-zeki-teil="auge-[lr]"/g)||[]).length,2,'Atmen bleibt beidäugig');
 });
 

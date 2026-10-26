@@ -125,12 +125,14 @@ for joint in ['kopf','arm-r']:
  target=doc['nodes'][node[joint]];target.pop('matrix',None);target.update(translation=PIV[joint].tolist(),rotation=[0.,0.,0.,1.],scale=[1.,1.,1.])
 times=np.linspace(0,1.2,25);ain=accessor(times,'SCALAR');doc['animations']=[]
 def armwinkel(t):
- ts=[0,.24,.38,.52,.66,.80,1];aa=[0,-137,-116,-140,-116,-137,0];tau=t/1.2;i=max(1,next((i for i,v in enumerate(ts) if v>=tau),6));f=(tau-ts[i-1])/(ts[i]-ts[i-1]);f=(1-math.cos(math.pi*f))/2;return aa[i-1]*(1-f)+aa[i]*f
+ ts=[0,.24,.38,.52,.66,.80,1];aa=[0,137,116,140,116,137,0];tau=t/1.2;i=max(1,next((i for i,v in enumerate(ts) if v>=tau),6));f=(tau-ts[i-1])/(ts[i]-ts[i-1]);f=(1-math.cos(math.pi*f))/2;return aa[i-1]*(1-f)+aa[i]*f
 for name,target,axis,angles in [('Nicken','kopf',(1,0,0),[15*math.sin(math.pi*t/1.2)**2 for t in times]),('Kopfschuetteln','kopf',(0,1,0),[16*math.sin(4*math.pi*t/1.2)*math.sin(math.pi*t/1.2) for t in times]),('Hand_heben','arm-r',(0,0,1),[armwinkel(t) for t in times])]:
  q=[[*(np.array(axis)*math.sin(math.radians(a)/2)),math.cos(math.radians(a)/2)] for a in angles];out=accessor(q,'VEC4');doc['animations'].append({'name':name,'samplers':[{'input':ain,'output':out,'interpolation':'LINEAR'}],'channels':[{'sampler':0,'target':{'node':node[target],'path':'rotation'}}]})
 for mat in doc.get('materials',[]):mat['doubleSided']=True
-if (P/'atlas.png').exists():
- data=(P/'atlas.png').read_bytes();binary.extend(b'\0'*((-len(binary))%4));start=len(binary);binary.extend(data);iv=len(doc['bufferViews']);doc['bufferViews'].append({'buffer':0,'byteOffset':start,'byteLength':len(data)})
+if (P/'atlas.webp').exists():
+ import io
+ from PIL import Image
+ image_buffer=io.BytesIO();Image.open(P/'atlas.webp').save(image_buffer,'PNG');data=image_buffer.getvalue();binary.extend(b'\0'*((-len(binary))%4));start=len(binary);binary.extend(data);iv=len(doc['bufferViews']);doc['bufferViews'].append({'buffer':0,'byteOffset':start,'byteLength':len(data)})
  doc['images']=[{'name':'Vektorfarbe','bufferView':iv,'mimeType':'image/png'}];doc['samplers']=[{'magFilter':9729,'minFilter':9729,'wrapS':33071,'wrapT':33071}];doc['textures']=[{'sampler':0,'source':0}]
  mi=len(doc.setdefault('materials',[]));doc['materials'].append({'name':'Vektorfarbe auf 3D-Koerper','pbrMetallicRoughness':{'baseColorTexture':{'index':0},'metallicFactor':0,'roughnessFactor':1},'doubleSided':True,'extensions':{'KHR_materials_unlit':{}}});doc.setdefault('extensionsUsed',[]).append('KHR_materials_unlit')
  byname={m.get('name'):m for m in doc['meshes']}

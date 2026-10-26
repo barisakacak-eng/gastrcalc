@@ -12,9 +12,9 @@
 </main>
 <script type="module">
 import {mascotMarkup,zekiSpielen} from '../js/gastrocash-brand.js';
-import {sanjiDesign as de} from '../js/lang/de.js';import {sanjiDesign as tr} from '../js/lang/tr.js';import {sanjiDesign as en} from '../js/lang/en.js';
-const tables={de,tr,en};let active='de';let state='neutral';let reference=true;const t=k=>tables[active][k];const movements=['zwinkern','grinsen','hand','nicken','kopfschuetteln','atmen'];const live=document.querySelector('#live');
-function figure(){document.querySelector('#state').value=reference?'freude':state;live.innerHTML=mascotMarkup(reference?'freude':state);if(reference)live.firstElementChild.classList.add('zeki--referenz');document.querySelector('#state-label').textContent=reference?t('reference'):t(state);}
+import {de} from './schablone-texte.js';import {tr} from './schablone-texte.js';import {en} from './schablone-texte.js';
+const tables={de,tr,en};let active='de';let state='neutral';let reference=true;const t=k=>tables[active][k];const movements=['zwinkern','grinsen','hand','nicken','kopfschuetteln','pruefen'];const live=document.querySelector('#live');
+function figure(){document.querySelector('#state').value=reference?'freude':state;live.innerHTML=mascotMarkup(reference?'freude':state);if(reference)live.firstElementChild.classList.add('zeki--freude');document.querySelector('#state-label').textContent=reference?t('reference'):t(state);}
 function render(){document.documentElement.lang=active;document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));document.querySelector('#controls').innerHTML=movements.map(m=>`<button type="button" data-motion="${m}">${t(m)}</button>`).join('');figure();}
 document.querySelector('#language').addEventListener('change',e=>{active=e.target.value;render();});document.querySelector('#state').addEventListener('change',e=>{reference=false;state=e.target.value;figure();});document.querySelector('#controls').addEventListener('click',e=>{const motion=e.target.closest('[data-motion]')?.dataset.motion;if(!motion)return;if(reference){reference=false;figure();}zekiSpielen(live,motion);});render();
 // Für reproduzierbare PR-Aufnahmen; kein Zustand der App wird verändert.

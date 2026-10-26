@@ -7,7 +7,7 @@ function T(p){let m=I();m[12]=p[0];m[13]=p[1];m[14]=p[2];return m}
 function R(axis,d){let a=d*Math.PI/180,c=Math.cos(a),s=Math.sin(a),m=I();if(axis==='x'){m[5]=c;m[6]=s;m[9]=-s;m[10]=c}if(axis==='y'){m[0]=c;m[2]=-s;m[8]=s;m[10]=c}if(axis==='z'){m[0]=c;m[1]=s;m[4]=-s;m[5]=c}return m}
 export class Zeki3D{
  constructor(canvas){
-  this.canvas=canvas;const gl=canvas.getContext('webgl',{antialias:true,alpha:false,preserveDrawingBuffer:true});if(!gl)throw Error('3D-Ansicht konnte nicht geöffnet werden');this.gl=gl;
+  this.canvas=canvas;const gl=canvas.getContext('webgl',{antialias:true,alpha:true,preserveDrawingBuffer:true});if(!gl)throw Error('3D-Ansicht konnte nicht geöffnet werden');this.gl=gl;
   const compile=(type,src)=>{let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s};
   const vs=compile(gl.VERTEX_SHADER,`attribute vec3 a_pos;attribute vec3 a_n;attribute vec2 a_uv;varying vec2 v_uv;uniform mat4 u_node;uniform mat4 u_view;uniform vec2 u_frame;uniform float u_center;uniform float u_eyeScale;uniform float u_eyeCenter;uniform float u_look;varying vec3 v_n;void main(){vec3 p=a_pos;p.y=(p.y-u_eyeCenter)*u_eyeScale+u_eyeCenter;p.x+=u_look;vec4 q=u_view*u_node*vec4(p,1.0);gl_Position=vec4(q.x/u_frame.x,(q.y-u_center)/u_frame.y,-q.z/500.0,1.0);v_n=mat3(u_view*u_node)*a_n;v_uv=a_uv;}`);
   const fs=compile(gl.FRAGMENT_SHADER,`precision mediump float;uniform vec3 u_color;uniform float u_lit;uniform float u_paint;uniform sampler2D u_tex;varying vec2 v_uv;varying vec3 v_n;void main(){float light=0.86+0.14*abs(dot(normalize(v_n+vec3(0.0,0.0,0.00001)),normalize(vec3(-0.3,0.5,1.0))));vec4 paint=texture2D(u_tex,v_uv);vec3 color=mix(u_color,paint.rgb,u_paint*paint.a);gl_FragColor=vec4(color*mix(1.0,light,u_lit),1.0);}`);
@@ -21,8 +21,8 @@ export class Zeki3D{
   gl.enable(gl.DEPTH_TEST);gl.disable(gl.CULL_FACE);this.pose={state:'neutral',pitch:0,yaw:0,bodyYaw:0,arm:0,wink:0,look:0,head:false};this.render();
  }
  render(next={}){
-  Object.assign(this.pose,next);const p=this.pose,gl=this.gl,canvas=this.canvas,rect=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,3);let w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}gl.viewport(0,0,w,h);gl.useProgram(this.program);gl.clearColor(245/255,235/255,221/255,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-  const halfY=p.head?Math.max(73,110*h/w):180;gl.uniform2f(this.u.frame,halfY*w/h,halfY);gl.uniform1f(this.u.center,p.head?91:0);gl.uniformMatrix4fv(this.u.view,false,R('y',p.bodyYaw));
+  Object.assign(this.pose,next);const p=this.pose,gl=this.gl,canvas=this.canvas,rect=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,3);let w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}gl.viewport(0,0,w,h);gl.useProgram(this.program);gl.clearColor(245/255,235/255,221/255,p.transparent?0:1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  const halfY=p.head?Math.max(73,110*h/w):(p.halfY||180);gl.uniform2f(this.u.frame,halfY*w/h,halfY);gl.uniform1f(this.u.center,p.head?91:0);gl.uniformMatrix4fv(this.u.view,false,R('y',p.bodyYaw));
   const matrices={};for(let [name,pivot] of Object.entries(source.pivots)){let rot=I();if(name==='kopf')rot=mul(R('x',p.pitch),R('y',p.yaw));if(name==='arm-r')rot=R('z',p.arm);matrices[name]=mul(T(pivot),rot)}
   for(let m of this.meshes){if(m.state&&m.state!==p.state)continue;if(m.kind==='lid'&&!(m.name==='lid-r'&&p.wink>.5))continue;
    const eye=m.name==='auge-r'&&m.state,eyeL=m.name==='auge-l'&&m.state;let scale=eye?Math.max(.04,1-p.wink):1;if(eye&&p.wink>.65)continue;
@@ -38,7 +38,7 @@ export function poseAt(m,t){let pitch=0,yaw=0,arm=0,wink=0,look=0,state='neutral
  if(m==='nicken'){state='bestaetigt';pitch=15*Math.sin(Math.PI*t)**2}
  if(m==='nein'){state='fehler';yaw=16*Math.sin(4*Math.PI*t)*Math.sin(Math.PI*t)}
  if(m==='drehen')yaw=0;
- if(m==='hand'){const ts=[0,.24,.38,.52,.66,.80,1],as=[0,-137,-116,-140,-116,-137,0];let i=ts.findIndex(x=>x>=t);i=Math.max(1,i);let f=(t-ts[i-1])/(ts[i]-ts[i-1]);f=(1-Math.cos(Math.PI*f))/2;arm=as[i-1]*(1-f)+as[i]*f}
+ if(m==='hand'){const ts=[0,.24,.38,.52,.66,.80,1],as=[0,137,116,140,116,137,0];let i=ts.findIndex(x=>x>=t);i=Math.max(1,i);let f=(t-ts[i-1])/(ts[i]-ts[i-1]);f=(1-Math.cos(Math.PI*f))/2;arm=as[i-1]*(1-f)+as[i]*f}
  if(m==='zwinkern'||m==='laecheln'){state=m==='laecheln'?'freude':'neutral';wink=t<.22||t>.63?0:t<.33?(t-.22)/.11:t<.52?1:1-(t-.52)/.11}
  if(m==='import'){state='import';look=3*Math.sin(2*Math.PI*t)}if(m==='preis'){state='preis';look=4*Math.sin(2*Math.PI*t)}
  return {state,pitch,yaw,arm,wink,look};
