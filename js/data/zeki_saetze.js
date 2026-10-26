@@ -1,8 +1,8 @@
 // Zekis Sätze (Kurswechsel 24.10.2026). Format genau wie Frankys Lieferung „GastroCash Zeki Sätze 27.10.2026“:
 // id; ausloeser; art (hinweis | frage | aussage); bewegung (nicken | kopfschuetteln | zwinkern | grinsen | hand | keine); de; tr; en.
-// Platzhalter in geschweiften Klammern: {betrag} {tage} {stelle} {gericht}. Höchstens 12 Wörter je Satz, A2, kein Steuer-Deutsch, kein leeres Lob.
+// Platzhalter in geschweiften Klammern: {betrag} {tage} {stelle} {gericht} {anzahl}. Höchstens 12 Wörter je Satz, A2, kein Steuer-Deutsch, kein leeres Lob.
 // Stand 26.10.2026: 46 Sätze im umgangssprachlichen Ton (Baris Ja 26.10., 13:23). Herkunft: 32 Franky, 12 Zoro, 2 neu (zeki_u..).
-export const ZEKI_AUSLOESER = ["kuehl_abweichung", "kuehl_offen", "umsatz_fehlt", "karte_leer", "preis_fehlt", "erster_muell", "muell_hoch", "ziel_erreicht", "tag_abgeschlossen", "inventur_faellig", "sicherung_alt", "hinweis_neu"];
+export const ZEKI_AUSLOESER = ["kuehl_abweichung", "kuehl_offen", "putzen_offen", "umsatz_fehlt", "karte_leer", "preis_fehlt", "erster_muell", "muell_hoch", "ziel_erreicht", "tag_abgeschlossen", "inventur_faellig", "sicherung_alt", "hinweis_neu"];
 export const ZEKI_ARTEN = ["hinweis", "frage", "aussage"];
 export const ZEKI_BEWEGUNGEN = ["nicken", "kopfschuetteln", "zwinkern", "grinsen", "hand", "keine"];
 
@@ -30,6 +30,9 @@ export const ZEKI_SAETZE = [
   { id: "zeki_022", ausloeser: "kuehl_offen", art: "frage", bewegung: "zwinkern", de: "Schon die Temperaturen gemessen heute?", tr: "Bugün dereceleri ölçtün mü?", en: "Measured the temperatures yet today?" },
   { id: "zeki_023", ausloeser: "kuehl_offen", art: "hinweis", bewegung: "hand", de: "Ein Rundgang fehlt noch. Machst du ihn jetzt?", tr: "Bir tur eksik. Şimdi yapar mısın?", en: "One round is missing. Will you do it now?" },
   { id: "zeki_v02", ausloeser: "kuehl_offen", art: "frage", bewegung: "keine", de: "Noch {tage} Kühlstellen offen. Kurz rum, dauert zwei Minuten.", tr: "{tage} soğutma yeri açık. Kısa bir tur, iki dakika.", en: "{tage} fridges still open. Quick round, two minutes." },
+  { id: "zeki_p01", ausloeser: "putzen_offen", art: "hinweis", bewegung: "hand", de: "Chef, {anzahl} Putzaufgaben sind überfällig. Eine nach der anderen.", tr: "Usta, {anzahl} temizlik işi gecikti. Birer birer.", en: "Boss, {anzahl} cleaning jobs are overdue. One at a time." },
+  { id: "zeki_p02", ausloeser: "putzen_offen", art: "frage", bewegung: "keine", de: "{anzahl} Aufgaben überfällig. Wer im Team macht's heute?", tr: "{anzahl} iş gecikti. Bugün ekipten kim yapar?", en: "{anzahl} jobs overdue. Who on the team does it today?" },
+  { id: "zeki_p03", ausloeser: "putzen_offen", art: "aussage", bewegung: "nicken", de: "Abhaken reicht. Dann hast du's fürs Amt schwarz auf weiß.", tr: "İşaretlemen yeter. Belediye için kayıtlı olur.", en: "Just tick it off. Then it's on record for the inspector." },
   { id: "zeki_v03", ausloeser: "umsatz_fehlt", art: "frage", bewegung: "keine", de: "Was hat die Kasse gestern gemacht? Tipp's kurz ein.", tr: "Kasa dün ne yaptı? Kısaca yaz.", en: "What did the till make yesterday? Type it in." },
   { id: "zeki_u01", ausloeser: "umsatz_fehlt", art: "hinweis", bewegung: "hand", de: "Ohne Kassenzahl von gestern rate ich nur. Trag sie ein.", tr: "Dünkü kasa olmadan sadece tahmin ederim. Yaz onu.", en: "Without yesterday's till number I only guess. Enter it." },
   { id: "zeki_u02", ausloeser: "umsatz_fehlt", art: "frage", bewegung: "zwinkern", de: "Chef, wie lief's gestern an der Kasse?", tr: "Usta, dün kasa nasıl geçti?", en: "Boss, how did the till do yesterday?" },
