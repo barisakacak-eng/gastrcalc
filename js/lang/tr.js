@@ -1109,7 +1109,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem “?“
   ebene: { tabs: { start: "Bugün", muell: "Çöp", kuehl: "Soğutma", putzplan: "Temizlik", karte: "Yemekler" },
-    leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
+    leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", zekiFragen: "Zeki'ye sor", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
     pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil", testphase: "Deneme aşaması: kodsuz. Herkes büroya ve personel moduna girer. Büyük pilottan önce tekrar aç.", testphaseAn: "Kodsuz deneme aşamasını aç", testphaseAus: "Kodu tekrar aç" },
     hilfeText: {
       allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",

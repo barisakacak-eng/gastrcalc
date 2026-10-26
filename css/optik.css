@@ -278,3 +278,12 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .zeki-sprech--ernst{border-color:#8B3A2E}
 @keyframes zekiBlaseAus{to{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion: reduce){.zeki-sprech{animation-duration:.01s}}
+/* Frag Zeki (26.10.2026) */
+.zeki-fragen{margin-top:14px;text-align:left}
+.zeki-fragen-titel{display:block;margin:0 0 6px;font-size:1rem}
+.zeki-frage{border-top:1px solid var(--b-linie,#e2d6c4);padding:2px 0}
+.zeki-frage summary{min-height:44px;display:flex;align-items:center;font-weight:650;cursor:pointer;list-style:none}
+.zeki-frage summary::-webkit-details-marker{display:none}
+.zeki-frage summary::after{content:"›";margin-left:auto;padding-left:10px;transition:transform .2s}
+.zeki-frage[open] summary::after{transform:rotate(90deg)}
+.zeki-frage p{margin:0 0 10px;line-height:1.4}

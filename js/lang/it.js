@@ -1109,7 +1109,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Oggi", muell: "Scarti", kuehl: "Frigo", putzplan: "Pulizie", karte: "Menu" },
-    leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
+    leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", zekiFragen: "Chiedi a Zeki", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
     pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",

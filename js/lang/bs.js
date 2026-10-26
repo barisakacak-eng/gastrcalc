@@ -1116,7 +1116,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Danas", muell: "Otpad", kuehl: "Hlađenje", putzplan: "Čišćenje", karte: "Meni" },
-    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi šifru ureda",
+    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", zekiFragen: "Pitaj Zekija", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi šifru ureda",
     pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",

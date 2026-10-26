@@ -1109,7 +1109,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hôm nay", muell: "Rác", kuehl: "Làm lạnh", putzplan: "Dọn dẹp", karte: "Thực đơn" },
-    leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
+    leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", zekiFragen: "Hỏi Zeki", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
     pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Thanh bên dưới dẫn đến mọi thứ bạn cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",

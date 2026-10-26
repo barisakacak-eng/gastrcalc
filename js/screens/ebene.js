@@ -3,6 +3,7 @@
 // Bildschirm darunter NICHT neu; teure Zahlen werden erst beim Öffnen gerechnet.
 // „personal" (Entwickler D, screens/personal.js) und „buero" (Entwickler C, screens/buero.js) haben eigene Bildschirme.
 import { t, sprache, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
+import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen (26.10.2026)
 import { esc } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
@@ -81,11 +82,17 @@ const HILFE_MEHR = {
   abschluss: ["abschluss.ohneUmsatz", "abschluss.hinweis"],
 };
 const HILFE = ["start", "muell", "kuehl", "putzplan", "karte", "abschluss", "laeden", "personal", "buero"];
+// Zeki beantwortet Fragen (Baris 26.10.2026, Variante C): fester, geprüfter Katalog, offline. Aufklappen ohne Skript (details).
+function zekiFragenHtml(k) {
+  const fragen = zekiFragenFuer(k, sprache());
+  if (!fragen.length) return "";
+  return `<div class="zeki-fragen"><b class="zeki-fragen-titel">${esc(t("ebene.zekiFragen"))}</b>${fragen.map((q) => `<details class="zeki-frage"><summary>${esc(q.f)}</summary><p>${esc(q.a)}</p></details>`).join("")}</div>`;
+}
 export function hilfeZeigen(ansicht) {
   const k = HILFE.includes(ansicht) ? ansicht : "allgemein";
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
   const mehr = (HILFE_MEHR[k] || []).map((key) => `<p class="hilfe-mehr">${esc(t(key))}</p>`).join("");
-  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}</div>
+  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}${zekiFragenHtml(k)}</div>
     <button type="button" class="knopf" data-a="blatt-zu">OK</button>`);
 }
 

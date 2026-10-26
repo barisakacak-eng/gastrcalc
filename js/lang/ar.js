@@ -1111,7 +1111,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "اليوم", muell: "الهدر", kuehl: "التبريد", putzplan: "التنظيف", karte: "القائمة" },
-    leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
+    leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", zekiFragen: "اسأل زكي", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
     pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "الشريط في الأسفل يأخذك إلى كل ما تحتاجه في المحل. الحسابات والإعداد والقوائم في المكتب.",

@@ -1114,7 +1114,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сьогодні", muell: "Відходи", kuehl: "Холод", putzplan: "Прибирання", karte: "Меню" },
-    leiste: "Заклад", menueAuf: "Відкрити меню", schliessen: "Закрити", hilfeAuf: "Допомога", deinLaden: "Твій заклад", abschluss: "Закрити день", personal: "Режим персоналу", buero: "Офіс", ladenWechseln: "Змінити заклад", sprache: "Мова", zumLaden: "Заклад", zumBuero: "Офіс", schlossCode: "Введи код офісу",
+    leiste: "Заклад", menueAuf: "Відкрити меню", schliessen: "Закрити", hilfeAuf: "Допомога", zekiFragen: "Запитай Зекі", deinLaden: "Твій заклад", abschluss: "Закрити день", personal: "Режим персоналу", buero: "Офіс", ladenWechseln: "Змінити заклад", sprache: "Мова", zumLaden: "Заклад", zumBuero: "Офіс", schlossCode: "Введи код офісу",
     pin: { titel: "Код офісу", neu: "Обери новий код", nochmal: "Ще раз", falsch: "Неправильний код", ungleich: "Не збігається. Обери знову.", gesetzt: "Код офісу збережено", entfernt: "Код офісу видалено", setzen: "Встановити код офісу", aendern: "Змінити код офісу", entfernen: "Видалити код", ohne: "Без коду до офісу може зайти будь-хто.", mit: "Офіс захищений кодом.", loeschen: "Стерти цифру", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Панель унизу веде до всього, що потрібно в закладі. Розрахунки, налаштування й списки — в офісі.",
