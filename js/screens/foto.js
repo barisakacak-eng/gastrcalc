@@ -5,7 +5,9 @@ import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Zutaten in
 import { esc, parseZahl, uid, fmtEuro } from "../util.js";
 import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ablage.js";
 import { auswerten, vorwaermen } from "../auswertung.js";
-import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau, kartePruefZahlen, baukastenZutatenOhneVerpackung } from "../karte_lesen.js"; // Trennung 2 (17.10.2026)
+import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau, kartePruefZahlen, baukastenZutatenOhneVerpackung, preisAuffaellig } from "../karte_lesen.js";
+import { gerichtBildQuelle } from "../bilder.js";
+import { mascotMarkup } from "../gastrocash-brand.js"; // Trennung 2 (17.10.2026)
 import { artikelAbgleichen } from "../karte_daten.js"; // Trennung (17.10.2026)
 import { uploadAnlegen, uploadAendern } from "../stamm.js"; // Trennung (17.10.2026): Uploads schreibt das Rechenwerk
 import { fehlendeRezepteErgaenzen } from "../rezept_baukasten.js";
@@ -102,6 +104,7 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
       // „Bitte prüfen" nur für Lesefehler (Name, Preis); eine Rezept-Rückfrage steht als Hinweis in der Zeile unter „Erkannt"
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
       vorschlaege.push(...neu); seiten += 1;
+      for (const v of vorschlaege) if (v.gruppe === "erkannt" && !v.preisGeprueft && preisAuffaellig(v, vorschlaege)) Object.assign(v, { preisHoch: true, gruppe: "pruefen" });
       mein.neu = neu.length;
       if (!neu.length) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
     } else if (!r.text.trim()) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
@@ -147,8 +150,8 @@ export function karteFotoView(stand) {
 // Kompakte Prüfliste (Kapitän 14.10., Entwurf A mit Teilen von B): oben „Bitte prüfen" offen zum Bearbeiten,
 // darunter „Erkannt" als eine Zeile pro Gericht – antippen klappt die Zeile zum Bearbeiten auf.
 let aufgeklappt = null;
-const grund = (v) => v.preis === null ? "preis" : v.pruefen ? "name" : v.zweiPreise && v.preisPruefen ? "zweiPreise" : v.preisPruefen ? "preisUnsicher" : v.sicher === "vorschlag" ? "rezept" : null;
-const punkt = (v) => !v.an ? "grau" : v.preis === null ? "rot" : (v.pruefen || v.preisPruefen || v.sicher === "vorschlag") ? "gelb" : "";
+const grund = (v) => v.preis === null ? "preis" : v.preisHoch ? "preisHoch" : v.pruefen ? "name" : v.zweiPreise && v.preisPruefen ? "zweiPreise" : v.preisPruefen ? "preisUnsicher" : v.sicher === "vorschlag" ? "rezept" : null;
+const punkt = (v) => !v.an ? "grau" : v.preis === null ? "rot" : (v.preisHoch || v.pruefen || v.preisPruefen || v.sicher === "vorschlag") ? "gelb" : "";
 function bearbeiter(v) {
   return `<div class="fvbearb">
       <input class="textfeld" data-f="fv-name:${v.id}" value="${esc(v.name)}" maxlength="80" aria-label="${esc(t("foto.name"))}">
@@ -156,40 +159,53 @@ function bearbeiter(v) {
         ${v.sicher === "vorschlag" ? `<button type="button" class="chip klein" data-a="fv-rezept-ja" data-id="${v.id}">${esc(t("foto.rezeptJa"))}</button><button type="button" class="chip klein" data-a="fv-rezept-nein" data-id="${v.id}">${esc(t("foto.rezeptNein"))}</button>` : ""}
         ${v.preis !== null && ["name", "preisUnsicher", "zweiPreise"].includes(grund(v)) ? `<button type="button" class="chip klein an" data-a="fv-stimmt" data-id="${v.id}">${esc(t("waage.ok"))}</button>` : ""}
         <button type="button" class="chip klein leise" data-a="fv-an" data-id="${v.id}">${esc(t("foto.weglassen"))}</button></div>
-      <small class="marke">${v.sicher === "sicher" ? "✓ " + esc(t("foto.rezeptVon", v.vorlage)) : v.sicher === "vorschlag" ? esc(t("foto.rezeptVorschlag", v.vorlage)) : v.sicher === "getraenk" ? esc(t("foto.getraenk")) : v.sicher === "baukasten" ? esc(t("foto.rezeptStartwert", v.bau.zutaten.length)) : esc(t("foto.ohneRezept"))}</small>
-      ${v.sicher === "baukasten" ? `<small class="marke">${esc(baukastenZutatenOhneVerpackung(v.bau).map((z) => `${artikelText(z.name)} ${String(z.menge).replace(".", ",")}${z.einheit === "stk" ? " " + t("allgemein.stueck") : " " + z.einheit}`).join(" · "))}</small>` : ""}
     </div>`;
 }
 function fvZeile(v) {
   const g = grund(v); const auf = aufgeklappt === v.id && v.an;
   const notiz = !v.an ? "" : g === "preis" ? `<small class="rot">${esc(t("foto.preisFehltKurz"))}</small>` : g === "name" ? `<small class="gelb">${esc(t("foto.namePruefen"))}</small>` : g === "preisUnsicher" ? `<small class="gelb">${esc(t("foto.preisPruefen"))}</small>` : g === "zweiPreise" ? `<small class="gelb">${esc(t("foto.zweiPreise", v.zweiPreise.map((x) => x.toFixed(2).replace(".", ",")).join(" / ")))}</small>` : g === "rezept" ? `<small class="gelb">${esc(t("foto.rezeptVorschlag", v.vorlage))}</small>` : "";
   return `<div class="fvz ${v.an ? "" : "aus"} ${auf ? "auf" : ""}">
-      <div class="fvkopf"><button type="button" class="fvtipp" data-a="fv-auf" data-id="${v.id}" aria-expanded="${auf}"><span class="pkt ${punkt(v)}" aria-hidden="true"></span><span class="n">${esc(v.name)}${notiz}</span><span class="p ${v.preis === null ? "leer" : ""}">${v.preis === null ? esc(t("foto.fehlt")) : esc(fmtEuro(v.preis, { dezimal: 2 }))}</span></button>
+      <div class="fvkopf"><button type="button" class="fvtipp" data-a="fv-auf" data-id="${v.id}" aria-expanded="${auf}">${fvBild(v).replace('class="fvbild', 'class="fvbild mini')}<span class="pkt ${punkt(v)}" aria-hidden="true"></span><span class="n">${esc(v.name)}${notiz}</span><span class="p ${v.preis === null ? "leer" : ""}">${v.preis === null ? esc(t("foto.fehlt")) : esc(fmtEuro(v.preis, { dezimal: 2 }))}</span></button>
         <button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-pressed="${!v.an}" aria-label="${esc(t(v.an ? "foto.weglassen" : "foto.zurueckholen"))}: ${esc(v.name)}">${v.an ? "✕" : "↺"}</button></div>
       ${auf ? bearbeiter(v) : ""}
     </div>`;
 }
+// Entwurf 26.10.2026 (Baris: „Wo ist Zeki, die einfache Sprache, wo sind unsere Bilder?“): Zeki sagt oben in einem Satz, was los ist;
+// jedes Gericht mit Bild, Name, Preis und einem Knopf. Rezept-Zeilen gehören ins Büro (Rezepte), nicht hierher.
+const fvBild = (v) => { const q = gerichtBildQuelle({ name: v.vorlage || v.name, vorlageName: v.vorlage || undefined });
+  return q.foto ? `<img class="fvbild" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="fvbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`; };
+const GRUND_TEXT = { preis: "foto.preisFehltKurz", preisHoch: "foto.preisHochKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", zweiPreise: "foto.zweiPreiseKurz", rezept: "foto.rezeptBestaetigen" };
+function pruefKarte(v) {
+  const g = grund(v);
+  if (!v.an) return `<div class="fvk aus"><span class="n durch">${esc(v.name)}</span><button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-label="${esc(t("foto.zurueckholen"))}: ${esc(v.name)}">↺</button></div>`;
+  return `<div class="fvk karte-${(punkt(v) || "ok").replace("grau", "ok")}">
+      ${fvBild(v)}
+      <div class="fvk-mitte">
+        <span class="fvgrund">${esc(t(g ? GRUND_TEXT[g] || "foto.erledigt" : "foto.erledigt"))}</span>
+        <input class="textfeld fvk-name" data-f="fv-name:${v.id}" value="${esc(v.name)}" maxlength="80" aria-label="${esc(t("foto.name"))}">
+        <div class="fvk-reihe"><div class="betrag klein"><input inputmode="decimal" data-f="fv-preis:${v.id}" value="${esc(v.preis === null ? "" : v.preis.toFixed(2).replace(".", ","))}" placeholder="0,00" aria-label="${esc(t("foto.preis"))}"><span class="einheit">€</span></div>
+          ${v.preis !== null && g ? `<button type="button" class="chip klein an" data-a="fv-stimmt" data-id="${v.id}">${esc(t("waage.ok"))}</button>` : ""}
+          <button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-label="${esc(t("foto.weglassen"))}: ${esc(v.name)}">✕</button></div>
+      </div></div>`;
+}
 export function kartePruefenView() {
   // Trennung (17.10.2026): die Gruppe (prüfen/erkannt) steht schon seit dem Hinzufügen fest – Zeichnen schreibt nichts
   const kz = kartePruefZahlen(vorschlaege); const pr = kz.pruefen, ok = kz.erkannt; // Trennung 2 (17.10.2026): Zahlen aus js/karte_lesen.js
+  const offen = pr.filter((v) => v.an && grund(v)).length;
   return `
-    <h1 class="frage">${esc(t("foto.pruefenFrage", vorschlaege.length))}</h1>
-    <p class="hinweis">${esc(t(pr.length ? "foto.pruefenHinweisKurz" : "foto.pruefenHinweisAlle"))}</p>
-    ${pr.length ? `<h2 class="fvgrp">${esc(t("foto.gruppePruefen", pr.filter((v) => v.an && grund(v)).length))}</h2>
-    <div class="fvliste offen">${pr.map((v) => `<div class="fvz ${v.an ? "" : "aus"} karte-${(punkt(v) || "ok").replace("grau", "ok")}">
-      <div class="fvkopf"><span class="fvgrund">${esc(t(v.an ? { preis: "foto.preisFehltKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", zweiPreise: "foto.zweiPreiseKurz", rezept: "foto.rezeptBestaetigen" }[grund(v) || ""] || "foto.erledigt" : "foto.weggelassen"))}</span>
-        ${v.an ? "" : `<button type="button" class="fvx" data-a="fv-an" data-id="${v.id}" aria-label="${esc(t("foto.zurueckholen"))}: ${esc(v.name)}">↺</button>`}</div>
-      ${v.an ? bearbeiter(v) : `<div class="n durch">${esc(v.name)}</div>`}</div>`).join("")}</div>` : ""}
-    ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.gruppeErkannt", ok.length))}</h2>
+    <div class="s2kopf s2zeki fvzeki"><div class="s2zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(offen ? "frage" : "freude")}</div>
+      <div class="s2zeki-blase"><h1 class="frage" dir="auto">${esc(t("foto.zeki.titel", vorschlaege.length))}</h1>
+      <p class="s2zeki-hilfe">${esc(offen ? t("foto.zeki.pruefen", offen) : t("foto.zeki.alle"))}</p></div></div>
+    ${pr.length ? `<div class="fvkarten">${pr.map(pruefKarte).join("")}</div>` : ""}
+    ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.zeki.erkannt", ok.length))}</h2>
     <div class="fvliste">${ok.map(fvZeile).join("")}</div>` : ""}
-    <p class="hinweis klein">${esc(t("foto.inventurVorschau", kz.an, kz.zutaten))} · ${esc(t("foto.inventurHinweis", kz.mitRezept))}</p>
     <div class="fotofeld">${fotoKnoepfe("speisekarte", { kamera: "foto.nochSeite", datei: "foto.nochDatei" })}</div>`;
 }
 
 export function kartePruefenEingabe(feld, wert) {
   const m = feld.match(/^fv-(name|preis):(.+)$/); if (!m) return false;
   const v = vorschlaege.find((x) => x.id === m[2]); if (!v) return false;
-  if (m[1] === "name") { v.name = wert.slice(0, 80); v.pruefen = false; } else { v.preis = parseZahl(wert); v.preisPruefen = false; }
+  if (m[1] === "name") { v.name = wert.slice(0, 80); v.pruefen = false; } else { Object.assign(v, { preis: parseZahl(wert), preisPruefen: false, preisHoch: false, preisGeprueft: true }); }
   return false;
 }
 
@@ -199,7 +215,7 @@ export function kartePruefenAktion(name, el) {
   const v = vorschlaege.find((x) => x.id === el.dataset.id);
   if (name === "fv-an" && v) { v.an = !v.an; if (!v.an && aufgeklappt === v.id) aufgeklappt = null; return true; }
   if (name === "fv-auf" && v) { aufgeklappt = aufgeklappt === v.id ? null : v.id; return true; }
-  if (name === "fv-stimmt" && v) { v.pruefen = false; v.preisPruefen = false; return true; } // Baris 19.10.2026: Name und Preis stimmen – bestätigen ohne zu tippen
+  if (name === "fv-stimmt" && v) { Object.assign(v, { pruefen: false, preisPruefen: false, preisHoch: false, preisGeprueft: true }); return true; } // Baris 19.10.2026: Name und Preis stimmen – bestätigen ohne zu tippen
   if (name === "fv-rezept-ja" && v) { v.sicher = "sicher"; return true; }
   if (name === "fv-rezept-nein" && v) { v.vorlage = null; v.sicher = v.getraenk ? "getraenk" : "ohne"; return true; }
   return false;
