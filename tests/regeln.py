@@ -131,7 +131,10 @@ async def lauf(b, breite, hoehe, fehler):
         async def bild(name):
             nonlocal n; n += 1; await pg.screenshot(path=str(OUT / f"{vp}_{n:02d}_{name}.png"), full_page=False)
         async def schirm(name, ebene, wurzel="#app", zusatz=None):
-            await pg.wait_for_timeout(250); m = await messen(pg, wurzel, aus); await bild(name)
+            await pg.wait_for_timeout(250)
+            if await pg.locator(".h-zeki--neu .h-zeki-blase").count():  # Zeki (26.10.2026): Blase steht ≈ 7 s, gemessen wird der Ruhezustand danach
+                await bild(name + "_zeki"); await pg.wait_for_timeout(7600)
+            m = await messen(pg, wurzel, aus); await bild(name)
             stand_mess[name] = {**m, "ebene": ebene, **(zusatz or {})}
             for regel, ok, ist, soll, hinweis in regeln_pruefen(name, ebene, m, zusatz or {}):
                 befunde.append({"viewport": vp, "bildschirm": name, "regel": regel, "ok": ok, "ist": ist, "soll": soll, "hinweis": hinweis})

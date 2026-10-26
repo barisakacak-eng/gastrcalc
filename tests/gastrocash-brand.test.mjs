@@ -3,23 +3,22 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { mascotMarkup, mascotResultState } from '../js/gastrocash-brand.js';
 
-test('alle fünf Mascot-Zustände sind ohne Zwinkern unterscheidbar', () => {
-  const states=['neutral','freundlich','nachdenklich','ernst','erfolg'];
-  const mouths=new Set();
+test('Zeki: Zustände bleiben unterscheidbar, neutrale Augen sind offen', () => {
+  const states=['neutral','freude','nachdenklich','warnung'];
+  const drawings=new Set();
   for(const state of states){
     const svg=mascotMarkup(state);
-    assert.match(svg, /viewBox="0 0 160 180"/);
-    assert.match(svg, /gc-bot-eyes/);
-    const eyeGroup=svg.match(/class="gc-bot-eyes"[^>]*>(.*?)<\/g>/)?.[1] || '';
-    assert.equal((eyeGroup.match(/<circle /g)||[]).length,2, state+' braucht zwei offene Augen');
-    const mouth=svg.match(/<path d="(M\d+ \d+[^"]*)" stroke="#FFFDF9"/)?.[1];
-    assert.ok(mouth, state+' braucht einen Mund');
-    mouths.add(mouth);
+    assert.match(svg, /viewBox="0 0 237 328"/);
+    assert.ok(svg.includes('zeki--'+(state==='nachdenklich'?'import':state)));
+    assert.equal((svg.match(/data-zeki-teil="auge-[lr]"/g)||[]).length,2);
+    const ids=[...svg.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);assert.equal(ids.length,new Set(ids).size,'jede Clip-ID ist eindeutig');
+    assert.doesNotMatch(svg,/zeki--zwinkern/,'kein Dauerzwinkern im Zustand '+state);
+    drawings.add(svg);
   }
-  assert.equal(mouths.size,5,'alle Zustände brauchen eigene Mundformen');
+  assert.equal(drawings.size,4);
 });
 test('unbekannter Zustand fällt neutral zurück; keine HTML-Injektion',()=>{
-  assert.equal(mascotMarkup('<img onerror=alert(1)>'),mascotMarkup('neutral'));
+  assert.equal(mascotMarkup('<img onerror=alert(1)>').replace(/zeki-\d+-clip-/g,'clip-'),mascotMarkup('neutral').replace(/zeki-\d+-clip-/g,'clip-'));
 });
 test('Markenpaket nutzt nur lokale Dateien und respektiert reduzierte Bewegung',()=>{
   const css=fs.readFileSync(new URL('../css/optik.css',import.meta.url),'utf8');
@@ -76,8 +75,8 @@ test('Bewegungen sind von Emotionen getrennt und unbekannte Bewegung fällt sich
   assert.match(mascotMarkup('erfolg','celebrate'),/gc-motion--celebrate/);
   assert.match(mascotMarkup('neutral','irgendwas'),/gc-motion--none/);
   const blink=mascotMarkup('neutral','idle');
-  const eyes=blink.match(/class="gc-bot-eyes"[^>]*>(.*?)<\/g>/)?.[1]||'';
-  assert.equal((eyes.match(/<circle /g)||[]).length,2,'Blinzeln bleibt beidäugig, kein Zwinkern');
+  assert.match(blink,/data-zeki-start="none"/);
+  assert.equal((blink.match(/data-zeki-teil="auge-[lr]"/g)||[]).length,2,'Atmen bleibt beidäugig');
 });
 
 
