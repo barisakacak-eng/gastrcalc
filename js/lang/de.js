@@ -1057,7 +1057,7 @@ export default {
     allesGenau: "Alles genau einrichten",
     karte: "Deine Karte", karteFoto: "Karte fotografieren", karteVorlagen: "Aus Vorlagen wählen", karteGalerie: "Fotos oder PDF", spaeter: "Später",
     karteHilfe: "Die App liest Gerichte und Preise vom Foto. Was ihr selbst macht, stellst du im Büro unter Rezepte ein.",
-    kuehl: "Kühlung", arten: { getraenke: "Getränkekühlschrank", kuehlschrank: "Kühlschrank", saladette: "Saladette", tiefkuehler: "Tiefkühler", warmhalter: "Warmhalter" },
+    kuehl: "Kühlung", arten: { getraenke: "Getränke\u00ADkühlschrank", kuehlschrank: "Kühlschrank", saladette: "Saladette", tiefkuehler: "Tiefkühler", warmhalter: "Warmhalter" },
     kuehlHilfe: "Für jedes Gerät trägst du später die Temperatur ein. Namen änderst du im Büro.",
     geld: "Kosten im Monat", miete: "Miete", personal: "Personal", eigen: "Dein Lohn", strom: "Strom",
     geldHilfe: "Ungefähr reicht, leer lassen geht auch. Rechnungen fotografierst du später im Büro.",
