@@ -57,6 +57,7 @@ export function karteLadenView(stand) {
   return `
     <div class="inhalt kartelaeden">
       <div class="kl-kopf"><h1>${esc(t("kartelaeden.titel"))}</h1><small>${esc(t("kartelaeden.anzahl", liste.length))}</small></div>
+      ${zekiZeile(liste, unsicher)}
       ${!liste.length ? `<div class="karte kl-leer"><b>${esc(t("kartelaeden.leer"))}</b><button type="button" class="knopf glut" data-a="nav" data-wert="kartefoto">${sym("camera")} ${esc(t("kartelaeden.fotografieren"))}</button></div>` : `
       <div class="kl-segment" role="tablist">
         <button type="button" role="tab" aria-selected="${filter === "alle"}" class="${filter === "alle" ? "an" : ""}" data-a="kl-filter" data-wert="alle">${esc(t("kartelaeden.alle"))}</button>
@@ -67,6 +68,20 @@ export function karteLadenView(stand) {
     </div>
     ${blatt ? karteLadenBlatt(stand) : ""}
     ${nav("karte")}`;
+}
+
+// Zeki in einem Satz (Baris 26.10.2026 23:52): Grün ruhig, Gelb leise, Rot hervorgehoben mit „Anschauen?“ – nicht bei jedem Gericht.
+function zekiZeile(liste, unsicher) {
+  const mit = liste.map((x) => ({ x, a: preisAmpel(x.z, x.z.preisBrutto) })).filter((y) => y.a.gewinn !== null && y.a.quote !== null);
+  if (!mit.length) return "";
+  const rot = mit.filter((y) => y.a.ampel === "rot").sort((p, q) => p.a.gewinn - q.a.gewinn)[0];
+  const gelb = mit.filter((y) => y.a.ampel === "gelb").sort((p, q) => p.a.quote - q.a.quote)[0];
+  const gut = [...mit].sort((p, q) => q.a.gewinn - p.a.gewinn)[0];
+  const y = rot || gelb || gut; const art = rot ? "rot" : gelb ? "gelb" : "gruen";
+  const betrag = `${unsicher || y.x.z.warenGeschaetzt || y.x.z.warenRichtpreis ? "≈ " : ""}${fmtEuro(Math.abs(y.a.gewinn), { dezimal: 2 })}`;
+  const satz = t("kartelaeden.zeki." + art, y.x.g.name, betrag);
+  return art === "gruen" ? `<p class="kl-zeki a-gruen" role="status">${esc(satz)}</p>`
+    : `<button type="button" class="kl-zeki a-${art}" data-a="kl-auf" data-id="${esc(y.x.g.id)}">${esc(satz)}</button>`;
 }
 
 // „Bleibt dir“-Zeile (19.10.2026): Gewinn nach allen Kosten je Stück und in %, Punkt in Ampelfarbe (engine.preisAmpel);

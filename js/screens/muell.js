@@ -34,10 +34,11 @@ let foto = null;          // Foto (optional) zum nächsten Eintrag (Upload-Eintr
 let letzterTipp = { id: "", zeit: 0 };
 let toastUhr = null;
 const TOAST_MS = 5000;
-const RASTER = 5;         // Design B (19.10.2026): 5 Fotos + „Andere" = 2 × 3, passt ohne Scrollen
+const RASTER = 5;
+let grund = "roh";       // Baris 26.10.2026 23:46: Lebensmittel zuerst; Personalessen und ganze Gerichte (Bruch) als eigene Wahl         // Design B (19.10.2026): 5 Fotos + „Andere" = 2 × 3, passt ohne Scrollen
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
-export function muellZuruecksetzen() { ansicht = "start"; rueckkehr = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
+export function muellZuruecksetzen() { grund = "roh"; ansicht = "start"; rueckkehr = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
 export function muellFotoSetzen(eintrag) { foto = eintrag; }
 export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = rueckkehr; return true; } if (ansicht !== "start") { ansicht = ansicht === "eingabe" ? rueckkehr : "start"; wahl = null; return true; } return false; }
 export const muellAnsicht = () => ansicht;
@@ -82,15 +83,20 @@ export function muellView(stand) {
 }
 
 function rasterView(stand, D, nach) {
-  const kacheln = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true }); const zaehl = tippsHeute(stand, D);
+  const alle = haeufigsteMuell(stand, { datum: D, max: 10000 });
+  const nurTyp = grund === "roh" ? "artikel" : "gericht";
+  const kacheln = alle.filter((x) => x.typ === nurTyp).slice(0, grund === "roh" ? 8 : 6); const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
-  return `<div class="inhalt muell1">
+  const h = muellHeute(stand, D);
+  const satz = grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");
+  const reiter = ["roh", "personal", "bruch"].filter((g) => g === "roh" || !personalAktiv() || g === "bruch");
+  return `<div class="inhalt muell1 m-schablone">
     <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.uebrig"))}">${sym("moon")}<span>${esc(t("muell.uebrig"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
-    ${kacheln.length ? `<div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
-      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>`
-    : `<div class="karte leer"><div>${esc(t("muell.keineGerichte"))}</div>${personalAktiv() ? "" : `<button type="button" class="knopf zweit" data-a="nav" data-wert="kartefoto">${esc(t("foto.karteKnopf"))}</button>`}</div>
-      <button type="button" class="karte ware andere einzeln" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>`}
+    <p class="zeki-zeile" role="status">${esc(satz)}</p>
+    <div class="m-reiter" role="tablist">${reiter.map((g) => `<button type="button" role="tab" aria-selected="${grund === g}" class="${grund === g ? "an" : ""}" data-a="muell-grund" data-wert="${g}">${esc(t("muell.grund." + g))}</button>`).join("")}</div>
+    <div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
+      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>
   </div>${toastHtml()}`;
 }
 
@@ -238,7 +244,7 @@ export function muellTipp(el, stand) {
   const k = muellSchluessel(x); const jetzt = Date.now();
   if (letzterTipp.id === "tipp:" + k && jetzt - letzterTipp.zeit < 350) return false;
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
-  const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station" });
+  const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station", grund: ansicht === "station" ? null : grund === "personal" ? "personal" : null });
   if (!e) return false;
   zuletzt = { ids: e.id, schluessel: k, text: `${zeigName(x)} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
   return { eintrag: e };
@@ -247,6 +253,7 @@ export function muellTippZurueck(stand, ids) { const n = muellStornieren(stand, 
 
 export function muellAktion(name, el, stand) {
   const D = tagGewaehlt();
+  if (name === "muell-grund") { grund = ["roh", "personal", "bruch"].includes(el.dataset.wert) ? el.dataset.wert : "roh"; return true; }
   if (name === "muell-station-auf") { ansicht = "station"; rueckkehr = "station"; return true; }
   if (name === "muell-station-zu") { ansicht = "start"; rueckkehr = "start"; return true; }
   if (name === "muell-eingabe" || name === "muell-andere") { rueckkehr = ansicht === "station" ? "station" : "start"; ansicht = "eingabe"; wahl = null; suche = ""; foto = null; auswahlOffen = true; return true; }

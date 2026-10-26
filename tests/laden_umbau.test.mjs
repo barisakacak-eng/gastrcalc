@@ -136,7 +136,8 @@ test("Putzen im Laden: ohne Plan wird still der Vorschlag nach Laden-Art überno
   assert.equal(planSicherstellen(s), false, "zweites Mal nichts");
   const html = P.putzplanView(s);
   assert.ok(!html.includes('data-a="pp-geraet"') && !html.includes("Was hast du im Laden") && !html.includes("852/2004"));
-  assert.match(html, /<h1>Putzen <span class="zahl">\u20660 \/ \d+\u2069<\/span><\/h1>/);
+  // 27.10.2026 Schablone: kein „0 / 20“ mehr im Titel – Zeki sagt in einem Satz, was heute dran ist
+  assert.match(html, /<h1>Putzen<\/h1>/); assert.match(html, /class="zeki-zeile/); assert.ok(html.includes("pbild"), "jede Aufgabe mit Bild");
   assert.ok(!html.includes('data-wert="einrichten"'), "Anpassen nur im Büro");
   const buero = P.putzplanView(s, { buero: true });
   assert.ok(buero.includes('data-wert="einrichten"'), "Büro: Anpassen (Geräte-Auswahl)");
@@ -158,7 +159,8 @@ test("Kühlung im Laden: „Rundgang starten“ springt mit vorbelegtem Namen di
   K.kuehlZuruecksetzen();
   let html = K.kuehlView(s);
   for (const weg of ["Eine Stelle antippen", "Heute noch nicht gemessen", "ohne Messung in den letzten 7", "Du bleibst verantwortlich", "kuehl-blatt"]) assert.ok(!html.includes(weg), weg);
-  assert.ok(html.includes("Heute gemessen") && html.includes("\u20660 / 2\u2069") && html.includes("Rundgang starten") && html.includes('data-a="kuehl-rundgang-los"'));
+  // 27.10.2026 Schablone: Zeki sagt in einem Satz, was zu tun ist (statt „Heute gemessen 0 / 2“)
+  assert.ok(html.includes("Noch 2 Geräte messen") && html.includes("zeki-zeile") && html.includes("Rundgang starten") && html.includes('data-a="kuehl-rundgang-los"'));
   assert.ok(!html.includes('<small class="rot">'), "Grenze nur bei Abweichung");
   const bh = K.kuehlView(s, { buero: true }); assert.ok(bh.includes("ohne Messung in den letzten 7") && bh.includes('data-a="kuehl-blatt"'), "Büro: 7-Tage-Lücken und Monatsblatt");
   assert.equal(LZ.kuehlWerVorschlag(s), "p1", "ohne früheren Rundgang: erste Person");

@@ -57,6 +57,14 @@ const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit
 // Die Grenze einer Stelle steht nur, wenn ihr letzter Wert außerhalb lag (sonst nach dem Antippen im Messfeld). Dauerhinweise (Lücken der
 // letzten 7 Tage, „Eine Stelle antippen …“, Verantwortung) stehen im Büro bzw. hinter „?“. Im Büro (buero: true) bleiben Monatsblatt,
 // Einrichtung und der 7-Tage-Hinweis auf dieser Seite.
+// Laden-Schablone (27.10.2026): Zeki sagt in einem Satz, was los ist – statt „0 / 4“.
+function zekiKuehl(stand, st, fertig) {
+  const warm = aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m?.abweichung && x.m.datum === heute());
+  if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(t("kuehl.zeki.warm", kn(warm.k)))}</p>`;
+  if (fertig) return `<p class="zeki-zeile a-gruen" role="status">${esc(t("kuehl.zeki.fertig"))}</p>`;
+  return `<p class="zeki-zeile" role="status">${esc(t("kuehl.zeki.offen", Math.max(0, st.stellen - st.heuteGemessen)))}</p>`;
+}
+
 export function kuehlView(stand, { buero = false } = {}) {
   const pers = personalAktiv(); // W2-S (p02 K2): Einrichtung, Grenzen, Verwerfen und Vortage gibt es im Personal-Modus nicht
   if (pers && ansicht === "einrichtung") ansicht = "start";
@@ -76,8 +84,9 @@ export function kuehlView(stand, { buero = false } = {}) {
         ${pers ? chefHinweis() : `<button type="button" class="knopf glut" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichten"))}</button>`}
       </div>` : `
       ${!st.bereit ? `<div class="karte hinweisgelb"><div>${esc(t("kuehl.grenzenFehlen"))}</div>${pers ? chefHinweis() : `<button type="button" class="knopf zweit" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}</div>` : ""}
+      ${buero ? "" : zekiKuehl(stand, st, fertig)}
       <div class="karte kuehlstand ${fertig ? "fertig" : ""}">
-        <div class="ks-zeile"><span>${esc(t("kuehl.heute"))}</span><b class="zahl">\u2066${st.heuteGemessen} / ${st.stellen}\u2069</b></div>
+        ${buero ? `<div class="ks-zeile"><span>${esc(t("kuehl.heute"))}</span><b class="zahl">\u2066${st.heuteGemessen} / ${st.stellen}\u2069</b></div>` : ""}
         ${st.bereit ? `<button type="button" class="knopf ${fertig ? "zweit" : "glut"}" data-a="${buero ? "kuehl-rundgang" : "kuehl-rundgang-los"}">${esc(t(offen ? "kuehl.weiterRundgang" : "ladenSchirm.rundgangStarten"))}</button>` : ""}
         ${buero && st.fehlt7 ? `<span class="marke offen">${esc(t("kuehl.luecken7", st.fehlt7))}</span>` : ""}
       </div>

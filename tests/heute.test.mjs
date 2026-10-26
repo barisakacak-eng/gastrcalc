@@ -100,8 +100,8 @@ test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruc
   // steht nicht mehr im Laden (Weg im Büro: Bereich Geld „· Richtwert“ und Ware → Einkaufspreise)
   const zaehlen = (h) => h.replace(/<div class="h-zeitzeile">.*?<\/div>/s, "").replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").split(/\s+/).filter((w) => w && !/[0-9€–·%/≈›]/.test(w) && !["Saladette"].includes(w));
   // Zeki (26.10.2026): Seine Blase steht nur beim ersten Mal am Tag ≈ 7 s und blendet dann aus – gezählt wird der Ruhezustand.
-  const blase = (inhalt.match(/<div class="h-zeki-blase"[^>]*>([^<]*)<\/div>/) || [])[1];
-  assert.ok(blase && blase.trim().split(/\s+/).length <= 12, "Zeki sagt beim ersten Mal einen Satz mit höchstens 12 Wörtern");
+  // 27.10.2026: Zeki spricht oben rechts (eigene Ebene, app.js zekiBildschirm) – auf Heute selbst keine zweite Figur und keine Blase.
+  assert.ok(!inhalt.includes("h-zeki-blase") && !inhalt.includes("h-zeki-figur"), "keine zweite Zeki-Figur auf Heute");
   const woerter = zaehlen(inhalt.replace(/<div class="h-zeki-blase"[^>]*>[^<]*<\/div>/, ""));
   assert.ok(woerter.length <= 15, `${woerter.length} Wörter: ${woerter.join(" ")}`);
   assert.ok(!inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: ≈ vor der Zahl, keine Richtwert-Zeile im Laden");
@@ -190,14 +190,14 @@ test("Facelift-Piloten: Hero richtet sich nach Döner- oder Burger-Ladenart", ()
   assert.doesNotMatch(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-doener/);
 });
 
-test("Zeki auf Heute: beim ersten Mal Satz und Bewegung, danach nur der Knopf (26.10.2026)", () => {
+test("Zeki auf Heute (27.10.2026): keine zweite Figur im Inhalt, der Jetzt-Knopf bleibt; Zeki spricht oben rechts", async () => {
   const s = mitKuehlung(laden()); s.messungen = [messung("k1", 9, { abw: true })];
   navKontext(s, wurzelVon(s));
-  const erst = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
-  assert.ok(erst.includes('class="h-zeki h-zeki--neu"') && erst.includes("h-zeki-blase"), "erstes Mal: Blase");
-  const key = (erst.match(/data-zeki-key="([^"]+)"/) || [])[1]; assert.ok(key && key.startsWith("kuehl_abweichung:"), key);
-  const danach = startView(s, { wurzel: wurzelVon(s), jetzt: um(19), zekiGesehen: new Set([key]) });
-  assert.ok(!danach.includes("h-zeki-blase") && danach.includes('class="jetzt '), "danach: keine Blase, Knopf bleibt");
-  const ruhig = startView(s, { wurzel: wurzelVon(s), jetzt: um(19), zekiGesehen: new Set(), zekiOhneBewegung: true, zekiRestMs: 3000 });
-  assert.ok(ruhig.includes("--zeki-rest:3000ms") && ruhig.includes('data-zeki-start="none"'), "neu gezeichnet: Blase läuft weiter, keine zweite Bewegung");
+  const html = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
+  const inhalt = html.slice(html.indexOf('<div class="inhalt'));
+  assert.ok(!inhalt.includes("h-zeki-figur") && !inhalt.includes("h-zeki-blase"), "keine zweite Figur");
+  assert.ok(inhalt.includes('class="jetzt '), "Knopf bleibt");
+  const { readFileSync } = await import("node:fs");
+  const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+  assert.match(app, /ansicht === "start" \? null : ZEKI_BILDSCHIRM\[ansicht\]/, "Heute nutzt die Sprechblase oben rechts mit allen Lagen");
 });

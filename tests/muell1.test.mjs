@@ -53,7 +53,9 @@ test("Raster: getippte Ware wandert nach vorne; 8 Kacheln + „Andere“", () =>
   assert.equal(haeufigsteMuell(s, { max: 8 })[0].name, "Knoblauchsauce");
   personalKontext({ modus: "laden" }); muellZuruecksetzen();
   const h = muellView(s);
-  assert.ok(h.includes('data-a="muell-andere"')); assert.equal((h.match(/data-a="muell-tipp"/g) || []).length, 4); // 1 Gericht + 3 Artikel
+  // 27.10.2026: Lebensmittel zuerst – der erste Reiter zeigt nur Waren (3 Artikel), Gerichte stehen unter „Personalessen“ und „Ganze Gerichte“
+  assert.ok(h.includes('data-a="muell-andere"')); assert.equal((h.match(/data-a="muell-tipp"/g) || []).length, 3);
+  assert.ok(h.includes('data-a="muell-grund"') && h.includes("zeki-zeile"));
   assert.ok(h.includes("3×"), "Zähler an der Kachel");
   assert.ok(!h.includes("Çöp gir") && !h.includes("Add waste") && !h.includes(" · Waste"), "keine dreisprachigen Untertitel");
 });

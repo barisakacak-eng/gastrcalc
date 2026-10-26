@@ -10,7 +10,8 @@ import { datumLesbar } from "./tag.js";
 import { sym } from "../symbole.js";
 import { nav } from "./nav.js";
 import { putzplanSpaeterSetzen } from "../stamm.js"; // Trennung (17.10.2026)
-import { personalAktiv } from "./personal.js"; // W2-S: Einrichten nur außerhalb des Personal-Modus
+import { personalAktiv } from "./personal.js";
+import { FOTOS } from "../data/fotos.js"; // W2-S: Einrichten nur außerhalb des Personal-Modus
 
 let ansicht = "plan"; // plan | einrichten | nachweis
 let entwurf = null;   // Plan während des Einrichtens
@@ -57,7 +58,37 @@ const statusText = (a) => {
 
 // Laden-Umbau (20.10.2026): im Laden Kopf „Putzen x / y“ und die Liste zum Abhaken – ohne Ring, Status-Unterzeilen und Stufen-Marken.
 // Rot (überfällig) zeigt die Zeile selbst. Wer abhakt (Kürzel), Nachweis und Anpassen bleiben; im Büro (buero: true) wie bisher mit Status.
+// Laden-Schablone (27.10.2026, Baris: „Kein einziges Bild, AB/CD versteht keiner, 0/20 erschlägt“): Zeki sagt in einem Satz, was dran ist;
+// nur Fälliges, jede Aufgabe mit Bild; Erledigtes klappt zusammen. Bilder: Sanjis p-*-Fotos, sonst passendes vorhandenes Foto, sonst Piktogramm.
+const PUTZ_BILD = { R01: ["p-arbeitsflaechen"], R02: ["p-arbeitsflaechen"], R03: ["p-spuele"], R04: ["p-boden-ablauf"], R05: ["p-handwaschbecken"],
+  R07: ["p-doenergrill", "hero-doenergrill"], R08: ["p-doenergrill", "hero-doenergrill"], R09: ["u-spiess-rest", "hero-doenergrill"], R10: ["p-doenergrill", "hero-doenergrill"],
+  R11: ["p-fritteuse", "g-pommes"], R13: ["p-fritteuse", "g-pommes"], R14: ["p-pizzaofen", "laden-pizza"], R15: ["p-dunstabzug"], R16: ["p-dunstabzug"], R17: ["p-dunstabzug"],
+  R19: ["k-saladette-foto"], R20: ["k-saladette-foto"], R21: ["p-kuehlschrank-innen", "k-kuehlschrank-lebensmittel-foto"], R22: ["p-kuehlschrank-innen", "k-kuehlschrank-lebensmittel-foto"],
+  R23: ["k-tiefkuehler-foto"], R32: ["p-lager"], R33: ["p-muelltonnen", "m-eimer-foto"], R34: ["p-muelltonnen", "m-biotonne-foto"] };
+const putzBild = (a) => { const f = (PUTZ_BILD[a.id] || []).find((n) => FOTOS.has(n));
+  return f ? `<img class="pbild" src="foto/${f}.webp" alt="" loading="lazy">` : `<span class="pbild pikto" aria-hidden="true">${sym("spray-can")}</span>`; };
+function ladenPlanView(stand) {
+  const g = planGruppen(stand); const personen = aktivePersonen(stand);
+  const faellig = [...g.tag, ...g.woche, ...g.monat].filter((a) => a.status !== "spaeter");
+  const auf = faellig.filter((a) => a.status !== "erledigt");
+  const fertig = faellig.filter((a) => a.status === "erledigt" && a.letzte?.datum === heute());
+  const zeile = (a) => `<div class="pzeile p2">
+      <button type="button" class="aufgabe ${a.status}" data-a="pp-haken" data-id="${a.id}" aria-pressed="${a.status === "erledigt"}" aria-label="${esc(text(a))}">
+        ${putzBild(a)}<span class="atext"><b>${esc(kurz(a))}</b></span><span class="box">${a.status === "erledigt" ? sym("check") : ""}</span></button>
+      <button type="button" class="pmehr" data-a="pp-mehr" data-id="${a.id}" aria-expanded="${offen === a.id}" aria-label="${esc(text(a))}">${sym("circle-help")}</button>
+      ${offen === a.id ? `<p class="pwarum">${esc(text(a))}${warum(a) ? " – " + esc(warum(a)) : ""}</p>` : ""}</div>`;
+  const satz = auf.length ? t("putzplan.zeki.offen", auf.length, kurz(auf[0])) : t("putzplan.zeki.fertig");
+  return `<div class="kopfband putzkopf"><h1>${esc(t("ebene.tabs.putzplan"))}</h1></div>
+    <div class="inhalt putzplan p-schablone">
+      <p class="zeki-zeile ${auf.length ? "" : "a-gruen"}" role="status">${esc(satz)}</p>
+      ${personen.length > 1 ? `<div class="werabhakt"><span class="wer-titel">${esc(t("putzplan.werKurz"))}</span><div class="chips">${personen.map((p) => `<button type="button" class="chip klein ${werId === p.id ? "an" : ""}" data-a="pp-wer" data-id="${esc(p.id)}">${esc(p.name || p.kuerzel || "")}</button>`).join("")}</div></div>` : ""}
+      ${auf.length ? `<div class="planliste">${auf.map(zeile).join("")}</div>` : ""}
+      ${fertig.length ? `<details class="p-fertig"><summary>${esc(t("putzplan.zeki.erledigt", fertig.length))}</summary><div class="planliste">${fertig.map(zeile).join("")}</div></details>` : ""}
+    </div>${nav("putzplan")}`;
+}
+
 function planView(stand, { buero = false } = {}) {
+  if (!buero) return ladenPlanView(stand);
   const g = planGruppen(stand); const personen = aktivePersonen(stand);
   const haken = (a) => `<button type="button" class="aufgabe ${a.status}" data-a="pp-haken" data-id="${a.id}" aria-pressed="${a.status === "erledigt"}" aria-label="${esc(text(a))} · ${esc(statusText(a))}">
       <span class="box">${a.status === "erledigt" ? sym("check") : ""}</span><span class="atext"><b>${esc(buero ? text(a) : kurz(a))}</b>${buero ? `<small>${esc(statusText(a))}</small>${a.stufe === "pflicht" ? stufeMarke(a) : ""}` : ""}</span></button>`;

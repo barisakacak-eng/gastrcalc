@@ -128,16 +128,9 @@ function heuteKachelnLaden(stand, ks, H) {
 // in einer Blase und macht seine Bewegung; nach ≈ 7 s blendet CSS die Blase aus und den Knopf ein (15-Wörter-Regel im Ruhezustand).
 // Welche Lage und welcher Satz: js/zeki.js. Ob schon gesehen: extra.zekiGesehen (Set „auslöser:Tag“, hält app.js im Browser).
 const ZEKI_ZUSTAND = { kuehl_abweichung: "warnung", kuehl_offen: "aufmerksam", umsatz_fehlt: "frage", karte_leer: "hilfe", preis_fehlt: "preis", erster_muell: "aufmerksam", muell_hoch: "warnung", ziel_erreicht: "freude", tag_abgeschlossen: "bestaetigt", inventur_faellig: "aufmerksam", sicherung_alt: "warnung", hinweis_neu: "hilfe" };
-export function zekiReihe(stand, H, dran, extra = {}) {
-  let zm = null; try { zm = zekiMoment(stand, { H, sprache: sprache(), sicherungTage: extra.sicherungTage ?? null }); } catch { zm = null; }
-  const neu = !!zm && !(extra.zekiGesehen instanceof Set && extra.zekiGesehen.has(`${zm.ausloeser}:${H}`));
-  if (!dran && !neu) return "";
-  const zustand = zm ? ZEKI_ZUSTAND[zm.ausloeser] || "neutral" : dran.ton === "rot" ? "warnung" : "neutral";
-  const bewegung = neu && !extra.zekiOhneBewegung && zm.bewegung && zm.bewegung !== "keine" ? zm.bewegung : "none";
-  return `<div class="h-zeki${neu ? " h-zeki--neu" : ""}"${neu ? ` data-zeki-key="${esc(zm.ausloeser + ":" + H)}" style="--zeki-rest:${Math.max(0, Math.round(extra.zekiRestMs ?? 7000))}ms"` : ""}>
-    <div class="h-zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(zustand, bewegung)}</div>
-    <div class="h-zeki-platz">${neu ? `<div class="h-zeki-blase" role="status">${esc(zm.text)}</div>` : ""}${dran ? jetztKarte(dran) : ""}</div>
-  </div>`;
+export function zekiReihe(stand, H, dran) {
+  // Baris 26.10.2026 23:42: keine zweite Zeki-Figur auf Heute – Zeki steht oben rechts als eigene Ebene und spricht dort (app.js zekiBildschirm).
+  return dran ? `<div class="h-zeki h-zeki--ohne-figur">${jetztKarte(dran)}</div>` : "";
 }
 function jetztKarte(d) {
   return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b data-t="nutzen.aktion.${esc(d.id)}">${esc(t("nutzen.aktion." + d.id))}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;

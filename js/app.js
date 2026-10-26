@@ -1079,11 +1079,12 @@ function zekiGesehenMerken(key) {
 // Zeki auf jedem Bildschirm (26.10.2026): Lage nur aus ZEKI_BILDSCHIRM[ansicht]; Heute macht das selbst (zekiReihe).
 // Personal sieht keine Euro: dort keine Lage mit Betrag.
 function zekiBildschirm() {
-  const nur = ZEKI_BILDSCHIRM[ansicht]; if (ansicht === "start" || !nur || !stand) return;
+  if (root.querySelector(".zeki-zeile, .kl-zeki")) return; // 27.10.2026: Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
+  const nur = ansicht === "start" ? null : ZEKI_BILDSCHIRM[ansicht]; if ((ansicht !== "start" && !nur) || !stand) return; // Heute: alle Lagen, Zeki spricht oben rechts
   const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
   if (zekiGerade && Date.now() - zekiGerade.t < 7000) gesehen.delete(zekiGerade.key);
   let zm = null;
-  try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, nur: personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur }); } catch { zm = null; }
+  try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
   if (!zm) return;
   const key = `${zm.ausloeser}:${H}`; const laeuft = zekiGerade?.key === key;
   zekiSprechblase(root, zm, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });

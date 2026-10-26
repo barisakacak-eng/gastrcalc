@@ -126,3 +126,29 @@
 .kl-bleibt-teil { display: block; }
 /* 27.10.2026 (Baris-Foto 23:49): Blatt war höher als der Bildschirm – Name lag unter der Uhr/Dynamic Island. Höhe begrenzen, innen scrollen. */
 .kl-blatt { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 16px); overflow-y: auto; overscroll-behavior: contain; }
+.h-zeki--ohne-figur{display:block}
+/* Zeki in einem Satz auf der Karte (27.10.2026) – Sprechblase mit Spitze nach oben rechts zu Zeki */
+.kl-zeki { position: relative; display: block; width: 100%; text-align: left; margin: 4px 0 14px; padding: 12px 16px; border-radius: 18px 6px 18px 18px; font: inherit; font-weight: 650; font-size: calc(17rem / 17); line-height: 1.35; background: var(--b-karte, #fff); border: 1px solid var(--b-linie, #e4ddd0); color: var(--b-text, #1d2a22); }
+.kl-zeki.a-gelb { background: #fff8e6; border-color: #f0d58a; }
+.kl-zeki.a-rot { background: #fdecea; border: 2px solid #b23a26; color: #7f1f10; box-shadow: 0 6px 18px rgba(178,58,38,.18); animation: klZekiRot 1.4s ease 1; }
+.kl-zeki.a-rot::after { content: "›"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 1.6em; }
+.kl-zeki.a-rot { padding-right: 36px; }
+@keyframes klZekiRot { 0%, 100% { transform: none; } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } }
+@media (prefers-reduced-motion: reduce) { .kl-zeki.a-rot { animation: none; } }
+.kl-gericht.rotrand { border: 2px solid #b23a26 !important; }
+/* Putzen im Laden mit Bildern (27.10.2026) */
+.p-schablone .pzeile.p2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.p-schablone .pzeile.p2 .aufgabe{display:flex;align-items:center;gap:12px;width:100%;min-height:72px;padding:8px 12px 8px 8px;text-align:left}
+.p-schablone .pbild{width:56px;height:56px;flex:0 0 56px;border-radius:14px;object-fit:cover;background:#eef3ee;display:grid;place-items:center;color:var(--gc-deep,#24412f)}
+.p-schablone .pbild.pikto svg{width:26px;height:26px}
+.p-schablone .atext{flex:1}
+.p-schablone .box{margin-left:auto}
+.p-schablone .pwarum{grid-column:1/-1;margin:0 4px 6px;font-size:calc(15rem / 17);color:var(--b-text-leise,#5b5b52)}
+.p-schablone .wer-titel{display:block;font-weight:700;margin-bottom:6px}
+.p-schablone .p-fertig summary{cursor:pointer;font-weight:700;padding:10px 4px;color:var(--b-text-leise,#5b5b52)}
+.p-schablone .aufgabe.erledigt{opacity:.7}
+/* Müll mit Lebensmitteln zuerst (27.10.2026) */
+.m-schablone .m-reiter{display:flex;gap:6px;margin:0 0 12px;padding:4px;border-radius:16px;background:var(--papier-tief,#efe7da)}
+.m-schablone .m-reiter button{flex:1;min-height:44px;border:0;border-radius:12px;background:transparent;font:inherit;font-weight:700;font-size:calc(14rem / 17);color:var(--b-text-leise,#5b5b52)}
+.m-schablone .m-reiter button.an{background:var(--b-karte,#fff);color:var(--b-text,#1d2a22);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.m-schablone .zeki-zeile{margin-top:12px}
