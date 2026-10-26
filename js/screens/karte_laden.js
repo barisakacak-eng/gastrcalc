@@ -72,7 +72,9 @@ export function karteLadenView(stand) {
 // „Bleibt dir“-Zeile (19.10.2026): Gewinn nach allen Kosten je Stück und in %, Punkt in Ampelfarbe (engine.preisAmpel);
 // darunter „Wohin geht dein Preis?“ – Balken aus Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn (engine.preisAufteilung).
 const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
-function bleibtZeile(z, preis, last) {
+// 27.10.2026 Fehler (Baris-Foto 23:49): Beim Tippen wurde nur „Bleibt dir“ ersetzt, „Wohin geht dein Preis?“ blieb stehen → dreifach. Jetzt eine Hülle für beides.
+function bleibtZeile(z, preis, last) { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last)}</div>`; }
+function bleibtInnen(z, preis, last) {
   const a = preisAmpel(z, preis);
   const prozent = a.quote === null ? "" : ` · ${fmtZahl(Math.round(a.quote * 100))} %`;
   const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : fmtEuro(a.gewinn, { dezimal: 2 })}${prozent}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;

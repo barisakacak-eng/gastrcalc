@@ -766,7 +766,7 @@ root.addEventListener("input", (ev) => {
     const zeile = el.closest(".zeile"); const betrag = el.closest(".betrag");
     if (zeile && betrag) { const leer = el.value.trim() === ""; zeile.classList.toggle("offen", leer); betrag.classList.remove("geschaetzt"); betrag.classList.toggle("offen", leer); }
   } else if (ansicht === "karte") { // B: Preis tippen – nur „Bleibt dir“ und Knopf austauschen, Feld behält den Fokus
-    if (karteLadenEingabe(el.dataset.f, el.value) === "teil") { const teil = karteLadenTeile(stand); const z = root.querySelector(".kl-bleibt"); if (teil && z) z.outerHTML = teil.bleibt; const k = root.querySelector('[data-a="kl-speichern"]'); if (k && teil) k.disabled = !teil.speichernAn; }
+    if (karteLadenEingabe(el.dataset.f, el.value) === "teil") { const teil = karteLadenTeile(stand); const z = root.querySelector(".kl-bleibt-teil"); if (teil && z) z.outerHTML = teil.bleibt; const k = root.querySelector('[data-a="kl-speichern"]'); if (k && teil) k.disabled = !teil.speichernAn; }
     return; // Entwurf, noch nichts zu speichern
   } else if (ansicht === "kartefoto") {
     neu = kartePruefenEingabe(el.dataset.f, el.value);

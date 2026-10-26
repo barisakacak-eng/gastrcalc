@@ -123,3 +123,6 @@
 @keyframes zekiBlaseAus { to { opacity: 0; visibility: hidden; } }
 @keyframes zekiKnopfEin { from { opacity: 0; visibility: hidden; } to { opacity: 1; visibility: visible; } }
 @media (prefers-reduced-motion: reduce) { .h-zeki--neu .h-zeki-blase, .h-zeki--neu .h-jetzt { animation-duration: .01s; } }
+.kl-bleibt-teil { display: block; }
+/* 27.10.2026 (Baris-Foto 23:49): Blatt war höher als der Bildschirm – Name lag unter der Uhr/Dynamic Island. Höhe begrenzen, innen scrollen. */
+.kl-blatt { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 16px); overflow-y: auto; overscroll-behavior: contain; }

@@ -1266,3 +1266,5 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .b-einstellungen .schalter::after{top:50%;transform:translateY(-50%)}
 .buero .b-frei .textfeld,.buero .b-belehrung .knopf{min-height:56px;min-width:0}
 .b-einstellungen .b-sicherung-link{justify-content:center;text-align:center}
+/* 27.10.2026 Fehler (Baris-Foto 23:51): Kopf ist klebend, war aber durchsichtig → Seitentitel „Karte“ lag beim Scrollen unter Menü und Logo. */
+.appleiste.ebene-kopf.laden{background:var(--b-hintergrund,#f7f1e8);-webkit-backdrop-filter:saturate(1.2) blur(8px);backdrop-filter:saturate(1.2) blur(8px)}
