@@ -158,3 +158,26 @@ button.b-zeile:active { background: var(--papier); }
 .b-fragen span{flex:1;display:flex;flex-direction:column}
 .karte.b-fragen{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;padding:14px 16px}
 .karte.b-beilagen{padding:14px 16px}
+/* Büro ruhig (27.10.2026): eine Liste, eine Farbe, Status als leiser Satz – erst beim Antippen kommen Zahlen und Analysen */
+.b-ruhig .b-gruppe{margin:22px 4px 8px;font-size:calc(13rem / 17);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--b-text-leise,#6b6a60)}
+.b-ruhig .b-zs{background:#eef1ec!important;color:var(--gc-deep,#24412f)!important}
+.b-ruhig .b-zt small{color:var(--b-text-leise,#6b6a60)}
+.b-ruhig .b-zt small.rot{color:#a3361b;font-weight:700}
+.b-ruhig .b-ordnerliste{padding:0;overflow:hidden}
+.b-ruhig .b-ordnerliste .b-zeile+.b-zeile{border-top:1px solid var(--b-linie,#ece4d6)}
+.b-ruhig .b-bereich{margin:0}
+.b-ruhig .b-bereiche{display:flex;flex-direction:column;gap:0;border-radius:20px;overflow:hidden;background:var(--b-karte,#fff);border:1px solid var(--b-linie,#ece4d6)}
+.b-ruhig .b-bereiche .b-bereich+.b-bereich{border-top:1px solid var(--b-linie,#ece4d6)}
+.b-ruhig .b-bereichkopf{background:transparent;border:0;box-shadow:none;border-radius:0}
+.b-ruhig .b-leise{margin-top:22px;opacity:.85}
+.b-ruhig .b-zeki{display:block;width:100%;text-align:left;font:inherit;font-weight:650}
+.b-ruhig .b-mehr-zeile{cursor:pointer;margin:0 4px 6px;font-weight:700;color:var(--b-text-leise,#6b6a60)}
+.b-ruhig .b-wert.plus{color:var(--gc-deep,#24412f)}
+.b-ruhig .b-zs{width:44px!important;height:44px!important;flex:0 0 44px!important;min-width:0!important;border-radius:12px!important;display:grid;place-items:center}
+.b-ruhig .b-zs svg{width:22px;height:22px}
+.b-ruhig .b-zt b{font-family:inherit!important;font-size:calc(17rem / 17)!important;font-weight:700!important;letter-spacing:0!important}
+.b-ruhig .b-bereich,.b-ruhig .b-bereich>summary{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;margin:0!important}
+.b-ruhig .b-zeile{min-height:64px;padding:10px 14px;gap:12px}
+.b-ruhig .b-werkzeuge{display:flex;flex-direction:column;gap:0;border-radius:20px;overflow:hidden;background:var(--b-karte,#fff);border:1px solid var(--b-linie,#ece4d6)}
+.b-ruhig .b-werkzeuge .b-zeile{border-radius:0;border:0;box-shadow:none;background:transparent}
+.b-ruhig .b-werkzeuge .b-zeile+.b-zeile{border-top:1px solid var(--b-linie,#ece4d6)}

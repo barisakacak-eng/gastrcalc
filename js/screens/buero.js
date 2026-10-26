@@ -56,6 +56,8 @@ export function bueroView(stand, wurzel, extra = {}) {
   if (bel.zaehl.bald + bel.zaehl.ueberfaellig) offen.push({ id: "belehrung", text: t("buero.offen.belehrung", bel.zaehl.bald + bel.zaehl.ueberfaellig), farbe: bel.zaehl.ueberfaellig ? "rot" : "gelb", ziel: { aktion: "nav", wert: "ordner-amt" } });
   const chip = (o) => `<button type="button" class="b-chip" ${zielAttr(o.ziel)}>${typeof o.prozent === "number" ? ring(o.prozent) : `<i class="b-punkt ${o.farbe === "rot" ? "rot" : "gelb"}" aria-hidden="true"></i>`}<span>${esc(o.text)}${typeof o.prozent === "number" ? ` <b class="zahl">${o.prozent} %</b>` : ""}</span></button>`;
   const k = ordnerKachelStand(stand, { datum: H });
+  // Büro ruhig (Baris 26.10.2026 23:56, Zwiebel + Uhrwerk): eine einheitliche Liste, eine Farbe, Status als leiser Satz.
+  const ordnerZeile = (id, symbol, s) => `<button type="button" class="b-zeile" data-a="nav" data-wert="ordner-${id}"><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(t(`ordner.${id}.kachel`))}</b><small class="${s.farbe === "rot" ? "rot" : ""}">${esc(s.text)}</small></span>${bsym("chevron-right", "b-pfeil")}</button>`;
   const kachel = (id, symbol, s) => `<button type="button" class="karte b-ordnerkachel" data-a="nav" data-wert="ordner-${id}"><span class="b-ks ${id}">${bsym(symbol)}</span><b>${esc(t(`ordner.${id}.kachel`))}</b><small><i class="b-punkt ${s.farbe}" aria-hidden="true"></i>${esc(s.text)}</small></button>`;
   const z = zaehlerImTakt(stand, heuteGeschaeft()); // W2-D; Paket 3, M7: Zähler nach Geschäftstag, Belehrungen/Ordner (H) nach Kalender
   const inv = inventurenFertig(stand).pop();
@@ -69,14 +71,12 @@ export function bueroView(stand, wurzel, extra = {}) {
   const karteSatz = haltbarUhrzeit(stand) || aktionUhrzeit(stand);
   const bereich = (id, symbol, titel, satz, rot, inhalt, wert = "") => `<details class="b-bereich" data-bereich="${id}"><summary class="b-zeile b-bereichkopf"><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${satz ? `<small class="${rot ? "rot" : ""}">${esc(satz)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</summary><div class="karte b-liste">${inhalt}</div></details>`;
   const [erster, ...rest] = offen;
-  return `<div class="buero">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
+  return `<div class="buero b-ruhig">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">
-      ${erster ? `<div class="b-offen">${chip(erster)}${rest.length ? `<details class="b-offen-mehr"><summary class="b-chip b-mehr">+ ${rest.length}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}</div>` : ""}
-      <div class="b-ordner">${kachel("amt", "shield-check", k.amt)}${kachel("steuer", "calculator", k.steuer)}${kachel("buch", "receipt", k.buch)}</div>
-      <div class="b-werkzeuge">
-        ${zeile({ aktion: "nav", wert: "einstellungen" }, "settings", t("buero.einrichten.einstellungen"), "")}
-        ${zeile({ aktion: "export" }, "download", t("buero.einrichten.sicherung"), "")}
-      </div>
+      ${erster ? `<button type="button" class="zeki-zeile b-zeki ${erster.farbe === "rot" ? "a-rot" : ""}" ${zielAttr(erster.ziel)}>${esc(erster.text)}</button>${rest.length ? `<details class="b-offen-mehr"><summary class="b-mehr-zeile">${esc(t("buero.ruhig.mehr", rest.length))}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}</div>` : ""}
+      <h2 class="b-gruppe">${esc(t("buero.ruhig.fuerAndere"))}</h2>
+      <div class="karte b-liste b-ordnerliste">${ordnerZeile("amt", "shield-check", k.amt)}${ordnerZeile("steuer", "calculator", k.steuer)}${ordnerZeile("buch", "receipt", k.buch)}</div>
+      <h2 class="b-gruppe">${esc(t("buero.ruhig.deinLaden"))}</h2>
       <div class="b-bereiche">
       ${bereich("geld", "trending-up", t("buero.abschnitt.geld"), t("buero.zahlen.monatUnter", monatName(H)), false, `
         ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("zaehler.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}
@@ -107,6 +107,10 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${zeile({ aktion: "nav", wert: "laeden" }, "store", t("buero.einrichten.laeden"), "")}
         ${zeile({ aktion: "pin-setzen" }, "lock", t("buero.einrichten.code"), "", `<span class="b-wert ${codeAn ? "plus" : ""}">${esc(t(codeAn ? "buero.einrichten.codeAn" : "buero.einrichten.codeAus"))}</span>`)}
         `)}
+      </div>
+      <div class="b-werkzeuge b-leise">
+        ${zeile({ aktion: "nav", wert: "einstellungen" }, "settings", t("buero.einrichten.einstellungen"), "")}
+        ${zeile({ aktion: "export" }, "download", t("buero.einrichten.sicherung"), "")}
       </div>
     </div></div>`;
 }
