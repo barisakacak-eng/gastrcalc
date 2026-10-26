@@ -2,6 +2,17 @@
 
 Stand: 26.10.2026. Auftrag des Kapitäns: Piktogrammrichtungen A/B verwerfen, fotografische Produktdarstellung nach SmashIt Heidelberg, zuordenbare Referenzen sichern, Produkte/Zutaten ergänzen, Änderungen und Restarbeit vollständig übergeben.
 
+
+## Aktueller Lieferstand nach Ausfall der Ausführungsumgebung
+
+**In GitHub dauerhaft verfügbar:** sämtliche 78 geänderten App-Dateien, alle 41 neuen Bildmotive, Bildherkunft, Daten-/Spracherweiterung, Tests, dieses Übergabedokument und die appweite Bildliste.
+
+**Noch nicht als Datei übergeben:** das vorbereitete Zusatzarchiv mit unveränderten Originalreferenzen, 35 Einzel-Screenshots, App-Prüfscreenshots, Einzelbild-HTML, Export-CSV und vollständigen Laufprotokollen. Die Ausführungsumgebung wurde vor ZIP-Erstellung und Datei-Upload unerreichbar. Die Sammlung wurde im Lauf erstellt, konnte aber nicht dauerhaft als herunterladbares Paket bereitgestellt werden. Die unten genannten temporären Paketpfade sind deshalb aktuell keine verfügbaren Downloads. Diese Einschränkung ist keine abgeschlossene Archivlieferung.
+
+Die Originalquellen sind unten verlinkt. Die Restzuordnung lässt sich mit `node tools/menue_bildstand.mjs` aus dem übergebenen App-Stand neu exportieren. Es fehlen appweit weiterhin 155 reine Artikel-Fotozuordnungen und acht Gericht-Fotozuordnungen; 80 vorhandene Fotodateien sind nicht aktiviert. Der neue Menübereich hat dagegen für alle 30 Vorlagen und seine Zutaten lokale Fotos.
+
+**Tatsächlich abgeschlossen:** Node 22.23.4 in UTC und Europe/Berlin jeweils 688 Tests, 683 bestanden, 0 Fehler, 5 bestehende Auslassungen; Work-Pilotdurchlauf 12/12 plus Nutzenzustände 60/60; neue Menü-Offlinetests 6/6; mobile Regeln 390/360 ohne Verstöße; Sprachstruktur 18/18. Die Original-Laufprotokolle lagen vor dem Umgebungsausfall lokal vor. Der gesonderte GitHub-CI-Status steht im Pull Request.
+
 ## Ergebnis
 
 - Eigener Prüfbranch `sanji/2026-10-26-produktfotos` auf `work/facelift-integration-2026-10-22`, Ausgangsstand `b040c25`. Kein Merge nach main und kein Deployment.
@@ -58,13 +69,13 @@ Keine Änderung an `engine.js`, `store.js`, Nutzen-/Hinweis-Rechenwerk, Steuerre
 
 ## Echte Prüfung und Prüfnachweise
 
-Die ausführlichen Laufprotokolle liegen unter `pruefung/`. Der finale Ergebnisstand wird zusätzlich in `PRUEFUNGEN.md` festgehalten. Keine Einzelprüfung wird als komplette Abnahme ausgegeben.
+Die ausführlichen Laufprotokolle wurden lokal unter `pruefung/` erzeugt; sie konnten nach dem Umgebungsausfall nicht als Zusatzarchiv hochgeladen werden. Die tatsächlich gelaufenen Endergebnisse stehen oben. Keine Einzelprüfung wird als komplette Abnahme ausgegeben.
 
 - Alle 276 lokalen WebP-Dateien wurden vollständig dekodiert. Ein beim Export leer gebliebenes Pfirsichbild wurde neu und atomar geschrieben; der Offline-Katalog wurde danach neu erzeugt.
 - Neue Menüprüfung: 30 Gerichte sowie Zutatenbilder in DE/TR/EN bei 390×844 und 360×780, nach Offline-Neustart; identische Bildzuordnungen, dekodierbare Dateien und keine erfundenen Gewinnwerte ohne Preise.
 - Bestehender Work-Pilotdurchlauf: Döner/Burger × DE/TR/EN × 390/360, zusätzlich Nutzenzustände.
 - Mobile Regelprüfung 390/360 und strukturelle Sprachprüfung.
-- Node-Prüfungen UTC/Berlin, finale Zahlen siehe `PRUEFUNGEN.md`.
+- Node 22.23.4, UTC und Europe/Berlin: jeweils 688 Tests, 683 bestanden, 0 Fehler, 5 bestehende Auslassungen.
 
 Die zwei Speichertests scheiterten auch unverändert im separaten Ausgangsstand. Ursache ihrer unzuverlässigen Abnahme: Die erste Leerlaufprüfung wurde nach pauschal 50 ms als fertig angenommen; außerdem wurden Schreibvorgänge nach pauschal 1,4 beziehungsweise 4,5 Sekunden erwartet. Auf diesem langsameren Rechner waren die Arbeitspakete zu diesem Zeitpunkt noch nicht abgeschlossen. Der Test wartet nun auf den tatsächlichen Abschluss der ersten Prüfung und auf den erwarteten Monatsschreibvorgang. Inhaltliche Speicher-Assertions wurden nicht entfernt und `store.js` bleibt bytegleich zum Sockel.
 
@@ -77,9 +88,9 @@ Die zwei Speichertests scheiterten auch unverändert im separaten Ausgangsstand.
 5. **Übrige 15 Sprachen:** den neuen Rezept-Hinweis fachlich übersetzen; englischer Rückfall ist kenntlich gemacht.
 6. **Appweiter Rest:** `noch_ohne_foto_artikel.csv` und `noch_ohne_foto_gerichte.csv` nennen die verbleibenden reinen Piktogramme. `appweite_einzelmotiv_liste.csv` unterscheidet fehlende individuelle Motive von bereits funktionierenden Familienbildern. Diese Lieferung ist keine Behauptung, dass die gesamte App jetzt für jeden Artikel ein eigenes Originalfoto besitzt.
 7. **Alte lokale Fotos:** 80 vorhandene Dateien sind weiterhin nicht im aktiven Fotoregister. Vor Aktivierung Motiv und richtige Zuordnung einzeln prüfen; alte falsche Döner-/Wrap-Zuordnungen nicht wieder einschalten.
-8. **Separater Vorauftrag:** Product-Readiness bleibt im eigenen lokalen Branch `sanji/product-readiness-auf-sockel-2026-10-26` mit Übergabe `bruecke/an-zoro/2026-10-26_product_readiness.md`. Die dortige L3-Arbeit wurde nicht unbemerkt in diesen Bildauftrag gemischt.
+8. **Separater Vorauftrag:** Product-Readiness lag im eigenen lokalen Branch `sanji/product-readiness-auf-sockel-2026-10-26` mit Übergabe `bruecke/an-zoro/2026-10-26_product_readiness.md`. Die dortige L3-Arbeit wurde nicht unbemerkt in diesen Bildauftrag gemischt und ist nicht als Bestandteil dieser GitHub-Übertragung gesichert.
 
-## Dateien im Übergabepaket
+## Vorbereitete Zusatzdateien – Archivlieferung noch offen
 
 - Diese Übergabe und `PRUEFUNGEN.md` zuerst lesen.
 - `Sanji_2026-10-26_Produktbilder.html`: offline öffnende Einzelansicht, ein Produkt pro Ansicht, mit Zutaten und offenen Mengen.
@@ -100,7 +111,7 @@ Die zwei Speichertests scheiterten auch unverändert im separaten Ausgangsstand.
 
 Aufgabe: Fotografischer Burgerbereich nach SmashIt-Referenzen, ersetzt Piktogrammrichtungen A/B.
 
-Ergebnis: 30 neue Vorlagen, 26 neue Einkaufsartikel, 41 neue lokale Bildmotive, Quellen-/Screenshot-Sammlung, Änderungen im Prüfbranch, Einzelbild-Vorschau und vollständige Restlisten.
+Ergebnis: In GitHub gesichert sind 30 neue Vorlagen, 26 neue Einkaufsartikel, 41 neue lokale Bildmotive, Änderungen im Prüfbranch, Bildherkunft, Tests und die appweite Bildliste. Das Zusatzarchiv mit Originalen, Screenshots und Einzelbild-Vorschau ist wegen des Umgebungsausfalls noch nicht als Datei übergeben.
 
 Empfehlung: Die konsistente fotografische Richtung übernehmen. Originalreferenzen und KI-Visualisierungen weiter klar unterscheiden; Rezepte erst nach Bestätigung ihrer Mengen und Zeiten als fertig kalkuliert behandeln.
 
@@ -108,4 +119,4 @@ Offene Fragen: Echte Grammrezepte, vollständige Special-Fries-Zusammensetzung, 
 
 Hinweise für den Code: Keine eigenen Finanzformeln. Vorlagenwerte bewusst `null`, vorhandene Preise nicht überschreiben, eigene Fotos bevorzugen. Erst exakte Menüzuordnung, dann Familienbild. Neue Dateien offline gelistet; Prüfstand nicht mit Veröffentlichung verwechseln.
 
-Quellen: Die vier oben genannten Primär-/Projektquellen; URLs, Datum und unveränderte Originaldateien liegen im Paket.
+Quellen: Die vier oben genannten Primär-/Projektquellen. URLs und Datum stehen hier; die unveränderten Originaldateien wurden erfasst, konnten aber noch nicht als Zusatzarchiv übergeben werden.
