@@ -1122,6 +1122,7 @@ export default {
       laeden: "Qui passi da un locale all'altro. Ogni locale ha i suoi numeri.",
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },

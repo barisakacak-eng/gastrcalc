@@ -1121,6 +1121,7 @@ export default {
       laeden: "اینجا بین مغازه‌هایت جابه‌جا می‌شوی. هر مغازه عددهای خودش را دارد.",
       personal: "دورریز را ثبت کن، سرمایش را اندازه بگیر، نظافت را تیک بزن. برگشت فقط با رمز دفتر.",
       buero: "همهٔ حساب‌ها، فهرست‌ها و تنظیمات اینجاست. پوشه‌ها را به بازرس، مشاور مالیاتی یا حسابدار می‌دهی." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "صفر + سود هدف",
     stufe: { bisNull: "تا صفر کم است", bisZiel: "تا هدف", ueberZiel: "بالای هدف" },

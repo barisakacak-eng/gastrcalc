@@ -1124,6 +1124,7 @@ export default {
       laeden: "هنا تنتقل بين محلاتك. لكل محل أرقامه الخاصة.",
       personal: "سجّل الهدر، قِس التبريد، علّم التنظيف. العودة فقط برمز المكتب.",
       buero: "هنا كل الحسابات والقوائم والإعدادات. الملفات تعطيها للتفتيش أو المستشار الضريبي أو المحاسب." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "صفر + الربح المستهدف",
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },

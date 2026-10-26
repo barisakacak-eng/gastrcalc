@@ -14,6 +14,13 @@ const erwartet = (w) => st.migrierenWurzel(JSON.parse(json(w))); // so muss der 
 const teile = (a) => a.speicher("gastrocalc", "teile");
 const schreibAb = (a) => { const n = a.schreibvorgaenge.length; return () => a.schreibvorgaenge.slice(n); };
 const teilPuts = (liste) => liste.filter(([s, art]) => s === "teile" && art === "put").map(([, , k]) => k);
+// Leerlauf ist absichtlich in kleine Arbeitspakete geteilt. Ein langsamer Testrechner
+// braucht dafür länger; geprüft wird der echte Abschluss, nicht eine feste Schlafzeit.
+async function warteBis(pruefen, beschreibung) {
+  const ab = performance.now();
+  while (!pruefen() && performance.now() - ab < 30000) await new Promise((r) => setTimeout(r, 25));
+  assert.ok(pruefen(), beschreibung);
+}
 
 let JAHR = null; const jahr = () => (JAHR ??= jahresStand(365));
 
@@ -214,18 +221,22 @@ test("Leerlauf-Prüfung findet tiefe Änderungen an alten Einträgen und speiche
   // Paket 2 (16.10.2026): der Leerlauf wird jetzt auch ohne requestIdleCallback geplant (Rückfall setTimeout), darum steht der
   // Idle-Callback hier vor dem ersten Speichern und die Uhr springt vor der zweiten Prüfung über den Mindestabstand (60 s).
   const a = idbAttrappe(); await st.laden();
-  globalThis.requestIdleCallback = (fn) => setTimeout(() => fn({ timeRemaining: () => 50, didTimeout: false }), 0);
+  let idleOffen = 0;
+  globalThis.requestIdleCallback = (fn) => {
+    idleOffen += 1;
+    return setTimeout(() => { try { fn({ timeRemaining: () => 50, didTimeout: false }); } finally { idleOffen -= 1; } }, 0);
+  };
   const echt = Date.now;
   try {
     const w = structuredClone(jahr()); await st.sofortSpeichern(w);
-    await new Promise((r) => setTimeout(r, 50)); // erste Leerlauf-Prüfung (nichts anders) durchlaufen lassen
+    await warteBis(() => idleOffen === 0, "erste Leerlauf-Prüfung ist vollständig abgeschlossen");
     const b = w.betriebe[0]; const l = b.lieferungen[5];
     Date.now = () => echt() + 61e3;
     l.zeilen[1].einzelpreis = 0.01; // tief, kein beobachtetes Feld
     b.betrieb.name = "Anstoß"; // sorgt für ein Speichern, nach dem der Leerlauf geplant wird
     const ab = schreibAb(a);
     await st.sofortSpeichern(w);
-    await new Promise((r) => setTimeout(r, 1400)); // Leerlauf-Stücke + verzögertes Speichern (900 ms)
+    await warteBis(() => teilPuts(ab()).includes(`${b.id}|lieferungen|${l.datum.slice(0, 7)}`), "Leerlauf hat den geänderten Monat nachgeschrieben");
     assert.ok(teilPuts(ab()).includes(`${b.id}|lieferungen|${l.datum.slice(0, 7)}`));
     assert.equal((await st.laden()).betriebe[0].lieferungen[5].zeilen[1].einzelpreis, 0.01);
   } finally { delete globalThis.requestIdleCallback; Date.now = echt; }
@@ -238,7 +249,7 @@ test("Paket 2: ohne requestIdleCallback (Safari) läuft die Leerlauf-Prüfung ü
   const b = w.betriebe[0]; const l = b.lieferungen[7];
   l.zeilen[0].menge = 4321; // tief, kein beobachtetes Feld
   const ab = schreibAb(a);
-  await new Promise((r) => setTimeout(r, 4500)); // Rückfall-Stücke (8 ms Budget, alle 200 ms) + verzögertes Speichern
+  await warteBis(() => teilPuts(ab()).includes(`${b.id}|lieferungen|${l.datum.slice(0, 7)}`), "Safari-Rückfall hat den geänderten Monat nachgeschrieben");
   assert.ok(teilPuts(ab()).includes(`${b.id}|lieferungen|${l.datum.slice(0, 7)}`), "Rückfall hat die tiefe Änderung gefunden und nachgeschrieben");
   assert.equal((await st.laden()).betriebe[0].lieferungen[7].zeilen[0].menge, 4321);
 });

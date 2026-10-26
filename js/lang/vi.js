@@ -1122,6 +1122,7 @@ export default {
       laeden: "Ở đây bạn chuyển giữa các quán. Mỗi quán có số liệu riêng.",
       personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "hòa vốn + lãi mục tiêu",
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },

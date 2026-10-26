@@ -1122,6 +1122,7 @@ export default {
       laeden: "Εδώ αλλάζεις ανάμεσα στα μαγαζιά σου. Κάθε μαγαζί έχει δικά του νούμερα.",
       personal: "Γράψε απορρίμματα, μέτρησε ψύξη, τσέκαρε καθάρισμα. Πίσω μόνο με τον κωδικό γραφείου.",
       buero: "Εδώ είναι όλοι οι υπολογισμοί, οι λίστες και οι ρυθμίσεις. Τους φακέλους τους δίνεις στην υγειονομική, στον φοροτεχνικό ή στον λογιστή." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "μηδέν + στόχος κέρδους",
     stufe: { bisNull: "Μέχρι το μηδέν λείπουν", bisZiel: "Μέχρι τον στόχο", ueberZiel: "Πάνω από τον στόχο" },
