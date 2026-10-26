@@ -1,6 +1,8 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
+import { rundgangStarten, rundgangOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
+import { zekiLogAnhaengen, rundgangAbschliessen } from "./stamm.js";
 import { zekiTaktStarten, zekiSprechblase } from "./screens/zeki_takt.js";
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
@@ -164,6 +166,8 @@ function zeichne() {
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiBildschirm(); zekiTaktStarten();
+      if (ansicht === "start" && !stand.rundgang && modus(wurzel) === "laden" && !personalAktiv() && !rundgangOffen()) // erster Besuch auf Heute: Rundgang mit Zeki
+        setTimeout(() => rundgangStarten(document, { log: (e) => { zekiLogAnhaengen(stand, e); speichern(wurzel); }, ende: (erg) => { rundgangAbschliessen(stand, erg); speichern(wurzel); } }), 400);
       eigeneFotosLaden();
     }
   } catch (e) {

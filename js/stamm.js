@@ -167,3 +167,18 @@ export function beilageBereitSchalten(stand, art, zeitraum, id) {
   alle[k] = [...liste]; return liste.has(id);
 }
 export const beilagenBereit = (stand, art, zeitraum) => new Set(stand?.betrieb?.beilagenBereit?.[`${art}:${zeitraum}`] || []);
+
+// Zeki lernt mit (Baris 26.10.2026): Fragen, getippte Antworten und das Ende des Rundgangs bleiben lokal im Laden.
+// Grundlage für den späteren KI-Zeki; verlässt das Gerät nur über die Sicherung oder einen ausdrücklichen Export (DSGVO).
+export function zekiLogAnhaengen(stand, eintrag) {
+  if (!stand || !eintrag?.art) return 0;
+  const l = (stand.zekiLog ??= []);
+  l.push({ t: new Date().toISOString(), ...eintrag });
+  if (l.length > 1000) l.splice(0, l.length - 1000);
+  return l.length;
+}
+export function rundgangAbschliessen(stand, ergebnis) {
+  if (!stand) return false;
+  stand.rundgang = { ergebnis: String(ergebnis || "fertig"), t: new Date().toISOString(), mal: (stand.rundgang?.mal || 0) + 1 };
+  return true;
+}
