@@ -1,3 +1,4 @@
+import { MENUE_GERICHTE, MENUE_WAREN_FOTO } from "./data/burger_ergaenzung.js";
 // Trennung 2 (17.10.2026): Bildzuordnung per Regeln – welches Foto/Piktogramm zu einem Gericht oder einer Ware gehört.
 // Gibt nur Namen zurück (foto/<name>.webp, bilder/<name>.svg), kein HTML. Vorher in js/screens/vergleich.js und js/screens/muell.js.
 import { fotoSlug } from "./util.js";
@@ -21,6 +22,8 @@ const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger",
   beilagen: "g-pommes", alkoholfrei: "g-getraenk", suppe: "g-suppe", kuchen: "g-kuchen", kaffee: "g-kaffee", fruehstueck: "g-fruehstueck", eis: "g-eis", bier: "g-bier", fleischgericht: "g-fleischgericht" };
 export function fotoName(g) {
   const f = g.rezeptFamilie || "";
+  const menue = MENUE_GERICHTE.find((v) => v.name === (g.vorlageName || g.name));
+  if (menue && FOTOS.has(menue.foto)) return menue.foto;
   // Ein altes Foto namens "Döner Kebab" zeigt in Wirklichkeit einen Wrap/Dürüm.
   // Türkischer Döner im Brot erhält daher immer das fachlich richtige Brot-Motiv.
   const nameFoto = "g-" + fotoSlug(g.name);
@@ -77,6 +80,8 @@ const R_ALIAS = { "w-doenerfleisch": (n) => /h[äa]hnchen|pute/i.test(n) ? "r-ha
 const fotoFuer = (n, name) => { const kand = n.startsWith("v-") ? n : R_ALIAS[n] ? R_ALIAS[n](name) : "r-" + n.slice(2); return FOTOS.has(kand) ? kand : null; };
 // Trennung 2 (17.10.2026): Bildquelle einer Ware ohne HTML – { foto } (foto/<name>.webp) oder { pikto } (bilder/<name>.svg).
 export function wareBildQuelle(x) {
+  const menueFoto = MENUE_WAREN_FOTO[x.name];
+  if (menueFoto) return FOTOS.has(menueFoto) ? { foto: menueFoto } : { pikto: "w-ware" };
   // 17.10.2026: Einzelbild je Artikel zuerst (Bildliste: r-/v-/d- + fotoSlug(Name)), dann Sammelbild, dann Piktogramm
   const eigen = (x.gruppe === "verpackung" ? "v-" : x.gruppe === "getraenk" || x.gruppe === "spirituose" ? "d-" : "r-") + fotoSlug(x.name);
   if (FOTOS.has(eigen)) return { foto: eigen };

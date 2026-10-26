@@ -1,0 +1,523 @@
+[
+  {
+    "datei": "foto/g-bacon-cheeseburger.webp",
+    "sha256": "e45b6aa79df66374dbda40f3c730a3010e95a840702325649a93c76d34610b08",
+    "bytes": 26152,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-chili-cheeseburger.webp",
+    "sha256": "93209e4a57de5fea5e5fe80f2861ba495c608e55f59999566d3839bece1927ed",
+    "bytes": 28266,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-super-smash-burger.webp",
+    "sha256": "8ba2d5d7b5f2cc539ddf225c2db2193a3f9f3b97584807669cf9ee4a38e1860c",
+    "bytes": 26884,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-nashville-burger.webp",
+    "sha256": "ea08b53b48df6e76153fc584487408cf584db97f3c9090612826565d4ee0f1d9",
+    "bytes": 26040,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-oklahoma-smash-burger.webp",
+    "sha256": "6dd344431094179d727bc381cc876e6b89f7fe248fe67ba282f9d6b51d939c2d",
+    "bytes": 29366,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-suesskartoffel-pommes.webp",
+    "sha256": "db7db3ffab1cc4702b2ee0e092cd8f7e349faa56901b4f241b305370acf40841",
+    "bytes": 25584,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-curly-fries.webp",
+    "sha256": "9d17cd168cefea8d1643fafc82f4dc19a8fb15212fc768bed24908a35ec13773",
+    "bytes": 23064,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-wedges.webp",
+    "sha256": "47eff32228e8670dfaee91de55c29212011270d9b1e87ed1ed3e55e1e924ff6f",
+    "bytes": 26118,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-coleslaw.webp",
+    "sha256": "2258ff94d879787e4157c47bfc179a4cd8aaa49df1819697cc6f71589995dce3",
+    "bytes": 16490,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-knoblauch-parmesan-pommes.webp",
+    "sha256": "158593433fdc27832d703e8fbedb3401f5e376a7dd07a180d7d867d605a7ee00",
+    "bytes": 29686,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-chicken-pommes.webp",
+    "sha256": "df67ee2d6921634b27bb22e835b3917c9fe8840b4c9daf69afc0832c953cdd01",
+    "bytes": 30112,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-trueffel-pommes.webp",
+    "sha256": "8d6095b5364d00fa694a7e957d33ad020898903384c9e78aa1867579a1fd18cc",
+    "bytes": 23614,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-ketchup-dip.webp",
+    "sha256": "c775808c9465e35ae91205af71743cdb8ba304774d1447ba2c942c4cc25f1c8b",
+    "bytes": 15990,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-mayonnaise-dip.webp",
+    "sha256": "cb03bbee6f5be36770044e23083a1e8a2672fe64183f1d5f0f5f1fd4fb79996e",
+    "bytes": 14106,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-bbq-dip.webp",
+    "sha256": "47e3cf632a7a6908e28527a3210a741016db8db97b3df5dbfa0120ba2fec4c20",
+    "bytes": 23210,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-trueffel-mayonnaise-dip.webp",
+    "sha256": "43c7a33416ea748c08f7b53367731702b9568e3bd8a236cb39aff55668bfbc63",
+    "bytes": 13658,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-kaesesauce-dip.webp",
+    "sha256": "e8ef680bfdef0fbed69e3e64fe50fb1f25399baff46b19c35dc7cf3d3e1a9582",
+    "bytes": 12648,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-joppie-dip.webp",
+    "sha256": "2acf1d57c9da84f1c5d77d918dcc1fdf975bad80fc659a48393a82b66a20172d",
+    "bytes": 15792,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-knoblauch-mayonnaise-dip.webp",
+    "sha256": "707beddf82e0d7923324b83ecbb5a602a5f76385a09da60f68d84ce624e5a043",
+    "bytes": 14486,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-detox-smoothie-0-4-l.webp",
+    "sha256": "c02f3030c74dc15d0ce5bc519df15c7f5f50a16c9e89729d5132d9697c97cdfe",
+    "bytes": 14524,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-sunshine-smoothie-0-4-l.webp",
+    "sha256": "cdaece382385c598da4555dbde78623aa62f14240ee9da781f5a3c7d2365a9b1",
+    "bytes": 13466,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-acai-smoothie-0-4-l.webp",
+    "sha256": "839a077e7fded2b6ec961322f171d54af5575a097b6648f2132ade6ad7b122c5",
+    "bytes": 15864,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-halloumi-sticks-6-stueck.webp",
+    "sha256": "b8e7d1b0d78b351818ef32a11f00a8757d628e4266a51c38451eb9ce56e8718a",
+    "bytes": 22312,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-chili-cheese-nuggets-6-stueck.webp",
+    "sha256": "8abd0b7da0034c8a7bb4cbf322a53690ec9675e7be6459617c45758ecde8c14f",
+    "bytes": 22028,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-onion-rings-5-stueck.webp",
+    "sha256": "83e282bcacb44f16f3b92709e122409f69eac3d3dcac0f19f20488a247708afa",
+    "bytes": 21236,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-chicken-tenders-5-stueck.webp",
+    "sha256": "af5415c532298fa93fea1b2d88ca2b7f6969f6e6ff45cc940a7a8f39d51153e9",
+    "bytes": 30784,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-chili-cheese-pommes.webp",
+    "sha256": "1ea148ba1387b55d567a790424be3fe2273b9adf3c8f384cd20c1972dc161f5d",
+    "bytes": 18856,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-muffin-sorte-offen.webp",
+    "sha256": "558abbae1d1aee22c99f0a7bed1404c0e4ae1b78d8e3d1c1edbfb447d751657b",
+    "bytes": 19936,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/g-classic-smash-burger.webp",
+    "sha256": "65e4af77555fa3af65d0e219bcbb17550c64c7357b4b97463069cd01946701f9",
+    "bytes": 23892,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "https://smash-it-burgers.de/",
+      "https://wolt.com/de/deu/heidelberg/restaurant/smash-it-burger-heidelberg"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-rinderspeck.webp",
+    "sha256": "051fb328a10a8d6f6e758099882994084283d2d55910f42b55d6776fc97c1c36",
+    "bytes": 28988,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-curly-fries.webp",
+    "sha256": "4b4190fa090c9779fa0f6f0d3c980c76b225639644a62f7a41bfeb8e3bf957b0",
+    "bytes": 19914,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-wedges.webp",
+    "sha256": "a0d69cc704b4ecb028c5ba4147fba8c9889dfcf6f9bd7452df99b9d0c6964278",
+    "bytes": 20578,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-mango.webp",
+    "sha256": "ccad684c21c0858a449435d74f869b27d51a649e2b8d9fc1d70ad0981948cc3a",
+    "bytes": 16856,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-bananen.webp",
+    "sha256": "de13a268c55ecc6e8060e0299edfad676e040733e41bfeec5ff4a82c317075c9",
+    "bytes": 17942,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-blaubeeren.webp",
+    "sha256": "a3b24b637405e9839519ff86c68c7c25b37d4b854c9d6dece01291932ccccea5",
+    "bytes": 20028,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-passionsfrucht.webp",
+    "sha256": "29459ac9a63670e2d9023a278e5852d8a3525f72c6703613dd5373a450b3447c",
+    "bytes": 25686,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-acai-pueree.webp",
+    "sha256": "b71c5725567e8e12323aa5ba668db9cc821b0b706126260f2a0b000a768af11d",
+    "bytes": 26060,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-spinat.webp",
+    "sha256": "cf7976565486359547d8d9f8ca874b714b1ba1005eacce25a511d2c76da6ccfc",
+    "bytes": 26904,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-pfirsich.webp",
+    "sha256": "7c3ca0a517401a42e734471e1249544634e1a188ea3f1ee94be1873f340fa11e",
+    "bytes": 23008,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-erdbeeren.webp",
+    "sha256": "626fce142c0321a95cc7d33ba825d8f524eb3ecff929a5d5c2bd0f51573cf7f8",
+    "bytes": 28172,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  },
+  {
+    "datei": "foto/r-senf.webp",
+    "sha256": "052e37afe3d467af2fe22a214aa260c6ce39f0ed46438569fa46d7bbebce64e5",
+    "bytes": 11026,
+    "format": "WebP 520×390",
+    "erzeugung": "KI-Visualisierung; keine unveränderte Originalaufnahme des Betriebs",
+    "quelle_datum": "2026-10-26",
+    "quellen": [
+      "Generisches Zutatenmotiv; keine betriebliche Produktaufnahme"
+    ],
+    "status": "Arbeitsstand für Zoros Prüfung"
+  }
+]

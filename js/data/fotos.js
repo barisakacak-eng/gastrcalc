@@ -2,6 +2,9 @@
 // Stand 15.10.2026: 38 Fotos aus Sanjis drei Bildbögen (mit ChatGPT erzeugt, Nutzung in der App durch Baris), von Zoro zugeschnitten.
 // Neue Fotos: Datei nach foto/ legen und den Namen hier eintragen. Eigene Fotos des Wirts je Gericht gehen vor (bleiben auf dem Gerät).
 export const FOTOS = new Set([
+  "r-rinderspeck", "r-curly-fries", "r-wedges", "r-mango", "r-bananen", "r-blaubeeren", "r-passionsfrucht", "r-acai-pueree", "r-spinat", "r-pfirsich", "r-erdbeeren", "r-senf",
+  // Sanji 26.10.: fotografische Menü-Ergänzung; Herkunft/AI-Bearbeitung in der Übergabe.
+  "g-bacon-cheeseburger", "g-chili-cheeseburger", "g-super-smash-burger", "g-nashville-burger", "g-oklahoma-smash-burger", "g-suesskartoffel-pommes", "g-curly-fries", "g-wedges", "g-coleslaw", "g-knoblauch-parmesan-pommes", "g-chicken-pommes", "g-trueffel-pommes", "g-ketchup-dip", "g-mayonnaise-dip", "g-bbq-dip", "g-trueffel-mayonnaise-dip", "g-kaesesauce-dip", "g-joppie-dip", "g-knoblauch-mayonnaise-dip", "g-detox-smoothie-0-4-l", "g-sunshine-smoothie-0-4-l", "g-acai-smoothie-0-4-l", "g-halloumi-sticks-6-stueck", "g-chili-cheese-nuggets-6-stueck", "g-onion-rings-5-stueck", "g-chicken-tenders-5-stueck", "g-chili-cheese-pommes", "g-muffin-sorte-offen", "g-classic-smash-burger", "r-zwiebeln", "r-krautsalat", "r-suesskartoffel-pommes", "r-onion-rings-tk", "r-mayonnaise", "r-jalapenos", "r-tomaten", "r-pommes-frites",
   // Sanji 22.10.: freigegebene Premium-Einzelmotive für beide Pilot-Ladentypen.
   "g-cheeseburger", "g-double-smash-burger", "g-burger-menue", "r-cheddar", "r-burgersauce", "r-pickles",
   // Sanji 22.10.: weitere bereits vorhandene, visuell geprüfte Pilot-Motive aktivieren; Dateien sind schon offline im SW-Catalog.

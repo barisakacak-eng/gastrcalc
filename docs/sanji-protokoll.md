@@ -166,3 +166,14 @@ Keine.
 - Node **22.23.4**, UTC und Berlin je **677 Tests: 672 bestanden, 0 Fehler, 5 bestehende Auslassungen**. Sprachprüfung 18 Tabellen vollständig; **15 neue Übersetzungen offen**, vorläufig Deutsch. Regelprüfung 390/360 **0 Verstöße/0 Konsolenfehler**, Personal-Durchlauf bestanden. Work-Pilotdurchlauf lokal **12/12**, zusätzlich **60/60 Nutzenansichten** über fünf Zustände mit Wortbudget, Leeranzeige, Schätztrennung, Helfer und Platzprüfung. Keine Assertions abgeschwächt.
 - HTML-Tagesmappe aus echten lokalen DOM-Ansichten, vollständig offline und ohne Kundendaten: [Variante A](../bruecke/an-zoro/2026-10-24_euro-zaehler/Sanji_2026-10-24_Tagesmappe_Euro-Zaehler_A.html). Übergabe und Integrationsauftrag: [Euro-Zähler L1 v1](../bruecke/an-zoro/2026-10-24_euro_zaehler.md).
 - Generator-Fassung `2026-10-23.5`, Fingerabdruck `8153b0f3da7e`; SW nicht manuell geändert. Der PR-Workflow filtert Zoro-Basisbranches aktuell noch aus; lokale Ergebnisse werden nicht als gelaufene GitHub-CI ausgegeben. Kein paralleler Nutzenrechner und keine ungeprüften Steuerinhalte.
+
+
+## 26.10.2026 – Fotografischer Produktbereich nach SmashIt-Referenz
+
+- Kapitän verwirft Piktogramme A/B, bestätigt die Website als richtige Referenz und beauftragt Referenzsammlung, Produkt-/Zutatenergänzung und vollständige Übergabe.
+- Eigener Prüfbranch `sanji/2026-10-26-produktfotos` auf Work-Sockel `b040c25`. 30 zusätzliche Vorlagen, 26 neue Katalogartikel, 41 neue WebP-Motive und acht vorhandene Bilder aktiviert. Eigene Fotos des Wirts bleiben vorrangig.
+- 38 Quellenprodukte, acht Website-Fotos und 27 Menü-Beispielbilder gesichert, jeweils mit Screenshot. Originale separat im Übergabepaket; neue App-Motive sind ausdrücklich als KI-Visualisierungen dokumentiert. Kein Instagram-Konto geraten.
+- Keine erfundenen Grammwerte, Arbeitszeiten oder Einkaufspreise. Neuer Smash-Patty ohne behauptetes Gewicht, Rinderspeck statt Schweine-Bacon, getrennte Auswahlmenüs. Offene Mengen bleiben null. DE/TR/EN vollständig; 15 weitere Hinweis-Übersetzungen offen.
+- Neue Offline-Abnahme DE/TR/EN × 390/360: 30 Gerichte und Zutatenbilder vollständig, kein horizontaler Überlauf, keine Gewinnzahl ohne Preise. Bestehender Work-Durchlauf 12/12, Regeln 390/360 und Sprachtabellen bestanden. Finale Node-Zahlen und alle Restpunkte stehen in der Übergabe/Prüfdatei.
+- Zwei auch auf dem Ausgangsstand rote Leerlauftests repariert: tatsächlichen Abschluss abwarten statt 50/1400/4500-ms-Annahmen. Inhaltliche Assertions bleiben, store.js/engine.js bytegleich. Speichertests 13/13 auf Node 22.23.4.
+- Übergabe: [Fotografischer Produktbereich](../bruecke/an-zoro/2026-10-26_produktfotos.md). Originale und Screenshots bleiben im privaten Paket. Kein Merge, kein Deployment durch Sanji.

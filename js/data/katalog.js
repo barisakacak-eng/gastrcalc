@@ -1,3 +1,4 @@
+import { MENUE_ARTIKEL, MENUE_GERICHTE } from "./burger_ergaenzung.js";
 // Warenkatalog und Gerichtsvorlagen – übernommen aus dem Prototyp vom 5.10.2026 (540 Artikel, 120 Vorlagen).
 // Bewusst OHNE Preise: was eine Zutat kostet, weiß nur der Betrieb. Mengen in den Vorlagen sind Startwerte (Schätzung).
 // Namen bleiben vorerst Deutsch in allen Sprachen; die Übersetzung des Katalogs ist eine eigene Etappe.
@@ -407,6 +408,9 @@ export const KATALOG = {
 };
 
 /** Welche Sortimentsbereiche eine Betriebsart zur Auswahl bekommt. */
+// Öffentliche Speisekarte: Artikel ohne Preise, fehlende Gewichte bleiben offen.
+for (const [n,e,g] of MENUE_ARTIKEL) if (!KATALOG.burger.produkte.some((p) => p.n === n)) KATALOG.burger.produkte.push(K(n,e,g));
+
 export const BEREICHE_JE_BETRIEB = {
   restaurant: ["fleischgericht", "suppe", "salat", "beilagen", "kuchen", "eis", "kaffee", "bar", "bier", "alkoholfrei", "grundzutaten", "verpackung"],
   bar: ["bar", "bier", "alkoholfrei", "fingerfood", "kaffee", "grundzutaten", "verpackung"],
@@ -710,6 +714,12 @@ export const VORLAGEN = {
       ["Fingerfood-Schale", 1, "stk"]]),
   ],
 };
+
+// Neue Menüvorlagen: keine erfundenen Grammwerte oder Zubereitungszeiten.
+for (const g of MENUE_GERICHTE) {
+  const liste = (VORLAGEN[g.bereich] ||= []);
+  if (!liste.some((v) => v.name === g.name)) liste.push(V(g.name, null, g.zutaten));
+}
 
 /** Vorlagen, die zur Betriebsart passen – mit Herkunftsbereich. */
 

@@ -67,13 +67,22 @@ prio;gruppe;datei;name;status;motiv
 1;D Gericht-Familie;g-teller.webp;teller;fehlt;Ein typisches Gericht der Familie „teller“, fertig serviert wie im Imbiss (sichtbar: Dönerspieß Kalb/Pute, Eisbergsalat, Tomaten, Knoblauchsauce, Menüschale 3-teilig). Eine Portion.
 1;D Gericht-Familie;g-wrap.webp;wrap;fehlt;Ein typisches Gericht der Familie „wrap“, fertig serviert wie im Imbiss (sichtbar: Dönerspieß Kalb/Pute, Dürüm-Wrap, Eisbergsalat, Tomaten, Zwiebeln, Kräutersauce). Eine Portion.
 1;D Gericht-Familie;g-wurst.webp;wurst;vorhanden;Ein typisches Gericht der Familie „wurst“, fertig serviert wie im Imbiss (sichtbar: Senf, Pommesschale). Eine Portion.
+1;E Gericht;g-acai-smoothie-0-4-l.webp;Acai Smoothie 0,4 l;vorhanden;„Acai Smoothie 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Erdbeeren, Blaubeeren, Mango, Acai-Püree.
 1;E Gericht;g-adana-spiess.webp;Adana-Spieß;fehlt – zeigt bis dahin g-adana;„Adana-Spieß“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Adana-Spieß, Pide-Brot, Zwiebeln, Petersilie, Joghurtsauce.
 1;E Gericht;g-apfelschorle-0-3-l.webp;Apfelschorle 0,3 l;fehlt – zeigt bis dahin d-saft;„Apfelschorle 0,3 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Apfelsaft.
+1;E Gericht;g-bbq-dip.webp;BBQ-Dip;vorhanden;„BBQ-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: BBQ-Sauce.
 1;E Gericht;g-caesar-salad.webp;Caesar Salad;fehlt – zeigt bis dahin g-salat;„Caesar Salad“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Romanasalat, Hähnchenbrust, Parmesan, Croutons, Caesar-Dressing.
+1;E Gericht;g-chicken-pommes.webp;Chicken-Pommes;vorhanden;„Chicken-Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Chicken-Pommes (fertig).
+1;E Gericht;g-chicken-tenders-5-stueck.webp;Chicken Tenders (5 Stück);vorhanden;„Chicken Tenders (5 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Chicken Tenders (Stück).
+1;E Gericht;g-chili-cheese-nuggets-6-stueck.webp;Chili-Cheese-Nuggets (6 Stück);vorhanden;„Chili-Cheese-Nuggets (6 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Chili-Cheese-Nuggets.
+1;E Gericht;g-chili-cheese-pommes.webp;Chili-Cheese-Pommes;vorhanden;„Chili-Cheese-Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Chili-Cheese-Pommes (fertig).
 1;E Gericht;g-cola-0-33-l.webp;Cola 0,33 l;vorhanden;„Cola 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Cola 0,33 l.
+1;E Gericht;g-coleslaw.webp;Coleslaw;vorhanden;„Coleslaw“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Krautsalat.
 1;E Gericht;g-couscous-salat.webp;Couscous-Salat;fehlt – zeigt bis dahin g-salat;„Couscous-Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Couscous, Cocktailtomaten, Salatgurke, Kichererbsen, Olivenöl.
+1;E Gericht;g-curly-fries.webp;Curly Fries;vorhanden;„Curly Fries“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Curly Fries TK.
+1;E Gericht;g-detox-smoothie-0-4-l.webp;Detox Smoothie 0,4 l;vorhanden;„Detox Smoothie 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Ananas (Smoothie), Bananen, Spinat, Mango.
 1;E Gericht;g-doener-kebab.webp;Döner Kebab;vorhanden;„Döner Kebab“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Zwiebeln, Weißkohl.
-1;E Gericht;g-doenerteller.webp;Dönerteller;fehlt – zeigt bis dahin g-doener;„Dönerteller“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Pommes frites, Eisbergsalat, Tomaten, Knoblauchsauce, Hirtenkäse / Feta.
+1;E Gericht;g-doenerteller.webp;Dönerteller;fehlt – zeigt bis dahin g-doener-teller;„Dönerteller“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Pommes frites, Eisbergsalat, Tomaten, Knoblauchsauce, Hirtenkäse / Feta.
 1;E Gericht;g-dueruem-doener.webp;Dürüm Döner;fehlt – zeigt bis dahin g-duerum;„Dürüm Döner“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Dönerspieß Kalb/Pute, Dürüm-Wrap, Eisbergsalat, Tomaten, Zwiebeln, Kräutersauce.
 1;E Gericht;g-eistee-0-33-l.webp;Eistee 0,33 l;fehlt – zeigt bis dahin d-eistee;„Eistee 0,33 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eistee.
 1;E Gericht;g-energydrink-0-25-l.webp;Energydrink 0,25 l;fehlt – zeigt bis dahin d-energy;„Energydrink 0,25 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Energydrink 0,25 l.
@@ -82,18 +91,32 @@ prio;gruppe;datei;name;status;motiv
 1;E Gericht;g-gemischtes-gemuese.webp;Gemischtes Gemüse;vorhanden;„Gemischtes Gemüse“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mischgemüse TK, Butter.
 1;E Gericht;g-griechischer-salat.webp;Griechischer Salat;vorhanden;„Griechischer Salat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Tomaten, Salatgurke, Rote Zwiebeln, Oliven, Feta.
 1;E Gericht;g-haehnchendoener.webp;Hähnchendöner;fehlt – zeigt bis dahin g-doener;„Hähnchendöner“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenspieß, Dönerbrot / Fladen, Eisbergsalat, Tomaten, Zwiebeln, Joghurtsauce.
+1;E Gericht;g-halloumi-sticks-6-stueck.webp;Halloumi-Sticks (6 Stück);vorhanden;„Halloumi-Sticks (6 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Halloumi-Sticks.
 1;E Gericht;g-hausgemachte-limonade-0-4-l.webp;Hausgemachte Limonade 0,4 l;vorhanden;„Hausgemachte Limonade 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hausgemachte Limonade, Zitronen, Minze, Trinkhalm.
+1;E Gericht;g-joppie-dip.webp;Joppie-Dip;vorhanden;„Joppie-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Joppie-Sauce.
+1;E Gericht;g-kaesesauce-dip.webp;Käsesauce-Dip;vorhanden;„Käsesauce-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Käsesauce.
 1;E Gericht;g-kartoffelknoedel-2-stueck.webp;Kartoffelknödel (2 Stück);fehlt – zeigt bis dahin g-pommes;„Kartoffelknödel (2 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kartoffelknödel.
 1;E Gericht;g-kartoffelsalat.webp;Kartoffelsalat;fehlt – zeigt bis dahin g-salat;„Kartoffelsalat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kartoffeln, Zwiebeln, Weinessig, Rapsöl.
+1;E Gericht;g-ketchup-dip.webp;Ketchup-Dip;vorhanden;„Ketchup-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Ketchup.
+1;E Gericht;g-knoblauch-mayonnaise-dip.webp;Knoblauch-Mayonnaise-Dip;vorhanden;„Knoblauch-Mayonnaise-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Knoblauch-Mayonnaise.
+1;E Gericht;g-knoblauch-parmesan-pommes.webp;Knoblauch-Parmesan-Pommes;vorhanden;„Knoblauch-Parmesan-Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Knoblauch-Parmesan-Pommes (fertig).
 1;E Gericht;g-kroketten-beilage.webp;Kroketten (Beilage);fehlt – zeigt bis dahin g-pommes;„Kroketten (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kroketten.
+1;E Gericht;g-mayonnaise-dip.webp;Mayonnaise-Dip;vorhanden;„Mayonnaise-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mayonnaise.
 1;E Gericht;g-mineralwasser-0-25-l.webp;Mineralwasser 0,25 l;vorhanden;„Mineralwasser 0,25 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mineralwasser 0,25 l.
+1;E Gericht;g-onion-rings-5-stueck.webp;Onion Rings (5 Stück);vorhanden;„Onion Rings (5 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Onion Rings TK (Stück).
 1;E Gericht;g-orangensaft-0-2-l.webp;Orangensaft 0,2 l;vorhanden;„Orangensaft 0,2 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Orangensaft.
 1;E Gericht;g-poke-bowl-lachs.webp;Poke Bowl Lachs;fehlt – zeigt bis dahin g-salat;„Poke Bowl Lachs“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Quinoa, Räucherlachs, Avocado, Möhren, Babyspinat.
+1;E Gericht;g-pommes-frites.webp;Pommes frites;fehlt – zeigt bis dahin g-pommes;„Pommes frites“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pommes frites.
 1;E Gericht;g-pommes-frites-beilage.webp;Pommes frites (Beilage);vorhanden;„Pommes frites (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pommes frites.
 1;E Gericht;g-reis-beilage.webp;Reis (Beilage);vorhanden;„Reis (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Langkornreis.
 1;E Gericht;g-spaetzle-beilage.webp;Spätzle (Beilage);fehlt – zeigt bis dahin g-pommes;„Spätzle (Beilage)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Spätzle, Butter.
 1;E Gericht;g-sucuk-sandwich.webp;Sucuk-Sandwich;fehlt – zeigt bis dahin g-sucuk;„Sucuk-Sandwich“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Sucuk, Dönerbrot / Fladen, Tomaten, Zwiebeln, Scharfe Sauce.
+1;E Gericht;g-suesskartoffel-pommes.webp;Süßkartoffel-Pommes;vorhanden;„Süßkartoffel-Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Süßkartoffel-Pommes.
+1;E Gericht;g-sunshine-smoothie-0-4-l.webp;Sunshine Smoothie 0,4 l;vorhanden;„Sunshine Smoothie 0,4 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pfirsich, Passionsfrucht, Mango.
 1;E Gericht;g-thunfischsalat.webp;Thunfischsalat;vorhanden;„Thunfischsalat“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Eisbergsalat, Thunfisch (Dose), Mais, Tomaten, Joghurtdressing.
+1;E Gericht;g-trueffel-mayonnaise-dip.webp;Trüffel-Mayonnaise-Dip;vorhanden;„Trüffel-Mayonnaise-Dip“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Trüffel-Mayonnaise.
+1;E Gericht;g-trueffel-pommes.webp;Trüffel-Pommes;vorhanden;„Trüffel-Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Trüffel-Pommes (fertig).
+1;E Gericht;g-wedges.webp;Wedges;vorhanden;„Wedges“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kartoffel-Wedges TK.
 1;F Artikel;d-apfelsaft.webp;Apfelsaft;vorhanden;Apfelsaft als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1;F Artikel;d-ayran-0-25-l.webp;Ayran 0,25 l;vorhanden;Ayran 0,25 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1;F Artikel;d-ayran-1-0-l.webp;Ayran 1,0 l;fehlt – zeigt bis dahin g-ayran;Ayran 1,0 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
@@ -118,7 +141,7 @@ prio;gruppe;datei;name;status;motiv
 1;F Artikel;d-sprite-0-2-l.webp;Sprite 0,2 l;vorhanden;Sprite 0,2 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 1;F Artikel;r-adana-spiess.webp;Adana-Spieß;fehlt – zeigt bis dahin r-doenerspiess;Adana-Spieß als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-ajvar.webp;Ajvar;fehlt – zeigt bis dahin r-ketchup-mayo;Ajvar als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-babyspinat.webp;Babyspinat;fehlt;Babyspinat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+1;F Artikel;r-babyspinat.webp;Babyspinat;fehlt – zeigt bis dahin r-spinat;Babyspinat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-balsamico.webp;Balsamico;fehlt;Balsamico als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-bandnudeln.webp;Bandnudeln;vorhanden;Bandnudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-basilikum-getrocknet.webp;Basilikum getrocknet;fehlt – zeigt bis dahin r-petersilie;Basilikum getrocknet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -180,7 +203,6 @@ prio;gruppe;datei;name;status;motiv
 1;F Artikel;r-spaetzle.webp;Spätzle;fehlt;Spätzle als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-speisestaerke.webp;Speisestärke;fehlt;Speisestärke als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-sucuk.webp;Sucuk;vorhanden;Sucuk als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-1;F Artikel;r-suesskartoffel-pommes.webp;Süßkartoffel-Pommes;vorhanden;Süßkartoffel-Pommes als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-suesskartoffeln.webp;Süßkartoffeln;fehlt – zeigt bis dahin r-pommes-tk;Süßkartoffeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-thymian.webp;Thymian;fehlt – zeigt bis dahin r-gewuerz;Thymian als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 1;F Artikel;r-tomaten.webp;Tomaten;vorhanden;Tomaten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -209,6 +231,7 @@ prio;gruppe;datei;name;status;motiv
 1;F Artikel;v-salatschale.webp;Salatschale;fehlt;Salatschale, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
 1;F Artikel;v-trinkbecher-0-3-l.webp;Trinkbecher 0,3 l;fehlt – zeigt bis dahin v-becher;Trinkbecher 0,3 l, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
 1;F Artikel;v-trinkbecher-0-4-l.webp;Trinkbecher 0,4 l;fehlt – zeigt bis dahin v-becher;Trinkbecher 0,4 l, leer, ein Stück bzw. kleiner Stapel, ohne Aufdruck.
+1;G Selbst gemacht;s-adana.webp;adana;fehlt;Selbstgemachtes „adana“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale.
 1;G Selbst gemacht;s-brot.webp;brot;vorhanden;Selbstgemachtes „brot“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale.
 1;G Selbst gemacht;s-lahmacun.webp;lahmacun;fehlt;Selbstgemachtes „lahmacun“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale.
 1;G Selbst gemacht;s-patty.webp;patty;fehlt;Selbstgemachtes „patty“ in der Küche, roh bzw. frisch zubereitet, in einer Edelstahl- oder Kunststoffschale.
@@ -232,14 +255,17 @@ prio;gruppe;datei;name;status;motiv
 2;B Bereich;bereich-fleischgericht.webp;Fleisch, Fisch & Hauptgang;fehlt;Typische Auswahl des Bereichs „Fleisch, Fisch & Hauptgang“ als Stillleben, 3–5 Dinge, Draufsicht.
 2;B Bereich;bereich-pizza.webp;Pizza & Pasta;fehlt;Typische Auswahl des Bereichs „Pizza & Pasta“ als Stillleben, 3–5 Dinge, Draufsicht.
 2;E Gericht;g-bacon-burger.webp;Bacon Burger;fehlt – zeigt bis dahin g-burger;„Bacon Burger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rinderpatty 150 g, Burger-Bun, Bacon, Cheddar-Scheiben, BBQ-Sauce, Eisbergsalat.
+2;E Gericht;g-bacon-cheeseburger.webp;Bacon Cheeseburger;vorhanden;„Bacon Cheeseburger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Smash-Patty (Gewicht offen), Burger-Bun, Cheddar-Scheiben, Gewürzgurken, Zwiebeln, Rinderspeck.
 2;E Gericht;g-bratwurst-im-broetchen.webp;Bratwurst im Brötchen;fehlt – zeigt bis dahin g-wurst;„Bratwurst im Brötchen“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Bratwurst, Brötchen, Ketchup.
 2;E Gericht;g-canape-lachs.webp;Canapé Lachs;fehlt – zeigt bis dahin g-fingerfood;„Canapé Lachs“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Canapé-Böden, Lachstatar, Frischkäse.
-2;E Gericht;g-cheeseburger-classic.webp;Cheeseburger Classic;fehlt – zeigt bis dahin g-burger;„Cheeseburger Classic“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rinderpatty 150 g, Burger-Bun, Cheddar-Scheiben, Eisbergsalat, Tomaten, Rote Zwiebeln.
+2;E Gericht;g-cheeseburger-classic.webp;Cheeseburger Classic;fehlt – zeigt bis dahin g-cheeseburger;„Cheeseburger Classic“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rinderpatty 150 g, Burger-Bun, Cheddar-Scheiben, Eisbergsalat, Tomaten, Rote Zwiebeln.
 2;E Gericht;g-chicken-nuggets-6-stueck.webp;Chicken Nuggets (6 Stück);vorhanden;„Chicken Nuggets (6 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchen-Nuggets, Mayonnaise.
 2;E Gericht;g-chickenburger.webp;Chickenburger;fehlt – zeigt bis dahin g-burger;„Chickenburger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Hähnchenpatty, Brioche-Bun, Eisbergsalat, Tomaten, Mayonnaise.
+2;E Gericht;g-chili-cheeseburger.webp;Chili Cheeseburger;vorhanden;„Chili Cheeseburger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Smash-Patty (Gewicht offen), Burger-Bun, Cheddar-Scheiben, Gewürzgurken, Zwiebeln, Cheddarcreme.
+2;E Gericht;g-classic-smash-burger.webp;Classic Smash Burger;vorhanden;„Classic Smash Burger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Smash-Patty (Gewicht offen), Burger-Bun, Cheddar-Scheiben, Gewürzgurken, Zwiebeln, Ketchup.
 2;E Gericht;g-currywurst-einzeln.webp;Currywurst einzeln;fehlt – zeigt bis dahin g-currywurst;„Currywurst einzeln“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Currywurst, Currysauce, Currypulver, Holzgabel.
 2;E Gericht;g-currywurst-mit-pommes.webp;Currywurst mit Pommes;vorhanden;„Currywurst mit Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Currywurst, Currysauce, Pommes frites, Currypulver, Holzgabel.
-2;E Gericht;g-doppel-cheeseburger.webp;Doppel-Cheeseburger;fehlt – zeigt bis dahin g-burger;„Doppel-Cheeseburger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rinderpatty 150 g, Burger-Bun, Cheddar-Scheiben, Eisbergsalat, Tomaten, Burgersauce.
+2;E Gericht;g-doppel-cheeseburger.webp;Doppel-Cheeseburger;fehlt – zeigt bis dahin g-cheeseburger;„Doppel-Cheeseburger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Rinderpatty 150 g, Burger-Bun, Cheddar-Scheiben, Eisbergsalat, Tomaten, Burgersauce.
 2;E Gericht;g-ente-knusprig-mit-reis.webp;Ente knusprig mit Reis;fehlt – zeigt bis dahin g-reis;„Ente knusprig mit Reis“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Entenbrust, Jasminreis, Pak Choi, Sojasauce.
 2;E Gericht;g-forelle-muellerin.webp;Forelle Müllerin;fehlt – zeigt bis dahin g-fleischgericht;„Forelle Müllerin“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Forelle ganz, Kartoffeln, Butterschmalz, Zitronen, Petersilie.
 2;E Gericht;g-frikadelle-im-broetchen.webp;Frikadelle im Brötchen;fehlt – zeigt bis dahin g-currywurst;„Frikadelle im Brötchen“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Frikadelle, Brötchen, Ketchup.
@@ -255,6 +281,8 @@ prio;gruppe;datei;name;status;motiv
 2;E Gericht;g-lasagne.webp;Lasagne;vorhanden;„Lasagne“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Lasagneplatten, Hackfleisch gemischt, Pizzatomaten (Dose), Sahnesauce, Pizzakäse gerieben.
 2;E Gericht;g-mini-frikadellen-3-stueck.webp;Mini-Frikadellen (3 Stück);fehlt – zeigt bis dahin g-fingerfood;„Mini-Frikadellen (3 Stück)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mini-Frikadellen, Kräuterdip.
 2;E Gericht;g-mini-quiche.webp;Mini-Quiche;fehlt – zeigt bis dahin g-fingerfood;„Mini-Quiche“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Mini-Quiche.
+2;E Gericht;g-nashville-burger.webp;Nashville Burger;vorhanden;„Nashville Burger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Burger-Bun, Chicken Tenders, Krautsalat, Burgersauce.
+2;E Gericht;g-oklahoma-smash-burger.webp;Oklahoma Smash Burger;vorhanden;„Oklahoma Smash Burger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Smash-Patty (Gewicht offen), Burger-Bun, Cheddar-Scheiben, Gewürzgurken, Zwiebeln, Ketchup.
 2;E Gericht;g-penne-arrabiata.webp;Penne Arrabiata;vorhanden;„Penne Arrabiata“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Penne, Pizzatomaten (Dose), Knoblauch, Chiliflocken, Olivenöl.
 2;E Gericht;g-pizza-funghi.webp;Pizza Funghi;fehlt – zeigt bis dahin g-pizza;„Pizza Funghi“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pizzateig, Pizzasoße, Pizzakäse gerieben, Champignons.
 2;E Gericht;g-pizza-margherita.webp;Pizza Margherita;vorhanden;„Pizza Margherita“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pizzateig, Pizzasoße, Pizzakäse gerieben, Olivenöl, Oregano.
@@ -272,36 +300,49 @@ prio;gruppe;datei;name;status;motiv
 2;E Gericht;g-schnitzel-mit-pommes.webp;Schnitzel mit Pommes;vorhanden;„Schnitzel mit Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Schnitzel paniert, Pommes frites, Remoulade.
 2;E Gericht;g-spaghetti-bolognese.webp;Spaghetti Bolognese;vorhanden;„Spaghetti Bolognese“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Spaghetti, Hackfleisch gemischt, Pizzatomaten (Dose), Zwiebeln, Parmesan, Olivenöl.
 2;E Gericht;g-suess-sauer-schwein.webp;Süß-sauer Schwein;fehlt – zeigt bis dahin g-asia-reis;„Süß-sauer Schwein“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Schweinegeschnetzeltes, Süß-Sauer-Sauce, Paprika, Basmatireis.
+2;E Gericht;g-super-smash-burger.webp;Super Smash Burger;vorhanden;„Super Smash Burger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Smash-Patty (Gewicht offen), Burger-Bun, Cheddar-Scheiben, Gewürzgurken, Zwiebeln, Burgersauce.
 2;E Gericht;g-veggie-burger.webp;Veggie-Burger;fehlt – zeigt bis dahin g-burger;„Veggie-Burger“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Veggie-Patty, Vollkorn-Bun, Eisbergsalat, Tomaten, Avocado, Burgersauce.
 2;E Gericht;g-wiener-schnitzel-mit-pommes.webp;Wiener Schnitzel mit Pommes;fehlt – zeigt bis dahin g-fleischgericht;„Wiener Schnitzel mit Pommes“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Kalbsschnitzel, Weizenmehl Typ 405, Eier, Kartoffeln, Butterschmalz, Zitronen.
 2;E Gericht;g-wrap-haeppchen.webp;Wrap-Häppchen;fehlt – zeigt bis dahin g-duerum;„Wrap-Häppchen“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weizenwraps, Frischkäse, Serranoschinken, Cocktailtomaten.
 2;F Artikel;d-cola-0-33-l.webp;Cola 0,33 l;fehlt – zeigt bis dahin d-cola;Cola 0,33 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
 2;F Artikel;d-mineralwasser-0-5-l.webp;Mineralwasser 0,5 l;fehlt – zeigt bis dahin d-wasser;Mineralwasser 0,5 l als neutrales Gebinde (Dose/Flasche/Glas), ohne Marke und ohne Schrift.
+2;F Artikel;r-acai-pueree.webp;Acai-Püree;vorhanden;Acai-Püree als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-aioli.webp;Aioli;fehlt – zeigt bis dahin r-ketchup-mayo;Aioli als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-ananas-dose.webp;Ananas (Dose);fehlt – zeigt bis dahin r-ananas;Ananas (Dose) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-ananas-smoothie.webp;Ananas (Smoothie);fehlt – zeigt bis dahin r-ananas;Ananas (Smoothie) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-artischockenherzen.webp;Artischockenherzen;fehlt;Artischockenherzen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-avocado.webp;Avocado;fehlt;Avocado als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-bacon.webp;Bacon;fehlt;Bacon als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-bambussprossen.webp;Bambussprossen;fehlt;Bambussprossen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-bananen.webp;Bananen;vorhanden;Bananen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-basilikum.webp;Basilikum;fehlt – zeigt bis dahin r-petersilie;Basilikum als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-basmatireis.webp;Basmatireis;vorhanden;Basmatireis als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-bbq-sauce.webp;BBQ-Sauce;fehlt – zeigt bis dahin r-ketchup-mayo;BBQ-Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-bbq-sauce.webp;BBQ-Sauce;fehlt – zeigt bis dahin g-bbq-dip;BBQ-Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-blattsalat-sorte-offen.webp;Blattsalat (Sorte offen);fehlt – zeigt bis dahin r-salat;Blattsalat (Sorte offen) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-blaubeeren.webp;Blaubeeren;vorhanden;Blaubeeren als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-blauschimmelkaese.webp;Blauschimmelkäse;fehlt – zeigt bis dahin r-pizzakaese;Blauschimmelkäse als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-bockwurst.webp;Bockwurst;fehlt – zeigt bis dahin r-wurst;Bockwurst als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-bratenfond.webp;Bratenfond;fehlt;Bratenfond als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-bratwurst.webp;Bratwurst;fehlt – zeigt bis dahin r-wurst;Bratwurst als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-brioche-bun.webp;Brioche-Bun;fehlt – zeigt bis dahin r-buns;Brioche-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-brioche-bun.webp;Brioche-Bun;fehlt – zeigt bis dahin r-burger-bun;Brioche-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-broetchen.webp;Brötchen;vorhanden;Brötchen als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-brokkoli.webp;Brokkoli;fehlt;Brokkoli als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-bueffelmozzarella.webp;Büffelmozzarella;fehlt – zeigt bis dahin r-mozzarella;Büffelmozzarella als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-burger-bun.webp;Burger-Bun;vorhanden;Burger-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-burgersauce.webp;Burgersauce;fehlt – zeigt bis dahin r-ketchup-mayo;Burgersauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-burgersauce.webp;Burgersauce;vorhanden;Burgersauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-butterschmalz.webp;Butterschmalz;fehlt;Butterschmalz als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-canape-boeden.webp;Canapé-Böden;fehlt;Canapé-Böden als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-champignons.webp;Champignons;fehlt – zeigt bis dahin r-champignon;Champignons als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-cheddar-scheiben.webp;Cheddar-Scheiben;fehlt – zeigt bis dahin r-pizzakaese;Cheddar-Scheiben als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-cheddar-scheiben.webp;Cheddar-Scheiben;fehlt – zeigt bis dahin r-cheddar;Cheddar-Scheiben als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-cheddarcreme.webp;Cheddarcreme;fehlt – zeigt bis dahin g-kaesesauce-dip;Cheddarcreme als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-chicken-pommes-fertig.webp;Chicken-Pommes (fertig);fehlt – zeigt bis dahin g-chicken-pommes;Chicken-Pommes (fertig) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-chicken-tenders.webp;Chicken Tenders;fehlt – zeigt bis dahin g-chicken-tenders-5-stueck;Chicken Tenders als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-chicken-tenders-stueck.webp;Chicken Tenders (Stück);fehlt – zeigt bis dahin g-chicken-tenders-5-stueck;Chicken Tenders (Stück) als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-chicken-wings.webp;Chicken Wings;fehlt – zeigt bis dahin r-fingerfood-tk;Chicken Wings als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-chili-cheese-nuggets.webp;Chili-Cheese-Nuggets;fehlt – zeigt bis dahin g-chili-cheese-nuggets-6-stueck;Chili-Cheese-Nuggets als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-chili-cheese-pommes-fertig.webp;Chili-Cheese-Pommes (fertig);fehlt – zeigt bis dahin g-chili-cheese-pommes;Chili-Cheese-Pommes (fertig) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-cracker.webp;Cracker;fehlt;Cracker als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-curly-fries-tk.webp;Curly Fries TK;fehlt – zeigt bis dahin r-curly-fries;Curly Fries TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currypaste.webp;Currypaste;fehlt;Currypaste als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currypulver.webp;Currypulver;fehlt – zeigt bis dahin r-gewuerz;Currypulver als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-currysauce.webp;Currysauce;vorhanden;Currysauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -310,6 +351,7 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-dorade-ganz.webp;Dorade ganz;fehlt;Dorade ganz als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-emmentaler.webp;Emmentaler;fehlt – zeigt bis dahin r-pizzakaese;Emmentaler als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-entenbrust.webp;Entenbrust;fehlt;Entenbrust als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-erdbeeren.webp;Erdbeeren;vorhanden;Erdbeeren als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-erdnusssauce.webp;Erdnusssauce;fehlt – zeigt bis dahin r-ketchup-mayo;Erdnusssauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-forelle-ganz.webp;Forelle ganz;fehlt;Forelle ganz als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-frikadelle.webp;Frikadelle;vorhanden;Frikadelle als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -320,7 +362,7 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-fruehlingszwiebeln.webp;Frühlingszwiebeln;fehlt – zeigt bis dahin r-zwiebel;Frühlingszwiebeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-garnelen.webp;Garnelen;vorhanden;Garnelen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-garnelenspiess.webp;Garnelenspieß;fehlt – zeigt bis dahin r-doenerspiess;Garnelenspieß als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-gewuerzgurken.webp;Gewürzgurken;fehlt – zeigt bis dahin r-gewuerz;Gewürzgurken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-gewuerzgurken.webp;Gewürzgurken;fehlt – zeigt bis dahin r-pickles;Gewürzgurken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-gnocchi.webp;Gnocchi;fehlt;Gnocchi als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-gorgonzola.webp;Gorgonzola;fehlt;Gorgonzola als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-gruene-bohnen.webp;Grüne Bohnen;fehlt;Grüne Bohnen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -329,17 +371,22 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-haehnchen-nuggets.webp;Hähnchen-Nuggets;vorhanden;Hähnchen-Nuggets als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-haehnchenbrust.webp;Hähnchenbrust;vorhanden;Hähnchenbrust als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-haehnchenpatty.webp;Hähnchenpatty;fehlt – zeigt bis dahin r-haehnchen;Hähnchenpatty als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-halloumi-sticks.webp;Halloumi-Sticks;fehlt – zeigt bis dahin g-halloumi-sticks-6-stueck;Halloumi-Sticks als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-hartweizengriess.webp;Hartweizengrieß;fehlt;Hartweizengrieß als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-hummus.webp;Hummus;fehlt – zeigt bis dahin r-ketchup-mayo;Hummus als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-ingwer.webp;Ingwer;fehlt;Ingwer als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-jakobsmuscheln.webp;Jakobsmuscheln;fehlt;Jakobsmuscheln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-jalapenos.webp;Jalapeños;vorhanden;Jalapeños als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-jasminreis.webp;Jasminreis;fehlt – zeigt bis dahin r-reis;Jasminreis als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-kaesesauce.webp;Käsesauce;fehlt – zeigt bis dahin r-ketchup-mayo;Käsesauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-joppie-sauce.webp;Joppie-Sauce;fehlt – zeigt bis dahin g-joppie-dip;Joppie-Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-kaesesauce.webp;Käsesauce;fehlt – zeigt bis dahin g-kaesesauce-dip;Käsesauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kaesewuerfel.webp;Käsewürfel;fehlt – zeigt bis dahin r-pizzakaese;Käsewürfel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kalbsschnitzel.webp;Kalbsschnitzel;fehlt – zeigt bis dahin r-doenerspiess;Kalbsschnitzel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-ketchup.webp;Ketchup;fehlt – zeigt bis dahin r-ketchup-mayo;Ketchup als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-kartoffel-wedges-tk.webp;Kartoffel-Wedges TK;fehlt – zeigt bis dahin r-wedges;Kartoffel-Wedges TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-ketchup.webp;Ketchup;fehlt – zeigt bis dahin g-ketchup-dip;Ketchup als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-knoblauch.webp;Knoblauch;vorhanden;Knoblauch als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-knoblauch-mayonnaise.webp;Knoblauch-Mayonnaise;fehlt – zeigt bis dahin g-knoblauch-mayonnaise-dip;Knoblauch-Mayonnaise als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-knoblauch-parmesan-pommes-fertig.webp;Knoblauch-Parmesan-Pommes (fertig);fehlt – zeigt bis dahin g-knoblauch-parmesan-pommes;Knoblauch-Parmesan-Pommes (fertig) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kochschinken.webp;Kochschinken;fehlt – zeigt bis dahin r-schinken;Kochschinken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kokosmilch.webp;Kokosmilch;fehlt;Kokosmilch als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-kraeuterdip.webp;Kräuterdip;fehlt – zeigt bis dahin r-ketchup-mayo;Kräuterdip als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -350,6 +397,7 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-lachstatar.webp;Lachstatar;fehlt;Lachstatar als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-lammkotelett.webp;Lammkotelett;fehlt – zeigt bis dahin r-doenerspiess;Lammkotelett als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-lasagneplatten.webp;Lasagneplatten;fehlt – zeigt bis dahin r-nudeln;Lasagneplatten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-mango.webp;Mango;vorhanden;Mango als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-matjesfilet.webp;Matjesfilet;fehlt;Matjesfilet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mayonnaise.webp;Mayonnaise;vorhanden;Mayonnaise als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mie-nudeln.webp;Mie-Nudeln;fehlt – zeigt bis dahin r-nudeln;Mie-Nudeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -359,17 +407,21 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-mozzarella.webp;Mozzarella;vorhanden;Mozzarella als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mozzarella-kugeln.webp;Mozzarella-Kugeln;fehlt – zeigt bis dahin r-mozzarella;Mozzarella-Kugeln als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-mozzarella-sticks-tk.webp;Mozzarella-Sticks TK;vorhanden;Mozzarella-Sticks TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-muffin-sorte-offen.webp;Muffin (Sorte offen);fehlt – zeigt bis dahin g-muffin-sorte-offen;Muffin (Sorte offen) als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-oliven-schwarz.webp;Oliven schwarz;fehlt – zeigt bis dahin r-oliven;Oliven schwarz als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-olivenoel.webp;Olivenöl;fehlt – zeigt bis dahin r-oel;Olivenöl als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-onion-rings-tk.webp;Onion Rings TK;vorhanden;Onion Rings TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-onion-rings-tk-stueck.webp;Onion Rings TK (Stück);fehlt – zeigt bis dahin r-onion-rings-tk;Onion Rings TK (Stück) als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-oregano-getrocknet.webp;Oregano getrocknet;fehlt – zeigt bis dahin r-gewuerz;Oregano getrocknet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-pak-choi.webp;Pak Choi;fehlt;Pak Choi als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-paprika.webp;Paprika;vorhanden;Paprika als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-parmaschinken.webp;Parmaschinken;fehlt – zeigt bis dahin r-schinken;Parmaschinken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-parmesan.webp;Parmesan;fehlt;Parmesan als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-passionsfrucht.webp;Passionsfrucht;vorhanden;Passionsfrucht als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-penne.webp;Penne;vorhanden;Penne als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-peperoni-salami.webp;Peperoni-Salami;fehlt – zeigt bis dahin r-salami;Peperoni-Salami als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-pesto-genovese.webp;Pesto Genovese;fehlt – zeigt bis dahin r-ketchup-mayo;Pesto Genovese als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-pfirsich.webp;Pfirsich;vorhanden;Pfirsich als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-pizzakaese-gerieben.webp;Pizzakäse gerieben;vorhanden;Pizzakäse gerieben als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-pizzamehl-typ-00.webp;Pizzamehl Typ 00;fehlt – zeigt bis dahin r-pizzateig;Pizzamehl Typ 00 als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-pizzasosse.webp;Pizzasoße;vorhanden;Pizzasoße als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -384,8 +436,9 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-rinderbraten.webp;Rinderbraten;fehlt – zeigt bis dahin r-doenerspiess;Rinderbraten als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-rinderfilet.webp;Rinderfilet;fehlt – zeigt bis dahin r-doenerspiess;Rinderfilet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-rindergeschnetzeltes.webp;Rindergeschnetzeltes;fehlt – zeigt bis dahin r-doenerspiess;Rindergeschnetzeltes als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-rinderhack.webp;Rinderhack;fehlt – zeigt bis dahin r-doenerspiess;Rinderhack als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-rinderhack.webp;Rinderhack;fehlt – zeigt bis dahin r-hack;Rinderhack als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-rinderpatty-150-g.webp;Rinderpatty 150 g;fehlt – zeigt bis dahin r-doenerspiess;Rinderpatty 150 g als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-rinderspeck.webp;Rinderspeck;vorhanden;Rinderspeck als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-roesti.webp;Rösti;fehlt;Rösti als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-rohkost-sticks.webp;Rohkost-Sticks;fehlt – zeigt bis dahin r-fingerfood-tk;Rohkost-Sticks als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-rosenkohl.webp;Rosenkohl;fehlt – zeigt bis dahin r-rotkohl;Rosenkohl als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -404,18 +457,23 @@ prio;gruppe;datei;name;status;motiv
 2;F Artikel;r-schweinefilet.webp;Schweinefilet;fehlt;Schweinefilet als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-schweinegeschnetzeltes.webp;Schweinegeschnetzeltes;vorhanden;Schweinegeschnetzeltes als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-schweineschnitzel.webp;Schweineschnitzel;fehlt;Schweineschnitzel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-2;F Artikel;r-senf.webp;Senf;fehlt – zeigt bis dahin r-ketchup-mayo;Senf als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-senf.webp;Senf;vorhanden;Senf als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-serranoschinken.webp;Serranoschinken;fehlt – zeigt bis dahin r-schinken;Serranoschinken als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-sesamoel.webp;Sesamöl;fehlt – zeigt bis dahin r-oel;Sesamöl als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-smash-patty-gewicht-offen.webp;Smash-Patty (Gewicht offen);fehlt – zeigt bis dahin r-patty;Smash-Patty (Gewicht offen) als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-sojasauce.webp;Sojasauce;fehlt – zeigt bis dahin r-ketchup-mayo;Sojasauce als Rohware, Flasche oder Kanister, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-sojasprossen.webp;Sojasprossen;fehlt;Sojasprossen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-spaghetti.webp;Spaghetti;fehlt – zeigt bis dahin r-nudeln;Spaghetti als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-speckwuerfel.webp;Speckwürfel;fehlt;Speckwürfel als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-spinat.webp;Spinat;vorhanden;Spinat als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-suess-sauer-sauce.webp;Süß-Sauer-Sauce;fehlt – zeigt bis dahin r-ketchup-mayo;Süß-Sauer-Sauce als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-suesskartoffel-pommes.webp;Süßkartoffel-Pommes;vorhanden;Süßkartoffel-Pommes als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-teigtaschen-tk.webp;Teigtaschen TK;fehlt – zeigt bis dahin r-mehl;Teigtaschen TK als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-thunfisch-dose.webp;Thunfisch (Dose);fehlt – zeigt bis dahin r-thunfisch;Thunfisch (Dose) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-tofu.webp;Tofu;fehlt;Tofu als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-tomatenmark.webp;Tomatenmark;fehlt – zeigt bis dahin r-tomate;Tomatenmark als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-trueffel-mayonnaise.webp;Trüffel-Mayonnaise;fehlt – zeigt bis dahin g-trueffel-mayonnaise-dip;Trüffel-Mayonnaise als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
+2;F Artikel;r-trueffel-pommes-fertig.webp;Trüffel-Pommes (fertig);fehlt – zeigt bis dahin g-trueffel-pommes;Trüffel-Pommes (fertig) als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-veggie-patty.webp;Veggie-Patty;fehlt – zeigt bis dahin r-patty;Veggie-Patty als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-vollkorn-bun.webp;Vollkorn-Bun;vorhanden;Vollkorn-Bun als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 2;F Artikel;r-wan-tan-blaetter.webp;Wan-Tan-Blätter;fehlt;Wan-Tan-Blätter als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -479,6 +537,7 @@ prio;gruppe;datei;name;status;motiv
 3;E Gericht;g-mojito.webp;Mojito;vorhanden;„Mojito“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weißer Rum, Limetten, Minze, Zuckersirup, Sodawasser, Trinkhalm.
 3;E Gericht;g-muesli-mit-joghurt.webp;Müsli mit Joghurt;fehlt – zeigt bis dahin g-fruehstueck;„Müsli mit Joghurt“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Müsli, Joghurt natur, Bananen.
 3;E Gericht;g-muffin.webp;Muffin;vorhanden;„Muffin“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Weizenmehl Typ 405, Zucker, Butter, Eier.
+3;E Gericht;g-muffin-sorte-offen.webp;Muffin (Sorte offen);vorhanden;„Muffin (Sorte offen)“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Muffin (Sorte offen).
 3;E Gericht;g-pils-0-3-l.webp;Pils 0,3 l;fehlt – zeigt bis dahin g-bier;„Pils 0,3 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pils vom Fass, Bierdeckel.
 3;E Gericht;g-pils-0-5-l.webp;Pils 0,5 l;fehlt – zeigt bis dahin g-bier;„Pils 0,5 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Pils vom Fass, Bierdeckel.
 3;E Gericht;g-prosecco-0-1-l.webp;Prosecco 0,1 l;fehlt;„Prosecco 0,1 l“, eine Portion fertig serviert, so wie ein Imbiss es über die Theke gibt. Sichtbar: Prosecco 0,75 l.
@@ -541,7 +600,6 @@ prio;gruppe;datei;name;status;motiv
 3;F Artikel;r-amarenakirschen.webp;Amarenakirschen;fehlt;Amarenakirschen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-backpulver.webp;Backpulver;fehlt – zeigt bis dahin r-gewuerz;Backpulver als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-baguette.webp;Baguette;vorhanden;Baguette als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
-3;F Artikel;r-bananen.webp;Bananen;fehlt;Bananen als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-bauernbrot.webp;Bauernbrot;fehlt – zeigt bis dahin r-fladenbrot;Bauernbrot als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-bergkaese.webp;Bergkäse;fehlt – zeigt bis dahin r-pizzakaese;Bergkäse als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-blaetterteig.webp;Blätterteig;fehlt – zeigt bis dahin r-mehl;Blätterteig als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
@@ -556,7 +614,6 @@ prio;gruppe;datei;name;status;motiv
 3;F Artikel;r-eismix-vanille.webp;Eismix Vanille;fehlt;Eismix Vanille als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-eiswaffel.webp;Eiswaffel;fehlt;Eiswaffel als Rohware, ein einzelnes Stück, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-erbsen-tk.webp;Erbsen TK;fehlt;Erbsen TK als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
-3;F Artikel;r-erdbeeren.webp;Erdbeeren;fehlt;Erdbeeren als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-frischkaese.webp;Frischkäse;fehlt – zeigt bis dahin r-pizzakaese;Frischkäse als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-fruchtpueree-erdbeere.webp;Fruchtpüree Erdbeere;fehlt;Fruchtpüree Erdbeere als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
 3;F Artikel;r-fruchtpueree-mango.webp;Fruchtpüree Mango;fehlt;Fruchtpüree Mango als Rohware, lose Ware, eine Handvoll bzw. Portion, so, wie es beim Großhändler oder in der Küche aussieht.
