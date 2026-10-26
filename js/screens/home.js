@@ -18,6 +18,8 @@ import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
 import { bueroKopf } from "./buero.js";
 import { nutzenStand } from "../nutzen.js";
+import { zekiMoment } from "../zeki.js"; // Zeki auf Heute (26.10.2026)
+import { mascotMarkup } from "../gastrocash-brand.js";
 
 // Drei Ebenen (15.10.2026, Entwickler B): Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
@@ -37,7 +39,7 @@ export function startView(stand, extra = {}) {
       ${heuteZielKarte(stand, z, H)}
       ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
-      ${dran ? jetztKarte(dran) : ""}
+      ${zekiReihe(stand, H, dran, extra)}
       ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
     ${nav("start", { mascot: nutzen.summe > 0 ? "freundlich" : "neutral" })}`;
@@ -122,6 +124,21 @@ function heuteKachelnLaden(stand, ks, H) {
     + feld("putz", "ebene.tabs.putzplan", w.putz.wert, 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
 }
 // Laden-Umbau (20.10.2026): „Jetzt dran“ ist die eine Haupthandlung – ein großer oranger Knopf (ohne eigenen „Los“-Knopf).
+// Zeki auf Heute (Baris Ja 26.10.2026): Zeki steht neben dem einen Knopf. Beim ersten Mal am Tag je Lage sagt er seinen Satz
+// in einer Blase und macht seine Bewegung; nach ≈ 7 s blendet CSS die Blase aus und den Knopf ein (15-Wörter-Regel im Ruhezustand).
+// Welche Lage und welcher Satz: js/zeki.js. Ob schon gesehen: extra.zekiGesehen (Set „auslöser:Tag“, hält app.js im Browser).
+const ZEKI_ZUSTAND = { kuehl_abweichung: "warnung", kuehl_offen: "aufmerksam", umsatz_fehlt: "frage", karte_leer: "hilfe", preis_fehlt: "preis", erster_muell: "aufmerksam", muell_hoch: "warnung", ziel_erreicht: "freude", tag_abgeschlossen: "bestaetigt", inventur_faellig: "aufmerksam", sicherung_alt: "warnung", hinweis_neu: "hilfe" };
+export function zekiReihe(stand, H, dran, extra = {}) {
+  let zm = null; try { zm = zekiMoment(stand, { H, sprache: sprache(), sicherungTage: extra.sicherungTage ?? null }); } catch { zm = null; }
+  const neu = !!zm && !(extra.zekiGesehen instanceof Set && extra.zekiGesehen.has(`${zm.ausloeser}:${H}`));
+  if (!dran && !neu) return "";
+  const zustand = zm ? ZEKI_ZUSTAND[zm.ausloeser] || "neutral" : dran.ton === "rot" ? "warnung" : "neutral";
+  const bewegung = neu && !extra.zekiOhneBewegung && zm.bewegung && zm.bewegung !== "keine" ? zm.bewegung : "none";
+  return `<div class="h-zeki${neu ? " h-zeki--neu" : ""}"${neu ? ` data-zeki-key="${esc(zm.ausloeser + ":" + H)}" style="--zeki-rest:${Math.max(0, Math.round(extra.zekiRestMs ?? 7000))}ms"` : ""}>
+    <div class="h-zeki-figur" aria-hidden="true">${mascotMarkup(zustand, bewegung)}</div>
+    <div class="h-zeki-platz">${neu ? `<div class="h-zeki-blase" role="status">${esc(zm.text)}</div>` : ""}${dran ? jetztKarte(dran) : ""}</div>
+  </div>`;
+}
 function jetztKarte(d) {
   return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b data-t="nutzen.aktion.${esc(d.id)}">${esc(t("nutzen.aktion." + d.id))}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
 }

@@ -159,8 +159,9 @@ function zeichne() {
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
-        : startView(stand, { aktualisierung: !!aktualisierung, wurzel });
+        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
       root.innerHTML = `<div class="schirm">${v}</div>`;
+      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey);
       eigeneFotosLaden();
     }
   } catch (e) {
@@ -1050,3 +1051,21 @@ muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && mue
 // Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)
 if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) || new URLSearchParams(location.search).has("test"))
   window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };
+
+// Zeki (26.10.2026): Welche Lage Zeki heute schon gesagt hat – nur Anzeige-Komfort im Browser, nicht im Betriebsstand.
+// Fehlt der Speicher (privates Fenster), sagt Zeki seinen Satz eben noch einmal.
+const ZEKI_SCHLUESSEL = "gastrocash-zeki-gesehen";
+function zekiGesehenLesen() {
+  try { const a = JSON.parse(localStorage.getItem(ZEKI_SCHLUESSEL) || "[]"); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); }
+}
+let zekiGerade = null; // { key, t }: die Blase, die gerade läuft – bleibt bei neuem Zeichnen stehen, bis ihre ≈ 7 s um sind
+function zekiLage() {
+  const g = zekiGesehenLesen(); const rest = zekiGerade ? 7000 - (Date.now() - zekiGerade.t) : 0;
+  if (rest > 0) { g.delete(zekiGerade.key); return { zekiGesehen: g, zekiRestMs: rest, zekiOhneBewegung: true }; }
+  return { zekiGesehen: g };
+}
+function zekiGesehenMerken(key) {
+  if (!key) return;
+  if (!zekiGerade || zekiGerade.key !== key) zekiGerade = { key, t: Date.now() };
+  try { const tag = key.split(":").pop(); const a = [...zekiGesehenLesen()].filter((k) => k.endsWith(":" + tag)); if (!a.includes(key)) a.push(key); localStorage.setItem(ZEKI_SCHLUESSEL, JSON.stringify(a)); } catch { /* ohne Speicher kein Merken */ }
+}

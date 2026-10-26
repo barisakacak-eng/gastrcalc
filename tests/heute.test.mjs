@@ -99,7 +99,10 @@ test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruc
   // Paket 3 (16.10.2026), M15/E2: „≈“ vor der großen Zahl ist erlaubt (Richtwert). Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“
   // steht nicht mehr im Laden (Weg im Büro: Bereich Geld „· Richtwert“ und Ware → Einkaufspreise)
   const zaehlen = (h) => h.replace(/<div class="h-zeitzeile">.*?<\/div>/s, "").replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").split(/\s+/).filter((w) => w && !/[0-9€–·%/≈›]/.test(w) && !["Saladette"].includes(w));
-  const woerter = zaehlen(inhalt);
+  // Zeki (26.10.2026): Seine Blase steht nur beim ersten Mal am Tag ≈ 7 s und blendet dann aus – gezählt wird der Ruhezustand.
+  const blase = (inhalt.match(/<div class="h-zeki-blase"[^>]*>([^<]*)<\/div>/) || [])[1];
+  assert.ok(blase && blase.trim().split(/\s+/).length <= 12, "Zeki sagt beim ersten Mal einen Satz mit höchstens 12 Wörtern");
+  const woerter = zaehlen(inhalt.replace(/<div class="h-zeki-blase"[^>]*>[^<]*<\/div>/, ""));
   assert.ok(woerter.length <= 15, `${woerter.length} Wörter: ${woerter.join(" ")}`);
   assert.ok(!inhalt.includes("h-richtwert") && inhalt.includes("≈ "), "ohne Einkaufspreise: ≈ vor der Zahl, keine Richtwert-Zeile im Laden");
   // Facelift 1.0 (Baris 21.10.): vier Messfelder direkt unter der Zielkarte, danach eine Haupthandlung „Jetzt dran“; Umsatz führt weiter zu „Umsatz heute“.
@@ -185,4 +188,16 @@ test("Facelift-Piloten: Hero richtet sich nach Döner- oder Burger-Ladenart", ()
   const b = laden(); b.ladenArt = "imbiss"; b.betrieb.kuechen = ["burger"];
   assert.match(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-burger/);
   assert.doesNotMatch(startView(b, { wurzel: wurzelVon(b) }), /heute-laden pilot-doener/);
+});
+
+test("Zeki auf Heute: beim ersten Mal Satz und Bewegung, danach nur der Knopf (26.10.2026)", () => {
+  const s = mitKuehlung(laden()); s.messungen = [messung("k1", 9, { abw: true })];
+  navKontext(s, wurzelVon(s));
+  const erst = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
+  assert.ok(erst.includes('class="h-zeki h-zeki--neu"') && erst.includes("h-zeki-blase"), "erstes Mal: Blase");
+  const key = (erst.match(/data-zeki-key="([^"]+)"/) || [])[1]; assert.ok(key && key.startsWith("kuehl_abweichung:"), key);
+  const danach = startView(s, { wurzel: wurzelVon(s), jetzt: um(19), zekiGesehen: new Set([key]) });
+  assert.ok(!danach.includes("h-zeki-blase") && danach.includes('class="jetzt '), "danach: keine Blase, Knopf bleibt");
+  const ruhig = startView(s, { wurzel: wurzelVon(s), jetzt: um(19), zekiGesehen: new Set(), zekiOhneBewegung: true, zekiRestMs: 3000 });
+  assert.ok(ruhig.includes("--zeki-rest:3000ms") && ruhig.includes('data-zeki-start="none"'), "neu gezeichnet: Blase läuft weiter, keine zweite Bewegung");
 });
