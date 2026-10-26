@@ -75,4 +75,7 @@ export const RICHTPREIS_NACHTRAG = [
   // ANNAHME Stückgewicht ≈ 500 g (Großmarktware liegt üblich bei 400–700 g; kein belegtes Gewicht gefunden) → 2,8178 €/kg. Bleibt eine Schätzung,
   // bis ein Lieferant das Gewicht nennt oder der Wirt seinen Preis einträgt. Gremium 1 (24.10.2026): ohne diesen Wert zeigten 19 Döner-Gerichte „–“.
   {"name":"Eisbergsalat","einheit":"kg","preis":2.8178,"min":2.6556,"max":2.98,"methode":"Großhandel (Stückpreis, Gewicht angenommen)","quellen":["https://www.food-service-frater.de/shop/Eisbergsalat-St%C3%BCck-p335284778","https://www.food-service-frater.de/shop/Eisbergsalat-9-er-Kiste-p438642968"],"abruf":"2026-10-24"},
+  // Senf (Zoro 26.10.2026, Gastro-Gebinde, gewerbliche Händler): Esmeyer Kühne mittelscharf 875 g 4,70 € netto = 5,3714 €/kg;
+  // Kühne mittelscharf Portionsbeutel 150 × 10 g = 1,5 kg 8,54 € (Kaufland-Marktplatz, gewerblicher Verkäufer) = 5,6933 €/kg → Mittel 5,5324.
+  {"name":"Senf","einheit":"kg","preis":5.5324,"min":5.3714,"max":5.6933,"methode":"Großhandel","quellen":["https://www.esmeyer-shop.de/en/kuehne-senf-mittelscharf-875g-einzelstueck-1kt-10st","https://www.kaufland.de/product/300589275/"],"abruf":"2026-10-26"},
 ];

@@ -1,4 +1,4 @@
-import { MENUE_ARTIKEL, MENUE_GERICHTE } from "./burger_ergaenzung.js";
+import { MENUE_ARTIKEL, MENUE_GERICHTE, MENUE_FREIGEGEBEN } from "./burger_ergaenzung.js";
 // Warenkatalog und Gerichtsvorlagen – übernommen aus dem Prototyp vom 5.10.2026 (540 Artikel, 120 Vorlagen).
 // Bewusst OHNE Preise: was eine Zutat kostet, weiß nur der Betrieb. Mengen in den Vorlagen sind Startwerte (Schätzung).
 // Namen bleiben vorerst Deutsch in allen Sprachen; die Übersetzung des Katalogs ist eine eigene Etappe.
@@ -754,7 +754,9 @@ export const VORLAGEN = {
 // Menü-Ergänzung (Sanji 26.10.2026): NOCH NICHT im Vorlagen-Wähler. Ohne Mengen zeigt jedes Gericht „–“ statt Wareneinsatz –
 // genau der Fehler aus Gremium 1 (24.10.2026). Freischalten, sobald der Pilot-Burgerladen echte Grammrezepte geliefert hat (Zoro 26.10.2026).
 // Bis dahin wirken die Daten nur über Fotos (bilder.js: Gericht mit gleichem Namen bekommt das Foto) und Artikelnamen.
-export const MENUE_VORLAGEN_ENTWURF = MENUE_GERICHTE.map((g) => ({ ...V(g.name, null, g.zutaten), bereich: g.bereich }));
+// Zoro 26.10.2026: freigegebene Menü-Gerichte stehen im Wähler (VORLAGEN.burger), der Rest bleibt Entwurf ohne Grammwerte.
+for (const [name, f] of Object.entries(MENUE_FREIGEGEBEN)) VORLAGEN.burger.push(V(name, f.zeit, f.zutaten));
+export const MENUE_VORLAGEN_ENTWURF = MENUE_GERICHTE.filter((g) => !MENUE_FREIGEGEBEN[g.name]).map((g) => ({ ...V(g.name, null, g.zutaten), bereich: g.bereich }));
 
 /** Vorlagen, die zur Betriebsart passen – mit Herkunftsbereich. */
 

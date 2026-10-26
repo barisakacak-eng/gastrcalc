@@ -40,6 +40,16 @@ export const MENUE_GERICHTE = [
   gericht("Sunshine Smoothie 0,4 l", "g-sunshine-smoothie-0-4-l", "Sunshine smoothie 0,4 l", "Sunshine smoothie 0.4 l", [z("Pfirsich"),z("Passionsfrucht"),z("Mango")], "alkoholfrei"),
   gericht("Acai Smoothie 0,4 l", "g-acai-smoothie-0-4-l", "Acai smoothie 0,4 l", "Acai smoothie 0.4 l", [z("Erdbeeren"),z("Blaubeeren"),z("Mango"),z("Acai-Püree")], "alkoholfrei")
 ];
+// Zoro 26.10.2026 („Go Burger“): freigegebene Menü-Vorlagen mit Startmengen (≈). Mengen = Median der Stückzahl je Burger aus Rezeptquellen
+// × Stückgewicht (Recherche 26.10.2026, Belege im privaten Projekt). Der Wirt korrigiert selbst. Nur Zutaten mit Richtpreis, damit kein Gericht „–“ zeigt:
+// Smash-Patty = Rinderhack 100 g (Median 106,5 g aus 6 Rezepten), Blattsalat = Eisbergsalat (1 Blatt ≈ 30 g).
+// Bacon Cheeseburger (Rinderspeck) und Chili Cheeseburger (Cheddarcreme) bleiben Entwurf, bis ein Einkaufspreis belegt ist.
+const smashBasis = () => [["Rinderhack", 100, "g"], ["Burger-Bun", 1, "stk"], ["Cheddar-Scheiben", 20, "g"], ["Gewürzgurken", 15, "g"], ["Zwiebeln", 35, "g"]];
+export const MENUE_FREIGEGEBEN = {
+  "Classic Smash Burger": { zeit: 5, zutaten: [...smashBasis(), ["Ketchup", 7, "g"], ["Senf", 4, "g"], ["Burgerbox", 1, "stk"]] },
+  "Oklahoma Smash Burger": { zeit: 6, zutaten: [...smashBasis(), ["Ketchup", 7, "g"], ["Senf", 4, "g"], ["Burgerbox", 1, "stk"]] },
+  "Super Smash Burger": { zeit: 6, zutaten: [...smashBasis(), ["Burgersauce", 25, "g"], ["Eisbergsalat", 30, "g"], ["Tomaten", 25, "g"], ["Burgerbox", 1, "stk"]] },
+};
 // Neue Einkaufsartikel bleiben ohne Preise und ohne behauptetes Stückgewicht.
 export const MENUE_ARTIKEL = [
   ["Smash-Patty","stk","fleisch"], ["Cheddarcreme","kg","sauce"], ["Blattsalat","kg","gemuese"],
