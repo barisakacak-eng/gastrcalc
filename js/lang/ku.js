@@ -1055,7 +1055,7 @@ export default {
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",
     putzt: "Kî paqij dike?", wer: { selbst: "Em", firma: "Şîrket", beides: "Her du" }, firma: "Şîrket",
     fertig: "Qediya!", eingerichtet: "hat sazkirin", los: "Em dest pê bikin", pin: "PIN-a ofîsê diyar bike",
-    zeki: { hallo: "Silav serok! Ez Zekî me.", rolle: "Ez alîkariya te dikim – li pêş di dikanê de, li paş di ofîsê de.", "laden-schnell": "Navê dikana te çi ye? Û tu çi difroşî?", "karte-foto": "Wêneyê menûya xwe bikişîne. Ez xwarin û bihayan dixwînim.", "kuehl-schnell": "Sarincokên te çi ne? Tenê li + bitikîne.", geld: "Dikan mehê çiqas lê dikeve? Texmînî bes e.", fertig: "Pir baş, serok! Ji niha pê ve ez her tim li vir im." },
+    zeki: { hallo: "Silav hosta! Ez Zekî me.", rolle: "Ez alîkariya te dikim – li dikanê û li ofîsê.", "laden-schnell": "Navê dikana te çi ye? Û tu çi difroşî?", "karte-foto": "Wêneyê menûya xwe bikişîne. Ez xwarin û biha dixwînim.", "kuehl-schnell": "Sarincokên te çi ne? Tenê li + bitikîne.", geld: "Dikan mehê çiqas lê dikeve? Texmînî bes e.", fertig: "Pir baş, hosta! Êdî ez her tim li vir im." },
   },
   inventur: {
     menue: "Hejmartina malê", titel: "Hejmartina malê", titelMonat: (m) => `Hejmartina malê ${m}`,
@@ -1109,7 +1109,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Îro", muell: "Çop", kuehl: "Sarkirin", putzplan: "Paqijî", karte: "Menû" },
-    leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", zekiFragen: "Ji Zeki bipirse", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
+    leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", zekiFragen: "Ji Zekî bipirse", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
     pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
     hilfeText: {
       allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",

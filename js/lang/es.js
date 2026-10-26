@@ -1055,7 +1055,7 @@ export default {
     geldHilfe: "Aproximado basta, también puedes dejarlo vacío. Las facturas las fotografías luego en la oficina.",
     putzt: "¿Quién limpia?", wer: { selbst: "Nosotros", firma: "Empresa", beides: "Ambos" }, firma: "Empresa",
     fertig: "¡Listo!", eingerichtet: "configurado", los: "Vamos", pin: "Fijar código de oficina",
-    zeki: { hallo: "¡Hola, jefe! Soy Zeki.", rolle: "Te ayudo: delante en el local y detrás en la oficina.", "laden-schnell": "¿Cómo se llama tu local? ¿Y qué vendes?", "karte-foto": "Fotografía tu carta. Yo leo platos y precios.", "kuehl-schnell": "¿Qué neveras tienes? Solo pulsa más.", geld: "¿Cuánto cuesta el local al mes? Aproximado vale.", fertig: "¡Genial, jefe! A partir de ahora siempre estoy aquí." },
+    zeki: { hallo: "¡Hola, jefe! Soy Zeki.", rolle: "Te ayudo: en el local y en la oficina.", "laden-schnell": "¿Cómo se llama tu local? ¿Y qué vendes?", "karte-foto": "Fotografía tu carta. Yo leo los platos y los precios.", "kuehl-schnell": "¿Qué neveras tienes? Pulsa el botón más y listo.", geld: "¿Cuánto te cuesta el local al mes? Una aproximación vale.", fertig: "¡Genial, jefe! A partir de ahora siempre estoy aquí." },
   },
   // Inventario
   inventur: {
