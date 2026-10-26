@@ -1055,7 +1055,7 @@ export default {
     geldHilfe: "Basta più o meno, puoi anche lasciare vuoto. Le bollette le fotografi dopo in ufficio.",
     putzt: "Chi pulisce?", wer: { selbst: "Noi", firma: "Ditta", beides: "Entrambi" }, firma: "Ditta",
     fertig: "Fatto!", eingerichtet: "impostato", los: "Si parte", pin: "Imposta codice ufficio",
-    zeki: { hallo: "Ciao, capo! Sono Zeki.", rolle: "Ti aiuto – davanti nel locale, dietro in ufficio.", "laden-schnell": "Come si chiama il tuo locale? E cosa vendi?", "karte-foto": "Fotografa il tuo menù. Leggo piatti e prezzi.", "kuehl-schnell": "Quali frigoriferi hai? Premi semplicemente più.", geld: "Quanto costa il locale al mese? Basta una stima.", fertig: "Grande, capo! D'ora in poi sono sempre qui." },
+    zeki: { hallo: "Ciao, capo! Sono Zeki.", rolle: "Ti aiuto – davanti nel locale, dietro in ufficio.", "laden-schnell": "Come si chiama il tuo locale? E cosa vendi?", "karte-foto": "Fotografa il tuo menù. Leggo io piatti e prezzi.", "kuehl-schnell": "Quali frigoriferi hai? Basta premere il +.", geld: "Quanto ti costa il locale al mese? Basta una stima.", fertig: "Grande, capo! D'ora in poi sono sempre qui." },
   },
   // Inventario (punto 3, Baris 15.10.: A1 + A2, risultato A–E con spiegazione)
   inventur: {

@@ -1061,7 +1061,7 @@ export default {
     geldHilfe: "Përafërsisht mjafton, mund ta lësh edhe bosh. Faturat i fotografon më vonë në zyrë.",
     putzt: "Kush pastron?", wer: { selbst: "Ne", firma: "Firma", beides: "Të dyja" }, firma: "Firma",
     fertig: "Gati!", eingerichtet: "rregulluar", los: "Fillojmë", pin: "Vendos PIN-in e zyrës",
-    zeki: { hallo: "Tung, shef! Unë jam Zeki.", rolle: "Të ndihmoj – përpara në lokal, prapa në zyrë.", "laden-schnell": "Si quhet lokali yt? Dhe çfarë shet?", "karte-foto": "Fotografo menunë. Unë lexoj gatimet dhe çmimet.", "kuehl-schnell": "Çfarë frigoriferësh ke? Thjesht shtyp plus.", geld: "Sa kushton lokali në muaj? Përafërsisht mjafton.", fertig: "Bukur, shef! Tani e tutje jam gjithmonë këtu." },
+    zeki: { hallo: "Tung, shef! Unë jam Zeki.", rolle: "Të ndihmoj – përpara në lokal, prapa në zyrë.", "laden-schnell": "Si quhet lokali yt? Dhe çfarë shet?", "karte-foto": "Fotografo menunë. Unë i lexoj gatimet dhe çmimet.", "kuehl-schnell": "Çfarë frigoriferësh ke? Thjesht shtyp plus.", geld: "Sa të kushton lokali në muaj? Mjafton përafërsisht.", fertig: "Shumë mirë, shef! Tani e tutje jam gjithmonë këtu." },
   },
   inventur: {
     menue: "Inventari", titel: "Inventari", titelMonat: (m) => `Inventari ${m}`,

@@ -1055,7 +1055,7 @@ export default {
     geldHilfe: "À peu près suffit, tu peux aussi laisser vide. Les factures, tu les photographies plus tard au bureau.",
     putzt: "Qui nettoie ?", wer: { selbst: "Nous", firma: "Société", beides: "Les deux" }, firma: "Société",
     fertig: "Terminé !", eingerichtet: "réglé", los: "C’est parti", pin: "Définir le code bureau",
-    zeki: { hallo: "Salut, chef ! Moi, c'est Zeki.", rolle: "Je t'aide – devant au comptoir, derrière au bureau.", "laden-schnell": "Comment s'appelle ton snack ? Et tu vends quoi ?", "karte-foto": "Prends ta carte en photo. Je lis les plats et les prix.", "kuehl-schnell": "Quels frigos as-tu ? Appuie simplement sur plus.", geld: "Combien coûte le snack par mois ? À peu près, ça suffit.", fertig: "Super, chef ! Désormais, je suis toujours là." },
+    zeki: { hallo: "Salut, chef ! Moi, c'est Zeki.", rolle: "Je t'aide – devant au comptoir, derrière au bureau.", "laden-schnell": "Comment s'appelle ton snack ? Et tu vends quoi ?", "karte-foto": "Photographie ta carte. Je lis les plats et les prix.", "kuehl-schnell": "Quels frigos as-tu ? Appuie simplement sur le +.", geld: "Combien coûte le snack par mois ? Une estimation suffit.", fertig: "Super, chef ! Désormais, je suis toujours là." },
   },
   // Inventaire
   inventur: {

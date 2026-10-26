@@ -10,3 +10,9 @@
 @media(prefers-reduced-motion:reduce){.zeki *{animation:none!important}.zeki--spielt [data-zeki-teil="zeki"]{opacity:1}.zeki--spielt [data-zeki-teil="bewegung"]{opacity:0}}
 
 .zeki--neutral,.zeki--freude,.zeki--import,.zeki--warnung,.zeki--frage,.zeki--preis,.zeki--hilfe,.zeki--bestaetigt,.zeki--aufmerksam,.zeki--erleichtert,.zeki--fehler{isolation:isolate}
+
+/* Zeki natürlich (26.10.2026): Blinzeln im Vektor – Augen kurz zu (Lid-Variante), kein Bildwechsel */
+.zeki--blinzeln [data-zeki-teil="auge-l"] .zeki-variante, .zeki--blinzeln [data-zeki-teil="auge-r"] .zeki-variante { opacity: 0 !important; }
+.zeki--blinzeln [data-zeki-teil="lid-l"] [data-variante="lid"], .zeki--blinzeln [data-zeki-teil="lid-r"] [data-variante="lid"] { opacity: 1 !important; }
+/* Kein Durchscheinen des Nachbarbildes am Rand der Bildfolge */
+.zeki [data-zeki-teil="bewegung"] { clip-path: inset(3px); }
