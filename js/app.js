@@ -1,6 +1,7 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
+import { zekiTaktStarten } from "./screens/zeki_takt.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
@@ -161,7 +162,7 @@ function zeichne() {
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
       root.innerHTML = `<div class="schirm">${v}</div>`;
-      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey);
+      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiTaktStarten();
       eigeneFotosLaden();
     }
   } catch (e) {

@@ -20,8 +20,9 @@ export function tabLeiste(aktiv, stand) {
   return `<nav class="tableiste" aria-label="${esc(t("ebene.leiste"))}">${LADEN_TABS.map((id) => `<button type="button" class="tab ${aktiv === id ? "an" : ""}" data-a="nav" data-wert="${id}"${aktiv === id ? ' aria-current="page"' : ""}><span class="ik">${sym(TAB_SYM[id])}${punkt === id ? '<i class="punkt" aria-hidden="true"></i>' : ""}</span><span class="tabname">${esc(t("ebene.tabs." + id))}</span></button>`).join("")}</nav>`;
 }
 
-const logo = (zustand = "neutral", bewegung = "idle") => `<span class="gc-brand" aria-label="GastroCash">${mascotMarkup(zustand, bewegung)}<span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
-const hilfeKnopf = () => `<button type="button" class="ikonknopf hilfe" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${sym("circle-help")}</button>`;
+const logo = () => `<span class="gc-brand" aria-label="GastroCash"><span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
+// Zeki als Begleiter (Baris 26.10.2026): Statt „?“ steht Zeki oben rechts auf jedem Bildschirm, bewegt sich alle ≈ 4 s und erklärt beim Antippen, was hier zu tun ist.
+export const hilfeKnopf = (zustand = "hilfe") => `<button type="button" class="ikonknopf hilfe zeki-knopf zeki-lebt" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${mascotMarkup(zustand)}</button>`;
 
 // nav(aktiv): Kopfleiste (+ Leiste unten im Laden). Zweites Argument nur noch aus Verträglichkeit ({ schnell } hat keine Wirkung mehr).
 export function nav(aktiv, _alt = {}) {
@@ -40,5 +41,5 @@ export function nav(aktiv, _alt = {}) {
   }
   const tab = LADEN_TABS.includes(ansicht) ? ansicht : LADEN_TABS.includes(aktiv) ? aktiv : null;
   const menue = `<button type="button" class="ikonknopf menueknopf" data-a="menue-auf" aria-label="${esc(t("ebene.menueAuf"))}" aria-haspopup="dialog">${sym("menu")}</button>`;
-  return `<header class="appleiste ebene-kopf laden">${menue}${logo(_alt.mascot || "neutral", _alt.mascot ? "none" : "idle")}${hilfeKnopf()}</header>${tabLeiste(tab, stand)}`;
+  return `<header class="appleiste ebene-kopf laden">${menue}${logo()}${hilfeKnopf(_alt.mascot || "hilfe")}</header>${tabLeiste(tab, stand)}`;
 }

@@ -266,3 +266,9 @@ h1, h2, h3, .frage { letter-spacing: -.022em; }
 .ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:70px}
 @media(max-width:360px){.gc-ab-mascot{width:50px;height:57px;top:10px;right:10px}.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:60px}.gc-help-bot{width:60px;height:68px}}
 
+/* Zeki als Begleiter oben rechts (26.10.2026) */
+.ikonknopf.zeki-knopf{width:48px;height:48px;padding:0;background:transparent;border:0;box-shadow:none;display:grid;place-items:center}
+.ikonknopf.zeki-knopf .zeki{width:38px;height:52px;display:block}
+.gc-help-bot.zeki-lebt .zeki{width:96px;height:132px}
+/* Zeki-Zustände: Mimik steuert css/zeki.css über .zeki--<zustand>; diese Klassen tragen nur den Namen (Prüfung „Klasse ohne CSS“) */
+.gc-bot--freude,.gc-bot--warnung,.gc-bot--frage,.gc-bot--import,.gc-bot--preis,.gc-bot--hilfe,.gc-bot--bestaetigt,.gc-bot--aufmerksam,.gc-bot--erleichtert,.gc-bot--fehler{flex:none}
