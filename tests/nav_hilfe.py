@@ -15,7 +15,19 @@ async def modus(pg):
 OEFFNEN = "s => { for (const e of document.querySelectorAll(s)) { const d = e.closest('details'); if (d && !d.open) d.open = true; } }"
 
 
+async def rundgang_weg(pg):
+    """Rundgang mit Zeki (27.10.2026) wie ein Mensch durchklicken: Weiter … bis „Ja, alles klar“."""
+    await pg.wait_for_timeout(450)
+    for _ in range(12):
+        if await pg.locator(".rg-huelle").count() == 0: return False
+        if await pg.locator('.rg-huelle [data-rg="ja"]').count(): await pg.click('.rg-huelle [data-rg="ja"]'); await pg.wait_for_timeout(150); return True
+        if await pg.locator(".rg-huelle .rg-weiter").count(): await pg.click(".rg-huelle .rg-weiter"); await pg.wait_for_timeout(120)
+        else: await pg.wait_for_timeout(150)
+    return True
+
+
 async def _tipp(pg, sel, warte):
+    if await pg.locator(".rg-huelle").count(): await rundgang_weg(pg)
     await pg.evaluate(OEFFNEN, sel)  # Büro-Bereiche (19.10.2026) sind aufklappbar – Ziel vorher aufklappen, wie ein Mensch es täte
     await pg.locator(sel).first.click(); await pg.wait_for_timeout(warte)
 
@@ -44,6 +56,7 @@ async def ins_buero(pg, warte=420):
 
 
 async def geh(pg, ziel, warte=420):
+    if await pg.locator(".rg-huelle").count(): await rundgang_weg(pg)
     if ziel in LADEN_TABS or ziel in BLATT:
         await zum_laden(pg, warte)
         if ziel in LADEN_TABS:

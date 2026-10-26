@@ -55,6 +55,7 @@ async def schnellstart(pg, port, name="Döner Test"):
         async with pg.expect_event("load", timeout=8000): await pg.wait_for_timeout(100)
     except Exception: pass  # kein Neuladen nötig
     await pg.wait_for_selector('[data-a="menue-auf"]'); await pg.wait_for_timeout(400)
+    await nav_hilfe.rundgang_weg(pg)  # 27.10.2026: erster Besuch auf Heute zeigt den Rundgang mit Zeki
 
 
 async def code_tippen(pg, code):

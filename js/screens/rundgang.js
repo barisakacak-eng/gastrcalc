@@ -15,7 +15,9 @@ export const RUNDGANG_SCHRITTE = [
   { id: "zeki", ziel: ".appleiste .zeki-knopf" },
 ];
 
-let huelle = null; let nr = 0; let rueck = null;
+let huelle = null;
+let nr = 0; let rueck = null;
+const fuellen = (el, html) => el.replaceChildren(el.ownerDocument.createRange().createContextualFragment(html)); // nur Anzeige
 
 export const rundgangOffen = () => !!huelle;
 
@@ -41,26 +43,26 @@ function zeigen(doc) {
   const r = el.getBoundingClientRect(), h = doc.defaultView.innerHeight;
   const pad = 8, unten = r.top + r.height / 2 < h / 2;
   const punkte = RUNDGANG_SCHRITTE.map((_, i) => `<i class="${i === nr ? "an" : ""}"></i>`).join("");
-  huelle.innerHTML = `
+  fuellen(huelle, `
     <div class="rg-loch" style="top:${Math.round(r.top - pad)}px;left:${Math.round(r.left - pad)}px;width:${Math.round(r.width + 2 * pad)}px;height:${Math.round(r.height + 2 * pad)}px"></div>
     <div class="rg-karte ${unten ? "rg-unten" : "rg-oben"}" style="${unten ? `top:${Math.round(r.bottom + pad + 14)}px` : `bottom:${Math.round(h - r.top + pad + 14)}px`}">
       <span class="rg-zeki zeki-lebt">${mascotMarkup(s.id === "zeki" ? "freude" : "hilfe", s.id === "ziel" ? "hand" : "none")}</span>
       <div class="rg-blase"><p dir="auto">${esc(t("rundgang.schritte." + s.id))}</p>
         <div class="rg-fuss"><span class="rg-punkte" aria-hidden="true">${punkte}</span><button type="button" class="knopf rg-weiter">${esc(t("allgemein.weiter"))}</button></div></div>
-    </div>`;
+    </div>`);
   huelle.querySelector(".rg-weiter").addEventListener("click", () => { nr++; zeigen(doc); });
   huelle.querySelector(".rg-weiter").focus();
 }
 
 function frage(doc) {
-  huelle.innerHTML = `
+  fuellen(huelle, `
     <div class="rg-ende">
       <span class="rg-zeki gross zeki-lebt">${mascotMarkup("frage", "none")}</span>
       <h2 dir="auto">${esc(t("rundgang.fertigFrage"))}</h2>
       <button type="button" class="knopf" data-rg="ja">${esc(t("rundgang.ja"))}</button>
       <button type="button" class="knopf zweit" data-rg="nochmal">${esc(t("rundgang.nochmal"))}</button>
       <button type="button" class="knopf zweit" data-rg="frage">${esc(t("rundgang.frage"))}</button>
-    </div>`;
+    </div>`);
   huelle.querySelector('[data-rg="ja"]').addEventListener("click", () => schliessen(doc, "verstanden"));
   huelle.querySelector('[data-rg="nochmal"]').addEventListener("click", () => { rueck.log({ art: "rundgang", inhalt: "nochmal" }); nr = 0; zeigen(doc); });
   huelle.querySelector('[data-rg="frage"]').addEventListener("click", () => fragen(doc));
@@ -68,7 +70,7 @@ function frage(doc) {
 
 function fragen(doc) {
   const liste = zekiFragenFuer("start", sprache(), 6);
-  huelle.innerHTML = `
+  fuellen(huelle, `
     <div class="rg-ende rg-fragen">
       <span class="rg-zeki zeki-lebt">${mascotMarkup("hilfe", "none")}</span>
       <h2 dir="auto">${esc(t("rundgang.fragenTitel"))}</h2>
@@ -77,12 +79,12 @@ function fragen(doc) {
       <p class="rg-danke" hidden>${esc(t("rundgang.danke"))}</p>
       <button type="button" class="knopf zweit" data-rg="senden">${esc(t("rundgang.abschicken"))}</button>
       <button type="button" class="knopf" data-rg="fertig">${esc(t("rundgang.schliessen"))}</button>
-    </div>`;
+    </div>`);
   huelle.querySelectorAll("details.zeki-frage").forEach((d) => d.addEventListener("toggle", () => { if (d.open) rueck.log({ art: "frage-katalog", inhalt: d.dataset.id, ort: "rundgang" }); }));
   huelle.querySelector('[data-rg="senden"]').addEventListener("click", () => {
     const feld = huelle.querySelector(".rg-text"); const text = feld.value.trim(); if (!text) { feld.focus(); return; }
     rueck.log({ art: "frage-frei", inhalt: text, ort: "rundgang", sprache: sprache() });
-    feld.value = ""; huelle.querySelector(".rg-danke").hidden = false;
+    feld.setRangeText("", 0, feld.value.length, "end"); huelle.querySelector(".rg-danke").hidden = false;
   });
   huelle.querySelector('[data-rg="fertig"]').addEventListener("click", () => schliessen(doc, "frage"));
 }

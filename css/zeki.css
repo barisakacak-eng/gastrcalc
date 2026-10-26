@@ -14,5 +14,4 @@
 /* Zeki natürlich (26.10.2026): Blinzeln im Vektor – Augen kurz zu (Lid-Variante), kein Bildwechsel */
 .zeki--blinzeln [data-zeki-teil="auge-l"] .zeki-variante, .zeki--blinzeln [data-zeki-teil="auge-r"] .zeki-variante { opacity: 0 !important; }
 .zeki--blinzeln [data-zeki-teil="lid-l"] [data-variante="lid"], .zeki--blinzeln [data-zeki-teil="lid-r"] [data-variante="lid"] { opacity: 1 !important; }
-/* Kein Durchscheinen des Nachbarbildes am Rand der Bildfolge */
-.zeki [data-zeki-teil="bewegung"] { clip-path: inset(3px); }
+/* 27.10.2026: clip-path auf der inneren SVG hob das Abschneiden auf (Nachbarbilder sichtbar) – entfernt. Rand-Durchscheinen löst Sanji im Bildraster (4 px Rand). */

@@ -179,6 +179,6 @@ export function zekiLogAnhaengen(stand, eintrag) {
 }
 export function rundgangAbschliessen(stand, ergebnis) {
   if (!stand) return false;
-  stand.rundgang = { ergebnis: String(ergebnis || "fertig"), t: new Date().toISOString(), mal: (stand.rundgang?.mal || 0) + 1 };
+  stand.fuehrung = { ergebnis: String(ergebnis || "fertig"), t: new Date().toISOString(), mal: (stand.fuehrung?.mal || 0) + 1 };
   return true;
 }
