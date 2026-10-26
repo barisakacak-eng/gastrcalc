@@ -1049,6 +1049,15 @@ export default {
     rechnungen: "Rechnungen fotografieren", zumCockpit: "Zum Cockpit",
   },
   // Schnellweg 2 (Entwickler E, 15.10.2026): 6 Bildschirme, kurze Wörter, Erklärung nur hinter „?“
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Das ist dein Ziel: So viel Umsatz fehlt bis null.", kacheln: "Hier trägst du ein: Umsatz, Müll, Kühlung, Putzen.",
+      jetzt: "Hier steht, was jetzt dran ist. Einfach antippen.", leiste: "Unten wechselst du zwischen den Bereichen.",
+      menue: "Im Menü ist dein Büro: Karte, Kosten, Ordner.", zeki: "Und ich bin immer hier oben. Tipp auf mich." },
+    fertigFrage: "Chef, alles verstanden?", ja: "Ja, alles klar", nochmal: "Nochmal zeigen", frage: "Ich hab eine Frage",
+    fragenTitel: "Das fragen viele:", fragePlatzhalter: "Oder schreib deine Frage …", abschicken: "Frage schicken",
+    danke: "Danke, Chef. Ich merk mir die Frage.", schliessen: "Fertig",
+  },
   schnell2: { willkommen: "Willkommen", willkommenText: "Dein Laden. Deine Zahlen. Einfach im Griff.",
     hilfe: "Kurz erklärt", sprache: "Sprache",
     laden: "Dein Laden", namePlatzhalter: "Name des Ladens",
