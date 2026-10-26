@@ -1,11 +1,12 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
-import { zekiTaktStarten } from "./screens/zeki_takt.js"; // Zeki lebt (26.10.2026)
+import { zekiTaktStarten, zekiSprechblase } from "./screens/zeki_takt.js";
+import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
-import { t, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen } from "./i18n.js";
+import { t, sprache as aktuelleSprache, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen, beiAblageFehler } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
@@ -162,7 +163,7 @@ function zeichne() {
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
       root.innerHTML = `<div class="schirm">${v}</div>`;
-      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiTaktStarten();
+      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiBildschirm(); zekiTaktStarten();
       eigeneFotosLaden();
     }
   } catch (e) {
@@ -1069,4 +1070,18 @@ function zekiGesehenMerken(key) {
   if (!key) return;
   if (!zekiGerade || zekiGerade.key !== key) zekiGerade = { key, t: Date.now() };
   try { const tag = key.split(":").pop(); const a = [...zekiGesehenLesen()].filter((k) => k.endsWith(":" + tag)); if (!a.includes(key)) a.push(key); localStorage.setItem(ZEKI_SCHLUESSEL, JSON.stringify(a)); } catch { /* ohne Speicher kein Merken */ }
+}
+
+// Zeki auf jedem Bildschirm (26.10.2026): Lage nur aus ZEKI_BILDSCHIRM[ansicht]; Heute macht das selbst (zekiReihe).
+// Personal sieht keine Euro: dort keine Lage mit Betrag.
+function zekiBildschirm() {
+  const nur = ZEKI_BILDSCHIRM[ansicht]; if (ansicht === "start" || !nur || !stand) return;
+  const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
+  if (zekiGerade && Date.now() - zekiGerade.t < 7000) gesehen.delete(zekiGerade.key);
+  let zm = null;
+  try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, nur: personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur }); } catch { zm = null; }
+  if (!zm) return;
+  const key = `${zm.ausloeser}:${H}`; const laeuft = zekiGerade?.key === key;
+  zekiSprechblase(root, zm, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
+  zekiGesehenMerken(key);
 }

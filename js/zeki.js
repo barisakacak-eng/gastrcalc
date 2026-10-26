@@ -7,6 +7,7 @@ import { offeneNachkontrollen, kuehlStatus, umsatzEintrag, schwundAuswertung, ta
 import { zaehler } from "./zaehler.js";
 import { inventurenFertig } from "./inventur.js";
 import { hinweiseFuer } from "./hinweis.js";
+import { planGruppen } from "./putzplan.js";
 import { fmtEuro } from "./util.js";
 
 const tageZwischen = (a, b) => Math.round((Date.parse(b + "T12:00:00") - Date.parse(a + "T12:00:00")) / 86400000);
@@ -17,6 +18,7 @@ const istMuell = (e) => e && !e.storniert && (SCHWUND_ARTEN[e.art] || 1) === 1;
 export const ZEKI_PRUEFUNGEN = {
   kuehl_abweichung: (s) => { const nk = offeneNachkontrollen(s); return nk.length ? { stelle: stelleName(s, nk[0].messung.stelle) || "1" } : null; },
   kuehl_offen: (s) => { const k = kuehlStatus(s); return k.eingerichtet && k.heuteGemessen < k.stellen ? { tage: String(k.stellen - k.heuteGemessen) } : null; },
+  putzen_offen: (s, H) => { if (!s.putzplan?.aktiv) return null; const n = planGruppen(s, H).ueberfaellig; return n > 0 ? { anzahl: String(n) } : null; },
   umsatz_fehlt: (s, H) => ((s.tagesnotizen || []).length && !umsatzEintrag(s, tagPlus(H, -1)) && !umsatzEintrag(s, H) ? {} : null),
   karte_leer: (s) => ((s.gerichte || []).length ? null : {}),
   preis_fehlt: (s) => { const g = (s.gerichte || []).find((x) => x.klasse !== "getraenk" && typeof x.preis !== "number"); return g ? { gericht: g.name } : null; },
@@ -36,6 +38,20 @@ export const ZEKI_PRUEFUNGEN = {
   inventur_faellig: (s, H) => { const f = inventurenFertig(s); if (!f.length) return null; const t = tageZwischen(f[f.length - 1].datum, H); return t >= 30 ? { tage: String(t) } : null; },
   sicherung_alt: (s, H, o) => (typeof o.sicherungTage === "number" && o.sicherungTage >= 7 ? { tage: String(o.sicherungTage) } : null),
   hinweis_neu: (s) => (hinweiseFuer(s).some((h) => h.status === "neu") ? {} : null),
+};
+
+// Zeki auf jedem Bildschirm (Baris 26.10.2026): welche Lagen auf welchem Bildschirm zählen. Heute nimmt alle (zekiReihe in screens/home.js).
+export const ZEKI_BILDSCHIRM = {
+  muell: ["erster_muell", "muell_hoch"],
+  kuehl: ["kuehl_abweichung", "kuehl_offen"],
+  putzplan: ["putzen_offen"],
+  karte: ["karte_leer", "preis_fehlt"],
+  abschluss: ["umsatz_fehlt", "tag_abgeschlossen", "ziel_erreicht"],
+  umsatzheute: ["umsatz_fehlt"],
+  buero: ["hinweis_neu", "inventur_faellig", "sicherung_alt"],
+  hinweise: ["hinweis_neu"],
+  inventur: ["inventur_faellig"],
+  einstellungen: ["sicherung_alt"],
 };
 
 const fuellen = (text, w) => { let fehlt = false; const t = String(text || "").replace(/\{(\w+)\}/g, (_, k) => (w[k] != null && w[k] !== "" ? w[k] : ((fehlt = true), ""))); return fehlt ? null : t; };

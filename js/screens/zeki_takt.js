@@ -23,3 +23,18 @@ export function zekiTaktStarten(doc = typeof document !== "undefined" ? document
     });
   }, ZEKI_TAKT_MS);
 }
+
+// Zeki spricht auf jedem Bildschirm (Baris 26.10.2026): Sprechblase unter dem Zeki oben rechts, ≈ 7 s, dann blendet CSS sie aus.
+// Liegt über dem Inhalt (verschiebt nichts) und verschwindet von selbst; Antippen schließt sie sofort.
+export function zekiSprechblase(root, moment, { restMs = 7000, bewegen = true } = {}) {
+  const kopf = root?.querySelector?.(".appleiste .zeki-knopf"); if (!kopf || !moment?.text) return false;
+  const leiste = kopf.closest(".appleiste");
+  const blase = root.ownerDocument.createElement("div");
+  blase.setAttribute("class", "zeki-sprech" + (moment.ausloeser === "kuehl_abweichung" || moment.ausloeser === "muell_hoch" ? " zeki-sprech--ernst" : ""));
+  blase.setAttribute("role", "status"); blase.style.setProperty("--zeki-rest", Math.max(0, Math.round(restMs)) + "ms");
+  blase.append(moment.text);
+  blase.addEventListener("click", () => blase.remove());
+  leiste.appendChild(blase);
+  if (bewegen && moment.bewegung && moment.bewegung !== "keine") zekiSpielen(kopf, moment.bewegung);
+  return true;
+}

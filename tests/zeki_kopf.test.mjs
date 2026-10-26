@@ -63,3 +63,10 @@ test("umsatz_fehlt hat ohne Betrag trotzdem einen Satz (Kassenzahl von gestern f
   assert.ok(ZEKI_SAETZE.some((x) => x.ausloeser === "umsatz_fehlt" && !/\{/.test(x.de)));
   for (const id of Object.keys(ZEKI_RAUS)) assert.ok(!ZEKI_SAETZE.some((x) => x.id === id), "aussortiert: " + id);
 });
+
+test("Zeki auf jedem Bildschirm: jede Bildschirm-Lage hat Sätze, Putzen meldet Überfälliges (26.10.2026)", async () => {
+  const { ZEKI_BILDSCHIRM } = await import("../js/zeki.js");
+  for (const [schirm, lagen] of Object.entries(ZEKI_BILDSCHIRM)) for (const a of lagen) assert.ok(ZEKI_AUSLOESER.includes(a), schirm + ": " + a);
+  assert.equal(ZEKI_PRUEFUNGEN.putzen_offen({ putzplan: { aktiv: false } }, "2026-10-26"), null);
+  assert.ok(ZEKI_SAETZE.filter((x) => x.ausloeser === "putzen_offen").every((x) => x.de && x.tr && x.en));
+});
