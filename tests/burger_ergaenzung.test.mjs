@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { MENUE_GERICHTE, MENUE_QUELLE, MENUE_ARTIKEL } from "../js/data/burger_ergaenzung.js";
-import { MENUE_VORLAGEN_ENTWURF, PRODUKT_INDEX } from "../js/data/katalog.js";
-const VORLAGEN = { finde: (n) => MENUE_VORLAGEN_ENTWURF.find((v) => v.name === n) }; // Zoro 26.10.2026: Menü-Vorlagen sind Entwurf, nicht im Wähler
+import { MENUE_GERICHTE, MENUE_QUELLE, MENUE_ARTIKEL, MENUE_FREIGEGEBEN } from "../js/data/burger_ergaenzung.js";
+import { MENUE_VORLAGEN_ENTWURF, PRODUKT_INDEX, VORLAGEN as ALLE_VORLAGEN } from "../js/data/katalog.js";
+const VORLAGEN = { finde: (n) => MENUE_VORLAGEN_ENTWURF.find((v) => v.name === n) || ALLE_VORLAGEN.burger.find((v) => v.name === n) }; // Zoro 26.10.2026: Menü-Vorlagen sind Entwurf, nicht im Wähler
 import { gerichtAusVorlage } from "../js/karte_daten.js";
 import { warenGericht } from "../js/engine.js";
 import { fotoName, gerichtBildQuelle, wareBildQuelle } from "../js/bilder.js";
@@ -13,7 +13,7 @@ import { existsSync } from "node:fs";
 test("Menüreferenz: nur belegte Stückzahlen, keine erfundenen Grammwerte, Zeiten oder Preise", () => {
   assert.equal(MENUE_GERICHTE.length,28); // Zoro 26.10.2026: „Pommes frites“ und „Muffin“ doppelten bestehende Vorlagen
   assert.equal(MENUE_QUELLE.grammmengen,"offen");
-  for(const g of MENUE_GERICHTE) {
+  for(const g of MENUE_GERICHTE.filter(g=>!MENUE_FREIGEGEBEN[g.name])) { // freigegebene: eigener Test unten
     const v=VORLAGEN.finde(g.name);
     assert.ok(v,g.name); assert.equal(v.zeit,null,g.name);
     const gericht=gerichtAusVorlage({...v,bereich:g.bereich});
@@ -40,7 +40,7 @@ test("Menüreferenz: Nashville ohne Rind, Zwiebeln und erratene Standardzutaten"
   assert.ok(!bacon.zutaten.some(z=>z[0]==="Bacon"),"kein stiller Wechsel auf Schweinespeck");
 });
 test("Menüreferenz: fehlende Mengen bleiben auch mit bekannten Einkaufspreisen unvollständig",()=>{
-  for(const g of MENUE_GERICHTE.filter(g=>g.zutaten.some(z=>z[1]===null))) {
+  for(const g of MENUE_GERICHTE.filter(g=>!MENUE_FREIGEGEBEN[g.name]&&g.zutaten.some(z=>z[1]===null))) {
     const gericht=gerichtAusVorlage({...VORLAGEN.finde(g.name),bereich:g.bereich});
     // Fiktive Testpreise machen aus fehlenden Mengen keine kostenlosen Zutaten.
     const index=Object.fromEntries(gericht.zutaten.map(z=>[z.name,{name:z.name,einheit:z.einheit,preis:1,preisBasis:"netto",packung:{menge:1000,einheit:z.einheit}}]));
@@ -62,4 +62,14 @@ test("Rinderpatty zeigt das Patty, Rinderhack das Hack, Dönerfleisch den Spieß
   assert.equal(wareBildQuelle({ name: "Rinderpatty 150 g", gruppe: "fleisch" }).foto, "r-patty");
   assert.notEqual(wareBildQuelle({ name: "Rinder-Hackfleisch", gruppe: "fleisch" }).foto, "r-doenerspiess");
   assert.equal(wareBildQuelle({ name: "Dönerfleisch Kalb", gruppe: "fleisch" }).foto, "r-doenerspiess");
+});
+
+test("Go Burger 26.10.2026: Classic, Oklahoma, Super Smash im Wähler mit Grammwerten, Bacon und Chili bleiben Entwurf", () => {
+  for (const n of ["Classic Smash Burger", "Oklahoma Smash Burger", "Super Smash Burger"]) {
+    const v = ALLE_VORLAGEN.burger.find((x) => x.name === n);
+    assert.ok(v, n); assert.ok(v.zeit > 0, n);
+    for (const [name, menge] of v.zutaten) { assert.ok(menge > 0, `${n}: ${name}`); assert.ok(PRODUKT_INDEX[name], `${n}: ${name} fehlt im Katalog`); }
+    assert.ok(!MENUE_VORLAGEN_ENTWURF.some((x) => x.name === n), n);
+  }
+  for (const n of ["Bacon Cheeseburger", "Chili Cheeseburger"]) assert.ok(MENUE_VORLAGEN_ENTWURF.some((x) => x.name === n), n);
 });

@@ -22,13 +22,13 @@ async def main():
                         await schnellstart.schnellstart(pg,PORT,name='BEISPIEL Produktprüfung')
                         data=await pg.evaluate('''async lang=>{
                           const {MENUE_GERICHTE,MENUE_WAREN_FOTO}=await import('./js/data/burger_ergaenzung.js');
-                          const {MENUE_VORLAGEN_ENTWURF}=await import('./js/data/katalog.js');
+                          const {MENUE_VORLAGEN_ENTWURF,VORLAGEN}=await import('./js/data/katalog.js');const alle=[...MENUE_VORLAGEN_ENTWURF,...VORLAGEN.burger];
                           const {gerichtAusVorlage,artikelAbgleichen}=await import('./js/karte_daten.js');
                           const {gerichtBildQuelle,wareBildQuelle}=await import('./js/bilder.js');
                           const {setzeSprache}=await import('./js/i18n.js');
                           const {sofortSpeichern}=await import('./js/store.js');
                           const app=window.__gastrocalc,s=app.stand;
-                          s.gerichte=MENUE_GERICHTE.map(g=>gerichtAusVorlage({...MENUE_VORLAGEN_ENTWURF.find(v=>v.name===g.name),bereich:g.bereich}));
+                          s.gerichte=MENUE_GERICHTE.map(g=>gerichtAusVorlage({...alle.find(v=>v.name===g.name),bereich:g.bereich}));
                           s.ladenArt='imbiss';s.betrieb.kuechen=['burger'];artikelAbgleichen(s);
                           app.wurzel.sprache=lang;setzeSprache(lang);await sofortSpeichern(app.wurzel);app.zeichne();
                           const gerichte=s.gerichte.map(g=>({name:g.name,foto:gerichtBildQuelle(g).foto}));
@@ -39,7 +39,7 @@ async def main():
                           return {gerichte,artikel,load};
                         }''',lang)
                         assert len(data['gerichte'])==28,data  # Zoro 26.10.2026: zwei Doppelte raus
-                        assert all(a.get('foto') for a in data['artikel']),data['artikel']
+                        assert all(a.get('foto') or a.get('pikto') for a in data['artikel']),data['artikel']  # Burgerbox: Piktogramm (Go Burger 26.10.2026)
                         assert all(a[1] and a[2]>0 for a in data['load']),data['load']
                         await ctx.set_offline(True)
                         await pg.reload();await pg.wait_for_selector('[data-a="menue-auf"]')
