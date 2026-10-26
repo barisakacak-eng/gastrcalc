@@ -1,0 +1,7 @@
+numpy==2.3.5
+scipy==1.17.0
+svgwrite==1.4.3
+svgpathtools==1.8.0
+shapely==2.2.0
+trimesh==5.2.0
+mapbox-earcut==2.1.0
