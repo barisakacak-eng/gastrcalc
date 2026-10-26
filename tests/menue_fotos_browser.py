@@ -22,7 +22,7 @@ async def main():
                         await schnellstart.schnellstart(pg,PORT,name='BEISPIEL Produktprüfung')
                         data=await pg.evaluate('''async lang=>{
                           const {MENUE_GERICHTE,MENUE_WAREN_FOTO}=await import('./js/data/burger_ergaenzung.js');
-                          const {MENUE_VORLAGEN_ENTWURF,VORLAGEN}=await import('./js/data/katalog.js');const alle=[...MENUE_VORLAGEN_ENTWURF,...VORLAGEN.burger];
+                          const {MENUE_VORLAGEN_ENTWURF,VORLAGEN}=await import('./js/data/katalog.js');const alle=[...MENUE_VORLAGEN_ENTWURF,...VORLAGEN.burger,...VORLAGEN.beilagen];
                           const {gerichtAusVorlage,artikelAbgleichen}=await import('./js/karte_daten.js');
                           const {gerichtBildQuelle,wareBildQuelle}=await import('./js/bilder.js');
                           const {setzeSprache}=await import('./js/i18n.js');
