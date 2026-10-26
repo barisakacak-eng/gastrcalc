@@ -117,3 +117,24 @@
 @keyframes s2zekiAuftauchen { from { transform: translateY(70%) scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes s2zekiBlase { from { transform: translateY(8px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .s2zeki-intro, .s2zeki-introblase, .s2zeki-introblase .s2unterzeile { animation: none; } }
+
+/* Entwurf 26.10.2026: Karte prüfen mit Zeki und Bildern */
+.fvzeki { margin-bottom: 14px; }
+.fvkarten { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.fvk { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 18px; background: #fff; border: 1px solid var(--b-linie, #e4ddd0); }
+.fvk.karte-gelb { background: #fff8e6; border-color: #f0d58a; } .fvk.karte-rot { background: #fff1ec; border-color: #e3a08c; }
+.fvk.aus { align-items: center; justify-content: space-between; opacity: .6; }
+.fvbild { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 14px; object-fit: cover; background: #f1ece2; }
+.fvbild.pikto { object-fit: contain; padding: 6px; }
+.fvbild.mini { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 10px; margin-right: 8px; }
+.fvk-mitte { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.fvk .fvgrund { font-size: calc(14rem / 17); font-weight: 700; color: #8a5a10; }
+.fvk.karte-rot .fvgrund { color: #a3361b; }
+.fvk-name { padding: 8px 12px; min-height: 44px; }
+.fvk-reihe { display: flex; align-items: center; gap: 8px; }
+.fvk-reihe .betrag { flex: 1; }
+.fvtipp { display: flex; align-items: center; }
+.fvk-reihe .chip { white-space: nowrap; flex: 0 0 auto; }
+.fvk-reihe .betrag { min-width: 0; max-width: 175px; }
+.fvk-reihe .betrag input { font-size: calc(26rem / 17); width: 100%; }
+.fvliste .fvbild.mini + .pkt:not(.gelb):not(.rot) { display: none; }

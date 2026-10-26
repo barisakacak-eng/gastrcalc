@@ -301,6 +301,14 @@ export function inventurVorschau(stand) {
 
 // Trennung 2 (17.10.2026): Zahlen der Prüfliste „Karte per Foto“ (vorher in js/screens/foto.js kartePruefenView).
 // an = übernommene Vorschläge, mitRezept = davon mit Vorlage, zutaten = Zahl verschiedener Waren (Zutaten der Vorlagen, Getränke selbst).
+// Baris 26.10.2026 („48 € für Maccaroni rutscht durch“): Preis auffällig, wenn über 30 € oder mehr als das Dreifache des mittleren Kartenpreises.
+export function preisAuffaellig(v, alle) {
+  if (!v || v.preis === null || v.preis === undefined) return false;
+  const p = (alle || []).filter((x) => x.an !== false && x.preis !== null && x.preis !== undefined).map((x) => x.preis).sort((a, b) => a - b);
+  const median = p.length ? p[Math.floor(p.length / 2)] : 0;
+  return v.preis > 30 || (median > 0 && p.length >= 5 && v.preis > 3 * median);
+}
+
 export function kartePruefZahlen(vorschlaege) {
   const an = vorschlaege.filter((v) => v.an);
   const zutaten = new Set(); for (const v of an) { if (v.vorlage) for (const l of Object.values(VORLAGEN)) { const x = l.find((y) => y.name === v.vorlage); if (x) x.zutaten.forEach((z) => zutaten.add(z[0])); } else if (v.getraenk) zutaten.add(v.name); }
