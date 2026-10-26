@@ -1,15 +1,29 @@
-// GastroCash: visuelle Marke ohne Eingriff in Berechnungen, Speicher oder Navigation.
-// Der Bot ist absichtlich standardmäßig neutral: beide Augen offen, kein widersprüchliches Zwinkern.
-const states = new Set(['neutral','freundlich','nachdenklich','ernst','erfolg']);
-const motions = new Set(['none','idle','thumb','turn','celebrate']);
-export function mascotMarkup(state='neutral', motion='none') {
-  const s=states.has(state)?state:'neutral';
-  const m=motions.has(motion)?motion:'none';
-  const mouths={neutral:'M69 79 Q80 82 91 79',freundlich:'M66 76 Q80 91 94 76',nachdenklich:'M73 80 H88',ernst:'M70 81 H90',erfolg:'M65 75 Q80 94 95 75'};
-  const eyes=s==='nachdenklich'?'<circle cx="65" cy="64" r="5"/><circle cx="103" cy="64" r="5"/>':'<circle cx="61" cy="64" r="5"/><circle cx="99" cy="64" r="5"/>';
-  return `<svg class="gc-bot gc-bot--${s} gc-motion--${m}" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g class="gc-bot-body" stroke="#22301F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><path d="M48 102 Q80 114 112 102 L127 155 Q80 173 33 155Z" fill="#4C6B55"/><path d="M33 116 Q13 119 17 148 M127 116 Q147 119 143 148" fill="none" stroke-width="12"/><path d="M55 158 V173 M105 158 V173" stroke-width="13"/><path d="M54 111 V146 Q80 159 106 146 V111" fill="none"/><circle class="gc-bot-coin" cx="80" cy="128" r="16" fill="#E8763A"/><path d="M61 135 H99 V151 Q80 161 61 151Z" fill="#2E4034"/></g><g class="gc-bot-head" stroke="#22301F" stroke-width="5" stroke-linejoin="round"><rect x="28" y="5" width="104" height="99" rx="48" fill="#F5EDE2"/><rect x="36" y="38" width="88" height="56" rx="23" fill="#22301F"/><rect x="12" y="55" width="18" height="27" rx="8" fill="#F5EDE2"/><rect x="130" y="55" width="18" height="27" rx="8" fill="#F5EDE2"/><g class="gc-bot-eyes" fill="#FFFDF9" stroke="none">${eyes}</g><path d="${mouths[s]}" stroke="#FFFDF9" stroke-width="4" fill="none" stroke-linecap="round"/></g><g class="gc-bot-thumb" stroke="#22301F" stroke-width="5" stroke-linejoin="round"><path d="M126 119 L143 107 L145 95 Q152 88 155 96 L155 110 L158 115 L155 139 L130 138Z" fill="#4C6B55"/></g></svg>`;
+// Darstellung und Bewegung. Keine Sätze, Ereignisentscheidungen oder Speicherung.
+import {ZEKI_SVG} from './zeki-svg.js';
+import {ZEKI_BILDER} from './zeki-bilder.js';
+const own=(o,k)=>typeof k==='string'&&Object.hasOwn(o,k);
+const states={neutral:'neutral',freude:'freude',nachdenklich:'import',warnung:'warnung',freundlich:'freude',ernst:'warnung',erfolg:'freude',frage:'frage',import:'import',preis:'preis',hilfe:'hilfe',bestaetigt:'bestaetigt',aufmerksam:'aufmerksam',erleichtert:'erleichtert',fehler:'fehler'};
+const motions={none:'none',idle:'none',atmen:'none',zwinkern:'zwinkern',grinsen:'grinsen',laecheln:'grinsen',hand:'hand',nicken:'nicken',kopfschuetteln:'kopfschuetteln',pruefen:'pruefen',preis:'preis',thumb:'hand',celebrate:'grinsen',turn:'pruefen'};
+let instance=0;const runs=new WeakMap();
+export function mascotMarkup(zustand='neutral',bewegung='none'){
+ const s=own(states,zustand)?zustand:'neutral',m=own(motions,bewegung)?bewegung:'none',prefix='zeki-'+(++instance)+'-';
+ return ZEKI_SVG.replace(/<style>[\s\S]*?<\/style>/,'').replace(/id="([^"]+)"/g,(_,id)=>id.startsWith('clip-')?'id="'+prefix+id+'"':'data-zeki-teil="'+id+'"').replaceAll('url(#clip-','url(#'+prefix+'clip-').replaceAll('href="#clip-','href="#'+prefix+'clip-').replace('class="zeki"',`class="gc-bot gc-bot--${s} gc-motion--${m} zeki zeki--${states[s]}" data-zeki-start="${motions[m]}"`).replace('data-zeki-zustand="neutral"',`data-zeki-zustand="${states[s]}"`);
 }
-
+export function zekiMimik(element,zustand='neutral'){
+ const svg=element?.matches?.('.zeki')?element:element?.querySelector?.('.zeki');if(!svg||!own(states,zustand))return false;zekiSpielen(svg,'none');svg.dataset.zekiZustand=states[zustand];return true;
+}
+export function zekiSpielen(element,bewegung='none'){
+ const svg=element?.matches?.('.zeki')?element:element?.querySelector?.('.zeki');if(!svg||!own(motions,bewegung))return false;runs.get(svg)?.();const m=motions[bewegung];if(m==='none')return true;
+ if(svg.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches)return true;
+ const info=ZEKI_BILDER[m],film=svg.querySelector('[data-zeki-teil="film"]');if(!info||!film)return false;
+ let cancelled=false,timer;const cleanup=()=>{cancelled=true;clearTimeout(timer);film.removeEventListener('animationend',end);film.removeEventListener('animationcancel',end);if(runs.get(svg)===cleanup){svg.classList.remove('zeki--spielt');runs.delete(svg);}};const end=e=>{if(e.target===film)cleanup()};runs.set(svg,cleanup);
+ const url=new URL('../assets/brand/zeki/'+info.datei,import.meta.url).href,img=new svg.ownerDocument.defaultView.Image();img.onload=()=>{if(cancelled)return;film.setAttribute('href',url);film.setAttribute('width','1385');film.setAttribute('height','1720');svg.style.setProperty('--zeki-ablauf','zeki3d-'+m);svg.style.setProperty('--zeki-dauer',info.dauer+'ms');film.addEventListener('animationend',end);film.addEventListener('animationcancel',end);void film.getBoundingClientRect();svg.classList.add('zeki--spielt');timer=setTimeout(cleanup,info.dauer+450)};img.onerror=cleanup;img.src=url;return true;
+}
+// Nur angeforderte Darstellungsbewegungen starten; keine fachliche Ereigniszuordnung.
+if(typeof document!=='undefined'&&typeof MutationObserver!=='undefined'){
+ const start=root=>{for(const s of root.querySelectorAll('.zeki[data-zeki-start]')){const m=s.dataset.zekiStart;s.removeAttribute('data-zeki-start');zekiSpielen(s,m)}};
+ const observer=new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1)start(n.parentElement||document)});observer.observe(document.documentElement,{childList:true,subtree:true});start(document);
+}
 export function mascotResultState({ aboveZero=false, delta=0, incomplete=false }={}) {
   if (incomplete) return 'nachdenklich';
   if (aboveZero) return 'erfolg';

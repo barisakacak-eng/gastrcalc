@@ -196,7 +196,7 @@ test("Bildschirm „Getränke“: Liste, Hinweis, ändern, neu aus dem Katalog; 
   sc.getraenkeEingabe("gt-preis", "2,40"); const r = sc.getraenkeAktion("gt-anlegen", { dataset: {} }, s); assert.equal(r.speichern, true, r.meldung);
   const neu = s.gerichte.find((g) => g.name === "Cola offen 0,3 l"); assert.deepEqual([neu.preis, neu.getraenk.quelle, neu.getraenk.gebinde], [2.4, "Cola Bag-in-Box (Postmix)", "becher"]);
   // nur vorhandene CSS-Klassen
-  const css = ["app", "buero", "zielbild", "optik", "laden", "heute"].map((x) => fs.readFileSync(path.join(HIER, "..", "css", x + ".css"), "utf8")).join("\n");
+  const css = ["app", "buero", "zielbild", "optik", "laden", "heute", "zeki"].map((x) => fs.readFileSync(path.join(HIER, "..", "css", x + ".css"), "utf8")).join("\n");
   for (const h of [html, f, n]) for (const k of new Set([...h.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean))) assert.ok(new RegExp("\\." + k.replace(/[-]/g, "\\-") + "(?![\\w-])").test(css), "Klasse ohne CSS: " + k);
   for (const x of ["gt-auf", "gt-neu", "gt-speichern", "gt-anlegen", "gt-gebinde"]) assert.equal(personalGesperrt(x, null, H), true, x);
   assert.equal(ansichtErlaubt({ modus: "personal" }, "getraenke"), false); assert.equal(ansichtErlaubt({ modus: "laden" }, "getraenke"), false, "Büro");
