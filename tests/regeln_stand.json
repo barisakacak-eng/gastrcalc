@@ -1,7 +1,7 @@
 {
- "datum": "2026-10-24 02:55",
- "fassung": "b577581",
- "dauer_s": 48.0,
+ "datum": "2026-10-26 13:30",
+ "fassung": "a63ed8e",
+ "dauer_s": 147.7,
  "soll": {
   "woerter": {
    "laden": 15,
@@ -17,31 +17,35 @@
  "bildschirme": {
   "390x844": {
    "heute": {
-    "worte": 11,
+    "worte": 12,
     "wortliste": [
      "Bis",
      "null",
-     "Schätzung",
-     "Messung",
-     "startet",
-     "beim",
-     "ersten",
+     "Ab",
+     "erstem",
      "Müll-Eintrag",
+     "Umsatz",
+     "Müll",
+     "Kühlung",
+     "Putzen",
      "Kühlrundgang",
      "Gastro",
      "Cash"
     ],
     "texte": [
      "Döner Test",
-     "Fr., 23. Okt.",
+     "Mo., 26. Okt.",
      "Bis null",
-     "≈ 1.096 €",
-     "Schätzung",
-     "1.096 €",
+     "≈ 731 €",
+     "731 €",
      "⁦01.10.⁩",
      "⁦31.10.⁩",
-     "Messung startet beim ersten Müll-Eintrag",
+     "Ab erstem Müll-Eintrag",
+     "Umsatz",
+     "Müll",
      "2",
+     "Kühlung",
+     "Putzen",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -61,7 +65,7 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "Schätzung"
+     "text": "731 €"
     },
     "tippKlein": [],
     "tippAnzahl": 13,
@@ -763,7 +767,7 @@
      "Cash",
      "?",
      "Hallo",
-     "Samstag, 24. Oktober",
+     "Montag, 26. Oktober",
      "Müll",
      "Kühlung",
      "2 offen",
@@ -799,7 +803,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Samstag, 24. Oktober"
+     "text": "Montag, 26. Oktober"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -861,31 +865,35 @@
   },
   "360x780": {
    "heute": {
-    "worte": 11,
+    "worte": 12,
     "wortliste": [
      "Bis",
      "null",
-     "Schätzung",
-     "Messung",
-     "startet",
-     "beim",
-     "ersten",
+     "Ab",
+     "erstem",
      "Müll-Eintrag",
+     "Umsatz",
+     "Müll",
+     "Kühlung",
+     "Putzen",
      "Kühlrundgang",
      "Gastro",
      "Cash"
     ],
     "texte": [
      "Döner Test",
-     "Fr., 23. Okt.",
+     "Mo., 26. Okt.",
      "Bis null",
-     "≈ 1.096 €",
-     "Schätzung",
-     "1.096 €",
+     "≈ 731 €",
+     "731 €",
      "⁦01.10.⁩",
      "⁦31.10.⁩",
-     "Messung startet beim ersten Müll-Eintrag",
+     "Ab erstem Müll-Eintrag",
+     "Umsatz",
+     "Müll",
      "2",
+     "Kühlung",
+     "Putzen",
      "Kühlrundgang",
      "Gastro",
      "Cash"
@@ -905,7 +913,7 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "Schätzung"
+     "text": "731 €"
     },
     "tippKlein": [],
     "tippAnzahl": 13,
@@ -1607,7 +1615,7 @@
      "Cash",
      "?",
      "Hallo",
-     "Samstag, 24. Oktober",
+     "Montag, 26. Oktober",
      "Müll",
      "Kühlung",
      "2 offen",
@@ -1643,7 +1651,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Samstag, 24. Oktober"
+     "text": "Montag, 26. Oktober"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -1710,7 +1718,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 11,
+   "ist": 12,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -1739,7 +1747,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Schätzung"
+   "hinweis": "731 €"
   },
   {
    "viewport": "390x844",
@@ -2322,7 +2330,7 @@
    "bildschirm": "heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 11,
+   "ist": 12,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2351,7 +2359,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Schätzung"
+   "hinweis": "731 €"
   },
   {
    "viewport": "360x780",
