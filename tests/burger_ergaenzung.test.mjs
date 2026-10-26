@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { MENUE_GERICHTE, MENUE_QUELLE, MENUE_ARTIKEL, MENUE_FREIGEGEBEN } from "../js/data/burger_ergaenzung.js";
 import { MENUE_VORLAGEN_ENTWURF, PRODUKT_INDEX, VORLAGEN as ALLE_VORLAGEN } from "../js/data/katalog.js";
-const VORLAGEN = { finde: (n) => MENUE_VORLAGEN_ENTWURF.find((v) => v.name === n) || ALLE_VORLAGEN.burger.find((v) => v.name === n) }; // Zoro 26.10.2026: Menü-Vorlagen sind Entwurf, nicht im Wähler
+const VORLAGEN = { finde: (n) => MENUE_VORLAGEN_ENTWURF.find((v) => v.name === n) || [...ALLE_VORLAGEN.burger, ...ALLE_VORLAGEN.beilagen].find((v) => v.name === n) }; // Zoro 26.10.2026: Menü-Vorlagen sind Entwurf, nicht im Wähler
 import { gerichtAusVorlage } from "../js/karte_daten.js";
 import { warenGericht } from "../js/engine.js";
 import { fotoName, gerichtBildQuelle, wareBildQuelle } from "../js/bilder.js";
@@ -72,4 +72,13 @@ test("Go Burger 26.10.2026: Classic, Oklahoma, Super Smash im Wähler mit Grammw
     assert.ok(!MENUE_VORLAGEN_ENTWURF.some((x) => x.name === n), n);
   }
   for (const n of ["Bacon Cheeseburger", "Chili Cheeseburger"]) assert.ok(MENUE_VORLAGEN_ENTWURF.some((x) => x.name === n), n);
+});
+
+test("Freigegebene Menü-Vorlagen haben am ersten Tag einen Wareneinsatz (alle Zutaten mit Richtpreis)", async () => {
+  const { richtpreisFuer } = await import("../js/richtpreise.js");
+  for (const [name, f] of Object.entries(MENUE_FREIGEGEBEN)) {
+    const v = ALLE_VORLAGEN[f.bereich || "burger"].find((x) => x.name === name);
+    assert.ok(v, name);
+    for (const [z, menge] of v.zutaten) { assert.ok(menge > 0, `${name}: ${z}`); assert.ok(richtpreisFuer(z), `${name}: ${z} ohne Richtpreis`); }
+  }
 });

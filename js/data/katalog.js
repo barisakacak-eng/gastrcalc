@@ -755,7 +755,7 @@ export const VORLAGEN = {
 // genau der Fehler aus Gremium 1 (24.10.2026). Freischalten, sobald der Pilot-Burgerladen echte Grammrezepte geliefert hat (Zoro 26.10.2026).
 // Bis dahin wirken die Daten nur über Fotos (bilder.js: Gericht mit gleichem Namen bekommt das Foto) und Artikelnamen.
 // Zoro 26.10.2026: freigegebene Menü-Gerichte stehen im Wähler (VORLAGEN.burger), der Rest bleibt Entwurf ohne Grammwerte.
-for (const [name, f] of Object.entries(MENUE_FREIGEGEBEN)) VORLAGEN.burger.push(V(name, f.zeit, f.zutaten));
+for (const [name, f] of Object.entries(MENUE_FREIGEGEBEN)) VORLAGEN[f.bereich || "burger"].push(V(name, f.zeit, f.zutaten));
 export const MENUE_VORLAGEN_ENTWURF = MENUE_GERICHTE.filter((g) => !MENUE_FREIGEGEBEN[g.name]).map((g) => ({ ...V(g.name, null, g.zutaten), bereich: g.bereich }));
 
 /** Vorlagen, die zur Betriebsart passen – mit Herkunftsbereich. */

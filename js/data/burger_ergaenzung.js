@@ -49,6 +49,10 @@ export const MENUE_FREIGEGEBEN = {
   "Classic Smash Burger": { zeit: 5, zutaten: [...smashBasis(), ["Ketchup", 7, "g"], ["Senf", 4, "g"], ["Burgerbox", 1, "stk"]] },
   "Oklahoma Smash Burger": { zeit: 6, zutaten: [...smashBasis(), ["Ketchup", 7, "g"], ["Senf", 4, "g"], ["Burgerbox", 1, "stk"]] },
   "Super Smash Burger": { zeit: 6, zutaten: [...smashBasis(), ["Burgersauce", 25, "g"], ["Eisbergsalat", 30, "g"], ["Tomaten", 25, "g"], ["Burgerbox", 1, "stk"]] },
+  // Beilagen (Zoro 26.10.2026, nach Großhandels-Recherche): Portion ≈ 200 g = Pommes-Median aus 5 Quellen, für Süßkartoffel und Wedges abgeleitet.
+  "Süßkartoffel-Pommes": { bereich: "beilagen", zeit: 4, zutaten: [["Süßkartoffel-Pommes", 200, "g"], ["Pommesschale", 1, "stk"]] },
+  "Wedges": { bereich: "beilagen", zeit: 5, zutaten: [["Kartoffel-Wedges TK", 200, "g"], ["Pommesschale", 1, "stk"]] },
+  "Chili-Cheese-Nuggets (6 Stück)": { bereich: "beilagen", zeit: 5, zutaten: [["Chili-Cheese-Nuggets", 6, "stk"], ["Pommesschale", 1, "stk"]] },
 };
 // Neue Einkaufsartikel bleiben ohne Preise und ohne behauptetes Stückgewicht.
 export const MENUE_ARTIKEL = [
