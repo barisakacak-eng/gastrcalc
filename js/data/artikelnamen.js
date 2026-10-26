@@ -1,3 +1,4 @@
+import { MENUE_GERICHTE, MENUE_ARTIKEL } from "./burger_ergaenzung.js";
 // Paket 6 (17.10.2026): Anzeige-Übersetzung der Katalog-Artikelnamen (Türkisch, Englisch).
 // Gespeichert, gerechnet und exportiert wird IMMER der deutsche Katalogname (Rezepte, Amt, Steuerberater) – übersetzt wird nur die Anzeige.
 // Schlüssel = exakter Artikelname aus js/data/katalog.js. Vom Wirt selbst angelegte Artikel stehen hier nicht und bleiben, wie er sie nennt.
@@ -483,9 +484,113 @@ export const ARTIKELNAMEN = {
 
 // Rückfallreihenfolge: gewählte Sprache (nur tr/en vorhanden) → Englisch (für die übrigen 15 Sprachen) → deutscher Originalname.
 // Deutsch, leerer Name oder unbekannter (eigener) Artikel: Originalname unverändert.
+
+// Menü-Ergänzung: nur Anzeige, gespeicherte Katalognamen bleiben Deutsch.
+const MENUE_GERICHTNAMEN = Object.fromEntries(MENUE_GERICHTE.map((g) => [g.name, A(g.tr,g.en)])); // Sanji 26.10.2026, unten in GERICHTNAMEN übernommen
+for (const g of MENUE_GERICHTE) if (MENUE_ARTIKEL.some(([name]) => name === g.name)) ARTIKELNAMEN[g.name] = A(g.tr, g.en);
+ARTIKELNAMEN["Smash-Patty"] = A("Smash köftesi", "Smash patty");
+ARTIKELNAMEN["Cheddarcreme"] = A("Cheddar kreması", "Cheddar cream");
+ARTIKELNAMEN["Muffin"] ??= A("Muffin", "Muffin");
+ARTIKELNAMEN["Spinat"] = A("Ispanak", "Spinach");
+ARTIKELNAMEN["Blattsalat"] = A("Marul", "Leaf lettuce");
+Object.assign(ARTIKELNAMEN, {
+  "Rinderspeck": {
+    "tr": "Dana bacon",
+    "en": "Beef bacon"
+  },
+  "Chicken Tenders": {
+    "tr": "Tavuk şeritleri",
+    "en": "Chicken tenders"
+  },
+  "Chicken Tenders (Stück)": {
+    "tr": "Tavuk şeritleri (adet)",
+    "en": "Chicken tenders (pieces)"
+  },
+  "Curly Fries TK": {
+    "tr": "Donuk spiral patates",
+    "en": "Frozen curly fries"
+  },
+  "Kartoffel-Wedges TK": {
+    "tr": "Donuk elma dilim patates",
+    "en": "Frozen potato wedges"
+  },
+  "Halloumi-Sticks": {
+    "tr": "Hellim çubukları",
+    "en": "Halloumi sticks"
+  },
+  "Chili-Cheese-Nuggets": {
+    "tr": "Acılı peynir topları",
+    "en": "Chili cheese nuggets"
+  },
+  "Onion Rings TK (Stück)": {
+    "tr": "Donuk soğan halkaları (adet)",
+    "en": "Frozen onion rings (pieces)"
+  },
+  "Knoblauch-Parmesan-Pommes (fertig)": {
+    "tr": "Sarımsaklı parmesanlı patates (hazır)",
+    "en": "Garlic parmesan fries (prepared)"
+  },
+  "Chili-Cheese-Pommes (fertig)": {
+    "tr": "Acılı peynir soslu patates (hazır)",
+    "en": "Chili cheese fries (prepared)"
+  },
+  "Chicken-Pommes (fertig)": {
+    "tr": "Tavuklu patates (hazır)",
+    "en": "Chicken fries (prepared)"
+  },
+  "Trüffel-Pommes (fertig)": {
+    "tr": "Trüflü patates (hazır)",
+    "en": "Truffle fries (prepared)"
+  },
+  "Käsesauce": {
+    "tr": "Peynir sosu",
+    "en": "Cheese sauce"
+  },
+  "Trüffel-Mayonnaise": {
+    "tr": "Trüflü mayonez",
+    "en": "Truffle mayonnaise"
+  },
+  "Joppie-Sauce": {
+    "tr": "Joppie sos",
+    "en": "Joppie sauce"
+  },
+  "Knoblauch-Mayonnaise": {
+    "tr": "Sarımsaklı mayonez",
+    "en": "Garlic mayonnaise"
+  },
+  "Ananas (Smoothie)": {
+    "tr": "Ananas (smoothie için)",
+    "en": "Pineapple (for smoothie)"
+  },
+  "Bananen": {
+    "tr": "Muz",
+    "en": "Bananas"
+  },
+  "Mango": {
+    "tr": "Mango",
+    "en": "Mango"
+  },
+  "Pfirsich": {
+    "tr": "Şeftali",
+    "en": "Peach"
+  },
+  "Passionsfrucht": {
+    "tr": "Çarkıfelek meyvesi",
+    "en": "Passion fruit"
+  },
+  "Blaubeeren": {
+    "tr": "Yaban mersini",
+    "en": "Blueberries"
+  },
+  "Acai-Püree": {
+    "tr": "Acai püresi",
+    "en": "Acai puree"
+  }
+});
+
 export function artikelAnzeige(name, sprache) {
   if (!name || !sprache || sprache === "de") return name;
-  const e = ARTIKELNAMEN[name];
+  const e = ARTIKELNAMEN[name] || MENUE_GERICHTNAMEN[name];
   if (!e) return name;
   return e[sprache] || e.en || name;
 }
@@ -524,6 +629,8 @@ export const GERICHTNAMEN = {
   "Gemischter Salat klein": A("Küçük karışık salata", "Small mixed salad"), "Caesar Salad": A("Sezar salata", "Caesar salad"), "Griechischer Salat": A("Yunan salatası", "Greek salad"),
   "Thunfischsalat": A("Ton balıklı salata", "Tuna salad"), "Poke Bowl Lachs": A("Somonlu poke bowl", "Salmon poke bowl"), "Couscous-Salat": A("Kuskus salatası", "Couscous salad"),
 };
+
+for (const [n, e] of Object.entries(MENUE_GERICHTNAMEN)) GERICHTNAMEN[n] ??= e; // Burger-Vorlagen (Sanji 26.10.2026)
 
 export function gerichtAnzeige(name, sprache) {
   if (!name || !sprache || sprache === "de") return name;

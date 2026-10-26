@@ -4,6 +4,7 @@
 // Lieber ein Begriff zu wenig als ein geratener.
 
 import { ARTIKELNAMEN } from "./artikelnamen.js";
+import { MENUE_ARTIKEL } from "./burger_ergaenzung.js";
 
 export const SUCHNAMEN = {
   // ── Fleisch & Wurst ──
@@ -432,6 +433,14 @@ export const SUCHNAMEN = {
   "Müllbeutel": ["çöp poşeti", "çöp torbası", "bin bag", "trash bag", "garbage bag"],
   "Reinigungstuch": ["temizlik bezi", "bez", "cleaning cloth"],
 };
+
+// Neue Menü-Zutaten sind auch über ihre übersetzten Anzeigenamen auffindbar.
+for (const name of [...MENUE_ARTIKEL.map((a) => a[0]), "Jalapeños"]) {
+  if (!SUCHNAMEN[name]) {
+    const a = ARTIKELNAMEN[name];
+    SUCHNAMEN[name] = [name, a?.tr, a?.en].filter(Boolean).map((s) => s.toLowerCase());
+  }
+}
 
 // Klein schreiben, türkische Sonderzeichen und deutsche Umlaute falten: „Soğan“, „sogan“, „SOGAN“ → „sogan“.
 export function normalisieren(s) {

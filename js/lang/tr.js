@@ -1123,6 +1123,7 @@ export default {
       personal: "Çöp gir, soğutmayı ölç, temizliği işaretle. Geri dönüş sadece büro koduyla.",
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân “Bugün“ ve “Ofiste açık“
+  menueReferenz: { hinweis: "Malzemeler menüden. Miktarları, süreyi ve tarifin tamamını kontrol et." }, // 26.10.2026
   heute: {
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },

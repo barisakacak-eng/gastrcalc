@@ -1127,6 +1127,7 @@ export default {
       laeden: "Тут ти перемикаєшся між закладами. Кожен заклад має свої цифри.",
       personal: "Внеси відходи, виміряй холод, познач прибирання. Назад лише з кодом офісу.",
       buero: "Тут усі розрахунки, списки й налаштування. Папки ти віддаєш інспекції, податковому консультанту або бухгалтеру." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "нуль + цільовий прибуток",
     stufe: { bisNull: "До нуля бракує", bisZiel: "До цілі", ueberZiel: "Понад ціль" },

@@ -1127,6 +1127,7 @@ export default {
       laeden: "Тук превключваш между обектите си. Всеки обект има свои числа.",
       personal: "Въведи отпадъци, измери охлаждането, отметни почистването. Обратно само с кода за офиса.",
       buero: "Тук са всички сметки, списъци и настройки. Папките даваш на инспекцията, данъчния съветник или счетоводителя." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "нула + целева печалба",
     stufe: { bisNull: "До нулата липсват", bisZiel: "До целта", ueberZiel: "Над целта" },

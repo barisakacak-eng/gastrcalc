@@ -1127,6 +1127,7 @@ export default {
       laeden: "Здесь ты переключаешься между заведениями. У каждого свои цифры.",
       personal: "Внеси отходы, измерь холод, отметь уборку. Назад только с кодом офиса.",
       buero: "Здесь все расчёты, списки и настройки. Папки ты отдаёшь инспекции, налоговому консультанту или бухгалтеру." } },
+  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
   heute: {
     zielLinie: "ноль + целевая прибыль",
     stufe: { bisNull: "До нуля не хватает", bisZiel: "До цели", ueberZiel: "Выше цели" },

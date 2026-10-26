@@ -1,3 +1,4 @@
+import { MENUE_GERICHTE } from "../data/burger_ergaenzung.js";
 // Etappe 2: Karte wählen, Rezepte prüfen, Einkaufspreise, Verkaufspreise, Ergebnis.
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
 import { sym, SYMBOLE } from "../symbole.js";
@@ -129,13 +130,14 @@ function rezeptDetail(stand, g) {
     <button type="button" class="leise" data-a="rezept-zu">‹ ${esc(t("rezepte.alle"))}</button>
     <input class="textfeld gross" data-f="gericht-name" value="${esc(g.name)}" autocomplete="off">
     <div class="stempelzeile">${stempelHtml(rezeptStempel(g), { info: stempelInfo })}</div>
+    ${MENUE_GERICHTE.some((v) => v.name === (g.vorlageName || g.name)) ? `<p class="tipp">${esc(t("menueReferenz.hinweis"))}</p>` : ""}
     ${waage && waage.fertig && waage.gid === g.id ? waage.meldungen.map((m) => `<p class="tipp gruen">${esc(m)}</p>`).join("") : ""}
     ${waageFragen(stand, g).length ? `<button type="button" class="knopf glut" data-a="waage-start">${sym("scale")} ${esc(t("waage.start"))}</button>` : ""}
     <div class="feldzeile"><label>${esc(t("rezepte.klasse"))}</label>
       <div class="chips">${KLASSEN.map((k) => `<button type="button" class="chip ${g.klasse === k ? "an" : ""}" data-a="klasse" data-wert="${k}">${esc(t("rezepte.klassen." + k))}</button>`).join("")}</div>
       <span class="marke">${esc(t("rezepte.klasseHinweis"))}</span></div>
     <div class="feldzeile"><label>${esc(t("rezepte.zeit"))}</label>
-      <div class="stepper"><button type="button" data-a="zeit" data-d="-1">−</button><div class="wert">${esc(t("rezepte.minuten", g.zeit))}</div><button type="button" data-a="zeit" data-d="1">+</button></div></div>
+      <div class="stepper"><button type="button" data-a="zeit" data-d="-1">−</button><div class="wert">${g.zeit == null ? "–" : esc(t("rezepte.minuten", g.zeit))}</div><button type="button" data-a="zeit" data-d="1">+</button></div></div>
     <div class="feldzeile"><label>${esc(t("rezepte.zutaten"))}</label><span class="marke">${esc(t("rezepte.zutatenHinweis"))}</span></div>
     <div class="liste">
       ${g.zutaten.map((z, i) => {
