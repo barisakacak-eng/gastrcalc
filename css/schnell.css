@@ -98,3 +98,19 @@
   .s2kuehlzeile { grid-template-columns: 60px 1fr; }
   .s2kuehlzeile .s2zaehler { grid-column: 1 / -1; justify-self: end; }
 }
+
+/* Entwurf 26.10.2026: Zeki führt durch die Einrichtung */
+.s2zeki { justify-content: flex-start; align-items: center; gap: 10px; }
+.s2zeki-figur { flex: 0 0 64px; width: 64px; height: 76px; padding: 0; border: 0; background: none; cursor: pointer; }
+.s2zeki-figur .zeki { width: 64px; height: 76px; }
+.s2zeki-blase { position: relative; flex: 1; background: #fff; border: 1px solid var(--b-linie, #e4ddd0); border-radius: 18px; padding: 10px 14px; box-shadow: 0 2px 10px rgba(15,23,32,.06); }
+.s2zeki-blase::before { content: ""; position: absolute; left: -7px; top: 26px; width: 12px; height: 12px; background: #fff; border-left: 1px solid var(--b-linie, #e4ddd0); border-bottom: 1px solid var(--b-linie, #e4ddd0); transform: rotate(45deg); }
+.s2zeki-blase .frage { font-size: calc(19rem / 17); line-height: 1.3; }
+.s2zeki-hilfe { margin: 8px 0 0; font-size: calc(15rem / 17); color: var(--b-text-leise, #5b5b52); line-height: 1.4; }
+.s2zeki-intro { width: 150px; height: 180px; margin: 0 auto; animation: s2zekiAuftauchen .8s cubic-bezier(.2,1.35,.4,1) both; }
+.s2zeki-intro .zeki { width: 150px; height: 180px; }
+.s2zeki-introblase { animation: s2zekiBlase .5s .9s ease-out both; display: flex; flex-direction: column; align-items: center; }
+.s2zeki-introblase .s2unterzeile { animation: s2zekiBlase .5s 1.7s ease-out both; }
+@keyframes s2zekiAuftauchen { from { transform: translateY(70%) scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes s2zekiBlase { from { transform: translateY(8px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .s2zeki-intro, .s2zeki-introblase, .s2zeki-introblase .s2unterzeile { animation: none; } }

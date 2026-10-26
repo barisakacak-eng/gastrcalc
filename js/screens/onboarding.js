@@ -23,6 +23,7 @@ import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } fro
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
 import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste, karteModus, serieStand, fotoLauf, fotoVorbereiten } from "./foto.js";
 import { monatsLast } from "../engine.js";
+import { mascotMarkup } from "../gastrocash-brand.js"; // Zeki führt durch die Einrichtung (Entwurf 26.10.2026)
 
 // ---------- Bausteine ----------
 
@@ -422,9 +423,14 @@ export const kostenSchnell = {
 // „?“ – je Bildschirm höchstens eine aufklappbare Erklärung. Der Zustand gilt nur für den Bildschirm, auf dem sie geöffnet wurde.
 let hilfeAuf = null;
 export function onboardingZuruecksetzen() { hilfeAuf = null; } // Paket 2 (16.10.2026): Ladenwechsel – zentrale Liste in app.js
+// Entwurf 26.10.2026 (Baris: „Zeki gibt bei jedem Fenster Hilfestellung“): Zeki spricht die Frage selbst, ein Tipp auf Zeki öffnet die kurze Erklärung.
+const zekiSatz = (id, titel) => { const k = "schnell2.zeki." + id, v = t(k); return v === k ? titel : v; };
 const kopfS2 = (id, titel, hilfeText, extra = "") => `
-    <div class="s2kopf"><h1 class="frage" dir="auto">${esc(titel)}</h1>${hilfeText ? `<button type="button" class="s2fragezeichen" data-a="s2-hilfe" data-wert="${id}" aria-expanded="${hilfeAuf === id}" aria-label="${esc(t("schnell2.hilfe"))}">?</button>` : ""}</div>
-    ${hilfeText && hilfeAuf === id ? `<div class="s2hilfe" role="note"><p>${esc(hilfeText)}</p>${extra}</div>` : ""}`;
+    <div class="s2kopf s2zeki">
+      <button type="button" class="s2zeki-figur zeki-lebt" data-a="s2-hilfe" data-wert="${id}" aria-expanded="${hilfeAuf === id}" aria-label="${esc(t("schnell2.hilfe"))}">${mascotMarkup(hilfeAuf === id ? "hilfe" : "frage")}</button>
+      <div class="s2zeki-blase"><h1 class="frage" dir="auto">${esc(zekiSatz(id, titel))}</h1>
+      ${hilfeText && hilfeAuf === id ? `<p class="s2zeki-hilfe" role="note">${esc(hilfeText)}</p>${extra}` : ""}</div>
+    </div>`;
 const hilfeAktion = (name, el) => { if (name !== "s2-hilfe") return false; hilfeAuf = hilfeAuf === el.dataset.wert ? null : el.dataset.wert; return true; };
 
 // Vorauswahl „selbst gemacht“ nach Laden-Art – Trennung (17.10.2026): selbstStandard wohnt jetzt in js/selbst.js
@@ -437,9 +443,9 @@ const spracheSchnell = {
   id: "sprache",
   view: () => `
     <div class="s2sprache s2willkommen">
-      <img class="s2logo" src="icons/logo-zeichen.svg" alt="" aria-hidden="true">
-      <h1 class="s2titel-gross">${esc(t("schnell2.willkommen"))}</h1>
-      <p class="s2unterzeile">${esc(t("schnell2.willkommenText"))}</p>
+      <div class="s2zeki-intro zeki-lebt" aria-hidden="true">${mascotMarkup("freude", "hand")}</div>
+      <div class="s2zeki-introblase"><h1 class="s2titel-gross">${esc(zekiSatz("hallo", t("schnell2.willkommen")))}</h1>
+      <p class="s2unterzeile">${esc(zekiSatz("rolle", t("schnell2.willkommenText")))}</p></div>
       <label class="s2feldtitel" for="sprache-wahl">${esc(t("schnell2.sprache"))}</label>
       <select id="sprache-wahl" class="textfeld s2sprachwahl" data-f="sprache-wahl" dir="auto">
         ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(SPRACH_NAMEN[s] || s)}</option>`).join("")}
@@ -595,8 +601,8 @@ const fertigSchnell = {
     const e = einrichtungStand(stand);
     return `
       <div class="s2fertig">
-        <span class="s2haken" aria-hidden="true">${sym("check")}</span>
-        <h1 class="frage" dir="auto">${esc(t("schnell2.fertig"))}</h1>
+        <div class="s2zeki-intro zeki-lebt" aria-hidden="true">${mascotMarkup("bestaetigt", "nicken")}</div>
+        <h1 class="frage" dir="auto">${esc(zekiSatz("fertig", t("schnell2.fertig")))}</h1>
         <div class="s2ring">${ring(e.prozent)}<span>${esc(t("schnell2.eingerichtet"))}</span></div>
         <button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>
       </div>`;
