@@ -135,7 +135,7 @@ export function zekiReihe(stand, H, dran, extra = {}) {
   const zustand = zm ? ZEKI_ZUSTAND[zm.ausloeser] || "neutral" : dran.ton === "rot" ? "warnung" : "neutral";
   const bewegung = neu && !extra.zekiOhneBewegung && zm.bewegung && zm.bewegung !== "keine" ? zm.bewegung : "none";
   return `<div class="h-zeki${neu ? " h-zeki--neu" : ""}"${neu ? ` data-zeki-key="${esc(zm.ausloeser + ":" + H)}" style="--zeki-rest:${Math.max(0, Math.round(extra.zekiRestMs ?? 7000))}ms"` : ""}>
-    <div class="h-zeki-figur" aria-hidden="true">${mascotMarkup(zustand, bewegung)}</div>
+    <div class="h-zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(zustand, bewegung)}</div>
     <div class="h-zeki-platz">${neu ? `<div class="h-zeki-blase" role="status">${esc(zm.text)}</div>` : ""}${dran ? jetztKarte(dran) : ""}</div>
   </div>`;
 }

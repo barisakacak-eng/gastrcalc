@@ -40,7 +40,7 @@ async def pruefe_nutzen(pg, art, lang, width, out, pruefe_heute):
                     farben=await karte.evaluate("""k=>({ist:getComputedStyle(k.querySelector('.h-nutzen-geschaetzt')).color,soll:getComputedStyle(document.documentElement).getPropertyValue('--tinte-weich').trim()})""")
                     assert farben['ist'] in ('rgb(98, 95, 87)',farben['soll']),farben
             state='freundlich' if erwartung['summe']>0 else 'neutral'
-            assert await pg.locator('.gc-brand .gc-bot--'+state+'.gc-motion--none').count()==1
+            assert await pg.locator('.zeki-knopf .gc-bot--'+state+'.gc-motion--none').count()==1
             assert await karte.locator('button,a,input').count()==0,"Nutzenkarte führt keine zweite Hauptaktion ein"
             grenzen=await karte.evaluate("""k=>({unten:k.getBoundingClientRect().bottom,nav:document.querySelector('.tableiste').getBoundingClientRect().top,scroll:document.documentElement.scrollHeight,viewport:innerHeight})""")
             assert grenzen['unten']<=grenzen['nav'] and grenzen['scroll']<=grenzen['viewport'],(fall,grenzen)

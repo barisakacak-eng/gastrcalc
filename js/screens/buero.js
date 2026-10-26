@@ -2,6 +2,7 @@
 // Blöcke: Offen (Chips, statt Meldungen im Laden) · Ordner zum Abgeben · Zahlen · Karte & Einkauf · Laden einrichten.
 // Büro-Code: ein Code für alles (modus.js, wurzel.bueroPin, Zifferntastatur in ebene.js) – er schützt den Eintritt ins Büro, nicht diese Seite. Optik: css/buero.css (Klassen mit „b-“).
 import { t } from "../i18n.js";
+import { hilfeKnopf } from "./nav.js"; // Zeki als Begleiter (26.10.2026)
 import { esc, fmtEuro, heute, heuteGeschaeft } from "../util.js";
 import { sym } from "../symbole.js";
 import { bueroRing, zielAttr as zielAttrAlle } from "./bausteine.js"; // Trennung (17.10.2026)
@@ -45,7 +46,7 @@ const zielAttr = (z) => zielAttrAlle(z, { zusatz: false });
 export const bueroEntsperren = () => {}; export function bueroZuruecksetzen() {} export function bueroSperren() {}
 const kopf = (zurueck, titel) => `<header class="appleiste ebene-kopf buero">${zurueck.ziel === "start"
     ? `<button type="button" class="zurueckzeile" data-a="modus" data-wert="laden">${bsym("chevron-left")}<span>${esc(t("ebene.zumLaden"))}</span></button>`
-    : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="${esc(zurueck.ziel)}">${bsym("chevron-left")}<span>${esc(zurueck.text)}</span></button>`}<span class="kopftitel">${esc(titel)}</span><button type="button" class="ikonknopf hilfe" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${bsym("circle-help")}</button></header>`;
+    : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="${esc(zurueck.ziel)}">${bsym("chevron-left")}<span>${esc(zurueck.text)}</span></button>`}<span class="kopftitel">${esc(titel)}</span>${hilfeKnopf()}</header>`;
 export const bueroKopf = kopf;
 
 export function bueroView(stand, wurzel, extra = {}) {
