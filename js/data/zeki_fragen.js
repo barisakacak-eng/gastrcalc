@@ -1,3 +1,4 @@
+import { ZEKI_FRAGEN_MEHR } from "./zeki_mehrsprachig.js";
 // Zeki beantwortet Fragen (Baris 26.10.2026, Variante C: jetzt fester Katalog, echte KI erst nach dem Pilot).
 // Offline, geprüft, einfache Sprache. Jede Antwort beschreibt nur, was die App wirklich tut, oder gibt einen Arbeits-Tipp ohne Zahl.
 // Keine Grenzwerte, keine Paragrafen, keine Steuerregeln – dafür verweist Zeki auf Steuerberater oder Amt.
@@ -176,5 +177,5 @@ export const ZEKI_FRAGEN = [
 export function zekiFragenFuer(schirm, sprache = "de", max = 6) {
   const eigene = ZEKI_FRAGEN.filter((q) => q.schirm.includes(schirm));
   const alle = ZEKI_FRAGEN.filter((q) => q.schirm.includes("alle"));
-  return [...eigene, ...alle].slice(0, max).map((q) => ({ id: q.id, ...(q[sprache] || q.de) }));
+  return [...eigene, ...alle].slice(0, max).map((q) => ({ id: q.id, ...(q[sprache] || ZEKI_FRAGEN_MEHR[sprache]?.[q.id] || (sprache === "de" ? q.de : q.en || q.de)) })); // 27.10.2026: sonst Englisch statt Deutsch
 }

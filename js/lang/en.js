@@ -167,7 +167,7 @@ export default {
     leer: "no recipe yet",
   },
   preise: {
-    richtpreis: { knopf: "Insert guide prices", satz: "Fills missing prices with average values from the region (as of October 2026). Your own prices stay.", meldung: (n, m) => `${n} prices inserted · ${m} without guide price`, entfernen: "Remove guide prices again", entfernt: (n) => `${n} guide prices removed`, marke: "Guide price", aktiv: (n) => `${n} guide prices active`, quelleAuf: "Where do the guide prices come from?", quelle: "Online prices from wholesalers and producers, retrieved 17.10.2026; where only supermarket prices were found, 15 % was deducted. Test values, not offers.", inventur: "≈ Some prices are guide prices, so the euro amounts are approximate." },
+    richtpreis: { knopf: "Insert guide prices", satz: "Fills missing prices with online wholesale prices (as of October 2026). Your own prices stay.", meldung: (n, m) => `${n} prices inserted · ${m} without guide price`, entfernen: "Remove guide prices again", entfernt: (n) => `${n} guide prices removed`, marke: "Guide price", aktiv: (n) => `${n} guide prices active`, quelleAuf: "Where do the guide prices come from?", quelle: "Online prices from wholesalers and producers, retrieved 17.10.2026; where only supermarket prices were found, 15 % was deducted. Test values, not offers.", inventur: "≈ Some prices are guide prices, so the euro amounts are approximate." },
     preisNull: "Price 0 € – is that right? Counts as “no price”.", // Paket 3 (16.10.2026), M3
     frage: "What do you pay when buying?",
     hinweis: "Per item the pack as you buy it, and what it costs – without VAT, as it appears on the supplier invoice. Reference prices are only a start – your real price counts more. What is missing, you leave open.",

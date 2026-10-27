@@ -605,8 +605,8 @@ const fertigSchnell = {
         <div class="s2zeki-intro zeki-lebt" aria-hidden="true">${mascotMarkup("bestaetigt", "nicken")}</div>
         <h1 class="frage" dir="auto">${esc(zekiSatz("fertig", t("schnell2.fertig")))}</h1>
         ${e.prozent > 0 ? `<div class="s2ring">${ring(e.prozent)}<span>${esc(t("schnell2.eingerichtet"))}</span></div>` : ""}
-        <button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>
-      </div>`;
+        ${globalThis.__gastrocalc?.wurzel?.bueroPin ? "" : `<button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>`}
+      </div>`; // 27.10.2026 (Persona-Test Wirt): Code schon im Schloss-Schritt gesetzt → kein zweites Angebot
   },
   fuss: (stand) => stand && !stand.gerichte.length
     ? (stand.karteWeg === "vorlagen"

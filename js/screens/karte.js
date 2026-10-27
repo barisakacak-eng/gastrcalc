@@ -11,7 +11,7 @@ import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
 import { zwischenrezept } from "../data/zwischen.js";
 import { rezeptStempel, quelleVon, waageFragen, schnellwahl, familieAnpassen, geldSatz } from "../rezept_quelle.js";
-import { kalkulation, garverlustAnteil, preisJeBasis, gebindePreise, istRichtpreis, preisGeschaetzt, selbstWerte } from "../engine.js";
+import { kalkulation, preisAmpel, garverlustAnteil, preisJeBasis, gebindePreise, istRichtpreis, preisGeschaetzt, selbstWerte } from "../engine.js";
 import { einklappen } from "./bausteine.js";
 // Trennung (17.10.2026): alle Schreibvorgänge dieser Schritte laufen über js/karte_daten.js
 import { gerichtAusVorlage, gerichtAusVorlageAnlegen, gerichtEigenAnlegen, gerichtEntfernen, gerichtNameSetzen, gerichtKlasseSetzen, gerichtZeitSchritt, rezeptAngepasst,
@@ -32,6 +32,10 @@ let waage = null;          // Waage-Check (Punkt 7): { gid, fragen[], k, wert, m
 let stempelInfo = false;   // Erklärung zum Stempel aufgeklappt
 let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
 // Paket 2 (16.10.2026): Ladenwechsel, Einlesen, „Alles löschen“ – der flüchtige Zustand gehört zum alten Laden (zentrale Liste in app.js)
+// 27.10.2026 (Persona-Test Wirt): „Kostet dich“ im Büro = dieselbe Rechnung wie im Laden: alle Kosten plus die Steuer auf den heutigen Preis.
+// So gilt überall: Preis − Kostet dich = Bleibt dir. Ohne Preis: Kosten mit Steuer (Preis, ab dem kein Minus bleibt).
+const kostetDich = (z) => { const a = z.preisBrutto !== null ? preisAmpel(z, z.preisBrutto) : null; return a?.gewinn !== null && a ? z.preisBrutto - a.gewinn : z.sk * (1 + z.mwst); };
+
 export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatSuche = ""; eigenesText = ""; waage = null; stempelInfo = false; weitereOffen = false; zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; offeneWare = null; filterWahl = null; }
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
@@ -534,7 +538,7 @@ export function ergebnisView(stand, { inApp = false } = {}) {
         ${z.sk === null ? `<span class="marke offen">${esc(z.warenFehlt[0] === "rezept" ? t("rezepte.leer") : z.warenFehlt.length ? t("ergebnis.fehlt", z.warenFehlt.slice(0, 3).map(artikelText).join(", ")) : t("ergebnis.preisFehlt"))}</span>` : `
           <div class="kennzahlen">
             <span>${esc(t("ergebnis.waren"))} <b>${fmtEuro(z.waren, { dezimal: 2 })}</b>${z.wareneinsatzAnteil !== null ? ` (${fmtZahl(z.wareneinsatzAnteil * 100, 0)} % ${esc(t("ergebnis.vomNetto"))})` : ""}</span>
-            <span>${esc(t("ergebnis.kosten"))} <b>${fmtEuro(z.sk * (1 + z.mwst), { dezimal: 2 })}</b></span>
+            <span>${esc(t("ergebnis.kosten"))} <b>${fmtEuro(kostetDich(z), { dezimal: 2 })}</b></span>
             ${z.zielBrutto !== null ? `<span>${esc(t("ergebnis.ziel"))} <b>${fmtEuro(z.zielBrutto, { dezimal: 2 })}</b>${z.zielAufschlag > 0.004 ? ` <small>${esc(t("ergebnis.aufgerundet", fmtZahl(z.zielAufschlag * 100, 0)))}</small>` : ""}</span>` : `<span class="marke offen">${esc(t("ergebnis.zielSperre"))}</span>`}
             ${z.portalBrutto !== null ? `<span>${esc(t("ergebnis.portal", z.portalName))} <b>${fmtEuro(z.portalBrutto, { dezimal: 2 })}</b>${z.portalBasisUnbekannt ? ` <small>${esc(t("ergebnis.portalVorsichtig"))}</small>` : ""}</span>` : z.portalStufe === "sperre" ? `<span class="marke offen">${esc(t("ergebnis.portalSperre", z.portalName))}</span>` : ""}
           </div>`}

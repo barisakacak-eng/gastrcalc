@@ -21,7 +21,9 @@ function tagChips(D) {
 }
 
 // Wochentage Mo–So in der App-Sprache (Kalender mit 7 Spalten, Prüfung 15.10.)
-const wochentagKopf = () => { const f = new Intl.DateTimeFormat(sprache(), { weekday: "short" }); return Array.from({ length: 7 }, (_, i) => `<span class="wt">${f.format(new Date(2026, 9, 12 + i)).replace(".", "").slice(0, 2)}</span>`).join(""); };
+// 27.10.2026 (Persona-Test Vietnamesisch): „Th 2“…„Th 7“ wurden zu „Th“ abgeschnitten – Tage mit Nummer werden „T2“…, sonst 2 Buchstaben
+const kurzWt = (s) => (/\d/.test(s) ? s.replace(/^Th\s?/u, "T") : s.slice(0, 2));
+const wochentagKopf = () => { const f = new Intl.DateTimeFormat(sprache(), { weekday: "short" }); return Array.from({ length: 7 }, (_, i) => `<span class="wt">${kurzWt(f.format(new Date(2026, 9, 12 + i)).replace(".", ""))}</span>`).join(""); };
 export function umsatzView(stand) {
   const H = heute(); const D = tagGewaehlt(); const nach = D !== H;
   const z = zaehler(stand, { datum: D }); const st = umsatzSteuerSatz(stand);

@@ -174,7 +174,7 @@ export default {
     leer: "jeszcze bez przepisu",
   },
   preise: {
-    richtpreis: { knopf: "Wstaw ceny orientacyjne", satz: "Uzupełnia brakujące ceny średnimi wartościami z regionu (stan na październik 2026). Twoje ceny zostają.", meldung: (n, m) => `${n} cen wstawiono · ${m} bez ceny orientacyjnej`, entfernen: "Usuń ceny orientacyjne", entfernt: (n) => `${n} cen orientacyjnych usunięto`, marke: "Cena orientacyjna", aktiv: (n) => `${n} cen orientacyjnych aktywnych`, quelleAuf: "Skąd są ceny orientacyjne?", quelle: "Ceny online hurtowni i producentów, pobrane 17.10.2026; gdzie były tylko ceny z supermarketu, odjęto 15 %. Wartości testowe, nie oferty.", inventur: "≈ Niektóre ceny są orientacyjne, dlatego kwoty w euro są przybliżone." },
+    richtpreis: { knopf: "Wstaw ceny orientacyjne", satz: "Uzupełnia brakujące ceny cenami hurtowni z internetu (stan na październik 2026). Twoje ceny zostają.", meldung: (n, m) => `${n} cen wstawiono · ${m} bez ceny orientacyjnej`, entfernen: "Usuń ceny orientacyjne", entfernt: (n) => `${n} cen orientacyjnych usunięto`, marke: "Cena orientacyjna", aktiv: (n) => `${n} cen orientacyjnych aktywnych`, quelleAuf: "Skąd są ceny orientacyjne?", quelle: "Ceny online hurtowni i producentów, pobrane 17.10.2026; gdzie były tylko ceny z supermarketu, odjęto 15 %. Wartości testowe, nie oferty.", inventur: "≈ Niektóre ceny są orientacyjne, dlatego kwoty w euro są przybliżone." },
     preisNull: "Cena 0 € – zgadza się? Liczy się jako „brak ceny”.", // Paket 3 (16.10.2026), M3
     frage: "Ile płacisz w hurtowni i sklepie?",
     hinweis: "Przy każdym towarze: opakowanie, tak jak je kupujesz, i ile kosztuje – bez VAT, tak jak na fakturze od dostawcy. Czego brakuje, zostaw otwarte.",

@@ -503,7 +503,7 @@ export function preisAufteilung(zeile, last, preisBrutto) {
   const miete = fix * anteil(mieteMonat);
   const neben = Math.max(0, zeile.sk - ware - personal - miete);
   const steuer = preisBrutto - a.preisNetto;
-  return { ware, personal, miete, neben, steuer, gewinn: a.preisNetto - zeile.sk, brutto: preisBrutto, quote: a.quote, ampel: a.ampel };
+  return { ware, personal, miete, neben, steuer, gewinn: a.gewinn, brutto: preisBrutto, quote: a.quote, ampel: a.ampel };
 }
 
 // Mischsatz der Umsatzsteuer auf den Tagesumsatz (Etappe 5): eigener Wert, sonst aus der Karte (Speisen 7 %, Getränke 19 %,
