@@ -367,7 +367,8 @@ export default {
       einkauf: (n) => `${n} nguyên liệu chưa có giá mua – chụp một hóa đơn là điền được`, kuehlung: () => "Tạo điểm lạnh", sicherung: () => "Lần sao lưu cuối đã hơn 7 ngày" } },
   vergleich: { wareHoch: (q) => `${q} % – cao`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Tự chụp ảnh", fotoGespeichert: "Đã lưu ảnh. Ảnh chỉ nằm trên điện thoại này.",  titel: "So sánh món", unter: "Món nào lời nhiều nhất?", tab: { db: "Còn lại mỗi phần", marge: "Rohgewinn %" }, ware: "Tiền nguyên liệu", db: "Còn lại cho bạn mỗi phần", marge: "Rohgewinn (nach Ware)", leer: "Điền giá bán và giá mua, rồi ở đây bạn sẽ thấy món nào lời nhiều nhất.", ohneZahlen: (n) => `${n} món chưa có số liệu`, einkaufFehlt: "Thiếu giá mua", hinweis: "Các số là ước tính và có thể khác tùy nguyên liệu và giá. Tất cả số tiền đều chưa thuế, trừ giá bán.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Văn phòng", zurueck: "Quán",
+  buero: {
+    ruhig: { mehr: (n) => `${n} mục nữa` }, titel: "Văn phòng", zurueck: "Quán",
     abschnitt: { geld: "Tiền", ware: "Hàng hóa", kartePreise: "Thực đơn và giá", offen: "Còn việc", ordner: "Hồ sơ để nộp", zahlen: "Số liệu", karte: "Thực đơn & mua hàng", einrichten: "Cài đặt quán" },
     offen: { einrichtung: "Cài đặt", kosten: (n) => `Chi phí cố định: thiếu ${n}`, billig: (n) => `${n} giá quá rẻ`,
       ohneZahlen: (n) => `${n} món chưa có số`, sicherung: (n) => `Sao lưu ${n} ngày trước`, sicherungNie: "Chưa sao lưu",
@@ -494,6 +495,7 @@ export default {
     buero: (n) => `${n} sai lệch làm lạnh: thiếu quyết định về hàng hoặc đo lại`,
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Còn một thiết bị cần đo. Mất một phút thôi." : `Còn ${n} thiết bị cần đo. Mất một phút thôi.`), fertig: "Đo xong hết, tất cả đều trong mức an toàn.", warm: (k) => `Sếp ơi, “${k}” nóng quá. Sếp kiểm tra ngay nhé.` },
     titel: "Kiểm tra nhiệt độ lạnh",
     nav: "Nhiệt độ",
     nochNicht: "Chưa thiết lập. Hai phút mỗi sáng, bảng kiểm tra tự điền.",
@@ -616,7 +618,8 @@ export default {
     zeile: "Vệ sinh & vật tư", stufe: { offen: "chưa có", schaetzung: "≈ ước tính", beleg: "từ hóa đơn", inventur: "✓ từ kiểm kho" },
     zeileText: { offen: "Chưa có số. Chụp một hóa đơn có đồ vệ sinh, nó sẽ thành số của bạn.", schaetzung: "Số ước tính của bạn. Có hóa đơn thì chính xác hơn.", beleg: (n) => `Từ ${n} hóa đơn trong 60 ngày qua.`, inventur: "Đã mua trừ đi phần còn lại. Không chính xác hơn được nữa." },
     firmaTeil: (e) => `Công ty ${e}`, mittelTeil: (e) => `Đồ vệ sinh ${e}`, leiter: "Con số này chắc tới đâu?", leiterText: ["Chưa có", "Từ hóa đơn", "Từ kiểm kho"], zeitHinweis: "Thời gian tự dọn không nằm ở đây: lương nhân viên đã có trong tiền nhân viên, còn thời gian của bạn không tốn tiền trong tài khoản." },
-  putzplan: { wer: "Ai đánh dấu?", heuteOffen: (n) => `${n} việc hôm nay chưa làm`, allesErledigt: "Hôm nay xong hết rồi", kontrolliert: "Đã kiểm tra (ngày, chữ ký):", titel: "Lịch dọn vệ sinh", einrichtenUnter: "Gợi ý theo HACCP, cho quán của bạn", erklaerung: "Dọn vệ sinh là bắt buộc. Một danh sách đã đánh dấu là bằng chứng mà đoàn kiểm tra thực phẩm muốn xem. Khoảng cách giữa các lần là gợi ý từ tài liệu của cơ quan chức năng, không phải số trong luật. Bạn sửa được hết.", quellenHinweis: "Cơ sở: Quy định vệ sinh EU 852/2004, tài liệu của cơ quan kiểm tra thực phẩm (Lebensmittelüberwachung; gồm Dortmund, Mainz, Köln, Freising), VDI 2052 cho máy hút khói.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Còn một việc hôm nay: ${erst}.` : `Hôm nay còn ${n} việc. Sếp bắt đầu với “${erst}” nhé.`), fertig: "Hôm nay sạch sẽ hết rồi. Giỏi lắm, sếp.", erledigt: (n) => `Đã xong hôm nay (${n})` }, werKurz: "Ai dọn?", wer: "Ai đánh dấu?", heuteOffen: (n) => `${n} việc hôm nay chưa làm`, allesErledigt: "Hôm nay xong hết rồi", kontrolliert: "Đã kiểm tra (ngày, chữ ký):", titel: "Lịch dọn vệ sinh", einrichtenUnter: "Gợi ý theo HACCP, cho quán của bạn", erklaerung: "Dọn vệ sinh là bắt buộc. Một danh sách đã đánh dấu là bằng chứng mà đoàn kiểm tra thực phẩm muốn xem. Khoảng cách giữa các lần là gợi ý từ tài liệu của cơ quan chức năng, không phải số trong luật. Bạn sửa được hết.", quellenHinweis: "Cơ sở: Quy định vệ sinh EU 852/2004, tài liệu của cơ quan kiểm tra thực phẩm (Lebensmittelüberwachung; gồm Dortmund, Mainz, Köln, Freising), VDI 2052 cho máy hút khói.",
     geraeteFrage: "Quán bạn có những gì?", zusammen: (a, b, c, d, e) => `${a} hằng ngày · ${b} hằng tuần · ${c} hằng tháng · ${d} thỉnh thoảng · ${e} lưu ý`, uebernehmen: "Dùng lịch này", speichern: "Lưu thay đổi", aufgabenAnpassen: "Chỉnh công việc", spaeter: "Để sau", anpassen: "Chỉnh lịch",
     takt: { tag: "Hằng ngày", woche: "Hằng tuần", monat: "Hằng tháng", quartal: "3 tháng một lần", jahr: "Hằng năm", zweijahre: "2 năm một lần", nach: "Sau mỗi lần dùng (lưu ý)" },
     gruppe: { tag: "Hôm nay", woche: "Tuần này", monat: "Tháng này", spaeter: "Sắp đến hạn", nach: "Sau mỗi lần dùng" },
@@ -734,7 +737,9 @@ export default {
     belegeKurz: "Nạp hóa đơn, cập nhật giá",
   },
 
-  muell: { nichtsGefunden: "Không tìm thấy. Viết cách khác hoặc chọn “Cân xô rác”.",
+  muell: {
+    zeki: { start: "Hôm nay bỏ đi những gì?", weiter: "Còn gì bỏ đi nữa không?", personal: "Nhân viên của sếp đã ăn gì?", bruch: "Cái gì bị vỡ hay hỏng?" },
+    grund: { roh: "Hàng", personal: "Nhân viên", bruch: "Hỏng" }, nichtsGefunden: "Không tìm thấy. Viết cách khác hoặc chọn “Cân xô rác”.",
     zurUebersicht: "Tổng quan rác",
     auswaehlen: "Chọn thực phẩm", aendern: "Chạm để sửa", mengeEingeben: "Nhập số lượng", foto: "Ảnh (không bắt buộc)", fotoDabei: "Đã có ảnh", fotoFehler: "Không lưu được ảnh.", satz: "Biến lỗi thành bài học. Ghi lại những gì hôm nay đã vào thùng rác.", orientierung: "Số ước tính chỉ để tham khảo.", ohnePreisKurz: "Chưa có giá mua – vẫn được tính.",
     wasWeg: "Bỏ đi cái gì?", wocheTonne: "Tuần này vào thùng rác", monatTonne: "Rác cả tháng", leerWoche: "Chưa ghi gì. Không bỏ gì đi? Ngày tốt.", wocheZeile: (p, kg) => `≈ ${p} phần bán ra mới bù lại · ${kg} kg`, wenigerAls: (m, d) => `ít hơn ${m} tính đến ngày ${d}.`, mehrAls: (m, d) => `nhiều hơn ${m} tính đến ngày ${d}.`, rueckgaengig: "Hoàn tác", ammeisten: "Bỏ đi nhiều nhất", eintragen: "Ghi rác", andererTag: "Cho ngày khác", teller: "Đĩa", eimerNurGewicht: "chỉ cân nặng", ganzePackung: "nguyên gói", personalWert: (e) => `Bữa ăn nhân viên · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} vào thùng rác`, eimerHinweisKurz: "Đĩa và nguyên liệu sống đã ghi hôm nay sẽ được trừ ra.", fuerPersonal: "Nhân viên đã ăn", wegDamit: "Bỏ đi", geradeEben: "vừa xong", zurueckgenommen: "Đã hoàn tác.",
@@ -946,6 +951,8 @@ export default {
   },
   // Etappe 6a – ảnh, tải lên, bắt đầu nhanh
   foto: {
+    preisHochKurz: "Giá cao quá?",
+    zeki: { titel: (n) => `Em đã đọc ${n} món.`, pruefen: (k) => (k === 1 ? "Sếp xem nhanh một món giúp em nhé." : `Sếp xem nhanh ${k} món giúp em nhé.`), alle: "Trông ổn rồi. Đúng hết chưa sếp?", erkannt: (n) => `Ổn (${n})` },
     zweiPreise: (p) => `Thấy hai giá (${p} €) – khuyến mãi? Đã ghi giá cao hơn.`, zweiPreiseKurz: "Hai giá",
     fehlerLaden: "Phần đọc chữ cần tải một lần khi có internet. Hãy bật mạng một chút rồi thử lại.",
     fehlerZeit: "Đọc lâu quá. Hãy thử ảnh nhỏ hơn hoặc rõ hơn.",
@@ -1042,6 +1049,24 @@ export default {
     fertigHinweis: "Tiếp theo: chụp vài hóa đơn mua hàng. Khi đó app biết giá thật của bạn.",
     rechnungen: "Chụp hóa đơn", zumCockpit: "Đến bảng điều khiển",
   },
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Đây là mục tiêu của sếp: còn thiếu bấy nhiêu doanh thu để hòa vốn.", kacheln: "Sếp nhập ở đây: doanh thu, đồ bỏ, làm lạnh, dọn dẹp.", jetzt: "Đây là việc cần làm bây giờ. Sếp chỉ cần bấm.", leiste: "Bên dưới sếp chuyển giữa các mục.", menue: "Văn phòng nằm trong menu: món ăn, chi phí, thư mục.", zeki: "Còn em luôn ở trên này. Sếp bấm vào em nhé." },
+    fertigFrage: "Sếp hiểu hết chưa?", ja: "Rồi, rõ rồi", nochmal: "Cho xem lại", frage: "Tôi có câu hỏi", fragenTitel: "Nhiều người hỏi:", fragePlatzhalter: "Hoặc sếp viết câu hỏi …", abschicken: "Gửi câu hỏi", danke: "Cảm ơn sếp. Em ghi nhớ câu hỏi rồi.", schliessen: "Xong",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Sếp đặt một mã nhé. Vậy chỉ sếp vào được văn phòng.", hilfe: "Ở quán, ứng dụng không bao giờ hỏi. Chỉ khi vào văn phòng mới hỏi nhanh mã hoặc Face ID. Sau đó văn phòng mở trong 15 phút.", code: "Đặt mã", codeAn: "Đã đặt mã", bio: "Bật Face ID", bioAn: "Face ID đang bật", bioNicht: "Thiết bị này không dùng được Face ID. Có mã là đủ.", mitBio: "Mở bằng Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Em soạn sẵn email cho sếp. Sếp chỉ cần bấm Gửi.", buch: "Em soạn sẵn email cho sếp. Sếp chỉ cần bấm Gửi." },
+    platzhalter: { steuer: "Email cố vấn thuế (nếu sếp có)", buch: "Email kế toán (nếu sếp có)" },
+    knopf: { steuer: "Gửi cho cố vấn thuế", buch: "Gửi cho kế toán" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Gửi: ${an}\n\n` : ""}Chào [Tên],\n\nTôi gửi kèm tài liệu của ${laden} cho ${zeitraum}: bản tổng hợp và các bảng (CSV).\nHóa đơn, hợp đồng và thư từ cơ quan thuế [tôi gửi kèm / tôi gửi riêng].\n\nNếu có câu hỏi, anh/chị cứ liên hệ với tôi.\n\nTrân trọng\n[Tên của sếp]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Gửi: ${an}\n\n` : ""}Chào [Tên],\n\nTôi gửi kèm tài liệu của ${laden} cho ${zeitraum}: bản tổng hợp và các bảng (CSV).\nPhiếu Z, bảng kê thanh toán thẻ và sao kê ngân hàng [tôi gửi kèm / tôi gửi riêng].\n\nTrân trọng\n[Tên của sếp]`,
+    },
+    fertig: "Email xong rồi – sếp chỉ cần gửi.",
+  },
   schnell2: { willkommen: "Chào mừng", willkommenText: "Quán của bạn. Số liệu của bạn. Mọi thứ trong tầm tay.",
     hilfe: "Giải thích ngắn", sprache: "Ngôn ngữ",
     laden: "Quán của bạn", namePlatzhalter: "Tên quán",
@@ -1055,7 +1080,7 @@ export default {
     geldHilfe: "Ghi khoảng chừng là đủ, để trống cũng được. Hóa đơn thì chụp sau ở văn phòng.",
     putzt: "Ai dọn dẹp?", wer: { selbst: "Chúng tôi", firma: "Công ty", beides: "Cả hai" }, firma: "Công ty",
     fertig: "Xong!", eingerichtet: "đã cài đặt", los: "Bắt đầu", pin: "Đặt mã văn phòng",
-    zeki: { hallo: "Chào sếp! Em là Zeki.", rolle: "Em giúp sếp – ngoài quán, trong văn phòng.", "laden-schnell": "Quán của sếp tên gì? Sếp bán gì?", "karte-foto": "Chụp ảnh thực đơn đi. Em đọc món và giá.", "kuehl-schnell": "Sếp có những tủ lạnh nào? Cứ bấm dấu cộng.", geld: "Quán tốn bao nhiêu mỗi tháng? Ước chừng là đủ.", fertig: "Tuyệt, sếp! Từ giờ em luôn ở đây." },
+    zeki: { schloss: "Sếp đặt một mã nhé. Vậy chỉ sếp vào được văn phòng.", hallo: "Chào sếp! Em là Zeki.", rolle: "Em giúp sếp – ngoài quán, trong văn phòng.", "laden-schnell": "Quán của sếp tên gì? Sếp bán gì?", "karte-foto": "Chụp ảnh thực đơn đi. Em đọc món và giá.", "kuehl-schnell": "Sếp có những tủ lạnh nào? Cứ bấm dấu cộng.", geld: "Quán tốn bao nhiêu mỗi tháng? Ước chừng là đủ.", fertig: "Tuyệt, sếp! Từ giờ em luôn ở đây." },
   },
   // Kiểm kho
   inventur: {
@@ -1138,7 +1163,8 @@ export default {
       muellOhneWert: (n) => `${n} mục rác chưa có giá trị` },
   },
   ordnerC: { selbstTitel: "Bạn tự thêm", fragenTitel: "Câu hỏi cho bạn", fragenUnter: (n) => (n === 1 ? "1 gợi ý còn mở từ văn phòng" : `${n} gợi ý còn mở từ văn phòng`), titel: "Nội dung và tài liệu đính kèm", kopf: ["STT", "Tài liệu", "Ai cung cấp", "Tình trạng"], app: "Ứng dụng", du: "Bạn", liegtBei: "đã đính kèm", beilegen: "vui lòng đính kèm", pruefen: "kiểm tra", fehlt: "còn thiếu", notiz: "Ghi chú – không phải Z-Bon", hinweis: "Do chủ quán tổng hợp, không phải kết quả kế toán. Số liệu theo ngày trong ứng dụng chỉ là ghi chú – không phải Z-Bon.", karteTitel: "Phần bạn tự đính kèm", kleinbetrag: "Khoản nhỏ đến 250 €", nachgetragen: (d) => `thêm sau vào ${d}`, belegNr: "Số chứng từ", teile: { arbeitszeiten: "Giờ làm và giấy nghỉ ốm để tính lương", bewirtung: "Hóa đơn tiếp khách có lý do và người dự", geraete: "Hóa đơn thiết bị trên 800 € chưa thuế", darlehen: "Khoản vay: lịch trả nợ và dư nợ", kassenzaehl: "Biên bản kiểm quỹ cuối năm", zbon: "Z-Bon (báo cáo ngày của máy tính tiền) của tất cả các ngày, không thiếu ngày nào", karten: "Sao kê thẻ và sao kê nền tảng giao hàng", bank: "Sao kê ngân hàng của tất cả tài khoản", fapost: "Thư từ cục thuế (Finanzamt) và các câu hỏi còn mở", rechnungen: "Hóa đơn đầu vào, bản gốc hoặc ảnh, sắp theo số chứng từ", ausgang: "Hóa đơn bán ra (ví dụ phục vụ tiệc), đánh số liên tục", vertraege: "Hợp đồng mới và hàng mua mới kèm hóa đơn", lieferscheine: "Phiếu giao hàng (truy xuất nguồn gốc)", ifsg: "Giấy chứng nhận theo § 43 Infektionsschutzgesetz (Luật phòng chống lây nhiễm)", schaedling: "Diệt côn trùng, chuột và báo cáo của công ty chuyên môn", haccp: "Kế hoạch HACCP theo mẫu của cơ quan địa phương bạn" } },
-  kartelaeden: { wohin: "Giá của bạn đi đâu?", nachAllem: "sau mọi chi phí", teil: { ware: "Hàng", personal: "Nhân viên", miete: "Tiền thuê", neben: "Chi phí khác", steuer: "Thuế", gewinn: "Lợi nhuận" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Sếp ơi, “${n}” đang lỗ ${b}. Xem thử không?`, gelb: (n, b) => `“${n}” lời ít: ${b}. Sếp xem qua nhé.`, gruen: (n, b) => `“${n}” lời nhiều nhất: ${b}. Tốt lắm.` }, wohin: "Giá của bạn đi đâu?", nachAllem: "sau mọi chi phí", teil: { ware: "Hàng", personal: "Nhân viên", miete: "Tiền thuê", neben: "Chi phí khác", steuer: "Thuế", gewinn: "Lợi nhuận" },
     titel: "Thực đơn", anzahl: (n) => `${n} món`, alle: "Tất cả", zuBillig: (n) => `Quá rẻ · ${n}`, mehr: (n) => `Xem thêm ${n}`,
     leer: "Chưa có món nào", fotografieren: "Chụp thực đơn", bleibt: "Còn lại cho bạn", speichern: "Lưu", gespeichert: "Đã lưu giá", preis: "Giá", schliessen: "Đóng",
     ampel: { gruen: "Đạt mục tiêu", gelb: "Đủ chi phí, dưới mục tiêu", rot: "Quá rẻ", grau: "Chưa tính được" },

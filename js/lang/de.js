@@ -1067,7 +1067,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     danke: "Danke, Chef. Ich merk mir die Frage.", schliessen: "Fertig",
   },
   // Schloss: Code + Face ID (Entwurf 27.10.2026)
-  schloss: { titel: "Leg einen Code fest. Dann kommt nur du ins Büro.", hilfe: "Im Laden fragt die App nie. Nur beim Büro fragt sie kurz – mit Code oder Face ID. Danach bleibt das Büro 15 Minuten offen.",
+  schloss: { titel: "Leg einen Code fest. Dann kommst nur du ins Büro.", hilfe: "Im Laden fragt die App nie. Nur beim Büro fragt sie kurz – mit Code oder Face ID. Danach bleibt das Büro 15 Minuten offen.",
     code: "Code festlegen", codeAn: "Code ist festgelegt", bio: "Face ID einschalten", bioAn: "Face ID ist an", bioNicht: "Face ID geht auf diesem Gerät nicht. Der Code reicht.", mitBio: "Mit Face ID öffnen" },
   // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
   ordnerMail: {
@@ -1095,7 +1095,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     fertig: "Fertig!", eingerichtet: "eingerichtet", los: "Los geht's", pin: "Büro-PIN festlegen",
     zeki: { hallo: "Selam, Chef! Ich bin Zeki.", rolle: "Ich helf dir – vorne im Laden, hinten im Büro.",
       "laden-schnell": "Wie heißt dein Laden? Und was verkaufst du?", "karte-foto": "Fotografier deine Karte. Ich lese Gerichte und Preise.",
-      "kuehl-schnell": "Welche Kühlgeräte hast du? Drück einfach Plus.", schloss: "Leg einen Code fest. Dann kommt nur du ins Büro.", geld: "Was kostet der Laden im Monat? Ungefähr reicht.",
+      "kuehl-schnell": "Welche Kühlgeräte hast du? Drück einfach Plus.", schloss: "Leg einen Code fest. Dann kommst nur du ins Büro.", geld: "Was kostet der Laden im Monat? Ungefähr reicht.",
       fertig: "Stark, Chef! Ab jetzt bin ich immer da." },
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)

@@ -366,7 +366,8 @@ export default {
       einkauf: (n) => `${n} malzeme bê bihayê kirînê – wêneyek ji fatûreyê vê tije dike`, kuehlung: () => "Sarkeran tomar bike", sicherung: () => "Kopiya dawî ji 7 rojan kevntir e" } },
   vergleich: { wareHoch: (q) => `${q} % – bilind`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Wêneyê xwe bikişîne", fotoGespeichert: "Wêne hate tomarkirin. Li ser vê telefonê dimîne.", titel: "Berhevdana xwarinan", unter: "Kîjan xwarin herî zêde ji te re tînin?", tab: { db: "Ji her heban dimîne", marge: "Rohgewinn %" }, ware: "Lêçûna malê", db: "Ji her heban ji te re dimîne", marge: "Rohgewinn (nach Ware)", leer: "Bihayên firotin û kirînê binivîse, paşê li vir dibînî kîjan xwarin herî zêde tînin.", ohneZahlen: (n) => `${n} xwarin hîn bê hejmar`, einkaufFehlt: "Bihayên kirînê kêm in", hinweis: "Nirx texmînî ne û li gorî malzeme û bihayan dikarin cuda bin. Hemû mîqdar bê bac in, ji bilî bihayê firotinê.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Ofîs", zurueck: "Dikan",
+  buero: {
+    ruhig: { mehr: (n) => `${n} yên din` }, titel: "Ofîs", zurueck: "Dikan",
     abschnitt: { geld: "Pere", ware: "Mal", kartePreise: "Menû û biha", offen: "Vekirî", ordner: "Dosyeyên radestkirinê", zahlen: "Hejmar", karte: "Menû û kirîn", einrichten: "Dikanê saz bike" },
     offen: { einrichtung: "Sazkirin", kosten: (n) => `Lêçûnên sabît: ${n} kêm in`, billig: (n) => `${n} biha pir erzan`,
       ohneZahlen: (n) => `${n} xwarin bê hejmar`, sicherung: (n) => `Kopî: berî ${n} rojan`, sicherungNie: "Hîn kopî tune",
@@ -493,6 +494,7 @@ export default {
     buero: (n) => `${n} cudabûnên sarkirinê: biryara malî an pîvana kontrolê kêm e`,
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Amûrek din maye ku were pîvan. Deqeyekê dikişîne." : `${n} amûrên din mane ku bên pîvan. Deqeyekê dikişîne.`), fertig: "Hemû hatin pîvan, hemû li qada kesk in.", warm: (k) => `Hosta, “${k}” zêde germ e. Ji kerema xwe yekser lê binêre.` },
     titel: "Kontrola sarkeran",
     nav: "Sarker",
     nochNicht: "Hîn nehatiye sazkirin. Sibê du deqe, û pelê kontrolê bi xwe tê nivîsandin.",
@@ -615,7 +617,8 @@ export default {
     zeile: "Paqijî û malzemeyên xebatê", stufe: { offen: "hîn vala", schaetzung: "≈ texmînî", beleg: "ji fîşan", inventur: "✓ ji hejmartina malê" },
     zeileText: { offen: "Hîn hejmar tune. Wêneyê fîşeke bi malzemeyên paqijiyê bikişîne, paşê dibe hejmara te.", schaetzung: "Texmîna te. Bi fîşan rasttir dibe.", beleg: (n) => `Ji ${n} fîşên 60 rojên dawî.`, inventur: "Kirî kêmî ya ku hîn heye. Ji vê rasttir nabe." },
     firmaTeil: (e) => `Şirket ${e}`, mittelTeil: (e) => `Malzemeyên paqijiyê ${e}`, leiter: "Ev hejmar çiqas ewle ye?", leiterText: ["Hîn vala", "Ji fîşan", "Ji hejmartina malê"], zeitHinweis: "Dema paqijiyê ya we li vir nîne: meaşê tîmê jixwe di karkeran de ye, dema te pere ji hesabê nabe." },
-  putzplan: { wer: "Kî nîşan dike?", heuteOffen: (n) => `${n} îro vekirî`, allesErledigt: "Îro her tişt qediya", kontrolliert: "Hate kontrolkirin (dîrok, îmze):", titel: "Plana paqijiyê", einrichtenUnter: "Pêşniyar li gorî HACCP, ji bo dikana te", erklaerung: "Paqijî mecbûrî ye. Lîsteyeke nîşankirî ew delîl e ku kontrola xwarinê (Lebensmittelkontrolle) dixwaze bibîne. Navber pêşniyarên belavokên fermangehan in, ne hejmarên qanûnê. Tu dikarî her tiştî biguherînî.", quellenHinweis: "Bingeh: Rêziknameya paqijiyê ya YE 852/2004, belavokên kontrola xwarinê (ji wan Dortmund, Mainz, Köln, Freising), VDI 2052 ji bo kişkera dûmanê.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Ji bo îro yek maye: ${erst}.` : `Îro hîn ${n} kar mane. Bi “${erst}” dest pê bike.`), fertig: "Îro her der paqij e. Destê te sax be, hosta.", erledigt: (n) => `Îro qediyan (${n})` }, werKurz: "Kî paqij dike?", wer: "Kî nîşan dike?", heuteOffen: (n) => `${n} îro vekirî`, allesErledigt: "Îro her tişt qediya", kontrolliert: "Hate kontrolkirin (dîrok, îmze):", titel: "Plana paqijiyê", einrichtenUnter: "Pêşniyar li gorî HACCP, ji bo dikana te", erklaerung: "Paqijî mecbûrî ye. Lîsteyeke nîşankirî ew delîl e ku kontrola xwarinê (Lebensmittelkontrolle) dixwaze bibîne. Navber pêşniyarên belavokên fermangehan in, ne hejmarên qanûnê. Tu dikarî her tiştî biguherînî.", quellenHinweis: "Bingeh: Rêziknameya paqijiyê ya YE 852/2004, belavokên kontrola xwarinê (ji wan Dortmund, Mainz, Köln, Freising), VDI 2052 ji bo kişkera dûmanê.",
     geraeteFrage: "Di dikanê de çi heye?", zusammen: (a, b, c, d, e) => `${a} rojane · ${b} heftane · ${c} mehane · ${d} kêm caran · ${e} not`, uebernehmen: "Planê bipejirîne", speichern: "Guhertinan tomar bike", aufgabenAnpassen: "Karan eyar bike", spaeter: "Paşê", anpassen: "Planê eyar bike",
     takt: { tag: "Rojane", woche: "Heftane", monat: "Mehane", quartal: "Her 3 mehan", jahr: "Salane", zweijahre: "Her 2 salan", nach: "Piştî her bikaranînê (not)" },
     gruppe: { tag: "Îro", woche: "Vê hefteyê", monat: "Vê mehê", spaeter: "Di nêzîk de", nach: "Piştî her bikaranînê" },
@@ -733,7 +736,9 @@ export default {
     belegeKurz: "Fîşê bixwîne, bihayan nû bike",
   },
 
-  muell: { nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",
+  muell: {
+    zeki: { start: "Îro çi hate avêtin?", weiter: "Tiştekî din jî hate avêtin?", personal: "Tîma te çi xwar?", bruch: "Çi şikest an xera bû?" },
+    grund: { roh: "Mal", personal: "Karmend", bruch: "Şikestî" }, nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",
     zurUebersicht: "Nêrîna giştî ya zibil",
     auswaehlen: "Xwarinê hilbijêre", aendern: "Ji bo guhertinê bitikîne", mengeEingeben: "Mîqdarê binivîse", foto: "Wêne (ne mecbûrî)", fotoDabei: "Wêne pê re ye", fotoFehler: "Wêne nehat tomarkirin.", satz: "Ji şaşiyan zanînê çêke. Ya ku îro ket zibil binivîse.", orientierung: "Nirxên texmînî tenê ji bo rêberiyê ne.", ohnePreisKurz: "Hîn bê bihayê kirînê – dîsa jî tê hesabkirin.",
     wasWeg: "Çi hate avêtin?", wocheTonne: "Vê hefteyê di zibil de", monatTonne: "Zibilê mehê", leerWoche: "Hîn tiştek nehatiye nivîsandin. Tiştek neavêtî? Rojeke baş.", wocheZeile: (p, kg) => `≈ ${p} porsiyonên firotî ji bo vegerandinê · ${kg} kg`, wenigerAls: (m, d) => `kêmtir ji heman demê di ${m} de (heta ${d}).`, mehrAls: (m, d) => `zêdetir ji heman demê di ${m} de (heta ${d}).`, rueckgaengig: "Paş de bigire", ammeisten: "Herî zêde hate avêtin", eintragen: "Zibil tomar bike", andererTag: "Ji bo rojeke din", teller: "Teyfik", eimerNurGewicht: "tenê giranî", ganzePackung: "pakêta tevahî", personalWert: (e) => `Xwarina karkeran · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} di zibil de`, eimerHinweisKurz: "Teyfik û malê xav ên ku îro hatin nivîsandin tên derxistin.", fuerPersonal: "Karkeran xwar", wegDamit: "Bavêje", geradeEben: "nuha", zurueckgenommen: "Paş de hate girtin.",
@@ -945,6 +950,8 @@ export default {
   },
   // Etappe 6a – Foto, Upload, Schnellstart
   foto: {
+    preisHochKurz: "Biha pir bilind e?",
+    zeki: { titel: (n) => `Min ${n} xwarin xwendin.`, pruefen: (k) => (k === 1 ? "Ji kerema xwe zû li yekê binêre." : `Ji kerema xwe zû li ${k} xwarinan binêre.`), alle: "Baş xuya dike. Her tişt rast e?", erkannt: (n) => `Baş e (${n})` },
     zweiPreise: (p) => `Du biha hatin dîtin (${p} €) – kampanya? Ya bilindtir hate nivîsandin.`, zweiPreiseKurz: "Du biha",
     fehlerLaden: "Xwendina nivîsê divê carekê bi înternetê were barkirin. Ji kerema xwe hinekî bikeve înternetê û dîsa biceribîne.",
     fehlerZeit: "Xwendin pir dirêj dikişîne. Ji kerema xwe wêneyekî biçûktir an zelaltir biceribîne.",
@@ -1042,6 +1049,24 @@ export default {
     rechnungen: "Wêneyê fatûreyan bikişîne", zumCockpit: "Here panelê",
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Armanca te ev e: heta sifirê ewqas firotin kêm e.", kacheln: "Li vir tu dinivîsî: firotin, çop, sarkirin, paqijî.", jetzt: "Li vir çi niha dor e, nivîsandî ye. Tenê lê bitikîne.", leiste: "Li jêr tu di navbera beşan de diguherî.", menue: "Ofîsa te di menuyê de ye: xwarin, lêçûn, peldank.", zeki: "Û ez her tim li vir li jor im. Li min bitikîne." },
+    fertigFrage: "Hosta, te her tişt fêm kir?", ja: "Erê, zelal e", nochmal: "Dîsa nîşan bide", frage: "Pirsek min heye", fragenTitel: "Gelek kes vê dipirsin:", fragePlatzhalter: "An jî pirsa xwe binivîse …", abschicken: "Pirsê bişîne", danke: "Spas, hosta. Ez pirsê di bîra xwe de digirim.", schliessen: "Temam",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Kodekê destnîşan bike. Wê demê tenê tu dikevî ofîsê.", hilfe: "Li dikanê sepan qet napirse. Tenê ji bo ofîsê bi kurtî kod an Face ID dixwaze. Paşê ofîs 15 deqeyan vekirî dimîne.", code: "Kodê destnîşan bike", codeAn: "Kod hate destnîşankirin", bio: "Face ID veke", bioAn: "Face ID vekirî ye", bioNicht: "Face ID li ser vê amûrê naxebite. Kod bes e.", mitBio: "Bi Face ID veke" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Ez e-nameyê ji te re amade dikim. Tu tenê li Bişîne bitikîne.", buch: "Ez e-nameyê ji te re amade dikim. Tu tenê li Bişîne bitikîne." },
+    platzhalter: { steuer: "E-nameya şêwirmendê bacê (heke hebe)", buch: "E-nameya hesabdar (heke hebe)" },
+    knopf: { steuer: "Ji şêwirmendê bacê re bişîne", buch: "Ji hesabdar re bişîne" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Ji bo: ${an}\n\n` : ""}Silav [Nav],\n\nbelgeyên ${laden} ji bo ${zeitraum} di pêvekê de ne: kurte û tablo (CSV).\nFîş, peyman û nameyên fermangeha bacê [di pêvekê de ne / ez ê cuda bişînim].\n\nHeke pirsên we hebin, bi dilxweşî bi min re têkilî daynin.\n\nBi silav\n[Navê te]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Ji bo: ${an}\n\n` : ""}Silav [Nav],\n\nbelgeyên ${laden} ji bo ${zeitraum} di pêvekê de ne: kurte û tablo (CSV).\nRaporên Z, hesabên kartê û daxuyaniyên bankê [di pêvekê de ne / ez ê cuda bişînim].\n\nBi silav\n[Navê te]`,
+    },
+    fertig: "E-name amade ye – tenê bişîne.",
+  },
   schnell2: { willkommen: "Bi xêr hatî", willkommenText: "Dikana te. Hejmarên te. Her tişt di destê te de.",
     hilfe: "Bi kurtî", sprache: "Ziman",
     laden: "Dikana te", namePlatzhalter: "Navê dikanê",
@@ -1055,7 +1080,7 @@ export default {
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",
     putzt: "Kî paqij dike?", wer: { selbst: "Em", firma: "Şîrket", beides: "Her du" }, firma: "Şîrket",
     fertig: "Qediya!", eingerichtet: "hat sazkirin", los: "Em dest pê bikin", pin: "PIN-a ofîsê diyar bike",
-    zeki: { hallo: "Silav hosta! Ez Zekî me.", rolle: "Ez alîkariya te dikim – li dikanê û li ofîsê.", "laden-schnell": "Navê dikana te çi ye? Û tu çi difroşî?", "karte-foto": "Wêneyê menûya xwe bikişîne. Ez xwarin û biha dixwînim.", "kuehl-schnell": "Sarincokên te çi ne? Tenê li + bitikîne.", geld: "Dikan mehê çiqas lê dikeve? Texmînî bes e.", fertig: "Pir baş, hosta! Êdî ez her tim li vir im." },
+    zeki: { schloss: "Kodekê destnîşan bike. Wê demê tenê tu dikevî ofîsê.", hallo: "Silav hosta! Ez Zekî me.", rolle: "Ez alîkariya te dikim – li dikanê û li ofîsê.", "laden-schnell": "Navê dikana te çi ye? Û tu çi difroşî?", "karte-foto": "Wêneyê menûya xwe bikişîne. Ez xwarin û biha dixwînim.", "kuehl-schnell": "Sarincokên te çi ne? Tenê li + bitikîne.", geld: "Dikan mehê çiqas lê dikeve? Texmînî bes e.", fertig: "Pir baş, hosta! Êdî ez her tim li vir im." },
   },
   inventur: {
     menue: "Hejmartina malê", titel: "Hejmartina malê", titelMonat: (m) => `Hejmartina malê ${m}`,
@@ -1137,7 +1162,8 @@ export default {
       muellOhneWert: (n) => `${n} tomarên çopê bê nirx` },
   },
   ordnerC: { selbstTitel: "Tu bi xwe zêde dikî", fragenTitel: "Pirs ji bo te", fragenUnter: (n) => (n === 1 ? "1 şîreta vekirî ji ofîsê" : `${n} şîretên vekirî ji ofîsê`), titel: "Naverok û pêvek", kopf: ["Hej.", "Belge", "Kî dide", "Rewş"], app: "Sepan", du: "Tu", liegtBei: "pêvekirî ye", beilegen: "ji kerema xwe pêve bike", pruefen: "kontrol bike", fehlt: "kêm e", notiz: "Nîşe – ne Z-Bon e", hinweis: "Ji aliyê xwediyê dikanê ve hatiye berhevkirin, encama hesabdariyê nîne. Nirxên rojane yên di sepanê de nîşe ne – ne Z-Bon in.", karteTitel: "Tiştên ku tu bi xwe pêve dikî", kleinbetrag: "Mîqdara biçûk heta 250 €", nachgetragen: (d) => `paşê hate zêdekirin: ${d}`, belegNr: "Hej. a fîşê", teile: { arbeitszeiten: "Demjimêrên kar û raporên nexweşiyê ji bo meaşan", bewirtung: "Belgeyên mêvandariyê bi sedem û kesan", geraete: "Fatûreyên amûran ji 800 € net zêdetir", darlehen: "Deyn: plana dayînê û mayî", kassenzaehl: "Protokola hejmartina kasê di dawiya salê de", zbon: "Z-Bonên hemû rojan ji kasayê (bê valahî)", karten: "Hesabên kartan û platformên radestkirinê", bank: "Hesabên bankayê yên hemû hesaban", fapost: "Name ji dezgeha bacê (Finanzamt) û pirsên vekirî", rechnungen: "Fatûreyên hatî, orîjînal an wêne, li gorî hej. a fîşê rêzkirî", ausgang: "Fatûreyên derketî (mînak catering), bi hejmarên li pey hev", vertraege: "Peymanên nû û kirînên bi fatûre", lieferscheine: "Peyayên radestkirinê (şopandin)", ifsg: "Belgeyên li gorî § 43 Infektionsschutzgesetz (Zagona Parastina ji Enfeksiyonan)", schaedling: "Têkoşîna li dijî kêzikan û raporta pargîdaniya pispor", haccp: "Plana HACCP li gorî nimûneya dezgeha te ya herêmî" } },
-  kartelaeden: { wohin: "Bihayê te diçe ku?", nachAllem: "piştî hemû lêçûnan", teil: { ware: "Mal", personal: "Karmend", miete: "Kirê", neben: "Lêçûnên din", steuer: "Bac", gewinn: "Qezenc" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Hosta, “${n}” ${b} zirarê dide. Em lê binêrin?`, gelb: (n, b) => `Ji “${n}” hindik dimîne: ${b}. Lê binêre.`, gruen: (n, b) => `Herî zêde ji “${n}” dimîne: ${b}. Wisa baş e.` }, wohin: "Bihayê te diçe ku?", nachAllem: "piştî hemû lêçûnan", teil: { ware: "Mal", personal: "Karmend", miete: "Kirê", neben: "Lêçûnên din", steuer: "Bac", gewinn: "Qezenc" },
     titel: "Menû", anzahl: (n) => `${n} xwarin`, alle: "Hemû", zuBillig: (n) => `Pir erzan · ${n}`, mehr: (n) => `${n} yên din nîşan bide`,
     leer: "Hîn xwarin tune", fotografieren: "Wêneyê menûyê bikişîne", bleibt: "Ji te re dimîne", speichern: "Tomar bike", gespeichert: "Biha hat tomarkirin", preis: "Biha", schliessen: "Bigire",
     ampel: { gruen: "Armanc hat girtin", gelb: "Lêçûn derketin, di bin armancê de", rot: "Pir erzan", grau: "Hîn nayê hesabkirin" },

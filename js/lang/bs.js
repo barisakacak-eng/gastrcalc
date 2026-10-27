@@ -374,7 +374,8 @@ export default {
       einkauf: (n) => `${n} ${pl(n, "sastojak", "sastojka", "sastojaka")} bez nabavne cijene – jedna slika računa to popuni`, kuehlung: () => "Dodaj rashladni uređaj", sicherung: () => "Zadnja kopija starija od 7 dana" } },
   vergleich: { wareHoch: (q) => `${q} % – visoko`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Rohgewinn %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Rohgewinn (nach Ware)", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Ured", zurueck: "Lokal",
+  buero: {
+    ruhig: { mehr: (n) => `još ${n}` }, titel: "Ured", zurueck: "Lokal",
     abschnitt: { geld: "Novac", ware: "Roba", kartePreise: "Meni i cijene", offen: "Za uraditi", ordner: "Fascikle za predaju", zahlen: "Brojke", karte: "Jelovnik i nabavka", einrichten: "Podesi lokal" },
     offen: { einrichtung: "Podešavanje", kosten: (n) => `Fiksni troškovi: fali ${n}`, billig: (n) => `Prejeftino: ${n} ${pl(n, "cijena", "cijene", "cijena")}`,
       ohneZahlen: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez brojki`, sicherung: (n) => `Kopija: prije ${n} ${pl(n, "dan", "dana", "dana")}`, sicherungNie: "Još nema kopije",
@@ -501,6 +502,7 @@ export default {
     buero: (n) => `${n} odstupanja hlađenja: nedostaje odluka o robi ili kontrolno mjerenje`,
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Još jedan uređaj za mjerenje. Traje minutu." : `Još ${n} ${pl(n, "uređaj", "uređaja", "uređaja")} za mjerenje. Traje minutu.`), fertig: "Sve izmjereno, sve u zelenom.", warm: (k) => `Šefe, u „${k}“ je pretoplo. Molim te, odmah provjeri.` },
     titel: "Kontrola hlađenja",
     nav: "Hlađenje",
     nochNicht: "Još nije podešeno. Dvije minute ujutro, i kontrolni list se piše sam.",
@@ -623,7 +625,8 @@ export default {
     zeile: "Čišćenje i potrošni materijal", stufe: { offen: "još otvoreno", schaetzung: "≈ procjena", beleg: "iz računa", inventur: "✓ iz inventure" },
     zeileText: { offen: "Još nema broja. Slikaj račun sa sredstvima za čišćenje, pa postaje tvoj broj.", schaetzung: "Tvoja procjena. S računima postaje tačnije.", beleg: (n) => `Iz ${n} ${pl(n, "računa", "računa", "računa")} u zadnjih 60 dana.`, inventur: "Kupljeno minus ono što je još tu. Tačnije ne može." },
     firmaTeil: (e) => `Firma ${e}`, mittelTeil: (e) => `Sredstva za čišćenje ${e}`, leiter: "Koliko je broj siguran?", leiterText: ["Još otvoreno", "Iz računa", "Iz inventure"], zeitHinweis: "Vlastito vrijeme čišćenja nije ovdje: plata tima je već u osoblju, tvoje vrijeme ne košta novac s računa." },
-  putzplan: { wer: "Ko štiklira?", heuteOffen: (n) => `${n} danas otvoreno`, allesErledigt: "Za danas je sve urađeno", kontrolliert: "Provjereno (datum, potpis):", titel: "Plan čišćenja", einrichtenUnter: "Preporuka po HACCP-u, za tvoj lokal", erklaerung: "Čišćenje je obaveza. Lista sa štiklama je dokaz koji inspekcija želi vidjeti. Razmaci su preporuke iz uputstava nadležnih ureda, nisu brojevi iz zakona. Sve možeš promijeniti.", quellenHinweis: "Osnova: EU uredba o higijeni 852/2004, uputstva inspekcije za hranu (Lebensmittelüberwachung, npr. Dortmund, Mainz, Köln, Freising), VDI 2052 za napu.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Još jedno za danas: ${erst}.` : `Danas još ${n} ${pl(n, "zadatak", "zadatka", "zadataka")}. Počni s „${erst}“.`), fertig: "Za danas je sve čisto. Svaka čast, šefe.", erledigt: (n) => `Urađeno danas (${n})` }, werKurz: "Ko čisti?", wer: "Ko štiklira?", heuteOffen: (n) => `${n} danas otvoreno`, allesErledigt: "Za danas je sve urađeno", kontrolliert: "Provjereno (datum, potpis):", titel: "Plan čišćenja", einrichtenUnter: "Preporuka po HACCP-u, za tvoj lokal", erklaerung: "Čišćenje je obaveza. Lista sa štiklama je dokaz koji inspekcija želi vidjeti. Razmaci su preporuke iz uputstava nadležnih ureda, nisu brojevi iz zakona. Sve možeš promijeniti.", quellenHinweis: "Osnova: EU uredba o higijeni 852/2004, uputstva inspekcije za hranu (Lebensmittelüberwachung, npr. Dortmund, Mainz, Köln, Freising), VDI 2052 za napu.",
     geraeteFrage: "Šta imaš u lokalu?", zusammen: (a, b, c, d, e) => `${a} dnevno · ${b} sedmično · ${c} mjesečno · ${d} rijetko · ${e} ${pl(e, "napomena", "napomene", "napomena")}`, uebernehmen: "Preuzmi plan", speichern: "Sačuvaj promjene", aufgabenAnpassen: "Prilagodi zadatke", spaeter: "Kasnije", anpassen: "Prilagodi plan",
     takt: { tag: "Dnevno", woche: "Sedmično", monat: "Mjesečno", quartal: "Svaka 3 mjeseca", jahr: "Godišnje", zweijahre: "Svake 2 godine", nach: "Poslije svake upotrebe (napomena)" },
     gruppe: { tag: "Danas", woche: "Ove sedmice", monat: "Ovog mjeseca", spaeter: "Uskoro na redu", nach: "Poslije svake upotrebe" },
@@ -741,7 +744,9 @@ export default {
     belegeKurz: "Učitaj račun, ažuriraj cijene",
   },
 
-  muell: { nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",
+  muell: {
+    zeki: { start: "Šta je danas bačeno?", weiter: "Još nešto bačeno?", personal: "Šta je tvoj tim jeo?", bruch: "Šta se razbilo ili pokvarilo?" },
+    grund: { roh: "Roba", personal: "Osoblje", bruch: "Lom" }, nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",
     zurUebersicht: "Pregled otpada",
     auswaehlen: "Izaberi namirnicu", aendern: "Dodirni za promjenu", mengeEingeben: "Upiši količinu", foto: "Slika (nije obavezno)", fotoDabei: "Slika je dodana", fotoFehler: "Slika nije mogla biti sačuvana.", satz: "Od grešaka napravi znanje. Upiši šta je danas završilo u kanti.", orientierung: "Procijenjene vrijednosti služe za orijentaciju.", ohnePreisKurz: "Još bez nabavne cijene – ipak se računa.",
     wasWeg: "Šta je bačeno?", wocheTonne: "Ove sedmice u kanti", monatTonne: "Kanta za mjesec", leerWoche: "Još ništa upisano. Ništa bačeno? Dobar dan.", wocheZeile: (p, kg) => `≈ ${p} ${pl(p, "prodana porcija", "prodane porcije", "prodanih porcija")} da se to vrati · ${kg} kg`, wenigerAls: (m, d) => `manje nego u ${m} do ${d}. dana.`, mehrAls: (m, d) => `više nego u ${m} do ${d}. dana.`, rueckgaengig: "Poništi", ammeisten: "Najviše bačeno", eintragen: "Upiši otpad", andererTag: "Za drugi dan", teller: "Tanjir", eimerNurGewicht: "samo težina", ganzePackung: "cijelo pakovanje", personalWert: (e) => `Hrana za osoblje · vrijednost obroka ${e}`, inDerTonne: (e) => `= ${e} u kanti`, eimerHinweisKurz: "Tanjiri i sirovine koji su danas već upisani se oduzimaju.", fuerPersonal: "Pojelo osoblje", wegDamit: "Baci", geradeEben: "upravo sad", zurueckgenommen: "Poništeno.",
@@ -953,6 +958,8 @@ export default {
   },
   // Etapa 6a – slika, upload, brzi start
   foto: {
+    preisHochKurz: "Cijena previsoka?",
+    zeki: { titel: (n) => `Pročitao sam ${n} ${pl(n, "jelo", "jela", "jela")}.`, pruefen: (k) => (k === 1 ? "Jedno pogledaj na brzinu, molim te." : `Molim te, pogledaj na brzinu ${k} ${pl(k, "stavku", "stavke", "stavki")}.`), alle: "Izgleda dobro. Je li sve tačno?", erkannt: (n) => `U redu (${n})` },
     zweiPreise: (p) => `Nađene dvije cijene (${p} €) – akcija? Upisana je viša.`, zweiPreiseKurz: "Dvije cijene",
     fehlerLaden: "Prepoznavanje teksta mora se jednom učitati s internetom. Molim te kratko se spoji na internet i pokušaj ponovo.",
     fehlerZeit: "Čitanje traje predugo. Probaj manju ili oštriju sliku.",
@@ -1050,6 +1057,24 @@ export default {
     rechnungen: "Slikaj račune", zumCockpit: "Na kokpit",
   },
   // Inventura (tačka 3, Baris 15.10.: A1 + A2, rezultat A–E s objašnjenjem)
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Ovo je tvoj cilj: toliko prometa fali do nule.", kacheln: "Ovdje upisuješ: promet, otpad, hlađenje, čišćenje.", jetzt: "Ovdje piše šta je sad na redu. Samo dodirni.", leiste: "Dolje prelaziš između dijelova.", menue: "U meniju je tvoja kancelarija: jela, troškovi, fascikle.", zeki: "A ja sam uvijek ovdje gore. Dodirni me." },
+    fertigFrage: "Šefe, je li sve jasno?", ja: "Da, sve jasno", nochmal: "Pokaži opet", frage: "Imam pitanje", fragenTitel: "Ovo mnogi pitaju:", fragePlatzhalter: "Ili napiši svoje pitanje …", abschicken: "Pošalji pitanje", danke: "Hvala, šefe. Zapamtit ću pitanje.", schliessen: "Gotovo",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Postavi kod. Onda samo ti ulaziš u kancelariju.", hilfe: "U radnji aplikacija nikad ne pita. Samo za kancelariju kratko traži kod ili Face ID. Nakon toga kancelarija ostaje otvorena 15 minuta.", code: "Postavi kod", codeAn: "Kod je postavljen", bio: "Uključi Face ID", bioAn: "Face ID je uključen", bioNicht: "Face ID ne radi na ovom uređaju. Kod je dovoljan.", mitBio: "Otvori uz Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Pripremit ću ti e-mail. Ti samo pritisneš Pošalji.", buch: "Pripremit ću ti e-mail. Ti samo pritisneš Pošalji." },
+    platzhalter: { steuer: "E-mail poreskog savjetnika (ako ga imaš)", buch: "E-mail knjigovođe (ako ga imaš)" },
+    knopf: { steuer: "Pošalji poreskom savjetniku", buch: "Pošalji knjigovođi" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Za: ${an}\n\n` : ""}Poštovani [Ime],\n\nu prilogu su dokumenti za ${laden} za ${zeitraum}: pregled i tabele (CSV).\nRačune, ugovore i poštu iz poreske uprave [prilažem / šaljem posebno].\n\nZa sva pitanja slobodno mi se javite.\n\nLijep pozdrav\n[Tvoje ime]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Za: ${an}\n\n` : ""}Poštovani [Ime],\n\nu prilogu su dokumenti za ${laden} za ${zeitraum}: pregled i tabele (CSV).\nZ-izvještaje, obračune kartičnog plaćanja i bankovne izvode [prilažem / šaljem posebno].\n\nLijep pozdrav\n[Tvoje ime]`,
+    },
+    fertig: "E-mail je spreman – samo ga pošalji.",
+  },
   schnell2: { willkommen: "Dobro došli", willkommenText: "Tvoja radnja. Tvoji brojevi. Sve pod kontrolom.",
     hilfe: "Ukratko", sprache: "Jezik",
     laden: "Tvoj lokal", namePlatzhalter: "Ime lokala",
@@ -1063,7 +1088,7 @@ export default {
     geldHilfe: "Otprilike je dovoljno, može i prazno. Račune slikaš kasnije u uredu.",
     putzt: "Ko čisti?", wer: { selbst: "Mi", firma: "Firma", beides: "Oboje" }, firma: "Firma",
     fertig: "Gotovo!", eingerichtet: "podešeno", los: "Idemo", pin: "Postavi PIN ureda",
-    zeki: { hallo: "Selam, šefe! Ja sam Zeki.", rolle: "Pomažem ti – sprijeda u radnji, pozadi u kancelariji.", "laden-schnell": "Kako se zove tvoja radnja? I šta prodaješ?", "karte-foto": "Slikaj svoj meni. Pročitat ću jela i cijene.", "kuehl-schnell": "Koje frižidere imaš? Samo pritisni plus.", geld: "Koliko te radnja košta mjesečno? Otprilike je dovoljno.", fertig: "Super, šefe! Od sada sam uvijek tu." },
+    zeki: { schloss: "Postavi kod. Onda samo ti ulaziš u kancelariju.", hallo: "Selam, šefe! Ja sam Zeki.", rolle: "Pomažem ti – sprijeda u radnji, pozadi u kancelariji.", "laden-schnell": "Kako se zove tvoja radnja? I šta prodaješ?", "karte-foto": "Slikaj svoj meni. Pročitat ću jela i cijene.", "kuehl-schnell": "Koje frižidere imaš? Samo pritisni plus.", geld: "Koliko te radnja košta mjesečno? Otprilike je dovoljno.", fertig: "Super, šefe! Od sada sam uvijek tu." },
   },
   inventur: {
     menue: "Inventura", titel: "Inventura", titelMonat: (m) => `Inventura ${m}`,
@@ -1145,7 +1170,8 @@ export default {
       muellOhneWert: (n) => `${n} ${pl(n, "unos", "unosa", "unosa")} otpada bez vrijednosti` },
   },
   ordnerC: { selbstTitel: "Dodaješ sam", fragenTitel: "Pitanja za tebe", fragenUnter: (n) => (n === 1 ? "1 otvoren savjet iz ureda" : `${n} otvorenih savjeta iz ureda`), titel: "Sadržaj i prilozi", kopf: ["Br.", "Dokument", "Daje", "Status"], app: "Aplikacija", du: "Ti", liegtBei: "u prilogu", beilegen: "molim priloži", pruefen: "provjeri", fehlt: "nedostaje", notiz: "Bilješka – nije Z-Bon", hinweis: "Sastavio vlasnik, nije rezultat knjigovodstva. Dnevne vrijednosti iz aplikacije su bilješke – nisu Z-Bon.", karteTitel: "Ovo prilažeš sam", kleinbetrag: "Mali iznos do 250 €", nachgetragen: (d) => `naknadno uneseno ${d}`, belegNr: "Br. računa", teile: { arbeitszeiten: "Radno vrijeme i bolovanja za plate", bewirtung: "Računi za ugošćavanje s povodom i osobama", geraete: "Računi za uređaje preko 800 € neto", darlehen: "Krediti: plan otplate i ostatak duga", kassenzaehl: "Zapisnik o brojanju kase na kraju godine", zbon: "Z-Bon (dnevni izvještaj s kase) za sve dane, bez praznina", karten: "Izvodi kartica i izvodi dostavnih platformi", bank: "Bankovni izvodi svih računa", fapost: "Pošta od porezne uprave (Finanzamt) i otvorena pitanja", rechnungen: "Ulazni računi, original ili fotografija, poredani po br. računa", ausgang: "Izlazni računi (npr. catering), uzastopno numerirani", vertraege: "Novi ugovori i nabavke s računom", lieferscheine: "Otpremnice (sljedivost)", ifsg: "Potvrde prema § 43 Infektionsschutzgesetz (Zakon o zaštiti od zaraza)", schaedling: "Dezinsekcija i izvještaj stručne firme", haccp: "HACCP plan prema predlošku tvog nadležnog ureda" } },
-  kartelaeden: { wohin: "Gdje ide tvoja cijena?", nachAllem: "nakon svih troškova", teil: { ware: "Roba", personal: "Osoblje", miete: "Kirija", neben: "Ostali troškovi", steuer: "Porez", gewinn: "Dobit" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Šefe, „${n}“ pravi ${b} minusa. Da pogledamo?`, gelb: (n, b) => `Kod „${n}“ ostaje malo: ${b}. Pogledaj.`, gruen: (n, b) => `Najviše ostaje kod „${n}“: ${b}. Tako treba.` }, wohin: "Gdje ide tvoja cijena?", nachAllem: "nakon svih troškova", teil: { ware: "Roba", personal: "Osoblje", miete: "Kirija", neben: "Ostali troškovi", steuer: "Porez", gewinn: "Dobit" },
     titel: "Jelovnik", anzahl: (n) => `${n} ${pl(n, "jelo", "jela", "jela")}`, alle: "Sva", zuBillig: (n) => `Prejeftino · ${n}`, mehr: (n) => `Prikaži još ${n}`,
     leer: "Još nema jela", fotografieren: "Slikaj jelovnik", bleibt: "Ostaje ti", speichern: "Sačuvaj", gespeichert: "Cijena sačuvana", preis: "Cijena", schliessen: "Zatvori",
     ampel: { gruen: "Cilj postignut", gelb: "Troškovi pokriveni, ispod cilja", rot: "Prejeftino", grau: "Još se ne može izračunati" },

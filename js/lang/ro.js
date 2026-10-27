@@ -373,7 +373,8 @@ export default {
       einkauf: (n) => `${nr(n, "ingredient", "ingrediente")} fără preț de cumpărare – o poză cu factura le completează`, kuehlung: () => "Adaugă un punct de răcire", sicherung: () => "Ultima copie e mai veche de 7 zile" } },
   vergleich: { wareHoch: (q) => `${q} % – ridicat`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Rohgewinn %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Rohgewinn (nach Ware)", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Birou", zurueck: "Local",
+  buero: {
+    ruhig: { mehr: (n) => `încă ${n}` }, titel: "Birou", zurueck: "Local",
     abschnitt: { geld: "Bani", ware: "Marfă", kartePreise: "Meniu și prețuri", offen: "De făcut", ordner: "Dosare de predat", zahlen: "Cifre", karte: "Meniu și cumpărături", einrichten: "Configurează localul" },
     offen: { einrichtung: "Configurare", kosten: (n) => (n === 1 ? "Costuri fixe: lipsește 1" : `Costuri fixe: lipsesc ${n}`), billig: (n) => (n === 1 ? "1 preț prea mic" : `${nr(n, "preț", "prețuri")} prea mici`),
       ohneZahlen: (n) => `${nr(n, "preparat", "preparate")} fără cifre`, sicherung: (n) => `Copie: acum ${nr(n, "zi", "zile")}`, sicherungNie: "Încă nicio copie",
@@ -500,6 +501,7 @@ export default {
     buero: (n) => `Abateri de răcire: ${n} – lipsește decizia despre marfă sau controlul ulterior`,
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Mai e un aparat de măsurat. Durează un minut." : `Mai sunt ${nr(n, "aparat", "aparate")} de măsurat. Durează un minut.`), fertig: "Totul măsurat, totul în zona verde.", warm: (k) => `Șefu', în „${k}” e prea cald. Verifică imediat, te rog.` },
     titel: "Controlul răcirii",
     nav: "Răcire",
     nochNicht: "Încă neconfigurat. Două minute dimineața și fișa de control se scrie singură.",
@@ -622,7 +624,8 @@ export default {
     zeile: "Curățenie și consumabile", stufe: { offen: "încă deschis", schaetzung: "≈ estimat", beleg: "din bonuri", inventur: "✓ din inventar" },
     zeileText: { offen: "Încă nicio cifră. Fotografiază un bon cu detergenți și devine cifra ta.", schaetzung: "Estimarea ta. Cu bonuri devine mai exact.", beleg: (n) => `Din ${nr(n, "bon", "bonuri")} din ultimele 60 de zile.`, inventur: "Cumpărat minus ce mai e. Mai exact nu se poate." },
     firmaTeil: (e) => `Firmă ${e}`, mittelTeil: (e) => `Detergenți ${e}`, leiter: "Cât de sigură e cifra?", leiterText: ["Încă deschis", "Din bonuri", "Din inventar"], zeitHinweis: "Timpul vostru de curățenie nu apare aici: salariile echipei sunt deja la personal, iar timpul tău nu scoate bani din cont." },
-  putzplan: { wer: "Cine bifează?", heuteOffen: (n) => `${n} deschise azi`, allesErledigt: "Pe azi totul e gata", kontrolliert: "Verificat (dată, semnătură):", titel: "Plan de curățenie", einrichtenUnter: "Recomandare după HACCP, pentru localul tău", erklaerung: "Curățenia e obligatorie. O listă bifată e dovada pe care vrea s-o vadă controlul alimentar. Intervalele sunt recomandări din fișele autorităților, nu cifre din lege. Poți schimba orice.", quellenHinweis: "Bază: Regulamentul UE de igienă 852/2004, fișele controlului alimentar (printre altele Dortmund, Mainz, Köln, Freising), VDI 2052 pentru hotă.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Încă una pentru azi: ${erst}.` : `Azi mai sunt ${nr(n, "sarcină", "sarcini")}. Începe cu „${erst}”.`), fertig: "Totul curat pentru azi. Bravo, șefu'.", erledigt: (n) => `Făcut azi (${n})` }, werKurz: "Cine face curat?", wer: "Cine bifează?", heuteOffen: (n) => `${n} deschise azi`, allesErledigt: "Pe azi totul e gata", kontrolliert: "Verificat (dată, semnătură):", titel: "Plan de curățenie", einrichtenUnter: "Recomandare după HACCP, pentru localul tău", erklaerung: "Curățenia e obligatorie. O listă bifată e dovada pe care vrea s-o vadă controlul alimentar. Intervalele sunt recomandări din fișele autorităților, nu cifre din lege. Poți schimba orice.", quellenHinweis: "Bază: Regulamentul UE de igienă 852/2004, fișele controlului alimentar (printre altele Dortmund, Mainz, Köln, Freising), VDI 2052 pentru hotă.",
     geraeteFrage: "Ce ai în local?", zusammen: (a, b, c, d, e) => `${a} zilnic · ${b} săptămânal · ${c} lunar · ${d} rar · ${e} indicații`, uebernehmen: "Preia planul", speichern: "Salvează schimbările", aufgabenAnpassen: "Ajustează sarcinile", spaeter: "Mai târziu", anpassen: "Ajustează planul",
     takt: { tag: "Zilnic", woche: "Săptămânal", monat: "Lunar", quartal: "La 3 luni", jahr: "Anual", zweijahre: "La 2 ani", nach: "După fiecare folosire (indicație)" },
     gruppe: { tag: "Azi", woche: "Săptămâna asta", monat: "Luna asta", spaeter: "Urmează curând", nach: "După fiecare folosire" },
@@ -740,7 +743,9 @@ export default {
     belegeKurz: "Încarcă bonul, actualizează prețurile",
   },
 
-  muell: { nichtsGefunden: "N-am găsit nimic. Scrie altfel sau alege „Găleată cântărită”.",
+  muell: {
+    zeki: { start: "Ce s-a aruncat azi?", weiter: "S-a mai aruncat ceva?", personal: "Ce a mâncat echipa ta?", bruch: "Ce s-a spart sau stricat?" },
+    grund: { roh: "Marfă", personal: "Personal", bruch: "Spart" }, nichtsGefunden: "N-am găsit nimic. Scrie altfel sau alege „Găleată cântărită”.",
     zurUebersicht: "Privire de ansamblu gunoi",
     auswaehlen: "Alege alimentul", aendern: "Atinge ca să schimbi", mengeEingeben: "Trece cantitatea", foto: "Poză (opțional)", fotoDabei: "Poza e atașată", fotoFehler: "Poza nu s-a putut salva.", satz: "Fă din greșeli învățătură. Trece ce a ajuns azi la gunoi.", orientierung: "Valorile estimate sunt doar orientative.", ohnePreisKurz: "Încă fără preț de cumpărare – contează oricum.",
     wasWeg: "Ce s-a aruncat?", wocheTonne: "Săptămâna asta la gunoi", monatTonne: "Gunoiul lunii", leerWoche: "Încă nimic trecut. N-ai aruncat nimic? Zi bună.", wocheZeile: (p, kg) => `≈ ${nr(p, "porție vândută", "porții vândute")} ca să recuperezi · ${kg} kg`, wenigerAls: (m, d) => `mai puțin decât în ${m} până pe ${d}.`, mehrAls: (m, d) => `mai mult decât în ${m} până pe ${d}.`, rueckgaengig: "Anulează", ammeisten: "Cel mai mult aruncat", eintragen: "Trece gunoi", andererTag: "Pentru altă zi", teller: "Farfurie", eimerNurGewicht: "doar greutatea", ganzePackung: "ambalaj întreg", personalWert: (e) => `Masa personalului · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} la gunoi`, eimerHinweisKurz: "Farfuriile și materia primă deja trecute azi se scad.", fuerPersonal: "Mâncat de personal", wegDamit: "La gunoi", geradeEben: "chiar acum", zurueckgenommen: "Anulat.",
@@ -952,6 +957,8 @@ export default {
   },
   // Etapa 6a – poză, încărcare, start rapid
   foto: {
+    preisHochKurz: "Preț foarte mare?",
+    zeki: { titel: (n) => `Am citit ${nr(n, "preparat", "preparate")}.`, pruefen: (k) => (k === 1 ? "Uită-te repede la unul, te rog." : `Uită-te repede la ${k} dintre ele, te rog.`), alle: "Arată bine. E totul corect?", erkannt: (n) => `Corect (${n})` },
     zweiPreise: (p) => `Am găsit două prețuri (${p} €) – ofertă? E trecut cel mai mare.`, zweiPreiseKurz: "Două prețuri",
     fehlerLaden: "Recunoașterea textului trebuie descărcată o dată cu internet. Intră puțin online și încearcă din nou.",
     fehlerZeit: "Citirea durează prea mult. Încearcă o poză mai mică sau mai clară.",
@@ -1049,6 +1056,24 @@ export default {
     rechnungen: "Fotografiază facturi", zumCockpit: "La cockpit",
   },
   // Inventar (punctul 3)
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Ăsta e obiectivul tău: atâta vânzare îți lipsește până la zero.", kacheln: "Aici introduci: vânzări, deșeuri, răcire, curățenie.", jetzt: "Aici scrie ce e de făcut acum. Doar apasă.", leiste: "Jos treci de la o secțiune la alta.", menue: "În meniu e biroul tău: preparate, costuri, dosare.", zeki: "Iar eu sunt mereu aici sus. Apasă pe mine." },
+    fertigFrage: "Șefu', totul clar?", ja: "Da, totul clar", nochmal: "Arată-mi din nou", frage: "Am o întrebare", fragenTitel: "Mulți întreabă asta:", fragePlatzhalter: "Sau scrie-ți întrebarea …", abschicken: "Trimite întrebarea", danke: "Mersi, șefu'. Rețin întrebarea.", schliessen: "Gata",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Setează un cod. Așa doar tu intri în birou.", hilfe: "În local aplicația nu întreabă niciodată. Doar la birou cere scurt codul sau Face ID. După aceea biroul rămâne deschis 15 minute.", code: "Setează codul", codeAn: "Codul e setat", bio: "Pornește Face ID", bioAn: "Face ID e pornit", bioNicht: "Face ID nu merge pe acest dispozitiv. Codul ajunge.", mitBio: "Deschide cu Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Îți pregătesc eu e-mailul. Tu doar apeși pe Trimite.", buch: "Îți pregătesc eu e-mailul. Tu doar apeși pe Trimite." },
+    platzhalter: { steuer: "E-mailul consultantului fiscal (dacă îl ai)", buch: "E-mailul contabilului (dacă îl ai)" },
+    knopf: { steuer: "Trimite consultantului fiscal", buch: "Trimite contabilului" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Către: ${an}\n\n` : ""}Bună ziua, [Nume],\n\nvă trimit atașat documentele pentru ${laden} aferente perioadei ${zeitraum}: rezumat și tabele (CSV).\nBonurile, contractele și corespondența de la fisc [le atașez / le trimit separat].\n\nPentru orice întrebare, vă stau la dispoziție.\n\nCu stimă\n[Numele tău]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Către: ${an}\n\n` : ""}Bună ziua, [Nume],\n\nvă trimit atașat documentele pentru ${laden} aferente perioadei ${zeitraum}: rezumat și tabele (CSV).\nRapoartele Z, decontările plăților cu cardul și extrasele de cont [le atașez / le trimit separat].\n\nCu stimă\n[Numele tău]`,
+    },
+    fertig: "E-mailul e gata – doar trimite-l.",
+  },
   schnell2: { willkommen: "Bun venit", willkommenText: "Localul tău. Cifrele tale. Totul sub control.",
     hilfe: "Pe scurt", sprache: "Limba",
     laden: "Localul tău", namePlatzhalter: "Numele localului",
@@ -1062,7 +1087,7 @@ export default {
     geldHilfe: "Aproximativ e destul, poți lăsa și gol. Facturile le fotografiezi mai târziu în birou.",
     putzt: "Cine face curat?", wer: { selbst: "Noi", firma: "Firmă", beides: "Amândouă" }, firma: "Firmă",
     fertig: "Gata!", eingerichtet: "configurat", los: "Hai să începem", pin: "Setează PIN-ul de birou",
-    zeki: { hallo: "Salut, șefu'! Eu sunt Zeki.", rolle: "Te ajut – la tejghea și la birou.", "laden-schnell": "Cum se numește localul tău? Și ce vinzi?", "karte-foto": "Fotografiază meniul. Eu citesc preparatele și prețurile.", "kuehl-schnell": "Ce frigidere ai? Apasă doar pe plus.", geld: "Cât te costă localul pe lună? Ajunge și aproximativ.", fertig: "Super, șefu'! De acum sunt mereu aici." },
+    zeki: { schloss: "Setează un cod. Așa doar tu intri în birou.", hallo: "Salut, șefu'! Eu sunt Zeki.", rolle: "Te ajut – la tejghea și la birou.", "laden-schnell": "Cum se numește localul tău? Și ce vinzi?", "karte-foto": "Fotografiază meniul. Eu citesc preparatele și prețurile.", "kuehl-schnell": "Ce frigidere ai? Apasă doar pe plus.", geld: "Cât te costă localul pe lună? Ajunge și aproximativ.", fertig: "Super, șefu'! De acum sunt mereu aici." },
   },
   inventur: {
     menue: "Inventar", titel: "Inventar", titelMonat: (m) => `Inventar – ${m}`,
@@ -1144,7 +1169,8 @@ export default {
       muellOhneWert: (n) => (n === 1 ? "1 deșeu introdus fără valoare" : `${nr(n, "deșeu", "deșeuri")} introduse fără valoare`) },
   },
   ordnerC: { selbstTitel: "Adaugi tu", fragenTitel: "Întrebări pentru tine", fragenUnter: (n) => (n === 1 ? "1 sfat deschis din birou" : `${n} sfaturi deschise din birou`), titel: "Conținut și anexe", kopf: ["Nr.", "Document", "Oferit de", "Stare"], app: "Aplicația", du: "Tu", liegtBei: "anexat", beilegen: "te rog anexează", pruefen: "verifică", fehlt: "lipsește", notiz: "Notă – nu este Z-Bon", hinweis: "Întocmit de proprietar, nu este un rezultat contabil. Valorile zilnice din aplicație sunt note – nu sunt Z-Bon.", karteTitel: "Pe acestea le anexezi tu", kleinbetrag: "Sumă mică până la 250 €", nachgetragen: (d) => `adăugat ulterior la ${d}`, belegNr: "Nr. document", teile: { arbeitszeiten: "Ore de lucru și concedii medicale pentru salarii", bewirtung: "Bonuri de protocol cu motiv și persoane", geraete: "Facturi pentru aparate peste 800 € net", darlehen: "Credite: grafic de rambursare și sold", kassenzaehl: "Proces-verbal de numărare a casei la final de an", zbon: "Z-Bon (raportul zilnic al casei) pentru toate zilele, fără goluri", karten: "Extrase de card și extrase ale platformelor de livrare", bank: "Extrase de cont pentru toate conturile", fapost: "Corespondență de la fisc (Finanzamt) și întrebări deschise", rechnungen: "Facturi primite, original sau poză, sortate după nr. document", ausgang: "Facturi emise (de ex. catering), numerotate în ordine", vertraege: "Contracte noi și achiziții cu factură", lieferscheine: "Avize de livrare (trasabilitate)", ifsg: "Certificate conform § 43 Infektionsschutzgesetz (Legea privind protecția împotriva infecțiilor)", schaedling: "Deratizare și raportul firmei de specialitate", haccp: "Plan HACCP după modelul autorității tale locale" } },
-  kartelaeden: { wohin: "Unde merge prețul tău?", nachAllem: "după toate costurile", teil: { ware: "Marfă", personal: "Personal", miete: "Chirie", neben: "Alte costuri", steuer: "Taxă", gewinn: "Profit" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Șefu', „${n}” face ${b} pierdere. Ne uităm?`, gelb: (n, b) => `La „${n}” rămâne puțin: ${b}. Aruncă o privire.`, gruen: (n, b) => `Cel mai mult rămâne la „${n}”: ${b}. Așa da.` }, wohin: "Unde merge prețul tău?", nachAllem: "după toate costurile", teil: { ware: "Marfă", personal: "Personal", miete: "Chirie", neben: "Alte costuri", steuer: "Taxă", gewinn: "Profit" },
     titel: "Meniu", anzahl: (n) => nr(n, "preparat", "preparate"), alle: "Toate", zuBillig: (n) => `Prea ieftin · ${n}`, mehr: (n) => `Arată încă ${n}`,
     leer: "Încă niciun preparat", fotografieren: "Fotografiază meniul", bleibt: "Îți rămâne", speichern: "Salvează", gespeichert: "Preț salvat", preis: "Preț", schliessen: "Închide",
     ampel: { gruen: "Țintă atinsă", gelb: "Costuri acoperite, sub țintă", rot: "Prea ieftin", grau: "Încă nu se poate calcula" },

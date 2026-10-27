@@ -367,7 +367,8 @@ export default {
       einkauf: (n) => `${n} ingredientes sin precio de compra: una foto de factura lo rellena`, kuehlung: () => "Crear punto de frío", sicherung: () => "Última copia de hace más de 7 días" } },
   vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Hacer foto propia", fotoGespeichert: "Foto guardada. Se queda en este móvil.",  titel: "Comparar platos", unter: "¿Qué platos te dejan más?", tab: { db: "Te queda por unidad", marge: "Rohgewinn %" }, ware: "Coste de producto", db: "Te queda por unidad", marge: "Rohgewinn (nach Ware)", leer: "Anota precios de venta y de compra y aquí verás qué platos te dejan más.", ohneZahlen: (n) => (n === 1 ? "1 plato todavía sin cifras" : `${n} platos todavía sin cifras`), einkaufFehlt: "Faltan precios de compra", hinweis: "Los valores son estimaciones y pueden variar según ingredientes y precios. Todos los importes sin IVA, menos el precio de venta.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Oficina", zurueck: "Local",
+  buero: {
+    ruhig: { mehr: (n) => `${n} más` }, titel: "Oficina", zurueck: "Local",
     abschnitt: { geld: "Dinero", ware: "Mercancía", kartePreise: "Carta y precios", offen: "Pendiente", ordner: "Carpetas para entregar", zahlen: "Cifras", karte: "Carta y compras", einrichten: "Configurar local" },
     offen: { einrichtung: "Configuración", kosten: (n) => (n === 1 ? "Gastos fijos: falta 1" : `Gastos fijos: faltan ${n}`), billig: (n) => (n === 1 ? "1 precio demasiado barato" : `${n} precios demasiado baratos`),
       ohneZahlen: (n) => (n === 1 ? "1 plato sin cifras" : `${n} platos sin cifras`), sicherung: (n) => (n === 1 ? "Copia de hace 1 día" : `Copia de hace ${n} días`), sicherungNie: "Aún sin copia",
@@ -494,6 +495,7 @@ export default {
     buero: (n) => (n === 1 ? "1 desviación de frío: falta decisión sobre la mercancía o control posterior" : `${n} desviaciones de frío: falta decisión sobre la mercancía o control posterior`),
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Falta medir un aparato. Es un minuto." : `Faltan ${n} aparatos por medir. Es un minuto.`), fertig: "Todo medido, todo en verde.", warm: (k) => `Jefe, “${k}” está demasiado caliente. Revísalo ya, por favor.` },
     titel: "Control de frío",
     nav: "Frío",
     nochNicht: "Todavía sin configurar. Dos minutos por la mañana y la hoja de control se rellena sola.",
@@ -616,7 +618,8 @@ export default {
     zeile: "Limpieza y material", stufe: { offen: "pendiente", schaetzung: "≈ estimado", beleg: "de tickets", inventur: "✓ del inventario" },
     zeileText: { offen: "Todavía sin cifra. Haz foto de un ticket con productos de limpieza y será tu cifra.", schaetzung: "Tu estimación. Con tickets es más exacta.", beleg: (n) => `De ${n === 1 ? "1 ticket" : n + " tickets"} de los últimos 60 días.`, inventur: "Lo comprado menos lo que queda. Más exacto, imposible." },
     firmaTeil: (e) => `Empresa ${e}`, mittelTeil: (e) => `Productos ${e}`, leiter: "¿Qué tan segura es la cifra?", leiterText: ["Pendiente", "De tickets", "Del inventario"], zeitHinweis: "Vuestro tiempo de limpieza no va aquí: el sueldo del equipo ya está en personal, y tu tiempo no saca dinero de la cuenta." },
-  putzplan: { wer: "¿Quién lo marca?", heuteOffen: (n) => `${n} pendientes hoy`, allesErledigt: "Todo hecho por hoy", kontrolliert: "Revisado (fecha, firma):", titel: "Plan de limpieza", einrichtenUnter: "Recomendación según HACCP, para tu local", erklaerung: "Limpiar es obligatorio. Una lista marcada es la prueba que quiere ver la inspección. Los plazos son recomendaciones de las hojas informativas de las autoridades, no cifras de la ley. Puedes cambiarlo todo.", quellenHinweis: "Base: Reglamento de higiene de la UE 852/2004, hojas informativas del control alimentario (Lebensmittelüberwachung; entre otros Dortmund, Maguncia, Colonia, Freising), VDI 2052 para la campana.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Queda una para hoy: ${erst}.` : `Hoy quedan ${n} tareas. Empieza por “${erst}”.`), fertig: "Todo limpio por hoy. Bien hecho, jefe.", erledigt: (n) => `Hecho hoy (${n})` }, werKurz: "¿Quién limpia?", wer: "¿Quién lo marca?", heuteOffen: (n) => `${n} pendientes hoy`, allesErledigt: "Todo hecho por hoy", kontrolliert: "Revisado (fecha, firma):", titel: "Plan de limpieza", einrichtenUnter: "Recomendación según HACCP, para tu local", erklaerung: "Limpiar es obligatorio. Una lista marcada es la prueba que quiere ver la inspección. Los plazos son recomendaciones de las hojas informativas de las autoridades, no cifras de la ley. Puedes cambiarlo todo.", quellenHinweis: "Base: Reglamento de higiene de la UE 852/2004, hojas informativas del control alimentario (Lebensmittelüberwachung; entre otros Dortmund, Maguncia, Colonia, Freising), VDI 2052 para la campana.",
     geraeteFrage: "¿Qué tienes en el local?", zusammen: (a, b, c, d, e) => `${a} diarias · ${b} semanales · ${c} mensuales · ${d} de vez en cuando · ${e} avisos`, uebernehmen: "Usar este plan", speichern: "Guardar cambios", aufgabenAnpassen: "Ajustar tareas", spaeter: "Luego", anpassen: "Ajustar plan",
     takt: { tag: "Diario", woche: "Semanal", monat: "Mensual", quartal: "Cada 3 meses", jahr: "Anual", zweijahre: "Cada 2 años", nach: "Después de cada uso (aviso)" },
     gruppe: { tag: "Hoy", woche: "Esta semana", monat: "Este mes", spaeter: "Toca pronto", nach: "Después de cada uso" },
@@ -734,7 +737,9 @@ export default {
     belegeKurz: "Cargar ticket, actualizar precios",
   },
 
-  muell: { nichtsGefunden: "No se ha encontrado nada. Escríbelo de otra forma o usa “Cubo pesado”.",
+  muell: {
+    zeki: { start: "¿Qué se ha tirado hoy?", weiter: "¿Se ha tirado algo más?", personal: "¿Qué ha comido tu equipo?", bruch: "¿Qué se ha roto?" },
+    grund: { roh: "Mercancía", personal: "Personal", bruch: "Rotura" }, nichtsGefunden: "No se ha encontrado nada. Escríbelo de otra forma o usa “Cubo pesado”.",
     zurUebersicht: "Resumen de basura",
     auswaehlen: "Elegir alimento", aendern: "Toca para cambiar", mengeEingeben: "Escribir cantidad", foto: "Foto (opcional)", fotoDabei: "Foto incluida", fotoFehler: "No se ha podido guardar la foto.", satz: "Convierte los errores en aprendizaje. Anota lo que ha acabado hoy en la basura.", orientierung: "Los valores estimados son orientativos.", ohnePreisKurz: "Todavía sin precio de compra; cuenta igual.",
     wasWeg: "¿Qué se ha tirado?", wocheTonne: "Esta semana en la basura", monatTonne: "Basura del mes", leerWoche: "Todavía no hay nada anotado. ¿No has tirado nada? Buen día.", wocheZeile: (p, kg) => `≈ ${p} raciones vendidas para recuperarlo · ${kg} kg`, wenigerAls: (m, d) => `menos que en ${m} hasta el ${d}.`, mehrAls: (m, d) => `más que en ${m} hasta el ${d}.`, rueckgaengig: "Deshacer", ammeisten: "Lo que más se tira", eintragen: "Anotar basura", andererTag: "Para otro día", teller: "Plato", eimerNurGewicht: "solo el peso", ganzePackung: "paquete entero", personalWert: (e) => `Comida del personal · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} en la basura`, eimerHinweisKurz: "Se descuentan los platos y el género crudo que ya anotaste hoy.", fuerPersonal: "Comido por el personal", wegDamit: "Fuera", geradeEben: "ahora mismo", zurueckgenommen: "Deshecho.",
@@ -946,6 +951,8 @@ export default {
   },
   // Etappe 6a – foto, subida, inicio rápido
   foto: {
+    preisHochKurz: "¿Precio muy alto?",
+    zeki: { titel: (n) => `He leído ${n} platos.`, pruefen: (k) => (k === 1 ? "Échale un vistazo rápido a uno, por favor." : `Échales un vistazo rápido a ${k}, por favor.`), alle: "Tiene buena pinta. ¿Está todo bien?", erkannt: (n) => `Bien (${n})` },
     zweiPreise: (p) => `Hay dos precios (${p} €). ¿Oferta? Se ha anotado el más alto.`, zweiPreiseKurz: "Dos precios",
     fehlerLaden: "El reconocimiento de texto tiene que cargarse una vez con internet. Conéctate un momento y vuelve a intentarlo.",
     fehlerZeit: "La lectura tarda demasiado. Prueba con una foto más pequeña o más nítida.",
@@ -1042,6 +1049,24 @@ export default {
     fertigHinweis: "Lo siguiente: haz foto de algunas facturas de compra. Así la app conoce tus precios reales.",
     rechnungen: "Hacer foto de facturas", zumCockpit: "Al panel",
   },
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Este es tu objetivo: lo que te falta vender para llegar a cero.", kacheln: "Aquí apuntas: ventas, desperdicio, frío, limpieza.", jetzt: "Aquí ves lo que toca ahora. Solo tócalo.", leiste: "Abajo cambias entre secciones.", menue: "En el menú está tu oficina: carta, costes, carpetas.", zeki: "Y yo siempre estoy aquí arriba. Tócame." },
+    fertigFrage: "Jefe, ¿todo claro?", ja: "Sí, todo claro", nochmal: "Enséñamelo otra vez", frage: "Tengo una pregunta", fragenTitel: "Esto pregunta mucha gente:", fragePlatzhalter: "O escribe tu pregunta …", abschicken: "Enviar pregunta", danke: "Gracias, jefe. Me apunto la pregunta.", schliessen: "Listo",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Pon un código. Así solo tú entras en la oficina.", hilfe: "En el local, la app nunca pregunta. Solo al entrar en la oficina te pide un momento el código o Face ID. Después, la oficina queda abierta 15 minutos.", code: "Poner código", codeAn: "Código puesto", bio: "Activar Face ID", bioAn: "Face ID activado", bioNicht: "Face ID no funciona en este dispositivo. Con el código basta.", mitBio: "Abrir con Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Te dejo el correo listo. Tú solo pulsas Enviar.", buch: "Te dejo el correo listo. Tú solo pulsas Enviar." },
+    platzhalter: { steuer: "Correo del asesor fiscal (si lo tienes)", buch: "Correo del contable (si lo tienes)" },
+    knopf: { steuer: "Enviar al asesor fiscal", buch: "Enviar al contable" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Para: ${an}\n\n` : ""}Hola, [nombre]:\n\nTe adjunto la documentación de ${laden} de ${zeitraum}: resumen y tablas (CSV).\nLos tickets, contratos y cartas de Hacienda [los adjunto / los envío por separado].\n\nCualquier duda, me dices.\n\nUn saludo\n[Tu nombre]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Para: ${an}\n\n` : ""}Hola, [nombre]:\n\nTe adjunto la documentación de ${laden} de ${zeitraum}: resumen y tablas (CSV).\nLos informes Z, las liquidaciones de tarjeta y los extractos bancarios [los adjunto / los envío por separado].\n\nUn saludo\n[Tu nombre]`,
+    },
+    fertig: "El correo está listo: solo falta enviarlo.",
+  },
   schnell2: { willkommen: "Bienvenido", willkommenText: "Tu local. Tus números. Todo bajo control.",
     hilfe: "En breve", sprache: "Idioma",
     laden: "Tu local", namePlatzhalter: "Nombre del local",
@@ -1055,7 +1080,7 @@ export default {
     geldHilfe: "Aproximado basta, también puedes dejarlo vacío. Las facturas las fotografías luego en la oficina.",
     putzt: "¿Quién limpia?", wer: { selbst: "Nosotros", firma: "Empresa", beides: "Ambos" }, firma: "Empresa",
     fertig: "¡Listo!", eingerichtet: "configurado", los: "Vamos", pin: "Fijar código de oficina",
-    zeki: { hallo: "¡Hola, jefe! Soy Zeki.", rolle: "Te ayudo: en el local y en la oficina.", "laden-schnell": "¿Cómo se llama tu local? ¿Y qué vendes?", "karte-foto": "Fotografía tu carta. Yo leo los platos y los precios.", "kuehl-schnell": "¿Qué neveras tienes? Pulsa el botón más y listo.", geld: "¿Cuánto te cuesta el local al mes? Una aproximación vale.", fertig: "¡Genial, jefe! A partir de ahora siempre estoy aquí." },
+    zeki: { schloss: "Pon un código. Así solo tú entras en la oficina.", hallo: "¡Hola, jefe! Soy Zeki.", rolle: "Te ayudo: en el local y en la oficina.", "laden-schnell": "¿Cómo se llama tu local? ¿Y qué vendes?", "karte-foto": "Fotografía tu carta. Yo leo los platos y los precios.", "kuehl-schnell": "¿Qué neveras tienes? Pulsa el botón más y listo.", geld: "¿Cuánto te cuesta el local al mes? Una aproximación vale.", fertig: "¡Genial, jefe! A partir de ahora siempre estoy aquí." },
   },
   // Inventario
   inventur: {
@@ -1138,7 +1163,8 @@ export default {
       muellOhneWert: (n) => n === 1 ? "1 entrada de basura sin valor" : `${n} entradas de basura sin valor` },
   },
   ordnerC: { selbstTitel: "Lo añades tú", fragenTitel: "Preguntas para ti", fragenUnter: (n) => (n === 1 ? "1 consejo abierto de la oficina" : `${n} consejos abiertos de la oficina`), titel: "Contenido y anexos", kopf: ["N.º", "Documento", "Lo aporta", "Estado"], app: "App", du: "Tú", liegtBei: "adjunto", beilegen: "adjunta, por favor", pruefen: "revisa", fehlt: "falta", notiz: "Nota – no es un Z-Bon", hinweis: "Recopilación del dueño, no es un resultado contable. Los valores diarios de la app son notas – no son un Z-Bon.", karteTitel: "Esto lo adjuntas tú", kleinbetrag: "Importe pequeño hasta 250 €", nachgetragen: (d) => `añadido después el ${d}`, belegNr: "N.º de recibo", teile: { arbeitszeiten: "Horas de trabajo y bajas para la nómina", bewirtung: "Recibos de comidas de negocios con motivo y personas", geraete: "Facturas de equipos de más de 800 € netos", darlehen: "Préstamos: plan de amortización y saldo", kassenzaehl: "Acta de arqueo de caja a fin de año", zbon: "Z-Bons (informe diario de la caja) de todos los días, sin huecos", karten: "Extractos de tarjetas y de plataformas de reparto", bank: "Extractos bancarios de todas las cuentas", fapost: "Correo de Hacienda (Finanzamt) y preguntas abiertas", rechnungen: "Facturas recibidas, original o foto, ordenadas por n.º de recibo", ausgang: "Facturas emitidas (p. ej. catering), numeradas correlativamente", vertraege: "Contratos nuevos y compras con factura", lieferscheine: "Albaranes (trazabilidad)", ifsg: "Certificados según § 43 Infektionsschutzgesetz (Ley de protección contra infecciones)", schaedling: "Control de plagas e informe de la empresa especializada", haccp: "Plan HACCP según el modelo de tu autoridad local" } },
-  kartelaeden: { wohin: "¿Adónde va tu precio?", nachAllem: "tras todos los costes", teil: { ware: "Mercancía", personal: "Personal", miete: "Alquiler", neben: "Otros gastos", steuer: "Impuesto", gewinn: "Beneficio" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Jefe, “${n}” deja ${b} de pérdida. ¿Lo miramos?`, gelb: (n, b) => `“${n}” deja poco: ${b}. Échale un ojo.`, gruen: (n, b) => `Lo que más deja es “${n}”: ${b}. Así se hace.` }, wohin: "¿Adónde va tu precio?", nachAllem: "tras todos los costes", teil: { ware: "Mercancía", personal: "Personal", miete: "Alquiler", neben: "Otros gastos", steuer: "Impuesto", gewinn: "Beneficio" },
     titel: "Carta", anzahl: (n) => n === 1 ? "1 plato" : `${n} platos`, alle: "Todos", zuBillig: (n) => `Muy baratos · ${n}`, mehr: (n) => `Ver ${n} más`,
     leer: "Aún sin platos", fotografieren: "Fotografiar la carta", bleibt: "Te queda", speichern: "Guardar", gespeichert: "Precio guardado", preis: "Precio", schliessen: "Cerrar",
     ampel: { gruen: "Objetivo logrado", gelb: "Cubre gastos, bajo objetivo", rot: "Demasiado barato", grau: "Aún sin calcular" },

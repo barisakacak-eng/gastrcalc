@@ -366,7 +366,8 @@ export default {
   vergleich: { wareHoch: (q) => `${q} % – high`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Take your own photo", fotoGespeichert: "Photo saved. It stays on this phone.",  titel: "Dishes compared", unter: "Which dishes earn you the most?", tab: { db: "Kept per item", marge: "Gross profit %" }, ware: "Cost of goods", db: "You keep per item", marge: "Gross profit (after goods)", leer: "Enter selling and purchase prices to see which dishes earn the most.", ohneZahlen: (n) => (n === 1 ? "1 dish without numbers yet" : `${n} dishes without numbers yet`), einkaufFehlt: "Purchase prices missing", hinweis: "Values are estimates and may vary with ingredients and prices. All amounts excluding VAT, except the selling price.", nachKosten: "After all costs", nachKostenFehlt: "Costs missing", ampelLegende: "Traffic light after all costs: red below 10 %, green from 19 % of net price (≈ based on BMF benchmark figures, data year 2024)." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
-  buero: { titel: "Office", zurueck: "Shop",
+  buero: {
+    ruhig: { mehr: (n) => `${n} more` }, titel: "Office", zurueck: "Shop",
     abschnitt: { geld: "Money", ware: "Stock", kartePreise: "Menu & prices", offen: "To do", ordner: "Folders to hand in", zahlen: "Numbers", karte: "Menu & purchasing", einrichten: "Set up the shop" },
     offen: { einrichtung: "Setup", kosten: (n) => (n === 1 ? "Fixed costs: 1 missing" : `Fixed costs: ${n} missing`), billig: (n) => (n === 1 ? "1 price too low" : `${n} prices too low`),
       ohneZahlen: (n) => (n === 1 ? "1 dish without numbers" : `${n} dishes without numbers`), sicherung: (n) => (n === 1 ? "Backup 1 day old" : `Backup ${n} days old`), sicherungNie: "No backup yet",
@@ -493,6 +494,7 @@ export default {
     buero: (n) => (n === 1 ? "1 cooling deviation: food decision or re-check missing" : `${n} cooling deviations: food decision or re-check missing`),
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "One more unit to check. Takes a minute." : `${n} more units to check. Takes a minute.`), fertig: "All checked, all in the green.", warm: (k) => `Boss, “${k}” is too warm. Please check it now.` },
     titel: "Fridge check",
     nav: "Cooling",
     standard: "standard",
@@ -615,7 +617,8 @@ export default {
     zeile: "Cleaning & supplies", stufe: { offen: "still open", schaetzung: "≈ estimated", beleg: "from receipts", inventur: "✓ from stock count" },
     zeileText: { offen: "No number yet. Photograph a receipt with cleaning supplies and it becomes your number.", schaetzung: "Your estimate. Receipts make it more precise.", beleg: (n) => `From ${n === 1 ? "1 receipt" : n + " receipts"} in the last 60 days.`, inventur: "Bought minus what is still there. It doesn't get more precise." },
     firmaTeil: (e) => `Company ${e}`, mittelTeil: (e) => `Supplies ${e}`, leiter: "How sure is this number?", leiterText: ["Still open", "From receipts", "From stock count"], zeitHinweis: "Your own cleaning time is not here: team wages are already in staff costs, your time costs no money from the account." },
-  putzplan: { wer: "Who is ticking?", heuteOffen: (n) => `${n} open today`, allesErledigt: "All done for today", kontrolliert: "Checked (date, signature):", titel: "Cleaning plan", einrichtenUnter: "HACCP recommendation for your shop", erklaerung: "Cleaning is mandatory. A ticked-off list is the proof food inspectors want to see. The intervals are recommendations from authority leaflets, not numbers from the law. You can change everything.", quellenHinweis: "Based on EU hygiene regulation 852/2004, food control leaflets (e.g. Dortmund, Mainz, Cologne, Freising), VDI 2052 for the extractor hood.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `One more for today: ${erst}.` : `${n} jobs left today. Start with “${erst}”.`), fertig: "All clean for today. Nice one, boss.", erledigt: (n) => `Done today (${n})` }, werKurz: "Who's cleaning?", wer: "Who is ticking?", heuteOffen: (n) => `${n} open today`, allesErledigt: "All done for today", kontrolliert: "Checked (date, signature):", titel: "Cleaning plan", einrichtenUnter: "HACCP recommendation for your shop", erklaerung: "Cleaning is mandatory. A ticked-off list is the proof food inspectors want to see. The intervals are recommendations from authority leaflets, not numbers from the law. You can change everything.", quellenHinweis: "Based on EU hygiene regulation 852/2004, food control leaflets (e.g. Dortmund, Mainz, Cologne, Freising), VDI 2052 for the extractor hood.",
     geraeteFrage: "What do you have in the shop?", zusammen: (a, b, c, d, e) => `${a} daily · ${b} weekly · ${c} monthly · ${d} rarely · ${e} reminders`, uebernehmen: "Use this plan", speichern: "Save changes", aufgabenAnpassen: "Adjust tasks", spaeter: "Later", anpassen: "Adjust plan",
     takt: { tag: "Daily", woche: "Weekly", monat: "Monthly", quartal: "Every 3 months", jahr: "Yearly", zweijahre: "Every 2 years", nach: "After each use (reminder)" },
     gruppe: { tag: "Today", woche: "This week", monat: "This month", spaeter: "Due soon", nach: "After each use" },
@@ -733,7 +736,9 @@ export default {
     belegeKurz: "Read a receipt, update prices",
   },
 
-  muell: { nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
+  muell: {
+    zeki: { start: "What got thrown out today?", weiter: "Anything else thrown out?", personal: "What did your team eat?", bruch: "What got broken?" },
+    grund: { roh: "Goods", personal: "Staff", bruch: "Breakage" }, nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
     zurUebersicht: "Waste overview", 
     auswaehlen: "Select item", aendern: "Tap to change", mengeEingeben: "Enter amount", foto: "Photo (optional)", fotoDabei: "Photo added", fotoFehler: "Photo could not be saved.", satz: "Turn mistakes into knowledge. Enter what ended up in the bin today.", orientierung: "Estimated values are for guidance.", ohnePreisKurz: "No purchase price yet – still counted.", 
     wasWeg: "What went in the bin?", wocheTonne: "In the bin this week", monatTonne: "Monthly bin", leerWoche: "Nothing entered yet. Nothing thrown away? Good day.", wocheZeile: (p, kg) => `≈ ${p} portions sold to make up for it · ${kg} kg`, wenigerAls: (m, d) => `less than in ${m} up to day ${d}.`, mehrAls: (m, d) => `more than in ${m} up to day ${d}.`, rueckgaengig: "Undo", ammeisten: "Most thrown away", eintragen: "Add waste", andererTag: "For another day", teller: "plate", eimerNurGewicht: "weight only", ganzePackung: "whole pack", personalWert: (e) => `Staff meal · benefit value ${e}`, inDerTonne: (e) => `= ${e} in the bin`, eimerHinweisKurz: "Plates and raw goods already reported today are subtracted.", fuerPersonal: "Eaten by staff", wegDamit: "Throw away", geradeEben: "just now", zurueckgenommen: "Undone.",
@@ -945,6 +950,8 @@ export default {
   },
   // Stage 6a – photo, upload, quick start
   foto: {
+    preisHochKurz: "Price very high?",
+    zeki: { titel: (n) => `I read ${n} dishes.`, pruefen: (k) => (k === 1 ? "Please take a quick look at one." : `Please take a quick look at ${k}.`), alle: "Looks good. All correct?", erkannt: (n) => `OK (${n})` },
     zweiPreise: (p) => `Two prices found (${p} €) – a deal? The higher one is entered.`, zweiPreiseKurz: "Two prices", 
     fehlerLaden: "The text recognition has to be loaded once with internet. Please go online briefly and try again.",
     fehlerZeit: "Reading takes too long. Please try a smaller or sharper photo.",
@@ -1042,6 +1049,24 @@ export default {
     rechnungen: "Photograph invoices", zumCockpit: "To the cockpit",
   },
   // Quick setup 2 (15 Oct 2026)
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "This is your goal: how much more you need to sell to break even.", kacheln: "Here you enter: sales, waste, fridges, cleaning.", jetzt: "This shows what's due now. Just tap it.", leiste: "Down here you switch between sections.", menue: "Your office is in the menu: dishes, costs, folders.", zeki: "And I'm always up here. Tap me." },
+    fertigFrage: "Boss, all clear?", ja: "Yes, got it", nochmal: "Show me again", frage: "I have a question", fragenTitel: "People often ask:", fragePlatzhalter: "Or type your question …", abschicken: "Send question", danke: "Thanks, boss. I'll remember your question.", schliessen: "Done",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Set a code. Then only you can get into the office.", hilfe: "In the shop, the app never asks. Only for the office does it ask briefly – for your code or Face ID. After that, the office stays open for 15 minutes.", code: "Set code", codeAn: "Code is set", bio: "Turn on Face ID", bioAn: "Face ID is on", bioNicht: "Face ID doesn't work on this device. The code is enough.", mitBio: "Open with Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "I'll get the email ready for you. You just tap Send.", buch: "I'll get the email ready for you. You just tap Send." },
+    platzhalter: { steuer: "Tax advisor's email (if you have it)", buch: "Bookkeeper's email (if you have it)" },
+    knopf: { steuer: "Send to tax advisor", buch: "Send to bookkeeper" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `To: ${an}\n\n` : ""}Hello [Name],\n\nPlease find attached the documents from ${laden} for ${zeitraum}: overview and tables (CSV).\nReceipts, contracts and letters from the tax office [are attached / will follow separately].\n\nFeel free to get in touch if you have any questions.\n\nBest regards\n[Your name]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `To: ${an}\n\n` : ""}Hello [Name],\n\nPlease find attached the documents from ${laden} for ${zeitraum}: overview and tables (CSV).\nZ reports, card statements and bank statements [are attached / will follow separately].\n\nBest regards\n[Your name]`,
+    },
+    fertig: "Email is ready – just hit send.",
+  },
   schnell2: { willkommen: "Welcome", willkommenText: "Your shop. Your numbers. Simply under control.",
     hilfe: "Quick help", sprache: "Language",
     laden: "Your shop", namePlatzhalter: "Shop name",
@@ -1055,7 +1080,7 @@ export default {
     geldHilfe: "Roughly is fine, empty is fine too. Photograph bills later in the office.",
     putzt: "Who cleans?", wer: { selbst: "We do", firma: "A company", beides: "Both" }, firma: "Cleaning company",
     fertig: "Done!", eingerichtet: "set up", los: "Let's go", pin: "Set office PIN",
-    zeki: { hallo: "Hi boss! I'm Zeki.", rolle: "I help you – out front and in the office.", "laden-schnell": "What's your shop called? And what do you sell?", "karte-foto": "Snap your menu. I'll read dishes and prices.", "kuehl-schnell": "Which fridges do you have? Just tap plus.", geld: "What does the shop cost per month? Roughly is fine.", fertig: "Great, boss! From now on I'm always here." },
+    zeki: { schloss: "Set a code. Then only you can get into the office.", hallo: "Hi boss! I'm Zeki.", rolle: "I help you – out front and in the office.", "laden-schnell": "What's your shop called? And what do you sell?", "karte-foto": "Snap your menu. I'll read dishes and prices.", "kuehl-schnell": "Which fridges do you have? Just tap plus.", geld: "What does the shop cost per month? Roughly is fine.", fertig: "Great, boss! From now on I'm always here." },
   },
   // Stocktake (Punkt 3)
   inventur: {
@@ -1138,7 +1163,8 @@ export default {
       muellOhneWert: (n) => n === 1 ? "1 waste entry without value" : `${n} waste entries without value` },
   },
   ordnerC: { selbstTitel: "You add yourself", fragenTitel: "Questions for you", fragenUnter: (n) => (n === 1 ? "1 open tip from the office" : `${n} open tips from the office`), titel: "Contents and enclosures", kopf: ["No.", "Document", "Provided by", "Status"], app: "App", du: "You", liegtBei: "enclosed", beilegen: "please enclose", pruefen: "check", fehlt: "missing", notiz: "Note – not a Z-Bon", hinweis: "Compiled by the owner, not an accounting result. Daily figures from the app are notes – not a Z-Bon.", karteTitel: "What you enclose yourself", kleinbetrag: "Small amount up to €250", nachgetragen: (d) => `added later on ${d}`, belegNr: "Receipt no.", teile: { arbeitszeiten: "Working hours and sick notes for payroll", bewirtung: "Hospitality receipts with occasion and guests", geraete: "Invoices for equipment over €800 net", darlehen: "Loans: repayment plan and balance", kassenzaehl: "Cash count record at year end", zbon: "Z-Bons (daily cash register reports) for all days, with no gaps", karten: "Card statements and delivery platform statements", bank: "Bank statements for all accounts", fapost: "Letters from the tax office (Finanzamt) and open questions", rechnungen: "Incoming invoices, original or photo, sorted by receipt no.", ausgang: "Outgoing invoices (e.g. catering), numbered consecutively", vertraege: "New contracts and purchases with invoice", lieferscheine: "Delivery notes (traceability)", ifsg: "Certificates under § 43 Infektionsschutzgesetz (Infection Protection Act)", schaedling: "Pest control and report from the specialist company", haccp: "HACCP plan based on the template from your local authority" } },
-  kartelaeden: { wohin: "Where does your price go?", nachAllem: "after all costs", teil: { ware: "Goods", personal: "Staff", miete: "Rent", neben: "Other costs", steuer: "Tax", gewinn: "Profit" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Boss, “${n}” is losing ${b}. Take a look?`, gelb: (n, b) => `Not much left on “${n}”: ${b}. Have a look.`, gruen: (n, b) => `“${n}” leaves you the most: ${b}. Nice.` }, wohin: "Where does your price go?", nachAllem: "after all costs", teil: { ware: "Goods", personal: "Staff", miete: "Rent", neben: "Other costs", steuer: "Tax", gewinn: "Profit" },
     titel: "Menu", anzahl: (n) => n === 1 ? "1 dish" : `${n} dishes`, alle: "All", zuBillig: (n) => `Too cheap · ${n}`, mehr: (n) => `Show ${n} more`,
     leer: "No dishes yet", fotografieren: "Photograph the menu", bleibt: "You keep", speichern: "Save", gespeichert: "Price saved", preis: "Price", schliessen: "Close",
     ampel: { gruen: "Target reached", gelb: "Costs covered, below target", rot: "Too cheap", grau: "Not calculable yet" },

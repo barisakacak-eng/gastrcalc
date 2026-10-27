@@ -372,7 +372,8 @@ export default {
       einkauf: (n) => `${n} ${lm(n, "składnik", "składniki", "składników")} bez ceny zakupu – zdjęcie faktury to uzupełni`, kuehlung: () => "Dodaj punkt chłodzenia", sicherung: () => "Ostatnia kopia starsza niż 7 dni" } },
   vergleich: { wareHoch: (q) => `${q} % – wysoko`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Zrób własne zdjęcie", fotoGespeichert: "Zdjęcie zapisane. Zostaje na tym telefonie.",  titel: "Porównanie dań", unter: "Które dania dają ci najwięcej?", tab: { db: "Zostaje na sztuce", marge: "Rohgewinn %" }, ware: "Koszt towaru", db: "Zostaje ci na sztuce", marge: "Rohgewinn (nach Ware)", leer: "Wpisz ceny sprzedaży i zakupu, wtedy zobaczysz tu, które dania dają najwięcej.", ohneZahlen: (n) => (n === 1 ? "1 danie jeszcze bez liczb" : `${n} ${lm(n, "danie", "dania", "dań")} jeszcze bez liczb`), einkaufFehlt: "Brak cen zakupu", hinweis: "Wartości są szacunkowe i mogą się różnić zależnie od składników i cen. Wszystkie kwoty bez VAT, poza ceną sprzedaży.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Biuro", zurueck: "Lokal",
+  buero: {
+    ruhig: { mehr: (n) => `jeszcze ${n}` }, titel: "Biuro", zurueck: "Lokal",
     abschnitt: { geld: "Pieniądze", ware: "Towar", kartePreise: "Karta i ceny", offen: "Do zrobienia", ordner: "Teczki do oddania", zahlen: "Liczby", karte: "Karta i zakupy", einrichten: "Ustaw lokal" },
     offen: { einrichtung: "Konfiguracja", kosten: (n) => `Stałe koszty: brak ${n}`, billig: (n) => `Za tanio: ${n} ${lm(n, "cena", "ceny", "cen")}`,
       ohneZahlen: (n) => `${n} ${lm(n, "danie", "dania", "dań")} bez liczb`, sicherung: (n) => `Kopia: ${n} ${lm(n, "dzień", "dni", "dni")} temu`, sicherungNie: "Jeszcze brak kopii",
@@ -499,6 +500,7 @@ export default {
     buero: (n) => `Odchylenia chłodzenia: ${n} – brak decyzji o towarze lub pomiaru kontrolnego`,
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Jeszcze jedno urządzenie do pomiaru. Zajmie minutę." : `Jeszcze ${n} ${lm(n, "urządzenie", "urządzenia", "urządzeń")} do pomiaru. Zajmie minutę.`), fertig: "Wszystko zmierzone, wszystko w normie.", warm: (k) => `Szefie, w „${k}” jest za ciepło. Sprawdź od razu.` },
     titel: "Kontrola chłodzenia",
     nav: "Chłodzenie",
     nochNicht: "Jeszcze nie skonfigurowane. Dwie minuty rano i karta kontroli pisze się sama.",
@@ -621,7 +623,8 @@ export default {
     zeile: "Sprzątanie i środki", stufe: { offen: "jeszcze otwarte", schaetzung: "≈ szacunek", beleg: "z rachunków", inventur: "✓ z inwentaryzacji" },
     zeileText: { offen: "Jeszcze brak liczby. Zrób zdjęcie rachunku ze środkami czystości, wtedy to będzie twoja liczba.", schaetzung: "Twój szacunek. Z rachunkami będzie dokładniej.", beleg: (n) => `Z ${n === 1 ? "1 rachunku" : n + " rachunków"} z ostatnich 60 dni.`, inventur: "Kupione minus to, co jeszcze jest. Dokładniej się nie da." },
     firmaTeil: (e) => `Firma ${e}`, mittelTeil: (e) => `Środki czystości ${e}`, leiter: "Jak pewna jest ta liczba?", leiterText: ["Jeszcze otwarte", "Z rachunków", "Z inwentaryzacji"], zeitHinweis: "Własnego czasu sprzątania tu nie ma: pensje zespołu są już w personelu, a twój czas nie schodzi z konta." },
-  putzplan: { wer: "Kto odhacza?", heuteOffen: (n) => `${n} dziś otwarte`, allesErledigt: "Na dziś wszystko zrobione", kontrolliert: "Sprawdzone (data, podpis):", titel: "Plan sprzątania", einrichtenUnter: "Zalecenia według HACCP, dla twojego lokalu", erklaerung: "Sprzątanie to obowiązek. Odhaczona lista to dowód, który chce zobaczyć kontrola żywności. Odstępy to zalecenia z ulotek urzędów, nie liczby z ustawy. Wszystko możesz zmienić.", quellenHinweis: "Podstawa: rozporządzenie UE w sprawie higieny 852/2004, ulotki urzędów kontroli żywności (m.in. Dortmund, Moguncja, Kolonia, Freising), VDI 2052 dla okapu.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Jeszcze jedno na dziś: ${erst}.` : `Na dziś jeszcze ${n} ${lm(n, "zadanie", "zadania", "zadań")}. Zacznij od „${erst}”.`), fertig: "Na dziś wszystko czyste. Brawo, szefie.", erledigt: (n) => `Zrobione dziś (${n})` }, werKurz: "Kto sprząta?", wer: "Kto odhacza?", heuteOffen: (n) => `${n} dziś otwarte`, allesErledigt: "Na dziś wszystko zrobione", kontrolliert: "Sprawdzone (data, podpis):", titel: "Plan sprzątania", einrichtenUnter: "Zalecenia według HACCP, dla twojego lokalu", erklaerung: "Sprzątanie to obowiązek. Odhaczona lista to dowód, który chce zobaczyć kontrola żywności. Odstępy to zalecenia z ulotek urzędów, nie liczby z ustawy. Wszystko możesz zmienić.", quellenHinweis: "Podstawa: rozporządzenie UE w sprawie higieny 852/2004, ulotki urzędów kontroli żywności (m.in. Dortmund, Moguncja, Kolonia, Freising), VDI 2052 dla okapu.",
     geraeteFrage: "Co masz w lokalu?", zusammen: (a, b, c, d, e) => `${a} codziennie · ${b} co tydzień · ${c} co miesiąc · ${d} rzadko · ${e} wskazówek`, uebernehmen: "Weź ten plan", speichern: "Zapisz zmiany", aufgabenAnpassen: "Dopasuj zadania", spaeter: "Później", anpassen: "Dopasuj plan",
     takt: { tag: "Codziennie", woche: "Co tydzień", monat: "Co miesiąc", quartal: "Co 3 miesiące", jahr: "Raz w roku", zweijahre: "Co 2 lata", nach: "Po każdym użyciu (wskazówka)" },
     gruppe: { tag: "Dziś", woche: "Ten tydzień", monat: "Ten miesiąc", spaeter: "Wkrótce", nach: "Po każdym użyciu" },
@@ -739,7 +742,9 @@ export default {
     belegeKurz: "Wczytaj rachunek, zaktualizuj ceny",
   },
 
-  muell: { nichtsGefunden: "Nic nie znaleziono. Napisz inaczej albo wybierz „Zważone wiadro”.",
+  muell: {
+    zeki: { start: "Co dziś poszło do kosza?", weiter: "Coś jeszcze do kosza?", personal: "Co zjadł twój zespół?", bruch: "Co się zepsuło lub stłukło?" },
+    grund: { roh: "Towar", personal: "Personel", bruch: "Uszkodzone" }, nichtsGefunden: "Nic nie znaleziono. Napisz inaczej albo wybierz „Zważone wiadro”.",
     zurUebersicht: "Przegląd śmieci",
     auswaehlen: "Wybierz produkt", aendern: "Dotknij, żeby zmienić", mengeEingeben: "Wpisz ilość", foto: "Zdjęcie (nieobowiązkowo)", fotoDabei: "Zdjęcie dodane", fotoFehler: "Nie udało się zapisać zdjęcia.", satz: "Zrób z błędów wiedzę. Wpisz, co dziś wylądowało w koszu.", orientierung: "Wartości szacunkowe są tylko orientacyjne.", ohnePreisKurz: "Jeszcze bez ceny zakupu – i tak się liczy.",
     wasWeg: "Co poszło do kosza?", wocheTonne: "W tym tygodniu w koszu", monatTonne: "Kosz miesiąca", leerWoche: "Jeszcze nic nie wpisano. Nic nie wyrzucone? Dobry dzień.", wocheZeile: (p, kg) => `≈ ${p} ${lm(p, "sprzedana porcja", "sprzedane porcje", "sprzedanych porcji")}, żeby to odrobić · ${kg} kg`, wenigerAls: (m, d) => `mniej niż w zeszłym miesiącu (${m}) do ${d}.`, mehrAls: (m, d) => `więcej niż w zeszłym miesiącu (${m}) do ${d}.`, rueckgaengig: "Cofnij", ammeisten: "Najwięcej wyrzucone", eintragen: "Wpisz śmieci", andererTag: "Za inny dzień", teller: "Talerz", eimerNurGewicht: "tylko waga", ganzePackung: "całe opakowanie", personalWert: (e) => `Posiłek pracowniczy · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} w koszu`, eimerHinweisKurz: "Talerze i surowiec, które już dziś zgłoszono, zostaną odjęte.", fuerPersonal: "Zjedzone przez personel", wegDamit: "Do kosza", geradeEben: "przed chwilą", zurueckgenommen: "Cofnięte.",
@@ -951,6 +956,8 @@ export default {
   },
   // Etap 6a – zdjęcie, wgrywanie, szybki start
   foto: {
+    preisHochKurz: "Cena bardzo wysoka?",
+    zeki: { titel: (n) => `Odczytałem ${n} ${lm(n, "danie", "dania", "dań")}.`, pruefen: (k) => (k === 1 ? "Rzuć okiem na jedno, proszę." : `Rzuć okiem na ${k} ${lm(k, "pozycję", "pozycje", "pozycji")}, proszę.`), alle: "Wygląda dobrze. Wszystko się zgadza?", erkannt: (n) => `OK (${n})` },
     zweiPreise: (p) => `Znaleziono dwie ceny (${p} €) – promocja? Wpisana jest wyższa.`, zweiPreiseKurz: "Dwie ceny",
     fehlerLaden: "Rozpoznawanie tekstu trzeba raz pobrać z internetem. Połącz się na chwilę i spróbuj jeszcze raz.",
     fehlerZeit: "Czytanie trwa za długo. Spróbuj z mniejszym albo ostrzejszym zdjęciem.",
@@ -1048,6 +1055,24 @@ export default {
     rechnungen: "Zrób zdjęcia faktur", zumCockpit: "Do kokpitu",
   },
   // Inwentaryzacja (punkt 3)
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "To twój cel: tyle obrotu brakuje do zera.", kacheln: "Tu wpisujesz: obrót, odpady, chłodzenie, sprzątanie.", jetzt: "Tu widzisz, co jest teraz do zrobienia. Wystarczy dotknąć.", leiste: "Na dole przełączasz się między sekcjami.", menue: "W menu jest twoje biuro: dania, koszty, foldery.", zeki: "A ja jestem zawsze tu na górze. Dotknij mnie." },
+    fertigFrage: "Szefie, wszystko jasne?", ja: "Tak, wszystko jasne", nochmal: "Pokaż jeszcze raz", frage: "Mam pytanie", fragenTitel: "O to często pytają:", fragePlatzhalter: "Albo napisz swoje pytanie …", abschicken: "Wyślij pytanie", danke: "Dzięki, szefie. Zapamiętam to pytanie.", schliessen: "Gotowe",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Ustaw kod. Wtedy tylko ty wejdziesz do biura.", hilfe: "W lokalu aplikacja nigdy nie pyta. Tylko przy wejściu do biura krótko poprosi o kod albo Face ID. Potem biuro jest otwarte przez 15 minut.", code: "Ustaw kod", codeAn: "Kod ustawiony", bio: "Włącz Face ID", bioAn: "Face ID włączone", bioNicht: "Face ID nie działa na tym urządzeniu. Kod wystarczy.", mitBio: "Otwórz przez Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Przygotuję ci e-mail. Ty tylko klikasz Wyślij.", buch: "Przygotuję ci e-mail. Ty tylko klikasz Wyślij." },
+    platzhalter: { steuer: "E-mail doradcy podatkowego (jeśli masz)", buch: "E-mail księgowego (jeśli masz)" },
+    knopf: { steuer: "Wyślij doradcy podatkowemu", buch: "Wyślij księgowemu" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Do: ${an}\n\n` : ""}Dzień dobry [Imię],\n\nw załączniku przesyłam dokumenty lokalu ${laden} za ${zeitraum}: podsumowanie i tabele (CSV).\nRachunki, umowy i pisma z urzędu skarbowego [załączam / wyślę osobno].\n\nW razie pytań proszę o kontakt.\n\nPozdrawiam\n[Twoje imię]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Do: ${an}\n\n` : ""}Dzień dobry [Imię],\n\nw załączniku przesyłam dokumenty lokalu ${laden} za ${zeitraum}: podsumowanie i tabele (CSV).\nRaporty dobowe (Z), zestawienia płatności kartą i wyciągi bankowe [załączam / wyślę osobno].\n\nPozdrawiam\n[Twoje imię]`,
+    },
+    fertig: "E-mail gotowy – tylko wyślij.",
+  },
   schnell2: { willkommen: "Witaj", willkommenText: "Twój lokal. Twoje liczby. Wszystko pod kontrolą.",
     hilfe: "W skrócie", sprache: "Język",
     laden: "Twój lokal", namePlatzhalter: "Nazwa lokalu",
@@ -1061,7 +1086,7 @@ export default {
     geldHilfe: "Wystarczy mniej więcej, można też zostawić puste. Rachunki sfotografujesz potem w biurze.",
     putzt: "Kto sprząta?", wer: { selbst: "My", firma: "Firma", beides: "Oba" }, firma: "Firma",
     fertig: "Gotowe!", eingerichtet: "ustawione", los: "Zaczynamy", pin: "Ustaw PIN biura",
-    zeki: { hallo: "Cześć, szefie! Jestem Zeki.", rolle: "Pomagam ci – przy ladzie i w biurze.", "laden-schnell": "Jak nazywa się twój lokal? I co sprzedajesz?", "karte-foto": "Zrób zdjęcie karty. Odczytam dania i ceny.", "kuehl-schnell": "Jakie masz lodówki? Po prostu naciśnij plus.", geld: "Ile cię kosztuje lokal miesięcznie? Wystarczy w przybliżeniu.", fertig: "Super, szefie! Od teraz zawsze tu jestem." },
+    zeki: { schloss: "Ustaw kod. Wtedy tylko ty wejdziesz do biura.", hallo: "Cześć, szefie! Jestem Zeki.", rolle: "Pomagam ci – przy ladzie i w biurze.", "laden-schnell": "Jak nazywa się twój lokal? I co sprzedajesz?", "karte-foto": "Zrób zdjęcie karty. Odczytam dania i ceny.", "kuehl-schnell": "Jakie masz lodówki? Po prostu naciśnij plus.", geld: "Ile cię kosztuje lokal miesięcznie? Wystarczy w przybliżeniu.", fertig: "Super, szefie! Od teraz zawsze tu jestem." },
   },
   inventur: {
     menue: "Inwentaryzacja", titel: "Inwentaryzacja", titelMonat: (m) => `Inwentaryzacja – ${m}`,
@@ -1143,7 +1168,8 @@ export default {
       muellOhneWert: (n) => `${n} ${lm(n, "wpis", "wpisy", "wpisów")} odpadów bez wartości` },
   },
   ordnerC: { selbstTitel: "Dodajesz sam", fragenTitel: "Pytania do ciebie", fragenUnter: (n) => (n === 1 ? "1 otwarta wskazówka z biura" : `${n} otwarte wskazówki z biura`), titel: "Spis treści i załączniki", kopf: ["Nr", "Dokument", "Dostarcza", "Stan"], app: "Aplikacja", du: "Ty", liegtBei: "w załączeniu", beilegen: "proszę dołączyć", pruefen: "sprawdź", fehlt: "brakuje", notiz: "Notatka – nie Z-Bon", hinweis: "Zestawienie właściciela, nie wynik księgowy. Dzienne wartości z aplikacji to notatki – nie Z-Bon.", karteTitel: "To dołączasz sam", kleinbetrag: "Mała kwota do 250 €", nachgetragen: (d) => `dodano później ${d}`, belegNr: "Nr dowodu", teile: { arbeitszeiten: "Godziny pracy i zwolnienia lekarskie do płac", bewirtung: "Rachunki z poczęstunku z okazją i osobami", geraete: "Faktury za urządzenia powyżej 800 € netto", darlehen: "Kredyty: plan spłat i saldo", kassenzaehl: "Protokół liczenia kasy na koniec roku", zbon: "Z-Bony (dzienny raport z kasy) ze wszystkich dni, bez luk", karten: "Zestawienia kart i platform dostaw", bank: "Wyciągi bankowe ze wszystkich kont", fapost: "Pisma z urzędu skarbowego (Finanzamt) i otwarte pytania", rechnungen: "Faktury zakupu, oryginał lub zdjęcie, posortowane wg nr dowodu", ausgang: "Faktury sprzedaży (np. catering), numerowane kolejno", vertraege: "Nowe umowy i zakupy z fakturą", lieferscheine: "Dokumenty dostawy (identyfikowalność)", ifsg: "Zaświadczenia wg § 43 Infektionsschutzgesetz (ustawa o ochronie przed zakażeniami)", schaedling: "Zwalczanie szkodników i raport firmy specjalistycznej", haccp: "Plan HACCP wg wzoru twojego urzędu" } },
-  kartelaeden: { wohin: "Dokąd idzie twoja cena?", nachAllem: "po wszystkich kosztach", teil: { ware: "Towar", personal: "Personel", miete: "Czynsz", neben: "Inne koszty", steuer: "Podatek", gewinn: "Zysk" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Szefie, „${n}” daje ${b} straty. Zerkniemy?`, gelb: (n, b) => `Na „${n}” zostaje mało: ${b}. Zerknij.`, gruen: (n, b) => `Najwięcej zostaje na „${n}”: ${b}. Tak trzymaj.` }, wohin: "Dokąd idzie twoja cena?", nachAllem: "po wszystkich kosztach", teil: { ware: "Towar", personal: "Personel", miete: "Czynsz", neben: "Inne koszty", steuer: "Podatek", gewinn: "Zysk" },
     titel: "Karta", anzahl: (n) => `${n} ${lm(n, "danie", "dania", "dań")}`, alle: "Wszystkie", zuBillig: (n) => `Za tanio · ${n}`, mehr: (n) => `Pokaż ${n} więcej`,
     leer: "Jeszcze brak dań", fotografieren: "Zrób zdjęcie karty", bleibt: "Zostaje ci", speichern: "Zapisz", gespeichert: "Cena zapisana", preis: "Cena", schliessen: "Zamknij",
     ampel: { gruen: "Cel osiągnięty", gelb: "Koszty pokryte, poniżej celu", rot: "Za tanio", grau: "Jeszcze nie da się policzyć" },

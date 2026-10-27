@@ -372,7 +372,8 @@ export default {
       einkauf: (n) => `${n} përbërës pa çmim blerjeje – një foto e faturës i plotëson`, kuehlung: () => "Krijo pikat e matjes", sicherung: () => "Kopja e fundit është më e vjetër se 7 ditë" } },
   vergleich: { wareHoch: (q) => `${q} % – e lartë`, // Paket 3 (16.10.2026), M4
     eigenesFoto: "Bëj foton tënde", fotoGespeichert: "Fotoja u ruajt. Mbetet në këtë telefon.",  titel: "Krahasimi i pjatave", unter: "Cilat pjata të sjellin më shumë?", tab: { db: "Të mbetet për copë", marge: "Rohgewinn %" }, ware: "Kostoja e mallit", db: "Të mbetet për copë", marge: "Rohgewinn (nach Ware)", leer: "Shkruaj çmimet e shitjes dhe të blerjes, pastaj sheh këtu cilat pjata sjellin më shumë.", ohneZahlen: (n) => (n === 1 ? "1 pjatë ende pa shifra" : `${n} pjata ende pa shifra`), einkaufFehlt: "Mungojnë çmimet e blerjes", hinweis: "Vlerat janë të përafërta dhe mund të ndryshojnë sipas përbërësve dhe çmimeve. Të gjitha shumat pa TVSH, përveç çmimit të shitjes.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
-  buero: { titel: "Zyra", zurueck: "Lokali",
+  buero: {
+    ruhig: { mehr: (n) => `edhe ${n}` }, titel: "Zyra", zurueck: "Lokali",
     abschnitt: { geld: "Paratë", ware: "Malli", kartePreise: "Menuja dhe çmimet", offen: "Për t'u bërë", ordner: "Dosje për dorëzim", zahlen: "Shifrat", karte: "Menyja dhe blerjet", einrichten: "Rregullo lokalin" },
     offen: { einrichtung: "Rregullimi", kosten: (n) => (n === 1 ? "Shpenzime fikse: mungon 1" : `Shpenzime fikse: mungojnë ${n}`), billig: (n) => `${sn(n, "çmim", "çmime")} shumë lirë`,
       ohneZahlen: (n) => `${sn(n, "pjatë", "pjata")} pa shifra`, sicherung: (n) => `Kopja: para ${sn(n, "dite", "ditësh")}`, sicherungNie: "Ende pa kopje",
@@ -499,6 +500,7 @@ export default {
     buero: (n) => `${n} devijime ftohjeje: mungon vendimi për mallin ose kontrolli i dytë`,
   },
   kuehl: {
+    zeki: { offen: (n) => (n === 1 ? "Edhe një pajisje për ta matur. Zgjat një minutë." : `Edhe ${n} pajisje për t'i matur. Zgjat një minutë.`), fertig: "Gjithçka u mat, gjithçka në zonën e gjelbër.", warm: (k) => `Shef, te “${k}” është shumë ngrohtë. Kontrollo menjëherë, të lutem.` },
     titel: "Kontrolli i frigoriferëve",
     nav: "Frigoriferët",
     nochNicht: "Ende i parregulluar. Dy minuta në mëngjes, dhe fleta e kontrollit shkruhet vetë.",
@@ -621,7 +623,8 @@ export default {
     zeile: "Pastrimi dhe materialet", stufe: { offen: "ende bosh", schaetzung: "≈ përafërsisht", beleg: "nga faturat", inventur: "✓ nga inventari" },
     zeileText: { offen: "Ende pa shifër. Fotografo një faturë me detergjentë dhe ajo bëhet shifra jote.", schaetzung: "Vlerësimi yt. Me fatura bëhet më e saktë.", beleg: (n) => `Nga ${n === 1 ? "1 faturë" : n + " fatura"} e 60 ditëve të fundit.`, inventur: "E blerë minus ajo që ka mbetur. Më saktë s’ka si." },
     firmaTeil: (e) => `Firma ${e}`, mittelTeil: (e) => `Detergjentët ${e}`, leiter: "Sa e sigurt është shifra?", leiterText: ["Ende bosh", "Nga faturat", "Nga inventari"], zeitHinweis: "Koha jote e pastrimit nuk është këtu: rroga e ekipit është tashmë te personeli, koha jote nuk kushton para nga llogaria." },
-  putzplan: { wer: "Kush i shënon?", heuteOffen: (n) => `${n} sot të hapura`, allesErledigt: "Për sot gjithçka u krye", kontrolliert: "Kontrolluar (data, nënshkrimi):", titel: "Plani i pastrimit", einrichtenUnter: "Rekomandim sipas HACCP, për lokalin tënd", erklaerung: "Pastrimi është detyrim. Një listë e shënuar është prova që do të shohë kontrolli i ushqimit (Lebensmittelkontrolle). Intervalet janë rekomandime nga fletëpalosjet e zyrave, jo shifra nga ligji. Mund t’i ndryshosh të gjitha.", quellenHinweis: "Baza: Rregullorja e BE-së për higjienën 852/2004, fletëpalosjet e kontrollit të ushqimit (ndër to Dortmund, Mainz, Köln, Freising), VDI 2052 për aspiratorin.",
+  putzplan: {
+    zeki: { offen: (n, erst) => (n === 1 ? `Edhe një për sot: ${erst}.` : `Sot edhe ${n} punë. Fillo me “${erst}”.`), fertig: "Gjithçka e pastër për sot. Të lumtë, shef.", erledigt: (n) => `Kryer sot (${n})` }, werKurz: "Kush pastron?", wer: "Kush i shënon?", heuteOffen: (n) => `${n} sot të hapura`, allesErledigt: "Për sot gjithçka u krye", kontrolliert: "Kontrolluar (data, nënshkrimi):", titel: "Plani i pastrimit", einrichtenUnter: "Rekomandim sipas HACCP, për lokalin tënd", erklaerung: "Pastrimi është detyrim. Një listë e shënuar është prova që do të shohë kontrolli i ushqimit (Lebensmittelkontrolle). Intervalet janë rekomandime nga fletëpalosjet e zyrave, jo shifra nga ligji. Mund t’i ndryshosh të gjitha.", quellenHinweis: "Baza: Rregullorja e BE-së për higjienën 852/2004, fletëpalosjet e kontrollit të ushqimit (ndër to Dortmund, Mainz, Köln, Freising), VDI 2052 për aspiratorin.",
     geraeteFrage: "Çfarë ke në lokal?", zusammen: (a, b, c, d, e) => `${a} çdo ditë · ${b} çdo javë · ${c} çdo muaj · ${d} rrallë · ${e} ${sh(e, "këshillë", "këshilla")}`, uebernehmen: "Merre planin", speichern: "Ruaj ndryshimet", aufgabenAnpassen: "Përshtat detyrat", spaeter: "Më vonë", anpassen: "Përshtat planin",
     takt: { tag: "Çdo ditë", woche: "Çdo javë", monat: "Çdo muaj", quartal: "Çdo 3 muaj", jahr: "Çdo vit", zweijahre: "Çdo 2 vjet", nach: "Pas çdo përdorimi (këshillë)" },
     gruppe: { tag: "Sot", woche: "Këtë javë", monat: "Këtë muaj", spaeter: "Së shpejti", nach: "Pas çdo përdorimi" },
@@ -739,7 +742,9 @@ export default {
     belegeKurz: "Lexo faturë, përditëso çmimet",
   },
 
-  muell: { nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",
+  muell: {
+    zeki: { start: "Çfarë u hodh sot?", weiter: "U hodh edhe diçka tjetër?", personal: "Çfarë hëngri ekipi yt?", bruch: "Çfarë u thye ose u prish?" },
+    grund: { roh: "Mall", personal: "Stafi", bruch: "Thyerje" }, nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",
     zurUebersicht: "Pasqyra e mbeturinave",
     auswaehlen: "Zgjidh ushqimin", aendern: "Prek për ta ndryshuar", mengeEingeben: "Shkruaj sasinë", foto: "Foto (sipas dëshirës)", fotoDabei: "Fotoja është shtuar", fotoFehler: "Fotoja nuk u ruajt dot.", satz: "Bëji gabimet mësim. Shëno çfarë përfundoi sot në kosh.", orientierung: "Vlerat e përafërta shërbejnë për orientim.", ohnePreisKurz: "Ende pa çmim blerjeje – llogaritet gjithsesi.",
     wasWeg: "Çfarë u hodh?", wocheTonne: "Këtë javë në kosh", monatTonne: "Koshi i muajit", leerWoche: "Ende asgjë e shënuar. Asgjë e hedhur? Ditë e mirë.", wocheZeile: (p, kg) => `≈ ${sn(p, "porcion i shitur", "porcione të shitura")} për ta rikthyer · ${kg} kg`, wenigerAls: (m, d) => `më pak se në ${m} deri më ${d}.`, mehrAls: (m, d) => `më shumë se në ${m} deri më ${d}.`, rueckgaengig: "Zhbëje", ammeisten: "Më së shumti i hedhur", eintragen: "Shëno mbeturina", andererTag: "Për një ditë tjetër", teller: "Pjata", eimerNurGewicht: "vetëm pesha", ganzePackung: "paketë e plotë", personalWert: (e) => `Ushqimi i stafit · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} në kosh`, eimerHinweisKurz: "Pjatat dhe lënda e parë që janë shënuar sot zbriten.", fuerPersonal: "E hëngri stafi", wegDamit: "Në kosh", geradeEben: "tani sapo", zurueckgenommen: "U anulua.",
@@ -951,6 +956,8 @@ export default {
   },
   // Etapa 6a – foto, ngarkim, nisje e shpejtë (Etappe 6a – Foto, Upload, Schnellstart)
   foto: {
+    preisHochKurz: "Çmim shumë i lartë?",
+    zeki: { titel: (n) => `Lexova ${sn(n, "gatim", "gatime")}.`, pruefen: (k) => (k === 1 ? "Hidhi një sy të shpejtë njërit, të lutem." : `Hidhu një sy të shpejtë ${k} prej tyre, të lutem.`), alle: "Duket mirë. A është gjithçka në rregull?", erkannt: (n) => `Në rregull (${n})` },
     zweiPreise: (p) => `U gjetën dy çmime (${p} €) – ofertë? Është shënuar më i larti.`, zweiPreiseKurz: "Dy çmime",
     fehlerLaden: "Njohja e tekstit duhet ngarkuar një herë me internet. Lidhu shkurt me internetin dhe provo përsëri.",
     fehlerZeit: "Leximi po zgjat shumë. Provo një foto më të vogël ose më të qartë.",
@@ -1048,6 +1055,24 @@ export default {
     rechnungen: "Fotografo faturat", zumCockpit: "Te pasqyra",
   },
   // Inventari (Inventur, Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)
+  // Rundgang mit Zeki (Entwurf 26.10.2026)
+  rundgang: {
+    schritte: { ziel: "Ky është qëllimi yt: kaq qarkullim mungon deri në zero.", kacheln: "Këtu shënon: qarkullimin, mbeturinat, ftohjen, pastrimin.", jetzt: "Këtu shkruhet çfarë duhet bërë tani. Thjesht prek.", leiste: "Poshtë kalon nga një seksion në tjetrin.", menue: "Te menuja është zyra jote: gatimet, kostot, dosjet.", zeki: "Dhe unë jam gjithmonë këtu lart. Më prek." },
+    fertigFrage: "Shef, u kuptua gjithçka?", ja: "Po, gjithçka e qartë", nochmal: "Ma trego përsëri", frage: "Kam një pyetje", fragenTitel: "Këtë e pyesin shumë:", fragePlatzhalter: "Ose shkruaj pyetjen tënde …", abschicken: "Dërgo pyetjen", danke: "Faleminderit, shef. Po e mbaj mend pyetjen.", schliessen: "Gati",
+  },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Vendos një kod. Atëherë vetëm ti hyn në zyrë.", hilfe: "Në lokal aplikacioni nuk pyet kurrë. Vetëm për zyrën kërkon shkurt kodin ose Face ID. Pastaj zyra mbetet e hapur 15 minuta.", code: "Vendos kodin", codeAn: "Kodi është vendosur", bio: "Aktivizo Face ID", bioAn: "Face ID është aktiv", bioNicht: "Face ID nuk punon në këtë pajisje. Kodi mjafton.", mitBio: "Hape me Face ID" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Ta përgatis unë e-mailin. Ti vetëm shtyp Dërgo.", buch: "Ta përgatis unë e-mailin. Ti vetëm shtyp Dërgo." },
+    platzhalter: { steuer: "E-maili i këshilltarit tatimor (nëse e ke)", buch: "E-maili i kontabilistit (nëse e ke)" },
+    knopf: { steuer: "Dërgoja këshilltarit tatimor", buch: "Dërgoja kontabilistit" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `Për: ${an}\n\n` : ""}Përshëndetje [Emri],\n\nbashkëngjitur gjeni dokumentet e ${laden} për ${zeitraum}: përmbledhje dhe tabela (CSV).\nFaturat, kontratat dhe shkresat nga zyra e tatimeve [i bashkëngjis / i dërgoj veçmas].\n\nPër çdo pyetje, më kontaktoni.\n\nMe respekt\n[Emri yt]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `Për: ${an}\n\n` : ""}Përshëndetje [Emri],\n\nbashkëngjitur gjeni dokumentet e ${laden} për ${zeitraum}: përmbledhje dhe tabela (CSV).\nRaportet Z, pasqyrat e pagesave me kartë dhe pasqyrat bankare [i bashkëngjis / i dërgoj veçmas].\n\nMe respekt\n[Emri yt]`,
+    },
+    fertig: "E-maili është gati – vetëm dërgoje.",
+  },
   schnell2: { willkommen: "Mirë se vjen", willkommenText: "Lokali yt. Shifrat e tua. Gjithçka nën kontroll.",
     hilfe: "Shkurt", sprache: "Gjuha",
     laden: "Lokali yt", namePlatzhalter: "Emri i lokalit",
@@ -1061,7 +1086,7 @@ export default {
     geldHilfe: "Përafërsisht mjafton, mund ta lësh edhe bosh. Faturat i fotografon më vonë në zyrë.",
     putzt: "Kush pastron?", wer: { selbst: "Ne", firma: "Firma", beides: "Të dyja" }, firma: "Firma",
     fertig: "Gati!", eingerichtet: "rregulluar", los: "Fillojmë", pin: "Vendos PIN-in e zyrës",
-    zeki: { hallo: "Tung, shef! Unë jam Zeki.", rolle: "Të ndihmoj – përpara në lokal, prapa në zyrë.", "laden-schnell": "Si quhet lokali yt? Dhe çfarë shet?", "karte-foto": "Fotografo menunë. Unë i lexoj gatimet dhe çmimet.", "kuehl-schnell": "Çfarë frigoriferësh ke? Thjesht shtyp plus.", geld: "Sa të kushton lokali në muaj? Mjafton përafërsisht.", fertig: "Shumë mirë, shef! Tani e tutje jam gjithmonë këtu." },
+    zeki: { schloss: "Vendos një kod. Atëherë vetëm ti hyn në zyrë.", hallo: "Tung, shef! Unë jam Zeki.", rolle: "Të ndihmoj – përpara në lokal, prapa në zyrë.", "laden-schnell": "Si quhet lokali yt? Dhe çfarë shet?", "karte-foto": "Fotografo menunë. Unë i lexoj gatimet dhe çmimet.", "kuehl-schnell": "Çfarë frigoriferësh ke? Thjesht shtyp plus.", geld: "Sa të kushton lokali në muaj? Mjafton përafërsisht.", fertig: "Shumë mirë, shef! Tani e tutje jam gjithmonë këtu." },
   },
   inventur: {
     menue: "Inventari", titel: "Inventari", titelMonat: (m) => `Inventari ${m}`,
@@ -1143,7 +1168,8 @@ export default {
       muellOhneWert: (n) => `${sn(n, "shënim", "shënime")} mbeturinash pa vlerë` },
   },
   ordnerC: { selbstTitel: "I shton vetë", fragenTitel: "Pyetje për ty", fragenUnter: (n) => (n === 1 ? "1 këshillë e hapur nga zyra" : `${n} këshilla të hapura nga zyra`), titel: "Përmbajtja dhe bashkëngjitjet", kopf: ["Nr.", "Dokumenti", "E jep", "Gjendja"], app: "Aplikacioni", du: "Ti", liegtBei: "bashkëngjitur", beilegen: "të lutem bashkëngjite", pruefen: "kontrollo", fehlt: "mungon", notiz: "Shënim – nuk është Z-Bon", hinweis: "Përmbledhje e pronarit, nuk është rezultat kontabiliteti. Vlerat ditore nga aplikacioni janë shënime – nuk janë Z-Bon.", karteTitel: "Këtë e bashkëngjit vetë", kleinbetrag: "Shumë e vogël deri në 250 €", nachgetragen: (d) => `shtuar më vonë më ${d}`, belegNr: "Nr. i faturës", teile: { arbeitszeiten: "Orët e punës dhe raportet mjekësore për pagat", bewirtung: "Fatura pritjeje me rastin dhe personat", geraete: "Fatura për pajisje mbi 800 € neto", darlehen: "Kreditë: plani i shlyerjes dhe mbetja", kassenzaehl: "Procesverbali i numërimit të arkës në fund të vitit", zbon: "Z-Bon (raporti ditor i arkës) për të gjitha ditët, pa boshllëqe", karten: "Pasqyrat e kartave dhe të platformave të dërgesave", bank: "Pasqyrat bankare të të gjitha llogarive", fapost: "Posta nga zyra e tatimeve (Finanzamt) dhe pyetje të hapura", rechnungen: "Faturat e hyrjes, origjinal ose foto, të renditura sipas nr. të faturës", ausgang: "Faturat e daljes (p.sh. catering), të numëruara në vijim", vertraege: "Kontrata dhe blerje të reja me faturë", lieferscheine: "Fletëdërgesat (gjurmueshmëria)", ifsg: "Vërtetime sipas § 43 Infektionsschutzgesetz (Ligji për mbrojtjen nga infeksionet)", schaedling: "Kontrolli i dëmtuesve dhe raporti i firmës së specializuar", haccp: "Plani HACCP sipas modelit të zyrës tënde" } },
-  kartelaeden: { wohin: "Ku shkon çmimi yt?", nachAllem: "pas të gjitha kostove", teil: { ware: "Malli", personal: "Stafi", miete: "Qiraja", neben: "Kosto të tjera", steuer: "Taksa", gewinn: "Fitimi" },
+  kartelaeden: {
+    zeki: { rot: (n, b) => `Shef, “${n}” bën ${b} humbje. E shohim?`, gelb: (n, b) => `Te “${n}” mbetet pak: ${b}. Hidhi një sy.`, gruen: (n, b) => `Më së shumti mbetet te “${n}”: ${b}. Shumë mirë.` }, wohin: "Ku shkon çmimi yt?", nachAllem: "pas të gjitha kostove", teil: { ware: "Malli", personal: "Stafi", miete: "Qiraja", neben: "Kosto të tjera", steuer: "Taksa", gewinn: "Fitimi" },
     titel: "Menyja", anzahl: (n) => sn(n, "pjatë", "pjata"), alle: "Të gjitha", zuBillig: (n) => `Shumë lirë · ${n}`, mehr: (n) => `Trego edhe ${n}`,
     leer: "Ende pa pjata", fotografieren: "Fotografo menynë", bleibt: "Të mbetet", speichern: "Ruaj", gespeichert: "Çmimi u ruajt", preis: "Çmimi", schliessen: "Mbyll",
     ampel: { gruen: "Objektivi u arrit", gelb: "Kostot të mbuluara, nën objektiv", rot: "Shumë lirë", grau: "Ende nuk llogaritet" },
