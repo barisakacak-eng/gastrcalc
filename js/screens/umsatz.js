@@ -89,9 +89,9 @@ function gesternKarte(stand, z, D) {
   if (z.keinUmsatz || !z.tage.find((x) => x.datum === D)?.umsatz) return "";
   const sw = schwundAuswertung(stand, { von: D, bis: D });
   const vor = z.standGestern;
-  return `<div class="karte ${z.bewegungHeute >= 0 ? "gruenrand" : "rotrand"}"><h2>${esc(t("zaehler.gestern"))}</h2>
+  return `<div class="karte ${vor >= 0 ? "gruenrand" : "rotrand"}"><h2>${esc(t("zaehler.gestern"))}</h2>
     <div class="mid ${vor >= 0 ? "gruen" : "rot"}">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</div>
-    <small class="marke">${esc(z.bewegungHeute >= 0 ? t("zaehler.naeher", fmtEuro(Math.abs(z.bewegungHeute))) : t("zaehler.weiterWeg", fmtEuro(Math.abs(z.bewegungHeute))))}${sw.muellwert > 0 && z.stufe !== 3 ? " " + esc(t("zaehler.tonneGefressen", fmtEuro(sw.muellwert, { dezimal: 2 }))) : ""}</small></div>`;
+    <small class="marke">${(() => { const b = (() => { try { return heuteZiel(stand, z, D).bewegung; } catch { return null; } })(); return !b || Math.abs(b.betrag) < 1 ? "" : esc(b.betrag <= 0 ? t("zaehler.naeher", fmtEuro(-b.betrag)) : t("zaehler.weiterWeg", fmtEuro(b.betrag))); })()}${sw.muellwert > 0 && z.stufe !== 3 ? " " + esc(t("zaehler.tonneGefressen", fmtEuro(sw.muellwert, { dezimal: 2 }))) : ""}</small></div>`;
 }
 
 function rechnungKarte(z) {

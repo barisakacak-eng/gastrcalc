@@ -55,7 +55,7 @@ function bilanzView(stand, H) {
       <div class="karte dunkel zaehler ab-hero ${hz.stufe !== "bisNull" ? "plus" : "minus"}">\n        <span class="gc-ab-mascot" data-state="${mascotState}">${mascotMarkup(mascotState, mascotState === "erfolg" ? "celebrate" : mascotState === "nachdenklich" ? "turn" : mascotState === "neutral" ? "idle" : "none")}</span>
         <small class="lbl">${esc(zielLabel)}</small>
         <span class="bewegung"><span class="riesig">${zielWert}</span></span>
-        <small class="ab-verlauf ${besser >= 0 ? "positiv" : "negativ"}">${esc(besser >= 0 ? t("abschluss.naeher", fmtEuro(besser), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(-besser)))}</small>
+        ${hz.bewegung && Math.abs(hz.bewegung.betrag) >= 1 ? `<small class="ab-verlauf ${hz.bewegung.betrag <= 0 ? "positiv" : "negativ"}">${esc(hz.bewegung.betrag <= 0 ? t("abschluss.naeher", fmtEuro(-hz.bewegung.betrag), restTage !== null ? t("abschluss.nochTage", restTage) : null) : t("abschluss.weiterWeg", fmtEuro(hz.bewegung.betrag)))}</small>` : ""}${""/* Persona-Test Vater 27.10.: „250 € näher“ neben steigendem Rest – jetzt dieselbe Bewegung wie auf Heute */}
         <small class="fein">${esc(t("cockpit.kalkulatorisch"))}</small>
       </div>
       <div class="karte ab-zahlen">

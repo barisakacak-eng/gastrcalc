@@ -57,7 +57,7 @@ export function karteLadenView(stand) {
   return `
     <div class="inhalt kartelaeden">
       <div class="kl-kopf"><h1>${esc(t("kartelaeden.titel"))}</h1><small>${esc(t("kartelaeden.anzahl", liste.length))}</small></div>
-      ${liste.length ? `<p class="kl-legende">${esc(t("kartelaeden.legende"))}</p>` : ""}
+      ${!liste.length ? "" : liste.every((x) => x.z.sk === null) ? `<p class="kl-legende">${esc(t("kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : `<p class="kl-legende">${esc(t("kartelaeden.legende"))}</p>`}${""/* Persona-Test Vater 27.10.: ohne Preise nur „–“ ohne Grund */}
       ${zekiZeile(liste, unsicher)}
       ${!liste.length ? `<div class="karte kl-leer"><b>${esc(t("kartelaeden.leer"))}</b><button type="button" class="knopf glut" data-a="nav" data-wert="kartefoto">${sym("camera")} ${esc(t("kartelaeden.fotografieren"))}</button></div>` : `
       <div class="kl-segment" role="tablist">
@@ -80,7 +80,7 @@ function zekiZeile(liste, unsicher) {
   const gut = [...mit].sort((p, q) => q.a.gewinn - p.a.gewinn)[0];
   const y = rot || gelb || gut; const art = rot ? "rot" : gelb ? "gelb" : "gruen";
   const betrag = `${unsicher || y.x.z.warenGeschaetzt || y.x.z.warenRichtpreis ? "≈\u00a0" : ""}${fmtEuro(Math.abs(y.a.gewinn), { dezimal: 2 })}`;
-  const satz = t("kartelaeden.zeki." + art, y.x.g.name, betrag);
+  const satz = t("kartelaeden.zeki." + (art === "rot" && y.a.gewinn >= 0 ? "gelb" : art), y.x.g.name, betrag); // Persona-Test Vater 27.10.: „Minus“ nur bei echtem Verlust
   return art === "gruen" ? `<p class="kl-zeki a-gruen" role="status">${esc(satz)}</p>`
     : `<button type="button" class="kl-zeki a-${art}" data-a="kl-auf" data-id="${esc(y.x.g.id)}">${esc(satz)}</button>`;
 }

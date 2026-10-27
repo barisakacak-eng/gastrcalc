@@ -217,8 +217,8 @@ function stationView(stand, r, k) {
   const kannSpeichern = typeof wert === "number" ? !minusOffen && (!abw || f.massnahmen.length > 0) : !!f.grund;
   // 27.10.2026 (Persona-Test Personal, 15-Wörter-Regel): im Personal-Modus ohne „Erste Messung“ und „(Standard)“, Nachkontrolle (vorbelegt: in 2 Stunden)
   // und „nicht gemessen“ erst auf Tipp (Knopf statt Überschrift und Chips), kurze Maßnahmen-Namen
-  const pers = personalAktiv();
-  const marke = [letzte ? (pers ? `${t("kuehl.zuletzt")} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : pers ? "" : t("kuehl.ersteMessung"), k.art === "tk" ? t("kuehl.minusHinweis") : ""].filter(Boolean).join(" · ");
+  const pers = personalAktiv(); const kurzForm = true; // Persona-Test Vater 27.10.2026: die kurze Form (15-Wörter-Regel) gilt im Laden auch für den Chef; „Chef informiert“ nur fürs Team
+  const marke = [letzte ? (kurzForm ? `${t("kuehl.zuletzt")} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : kurzForm ? "" : t("kuehl.ersteMessung"), k.art === "tk" ? t("kuehl.minusHinweis") : ""].filter(Boolean).join(" · ");
   const nachkontrolleChips = `<div class="chips">${["h1", "h2", "naechste"].map((n) => `<button type="button" class="chip klein ${f.nachkontrolle === n ? "an" : ""}" data-a="nachkontrolle" data-wert="${n}">${esc(t("kuehl.nachkontrollen." + n))}</button>`).join("")}</div>`;
   const grundChips = `<div class="chips">${NICHT_GEMESSEN.map((g) => `<button type="button" class="chip klein ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>`;
   return `
@@ -228,15 +228,15 @@ function stationView(stand, r, k) {
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       ${marke ? `<span class="marke">${esc(marke)}</span>` : ""}
       ${minusOffen ? `<div class="kuehl-minus-wahl"><button type="button" class="knopf glut kuehl-minus" data-a="station-minus">${esc(t("kuehl.minusFrage", fmtZahl(wert, Number.isInteger(wert) ? 0 : 1)))}</button><button type="button" class="knopf zweit" data-a="station-plus-ok">${esc(t("allgemein.nein"))}</button></div>` : ""}
-      ${typeof wert === "number" && abw && !minusOffen ? `<div class="karte hinweisrot">${pers ? "" : `<b>${esc(t("kuehl.ausserhalb"))}</b>`}
+      ${typeof wert === "number" && abw && !minusOffen ? `<div class="karte hinweisrot">${kurzForm ? "" : `<b>${esc(t("kuehl.ausserhalb"))}</b>`}
         <h2>${esc(t("kuehl.massnahme"))}</h2>
-        <div class="chips">${MASSNAHMEN.map((m) => `<button type="button" class="chip klein ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}">${esc(t((pers ? "kuehl.massnahmenKurz." : "kuehl.massnahmen.") + m))}</button>`).join("")}</div>
+        <div class="chips">${MASSNAHMEN.filter((m) => m !== "chef" || pers).map((m) => `<button type="button" class="chip klein ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}">${esc(t((kurzForm ? "kuehl.massnahmenKurz." : "kuehl.massnahmen.") + m))}</button>`).join("")}</div>
         <input class="textfeld" data-f="station-notiz" value="${esc(f.notiz)}" maxlength="200" placeholder="${esc(t("kuehl.notizPlatzhalter"))}" autocomplete="off">
-        ${pers && !f.nkAuf ? `<button type="button" class="leise" data-a="station-nk-auf">${esc(t("kuehl.nachkontrolle"))} ›</button>` : `<h2>${esc(t("kuehl.nachkontrolle"))}</h2>
+        ${kurzForm && !f.nkAuf ? `<button type="button" class="leise" data-a="station-nk-auf">${esc(t("kuehl.nachkontrolle"))} ›</button>` : `<h2>${esc(t("kuehl.nachkontrolle"))}</h2>
         ${nachkontrolleChips}`}
         ${f.massnahmen.includes("weggeworfen") ? wegView(stand, k) : ""}
       </div>` : ""}`}
-      ${typeof wert === "number" ? "" : pers && !f.grund && !f.nichtAuf ? `<button type="button" class="leise" data-a="station-nicht-auf">${esc(t("kuehl.nichtGemessenKurz"))} ›</button>` : pers ? grundChips : `<h2>${esc(t("kuehl.nichtGemessen"))}</h2>
+      ${typeof wert === "number" ? "" : kurzForm && !f.grund && !f.nichtAuf ? `<button type="button" class="leise" data-a="station-nicht-auf">${esc(t("kuehl.nichtGemessenKurz"))} ›</button>` : kurzForm ? grundChips : `<h2>${esc(t("kuehl.nichtGemessen"))}</h2>
       ${grundChips}`}
       <button type="button" class="knopf glut" data-a="station-speichern" ${kannSpeichern ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>
       <button type="button" class="leise" data-a="station-zu">${esc(t("allgemein.abbrechen"))}</button>

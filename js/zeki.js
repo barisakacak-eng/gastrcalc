@@ -5,7 +5,7 @@
 import { ZEKI_AUSLOESER, ZEKI_SAETZE } from "./data/zeki_saetze.js";
 import { ZEKI_SAETZE_MEHR } from "./data/zeki_mehrsprachig.js";
 import { offeneNachkontrollen, kuehlStatus, umsatzEintrag, schwundAuswertung, tagPlus, SCHWUND_ARTEN } from "./engine.js";
-import { zaehler } from "./zaehler.js";
+import { zaehler, monatsZiel } from "./zaehler.js";
 import { inventurenFertig } from "./inventur.js";
 import { hinweiseFuer } from "./hinweis.js";
 import { planGruppen } from "./putzplan.js";
@@ -31,7 +31,7 @@ export const ZEKI_PRUEFUNGEN = {
     if (tage < 7) return null; // erst ab einer Woche mit Einträgen gibt es ein „sonst“
     return heute > 1.5 * (vor.muellwert / tage) ? { betrag: fmtEuro(heute, { dezimal: 2 }) } : null;
   },
-  ziel_erreicht: (s, H) => { const z = zaehler(s, { datum: H }); return z.kippTag === H && !z.keinUmsatz ? {} : null; },
+  ziel_erreicht: (s, H) => { const z = zaehler(s, { datum: H }); if (z.kippTag !== H || z.keinUmsatz) return null; try { return monatsZiel(s, z, H).stufe !== "bisNull" ? {} : null; } catch { return null; } }, // Persona-Test Vater 27.10.: nur wenn der Monat wirklich über null ist
   tag_abgeschlossen: (s, H) => {
     if (!(s.abschluesse || []).some((a) => a && !a.storniert && a.datum === H)) return null;
     const z = zaehler(s, { datum: H }); return typeof z.stand === "number" && z.stand < 0 ? { betrag: fmtEuro(-z.stand, { dezimal: 0 }) } : null;

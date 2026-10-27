@@ -136,7 +136,7 @@ export function zekiReihe(stand, H, dran) {
   return dran ? `<div class="h-zeki h-zeki--ohne-figur">${jetztKarte(dran)}</div>` : "";
 }
 function jetztKarte(d) {
-  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b data-t="nutzen.aktion.${esc(d.id)}">${esc(t("nutzen.aktion." + d.id))}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
+  return `<button type="button" class="jetzt h-jetzt h-haupt ${d.ton}" ${zielAttr(d.ziel)} data-dran="${esc(d.id)}" aria-label="${esc(d.titel)}: ${esc(d.knopf)}"><span class="ks">${sym(d.symbol)}</span><span class="h-jetzt-text"><b data-t="nutzen.aktion.${esc(d.id)}">${esc(d.id === "selbst" ? d.titel : t("nutzen.aktion." + d.id))}</b></span>${sym("chevron-right", "h-pfeil")}</button>`;
 }
 
 // Schmale Zeile auf anderen Seiten, solange ein offener Schritt die Seite betrifft
