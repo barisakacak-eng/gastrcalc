@@ -182,3 +182,13 @@ export function rundgangAbschliessen(stand, ergebnis) {
   stand.fuehrung = { ergebnis: String(ergebnis || "fertig"), t: new Date().toISOString(), mal: (stand.fuehrung?.mal || 0) + 1 };
   return true;
 }
+
+// E-Mail von Steuerberater/Buchhalter (Baris 26.10.2026 23:56): freiwillig, nur zum Vorbelegen der Vorlage.
+export function kontaktSetzen(stand, art, email) {
+  if (!stand?.betrieb || !["steuer", "buch"].includes(art)) return false;
+  const e = String(email || "").trim().slice(0, 120);
+  const k = (stand.betrieb.kontakte ??= {});
+  if (!e) { delete k[art]; return true; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+  k[art] = e; return true;
+}

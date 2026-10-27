@@ -3,6 +3,7 @@
 // "ordner-buch" (Buchhalter). Je Ordner: Zeitraum, Stand mit Ring, Inhaltsliste mit Haken/Lücke, „Als PDF teilen“, Vorschau, CSV.
 // Daten kommen rein rechnend aus js/export_amt.js und js/export_steuer.js, Texte und Druckmodelle aus js/ordner_text.js (Trennung 2, 17.10.2026);
 // hier stehen nur Aufbau, Zeitraum-Wahl und Teilen/Drucken.
+import { kontaktSetzen } from "../stamm.js";
 import { t } from "../i18n.js";
 import { hinweiseFuer } from "../hinweis.js"; // Fragen an dich (26.10.2026)
 import { esc, heute } from "../util.js";
@@ -124,12 +125,29 @@ export function ordnerPaketView(stand, art) {
     <div class="b-inhalt b-ordnerseite">
       ${kopfOrdner(stand, art, art === "steuer" ? "calculator" : "receipt", t(`ordner.${art}.unter`))}
       <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.vorJahr" : "ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(art === "steuer" ? t("ordner.zeit.jahr", z.jahr) : monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.nachJahr" : "ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
+      ${schickenKarte(stand, art)}
       ${standKarte(p.vollstaendig, p.pruefTeile.length, art === "steuer" ? "" : t("ordnerT.kasse"), t("ordnerT.allesDa"))}
       <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
       ${art === "steuer" ? fragenKarte(stand) : ""}
       ${beilagenKarte(art, stand, z.monat)}
       ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
+}
+
+// Fertige E-Mail an Steuerberater/Buchhalter (Baris 26.10.2026 23:56): Zeki erklärt in einem Satz, die App baut Text und Anhänge,
+// der Chef tippt nur noch auf „Senden“. Lücken in [Klammern] füllt er selbst. Adresse freiwillig.
+let mailEntwurf = {}; const mailMerken = (art, wert) => { mailEntwurf = { ...mailEntwurf, [art]: wert }; }; // flüchtiger Entwurf, keine Stammdaten
+function schickenKarte(stand, art) {
+  const mail = mailEntwurf[art] ?? stand.betrieb?.kontakte?.[art] ?? "";
+  return `<p class="zeki-zeile" role="status">${esc(t(`ordnerMail.zeki.${art}`))}</p>
+    <div class="karte b-schicken">
+      <input class="textfeld" type="email" inputmode="email" autocomplete="email" data-f="ordner-mail:${art}" value="${esc(mail)}" placeholder="${esc(t(`ordnerMail.platzhalter.${art}`))}" aria-label="${esc(t(`ordnerMail.platzhalter.${art}`))}">
+      <button type="button" class="knopf glut" data-a="ordner-schicken" data-wert="${art}">${bsym("share")} ${esc(t(`ordnerMail.knopf.${art}`))}</button>
+    </div>`;
+}
+export function mailText(stand, art, zeitraum) {
+  const an = stand.betrieb?.kontakte?.[art];
+  return t(`ordnerMail.text.${art}`, { an: an || "", laden: stand.betrieb?.name || "[Name deines Ladens]", zeitraum });
 }
 
 // ---------- Drucken und Teilen (Browser) ----------
@@ -164,6 +182,14 @@ export async function ordnerAktion(name, el, stand, ansicht) {
   if (name === "ordner-pdf") { drucken(vorschauHtml || dokumentJetzt(stand, ansicht)); return { meldung: t("ordner.knopf.druckHinweis") }; }
   if (name === "ordner-teilen") { const html = vorschauHtml || dokumentJetzt(stand, ansicht); const z = ansicht === "ordner-amt" ? amtZeitraum(H) : paketZeit(ansicht === "ordner-steuer" ? "steuer" : "buch", H);
     const r = await teilen([{ name: dateiName(stand, t("ordner.datei." + ansicht.slice(7)), z).replace(/\.csv$/, ".html"), text: html, typ: "text/html;charset=utf-8" }], t(`ordner.${ansicht.slice(7)}.titel`)); return r === "abgebrochen" ? false : { meldung: t("ordner.knopf.geteilt") }; }
+  if (name === "ordner-schicken") {
+    const art = el.dataset.wert === "steuer" ? "steuer" : "buch"; const ans = "ordner-" + art;
+    if (mailEntwurf[art] !== undefined) kontaktSetzen(stand, art, mailEntwurf[art]);
+    const z = paketZeit(art, H); const html = dokumentJetzt(stand, ans);
+    const dateien = [{ name: dateiName(stand, t("ordner.datei." + art), z).replace(/\.csv$/, ".html"), text: html, typ: "text/html;charset=utf-8" }, ...csvJetzt(stand, ans, null)];
+    const r = await teilen(dateien, t(`ordner.${art}.titel`), mailText(stand, art, art === "steuer" ? z.monat : monatLang(z.monat)));
+    return r === "abgebrochen" ? { speichern: true } : { speichern: true, meldung: t("ordnerMail.fertig") };
+  }
   if (name === "ordner-csv") { const d = csvJetzt(stand, ansicht, el.dataset.teil || null); const r = await teilen(d, t(`ordner.${ansicht.slice(7)}.titel`)); return r === "abgebrochen" ? false : { meldung: t("ordner.knopf.csvFertig", d.length) }; }
   return false;
 }
@@ -171,5 +197,6 @@ export function ordnerEingabe(feld, wert) {
   if (feld === "amt-von" || feld === "amt-bis") { if (/^\d{4}-\d{2}-\d{2}$/.test(wert)) { amtZeit = { ...amtZeit, art: "frei", [feld === "amt-von" ? "von" : "bis"]: wert }; return true; } return false; }
   if (feld.startsWith("bel-datum:")) { belDatum[feld.slice(10)] = wert; return "knopf"; }
   if (feld === "person-neu") { personNeu = wert; return "knopf"; }
+  if (feld.startsWith("ordner-mail:")) { mailMerken(feld.slice(12), wert); return "knopf"; }
   return false;
 }

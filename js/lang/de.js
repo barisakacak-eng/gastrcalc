@@ -1069,6 +1069,17 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
   // Schloss: Code + Face ID (Entwurf 27.10.2026)
   schloss: { titel: "Leg einen Code fest. Dann kommt nur du ins Büro.", hilfe: "Im Laden fragt die App nie. Nur beim Büro fragt sie kurz – mit Code oder Face ID. Danach bleibt das Büro 15 Minuten offen.",
     code: "Code festlegen", codeAn: "Code ist festgelegt", bio: "Face ID einschalten", bioAn: "Face ID ist an", bioNicht: "Face ID geht auf diesem Gerät nicht. Der Code reicht.", mitBio: "Mit Face ID öffnen" },
+  // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
+  ordnerMail: {
+    zeki: { steuer: "Ich mach dir die E-Mail fertig. Du tippst nur auf Senden.", buch: "Ich mach dir die E-Mail fertig. Du tippst nur auf Senden." },
+    platzhalter: { steuer: "E-Mail Steuerberater (wenn du sie hast)", buch: "E-Mail Buchhalter (wenn du sie hast)" },
+    knopf: { steuer: "An Steuerberater schicken", buch: "An Buchhalter schicken" },
+    text: {
+      steuer: ({ an, laden, zeitraum }) => `${an ? `An: ${an}\n\n` : ""}Hallo [Name],\n\nanbei die Unterlagen von ${laden} für ${zeitraum}: Übersicht und Tabellen (CSV).\nBelege, Verträge und Post vom Finanzamt [lege ich bei / schicke ich getrennt].\n\nBei Fragen melde dich gern.\n\nViele Grüße\n[Dein Name]`,
+      buch: ({ an, laden, zeitraum }) => `${an ? `An: ${an}\n\n` : ""}Hallo [Name],\n\nanbei die Unterlagen von ${laden} für ${zeitraum}: Übersicht und Tabellen (CSV).\nZ-Bons, Kartenabrechnungen und Bankauszüge [lege ich bei / schicke ich getrennt].\n\nViele Grüße\n[Dein Name]`,
+    },
+    fertig: "E-Mail ist fertig – nur noch senden.",
+  },
   schnell2: { willkommen: "Willkommen", willkommenText: "Dein Laden. Deine Zahlen. Einfach im Griff.",
     hilfe: "Kurz erklärt", sprache: "Sprache",
     laden: "Dein Laden", namePlatzhalter: "Name des Ladens",

@@ -62,10 +62,10 @@ export async function textTeilen(text, titel) {
 }
 // Dateien teilen (CSV der Ordner): navigator.share mit Dateien, sonst herunterladen. Vorher ordner.js.
 // Rückgabe: "geteilt" | "abgebrochen" | "geladen"
-export async function dateienTeilen(dateien, titel) {
+export async function dateienTeilen(dateien, titel, text = "") { // text (27.10.2026): fertige E-Mail-Vorlage im Teilen-Blatt
   const files = dateien.map((d) => new File([d.text], d.name, { type: d.typ || "text/csv;charset=utf-8" }));
   if (navigator.canShare && navigator.canShare({ files })) {
-    try { await navigator.share({ files, title: titel }); return "geteilt"; } catch (e) { if (e.name === "AbortError") return "abgebrochen"; }
+    try { await navigator.share(text ? { files, title: titel, text } : { files, title: titel }); return "geteilt"; } catch (e) { if (e.name === "AbortError") return "abgebrochen"; }
   }
   for (const f of files) { const a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
   return "geladen";
