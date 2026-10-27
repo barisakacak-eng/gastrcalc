@@ -50,7 +50,9 @@ export function warenQuote(stand) {
 function muellJeTag(stand, von, bis) {
   const out = {};
   for (const e of stand.schwund || []) {
-    if (e.storniert || (SCHWUND_ARTEN[e.art] || 1) !== 1 || typeof e.datum !== "string" || e.datum < von || e.datum > bis) continue;
+    // 27.10.2026 (Baris: Müll, Schwund und Personal bewegen „bis null“): auch Personalessen und Eigenverbrauch kosten Ware ohne Umsatz –
+    // ohne Belege (Stufe 1/2) wird die Ware aus dem Umsatz geschätzt, darum zählen diese Einträge hier mit. Mit Belegen (Stufe 3) stecken sie im Einkauf.
+    if (e.storniert || typeof e.datum !== "string" || e.datum < von || e.datum > bis) continue;
     const w = eintragWert(e, stand); if (w !== null) out[e.datum] = (out[e.datum] || 0) + w; // Paket 3, M6: Alt-Einträge wie in schwundAuswertung
   }
   return out;
