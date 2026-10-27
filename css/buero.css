@@ -189,3 +189,14 @@ button.b-zeile:active { background: var(--papier); }
 .b-zeile > .b-zt{flex:1 1 0!important;min-width:0}
 .b-zeile > .b-mini,.b-zeile > .b-status{flex:none}
 .buero .b-zt small.zahl{white-space:normal}
+/* Entwurf 27.10.2026 (Baris 23:56): Buchhalter und Steuerberater sehen auf einen Blick verschieden aus.
+   Buchhalter = Monat, Salbeigrün, Beleg-Symbol. Steuerberater = Jahr, Kupfer, Rechner-Symbol. Gleicher Aufbau, andere Farbe und Kopfband. */
+.b-paket-buch{--paket:#2f5d43;--paket-hell:#e6efe7;--paket-linie:#b9d0bf}
+.b-paket-steuer{--paket:#9a4a22;--paket-hell:#f6e7dc;--paket-linie:#e2bfa7}
+.b-paket-buch .b-ordnerkopf,.b-paket-steuer .b-ordnerkopf{margin:-4px -4px 6px;padding:14px 14px 14px;border-radius:20px;background:var(--paket-hell);border:1px solid var(--paket-linie)}
+.buero .b-paket-buch .b-ordnerkopf .b-ks,.buero .b-paket-steuer .b-ordnerkopf .b-ks{background:var(--paket)!important;color:#fff}
+.b-paket-buch .b-ordnerkopf b,.b-paket-steuer .b-ordnerkopf b{color:var(--paket)}
+.b-paket-buch .b-monat,.b-paket-steuer .b-monat{border-color:var(--paket-linie)}
+.b-paket-buch .b-monat b,.b-paket-steuer .b-monat b{color:var(--paket)}
+.b-paket-buch .knopf.glut,.b-paket-steuer .knopf.glut{background:var(--paket)!important;border-color:var(--paket)!important}
+.b-paket-buch .b-mini,.b-paket-steuer .b-mini{color:var(--paket)!important;border-color:var(--paket-linie)}
