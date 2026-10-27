@@ -414,7 +414,7 @@ export default {
       belehrungKeine: "Ancora nessuna persona", belehrungOk: (n) => (n === 1 ? "1 persona in regola" : `${n} persone in regola`), belehrungFehlt: (name) => `${name}: manca la data`, belehrungUeber: (name) => `${name}: scaduta`,
       belehrungBald: (name, m) => `${name}: prossima formazione ${m}`, konzept: "Apparecchi, punti frigo, limiti", konzeptFehlt: "Mancano punti frigo o piano pulizie",
       umsatz: (n, e) => `${n} giorni · ${e}`, umsatzKeine: "Nessun incasso inserito", personal: (n, e) => `${n} pasti · ${e}`, keine: "Nessuna voce", schwund: (e) => `${e} valore merce`,
-      schwundOffen: (e, n) => `${e} · ${n} senza prezzo`, belege: (n, e) => `${n} ${n === 1 ? "scontrino" : "scontrini"} · ${e} netto`, belegeKeine: "Nessuno scontrino letto", inventurKeine: "Nessun inventario nel mese",
+      schwundOffen: (e, n) => `${e} · ${n} senza prezzo`, belege: (n, e) => `${n} ${n === 1 ? "scontrino" : "scontrini"} · ${e} netto`, belegeKeine: "Nessuno scontrino letto", inventurKeine: "Nessun inventario in questo periodo",
       reinigung: (e) => `${e} netto`, kosten: (e) => `${e} al mese`, kostenKeine: "Nessun costo fisso inserito" },
     hinweis: { belehrungBald: (n) => (n === 1 ? "1 formazione presto in scadenza" : `${n} formazioni presto in scadenza`), belehrungFehlt: (n) => (n === 1 ? "Manca 1 formazione" : `Mancano ${n} formazioni`),
       luecken: (n) => (n === 1 ? "1 giorno senza misura frigo" : `${n} giorni senza misura frigo`), fertig: "Lista completa", kasse: "Incassi dall'app, non è un rapporto di cassa" },

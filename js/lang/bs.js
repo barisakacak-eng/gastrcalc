@@ -421,7 +421,7 @@ export default {
       belehrungKeine: "Još nema osoba", belehrungOk: (n) => `${n} ${pl(n, "osoba", "osobe", "osoba")} u redu`, belehrungFehlt: (name) => `${name}: fali datum`, belehrungUeber: (name) => `${name}: rok prošao`,
       belehrungBald: (name, m) => `${name}: sljedeća obuka ${m}`, konzept: "Uređaji, mjesta hlađenja, granice", konzeptFehlt: "Fale mjesta hlađenja ili plan čišćenja",
       umsatz: (n, e) => `${n} ${pl(n, "dan", "dana", "dana")} · ${e}`, umsatzKeine: "Nije upisan promet", personal: (n, e) => `${n} ${pl(n, "obrok", "obroka", "obroka")} · ${e}`, keine: "Nema unosa", schwund: (e) => `${e} vrijednost robe`,
-      schwundOffen: (e, n) => `${e} · ${n} bez cijene`, belege: (n, e) => `${n} ${pl(n, "račun", "računa", "računa")} · ${e} neto`, belegeKeine: "Nijedan račun učitan", inventurKeine: "Nema inventure u mjesecu",
+      schwundOffen: (e, n) => `${e} · ${n} bez cijene`, belege: (n, e) => `${n} ${pl(n, "račun", "računa", "računa")} · ${e} neto`, belegeKeine: "Nijedan račun učitan", inventurKeine: "Nema inventure u ovom periodu",
       reinigung: (e) => `${e} neto`, kosten: (e) => `${e} mjesečno`, kostenKeine: "Nisu upisani fiksni troškovi" },
     hinweis: { belehrungBald: (n) => `Uskoro: ${n} ${pl(n, "obuka", "obuke", "obuka")}`, belehrungFehlt: (n) => `Fali: ${n} ${pl(n, "obuka", "obuke", "obuka")}`,
       luecken: (n) => `${n} ${pl(n, "dan", "dana", "dana")} bez mjerenja hlađenja`, fertig: "Lista potpuna", kasse: "Promet iz aplikacije, nije izvještaj kase" },

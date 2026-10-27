@@ -420,7 +420,7 @@ export default {
       belehrungKeine: "Încă nicio persoană", belehrungOk: (n) => `${nr(n, "persoană", "persoane")} la zi`, belehrungFehlt: (name) => `${name}: lipsește data`, belehrungUeber: (name) => `${name}: termen depășit`,
       belehrungBald: (name, m) => `${name}: următoarea instruire ${m}`, konzept: "Aparate, puncte de răcire, limite", konzeptFehlt: "Lipsesc punctele de răcire sau planul de curățenie",
       umsatz: (n, e) => `${nr(n, "zi", "zile")} · ${e}`, umsatzKeine: "Nicio încasare introdusă", personal: (n, e) => `${nr(n, "masă", "mese")} · ${e}`, keine: "Nicio înregistrare", schwund: (e) => `${e} valoare marfă`,
-      schwundOffen: (e, n) => `${e} · ${n} fără preț`, belege: (n, e) => `${nr(n, "bon", "bonuri")} · ${e} net`, belegeKeine: "Niciun bon citit", inventurKeine: "Niciun inventar în lună",
+      schwundOffen: (e, n) => `${e} · ${n} fără preț`, belege: (n, e) => `${nr(n, "bon", "bonuri")} · ${e} net`, belegeKeine: "Niciun bon citit", inventurKeine: "Niciun inventar în această perioadă",
       reinigung: (e) => `${e} net`, kosten: (e) => `${e} pe lună`, kostenKeine: "Niciun cost fix introdus" },
     hinweis: { belehrungBald: (n) => (n === 1 ? "1 instruire în curând" : `${nr(n, "instruire", "instruiri")} în curând`), belehrungFehlt: (n) => (n === 1 ? "Lipsește 1 instruire" : `Lipsesc ${nr(n, "instruire", "instruiri")}`),
       luecken: (n) => `${nr(n, "zi", "zile")} fără măsurare la răcire`, fertig: "Listă completă", kasse: "Încasări din aplicație, nu raportul casei" },

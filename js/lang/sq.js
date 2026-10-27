@@ -419,7 +419,7 @@ export default {
       belehrungKeine: "Ende pa persona", belehrungOk: (n) => `${sn(n, "person", "persona")} në rregull`, belehrungFehlt: (name) => `${name}: mungon data`, belehrungUeber: (name) => `${name}: afati ka kaluar`,
       belehrungBald: (name, m) => `${name}: trajnimi tjetër ${m}`, konzept: "Pajisjet, vendet e ftohjes, kufijtë", konzeptFehlt: "Mungojnë vendet e ftohjes ose plani i pastrimit",
       umsatz: (n, e) => `${n} ditë · ${e}`, umsatzKeine: "Asnjë xhiro e shënuar", personal: (n, e) => `${sn(n, "vakt", "vakte")} · ${e}`, keine: "Asnjë shënim", schwund: (e) => `${e} vlera e mallit`,
-      schwundOffen: (e, n) => `${e} · ${n} pa çmim`, belege: (n, e) => `${sn(n, "faturë", "fatura")} · ${e} neto`, belegeKeine: "Asnjë faturë e lexuar", inventurKeine: "Asnjë inventar këtë muaj",
+      schwundOffen: (e, n) => `${e} · ${n} pa çmim`, belege: (n, e) => `${sn(n, "faturë", "fatura")} · ${e} neto`, belegeKeine: "Asnjë faturë e lexuar", inventurKeine: "Asnjë inventar në këtë periudhë",
       reinigung: (e) => `${e} neto`, kosten: (e) => `${e} në muaj`, kostenKeine: "Asnjë shpenzim fiks i shënuar" },
     hinweis: { belehrungBald: (n) => `${sn(n, "trajnim", "trajnime")} së shpejti`, belehrungFehlt: (n) => (n === 1 ? "Mungon 1 trajnim" : `Mungojnë ${n} trajnime`),
       luecken: (n) => `${n} ditë pa matje ftohjeje`, fertig: "Lista e plotë", kasse: "Xhiro nga aplikacioni, jo raporti i arkës" },

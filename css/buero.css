@@ -184,3 +184,8 @@ button.b-zeile:active { background: var(--papier); }
 /* E-Mail an Steuerberater/Buchhalter (27.10.2026) */
 .b-schicken{display:flex;flex-direction:column;gap:10px;padding:14px;margin-bottom:12px}
 .b-schicken .knopf{margin:0}
+/* 27.10.2026: Symbol-Spalte fest – vorher wuchs sie mit (design-b „span:first-child“) und drückte den Untertitel unter CSV-Knopf und Status */
+.b-zeile > .b-zs{flex:0 0 40px!important;min-width:40px}
+.b-zeile > .b-zt{flex:1 1 0!important;min-width:0}
+.b-zeile > .b-mini,.b-zeile > .b-status{flex:none}
+.buero .b-zt small.zahl{white-space:normal}

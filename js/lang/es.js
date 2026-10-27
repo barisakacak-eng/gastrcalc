@@ -414,7 +414,7 @@ export default {
       belehrungKeine: "Aún sin personas", belehrungOk: (n) => (n === 1 ? "1 persona al día" : `${n} personas al día`), belehrungFehlt: (name) => `${name}: falta la fecha`, belehrungUeber: (name) => `${name}: vencida`,
       belehrungBald: (name, m) => `${name}: siguiente formación ${m}`, konzept: "Equipos, puntos de frío, límites", konzeptFehlt: "Faltan puntos de frío o plan de limpieza",
       umsatz: (n, e) => `${n} días · ${e}`, umsatzKeine: "Sin ventas anotadas", personal: (n, e) => `${n} comidas · ${e}`, keine: "Sin entradas", schwund: (e) => `${e} valor de producto`,
-      schwundOffen: (e, n) => `${e} · ${n} sin precio`, belege: (n, e) => `${n} ${n === 1 ? "ticket" : "tickets"} · ${e} neto`, belegeKeine: "Ningún ticket leído", inventurKeine: "Sin inventario este mes",
+      schwundOffen: (e, n) => `${e} · ${n} sin precio`, belege: (n, e) => `${n} ${n === 1 ? "ticket" : "tickets"} · ${e} neto`, belegeKeine: "Ningún ticket leído", inventurKeine: "Sin inventario en este periodo",
       reinigung: (e) => `${e} neto`, kosten: (e) => `${e} al mes`, kostenKeine: "Sin gastos fijos anotados" },
     hinweis: { belehrungBald: (n) => (n === 1 ? "1 formación vence pronto" : `${n} formaciones vencen pronto`), belehrungFehlt: (n) => (n === 1 ? "Falta 1 formación" : `Faltan ${n} formaciones`),
       luecken: (n) => (n === 1 ? "1 día sin medir el frío" : `${n} días sin medir el frío`), fertig: "Lista completa", kasse: "Ventas de la app, no es informe de caja" },

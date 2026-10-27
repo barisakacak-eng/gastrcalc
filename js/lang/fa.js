@@ -413,7 +413,7 @@ export default {
       belehrungKeine: "هنوز کسی نیست", belehrungOk: (n) => `${n} نفر به‌روز`, belehrungFehlt: (name) => `${name}: تاریخ نیست`, belehrungUeber: (name) => `${name}: دیر شده`,
       belehrungBald: (name, m) => `${name}: آموزش بعدی ${m}`, konzept: "دستگاه‌ها، جاهای سرد، حدها", konzeptFehlt: "دستگاه سرد یا برنامه‌ی نظافت نیست",
       umsatz: (n, e) => `${n} روز · ${e}`, umsatzKeine: "فروشی ثبت نشده", personal: (n, e) => `${n} غذا · ${e}`, keine: "چیزی ثبت نشده", schwund: (e) => `ارزش جنس ${e}`,
-      schwundOffen: (e, n) => `${e} · ${n} بدون قیمت`, belege: (n, e) => `${n} رسید · ${e} خالص`, belegeKeine: "هیچ رسیدی خوانده نشده", inventurKeine: "این ماه انبارگردانی نشده",
+      schwundOffen: (e, n) => `${e} · ${n} بدون قیمت`, belege: (n, e) => `${n} رسید · ${e} خالص`, belegeKeine: "هیچ رسیدی خوانده نشده", inventurKeine: "در این بازه انبارگردانی نشده",
       reinigung: (e) => `${e} خالص`, kosten: (e) => `${e} در ماه`, kostenKeine: "هزینه‌ی ثابتی ثبت نشده" },
     hinweis: { belehrungBald: (n) => `${n} آموزش به‌زودی سررسید می‌شود`, belehrungFehlt: (n) => `${n} آموزش نیست`,
       luecken: (n) => `${n} روز بدون اندازه‌ی دما`, fertig: "فهرست کامل است", kasse: "فروش از اپ است، نه گزارش صندوق" },

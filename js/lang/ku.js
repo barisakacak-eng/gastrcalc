@@ -413,7 +413,7 @@ export default {
       belehrungKeine: "Hîn kes tune", belehrungOk: (n) => `${n} kes di dem de`, belehrungFehlt: (name) => `${name}: dîrok tune`, belehrungUeber: (name) => `${name}: dema wê derbas bû`,
       belehrungBald: (name, m) => `${name}: perwerdeya din ${m}`, konzept: "Amûr, cihên sar, sînor", konzeptFehlt: "Amûrên sar an plana paqijiyê tune",
       umsatz: (n, e) => `${n} roj · ${e}`, umsatzKeine: "Firotin nehatiye tomarkirin", personal: (n, e) => `${n} xwarin · ${e}`, keine: "Tomar tune", schwund: (e) => `Nirxa malê ${e}`,
-      schwundOffen: (e, n) => `${e} · ${n} bê biha`, belege: (n, e) => `${n} fîş · ${e} net`, belegeKeine: "Hîn fîş nehatiye xwendin", inventurKeine: "Vê mehê hejmartin tune",
+      schwundOffen: (e, n) => `${e} · ${n} bê biha`, belege: (n, e) => `${n} fîş · ${e} net`, belegeKeine: "Hîn fîş nehatiye xwendin", inventurKeine: "Di vê demê de hejmartin tune",
       reinigung: (e) => `${e} net`, kosten: (e) => `${e} di mehê de`, kostenKeine: "Lêçûnên sabît nehatine tomarkirin" },
     hinweis: { belehrungBald: (n) => `Dema ${n} perwerdeyan nêzîk e`, belehrungFehlt: (n) => `${n} perwerde kêm in`,
       luecken: (n) => `${n} roj bê pîvandina sarkirinê`, fertig: "Lîste temam e", kasse: "Firotin ji sepanê ne, ne rapora kasê" },

@@ -414,7 +414,7 @@ export default {
       belehrungKeine: "Pas encore de personnes", belehrungOk: (n) => (n === 1 ? "1 personne à jour" : `${n} personnes à jour`), belehrungFehlt: (name) => `${name} : date manquante`, belehrungUeber: (name) => `${name} : en retard`,
       belehrungBald: (name, m) => `${name} : prochaine formation ${m}`, konzept: "Appareils, points froids, limites", konzeptFehlt: "Points froids ou plan de nettoyage manquants",
       umsatz: (n, e) => `${n} jours · ${e}`, umsatzKeine: "Aucune vente saisie", personal: (n, e) => `${n} repas · ${e}`, keine: "Aucune saisie", schwund: (e) => `${e} valeur marchandise`,
-      schwundOffen: (e, n) => `${e} · ${n} sans prix`, belege: (n, e) => `${n} ${n === 1 ? "ticket" : "tickets"} · ${e} HT`, belegeKeine: "Aucun ticket lu", inventurKeine: "Pas d’inventaire ce mois",
+      schwundOffen: (e, n) => `${e} · ${n} sans prix`, belege: (n, e) => `${n} ${n === 1 ? "ticket" : "tickets"} · ${e} HT`, belegeKeine: "Aucun ticket lu", inventurKeine: "Pas d’inventaire sur cette période",
       reinigung: (e) => `${e} HT`, kosten: (e) => `${e} par mois`, kostenKeine: "Aucun frais fixe saisi" },
     hinweis: { belehrungBald: (n) => (n === 1 ? "1 formation bientôt due" : `${n} formations bientôt dues`), belehrungFehlt: (n) => (n === 1 ? "1 formation manque" : `${n} formations manquent`),
       luecken: (n) => (n === 1 ? "1 jour sans mesure du froid" : `${n} jours sans mesure du froid`), fertig: "Liste complète", kasse: "Ventes de l’appli, pas un rapport de caisse" },

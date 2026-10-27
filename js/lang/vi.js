@@ -414,7 +414,7 @@ export default {
       belehrungKeine: "Chưa có người nào", belehrungOk: (n) => `${n} người còn hạn`, belehrungFehlt: (name) => `${name}: thiếu ngày`, belehrungUeber: (name) => `${name}: quá hạn`,
       belehrungBald: (name, m) => `${name}: hướng dẫn lại ${m}`, konzept: "Thiết bị, chỗ làm lạnh, giới hạn", konzeptFehlt: "Thiếu chỗ làm lạnh hoặc lịch dọn",
       umsatz: (n, e) => `${n} ngày · ${e}`, umsatzKeine: "Chưa ghi doanh thu", personal: (n, e) => `${n} bữa · ${e}`, keine: "Chưa có mục nào", schwund: (e) => `${e} tiền hàng`,
-      schwundOffen: (e, n) => `${e} · ${n} chưa có giá`, belege: (n, e) => `${n} hóa đơn · ${e} chưa thuế`, belegeKeine: "Chưa đọc hóa đơn nào", inventurKeine: "Tháng này chưa kiểm kho",
+      schwundOffen: (e, n) => `${e} · ${n} chưa có giá`, belege: (n, e) => `${n} hóa đơn · ${e} chưa thuế`, belegeKeine: "Chưa đọc hóa đơn nào", inventurKeine: "Kỳ này chưa kiểm kho",
       reinigung: (e) => `${e} chưa thuế`, kosten: (e) => `${e} mỗi tháng`, kostenKeine: "Chưa ghi chi phí cố định" },
     hinweis: { belehrungBald: (n) => `${n} buổi hướng dẫn sắp đến hạn`, belehrungFehlt: (n) => `Thiếu ${n} buổi hướng dẫn`,
       luecken: (n) => `${n} ngày chưa đo nhiệt độ`, fertig: "Danh sách đầy đủ", kasse: "Doanh thu từ app, không phải báo cáo máy tính tiền" },

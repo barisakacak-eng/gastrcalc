@@ -419,7 +419,7 @@ export default {
       belehrungKeine: "Jeszcze brak osób", belehrungOk: (n) => `Aktualne: ${n} ${lm(n, "osoba", "osoby", "osób")}`, belehrungFehlt: (name) => `${name}: brak daty`, belehrungUeber: (name) => `${name}: po terminie`,
       belehrungBald: (name, m) => `${name}: kolejne szkolenie ${m}`, konzept: "Sprzęt, punkty chłodzenia, limity", konzeptFehlt: "Brak punktów chłodzenia lub planu sprzątania",
       umsatz: (n, e) => `${n} ${lm(n, "dzień", "dni", "dni")} · ${e}`, umsatzKeine: "Brak wpisanego utargu", personal: (n, e) => `${n} ${lm(n, "posiłek", "posiłki", "posiłków")} · ${e}`, keine: "Brak wpisów", schwund: (e) => `${e} wartości towaru`,
-      schwundOffen: (e, n) => `${e} · ${n} bez ceny`, belege: (n, e) => `${n} ${lm(n, "rachunek", "rachunki", "rachunków")} · ${e} netto`, belegeKeine: "Brak wczytanych rachunków", inventurKeine: "Brak inwentaryzacji w miesiącu",
+      schwundOffen: (e, n) => `${e} · ${n} bez ceny`, belege: (n, e) => `${n} ${lm(n, "rachunek", "rachunki", "rachunków")} · ${e} netto`, belegeKeine: "Brak wczytanych rachunków", inventurKeine: "Brak inwentaryzacji w tym okresie",
       reinigung: (e) => `${e} netto`, kosten: (e) => `${e} miesięcznie`, kostenKeine: "Brak wpisanych stałych kosztów" },
     hinweis: { belehrungBald: (n) => `Wkrótce termin: ${n} ${lm(n, "szkolenie", "szkolenia", "szkoleń")}`, belehrungFehlt: (n) => `Brak: ${n} ${lm(n, "szkolenie", "szkolenia", "szkoleń")}`,
       luecken: (n) => `${n} ${lm(n, "dzień", "dni", "dni")} bez pomiaru chłodzenia`, fertig: "Lista kompletna", kasse: "Utarg z aplikacji, nie raport kasowy" },
