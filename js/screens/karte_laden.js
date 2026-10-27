@@ -29,6 +29,8 @@ const lastVon = (stand) => kalkulation(stand).last;
 const zeilenVon = (stand) => { const k = kalkulation(stand); const m = new Map(k.zeilen.map((z) => [z.id, z])); return stand.gerichte.map((g) => ({ g, z: m.get(g.id) })).filter((x) => x.z); };
 const zuBillig = (x) => x.z.ampel === "rot";
 const cent = (v) => Math.round(v * 100) / 100;
+// Eine Zahl nach allen Kosten, mit Vorzeichen (Baris 27.10.2026, B): „+ 2,10 €“ oder „− 0,80 €“
+const vorzeichen = (v) => v > 0.004 ? "+ " : v < -0.004 ? "− " : "";
 
 export function karteLadenView(stand) {
   const liste = zeilenVon(stand); const billig = liste.filter(zuBillig).length;
@@ -43,20 +45,19 @@ export function karteLadenView(stand) {
     const a = preisAmpel(x.z, x.z.preisBrutto);
     const valid = a.gewinn !== null && a.quote !== null;
     const unscharf = unsicher || x.z.warenGeschaetzt || x.z.warenRichtpreis;
-    const betrag = valid ? `${unscharf ? "≈ " : ""}${fmtEuro(a.gewinn, { dezimal: 2 })}` : "–";
-    const prozent = valid ? `${unscharf ? "≈ " : ""}${fmtZahl(Math.round(a.quote * 100), 0)} %` : "–";
-    const breitenProzent = valid ? Math.max(0, Math.min(100, Math.round(a.quote * 100))) : 0; // nur Balkenbreite für die Anzeige
+    const betrag = valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : "–";
+    const prozent = valid ? `${fmtZahl(Math.round(a.quote * 100), 0)} %` : "–"; // nur für Vorlesehilfe; sichtbar ist eine Zahl (Baris 27.10.2026, B)
     return `<button type="button" class="karte kl-gericht a-${a.ampel} ${a.ampel === "rot" ? "rotrand" : ""}" data-a="kl-auf" data-id="${esc(x.g.id)}" aria-label="${esc(x.g.name)}, ${esc(t("kartelaeden.preis"))} ${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}, ${esc(t("kartelaeden.bleibt"))} ${betrag}, ${prozent}, ${esc(t("kartelaeden.ampel." + a.ampel))}">
       ${gerichtBild(x.g)}<span class="kl-gt">
         <span class="kl-gn">${esc(x.g.name)}</span>
         <span class="kl-gp"><b>${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}</b><i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></span>
-        <span class="kl-nutzen ${valid ? "hat-wert" : "ohne-wert"}"><b>${betrag}</b><small>${prozent}</small></span>
-        <span class="kl-nutzen-balken a-${a.ampel}" aria-hidden="true"><i style="width:${breitenProzent}%"></i></span>
+        <span class="kl-nutzen ${valid ? "hat-wert" : "ohne-wert"}"><b>${betrag}</b></span>
       </span></button>`;
   };
   return `
     <div class="inhalt kartelaeden">
       <div class="kl-kopf"><h1>${esc(t("kartelaeden.titel"))}</h1><small>${esc(t("kartelaeden.anzahl", liste.length))}</small></div>
+      ${liste.length ? `<p class="kl-legende">${esc(t("kartelaeden.legende"))}</p>` : ""}
       ${zekiZeile(liste, unsicher)}
       ${!liste.length ? `<div class="karte kl-leer"><b>${esc(t("kartelaeden.leer"))}</b><button type="button" class="knopf glut" data-a="nav" data-wert="kartefoto">${sym("camera")} ${esc(t("kartelaeden.fotografieren"))}</button></div>` : `
       <div class="kl-segment" role="tablist">
@@ -78,7 +79,7 @@ function zekiZeile(liste, unsicher) {
   const gelb = mit.filter((y) => y.a.ampel === "gelb").sort((p, q) => p.a.quote - q.a.quote)[0];
   const gut = [...mit].sort((p, q) => q.a.gewinn - p.a.gewinn)[0];
   const y = rot || gelb || gut; const art = rot ? "rot" : gelb ? "gelb" : "gruen";
-  const betrag = `${unsicher || y.x.z.warenGeschaetzt || y.x.z.warenRichtpreis ? "≈ " : ""}${fmtEuro(Math.abs(y.a.gewinn), { dezimal: 2 })}`;
+  const betrag = `${unsicher || y.x.z.warenGeschaetzt || y.x.z.warenRichtpreis ? "≈\u00a0" : ""}${fmtEuro(Math.abs(y.a.gewinn), { dezimal: 2 })}`;
   const satz = t("kartelaeden.zeki." + art, y.x.g.name, betrag);
   return art === "gruen" ? `<p class="kl-zeki a-gruen" role="status">${esc(satz)}</p>`
     : `<button type="button" class="kl-zeki a-${art}" data-a="kl-auf" data-id="${esc(y.x.g.id)}">${esc(satz)}</button>`;
@@ -91,14 +92,14 @@ const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
 function bleibtZeile(z, preis, last) { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last)}</div>`; }
 function bleibtInnen(z, preis, last) {
   const a = preisAmpel(z, preis);
-  const prozent = a.quote === null ? "" : ` · ${fmtZahl(Math.round(a.quote * 100))} %`;
-  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : fmtEuro(a.gewinn, { dezimal: 2 })}${prozent}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
+  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : vorzeichen(a.gewinn) + fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
   const tl = preisAufteilung(z, last, preis);
   if (!tl || !(preis > 0)) return zeile;
   const breite = (v) => Math.max(0, v) / preis * 100;
-  return zeile + `<div class="kl-wohin"><small>${esc(t("kartelaeden.wohin"))}</small>
+  // Details nur auf Tipp (Baris 27.10.2026, B): zu, bis der Chef „Wohin geht dein Preis?“ antippt
+  return zeile + `<details class="kl-wohin"><summary>${esc(t("kartelaeden.wohin"))}</summary>
     <div class="kl-balken" aria-hidden="true">${TEILE.map((k) => breite(tl[k]) > 0.4 ? `<i class="t-${k}" style="width:${breite(tl[k]).toFixed(1)}%"></i>` : "").join("")}</div>
-    <ul class="kl-teile">${TEILE.map((k) => `<li class="t-${k}${k === "gewinn" && tl.gewinn < 0 ? " minus" : ""}"><i></i><span>${esc(t("kartelaeden.teil." + k))}</span><b>${fmtEuro(tl[k], { dezimal: 2 })}</b></li>`).join("")}</ul></div>`;
+    <ul class="kl-teile">${TEILE.map((k) => `<li class="t-${k}${k === "gewinn" && tl.gewinn < 0 ? " minus" : ""}"><i></i><span>${esc(t("kartelaeden.teil." + k))}</span><b>${fmtEuro(tl[k], { dezimal: 2 })}</b></li>`).join("")}</ul></details>`;
 }
 export function karteLadenBlatt(stand) {
   if (!blatt) return "";

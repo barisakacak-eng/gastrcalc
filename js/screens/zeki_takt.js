@@ -49,17 +49,36 @@ export function zekiTaktStarten(doc = typeof document !== "undefined" ? document
   }, ZEKI_TAKT_MS);
 }
 
-// Zeki spricht auf jedem Bildschirm (Baris 26.10.2026): Sprechblase unter dem Zeki oben rechts, ≈ 7 s, dann blendet CSS sie aus.
-// Liegt über dem Inhalt (verschiebt nichts) und verschwindet von selbst; Antippen schließt sie sofort.
-export function zekiSprechblase(root, moment, { restMs = 7000, bewegen = true } = {}) {
-  const kopf = root?.querySelector?.(".appleiste .zeki-knopf"); if (!kopf || !moment?.text) return false;
+// Zekis Stimme (Baris 27.10.2026, 02:05): Was Zeki sagt, steht direkt neben ihm im Kopf – keine Sprechblase, kein Kasten,
+// nie über dem Inhalt. Der Kopf ist Zekis Ebene: links Menü, in der Mitte sein Satz (statt Logo), rechts Zeki selbst.
+function stimmePlatz(root) {
+  const kopf = root?.querySelector?.(".appleiste .zeki-knopf"); if (!kopf) return null;
   const leiste = kopf.closest(".appleiste");
-  const blase = root.ownerDocument.createElement("div");
-  blase.setAttribute("class", "zeki-sprech" + (moment.ausloeser === "kuehl_abweichung" || moment.ausloeser === "muell_hoch" ? " zeki-sprech--ernst" : ""));
-  blase.setAttribute("role", "status"); blase.style.setProperty("--zeki-rest", Math.max(0, Math.round(restMs)) + "ms");
-  blase.append(moment.text);
-  blase.addEventListener("click", () => blase.remove());
-  leiste.appendChild(blase);
-  if (bewegen && moment.bewegung && moment.bewegung !== "keine") zekiSpielen(kopf, moment.bewegung);
+  let platz = leiste.querySelector(".zeki-stimme");
+  if (!platz) { platz = root.ownerDocument.createElement("div"); platz.setAttribute("class", "zeki-stimme"); platz.setAttribute("aria-live", "polite"); leiste.insertBefore(platz, kopf); }
+  return { kopf, leiste, platz };
+}
+// Der feste Satz eines Bildschirms (.zeki-zeile / .kl-zeki) wandert aus dem Inhalt neben Zeki. Rückgabe: true, wenn Zeki spricht.
+export function zekiStimmeEinsetzen(root) {
+  const satz = [...(root?.querySelectorAll?.(".zeki-zeile, .kl-zeki") || [])].find((el) => !el.closest(".zeki-stimme, .appleiste")); if (!satz) return false;
+  const p = stimmePlatz(root); if (!p) return false;
+  p.platz.replaceChildren(satz); p.leiste.classList.add("spricht");
+  if (satz.classList.contains("a-rot")) p.leiste.classList.add("spricht-ernst");
   return true;
 }
+// Flüchtiger Satz (Lage des Tages): steht ≈ 7 s neben Zeki, dann kommt das Logo zurück. Antippen schließt sofort.
+export function zekiSprechblase(root, moment, { restMs = 7000, bewegen = true } = {}) {
+  if (!moment?.text) return false;
+  const p = stimmePlatz(root); if (!p) return false;
+  const satz = root.ownerDocument.createElement("p");
+  const ernst = moment.ausloeser === "kuehl_abweichung" || moment.ausloeser === "muell_hoch";
+  satz.setAttribute("class", "zeki-sprech" + (ernst ? " zeki-sprech--ernst" : ""));
+  satz.setAttribute("role", "status"); satz.style.setProperty("--zeki-rest", Math.max(0, Math.round(restMs)) + "ms");
+  satz.append(moment.text);
+  const weg = () => { satz.remove(); if (!p.platz.childElementCount) p.leiste.classList.remove("spricht", "spricht-ernst"); };
+  satz.addEventListener("click", weg); satz.addEventListener("animationend", (e) => { if (e.animationName === "zekiBlaseAus") weg(); });
+  p.platz.replaceChildren(satz); p.leiste.classList.add("spricht"); if (ernst) p.leiste.classList.add("spricht-ernst");
+  if (bewegen && moment.bewegung && moment.bewegung !== "keine") zekiSpielen(p.kopf, moment.bewegung);
+  return true;
+}
+

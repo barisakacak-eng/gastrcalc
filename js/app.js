@@ -3,7 +3,7 @@
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
 import { zekiLogAnhaengen, rundgangAbschliessen } from "./stamm.js";
-import { zekiTaktStarten, zekiSprechblase } from "./screens/zeki_takt.js";
+import { zekiTaktStarten, zekiSprechblase, zekiStimmeEinsetzen } from "./screens/zeki_takt.js";
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
@@ -167,7 +167,7 @@ function zeichne() {
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
         : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
       root.innerHTML = `<div class="schirm">${v}</div>`;
-      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiBildschirm(); zekiTaktStarten();
+      zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
         setTimeout(() => fuehrungStarten(document, { log: (e) => { zekiLogAnhaengen(stand, e); speichern(wurzel); }, ende: (erg) => { rundgangAbschliessen(stand, erg); speichern(wurzel); } }), 400);
       eigeneFotosLaden();
@@ -1092,13 +1092,15 @@ function zekiGesehenMerken(key) {
 // Personal sieht keine Euro: dort keine Lage mit Betrag.
 function zekiBildschirm() {
   if (fuehrungOffen() || (ansicht === "start" && !stand?.fuehrung && modus(wurzel) === "laden")) return; // Führung zuerst, keine zweite Blase darüber
-  if (root.querySelector(".zeki-zeile, .kl-zeki")) return; // 27.10.2026: Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
+  if (root.querySelector(".zeki-zeile, .kl-zeki, .zeki-stimme > *")) return; // 27.10.2026: Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
   const nur = ansicht === "start" ? null : ZEKI_BILDSCHIRM[ansicht]; if ((ansicht !== "start" && !nur) || !stand) return; // Heute: alle Lagen, Zeki spricht oben rechts
   const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
   if (zekiGerade && Date.now() - zekiGerade.t < 7000) gesehen.delete(zekiGerade.key);
   let zm = null;
   try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
   if (!zm) return;
+  // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter
+  if (ansicht === "start" && zm.ausloeser !== "kuehl_abweichung" && zm.ausloeser !== "muell_hoch") return;
   const key = `${zm.ausloeser}:${H}`; const laeuft = zekiGerade?.key === key;
   zekiSprechblase(root, zm, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
   zekiGesehenMerken(key);
