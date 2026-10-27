@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Nạp hóa đơn, cập nhật giá",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Ghi bữa ăn nhân viên",
     zeki: { start: "Hôm nay bỏ đi những gì?", weiter: "Còn gì bỏ đi nữa không?", personal: "Nhân viên của sếp đã ăn gì?", bruch: "Cái gì bị vỡ hay hỏng?" },
     grund: { roh: "Hàng", personal: "Nhân viên", bruch: "Hỏng" }, nichtsGefunden: "Không tìm thấy. Viết cách khác hoặc chọn “Cân xô rác”.",

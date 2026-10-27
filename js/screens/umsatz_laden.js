@@ -6,7 +6,7 @@ import { esc, fmtEuro, heuteGeschaeft, wertAnzeige } from "../util.js";
 import { umsatzEintrag } from "../engine.js";
 import { umsatzHeutePruefen, umsatzHeuteSpeichern } from "../laden_zahlen.js";
 import { nav } from "./nav.js";
-import { teamTag, teamTagSetzen, teamTagLohn } from "../stamm.js";
+import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten } from "../stamm.js";
 import { sym } from "../symbole.js";
 
 let entwurf = null;   // getippter Text (null = noch nichts getippt, Feld zeigt den gespeicherten Wert)
@@ -20,8 +20,8 @@ export function umsatzLadenZuruecksetzen() { entwurf = null; rueckfrage = null; 
 function teamStart(stand, H) {
   const alt = teamTag(stand, H);
   const leute = (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false);
-  const basis = leute.length ? leute.map((p) => ({ person: p.id, name: p.kuerzel, satz: p.stundenlohn || null })) : [{ person: null, name: t("teamTag.person", 1), satz: null }];
-  return basis.map((b) => { const v = alt?.eintraege.find((x) => (x.person || x.name) === (b.person || b.name)); return { ...b, stunden: v ? v.stunden : 8, satz: v?.satz || b.satz, an: !!v || !alt }; });
+  const basis = leute.length ? leute.map((p) => ({ person: p.id, name: p.kuerzel, satz: p.stundenlohn || null, art: p.lohnArt || null })) : [{ person: null, name: t("teamTag.person", 1), satz: null, art: null }];
+  return basis.map((b) => { const v = alt?.eintraege.find((x) => (x.person || x.name) === (b.person || b.name)); return { ...b, stunden: v ? v.stunden : 8, satz: v?.satz || b.satz, art: v?.art || b.art, an: !!v || !alt }; });
 }
 function teamView(stand) {
   if (schritt === "frage") return `
@@ -29,7 +29,7 @@ function teamView(stand) {
       <p class="zeki-zeile">${esc(t("teamTag.frage"))}</p>
       <div class="team-wahl"><button type="button" class="knopf glut" data-a="ul-team-ja">${esc(t("allgemein.ja"))}</button><button type="button" class="knopf zweit" data-a="ul-team-nein">${esc(t("allgemein.nein"))}</button></div>
     </div>${nav("start")}`;
-  const lohn = teamTagLohn({ eintraege: team.filter((x) => x.an) }); const offen = team.some((x) => x.an && !x.satz);
+  const an = { eintraege: team.filter((x) => x.an) }; const lohn = teamTagLohn(an); const kosten = teamTagKosten(an); const offen = team.some((x) => x.an && (!x.satz || !x.art));
   return `
     <div class="inhalt umsatz-laden team-tag">
       <p class="zeki-zeile">${esc(t("teamTag.wer"))}</p>
@@ -37,10 +37,11 @@ function teamView(stand) {
         <div class="karte team-zeile ${x.an ? "an" : ""}">
           <button type="button" class="team-name" data-a="ul-team-wer" data-i="${i}" aria-pressed="${x.an}"><span class="team-haken">${x.an ? sym("check") : ""}</span><b>${esc(x.name)}</b></button>
           ${x.an ? `<div class="stepper team-std"><button type="button" data-a="ul-team-std" data-i="${i}" data-d="-0.5" aria-label="−">−</button><div class="wert"><b>${esc(String(x.stunden).replace(".", ","))}</b><small>${esc(t("teamTag.std"))}</small></div><button type="button" data-a="ul-team-std" data-i="${i}" data-d="0.5" aria-label="+">+</button></div>
-          ${x.satz ? "" : `<label class="team-satz"><span>${esc(t("teamTag.satz"))}</span><input inputmode="decimal" data-f="ul-team-satz:${i}" placeholder="0,00" autocomplete="off"><span>€</span></label>`}` : ""}
+          ${x.satz && x.art ? "" : `<label class="team-satz"><span>${esc(t("teamTag.satz"))}</span><input inputmode="decimal" data-f="ul-team-satz:${i}" value="${x.satz ? esc(String(x.satz).replace(".", ",")) : ""}" placeholder="0,00" autocomplete="off"><span>€</span></label>
+          <div class="team-art">${["angestellt", "minijob"].map((a) => `<button type="button" class="chip ${x.art === a ? "an" : ""}" data-a="ul-team-art" data-i="${i}" data-wert="${a}">${esc(t("teamTag.art." + a))}</button>`).join("")}</div>`}` : ""}
         </div>`).join("")}</div>
       ${(stand.personen || []).some((p) => !p.entfernt) ? "" : `<button type="button" class="leise" data-a="ul-team-plus">+ ${esc(t("teamTag.weitere"))}</button>`}
-      <p class="team-summe">${esc(offen ? t("teamTag.summeOffen") : t("teamTag.summe", fmtEuro(lohn, { dezimal: 2 })))}</p>
+      <p class="team-summe">${esc(offen ? t("teamTag.summeOffen") : t("teamTag.summe", "≈ " + fmtEuro(kosten, { dezimal: 2 })))}${offen ? "" : `<small>${esc(t("teamTag.brutto", fmtEuro(lohn, { dezimal: 2 })))}</small>`}</p>
       <button type="button" class="knopf glut" data-a="ul-team-fertig">${esc(t("teamTag.fertig"))}</button>
     </div>${nav("start")}`;
 }
@@ -78,6 +79,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (team && name.startsWith("ul-team-")) {
     team = team.map((y, i) => (satzEntwuerfe.get(i) ? { ...y, satz: satzEntwuerfe.get(i) } : y)); satzEntwuerfe.clear();
     const x = team[Number(el.dataset.i)];
+    if (name === "ul-team-art" && x) { team = team.map((y) => (y === x ? { ...y, art: el.dataset.wert === "minijob" ? "minijob" : "angestellt" } : y)); return "zeichnen"; }
     if (name === "ul-team-wer" && x) { team = team.map((y) => (y === x ? { ...y, an: !y.an } : y)); return "zeichnen"; }
     if (name === "ul-team-std" && x) { team = team.map((y) => (y === x ? { ...y, stunden: Math.max(0.5, Math.min(16, y.stunden + Number(el.dataset.d))) } : y)); return "zeichnen"; }
     if (name === "ul-team-plus") { team = [...team, { person: null, name: t("teamTag.person", team.length + 1), stunden: 8, satz: team[team.length - 1]?.satz || null, an: true }]; return "zeichnen"; }

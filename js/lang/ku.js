@@ -736,7 +736,7 @@ export default {
     belegeKurz: "Fîşê bixwîne, bihayan nû bike",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Xwarina karmendan binivîse",
     zeki: { start: "Îro çi hate avêtin?", weiter: "Tiştekî din jî hate avêtin?", personal: "Tîma te çi xwar?", bruch: "Çi şikest an xera bû?" },
     grund: { roh: "Mal", personal: "Karmend", bruch: "Şikestî" }, nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",

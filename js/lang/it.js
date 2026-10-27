@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Carica scontrino, aggiorna i prezzi",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Segna pasto del personale",
     zeki: { start: "Cosa hai buttato oggi?", weiter: "Hai buttato altro?", personal: "Cosa ha mangiato la tua squadra?", bruch: "Cosa si è rotto?" },
     grund: { roh: "Merce", personal: "Personale", bruch: "Rottura" }, nichtsGefunden: "Non trovato niente. Scrivi in un altro modo o scegli “Bidone pesato”.",

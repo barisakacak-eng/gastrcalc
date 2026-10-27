@@ -739,7 +739,7 @@ export default {
     belegeKurz: "اقرأ إيصالًا، وحدّث الأسعار",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "تسجيل وجبة الموظفين",
     zeki: { start: "ماذا رُمي اليوم؟", weiter: "هل رُمي شيء آخر؟", personal: "ماذا أكل فريقك؟", bruch: "ما الذي انكسر أو تلف؟" },
     grund: { roh: "بضاعة", personal: "موظفون", bruch: "تالف" }, nichtsGefunden: "لم يُعثر على شيء. اكتبه بطريقة أخرى أو اختر «وزن السطل».",

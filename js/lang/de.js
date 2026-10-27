@@ -744,7 +744,7 @@ titel: "Büro", zurueck: "Laden",
     belegeKurz: "Beleg einlesen, Preise nachziehen",
   },
 
-  teamTag: { frage: "Waren heute Mitarbeiter da?", wer: "Wer war da? Stunden einstellen.", std: "Std.", satz: "Lohn pro Stunde", summe: (b) => `Lohn heute: ${b}`, summeOffen: "Lohn pro Stunde fehlt noch", weitere: "weitere Person", person: (n) => `Mitarbeiter ${n}`, fertig: "Fertig" },
+  teamTag: { frage: "Waren heute Mitarbeiter da?", wer: "Wer war da? Stunden einstellen.", std: "Std.", satz: "Brutto pro Stunde", summe: (b) => `Kostet dich heute: ${b}`, brutto: (b) => `${b} brutto, dazu Arbeitgeberanteil`, art: { angestellt: "Angestellt", minijob: "Minijob" }, summeOffen: "Lohn und Art fehlen noch", weitere: "weitere Person", person: (n) => `Mitarbeiter ${n}`, fertig: "Fertig" },
   muell: { personalEintragen: "Personalessen eintragen",
     zeki: { start: "Was ist heute weg?", weiter: "Noch was weg?", personal: "Was hat dein Team gegessen?", bruch: "Was ist kaputtgegangen?" },
     grund: { roh: "Ware", personal: "Personal", bruch: "Bruch" },

@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Зареди бележка, обнови цените",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Запиши храна за персонала",
     zeki: { start: "Какво се изхвърли днес?", weiter: "Още нещо за изхвърляне?", personal: "Какво яде екипът ти?", bruch: "Какво се счупи?" },
     grund: { roh: "Стока", personal: "Персонал", bruch: "Счупено" }, nichtsGefunden: "Нищо не е намерено. Напиши го иначе или избери „Претеглена кофа“.",

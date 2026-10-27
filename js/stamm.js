@@ -1,3 +1,4 @@
+import { kostenJeStunde } from "./data/lohnkosten.js";
 // Trennung (17.10.2026): Schreib-Funktionen für die Stammdaten eines Ladens (Betrieb, Team, Kosten, Kanäle, Reinigung,
 // Kühlstellen, Personen, Einrichtungs-Schalter). Vorher schrieben die Bildschirme (js/screens/*.js, app.js) diese Felder selbst.
 // Regel: die Bildschirme fragen nach (confirm), lesen Eingaben und rufen eine dieser Funktionen; danach speichert app.js.
@@ -200,9 +201,11 @@ export function kontaktSetzen(stand, art, email) {
 export const teamTag = (stand, datum) => [...(stand?.teamTage || [])].reverse().find((x) => x.datum === datum) || null;
 export function teamTagSetzen(stand, datum, eintraege) {
   stand.teamTage ??= [];
-  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), stunden: Math.round(x.stunden * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
+  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), stunden: Math.round(x.stunden * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
   stand.teamTage.push(e);
-  for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) p.stundenlohn = x.satz; }
+  for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) { p.stundenlohn = x.satz; p.lohnArt = x.art; } }
   return e;
 }
+// satz = Brutto-Stundenlohn; art = "angestellt" | "minijob". Kosten = Brutto × Arbeitgeber-Aufschlag (js/data/lohnkosten.js)
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
+export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);

@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Lexo faturë, përditëso çmimet",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Shëno ushqimin e stafit",
     zeki: { start: "Çfarë u hodh sot?", weiter: "U hodh edhe diçka tjetër?", personal: "Çfarë hëngri ekipi yt?", bruch: "Çfarë u thye ose u prish?" },
     grund: { roh: "Mall", personal: "Stafi", bruch: "Thyerje" }, nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",

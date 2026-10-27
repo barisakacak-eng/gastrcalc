@@ -736,7 +736,7 @@ export default {
     belegeKurz: "Read a receipt, update prices",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Log staff meal",
     zeki: { start: "What got thrown out today?", weiter: "Anything else thrown out?", personal: "What did your team eat?", bruch: "What got broken?" },
     grund: { roh: "Goods", personal: "Staff", bruch: "Breakage" }, nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
