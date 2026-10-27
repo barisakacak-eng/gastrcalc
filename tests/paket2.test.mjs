@@ -158,7 +158,10 @@ test("Paket 2 (2): alter Kopf ohne gen lädt weiter (gen fehlt = 0) und bekommt 
 // ---------- 3./4. app.js: controllerchange ohne eigenen Tipp, Zurücksetzer ----------
 test("Paket 2 (3): controllerchange ohne eigenen „Aktualisieren“-Tipp lädt neu, sobald kein Formular offen ist", () => {
   const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  assert.match(app, /addEventListener\("controllerchange", \(\) => \{ if \(aktualisierungKlick\) location\.reload\(\); else fremdeFassungUebernehmen\(\); \}\)/);
+  assert.match(app, /addEventListener\("controllerchange", \(\) => \{[^}]*\}\s*if \(aktualisierungKlick\) location\.reload\(\); else fremdeFassungUebernehmen\(\);/);
+  // 27.10.2026: der erste Wechsel beim allerersten Besuch (clients.claim, noch kein Controller) lädt NICHT neu
+  assert.match(app, /let ersteUebernahme = !navigator\.serviceWorker\.controller;/);
+  assert.match(app, /if \(ersteUebernahme\) \{ ersteUebernahme = false; return; \}/);
   assert.match(app, /function fremdeFassungUebernehmen\(\)/);
   assert.match(app, /function formularOffen\(\)/);
   assert.match(app, /window\.addEventListener\(FREMDER_STAND/);
