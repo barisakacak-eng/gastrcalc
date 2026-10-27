@@ -41,3 +41,22 @@ test("Umsatz senkt bis null", () => {
   const b = monatsZiel(s, zaehler(s, { datum: H }), H).fehltNull;
   assert.ok(a > 0 && b < a);
 });
+
+test("Gegenprüfung 27.10.: ein Mitarbeiter-Eintrag wird nicht auf den Monat hochgerechnet", () => {
+  const s = beispielLaden("2026-10-26"); const H = "2026-10-15";
+  const vor = monatsZiel(s, zaehler(s, { datum: H }), H).fehltNull;
+  teamTagSetzen(s, H, [{ name: "A", stunden: 10, satz: 15 }, { name: "B", stunden: 10, satz: 15 }]);
+  const z = zaehler(s, { datum: H }); const nach = monatsZiel(s, z, H).fehltNull;
+  const anteil = z.tageskostenPrognose - z.tageskostenFest; // anteiliger Lohn je Öffnungstag
+  const echt = z.tage.find((t) => t.datum === H).lohn;
+  const erwartet = (echt - anteil) / (1 - z.quoteEff) * (1 + z.steuer);
+  assert.ok(Math.abs((nach - vor) - erwartet) < 1, `${nach - vor} statt ${erwartet}`);
+});
+
+test("Gegenprüfung 27.10.: Eintrag ohne Stundenlohn zählt nicht als 0 €", () => {
+  const s = beispielLaden("2026-10-26"); const H = "2026-10-15";
+  const vor = monatsZiel(s, zaehler(s, { datum: H }), H).fehltNull;
+  teamTagSetzen(s, H, [{ name: "A", stunden: 8, satz: null }]);
+  const nach = monatsZiel(s, zaehler(s, { datum: H }), H).fehltNull;
+  assert.ok(Math.abs(nach - vor) < 1e-6);
+});

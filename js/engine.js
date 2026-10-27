@@ -507,7 +507,7 @@ export function preisAufteilung(zeile, last, preisBrutto) {
   const anteil = (x) => (gesamt > 0 ? x / gesamt : 0);
   const ware = zeile.waren;
   // 27.10.2026 (F2): Anteile wie in der Kalkulation gekürzt, damit die Teile wieder den Selbstkosten entsprechen
-  const k = fix + zeit > 0 ? Math.max(0, zeile.sk - ware) / (fix + zeit) : 1;
+  const k = fix + zeit > 0 ? Math.max(0, zeile.sk - ware) / (fix + zeit) : 0; // gekürzt auf 0 → keine Miete/Personal-Anteile (Gegenprüfung 27.10.)
   const personal = Math.max(0, fix * anteil(personalMonat) + zeit) * k;
   const miete = fix * anteil(mieteMonat) * k;
   const neben = Math.max(0, zeile.sk - ware - personal - miete);

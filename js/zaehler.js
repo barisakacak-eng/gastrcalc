@@ -111,7 +111,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   // Stufe 3 weiterhin nur mit Karte (ein Richtwert ist keine Schätzung zum Vergleichen – Entscheidung „Ohne Karte keine Stufe 3“ bleibt).
   const mitKarte = q.quelle !== "richtwert";
   let stufe = mitKarte ? 2 : 1;
-  const belegSumme = Object.values(einkauf.jeTag).reduce((a, b) => a + b, 0);
+  const belegSumme = Object.entries(einkauf.jeTag).filter(([d]) => d <= datum).reduce((a, [, b]) => a + b, 0); // Gegenprüfung 27.10.: nur Belege bis zum gewählten Tag
   if (einkauf.anzahl > 0 && mitKarte && belegSumme > 0 && belegSumme >= umsatzNettoGesamt * q.quote) stufe = 3;
   // Quote für Prognose, Tempo und „pro Tag nötig“. Schwadron 18.10.2026, H1: in Stufe 3 NICHT mehr „Belege Monat bis heute / Umsatz bis
   // heute“ – am Einkaufstag und am Monatsersten stand dort der ganze Beleg gegen ein, zwei Tage Umsatz (Quote 95 %, „4.769 € / Tag nötig“).
@@ -132,13 +132,15 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const lohnMonat = last.lohn ?? 0;
   const tageskostenFest = gewichtMonat > 0 ? (last.gesamt - lohnMonat + sonder.summe) / gewichtMonat : 0;
   const lohnAnteilig = gewichtMonat > 0 ? lohnMonat / gewichtMonat : 0;
-  const lohnAm = (d, gewicht) => { const e = teamTag(stand, d); return e ? { betrag: teamTagKosten(e), echt: true } : { betrag: lohnAnteilig * gewicht, echt: false }; };
+  // Ein Eintrag zählt nur, wenn bei allen Personen der Stundenlohn da ist – sonst bleibt der Tag beim Anteil (Gegenprüfung 27.10.: fehlender Lohn ≠ 0 €).
+  const lohnAm = (d, gewicht) => { const e = teamTag(stand, d); const vollstaendig = e && (e.keine || e.eintraege.every((x) => x.satz > 0));
+    return vollstaendig ? { betrag: teamTagKosten(e), echt: true } : { betrag: lohnAnteilig * gewicht, echt: false }; };
   const anteil = (betrag) => gewichtMonat > 0 ? (betrag || 0) / gewichtMonat : 0;
 
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
   let kosten = 0, umsatzBrutto = 0, umsatzNetto = 0, ware = 0, muellSumme = 0, gewichtBisHeute = 0, tageMitUmsatz = 0, db = 0;
   let standGestern = 0, kippTag = null, letzterStand = 0;
-  let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0;
+  let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0, lohnEchtSummeOffen = 0;
   for (const t of tage) {
     if (t.datum > datum) { t.status = "zukunft"; continue; }
     if (t.datum < start) { t.status = "vorher"; t.stand = 0; continue; }
@@ -148,7 +150,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     const w = stufe === 3 ? (einkauf.jeTag[t.datum] || 0) : un * quoteEff; // Paket 3: Stufe 1 schätzt die Ware mit dem Richtwert
     const m = stufe === 3 ? 0 : (muell[t.datum] || 0);
     const lt = lohnAm(t.datum, t.gewicht); t.lohn = lt.betrag; t.lohnEcht = lt.echt;
-    if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; lohnEchtGewicht += t.gewicht; } else if (t.gewicht > 0) lohnGeschaetztTage += 1;
+    if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } else if (t.gewicht > 0) lohnGeschaetztTage += 1;
     lohnBis += lt.betrag;
     kosten += tageskostenFest * t.gewicht + lt.betrag; gewichtBisHeute += t.gewicht;
     umsatzBrutto += ub; umsatzNetto += un; ware += w; muellSumme += m;
@@ -163,7 +165,9 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
 
   // Prognose: Deckungsbeitrag je Tag mit Umsatz, gegen die Tageskosten
   const dbProTag = tageMitUmsatz > 0 ? db / tageMitUmsatz : null;
-  const lohnJeGewicht = lohnEchtGewicht > 0 ? lohnEchtSumme / lohnEchtGewicht : lohnAnteilig;
+  // Gegenprüfung 27.10.: künftige Tage immer mit dem anteiligen Monatslohn – ein einzelner Eintrag wird nicht auf den Monat hochgerechnet.
+  // Nur ohne Monatssumme (Lohn nie eingetragen) nimmt die Vorhersage den Schnitt der echten Öffnungstage (Ruhetage zählen dort nicht mit).
+  const lohnJeGewicht = lohnMonat > 0 ? lohnAnteilig : (lohnEchtGewicht > 0 ? lohnEchtSummeOffen / lohnEchtGewicht : 0);
   const tageskostenPrognose = tageskostenFest + lohnJeGewicht; // je Öffnungstag (Gewicht 1) für die restlichen Tage
   const gewichtZukunft = tage.filter((t) => t.status === "zukunft").reduce((a, t) => a + t.gewicht, 0);
   let nullTag = null, monatsende = null, reichtNicht = false;
