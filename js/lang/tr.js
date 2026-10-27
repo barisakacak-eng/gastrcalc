@@ -368,7 +368,7 @@ export default {
     eigenesFoto: "Kendi fotoğrafını çek", fotoGespeichert: "Fotoğraf kaydedildi. Bu telefonda kalır.",  titel: "Yemek karşılaştırması", unter: "Hangi yemekler sana en çok kazandırıyor?", tab: { db: "Adet başı kalan", marge: "Brüt kâr %" }, ware: "Malzeme maliyeti", db: "Adet başı sana kalan", marge: "Brüt kâr (mal sonrası)", leer: "Satış ve alış fiyatlarını gir, hangi yemeklerin en çok kazandırdığını burada gör.", ohneZahlen: (n) => `${n} yemeğin henüz rakamı yok`, einkaufFehlt: "Alış fiyatları eksik", hinweis: "Değerler tahminidir, malzemeye ve fiyatlara göre değişebilir. Satış fiyatı dışındaki tutarlar KDV hariçtir.", nachKosten: "Tüm maliyetlerden sonra", nachKostenFehlt: "Maliyetler eksik", ampelLegende: "Tüm maliyetlerden sonra ışık: net fiyatın % 10 altı kırmızı, % 19 ve üstü yeşil (≈ BMF kılavuz oranlarına göre, veri yılı 2024)." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: {
-    ruhig: { mehr: (n) => `${n} tane daha` }, titel: "Ofis", zurueck: "Dükkan",
+    ruhig: { mehr: (n) => `${n} tane daha` }, titel: "Büro", zurueck: "Dükkan",
     abschnitt: { geld: "Para", ware: "Mal", kartePreise: "Menü ve fiyatlar", offen: "Açık işler", ordner: "Teslim dosyaları", zahlen: "Rakamlar", karte: "Menü ve alım", einrichten: "Dükkanı kur" },
     offen: { einrichtung: "Kurulum", kosten: (n) => `Sabit giderler: ${n} eksik`, billig: (n) => `${n} fiyat çok ucuz`,
       ohneZahlen: (n) => `${n} yemeğin rakamı yok`, sicherung: (n) => `Yedek ${n} gün önce`, sicherungNie: "Henüz yedek yok",
@@ -377,10 +377,10 @@ export default {
       monat: "Ay ve sayaç", monatUnter: (m) => `${m} şimdiye kadar`, vergleich: "Yemek karşılaştırması", vergleichUnter: "Porsiyon başına ne kalıyor", listen: "Listeler", listenUnter: "Çöp, fire, personel yemeği",
       inventur: "Sayım", inventurUnter: (d) => `Son sayım ${d}`, inventurNie: "Henüz sayım yok" },
     karte: { rezepte: "Tarifler", preise: "Alış fiyatları", belege: "Fişler", verkauf: "Satış fiyatları", kosten: "Sabit giderler", kartefoto: "Fotoğrafla menü" },
-    einrichten: { einrichtung: "Kurulum", kuehl: "Soğutucular", putzplan: "Temizlik planını düzenle", laeden: "Dükkanlar", sicherung: "Yedek", code: "Ofis kodu", codeAn: "açık", codeAus: "kapalı", einstellungen: "Ayarlar" },
-    code: { titel: "Ofis kodu", text: "4 rakam. Ofisi ve personel modundan çıkışı korur.", neu: "Yeni kod", wiederholen: "Kodu tekrar gir", setzen: "Kodu kaydet",
-      ungleich: "İki kod aynı değil. Lütfen yeniden.", gesetzt: "Ofis kodu kaydedildi.", entfernen: "Kodu kaldır", entfernt: "Ofis kodu kaldırıldı.",
-      eingeben: "Ofis kodunu gir", falsch: "Kod yanlış.", oeffnen: "Aç", vier: "Lütfen tam 4 rakam." },
+    einrichten: { einrichtung: "Kurulum", kuehl: "Soğutucular", putzplan: "Temizlik planını düzenle", laeden: "Dükkanlar", sicherung: "Yedek", code: "Büro kodu", codeAn: "açık", codeAus: "kapalı", einstellungen: "Ayarlar" },
+    code: { titel: "Büro kodu", text: "4 rakam. Büroyu ve personel modundan çıkışı korur.", neu: "Yeni kod", wiederholen: "Kodu tekrar gir", setzen: "Kodu kaydet",
+      ungleich: "İki kod aynı değil. Lütfen yeniden.", gesetzt: "Büro kodu kaydedildi.", entfernen: "Kodu kaldır", entfernt: "Büro kodu kaldırıldı.",
+      eingeben: "Büro kodunu gir", falsch: "Kod yanlış.", oeffnen: "Aç", vier: "Lütfen tam 4 rakam." },
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Misafirlere ikram: ${e} net · özel kullanım için çekim, mali müşavirle netleştir`, pausch: (p) => `Kendi yemeğin: 2026 götürü tutar kişi başı yıllık ${p}, 2–12 yaş çocuklar yarısı. O zaman tek tek yazman gerekmez. Mali müşavirinle netleştir.`, kennung: "Not – Z raporu değil, muhasebe için değil", steuerZbon: "KDV'yi lütfen kasanın Z raporundan al.", kasse: "Cirolar sadece not. Geçerli olan kasan (Z raporu).",
@@ -1059,7 +1059,7 @@ export default {
     fertigFrage: "Usta, her şey anlaşıldı mı?", ja: "Evet, anladım", nochmal: "Bir daha göster", frage: "Bir sorum var", fragenTitel: "Çok sorulanlar:", fragePlatzhalter: "Ya da sorunu yaz …", abschicken: "Soruyu gönder", danke: "Sağ ol usta. Sorunu not ettim.", schliessen: "Bitti",
   },
   // Schloss: Code + Face ID (Entwurf 27.10.2026)
-  schloss: { titel: "Bir kod belirle. Ofise sadece sen girersin.", hilfe: "Dükkânda uygulama hiç sormaz. Sadece ofise girerken kısaca sorar – kodla ya da Face ID ile. Sonra ofis 15 dakika açık kalır.", code: "Kod belirle", codeAn: "Kod belirlendi", bio: "Face ID'yi aç", bioAn: "Face ID açık", bioNicht: "Face ID bu cihazda çalışmıyor. Kod yeterli.", mitBio: "Face ID ile aç" },
+  schloss: { titel: "Bir kod belirle. Büroya sadece sen girersin.", hilfe: "Dükkânda uygulama hiç sormaz. Sadece ofise girerken kısaca sorar – kodla ya da Face ID ile. Sonra ofis 15 dakika açık kalır.", code: "Kod belirle", codeAn: "Kod belirlendi", bio: "Face ID'yi aç", bioAn: "Face ID açık", bioNicht: "Face ID bu cihazda çalışmıyor. Kod yeterli.", mitBio: "Face ID ile aç" },
   // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
   ordnerMail: {
     zeki: { steuer: "E-postayı senin için hazırlarım. Sen sadece Gönder'e basarsın.", buch: "E-postayı senin için hazırlarım. Sen sadece Gönder'e basarsın." },
@@ -1084,7 +1084,7 @@ export default {
     geldHilfe: "Yaklaşık yeter, boş da bırakabilirsin. Faturaları sonra büroda fotoğraflarsın.",
     putzt: "Kim temizliyor?", wer: { selbst: "Biz", firma: "Firma", beides: "İkisi de" }, firma: "Firma",
     fertig: "Tamam!", eingerichtet: "kuruldu", los: "Başlayalım", pin: "Büro kodunu belirle",
-    zeki: { schloss: "Bir kod belirle. Ofise sadece sen girersin.", hallo: "Selam usta! Benim adım Zeki.", rolle: "Sana yardım ederim – önde tezgâhta, arkada büroda.", "laden-schnell": "Dükkânının adı ne? Ne satıyorsun?", "karte-foto": "Menünün fotoğrafını çek. Yemekleri ve fiyatları ben okurum.", "kuehl-schnell": "Hangi soğutucuların var? Artıya basman yeter.", geld: "Dükkânın aylık masrafı ne kadar? Aşağı yukarı yeter.", fertig: "Süper usta! Artık hep yanındayım." },
+    zeki: { schloss: "Bir kod belirle. Büroya sadece sen girersin.", hallo: "Selam usta! Benim adım Zeki.", rolle: "Sana yardım ederim – önde tezgâhta, arkada büroda.", "laden-schnell": "Dükkânının adı ne? Ne satıyorsun?", "karte-foto": "Menünün fotoğrafını çek. Yemekleri ve fiyatları ben okurum.", "kuehl-schnell": "Hangi soğutucuların var? Artıya basman yeter.", geld: "Dükkânın aylık masrafı ne kadar? Aşağı yukarı yeter.", fertig: "Süper usta! Artık hep yanındayım." },
   },
   // Envanter sayımı (Punkt 3)
   inventur: {

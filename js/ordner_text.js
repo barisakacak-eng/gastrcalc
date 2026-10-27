@@ -85,7 +85,7 @@ export function paketUnter(teil, p) {
 }
 
 // ---------- Dokumente (übersetzt) ----------
-const NAMEN = () => ({ kleinbetrag: () => t("ordnerC.kleinbetrag"), nachgetragen: (d) => t("ordnerC.nachgetragen", d),
+const NAMEN = () => ({ liefer: () => t("lieferTag.davon") + " €", kleinbetrag: () => t("ordnerC.kleinbetrag"), nachgetragen: (d) => t("ordnerC.nachgetragen", d),
   ja: () => t("allgemein.ja"),
   grund: (g) => (!g ? "" : GRUENDE.includes(g) ? t("amtW2.nichtGemessen", t("kuehl.gruende." + g)) : t("ordner.dok.nichtGemessen")),
   massnahme: (m) => t("kuehl.massnahmen." + m),
@@ -188,8 +188,8 @@ export function amtDokument(stand, o) {
 export function paketDokument(stand, p) {
   const n = NAMEN(); const a = [];
   const art = p.art; const leerOder = (v) => (v === null || v === undefined ? "–" : euro(v));
-  if (p.umsatz) a.push({ titel: t("ordner.teil.umsatz"), info: `${kennung()} · ${t("ordnerT.steuerZbon")}`, warn: true, notiz: true, kopf: t("ordnerT.druck.umsatz"), rechts: [1, 2],
-    zeilen: p.umsatz.zeilen.map((x) => [datumDe(x.datum) + (x.nacherfasst ? " *" : ""), euro(x.brutto), x.geaendert === null ? "" : euro(x.geaendert)]), summe: p.umsatz.tage ? [t("ordner.dok.summe"), euro(p.umsatz.summe.brutto), ""] : null, leer: t("ordner.zeile.umsatzKeine") });
+  if (p.umsatz) a.push({ titel: t("ordner.teil.umsatz"), info: `${kennung()} · ${t("ordnerT.steuerZbon")}`, warn: true, notiz: true, kopf: p.umsatz.mitLiefer ? [...t("ordnerT.druck.umsatz"), t("lieferTag.davon") + " €"] : t("ordnerT.druck.umsatz"), rechts: p.umsatz.mitLiefer ? [1, 2, 3] : [1, 2],
+    zeilen: p.umsatz.zeilen.map((x) => [datumDe(x.datum) + (x.nacherfasst ? " *" : ""), euro(x.brutto), x.geaendert === null ? "" : euro(x.geaendert), ...(p.umsatz.mitLiefer ? [x.liefer === null ? "" : euro(x.liefer)] : [])]), summe: p.umsatz.tage ? [t("ordner.dok.summe"), euro(p.umsatz.summe.brutto), "", ...(p.umsatz.mitLiefer ? [euro(p.umsatz.summe.liefer)] : [])] : null, leer: t("ordner.zeile.umsatzKeine") });
   if (p.personal) { const je = Object.entries(p.personal.jePerson).map(([k, v]) => `${k || "–"}: ${fmtZahl(v.anzahl)} · ${euro(v.sachbezug)}`).join(" · ");
     a.push({ titel: t("ordner.teil.personal"), info: [t("ordner.dok.svev"), je, p.personal.ohnePerson ? t("ordnerT.personalOhne", p.personal.ohnePerson) : ""].filter(Boolean).join(" · "), warn: !!p.personal.ohnePerson, kopf: kopfVon("personal").slice(0, 7), rechts: [4, 5, 6],
       zeilen: p.personal.zeilen.map((x) => ({ warn: !x.person, zellen: [datumDe(x.datum), !x.person ? "–" : !x.personAus ? x.person : x.personAusAm ? n.ausgeschiedenAm(x.person, x.personAusAm) : n.ausgeschieden(x.person), x.gericht, n.mahlzeit(x.mahlzeit), fmtZahl(x.menge), euro(x.je), euro(x.sachbezug)] })), summe: p.personal.zeilen.length ? [t("ordner.dok.summe"), "", "", "", fmtZahl(p.personal.anzahl), "", euro(p.personal.sachbezug)] : null, leer: t("ordner.zeile.keine") }); }

@@ -9,6 +9,7 @@ import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
 import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
+import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt 27.10.2026: Lieferanteil in der Tagesliste
 
 // ---------- CSV ----------
 export const CSV_BOM = "﻿";
@@ -67,9 +68,11 @@ export function tagesumsaetze(stand, z) {
   for (let d = z.von; d <= z.bis; d = tagPlus(d, 1)) {
     const e = umsatzEintrag(stand, d); if (!e) continue;
     const vor = (stand.tagesnotizen || []).filter((x) => x.ersetzt === e.id && typeof x.umsatz === "number").sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || ""))).pop() || null;
-    zeilen.push({ datum: d, brutto: e.umsatz, nacherfasst: !!e.nacherfasst, geaendert: vor ? vor.umsatz : null, geaendertZeit: vor?.storniertZeit || null });
+    const l = lieferProvision(stand) ? lieferTag(stand, d) : null;
+    zeilen.push({ datum: d, brutto: e.umsatz, nacherfasst: !!e.nacherfasst, geaendert: vor ? vor.umsatz : null, geaendertZeit: vor?.storniertZeit || null, liefer: l ? l.betrag : null });
   }
-  return { zeilen, summe: { brutto: rund2(zeilen.reduce((s, x) => s + x.brutto, 0)) }, tage: zeilen.length, geaendert: zeilen.filter((x) => x.geaendert !== null).length };
+  const mitLiefer = zeilen.some((x) => x.liefer !== null);
+  return { zeilen, mitLiefer, summe: { brutto: rund2(zeilen.reduce((s, x) => s + x.brutto, 0)), liefer: rund2(zeilen.reduce((s, x) => s + (x.liefer || 0), 0)) }, tage: zeilen.length, geaendert: zeilen.filter((x) => x.geaendert !== null).length };
 }
 
 // Rücknahmen und Korrekturen des Monats (W2-T, Prüfung p04 Nr. 3): Tagesnotizen, Warenbelege, Kostenbelege – nichts verschwindet still.
@@ -277,7 +280,7 @@ function teilStand(p, t) {
 // CSV je Teil. kopf: übersetzte Spaltenköpfe (von der Ansicht), namen: Übersetzer für Kennungen (art, mahlzeit, stelle, quelle, kennung, hinweis …)
 export function teilCsv(p, teil, kopf, namen = {}) {
   const n = (f, k) => (namen[f] ? namen[f](k) : k);
-  if (teil === "umsatz") return csvText(kopf, p.umsatz.zeilen.map((x) => [datumDe(x.datum), x.brutto, x.nacherfasst ? n("ja", "x") : "", x.geaendert, n("kennung", "notiz")]));
+  if (teil === "umsatz") return csvText(p.umsatz.mitLiefer ? [...kopf, n("liefer", "liefer")] : kopf, p.umsatz.zeilen.map((x) => [datumDe(x.datum), x.brutto, x.nacherfasst ? n("ja", "x") : "", x.geaendert, n("kennung", "notiz"), ...(p.umsatz.mitLiefer ? [x.liefer ?? ""] : [])]));
   const wer = (x) => (!x.person ? "" : !x.personAus ? x.person : x.personAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.person, x.personAusAm) : n("ausgeschieden", x.person)); // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
   if (teil === "personal") return csvText(kopf, p.personal.zeilen.map((x) => [datumDe(x.datum), wer(x), x.gericht, n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 0, 0, 2, 2, 2] });
   if (teil === "schwund") return csvText(kopf, p.schwund.zeilen.map((x) => [datumDe(x.datum), n("art", x.art), x.name, x.menge, x.einheit, x.wert, x.grund]), { dezimal: [0, 0, 0, 2, 0, 2] });
