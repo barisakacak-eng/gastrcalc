@@ -495,7 +495,7 @@ export default {
     buero: (n) => `${n} sai lệch làm lạnh: thiếu quyết định về hàng hoặc đo lại`,
   },
   kuehl: {
-    zeki: { offen: (n) => (n === 1 ? "Còn một thiết bị cần đo. Mất một phút thôi." : `Còn ${n} thiết bị cần đo. Mất một phút thôi.`), fertig: "Đo xong hết, tất cả đều trong mức an toàn.", warm: (k) => `“${k}” nóng quá. Kiểm tra ngay nhé.` },
+    zeki: { offen: (n) => (n === 1 ? "Còn một thiết bị cần đo. Mất một phút thôi." : `Còn ${n} thiết bị cần đo. Mất một phút thôi.`), fertig: "Đo xong hết, tất cả đều trong mức an toàn.", warm: (k) => `Sếp ơi, “${k}” nóng quá. Kiểm tra ngay nhé.` },
     titel: "Kiểm tra nhiệt độ lạnh",
     nav: "Nhiệt độ",
     nochNicht: "Chưa thiết lập. Hai phút mỗi sáng, bảng kiểm tra tự điền.",
@@ -745,7 +745,7 @@ export default {
     grund: { ausgegeben: "Mời khách", roh: "Hàng", personal: "Nhân viên", bruch: "Hỏng" }, nichtsGefunden: "Không tìm thấy. Viết cách khác hoặc chọn “Cân xô rác”.",
     zurUebersicht: "Tổng quan rác",
     auswaehlen: "Chọn thực phẩm", aendern: "Chạm để sửa", mengeEingeben: "Nhập số lượng", foto: "Ảnh (không bắt buộc)", fotoDabei: "Đã có ảnh", fotoFehler: "Không lưu được ảnh.", satz: "Biến lỗi thành bài học. Ghi lại những gì hôm nay đã vào thùng rác.", orientierung: "Số ước tính chỉ để tham khảo.", ohnePreisKurz: "Chưa có giá mua – vẫn được tính.",
-    wasWeg: "Bỏ đi cái gì?", wocheTonne: "Tuần này vào thùng rác", monatTonne: "Rác cả tháng", leerWoche: "Chưa ghi gì. Không bỏ gì đi? Ngày tốt.", wocheZeile: (p, kg) => `≈ ${p} phần bán ra mới bù lại · ${kg} kg`, wenigerAls: (m, d) => `ít hơn ${m} tính đến ngày ${d}.`, mehrAls: (m, d) => `nhiều hơn ${m} tính đến ngày ${d}.`, rueckgaengig: "Hoàn tác", ammeisten: "Bỏ đi nhiều nhất", eintragen: "Ghi rác", andererTag: "Cho ngày khác", teller: "Đĩa", eimerNurGewicht: "chỉ cân nặng", ganzePackung: "nguyên gói", personalWert: (e) => `Bữa ăn nhân viên · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} vào thùng rác`, eimerHinweisKurz: "Đĩa và nguyên liệu sống đã ghi hôm nay sẽ được trừ ra.", fuerPersonal: "Nhân viên đã ăn", wegDamit: "Bỏ đi", geradeEben: "vừa xong", zurueckgenommen: "Đã hoàn tác.",
+    wasWeg: "Bỏ đi cái gì?", wocheTonne: "Tuần này vào thùng rác", monatTonne: "Rác cả tháng", leerWoche: "Chưa ghi gì. Không bỏ gì đi? Tốt lắm.", wocheZeile: (p, kg) => `≈ ${p} phần bán ra mới bù lại · ${kg} kg`, wenigerAls: (m, d) => `ít hơn ${m} tính đến ngày ${d}.`, mehrAls: (m, d) => `nhiều hơn ${m} tính đến ngày ${d}.`, rueckgaengig: "Hoàn tác", ammeisten: "Bỏ đi nhiều nhất", eintragen: "Ghi rác", andererTag: "Cho ngày khác", teller: "Đĩa", eimerNurGewicht: "chỉ cân nặng", ganzePackung: "nguyên gói", personalWert: (e) => `Bữa ăn nhân viên · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} vào thùng rác`, eimerHinweisKurz: "Đĩa và nguyên liệu sống đã ghi hôm nay sẽ được trừ ra.", fuerPersonal: "Nhân viên đã ăn", wegDamit: "Bỏ đi", geradeEben: "vừa xong", zurueckgenommen: "Đã hoàn tác.",
     nav: "Rác",
     titel: "Bỏ đi cái gì?",
     gerichtWeg: "Bỏ món",
@@ -777,7 +777,7 @@ export default {
     mahlzeit: "Bữa",
     zurueck: "Quay lại “Bỏ đi cái gì?”",
     andereArt: "Khác",
-    leerHeute: "Hôm nay chưa có gì. Không bỏ gì đi? Ngày tốt.",
+    leerHeute: "Hôm nay chưa có gì. Không bỏ gì đi? Tốt lắm.",
     nachtragen: "Cho ngày khác",
   },
 
@@ -1162,7 +1162,7 @@ export default {
       putzen: (n) => `${n} việc quá hạn`, sicherung: "Sao lưu ngay", sichern: "Sao lưu", abschluss: "Kết thúc ngày", los: "Làm" },
     offen: { fassung: "Có bản app mới", einrichtung: (p, s) => `Cài đặt ${p} % – tiếp theo: ${s}`, kosten: "Chi phí cố định hoặc lương chưa đủ",
       karteGrau: (n) => `${n} món chưa có giá hoặc công thức`, waage: (n) => `${n} công thức ước tính – cân một lần`,
-      putzplan: "Tạo lịch dọn vệ sinh (khuyến nghị HACCP)", sicherung: (n) => `Sao lưu lần cuối ${n} ngày trước`, sicherungNie: "Chưa sao lưu",
+      putzplan: "Tạo lịch dọn vệ sinh", sicherung: (n) => `Sao lưu lần cuối ${n} ngày trước`, sicherungNie: "Chưa sao lưu",
       muellOhneWert: (n) => `${n} mục rác chưa có giá trị` },
   },
   ordnerC: { selbstTitel: "Tự thêm", fragenTitel: "Câu hỏi cho sếp", fragenUnter: (n) => (n === 1 ? "1 gợi ý còn mở từ văn phòng" : `${n} gợi ý còn mở từ văn phòng`), titel: "Nội dung và tài liệu đính kèm", kopf: ["STT", "Tài liệu", "Ai cung cấp", "Tình trạng"], app: "Ứng dụng", du: "Chủ quán", liegtBei: "đã đính kèm", beilegen: "vui lòng đính kèm", pruefen: "kiểm tra", fehlt: "còn thiếu", notiz: "Ghi chú – không phải Z-Bon", hinweis: "Do chủ quán tổng hợp, không phải kết quả kế toán. Số liệu theo ngày trong ứng dụng chỉ là ghi chú – không phải Z-Bon.", karteTitel: "Phần tự đính kèm", kleinbetrag: "Khoản nhỏ đến 250 €", nachgetragen: (d) => `thêm sau vào ${d}`, belegNr: "Số chứng từ", teile: { arbeitszeiten: "Giờ làm và giấy nghỉ ốm để tính lương", bewirtung: "Hóa đơn tiếp khách có lý do và người dự", geraete: "Hóa đơn thiết bị trên 800 € chưa thuế", darlehen: "Khoản vay: lịch trả nợ và dư nợ", kassenzaehl: "Biên bản kiểm quỹ cuối năm", zbon: "Z-Bon (báo cáo ngày của máy tính tiền) của tất cả các ngày, không thiếu ngày nào", karten: "Sao kê thẻ và sao kê nền tảng giao hàng", bank: "Sao kê ngân hàng của tất cả tài khoản", fapost: "Thư từ cục thuế (Finanzamt) và các câu hỏi còn mở", rechnungen: "Hóa đơn đầu vào, bản gốc hoặc ảnh, sắp theo số chứng từ", ausgang: "Hóa đơn bán ra (ví dụ phục vụ tiệc), đánh số liên tục", vertraege: "Hợp đồng mới và hàng mua mới kèm hóa đơn", lieferscheine: "Phiếu giao hàng (truy xuất nguồn gốc)", ifsg: "Giấy chứng nhận theo § 43 Infektionsschutzgesetz (Luật phòng chống lây nhiễm)", schaedling: "Diệt côn trùng, chuột và báo cáo của công ty chuyên môn", haccp: "Kế hoạch HACCP theo mẫu của cơ quan địa phương" } },
@@ -1177,7 +1177,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Thoát chế độ nhân viên", zurueck: "Quay lại", hallo: (n) => `Xin chào ${n}`, halloOhne: "Xin chào", wechseln: "Đổi", werBistDu: "Ai đang làm?", ohneNamen: "Không tên",
     muell: "Rác thải", kuehlung: "Làm lạnh", putzen: "Vệ sinh", offen: (n) => `${n} chưa xong` },
-  muell1: { ausgegeben: "Đã mời", anleitung: "Chạm vào ảnh = bỏ 1 phần. ••• = đổi số lượng.", titel: "Rác thải", andere: "Khác", portion: (n, z) => `${z} phần`, eingetragen: "đã ghi", menge: "Đổi số lượng", personalessen: "Bữa ăn nhân viên" },
+  muell1: { ausgegeben: "Mời khách", anleitung: "Chạm vào ảnh = bỏ 1 phần. ••• = đổi số lượng.", titel: "Rác thải", andere: "Khác", portion: (n, z) => `${z} phần`, eingetragen: "đã ghi", menge: "Đổi số lượng", personalessen: "Bữa ăn nhân viên" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Bản sao lưu", titelEinlesen: "Mật khẩu bản sao lưu", feld: "Mật khẩu", hinweis: "Có mật khẩu thì file được mã hóa. Không có mật khẩu thì ai cũng mở được.", teilen: "Chia sẻ bản sao lưu", ohne: "Chia sẻ không mật khẩu", einlesen: "Đọc vào", zuKurz: "Ít nhất 6 ký tự", falsch: "Sai mật khẩu", zeigen: "Hiện mật khẩu", verbergen: "Ẩn mật khẩu", mit: "có mật khẩu", ohneKurz: "không mật khẩu" },
   rettung: { titel: "Mã khôi phục", vergessen: "Quên mã?", eingeben: "Nhập mã khôi phục từ tờ giấy của sếp.", falsch: "Mã khôi phục sai", richtig: "Đúng rồi. Bây giờ hãy chọn mã văn phòng mới.", neuTitel: "Mã khôi phục của sếp", aufschreiben: "Hãy viết nó ra giấy ngay. Nếu quên mã, sếp vào văn phòng bằng mã này.", nurEinmal: "Chỉ hiện lúc này. Cất tờ giấy ở nơi an toàn, không lưu trong điện thoại.", aufgeschrieben: "Đã ghi lại", anlegen: "Tạo mã khôi phục", neuAnlegen: "Tạo mã khôi phục mới", offen: "Tạo mã khôi phục – phòng khi sếp quên mã văn phòng", fehlerOhneCode: "Ở đây sếp có thể đọc bản sao lưu mà không cần mã văn phòng.", ersetzenFrage: (n) => `Chú ý: bản sao lưu sẽ thay thế toàn bộ dữ liệu trên điện thoại này. Trong bản sao lưu: ${n}. Những gì đang lưu ở đây sẽ mất. Tiếp tục?`, ersetzt: "Đã đọc bản sao lưu. Dữ liệu của sếp đã trở lại." }, // Rettung (17.10.2026)
