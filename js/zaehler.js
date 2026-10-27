@@ -1,4 +1,5 @@
 import { teamTag, teamTagKosten, abwesendMonat, abwesendKosten } from "./stamm.js";
+import { inventurenFertig, inventurVergleich } from "./inventur.js";
 // Etappe 5: der Break-even-Zähler (Wunsch Baris 12.10.2026). Reine Funktionen, keine Oberfläche.
 // Jeden Tag: alles, was bis heute an Kosten angefallen ist, gegen alles, was bis heute (netto) reingekommen ist.
 // Rot im Minus („bis null fehlen"), grün im Plus („verdient diesen Monat"). Kalkulatorisch, kein Kontostand.
@@ -92,6 +93,10 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const q = warenQuote(stand);
   const einkauf = einkaufJeTag(stand, M.von, M.bis);
   const muell = muellJeTag(stand, M.von, M.bis);
+  // 27.10.2026 (Prüfung L3, Baris: Schwund bewegt „bis null“): Was die Inventur als „mehr weg als erwartet, ohne Erklärung“ zeigt, ist echter
+  // Wareneinsatz ohne Umsatz. Ohne Belege (Stufe 1/2) zählt er am Zähltag mit; mit Belegen (Stufe 3) steckt er schon im Einkauf.
+  const schwund = {};
+  try { const fertig = inventurenFertig(stand); for (let i = 1; i < fertig.length; i++) { const v = inventurVergleich(stand, fertig[i], fertig[i - 1]); if (v && v.ohneErklaerung > 0 && v.bis >= M.von && v.bis <= M.bis) schwund[v.bis] = (schwund[v.bis] || 0) + v.ohneErklaerung; } } catch { /* ohne Inventur kein Schwund */ }
   // Beginn der Zählung: der erste Tag des Monats mit Umsatzeintrag (Review Etappe 5, Punkt 10). Wer am 12. anfängt, bekommt nicht elf Tage
   // Kosten ohne Umsatz angerechnet; Tage davor zählen nicht, und das steht im Cockpit („zählt ab dem …").
   let start = null;
@@ -143,7 +148,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
   let kosten = 0, umsatzBrutto = 0, umsatzNetto = 0, ware = 0, muellSumme = 0, gewichtBisHeute = 0, tageMitUmsatz = 0, db = 0;
   let standGestern = 0, kippTag = null, letzterStand = 0;
-  let muellNurPrognose = 0; // Gegenprüfung F6: Müll, den die Monatsrechnung braucht, wenn in Stufe 3 die Kartenquote gilt
+  let schwundSumme = 0; let muellNurPrognose = 0; // Gegenprüfung F6: Müll, den die Monatsrechnung braucht, wenn in Stufe 3 die Kartenquote gilt
   let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0, lohnEchtSummeOffen = 0;
   for (const t of tage) {
     if (t.datum > datum) { t.status = "zukunft"; continue; }
@@ -159,10 +164,11 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     lohnBis += lt.betrag;
     const ab = abwesendMonat(stand, M.von.slice(0, 7)); if (ab && ab.datum === t.datum) { const k = abwesendKosten(ab); lt.betrag += k; lohnBis += k; } // Urlaub/Krankheit am Tag der Antwort
     kosten += tageskostenFest * t.gewicht + lt.betrag; gewichtBisHeute += t.gewicht;
+    const sw = stufe === 3 ? 0 : (schwund[t.datum] || 0); schwundSumme += sw;
     umsatzBrutto += ub; umsatzNetto += un; ware += w; muellSumme += m;
     if (e) { tageMitUmsatz += 1; db += un * (1 - quoteEff) - m; }
     if (t.datum === datum) standGestern = letzterStand;
-    letzterStand = umsatzNetto - ware - muellSumme - kosten;
+    letzterStand = umsatzNetto - ware - muellSumme - schwundSumme - kosten;
     t.stand = letzterStand; t.umsatz = !!e;
     if (kippTag === null && letzterStand >= 0 && tageMitUmsatz > 0) kippTag = t.datum;
     if (letzterStand < 0) kippTag = null; // wieder unter null: der Kipptag ist der letzte Übergang
@@ -197,7 +203,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
-    umsatzBrutto, umsatzNetto, ware, muell: muellSumme, muellPrognose: muellNurPrognose, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
+    umsatzBrutto, umsatzNetto, ware, muell: muellSumme, muellPrognose: muellNurPrognose, schwund: schwundSumme, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
     dbProTag, noetigProTag: standHeute < 0 && gewichtMonat - gewichtBisHeute > 0 ? tageskostenPrognose + (-standHeute) / (gewichtMonat - gewichtBisHeute) : null,
     nullTag, kippTag, monatsende, reichtNicht, tage, unvollstaendig, keinUmsatz: tageMitUmsatz === 0, last, sonder, belege: einkauf.anzahl,
   };
@@ -239,7 +245,7 @@ export function monatsZiel(stand, z, H) {
   // „Mitarbeiter heute“ oder anteilig, Müll und Personalessen) + Prognose für die restlichen Öffnungstage. Laden und Büro nutzen nur diese Zahl.
   const kostenMonat = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
   const kosten = typeof z.kosten === "number" && z.tageskostenPrognose !== undefined
-    ? z.kosten + (z.tageskostenPrognose || 0) * (z.gewichtZukunft || 0) + (z.muell || 0) + (z.muellPrognose || 0)
+    ? z.kosten + (z.tageskostenPrognose || 0) * (z.gewichtZukunft || 0) + (z.muell || 0) + (z.muellPrognose || 0) + (z.schwund || 0)
     : kostenMonat + (z.muell || 0);
   const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
   const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));

@@ -1,6 +1,6 @@
 """Paket 7 (16.10.2026): Regelprüfung im Browser – macht die verbindlichen Vorgaben der App messbar.
 Schnellstart (Deutsch, Dönerladen, Karte „Später“, 1 Kühlschrank + 1 Tiefkühler, Kosten leer) in 390×844 und 360×780, dann je Bildschirm:
-  woerter      sichtbarer fester Text ohne Zahlen, Datum, Einheiten, Gericht-/Kühlstellen-/Sprachnamen, Putzaufgaben, ohne Leiste unten (Laden ≤ 15, Personal ≤ 10, Büro ≤ 120)
+  woerter      sichtbarer fester Text ohne Zahlen, Datum, Einheiten, Gericht-/Kühlstellen-/Sprachnamen, Putzaufgaben, Antwort-Knöpfe (Chips), ohne Leiste unten (Laden ≤ 15, Personal ≤ 10, Büro ≤ 120)
   scroll       Seitenhöhe gegen Viewport (Laden scrollt nicht; Ausnahme Karte > 8 Gerichte, Putzliste > 6 Aufgaben)
   knopfhoehe   Hauptknopf (.knopf.glut) ≥ 64 px; dazu die Zahl der Knöpfe mit Klasse knopf/glut
   absaetze     Erklärabsätze (p, small, .hinweis, .fein, .unter, li) mit ≥ 12 Wörtern im Laden: 0
@@ -47,7 +47,7 @@ MESSEN_JS = r"""
   // sichtbare Textknoten
   const texte = []; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let n; while ((n = w.nextNode())) { const t = n.textContent.replace(/\s+/g, " ").trim(); if (!t) continue; const p = n.parentElement;
-    if (!p || inLeiste(p) || p.closest("script,style") || p.closest(".aufgabe .atext b, .phinweis") || !sichtbar(p)) continue; texte.push(t); } // Laden-Umbau (20.10.2026): Putzaufgaben zählen wie Gerichtnamen nicht
+    if (!p || inLeiste(p) || p.closest("script,style") || p.closest(".aufgabe .atext b, .phinweis, .chips .chip, .team-art .chip") /* Baris 27.10.2026: Antwort-Knöpfe zählen nicht, nur Lesetext */ || !sichtbar(p)) continue; texte.push(t); } // Laden-Umbau (20.10.2026): Putzaufgaben zählen wie Gerichtnamen nicht
   const ganz = texte.join(" ");
   const wortliste = ganz.split(/\s+/).map(token).filter(istWort);
   // Knöpfe

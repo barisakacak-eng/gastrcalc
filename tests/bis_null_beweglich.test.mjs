@@ -94,6 +94,17 @@ test("Gegenprüfung F6: Stufe 3 mit Kartenquote zählt den Müll in der Monatsre
   const z = zaehler(s, { datum: H });
   if (z.stufe === 3 && !(z.quoteFenster >= z.quote)) assert.ok(z.muellPrognose >= 0);
   const m = monatsZiel(s, z, H);
-  const erwartet = (z.kosten + z.tageskostenPrognose * z.gewichtZukunft + z.muell + (z.muellPrognose || 0)) / (1 - z.quoteEff) * (1 + z.steuer);
+  const erwartet = (z.kosten + z.tageskostenPrognose * z.gewichtZukunft + z.muell + (z.muellPrognose || 0) + (z.schwund || 0)) / (1 - z.quoteEff) * (1 + z.steuer);
   assert.ok(Math.abs(m.nullpunkt - erwartet) < 1e-6);
+});
+
+test("Prüfung L3: Schwund ohne Erklärung aus der Inventur zählt in Stufe 1/2 als Kosten", async () => {
+  const { inventurenFertig, inventurVergleich } = await import("../js/inventur.js");
+  const s = beispielLaden("2026-10-26"); const H = "2026-10-26"; const z = zaehler(s, { datum: H });
+  const f = inventurenFertig(s); let erwartet = 0;
+  for (let i = 1; i < f.length; i++) { const v = inventurVergleich(s, f[i], f[i - 1]); if (v && v.bis.startsWith("2026-10") && v.bis <= H) erwartet += v.ohneErklaerung || 0; }
+  assert.ok(Math.abs(z.schwund - (z.stufe === 3 ? 0 : erwartet)) < 1e-6);
+  const m = monatsZiel(s, z, H);
+  const k = z.kosten + z.tageskostenPrognose * z.gewichtZukunft + z.muell + (z.muellPrognose || 0) + z.schwund;
+  assert.ok(Math.abs(m.nullpunkt - k / (1 - z.quoteEff) * (1 + z.steuer)) < 1e-6);
 });
