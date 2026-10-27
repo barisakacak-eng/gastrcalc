@@ -8,7 +8,7 @@ const nr = (n, unu, multe) => Number(n) === 1 ? `1 ${unu}` : `${n} ${de(n)}${mul
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"De la prima intrare de gunoi","titel":"Mai puține pierderi pe săptămână","laueft": (ab) => `Măsurare din ${ab}`,"stufe":{"bisNull":"Până la zero","bisZiel":"Spre obiectiv","ueberZiel":"Peste obiectiv"},"ohneKosten":"Lipsesc costurile","art":{"muell":"Gunoi","preis":"Preț","lager":"Stoc","papier":"Hârtii"},"aktion":{"kuehlAlarm":"Măsoară din nou","rundgangOffen":"Continuă runda","rundgang":"Runda de frig","putzen":"Curățenie","sicherung":"Fă o copie","abschluss":"Închide ziua","selbst":"Scrie rețeta ta","einkauf":"Scrie prețurile de achiziție","rezepte":"Cântărește rețetele"}},
+  nutzen: {"start":"De la prima intrare de gunoi","titel":"Economisit pe săptămână","laueft": (ab) => `Măsurare din ${ab}`,"stufe":{"bisNull":"Până la zero","bisZiel":"Spre obiectiv","ueberZiel":"Peste obiectiv"},"ohneKosten":"Lipsesc costurile","art":{"muell":"Gunoi","preis":"Preț","lager":"Stoc","papier":"Hârtii"},"aktion":{"kuehlAlarm":"Măsoară din nou","rundgangOffen":"Continuă runda","rundgang":"Runda de frig","putzen":"Curățenie","sicherung":"Fă o copie","abschluss":"Închide ziua","selbst":"Scrie rețeta ta","einkauf":"Scrie prețurile de achiziție","rezepte":"Cântărește rețetele"}},
   app: { name: "GastroCash", entwurf: "Versiune de test" },
 
   allgemein: {

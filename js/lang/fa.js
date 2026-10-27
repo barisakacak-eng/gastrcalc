@@ -1,7 +1,7 @@
 // فارسی – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / زبان مغازه، جمله‌های کوتاه.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"از اولین ثبت دورریز","titel":"ضرر کمتر در هفته","laueft": (ab) => `اندازه‌گیری از ${ab}`,"stufe":{"bisNull":"تا صفر","bisZiel":"تا هدف","ueberZiel":"بالای هدف"},"ohneKosten":"هزینه‌ها کم است","art":{"muell":"دورریز","preis":"قیمت","lager":"انبار","papier":"کاغذبازی"},"aktion":{"kuehlAlarm":"دوباره اندازه بگیر","rundgangOffen":"دور چک را ادامه بده","rundgang":"دور چک سرما","putzen":"نظافت","sicherung":"پشتیبان بگیر","abschluss":"بستن روز","selbst":"دستورت را وارد کن","einkauf":"قیمت‌های خرید را وارد کن","rezepte":"دستورها را وزن کن"}},
+  nutzen: {"start":"از اولین ثبت دورریز","titel":"صرفه‌جویی در هفته","laueft": (ab) => `اندازه‌گیری از ${ab}`,"stufe":{"bisNull":"تا صفر","bisZiel":"تا هدف","ueberZiel":"بالای هدف"},"ohneKosten":"هزینه‌ها کم است","art":{"muell":"دورریز","preis":"قیمت","lager":"انبار","papier":"کاغذبازی"},"aktion":{"kuehlAlarm":"دوباره اندازه بگیر","rundgangOffen":"دور چک را ادامه بده","rundgang":"دور چک سرما","putzen":"نظافت","sicherung":"پشتیبان بگیر","abschluss":"بستن روز","selbst":"دستورت را وارد کن","einkauf":"قیمت‌های خرید را وارد کن","rezepte":"دستورها را وزن کن"}},
   app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
@@ -571,7 +571,7 @@ export default {
     zuletzt: "آخرین بار",
     zuletztLang: (w, d) => `آخرین بار ${w} °C در ${d}. عددی را که الان می‌خوانی وارد کن.`,
     ersteMessung: "اولین اندازه‌گیری این دستگاه.",
-    minusFrage: (v) => `منظورت −${v} درجه است؟ بزن`, minusHinweis: "منفی را با «-» بنویس، مثلاً -18",
+    minusFrage: (v) => `منظورت −${v} درجه است؟ بزن`, minusHinweis: "منفی را با «-» بنویس، مثلاً ⁦-18⁩",
     nichtGemessenKurz: "اندازه گرفته نشد",
     nichtGemessen: "یا: امروز اندازه گرفته نشد، چون …",
     gruende: { geschlossen: "تعطیل", geraetAus: "دستگاه خاموش / یخ‌زدایی", leer: "دستگاه خالی" },

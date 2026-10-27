@@ -5,7 +5,7 @@
 import { einklappen } from "./bausteine.js"; // Prüfer 19.10.2026: Haftungstext eingeklappt (15-Wörter-Regel im Laden)
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
-import { t, sprache, artikelText } from "../i18n.js";
+import { t, sprache, artikelText, datumText } from "../i18n.js";
 import { esc, parseZahl, fmtZahl, fmtEuro, heute, wertAnzeige, parseTemperatur } from "../util.js";
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
   letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD,
@@ -212,7 +212,9 @@ const minusVergessen = (k, wert, abw) => k?.art === "tk" && typeof wert === "num
 function stationView(stand, r, k) {
   const f = form; const letzte = letzteMessung(stand, k.id);
   const wert = f.wert; const abw = abweichung(k, wert); f.abwGezeigt = typeof wert === "number" && abw;
-  const kannSpeichern = typeof wert === "number" ? (!abw || f.massnahmen.length > 0) : !!f.grund;
+  // Persona-Test Team (27.10.2026): „18“ ohne Minus wurde als +18 °C gespeichert, sobald eine Maßnahme gewählt war – jetzt erst Minus ja/nein
+  const minusOffen = minusVergessen(k, wert, abw) && !f.plusBestaetigt;
+  const kannSpeichern = typeof wert === "number" ? !minusOffen && (!abw || f.massnahmen.length > 0) : !!f.grund;
   // 27.10.2026 (Persona-Test Personal, 15-Wörter-Regel): im Personal-Modus ohne „Erste Messung“ und „(Standard)“, Nachkontrolle (vorbelegt: in 2 Stunden)
   // und „nicht gemessen“ erst auf Tipp (Knopf statt Überschrift und Chips), kurze Maßnahmen-Namen
   const pers = personalAktiv();
@@ -225,8 +227,8 @@ function stationView(stand, r, k) {
       ${f.grund ? "" : `
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       ${marke ? `<span class="marke">${esc(marke)}</span>` : ""}
-      ${minusVergessen(k, wert, abw) ? `<button type="button" class="knopf zweit kuehl-minus" data-a="station-minus">${esc(t("kuehl.minusFrage", fmtZahl(wert, Number.isInteger(wert) ? 0 : 1)))}</button>` : ""}
-      ${typeof wert === "number" && abw ? `<div class="karte hinweisrot">${pers ? "" : `<b>${esc(t("kuehl.ausserhalb"))}</b>`}
+      ${minusOffen ? `<div class="kuehl-minus-wahl"><button type="button" class="knopf glut kuehl-minus" data-a="station-minus">${esc(t("kuehl.minusFrage", fmtZahl(wert, Number.isInteger(wert) ? 0 : 1)))}</button><button type="button" class="knopf zweit" data-a="station-plus-ok">${esc(t("allgemein.nein"))}</button></div>` : ""}
+      ${typeof wert === "number" && abw && !minusOffen ? `<div class="karte hinweisrot">${pers ? "" : `<b>${esc(t("kuehl.ausserhalb"))}</b>`}
         <h2>${esc(t("kuehl.massnahme"))}</h2>
         <div class="chips">${MASSNAHMEN.map((m) => `<button type="button" class="chip klein ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}">${esc(t((pers ? "kuehl.massnahmenKurz." : "kuehl.massnahmen.") + m))}</button>`).join("")}</div>
         <input class="textfeld" data-f="station-notiz" value="${esc(f.notiz)}" maxlength="200" placeholder="${esc(t("kuehl.notizPlatzhalter"))}" autocomplete="off">
@@ -259,7 +261,7 @@ function blattView(stand) {
   const d = new Date(); d.setMonth(d.getMonth() + blattMonat, 1);
   const von = heute(d); const ende = new Date(d.getFullYear(), d.getMonth() + 1, 0); const bis = heute(ende) > heute() ? heute() : heute(ende);
   const mb = k ? monatsblatt(stand, k.id, { von, bis }) : { tage: [], zaehl: {} };
-  const monatText = d.toLocaleDateString(sprache(), { month: "long", year: "numeric" });
+  const monatText = datumText(d, { month: "long", year: "numeric" });
   return `
     <div class="kopfband druckkopf"><h1>${esc(t("kuehl.blatt"))}</h1><div class="unter">${esc(stand.betrieb.name)} · ${esc(k?.name || "")} · ${esc(monatText)}</div></div>
     <div class="inhalt">
@@ -342,6 +344,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (!form) return false;
   if (name === "station-nicht-auf") { form.nichtAuf = true; return true; } // 27.10.2026: Personal – Gründe erst auf Tipp
   if (name === "station-nk-auf") { form.nkAuf = true; return true; }
+  if (name === "station-plus-ok") { if (form) form.plusBestaetigt = true; return true; }
   if (name === "station-minus") { if (typeof form?.wert === "number" && form.wert > 0) { form.wert = -form.wert; form.wertText = "-" + form.wertText.trim().replace(/^\+/, ""); } return true; }
   if (name === "station-grund") { form.grund = form.grund === el.dataset.wert ? null : el.dataset.wert; if (form.grund) form.wert = null; return true; }
   if (name === "massnahme") { const i = form.massnahmen.indexOf(el.dataset.wert); if (i >= 0) form.massnahmen.splice(i, 1); else form.massnahmen.push(el.dataset.wert); return true; }
@@ -358,7 +361,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "weg-alles") { const k = aktiveStellen(stand).find((x) => x.id === station); form.weg.push({ name: t("kuehl.inhaltVon", k.name), menge: 1, einheit: "stk", wert: null, ref: { typ: "frei", name: t("kuehl.inhaltVon", k.name) } }); return true; }
   if (name === "weg-weg") { form.weg.splice(Number(el.dataset.i), 1); return true; }
   if (name === "station-speichern") {
-    const k = aktiveStellen(stand).find((x) => x.id === station); if (!k) return false;
+    const k = aktiveStellen(stand).find((x) => x.id === station); if (!k || !kuehlFormGueltig()) return false; // Minus-Frage offen: nicht speichern
     stationEintragen(r, k, form); // „Ware weggeworfen" wird erst beim Abschluss zu Schwund-Einträgen
     station = null; form = null;
     if (!r.einzel && !rundgangVollstaendig(stand, r)) { // Gremium 1 (24.10.2026): nach dem Speichern direkt die nächste offene Stelle, kein Umweg über die Übersicht
@@ -380,7 +383,9 @@ export function kuehlEingabe(feld, wert, stand) {
     form.wertText = wert; form.wert = parseTemperatur(wert); if (form.wert !== null) form.grund = null;
     // Nur neu zeichnen, wenn sich der Abweichungs-Zustand ändert (dann erscheinen oder verschwinden die Maßnahmen); sonst nur den Knopf schalten
     const abw = typeof form.wert === "number" && form.k ? abweichung(form.k, form.wert) : false;
-    if (abw !== form.abwGezeigt) { form.abwGezeigt = abw; return true; }
+    form.plusBestaetigt = false;
+    const minus = !!(form.k && minusVergessen(form.k, form.wert, abw));
+    if (abw !== form.abwGezeigt || minus !== !!form.minusGezeigt) { form.abwGezeigt = abw; form.minusGezeigt = minus; return true; }
     return "knopf";
   }
   if (feld === "station-notiz") { form.notiz = wert; return false; }
@@ -390,4 +395,4 @@ export function kuehlEingabe(feld, wert, stand) {
   return false;
 }
 
-export const kuehlFormGueltig = () => { if (!form) return false; if (typeof form.wert === "number") return !(form.k && abweichung(form.k, form.wert)) || form.massnahmen.length > 0; return !!form.grund; };
+export const kuehlFormGueltig = () => { if (!form) return false; if (typeof form.wert === "number") { const abw = !!(form.k && abweichung(form.k, form.wert)); if (form.k && minusVergessen(form.k, form.wert, abw) && !form.plusBestaetigt) return false; return !abw || form.massnahmen.length > 0; } return !!form.grund; };

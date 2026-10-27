@@ -2,7 +2,7 @@ import { datenschutzText } from "../data/datenschutz.js";
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
 import { reinigungZeile } from "./reinigung_zeile.js";
-import { t, SPRACHEN, SPRACH_NAMEN, sprache } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN, sprache, datumText } from "../i18n.js";
 import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform (23.10.2026)
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
@@ -58,7 +58,7 @@ export function nutzenKarte(nutzen) {
     ${geschaetzte.length ? `<div class="h-nutzen-posten">${geschaetzte.map((p) => `<span class="h-nutzen-geschaetzt" aria-label="${esc(t("nutzen.art." + p.art))}: ≈ ${esc(fmtEuro(p.euro, { dezimal: 2 }))}" aria-description="${esc(p.quelle)}" title="${esc(p.quelle)}">${sym(symbole[p.art])}<span>≈ ${esc(fmtEuro(p.euro, { dezimal: 2 }))}</span></span>`).join("")}</div>` : ""}
   </section>`;
 }
-const tagKurz = (H) => { const [j, m, d] = H.split("-").map(Number); try { return new Date(j, m - 1, d).toLocaleDateString(sprache() === "en" ? "en-GB" : sprache(), { weekday: "short", day: "numeric", month: "short" }); } catch { return datumLesbar(H); } };
+const tagKurz = (H) => { const [j, m, d] = H.split("-").map(Number); try { return datumText(new Date(j, m - 1, d), { weekday: "short", day: "numeric", month: "short" }); } catch { return datumLesbar(H); } };
 
 // Zielkarte im Laden: Stufe als Überschrift, eine große Zahl, Balken vom Monatsumsatz bis zur Zielmarke, Tempo als kleine Pille.
 // Trennung 2 (17.10.2026): alle Zahlen aus heuteZiel() (js/laden_zahlen.js); hier entsteht nur der Tempo-Satz.
@@ -98,7 +98,7 @@ export function kursDiagramm(m, marke, z, stufe = "bisZiel") {
     <line class="h-kurs-ziel" x1="4" x2="316" y1="${yz}" y2="${yz}"/>
     <line class="h-kurs-achse" x1="4" x2="316" y1="142" y2="142"/>
     ${tage.length && ist.length ? `<path class="h-kurs-flaeche" d="${pfad} L${X(idx(letzt.datum))},142 L${X(idx(tage[0].datum))},142 Z"/><path class="h-kurs-linie" d="${pfad}"/><circle class="h-kurs-punkt" cx="${X(idx(letzt.datum))}" cy="${Y(letzt.kumuliert || 0)}" r="5"/>` : ""}
-  </svg><span class="h-kurs-ziellabel" style="bottom:calc(${zielProzent}% + 3px)">${esc(t(stufe === "bisNull" ? "heute.nullKurz" : "heute.zielKurz"))} ${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</span><span class="h-kurs-tag links">\u2066${esc(tag(z?.start && z.start > (alle[0]?.datum || "") ? z.start : alle[0]?.datum))}\u2069</span><span class="h-kurs-tag rechts">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</span></span>`;
+  </svg><span class="h-kurs-ziellabel" style="bottom:calc(${zielProzent}% + 3px)">${stufe === "bisNull" ? "" : esc(t("heute.zielKurz")) + " "}${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</span><span class="h-kurs-tag links">\u2066${esc(tag(z?.start && z.start > (alle[0]?.datum || "") ? z.start : alle[0]?.datum))}\u2069</span><span class="h-kurs-tag rechts">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</span></span>`;
 }
 // Lorbeer und Kupferlinie aus Sanjis Entwurf (inline-SVG, Farben aus den Tokens)
 const LORBEER = `<svg class="h-lorbeer" viewBox="0 0 44 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 53 C4 40 4 23 14 7"/><path d="M32 53 C40 40 40 23 30 7"/></g><g fill="currentColor"><ellipse cx="8" cy="42" rx="3" ry="7" transform="rotate(-34 8 42)"/><ellipse cx="6" cy="31" rx="3" ry="7" transform="rotate(-12 6 31)"/><ellipse cx="9" cy="20" rx="3" ry="7" transform="rotate(19 9 20)"/><ellipse cx="15" cy="11" rx="2.5" ry="6" transform="rotate(39 15 11)"/><ellipse cx="36" cy="42" rx="3" ry="7" transform="rotate(34 36 42)"/><ellipse cx="38" cy="31" rx="3" ry="7" transform="rotate(12 38 31)"/><ellipse cx="35" cy="20" rx="3" ry="7" transform="rotate(-19 35 20)"/><ellipse cx="29" cy="11" rx="2.5" ry="6" transform="rotate(-39 29 11)"/></g></svg>`;

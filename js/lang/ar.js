@@ -4,7 +4,7 @@ const pl = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : (n === 0 
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"من أول إدخال للهدر","titel":"خسارة أقل أسبوعيًا","laueft": (ab) => `القياس جارٍ منذ ${ab}`,"stufe":{"bisNull":"حتى الصفر","bisZiel":"إلى الهدف","ueberZiel":"فوق الهدف"},"ohneKosten":"التكاليف ناقصة","art":{"muell":"الهدر","preis":"السعر","lager":"المخزون","papier":"الأوراق"},"aktion":{"kuehlAlarm":"قِس مرة أخرى","rundgangOffen":"تابع جولة القياس","rundgang":"جولة القياس","putzen":"التنظيف","sicherung":"احفظ نسخة","abschluss":"إغلاق اليوم","selbst":"أدخل وصفتك","einkauf":"أدخل أسعار الشراء","rezepte":"زِن الوصفات"}},
+  nutzen: {"start":"من أول إدخال للهدر","titel":"وفّرت أسبوعيًا","laueft": (ab) => `القياس جارٍ منذ ${ab}`,"stufe":{"bisNull":"حتى الصفر","bisZiel":"إلى الهدف","ueberZiel":"فوق الهدف"},"ohneKosten":"التكاليف ناقصة","art":{"muell":"الهدر","preis":"السعر","lager":"المخزون","papier":"الأوراق"},"aktion":{"kuehlAlarm":"قِس مرة أخرى","rundgangOffen":"تابع جولة القياس","rundgang":"جولة القياس","putzen":"التنظيف","sicherung":"احفظ نسخة","abschluss":"إغلاق اليوم","selbst":"أدخل وصفتك","einkauf":"أدخل أسعار الشراء","rezepte":"زِن الوصفات"}},
   app: { name: "GastroCash", entwurf: "نسخة تجريبية" },
 
   allgemein: {
@@ -574,7 +574,7 @@ export default {
     zuletzt: "آخر مرة",
     zuletztLang: (w, d) => `آخر مرة ${w} °C في ${d}. أدخل القيمة التي تقرأها الآن.`,
     ersteMessung: "أول قياس لهذا الجهاز.",
-    minusFrage: (v) => `هل تقصد −${v} °م؟ اضغط`, minusHinweis: "السالب بـ «-»، مثلًا -18",
+    minusFrage: (v) => `هل تقصد ⁦−${v} °م⁩؟ اضغط`, minusHinweis: "السالب بـ «-»، مثلًا ⁦-18⁩",
     nichtGemessenKurz: "لم يُقَس",
     nichtGemessen: "أو: لم يُقَس اليوم، لأن …",
     gruende: { geschlossen: "مغلق", geraetAus: "الجهاز مطفأ / إذابة الثلج", leer: "الجهاز فارغ" },

@@ -2,7 +2,7 @@
 // Spanisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Du-Form.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Desde el primer registro de basura","titel":"Menos pérdidas por semana","laueft": (ab) => `Midiendo desde ${ab}`,"stufe":{"bisNull":"Hasta cero","bisZiel":"Hacia el objetivo","ueberZiel":"Sobre el objetivo"},"ohneKosten":"Faltan costes","art":{"muell":"Basura","preis":"Precio","lager":"Almacén","papier":"Papeleo"},"aktion":{"kuehlAlarm":"Volver a medir","rundgangOffen":"Seguir la ronda","rundgang":"Ronda de frío","putzen":"Limpiar","sicherung":"Hacer copia","abschluss":"Cerrar el día","selbst":"Anotar tu receta","einkauf":"Anotar precios de compra","rezepte":"Pesar recetas"}},
+  nutzen: {"start":"Desde el primer registro de basura","titel":"Ahorro por semana","laueft": (ab) => `Midiendo desde ${ab}`,"stufe":{"bisNull":"Hasta cero","bisZiel":"Hacia el objetivo","ueberZiel":"Sobre el objetivo"},"ohneKosten":"Faltan costes","art":{"muell":"Basura","preis":"Precio","lager":"Almacén","papier":"Papeleo"},"aktion":{"kuehlAlarm":"Volver a medir","rundgangOffen":"Seguir la ronda","rundgang":"Ronda de frío","putzen":"Limpiar","sicherung":"Hacer copia","abschluss":"Cerrar el día","selbst":"Anotar tu receta","einkauf":"Anotar precios de compra","rezepte":"Pesar recetas"}},
   app: { name: "GastroCash", entwurf: "Versión de prueba" },
 
   allgemein: {

@@ -7,7 +7,7 @@ const br = (n, eden, mnogo) => Number(n) === 1 ? `1 ${eden}` : `${n} ${mnogo}`;
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"От първото въвеждане на отпадъци","titel":"По-малко загуби на седмица","laueft": (ab) => `Мерене от ${ab}`,"stufe":{"bisNull":"До нулата","bisZiel":"Към целта","ueberZiel":"Над целта"},"ohneKosten":"Липсват разходи","art":{"muell":"Отпадъци","preis":"Цена","lager":"Склад","papier":"Документи"},"aktion":{"kuehlAlarm":"Измери пак","rundgangOffen":"Продължи обиколката","rundgang":"Обиколка за охлаждане","putzen":"Почистване","sicherung":"Направи копие","abschluss":"Приключи деня","selbst":"Въведи рецептата си","einkauf":"Въведи покупните цени","rezepte":"Претегли рецептите"}},
+  nutzen: {"start":"От първото въвеждане на отпадъци","titel":"Спестено седмично","laueft": (ab) => `Мерене от ${ab}`,"stufe":{"bisNull":"До нулата","bisZiel":"Към целта","ueberZiel":"Над целта"},"ohneKosten":"Липсват разходи","art":{"muell":"Отпадъци","preis":"Цена","lager":"Склад","papier":"Документи"},"aktion":{"kuehlAlarm":"Измери пак","rundgangOffen":"Продължи обиколката","rundgang":"Обиколка за охлаждане","putzen":"Почистване","sicherung":"Направи копие","abschluss":"Приключи деня","selbst":"Въведи рецептата си","einkauf":"Въведи покупните цени","rezepte":"Претегли рецептите"}},
   app: { name: "GastroCash", entwurf: "Тестова версия" },
 
   allgemein: {

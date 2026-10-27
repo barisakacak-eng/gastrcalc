@@ -2,7 +2,7 @@
 // Vietnamesisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Anrede: Chef = „sếp“, App/Zeki = „em“; Personal-Texte neutral.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Từ lần ghi rác đầu tiên","titel":"Ít hao hụt hơn mỗi tuần","laueft": (ab) => `Đang đo từ ${ab}`,"stufe":{"bisNull":"Đến hòa vốn","bisZiel":"Đến mục tiêu","ueberZiel":"Trên mục tiêu"},"ohneKosten":"Thiếu chi phí","art":{"muell":"Rác","preis":"Giá","lager":"Kho","papier":"Giấy tờ"},"aktion":{"kuehlAlarm":"Đo lại","rundgangOffen":"Tiếp tục vòng đo","rundgang":"Vòng đo lạnh","putzen":"Dọn dẹp","sicherung":"Sao lưu","abschluss":"Chốt ngày","selbst":"Nhập công thức của sếp","einkauf":"Nhập giá mua","rezepte":"Cân công thức"}},
+  nutzen: {"start":"Từ lần ghi rác đầu tiên","titel":"Tiết kiệm mỗi tuần","laueft": (ab) => `Đang đo từ ${ab}`,"stufe":{"bisNull":"Đến hòa vốn","bisZiel":"Đến mục tiêu","ueberZiel":"Trên mục tiêu"},"ohneKosten":"Thiếu chi phí","art":{"muell":"Rác","preis":"Giá","lager":"Kho","papier":"Giấy tờ"},"aktion":{"kuehlAlarm":"Đo lại","rundgangOffen":"Tiếp tục vòng đo","rundgang":"Vòng đo lạnh","putzen":"Dọn dẹp","sicherung":"Sao lưu","abschluss":"Chốt ngày","selbst":"Nhập công thức của sếp","einkauf":"Nhập giá mua","rezepte":"Cân công thức"}},
   app: { name: "GastroCash", entwurf: "Bản dùng thử" },
 
   allgemein: {

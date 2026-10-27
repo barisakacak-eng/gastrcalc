@@ -3,7 +3,7 @@
 // Lang drücken (500 ms) oder „…" öffnet das Detail (Menge, Foto, Personalessen). „Andere" öffnet die Suche (auch türkische/englische Namen)
 // und „Eimer gewogen". Die Wochen-Statistik (früher Müll-Zentrale) wohnt jetzt im Büro unter Listen (muellStatistikView).
 // Im Personal-Modus: keine Euro-Beträge, nur Mengen; Einträge tragen von: personId. Rechenwerk unverändert (js/muell.js).
-import { t, einheitLabel, sprache, artikelText } from "../i18n.js";
+import { t, einheitLabel, sprache, artikelText, datumText } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
 import { normalisieren } from "../data/suchnamen.js";
 import { mengeUmrechnen } from "../engine.js";
@@ -89,7 +89,7 @@ function rasterView(stand, D, nach) {
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   const h = muellHeute(stand, D);
   const satz = grund === "ausgegeben" ? t("muell.zeki.ausgegeben") : grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");
-  const reiter = ["roh", "personal", "ausgegeben", "bruch"].filter((g) => g === "roh" || !personalAktiv() || g === "bruch"); // „Ausgegeben“ (27.10.2026) nur für den Chef
+  const reiter = ["roh", "personal", "ausgegeben", "bruch"].filter((g) => g !== "ausgegeben" || !personalAktiv()); // Persona-Test Team 27.10.: Personalessen auch für das Team // „Ausgegeben“ (27.10.2026) nur für den Chef
   return `<div class="inhalt muell1 m-schablone">
     <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.uebrig"))}">${sym("moon")}<span>${esc(t("muell.uebrig"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
@@ -169,7 +169,7 @@ export function muellStatistikView(stand) {
   const w = muellWoche(stand, D); const mv = muellMonatVergleich(stand, D);
   const leer = !w.anzahl;
   const { fuell, linie } = muellTonne(mv); // Trennung 2 (17.10.2026)
-  const vormonatName = new Date(Number(D.slice(0, 4)), Number(D.slice(5, 7)) - 2, 1).toLocaleDateString(sprache(), { month: "long" });
+  const vormonatName = datumText(new Date(Number(D.slice(0, 4)), Number(D.slice(5, 7)) - 2, 1), { month: "long" });
   return `<div class="muellzentrale">
     <div class="karte muellkarte">
       <small class="lbl">${esc(t("muell.wocheTonne"))}</small>
@@ -248,7 +248,7 @@ export function muellTipp(el, stand) {
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
   const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station", grund: ansicht === "station" ? null : grund === "personal" || grund === "ausgegeben" ? grund : null });
   if (!e) return false;
-  zuletzt = { personal: e.art === "personal" || grund === "personal" && ansicht !== "station", ausgegeben: e.art === "ausgegeben", ids: e.id, schluessel: k, text: `${zeigName(x)} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
+  zuletzt = { personal: e.art === "personal" || grund === "personal" && ansicht !== "station", ausgegeben: e.art === "ausgegeben", ids: e.id, schluessel: k, text: `${zeigName(x)} · \u2066${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}\u2069`, zeit: jetzt };
   return { eintrag: e };
 }
 export function muellTippZurueck(stand, ids) { const n = muellStornieren(stand, ids); if (zuletzt && zuletzt.ids === ids) zuletzt = null; return n; }
@@ -286,7 +286,7 @@ export function muellAktion(name, el, stand) {
     const von = personalVon(stand);
     schwundNachweisSetzen(stand, ids, { foto: foto ? foto.id : null, von }); // Foto als Nachweis, Person im Personal-Modus
     foto = null;
-    zuletzt = { personal: !!wahl.personal, ausgegeben: !!wahl.ausgegeben && !wahl.personal, ids: ids.join(","), schluessel: e.art === "eimer" ? "eimer" : muellSchluessel(e), text: `${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} · ${e.art === "eimer" ? fmtZahl(e.gewogen, 1) + " kg" : mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
+    zuletzt = { personal: !!wahl.personal, ausgegeben: !!wahl.ausgegeben && !wahl.personal, ids: ids.join(","), schluessel: e.art === "eimer" ? "eimer" : muellSchluessel(e), text: `${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} · ${e.art === "eimer" ? fmtZahl(e.gewogen, 1) + " kg" : "\u2066" + mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit) + "\u2069"}`, zeit: jetzt };
     wahl = null; ansicht = rueckkehr; suche = "";
     return true;
   }

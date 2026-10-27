@@ -75,3 +75,18 @@ export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === 
 // Paket 6 (17.10.2026): Katalog-Artikelname in der aktiven Sprache – nur Anzeige, gespeichert bleibt der deutsche Name.
 export const artikelText = (name) => artikelAnzeige(name, aktiv);
 export const gerichtText = (name) => gerichtAnzeige(name, aktiv); // Perfektionswoche 24.10.2026: Vorlagen-Namen
+
+// Persona-Test Team (27.10.2026): Chromium kennt Kurmancî nicht und zeigte Datumstexte deutsch. Eigene Namen für ku, sonst Intl;
+// fehlt einer Sprache die Intl-Unterstützung, lieber Englisch als Deutsch.
+const KU_TAG = ["yekşem", "duşem", "sêşem", "çarşem", "pêncşem", "în", "şemî"];
+const KU_MONAT = ["çile", "sibat", "adar", "nîsan", "gulan", "hezîran", "tîrmeh", "tebax", "îlon", "cotmeh", "mijdar", "berfanbar"];
+export function datumText(d, opts = {}) {
+  const l = aktiv === "en" ? "en-GB" : aktiv;
+  if (aktiv === "ku") {
+    const teile = [];
+    if (opts.weekday) teile.push(opts.weekday === "short" ? KU_TAG[d.getDay()].slice(0, 3) : KU_TAG[d.getDay()]);
+    const rest = [opts.day ? String(d.getDate()) : "", opts.month ? (opts.month === "short" ? KU_MONAT[d.getMonth()].slice(0, 3) : KU_MONAT[d.getMonth()]) : "", opts.year ? String(d.getFullYear()) : ""].filter(Boolean).join(" ");
+    if (rest) teile.push(rest); return teile.join(", ");
+  }
+  try { return d.toLocaleDateString(Intl.DateTimeFormat.supportedLocalesOf([l]).length ? l : "en-GB", opts); } catch { return d.toLocaleDateString("en-GB", opts); }
+}

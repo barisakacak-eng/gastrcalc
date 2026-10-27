@@ -7,7 +7,7 @@ const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase()
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Nga regjistrimi i parë i mbeturinave","titel":"Më pak humbje në javë","laueft": (ab) => `Matja që nga ${ab}`,"stufe":{"bisNull":"Deri në zero","bisZiel":"Drejt objektivit","ueberZiel":"Mbi objektiv"},"ohneKosten":"Mungojnë kostot","art":{"muell":"Mbeturina","preis":"Çmimi","lager":"Magazina","papier":"Letrat"},"aktion":{"kuehlAlarm":"Mat përsëri","rundgangOffen":"Vazhdo raundin","rundgang":"Raundi i ftohjes","putzen":"Pastrim","sicherung":"Bëj kopje","abschluss":"Mbyll ditën","selbst":"Shkruaj recetën tënde","einkauf":"Shkruaj çmimet e blerjes","rezepte":"Peso recetat"}},
+  nutzen: {"start":"Nga regjistrimi i parë i mbeturinave","titel":"Kursim në javë","laueft": (ab) => `Matja që nga ${ab}`,"stufe":{"bisNull":"Deri në zero","bisZiel":"Drejt objektivit","ueberZiel":"Mbi objektiv"},"ohneKosten":"Mungojnë kostot","art":{"muell":"Mbeturina","preis":"Çmimi","lager":"Magazina","papier":"Letrat"},"aktion":{"kuehlAlarm":"Mat përsëri","rundgangOffen":"Vazhdo raundin","rundgang":"Raundi i ftohjes","putzen":"Pastrim","sicherung":"Bëj kopje","abschluss":"Mbyll ditën","selbst":"Shkruaj recetën tënde","einkauf":"Shkruaj çmimet e blerjes","rezepte":"Peso recetat"}},
   app: { name: "GastroCash", entwurf: "Version prove" },
 
   allgemein: {

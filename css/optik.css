@@ -321,3 +321,11 @@ body.rg-aktiv { overflow: hidden; }
 textarea.rg-text { resize: none; }
 .b-zeki { min-height: 44px; }
 .s2name:focus, .s2name:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 93, 67, .18); }
+
+/* Persona-Test Team 27.10.2026: °C, g, kg in RTL nicht umdrehen */
+.einheit { unicode-bidi: isolate; direction: ltr; }
+.kuehl-minus-wahl { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin: 10px 0; } .kuehl-minus-wahl .knopf { margin: 0; }
+/* Persona-Test Team 27.10.2026: die Müll-Bestätigung blieb ohne Neuzeichnen stehen und verdeckte Kacheln – nach 5 s weg (wie TOAST_MS) */
+@keyframes muellToastWeg { to { opacity: 0; visibility: hidden; } }
+.muelltoast { animation: muellToastWeg .35s ease 5s forwards; }
+@media (prefers-reduced-motion: reduce) { .muelltoast { animation: muellToastWeg 0s linear 5s forwards; } }

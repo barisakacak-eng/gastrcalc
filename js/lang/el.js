@@ -2,7 +2,7 @@
 // Griechisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Από την πρώτη καταχώριση απορριμμάτων","titel":"Λιγότερη απώλεια την εβδομάδα","laueft": (ab) => `Μέτρηση από ${ab}`,"stufe":{"bisNull":"Ως το μηδέν","bisZiel":"Προς τον στόχο","ueberZiel":"Πάνω από τον στόχο"},"ohneKosten":"Λείπουν κόστη","art":{"muell":"Απορρίμματα","preis":"Τιμή","lager":"Αποθήκη","papier":"Χαρτιά"},"aktion":{"kuehlAlarm":"Μέτρησε ξανά","rundgangOffen":"Συνέχισε τον γύρο","rundgang":"Γύρος ψύξης","putzen":"Καθάρισμα","sicherung":"Κάνε backup","abschluss":"Κλείσιμο ημέρας","selbst":"Γράψε τη συνταγή σου","einkauf":"Γράψε τιμές αγοράς","rezepte":"Ζύγισε τις συνταγές"}},
+  nutzen: {"start":"Από την πρώτη καταχώριση απορριμμάτων","titel":"Κέρδος ανά εβδομάδα","laueft": (ab) => `Μέτρηση από ${ab}`,"stufe":{"bisNull":"Ως το μηδέν","bisZiel":"Προς τον στόχο","ueberZiel":"Πάνω από τον στόχο"},"ohneKosten":"Λείπουν κόστη","art":{"muell":"Απορρίμματα","preis":"Τιμή","lager":"Αποθήκη","papier":"Χαρτιά"},"aktion":{"kuehlAlarm":"Μέτρησε ξανά","rundgangOffen":"Συνέχισε τον γύρο","rundgang":"Γύρος ψύξης","putzen":"Καθάρισμα","sicherung":"Κάνε backup","abschluss":"Κλείσιμο ημέρας","selbst":"Γράψε τη συνταγή σου","einkauf":"Γράψε τιμές αγοράς","rezepte":"Ζύγισε τις συνταγές"}},
   app: { name: "GastroCash", entwurf: "Δοκιμαστική έκδοση" },
 
   allgemein: {

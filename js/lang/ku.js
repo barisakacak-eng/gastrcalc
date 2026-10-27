@@ -1,7 +1,7 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Ji yekem tomara zibil","titel":"Hefteyê kêmtir windabûn","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Zibil","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
+  nutzen: {"start":"Ji yekem tomara zibil","titel":"Hefteyê teserûf","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Zibil","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {

@@ -2,7 +2,7 @@
 // Italienisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Dalla prima registrazione rifiuti","titel":"Meno perdite a settimana","laueft": (ab) => `Misurazione attiva da ${ab}`,"stufe":{"bisNull":"Fino a zero","bisZiel":"Verso l’obiettivo","ueberZiel":"Sopra l’obiettivo"},"ohneKosten":"Mancano i costi","art":{"muell":"Rifiuti","preis":"Prezzo","lager":"Magazzino","papier":"Scartoffie"},"aktion":{"kuehlAlarm":"Rimisura","rundgangOffen":"Continua il giro","rundgang":"Giro del freddo","putzen":"Pulizia","sicherung":"Fai un backup","abschluss":"Chiudi la giornata","selbst":"Inserisci la tua ricetta","einkauf":"Inserisci i prezzi d’acquisto","rezepte":"Pesa le ricette"}},
+  nutzen: {"start":"Dalla prima registrazione rifiuti","titel":"Risparmio a settimana","laueft": (ab) => `Misurazione attiva da ${ab}`,"stufe":{"bisNull":"Fino a zero","bisZiel":"Verso l’obiettivo","ueberZiel":"Sopra l’obiettivo"},"ohneKosten":"Mancano i costi","art":{"muell":"Rifiuti","preis":"Prezzo","lager":"Magazzino","papier":"Scartoffie"},"aktion":{"kuehlAlarm":"Rimisura","rundgangOffen":"Continua il giro","rundgang":"Giro del freddo","putzen":"Pulizia","sicherung":"Fai un backup","abschluss":"Chiudi la giornata","selbst":"Inserisci la tua ricetta","einkauf":"Inserisci i prezzi d’acquisto","rezepte":"Pesa le ricette"}},
   app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {

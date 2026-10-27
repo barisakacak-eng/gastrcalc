@@ -1,7 +1,7 @@
 // Personal-Modus (Drei Ebenen, Punkt 9 – 15.10.2026): drei Fotokacheln Müll · Kühlung · Putzen, kein einziger Euro.
 // Die Person wird einmal je Schicht gewählt (je Gerät gemerkt) und steht danach an jedem Eintrag (von: personId).
 // Verlassen nur mit Büro-Code über das Schloss in der Kopfleiste (nav.js, data-a="schloss"); ohne Code gibt es keinen Personal-Modus (W2-S).
-import { t, sprache } from "../i18n.js";
+import { t, sprache, datumText } from "../i18n.js";
 import { esc, heuteGeschaeft as heute } from "../util.js"; // Paket 3 (16.10.2026), M7: eine Schicht endet mit dem Geschäftstag (4 Uhr), nicht um Mitternacht
 import { sym } from "../symbole.js";
 import { personalZahlen } from "../personal.js"; // Trennung 2 (17.10.2026)
@@ -63,7 +63,7 @@ export function personalView(stand) {
   if (personen.length && wer === null) return personalLeiste() + werView(personen);
   const z = personalZahlen(stand);
   const name = wer ? nameVon(stand, wer) : "";
-  const datum = new Date().toLocaleDateString(sprache(), { weekday: "long", day: "numeric", month: "long" });
+  const datum = datumText(new Date(), { weekday: "long", day: "numeric", month: "long" });
   const kachel = (ziel, bild, symbol, farbe, titel, pille, klasse = "") => `<button type="button" class="riesenkachel ${klasse}" data-a="personal-ziel" data-wert="${ziel}">
       ${bild ? `<img src="foto/${bild}.webp" alt="">` : `<span class="putzmuster" aria-hidden="true">${sym("spray-can")}</span>`}
       <span class="rt"><span class="ks" style="color:var(${farbe})">${sym(symbol)}</span><b>${esc(titel)}</b>${pille || ""}</span></button>`;
@@ -101,5 +101,5 @@ export function anredeTeam(satz, stand) {
   if (!personalAktiv() || typeof satz !== "string" || !ANREDE.test(satz)) return satz;
   const rest = satz.replace(ANREDE, "").replace(/ Sếp kiểm/u, " Kiểm");
   const name = nameVon(stand, schichtPerson(stand));
-  return name ? `${name}, ${rest}` : rest.charAt(0).toLocaleUpperCase() + rest.slice(1);
+  return name ? `\u2068${name}\u2069, ${rest}` : rest.charAt(0).toLocaleUpperCase() + rest.slice(1);
 }

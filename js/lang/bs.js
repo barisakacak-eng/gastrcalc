@@ -9,7 +9,7 @@ const pl = (n, jedan, dva, pet) => {
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Od prvog unosa otpada","titel":"Manje gubitka sedmično","laueft": (ab) => `Mjerenje od ${ab}`,"stufe":{"bisNull":"Do nule","bisZiel":"Do cilja","ueberZiel":"Iznad cilja"},"ohneKosten":"Nedostaju troškovi","art":{"muell":"Otpad","preis":"Cijena","lager":"Skladište","papier":"Papiri"},"aktion":{"kuehlAlarm":"Izmjeri ponovo","rundgangOffen":"Nastavi obilazak","rundgang":"Obilazak hlađenja","putzen":"Čišćenje","sicherung":"Napravi kopiju","abschluss":"Zatvori dan","selbst":"Unesi svoj recept","einkauf":"Unesi nabavne cijene","rezepte":"Izvagaj recepte"}},
+  nutzen: {"start":"Od prvog unosa otpada","titel":"Ušteđeno sedmično","laueft": (ab) => `Mjerenje od ${ab}`,"stufe":{"bisNull":"Do nule","bisZiel":"Do cilja","ueberZiel":"Iznad cilja"},"ohneKosten":"Nedostaju troškovi","art":{"muell":"Otpad","preis":"Cijena","lager":"Skladište","papier":"Papiri"},"aktion":{"kuehlAlarm":"Izmjeri ponovo","rundgangOffen":"Nastavi obilazak","rundgang":"Obilazak hlađenja","putzen":"Čišćenje","sicherung":"Napravi kopiju","abschluss":"Zatvori dan","selbst":"Unesi svoj recept","einkauf":"Unesi nabavne cijene","rezepte":"Izvagaj recepte"}},
   app: { name: "GastroCash", entwurf: "Test verzija" },
 
   allgemein: {
