@@ -182,7 +182,7 @@ function zeichne() {
     b.textContent = t(speicherProblem === "fassung" ? "einstellungen.andereFassung" : speicherProblem ? "einstellungen.speichernFehlgeschlagen" : "einstellungen.speicherFehlt");
     root.prepend(b);
   }
-  if (kennung !== letzterSchirm) ruheBis = Date.now() + 250;
+  if (kennung !== letzterSchirm) { ruheBis = Date.now() + 250; meldungBeiWechsel(); }
   letzterSchirm = kennung;
   window.scrollTo(0, y);
 }
@@ -333,11 +333,21 @@ async function ladenWechseln(id) {
   zeichne(); await sofortSpeichern(wurzel);
 }
 
+// 27.10.2026 (Persona-Test Personal): eine Meldung hing nach dem Bildschirmwechsel noch über der nächsten Liste. Jetzt: eine Uhr je Meldung
+// (eine alte Uhr schließt keine neue Meldung zu früh), und wechselt der Mensch danach den Bildschirm (Tipp, Zurück), geht sie sofort zu.
+// Eine Meldung, die mit genau dem Tipp kommt, der den Bildschirm wechselt, bleibt stehen (eingabeNr zählt Tipps und Zurück).
+let meldungUhr = null, eingabeNr = 0, meldungNr = -1;
+for (const art of ["pointerdown", "keydown"]) document.addEventListener(art, () => { eingabeNr++; }, true);
+window.addEventListener("popstate", () => { eingabeNr++; }, true);
 function meldung(text) {
   let m = document.querySelector(".meldung");
   if (!m) { m = document.createElement("div"); m.className = "meldung"; document.body.appendChild(m); }
-  m.textContent = text; m.classList.add("da");
-  setTimeout(() => m.classList.remove("da"), 2600);
+  m.textContent = text; m.classList.add("da"); meldungNr = eingabeNr;
+  clearTimeout(meldungUhr); meldungUhr = setTimeout(() => m.classList.remove("da"), 2600);
+}
+function meldungBeiWechsel() {
+  if (eingabeNr <= meldungNr) return;
+  const m = document.querySelector(".meldung.da"); if (m) { clearTimeout(meldungUhr); m.classList.remove("da"); }
 }
 
 // W2-D: Sicherung als ZIP mit allen Fotos und Belegen; die Größe steht in der Meldung.
@@ -655,7 +665,7 @@ async function aufKlick(ev) {
     if (r.ziel) {
       const wer = schichtPerson(stand) || "";
       if (r.ziel === "muell") { tagZuruecksetzen(); muellZuruecksetzen(); }
-      if (r.ziel === "kuehl") { kuehlZuruecksetzen(); if (kuehlBereit(stand) && !rundgangOffen(stand)) { kuehlAktion("kuehl-rundgang", el, stand, wurzel); kuehlAktion("start-von", { dataset: { id: wer } }, stand, wurzel); } }
+      if (r.ziel === "kuehl") { kuehlZuruecksetzen(); if (kuehlBereit(stand) && !rundgangOffen(stand)) { kuehlAktion("kuehl-rundgang-los", el, stand, wurzel); speichern(wurzel); } } // 27.10.2026 (Persona-Test): Schicht-Person steht fest – kein „Wer misst?“ mit „Los“, gleich die erste Stelle
       if (r.ziel === "putzplan") { putzplanZuruecksetzen(); if (wer) putzplanAktion("pp-wer", { dataset: { id: wer } }, stand); }
       herkunft = "personal"; ansicht = r.ziel;
     }

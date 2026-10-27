@@ -588,6 +588,7 @@ export default {
     ausserhalb: "Value outside the limit",
     massnahme: "What did you do?",
     massnahmen: { tuer: "Door was open", eingeraeumt: "Just restocked / delivery, waiting", eingestellt: "Adjusted", umgeraeumt: "Moved goods", stecker: "Checked plug / fuse", chef: "Called the boss", techniker: "Called technician", weggeworfen: "Threw goods away" },
+    massnahmenKurz: { tuer: "Door open", eingeraeumt: "Delivery", eingestellt: "Adjusted", umgeraeumt: "Moved goods", stecker: "Plug checked", chef: "Called boss", techniker: "Technician", weggeworfen: "Thrown away" },
     notizPlatzhalter: "note, optional",
     nachkontrolle: "Re-check",
     nachkontrollen: { h1: "in 1 hour", h2: "in 2 hours", naechste: "next measurement" },

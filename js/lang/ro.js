@@ -595,6 +595,7 @@ export default {
     ausserhalb: "Valoare în afara limitei",
     massnahme: "Ce ai făcut?",
     massnahmen: { tuer: "Ușa era deschisă", eingeraeumt: "Pus mult înăuntru / livrare, aștept", eingestellt: "Reglat din nou", umgeraeumt: "Marfa mutată", stecker: "Verificat ștecherul / siguranța", chef: "Am sunat șeful", techniker: "Chemat tehnicianul", weggeworfen: "Marfa aruncată" },
+    massnahmenKurz: { tuer: "Ușă deschisă", eingeraeumt: "Livrare", eingestellt: "Reglat", umgeraeumt: "Marfă mutată", stecker: "Ștecher verificat", chef: "Am sunat șeful", techniker: "Tehnician", weggeworfen: "Aruncat" },
     notizPlatzhalter: "Notiță, opțional",
     nachkontrolle: "Remăsurare",
     nachkontrollen: { h1: "peste 1 oră", h2: "peste 2 ore", naechste: "următoarea măsurare" },

@@ -589,6 +589,7 @@ export default {
     ausserhalb: "Değer sınırın dışında",
     massnahme: "Ne yaptın?",
     massnahmen: { tuer: "Kapı açıktı", eingeraeumt: "Yeni mal kondu / teslimat, bekliyorum", eingestellt: "Yeniden ayarlandı", umgeraeumt: "Mal taşındı", stecker: "Fiş / sigorta kontrol edildi", chef: "Patron arandı", techniker: "Teknisyen çağrıldı", weggeworfen: "Mal atıldı" },
+    massnahmenKurz: { tuer: "Kapı açık", eingeraeumt: "Teslimat", eingestellt: "Ayarlandı", umgeraeumt: "Mal taşındı", stecker: "Fiş kontrol", chef: "Patron arandı", techniker: "Teknisyen", weggeworfen: "Atıldı" },
     notizPlatzhalter: "not, isteğe bağlı",
     nachkontrolle: "Tekrar kontrol",
     nachkontrollen: { h1: "1 saat sonra", h2: "2 saat sonra", naechste: "bir sonraki ölçüm" },

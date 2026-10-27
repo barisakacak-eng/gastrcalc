@@ -594,6 +594,7 @@ export default {
     ausserhalb: "Стойност извън границата",
     massnahme: "Какво направи?",
     massnahmen: { tuer: "Вратата беше отворена", eingeraeumt: "Много заредено / доставка, чакам", eingestellt: "Пренастроено", umgeraeumt: "Стоката преместена", stecker: "Проверен щепсел / бушон", chef: "Обадих се на шефа", techniker: "Повикан техник", weggeworfen: "Стоката изхвърлена" },
+    massnahmenKurz: { tuer: "Врата отворена", eingeraeumt: "Доставка", eingestellt: "Пренастроено", umgeraeumt: "Преместено", stecker: "Щепсел проверен", chef: "Обадих се на шефа", techniker: "Техник", weggeworfen: "Изхвърлено" },
     notizPlatzhalter: "Бележка, по желание",
     nachkontrolle: "Повторно мерене",
     nachkontrollen: { h1: "след 1 час", h2: "след 2 часа", naechste: "следващо мерене" },

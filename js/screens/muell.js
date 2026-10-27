@@ -127,6 +127,7 @@ export function muellTippZeigen(root, stand) {
   const ziel = zuletzt ? raster.querySelector(`.ware[data-k="${CSS.escape(zuletzt.schluessel)}"]`) : null;
   if (ziel) { const x = kachelDaten(ziel.querySelector("[data-a='muell-tipp']"), stand); if (x) ziel.outerHTML = kachelHtml(stand, x, zaehl, zuletzt.schluessel, ansicht === "station"); }
   const p = root.querySelector("#muell-heute"); if (p) p.outerHTML = pilleHtml(stand, D);
+  const z = root.querySelector(".muell1 .zeki-zeile"); if (z && grund === "roh" && muellHeute(stand, D).anzahl) z.replaceChildren(t("muell.zeki.weiter")); // 27.10.2026: nach dem ersten Tipp „Noch was weg?“ statt der Startfrage
   root.querySelector(".muelltoast")?.remove();
   const html = toastHtml(); if (html) raster.closest(".inhalt").insertAdjacentHTML("afterend", html);
   clearTimeout(toastUhr); const id = zuletzt?.ids;

@@ -594,6 +594,7 @@ export default {
     ausserhalb: "Значення поза межею",
     massnahme: "Що ти зробив?",
     massnahmen: { tuer: "Двері були відчинені", eingeraeumt: "Багато завантажили / поставка, чекаю", eingestellt: "Переналаштував", umgeraeumt: "Переклав товар", stecker: "Перевірив вилку / запобіжник", chef: "Подзвонив шефу", techniker: "Викликав майстра", weggeworfen: "Викинув товар" },
+    massnahmenKurz: { tuer: "Двері відчинені", eingeraeumt: "Поставка", eingestellt: "Переналаштував", umgeraeumt: "Переклав", stecker: "Вилка перевірена", chef: "Дзвонив шефу", techniker: "Майстер", weggeworfen: "Викинув" },
     notizPlatzhalter: "Нотатка, за бажанням",
     nachkontrolle: "Повторний замір",
     nachkontrollen: { h1: "за 1 годину", h2: "за 2 години", naechste: "під час наступного заміру" },

@@ -589,6 +589,7 @@ export default {
     ausserhalb: "Τιμή εκτός ορίου",
     massnahme: "Τι έκανες;",
     massnahmen: { tuer: "Η πόρτα ήταν ανοιχτή", eingeraeumt: "Μπήκαν πολλά / παράδοση, περιμένω", eingestellt: "Ρυθμίστηκε ξανά", umgeraeumt: "Τα προϊόντα μεταφέρθηκαν", stecker: "Έλεγχος φις / ασφάλειας", chef: "Πήρα τηλέφωνο το αφεντικό", techniker: "Κάλεσα τεχνικό", weggeworfen: "Τα προϊόντα πετάχτηκαν" },
+    massnahmenKurz: { tuer: "Πόρτα ανοιχτή", eingeraeumt: "Παράδοση", eingestellt: "Ρυθμίστηκε", umgeraeumt: "Μεταφέρθηκαν", stecker: "Έλεγχος φις", chef: "Πήρα αφεντικό", techniker: "Τεχνικός", weggeworfen: "Πετάχτηκαν" },
     notizPlatzhalter: "Σημείωση, προαιρετικά",
     nachkontrolle: "Επανέλεγχος",
     nachkontrollen: { h1: "σε 1 ώρα", h2: "σε 2 ώρες", naechste: "επόμενη μέτρηση" },
