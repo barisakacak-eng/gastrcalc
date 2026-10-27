@@ -8,3 +8,6 @@ Keine Marken, Logos oder Personen. Eigene Fotos des Wirts ersetzen diese Bilder 
 
 ## Welle 3 (15.10.2026, 03:55 Uhr)
 64 Fotos aus vier Bildbögen, erzeugt von Sanji (ChatGPT) für Baris: 48 Rohwaren (r-*), 8 Verpackungen (v-*), 4 Kühlgeräte (k-*-foto), Eimer auf Waage, Biotonne, Rechnungsstapel, Dönergrill (hero-doenergrill). Zugeschnitten von Zoro (WebP 520 × 390).
+
+## Sanji 27.10.2026 (Schablone A + Serie B aus Übergabepaket 5.1)
+14 Fotos, erzeugt von Sanji (ChatGPT) für Baris, je 520 × 390 WebP unter 40 KB, von Zoro auf Größe, Motiv und Dateinamen geprüft: k-kuehlschrank-lebensmittel-foto, laden-burger, g-classic-smash-burger (ersetzt Doppel-Patty-Bild), r-bacon, r-pide-teig, r-avocado, r-pulled-pork, r-spaetzle, r-butter, r-mischgemuese-tk, r-weinessig, v-burgerbox, v-beilagenschale, v-trinkhalm. Kein Text, keine Marken, keine Personen.
