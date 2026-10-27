@@ -165,7 +165,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const lohnAnteilig = gewichtMonat > 0 ? lohnStundenMonat / gewichtMonat : 0;
   // Ein Eintrag zählt nur, wenn bei allen Personen der Stundenlohn da ist – sonst bleibt der Tag beim Anteil (Gegenprüfung 27.10.: fehlender Lohn ≠ 0 €).
   const lohnAm = (d, gewicht) => { const e = teamTag(stand, d); const vollstaendig = e && (e.keine || e.eintraege.every((x) => x.satz > 0));
-    return vollstaendig ? { betrag: teamTagKosten(e), echt: true } : { betrag: lohnAnteilig * gewicht, echt: false }; };
+    return vollstaendig ? { betrag: teamTagKosten(e), echt: true, untypisch: !!e.untypisch } : { betrag: lohnAnteilig * gewicht, echt: false }; };
   const anteil = (betrag) => gewichtMonat > 0 ? (betrag || 0) / gewichtMonat : 0;
 
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
@@ -184,7 +184,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     const m = stufe === 3 ? 0 : (muell[t.datum] || 0); // Stufe 3: echte Belege enthalten den weggeworfenen Einkauf schon
     if (stufe === 3 && !belegQuoteZaehlt) muellNurPrognose += muell[t.datum] || 0;
     const lt = lohnAm(t.datum, t.gewicht); t.lohn = lt.betrag; t.lohnEcht = lt.echt;
-    if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } else if (t.gewicht > 0) lohnGeschaetztTage += 1;
+    if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; if (!lt.untypisch) { lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } } // Baris 27.10.2026 (B): „kein normaler Tag“ zählt heute, aber nicht für die Vorhersage else if (t.gewicht > 0) lohnGeschaetztTage += 1;
     lohnBis += lt.betrag;
     const ab = abwesendMonat(stand, M.von.slice(0, 7)); if (ab && ab.datum === t.datum) { const k = abwesendKosten(ab); lt.betrag += k; lohnBis += k; } // Urlaub/Krankheit am Tag der Antwort
     kosten += tageskostenFest * t.gewicht + lt.betrag; gewichtBisHeute += t.gewicht;

@@ -6,7 +6,7 @@ import { esc, fmtEuro, heuteGeschaeft, wertAnzeige, parseZahl } from "../util.js
 import { umsatzEintrag } from "../engine.js";
 import { umsatzHeutePruefen, umsatzHeuteSpeichern } from "../laden_zahlen.js";
 import { nav } from "./nav.js";
-import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision } from "../stamm.js";
+import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision, normalFrageNoetig, normalTagSetzen } from "../stamm.js";
 import { sym } from "../symbole.js";
 
 let lieferEntwurf = null; // „davon Lieferdienst“ (27.10.2026), nur wenn ein Portal mit Provision eingerichtet ist
@@ -58,8 +58,19 @@ function abwesendView(stand) {
       <button type="button" class="knopf glut" data-a="ul-abw-fertig">${esc(t("teamTag.fertig"))}</button>
     </div>${nav("start")}`;
 }
+let normalAntwort = null; // Baris 27.10.2026 (B): Antwort auf „Ist das ein normaler Tag?“
 function teamView(stand) {
   if (schritt.startsWith("abw-")) return abwesendView(stand);
+  if (schritt === "normal-frage") return `
+    <div class="inhalt umsatz-laden team-tag">
+      <p class="zeki-zeile">${esc(t("teamTag.normalFrage"))}</p>
+      <div class="team-wahl"><button type="button" class="knopf glut" data-a="ul-normal-ja">${esc(t("allgemein.ja"))}</button><button type="button" class="knopf zweit" data-a="ul-normal-nein">${esc(t("allgemein.nein"))}</button></div>
+    </div>${nav("start")}`;
+  if (schritt === "normal-info") return `
+    <div class="inhalt umsatz-laden team-tag">
+      <p class="zeki-zeile">${esc(t(normalAntwort ? "teamTag.normalJa" : "teamTag.normalNein"))}</p>
+      <button type="button" class="knopf glut" data-a="ul-normal-fertig">${esc(t("teamTag.fertig"))}</button>
+    </div>${nav("start")}`;
   if (schritt === "frage") return `
     <div class="inhalt umsatz-laden team-tag">
       <p class="zeki-zeile">${esc(t("teamTag.frage"))}</p>
@@ -123,6 +134,8 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (name === "ul-abw-ja") { abwesend = stundenLeute(stand).map((p) => ({ person: p.id, name: p.kuerzel, tage: 0, satz: p.stundenlohn, art: p.lohnArt || "angestellt", stundenTag: stundenJeTag(stand, p.id, H.slice(0, 7)) })); schritt = "abw-liste"; return "zeichnen"; }
   if (name === "ul-abw-tage" && abwesend) { const i = Number(el.dataset.i); abwesend = abwesend.map((x, k) => (k === i ? { ...x, tage: Math.max(0, Math.min(31, x.tage + Number(el.dataset.d))) } : x)); return "zeichnen"; }
   if (name === "ul-abw-fertig" && abwesend) { abwesendSetzen(stand, H, abwesend); schritt = "feld"; abwesend = null; return { fertig: true }; }
+  if (name === "ul-normal-ja" || name === "ul-normal-nein") { normalAntwort = name === "ul-normal-ja"; normalTagSetzen(stand, H, normalAntwort); schritt = "normal-info"; return "zeichnen"; }
+  if (name === "ul-normal-fertig") return weiterOderFertig();
   if (name === "ul-team-nein") { teamTagSetzen(stand, H, []); return weiterOderFertig(); }
   if (name === "ul-team-ja") { team = teamStart(stand, H); schritt = "liste"; return "zeichnen"; }
   if (team && name.startsWith("ul-team-")) {
@@ -133,7 +146,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
     if (name === "ul-team-wer" && x) { team = team.map((y) => (y === x ? { ...y, an: !y.an } : y)); return "zeichnen"; }
     if (name === "ul-team-std" && x) { team = team.map((y) => (y === x ? { ...y, stunden: Math.max(0.5, Math.min(16, y.stunden + Number(el.dataset.d))) } : y)); return "zeichnen"; }
     if (name === "ul-team-plus") { team = [...team, { person: null, name: t("teamTag.person", team.length + 1), stunden: 8, satz: team[team.length - 1]?.satz || null, an: true }]; return "zeichnen"; }
-    if (name === "ul-team-fertig") { teamTagSetzen(stand, H, team.filter((y) => y.an).map((y) => ({ ...y, modell: y.modell || y.modellNeu || "stunde" }))); return weiterOderFertig(); }
+    if (name === "ul-team-fertig") { teamTagSetzen(stand, H, team.filter((y) => y.an).map((y) => ({ ...y, modell: y.modell || y.modellNeu || "stunde" }))); if (normalFrageNoetig(stand, H)) { team = null; schritt = "normal-frage"; return "zeichnen"; } return weiterOderFertig(); }
   }
   if (name !== "ul-speichern" && name !== "ul-ja") return false;
   const text = entwurf ?? (umsatzEintrag(stand, heuteGeschaeft()) ? wertAnzeige(umsatzEintrag(stand, heuteGeschaeft()).umsatz) : "");

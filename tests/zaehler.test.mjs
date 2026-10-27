@@ -216,3 +216,14 @@ test("Eigenes Gericht: „Classic Smash 9.90“ → Name + Preis, „Fries“ �
   assert.equal(K.gerichtEigenAnlegen(b, "Fries 3,50 €").klasse, "kleinigkeit"); assert.equal(K.gerichtEigenAnlegen(b, "Cola 0,33").klasse, "getraenk");
   assert.equal(K.gerichtEigenAnlegen(b, "Burger 2000").name, "Burger 2000");
 });
+
+// Baris 27.10.2026 (B): „Ist das ein normaler Tag?“ – Nein: der Tag zählt, aber nicht für die Vorhersage
+test("Normaler Tag: Nein nimmt den Lohn aus der Vorhersage, Ja behält ihn", async () => {
+  const S = await import("../js/stamm.js");
+  const mk = () => { const b = laden(); b.team.lohnkosten = null; stand(b, "2026-10-12", 1070); S.teamTagSetzen(b, "2026-10-12", [{ person: null, name: "A", stunden: 8, satz: 14, art: "angestellt", modell: "stunde" }]); return b; };
+  const ja = mk(); assert.equal(S.normalFrageNoetig(ja, "2026-10-12"), true); S.normalTagSetzen(ja, "2026-10-12", true); assert.equal(S.normalFrageNoetig(ja, "2026-10-12"), false);
+  const nein = mk(); S.normalTagSetzen(nein, "2026-10-12", false);
+  const zj = Z.zaehler(ja, { datum: "2026-10-12" }), zn = Z.zaehler(nein, { datum: "2026-10-12" });
+  nah(zj.stand, zn.stand); // heute zählt in beiden Fällen
+  assert.ok(zj.tageskostenPrognose > zn.tageskostenPrognose, `${zj.tageskostenPrognose} > ${zn.tageskostenPrognose}`);
+});

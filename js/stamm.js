@@ -229,6 +229,9 @@ export function lieferProvision(stand) {
 // Provision eines Betrags (brutto eingegeben); bei Netto-Basis vom Netto-Betrag.
 export const lieferKosten = (betrag, prov, mwst) => !prov || !(betrag > 0) ? 0 : (prov.basis === "netto" ? betrag / (1 + (mwst || 0)) : betrag) * prov.satz;
 // satz = Brutto-Stundenlohn; art = "angestellt" | "minijob". Kosten = Brutto × Arbeitgeber-Aufschlag (js/data/lohnkosten.js)
+// Baris 27.10.2026 (B): nach den ersten Stunden einmal „Ist das ein normaler Tag?“ – nur ohne Monatssumme für Löhne und nur einmal je Laden.
+export const normalFrageNoetig = (stand, datum) => { const e = teamTag(stand, datum); return !!e && !e.keine && e.eintraege.length > 0 && !(Number(stand?.team?.lohnkosten) > 0) && !stand?.team?.normalGefragt; };
+export function normalTagSetzen(stand, datum, normal) { const e = teamTag(stand, datum); if (e && !normal) e.untypisch = true; stand.team ??= {}; stand.team.normalGefragt = true; }
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);
 
