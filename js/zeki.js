@@ -34,7 +34,7 @@ export const ZEKI_PRUEFUNGEN = {
   ziel_erreicht: (s, H) => { const z = zaehler(s, { datum: H }); if (z.kippTag !== H || z.keinUmsatz) return null; try { return monatsZiel(s, z, H).stufe !== "bisNull" ? {} : null; } catch { return null; } }, // Persona-Test Vater 27.10.: nur wenn der Monat wirklich über null ist
   tag_abgeschlossen: (s, H) => {
     if (!(s.abschluesse || []).some((a) => a && !a.storniert && a.datum === H)) return null;
-    const z = zaehler(s, { datum: H }); return typeof z.stand === "number" && z.stand < 0 ? { betrag: fmtEuro(-z.stand, { dezimal: 0 }) } : null;
+    const z = zaehler(s, { datum: H }); try { const m = monatsZiel(s, z, H); return m.stufe === "bisNull" && m.fehltNull > 0 ? { betrag: fmtEuro(m.fehltNull, { dezimal: 0 }) } : null; } catch { return null; } // Nachtest 27.10.: dieselbe Monatszahl wie Heute, nicht der Tagesstand
   },
   inventur_faellig: (s, H) => { const f = inventurenFertig(s); if (!f.length) return null; const t = tageZwischen(f[f.length - 1].datum, H); return t >= 30 ? { tage: String(t) } : null; },
   sicherung_alt: (s, H, o) => (typeof o.sicherungTage === "number" && o.sicherungTage >= 7 ? { tage: String(o.sicherungTage) } : null),

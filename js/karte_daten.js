@@ -25,9 +25,11 @@ export function gerichtAusVorlageAnlegen(stand, v) { const g = gerichtAusVorlage
 const KLEIN_RE = /\b(pommes|fries|wedges|chips|dip|soße|sosse|sauce|nuggets|onion rings|ayran)\b/i;
 const GETRAENK_RE = /\b(cola|fanta|sprite|wasser|water|limo|saft|juice|eistee|ice tea|bier|beer|kaffee|coffee|tee|tea|çay|energy)\b/i;
 export function nameUndPreis(text) {
-  const m = String(text || "").trim().match(/^(.*?\S)\s+(\d{1,3}(?:[.,]\d{1,2})?)\s*€?$/);
-  if (!m) return { name: String(text || "").trim(), preis: null };
-  const preis = Number(m[2].replace(",", ".")); return preis > 0 && preis < 200 ? { name: m[1], preis } : { name: String(text).trim(), preis: null };
+  // Nachtest 27.10.2026: nur eindeutige Preise – mit zwei Nachkommastellen („9.90“) oder mit €-Zeichen („12 €“); „Menü 1“, „Pizza 32“, „Cola 0,5“ bleiben Namen
+  const roh = String(text || "").trim();
+  const m = roh.match(/^(.*?\S)\s+(\d{1,3}[.,]\d{2})\s*€?$/) || roh.match(/^(.*?\S)\s+(\d{1,3}(?:[.,]\d{1,2})?)\s*€$/);
+  if (!m) return { name: roh, preis: null };
+  const preis = Number(m[2].replace(",", ".")); return preis >= 1 && preis < 200 ? { name: m[1], preis } : { name: roh, preis: null };
 }
 export function gerichtEigenAnlegen(stand, eingabe) {
   const { name, preis } = nameUndPreis(eingabe);

@@ -227,3 +227,8 @@ test("Normaler Tag: Nein nimmt den Lohn aus der Vorhersage, Ja behält ihn", asy
   nah(zj.stand, zn.stand); // heute zählt in beiden Fällen
   assert.ok(zj.tageskostenPrognose > zn.tageskostenPrognose, `${zj.tageskostenPrognose} > ${zn.tageskostenPrognose}`);
 });
+test("Eigenes Gericht: Zahlen im Namen bleiben Namen (Nachtest 27.10.)", async () => {
+  const K = await import("../js/karte_daten.js");
+  for (const n of ["Menü 1", "Pizza 32", "Cola 0,5", "Döner 2", "Burger Nr 3"]) assert.equal(K.nameUndPreis(n).preis, null, n);
+  assert.deepEqual(K.nameUndPreis("Lahmacun 12 €"), { name: "Lahmacun", preis: 12 });
+});

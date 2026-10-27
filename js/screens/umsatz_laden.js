@@ -117,7 +117,7 @@ export function umsatzLadenView(stand) {
   const wert = entwurf ?? (u ? wertAnzeige(u.umsatz) : "");
   return `
     <div class="inhalt umsatz-laden">
-      <div class="ul-kopf"><h1>${esc(t("heute.kachel.umsatz"))}</h1><small>${esc(t("abschluss.umsatzKurz"))}</small></div>
+      <div class="ul-kopf"><h1>${esc(t("heute.kachel.umsatz"))}</h1></div>${""/* Nachtest 27.10.2026: „Aus der Kasse“ entfällt – mit Lieferdienst und Personal sonst über 15 Wörter */}
       ${rueckfrage !== null ? `
       <div class="karte ul-frage" role="alertdialog" aria-live="assertive">
         <b>${esc(t("ladenSchirm.stimmt", fmtEuro(rueckfrage, { dezimal: 2 })))}</b>
@@ -169,7 +169,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (name !== "ul-speichern" && name !== "ul-ja") return false;
   const text = entwurf ?? (umsatzEintrag(stand, heuteGeschaeft()) ? wertAnzeige(umsatzEintrag(stand, heuteGeschaeft()).umsatz) : "");
   const p = umsatzHeutePruefen(name === "ul-ja" ? String(rueckfrage ?? "") : text, { bestaetigt: name === "ul-ja" });
-  if (p.status === "leer") return false;
+  if (p.status === "leer") return { meldung: t("teamTag.umsatzLeer") };
   if (p.status === "ungueltig") return { meldung: t("allgemein.zahlUngueltig", String(text).trim().slice(0, 20)) };
   if (p.status === "rueckfrage") { rueckfrage = p.betrag; return "zeichnen"; }
   const prov = lieferProvision(stand);
@@ -185,6 +185,8 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   const satz = satzNeu ?? (Number(stand.team?.stundenlohn) > 0 ? stand.team.stundenlohn : null);
   if (std === null || (teamEntwurf.satz && satzNeu === null)) return { meldung: t("allgemein.zahlUngueltig", String(std === null ? stdText : teamEntwurf.satz).trim().slice(0, 20)) };
   if (std > 0 && !satz) return { meldung: t("teamTag.satzFehlt") };
+  // Nachtest 27.10.2026: unplausible Werte nicht still speichern (1.400 €/Std. ergab „bis null ≈ 409.027 €“)
+  if ((satz && (satz < 5 || satz > 80)) || (std > 0 && std > 24 * Math.max(1, pers || 1)) || (pers && pers > 60)) return { meldung: t("teamTag.unplausibel") };
   umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null });
   if (prov) lieferTagSetzen(stand, H, liefer);
   if (satzNeu) teamStundenlohnSetzen(stand, satzNeu);

@@ -39,7 +39,7 @@ test("Umsatz heute: über 100.000 € fragt der Bildschirm einmal nach (Stimmt d
   globalThis.alert = () => { throw new Error("alert() darf nicht kommen"); };
   const s = laden(); const w = wurzelVon(s); navKontext(s, w, "umsatzheute"); UL.umsatzLadenZuruecksetzen();
   let html = UL.umsatzLadenView(s);
-  assert.ok(html.includes('data-f="ul-umsatz"') && html.includes('inputmode="decimal"') && html.includes("aus der Kasse".replace("aus", "Aus")), "großes Zahlfeld, Untertitel");
+  assert.ok(html.includes('data-f="ul-umsatz"') && html.includes('inputmode="decimal"'), "großes Zahlfeld"); // 27.10.2026: Untertitel „Aus der Kasse“ entfällt (15-Wörter-Regel)
   assert.ok(!html.includes("umsatz-basis") && !/netto/i.test(html), "brutto/netto-Schalter bleibt im Büro"); // 27.10.2026: „Lohn brutto“ beim Personal ist erlaubt
   assert.equal(UL.umsatzLadenEingabe("ul-umsatz", "150000"), "entwurf");
   assert.equal(UL.umsatzLadenAktion("ul-speichern", el(), s, w), "zeichnen");
@@ -68,7 +68,7 @@ test("Umsatz heute: normaler Betrag speichert sofort, am Geschäftstag, festgesc
   UL.umsatzLadenEingabe("ul-umsatz", "1300"); UL.umsatzLadenAktion("ul-speichern", el(), s, w);
   assert.equal(umsatzEintrag(s, heuteGeschaeft()).umsatz, 1300); assert.equal(s.tagesnotizen.filter((n) => n.storniert).length, 1);
   // leeres Feld tut nichts, ungültige Zahl meldet sich
-  UL.umsatzLadenEingabe("ul-umsatz", ""); assert.equal(UL.umsatzLadenAktion("ul-speichern", el(), s, w), false);
+  UL.umsatzLadenEingabe("ul-umsatz", ""); assert.ok(UL.umsatzLadenAktion("ul-speichern", el(), s, w).meldung, "Nachtest 27.10.: leeres Feld sagt Bescheid");
   UL.umsatzLadenEingabe("ul-umsatz", "12,3,4"); assert.ok(UL.umsatzLadenAktion("ul-speichern", el(), s, w).meldung);
   // Geschäftstag bis 4 Uhr: umsatzHeuteSpeichern nimmt standardmäßig heuteGeschaeft()
   const s2 = laden(); LZ.umsatzHeuteSpeichern(s2, 500, { datum: tagPlus(H, -1) });

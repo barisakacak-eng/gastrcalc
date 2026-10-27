@@ -344,3 +344,4 @@ textarea.rg-text { resize: none; }
 .ul-team-zahl .einheit { flex: 0 0 auto; font-size: calc(16rem / 17); }
 .umsatz-laden .ul-feld.ul-liefer input, .ul-team-zahl input { min-height: 44px; } .ul-team-zahl input { min-width: 44px; }
 .ul-team-zahl { padding: 6px 8px; gap: 4px; } .ul-team-zahl input { flex: 1 0 44px; } .ul-team-zahlen { gap: 8px; }
+.ul-team-zahl input { font-size: calc(24rem / 17); } .ul-team-zahl .einheit { font-size: calc(14rem / 17); } /* Nachtest: „12“ und „96,5“ passen auch bei 360 px */

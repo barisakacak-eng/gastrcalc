@@ -168,13 +168,14 @@ function zaehlerKarteMonat(z, H, w) {
   const zahl = `${g}${w.stufe === "ueberZiel" ? "+ " : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`;
   // Persona-Test Wirt (27.10.2026): an einem Vortag stand „Heute stehst du bei …“ und „seit gestern“ – jetzt mit Datum, ohne Tagesvergleich.
   const istHeute = H === heuteGeschaeft(); const betrag = `${z.stand >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.stand), { dezimal: 0 })}`;
-  const heuteZeile = z.keinUmsatz ? t("cockpit.keinUmsatz") : istHeute ? t("zaehler.standHeuteZeile", betrag) : t("zaehler.standTagZeile", datumLesbar(H).slice(0, 6), betrag);
-  const erklaerung = !z.keinUmsatz && w.stufe === "bisNull" && z.stand >= 0 ? `<small class="fein">${esc(t("zaehler.standErklaerung"))}</small>` : "";
+  // Nachtest 27.10.2026: „Heute stehst du bei + 500 €“ neben „bis null fehlen 4.065 €“ verwirrte – eine Zahl (Baris B, 02:13); nur an Vortagen der Stand mit Datum
+  const heuteZeile = z.keinUmsatz ? t("cockpit.keinUmsatz") : istHeute ? "" : t("zaehler.standTagZeile", datumLesbar(H).slice(0, 6), betrag);
+  const erklaerung = "";
   return `<div class="karte dunkel zaehler ${w.stufe === "bisNull" ? "minus" : "plus"}">
     <small class="lbl">${esc(label)}</small>
     <span class="riesig">${zahl}</span>
     ${istHeute && w.bewegung && Math.abs(w.bewegung.betrag) >= 1 && w.stufe === "bisNull" ? `<small class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</small>` : ""}
-    <small>${esc(heuteZeile)}</small>${erklaerung}
+    ${heuteZeile ? `<small>${esc(heuteZeile)}</small>` : ""}${erklaerung}
     ${z.unvollstaendig ? `<small class="warn">${esc(t("cockpit.unvollstaendig"))}</small>` : ""}
     <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("zaehler.lohnTageZeile", z.lohnEchtTage || 0))}</small>
   </div>`;

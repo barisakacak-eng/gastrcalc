@@ -52,7 +52,7 @@ export function umsatzView(stand) {
       </div>
       ${zaehlerKarte(z, D, { tipp: false, ziel: (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })() })}
       ${streckeKarte(z, st)}
-      ${prognoseKarte(z)}
+      ${prognoseKarte(z, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
       ${gesternKarte(stand, z, D)}
       ${rechnungKarte(z)}
       ${monatKarte(z, D)}
@@ -73,11 +73,11 @@ function streckeKarte(z, st) {
     <small class="marke">${esc(t("zaehler.jederTag", fmtEuro(sk.beispiel), fmtEuro(sk.bringt)))} ${esc(t("zaehler.legendeStrecke"))}</small></div>`;
 }
 
-function prognoseKarte(z) {
+function prognoseKarte(z, mz = null) { // Nachtest 27.10.2026: „Null am“ aus der Monatsrechnung (mz), nicht aus dem Tagesstand
   if (z.dbProTag === null) return "";
   const zeile = (k, v) => `<div class="summenzeile"><span>${esc(t("zaehler." + k))}</span><span class="wert">${v}</span></div>`;
   return `<div class="karte"><h2>${esc(t("zaehler.wennSoWeiter"))}</h2>
-    ${zeile("nullAm", z.imPlus ? `<span class="gruen">✓</span>` : z.nullTag ? esc(datumLesbar(z.nullTag).slice(0, 6)) : `<span class="rot">${esc(t("zaehler.nieDiesenMonat"))}</span>`)}
+    ${zeile("nullAm", mz?.stufe && mz.stufe !== "bisNull" ? `<span class="gruen">✓</span>` : mz?.erreichtAm ? esc(datumLesbar(mz.erreichtAm).slice(0, 6)) : !mz && z.nullTag ? esc(datumLesbar(z.nullTag).slice(0, 6)) : `<span class="rot">${esc(t("zaehler.nieDiesenMonat"))}</span>`)}
     ${zeile("monatsende", `<span class="${z.monatsende >= 0 ? "gruen" : "rot"}">${z.monatsende >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.monatsende))}</span>`)}
     ${zeile("tagesschnitt", fmtEuro(z.dbProTag))}
     ${zeile("tageskosten", fmtEuro(z.tageskosten))}
@@ -88,9 +88,12 @@ function prognoseKarte(z) {
 function gesternKarte(stand, z, D) {
   if (z.keinUmsatz || !z.tage.find((x) => x.datum === D)?.umsatz) return "";
   const sw = schwundAuswertung(stand, { von: D, bis: D });
-  const vor = z.standGestern;
-  return `<div class="karte ${vor >= 0 ? "gruenrand" : "rotrand"}"><h2>${esc(t("zaehler.gestern"))}</h2>
-    <div class="mid ${vor >= 0 ? "gruen" : "rot"}">${vor >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(vor))}</div>
+  // Nachtest 27.10.2026: gestern als dieselbe Monatszahl „bis null“ wie oben, nicht der Tagesstand
+  const hz = (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })();
+  if (!hz?.bewegung || hz.m.fehltNull === null) return "";
+  const vor = hz.m.fehltNull - hz.bewegung.betrag;
+  return `<div class="karte ${hz.bewegung.betrag <= 0 ? "gruenrand" : "rotrand"}"><h2>${esc(t("zaehler.gestern"))}</h2>
+    <div class="mid">${esc(t("nutzen.stufe.bisNull"))} ${hz.m.geschaetzt ? "≈ " : ""}${fmtEuro(Math.max(0, vor))}</div>
     <small class="marke">${(() => { const b = (() => { try { return heuteZiel(stand, z, D).bewegung; } catch { return null; } })(); return !b || Math.abs(b.betrag) < 1 ? "" : esc(b.betrag <= 0 ? t("zaehler.naeher", fmtEuro(-b.betrag)) : t("zaehler.weiterWeg", fmtEuro(b.betrag))); })()}${sw.muellwert > 0 && z.stufe !== 3 ? " " + esc(t("zaehler.tonneGefressen", fmtEuro(sw.muellwert, { dezimal: 2 }))) : ""}</small></div>`;
 }
 
