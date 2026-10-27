@@ -589,6 +589,7 @@ export default {
     ausserhalb: "Valeur hors limite",
     massnahme: "Qu’est-ce que tu as fait ?",
     massnahmen: { tuer: "La porte était ouverte", eingeraeumt: "Gros rangement / livraison, j’attends", eingestellt: "Réglé à nouveau", umgeraeumt: "Marchandise déplacée", stecker: "Prise / fusible vérifié", chef: "Patron appelé", techniker: "Technicien appelé", weggeworfen: "Marchandise jetée" },
+    massnahmenKurz: { tuer: "Porte ouverte", eingeraeumt: "Livraison", eingestellt: "Réglé", umgeraeumt: "Déplacé", stecker: "Prise vérifiée", chef: "Patron appelé", techniker: "Technicien", weggeworfen: "Jeté" },
     notizPlatzhalter: "Note, facultatif",
     nachkontrolle: "Recontrôle",
     nachkontrollen: { h1: "dans 1 heure", h2: "dans 2 heures", naechste: "prochaine mesure" },

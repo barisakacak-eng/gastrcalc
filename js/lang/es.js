@@ -589,6 +589,7 @@ export default {
     ausserhalb: "Valor fuera del límite",
     massnahme: "¿Qué has hecho?",
     massnahmen: { tuer: "La puerta estaba abierta", eingeraeumt: "Se ha metido mucho / entrega, espero", eingestellt: "Lo he regulado otra vez", umgeraeumt: "He movido el género", stecker: "Enchufe / fusible revisado", chef: "He llamado al jefe", techniker: "He llamado al técnico", weggeworfen: "He tirado el género" },
+    massnahmenKurz: { tuer: "Puerta abierta", eingeraeumt: "Entrega", eingestellt: "Regulado", umgeraeumt: "Género movido", stecker: "Enchufe revisado", chef: "Llamé al jefe", techniker: "Técnico", weggeworfen: "Tirado" },
     notizPlatzhalter: "Nota, opcional",
     nachkontrolle: "Revisión",
     nachkontrollen: { h1: "en 1 hora", h2: "en 2 horas", naechste: "próxima medición" },

@@ -589,6 +589,7 @@ export default {
     ausserhalb: "Valore fuori limite",
     massnahme: "Cosa hai fatto?",
     massnahmen: { tuer: "La porta era aperta", eingeraeumt: "Caricato tanto / consegna, aspetto", eingestellt: "Regolato di nuovo", umgeraeumt: "Merce spostata", stecker: "Controllata spina / fusibile", chef: "Chiamato il capo", techniker: "Chiamato il tecnico", weggeworfen: "Merce buttata" },
+    massnahmenKurz: { tuer: "Porta aperta", eingeraeumt: "Consegna", eingestellt: "Regolato", umgeraeumt: "Merce spostata", stecker: "Spina controllata", chef: "Chiamato capo", techniker: "Tecnico", weggeworfen: "Buttato" },
     notizPlatzhalter: "Nota, facoltativa",
     nachkontrolle: "Ricontrollo",
     nachkontrollen: { h1: "tra 1 ora", h2: "tra 2 ore", naechste: "prossima misura" },

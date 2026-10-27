@@ -594,6 +594,7 @@ export default {
     ausserhalb: "Wartość poza granicą",
     massnahme: "Co zrobiłeś?",
     massnahmen: { tuer: "Drzwi były otwarte", eingeraeumt: "Dużo włożone / dostawa, czekam", eingestellt: "Ustawione na nowo", umgeraeumt: "Towar przełożony", stecker: "Sprawdzona wtyczka / bezpiecznik", chef: "Zadzwoniłem do szefa", techniker: "Wezwany serwisant", weggeworfen: "Towar wyrzucony" },
+    massnahmenKurz: { tuer: "Drzwi otwarte", eingeraeumt: "Dostawa", eingestellt: "Ustawione", umgeraeumt: "Przełożone", stecker: "Wtyczka sprawdzona", chef: "Telefon do szefa", techniker: "Serwisant", weggeworfen: "Wyrzucone" },
     notizPlatzhalter: "Notatka, nieobowiązkowo",
     nachkontrolle: "Ponowny pomiar",
     nachkontrollen: { h1: "za 1 godzinę", h2: "za 2 godziny", naechste: "następny pomiar" },

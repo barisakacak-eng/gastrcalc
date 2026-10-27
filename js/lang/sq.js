@@ -594,6 +594,7 @@ export default {
     ausserhalb: "Vlera jashtë kufirit",
     massnahme: "Çfarë bëre?",
     massnahmen: { tuer: "Dera ishte hapur", eingeraeumt: "U fut shumë mall / dërgesë, po pres", eingestellt: "E rregullova përsëri", umgeraeumt: "E zhvendosa mallin", stecker: "Kontrollova prizën / siguresën", chef: "Thirra shefin", techniker: "Thirra teknikun", weggeworfen: "E hodha mallin" },
+    massnahmenKurz: { tuer: "Dera hapur", eingeraeumt: "Dërgesë", eingestellt: "Rregullova", umgeraeumt: "Zhvendosa", stecker: "Priza kontrolluar", chef: "Thirra shefin", techniker: "Tekniku", weggeworfen: "Hodha" },
     notizPlatzhalter: "Shënim, sipas dëshirës",
     nachkontrolle: "Matja e dytë",
     nachkontrollen: { h1: "pas 1 ore", h2: "pas 2 orësh", naechste: "matja e radhës" },

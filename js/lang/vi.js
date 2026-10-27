@@ -589,6 +589,7 @@ export default {
     ausserhalb: "Nhiệt độ ngoài giới hạn",
     massnahme: "Bạn đã làm gì?",
     massnahmen: { tuer: "Cửa bị mở", eingeraeumt: "Mới xếp nhiều hàng / hàng mới về, chờ thêm", eingestellt: "Chỉnh lại nhiệt độ", umgeraeumt: "Chuyển hàng sang chỗ khác", stecker: "Đã kiểm tra phích cắm / cầu chì", chef: "Đã gọi chủ quán", techniker: "Đã gọi thợ", weggeworfen: "Đã bỏ hàng đi" },
+    massnahmenKurz: { tuer: "Cửa mở", eingeraeumt: "Hàng về", eingestellt: "Chỉnh lại", umgeraeumt: "Chuyển hàng", stecker: "Kiểm tra phích", chef: "Gọi chủ quán", techniker: "Thợ", weggeworfen: "Đã bỏ" },
     notizPlatzhalter: "Ghi chú, không bắt buộc",
     nachkontrolle: "Đo lại",
     nachkontrollen: { h1: "sau 1 giờ", h2: "sau 2 giờ", naechste: "lần đo tới" },

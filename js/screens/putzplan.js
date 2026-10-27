@@ -11,7 +11,7 @@ import { datumLesbar } from "./tag.js";
 import { sym } from "../symbole.js";
 import { nav } from "./nav.js";
 import { putzplanSpaeterSetzen } from "../stamm.js"; // Trennung (17.10.2026)
-import { personalAktiv } from "./personal.js";
+import { personalAktiv, schichtPerson } from "./personal.js";
 import { FOTOS } from "../data/fotos.js"; // W2-S: Einrichten nur außerhalb des Personal-Modus
 
 let ansicht = "plan"; // plan | einrichten | nachweis
@@ -22,7 +22,7 @@ let werId = (() => { try { return localStorage.getItem("gc-putz-wer") || null; }
 const aktivePersonen = (stand) => (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false);
 const kuerzel = (stand, id) => { const p = (stand.personen || []).find((x) => x.id === id); return p ? p.kuerzel || p.name || "" : ""; };
 // Laden-Umbau (20.10.2026): gewählte Person, sonst bei genau einer Person diese (keine Auswahl nötig), sonst ohne
-const werFuer = (stand) => { const ps = aktivePersonen(stand); return ps.some((p) => p.id === werId) ? werId : ps.length === 1 ? ps[0].id : null; };
+const werFuer = (stand) => { if (personalAktiv()) return schichtPerson(stand) || null; /* 27.10.2026: im Personal-Modus putzt die Schicht-Person */ const ps = aktivePersonen(stand); return ps.some((p) => p.id === werId) ? werId : ps.length === 1 ? ps[0].id : null; };
 export const putzplanZuruecksetzen = () => { ansicht = "plan"; entwurf = null; offen = null; };
 export const putzplanZurueck = (stand) => { if (ansicht !== "plan" && planVon(stand)?.aktiv) { ansicht = "plan"; entwurf = null; return true; } return false; };
 
@@ -83,7 +83,7 @@ function ladenPlanView(stand) {
   return `<div class="kopfband putzkopf"><h1>${esc(t("ebene.tabs.putzplan"))}</h1></div>
     <div class="inhalt putzplan p-schablone">
       <p class="zeki-zeile ${auf.length ? "" : "a-gruen"}" role="status">${esc(satz)}</p>
-      ${personen.length > 1 ? `<div class="werabhakt"><span class="wer-titel">${esc(t("putzplan.werKurz"))}</span><div class="chips">${personen.map((p) => `<button type="button" class="chip klein ${werId === p.id ? "an" : ""}" data-a="pp-wer" data-id="${esc(p.id)}">${esc(p.name || p.kuerzel || "")}</button>`).join("")}</div></div>` : ""}
+      ${personen.length > 1 && !personalAktiv() ? `<div class="werabhakt"><span class="wer-titel">${esc(t("putzplan.werKurz"))}</span><div class="chips">${personen.map((p) => `<button type="button" class="chip klein ${werId === p.id ? "an" : ""}" data-a="pp-wer" data-id="${esc(p.id)}">${esc(p.name || p.kuerzel || "")}</button>`).join("")}</div></div>` : ""}
       ${auf.length ? `<div class="planliste">${auf.map(zeile).join("")}</div>` : ""}
       ${fertig.length ? `<details class="p-fertig"><summary>${esc(t("putzplan.zeki.erledigt", fertig.length))}</summary><div class="planliste">${fertig.map(zeile).join("")}</div></details>` : ""}
     </div>${nav("putzplan")}`;

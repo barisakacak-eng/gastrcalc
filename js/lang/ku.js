@@ -588,6 +588,7 @@ export default {
     ausserhalb: "Nirx li derveyî sînor e",
     massnahme: "Te çi kir?",
     massnahmen: { tuer: "Derî vekirî bû", eingeraeumt: "Gelek mal hate danîn / barkirin, em li bendê ne", eingestellt: "Min ji nû ve eyar kir", umgeraeumt: "Min mal veguhast", stecker: "Min fîş / sîgorte kontrol kir", chef: "Min li xwedî geriya", techniker: "Min teknîsyen gazî kir", weggeworfen: "Min mal avêt" },
+    massnahmenKurz: { tuer: "Derî vekirî", eingeraeumt: "Barkirin", eingestellt: "Eyar kir", umgeraeumt: "Mal veguhast", stecker: "Fîş kontrol", chef: "Li xwedî geriya", techniker: "Teknîsyen", weggeworfen: "Avêt" },
     notizPlatzhalter: "Not, ne mecbûrî",
     nachkontrolle: "Kontrola duyem",
     nachkontrollen: { h1: "piştî 1 saetê", h2: "piştî 2 saetan", naechste: "pîvandina din" },

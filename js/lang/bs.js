@@ -596,6 +596,7 @@ export default {
     ausserhalb: "Vrijednost izvan granice",
     massnahme: "Šta si uradio?",
     massnahmen: { tuer: "Vrata su bila otvorena", eingeraeumt: "Puno ubačeno / isporuka, čekam", eingestellt: "Ponovo podešeno", umgeraeumt: "Roba premještena", stecker: "Provjeren utikač / osigurač", chef: "Pozvan šef", techniker: "Pozvan serviser", weggeworfen: "Roba bačena" },
+    massnahmenKurz: { tuer: "Vrata otvorena", eingeraeumt: "Isporuka", eingestellt: "Podešeno", umgeraeumt: "Premješteno", stecker: "Utikač provjeren", chef: "Pozvan šef", techniker: "Serviser", weggeworfen: "Bačeno" },
     notizPlatzhalter: "Bilješka, nije obavezno",
     nachkontrolle: "Ponovna kontrola",
     nachkontrollen: { h1: "za 1 sat", h2: "za 2 sata", naechste: "sljedeće mjerenje" },

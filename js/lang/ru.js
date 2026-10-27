@@ -594,6 +594,7 @@ export default {
     ausserhalb: "Значение вне границы",
     massnahme: "Что ты сделал?",
     massnahmen: { tuer: "Дверь была открыта", eingeraeumt: "Много загрузили / поставка, жду", eingestellt: "Перенастроил", umgeraeumt: "Переложил товар", stecker: "Проверил вилку / предохранитель", chef: "Позвонил шефу", techniker: "Вызвал мастера", weggeworfen: "Выбросил товар" },
+    massnahmenKurz: { tuer: "Дверь открыта", eingeraeumt: "Поставка", eingestellt: "Перенастроил", umgeraeumt: "Переложил", stecker: "Вилка проверена", chef: "Звонил шефу", techniker: "Мастер", weggeworfen: "Выбросил" },
     notizPlatzhalter: "Заметка, по желанию",
     nachkontrolle: "Повторный замер",
     nachkontrollen: { h1: "через 1 час", h2: "через 2 часа", naechste: "при следующем замере" },

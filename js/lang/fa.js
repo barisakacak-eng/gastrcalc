@@ -588,6 +588,7 @@ export default {
     ausserhalb: "عدد بیرون از حد است",
     massnahme: "چه کار کردی؟",
     massnahmen: { tuer: "در باز بود", eingeraeumt: "جنس زیاد گذاشتیم / بار رسید، صبر می‌کنیم", eingestellt: "دوباره تنظیم کردم", umgeraeumt: "جنس را جابه‌جا کردم", stecker: "دوشاخه / فیوز را چک کردم", chef: "به صاحب‌کار زنگ زدم", techniker: "تعمیرکار خبر کردم", weggeworfen: "جنس را دور ریختم" },
+    massnahmenKurz: { tuer: "در باز بود", eingeraeumt: "بار رسید", eingestellt: "تنظیم شد", umgeraeumt: "جابه‌جا شد", stecker: "دوشاخه چک شد", chef: "به صاحب‌کار زنگ زدم", techniker: "تعمیرکار", weggeworfen: "دور ریختم" },
     notizPlatzhalter: "یادداشت، اختیاری",
     nachkontrolle: "چک دوباره",
     nachkontrollen: { h1: "1 ساعت بعد", h2: "2 ساعت بعد", naechste: "اندازه‌گیری بعدی" },

@@ -591,6 +591,7 @@ export default {
     ausserhalb: "القيمة خارج الحد",
     massnahme: "ماذا فعلت؟",
     massnahmen: { tuer: "الباب كان مفتوحًا", eingeraeumt: "رتّبنا بضاعة كثيرة / توريد، ننتظر", eingestellt: "ضبطته من جديد", umgeraeumt: "نقلت البضاعة", stecker: "فحصت القابس / الفيوز", chef: "اتصلت بالمدير", techniker: "طلبت فنيًا", weggeworfen: "رميت البضاعة" },
+    massnahmenKurz: { tuer: "الباب مفتوح", eingeraeumt: "توريد", eingestellt: "ضبطته", umgeraeumt: "نقلت البضاعة", stecker: "فحصت القابس", chef: "اتصلت بالمدير", techniker: "فني", weggeworfen: "رميتها" },
     notizPlatzhalter: "ملاحظة، اختياري",
     nachkontrolle: "إعادة الفحص",
     nachkontrollen: { h1: "بعد ساعة", h2: "بعد ساعتين", naechste: "القياس القادم" },

@@ -16,7 +16,7 @@ import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
-import { personalAktiv, anredeTeam } from "./personal.js"; // D: im Personal-Modus kein Euro
+import { personalAktiv, anredeTeam, schichtPerson } from "./personal.js"; // D: im Personal-Modus kein Euro; 27.10.2026: Schicht-Person misst
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
@@ -39,14 +39,14 @@ export const kuehlAnsicht = () => ansicht;
 export const kuehlKennung = () => `${ansicht}:${station || ""}:${rundgangOffen ? "" : ""}`; // für den Doppeltipp-Schutz: jede Ebene ist ein eigener Bildschirm
 export function kuehlZuruecksetzen() { ansicht = "start"; station = null; form = null; }
 export function kuehlZurueck() { // Zurück-Geste: eine Ebene hoch; true = behandelt
-  if (station) { station = null; form = null; return true; }
+  if (station) { station = null; form = null; if (personalAktiv()) ansicht = "start"; return true; } // 27.10.2026: Personal startet direkt im Messfeld – Zurück führt zur Kühlung, nicht in die Stellenliste
   if (ansicht !== "start") { ansicht = "start"; return true; }
   return false;
 }
 
 const artName = (a) => t("kuehl.arten." + a);
 // Grenzen einer Stelle als Text; ohne eigene Grenze gilt der Standard (Etappe 5), das steht dann dabei.
-const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `\u2066≥\u00a0${fmtZahl(g.min, 1)}\u00a0°C\u2069` : "", typeof g.max === "number" ? `\u2066≤\u00a0${fmtZahl(g.max, 1)}\u00a0°C\u2069` : ""].filter(Boolean).join(" · ") + (g.standard ? ` (${t("kuehl.standard")})` : ""); };
+const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `\u2066≥\u00a0${fmtZahl(g.min, 1)}\u00a0°C\u2069` : "", typeof g.max === "number" ? `\u2066≤\u00a0${fmtZahl(g.max, 1)}\u00a0°C\u2069` : ""].filter(Boolean).join(" · ") + (g.standard && !personalAktiv() ? ` (${t("kuehl.standard")})` : ""); }; // 27.10.2026 (Persona-Test): Personal braucht „Standard“ nicht
 const kuerzelVon = (stand, id) => stand.personen.find((p) => p.id === id)?.kuerzel || "";
 const zeitOderStrich = (iso) => (iso ? zeitKurz(iso) : "–"); // W2-H: Nachtrag ohne Uhrzeit. Trennung 2 (17.10.2026): Uhrzeit aus js/anzeige_text.js
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
@@ -213,23 +213,29 @@ function stationView(stand, r, k) {
   const f = form; const letzte = letzteMessung(stand, k.id);
   const wert = f.wert; const abw = abweichung(k, wert); f.abwGezeigt = typeof wert === "number" && abw;
   const kannSpeichern = typeof wert === "number" ? (!abw || f.massnahmen.length > 0) : !!f.grund;
+  // 27.10.2026 (Persona-Test Personal, 15-Wörter-Regel): im Personal-Modus ohne „Erste Messung“ und „(Standard)“, Nachkontrolle (vorbelegt: in 2 Stunden)
+  // und „nicht gemessen“ erst auf Tipp (Knopf statt Überschrift und Chips), kurze Maßnahmen-Namen
+  const pers = personalAktiv();
+  const marke = [letzte ? (pers ? `${t("kuehl.zuletzt")} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : pers ? "" : t("kuehl.ersteMessung"), k.art === "tk" ? t("kuehl.minusHinweis") : ""].filter(Boolean).join(" · ");
+  const nachkontrolleChips = `<div class="chips">${["h1", "h2", "naechste"].map((n) => `<button type="button" class="chip klein ${f.nachkontrolle === n ? "an" : ""}" data-a="nachkontrolle" data-wert="${n}">${esc(t("kuehl.nachkontrollen." + n))}</button>`).join("")}</div>`;
+  const grundChips = `<div class="chips">${NICHT_GEMESSEN.map((g) => `<button type="button" class="chip klein ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>`;
   return `
     <div class="karte formular">
       <h2>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></h2>
       ${f.grund ? "" : `
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
-      <span class="marke">${letzte ? esc(t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : esc(t("kuehl.ersteMessung"))}${k.art === "tk" ? ` · ${esc(t("kuehl.minusHinweis"))}` : ""}</span>
+      ${marke ? `<span class="marke">${esc(marke)}</span>` : ""}
       ${minusVergessen(k, wert, abw) ? `<button type="button" class="knopf zweit kuehl-minus" data-a="station-minus">${esc(t("kuehl.minusFrage", fmtZahl(wert, Number.isInteger(wert) ? 0 : 1)))}</button>` : ""}
-      ${typeof wert === "number" && abw ? `<div class="karte hinweisrot"><b>${esc(t("kuehl.ausserhalb"))}</b>
+      ${typeof wert === "number" && abw ? `<div class="karte hinweisrot">${pers ? "" : `<b>${esc(t("kuehl.ausserhalb"))}</b>`}
         <h2>${esc(t("kuehl.massnahme"))}</h2>
-        <div class="chips">${MASSNAHMEN.map((m) => `<button type="button" class="chip klein ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}">${esc(t("kuehl.massnahmen." + m))}</button>`).join("")}</div>
+        <div class="chips">${MASSNAHMEN.map((m) => `<button type="button" class="chip klein ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}">${esc(t((pers ? "kuehl.massnahmenKurz." : "kuehl.massnahmen.") + m))}</button>`).join("")}</div>
         <input class="textfeld" data-f="station-notiz" value="${esc(f.notiz)}" maxlength="200" placeholder="${esc(t("kuehl.notizPlatzhalter"))}" autocomplete="off">
-        <h2>${esc(t("kuehl.nachkontrolle"))}</h2>
-        <div class="chips">${["h1", "h2", "naechste"].map((n) => `<button type="button" class="chip klein ${f.nachkontrolle === n ? "an" : ""}" data-a="nachkontrolle" data-wert="${n}">${esc(t("kuehl.nachkontrollen." + n))}</button>`).join("")}</div>
+        ${pers && !f.nkAuf ? `<button type="button" class="leise" data-a="station-nk-auf">${esc(t("kuehl.nachkontrolle"))} ›</button>` : `<h2>${esc(t("kuehl.nachkontrolle"))}</h2>
+        ${nachkontrolleChips}`}
         ${f.massnahmen.includes("weggeworfen") ? wegView(stand, k) : ""}
       </div>` : ""}`}
-      ${typeof wert === "number" ? "" : `<h2>${esc(t("kuehl.nichtGemessen"))}</h2>
-      <div class="chips">${NICHT_GEMESSEN.map((g) => `<button type="button" class="chip klein ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>`}
+      ${typeof wert === "number" ? "" : pers && !f.grund && !f.nichtAuf ? `<button type="button" class="leise" data-a="station-nicht-auf">${esc(t("kuehl.nichtGemessenKurz"))} ›</button>` : pers ? grundChips : `<h2>${esc(t("kuehl.nichtGemessen"))}</h2>
+      ${grundChips}`}
       <button type="button" class="knopf glut" data-a="station-speichern" ${kannSpeichern ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>
       <button type="button" class="leise" data-a="station-zu">${esc(t("allgemein.abbrechen"))}</button>
     </div>`;
@@ -239,7 +245,7 @@ function stationView(stand, r, k) {
 function wegView(stand, k) {
   const f = form;
   return `<h2>${esc(t("kuehl.wegTitel"))}</h2>
-    <p class="hinweis">${esc(t("kuehl.wegHinweis"))}</p>
+    ${personalAktiv() ? "" : `<p class="hinweis">${esc(t("kuehl.wegHinweis"))}</p>`}
     <div class="liste eng">${f.weg.map((w, i) => `<div class="zeile"><div class="oben"><div class="name">${esc(artikelText(w.name))}<small>${fmtZahl(w.menge, w.einheit === "stk" ? 0 : 2)} ${esc(w.einheit === "stk" ? t("allgemein.stueck") : w.einheit)}${personalAktiv() ? "" : w.wert === null ? ` · ${esc(t("tag.keinPreis"))}` : ` · ${fmtEuro(w.wert, { dezimal: 2 })}`}</small></div><button type="button" class="leise" data-a="weg-weg" data-i="${i}">×</button></div></div>`).join("")}</div>
     <div class="neu"><input class="textfeld" data-f="weg-name" value="${esc(artikelText(f.wegName))}" maxlength="60" placeholder="${esc(t("kuehl.wegPlatzhalter"))}" autocomplete="off"><input class="textfeld" style="flex:0 0 5em" inputmode="decimal" data-f="weg-menge" value="${esc(wertAnzeige(f.wegMenge))}" placeholder="${esc(t("kuehl.menge"))}" autocomplete="off"></div>
     ${f.wegName.trim() ? `<div class="chips">${(stand.artikel || []).filter((a) => suchRang(a.name, normalisieren(f.wegName.trim())) >= 0).slice(0, 6).map((a) => `<button type="button" class="chip klein" data-a="weg-artikel" data-name="${esc(a.name)}">${esc(artikelText(a.name))}</button>`).join("")}</div>` : ""}
@@ -290,12 +296,15 @@ export function kuehlAktion(name, el, stand, wurzel) {
   // Stelle ohne Wert. Läuft schon ein Rundgang, geht es an seiner ersten offenen Stelle weiter. Wer misst, lässt sich oben im Rundgang mit einem Tipp ändern (personenWahl).
   if (name === "kuehl-rundgang-los") {
     if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; }
-    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von: kuehlWerVorschlag(stand), datum: heute() });
+    const von = personalAktiv() ? schichtPerson(stand) || null : kuehlWerVorschlag(stand); // 27.10.2026: im Personal-Modus misst die Schicht-Person, keine Frage „Wer misst?“
+    const offen = rundgangOffen(stand) || rundgangStarten(stand, { von, datum: heute() });
     ansicht = "rundgang"; startVon = null; startNach = null; startStelle = null;
     station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null;
     return true;
   }
-  if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id; return true; }
+  if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id;
+    if (personalAktiv()) { startVon = schichtPerson(stand) || ""; return kuehlAktion("rundgang-start", el, stand); } // 27.10.2026: Schicht-Person misst, direkt ins Messfeld
+    return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
   if (name === "blatt-monat") { blattMonat = Number(el.dataset.wert); return true; }
@@ -331,6 +340,8 @@ export function kuehlAktion(name, el, stand, wurzel) {
     station = null; form = null; ansicht = "start"; return "abgeschlossen";
   }
   if (!form) return false;
+  if (name === "station-nicht-auf") { form.nichtAuf = true; return true; } // 27.10.2026: Personal – Gründe erst auf Tipp
+  if (name === "station-nk-auf") { form.nkAuf = true; return true; }
   if (name === "station-minus") { if (typeof form?.wert === "number" && form.wert > 0) { form.wert = -form.wert; form.wertText = "-" + form.wertText.trim().replace(/^\+/, ""); } return true; }
   if (name === "station-grund") { form.grund = form.grund === el.dataset.wert ? null : el.dataset.wert; if (form.grund) form.wert = null; return true; }
   if (name === "massnahme") { const i = form.massnahmen.indexOf(el.dataset.wert); if (i >= 0) form.massnahmen.splice(i, 1); else form.massnahmen.push(el.dataset.wert); return true; }
