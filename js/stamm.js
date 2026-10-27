@@ -215,6 +215,9 @@ export const lieferTag = (stand, datum) => [...(stand?.lieferTage || [])].revers
 export function lieferTagSetzen(stand, datum, betrag) {
   stand.lieferTage ??= [];
   const e = { datum, betrag: Math.max(0, Math.round((Number(betrag) || 0) * 100) / 100), erfasst: new Date().toISOString() };
+  // Tippen im Büro (jede Taste): der eigene Eintrag der letzten Minute wird ersetzt statt eine lange Liste zu bauen
+  const i = stand.lieferTage.length - 1; const l = stand.lieferTage[i];
+  if (l && l.datum === datum && Date.now() - Date.parse(l.erfasst) < 60000) { stand.lieferTage[i] = e; return e; }
   stand.lieferTage.push(e); return e;
 }
 export function lieferProvision(stand) {

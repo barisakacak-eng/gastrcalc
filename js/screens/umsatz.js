@@ -4,6 +4,7 @@ import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige 
 import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung, wareneinsatzWarnung, RICHTWERT_WARENEINSATZ } from "../engine.js"; // Paket 3 (16.10.2026), M4/M15
 import { zaehler, monatsGrenzen, umsatzAnzeigeWert, umsatzAusEingabe, zaehlerStrecke, monatTagStatus, wochentagSpalte } from "../zaehler.js"; // Trennung 2 (17.10.2026)
 import { tagPlus } from "../engine.js";
+import { lieferTag, lieferTagSetzen, lieferProvision, lieferKosten } from "../stamm.js"; // Lieferdienst (27.10.2026): Vortage im Büro nachtragen
 import { preisAenderungen, preisAnzeige } from "../lieferung.js";
 import { nav } from "./nav.js";
 import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
@@ -25,6 +26,11 @@ function tagChips(D) {
 // 27.10.2026 (Persona-Test Vietnamesisch): „Th 2“…„Th 7“ wurden zu „Th“ abgeschnitten – Tage mit Nummer werden „T2“…, sonst 2 Buchstaben
 const kurzWt = (s) => (/\d/.test(s) ? s.replace(/^Th\s?/u, "T") : s.slice(0, 2));
 const wochentagKopf = () => { const f = new Intl.DateTimeFormat(sprache(), { weekday: "short" }); return Array.from({ length: 7 }, (_, i) => `<span class="wt">${kurzWt(f.format(new Date(2026, 9, 12 + i)).replace(".", ""))}</span>`).join(""); };
+function lieferBuero(stand, D, st) {
+  const prov = lieferProvision(stand); if (!prov) return "";
+  const l = lieferTag(stand, D); const k = l ? lieferKosten(l.betrag, prov, st.satz) : 0;
+  return `<div class="zahlfeld klein ul-liefer-buero"><span class="ul-liefer-text">${esc(t("lieferTag.davon"))}<small>${esc(t("lieferTag.provision"))} ${esc(String(Math.round(prov.satz * 1000) / 10).replace(".", ","))} %${k > 0 ? " · ≈ " + esc(fmtEuro(k, { dezimal: 2 })) : ""}</small></span><input inputmode="decimal" data-f="umsatz-liefer" value="${esc(l && l.betrag > 0 ? wertAnzeige(l.betrag) : "")}" placeholder="0" aria-label="${esc(t("lieferTag.davon"))}"><span class="einheit">€</span></div>`;
+}
 export function umsatzView(stand) {
   const H = heute(); const D = tagGewaehlt(); const nach = D !== H;
   const z = zaehler(stand, { datum: D }); const st = umsatzSteuerSatz(stand);
@@ -42,6 +48,7 @@ export function umsatzView(stand) {
         <div class="zahlfeld klein"><input inputmode="decimal" data-f="umsatz" value="${esc(wertAnzeige(wert))}" placeholder="" aria-label="${esc(t("tag.umsatz"))}"><span class="einheit">€</span>
           <span class="seg">${["brutto", "netto"].map((b) => `<button type="button" class="${umsatzBasis === b ? "an" : ""}" data-a="umsatz-basis" data-wert="${b}">${esc(t("zaehler.umsatzBasis." + b))}</button>`).join("")}</span></div>
         <span class="marke">${esc(umsatzBasis === "netto" && notiz ? t("zaehler.nettoGespeichert", fmtEuro(notiz.umsatz, { dezimal: 2 })) : t("tag.umsatzHinweis"))}</span>
+        ${lieferBuero(stand, D, st)}
       </div>
       ${zaehlerKarte(z, D, { tipp: false, ziel: (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })() })}
       ${streckeKarte(z, st)}
@@ -124,6 +131,7 @@ export function umsatzAktion(name, el) {
   return false;
 }
 export function umsatzEingabe(feld, wert, stand, wurzel) {
+  if (feld === "umsatz-liefer") { const n = parseZahl(wert); lieferTagSetzen(stand, tagGewaehlt(), n === null ? 0 : n); return false; }
   if (feld !== "umsatz") return false;
   const n = parseZahl(wert); const D = tagGewaehlt(); const st = umsatzSteuerSatz(stand);
   if (n === null) tagesnotizLoeschen(stand, D, wurzel?.geraet || null);
