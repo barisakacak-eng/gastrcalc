@@ -210,7 +210,7 @@ export default {
     portal: (n) => `Via ${n}`,
     portalSperre: (n) => `Via ${n}, ce plat ne tient pas comme ça : la commission et l’objectif mangent le prix.`,
     garverlustGeschaetzt: "Perte à la cuisson estimée",
-    lesehilfe: "« Te coûte », c’est tout ensemble : marchandise, part du loyer et des salaires, TVA. « Ça va » veut dire : ton prix actuel couvre ça et ton objectif. « Juste » : couvre les frais, mais pas ton objectif. « Trop bas » : tu y perds.",
+    lesehilfe: "« Te coûte », c’est tout ensemble : marchandise, part du loyer et des salaires, TVA. « Ça va » veut dire : ton prix actuel couvre ça et ton objectif. « Juste » : couvre les frais, mais pas ton objectif. « Trop bas » : il reste moins de 10 % ou tu y perds.",
   },
 
   start: {
@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Reste jusqu'à l'objectif en ${m}`, standHeuteZeile: (b) => `Aujourd'hui tu es à ${b}`, lohnTageZeile: (n) => `Salaires : ${n} jours saisis, le reste ≈ du total mensuel`,
+  zaehler: { standTagZeile: (d, b) => `Le ${d}, tu étais à ${b}`, standErklaerung: "Calculé jusqu'à aujourd'hui. Le reste du mois coûte encore.", zumZiel: (m) => `Reste jusqu'à l'objectif en ${m}`, standHeuteZeile: (b) => `Aujourd'hui tu es à ${b}`, lohnTageZeile: (n) => `Salaires : ${n} jours saisis, le reste ≈ du total mensuel`,
     sonderBis: (n) => `Factures ponctuelles jusqu’à aujourd’hui (${n})`,
     frueher: "Avant…",
     zaehltAb: (d) => `compte à partir du ${d}`,

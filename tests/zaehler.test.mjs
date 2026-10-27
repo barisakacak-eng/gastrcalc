@@ -208,3 +208,11 @@ test("Ausgegeben: zählt in bis null, getrennt von Müll und Eigenverbrauch", as
   assert.equal(a.muellwert, 0); assert.equal(a.eigen.anzahl, 0); assert.equal(a.ausgegeben.anzahl, 1);
   const s = X.schwund(b, { von: "2026-10-01", bis: "2026-10-31" }); nah(s.summeAusgegeben, Math.round(e.wert * 100) / 100); assert.equal(s.summeEigen, 0);
 });
+
+// Persona-Test Wirt 27.10.2026: Preis am Namensende wird Preis, Pommes sind keine Hauptgerichte
+test("Eigenes Gericht: „Classic Smash 9.90“ → Name + Preis, „Fries“ → Kleinigkeit", async () => {
+  const K = await import("../js/karte_daten.js");
+  const b = laden(); const g = K.gerichtEigenAnlegen(b, "Classic Smash 9.90"); assert.equal(g.name, "Classic Smash"); assert.equal(g.preis, 9.9); assert.equal(g.klasse, "haupt");
+  assert.equal(K.gerichtEigenAnlegen(b, "Fries 3,50 €").klasse, "kleinigkeit"); assert.equal(K.gerichtEigenAnlegen(b, "Cola 0,33").klasse, "getraenk");
+  assert.equal(K.gerichtEigenAnlegen(b, "Burger 2000").name, "Burger 2000");
+});

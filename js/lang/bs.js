@@ -217,7 +217,7 @@ export default {
     portal: (n) => `Preko ${n}`,
     portalSperre: (n) => `Preko ${n} se ovo jelo tako ne isplati: provizija i cilj pojedu cijenu.`,
     garverlustGeschaetzt: "Gubitak pri kuhanju procijenjen",
-    lesehilfe: "„Košta te“ je sve zajedno: roba, dio kirije i plata, PDV. „U redu“ znači: tvoja današnja cijena pokriva to i tvoj cilj. „Tijesno“: pokriva troškove, ali ne i cilj. „Prejeftino“: gubiš na tome.",
+    lesehilfe: "„Košta te“ je sve zajedno: roba, dio kirije i plata, PDV. „U redu“ znači: tvoja današnja cijena pokriva to i tvoj cilj. „Tijesno“: pokriva troškove, ali ne i cilj. „Prejeftino“: ostaje manje od 10 % ili gubiš.",
   },
 
   start: {
@@ -690,7 +690,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Do cilja fali u ${m}`, standHeuteZeile: (b) => `Danas si na ${b}`, lohnTageZeile: (n) => `Plate: ${n} dana upisano, ostalo ≈ iz mjesečnog iznosa`,
+  zaehler: { standTagZeile: (d, b) => `Na dan ${d} bio si na ${b}`, standErklaerung: "Računato do danas. Ostatak mjeseca još košta.", zumZiel: (m) => `Do cilja fali u ${m}`, standHeuteZeile: (b) => `Danas si na ${b}`, lohnTageZeile: (n) => `Plate: ${n} dana upisano, ostalo ≈ iz mjesečnog iznosa`,
     sonderBis: (n) => `Jednokratni računi do danas (${n})`,
     frueher: "Ranije …",
     zaehltAb: (d) => `broji se od ${d}`,

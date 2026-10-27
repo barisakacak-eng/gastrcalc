@@ -215,7 +215,7 @@ export default {
     portal: (n) => `Përmes ${n}`,
     portalSperre: (n) => `Përmes ${n} kjo pjatë kështu nuk del: komisioni dhe objektivi e hanë çmimin.`,
     garverlustGeschaetzt: "Humbja gjatë gatimit e përafërt",
-    lesehilfe: "“Të kushton” është gjithçka bashkë: malli, pjesa e qirasë dhe e rrogave, TVSH-ja. “Në rregull” do të thotë: çmimi yt i sotëm e mbulon këtë dhe objektivin tënd. “Ngushtë”: mbulon shpenzimet, por jo objektivin. “Shumë lirë”: po humbet para.",
+    lesehilfe: "“Të kushton” është gjithçka bashkë: malli, pjesa e qirasë dhe e rrogave, TVSH-ja. “Në rregull” do të thotë: çmimi yt i sotëm e mbulon këtë dhe objektivin tënd. “Ngushtë”: mbulon shpenzimet, por jo objektivin. “Shumë lirë”: mbetet më pak se 10 % ose po humbet para.",
   },
 
   start: {
@@ -688,7 +688,7 @@ export default {
     entwurfKurz: "Provë",
   },
 
-  zaehler: { zumZiel: (m) => `Deri te synimi mungojnë në ${m}`, standHeuteZeile: (b) => `Sot je në ${b}`, lohnTageZeile: (n) => `Pagat: ${n} ditë të shënuara, pjesa tjetër ≈ nga shuma mujore`,
+  zaehler: { standTagZeile: (d, b) => `Më ${d} ishe në ${b}`, standErklaerung: "Llogaritur deri sot. Pjesa tjetër e muajit ende kushton.", zumZiel: (m) => `Deri te synimi mungojnë në ${m}`, standHeuteZeile: (b) => `Sot je në ${b}`, lohnTageZeile: (n) => `Pagat: ${n} ditë të shënuara, pjesa tjetër ≈ nga shuma mujore`,
     sonderBis: (n) => `Fatura të njëhershme deri sot (${n})`,
     frueher: "Më parë …",
     zaehltAb: (d) => `llogaritet nga ${d}`,

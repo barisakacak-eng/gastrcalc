@@ -210,7 +210,7 @@ export default {
     portal: (n) => `Tramite ${n}`,
     portalSperre: (n) => `Tramite ${n} questo piatto così non torna: commissione e obiettivo si mangiano il prezzo.`,
     garverlustGeschaetzt: "Calo di cottura stimato",
-    lesehilfe: "“Ti costa” è tutto insieme: merce, quota di affitto e stipendi, IVA. “Va bene” vuol dire: il tuo prezzo di oggi copre questo e il tuo obiettivo. “Al limite”: copre i costi, ma non il tuo obiettivo. “Troppo economico”: ci rimetti.",
+    lesehilfe: "“Ti costa” è tutto insieme: merce, quota di affitto e stipendi, IVA. “Va bene” vuol dire: il tuo prezzo di oggi copre questo e il tuo obiettivo. “Al limite”: copre i costi, ma non il tuo obiettivo. “Troppo economico”: resta meno del 10 % o ci rimetti.",
   },
 
   start: {
@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Prova",
   },
 
-  zaehler: { zumZiel: (m) => `Manca all'obiettivo a ${m}`, standHeuteZeile: (b) => `Oggi sei a ${b}`, lohnTageZeile: (n) => `Stipendi: ${n} giorni inseriti, il resto ≈ dal totale mensile`,
+  zaehler: { standTagZeile: (d, b) => `Il ${d} eri a ${b}`, standErklaerung: "Calcolato fino a oggi. Il resto del mese costa ancora.", zumZiel: (m) => `Manca all'obiettivo a ${m}`, standHeuteZeile: (b) => `Oggi sei a ${b}`, lohnTageZeile: (n) => `Stipendi: ${n} giorni inseriti, il resto ≈ dal totale mensile`,
     sonderBis: (n) => `Fatture una tantum fino a oggi (${n})`,
     frueher: "Prima …",
     zaehltAb: (d) => `conta dal ${d}`,

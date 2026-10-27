@@ -200,6 +200,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     if (letzterStand < 0) kippTag = null; // wieder unter null: der Kipptag ist der letzte Übergang
   }
   const standHeute = letzterStand;
+  const pJB = prov && lieferBasisBrutto > 0 ? lieferKosten(lieferBrutto, prov, steuer.satz) / lieferBasisBrutto : 0; // Provision je Euro Brutto-Umsatz
 
   // Prognose: Deckungsbeitrag je Tag mit Umsatz, gegen die Tageskosten
   const dbProTag = tageMitUmsatz > 0 ? db / tageMitUmsatz : null;
@@ -225,8 +226,8 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const lohnGeschaetzt = lohnStundenMonat > 0 && lohnGeschaetztTage > 0;
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0 || lohnGeschaetzt;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, provision: provisionSumme, lieferAnteil: lieferBasisBrutto > 0 ? lieferBrutto / lieferBasisBrutto : 0, provisionJeBrutto: prov && lieferBasisBrutto > 0 ? lieferKosten(lieferBrutto, prov, steuer.satz) / lieferBasisBrutto : 0, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
-    nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, provision: provisionSumme, lieferAnteil: lieferBasisBrutto > 0 ? lieferBrutto / lieferBasisBrutto : 0, provisionJeBrutto: pJB, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
+    nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff) - (Number(brutto) || 0) * pJB, // Lieferdienst (Persona-Test 27.10.): Provision je Euro wie im Tagesschnitt
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
     umsatzBrutto, umsatzNetto, ware, muell: muellSumme, muellPrognose: muellNurPrognose, schwund: schwundSumme, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,

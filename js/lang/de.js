@@ -209,7 +209,7 @@ export default {
     portal: (n) => `Über ${n}`,
     portalSperre: (n) => `Über ${n} geht dieses Gericht so nicht auf: Provision und Ziel fressen den Preis.`,
     garverlustGeschaetzt: "Garverlust geschätzt",
-    lesehilfe: "„Kostet dich“ ist alles zusammen: Ware, Anteil an Miete und Löhnen, Mehrwertsteuer. „Passt“ heißt: Dein heutiger Preis deckt das und dein Ziel. „Knapp“: deckt die Kosten, aber nicht dein Ziel. „Zu billig“: du legst drauf.",
+    lesehilfe: "„Kostet dich“ ist alles zusammen: Ware, Anteil an Miete und Löhnen, Mehrwertsteuer. „Passt“ heißt: Dein heutiger Preis deckt das und dein Ziel. „Knapp“: deckt die Kosten, aber nicht dein Ziel. „Zu billig“: es bleiben unter 10 % oder du legst drauf.",
   },
 
   start: {
@@ -690,7 +690,7 @@ titel: "Büro", zurueck: "Laden",
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Zum Ziel fehlen im ${m}`, standHeuteZeile: (b) => `Heute stehst du bei ${b}`, lohnTageZeile: (n) => `Lohn: ${n} ${n === 1 ? "Tag" : "Tage"} eingetragen, Rest ≈ aus der Monatssumme`,
+  zaehler: { standTagZeile: (d, b) => `Am ${d} standest du bei ${b}`, standErklaerung: "Bis heute gerechnet. Der Rest des Monats kostet noch.", zumZiel: (m) => `Zum Ziel fehlen im ${m}`, standHeuteZeile: (b) => `Heute stehst du bei ${b}`, lohnTageZeile: (n) => `Lohn: ${n} ${n === 1 ? "Tag" : "Tage"} eingetragen, Rest ≈ aus der Monatssumme`,
     sonderBis: (n) => `Einmalige Rechnungen bis heute (${n})`,
     frueher: "Früher …",
     zaehltAb: (d) => `zählt ab dem ${d}`,

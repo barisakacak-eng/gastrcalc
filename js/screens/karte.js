@@ -107,7 +107,7 @@ const gerichtHatEingaben = (g) => typeof g.preis === "number" || g.mengeTag > 0 
 const PKT = { schaetzung: "gelb", pilot: "blau", branche: "blau", "eigen-abgeleitet": "gruen", eigen: "gruen" };
 function stempelHtml(st, { info = false } = {}) {
   if (!st?.stufe) return "";
-  const text = st.stufe === "branche" ? t("stempel.branche", (st.quellen || []).length) : st.stufe === "eigen" && st.datum ? t("stempel.eigenAm", datumKurz(st.datum)) : t("stempel." + st.stufe);
+  const text = st.stufe === "branche" ? t("stempel.branche", (st.quellen || []).length) : st.stufe === "eigen" && st.datum ? `${t("stempel.eigen")} · ${datumKurz(st.datum)}` : t("stempel." + st.stufe);
   return `<button type="button" class="stempel stempel-${st.stufe}" data-a="stempel-info" aria-expanded="${info}">${esc(text)}</button>${info ? `<p class="hinweis stempel-erklaerung">${esc(t("stempel.erklaerung." + st.stufe))}</p>` : ""}`;
 }
 const datumKurz = (iso) => { const [, m, d] = String(iso).split("-"); return `${Number(d)}.${Number(m)}.`; };

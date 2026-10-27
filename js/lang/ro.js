@@ -216,7 +216,7 @@ export default {
     portal: (n) => `Prin ${n}`,
     portalSperre: (n) => `Prin ${n} preparatul ăsta nu iese așa: comisionul și obiectivul mănâncă prețul.`,
     garverlustGeschaetzt: "Pierdere la gătit estimată",
-    lesehilfe: "„Te costă” e totul la un loc: marfa, partea din chirie și salarii, TVA. „E bine” înseamnă: prețul tău de azi acoperă asta și obiectivul tău. „La limită”: acoperă costurile, dar nu obiectivul. „Prea ieftin”: pui de la tine.",
+    lesehilfe: "„Te costă” e totul la un loc: marfa, partea din chirie și salarii, TVA. „E bine” înseamnă: prețul tău de azi acoperă asta și obiectivul tău. „La limită”: acoperă costurile, dar nu obiectivul. „Prea ieftin”: rămâne sub 10 % sau pui de la tine.",
   },
 
   start: {
@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Până la obiectiv lipsesc în ${m}`, standHeuteZeile: (b) => `Azi ești la ${b}`, lohnTageZeile: (n) => `Salarii: ${n} zile introduse, restul ≈ din suma lunară`,
+  zaehler: { standTagZeile: (d, b) => `Pe ${d} erai la ${b}`, standErklaerung: "Calculat până azi. Restul lunii încă costă.", zumZiel: (m) => `Până la obiectiv lipsesc în ${m}`, standHeuteZeile: (b) => `Azi ești la ${b}`, lohnTageZeile: (n) => `Salarii: ${n} zile introduse, restul ≈ din suma lunară`,
     sonderBis: (n) => `Facturi unice până azi (${n})`,
     frueher: "Mai devreme …",
     zaehltAb: (d) => `contează de pe ${d}`,

@@ -29,7 +29,7 @@ export const ordnerVorschauOffen = () => !!vorschauHtml;
 const datum = (iso) => (iso ? datumDe(iso) : "–");
 const wahl = () => ({ amtZeit, paketMonat });
 const amtZeitraum = (H = heute()) => amtZeitraumVon(amtZeit, H);
-const paketZeit = (art, H = heute()) => paketZeitVon(paketMonat, art, H);
+const paketZeit = (art, H = heute(), stand = null) => paketZeitVon(paketMonat, art, H, stand?.angelegt);
 const csvJetzt = (stand, ansicht, nurTeil = null) => csvDateienR(stand, ansicht, nurTeil, wahl());
 const dokumentJetzt = (stand, ansicht) => dokumentFuerR(stand, ansicht, wahl());
 
@@ -119,7 +119,7 @@ export function ordnerAmtView(stand) {
 const TEIL_SYM = { umsatz: "trending-up", personal: "users", schwund: "trash-2", belege: "receipt", inventur: "clipboard-list", reinigung: "spray-can", kosten: "calculator" };
 
 export function ordnerPaketView(stand, art) {
-  const H = heute(); const z = paketZeit(art, H); const p = monatsPaket(stand, z, art);
+  const H = heute(); const z = paketZeit(art, H, stand); const p = monatsPaket(stand, z, art);
   const istAktuell = art === "steuer" ? z.monat >= H.slice(0, 4) : z.monat >= H.slice(0, 7);
   return `<div class="buero">${bueroKopf({ ziel: "buero", text: t("buero.titel") }, "")}
     <div class="b-inhalt b-ordnerseite b-paket-${art}">
@@ -166,10 +166,10 @@ const teilen = dateienTeilen; // Trennung (17.10.2026): gemeinsames Teilen (./ba
 export async function ordnerAktion(name, el, stand, ansicht) {
   const H = heute();
   if (name === "ordner-zeit") { amtZeit = { art: el.dataset.wert, von: amtZeit.von, bis: amtZeit.bis }; if (amtZeit.art === "frei" && !amtZeit.von) { const z = zeitraumFuer("monat", { datum: H }); amtZeit.von = z.von; amtZeit.bis = H; } return true; }
-  if (name === "ordner-monat") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const jetzt = paketZeit(art, H).monat; const d = Number(el.dataset.wert) || 0;
+  if (name === "ordner-monat") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const jetzt = paketZeit(art, H, stand).monat; const d = Number(el.dataset.wert) || 0;
     if (art === "steuer") { const neu = String(Number(jetzt) + d); if (neu > H.slice(0, 4)) return false; paketMonat.steuer = neu; return true; } // Steuerberater: Jahr (26.10.2026)
     const neu = monatPlus(jetzt, d); if (neu > H.slice(0, 7)) return false; paketMonat[art] = neu; return true; }
-  if (name === "beilage-bereit") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; beilageBereitSchalten(stand, art, paketZeit(art, H).monat, el.dataset.wert); return { speichern: true }; }
+  if (name === "beilage-bereit") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; beilageBereitSchalten(stand, art, paketZeit(art, H, stand).monat, el.dataset.wert); return { speichern: true }; }
   if (name === "ordner-belehrung") { belehrungAuf = !belehrungAuf; return true; }
   if (name === "bel-eintragen") {
     const id = el.dataset.id; const e = belehrungEintragen(stand, id, { datum: belDatum[id] || H, art: el.dataset.wert });
@@ -180,12 +180,12 @@ export async function ordnerAktion(name, el, stand, ansicht) {
   if (name === "ordner-vorschau") { vorschauHtml = dokumentJetzt(stand, ansicht); return true; }
   if (name === "ordner-vorschau-zu") { vorschauHtml = null; return true; }
   if (name === "ordner-pdf") { drucken(vorschauHtml || dokumentJetzt(stand, ansicht)); return { meldung: t("ordner.knopf.druckHinweis") }; }
-  if (name === "ordner-teilen") { const html = vorschauHtml || dokumentJetzt(stand, ansicht); const z = ansicht === "ordner-amt" ? amtZeitraum(H) : paketZeit(ansicht === "ordner-steuer" ? "steuer" : "buch", H);
+  if (name === "ordner-teilen") { const html = vorschauHtml || dokumentJetzt(stand, ansicht); const z = ansicht === "ordner-amt" ? amtZeitraum(H) : paketZeit(ansicht === "ordner-steuer" ? "steuer" : "buch", H, stand);
     const r = await teilen([{ name: dateiName(stand, t("ordner.datei." + ansicht.slice(7)), z).replace(/\.csv$/, ".html"), text: html, typ: "text/html;charset=utf-8" }], t(`ordner.${ansicht.slice(7)}.titel`)); return r === "abgebrochen" ? false : { meldung: t("ordner.knopf.geteilt") }; }
   if (name === "ordner-schicken") {
     const art = el.dataset.wert === "steuer" ? "steuer" : "buch"; const ans = "ordner-" + art;
     if (mailEntwurf[art] !== undefined) kontaktSetzen(stand, art, mailEntwurf[art]);
-    const z = paketZeit(art, H); const html = dokumentJetzt(stand, ans);
+    const z = paketZeit(art, H, stand); const html = dokumentJetzt(stand, ans);
     const dateien = [{ name: dateiName(stand, t("ordner.datei." + art), z).replace(/\.csv$/, ".html"), text: html, typ: "text/html;charset=utf-8" }, ...csvJetzt(stand, ans, null)];
     const r = await teilen(dateien, t(`ordner.${art}.titel`), mailText(stand, art, art === "steuer" ? z.monat : monatLang(z.monat)));
     return r === "abgebrochen" ? { speichern: true } : { speichern: true, meldung: t("ordnerMail.fertig") };

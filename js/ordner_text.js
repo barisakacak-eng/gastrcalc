@@ -29,7 +29,9 @@ export function zeitraumText(z) {
   return `${datumDe(z.von)} – ${datumDe(z.bis)}`;
 }
 // Monat des Steuer-/Buchhalter-Pakets: gewählter Monat ("JJJJ-MM") oder der Vormonat
-export const paketZeitVon = (paketMonat = {}, art, H = heute()) => (art === "steuer" ? jahrVon(paketMonat?.steuer || H.slice(0, 4), H) : monatVon((paketMonat?.[art] || monatPlus(H.slice(0, 7), -1)) + "-01")); // Steuerberater: Jahr (26.10.2026)
+// Persona-Test Wirt (27.10.2026): Buchhalter öffnete den leeren Vormonat, wenn der Laden erst in diesem Monat angelegt wurde – dann gilt der laufende Monat.
+export const paketZeitVon = (paketMonat = {}, art, H = heute(), angelegt = null) => { const vor = monatPlus(H.slice(0, 7), -1); const start = typeof angelegt === "string" && angelegt.slice(0, 7) > vor ? H.slice(0, 7) : vor;
+  return art === "steuer" ? jahrVon(paketMonat?.steuer || H.slice(0, 4), H) : monatVon((paketMonat?.[art] || start) + "-01"); }; // Steuerberater: Jahr (26.10.2026)
 
 
 // ---------- Kachelstand für die Büro-Startseite ----------
@@ -215,7 +217,7 @@ export function csvDateien(stand, ansicht, nurTeil = null, wahl = {}) { // Beisp
   const H = heute(); const n = NAMEN();
   if (ansicht === "ordner-amt") { const z = amtZeitraumVon(wahl.amtZeit, H); const o = ordnerAmt(stand, z, { datum: H });
     return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, dateiTeil(teil), z), text: mitBeispiel(stand, amtCsv(o, teil, kopfVon(teil), n)) })); }
-  const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const z = paketZeitVon(wahl.paketMonat, art, H); const p = monatsPaket(stand, z, art);
+  const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const z = paketZeitVon(wahl.paketMonat, art, H, stand?.angelegt); const p = monatsPaket(stand, z, art);
   const teile = nurTeil ? p.teile.filter((x) => x === nurTeil) : [...p.teile, "aenderungen"]; // W2-T: Aenderungen.csv gehört zu jedem Monatspaket
   return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : t("ordner.datei." + teil), z), text: mitBeispiel(stand, teilCsv(p, teil, kopfVon(teil), n)) }));
 }
@@ -223,6 +225,6 @@ export function dokumentFuer(stand, ansicht, wahl = {}) {
   const H = heute();
   if (ansicht === "ordner-amt") return druckHtml(mitInhalt(amtDokument(stand, ordnerAmt(stand, amtZeitraumVon(wahl.amtZeit, H), { datum: H })), "amt"));
   const art = ansicht === "ordner-steuer" ? "steuer" : "buch";
-  return druckHtml(mitInhalt(paketDokument(stand, monatsPaket(stand, paketZeitVon(wahl.paketMonat, art, H), art)), art));
+  return druckHtml(mitInhalt(paketDokument(stand, monatsPaket(stand, paketZeitVon(wahl.paketMonat, art, H, stand?.angelegt), art)), art));
 }
 

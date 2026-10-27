@@ -28,14 +28,14 @@ export function vergleichView(stand) {
         <div class="vk-zeile ${x.wareHoch ? "minus" : ""}"><span>${esc(t("vergleich.ware"))}</span><span>${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.z.waren, { dezimal: 2 })}${x.wareHoch ? ` · ${esc(t("vergleich.wareHoch", fmtZahl(x.z.wareneinsatzAnteil * 100, 0)))}` : ""}</span></div>
         <div class="vk-zeile ${x.db < 0 ? "minus" : ""}"><span>${esc(t("vergleich.db"))}</span><span>${fmtEuro(x.db, { dezimal: 2 })}</span></div>
         <div class="vk-zeile ${x.marge < 0 ? "minus" : ""}"><span>${esc(t("vergleich.marge"))}</span><span>${fmtZahl(x.marge * 100, 0)} %</span></div>
-        <div class="vk-zeile vk-ampel ${x.ampel}"><span>${esc(t("vergleich.nachKosten"))}</span><span><i class="punkt ${x.ampel}" aria-hidden="true"></i> ${x.quote === null ? esc(t("vergleich.nachKostenFehlt")) : `${fmtEuro(x.gewinn, { dezimal: 2 })} · ${fmtZahl(x.quote * 100, 0)} %`}</span></div>
+        <div class="vk-zeile vk-ampel ${x.ampel}"><span>${esc(t("vergleich.nachKosten"))}</span><span><i class="punkt ${x.ampel}" aria-hidden="true"></i> ${x.quote === null ? esc(t("vergleich.nachKostenFehlt")) : `${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.gewinn, { dezimal: 2 })} · ${fmtZahl(x.quote * 100, 0)} %`}</span></div>
         <span class="vk-balken"><i class="${x.ampel === "rot" ? "knapp" : ""}" style="width:${x.balken}%"></i></span>
       </div></div>`;
   return `<div class="kopfband"><h1>${esc(t("vergleich.titel"))}</h1><div class="unter">${esc(t("vergleich.unter"))}</div></div>
     <div class="inhalt vergleich">
       <div class="seg umschalter" role="tablist">${["db", "marge"].map((m) => `<button type="button" role="tab" aria-selected="${modus === m}" class="${modus === m ? "an" : ""}" data-a="vergleich-modus" data-wert="${m}">${esc(t("vergleich.tab." + m))}</button>`).join("")}</div>
       ${mit.length ? mit.map(karte).join("") : `<div class="karte leer"><div>${esc(t("vergleich.leer"))}</div><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="preise">${esc(t("start.preiseAendern"))}</button></div>`}
-      ${ohne.length ? `<div class="karte"><h2>${esc(t("vergleich.ohneZahlen", ohne.length))}</h2>${ohne.map((x) => `<div class="vk-ohne">${esc(x.z.name)} · <small>${esc(x.z.preisBrutto === null ? t("ergebnis.preisFehlt") : t("vergleich.einkaufFehlt"))}</small></div>`).join("")}</div>` : ""}
+      ${ohne.length ? `<div class="karte"><h2>${esc(t("vergleich.ohneZahlen", ohne.length))}</h2>${ohne.map((x) => `<div class="vk-ohne">${esc(x.z.name)} · <small>${esc(x.z.preisBrutto === null ? t("ergebnis.preisFehlt") : !(x.g?.zutaten || []).length ? t("kartelaeden.ohneRezept") : t("vergleich.einkaufFehlt"))}</small></div>`).join("")}</div>` : ""}
       ${geschaetzt ? `<p class="hinweis geschaetzt-hinweis">≈ ${esc(t("vergleich.hinweis"))}</p>` : ""}
       ${mit.length ? `<p class="hinweis">${esc(t("vergleich.ampelLegende"))}</p>` : ""}
     </div>${nav("vergleich")}`;

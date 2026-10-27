@@ -208,7 +208,7 @@ export default {
     portal: (n) => `Via ${n}`,
     portalSperre: (n) => `Via ${n} this dish does not work out: commission and target eat the price.`,
     garverlustGeschaetzt: "cooking loss estimated",
-    lesehilfe: "“Costs you” is everything together: goods, share of rent and wages, VAT. “Fine” means your current price covers that and your target. “Tight”: covers the costs but not your target. “Too cheap”: you lose money.",
+    lesehilfe: "“Costs you” is everything together: goods, share of rent and wages, VAT. “Fine” means your current price covers that and your target. “Tight”: covers the costs but not your target. “Too cheap”: less than 10 % is left, or you lose money.",
   },
 
   start: {
@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Left to your goal in ${m}`, standHeuteZeile: (b) => `Today you stand at ${b}`, lohnTageZeile: (n) => `Wages: ${n} days entered, rest ≈ from the monthly total`,
+  zaehler: { standTagZeile: (d, b) => `On ${d} you stood at ${b}`, standErklaerung: "Counted up to today. The rest of the month still costs.", zumZiel: (m) => `Left to your goal in ${m}`, standHeuteZeile: (b) => `Today you stand at ${b}`, lohnTageZeile: (n) => `Wages: ${n} days entered, rest ≈ from the monthly total`,
     sonderBis: (n) => `One-off invoices until today (${n})`,
     frueher: "Earlier …",
     zaehltAb: (d) => `counting from ${d}`,

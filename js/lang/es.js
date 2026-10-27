@@ -210,7 +210,7 @@ export default {
     portal: (n) => `Por ${n}`,
     portalSperre: (n) => `Por ${n} este plato así no sale a cuenta: la comisión y el objetivo se comen el precio.`,
     garverlustGeschaetzt: "Merma al cocinar estimada",
-    lesehilfe: "“Te cuesta” es todo junto: producto, parte del alquiler y los sueldos, IVA. “Bien” significa: tu precio de hoy cubre eso y tu objetivo. “Justo”: cubre los gastos, pero no tu objetivo. “Muy barato”: pierdes dinero.",
+    lesehilfe: "“Te cuesta” es todo junto: producto, parte del alquiler y los sueldos, IVA. “Bien” significa: tu precio de hoy cubre eso y tu objetivo. “Justo”: cubre los gastos, pero no tu objetivo. “Muy barato”: queda menos del 10 % o pierdes dinero.",
   },
 
   start: {
@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Prueba",
   },
 
-  zaehler: { zumZiel: (m) => `Falta para tu meta en ${m}`, standHeuteZeile: (b) => `Hoy estás en ${b}`, lohnTageZeile: (n) => `Sueldos: ${n} días anotados, el resto ≈ del total mensual`,
+  zaehler: { standTagZeile: (d, b) => `El ${d} estabas en ${b}`, standErklaerung: "Calculado hasta hoy. El resto del mes todavía cuesta.", zumZiel: (m) => `Falta para tu meta en ${m}`, standHeuteZeile: (b) => `Hoy estás en ${b}`, lohnTageZeile: (n) => `Sueldos: ${n} días anotados, el resto ≈ del total mensual`,
     sonderBis: (n) => `Facturas únicas hasta hoy (${n})`,
     frueher: "Antes…",
     zaehltAb: (d) => `cuenta desde el ${d}`,

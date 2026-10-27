@@ -210,7 +210,7 @@ export default {
     portal: (n) => `Qua ${n}`,
     portalSperre: (n) => `Qua ${n} món này không có lời: hoa hồng và mục tiêu ăn hết giá bán.`,
     garverlustGeschaetzt: "Hao hụt khi nấu là ước tính",
-    lesehilfe: "“Tốn của sếp” là tất cả cộng lại: nguyên liệu, phần tiền thuê và lương, thuế VAT. “Ổn” nghĩa là: giá hiện tại đủ trả chi phí và đạt mục tiêu. “Sát”: đủ chi phí nhưng chưa đạt mục tiêu. “Rẻ quá”: sếp đang lỗ.",
+    lesehilfe: "“Tốn của sếp” là tất cả cộng lại: nguyên liệu, phần tiền thuê và lương, thuế VAT. “Ổn” nghĩa là: giá hiện tại đủ trả chi phí và đạt mục tiêu. “Sát”: đủ chi phí nhưng chưa đạt mục tiêu. “Rẻ quá”: còn lại dưới 10 % hoặc sếp đang lỗ.",
   },
 
   start: {
@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Thử",
   },
 
-  zaehler: { zumZiel: (m) => `Còn thiếu đến mục tiêu trong ${m}`, standHeuteZeile: (b) => `Hôm nay sếp đang ở ${b}`, lohnTageZeile: (n) => `Lương: đã ghi ${n} ngày, còn lại ≈ từ tổng tháng`,
+  zaehler: { standTagZeile: (d, b) => `Ngày ${d} sếp ở mức ${b}`, standErklaerung: "Tính đến hôm nay. Phần còn lại của tháng vẫn còn chi phí.", zumZiel: (m) => `Còn thiếu đến mục tiêu trong ${m}`, standHeuteZeile: (b) => `Hôm nay sếp đang ở ${b}`, lohnTageZeile: (n) => `Lương: đã ghi ${n} ngày, còn lại ≈ từ tổng tháng`,
     sonderBis: (n) => `Hóa đơn một lần đến hôm nay (${n})`,
     frueher: "Trước đó …",
     zaehltAb: (d) => `tính từ ngày ${d}`,

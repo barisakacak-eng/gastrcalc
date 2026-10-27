@@ -208,7 +208,7 @@ export default {
     portal: (n) => `${n} üzerinden`,
     portalSperre: (n) => `${n} üzerinden bu yemek böyle çıkmıyor: komisyon ve hedef fiyatı yiyor.`,
     garverlustGeschaetzt: "pişirme kaybı tahmin",
-    lesehilfe: "“Sana maliyeti” her şey birlikte: malzeme, kira ve maaş payı, KDV. “Uygun”: bugünkü fiyatın bunu ve hedefini karşılıyor. “Sınırda”: giderleri karşılıyor, hedefi değil. “Çok ucuz”: zarar ediyorsun.",
+    lesehilfe: "“Sana maliyeti” her şey birlikte: malzeme, kira ve maaş payı, KDV. “Uygun”: bugünkü fiyatın bunu ve hedefini karşılıyor. “Sınırda”: giderleri karşılıyor, hedefi değil. “Çok ucuz”: %10'dan az kalıyor ya da zarar ediyorsun.",
   },
 
   start: {
@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `${m} ayında hedefe kalan`, standHeuteZeile: (b) => `Bugün durumun: ${b}`, lohnTageZeile: (n) => `Maaş: ${n} gün girildi, kalanı ≈ aylık toplamdan`,
+  zaehler: { standTagZeile: (d, b) => `${d} tarihinde durumun: ${b}`, standErklaerung: "Bugüne kadar hesaplandı. Ayın geri kalanının da masrafı var.", zumZiel: (m) => `${m} ayında hedefe kalan`, standHeuteZeile: (b) => `Bugün durumun: ${b}`, lohnTageZeile: (n) => `Maaş: ${n} gün girildi, kalanı ≈ aylık toplamdan`,
     sonderBis: (n) => `Bugüne kadar tek seferlik faturalar (${n})`,
     frueher: "Daha önce …",
     zaehltAb: (d) => `${d} tarihinden itibaren sayıyor`,

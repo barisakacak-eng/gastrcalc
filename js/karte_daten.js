@@ -20,8 +20,19 @@ export function gerichtAusVorlage(v) { // 17.10.2026 Fehler F1 (vorher screens/k
     zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten), rezeptFamilie: rezeptBauen(v.name)?.familie || null };
 }
 export function gerichtAusVorlageAnlegen(stand, v) { const g = gerichtAusVorlage(v); stand.gerichte.push(g); return g; }
-export function gerichtEigenAnlegen(stand, name) {
-  const g = { id: uid(), name, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis: null, mengeTag: null, steuer: 0.07 };
+// Persona-Test Wirt (27.10.2026): „Classic Smash 9.90“ wurde komplett zum Namen, „Fries 3.50“ zum Hauptgericht (trug Miete wie ein Burger).
+// Ein Preis am Ende des Namens wird zum Preis; Pommes/Dips sind Kleinigkeiten, Getränke Getränke (änderbar wie bisher).
+const KLEIN_RE = /\b(pommes|fries|wedges|chips|dip|soße|sosse|sauce|nuggets|onion rings|ayran)\b/i;
+const GETRAENK_RE = /\b(cola|fanta|sprite|wasser|water|limo|saft|juice|eistee|ice tea|bier|beer|kaffee|coffee|tee|tea|çay|energy)\b/i;
+export function nameUndPreis(text) {
+  const m = String(text || "").trim().match(/^(.*?\S)\s+(\d{1,3}(?:[.,]\d{1,2})?)\s*€?$/);
+  if (!m) return { name: String(text || "").trim(), preis: null };
+  const preis = Number(m[2].replace(",", ".")); return preis > 0 && preis < 200 ? { name: m[1], preis } : { name: String(text).trim(), preis: null };
+}
+export function gerichtEigenAnlegen(stand, eingabe) {
+  const { name, preis } = nameUndPreis(eingabe);
+  const klasse = GETRAENK_RE.test(name) ? "getraenk" : KLEIN_RE.test(name) ? "kleinigkeit" : "haupt";
+  const g = { id: uid(), name, bereich: null, klasse, zeit: klasse === "haupt" ? 5 : 2, vorlage: false, zutaten: [], preis, mengeTag: null, steuer: 0.07 };
   stand.gerichte.push(g); startRezept(stand, g); return g;
 }
 // Persona-Test Wirt (27.10.2026): Ein eigenes Gericht bekam das Start-Rezept aus dem Baukasten erst beim nächsten App-Start –

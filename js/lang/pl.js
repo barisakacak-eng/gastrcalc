@@ -215,7 +215,7 @@ export default {
     portal: (n) => `Przez ${n}`,
     portalSperre: (n) => `Przez ${n} to danie się tak nie opłaca: prowizja i cel zjadają cenę.`,
     garverlustGeschaetzt: "Ubytek przy gotowaniu szacunkowo",
-    lesehilfe: "„Kosztuje cię” to wszystko razem: towar, część czynszu i pensji, VAT. „Pasuje” znaczy: twoja dzisiejsza cena to pokrywa i jeszcze twój cel. „Na styk”: pokrywa koszty, ale nie cel. „Za tanio”: dokładasz do interesu.",
+    lesehilfe: "„Kosztuje cię” to wszystko razem: towar, część czynszu i pensji, VAT. „Pasuje” znaczy: twoja dzisiejsza cena to pokrywa i jeszcze twój cel. „Na styk”: pokrywa koszty, ale nie cel. „Za tanio”: zostaje mniej niż 10 % albo dokładasz.",
   },
 
   start: {
@@ -688,7 +688,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Do celu brakuje w ${m}`, standHeuteZeile: (b) => `Dziś jesteś na ${b}`, lohnTageZeile: (n) => `Płace: wpisane ${n} dni, reszta ≈ z sumy miesięcznej`,
+  zaehler: { standTagZeile: (d, b) => `${d} byłeś na ${b}`, standErklaerung: "Liczone do dziś. Reszta miesiąca jeszcze kosztuje.", zumZiel: (m) => `Do celu brakuje w ${m}`, standHeuteZeile: (b) => `Dziś jesteś na ${b}`, lohnTageZeile: (n) => `Płace: wpisane ${n} dni, reszta ≈ z sumy miesięcznej`,
     sonderBis: (n) => `Jednorazowe rachunki do dziś (${n})`,
     frueher: "Wcześniej …",
     zaehltAb: (d) => `liczy się od ${d}`,

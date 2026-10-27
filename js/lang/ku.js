@@ -209,7 +209,7 @@ export default {
     portal: (n) => `Bi rêya ${n}`,
     portalSperre: (n) => `Bi rêya ${n} ev xwarin bi vî awayî nagihîje: komîsyon û armanc bihayê dixwin.`,
     garverlustGeschaetzt: "Kêmbûna pijandinê texmînî ye",
-    lesehilfe: "“Ji te diçe” her tişt bi hev re ye: mal, para kirê û meaşan, bac. “Baş e” tê wateya: bihayê te yê îro vê û armanca te digire. “Teng”: lêçûnan digire, lê ne armanca te. “Pir erzan”: tu zirarê dikî.",
+    lesehilfe: "“Ji te diçe” her tişt bi hev re ye: mal, para kirê û meaşan, bac. “Baş e” tê wateya: bihayê te yê îro vê û armanca te digire. “Teng”: lêçûnan digire, lê ne armanca te. “Pir erzan”: ji 10 % kêmtir dimîne an tu zirarê dikî.",
   },
 
   start: {
@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { zumZiel: (m) => `Heta armancê di ${m} de dimîne`, standHeuteZeile: (b) => `Îro tu li ${b} yî`, lohnTageZeile: (n) => `Meaş: ${n} roj hatin nivîsîn, yên din ≈ ji tevahiya mehê`,
+  zaehler: { standTagZeile: (d, b) => `Di ${d} de tu li ${b} bûyî`, standErklaerung: "Heta îro hatiye hesabkirin. Mayîna mehê hê lêçûn e.", zumZiel: (m) => `Heta armancê di ${m} de dimîne`, standHeuteZeile: (b) => `Îro tu li ${b} yî`, lohnTageZeile: (n) => `Meaş: ${n} roj hatin nivîsîn, yên din ≈ ji tevahiya mehê`,
     sonderBis: (n) => `Fatûreyên yekcarî heta îro (${n})`,
     frueher: "Berê …",
     zaehltAb: (d) => `ji ${d} ve tê hesabkirin`,
