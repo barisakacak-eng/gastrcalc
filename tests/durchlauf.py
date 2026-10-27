@@ -38,7 +38,7 @@ async def main():
             await pg.goto(f"http://127.0.0.1:{PORT}/index.html")
             await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
             # E5 (16.10.2026): erster Start – der Service Worker übernimmt die Seite und lädt sie einmal neu, sobald die App-Phase erreicht ist.
-            # Damit das nicht mitten in einem Bildschirm passiert: erst warten, bis er die Seite hat; das Neuladen kommt dann direkt nach „Fertig“.
+            # Damit das nicht mitten in einem Bildschirm passiert: erst warten, bis er die Seite hat (seit 27.10.2026 ohne Neuladen beim ersten Besuch).
             for _ in range(240):
                 if await pg.evaluate("!!navigator.serviceWorker.controller"): break
                 await pg.wait_for_timeout(500)
@@ -144,7 +144,7 @@ async def main():
             await pg.click(f'[data-a="bestseller"][data-id="{ids[0]}"]'); await pg.fill(f'[data-f="menge:{ids[0]}"]', "120")
             await pg.fill('[data-f="bestellungenTag"]', "200"); await pg.locator('[data-f="bestellungenTag"]').blur(); await pg.wait_for_timeout(150)
             await pg.click('[data-a="weiter"]'); await bild("ergebnis")
-            async with pg.expect_event("load", timeout=20000): await pg.click('[data-a="fertig"]')  # E5: das einmalige Neuladen des Service Workers abwarten
+            await pg.click('[data-a="fertig"]')  # 27.10.2026: der erste Service Worker lädt die Seite nicht mehr neu (tests/durchlauf_erststart.py)
             await pg.wait_for_selector(".cockpit")
             # ---- Cockpit
             await bild("cockpit-leer")

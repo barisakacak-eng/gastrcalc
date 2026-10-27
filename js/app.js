@@ -990,7 +990,14 @@ async function serviceWorkerStarten() {
     const bereit = (w) => { aktualisierung = w; if ((ansicht === "start" || ansicht === "buero") && stand?.phase === "app") zeichne(); }; // W2-D: auch im Büro
     if (reg.waiting && navigator.serviceWorker.controller) bereit(reg.waiting);
     reg.addEventListener("updatefound", () => { const w = reg.installing; if (!w) return; w.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) bereit(w); }); });
-    navigator.serviceWorker.addEventListener("controllerchange", () => { if (aktualisierungKlick) location.reload(); else fremdeFassungUebernehmen(); }); // Paket 2: auch ohne eigenen Tipp
+    // 27.10.2026 (Persona-Test): beim allerersten Besuch hat die Seite noch keinen Service Worker. sw.js übernimmt sie per
+    // clients.claim() – das löst ebenfalls „controllerchange“ aus, ist aber KEINE neue Fassung (die Seite läuft schon mit genau
+    // diesen Dateien). Dieser erste Wechsel lädt deshalb nicht neu; erst ein späterer Wechsel (echtes Update) läuft wie gehabt.
+    let ersteUebernahme = !navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (ersteUebernahme) { ersteUebernahme = false; return; }
+      if (aktualisierungKlick) location.reload(); else fremdeFassungUebernehmen(); // Paket 2: auch ohne eigenen Tipp
+    });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) reg.update().catch(() => {}); });
     await navigator.serviceWorker.ready; offlineStand = "bereit";
     setInterval(stillAktualisieren, 60e3); document.addEventListener("visibilitychange", () => { if (!document.hidden) stillAktualisieren(); }); // W2-D

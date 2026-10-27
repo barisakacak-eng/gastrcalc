@@ -23,7 +23,7 @@ async def kontext(b, breite, hoehe, fehler):
 async def schnellstart(pg, port, name="Döner Test"):
     import nav_hilfe
     await pg.goto(f"http://127.0.0.1:{port}/index.html"); await pg.wait_for_selector(".kachel, [data-f=\"sprache-wahl\"]")
-    for _ in range(240):  # erster Start: der Service Worker lädt die Seite nach der Einrichtung einmal neu – erst warten, bis er sie hat
+    for _ in range(240):  # erster Start: warten, bis der Service Worker die Seite übernommen hat (seit 27.10.2026 ohne Neuladen)
         if await pg.evaluate("!!navigator.serviceWorker.controller"): break
         await pg.wait_for_timeout(500)
     await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await nav_hilfe.nach_sprache(pg); await pg.wait_for_selector('[data-a="laden-art"]')
@@ -51,9 +51,6 @@ async def schnellstart(pg, port, name="Döner Test"):
             if versuch == 2: raise
     if await pg.locator('[data-a="foto-abbrechen"]').count(): await pg.click('[data-a="foto-abbrechen"]')  # ohne Gerichte landet „Los“ bei „Karte per Foto“
     await nav_hilfe.geh(pg, "start")
-    try:
-        async with pg.expect_event("load", timeout=8000): await pg.wait_for_timeout(100)
-    except Exception: pass  # kein Neuladen nötig
     await pg.wait_for_selector('[data-a="menue-auf"]'); await pg.wait_for_timeout(400)
     await nav_hilfe.rundgang_weg(pg)  # 27.10.2026: erster Besuch auf Heute zeigt den Rundgang mit Zeki
 
