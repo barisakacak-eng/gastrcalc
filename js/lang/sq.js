@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Lexo faturë, përditëso çmimet",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "A pati punëtorë të sëmurë apo me pushim këtë muaj?", abwWer: "Sa ditë? Ti i paguan gjithsesi.", tage: "ditë", modell: { stunde: "Me orë", monat: "Fikse në muaj" }, monatBrutto: "Bruto në muaj", monatHinweis: "Llogaritet çdo muaj si kosto fikse. Nuk pyetet më çdo ditë.", frage: "A pati punëtorë sot?", wer: "Kush ishte? Vendos orët.", std: "orë", satz: "Bruto për orë", summe: (b) => `Të kushton sot: ${b}`, brutto: (b) => `${b} bruto, plus pjesa e punëdhënësit`, art: { angestellt: "Me kontratë", minijob: "Minijob" }, summeOffen: "Mungojnë paga dhe lloji", weitere: "një person tjetër", person: (n) => `Punëtor ${n}`, fertig: "Gati" },
   muell: { personalEintragen: "Shëno ushqimin e stafit",
     zeki: { start: "Çfarë u hodh sot?", weiter: "U hodh edhe diçka tjetër?", personal: "Çfarë hëngri ekipi yt?", bruch: "Çfarë u thye ose u prish?" },
     grund: { roh: "Mall", personal: "Stafi", bruch: "Thyerje" }, nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",
@@ -1083,7 +1083,7 @@ export default {
     karteHilfe: "Aplikacioni lexon pjatat dhe çmimet nga foto. Çfarë bëni vetë, e vendos në zyrë te Recetat.",
     kuehl: "Ftohja", arten: { getraenke: "Frigorifer pijesh", kuehlschrank: "Frigorifer", saladette: "Saladeta", tiefkuehler: "Ngrirës", warmhalter: "Ngrohës" },
     kuehlHilfe: "Për çdo pajisje shkruan më vonë temperaturën. Emrat i ndryshon në zyrë.",
-    geld: "Shpenzimet në muaj", miete: "Qiraja", personal: "Stafi", eigen: "Rroga jote", strom: "Rryma",
+    geld: "Shpenzimet në muaj", miete: "Qiraja", personal: "Stafi", eigen: "Rroga jote", strom: "Rryma (me TVSH)",
     geldHilfe: "Përafërsisht mjafton, mund ta lësh edhe bosh. Faturat i fotografon më vonë në zyrë.",
     putzt: "Kush pastron?", wer: { selbst: "Ne", firma: "Firma", beides: "Të dyja" }, firma: "Firma",
     fertig: "Gati!", eingerichtet: "rregulluar", los: "Fillojmë", pin: "Vendos PIN-in e zyrës",

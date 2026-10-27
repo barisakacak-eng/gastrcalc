@@ -739,7 +739,7 @@ export default {
     belegeKurz: "اقرأ إيصالًا، وحدّث الأسعار",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "هل مرض أحد من الموظفين أو أخذ إجازة هذا الشهر؟", abwWer: "كم يومًا؟ أنت تدفع لهم رغم ذلك.", tage: "أيام", modell: { stunde: "بالساعة", monat: "ثابت شهريًا" }, monatBrutto: "الإجمالي (Brutto) شهريًا", monatHinweis: "يُحسب كل شهر كتكلفة ثابتة. لن يُسأل عنه يوميًا بعد الآن.", frage: "هل كان هناك موظفون اليوم؟", wer: "من كان موجودًا؟ اضبط الساعات.", std: "س", satz: "الإجمالي (Brutto) بالساعة", summe: (b) => `يكلّفك اليوم: ${b}`, brutto: (b) => `${b} إجمالي، ومعه حصة صاحب العمل`, art: { angestellt: "موظف ثابت", minijob: "Minijob" }, summeOffen: "الأجر والنوع ناقصان", weitere: "شخص آخر", person: (n) => `موظف ${n}`, fertig: "تم" },
   muell: { personalEintragen: "تسجيل وجبة الموظفين",
     zeki: { start: "ماذا رُمي اليوم؟", weiter: "هل رُمي شيء آخر؟", personal: "ماذا أكل فريقك؟", bruch: "ما الذي انكسر أو تلف؟" },
     grund: { roh: "بضاعة", personal: "موظفون", bruch: "تالف" }, nichtsGefunden: "لم يُعثر على شيء. اكتبه بطريقة أخرى أو اختر «وزن السطل».",
@@ -1080,7 +1080,7 @@ export default {
     karteHilfe: "التطبيق يقرأ الأطباق والأسعار من الصورة. ما تحضّرونه بأنفسكم تضبطه في المكتب تحت «الوصفات».",
     kuehl: "التبريد", arten: { getraenke: "ثلاجة المشروبات", kuehlschrank: "ثلاجة", saladette: "ثلاجة السلطات", tiefkuehler: "فريزر", warmhalter: "حافظة حرارة" },
     kuehlHilfe: "لكل جهاز تُدخل الحرارة لاحقًا. الأسماء تغيّرها في المكتب.",
-    geld: "التكاليف في الشهر", miete: "الإيجار", personal: "الموظفون", eigen: "راتبك", strom: "الكهرباء",
+    geld: "التكاليف في الشهر", miete: "الإيجار", personal: "الموظفون", eigen: "راتبك", strom: "الكهرباء (مع الضريبة)",
     geldHilfe: "التقريب يكفي، ويمكن تركه فارغًا. الفواتير تصوّرها لاحقًا في المكتب.",
     putzt: "من ينظّف؟", wer: { selbst: "نحن", firma: "شركة", beides: "الاثنان" }, firma: "شركة",
     fertig: "تم!", eingerichtet: "تم الإعداد", los: "هيا نبدأ", pin: "حدّد رمز المكتب",

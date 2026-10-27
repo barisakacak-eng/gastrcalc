@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Φόρτωσε απόδειξη, ενημέρωσε τιμές",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Ήταν κάποιος από το προσωπικό άρρωστος ή σε άδεια αυτόν τον μήνα;", abwWer: "Πόσες μέρες; Τους πληρώνεις κανονικά.", tage: "μέρες", modell: { stunde: "Ανά ώρα", monat: "Σταθερά τον μήνα" }, monatBrutto: "Μικτά τον μήνα", monatHinweis: "Μετράει κάθε μήνα ως σταθερό κόστος. Δεν ρωτιέται πια κάθε μέρα.", frage: "Ήταν προσωπικό σήμερα;", wer: "Ποιος ήταν; Βάλε τις ώρες.", std: "ώρ.", satz: "Μικτά ανά ώρα", summe: (b) => `Σου κοστίζει σήμερα: ${b}`, brutto: (b) => `${b} μικτά, συν το μερίδιο εργοδότη`, art: { angestellt: "Με σύμβαση", minijob: "Minijob" }, summeOffen: "Λείπουν μισθός και είδος", weitere: "άλλο ένα άτομο", person: (n) => `Υπάλληλος ${n}`, fertig: "Έτοιμο" },
   muell: { personalEintragen: "Καταχώρισε φαγητό προσωπικού",
     zeki: { start: "Τι πετάχτηκε σήμερα;", weiter: "Πετάχτηκε κάτι άλλο;", personal: "Τι έφαγε η ομάδα σου;", bruch: "Τι χάλασε ή έσπασε;" },
     grund: { roh: "Εμπόρευμα", personal: "Προσωπικό", bruch: "Φθορά" }, nichtsGefunden: "Δεν βρέθηκε τίποτα. Γράψ' το αλλιώς ή διάλεξε «Ζυγίστηκε κάδος».",
@@ -1077,7 +1077,7 @@ export default {
     karteHilfe: "Η εφαρμογή διαβάζει πιάτα και τιμές από τη φωτογραφία. Ό,τι φτιάχνετε μόνοι σας το βάζεις στο γραφείο στις Συνταγές.",
     kuehl: "Ψύξη", arten: { getraenke: "Ψυγείο ποτών", kuehlschrank: "Ψυγείο", saladette: "Σαλατιέρα", tiefkuehler: "Καταψύκτης", warmhalter: "Θερμοθάλαμος" },
     kuehlHilfe: "Για κάθε συσκευή γράφεις μετά τη θερμοκρασία. Τα ονόματα τα αλλάζεις στο γραφείο.",
-    geld: "Έξοδα τον μήνα", miete: "Ενοίκιο", personal: "Προσωπικό", eigen: "Ο μισθός σου", strom: "Ρεύμα",
+    geld: "Έξοδα τον μήνα", miete: "Ενοίκιο", personal: "Προσωπικό", eigen: "Ο μισθός σου", strom: "Ρεύμα (με ΦΠΑ)",
     geldHilfe: "Περίπου αρκεί, μπορείς και να το αφήσεις κενό. Τους λογαριασμούς τους φωτογραφίζεις μετά στο γραφείο.",
     putzt: "Ποιος καθαρίζει;", wer: { selbst: "Εμείς", firma: "Εταιρεία", beides: "Και τα δύο" }, firma: "Εταιρεία",
     fertig: "Έτοιμο!", eingerichtet: "ρυθμίστηκε", los: "Πάμε", pin: "Όρισε κωδικό γραφείου",

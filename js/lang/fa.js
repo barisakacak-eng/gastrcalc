@@ -736,7 +736,7 @@ export default {
     belegeKurz: "رسید بخوان، قیمت‌ها را به‌روز کن",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "این ماه کسی از پرسنل بیمار یا مرخصی بود؟", abwWer: "چند روز؟ حقوقشان را باز هم می‌دهی.", tage: "روز", modell: { stunde: "ساعتی", monat: "ثابت ماهانه" }, monatBrutto: "ناخالص (Brutto) ماهانه", monatHinweis: "هر ماه هزینه‌ی ثابت حساب می‌شود. دیگر هر روز پرسیده نمی‌شود.", frage: "امروز پرسنل بودند؟", wer: "چه کسی بود؟ ساعت‌ها را تنظیم کن.", std: "ساعت", satz: "ناخالص (Brutto) ساعتی", summe: (b) => `امروز برایت هزینه دارد: ${b}`, brutto: (b) => `${b} ناخالص، به‌علاوه‌ی سهم کارفرما`, art: { angestellt: "استخدامی", minijob: "Minijob" }, summeOffen: "دستمزد و نوع هنوز نیست", weitere: "یک نفر دیگر", person: (n) => `پرسنل ${n}`, fertig: "تمام" },
   muell: { personalEintragen: "ثبت غذای پرسنل",
     zeki: { start: "امروز چه چیزی دور ریخته شد؟", weiter: "چیز دیگری هم دور ریخته شد؟", personal: "تیمت چه خورد؟", bruch: "چه چیزی شکست یا خراب شد؟" },
     grund: { roh: "کالا", personal: "پرسنل", bruch: "خرابی" }, nichtsGefunden: "چیزی پیدا نشد. جور دیگری بنویس یا «وزن سطل» را بزن.",
@@ -1077,7 +1077,7 @@ export default {
     karteHilfe: "اپ غذاها و قیمت‌ها را از عکس می‌خواند. چیزهایی را که خودتان درست می‌کنید در دفتر زیر «دستور پخت‌ها» تنظیم کن.",
     kuehl: "سرمایش", arten: { getraenke: "یخچال نوشیدنی", kuehlschrank: "یخچال", saladette: "یخچال سالاد", tiefkuehler: "فریزر", warmhalter: "گرم‌نگه‌دار" },
     kuehlHilfe: "برای هر دستگاه بعداً دما را وارد می‌کنی. نام‌ها را در دفتر عوض می‌کنی.",
-    geld: "هزینه در ماه", miete: "اجاره", personal: "پرسنل", eigen: "حقوق خودت", strom: "برق",
+    geld: "هزینه در ماه", miete: "اجاره", personal: "پرسنل", eigen: "حقوق خودت", strom: "برق (با مالیات)",
     geldHilfe: "تقریبی کافی است، خالی هم می‌شود. از فاکتورها بعداً در دفتر عکس می‌گیری.",
     putzt: "چه کسی نظافت می‌کند؟", wer: { selbst: "خودمان", firma: "شرکت", beides: "هر دو" }, firma: "شرکت",
     fertig: "تمام!", eingerichtet: "تنظیم شد", los: "شروع کنیم", pin: "تعیین PIN دفتر",

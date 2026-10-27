@@ -736,7 +736,7 @@ export default {
     belegeKurz: "Fîşê bixwîne, bihayan nû bike",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Vê mehê karmend nexweş an di betlaneyê de bûn?", abwWer: "Çend roj? Tu dîsa jî pereyê wan didî.", tage: "roj", modell: { stunde: "Bi saetê", monat: "Mehane sabît" }, monatBrutto: "Brutto mehane", monatHinweis: "Her meh wek mesrefa sabît tê hesibandin. Êdî her roj nayê pirsîn.", frage: "Îro karmend li vir bûn?", wer: "Kî li vir bû? Saetan saz bike.", std: "saet", satz: "Brutto bi saetê", summe: (b) => `Îro ji te re mesref: ${b}`, brutto: (b) => `${b} brutto, û para kardêr jî`, art: { angestellt: "Bi peyman", minijob: "Minijob" }, summeOffen: "Meaş û cure hîn kêm in", weitere: "kesekî din", person: (n) => `Karmend ${n}`, fertig: "Qediya" },
   muell: { personalEintragen: "Xwarina karmendan binivîse",
     zeki: { start: "Îro çi hate avêtin?", weiter: "Tiştekî din jî hate avêtin?", personal: "Tîma te çi xwar?", bruch: "Çi şikest an xera bû?" },
     grund: { roh: "Mal", personal: "Karmend", bruch: "Şikestî" }, nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",
@@ -1077,7 +1077,7 @@ export default {
     karteHilfe: "Sepan xwarin û bihayan ji wêneyê dixwîne. Tiştên ku hûn bi xwe çêdikin, di ofîsê de li bin “Reçete” saz bike.",
     kuehl: "Sarkirin", arten: { getraenke: "Sarinca vexwarinan", kuehlschrank: "Sarinc", saladette: "Sarinca salatayê", tiefkuehler: "Cemidok", warmhalter: "Germker" },
     kuehlHilfe: "Ji bo her amûrekê paşê germahiyê dinivîsî. Navan di ofîsê de diguherînî.",
-    geld: "Lêçûn di mehê de", miete: "Kirê", personal: "Karker", eigen: "Meaşê te", strom: "Elektrîk",
+    geld: "Lêçûn di mehê de", miete: "Kirê", personal: "Karker", eigen: "Meaşê te", strom: "Elektrîk (bi bac)",
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",
     putzt: "Kî paqij dike?", wer: { selbst: "Em", firma: "Şîrket", beides: "Her du" }, firma: "Şîrket",
     fertig: "Qediya!", eingerichtet: "hat sazkirin", los: "Em dest pê bikin", pin: "PIN-a ofîsê diyar bike",

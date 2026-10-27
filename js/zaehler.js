@@ -120,6 +120,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const belegQuoteMonat = umsatzNettoGesamt > 0 ? belegSumme / umsatzNettoGesamt : null;
   const quoteFenster = stufe === 3 ? belegQuoteFenster(stand, datum, steuer.satz) : null;
   const quoteEff = stufe === 3 ? Math.min(QUOTE_MAX, Math.max(q.quote, quoteFenster ?? q.quote)) : (q.quote ?? 0);
+  const belegQuoteZaehlt = stufe === 3 && quoteFenster !== null && quoteFenster !== undefined && quoteFenster >= q.quote;
 
   // Öffnungstage des Monats (gewichtet) und Tageskosten
   const tage = []; let gewichtMonat = 0;
@@ -142,6 +143,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
   let kosten = 0, umsatzBrutto = 0, umsatzNetto = 0, ware = 0, muellSumme = 0, gewichtBisHeute = 0, tageMitUmsatz = 0, db = 0;
   let standGestern = 0, kippTag = null, letzterStand = 0;
+  let muellNurPrognose = 0; // Gegenprüfung F6: Müll, den die Monatsrechnung braucht, wenn in Stufe 3 die Kartenquote gilt
   let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0, lohnEchtSummeOffen = 0;
   for (const t of tage) {
     if (t.datum > datum) { t.status = "zukunft"; continue; }
@@ -150,7 +152,8 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     const e = umsatzEintrag(stand, t.datum);
     const ub = e ? e.umsatz : 0; const un = ub / (1 + steuer.satz);
     const w = stufe === 3 ? (einkauf.jeTag[t.datum] || 0) : un * quoteEff; // Paket 3: Stufe 1 schätzt die Ware mit dem Richtwert
-    const m = stufe === 3 ? 0 : (muell[t.datum] || 0);
+    const m = stufe === 3 ? 0 : (muell[t.datum] || 0); // Stufe 3: echte Belege enthalten den weggeworfenen Einkauf schon
+    if (stufe === 3 && !belegQuoteZaehlt) muellNurPrognose += muell[t.datum] || 0;
     const lt = lohnAm(t.datum, t.gewicht); t.lohn = lt.betrag; t.lohnEcht = lt.echt;
     if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } else if (t.gewicht > 0) lohnGeschaetztTage += 1;
     lohnBis += lt.betrag;
@@ -194,7 +197,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
-    umsatzBrutto, umsatzNetto, ware, muell: muellSumme, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
+    umsatzBrutto, umsatzNetto, ware, muell: muellSumme, muellPrognose: muellNurPrognose, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
     dbProTag, noetigProTag: standHeute < 0 && gewichtMonat - gewichtBisHeute > 0 ? tageskostenPrognose + (-standHeute) / (gewichtMonat - gewichtBisHeute) : null,
     nullTag, kippTag, monatsende, reichtNicht, tage, unvollstaendig, keinUmsatz: tageMitUmsatz === 0, last, sonder, belege: einkauf.anzahl,
   };
@@ -236,7 +239,7 @@ export function monatsZiel(stand, z, H) {
   // „Mitarbeiter heute“ oder anteilig, Müll und Personalessen) + Prognose für die restlichen Öffnungstage. Laden und Büro nutzen nur diese Zahl.
   const kostenMonat = (z.last?.gesamt || 0) + (z.sonder?.summe || 0);
   const kosten = typeof z.kosten === "number" && z.tageskostenPrognose !== undefined
-    ? z.kosten + (z.tageskostenPrognose || 0) * (z.gewichtZukunft || 0) + (z.muell || 0)
+    ? z.kosten + (z.tageskostenPrognose || 0) * (z.gewichtZukunft || 0) + (z.muell || 0) + (z.muellPrognose || 0)
     : kostenMonat + (z.muell || 0);
   const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
   const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));

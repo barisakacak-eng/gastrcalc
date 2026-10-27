@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Nạp hóa đơn, cập nhật giá",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Tháng này có nhân viên nào ốm hay nghỉ phép không?", abwWer: "Bao nhiêu ngày? Sếp vẫn phải trả lương.", tage: "ngày", modell: { stunde: "Theo giờ", monat: "Cố định theo tháng" }, monatBrutto: "Lương gộp mỗi tháng", monatHinweis: "Tính mỗi tháng là chi phí cố định. Không hỏi hằng ngày nữa.", frage: "Hôm nay có nhân viên không?", wer: "Ai đã làm? Chỉnh số giờ.", std: "giờ", satz: "Lương gộp mỗi giờ", summe: (b) => `Hôm nay sếp tốn: ${b}`, brutto: (b) => `${b} lương gộp, cộng phần chủ phải đóng`, art: { angestellt: "Chính thức", minijob: "Minijob" }, summeOffen: "Còn thiếu lương và loại", weitere: "thêm người", person: (n) => `Nhân viên ${n}`, fertig: "Xong" },
   muell: { personalEintragen: "Ghi bữa ăn nhân viên",
     zeki: { start: "Hôm nay bỏ đi những gì?", weiter: "Còn gì bỏ đi nữa không?", personal: "Nhân viên của sếp đã ăn gì?", bruch: "Cái gì bị vỡ hay hỏng?" },
     grund: { roh: "Hàng", personal: "Nhân viên", bruch: "Hỏng" }, nichtsGefunden: "Không tìm thấy. Viết cách khác hoặc chọn “Cân xô rác”.",
@@ -1077,7 +1077,7 @@ export default {
     karteHilfe: "App đọc món và giá từ ảnh. Món quán tự làm thì bạn nhập ở văn phòng, mục Công thức.",
     kuehl: "Làm lạnh", arten: { getraenke: "Tủ lạnh đồ uống", kuehlschrank: "Tủ lạnh", saladette: "Tủ salad", tiefkuehler: "Tủ đông", warmhalter: "Tủ giữ nóng" },
     kuehlHilfe: "Sau này bạn ghi nhiệt độ cho từng thiết bị. Tên thì đổi ở văn phòng.",
-    geld: "Chi phí mỗi tháng", miete: "Tiền thuê", personal: "Nhân viên", eigen: "Lương của bạn", strom: "Tiền điện",
+    geld: "Chi phí mỗi tháng", miete: "Tiền thuê", personal: "Nhân viên", eigen: "Lương của bạn", strom: "Tiền điện (gồm VAT)",
     geldHilfe: "Ghi khoảng chừng là đủ, để trống cũng được. Hóa đơn thì chụp sau ở văn phòng.",
     putzt: "Ai dọn dẹp?", wer: { selbst: "Chúng tôi", firma: "Công ty", beides: "Cả hai" }, firma: "Công ty",
     fertig: "Xong!", eingerichtet: "đã cài đặt", los: "Bắt đầu", pin: "Đặt mã văn phòng",

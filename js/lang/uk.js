@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Завантажити чек, оновити ціни",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Хтось із персоналу хворів чи був у відпустці цього місяця?", abwWer: "Скільки днів? Ти все одно їм платиш.", tage: "дн.", modell: { stunde: "Погодинно", monat: "Фіксовано на місяць" }, monatBrutto: "Брутто на місяць", monatHinweis: "Рахується щомісяця як постійні витрати. Більше не питаємо щодня.", frage: "Був сьогодні персонал?", wer: "Хто був? Вкажи години.", std: "год.", satz: "Брутто за годину", summe: (b) => `Коштує тобі сьогодні: ${b}`, brutto: (b) => `${b} брутто, плюс частка роботодавця`, art: { angestellt: "За договором", minijob: "Minijob" }, summeOffen: "Немає ставки й типу", weitere: "ще одна людина", person: (n) => `Працівник ${n}`, fertig: "Готово" },
   muell: { personalEintragen: "Записати їжу персоналу",
     zeki: { start: "Що сьогодні викинули?", weiter: "Ще щось викинули?", personal: "Що з'їла твоя команда?", bruch: "Що зламалося чи розбилося?" },
     grund: { roh: "Товар", personal: "Персонал", bruch: "Поломка" }, nichtsGefunden: "Нічого не знайдено. Напиши інакше або обери «Зважив відро».",
@@ -1083,7 +1083,7 @@ export default {
     karteHilfe: "Застосунок читає страви й ціни з фото. Що ви робите самі, вкажеш в офісі в розділі «Рецепти».",
     kuehl: "Холод", arten: { getraenke: "Холодильник для напоїв", kuehlschrank: "Холодильник", saladette: "Саладета", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
     kuehlHilfe: "Для кожного приладу потім вносиш температуру. Назви змінюєш в офісі.",
-    geld: "Витрати на місяць", miete: "Оренда", personal: "Персонал", eigen: "Твоя зарплата", strom: "Електрика",
+    geld: "Витрати на місяць", miete: "Оренда", personal: "Персонал", eigen: "Твоя зарплата", strom: "Електрика (з ПДВ)",
     geldHilfe: "Приблизно – вже добре, можна й порожнім. Рахунки сфотографуєш потім в офісі.",
     putzt: "Хто прибирає?", wer: { selbst: "Ми", firma: "Фірма", beides: "Разом" }, firma: "Фірма",
     fertig: "Готово!", eingerichtet: "налаштовано", los: "Поїхали", pin: "Встановити PIN офісу",

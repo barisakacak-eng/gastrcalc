@@ -212,7 +212,7 @@ function karteFotoSchirm() {
   return `<div class="inhalt">${karteZeigtPruefliste() ? kartePruefenView(stand) : karteFotoView(stand)}
       ${karteFussKnopf("")}
       ${!karteZeigtPruefliste() && !fotoLauf() && !stand.gerichte.length ? `<button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="karte" data-bis="ergebnis">${esc(t("start.karteAnlegen"))}</button>` : ""}
-      <button type="button" class="leise" data-a="nav" data-wert="kartebuero">${esc(t("allgemein.zurueck"))}</button></div>${nav("kartebuero")}`;
+      <button type="button" class="leise" data-a="nav" data-wert="${modus(wurzel) === "buero" ? "kartebuero" : "start"}">${esc(t("allgemein.zurueck"))}</button></div>${nav("kartebuero")}`; // Persona-Test 27.10.: aus dem Laden zurück zu Heute
 }
 
 function zeichneOnboarding() {
@@ -926,7 +926,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "kuehlware" && kuehlWareZurueck()) { /* Trennung (17.10.2026): offene Entscheidung schließen */ }
     else if (ansicht === "beleg") ansicht = herkunft && herkunft !== "beleg" ? herkunft : m === "buero" ? "buero" : "umsatz";
     else if (ansicht === "umsatzheute") { umsatzLadenZuruecksetzen(); ansicht = herkunft === "abschluss" ? "abschluss" : anfang; } // Laden-Umbau (20.10.2026)
-    else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = "kartebuero"; }
+    else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = m === "buero" ? "kartebuero" : anfang; } // Persona-Test 27.10.: nach der Einrichtung (Laden) zurück zu Heute, nicht ins Büro
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro
     else if (ansicht === "karte" && karteLadenZurueck()) { /* erst das Preis-Blatt schließen */ }
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = anfang; } // Laden-Reiter stapeln nicht: Zurück = Heute; Büro → Büro-Start; Personal → drei Kacheln

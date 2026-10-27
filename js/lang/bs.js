@@ -744,7 +744,7 @@ export default {
     belegeKurz: "Učitaj račun, ažuriraj cijene",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Je li neko od radnika ovaj mjesec bio bolestan ili na godišnjem?", abwWer: "Koliko dana? Ipak ih plaćaš.", tage: "dana", modell: { stunde: "Po satu", monat: "Fiksno mjesečno" }, monatBrutto: "Bruto mjesečno", monatHinweis: "Računa se svaki mjesec kao fiksni trošak. Više se ne pita svaki dan.", frage: "Jesu li danas bili radnici?", wer: "Ko je bio? Podesi sate.", std: "sati", satz: "Bruto po satu", summe: (b) => `Košta te danas: ${b}`, brutto: (b) => `${b} bruto, plus dio poslodavca`, art: { angestellt: "Zaposlen", minijob: "Minijob" }, summeOffen: "Fale plata i vrsta", weitere: "još jedna osoba", person: (n) => `Radnik ${n}`, fertig: "Gotovo" },
   muell: { personalEintragen: "Upiši obrok osoblja",
     zeki: { start: "Šta je danas bačeno?", weiter: "Još nešto bačeno?", personal: "Šta je tvoj tim jeo?", bruch: "Šta se razbilo ili pokvarilo?" },
     grund: { roh: "Roba", personal: "Osoblje", bruch: "Lom" }, nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",
@@ -1085,7 +1085,7 @@ export default {
     karteHilfe: "Aplikacija čita jela i cijene sa slike. Šta pravite sami, podesiš u uredu pod Recepti.",
     kuehl: "Hlađenje", arten: { getraenke: "Frižider za pića", kuehlschrank: "Frižider", saladette: "Saladeta", tiefkuehler: "Zamrzivač", warmhalter: "Grijač" },
     kuehlHilfe: "Za svaki uređaj kasnije upisuješ temperaturu. Imena mijenjaš u uredu.",
-    geld: "Troškovi mjesečno", miete: "Kirija", personal: "Osoblje", eigen: "Tvoja plata", strom: "Struja",
+    geld: "Troškovi mjesečno", miete: "Kirija", personal: "Osoblje", eigen: "Tvoja plata", strom: "Struja (sa PDV-om)",
     geldHilfe: "Otprilike je dovoljno, može i prazno. Račune slikaš kasnije u uredu.",
     putzt: "Ko čisti?", wer: { selbst: "Mi", firma: "Firma", beides: "Oboje" }, firma: "Firma",
     fertig: "Gotovo!", eingerichtet: "podešeno", los: "Idemo", pin: "Postavi PIN ureda",

@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Cargar ticket, actualizar precios",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "¿Algún empleado estuvo enfermo o de vacaciones este mes?", abwWer: "¿Cuántos días? Igual les pagas.", tage: "días", modell: { stunde: "Por hora", monat: "Fijo al mes" }, monatBrutto: "Bruto al mes", monatHinweis: "Cuenta cada mes como gasto fijo. Ya no se pregunta a diario.", frage: "¿Hubo empleados hoy?", wer: "¿Quién estuvo? Ajusta las horas.", std: "h", satz: "Bruto por hora", summe: (b) => `Hoy te cuesta: ${b}`, brutto: (b) => `${b} bruto, más la parte de la empresa`, art: { angestellt: "Contratado", minijob: "Minijob" }, summeOffen: "Faltan sueldo y tipo", weitere: "otra persona", person: (n) => `Empleado ${n}`, fertig: "Listo" },
   muell: { personalEintragen: "Anotar comida del personal",
     zeki: { start: "¿Qué se ha tirado hoy?", weiter: "¿Se ha tirado algo más?", personal: "¿Qué ha comido tu equipo?", bruch: "¿Qué se ha roto?" },
     grund: { roh: "Mercancía", personal: "Personal", bruch: "Rotura" }, nichtsGefunden: "No se ha encontrado nada. Escríbelo de otra forma o usa “Cubo pesado”.",
@@ -1077,7 +1077,7 @@ export default {
     karteHilfe: "La app lee platos y precios de la foto. Lo que hacéis vosotros lo pones en la oficina, en Recetas.",
     kuehl: "Frío", arten: { getraenke: "Nevera de bebidas", kuehlschrank: "Nevera", saladette: "Saladette", tiefkuehler: "Congelador", warmhalter: "Mantenedor caliente" },
     kuehlHilfe: "Para cada equipo anotas luego la temperatura. Los nombres los cambias en la oficina.",
-    geld: "Gastos al mes", miete: "Alquiler", personal: "Personal", eigen: "Tu sueldo", strom: "Luz",
+    geld: "Gastos al mes", miete: "Alquiler", personal: "Personal", eigen: "Tu sueldo", strom: "Luz (con IVA)",
     geldHilfe: "Aproximado basta, también puedes dejarlo vacío. Las facturas las fotografías luego en la oficina.",
     putzt: "¿Quién limpia?", wer: { selbst: "Nosotros", firma: "Empresa", beides: "Ambos" }, firma: "Empresa",
     fertig: "¡Listo!", eingerichtet: "configurado", los: "Vamos", pin: "Fijar código de oficina",

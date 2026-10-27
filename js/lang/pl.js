@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Wczytaj rachunek, zaktualizuj ceny",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Czy ktoś z pracowników był w tym miesiącu chory albo na urlopie?", abwWer: "Ile dni? I tak im płacisz.", tage: "dni", modell: { stunde: "Za godzinę", monat: "Stała co miesiąc" }, monatBrutto: "Brutto miesięcznie", monatHinweis: "Liczy się co miesiąc jako koszt stały. Nie pytamy już codziennie.", frage: "Byli dziś pracownicy?", wer: "Kto był? Ustaw godziny.", std: "godz.", satz: "Brutto za godzinę", summe: (b) => `Kosztuje cię dziś: ${b}`, brutto: (b) => `${b} brutto, plus część pracodawcy`, art: { angestellt: "Na etacie", minijob: "Minijob" }, summeOffen: "Brak stawki i rodzaju", weitere: "kolejna osoba", person: (n) => `Pracownik ${n}`, fertig: "Gotowe" },
   muell: { personalEintragen: "Wpisz posiłek pracownika",
     zeki: { start: "Co dziś poszło do kosza?", weiter: "Coś jeszcze do kosza?", personal: "Co zjadł twój zespół?", bruch: "Co się zepsuło lub stłukło?" },
     grund: { roh: "Towar", personal: "Personel", bruch: "Uszkodzone" }, nichtsGefunden: "Nic nie znaleziono. Napisz inaczej albo wybierz „Zważone wiadro”.",
@@ -1083,7 +1083,7 @@ export default {
     karteHilfe: "Aplikacja czyta dania i ceny ze zdjęcia. To, co robicie sami, ustawisz w biurze w Przepisach.",
     kuehl: "Chłodzenie", arten: { getraenke: "Lodówka na napoje", kuehlschrank: "Lodówka", saladette: "Saladetta", tiefkuehler: "Zamrażarka", warmhalter: "Podgrzewacz" },
     kuehlHilfe: "Dla każdego urządzenia wpiszesz potem temperaturę. Nazwy zmienisz w biurze.",
-    geld: "Koszty w miesiącu", miete: "Czynsz", personal: "Personel", eigen: "Twoja pensja", strom: "Prąd",
+    geld: "Koszty w miesiącu", miete: "Czynsz", personal: "Personel", eigen: "Twoja pensja", strom: "Prąd (z VAT)",
     geldHilfe: "Wystarczy mniej więcej, można też zostawić puste. Rachunki sfotografujesz potem w biurze.",
     putzt: "Kto sprząta?", wer: { selbst: "My", firma: "Firma", beides: "Oba" }, firma: "Firma",
     fertig: "Gotowe!", eingerichtet: "ustawione", los: "Zaczynamy", pin: "Ustaw PIN biura",

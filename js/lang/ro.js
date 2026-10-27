@@ -743,7 +743,7 @@ export default {
     belegeKurz: "Încarcă bonul, actualizează prețurile",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Au fost angajați bolnavi sau în concediu luna asta?", abwWer: "Câte zile? Tot îi plătești.", tage: "zile", modell: { stunde: "Pe oră", monat: "Fix pe lună" }, monatBrutto: "Brut pe lună", monatHinweis: "Intră în fiecare lună la costuri fixe. Nu mai e întrebat zilnic.", frage: "Au fost angajați azi?", wer: "Cine a fost? Setează orele.", std: "ore", satz: "Brut pe oră", summe: (b) => `Te costă azi: ${b}`, brutto: (b) => `${b} brut, plus partea angajatorului`, art: { angestellt: "Angajat", minijob: "Minijob" }, summeOffen: "Lipsesc salariul și tipul", weitere: "încă o persoană", person: (n) => `Angajat ${n}`, fertig: "Gata" },
   muell: { personalEintragen: "Notează masa personalului",
     zeki: { start: "Ce s-a aruncat azi?", weiter: "S-a mai aruncat ceva?", personal: "Ce a mâncat echipa ta?", bruch: "Ce s-a spart sau stricat?" },
     grund: { roh: "Marfă", personal: "Personal", bruch: "Spart" }, nichtsGefunden: "N-am găsit nimic. Scrie altfel sau alege „Găleată cântărită”.",
@@ -1084,7 +1084,7 @@ export default {
     karteHilfe: "Aplicația citește preparatele și prețurile din poză. Ce faceți voi singuri setezi în birou, la Rețete.",
     kuehl: "Răcire", arten: { getraenke: "Frigider de băuturi", kuehlschrank: "Frigider", saladette: "Saladetă", tiefkuehler: "Congelator", warmhalter: "Încălzitor" },
     kuehlHilfe: "Pentru fiecare aparat introduci mai târziu temperatura. Numele le schimbi în birou.",
-    geld: "Costuri pe lună", miete: "Chirie", personal: "Personal", eigen: "Salariul tău", strom: "Curent",
+    geld: "Costuri pe lună", miete: "Chirie", personal: "Personal", eigen: "Salariul tău", strom: "Curent (cu TVA)",
     geldHilfe: "Aproximativ e destul, poți lăsa și gol. Facturile le fotografiezi mai târziu în birou.",
     putzt: "Cine face curat?", wer: { selbst: "Noi", firma: "Firmă", beides: "Amândouă" }, firma: "Firmă",
     fertig: "Gata!", eingerichtet: "configurat", los: "Hai să începem", pin: "Setează PIN-ul de birou",

@@ -88,3 +88,12 @@ test("Urlaub/Krankheit am Monatsende: Tage × übliche Stunden × Brutto × Aufs
   assert.ok(Math.abs((nach - vor) - 2 * 8 * kostenJeStunde(14, "angestellt")) < 1e-6);
   assert.equal(abwesendFrageNoetig(s, "2026-10-30"), false); // einmal je Monat
 });
+
+test("Gegenprüfung F6: Stufe 3 mit Kartenquote zählt den Müll in der Monatsrechnung", () => {
+  const s = beispielLaden("2026-10-26"); const H = "2026-10-26";
+  const z = zaehler(s, { datum: H });
+  if (z.stufe === 3 && !(z.quoteFenster >= z.quote)) assert.ok(z.muellPrognose >= 0);
+  const m = monatsZiel(s, z, H);
+  const erwartet = (z.kosten + z.tageskostenPrognose * z.gewichtZukunft + z.muell + (z.muellPrognose || 0)) / (1 - z.quoteEff) * (1 + z.steuer);
+  assert.ok(Math.abs(m.nullpunkt - erwartet) < 1e-6);
+});

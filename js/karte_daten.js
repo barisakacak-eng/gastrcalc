@@ -22,11 +22,19 @@ export function gerichtAusVorlage(v) { // 17.10.2026 Fehler F1 (vorher screens/k
 export function gerichtAusVorlageAnlegen(stand, v) { const g = gerichtAusVorlage(v); stand.gerichte.push(g); return g; }
 export function gerichtEigenAnlegen(stand, name) {
   const g = { id: uid(), name, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis: null, mengeTag: null, steuer: 0.07 };
-  stand.gerichte.push(g); return g;
+  stand.gerichte.push(g); startRezept(stand, g); return g;
+}
+// Persona-Test Wirt (27.10.2026): Ein eigenes Gericht bekam das Start-Rezept aus dem Baukasten erst beim nächsten App-Start –
+// bis dahin zeigte der Rezept-Schritt „0 Zutaten“, das Büro später fremde Zutaten. Jetzt sofort, sobald der Name passt.
+function startRezept(stand, g) {
+  if (!g?.name || String(g.name).trim().length < 4 || (g.zutaten || []).length || g.rezeptBewusstLeer || g.klasse === "getraenk") return false;
+  const r = rezeptBauen(g.name, { rubrik: g.rubrik }); if (!r) return false;
+  g.zutaten = r.zutaten.map((z) => ({ name: z.name, menge: z.menge, einheit: z.einheit })); g.zeit = r.zeit || g.zeit; g.rezeptQuelle = "baukasten"; g.rezeptFamilie = r.familie;
+  stand.artikel = artikelAusGerichten(stand); return true;
 }
 export function gerichtEntfernen(stand, id) { const vorher = stand.gerichte.length; stand.gerichte = stand.gerichte.filter((x) => x.id !== id); return stand.gerichte.length < vorher; }
 const gericht = (stand, id) => stand.gerichte.find((x) => x.id === id) || null;
-export function gerichtNameSetzen(stand, id, name) { const g = gericht(stand, id); if (g) g.name = name; }
+export function gerichtNameSetzen(stand, id, name) { const g = gericht(stand, id); if (g) { g.name = name; startRezept(stand, g); } }
 export function gerichtKlasseSetzen(stand, id, klasse) { const g = gericht(stand, id); if (g) g.klasse = klasse; }
 // Zubereitungszeit in Schritten: ab 5 Minuten 1 Minute, darunter eine halbe
 export function gerichtZeitSchritt(stand, id, d) { const g = gericht(stand, id); if (!g) return; const z = Number(g.zeit) || 0; const schritt = (d > 0 ? z >= 5 : z > 5) ? 1 : 0.5; g.zeit = Math.max(0.5, Math.round((z + d * schritt) * 2) / 2); }

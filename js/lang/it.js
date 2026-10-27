@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Carica scontrino, aggiorna i prezzi",
   },
 
-  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Questo mese qualche dipendente è stato malato o in ferie?", abwWer: "Quanti giorni? Li paghi comunque.", tage: "giorni", modell: { stunde: "A ore", monat: "Fisso al mese" }, monatBrutto: "Lordo al mese", monatHinweis: "Conta ogni mese come costo fisso. Non viene più chiesto ogni giorno.", frage: "Oggi c’erano dipendenti?", wer: "Chi c’era? Imposta le ore.", std: "ore", satz: "Lordo all’ora", summe: (b) => `Ti costa oggi: ${b}`, brutto: (b) => `${b} lordo, più la parte del datore di lavoro`, art: { angestellt: "Assunto", minijob: "Minijob" }, summeOffen: "Mancano paga e tipo", weitere: "un’altra persona", person: (n) => `Dipendente ${n}`, fertig: "Fatto" },
   muell: { personalEintragen: "Segna pasto del personale",
     zeki: { start: "Cosa hai buttato oggi?", weiter: "Hai buttato altro?", personal: "Cosa ha mangiato la tua squadra?", bruch: "Cosa si è rotto?" },
     grund: { roh: "Merce", personal: "Personale", bruch: "Rottura" }, nichtsGefunden: "Non trovato niente. Scrivi in un altro modo o scegli “Bidone pesato”.",
@@ -1077,7 +1077,7 @@ export default {
     karteHilfe: "L'app legge piatti e prezzi dalla foto. Quello che fate voi lo imposti in ufficio sotto Ricette.",
     kuehl: "Frigo", arten: { getraenke: "Frigo bevande", kuehlschrank: "Frigorifero", saladette: "Saladette", tiefkuehler: "Congelatore", warmhalter: "Scaldavivande" },
     kuehlHilfe: "Per ogni apparecchio inserisci poi la temperatura. I nomi li cambi in ufficio.",
-    geld: "Costi al mese", miete: "Affitto", personal: "Personale", eigen: "Il tuo stipendio", strom: "Luce",
+    geld: "Costi al mese", miete: "Affitto", personal: "Personale", eigen: "Il tuo stipendio", strom: "Luce (IVA inclusa)",
     geldHilfe: "Basta più o meno, puoi anche lasciare vuoto. Le bollette le fotografi dopo in ufficio.",
     putzt: "Chi pulisce?", wer: { selbst: "Noi", firma: "Ditta", beides: "Entrambi" }, firma: "Ditta",
     fertig: "Fatto!", eingerichtet: "impostato", los: "Si parte", pin: "Imposta codice ufficio",
