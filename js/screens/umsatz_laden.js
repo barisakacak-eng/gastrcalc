@@ -100,11 +100,11 @@ function teamFeld(stand, H) {
   const pers = teamEntwurf.pers ?? (k ? String(k.personen) : ""); const std = teamEntwurf.std ?? (k ? wertAnzeige(k.stunden) : "");
   const satz = parseZahl(teamEntwurf.satz ?? "") ?? satzGemerkt; const stdZahl = parseZahl(std);
   const kosten = satz && stdZahl > 0 ? teamTagKosten({ eintraege: [{ stunden: stdZahl, satz, art: "angestellt" }] }) : null;
-  const unter = satzGemerkt && !satzAuf ? `<button type="button" class="ul-team-satz-zeile" data-a="ul-satz-auf">${esc(t("teamTag.kompaktKosten", fmtEuro(satzGemerkt, { dezimal: 2 }), kosten !== null ? fmtEuro(kosten, { dezimal: 0 }) : "–"))}</button>` : `<small>${esc(t("teamTag.zusammen"))}</small>`;
+  const unter = satzGemerkt && !satzAuf ? `<button type="button" class="ul-team-satz-zeile" data-a="ul-satz-auf">${esc(t("teamTag.kompaktKosten", fmtEuro(satzGemerkt, { dezimal: 2 }), kosten !== null ? fmtEuro(kosten, { dezimal: 0 }) : "–"))}</button>` : "";
   const zahl = (f, w, e, im) => `<label class="ul-team-zahl"><input inputmode="${im}" enterkeyhint="done" autocomplete="off" data-f="${f}" value="${esc(w)}" placeholder="0" aria-label="${esc(e)}"><span class="einheit">${esc(e)}</span></label>`;
   return `<div class="ul-feld ul-team-kompakt"><span class="ul-liefer-text">${esc(t("teamTag.heute"))}${unter}</span>
       <div class="ul-team-zahlen">${zahl("ul-team-pers", pers, t("teamTag.pers"), "numeric")}${zahl("ul-team-std", std, t("teamTag.std"), "decimal")}</div></div>
-    ${!satzGemerkt || satzAuf ? `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("teamTag.satz"))}<small>${esc(t(satzGemerkt ? "teamTag.satzAendern" : "teamTag.satzErst"))}</small></span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-team-satz" value="${esc(teamEntwurf.satz ?? (satzGemerkt ? wertAnzeige(satzGemerkt) : ""))}" placeholder="0,00" aria-label="${esc(t("teamTag.satz"))}"><span class="einheit">€</span></label>` : ""}`;
+    ${!satzGemerkt || satzAuf ? `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("teamTag.satz"))}</span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-team-satz" value="${esc(teamEntwurf.satz ?? (satzGemerkt ? wertAnzeige(satzGemerkt) : ""))}" placeholder="0,00" aria-label="${esc(t("teamTag.satz"))}"><span class="einheit">€</span></label>` : ""}`;
 }
 function lieferFeld(stand, H) {
   const prov = lieferProvision(stand); if (!prov) return "";
