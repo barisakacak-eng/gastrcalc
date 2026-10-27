@@ -8,8 +8,8 @@ const pl = (n, jedan, dva, pet) => {
 };
 
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"Od prvog unosa otpada","titel":"Manje gubitka","laueft": (ab) => `Mjerenje od ${ab}`,"stufe":{"bisNull":"Do nule","bisZiel":"Do cilja","ueberZiel":"Iznad cilja"},"ohneKosten":"Nedostaju troškovi","art":{"muell":"Otpad","preis":"Cijena","lager":"Skladište","papier":"Papiri"},"aktion":{"kuehlAlarm":"Izmjeri ponovo","rundgangOffen":"Nastavi obilazak","rundgang":"Obilazak hlađenja","putzen":"Čišćenje","sicherung":"Napravi kopiju","abschluss":"Zatvori dan","selbst":"Unesi svoj recept","einkauf":"Unesi nabavne cijene","rezepte":"Izvagaj recepte"}},
   app: { name: "GastroCash", entwurf: "Test verzija" },
 
   allgemein: {
@@ -373,7 +373,7 @@ export default {
     offen: { karte: () => "Slikaj jelovnik", preise: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez cijene`, rezepte: (n) => `${n} ${pl(n, "jelo", "jela", "jela")} bez recepta`, kosten: (n) => `${n} ${pl(n, "obavezna stavka otvorena", "obavezne stavke otvorene", "obaveznih stavki otvoreno")} (kirija, osoblje, tvoja plata, struja/plin)`,
       einkauf: (n) => `${n} ${pl(n, "sastojak", "sastojka", "sastojaka")} bez nabavne cijene – jedna slika računa to popuni`, kuehlung: () => "Dodaj rashladni uređaj", sicherung: () => "Zadnja kopija starija od 7 dana" } },
   vergleich: { wareHoch: (q) => `${q} % – visoko`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Rohgewinn %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Rohgewinn (nach Ware)", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Napravi svoju sliku", fotoGespeichert: "Slika sačuvana. Ostaje na ovom telefonu.",  titel: "Jela u poređenju", unter: "Koja jela ti najviše donose?", tab: { db: "Ostaje po komadu", marge: "Bruto zarada %" }, ware: "Trošak robe", db: "Ostaje ti po komadu", marge: "Bruto zarada (nakon robe)", leer: "Upiši prodajne i nabavne cijene, pa ćeš ovdje vidjeti koja jela najviše donose.", ohneZahlen: (n) => `${n} ${pl(n, "jelo još bez brojeva", "jela još bez brojeva", "jela još bez brojeva")}`, einkaufFehlt: "Fale nabavne cijene", hinweis: "Vrijednosti su procjene i mogu odstupati zavisno od sastojaka i cijena. Svi iznosi su bez PDV-a, osim prodajne cijene.", nachKosten: "Nakon svih troškova", nachKostenFehlt: "Nedostaju troškovi", ampelLegende: "Semafor nakon svih troškova: crveno ispod 10 %, zeleno od 19 % neto cijene (≈ procjena po zbirci smjernica BMF, godina podataka 2024)." },
   buero: {
     ruhig: { mehr: (n) => `još ${n}` }, titel: "Ured", zurueck: "Lokal",
     abschnitt: { geld: "Novac", ware: "Roba", kartePreise: "Meni i cijene", offen: "Za uraditi", ordner: "Fascikle za predaju", zahlen: "Brojke", karte: "Jelovnik i nabavka", einrichten: "Podesi lokal" },
@@ -579,7 +579,7 @@ export default {
     zuletzt: "zadnji put",
     zuletztLang: (w, d) => `Zadnji put ${w} °C, ${d}. Upiši vrijednost koju sad očitaš.`,
     ersteMessung: "Prvo mjerenje na ovom uređaju.",
-    minusHinweis: "Minus upiši sa „-“, npr. -18",
+    minusFrage: (v) => `Misliš −${v} °C? Dodirni`, minusHinweis: "Minus upiši sa „-“, npr. -18",
     nichtGemessenKurz: "nije mjereno",
     nichtGemessen: "Ili: danas nije mjereno, jer …",
     gruende: { geschlossen: "zatvoreno", geraetAus: "uređaj isključen / odmrzava se", leer: "uređaj prazan" },
@@ -744,7 +744,7 @@ export default {
     belegeKurz: "Učitaj račun, ažuriraj cijene",
   },
 
-  muell: {
+  muell: { personalEintragen: "Upiši obrok osoblja",
     zeki: { start: "Šta je danas bačeno?", weiter: "Još nešto bačeno?", personal: "Šta je tvoj tim jeo?", bruch: "Šta se razbilo ili pokvarilo?" },
     grund: { roh: "Roba", personal: "Osoblje", bruch: "Lom" }, nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",
     zurUebersicht: "Pregled otpada",
@@ -756,7 +756,7 @@ export default {
     gerichtWegKurz: "Gotova hrana, vraćen tanjir, pogrešna narudžba",
     rohwareWeg: "Sirovina bačena",
     rohwareKurz: "Paradajz, meso, hljeb – istekao rok ili pokvareno",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Ostalo", uebrigHinweis: "Šta je bilo gotovo i nije prodano",
     eimer: "Kanta izvagana",
     eimerKurz: "Samo težina, aplikacija računa ostalo",
     personal: "Hrana za osoblje",
@@ -855,7 +855,7 @@ export default {
     fixTag: "Fiksni troškovi dana",
     tonne: "Kanta",
     kuehl: "Hlađenje",
-    rundgaenge: (n) => `${n} ${pl(n, "obilazak", "obilaska", "obilazaka")}`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => `${n} ${pl(n, "obilazak", "obilaska", "obilazaka")}`, nachkontrolle: (n) => `${n} ${pl(n, "ponovna kontrola", "ponovne kontrole", "ponovnih kontrola")}`,
     besser: (tag, b) => `${tag}: ${b} više prometa nego isti dan prošle sedmice.`,
     schlechter: (tag, b) => `${tag}: ${b} manje prometa nego isti dan prošle sedmice.`,
     gleich: (tag) => `${tag}: isto kao isti dan prošle sedmice.`,
@@ -1080,9 +1080,9 @@ export default {
     laden: "Tvoj lokal", namePlatzhalter: "Ime lokala",
     ladenHilfe: "Vrsta lokala daje početne vrijednosti za recepte, hlađenje i plan čišćenja. Sve možeš kasnije promijeniti u uredu.",
     allesGenau: "Podesi sve tačno",
-    karte: "Tvoj jelovnik", karteFoto: "Slikaj jelovnik", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Slike ili PDF", spaeter: "Kasnije",
+    karte: "Tvoj jelovnik", karteFoto: "Slikaj jelovnik", karteVorlagen: "Izaberi iz predložaka", karteGalerie: "Slike ili PDF", spaeter: "Kasnije",
     karteHilfe: "Aplikacija čita jela i cijene sa slike. Šta pravite sami, podesiš u uredu pod Recepti.",
-    kuehl: "Hlađenje", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frižider", saladette: "Saladeta", tiefkuehler: "Zamrzivač", warmhalter: "Grijač" },
+    kuehl: "Hlađenje", arten: { getraenke: "Frižider za pića", kuehlschrank: "Frižider", saladette: "Saladeta", tiefkuehler: "Zamrzivač", warmhalter: "Grijač" },
     kuehlHilfe: "Za svaki uređaj kasnije upisuješ temperaturu. Imena mijenjaš u uredu.",
     geld: "Troškovi mjesečno", miete: "Kirija", personal: "Osoblje", eigen: "Tvoja plata", strom: "Struja",
     geldHilfe: "Otprilike je dovoljno, može i prazno. Račune slikaš kasnije u uredu.",
@@ -1143,7 +1143,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Danas", muell: "Otpad", kuehl: "Hlađenje", putzplan: "Čišćenje", karte: "Meni" },
     leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", zekiFragen: "Pitaj Zekija", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi šifru ureda",
-    pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru", testphase: "Testna faza: bez koda. Svi ulaze u ured i u način za osoblje. Prije velikog pilota ponovo uključi kod.", testphaseAn: "Uključi testnu fazu bez koda", testphaseAus: "Ponovo uključi kod" },
     hilfeText: {
       allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",
       start: "Dan na jedan pogled. Veliki broj pokazuje koliko prometa još fali do nule. Crveno znači: pobrini se sada. „≈“ ispred broja znači procjenu (roba ili tvoja plata) – objašnjenje u uredu pod „Mjesec i brojač“. Bez nabavnih cijena aplikacija računa s 32 % robe (snek-barovi: 23–41 %, BMF tabele 2025).",
@@ -1155,7 +1155,7 @@ export default {
       laeden: "Ovdje prelaziš između svojih lokala. Svaki lokal ima svoje brojke.",
       personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Sastojci s menija. Provjeri količine, vrijeme pripreme i cijeli recept." }, // 26.10.2026
   heute: {
     zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
@@ -1470,6 +1470,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Zadnja van telefona: danas" : n === 1 ? "Zadnja van telefona: prije 1 dan" : `Zadnja van telefona: prije ${n} dana`, nieWeg: "Još nema kopije van telefona", mitPasswort: "Sa šifrom", ohneFotos: "Bez slika (mala, za mail)",
       verschicken: "Pošalji kopiju", woFrage: "Gdje je sada?", woanders: "Drugi uređaj, mail, oblak", nurHandy: "Samo na ovom telefonu", nurHandyMeldung: "Podsjetnik ostaje: datoteka je samo na ovom telefonu.", gezaehlt: "Kopija uračunata. Podsjetnik poništen." } },
   adanaBrot: { frage: "Koji hljeb dajete uz adanu?", pide: "Cijela pita", pideHalb: "Pola pite", fladen: "Dürüm / lavaš", kein: "Bez hljeba" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Napomene", einstiegUnter: "Porez i uredi, iz tvojih podataka", einstiegNeu: (n) => `${n} ${pl(n, "nova napomena", "nove napomene", "novih napomena")}`, titel: "Napomene", unter: "Iz tvojih podataka. Općenito, nije savjet.", pflicht: "Opća napomena, nije porezni savjet – razjasni s poreznim savjetnikom.", leer: "Trenutno nema napomene. S više podataka dolaze napomene.", quelle: "Izvor", belege: "Pripremi račune", spaeterKnopf: "Kasnije", spaeter: "kasnije", erledigt: "Gotovo", erledigtMeldung: "Napomena riješena", spaeterMeldung: "Napomena odgođena" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Pravni oblik", hinweis: "Piše na tvojoj prijavi obrta (Gewerbeanmeldung) ili u Impressumu. e.K. se računa kao samostalni obrt, GmbH & Co. KG kao KG.", offen: "Unesi pravni oblik", gesetzt: "Pravni oblik sačuvan", namen: { einzel: "Samostalni obrt", gbr: "GbR", gmbh: "GmbH", ug: "UG (s ograničenom odgovornošću)", kg_ohg: "KG ili OHG", unbekannt: "Ne znam" } }, // Rechtsform (23.10.2026)
 };

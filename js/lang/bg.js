@@ -6,8 +6,8 @@
 const br = (n, eden, mnogo) => Number(n) === 1 ? `1 ${eden}` : `${n} ${mnogo}`;
 
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"От първото въвеждане на отпадъци","titel":"По-малко загуби","laueft": (ab) => `Мерене от ${ab}`,"stufe":{"bisNull":"До нулата","bisZiel":"Към целта","ueberZiel":"Над целта"},"ohneKosten":"Липсват разходи","art":{"muell":"Отпадъци","preis":"Цена","lager":"Склад","papier":"Документи"},"aktion":{"kuehlAlarm":"Измери пак","rundgangOffen":"Продължи обиколката","rundgang":"Обиколка за охлаждане","putzen":"Почистване","sicherung":"Направи копие","abschluss":"Приключи деня","selbst":"Въведи рецептата си","einkauf":"Въведи покупните цени","rezepte":"Претегли рецептите"}},
   app: { name: "GastroCash", entwurf: "Тестова версия" },
 
   allgemein: {
@@ -371,7 +371,7 @@ export default {
     offen: { karte: () => "Снимай менюто", preise: (n) => `${br(n, "ястие", "ястия")} без цена`, rezepte: (n) => `${br(n, "ястие", "ястия")} без рецепта`, kosten: (n) => `${br(n, "задължителна позиция отворена", "задължителни позиции отворени")} (наем, персонал, твоята заплата, ток/газ)`,
       einkauf: (n) => `${br(n, "съставка", "съставки")} без покупна цена – една снимка на фактура ги попълва`, kuehlung: () => "Добави хладилна точка", sicherung: () => "Последното копие е по-старо от 7 дни" } },
   vergleich: { wareHoch: (q) => `${q} % – високо`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Направи своя снимка", fotoGespeichert: "Снимката е запазена. Остава на този телефон.",  titel: "Ястия в сравнение", unter: "Кои ястия ти носят най-много?", tab: { db: "Остава на брой", marge: "Rohgewinn %" }, ware: "Разход за стока", db: "Остава ти на брой", marge: "Rohgewinn (nach Ware)", leer: "Въведи продажни и покупни цени и тук ще видиш кои ястия носят най-много.", ohneZahlen: (n) => (n === 1 ? "1 ястие още без цифри" : `${n} ястия още без цифри`), einkaufFehlt: "Липсват покупни цени", hinweis: "Стойностите са приблизителни и може да се различават според съставките и цените. Всички суми са без ДДС, освен продажната цена.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Направи своя снимка", fotoGespeichert: "Снимката е запазена. Остава на този телефон.",  titel: "Ястия в сравнение", unter: "Кои ястия ти носят най-много?", tab: { db: "Остава на брой", marge: "Брутна печалба %" }, ware: "Разход за стока", db: "Остава ти на брой", marge: "Брутна печалба (след стоката)", leer: "Въведи продажни и покупни цени и тук ще видиш кои ястия носят най-много.", ohneZahlen: (n) => (n === 1 ? "1 ястие още без цифри" : `${n} ястия още без цифри`), einkaufFehlt: "Липсват покупни цени", hinweis: "Стойностите са приблизителни и може да се различават според съставките и цените. Всички суми са без ДДС, освен продажната цена.", nachKosten: "След всички разходи", nachKostenFehlt: "Липсват разходи", ampelLegende: "Светофар след всички разходи: червено под 10 %, зелено от 19 % от нетната цена (≈ оценка по сборника с ориентировъчни стойности на BMF, година на данните 2024)." },
   buero: {
     ruhig: { mehr: (n) => `още ${n}` }, titel: "Офис", zurueck: "Обект",
     abschnitt: { geld: "Пари", ware: "Стока", kartePreise: "Меню и цени", offen: "За вършене", ordner: "Папки за предаване", zahlen: "Числа", karte: "Меню и покупки", einrichten: "Настрой обекта" },
@@ -577,7 +577,7 @@ export default {
     zuletzt: "последно",
     zuletztLang: (w, d) => `Последно ${w} °C на ${d}. Въведи стойността, която виждаш сега.`,
     ersteMessung: "Първо мерене на тази точка.",
-    minusHinweis: "Минус се пише с „-“, напр. -18",
+    minusFrage: (v) => `Имаше предвид −${v} °C? Докосни`, minusHinweis: "Минус се пише с „-“, напр. -18",
     nichtGemessenKurz: "не е мерено",
     nichtGemessen: "Или: днес не е мерено, защото …",
     gruende: { geschlossen: "затворено", geraetAus: "уредът е изключен / размразява се", leer: "уредът е празен" },
@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Зареди бележка, обнови цените",
   },
 
-  muell: {
+  muell: { personalEintragen: "Запиши храна за персонала",
     zeki: { start: "Какво се изхвърли днес?", weiter: "Още нещо за изхвърляне?", personal: "Какво яде екипът ти?", bruch: "Какво се счупи?" },
     grund: { roh: "Стока", personal: "Персонал", bruch: "Счупено" }, nichtsGefunden: "Нищо не е намерено. Напиши го иначе или избери „Претеглена кофа“.",
     zurUebersicht: "Преглед на боклука",
@@ -754,7 +754,7 @@ export default {
     gerichtWegKurz: "Готова храна, върната чиния, грешна поръчка",
     rohwareWeg: "Суровина в кофата",
     rohwareKurz: "Домати, месо, хляб – с изтекъл срок или развалени",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Останало", uebrigHinweis: "Каквото беше готово и не се продаде",
     eimer: "Претеглена кофа",
     eimerKurz: "Само теглото, останалото го смята приложението",
     personal: "Храна за персонала",
@@ -853,7 +853,7 @@ export default {
     fixTag: "Постоянни разходи за деня",
     tonne: "Кофа",
     kuehl: "Охлаждане",
-    rundgaenge: (n) => n === 1 ? "1 обиколка" : `${n} обиколки`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => n === 1 ? "1 обиколка" : `${n} обиколки`, nachkontrolle: (n) => br(n, "повторно мерене", "повторни мерения"),
     besser: (tag, b) => `${tag}: с ${b} повече оборот от миналата седмица.`,
     schlechter: (tag, b) => `${tag}: с ${b} по-малко оборот от миналата седмица.`,
     gleich: (tag) => `${tag}: колкото миналата седмица.`,
@@ -1078,9 +1078,9 @@ export default {
     laden: "Твоят обект", namePlatzhalter: "Име на обекта",
     ladenHilfe: "Видът на обекта дава начални стойности за рецепти, охлаждане и график за почистване. Всичко можеш да смениш после в офиса.",
     allesGenau: "Настрой всичко точно",
-    karte: "Твоето меню", karteFoto: "Снимай менюто", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Снимки или PDF", spaeter: "По-късно",
+    karte: "Твоето меню", karteFoto: "Снимай менюто", karteVorlagen: "Избери от шаблони", karteGalerie: "Снимки или PDF", spaeter: "По-късно",
     karteHilfe: "Приложението чете ястията и цените от снимката. Каквото правите сами, настройваш в офиса в Рецепти.",
-    kuehl: "Охлаждане", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Хладилник", saladette: "Саладета", tiefkuehler: "Фризер", warmhalter: "Топла витрина" },
+    kuehl: "Охлаждане", arten: { getraenke: "Хладилник за напитки", kuehlschrank: "Хладилник", saladette: "Саладета", tiefkuehler: "Фризер", warmhalter: "Топла витрина" },
     kuehlHilfe: "За всеки уред после въвеждаш температурата. Имената сменяш в офиса.",
     geld: "Разходи на месец", miete: "Наем", personal: "Персонал", eigen: "Твоята заплата", strom: "Ток",
     geldHilfe: "Горе-долу е достатъчно, може и празно. Фактурите снимаш после в офиса.",
@@ -1141,7 +1141,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Днес", muell: "Отпадъци", kuehl: "Охлаждане", putzplan: "Почистване", karte: "Меню" },
     leiste: "Обект", menueAuf: "Отвори менюто", schliessen: "Затвори", hilfeAuf: "Помощ", zekiFragen: "Попитай Зеки", deinLaden: "Твоят обект", abschluss: "Приключи деня", personal: "Режим персонал", buero: "Офис", ladenWechseln: "Смени обекта", sprache: "Език", zumLaden: "Обект", zumBuero: "Офис", schlossCode: "Въведи кода за офиса",
-    pin: { titel: "Код за офиса", neu: "Избери нов код", nochmal: "Още веднъж", falsch: "Грешен код", ungleich: "Не съвпада. Избери отново.", gesetzt: "Кодът за офиса е запазен", entfernt: "Кодът за офиса е премахнат", setzen: "Задай код за офиса", aendern: "Смени кода за офиса", entfernen: "Премахни кода", ohne: "Без код всеки влиза в офиса.", mit: "Офисът е защитен с код.", loeschen: "Изтрий цифра", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Код за офиса", neu: "Избери нов код", nochmal: "Още веднъж", falsch: "Грешен код", ungleich: "Не съвпада. Избери отново.", gesetzt: "Кодът за офиса е запазен", entfernt: "Кодът за офиса е премахнат", setzen: "Задай код за офиса", aendern: "Смени кода за офиса", entfernen: "Премахни кода", ohne: "Без код всеки влиза в офиса.", mit: "Офисът е защитен с код.", loeschen: "Изтрий цифра", testphase: "Тестова фаза: без код. Всеки влиза в офиса и в режим персонал. Включи кода отново преди големия пилот.", testphaseAn: "Включи тестова фаза без код", testphaseAus: "Включи кода отново" },
     hilfeText: {
       allgemein: "Лентата долу води до всичко, което ти трябва в обекта. Сметки, настройки и списъци има в офиса.",
       start: "Денят с един поглед. Голямото число показва колко оборот още липсва до нулата. Червено значи: погрижи се сега. „≈“ отпред означава оценка (ориентир за стока или твоята заплата) – обяснение в офиса под „Месец и брояч“. Без покупни цени приложението смята с 32 % стока (снекбарове: 23–41 %, таблици BMF 2025).",
@@ -1153,7 +1153,7 @@ export default {
       laeden: "Тук превключваш между обектите си. Всеки обект има свои числа.",
       personal: "Въведи отпадъци, измери охлаждането, отметни почистването. Обратно само с кода за офиса.",
       buero: "Тук са всички сметки, списъци и настройки. Папките даваш на инспекцията, данъчния съветник или счетоводителя." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Съставки от менюто. Провери количествата, времето за приготвяне и цялата рецепта." }, // 26.10.2026
   heute: {
     zielLinie: "нула + целева печалба",
     stufe: { bisNull: "До нулата липсват", bisZiel: "До целта", ueberZiel: "Над целта" },
@@ -1468,6 +1468,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Последно извън телефона: днес" : n === 1 ? "Последно извън телефона: преди 1 ден" : `Последно извън телефона: преди ${n} дни`, nieWeg: "Още няма копие извън телефона", mitPasswort: "С парола", ohneFotos: "Без снимки (малко, за имейл)",
       verschicken: "Изпрати копието", woFrage: "Къде е сега?", woanders: "Друго устройство, имейл, облак", nurHandy: "Само на този телефон", nurHandyMeldung: "Напомнянето остава: файлът е само на този телефон.", gezaehlt: "Копието е отчетено. Напомнянето е нулирано." } },
   adanaBrot: { frage: "Какъв хляб давате към адана?", pide: "Цяла пиде", pideHalb: "Половин пиде", fladen: "Дюрюм / лаваш", kein: "Без хляб" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Подсказки", einstiegUnter: "Данъци и служби, от твоите данни", einstiegNeu: (n) => br(n, "нова подсказка", "нови подсказки"), titel: "Подсказки", unter: "От твоите данни. Общо, не съвет.", pflicht: "Обща подсказка, не данъчен съвет – изясни със счетоводителя си.", leer: "Сега няма подсказка. С повече данни идват още.", quelle: "Източник", belege: "Приготви бележките", spaeterKnopf: "По-късно", spaeter: "по-късно", erledigt: "Готово", erledigtMeldung: "Подсказката е готова", spaeterMeldung: "Подсказката е отложена" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Правна форма", hinweis: "Пише в регистрацията на дейността (Gewerbeanmeldung) или в Impressum. e.K. се брои за едноличен търговец, GmbH & Co. KG за KG.", offen: "Въведи правна форма", gesetzt: "Правната форма е запазена", namen: { einzel: "Едноличен търговец", gbr: "GbR", gmbh: "GmbH", ug: "UG (с ограничена отговорност)", kg_ohg: "KG или OHG", unbekannt: "Не знам" } }, // Rechtsform (23.10.2026)
 };

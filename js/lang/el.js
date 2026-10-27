@@ -1,8 +1,8 @@
 // Ελληνικά – μετάφραση από το de.js (15.10.2026). Γλώσσα του μαγαζιού, σύντομα.
 // Griechisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"Από την πρώτη καταχώριση απορριμμάτων","titel":"Λιγότερη απώλεια","laueft": (ab) => `Μέτρηση από ${ab}`,"stufe":{"bisNull":"Ως το μηδέν","bisZiel":"Προς τον στόχο","ueberZiel":"Πάνω από τον στόχο"},"ohneKosten":"Λείπουν κόστη","art":{"muell":"Απορρίμματα","preis":"Τιμή","lager":"Αποθήκη","papier":"Χαρτιά"},"aktion":{"kuehlAlarm":"Μέτρησε ξανά","rundgangOffen":"Συνέχισε τον γύρο","rundgang":"Γύρος ψύξης","putzen":"Καθάρισμα","sicherung":"Κάνε backup","abschluss":"Κλείσιμο ημέρας","selbst":"Γράψε τη συνταγή σου","einkauf":"Γράψε τιμές αγοράς","rezepte":"Ζύγισε τις συνταγές"}},
   app: { name: "GastroCash", entwurf: "Δοκιμαστική έκδοση" },
 
   allgemein: {
@@ -366,7 +366,7 @@ export default {
     offen: { karte: () => "Φωτογράφισε το μενού", preise: (n) => `${n} ${n === 1 ? "πιάτο" : "πιάτα"} χωρίς τιμή`, rezepte: (n) => `${n} ${n === 1 ? "πιάτο" : "πιάτα"} χωρίς συνταγή`, kosten: (n) => `${n} ${n === 1 ? "υποχρεωτικό έξοδο ανοιχτό" : "υποχρεωτικά έξοδα ανοιχτά"} (ενοίκιο, προσωπικό, δικός σου μισθός, ρεύμα/γκάζι)`,
       einkauf: (n) => `${n} ${n === 1 ? "υλικό" : "υλικά"} χωρίς τιμή αγοράς – μια φωτογραφία τιμολογίου το συμπληρώνει`, kuehlung: () => "Πρόσθεσε συσκευή ψύξης", sicherung: () => "Τελευταίο αντίγραφο παλαιότερο από 7 μέρες" } },
   vergleich: { wareHoch: (q) => `${q} % – υψηλό`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Τράβηξε δική σου φωτογραφία", fotoGespeichert: "Η φωτογραφία αποθηκεύτηκε. Μένει σε αυτό το κινητό.",  titel: "Σύγκριση πιάτων", unter: "Ποια πιάτα σου αποδίδουν περισσότερο;", tab: { db: "Μένει ανά τεμάχιο", marge: "Rohgewinn %" }, ware: "Κόστος υλικών", db: "Σου μένει ανά τεμάχιο", marge: "Rohgewinn (nach Ware)", leer: "Γράψε τιμές πώλησης και αγοράς και θα δεις εδώ ποια πιάτα αποδίδουν περισσότερο.", ohneZahlen: (n) => (n === 1 ? "1 πιάτο ακόμα χωρίς αριθμούς" : `${n} πιάτα ακόμα χωρίς αριθμούς`), einkaufFehlt: "Λείπουν τιμές αγοράς", hinweis: "Οι τιμές είναι εκτιμήσεις και μπορεί να διαφέρουν ανάλογα με υλικά και τιμές. Όλα τα ποσά χωρίς ΦΠΑ, εκτός από την τιμή πώλησης.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Τράβηξε δική σου φωτογραφία", fotoGespeichert: "Η φωτογραφία αποθηκεύτηκε. Μένει σε αυτό το κινητό.",  titel: "Σύγκριση πιάτων", unter: "Ποια πιάτα σου αποδίδουν περισσότερο;", tab: { db: "Μένει ανά τεμάχιο", marge: "Μικτό κέρδος %" }, ware: "Κόστος υλικών", db: "Σου μένει ανά τεμάχιο", marge: "Μικτό κέρδος (μετά το εμπόρευμα)", leer: "Γράψε τιμές πώλησης και αγοράς και θα δεις εδώ ποια πιάτα αποδίδουν περισσότερο.", ohneZahlen: (n) => (n === 1 ? "1 πιάτο ακόμα χωρίς αριθμούς" : `${n} πιάτα ακόμα χωρίς αριθμούς`), einkaufFehlt: "Λείπουν τιμές αγοράς", hinweis: "Οι τιμές είναι εκτιμήσεις και μπορεί να διαφέρουν ανάλογα με υλικά και τιμές. Όλα τα ποσά χωρίς ΦΠΑ, εκτός από την τιμή πώλησης.", nachKosten: "Μετά από όλα τα κόστη", nachKostenFehlt: "Λείπουν κόστη", ampelLegende: "Φανάρι μετά από όλα τα κόστη: κόκκινο κάτω από 10 %, πράσινο από 19 % της καθαρής τιμής (≈ κατάταξη κατά τη συλλογή συντελεστών του BMF, έτος δεδομένων 2024)." },
   buero: {
     ruhig: { mehr: (n) => `ακόμα ${n}` }, titel: "Γραφείο", zurueck: "Μαγαζί",
     abschnitt: { geld: "Χρήματα", ware: "Εμπόρευμα", kartePreise: "Μενού και τιμές", offen: "Εκκρεμή", ordner: "Φάκελοι για παράδοση", zahlen: "Νούμερα", karte: "Μενού & αγορές", einrichten: "Ρύθμιση μαγαζιού" },
@@ -572,7 +572,7 @@ export default {
     zuletzt: "τελευταία",
     zuletztLang: (w, d) => `Τελευταία ${w} °C στις ${d}. Γράψε την τιμή που βλέπεις τώρα.`,
     ersteMessung: "Πρώτη μέτρηση σε αυτή τη συσκευή.",
-    minusHinweis: "Το μείον γράψ' το με «-», π.χ. -18",
+    minusFrage: (v) => `Εννοείς −${v} °C; Πάτα`, minusHinweis: "Το μείον γράψ' το με «-», π.χ. -18",
     nichtGemessenKurz: "δεν μετρήθηκε",
     nichtGemessen: "Ή: σήμερα δεν μετρήθηκε, γιατί …",
     gruende: { geschlossen: "κλειστά", geraetAus: "συσκευή σβηστή / σε απόψυξη", leer: "συσκευή άδεια" },
@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Φόρτωσε απόδειξη, ενημέρωσε τιμές",
   },
 
-  muell: {
+  muell: { personalEintragen: "Καταχώρισε φαγητό προσωπικού",
     zeki: { start: "Τι πετάχτηκε σήμερα;", weiter: "Πετάχτηκε κάτι άλλο;", personal: "Τι έφαγε η ομάδα σου;", bruch: "Τι χάλασε ή έσπασε;" },
     grund: { roh: "Εμπόρευμα", personal: "Προσωπικό", bruch: "Φθορά" }, nichtsGefunden: "Δεν βρέθηκε τίποτα. Γράψ' το αλλιώς ή διάλεξε «Ζυγίστηκε κάδος».",
     zurUebersicht: "Σύνοψη σκουπιδιών",
@@ -749,7 +749,7 @@ export default {
     gerichtWegKurz: "Έτοιμο φαγητό, πιάτο που γύρισε, λάθος παραγγελία",
     rohwareWeg: "Πρώτη ύλη πετάχτηκε",
     rohwareKurz: "Ντομάτες, κρέας, ψωμί – έληξαν ή χάλασαν",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Περίσσεψε", uebrigHinweis: "Ό,τι ήταν έτοιμο και δεν πουλήθηκε",
     eimer: "Ζυγίστηκε κάδος",
     eimerKurz: "Μόνο το βάρος, τα υπόλοιπα τα βγάζει η εφαρμογή",
     personal: "Φαγητό προσωπικού",
@@ -848,7 +848,7 @@ export default {
     fixTag: "Πάγια της ημέρας",
     tonne: "Κάδος",
     kuehl: "Ψύξη",
-    rundgaenge: (n) => n === 1 ? "1 γύρος" : `${n} γύροι`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => n === 1 ? "1 γύρος" : `${n} γύροι`, nachkontrolle: (n) => (n === 1 ? "1 επανέλεγχος" : `${n} επανέλεγχοι`),
     besser: (tag, b) => `${tag}: ${b} περισσότερος τζίρος από την ίδια μέρα την προηγούμενη εβδομάδα.`,
     schlechter: (tag, b) => `${tag}: ${b} λιγότερος τζίρος από την ίδια μέρα την προηγούμενη εβδομάδα.`,
     gleich: (tag) => `${tag}: ίδιο με την ίδια μέρα την προηγούμενη εβδομάδα.`,
@@ -1072,9 +1072,9 @@ export default {
     laden: "Το μαγαζί σου", namePlatzhalter: "Όνομα μαγαζιού",
     ladenHilfe: "Το είδος του μαγαζιού δίνει αρχικές τιμές για συνταγές, ψύξη και καθαριότητα. Όλα αλλάζουν μετά στο γραφείο.",
     allesGenau: "Ρύθμισε τα πάντα αναλυτικά",
-    karte: "Το μενού σου", karteFoto: "Φωτογράφισε το μενού", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Φωτογραφίες ή PDF", spaeter: "Αργότερα",
+    karte: "Το μενού σου", karteFoto: "Φωτογράφισε το μενού", karteVorlagen: "Διάλεξε από πρότυπα", karteGalerie: "Φωτογραφίες ή PDF", spaeter: "Αργότερα",
     karteHilfe: "Η εφαρμογή διαβάζει πιάτα και τιμές από τη φωτογραφία. Ό,τι φτιάχνετε μόνοι σας το βάζεις στο γραφείο στις Συνταγές.",
-    kuehl: "Ψύξη", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Ψυγείο", saladette: "Σαλατιέρα", tiefkuehler: "Καταψύκτης", warmhalter: "Θερμοθάλαμος" },
+    kuehl: "Ψύξη", arten: { getraenke: "Ψυγείο ποτών", kuehlschrank: "Ψυγείο", saladette: "Σαλατιέρα", tiefkuehler: "Καταψύκτης", warmhalter: "Θερμοθάλαμος" },
     kuehlHilfe: "Για κάθε συσκευή γράφεις μετά τη θερμοκρασία. Τα ονόματα τα αλλάζεις στο γραφείο.",
     geld: "Έξοδα τον μήνα", miete: "Ενοίκιο", personal: "Προσωπικό", eigen: "Ο μισθός σου", strom: "Ρεύμα",
     geldHilfe: "Περίπου αρκεί, μπορείς και να το αφήσεις κενό. Τους λογαριασμούς τους φωτογραφίζεις μετά στο γραφείο.",
@@ -1136,7 +1136,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Σήμερα", muell: "Απορρίμματα", kuehl: "Ψύξη", putzplan: "Καθάρισμα", karte: "Μενού" },
     leiste: "Μαγαζί", menueAuf: "Άνοιγμα μενού", schliessen: "Κλείσιμο", hilfeAuf: "Βοήθεια", zekiFragen: "Ρώτα τον Ζέκι", deinLaden: "Το μαγαζί σου", abschluss: "Κλείσιμο ημέρας", personal: "Λειτουργία προσωπικού", buero: "Γραφείο", ladenWechseln: "Αλλαγή μαγαζιού", sprache: "Γλώσσα", zumLaden: "Μαγαζί", zumBuero: "Γραφείο", schlossCode: "Βάλε τον κωδικό γραφείου",
-    pin: { titel: "Κωδικός γραφείου", neu: "Διάλεξε νέο κωδικό", nochmal: "Άλλη μία φορά", falsch: "Λάθος κωδικός", ungleich: "Δεν ταιριάζει. Διάλεξε ξανά.", gesetzt: "Ο κωδικός γραφείου αποθηκεύτηκε", entfernt: "Ο κωδικός γραφείου αφαιρέθηκε", setzen: "Όρισε κωδικό γραφείου", aendern: "Άλλαξε τον κωδικό γραφείου", entfernen: "Αφαίρεση κωδικού", ohne: "Χωρίς κωδικό μπαίνει ο καθένας στο γραφείο.", mit: "Το γραφείο προστατεύεται με κωδικό.", loeschen: "Σβήσε ψηφίο", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Κωδικός γραφείου", neu: "Διάλεξε νέο κωδικό", nochmal: "Άλλη μία φορά", falsch: "Λάθος κωδικός", ungleich: "Δεν ταιριάζει. Διάλεξε ξανά.", gesetzt: "Ο κωδικός γραφείου αποθηκεύτηκε", entfernt: "Ο κωδικός γραφείου αφαιρέθηκε", setzen: "Όρισε κωδικό γραφείου", aendern: "Άλλαξε τον κωδικό γραφείου", entfernen: "Αφαίρεση κωδικού", ohne: "Χωρίς κωδικό μπαίνει ο καθένας στο γραφείο.", mit: "Το γραφείο προστατεύεται με κωδικό.", loeschen: "Σβήσε ψηφίο", testphase: "Δοκιμαστική φάση: χωρίς κωδικό. Όλοι μπαίνουν στο γραφείο και στη λειτουργία προσωπικού. Άνοιξε ξανά τον κωδικό πριν από τον μεγάλο πιλότο.", testphaseAn: "Άνοιξε δοκιμαστική φάση χωρίς κωδικό", testphaseAus: "Άνοιξε ξανά τον κωδικό" },
     hilfeText: {
       allgemein: "Η μπάρα κάτω οδηγεί σε ό,τι χρειάζεσαι στο μαγαζί. Υπολογισμοί, ρυθμίσεις και λίστες είναι στο γραφείο.",
       start: "Η μέρα με μια ματιά. Ο μεγάλος αριθμός δείχνει πόσος τζίρος λείπει ακόμα μέχρι το μηδέν. Κόκκινο σημαίνει: φρόντισέ το τώρα. Το «≈» μπροστά σημαίνει εκτίμηση (εμπόρευμα ή δικός σου μισθός) – εξήγηση στο γραφείο, «Μήνας & μετρητής». Χωρίς τιμές αγοράς η εφαρμογή υπολογίζει 32 % εμπόρευμα (σνακ μπαρ: 23–41 %, πίνακες BMF 2025).",
@@ -1148,7 +1148,7 @@ export default {
       laeden: "Εδώ αλλάζεις ανάμεσα στα μαγαζιά σου. Κάθε μαγαζί έχει δικά του νούμερα.",
       personal: "Γράψε απορρίμματα, μέτρησε ψύξη, τσέκαρε καθάρισμα. Πίσω μόνο με τον κωδικό γραφείου.",
       buero: "Εδώ είναι όλοι οι υπολογισμοί, οι λίστες και οι ρυθμίσεις. Τους φακέλους τους δίνεις στην υγειονομική, στον φοροτεχνικό ή στον λογιστή." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Υλικά από το μενού. Έλεγξε ποσότητες, χρόνο προετοιμασίας και ολόκληρη τη συνταγή." }, // 26.10.2026
   heute: {
     zielLinie: "μηδέν + στόχος κέρδους",
     stufe: { bisNull: "Μέχρι το μηδέν λείπουν", bisZiel: "Μέχρι τον στόχο", ueberZiel: "Πάνω από τον στόχο" },
@@ -1463,6 +1463,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Τελευταίο εκτός κινητού: σήμερα" : n === 1 ? "Τελευταίο εκτός κινητού: πριν 1 ημέρα" : `Τελευταίο εκτός κινητού: πριν ${n} ημέρες`, nieWeg: "Κανένα αντίγραφο εκτός κινητού ακόμα", mitPasswort: "Με κωδικό", ohneFotos: "Χωρίς φωτογραφίες (μικρό, για email)",
       verschicken: "Αποστολή αντιγράφου", woFrage: "Πού είναι τώρα;", woanders: "Άλλη συσκευή, email, cloud", nurHandy: "Μόνο σε αυτό το κινητό", nurHandyMeldung: "Η υπενθύμιση μένει: το αρχείο είναι μόνο σε αυτό το κινητό.", gezaehlt: "Το αντίγραφο μετρήθηκε. Η υπενθύμιση μηδενίστηκε." } },
   adanaBrot: { frage: "Τι ψωμί σερβίρετε με το Αδανά;", pide: "Ολόκληρη πίτα", pideHalb: "Μισή πίτα", fladen: "Ντουρούμ / λαβάς", kein: "Χωρίς ψωμί" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Υποδείξεις", einstiegUnter: "Φόροι και υπηρεσίες, από τα δεδομένα σου", einstiegNeu: (n) => (n === 1 ? "1 νέα υπόδειξη" : `${n} νέες υποδείξεις`), titel: "Υποδείξεις", unter: "Από τα δεδομένα σου. Γενικά, όχι συμβουλή.", pflicht: "Γενική υπόδειξη, όχι φορολογική συμβουλή – ξεκαθάρισέ το με τον λογιστή σου.", leer: "Τώρα καμία υπόδειξη. Με περισσότερα δεδομένα έρχονται υποδείξεις.", quelle: "Πηγή", belege: "Ετοίμασε αποδείξεις", spaeterKnopf: "Αργότερα", spaeter: "αργότερα", erledigt: "Έγινε", erledigtMeldung: "Η υπόδειξη έγινε", spaeterMeldung: "Η υπόδειξη μετατέθηκε" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Νομική μορφή", hinweis: "Γράφεται στη δήλωση επιχείρησης (Gewerbeanmeldung) ή στο Impressum. Η e.K. μετράει ως ατομική επιχείρηση, η GmbH & Co. KG ως KG.", offen: "Γράψε νομική μορφή", gesetzt: "Η νομική μορφή αποθηκεύτηκε", namen: { einzel: "Ατομική επιχείρηση", gbr: "GbR", gmbh: "GmbH", ug: "UG (περιορισμένης ευθύνης)", kg_ohg: "KG ή OHG", unbekannt: "Δεν ξέρω" } }, // Rechtsform (23.10.2026)
 };

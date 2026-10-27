@@ -1,8 +1,8 @@
 // Tiếng Việt – dịch từ de.js (15.10.2026). Ngôn ngữ trong quán, ngắn gọn, xưng "bạn".
 // Vietnamesisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Anrede „bạn“.
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"Từ lần ghi rác đầu tiên","titel":"Ít hao hụt hơn","laueft": (ab) => `Đang đo từ ${ab}`,"stufe":{"bisNull":"Đến hòa vốn","bisZiel":"Đến mục tiêu","ueberZiel":"Trên mục tiêu"},"ohneKosten":"Thiếu chi phí","art":{"muell":"Rác","preis":"Giá","lager":"Kho","papier":"Giấy tờ"},"aktion":{"kuehlAlarm":"Đo lại","rundgangOffen":"Tiếp tục vòng đo","rundgang":"Vòng đo lạnh","putzen":"Dọn dẹp","sicherung":"Sao lưu","abschluss":"Chốt ngày","selbst":"Nhập công thức của bạn","einkauf":"Nhập giá mua","rezepte":"Cân công thức"}},
   app: { name: "GastroCash", entwurf: "Bản dùng thử" },
 
   allgemein: {
@@ -366,7 +366,7 @@ export default {
     offen: { karte: () => "Chụp ảnh thực đơn", preise: (n) => `${n} món chưa có giá`, rezepte: (n) => `${n} món chưa có công thức`, kosten: (n) => `${n} khoản bắt buộc chưa điền (tiền thuê, nhân viên, lương của bạn, điện/gas)`,
       einkauf: (n) => `${n} nguyên liệu chưa có giá mua – chụp một hóa đơn là điền được`, kuehlung: () => "Tạo điểm lạnh", sicherung: () => "Lần sao lưu cuối đã hơn 7 ngày" } },
   vergleich: { wareHoch: (q) => `${q} % – cao`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Tự chụp ảnh", fotoGespeichert: "Đã lưu ảnh. Ảnh chỉ nằm trên điện thoại này.",  titel: "So sánh món", unter: "Món nào lời nhiều nhất?", tab: { db: "Còn lại mỗi phần", marge: "Rohgewinn %" }, ware: "Tiền nguyên liệu", db: "Còn lại cho bạn mỗi phần", marge: "Rohgewinn (nach Ware)", leer: "Điền giá bán và giá mua, rồi ở đây bạn sẽ thấy món nào lời nhiều nhất.", ohneZahlen: (n) => `${n} món chưa có số liệu`, einkaufFehlt: "Thiếu giá mua", hinweis: "Các số là ước tính và có thể khác tùy nguyên liệu và giá. Tất cả số tiền đều chưa thuế, trừ giá bán.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Tự chụp ảnh", fotoGespeichert: "Đã lưu ảnh. Ảnh chỉ nằm trên điện thoại này.",  titel: "So sánh món", unter: "Món nào lời nhiều nhất?", tab: { db: "Còn lại mỗi phần", marge: "Lãi gộp %" }, ware: "Tiền nguyên liệu", db: "Còn lại cho bạn mỗi phần", marge: "Lãi gộp (sau tiền hàng)", leer: "Điền giá bán và giá mua, rồi ở đây bạn sẽ thấy món nào lời nhiều nhất.", ohneZahlen: (n) => `${n} món chưa có số liệu`, einkaufFehlt: "Thiếu giá mua", hinweis: "Các số là ước tính và có thể khác tùy nguyên liệu và giá. Tất cả số tiền đều chưa thuế, trừ giá bán.", nachKosten: "Sau mọi chi phí", nachKostenFehlt: "Thiếu chi phí", ampelLegende: "Đèn giao thông sau mọi chi phí: đỏ dưới 10 %, xanh từ 19 % giá chưa thuế (≈ xếp theo bộ hệ số tham chiếu của BMF, số liệu năm 2024)." },
   buero: {
     ruhig: { mehr: (n) => `${n} mục nữa` }, titel: "Văn phòng", zurueck: "Quán",
     abschnitt: { geld: "Tiền", ware: "Hàng hóa", kartePreise: "Thực đơn và giá", offen: "Còn việc", ordner: "Hồ sơ để nộp", zahlen: "Số liệu", karte: "Thực đơn & mua hàng", einrichten: "Cài đặt quán" },
@@ -572,7 +572,7 @@ export default {
     zuletzt: "lần trước",
     zuletztLang: (w, d) => `Lần trước ${w} °C ngày ${d}. Ghi số bạn đọc được bây giờ.`,
     ersteMessung: "Lần đo đầu tiên ở điểm này.",
-    minusHinweis: "Số âm nhập bằng dấu “-”, vd. -18",
+    minusFrage: (v) => `Ý sếp là −${v} °C? Bấm vào đây`, minusHinweis: "Số âm nhập bằng dấu “-”, vd. -18",
     nichtGemessenKurz: "không đo",
     nichtGemessen: "Hoặc: hôm nay không đo, vì …",
     gruende: { geschlossen: "đóng cửa", geraetAus: "máy tắt / đang xả đá", leer: "máy trống" },
@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Nạp hóa đơn, cập nhật giá",
   },
 
-  muell: {
+  muell: { personalEintragen: "Ghi bữa ăn nhân viên",
     zeki: { start: "Hôm nay bỏ đi những gì?", weiter: "Còn gì bỏ đi nữa không?", personal: "Nhân viên của sếp đã ăn gì?", bruch: "Cái gì bị vỡ hay hỏng?" },
     grund: { roh: "Hàng", personal: "Nhân viên", bruch: "Hỏng" }, nichtsGefunden: "Không tìm thấy. Viết cách khác hoặc chọn “Cân xô rác”.",
     zurUebersicht: "Tổng quan rác",
@@ -749,7 +749,7 @@ export default {
     gerichtWegKurz: "Món đã làm, đĩa bị trả lại, đặt nhầm",
     rohwareWeg: "Bỏ nguyên liệu sống",
     rohwareKurz: "Cà chua, thịt, bánh mì – hết hạn hoặc bị hư",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Còn dư", uebrigHinweis: "Đồ đã làm sẵn mà không bán được",
     eimer: "Cân xô rác",
     eimerKurz: "Chỉ cân nặng, app tính phần còn lại",
     personal: "Bữa ăn nhân viên",
@@ -848,7 +848,7 @@ export default {
     fixTag: "Chi phí cố định trong ngày",
     tonne: "Rác",
     kuehl: "Nhiệt độ lạnh",
-    rundgaenge: (n) => `${n} vòng đo`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => `${n} vòng đo`, nachkontrolle: (n) => `${n} cần đo lại`,
     besser: (tag, b) => `${tag} này tốt hơn ${tag} tuần trước: doanh thu nhiều hơn ${b}.`,
     schlechter: (tag, b) => `${tag} này yếu hơn ${tag} tuần trước: doanh thu ít hơn ${b}.`,
     gleich: (tag) => `${tag} này giống ${tag} tuần trước.`,
@@ -1072,9 +1072,9 @@ export default {
     laden: "Quán của bạn", namePlatzhalter: "Tên quán",
     ladenHilfe: "Loại quán cho sẵn số liệu ban đầu cho công thức, làm lạnh và dọn dẹp. Sau này đổi được hết ở văn phòng.",
     allesGenau: "Cài đặt chi tiết",
-    karte: "Thực đơn của bạn", karteFoto: "Chụp thực đơn", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Ảnh hoặc PDF", spaeter: "Để sau",
+    karte: "Thực đơn của bạn", karteFoto: "Chụp thực đơn", karteVorlagen: "Chọn từ mẫu", karteGalerie: "Ảnh hoặc PDF", spaeter: "Để sau",
     karteHilfe: "App đọc món và giá từ ảnh. Món quán tự làm thì bạn nhập ở văn phòng, mục Công thức.",
-    kuehl: "Làm lạnh", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Tủ lạnh", saladette: "Tủ salad", tiefkuehler: "Tủ đông", warmhalter: "Tủ giữ nóng" },
+    kuehl: "Làm lạnh", arten: { getraenke: "Tủ lạnh đồ uống", kuehlschrank: "Tủ lạnh", saladette: "Tủ salad", tiefkuehler: "Tủ đông", warmhalter: "Tủ giữ nóng" },
     kuehlHilfe: "Sau này bạn ghi nhiệt độ cho từng thiết bị. Tên thì đổi ở văn phòng.",
     geld: "Chi phí mỗi tháng", miete: "Tiền thuê", personal: "Nhân viên", eigen: "Lương của bạn", strom: "Tiền điện",
     geldHilfe: "Ghi khoảng chừng là đủ, để trống cũng được. Hóa đơn thì chụp sau ở văn phòng.",
@@ -1136,7 +1136,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hôm nay", muell: "Rác", kuehl: "Làm lạnh", putzplan: "Dọn dẹp", karte: "Thực đơn" },
     leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", zekiFragen: "Hỏi Zeki", deinLaden: "Quán của bạn", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
-    pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số", testphase: "Giai đoạn thử: không có mã. Ai cũng vào được văn phòng và chế độ nhân viên. Bật lại mã trước đợt thử lớn.", testphaseAn: "Bật giai đoạn thử không mã", testphaseAus: "Bật lại mã" },
     hilfeText: {
       allgemein: "Thanh bên dưới dẫn đến mọi thứ bạn cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",
       start: "Cả ngày trong một cái nhìn. Con số lớn cho biết còn thiếu bao nhiêu doanh thu để hòa vốn. Màu đỏ nghĩa là: xử lý ngay. Có „≈“ phía trước nghĩa là số ước tính (nguyên liệu hoặc lương của bạn) – giải thích trong văn phòng, mục „Tháng và bộ đếm“. Chưa có giá mua thì ứng dụng tính 32 % nguyên liệu (quán ăn nhanh: 23–41 %, bảng BMF 2025).",
@@ -1148,7 +1148,7 @@ export default {
       laeden: "Ở đây bạn chuyển giữa các quán. Mỗi quán có số liệu riêng.",
       personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Nguyên liệu lấy từ thực đơn. Kiểm tra số lượng, thời gian chuẩn bị và toàn bộ công thức." }, // 26.10.2026
   heute: {
     zielLinie: "hòa vốn + lãi mục tiêu",
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },
@@ -1463,6 +1463,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Bản cuối ra khỏi điện thoại: hôm nay" : n === 1 ? "Bản cuối ra khỏi điện thoại: 1 ngày trước" : `Bản cuối ra khỏi điện thoại: ${n} ngày trước`, nieWeg: "Chưa có bản sao lưu nào ngoài điện thoại", mitPasswort: "Có mật khẩu", ohneFotos: "Không ảnh (nhỏ, để gửi mail)",
       verschicken: "Gửi bản sao lưu", woFrage: "Giờ nó ở đâu?", woanders: "Thiết bị khác, mail, đám mây", nurHandy: "Chỉ trên điện thoại này", nurHandyMeldung: "Lời nhắc vẫn còn: tệp chỉ ở trên điện thoại này.", gezaehlt: "Đã tính bản sao lưu. Lời nhắc được đặt lại." } },
   adanaBrot: { frage: "Quán bạn ăn Adana kèm bánh mì nào?", pide: "Nguyên bánh pide", pideHalb: "Nửa bánh pide", fladen: "Dürüm / lavash", kein: "Không bánh mì" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Lưu ý", einstiegUnter: "Thuế và cơ quan, từ dữ liệu của bạn", einstiegNeu: (n) => `${n} lưu ý mới`, titel: "Lưu ý", unter: "Từ dữ liệu của bạn. Thông tin chung, không phải tư vấn.", pflicht: "Lưu ý chung, không phải tư vấn thuế – hãy hỏi lại cố vấn thuế của bạn.", leer: "Hiện chưa có lưu ý. Có thêm dữ liệu thì sẽ có thêm lưu ý.", quelle: "Nguồn", belege: "Chuẩn bị hóa đơn", spaeterKnopf: "Để sau", spaeter: "để sau", erledigt: "Xong", erledigtMeldung: "Đã xong lưu ý", spaeterMeldung: "Đã dời lưu ý lại" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Loại hình kinh doanh", hinweis: "Ghi trên giấy đăng ký kinh doanh (Gewerbeanmeldung) hoặc trong Impressum. e.K. tính là doanh nghiệp cá thể, GmbH & Co. KG tính là KG.", offen: "Nhập loại hình kinh doanh", gesetzt: "Đã lưu loại hình kinh doanh", namen: { einzel: "Doanh nghiệp cá thể", gbr: "GbR", gmbh: "GmbH", ug: "UG (trách nhiệm hữu hạn)", kg_ohg: "KG hoặc OHG", unbekannt: "Không biết" } }, // Rechtsform (23.10.2026)
 };

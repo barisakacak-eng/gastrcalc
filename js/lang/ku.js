@@ -1,7 +1,7 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"Ji yekem tomara zibil","titel":"Kêmtir windabûn","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Zibil","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
@@ -365,7 +365,7 @@ export default {
     offen: { karte: () => "Wêneyê menûyê bikişîne", preise: (n) => `${n} xwarin bê biha`, rezepte: (n) => `${n} xwarin bê reçete`, kosten: (n) => `${n} xalên mecbûrî vala ne (kirê, karker, meaşê te, elektrîk/gaz)`,
       einkauf: (n) => `${n} malzeme bê bihayê kirînê – wêneyek ji fatûreyê vê tije dike`, kuehlung: () => "Sarkeran tomar bike", sicherung: () => "Kopiya dawî ji 7 rojan kevntir e" } },
   vergleich: { wareHoch: (q) => `${q} % – bilind`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Wêneyê xwe bikişîne", fotoGespeichert: "Wêne hate tomarkirin. Li ser vê telefonê dimîne.", titel: "Berhevdana xwarinan", unter: "Kîjan xwarin herî zêde ji te re tînin?", tab: { db: "Ji her heban dimîne", marge: "Rohgewinn %" }, ware: "Lêçûna malê", db: "Ji her heban ji te re dimîne", marge: "Rohgewinn (nach Ware)", leer: "Bihayên firotin û kirînê binivîse, paşê li vir dibînî kîjan xwarin herî zêde tînin.", ohneZahlen: (n) => `${n} xwarin hîn bê hejmar`, einkaufFehlt: "Bihayên kirînê kêm in", hinweis: "Nirx texmînî ne û li gorî malzeme û bihayan dikarin cuda bin. Hemû mîqdar bê bac in, ji bilî bihayê firotinê.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Wêneyê xwe bikişîne", fotoGespeichert: "Wêne hate tomarkirin. Li ser vê telefonê dimîne.", titel: "Berhevdana xwarinan", unter: "Kîjan xwarin herî zêde ji te re tînin?", tab: { db: "Ji her heban dimîne", marge: "Qezenca xav %" }, ware: "Lêçûna malê", db: "Ji her heban ji te re dimîne", marge: "Qezenca xav (piştî malê)", leer: "Bihayên firotin û kirînê binivîse, paşê li vir dibînî kîjan xwarin herî zêde tînin.", ohneZahlen: (n) => `${n} xwarin hîn bê hejmar`, einkaufFehlt: "Bihayên kirînê kêm in", hinweis: "Nirx texmînî ne û li gorî malzeme û bihayan dikarin cuda bin. Hemû mîqdar bê bac in, ji bilî bihayê firotinê.", nachKosten: "Piştî hemû lêçûnan", nachKostenFehlt: "Lêçûn kêm in", ampelLegende: "Ronahiya trafîkê piştî hemû lêçûnan: sor di bin 10 % de, kesk ji 19 % ya bihayê net (≈ li gorî berhevoka rêjeyên BMF, sala daneyan 2024)." },
   buero: {
     ruhig: { mehr: (n) => `${n} yên din` }, titel: "Ofîs", zurueck: "Dikan",
     abschnitt: { geld: "Pere", ware: "Mal", kartePreise: "Menû û biha", offen: "Vekirî", ordner: "Dosyeyên radestkirinê", zahlen: "Hejmar", karte: "Menû û kirîn", einrichten: "Dikanê saz bike" },
@@ -571,7 +571,7 @@ export default {
     zuletzt: "cara dawî",
     zuletztLang: (w, d) => `Cara dawî ${w} °C di ${d} de. Nirxa ku tu niha dixwînî binivîse.`,
     ersteMessung: "Pîvandina yekem a vê amûrê.",
-    minusHinweis: "Kêmasî bi “-” binivîse, wek mînak -18",
+    minusFrage: (v) => `Mebesta te −${v} °C ye? Bitikîne`, minusHinweis: "Kêmasî bi “-” binivîse, wek mînak -18",
     nichtGemessenKurz: "nehat pîvandin",
     nichtGemessen: "An jî: îro nehat pîvandin, ji ber ku …",
     gruende: { geschlossen: "girtî", geraetAus: "amûr girtî / qeşa tê helandin", leer: "amûr vala ye" },
@@ -736,7 +736,7 @@ export default {
     belegeKurz: "Fîşê bixwîne, bihayan nû bike",
   },
 
-  muell: {
+  muell: { personalEintragen: "Xwarina karmendan binivîse",
     zeki: { start: "Îro çi hate avêtin?", weiter: "Tiştekî din jî hate avêtin?", personal: "Tîma te çi xwar?", bruch: "Çi şikest an xera bû?" },
     grund: { roh: "Mal", personal: "Karmend", bruch: "Şikestî" }, nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",
     zurUebersicht: "Nêrîna giştî ya zibil",
@@ -748,7 +748,7 @@ export default {
     gerichtWegKurz: "Xwarina amade, teyfika vegeriyayî, sîparîşa şaş",
     rohwareWeg: "Malê xav hate avêtin",
     rohwareKurz: "Bacanên sor, goşt, nan – dema wê derbas bûye an xera bûye",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Ma", uebrigHinweis: "Ya ku amade bû û nehat firotin",
     eimer: "Satil hate kişandin",
     eimerKurz: "Tenê giranî, app yên din hesab dike",
     personal: "Xwarina karkeran",
@@ -847,7 +847,7 @@ export default {
     fixTag: "Lêçûnên sabît ên rojê",
     tonne: "Zibil",
     kuehl: "Sarker",
-    rundgaenge: (n) => `${n} ger`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => `${n} ger`, nachkontrolle: (n) => `${n} kontrola duyem`,
     besser: (tag, b) => `${tag}: ji ya hefteya borî baştir bû, ${b} zêdetir firotin.`,
     schlechter: (tag, b) => `${tag}: ji ya hefteya borî qelstir bû, ${b} kêmtir firotin.`,
     gleich: (tag) => `${tag}: wek ya hefteya borî bû.`,
@@ -1072,9 +1072,9 @@ export default {
     laden: "Dikana te", namePlatzhalter: "Navê dikanê",
     ladenHilfe: "Cureya dikanê ji bo reçete, sarkirin û plana paqijiyê nirxên destpêkê dide. Paşê her tiştî di ofîsê de diguherînî.",
     allesGenau: "Her tiştî bi hûrgilî saz bike",
-    karte: "Menûya te", karteFoto: "Wêneyê menûyê bikişîne", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Wêne an PDF", spaeter: "Paşê",
+    karte: "Menûya te", karteFoto: "Wêneyê menûyê bikişîne", karteVorlagen: "Ji şablonan hilbijêre", karteGalerie: "Wêne an PDF", spaeter: "Paşê",
     karteHilfe: "Sepan xwarin û bihayan ji wêneyê dixwîne. Tiştên ku hûn bi xwe çêdikin, di ofîsê de li bin “Reçete” saz bike.",
-    kuehl: "Sarkirin", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Sarinc", saladette: "Sarinca salatayê", tiefkuehler: "Cemidok", warmhalter: "Germker" },
+    kuehl: "Sarkirin", arten: { getraenke: "Sarinca vexwarinan", kuehlschrank: "Sarinc", saladette: "Sarinca salatayê", tiefkuehler: "Cemidok", warmhalter: "Germker" },
     kuehlHilfe: "Ji bo her amûrekê paşê germahiyê dinivîsî. Navan di ofîsê de diguherînî.",
     geld: "Lêçûn di mehê de", miete: "Kirê", personal: "Karker", eigen: "Meaşê te", strom: "Elektrîk",
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",
@@ -1135,7 +1135,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Îro", muell: "Çop", kuehl: "Sarkirin", putzplan: "Paqijî", karte: "Menû" },
     leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", zekiFragen: "Ji Zekî bipirse", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
-    pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe", testphase: "Qonaxa ceribandinê: bê kod. Her kes dikare bikeve ofîsê û moda karmendan. Berî pîlota mezin kodê dîsa vêxe.", testphaseAn: "Qonaxa ceribandinê bê kod vêxe", testphaseAus: "Kodê dîsa vêxe" },
     hilfeText: {
       allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",
       start: "Roj bi nêrînekê. Hejmara mezin nîşan dide ka heta sifirê çiqas firotin hîn kêm e. Sor tê wateya: niha lê binêre. Heke „≈“ li pêş be, hejmar texmîn e (mal an mûçeya te) – ravekirin di ofîsê de di bin „Meh û jimêr“ de. Bê bihayên kirînê sepan bi 32 % malê dihesibîne (xwarinxaneyên biçûk: 23–41 %, tabloyên BMF 2025).",
@@ -1147,7 +1147,7 @@ export default {
       laeden: "Li vir di navbera dikanên xwe de diguherînî. Her dikanek hejmarên xwe hene.",
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Malzemeyên ji menûyê. Mîqdar, dema amadekirinê û reçeteya tevahî kontrol bike." }, // 26.10.2026
   heute: {
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
@@ -1462,6 +1462,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ya dawî ji telefonê derket: îro" : n === 1 ? "Ya dawî ji telefonê derket: 1 roj berê" : `Ya dawî ji telefonê derket: ${n} roj berê`, nieWeg: "Hêj tu kopî ji telefonê derneketiye", mitPasswort: "Bi şîfre", ohneFotos: "Bê wêne (biçûk, ji bo e-nameyê)",
       verschicken: "Kopiyê bişîne", woFrage: "Niha li ku ye?", woanders: "Amûrek din, e-name, ewr", nurHandy: "Tenê li ser vê telefonê", nurHandyMeldung: "Bîranîn dimîne: pel tenê li ser vê telefonê ye.", gezaehlt: "Kopî hate hesibandin. Bîranîn ji nû ve dest pê kir." } },
   adanaBrot: { frage: "Li cem we bi Adanayê re kîjan nan heye?", pide: "Pîdeya tevahî", pideHalb: "Nîvê pîdeyê", fladen: "Dürüm / lavaş", kein: "Bê nan" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Nîşe", einstiegUnter: "Bac û dayre, ji daneyên te", einstiegNeu: (n) => (n === 1 ? "1 nîşeya nû" : `${n} nîşeyên nû`), titel: "Nîşe", unter: "Ji daneyên te. Giştî, ne şêwir.", pflicht: "Nîşeya giştî, ne şêwira bacê – bi şêwirmendê xwe yê bacê re zelal bike.", leer: "Niha tu nîşe tune. Bi daneyên zêdetir nîşe tên.", quelle: "Çavkanî", belege: "Belgeyan amade bike", spaeterKnopf: "Paşê", spaeter: "paşê", erledigt: "Qediya", erledigtMeldung: "Nîşe qediya", spaeterMeldung: "Nîşe hat paşxistin" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Forma hiqûqî", hinweis: "Li ser qeyda karê te (Gewerbeanmeldung) an di Impressumê de ye. e.K. wek karsaziya yekkesî tê hesibandin, GmbH & Co. KG wek KG.", offen: "Forma hiqûqî binivîse", gesetzt: "Forma hiqûqî hat tomarkirin", namen: { einzel: "Karsaziya yekkesî", gbr: "GbR", gmbh: "GmbH", ug: "UG (berpirsiyariya sînorkirî)", kg_ohg: "KG an OHG", unbekannt: "Nizanim" } }, // Rechtsform (23.10.2026)
 };

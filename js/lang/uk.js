@@ -6,8 +6,8 @@ const pn = (n, one, few, many) => `${n} ${pl(n, one, few, many)}`;
 const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"З першого запису відходів","titel":"Менше втрат","laueft": (ab) => `Замір триває з ${ab}`,"stufe":{"bisNull":"До нуля","bisZiel":"До цілі","ueberZiel":"Вище цілі"},"ohneKosten":"Немає витрат","art":{"muell":"Відходи","preis":"Ціна","lager":"Склад","papier":"Папери"},"aktion":{"kuehlAlarm":"Виміряти знову","rundgangOffen":"Продовжити обхід","rundgang":"Обхід холоду","putzen":"Прибирання","sicherung":"Зробити копію","abschluss":"Закрити день","selbst":"Внести свій рецепт","einkauf":"Внести закупівельні ціни","rezepte":"Зважити рецепти"}},
   app: { name: "GastroCash", entwurf: "Тестова версія" },
 
   allgemein: {
@@ -371,7 +371,7 @@ export default {
     offen: { karte: () => "Сфотографувати меню", preise: (n) => `${pn(n, "страва", "страви", "страв")} без ціни`, rezepte: (n) => `${pn(n, "страва", "страви", "страв")} без рецепта`, kosten: (n) => `Не заповнено обов’язкових пунктів: ${n} (оренда, персонал, своя зарплата, електрика/газ)`,
       einkauf: (n) => `${pn(n, "інгредієнт", "інгредієнти", "інгредієнтів")} без закупівельної ціни – фото рахунку це заповнить`, kuehlung: () => "Додати точки заміру", sicherung: () => "Останній копії більше 7 днів" } },
   vergleich: { wareHoch: (q) => `${q} % – високо`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Зробити своє фото", fotoGespeichert: "Фото збережено. Воно лишається на цьому телефоні.",  titel: "Порівняння страв", unter: "Які страви приносять тобі найбільше?", tab: { db: "Лишається зі штуки", marge: "Rohgewinn %" }, ware: "Витрати на продукти", db: "Лишається тобі зі штуки", marge: "Rohgewinn (nach Ware)", leer: "Впиши ціни продажу й закупівлі – тоді тут буде видно, які страви приносять найбільше.", ohneZahlen: (n) => `${pn(n, "страва", "страви", "страв")} поки без цифр`, einkaufFehlt: "Немає закупівельних цін", hinweis: "Значення приблизні й можуть відрізнятися залежно від інгредієнтів і цін. Усі суми без ПДВ, крім ціни продажу.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Зробити своє фото", fotoGespeichert: "Фото збережено. Воно лишається на цьому телефоні.",  titel: "Порівняння страв", unter: "Які страви приносять тобі найбільше?", tab: { db: "Лишається зі штуки", marge: "Валовий прибуток %" }, ware: "Витрати на продукти", db: "Лишається тобі зі штуки", marge: "Валовий прибуток (після товару)", leer: "Впиши ціни продажу й закупівлі – тоді тут буде видно, які страви приносять найбільше.", ohneZahlen: (n) => `${pn(n, "страва", "страви", "страв")} поки без цифр`, einkaufFehlt: "Немає закупівельних цін", hinweis: "Значення приблизні й можуть відрізнятися залежно від інгредієнтів і цін. Усі суми без ПДВ, крім ціни продажу.", nachKosten: "Після всіх витрат", nachKostenFehlt: "Немає витрат", ampelLegende: "Світлофор після всіх витрат: червоний нижче 10 %, зелений від 19 % ціни нетто (≈ оцінка за збірником нормативів BMF, дані 2024 року)." },
   buero: {
     ruhig: { mehr: (n) => `ще ${n}` }, titel: "Офіс", zurueck: "Заклад",
     abschnitt: { geld: "Гроші", ware: "Товар", kartePreise: "Меню і ціни", offen: "Не зроблено", ordner: "Папки для здачі", zahlen: "Цифри", karte: "Меню й закупівля", einrichten: "Налаштування закладу" },
@@ -577,7 +577,7 @@ export default {
     zuletzt: "востаннє",
     zuletztLang: (w, d) => `Востаннє ${w} °C (${d}). Впиши значення, яке бачиш зараз.`,
     ersteMessung: "Перший замір на цій точці.",
-    minusHinweis: "Мінус вводь через «-», напр. -18",
+    minusFrage: (v) => `Ти мав на увазі −${v} °C? Торкнись`, minusHinweis: "Мінус вводь через «-», напр. -18",
     nichtGemessenKurz: "не виміряно",
     nichtGemessen: "Або: сьогодні не вимірювали, бо …",
     gruende: { geschlossen: "зачинено", geraetAus: "прилад вимкнено / розморожується", leer: "прилад порожній" },
@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Завантажити чек, оновити ціни",
   },
 
-  muell: {
+  muell: { personalEintragen: "Записати їжу персоналу",
     zeki: { start: "Що сьогодні викинули?", weiter: "Ще щось викинули?", personal: "Що з'їла твоя команда?", bruch: "Що зламалося чи розбилося?" },
     grund: { roh: "Товар", personal: "Персонал", bruch: "Поломка" }, nichtsGefunden: "Нічого не знайдено. Напиши інакше або обери «Зважив відро».",
     zurUebersicht: "Огляд сміття",
@@ -754,7 +754,7 @@ export default {
     gerichtWegKurz: "Готова їжа, тарілку повернули, помилка в замовленні",
     rohwareWeg: "Сировина в смітник",
     rohwareKurz: "Помідори, м’ясо, хліб – прострочено або зіпсувалося",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Залишилося", uebrigHinweis: "Що було готове і не продалося",
     eimer: "Зважив відро",
     eimerKurz: "Тільки вага, решту порахує застосунок",
     personal: "Їжа для персоналу",
@@ -853,7 +853,7 @@ export default {
     fixTag: "Постійні витрати за день",
     tonne: "Сміття",
     kuehl: "Холодильники",
-    rundgaenge: (n) => pn(n, "обхід", "обходи", "обходів"), nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => pn(n, "обхід", "обходи", "обходів"), nachkontrolle: (n) => pn(n, "повторний замір", "повторні заміри", "повторних замірів"),
     besser: (tag, b) => `${tag}: на ${b} більше виторгу, ніж тиждень тому.`,
     schlechter: (tag, b) => `${tag}: на ${b} менше виторгу, ніж тиждень тому.`,
     gleich: (tag) => `${tag}: так само, як тиждень тому.`,
@@ -1078,9 +1078,9 @@ export default {
     laden: "Твій заклад", namePlatzhalter: "Назва закладу",
     ladenHilfe: "Тип закладу дає стартові значення для рецептів, холоду й плану прибирання. Усе можна змінити потім в офісі.",
     allesGenau: "Налаштувати все докладно",
-    karte: "Твоє меню", karteFoto: "Сфотографувати меню", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Фото або PDF", spaeter: "Потім",
+    karte: "Твоє меню", karteFoto: "Сфотографувати меню", karteVorlagen: "Вибрати із шаблонів", karteGalerie: "Фото або PDF", spaeter: "Потім",
     karteHilfe: "Застосунок читає страви й ціни з фото. Що ви робите самі, вкажеш в офісі в розділі «Рецепти».",
-    kuehl: "Холод", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Холодильник", saladette: "Саладета", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
+    kuehl: "Холод", arten: { getraenke: "Холодильник для напоїв", kuehlschrank: "Холодильник", saladette: "Саладета", tiefkuehler: "Морозилка", warmhalter: "Мармит" },
     kuehlHilfe: "Для кожного приладу потім вносиш температуру. Назви змінюєш в офісі.",
     geld: "Витрати на місяць", miete: "Оренда", personal: "Персонал", eigen: "Твоя зарплата", strom: "Електрика",
     geldHilfe: "Приблизно – вже добре, можна й порожнім. Рахунки сфотографуєш потім в офісі.",
@@ -1141,7 +1141,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сьогодні", muell: "Відходи", kuehl: "Холод", putzplan: "Прибирання", karte: "Меню" },
     leiste: "Заклад", menueAuf: "Відкрити меню", schliessen: "Закрити", hilfeAuf: "Допомога", zekiFragen: "Запитай Зекі", deinLaden: "Твій заклад", abschluss: "Закрити день", personal: "Режим персоналу", buero: "Офіс", ladenWechseln: "Змінити заклад", sprache: "Мова", zumLaden: "Заклад", zumBuero: "Офіс", schlossCode: "Введи код офісу",
-    pin: { titel: "Код офісу", neu: "Обери новий код", nochmal: "Ще раз", falsch: "Неправильний код", ungleich: "Не збігається. Обери знову.", gesetzt: "Код офісу збережено", entfernt: "Код офісу видалено", setzen: "Встановити код офісу", aendern: "Змінити код офісу", entfernen: "Видалити код", ohne: "Без коду до офісу може зайти будь-хто.", mit: "Офіс захищений кодом.", loeschen: "Стерти цифру", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Код офісу", neu: "Обери новий код", nochmal: "Ще раз", falsch: "Неправильний код", ungleich: "Не збігається. Обери знову.", gesetzt: "Код офісу збережено", entfernt: "Код офісу видалено", setzen: "Встановити код офісу", aendern: "Змінити код офісу", entfernen: "Видалити код", ohne: "Без коду до офісу може зайти будь-хто.", mit: "Офіс захищений кодом.", loeschen: "Стерти цифру", testphase: "Тестова фаза: без коду. Усі заходять в офіс і в режим персоналу. Перед великим пілотом знову увімкнути код.", testphaseAn: "Увімкнути тестову фазу без коду", testphaseAus: "Знову увімкнути код" },
     hilfeText: {
       allgemein: "Панель унизу веде до всього, що потрібно в закладі. Розрахунки, налаштування й списки — в офісі.",
       start: "День одним поглядом. Велике число показує, скільки виторгу ще бракує до нуля. Червоне означає: займися зараз. «≈» попереду означає оцінку (товар або твоя зарплата) – пояснення в офісі, «Місяць і лічильник». Без закупівельних цін застосунок рахує 32 % на товар (закусочні: 23–41 %, таблиці BMF 2025).",
@@ -1153,7 +1153,7 @@ export default {
       laeden: "Тут ти перемикаєшся між закладами. Кожен заклад має свої цифри.",
       personal: "Внеси відходи, виміряй холод, познач прибирання. Назад лише з кодом офісу.",
       buero: "Тут усі розрахунки, списки й налаштування. Папки ти віддаєш інспекції, податковому консультанту або бухгалтеру." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Інгредієнти з меню. Перевір кількості, час приготування і повний рецепт." }, // 26.10.2026
   heute: {
     zielLinie: "нуль + цільовий прибуток",
     stufe: { bisNull: "До нуля бракує", bisZiel: "До цілі", ueberZiel: "Понад ціль" },
@@ -1468,6 +1468,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Остання поза телефоном: сьогодні" : n === 1 ? "Остання поза телефоном: 1 день тому" : `Остання поза телефоном: ${n} дн. тому`, nieWeg: "Ще немає копії поза телефоном", mitPasswort: "З паролем", ohneFotos: "Без фото (мала, для пошти)",
       verschicken: "Надіслати копію", woFrage: "Де вона зараз?", woanders: "Інший пристрій, пошта, хмара", nurHandy: "Лише на цьому телефоні", nurHandyMeldung: "Нагадування лишається: файл лише на цьому телефоні.", gezaehlt: "Копію зараховано. Нагадування скинуто." } },
   adanaBrot: { frage: "Який хліб ви подаєте до адани?", pide: "Ціла піде", pideHalb: "Половина піде", fladen: "Дюрюм / лаваш", kein: "Без хліба" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Підказки", einstiegUnter: "Податки й установи, з твоїх даних", einstiegNeu: (n) => pn(n, "нова підказка", "нові підказки", "нових підказок"), titel: "Підказки", unter: "З твоїх даних. Загальна інформація, не консультація.", pflicht: "Загальна підказка, не податкова консультація – уточни з податковим консультантом.", leer: "Зараз підказок немає. З новими даними з’являться нові.", quelle: "Джерело", belege: "Підготувати чеки", spaeterKnopf: "Пізніше", spaeter: "пізніше", erledigt: "Готово", erledigtMeldung: "Підказку виконано", spaeterMeldung: "Підказку відкладено" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Правова форма", hinweis: "Вказана в реєстрації промислу (Gewerbeanmeldung) або в Impressum. e.K. вважається одноосібним підприємством, GmbH & Co. KG — як KG.", offen: "Внести правову форму", gesetzt: "Правову форму збережено", namen: { einzel: "Одноосібне підприємство", gbr: "GbR", gmbh: "GmbH", ug: "UG (з обмеженою відповідальністю)", kg_ohg: "KG або OHG", unbekannt: "Не знаю" } }, // Rechtsform (23.10.2026)
 };

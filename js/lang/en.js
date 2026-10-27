@@ -571,7 +571,7 @@ export default {
     zuletzt: "last",
     zuletztLang: (w, d) => `Last ${w} °C on ${d}. Enter the value you read now.`,
     ersteMessung: "First measurement at this unit.",
-    minusHinweis: "Enter minus with \"-\", e.g. -18",
+    minusFrage: (v) => `Did you mean −${v} °C? Tap`, minusHinweis: "Enter minus with \"-\", e.g. -18",
     nichtGemessenKurz: "not measured",
     nichtGemessen: "Or: not measured today because …",
     gruende: { geschlossen: "closed", geraetAus: "unit off / defrosting", leer: "unit empty" },
@@ -736,7 +736,7 @@ export default {
     belegeKurz: "Read a receipt, update prices",
   },
 
-  muell: {
+  muell: { personalEintragen: "Log staff meal",
     zeki: { start: "What got thrown out today?", weiter: "Anything else thrown out?", personal: "What did your team eat?", bruch: "What got broken?" },
     grund: { roh: "Goods", personal: "Staff", bruch: "Breakage" }, nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
     zurUebersicht: "Waste overview", 

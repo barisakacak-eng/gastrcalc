@@ -7,8 +7,8 @@ const de = (n) => { const x = Math.abs(Number(n)); if (!Number.isInteger(x) || x
 const nr = (n, unu, multe) => Number(n) === 1 ? `1 ${unu}` : `${n} ${de(n)}${multe}`;
 
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"De la prima intrare de gunoi","titel":"Mai puține pierderi","laueft": (ab) => `Măsurare din ${ab}`,"stufe":{"bisNull":"Până la zero","bisZiel":"Spre obiectiv","ueberZiel":"Peste obiectiv"},"ohneKosten":"Lipsesc costurile","art":{"muell":"Gunoi","preis":"Preț","lager":"Stoc","papier":"Hârtii"},"aktion":{"kuehlAlarm":"Măsoară din nou","rundgangOffen":"Continuă runda","rundgang":"Runda de frig","putzen":"Curățenie","sicherung":"Fă o copie","abschluss":"Închide ziua","selbst":"Scrie rețeta ta","einkauf":"Scrie prețurile de achiziție","rezepte":"Cântărește rețetele"}},
   app: { name: "GastroCash", entwurf: "Versiune de test" },
 
   allgemein: {
@@ -372,7 +372,7 @@ export default {
     offen: { karte: () => "Fotografiază meniul", preise: (n) => `${nr(n, "preparat", "preparate")} fără preț`, rezepte: (n) => `${nr(n, "preparat", "preparate")} fără rețetă`, kosten: (n) => `${nr(n, "poziție obligatorie deschisă", "poziții obligatorii deschise")} (chirie, personal, salariul tău, curent/gaz)`,
       einkauf: (n) => `${nr(n, "ingredient", "ingrediente")} fără preț de cumpărare – o poză cu factura le completează`, kuehlung: () => "Adaugă un punct de răcire", sicherung: () => "Ultima copie e mai veche de 7 zile" } },
   vergleich: { wareHoch: (q) => `${q} % – ridicat`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Rohgewinn %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Rohgewinn (nach Ware)", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Fă o poză proprie", fotoGespeichert: "Poză salvată. Rămâne pe telefonul ăsta.",  titel: "Preparate comparate", unter: "Care preparate îți aduc cel mai mult?", tab: { db: "Rămâne pe bucată", marge: "Profit brut %" }, ware: "Costul mărfii", db: "Îți rămâne pe bucată", marge: "Profit brut (după marfă)", leer: "Trece prețurile de vânzare și de cumpărare, apoi vezi aici care preparate aduc cel mai mult.", ohneZahlen: (n) => (n === 1 ? "1 preparat încă fără cifre" : `${nr(n, "preparat", "preparate")} încă fără cifre`), einkaufFehlt: "Lipsesc prețurile de cumpărare", hinweis: "Valorile sunt estimări și pot varia după ingrediente și prețuri. Toate sumele fără TVA, în afară de prețul de vânzare.", nachKosten: "După toate costurile", nachKostenFehlt: "Lipsesc costurile", ampelLegende: "Semafor după toate costurile: roșu sub 10 %, verde de la 19 % din prețul net (≈ încadrare după culegerea de coeficienți BMF, anul datelor 2024)." },
   buero: {
     ruhig: { mehr: (n) => `încă ${n}` }, titel: "Birou", zurueck: "Local",
     abschnitt: { geld: "Bani", ware: "Marfă", kartePreise: "Meniu și prețuri", offen: "De făcut", ordner: "Dosare de predat", zahlen: "Cifre", karte: "Meniu și cumpărături", einrichten: "Configurează localul" },
@@ -578,7 +578,7 @@ export default {
     zuletzt: "ultima dată",
     zuletztLang: (w, d) => `Ultima dată ${w} °C pe ${d}. Trece valoarea pe care o citești acum.`,
     ersteMessung: "Prima măsurare la acest punct.",
-    minusHinweis: "Minus se scrie cu „-”, ex. -18",
+    minusFrage: (v) => `Voiai să scrii −${v} °C? Atinge`, minusHinweis: "Minus se scrie cu „-”, ex. -18",
     nichtGemessenKurz: "nemăsurat",
     nichtGemessen: "Sau: azi nemăsurat, pentru că …",
     gruende: { geschlossen: "închis", geraetAus: "aparat oprit / la dezghețat", leer: "aparat gol" },
@@ -743,7 +743,7 @@ export default {
     belegeKurz: "Încarcă bonul, actualizează prețurile",
   },
 
-  muell: {
+  muell: { personalEintragen: "Notează masa personalului",
     zeki: { start: "Ce s-a aruncat azi?", weiter: "S-a mai aruncat ceva?", personal: "Ce a mâncat echipa ta?", bruch: "Ce s-a spart sau stricat?" },
     grund: { roh: "Marfă", personal: "Personal", bruch: "Spart" }, nichtsGefunden: "N-am găsit nimic. Scrie altfel sau alege „Găleată cântărită”.",
     zurUebersicht: "Privire de ansamblu gunoi",
@@ -755,7 +755,7 @@ export default {
     gerichtWegKurz: "Mâncare gata, farfurie returnată, comandă greșită",
     rohwareWeg: "Materie primă aruncată",
     rohwareKurz: "Roșii, carne, pâine – expirate sau stricate",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Rămas", uebrigHinweis: "Ce era gata și nu s-a vândut",
     eimer: "Găleată cântărită",
     eimerKurz: "Doar greutatea, restul îl calculează aplicația",
     personal: "Masa personalului",
@@ -854,7 +854,7 @@ export default {
     fixTag: "Costurile fixe ale zilei",
     tonne: "Gunoi",
     kuehl: "Răcire",
-    rundgaenge: (n) => n === 1 ? "1 rundă" : nr(n, "rundă", "runde"), nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => n === 1 ? "1 rundă" : nr(n, "rundă", "runde"), nachkontrolle: (n) => nr(n, "remăsurare", "remăsurări"),
     besser: (tag, b) => `${tag}: cu ${b} mai multe încasări decât săptămâna trecută.`,
     schlechter: (tag, b) => `${tag}: cu ${b} mai puține încasări decât săptămâna trecută.`,
     gleich: (tag) => `${tag}: la fel ca săptămâna trecută.`,
@@ -1079,9 +1079,9 @@ export default {
     laden: "Localul tău", namePlatzhalter: "Numele localului",
     ladenHilfe: "Tipul localului dă valori de start pentru rețete, răcire și planul de curățenie. Poți schimba totul mai târziu în birou.",
     allesGenau: "Configurează totul exact",
-    karte: "Meniul tău", karteFoto: "Fotografiază meniul", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Poze sau PDF", spaeter: "Mai târziu",
+    karte: "Meniul tău", karteFoto: "Fotografiază meniul", karteVorlagen: "Alege din șabloane", karteGalerie: "Poze sau PDF", spaeter: "Mai târziu",
     karteHilfe: "Aplicația citește preparatele și prețurile din poză. Ce faceți voi singuri setezi în birou, la Rețete.",
-    kuehl: "Răcire", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigider", saladette: "Saladetă", tiefkuehler: "Congelator", warmhalter: "Încălzitor" },
+    kuehl: "Răcire", arten: { getraenke: "Frigider de băuturi", kuehlschrank: "Frigider", saladette: "Saladetă", tiefkuehler: "Congelator", warmhalter: "Încălzitor" },
     kuehlHilfe: "Pentru fiecare aparat introduci mai târziu temperatura. Numele le schimbi în birou.",
     geld: "Costuri pe lună", miete: "Chirie", personal: "Personal", eigen: "Salariul tău", strom: "Curent",
     geldHilfe: "Aproximativ e destul, poți lăsa și gol. Facturile le fotografiezi mai târziu în birou.",
@@ -1142,7 +1142,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Azi", muell: "Deșeuri", kuehl: "Răcire", putzplan: "Curățenie", karte: "Meniu" },
     leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", zekiFragen: "Întreabă-l pe Zeki", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossCode: "Introdu codul de birou",
-    pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra", testphase: "Fază de test: fără cod. Toată lumea intră în birou și în modul personal. Pornește codul din nou înainte de pilotul mare.", testphaseAn: "Pornește faza de test fără cod", testphaseAus: "Pornește din nou codul" },
     hilfeText: {
       allgemein: "Bara de jos duce la tot ce îți trebuie în local. Calculele, configurarea și listele sunt în birou.",
       start: "Ziua dintr-o privire. Numărul mare arată cât încasări mai lipsesc până la zero. Roșu înseamnă: ocupă-te acum. Un „≈” în față înseamnă estimare (marfă sau salariul tău) – explicația la birou, sub „Lună și contor”. Fără prețuri de achiziție aplicația calculează cu 32 % marfă (fast-food: 23–41 %, tabele BMF 2025).",
@@ -1154,7 +1154,7 @@ export default {
       laeden: "Aici treci de la un local la altul. Fiecare local are cifrele lui.",
       personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Ingrediente din meniu. Verifică cantitățile, timpul de preparare și rețeta completă." }, // 26.10.2026
   heute: {
     zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },
@@ -1469,6 +1469,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ultima în afara telefonului: azi" : n === 1 ? "Ultima în afara telefonului: acum 1 zi" : `Ultima în afara telefonului: acum ${n} zile`, nieWeg: "Încă nicio copie în afara telefonului", mitPasswort: "Cu parolă", ohneFotos: "Fără poze (mică, pentru e-mail)",
       verschicken: "Trimite copia", woFrage: "Unde este acum?", woanders: "Alt dispozitiv, e-mail, cloud", nurHandy: "Doar pe acest telefon", nurHandyMeldung: "Memento-ul rămâne: fișierul e doar pe acest telefon.", gezaehlt: "Copie numărată. Memento resetat." } },
   adanaBrot: { frage: "Ce pâine serviți la adana?", pide: "Pide întreg", pideHalb: "Jumătate de pide", fladen: "Dürüm / lavaș", kein: "Fără pâine" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Indicații", einstiegUnter: "Taxe și autorități, din datele tale", einstiegNeu: (n) => nr(n, "indicație nouă", "indicații noi"), titel: "Indicații", unter: "Din datele tale. General, nu consultanță.", pflicht: "Indicație generală, nu consultanță fiscală – lămurește cu consultantul tău fiscal.", leer: "Acum nu e nicio indicație. Cu mai multe date vin și indicații.", quelle: "Sursă", belege: "Pregătește bonurile", spaeterKnopf: "Mai târziu", spaeter: "mai târziu", erledigt: "Gata", erledigtMeldung: "Indicație rezolvată", spaeterMeldung: "Indicație amânată" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Forma juridică", hinweis: "Scrie pe înregistrarea activității (Gewerbeanmeldung) sau în Impressum. e.K. se socotește întreprindere individuală, GmbH & Co. KG ca KG.", offen: "Scrie forma juridică", gesetzt: "Forma juridică salvată", namen: { einzel: "Întreprindere individuală", gbr: "GbR", gmbh: "GmbH", ug: "UG (cu răspundere limitată)", kg_ohg: "KG sau OHG", unbekannt: "Nu știu" } }, // Rechtsform (23.10.2026)
 };

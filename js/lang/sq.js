@@ -6,8 +6,8 @@ const sn = (n, one, many) => `${n} ${sh(n, one, many)}`;
 const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase() + t.slice(1); };
 
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"Nga regjistrimi i parë i mbeturinave","titel":"Më pak humbje","laueft": (ab) => `Matja që nga ${ab}`,"stufe":{"bisNull":"Deri në zero","bisZiel":"Drejt objektivit","ueberZiel":"Mbi objektiv"},"ohneKosten":"Mungojnë kostot","art":{"muell":"Mbeturina","preis":"Çmimi","lager":"Magazina","papier":"Letrat"},"aktion":{"kuehlAlarm":"Mat përsëri","rundgangOffen":"Vazhdo raundin","rundgang":"Raundi i ftohjes","putzen":"Pastrim","sicherung":"Bëj kopje","abschluss":"Mbyll ditën","selbst":"Shkruaj recetën tënde","einkauf":"Shkruaj çmimet e blerjes","rezepte":"Peso recetat"}},
   app: { name: "GastroCash", entwurf: "Version prove" },
 
   allgemein: {
@@ -371,7 +371,7 @@ export default {
     offen: { karte: () => "Fotografo menynë", preise: (n) => `${sn(n, "pjatë", "pjata")} pa çmim`, rezepte: (n) => `${sn(n, "pjatë", "pjata")} pa recetë`, kosten: (n) => `${sn(n, "zë i detyrueshëm bosh", "zëra të detyrueshëm bosh")} (qiraja, personeli, rroga jote, rryma/gazi)`,
       einkauf: (n) => `${n} përbërës pa çmim blerjeje – një foto e faturës i plotëson`, kuehlung: () => "Krijo pikat e matjes", sicherung: () => "Kopja e fundit është më e vjetër se 7 ditë" } },
   vergleich: { wareHoch: (q) => `${q} % – e lartë`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Bëj foton tënde", fotoGespeichert: "Fotoja u ruajt. Mbetet në këtë telefon.",  titel: "Krahasimi i pjatave", unter: "Cilat pjata të sjellin më shumë?", tab: { db: "Të mbetet për copë", marge: "Rohgewinn %" }, ware: "Kostoja e mallit", db: "Të mbetet për copë", marge: "Rohgewinn (nach Ware)", leer: "Shkruaj çmimet e shitjes dhe të blerjes, pastaj sheh këtu cilat pjata sjellin më shumë.", ohneZahlen: (n) => (n === 1 ? "1 pjatë ende pa shifra" : `${n} pjata ende pa shifra`), einkaufFehlt: "Mungojnë çmimet e blerjes", hinweis: "Vlerat janë të përafërta dhe mund të ndryshojnë sipas përbërësve dhe çmimeve. Të gjitha shumat pa TVSH, përveç çmimit të shitjes.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Bëj foton tënde", fotoGespeichert: "Fotoja u ruajt. Mbetet në këtë telefon.",  titel: "Krahasimi i pjatave", unter: "Cilat pjata të sjellin më shumë?", tab: { db: "Të mbetet për copë", marge: "Fitimi bruto %" }, ware: "Kostoja e mallit", db: "Të mbetet për copë", marge: "Fitimi bruto (pas mallit)", leer: "Shkruaj çmimet e shitjes dhe të blerjes, pastaj sheh këtu cilat pjata sjellin më shumë.", ohneZahlen: (n) => (n === 1 ? "1 pjatë ende pa shifra" : `${n} pjata ende pa shifra`), einkaufFehlt: "Mungojnë çmimet e blerjes", hinweis: "Vlerat janë të përafërta dhe mund të ndryshojnë sipas përbërësve dhe çmimeve. Të gjitha shumat pa TVSH, përveç çmimit të shitjes.", nachKosten: "Pas të gjitha kostove", nachKostenFehlt: "Mungojnë kostot", ampelLegende: "Semafori pas të gjitha kostove: e kuqe nën 10 %, e gjelbër nga 19 % e çmimit neto (≈ vlerësim sipas përmbledhjes së normave të BMF, viti i të dhënave 2024)." },
   buero: {
     ruhig: { mehr: (n) => `edhe ${n}` }, titel: "Zyra", zurueck: "Lokali",
     abschnitt: { geld: "Paratë", ware: "Malli", kartePreise: "Menuja dhe çmimet", offen: "Për t'u bërë", ordner: "Dosje për dorëzim", zahlen: "Shifrat", karte: "Menyja dhe blerjet", einrichten: "Rregullo lokalin" },
@@ -577,7 +577,7 @@ export default {
     zuletzt: "herën e fundit",
     zuletztLang: (w, d) => `Herën e fundit ${w} °C më ${d}. Shkruaj vlerën që lexon tani.`,
     ersteMessung: "Matja e parë në këtë pikë.",
-    minusHinweis: "Minusin shkruaje me “-”, p.sh. -18",
+    minusFrage: (v) => `Doje të thoje −${v} °C? Prek`, minusHinweis: "Minusin shkruaje me “-”, p.sh. -18",
     nichtGemessenKurz: "pa matje",
     nichtGemessen: "Ose: sot nuk u mat, sepse …",
     gruende: { geschlossen: "mbyllur", geraetAus: "pajisja e fikur / duke u shkrirë", leer: "pajisja bosh" },
@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Lexo faturë, përditëso çmimet",
   },
 
-  muell: {
+  muell: { personalEintragen: "Shëno ushqimin e stafit",
     zeki: { start: "Çfarë u hodh sot?", weiter: "U hodh edhe diçka tjetër?", personal: "Çfarë hëngri ekipi yt?", bruch: "Çfarë u thye ose u prish?" },
     grund: { roh: "Mall", personal: "Stafi", bruch: "Thyerje" }, nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",
     zurUebersicht: "Pasqyra e mbeturinave",
@@ -754,7 +754,7 @@ export default {
     gerichtWegKurz: "Ushqim i gatshëm, pjatë e kthyer, porosi e gabuar",
     rohwareWeg: "Lëndë e parë në kosh",
     rohwareKurz: "Domate, mish, bukë – e skaduar ose e prishur",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Mbeti", uebrigHinweis: "Çfarë ishte gati dhe nuk u shit",
     eimer: "Peshova koshin",
     eimerKurz: "Vetëm pesha, pjesën tjetër e llogarit aplikacioni",
     personal: "Ushqimi i stafit",
@@ -853,7 +853,7 @@ export default {
     fixTag: "Shpenzimet fikse të ditës",
     tonne: "Koshi",
     kuehl: "Frigoriferët",
-    rundgaenge: (n) => n === 1 ? "1 raund" : `${n} raunde`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => n === 1 ? "1 raund" : `${n} raunde`, nachkontrolle: (n) => sn(n, "matje e dytë", "matje të dyta"),
     besser: (tag, b) => `${tag} ishte më mirë se ${tag} i kaluar: ${b} më shumë xhiro.`,
     schlechter: (tag, b) => `${tag} ishte më dobët se ${tag} i kaluar: ${b} më pak xhiro.`,
     gleich: (tag) => `${tag} ishte si ${tag} i kaluar.`,
@@ -1078,9 +1078,9 @@ export default {
     laden: "Lokali yt", namePlatzhalter: "Emri i lokalit",
     ladenHilfe: "Lloji i lokalit jep vlera fillestare për recetat, ftohjen dhe planin e pastrimit. Gjithçka mund ta ndryshosh më vonë në zyrë.",
     allesGenau: "Rregullo gjithçka me saktësi",
-    karte: "Menyja jote", karteFoto: "Fotografo menynë", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Foto ose PDF", spaeter: "Më vonë",
+    karte: "Menyja jote", karteFoto: "Fotografo menynë", karteVorlagen: "Zgjidh nga shabllonet", karteGalerie: "Foto ose PDF", spaeter: "Më vonë",
     karteHilfe: "Aplikacioni lexon pjatat dhe çmimet nga foto. Çfarë bëni vetë, e vendos në zyrë te Recetat.",
-    kuehl: "Ftohja", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigorifer", saladette: "Saladeta", tiefkuehler: "Ngrirës", warmhalter: "Ngrohës" },
+    kuehl: "Ftohja", arten: { getraenke: "Frigorifer pijesh", kuehlschrank: "Frigorifer", saladette: "Saladeta", tiefkuehler: "Ngrirës", warmhalter: "Ngrohës" },
     kuehlHilfe: "Për çdo pajisje shkruan më vonë temperaturën. Emrat i ndryshon në zyrë.",
     geld: "Shpenzimet në muaj", miete: "Qiraja", personal: "Stafi", eigen: "Rroga jote", strom: "Rryma",
     geldHilfe: "Përafërsisht mjafton, mund ta lësh edhe bosh. Faturat i fotografon më vonë në zyrë.",
@@ -1141,7 +1141,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Sot", muell: "Mbetje", kuehl: "Ftohja", putzplan: "Pastrimi", karte: "Menuja" },
     leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", zekiFragen: "Pyet Zekin", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossCode: "Shkruaj kodin e zyrës",
-    pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën", testphase: "Fazë prove: pa kod. Të gjithë hyjnë në zyrë dhe në modalitetin e stafit. Ndize përsëri kodin para pilotit të madh.", testphaseAn: "Ndiz fazën e provës pa kod", testphaseAus: "Ndize përsëri kodin" },
     hilfeText: {
       allgemein: "Shiriti poshtë të çon te gjithçka që të duhet në lokal. Llogaritë, rregullimet dhe listat janë në zyrë.",
       start: "Dita me një shikim. Numri i madh tregon sa xhiro mungon ende deri në zero. E kuqe do të thotë: merru tani. „≈“ përpara do të thotë vlerësim (mall ose paga jote) – shpjegimi në zyrë te „Muaji dhe numëruesi“. Pa çmime blerjeje aplikacioni llogarit 32 % mall (lokale të vogla: 23–41 %, tabelat BMF 2025).",
@@ -1153,7 +1153,7 @@ export default {
       laeden: "Këtu kalon nga një lokal te tjetri. Çdo lokal ka shifrat e veta.",
       personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Përbërësit nga menuja. Kontrollo sasitë, kohën e përgatitjes dhe recetën e plotë." }, // 26.10.2026
   heute: {
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
@@ -1468,6 +1468,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "E fundit jashtë telefonit: sot" : n === 1 ? "E fundit jashtë telefonit: 1 ditë më parë" : `E fundit jashtë telefonit: ${n} ditë më parë`, nieWeg: "Ende asnjë kopje jashtë telefonit", mitPasswort: "Me fjalëkalim", ohneFotos: "Pa foto (e vogël, për email)",
       verschicken: "Dërgo kopjen", woFrage: "Ku është tani?", woanders: "Pajisje tjetër, email, cloud", nurHandy: "Vetëm në këtë telefon", nurHandyMeldung: "Kujtesa mbetet: skedari është vetëm në këtë telefon.", gezaehlt: "Kopja u numërua. Kujtesa u rivendos." } },
   adanaBrot: { frage: "Çfarë buke jepni me adanën?", pide: "Pide e plotë", pideHalb: "Gjysmë pide", fladen: "Dürüm / lavash", kein: "Pa bukë" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Njoftime", einstiegUnter: "Taksat dhe zyrat, nga të dhënat e tua", einstiegNeu: (n) => sn(n, "njoftim i ri", "njoftime të reja"), titel: "Njoftime", unter: "Nga të dhënat e tua. Të përgjithshme, jo këshillim.", pflicht: "Njoftim i përgjithshëm, jo këshillim tatimor – sqaroje me këshilltarin tatimor.", leer: "Tani nuk ka njoftim. Me më shumë të dhëna vijnë njoftime.", quelle: "Burimi", belege: "Përgatit faturat", spaeterKnopf: "Më vonë", spaeter: "më vonë", erledigt: "U krye", erledigtMeldung: "Njoftimi u krye", spaeterMeldung: "Njoftimi u shty" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Forma ligjore", hinweis: "Shkruhet në regjistrimin e biznesit (Gewerbeanmeldung) ose në Impressum. e.K. llogaritet si biznes individual, GmbH & Co. KG si KG.", offen: "Shkruaj formën ligjore", gesetzt: "Forma ligjore u ruajt", namen: { einzel: "Biznes individual", gbr: "GbR", gmbh: "GmbH", ug: "UG (me përgjegjësi të kufizuar)", kg_ohg: "KG ose OHG", unbekannt: "Nuk e di" } }, // Rechtsform (23.10.2026)
 };

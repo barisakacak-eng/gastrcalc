@@ -1,7 +1,7 @@
 // Türkçe. Mutfak dili: kısa cümleler, terim yok. Almanca tablodan çevrildi (Etap 1).
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"İlk çöple","titel":"Kayıp azaldı","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
+  nutzen: {"start":"İlk çöpten","titel":"Kayıp azaldı","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
   app: { name: "GastroCash", entwurf: "Deneme sürümü" },
 
   allgemein: {
@@ -572,7 +572,7 @@ export default {
     zuletzt: "son",
     zuletztLang: (w, d) => `Son ölçüm ${d} tarihinde ${w} °C. Şimdi okuduğun değeri gir.`,
     ersteMessung: "Bu noktada ilk ölçüm.",
-    minusHinweis: "Eksiyi “-” ile gir, örn. -18",
+    minusFrage: (v) => `−${v} °C mi demek istedin? Dokun`, minusHinweis: "Eksiyi “-” ile gir, örn. -18",
     nichtGemessenKurz: "ölçülmedi",
     nichtGemessen: "Veya: bugün ölçülmedi, çünkü …",
     gruende: { geschlossen: "kapalı", geraetAus: "cihaz kapalı / buz çözme", leer: "cihaz boş" },
@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Fiş oku, fiyatları güncelle",
   },
 
-  muell: {
+  muell: { personalEintragen: "Personel yemeği gir",
     zeki: { start: "Bugün ne çöpe gitti?", weiter: "Başka giden var mı?", personal: "Ekibin ne yedi?", bruch: "Ne kırıldı?" },
     grund: { roh: "Mal", personal: "Personel", bruch: "Kırık" }, nichtsGefunden: "Bir şey bulunamadı. Başka yaz veya “Kova tartıldı”yı seç.",
     zurUebersicht: "Çöp özeti", 

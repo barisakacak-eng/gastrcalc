@@ -1,8 +1,8 @@
 // Italiano – tradotto da de.js (15.10.2026). Lingua da locale, frasi brevi.
 // Italienisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"Dalla prima registrazione rifiuti","titel":"Meno perdite","laueft": (ab) => `Misurazione attiva da ${ab}`,"stufe":{"bisNull":"Fino a zero","bisZiel":"Verso l’obiettivo","ueberZiel":"Sopra l’obiettivo"},"ohneKosten":"Mancano i costi","art":{"muell":"Rifiuti","preis":"Prezzo","lager":"Magazzino","papier":"Scartoffie"},"aktion":{"kuehlAlarm":"Rimisura","rundgangOffen":"Continua il giro","rundgang":"Giro del freddo","putzen":"Pulizia","sicherung":"Fai un backup","abschluss":"Chiudi la giornata","selbst":"Inserisci la tua ricetta","einkauf":"Inserisci i prezzi d’acquisto","rezepte":"Pesa le ricette"}},
   app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {
@@ -366,7 +366,7 @@ export default {
     offen: { karte: () => "Fotografa il menù", preise: (n) => `${n} ${n === 1 ? "piatto" : "piatti"} senza prezzo`, rezepte: (n) => `${n} ${n === 1 ? "piatto" : "piatti"} senza ricetta`, kosten: (n) => `${n} ${n === 1 ? "voce obbligatoria aperta" : "voci obbligatorie aperte"} (affitto, personale, tuo stipendio, luce/gas)`,
       einkauf: (n) => `${n} ${n === 1 ? "ingrediente" : "ingredienti"} senza prezzo d'acquisto – una foto della fattura lo compila`, kuehlung: () => "Aggiungi un apparecchio frigo", sicherung: () => "Ultimo backup più vecchio di 7 giorni" } },
   vergleich: { wareHoch: (q) => `${q} % – alto`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Rohgewinn %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Rohgewinn (nach Ware)", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "Scatta una tua foto", fotoGespeichert: "Foto salvata. Resta su questo telefono.",  titel: "Piatti a confronto", unter: "Quali piatti ti rendono di più?", tab: { db: "Resta al pezzo", marge: "Utile lordo %" }, ware: "Costo merce", db: "Ti resta al pezzo", marge: "Utile lordo (dopo la merce)", leer: "Inserisci prezzi di vendita e d'acquisto, così qui vedi quali piatti rendono di più.", ohneZahlen: (n) => (n === 1 ? "1 piatto ancora senza numeri" : `${n} piatti ancora senza numeri`), einkaufFehlt: "Mancano prezzi d'acquisto", hinweis: "I valori sono stime e possono variare secondo ingredienti e prezzi. Tutti gli importi senza IVA, tranne il prezzo di vendita.", nachKosten: "Dopo tutti i costi", nachKostenFehlt: "Mancano i costi", ampelLegende: "Semaforo dopo tutti i costi: rosso sotto il 10 %, verde dal 19 % del prezzo netto (≈ valutazione secondo la raccolta di coefficienti del BMF, anno dei dati 2024)." },
   buero: {
     ruhig: { mehr: (n) => `altri ${n}` }, titel: "Ufficio", zurueck: "Locale",
     abschnitt: { geld: "Soldi", ware: "Merce", kartePreise: "Menù e prezzi", offen: "Da fare", ordner: "Cartelle da consegnare", zahlen: "Numeri", karte: "Menu & acquisti", einrichten: "Imposta il locale" },
@@ -572,7 +572,7 @@ export default {
     zuletzt: "ultima volta",
     zuletztLang: (w, d) => `Ultima volta ${w} °C il ${d}. Inserisci il valore che leggi adesso.`,
     ersteMessung: "Prima misura su questo apparecchio.",
-    minusHinweis: "Il meno inseriscilo con “-”, es. -18",
+    minusFrage: (v) => `Intendevi −${v} °C? Tocca`, minusHinweis: "Il meno inseriscilo con “-”, es. -18",
     nichtGemessenKurz: "non misurato",
     nichtGemessen: "Oppure: oggi non misurato, perché …",
     gruende: { geschlossen: "chiuso", geraetAus: "apparecchio spento / in sbrinamento", leer: "apparecchio vuoto" },
@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Carica scontrino, aggiorna i prezzi",
   },
 
-  muell: {
+  muell: { personalEintragen: "Segna pasto del personale",
     zeki: { start: "Cosa hai buttato oggi?", weiter: "Hai buttato altro?", personal: "Cosa ha mangiato la tua squadra?", bruch: "Cosa si è rotto?" },
     grund: { roh: "Merce", personal: "Personale", bruch: "Rottura" }, nichtsGefunden: "Non trovato niente. Scrivi in un altro modo o scegli “Bidone pesato”.",
     zurUebersicht: "Riepilogo rifiuti",
@@ -749,7 +749,7 @@ export default {
     gerichtWegKurz: "Cibo pronto, piatto tornato indietro, ordine sbagliato",
     rohwareWeg: "Materia prima buttata",
     rohwareKurz: "Pomodori, carne, pane – scaduti o andati a male",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "Avanzato", uebrigHinweis: "Ciò che era pronto e non è stato venduto",
     eimer: "Bidone pesato",
     eimerKurz: "Solo il peso, il resto lo calcola l'app",
     personal: "Pasto del personale",
@@ -848,7 +848,7 @@ export default {
     fixTag: "Costi fissi del giorno",
     tonne: "Bidone",
     kuehl: "Frigo",
-    rundgaenge: (n) => n === 1 ? "1 giro" : `${n} giri`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => n === 1 ? "1 giro" : `${n} giri`, nachkontrolle: (n) => `${n} da ricontrollare`,
     besser: (tag, b) => `${tag}: ${b} di incasso in più rispetto allo stesso giorno della settimana scorsa.`,
     schlechter: (tag, b) => `${tag}: ${b} di incasso in meno rispetto allo stesso giorno della settimana scorsa.`,
     gleich: (tag) => `${tag}: come lo stesso giorno della settimana scorsa.`,
@@ -1072,9 +1072,9 @@ export default {
     laden: "Il tuo locale", namePlatzhalter: "Nome del locale",
     ladenHilfe: "Il tipo di locale dà valori di partenza per ricette, frigo e pulizie. Puoi cambiare tutto dopo in ufficio.",
     allesGenau: "Imposta tutto nel dettaglio",
-    karte: "Il tuo menu", karteFoto: "Fotografa il menu", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "Foto o PDF", spaeter: "Dopo",
+    karte: "Il tuo menu", karteFoto: "Fotografa il menu", karteVorlagen: "Scegli dai modelli", karteGalerie: "Foto o PDF", spaeter: "Dopo",
     karteHilfe: "L'app legge piatti e prezzi dalla foto. Quello che fate voi lo imposti in ufficio sotto Ricette.",
-    kuehl: "Frigo", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "Frigorifero", saladette: "Saladette", tiefkuehler: "Congelatore", warmhalter: "Scaldavivande" },
+    kuehl: "Frigo", arten: { getraenke: "Frigo bevande", kuehlschrank: "Frigorifero", saladette: "Saladette", tiefkuehler: "Congelatore", warmhalter: "Scaldavivande" },
     kuehlHilfe: "Per ogni apparecchio inserisci poi la temperatura. I nomi li cambi in ufficio.",
     geld: "Costi al mese", miete: "Affitto", personal: "Personale", eigen: "Il tuo stipendio", strom: "Luce",
     geldHilfe: "Basta più o meno, puoi anche lasciare vuoto. Le bollette le fotografi dopo in ufficio.",
@@ -1136,7 +1136,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Oggi", muell: "Scarti", kuehl: "Frigo", putzplan: "Pulizie", karte: "Menu" },
     leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", zekiFragen: "Chiedi a Zeki", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
-    pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra", testphase: "Fase di prova: senza codice. Tutti entrano in ufficio e nella modalità personale. Riattiva il codice prima del grande pilota.", testphaseAn: "Attiva la fase di prova senza codice", testphaseAus: "Riattiva il codice" },
     hilfeText: {
       allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",
       start: "La giornata a colpo d'occhio. Il numero grande mostra quanto incasso manca ancora per arrivare a zero. Rosso vuol dire: occupatene ora. Un «≈» davanti significa stima (merce o il tuo stipendio) – spiegazione in ufficio sotto «Mese e contatore». Senza prezzi d’acquisto l’app calcola il 32 % di merce (chioschi: 23–41 %, tabelle BMF 2025).",
@@ -1148,7 +1148,7 @@ export default {
       laeden: "Qui passi da un locale all'altro. Ogni locale ha i suoi numeri.",
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "Ingredienti dal menù. Controlla quantità, tempo di preparazione e ricetta completa." }, // 26.10.2026
   heute: {
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
@@ -1463,6 +1463,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "Ultimo fuori dal telefono: oggi" : n === 1 ? "Ultimo fuori dal telefono: 1 giorno fa" : `Ultimo fuori dal telefono: ${n} giorni fa`, nieWeg: "Ancora nessun backup fuori dal telefono", mitPasswort: "Con password", ohneFotos: "Senza foto (piccolo, per e-mail)",
       verschicken: "Invia backup", woFrage: "Dove si trova ora?", woanders: "Altro dispositivo, e-mail, cloud", nurHandy: "Solo su questo telefono", nurHandyMeldung: "Il promemoria resta: il file è solo su questo telefono.", gezaehlt: "Backup contato. Promemoria azzerato." } },
   adanaBrot: { frage: "Che pane servite con l'adana?", pide: "Pide intero", pideHalb: "Mezzo pide", fladen: "Dürüm / lavash", kein: "Senza pane" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "Avvisi", einstiegUnter: "Tasse e uffici, dai tuoi dati", einstiegNeu: (n) => (n === 1 ? "1 nuovo avviso" : `${n} nuovi avvisi`), titel: "Avvisi", unter: "Dai tuoi dati. In generale, non è consulenza.", pflicht: "Avviso generale, non consulenza fiscale – chiariscilo con il tuo commercialista.", leer: "Al momento nessun avviso. Con più dati arrivano altri avvisi.", quelle: "Fonte", belege: "Prepara le ricevute", spaeterKnopf: "Più tardi", spaeter: "più tardi", erledigt: "Fatto", erledigtMeldung: "Avviso fatto", spaeterMeldung: "Avviso rimandato" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "Forma giuridica", hinweis: "È sulla tua registrazione dell’attività (Gewerbeanmeldung) o nell’Impressum. e.K. conta come impresa individuale, GmbH & Co. KG come KG.", offen: "Inserisci la forma giuridica", gesetzt: "Forma giuridica salvata", namen: { einzel: "Impresa individuale", gbr: "GbR", gmbh: "GmbH", ug: "UG (a responsabilità limitata)", kg_ohg: "KG o OHG", unbekannt: "Non lo so" } }, // Rechtsform (23.10.2026)
 };

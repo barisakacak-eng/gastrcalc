@@ -1,7 +1,7 @@
 // فارسی – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / زبان مغازه، جمله‌های کوتاه.
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"از اولین ثبت دورریز","titel":"ضرر کمتر","laueft": (ab) => `اندازه‌گیری از ${ab}`,"stufe":{"bisNull":"تا صفر","bisZiel":"تا هدف","ueberZiel":"بالای هدف"},"ohneKosten":"هزینه‌ها کم است","art":{"muell":"دورریز","preis":"قیمت","lager":"انبار","papier":"کاغذبازی"},"aktion":{"kuehlAlarm":"دوباره اندازه بگیر","rundgangOffen":"دور چک را ادامه بده","rundgang":"دور چک سرما","putzen":"نظافت","sicherung":"پشتیبان بگیر","abschluss":"بستن روز","selbst":"دستورت را وارد کن","einkauf":"قیمت‌های خرید را وارد کن","rezepte":"دستورها را وزن کن"}},
   app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
@@ -365,7 +365,7 @@ export default {
     offen: { karte: () => "از منو عکس بگیر", preise: (n) => `${n} غذا بدون قیمت`, rezepte: (n) => `${n} غذا بدون دستور پخت`, kosten: (n) => `${n} مورد ضروری خالی (اجاره، پرسنل، حقوق خودت، برق/گاز)`,
       einkauf: (n) => `${n} ماده بدون قیمت خرید – یک عکس از فاکتور پرش می‌کند`, kuehlung: () => "یخچال‌ها را ثبت کن", sicherung: () => "آخرین پشتیبان قدیمی‌تر از 7 روز" } },
   vergleich: { wareHoch: (q) => `${q}٪ – بالا`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "عکس خودت را بگیر", fotoGespeichert: "عکس ذخیره شد. روی همین گوشی می‌ماند.", titel: "مقایسه‌ی غذاها", unter: "کدام غذاها بیشتر برایت درمی‌آورند؟", tab: { db: "برای هر عدد می‌ماند", marge: "Rohgewinn %" }, ware: "هزینه‌ی جنس", db: "از هر عدد برایت می‌ماند", marge: "Rohgewinn (nach Ware)", leer: "قیمت فروش و خرید را وارد کن، بعد اینجا می‌بینی کدام غذاها بیشتر درمی‌آورند.", ohneZahlen: (n) => `${n} غذا هنوز بدون عدد`, einkaufFehlt: "قیمت‌های خرید نیست", hinweis: "عددها تخمینی‌اند و بسته به مواد و قیمت‌ها فرق می‌کنند. همه‌ی مبلغ‌ها بدون مالیات، به‌جز قیمت فروش.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "عکس خودت را بگیر", fotoGespeichert: "عکس ذخیره شد. روی همین گوشی می‌ماند.", titel: "مقایسه‌ی غذاها", unter: "کدام غذاها بیشتر برایت درمی‌آورند؟", tab: { db: "برای هر عدد می‌ماند", marge: "سود ناخالص %" }, ware: "هزینه‌ی جنس", db: "از هر عدد برایت می‌ماند", marge: "سود ناخالص (بعد از جنس)", leer: "قیمت فروش و خرید را وارد کن، بعد اینجا می‌بینی کدام غذاها بیشتر درمی‌آورند.", ohneZahlen: (n) => `${n} غذا هنوز بدون عدد`, einkaufFehlt: "قیمت‌های خرید نیست", hinweis: "عددها تخمینی‌اند و بسته به مواد و قیمت‌ها فرق می‌کنند. همه‌ی مبلغ‌ها بدون مالیات، به‌جز قیمت فروش.", nachKosten: "بعد از همه‌ی هزینه‌ها", nachKostenFehlt: "هزینه‌ها کم است", ampelLegende: "چراغ بعد از همه‌ی هزینه‌ها: قرمز زیر 10 %، سبز از 19 % قیمت خالص (≈ دسته‌بندی بر اساس جدول نرخ‌های مرجع وزارت دارایی آلمان BMF، داده‌های سال 2024)." },
   buero: {
     ruhig: { mehr: (n) => `${n} مورد دیگر` }, titel: "دفتر", zurueck: "مغازه",
     abschnitt: { geld: "پول", ware: "کالا", kartePreise: "منو و قیمت‌ها", offen: "باز", ordner: "پوشه‌ها برای تحویل", zahlen: "عددها", karte: "منو و خرید", einrichten: "تنظیم مغازه" },
@@ -571,7 +571,7 @@ export default {
     zuletzt: "آخرین بار",
     zuletztLang: (w, d) => `آخرین بار ${w} °C در ${d}. عددی را که الان می‌خوانی وارد کن.`,
     ersteMessung: "اولین اندازه‌گیری این دستگاه.",
-    minusHinweis: "منفی را با «-» بنویس، مثلاً -18",
+    minusFrage: (v) => `منظورت −${v} درجه است؟ بزن`, minusHinweis: "منفی را با «-» بنویس، مثلاً -18",
     nichtGemessenKurz: "اندازه گرفته نشد",
     nichtGemessen: "یا: امروز اندازه گرفته نشد، چون …",
     gruende: { geschlossen: "تعطیل", geraetAus: "دستگاه خاموش / یخ‌زدایی", leer: "دستگاه خالی" },
@@ -736,7 +736,7 @@ export default {
     belegeKurz: "رسید بخوان، قیمت‌ها را به‌روز کن",
   },
 
-  muell: {
+  muell: { personalEintragen: "ثبت غذای پرسنل",
     zeki: { start: "امروز چه چیزی دور ریخته شد؟", weiter: "چیز دیگری هم دور ریخته شد؟", personal: "تیمت چه خورد؟", bruch: "چه چیزی شکست یا خراب شد؟" },
     grund: { roh: "کالا", personal: "پرسنل", bruch: "خرابی" }, nichtsGefunden: "چیزی پیدا نشد. جور دیگری بنویس یا «وزن سطل» را بزن.",
     zurUebersicht: "نمای کلی دورریز",
@@ -748,7 +748,7 @@ export default {
     gerichtWegKurz: "غذای آماده، بشقاب برگشتی، سفارش اشتباه",
     rohwareWeg: "مواد خام دور ریخته شد",
     rohwareKurz: "گوجه، گوشت، نان – تاریخ‌گذشته یا خراب",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "باقی‌مانده", uebrigHinweis: "آنچه آماده بود و فروش نرفت",
     eimer: "وزن سطل",
     eimerKurz: "فقط وزن، بقیه را اپ حساب می‌کند",
     personal: "غذای پرسنل",
@@ -847,7 +847,7 @@ export default {
     fixTag: "هزینه‌ی ثابت امروز",
     tonne: "سطل زباله",
     kuehl: "یخچال‌ها",
-    rundgaenge: (n) => `${n} دور چک`, nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => `${n} دور چک`, nachkontrolle: (n) => `${n} چک دوباره`,
     besser: (tag, b) => `${tag} بهتر از ${tag} هفته‌ی قبل بود: ${b} فروش بیشتر.`,
     schlechter: (tag, b) => `${tag} ضعیف‌تر از ${tag} هفته‌ی قبل بود: ${b} فروش کمتر.`,
     gleich: (tag) => `${tag} مثل ${tag} هفته‌ی قبل بود.`,
@@ -1072,9 +1072,9 @@ export default {
     laden: "مغازه‌ی تو", namePlatzhalter: "نام مغازه",
     ladenHilfe: "نوع مغازه برای دستور پخت، سرمایش و برنامه‌ی نظافت عدد اولیه می‌دهد. همه را بعداً در دفتر عوض می‌کنی.",
     allesGenau: "همه را دقیق تنظیم کن",
-    karte: "منوی تو", karteFoto: "از منو عکس بگیر", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "عکس یا PDF", spaeter: "بعداً",
+    karte: "منوی تو", karteFoto: "از منو عکس بگیر", karteVorlagen: "از نمونه‌ها انتخاب کن", karteGalerie: "عکس یا PDF", spaeter: "بعداً",
     karteHilfe: "اپ غذاها و قیمت‌ها را از عکس می‌خواند. چیزهایی را که خودتان درست می‌کنید در دفتر زیر «دستور پخت‌ها» تنظیم کن.",
-    kuehl: "سرمایش", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "یخچال", saladette: "یخچال سالاد", tiefkuehler: "فریزر", warmhalter: "گرم‌نگه‌دار" },
+    kuehl: "سرمایش", arten: { getraenke: "یخچال نوشیدنی", kuehlschrank: "یخچال", saladette: "یخچال سالاد", tiefkuehler: "فریزر", warmhalter: "گرم‌نگه‌دار" },
     kuehlHilfe: "برای هر دستگاه بعداً دما را وارد می‌کنی. نام‌ها را در دفتر عوض می‌کنی.",
     geld: "هزینه در ماه", miete: "اجاره", personal: "پرسنل", eigen: "حقوق خودت", strom: "برق",
     geldHilfe: "تقریبی کافی است، خالی هم می‌شود. از فاکتورها بعداً در دفتر عکس می‌گیری.",
@@ -1135,7 +1135,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "امروز", muell: "دورریز", kuehl: "سرمایش", putzplan: "نظافت", karte: "منو" },
     leiste: "مغازه", menueAuf: "باز کردن منو", schliessen: "بستن", hilfeAuf: "راهنما", zekiFragen: "از زکی بپرس", deinLaden: "مغازهٔ تو", abschluss: "بستن روز", personal: "حالت کارکنان", buero: "دفتر", ladenWechseln: "عوض کردن مغازه", sprache: "زبان", zumLaden: "مغازه", zumBuero: "دفتر", schlossCode: "رمز دفتر را وارد کن",
-    pin: { titel: "رمز دفتر", neu: "رمز تازه انتخاب کن", nochmal: "یک بار دیگر", falsch: "رمز اشتباه", ungleich: "یکی نیست. دوباره انتخاب کن.", gesetzt: "رمز دفتر ذخیره شد", entfernt: "رمز دفتر برداشته شد", setzen: "تعیین رمز دفتر", aendern: "تغییر رمز دفتر", entfernen: "برداشتن رمز", ohne: "بدون رمز هر کسی وارد دفتر می‌شود.", mit: "دفتر با رمز محافظت می‌شود.", loeschen: "پاک کردن رقم", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "رمز دفتر", neu: "رمز تازه انتخاب کن", nochmal: "یک بار دیگر", falsch: "رمز اشتباه", ungleich: "یکی نیست. دوباره انتخاب کن.", gesetzt: "رمز دفتر ذخیره شد", entfernt: "رمز دفتر برداشته شد", setzen: "تعیین رمز دفتر", aendern: "تغییر رمز دفتر", entfernen: "برداشتن رمز", ohne: "بدون رمز هر کسی وارد دفتر می‌شود.", mit: "دفتر با رمز محافظت می‌شود.", loeschen: "پاک کردن رقم", testphase: "مرحله‌ی آزمایشی: بدون کد. همه وارد دفتر و حالت کارکنان می‌شوند. قبل از آزمایش بزرگ کد را دوباره روشن کن.", testphaseAn: "مرحله‌ی آزمایشی بدون کد را روشن کن", testphaseAus: "کد را دوباره روشن کن" },
     hilfeText: {
       allgemein: "نوار پایین تو را به هر چیزی که در مغازه لازم داری می‌برد. حساب‌ها، تنظیمات و فهرست‌ها در دفتر هستند.",
       start: "روز در یک نگاه. عدد بزرگ نشان می‌دهد تا صفر چقدر فروش کم است. قرمز یعنی: همین حالا رسیدگی کن. اگر «≈» جلوی عدد باشد، تخمین است (کالا یا دستمزد خودت) – توضیح در دفتر زیر «ماه و شمارنده». بدون قیمت خرید، برنامه با ۳۲٪ هزینه کالا حساب می‌کند (اغذیه‌فروشی: ۲۳–۴۱٪، جداول BMF ۲۰۲۵).",
@@ -1147,7 +1147,7 @@ export default {
       laeden: "اینجا بین مغازه‌هایت جابه‌جا می‌شوی. هر مغازه عددهای خودش را دارد.",
       personal: "دورریز را ثبت کن، سرمایش را اندازه بگیر، نظافت را تیک بزن. برگشت فقط با رمز دفتر.",
       buero: "همهٔ حساب‌ها، فهرست‌ها و تنظیمات اینجاست. پوشه‌ها را به بازرس، مشاور مالیاتی یا حسابدار می‌دهی." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "مواد از منو. مقدارها، زمان آماده‌سازی و دستور کامل را چک کن." }, // 26.10.2026
   heute: {
     zielLinie: "صفر + سود هدف",
     stufe: { bisNull: "تا صفر کم است", bisZiel: "تا هدف", ueberZiel: "بالای هدف" },
@@ -1462,6 +1462,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "آخرین نسخه بیرون از گوشی: امروز" : n === 1 ? "آخرین نسخه بیرون از گوشی: ۱ روز پیش" : `آخرین نسخه بیرون از گوشی: ${n} روز پیش`, nieWeg: "هنوز نسخه‌ای بیرون از گوشی نیست", mitPasswort: "با رمز", ohneFotos: "بدون عکس (کوچک، برای ایمیل)",
       verschicken: "فرستادن پشتیبان", woFrage: "الان کجاست؟", woanders: "دستگاه دیگر، ایمیل، فضای ابری", nurHandy: "فقط روی این گوشی", nurHandyMeldung: "یادآوری می‌ماند: فایل فقط روی این گوشی است.", gezaehlt: "پشتیبان ثبت شد. یادآوری از نو شروع شد." } },
   adanaBrot: { frage: "کنار آدانا چه نانی می‌دهید؟", pide: "پیده کامل", pideHalb: "نصف پیده", fladen: "دوروم / لواش", kein: "بدون نان" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "نکته‌ها", einstiegUnter: "مالیات و اداره، از داده‌های تو", einstiegNeu: (n) => `${n} نکته‌ی جدید`, titel: "نکته‌ها", unter: "از داده‌های تو. کلی، نه مشاوره.", pflicht: "نکته‌ی کلی، نه مشاوره‌ی مالیاتی – با مشاور مالیاتی‌ات روشن کن.", leer: "الان نکته‌ای نیست. با داده‌ی بیشتر نکته‌های بیشتری می‌آید.", quelle: "منبع", belege: "رسیدها را آماده کن", spaeterKnopf: "بعداً", spaeter: "بعداً", erledigt: "انجام شد", erledigtMeldung: "نکته انجام شد", spaeterMeldung: "نکته به بعد موکول شد" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "شکل حقوقی", hinweis: "روی ثبت کسب‌وکارت (Gewerbeanmeldung) یا در Impressum نوشته شده. e.K. کسب‌وکار تک‌نفره حساب می‌شود، GmbH & Co. KG هم KG.", offen: "شکل حقوقی را وارد کن", gesetzt: "شکل حقوقی ذخیره شد", namen: { einzel: "کسب‌وکار تک‌نفره", gbr: "GbR", gmbh: "GmbH", ug: "UG (با مسئولیت محدود)", kg_ohg: "KG یا OHG", unbekannt: "نمی‌دانم" } }, // Rechtsform (23.10.2026)
 };

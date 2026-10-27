@@ -3,8 +3,8 @@
 const pl = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : (n === 0 || (n % 100 >= 3 && n % 100 <= 10)) ? `${n} ${few}` : `${n} ${many}`;
 
 export default {
-  // Euro-Zähler – Übersetzung OFFEN; neue Schlüssel vorläufig auf Deutsch.
-  nutzen: {"start":"Ab erstem Müll-Eintrag",/* Übersetzung offen (de) */ "titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  // Euro-Zähler (übersetzt 27.10.2026)
+  nutzen: {"start":"من أول إدخال للهدر","titel":"خسارة أقل","laueft": (ab) => `القياس جارٍ منذ ${ab}`,"stufe":{"bisNull":"حتى الصفر","bisZiel":"إلى الهدف","ueberZiel":"فوق الهدف"},"ohneKosten":"التكاليف ناقصة","art":{"muell":"الهدر","preis":"السعر","lager":"المخزون","papier":"الأوراق"},"aktion":{"kuehlAlarm":"قِس مرة أخرى","rundgangOffen":"تابع جولة القياس","rundgang":"جولة القياس","putzen":"التنظيف","sicherung":"احفظ نسخة","abschluss":"إغلاق اليوم","selbst":"أدخل وصفتك","einkauf":"أدخل أسعار الشراء","rezepte":"زِن الوصفات"}},
   app: { name: "GastroCash", entwurf: "نسخة تجريبية" },
 
   allgemein: {
@@ -368,7 +368,7 @@ export default {
     offen: { karte: () => "صوّر المنيو", preise: (n) => `أطباق بدون سعر: ${n}`, rezepte: (n) => `أطباق بدون وصفة: ${n}`, kosten: (n) => `بنود أساسية ناقصة: ${n} (الإيجار، الموظفون، راتبك، الكهرباء/الغاز)`,
       einkauf: (n) => `مكوّنات بدون سعر شراء: ${n} – صورة فاتورة تملأ هذا`, kuehlung: () => "أضف أجهزة التبريد", sicherung: () => "آخر نسخة احتياطية أقدم من 7 أيام" } },
   vergleich: { wareHoch: (q) => `${q} % – مرتفع`, // Paket 3 (16.10.2026), M4
-    eigenesFoto: "التقط صورتك الخاصة", fotoGespeichert: "الصورة محفوظة. تبقى على هذا الهاتف.", titel: "مقارنة الأطباق", unter: "أي الأطباق تجلب لك أكثر؟", tab: { db: "يبقى لكل قطعة", marge: "Rohgewinn %" }, ware: "تكلفة البضاعة", db: "يبقى لك لكل قطعة", marge: "Rohgewinn (nach Ware)", leer: "أدخل أسعار البيع والشراء، وسترى هنا أي الأطباق تجلب أكثر.", ohneZahlen: (n) => (n === 1 ? "طبق واحد بدون أرقام بعد" : `أطباق بدون أرقام بعد: ${n}`), einkaufFehlt: "أسعار الشراء ناقصة", hinweis: "القيم تقديرية وقد تختلف حسب المكوّنات والأسعار. كل المبالغ بدون ضريبة، ما عدا سعر البيع.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen" /* Übersetzung offen (de) */, ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." /* Übersetzung offen (de) */ },
+    eigenesFoto: "التقط صورتك الخاصة", fotoGespeichert: "الصورة محفوظة. تبقى على هذا الهاتف.", titel: "مقارنة الأطباق", unter: "أي الأطباق تجلب لك أكثر؟", tab: { db: "يبقى لكل قطعة", marge: "الربح الإجمالي %" }, ware: "تكلفة البضاعة", db: "يبقى لك لكل قطعة", marge: "الربح الإجمالي (بعد البضاعة)", leer: "أدخل أسعار البيع والشراء، وسترى هنا أي الأطباق تجلب أكثر.", ohneZahlen: (n) => (n === 1 ? "طبق واحد بدون أرقام بعد" : `أطباق بدون أرقام بعد: ${n}`), einkaufFehlt: "أسعار الشراء ناقصة", hinweis: "القيم تقديرية وقد تختلف حسب المكوّنات والأسعار. كل المبالغ بدون ضريبة، ما عدا سعر البيع.", nachKosten: "بعد كل التكاليف", nachKostenFehlt: "التكاليف ناقصة", ampelLegende: "الإشارة بعد كل التكاليف: أحمر تحت 10 %، أخضر من 19 % من السعر الصافي (≈ تصنيف حسب جدول المعدلات المرجعية لوزارة المالية الألمانية BMF، بيانات سنة 2024)." },
   buero: {
     ruhig: { mehr: (n) => `${n} أخرى` }, titel: "المكتب", zurueck: "المحل",
     abschnitt: { geld: "المال", ware: "البضاعة", kartePreise: "القائمة والأسعار", offen: "مفتوح", ordner: "ملفات للتسليم", zahlen: "الأرقام", karte: "القائمة والشراء", einrichten: "إعداد المحل" },
@@ -574,7 +574,7 @@ export default {
     zuletzt: "آخر مرة",
     zuletztLang: (w, d) => `آخر مرة ${w} °C في ${d}. أدخل القيمة التي تقرأها الآن.`,
     ersteMessung: "أول قياس لهذا الجهاز.",
-    minusHinweis: "السالب بـ «-»، مثلًا -18",
+    minusFrage: (v) => `هل تقصد −${v} °م؟ اضغط`, minusHinweis: "السالب بـ «-»، مثلًا -18",
     nichtGemessenKurz: "لم يُقَس",
     nichtGemessen: "أو: لم يُقَس اليوم، لأن …",
     gruende: { geschlossen: "مغلق", geraetAus: "الجهاز مطفأ / إذابة الثلج", leer: "الجهاز فارغ" },
@@ -739,7 +739,7 @@ export default {
     belegeKurz: "اقرأ إيصالًا، وحدّث الأسعار",
   },
 
-  muell: {
+  muell: { personalEintragen: "تسجيل وجبة الموظفين",
     zeki: { start: "ماذا رُمي اليوم؟", weiter: "هل رُمي شيء آخر؟", personal: "ماذا أكل فريقك؟", bruch: "ما الذي انكسر أو تلف؟" },
     grund: { roh: "بضاعة", personal: "موظفون", bruch: "تالف" }, nichtsGefunden: "لم يُعثر على شيء. اكتبه بطريقة أخرى أو اختر «وزن السطل».",
     zurUebersicht: "نظرة على الهدر",
@@ -751,7 +751,7 @@ export default {
     gerichtWegKurz: "أكل جاهز، صحن رجع، طلب خاطئ",
     rohwareWeg: "مواد خام مرمية",
     rohwareKurz: "طماطم، لحم، خبز – منتهي الصلاحية أو فاسد",
-    uebrig: "Übrig geblieben" /* Übersetzung offen (de) */, uebrigHinweis: "Was fertig war und nicht verkauft wurde" /* Übersetzung offen (de) */,
+    uebrig: "تبقّى", uebrigHinweis: "ما كان جاهزًا ولم يُبَع",
     eimer: "وزن السطل",
     eimerKurz: "الوزن فقط، والتطبيق يحسب الباقي",
     personal: "أكل الطاقم",
@@ -850,7 +850,7 @@ export default {
     fixTag: "التكاليف الثابتة لليوم",
     tonne: "الزبالة",
     kuehl: "التبريد",
-    rundgaenge: (n) => pl(n, "جولة واحدة", "جولتان", "جولات", "جولة"), nachkontrolle: (n) => `${n} nachmessen` /* Übersetzung offen (de) */,
+    rundgaenge: (n) => pl(n, "جولة واحدة", "جولتان", "جولات", "جولة"), nachkontrolle: (n) => pl(n, "قياس واحد للإعادة", "قياسان للإعادة", "قياسات للإعادة", "قياسًا للإعادة"),
     besser: (tag, b) => `يوم ${tag} كان أفضل من ${tag} الماضي: مبيعات أكثر بـ ${b}.`,
     schlechter: (tag, b) => `يوم ${tag} كان أضعف من ${tag} الماضي: مبيعات أقل بـ ${b}.`,
     gleich: (tag) => `يوم ${tag} كان مثل ${tag} الماضي.`,
@@ -1075,9 +1075,9 @@ export default {
     laden: "محلك", namePlatzhalter: "اسم المحل",
     ladenHilfe: "نوع المحل يعطي قيمًا أولية للوصفات والتبريد وخطة التنظيف. تغيّر كل شيء لاحقًا في المكتب.",
     allesGenau: "إعداد كل شيء بالتفصيل",
-    karte: "قائمتك", karteFoto: "صوّر القائمة", karteVorlagen: "Aus Vorlagen wählen" /* Übersetzung offen (de) */, karteGalerie: "صور أو PDF", spaeter: "لاحقًا",
+    karte: "قائمتك", karteFoto: "صوّر القائمة", karteVorlagen: "اختر من القوالب", karteGalerie: "صور أو PDF", spaeter: "لاحقًا",
     karteHilfe: "التطبيق يقرأ الأطباق والأسعار من الصورة. ما تحضّرونه بأنفسكم تضبطه في المكتب تحت «الوصفات».",
-    kuehl: "التبريد", arten: { getraenke: "Getränkekühlschrank" /* Übersetzung offen (de) */, kuehlschrank: "ثلاجة", saladette: "ثلاجة السلطات", tiefkuehler: "فريزر", warmhalter: "حافظة حرارة" },
+    kuehl: "التبريد", arten: { getraenke: "ثلاجة المشروبات", kuehlschrank: "ثلاجة", saladette: "ثلاجة السلطات", tiefkuehler: "فريزر", warmhalter: "حافظة حرارة" },
     kuehlHilfe: "لكل جهاز تُدخل الحرارة لاحقًا. الأسماء تغيّرها في المكتب.",
     geld: "التكاليف في الشهر", miete: "الإيجار", personal: "الموظفون", eigen: "راتبك", strom: "الكهرباء",
     geldHilfe: "التقريب يكفي، ويمكن تركه فارغًا. الفواتير تصوّرها لاحقًا في المكتب.",
@@ -1138,7 +1138,7 @@ export default {
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "اليوم", muell: "الهدر", kuehl: "التبريد", putzplan: "التنظيف", karte: "القائمة" },
     leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", zekiFragen: "اسأل زكي", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
-    pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" /* Übersetzung offen (de) */ },
+    pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم", testphase: "مرحلة تجربة: بلا رمز. يدخل الجميع إلى المكتب ووضع الموظفين. شغّل الرمز من جديد قبل التجربة الكبيرة.", testphaseAn: "شغّل مرحلة التجربة بلا رمز", testphaseAus: "شغّل الرمز من جديد" },
     hilfeText: {
       allgemein: "الشريط في الأسفل يأخذك إلى كل ما تحتاجه في المحل. الحسابات والإعداد والقوائم في المكتب.",
       start: "يومك بنظرة واحدة. الرقم الكبير يبيّن كم ينقص من المبيعات حتى نقطة الصفر. الأحمر يعني: اهتم الآن. إذا سبق الرقم „≈“ فهو تقدير (للبضاعة أو أجرك) – الشرح في المكتب تحت „الشهر والعداد“. بدون أسعار شراء يحسب التطبيق 32 % تكلفة بضاعة (مطاعم سريعة: 23–41 %، جداول BMF 2025).",
@@ -1150,7 +1150,7 @@ export default {
       laeden: "هنا تنتقل بين محلاتك. لكل محل أرقامه الخاصة.",
       personal: "سجّل الهدر، قِس التبريد، علّم التنظيف. العودة فقط برمز المكتب.",
       buero: "هنا كل الحسابات والقوائم والإعدادات. الملفات تعطيها للتفتيش أو المستشار الضريبي أو المحاسب." } },
-  menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026 – Übersetzung offen (Englisch)
+  menueReferenz: { hinweis: "المكوّنات من القائمة. تحقّق من الكميات ووقت التحضير والوصفة كاملة." }, // 26.10.2026
   heute: {
     zielLinie: "صفر + الربح المستهدف",
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },
@@ -1465,6 +1465,6 @@ export default {
     sicherung: { letzteWeg: (n) => n === 0 ? "آخر نسخة خارج الهاتف: اليوم" : n === 1 ? "آخر نسخة خارج الهاتف: قبل يوم" : `آخر نسخة خارج الهاتف: قبل ${n} يوم`, nieWeg: "لا توجد نسخة خارج الهاتف بعد", mitPasswort: "بكلمة مرور", ohneFotos: "بدون صور (صغيرة، للبريد)",
       verschicken: "إرسال النسخة", woFrage: "أين هي الآن؟", woanders: "جهاز آخر، بريد، سحابة", nurHandy: "على هذا الهاتف فقط", nurHandyMeldung: "يبقى التذكير: الملف على هذا الهاتف فقط.", gezaehlt: "تم احتساب النسخة. أُعيد ضبط التذكير." } },
   adanaBrot: { frage: "أي خبز تقدّمون مع الأضنة؟", pide: "بيدا كاملة", pideHalb: "نصف بيدا", fladen: "دُرُم / لواش", kein: "بدون خبز" }, // 20.10.2026
-  hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt, aus deinen Daten", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" } /* Übersetzung offen (de) */, // Hinweis-Karten (23.10.2026)
-  rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } } /* Übersetzung offen (de) */, // Rechtsform (23.10.2026)
+  hinweise: { einstieg: "ملاحظات", einstiegUnter: "الضرائب والدوائر، من بياناتك", einstiegNeu: (n) => pl(n, "ملاحظة جديدة واحدة", "ملاحظتان جديدتان", "ملاحظات جديدة", "ملاحظة جديدة"), titel: "ملاحظات", unter: "من بياناتك. معلومات عامة، ليست استشارة.", pflicht: "ملاحظة عامة، ليست استشارة ضريبية – راجعها مع مستشارك الضريبي.", leer: "لا توجد ملاحظة الآن. مع بيانات أكثر تأتي ملاحظات أكثر.", quelle: "المصدر", belege: "جهّز الإيصالات", spaeterKnopf: "لاحقًا", spaeter: "لاحقًا", erledigt: "تم", erledigtMeldung: "تمت الملاحظة", spaeterMeldung: "تم تأجيل الملاحظة" }, // Hinweis-Karten (23.10.2026)
+  rechtsform: { titel: "الشكل القانوني", hinweis: "مكتوب في تسجيل نشاطك التجاري (Gewerbeanmeldung) أو في بيانات الموقع (Impressum). e.K. تُعدّ مؤسسة فردية، وGmbH & Co. KG تُعدّ KG.", offen: "أدخل الشكل القانوني", gesetzt: "تم حفظ الشكل القانوني", namen: { einzel: "مؤسسة فردية", gbr: "GbR", gmbh: "GmbH", ug: "UG (محدودة المسؤولية)", kg_ohg: "KG أو OHG", unbekannt: "لا أعرف" } }, // Rechtsform (23.10.2026)
 };
