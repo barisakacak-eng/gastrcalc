@@ -159,3 +159,4 @@
 .kl-wohin summary::after{content:"›";margin-left:auto;transition:transform .2s;font-size:1.3em}
 .kl-wohin[open] summary{margin-bottom:8px}
 .kl-wohin[open] summary::after{transform:rotate(90deg)}
+.kl-ohne{margin:6px 2px 10px;font-weight:650;color:var(--b-text-leise,#5b5b52)}

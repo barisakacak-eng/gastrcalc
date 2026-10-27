@@ -116,6 +116,7 @@ export function karteLadenBlatt(stand) {
         <button type="button" class="kl-rund" data-a="kl-plus" aria-label="+0,10 €">${zeichen("plus")}</button>
       </div>
       ${bleibtZeile(x.z, blatt.preis, lastVon(stand))}
+      ${x.z.sk === null ? `<p class="kl-ohne">${esc(t(x.z.warenFehlt?.[0] === "rezept" ? "kartelaeden.ohneRezept" : "kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : ""}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-speichern" ${geaendert && blatt.preis > 0 ? "" : "disabled"}>${esc(t("kartelaeden.speichern"))}</button>
     </div>`;
 }
