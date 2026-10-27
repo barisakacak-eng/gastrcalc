@@ -22,9 +22,10 @@ test("artikelAnzeige: tr, en, de, unbekannte Sprache, eigener Artikel", () => {
   assert.equal(artikelAnzeige("Knoblauchsauce", "de"), "Knoblauchsauce");
   assert.equal(artikelAnzeige("Dönerspieß Kalb/Pute", "tr"), "Döner eti (dana/hindi)");
   assert.equal(artikelAnzeige("Pizzateig", "tr"), "Pizza hamuru");
-  // übrige 15 Sprachen: Rückfall auf Englisch
-  assert.equal(artikelAnzeige("Knoblauchsauce", "pl"), "Garlic sauce");
-  assert.equal(artikelAnzeige("Knoblauchsauce", "ar"), "Garlic sauce");
+  // übrige 15 Sprachen (27.10.2026): eigene Übersetzung aus namen_mehr.js, nie Deutsch; unbekannte Sprache → Englisch
+  assert.notEqual(artikelAnzeige("Knoblauchsauce", "pl"), "Knoblauchsauce");
+  assert.notEqual(artikelAnzeige("Knoblauchsauce", "ar"), "Garlic sauce");
+  assert.equal(artikelAnzeige("Knoblauchsauce", "xx"), "Garlic sauce");
   // eigener Artikel des Wirts und leere Werte bleiben unverändert
   assert.equal(artikelAnzeige("Omas Spezialsoße", "tr"), "Omas Spezialsoße");
   assert.equal(artikelAnzeige("", "tr"), "");

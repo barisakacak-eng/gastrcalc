@@ -16,7 +16,7 @@ import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
 import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
-import { personalAktiv } from "./personal.js"; // D: im Personal-Modus kein Euro
+import { personalAktiv, anredeTeam } from "./personal.js"; // D: im Personal-Modus kein Euro
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
@@ -58,11 +58,9 @@ const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit
 // letzten 7 Tage, „Eine Stelle antippen …“, Verantwortung) stehen im Büro bzw. hinter „?“. Im Büro (buero: true) bleiben Monatsblatt,
 // Einrichtung und der 7-Tage-Hinweis auf dieser Seite.
 // Laden-Schablone (27.10.2026): Zeki sagt in einem Satz, was los ist – statt „0 / 4“.
-// 27.10.2026 (Persona-Test Jungs): Im Personal-Modus spricht Zeki die Mitarbeiter nicht mit „Chef“ an – Anrede vorn (bis zum ersten Komma) weg
-const ohneChef = (satz) => { if (!personalAktiv()) return satz; const s = satz.replace(/^[^,،«„“"]{1,14}[,،]\s*/u, "").replace(/ Sếp kiểm/u, " Kiểm"); return s.charAt(0).toLocaleUpperCase() + s.slice(1); };
 function zekiKuehl(stand, st, fertig) {
   const warm = aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m?.abweichung && x.m.datum === heute());
-  if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(ohneChef(t("kuehl.zeki.warm", kn(warm.k))))}</p>`;
+  if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(anredeTeam(t("kuehl.zeki.warm", kn(warm.k)), stand))}</p>`;
   if (fertig) return `<p class="zeki-zeile a-gruen" role="status">${esc(t("kuehl.zeki.fertig"))}</p>`;
   return `<p class="zeki-zeile" role="status">${esc(t("kuehl.zeki.offen", Math.max(0, st.stellen - st.heuteGemessen)))}</p>`;
 }

@@ -200,3 +200,12 @@ button.b-zeile:active { background: var(--papier); }
 .b-paket-buch .b-monat b,.b-paket-steuer .b-monat b{color:var(--paket)}
 .b-paket-buch .knopf.glut,.b-paket-steuer .knopf.glut{background:var(--paket)!important;border-color:var(--paket)!important}
 .b-paket-buch .b-mini,.b-paket-steuer .b-mini{color:var(--paket)!important;border-color:var(--paket-linie)}
+/* Datenschutz im Büro (27.10.2026) */
+.ds-karte summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.ds-karte summary::-webkit-details-marker{display:none}
+.ds-karte summary h2{margin:0}
+.ds-karte summary small{color:var(--b-text-leise,#6b6a60)}
+.ds-karte h3{margin:14px 0 4px;font-size:calc(16rem / 17)}
+.ds-karte p{margin:0 0 6px;line-height:1.45}
+.ds-karte .ds-verantwortlich{margin-top:14px;font-weight:700}
+.b-einstellungen .einstellungen-inhalt>details.ds-karte.karte,.ds-karte{padding:16px 18px!important;display:block} /* facelift setzt :first-of-type auf 0 – details ist das erste seiner Art */

@@ -2,7 +2,8 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
-import { zekiLogAnhaengen, rundgangAbschliessen } from "./stamm.js";
+import { zekiLogAnhaengen, zekiLogLoeschen, rundgangAbschliessen } from "./stamm.js";
+import { datenschutzText } from "./data/datenschutz.js";
 import { zekiTaktStarten, zekiSprechblase, zekiStimmeEinsetzen } from "./screens/zeki_takt.js";
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
@@ -40,7 +41,7 @@ import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
-import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, schichtPersonVergessen, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
+import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, schichtPersonVergessen, personalLeiste, anredeTeam } from "./screens/personal.js"; // D: Personal-Modus
 import { rundgangOffen, kuehlBereit } from "./engine.js"; // D: Personal-Kachel Kühlung
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen, umsatzFeldVerlassen } from "./screens/umsatz.js"; // W2-T
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
@@ -626,6 +627,7 @@ async function aufKlick(ev) {
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
+  if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
   if (name === "laden-neu") return ladenNeu();
@@ -1103,6 +1105,7 @@ function zekiBildschirm() {
   // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter
   if (ansicht === "start" && zm.ausloeser !== "kuehl_abweichung" && zm.ausloeser !== "muell_hoch") return;
   const key = `${zm.ausloeser}:${H}`; const laeuft = zekiGerade?.key === key;
+  if (personalAktiv()) zm = { ...zm, text: anredeTeam(zm.text, stand) }; // Baris 27.10.2026: andere Anrede im Personal-Modus
   zekiSprechblase(root, zm, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
   zekiGesehenMerken(key);
 }

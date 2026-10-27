@@ -93,3 +93,13 @@ export function personalAktion(name, el, stand) {
   if (name === "personal-ziel") return { ziel: el.dataset.wert };
   return false;
 }
+
+// Andere Anrede im Personal-Modus (Baris 27.10.2026, 10:51: „nur ne andere Anrede“): Zeki sagt dort nicht „Chef“,
+// sondern spricht den Mitarbeiter mit seinem Namen an (ohne Namen: ohne Anrede). Gilt für alle 18 Sprachen.
+const ANREDE = /^(Chef|Usta|Boss|يا معلّم|رئیس|Hosta|Szefie|Șefu'|Шефе|Šefe|Шеф|Shef|Αφεντικό|Capo|Jefe|Sếp ơi|Sếp)\s*[,،!]\s*/u;
+export function anredeTeam(satz, stand) {
+  if (!personalAktiv() || typeof satz !== "string" || !ANREDE.test(satz)) return satz;
+  const rest = satz.replace(ANREDE, "").replace(/ Sếp kiểm/u, " Kiểm");
+  const name = nameVon(stand, schichtPerson(stand));
+  return name ? `${name}, ${rest}` : rest.charAt(0).toLocaleUpperCase() + rest.slice(1);
+}

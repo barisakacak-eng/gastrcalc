@@ -1,3 +1,4 @@
+import { datenschutzText } from "../data/datenschutz.js";
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
 import { reinigungZeile } from "./reinigung_zeile.js";
@@ -187,6 +188,14 @@ export function karteView(stand) {
     ${nav("kartebuero")}`;
 }
 
+// Datenschutz im Büro (Baris 27.10.2026: Verantwortlicher als Platzhalter bis zur Firma); Text in js/data/datenschutz.js
+function datenschutzKarte() {
+  const d = datenschutzText(sprache());
+  return `<details class="karte ds-karte" id="datenschutz"><summary><h2>${esc(d.titel)}</h2><small>${esc(d.stand)}</small></summary>
+    ${d.abschnitte.map(([k, x]) => `<h3>${esc(k)}</h3><p>${esc(x)}</p>`).join("")}
+    <p class="ds-verantwortlich">${esc(d.verantwortlich)}</p>
+    <button type="button" class="knopf zweit" data-a="zeki-log-loeschen">${esc(d.zekiLoeschen)}</button></details>`;
+}
 export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
   const m = monatsLast(stand); const q = warenQuote(stand); const st = umsatzSteuerSatz(stand);
   return `
@@ -252,6 +261,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <div>${esc(t(extra.dauerhaft === true ? "w2d.dauerhaftJa" : extra.dauerhaft === false ? "w2d.dauerhaftNein" : "w2d.dauerhaftUnbekannt"))}</div>
         <button type="button" class="zeileknopf" data-a="diagnose-kopieren"><b>${esc(t("w2d.diagnose"))}</b><small>${esc(t("w2d.diagnoseUnter"))}</small><span class="pfeil">›</span></button>
       </div>
+      ${datenschutzKarte()}
       <div class="karte">
         <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button>
       </div>
