@@ -122,7 +122,7 @@ export function ordnerPaketView(stand, art) {
   const H = heute(); const z = paketZeit(art, H); const p = monatsPaket(stand, z, art);
   const istAktuell = art === "steuer" ? z.monat >= H.slice(0, 4) : z.monat >= H.slice(0, 7);
   return `<div class="buero">${bueroKopf({ ziel: "buero", text: t("buero.titel") }, "")}
-    <div class="b-inhalt b-ordnerseite">
+    <div class="b-inhalt b-ordnerseite b-paket-${art}">
       ${kopfOrdner(stand, art, art === "steuer" ? "calculator" : "receipt", t(`ordner.${art}.unter`))}
       <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.vorJahr" : "ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(art === "steuer" ? t("ordner.zeit.jahr", z.jahr) : monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.nachJahr" : "ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
       ${schickenKarte(stand, art)}
