@@ -737,6 +737,7 @@ export default {
     belegeKurz: "Fiş oku, fiyatları güncelle",
   },
 
+  teamTag: { frage: "Bugün personel var mıydı?", wer: "Kim vardı? Saatleri ayarla.", std: "sa.", satz: "Saatlik ücret", summe: (b) => `Bugünkü maaş: ${b}`, summeOffen: "Saatlik ücret eksik", weitere: "bir kişi daha", person: (n) => `Personel ${n}`, fertig: "Tamam" },
   muell: { personalEintragen: "Personel yemeği gir",
     zeki: { start: "Bugün ne çöpe gitti?", weiter: "Başka giden var mı?", personal: "Ekibin ne yedi?", bruch: "Ne kırıldı?" },
     grund: { roh: "Mal", personal: "Personel", bruch: "Kırık" }, nichtsGefunden: "Bir şey bulunamadı. Başka yaz veya “Kova tartıldı”yı seç.",

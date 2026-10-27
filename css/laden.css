@@ -154,3 +154,19 @@ body.blatt-da { overflow: hidden; }
 .kuehl-minus{margin:10px 0 4px;font-weight:800;border:2px solid var(--glut,#a8441f)}
 .auswahlblatt{position:relative}.auswahlblatt .blatt-x{position:absolute;top:10px;right:12px;width:44px;height:44px;border-radius:50%;border:1px solid var(--b-linie,#e4ddd0);background:var(--b-karte,#fff);display:grid;place-items:center;z-index:2}[dir="rtl"] .auswahlblatt .blatt-x{right:auto;left:12px}
 .auswahlblatt h2{padding-inline-end:52px}
+/* Mitarbeiter heute (Entwurf 27.10.2026) */
+.team-tag .team-wahl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.team-tag .team-wahl .knopf{margin:0;min-height:64px;font-size:calc(19rem / 17)}
+.team-liste{display:grid;gap:10px}
+.team-zeile{padding:12px 14px;display:grid;gap:10px}
+.team-zeile.an{border:2px solid var(--gc-deep,#24412f)}
+.team-name{display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;font:inherit;text-align:left;min-height:44px}
+.team-name b{font-size:calc(19rem / 17)}
+.team-haken{width:30px;height:30px;border-radius:50%;border:2px solid var(--b-linie,#d8cdbb);display:grid;place-items:center;color:#fff}
+.team-zeile.an .team-haken{background:var(--gc-deep,#24412f);border-color:var(--gc-deep,#24412f)}
+.team-std .wert{display:flex;flex-direction:column;align-items:center}
+.team-std .wert b{font-size:calc(28rem / 17)}
+.team-satz{display:flex;align-items:center;gap:8px;font-weight:650}
+.team-satz input{flex:1;min-width:0;font:inherit;font-size:calc(20rem / 17);padding:8px 10px;border:1px solid var(--b-linie,#d8cdbb);border-radius:12px;text-align:right}
+.team-summe{margin:14px 2px 6px;font-weight:800;font-size:calc(18rem / 17)}
+.team-zeile{min-width:0;max-width:100%;box-sizing:border-box}.team-satz{display:grid;grid-template-columns:auto minmax(0,1fr) auto}.team-satz input{width:100%;box-sizing:border-box}

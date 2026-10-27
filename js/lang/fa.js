@@ -736,6 +736,7 @@ export default {
     belegeKurz: "رسید بخوان، قیمت‌ها را به‌روز کن",
   },
 
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "ثبت غذای پرسنل",
     zeki: { start: "امروز چه چیزی دور ریخته شد؟", weiter: "چیز دیگری هم دور ریخته شد؟", personal: "تیمت چه خورد؟", bruch: "چه چیزی شکست یا خراب شد؟" },
     grund: { roh: "کالا", personal: "پرسنل", bruch: "خرابی" }, nichtsGefunden: "چیزی پیدا نشد. جور دیگری بنویس یا «وزن سطل» را بزن.",

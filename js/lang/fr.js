@@ -737,6 +737,7 @@ export default {
     belegeKurz: "Charger un ticket, mettre les prix à jour",
   },
 
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Noter repas du personnel",
     zeki: { start: "Qu'est-ce qui a été jeté aujourd'hui ?", weiter: "Autre chose de jeté ?", personal: "Qu'a mangé ton équipe ?", bruch: "Qu'est-ce qui s'est cassé ?" },
     grund: { roh: "Marchandise", personal: "Personnel", bruch: "Casse" }, nichtsGefunden: "Rien trouvé. Écris autrement ou prends « Seau pesé ».",

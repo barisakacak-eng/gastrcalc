@@ -194,3 +194,15 @@ export function kontaktSetzen(stand, art, email) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
   k[art] = e; return true;
 }
+
+// Mitarbeiter heute (Baris 27.10.2026, 11:14): beim Tagesumsatz „Waren heute Mitarbeiter da?“ – bis eine Personalanbindung kommt, von Hand.
+// stand.teamTage = [{ datum, eintraege: [{ person (id | null), name, stunden, satz }], keine, erfasst }] – je Datum gilt der jüngste Eintrag.
+export const teamTag = (stand, datum) => [...(stand?.teamTage || [])].reverse().find((x) => x.datum === datum) || null;
+export function teamTagSetzen(stand, datum, eintraege) {
+  stand.teamTage ??= [];
+  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), stunden: Math.round(x.stunden * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
+  stand.teamTage.push(e);
+  for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) p.stundenlohn = x.satz; }
+  return e;
+}
+export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);

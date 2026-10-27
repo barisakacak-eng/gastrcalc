@@ -677,7 +677,8 @@ async function aufKlick(ev) {
     const r = umsatzLadenAktion(name, el, stand, wurzel); if (!r) return;
     if (r === "zeichnen") { zeichne(); root.querySelector('[data-f="ul-umsatz"]')?.focus(); return; }
     if (r.meldung) { meldung(r.meldung); return; }
-    if (r.gespeichert) { ereignis("umsatz-laden", { laden: stand.id }); meldung(t("tag.gespeichert")); await sofortSpeichern(wurzel); ansicht = herkunft === "abschluss" ? "abschluss" : startAnsicht(wurzel); return zeichne(); }
+    if (r.gespeichert) { ereignis("umsatz-laden", { laden: stand.id }); await sofortSpeichern(wurzel); if (r.weiter) return zeichne(); ansicht = herkunft === "abschluss" ? "abschluss" : startAnsicht(wurzel); return zeichne(); }
+    if (r.fertig) { meldung(t("tag.gespeichert")); await sofortSpeichern(wurzel); ansicht = herkunft === "abschluss" ? "abschluss" : startAnsicht(wurzel); return zeichne(); } // Mitarbeiter heute (27.10.2026)
     return;
   }
   if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)

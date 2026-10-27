@@ -737,6 +737,7 @@ export default {
     belegeKurz: "Φόρτωσε απόδειξη, ενημέρωσε τιμές",
   },
 
+  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Pay per hour", summe: (b) => `Wages today: ${b}`, summeOffen: "Pay per hour still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Καταχώρισε φαγητό προσωπικού",
     zeki: { start: "Τι πετάχτηκε σήμερα;", weiter: "Πετάχτηκε κάτι άλλο;", personal: "Τι έφαγε η ομάδα σου;", bruch: "Τι χάλασε ή έσπασε;" },
     grund: { roh: "Εμπόρευμα", personal: "Προσωπικό", bruch: "Φθορά" }, nichtsGefunden: "Δεν βρέθηκε τίποτα. Γράψ' το αλλιώς ή διάλεξε «Ζυγίστηκε κάδος».",
