@@ -40,7 +40,7 @@ import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
   muellTipp, muellTippZeigen, muellTippZurueck, muellZurueckZeigen, muellKlickUnterdrueckt, muellLangdruckEinrichten } from "./screens/muell.js"; // D: Müll mit einem Tipp
-import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
+import { personalView, personalAktion, personalKontext, personalAktiv, personalNachtragen, schichtPerson, schichtPersonVergessen, personalLeiste } from "./screens/personal.js"; // D: Personal-Modus
 import { rundgangOffen, kuehlBereit } from "./engine.js"; // D: Personal-Kachel Kühlung
 import { umsatzView, umsatzAktion, umsatzEingabe, umsatzZuruecksetzen, umsatzFeldVerlassen } from "./screens/umsatz.js"; // W2-T
 import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen, belegKennung, belegTextDa, belegTextVonFoto } from "./screens/beleg.js";
@@ -440,6 +440,7 @@ async function diagnoseKopieren() {
 
 function ebeneWechseln(m, ziel) {
   if (m === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) return; // W2-S: Personal nur mit Büro-Code – außer in der Testphase ohne Code
+  if (m === "personal" && modus(wurzel) !== "personal") schichtPersonVergessen(stand); // 27.10.2026 (Persona-Test): Chef gibt das Handy weiter → neu fragen „Wer arbeitet?“, sonst bucht der Nächste unter dem alten Namen
   if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
   modusSetzen(wurzel, m); blattSchliessen();
   ansicht = ziel === "preise" ? "buero" : (ziel || startAnsicht(wurzel)); // Paket 3 (16.10.2026): Nav-Ziel „preise“ = Büro, dann der Schritt Einkaufspreise

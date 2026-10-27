@@ -188,13 +188,14 @@ export function muellStatistikView(stand) {
 
 // ---------- „Andere": Suche über alle Waren (auch türkische/englische Namen) + Eimer gewogen ----------
 function eingabeView(stand, D) {
-  const q = normalisieren(suche); const kacheln = muellSuche(stand, suche, D); // Trennung 2 (17.10.2026): Suche im Rechenwerk
+  const q = normalisieren(suche); const nurGerichte = grund === "personal" && ansicht !== "station"; // 27.10.2026 (Persona-Test): Personalessen ist immer ein Gericht, nie Rohware
+  const kacheln = muellSuche(stand, suche, D).filter((x) => !nurGerichte || x.typ === "gericht"); // Trennung 2 (17.10.2026): Suche im Rechenwerk
   return `<div class="inhalt">
     <h2>${esc(t("muell.auswaehlen"))}</h2>
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
       ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${bildFuer(stand, x)}<b>${esc(zeigName(x))}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-      <button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>
+${nurGerichte ? "" : `<button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>`}
     </div>
     ${!kacheln.length && q ? `<p class="hinweis">${esc(t("muell.nichtsGefunden"))}</p>` : ""}
   </div>`;
@@ -221,7 +222,7 @@ function formView(stand, D) {
       ${w.typ === "gericht" ? `<button type="button" class="karte formkachel personalkachel ${w.personal ? "an" : ""}" role="switch" aria-checked="${w.personal}" data-a="muell-personal"><span class="kachelsym">${sym(w.personal ? "check" : "chef-hat")}</span><b>${esc(t("muell1.personalessen"))}</b></button>` : ""}
     </div>
     ${w.typ === "eimer" ? `<p class="hinweis">${esc(t("muell.eimerHinweisKurz"))}</p>` : ""}` : ""}
-    <button type="button" class="knopf glut muellhaupt" data-a="muell-weg-damit" ${w && w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t("muell.eintragen"))}</b></button>
+    <button type="button" class="knopf glut muellhaupt" data-a="muell-weg-damit" ${w && w.menge > 0 ? "" : "disabled"}>${sym("check")} <b>${esc(t(w?.personal ? "muell.personalEintragen" : "muell.eintragen"))}</b></button>
     <button type="button" class="leise" data-a="muell-start">‹ ${esc(t("muell1.titel"))}</button>
   </div>`;
 }
@@ -231,7 +232,7 @@ const chipsFuer = (w) => (w.typ === "gericht" ? [1, 2, 5] : w.typ === "eimer" ? 
 // Detail-Wahl aus einer Kachel (Raster oder Suche) mit der üblichen Menge vorbelegt
 function wahlAus(el, stand) {
   const typ = el.dataset.typ;
-  if (typ === "gericht") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); return g ? { typ, id: g.id, name: g.name, menge: 1, einheit: "portion", gruppe: "speise", personal: false } : null; }
+  if (typ === "gericht") { const g = stand.gerichte.find((x) => x.id === el.dataset.id); return g ? { typ, id: g.id, name: g.name, menge: 1, einheit: "portion", gruppe: "speise", personal: grund === "personal" && ansicht !== "station" } : null; }
   if (typ === "artikel") { const a = stand.artikel.find((x) => x.name === el.dataset.name); if (!a) return null; const m = standardMenge(stand, { typ, name: a.name });
     return { typ, name: a.name, menge: m.menge, einheit: m.einheit, packung: a.packung, gruppe: a.gruppe, personal: false }; }
   return { typ: "eimer", name: "", menge: null, einheit: "kg" };

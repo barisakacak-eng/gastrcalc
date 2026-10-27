@@ -364,3 +364,5 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 /* Vergleich: Gewinn nach allen Kosten mit Ampelpunkt (24.10.2026) */
 .vk-ampel .punkt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; background: var(--weggelassen); vertical-align: middle; }
 .vk-ampel .punkt.rot { background: var(--rot); } .vk-ampel .punkt.gelb { background: var(--gelb); } .vk-ampel .punkt.gruen { background: var(--gruen); }
+/* 27.10.2026 (Persona-Test Arabisch): „g 250“ → „250 g“ – Mengen mit lateinischer Einheit in Kacheln, Chips und Untertiteln nach dem ersten starken Zeichen ausrichten */
+[dir="rtl"] small, [dir="rtl"] .chip, [dir="rtl"] .kwert, [dir="rtl"] .marke { unicode-bidi: plaintext; }

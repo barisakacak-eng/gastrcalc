@@ -139,7 +139,9 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     if (art === "eigen") return { id, name: n, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis, mengeTag, steuer: 0.07 };
     return { ...gerichtAusVorlage(vorlage(n)), id, preis, mengeTag };
   });
-  s.gerichte.forEach((g, i) => { g.plu = String(101 + i); }); // E7 (17.10.2026): Kassen-Artikelnummer im Beispiel
+  s.gerichte.forEach((g, i) => { g.plu = String(101 + i); });
+  // 27.10.2026 (Persona-Test Türkisch): Vorlagen-Gerichte tragen den Namen in der App-Sprache – im Beispiel immer über die Kartenzeile suchen, nie über den deutschen Namen
+  const NACH_KARTE = new Map(KARTE.map(([n], i) => [n, s.gerichte[i]]));
   fehlendeRezepteErgaenzen(s);
   selbstAnwenden(s, vorauswahlFuer("doener").filter((k) => k !== "adana")); s.selbstAutoArt = "doener"; // 20.10.2026: Adana bleibt im Beispiel gekauft (Ladenhüter mit totem Lager)
   s.artikel = artikelAusGerichten(s);
@@ -151,7 +153,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   // Rezepte und Wareneinsatz bleiben dabei gleich (Eistee: 330 ml aus dem Großgebinde wie in der Vorlage).
   for (const [n, f] of [["Cola 0,33 l", { gebinde: "glas", marke: "Fritz-Kola", pfand: 0.08, einkauf: "glas" }], ["Eistee 0,33 l", { gebinde: "becher", quelle: "Eistee", flasche: 1.5, einkauf: "pet" }],
     ["Ayran 0,25 l", { gebinde: "becher", einkauf: "becher" }], ["Mineralwasser 0,25 l", { gebinde: "glas", einkauf: "glas" }]]) {
-    const g = s.gerichte.find((x) => x.name === n); if (g) getraenkSetzen(s, g.id, f);
+    const g = NACH_KARTE.get(n); if (g) getraenkSetzen(s, g.id, f);
   }
 
   // Beispiel-Laden (17.10.2026): Kühlung – 4 Stellen, morgens und abends, Sonntag Ruhetag
@@ -212,7 +214,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   zaehlen(inv1, 0); inventurAbschliessen(s, inv1, { datum: start, jetzt: zeit(start, 16) }); // errechnete Preise: kein Verlauf mit dem Tag der Erzeugung
 
   // Beispiel-Laden (17.10.2026): Tagesumsätze, Müll, Personalessen, Kühl-Rundgänge und Putz-Haken je Öffnungstag
-  const g = (n) => s.gerichte.find((x) => x.name === n);
+  const g = (n) => NACH_KARTE.get(n) || s.gerichte.find((x) => x.name === n);
   const a = (n) => s.artikel.find((x) => x.name === n);
   const fest = (e, d, h, m, n) => { e.id = `bsp-schwund-${d}-${n}`; e.erfasst = zeit(d, h, m); e.nacherfasst = false; return e; };
   let rundgangNr = 0;
@@ -292,7 +294,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
 
   // Menütafel (18.10.2026): eine laufende Kombi-Aktion (Beispiel, wie aus „Aktionen & Haltbarkeit“ übernommen): Döner + Pommes + Cola,
   // 10 % unter der Summe der Kartenpreise, auf 50 Cent gerundet; seit gestern, noch 6 Tage – so zeigt die Tafel eine Aktion mit Laufzeit.
-  { const ids = ["Döner Kebab", "Pommes frites (Beilage)", "Cola 0,33 l"].map((n) => s.gerichte.find((g) => g.name === n)).filter(Boolean);
+  { const ids = ["Döner Kebab", "Pommes frites (Beilage)", "Cola 0,33 l"].map((n) => NACH_KARTE.get(n)).filter(Boolean);
     const summe = rund2(ids.reduce((x, g) => x + g.preis, 0));
     if (ids.length === 3) s.aktionen = [{ id: "bsp-aktion-1", art: "kombi", gerichte: ids.map((g) => g.id), preis: Math.round(summe * 0.9 * 2) / 2, statt: summe,
       von: tagPlus(heute, -1), bis: tagPlus(heute, 6), ende: "datum", erfasst: zeit(tagPlus(heute, -1), 10), entfernt: false }];

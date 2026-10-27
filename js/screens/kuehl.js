@@ -207,6 +207,8 @@ function rundgangStartView(stand) {
     ${nav("kuehl")}`;
 }
 
+// 27.10.2026 (Persona-Test Vater): „18“ beim Tiefkühler ist fast immer „−18“ mit vergessenem Minus – erst fragen, statt sofort Maßnahmen zu verlangen
+const minusVergessen = (k, wert, abw) => k?.art === "tk" && typeof wert === "number" && wert >= 5 && abw && !abweichung(k, -wert);
 function stationView(stand, r, k) {
   const f = form; const letzte = letzteMessung(stand, k.id);
   const wert = f.wert; const abw = abweichung(k, wert); f.abwGezeigt = typeof wert === "number" && abw;
@@ -217,6 +219,7 @@ function stationView(stand, r, k) {
       ${f.grund ? "" : `
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       <span class="marke">${letzte ? esc(t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : esc(t("kuehl.ersteMessung"))}${k.art === "tk" ? ` · ${esc(t("kuehl.minusHinweis"))}` : ""}</span>
+      ${minusVergessen(k, wert, abw) ? `<button type="button" class="knopf zweit kuehl-minus" data-a="station-minus">${esc(t("kuehl.minusFrage", fmtZahl(wert, Number.isInteger(wert) ? 0 : 1)))}</button>` : ""}
       ${typeof wert === "number" && abw ? `<div class="karte hinweisrot"><b>${esc(t("kuehl.ausserhalb"))}</b>
         <h2>${esc(t("kuehl.massnahme"))}</h2>
         <div class="chips">${MASSNAHMEN.map((m) => `<button type="button" class="chip klein ${f.massnahmen.includes(m) ? "an" : ""}" data-a="massnahme" data-wert="${m}">${esc(t("kuehl.massnahmen." + m))}</button>`).join("")}</div>
@@ -328,6 +331,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     station = null; form = null; ansicht = "start"; return "abgeschlossen";
   }
   if (!form) return false;
+  if (name === "station-minus") { if (typeof form?.wert === "number" && form.wert > 0) { form.wert = -form.wert; form.wertText = "-" + form.wertText.trim().replace(/^\+/, ""); } return true; }
   if (name === "station-grund") { form.grund = form.grund === el.dataset.wert ? null : el.dataset.wert; if (form.grund) form.wert = null; return true; }
   if (name === "massnahme") { const i = form.massnahmen.indexOf(el.dataset.wert); if (i >= 0) form.massnahmen.splice(i, 1); else form.massnahmen.push(el.dataset.wert); return true; }
   if (name === "nachkontrolle") { form.nachkontrolle = el.dataset.wert; return true; }

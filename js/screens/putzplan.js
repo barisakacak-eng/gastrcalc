@@ -1,6 +1,7 @@
 // Putzplan-Bildschirm (Baris 15.10.2026, 12:43: HACCP-Grundreinigung als Empfehlung, wenn die Einrichtung fertig ist).
 // Drei Ansichten: einrichten (Geräte und Aufgaben wählen), plan (heute abhaken), nachweis (Liste für die Kontrolle, druckbar).
 import { PUTZ_TEXTE } from "../data/putzplan_texte.js";
+import { PUTZ_WARUM } from "../data/putzplan_warum.js";
 import { PUTZ_KURZ } from "../data/putzplan_kurz.js"; // Baris 20.10.2026: „Putzen kurz“ im Laden
 import { t, sprache } from "../i18n.js";
 import { esc, heute } from "../util.js";
@@ -28,7 +29,8 @@ export const putzplanZurueck = (stand) => { if (ansicht !== "plan" && planVon(st
 const text = (a) => a.text[sprache()] || PUTZ_TEXTE[sprache()]?.[a.id] || a.text.de; // 20.10.2026: 15 weitere Sprachen
 // Paket 6 (17.10.2026): Begründung wie der Titel in der aktiven Sprache (sonst Deutsch); alte Form (Text) bleibt lesbar
 const kurz = (a) => PUTZ_KURZ[sprache()]?.[a.id] || text(a); // Laden: 2–3 Wörter; ohne Übersetzung der volle Text der Sprache
-const warum = (a) => (typeof a.warum === "string" ? a.warum : a.warum?.[sprache()] || a.warum?.de || "");
+// 27.10.2026 (Persona-Test Arabisch): ohne eigene Übersetzung Englisch statt Deutsch – wie bei den Artikelnamen; eigene Texte aus PUTZ_WARUM, sobald da
+const warum = (a) => (typeof a.warum === "string" ? a.warum : a.warum?.[sprache()] || PUTZ_WARUM[sprache()]?.[a.id] || (sprache() === "de" ? a.warum?.de : a.warum?.en || a.warum?.de) || "");
 const stufeMarke = (a) => `<span class="pstufe ${a.stufe}">${esc(t("putzplan.stufe." + a.stufe))}</span>`;
 
 function einrichtenView(stand) {
