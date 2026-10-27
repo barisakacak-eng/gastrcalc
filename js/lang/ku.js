@@ -1,7 +1,7 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Ji yekem tomara zibil","titel":"Hefteyê teserûf","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Zibil","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
+  nutzen: {"start":"Ji yekem tomara zibil","titel":"Hefteyê teserûf","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Çop","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
@@ -632,7 +632,7 @@ export default {
     zielStufe: { bisNull: () => "Heta sifirê maye", bisZiel: (g) => `Heta armancê maye (+ ${g} % qezenc)`, ueberZiel: () => "Ser armancê di mehê de" }, zielSatzStufe: { bisNull: () => "Ev qas firotin kêm e da ku lêçûnên te heta îro werin girtin. Paşê qezenca armancê tê.", bisZiel: (g) => `Lêçûnên te heta îro hatin girtin. Niha armanca te girîng e: ${g} % qezenc ji firotina mehê.`, ueberZiel: () => "Lêçûn hatin girtin, qezenca armancê gihîşt. Her tiştê ser vê ji te re dimîne." }, nullKurz: "Sifir",
     tempoGut: (d) => `Li gorî planê: bi vê lezê tu di ${d} de digihîjî.`, tempoKnapp: (b) => `Bi vê lezê têr nake. Pêwîst: ${b} di rojê de.`,
     sprueche: ["Satil ne birçî ye. Ne hewce ye em wî têr bikin.", "Kêmtir bibire, kêmtir bavêje, kêmtir xeber bide.", "Amadekariya baş satil bêkar dike.", "Hin bermahî ji ya ku xuya dikin bihatir in.", "Nêrînek li zibil hêjayî ye. Dîmen ne xweş e, lê bi kêr tê.", "Serê salatayê ya dawî jî planekê heq dike.", "Pêşî binêre çiqas lazim e. Paşê amade bike.", "Kêmtir di satil de, zêdetir di dikanê de dimîne.", "Teyfikek tije baş e. Porsiyoneke zelal baştir e.", "Terazû ne dijmin e. Tenê bahaneyan nas nake.", "Kevçiyek zêde biçûk xuya dike. Kirîn wê hîs dike.", "Porsiyonên wekhev li pişt tezgehê aramiyê tînin.", "Lêçûna malê ji destê li ser kevçîyê mezin jî dest pê dike.", "Porsiyoneke baş ne hewce ye pir mezin be.", "Biha rast e, heke piştî firotinê tiştek bimîne.", "Kirîn biha bû? Wê demê biha nêrîneke duyem dixwaze.", "Menû dikare kevn be. Biha çêtir e ne.", "Hîsa dil tam dide. Lê biha çêtir e were hesabkirin.", "Tîmeke baş dibîne kengî yek hinekî bêhnvedanê dixwaze.", "Gotineke xweş bi pere nîne. Lê di bîrê de dimîne.", "Hin ji bo xwarinê tên. Ji bo we vedigerin.", "Piştî kar, kî alîkarî kir jî tê hesabkirin.", "Sîparîşa dawî derket. Niha tu dikarî rûnî.", "Her roj baş naçe. Hevîr jî ne her car.", "Te îro gelek tişt hilgirt. Ne tenê qutiyên vexwarinê.", "Dikan biçûk e. Karê li pişt wê ne biçûk e.", "Îro deng zêde bû. Lê dikan hîn li ser piyan e.", "Carinan dawiya kar tiştê herî xweş ê menûyê ye.", "Kes her hûrgiliyê nabîne. Tu dibînî. Ev xuya dike.", "Sibê em didomînin. Niha pêşî solên xwe derxe."],
-    umsatzWoche: "Firotina hefteyê", zurVorwoche: (p) => `${p} % li gorî hefteya borî`, umsatzLeer: "Firotina rojê ya yekem tomar bike", tonneWoche: "Zibilê hefteyê", tonneLeer: "Hîn tiştek nehatiye avêtin", wareneinsatz: "Lêçûna malê", karteFehlt: "Menû tune", genauerAbwiegen: "Heke tu bikişînî rasttir dibe", ziel: (p) => `Armanc ${p} %`, einrichten: "saz bike", branchenMeldung: (n) => `${n} reçete bi nirxên sektorê hatin nûkirin. Nirxên te yên xwe dimînin.`,
+    umsatzWoche: "Firotina hefteyê", zurVorwoche: (p) => `${p} % li gorî hefteya borî`, umsatzLeer: "Firotina rojê ya yekem tomar bike", tonneWoche: "Çopa hefteyê", tonneLeer: "Hîn tiştek nehatiye avêtin", wareneinsatz: "Lêçûna malê", karteFehlt: "Menû tune", genauerAbwiegen: "Heke tu bikişînî rasttir dibe", ziel: (p) => `Armanc ${p} %`, einrichten: "saz bike", branchenMeldung: (n) => `${n} reçete bi nirxên sektorê hatin nûkirin. Nirxên te yên xwe dimînin.`,
     bisNull: (m) => `Heta sifirê di ${m} de maye`,
     verdient: (m) => `Qezenc di ${m} de`,
     nullErreicht: "Gihîşt sifirê",
@@ -647,7 +647,7 @@ export default {
     richtwertZeile: "Texmîn · Bihayan binivîse ›", // Paket 3 (16.10.2026)
     stufe: { 1: "tenê lêçûnên sabît û meaş, mal hîn kêm e", 2: "mal ji menûyê texmînî", 3: "mal ji fîşên te" },
     umsatzHeute: "Firotina îro",
-    tonneHeute: "Zibilê îro",
+    tonneHeute: "Çopa îro",
     kuehlung: "Sarker",
     portionenKurz: (n) => `≈ ${n} porsiyon`,
     alleGemessen: "hemû hatin pîvandin",

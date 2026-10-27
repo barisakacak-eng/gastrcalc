@@ -1122,6 +1122,7 @@ function zekiBildschirm() {
   if (!zm) return;
   // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter
   if (ansicht === "start" && zm.ausloeser !== "kuehl_abweichung" && zm.ausloeser !== "muell_hoch") return;
+  if (ansicht === "start" && zm.ausloeser === "kuehl_abweichung" && root.querySelector('[data-dran="kuehlAlarm"]')) return; // Persona-Test Vater 27.10.: Warnung stand doppelt
   const key = `${zm.ausloeser}:${H}`; const laeuft = zekiGerade?.key === key;
   if (personalAktiv()) zm = { ...zm, text: anredeTeam(zm.text, stand) }; // Baris 27.10.2026: andere Anrede im Personal-Modus
   zekiSprechblase(root, zm, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
