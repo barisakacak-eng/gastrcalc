@@ -85,6 +85,22 @@ export function belegQuoteFenster(stand, datum, satz) {
   return u > 0 ? belege / u : null;
 }
 
+// Glättung Stufe 3 (27.10.2026): Belegquote über die vorhandenen Tage (weniger als 28), mit Gewicht 0 bis Tag 7, dann linear bis 1 an Tag 28.
+export function belegQuoteTeil(stand, datum, satz) {
+  let erster = null;
+  for (const n of stand.tagesnotizen || []) if (!n.storniert && typeof n.umsatz === "number" && typeof n.datum === "string" && (erster === null || n.datum < erster)) erster = n.datum;
+  for (const l of stand.lieferungen || []) if (!l.storniert && typeof l.datum === "string" && (erster === null || l.datum < erster)) erster = l.datum;
+  if (erster === null || erster > datum) return null;
+  let tage = 0; for (let d = erster; d <= datum && tage < PROGNOSE_FENSTER; d = tagPlus(d, 1)) tage += 1;
+  const gewicht = Math.max(0, Math.min(1, (tage - 7) / (PROGNOSE_FENSTER - 7)));
+  if (gewicht === 0) return null;
+  // ganze Wochen rückwärts ab heute: ein Wocheneinkauf steht so gegen den Umsatz der Woche, die er versorgt (kein Sägezahn am Einkaufstag)
+  const von = tagPlus(datum, -(Math.floor(tage / 7) * 7 - 1));
+  const ek = einkaufJeTag(stand, von, datum); const belege = Object.values(ek.jeTag).reduce((a, b) => a + b, 0);
+  let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += e.umsatz / (1 + satz); }
+  return u > 0 ? { quote: belege / u, gewicht, tage } : null;
+}
+
 // Der Zähler für den Monat, in dem `datum` liegt, Stand am Abend von `datum`. Paket 3, M7: Standard ist der Geschäftstag (bis 4 Uhr = Vortag).
 export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const M = monatsGrenzen(datum);
@@ -118,13 +134,20 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   let stufe = mitKarte ? 2 : 1;
   const belegSumme = Object.entries(einkauf.jeTag).filter(([d]) => d <= datum).reduce((a, [, b]) => a + b, 0); // Gegenprüfung 27.10.: nur Belege bis zum gewählten Tag
   if (einkauf.anzahl > 0 && mitKarte && belegSumme > 0 && belegSumme >= umsatzNettoGesamt * q.quote) stufe = 3;
+  // 27.10.2026 (Glättung): am Monatsanfang, vor dem ersten Beleg des Monats, fiel der Laden auf Stufe 2 zurück – die Quote sprang auf die
+  // Kartenquote und mit dem ersten Beleg wieder hoch. Hat die App schon eine Belegquote aus den letzten Wochen, bleibt Stufe 3.
+  if (stufe === 2 && belegSumme === 0) { const f = belegQuoteFenster(stand, datum, steuer.satz) ?? belegQuoteTeil(stand, datum, steuer.satz)?.quote ?? null; if (f !== null && f >= q.quote) stufe = 3; }
   // Quote für Prognose, Tempo und „pro Tag nötig“. Schwadron 18.10.2026, H1: in Stufe 3 NICHT mehr „Belege Monat bis heute / Umsatz bis
   // heute“ – am Einkaufstag und am Monatsersten stand dort der ganze Beleg gegen ein, zwei Tage Umsatz (Quote 95 %, „4.769 € / Tag nötig“).
   // Jetzt: Belegquote über die letzten 28 Kalendertage (über die Monatsgrenze), erst wenn die App so lange Daten hat; davor die Kartenquote
   // (Verbrauch laut Rezept). Nie unter der Kartenquote, höchstens 0,9. Stand, Ware und Monatssumme bleiben echte Belege (unverändert).
   const belegQuoteMonat = umsatzNettoGesamt > 0 ? belegSumme / umsatzNettoGesamt : null;
   const quoteFenster = stufe === 3 ? belegQuoteFenster(stand, datum, steuer.satz) : null;
-  const quoteEff = stufe === 3 ? Math.min(QUOTE_MAX, Math.max(q.quote, quoteFenster ?? q.quote)) : (q.quote ?? 0);
+  // 27.10.2026 (Glättung Stufe 3): bisher sprang die Quote am 28. Tag von der Kartenquote auf die Belegquote. Jetzt gleitet sie: ab Tag 8
+  // mit Daten wächst das Gewicht der Belegquote linear, ab Tag 28 gilt sie ganz (wie bisher). Ein Großeinkauf in der ersten Woche zählt nicht.
+  const gleitend = stufe === 3 && quoteFenster === null ? belegQuoteTeil(stand, datum, steuer.satz) : null;
+  const quoteBeleg = quoteFenster ?? (gleitend ? q.quote + gleitend.gewicht * (Math.max(q.quote, Math.min(QUOTE_MAX, gleitend.quote)) - q.quote) : null);
+  const quoteEff = stufe === 3 ? Math.min(QUOTE_MAX, Math.max(q.quote, quoteBeleg ?? q.quote)) : (q.quote ?? 0);
   const belegQuoteZaehlt = stufe === 3 && quoteFenster !== null && quoteFenster !== undefined && quoteFenster >= q.quote;
 
   // Öffnungstage des Monats (gewichtet) und Tageskosten
@@ -199,7 +222,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const lohnGeschaetzt = lohnStundenMonat > 0 && lohnGeschaetztTage > 0;
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0 || lohnGeschaetzt;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,

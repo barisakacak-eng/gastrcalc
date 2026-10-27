@@ -169,3 +169,16 @@ test("Schwadron N5: wareneinsatzQuote ist gedeckelt und kennzeichnet unplausible
   const z = Z.zaehler(b, { datum: "2026-10-01" }); const w = Z.wareneinsatzQuote(b, z);
   assert.ok(w.quote <= 0.9, `Quote ${w.quote}`); assert.equal(w.unplausibel, true); nah(w.roh, 1.8);
 });
+
+// 27.10.2026, Glättung Stufe 3: die Belegquote gleitet von Tag 8 bis Tag 28 ein, statt am 28. Tag zu springen.
+test("Stufe 3: Quote gleitet ohne Sprung von der Kartenquote zur Belegquote", () => {
+  const c = laden(); for (let i = 0; i < 31; i++) stand(c, E.tagPlus("2026-09-14", i), 1070);
+  for (const d of ["2026-09-14", "2026-09-21", "2026-09-28", "2026-10-05", "2026-10-12"]) c.lieferungen.push({ id: "l" + d, datum: d, erfasst: d + "T08:00:00.000Z", basis: "netto", summeNetto: 2800, zeilen: [], storniert: false });
+  const quoten = []; for (let i = 0; i < 31; i++) { const z = Z.zaehler(c, { datum: E.tagPlus("2026-09-14", i) }); if (z.stufe === 3) quoten.push([i + 1, z.quoteEff, z.quote]); }
+  if (process.env.ZEIG) console.log(quoten.map((x) => x[0] + ":" + x[1].toFixed(3)).join(" "));
+  assert.ok(quoten.length > 20);
+  for (const [tag, qe, qk] of quoten) if (tag <= 7) nah(qe, qk); // erste Woche: Kartenquote
+  let groessterSchritt = 0; for (let i = 1; i < quoten.length; i++) groessterSchritt = Math.max(groessterSchritt, Math.abs(quoten[i][1] - quoten[i - 1][1]));
+  const spanne = Math.abs(quoten[quoten.length - 1][1] - quoten[0][1]);
+  assert.ok(groessterSchritt < spanne / 4 + 0.03, `größter Tagessprung ${groessterSchritt.toFixed(3)} bei Spanne ${spanne.toFixed(3)}`);
+});

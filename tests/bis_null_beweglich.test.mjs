@@ -108,3 +108,4 @@ test("Prüfung L3: Schwund ohne Erklärung aus der Inventur zählt in Stufe 1/2 
   const k = z.kosten + z.tageskostenPrognose * z.gewichtZukunft + z.muell + (z.muellPrognose || 0) + z.schwund;
   assert.ok(Math.abs(m.nullpunkt - k / (1 - z.quoteEff) * (1 + z.steuer)) < 1e-6);
 });
+
