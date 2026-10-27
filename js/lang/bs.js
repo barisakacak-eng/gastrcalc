@@ -280,7 +280,7 @@ export default {
     nochNichts: "Danas još ništa upisano. Ništa bačeno? Onda je dobar dan.",
     eintragen: "Upiši",
     wasPassiert: "Šta se desilo?",
-    arten: { verderb: "Pokvareno", bruch: "Razbijeno", fehler: "Pogrešna narudžba", nichtverkauft: "Nije prodano", gericht: "Jelo bačeno", rohware: "Sirovina bačena", eimer: "Kanta izvagana", personal: "Hrana za osoblje", eigen: "Sam pojeo" },
+    arten: { ausgegeben: "Častio (gosti)", verderb: "Pokvareno", bruch: "Razbijeno", fehler: "Pogrešna narudžba", nichtverkauft: "Nije prodano", gericht: "Jelo bačeno", rohware: "Sirovina bačena", eimer: "Kanta izvagana", personal: "Hrana za osoblje", eigen: "Sam pojeo" },
     eimerZeile: (g, r) => `${g} kg izvagano, od toga ${r} kg novo`,
     personalHinweis: "Hrana za osoblje nije otpad. Računa se po službenoj vrijednosti obroka (Sachbezugswert), ne po nabavnoj cijeni.",
     eigenHinweis: "Ono što sam pojedeš je vlastita potrošnja. Poreska uprava (Finanzamt) to traži posebno, zato stoji ovdje odvojeno.",
@@ -390,7 +390,7 @@ export default {
       eingeben: "Unesi šifru ureda", falsch: "Pogrešna šifra.", oeffnen: "Otvori", vier: "Tačno 4 cifre, molim." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Bilješka – nije Z-izvještaj, nije za knjiženje", steuerZbon: "PDV molim iz Z-izvještaja kase.", kasse: "Prometi su samo bilješke. Važi tvoja kasa (Z-izvještaj).",
+  ordnerT: { ausgegeben: (e) => `Častio goste: ${e} neto · privatno uzimanje, provjeri s poreznim savjetnikom`, pausch: (p) => `Tvoja hrana: paušal 2026 ${p} po osobi godišnje, djeca od 2 do 12 pola. Onda je ne moraš upisivati pojedinačno. Provjeri s poreznim savjetnikom.`, kennung: "Bilješka – nije Z-izvještaj, nije za knjiženje", steuerZbon: "PDV molim iz Z-izvještaja kase.", kasse: "Prometi su samo bilješke. Važi tvoja kasa (Z-izvještaj).",
     allesDa: "Računi i liste potpuni", umsatzZeile: (n, e) => `${n} dana · ${e} bruto · bilješke, važi kasa`, status: { notiz: "Bilješka, važi kasa", pruefen: "provjeri" },
     inventurPruefen: (n) => `${n} roba bez cijene – provjeri`, wertFehlt: "Vrijednost nije zabilježena",
     personalOhne: (n) => `${n} obroka bez osobe – provjeri`, kostenZeile: (n) => `${n} stavki · bez tvoje plate`,
@@ -745,10 +745,11 @@ export default {
     belegeKurz: "Učitaj račun, ažuriraj cijene",
   },
 
+  lieferTag: { davon: "od toga dostava", provision: "Provizija", zuViel: "Dostava je veća od prometa." },
   teamTag: { abwFrage: "Je li neko od radnika ovaj mjesec bio bolestan ili na godišnjem?", abwWer: "Koliko dana? Ipak ih plaćaš.", tage: "dana", modell: { stunde: "Po satu", monat: "Fiksno mjesečno" }, monatBrutto: "Bruto mjesečno", monatHinweis: "Računa se svaki mjesec kao fiksni trošak. Više se ne pita svaki dan.", frage: "Jesu li danas bili radnici?", wer: "Ko je bio? Podesi sate.", std: "sati", satz: "Bruto po satu", summe: (b) => `Košta te danas: ${b}`, brutto: (b) => `${b} bruto, plus dio poslodavca`, art: { angestellt: "Zaposlen", minijob: "Minijob" }, summeOffen: "Fale plata i vrsta", weitere: "još jedna osoba", person: (n) => `Radnik ${n}`, fertig: "Gotovo" },
   muell: { personalEintragen: "Upiši obrok osoblja",
-    zeki: { start: "Šta je danas bačeno?", weiter: "Još nešto bačeno?", personal: "Šta je tvoj tim jeo?", bruch: "Šta se razbilo ili pokvarilo?" },
-    grund: { roh: "Roba", personal: "Osoblje", bruch: "Lom" }, nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",
+    zeki: { ausgegeben: "Šta si danas častio?", start: "Šta je danas bačeno?", weiter: "Još nešto bačeno?", personal: "Šta je tvoj tim jeo?", bruch: "Šta se razbilo ili pokvarilo?" },
+    grund: { ausgegeben: "Častio", roh: "Roba", personal: "Osoblje", bruch: "Lom" }, nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",
     zurUebersicht: "Pregled otpada",
     auswaehlen: "Izaberi namirnicu", aendern: "Dodirni za promjenu", mengeEingeben: "Upiši količinu", foto: "Slika (nije obavezno)", fotoDabei: "Slika je dodana", fotoFehler: "Slika nije mogla biti sačuvana.", satz: "Od grešaka napravi znanje. Upiši šta je danas završilo u kanti.", orientierung: "Procijenjene vrijednosti služe za orijentaciju.", ohnePreisKurz: "Još bez nabavne cijene – ipak se računa.",
     wasWeg: "Šta je bačeno?", wocheTonne: "Ove sedmice u kanti", monatTonne: "Kanta za mjesec", leerWoche: "Još ništa upisano. Ništa bačeno? Dobar dan.", wocheZeile: (p, kg) => `≈ ${p} ${pl(p, "prodana porcija", "prodane porcije", "prodanih porcija")} da se to vrati · ${kg} kg`, wenigerAls: (m, d) => `manje nego u ${m} do ${d}. dana.`, mehrAls: (m, d) => `više nego u ${m} do ${d}. dana.`, rueckgaengig: "Poništi", ammeisten: "Najviše bačeno", eintragen: "Upiši otpad", andererTag: "Za drugi dan", teller: "Tanjir", eimerNurGewicht: "samo težina", ganzePackung: "cijelo pakovanje", personalWert: (e) => `Hrana za osoblje · vrijednost obroka ${e}`, inDerTonne: (e) => `= ${e} u kanti`, eimerHinweisKurz: "Tanjiri i sirovine koji su danas već upisani se oduzimaju.", fuerPersonal: "Pojelo osoblje", wegDamit: "Baci", geradeEben: "upravo sad", zurueckgenommen: "Poništeno.",
@@ -1183,7 +1184,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Izađi iz načina za osoblje", zurueck: "Nazad", hallo: (n) => `Zdravo ${n}`, halloOhne: "Zdravo", wechseln: "Promijeni", werBistDu: "Ko radi?", ohneNamen: "Bez imena",
     muell: "Otpad", kuehlung: "Hlađenje", putzen: "Čišćenje", offen: (n) => `${n} otvoreno` },
-  muell1: { anleitung: "Dodirni sliku = 1 porcija bačena. ••• = promijeni količinu.", titel: "Otpad", andere: "Ostalo", portion: (n, z) => `${z} ${pl(n, "porcija", "porcije", "porcija")}`, eingetragen: "upisano", menge: "Promijeni količinu", personalessen: "Obrok za osoblje" },
+  muell1: { ausgegeben: "Častio", anleitung: "Dodirni sliku = 1 porcija bačena. ••• = promijeni količinu.", titel: "Otpad", andere: "Ostalo", portion: (n, z) => `${z} ${pl(n, "porcija", "porcije", "porcija")}`, eingetragen: "upisano", menge: "Promijeni količinu", personalessen: "Obrok za osoblje" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Sigurnosna kopija", titelEinlesen: "Lozinka kopije", feld: "Lozinka", hinweis: "S lozinkom je fajl šifrovan. Bez lozinke ga svako može otvoriti.", teilen: "Podijeli kopiju", ohne: "Podijeli bez lozinke", einlesen: "Učitaj", zuKurz: "Najmanje 6 znakova", falsch: "Pogrešna lozinka", zeigen: "Prikaži lozinku", verbergen: "Sakrij lozinku", mit: "s lozinkom", ohneKurz: "bez lozinke" },
   rettung: { titel: "Kod za spas", vergessen: "Zaboravio si kod?", eingeben: "Upiši kod za spas sa svog papira.", falsch: "Pogrešan kod za spas", richtig: "Tačno. Sada izaberi novi kod za kancelariju.", neuTitel: "Tvoj kod za spas", aufschreiben: "Zapiši ga sada na papir. S njim ulaziš u kancelariju ako zaboraviš kod.", nurEinmal: "Prikazuje se samo sada. Čuvaj papir na sigurnom, ne u telefonu.", aufgeschrieben: "Zapisao sam ga", anlegen: "Napravi kod za spas", neuAnlegen: "Napravi novi kod za spas", offen: "Napravi kod za spas – ako zaboraviš kod za kancelariju", fehlerOhneCode: "Ovdje možeš učitati kopiju bez koda za kancelariju.", ersetzenFrage: (n) => `Pažnja: kopija zamjenjuje sve podatke na ovom telefonu. U kopiji: ${n}. Ono što je sada ovdje sačuvano bit će obrisano. Nastaviti?`, ersetzt: "Kopija učitana. Tvoji podaci su ponovo tu." }, // Rettung (17.10.2026)

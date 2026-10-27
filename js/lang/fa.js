@@ -272,7 +272,7 @@ export default {
     nochNichts: "امروز هنوز چیزی ثبت نشده. چیزی دور نریختی؟ پس روز خوبی است.",
     eintragen: "ثبت",
     wasPassiert: "چه شد؟",
-    arten: { verderb: "خراب شد", bruch: "شکست", fehler: "سفارش اشتباه", nichtverkauft: "فروش نرفت", gericht: "غذا دور ریخته شد", rohware: "مواد خام دور ریخته شد", eimer: "وزن سطل", personal: "غذای پرسنل", eigen: "خودم خوردم" },
+    arten: { ausgegeben: "مهمانی (مهمان‌ها)", verderb: "خراب شد", bruch: "شکست", fehler: "سفارش اشتباه", nichtverkauft: "فروش نرفت", gericht: "غذا دور ریخته شد", rohware: "مواد خام دور ریخته شد", eimer: "وزن سطل", personal: "غذای پرسنل", eigen: "خودم خوردم" },
     eimerZeile: (g, r) => `${g} kg وزن شد، ${r} kg از آن جدید`,
     personalHinweis: "غذای پرسنل دورریز نیست. با ارزش رسمی Sachbezug حساب می‌شود، نه با قیمت خرید.",
     eigenHinweis: "چیزی که خودت می‌خوری مصرف شخصی (Eigenverbrauch) است. اداره‌ی مالیات (Finanzamt) آن را جدا می‌خواهد، برای همین اینجا جداست.",
@@ -382,7 +382,7 @@ export default {
       eingeben: "رمز دفتر را وارد کن", falsch: "رمز اشتباه.", oeffnen: "باز کن", vier: "دقیقاً 4 رقم بزن." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "یادداشت – گزارش Z نیست، برای حسابداری نیست", steuerZbon: "مالیات بر فروش را از گزارش Z صندوق بردار.", kasse: "فروش‌ها فقط یادداشت‌اند. معتبر صندوق توست (گزارش Z).",
+  ordnerT: { ausgegeben: (e) => `مهمانی برای مهمان‌ها: ${e} خالص · برداشت شخصی، با مشاور مالیاتی روشن کن`, pausch: (p) => `غذای خودت: مبلغ ثابت ۲۰۲۶ ${p} برای هر نفر در سال، کودکان ۲ تا ۱۲ سال نصف. آن‌وقت لازم نیست تک‌تک بنویسی. با مشاور مالیاتی‌ات روشن کن.`, kennung: "یادداشت – گزارش Z نیست، برای حسابداری نیست", steuerZbon: "مالیات بر فروش را از گزارش Z صندوق بردار.", kasse: "فروش‌ها فقط یادداشت‌اند. معتبر صندوق توست (گزارش Z).",
     allesDa: "رسیدها و فهرست‌ها کامل", umsatzZeile: (n, e) => `${n} روز · ${e} ناخالص · یادداشت، صندوق معتبر است`, status: { notiz: "یادداشت، صندوق معتبر است", pruefen: "بررسی کن" },
     inventurPruefen: (n) => `${n} کالا بدون قیمت – بررسی کن`, wertFehlt: "ارزش ثبت نشده",
     personalOhne: (n) => `${n} غذا بدون شخص – بررسی کن`, kostenZeile: (n) => `${n} قلم · بدون حقوق خودت`,
@@ -737,10 +737,11 @@ export default {
     belegeKurz: "رسید بخوان، قیمت‌ها را به‌روز کن",
   },
 
+  lieferTag: { davon: "از این مقدار، پیک", provision: "کمیسیون", zuViel: "پیک بیشتر از کل فروش است." },
   teamTag: { abwFrage: "این ماه کسی از پرسنل بیمار یا مرخصی بود؟", abwWer: "چند روز؟ حقوقشان را باز هم می‌دهی.", tage: "روز", modell: { stunde: "ساعتی", monat: "ثابت ماهانه" }, monatBrutto: "ناخالص (Brutto) ماهانه", monatHinweis: "هر ماه هزینه‌ی ثابت حساب می‌شود. دیگر هر روز پرسیده نمی‌شود.", frage: "امروز پرسنل بودند؟", wer: "چه کسی بود؟ ساعت‌ها را تنظیم کن.", std: "ساعت", satz: "ناخالص (Brutto) ساعتی", summe: (b) => `امروز برایت هزینه دارد: ${b}`, brutto: (b) => `${b} ناخالص، به‌علاوه‌ی سهم کارفرما`, art: { angestellt: "استخدامی", minijob: "Minijob" }, summeOffen: "دستمزد و نوع هنوز نیست", weitere: "یک نفر دیگر", person: (n) => `پرسنل ${n}`, fertig: "تمام" },
   muell: { personalEintragen: "ثبت غذای پرسنل",
-    zeki: { start: "امروز چه چیزی دور ریخته شد؟", weiter: "چیز دیگری هم دور ریخته شد؟", personal: "تیمت چه خورد؟", bruch: "چه چیزی شکست یا خراب شد؟" },
-    grund: { roh: "کالا", personal: "پرسنل", bruch: "خرابی" }, nichtsGefunden: "چیزی پیدا نشد. جور دیگری بنویس یا «وزن سطل» را بزن.",
+    zeki: { ausgegeben: "امروز چه چیزی مهمان کردی؟", start: "امروز چه چیزی دور ریخته شد؟", weiter: "چیز دیگری هم دور ریخته شد؟", personal: "تیمت چه خورد؟", bruch: "چه چیزی شکست یا خراب شد؟" },
+    grund: { ausgegeben: "مهمانی", roh: "کالا", personal: "پرسنل", bruch: "خرابی" }, nichtsGefunden: "چیزی پیدا نشد. جور دیگری بنویس یا «وزن سطل» را بزن.",
     zurUebersicht: "نمای کلی دورریز",
     auswaehlen: "انتخاب مواد غذایی", aendern: "برای تغییر بزن", mengeEingeben: "مقدار را وارد کن", foto: "عکس (اختیاری)", fotoDabei: "عکس ضمیمه است", fotoFehler: "عکس ذخیره نشد.", satz: "از اشتباه درس بساز. چیزی را که امروز در سطل زباله رفت ثبت کن.", orientierung: "عددهای تخمینی فقط برای راهنمایی‌اند.", ohnePreisKurz: "هنوز بدون قیمت خرید – با این حال حساب می‌شود.",
     wasWeg: "چه چیزی دور ریخته شد؟", wocheTonne: "این هفته در سطل زباله", monatTonne: "سطل زباله‌ی ماه", leerWoche: "هنوز چیزی ثبت نشده. چیزی دور نریختی؟ روز خوبی است.", wocheZeile: (p, kg) => `≈ ${p} پرس فروخته‌شده برای جبرانش · ${kg} kg`, wenigerAls: (m, d) => `کمتر از همین مدت در ${m} (تا ${d}).`, mehrAls: (m, d) => `بیشتر از همین مدت در ${m} (تا ${d}).`, rueckgaengig: "برگرداندن", ammeisten: "بیشترین دورریز", eintragen: "ثبت دورریز", andererTag: "برای روز دیگر", teller: "بشقاب", eimerNurGewicht: "فقط وزن", ganzePackung: "کل بسته", personalWert: (e) => `غذای پرسنل · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} در سطل زباله`, eimerHinweisKurz: "بشقاب‌ها و مواد خامی که امروز ثبت شده کم می‌شوند.", fuerPersonal: "پرسنل خورد", wegDamit: "دور بریز", geradeEben: "همین الان", zurueckgenommen: "پس گرفته شد.",
@@ -1175,7 +1176,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "خروج از حالت کارکنان", zurueck: "بازگشت", hallo: (n) => `سلام ${n}`, halloOhne: "سلام", wechseln: "تغییر", werBistDu: "چه کسی کار می‌کند؟", ohneNamen: "بدون نام",
     muell: "دورریز", kuehlung: "سرمایش", putzen: "نظافت", offen: (n) => `${n} باز` },
-  muell1: { anleitung: "روی عکس بزن = ۱ پرس دور ریخته شد. ••• = تغییر مقدار.", titel: "دورریز", andere: "دیگر", portion: (n, z) => `${z} پرس`, eingetragen: "ثبت شد", menge: "تغییر مقدار", personalessen: "غذای کارکنان" },
+  muell1: { ausgegeben: "مهمانی ثبت شد", anleitung: "روی عکس بزن = ۱ پرس دور ریخته شد. ••• = تغییر مقدار.", titel: "دورریز", andere: "دیگر", portion: (n, z) => `${z} پرس`, eingetragen: "ثبت شد", menge: "تغییر مقدار", personalessen: "غذای کارکنان" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "پشتیبان", titelEinlesen: "رمز پشتیبان", feld: "رمز", hinweis: "با رمز، فایل رمزگذاری می‌شود. بدون رمز هر کسی می‌تواند آن را باز کند.", teilen: "اشتراک پشتیبان", ohne: "اشتراک بدون رمز", einlesen: "خواندن", zuKurz: "دست‌کم ۶ نویسه", falsch: "رمز اشتباه است", zeigen: "نمایش رمز", verbergen: "پنهان کردن رمز", mit: "با رمز", ohneKurz: "بدون رمز" },
   rettung: { titel: "کد بازیابی", vergessen: "کد را فراموش کردی؟", eingeben: "کد بازیابی را از روی کاغذت وارد کن.", falsch: "کد بازیابی اشتباه است", richtig: "درست است. حالا یک کد دفتر جدید انتخاب کن.", neuTitel: "کد بازیابی تو", aufschreiben: "همین حالا روی کاغذ بنویس. اگر کد را فراموش کنی، با این وارد دفتر می‌شوی.", nurEinmal: "فقط همین حالا نشان داده می‌شود. کاغذ را جای امن بگذار، نه در گوشی.", aufgeschrieben: "نوشتم", anlegen: "ساخت کد بازیابی", neuAnlegen: "ساخت کد بازیابی جدید", offen: "یک کد بازیابی بساز – اگر کد دفتر را فراموش کنی", fehlerOhneCode: "اینجا بدون کد دفتر می‌توانی پشتیبان را بخوانی.", ersetzenFrage: (n) => `توجه: پشتیبان همه داده‌های این گوشی را جایگزین می‌کند. در پشتیبان: ${n}. آنچه الان اینجا ذخیره است، پاک می‌شود. ادامه می‌دهی؟`, ersetzt: "پشتیبان خوانده شد. داده‌هایت برگشت." }, // Rettung (17.10.2026)

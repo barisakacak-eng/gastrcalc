@@ -275,7 +275,7 @@ export default {
     nochNichts: "لم تُدخل شيئًا اليوم بعد. لم ترمِ شيئًا؟ إذن هذا يوم جيد.",
     eintragen: "إدخال",
     wasPassiert: "ماذا حدث؟",
-    arten: { verderb: "فسد", bruch: "انكسر", fehler: "طلب خاطئ", nichtverkauft: "لم يُبع", gericht: "طبق مرمي", rohware: "مواد خام مرمية", eimer: "وزن السطل", personal: "أكل الطاقم", eigen: "أكلته أنا" },
+    arten: { ausgegeben: "ضيافة (ضيوف)", verderb: "فسد", bruch: "انكسر", fehler: "طلب خاطئ", nichtverkauft: "لم يُبع", gericht: "طبق مرمي", rohware: "مواد خام مرمية", eimer: "وزن السطل", personal: "أكل الطاقم", eigen: "أكلته أنا" },
     eimerZeile: (g, r) => `${g} kg موزون، منها ${r} kg جديد`,
     personalHinweis: "أكل الطاقم ليس هدرًا. يُحسب حسب قيمة Sachbezug الرسمية، وليس حسب سعر الشراء.",
     eigenHinweis: "ما تأكله أنت هو استهلاك شخصي (Eigenverbrauch). مكتب الضرائب (Finanzamt) يريده منفصلًا، لذلك هو هنا لوحده.",
@@ -385,7 +385,7 @@ export default {
       eingeben: "أدخل رمز المكتب", falsch: "رمز خاطئ.", oeffnen: "افتح", vier: "أدخل 4 أرقام بالضبط." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "ملاحظة – ليست تقرير Z، ليست للمحاسبة", steuerZbon: "خذ ضريبة المبيعات من تقرير Z في الصندوق.", kasse: "المبيعات ملاحظات فقط. المعتمد هو صندوقك (تقرير Z).",
+  ordnerT: { ausgegeben: (e) => `ضيافة للضيوف: ${e} صافي · سحب للاستخدام الخاص، راجع مستشارك الضريبي`, pausch: (p) => `طعامك أنت: المبلغ الجزافي 2026 ${p} للشخص سنويًا، والأطفال من 2 إلى 12 النصف. عندها لا تحتاج إلى تسجيله واحدًا واحدًا. راجع مستشارك الضريبي.`, kennung: "ملاحظة – ليست تقرير Z، ليست للمحاسبة", steuerZbon: "خذ ضريبة المبيعات من تقرير Z في الصندوق.", kasse: "المبيعات ملاحظات فقط. المعتمد هو صندوقك (تقرير Z).",
     allesDa: "الإيصالات والقوائم كاملة", umsatzZeile: (n, e) => `${n} أيام · ${e} إجمالي · ملاحظات، الصندوق هو المعتمد`, status: { notiz: "ملاحظة، الصندوق هو المعتمد", pruefen: "راجِع" },
     inventurPruefen: (n) => `${n} مواد بلا سعر – راجِع`, wertFehlt: "القيمة غير مسجلة",
     personalOhne: (n) => `${n} وجبات بلا شخص – راجِع`, kostenZeile: (n) => `${n} بنود · بدون أجرك`,
@@ -740,10 +740,11 @@ export default {
     belegeKurz: "اقرأ إيصالًا، وحدّث الأسعار",
   },
 
+  lieferTag: { davon: "منها خدمة التوصيل", provision: "العمولة", zuViel: "التوصيل أكثر من المجموع." },
   teamTag: { abwFrage: "هل مرض أحد من الموظفين أو أخذ إجازة هذا الشهر؟", abwWer: "كم يومًا؟ أنت تدفع لهم رغم ذلك.", tage: "أيام", modell: { stunde: "بالساعة", monat: "ثابت شهريًا" }, monatBrutto: "الإجمالي (Brutto) شهريًا", monatHinweis: "يُحسب كل شهر كتكلفة ثابتة. لن يُسأل عنه يوميًا بعد الآن.", frage: "هل كان هناك موظفون اليوم؟", wer: "من كان موجودًا؟ اضبط الساعات.", std: "س", satz: "الإجمالي (Brutto) بالساعة", summe: (b) => `يكلّفك اليوم: ${b}`, brutto: (b) => `${b} إجمالي، ومعه حصة صاحب العمل`, art: { angestellt: "موظف ثابت", minijob: "Minijob" }, summeOffen: "الأجر والنوع ناقصان", weitere: "شخص آخر", person: (n) => `موظف ${n}`, fertig: "تم" },
   muell: { personalEintragen: "تسجيل وجبة الموظفين",
-    zeki: { start: "ماذا رُمي اليوم؟", weiter: "هل رُمي شيء آخر؟", personal: "ماذا أكل فريقك؟", bruch: "ما الذي انكسر أو تلف؟" },
-    grund: { roh: "بضاعة", personal: "موظفون", bruch: "تالف" }, nichtsGefunden: "لم يُعثر على شيء. اكتبه بطريقة أخرى أو اختر «وزن السطل».",
+    zeki: { ausgegeben: "ماذا قدّمت مجانًا اليوم؟", start: "ماذا رُمي اليوم؟", weiter: "هل رُمي شيء آخر؟", personal: "ماذا أكل فريقك؟", bruch: "ما الذي انكسر أو تلف؟" },
+    grund: { ausgegeben: "ضيافة", roh: "بضاعة", personal: "موظفون", bruch: "تالف" }, nichtsGefunden: "لم يُعثر على شيء. اكتبه بطريقة أخرى أو اختر «وزن السطل».",
     zurUebersicht: "نظرة على الهدر",
     auswaehlen: "اختر المادة الغذائية", aendern: "اضغط للتغيير", mengeEingeben: "أدخل الكمية", foto: "صورة (اختياري)", fotoDabei: "الصورة مرفقة", fotoFehler: "لم يتم حفظ الصورة.", satz: "حوّل الأخطاء إلى معرفة. أدخل ما انتهى اليوم في الزبالة.", orientierung: "القيم المقدّرة للتوجيه فقط.", ohnePreisKurz: "بدون سعر شراء بعد – يُحسب مع ذلك.",
     wasWeg: "ماذا رُمي؟", wocheTonne: "هذا الأسبوع في الزبالة", monatTonne: "زبالة الشهر", leerWoche: "لم يُدخل شيء بعد. لم ترمِ شيئًا؟ يوم جيد.", wocheZeile: (p, kg) => `≈ ${p} من الحصص المباعة لتعويض هذا · ${kg} kg`, wenigerAls: (m, d) => `أقل مما كان في ${m} حتى ${d}.`, mehrAls: (m, d) => `أكثر مما كان في ${m} حتى ${d}.`, rueckgaengig: "تراجع", ammeisten: "الأكثر رميًا", eintragen: "إدخال هدر", andererTag: "ليوم آخر", teller: "صحن", eimerNurGewicht: "الوزن فقط", ganzePackung: "عبوة كاملة", personalWert: (e) => `أكل الطاقم · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} في الزبالة`, eimerHinweisKurz: "الصحون والمواد الخام المُدخلة اليوم تُخصم.", fuerPersonal: "أكله الطاقم", wegDamit: "ارمِه", geradeEben: "الآن", zurueckgenommen: "تم التراجع.",
@@ -1178,7 +1179,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "الخروج من وضع الموظفين", zurueck: "رجوع", hallo: (n) => `مرحبًا ${n}`, halloOhne: "مرحبًا", wechseln: "تبديل", werBistDu: "من يعمل؟", ohneNamen: "بدون اسم",
     muell: "هدر", kuehlung: "تبريد", putzen: "تنظيف", offen: (n) => `${n} مفتوح` },
-  muell1: { anleitung: "المس الصورة = رمي حصة واحدة. ••• = تغيير الكمية.", titel: "هدر", andere: "أخرى", portion: (n, z) => `${z} ${n === 1 ? "حصة" : n === 2 ? "حصتان" : (n % 100 >= 3 && n % 100 <= 10) ? "حصص" : "حصة"}`, eingetragen: "تم التسجيل", menge: "تغيير الكمية", personalessen: "وجبة الموظفين" },
+  muell1: { ausgegeben: "تمت الضيافة", anleitung: "المس الصورة = رمي حصة واحدة. ••• = تغيير الكمية.", titel: "هدر", andere: "أخرى", portion: (n, z) => `${z} ${n === 1 ? "حصة" : n === 2 ? "حصتان" : (n % 100 >= 3 && n % 100 <= 10) ? "حصص" : "حصة"}`, eingetragen: "تم التسجيل", menge: "تغيير الكمية", personalessen: "وجبة الموظفين" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "النسخة الاحتياطية", titelEinlesen: "كلمة مرور النسخة", feld: "كلمة المرور", hinweis: "مع كلمة مرور يكون الملف مشفّرًا. بدونها يستطيع أي شخص فتحه.", teilen: "مشاركة النسخة", ohne: "مشاركة بدون كلمة مرور", einlesen: "قراءة", zuKurz: "6 أحرف على الأقل", falsch: "كلمة المرور خاطئة", zeigen: "إظهار كلمة المرور", verbergen: "إخفاء كلمة المرور", mit: "مع كلمة مرور", ohneKurz: "بدون كلمة مرور" },
   rettung: { titel: "رمز الاسترداد", vergessen: "نسيت الرمز؟", eingeben: "اكتب رمز الاسترداد من ورقتك.", falsch: "رمز الاسترداد خطأ", richtig: "صحيح. اختر الآن رمزًا جديدًا للمكتب.", neuTitel: "رمز الاسترداد الخاص بك", aufschreiben: "اكتبه الآن على ورقة. به تدخل المكتب إذا نسيت الرمز.", nurEinmal: "يظهر الآن فقط. احفظ الورقة في مكان آمن، وليس في الهاتف.", aufgeschrieben: "كتبته", anlegen: "إنشاء رمز استرداد", neuAnlegen: "إنشاء رمز استرداد جديد", offen: "أنشئ رمز استرداد – في حال نسيت رمز المكتب", fehlerOhneCode: "يمكنك هنا تحميل نسخة احتياطية بدون رمز المكتب.", ersetzenFrage: (n) => `تنبيه: النسخة الاحتياطية تستبدل كل البيانات على هذا الهاتف. في النسخة: ${n}. ما هو محفوظ هنا الآن سيختفي. هل تتابع؟`, ersetzt: "تم تحميل النسخة. بياناتك عادت." }, // Rettung (17.10.2026)

@@ -209,6 +209,22 @@ export function teamTagSetzen(stand, datum, eintraege) {
   for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) { p.stundenlohn = x.satz; p.lohnArt = x.art; } }
   return e;
 }
+// Lieferdienst (Baris 27.10.2026, 15:32): unter dem Tagesumsatz „davon Lieferdienst“. stand.lieferTage = [{ datum, betrag (brutto), erfasst }],
+// je Datum gilt der jüngste Eintrag. Die Provision ist der Durchschnitt der eingerichteten Portale mit Provision (Anteil 0..1).
+export const lieferTag = (stand, datum) => [...(stand?.lieferTage || [])].reverse().find((x) => x.datum === datum) || null;
+export function lieferTagSetzen(stand, datum, betrag) {
+  stand.lieferTage ??= [];
+  const e = { datum, betrag: Math.max(0, Math.round((Number(betrag) || 0) * 100) / 100), erfasst: new Date().toISOString() };
+  stand.lieferTage.push(e); return e;
+}
+export function lieferProvision(stand) {
+  const p = (stand?.kanaele?.portale || []).filter((x) => Number(x.provision) > 0);
+  if (!p.length) return null;
+  const satz = p.reduce((a, x) => a + Number(x.provision), 0) / p.length / 100;
+  return { satz, basis: p.every((x) => x.basis === "netto") ? "netto" : "brutto", anzahl: p.length };
+}
+// Provision eines Betrags (brutto eingegeben); bei Netto-Basis vom Netto-Betrag.
+export const lieferKosten = (betrag, prov, mwst) => !prov || !(betrag > 0) ? 0 : (prov.basis === "netto" ? betrag / (1 + (mwst || 0)) : betrag) * prov.satz;
 // satz = Brutto-Stundenlohn; art = "angestellt" | "minijob". Kosten = Brutto × Arbeitgeber-Aufschlag (js/data/lohnkosten.js)
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);

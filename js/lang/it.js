@@ -273,7 +273,7 @@ export default {
     nochNichts: "Oggi ancora niente inserito. Niente buttato? Allora è una bella giornata.",
     eintragen: "Inserisci",
     wasPassiert: "Cos'è successo?",
-    arten: { verderb: "Andato a male", bruch: "Rotto", fehler: "Ordine sbagliato", nichtverkauft: "Non venduto", gericht: "Piatto buttato", rohware: "Materia prima buttata", eimer: "Bidone pesato", personal: "Pasto del personale", eigen: "Mangiato da me" },
+    arten: { ausgegeben: "Offerto (ospiti)", verderb: "Andato a male", bruch: "Rotto", fehler: "Ordine sbagliato", nichtverkauft: "Non venduto", gericht: "Piatto buttato", rohware: "Materia prima buttata", eimer: "Bidone pesato", personal: "Pasto del personale", eigen: "Mangiato da me" },
     eimerZeile: (g, r) => `${g} kg pesati, di cui ${r} kg nuovi`,
     personalHinweis: "Il pasto del personale non è spreco. Si conta con il valore ufficiale del pasto (Sachbezugswert), non con il prezzo d'acquisto.",
     eigenHinweis: "Quello che mangi tu è autoconsumo. Il fisco (Finanzamt) lo vuole a parte, per questo è qui separato.",
@@ -383,7 +383,7 @@ export default {
       eingeben: "Inserisci il codice ufficio", falsch: "Codice errato.", oeffnen: "Apri", vier: "Servono esattamente 4 cifre." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Nota – non è uno scontrino Z, non per la contabilità", steuerZbon: "L'IVA per favore dal rapporto Z della cassa.", kasse: "Gli incassi sono solo note. Vale la tua cassa (rapporto Z).",
+  ordnerT: { ausgegeben: (e) => `Offerto agli ospiti: ${e} netto · prelievo privato, da chiarire con il commercialista`, pausch: (p) => `Il tuo pasto: forfait 2026 ${p} a persona all'anno, bambini da 2 a 12 anni la metà. Così non devi annotarlo uno per uno. Chiariscilo con il tuo commercialista.`, kennung: "Nota – non è uno scontrino Z, non per la contabilità", steuerZbon: "L'IVA per favore dal rapporto Z della cassa.", kasse: "Gli incassi sono solo note. Vale la tua cassa (rapporto Z).",
     allesDa: "Documenti e liste completi", umsatzZeile: (n, e) => `${n} giorni · ${e} lordo · note, vale la cassa`, status: { notiz: "Nota, vale la cassa", pruefen: "verificare" },
     inventurPruefen: (n) => `${n} merci senza prezzo – verificare`, wertFehlt: "Valore non registrato",
     personalOhne: (n) => `${n} pasti senza persona – verificare`, kostenZeile: (n) => `${n} voci · senza il tuo stipendio`,
@@ -738,10 +738,11 @@ export default {
     belegeKurz: "Carica scontrino, aggiorna i prezzi",
   },
 
+  lieferTag: { davon: "di cui consegne", provision: "Commissione", zuViel: "Le consegne superano il totale." },
   teamTag: { abwFrage: "Questo mese qualche dipendente è stato malato o in ferie?", abwWer: "Quanti giorni? Li paghi comunque.", tage: "giorni", modell: { stunde: "A ore", monat: "Fisso al mese" }, monatBrutto: "Lordo al mese", monatHinweis: "Conta ogni mese come costo fisso. Non viene più chiesto ogni giorno.", frage: "Oggi c’erano dipendenti?", wer: "Chi c’era? Imposta le ore.", std: "ore", satz: "Lordo all’ora", summe: (b) => `Ti costa oggi: ${b}`, brutto: (b) => `${b} lordo, più la parte del datore di lavoro`, art: { angestellt: "Assunto", minijob: "Minijob" }, summeOffen: "Mancano paga e tipo", weitere: "un’altra persona", person: (n) => `Dipendente ${n}`, fertig: "Fatto" },
   muell: { personalEintragen: "Segna pasto del personale",
-    zeki: { start: "Cosa hai buttato oggi?", weiter: "Hai buttato altro?", personal: "Cosa ha mangiato la tua squadra?", bruch: "Cosa si è rotto?" },
-    grund: { roh: "Merce", personal: "Personale", bruch: "Rottura" }, nichtsGefunden: "Non trovato niente. Scrivi in un altro modo o scegli “Bidone pesato”.",
+    zeki: { ausgegeben: "Cosa hai offerto oggi?", start: "Cosa hai buttato oggi?", weiter: "Hai buttato altro?", personal: "Cosa ha mangiato la tua squadra?", bruch: "Cosa si è rotto?" },
+    grund: { ausgegeben: "Offerto", roh: "Merce", personal: "Personale", bruch: "Rottura" }, nichtsGefunden: "Non trovato niente. Scrivi in un altro modo o scegli “Bidone pesato”.",
     zurUebersicht: "Riepilogo rifiuti",
     auswaehlen: "Scegli alimento", aendern: "Tocca per cambiare", mengeEingeben: "Inserisci quantità", foto: "Foto (facoltativa)", fotoDabei: "Foto aggiunta", fotoFehler: "Non è stato possibile salvare la foto.", satz: "Trasforma gli errori in esperienza. Inserisci cosa è finito oggi nel bidone.", orientierung: "I valori stimati servono da orientamento.", ohnePreisKurz: "Ancora senza prezzo d'acquisto – conta lo stesso.",
     wasWeg: "Cosa è stato buttato?", wocheTonne: "Nel bidone questa settimana", monatTonne: "Bidone del mese", leerWoche: "Ancora niente inserito. Niente buttato? Bella giornata.", wocheZeile: (p, kg) => `≈ ${p} porzioni vendute per recuperarlo · ${kg} kg`, wenigerAls: (m, d) => `meno che a ${m} fino al giorno ${d}.`, mehrAls: (m, d) => `più che a ${m} fino al giorno ${d}.`, rueckgaengig: "Annulla", ammeisten: "Buttato di più", eintragen: "Inserisci rifiuti", andererTag: "Per un altro giorno", teller: "Piatto", eimerNurGewicht: "solo il peso", ganzePackung: "confezione intera", personalWert: (e) => `Pasto del personale · valore pasto ${e}`, inDerTonne: (e) => `= ${e} nel bidone`, eimerHinweisKurz: "Piatti e materie prime già segnati oggi vengono sottratti.", fuerPersonal: "Mangiato dal personale", wegDamit: "Buttalo", geradeEben: "proprio adesso", zurueckgenommen: "Annullato.",
@@ -1176,7 +1177,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Esci dalla modalità personale", zurueck: "Indietro", hallo: (n) => `Ciao ${n}`, halloOhne: "Ciao", wechseln: "Cambia", werBistDu: "Chi lavora?", ohneNamen: "Senza nome",
     muell: "Scarti", kuehlung: "Refrigerazione", putzen: "Pulizia", offen: (n) => `${n} aperti` },
-  muell1: { anleitung: "Tocca la foto = 1 porzione buttata. ••• = cambia quantità.", titel: "Scarti", andere: "Altro", portion: (n, z) => `${z} ${n === 1 ? "porzione" : "porzioni"}`, eingetragen: "registrato", menge: "Cambia quantità", personalessen: "Pasto del personale" },
+  muell1: { ausgegeben: "Offerto", anleitung: "Tocca la foto = 1 porzione buttata. ••• = cambia quantità.", titel: "Scarti", andere: "Altro", portion: (n, z) => `${z} ${n === 1 ? "porzione" : "porzioni"}`, eingetragen: "registrato", menge: "Cambia quantità", personalessen: "Pasto del personale" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Backup", titelEinlesen: "Password del backup", feld: "Password", hinweis: "Con password il file è cifrato. Senza password chiunque può aprirlo.", teilen: "Condividi backup", ohne: "Condividi senza password", einlesen: "Leggi", zuKurz: "Almeno 6 caratteri", falsch: "Password sbagliata", zeigen: "Mostra password", verbergen: "Nascondi password", mit: "con password", ohneKurz: "senza password" },
   rettung: { titel: "Codice di recupero", vergessen: "Hai dimenticato il codice?", eingeben: "Scrivi il codice di recupero dal tuo foglio.", falsch: "Codice di recupero sbagliato", richtig: "Giusto. Ora scegli un nuovo codice ufficio.", neuTitel: "Il tuo codice di recupero", aufschreiben: "Scrivilo ora su carta. Con questo entri in ufficio se dimentichi il codice.", nurEinmal: "Si vede solo adesso. Tieni il foglio al sicuro, non nel telefono.", aufgeschrieben: "L’ho scritto", anlegen: "Crea codice di recupero", neuAnlegen: "Crea nuovo codice di recupero", offen: "Crea un codice di recupero – se dimentichi il codice ufficio", fehlerOhneCode: "Qui puoi caricare un backup senza codice ufficio.", ersetzenFrage: (n) => `Attenzione: il backup sostituisce tutti i dati su questo telefono. Nel backup: ${n}. Ciò che è salvato qui ora andrà perso. Continuare?`, ersetzt: "Backup caricato. I tuoi dati sono tornati." }, // Rettung (17.10.2026)

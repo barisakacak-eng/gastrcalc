@@ -182,3 +182,29 @@ test("Stufe 3: Quote gleitet ohne Sprung von der Kartenquote zur Belegquote", ()
   const spanne = Math.abs(quoten[quoten.length - 1][1] - quoten[0][1]);
   assert.ok(groessterSchritt < spanne / 4 + 0.03, `größter Tagessprung ${groessterSchritt.toFixed(3)} bei Spanne ${spanne.toFixed(3)}`);
 });
+
+// 27.10.2026 (Baris 15:32): „davon Lieferdienst“ unter dem Tagesumsatz – Provision zählt als bewegliche Kosten und hebt den Nullpunkt.
+test("Lieferdienst: Provision senkt den Stand und hebt den Nullpunkt", async () => {
+  const S = await import("../js/stamm.js");
+  const ohne = laden(); stand(ohne, "2026-10-12", 1070);
+  const mit = laden(); stand(mit, "2026-10-12", 1070); mit.kanaele = { portale: [{ id: "p", name: "Portal", provision: 30, basis: "brutto" }] };
+  S.lieferTagSetzen(mit, "2026-10-12", 214);
+  const zo = Z.zaehler(ohne, { datum: "2026-10-12" }), zm = Z.zaehler(mit, { datum: "2026-10-12" });
+  nah(zm.provision, 214 * 0.3); nah(zo.stand - zm.stand, 64.2); nah(zm.lieferAnteil, 0.2); nah(zm.provisionJeBrutto, 0.06);
+  const mo = Z.monatsZiel(ohne, zo, "2026-10-12"), mm = Z.monatsZiel(mit, zm, "2026-10-12");
+  assert.ok(mm.nullpunkt > mo.nullpunkt, `${mm.nullpunkt} > ${mo.nullpunkt}`);
+  // Ohne eingerichtetes Portal zählt ein Eintrag nicht
+  const kein = laden(); stand(kein, "2026-10-12", 1070); S.lieferTagSetzen(kein, "2026-10-12", 214);
+  nah(Z.zaehler(kein, { datum: "2026-10-12" }).provision, 0);
+});
+
+// 27.10.2026 (Baris 15:32): „Ausgegeben“ – Essen, das der Chef Gästen ausgibt: kostet Ware, ist kein Müll, kein Eigenverbrauch (Pauschbetrag).
+test("Ausgegeben: zählt in bis null, getrennt von Müll und Eigenverbrauch", async () => {
+  const Mu = await import("../js/muell.js"); const X = await import("../js/export_steuer.js");
+  const b = laden(); stand(b, "2026-10-12", 1070); const vorher = Z.zaehler(b, { datum: "2026-10-12" });
+  const e = Mu.ausgegeben(b, b.gerichte[0], { datum: "2026-10-12" }); assert.equal(e.vorgang, 4); assert.ok(e.wert > 0);
+  const nachher = Z.zaehler(b, { datum: "2026-10-12" }); nah(vorher.stand - nachher.stand, e.wert);
+  const a = E.schwundAuswertung(b, { von: "2026-10-01", bis: "2026-10-31" });
+  assert.equal(a.muellwert, 0); assert.equal(a.eigen.anzahl, 0); assert.equal(a.ausgegeben.anzahl, 1);
+  const s = X.schwund(b, { von: "2026-10-01", bis: "2026-10-31" }); nah(s.summeAusgegeben, Math.round(e.wert * 100) / 100); assert.equal(s.summeEigen, 0);
+});

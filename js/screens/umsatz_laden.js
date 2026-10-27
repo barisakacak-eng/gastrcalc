@@ -2,20 +2,21 @@
 // Gespeichert wird wie die Tagesumsatz-Eingabe im Büro (js/laden_zahlen.js umsatzHeuteSpeichern: Geschäftstag bis 4 Uhr, festgeschrieben).
 // brutto/netto, Vortage und Korrekturen bleiben im Büro. Über 100.000 € fragt der Bildschirm einmal nach („Stimmt das?“), ohne alert().
 import { t } from "../i18n.js";
-import { esc, fmtEuro, heuteGeschaeft, wertAnzeige } from "../util.js";
+import { esc, fmtEuro, heuteGeschaeft, wertAnzeige, parseZahl } from "../util.js";
 import { umsatzEintrag } from "../engine.js";
 import { umsatzHeutePruefen, umsatzHeuteSpeichern } from "../laden_zahlen.js";
 import { nav } from "./nav.js";
-import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag } from "../stamm.js";
+import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision } from "../stamm.js";
 import { sym } from "../symbole.js";
 
+let lieferEntwurf = null; // „davon Lieferdienst“ (27.10.2026), nur wenn ein Portal mit Provision eingerichtet ist
 let entwurf = null;   // getippter Text (null = noch nichts getippt, Feld zeigt den gespeicherten Wert)
 let rueckfrage = null; // Betrag, nach dem gerade gefragt wird (über der Grenze)
 // Mitarbeiter heute (Baris 27.10.2026, 11:14): nach dem Umsatz fragt Zeki „Waren heute Mitarbeiter da?“. schritt: "feld" | "frage" | "liste"
 let schritt = "feld"; let team = null; const satzEntwuerfe = new Map(); const monatEntwuerfe = new Map(); // team: [{ person, name, stunden, satz, an }]
 
 export const umsatzLadenKennung = () => (rueckfrage !== null ? "frage" : schritt);
-export function umsatzLadenZuruecksetzen() { entwurf = null; rueckfrage = null; schritt = "feld"; team = null; abwesend = null; }
+export function umsatzLadenZuruecksetzen() { entwurf = null; lieferEntwurf = null; rueckfrage = null; schritt = "feld"; team = null; abwesend = null; }
 
 function teamStart(stand, H) {
   const alt = teamTag(stand, H);
@@ -81,6 +82,11 @@ function teamView(stand) {
     </div>${nav("start")}`;
 }
 
+function lieferFeld(stand, H) {
+  const prov = lieferProvision(stand); if (!prov) return "";
+  const l = lieferTag(stand, H); const wert = lieferEntwurf ?? (l && l.betrag > 0 ? wertAnzeige(l.betrag) : "");
+  return `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("lieferTag.davon"))}<small>${esc(t("lieferTag.provision"))} ${esc(String(Math.round(prov.satz * 1000) / 10).replace(".", ","))} %</small></span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-liefer" value="${esc(wert)}" placeholder="0" aria-label="${esc(t("lieferTag.davon"))}"><span class="einheit">€</span></label>`;
+}
 export function umsatzLadenView(stand) {
   if (schritt !== "feld") return teamView(stand);
   const H = heuteGeschaeft(); const u = umsatzEintrag(stand, H);
@@ -95,6 +101,7 @@ export function umsatzLadenView(stand) {
         <button type="button" class="knopf zweit" data-a="ul-aendern">${esc(t("ladenSchirm.aendern"))}</button>
       </div>` : `
       <label class="ul-feld"><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-umsatz" value="${esc(wert)}" placeholder="0,00" aria-label="${esc(t("heute.kachel.umsatz"))}"><span class="einheit">€</span></label>
+      ${lieferFeld(stand, H)}
       <button type="button" class="knopf glut" data-a="ul-speichern">${esc(t("kartelaeden.speichern"))}</button>`}
     </div>
     ${nav("start")}`;
@@ -104,6 +111,7 @@ export function umsatzLadenView(stand) {
 export function umsatzLadenEingabe(feld, wert) {
   if (feld.startsWith("ul-team-monat:") && team) { const v = Number(String(wert).replace(/\./g, "").replace(",", ".")); monatEntwuerfe.set(Number(feld.slice(14)), v > 0 ? v : null); return "entwurf"; }
   if (feld.startsWith("ul-team-satz:") && team) { const v = Number(String(wert).replace(",", ".")); satzEntwuerfe.set(Number(feld.slice(13)), v > 0 ? v : null); return "entwurf"; }
+  if (feld === "ul-liefer") { lieferEntwurf = wert; return "entwurf"; }
   if (feld !== "ul-umsatz") return false; entwurf = wert; return "entwurf"; }
 
 // Rückgabe: false (nicht meine) | "zeichnen" | { gespeichert: true, betrag } | { meldung }
@@ -133,8 +141,14 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (p.status === "leer") return false;
   if (p.status === "ungueltig") return { meldung: t("allgemein.zahlUngueltig", String(text).trim().slice(0, 20)) };
   if (p.status === "rueckfrage") { rueckfrage = p.betrag; return "zeichnen"; }
+  const prov = lieferProvision(stand);
+  const lieferText = lieferEntwurf ?? (lieferTag(stand, H) ? wertAnzeige(lieferTag(stand, H).betrag) : "");
+  const liefer = prov ? (String(lieferText).trim() === "" ? 0 : parseZahl(lieferText)) : null;
+  if (prov && liefer === null) return { meldung: t("allgemein.zahlUngueltig", String(lieferText).trim().slice(0, 20)) };
+  if (prov && liefer > p.betrag) { rueckfrage = null; return { meldung: t("lieferTag.zuViel") }; }
   umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null });
-  entwurf = null; rueckfrage = null;
+  if (prov) lieferTagSetzen(stand, H, liefer);
+  entwurf = null; rueckfrage = null; lieferEntwurf = null;
   if (!teamFrageNoetig(stand)) { if (abwesendFrageNoetig(stand, heuteGeschaeft())) { schritt = "abw-frage"; return { gespeichert: true, betrag: p.betrag, weiter: true }; } return { gespeichert: true, betrag: p.betrag }; } // alle mit festem Monatslohn: keine Frage
   schritt = "frage"; // gleich danach: Waren heute Mitarbeiter da?
   return { gespeichert: true, betrag: p.betrag, weiter: true };

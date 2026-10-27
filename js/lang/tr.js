@@ -271,7 +271,7 @@ export default {
     nochNichts: "Bugün henüz bir şey girilmedi. Hiçbir şey atılmadı mı? O zaman iyi bir gün.",
     eintragen: "Kayıt ekle",
     wasPassiert: "Ne oldu?",
-    arten: { verderb: "Bozuldu", bruch: "Kırıldı", fehler: "Yanlış sipariş", nichtverkauft: "Satılmadı", gericht: "Yemek atıldı", rohware: "Ham madde atıldı", eimer: "Kova tartıldı", personal: "Personel yemeği", eigen: "Kendim yedim" },
+    arten: { ausgegeben: "İkram (misafir)", verderb: "Bozuldu", bruch: "Kırıldı", fehler: "Yanlış sipariş", nichtverkauft: "Satılmadı", gericht: "Yemek atıldı", rohware: "Ham madde atıldı", eimer: "Kova tartıldı", personal: "Personel yemeği", eigen: "Kendim yedim" },
     eimerZeile: (g, r) => `${g} kg tartıldı, bunun ${r} kg'ı yeni`,
     personalHinweis: "Personel yemeği israf değildir. Alış fiyatıyla değil, resmi ayni yardım değeriyle sayılır.",
     eigenHinweis: "Kendi yediğin, öz tüketimdir. Vergi dairesi bunu tek tek ister, bu yüzden burada ayrı durur.",
@@ -383,7 +383,7 @@ export default {
       eingeben: "Ofis kodunu gir", falsch: "Kod yanlış.", oeffnen: "Aç", vier: "Lütfen tam 4 rakam." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Not – Z raporu değil, muhasebe için değil", steuerZbon: "KDV'yi lütfen kasanın Z raporundan al.", kasse: "Cirolar sadece not. Geçerli olan kasan (Z raporu).",
+  ordnerT: { ausgegeben: (e) => `Misafirlere ikram: ${e} net · özel kullanım için çekim, mali müşavirle netleştir`, pausch: (p) => `Kendi yemeğin: 2026 götürü tutar kişi başı yıllık ${p}, 2–12 yaş çocuklar yarısı. O zaman tek tek yazman gerekmez. Mali müşavirinle netleştir.`, kennung: "Not – Z raporu değil, muhasebe için değil", steuerZbon: "KDV'yi lütfen kasanın Z raporundan al.", kasse: "Cirolar sadece not. Geçerli olan kasan (Z raporu).",
     allesDa: "Fişler ve listeler tamam", umsatzZeile: (n, e) => `${n} gün · ${e} brüt · not, kasa geçerli`, status: { notiz: "Not, kasa geçerli", pruefen: "kontrol et" },
     inventurPruefen: (n) => (n === 1 ? "1 mal fiyatsız – kontrol et" : `${n} mal fiyatsız – kontrol et`), wertFehlt: "Değer kaydedilmedi",
     personalOhne: (n) => (n === 1 ? "1 yemek kişisiz – kontrol et" : `${n} yemek kişisiz – kontrol et`), kostenZeile: (n) => `${n} kalem · kendi maaşın hariç`,
@@ -738,10 +738,11 @@ export default {
     belegeKurz: "Fiş oku, fiyatları güncelle",
   },
 
+  lieferTag: { davon: "bunun paket servisi", provision: "Komisyon", zuViel: "Paket servisi toplamdan fazla." },
   teamTag: { abwFrage: "Bu ay hasta ya da izinli personel oldu mu?", abwWer: "Kaç gün? Onları yine de ödüyorsun.", tage: "gün", modell: { stunde: "Saatlik", monat: "Aylık sabit" }, monatBrutto: "Aylık brüt", monatHinweis: "Her ay sabit gider sayılır. Artık her gün sorulmaz.", frage: "Bugün personel var mıydı?", wer: "Kim vardı? Saatleri ayarla.", std: "sa.", satz: "Saatlik brüt", summe: (b) => `Bugün sana maliyeti: ${b}`, brutto: (b) => `${b} brüt, üstüne işveren payı`, art: { angestellt: "Sigortalı", minijob: "Minijob" }, summeOffen: "Ücret ve tür eksik", weitere: "bir kişi daha", person: (n) => `Personel ${n}`, fertig: "Tamam" },
   muell: { personalEintragen: "Personel yemeği gir",
-    zeki: { start: "Bugün ne çöpe gitti?", weiter: "Başka giden var mı?", personal: "Ekibin ne yedi?", bruch: "Ne kırıldı?" },
-    grund: { roh: "Mal", personal: "Personel", bruch: "Kırık" }, nichtsGefunden: "Bir şey bulunamadı. Başka yaz veya “Kova tartıldı”yı seç.",
+    zeki: { ausgegeben: "Bugün ne ikram ettin?", start: "Bugün ne çöpe gitti?", weiter: "Başka giden var mı?", personal: "Ekibin ne yedi?", bruch: "Ne kırıldı?" },
+    grund: { ausgegeben: "İkram", roh: "Mal", personal: "Personel", bruch: "Kırık" }, nichtsGefunden: "Bir şey bulunamadı. Başka yaz veya “Kova tartıldı”yı seç.",
     zurUebersicht: "Çöp özeti", 
     auswaehlen: "Ürün seç", aendern: "Değiştirmek için dokun", mengeEingeben: "Miktar gir", foto: "Fotoğraf (isteğe bağlı)", fotoDabei: "Fotoğraf eklendi", fotoFehler: "Fotoğraf kaydedilemedi.", satz: "Hatalardan bilgi çıkar. Bugün çöpe gideni gir.", orientierung: "Tahmini değerler yön göstermek içindir.", ohnePreisKurz: "Henüz alış fiyatı yok – yine de sayılır.", 
     wasWeg: "Ne atıldı?", wocheTonne: "Bu hafta çöpte", monatTonne: "Aylık çöp", leerWoche: "Henüz bir şey girilmedi. Hiçbir şey atılmadı mı? İyi gün.", wocheZeile: (p, kg) => `≈ bunu geri kazanmak için ${p} porsiyon satış · ${kg} kg`, wenigerAls: (m, d) => `${m} ayında ${d}. güne göre daha az.`, mehrAls: (m, d) => `${m} ayında ${d}. güne göre daha fazla.`, rueckgaengig: "Geri al", ammeisten: "En çok atılan", eintragen: "Çöp gir", andererTag: "Başka bir gün için", teller: "tabak", eimerNurGewicht: "sadece ağırlık", ganzePackung: "tüm paket", personalWert: (e) => `Personel yemeği · ayni değer ${e}`, inDerTonne: (e) => `= çöpte ${e}`, eimerHinweisKurz: "Bugün bildirilen tabaklar ve ham mallar düşülür.", fuerPersonal: "Personel yedi", wegDamit: "Atıldı", geradeEben: "az önce", zurueckgenommen: "Geri alındı.",
@@ -1177,7 +1178,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Personel modundan çık", zurueck: "Geri", hallo: (n) => `Merhaba ${n}`, halloOhne: "Merhaba", wechseln: "Değiştir", werBistDu: "Kim çalışıyor?", ohneNamen: "İsimsiz",
     muell: "Çöp", kuehlung: "Soğutma", putzen: "Temizlik", offen: (n) => `${n} açık` },
-  muell1: { anleitung: "Fotoğrafa dokun = 1 porsiyon atıldı. ••• = miktarı değiştir.", titel: "Çöp", andere: "Diğer", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "kaydedildi", menge: "Miktarı değiştir", personalessen: "Personel yemeği" },
+  muell1: { ausgegeben: "İkram edildi", anleitung: "Fotoğrafa dokun = 1 porsiyon atıldı. ••• = miktarı değiştir.", titel: "Çöp", andere: "Diğer", portion: (n, z) => `${z} ${n === 1 ? "porsiyon" : "porsiyon"}`, eingetragen: "kaydedildi", menge: "Miktarı değiştir", personalessen: "Personel yemeği" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Yedek", titelEinlesen: "Yedeğin parolası", feld: "Parola", hinweis: "Parolayla dosya şifrelenir. Parolasız herkes açabilir.", teilen: "Yedeği paylaş", ohne: "Parolasız paylaş", einlesen: "Oku", zuKurz: "En az 6 karakter", falsch: "Parola yanlış", zeigen: "Parolayı göster", verbergen: "Parolayı gizle", mit: "parolalı", ohneKurz: "parolasız" },
   rettung: { titel: "Kurtarma kodu", vergessen: "Kodu mu unuttun?", eingeben: "Kâğıdındaki kurtarma kodunu gir.", falsch: "Kurtarma kodu yanlış", richtig: "Doğru. Şimdi yeni bir ofis kodu seç.", neuTitel: "Kurtarma kodun", aufschreiben: "Şimdi kâğıda yaz. Kodu unutursan bununla ofise girersin.", nurEinmal: "Sadece şimdi gösteriliyor. Kâğıdı güvenli bir yere koy, telefona değil.", aufgeschrieben: "Yazdım", anlegen: "Kurtarma kodu oluştur", neuAnlegen: "Yeni kurtarma kodu oluştur", offen: "Kurtarma kodu oluştur – ofis kodunu unutursan diye", fehlerOhneCode: "Burada ofis kodu olmadan yedek yükleyebilirsin.", ersetzenFrage: (n) => `Dikkat: Yedek bu telefondaki tüm verilerin yerine geçer. Yedekte: ${n}. Şu an burada kayıtlı olan silinir. Devam edilsin mi?`, ersetzt: "Yedek yüklendi. Verilerin geri geldi." }, // Rettung (17.10.2026)

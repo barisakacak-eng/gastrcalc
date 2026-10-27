@@ -278,7 +278,7 @@ export default {
     nochNichts: "Sot ende asgjë e shënuar. Asgjë e hedhur? Atëherë është ditë e mirë.",
     eintragen: "Shëno",
     wasPassiert: "Çfarë ndodhi?",
-    arten: { verderb: "U prish", bruch: "U thye", fehler: "Porosi e gabuar", nichtverkauft: "Nuk u shit", gericht: "Pjatë në kosh", rohware: "Lëndë e parë në kosh", eimer: "Peshova koshin", personal: "Ushqimi i stafit", eigen: "E hëngra vetë" },
+    arten: { ausgegeben: "Qerasje (mysafirë)", verderb: "U prish", bruch: "U thye", fehler: "Porosi e gabuar", nichtverkauft: "Nuk u shit", gericht: "Pjatë në kosh", rohware: "Lëndë e parë në kosh", eimer: "Peshova koshin", personal: "Ushqimi i stafit", eigen: "E hëngra vetë" },
     eimerZeile: (g, r) => `${g} kg të peshuara, prej tyre ${r} kg të reja`,
     personalHinweis: "Ushqimi i stafit nuk është mbeturinë. Llogaritet me vlerën zyrtare (Sachbezugswert), jo me çmimin e blerjes.",
     eigenHinweis: "Ajo që ha vetë është konsum vetjak (Eigenverbrauch). Zyra e tatimeve (Finanzamt) e do veç, prandaj qëndron këtu veç.",
@@ -388,7 +388,7 @@ export default {
       eingeben: "Shkruaj kodin e zyrës", falsch: "Kod i gabuar.", oeffnen: "Hap", vier: "Saktësisht 4 shifra, të lutem." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Shënim – jo raport Z, jo për kontabilitet", steuerZbon: "TVSH-në të lutem nga raporti Z i arkës.", kasse: "Shitjet janë vetëm shënime. Vlen arka jote (raporti Z).",
+  ordnerT: { ausgegeben: (e) => `Qerasur mysafirëve: ${e} neto · tërheqje private, sqaroje me këshilltarin tatimor`, pausch: (p) => `Ushqimi yt: shuma fikse 2026 ${p} për person në vit, fëmijët 2 deri 12 vjeç gjysma. Atëherë nuk duhet ta shënosh një nga një. Sqaroje me këshilltarin tatimor.`, kennung: "Shënim – jo raport Z, jo për kontabilitet", steuerZbon: "TVSH-në të lutem nga raporti Z i arkës.", kasse: "Shitjet janë vetëm shënime. Vlen arka jote (raporti Z).",
     allesDa: "Dokumentet dhe listat të plota", umsatzZeile: (n, e) => `${n} ditë · ${e} bruto · shënime, vlen arka`, status: { notiz: "Shënim, vlen arka", pruefen: "kontrollo" },
     inventurPruefen: (n) => `${n} mallra pa çmim – kontrollo`, wertFehlt: "Vlera nuk u ruajt",
     personalOhne: (n) => `${n} vakte pa person – kontrollo`, kostenZeile: (n) => `${n} zëra · pa pagën tënde`,
@@ -743,10 +743,11 @@ export default {
     belegeKurz: "Lexo faturë, përditëso çmimet",
   },
 
+  lieferTag: { davon: "prej tyre dërgesa", provision: "Komision", zuViel: "Dërgesa është më shumë se totali." },
   teamTag: { abwFrage: "A pati punëtorë të sëmurë apo me pushim këtë muaj?", abwWer: "Sa ditë? Ti i paguan gjithsesi.", tage: "ditë", modell: { stunde: "Me orë", monat: "Fikse në muaj" }, monatBrutto: "Bruto në muaj", monatHinweis: "Llogaritet çdo muaj si kosto fikse. Nuk pyetet më çdo ditë.", frage: "A pati punëtorë sot?", wer: "Kush ishte? Vendos orët.", std: "orë", satz: "Bruto për orë", summe: (b) => `Të kushton sot: ${b}`, brutto: (b) => `${b} bruto, plus pjesa e punëdhënësit`, art: { angestellt: "Me kontratë", minijob: "Minijob" }, summeOffen: "Mungojnë paga dhe lloji", weitere: "një person tjetër", person: (n) => `Punëtor ${n}`, fertig: "Gati" },
   muell: { personalEintragen: "Shëno ushqimin e stafit",
-    zeki: { start: "Çfarë u hodh sot?", weiter: "U hodh edhe diçka tjetër?", personal: "Çfarë hëngri ekipi yt?", bruch: "Çfarë u thye ose u prish?" },
-    grund: { roh: "Mall", personal: "Stafi", bruch: "Thyerje" }, nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",
+    zeki: { ausgegeben: "Çfarë qerase sot?", start: "Çfarë u hodh sot?", weiter: "U hodh edhe diçka tjetër?", personal: "Çfarë hëngri ekipi yt?", bruch: "Çfarë u thye ose u prish?" },
+    grund: { ausgegeben: "Qerasje", roh: "Mall", personal: "Stafi", bruch: "Thyerje" }, nichtsGefunden: "Nuk u gjet asgjë. Shkruaje ndryshe ose zgjidh “Peshova koshin”.",
     zurUebersicht: "Pasqyra e mbeturinave",
     auswaehlen: "Zgjidh ushqimin", aendern: "Prek për ta ndryshuar", mengeEingeben: "Shkruaj sasinë", foto: "Foto (sipas dëshirës)", fotoDabei: "Fotoja është shtuar", fotoFehler: "Fotoja nuk u ruajt dot.", satz: "Bëji gabimet mësim. Shëno çfarë përfundoi sot në kosh.", orientierung: "Vlerat e përafërta shërbejnë për orientim.", ohnePreisKurz: "Ende pa çmim blerjeje – llogaritet gjithsesi.",
     wasWeg: "Çfarë u hodh?", wocheTonne: "Këtë javë në kosh", monatTonne: "Koshi i muajit", leerWoche: "Ende asgjë e shënuar. Asgjë e hedhur? Ditë e mirë.", wocheZeile: (p, kg) => `≈ ${sn(p, "porcion i shitur", "porcione të shitura")} për ta rikthyer · ${kg} kg`, wenigerAls: (m, d) => `më pak se në ${m} deri më ${d}.`, mehrAls: (m, d) => `më shumë se në ${m} deri më ${d}.`, rueckgaengig: "Zhbëje", ammeisten: "Më së shumti i hedhur", eintragen: "Shëno mbeturina", andererTag: "Për një ditë tjetër", teller: "Pjata", eimerNurGewicht: "vetëm pesha", ganzePackung: "paketë e plotë", personalWert: (e) => `Ushqimi i stafit · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} në kosh`, eimerHinweisKurz: "Pjatat dhe lënda e parë që janë shënuar sot zbriten.", fuerPersonal: "E hëngri stafi", wegDamit: "Në kosh", geradeEben: "tani sapo", zurueckgenommen: "U anulua.",
@@ -1181,7 +1182,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Dil nga modaliteti i stafit", zurueck: "Mbrapa", hallo: (n) => `Përshëndetje ${n}`, halloOhne: "Përshëndetje", wechseln: "Ndrysho", werBistDu: "Kush punon?", ohneNamen: "Pa emër",
     muell: "Mbeturina", kuehlung: "Ftohja", putzen: "Pastrimi", offen: (n) => `${n} të hapura` },
-  muell1: { anleitung: "Prek foton = 1 porcion i hedhur. ••• = ndrysho sasinë.", titel: "Mbeturina", andere: "Të tjera", portion: (n, z) => `${z} ${n === 1 ? "porcion" : "porcione"}`, eingetragen: "u regjistrua", menge: "Ndrysho sasinë", personalessen: "Ushqim për stafin" },
+  muell1: { ausgegeben: "Qerasur", anleitung: "Prek foton = 1 porcion i hedhur. ••• = ndrysho sasinë.", titel: "Mbeturina", andere: "Të tjera", portion: (n, z) => `${z} ${n === 1 ? "porcion" : "porcione"}`, eingetragen: "u regjistrua", menge: "Ndrysho sasinë", personalessen: "Ushqim për stafin" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopja", titelEinlesen: "Fjalëkalimi i kopjes", feld: "Fjalëkalimi", hinweis: "Me fjalëkalim skedari është i koduar. Pa fjalëkalim mund ta hapë kushdo.", teilen: "Ndaj kopjen", ohne: "Ndaj pa fjalëkalim", einlesen: "Lexo", zuKurz: "Të paktën 6 shenja", falsch: "Fjalëkalim i gabuar", zeigen: "Shfaq fjalëkalimin", verbergen: "Fshih fjalëkalimin", mit: "me fjalëkalim", ohneKurz: "pa fjalëkalim" },
   rettung: { titel: "Kodi i shpëtimit", vergessen: "E harrove kodin?", eingeben: "Shkruaj kodin e shpëtimit nga letra jote.", falsch: "Kodi i shpëtimit është gabim", richtig: "Saktë. Tani zgjidh një kod të ri për zyrën.", neuTitel: "Kodi yt i shpëtimit", aufschreiben: "Shkruaje tani në letër. Me të hyn në zyrë nëse e harron kodin.", nurEinmal: "Shfaqet vetëm tani. Ruaje letrën në vend të sigurt, jo në telefon.", aufgeschrieben: "E shkrova", anlegen: "Krijo kod shpëtimi", neuAnlegen: "Krijo kod të ri shpëtimi", offen: "Krijo një kod shpëtimi – nëse e harron kodin e zyrës", fehlerOhneCode: "Këtu mund të lexosh një kopje pa kodin e zyrës.", ersetzenFrage: (n) => `Kujdes: kopja zëvendëson të gjitha të dhënat në këtë telefon. Në kopje: ${n}. Ajo që është ruajtur këtu tani do të humbasë. Vazhdo?`, ersetzt: "Kopja u lexua. Të dhënat e tua u kthyen." }, // Rettung (17.10.2026)

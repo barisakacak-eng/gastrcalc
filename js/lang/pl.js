@@ -278,7 +278,7 @@ export default {
     nochNichts: "Dziś jeszcze nic nie wpisano. Nic nie wyrzucone? To dobry dzień.",
     eintragen: "Wpisz",
     wasPassiert: "Co się stało?",
-    arten: { verderb: "Zepsute", bruch: "Stłuczone, zniszczone", fehler: "Złe zamówienie", nichtverkauft: "Nie sprzedane", gericht: "Danie do kosza", rohware: "Surowiec do kosza", eimer: "Zważone wiadro", personal: "Posiłek pracowniczy", eigen: "Zjedzone przeze mnie" },
+    arten: { ausgegeben: "Postawione (goście)", verderb: "Zepsute", bruch: "Stłuczone, zniszczone", fehler: "Złe zamówienie", nichtverkauft: "Nie sprzedane", gericht: "Danie do kosza", rohware: "Surowiec do kosza", eimer: "Zważone wiadro", personal: "Posiłek pracowniczy", eigen: "Zjedzone przeze mnie" },
     eimerZeile: (g, r) => `zważono ${g} kg, z tego ${r} kg nowe`,
     personalHinweis: "Posiłek pracowniczy to nie odpady. Liczy się go według urzędowej wartości świadczenia (Sachbezugswert), nie według ceny zakupu.",
     eigenHinweis: "To, co sam zjadasz, to zużycie własne. Urząd skarbowy (Finanzamt) chce mieć to osobno, dlatego jest tu oddzielnie.",
@@ -388,7 +388,7 @@ export default {
       eingeben: "Wpisz kod biura", falsch: "Zły kod.", oeffnen: "Otwórz", vier: "Wpisz dokładnie 4 cyfry." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Notatka – nie raport Z, nie do księgowania", steuerZbon: "VAT proszę wziąć z raportu Z kasy.", kasse: "Obroty to tylko notatki. Ważna jest twoja kasa (raport Z).",
+  ordnerT: { ausgegeben: (e) => `Postawione gościom: ${e} netto · pobranie na cele prywatne, ustal z doradcą podatkowym`, pausch: (p) => `Twoje własne jedzenie: ryczałt 2026 ${p} na osobę rocznie, dzieci od 2 do 12 lat połowa. Wtedy nie musisz zapisywać każdego posiłku. Ustal to z doradcą podatkowym.`, kennung: "Notatka – nie raport Z, nie do księgowania", steuerZbon: "VAT proszę wziąć z raportu Z kasy.", kasse: "Obroty to tylko notatki. Ważna jest twoja kasa (raport Z).",
     allesDa: "Dowody i listy kompletne", umsatzZeile: (n, e) => `${n} dni · ${e} brutto · notatki, ważna kasa`, status: { notiz: "Notatka, ważna kasa", pruefen: "sprawdź" },
     inventurPruefen: (n) => `${n} towary bez ceny – sprawdź`, wertFehlt: "Wartość nie zapisana",
     personalOhne: (n) => `${n} posiłki bez osoby – sprawdź`, kostenZeile: (n) => `${n} pozycje · bez twojej pensji`,
@@ -743,10 +743,11 @@ export default {
     belegeKurz: "Wczytaj rachunek, zaktualizuj ceny",
   },
 
+  lieferTag: { davon: "w tym dostawy", provision: "Prowizja", zuViel: "Dostawy są wyższe niż utarg." },
   teamTag: { abwFrage: "Czy ktoś z pracowników był w tym miesiącu chory albo na urlopie?", abwWer: "Ile dni? I tak im płacisz.", tage: "dni", modell: { stunde: "Za godzinę", monat: "Stała co miesiąc" }, monatBrutto: "Brutto miesięcznie", monatHinweis: "Liczy się co miesiąc jako koszt stały. Nie pytamy już codziennie.", frage: "Byli dziś pracownicy?", wer: "Kto był? Ustaw godziny.", std: "godz.", satz: "Brutto za godzinę", summe: (b) => `Kosztuje cię dziś: ${b}`, brutto: (b) => `${b} brutto, plus część pracodawcy`, art: { angestellt: "Na etacie", minijob: "Minijob" }, summeOffen: "Brak stawki i rodzaju", weitere: "kolejna osoba", person: (n) => `Pracownik ${n}`, fertig: "Gotowe" },
   muell: { personalEintragen: "Wpisz posiłek pracownika",
-    zeki: { start: "Co dziś poszło do kosza?", weiter: "Coś jeszcze do kosza?", personal: "Co zjadł twój zespół?", bruch: "Co się zepsuło lub stłukło?" },
-    grund: { roh: "Towar", personal: "Personel", bruch: "Uszkodzone" }, nichtsGefunden: "Nic nie znaleziono. Napisz inaczej albo wybierz „Zważone wiadro”.",
+    zeki: { ausgegeben: "Co dziś postawiłeś?", start: "Co dziś poszło do kosza?", weiter: "Coś jeszcze do kosza?", personal: "Co zjadł twój zespół?", bruch: "Co się zepsuło lub stłukło?" },
+    grund: { ausgegeben: "Na koszt firmy", roh: "Towar", personal: "Personel", bruch: "Uszkodzone" }, nichtsGefunden: "Nic nie znaleziono. Napisz inaczej albo wybierz „Zważone wiadro”.",
     zurUebersicht: "Przegląd śmieci",
     auswaehlen: "Wybierz produkt", aendern: "Dotknij, żeby zmienić", mengeEingeben: "Wpisz ilość", foto: "Zdjęcie (nieobowiązkowo)", fotoDabei: "Zdjęcie dodane", fotoFehler: "Nie udało się zapisać zdjęcia.", satz: "Zrób z błędów wiedzę. Wpisz, co dziś wylądowało w koszu.", orientierung: "Wartości szacunkowe są tylko orientacyjne.", ohnePreisKurz: "Jeszcze bez ceny zakupu – i tak się liczy.",
     wasWeg: "Co poszło do kosza?", wocheTonne: "W tym tygodniu w koszu", monatTonne: "Kosz miesiąca", leerWoche: "Jeszcze nic nie wpisano. Nic nie wyrzucone? Dobry dzień.", wocheZeile: (p, kg) => `≈ ${p} ${lm(p, "sprzedana porcja", "sprzedane porcje", "sprzedanych porcji")}, żeby to odrobić · ${kg} kg`, wenigerAls: (m, d) => `mniej niż w zeszłym miesiącu (${m}) do ${d}.`, mehrAls: (m, d) => `więcej niż w zeszłym miesiącu (${m}) do ${d}.`, rueckgaengig: "Cofnij", ammeisten: "Najwięcej wyrzucone", eintragen: "Wpisz śmieci", andererTag: "Za inny dzień", teller: "Talerz", eimerNurGewicht: "tylko waga", ganzePackung: "całe opakowanie", personalWert: (e) => `Posiłek pracowniczy · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} w koszu`, eimerHinweisKurz: "Talerze i surowiec, które już dziś zgłoszono, zostaną odjęte.", fuerPersonal: "Zjedzone przez personel", wegDamit: "Do kosza", geradeEben: "przed chwilą", zurueckgenommen: "Cofnięte.",
@@ -1181,7 +1182,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Wyjdź z trybu personelu", zurueck: "Wstecz", hallo: (n) => `Cześć ${n}`, halloOhne: "Cześć", wechseln: "Zmień", werBistDu: "Kto pracuje?", ohneNamen: "Bez imienia",
     muell: "Odpady", kuehlung: "Chłodzenie", putzen: "Sprzątanie", offen: (n) => `${n} otwarte` },
-  muell1: { anleitung: "Dotknij zdjęcia = 1 porcja wyrzucona. ••• = zmień ilość.", titel: "Odpady", andere: "Inne", portion: (n, z) => `${z} ${lm(n, "porcja", "porcje", "porcji")}`, eingetragen: "zapisano", menge: "Zmień ilość", personalessen: "Posiłek personelu" },
+  muell1: { ausgegeben: "Postawione", anleitung: "Dotknij zdjęcia = 1 porcja wyrzucona. ••• = zmień ilość.", titel: "Odpady", andere: "Inne", portion: (n, z) => `${z} ${lm(n, "porcja", "porcje", "porcji")}`, eingetragen: "zapisano", menge: "Zmień ilość", personalessen: "Posiłek personelu" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopia", titelEinlesen: "Hasło kopii", feld: "Hasło", hinweis: "Z hasłem plik jest zaszyfrowany. Bez hasła każdy może go otworzyć.", teilen: "Udostępnij kopię", ohne: "Udostępnij bez hasła", einlesen: "Wczytaj", zuKurz: "Co najmniej 6 znaków", falsch: "Błędne hasło", zeigen: "Pokaż hasło", verbergen: "Ukryj hasło", mit: "z hasłem", ohneKurz: "bez hasła" },
   rettung: { titel: "Kod ratunkowy", vergessen: "Nie pamiętasz kodu?", eingeben: "Wpisz kod ratunkowy z kartki.", falsch: "Zły kod ratunkowy", richtig: "Dobrze. Teraz wybierz nowy kod biura.", neuTitel: "Twój kod ratunkowy", aufschreiben: "Zapisz go teraz na kartce. Dzięki niemu wejdziesz do biura, gdy zapomnisz kodu.", nurEinmal: "Jest pokazany tylko teraz. Schowaj kartkę bezpiecznie, nie w telefonie.", aufgeschrieben: "Zapisałem go", anlegen: "Utwórz kod ratunkowy", neuAnlegen: "Utwórz nowy kod ratunkowy", offen: "Utwórz kod ratunkowy – na wypadek, gdy zapomnisz kodu biura", fehlerOhneCode: "Tutaj możesz wczytać kopię bez kodu biura.", ersetzenFrage: (n) => `Uwaga: kopia zastąpi wszystkie dane na tym telefonie. W kopii: ${n}. To, co jest tu teraz zapisane, zniknie. Dalej?`, ersetzt: "Kopia wczytana. Twoje dane wróciły." }, // Rettung (17.10.2026)

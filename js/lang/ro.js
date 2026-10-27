@@ -279,7 +279,7 @@ export default {
     nochNichts: "Azi încă nimic completat. N-ai aruncat nimic? Atunci e o zi bună.",
     eintragen: "Completează",
     wasPassiert: "Ce s-a întâmplat?",
-    arten: { verderb: "Stricat", bruch: "Spart, distrus", fehler: "Comandă greșită", nichtverkauft: "Nevândut", gericht: "Preparat aruncat", rohware: "Materie primă aruncată", eimer: "Găleată cântărită", personal: "Masa personalului", eigen: "Mâncat de mine" },
+    arten: { ausgegeben: "Oferit (invitați)", verderb: "Stricat", bruch: "Spart, distrus", fehler: "Comandă greșită", nichtverkauft: "Nevândut", gericht: "Preparat aruncat", rohware: "Materie primă aruncată", eimer: "Găleată cântărită", personal: "Masa personalului", eigen: "Mâncat de mine" },
     eimerZeile: (g, r) => `${g} kg cântărit, din care ${r} kg nou`,
     personalHinweis: "Masa personalului nu e gunoi. Se socotește după valoarea oficială a beneficiului în natură (Sachbezugswert), nu după prețul de cumpărare.",
     eigenHinweis: "Ce mănânci tu e consum propriu. Fiscul (Finanzamt) îl vrea separat, de aceea stă aici separat.",
@@ -389,7 +389,7 @@ export default {
       eingeben: "Introdu codul de birou", falsch: "Cod greșit.", oeffnen: "Deschide", vier: "Exact 4 cifre, te rog." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Notă – nu e raport Z, nu pentru contabilitate", steuerZbon: "TVA te rog din raportul Z al casei.", kasse: "Vânzările sunt doar note. Valabilă e casa ta (raport Z).",
+  ordnerT: { ausgegeben: (e) => `Oferit invitaților: ${e} net · prelevare în scop privat, clarifică cu consultantul fiscal`, pausch: (p) => `Mâncarea ta: suma forfetară 2026 ${p} de persoană pe an, copiii de 2–12 ani jumătate. Atunci nu trebuie să o notezi pe rând. Clarifică cu consultantul fiscal.`, kennung: "Notă – nu e raport Z, nu pentru contabilitate", steuerZbon: "TVA te rog din raportul Z al casei.", kasse: "Vânzările sunt doar note. Valabilă e casa ta (raport Z).",
     allesDa: "Documente și liste complete", umsatzZeile: (n, e) => `${n} zile · ${e} brut · note, casa e valabilă`, status: { notiz: "Notă, casa e valabilă", pruefen: "verifică" },
     inventurPruefen: (n) => `${n} mărfuri fără preț – verifică`, wertFehlt: "Valoare neînregistrată",
     personalOhne: (n) => `${n} mese fără persoană – verifică`, kostenZeile: (n) => `${n} poziții · fără salariul tău`,
@@ -744,10 +744,11 @@ export default {
     belegeKurz: "Încarcă bonul, actualizează prețurile",
   },
 
+  lieferTag: { davon: "din care livrări", provision: "Comision", zuViel: "Livrările depășesc totalul." },
   teamTag: { abwFrage: "Au fost angajați bolnavi sau în concediu luna asta?", abwWer: "Câte zile? Tot îi plătești.", tage: "zile", modell: { stunde: "Pe oră", monat: "Fix pe lună" }, monatBrutto: "Brut pe lună", monatHinweis: "Intră în fiecare lună la costuri fixe. Nu mai e întrebat zilnic.", frage: "Au fost angajați azi?", wer: "Cine a fost? Setează orele.", std: "ore", satz: "Brut pe oră", summe: (b) => `Te costă azi: ${b}`, brutto: (b) => `${b} brut, plus partea angajatorului`, art: { angestellt: "Angajat", minijob: "Minijob" }, summeOffen: "Lipsesc salariul și tipul", weitere: "încă o persoană", person: (n) => `Angajat ${n}`, fertig: "Gata" },
   muell: { personalEintragen: "Notează masa personalului",
-    zeki: { start: "Ce s-a aruncat azi?", weiter: "S-a mai aruncat ceva?", personal: "Ce a mâncat echipa ta?", bruch: "Ce s-a spart sau stricat?" },
-    grund: { roh: "Marfă", personal: "Personal", bruch: "Spart" }, nichtsGefunden: "N-am găsit nimic. Scrie altfel sau alege „Găleată cântărită”.",
+    zeki: { ausgegeben: "Ce ai oferit azi?", start: "Ce s-a aruncat azi?", weiter: "S-a mai aruncat ceva?", personal: "Ce a mâncat echipa ta?", bruch: "Ce s-a spart sau stricat?" },
+    grund: { ausgegeben: "Oferit", roh: "Marfă", personal: "Personal", bruch: "Spart" }, nichtsGefunden: "N-am găsit nimic. Scrie altfel sau alege „Găleată cântărită”.",
     zurUebersicht: "Privire de ansamblu gunoi",
     auswaehlen: "Alege alimentul", aendern: "Atinge ca să schimbi", mengeEingeben: "Trece cantitatea", foto: "Poză (opțional)", fotoDabei: "Poza e atașată", fotoFehler: "Poza nu s-a putut salva.", satz: "Fă din greșeli învățătură. Trece ce a ajuns azi la gunoi.", orientierung: "Valorile estimate sunt doar orientative.", ohnePreisKurz: "Încă fără preț de cumpărare – contează oricum.",
     wasWeg: "Ce s-a aruncat?", wocheTonne: "Săptămâna asta la gunoi", monatTonne: "Gunoiul lunii", leerWoche: "Încă nimic trecut. N-ai aruncat nimic? Zi bună.", wocheZeile: (p, kg) => `≈ ${nr(p, "porție vândută", "porții vândute")} ca să recuperezi · ${kg} kg`, wenigerAls: (m, d) => `mai puțin decât în ${m} până pe ${d}.`, mehrAls: (m, d) => `mai mult decât în ${m} până pe ${d}.`, rueckgaengig: "Anulează", ammeisten: "Cel mai mult aruncat", eintragen: "Trece gunoi", andererTag: "Pentru altă zi", teller: "Farfurie", eimerNurGewicht: "doar greutatea", ganzePackung: "ambalaj întreg", personalWert: (e) => `Masa personalului · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} la gunoi`, eimerHinweisKurz: "Farfuriile și materia primă deja trecute azi se scad.", fuerPersonal: "Mâncat de personal", wegDamit: "La gunoi", geradeEben: "chiar acum", zurueckgenommen: "Anulat.",
@@ -1182,7 +1183,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Ieși din modul personal", zurueck: "Înapoi", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Schimbă", werBistDu: "Cine lucrează?", ohneNamen: "Fără nume",
     muell: "Deșeuri", kuehlung: "Răcire", putzen: "Curățenie", offen: (n) => `${n} deschise` },
-  muell1: { anleitung: "Atinge poza = 1 porție aruncată. ••• = schimbă cantitatea.", titel: "Deșeuri", andere: "Altele", portion: (n, z) => `${z} ${n === 1 ? "porție" : "porții"}`, eingetragen: "înregistrat", menge: "Schimbă cantitatea", personalessen: "Masa personalului" },
+  muell1: { ausgegeben: "Oferit", anleitung: "Atinge poza = 1 porție aruncată. ••• = schimbă cantitatea.", titel: "Deșeuri", andere: "Altele", portion: (n, z) => `${z} ${n === 1 ? "porție" : "porții"}`, eingetragen: "înregistrat", menge: "Schimbă cantitatea", personalessen: "Masa personalului" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Copie", titelEinlesen: "Parola copiei", feld: "Parolă", hinweis: "Cu parolă fișierul e criptat. Fără parolă oricine îl poate deschide.", teilen: "Trimite copia", ohne: "Trimite fără parolă", einlesen: "Citește", zuKurz: "Cel puțin 6 caractere", falsch: "Parolă greșită", zeigen: "Arată parola", verbergen: "Ascunde parola", mit: "cu parolă", ohneKurz: "fără parolă" },
   rettung: { titel: "Cod de salvare", vergessen: "Ai uitat codul?", eingeben: "Scrie codul de salvare de pe hârtie.", falsch: "Cod de salvare greșit", richtig: "Corect. Alege acum un cod nou pentru birou.", neuTitel: "Codul tău de salvare", aufschreiben: "Scrie-l acum pe hârtie. Cu el intri în birou dacă uiți codul.", nurEinmal: "Se arată doar acum. Păstrează hârtia în siguranță, nu în telefon.", aufgeschrieben: "L-am scris", anlegen: "Creează cod de salvare", neuAnlegen: "Creează cod de salvare nou", offen: "Creează un cod de salvare – dacă uiți codul de birou", fehlerOhneCode: "Aici poți încărca o copie fără codul de birou.", ersetzenFrage: (n) => `Atenție: copia înlocuiește toate datele de pe acest telefon. În copie: ${n}. Ce e salvat acum aici va dispărea. Continui?`, ersetzt: "Copia a fost încărcată. Datele tale sunt înapoi." }, // Rettung (17.10.2026)

@@ -566,7 +566,7 @@ import { reinigungMonat } from "./reinigung.js";
 //  2 = Personalverzehr – bewertet nach Sachbezugswerten (SvEV 2026)
 //  3 = Eigenverzehr des Inhabers – BMF-Pauschbeträge oder Einzelaufzeichnung; hier Einzelaufzeichnung
 // Etappe 5: drei Wege in zwei Tipps – gericht (Teller weg), rohware (Artikel weg), eimer (nur gewogen). Alte Arten bleiben lesbar.
-export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3 };
+export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3, ausgegeben: 4 }; // ausgegeben (27.10.2026): Essen, das der Chef Gästen ausgibt – nicht im Pauschbetrag
 export const FRAKTIONEN = ["bio", "rest", "verpackung", "glas", "papier", "fett"];
 // Sachbezugswerte 2026 (SvEV): 345 € je Monat, kalendertäglich 11,50 €, Frühstück 2,37 €, Mittag und Abend je 4,57 € (Prüfung Teil 3).
 // Pauschbetrag unentgeltliche Wertabgaben 2026, Gaststätten aller Art mit kalten und warmen Speisen, je Person und Jahr netto
@@ -622,7 +622,7 @@ export const monatsZeitraum = () => { const h = heuteGeschaeft(); return { von: 
 // Auswertung der Schwund-Einträge in einem Zeitraum (Datum als "JJJJ-MM-TT", Grenzen einschließlich).
 export function schwundAuswertung(stand, { von, bis }) {
   const out = { muellwert: 0, jeArt: {}, jeFraktion: {}, ohneWert: 0, anzahl: 0,
-    personal: { anzahl: 0, svev: 0, waren: 0 }, eigen: { anzahl: 0, waren: 0 }, portionen: null, dbJePortion: null };
+    personal: { anzahl: 0, svev: 0, waren: 0 }, eigen: { anzahl: 0, waren: 0 }, ausgegeben: { anzahl: 0, waren: 0 }, portionen: null, dbJePortion: null };
   for (const e of stand.schwund || []) {
     if (e.storniert || typeof e.datum !== "string" || e.datum < von || e.datum > bis) continue;
     out.anzahl += 1;
@@ -635,6 +635,9 @@ export function schwundAuswertung(stand, { von, bis }) {
       out.personal.anzahl += Number(e.menge) || 0;
       out.personal.svev += (Number(e.menge) || 0) * (SVEV_2026[e.mahlzeit] ?? SVEV_2026.mittag);
       if (wert !== null) out.personal.waren += wert;
+    } else if (vorgang === 4) {
+      out.ausgegeben.anzahl += Number(e.menge) || 0;
+      if (wert !== null) out.ausgegeben.waren += wert;
     } else {
       out.eigen.anzahl += Number(e.menge) || 0;
       if (wert !== null) out.eigen.waren += wert;

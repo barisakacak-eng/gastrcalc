@@ -86,6 +86,13 @@ export function personalessen(stand, gericht, { datum = heuteGeschaeft(), mahlze
   stand.schwund.push(e); return e;
 }
 
+// Ausgegeben (Baris 27.10.2026): ein Gericht, das der Chef Gästen oder Freunden ausgibt – Ware ohne Umsatz, für den Steuerberater getrennt.
+export function ausgegeben(stand, gericht, { datum = heuteGeschaeft() } = {}) {
+  const e = neu(datum, "ausgegeben", { typ: "gericht", id: gericht.id, name: gericht.name }, 1, "portion", { quelle: "muell" });
+  e.wert = wertEintrag(e, stand);
+  stand.schwund.push(e); return e;
+}
+
 // Zähler je Gericht für die Kacheln („Döner Teller 4×" heute).
 export function heuteJeGericht(stand, datum = heuteGeschaeft(), art = "gericht") {
   const out = {};
@@ -197,7 +204,7 @@ export function standardMenge(stand, x) {
 // Ein Tipp = ein Eintrag mit der üblichen Menge. von = Person (Personal-Modus), sonst ohne.
 export function muellTippEintragen(stand, x, { datum = heuteGeschaeft(), von = null, uebrig = false, grund = null } = {}) { // grund „personal“ (27.10.2026): Gericht als Personalessen // uebrig: abends nicht Verkauftes (Baris 24.10.2026, ersetzt „Eimer wiegen“)
   let e = null;
-  if (x.typ === "gericht") { const g = (stand.gerichte || []).find((y) => y.id === x.id); if (!g) return null; e = grund === "personal" ? personalessen(stand, g, { datum }) : gerichtWeg(stand, g, { datum, anzahl: 1 }); }
+  if (x.typ === "gericht") { const g = (stand.gerichte || []).find((y) => y.id === x.id); if (!g) return null; e = grund === "personal" ? personalessen(stand, g, { datum }) : grund === "ausgegeben" ? ausgegeben(stand, g, { datum }) : gerichtWeg(stand, g, { datum, anzahl: 1 }); }
   else { const a = (stand.artikel || []).find((y) => y.name === x.name); if (!a) return null; const m = standardMenge(stand, x); e = rohwareWeg(stand, a, { datum, menge: m.menge, einheit: m.einheit }); }
   if (!e) return null;
   e.tipp = true; if (von) e.von = von; if (uebrig) e.uebrig = true;

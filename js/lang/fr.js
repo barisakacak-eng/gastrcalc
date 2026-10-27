@@ -273,7 +273,7 @@ export default {
     nochNichts: "Rien de rempli aujourd’hui. Rien jeté ? Alors c’est une bonne journée.",
     eintragen: "Noter",
     wasPassiert: "Qu’est-ce qui s’est passé ?",
-    arten: { verderb: "Abîmé", bruch: "Cassé", fehler: "Erreur de commande", nichtverkauft: "Pas vendu", gericht: "Plat jeté", rohware: "Produit brut jeté", eimer: "Seau pesé", personal: "Repas du personnel", eigen: "Mangé par moi" },
+    arten: { ausgegeben: "Offert (invités)", verderb: "Abîmé", bruch: "Cassé", fehler: "Erreur de commande", nichtverkauft: "Pas vendu", gericht: "Plat jeté", rohware: "Produit brut jeté", eimer: "Seau pesé", personal: "Repas du personnel", eigen: "Mangé par moi" },
     eimerZeile: (g, r) => `${g} kg pesés, dont ${r} kg nouveaux`,
     personalHinweis: "Le repas du personnel n’est pas un déchet. Il est compté à la valeur officielle d’avantage en nature (Sachbezug), pas au prix d’achat.",
     eigenHinweis: "Ce que tu manges toi-même, c’est de la consommation perso. Les impôts (Finanzamt) la veulent à part, c’est pour ça qu’elle est séparée ici.",
@@ -383,7 +383,7 @@ export default {
       eingeben: "Saisis le code bureau", falsch: "Code erroné.", oeffnen: "Ouvrir", vier: "Exactement 4 chiffres, svp." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Note – pas un ticket Z, pas pour la comptabilité", steuerZbon: "La TVA, merci, depuis le ticket Z de la caisse.", kasse: "Les ventes ne sont que des notes. Ta caisse (ticket Z) fait foi.",
+  ordnerT: { ausgegeben: (e) => `Offert aux invités : ${e} net · prélèvement privé, à voir avec ton expert-comptable`, pausch: (p) => `Tes propres repas : forfait 2026 ${p} par personne et par an, enfants de 2 à 12 ans la moitié. Tu n'as alors pas à les noter un par un. Vois cela avec ton expert-comptable.`, kennung: "Note – pas un ticket Z, pas pour la comptabilité", steuerZbon: "La TVA, merci, depuis le ticket Z de la caisse.", kasse: "Les ventes ne sont que des notes. Ta caisse (ticket Z) fait foi.",
     allesDa: "Pièces et listes complètes", umsatzZeile: (n, e) => `${n} jours · ${e} brut · notes, la caisse fait foi`, status: { notiz: "Note, la caisse fait foi", pruefen: "vérifier" },
     inventurPruefen: (n) => `${n} articles sans prix – vérifier`, wertFehlt: "Valeur non enregistrée",
     personalOhne: (n) => `${n} repas sans personne – vérifier`, kostenZeile: (n) => `${n} postes · sans ton salaire`,
@@ -738,10 +738,11 @@ export default {
     belegeKurz: "Charger un ticket, mettre les prix à jour",
   },
 
+  lieferTag: { davon: "dont livraison", provision: "Commission", zuViel: "La livraison dépasse le total." },
   teamTag: { abwFrage: "Des employés malades ou en congé ce mois-ci ?", abwWer: "Combien de jours ? Tu les paies quand même.", tage: "jours", modell: { stunde: "À l’heure", monat: "Fixe par mois" }, monatBrutto: "Brut par mois", monatHinweis: "Compte chaque mois comme frais fixes. On ne le demande plus chaque jour.", frage: "Des employés aujourd’hui ?", wer: "Qui était là ? Règle les heures.", std: "h", satz: "Brut par heure", summe: (b) => `Ça te coûte aujourd’hui : ${b}`, brutto: (b) => `${b} brut, plus la part patronale`, art: { angestellt: "Salarié", minijob: "Minijob" }, summeOffen: "Salaire et type manquent", weitere: "une autre personne", person: (n) => `Employé ${n}`, fertig: "Terminé" },
   muell: { personalEintragen: "Noter repas du personnel",
-    zeki: { start: "Qu'est-ce qui a été jeté aujourd'hui ?", weiter: "Autre chose de jeté ?", personal: "Qu'a mangé ton équipe ?", bruch: "Qu'est-ce qui s'est cassé ?" },
-    grund: { roh: "Marchandise", personal: "Personnel", bruch: "Casse" }, nichtsGefunden: "Rien trouvé. Écris autrement ou prends « Seau pesé ».",
+    zeki: { ausgegeben: "Qu'as-tu offert aujourd'hui ?", start: "Qu'est-ce qui a été jeté aujourd'hui ?", weiter: "Autre chose de jeté ?", personal: "Qu'a mangé ton équipe ?", bruch: "Qu'est-ce qui s'est cassé ?" },
+    grund: { ausgegeben: "Offert", roh: "Marchandise", personal: "Personnel", bruch: "Casse" }, nichtsGefunden: "Rien trouvé. Écris autrement ou prends « Seau pesé ».",
     zurUebersicht: "Vue d’ensemble des déchets",
     auswaehlen: "Choisir un aliment", aendern: "Touche pour modifier", mengeEingeben: "Saisir la quantité", foto: "Photo (facultatif)", fotoDabei: "Photo jointe", fotoFehler: "La photo n’a pas pu être enregistrée.", satz: "Transforme les erreurs en savoir. Note ce qui a fini à la poubelle aujourd’hui.", orientierung: "Les valeurs estimées servent de repère.", ohnePreisKurz: "Pas encore de prix d’achat – compte quand même.",
     wasWeg: "Qu’est-ce qui part ?", wocheTonne: "Cette semaine à la poubelle", monatTonne: "Poubelle du mois", leerWoche: "Rien de noté pour l’instant. Rien jeté ? Bonne journée.", wocheZeile: (p, kg) => `≈ ${p} portions vendues pour le récupérer · ${kg} kg`, wenigerAls: (m, d) => `moins qu’en ${m} jusqu’au ${d}.`, mehrAls: (m, d) => `plus qu’en ${m} jusqu’au ${d}.`, rueckgaengig: "Annuler", ammeisten: "Ce qui part le plus", eintragen: "Noter des déchets", andererTag: "Pour un autre jour", teller: "Assiette", eimerNurGewicht: "seulement le poids", ganzePackung: "paquet entier", personalWert: (e) => `Repas du personnel · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} à la poubelle`, eimerHinweisKurz: "Les assiettes et produits bruts déjà notés aujourd’hui sont déduits.", fuerPersonal: "Mangé par le personnel", wegDamit: "Poubelle", geradeEben: "à l’instant", zurueckgenommen: "Annulé.",
@@ -1176,7 +1177,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Quitter le mode équipe", zurueck: "Retour", hallo: (n) => `Salut ${n}`, halloOhne: "Salut", wechseln: "Changer", werBistDu: "Qui travaille ?", ohneNamen: "Sans nom",
     muell: "Déchets", kuehlung: "Froid", putzen: "Nettoyage", offen: (n) => `${n} ouverts` },
-  muell1: { anleitung: "Touche la photo = 1 portion jetée. ••• = changer la quantité.", titel: "Déchets", andere: "Autres", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "enregistré", menge: "Modifier la quantité", personalessen: "Repas du personnel" },
+  muell1: { ausgegeben: "Offert", anleitung: "Touche la photo = 1 portion jetée. ••• = changer la quantité.", titel: "Déchets", andere: "Autres", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "enregistré", menge: "Modifier la quantité", personalessen: "Repas du personnel" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Sauvegarde", titelEinlesen: "Mot de passe de la sauvegarde", feld: "Mot de passe", hinweis: "Avec mot de passe, le fichier est chiffré. Sans, n’importe qui peut l’ouvrir.", teilen: "Partager la sauvegarde", ohne: "Partager sans mot de passe", einlesen: "Lire", zuKurz: "Au moins 6 caractères", falsch: "Mot de passe incorrect", zeigen: "Afficher le mot de passe", verbergen: "Masquer le mot de passe", mit: "avec mot de passe", ohneKurz: "sans mot de passe" },
   rettung: { titel: "Code de secours", vergessen: "Code oublié ?", eingeben: "Tape le code de secours de ta feuille.", falsch: "Code de secours faux", richtig: "Correct. Choisis maintenant un nouveau code bureau.", neuTitel: "Ton code de secours", aufschreiben: "Écris-le maintenant sur papier. Avec lui, tu entres au bureau si tu oublies le code.", nurEinmal: "Il n’est montré que maintenant. Garde la feuille en lieu sûr, pas dans le téléphone.", aufgeschrieben: "Je l’ai noté", anlegen: "Créer un code de secours", neuAnlegen: "Créer un nouveau code de secours", offen: "Crée un code de secours – au cas où tu oublies le code bureau", fehlerOhneCode: "Ici, tu peux charger une sauvegarde sans code bureau.", ersetzenFrage: (n) => `Attention : la sauvegarde remplace toutes les données de ce téléphone. Dans la sauvegarde : ${n}. Ce qui est enregistré ici maintenant sera perdu. Continuer ?`, ersetzt: "Sauvegarde chargée. Tes données sont revenues." }, // Rettung (17.10.2026)

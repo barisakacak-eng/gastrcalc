@@ -272,7 +272,7 @@ export default {
     nochNichts: "Îro hîn tiştek nehatiye nivîsandin. Tiştek neavêtî? Wê demê ev rojeke baş e.",
     eintragen: "Tomar bike",
     wasPassiert: "Çi bû?",
-    arten: { verderb: "Xera bû", bruch: "Şikest", fehler: "Sîparîşa şaş", nichtverkauft: "Nehat firotin", gericht: "Xwarin hate avêtin", rohware: "Malê xav hate avêtin", eimer: "Satil hate kişandin", personal: "Xwarina karkeran", eigen: "Min bi xwe xwar" },
+    arten: { ausgegeben: "Mêvandarî (mêvan)", verderb: "Xera bû", bruch: "Şikest", fehler: "Sîparîşa şaş", nichtverkauft: "Nehat firotin", gericht: "Xwarin hate avêtin", rohware: "Malê xav hate avêtin", eimer: "Satil hate kişandin", personal: "Xwarina karkeran", eigen: "Min bi xwe xwar" },
     eimerZeile: (g, r) => `${g} kg hate kişandin, ji wê ${r} kg nû`,
     personalHinweis: "Xwarina karkeran ne zibil e. Li gorî nirxa fermî ya Sachbezug tê hesabkirin, ne li gorî bihayê kirînê.",
     eigenHinweis: "Ya ku tu bi xwe dixwî, xerckirina şexsî (Eigenverbrauch) ye. Fermangeha bacê (Finanzamt) wê cuda dixwaze, ji ber vê li vir cuda ye.",
@@ -382,7 +382,7 @@ export default {
       eingeben: "Koda ofîsê binivîse", falsch: "Koda şaş.", oeffnen: "Veke", vier: "Tam 4 reqam binivîse." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Not – ne raporta Z ye, ne ji bo hesabdariyê", steuerZbon: "Bacê ji raporta Z ya kasê bigire.", kasse: "Firotin tenê not in. Kasa te (raporta Z) derbasdar e.",
+  ordnerT: { ausgegeben: (e) => `Ji mêvanan re belaş: ${e} net · kişandina taybet, bi şêwirmendê bacê re zelal bike`, pausch: (p) => `Xwarina te bi xwe: mîqdara giştî ya 2026 ${p} ji bo her kesî salê, zarokên 2 heta 12 salî nîv. Wê demê ne hewce ye tu yek bi yek binivîsî. Bi şêwirmendê bacê re zelal bike.`, kennung: "Not – ne raporta Z ye, ne ji bo hesabdariyê", steuerZbon: "Bacê ji raporta Z ya kasê bigire.", kasse: "Firotin tenê not in. Kasa te (raporta Z) derbasdar e.",
     allesDa: "Belge û lîste temam in", umsatzZeile: (n, e) => `${n} roj · ${e} brut · not, kasa derbasdar e`, status: { notiz: "Not, kasa derbasdar e", pruefen: "kontrol bike" },
     inventurPruefen: (n) => `${n} mal bê biha – kontrol bike`, wertFehlt: "Nirx nehatiye tomarkirin",
     personalOhne: (n) => `${n} xwarin bê kes – kontrol bike`, kostenZeile: (n) => `${n} xal · bê meaşê te`,
@@ -737,10 +737,11 @@ export default {
     belegeKurz: "Fîşê bixwîne, bihayan nû bike",
   },
 
+  lieferTag: { davon: "ji vê, gihandin", provision: "Komîsyon", zuViel: "Gihandin ji tevahiyê zêdetir e." },
   teamTag: { abwFrage: "Vê mehê karmend nexweş an di betlaneyê de bûn?", abwWer: "Çend roj? Tu dîsa jî pereyê wan didî.", tage: "roj", modell: { stunde: "Bi saetê", monat: "Mehane sabît" }, monatBrutto: "Brutto mehane", monatHinweis: "Her meh wek mesrefa sabît tê hesibandin. Êdî her roj nayê pirsîn.", frage: "Îro karmend li vir bûn?", wer: "Kî li vir bû? Saetan saz bike.", std: "saet", satz: "Brutto bi saetê", summe: (b) => `Îro ji te re mesref: ${b}`, brutto: (b) => `${b} brutto, û para kardêr jî`, art: { angestellt: "Bi peyman", minijob: "Minijob" }, summeOffen: "Meaş û cure hîn kêm in", weitere: "kesekî din", person: (n) => `Karmend ${n}`, fertig: "Qediya" },
   muell: { personalEintragen: "Xwarina karmendan binivîse",
-    zeki: { start: "Îro çi hate avêtin?", weiter: "Tiştekî din jî hate avêtin?", personal: "Tîma te çi xwar?", bruch: "Çi şikest an xera bû?" },
-    grund: { roh: "Mal", personal: "Karmend", bruch: "Şikestî" }, nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",
+    zeki: { ausgegeben: "Te îro çi belaş da?", start: "Îro çi hate avêtin?", weiter: "Tiştekî din jî hate avêtin?", personal: "Tîma te çi xwar?", bruch: "Çi şikest an xera bû?" },
+    grund: { ausgegeben: "Mêvandarî", roh: "Mal", personal: "Karmend", bruch: "Şikestî" }, nichtsGefunden: "Tiştek nehat dîtin. Bi awayekî din binivîse an “Satil hate kişandin” hilbijêre.",
     zurUebersicht: "Nêrîna giştî ya zibil",
     auswaehlen: "Xwarinê hilbijêre", aendern: "Ji bo guhertinê bitikîne", mengeEingeben: "Mîqdarê binivîse", foto: "Wêne (ne mecbûrî)", fotoDabei: "Wêne pê re ye", fotoFehler: "Wêne nehat tomarkirin.", satz: "Ji şaşiyan zanînê çêke. Ya ku îro ket zibil binivîse.", orientierung: "Nirxên texmînî tenê ji bo rêberiyê ne.", ohnePreisKurz: "Hîn bê bihayê kirînê – dîsa jî tê hesabkirin.",
     wasWeg: "Çi hate avêtin?", wocheTonne: "Vê hefteyê di zibil de", monatTonne: "Zibilê mehê", leerWoche: "Hîn tiştek nehatiye nivîsandin. Tiştek neavêtî? Rojeke baş.", wocheZeile: (p, kg) => `≈ ${p} porsiyonên firotî ji bo vegerandinê · ${kg} kg`, wenigerAls: (m, d) => `kêmtir ji heman demê di ${m} de (heta ${d}).`, mehrAls: (m, d) => `zêdetir ji heman demê di ${m} de (heta ${d}).`, rueckgaengig: "Paş de bigire", ammeisten: "Herî zêde hate avêtin", eintragen: "Zibil tomar bike", andererTag: "Ji bo rojeke din", teller: "Teyfik", eimerNurGewicht: "tenê giranî", ganzePackung: "pakêta tevahî", personalWert: (e) => `Xwarina karkeran · Sachbezug ${e}`, inDerTonne: (e) => `= ${e} di zibil de`, eimerHinweisKurz: "Teyfik û malê xav ên ku îro hatin nivîsandin tên derxistin.", fuerPersonal: "Karkeran xwar", wegDamit: "Bavêje", geradeEben: "nuha", zurueckgenommen: "Paş de hate girtin.",
@@ -1175,7 +1176,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Ji moda karmendan derkeve", zurueck: "Paş", hallo: (n) => `Silav ${n}`, halloOhne: "Silav", wechseln: "Biguherîne", werBistDu: "Kî dixebite?", ohneNamen: "Bê nav",
     muell: "Çop", kuehlung: "Sarkirin", putzen: "Paqijî", offen: (n) => `${n} vekirî` },
-  muell1: { anleitung: "Li wêneyê bixe = 1 parî hate avêtin. ••• = mîqdarê biguherîne.", titel: "Çop", andere: "Yên din", portion: (n, z) => `${z} porsiyon`, eingetragen: "hat tomarkirin", menge: "Mîqdarê biguherîne", personalessen: "Xwarina karmendan" },
+  muell1: { ausgegeben: "Mêvandarî", anleitung: "Li wêneyê bixe = 1 parî hate avêtin. ••• = mîqdarê biguherîne.", titel: "Çop", andere: "Yên din", portion: (n, z) => `${z} porsiyon`, eingetragen: "hat tomarkirin", menge: "Mîqdarê biguherîne", personalessen: "Xwarina karmendan" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Kopiya ewlehiyê", titelEinlesen: "Şîfreya kopiyê", feld: "Şîfre", hinweis: "Bi şîfreyê dosya şîfrekirî ye. Bê şîfre her kes dikare wê veke.", teilen: "Kopiyê parve bike", ohne: "Bê şîfre parve bike", einlesen: "Bixwîne", zuKurz: "Herî kêm 6 tîp", falsch: "Şîfre şaş e", zeigen: "Şîfreyê nîşan bide", verbergen: "Şîfreyê veşêre", mit: "bi şîfre", ohneKurz: "bê şîfre" },
   rettung: { titel: "Koda rizgariyê", vergessen: "Te kod ji bîr kir?", eingeben: "Koda rizgariyê ji kaxeza xwe binivîse.", falsch: "Koda rizgariyê şaş e", richtig: "Rast e. Niha kodeke nû ya nivîsgehê hilbijêre.", neuTitel: "Koda te ya rizgariyê", aufschreiben: "Niha li ser kaxezê binivîse. Heke tu kodê ji bîr bikî, bi vê dikevî nivîsgehê.", nurEinmal: "Tenê niha tê nîşandan. Kaxezê li cihekî ewle deyne, ne di telefonê de.", aufgeschrieben: "Min nivîsî", anlegen: "Koda rizgariyê çêke", neuAnlegen: "Koda rizgariyê ya nû çêke", offen: "Koda rizgariyê çêke – heke tu koda nivîsgehê ji bîr bikî", fehlerOhneCode: "Li vir bê koda nivîsgehê tu dikarî kopiyê bixwînî.", ersetzenFrage: (n) => `Hişyarî: Kopî hemû daneyên vê telefonê diguherîne. Di kopiyê de: ${n}. Tiştê niha li vir tomarkirî ye, dê winda bibe. Berdewam bike?`, ersetzt: "Kopî hate xwendin. Daneyên te vegeriyan." }, // Rettung (17.10.2026)

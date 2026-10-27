@@ -271,7 +271,7 @@ export default {
     nochNichts: "Nothing entered today yet. Nothing thrown away? Then it's a good day.",
     eintragen: "Add entry",
     wasPassiert: "What happened?",
-    arten: { verderb: "Spoiled", bruch: "Breakage", fehler: "Wrong order", nichtverkauft: "Not sold", gericht: "Dish binned", rohware: "Raw goods binned", eimer: "Bucket weighed", personal: "Staff meal", eigen: "Eaten myself" },
+    arten: { ausgegeben: "Given away (guests)", verderb: "Spoiled", bruch: "Breakage", fehler: "Wrong order", nichtverkauft: "Not sold", gericht: "Dish binned", rohware: "Raw goods binned", eimer: "Bucket weighed", personal: "Staff meal", eigen: "Eaten myself" },
     eimerZeile: (g, r) => `${g} kg weighed, ${r} kg of it new`,
     personalHinweis: "Staff meals are not waste. They are counted at the official benefit-in-kind value, not at purchase price.",
     eigenHinweis: "What you eat yourself is own consumption. The tax office wants it itemised, so it is kept separate here.",
@@ -382,7 +382,7 @@ export default {
       eingeben: "Enter office code", falsch: "Wrong code.", oeffnen: "Open", vier: "Please enter exactly 4 digits." },
   },
   // W2-T (Prüfung p04)
-  ordnerT: { kennung: "Note – not a Z report, not for bookkeeping", steuerZbon: "Please take VAT from the till's Z report.", kasse: "Sales are notes only. Your till (Z report) counts.",
+  ordnerT: { ausgegeben: (e) => `Given to guests: ${e} net · withdrawal for private use, check with your tax advisor`, pausch: (p) => `Your own meals: flat rate 2026 ${p} per person and year, children aged 2 to 12 half. Then you do not need to note them one by one. Check with your tax advisor.`, kennung: "Note – not a Z report, not for bookkeeping", steuerZbon: "Please take VAT from the till's Z report.", kasse: "Sales are notes only. Your till (Z report) counts.",
     allesDa: "Receipts and lists complete", umsatzZeile: (n, e) => `${n} days · ${e} gross · notes, till counts`, status: { notiz: "Note, till counts", pruefen: "check" },
     inventurPruefen: (n) => (n === 1 ? "1 item without price – check" : `${n} items without price – check`), wertFehlt: "Value not recorded",
     personalOhne: (n) => (n === 1 ? "1 meal without person – check" : `${n} meals without person – check`), kostenZeile: (n) => (n === 1 ? "1 item · without your own pay" : `${n} items · without your own pay`),
@@ -737,10 +737,11 @@ export default {
     belegeKurz: "Read a receipt, update prices",
   },
 
+  lieferTag: { davon: "of which delivery apps", provision: "Commission", zuViel: "Delivery is more than the total." },
   teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" },
   muell: { personalEintragen: "Log staff meal",
-    zeki: { start: "What got thrown out today?", weiter: "Anything else thrown out?", personal: "What did your team eat?", bruch: "What got broken?" },
-    grund: { roh: "Goods", personal: "Staff", bruch: "Breakage" }, nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
+    zeki: { ausgegeben: "What did you give away today?", start: "What got thrown out today?", weiter: "Anything else thrown out?", personal: "What did your team eat?", bruch: "What got broken?" },
+    grund: { ausgegeben: "Given away", roh: "Goods", personal: "Staff", bruch: "Breakage" }, nichtsGefunden: "Nothing found. Try another spelling or use “Bucket weighed”.",
     zurUebersicht: "Waste overview", 
     auswaehlen: "Select item", aendern: "Tap to change", mengeEingeben: "Enter amount", foto: "Photo (optional)", fotoDabei: "Photo added", fotoFehler: "Photo could not be saved.", satz: "Turn mistakes into knowledge. Enter what ended up in the bin today.", orientierung: "Estimated values are for guidance.", ohnePreisKurz: "No purchase price yet – still counted.", 
     wasWeg: "What went in the bin?", wocheTonne: "In the bin this week", monatTonne: "Monthly bin", leerWoche: "Nothing entered yet. Nothing thrown away? Good day.", wocheZeile: (p, kg) => `≈ ${p} portions sold to make up for it · ${kg} kg`, wenigerAls: (m, d) => `less than in ${m} up to day ${d}.`, mehrAls: (m, d) => `more than in ${m} up to day ${d}.`, rueckgaengig: "Undo", ammeisten: "Most thrown away", eintragen: "Add waste", andererTag: "For another day", teller: "plate", eimerNurGewicht: "weight only", ganzePackung: "whole pack", personalWert: (e) => `Staff meal · benefit value ${e}`, inDerTonne: (e) => `= ${e} in the bin`, eimerHinweisKurz: "Plates and raw goods already reported today are subtracted.", fuerPersonal: "Eaten by staff", wegDamit: "Throw away", geradeEben: "just now", zurueckgenommen: "Undone.",
@@ -1176,7 +1177,7 @@ export default {
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Leave staff mode", zurueck: "Back", hallo: (n) => `Hi ${n}`, halloOhne: "Hi", wechseln: "Switch", werBistDu: "Who is working?", ohneNamen: "No name",
     muell: "Waste", kuehlung: "Cooling", putzen: "Cleaning", offen: (n) => `${n} open` },
-  muell1: { anleitung: "Tap a photo = 1 portion thrown away. ••• = change amount.", titel: "Waste", andere: "Other", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "logged", menge: "Change amount", personalessen: "Staff meal" },
+  muell1: { ausgegeben: "Given away", anleitung: "Tap a photo = 1 portion thrown away. ••• = change amount.", titel: "Waste", andere: "Other", portion: (n, z) => `${z} ${n === 1 ? "portion" : "portions"}`, eingetragen: "logged", menge: "Change amount", personalessen: "Staff meal" },
   // E5 (16.10.2026): Passwort für die Sicherungsdatei (Blatt beim Teilen und Einlesen)
   passwort: { titel: "Backup", titelEinlesen: "Backup password", feld: "Password", hinweis: "With a password the file is encrypted. Without one, anyone can open it.", teilen: "Share backup", ohne: "Share without password", einlesen: "Read in", zuKurz: "At least 6 characters", falsch: "Wrong password", zeigen: "Show password", verbergen: "Hide password", mit: "with password", ohneKurz: "without password" },
   rettung: { titel: "Recovery code", vergessen: "Forgot the code?", eingeben: "Type the recovery code from your paper.", falsch: "Wrong recovery code", richtig: "Correct. Now choose a new office code.", neuTitel: "Your recovery code", aufschreiben: "Write it on paper now. With it you get into the office if you forget the code.", nurEinmal: "It is shown only now. Keep the paper safe, not in the phone.", aufgeschrieben: "I wrote it down", anlegen: "Create recovery code", neuAnlegen: "Create new recovery code", offen: "Create a recovery code – in case you forget the office code", fehlerOhneCode: "You can load a backup here without the office code.", ersetzenFrage: (n) => `Warning: the backup replaces all data on this phone. In the backup: ${n}. What is saved here now will be gone. Continue?`, ersetzt: "Backup loaded. Your data is back." }, // Rettung (17.10.2026)

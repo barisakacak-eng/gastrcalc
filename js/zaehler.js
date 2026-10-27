@@ -1,4 +1,4 @@
-import { teamTag, teamTagKosten, abwesendMonat, abwesendKosten } from "./stamm.js";
+import { teamTag, teamTagKosten, abwesendMonat, abwesendKosten, lieferTag, lieferProvision, lieferKosten } from "./stamm.js";
 import { inventurenFertig, inventurVergleich } from "./inventur.js";
 // Etappe 5: der Break-even-Zähler (Wunsch Baris 12.10.2026). Reine Funktionen, keine Oberfläche.
 // Jeden Tag: alles, was bis heute an Kosten angefallen ist, gegen alles, was bis heute (netto) reingekommen ist.
@@ -170,6 +170,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
 
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
   let kosten = 0, umsatzBrutto = 0, umsatzNetto = 0, ware = 0, muellSumme = 0, gewichtBisHeute = 0, tageMitUmsatz = 0, db = 0;
+  const prov = lieferProvision(stand); let provisionSumme = 0, lieferBrutto = 0, lieferBasisBrutto = 0; // Lieferdienst (27.10.2026)
   let standGestern = 0, kippTag = null, letzterStand = 0;
   let schwundSumme = 0; let muellNurPrognose = 0; // Gegenprüfung F6: Müll, den die Monatsrechnung braucht, wenn in Stufe 3 die Kartenquote gilt
   let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0, lohnEchtSummeOffen = 0;
@@ -189,9 +190,11 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     kosten += tageskostenFest * t.gewicht + lt.betrag; gewichtBisHeute += t.gewicht;
     const sw = stufe === 3 ? 0 : (schwund[t.datum] || 0); schwundSumme += sw;
     umsatzBrutto += ub; umsatzNetto += un; ware += w; muellSumme += m;
-    if (e) { tageMitUmsatz += 1; db += un * (1 - quoteEff) - m; }
+    const lt2 = prov && e ? lieferTag(stand, t.datum) : null; const pv = lt2 ? lieferKosten(Math.min(lt2.betrag, ub), prov, steuer.satz) : 0;
+    if (lt2) { lieferBrutto += Math.min(lt2.betrag, ub); lieferBasisBrutto += ub; } provisionSumme += pv;
+    if (e) { tageMitUmsatz += 1; db += un * (1 - quoteEff) - m - pv; }
     if (t.datum === datum) standGestern = letzterStand;
-    letzterStand = umsatzNetto - ware - muellSumme - schwundSumme - kosten;
+    letzterStand = umsatzNetto - ware - muellSumme - schwundSumme - kosten - provisionSumme;
     t.stand = letzterStand; t.umsatz = !!e;
     if (kippTag === null && letzterStand >= 0 && tageMitUmsatz > 0) kippTag = t.datum;
     if (letzterStand < 0) kippTag = null; // wieder unter null: der Kipptag ist der letzte Übergang
@@ -222,7 +225,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const lohnGeschaetzt = lohnStundenMonat > 0 && lohnGeschaetztTage > 0;
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0 || lohnGeschaetzt;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, provision: provisionSumme, lieferAnteil: lieferBasisBrutto > 0 ? lieferBrutto / lieferBasisBrutto : 0, provisionJeBrutto: prov && lieferBasisBrutto > 0 ? lieferKosten(lieferBrutto, prov, steuer.satz) / lieferBasisBrutto : 0, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff),
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
@@ -273,8 +276,12 @@ export function monatsZiel(stand, z, H) {
   const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
   const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));
   const brutto = 1 + (z.steuer || 0);
-  const nullpunkt = kosten > 0 ? kosten / (1 - q) * brutto : null;
-  const ziel = nullpunkt === null ? null : 1 - q - g > 0.05 ? kosten / (1 - q - g) * brutto : nullpunkt;
+  // Lieferdienst (27.10.2026): Provision je Euro Brutto-Umsatz (bisheriger Anteil über Lieferdienste × Satz) senkt, was jeder Euro übrig lässt.
+  const pS = Math.min(0.3, Math.max(0, z.provisionJeBrutto || 0));
+  const nenner = (1 - q) / brutto - pS;
+  const nullpunkt = kosten > 0 && nenner > 0.02 ? kosten / nenner : kosten > 0 ? kosten / (1 - q) * brutto : null;
+  const nennerZ = (1 - q - g) / brutto - pS;
+  const ziel = nullpunkt === null ? null : 1 - q - g > 0.05 && nennerZ > 0.02 ? kosten / nennerZ : nullpunkt;
   const tage = []; let summe = 0;
   for (const x of z.tage) { if (x.datum > H) break; const u = umsatzEintrag(stand, x.datum); summe += u ? u.umsatz : 0; tage.push({ datum: x.datum, umsatz: u ? u.umsatz : null, kumuliert: summe }); }
   // „Null“ heißt überall dasselbe wie im Zähler (Nachtester 15.10.): gerechneter Stand bis heute ≥ 0. Danach zählt das Monatsziel mit Zielgewinn.
@@ -282,7 +289,7 @@ export function monatsZiel(stand, z, H) {
   const stufe = nullpunkt === null ? "ohne" : summe < nullpunkt ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
   const fehltNullZ = nullpunkt === null ? null : Math.max(0, nullpunkt - summe);
   let erreichtAm = null, proTagNoetig = null;
-  if (stufe === "bisNull" && !z.keinUmsatz) { erreichtAm = z.nullTag || null; if (!erreichtAm && z.noetigProTag) proTagNoetig = z.noetigProTag / (1 - q) * brutto; }
+  if (stufe === "bisNull" && !z.keinUmsatz) { erreichtAm = z.nullTag || null; if (!erreichtAm && z.noetigProTag) proTagNoetig = z.noetigProTag / (nenner > 0.02 ? nenner : (1 - q) / brutto); }
   if (stufe === "bisZiel") { // Tempo: Umsatz je Öffnungstag bisher, hochgerechnet auf die restlichen Öffnungstage
     const gBis = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a2, x) => a2 + (x.gewicht || 0), 0);
     if (gBis > 0 && summe > 0) { const tempo = summe / gBis; let s2 = summe;

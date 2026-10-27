@@ -128,7 +128,7 @@ export function schwund(stand, z) {
   const summe = (v) => rund2(zeilen.filter((x) => x.vorgang === v && typeof x.wert === "number").reduce((s, x) => s + rund2(x.wert), 0));
   // P1 (20.10.2026): Eigenverbrauch im Kalenderjahr bis Zeitraum-Ende, zum Vergleich mit dem Pauschbetrag (nur Anzeige)
   const jahr = String(z.bis).slice(0, 4); const eigenJahr = rund2(schwundAuswertung(stand, { von: jahr + "-01-01", bis: z.bis }).eigen.waren || 0);
-  return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen, summeMuell: summe(1), summeEigen: summe(3), eigenJahr, jahr };
+  return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen, summeMuell: summe(1), summeEigen: summe(3), summeAusgegeben: summe(4), ausgegeben: a.ausgegeben, eigenJahr, jahr };
 }
 
 // Belege (W2-T, Prüfung p04 Nr. 5 und 6): eingelesene Lieferungen und Kostenbelege. Keine erfundene Vorsteuer:
