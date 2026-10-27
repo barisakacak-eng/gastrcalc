@@ -2,7 +2,7 @@
 // Italienisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Dalla prima registrazione rifiuti","titel":"Meno perdite","laueft": (ab) => `Misurazione attiva da ${ab}`,"stufe":{"bisNull":"Fino a zero","bisZiel":"Verso l’obiettivo","ueberZiel":"Sopra l’obiettivo"},"ohneKosten":"Mancano i costi","art":{"muell":"Rifiuti","preis":"Prezzo","lager":"Magazzino","papier":"Scartoffie"},"aktion":{"kuehlAlarm":"Rimisura","rundgangOffen":"Continua il giro","rundgang":"Giro del freddo","putzen":"Pulizia","sicherung":"Fai un backup","abschluss":"Chiudi la giornata","selbst":"Inserisci la tua ricetta","einkauf":"Inserisci i prezzi d’acquisto","rezepte":"Pesa le ricette"}},
+  nutzen: {"start":"Dalla prima registrazione rifiuti","titel":"Meno perdite a settimana","laueft": (ab) => `Misurazione attiva da ${ab}`,"stufe":{"bisNull":"Fino a zero","bisZiel":"Verso l’obiettivo","ueberZiel":"Sopra l’obiettivo"},"ohneKosten":"Mancano i costi","art":{"muell":"Rifiuti","preis":"Prezzo","lager":"Magazzino","papier":"Scartoffie"},"aktion":{"kuehlAlarm":"Rimisura","rundgangOffen":"Continua il giro","rundgang":"Giro del freddo","putzen":"Pulizia","sicherung":"Fai un backup","abschluss":"Chiudi la giornata","selbst":"Inserisci la tua ricetta","einkauf":"Inserisci i prezzi d’acquisto","rezepte":"Pesa le ricette"}},
   app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {
@@ -1153,6 +1153,7 @@ export default {
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
   menueReferenz: { hinweis: "Ingredienti dal menù. Controlla quantità, tempo di preparazione e ricetta completa." }, // 26.10.2026
   heute: { bewegung: (b) => `da ieri ${b}`,
+    nullKurz: "Zero a", zielKurz: "Obiettivo",
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
     tempoGut: (d) => `In linea · ${d}`, tempoKnapp: (b) => `Servono ${b} / giorno`, ohneKosten: "Mancano i costi fissi",

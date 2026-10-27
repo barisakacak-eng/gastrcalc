@@ -4,7 +4,7 @@ const pl = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : (n === 0 
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"من أول إدخال للهدر","titel":"خسارة أقل","laueft": (ab) => `القياس جارٍ منذ ${ab}`,"stufe":{"bisNull":"حتى الصفر","bisZiel":"إلى الهدف","ueberZiel":"فوق الهدف"},"ohneKosten":"التكاليف ناقصة","art":{"muell":"الهدر","preis":"السعر","lager":"المخزون","papier":"الأوراق"},"aktion":{"kuehlAlarm":"قِس مرة أخرى","rundgangOffen":"تابع جولة القياس","rundgang":"جولة القياس","putzen":"التنظيف","sicherung":"احفظ نسخة","abschluss":"إغلاق اليوم","selbst":"أدخل وصفتك","einkauf":"أدخل أسعار الشراء","rezepte":"زِن الوصفات"}},
+  nutzen: {"start":"من أول إدخال للهدر","titel":"خسارة أقل أسبوعيًا","laueft": (ab) => `القياس جارٍ منذ ${ab}`,"stufe":{"bisNull":"حتى الصفر","bisZiel":"إلى الهدف","ueberZiel":"فوق الهدف"},"ohneKosten":"التكاليف ناقصة","art":{"muell":"الهدر","preis":"السعر","lager":"المخزون","papier":"الأوراق"},"aktion":{"kuehlAlarm":"قِس مرة أخرى","rundgangOffen":"تابع جولة القياس","rundgang":"جولة القياس","putzen":"التنظيف","sicherung":"احفظ نسخة","abschluss":"إغلاق اليوم","selbst":"أدخل وصفتك","einkauf":"أدخل أسعار الشراء","rezepte":"زِن الوصفات"}},
   app: { name: "GastroCash", entwurf: "نسخة تجريبية" },
 
   allgemein: {
@@ -1155,6 +1155,7 @@ export default {
       buero: "هنا كل الحسابات والقوائم والإعدادات. الملفات تعطيها للتفتيش أو المستشار الضريبي أو المحاسب." } },
   menueReferenz: { hinweis: "المكوّنات من القائمة. تحقّق من الكميات ووقت التحضير والوصفة كاملة." }, // 26.10.2026
   heute: { bewegung: (b) => `منذ أمس ${b}`,
+    nullKurz: "نقطة الصفر", zielKurz: "الهدف",
     zielLinie: "صفر + الربح المستهدف",
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },
     tempoGut: (d) => `حسب الخطة · ${d}`, tempoKnapp: (b) => `مطلوب ${b} / يوم`, ohneKosten: "التكاليف الثابتة ناقصة",

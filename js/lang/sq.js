@@ -7,7 +7,7 @@ const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase()
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Nga regjistrimi i parë i mbeturinave","titel":"Më pak humbje","laueft": (ab) => `Matja që nga ${ab}`,"stufe":{"bisNull":"Deri në zero","bisZiel":"Drejt objektivit","ueberZiel":"Mbi objektiv"},"ohneKosten":"Mungojnë kostot","art":{"muell":"Mbeturina","preis":"Çmimi","lager":"Magazina","papier":"Letrat"},"aktion":{"kuehlAlarm":"Mat përsëri","rundgangOffen":"Vazhdo raundin","rundgang":"Raundi i ftohjes","putzen":"Pastrim","sicherung":"Bëj kopje","abschluss":"Mbyll ditën","selbst":"Shkruaj recetën tënde","einkauf":"Shkruaj çmimet e blerjes","rezepte":"Peso recetat"}},
+  nutzen: {"start":"Nga regjistrimi i parë i mbeturinave","titel":"Më pak humbje në javë","laueft": (ab) => `Matja që nga ${ab}`,"stufe":{"bisNull":"Deri në zero","bisZiel":"Drejt objektivit","ueberZiel":"Mbi objektiv"},"ohneKosten":"Mungojnë kostot","art":{"muell":"Mbeturina","preis":"Çmimi","lager":"Magazina","papier":"Letrat"},"aktion":{"kuehlAlarm":"Mat përsëri","rundgangOffen":"Vazhdo raundin","rundgang":"Raundi i ftohjes","putzen":"Pastrim","sicherung":"Bëj kopje","abschluss":"Mbyll ditën","selbst":"Shkruaj recetën tënde","einkauf":"Shkruaj çmimet e blerjes","rezepte":"Peso recetat"}},
   app: { name: "GastroCash", entwurf: "Version prove" },
 
   allgemein: {
@@ -1158,6 +1158,7 @@ export default {
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
   menueReferenz: { hinweis: "Përbërësit nga menuja. Kontrollo sasitë, kohën e përgatitjes dhe recetën e plotë." }, // 26.10.2026
   heute: { bewegung: (b) => `që dje ${b}`,
+    nullKurz: "Zero te", zielKurz: "Synimi",
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
     tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",

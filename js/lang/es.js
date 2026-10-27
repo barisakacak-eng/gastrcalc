@@ -2,7 +2,7 @@
 // Spanisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Du-Form.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Desde el primer registro de basura","titel":"Menos pérdidas","laueft": (ab) => `Midiendo desde ${ab}`,"stufe":{"bisNull":"Hasta cero","bisZiel":"Hacia el objetivo","ueberZiel":"Sobre el objetivo"},"ohneKosten":"Faltan costes","art":{"muell":"Basura","preis":"Precio","lager":"Almacén","papier":"Papeleo"},"aktion":{"kuehlAlarm":"Volver a medir","rundgangOffen":"Seguir la ronda","rundgang":"Ronda de frío","putzen":"Limpiar","sicherung":"Hacer copia","abschluss":"Cerrar el día","selbst":"Anotar tu receta","einkauf":"Anotar precios de compra","rezepte":"Pesar recetas"}},
+  nutzen: {"start":"Desde el primer registro de basura","titel":"Menos pérdidas por semana","laueft": (ab) => `Midiendo desde ${ab}`,"stufe":{"bisNull":"Hasta cero","bisZiel":"Hacia el objetivo","ueberZiel":"Sobre el objetivo"},"ohneKosten":"Faltan costes","art":{"muell":"Basura","preis":"Precio","lager":"Almacén","papier":"Papeleo"},"aktion":{"kuehlAlarm":"Volver a medir","rundgangOffen":"Seguir la ronda","rundgang":"Ronda de frío","putzen":"Limpiar","sicherung":"Hacer copia","abschluss":"Cerrar el día","selbst":"Anotar tu receta","einkauf":"Anotar precios de compra","rezepte":"Pesar recetas"}},
   app: { name: "GastroCash", entwurf: "Versión de prueba" },
 
   allgemein: {
@@ -1153,6 +1153,7 @@ export default {
       buero: "Aquí están todas las cuentas, listas y ajustes. Las carpetas se las das a la inspección, al asesor fiscal o al contable." } },
   menueReferenz: { hinweis: "Ingredientes de la carta. Revisa cantidades, tiempo de preparación y la receta completa." }, // 26.10.2026
   heute: { bewegung: (b) => `desde ayer ${b}`,
+    nullKurz: "Cero en", zielKurz: "Meta",
     zielLinie: "cero + beneficio objetivo",
     stufe: { bisNull: "Para llegar a cero faltan", bisZiel: "Hasta el objetivo", ueberZiel: "Por encima del objetivo" },
     tempoGut: (d) => `En plan · ${d}`, tempoKnapp: (b) => `Hacen falta ${b} / día`, ohneKosten: "Faltan gastos fijos",

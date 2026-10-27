@@ -1,7 +1,7 @@
 // فارسی – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / زبان مغازه، جمله‌های کوتاه.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"از اولین ثبت دورریز","titel":"ضرر کمتر","laueft": (ab) => `اندازه‌گیری از ${ab}`,"stufe":{"bisNull":"تا صفر","bisZiel":"تا هدف","ueberZiel":"بالای هدف"},"ohneKosten":"هزینه‌ها کم است","art":{"muell":"دورریز","preis":"قیمت","lager":"انبار","papier":"کاغذبازی"},"aktion":{"kuehlAlarm":"دوباره اندازه بگیر","rundgangOffen":"دور چک را ادامه بده","rundgang":"دور چک سرما","putzen":"نظافت","sicherung":"پشتیبان بگیر","abschluss":"بستن روز","selbst":"دستورت را وارد کن","einkauf":"قیمت‌های خرید را وارد کن","rezepte":"دستورها را وزن کن"}},
+  nutzen: {"start":"از اولین ثبت دورریز","titel":"ضرر کمتر در هفته","laueft": (ab) => `اندازه‌گیری از ${ab}`,"stufe":{"bisNull":"تا صفر","bisZiel":"تا هدف","ueberZiel":"بالای هدف"},"ohneKosten":"هزینه‌ها کم است","art":{"muell":"دورریز","preis":"قیمت","lager":"انبار","papier":"کاغذبازی"},"aktion":{"kuehlAlarm":"دوباره اندازه بگیر","rundgangOffen":"دور چک را ادامه بده","rundgang":"دور چک سرما","putzen":"نظافت","sicherung":"پشتیبان بگیر","abschluss":"بستن روز","selbst":"دستورت را وارد کن","einkauf":"قیمت‌های خرید را وارد کن","rezepte":"دستورها را وزن کن"}},
   app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
@@ -1152,6 +1152,7 @@ export default {
       buero: "همهٔ حساب‌ها، فهرست‌ها و تنظیمات اینجاست. پوشه‌ها را به بازرس، مشاور مالیاتی یا حسابدار می‌دهی." } },
   menueReferenz: { hinweis: "مواد از منو. مقدارها، زمان آماده‌سازی و دستور کامل را چک کن." }, // 26.10.2026
   heute: { bewegung: (b) => `از دیروز ${b}`,
+    nullKurz: "صفر در", zielKurz: "هدف",
     zielLinie: "صفر + سود هدف",
     stufe: { bisNull: "تا صفر کم است", bisZiel: "تا هدف", ueberZiel: "بالای هدف" },
     tempoGut: (d) => `طبق برنامه · ${d}`, tempoKnapp: (b) => `${b} / روز لازم است`, ohneKosten: "هزینه‌های ثابت وارد نشده",

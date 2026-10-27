@@ -2,7 +2,7 @@
 // Französisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz, Du-Form.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Dès la première saisie de déchets","titel":"Moins de pertes","laueft": (ab) => `Mesure depuis ${ab}`,"stufe":{"bisNull":"Jusqu’à zéro","bisZiel":"Vers l’objectif","ueberZiel":"Au-dessus de l’objectif"},"ohneKosten":"Coûts manquants","art":{"muell":"Déchets","preis":"Prix","lager":"Stock","papier":"Paperasse"},"aktion":{"kuehlAlarm":"Mesurer à nouveau","rundgangOffen":"Continuer la tournée","rundgang":"Tournée du froid","putzen":"Nettoyer","sicherung":"Sauvegarder","abschluss":"Clôturer la journée","selbst":"Saisir ta recette","einkauf":"Saisir les prix d’achat","rezepte":"Peser les recettes"}},
+  nutzen: {"start":"Dès la première saisie de déchets","titel":"Moins de pertes par semaine","laueft": (ab) => `Mesure depuis ${ab}`,"stufe":{"bisNull":"Jusqu’à zéro","bisZiel":"Vers l’objectif","ueberZiel":"Au-dessus de l’objectif"},"ohneKosten":"Coûts manquants","art":{"muell":"Déchets","preis":"Prix","lager":"Stock","papier":"Paperasse"},"aktion":{"kuehlAlarm":"Mesurer à nouveau","rundgangOffen":"Continuer la tournée","rundgang":"Tournée du froid","putzen":"Nettoyer","sicherung":"Sauvegarder","abschluss":"Clôturer la journée","selbst":"Saisir ta recette","einkauf":"Saisir les prix d’achat","rezepte":"Peser les recettes"}},
   app: { name: "GastroCash", entwurf: "Version de test" },
 
   allgemein: {
@@ -1153,6 +1153,7 @@ export default {
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
   menueReferenz: { hinweis: "Ingrédients de la carte. Vérifie les quantités, le temps de préparation et la recette complète." }, // 26.10.2026
   heute: { bewegung: (b) => `depuis hier ${b}`,
+    nullKurz: "Zéro à", zielKurz: "Objectif",
     zielLinie: "zéro + bénéfice visé",
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },
     tempoGut: (d) => `Dans les temps · ${d}`, tempoKnapp: (b) => `${b} / jour nécessaires`, ohneKosten: "Frais fixes manquants",

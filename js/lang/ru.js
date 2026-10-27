@@ -7,7 +7,7 @@ const cap = (s) => { const t = String(s ?? ""); return t.charAt(0).toUpperCase()
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"С первой записи отходов","titel":"Меньше потерь","laueft": (ab) => `Замер идёт с ${ab}`,"stufe":{"bisNull":"До нуля","bisZiel":"К цели","ueberZiel":"Выше цели"},"ohneKosten":"Нет расходов","art":{"muell":"Отходы","preis":"Цена","lager":"Склад","papier":"Бумаги"},"aktion":{"kuehlAlarm":"Измерить снова","rundgangOffen":"Продолжить обход","rundgang":"Обход холода","putzen":"Уборка","sicherung":"Сделать копию","abschluss":"Закрыть день","selbst":"Внести свой рецепт","einkauf":"Внести закупочные цены","rezepte":"Взвесить рецепты"}},
+  nutzen: {"start":"С первой записи отходов","titel":"Меньше потерь в неделю","laueft": (ab) => `Замер идёт с ${ab}`,"stufe":{"bisNull":"До нуля","bisZiel":"К цели","ueberZiel":"Выше цели"},"ohneKosten":"Нет расходов","art":{"muell":"Отходы","preis":"Цена","lager":"Склад","papier":"Бумаги"},"aktion":{"kuehlAlarm":"Измерить снова","rundgangOffen":"Продолжить обход","rundgang":"Обход холода","putzen":"Уборка","sicherung":"Сделать копию","abschluss":"Закрыть день","selbst":"Внести свой рецепт","einkauf":"Внести закупочные цены","rezepte":"Взвесить рецепты"}},
   app: { name: "GastroCash", entwurf: "Тестовая версия" },
 
   allgemein: {
@@ -1158,6 +1158,7 @@ export default {
       buero: "Здесь все расчёты, списки и настройки. Папки ты отдаёшь инспекции, налоговому консультанту или бухгалтеру." } },
   menueReferenz: { hinweis: "Ингредиенты из меню. Проверь количества, время приготовления и полный рецепт." }, // 26.10.2026
   heute: { bewegung: (b) => `со вчера ${b}`,
+    nullKurz: "Ноль при", zielKurz: "Цель",
     zielLinie: "ноль + целевая прибыль",
     stufe: { bisNull: "До нуля не хватает", bisZiel: "До цели", ueberZiel: "Выше цели" },
     tempoGut: (d) => `По плану · ${d}`, tempoKnapp: (b) => `Нужно ${b} / день`, ohneKosten: "Не внесены постоянные расходы",

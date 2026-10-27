@@ -1,7 +1,7 @@
 // Türkçe. Mutfak dili: kısa cümleler, terim yok. Almanca tablodan çevrildi (Etap 1).
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"İlk çöpten","titel":"Kayıp azaldı","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
+  nutzen: {"start":"İlk çöpten","titel":"Haftalık kayıp azaldı","laueft": (ab) => `Ölçüm başlangıcı ${ab}`,"stufe":{"bisNull":"Sıfıra kalan","bisZiel":"Hedefe kalan","ueberZiel":"Hedefin üstünde"},"ohneKosten":"Giderler eksik","art":{"muell":"Atık","preis":"Fiyat","lager":"Stok","papier":"Evrak işleri"},"aktion":{"kuehlAlarm":"Tekrar ölç","rundgangOffen":"Tura devam et","rundgang":"Soğutma turu","putzen":"Temizlik","sicherung":"Yedek al","abschluss":"Günü kapat","selbst":"Üretimi kaydet","einkauf":"Alış fiyatlarını gir","rezepte":"Tarifleri tart"}},
   app: { name: "GastroCash", entwurf: "Deneme sürümü" },
 
   allgemein: {
@@ -1154,6 +1154,7 @@ export default {
   // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân “Bugün“ ve “Ofiste açık“
   menueReferenz: { hinweis: "Malzemeler menüden. Miktarları, süreyi ve tarifin tamamını kontrol et." }, // 26.10.2026
   heute: { bewegung: (b) => `dünden beri ${b}`,
+    nullKurz: "Sıfır noktası", zielKurz: "Hedef",
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
     tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",

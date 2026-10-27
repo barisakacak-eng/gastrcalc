@@ -1,7 +1,7 @@
 // Kurmancî – aus de.js übersetzt (15.10.2026). Ladensprache, kurz. / Zimanê dikanê, hevokên kurt.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Ji yekem tomara zibil","titel":"Kêmtir windabûn","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Zibil","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
+  nutzen: {"start":"Ji yekem tomara zibil","titel":"Hefteyê kêmtir windabûn","laueft": (ab) => `Pîvan ji ${ab} ve didome`,"stufe":{"bisNull":"Heta sifirê","bisZiel":"Ber bi armancê","ueberZiel":"Ser armancê"},"ohneKosten":"Lêçûn kêm in","art":{"muell":"Zibil","preis":"Biha","lager":"Embar","papier":"Kaxez"},"aktion":{"kuehlAlarm":"Dîsa bipîve","rundgangOffen":"Gera kontrolê bidomîne","rundgang":"Gera sarkirinê","putzen":"Paqij bike","sicherung":"Paşkopî bigire","abschluss":"Rojê bigire","selbst":"Reçeteya xwe binivîse","einkauf":"Bihayên kirînê binivîse","rezepte":"Reçeteyan bikişîne"}},
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
@@ -1152,6 +1152,7 @@ export default {
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   menueReferenz: { hinweis: "Malzemeyên ji menûyê. Mîqdar, dema amadekirinê û reçeteya tevahî kontrol bike." }, // 26.10.2026
   heute: { bewegung: (b) => `ji duh ve ${b}`,
+    nullKurz: "Sifir li", zielKurz: "Armanc",
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
     tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",

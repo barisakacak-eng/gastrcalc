@@ -65,7 +65,7 @@ button.b-zeile:active { background: var(--papier); }
 .b-sperrsym .sym { width: 36px; height: 36px; }
 .b-codefeld { width: 100%; max-width: 240px; min-height: 64px; text-align: center; font: inherit; font-size: calc(32rem / 17); letter-spacing: .5em; padding: 8px 0 8px .5em; border: 2px solid var(--holz); border-radius: var(--radius); background: var(--weiss); color: var(--tinte); }
 .b-codefeld:focus { outline: 3px solid var(--fokus); outline-offset: 2px; border-color: var(--fokus); }
-.b-haupt { min-height: 60px; display: flex !important; align-items: center; justify-content: center; gap: 8px; color: var(--tinte) !important; box-shadow: var(--schatten-knopf); border: 0; }
+.b-haupt { min-height: 60px; display: flex !important; align-items: center; justify-content: center; gap: 8px; color: #fff !important; /* 27.10.2026: dunkle Schrift auf Grün war kaum lesbar */ box-shadow: var(--schatten-knopf); border: 0; }
 .b-haupt .sym { width: 22px; height: 22px; }
 .b-sperre .b-haupt { max-width: 320px; }
 

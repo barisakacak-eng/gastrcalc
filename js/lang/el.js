@@ -2,7 +2,7 @@
 // Griechisch – aus de.js übersetzt (15.10.2026). Ladensprache, kurz.
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Από την πρώτη καταχώριση απορριμμάτων","titel":"Λιγότερη απώλεια","laueft": (ab) => `Μέτρηση από ${ab}`,"stufe":{"bisNull":"Ως το μηδέν","bisZiel":"Προς τον στόχο","ueberZiel":"Πάνω από τον στόχο"},"ohneKosten":"Λείπουν κόστη","art":{"muell":"Απορρίμματα","preis":"Τιμή","lager":"Αποθήκη","papier":"Χαρτιά"},"aktion":{"kuehlAlarm":"Μέτρησε ξανά","rundgangOffen":"Συνέχισε τον γύρο","rundgang":"Γύρος ψύξης","putzen":"Καθάρισμα","sicherung":"Κάνε backup","abschluss":"Κλείσιμο ημέρας","selbst":"Γράψε τη συνταγή σου","einkauf":"Γράψε τιμές αγοράς","rezepte":"Ζύγισε τις συνταγές"}},
+  nutzen: {"start":"Από την πρώτη καταχώριση απορριμμάτων","titel":"Λιγότερη απώλεια την εβδομάδα","laueft": (ab) => `Μέτρηση από ${ab}`,"stufe":{"bisNull":"Ως το μηδέν","bisZiel":"Προς τον στόχο","ueberZiel":"Πάνω από τον στόχο"},"ohneKosten":"Λείπουν κόστη","art":{"muell":"Απορρίμματα","preis":"Τιμή","lager":"Αποθήκη","papier":"Χαρτιά"},"aktion":{"kuehlAlarm":"Μέτρησε ξανά","rundgangOffen":"Συνέχισε τον γύρο","rundgang":"Γύρος ψύξης","putzen":"Καθάρισμα","sicherung":"Κάνε backup","abschluss":"Κλείσιμο ημέρας","selbst":"Γράψε τη συνταγή σου","einkauf":"Γράψε τιμές αγοράς","rezepte":"Ζύγισε τις συνταγές"}},
   app: { name: "GastroCash", entwurf: "Δοκιμαστική έκδοση" },
 
   allgemein: {
@@ -1153,6 +1153,7 @@ export default {
       buero: "Εδώ είναι όλοι οι υπολογισμοί, οι λίστες και οι ρυθμίσεις. Τους φακέλους τους δίνεις στην υγειονομική, στον φοροτεχνικό ή στον λογιστή." } },
   menueReferenz: { hinweis: "Υλικά από το μενού. Έλεγξε ποσότητες, χρόνο προετοιμασίας και ολόκληρη τη συνταγή." }, // 26.10.2026
   heute: { bewegung: (b) => `από χθες ${b}`,
+    nullKurz: "Μηδέν στα", zielKurz: "Στόχος",
     zielLinie: "μηδέν + στόχος κέρδους",
     stufe: { bisNull: "Μέχρι το μηδέν λείπουν", bisZiel: "Μέχρι τον στόχο", ueberZiel: "Πάνω από τον στόχο" },
     tempoGut: (d) => `Εντός πλάνου · ${d}`, tempoKnapp: (b) => `Χρειάζονται ${b} / μέρα`, ohneKosten: "Λείπουν πάγια έξοδα",

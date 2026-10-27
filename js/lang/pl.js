@@ -7,7 +7,7 @@ const lm = (n, a, b, c) => { const x = Math.abs(Number(n)); if (!Number.isFinite
 
 export default {
   // Euro-Zähler (übersetzt 27.10.2026)
-  nutzen: {"start":"Od pierwszego wpisu odpadów","titel":"Mniej strat","laueft": (ab) => `Pomiar trwa od ${ab}`,"stufe":{"bisNull":"Do zera","bisZiel":"Do celu","ueberZiel":"Powyżej celu"},"ohneKosten":"Brak kosztów","art":{"muell":"Odpady","preis":"Cena","lager":"Magazyn","papier":"Papiery"},"aktion":{"kuehlAlarm":"Zmierz jeszcze raz","rundgangOffen":"Kontynuuj obchód","rundgang":"Obchód chłodzenia","putzen":"Sprzątanie","sicherung":"Zrób kopię","abschluss":"Zamknij dzień","selbst":"Wpisz swoją recepturę","einkauf":"Wpisz ceny zakupu","rezepte":"Zważ receptury"}},
+  nutzen: {"start":"Od pierwszego wpisu odpadów","titel":"Mniej strat tygodniowo","laueft": (ab) => `Pomiar trwa od ${ab}`,"stufe":{"bisNull":"Do zera","bisZiel":"Do celu","ueberZiel":"Powyżej celu"},"ohneKosten":"Brak kosztów","art":{"muell":"Odpady","preis":"Cena","lager":"Magazyn","papier":"Papiery"},"aktion":{"kuehlAlarm":"Zmierz jeszcze raz","rundgangOffen":"Kontynuuj obchód","rundgang":"Obchód chłodzenia","putzen":"Sprzątanie","sicherung":"Zrób kopię","abschluss":"Zamknij dzień","selbst":"Wpisz swoją recepturę","einkauf":"Wpisz ceny zakupu","rezepte":"Zważ receptury"}},
   app: { name: "GastroCash", entwurf: "Wersja testowa" },
 
   allgemein: {
@@ -1158,6 +1158,7 @@ export default {
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   menueReferenz: { hinweis: "Składniki z karty. Sprawdź ilości, czas przygotowania i cały przepis." }, // 26.10.2026
   heute: { bewegung: (b) => `od wczoraj ${b}`,
+    nullKurz: "Zero przy", zielKurz: "Cel",
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
     tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",

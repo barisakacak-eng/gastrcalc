@@ -1,7 +1,7 @@
 // Leitsprache. Küchensprache: kurze Sätze, keine Fachbegriffe. Jede andere Sprache wird aus dieser Tabelle übersetzt.
 export default {
   // Euro-Zähler – Sanji, DE/TR/EN, 23.10.2026.
-  nutzen: {"start":"Ab erstem Müll-Eintrag","titel":"Weniger Verlust","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
+  nutzen: {"start":"Ab erstem Müll-Eintrag","titel":"Weniger Verlust pro Woche","laueft": (ab) => `Messung läuft seit ${ab}`,"stufe":{"bisNull":"Bis null","bisZiel":"Zum Ziel","ueberZiel":"Über Ziel"},"ohneKosten":"Kosten fehlen","art":{"muell":"Müll","preis":"Preis","lager":"Lager","papier":"Papierkram"},"aktion":{"kuehlAlarm":"Nachmessen","rundgangOffen":"Rundgang fortsetzen","rundgang":"Kühlrundgang","putzen":"Putzen","sicherung":"Sicherung machen","abschluss":"Tag abschließen","selbst":"Ansatz eintragen","einkauf":"Einkaufspreise eintragen","rezepte":"Rezepte abwiegen"}},
   app: { name: "GastroCash", entwurf: "Testfassung" },
 
   allgemein: {
@@ -1074,7 +1074,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     code: "Code festlegen", codeAn: "Code ist festgelegt", bio: "Face ID einschalten", bioAn: "Face ID ist an", bioNicht: "Face ID geht auf diesem Gerät nicht. Der Code reicht.", mitBio: "Mit Face ID öffnen" },
   // E-Mail an Steuerberater/Buchhalter (Entwurf 27.10.2026)
   ordnerMail: {
-    zeki: { steuer: "Ich mach dir die E-Mail fertig. Du tippst nur auf Senden.", buch: "Ich mach dir die E-Mail fertig. Du tippst nur auf Senden." },
+    zeki: { steuer: "Ich mach dir die E\u2011Mail fertig. Du tippst nur auf Senden.", buch: "Ich mach dir die E\u2011Mail fertig. Du tippst nur auf Senden." },
     platzhalter: { steuer: "E-Mail Steuerberater (wenn du sie hast)", buch: "E-Mail Buchhalter (wenn du sie hast)" },
     knopf: { steuer: "An Steuerberater schicken", buch: "An Buchhalter schicken" },
     text: {
@@ -1170,6 +1170,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
   // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
   menueReferenz: { hinweis: "Zutaten aus der Karte. Mengen, Zeit und vollständiges Rezept bitte prüfen." }, // 26.10.2026
   heute: { bewegung: (b) => `seit gestern ${b}`,
+    nullKurz: "Null bei", zielKurz: "Ziel",
     zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },
     tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",

@@ -77,13 +77,13 @@ function heuteZielKarte(stand, z, H) {
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
     ${w.stufe === "bisNull" && w.bewegung && Math.abs(w.bewegung.betrag) >= 1 ? `<span class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</span>` : ""}
     ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
-    ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
+    ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z, w.stufe)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
 
 // Kursdiagramm der Zielkarte (Sanji-Entwurf 20.10.2026): x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
 // Daten aus monatsZiel (m.tage: kumuliert bis heute) – die Oberfläche rechnet nichts Neues, sie zeichnet nur.
-export function kursDiagramm(m, marke, z) {
+export function kursDiagramm(m, marke, z, stufe = "bisZiel") {
   const alle = z?.tage || []; const n = Math.max(2, alle.length); const ist = (m.tage || []).filter((x) => x.umsatz !== null || x.kumuliert > 0);
   const W = 312, X0 = 4, Y0 = 142, HH = 126;
   const max = Math.max(marke || 0, ...(m.tage || []).map((x) => x.kumuliert || 0), 1) * 1.12;
@@ -98,7 +98,7 @@ export function kursDiagramm(m, marke, z) {
     <line class="h-kurs-ziel" x1="4" x2="316" y1="${yz}" y2="${yz}"/>
     <line class="h-kurs-achse" x1="4" x2="316" y1="142" y2="142"/>
     ${tage.length && ist.length ? `<path class="h-kurs-flaeche" d="${pfad} L${X(idx(letzt.datum))},142 L${X(idx(tage[0].datum))},142 Z"/><path class="h-kurs-linie" d="${pfad}"/><circle class="h-kurs-punkt" cx="${X(idx(letzt.datum))}" cy="${Y(letzt.kumuliert || 0)}" r="5"/>` : ""}
-  </svg><span class="h-kurs-ziellabel" style="bottom:calc(${zielProzent}% + 3px)">${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</span><span class="h-kurs-tag links">\u2066${esc(tag(z?.start && z.start > (alle[0]?.datum || "") ? z.start : alle[0]?.datum))}\u2069</span><span class="h-kurs-tag rechts">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</span></span>`;
+  </svg><span class="h-kurs-ziellabel" style="bottom:calc(${zielProzent}% + 3px)">${esc(t(stufe === "bisNull" ? "heute.nullKurz" : "heute.zielKurz"))} ${esc(fmtEuro(marke || 0, { dezimal: 0 }))}</span><span class="h-kurs-tag links">\u2066${esc(tag(z?.start && z.start > (alle[0]?.datum || "") ? z.start : alle[0]?.datum))}\u2069</span><span class="h-kurs-tag rechts">\u2066${esc(tag(alle[alle.length - 1]?.datum))}\u2069</span></span>`;
 }
 // Lorbeer und Kupferlinie aus Sanjis Entwurf (inline-SVG, Farben aus den Tokens)
 const LORBEER = `<svg class="h-lorbeer" viewBox="0 0 44 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 53 C4 40 4 23 14 7"/><path d="M32 53 C40 40 40 23 30 7"/></g><g fill="currentColor"><ellipse cx="8" cy="42" rx="3" ry="7" transform="rotate(-34 8 42)"/><ellipse cx="6" cy="31" rx="3" ry="7" transform="rotate(-12 6 31)"/><ellipse cx="9" cy="20" rx="3" ry="7" transform="rotate(19 9 20)"/><ellipse cx="15" cy="11" rx="2.5" ry="6" transform="rotate(39 15 11)"/><ellipse cx="36" cy="42" rx="3" ry="7" transform="rotate(34 36 42)"/><ellipse cx="38" cy="31" rx="3" ry="7" transform="rotate(12 38 31)"/><ellipse cx="35" cy="20" rx="3" ry="7" transform="rotate(-19 35 20)"/><ellipse cx="29" cy="11" rx="2.5" ry="6" transform="rotate(-39 29 11)"/></g></svg>`;
