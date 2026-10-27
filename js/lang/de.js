@@ -744,7 +744,7 @@ titel: "Büro", zurueck: "Laden",
     belegeKurz: "Beleg einlesen, Preise nachziehen",
   },
 
-  teamTag: { frage: "Waren heute Mitarbeiter da?", wer: "Wer war da? Stunden einstellen.", std: "Std.", satz: "Brutto pro Stunde", summe: (b) => `Kostet dich heute: ${b}`, brutto: (b) => `${b} brutto, dazu Arbeitgeberanteil`, art: { angestellt: "Angestellt", minijob: "Minijob" }, summeOffen: "Lohn und Art fehlen noch", weitere: "weitere Person", person: (n) => `Mitarbeiter ${n}`, fertig: "Fertig" },
+  teamTag: { abwFrage: "Waren diesen Monat Mitarbeiter krank oder im Urlaub?", abwWer: "Wie viele Tage? Du zahlst sie trotzdem.", tage: "Tage", modell: { stunde: "Pro Stunde", monat: "Fest im Monat" }, monatBrutto: "Brutto im Monat", monatHinweis: "Zählt jeden Monat als feste Kosten. Wird nicht mehr täglich gefragt.", frage: "Waren heute Mitarbeiter da?", wer: "Wer war da? Stunden einstellen.", std: "Std.", satz: "Brutto pro Stunde", summe: (b) => `Kostet dich heute: ${b}`, brutto: (b) => `${b} brutto, dazu Arbeitgeberanteil`, art: { angestellt: "Angestellt", minijob: "Minijob" }, summeOffen: "Lohn und Art fehlen noch", weitere: "weitere Person", person: (n) => `Mitarbeiter ${n}`, fertig: "Fertig" },
   muell: { personalEintragen: "Personalessen eintragen",
     zeki: { start: "Was ist heute weg?", weiter: "Noch was weg?", personal: "Was hat dein Team gegessen?", bruch: "Was ist kaputtgegangen?" },
     grund: { roh: "Ware", personal: "Personal", bruch: "Bruch" },

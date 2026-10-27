@@ -21,7 +21,7 @@ test("ohne Messung bleibt ausschließlich der Messbeginn, auch bei vorhandener S
     assert.doesNotMatch(html, /€|h-nutzen-summe|h-nutzen-posten/);
   }
   setzeSprache("de");
-  assert.equal(text(nutzenKarte({ ...leer, ab: null })), "Ab erstem Müll-Eintrag"); // Zoro 23.10.: kein „seit –“
+  assert.equal(nutzenKarte({ ...leer, ab: null }), ""); // Baris 27.10.2026: ohne Messbeginn keine Karte (vorher „Ab erstem Müll-Eintrag“)
 });
 
 test("groß steht nur die gelieferte Summe; geschätzte Posten bleiben separat mit ≈", () => {

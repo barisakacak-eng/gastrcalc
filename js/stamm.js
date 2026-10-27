@@ -201,6 +201,9 @@ export function kontaktSetzen(stand, art, email) {
 export const teamTag = (stand, datum) => [...(stand?.teamTage || [])].reverse().find((x) => x.datum === datum) || null;
 export function teamTagSetzen(stand, datum, eintraege) {
   stand.teamTage ??= [];
+  // Fester Monatslohn: wird an der Person gemerkt und zählt nicht als Tageseintrag
+  for (const x of eintraege || []) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.modell === "monat" && x.monatsBrutto > 0) { p.lohnModell = "monat"; p.monatsBrutto = Math.round(x.monatsBrutto * 100) / 100; p.lohnArt = x.art === "minijob" ? "minijob" : "angestellt"; } else if (p && x.modell === "stunde") p.lohnModell = "stunde"; }
+  eintraege = (eintraege || []).filter((x) => x.modell !== "monat");
   const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), stunden: Math.round(x.stunden * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
   stand.teamTage.push(e);
   for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) { p.stundenlohn = x.satz; p.lohnArt = x.art; } }
@@ -209,3 +212,19 @@ export function teamTagSetzen(stand, datum, eintraege) {
 // satz = Brutto-Stundenlohn; art = "angestellt" | "minijob". Kosten = Brutto × Arbeitgeber-Aufschlag (js/data/lohnkosten.js)
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);
+
+// Urlaub und Krankheit (Baris 27.10.2026, 12:25): gegen Monatsende einmal „Waren diesen Monat Mitarbeiter krank oder im Urlaub?“.
+// Bei Stundenlohn zahlt der Chef diese Tage trotzdem (Lohnfortzahlung/Urlaubsentgelt) – Tage × übliche Stunden × Brutto × Arbeitgeberanteil.
+// stand.abwesend = [{ monat: "JJJJ-MM", datum, eintraege: [{ person, name, tage, stundenTag, satz, art }], erfasst }] – je Monat der jüngste.
+export const abwesendMonat = (stand, monat) => [...(stand?.abwesend || [])].reverse().find((x) => x.monat === monat) || null;
+export function abwesendSetzen(stand, datum, eintraege) {
+  stand.abwesend ??= [];
+  const e = { monat: datum.slice(0, 7), datum, eintraege: (eintraege || []).filter((x) => x.tage > 0 && x.satz > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), tage: Math.round(x.tage), stundenTag: x.stundenTag > 0 ? x.stundenTag : 8, satz: x.satz, art: x.art === "minijob" ? "minijob" : "angestellt" })), erfasst: new Date().toISOString() };
+  stand.abwesend.push(e); return e;
+}
+export const abwesendKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + x.tage * x.stundenTag * kostenJeStunde(x.satz, x.art), 0);
+// Übliche Stunden je Arbeitstag einer Person im Monat (aus „Mitarbeiter heute“), sonst 8
+export function stundenJeTag(stand, person, monat) {
+  const tage = (stand?.teamTage || []).filter((x) => x.datum.startsWith(monat)).flatMap((x) => x.eintraege.filter((y) => y.person === person));
+  return tage.length ? tage.reduce((s, y) => s + y.stunden, 0) / tage.length : 8;
+}

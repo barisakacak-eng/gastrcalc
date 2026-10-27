@@ -737,7 +737,7 @@ export default {
     belegeKurz: "Fiş oku, fiyatları güncelle",
   },
 
-  teamTag: { frage: "Bugün personel var mıydı?", wer: "Kim vardı? Saatleri ayarla.", std: "sa.", satz: "Saatlik brüt", summe: (b) => `Bugün sana maliyeti: ${b}`, brutto: (b) => `${b} brüt, üstüne işveren payı`, art: { angestellt: "Sigortalı", minijob: "Minijob" }, summeOffen: "Ücret ve tür eksik", weitere: "bir kişi daha", person: (n) => `Personel ${n}`, fertig: "Tamam" },
+  teamTag: { abwFrage: "Bu ay hasta ya da izinli personel oldu mu?", abwWer: "Kaç gün? Onları yine de ödüyorsun.", tage: "gün", modell: { stunde: "Saatlik", monat: "Aylık sabit" }, monatBrutto: "Aylık brüt", monatHinweis: "Her ay sabit gider sayılır. Artık her gün sorulmaz.", frage: "Bugün personel var mıydı?", wer: "Kim vardı? Saatleri ayarla.", std: "sa.", satz: "Saatlik brüt", summe: (b) => `Bugün sana maliyeti: ${b}`, brutto: (b) => `${b} brüt, üstüne işveren payı`, art: { angestellt: "Sigortalı", minijob: "Minijob" }, summeOffen: "Ücret ve tür eksik", weitere: "bir kişi daha", person: (n) => `Personel ${n}`, fertig: "Tamam" },
   muell: { personalEintragen: "Personel yemeği gir",
     zeki: { start: "Bugün ne çöpe gitti?", weiter: "Başka giden var mı?", personal: "Ekibin ne yedi?", bruch: "Ne kırıldı?" },
     grund: { roh: "Mal", personal: "Personel", bruch: "Kırık" }, nichtsGefunden: "Bir şey bulunamadı. Başka yaz veya “Kova tartıldı”yı seç.",

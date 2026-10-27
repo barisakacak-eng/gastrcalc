@@ -1,4 +1,4 @@
-import { teamTag, teamTagKosten } from "./stamm.js";
+import { teamTag, teamTagKosten, abwesendMonat, abwesendKosten } from "./stamm.js";
 // Etappe 5: der Break-even-Zähler (Wunsch Baris 12.10.2026). Reine Funktionen, keine Oberfläche.
 // Jeden Tag: alles, was bis heute an Kosten angefallen ist, gegen alles, was bis heute (netto) reingekommen ist.
 // Rot im Minus („bis null fehlen"), grün im Plus („verdient diesen Monat"). Kalkulatorisch, kein Kontostand.
@@ -129,9 +129,11 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const tageskosten = gewichtMonat > 0 ? (last.gesamt + sonder.summe) / gewichtMonat : 0;
   // 27.10.2026 (Baris: Mitarbeiter sind bewegliche Kosten): Lohn je Tag aus „Mitarbeiter heute“ (Brutto × Arbeitgeberanteil), sonst die
   // Monatssumme anteilig als Schätzung. Tageskosten ohne Lohn sind die festen Kosten des Tages.
-  const lohnMonat = last.lohn ?? 0;
-  const tageskostenFest = gewichtMonat > 0 ? (last.gesamt - lohnMonat + sonder.summe) / gewichtMonat : 0;
-  const lohnAnteilig = gewichtMonat > 0 ? lohnMonat / gewichtMonat : 0;
+  // Feste Monatslöhne (lohnModell "monat") sind feste Kosten; der Rest der Lohnsumme ist der geschätzte Stundenlohn-Anteil.
+  const lohnMonat = last.lohn ?? 0; const festPersonal = last.festPersonal || 0;
+  const tageskostenFest = gewichtMonat > 0 ? (last.gesamt - lohnMonat + festPersonal + sonder.summe) / gewichtMonat : 0;
+  const lohnStundenMonat = Math.max(0, lohnMonat - festPersonal);
+  const lohnAnteilig = gewichtMonat > 0 ? lohnStundenMonat / gewichtMonat : 0;
   // Ein Eintrag zählt nur, wenn bei allen Personen der Stundenlohn da ist – sonst bleibt der Tag beim Anteil (Gegenprüfung 27.10.: fehlender Lohn ≠ 0 €).
   const lohnAm = (d, gewicht) => { const e = teamTag(stand, d); const vollstaendig = e && (e.keine || e.eintraege.every((x) => x.satz > 0));
     return vollstaendig ? { betrag: teamTagKosten(e), echt: true } : { betrag: lohnAnteilig * gewicht, echt: false }; };
@@ -152,6 +154,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     const lt = lohnAm(t.datum, t.gewicht); t.lohn = lt.betrag; t.lohnEcht = lt.echt;
     if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } else if (t.gewicht > 0) lohnGeschaetztTage += 1;
     lohnBis += lt.betrag;
+    const ab = abwesendMonat(stand, M.von.slice(0, 7)); if (ab && ab.datum === t.datum) { const k = abwesendKosten(ab); lt.betrag += k; lohnBis += k; } // Urlaub/Krankheit am Tag der Antwort
     kosten += tageskostenFest * t.gewicht + lt.betrag; gewichtBisHeute += t.gewicht;
     umsatzBrutto += ub; umsatzNetto += un; ware += w; muellSumme += m;
     if (e) { tageMitUmsatz += 1; db += un * (1 - quoteEff) - m; }
@@ -167,7 +170,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const dbProTag = tageMitUmsatz > 0 ? db / tageMitUmsatz : null;
   // Gegenprüfung 27.10.: künftige Tage immer mit dem anteiligen Monatslohn – ein einzelner Eintrag wird nicht auf den Monat hochgerechnet.
   // Nur ohne Monatssumme (Lohn nie eingetragen) nimmt die Vorhersage den Schnitt der echten Öffnungstage (Ruhetage zählen dort nicht mit).
-  const lohnJeGewicht = lohnMonat > 0 ? lohnAnteilig : (lohnEchtGewicht > 0 ? lohnEchtSummeOffen / lohnEchtGewicht : 0);
+  const lohnJeGewicht = lohnStundenMonat > 0 ? lohnAnteilig : (lohnEchtGewicht > 0 ? lohnEchtSummeOffen / lohnEchtGewicht : 0);
   const tageskostenPrognose = tageskostenFest + lohnJeGewicht; // je Öffnungstag (Gewicht 1) für die restlichen Tage
   const gewichtZukunft = tage.filter((t) => t.status === "zukunft").reduce((a, t) => a + t.gewicht, 0);
   let nullTag = null, monatsende = null, reichtNicht = false;
@@ -184,7 +187,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const unvollstaendig = last.offen > 0;
   // Paket 3 (16.10.2026), M2/M15: geschätzt, wenn der Mischsatz ohne echte Mengen gewichtet ist, die Quote vom Richtwert kommt oder der
   // eigene Lohn ein Richtwert ist – unter Stufe 3 ist die Ware ohnehin eine Schätzung aus der Karte.
-  const lohnGeschaetzt = lohnMonat > 0 && lohnGeschaetztTage > 0;
+  const lohnGeschaetzt = lohnStundenMonat > 0 && lohnGeschaetztTage > 0;
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0 || lohnGeschaetzt;
   return {
     datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,

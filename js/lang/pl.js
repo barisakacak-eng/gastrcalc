@@ -742,7 +742,7 @@ export default {
     belegeKurz: "Wczytaj rachunek, zaktualizuj ceny",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Wpisz posiłek pracownika",
     zeki: { start: "Co dziś poszło do kosza?", weiter: "Coś jeszcze do kosza?", personal: "Co zjadł twój zespół?", bruch: "Co się zepsuło lub stłukło?" },
     grund: { roh: "Towar", personal: "Personel", bruch: "Uszkodzone" }, nichtsGefunden: "Nic nie znaleziono. Napisz inaczej albo wybierz „Zważone wiadro”.",

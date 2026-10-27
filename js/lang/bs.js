@@ -744,7 +744,7 @@ export default {
     belegeKurz: "Učitaj račun, ažuriraj cijene",
   },
 
-  teamTag: { frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
+  teamTag: { abwFrage: "Was any staff sick or on leave this month?", abwWer: "How many days? You still pay them.", tage: "days", modell: { stunde: "Per hour", monat: "Fixed per month" }, monatBrutto: "Gross per month", monatHinweis: "Counts as a fixed cost every month. No longer asked daily.", frage: "Was staff here today?", wer: "Who was here? Set the hours.", std: "hrs", satz: "Gross per hour", summe: (b) => `Costs you today: ${b}`, brutto: (b) => `${b} gross, plus employer share`, art: { angestellt: "Employed", minijob: "Minijob" }, summeOffen: "Wage and type still missing", weitere: "another person", person: (n) => `Staff ${n}`, fertig: "Done" }, /* Entwurf – Übersetzung folgt nach Baris' Ja */
   muell: { personalEintragen: "Upiši obrok osoblja",
     zeki: { start: "Šta je danas bačeno?", weiter: "Još nešto bačeno?", personal: "Šta je tvoj tim jeo?", bruch: "Šta se razbilo ili pokvarilo?" },
     grund: { roh: "Roba", personal: "Osoblje", bruch: "Lom" }, nichtsGefunden: "Ništa nađeno. Napiši drugačije ili uzmi „Kanta izvagana“.",

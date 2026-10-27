@@ -60,3 +60,31 @@ test("Gegenprüfung 27.10.: Eintrag ohne Stundenlohn zählt nicht als 0 €", ()
   const nach = monatsZiel(s, zaehler(s, { datum: H }), H).fehltNull;
   assert.ok(Math.abs(nach - vor) < 1e-6);
 });
+
+test("Fester Monatslohn zählt als feste Kosten mit Arbeitgeberanteil, nicht täglich", async () => {
+  const { festPersonalMonat, kostenJeMonat } = await import("../js/data/lohnkosten.js");
+  const { teamFrageNoetig } = await import("../js/screens/umsatz_laden.js");
+  const s = beispielLaden("2026-10-26"); const H = "2026-10-15";
+  for (const p of s.personen) { p.lohnModell = "monat"; p.monatsBrutto = 3000; p.lohnArt = "angestellt"; }
+  assert.ok(Math.abs(festPersonalMonat(s) - 2 * kostenJeMonat(3000, "angestellt")) < 1e-6);
+  assert.equal(teamFrageNoetig(s), false);
+  const z = zaehler(s, { datum: H });
+  assert.ok(z.tageskostenPrognose - z.tageskostenFest < 1e-6 || z.last.lohn > z.last.festPersonal);
+  // „Nein, heute keiner da“ ändert bei festem Lohn nichts
+  const vor = monatsZiel(s, z, H).fehltNull; teamTagSetzen(s, H, []);
+  const nach = monatsZiel(s, zaehler(s, { datum: H }), H).fehltNull;
+  assert.ok(Math.abs(nach - vor) < 1e-6 || z.last.lohn > z.last.festPersonal);
+});
+
+test("Urlaub/Krankheit am Monatsende: Tage × übliche Stunden × Brutto × Aufschlag bewegen bis null", async () => {
+  const { abwesendSetzen } = await import("../js/stamm.js");
+  const { abwesendFrageNoetig } = await import("../js/screens/umsatz_laden.js");
+  const { kostenJeStunde } = await import("../js/data/lohnkosten.js");
+  const s = beispielLaden("2026-10-26"); const p = s.personen[0]; p.stundenlohn = 14; p.lohnArt = "angestellt";
+  assert.equal(abwesendFrageNoetig(s, "2026-10-29"), true); assert.equal(abwesendFrageNoetig(s, "2026-10-20"), false);
+  const H = "2026-10-29"; const vor = zaehler(s, { datum: H }).kosten;
+  abwesendSetzen(s, H, [{ person: p.id, name: p.kuerzel, tage: 2, stundenTag: 8, satz: 14, art: "angestellt" }]);
+  const nach = zaehler(s, { datum: H }).kosten;
+  assert.ok(Math.abs((nach - vor) - 2 * 8 * kostenJeStunde(14, "angestellt")) < 1e-6);
+  assert.equal(abwesendFrageNoetig(s, "2026-10-30"), false); // einmal je Monat
+});

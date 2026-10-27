@@ -14,3 +14,9 @@ export const LOHN_AUFSCHLAG = {
 export const LOHN_STANDARD = "angestellt";
 // Was dich eine Stunde wirklich kostet: Brutto × (1 + Aufschlag)
 export const kostenJeStunde = (brutto, art = LOHN_STANDARD) => (brutto > 0 ? brutto * (1 + (LOHN_AUFSCHLAG[art] || LOHN_AUFSCHLAG[LOHN_STANDARD]).satz) : 0);
+
+// Fester Monatslohn (Baris 27.10.2026, 13:02: „Stunden und Monat … rechnen sich natürlich anders“): Personen mit lohnModell "monat"
+// kosten jeden Monat Brutto × (1 + Aufschlag) – unabhängig von „Waren heute Mitarbeiter da?“. Sie gehören zu den festen Kosten.
+export const kostenJeMonat = (brutto, art = LOHN_STANDARD) => (brutto > 0 ? brutto * (1 + (LOHN_AUFSCHLAG[art] || LOHN_AUFSCHLAG[LOHN_STANDARD]).satz) : 0);
+export const festPersonalMonat = (stand) => (stand?.personen || []).filter((p) => !p.entfernt && p.aktiv !== false && p.lohnModell === "monat" && p.monatsBrutto > 0)
+  .reduce((s, p) => s + kostenJeMonat(p.monatsBrutto, p.lohnArt), 0);

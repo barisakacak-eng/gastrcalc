@@ -27,6 +27,8 @@ async def pruefe_nutzen(pg, art, lang, width, out, pruefe_heute):
             }""",fall)
             await pruefe_heute()
             karte=pg.locator('.h-nutzen')
+            if fall=='ohne-beginn':  # Baris 27.10.2026: ohne Messbeginn keine Karte mehr („Ab erstem Müll-Eintrag“ entfällt)
+                await pg.wait_for_timeout(300); assert await karte.count()==0; continue
             await karte.wait_for()
             if erwartung['leer']:
                 assert await karte.inner_text()==erwartung['text'],(fall,await karte.inner_text())

@@ -106,6 +106,9 @@ async def pilot(browser, art, temp):
         await heute(pg,art)
         # Umsatz über den echten Eingabeweg speichern, dann echte Müllbuchung mit Rückgängig.
         await tipp(pg,'.h-feld.umsatz');await pg.fill('[data-f="ul-umsatz"]','820');await tipp(pg,'[data-a="ul-speichern"]')
+        # 27.10.2026: danach fragt Zeki „Waren heute Mitarbeiter da?“ – hier: Nein
+        await pg.wait_for_selector('[data-a="ul-team-nein"], .heute-laden'); 
+        if await pg.locator('[data-a="ul-team-nein"]').count(): await tipp(pg,'[data-a="ul-team-nein"]')
         await pg.wait_for_selector('.heute-laden')
         await nav_hilfe.geh(pg,'muell');await tipp(pg,'[data-a="muell-station-auf"]')
         assert '€' not in await pg.locator('.muell-station').inner_text()

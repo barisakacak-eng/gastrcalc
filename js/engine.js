@@ -1,3 +1,4 @@
+import { festPersonalMonat } from "./data/lohnkosten.js";
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
 // Die Oberfläche darf nichts rechnen, was hier nicht steht. So reden Rechnung und Gestaltung nicht aneinander vorbei.
@@ -70,11 +71,13 @@ export function lohnJeMonat(team) {
 // Lohnsplit saisonal/ganzjährig kommt später). Ergebnis-Objekt sagt, ob Teile offen sind.
 export function monatsLast(stand) {
   const fk = fixkosten(stand);
-  const lohn = lohnJeMonat(stand.team);
+  // 27.10.2026: Lohn im Monat = eingetragene Lohnkosten, mindestens aber die festen Monatslöhne der Personen (Brutto + Arbeitgeberanteil)
+  const lohnEingetragen = lohnJeMonat(stand.team); const festPersonal = festPersonalMonat(stand);
+  const lohn = festPersonal > 0 ? Math.max(lohnEingetragen ?? 0, festPersonal) : lohnEingetragen;
   const eigen = eigenerLohnJeMonat(stand.team);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
   const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
-  return { fix: fk, lohn, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
+  return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
 }
 
 // Minutensatz auf Leistungsstunden (Prüfung "Minutensatz, nebenbei"): bezahlte Stunden sind nicht produktive Stunden.
