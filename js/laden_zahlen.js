@@ -19,7 +19,11 @@ export function heuteZiel(stand, z, H) {
   const marke = m.ziel === null ? null : stufe === "bisNull" ? m.nullpunkt : m.ziel;
   const anteil = marke ? Math.max(0, Math.min(1, m.umsatz / marke)) : 0;
   const tempo = m.erreichtAm ? { art: "gut", am: m.erreichtAm } : m.proTagNoetig ? { art: "knapp", proTag: m.proTagNoetig } : null;
-  return { m, stufe, zahl, marke, anteil, tempo };
+  // 27.10.2026 (Baris: die Zahl bewegt sich jeden Tag): Bewegung seit gestern – gleiche Rechnung mit dem Stand bis gestern
+  let bewegung = null;
+  try { const G = tagPlus(H, -1); const ab = typeof stand.angelegt === "string" ? heuteGeschaeft(new Date(stand.angelegt)) : null; if (G.slice(0, 7) === H.slice(0, 7) && (!ab || G >= ab)) { const mg = monatsZiel(stand, zaehler(stand, { datum: G }), G);
+    if (mg.nullpunkt !== null && m.nullpunkt !== null) { const vorher = mg.fehltNull ?? 0, jetzt = m.fehltNull ?? 0; bewegung = { betrag: jetzt - vorher, umsatz: (m.umsatz || 0) - (mg.umsatz || 0) }; } } } catch { bewegung = null; }
+  return { m, stufe, zahl, marke, anteil, tempo, bewegung };
 }
 
 // Vier Kacheln. Umsatz und Müll nach Geschäftstag H, Kühlung und Putzen nach Kalendertag K (Paket 3, M7).

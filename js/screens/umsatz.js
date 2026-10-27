@@ -43,7 +43,7 @@ export function umsatzView(stand) {
           <span class="seg">${["brutto", "netto"].map((b) => `<button type="button" class="${umsatzBasis === b ? "an" : ""}" data-a="umsatz-basis" data-wert="${b}">${esc(t("zaehler.umsatzBasis." + b))}</button>`).join("")}</span></div>
         <span class="marke">${esc(umsatzBasis === "netto" && notiz ? t("zaehler.nettoGespeichert", fmtEuro(notiz.umsatz, { dezimal: 2 })) : t("tag.umsatzHinweis"))}</span>
       </div>
-      ${zaehlerKarte(z, D, { tipp: false, vorUmsatz: (() => { try { const w = heuteZiel(stand, z, D); return w.zahl === null ? null : { zahl: w.zahl, geschaetzt: !!w.m?.geschaetzt }; } catch { return null; } })() })}
+      ${zaehlerKarte(z, D, { tipp: false, ziel: (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })() })}
       ${streckeKarte(z, st)}
       ${prognoseKarte(z)}
       ${gesternKarte(stand, z, D)}

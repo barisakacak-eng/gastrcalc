@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Do cilja fali u ${m}`, standHeuteZeile: (b) => `Danas si na ${b}`, lohnTageZeile: (n) => `Plate: ${n} dana upisano, ostalo ≈ iz mjesečnog iznosa`,
     sonderBis: (n) => `Jednokratni računi do danas (${n})`,
     frueher: "Ranije …",
     zaehltAb: (d) => `broji se od ${d}`,
@@ -723,7 +723,7 @@ export default {
     wareRichtwert: (q) => `Roba (procjena ≈ ${q} % prometa)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Procjena bez tvojih cijena: snek-barovi imaju ${min}–${max} % troška robe. Izvor: ${q}. Unesi nabavne cijene i aplikacija računa s tvojim brojevima.`,
     wareFehlt: "Roba (još nije uračunata)",
-    muellBis: "Otpad do danas",
+    muellBis: "Otpad i obroci osoblja do danas",
     umsatzBis: "Neto promet do danas",
     umsatzBruttoHinweis: (b, s) => `od ${b} bruto, ${s} % poreza odbijeno`,
     steuerQuelle: { eigen: "vlastita poreska stopa", karte: "prosječna stopa iz jelovnika", standard: "uzeto 7 %" },
@@ -1157,7 +1157,7 @@ export default {
       personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
   menueReferenz: { hinweis: "Sastojci s menija. Provjeri količine, vrijeme pripreme i cijeli recept." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `od jučer ${b}`,
     zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
     tempoGut: (d) => `Po planu · ${d}`, tempoKnapp: (b) => `Treba ${b} / dan`, ohneKosten: "Fale fiksni troškovi",

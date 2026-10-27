@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Prova",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Manca all'obiettivo a ${m}`, standHeuteZeile: (b) => `Oggi sei a ${b}`, lohnTageZeile: (n) => `Stipendi: ${n} giorni inseriti, il resto ≈ dal totale mensile`,
     sonderBis: (n) => `Fatture una tantum fino a oggi (${n})`,
     frueher: "Prima …",
     zaehltAb: (d) => `conta dal ${d}`,
@@ -716,7 +716,7 @@ export default {
     wareRichtwert: (q) => `Merce (riferimento ≈ ${q} % del fatturato)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Riferimento senza i tuoi prezzi: i chioschi stanno al ${min}–${max} % di costo merce. Fonte: ${q}. Inserisci i prezzi d’acquisto e l’app calcola con i tuoi numeri.`,
     wareFehlt: "Merce (non ancora calcolata)",
-    muellBis: "Rifiuti fino a oggi",
+    muellBis: "Scarti e pasti del personale a oggi",
     umsatzBis: "Incasso netto fino a oggi",
     umsatzBruttoHinweis: (b, s) => `da ${b} lordi, tolto ${s} % di imposta`,
     steuerQuelle: { eigen: "aliquota tua", karte: "aliquota media dal menù", standard: "ipotesi 7 %" },
@@ -1150,7 +1150,7 @@ export default {
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
   menueReferenz: { hinweis: "Ingredienti dal menù. Controlla quantità, tempo di preparazione e ricetta completa." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `da ieri ${b}`,
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
     tempoGut: (d) => `In linea · ${d}`, tempoKnapp: (b) => `Servono ${b} / giorno`, ohneKosten: "Mancano i costi fissi",

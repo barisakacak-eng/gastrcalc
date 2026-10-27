@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Thử",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Còn thiếu đến mục tiêu trong ${m}`, standHeuteZeile: (b) => `Hôm nay sếp đang ở ${b}`, lohnTageZeile: (n) => `Lương: đã ghi ${n} ngày, còn lại ≈ từ tổng tháng`,
     sonderBis: (n) => `Hóa đơn một lần đến hôm nay (${n})`,
     frueher: "Trước đó …",
     zaehltAb: (d) => `tính từ ngày ${d}`,
@@ -716,7 +716,7 @@ export default {
     wareRichtwert: (q) => `Nguyên liệu (ước tính ≈ ${q} % doanh thu)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Ước tính khi chưa có giá của bạn: quán ăn nhanh ở mức ${min}–${max} % chi phí nguyên liệu. Nguồn: ${q}. Nhập giá mua để ứng dụng tính bằng số của bạn.`,
     wareFehlt: "Nguyên liệu (chưa tính)",
-    muellBis: "Rác đến hôm nay",
+    muellBis: "Rác và bữa ăn nhân viên đến hôm nay",
     umsatzBis: "Doanh thu chưa thuế đến hôm nay",
     umsatzBruttoHinweis: (b, s) => `từ ${b} gồm thuế, đã trừ ${s} % thuế`,
     steuerQuelle: { eigen: "thuế suất riêng", karte: "thuế suất trung bình theo thực đơn", standard: "tạm tính 7 %" },
@@ -1150,7 +1150,7 @@ export default {
       personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ bạn đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
   menueReferenz: { hinweis: "Nguyên liệu lấy từ thực đơn. Kiểm tra số lượng, thời gian chuẩn bị và toàn bộ công thức." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `từ hôm qua ${b}`,
     zielLinie: "hòa vốn + lãi mục tiêu",
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },
     tempoGut: (d) => `Đúng kế hoạch · ${d}`, tempoKnapp: (b) => `Cần ${b} / ngày`, ohneKosten: "Thiếu chi phí cố định",

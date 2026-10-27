@@ -21,7 +21,7 @@ function teamStart(stand, H) {
   const alt = teamTag(stand, H);
   const leute = (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false);
   const basis = leute.length ? leute.map((p) => ({ person: p.id, name: p.kuerzel, satz: p.stundenlohn || null, art: p.lohnArt || null })) : [{ person: null, name: t("teamTag.person", 1), satz: null, art: null }];
-  return basis.map((b) => { const v = alt?.eintraege.find((x) => (x.person || x.name) === (b.person || b.name)); return { ...b, stunden: v ? v.stunden : 8, satz: v?.satz || b.satz, art: v?.art || b.art, an: !!v || !alt }; });
+  return basis.map((b) => { const v = alt?.eintraege.find((x) => (x.person || x.name) === (b.person || b.name)); return { ...b, stunden: v ? v.stunden : 8, satz: v?.satz || b.satz, art: v?.art || b.art, an: !!v }; }); // 27.10.2026 (Prüfung F5): nichts vorauswählen – sonst zählt der Inhaber als Mitarbeiter doppelt
 }
 function teamView(stand) {
   if (schritt === "frage") return `

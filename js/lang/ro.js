@@ -688,7 +688,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Până la obiectiv lipsesc în ${m}`, standHeuteZeile: (b) => `Azi ești la ${b}`, lohnTageZeile: (n) => `Salarii: ${n} zile introduse, restul ≈ din suma lunară`,
     sonderBis: (n) => `Facturi unice până azi (${n})`,
     frueher: "Mai devreme …",
     zaehltAb: (d) => `contează de pe ${d}`,
@@ -722,7 +722,7 @@ export default {
     wareRichtwert: (q) => `Marfă (reper ≈ ${q} % din vânzări)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Reper fără prețurile tale: fast-foodurile au ${min}–${max} % cost marfă. Sursă: ${q}. Introdu prețuri de achiziție și aplicația calculează cu cifrele tale.`,
     wareFehlt: "Marfă (încă necalculată)",
-    muellBis: "Gunoi până azi",
+    muellBis: "Deșeuri și mesele personalului până azi",
     umsatzBis: "Încasări nete până azi",
     umsatzBruttoHinweis: (b, s) => `din ${b} brut, minus ${s} % taxe`,
     steuerQuelle: { eigen: "cota ta de taxă", karte: "cotă mixtă din meniu", standard: "presupus 7 %" },
@@ -1156,7 +1156,7 @@ export default {
       personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
   menueReferenz: { hinweis: "Ingrediente din meniu. Verifică cantitățile, timpul de preparare și rețeta completă." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `de ieri ${b}`,
     zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },
     tempoGut: (d) => `În plan · ${d}`, tempoKnapp: (b) => `${b} / zi necesar`, ohneKosten: "Lipsesc costurile fixe",

@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Reste jusqu'à l'objectif en ${m}`, standHeuteZeile: (b) => `Aujourd'hui tu es à ${b}`, lohnTageZeile: (n) => `Salaires : ${n} jours saisis, le reste ≈ du total mensuel`,
     sonderBis: (n) => `Factures ponctuelles jusqu’à aujourd’hui (${n})`,
     frueher: "Avant…",
     zaehltAb: (d) => `compte à partir du ${d}`,
@@ -716,7 +716,7 @@ export default {
     wareRichtwert: (q) => `Marchandise (repère ≈ ${q} % du chiffre)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Repère sans tes prix : les snacks sont à ${min}–${max} % de coût marchandise. Source : ${q}. Saisis tes prix d’achat et l’appli calcule avec tes chiffres.`,
     wareFehlt: "Marchandise (pas encore calculée)",
-    muellBis: "Déchets jusqu’à aujourd’hui",
+    muellBis: "Déchets et repas du personnel à ce jour",
     umsatzBis: "CA HT jusqu’à aujourd’hui",
     umsatzBruttoHinweis: (b, s) => `sur ${b} TTC, ${s} % de TVA retirés`,
     steuerQuelle: { eigen: "taux de TVA perso", karte: "taux moyen de la carte", standard: "7 % par défaut" },
@@ -1150,7 +1150,7 @@ export default {
       personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau.",
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
   menueReferenz: { hinweis: "Ingrédients de la carte. Vérifie les quantités, le temps de préparation et la recette complète." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `depuis hier ${b}`,
     zielLinie: "zéro + bénéfice visé",
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },
     tempoGut: (d) => `Dans les temps · ${d}`, tempoKnapp: (b) => `${b} / jour nécessaires`, ohneKosten: "Frais fixes manquants",

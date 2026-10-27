@@ -681,7 +681,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Heta armancê di ${m} de dimîne`, standHeuteZeile: (b) => `Îro tu li ${b} yî`, lohnTageZeile: (n) => `Meaş: ${n} roj hatin nivîsîn, yên din ≈ ji tevahiya mehê`,
     sonderBis: (n) => `Fatûreyên yekcarî heta îro (${n})`,
     frueher: "Berê …",
     zaehltAb: (d) => `ji ${d} ve tê hesabkirin`,
@@ -715,7 +715,7 @@ export default {
     wareRichtwert: (q) => `Mal (texmîn ≈ ${q} % ji firotinê)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Texmîn bê bihayên te: xwarinxaneyên biçûk di ${min}–${max} % lêçûna malê de ne. Çavkanî: ${q}. Bihayên kirînê binivîse, sepan bi hejmarên te dihesibîne.`,
     wareFehlt: "Mal (hîn nehatiye hesabkirin)",
-    muellBis: "Zibil heta îro",
+    muellBis: "Zibil û xwarina karmendan heta îro",
     umsatzBis: "Firotina bê bac heta îro",
     umsatzBruttoHinweis: (b, s) => `ji ${b} bi bac, ${s} % bac hate derxistin`,
     steuerQuelle: { eigen: "rêjeya bacê ya xwe", karte: "rêjeya tevlihev ji menûyê", standard: "7 % hate texmînkirin" },
@@ -1149,7 +1149,7 @@ export default {
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   menueReferenz: { hinweis: "Malzemeyên ji menûyê. Mîqdar, dema amadekirinê û reçeteya tevahî kontrol bike." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `ji duh ve ${b}`,
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
     tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",

@@ -687,7 +687,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Do celu brakuje w ${m}`, standHeuteZeile: (b) => `Dziś jesteś na ${b}`, lohnTageZeile: (n) => `Płace: wpisane ${n} dni, reszta ≈ z sumy miesięcznej`,
     sonderBis: (n) => `Jednorazowe rachunki do dziś (${n})`,
     frueher: "Wcześniej …",
     zaehltAb: (d) => `liczy się od ${d}`,
@@ -721,7 +721,7 @@ export default {
     wareRichtwert: (q) => `Towar (orientacyjnie ≈ ${q} % obrotu)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Wartość orientacyjna bez twoich cen: bary mają ${min}–${max} % kosztu towaru. Źródło: ${q}. Wpisz ceny zakupu, a aplikacja liczy twoimi liczbami.`,
     wareFehlt: "Towar (jeszcze nie policzony)",
-    muellBis: "Śmieci do dziś",
+    muellBis: "Odpady i posiłki pracowników do dziś",
     umsatzBis: "Utarg netto do dziś",
     umsatzBruttoHinweis: (b, s) => `z ${b} brutto, minus ${s} % podatku`,
     steuerQuelle: { eigen: "własna stawka podatku", karte: "stawka mieszana z karty", standard: "przyjęto 7 %" },
@@ -1155,7 +1155,7 @@ export default {
       personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   menueReferenz: { hinweis: "Składniki z karty. Sprawdź ilości, czas przygotowania i cały przepis." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `od wczoraj ${b}`,
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
     tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",

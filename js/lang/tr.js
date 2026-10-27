@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `${m} ayında hedefe kalan`, standHeuteZeile: (b) => `Bugün durumun: ${b}`, lohnTageZeile: (n) => `Maaş: ${n} gün girildi, kalanı ≈ aylık toplamdan`,
     sonderBis: (n) => `Bugüne kadar tek seferlik faturalar (${n})`,
     frueher: "Daha önce …",
     zaehltAb: (d) => `${d} tarihinden itibaren sayıyor`,
@@ -716,7 +716,7 @@ export default {
     wareRichtwert: (q) => `Mal (tahmini ≈ ciro %${q})`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Kendi fiyatların olmadan tahmin: büfelerde mal payı %${min}–${max}. Kaynak: ${q}. Alış fiyatlarını gir, uygulama senin rakamlarınla hesaplasın.`,
     wareFehlt: "Mal (henüz hesaplanmadı)",
-    muellBis: "Bugüne kadar çöp",
+    muellBis: "Bugüne kadar çöp ve personel yemeği",
     umsatzBis: "Bugüne kadar net ciro",
     umsatzBruttoHinweis: (b, s) => `${b} brütten, %${s} vergi çıkarıldı`,
     steuerQuelle: { eigen: "kendi vergi oranın", karte: "menüden karma oran", standard: "%7 varsayıldı" },
@@ -1151,7 +1151,7 @@ export default {
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân “Bugün“ ve “Ofiste açık“
   menueReferenz: { hinweis: "Malzemeler menüden. Miktarları, süreyi ve tarifin tamamını kontrol et." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `dünden beri ${b}`,
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
     tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",

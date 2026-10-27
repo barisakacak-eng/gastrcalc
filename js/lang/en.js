@@ -681,7 +681,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Left to your goal in ${m}`, standHeuteZeile: (b) => `Today you stand at ${b}`, lohnTageZeile: (n) => `Wages: ${n} days entered, rest ≈ from the monthly total`,
     sonderBis: (n) => `One-off invoices until today (${n})`,
     frueher: "Earlier …",
     zaehltAb: (d) => `counting from ${d}`,
@@ -715,7 +715,7 @@ export default {
     wareRichtwert: (q) => `Goods (benchmark ≈ ${q} % of sales)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Benchmark without your own prices: snack bars run ${min}–${max} % cost of goods. Source: ${q}. Enter purchase prices and the app uses your numbers.`,
     wareFehlt: "Goods (not yet calculated)",
-    muellBis: "Bin to date",
+    muellBis: "Waste and staff meals to date",
     umsatzBis: "Net takings to date",
     umsatzBruttoHinweis: (b, s) => `from ${b} gross, ${s} % tax removed`,
     steuerQuelle: { eigen: "your own tax rate", karte: "mixed rate from the menu", standard: "7 % assumed" },
@@ -1150,7 +1150,7 @@ export default {
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `since yesterday ${b}`,
     zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },
     tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",

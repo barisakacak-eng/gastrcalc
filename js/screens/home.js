@@ -74,6 +74,7 @@ function heuteZielKarte(stand, z, H) {
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
+    ${w.stufe === "bisNull" && w.bewegung && Math.abs(w.bewegung.betrag) >= 1 ? `<span class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</span>` : ""}
     ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
     ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z)}
   </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
@@ -143,7 +144,10 @@ export function einrichtungZeile(e, ids) {
   return `<button type="button" class="einrichtungzeile" data-a="nav" data-wert="start">${esc(t("einrichtung.kurz", e.prozent))}</button>`;
 }
 
-export function zaehlerKarte(z, H, { tipp = true, vorUmsatz = null } = {}) {
+export function zaehlerKarte(z, H, { tipp = true, ziel = null } = {}) {
+  // 27.10.2026 (Baris: eine Rechnung): Mit „ziel“ (heuteZiel) zeigt das Büro dieselbe große Zahl wie der Laden; der Stand heute steht darunter.
+  if (ziel && ziel.zahl !== null && ziel.m?.nullpunkt !== null) return zaehlerKarteMonat(z, H, ziel);
+  const vorUmsatz = null;
   const monat = monatName(H);
   const grau = z.keinUmsatz;
   const satz = grau ? t("cockpit.keinUmsatz") : z.imPlus ? (z.kippTag ? t("cockpit.seitArbeitest", datumLesbar(z.kippTag).slice(0, 6)) : "") : z.reichtNicht ? t("cockpit.reichtNicht") : z.nullTag ? t("cockpit.nullAm", datumLesbar(z.nullTag).slice(0, 6)) : "";
@@ -155,6 +159,21 @@ export function zaehlerKarte(z, H, { tipp = true, vorUmsatz = null } = {}) {
     ${z.unvollstaendig ? `<small class="warn">${esc(t("cockpit.unvollstaendig"))}</small>` : ""}
     <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("cockpit.stufe." + z.stufe))}${(!grau || vorUmsatz) && z.start > z.monat.von ? ` · ${esc(t("zaehler.zaehltAb", datumLesbar(z.start).slice(0, 6)))}` : ""}</small>
   </${tipp ? "button" : "div"}>`;
+}
+
+function zaehlerKarteMonat(z, H, w) {
+  const monat = monatName(H); const g = w.m.geschaetzt ? "≈ " : "";
+  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("cockpit.verdient", monat);
+  const zahl = `${g}${w.stufe === "ueberZiel" ? "+ " : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`;
+  const heuteZeile = z.keinUmsatz ? t("cockpit.keinUmsatz") : t("zaehler.standHeuteZeile", `${z.stand >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.stand), { dezimal: 0 })}`);
+  return `<div class="karte dunkel zaehler ${w.stufe === "bisNull" ? "minus" : "plus"}">
+    <small class="lbl">${esc(label)}</small>
+    <span class="riesig">${zahl}</span>
+    ${w.bewegung && Math.abs(w.bewegung.betrag) >= 1 && w.stufe === "bisNull" ? `<small class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</small>` : ""}
+    <small>${esc(heuteZeile)}</small>
+    ${z.unvollstaendig ? `<small class="warn">${esc(t("cockpit.unvollstaendig"))}</small>` : ""}
+    <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("zaehler.lohnTageZeile", z.lohnEchtTage || 0))}</small>
+  </div>`;
 }
 
 function monatsKurve(z, H) {

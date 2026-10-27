@@ -687,7 +687,7 @@ export default {
     entwurfKurz: "Provë",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Deri te synimi mungojnë në ${m}`, standHeuteZeile: (b) => `Sot je në ${b}`, lohnTageZeile: (n) => `Pagat: ${n} ditë të shënuara, pjesa tjetër ≈ nga shuma mujore`,
     sonderBis: (n) => `Fatura të njëhershme deri sot (${n})`,
     frueher: "Më parë …",
     zaehltAb: (d) => `llogaritet nga ${d}`,
@@ -721,7 +721,7 @@ export default {
     wareRichtwert: (q) => `Mall (vlerësim ≈ ${q} % e shitjeve)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Vlerësim pa çmimet e tua: lokalet e vogla kanë ${min}–${max} % kosto malli. Burimi: ${q}. Shkruaj çmimet e blerjes dhe aplikacioni llogarit me shifrat e tua.`,
     wareFehlt: "Malli (ende i pallogaritur)",
-    muellBis: "Mbeturinat deri sot",
+    muellBis: "Mbeturina dhe ushqimi i stafit deri sot",
     umsatzBis: "Xhiroja neto deri sot",
     umsatzBruttoHinweis: (b, s) => `nga ${b} bruto, minus ${s} % taksë`,
     steuerQuelle: { eigen: "norma jote e taksës", karte: "normë e përzier nga menyja", standard: "marrë 7 %" },
@@ -1155,7 +1155,7 @@ export default {
       personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
   menueReferenz: { hinweis: "Përbërësit nga menuja. Kontrollo sasitë, kohën e përgatitjes dhe recetën e plotë." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `që dje ${b}`,
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
     tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",

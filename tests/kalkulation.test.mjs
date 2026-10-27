@@ -64,7 +64,8 @@ test("kalkulation: Selbstkosten, Zielpreis, Portalpreis, Ampel", () => {
   // Zeitzuschlag: Σ q·z = 0
   nah(d.zeit * 150 * tage + c.zeit * 50 * tage, 0, 1e-6);
   // Selbstkosten und Zielpreis
-  nah(d.sk, d.waren + d.fix + d.zeit); nah(d.zielNetto, d.sk / 0.9); nah(d.zielBrutto, E.aufrunden10Cent(d.zielNetto * 1.07).gerundet); assert.ok(d.zielAufschlag >= 0 && d.zielAufschlag < 0.1);
+  // 27.10.2026 (F2): Anteile summieren sich genau auf die Monatskosten, auch wenn ein Gericht unten bei 0 abgeschnitten wird
+  nah((d.sk - d.waren) * 150 * tage + (c.sk - c.waren) * 50 * tage, 8000, 1e-6); assert.ok(d.sk <= d.waren + d.fix + d.zeit + 1e-9); nah(d.zielNetto, d.sk / 0.9); nah(d.zielBrutto, E.aufrunden10Cent(d.zielNetto * 1.07).gerundet); assert.ok(d.zielAufschlag >= 0 && d.zielAufschlag < 0.1);
   assert.equal(d.mwst, 0.07); assert.equal(c.mwst, 0.19);
   // Portal: Basis unbekannt -> brutto, 30 %: netto = SK / (1 − 0,1 − 0,3·1,07)
   nah(d.portalBrutto, d.sk / (1 - 0.1 - 0.3 * 1.07) * 1.07); assert.equal(d.portalName, "Lieferando");
@@ -112,7 +113,8 @@ test("Review Etappe 2: Ziel ab 85 % -> kein Zielpreis, Ampel grau, Stufe Sperre"
 });
 test("Ampel (19.10.2026): Gewinn nach allen Kosten – rot unter 10 %, gelb 10 bis unter 19 %, grün ab 19 %", () => {
   const s = stand(); const d0 = E.kalkulation(s).zeilen[0];
-  const preisFuer = (q) => Math.ceil(d0.sk / (1 - q) * (1 + d0.mwst) * 100) / 100; // kleinster Bruttopreis mit Gewinnquote ≥ q
+  const skCent = Math.round(d0.sk * 100) / 100; // preisAmpel rechnet auf den Cent (27.10.2026: Selbstkosten nicht mehr glatt)
+  const preisFuer = (q) => Math.ceil((skCent / (1 - q) + 0.005) * (1 + d0.mwst) * 100) / 100; // kleinster Bruttopreis mit Gewinnquote ≥ q
   assert.equal(E.preisAmpel(d0, preisFuer(0.19)).ampel, "gruen");
   assert.equal(E.preisAmpel(d0, preisFuer(0.19) - 0.02).ampel, "gelb");
   assert.equal(E.preisAmpel(d0, preisFuer(0.10)).ampel, "gelb");

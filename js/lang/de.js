@@ -689,7 +689,7 @@ titel: "Büro", zurueck: "Laden",
     entwurfKurz: "Test",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Zum Ziel fehlen im ${m}`, standHeuteZeile: (b) => `Heute stehst du bei ${b}`, lohnTageZeile: (n) => `Lohn: ${n} ${n === 1 ? "Tag" : "Tage"} eingetragen, Rest ≈ aus der Monatssumme`,
     sonderBis: (n) => `Einmalige Rechnungen bis heute (${n})`,
     frueher: "Früher …",
     zaehltAb: (d) => `zählt ab dem ${d}`,
@@ -723,7 +723,7 @@ titel: "Büro", zurueck: "Laden",
     wareRichtwert: (q) => `Ware (Richtwert ≈ ${q} % vom Umsatz)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Richtwert ohne eigene Preise: Imbisse liegen bei ${min}–${max} % Wareneinsatz. Quelle: ${q}. Trag Einkaufspreise ein, dann rechnet die App mit deinen Zahlen.`,
     wareFehlt: "Ware (noch nicht gerechnet)",
-    muellBis: "Müll bis heute",
+    muellBis: "Müll und Personalessen bis heute",
     umsatzBis: "Umsatz netto bis heute",
     umsatzBruttoHinweis: (b, s) => `aus ${b} brutto, ${s} % Steuer raus`,
     steuerQuelle: { eigen: "eigener Steuersatz", karte: "Mischsatz aus der Karte", standard: "7 % angenommen" },
@@ -1167,7 +1167,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
       buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
   menueReferenz: { hinweis: "Zutaten aus der Karte. Mengen, Zeit und vollständiges Rezept bitte prüfen." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `seit gestern ${b}`,
     zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },
     tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",

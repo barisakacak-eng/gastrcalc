@@ -437,12 +437,19 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
   const tQuer = gewichteteZeit(gerichteMitMenge);
   const kFix = fixkostenJeGericht(gerichteMitMenge, last.gesamt);
   const portal = (stand.kanaele?.portale || []).find((p) => p.provision > 0) || null;
+  // 27.10.2026 (Prüfung fest/beweglich, F2): Die Untergrenze „Anteil nie unter 0“ (schnelle Getränke) hob die Summe aller Anteile über die
+  // Monatskosten (Beispiel ≈ 711 €/Monat zu viel). Was unten abgeschnitten wird, ziehen wir jetzt anteilig bei den übrigen Gerichten wieder ab.
+  const roh = new Map(gerichteMitMenge.map((x) => [x.id, (kFix(x) ?? 0) + (minutensatz === null ? 0 : zeitzuschlag(x, tQuer, minutensatz))]));
+  let abgeschnitten = 0, positiv = 0;
+  for (const x of gerichteMitMenge) { const r = roh.get(x.id); const m = x.menge || 0; if (r < 0) abgeschnitten += -r * m; else positiv += r * m; }
+  const faktor = positiv > 0 ? Math.max(0, (positiv - abgeschnitten) / positiv) : 1;
   const zeilen = gerichteMitMenge.map((x) => {
     const w = warenGericht(x, artikelIndex);
     const fix = kFix(x) ?? 0;
     const zeit = minutensatz === null ? 0 : zeitzuschlag(x, tQuer, minutensatz);
     // Untergrenze (Prüfung Befund 1): Selbstkosten nie unter dem Wareneinsatz, auch wenn der Zeitzuschlag negativ ist.
-    const sk = w.vollstaendig ? w.waren + Math.max(0, fix + zeit) : null;
+    const anteilKosten = Math.max(0, fix + zeit) * (fix + zeit > 0 ? faktor : 1);
+    const sk = w.vollstaendig ? w.waren + anteilKosten : null;
     const mwst = steuersatzGericht(x);
     const ziel = sk === null ? { netto: null, stufe: "ok" } : nettoPreis(sk, g, 0);
     const zielNetto = ziel.netto;
@@ -499,8 +506,10 @@ export function preisAufteilung(zeile, last, preisBrutto) {
   const kat = last.fix?.jeKategorie || {}; const mieteMonat = ((kat.miete?.summe || 0) + (kat.standgebuehr?.summe || 0)) * (last.fix?.gesamt > 0 ? last.fixJeOffen / last.fix.gesamt : 1);
   const anteil = (x) => (gesamt > 0 ? x / gesamt : 0);
   const ware = zeile.waren;
-  const personal = Math.max(0, fix * anteil(personalMonat) + zeit);
-  const miete = fix * anteil(mieteMonat);
+  // 27.10.2026 (F2): Anteile wie in der Kalkulation gekürzt, damit die Teile wieder den Selbstkosten entsprechen
+  const k = fix + zeit > 0 ? Math.max(0, zeile.sk - ware) / (fix + zeit) : 1;
+  const personal = Math.max(0, fix * anteil(personalMonat) + zeit) * k;
+  const miete = fix * anteil(mieteMonat) * k;
   const neben = Math.max(0, zeile.sk - ware - personal - miete);
   const steuer = preisBrutto - a.preisNetto;
   return { ware, personal, miete, neben, steuer, gewinn: a.gewinn, brutto: preisBrutto, quote: a.quote, ampel: a.ampel };

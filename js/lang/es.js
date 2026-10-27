@@ -682,7 +682,7 @@ export default {
     entwurfKurz: "Prueba",
   },
 
-  zaehler: {
+  zaehler: { zumZiel: (m) => `Falta para tu meta en ${m}`, standHeuteZeile: (b) => `Hoy estás en ${b}`, lohnTageZeile: (n) => `Sueldos: ${n} días anotados, el resto ≈ del total mensual`,
     sonderBis: (n) => `Facturas únicas hasta hoy (${n})`,
     frueher: "Antes…",
     zaehltAb: (d) => `cuenta desde el ${d}`,
@@ -716,7 +716,7 @@ export default {
     wareRichtwert: (q) => `Mercancía (referencia ≈ ${q} % de las ventas)`, // Paket 3 (16.10.2026), M15
     richtwertErklaerung: (min, max, q) => `Referencia sin tus precios: los puestos de comida están en ${min}–${max} % de coste de mercancía. Fuente: ${q}. Pon precios de compra y la app calcula con tus números.`,
     wareFehlt: "Producto (todavía sin calcular)",
-    muellBis: "Basura hasta hoy",
+    muellBis: "Desperdicio y comida del personal hasta hoy",
     umsatzBis: "Ventas netas hasta hoy",
     umsatzBruttoHinweis: (b, s) => `de ${b} bruto, quitando ${s} % de IVA`,
     steuerQuelle: { eigen: "tipo de IVA propio", karte: "tipo mixto de la carta", standard: "se supone 7 %" },
@@ -1150,7 +1150,7 @@ export default {
       personal: "Anota desperdicio, mide el frío, marca la limpieza. Volver solo con el código de oficina.",
       buero: "Aquí están todas las cuentas, listas y ajustes. Las carpetas se las das a la inspección, al asesor fiscal o al contable." } },
   menueReferenz: { hinweis: "Ingredientes de la carta. Revisa cantidades, tiempo de preparación y la receta completa." }, // 26.10.2026
-  heute: {
+  heute: { bewegung: (b) => `desde ayer ${b}`,
     zielLinie: "cero + beneficio objetivo",
     stufe: { bisNull: "Para llegar a cero faltan", bisZiel: "Hasta el objetivo", ueberZiel: "Por encima del objetivo" },
     tempoGut: (d) => `En plan · ${d}`, tempoKnapp: (b) => `Hacen falta ${b} / día`, ohneKosten: "Faltan gastos fijos",
