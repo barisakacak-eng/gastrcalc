@@ -1169,7 +1169,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
       buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
   menueReferenz: { hinweis: "Zutaten aus der Karte. Mengen, Zeit und vollständiges Rezept bitte prüfen." }, // 26.10.2026
-  heute: { bewegung: (b) => `seit gestern ${b}`,
+  heute: { introGruss: "Hallo, Chef!", bewegung: (b) => `seit gestern ${b}`,
     nullKurz: "Null bei", zielKurz: "Ziel",
     zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },

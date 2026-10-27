@@ -1152,7 +1152,7 @@ export default {
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026
-  heute: { bewegung: (b) => `since yesterday ${b}`,
+  heute: { introGruss: "Hello, boss!", bewegung: (b) => `since yesterday ${b}`,
     nullKurz: "Break-even", zielKurz: "Goal",
     zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },

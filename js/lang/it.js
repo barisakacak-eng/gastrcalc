@@ -1152,7 +1152,7 @@ export default {
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
   menueReferenz: { hinweis: "Ingredienti dal menù. Controlla quantità, tempo di preparazione e ricetta completa." }, // 26.10.2026
-  heute: { bewegung: (b) => `da ieri ${b}`,
+  heute: { introGruss: "Ciao, capo!", bewegung: (b) => `da ieri ${b}`,
     nullKurz: "Zero a", zielKurz: "Obiettivo",
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },

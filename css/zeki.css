@@ -61,3 +61,10 @@
 .rg-punkte i{background:rgba(255,255,255,.35)}
 .rg-loch{box-shadow:0 0 0 9999px rgba(14,20,16,.88)!important}
 .rg-blase p{text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 18px rgba(0,0,0,.6)}
+
+/* Zeki-Auftritt (27.10.2026): Bogen auftreten.webp, nur Felder 7–25 (1-basiert); Felder 1–6 sind angeschnitten und springen */
+@keyframes zeki3d-auftreten{0.0000%{transform:translate(-277px,-344px)}5.2632%{transform:translate(-554px,-344px)}10.5263%{transform:translate(-831px,-344px)}15.7895%{transform:translate(-1108px,-344px)}21.0526%{transform:translate(0px,-688px)}26.3158%{transform:translate(-277px,-688px)}31.5789%{transform:translate(-554px,-688px)}36.8421%{transform:translate(-831px,-688px)}42.1053%{transform:translate(-1108px,-688px)}47.3684%{transform:translate(0px,-1032px)}52.6316%{transform:translate(-277px,-1032px)}57.8947%{transform:translate(-554px,-1032px)}63.1579%{transform:translate(-831px,-1032px)}68.4211%{transform:translate(-1108px,-1032px)}73.6842%{transform:translate(0px,-1376px)}78.9474%{transform:translate(-277px,-1376px)}84.2105%{transform:translate(-554px,-1376px)}89.4737%{transform:translate(-831px,-1376px)}94.7368%{transform:translate(-1108px,-1376px)}}
+/* Gruß unter dem Logo – kleiner App-Text, fängt nie Eingaben ab */
+.appleiste .intro-gruss{position:absolute;left:56px;right:56px;bottom:3px;text-align:center;font-size:calc(12rem / 17);font-weight:650;line-height:1.1;color:var(--b-text,#1d2a22);pointer-events:none;animation:introGruss 1s ease both}
+@keyframes introGruss{0%{opacity:0;transform:translateY(-3px)}18%,78%{opacity:1;transform:none}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.appleiste .intro-gruss{display:none}}

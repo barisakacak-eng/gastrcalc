@@ -1159,7 +1159,7 @@ export default {
       personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
   menueReferenz: { hinweis: "Sastojci s menija. Provjeri količine, vrijeme pripreme i cijeli recept." }, // 26.10.2026
-  heute: { bewegung: (b) => `od jučer ${b}`,
+  heute: { introGruss: "Zdravo, šefe!", bewegung: (b) => `od jučer ${b}`,
     nullKurz: "Nula kod", zielKurz: "Cilj",
     zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
