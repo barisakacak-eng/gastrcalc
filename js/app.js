@@ -1091,6 +1091,7 @@ function zekiGesehenMerken(key) {
 // Zeki auf jedem Bildschirm (26.10.2026): Lage nur aus ZEKI_BILDSCHIRM[ansicht]; Heute macht das selbst (zekiReihe).
 // Personal sieht keine Euro: dort keine Lage mit Betrag.
 function zekiBildschirm() {
+  if (fuehrungOffen() || (ansicht === "start" && !stand?.fuehrung && modus(wurzel) === "laden")) return; // Führung zuerst, keine zweite Blase darüber
   if (root.querySelector(".zeki-zeile, .kl-zeki")) return; // 27.10.2026: Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
   const nur = ansicht === "start" ? null : ZEKI_BILDSCHIRM[ansicht]; if ((ansicht !== "start" && !nur) || !stand) return; // Heute: alle Lagen, Zeki spricht oben rechts
   const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
