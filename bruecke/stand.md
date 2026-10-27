@@ -1,3 +1,5 @@
+> **Hinweis 27.10.2026:** Dieser Stand ist vom 16.10. und veraltet. Aktuell gelten für Sanji `docs/sanji/lieferstatus-2026-10-27.md`, `docs/sanji/regeln-und-auftrag-d-2026-10-27.md` und die Referenzbilder in `docs/sanji/referenz-2026-10-27/`.
+
 # Stand der App (gepflegt von Zoro) – 16.10.2026, 16:30
 
 Live: https://barisakacak-eng.github.io/gastrcalc/ · Fassung 2026-10-16.1 · alles bleibt auf dem Handy, keine Cloud, kein Server.
