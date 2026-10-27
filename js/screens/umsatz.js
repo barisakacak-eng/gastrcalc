@@ -8,6 +8,7 @@ import { preisAenderungen, preisAnzeige } from "../lieferung.js";
 import { nav } from "./nav.js";
 import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
 import { zaehlerKarte } from "./home.js";
+import { heuteZiel } from "../laden_zahlen.js"; // 27.10.2026 (Persona-Test Wirt): vor dem ersten Umsatz dieselbe Zahl wie auf Heute
 
 let umsatzBasis = "brutto"; // Schalter am Feld: Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert (der Zähler rechnet netto)
 let mehrTage = false;       // Datumsleiste bis zum Monatsanfang ausgeklappt (Nachtest Etappe 5, Punkt 4)
@@ -42,7 +43,7 @@ export function umsatzView(stand) {
           <span class="seg">${["brutto", "netto"].map((b) => `<button type="button" class="${umsatzBasis === b ? "an" : ""}" data-a="umsatz-basis" data-wert="${b}">${esc(t("zaehler.umsatzBasis." + b))}</button>`).join("")}</span></div>
         <span class="marke">${esc(umsatzBasis === "netto" && notiz ? t("zaehler.nettoGespeichert", fmtEuro(notiz.umsatz, { dezimal: 2 })) : t("tag.umsatzHinweis"))}</span>
       </div>
-      ${zaehlerKarte(z, D, { tipp: false })}
+      ${zaehlerKarte(z, D, { tipp: false, vorUmsatz: (() => { try { const w = heuteZiel(stand, z, D); return w.zahl === null ? null : { zahl: w.zahl, geschaetzt: !!w.m?.geschaetzt }; } catch { return null; } })() })}
       ${streckeKarte(z, st)}
       ${prognoseKarte(z)}
       ${gesternKarte(stand, z, D)}
