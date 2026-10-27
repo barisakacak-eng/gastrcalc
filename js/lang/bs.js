@@ -1090,7 +1090,7 @@ export default {
     geldHilfe: "Otprilike je dovoljno, može i prazno. Račune slikaš kasnije u uredu.",
     putzt: "Ko čisti?", wer: { selbst: "Mi", firma: "Firma", beides: "Oboje" }, firma: "Firma",
     fertig: "Gotovo!", eingerichtet: "podešeno", los: "Idemo", pin: "Postavi PIN ureda",
-    zeki: { schloss: "Postavi kod. Onda samo ti ulaziš u kancelariju.", hallo: "Selam, šefe! Ja sam Zeki.", rolle: "Pomažem ti – sprijeda u radnji, pozadi u kancelariji.", "laden-schnell": "Kako se zove tvoja radnja? I šta prodaješ?", "karte-foto": "Slikaj svoj meni. Pročitat ću jela i cijene.", "kuehl-schnell": "Koje frižidere imaš? Samo pritisni plus.", geld: "Koliko te radnja košta mjesečno? Otprilike je dovoljno.", fertig: "Super, šefe! Od sada sam uvijek tu." },
+    zeki: { schloss: "Postavi kod. Onda samo ti ulaziš u kancelariju.", hallo: "Zdravo, šefe! Ja sam Zeki.", rolle: "Pomažem ti – sprijeda u radnji, pozadi u kancelariji.", "laden-schnell": "Kako se zove tvoja radnja? I šta prodaješ?", "karte-foto": "Slikaj svoj meni. Pročitat ću jela i cijene.", "kuehl-schnell": "Koje frižidere imaš? Samo pritisni plus.", geld: "Koliko te radnja košta mjesečno? Otprilike je dovoljno.", fertig: "Super, šefe! Od sada sam uvijek tu." },
   },
   inventur: {
     menue: "Inventura", titel: "Inventura", titelMonat: (m) => `Inventura ${m}`,
