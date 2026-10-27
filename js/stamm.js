@@ -204,7 +204,7 @@ export function teamTagSetzen(stand, datum, eintraege) {
   // Fester Monatslohn: wird an der Person gemerkt und zählt nicht als Tageseintrag
   for (const x of eintraege || []) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.modell === "monat" && x.monatsBrutto > 0) { p.lohnModell = "monat"; p.monatsBrutto = Math.round(x.monatsBrutto * 100) / 100; p.lohnArt = x.art === "minijob" ? "minijob" : "angestellt"; } else if (p && x.modell === "stunde") p.lohnModell = "stunde"; }
   eintraege = (eintraege || []).filter((x) => x.modell !== "monat");
-  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), stunden: Math.round(x.stunden * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
+  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), ...(x.kompakt ? { kompakt: true, personen: Math.max(1, Math.round(Number(x.personen) || 1)) } : {}), stunden: Math.round(Math.min(400, x.stunden) * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
   stand.teamTage.push(e);
   for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) { p.stundenlohn = x.satz; p.lohnArt = x.art; } }
   return e;
@@ -232,6 +232,7 @@ export const lieferKosten = (betrag, prov, mwst) => !prov || !(betrag > 0) ? 0 :
 // Baris 27.10.2026 (B): nach den ersten Stunden einmal „Ist das ein normaler Tag?“ – nur ohne Monatssumme für Löhne und nur einmal je Laden.
 export const normalFrageNoetig = (stand, datum) => { const e = teamTag(stand, datum); return !!e && !e.keine && e.eintraege.length > 0 && !(Number(stand?.team?.lohnkosten) > 0) && !stand?.team?.normalGefragt; };
 export function normalTagSetzen(stand, datum, normal) { const e = teamTag(stand, datum); if (e && !normal) e.untypisch = true; stand.team ??= {}; stand.team.normalGefragt = true; }
+export function teamStundenlohnSetzen(stand, satz) { stand.team ??= {}; stand.team.stundenlohn = Math.round(satz * 100) / 100; } // Lohn je Stunde für „Mitarbeiter heute“ kompakt (27.10.2026)
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);
 

@@ -6,9 +6,10 @@ import { esc, fmtEuro, heuteGeschaeft, wertAnzeige, parseZahl } from "../util.js
 import { umsatzEintrag } from "../engine.js";
 import { umsatzHeutePruefen, umsatzHeuteSpeichern } from "../laden_zahlen.js";
 import { nav } from "./nav.js";
-import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision, normalFrageNoetig, normalTagSetzen } from "../stamm.js";
+import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision, normalFrageNoetig, normalTagSetzen, teamStundenlohnSetzen } from "../stamm.js";
 import { sym } from "../symbole.js";
 
+let teamEntwurf = { pers: null, std: null, satz: null }; let satzAuf = false; // Baris 27.10.2026 18:10: Mitarbeiter kompakt unter dem Umsatz (Personen, Stunden zusammen, Lohn je Stunde einmal)
 let lieferEntwurf = null; // „davon Lieferdienst“ (27.10.2026), nur wenn ein Portal mit Provision eingerichtet ist
 let entwurf = null;   // getippter Text (null = noch nichts getippt, Feld zeigt den gespeicherten Wert)
 let rueckfrage = null; // Betrag, nach dem gerade gefragt wird (über der Grenze)
@@ -16,7 +17,7 @@ let rueckfrage = null; // Betrag, nach dem gerade gefragt wird (über der Grenze
 let schritt = "feld"; let team = null; const satzEntwuerfe = new Map(); const monatEntwuerfe = new Map(); // team: [{ person, name, stunden, satz, an }]
 
 export const umsatzLadenKennung = () => (rueckfrage !== null ? "frage" : schritt);
-export function umsatzLadenZuruecksetzen() { entwurf = null; lieferEntwurf = null; rueckfrage = null; schritt = "feld"; team = null; abwesend = null; }
+export function umsatzLadenZuruecksetzen() { entwurf = null; lieferEntwurf = null; teamEntwurf = { pers: null, std: null, satz: null }; satzAuf = false; rueckfrage = null; schritt = "feld"; team = null; abwesend = null; }
 
 function teamStart(stand, H) {
   const alt = teamTag(stand, H);
@@ -93,6 +94,18 @@ function teamView(stand) {
     </div>${nav("start")}`;
 }
 
+const kompaktVon = (stand, H) => (teamTag(stand, H)?.eintraege || []).find((x) => x.kompakt) || null;
+function teamFeld(stand, H) {
+  const k = kompaktVon(stand, H); const satzGemerkt = Number(stand.team?.stundenlohn) > 0 ? stand.team.stundenlohn : null;
+  const pers = teamEntwurf.pers ?? (k ? String(k.personen) : ""); const std = teamEntwurf.std ?? (k ? wertAnzeige(k.stunden) : "");
+  const satz = parseZahl(teamEntwurf.satz ?? "") ?? satzGemerkt; const stdZahl = parseZahl(std);
+  const kosten = satz && stdZahl > 0 ? teamTagKosten({ eintraege: [{ stunden: stdZahl, satz, art: "angestellt" }] }) : null;
+  const unter = satzGemerkt && !satzAuf ? `<button type="button" class="ul-team-satz-zeile" data-a="ul-satz-auf">${esc(t("teamTag.kompaktKosten", fmtEuro(satzGemerkt, { dezimal: 2 }), kosten !== null ? fmtEuro(kosten, { dezimal: 0 }) : "–"))}</button>` : `<small>${esc(t("teamTag.zusammen"))}</small>`;
+  const zahl = (f, w, e, im) => `<label class="ul-team-zahl"><input inputmode="${im}" enterkeyhint="done" autocomplete="off" data-f="${f}" value="${esc(w)}" placeholder="0" aria-label="${esc(e)}"><span class="einheit">${esc(e)}</span></label>`;
+  return `<div class="ul-feld ul-team-kompakt"><span class="ul-liefer-text">${esc(t("teamTag.heute"))}${unter}</span>
+      <div class="ul-team-zahlen">${zahl("ul-team-pers", pers, t("teamTag.pers"), "numeric")}${zahl("ul-team-std", std, t("teamTag.std"), "decimal")}</div></div>
+    ${!satzGemerkt || satzAuf ? `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("teamTag.satz"))}<small>${esc(t(satzGemerkt ? "teamTag.satzAendern" : "teamTag.satzErst"))}</small></span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-team-satz" value="${esc(teamEntwurf.satz ?? (satzGemerkt ? wertAnzeige(satzGemerkt) : ""))}" placeholder="0,00" aria-label="${esc(t("teamTag.satz"))}"><span class="einheit">€</span></label>` : ""}`;
+}
 function lieferFeld(stand, H) {
   const prov = lieferProvision(stand); if (!prov) return "";
   const l = lieferTag(stand, H); const wert = lieferEntwurf ?? (l && l.betrag > 0 ? wertAnzeige(l.betrag) : "");
@@ -113,6 +126,7 @@ export function umsatzLadenView(stand) {
       </div>` : `
       <label class="ul-feld"><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-umsatz" value="${esc(wert)}" placeholder="0,00" aria-label="${esc(t("heute.kachel.umsatz"))}"><span class="einheit">€</span></label>
       ${lieferFeld(stand, H)}
+      ${teamFeld(stand, H)}
       <button type="button" class="knopf glut" data-a="ul-speichern">${esc(t("kartelaeden.speichern"))}</button>`}
     </div>
     ${nav("start")}`;
@@ -123,6 +137,9 @@ export function umsatzLadenEingabe(feld, wert) {
   if (feld.startsWith("ul-team-monat:") && team) { const v = Number(String(wert).replace(/\./g, "").replace(",", ".")); monatEntwuerfe.set(Number(feld.slice(14)), v > 0 ? v : null); return "entwurf"; }
   if (feld.startsWith("ul-team-satz:") && team) { const v = Number(String(wert).replace(",", ".")); satzEntwuerfe.set(Number(feld.slice(13)), v > 0 ? v : null); return "entwurf"; }
   if (feld === "ul-liefer") { lieferEntwurf = wert; return "entwurf"; }
+  if (feld === "ul-team-pers") { teamEntwurf = { ...teamEntwurf, pers: wert }; return "entwurf"; }
+  if (feld === "ul-team-std") { teamEntwurf = { ...teamEntwurf, std: wert }; return "entwurf"; }
+  if (feld === "ul-team-satz") { teamEntwurf = { ...teamEntwurf, satz: wert }; return "entwurf"; }
   if (feld !== "ul-umsatz") return false; entwurf = wert; return "entwurf"; }
 
 // Rückgabe: false (nicht meine) | "zeichnen" | { gespeichert: true, betrag } | { meldung }
@@ -134,6 +151,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (name === "ul-abw-ja") { abwesend = stundenLeute(stand).map((p) => ({ person: p.id, name: p.kuerzel, tage: 0, satz: p.stundenlohn, art: p.lohnArt || "angestellt", stundenTag: stundenJeTag(stand, p.id, H.slice(0, 7)) })); schritt = "abw-liste"; return "zeichnen"; }
   if (name === "ul-abw-tage" && abwesend) { const i = Number(el.dataset.i); abwesend = abwesend.map((x, k) => (k === i ? { ...x, tage: Math.max(0, Math.min(31, x.tage + Number(el.dataset.d))) } : x)); return "zeichnen"; }
   if (name === "ul-abw-fertig" && abwesend) { abwesendSetzen(stand, H, abwesend); schritt = "feld"; abwesend = null; return { fertig: true }; }
+  if (name === "ul-satz-auf") { satzAuf = true; return "zeichnen"; }
   if (name === "ul-normal-ja" || name === "ul-normal-nein") { normalAntwort = name === "ul-normal-ja"; normalTagSetzen(stand, H, normalAntwort); schritt = "normal-info"; return "zeichnen"; }
   if (name === "ul-normal-fertig") return weiterOderFertig();
   if (name === "ul-team-nein") { teamTagSetzen(stand, H, []); return weiterOderFertig(); }
@@ -159,10 +177,20 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   const liefer = prov ? (String(lieferText).trim() === "" ? 0 : parseZahl(lieferText)) : null;
   if (prov && liefer === null) return { meldung: t("allgemein.zahlUngueltig", String(lieferText).trim().slice(0, 20)) };
   if (prov && liefer > p.betrag) { rueckfrage = null; return { meldung: t("lieferTag.zuViel") }; }
+  // Mitarbeiter kompakt: leer = heute kein Personal; Stunden brauchen einmal den Lohn je Stunde
+  const k0 = kompaktVon(stand, H);
+  const stdText = teamEntwurf.std ?? (k0 ? String(k0.stunden) : ""); const persText = teamEntwurf.pers ?? (k0 ? String(k0.personen) : "");
+  const std = String(stdText).trim() === "" ? 0 : parseZahl(stdText); const pers = String(persText).trim() === "" ? null : parseZahl(persText);
+  const satzNeu = String(teamEntwurf.satz ?? "").trim() === "" ? null : parseZahl(teamEntwurf.satz);
+  const satz = satzNeu ?? (Number(stand.team?.stundenlohn) > 0 ? stand.team.stundenlohn : null);
+  if (std === null || (teamEntwurf.satz && satzNeu === null)) return { meldung: t("allgemein.zahlUngueltig", String(std === null ? stdText : teamEntwurf.satz).trim().slice(0, 20)) };
+  if (std > 0 && !satz) return { meldung: t("teamTag.satzFehlt") };
   umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null });
   if (prov) lieferTagSetzen(stand, H, liefer);
-  entwurf = null; rueckfrage = null; lieferEntwurf = null;
-  if (!teamFrageNoetig(stand)) { if (abwesendFrageNoetig(stand, heuteGeschaeft())) { schritt = "abw-frage"; return { gespeichert: true, betrag: p.betrag, weiter: true }; } return { gespeichert: true, betrag: p.betrag }; } // alle mit festem Monatslohn: keine Frage
-  schritt = "frage"; // gleich danach: Waren heute Mitarbeiter da?
-  return { gespeichert: true, betrag: p.betrag, weiter: true };
+  if (satzNeu) teamStundenlohnSetzen(stand, satzNeu);
+  teamTagSetzen(stand, H, std > 0 ? [{ person: null, name: `${pers || 1}`, kompakt: true, personen: pers || 1, stunden: std, satz, art: "angestellt", modell: "stunde" }] : []);
+  entwurf = null; rueckfrage = null; lieferEntwurf = null; teamEntwurf = { pers: null, std: null, satz: null }; satzAuf = false;
+  if (normalFrageNoetig(stand, H)) { schritt = "normal-frage"; return { gespeichert: true, betrag: p.betrag, weiter: true }; }
+  if (abwesendFrageNoetig(stand, H)) { schritt = "abw-frage"; return { gespeichert: true, betrag: p.betrag, weiter: true }; }
+  return { gespeichert: true, betrag: p.betrag };
 }

@@ -329,3 +329,16 @@ textarea.rg-text { resize: none; }
 @keyframes muellToastWeg { to { opacity: 0; visibility: hidden; } }
 .muelltoast { animation: muellToastWeg .35s ease 5s forwards; }
 @media (prefers-reduced-motion: reduce) { .muelltoast { animation: muellToastWeg 0s linear 5s forwards; } }
+/* Mitarbeiter kompakt unter dem Umsatz (Baris 27.10.2026, 18:10) */
+.ul-feld.ul-team-kompakt { display: block; padding: 10px 16px 12px; }
+.ul-team-kompakt .ul-liefer-text { display: block; font-weight: 700; font-size: calc(16rem / 17); }
+.ul-team-kompakt .ul-liefer-text small { display: block; font-weight: 600; color: var(--b-text-leise); font-size: calc(14rem / 17); }
+.ul-team-satz-zeile { display: block; padding: 0; margin: 2px 0 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--b-text-leise); font-size: calc(14rem / 17); text-align: start; min-height: 32px; text-decoration: underline dotted; }
+.ul-team-zahlen { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.ul-team-zahl { display: flex; align-items: baseline; gap: 6px; border: 2px solid var(--b-linie); border-radius: 12px; padding: 6px 10px; background: var(--b-karte); }
+.ul-team-zahl:focus-within { border-color: var(--b-primaer); }
+.ul-team-zahl input { flex: 1 1 auto; min-width: 2ch; width: 100%; border: 0; background: none; font-size: calc(28rem / 17); font-weight: 800; text-align: end; outline: none; color: var(--b-text); font-variant-numeric: var(--zahlen); }
+.umsatz-laden .ul-feld.ul-liefer { padding: 8px 16px; } .umsatz-laden .ul-feld.ul-liefer input { font-size: calc(26rem / 17); min-width: 3.5ch; flex: 1 1 5ch; }
+.umsatz-laden .ul-feld.ul-liefer .ul-liefer-text { flex: 1 1 auto; min-width: 0; }
+.inhalt.umsatz-laden { gap: 10px; } .inhalt.umsatz-laden .ul-feld:not(.ul-liefer):not(.ul-team-kompakt) { padding: 10px 18px; }
+.ul-team-zahl .einheit { flex: 0 0 auto; font-size: calc(16rem / 17); }
