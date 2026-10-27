@@ -68,7 +68,7 @@ function pilleHtml(stand, D) {
 }
 function toastHtml() {
   if (!zuletzt || Date.now() - zuletzt.zeit > TOAST_MS) return "";
-  return `<div class="muelltoast" role="status" aria-live="polite"><span class="ok">${sym("check")}</span><div><b>${esc(zuletzt.text)}</b><small>${esc(t("muell1.eingetragen"))}</small></div>
+  return `<div class="muelltoast" role="status" aria-live="polite"><span class="ok">${sym("check")}</span><div><b>${esc(zuletzt.text)}</b><small>${esc(zuletzt.personal ? t("muell1.personalessen") + " ✓" : t("muell1.eingetragen"))}</small></div>
     <button type="button" class="rueck" data-a="muell1-zurueck" data-id="${esc(zuletzt.ids)}">${esc(t("muell.rueckgaengig"))}</button></div>`;
 }
 
@@ -78,7 +78,7 @@ export function muellView(stand) {
   const oben = pers && !stationDetail ? personalLeiste(true) : "";
   const unten = pers || stationDetail ? "" : nav("muell", { schnell: false });
   if (ansicht === "station") return stationView(stand, D);
-  if (ansicht === "eingabe") return oben + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog">${eingabeView(stand, D)}</div>` : "") + unten;
+  if (ansicht === "eingabe") return oben + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog"><button type="button" class="blatt-x" data-a="muell-auswahl-zu" aria-label="${esc(t("kartelaeden.schliessen"))}">${sym("x")}</button>${eingabeView(stand, D)}</div>` : "") + unten;
   return oben + rasterView(stand, D, nach) + unten;
 }
 
@@ -247,7 +247,7 @@ export function muellTipp(el, stand) {
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
   const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station", grund: ansicht === "station" ? null : grund === "personal" ? "personal" : null });
   if (!e) return false;
-  zuletzt = { ids: e.id, schluessel: k, text: `${zeigName(x)} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
+  zuletzt = { personal: e.art === "personal" || grund === "personal" && ansicht !== "station", ids: e.id, schluessel: k, text: `${zeigName(x)} · ${mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
   return { eintrag: e };
 }
 export function muellTippZurueck(stand, ids) { const n = muellStornieren(stand, ids); if (zuletzt && zuletzt.ids === ids) zuletzt = null; return n; }
@@ -284,7 +284,7 @@ export function muellAktion(name, el, stand) {
     const von = personalVon(stand);
     schwundNachweisSetzen(stand, ids, { foto: foto ? foto.id : null, von }); // Foto als Nachweis, Person im Personal-Modus
     foto = null;
-    zuletzt = { ids: ids.join(","), schluessel: e.art === "eimer" ? "eimer" : muellSchluessel(e), text: `${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} · ${e.art === "eimer" ? fmtZahl(e.gewogen, 1) + " kg" : mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
+    zuletzt = { personal: !!wahl.personal, ids: ids.join(","), schluessel: e.art === "eimer" ? "eimer" : muellSchluessel(e), text: `${e.art === "eimer" ? t("muell.eimer") : eintragName(e, stand)} · ${e.art === "eimer" ? fmtZahl(e.gewogen, 1) + " kg" : mengeText(e.menge, e.ref?.typ === "gericht" ? "portion" : e.einheit)}`, zeit: jetzt };
     wahl = null; ansicht = rueckkehr; suche = "";
     return true;
   }

@@ -99,3 +99,5 @@
 .personenraster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .personwahl { font: inherit; flex-direction: row; align-items: center; gap: 12px; min-height: 72px; text-align: left; border-width: 1px; box-shadow: var(--schatten-karte); color: var(--tinte); }
 .personwahl b { font-size: calc(18rem / 17); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 27.10.2026 (Persona-Test 360 px): Plus-Knopf ragte über den Kartenrand – Mittelteil darf schrumpfen, Knöpfe nicht */
+.mengekarte .stepper .wert{min-width:0}.mengekarte .stepper button{flex:none}.mengekarte .stepper .wert input{max-width:100%;min-width:0}
