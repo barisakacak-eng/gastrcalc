@@ -32,8 +32,10 @@ import { karteZuruecksetzen } from "./screens/karte.js"; // Paket 2: Zurücksetz
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
+import { bioKennung, bioSetzen, BUERO_OFFEN_MS } from "./modus.js";
+import { bioPruefen, bioEinrichten } from "./schloss_bio.js";
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt, codeAktiv, testphaseOhneCode, testphaseSetzen } from "./modus.js"; // W2-S: Sperrliste Personal
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, pinZweckJetzt, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
@@ -448,8 +450,10 @@ function ebeneWechseln(m, ziel) {
   zeichne();
 }
 // Laden → Büro: mit Code, wenn einer gesetzt ist (Einstellung im Büro), sonst direkt.
+let bueroOffenBis = 0; let versteckt = 0; // Büro einmal aufgeschlossen = 15 Min. offen; nach > 5 Min. im Hintergrund wieder zu
+if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => { if (document.hidden) versteckt = Date.now(); else if (versteckt && Date.now() - versteckt > 5 * 60 * 1000) bueroOffenBis = 0; });
 function bueroBetreten(ziel = "buero") {
-  if (codeAktiv(wurzel)) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel, wurzel); return; }
+  if (codeAktiv(wurzel) && Date.now() > bueroOffenBis) { if (!blattOffen()) history.pushState({ blatt: true }, ""); pinStarten("buero", ziel, wurzel); return; }
   ebeneWechseln("buero", ziel);
 }
 // Personal → Laden: nur mit Code (W2-S – das 2-Sekunden-Schloss gibt es nicht mehr).
@@ -461,7 +465,7 @@ function mitCode(zweck, ziel, weiter) {
 }
 
 // Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
-const BLATT_INTERN = new Set(["menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "sicherung-pw-schalter", "sicherung-fotos-schalter", "sicherung-ort", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
+const BLATT_INTERN = new Set(["pin-bio", "menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "sicherung-pw-schalter", "sicherung-fotos-schalter", "sicherung-ort", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
 async function ebeneAktion(name, el) {
   if (name === "menue-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); menueZeigen(stand, wurzel); return true; }
   if (name === "menue-zurueck") { menueZeigen(stand, wurzel); return true; }
@@ -469,10 +473,18 @@ async function ebeneAktion(name, el) {
   if (name === "blatt-sprache") { spracheZeigen(); return true; }
   if (name === "blatt-laeden") { laedenZeigen(wurzel); return true; }
   if (name === "hilfe-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); hilfeZeigen(ansicht); return true; }
+  if (name === "pin-bio") { // Face ID statt Code (27.10.2026)
+    const z = pinZweckJetzt(); if (!z || !(await bioPruefen(bioKennung(wurzel)))) return true;
+    blattSchliessen();
+    if (z.zweck === "buero") { bueroOffenBis = Date.now() + BUERO_OFFEN_MS; ebeneWechseln("buero", z.ziel || "buero"); }
+    else if (z.zweck === "personal") personalVerlassen();
+    return true;
+  }
+  if (name === "bio-einrichten") { const id = await bioEinrichten(); if (id) { bioSetzen(wurzel, id); await sofortSpeichern(wurzel); meldung(t("schloss.bioAn")); } else meldung(t("schloss.bioNicht")); zeichne(); return true; }
   if (name === "pin-taste" || name === "pin-weg") {
     const r = await pinTaste(name === "pin-weg" ? "weg" : el.dataset.wert, wurzel);
     if (r?.fehler) { await sofortSpeichern(wurzel); return true; } // W2-S: Fehlversuch-Zähler übersteht einen Neustart
-    if (r?.zweck === "buero") ebeneWechseln("buero", r.ziel || "buero");
+    if (r?.zweck === "buero") { bueroOffenBis = Date.now() + BUERO_OFFEN_MS; ebeneWechseln("buero", r.ziel || "buero"); }
     else if (r?.zweck === "personal") personalVerlassen();
     else if (r?.zweck === "loeschen") await allesLoeschenJetzt(); // W2-S
     else if (r?.zweck === "ladenLoeschen") await ladenLoeschenJetzt(r.ziel); // W2-S

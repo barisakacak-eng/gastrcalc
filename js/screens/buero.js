@@ -73,10 +73,10 @@ export function bueroView(stand, wurzel, extra = {}) {
   const [erster, ...rest] = offen;
   return `<div class="buero b-ruhig">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">
-      ${erster ? `<button type="button" class="zeki-zeile b-zeki ${erster.farbe === "rot" ? "a-rot" : ""}" ${zielAttr(erster.ziel)}>${esc(erster.text)}</button>${rest.length ? `<details class="b-offen-mehr"><summary class="b-mehr-zeile">${esc(t("buero.ruhig.mehr", rest.length))}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}</div>` : ""}
-      <h2 class="b-gruppe">${esc(t("buero.ruhig.fuerAndere"))}</h2>
+      ${erster ? `<button type="button" class="zeki-zeile b-zeki ${erster.farbe === "rot" ? "a-rot" : ""}" ${zielAttr(erster.ziel)}>${esc(erster.text)}</button>${rest.length ? `<details class="b-offen-mehr"><summary class="b-mehr-zeile">${esc(t("buero.ruhig.mehr", rest.length))}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}` : ""}
+      <div class="b-gruppe" aria-hidden="true"></div>
       <div class="karte b-liste b-ordnerliste">${ordnerZeile("amt", "shield-check", k.amt)}${ordnerZeile("steuer", "calculator", k.steuer)}${ordnerZeile("buch", "receipt", k.buch)}</div>
-      <h2 class="b-gruppe">${esc(t("buero.ruhig.deinLaden"))}</h2>
+      <div class="b-gruppe" aria-hidden="true"></div>
       <div class="b-bereiche">
       ${bereich("geld", "trending-up", t("buero.abschnitt.geld"), t("buero.zahlen.monatUnter", monatName(H)), false, `
         ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("zaehler.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}

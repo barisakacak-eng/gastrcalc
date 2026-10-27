@@ -159,7 +159,7 @@ button.b-zeile:active { background: var(--papier); }
 .karte.b-fragen{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;padding:14px 16px}
 .karte.b-beilagen{padding:14px 16px}
 /* Büro ruhig (27.10.2026): eine Liste, eine Farbe, Status als leiser Satz – erst beim Antippen kommen Zahlen und Analysen */
-.b-ruhig .b-gruppe{margin:22px 4px 8px;font-size:calc(13rem / 17);font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--b-text-leise,#6b6a60)}
+.b-ruhig .b-gruppe{height:14px}
 .b-ruhig .b-zs{background:#eef1ec!important;color:var(--gc-deep,#24412f)!important}
 .b-ruhig .b-zt small{color:var(--b-text-leise,#6b6a60)}
 .b-ruhig .b-zt small.rot{color:#a3361b;font-weight:700}

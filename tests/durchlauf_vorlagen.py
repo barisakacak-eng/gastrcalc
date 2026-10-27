@@ -71,7 +71,7 @@ async def main():
             assert "Noch keine Waren" not in await pg.inner_text("#app")
 
             # ---- Müll-Raster, Vergleich, Einrichtung zeigen die Gerichte
-            await nav_hilfe.geh(pg, "muell"); text = await pg.inner_text("#app"); await bild("muell")
+            await nav_hilfe.geh(pg, "muell"); await pg.click('[data-a="muell-grund"][data-wert="bruch"]'); await pg.wait_for_timeout(300); text = await pg.inner_text("#app")  # 27.10.2026: Gerichte unter „Ganze Gerichte“; await bild("muell")
             assert "Döner Kebab" in text and "Dürüm Döner" in text, text[:400]
             await nav_hilfe.geh(pg, "vergleich"); text = await pg.inner_text("#app")
             assert "Döner Kebab" in text and "Verkaufspreis fehlt" in text, text[:400]

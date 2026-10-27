@@ -54,7 +54,7 @@ async def main():
             async def stand(): return await pg.evaluate("window.__gastrocalc.stand")
 
             # ---- Onboarding
-            await bild("sprache"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.click('[data-a="s2-hilfe"]'); await pg.click('[data-a="weg-genau"]')  # Schnellweg 2: „Alles genau einrichten“ hinter dem „?“
+            await bild("sprache"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await nav_hilfe.nach_sprache(pg); await pg.click('[data-a="s2-hilfe"]'); await pg.click('[data-a="weg-genau"]')  # Schnellweg 2: „Alles genau einrichten“ hinter dem „?“
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')
@@ -179,6 +179,7 @@ async def main():
             await geh("muell"); await pg.wait_for_selector('.muellraster'); await bild("muell-raster-leer")
             html = await pg.content(); assert "Çöp gir" not in html and "Add waste" not in html, "keine dreisprachigen Untertitel mehr"
             assert await pg.locator('[data-a="muell-tipp"]').count() <= 8 and await pg.locator('[data-a="muell-andere"]').count() == 1
+            await pg.click('[data-a="muell-grund"][data-wert="bruch"]'); await pg.wait_for_timeout(250)  # 27.10.2026: Gerichte unter „Ganze Gerichte“
             await pg.click(f'[data-a="muell-tipp"][data-typ="gericht"][data-id="{ids[0]}"]'); await pg.wait_for_selector('.muelltoast'); await bild("muell-getippt")
             s = await stand(); g = [e for e in s["schwund"] if e["art"] == "gericht" and not e["storniert"]]
             assert len(g) == 1 and g[0]["menge"] == 1 and g[0]["wert"] is not None, g

@@ -15,18 +15,18 @@ const ladenSchnell = (art = "doener") => {
 };
 
 test("Schnellweg hat höchstens 6 Bildschirme in fester Reihenfolge", () => {
-  assert.deepEqual(SCHNELL.map((s) => s.id), ["sprache", "laden-schnell", "karte-foto", "kuehl-schnell", "geld", "fertig-schnell"]);
-  assert.ok(SCHNELL.length <= 6);
+  assert.deepEqual(SCHNELL.map((s) => s.id), ["sprache", "schloss", "laden-schnell", "karte-foto", "kuehl-schnell", "geld", "fertig-schnell"]); // 27.10.2026: Schloss nach der Sprache
+  assert.ok(SCHNELL.length <= 7);
   assert.equal(schritteFuer({ weg: "genau" }), SCHRITTE, "genauer Weg unverändert erreichbar");
   assert.ok(SCHRITTE.some((s) => s.id === "format") && SCHRITTE.some((s) => s.id === "ergebnis"));
 });
 
 test("Schritt wird mit Kennung gemerkt und nach Kennung wiederhergestellt", () => {
-  const s = ladenSchnell(); s.schritt = 4; schrittIdMerken(s);
+  const s = ladenSchnell(); s.schritt = 5; schrittIdMerken(s);
   assert.equal(s.schrittId, "geld");
   s.schritt = 1; // Nummer veraltet (z. B. ein Schritt kam dazu) – die Kennung gewinnt
   schrittWiederherstellen(s);
-  assert.equal(s.schritt, 4); assert.equal(SCHNELL[s.schritt].id, "geld");
+  assert.equal(s.schritt, 5); assert.equal(SCHNELL[s.schritt].id, "geld");
 });
 
 test("Unbekannte Kennung bleibt bei der Nummer, Nummer wird begrenzt", () => {

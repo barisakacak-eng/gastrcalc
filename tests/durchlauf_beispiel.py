@@ -58,7 +58,7 @@ async def main():
             await sprache("tr"); t = await text(); assert "Örnek Döner" in t, t[:300]
             await sprache("de"); t = await text(); assert "Beispiel-Döner" in t, t[:300]
             # Müll-Raster mit den Gerichten
-            await nav_hilfe.geh(pg, "muell"); t = await text()
+            await nav_hilfe.geh(pg, "muell"); await pg.click('[data-a="muell-grund"][data-wert="bruch"]'); await pg.wait_for_timeout(300); t = await text()  # 27.10.2026: Gerichte unter „Ganze Gerichte“
             assert "Döner Kebab" in t and "Dürüm Döner" in t, t[:400]
             await bild("muell")
             # Kühlung: vier Stellen mit letzter Messung, Monatsblatt = Rundgang-Historie

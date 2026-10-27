@@ -67,3 +67,14 @@ async def geh(pg, ziel, warte=420):
     await ins_buero(pg, warte)
     if ziel != "buero":
         await _tipp(pg, f'#app [data-a="nav"][data-wert="{ziel}"]', warte)
+
+
+async def nach_sprache(pg):
+    """27.10.2026: nach der Sprache kommt der Schloss-Schritt (Code/Face ID) – im Test „Später“ (Weiter)."""
+    for _ in range(150):
+        if await pg.locator('[data-a="laden-art"]').count(): return True
+        if await pg.locator('[data-a="bio-einrichten"]').count():
+            try: await pg.click('[data-a="weiter"]', timeout=3000)
+            except Exception: pass
+        await pg.wait_for_timeout(120)
+    return False

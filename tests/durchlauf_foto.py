@@ -37,7 +37,7 @@ async def main():
             t0 = time.time()
 
             # 1 Sprache
-            await bild("sprache"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await klick('[data-a="sprache"][data-wert="de"]')
+            await bild("sprache"); await pg.select_option('[data-f="sprache-wahl"]', "de"); await klick('[data-a="sprache"][data-wert="de"]'); await nav_hilfe.nach_sprache(pg)
             # 2 Laden
             await pg.wait_for_selector('[data-a="laden-art"]'); await bild("laden")
             await pg.fill('[data-f="betrieb.name"]', "Döner Haus"); await klick('[data-a="laden-art"][data-wert="doener"]')

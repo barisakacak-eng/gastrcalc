@@ -374,7 +374,7 @@ export default {
     eigenesFoto: "Eigenes Foto aufnehmen", fotoGespeichert: "Foto gespeichert. Es bleibt auf diesem Handy.",  titel: "Gerichte im Vergleich", unter: "Welche Gerichte bringen dir am meisten?", tab: { db: "Bleibt pro Stück", marge: "Rohgewinn %" }, ware: "Wareneinsatz", db: "Bleibt dir pro Stück", marge: "Rohgewinn (nach Ware)", leer: "Trag Verkaufs- und Einkaufspreise ein, dann siehst du hier, welche Gerichte am meisten bringen.", ohneZahlen: (n) => (n === 1 ? "1 Gericht noch ohne Zahlen" : `${n} Gerichte noch ohne Zahlen`), einkaufFehlt: "Einkaufspreise fehlen", hinweis: "Werte sind Schätzungen und können je nach Zutaten und Preisen abweichen. Alle Beträge ohne Mehrwertsteuer, außer dem Verkaufspreis.", nachKosten: "Nach allen Kosten", nachKostenFehlt: "Kosten fehlen", ampelLegende: "Ampel nach allen Kosten: rot unter 10 %, grün ab 19 % vom Nettopreis (≈ Einordnung nach BMF-Richtsatzsammlung, Datenjahr 2024)." },
   // Drei Ebenen (15.10.2026), Entwickler C: Büro-Startseite und die drei Ordner zum Abgeben
   buero: {
-    ruhig: { mehr: (n) => `Noch ${n} Punkte`, fuerAndere: "Für Amt und Steuer", deinLaden: "Dein Laden" },
+    ruhig: { mehr: (n) => `${n} weitere` },
 titel: "Büro", zurueck: "Laden",
     abschnitt: { geld: "Geld", ware: "Ware", kartePreise: "Karte & Preise", offen: "Offen", ordner: "Ordner zum Abgeben", zahlen: "Zahlen", karte: "Karte & Einkauf", einrichten: "Laden einrichten" },
     offen: { einrichtung: "Einrichtung", kosten: (n) => (n === 1 ? "Feste Kosten: 1 fehlt" : `Feste Kosten: ${n} fehlen`), billig: (n) => (n === 1 ? "1 Preis zu billig" : `${n} Preise zu billig`),
@@ -745,8 +745,8 @@ titel: "Büro", zurueck: "Laden",
   },
 
   muell: {
-    zeki: { start: "Was ist heute weggekommen? Tipp auf die Ware.", weiter: "Noch was weg? Tipp einfach drauf.", personal: "Was haben deine Leute gegessen? Tipp drauf.", bruch: "Ganzes Gericht kaputt oder runtergefallen? Tipp drauf." },
-    grund: { roh: "Lebensmittel", personal: "Personalessen", bruch: "Ganze Gerichte" },
+    zeki: { start: "Was ist heute weg?", weiter: "Noch was weg?", personal: "Was hat dein Team gegessen?", bruch: "Was ist kaputtgegangen?" },
+    grund: { roh: "Ware", personal: "Personal", bruch: "Bruch" },
 nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehmen.",
     zurUebersicht: "Müll-Übersicht", 
     auswaehlen: "Lebensmittel auswählen", aendern: "Antippen zum Ändern", mengeEingeben: "Menge eingeben", foto: "Foto (optional)", fotoDabei: "Foto ist dabei", fotoFehler: "Foto konnte nicht gespeichert werden.", satz: "Mache aus Fehlern Wissen. Trage ein, was heute im Müll gelandet ist.", orientierung: "Geschätzte Werte dienen der Orientierung.", ohnePreisKurz: "Noch ohne Einkaufspreis – zählt trotzdem mit.", 
@@ -1066,6 +1066,9 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     fragenTitel: "Das fragen viele:", fragePlatzhalter: "Oder schreib deine Frage …", abschicken: "Frage schicken",
     danke: "Danke, Chef. Ich merk mir die Frage.", schliessen: "Fertig",
   },
+  // Schloss: Code + Face ID (Entwurf 27.10.2026)
+  schloss: { titel: "Leg einen Code fest. Dann kommt nur du ins Büro.", hilfe: "Im Laden fragt die App nie. Nur beim Büro fragt sie kurz – mit Code oder Face ID. Danach bleibt das Büro 15 Minuten offen.",
+    code: "Code festlegen", codeAn: "Code ist festgelegt", bio: "Face ID einschalten", bioAn: "Face ID ist an", bioNicht: "Face ID geht auf diesem Gerät nicht. Der Code reicht.", mitBio: "Mit Face ID öffnen" },
   schnell2: { willkommen: "Willkommen", willkommenText: "Dein Laden. Deine Zahlen. Einfach im Griff.",
     hilfe: "Kurz erklärt", sprache: "Sprache",
     laden: "Dein Laden", namePlatzhalter: "Name des Ladens",
@@ -1081,7 +1084,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     fertig: "Fertig!", eingerichtet: "eingerichtet", los: "Los geht's", pin: "Büro-PIN festlegen",
     zeki: { hallo: "Selam, Chef! Ich bin Zeki.", rolle: "Ich helf dir – vorne im Laden, hinten im Büro.",
       "laden-schnell": "Wie heißt dein Laden? Und was verkaufst du?", "karte-foto": "Fotografier deine Karte. Ich lese Gerichte und Preise.",
-      "kuehl-schnell": "Welche Kühlgeräte hast du? Drück einfach Plus.", geld: "Was kostet der Laden im Monat? Ungefähr reicht.",
+      "kuehl-schnell": "Welche Kühlgeräte hast du? Drück einfach Plus.", schloss: "Leg einen Code fest. Dann kommt nur du ins Büro.", geld: "Was kostet der Laden im Monat? Ungefähr reicht.",
       fertig: "Stark, Chef! Ab jetzt bin ich immer da." },
   },
   // Inventur (Punkt 3, Baris 15.10.: A1 + A2, Ergebnis A–E mit Erklärung)

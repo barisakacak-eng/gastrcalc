@@ -56,7 +56,7 @@ import { SCHRITTE, SCHNELL } from "../js/screens/onboarding.js";
 test("Rechtsform ist Schritt im genauen Weg, Schnellweg bleibt bei 6", () => {
   const ids = SCHRITTE.map((s) => s.id);
   assert.equal(ids[ids.indexOf("betrieb") + 1], "rechtsform");
-  assert.equal(SCHNELL.length, 6);
+  assert.equal(SCHNELL.length, 7); // 27.10.2026: + Schloss (Code/Face ID)
   assert.ok(!SCHNELL.some((s) => s.id === "rechtsform"));
 });
 test("Rechtsform-Schritt: „Weiß ich nicht“ setzt den Wert und geht weiter", () => {

@@ -192,3 +192,9 @@ export function sha256Hex(text) {
   }
   return H.map((x) => x.toString(16).padStart(8, "0")).join("");
 }
+
+// Face ID (27.10.2026): nur die Kennung des Geräte-Schlüssels in der Wurzel, kein Geheimnis.
+export const bioKennung = (wurzel) => (typeof wurzel?.bio?.id === "string" ? wurzel.bio.id : null);
+export function bioSetzen(wurzel, id) { if (!wurzel) return false; if (id) wurzel.bio = { id, seit: new Date().toISOString() }; else delete wurzel.bio; return true; }
+// Büro bleibt nach dem Aufschließen eine Weile offen (Baris 26.10.2026: „nicht bei jedem Wechsel neu fragen“)
+export const BUERO_OFFEN_MS = 15 * 60 * 1000;

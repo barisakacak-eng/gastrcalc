@@ -61,9 +61,9 @@ async def heute(pg, art):
 async def ordner(pg, art):
     await nav_hilfe.ins_buero(pg)
     assert await pg.locator('.b-bereich[open]').count()==0,"Büro-Bereiche müssen anfangs geschlossen sein"
-    await layout(pg,"Büro",'.b-werkzeuge button,.b-ordnerkachel')
+    await layout(pg,"Büro",'.b-werkzeuge button,.b-ordnerliste .b-zeile')  # 27.10.2026: Büro ruhig – Ordner als Zeilen
     for typ in ('amt','steuer','buch'):
-        await tipp(pg,f'.b-ordnerkachel[data-wert="ordner-{typ}"]')
+        await tipp(pg,f'.b-ordnerliste [data-wert="ordner-{typ}"]')
         await pg.wait_for_selector('.b-ordnerseite')
         await layout(pg,typ,'.b-unten button,.b-mini,.b-rund,.b-segment button')
         assert 'undefined' not in await pg.locator('.b-ordnerseite').inner_text()
@@ -180,7 +180,7 @@ async def pilot(browser, art, temp):
                 await layout(pg,'Einstellungen','.b-sicherung-link,.einstellungen-inhalt .knopf,.einstellungen-inhalt .zeileknopf,.einstellungen-inhalt .chip')
                 await tipp(pg,'.b-sicherung-link')
                 await tipp(pg,'.ebene-kopf [data-wert="buero"]')
-                assert await pg.locator('.b-ordner').count()==1
+                assert await pg.locator('.b-ordnerliste').count()==1  # 27.10.2026: Büro ruhig
                 print('WORK_BROWSER',art,lang,f'{width}x{height}','OK',flush=True)
         assert not fehler,fehler
     finally:await ctx.close()

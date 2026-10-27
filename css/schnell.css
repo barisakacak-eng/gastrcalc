@@ -138,3 +138,12 @@
 .fvk-reihe .betrag { min-width: 0; max-width: 175px; }
 .fvk-reihe .betrag input { font-size: calc(26rem / 17); width: 100%; }
 .fvliste .fvbild.mini + .pkt:not(.gelb):not(.rot) { display: none; }
+/* Schloss in der Einrichtung (27.10.2026) */
+.s2schloss{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.s2schloss-zeile{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:12px 16px;text-align:left;font:inherit}
+.s2schloss-zeile .ks{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#eef1ec;color:var(--gc-deep,#24412f)}
+.s2schloss-zeile b{flex:1;font-size:calc(17rem / 17)}
+.s2schloss-zeile.an{border-color:#b9d8c0;background:#f1f8f2}
+.s2schloss-zeile .haken{color:#2f7a45}
+.s2schloss-zeile[disabled]{opacity:.5}
+.pin-bio{margin-top:10px}

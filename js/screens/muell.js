@@ -85,7 +85,7 @@ export function muellView(stand) {
 function rasterView(stand, D, nach) {
   const alle = haeufigsteMuell(stand, { datum: D, max: 10000 });
   const nurTyp = grund === "roh" ? "artikel" : "gericht";
-  const kacheln = alle.filter((x) => x.typ === nurTyp).slice(0, grund === "roh" ? 8 : 6); const zaehl = tippsHeute(stand, D);
+  const kacheln = alle.filter((x) => x.typ === nurTyp).slice(0, 5); const zaehl = tippsHeute(stand, D); // 5 + „Andere“ = 2 × 3, passt ohne Scrollen const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   const h = muellHeute(stand, D);
   const satz = grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");

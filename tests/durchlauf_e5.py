@@ -28,7 +28,7 @@ async def main():
                 if await pg.evaluate("!!navigator.serviceWorker.controller"): break
                 await pg.wait_for_timeout(500)
             # Schnellster Weg in die App: Schnellweg mit Namen, dann Kostenschritte überspringen
-            await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
+            await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await nav_hilfe.nach_sprache(pg); await pg.wait_for_selector('[data-a="laden-art"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Test"); await pg.click('[data-a="laden-art"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             for _ in range(8):
                 if await pg.locator('[data-a="weiter"]').count() == 0: break
@@ -64,7 +64,7 @@ async def main():
             assert d.suggested_filename.endswith(".gcs.zip"), d.suggested_filename
             with zipfile.ZipFile(verschl) as zf:
                 namen = sorted(zf.namelist()); assert namen == ["LIESMICH.txt", "sicherung.enc"], namen
-                assert zf.read("sicherung.enc")[:4] == b"GCS1"; assert "GastroCalc" in zf.read("LIESMICH.txt").decode()
+                assert zf.read("sicherung.enc")[:4] == b"GCS1"; assert "GastroCash" in zf.read("LIESMICH.txt").decode()  # Name seit 23.10.2026
             await pg.wait_for_timeout(300); meld = await pg.inner_text(".meldung"); assert "mit Passwort" in meld, meld
             assert await pg.locator("#ebene-huelle .blatt-passwort").count() == 0
             # Laden-Umbau (20.10.2026): danach „Wo liegt sie jetzt?“ – „Nur auf diesem Handy“ zählt nicht als Sicherung

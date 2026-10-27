@@ -621,7 +621,22 @@ const fertigSchnell = {
   },
 };
 
-export const SCHNELL = [spracheSchnell, ladenSchnell, karteSchnell, kuehlSchnell, geld, fertigSchnell];
+// Schloss (Baris 26.10.2026 23:44): gleich nach der Sprache ein Code für den Chef, dazu Face ID. Später fragt die App nur noch kurz beim Büro.
+const schlossSchnell = {
+  id: "schloss",
+  view: () => {
+    const w = globalThis.__gastrocalc?.wurzel; const code = !!w?.bueroPin; const bio = !!w?.bio?.id; // nur Anzeige
+    return `
+    ${kopfS2("schloss", t("schloss.titel"), t("schloss.hilfe"))}
+    <div class="s2schloss">
+      <button type="button" class="karte s2schloss-zeile ${code ? "an" : ""}" data-a="pin-setzen"><span class="ks">${sym("lock")}</span><b>${esc(t(code ? "schloss.codeAn" : "schloss.code"))}</b>${code ? `<span class="haken">${sym("check")}</span>` : ""}</button>
+      <button type="button" class="karte s2schloss-zeile ${bio ? "an" : ""}" data-a="bio-einrichten" ${code ? "" : "disabled"}><span class="ks">${sym("eye")}</span><b>${esc(t(bio ? "schloss.bioAn" : "schloss.bio"))}</b>${bio ? `<span class="haken">${sym("check")}</span>` : ""}</button>
+    </div>`;
+  },
+  fuss: () => knopfWeiter(),
+  aktion(name, el) { return hilfeAktion(name, el); },
+};
+export const SCHNELL = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, kuehlSchnell, geld, fertigSchnell];
 export const schritteFuer = (stand) => (stand?.weg === "schnell" ? SCHNELL : SCHRITTE);
 
 // ---------- Gespeicherter Schritt: nach Kennung, nicht nur nach Nummer ----------

@@ -31,6 +31,7 @@ export function ebeneHuelle() {
 }
 export const blattOffen = () => offen;
 export const pinOffen = () => offen === "pin";
+export const pinZweckJetzt = () => (offen === "pin" && pin ? { zweck: pin.zweck, ziel: pin.ziel } : null);
 
 function zeigen(art, html) {
   const h = ebeneHuelle(); const neu = offen !== art && !offen;
@@ -121,6 +122,7 @@ function pinZeichnen() {
   zeigen("pin", `<div class="pin-kopf"><span class="ks">${sym("lock")}</span><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div>
     <div class="pin-punkte${p.fehler && !rest ? " wackeln" : ""}" aria-hidden="true">${[0, 1, 2, 3].map((i) => `<i class="${i < p.eingabe.length ? "voll" : ""}"></i>`).join("")}</div>
     <div class="pin-tasten">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}"${rest ? " disabled" : ""}>${sym("delete")}</button></div>
+    ${p.zweck !== "setzen" && p.wurzel?.bio?.id ? `<button type="button" class="knopf zweit pin-bio" data-a="pin-bio">${esc(t("schloss.mitBio"))}</button>` : ""}
     ${vergessenErlaubt(p) ? `<button type="button" class="leise" data-a="rettung-start">${esc(t("rettung.vergessen"))}</button>` : ""}`);
   if (rest) uhrStarten(); else uhrStop();
 }
