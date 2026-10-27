@@ -85,7 +85,7 @@ function teamView(stand) {
 function lieferFeld(stand, H) {
   const prov = lieferProvision(stand); if (!prov) return "";
   const l = lieferTag(stand, H); const wert = lieferEntwurf ?? (l && l.betrag > 0 ? wertAnzeige(l.betrag) : "");
-  return `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("lieferTag.davon"))}<small>${esc(t("lieferTag.provision"))} ${esc(String(Math.round(prov.satz * 1000) / 10).replace(".", ","))} %</small></span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-liefer" value="${esc(wert)}" placeholder="0" aria-label="${esc(t("lieferTag.davon"))}"><span class="einheit">€</span></label>`;
+  return `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("lieferTag.davon"))}<small>${esc(t("lieferTag.provision"))} ${esc(String(Math.round(prov.satz * 1000) / 10).replace(".", ","))}\u00a0%</small></span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-liefer" value="${esc(wert)}" placeholder="0" aria-label="${esc(t("lieferTag.davon"))}"><span class="einheit">€</span></label>`;
 }
 export function umsatzLadenView(stand) {
   if (schritt !== "feld") return teamView(stand);

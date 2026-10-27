@@ -29,7 +29,7 @@ const wochentagKopf = () => { const f = new Intl.DateTimeFormat(sprache(), { wee
 function lieferBuero(stand, D, st) {
   const prov = lieferProvision(stand); if (!prov) return "";
   const l = lieferTag(stand, D); const k = l ? lieferKosten(l.betrag, prov, st.satz) : 0;
-  return `<div class="zahlfeld klein ul-liefer-buero"><span class="ul-liefer-text">${esc(t("lieferTag.davon"))}<small>${esc(t("lieferTag.provision"))} ${esc(String(Math.round(prov.satz * 1000) / 10).replace(".", ","))} %${k > 0 ? " · ≈ " + esc(fmtEuro(k, { dezimal: 2 })) : ""}</small></span><input inputmode="decimal" data-f="umsatz-liefer" value="${esc(l && l.betrag > 0 ? wertAnzeige(l.betrag) : "")}" placeholder="0" aria-label="${esc(t("lieferTag.davon"))}"><span class="einheit">€</span></div>`;
+  return `<div class="zahlfeld klein ul-liefer-buero"><span class="ul-liefer-text">${esc(t("lieferTag.davon"))}<small>${esc(t("lieferTag.provision"))} ${esc(String(Math.round(prov.satz * 1000) / 10).replace(".", ","))}\u00a0%${k > 0 ? " · ≈\u00a0" + esc(fmtEuro(k, { dezimal: 2 })) : ""}</small></span><input inputmode="decimal" data-f="umsatz-liefer" value="${esc(l && l.betrag > 0 ? wertAnzeige(l.betrag) : "")}" placeholder="0" aria-label="${esc(t("lieferTag.davon"))}"><span class="einheit">€</span></div>`;
 }
 export function umsatzView(stand) {
   const H = heute(); const D = tagGewaehlt(); const nach = D !== H;

@@ -74,7 +74,7 @@ function heuteZielKarte(stand, z, H) {
   return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
-    <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`}</span>
+    <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `<bdi dir="ltr">${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}</bdi>`}</span>
     ${w.stufe === "bisNull" && w.bewegung && Math.abs(w.bewegung.betrag) >= 1 ? `<span class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</span>` : ""}
     ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
     ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z, w.stufe)}

@@ -310,3 +310,14 @@ body.rg-aktiv { overflow: hidden; }
 .rg-text{font:inherit;font-size:calc(16rem / 17)}
 /* 27.10.2026 (Persona-Test Wirt): Stempeltext beginnt in allen 18 Sprachen schon mit „≈“ – kein zweites davor */
 .stempel-schaetzung::before{content:none}
+
+/* Sicht-Prüfung 27.10.2026 */
+.ul-liefer input:focus, .ul-feld input:focus, .ul-liefer-buero input:focus { outline: none; box-shadow: none; }
+.ul-liefer-buero .ul-liefer-text { min-width: 0; flex: 1 1 60%; } .ul-liefer-buero input { flex: 0 0 7.5em; min-width: 0; }
+#app input.textfeld + button.knopf { margin-top: 10px; }
+.rg-blase { background: rgba(14, 20, 16, .94) !important; border-radius: 18px; padding: 14px 16px 12px !important; box-shadow: 0 8px 30px rgba(0,0,0,.35) !important; }
+.b-ruhig summary.b-mehr-zeile { min-height: 44px; display: flex; align-items: center; }
+.periode button { min-width: 44px; }
+textarea.rg-text { resize: none; }
+.b-zeki { min-height: 44px; }
+.s2name:focus, .s2name:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 93, 67, .18); }
