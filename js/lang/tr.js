@@ -57,7 +57,7 @@ export default {
     frageStunden: "Her biri ayda yaklaşık kaç saat çalışıyor?",
     stundenHinweis: "Tam zamanlı biri yaklaşık 160 saat. Bir ortalama al.",
     frageLohn: "Bütün maaşlar ayda toplam ne kadar tutuyor?",
-    lohnHinweis: "Maaşlar için hesaptan çıkan her şey, kesintilerle birlikte. Kendi maaşın hemen sonra geliyor.",
+    lohnHinweis: "Maaşlar için hesaptan çıkan her şey, kesintilerle birlikte. Kesintiler sağlık sigortana göre değişir, bu yüzden ≈ ile hesaplıyorum. Kendi maaşın hemen sonra geliyor.",
     frageEigen: "Peki kendi aylık maaşın?",
     eigenHinweis: "Kendine ödediğin veya ödemek istediğin.",
     eigenRichtwert: (b, j, s) => `Yol gösterici değer ${b}: ${j} asgari ücreti (${s}) çarpı 173 saat.`,

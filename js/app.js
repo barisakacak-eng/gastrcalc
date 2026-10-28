@@ -236,8 +236,8 @@ function zeichneOnboarding() {
           ${zeigeFortschritt ? `<span class="schrittzahl">${esc(t("allgemein.schrittVon", i, SCHRITTE.length - 1))}</span>` : bearbeitet ? `<span class="schrittzahl">${esc(t("allgemein.bearbeiten"))}</span>` : ""}
         </div>
       </div>
-      <div class="inhalt">${s.view(stand)}${i === 0 && wurzel.betriebe.length === 1 ? `<label class="leise" style="display:block;text-align:center;margin-top:24px">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>` : ""}</div>
-      <div class="fuss">${s.fuss ? s.fuss(stand) : ""}</div>
+      <div class="inhalt">${s.view(stand)}</div>
+      <div class="fuss">${s.fuss ? s.fuss(stand) : ""}${i === 0 && wurzel.betriebe.length === 1 ? `<label class="leise ob-import">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>` : ""}</div>
     </div>`;
   if (bearbeitet && stand.rueckkehr.bis === s.id) { const k = root.querySelector('.fuss [data-a="weiter"]'); if (k) k.textContent = t("allgemein.uebernehmen"); }
   // Am Rechner das erste leere Textfeld fokussieren; am Handy nicht, sonst springt die Tastatur ungefragt hoch.

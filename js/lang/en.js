@@ -56,7 +56,7 @@ export default {
     frageStunden: "Roughly how many hours does each one work per month?",
     stundenHinweis: "A full-time person is about 160 hours. Use an average.",
     frageLohn: "What do all wages cost you together per month?",
-    lohnHinweis: "Everything that leaves the account for wages, with all contributions. Your own pay comes next.",
+    lohnHinweis: "Everything that leaves the account for wages, with all contributions. Contributions depend on your health insurer, so I calculate with ≈. Your own pay comes next.",
     frageEigen: "And your own pay per month?",
     eigenHinweis: "What you pay yourself or want to pay yourself.",
     eigenRichtwert: (b, j, s) => `Guide value ${b}: minimum wage ${j} (${s}) times 173 hours.`,
