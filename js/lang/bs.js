@@ -68,7 +68,7 @@ export default {
     lohnHinweis: "Ono što stvarno ode s računa: bruto plus tvoj dio kao poslodavca. Tvoja plata ide odmah posebno.",
     frageEigen: "A tvoja vlastita plata u mjesecu?",
     eigenHinweis: "Koliko sebi plaćaš ili želiš plaćati. Brojač postaje zelen tek kad je i to unutra.",
-    eigenRichtwert: (b) => `Okvirno ${b}: minimalna plata 2026 (13,90 € na sat) puta 173 sata. Upiši svoj pravi iznos.`,
+    eigenRichtwert: (b, j, s) => `Okvirno ${b}: minimalna plata ${j} (${s} na sat) puta 173 sata. Upiši svoj pravi iznos.`,
     eigenOffen: "Računaj bez moje plate",
     lohnTipp: "Bolje procijeni više. Ko plate računa premalo, prodaje svaki tanjir prejeftino.",
   },

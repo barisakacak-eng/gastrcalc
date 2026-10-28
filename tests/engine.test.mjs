@@ -107,7 +107,7 @@ test("monatsLast: Löhne offen bleibt offen, Saison nur auf feste Kosten, eigene
   stand.team.lohnkosten = 3000;
   nah(E.monatsLast(stand).gesamt, 5000);
   stand.team.eigenerLohnStatus = "geschaetzt"; // Richtwert Mindestlohn × 173 Std
-  nah(E.monatsLast(stand).gesamt, 5000 + E.EIGENER_LOHN_RICHTWERT); assert.equal(E.monatsLast(stand).eigen.status, "geschaetzt");
+  nah(E.monatsLast(stand).gesamt, 5000 + E.eigenerLohnRichtwert()); assert.equal(E.monatsLast(stand).eigen.status, "geschaetzt");
   stand.team.eigenerLohn = 3200; stand.team.eigenerLohnStatus = "eigen";
   nah(E.monatsLast(stand).gesamt, 8200); assert.equal(E.monatsLast(stand).offen, 0);
 });

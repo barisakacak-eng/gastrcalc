@@ -66,7 +66,7 @@ export default {
     lohnHinweis: "To, co naprawdę schodzi z konta: brutto plus twoja część jako pracodawcy. Twoja własna pensja osobno, za chwilę.",
     frageEigen: "A twoja własna pensja w miesiącu?",
     eigenHinweis: "Ile sobie wypłacasz albo chcesz wypłacać. Licznik zrobi się zielony dopiero wtedy, gdy to też jest w środku.",
-    eigenRichtwert: (b) => `Wartość orientacyjna ${b}: płaca minimalna 2026 (Mindestlohn, 13,90 €) razy 173 godziny. Wpisz swoją prawdziwą kwotę.`,
+    eigenRichtwert: (b, j, s) => `Wartość orientacyjna ${b}: płaca minimalna ${j} (Mindestlohn, ${s}) razy 173 godziny. Wpisz swoją prawdziwą kwotę.`,
     eigenOffen: "Licz bez mojej pensji",
     lohnTipp: "Lepiej szacuj z zapasem. Kto liczy za niskie pensje, sprzedaje każde danie za tanio.",
   },

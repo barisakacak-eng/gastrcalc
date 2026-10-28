@@ -67,7 +67,7 @@ export default {
     lohnHinweis: "Ce iese cu adevărat din cont: brutul plus partea ta de angajator. Salariul tău vine separat, imediat.",
     frageEigen: "Și salariul tău pe lună?",
     eigenHinweis: "Cât îți plătești sau vrei să-ți plătești. Contorul se face verde doar când e și asta inclus.",
-    eigenRichtwert: (b) => `Valoare orientativă ${b}: salariul minim 2026 (Mindestlohn, 13,90 €) ori 173 de ore. Trece suma ta reală.`,
+    eigenRichtwert: (b, j, s) => `Valoare orientativă ${b}: salariul minim ${j} (Mindestlohn, ${s}) ori 173 de ore. Trece suma ta reală.`,
     eigenOffen: "Calculează fără salariul meu",
     lohnTipp: "Mai bine estimezi generos. Cine pune salariile prea mici vinde fiecare farfurie prea ieftin.",
   },

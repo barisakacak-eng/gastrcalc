@@ -74,6 +74,9 @@ export function debounce(fn, ms) {
 }
 
 // Zahl für ein Eingabefeld: Komma statt Punkt, nichts bei null.
+// Gemeinsamer Helfer für geschätzte Euro-Zahlen (Masterauftrag „Gehirn“ 0.1, 28.10.2026): jede Zahl, die auf einem Richtwert,
+// einer geschätzten Warenquote oder einem Startwert beruht, bekommt „≈ “ davor – an einer Stelle statt in jedem Bildschirm einzeln.
+export const fmtEuroGeschaetzt = (n, geschaetzt, opts = {}) => (geschaetzt && n !== null && n !== undefined && Number.isFinite(n) ? "≈ " : "") + fmtEuro(n, opts);
 export const wertAnzeige = (n) => (n === null || n === undefined) ? "" : String(n).replace(".", ",");
 
 // Bildname aus einem Namen (17.10.2026, Bildliste für Sanji): „Dönerspieß Kalb/Pute“ → „doenerspiess-kalb-pute“.

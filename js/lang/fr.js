@@ -61,7 +61,7 @@ export default {
     lohnHinweis: "Ce qui sort vraiment du compte : brut plus ta part patronale. Ton propre salaire vient juste après, à part.",
     frageEigen: "Et ton propre salaire par mois ?",
     eigenHinweis: "Ce que tu te verses ou veux te verser. Le compteur ne passe au vert que si ça aussi est dedans.",
-    eigenRichtwert: (b) => `Repère ${b} : salaire minimum (Mindestlohn) 2026 (13,90 €) fois 173 heures. Mets ton vrai chiffre.`,
+    eigenRichtwert: (b, j, s) => `Repère ${b} : salaire minimum (Mindestlohn) ${j} (${s}) fois 173 heures. Mets ton vrai chiffre.`,
     eigenOffen: "Calculer sans mon salaire",
     lohnTipp: "Mieux vaut estimer large. Si tu mets les salaires trop bas, tu vends chaque assiette trop peu cher.",
   },

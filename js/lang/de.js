@@ -60,7 +60,7 @@ export default {
     lohnHinweis: "Das, was wirklich vom Konto geht: Brutto plus dein Anteil als Arbeitgeber. Dein eigener Lohn kommt gleich extra.",
     frageEigen: "Und dein eigener Lohn im Monat?",
     eigenHinweis: "Was du dir selbst zahlst oder zahlen willst. Der Zähler wird erst grün, wenn auch das drin ist.",
-    eigenRichtwert: (b) => `Richtwert ${b}: Mindestlohn 2026 (13,90 €) mal 173 Stunden. Trag deinen echten Wert ein.`,
+    eigenRichtwert: (b, j, s) => `Richtwert ${b}: Mindestlohn ${j} (${s}) mal 173 Stunden. Trag deinen echten Wert ein.`,
     eigenOffen: "Ohne eigenen Lohn rechnen",
     lohnTipp: "Lieber großzügig schätzen. Wer die Löhne zu niedrig ansetzt, verkauft jeden Teller zu billig.",
   },

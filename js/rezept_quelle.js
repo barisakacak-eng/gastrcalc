@@ -140,3 +140,10 @@ export function wareneinsatzSicherheit(stand) {
   const fortschritt = n ? (zaehl.eigen + zaehl.branche * 2 / 3 + zaehl.schaetzung / 3) / n : 0;
   return { anteilGeschaetzt: anteil, unsicher: anteil > 0.5, zaehl, fortschritt };
 }
+
+// Kein rotes Minus aus Startwerten (Masterauftrag „Gehirn“ 0.1, 28.10.2026): Ist ein Gericht rot, aber das Rezept nur geschätzt
+// (Vorlage, Baukasten) oder ein Preis nur Richtwert, ist das Minus nicht belegt. Die Oberfläche zeigt dann „≈ prüfen: abwiegen“ statt Rot.
+export function minusUnsicher(zeile, gericht) {
+  if (!zeile || zeile.ampel !== "rot") return false;
+  return rezeptStempel(gericht).stufe === "schaetzung" || !!zeile.warenRichtpreis || !!zeile.warenGeschaetzt;
+}

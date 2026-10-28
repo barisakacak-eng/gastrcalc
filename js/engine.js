@@ -1,4 +1,5 @@
 import { festPersonalMonat } from "./data/lohnkosten.js";
+import { mindestlohnAm } from "./data/mindestlohn.js";
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
 // Die Oberfläche darf nichts rechnen, was hier nicht steht. So reden Rechnung und Gestaltung nicht aneinander vorbei.
@@ -27,12 +28,15 @@ export function betragJeMonat(posten, betrieb = null) {
 }
 
 // Eigener Lohn (Etappe 5, Wunsch Baris 12.10.): eigene Kostenzeile, damit der Zähler erst grün wird, wenn auch der Chef bezahlt ist.
-// Richtwert: gesetzlicher Mindestlohn 2026 (13,90 €/Std) × 173 Std ≈ 2.400 € – als Schätzung gekennzeichnet, der Wirt überschreibt.
-export const EIGENER_LOHN_RICHTWERT = 2400;
-export function eigenerLohnJeMonat(team) {
+// Richtwert: gesetzlicher Mindestlohn (js/data/mindestlohn.js, nach Datum) × 173 Std, auf 50 € gerundet – als Schätzung gekennzeichnet,
+// der Wirt überschreibt. 2026: 13,90 × 173 = 2.404,70 → 2.400 €. Ab 01.01.2027: 14,60 × 173 = 2.525,80 → 2.550 € (Masterauftrag 1.1).
+export const EIGENER_LOHN_STUNDEN = 173;
+export const eigenerLohnRichtwert = (datum = heuteGeschaeft()) => Math.round(mindestlohnAm(datum).satz * EIGENER_LOHN_STUNDEN / 50) * 50;
+export const EIGENER_LOHN_RICHTWERT = eigenerLohnRichtwert("2026-01-01"); // Wert 2026, nur noch für alte Tests; die App nimmt eigenerLohnRichtwert(datum)
+export function eigenerLohnJeMonat(team, datum = heuteGeschaeft()) {
   if (team.eigenerLohnStatus === "offen") return { betrag: null, status: "offen" };
   if (typeof team.eigenerLohn === "number") return { betrag: team.eigenerLohn, status: team.eigenerLohnStatus === "geschaetzt" ? "geschaetzt" : "eigen" };
-  return { betrag: EIGENER_LOHN_RICHTWERT, status: "geschaetzt" };
+  return { betrag: eigenerLohnRichtwert(datum), status: "geschaetzt" };
 }
 
 // Summe der festen Kosten je Monat, getrennt nach Status.
@@ -69,12 +73,12 @@ export function lohnJeMonat(team) {
 // Was jeden Monat reinkommen muss (Etappe 1): feste Kosten auf die offenen Monate verteilt, plus Löhne.
 // Löhne werden NICHT mit 12/monate hochgerechnet: In der Saison fallen sie nur in den offenen Monaten an (Prüfung Teil 4 Nr. 11,
 // Lohnsplit saisonal/ganzjährig kommt später). Ergebnis-Objekt sagt, ob Teile offen sind.
-export function monatsLast(stand) {
+export function monatsLast(stand, datum = heuteGeschaeft()) {
   const fk = fixkosten(stand);
   // 27.10.2026: Lohn im Monat = eingetragene Lohnkosten, mindestens aber die festen Monatslöhne der Personen (Brutto + Arbeitgeberanteil)
   const lohnEingetragen = lohnJeMonat(stand.team); const festPersonal = festPersonalMonat(stand);
   const lohn = festPersonal > 0 ? Math.max(lohnEingetragen ?? 0, festPersonal) : lohnEingetragen;
-  const eigen = eigenerLohnJeMonat(stand.team);
+  const eigen = eigenerLohnJeMonat(stand.team, datum);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
   const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
   return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };

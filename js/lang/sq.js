@@ -66,7 +66,7 @@ export default {
     lohnHinweis: "Aq sa del vërtet nga llogaria: bruto plus pjesa jote si punëdhënës. Rroga jote del më pas veç.",
     frageEigen: "Po rroga jote në muaj?",
     eigenHinweis: "Sa i paguan vetes ose do të paguash. Numëruesi bëhet i gjelbër vetëm kur është brenda edhe kjo.",
-    eigenRichtwert: (b) => `Vlerë orientuese ${b}: paga minimale 2026 (13,90 €) × 173 orë. Shkruaj vlerën tënde të vërtetë.`,
+    eigenRichtwert: (b, j, s) => `Vlerë orientuese ${b}: paga minimale ${j} (${s}) × 173 orë. Shkruaj vlerën tënde të vërtetë.`,
     eigenOffen: "Llogarit pa rrogën time",
     lohnTipp: "Më mirë llogarit me bollëk. Kush i llogarit rrogat shumë ulët, e shet çdo pjatë shumë lirë.",
   },

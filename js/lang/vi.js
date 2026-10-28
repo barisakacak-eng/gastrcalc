@@ -61,7 +61,7 @@ export default {
     lohnHinweis: "Số tiền thật sự ra khỏi tài khoản: lương gộp cộng phần chủ phải đóng. Lương của sếp tính riêng ở bước sau.",
     frageEigen: "Còn lương của chính sếp mỗi tháng?",
     eigenHinweis: "Số sếp tự trả hoặc muốn trả cho mình. Bộ đếm chỉ chuyển xanh khi có cả khoản này.",
-    eigenRichtwert: (b) => `Số tham khảo ${b}: lương tối thiểu (Mindestlohn) 2026 (13,90 €) nhân 173 giờ. Điền số thật của sếp.`,
+    eigenRichtwert: (b, j, s) => `Số tham khảo ${b}: lương tối thiểu (Mindestlohn) ${j} (${s}) nhân 173 giờ. Điền số thật của sếp.`,
     eigenOffen: "Tính mà không có lương của mình",
     lohnTipp: "Nên ước tính rộng tay. Tính lương thấp quá thì món nào bán cũng rẻ quá.",
   },

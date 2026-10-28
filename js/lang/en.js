@@ -59,7 +59,7 @@ export default {
     lohnHinweis: "What really leaves the account: gross plus your share as employer. Your own pay comes next.",
     frageEigen: "And your own pay per month?",
     eigenHinweis: "What you pay yourself or want to pay yourself. The counter only turns green once this is covered too.",
-    eigenRichtwert: (b) => `Guide value ${b}: minimum wage 2026 (€13.90) times 173 hours. Enter your real value.`,
+    eigenRichtwert: (b, j, s) => `Guide value ${b}: minimum wage ${j} (${s}) times 173 hours. Enter your real value.`,
     eigenOffen: "Calculate without own pay",
     lohnTipp: "Rather estimate generously. Whoever sets wages too low sells every plate too cheap.",
   },

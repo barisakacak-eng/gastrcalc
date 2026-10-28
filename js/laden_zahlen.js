@@ -6,6 +6,19 @@ import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichun
 import { zaehler, monatsZiel, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
 
+// Erste Zahl vertrauenswürdig (Masterauftrag „Gehirn“ 0.1, 28.10.2026): Ohne Miete und ohne Löhne ist „bis null“ nur der Richtwert des
+// eigenen Lohns – die Zahl sieht echt aus und ist es nicht (Gremium: leerer Laden zeigte „≈ 487 €“). Dann fehlt eine Euro-Zahl, und die App
+// sagt, was als Nächstes einzutragen ist. Rückgabe: null (genug da) | "miete" | "personal".
+// Miete fehlt: kein Posten der Gruppe „miete“ mit Betrag, und der Wirt hat „Miete“ nicht ausgeschaltet (status "aus" = gibt es nicht).
+// Personal fehlt: keine Lohnsumme und keine festen Monatslöhne, und der Wirt hat nicht „0 Mitarbeiter“ gesagt.
+export function ersteZahlFehlt(stand, last) {
+  const miete = (stand.kosten || []).filter((k) => k.kategorie === "miete");
+  const mieteDa = miete.some((k) => k.status !== "aus" && Number(k.betrag) > 0) || miete.some((k) => k.posten === "miete" && k.status === "aus");
+  if (!mieteDa) return "miete";
+  if (last && last.lohn === null && stand.team?.personen !== 0) return "personal";
+  return null;
+}
+
 // Zielkarte im Laden. stufe: "bisNull" | "bisZiel" | "ueberZiel" (ohne Ziel = "bisNull"); zahl = die große Zahl (null = keine Kosten);
 // marke = Zielmarke des Balkens (bis null: Umsatz + was fehlt, danach das Monatsziel); anteil 0–1;
 // tempo: { art: "gut", am } (Ziel erreicht am …) | { art: "knapp", proTag } (so viel pro Tag nötig) | null. m = monatsZiel().
@@ -24,7 +37,7 @@ export function heuteZiel(stand, z, H) {
   // Persona-Test Vater (27.10.2026): ohne heutigen Umsatz stand morgens „seit gestern − 483 €“ – nur Prognose-Rauschen. Erst mit Umsatz zeigen.
   try { if (!umsatzEintrag(stand, H)) throw 0; const G = tagPlus(H, -1); const ab = typeof stand.angelegt === "string" ? heuteGeschaeft(new Date(stand.angelegt)) : null; if (G.slice(0, 7) === H.slice(0, 7) && (!ab || G >= ab)) { const mg = monatsZiel(stand, zaehler(stand, { datum: G }), G);
     if (mg.nullpunkt !== null && m.nullpunkt !== null) { const vorher = mg.fehltNull ?? 0, jetzt = m.fehltNull ?? 0; bewegung = { betrag: jetzt - vorher, umsatz: (m.umsatz || 0) - (mg.umsatz || 0) }; } } } catch { bewegung = null; }
-  return { m, stufe, zahl, marke, anteil, tempo, bewegung };
+  return { m, stufe, zahl, marke, anteil, tempo, bewegung, fehlt: ersteZahlFehlt(stand, z?.last) };
 }
 
 // Vier Kacheln. Umsatz und Müll nach Geschäftstag H, Kühlung und Putzen nach Kalendertag K (Paket 3, M7).

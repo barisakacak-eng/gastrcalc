@@ -104,7 +104,7 @@ export function belegQuoteTeil(stand, datum, satz) {
 // Der Zähler für den Monat, in dem `datum` liegt, Stand am Abend von `datum`. Paket 3, M7: Standard ist der Geschäftstag (bis 4 Uhr = Vortag).
 export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const M = monatsGrenzen(datum);
-  const last = monatsLast(stand);
+  const last = monatsLast(stand, datum);
   const steuer = umsatzSteuerSatz(stand);
   const q = warenQuote(stand);
   const einkauf = einkaufJeTag(stand, M.von, M.bis);

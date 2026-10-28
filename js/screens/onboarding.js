@@ -8,7 +8,7 @@ import { sym } from "../symbole.js";
 import { RECHTSFORMEN, rechtsform, rechtsformSetzen } from "../rechtsform.js"; // Rechtsform-Schritt nach Sanjis Entwurf (24.10.2026)
 import { t, SPRACHEN, SPRACH_NAMEN, sprache as aktiveSprache } from "../i18n.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
-import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige } from "../util.js";
+import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from "../util.js";
 import { reinigungVon, putzzeitMonat } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
@@ -19,7 +19,8 @@ import { schrittSetzen, einrichtungWegSetzen, schnellErgebnisSetzen, schnellFert
   kostenPostenOffen, kostenBasisSetzen, kostenSatzSetzen, kostenKategorieGeprueft, kostenSchnellSetzen, kanalUmschalten, portalAnlegen, portalEntfernen, portalBasisSetzen,
   portalFeldSetzen, reinigungAendern, reinigungMinutenAendern, kuehlstelleAnlegen, kuehlstelleArtWaehlen, kuehlstelleNameSetzen, kuehlstelleWegnehmen, kuehlEingerichtetSetzen } from "../stamm.js";
 import { VORSTEUER_SAETZE } from "../engine.js"; // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten
-import { fixkosten, EIGENER_LOHN_RICHTWERT, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
+import { fixkosten, eigenerLohnRichtwert, eigenerLohnJeMonat, grenzenVon } from "../engine.js";
+import { mindestlohnAm } from "../data/mindestlohn.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
 import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste, karteModus, serieStand, fotoLauf, fotoVorbereiten } from "./foto.js";
 import { monatsLast } from "../engine.js";
@@ -160,8 +161,8 @@ const lohn = {
     <div class="feldzeile abstand-o">
       <label>${esc(t("team.frageEigen"))}</label>
       <p class="hinweis">${esc(t("team.eigenHinweis"))}</p>
-      ${(() => { const e = eigenerLohnJeMonat(stand.team); return zahlfeld({ feld: "team.eigenerLohn", wert: e.status === "eigen" ? stand.team.eigenerLohn : null, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: e.status === "offen" ? "" : String(EIGENER_LOHN_RICHTWERT), klein: true, status: e.status === "geschaetzt" ? "geschaetzt" : e.status === "offen" ? "offen" : "" }); })()}
-      <span class="marke ${stand.team.eigenerLohnStatus === "offen" ? "offen" : "geschaetzt"}">${esc(stand.team.eigenerLohnStatus === "offen" ? t("allgemein.offen") : stand.team.eigenerLohnStatus === "eigen" ? t("allgemein.bekannt") : t("team.eigenRichtwert", fmtEuro(EIGENER_LOHN_RICHTWERT)))}</span>
+      ${(() => { const e = eigenerLohnJeMonat(stand.team); return zahlfeld({ feld: "team.eigenerLohn", wert: e.status === "eigen" ? stand.team.eigenerLohn : null, einheit: `${t("allgemein.euro")} ${t("allgemein.proMonat")}`, platzhalter: e.status === "offen" ? "" : String(eigenerLohnRichtwert()), klein: true, status: e.status === "geschaetzt" ? "geschaetzt" : e.status === "offen" ? "offen" : "" }); })()}
+      <span class="marke ${stand.team.eigenerLohnStatus === "offen" ? "offen" : "geschaetzt"}">${esc(stand.team.eigenerLohnStatus === "offen" ? t("allgemein.offen") : stand.team.eigenerLohnStatus === "eigen" ? t("allgemein.bekannt") : t("team.eigenRichtwert", fmtEuro(eigenerLohnRichtwert()), heuteGeschaeft().slice(0, 4), fmtEuro(mindestlohnAm(heuteGeschaeft()).satz, { dezimal: 2 })))}</span>
       ${stand.team.eigenerLohnStatus === "offen" ? "" : `<button type="button" class="leise" data-a="eigen-offen">${esc(t("team.eigenOffen"))}</button>`}
     </div>`,
   fuss: () => knopfOffen() + knopfWeiter(),
@@ -400,7 +401,7 @@ export const kostenSchnell = {
       <p class="hinweis">${esc(t("schnell.kostenHinweis"))}</p>
       ${zeile("ks:miete", t("schnell.miete"), t("schnell.mieteHinweis"), wert("miete"), f?.rw.miete)}
       ${zeile("ks:personal", t("schnell.personal"), t("schnell.personalHinweis"), stand.team.lohnkosten, null)}
-      ${zeile("ks:eigen", t("schnell.eigen"), t("schnell.eigenHinweis", fmtEuro(EIGENER_LOHN_RICHTWERT)), eigen, EIGENER_LOHN_RICHTWERT)}
+      ${zeile("ks:eigen", t("schnell.eigen"), t("schnell.eigenHinweis", fmtEuro(eigenerLohnRichtwert())), eigen, eigenerLohnRichtwert())}
       ${zeile("ks:energie", t("schnell.energie"), t("schnell.energieHinweis"), wert("strom"), null)}
       <p class="tipp">${esc(t("schnell.kostenFoto"))}</p>`;
   },
@@ -571,7 +572,7 @@ const geld = {
       <div class="s2geld">
         ${feld("ks:miete", t("schnell2.miete"), wert("miete"), f?.rw.miete)}
         ${feld("ks:personal", t("schnell2.personal"), stand.team.lohnkosten, null)}
-        ${feld("ks:eigen", t("schnell2.eigen"), eigen, EIGENER_LOHN_RICHTWERT)}
+        ${feld("ks:eigen", t("schnell2.eigen"), eigen, eigenerLohnRichtwert())}
         ${feld("ks:energie", t("schnell2.strom"), wert("strom"), null)}
       </div>
       <div class="s2putz"><b>${esc(t("schnell2.putzt"))}</b>

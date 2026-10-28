@@ -60,7 +60,7 @@ export default {
     lohnHinweis: "Ya ku bi rastî ji hesabê diçe: meaşê bi bac (Brutto) û para te wek kardêr. Meaşê te bi xwe paşê cuda tê.",
     frageEigen: "Û meaşê te bi xwe di mehê de?",
     eigenHinweis: "Ya ku tu didî xwe an dixwazî bidî. Hejmarker tenê wê demê kesk dibe ku ev jî tê de be.",
-    eigenRichtwert: (b) => `Nirxa pêşniyarî ${b}: meaşê herî kêm 2026 (13,90 €) × 173 saet. Nirxa xwe ya rastîn binivîse.`,
+    eigenRichtwert: (b, j, s) => `Nirxa pêşniyarî ${b}: meaşê herî kêm ${j} (${s}) × 173 saet. Nirxa xwe ya rastîn binivîse.`,
     eigenOffen: "Bê meaşê min hesab bike",
     lohnTipp: "Bi destvekirî texmîn bike. Yê ku meaşan kêm hesab dike, her teyfikê pir erzan difiroşe.",
   },

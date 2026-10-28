@@ -61,7 +61,7 @@ export default {
     lohnHinweis: "Lo que de verdad sale de la cuenta: bruto más tu parte como empresa. Tu propio sueldo va aparte, ahora.",
     frageEigen: "¿Y tu propio sueldo al mes?",
     eigenHinweis: "Lo que te pagas o quieres pagarte. El contador solo se pone en verde cuando esto también está dentro.",
-    eigenRichtwert: (b) => `Referencia ${b}: salario mínimo (Mindestlohn) 2026 (13,90 €) por 173 horas. Pon tu cifra real.`,
+    eigenRichtwert: (b, j, s) => `Referencia ${b}: salario mínimo (Mindestlohn) ${j} (${s}) por 173 horas. Pon tu cifra real.`,
     eigenOffen: "Calcular sin mi sueldo",
     lohnTipp: "Mejor calcula de más. Si pones los sueldos bajos, vendes cada plato demasiado barato.",
   },

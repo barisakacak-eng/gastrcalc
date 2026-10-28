@@ -60,7 +60,7 @@ export default {
     lohnHinweis: "Hesaptan gerçekten çıkan: brüt artı işveren payın. Kendi maaşın hemen sonra geliyor.",
     frageEigen: "Peki kendi aylık maaşın?",
     eigenHinweis: "Kendine ödediğin veya ödemek istediğin. Sayaç ancak bu da karşılanınca yeşile döner.",
-    eigenRichtwert: (b) => `Yol gösterici değer ${b}: 2026 asgari ücreti (13,90 €) çarpı 173 saat. Gerçek değerini gir.`,
+    eigenRichtwert: (b, j, s) => `Yol gösterici değer ${b}: ${j} asgari ücreti (${s}) çarpı 173 saat. Gerçek değerini gir.`,
     eigenOffen: "Kendi maaşım olmadan hesapla",
     lohnTipp: "Fazla tahmin etmek daha iyi. Maaşları düşük yazan her tabağı ucuza satar.",
   },

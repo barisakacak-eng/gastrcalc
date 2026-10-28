@@ -4,8 +4,12 @@
 //   Umlagen: U1 2,1 % (Standardsatz TK, je Kasse und Erstattungssatz verschieden) + U2 0,44 % + Insolvenzgeldumlage 0,15 % → ≈ 2,69 %
 //   Quelle: https://www.tk.de/firmenkunden/versicherung/beitraege-faq/beitragssaetze/aktuelle-beitragssaetze-in-der-sozialversicherung-2031554
 //   Insolvenzgeldumlage 0,15 %: https://www.lohndialog.de/minijob-lohnabrechnung-2026/
-//   Nicht enthalten: Berufsgenossenschaft (Unfallversicherung, je Betrieb verschieden) – darum ≈.
-// Minijob (gewerblich, bis 603 €/Monat 2026): KV 13 % + RV 15 % + Pauschsteuer 2 % + U1 0,8 % + U2 0,22 % + Insolvenzgeld 0,15 % = 31,17 %
+//   Nicht enthalten: Berufsgenossenschaft (Unfallversicherung, je Betrieb verschieden) – darum ≈. Kein fester BG-Zuschlag, solange keine
+//   belegte Quelle für den Gastgewerbe-Satz vorliegt (Masterauftrag 0.5, Entscheidung Zoro 28.10.2026): Anzeige sagt „ohne Berufsgenossenschaft“.
+//   Sachbezug Personalessen (0.5): kein Zuschlag auf die Lohnkosten. Die Ware des Essens zählt schon als Wareneinsatz ohne Umsatz
+//   (js/zaehler.js, muellJeTag); der Sachbezugswert ist ein steuerlicher Wert beim Mitarbeiter, kein zweites Geld vom Konto. Ob Steuer
+//   und Sozialabgaben darauf der Chef pauschal trägt, entscheidet das Lohnbüro – darum nicht fest eingerechnet.
+// Minijob (gewerblich, bis 603 €/Monat 2026, ab 01.01.2027 bis 633 € – js/data/mindestlohn.js): KV 13 % + RV 15 % + Pauschsteuer 2 % + U1 0,8 % + U2 0,22 % + Insolvenzgeld 0,15 % = 31,17 %
 //   Quelle: https://www.lohndialog.de/minijob-lohnabrechnung-2026/ (Abruf 27.10.2026)
 export const LOHN_AUFSCHLAG = {
   angestellt: { satz: 0.2115 + 0.0269, geschaetzt: true, stand: "2026" },

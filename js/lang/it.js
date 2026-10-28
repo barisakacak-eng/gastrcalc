@@ -61,7 +61,7 @@ export default {
     lohnHinweis: "Quello che esce davvero dal conto: lordo più la tua parte da datore di lavoro. Il tuo stipendio viene subito dopo, a parte.",
     frageEigen: "E il tuo stipendio al mese?",
     eigenHinweis: "Quanto ti paghi o vuoi pagarti. Il contatore diventa verde solo quando c'è anche questo.",
-    eigenRichtwert: (b) => `Valore indicativo ${b}: salario minimo 2026 (13,90 € all'ora) per 173 ore. Inserisci il tuo valore vero.`,
+    eigenRichtwert: (b, j, s) => `Valore indicativo ${b}: salario minimo ${j} (${s} all'ora) per 173 ore. Inserisci il tuo valore vero.`,
     eigenOffen: "Calcola senza il mio stipendio",
     lohnTipp: "Meglio stimare largo. Chi mette gli stipendi troppo bassi vende ogni piatto troppo a buon mercato.",
   },
