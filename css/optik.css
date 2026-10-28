@@ -345,3 +345,8 @@ textarea.rg-text { resize: none; }
 .umsatz-laden .ul-feld.ul-liefer input, .ul-team-zahl input { min-height: 44px; } .ul-team-zahl input { min-width: 44px; }
 .ul-team-zahl { padding: 6px 8px; gap: 4px; } .ul-team-zahl input { flex: 1 0 44px; } .ul-team-zahlen { gap: 8px; }
 .ul-team-zahl input { font-size: calc(24rem / 17); } .ul-team-zahl .einheit { font-size: calc(14rem / 17); } /* Nachtest: „12“ und „96,5“ passen auch bei 360 px */
+/* F1 (Sonderauftrag 6b, 28.10.2026): Einheit unter die Zahl, damit „1234,5“ und „38,5“ auch bei 360 px ganz sichtbar bleiben (Baris: Zahl verschwand im Kasten) */
+.ul-team-zahl { flex-direction: column; align-items: stretch; gap: 0; padding: 4px 8px 6px; }
+.ul-team-zahl input { flex: 0 0 auto; width: 100%; min-width: 0; text-align: center; font-size: calc(24rem / 17); letter-spacing: -0.01em; padding: 0; }
+.ul-team-zahl .einheit { text-align: center; font-size: calc(14rem / 17); line-height: 1.1; }
+.ul-team-zahlen .ul-team-zahl input { text-align: center; font-size: calc(24rem / 17); } /* F1: gilt vor späteren Regeln, damit auch „120,5“ bei 360 px Luft hat */
