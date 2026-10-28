@@ -210,6 +210,7 @@ button.b-zeile:active { background: var(--papier); }
 .ds-karte .ds-verantwortlich{margin-top:14px;font-weight:700}
 .b-einstellungen .einstellungen-inhalt>details.ds-karte.karte,.ds-karte{padding:16px 18px!important;display:block} /* facelift setzt :first-of-type auf 0 – details ist das erste seiner Art */
 /* Masterauftrag „Gehirn“ (28.10.2026): Hauptzahl wie auf Heute, Mindestlohn-Karte, Ausblick am Monatsergebnis */
+.buero .karte.b-hauptzahl, .buero .karte.b-mindestlohn { padding: 14px 16px; gap: 6px; }
 .b-hauptzahl { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; text-align: start; min-height: 44px; }
 .b-hauptzahl small { color: var(--tinte-weich); }
 .b-hauptzahl b { font-size: calc(34rem / 17); line-height: 1.1; }
