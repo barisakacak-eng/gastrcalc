@@ -78,7 +78,9 @@ Jede Zahl mit Quelle und Abrufdatum; Setzungen sind eigene Schwellen ohne Branch
 | Mindestlohn-Vorschau | Stunden der letzten 28 Tage × 30,4/28 × Differenz × (1 + Arbeitgeberanteil); Umsatz = Mehrkosten ÷ (1 − Warenquote) × (1 + USt) | `js/mindestlohn.js` | Rechnung, immer ≈ (ohne Berufsgenossenschaft) |
 | Karte Mindestlohn | ab 92 Tage vorher bis 31 Tage danach | `js/mindestlohn.js` | Setzung |
 | Umsatz-Rückfrage | unter 10 % oder über 3× Median der letzten 14 Tage, ab 5 Tagen | `js/umsatz_pruefung.js` | Setzung |
+| BGN | ≈ 1,04 % des Bruttoentgelts | `js/data/lohnkosten.js` BGN_ANTEIL | BGN Geschäftszahlen 2025, Register 28.10.2026 |
+| Sachbezug 2027 | 2,43 € / 4,70 € (geplant) | `js/engine.js` SVEV_2027 | BR-Drs. 503/26, Register 28.10.2026 |
 | Sicherung | Erinnerung: nie gesichert ab 5 Einträgen, nach 7 Tagen, erste 7 Tage im neuen Monat | `js/sicherung_stufe.js` sicherungFaellig | Setzung |
 | Erste Zahl | ohne Miete (Gruppe „miete“) oder Löhne keine Euro-Zahl | `js/laden_zahlen.js` ersteZahlFehlt | Regel (Gremium 28.10.2026) |
 
-Bewusst nicht eingerechnet (Entscheidung Zoro 28.10.2026): Berufsgenossenschaft (kein belegter Satz) und Sachbezug Personalessen als Lohnkosten (die Ware zählt schon als Wareneinsatz ohne Umsatz) – Begründung in `js/data/lohnkosten.js`.
+Nach Register „Zahlen und Fristen“ 28.10.2026 (ab 16:30 maßgeblich): BGN ≈ 1,04 % des Bruttoentgelts im Arbeitgeber-Aufschlag (angestellt ≈ 24,88 %, Minijob ≈ 32,21 %, immer ≈, hängt an der Krankenkasse); Sachbezug SvEV nach Datum (2026: 2,37/4,57 €; ab 01.01.2027 geplant 2,43/4,70 €); Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage als ≈ Lohnkosten (`sachbezugAbgabenMonat`), die Ware selbst nicht doppelt. Pauschbetrag 2027 nicht vorab eingebaut. Feiertage BW 2026/2027 per Test gegen das Register geprüft (Gründonnerstag kein Feiertag). Aufbewahrung Belege 8 Jahre (Hinweis-Karte).

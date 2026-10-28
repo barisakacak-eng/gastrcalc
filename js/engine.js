@@ -1,4 +1,4 @@
-import { festPersonalMonat } from "./data/lohnkosten.js";
+import { festPersonalMonat, LOHN_AUFSCHLAG } from "./data/lohnkosten.js";
 import { mindestlohnAm } from "./data/mindestlohn.js";
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
@@ -79,9 +79,18 @@ export function monatsLast(stand, datum = heuteGeschaeft()) {
   const lohnEingetragen = lohnJeMonat(stand.team); const festPersonal = festPersonalMonat(stand);
   const lohn = festPersonal > 0 ? Math.max(lohnEingetragen ?? 0, festPersonal) : lohnEingetragen;
   const eigen = eigenerLohnJeMonat(stand.team, datum);
+  const sachbezugAbgaben = sachbezugAbgabenMonat(stand, datum);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
   const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
-  return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, gesamt: fixJeOffen + (lohn ?? 0) + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
+  return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, sachbezugAbgaben, gesamt: fixJeOffen + (lohn ?? 0) + sachbezugAbgaben + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
+}
+
+// Masterauftrag 0.5 (28.10.2026): Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage (≈ je Monat).
+// = Sachbezugswert (SvEV nach Datum) × Arbeitgeber-Aufschlag „angestellt“ (inkl. BGN). Die Ware selbst zählt schon beim Wareneinsatz.
+export function sachbezugAbgabenMonat(stand, datum = heuteGeschaeft()) {
+  const von = tagPlus(datum, -29); let sb = 0;
+  for (const e of stand?.schwund || []) if (!e.storniert && e.art === "personal" && typeof e.datum === "string" && e.datum >= von && e.datum <= datum) sb += sachbezugWert(e.menge, e.mahlzeit, e.datum);
+  return sb * LOHN_AUFSCHLAG.angestellt.satz;
 }
 
 // Minutensatz auf Leistungsstunden (Prüfung "Minutensatz, nebenbei"): bezahlte Stunden sind nicht produktive Stunden.
@@ -578,8 +587,13 @@ export const FRAKTIONEN = ["bio", "rest", "verpackung", "glas", "papier", "fett"
 // (Rechtsstand 02.07.2026) und steuertipps.de, Abruf 20.10.2026. Nur zum Vergleich im Steuer-Ordner, keine Buchung (Baris 20.10.2026: P1).
 export const PAUSCHBETRAG_EIGEN_2026 = 4001;
 export const SVEV_2026 = { fruehstueck: 2.37, mittag: 4.57, abend: 4.57, tag: 11.5, monat: 345 };
+// 2027 (Register 28.10.2026, Punkt 6): 17. Änderungsverordnung SvEV, BR-Drs. 503/26 vom 03.09.2026 – Monat 355 €, Frühstück 2,43 €,
+// Mittag/Abend je 4,70 €. Status „geplant“ (Bundesrat-Zustimmung nicht belegt) → geplant: true, Anzeige mit ≈.
+export const SVEV_2027 = { fruehstueck: 2.43, mittag: 4.70, abend: 4.70, tag: 11.83, monat: 355, geplant: true };
+export const svevAm = (datum) => (typeof datum === "string" && datum >= "2027-01-01" ? SVEV_2027 : SVEV_2026);
 // Trennung 2 (17.10.2026): Sachbezug eines Personalessens = Menge × Satz der Mahlzeit (ohne Mahlzeit: Mittag). Vorher zweimal im Bildschirm.
-export const sachbezugWert = (menge, mahlzeit) => (Number(menge) || 0) * (SVEV_2026[mahlzeit] ?? SVEV_2026.mittag);
+// 28.10.2026: Satz nach dem Datum des Essens (ohne Datum: heute).
+export const sachbezugWert = (menge, mahlzeit, datum = heuteGeschaeft()) => { const t = svevAm(datum); return (Number(menge) || 0) * (t[mahlzeit] ?? t.mittag); };
 // Trennung 2 (17.10.2026): Schwund-Liste eines Zeitraums, neueste zuerst (Büro „Listen“).
 export const schwundEintraege = (stand, { von, bis }) => (stand.schwund || []).filter((e) => e.datum >= von && e.datum <= bis).slice().reverse();
 
@@ -637,7 +651,7 @@ export function schwundAuswertung(stand, { von, bis }) {
       if (e.fraktion) { out.jeFraktion[e.fraktion] ??= { anzahl: 0, wert: 0 }; out.jeFraktion[e.fraktion].anzahl += 1; out.jeFraktion[e.fraktion].wert += wert || 0; }
     } else if (vorgang === 2) {
       out.personal.anzahl += Number(e.menge) || 0;
-      out.personal.svev += (Number(e.menge) || 0) * (SVEV_2026[e.mahlzeit] ?? SVEV_2026.mittag);
+      out.personal.svev += sachbezugWert(e.menge, e.mahlzeit, e.datum);
       if (wert !== null) out.personal.waren += wert;
     } else if (vorgang === 4) {
       out.ausgegeben.anzahl += Number(e.menge) || 0;
