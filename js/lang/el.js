@@ -1159,7 +1159,7 @@ export default {
     nullKurz: "Μηδέν στα", zielKurz: "Στόχος",
     zielLinie: "μηδέν + στόχος κέρδους",
     stufe: { bisNull: "Μέχρι το μηδέν λείπουν", bisZiel: "Μέχρι τον στόχο", ueberZiel: "Πάνω από τον στόχο" },
-    tempoGut: (d) => `Εντός πλάνου · ${d}`, tempoKnapp: (b) => `Χρειάζονται ${b} / μέρα`, ohneKosten: "Λείπουν πάγια έξοδα",
+    fehlt: { miete: "Γράψε το ενοίκιο", personal: "Γράψε τους μισθούς" }, tempoGut: (d) => `Εντός πλάνου · ${d}`, tempoKnapp: (b) => `Χρειάζονται ${b} / μέρα`, ohneKosten: "Λείπουν πάγια έξοδα",
     kachel: { umsatz: "Τζίρος σήμερα", muell: "Σκουπίδια σήμερα", kuehlung: "Ψύξη", putzen: "Καθάρισμα" },
     ok: "OK", offenN: (n) => `${n} εκκρεμούν`, jetztDran: "Σειρά σου",
     dran: { selbst: (n) => `${n}: γράψε τη συνταγή`, einkauf: "Βάλε τις τιμές αγοράς", rezepte: "Ζύγισε τις συνταγές", zuWarm: (s) => `${s} πολύ ζεστό`, zuKalt: (s) => `${s} πολύ κρύο`, nachmessen: "Μέτρησε ξανά", rundgang: "Γύρος ψύξης", rundgangWeiter: "Συνέχισε τον γύρο",

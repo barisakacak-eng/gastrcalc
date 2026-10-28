@@ -1165,7 +1165,7 @@ export default {
     nullKurz: "Zero la", zielKurz: "Țintă",
     zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },
-    tempoGut: (d) => `În plan · ${d}`, tempoKnapp: (b) => `${b} / zi necesar`, ohneKosten: "Lipsesc costurile fixe",
+    fehlt: { miete: "Trece chiria", personal: "Trece salariile" }, tempoGut: (d) => `În plan · ${d}`, tempoKnapp: (b) => `${b} / zi necesar`, ohneKosten: "Lipsesc costurile fixe",
     kachel: { umsatz: "Încasări azi", muell: "Deșeuri azi", kuehlung: "Răcire", putzen: "Curățenie" },
     ok: "OK", offenN: (n) => `${n} deschise`, jetztDran: "Acum",
     dran: { selbst: (n) => `${n}: scrie rețeta`, einkauf: "Introdu prețurile de achiziție", rezepte: "Cântărește rețetele", zuWarm: (s) => `${s} prea cald`, zuKalt: (s) => `${s} prea rece`, nachmessen: "Măsoară din nou", rundgang: "Rundă de răcire", rundgangWeiter: "Continuă runda",

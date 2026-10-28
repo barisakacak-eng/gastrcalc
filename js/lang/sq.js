@@ -1164,7 +1164,7 @@ export default {
     nullKurz: "Zero te", zielKurz: "Synimi",
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
-    tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",
+    fehlt: { miete: "Shkruaj qiranë", personal: "Shkruaj rrogat" }, tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",
     kachel: { umsatz: "Xhiroja sot", muell: "Mbeturina sot", kuehlung: "Ftohja", putzen: "Pastrimi" },
     ok: "OK", offenN: (n) => `${n} të hapura`, jetztDran: "Tani",
     dran: { selbst: (n) => `${n}: shkruaj recetën`, einkauf: "Shkruaj çmimet e blerjes", rezepte: "Peshoji recetat", zuWarm: (s) => `${s} shumë ngrohtë`, zuKalt: (s) => `${s} shumë ftohtë`, nachmessen: "Mat përsëri", rundgang: "Raundi i ftohjes", rundgangWeiter: "Vazhdo raundin",

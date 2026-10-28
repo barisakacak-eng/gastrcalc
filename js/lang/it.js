@@ -1159,7 +1159,7 @@ export default {
     nullKurz: "Zero a", zielKurz: "Obiettivo",
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
-    tempoGut: (d) => `In linea · ${d}`, tempoKnapp: (b) => `Servono ${b} / giorno`, ohneKosten: "Mancano i costi fissi",
+    fehlt: { miete: "Inserisci l'affitto", personal: "Inserisci gli stipendi" }, tempoGut: (d) => `In linea · ${d}`, tempoKnapp: (b) => `Servono ${b} / giorno`, ohneKosten: "Mancano i costi fissi",
     kachel: { umsatz: "Incasso oggi", muell: "Scarti oggi", kuehlung: "Frigo", putzen: "Pulizie" },
     ok: "OK", offenN: (n) => `${n} da fare`, jetztDran: "Tocca a te",
     dran: { selbst: (n) => `${n}: inserisci la ricetta`, einkauf: "Inserisci i prezzi d'acquisto", rezepte: "Pesa le ricette", zuWarm: (s) => `${s} troppo caldo`, zuKalt: (s) => `${s} troppo freddo`, nachmessen: "Rimisura", rundgang: "Giro frigo", rundgangWeiter: "Continua il giro",

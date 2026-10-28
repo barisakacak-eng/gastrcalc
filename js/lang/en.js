@@ -1159,7 +1159,7 @@ export default {
     nullKurz: "Break-even", zielKurz: "Goal",
     zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },
-    tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
+    fehlt: { miete: "Enter your rent", personal: "Enter your wages" }, tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
     kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },
     ok: "OK", offenN: (n) => `${n} open`, jetztDran: "Up next",
     dran: { selbst: (n) => `${n}: enter your batch`, einkauf: "Enter purchase prices", rezepte: "Weigh your recipes", zuWarm: (s) => `${s} too warm`, zuKalt: (s) => `${s} too cold`, nachmessen: "Re-check", rundgang: "Fridge round", rundgangWeiter: "Continue round",

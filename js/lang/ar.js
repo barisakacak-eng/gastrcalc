@@ -1161,7 +1161,7 @@ export default {
     nullKurz: "نقطة الصفر", zielKurz: "الهدف",
     zielLinie: "صفر + الربح المستهدف",
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },
-    tempoGut: (d) => `حسب الخطة · ${d}`, tempoKnapp: (b) => `مطلوب ${b} / يوم`, ohneKosten: "التكاليف الثابتة ناقصة",
+    fehlt: { miete: "أدخل الإيجار", personal: "أدخل الأجور" }, tempoGut: (d) => `حسب الخطة · ${d}`, tempoKnapp: (b) => `مطلوب ${b} / يوم`, ohneKosten: "التكاليف الثابتة ناقصة",
     kachel: { umsatz: "مبيعات اليوم", muell: "هدر اليوم", kuehlung: "التبريد", putzen: "التنظيف" },
     ok: "OK", offenN: (n) => `مفتوح: ${n}`, jetztDran: "الآن",
     dran: { selbst: (n) => `${n}: أدخل وصفتك`, einkauf: "أدخل أسعار الشراء", rezepte: "زِن وصفاتك", zuWarm: (s) => `${s} دافئ جدًا`, zuKalt: (s) => `${s} بارد جدًا`, nachmessen: "قِس مرة أخرى", rundgang: "جولة التبريد", rundgangWeiter: "تابع الجولة",

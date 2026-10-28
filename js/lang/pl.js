@@ -1164,7 +1164,7 @@ export default {
     nullKurz: "Zero przy", zielKurz: "Cel",
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
-    tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",
+    fehlt: { miete: "Wpisz czynsz", personal: "Wpisz pensje" }, tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",
     kachel: { umsatz: "Utarg dziś", muell: "Odpady dziś", kuehlung: "Chłodzenie", putzen: "Sprzątanie" },
     ok: "OK", offenN: (n) => `${n} otwarte`, jetztDran: "Teraz",
     dran: { selbst: (n) => `${n}: wpisz recepturę`, einkauf: "Wpisz ceny zakupu", rezepte: "Zważ receptury", zuWarm: (s) => `${s} za ciepło`, zuKalt: (s) => `${s} za zimno`, nachmessen: "Zmierz jeszcze raz", rundgang: "Obchód chłodzenia", rundgangWeiter: "Dalej obchód",

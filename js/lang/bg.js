@@ -1164,7 +1164,7 @@ export default {
     nullKurz: "Нула при", zielKurz: "Цел",
     zielLinie: "нула + целева печалба",
     stufe: { bisNull: "До нулата липсват", bisZiel: "До целта", ueberZiel: "Над целта" },
-    tempoGut: (d) => `По план · ${d}`, tempoKnapp: (b) => `Трябват ${b} / ден`, ohneKosten: "Липсват постоянни разходи",
+    fehlt: { miete: "Въведи наема", personal: "Въведи заплатите" }, tempoGut: (d) => `По план · ${d}`, tempoKnapp: (b) => `Трябват ${b} / ден`, ohneKosten: "Липсват постоянни разходи",
     kachel: { umsatz: "Оборот днес", muell: "Отпадъци днес", kuehlung: "Охлаждане", putzen: "Почистване" },
     ok: "OK", offenN: (n) => `${n} отворени`, jetztDran: "Сега",
     dran: { selbst: (n) => `${n}: въведи рецептата`, einkauf: "Въведи покупните цени", rezepte: "Претегли рецептите", zuWarm: (s) => `${s} твърде топло`, zuKalt: (s) => `${s} твърде студено`, nachmessen: "Измери пак", rundgang: "Обиколка охлаждане", rundgangWeiter: "Продължи обиколката",
