@@ -296,3 +296,28 @@ export function extraWeg(stand, gericht, id) {
   const g = (stand.gerichte || []).find((x) => x.id === gericht); if (!g?.extras) return false;
   g.extras = g.extras.filter((x) => x.id !== id); return true;
 }
+
+// Masterauftrag „Gehirn“ Welle 2 (28.10.2026): Schreibvorgänge für Ware & Schwund
+export function wochenZaehlungSpeichern(stand, { datum, posten, jetzt }) {
+  stand.wochenZaehlungen ??= [];
+  const alt = stand.wochenZaehlungen.find((w) => w.datum === datum && !w.verworfen); if (alt) alt.verworfen = true; // je Tag eine Zählung, die neue gilt
+  const w = { id: uid(), datum, zeitpunkt: "vor", erfasst: jetzt, posten: { ...posten } }; stand.wochenZaehlungen.push(w);
+  if (stand.wochenZaehlungen.length > 120) stand.wochenZaehlungen.splice(0, stand.wochenZaehlungen.length - 120);
+  return w;
+}
+export function spiessSpeichern(stand, { datum, rohKg, preisKg, restKg, portionen, lieferant }) {
+  stand.spiesse ??= [];
+  const s = { id: uid(), datum, rohKg, preisKg, restKg, portionen, lieferant: String(lieferant || "").slice(0, 40) }; stand.spiesse.push(s);
+  if (stand.spiesse.length > 200) stand.spiesse.splice(0, stand.spiesse.length - 200);
+  return s;
+}
+export function spiessLoeschen(stand, id) { const s = (stand.spiesse || []).find((x) => x.id === id); if (!s) return false; s.verworfen = true; return true; }
+export function zukaufPreisSetzen(stand, name, preis) {
+  const a = (stand.artikel || []).find((x) => x.name === name); if (!a?.rezept) return false;
+  if (preis > 0) a.rezept.zukaufPreis = preis; else delete a.rezept.zukaufPreis; return true;
+}
+export function portionMessungSpeichern(stand, { datum, gericht, zutat, soll, ist, einheit }) {
+  stand.portionMessungen ??= [];
+  stand.portionMessungen.push({ id: uid(), datum, gericht, zutat, soll, ist, einheit });
+  if (stand.portionMessungen.length > 300) stand.portionMessungen.splice(0, stand.portionMessungen.length - 300);
+}

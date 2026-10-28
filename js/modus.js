@@ -8,7 +8,7 @@ export function modus(wurzel) { return MODI.includes(wurzel?.modus) ? wurzel.mod
 // Laden-Leiste unten: genau diese fünf Reiter, in dieser Reihenfolge.
 export const LADEN_TABS = ["start", "muell", "kuehl", "putzplan", "karte"];
 // Im Laden erreichbar: die Reiter plus das, was das Menü-Blatt öffnet.
-export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto", "umsatzheute"]; // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden // Laden wechseln geht im Blatt; „Alle Läden" mit Zahlen wohnt im Büro
+export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto", "umsatzheute", "portion"]; // portion: Masterauftrag 2.1 (28.10.2026) // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden // Laden wechseln geht im Blatt; „Alle Läden" mit Zahlen wohnt im Büro
 // Personal: drei Kacheln, sonst nichts.
 export const PERSONAL_ANSICHTEN = ["personal", "muell", "kuehl", "putzplan"];
 

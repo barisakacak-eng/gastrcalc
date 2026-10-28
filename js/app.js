@@ -30,6 +30,8 @@ import { sicherungStufe, sicherungFaellig, sicherungOrtSetzen, sicherungZeitraum
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js";
+import { wareView, wareAktion, wareEingabe, wareZuruecksetzen } from "./screens/ware.js"; // Masterauftrag Welle 2
+import { portionView, portionOeffnen, portionAktion, portionZuruecksetzen } from "./screens/portion.js"; // Masterauftrag 2.1
 import { preisrundeView, preisrundeOeffnen, preisrundeAktion, preisrundeEingabe, preisrundeZuruecksetzen } from "./screens/preisrunde.js"; // Masterauftrag 1.2/1.3/1.6 // Paket 2: Zurücksetzer
 import { karteZuruecksetzen, rezeptDirektOeffnen } from "./screens/karte.js";
 import { naechstesRezept, rezeptFortschritt, waageFragen } from "./rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.3/7.4): Rezept in höchstens 2 Tipps // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
@@ -79,7 +81,7 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, preisrundeZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, umsatzLadenZuruecksetzen, kuehlWareZuruecksetzen]; // Laden-Umbau (20.10.2026): umsatzLadenZuruecksetzen; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, preisrundeZuruecksetzen, wareZuruecksetzen, portionZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, umsatzLadenZuruecksetzen, kuehlWareZuruecksetzen]; // Laden-Umbau (20.10.2026): umsatzLadenZuruecksetzen; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -158,6 +160,8 @@ function zeichne() {
         : ansicht === "kartefoto" ? karteFotoSchirm()
         : ansicht === "vergleich" ? vergleichView(stand)
         : ansicht === "preisrunde" ? preisrundeView(stand) // Masterauftrag 1.2 (28.10.2026)
+        : ansicht === "ware" ? wareView(stand, { datum: heuteGeschaeft() }) // Masterauftrag Welle 2
+        : ansicht === "portion" ? portionView(stand) // Masterauftrag 2.1
         : ansicht === "inventur" ? inventurView(stand)
         : ansicht === "verkauf" ? verkaufView(stand) // E7 (17.10.2026)
         : ansicht === "bestand" ? bestandView(stand) // Bestand (17.10.2026)
@@ -682,6 +686,8 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
+    if (ziel === "ware") wareZuruecksetzen(); // Welle 2
+    if (ziel === "portion") portionOeffnen(stand, el.dataset.id || null); // 2.1
     if (ziel === "preisrunde") preisrundeOeffnen(stand, el.dataset.id || null, el.dataset.cent || null); // Masterauftrag 1.2
     if (ziel === "getraenke") getraenkeZuruecksetzen(); // Getränke (18.10.2026)
     if (ziel === "lieferanten") lieferantenZuruecksetzen(); // Lieferanten (18.10.2026)
@@ -796,6 +802,16 @@ async function aufKlick(ev) {
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
+  if (ansicht === "ware" && name.startsWith("wa-")) { // Masterauftrag Welle 2
+    const r = wareAktion(name, el, stand, { datum: heuteGeschaeft(), jetzt: new Date().toISOString() });
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
+  if (ansicht === "portion" && name.startsWith("po-")) { // Masterauftrag 2.1
+    const r = portionAktion(name, el, stand, { datum: heuteGeschaeft() });
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.nav) { ansicht = r.nav; karteLadenZuruecksetzen(); } zeichne(); }
+    return;
+  }
   if (ansicht === "preisrunde" && name.startsWith("pr-")) { // Masterauftrag 1.2/1.6 (28.10.2026)
     const r = preisrundeAktion(name, el, stand, { datum: heuteGeschaeft() });
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
@@ -896,6 +912,11 @@ root.addEventListener("input", (ev) => {
   } else if (ansicht === "tafel") { // Menütafel (18.10.2026): Sprache der Tafel – speichern, Sprache laden, neu zeichnen
     const r = tafelEingabe(el.dataset.f, el.value, stand); if (!r) return;
     speichern(wurzel); ladeSprache(r.sprache).then(() => { if (ansicht === "tafel") zeichne(); }); return;
+  } else if (ansicht === "ware") { // Welle 2: Entwurf; Zukaufpreis speichert sofort
+    const r = wareEingabe(el.dataset.f, el.value, stand, el);
+    if (r === "speichern") { speichern(wurzel); return; }
+    if (r && typeof r === "object") { const k = root.querySelector('[data-a="wa-spiess"]'); if (k) { k.disabled = !r.knopf; k.textContent = r.text; } }
+    return;
   } else if (ansicht === "preisrunde") { // Masterauftrag 1.2/1.6: Gericht wechseln zeichnet neu, Extra-Felder schalten nur den Knopf
     const r = preisrundeEingabe(el.dataset.f, el.value, stand); if (r === "zeichnen") { zeichne(); return; }
     if (r) { const k = root.querySelector('[data-a="pr-extra-dazu"]'); if (k) k.disabled = r !== "knopf-an"; } return;

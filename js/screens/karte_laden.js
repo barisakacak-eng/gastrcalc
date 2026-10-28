@@ -136,7 +136,8 @@ export function karteLadenBlatt(stand) {
       </div>
       ${bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z))}
       ${x.z.sk === null ? `<p class="kl-ohne">${esc(t(x.z.warenFehlt?.[0] === "rezept" ? "kartelaeden.ohneRezept" : "kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : ""}
-      ${x.g.klasse !== "getraenk" && rezeptStempel(x.g).stufe ? `<button type="button" class="knopf zweit" data-a="kl-rezept" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("karte.kurz.abwiegen"))}</button>` : ""}
+      ${x.g.klasse !== "getraenk" && hatEigenesRezept(x.g) ? `<button type="button" class="knopf zweit" data-a="nav" data-wert="portion" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("gehirn.portion.knopf"))}</button>` // Masterauftrag 2.1: eigenes Rezept → Portion prüfen
+        : x.g.klasse !== "getraenk" && rezeptStempel(x.g).stufe ? `<button type="button" class="knopf zweit" data-a="kl-rezept" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("karte.kurz.abwiegen"))}</button>` : ""}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-speichern" ${geaendert && blatt.preis > 0 ? "" : "disabled"}>${esc(t("kartelaeden.speichern"))}</button>
     </div>`;
 }

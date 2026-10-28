@@ -43,6 +43,8 @@ const AUSNAHMEN = {
   "ordner.js": { f: "DOM (Druckrahmen)", amtZeit: "Zeitraum-Wahl (Modulzustand)", paketMonat: "Monats-Wahl (Modulzustand)", belDatum: "Datums-Entwürfe (Modulzustand)" },
   "personal.js": { alle: "Schicht-Person im Gerätespeicher (localStorage, nicht im Laden)", gemerkt: "Ersatz für den Gerätespeicher" },
   "putzplan.js": { entwurf: "Entwurf Putzplan (Modulzustand)" },
+  "ware.js": { karten: "lokale Liste der Karten", posten: "lokale Liste der Zählung", zaehlen: "Entwurf Wochenzählung (Modulzustand)" }, // Welle 2 (28.10.2026)
+  "portion.js": { p: "Portions-Entwurf (Modulzustand)" }, // Welle 2 (28.10.2026)
   "umsatz.js": { out: "lokale Liste", tage: "lokale Liste" },
   "verkauf.js": { zeilen: "lokale Liste von Sätzen", entwurf: "Entwurf Handeingabe (Modulzustand)" },
 };

@@ -260,3 +260,22 @@ button.b-zeile:active { background: var(--papier); }
 .vk-hebel { min-height: 44px; display: inline-flex; align-items: center; }
 .kl-monat { margin-bottom: 12px; }
 .kl-monat.minus { color: var(--kupfer-dunkel); }
+
+/* Masterauftrag „Gehirn“ Welle 2 (28.10.2026): Ware & Schwund, Portion prüfen */
+.wa-zahl { font-family: var(--zahlen); font-size: 1.8rem; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--tinte); }
+.wa-karte p { margin: 0; }
+.wa-hinweis { color: var(--kupfer-dunkel); font-weight: 600; }
+.wa-liste { color: var(--tinte-weich); font-size: calc(14rem / 17); }
+.wa-melden .wert { color: var(--rot); font-weight: 700; }
+.wa-zaehlzeile { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid var(--paket-linie); }
+.wa-zaehlzeile span { display: flex; flex-direction: column; min-width: 0; }
+.wa-zaehlzeile small { color: var(--tinte-weich); }
+.wa-zaehlzeile input, .wa-zukauf input { width: 96px; min-height: 48px; font: inherit; font-size: 1.1rem; text-align: center; border: 1.5px solid var(--holz); border-radius: var(--radius); background: var(--weiss); color: var(--tinte); }
+.wa-zukauf { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: calc(14rem / 17); color: var(--tinte-weich); }
+.wa-selbst { padding: 6px 0; border-top: 1px solid var(--paket-linie); }
+.po { display: flex; flex-direction: column; gap: 18px; padding-top: 12px; }
+.po-ergebnis { text-align: center; padding: 28px 16px; border-radius: var(--radius); background: var(--papier); display: flex; flex-direction: column; gap: 8px; }
+.po-gross { font-family: var(--zahlen); font-size: 3rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--tinte); }
+.po-ergebnis.mehr .po-gross { color: var(--kupfer-dunkel); }
+.po-ergebnis.gut .po-gross { color: var(--salbei-tief); }
+.po-ergebnis p { margin: 0; font-size: 1.1rem; font-weight: 600; }

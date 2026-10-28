@@ -143,3 +143,35 @@ export function einkaufNaechsteWoche(vorschlag) {
   const z = vorschlag.zeilen.filter((x) => x.bestellenAm && x.bestellenAm <= bis);
   return { summe: z.reduce((s, x) => s + (x.wert || 0), 0), ohneWert: z.filter((x) => x.wert === null).length, anzahl: z.length, geschaetzt: z.some((x) => x.geschaetzt) };
 }
+
+// ---------- 2.3 Wochenzählung: Soll-Ist in Euro ----------
+// Eine Wochenzählung ist eine kleine Zählung NUR der A-Artikel, vor Öffnung (zeitpunkt "vor"): { id, datum, zeitpunkt, posten: { name: Gebinde } }.
+// Sie liegt in stand.wochenZaehlungen und zählt NICHT als Inventur (kein Einfluss auf Bestand, Wareneinsatz, Steuer).
+// Soll-Ist wie die Inventur (verkauf.abgleichInventur): Ist = Anfang + Einkauf − Ende, erwartet = Rezept × Verkäufe + Müll + Personalessen.
+// Abweichung in Prozentpunkten des erwarteten Verbrauchs: unter WOCHE_RUHIG ruhig, ab WOCHE_MELDEN melden (Setzung nach Anbieterwerten 2026, Recherchebericht).
+export const WOCHE_RUHIG = 1.5, WOCHE_MELDEN = 3; // Setzung (Masterauftrag 2.3)
+export function wochenSollIst(stand, jetzt, vorher, abgleich) {
+  if (!jetzt || !vorher) return null;
+  const r = abgleich(stand, { ...jetzt, abgeschlossen: jetzt.abgeschlossen || jetzt.datum + "T08:00:00" }, { ...vorher, abgeschlossen: vorher.abgeschlossen || vorher.datum + "T08:00:00" });
+  if (!r || r.gleicherTag) return r;
+  const namen = new Set(Object.keys(jetzt.posten || {}));
+  const zeilen = r.zeilen.filter((z) => namen.has(z.name)).map((z) => {
+    const punkte = z.diff !== null && z.erwartet > 0 ? z.diff / z.erwartet * 100 : null;
+    const ampel = !r.verkaufTage ? "ohneVerkauf" : z.status === "nichtGezaehlt" || z.status === "unklar" ? z.status : punkte === null ? "unklar" : punkte >= WOCHE_MELDEN ? "melden" : punkte >= WOCHE_RUHIG ? "beobachten" : "ruhig";
+    return { ...z, punkte, ampel };
+  });
+  const melden = zeilen.filter((z) => z.ampel === "melden");
+  return { von: r.von, bis: r.bis, zeilen, melden, wert: melden.reduce((s, z) => s + (z.diffWert || 0), 0), verkaufTage: r.verkaufTage, geschaetzt: zeilen.some((z) => z.geschaetzt) };
+}
+
+// Hauptzutat eines Gerichts für den Portions-Check: die Zutat mit dem größten Warenwert (meist Fleisch)
+export function hauptZutat(stand, g) {
+  const idx = idxVon(stand); let best = null;
+  for (const z of g?.zutaten || []) {
+    const a = idx[z.name]; const pj = a ? preisJeBasis(a) : null; const m = a ? mengeInArtikelBasis(z.menge, z.einheit, a) : null;
+    if (pj === null || !(m > 0) || !["g", "ml"].includes(z.einheit)) continue;
+    const w = pj * m; if (!best || w > best.wert) best = { name: z.name, menge: Number(z.menge), einheit: z.einheit, wert: w };
+  }
+  return best;
+}
+export const wochenZaehlungen = (stand) => (stand.wochenZaehlungen || []).filter((w) => w && !w.verworfen).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : 0));

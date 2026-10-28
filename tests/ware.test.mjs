@@ -78,3 +78,16 @@ test("2.4 zu viel vorbereitet: 3 Tage je 10 Döner übrig bei 40 am Tag → 20 %
   const r = zuVielVorbereitet(s, "2026-10-28");
   assert.equal(r.length, 1); nah(r[0].anteil, 30 / (40 * 3 + 30));
 });
+
+test("2.3 Wochenzählung: Fleisch laut Rezept 41,6 kg, verbraucht 45,5 kg → 3,9 kg ≈ 39 € melden", async () => {
+  const { wochenSollIst } = await import("../js/ware.js"); const { abgleichInventur } = await import("../js/verkauf.js");
+  const s = stand([{ ...art("Fleisch", 10), packung: { menge: 1000, einheit: "g" }, gebinde: { art: "packung" } }], [doener()]);
+  // Verkäufe von Hand: 6 Tage × 40 … hier vereinfacht ein Tag mit 416 Döner (= 41,6 kg laut Rezept)
+  s.verkaeufe = [{ id: "v1", datum: "2026-10-22", gericht: "d", menge: 416, herkunft: "hand", storniert: false }];
+  const vorher = { id: "w1", datum: "2026-10-21", zeitpunkt: "nach", posten: { Fleisch: 50 } }; // 50 kg
+  const jetzt = { id: "w2", datum: "2026-10-28", zeitpunkt: "vor", posten: { Fleisch: 4.5 } };   // 4,5 kg übrig (gezählt wird in Vierteln) → 45,5 kg verbraucht
+  const r = wochenSollIst(s, jetzt, vorher, abgleichInventur);
+  const z = r.zeilen.find((x) => x.name === "Fleisch");
+  assert.ok(r.verkaufTage > 0);
+  { nah(z.ist, 45500, 1e-6); nah(z.erwartet, 41600, 1e-6); nah(z.diffWert, 39, 1e-6); assert.equal(z.ampel, "melden"); }
+});
