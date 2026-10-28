@@ -41,6 +41,9 @@ async def schnellstart(pg, port, name="Döner Test"):
     await pg.click('[data-a="s2-kuehl"][data-wert="tiefkuehler"][data-d="1"]'); await pg.wait_for_timeout(150)
     await weiter("geld")
     await weiter("fertig-schnell")  # Kosten leer lassen
+    # 28.10.2026: „Später“ bei der Karte wird respektiert – am Ende „Los geht's“ (start), nicht zurück in die Karte
+    assert await pg.locator('[data-a="ob-fertig"].s2los').get_attribute("data-ziel") == "start", "Karte „Später“ wurde am Ende überfahren"
+    assert await pg.locator('.fuss [data-a="ob-fertig"]').count() == 1, "genau ein Hauptknopf nach „Später“"
     # 17./18.10.: auf langsamen CI-Rechnern ging der erste Tipp gelegentlich ins Leere – bis zu 3 Tipps, je 20 s warten
     for versuch in range(3):
         knopf = pg.locator('[data-a="ob-fertig"].s2los')

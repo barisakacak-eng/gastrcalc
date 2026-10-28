@@ -1,7 +1,7 @@
 // Laden-Profil (Etappe 6, Punkt 9): welche Bereiche ein Laden zuerst sieht.
 // Profil = Laden-Art (feste Ringe) + was die Speisekarte zeigt + was der Wirt selbst hoch- oder weggeklappt hat.
 import { KATALOG, VORLAGEN } from "./data/katalog.js";
-import { PROFILE, GRUNDBEDARF, ART_JE_KUECHE, ART_JE_FORMAT, KARTE_SCHWELLE } from "./data/register.js";
+import { PROFILE, GRUNDBEDARF, ART_JE_KUECHE, ART_JE_FORMAT, KARTE_SCHWELLE, VORLAGEN_ENGE } from "./data/register.js";
 import { BEREICH_JE_FAMILIE } from "./rezept_baukasten.js";
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 
@@ -59,10 +59,13 @@ export function bereicheSortiert(stand) {
 export const imProfil = (stand, bereich) => { const p = profilFuer(stand); return p.kern.includes(bereich) || p.oft.includes(bereich); };
 
 // Alle Vorlagen mit Bereich, nach Profil geordnet (Kern, Oft, Weitere).
+// Engere Auswahl je Laden-Art (VORLAGEN_ENGE): Gerichte außerhalb der Liste rutschen aus Kern/Oft nach „Weitere“ (zugeklappt, per Suche auffindbar).
 export function vorlagenSortiert(stand) {
   const s = bereicheSortiert(stand);
-  const mit = (liste) => liste.flatMap((b) => (VORLAGEN[b] || []).map((v) => ({ ...v, bereich: b })));
-  return { kern: mit(s.kern), oft: mit(s.oft), weitere: mit(s.weitere) };
+  const enge = VORLAGEN_ENGE[ladenArtVon(stand)] || {};
+  const mit = (liste) => liste.flatMap((b) => (VORLAGEN[b] || []).filter((v) => !enge[b] || enge[b].includes(v.name)).map((v) => ({ ...v, bereich: b })));
+  const draussen = Object.keys(enge).flatMap((b) => (VORLAGEN[b] || []).filter((v) => !enge[b].includes(v.name)).map((v) => ({ ...v, bereich: b })));
+  return { kern: mit(s.kern), oft: mit(s.oft), weitere: [...mit(s.weitere), ...draussen] };
 }
 
 // Produkt → Bereiche, in denen es im Katalog steht (für die Zutatensuche „aus: Burger“).

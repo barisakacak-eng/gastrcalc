@@ -300,7 +300,7 @@ async function fertig(ziel = "start") {
     }
     { const nz = navZiel(wurzel, ziel); if (nz.buero) modusSetzen(wurzel, "buero"); ansicht = nz.ansicht; } // Einrichtung macht der Inhaber: „Beleg fotografieren" am Ende führt ins Büro
     await ereignis("onboarding-fertig", { laden: stand.id });
-    const pinWunsch = !!stand.pinFestlegen; delete stand.pinFestlegen; // W2-S (p07 H1): „Büro-PIN festlegen" öffnet gleich das PIN-Blatt
+    const pinWunsch = !!stand.pinFestlegen; delete stand.pinFestlegen; // W2-S (p07 H1): „Büro-Code festlegen" öffnet gleich das Code-Blatt
     dauerhaftAnfragen(); // W2-D
     await sofortSpeichern(wurzel); zeichne();
     if (pinWunsch) { history.pushState({ blatt: true }, ""); pinStarten("setzen", null, wurzel); }

@@ -1090,7 +1090,7 @@ export default {
     geld: "Costuri pe lună", miete: "Chirie", personal: "Personal", eigen: "Salariul tău", strom: "Curent (cu TVA)",
     geldHilfe: "Aproximativ e destul, poți lăsa și gol. Facturile le fotografiezi mai târziu în birou.",
     putzt: "Cine face curat?", wer: { selbst: "Noi", firma: "Firmă", beides: "Amândouă" }, firma: "Firmă",
-    fertig: "Gata!", eingerichtet: "configurat", los: "Hai să începem", pin: "Setează PIN-ul de birou",
+    fertig: "Gata!", eingerichtet: "configurat", los: "Hai să începem", pin: "Setează codul de birou",
     zeki: { schloss: "Setează un cod. Așa doar tu intri în birou.", hallo: "Salut, șefu'! Eu sunt Zeki.", rolle: "Te ajut – la tejghea și la birou.", "laden-schnell": "Cum se numește localul tău? Și ce vinzi?", "karte-foto": "Fotografiază meniul. Eu citesc preparatele și prețurile.", "kuehl-schnell": "Ce frigidere ai? Apasă doar pe plus.", geld: "Cât te costă localul pe lună? Ajunge și aproximativ.", fertig: "Super, șefu'! De acum sunt mereu aici." },
   },
   inventur: {

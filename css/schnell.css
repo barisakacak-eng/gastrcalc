@@ -99,9 +99,6 @@
   .s2kuehlzeile .s2zaehler { grid-column: 1 / -1; justify-self: end; }
 }
 
-/* 26.10.2026: Rechtsformen sind lang („UG (haftungsbeschränkt)“) – zwei Spalten, eckiger, sauberer Umbruch statt „Einzelunternehm-en“ */
-.s2rechtsform .chips { grid-template-columns: repeat(2, 1fr); }
-.s2rechtsform .chip { border-radius: 14px; font-size: calc(15rem / 17); line-height: 1.25; hyphens: auto; overflow-wrap: normal; word-break: normal; }
 /* Entwurf 26.10.2026: Zeki führt durch die Einrichtung */
 .s2zeki { justify-content: flex-start; align-items: center; gap: 10px; }
 .s2zeki-figur { flex: 0 0 64px; width: 64px; height: 76px; padding: 0; border: 0; background: none; cursor: pointer; }

@@ -1089,7 +1089,7 @@ export default {
     geld: "Shpenzimet në muaj", miete: "Qiraja", personal: "Stafi", eigen: "Rroga jote", strom: "Rryma (me TVSH)",
     geldHilfe: "Përafërsisht mjafton, mund ta lësh edhe bosh. Faturat i fotografon më vonë në zyrë.",
     putzt: "Kush pastron?", wer: { selbst: "Ne", firma: "Firma", beides: "Të dyja" }, firma: "Firma",
-    fertig: "Gati!", eingerichtet: "rregulluar", los: "Fillojmë", pin: "Vendos PIN-in e zyrës",
+    fertig: "Gati!", eingerichtet: "rregulluar", los: "Fillojmë", pin: "Vendos kodin e zyrës",
     zeki: { schloss: "Vendos një kod. Atëherë vetëm ti hyn në zyrë.", hallo: "Tung, shef! Unë jam Zeki.", rolle: "Të ndihmoj – përpara në lokal, prapa në zyrë.", "laden-schnell": "Si quhet lokali yt? Dhe çfarë shet?", "karte-foto": "Fotografo menunë. Unë i lexoj gatimet dhe çmimet.", "kuehl-schnell": "Çfarë frigoriferësh ke? Thjesht shtyp plus.", geld: "Sa të kushton lokali në muaj? Mjafton përafërsisht.", fertig: "Shumë mirë, shef! Tani e tutje jam gjithmonë këtu." },
   },
   inventur: {
