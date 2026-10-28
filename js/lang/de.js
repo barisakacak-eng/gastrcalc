@@ -57,7 +57,7 @@ export default {
     frageStunden: "Wie viele Stunden arbeitet jeder ungefähr im Monat?",
     stundenHinweis: "Eine Vollzeitkraft kommt auf etwa 160 Stunden. Nimm einen Durchschnitt.",
     frageLohn: "Was kosten dich alle Löhne zusammen im Monat?",
-    lohnHinweis: "Alles, was für die Löhne vom Konto geht, mit allen Abgaben. Dein eigener Lohn kommt gleich extra.",
+    lohnHinweis: "Alles, was für die Löhne vom Konto geht, mit allen Abgaben. Die Abgaben hängen an deiner Krankenkasse, darum rechne ich mit ≈. Dein eigener Lohn kommt gleich extra.",
     frageEigen: "Und dein eigener Lohn im Monat?",
     eigenHinweis: "Was du dir selbst zahlst oder zahlen willst.",
     eigenRichtwert: (b, j, s) => `Richtwert ${b}: Mindestlohn ${j} (${s}) mal 173 Stunden.`,

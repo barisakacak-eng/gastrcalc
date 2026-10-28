@@ -5,7 +5,7 @@
 //
 // CSV für Excel in Deutschland: Semikolon als Trenner, Dezimalkomma, Datum TT.MM.JJJJ, UTF-8 mit BOM (sonst zeigt Excel Umlaute falsch),
 // Zeilenende CRLF. Textzellen, die mit = + - @ beginnen, bekommen ein Hochkomma davor (sonst führt Excel sie als Formel aus).
-import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026, tagPlus } from "./engine.js";
+import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026, tagPlus, sachbezugWert } from "./engine.js";
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
 import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
@@ -114,7 +114,7 @@ export function rechnungsNummerLesen(text) {
 // Personalessen mit amtlichem Sachbezugswert (SvEV 2026) je Mahlzeit, dazu je Person (wenn der Eintrag eine Person trägt)
 export function personalessen(stand, z) {
   const zeilen = (stand.schwund || []).filter((e) => !e.storniert && e.art === "personal" && imZeitraum(e.datum, z)).sort(nachDatum).map((e) => {
-    const je = SVEV_2026[e.mahlzeit] ?? SVEV_2026.mittag; const menge = Number(e.menge) || 0;
+    const je = sachbezugWert(1, e.mahlzeit, e.datum); const menge = Number(e.menge) || 0;
     return { datum: e.datum, gericht: e.ref?.name || "", mahlzeit: e.mahlzeit || "mittag", menge, je, sachbezug: rund2(menge * je), waren: schwundWert(e, stand), person: personName(stand, e.von), ...personAus(stand, e.von) };
   });
   const jePerson = {};
