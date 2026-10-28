@@ -42,7 +42,10 @@ async function ocrAuftrag(bild, modus = "block") {
 // Beim Öffnen der Kamera schon laden (ca. 5 MB beim ersten Mal), damit nach dem Foto keine Wartezeit entsteht.
 export function vorwaermen() { if (typeof Worker === "undefined") return; try { const w = ocrWorker(); offen.set("vorwaermen", { res() {}, rej() {} }); w.postMessage({ id: "vorwaermen" }); } catch (_) {} }
 
-// Bild für die Erkennung vorbereiten: richtig drehen (EXIF), lange Seite 2400 px, Graustufen, leichter Kontrast. Ergebnis PNG-Bytes.
+// Bild für die Erkennung vorbereiten: richtig drehen (EXIF), lange Seite höchstens LANGE_SEITE_ERKENNUNG, Graustufen, leichter Kontrast. Ergebnis PNG-Bytes.
+// Setzung (28.10.2026, F3): längste Seite 1920 px (vorher 2400). Ein Handyfoto hat 12 MP; weniger Pixel heißt weniger Arbeit beim Vorbereiten und Erkennen.
+// Geprüft an drei Testbildern (26 Gerichte, kleine und große Schrift): gleich viele Gerichte erkannt wie mit 2400 px. Unter 1600 px nicht gewählt, zu wenig Reserve für echte Fotos.
+export const LANGE_SEITE_ERKENNUNG = 1920;
 // Ältere iPhones (vor iOS 17) kennen die Option imageOrientation nicht: dann ohne, und notfalls über ein <img> (dreht laut EXIF).
 async function bildLesen(datei) {
   try { return await createImageBitmap(datei, { imageOrientation: "from-image" }); } catch (_) {}
@@ -52,7 +55,7 @@ async function bildLesen(datei) {
 }
 async function bildVorbereiten(quelle) {
   const bmp = quelle instanceof HTMLCanvasElement ? quelle : await bildLesen(quelle);
-  const f = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
+  const f = Math.min(1, LANGE_SEITE_ERKENNUNG / Math.max(bmp.width, bmp.height));
   const c = document.createElement("canvas"); c.width = Math.round(bmp.width * f); c.height = Math.round(bmp.height * f);
   const g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(bmp, 0, 0, c.width, c.height);
   const d = g.getImageData(0, 0, c.width, c.height); const p = d.data;

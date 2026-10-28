@@ -48,7 +48,10 @@ async def zum_laden(pg, warte=420):
 
 async def menue(pg, warte=200):
     """Menü-Blatt öffnen (☰ oben links)."""
-    await _tipp(pg, '[data-a="menue-auf"]', warte); await pg.wait_for_selector("#ebene-huelle .blatt-menue")
+    await _tipp(pg, '[data-a="menue-auf"]', warte)
+    try: await pg.wait_for_selector("#ebene-huelle .blatt-menue", timeout=3000)
+    except Exception:  # F3 (28.10.2026): direkt nach dem Start zeichnet die App noch neu und verschluckt den ersten Tipp – wie ein Mensch noch einmal tippen
+        await _tipp(pg, '[data-a="menue-auf"]', warte); await pg.wait_for_selector("#ebene-huelle .blatt-menue")
 
 
 async def ins_buero(pg, warte=420):

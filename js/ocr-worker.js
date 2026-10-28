@@ -10,6 +10,16 @@ function simdDa() {
   try { return WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11])); } catch (_) { return false; }
 }
 
+// Kleines Probebild (eine Zeile Text) in beiden Lesarten erkennen. Fehler hier sind egal: dann läuft das erste Foto eben ohne Anwärmen.
+async function probelauf(M, api) {
+  try {
+    const c = new OffscreenCanvas(360, 64); const g = c.getContext("2d");
+    g.fillStyle = "#fff"; g.fillRect(0, 0, 360, 64); g.fillStyle = "#000"; g.font = "bold 36px sans-serif"; g.fillText("Döner 7,50 €", 10, 46);
+    M.FS.writeFile("/input", new Uint8Array(await (await c.convertToBlob({ type: "image/png" })).arrayBuffer()));
+    for (const psm of [6, 3]) { api.SetVariable("tessedit_pageseg_mode", String(psm)); if (api.SetImageFile(1, 0) !== 1) { psm === 6 ? api.GetUTF8Text() : api.GetTSVText(0); } }
+  } catch (_) {}
+}
+
 function starten() {
   if (bereit) return bereit;
   bereit = (async () => {
@@ -20,6 +30,7 @@ function starten() {
     M.FS.writeFile("deu.traineddata", new Uint8Array(await r.arrayBuffer()));
     const api = new M.TessBaseAPI();
     if (api.Init(null, "deu", 1) === -1) throw new Error("Texterkennung startet nicht");
+    await probelauf(M, api); // F3: erster Lauf auf einem Mini-Bild jetzt, damit das erste echte Foto nicht die Anlaufzeit trägt
     return { M, api };
   })();
   bereit.catch(() => { bereit = null; });
