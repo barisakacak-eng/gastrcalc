@@ -1158,7 +1158,7 @@ export default {
     nullKurz: "Sıfır noktası", zielKurz: "Hedef",
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
-    tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",
+    fehlt: { miete: "Kirayı gir", personal: "Maaşları gir" }, tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",
     kachel: { umsatz: "Bugünkü ciro", muell: "Bugünkü çöp", kuehlung: "Soğutma", putzen: "Temizlik" },
     ok: "Tamam", offenN: (n) => `${n} bekliyor`, jetztDran: "Şimdi sırada",
     dran: { selbst: (n) => `${n}: tarifini gir`, einkauf: "Alış fiyatlarını gir", rezepte: "Tarifleri tart", zuWarm: (s) => `${s} fazla sıcak`, zuKalt: (s) => `${s} fazla soğuk`, nachmessen: "Tekrar ölç", rundgang: "Soğutma turu", rundgangWeiter: "Tura devam et",

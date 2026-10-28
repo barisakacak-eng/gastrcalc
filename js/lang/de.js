@@ -1174,7 +1174,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     nullKurz: "Null bei", zielKurz: "Ziel",
     zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },
-    tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",
+    fehlt: { miete: "Trag die Miete ein", personal: "Trag die Löhne ein" }, tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",
     kachel: { umsatz: "Umsatz heute", muell: "Müll heute", kuehlung: "Kühlung", putzen: "Putzen" },
     ok: "OK", offenN: (n) => `${n} offen`, jetztDran: "Jetzt dran",
     dran: { selbst: (n) => `${n}: Ansatz eintragen`, einkauf: "Einkaufspreise eintragen", rezepte: "Rezepte abwiegen", zuWarm: (s) => `${s} zu warm`, zuKalt: (s) => `${s} zu kalt`, nachmessen: "Nachmessen", rundgang: "Kühlrundgang", rundgangWeiter: "Rundgang fortsetzen",

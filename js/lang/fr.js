@@ -1157,7 +1157,7 @@ export default {
     nullKurz: "Zéro à", zielKurz: "Objectif",
     zielLinie: "zéro + bénéfice visé",
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },
-    tempoGut: (d) => `Dans les temps · ${d}`, tempoKnapp: (b) => `${b} / jour nécessaires`, ohneKosten: "Frais fixes manquants",
+    fehlt: { miete: "Mets le loyer", personal: "Mets les salaires" }, tempoGut: (d) => `Dans les temps · ${d}`, tempoKnapp: (b) => `${b} / jour nécessaires`, ohneKosten: "Frais fixes manquants",
     kachel: { umsatz: "Ventes du jour", muell: "Déchets du jour", kuehlung: "Froid", putzen: "Nettoyage" },
     ok: "OK", offenN: (n) => `${n} à faire`, jetztDran: "À faire maintenant",
     dran: { selbst: (n) => `${n} : saisis ta recette`, einkauf: "Saisis les prix d'achat", rezepte: "Pèse tes recettes", zuWarm: (s) => `${s} trop chaud`, zuKalt: (s) => `${s} trop froid`, nachmessen: "Mesurer à nouveau", rundgang: "Tournée du froid", rundgangWeiter: "Continuer la tournée",

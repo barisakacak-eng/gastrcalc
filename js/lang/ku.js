@@ -1156,7 +1156,7 @@ export default {
     nullKurz: "Sifir li", zielKurz: "Armanc",
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
-    tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",
+    fehlt: { miete: "Kirêyê binivîse", personal: "Meaşan binivîse" }, tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",
     kachel: { umsatz: "Firotina îro", muell: "Çopa îro", kuehlung: "Sarkirin", putzen: "Paqijî" },
     ok: "OK", offenN: (n) => `${n} vekirî`, jetztDran: "Niha",
     dran: { selbst: (n) => `${n}: reçeteyê binivîse`, einkauf: "Bihayên kirînê binivîse", rezepte: "Reçeteyan bikêşe", zuWarm: (s) => `${s} pir germ e`, zuKalt: (s) => `${s} pir sar e`, nachmessen: "Dîsa bipîve", rundgang: "Gera sarkirinê", rundgangWeiter: "Gerê bidomîne",

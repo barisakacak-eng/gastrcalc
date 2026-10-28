@@ -69,6 +69,12 @@ function zielTexte(stand, z, H) {
 }
 function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
+  // Masterauftrag „Gehirn“ 0.1 (28.10.2026): ohne Miete oder Löhne keine Euro-Zahl, sondern der nächste Eintrag
+  if (w.fehlt) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
+    <span class="h-zielkopf"><span data-t="nutzen.stufe.bisNull">${esc(t("nutzen.stufe.bisNull"))}</span></span>
+    <span class="h-riesig leicht">?</span>
+    <span class="h-fehlt-knopf">${esc(t("heute.fehlt." + w.fehlt))}${sym("chevron-right", "h-pfeil")}</span>
+  </button>`;
   // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
   return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">

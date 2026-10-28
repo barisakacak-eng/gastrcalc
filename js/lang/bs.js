@@ -1164,7 +1164,7 @@ export default {
     nullKurz: "Nula kod", zielKurz: "Cilj",
     zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
-    tempoGut: (d) => `Po planu · ${d}`, tempoKnapp: (b) => `Treba ${b} / dan`, ohneKosten: "Fale fiksni troškovi",
+    fehlt: { miete: "Upiši kiriju", personal: "Upiši plate" }, tempoGut: (d) => `Po planu · ${d}`, tempoKnapp: (b) => `Treba ${b} / dan`, ohneKosten: "Fale fiksni troškovi",
     kachel: { umsatz: "Promet danas", muell: "Otpad danas", kuehlung: "Hlađenje", putzen: "Čišćenje" },
     ok: "OK", offenN: (n) => `${n} otvoreno`, jetztDran: "Sada",
     dran: { selbst: (n) => `${n}: unesi recept`, einkauf: "Unesi nabavne cijene", rezepte: "Izvaži recepte", zuWarm: (s) => `${s} pretoplo`, zuKalt: (s) => `${s} prehladno`, nachmessen: "Izmjeri ponovo", rundgang: "Obilazak hlađenja", rundgangWeiter: "Nastavi obilazak",

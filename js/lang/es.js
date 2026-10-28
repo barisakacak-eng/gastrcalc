@@ -1157,7 +1157,7 @@ export default {
     nullKurz: "Cero en", zielKurz: "Meta",
     zielLinie: "cero + beneficio objetivo",
     stufe: { bisNull: "Para llegar a cero faltan", bisZiel: "Hasta el objetivo", ueberZiel: "Por encima del objetivo" },
-    tempoGut: (d) => `En plan · ${d}`, tempoKnapp: (b) => `Hacen falta ${b} / día`, ohneKosten: "Faltan gastos fijos",
+    fehlt: { miete: "Pon el alquiler", personal: "Pon los sueldos" }, tempoGut: (d) => `En plan · ${d}`, tempoKnapp: (b) => `Hacen falta ${b} / día`, ohneKosten: "Faltan gastos fijos",
     kachel: { umsatz: "Ventas hoy", muell: "Basura hoy", kuehlung: "Frío", putzen: "Limpieza" },
     ok: "OK", offenN: (n) => `${n} pendientes`, jetztDran: "Ahora toca",
     dran: { selbst: (n) => `${n}: anota tu receta`, einkauf: "Introduce precios de compra", rezepte: "Pesa tus recetas", zuWarm: (s) => `${s} demasiado caliente`, zuKalt: (s) => `${s} demasiado frío`, nachmessen: "Volver a medir", rundgang: "Ronda de frío", rundgangWeiter: "Seguir la ronda",

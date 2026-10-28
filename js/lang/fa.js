@@ -1156,7 +1156,7 @@ export default {
     nullKurz: "صفر در", zielKurz: "هدف",
     zielLinie: "صفر + سود هدف",
     stufe: { bisNull: "تا صفر کم است", bisZiel: "تا هدف", ueberZiel: "بالای هدف" },
-    tempoGut: (d) => `طبق برنامه · ${d}`, tempoKnapp: (b) => `${b} / روز لازم است`, ohneKosten: "هزینه‌های ثابت وارد نشده",
+    fehlt: { miete: "اجاره را وارد کن", personal: "دستمزدها را وارد کن" }, tempoGut: (d) => `طبق برنامه · ${d}`, tempoKnapp: (b) => `${b} / روز لازم است`, ohneKosten: "هزینه‌های ثابت وارد نشده",
     kachel: { umsatz: "فروش امروز", muell: "دورریز امروز", kuehlung: "سرمایش", putzen: "نظافت" },
     ok: "OK", offenN: (n) => `${n} باز`, jetztDran: "همین حالا",
     dran: { selbst: (n) => `${n}: دستورت را وارد کن`, einkauf: "قیمت‌های خرید را وارد کن", rezepte: "دستورها را وزن کن", zuWarm: (s) => `${s} خیلی گرم است`, zuKalt: (s) => `${s} خیلی سرد است`, nachmessen: "دوباره اندازه بگیر", rundgang: "دور چک دما", rundgangWeiter: "ادامه‌ی دور چک",
