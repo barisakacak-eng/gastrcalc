@@ -12,6 +12,7 @@ GERICHTE = """async () => {
   const kl = await import('./js/karte_lesen.js'); const e = await import('./js/engine.js');
   const s = window.__gastrocalc.stand;
   const t = "Döner Kebab ⋯ 7,50\\nDürüm Döner ⋯ 8,00\\nDöner Box ⋯ 7,00\\nDöner-Teller mit Reis ⋯ 12,00\\nLahmacun ⋯ 5,00\\nPommes ⋯ 3,50";
+  const st = await import('./js/stamm.js'); st.kostenBetragSetzen(s, 'miete', 'miete', 1500); s.team.personen = 0; // erste Zahl vollständig
   kl.vorschlaegeUebernehmen(s, kl.vorschlaegeAusText(t, s).map(v => ({...v, an: true}))); s.artikel = e.artikelAusGerichten(s);
   window.__gastrocalc.zeichne();
 }"""
@@ -41,6 +42,10 @@ async def main():
             b = await p.chromium.launch(); ctx, pg = await schnellstart.kontext(b, 390, 844, fehler)
             await schnellstart.schnellstart(pg, PORT)
             await pg.evaluate(GERICHTE); await pg.wait_for_timeout(400)
+            stand0 = await pg.evaluate("window.__gastrocalc.stand")
+            await heute(pg); await pg.wait_for_timeout(300)
+            m0 = await regeln.messen(pg, "#app", regeln.ausschluss_fuer(stand0, "Döner Test"))
+            erg["heuteWoerter"] = m0["worte"]; erg["heuteWortliste"] = m0["wortliste"]
             wege = {
                 "heute-jetzt": ['#app [data-a="rezept-direkt"][data-ort="heute"]'],
                 "karte-zeile": ['.tableiste [data-wert="karte"]', '#app [data-a="kl-rezept"]'],
@@ -51,7 +56,7 @@ async def main():
                 await heute(pg); erg[name] = await weg(pg, schritte)
                 if await pg.locator('[data-a="waage-weiss-nicht"]').count(): await pg.click('[data-a="waage-weiss-nicht"]'); await pg.wait_for_timeout(300)
                 await pg.evaluate("window.__gastrocalc.stand.phase = 'app'; window.__gastrocalc.stand.rueckkehr = null; window.__gastrocalc.zeichne()")
-            gefunden = [v for v in erg.values() if v]
+            gefunden = [erg[k] for k in wege if erg[k]]
             erg["kuerzester"] = min(gefunden) if gefunden else None
             await heute(pg); await nav_hilfe.geh(pg, "karte"); await pg.wait_for_timeout(400)
             stand = await pg.evaluate("window.__gastrocalc.stand")

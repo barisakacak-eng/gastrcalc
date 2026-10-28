@@ -1154,7 +1154,7 @@ export default {
       personal: "Ghi rác, đo làm lạnh, đánh dấu dọn dẹp. Quay lại chỉ bằng mã văn phòng.",
       buero: "Mọi tính toán, danh sách và cài đặt nằm ở đây. Các bộ hồ sơ sếp đưa cho cơ quan kiểm tra, cố vấn thuế hoặc kế toán." } },
   menueReferenz: { hinweis: "Nguyên liệu lấy từ thực đơn. Kiểm tra số lượng, thời gian chuẩn bị và toàn bộ công thức." }, // 26.10.2026
-  heute: { introGruss: "Chào sếp!", rezeptErinnerung: { frage: "Sếp đã nhập công thức của mình chưa?", jetzt: "Ngay", stand: (n, g) => `${n}/${g} món có công thức của sếp.` }, bewegung: (b) => `từ hôm qua ${b}`,
+  heute: { introGruss: "Chào sếp!", rezeptErinnerung: { frage: "Sếp đã nhập công thức của mình chưa?", knopf: "Nhập công thức", stand: (n, g) => `${n}/${g} món có công thức của sếp.` }, bewegung: (b) => `từ hôm qua ${b}`,
     nullKurz: "Hòa vốn", zielKurz: "Mục tiêu",
     zielLinie: "hòa vốn + lãi mục tiêu",
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },

@@ -1154,7 +1154,7 @@ export default {
       personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau.",
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
   menueReferenz: { hinweis: "Ingrédients de la carte. Vérifie les quantités, le temps de préparation et la recette complète." }, // 26.10.2026
-  heute: { introGruss: "Bonjour, chef !", rezeptErinnerung: { frage: "Chef, tu as déjà saisi tes recettes ?", jetzt: "Maintenant", stand: (n, g) => `${n} sur ${g} plats ont ta recette.` }, bewegung: (b) => `depuis hier ${b}`,
+  heute: { introGruss: "Bonjour, chef !", rezeptErinnerung: { frage: "Chef, tu as déjà saisi tes recettes ?", knopf: "Saisir la recette", stand: (n, g) => `${n} sur ${g} plats ont ta recette.` }, bewegung: (b) => `depuis hier ${b}`,
     nullKurz: "Zéro à", zielKurz: "Objectif",
     zielLinie: "zéro + bénéfice visé",
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },

@@ -29,6 +29,8 @@ export function karteLadenZurueck() { if (blatt) { blatt = null; return true; } 
 const lastVon = (stand) => kalkulation(stand).last;
 const zeilenVon = (stand) => { const k = kalkulation(stand); const m = new Map(k.zeilen.map((z) => [z.id, z])); return stand.gerichte.map((g) => ({ g, z: m.get(g.id) })).filter((x) => x.z); };
 const zuBillig = (x) => x.z.ampel === "rot" && !minusUnsicher(x.z, x.g); // 28.10.2026: ein nur geschätztes Minus ist nicht „zu billig“
+// Gegenprüfung 28.10.2026: Spalte „bleibt dir“ nur, wenn es für mindestens ein Gericht eine Zahl (oder „≈ prüfen“) gibt
+const mitZahl = (x) => { const a = preisAmpel(x.z, x.z.preisBrutto); return (a.gewinn !== null && a.quote !== null) || minusUnsicher({ ...x.z, ampel: a.ampel }, x.g); };
 const cent = (v) => Math.round(v * 100) / 100;
 // Eine Zahl nach allen Kosten, mit Vorzeichen (Baris 27.10.2026, B): „+ 2,10 €“ oder „− 0,80 €“
 const vorzeichen = (v) => v > 0.004 ? "+ " : v < -0.004 ? "− " : "";
@@ -47,14 +49,14 @@ export function karteLadenView(stand) {
     const a = preisAmpel(x.z, x.z.preisBrutto); const getraenk = x.g.klasse === "getraenk";
     const valid = a.gewinn !== null && a.quote !== null; const pruefen = minusUnsicher({ ...x.z, ampel: a.ampel }, x.g);
     const unscharf = unsicher || x.z.warenGeschaetzt || x.z.warenRichtpreis;
-    const betrag = pruefen ? t("karte.kurz.pruefen") : valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : "–";
+    const betrag = pruefen ? t("karte.kurz.pruefen") : valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : ""; // Gegenprüfung 28.10.: nicht berechenbar → keine Zahl statt „–“
     const eigen = hatEigenesRezept(x.g); const quelle = getraenk || !rezeptStempel(x.g).stufe ? "" : eigen ? "eigen" : "geschaetzt";
     const preis = x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 });
     const ampel = pruefen ? "pruefen" : a.ampel;
     return `<div class="kl-gericht kl-zeile a-${ampel}">
-      <button type="button" class="kl-zeile-haupt" data-a="kl-rezept" data-id="${esc(x.g.id)}" aria-label="${esc(x.g.name)}${quelle ? `, ${esc(t("karte.kurz." + quelle))}` : ""}, ${esc(t("karte.kurz.bleibt"))} ${esc(betrag)}">
+      <button type="button" class="kl-zeile-haupt" data-a="kl-rezept" data-id="${esc(x.g.id)}" aria-label="${esc(x.g.name)}${quelle ? `, ${esc(t("karte.kurz." + quelle))}` : ""},${betrag ? ` ${esc(t("karte.kurz.bleibt"))} ${esc(betrag)}` : ""}">
         ${gerichtBild(x.g)}${quelle ? `<i class="kl-quelle ${quelle}" aria-hidden="true"></i>` : '<i class="kl-quelle ohne" aria-hidden="true"></i>'}<span class="kl-gn">${esc(x.g.name)}</span>
-        <span class="kl-nutzen ${pruefen ? "pruefen" : valid ? "hat-wert" : "ohne-wert"}"><b>${esc(betrag)}</b></span></button>
+        ${betrag ? `<span class="kl-nutzen ${pruefen ? "pruefen" : "hat-wert"}"><b>${esc(betrag)}</b></span>` : `<span class="kl-nutzen ohne-wert"></span>`}</button>
       <button type="button" class="kl-preis" data-a="kl-auf" data-id="${esc(x.g.id)}" aria-label="${esc(t("kartelaeden.preis"))} ${esc(preis)}"><b>${esc(preis)}</b></button>
     </div>`;
   };
@@ -67,7 +69,7 @@ export function karteLadenView(stand) {
         <button type="button" role="tab" aria-selected="${filter === "alle"}" class="${filter === "alle" ? "an" : ""}" data-a="kl-filter" data-wert="alle">${esc(t("kartelaeden.alle"))}</button>
         <button type="button" role="tab" aria-selected="${filter === "billig"}" class="${filter === "billig" ? "an" : ""}" data-a="kl-filter" data-wert="billig"><i class="kl-punkt r klein" aria-hidden="true"></i>${esc(t("kartelaeden.zuBillig", billig))}</button>
       </div>` : ""}
-      <div class="kl-liste" role="list"><div class="kl-spalten" aria-hidden="true"><span></span><span>${esc(t("karte.kurz.bleibt"))}</span><span></span></div>${zeig.map(zeile).join("")}</div>
+      <div class="kl-liste" role="list">${liste.some(mitZahl) ? `<div class="kl-spalten" aria-hidden="true"><span></span><span>${esc(t("karte.kurz.bleibt"))}</span><span></span></div>` : ""}${zeig.map(zeile).join("")}</div>
       ${zeig.length < sicht.length ? `<button type="button" class="knopf zweit" data-a="kl-alle">${esc(t("kartelaeden.mehr", sicht.length - zeig.length))}</button>` : ""}`}
     </div>
     ${blatt ? karteLadenBlatt(stand) : ""}

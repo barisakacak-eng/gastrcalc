@@ -4,11 +4,15 @@ import assert from "node:assert/strict";
 globalThis.document ??= { documentElement: {} };
 import { leererBetrieb } from "../js/store.js";
 import { rezeptFortschritt, naechstesRezept, hatEigenesRezept, familieAnpassen } from "../js/rezept_quelle.js";
-import { startView } from "../js/screens/home.js";
+import { startView, zekiReihe } from "../js/screens/home.js";
+import { kostenBetragSetzen } from "../js/stamm.js";
+import { heuteZiel } from "../js/laden_zahlen.js";
+import { zaehler } from "../js/zaehler.js";
 import { karteLadenView, karteLadenAktion, karteLadenZuruecksetzen } from "../js/screens/karte_laden.js";
 import { rezeptDirektOeffnen, rezepte, karteZuruecksetzen } from "../js/screens/karte.js";
 import { navKontext } from "../js/screens/nav.js";
 import { setzeSprache, t } from "../js/i18n.js";
+import { heute } from "../js/util.js";
 setzeSprache("de");
 
 const wurzelVon = (s) => ({ betriebe: [s], letzteSicherung: new Date().toISOString(), sicherungZaehler: 0 });
@@ -20,6 +24,7 @@ function laden() {
     { id: "b", name: "Dürüm", klasse: "haupt", vorlage: true, preis: 8, steuer: 0.07, mengeTag: 10, zutaten: [{ name: "Dönerspieß Kalb/Pute", menge: 140, einheit: "g" }] },
     { id: "c", name: "Ayran", klasse: "getraenk", preis: 2, steuer: 0.19, zutaten: [] },
   ];
+  kostenBetragSetzen(s, "miete", "miete", 1500); s.team.personen = 0; // erste Zahl vollständig (Miete da, allein im Laden)
   return s;
 }
 
@@ -44,6 +49,16 @@ test("Heute: ohne eigenes Rezept steht Zekis feste Frage mit „Jetzt“ statt d
   assert.ok(!startView(s, { wurzel: w }).includes("rezept-direkt"), "erstes eigenes Rezept: Erinnerung weg");
   // ohne Gerichte keine Erinnerung (dann fehlt erst die Karte)
   const leer = laden(); leer.gerichte = []; assert.ok(!startView(leer, { wurzel: wurzelVon(leer) }).includes("rezept-direkt"));
+});
+
+test("Eine Haupthandlung: fehlt Miete oder Personal (heuteZiel().fehlt), wartet die Rezept-Erinnerung", () => {
+  const s = laden(); s.kosten = []; s.team.personen = null; const w = wurzelVon(s); navKontext(s, w);
+  const ziel = heuteZiel(s, zaehler(s, { datum: heute() }), heute());
+  assert.ok(["miete", "personal"].includes(ziel.fehlt), "dieser Stand meldet die fehlende erste Zahl");
+  assert.ok(!startView(s, { wurzel: w }).includes("rezept-direkt"), "Miete zuerst, dann Rezept");
+  // auch unabhängig vom Stand der Zielkarte: zekiReihe hält die Erinnerung zurück, solange fehlt gesetzt ist
+  assert.ok(!zekiReihe(s, heute(), null, { fehlt: "miete" }).includes("rezept-direkt"));
+  assert.ok(zekiReihe(s, heute(), null, { fehlt: null }).includes("rezept-direkt"));
 });
 
 test("Heute: der Satz „x von y“ hat höchstens 15 Wörter, die Frage auch", () => {

@@ -1154,7 +1154,7 @@ export default {
       personal: "Segna gli scarti, misura i frigo, spunta le pulizie. Indietro solo con il codice ufficio.",
       buero: "Qui ci sono tutti i conti, le liste e le impostazioni. Le cartelle le dai all'ispettore, al commercialista o al contabile." } },
   menueReferenz: { hinweis: "Ingredienti dal menù. Controlla quantità, tempo di preparazione e ricetta completa." }, // 26.10.2026
-  heute: { introGruss: "Ciao, capo!", rezeptErinnerung: { frage: "Capo, hai già inserito le tue ricette?", jetzt: "Ora", stand: (n, g) => `${n} di ${g} piatti hanno la tua ricetta.` }, bewegung: (b) => `da ieri ${b}`,
+  heute: { introGruss: "Ciao, capo!", rezeptErinnerung: { frage: "Capo, hai già inserito le tue ricette?", knopf: "Inserisci ricetta", stand: (n, g) => `${n} di ${g} piatti hanno la tua ricetta.` }, bewegung: (b) => `da ieri ${b}`,
     nullKurz: "Zero a", zielKurz: "Obiettivo",
     zielLinie: "zero + utile obiettivo",
     stufe: { bisNull: "Per arrivare a zero mancano", bisZiel: "Fino all'obiettivo", ueberZiel: "Sopra l'obiettivo" },
