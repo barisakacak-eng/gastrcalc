@@ -596,9 +596,15 @@ export const MENGEN_NAMEN = {
   "Hähnchenspieß": { de: "Hähnchenfleisch", tr: "tavuk döner eti", en: "chicken döner meat" },
   "Dönerbrot / Fladen": { de: "Dönerbrot", tr: "döner ekmeği", en: "döner bread" },
   "Hirtenkäse / Feta": { de: "Feta", tr: "beyaz peynir", en: "feta" },
+  "Hackfleisch gemischt": { de: "gemischtes Hackfleisch" },
+  "Joghurt natur": { de: "Naturjoghurt" },
+  "Pizzakäse gerieben": { de: "geriebener Pizzakäse" },
+  "Kuvertüre zartbitter": { de: "Zartbitter-Kuvertüre" },
+  "Weizenmehl Typ 405": { de: "Weizenmehl" },
+  "Filterkaffee gemahlen": { de: "gemahlener Filterkaffee" },
 };
 export function mengenName(name, sprache) {
-  const e = MENGEN_NAMEN[name]; if (e) return e[sprache] || e.en || e.de;
+  const e = MENGEN_NAMEN[name]; if (e && e[sprache]) return e[sprache]; if (e && sprache === "de") return e.de;
   const n = String(artikelAnzeige(name, sprache) || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*\/.*$/, "").trim() || name;
   // Mitten im Satz klein (außer Deutsch und Abkürzungen wie „BBQ“): „kaç gram domates“, „grams of tomatoes“
   if (!sprache || sprache === "de" || !/^\p{Lu}\p{Ll}/u.test(n)) return n;

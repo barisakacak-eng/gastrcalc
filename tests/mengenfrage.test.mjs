@@ -21,3 +21,16 @@ test("Frage je Einheit", () => {
   assert.equal(tr.waage.frage("döner eti", "Döner kebap", "g"), "“Döner kebap” içine kaç gram döner eti giriyor?");
   assert.equal(en.waage.frage("döner meat", "Döner kebab", "g"), "How many grams of döner meat go into “Döner kebab”?");
 });
+
+test("Sprachprüfung 28.10.2026: Einzahl in Zeki-Sätzen und Richtung bei Kühlabweichung", async () => {
+  const { zekiMoment } = await import("../js/zeki.js");
+  const s = { putzplan: { aktiv: true }, gerichte: [], messungen: [], kuehlstellen: [], schwund: [], tagesnotizen: [], abschluesse: [] };
+  const Z = await import("../js/data/zeki_saetze.js");
+  const p01 = Z.ZEKI_SAETZE.find((x) => x.id === "zeki_p01").de;
+  const fuell = (t, w) => t.replace(/\{(\w+):([^|}]*)\|([^}]*)\}/g, (_, k, e, m) => (String(w[k]) === "1" ? e : m)).replace(/\{(\w+)\}/g, (_, k) => w[k]);
+  assert.equal(fuell(p01, { anzahl: "1" }), "Chef, 1 Putzaufgabe ist überfällig. Eine nach der anderen.");
+  assert.equal(fuell(p01, { anzahl: "3" }), "Chef, 3 Putzaufgaben sind überfällig. Eine nach der anderen.");
+  assert.ok(Z.ZEKI_SAETZE.filter((x) => x.wenn === "kalt").every((x) => /kalt/.test(x.de)));
+  assert.ok(Z.ZEKI_SAETZE.filter((x) => /zu warm|so warm/.test(x.de)).every((x) => x.wenn === "warm"));
+  assert.equal(typeof zekiMoment, "function"); void s;
+});

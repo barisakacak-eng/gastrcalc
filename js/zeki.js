@@ -4,7 +4,7 @@
 // Sätze aus js/data/zeki_saetze.js (Frankys Format). Platzhalter werden hier gefüllt; fehlt ein Wert, fällt der Satz weg (kein „{betrag}“ auf dem Schirm).
 import { ZEKI_AUSLOESER, ZEKI_SAETZE } from "./data/zeki_saetze.js";
 import { ZEKI_SAETZE_MEHR } from "./data/zeki_mehrsprachig.js";
-import { offeneNachkontrollen, kuehlStatus, umsatzEintrag, schwundAuswertung, tagPlus, SCHWUND_ARTEN } from "./engine.js";
+import { offeneNachkontrollen, kuehlStatus, umsatzEintrag, schwundAuswertung, tagPlus, SCHWUND_ARTEN, grenzenVon } from "./engine.js";
 import { zaehler, monatsZiel } from "./zaehler.js";
 import { inventurenFertig } from "./inventur.js";
 import { hinweiseFuer } from "./hinweis.js";
@@ -17,7 +17,10 @@ const istMuell = (e) => e && !e.storniert && (SCHWUND_ARTEN[e.art] || 1) === 1;
 
 // Jede Prüfung liefert null (Lage trifft nicht zu) oder die Werte für die Platzhalter.
 export const ZEKI_PRUEFUNGEN = {
-  kuehl_abweichung: (s) => { const nk = offeneNachkontrollen(s); return nk.length ? { stelle: stelleName(s, nk[0].messung.stelle) || "1" } : null; },
+  // Sprachprüfung 28.10.2026: „zu warm“ stimmte nicht, wenn es zu kalt war – Richtung aus Wert und Grenze (wenn: "warm" | "kalt")
+  kuehl_abweichung: (s) => { const nk = offeneNachkontrollen(s); if (!nk.length) return null; const m = nk[0].messung; const k = (s.kuehlstellen || []).find((x) => x.id === m.stelle);
+    let wenn = "warm"; try { const g = k ? grenzenVon(k) : null; if (g && typeof g.min === "number" && typeof m.wert === "number" && m.wert < g.min) wenn = "kalt"; } catch { /* Richtung unbekannt: warm */ }
+    return { stelle: stelleName(s, m.stelle) || "1", wenn }; },
   kuehl_offen: (s) => { const k = kuehlStatus(s); return k.eingerichtet && k.heuteGemessen < k.stellen ? { tage: String(k.stellen - k.heuteGemessen) } : null; },
   putzen_offen: (s, H) => { if (!s.putzplan?.aktiv) return null; const n = planGruppen(s, H).ueberfaellig; return n > 0 ? { anzahl: String(n) } : null; },
   umsatz_fehlt: (s, H) => ((s.tagesnotizen || []).length && !umsatzEintrag(s, tagPlus(H, -1)) && !umsatzEintrag(s, H) ? {} : null),
@@ -56,7 +59,8 @@ export const ZEKI_BILDSCHIRM = {
   einstellungen: ["sicherung_alt"],
 };
 
-const fuellen = (text, w) => { let fehlt = false; const t = String(text || "").replace(/\{(\w+)\}/g, (_, k) => (w[k] != null && w[k] !== "" ? w[k] : ((fehlt = true), ""))); return fehlt ? null : t; };
+// {zahl:Einzahl|Mehrzahl} wählt das Wort nach der Zahl (Sprachprüfung 28.10.2026: „1 Putzaufgaben sind überfällig“)
+const fuellen = (text, w) => { let fehlt = false; const t = String(text || "").replace(/\{(\w+):([^|}]*)\|([^}]*)\}/g, (_, k, e, m) => (String(w[k]) === "1" ? e : m)).replace(/\{(\w+)\}/g, (_, k) => (w[k] != null && w[k] !== "" ? w[k] : ((fehlt = true), ""))); return fehlt ? null : t; };
 
 // Der eine Moment: { id, ausloeser, art, bewegung, text } oder null.
 // opts: H (Geschäftstag), sprache ("de"|"tr"|"en"), gesehen (Set „ausloeser:H“ schon gezeigt), sicherungTage, nur (Liste erlaubter Auslöser)
@@ -72,6 +76,7 @@ export function zekiMoment(stand, { H, sprache = "de", gesehen = new Set(), sich
     const start = [...H].reduce((n, c) => n + c.charCodeAt(0), 0) % (saetze.length || 1);
     for (let i = 0; i < saetze.length; i++) {
       const x = saetze[(start + i) % saetze.length];
+      if (x.wenn && x.wenn !== werte.wenn) continue; // Satz gilt nur für eine Richtung (z. B. „zu warm“)
       const text = fuellen(x[sprache] || ZEKI_SAETZE_MEHR[sprache]?.[x.id] || (sprache === "de" ? x.de : x.en || x.de), werte); // 27.10.2026: sonst Englisch statt Deutsch
       if (text) return { id: x.id, ausloeser: a, art: x.art, bewegung: x.bewegung, text };
     }
