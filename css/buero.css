@@ -224,3 +224,35 @@ button.b-zeile:active { background: var(--papier); }
 /* K4 (28.10.2026): Stoßzeiten je Laden */
 .b-ruhezeiten .ruhezeile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .b-ruhezeiten .ruhezeile input[type="time"] { min-height: 44px; width: 7.5em; }
+
+/* Masterauftrag „Gehirn“ Welle 1 (28.10.2026): Preisrunden-Rechner, Euro-Hebel, Renner & Penner, Preisdrift */
+.pr { display: flex; flex-direction: column; gap: 12px; }
+.pr-karte { display: flex; flex-direction: column; gap: 12px; }
+.pr-wahl { display: flex; flex-direction: column; gap: 4px; font-size: calc(14rem / 17); color: var(--tinte-weich); }
+.pr-wahl select { font: inherit; font-size: 1rem; color: var(--tinte); padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--paket-linie); background: var(--weiss); min-height: 48px; }
+.pr-schritt { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; gap: 10px; }
+.pr-schritt .knopf { min-height: 56px; font-size: 1.6rem; padding: 0; }
+.pr-preis { display: flex; flex-direction: column; align-items: center; }
+.pr-preis b { font-family: var(--zahlen); font-size: 2.2rem; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--tinte); }
+.pr-preis small { color: var(--tinte-weich); }
+.pr-ergebnis { background: var(--papier); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.pr-gross { font-family: var(--zahlen); font-size: 1.9rem; line-height: 1.1; color: var(--salbei-tief); font-variant-numeric: tabular-nums; }
+.pr-gross.minus { font-size: 1.15rem; color: var(--kupfer-dunkel); }
+.pr-satz { margin: 0; }
+.pr-satz.minus { color: var(--rot); font-weight: 600; }
+.pr-euro { margin: 0; font-weight: 600; }
+.pr-grenze { color: var(--tinte-weich); }
+.pr-hebelzeile, .rp-zeile { width: 100%; text-align: start; background: none; border: 0; border-top: 1px solid var(--paket-linie); padding: 10px 0; font: inherit; color: var(--tinte); cursor: pointer; }
+.pr-extra-neu { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pr-extra-neu input, .pr-extra-neu select { font: inherit; min-height: 44px; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--paket-linie); background: var(--weiss); color: var(--tinte); min-width: 0; }
+.pr-extra-neu input[data-f="pr-ex-name"], .pr-extra-neu .knopf { grid-column: 1 / -1; }
+.vk-hebel { margin-top: 6px; align-self: flex-start; background: none; border: 0; padding: 4px 0; font: inherit; font-size: calc(14rem / 17); font-weight: 600; color: var(--salbei-tief); cursor: pointer; text-align: start; }
+.rp-feld h2 { margin: 0; }
+.rp-feld .hinweis { margin: 2px 0 6px; }
+.rp-stern { border-inline-start: 4px solid var(--salbei-tief); }
+.rp-pferd { border-inline-start: 4px solid var(--kupfer-hell); }
+.rp-raetsel { border-inline-start: 4px solid var(--holz); }
+.rp-hund { border-inline-start: 4px solid var(--rot); }
+.b-drift .minus { color: var(--rot); font-weight: 600; }
+.kl-monat { margin: 6px 0 0; font-weight: 600; color: var(--salbei-tief); }
+.pr .karte h2, .rp-feld h2 { font-family: inherit; font-size: 1.05rem; font-weight: 700; line-height: 1.3; color: var(--tinte); margin: 0 0 4px; }

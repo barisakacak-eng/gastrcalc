@@ -3,7 +3,7 @@
 // Büro-Code: ein Code für alles (modus.js, wurzel.bueroPin, Zifferntastatur in ebene.js) – er schützt den Eintritt ins Büro, nicht diese Seite. Optik: css/buero.css (Klassen mit „b-“).
 import { t } from "../i18n.js";
 import { hilfeKnopf } from "./nav.js"; // Zeki als Begleiter (26.10.2026)
-import { esc, fmtEuro, heute, heuteGeschaeft } from "../util.js";
+import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft } from "../util.js";
 import { sym } from "../symbole.js";
 import { bueroRing, zielAttr as zielAttrAlle } from "./bausteine.js"; // Trennung (17.10.2026)
 import { zaehler } from "../zaehler.js";
@@ -22,6 +22,7 @@ import { haltbarUhrzeit } from "../haltbar.js"; // Stufe 1 (17.10.2026): Einstie
 import { aktionUhrzeit } from "../aktion_plan.js";
 import { heuteZiel } from "../laden_zahlen.js"; // Masterauftrag 0.1: Büro-Start zeigt dieselbe Hauptzahl wie Heute
 import { mindestlohnKarteZeigen } from "../mindestlohn.js"; // Masterauftrag 1.1
+import { preisDrift } from "../preisdrift.js"; // Masterauftrag 1.4
 import { fmtEuroGeschaetzt } from "../util.js"; // Aktion planen (18.10.2026): Satz zur laufenden Aktion
 
 // Symbole, die es in symbole.js (noch) nicht gibt – Lucide, ISC-Lizenz wie dort. Eigene Liste, damit symbole.js unberührt bleibt.
@@ -86,13 +87,22 @@ export function bueroView(stand, wurzel, extra = {}) {
       <b>${esc(t(ml.seit ? "gehirn.mindestlohn.titelSeit" : "gehirn.mindestlohn.titel", mlDatum, fmtEuro(ml.neu, { dezimal: 2 })))}</b>
       <p>${esc(t("gehirn.mindestlohn.satz", fmtEuro(ml.mehrMonat), fmtEuro(ml.umsatzMehrMonat)))}</p>
       ${ml.grundlage === "team" ? `<small>${esc(t("gehirn.mindestlohn.annahme"))}</small>` : ""}${ml.offen ? `<small>${esc(t("gehirn.mindestlohn.offen", ml.offen))}</small>` : ""}
-      <button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("gehirn.mindestlohn.knopf"))}</button>
+      <button type="button" class="knopf zweit" data-a="nav" data-wert="preisrunde">${esc(t("gehirn.mindestlohn.knopf"))}</button>
       <small class="b-quelle">${esc(t("gehirn.mindestlohn.quelle"))}</small>
+    </div>`;
+  // Masterauftrag 1.4: Preisdrift – die teuerste Preiserhöhung einer Zutat in Euro im Monat; nur eine Karte oben (Mindestlohn hat Vorrang)
+  let dr = null; if (!ml) { try { dr = preisDrift(stand, { datum: HG }); } catch { dr = null; } }
+  const dz = dr?.zutaten.find((x) => x.prozent > 0 && x.euroMonat >= 1); const dg = dr?.gerutscht[0];
+  const driftKarte = !dz ? "" : `<div class="karte b-mindestlohn b-drift">
+      <b>${esc(t("gehirn.drift.titel", dz.name, "+" + fmtZahl(dz.prozent * 100, 0) + " %"))}</b>
+      <p>${esc(t("gehirn.drift.satz", fmtEuroGeschaetzt(dz.euroMonat, dz.geschaetzt)))}</p>
+      ${dg ? `<p class="minus">${esc(t("gehirn.drift.rot", dg.name, fmtEuro(dg.zielBrutto, { dezimal: 2 })))}</p>` : ""}
+      <button type="button" class="knopf zweit" data-a="nav" data-wert="preisrunde"${dg ? ` data-id="${esc(dg.id)}"` : ""}>${esc(t("gehirn.drift.knopf"))}</button>
     </div>`;
   return `<div class="buero b-ruhig">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">
       ${erster ? `<button type="button" class="zeki-zeile b-zeki ${erster.farbe === "rot" ? "a-rot" : ""}" ${zielAttr(erster.ziel)}>${esc(erster.text)}</button>${rest.length ? `<details class="b-offen-mehr"><summary class="b-mehr-zeile">${esc(t("buero.ruhig.mehr", rest.length))}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}` : ""}
-      ${hauptzahl}${mindestlohnKarte}
+      ${hauptzahl}${mindestlohnKarte}${driftKarte}
       <div class="b-gruppe" aria-hidden="true"></div>
       <div class="karte b-liste b-ordnerliste">${ordnerZeile("amt", "shield-check", k.amt)}${ordnerZeile("steuer", "calculator", k.steuer)}${ordnerZeile("buch", "receipt", k.buch)}</div>
       <div class="b-gruppe" aria-hidden="true"></div>

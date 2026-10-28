@@ -280,3 +280,19 @@ export function ruhezeitSetzen(stand, i, feld, wert) {
   r[i][feld === "von" ? 0 : 1] = zeitStunden(wert);
   stand.betrieb.ruhezeiten = r.filter(([v, b]) => typeof v === "number" && typeof b === "number");
 }
+
+// Masterauftrag „Gehirn“ 1.2/1.6 (28.10.2026): Preisrunde übernehmen (neuer Kartenpreis + Eintrag für den Nutzen-Posten „preis“) und Extras am Gericht.
+export function preisRundeUebernehmen(stand, { gericht, alt, neu, mwst, mengeMonat, datum }) {
+  const g = (stand.gerichte || []).find((x) => x.id === gericht); if (!g || !(neu > 0)) return false;
+  (stand.preisRunden ??= []).push({ datum, gericht, alt, neu, mwst, mengeMonat: mengeMonat || 0 });
+  if (stand.preisRunden.length > 200) stand.preisRunden.splice(0, stand.preisRunden.length - 200);
+  g.preis = neu; return true;
+}
+export function extraDazu(stand, gericht, extra) {
+  const g = (stand.gerichte || []).find((x) => x.id === gericht); if (!g) return false;
+  (g.extras ??= []).push(extra); return true;
+}
+export function extraWeg(stand, gericht, id) {
+  const g = (stand.gerichte || []).find((x) => x.id === gericht); if (!g?.extras) return false;
+  g.extras = g.extras.filter((x) => x.id !== id); return true;
+}

@@ -10,6 +10,13 @@ export function hebelJeGericht(stand, { cent = HEBEL_CENT } = {}) {
     euroMonat: cent / (1 + z.mwst) * (mengen[z.id] || 0), geschaetzt })).sort((a, b) => b.euroMonat - a.euroMonat);
 }
 
+// 1.3 im Laden: Was bringt der neue Preis im Monat bei gleicher Menge? (neu − alt) / (1 + MwSt) × Menge im Monat
+export function mehrImMonat(stand, gerichtId, alt, neu) {
+  const z = kalkulation(stand).zeilen.find((x) => x.id === gerichtId); const { mengen, geschaetzt } = mengenJeMonat(stand);
+  if (!z || !(neu > 0) || !(alt > 0)) return { euro: null, geschaetzt };
+  return { euro: (neu - alt) / (1 + z.mwst) * (mengen[gerichtId] || 0), geschaetzt };
+}
+
 // 1.5: Menü-Matrix nach Deckungsbeitrag (Nettopreis − Ware, ohne Fixanteil) und Stückzahl.
 // Felder: stern (beliebt + viel DB) · pferd (beliebt, wenig DB: Preis oder Portion anpassen) · raetsel (wenig verkauft, viel DB: nach vorn stellen)
 //         · hund (wenig verkauft, wenig DB: prüfen). Grenzen = Durchschnitt der Karte (Menge: Mittel; DB: mengengewichtetes Mittel).

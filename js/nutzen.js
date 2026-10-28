@@ -64,12 +64,19 @@ export function postenPapier(stand) {
   return { art: "papier", euro: rund((min / 60) * satz), gemessen: false, stand: "geschaetzt", quelle: `≈ ${min} Minuten Papierkram je Monat vorher, Schätzung des Wirts` };
 }
 
-// Posten Preis: erst messbar mit Preisänderungen je Gericht (noch nicht gebaut) – ehrlich „fehlt“.
-export const postenPreis = () => ({ art: "preis", euro: null, gemessen: false, stand: "fehlt", quelle: "Preisänderungen je Gericht werden noch nicht gemessen" });
+// Posten Preis (Masterauftrag 1.4, 28.10.2026): Preisrunden, die der Wirt im Preisrunden-Rechner übernommen hat (stand.preisRunden).
+// Je Runde: (neu − alt) / (1 + MwSt) × Menge im Monat zum Zeitpunkt der Änderung = Mehr-Deckungsbeitrag im Monat, wenn alle Gäste bleiben.
+// Immer ≈ geschätzt (nicht gemessen): ob Gäste weggeblieben sind, weiß die App nicht. Ohne Runde ehrlich „fehlt“.
+export function postenPreis(stand) {
+  const r = (stand?.preisRunden || []).filter((x) => x && x.neu > x.alt && x.mengeMonat > 0);
+  if (!r.length) return { art: "preis", euro: null, gemessen: false, stand: "fehlt", quelle: "Noch keine Preisrunde im Preisrunden-Rechner übernommen" };
+  const euro = r.reduce((s, x) => s + (x.neu - x.alt) / (1 + (Number(x.mwst) || 0)) * x.mengeMonat, 0);
+  return { art: "preis", euro: rund(euro), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Monat bei gleicher Menge` };
+}
 
 export function nutzenStand(stand, H = heuteGeschaeft()) {
   const ab = messbeginn(stand);
-  const posten = [postenMuell(stand, H, ab), postenPreis(), postenLager(stand), postenPapier(stand)];
+  const posten = [postenMuell(stand, H, ab), postenPreis(stand), postenLager(stand), postenPapier(stand)];
   const summe = rund(posten.filter((p) => p.gemessen && p.euro > 0).reduce((s, p) => s + p.euro, 0));
   const geschaetzt = rund(posten.filter((p) => !p.gemessen && typeof p.euro === "number" && p.euro > 0).reduce((s, p) => s + p.euro, 0));
   return { ab, tage: ab ? tageZwischen(ab, H) + 1 : 0, leer: !posten.some((p) => p.gemessen), summe, geschaetzt, posten };

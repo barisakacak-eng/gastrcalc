@@ -30,3 +30,8 @@ test("1.5 Renner/Penner: vier Felder nach Mittelwerten", () => {
 test("1.5 ohne eingetragene Mengen: kein Urteil", () => {
   assert.equal(rennerPenner(stand([ger("a", "A", 9, 100, 0), ger("b", "B", 6, 300, 0)])).ohneMengen, true);
 });
+
+test("1.3 Laden: 7,50 → 7,80 € bei 40 am Tag bringt ≈ 291,59 € im Monat", async () => {
+  const { mehrImMonat } = await import("../js/hebel.js");
+  nah(mehrImMonat(stand([ger("d", "Döner", 7.5, 100, 40)]), "d", 7.5, 7.8).euro, 0.3 / 1.07 * 1040);
+});

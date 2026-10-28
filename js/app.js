@@ -29,7 +29,8 @@ import { umsatzLadenView, umsatzLadenAktion, umsatzLadenEingabe, umsatzLadenZuru
 import { sicherungStufe, sicherungFaellig, sicherungOrtSetzen, sicherungZeitraum } from "./sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Wo liegt sie jetzt?“
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
-import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
+import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js";
+import { preisrundeView, preisrundeOeffnen, preisrundeAktion, preisrundeEingabe, preisrundeZuruecksetzen } from "./screens/preisrunde.js"; // Masterauftrag 1.2/1.3/1.6 // Paket 2: Zurücksetzer
 import { karteZuruecksetzen, rezeptDirektOeffnen } from "./screens/karte.js";
 import { naechstesRezept, rezeptFortschritt, waageFragen } from "./rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.3/7.4): Rezept in höchstens 2 Tipps // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
@@ -78,7 +79,7 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
 const ZURUECKSETZER = [fotoZuruecksetzen, rechnungsLaufZuruecksetzen, tagZuruecksetzen, kuehlZuruecksetzen, muellZuruecksetzen, umsatzZuruecksetzen, belegZuruecksetzen,
   abschlussZuruecksetzen, inventurZuruecksetzen, putzplanZuruecksetzen, karteLadenZuruecksetzen, bueroZuruecksetzen, ordnerZuruecksetzen,
-  karteZuruecksetzen, vergleichZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, umsatzLadenZuruecksetzen, kuehlWareZuruecksetzen]; // Laden-Umbau (20.10.2026): umsatzLadenZuruecksetzen; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
+  karteZuruecksetzen, vergleichZuruecksetzen, preisrundeZuruecksetzen, onboardingZuruecksetzen, verkaufZuruecksetzen, bestandZuruecksetzen, aktionenZuruecksetzen, getraenkeZuruecksetzen, lieferantenZuruecksetzen, laedenZuruecksetzen, umsatzLadenZuruecksetzen, kuehlWareZuruecksetzen]; // Laden-Umbau (20.10.2026): umsatzLadenZuruecksetzen; // Eigentümer-Ebene (18.10.2026): laedenZuruecksetzen; // Lieferanten (18.10.2026): lieferantenZuruecksetzen; // Trennung (17.10.2026): kuehlWareZuruecksetzen; // Stufe 1 (17.10.2026): aktionenZuruecksetzen; Bestand (17.10.2026): bestandZuruecksetzen; E7 (17.10.2026): verkaufZuruecksetzen; Paket 2 (16.10.2026): Suche, offenes Rezept, Waage, Vergleichs-Modus, „?“-Hilfe
 function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } catch (e) { console.warn(e); } } }
 
 const root = document.getElementById("app");
@@ -156,6 +157,7 @@ function zeichne() {
         : ansicht === "abschluss" ? abschlussView(stand)
         : ansicht === "kartefoto" ? karteFotoSchirm()
         : ansicht === "vergleich" ? vergleichView(stand)
+        : ansicht === "preisrunde" ? preisrundeView(stand) // Masterauftrag 1.2 (28.10.2026)
         : ansicht === "inventur" ? inventurView(stand)
         : ansicht === "verkauf" ? verkaufView(stand) // E7 (17.10.2026)
         : ansicht === "bestand" ? bestandView(stand) // Bestand (17.10.2026)
@@ -680,6 +682,7 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
+    if (ziel === "preisrunde") preisrundeOeffnen(stand, el.dataset.id || null, el.dataset.cent || null); // Masterauftrag 1.2
     if (ziel === "getraenke") getraenkeZuruecksetzen(); // Getränke (18.10.2026)
     if (ziel === "lieferanten") lieferantenZuruecksetzen(); // Lieferanten (18.10.2026)
     if ((ziel === "aktionen" || ziel === "tafel") && aktionenAbschliessen(stand)) speichern(wurzel); // Aktion planen (18.10.2026): Bilanz beendeter Aktionen festhalten
@@ -793,6 +796,11 @@ async function aufKlick(ev) {
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
     return;
   }
+  if (ansicht === "preisrunde" && name.startsWith("pr-")) { // Masterauftrag 1.2/1.6 (28.10.2026)
+    const r = preisrundeAktion(name, el, stand, { datum: heuteGeschaeft() });
+    if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
+    return;
+  }
   if (ansicht === "aktionen") { // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit – Vorschläge; Menütafel (18.10.2026): „Auf die Tafel“ speichert
     const r = await aktionenAktion(name, el, stand);
     if (r) { if (r.speichern) await sofortSpeichern(wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
@@ -888,6 +896,9 @@ root.addEventListener("input", (ev) => {
   } else if (ansicht === "tafel") { // Menütafel (18.10.2026): Sprache der Tafel – speichern, Sprache laden, neu zeichnen
     const r = tafelEingabe(el.dataset.f, el.value, stand); if (!r) return;
     speichern(wurzel); ladeSprache(r.sprache).then(() => { if (ansicht === "tafel") zeichne(); }); return;
+  } else if (ansicht === "preisrunde") { // Masterauftrag 1.2/1.6: Gericht wechseln zeichnet neu, Extra-Felder schalten nur den Knopf
+    const r = preisrundeEingabe(el.dataset.f, el.value, stand); if (r === "zeichnen") { zeichne(); return; }
+    if (r) { const k = root.querySelector('[data-a="pr-extra-dazu"]'); if (k) k.disabled = r !== "knopf-an"; } return;
   } else if (ansicht === "aktionen") { // Aktion planen (18.10.2026): Datum im Plan ist ein Entwurf bis „Auf die Tafel“
     const r = aktionenEingabe(el.dataset.f, el.value); if (r === "zeichnen") { zeichne(); return; } if (r === "entwurf" || !r) return;
   } else if (ansicht === "lieferanten") { // Lieferanten (18.10.2026): Formular = Entwurf; Zuordnung (Auswahl) schreibt gleich

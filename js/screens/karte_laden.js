@@ -8,6 +8,8 @@ import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
 import { verkaufspreisSetzen } from "../karte_daten.js"; // Trennung (17.10.2026)
 import { gerichtBild } from "./vergleich.js";
 import { nav } from "./nav.js";
+import { mehrImMonat } from "../hebel.js"; // Masterauftrag 1.3
+import { fmtEuroGeschaetzt } from "../util.js";
 import { sym } from "../symbole.js";
 import { minusUnsicher, rezeptStempel, hatEigenesRezept } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.4)
 
@@ -99,7 +101,13 @@ function zekiZeile(liste, unsicher) {
 // darunter „Wohin geht dein Preis?“ – Balken aus Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn (engine.preisAufteilung).
 const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
 // 27.10.2026 Fehler (Baris-Foto 23:49): Beim Tippen wurde nur „Bleibt dir“ ersetzt, „Wohin geht dein Preis?“ blieb stehen → dreifach. Jetzt eine Hülle für beides.
-function bleibtZeile(z, preis, last) { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last)}</div>`; }
+function bleibtZeile(z, preis, last, monat = "") { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last)}${monat}</div>`; }
+// Masterauftrag 1.3 (28.10.2026): Euro-Hebel im Laden nur hier, beim Preis ändern – „Das bringt dir ≈ x € im Monat“ (bei gleicher Menge, js/hebel.js)
+function monatZeile(stand, z) {
+  if (!blatt || blatt.alt === null || !(blatt.preis > blatt.alt + 0.004)) return "";
+  const m = mehrImMonat(stand, z.id, blatt.alt, blatt.preis); if (!(m.euro >= 1)) return "";
+  return `<p class="kl-monat">${esc(t("gehirn.hebel.laden", fmtEuroGeschaetzt(m.euro, m.geschaetzt)))}</p>`;
+}
 function bleibtInnen(z, preis, last) {
   const a = preisAmpel(z, preis);
   const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : vorzeichen(a.gewinn) + fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
@@ -125,7 +133,7 @@ export function karteLadenBlatt(stand) {
         <label class="kl-gross"><input inputmode="decimal" data-f="kl-preis" value="${esc(wertAnzeige(blatt.preis.toFixed(2)))}" aria-label="${esc(t("kartelaeden.preis"))}" autocomplete="off"><span>€</span></label>
         <button type="button" class="kl-rund" data-a="kl-plus" aria-label="+0,10 €">${zeichen("plus")}</button>
       </div>
-      ${bleibtZeile(x.z, blatt.preis, lastVon(stand))}
+      ${bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z))}
       ${x.z.sk === null ? `<p class="kl-ohne">${esc(t(x.z.warenFehlt?.[0] === "rezept" ? "kartelaeden.ohneRezept" : "kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : ""}
       ${x.g.klasse !== "getraenk" && rezeptStempel(x.g).stufe ? `<button type="button" class="knopf zweit" data-a="kl-rezept" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("karte.kurz.abwiegen"))}</button>` : ""}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-speichern" ${geaendert && blatt.preis > 0 ? "" : "disabled"}>${esc(t("kartelaeden.speichern"))}</button>
@@ -169,5 +177,5 @@ export function karteLadenTeile(stand) {
   if (!blatt) return null;
   const x = zeilenVon(stand).find((y) => y.g.id === blatt.id); if (!x) return null;
   const geaendert = blatt.alt === null || cent(blatt.alt) !== cent(blatt.preis);
-  return { bleibt: bleibtZeile(x.z, blatt.preis, lastVon(stand)), speichernAn: geaendert && blatt.preis > 0 };
+  return { bleibt: bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z)), speichernAn: geaendert && blatt.preis > 0 };
 }
