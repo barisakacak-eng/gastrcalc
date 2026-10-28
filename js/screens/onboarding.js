@@ -6,7 +6,7 @@ import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
 import { RECHTSFORMEN, rechtsform, rechtsformSetzen } from "../rechtsform.js"; // Rechtsform-Schritt nach Sanjis Entwurf (24.10.2026)
-import { t, SPRACHEN, SPRACH_NAMEN, sprache as aktiveSprache } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache as aktiveSprache } from "../i18n.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from "../util.js";
 import { reinigungVon, putzzeitMonat } from "../reinigung.js";
@@ -55,7 +55,7 @@ const sprache = {
     <h1 class="frage">${esc(t("sprache.frage"))}</h1>
     <p class="hinweis">${esc(t("sprache.hinweis"))}</p>
     <div class="kacheln">
-      ${SPRACHEN.map((s) => `<button type="button" class="kachel sprachkachel" data-a="sprache" data-wert="${s}" lang="${s}"><b>${esc(SPRACH_NAMEN[s] || s)}</b></button>`).join("")}
+      ${SPRACHEN.map((s) => `<button type="button" class="kachel sprachkachel" data-a="sprache" data-wert="${s}" lang="${s}"><b>${esc(spracheName(s))}</b></button>`).join("")}
     </div>`,
   fuss: () => "",
   aktion(name, el, stand, ctx) {
@@ -449,7 +449,7 @@ const spracheSchnell = {
       <p class="s2unterzeile">${esc(zekiSatz("rolle", t("schnell2.willkommenText")))}</p></div>
       <label class="s2feldtitel" for="sprache-wahl">${esc(t("schnell2.sprache"))}</label>
       <select id="sprache-wahl" class="textfeld s2sprachwahl" data-f="sprache-wahl" dir="auto">
-        ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(SPRACH_NAMEN[s] || s)}</option>`).join("")}
+        ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(spracheName(s))}</option>`).join("")}
       </select>
       <img class="s2kraeuter" src="bilder/ui/kraeuter.svg" alt="" aria-hidden="true">
     </div>`,

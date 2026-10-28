@@ -2,7 +2,7 @@ import { datenschutzText } from "../data/datenschutz.js";
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
 import { reinigungZeile } from "./reinigung_zeile.js";
-import { t, SPRACHEN, SPRACH_NAMEN, sprache, datumText } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache, datumText } from "../i18n.js";
 import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform (23.10.2026)
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
@@ -257,7 +257,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
       </div>
       <div class="karte">
         <h2>${esc(t("einstellungen.sprache"))}</h2>
-        <div class="chips">${SPRACHEN.map((s) => `<button type="button" class="chip ${sprache() === s ? "an" : ""}" data-a="sprache" data-wert="${s}" lang="${s}">${esc(SPRACH_NAMEN[s] || s)}</button>`).join("")}</div>
+        <div class="chips">${SPRACHEN.map((s) => `<button type="button" class="chip ${sprache() === s ? "an" : ""}" data-a="sprache" data-wert="${s}" lang="${s}">${esc(spracheName(s))}</button>`).join("")}</div>
       </div>
       ${bueroCodeKarte(wurzel)}
       <div class="karte">

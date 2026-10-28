@@ -2,7 +2,7 @@
 // Leistung (Stresstest 15.10.): Die Blätter wohnen in einer eigenen Hülle außerhalb von #app. Öffnen und Schließen zeichnet den
 // Bildschirm darunter NICHT neu; teure Zahlen werden erst beim Öffnen gerechnet.
 // „personal" (Entwickler D, screens/personal.js) und „buero" (Entwickler C, screens/buero.js) haben eigene Bildschirme.
-import { t, sprache, SPRACHEN, SPRACH_NAMEN } from "../i18n.js";
+import { t, sprache, SPRACHEN, SPRACH_NAMEN, spracheName } from "../i18n.js";
 import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen (26.10.2026)
 import { esc } from "../util.js";
 import { sym } from "../symbole.js";
@@ -66,7 +66,7 @@ export function menueZeigen(stand, wurzel) {
 
 export function spracheZeigen() {
   zeigen("sprache", `<div class="blattkopf nur"><button type="button" class="ikonknopf" data-a="menue-zurueck" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button><b>${esc(t("ebene.sprache"))}</b></div>
-    <div class="blattliste">${SPRACHEN.map((c) => `<button type="button" class="blattzeile ${sprache() === c ? "an" : ""}" data-a="sprache" data-wert="${c}" lang="${c}"><span>${esc(SPRACH_NAMEN[c] || c)}</span>${sprache() === c ? sym("check") : ""}</button>`).join("")}</div>`);
+    <div class="blattliste">${SPRACHEN.map((c) => `<button type="button" class="blattzeile ${sprache() === c ? "an" : ""}" data-a="sprache" data-wert="${c}" lang="${c}"><span>${esc(spracheName(c))}</span>${sprache() === c ? sym("check") : ""}</button>`).join("")}</div>`);
 }
 
 export function laedenZeigen(wurzel) {

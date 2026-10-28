@@ -12,6 +12,10 @@ export const SPRACH_NAMEN = { de: "Deutsch", tr: "Türkçe", en: "English", ar: 
 export const NACHLADBAR = ["ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
 export const SPRACHEN = ["de", "tr", "en", ...NACHLADBAR];
 export const RTL = new Set(["ar", "fa"]);
+// Masterauftrag „Gehirn“ 0.6 (28.10.2026): Sprachen ohne vollständige Prüfung tragen „Beta“ (de führend, tr/en vollständig gepflegt).
+// Kein Muttersprachler hat bisher gegengelesen – das steht im Projektstand, nicht hier.
+export const SPRACHE_BETA = new Set(NACHLADBAR);
+export const spracheName = (c) => (SPRACH_NAMEN[c] || c) + (SPRACHE_BETA.has(c) ? " · Beta" : "");
 let aktiv = "de";
 export const spracheGeladen = (c) => !!TABELLEN[c];
 export async function ladeSprache(code) {
