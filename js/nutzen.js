@@ -68,10 +68,11 @@ export function postenPapier(stand) {
 // Je Runde: (neu − alt) / (1 + MwSt) × Menge im Monat zum Zeitpunkt der Änderung = Mehr-Deckungsbeitrag im Monat, wenn alle Gäste bleiben.
 // Immer ≈ geschätzt (nicht gemessen): ob Gäste weggeblieben sind, weiß die App nicht. Ohne Runde ehrlich „fehlt“.
 export function postenPreis(stand) {
-  const r = (stand?.preisRunden || []).filter((x) => x && x.neu > x.alt && x.mengeMonat > 0);
+  const r = (stand?.preisRunden || []).filter((x) => x && x.neu > 0 && x.alt > 0 && x.mengeMonat > 0); // Senkungen zählen mit (Kanzlei-Test 28.10.2026)
   if (!r.length) return { art: "preis", euro: null, gemessen: false, stand: "fehlt", quelle: "Noch keine Preisrunde im Preisrunden-Rechner übernommen" };
-  const euro = r.reduce((s, x) => s + (x.neu - x.alt) / (1 + (Number(x.mwst) || 0)) * x.mengeMonat, 0);
-  return { art: "preis", euro: rund(euro), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Monat bei gleicher Menge` };
+  const monat = r.reduce((s, x) => s + (x.neu - x.alt) / (1 + (Number(x.mwst) || 0)) * x.mengeMonat, 0);
+  // Je Woche wie die übrigen Posten („pro Woche“ auf Heute): Monat × 12 / 52
+  return { art: "preis", euro: rund(Math.max(0, monat) * 12 / 52), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Woche bei gleicher Menge` };
 }
 
 export function nutzenStand(stand, H = heuteGeschaeft()) {

@@ -8,7 +8,7 @@ import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
 import { verkaufspreisSetzen } from "../karte_daten.js"; // Trennung (17.10.2026)
 import { gerichtBild } from "./vergleich.js";
 import { nav } from "./nav.js";
-import { mehrImMonat } from "../hebel.js"; // Masterauftrag 1.3
+import { mehrImMonat, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3
 import { fmtEuroGeschaetzt } from "../util.js";
 import { sym } from "../symbole.js";
 import { minusUnsicher, rezeptStempel, hatEigenesRezept } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.4)
@@ -105,8 +105,8 @@ function bleibtZeile(z, preis, last, monat = "") { return `<div class="kl-bleibt
 // Masterauftrag 1.3 (28.10.2026): Euro-Hebel im Laden nur hier, beim Preis ändern – „Das bringt dir ≈ x € im Monat“ (bei gleicher Menge, js/hebel.js)
 function monatZeile(stand, z) {
   if (!blatt || blatt.alt === null || !(blatt.preis > blatt.alt + 0.004)) return "";
-  const m = mehrImMonat(stand, z.id, blatt.alt, blatt.preis); if (!(m.euro >= 1)) return "";
-  return `<p class="kl-monat">${esc(t("gehirn.hebel.laden", fmtEuroGeschaetzt(m.euro, m.geschaetzt)))}</p>`;
+  const m = mehrImMonat(stand, z.id, blatt.alt, blatt.preis); if (!(m.euro >= HEBEL_MIN_EURO)) return "";
+  return `<p class="kl-monat">${esc(t("gehirn.hebel.laden", fmtEuroGeschaetzt(m.euro, true)))}</p>`;
 }
 function bleibtInnen(z, preis, last) {
   const a = preisAmpel(z, preis);

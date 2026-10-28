@@ -53,7 +53,7 @@ export function preisDrift(stand, { datum, tage = DRIFT_TAGE } = {}) {
     const kAlt = new Map(kalkulation(alt).zeilen.map((z) => [z.id, z]));
     for (const z of kalkulation(stand).zeilen) {
       const v = kAlt.get(z.id);
-      if (z.ampel === "rot" && v && v.ampel !== "rot") gerutscht.push({ id: z.id, name: z.name, zielBrutto: z.zielBrutto, preisBrutto: z.preisBrutto });
+      if (z.ampel === "rot" && v && v.ampel !== "rot") gerutscht.push({ id: z.id, name: z.name, zielBrutto: z.zielBrutto, preisBrutto: z.preisBrutto, geschaetzt: !!(z.warenGeschaetzt || z.warenRichtpreis) || geschaetzt });
     }
   }
   return { zutaten, gerutscht, geschaetzt };

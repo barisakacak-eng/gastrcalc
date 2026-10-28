@@ -141,6 +141,7 @@ function kombiErgebnis(stand, k) {
     <p class="hinweis">${esc(t("aktionen.einzeln", fmtEuro(kb.summe, { dezimal: 2 })))} · ${esc(t("aktionen.ware", euro(kb.waren, ca), fmtZahl(kb.quoteEinzeln * 100, 0)))}</p>
     ${kb.stufen.map(stufe).join("")}
     ${kb.fehlt.length ? `<small class="marke">${esc(t("aktionen.fehlt"))}</small>` : ""}
+    ${kb.teile.some((x) => x.mwst !== kb.teile[0].mwst) ? `<p class="hinweis">${esc(t("aktionen.ustHinweis"))}</p>` : ""}
     <button type="button" class="leise" data-a="akt-kombi-leeren">${esc(t("aktionen.leeren"))}</button></div>`;
 }
 

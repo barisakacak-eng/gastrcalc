@@ -6,12 +6,14 @@ import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtEuroGeschaetzt, fmtZahl, parseZahl, uid } from "../util.js";
 import { kalkulation } from "../engine.js";
 import { preisRundeGericht } from "../preisrunde.js";
-import { hebelJeGericht } from "../hebel.js";
+import { hebelJeGericht, HEBEL_MIN_EURO, HEBEL_LISTE } from "../hebel.js";
 import { extrasVon } from "../extras.js";
 import { nav } from "./nav.js";
 import { preisRundeUebernehmen, extraDazu, extraWeg } from "../stamm.js";
 
 export const PREIS_STUFE = 0.10; // Setzung 28.10.2026: Schritt der Knöpfe −/+ (10 Cent)
+export const START_AUFSCHLAG = 0.50; // Setzung 28.10.2026: Rechner öffnet mit +0,50 € (Goldwert-Beispiel des Masterauftrags)
+export const MIN_PREIS = 0.10; // Setzung 28.10.2026: kleinster Preis im Rechner
 let gerichtId = null, preisNeu = null; let entwurf = { name: "", preis: "", zutat: "", menge: "" };
 export const preisrundeZuruecksetzen = () => { gerichtId = null; preisNeu = null; entwurf = { name: "", preis: "", zutat: "", menge: "" }; };
 const r2 = (x) => Math.round(x * 100) / 100;
@@ -24,7 +26,7 @@ export function preisrundeOeffnen(stand, id, cent) {
   const zs = rechenbar(stand); const h = hebelJeGericht(stand).filter((x) => zs.some((z) => z.id === x.id));
   gerichtId = zs.some((z) => z.id === id) ? id : h[0]?.id || zs[0]?.id || null;
   const z = zs.find((x) => x.id === gerichtId);
-  preisNeu = z ? r2(z.preisBrutto + (Number(cent) > 0 ? Number(cent) / 100 : 0.5)) : null;
+  preisNeu = z ? r2(z.preisBrutto + (Number(cent) > 0 ? Number(cent) / 100 : START_AUFSCHLAG)) : null;
   entwurf = { name: "", preis: "", zutat: "", menge: "" };
 }
 
@@ -41,9 +43,9 @@ export function preisrundeView(stand) {
   else if (!(r.dbNeu > 0)) ergebnis = `<p class="pr-satz minus">${esc(t("gehirn.preisrunde.deckt"))}</p>`;
   else if (r.schwelle !== null) ergebnis = `<div class="pr-gross">${ca ? "≈ " : ""}${esc(t("gehirn.preisrunde.wegbleiben", fmtZahl(Math.floor(r.schwelle * 100), 0)))}</div>
       <p class="pr-satz">${esc(t("gehirn.preisrunde.wegSatz"))}</p>
-      <p class="pr-euro">${esc(t("gehirn.preisrunde.alleBleiben", fmtEuroGeschaetzt(r.mehrJahr / 12, ca)))}</p>`;
-  else ergebnis = `<div class="pr-gross minus">${esc(t("gehirn.preisrunde.mehrGaeste", fmtZahl(Math.ceil(r.mehrGaesteNoetig * 100), 0)))}</div>
-      <p class="pr-euro">${esc(t("gehirn.preisrunde.weniger", fmtEuroGeschaetzt(-r.mehrJahr / 12, ca)))}</p>`;
+      <p class="pr-euro">${esc(t("gehirn.preisrunde.alleBleiben", fmtEuroGeschaetzt(r.mehrJahr / 12, true)))}</p>`;
+  else ergebnis = `<div class="pr-gross minus">${esc(r.mehrGaesteNoetig > 1 ? t("gehirn.preisrunde.doppelt") : t("gehirn.preisrunde.mehrGaeste", fmtZahl(Math.ceil(r.mehrGaesteNoetig * 100), 0)))}</div>
+      <p class="pr-euro">${esc(t("gehirn.preisrunde.weniger", fmtEuroGeschaetzt(-r.mehrJahr / 12, true)))}</p>`;
   const wahl = `<label class="pr-wahl"><span>${esc(t("gehirn.preisrunde.gericht"))}</span><select data-f="pr-gericht">${zs.map((x) => `<option value="${esc(x.id)}"${x.id === gerichtId ? " selected" : ""}>${esc(x.name)}</option>`).join("")}</select></label>`;
   const schritt = `<div class="pr-schritt">
       <button type="button" class="knopf zweit" data-a="pr-preis" data-wert="-10" aria-label="${esc(t("gehirn.preisrunde.minus"))}">−</button>
@@ -51,7 +53,7 @@ export function preisrundeView(stand) {
       <button type="button" class="knopf zweit" data-a="pr-preis" data-wert="10" aria-label="${esc(t("gehirn.preisrunde.plus"))}">+</button></div>`;
   const darf = r && r.dbNeu > 0 && Math.abs(preisNeu - z.preisBrutto) >= 0.005;
   const rechner = `<div class="karte pr-karte">${wahl}${schritt}<div class="pr-ergebnis">${ergebnis}</div>
-      ${darf && r.schwelle !== null ? `<small class="pr-grenze">${esc(t("gehirn.preisrunde.grenze"))}</small>` : ""}
+      ${darf ? `<small class="pr-grenze">${esc(t("gehirn.preisrunde.grenze"))}</small>` : ""}
       ${darf ? `<button type="button" class="knopf" data-a="pr-uebernehmen">${esc(t("gehirn.preisrunde.uebernehmen"))}</button>` : ""}</div>`;
   // Extras dieses Gerichts (1.6)
   const ex = extrasVon(stand, gerichtId); const g = stand.gerichte.find((x) => x.id === gerichtId);
@@ -67,8 +69,8 @@ export function preisrundeView(stand) {
         <button type="button" class="knopf zweit" data-a="pr-extra-dazu"${extraGueltig() ? "" : " disabled"}>${esc(t("gehirn.extra.dazu"))}</button>
       </div></div>`;
   // 30 Cent mehr (1.3): die drei Gerichte mit dem größten Hebel
-  const h = hebelJeGericht(stand).filter((x) => x.euroMonat > 0).slice(0, 3);
-  const hebel = h.length ? `<div class="karte pr-hebel"><h2>${esc(t("gehirn.hebel.titel"))}</h2>${h.map((x) => `<button type="button" class="summenzeile pr-hebelzeile" data-a="pr-gericht" data-wert="${esc(x.id)}"><span>${esc(x.name)}</span><span class="wert">${esc(t("gehirn.hebel.zeile", fmtEuroGeschaetzt(x.euroMonat, x.geschaetzt)))}</span></button>`).join("")}</div>` : "";
+  const h = hebelJeGericht(stand).filter((x) => x.euroMonat >= HEBEL_MIN_EURO).slice(0, HEBEL_LISTE);
+  const hebel = h.length ? `<div class="karte pr-hebel"><h2>${esc(t("gehirn.hebel.titel"))}</h2>${h.map((x) => `<button type="button" class="summenzeile pr-hebelzeile" data-a="pr-gericht" data-wert="${esc(x.id)}"><span>${esc(x.name)}</span><span class="wert">${esc(t("gehirn.hebel.zeile", fmtEuroGeschaetzt(x.euroMonat, true)))}</span></button>`).join("")}</div>` : "";
   return `${kopf}<div class="inhalt pr">${rechner}${hebel}${extras}</div>${nav("preisrunde")}`;
 }
 
@@ -77,7 +79,7 @@ const einheitVon = (stand, name) => { const a = (stand.artikel || []).find((x) =
 
 // Klicks. Rückgabe { speichern, meldung } oder true (nur zeichnen) oder null (nicht von hier)
 export function preisrundeAktion(name, el, stand, { datum } = {}) {
-  if (name === "pr-preis") { preisNeu = Math.max(0.1, r2(preisNeu + Number(el.dataset.wert) / 100)); return true; }
+  if (name === "pr-preis") { preisNeu = Math.max(MIN_PREIS, r2(preisNeu + Number(el.dataset.wert) / 100)); return true; }
   if (name === "pr-gericht") { preisrundeOeffnen(stand, el.dataset.wert, 30); return true; }
   if (name === "pr-uebernehmen") {
     const g = stand.gerichte.find((x) => x.id === gerichtId); const z = rechenbar(stand).find((x) => x.id === gerichtId); if (!g || !z) return null;

@@ -7,7 +7,7 @@ import { gerichteVergleich } from "../gerichte_vergleich.js"; // Trennung 2 (17.
 import { gerichtBildQuelle } from "../bilder.js"; // Trennung 2 (17.10.2026): Bildzuordnung
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
-import { hebelJeGericht, rennerPenner, HEBEL_CENT } from "../hebel.js"; // Masterauftrag 1.3/1.5
+import { hebelJeGericht, rennerPenner, HEBEL_CENT, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3/1.5
 import { fmtEuroGeschaetzt } from "../util.js";
 
 // Masterauftrag 1.5: Renner und Penner – vier Felder, je ein Satz, was du tun kannst. Nur mit eingetragenen Mengen.
@@ -17,7 +17,7 @@ function rennerView(stand) {
   if (r.ohneMengen || !r.gerichte.length) return `<div class="karte leer"><div>${esc(t("gehirn.renner.ohne"))}</div><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="verkauf">${esc(t("gehirn.renner.ohneKnopf"))}</button></div>`;
   return FELDER.map((f) => { const gs = r.gerichte.filter((x) => x.feld === f).sort((a, b) => b.dbMonat - a.dbMonat); if (!gs.length) return "";
     return `<div class="karte rp-feld rp-${f}"><h2>${esc(t("gehirn.renner.titel." + f))}</h2><p class="hinweis">${esc(t("gehirn.renner." + f))}</p>
-      ${gs.map((x) => `<button type="button" class="summenzeile rp-zeile" data-a="nav" data-wert="preisrunde" data-id="${esc(x.id)}"><span>${esc(x.name)}<br><small>${esc(t("gehirn.renner.zeile", fmtZahl(x.menge, 0)))}</small></span><span class="wert">${esc(fmtEuro(x.dbMonat))}</span></button>`).join("")}</div>`; }).join("")
+      ${gs.map((x) => `<button type="button" class="summenzeile rp-zeile" data-a="nav" data-wert="preisrunde" data-id="${esc(x.id)}"><span>${esc(x.name)}<br><small>${esc(t("gehirn.renner.zeile", fmtZahl(x.menge, 0)))}</small></span><span class="wert">${esc(fmtEuroGeschaetzt(x.dbMonat, x.geschaetzt))}</span></button>`).join("")}</div>`; }).join("")
     + `<p class="hinweis">${esc(t("gehirn.renner.hinweis"))}</p>`;
 }
 
@@ -44,7 +44,7 @@ export function vergleichView(stand) {
         <div class="vk-zeile ${x.marge < 0 ? "minus" : ""}"><span>${esc(t("vergleich.marge"))}</span><span>${fmtZahl(x.marge * 100, 0)} %</span></div>
         <div class="vk-zeile vk-ampel ${x.ampel}"><span>${esc(t("vergleich.nachKosten"))}</span><span><i class="punkt ${x.ampel}" aria-hidden="true"></i> ${x.quote === null ? esc(t("vergleich.nachKostenFehlt")) : `${x.geschaetzt ? "≈ " : ""}${fmtEuro(x.gewinn, { dezimal: 2 })} · ${fmtZahl(x.quote * 100, 0)} %`}</span></div>
         <span class="vk-balken"><i class="${x.ampel === "rot" ? "knapp" : ""}" style="width:${x.balken}%"></i></span>
-        ${hebel.get(x.z.id)?.euroMonat >= 1 ? `<button type="button" class="vk-hebel" data-a="nav" data-wert="preisrunde" data-id="${esc(x.z.id)}" data-cent="${Math.round(HEBEL_CENT * 100)}">${esc(t("gehirn.hebel.karte", fmtEuroGeschaetzt(hebel.get(x.z.id).euroMonat, hebel.get(x.z.id).geschaetzt)))} ›</button>` : ""}
+        ${hebel.get(x.z.id)?.euroMonat >= HEBEL_MIN_EURO ? `<button type="button" class="vk-hebel" data-a="nav" data-wert="preisrunde" data-id="${esc(x.z.id)}" data-cent="${Math.round(HEBEL_CENT * 100)}">${esc(t("gehirn.hebel.karte", fmtEuroGeschaetzt(hebel.get(x.z.id).euroMonat, true)))} ›</button>` : ""}
       </div></div>`;
   return `<div class="kopfband"><h1>${esc(t("vergleich.titel"))}</h1><div class="unter">${esc(t("vergleich.unter"))}</div></div>
     <div class="inhalt vergleich">

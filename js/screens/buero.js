@@ -23,6 +23,7 @@ import { aktionUhrzeit } from "../aktion_plan.js";
 import { heuteZiel } from "../laden_zahlen.js"; // Masterauftrag 0.1: Büro-Start zeigt dieselbe Hauptzahl wie Heute
 import { mindestlohnKarteZeigen } from "../mindestlohn.js"; // Masterauftrag 1.1
 import { preisDrift } from "../preisdrift.js"; // Masterauftrag 1.4
+import { HEBEL_MIN_EURO } from "../hebel.js"; // Setzung: unter 1 € im Monat keine Karte
 import { fmtEuroGeschaetzt } from "../util.js"; // Aktion planen (18.10.2026): Satz zur laufenden Aktion
 
 // Symbole, die es in symbole.js (noch) nicht gibt – Lucide, ISC-Lizenz wie dort. Eigene Liste, damit symbole.js unberührt bleibt.
@@ -92,11 +93,11 @@ export function bueroView(stand, wurzel, extra = {}) {
     </div>`;
   // Masterauftrag 1.4: Preisdrift – die teuerste Preiserhöhung einer Zutat in Euro im Monat; nur eine Karte oben (Mindestlohn hat Vorrang)
   let dr = null; if (!ml) { try { dr = preisDrift(stand, { datum: HG }); } catch { dr = null; } }
-  const dz = dr?.zutaten.find((x) => x.prozent > 0 && x.euroMonat >= 1); const dg = dr?.gerutscht[0];
+  const dz = dr?.zutaten.find((x) => x.prozent > 0 && x.euroMonat >= HEBEL_MIN_EURO); const dg = dr?.gerutscht[0];
   const driftKarte = !dz ? "" : `<div class="karte b-mindestlohn b-drift">
       <b>${esc(t("gehirn.drift.titel", dz.name, "+" + fmtZahl(dz.prozent * 100, 0) + " %"))}</b>
-      <p>${esc(t("gehirn.drift.satz", fmtEuroGeschaetzt(dz.euroMonat, dz.geschaetzt)))}</p>
-      ${dg ? `<p class="minus">${esc(t("gehirn.drift.rot", dg.name, fmtEuro(dg.zielBrutto, { dezimal: 2 })))}</p>` : ""}
+      <p>${esc(t("gehirn.drift.satz", fmtEuroGeschaetzt(dz.euroMonat, true)))}</p>
+      ${dg ? `<p class="minus">${esc(t("gehirn.drift.rot", dg.name, fmtEuroGeschaetzt(dg.zielBrutto, dg.geschaetzt, { dezimal: 2 })))}</p>` : ""}
       <button type="button" class="knopf zweit" data-a="nav" data-wert="preisrunde"${dg ? ` data-id="${esc(dg.id)}"` : ""}>${esc(t("gehirn.drift.knopf"))}</button>
     </div>`;
   return `<div class="buero b-ruhig">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}

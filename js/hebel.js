@@ -2,6 +2,8 @@
 // Grundlage: kalkulation() (Ware, Nettopreis, MwSt je Gericht) und mengenJeMonat() (eingetragene Menge je Tag × Öffnungstage, sonst geschätzt).
 import { kalkulation, mengenJeMonat } from "./engine.js";
 
+export const HEBEL_MIN_EURO = 1; // Setzung 28.10.2026: Hebel unter 1 € im Monat wird nicht gezeigt
+export const HEBEL_LISTE = 3; // Setzung 28.10.2026: im Rechner die drei Gerichte mit dem größten Hebel
 export const HEBEL_CENT = 0.30; // Setzung 28.10.2026: Beispiel-Erhöhung brutto, die der Chef sofort versteht
 // 1.3: Was bringen +0,30 € brutto bei deiner Menge im Monat? = 0,30 / (1 + MwSt) × Menge im Monat (bei gleicher Menge).
 export function hebelJeGericht(stand, { cent = HEBEL_CENT } = {}) {
@@ -26,7 +28,7 @@ export function rennerPenner(stand) {
   if (mit.length < 2) return { ohneMengen: true, gerichte: [] };
   const k = kalkulation(stand); const { mengen } = mengenJeMonat(stand);
   const zeilen = k.zeilen.filter((z) => mit.some((g) => g.id === z.id) && z.preisNetto !== null && z.waren !== null)
-    .map((z) => ({ id: z.id, name: z.name, menge: mengen[z.id] || 0, db: z.preisNetto - z.waren }));
+    .map((z) => ({ id: z.id, name: z.name, menge: mengen[z.id] || 0, db: z.preisNetto - z.waren, geschaetzt: !!(z.warenGeschaetzt || z.warenRichtpreis) }));
   if (zeilen.length < 2) return { ohneMengen: false, gerichte: [] };
   const summeM = zeilen.reduce((s, x) => s + x.menge, 0);
   const mGrenze = summeM / zeilen.length;
