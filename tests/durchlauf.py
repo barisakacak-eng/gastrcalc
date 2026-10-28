@@ -146,6 +146,7 @@ async def main():
             await pg.click('[data-a="weiter"]'); await bild("ergebnis")
             await pg.click('[data-a="fertig"]')  # 27.10.2026: der erste Service Worker lädt die Seite nicht mehr neu (tests/durchlauf_erststart.py)
             await pg.wait_for_selector(".cockpit")
+            await nav_hilfe.rundgang_weg(pg)  # 28.10.2026: der Mitmach-Rundgang endet erst mit „Verstanden“ (3 s) – vorher ging die alte Führung sofort zu
             # ---- Cockpit
             await bild("cockpit-leer")
             html = await pg.content(); assert "Bis null" in html and "umsatzheute" in html and "appleiste" in html and "Umsatz im Monat" not in html  # Drei Ebenen: Monatskurve wohnt im Büro

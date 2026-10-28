@@ -69,3 +69,53 @@
 .appleiste .intro-gruss{position:absolute;left:56px;right:56px;bottom:3px;text-align:center;font-size:calc(12rem / 17);font-weight:650;line-height:1.1;color:var(--b-text,#1d2a22);pointer-events:none;animation:introGruss var(--intro-gruss-dauer,1.3s) ease both}
 @keyframes introGruss{0%{opacity:0;transform:translateY(-3px)}18%,78%{opacity:1;transform:none}100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.appleiste .intro-gruss{display:none}}
+
+/* Mitmach-Rundgang (28.10.2026): Lichtkegel mit antippbarem Ziel, Sperrflächen ringsum, Zeki mit Blase, „Überspringen“ ≥ 44 px.
+   Farben nur aus css/tokens.css. */
+.rg-mitmach .rg-loch{position:fixed;border-radius:var(--radius-gross);box-shadow:0 0 0 9999px color-mix(in srgb,var(--tinte) 84%,transparent)!important;pointer-events:none;transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease}
+.rg-mitmach .rg-loch::after{content:"";position:absolute;inset:-3px;border:3px solid var(--glut);border-radius:inherit;animation:rgPuls 1.6s ease-in-out infinite}
+@keyframes rgPuls{0%,100%{opacity:.35}50%{opacity:1}}
+.rg-mitmach .rg-sperre{position:fixed;background:transparent}
+.rg-mitmach .rg-deckel{position:fixed;background:transparent;cursor:not-allowed}
+/* Die Hülle selbst fängt keine Tipps: nur Sperrflächen, Blase und Knöpfe; durch den Lichtkegel geht der Tipp an die echte App */
+.rg-mitmach{pointer-events:none}.rg-mitmach>*:not(.rg-loch){pointer-events:auto}
+.rg-mitmach.rg-pause{display:none}
+.rg-mitmach .rg-dunkel{position:fixed;inset:0;background:color-mix(in srgb,var(--tinte) 90%,transparent)}
+.rg-mitmach .rg-karte{position:fixed;left:16px;right:16px;display:flex;gap:10px;align-items:flex-end;animation:rgEin .3s ease both}
+.rg-mitmach.rg-frei .rg-karte{background:color-mix(in srgb,var(--tinte) 92%,transparent);border-radius:var(--radius-gross);padding:10px 12px}
+.rg-mitmach .rg-blase p{color:var(--weiss)}
+.rg-mitmach .rg-ueberspringen{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;min-height:44px;min-width:44px;padding:0 16px;border-radius:22px;border:1px solid color-mix(in srgb,var(--weiss) 55%,transparent);background:color-mix(in srgb,var(--tinte) 70%,transparent);color:var(--weiss);font:700 1rem/1 var(--schrift);z-index:2}
+.rg-mitmach .rg-ueberspringen.unten{top:auto;bottom:calc(96px + env(safe-area-inset-bottom))}
+.rg-mitmach .rg-uebung{display:inline-block;margin:0 0 6px;padding:4px 10px;border-radius:12px;background:var(--geschaetzt-hell);color:var(--geschaetzt-text);font:700 .8125rem/1.2 var(--schrift)}
+.rg-mitmach.rg-sucht .rg-karte{visibility:hidden}
+.rg-mitmach .rg-punkte i.da{background:color-mix(in srgb,var(--weiss) 70%,transparent)}
+.rg-mitmach .rg-ende{background:transparent;color:var(--weiss);z-index:1}
+.rg-mitmach .rg-ende h2{color:var(--weiss)}
+.rg-mitmach .rg-mitte .rg-blase{text-align:center;flex:none}.rg-mitmach .rg-mitte .rg-fuss{justify-content:center;flex-direction:column}
+.rg-mitmach .rg-achtung h2{font-size:calc(24rem / 17)}
+.rg-mitmach .rg-gross{min-height:72px;font-size:calc(19rem / 17)}
+.rg-mitmach .rg-spaeter{color:var(--weiss);min-height:44px}
+.rg-mitmach .rg-pflicht .rg-blase{flex:none;text-align:center}
+.rg-mitmach .rg-pflicht .rg-blase2 p{font-size:calc(22rem / 17)}
+.rg-mitmach .rg-verstanden{position:relative;overflow:hidden;min-height:64px}
+.rg-mitmach .rg-verstanden[disabled]{opacity:.75}
+.rg-mitmach .rg-uhr{position:absolute;left:0;bottom:0;height:5px;width:100%;background:var(--eigen);transform-origin:left;animation:rgUhr 3s linear both}
+@keyframes rgUhr{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* Beispiel-Beleg (Station 8) und Umschlag (Station 12, ≤ 2 s; bei reduzierter Bewegung ein Standbild) */
+.rg-beleg{margin:8px 0 4px;width:96px;padding:8px 10px;border-radius:6px;background:var(--weiss);color:var(--tinte);transform:rotate(-3deg);animation:rgEin .3s ease both}
+.rg-beleg b{display:block;font:700 .75rem/1.2 var(--schrift);margin-bottom:6px}
+.rg-beleg i{display:block;height:5px;margin:4px 0;border-radius:3px;background:var(--holz)}
+.rg-umschlag{position:relative;height:84px;margin:6px 0 10px}
+.rg-umschlag .rg-kuvert{position:absolute;left:50%;bottom:0;width:120px;height:56px;margin-left:-60px;border-radius:8px;background:var(--glut);overflow:hidden}
+.rg-umschlag .rg-kuvert::before{content:"";position:absolute;left:0;right:0;top:0;height:0;border-left:60px solid transparent;border-right:60px solid transparent;border-top:28px solid var(--kupfer-dunkel)}
+.rg-umschlag .rg-blatt{position:absolute;bottom:20px;width:52px;padding:6px 0;border-radius:4px;background:var(--weiss);color:var(--tinte);font:800 .75rem/1 var(--schrift);text-align:center;animation:rgEinpacken 1.8s ease-in both}
+.rg-umschlag .b1{left:calc(50% - 86px);animation-delay:0s}.rg-umschlag .b2{left:calc(50% - 26px);animation-delay:.1s}.rg-umschlag .b3{left:calc(50% + 34px);animation-delay:.2s}
+@keyframes rgEinpacken{0%{transform:translateY(-30px);opacity:0}25%{opacity:1;transform:translateY(-34px)}100%{transform:translate(0,10px) scale(.6);opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .rg-mitmach .rg-loch,.rg-mitmach .rg-karte{transition:none;animation:none}.rg-mitmach .rg-loch::after{animation:none;opacity:1}
+  .rg-umschlag .rg-blatt{animation:none;opacity:1;transform:translateY(-18px) rotate(-4deg)}
+  .rg-mitmach .rg-uhr{animation:none;transform:scaleX(1)}
+}
+.rg-mitmach .rg-blase{min-width:0}
+.rg-mitmach .rg-fuss{flex-wrap:wrap;row-gap:10px}
+.rg-mitmach .rg-karte .rg-fuss .knopf{margin-left:auto}

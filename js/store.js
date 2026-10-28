@@ -788,8 +788,14 @@ const seiteVersteckt = () => typeof document !== "undefined" && document.visibil
 
 // Speichern läuft nacheinander: solange eine Transaktion offen ist, wartet das nächste Speichern auf sie.
 let kette = Promise.resolve(), laufend = 0;
+// Mitmach-Rundgang (28.10.2026): Übungsmodus – solange der Rundgang läuft, wird nichts geschrieben (auch kein Ereignis).
+// Der Stand vor dem Rundgang liegt damit unverändert im Speicher: Abbruch oder Neuladen nehmen alle Übungseinträge spurlos zurück.
+let pausiert = false;
+export function speichernPausieren(an) { pausiert = !!an; }
+export const speichernPausiert = () => pausiert;
 function schreiben(wurzel, opt) {
   if (!verfuegbar || !db) return Promise.resolve(false);
+  if (pausiert) return Promise.resolve(true);
   const los = () => schreibenJetzt(wurzel, opt);
   const p = laufend ? kette.then(los) : los();
   laufend += 1; kette = p.then(() => { laufend -= 1; });
@@ -1057,7 +1063,7 @@ export function eintraegeZaehlen(wurzel) {
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
 export async function ereignis(art, daten = {}) {
   const e = { id: uid(), zeit: new Date().toISOString(), art, fassung: APP_FASSUNG, ...daten };
-  if (!verfuegbar || !db) return e;
+  if (!verfuegbar || !db || pausiert) return e; // Übungsmodus: kein Eintrag im Ereignis-Journal
   try { await tx("ereignisse", "readwrite", (st) => st.add(e)); } catch (_) {}
   return e;
 }

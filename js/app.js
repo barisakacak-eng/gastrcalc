@@ -2,7 +2,7 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
-import { zekiLogAnhaengen, zekiLogLoeschen, rundgangAbschliessen } from "./stamm.js";
+import { zekiLogAnhaengen, zekiLogLoeschen, rundgangAbschliessen, uebungStarten, uebungZuruecknehmen, uebungRezepteMerken, uebungRezepteBehalten } from "./stamm.js";
 import { datenschutzText } from "./data/datenschutz.js";
 import { zekiTaktStarten, zekiSprechblase, zekiStimmeEinsetzen } from "./screens/zeki_takt.js";
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
@@ -31,7 +31,7 @@ import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen,
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
 import { karteZuruecksetzen, rezeptDirektOeffnen } from "./screens/karte.js";
-import { naechstesRezept, rezeptFortschritt } from "./rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.3/7.4): Rezept in höchstens 2 Tipps // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
+import { naechstesRezept, rezeptFortschritt, waageFragen } from "./rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.3/7.4): Rezept in höchstens 2 Tipps // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
@@ -58,7 +58,8 @@ import { rundgangOffen as w2RundgangOffen } from "./engine.js"; // W2-D: stilles
 import { beispielLaden, beispielNamenFolgen } from "./beispiel.js"; // Beispiel-Laden (17.10.2026); Trennung (17.10.2026): beispielNamenFolgen
 // Trennung (17.10.2026): Handlungen und Eingaben schreiben über das Rechenwerk (js/stamm.js, js/karte_daten.js)
 import { einrichtungFertigSetzen, kuehlKeineSetzen, branchenMeldungQuittieren, abgleichHinweisQuittieren, kleinunternehmerUmschalten, waageVorschlagGesehen, warenQuoteSetzen, steuerSatzSetzen, uploadAnlegen } from "./stamm.js";
-import { gerichtFotoSetzen } from "./karte_daten.js";
+import { gerichtFotoSetzen, artikelAbgleichen } from "./karte_daten.js";
+import { speichernPausieren } from "./store.js"; // Mitmach-Rundgang (28.10.2026): Übungsmodus
 import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung, verkaufZbonFoto } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
 import { verkaufSichtbar } from "./verkauf.js"; // E7
 import { bestandView, bestandAktion, bestandEingabe, bestandZuruecksetzen, bestandZurueck, bestandKennung, bestandLink } from "./screens/bestand.js"; // Bestand (17.10.2026): Lager & Bestellen (Büro)
@@ -172,7 +173,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        setTimeout(() => fuehrungStarten(document, { log: (e) => { zekiLogAnhaengen(stand, e); speichern(wurzel); }, ende: (erg) => { rundgangAbschliessen(stand, erg); speichern(wurzel); } }), 400);
+        setTimeout(() => { if (ansicht === "start" && !stand.fuehrung && !fuehrungOffen()) fuehrungStarten(document, rundgangApi()); }, 400); // Mitmach-Rundgang (28.10.2026)
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -327,6 +328,44 @@ function rezeptDirekt(gid, { max = 3 } = {}) {
   rezeptDirektOeffnen(stand, g.id, { max });
   ereignis("rezept-direkt", { laden: stand.id, ort: ansicht });
   return bearbeiten("rezepte");
+}
+
+// Mitmach-Rundgang (28.10.2026): Rückrufe für js/screens/rundgang.js. Hier wird geschrieben (Übungsmodus, Rezept behalten, Ende);
+// der Rundgang selbst zeigt nur an. Während der Übung ist Speichern pausiert – ein Abbruch oder Neuladen lässt den alten Stand stehen.
+// Die Station steht im Browser (localStorage, nur Komfort): nach dem Neuladen geht es dort weiter.
+const RG_SCHLUESSEL = "gastrocash-rundgang";
+// app.js sofortSpeichern(w) reicht { stempel } nicht weiter – darum hier direkt (Merkzeichen und Zeki-Verlauf ändern den Zeitstempel nicht)
+const ohneStempelSpeichern = () => { personNachtragen(); return sofortSpeichernStore(wurzel, { stempel: false }); };
+let uebung = null, uebungLog = [], rezeptVorher = null, rezeptNeu = null;
+const RG_ZURUECK = { karte: () => karteLadenZuruecksetzen(), muell: () => { tagZuruecksetzen(); muellZuruecksetzen(); }, kuehl: () => kuehlZuruecksetzen(), start: () => umsatzLadenZuruecksetzen() };
+function rundgangApi() {
+  return {
+    log: (e) => { const x = { t: new Date().toISOString(), ...e }; if (uebung) uebungLog.push(x); else if (stand) { zekiLogAnhaengen(stand, x); ohneStempelSpeichern(); } }, // nur Zeki-Verlauf: kein neuer Zeitstempel
+    ansicht: () => ansicht, phase: () => stand?.phase, modus: () => modus(wurzel),
+    gehe: (ziel) => { if (!stand || stand.phase !== "app") return; blattSchliessen(); if (modus(wurzel) !== "laden") modusSetzen(wurzel, "laden"); RG_ZURUECK[ziel]?.(); ansicht = ziel; zeichne(); },
+    fortsetzen: () => { try { const x = JSON.parse(localStorage.getItem(RG_SCHLUESSEL) || "null"); return x && x.laden === stand.id ? Number(x.station) || 0 : 0; } catch { return 0; } },
+    merken: (nr) => { try { localStorage.setItem(RG_SCHLUESSEL, JSON.stringify({ laden: stand.id, station: nr })); } catch { /* ohne Speicher beginnt der Rundgang vorn */ } },
+    uebungStart: async () => { if (uebung) return; await sofortSpeichern(wurzel); uebung = uebungStarten(wurzel); uebungLog = []; rezeptVorher = rezeptNeu = null; speichernPausieren(true); },
+    uebungEnde: async () => {
+      if (!uebung) return;
+      speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();
+      const m0 = uebung.modus; uebungZuruecknehmen(wurzel, uebung); uebung = null; speichernPausieren(false);
+      modusSetzen(wurzel, m0 || "laden"); if (m0 === undefined) delete wurzel.modus; // Modus gilt auch je Handy (Gerätespeicher): mit zurücklegen, Stand bleibt byte-gleich
+      stand = wurzel.betriebe.find((b) => b.id === wurzel.aktiv) || stand; ansicht = startAnsicht(wurzel);
+      for (const e of uebungLog) zekiLogAnhaengen(stand, e); uebungLog = [];
+      await ohneStempelSpeichern(); zeichne();
+    },
+    rezeptId: () => naechstesRezept(stand)?.id || null, rezeptName: () => naechstesRezept(stand)?.name || "",
+    rezeptFrage: () => { const g = naechstesRezept(stand); const f = g && waageFragen(stand, g, 1)[0]; return f ? { zutat: f.name, einheit: f.einheit, gericht: g.name } : null; },
+    rezeptMerken: () => { rezeptVorher = JSON.stringify(stand.gerichte); rezeptNeu = null; },
+    rezeptNachher: () => { if (rezeptVorher !== null && JSON.stringify(stand.gerichte) !== rezeptVorher) rezeptNeu = uebungRezepteMerken(stand); rezeptVorher = null; },
+    rezeptGeaendert: () => !!rezeptNeu,
+    behalten: async () => { if (!rezeptNeu) return; uebungRezepteBehalten(stand, rezeptNeu); artikelAbgleichen(stand); rezeptNeu = null; ereignis("rundgang-rezept-behalten", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); },
+    hatRezept: () => rezeptFortschritt(stand).mit > 0,
+    kostenLeer: () => !(stand.kosten || []).some((k) => Number(k.betrag) > 0),
+    rezeptEintragen: () => rezeptDirekt(null),
+    ende: (erg) => { rezeptNeu = null; rundgangAbschliessen(stand, erg); try { localStorage.removeItem(RG_SCHLUESSEL); } catch { /* egal */ } ereignis("rundgang-mitmach", { laden: stand.id, ergebnis: erg }); ohneStempelSpeichern(); /* nur das Merkzeichen „Rundgang gesehen“ */ if (stand.phase === "app") { ansicht = startAnsicht(wurzel); zeichne(); } },
+  };
 }
 
 // Neuer Laden: Sprache ist schon gewählt, also beginnt der neue Laden beim Format (Schritt 1).
@@ -710,7 +749,7 @@ async function aufKlick(ev) {
   if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)
     const r = karteLadenAktion(name, el, stand);
     if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
-    if (r && r.rezept) return rezeptDirekt(r.rezept); // 28.10.2026: Tipp aufs Gericht → erste Mengenfrage
+    if (r && r.rezept) return rezeptDirekt(r.rezept, { max: fuehrungOffen() ? 1 : 3 }); // 28.10.2026: Tipp aufs Gericht → erste Mengenfrage (im Rundgang eine Frage)
     if (r && r.gespeichert) { ereignis("preis-geaendert", { laden: stand.id, gericht: r.id, vorher: r.vorher ?? null, preis: r.preis, ort: "laden" }); meldung(t("kartelaeden.gespeichert")); await sofortSpeichern(wurzel); return zeichne(); }
     if (r) return zeichne();
   }
@@ -934,6 +973,7 @@ root.addEventListener("keydown", (ev) => {
 let herkunft = null; // vorige Ansicht (für die Zurück-Geste aus Listen und Beleg)
 window.addEventListener("popstate", () => {
   if (!stand) return;
+  if (fuehrungOffen()) { history.pushState({ schritt: stand.schritt }, ""); return; } // Mitmach-Rundgang: Zurück-Geste wirkt nicht, Station 16 lässt sich nicht schließen
   if (blattSchliessen()) return; // Zurück schließt zuerst ein offenes Blatt – ohne Neuzeichnen
   const m = modus(wurzel); const anfang = startAnsicht(wurzel);
   if (stand.phase === "onboarding" && (stand.schritt > 0 || stand.rueckkehr || fotoLauf())) { schrittZurueck(); }
@@ -984,7 +1024,7 @@ let zuletztBedient = Date.now();
 for (const e of ["pointerdown", "keydown", "input"]) document.addEventListener(e, () => { zuletztBedient = Date.now(); }, { capture: true, passive: true });
 // Paket 2 (16.10.2026): „kein Formular offen“ an einer Stelle – für das stille Update und für den fremden Fassungswechsel (unten)
 function formularOffen() {
-  return !wurzel || !stand || ansicht !== startAnsicht(wurzel) || blattOffen() || w2RundgangOffen(stand) || fotoLauf() || !!document.activeElement?.matches?.("input, textarea, select");
+  return fuehrungOffen() || !wurzel || !stand || ansicht !== startAnsicht(wurzel) || blattOffen() || w2RundgangOffen(stand) || fotoLauf() || !!document.activeElement?.matches?.("input, textarea, select");
 }
 function stillAktualisieren() {
   if (!aktualisierung || aktualisierungKlick || !wurzel || !stand || stand.phase !== "app") return;

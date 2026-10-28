@@ -186,6 +186,26 @@ export function rundgangAbschliessen(stand, ergebnis) {
   return true;
 }
 
+// Mitmach-Rundgang (28.10.2026): Übungsmodus. Vor dem Rundgang wird der ganze Stand gemerkt (alle Läden, Journale, laufende Nummer, Modus).
+// Am Ende wird er an Ort und Stelle zurückgelegt – dieselben Objekte, dieselbe Reihenfolge der Felder, damit der gespeicherte Stand
+// Byte für Byte gleich bleibt. Speichern ist in der Zwischenzeit pausiert (store.js speichernPausieren).
+export const uebungStarten = (wurzel) => structuredClone(wurzel);
+export function uebungZuruecknehmen(wurzel, gemerkt) {
+  if (!wurzel || !gemerkt) return false;
+  const alt = structuredClone(gemerkt);
+  const da = new Map((wurzel.betriebe || []).map((b) => [b.id, b]));
+  const betriebe = (alt.betriebe || []).map((a) => { const b = da.get(a.id); if (!b) return a; for (const k of Object.keys(b)) delete b[k]; return Object.assign(b, a); });
+  for (const k of Object.keys(wurzel)) delete wurzel[k];
+  Object.assign(wurzel, alt, { betriebe });
+  return true;
+}
+// Ausnahme Station 9: der Chef hat im Rundgang ein echtes Rezept abgewogen und will es behalten – nur die Gerichte kommen zurück.
+export const uebungRezepteMerken = (stand) => structuredClone(stand?.gerichte || []);
+export function uebungRezepteBehalten(stand, gerichte) {
+  if (!stand || !Array.isArray(gerichte)) return false;
+  stand.gerichte = structuredClone(gerichte); return true;
+}
+
 // E-Mail von Steuerberater/Buchhalter (Baris 26.10.2026 23:56): freiwillig, nur zum Vorbelegen der Vorlage.
 export function kontaktSetzen(stand, art, email) {
   if (!stand?.betrieb || !["steuer", "buch"].includes(art)) return false;

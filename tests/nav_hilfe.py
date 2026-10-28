@@ -16,13 +16,20 @@ OEFFNEN = "s => { for (const e of document.querySelectorAll(s)) { const d = e.cl
 
 
 async def rundgang_weg(pg):
-    """Rundgang mit Zeki (27.10.2026) wie ein Mensch durchklicken: Weiter … bis „Ja, alles klar“."""
+    """Mitmach-Rundgang (28.10.2026) wie ein Mensch beenden: „Überspringen“ → ggf. „Später“ / „Nein, war Übung“ →
+    Station 16 „Verstanden“ (erst nach 3 Sekunden aktiv)."""
     await pg.wait_for_timeout(450)
-    for _ in range(12):
+    for _ in range(100):
         if await pg.locator(".rg-huelle").count() == 0: return False
-        if await pg.locator('.rg-huelle [data-rg="ja"]').count(): await pg.click('.rg-huelle [data-rg="ja"]'); await pg.wait_for_timeout(150); return True
-        if await pg.locator(".rg-huelle .rg-weiter").count(): await pg.click(".rg-huelle .rg-weiter"); await pg.wait_for_timeout(120)
-        else: await pg.wait_for_timeout(150)
+        for sel in ('.rg-huelle [data-rg="verstanden"]:not([disabled])', '.rg-huelle [data-rg="spaeter"]', '.rg-huelle [data-rg="verwerfen"]', '.rg-huelle [data-rg="ueberspringen"]'):
+            if await pg.locator(sel).count():
+                try: await pg.locator(sel).first.click(timeout=2000)  # die Testhilfe aufklappen.js tippt evtl. gleichzeitig
+                except Exception: pass
+                await pg.wait_for_timeout(150)
+                if "verstanden" in sel: return True
+                break
+        else:
+            await pg.wait_for_timeout(150)
     return True
 
 
