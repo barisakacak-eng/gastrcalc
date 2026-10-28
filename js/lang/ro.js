@@ -922,6 +922,7 @@ export default {
     kostenKurz: "Costuri fixe și salarii",
     speicherFehlt: "Aparatul ăsta nu salvează acum. Tot ce treci dispare după ce închizi. Verifică modul privat sau spațiul de stocare.",
     importFrage: (neu, gleich) => `Încarc copia. Noi: ${neu.length ? neu.join(", ") : "niciunul"}. Unite cu starea existentă: ${gleich.length ? gleich.join(", ") : "niciunul"} (Listele se unesc. La prețuri și costuri contează cea mai nouă schimbare). Continui?`,
+    importZeitraum: (n, von, bis) => `Zile în fișier: ${n}, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Fișier de copie creat." : `Fișier de copie creat cu ${nr(n, "local", "localuri")}.`,
     ladenLoeschen: "Șterge localul ăsta de pe telefon",
     ladenLoeschenFrage: (name) => `Ștergi „${name || "Localul ăsta"}” cu toate cifrele și listele de pe telefonul ăsta? Celelalte localuri rămân.`,

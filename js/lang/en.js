@@ -915,6 +915,7 @@ export default {
     kostenKurz: "Fixed costs and wages",
     speicherFehlt: "This device is not saving right now. Everything you enter is gone after closing. Check private mode or free space.",
     importFrage: (neu, gleich) => `Import backup. New: ${neu.length ? neu.join(", ") : "none"}. Merged with what is already here: ${gleich.length ? gleich.join(", ") : "none"} (Lists are combined. For prices and costs the newest change counts). Continue?`,
+    importZeitraum: (n, von, bis) => `Contains ${n} days, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Backup file created." : `Backup file with ${n} shops created.`,
     ladenLoeschen: "Delete this shop from the phone",
     ladenLoeschenFrage: (name) => `Delete "${name || "this shop"}" with all its numbers and lists from this phone? The other shops stay.`,

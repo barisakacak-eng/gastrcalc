@@ -10,7 +10,7 @@ import { kalkulationNeuerTakt } from "./engine.js";
 import { introStarten } from "./intro.js"; // Zeki-Auftritt beim App-Start (27.10.2026), Schalter INTRO_AN in js/intro.js
 import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
-import { t, sprache as aktuelleSprache, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen } from "./i18n.js";
+import { t, sprache as aktuelleSprache, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen, datumText } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen, beiAblageFehler } from "./ablage.js"; // W2-D: ablageZuruecklegen
 import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
@@ -26,7 +26,7 @@ import { parseTemperatur } from "./util.js"; // Trennung (17.10.2026)
 import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } from "./screens/putzplan.js";
 import { planSicherstellen } from "./putzplan.js"; // Laden-Umbau (20.10.2026): Putzplan im Laden ohne Geräte-Auswahl
 import { umsatzLadenView, umsatzLadenAktion, umsatzLadenEingabe, umsatzLadenZuruecksetzen, umsatzLadenKennung } from "./screens/umsatz_laden.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden
-import { sicherungStufe, sicherungOrtSetzen } from "./sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Wo liegt sie jetzt?“
+import { sicherungStufe, sicherungOrtSetzen, sicherungZeitraum } from "./sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Wo liegt sie jetzt?“
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
@@ -378,6 +378,8 @@ async function sicherungTeilen(passwort = null, { mitAblage = true } = {}) {
 // Einlesen führt zusammen: gleiche Laden-Kennung wird je Bereich zusammengeführt, neue Läden kommen dazu (W2-D: ZIP oder alte JSON).
 // E5 (16.10.2026): verschlüsselte Datei → Blatt fragt nach dem Passwort; die Datei wartet in einleseDatei, bis das Passwort stimmt oder das Blatt zugeht.
 let einleseDatei = null, einleseErsetzen = false;
+// Datensicherung (28.10.2026, Bauplan Prompt 12): Vorschau „wie viele Tage, von wann bis wann“ vor dem Einlesen
+const zeitraumZeile = (w) => { const z = sicherungZeitraum(w); if (!z.tage) return ""; const d = (x) => datumText(new Date(x + "T12:00:00"), { day: "2-digit", month: "2-digit", year: "numeric" }); return t("einstellungen.importZeitraum", z.tage, d(z.von), d(z.bis)) + " "; };
 async function sicherungEinlesen(datei, passwort = null, { ersetzen = einleseErsetzen } = {}) {
   einleseErsetzen = !!ersetzen && notfall && modus(wurzel) !== "personal"; // Rettung (17.10.2026): nur von der Fehlerseite
   let r;
@@ -397,7 +399,7 @@ async function sicherungUebernehmen(gelesen) {
     if (pruefsumme !== "ok") { await ereignis("import-pruefsumme", { pruefsumme }); if (!confirm(t(pruefsumme === "abweichung" ? "einstellungen.pruefsummeFalsch" : "w2d.pruefsummeFehlt"))) return; } // W2-D: Rückfrage vor dem Einlesen
     const gleich = importiert.betriebe.filter((b) => wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     const neu = importiert.betriebe.filter((b) => !wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
-    if (!confirm(t("einstellungen.importFrage", neu, gleich))) return;
+    if (!confirm(zeitraumZeile(importiert) + t("einstellungen.importFrage", neu, gleich))) return; // Datensicherung 28.10.2026: Tage und Zeitraum zuerst
     const leerVorher = stand && stand.phase === "onboarding" && !stand.betrieb.name && !stand.kosten.length && !stand.gerichte.length ? stand.id : null;
     const r = zusammenfuehren(wurzel, importiert).bericht;
     if (leerVorher && wurzel.betriebe.length > 1) { wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== leerVorher); if (wurzel.aktiv === leerVorher) wurzel.aktiv = importiert.aktiv; }
@@ -419,7 +421,7 @@ async function sicherungErsetzen(gelesen) {
     const { wurzel: importiert, ereignisse, pruefsumme, ablage } = gelesen;
     if (pruefsumme !== "ok") { await ereignis("import-pruefsumme", { pruefsumme }); if (!confirm(t(pruefsumme === "abweichung" ? "einstellungen.pruefsummeFalsch" : "w2d.pruefsummeFehlt"))) return; }
     const namen = importiert.betriebe.map((b) => b.betrieb?.name || t("ebene.deinLaden"));
-    if (!confirm(t("rettung.ersetzenFrage", namen.join(", ")))) return;
+    if (!confirm(zeitraumZeile(importiert) + t("rettung.ersetzenFrage", namen.join(", ")))) return;
     speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();
     wurzel = wurzelErsetzen(wurzel || leereWurzel(), importiert); stand = null; aktivSetzen(wurzel.aktiv);
     const fotos = ablage?.length ? await ablageAusSicherung(ablage, ablageZuruecklegen) : { neu: 0, kaputt: 0, da: 0 };

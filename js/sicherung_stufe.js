@@ -18,3 +18,17 @@ export function sicherungOrtSetzen(wurzel, ort, { jetzt = new Date() } = {}) {
   wurzel.letzteSicherung = jetzt.toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel);
   return true;
 }
+
+// Datensicherung (28.10.2026, Bauplan Prompt 12): Vorschau vor dem Einlesen – wie viele Tage stecken in der Datei, von wann bis wann.
+// Zählt jedes Feld „datum“ (JJJJ-MM-TT) in allen Läden: Umsatz, Müll, Kühlung, Abschlüsse, Lieferungen … Rein rechnend.
+export function sicherungZeitraum(wurzel) {
+  const tage = new Set(); const RE = /^\d{4}-\d{2}-\d{2}$/;
+  const lauf = (x, tiefe) => {
+    if (!x || typeof x !== "object" || tiefe > 8) return;
+    if (Array.isArray(x)) { for (const y of x) lauf(y, tiefe + 1); return; }
+    for (const [k, v] of Object.entries(x)) { if (k === "datum" && typeof v === "string" && RE.test(v)) tage.add(v); else if (v && typeof v === "object") lauf(v, tiefe + 1); }
+  };
+  for (const b of wurzel?.betriebe || []) lauf(b, 0);
+  if (!tage.size) return { tage: 0, von: null, bis: null };
+  const s = [...tage].sort(); return { tage: s.length, von: s[0], bis: s[s.length - 1] };
+}

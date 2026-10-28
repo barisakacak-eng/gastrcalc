@@ -915,6 +915,7 @@ export default {
     kostenKurz: "Lêçûnên sabît û meaş",
     speicherFehlt: "Ev amûr niha tomar nake. Her tiştê ku tu dinivîsî piştî girtinê winda dibe. Moda taybet (Private) an cihê bîrê kontrol bike.",
     importFrage: (neu, gleich) => `Kopiya ewlehiyê bixwîne. Nû: ${neu.length ? neu.join(", ") : "tu yek"}. Bi ya heyî re tê yekkirin: ${gleich.length ? gleich.join(", ") : "tu yek"} (Lîste tên yekkirin. Ji bo biha û lêçûnan guhertina herî nû derbas dibe). Bidomîne?`,
+    importZeitraum: (n, von, bis) => `Naverok: ${n} roj, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Dosyaya kopiya ewlehiyê hate çêkirin." : `Dosyaya kopiya ewlehiyê bi ${n} dikanan hate çêkirin.`,
     ladenLoeschen: "Vê dikanê ji telefonê jê bibe",
     ladenLoeschenFrage: (name) => `“${name || "Ev dikan"}” bi hemû hejmar û lîsteyan ji vê telefonê jê bibe? Dikanên din dimînin.`,

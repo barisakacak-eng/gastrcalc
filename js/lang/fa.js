@@ -915,6 +915,7 @@ export default {
     kostenKurz: "هزینه‌های ثابت و حقوق",
     speicherFehlt: "این دستگاه الان ذخیره نمی‌کند. هر چه وارد کنی بعد از بستن از بین می‌رود. حالت خصوصی (Private) یا فضای حافظه را چک کن.",
     importFrage: (neu, gleich) => `خواندن پشتیبان. جدید: ${neu.length ? neu.join("، ") : "هیچ"}. ادغام با چیزی که هست: ${gleich.length ? gleich.join("، ") : "هیچ"} (فهرست‌ها با هم یکی می‌شوند. برای قیمت و هزینه آخرین تغییر حساب است). ادامه؟`,
+    importZeitraum: (n, von, bis) => `محتوا: ${n} روز، \u2066${von} – ${bis}\u2069.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "فایل پشتیبان ساخته شد." : `فایل پشتیبان با ${n} مغازه ساخته شد.`,
     ladenLoeschen: "این مغازه از گوشی پاک شود",
     ladenLoeschenFrage: (name) => `«${name || "این مغازه"}» با همه‌ی عددها و لیست‌ها از این گوشی پاک شود؟ بقیه‌ی مغازه‌ها می‌مانند.`,

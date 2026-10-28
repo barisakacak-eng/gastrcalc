@@ -921,6 +921,7 @@ export default {
     kostenKurz: "Shpenzimet fikse dhe rrogat",
     speicherFehlt: "Kjo pajisje tani nuk po ruan. Gjithçka që shkruan, humbet pas mbylljes. Kontrollo modalitetin privat ose hapësirën e memories.",
     importFrage: (neu, gleich) => `Lexo kopjen rezervë. Të reja: ${neu.length ? neu.join(", ") : "asnjë"}. Bashkuar me gjendjen ekzistuese: ${gleich.length ? gleich.join(", ") : "asnjë"} (Listat bashkohen. Për çmimet dhe kostot vlen ndryshimi më i ri). Vazhdo?`,
+    importZeitraum: (n, von, bis) => `Ditë në skedar: ${n}, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Skedari i kopjes u krijua." : `Skedari i kopjes me ${n} lokale u krijua.`,
     ladenLoeschen: "Fshije këtë lokal nga telefoni",
     ladenLoeschenFrage: (name) => `Ta fshij “${name || "Ky lokal"}” me të gjitha shifrat dhe listat nga ky telefon? Lokalet e tjera mbeten.`,

@@ -924,6 +924,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     kostenKurz: "Feste Kosten und Löhne",
     speicherFehlt: "Dieses Gerät speichert gerade nicht. Alles, was du einträgst, ist nach dem Schließen weg. Prüf den privaten Modus oder den Speicherplatz.",
     importFrage: (neu, gleich) => `Sicherung einlesen. Neu dazu: ${neu.length ? neu.join(", ") : "keiner"}. Zusammengeführt mit dem vorhandenen Stand: ${gleich.length ? gleich.join(", ") : "keiner"} (Listen werden zusammengelegt. Bei Preisen und Kosten gilt die neueste Änderung). Weiter?`,
+    importZeitraum: (n, von, bis) => `Inhalt: ${n} Tage, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Sicherungsdatei erstellt." : `Sicherungsdatei mit ${n} Läden erstellt.`,
     ladenLoeschen: "Diesen Laden vom Handy löschen",
     ladenLoeschenFrage: (name) => `„${name || "Dieser Laden"}“ mit allen Zahlen und Listen von diesem Handy löschen? Die anderen Läden bleiben.`,

@@ -921,6 +921,7 @@ export default {
     kostenKurz: "Koszty stałe i pensje",
     speicherFehlt: "To urządzenie teraz nie zapisuje. Wszystko, co wpiszesz, zniknie po zamknięciu. Sprawdź tryb prywatny albo wolne miejsce.",
     importFrage: (neu, gleich) => `Wczytanie kopii. Nowe: ${neu.length ? neu.join(", ") : "brak"}. Połączone z obecnym stanem: ${gleich.length ? gleich.join(", ") : "brak"} (Listy są łączone. Przy cenach i kosztach liczy się najnowsza zmiana). Dalej?`,
+    importZeitraum: (n, von, bis) => `Dni w pliku: ${n}, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Plik kopii utworzony." : `Utworzono plik kopii z ${n} ${lm(n, "lokalem", "lokalami", "lokalami")}.`,
     ladenLoeschen: "Usuń ten lokal z telefonu",
     ladenLoeschenFrage: (name) => `Usunąć „${name || "Ten lokal"}” ze wszystkimi liczbami i listami z tego telefonu? Inne lokale zostaną.`,

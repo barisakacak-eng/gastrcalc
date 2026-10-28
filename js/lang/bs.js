@@ -923,6 +923,7 @@ export default {
     kostenKurz: "Fiksni troškovi i plate",
     speicherFehlt: "Ovaj uređaj trenutno ne čuva podatke. Sve što upišeš nestaje kad zatvoriš. Provjeri privatni način rada ili memoriju.",
     importFrage: (neu, gleich) => `Učitavanje sigurnosne kopije. Novo: ${neu.length ? neu.join(", ") : "nijedan"}. Spojeno s postojećim stanjem: ${gleich.length ? gleich.join(", ") : "nijedan"} (Liste se spajaju. Za cijene i troškove važi najnovija promjena). Dalje?`,
+    importZeitraum: (n, von, bis) => `Dana u datoteci: ${n}, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Fajl sigurnosne kopije napravljen." : `Fajl sigurnosne kopije sa ${n} ${pl(n, "lokal", "lokala", "lokala")} napravljen.`,
     ladenLoeschen: "Obriši ovaj lokal s telefona",
     ladenLoeschenFrage: (name) => `Obrisati „${name || "Ovaj lokal"}“ sa svim brojevima i listama s ovog telefona? Ostali lokali ostaju.`,

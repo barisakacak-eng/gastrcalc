@@ -916,6 +916,7 @@ export default {
     kostenKurz: "Chi phí cố định và lương",
     speicherFehlt: "Thiết bị này hiện không lưu được. Mọi thứ sếp ghi sẽ mất khi đóng app. Kiểm tra chế độ riêng tư hoặc bộ nhớ trống.",
     importFrage: (neu, gleich) => `Nạp bản sao lưu. Thêm mới: ${neu.length ? neu.join(", ") : "không có"}. Gộp với dữ liệu đang có: ${gleich.length ? gleich.join(", ") : "không có"} (Các danh sách được gộp. Với giá và chi phí, thay đổi mới nhất được tính). Tiếp tục?`,
+    importZeitraum: (n, von, bis) => `Số ngày trong tệp: ${n}, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Đã tạo file sao lưu." : `Đã tạo file sao lưu với ${n} quán.`,
     ladenLoeschen: "Xóa quán này khỏi điện thoại",
     ladenLoeschenFrage: (name) => `Xóa “${name || "quán này"}” cùng mọi số liệu và danh sách khỏi điện thoại này? Các quán khác vẫn giữ.`,

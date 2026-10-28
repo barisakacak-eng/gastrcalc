@@ -916,6 +916,7 @@ export default {
     kostenKurz: "Frais fixes et salaires",
     speicherFehlt: "Cet appareil n’enregistre pas en ce moment. Tout ce que tu remplis disparaît à la fermeture. Vérifie la navigation privée ou l’espace de stockage.",
     importFrage: (neu, gleich) => `Charger la sauvegarde. Nouveaux : ${neu.length ? neu.join(", ") : "aucun"}. Fusionnés avec ce qui existe : ${gleich.length ? gleich.join(", ") : "aucun"} (Les listes sont réunies. Pour les prix et les frais, le changement le plus récent compte). Continuer ?`,
+    importZeitraum: (n, von, bis) => `Contient ${n} jours, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n <= 1 ? "Fichier de sauvegarde créé." : `Fichier de sauvegarde avec ${n} restos créé.`,
     ladenLoeschen: "Supprimer ce resto du téléphone",
     ladenLoeschenFrage: (name) => `Supprimer « ${name || "ce resto"} » avec tous ses chiffres et listes de ce téléphone ? Les autres restos restent.`,

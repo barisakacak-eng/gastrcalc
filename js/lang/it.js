@@ -916,6 +916,7 @@ export default {
     kostenKurz: "Costi fissi e stipendi",
     speicherFehlt: "Questo dispositivo al momento non salva. Tutto quello che inserisci sparisce quando chiudi. Controlla la navigazione privata o lo spazio libero.",
     importFrage: (neu, gleich) => `Caricamento backup. Nuovi: ${neu.length ? neu.join(", ") : "nessuno"}. Uniti ai dati esistenti: ${gleich.length ? gleich.join(", ") : "nessuno"} (Le liste vengono unite. Per prezzi e costi vale la modifica più recente). Continuare?`,
+    importZeitraum: (n, von, bis) => `Contiene ${n} giorni, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "File di backup creato." : `File di backup con ${n} locali creato.`,
     ladenLoeschen: "Elimina questo locale dal telefono",
     ladenLoeschenFrage: (name) => `Eliminare “${name || "Questo locale"}” con tutti i numeri e le liste da questo telefono? Gli altri locali restano.`,

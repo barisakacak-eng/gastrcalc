@@ -26,8 +26,12 @@ async def main():
             async def alles(): return await pg.evaluate("JSON.stringify(window.__gastrocalc.wurzel) + JSON.stringify(Object.entries(localStorage))")
             async def code_blatt(code):
                 await schnellstart.code_tippen(pg, code); await pg.wait_for_timeout(300); await schnellstart.code_tippen(pg, code)
-            async def ins_buero_mit(code):
-                await nav_hilfe.zum_laden(pg); await nav_hilfe.ins_buero(pg); await pg.wait_for_selector("#ebene-huelle .blatt-pin")
+            async def ins_buero_mit(code):  # 27.10.2026: Büro bleibt nach dem Aufschließen 15 Min. offen – ein neuer App-Start schließt es
+                await nav_hilfe.zum_laden(pg); await nav_hilfe.ins_buero(pg)
+                try: await pg.wait_for_selector("#ebene-huelle .blatt-pin", timeout=3000)
+                except Exception:  # Büro war noch offen: neu starten, dann ist es zu
+                    await pg.reload(); await pg.wait_for_selector("#app .schirm"); await pg.wait_for_timeout(400)
+                    await nav_hilfe.zum_laden(pg); await nav_hilfe.ins_buero(pg); await pg.wait_for_selector("#ebene-huelle .blatt-pin")
                 await schnellstart.code_tippen(pg, code)
 
             await schnellstart.schnellstart(pg, PORT, name="Döner Test")
@@ -75,7 +79,8 @@ async def main():
             pruefe(await modus() == "laden", "alter Büro-Code öffnet das Büro noch")
             await schnellstart.code_tippen(pg, "5678"); await pg.locator("#ebene-huelle .blatt-pin").wait_for(state="detached", timeout=20000); await pg.wait_for_timeout(300)
             pruefe(await modus() == "buero", "neuer Büro-Code öffnet das Büro nicht")
-            # alter Rettungscode gilt nicht mehr
+            # alter Rettungscode gilt nicht mehr – vorher neu starten: das Büro bleibt nach dem Aufschließen 15 Min. offen (BUERO_OFFEN_MS), ein neuer App-Start schließt es
+            await pg.reload(); await pg.wait_for_selector("#app .schirm"); await pg.wait_for_timeout(400)
             await nav_hilfe.zum_laden(pg); await nav_hilfe.ins_buero(pg); await pg.wait_for_selector("#ebene-huelle .blatt-pin")
             await pg.click('#ebene-huelle [data-a="rettung-start"]'); await pg.wait_for_selector("#ebene-huelle .blatt-rettung")
             await pg.fill('#ebene-huelle [data-f="rettungscode"]', code1); await pg.click('#ebene-huelle [data-a="rettung-pruefen"]')
@@ -108,15 +113,16 @@ async def main():
             await schnellstart.rettungscode_quittieren(pg); await pg.wait_for_timeout(300)
             await nav_hilfe.zum_laden(pg); await pg.wait_for_timeout(300)
             # ---- 4. Alter Laden: Code ohne Rettungscode → Hinweis im Büro
+            await pg.reload(); await pg.wait_for_selector("#app .schirm"); await pg.wait_for_timeout(400)  # Büro zu (15-Min.-Regel), dann erst den Rettungscode im Speicher entfernen
             await pg.evaluate("delete window.__gastrocalc.wurzel.rettungPin")
             await ins_buero_mit("5678"); await pg.locator("#ebene-huelle .blatt-pin").wait_for(state="detached", timeout=20000); await pg.wait_for_timeout(300)
-            hinweis = pg.locator('#app .b-offen [data-a="rettung-neu"]')
+            hinweis = pg.locator('#app .b-zeki[data-a="rettung-neu"], #app .b-offen [data-a="rettung-neu"]')
             pruefe(await hinweis.count() == 1, "Offen-Hinweis „Rettungscode anlegen“ fehlt")
             await bild("08_offen_hinweis")
             await hinweis.click(); await feld.wait_for(timeout=20000); code3 = await feld.input_value()
             pruefe(FORM.match(code3), f"Rettungscode aus dem Hinweis falsch geformt: {code3!r}")
             await pg.click('#ebene-huelle [data-a="rettung-ok"]'); await pg.wait_for_timeout(400)
-            pruefe(await pg.locator('#app .b-offen [data-a="rettung-neu"]').count() == 0, "Hinweis bleibt nach dem Anlegen")
+            pruefe(await pg.locator('#app .b-zeki[data-a="rettung-neu"], #app .b-offen [data-a="rettung-neu"]').count() == 0, "Hinweis bleibt nach dem Anlegen")
             # ---- 5. Sicherung mit Passwort, dann Fehlerseite → ohne Büro-Code einlesen
             await pg.click('#app [data-a="export"]'); await pg.wait_for_selector("#ebene-huelle .blatt-passwort")
             await pg.fill('#ebene-huelle [data-f="passwort"]', "laden2026")

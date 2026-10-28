@@ -916,6 +916,7 @@ export default {
     kostenKurz: "Sabit giderler ve maaşlar",
     speicherFehlt: "Bu cihaz şu an kaydetmiyor. Girdiğin her şey kapatınca gider. Gizli modu ya da boş alanı kontrol et.",
     importFrage: (neu, gleich) => `Yedeği oku. Yeni: ${neu.length ? neu.join(", ") : "yok"}. Mevcut olanla birleştirilecek: ${gleich.length ? gleich.join(", ") : "yok"} (Listeler birleştirilir. Fiyat ve masraflarda en yeni değişiklik geçerli). Devam?`,
+    importZeitraum: (n, von, bis) => `İçerik: ${n} gün, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Yedek dosyası oluşturuldu." : `${n} işletmeli yedek dosyası oluşturuldu.`,
     ladenLoeschen: "Bu işletmeyi telefondan sil",
     ladenLoeschenFrage: (name) => `“${name || "Bu işletme"}” tüm rakam ve listeleriyle bu telefondan silinsin mi? Diğer işletmeler kalır.`,

@@ -916,6 +916,7 @@ export default {
     kostenKurz: "Gastos fijos y sueldos",
     speicherFehlt: "Este aparato no está guardando ahora mismo. Todo lo que anotes se pierde al cerrar. Revisa el modo privado o el espacio libre.",
     importFrage: (neu, gleich) => `Cargar copia de seguridad. Nuevos: ${neu.length ? neu.join(", ") : "ninguno"}. Unidos con lo que ya hay: ${gleich.length ? gleich.join(", ") : "ninguno"} (Las listas se unen. En precios y gastos vale el cambio más nuevo). ¿Seguir?`,
+    importZeitraum: (n, von, bis) => `Contiene ${n} días, ${von} – ${bis}.`, // Datensicherung 28.10.2026: Vorschau vor dem Einlesen
     exportOk: (n) => n === 1 ? "Copia de seguridad creada." : `Copia de seguridad con ${n} locales creada.`,
     ladenLoeschen: "Borrar este local del móvil",
     ladenLoeschenFrage: (name) => `¿Borrar “${name || "este local"}” con todas sus cifras y listas de este móvil? Los demás locales se quedan.`,
