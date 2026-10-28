@@ -144,3 +144,5 @@
 .s2schloss-zeile .haken{color:#2f7a45}
 .s2schloss-zeile[disabled]{opacity:.5}
 .pin-bio{margin-top:10px}
+/* Masterauftrag 0.3 (28.10.2026): Umzug auf eine neue Adresse – „Sicherung einlesen“ steht sichtbar unter „Weiter“ statt verdeckt dahinter */
+.fuss .ob-import { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 8px; text-align: center; }
