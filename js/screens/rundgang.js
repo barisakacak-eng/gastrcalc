@@ -145,7 +145,9 @@ function klick(ev) {
   if (ev.target.closest?.(".rg-karte, .rg-ueberspringen, .rg-ende")) return;
   const x = ev.clientX, y = ev.clientY;
   const drin = x >= rect.left - PAD && x <= rect.right + PAD && y >= rect.top - PAD && y <= rect.bottom + PAD;
-  if (!drin) return;
+  // F2 (Sonderauftrag 6b, 28.10.2026): auch ein Tipp direkt auf das Ziel zählt, selbst wenn der Lichtkegel auf dem Handy leicht verrutscht ist
+  const aufZiel = zielListe(schritt).some((sel) => typeof sel === "string" && ev.target.closest?.(sel));
+  if (!drin && !aufZiel) return;
   if (schritt.tipp && !ev.target.closest?.(schritt.tipp)) return;
   if (schritt.schlucken) { ev.preventDefault(); ev.stopPropagation(); }
   if (schritt.fertig) return; // fertig() entscheidet (z. B. Waage beendet)
@@ -176,7 +178,7 @@ function textVon(st, s) { const x = s?.text || st.text; return typeof x === "fun
 function zeichnen(st) {
   const s = schritt; const text = textVon(st, s);
   fuellen(huelle, `
-    ${s.frei ? "" : `<div class="rg-loch"></div>`}
+    ${s.frei ? "" : `<div class="rg-loch">${s.nurZeigen || s.fertig ? "" : `<span class="rg-tipphier" dir="auto">${esc(M("tippHier"))}</span>`}</div>`}
     ${s.frei ? "" : `<div class="rg-sperre o"></div><div class="rg-sperre u"></div><div class="rg-sperre l"></div><div class="rg-sperre r"></div>`}
     ${s.nurZeigen ? `<div class="rg-deckel"></div>` : ""}
     ${skip()}

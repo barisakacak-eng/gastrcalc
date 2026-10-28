@@ -231,7 +231,7 @@ async def main():
     try:
         async with async_playwright() as p:
             b = await p.chromium.launch()
-            for sprache in ("de", "tr"):
+            for sprache in ("de", "tr", "ar"):  # F2 (6b): auch rechts nach links
                 dauer, gesehen = await voller_rundgang(b, fehler, sprache)
                 print(f"voller Rundgang {sprache}: {len(gesehen)} Stationen, {dauer:.0f} s, Stand byte-gleich")
             geprueft = await ueberspringen_alle(b, fehler)

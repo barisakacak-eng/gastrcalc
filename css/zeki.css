@@ -119,3 +119,7 @@
 .rg-mitmach .rg-blase{min-width:0}
 .rg-mitmach .rg-fuss{flex-wrap:wrap;row-gap:10px}
 .rg-mitmach .rg-karte .rg-fuss .knopf{margin-left:auto}
+/* F2 (Sonderauftrag 6b, 28.10.2026): Die Sprechblase schluckt keine Tipps mehr – nur ihre Knöpfe sind antippbar; „Hier tippen“ am Ziel */
+.rg-mitmach .rg-karte{pointer-events:none}
+.rg-mitmach .rg-karte button,.rg-mitmach .rg-karte a,.rg-mitmach .rg-karte input{pointer-events:auto}
+.rg-mitmach .rg-tipphier{position:absolute;left:50%;top:-14px;transform:translate(-50%,-100%);white-space:nowrap;background:var(--glut);color:var(--weiss);font:700 calc(14rem / 17)/1 var(--schrift);padding:6px 10px;border-radius:999px;pointer-events:none}
