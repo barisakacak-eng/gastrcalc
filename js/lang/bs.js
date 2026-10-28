@@ -146,6 +146,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "ostaje ti", pruefen: "≈ provjeri: izvagaj", eigen: "tvoj recept", geschaetzt: "procjena", abwiegen: "Izvagaj", zekiOhne: "Dodirni jelo i upiši svoju količinu.", zekiPruefen: (n) => `„${n}“: ≈ provjeri: izvagaj. Količinu samo pogađam.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Obrisati broj za hit?",
     wegFrage: (n) => `Skinuti „${n}“ s jelovnika? Cijena i količine za to se gube.`,
     frage: "Šta imaš na jelovniku?",
@@ -384,10 +385,10 @@ export default {
       monat: "Mjesec i brojač", monatUnter: (m) => `${m} do sada`, vergleich: "Jela u poređenju", vergleichUnter: "Šta ostaje po komadu", listen: "Liste", listenUnter: "Otpad, gubitak, obrok za osoblje",
       inventur: "Inventura", inventurUnter: (d) => `Zadnji put brojano ${d}`, inventurNie: "Još nije brojano" },
     karte: { rezepte: "Recepti", preise: "Nabavne cijene", belege: "Računi", verkauf: "Prodajne cijene", kosten: "Fiksni troškovi", kartefoto: "Jelovnik sa slike" },
-    einrichten: { einrichtung: "Podešavanje", kuehl: "Mjesta hlađenja", putzplan: "Uredi plan čišćenja", laeden: "Lokali", sicherung: "Sigurnosna kopija", code: "Šifra ureda", codeAn: "uklj.", codeAus: "isklj.", einstellungen: "Postavke" },
-    code: { titel: "Šifra ureda", text: "4 cifre. Štiti ured i izlaz iz načina za osoblje.", neu: "Nova šifra", wiederholen: "Šifra još jednom", setzen: "Postavi šifru",
-      ungleich: "Šifre nisu iste. Probaj ponovo.", gesetzt: "Šifra ureda spremljena.", entfernen: "Ukloni šifru", entfernt: "Šifra ureda uklonjena.",
-      eingeben: "Unesi šifru ureda", falsch: "Pogrešna šifra.", oeffnen: "Otvori", vier: "Tačno 4 cifre, molim." },
+    einrichten: { einrichtung: "Podešavanje", kuehl: "Mjesta hlađenja", putzplan: "Uredi plan čišćenja", laeden: "Lokali", sicherung: "Sigurnosna kopija", code: "Kod ureda", codeAn: "uklj.", codeAus: "isklj.", einstellungen: "Postavke" },
+    code: { titel: "Kod ureda", text: "4 cifre. Štiti ured i izlaz iz načina za osoblje.", neu: "Novi kod", wiederholen: "Kod još jednom", setzen: "Postavi kod",
+      ungleich: "Kodovi nisu isti. Probaj ponovo.", gesetzt: "Kod ureda spremljen.", entfernen: "Ukloni kod", entfernt: "Kod ureda uklonjen.",
+      eingeben: "Unesi kod ureda", falsch: "Pogrešan kod.", oeffnen: "Otvori", vier: "Tačno 4 cifre, molim." },
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Častio goste: ${e} neto · privatno uzimanje, provjeri s poreznim savjetnikom`, pausch: (p) => `Tvoja hrana: paušal 2026 ${p} po osobi godišnje, djeca od 2 do 12 pola. Onda je ne moraš upisivati pojedinačno. Provjeri s poreznim savjetnikom.`, kennung: "Bilješka – nije Z-izvještaj, nije za knjiženje", steuerZbon: "PDV molim iz Z-izvještaja kase.", kasse: "Prometi su samo bilješke. Važi tvoja kasa (Z-izvještaj).",
@@ -1091,7 +1092,7 @@ export default {
     geld: "Troškovi mjesečno", miete: "Kirija", personal: "Osoblje", eigen: "Tvoja plata", strom: "Struja (sa PDV-om)",
     geldHilfe: "Otprilike je dovoljno, može i prazno. Račune slikaš kasnije u uredu.",
     putzt: "Ko čisti?", wer: { selbst: "Mi", firma: "Firma", beides: "Oboje" }, firma: "Firma",
-    fertig: "Gotovo!", eingerichtet: "podešeno", los: "Idemo", pin: "Postavi PIN ureda",
+    fertig: "Gotovo!", eingerichtet: "podešeno", los: "Idemo", pin: "Postavi kod ureda",
     zeki: { schloss: "Postavi kod. Onda samo ti ulaziš u kancelariju.", hallo: "Zdravo, šefe! Ja sam Zeki.", rolle: "Pomažem ti – sprijeda u radnji, pozadi u kancelariji.", "laden-schnell": "Kako se zove tvoja radnja? I šta prodaješ?", "karte-foto": "Slikaj svoj meni. Pročitat ću jela i cijene.", "kuehl-schnell": "Koje frižidere imaš? Samo pritisni plus.", geld: "Koliko te radnja košta mjesečno? Otprilike je dovoljno.", fertig: "Super, šefe! Od sada sam uvijek tu." },
   },
   inventur: {
@@ -1146,8 +1147,8 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Danas", muell: "Otpad", kuehl: "Hlađenje", putzplan: "Čišćenje", karte: "Meni" },
-    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", zekiFragen: "Pitaj Zekija", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi šifru ureda",
-    pin: { titel: "Šifra ureda", neu: "Odaberi novu šifru", nochmal: "Još jednom", falsch: "Pogrešna šifra", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Šifra ureda spremljena", entfernt: "Šifra ureda uklonjena", setzen: "Postavi šifru ureda", aendern: "Promijeni šifru ureda", entfernen: "Ukloni šifru", ohne: "Bez šifre svako ulazi u ured.", mit: "Ured je zaštićen šifrom.", loeschen: "Obriši cifru", testphase: "Testna faza: bez koda. Svi ulaze u ured i u način za osoblje. Prije velikog pilota ponovo uključi kod.", testphaseAn: "Uključi testnu fazu bez koda", testphaseAus: "Ponovo uključi kod" },
+    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", zekiFragen: "Pitaj Zekija", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi kod ureda",
+    pin: { titel: "Kod ureda", neu: "Odaberi novi kod", nochmal: "Još jednom", falsch: "Pogrešan kod", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Kod ureda spremljen", entfernt: "Kod ureda uklonjen", setzen: "Postavi kod ureda", aendern: "Promijeni kod ureda", entfernen: "Ukloni kod", ohne: "Bez koda svako ulazi u ured.", mit: "Ured je zaštićen kodom.", loeschen: "Obriši cifru", testphase: "Testna faza: bez koda. Svi ulaze u ured i u način za osoblje. Prije velikog pilota ponovo uključi kod.", testphaseAn: "Uključi testnu fazu bez koda", testphaseAus: "Ponovo uključi kod" },
     hilfeText: {
       allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",
       start: "Dan na jedan pogled. Veliki broj pokazuje koliko prometa još fali do nule. Crveno znači: pobrini se sada. „≈“ ispred broja znači procjenu (roba ili tvoja plata) – objašnjenje u uredu pod „Mjesec i brojač“. Bez nabavnih cijena aplikacija računa s 32 % robe (snek-barovi: 23–41 %, BMF tabele 2025).",
@@ -1160,7 +1161,7 @@ export default {
       personal: "Unesi otpad, izmjeri hlađenje, označi čišćenje. Nazad samo sa šifrom ureda.",
       buero: "Ovdje su svi računi, liste i podešavanja. Fascikle daješ inspekciji, poreskom savjetniku ili knjigovođi." } },
   menueReferenz: { hinweis: "Sastojci s menija. Provjeri količine, vrijeme pripreme i cijeli recept." }, // 26.10.2026
-  heute: { introGruss: "Zdravo, šefe!", bewegung: (b) => `od jučer ${b}`,
+  heute: { introGruss: "Zdravo, šefe!", rezeptErinnerung: { frage: "Šefe, jesi li već upisao svoje recepte?", knopf: "Upiši recept", stand: (n, g) => `${n} od ${g} jela ima tvoj recept.` }, bewegung: (b) => `od jučer ${b}`,
     nullKurz: "Nula kod", zielKurz: "Cilj",
     zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
@@ -1182,7 +1183,7 @@ export default {
     ampel: { gruen: "Cilj postignut", gelb: "Troškovi pokriveni, ispod cilja", rot: "Prejeftino", grau: "Još se ne može izračunati" },
   },
   // W2-S (15.10.2026 Abend): Büro-Code sicherer, Personal nur mit Code, Sperren im Personal-Modus
-  sicherheit: { warten: (z) => `Previše pokušaja. Sačekaj ${z}.`, personalBrauchtCode: "Za način osoblja prvo postavi šifru ureda.", chefRichtetEin: "Šef ovo podešava u uredu.", ohneCode: "Bez šifre svako ulazi u ured. Način osoblja postoji samo sa šifrom." },
+  sicherheit: { warten: (z) => `Previše pokušaja. Sačekaj ${z}.`, personalBrauchtCode: "Za način osoblja prvo postavi kod ureda.", chefRichtetEin: "Šef ovo podešava u uredu.", ohneCode: "Bez koda svako ulazi u ured. Način osoblja postoji samo sa šifrom." },
   // Drei Ebenen (Entwickler D): Personal-Modus und Müll mit einem Tipp
   personal: { verlassen: "Izađi iz načina za osoblje", zurueck: "Nazad", hallo: (n) => `Zdravo ${n}`, halloOhne: "Zdravo", wechseln: "Promijeni", werBistDu: "Ko radi?", ohneNamen: "Bez imena",
     muell: "Otpad", kuehlung: "Hlađenje", putzen: "Čišćenje", offen: (n) => `${n} otvoreno` },

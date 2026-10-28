@@ -141,6 +141,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "يبقى لك", pruefen: "≈ تحقّق: زِن", eigen: "وصفتك", geschaetzt: "تقديري", abwiegen: "زِن", zekiOhne: "اضغط على طبق وأدخل كميتك.", zekiPruefen: (n) => `„${n}“: ≈ تحقّق: زِن. الكمية مجرد تخمين.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "حذف عدد الأكثر مبيعًا؟",
     wegFrage: (n) => `حذف «${n}» من المنيو؟ السعر والكميات ستضيع.`,
     frage: "ماذا يوجد في المنيو عندك؟",
@@ -1155,7 +1156,7 @@ export default {
       personal: "سجّل الهدر، قِس التبريد، علّم التنظيف. العودة فقط برمز المكتب.",
       buero: "هنا كل الحسابات والقوائم والإعدادات. الملفات تعطيها للتفتيش أو المستشار الضريبي أو المحاسب." } },
   menueReferenz: { hinweis: "المكوّنات من القائمة. تحقّق من الكميات ووقت التحضير والوصفة كاملة." }, // 26.10.2026
-  heute: { introGruss: "أهلاً يا معلّم!", bewegung: (b) => `منذ أمس ${b}`,
+  heute: { introGruss: "أهلاً يا معلّم!", rezeptErinnerung: { frage: "يا معلّم، هل أدخلت وصفاتك؟", knopf: "أدخل الوصفة", stand: (n, g) => `${n} من ${g} أطباق فيها وصفتك.` }, bewegung: (b) => `منذ أمس ${b}`,
     nullKurz: "نقطة الصفر", zielKurz: "الهدف",
     zielLinie: "صفر + الربح المستهدف",
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },

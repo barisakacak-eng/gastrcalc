@@ -144,6 +144,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "zostaje ci", pruefen: "≈ sprawdź: zważ", eigen: "twój przepis", geschaetzt: "szacunek", abwiegen: "Zważ", zekiOhne: "Dotknij dania i wpisz swoją ilość.", zekiPruefen: (n) => `„${n}“: ≈ sprawdź: zważ. Ilość tylko zgaduję.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Usunąć liczbę dla hitu?",
     wegFrage: (n) => `Zdjąć „${n}” z karty? Cena i ilości do tego przepadną.`,
     frage: "Co masz w karcie?",
@@ -1089,7 +1090,7 @@ export default {
     geld: "Koszty w miesiącu", miete: "Czynsz", personal: "Personel", eigen: "Twoja pensja", strom: "Prąd (z VAT)",
     geldHilfe: "Wystarczy mniej więcej, można też zostawić puste. Rachunki sfotografujesz potem w biurze.",
     putzt: "Kto sprząta?", wer: { selbst: "My", firma: "Firma", beides: "Oba" }, firma: "Firma",
-    fertig: "Gotowe!", eingerichtet: "ustawione", los: "Zaczynamy", pin: "Ustaw PIN biura",
+    fertig: "Gotowe!", eingerichtet: "ustawione", los: "Zaczynamy", pin: "Ustaw kod biura",
     zeki: { schloss: "Ustaw kod. Wtedy tylko ty wejdziesz do biura.", hallo: "Cześć, szefie! Jestem Zeki.", rolle: "Pomagam ci – przy ladzie i w biurze.", "laden-schnell": "Jak nazywa się twój lokal? I co sprzedajesz?", "karte-foto": "Zrób zdjęcie karty. Odczytam dania i ceny.", "kuehl-schnell": "Jakie masz lodówki? Po prostu naciśnij plus.", geld: "Ile cię kosztuje lokal miesięcznie? Wystarczy w przybliżeniu.", fertig: "Super, szefie! Od teraz zawsze tu jestem." },
   },
   inventur: {
@@ -1158,7 +1159,7 @@ export default {
       personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   menueReferenz: { hinweis: "Składniki z karty. Sprawdź ilości, czas przygotowania i cały przepis." }, // 26.10.2026
-  heute: { introGruss: "Cześć, szefie!", bewegung: (b) => `od wczoraj ${b}`,
+  heute: { introGruss: "Cześć, szefie!", rezeptErinnerung: { frage: "Szefie, wpisałeś już swoje przepisy?", knopf: "Wpisz przepis", stand: (n, g) => `${n} z ${g} dań ma twój przepis.` }, bewegung: (b) => `od wczoraj ${b}`,
     nullKurz: "Zero przy", zielKurz: "Cel",
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },

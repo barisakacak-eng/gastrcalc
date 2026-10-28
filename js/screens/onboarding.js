@@ -5,7 +5,6 @@ import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
-import { RECHTSFORMEN, rechtsform, rechtsformSetzen } from "../rechtsform.js"; // Rechtsform-Schritt nach Sanjis Entwurf (24.10.2026)
 import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache as aktiveSprache } from "../i18n.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from "../util.js";
@@ -116,22 +115,7 @@ const betrieb = {
   },
 };
 
-// Rechtsform (24.10.2026, Entwurf Sanji PR #14): sechs Kacheln, „Weiß ich nicht“ geht direkt weiter. Steuert die Hinweis-Karten im Büro.
-const rechtsformKacheln = (stand) => `<div class="kacheln rechtsformwahl" role="group" aria-label="${esc(t("rechtsform.titel"))}">${RECHTSFORMEN.map((r) => `<button type="button" class="kachel ${stand.betrieb?.rechtsform === r ? "an" : ""}" aria-pressed="${stand.betrieb?.rechtsform === r}" data-a="rechtsform" data-wert="${r}"><b>${esc(t("rechtsform.namen." + r))}</b></button>`).join("")}</div>`;
-const rechtsformSchritt = {
-  id: "rechtsform",
-  view: (stand) => `
-    <h1 class="frage">${esc(t("rechtsform.titel"))}</h1>
-    <p class="hinweis">${esc(t("rechtsform.hinweis"))}</p>
-    ${rechtsformKacheln(stand)}`,
-  fuss: (stand) => (stand.betrieb?.rechtsform ? knopfWeiter() : ""),
-  aktion(name, el, stand, ctx) {
-    if (name !== "rechtsform") return false;
-    rechtsformSetzen(stand, el.dataset.wert);
-    if (el.dataset.wert === "unbekannt") ctx.weiter("uebersprungen");
-    return true;
-  },
-};
+// Rechtsform (28.10.2026): nicht mehr in der Einrichtung. Die Auswahl steht im Büro unter Einstellungen (home.js), js/offen.js erinnert dort.
 
 const team = {
   id: "team",
@@ -219,7 +203,7 @@ function kostenSchritt(kat) {
                       <button type="button" class="${e.periode === "jahr" ? "an" : ""}" data-a="periode" data-posten="${p.id}" data-wert="jahr">${esc(t("allgemein.proJahr"))}</button>
                     </div>
                   </div>
-                  <div class="seg klein"><button type="button" class="${(e.basis || basisStandard(p.id)) === "brutto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="brutto">${esc(t("gebinde.brutto"))}</button><button type="button" class="${(e.basis || basisStandard(p.id)) === "netto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="netto">${esc(t("gebinde.netto"))}</button></div>
+                  <div class="seg klein"><button type="button" class="${(e.basis || basisStandard(p.id)) === "brutto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="brutto">${esc(t("pw.mitMwst"))}</button><button type="button" class="${(e.basis || basisStandard(p.id)) === "netto" ? "an" : ""}" data-a="basis-posten" data-posten="${p.id}" data-wert="netto">${esc(t("pw.ohneMwst"))}</button></div>
                   ${(e.basis || basisStandard(p.id)) === "brutto" && !stand.betrieb.kleinunternehmer ? `<div class="chips satzwahl">${VORSTEUER_SAETZE.map((sz) => `<button type="button" class="chip klein ${(VORSTEUER_SAETZE.includes(Number(e.satz)) ? Number(e.satz) : satzStandard(p.id)) === sz ? "an" : ""}" data-a="satz-posten" data-posten="${p.id}" data-wert="${sz}">${esc(t("kosten.satz." + sz))}</button>`).join("")}</div>` : ""}
                   <div class="unterzeile">
                     ${e.status === "geschaetzt" ? `<span class="marke geschaetzt">${esc(t("kosten.richtwertHinweis", fmtEuro(rw)))}</span>`
@@ -368,7 +352,7 @@ export const reinigungSchritt = {
   },
 };
 
-export const SCHRITTE = [sprache, format, kueche, betrieb, rechtsformSchritt, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
+export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 // 17.10.2026 Fehler F1: Ohne Gerichte zeigten „Rezepte“ und „Einkaufspreise“ (Büro, Speisekarte) eine leere Seite mit „Übernehmen“, das nichts übernahm.
 // Dann zuerst die Gerichte-Auswahl mit den Vorlagen öffnen; danach geht es weiter bis zum gewünschten Schritt.
@@ -479,6 +463,7 @@ const ladenSchnell = {
 };
 
 // Karte: eine große Foto-Fläche (Kamera), darunter leise „Fotos oder PDF“. Läuft das Lesen oder steht die Prüfliste, zeigt foto.js wie bisher.
+let vorlagenGetippt = false; // „Aus Vorlagen wählen“ wurde auf diesem Bildschirm getippt (sonst gilt beim Verlassen ohne Gerichte: „Später“)
 const karteSchnell = {
   id: "karte-foto",
   view(stand) {
@@ -500,11 +485,12 @@ const karteSchnell = {
   eingabe: (feld, wert) => kartePruefenEingabe(feld, wert),
   aktion(name, el, stand, ctx) {
     if (hilfeAktion(name, el)) return true;
-    if (name === "karte-vorlagen") { karteWegSetzen(stand, "vorlagen"); ctx.weiter(); return true; } // am Ende der Einrichtung öffnet sich die Vorlagen-Auswahl
+    if (name === "karte-vorlagen") { karteWegSetzen(stand, "vorlagen"); vorlagenGetippt = true; ctx.weiter(); return true; } // am Ende der Einrichtung öffnet sich die Vorlagen-Auswahl
     if (name === "fv-uebernehmen") { selbstStandard(stand); schnellErgebnisSetzen(stand, karteUebernehmen(stand)); ctx.weiter(); return true; }
     return kartePruefenAktion(name, el);
   },
-  beimVerlassen(stand) { selbstStandard(stand); },
+  // 28.10.2026: Wer die Karte ohne Gerichte und ohne „Aus Vorlagen wählen“ verlässt, hat „Später“ gewählt – das gilt bis zum Ende der Einrichtung (kein Zwang zurück in die Karte).
+  beimVerlassen(stand) { selbstStandard(stand); if (!(stand.gerichte || []).length) karteWegSetzen(stand, vorlagenGetippt ? "vorlagen" : "spaeter"); vorlagenGetippt = false; },
 };
 
 // Kühlung: vier Foto-Zeilen mit Anzahl. Jede Stelle bekommt `typ` (neu, tolerant), damit die Zeile weiß, was zu ihr gehört.
@@ -578,9 +564,6 @@ const geld = {
       <div class="s2putz"><b>${esc(t("schnell2.putzt"))}</b>
         <div class="chips">${["selbst", "firma", "beides"].map((w) => `<button type="button" class="chip ${r.wer === w ? "an" : ""}" data-a="rein-wer" data-wert="${w}" aria-pressed="${r.wer === w}">${esc(t("schnell2.wer." + w))}</button>`).join("")}</div>
         ${r.wer === "firma" || r.wer === "beides" ? `<div class="s2geld">${feld("rein-firma", t("schnell2.firma"), r.firmaBetrag, null)}</div>` : ""}
-      </div>
-      <div class="s2putz s2rechtsform"><b>${esc(t("rechtsform.titel"))}</b>
-        <div class="chips">${RECHTSFORMEN.map((w) => `<button type="button" class="chip ${stand.betrieb?.rechtsform === w ? "an" : ""}" data-a="rechtsform" data-wert="${w}" aria-pressed="${stand.betrieb?.rechtsform === w}">${esc(t("rechtsform.namen." + w))}</button>`).join("")}</div>
       </div>`;
   },
   fuss: () => knopfWeiter(),
@@ -590,12 +573,11 @@ const geld = {
   },
   aktion(name, el, stand) {
     if (hilfeAktion(name, el)) return true;
-    if (name === "rechtsform") { rechtsformSetzen(stand, el.dataset.wert); return true; } // Schnellweg bleibt bei 6 Bildschirmen (24.10.2026)
     if (name === "rein-wer") return reinigungSchritt.aktion(name, el, stand);
   },
 };
 
-// Fertig: großer Haken, Einrichtungsring, EIN Hauptknopf (ohne Gerichte: Karte fotografieren, sonst „Los geht's“), leise „Büro-PIN festlegen“.
+// Fertig: großer Haken, Einrichtungsring, EIN Hauptknopf (ohne Gerichte: Karte fotografieren, sonst „Los geht's“), leise „Büro-Code festlegen“.
 // 26.10.2026: Ring nur bei mehr als 0 % – kein „0 % eingerichtet“ direkt nach „Fertig!“
 const fertigSchnell = {
   id: "fertig-schnell",
@@ -609,7 +591,7 @@ const fertigSchnell = {
         ${globalThis.__gastrocalc?.wurzel?.bueroPin ? "" : `<button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>`}
       </div>`; // 27.10.2026 (Persona-Test Wirt): Code schon im Schloss-Schritt gesetzt → kein zweites Angebot
   },
-  fuss: (stand) => stand && !stand.gerichte.length
+  fuss: (stand) => stand && !stand.gerichte.length && stand.karteWeg !== "spaeter" // 28.10.2026: wer bei der Karte „Später“ getippt hat, bekommt am Ende nur „Los geht's“
     ? (stand.karteWeg === "vorlagen"
       ? `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="vorlagen">${esc(t("schnell2.karteVorlagen"))}</button><button type="button" class="leise" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("schnell2.karteFoto"))}</button>`
       : `<button type="button" class="knopf glut s2los" data-a="ob-fertig" data-ziel="kartefoto">${esc(t("schnell2.karteFoto"))}</button><button type="button" class="leise" data-a="ob-fertig" data-ziel="vorlagen">${esc(t("schnell2.karteVorlagen"))}</button>`) // Gremium 1 (24.10.2026): beide Wege sichtbar

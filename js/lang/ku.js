@@ -138,6 +138,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "ji te re dimîne", pruefen: "≈ kontrol bike: bikişîne", eigen: "reçeteya te", geschaetzt: "texmînî", abwiegen: "Bikişîne", zekiOhne: "Li xwarinekê bixe û mîqdara xwe binivîse.", zekiPruefen: (n) => `„${n}“: ≈ kontrol bike: bikişîne. Mîqdarê tenê texmîn dikim.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Hejmara herî firotî jê bibe?",
     wegFrage: (n) => `“${n}” ji menûyê rake? Biha û mîqdarên wê winda dibin.`,
     frage: "Di menûya te de çi heye?",
@@ -1083,7 +1084,7 @@ export default {
     geld: "Lêçûn di mehê de", miete: "Kirê", personal: "Karker", eigen: "Meaşê te", strom: "Elektrîk (bi bac)",
     geldHilfe: "Texmînî bes e, vala hiştin jî dibe. Wêneyên fatûreyan paşê di ofîsê de dikişînî.",
     putzt: "Kî paqij dike?", wer: { selbst: "Em", firma: "Şîrket", beides: "Her du" }, firma: "Şîrket",
-    fertig: "Qediya!", eingerichtet: "hat sazkirin", los: "Em dest pê bikin", pin: "PIN-a ofîsê diyar bike",
+    fertig: "Qediya!", eingerichtet: "hat sazkirin", los: "Em dest pê bikin", pin: "Koda ofîsê diyar bike",
     zeki: { schloss: "Kodekê destnîşan bike. Wê demê tenê tu dikevî ofîsê.", hallo: "Silav hosta! Ez Zekî me.", rolle: "Ez alîkariya te dikim – li dikanê û li ofîsê.", "laden-schnell": "Navê dikana te çi ye? Û tu çi difroşî?", "karte-foto": "Wêneyê menûya xwe bikişîne. Ez xwarin û biha dixwînim.", "kuehl-schnell": "Sarincokên te çi ne? Tenê li + bitikîne.", geld: "Dikan mehê çiqas lê dikeve? Texmînî bes e.", fertig: "Pir baş, hosta! Êdî ez her tim li vir im." },
   },
   inventur: {
@@ -1152,7 +1153,7 @@ export default {
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   menueReferenz: { hinweis: "Malzemeyên ji menûyê. Mîqdar, dema amadekirinê û reçeteya tevahî kontrol bike." }, // 26.10.2026
-  heute: { introGruss: "Silav, şef!", bewegung: (b) => `ji duh ve ${b}`,
+  heute: { introGruss: "Silav, şef!", rezeptErinnerung: { frage: "Şef, te reçeteyên xwe nivîsandin?", knopf: "Reçeteyê binivîse", stand: (n, g) => `${n} ji ${g} xwarinan reçeteya te heye.` }, bewegung: (b) => `ji duh ve ${b}`,
     nullKurz: "Sifir li", zielKurz: "Armanc",
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },

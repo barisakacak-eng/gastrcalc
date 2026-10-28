@@ -9,6 +9,7 @@ import { verkaufspreisSetzen } from "../karte_daten.js"; // Trennung (17.10.2026
 import { gerichtBild } from "./vergleich.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
+import { minusUnsicher, rezeptStempel, hatEigenesRezept } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.4)
 
 const ERSTE = 60; // so viele Kacheln sofort; der Rest auf Tipp („Alle zeigen“) – lange Karten bleiben schnell
 const PUNKT = { gruen: "g", gelb: "y", rot: "r", grau: "grau" };
@@ -27,7 +28,9 @@ export function karteLadenZurueck() { if (blatt) { blatt = null; return true; } 
 
 const lastVon = (stand) => kalkulation(stand).last;
 const zeilenVon = (stand) => { const k = kalkulation(stand); const m = new Map(k.zeilen.map((z) => [z.id, z])); return stand.gerichte.map((g) => ({ g, z: m.get(g.id) })).filter((x) => x.z); };
-const zuBillig = (x) => x.z.ampel === "rot";
+const zuBillig = (x) => x.z.ampel === "rot" && !minusUnsicher(x.z, x.g); // 28.10.2026: ein nur geschätztes Minus ist nicht „zu billig“
+// Gegenprüfung 28.10.2026: Spalte „bleibt dir“ nur, wenn es für mindestens ein Gericht eine Zahl (oder „≈ prüfen“) gibt
+const mitZahl = (x) => { const a = preisAmpel(x.z, x.z.preisBrutto); return (a.gewinn !== null && a.quote !== null) || minusUnsicher({ ...x.z, ampel: a.ampel }, x.g); };
 const cent = (v) => Math.round(v * 100) / 100;
 // Eine Zahl nach allen Kosten, mit Vorzeichen (Baris 27.10.2026, B): „+ 2,10 €“ oder „− 0,80 €“
 const vorzeichen = (v) => v > 0.004 ? "+ " : v < -0.004 ? "− " : "";
@@ -37,34 +40,36 @@ export function karteLadenView(stand) {
   if (filter === "billig" && !billig) filter = "alle";
   const sicht = filter === "billig" ? liste.filter(zuBillig) : liste;
   const zeig = alle ? sicht : sicht.slice(0, ERSTE);
-  // Facelift 1.0: das eigentliche Versprechen direkt sichtbar – was nach ALLEN Kosten je Portion bleibt.
-  // Gewinn, Quote und Ampel stammen vollständig aus engine.preisAmpel, niemals aus eigenem Bildschirm-Rechnen.
-  // Grau bleibt grau, wenn die Kalkulationsgrundlage fehlt; fremde Schätzwerte werden mit ≈ markiert.
+  // Mitmach-Rundgang (28.10.2026, Konzept 7.4 „Karte entschlacken“): eine Zeile je Gericht – kleines Bild, Punkt (grün = dein Rezept,
+  // kupfer = geschätzt), Name, was dir bleibt, Preis. Tipp aufs Gericht → gleich die erste Mengenfrage (app.js, Waage); Tipp auf den Preis → Preis-Blatt
+  // mit den Details. Erklärtexte wohnen im Büro. Gewinn und Ampel kommen weiter nur aus engine.preisAmpel. Rot aus geschätztem Rezept oder
+  // Richtpreis (rezept_quelle.minusUnsicher) ist kein belegtes Minus: dann „≈ prüfen: abwiegen“ statt Rot.
   const unsicher = kalkulation(stand).geschaetzt;
-  const kachel = (x) => {
-    const a = preisAmpel(x.z, x.z.preisBrutto);
-    const valid = a.gewinn !== null && a.quote !== null;
+  const zeile = (x) => {
+    const a = preisAmpel(x.z, x.z.preisBrutto); const getraenk = x.g.klasse === "getraenk";
+    const valid = a.gewinn !== null && a.quote !== null; const pruefen = minusUnsicher({ ...x.z, ampel: a.ampel }, x.g);
     const unscharf = unsicher || x.z.warenGeschaetzt || x.z.warenRichtpreis;
-    const betrag = valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : "–";
-    const prozent = valid ? `${fmtZahl(Math.round(a.quote * 100), 0)} %` : "–"; // nur für Vorlesehilfe; sichtbar ist eine Zahl (Baris 27.10.2026, B)
-    return `<button type="button" class="karte kl-gericht a-${a.ampel} ${a.ampel === "rot" ? "rotrand" : ""}" data-a="kl-auf" data-id="${esc(x.g.id)}" aria-label="${esc(x.g.name)}, ${esc(t("kartelaeden.preis"))} ${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}, ${esc(t("kartelaeden.bleibt"))} ${betrag}, ${prozent}, ${esc(t("kartelaeden.ampel." + a.ampel))}">
-      ${gerichtBild(x.g)}<span class="kl-gt">
-        <span class="kl-gn">${esc(x.g.name)}</span>
-        <span class="kl-gp"><b>${x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 })}</b><i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></span>
-        <span class="kl-nutzen ${valid ? "hat-wert" : "ohne-wert"}"><b>${betrag}</b></span>
-      </span></button>`;
+    const betrag = pruefen ? t("karte.kurz.pruefen") : valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : ""; // Gegenprüfung 28.10.: nicht berechenbar → keine Zahl statt „–“
+    const eigen = hatEigenesRezept(x.g); const quelle = getraenk || !rezeptStempel(x.g).stufe ? "" : eigen ? "eigen" : "geschaetzt";
+    const preis = x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 });
+    const ampel = pruefen ? "pruefen" : a.ampel;
+    return `<div class="kl-gericht kl-zeile a-${ampel}">
+      <button type="button" class="kl-zeile-haupt" data-a="kl-rezept" data-id="${esc(x.g.id)}" aria-label="${esc(x.g.name)}${quelle ? `, ${esc(t("karte.kurz." + quelle))}` : ""},${betrag ? ` ${esc(t("karte.kurz.bleibt"))} ${esc(betrag)}` : ""}">
+        ${gerichtBild(x.g)}${quelle ? `<i class="kl-quelle ${quelle}" aria-hidden="true"></i>` : '<i class="kl-quelle ohne" aria-hidden="true"></i>'}<span class="kl-gn">${esc(x.g.name)}</span>
+        ${betrag ? `<span class="kl-nutzen ${pruefen ? "pruefen" : "hat-wert"}"><b>${esc(betrag)}</b></span>` : `<span class="kl-nutzen ohne-wert"></span>`}</button>
+      <button type="button" class="kl-preis" data-a="kl-auf" data-id="${esc(x.g.id)}" aria-label="${esc(t("kartelaeden.preis"))} ${esc(preis)}"><b>${esc(preis)}</b></button>
+    </div>`;
   };
   return `
-    <div class="inhalt kartelaeden">
+    <div class="inhalt kartelaeden kl-kurz">
       <div class="kl-kopf"><h1>${esc(t("kartelaeden.titel"))}</h1><small>${esc(t("kartelaeden.anzahl", liste.length))}</small></div>
-      ${!liste.length ? "" : liste.every((x) => x.z.sk === null) ? `<p class="kl-legende">${esc(t("kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : `<p class="kl-legende">${esc(t("kartelaeden.legende"))}</p>`}${""/* Persona-Test Vater 27.10.: ohne Preise nur „–“ ohne Grund */}
       ${zekiZeile(liste, unsicher)}
       ${!liste.length ? `<div class="karte kl-leer"><b>${esc(t("kartelaeden.leer"))}</b><button type="button" class="knopf glut" data-a="nav" data-wert="kartefoto">${sym("camera")} ${esc(t("kartelaeden.fotografieren"))}</button></div>` : `
-      <div class="kl-segment" role="tablist">
+      ${billig ? `<div class="kl-segment" role="tablist">
         <button type="button" role="tab" aria-selected="${filter === "alle"}" class="${filter === "alle" ? "an" : ""}" data-a="kl-filter" data-wert="alle">${esc(t("kartelaeden.alle"))}</button>
-        <button type="button" role="tab" aria-selected="${filter === "billig"}" class="${filter === "billig" ? "an" : ""}" data-a="kl-filter" data-wert="billig" ${billig ? "" : "disabled"}><i class="kl-punkt r klein" aria-hidden="true"></i>${esc(t("kartelaeden.zuBillig", billig))}</button>
-      </div>
-      <div class="kl-raster">${zeig.map(kachel).join("")}</div>
+        <button type="button" role="tab" aria-selected="${filter === "billig"}" class="${filter === "billig" ? "an" : ""}" data-a="kl-filter" data-wert="billig"><i class="kl-punkt r klein" aria-hidden="true"></i>${esc(t("kartelaeden.zuBillig", billig))}</button>
+      </div>` : ""}
+      <div class="kl-liste" role="list">${liste.some(mitZahl) ? `<div class="kl-spalten" aria-hidden="true"><span></span><span>${esc(t("karte.kurz.bleibt"))}</span><span></span></div>` : ""}${zeig.map(zeile).join("")}</div>
       ${zeig.length < sicht.length ? `<button type="button" class="knopf zweit" data-a="kl-alle">${esc(t("kartelaeden.mehr", sicht.length - zeig.length))}</button>` : ""}`}
     </div>
     ${blatt ? karteLadenBlatt(stand) : ""}
@@ -72,10 +77,15 @@ export function karteLadenView(stand) {
 }
 
 // Zeki in einem Satz (Baris 26.10.2026 23:52): Grün ruhig, Gelb leise, Rot hervorgehoben mit „Anschauen?“ – nicht bei jedem Gericht.
+// 28.10.2026: Rot aus Schätzung → „≈ prüfen: abwiegen“ (Tipp führt zur Mengenfrage); ganz ohne Zahlen → „Tipp auf ein Gericht …“.
 function zekiZeile(liste, unsicher) {
+  if (!liste.length) return "";
   const mit = liste.map((x) => ({ x, a: preisAmpel(x.z, x.z.preisBrutto) })).filter((y) => y.a.gewinn !== null && y.a.quote !== null);
-  if (!mit.length) return "";
-  const rot = mit.filter((y) => y.a.ampel === "rot").sort((p, q) => p.a.gewinn - q.a.gewinn)[0];
+  const offen = liste.find((x) => x.g.klasse !== "getraenk" && rezeptStempel(x.g).stufe && !hatEigenesRezept(x.g));
+  if (!mit.length) return offen ? `<button type="button" class="kl-zeki a-gelb" data-a="kl-rezept" data-id="${esc(offen.g.id)}">${esc(t("karte.kurz.zekiOhne"))}</button>` : "";
+  const pruefen = mit.filter((y) => y.a.ampel === "rot" && minusUnsicher({ ...y.x.z, ampel: "rot" }, y.x.g)).sort((p, q) => p.a.gewinn - q.a.gewinn)[0];
+  const rot = mit.filter((y) => y.a.ampel === "rot" && y !== pruefen && !minusUnsicher({ ...y.x.z, ampel: "rot" }, y.x.g)).sort((p, q) => p.a.gewinn - q.a.gewinn)[0];
+  if (!rot && pruefen) return `<button type="button" class="kl-zeki a-gelb" data-a="kl-rezept" data-id="${esc(pruefen.x.g.id)}">${esc(t("karte.kurz.zekiPruefen", pruefen.x.g.name))}</button>`;
   const gelb = mit.filter((y) => y.a.ampel === "gelb").sort((p, q) => p.a.quote - q.a.quote)[0];
   const gut = [...mit].sort((p, q) => q.a.gewinn - p.a.gewinn)[0];
   const y = rot || gelb || gut; const art = rot ? "rot" : gelb ? "gelb" : "gruen";
@@ -117,6 +127,7 @@ export function karteLadenBlatt(stand) {
       </div>
       ${bleibtZeile(x.z, blatt.preis, lastVon(stand))}
       ${x.z.sk === null ? `<p class="kl-ohne">${esc(t(x.z.warenFehlt?.[0] === "rezept" ? "kartelaeden.ohneRezept" : "kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : ""}
+      ${x.g.klasse !== "getraenk" && rezeptStempel(x.g).stufe ? `<button type="button" class="knopf zweit" data-a="kl-rezept" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("karte.kurz.abwiegen"))}</button>` : ""}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-speichern" ${geaendert && blatt.preis > 0 ? "" : "disabled"}>${esc(t("kartelaeden.speichern"))}</button>
     </div>`;
 }
@@ -132,6 +143,11 @@ export function karteLadenAktion(name, el, stand) {
     blatt = { id: g.id, alt, preis: alt ?? (z?.zielBrutto ?? 0) }; return true;
   }
   if (name === "kl-zu") { blatt = null; return true; }
+  if (name === "kl-rezept") { // 28.10.2026: app.js öffnet die Mengenfrage; Getränke (ohne Rezept) öffnen gleich das Preis-Blatt
+    const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false;
+    if (g.klasse === "getraenk" || !rezeptStempel(g).stufe) return karteLadenAktion("kl-auf", el, stand);
+    blatt = null; return { rezept: g.id };
+  }
   if (!blatt) return false;
   if (name === "kl-minus") { blatt.preis = Math.max(0, cent(blatt.preis - 0.1)); return "blatt"; }
   if (name === "kl-plus") { blatt.preis = Math.min(999, cent(blatt.preis + 0.1)); return "blatt"; }

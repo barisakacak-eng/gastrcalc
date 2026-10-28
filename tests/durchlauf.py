@@ -58,7 +58,7 @@ async def main():
             await pg.click('[data-a="format"][data-wert="imbiss"]'); await pg.click('[data-a="weiter"]')
             await pg.click('[data-a="kueche"][data-wert="doener"]'); await pg.click('[data-a="weiter"]')
             await pg.fill('[data-f="betrieb.name"]', "Döner Baris"); await pg.click('[data-a="weiter"]')
-            await pg.click('[data-a="rechtsform"][data-wert="einzel"]'); await pg.click('[data-a="weiter"]')  # Rechtsform-Schritt (24.10.2026)
+            assert await pg.locator('[data-a="rechtsform"]').count() == 0, "Rechtsform gehört nicht mehr in die Einrichtung (28.10.2026), sie steht im Büro"
             await pg.fill('[data-f="team.personen"]', "3"); await pg.fill('[data-f="team.stundenProPerson"]', "160"); await pg.click('[data-a="weiter"]')
             await bild("lohn-mit-eigenem")
             await pg.fill('[data-f="team.lohnkosten"]', "6000")

@@ -19,7 +19,7 @@ export default {
 
   format: {
     frage: "What kind of place is it?",
-    hinweis: "Pick the closest match. Reference values follow from it, you can change everything.",
+    hinweis: "Pick the closest match. You can change everything later.",
     gruppen: { haus: "Eat in", schnell: "Fast and take-away", draussen: "Outdoors and seasonal", gross: "On order and larger houses" },
     restaurant: ["Restaurant", "Table service"], bar: ["Bar, pub", "Drinks first"],
     cafe: ["Café", "Coffee and cake"], system: ["Chain, franchise", "By the book"],
@@ -56,18 +56,18 @@ export default {
     frageStunden: "Roughly how many hours does each one work per month?",
     stundenHinweis: "A full-time person is about 160 hours. Use an average.",
     frageLohn: "What do all wages cost you together per month?",
-    lohnHinweis: "What really leaves the account: gross plus your share as employer. Your own pay comes next.",
+    lohnHinweis: "Everything that leaves the account for wages, with all contributions. Your own pay comes next.",
     frageEigen: "And your own pay per month?",
-    eigenHinweis: "What you pay yourself or want to pay yourself. The counter only turns green once this is covered too.",
-    eigenRichtwert: (b, j, s) => `Guide value ${b}: minimum wage ${j} (${s}) times 173 hours. Enter your real value.`,
+    eigenHinweis: "What you pay yourself or want to pay yourself.",
+    eigenRichtwert: (b, j, s) => `Guide value ${b}: minimum wage ${j} (${s}) times 173 hours.`,
     eigenOffen: "Calculate without own pay",
-    lohnTipp: "Rather estimate generously. Whoever sets wages too low sells every plate too cheap.",
+    lohnTipp: "Better a bit too much than too little.",
   },
 
   kosten: {
     satz: { 19: "19 % VAT", 7: "7 % VAT", 0: "no VAT" }, // Paket 3 (16.10.2026), M1
     titel: "Your fixed costs",
-    einleitung: "Now we collect everything you pay every month, no matter how much you sell. Ten short lists. What you don't know, you leave open.",
+    einleitung: "Everything you pay every month. Ten short lists. What you don't know, you leave open.",
     los: "Let's go",
     habIch: "I have this", habIchNicht: "I don't have this",
     kategorieLeer: "None of these",
@@ -137,10 +137,11 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "you keep", pruefen: "≈ check: weigh it", eigen: "your recipe", geschaetzt: "estimated", abwiegen: "Weigh", zekiOhne: "Tap a dish and enter your amount.", zekiPruefen: (n) => `„${n}“: ≈ check: weigh it. I'm only guessing the amount.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Delete the top-seller number?",
     wegFrage: (n) => `Remove “${n}” from the menu? Its price and quantities are lost.`,
     frage: "What is on your menu?",
-    hinweis: "Tap everything you sell. Every dish brings a recipe as an estimate, you only adjust it afterwards.",
+    hinweis: "Tap everything you sell. Recipes are estimates, you adjust them later.",
     suchen: "Search dish",
     eigene: "My own dishes",
     eigenesPlatzhalter: "Dish that is missing",
@@ -170,7 +171,7 @@ export default {
     richtpreis: { knopf: "Insert guide prices", satz: "Fills missing prices with online wholesale prices (as of October 2026). Your own prices stay.", meldung: (n, m) => `${n} prices inserted · ${m} without guide price`, entfernen: "Remove guide prices again", entfernt: (n) => `${n} guide prices removed`, marke: "Guide price", aktiv: (n) => `${n} guide prices active`, quelleAuf: "Where do the guide prices come from?", quelle: "Online prices from wholesalers and producers, retrieved 17.10.2026; where only supermarket prices were found, 15 % was deducted. Test values, not offers.", inventur: "≈ Some prices are guide prices, so the euro amounts are approximate." },
     preisNull: "Price 0 € – is that right? Counts as “no price”.", // Paket 3 (16.10.2026), M3
     frage: "What do you pay when buying?",
-    hinweis: "Per item the pack as you buy it, and what it costs – without VAT, as it appears on the supplier invoice. Reference prices are only a start – your real price counts more. What is missing, you leave open.",
+    hinweis: "Per item: pack and price without VAT, as on the invoice. Reference prices are only a start. What is missing, you leave open.",
     stand: (a, b) => `${a} of ${b} prices entered`,
     menge: "Pack", fuer: "for", preis: "Price",
     garverlust: (p, status) => `Cooking loss ${p} % (${status})`,
@@ -180,15 +181,15 @@ export default {
   },
   verkauf: { preisNull: "Price 0 € – is that right?", doppelt: "Name appears twice",
     frage: "What do you charge today?",
-    hinweis: "The prices as they are on the menu now, including VAT. For your three best sellers tap “Top seller” and say how many go out per day.",
+    hinweis: "The prices on your menu, including VAT. For your three best sellers tap “Top seller” and enter the daily amount.",
     bestseller: "Top seller",
     preisPlatzhalter: "Price today",
     amTag: "pieces", proTag: "per day",
     bestellungen: "How many dishes and drinks go out on a normal day?",
-    bestellungenHinweis: "Roughly is fine. The app uses it to spread rent and wages across the dishes.",
+    bestellungenHinweis: "Roughly is fine. The app uses it to spread rent and wages.",
     ziel: "How much should be left for you per dish?",
-    zielHinweis: "In percent of the net price, after all costs. Many places use 10.",
-    zielVorschlag: "Suggestion 10 %, change it if you have another number in mind",
+    zielHinweis: "In percent of the price without VAT, after all costs. Many places use 10.",
+    zielVorschlag: "Suggestion: 10 %. You can change it any time.",
     zeigen: "Show me what my dishes cost",
   },
   ergebnis: {
@@ -198,9 +199,9 @@ export default {
     zielWarnung: "Your target is very high. Hardly any guest pays the prices that come out of it.",
     zielSperre: "No price works with this target.",
     aufgerundet: (c) => `rounded up to 10 cents, +${c} cents`,
-    vomNetto: "of net",
+    vomNetto: "of the price without VAT",
     titel: "Your menu in numbers",
-    hinweis: "Per dish: what it really costs you, and what you would need to charge so your target is left over.",
+    hinweis: "Per dish: what it costs and what you would need to charge.",
     ampel: { gruen: "fine", gelb: "tight", rot: "too cheap", grau: "open" },
     unvollstaendig: "Some numbers are missing or estimated. The traffic light gets more precise the more you enter.",
     fehlt: (z) => `Amount or price missing for: ${z}`,
@@ -208,7 +209,7 @@ export default {
     portal: (n) => `Via ${n}`,
     portalSperre: (n) => `Via ${n} this dish does not work out: commission and target eat the price.`,
     garverlustGeschaetzt: "cooking loss estimated",
-    lesehilfe: "“Costs you” is everything together: goods, share of rent and wages, VAT. “Fine” means your current price covers that and your target. “Tight”: covers the costs but not your target. “Too cheap”: less than 10 % is left, or you lose money.",
+    lesehilfe: "“Costs you”: goods, share of rent and wages, VAT. “Fine”: price covers costs and target. “Tight”: covers only the costs. “Too cheap”: less than 10 % left, or a loss.",
   },
 
   start: {
@@ -1083,7 +1084,7 @@ export default {
     geld: "Monthly costs", miete: "Rent", personal: "Staff", eigen: "Your pay", strom: "Electricity (incl. VAT)",
     geldHilfe: "Roughly is fine, empty is fine too. Photograph bills later in the office.",
     putzt: "Who cleans?", wer: { selbst: "We do", firma: "A company", beides: "Both" }, firma: "Cleaning company",
-    fertig: "Done!", eingerichtet: "set up", los: "Let's go", pin: "Set office PIN",
+    fertig: "Done!", eingerichtet: "set up", los: "Let's go", pin: "Set office code",
     zeki: { schloss: "Set a code. Then only you can get into the office.", hallo: "Hi boss! I'm Zeki.", rolle: "I help you – out front and in the office.", "laden-schnell": "What's your shop called? And what do you sell?", "karte-foto": "Snap your menu. I'll read dishes and prices.", "kuehl-schnell": "Which fridges do you have? Just tap plus.", geld: "What does the shop cost per month? Roughly is fine.", fertig: "Great, boss! From now on I'm always here." },
   },
   // Stocktake (Punkt 3)
@@ -1153,7 +1154,7 @@ export default {
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026
-  heute: { introGruss: "Hello, boss!", bewegung: (b) => `since yesterday ${b}`,
+  heute: { introGruss: "Hello, boss!", rezeptErinnerung: { frage: "Boss, have you entered your recipes yet?", knopf: "Enter recipe", stand: (n, g) => `${n} of ${g} dishes have your recipe.` }, bewegung: (b) => `since yesterday ${b}`,
     nullKurz: "Break-even", zielKurz: "Goal",
     zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },

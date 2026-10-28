@@ -139,6 +139,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "il te reste", pruefen: "≈ vérifier : peser", eigen: "ta recette", geschaetzt: "estimé", abwiegen: "Peser", zekiOhne: "Touche un plat et saisis ta quantité.", zekiPruefen: (n) => `„${n}“: ≈ vérifier : peser. Je devine seulement la quantité.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Effacer le chiffre du best-seller ?",
     wegFrage: (n) => `Retirer « ${n} » de la carte ? Le prix et les quantités seront perdus.`,
     frage: "Qu’est-ce qu’il y a sur ta carte ?",
@@ -1153,7 +1154,7 @@ export default {
       personal: "Saisis les déchets, mesure le froid, coche le nettoyage. Retour uniquement avec le code bureau.",
       buero: "Ici se trouvent tous les calculs, listes et réglages. Les dossiers vont à l'inspection, au conseiller fiscal ou au comptable." } },
   menueReferenz: { hinweis: "Ingrédients de la carte. Vérifie les quantités, le temps de préparation et la recette complète." }, // 26.10.2026
-  heute: { introGruss: "Bonjour, chef !", bewegung: (b) => `depuis hier ${b}`,
+  heute: { introGruss: "Bonjour, chef !", rezeptErinnerung: { frage: "Chef, tu as déjà saisi tes recettes ?", knopf: "Saisir la recette", stand: (n, g) => `${n} sur ${g} plats ont ta recette.` }, bewegung: (b) => `depuis hier ${b}`,
     nullKurz: "Zéro à", zielKurz: "Objectif",
     zielLinie: "zéro + bénéfice visé",
     stufe: { bisNull: "Pour atteindre zéro, il manque", bisZiel: "Jusqu’à l’objectif", ueberZiel: "Au-dessus de l’objectif" },

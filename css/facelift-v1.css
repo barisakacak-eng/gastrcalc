@@ -1268,3 +1268,24 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .b-einstellungen .b-sicherung-link{justify-content:center;text-align:center}
 /* 27.10.2026 Fehler (Baris-Foto 23:51): Kopf ist klebend, war aber durchsichtig → Seitentitel „Karte“ lag beim Scrollen unter Menü und Logo. */
 .appleiste.ebene-kopf.laden{background:var(--b-hintergrund,#f7f1e8);-webkit-backdrop-filter:saturate(1.2) blur(8px);backdrop-filter:saturate(1.2) blur(8px)}
+
+/* Mitmach-Rundgang (28.10.2026, Konzept 7.4): Laden-Karte entschlackt – eine Zeile je Gericht. Farben nur aus css/tokens.css. */
+.kl-kurz .kl-liste{display:flex;flex-direction:column;gap:8px}
+.kl-kurz .kl-spalten{display:grid;grid-template-columns:1fr auto 96px;gap:8px;padding:0 6px;font:700 0.8125rem/1.2 var(--schrift);color:var(--tinte-weich)}
+.kl-kurz .kl-spalten span:nth-child(2){text-align:right}
+.kl-kurz .kl-zeile{display:grid!important;grid-template-columns:minmax(0,1fr) 96px!important;align-items:stretch;gap:0;min-height:64px;padding:0!important;background:var(--weiss);border:1px solid var(--holz);border-radius:var(--radius);box-shadow:var(--schatten-karte)}
+.kl-kurz .kl-zeile-haupt{width:auto!important;display:flex;align-items:center;gap:10px;min-width:0;min-height:64px;padding:8px 8px 8px 8px;border:0;background:none;font:inherit;color:var(--tinte);text-align:left;cursor:pointer;border-radius:var(--radius) 0 0 var(--radius)}
+.kl-kurz .kl-zeile .gerichtbild{width:46px!important;height:46px!important;min-height:0!important;max-height:46px!important;align-self:center!important;border-radius:var(--radius-klein)!important;object-fit:cover;flex:none}
+.kl-zeile .kl-quelle{flex:none;width:12px;height:12px;border-radius:50%;background:var(--weggelassen)}
+.kl-zeile .kl-quelle.eigen{background:var(--eigen)}
+.kl-zeile .kl-quelle.geschaetzt{background:var(--glut)}
+.kl-zeile .kl-gn{flex:1;min-width:0;font-size:1.0625rem!important;line-height:1.2;-webkit-line-clamp:2}
+.kl-zeile .kl-nutzen{flex:none;margin:0;padding:0;background:none;border:0;text-align:right;color:var(--tinte)}
+.kl-zeile .kl-nutzen b{font-size:1rem}
+.kl-zeile.a-gruen .kl-nutzen{color:var(--eigen)}
+.kl-zeile.a-rot .kl-nutzen{color:var(--rot)}
+.kl-zeile .kl-nutzen.pruefen b{display:inline-block;padding:4px 8px;border-radius:var(--radius-klein);background:var(--geschaetzt-hell);color:var(--geschaetzt-text);font-size:0.8125rem;white-space:normal;max-width:110px;line-height:1.2}
+.kl-kurz .kl-zeile .kl-preis{width:auto!important;min-height:64px;border:0;border-left:1px solid var(--holz);background:var(--papier-tief);border-radius:0 var(--radius) var(--radius) 0;font:800 1rem/1.2 var(--schrift);color:var(--tinte);cursor:pointer}
+.kl-zeile .kl-preis:active,.kl-zeile-haupt:active{filter:brightness(.96)}
+/* Heute: Rezept-Erinnerung (7.3) – Zekis Satz steht oben neben ihm, darunter der eine Knopf „Jetzt“ */
+.h-rezept-jetzt .ks{background:var(--geschaetzt-hell);color:var(--geschaetzt-text)}
