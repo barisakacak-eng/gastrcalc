@@ -1153,7 +1153,7 @@ export default {
       buero: "Tüm hesaplar, listeler ve ayarlar burada. Klasörleri denetime, mali müşavire veya muhasebeciye verirsin." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Dükkân “Bugün“ ve “Ofiste açık“
   menueReferenz: { hinweis: "Malzemeler menüden. Miktarları, süreyi ve tarifin tamamını kontrol et." }, // 26.10.2026
-  heute: { bewegung: (b) => `dünden beri ${b}`,
+  heute: { introGruss: "Merhaba, şef!", bewegung: (b) => `dünden beri ${b}`,
     nullKurz: "Sıfır noktası", zielKurz: "Hedef",
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },

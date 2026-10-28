@@ -64,3 +64,8 @@
 /* Zeki als Gliederpuppe (28.10.2026): Zwinkern über das Lid, Augen bleiben sonst unverändert */
 .zeki--zwinkern-r [data-zeki-teil="auge-r"] .zeki-variante { opacity: 0 !important; }
 .zeki--zwinkern-r [data-zeki-teil="lid-r"] [data-variante="lid"] { opacity: 1 !important; }
+
+/* Zeki-Auftritt (28.10.2026): Gruß unter dem Logo – kleiner App-Text, fängt nie Eingaben ab. Bewegung macht die Puppe (js/zeki-puppe.js). */
+.appleiste .intro-gruss{position:absolute;left:56px;right:56px;bottom:3px;text-align:center;font-size:calc(12rem / 17);font-weight:650;line-height:1.1;color:var(--b-text,#1d2a22);pointer-events:none;animation:introGruss var(--intro-gruss-dauer,1.3s) ease both}
+@keyframes introGruss{0%{opacity:0;transform:translateY(-3px)}18%,78%{opacity:1;transform:none}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){.appleiste .intro-gruss{display:none}}

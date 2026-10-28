@@ -19,7 +19,7 @@ const teil = (svg, id) => svg.querySelector(`[data-zeki-teil="${id}"]`);
 // darum sieht man die Schnittkante nicht, wenn sie sich drehen.
 // Die Figur ist nicht spiegelgleich: Schürzenrand links außen bei x 43,8, rechts bei 186,5 (gemessen 28.10.2026 an 4-facher Darstellung).
 // Der Schnitt liegt genau auf dem äußeren Rand der Schürzen-Kontur – so bleibt beim Armheben kein Ärmelstreifen am Rumpf hängen.
-const L = 44.5, M = 118.5, R = 187.2; // linke und rechte Kante des Rumpfs, Mitte
+const L = 43.4, M = 118.5, R = 187.2; // linke und rechte Kante des Rumpfs, Mitte
 const RO = [179.5, 185.5]; // rechte Schulterlinie oben (bei y 135 und 165), wie links um 7,5 bzw. 2,5 nach innen
 const RT = 142; // rechts beginnt der Arm erst unter dem Helmrand (Helm reicht dort bis y 140)
 const FORMEN = {
@@ -151,7 +151,7 @@ export const ALIAS = { hand: "winken", thumb: "freuen", daumen: "freuen", grinse
 export const zekiPuppeName = (b) => (BEWEGUNGEN[b] ? b : ALIAS[b] && BEWEGUNGEN[ALIAS[b]] ? ALIAS[b] : null);
 
 // Spielt eine Bewegung. Gibt eine Abbruch-Funktion zurück (oder null, wenn es die Bewegung nicht gibt).
-export function zekiPuppeSpielen(svg, bewegung, { fertig } = {}) {
+export function zekiPuppeSpielen(svg, bewegung, { fertig, dauer } = {}) {
   const name = zekiPuppeName(bewegung); if (!svg || !name || typeof svg.animate !== "function") return null;
   zekiPuppeVorbereiten(svg);
   const b = BEWEGUNGEN[name], laufend = [], vorher = svg.dataset.zekiZustand;
@@ -161,7 +161,7 @@ export function zekiPuppeSpielen(svg, bewegung, { fertig } = {}) {
   const zurueck = (b.vorne || []).map((id) => { const el = teil(svg, id), platz = el?.nextSibling; if (el) el.parentNode.appendChild(el); return () => el?.parentNode.insertBefore(el, platz); });
   for (const [id, [frames, opt]] of Object.entries(b.teile)) {
     const el = teil(svg, id); if (!el) continue;
-    laufend.push(el.animate(frames, { duration: b.dauer, easing: weich, fill: "none", ...(opt || {}) }));
+    laufend.push(el.animate(frames, { duration: dauer > 0 ? dauer : b.dauer, easing: weich, fill: "none", ...(opt || {}) }));
   }
   let aus = false;
   const ende = () => {

@@ -1157,7 +1157,7 @@ export default {
       personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
   menueReferenz: { hinweis: "Përbërësit nga menuja. Kontrollo sasitë, kohën e përgatitjes dhe recetën e plotë." }, // 26.10.2026
-  heute: { bewegung: (b) => `që dje ${b}`,
+  heute: { introGruss: "Përshëndetje, shef!", bewegung: (b) => `që dje ${b}`,
     nullKurz: "Zero te", zielKurz: "Synimi",
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },

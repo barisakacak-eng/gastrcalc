@@ -1158,7 +1158,7 @@ export default {
       personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
   menueReferenz: { hinweis: "Ingrediente din meniu. Verifică cantitățile, timpul de preparare și rețeta completă." }, // 26.10.2026
-  heute: { bewegung: (b) => `de ieri ${b}`,
+  heute: { introGruss: "Bună, șefule!", bewegung: (b) => `de ieri ${b}`,
     nullKurz: "Zero la", zielKurz: "Țintă",
     zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },

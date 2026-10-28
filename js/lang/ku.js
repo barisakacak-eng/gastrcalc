@@ -1151,7 +1151,7 @@ export default {
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   menueReferenz: { hinweis: "Malzemeyên ji menûyê. Mîqdar, dema amadekirinê û reçeteya tevahî kontrol bike." }, // 26.10.2026
-  heute: { bewegung: (b) => `ji duh ve ${b}`,
+  heute: { introGruss: "Silav, şef!", bewegung: (b) => `ji duh ve ${b}`,
     nullKurz: "Sifir li", zielKurz: "Armanc",
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
