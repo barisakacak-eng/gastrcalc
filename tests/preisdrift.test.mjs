@@ -42,3 +42,9 @@ test("1.6 Menü: 7,50 + 3,50 als Menü 10,00 € → Rabatt 1,00 €, du verdien
   const b = buendelRechnen(s, ["a", "b"], 10);
   nah(b.rabatt, 1); nah(b.verdienst, 10 / 1.07 - 1.5); assert.equal(b.lohntNie, false);
 });
+
+test("Burger-Test: „Cheeseburger“ bekommt die einfache Vorlage, nicht „Doppel-Cheeseburger“", async () => {
+  const { aehnlichkeit } = await import("../js/karte_lesen.js");
+  assert.ok(aehnlichkeit("Cheeseburger", "Cheeseburger Classic") > aehnlichkeit("Cheeseburger", "Doppel-Cheeseburger"));
+  assert.ok(aehnlichkeit("Double Cheeseburger", "Doppel-Cheeseburger") > aehnlichkeit("Double Cheeseburger", "Cheeseburger Classic"));
+});

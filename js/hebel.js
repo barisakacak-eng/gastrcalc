@@ -24,7 +24,7 @@ export function mehrImMonat(stand, gerichtId, alt, neu) {
 //         · hund (wenig verkauft, wenig DB: prüfen). Grenzen = Durchschnitt der Karte (Menge: Mittel; DB: mengengewichtetes Mittel).
 // Nur mit eingetragenen Mengen (mengeTag) – geschätzte Gleichverteilung sagt nichts über Beliebtheit → { ohneMengen: true }.
 export function rennerPenner(stand) {
-  const mit = (stand.gerichte || []).filter((g) => g.mengeTag > 0);
+  const mit = (stand.gerichte || []).filter((g) => g.mengeTag > 0 && g.klasse !== "getraenk"); // ohne Getränke, wie „Gerichte im Vergleich“ (Burger-Test 28.10.2026)
   if (mit.length < 2) return { ohneMengen: true, gerichte: [] };
   const k = kalkulation(stand); const { mengen } = mengenJeMonat(stand);
   const zeilen = k.zeilen.filter((z) => mit.some((g) => g.id === z.id) && z.preisNetto !== null && z.waren !== null)

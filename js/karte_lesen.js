@@ -191,7 +191,19 @@ function positionenEinerLesart(text) {
 }
 
 // Passt ein Kartenname zu einer Rezeptvorlage? Wert 0..1 (≥ 0,5 = Vorschlag, ≥ 0,75 = sicher)
+// Mengenwörter (Burger-Test 28.10.2026: „Cheeseburger“ bekam das Rezept „Doppel-Cheeseburger“ mit 2 Patties): steht so ein Wort nur auf
+// einer Seite, ist es ein anderes Gericht – Abschlag MENGENWORT_ABSCHLAG (Setzung), damit die einfache Vorlage gewinnt.
+const MENGENWORT = /\b(doppel\w*|double|dopp|triple|dreifach|xxl|xl|mega|maxi|mini|kids?|kinder|gross|grosse|klein|kleine)\b/g;
+export const MENGENWORT_ABSCHLAG = 0.25;
 export function aehnlichkeit(kartenName, vorlageName) {
+  const roh = aehnlichkeitRoh(kartenName, vorlageName); if (!roh) return 0;
+  const einheitlich = (w) => /^(doppel|double|dopp)/.test(w) ? "2" : /^(triple|dreifach)/.test(w) ? "3" : /^gross/.test(w) ? "gross" : /^klein/.test(w) ? "klein" : /^(kid|kinder)/.test(w) ? "kids" : w;
+  const woerter = (n) => new Set((normName(n).match(MENGENWORT) || []).map(einheitlich));
+  const wa = woerter(kartenName), wb = woerter(vorlageName);
+  const gleich = wa.size === wb.size && [...wa].every((w) => wb.has(w));
+  return gleich ? roh : Math.max(0, roh - MENGENWORT_ABSCHLAG);
+}
+function aehnlichkeitRoh(kartenName, vorlageName) {
   const a = normName(kartenName), b = normName(vorlageName.replace(/\(.*?\)/g, ""));
   if (!a || !b) return 0;
   if (a === b) return 1;

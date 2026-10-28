@@ -104,9 +104,10 @@ const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
 function bleibtZeile(z, preis, last, monat = "") { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last)}${monat}</div>`; }
 // Masterauftrag 1.3 (28.10.2026): Euro-Hebel im Laden nur hier, beim Preis ändern – „Das bringt dir ≈ x € im Monat“ (bei gleicher Menge, js/hebel.js)
 function monatZeile(stand, z) {
-  if (!blatt || blatt.alt === null || !(blatt.preis > blatt.alt + 0.004)) return "";
-  const m = mehrImMonat(stand, z.id, blatt.alt, blatt.preis); if (!(m.euro >= HEBEL_MIN_EURO)) return "";
-  return `<p class="kl-monat">${esc(t("gehirn.hebel.laden", fmtEuroGeschaetzt(m.euro, true)))}</p>`;
+  if (!blatt || blatt.alt === null || Math.abs(blatt.preis - blatt.alt) < 0.004) return "";
+  const m = mehrImMonat(stand, z.id, blatt.alt, blatt.preis); if (!(Math.abs(m.euro) >= HEBEL_MIN_EURO)) return "";
+  return m.euro > 0 ? `<p class="kl-monat">${esc(t("gehirn.hebel.laden", fmtEuroGeschaetzt(m.euro, true)))}</p>`
+    : `<p class="kl-monat minus">${esc(t("gehirn.hebel.ladenMinus", fmtEuroGeschaetzt(-m.euro, true)))}</p>`; // Preissenkung: was sie im Monat kostet (Burger-Test)
 }
 function bleibtInnen(z, preis, last) {
   const a = preisAmpel(z, preis);

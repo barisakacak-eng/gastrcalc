@@ -59,7 +59,7 @@ export function preisrundeView(stand) {
   const ex = extrasVon(stand, gerichtId); const g = stand.gerichte.find((x) => x.id === gerichtId);
   const artikel = (stand.artikel || []).filter((a) => a.gruppe !== "getraenk" && a.gruppe !== "spirituose").map((a) => a.name).sort((a, b) => a.localeCompare(b, "de"));
   const extras = `<div class="karte pr-extras"><h2>${esc(t("gehirn.extra.titel", z.name))}</h2>
-      ${ex.map((x, i) => `<div class="summenzeile"><span><b>${esc(x.name)}</b> · ${esc(fmtEuro(x.preis, { dezimal: 2 }))}<br><small>${esc(x.bringt === null ? t("gehirn.extra.fehlt") : t("gehirn.extra.bringt", fmtEuroGeschaetzt(x.bringt, x.geschaetzt, { dezimal: 2 })))}</small></span>
+      ${ex.map((x, i) => `<div class="summenzeile"><span><b>${esc(x.name)}</b> · ${esc(fmtEuro(x.preis, { dezimal: 2 }))}<br><small>${esc(x.bringt === null ? t("gehirn.extra.fehlt") : x.bringt < 0 ? t("gehirn.extra.kostet", fmtEuroGeschaetzt(-x.bringt, x.geschaetzt, { dezimal: 2 })) : t("gehirn.extra.bringt", fmtEuroGeschaetzt(x.bringt, x.geschaetzt, { dezimal: 2 })))}</small></span>
         <button type="button" class="leise klein" data-a="pr-extra-weg" data-wert="${esc(g.extras[i].id)}">${esc(t("gehirn.extra.weg"))}</button></div>`).join("")}
       <div class="pr-extra-neu">
         <input type="text" data-f="pr-ex-name" value="${esc(entwurf.name)}" placeholder="${esc(t("gehirn.extra.name"))}" maxlength="40">
@@ -69,7 +69,7 @@ export function preisrundeView(stand) {
         <button type="button" class="knopf zweit" data-a="pr-extra-dazu"${extraGueltig() ? "" : " disabled"}>${esc(t("gehirn.extra.dazu"))}</button>
       </div></div>`;
   // 30 Cent mehr (1.3): die drei Gerichte mit dem größten Hebel
-  const h = hebelJeGericht(stand).filter((x) => x.euroMonat >= HEBEL_MIN_EURO).slice(0, HEBEL_LISTE);
+  const h = hebelJeGericht(stand).filter((x) => x.euroMonat >= HEBEL_MIN_EURO && zs.some((z) => z.id === x.id)).slice(0, HEBEL_LISTE); // nur Gerichte, die der Rechner kennt (Burger-Test: Cola öffnete Pommes)
   const hebel = h.length ? `<div class="karte pr-hebel"><h2>${esc(t("gehirn.hebel.titel"))}</h2>${h.map((x) => `<button type="button" class="summenzeile pr-hebelzeile" data-a="pr-gericht" data-wert="${esc(x.id)}"><span>${esc(x.name)}</span><span class="wert">${esc(t("gehirn.hebel.zeile", fmtEuroGeschaetzt(x.euroMonat, true)))}</span></button>`).join("")}</div>` : "";
   return `${kopf}<div class="inhalt pr">${rechner}${hebel}${extras}</div>${nav("preisrunde")}`;
 }

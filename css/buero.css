@@ -259,3 +259,4 @@ button.b-zeile:active { background: var(--papier); }
 .inhalt.pr .pr-extra-neu input, .inhalt.pr .pr-extra-neu select, .inhalt.pr .pr-wahl select { border: 1.5px solid var(--holz); background: var(--weiss); box-shadow: none; }
 .vk-hebel { min-height: 44px; display: inline-flex; align-items: center; }
 .kl-monat { margin-bottom: 12px; }
+.kl-monat.minus { color: var(--kupfer-dunkel); }

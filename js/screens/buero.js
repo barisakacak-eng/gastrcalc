@@ -98,7 +98,7 @@ export function bueroView(stand, wurzel, extra = {}) {
       <b>${esc(t("gehirn.drift.titel", dz.name, "+" + fmtZahl(dz.prozent * 100, 0) + " %"))}</b>
       <p>${esc(t("gehirn.drift.satz", fmtEuroGeschaetzt(dz.euroMonat, true)))}</p>
       ${dg ? `<p class="minus">${esc(t("gehirn.drift.rot", dg.name, fmtEuroGeschaetzt(dg.zielBrutto, dg.geschaetzt, { dezimal: 2 })))}</p>` : ""}
-      <button type="button" class="knopf zweit" data-a="nav" data-wert="preisrunde"${dg ? ` data-id="${esc(dg.id)}"` : ""}>${esc(t("gehirn.drift.knopf"))}</button>
+      <button type="button" class="knopf zweit" data-a="nav" data-wert="preisrunde"${dg ? ` data-id="${esc(dg.id)}" data-cent="${Math.max(10, Math.ceil(((dg.zielBrutto || 0) - (dg.preisBrutto || 0)) * 10) * 10)}"` : ""}>${esc(t("gehirn.drift.knopf"))}</button>
     </div>`;
   return `<div class="buero b-ruhig">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">
