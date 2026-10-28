@@ -29,6 +29,7 @@ let offenesGericht = null; // id des Gerichts im Rezept-Detail (flüchtig)
 let zutatSuche = "";       // Suchtext im Rezept-Detail
 let eigenesText = "";      // Text im Feld „eigenes Gericht" (flüchtig, überlebt das Neuzeichnen)
 let waage = null;          // Waage-Check (Punkt 7): { gid, fragen[], k, wert, meldungen[] }
+let direkt = false;        // Mitmach-Rundgang (28.10.2026, 7.4): von der Laden-Karte oder Heute direkt in die Mengenfrage – danach zurück in die App
 let stempelInfo = false;   // Erklärung zum Stempel aufgeklappt
 let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
 // Paket 2 (16.10.2026): Ladenwechsel, Einlesen, „Alles löschen“ – der flüchtige Zustand gehört zum alten Laden (zentrale Liste in app.js)
@@ -36,7 +37,7 @@ let weitereOffen = false;  // „Weitere Bereiche“ aufgeklappt (Punkt 9)
 // So gilt überall: Preis − Kostet dich = Bleibt dir. Ohne Preis: Kosten mit Steuer (Preis, ab dem kein Minus bleibt).
 const kostetDich = (z) => { const a = z.preisBrutto !== null ? preisAmpel(z, z.preisBrutto) : null; return a?.gewinn !== null && a ? z.preisBrutto - a.gewinn : z.sk * (1 + z.mwst); };
 
-export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatSuche = ""; eigenesText = ""; waage = null; stempelInfo = false; weitereOffen = false; zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; offeneWare = null; filterWahl = null; }
+export function karteZuruecksetzen() { suche = ""; offenesGericht = null; zutatSuche = ""; eigenesText = ""; waage = null; direkt = false; stempelInfo = false; weitereOffen = false; zwischenOffen = new Set(); mehrArten = new Set(); rpQuelleOffen = false; offeneWare = null; filterWahl = null; }
 
 const knopfWeiter = (text = t("allgemein.weiter"), extra = "") => `<button type="button" class="knopf ${extra}" data-a="weiter">${esc(text)}</button>`;
 
@@ -160,6 +161,17 @@ function rezeptDetail(stand, g) {
     <button type="button" class="leise" data-a="gericht-weg">${esc(t("rezepte.gerichtWeg"))}</button>`;
 }
 
+// Mitmach-Rundgang (28.10.2026, 7.4): ein Weg statt vieler – Tipp aufs Gericht öffnet sofort die erste Mengenfrage (Waage).
+// Hat das Gericht keine offene Frage mehr (schon gewogen), öffnet sich gleich sein Rezept. max: Zahl der Fragen (Rundgang: 1).
+export function rezeptDirektOeffnen(stand, gid, { max = 3 } = {}) {
+  const g = (stand?.gerichte || []).find((x) => x.id === gid); if (!g) return false;
+  offenesGericht = g.id; zutatSuche = ""; stempelInfo = false; direkt = true;
+  const fragen = waageFragen(stand, g, max);
+  waage = fragen.length ? { gid: g.id, fragen, k: 0, wert: fragen[0].menge, meldungen: [], fertig: false } : null;
+  return true;
+}
+const direktZurueck = (ctx) => { const m = waage?.meldungen || []; offenesGericht = null; waage = null; direkt = false; if (m.length) ctx.meldung(m.join(" ")); ctx.weiter(); return true; };
+
 export const rezepte = {
   id: "rezepte",
   view(stand) {
@@ -186,9 +198,10 @@ export const rezepte = {
     else if (feld === "zutat-suche") { zutatSuche = wert; return true; }
     else if (feld.startsWith("zutat:")) zutatMengeSetzen(stand, g.id, Number(feld.slice(6)), parseZahl(wert), heute());
   },
-  aktion(name, el, stand) {
+  aktion(name, el, stand, ctx) {
     if (name === "adana-brot") { adanaBrotSetzen(stand, el.dataset.wert); artikelAbgleichen(stand); return true; } // 20.10.2026: einmal fragen
     if (name === "rezept-auf") { offenesGericht = el.dataset.id; zutatSuche = ""; waage = null; stempelInfo = false; return true; }
+    if (name === "rezept-zu" && direkt && ctx) { artikelAbgleichen(stand); return direktZurueck(ctx); }
     if (name === "rezept-zu") { offenesGericht = null; zutatSuche = ""; waage = null; stempelInfo = false; artikelAbgleichen(stand); return true; }
     const g = stand.gerichte.find((x) => x.id === offenesGericht); if (!g) return false;
     if (name === "stempel-info") { stempelInfo = !stempelInfo; return true; }
@@ -206,7 +219,7 @@ export const rezepte = {
           if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld), { dezimal: 2 }), g.name));
         }
         waage.k += 1;
-        if (waage.k >= waage.fragen.length) { waage.fertig = true; artikelAbgleichen(stand); }
+        if (waage.k >= waage.fragen.length) { waage.fertig = true; artikelAbgleichen(stand); if (direkt && ctx) return direktZurueck(ctx); }
         else waage.wert = waage.fragen[waage.k].menge;
         return true;
       }
@@ -220,9 +233,9 @@ export const rezepte = {
     if (name === "zutat-frei") { zutatFrei(stand, g.id, el.dataset.name); zutatSuche = ""; return true; }
     if (name === "gericht-weg") { if (!confirm(t("karte.wegFrage", g.name))) return false; gerichtEntfernen(stand, g.id); offenesGericht = null; return true; }
   },
-  beimVerlassen(stand) { offenesGericht = null; waage = null; artikelAbgleichen(stand); },
-  // Zurück-Geste im Detail: nur das Detail schließen, nicht den Schritt verlassen
-  zurueck(stand) { if (waage && !waage.fertig) { waage = null; return true; } if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; artikelAbgleichen(stand); return true; },
+  beimVerlassen(stand) { offenesGericht = null; waage = null; direkt = false; artikelAbgleichen(stand); },
+  // Zurück-Geste im Detail: nur das Detail schließen, nicht den Schritt verlassen (direkt geöffnet: gleich zurück in die App)
+  zurueck(stand) { if (direkt) { offenesGericht = null; waage = null; direkt = false; artikelAbgleichen(stand); return false; } if (waage && !waage.fertig) { waage = null; return true; } if (!offenesGericht) return false; offenesGericht = null; zutatSuche = ""; artikelAbgleichen(stand); return true; },
 };
 
 // ---------- Schritt: Einkaufspreise als Bilderwand (20.10.2026, Entwurf „Bilder-Raster“ von Baris freigegeben) ----------

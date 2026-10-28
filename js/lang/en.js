@@ -137,6 +137,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "you keep", pruefen: "≈ check: weigh it", eigen: "your recipe", geschaetzt: "estimated", abwiegen: "Weigh", zekiOhne: "Tap a dish and enter your amount.", zekiPruefen: (n) => `„${n}“: ≈ check: weigh it. I'm only guessing the amount.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Delete the top-seller number?",
     wegFrage: (n) => `Remove “${n}” from the menu? Its price and quantities are lost.`,
     frage: "What is on your menu?",
@@ -1153,7 +1154,7 @@ export default {
       buero: "All costs, lists and settings live here. Hand the folders to the inspector, tax advisor or bookkeeper." } },
   // Developer B (three levels, 15.10.2026): shop "Today" and "Open in the office"
   menueReferenz: { hinweis: "Ingredients from the menu. Check quantities, preparation time and the complete recipe." }, // 26.10.2026
-  heute: { introGruss: "Hello, boss!", bewegung: (b) => `since yesterday ${b}`,
+  heute: { introGruss: "Hello, boss!", rezeptErinnerung: { frage: "Boss, have you entered your recipes yet?", jetzt: "Now", stand: (n, g) => `${n} of ${g} dishes have your recipe.` }, bewegung: (b) => `since yesterday ${b}`,
     nullKurz: "Break-even", zielKurz: "Goal",
     zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },

@@ -21,6 +21,7 @@ import { bueroKopf } from "./buero.js";
 import { nutzenStand } from "../nutzen.js";
 import { zekiMoment } from "../zeki.js"; // Zeki auf Heute (26.10.2026)
 import { mascotMarkup } from "../gastrocash-brand.js";
+import { rezeptFortschritt } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026): Rezept-Erinnerung auf Heute
 
 // Drei Ebenen (15.10.2026, Entwickler B): Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
@@ -133,6 +134,12 @@ function heuteKachelnLaden(stand, ks, H) {
 const ZEKI_ZUSTAND = { kuehl_abweichung: "warnung", kuehl_offen: "aufmerksam", umsatz_fehlt: "frage", karte_leer: "hilfe", preis_fehlt: "preis", erster_muell: "aufmerksam", muell_hoch: "warnung", ziel_erreicht: "freude", tag_abgeschlossen: "bestaetigt", inventur_faellig: "aufmerksam", sicherung_alt: "warnung", hinweis_neu: "hilfe" };
 export function zekiReihe(stand, H, dran) {
   // Baris 26.10.2026 23:42: keine zweite Zeki-Figur auf Heute – Zeki steht oben rechts als eigene Ebene und spricht dort (app.js zekiBildschirm).
+  // Mitmach-Rundgang (28.10.2026, 7.3): solange kein Gericht ein eigenes Rezept hat, steht hier fest Zekis Frage mit „Jetzt“ (führt direkt zur
+  // Mengenfrage). Sie ersetzt die Zeile (15-Wörter-Regel) und geht der Zeki-Rotation vor; nur ein Kühl-Alarm bleibt wichtiger.
+  const r = rezeptFortschritt(stand);
+  if (r.gesamt && !r.mit && dran?.id !== "kuehlAlarm") { const frage = t("heute.rezeptErinnerung.frage"), jetzt = t("heute.rezeptErinnerung.jetzt");
+    return `<button type="button" class="zeki-zeile h-rezept-text a-gelb" data-a="rezept-direkt" dir="auto">${esc(frage)}</button>
+      <div class="h-zeki h-zeki--ohne-figur h-rezept"><button type="button" class="jetzt h-jetzt h-haupt h-rezept-jetzt normal" data-a="rezept-direkt" data-ort="heute" aria-label="${esc(frage)} ${esc(jetzt)}"><span class="ks">${sym("scale")}</span><span class="h-jetzt-text"><b>${esc(jetzt)}</b></span>${sym("chevron-right", "h-pfeil")}</button></div>`; }
   return dran ? `<div class="h-zeki h-zeki--ohne-figur">${jetztKarte(dran)}</div>` : "";
 }
 function jetztKarte(d) {

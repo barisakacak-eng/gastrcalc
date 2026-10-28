@@ -138,6 +138,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "bleibt dir", pruefen: "≈ prüfen: abwiegen", eigen: "dein Rezept", geschaetzt: "geschätzt", abwiegen: "Abwiegen", zekiOhne: "Tipp auf ein Gericht und trag deine Menge ein.", zekiPruefen: (n) => `„${n}“: ≈ prüfen: abwiegen. Die Menge rate ich nur.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Renner-Zahl löschen?",
     wegFrage: (n) => `„${n}“ von der Karte nehmen? Preis und Mengen dazu gehen verloren.`,
     frage: "Was steht auf deiner Karte?",
@@ -1170,7 +1171,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
       buero: "Hier wohnen alle Rechnungen, Listen und Einstellungen. Die Ordner gibst du dem Amt, dem Steuerberater oder dem Buchhalter." } },
   // Entwickler B (Drei Ebenen, 15.10.2026): Laden „Heute“ und „Offen im Büro“
   menueReferenz: { hinweis: "Zutaten aus der Karte. Mengen, Zeit und vollständiges Rezept bitte prüfen." }, // 26.10.2026
-  heute: { introGruss: "Hallo, Chef!", bewegung: (b) => `seit gestern ${b}`,
+  heute: { introGruss: "Hallo, Chef!", rezeptErinnerung: { frage: "Chef, hast du schon deine Rezepturen eingetragen?", jetzt: "Jetzt", stand: (n, g) => `${n} von ${g} Gerichten haben dein Rezept.` }, bewegung: (b) => `seit gestern ${b}`,
     nullKurz: "Null bei", zielKurz: "Ziel",
     zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },

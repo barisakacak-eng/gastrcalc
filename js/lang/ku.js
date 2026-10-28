@@ -138,6 +138,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "ji te re dimîne", pruefen: "≈ kontrol bike: bikişîne", eigen: "reçeteya te", geschaetzt: "texmînî", abwiegen: "Bikişîne", zekiOhne: "Li xwarinekê bixe û mîqdara xwe binivîse.", zekiPruefen: (n) => `„${n}“: ≈ kontrol bike: bikişîne. Mîqdarê tenê texmîn dikim.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Hejmara herî firotî jê bibe?",
     wegFrage: (n) => `“${n}” ji menûyê rake? Biha û mîqdarên wê winda dibin.`,
     frage: "Di menûya te de çi heye?",
@@ -1152,7 +1153,7 @@ export default {
       personal: "Çopê binivîse, sarkirinê bipîve, paqijiyê nîşan bike. Vegerîn tenê bi koda ofîsê.",
       buero: "Hemû hesab, lîste û mîheng li vir in. Dosyeyan didî kontrolê, şêwirmendê bacê an jî hesabdar." } },
   menueReferenz: { hinweis: "Malzemeyên ji menûyê. Mîqdar, dema amadekirinê û reçeteya tevahî kontrol bike." }, // 26.10.2026
-  heute: { introGruss: "Silav, şef!", bewegung: (b) => `ji duh ve ${b}`,
+  heute: { introGruss: "Silav, şef!", rezeptErinnerung: { frage: "Şef, te reçeteyên xwe nivîsandin?", jetzt: "Niha", stand: (n, g) => `${n} ji ${g} xwarinan reçeteya te heye.` }, bewegung: (b) => `ji duh ve ${b}`,
     nullKurz: "Sifir li", zielKurz: "Armanc",
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
