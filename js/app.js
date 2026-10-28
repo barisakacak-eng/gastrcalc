@@ -57,7 +57,7 @@ import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuru
 import { rundgangOffen as w2RundgangOffen } from "./engine.js"; // W2-D: stilles Update nur ohne offenen Rundgang
 import { beispielLaden, beispielNamenFolgen } from "./beispiel.js"; // Beispiel-Laden (17.10.2026); Trennung (17.10.2026): beispielNamenFolgen
 // Trennung (17.10.2026): Handlungen und Eingaben schreiben über das Rechenwerk (js/stamm.js, js/karte_daten.js)
-import { einrichtungFertigSetzen, kuehlKeineSetzen, branchenMeldungQuittieren, abgleichHinweisQuittieren, kleinunternehmerUmschalten, waageVorschlagGesehen, warenQuoteSetzen, steuerSatzSetzen, uploadAnlegen } from "./stamm.js";
+import { einrichtungFertigSetzen, kuehlKeineSetzen, branchenMeldungQuittieren, abgleichHinweisQuittieren, kleinunternehmerUmschalten, waageVorschlagGesehen, warenQuoteSetzen, steuerSatzSetzen, uploadAnlegen, ruhezeitSetzen } from "./stamm.js";
 import { gerichtFotoSetzen, artikelAbgleichen } from "./karte_daten.js";
 import { speichernPausieren } from "./store.js"; // Mitmach-Rundgang (28.10.2026): Übungsmodus
 import { verkaufView, verkaufAktion, verkaufEingabe, verkaufDatei, verkaufZuruecksetzen, verkaufZurueck, verkaufKennung, verkaufZbonFoto } from "./screens/verkauf.js"; // E7 (17.10.2026): Verkauf je Gericht (Büro, versteckt)
@@ -109,7 +109,7 @@ function schrittBetreten() { if (stand?.phase !== "onboarding") return; schrittI
 // Trennung (17.10.2026): Personal-Modus – neue Einträge bekommen die Schicht-Person, bevor gespeichert wird (vorher schrieb das Zeichnen das nach).
 function personNachtragen() { if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) personalNachtragen(stand); } }
 function speichern(w) { personNachtragen(); return speichernStore(w); }
-function sofortSpeichern(w) { personNachtragen(); return sofortSpeichernStore(w); }
+function sofortSpeichern(w, opts) { personNachtragen(); return sofortSpeichernStore(w, opts); } // K5 (28.10.2026): Optionen (stempel) weiterreichen
 
 // ---------- Zeichnen ----------
 
@@ -870,6 +870,7 @@ root.addEventListener("input", (ev) => {
   } else if (ansicht === "einstellungen") {
     if (el.dataset.f === "warenQuote") warenQuoteSetzen(stand, parseZahl(el.value));
     if (el.dataset.f === "steuerSatz") steuerSatzSetzen(stand, parseZahl(el.value));
+    { const m = /^ruhe-(\d)-(von|bis)$/.exec(el.dataset.f || ""); if (m) ruhezeitSetzen(stand, Number(m[1]), m[2], el.value); } // K4 Stoßzeiten
   } else if (ansicht === "buero") { // Entwickler C
     neu = bueroEingabe(el.dataset.f, el.value); if (neu === "knopf") { neu = false; if (el.value !== el.value.replace(/\D/g, "").slice(0, 4)) el.value = el.value.replace(/\D/g, "").slice(0, 4); }
   } else if (ansicht.startsWith("ordner-")) {

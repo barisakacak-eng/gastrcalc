@@ -137,7 +137,7 @@ test("Müll im Amt-Ordner ohne Euro; Geräteübersicht ohne Haken; Grenze je War
   const o = A.ordnerAmt(s, Z, { datum: "2026-10-05" });
   assert.equal(o.teile.muell.zeilen.length, 1); assert.equal(o.teile.muell.zeilen[0].wert, undefined); assert.equal(o.teile.muell.zeilen[0].ausKuehlung, true);
   assert.equal(o.teile.konzept.vollstaendig, null); assert.equal(o.gesamt, 3);
-  assert.deepEqual(E.GRENZEN_WARE, {}); // keine Werte ohne Fundstelle
+  assert.deepEqual(E.GRENZEN_WARE, { gefluegel: { min: null, max: 4 }, fisch: { min: null, max: 2 }, hack_sb: { min: null, max: 2 } }); // K2 28.10.2026: nur mit Fundstelle (LAVES 2022); loses Hack bleibt leer
   const g = E.grenzenVon({ art: "kuehl", ware: "hack", min: null, max: null }); assert.equal(g.max, 7); assert.equal(g.wareOhneGrenze, true);
   assert.equal(migrierenBetrieb(structuredClone({ ...s, kuehlstellen: [{ ...s.kuehlstellen[0], ware: "hack" }] })).kuehlstellen[0].ware, "hack");
   const html = A.druckHtml({ titel: "T", laden: 'L"<x>', zeitraum: "Z", seite: ["Seite", "von"], abschnitte: [{ titel: "A", kopf: ["a"], zeilen: [{ zellen: ["1"], klasse: "nach" }] }] });

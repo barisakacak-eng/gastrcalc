@@ -271,3 +271,12 @@ export function stundenJeTag(stand, person, monat) {
   const tage = (stand?.teamTage || []).filter((x) => x.datum.startsWith(monat)).flatMap((x) => x.eintraege.filter((y) => y.person === person));
   return tage.length ? tage.reduce((s, y) => s + y.stunden, 0) / tage.length : 8;
 }
+
+// K4 (28.10.2026): Stoßzeiten je Laden – „HH:MM“ von/bis für Zeile i (0 oder 1). Leer = Zeile entfällt. Werte in Stunden (11:30 → 11.5).
+const zeitStunden = (txt) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(txt || "").trim()); if (!m) return null; const h = Number(m[1]), mi = Number(m[2]); return h < 24 && mi < 60 ? h + mi / 60 : null; };
+export function ruhezeitSetzen(stand, i, feld, wert) {
+  const r = (Array.isArray(stand.betrieb.ruhezeiten) ? stand.betrieb.ruhezeiten : [[11.5, 14], [17.5, 20.5]]).map((x) => [...x]);
+  while (r.length < 2) r.push([null, null]);
+  r[i][feld === "von" ? 0 : 1] = zeitStunden(wert);
+  stand.betrieb.ruhezeiten = r.filter(([v, b]) => typeof v === "number" && typeof b === "number");
+}

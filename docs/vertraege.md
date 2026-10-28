@@ -80,6 +80,9 @@ Jede Zahl mit Quelle und Abrufdatum; Setzungen sind eigene Schwellen ohne Branch
 | Umsatz-Rückfrage | unter 10 % oder über 3× Median der letzten 14 Tage, ab 5 Tagen | `js/umsatz_pruefung.js` | Setzung |
 | BGN | ≈ 1,04 % des Bruttoentgelts | `js/data/lohnkosten.js` BGN_ANTEIL | BGN Geschäftszahlen 2025, Register 28.10.2026 |
 | Sachbezug 2027 | 2,43 € / 4,70 € (geplant) | `js/engine.js` SVEV_2027 | BR-Drs. 503/26, Register 28.10.2026 |
+| Kühlgrenzen Standard | kühl ≤ 7 °C, tief ≤ −18 °C, warm ≥ 60 °C, Speiseeis ≤ −10 °C | `js/engine.js` GRENZEN_STANDARD, GRENZEN_QUELLE | LAVES-Merkblatt MFB 08-002-00 (2022), § 2 Abs. 4 TLMV, BfR 037/2020 (Abruf 28.10.2026) |
+| Kühlgrenzen je Ware | Geflügel ≤ 4 °C, Fisch ≤ 2 °C, Hack SB ≤ 2 °C, loses Hack offen | `js/engine.js` GRENZEN_WARE | LAVES-Merkblatt 2022 |
+| Stoßzeiten (keine Erinnerungen) | Standard 11:30–14:00, 17:30–20:30, je Laden einstellbar | `js/offen.js` RUHEZEITEN_STANDARD | Setzung |
 | Sicherung | Erinnerung: nie gesichert ab 5 Einträgen, nach 7 Tagen, erste 7 Tage im neuen Monat | `js/sicherung_stufe.js` sicherungFaellig | Setzung |
 | Erste Zahl | ohne Miete (Gruppe „miete“) oder Löhne keine Euro-Zahl | `js/laden_zahlen.js` ersteZahlFehlt | Regel (Gremium 28.10.2026) |
 

@@ -258,6 +258,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.betrieb.hinweise = hinweiseSauber(s.betrieb.hinweise);
   if (s.betrieb.rechtsform !== undefined && !["einzel", "gbr", "gmbh", "ug", "kg_ohg", "unbekannt"].includes(s.betrieb.rechtsform)) delete s.betrieb.rechtsform;
   if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage (18.10.2026): Bundesland des Ladens (optional)
+  if (s.betrieb.ruhezeiten !== undefined && !(Array.isArray(s.betrieb.ruhezeiten) && s.betrieb.ruhezeiten.every((x) => Array.isArray(x) && x.length === 2 && x.every((y) => typeof y === "number" && y >= 0 && y < 24)))) delete s.betrieb.ruhezeiten; // K4
   if (s.betrieb.feiertagOffen !== false) delete s.betrieb.feiertagOffen;      // Standard: an Feiertagen offen wie an einem normalen Wochentag
   if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
   if (typeof s.verkauf.warenQuote !== "number" || !(s.verkauf.warenQuote >= 0 && s.verkauf.warenQuote < 0.9)) s.verkauf.warenQuote = null;
@@ -298,7 +299,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
       ...(typeof n.ersetzt === "string" || n.ersetzt === true ? { ersetzt: n.ersetzt } : {}) }));
   s.personen = mitId(s.personen).map((p) => ({ id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt, ...(typeof p.ausgeschieden === "string" ? { ausgeschieden: p.ausgeschieden } : {}), ...(typeof p.stundenlohn === "number" && p.stundenlohn > 0 ? { stundenlohn: p.stundenlohn } : {}), ...(p.lohnArt === "minijob" || p.lohnArt === "angestellt" ? { lohnArt: p.lohnArt } : {}), ...(p.lohnModell === "monat" || p.lohnModell === "stunde" ? { lohnModell: p.lohnModell } : {}), ...(typeof p.monatsBrutto === "number" && p.monatsBrutto > 0 ? { monatsBrutto: p.monatsBrutto } : {}) })); // 27.10.2026: Stundenlohn für „Mitarbeiter heute“ // W2-H: Datum „ausgeschieden“ bleibt
   s.kuehl.takt = s.kuehl.takt === 2 ? 2 : 1; if (typeof s.kuehl.seit !== "string") s.kuehl.seit = null; s.kuehl.ruhetage = (Array.isArray(s.kuehl.ruhetage) ? s.kuehl.ruhetage : []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
-  s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => ({ id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm"].includes(k.art) ? k.art : "kuehl",
+  s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => ({ id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm", "eis"].includes(k.art) ? k.art : "kuehl",
     min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, reihe: Number.isFinite(k.reihe) ? k.reihe : i, archiviert: !!k.archiviert, ...(typeof k.ware === "string" ? { ware: k.ware } : {}),
     ...(["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"].includes(k.typ) ? { typ: k.typ } : {}) })); // Paket 6 (17.10.2026): Typ-Schlüssel bleibt erhalten (Anzeige-Name folgt der Sprache) // W2-H: Datenstelle Grenze je Ware
   s.rundgaenge = mitId(s.rundgaenge).filter((r) => typeof r.datum === "string").map((r) => ({ ...r, messungen: Array.isArray(r.messungen) ? r.messungen.filter(istObjekt) : [] }));

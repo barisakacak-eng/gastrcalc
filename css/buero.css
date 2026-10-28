@@ -221,3 +221,6 @@ button.b-zeile:active { background: var(--papier); }
 .b-mindestlohn .knopf { align-self: flex-start; min-height: 44px; }
 .b-mindestlohn .b-quelle { font-size: calc(12rem / 17); }
 .b-ausblick { display: block; font-size: calc(11rem / 17); font-weight: 400; color: var(--tinte-weich); }
+/* K4 (28.10.2026): Stoßzeiten je Laden */
+.b-ruhezeiten .ruhezeile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.b-ruhezeiten .ruhezeile input[type="time"] { min-height: 44px; width: 7.5em; }

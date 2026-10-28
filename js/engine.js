@@ -745,19 +745,25 @@ export function ladenUebersicht(stand) {
 
 // ---------- Etappe 4: Kühlkontrolle ----------
 // Grenzen legt der Betrieb fest (Art. 5 Abs. 2 c VO (EG) 852/2004); die App gibt nur Anhaltspunkte als Text. Ohne Grenze keine Kontrolle.
-export const KUEHL_ARTEN = ["kuehl", "tk", "warm"];
+export const KUEHL_ARTEN = ["kuehl", "tk", "warm", "eis"]; // eis = Speiseeis-Theke (K3, 28.10.2026)
 export const MASSNAHMEN = ["tuer", "eingeraeumt", "eingestellt", "umgeraeumt", "stecker", "chef", "techniker", "weggeworfen"];
 export const NICHT_GEMESSEN = ["geschlossen", "geraetAus", "leer"];
 export const NACHKONTROLLE_STUNDEN = { h1: 1, h2: 2, naechste: null };
 export const WOCHENTAGE = [0, 1, 2, 3, 4, 5, 6]; // 0 = Sonntag (JavaScript)
 
-// Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt ein Standard-Anhaltswert
-// (Kühlung ≤ 7 °C, Tiefkühlung ≤ −18 °C, Warmhalten ≥ 65 °C) – kein Gesetzeswert für jede Ware (Welle 2, p03 H6 / p05 K1). Eigene Werte überschreiben ihn; das Blatt sagt, welcher galt.
-export const GRENZEN_STANDARD = { kuehl: { min: null, max: 7 }, tk: { min: null, max: -18 }, warm: { min: 65, max: null } };
-// W2-H: Grenze je Ware (k.ware, z. B. "hack", "fisch", "gefluegel") – nur die Datenstelle. Werte kommen erst hinein, wenn sie mit
-// Fundstelle belegt und von Baris freigegeben sind (Bauvertrag Welle 2: keine Grenzwerte erfinden). Bis dahin: leer → Standard der Art,
-// und grenzenVon meldet wareOhneGrenze, damit das Amt-Blatt „Grenze für die Ware nicht festgelegt“ schreiben kann.
-export const GRENZEN_WARE = {}; // Form: { hack: { min: null, max: <belegt> }, … }
+// Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt ein Standard-Anhaltswert; eigene Werte überschreiben ihn,
+// das Blatt sagt, welcher galt. Korrekturauftrag K1/K2/K3 (Abnahme Welle 0, 28.10.2026) – Quellen, Abruf 28.10.2026:
+//   kuehl ≤ 7 °C: LAVES-Merkblatt MFB 08-002-00 „Lagertemperaturen für Lebensmittel“, Stand 03.08.2022 (Bezug VO (EG) 853/2004, Tier-LMHV),
+//     https://www.laves.niedersachsen.de/download/209574/Merkblatt_Lagertemperaturen_fuer_Lebensmittel.pdf (Datenjahr 2022)
+//   tk ≤ −18 °C: § 2 Abs. 4 TLMV („ständig bei minus 18 Grad C oder tiefer“, kurze Toleranz bis 3 Grad), https://www.gesetze-im-internet.de/tlmv/__2.html
+//   warm ≥ 60 °C: BfR-Stellungnahme 037/2020 vom 27.08.2020 (mindestens 60 °C an allen Stellen; die frühere 65 °C-Empfehlung von 2008 ist abgelöst),
+//     https://www.bfr.bund.de/cm/343/schutz-vor-lebensmittelbedingten-erkrankungen-beim-heisshalten-von-speisen.pdf
+//   eis ≤ −10 °C: Speiseeis zum Ausportionieren, LAVES-Merkblatt (wie oben). Eine Eiswürfelmaschine ist keine Kühlstelle (Putzplan, Gerät „eismaschine“).
+export const GRENZEN_STANDARD = { kuehl: { min: null, max: 7 }, tk: { min: null, max: -18 }, warm: { min: 60, max: null }, eis: { min: null, max: -10 } };
+export const GRENZEN_QUELLE = { kuehl: "LAVES-Merkblatt 2022", tk: "§ 2 Abs. 4 TLMV", warm: "BfR 037/2020", eis: "LAVES-Merkblatt 2022" };
+// Grenze je Ware (k.ware) – LAVES-Merkblatt wie oben: Geflügel ≤ 4 °C, frischer Fisch ≤ 2 °C, Hackfleisch in SB-Verpackung ≤ 2 °C.
+// Loses Hackfleisch: Merkblatt nicht eindeutig → kein Eintrag (grenzenVon meldet dann wareOhneGrenze, das Amt-Blatt schreibt „nicht festgelegt“).
+export const GRENZEN_WARE = { gefluegel: { min: null, max: 4 }, fisch: { min: null, max: 2 }, hack_sb: { min: null, max: 2 } };
 export function grenzenVon(k) {
   const wareG = k.ware && GRENZEN_WARE[k.ware] ? GRENZEN_WARE[k.ware] : null;
   const st = wareG || GRENZEN_STANDARD[k.art] || GRENZEN_STANDARD.kuehl;

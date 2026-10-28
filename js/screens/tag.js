@@ -2,7 +2,7 @@
 // Die Eingabe selbst liegt seit Etappe 5 in muell.js (Müll) und umsatz.js (Tagesumsatz). Einträge werden nur angehängt; Rücknahme = storniert.
 import { t } from "../i18n.js";
 import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3 (16.10.2026), M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
-import { eintragWert, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SVEV_2026, sachbezugWert, schwundEintraege } from "../engine.js"; // Trennung 2 (17.10.2026): Sachbezug, Liste und Wert aus dem Rechenwerk
+import { eintragWert, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SVEV_2026, svevAm, sachbezugWert, schwundEintraege } from "../engine.js"; // Trennung 2 (17.10.2026): Sachbezug, Liste und Wert aus dem Rechenwerk
 import { nav } from "./nav.js";
 import { muellStornieren } from "../muell.js"; // Trennung (17.10.2026): Storno über das Rechenwerk
 import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
@@ -19,7 +19,7 @@ export { eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz 
 function eintragBetrag(e, stand) {
   const waren = eintragWert(e, stand); // Trennung 2 (17.10.2026)
   if (e.wertOffen && waren === null && !e.storniert) return `<span class="packung"><input inputmode="decimal" data-f="wert:${esc(e.id)}" placeholder="${esc(t("tag.wertNachtragen"))}" aria-label="${esc(t("tag.wertNachtragen"))}"><span class="einheit">€</span></span>`;
-  if (e.art === "personal") return `<b>${fmtEuro(sachbezugWert(e.menge, e.mahlzeit), { dezimal: 2 })}</b><small class="marke">${esc(t("tag.sachbezug"))}${waren !== null ? ` · ${esc(t("tag.warenKurz"))} ${fmtEuro(waren, { dezimal: 2 })}` : ""}</small>`;
+  if (e.art === "personal") return `<b>${fmtEuro(sachbezugWert(e.menge, e.mahlzeit, e.datum), { dezimal: 2 })}</b><small class="marke">${esc(t("tag.sachbezug"))}${waren !== null ? ` · ${esc(t("tag.warenKurz"))} ${fmtEuro(waren, { dezimal: 2 })}` : ""}</small>`;
   return `<b>${waren === null ? `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>` : fmtEuro(waren, { dezimal: 2 })}</b>`;
 }
 
@@ -48,7 +48,7 @@ export function listenView(stand) {
         <div class="summenzeile"><span>${esc(t("listen.personalAnzahl"))}</span><span class="wert">${fmtZahl(a.personal.anzahl)}</span></div>
         <div class="summenzeile"><span>${esc(t("listen.personalSvev"))}</span><span class="wert">${fmtEuro(a.personal.svev, { dezimal: 2 })}</span></div>
         <div class="summenzeile"><span>${esc(t("listen.personalWaren"))}</span><span class="wert">${fmtEuro(a.personal.waren, { dezimal: 2 })}</span></div>
-        <span class="marke">${esc(t("listen.svevStand", fmtEuro(SVEV_2026.tag, { dezimal: 2 })))}</span>
+        <span class="marke">${(() => { const sv = svevAm(heuteGeschaeft()); return esc(t("listen.svevStand", fmtEuro(sv.tag, { dezimal: 2 }), heuteGeschaeft().slice(0, 4) + (sv.geplant ? " ≈" : ""), fmtEuro(sv.fruehstueck, { dezimal: 2 }), fmtEuro(sv.mittag, { dezimal: 2 }))); })()}</span>
         ${a.eigen.anzahl ? `<div class="summenzeile"><span>${esc(t("listen.eigen"))}</span><span class="wert">${fmtZahl(a.eigen.anzahl)} · ${fmtEuro(a.eigen.waren, { dezimal: 2 })}</span></div><span class="marke">${esc(t("listen.eigenHinweis"))}</span>` : ""}
       </div>
       <div class="karte">

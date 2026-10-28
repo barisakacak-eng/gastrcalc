@@ -6,7 +6,7 @@ import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache, datumText } from "../i
 import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform (23.10.2026)
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
-import { jetztDran } from "../offen.js";
+import { jetztDran, ruhezeitenVon } from "../offen.js";
 import { zielAttr } from "./bausteine.js"; // Trennung (17.10.2026): ein zielAttr für alle Bildschirme
 import { zaehler, warenQuote, zaehlerVerlauf } from "../zaehler.js"; // Trennung (17.10.2026): zaehlerVerlauf aus dem Rechenwerk
 import { heuteZiel, heuteKachelZahlen } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026): Zahlen der Zielkarte und Kacheln
@@ -268,6 +268,9 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <div class="zeile rechtsform"><div class="oben"><div class="name">${esc(t("rechtsform.titel"))}<small>${esc(t("rechtsform.hinweis"))}</small></div></div>
           <div class="kacheln rechtsformwahl" role="group" aria-label="${esc(t("rechtsform.titel"))}">${RECHTSFORMEN.map((r) => `<button type="button" class="kachel ${rechtsform(stand) === r ? "an" : ""}" data-a="rechtsform" data-wert="${r}" aria-pressed="${rechtsform(stand) === r}"><b>${esc(t("rechtsform.namen." + r))}</b></button>`).join("")}</div></div>
       </div>
+      ${(() => { const uhr = (h) => (typeof h === "number" ? `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}` : ""); const rz = ruhezeitenVon(stand); const r = [0, 1].map((i) => rz[i] || [null, null]);
+        return `<div class="karte b-ruhezeiten"><h2>${esc(t("einstellungen.ruhe.titel"))}</h2><p class="hinweis">${esc(t("einstellungen.ruhe.hinweis"))}</p>
+        ${r.slice(0, 2).map(([v, b], i) => `<div class="feldzeile ruhezeile"><label for="ruhe-${i}-von">${esc(t("einstellungen.ruhe.von"))}</label><input type="time" id="ruhe-${i}-von" class="textfeld" data-f="ruhe-${i}-von" value="${uhr(v)}"><label for="ruhe-${i}-bis">${esc(t("einstellungen.ruhe.bis"))}</label><input type="time" id="ruhe-${i}-bis" class="textfeld" data-f="ruhe-${i}-bis" value="${uhr(b)}"></div>`).join("")}</div>`; })()}
       <div class="karte">
         <h2>${esc(t("einstellungen.sprache"))}</h2>
         <div class="chips">${SPRACHEN.map((s) => `<button type="button" class="chip ${sprache() === s ? "an" : ""}" data-a="sprache" data-wert="${s}" lang="${s}">${esc(spracheName(s))}</button>`).join("")}</div>

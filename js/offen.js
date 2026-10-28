@@ -23,7 +23,10 @@ export const zaehlerImTakt = (stand, H) => imTakt(stand, "zaehler:" + H, () => z
 export const einrichtungImTakt = (stand, wurzel) => imTakt(stand, "einrichtung", () => einrichtungStand(stand, wurzel));
 
 // Hauptzeiten im Laden: da stört keine Erinnerung, die warten kann (Sicherung).
-export const istHauptzeit = (h) => (h >= 11.5 && h < 14) || (h >= 17.5 && h < 20.5);
+// K4 (Abnahme Welle 0, 28.10.2026): je Laden einstellbar (stand.betrieb.ruhezeiten = [[von, bis], …] in Stunden), Standard wie bisher.
+export const RUHEZEITEN_STANDARD = [[11.5, 14], [17.5, 20.5]];
+export const ruhezeitenVon = (stand) => (Array.isArray(stand?.betrieb?.ruhezeiten) ? stand.betrieb.ruhezeiten : RUHEZEITEN_STANDARD);
+export const istHauptzeit = (h, stand = null) => ruhezeitenVon(stand).some(([v, b]) => (v <= b ? h >= v && h < b : h >= v || h < b));
 const stunde = (d) => d.getHours() + d.getMinutes() / 60;
 
 // Trennung (17.10.2026): zielAttr (ziel → data-Attribute) wohnt jetzt bei den Anzeige-Bausteinen (js/screens/bausteine.js).
@@ -52,11 +55,11 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
     if (ks.heuteGemessen < ks.stellen && (h < 15 || h >= 17) && !ruhetageAm(stand, H).includes(wochentag(H))) return { id: "rundgang", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgang"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } }; // Schwadron 18.10.2026, N2: am Ruhetag kein Rundgang
   }
   if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, H); if (pg.ueberfaellig) return { id: "putzen", ton: "normal", symbol: "spray-can", titel: t("heute.dran.putzen", pg.ueberfaellig), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "putzplan" } }; }
-  if (!istHauptzeit(h) && sicherungStufe(wurzel, jetzt.getTime())?.stufe === "rot") return { id: "sicherung", ton: "normal", symbol: "package", titel: t("heute.dran.sicherung"), knopf: t("heute.dran.sichern"), ziel: { aktion: "export" } };
+  if (!istHauptzeit(h, stand) && sicherungStufe(wurzel, jetzt.getTime())?.stufe === "rot") return { id: "sicherung", ton: "normal", symbol: "package", titel: t("heute.dran.sicherung"), knopf: t("heute.dran.sichern"), ziel: { aktion: "export" } };
   if ((h >= 18 || h < 4) && !abschlussVon(stand, heuteGeschaeft(jetzt))) return { id: "abschluss", ton: "dunkel", symbol: "check", titel: t("heute.dran.abschluss"), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "abschluss" } };
   // 6. (Baris 19.10.2026) Erst mit echten Einkaufspreisen und eigenen Rezepten rechnet die App genau – darum bleibt die Erinnerung
   //    im Laden, bis beides erledigt ist (nur außerhalb der Hauptzeiten, nie im Beispiel-Laden).
-  if (!stand.beispiel && stand.phase === "app" && !istHauptzeit(h)) {
+  if (!stand.beispiel && stand.phase === "app" && !istHauptzeit(h, stand)) {
     const e = einrichtungImTakt(stand, wurzel); const schritt = (id) => e.schritte.find((x) => x.id === id);
     // Selbst gemacht zuerst: den Ansatz kennt der Wirt auswendig, dafür braucht es keine Rechnung (Baris 19.10.2026: so früh wie möglich)
     const so = schritt("rezepte")?.selbstOffen || [];
