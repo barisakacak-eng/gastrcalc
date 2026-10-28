@@ -51,22 +51,11 @@ test("Büro-Chip „Rechtsform eintragen“ nur, solange sie unbekannt ist", () 
   rechtsformSetzen(s, "einzel"); assert.ok(!offenImBuero(s, w).some((o) => o.id === "rechtsform"));
 });
 
-// Rechtsform-Schritt (24.10.2026): genauer Weg hat den Kachel-Bildschirm nach „betrieb“, der Schnellweg bleibt bei 6 Bildschirmen
+// 28.10.2026 (Einrichtung kürzen): die Rechtsform steht nicht mehr in der Einrichtung – weder im genauen Weg noch im Schnellweg.
+// Auswahl im Büro (Einstellungen) und die Erinnerung „Rechtsform fehlt“ (offenImBuero, oben) bleiben; weitere Prüfungen in tests/einrichtung_kurz.test.mjs.
 import { SCHRITTE, SCHNELL } from "../js/screens/onboarding.js";
-test("Rechtsform ist Schritt im genauen Weg, Schnellweg bleibt bei 6", () => {
-  const ids = SCHRITTE.map((s) => s.id);
-  assert.equal(ids[ids.indexOf("betrieb") + 1], "rechtsform");
-  assert.equal(SCHNELL.length, 7); // 27.10.2026: + Schloss (Code/Face ID)
+test("Rechtsform ist kein Schritt der Einrichtung mehr (genauer Weg und Schnellweg)", () => {
+  assert.ok(!SCHRITTE.some((s) => s.id === "rechtsform"));
   assert.ok(!SCHNELL.some((s) => s.id === "rechtsform"));
-});
-test("Rechtsform-Schritt: „Weiß ich nicht“ setzt den Wert und geht weiter", () => {
-  const schritt = SCHRITTE.find((s) => s.id === "rechtsform");
-  const stand = { betrieb: {} }; let weiter = null;
-  assert.equal(schritt.fuss(stand), "", "ohne Wahl kein Weiter-Knopf");
-  schritt.aktion("rechtsform", { dataset: { wert: "unbekannt" } }, stand, { weiter: (a) => { weiter = a; } });
-  assert.equal(stand.betrieb.rechtsform, "unbekannt"); assert.equal(weiter, "uebersprungen");
-  schritt.aktion("rechtsform", { dataset: { wert: "gmbh" } }, stand, { weiter: () => { weiter = "nein"; } });
-  assert.equal(stand.betrieb.rechtsform, "gmbh"); assert.equal(weiter, "uebersprungen", "bei echter Wahl kein automatisches Weiter");
-  assert.ok(schritt.fuss(stand).includes('data-a="weiter"'));
-  assert.ok(schritt.view(stand).includes('class="kachel an"'));
+  assert.equal(SCHNELL.length, 7); // 27.10.2026: + Schloss (Code/Face ID)
 });

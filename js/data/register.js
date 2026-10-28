@@ -18,6 +18,17 @@ export const PROFILE = {
   anders: { kern: [], oft: [] }, // die Karte bestimmt das Profil
 };
 
+// Engere Vorlagen-Auswahl (28.10.2026): Der Bereich „Beilagen“ und „Salate“ ist ein gemeinsamer Katalog für alle Läden (Spätzle, Kartoffelknödel, Poke Bowl …).
+// In einem Döner-Laden sollen im Kern nur Gerichte stehen, die dort wirklich vorkommen. Alles andere bleibt auffindbar: unter „Weitere“ und über die Suche.
+// Gilt nur für die hier genannte Laden-Art und den hier genannten Bereich; alle anderen Läden sehen die Bereiche unverändert.
+export const VORLAGEN_ENGE = {
+  doener: {
+    beilagen: ["Pommes frites (Beilage)", "Reis (Beilage)"],
+    salat: ["Gemischter Salat klein", "Griechischer Salat", "Caesar Salad", "Thunfischsalat"],
+    pizza: ["Pizza Margherita", "Pizza Salami", "Pizza Prosciutto", "Pizza Funghi", "Pizza Tonno", "Pizza Quattro Formaggi"], // „Auch oft dabei“: Pizza ja, Pasta und Lasagne nicht
+  },
+};
+
 // Bereiche, die bewusst in keinem Nischen-Profil stehen (nur „Etwas anderes“ oder genaue Einrichtung mit anderem Format).
 export const NUR_ANDERE = ["bar", "bier", "eis"];
 

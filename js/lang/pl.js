@@ -1089,7 +1089,7 @@ export default {
     geld: "Koszty w miesiącu", miete: "Czynsz", personal: "Personel", eigen: "Twoja pensja", strom: "Prąd (z VAT)",
     geldHilfe: "Wystarczy mniej więcej, można też zostawić puste. Rachunki sfotografujesz potem w biurze.",
     putzt: "Kto sprząta?", wer: { selbst: "My", firma: "Firma", beides: "Oba" }, firma: "Firma",
-    fertig: "Gotowe!", eingerichtet: "ustawione", los: "Zaczynamy", pin: "Ustaw PIN biura",
+    fertig: "Gotowe!", eingerichtet: "ustawione", los: "Zaczynamy", pin: "Ustaw kod biura",
     zeki: { schloss: "Ustaw kod. Wtedy tylko ty wejdziesz do biura.", hallo: "Cześć, szefie! Jestem Zeki.", rolle: "Pomagam ci – przy ladzie i w biurze.", "laden-schnell": "Jak nazywa się twój lokal? I co sprzedajesz?", "karte-foto": "Zrób zdjęcie karty. Odczytam dania i ceny.", "kuehl-schnell": "Jakie masz lodówki? Po prostu naciśnij plus.", geld: "Ile cię kosztuje lokal miesięcznie? Wystarczy w przybliżeniu.", fertig: "Super, szefie! Od teraz zawsze tu jestem." },
   },
   inventur: {
