@@ -61,7 +61,7 @@ export function wareView(stand, { datum, minutensatz = kalkulation(stand).minute
   // 2.5 Lieferanten
   const lv = lieferantenVergleich(stand).slice(0, 5);
   if (lv.length) karten.push(`<div class="karte wa-karte"><h2>${esc(t("gehirn.ware.lieferTitel"))}</h2>${lv.map((x) => `<div class="summenzeile"><span><b>${esc(x.ware)}</b><br><small>${esc(x.vergleichbar ? t("gehirn.ware.lieferSatz", x.guenstig.lieferant, x.teuer.lieferant) : t("gehirn.ware.lieferNicht"))}</small></span>
-    <span class="wert">${x.jahr !== null && x.jahr >= 1 ? esc(t("gehirn.ware.imJahr", fmtEuroGeschaetzt(x.jahr, true))) : "–"}</span></div>`).join("")}</div>`);
+    <span class="wert">${x.jahr !== null && x.jahr >= 1 ? esc(t("gehirn.ware.imJahr", fmtEuroGeschaetzt(x.jahr, true))) : "–"}</span></div>`).join("")}<small>${esc(t("gehirn.ware.lieferHinweis"))}</small></div>`);
   // 2.6 Selbst oder kaufen
   const selbst = (stand.artikel || []).filter((a) => a.herkunft === "selbst" && a.rezept);
   if (selbst.length) karten.push(`<div class="karte wa-karte"><h2>${esc(t("gehirn.ware.selbstTitel"))}</h2>${selbst.map((a) => { const r = selbstOderKaufen(stand, a.name, minutensatz);

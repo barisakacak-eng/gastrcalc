@@ -31,7 +31,7 @@ import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen,
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js";
 import { wareView, wareAktion, wareEingabe, wareZuruecksetzen } from "./screens/ware.js"; // Masterauftrag Welle 2
-import { portionView, portionOeffnen, portionAktion, portionZuruecksetzen } from "./screens/portion.js"; // Masterauftrag 2.1
+import { portionView, portionOeffnen, portionAktion, portionZuruecksetzen, portionEingabe } from "./screens/portion.js"; // Masterauftrag 2.1
 import { preisrundeView, preisrundeOeffnen, preisrundeAktion, preisrundeEingabe, preisrundeZuruecksetzen } from "./screens/preisrunde.js"; // Masterauftrag 1.2/1.3/1.6 // Paket 2: Zurücksetzer
 import { karteZuruecksetzen, rezeptDirektOeffnen } from "./screens/karte.js";
 import { naechstesRezept, rezeptFortschritt, waageFragen } from "./rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.3/7.4): Rezept in höchstens 2 Tipps // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
@@ -912,6 +912,7 @@ root.addEventListener("input", (ev) => {
   } else if (ansicht === "tafel") { // Menütafel (18.10.2026): Sprache der Tafel – speichern, Sprache laden, neu zeichnen
     const r = tafelEingabe(el.dataset.f, el.value, stand); if (!r) return;
     speichern(wurzel); ladeSprache(r.sprache).then(() => { if (ansicht === "tafel") zeichne(); }); return;
+  } else if (ansicht === "portion") { portionEingabe(el.dataset.f, el.value); return; // W2-K3: Zahl merken, Feld behält den Fokus
   } else if (ansicht === "ware") { // Welle 2: Entwurf; Zukaufpreis speichert sofort
     const r = wareEingabe(el.dataset.f, el.value, stand, el);
     if (r === "speichern") { speichern(wurzel); return; }

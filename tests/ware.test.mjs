@@ -91,3 +91,26 @@ test("2.3 Wochenzählung: Fleisch laut Rezept 41,6 kg, verbraucht 45,5 kg → 3,
   assert.ok(r.verkaufTage > 0);
   { nah(z.ist, 45500, 1e-6); nah(z.erwartet, 41600, 1e-6); nah(z.diffWert, 39, 1e-6); assert.equal(z.ampel, "melden"); }
 });
+
+test("W2-K1: Schwund-Verdacht fließt in Zähler und Nutzen-Zähler – erst ab zwei Zählungen, nur „melden“, nie gemessen, nicht unter „gespart“", async () => {
+  const { nutzenStand } = await import("../js/nutzen.js"); const { schwundVerdacht } = await import("../js/ware.js");
+  const s = stand([{ ...art("Fleisch", 10), gebinde: { art: "packung" } }], [doener()]);
+  s.verkaeufe = [{ id: "v1", datum: "2026-10-22", gericht: "d", menge: 416, herkunft: "hand", storniert: false }];
+  s.wochenZaehlungen = [{ id: "w1", datum: "2026-10-21", zeitpunkt: "nach", posten: { Fleisch: 50 } }];
+  assert.equal(schwundVerdacht(s), null);
+  assert.equal(nutzenStand(s, "2026-10-28").posten.find((p) => p.art === "schwund").stand, "fehlt");
+  s.wochenZaehlungen.push({ id: "w2", datum: "2026-10-28", zeitpunkt: "vor", posten: { Fleisch: 4.5 } });
+  const v = schwundVerdacht(s); nah(v.euro, 39);
+  const { zaehler } = await import("../js/zaehler.js"); const { zaehlerMitSchwund } = await import("../js/ware.js");
+  s.kosten = []; s.tagesnotizen = []; nah(zaehlerMitSchwund(s, zaehler, { datum: "2026-10-28" }).schwundVerdacht.euro, 39);
+  const n = nutzenStand(s, "2026-10-28"); const p = n.posten.find((x) => x.art === "schwund");
+  nah(p.euro, 39); assert.equal(p.gemessen, false); assert.equal(p.verlust, true); assert.equal(n.geschaetzt, 0); assert.equal(n.summe, 0);
+  // knapp unter der Meldeschwelle (≈ 1,9 %): kein Posten-Betrag
+  s.wochenZaehlungen[1].posten.Fleisch = 7.5; assert.equal(schwundVerdacht(s).euro, 0);
+});
+
+test("W2-K4: Falafel zählt im Müll unter „Sonstiges“, nicht unter Fleisch", () => {
+  const s = stand([art("Falafelbällchen", 8, "fleisch")], [ger("f", "Falafel", 6, [{ name: "Falafelbällchen", menge: 120, einheit: "g" }], 20)]);
+  s.schwund = [{ id: "1", datum: "2026-10-27", art: "rohware", ref: { typ: "artikel", name: "Falafelbällchen" }, menge: 500, einheit: "g", storniert: false }];
+  assert.equal(muellRangliste(s, "2026-10-28").groesste.gruppe, "sonstiges");
+});

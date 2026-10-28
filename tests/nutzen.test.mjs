@@ -13,7 +13,7 @@ function laden() { const b = leererBetrieb(); b.betrieb = { name: "Test", format
 test("leerer Laden: kein Messbeginn, leer, Summe 0, vier Posten mit ehrlichem Stand", () => {
   const s = laden(); const z = nutzenStand(s, "2026-10-23");
   assert.equal(z.ab, null); assert.equal(z.leer, true); assert.equal(z.summe, 0); assert.equal(z.tage, 0);
-  assert.deepEqual(z.posten.map((p) => p.art), ["muell", "preis", "lager", "papier"]);
+  assert.deepEqual(z.posten.map((p) => p.art), ["muell", "preis", "lager", "papier", "schwund"]);
   for (const p of z.posten) { assert.equal(p.euro, null); assert.equal(p.gemessen, false); assert.ok(["fehlt", "laeuft"].includes(p.stand)); }
 });
 

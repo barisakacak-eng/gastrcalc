@@ -25,7 +25,7 @@ export function portionView(stand) {
       <button type="button" class="knopf glut" data-a="po-fertig">${esc(t("allgemein.fertig"))}</button></div>${nav("karte")}`;
   }
   return `<div class="inhalt po"><h1 class="frage">${esc(t("gehirn.portion.frage", mengenText(p.zutat), g.name, p.einheit))}</h1>
-    <div class="stepper gross"><button type="button" data-a="po-d" data-d="-1" aria-label="−">−</button><div class="wert">${esc(fmtZahl(p.wert))} ${esc(p.einheit)}</div><button type="button" data-a="po-d" data-d="1" aria-label="+">+</button></div>
+    <div class="stepper gross"><button type="button" data-a="po-d" data-d="-1" aria-label="−">−</button><label class="wert po-wert"><input type="text" inputmode="numeric" data-f="po-wert" value="${esc(String(p.wert))}" aria-label="${esc(t("gehirn.portion.pruefen"))}" autocomplete="off"><span>${esc(p.einheit)}</span></label><button type="button" data-a="po-d" data-d="1" aria-label="+">+</button></div>
     <button type="button" class="knopf glut" data-a="po-pruefen">${esc(t("gehirn.portion.pruefen"))}</button></div>${nav("karte")}`;
 }
 
@@ -35,4 +35,10 @@ export function portionAktion(name, el, stand, { datum } = {}) {
   if (name === "po-pruefen") { p.fertig = true; portionMessungSpeichern(stand, { datum, gericht: p.gid, zutat: p.zutat, soll: p.soll, ist: p.wert, einheit: p.einheit }); return { speichern: true }; }
   if (name === "po-fertig") { p = null; return { nav: "karte" }; }
   return null;
+}
+
+// W2-K3 (Abnahme Welle 2): Tipp auf die Zahl → Zahlenfeld, grammgenau wie die Waage. −/+ bleibt für den schnellen Weg.
+export function portionEingabe(feld, wert) {
+  if (feld !== "po-wert" || !p) return false;
+  const n = Number(String(wert).replace(",", ".")); if (Number.isFinite(n) && n >= 0 && n < 10000) p.wert = Math.round(n * 10) / 10; return true;
 }

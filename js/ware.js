@@ -3,7 +3,7 @@
 // (engine.mengenJeMonat), Müll-Journal (stand.schwund), Belege (stand.lieferungen), Bestellvorschlag (bestand.bestellVorschlag).
 // Euro-Zahlen sind Schätzungen (≈), sobald Mengen, Garverlust oder Preise geschätzt sind – jede Funktion liefert dafür „geschaetzt“.
 import { mengenJeMonat, preisJeBasis, preisGeschaetzt, mengeInArtikelBasis, rohmengeFuer, garverlustAnteil, eintragWert, SCHWUND_ARTEN, zwischenpreis } from "./engine.js";
-import { bedarfGericht, sollVerbrauch } from "./verkauf.js";
+import { bedarfGericht, sollVerbrauch, abgleichInventur } from "./verkauf.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 
 const idxVon = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
@@ -59,7 +59,7 @@ export function aArtikel(stand) {
 // ---------- 2.4 Müll-Rangliste in Euro ----------
 // Woche (7 Tage bis einschließlich datum) nach Gruppe. Gericht-Einträge werden nach dem Warenwert ihrer Zutaten auf die Gruppen verteilt.
 export const MUELL_GRUPPEN = { fleisch: "fleisch", fisch: "fleisch", teig: "brot", gemuese: "salat", sauce: "sosse" }; // Rest → „sonstiges“
-const gruppeVon = (a) => MUELL_GRUPPEN[a?.gruppe] || "sonstiges";
+const gruppeVon = (a) => (/falafel/i.test(a?.name || "") ? "sonstiges" : MUELL_GRUPPEN[a?.gruppe] || "sonstiges"); // W2-K4: Falafel ist kein Fleisch (Katalog-Gruppe bleibt für Garverlust und Steuer)
 export function muellRangliste(stand, datum) {
   const von = minusTage(datum, 6); const idx = idxVon(stand); const gr = { fleisch: 0, brot: 0, salat: 0, sosse: 0, sonstiges: 0 }; let summe = 0, ohneWert = 0;
   for (const e of stand.schwund || []) {
@@ -175,3 +175,14 @@ export function hauptZutat(stand, g) {
   return best;
 }
 export const wochenZaehlungen = (stand) => (stand.wochenZaehlungen || []).filter((w) => w && !w.verworfen).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : 0));
+
+// W2-K1 (Abnahme Welle 2, 28.10.2026): Schwund-Verdacht aus den letzten zwei Wochenzählungen – nur Ampel „melden“, immer ≈.
+// null, solange es keine zwei Zählungen gibt. Fließt als eigener Posten in den Nutzen-Zähler und als Hinweisfeld in den Zähler.
+export function schwundVerdacht(stand) {
+  const wz = wochenZaehlungen(stand); if (wz.length < 2) return null;
+  const r = wochenSollIst(stand, wz[wz.length - 1], wz[wz.length - 2], abgleichInventur); if (!r || r.gleicherTag) return null;
+  return { von: r.von, bis: r.bis, euro: r.wert, zeilen: r.melden.map((z) => ({ name: z.name, euro: z.diffWert, punkte: z.punkte })), geschaetzt: true };
+}
+// Zähler mit Schwund-Verdacht (W2-K1): der Monats-Zähler bekommt das Feld dazu, ohne dass zaehler.js von ware.js abhängt (kein Ring der Module).
+// Nur Hinweis – keine Kosten, der echte Verbrauch steckt schon im Einkauf.
+export function zaehlerMitSchwund(stand, zaehlerFn, opts) { const z = zaehlerFn(stand, opts); let v = null; try { v = schwundVerdacht(stand); } catch { v = null; } return { ...z, schwundVerdacht: v }; }

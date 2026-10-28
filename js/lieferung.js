@@ -103,7 +103,7 @@ export function preiseUebernehmen(stand, lieferung) {
     a.gebinde = { art: gebindeArtApp(z.gebinde), zwischen: !stueckModus && z.inhaltAnzahl > 1 && z.inhaltMenge !== z.inhaltAnzahl ? { art: "packung", anzahl: z.inhaltAnzahl } : null };
     if (stueckModus) a.gebinde.stueck = { anzahl: z.inhaltAnzahl, gewicht: z.stueckGewicht };
     if (z.stueckGewicht > 0 && (stueckModus || z.inhaltEinheit === "stk")) a.stueckGewicht = z.stueckGewicht; // Gramm-Rezepte für Stück-Ware
-    a.preis = Math.round(preisNetto * 100) / 100; a.preisBasis = "netto"; a.status = "bekannt"; a.preisDatum = lieferung.datum; delete a.richtpreis;
+    a.preis = Math.round(preisNetto * 100) / 100; a.preisBasis = "netto"; a.preisQuelle = "beleg"; a.status = "bekannt"; a.preisDatum = lieferung.datum; delete a.richtpreis; // W2-K2: preisQuelle = Preis vom Beleg
     const neu = preisJeBasis(a);
     if (alt !== null && neu !== null && Math.abs(neu - alt) > 1e-9) aenderungen.push({ name: a.name, alt, neu, prozent: alt > 0 ? (neu - alt) / alt : null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
     else if (alt === null && neu !== null) aenderungen.push({ name: a.name, alt: null, neu, prozent: null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
@@ -116,7 +116,8 @@ export function preisAenderungen(stand, { tage = 30, datum = heute() } = {}) {
   const grenze = new Date(Date.parse(datum) - tage * 86400e3).toISOString().slice(0, 10);
   const out = [];
   for (const a of stand.artikel || []) {
-    const h = (a.preisHistorie || []).filter((x) => x.datum >= grenze && x.herkunft !== "richtpreis"); // Richtpreise (17.10.2026): Richtpreis → echter Preis ist keine Preisänderung
+    if (a.preisQuelle !== "beleg") continue; // W2-K2 (28.10.2026): nur Preise vom Beleg, keine Handkorrektur
+    const h = (a.preisHistorie || []).filter((x) => x.datum >= grenze && x.herkunft !== "richtpreis"); // alter Preis darf von Hand sein (Abgleich Beleg gegen deine Angabe) // Richtpreise (17.10.2026): Richtpreis → echter Preis ist keine Preisänderung
     if (!h.length || !(a.preisDatum >= grenze)) continue;
     const letzter = h[h.length - 1];
     const altBasis = inBasis(letzter.menge, letzter.einheit); if (!(altBasis > 0)) continue;

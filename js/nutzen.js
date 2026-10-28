@@ -4,6 +4,7 @@
 import { heuteGeschaeft } from "./util.js";
 import { eintragWert, SCHWUND_ARTEN } from "./engine.js";
 import { inventurenFertig, inventurWert } from "./inventur.js";
+import { schwundVerdacht } from "./ware.js"; // W2-K1
 
 export const AUSGANGSWERT_TAGE = 14; // Wochen 1–2 nach Messbeginn (Baris 21.10.2026)
 
@@ -75,10 +76,18 @@ export function postenPreis(stand) {
   return { art: "preis", euro: rund(Math.max(0, monat) * 12 / 52), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Woche bei gleicher Menge` };
 }
 
+// Posten Schwund (W2-K1, 28.10.2026): Euro aus der Wochenzählung, Ampel „melden“, ab der zweiten Zählung. Immer ≈ (Rezept und Verkäufe
+// sind Durchschnitte), nie „gemessen“: es ist ein Verdacht, kein belegter Verlust. Euro = je Woche (Zeitraum zwischen den Zählungen).
+export function postenSchwund(stand) {
+  let v = null; try { v = schwundVerdacht(stand); } catch { v = null; }
+  if (!v) return { art: "schwund", euro: null, gemessen: false, verlust: true, stand: "fehlt", quelle: "Noch keine zwei Wochenzählungen" };
+  return { art: "schwund", euro: rund(v.euro), gemessen: false, verlust: true, stand: "geschaetzt", quelle: `≈ Schwund-Verdacht ${v.von} bis ${v.bis}: ${v.zeilen.map((z) => z.name).join(", ") || "keiner"}` };
+}
+
 export function nutzenStand(stand, H = heuteGeschaeft()) {
   const ab = messbeginn(stand);
-  const posten = [postenMuell(stand, H, ab), postenPreis(stand), postenLager(stand), postenPapier(stand)];
-  const summe = rund(posten.filter((p) => p.gemessen && p.euro > 0).reduce((s, p) => s + p.euro, 0));
-  const geschaetzt = rund(posten.filter((p) => !p.gemessen && typeof p.euro === "number" && p.euro > 0).reduce((s, p) => s + p.euro, 0));
+  const posten = [postenMuell(stand, H, ab), postenPreis(stand), postenLager(stand), postenPapier(stand), postenSchwund(stand)];
+  const summe = rund(posten.filter((p) => p.gemessen && !p.verlust && p.euro > 0).reduce((s, p) => s + p.euro, 0));
+  const geschaetzt = rund(posten.filter((p) => !p.gemessen && !p.verlust && typeof p.euro === "number" && p.euro > 0).reduce((s, p) => s + p.euro, 0)); // W2-K1: Verlust-Verdacht ist keine Ersparnis
   return { ab, tage: ab ? tageZwischen(ab, H) + 1 : 0, leer: !posten.some((p) => p.gemessen), summe, geschaetzt, posten };
 }

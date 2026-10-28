@@ -5,10 +5,10 @@ import { preisDrift } from "../js/preisdrift.js";
 import { extraRechnen, buendelRechnen } from "../js/extras.js";
 const nah = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) <= eps, `${a} ≠ ${b}`);
 const art = (name, preisKg, hist) => ({ name, einheit: "g", preis: preisKg, preisBasis: "netto", packung: { menge: 1000, einheit: "g" }, gruppe: "fleisch",
-  preisDatum: "2026-10-01", preisHistorie: hist || [] });
+  preisDatum: "2026-10-01", preisQuelle: "beleg", preisHistorie: hist || [] });
 const ger = (id, name, preis, gramm, mengeTag, extra = {}) => ({ id, name, preis, klasse: "haupt", mengeTag, zutaten: [{ name: "Fleisch", menge: gramm, einheit: "g" }], ...extra });
 const stand = (artikel, gerichte) => ({ betrieb: { tageProWoche: 6, monate: 12 }, team: { lohnkosten: 0, eigenerLohn: 0, eigenerLohnStatus: "eigen" }, kosten: [], verkauf: {}, artikel, gerichte });
-const acht = [{ datum: "2026-10-01", preis: 8, menge: 1000, einheit: "g", basis: "netto" }];
+const acht = [{ datum: "2026-10-01", preis: 8, menge: 1000, einheit: "g", basis: "netto", herkunft: "beleg" }];
 
 test("1.4 Fleisch 8 → 10 €/kg, 100 g × 40 am Tag: +25 %, ≈ 208 € im Monat", () => {
   // Verbrauch 100 g × 40 × 6 × 52 / 12 = 104.000 g; Mehrpreis 0,002 €/g → 208 €
@@ -23,8 +23,8 @@ test("1.4 gerutscht: Preis 1,05 € deckt 0,80 € Ware, aber nicht 1,00 €", (
 });
 
 test("1.4 schweigt: älter als 3 Monate, unter 3 %, Richtpreis, kein Verlauf", () => {
-  const alt = [{ datum: "2026-07-01", preis: 8, menge: 1000, einheit: "g", basis: "netto" }];
-  const klein = [{ datum: "2026-10-01", preis: 9.8, menge: 1000, einheit: "g", basis: "netto" }];
+  const alt = [{ datum: "2026-07-01", preis: 8, menge: 1000, einheit: "g", basis: "netto", herkunft: "beleg" }];
+  const klein = [{ datum: "2026-10-01", preis: 9.8, menge: 1000, einheit: "g", basis: "netto", herkunft: "beleg" }];
   const rp = [{ datum: "2026-10-01", preis: 8, menge: 1000, einheit: "g", basis: "netto", herkunft: "richtpreis" }];
   for (const h of [alt, klein, rp, []]) assert.equal(preisDrift(stand([art("Fleisch", 10, h)], [ger("d", "Döner", 7.5, 100, 40)]), { datum: "2026-10-28" }).zutaten.length, 0);
 });
@@ -47,4 +47,16 @@ test("Burger-Test: „Cheeseburger“ bekommt die einfache Vorlage, nicht „Dop
   const { aehnlichkeit } = await import("../js/karte_lesen.js");
   assert.ok(aehnlichkeit("Cheeseburger", "Cheeseburger Classic") > aehnlichkeit("Cheeseburger", "Doppel-Cheeseburger"));
   assert.ok(aehnlichkeit("Double Cheeseburger", "Doppel-Cheeseburger") > aehnlichkeit("Double Cheeseburger", "Cheeseburger Classic"));
+});
+
+test("W2-K2: Handkorrektur von 8 auf 10 €/kg erzeugt keine Drift", async () => {
+  const { artikelFeldSetzen } = await import("../js/karte_daten.js").catch(() => ({}));
+  const a = { ...art("Fleisch", 8, []), preisQuelle: "beleg" };
+  const s = stand([a], [ger("d", "Döner", 7.5, 100, 40)]);
+  const { preisMerken } = await import("../js/engine.js");
+  preisMerken(a, "2026-10-10"); a.preis = 10; a.preisQuelle = "hand"; // so setzt karte_daten.js einen Preis von Hand
+  assert.equal(a.preisHistorie.at(-1).herkunft, "beleg");
+  assert.equal(preisDrift(s, { datum: "2026-10-28" }).zutaten.length, 0);
+  // derselbe Sprung vom Beleg zählt
+  a.preisQuelle = "beleg"; assert.equal(preisDrift(s, { datum: "2026-10-28" }).zutaten.length, 1);
 });

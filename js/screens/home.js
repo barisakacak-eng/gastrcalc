@@ -52,7 +52,7 @@ export function nutzenKarte(nutzen) {
   if (nutzen.leer && !nutzen.ab) return ""; // Baris 27.10.2026: „Ab erstem Müll-Eintrag“ entfällt – versteht niemand, kostet Wörter auf Heute
   if (nutzen.leer) return `<section class="karte h-nutzen h-nutzen-leer" aria-label="${esc(t("nutzen.titel"))}"><span data-t="nutzen.laueft">${esc(nutzen.ab ? t("nutzen.laueft", datumLesbar(nutzen.ab)) : t("nutzen.start"))}</span></section>`;
   const symbole = { muell: "trash-2", preis: "receipt", lager: "package", papier: "file-text" };
-  const geschaetzte = nutzen.posten.filter((p) => !p.gemessen && typeof p.euro === "number" && p.euro > 0);
+  const geschaetzte = nutzen.posten.filter((p) => !p.gemessen && !p.verlust && typeof p.euro === "number" && p.euro > 0); // W2-K1: Schwund-Verdacht steht nicht unter „gespart“
   return `<section class="karte h-nutzen ${nutzen.summe > 0 ? "h-nutzen-plus" : "h-nutzen-null"}" aria-label="${esc(t("nutzen.titel"))}" aria-description="${esc(nutzen.posten.filter((p) => p.gemessen).map((p) => p.quelle).join(" · "))}">
     <span class="h-nutzen-titel" data-t="nutzen.titel">${esc(t("nutzen.titel"))}</span>
     <b class="h-nutzen-summe">${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}</b>

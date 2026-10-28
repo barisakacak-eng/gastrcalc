@@ -80,7 +80,7 @@ function statusNeu(a) { a.status = preisJeBasis(a) === null ? "offen" : istRicht
 export function artikelFeldSetzen(stand, name, feld, wert, datum) {
   const a = artikel(stand, name); if (!a) return false;
   if (feld === "packung") { a.packung ??= { menge: null, einheit: a.einheit }; a.packung.menge = wert; }
-  if (feld === "preis") { if (wert !== a.preis) { preisMerken(a, datum); a.preis = wert; if (wert !== null) a.preisDatum = datum; } }
+  if (feld === "preis") { if (wert !== a.preis) { preisMerken(a, datum); a.preis = wert; a.preisQuelle = "hand"; if (wert !== null) a.preisDatum = datum; } } // W2-K2: Preis von Hand
   if (feld === "zwischen") { a.gebinde ??= { art: "packung", zwischen: null }; a.gebinde.zwischen = wert > 0 ? { art: a.gebinde.zwischen?.art || a.gebinde.zwischenArt || "beutel", anzahl: Math.round(wert) } : null; }
   // Gebinde in Stück (19.10.2026, Teil 2): „Karton 40 Stück à 250 g“ – Inhalt bleibt in Gramm (40 × 250 = 10 kg), das Stückgewicht merkt sich der Artikel
   if (feld === "stk-anzahl" || feld === "stk-gewicht") {

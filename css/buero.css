@@ -279,3 +279,5 @@ button.b-zeile:active { background: var(--papier); }
 .po-ergebnis.mehr .po-gross { color: var(--kupfer-dunkel); }
 .po-ergebnis.gut .po-gross { color: var(--salbei-tief); }
 .po-ergebnis p { margin: 0; font-size: 1.1rem; font-weight: 600; }
+.po-wert { display: inline-flex; align-items: baseline; gap: 4px; }
+.po-wert input { width: 4.2ch; font: inherit; text-align: end; border: 0; border-bottom: 2px solid var(--holz); background: transparent; color: inherit; padding: 0; }

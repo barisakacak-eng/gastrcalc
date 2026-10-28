@@ -18,7 +18,8 @@ const minusTage = (datum, n) => new Date(Date.parse(datum + "T12:00:00Z") - n * 
 
 // Preis je Basis, der am Tag `grenze` galt, oder null (keine Änderung seither, oder nur Richtpreise)
 function preisDamals(a, grenze) {
-  const h = (a.preisHistorie || []).filter((x) => x.herkunft !== "richtpreis" && typeof x.datum === "string" && x.datum >= grenze);
+  // W2-K2 (28.10.2026): nur Preise vom Beleg – eine Handkorrektur (Tippfehler) ist keine Preiserhöhung des Lieferanten
+  const h = (a.preisHistorie || []).filter((x) => x.herkunft === "beleg" && typeof x.datum === "string" && x.datum >= grenze);
   if (!h.length) return null;
   const x = h[0];
   return preisJeBasis({ ...a, preis: x.preis, packung: { menge: x.menge, einheit: x.einheit }, preisBasis: x.basis || "netto" });
@@ -31,7 +32,7 @@ export function preisDrift(stand, { datum, tage = DRIFT_TAGE } = {}) {
   const verbrauch = sollVerbrauch(stand, mengen).artikel;
   const zutaten = []; const damals = new Map();
   for (const a of stand.artikel || []) {
-    if (istRichtpreis(a)) continue;
+    if (istRichtpreis(a) || a.preisQuelle !== "beleg") continue; // W2-K2: heutiger Preis muss vom Beleg kommen
     const neu = preisJeBasis(a); const alt = preisDamals(a, grenze);
     if (!(neu > 0) || !(alt > 0)) continue;
     const prozent = (neu - alt) / alt;

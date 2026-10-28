@@ -289,7 +289,9 @@ export function preisMerken(artikel, datum) {
   artikel.preisHistorie ??= [];
   const letzter = artikel.preisHistorie[artikel.preisHistorie.length - 1];
   if (letzter && letzter.preis === artikel.preis && letzter.menge === artikel.packung.menge && letzter.einheit === artikel.packung.einheit) return;
-  artikel.preisHistorie.push({ datum, preis: artikel.preis, menge: artikel.packung.menge, einheit: artikel.packung.einheit, basis: artikel.preisBasis || "netto", ...(istRichtpreis(artikel) ? { herkunft: "richtpreis" } : {}) });
+  // W2-K2 (Abnahme Welle 2, 28.10.2026): herkunft des alten Preises – "richtpreis" | "beleg" | "hand" | "errechnet" (aus artikel.preisQuelle); alte Daten ohne Angabe bleiben ohne
+  const quelle = istRichtpreis(artikel) ? "richtpreis" : ["beleg", "hand", "errechnet"].includes(artikel.preisQuelle) ? artikel.preisQuelle : null;
+  artikel.preisHistorie.push({ datum, preis: artikel.preis, menge: artikel.packung.menge, einheit: artikel.packung.einheit, basis: artikel.preisBasis || "netto", ...(quelle ? { herkunft: quelle } : {}) });
   if (artikel.preisHistorie.length > 24) artikel.preisHistorie.splice(0, artikel.preisHistorie.length - 24);
 }
 
@@ -411,7 +413,7 @@ export function zwischenpreiseRechnen(stand) {
     const menge = a.rezept.ausbeute.menge, einheit = a.rezept.ausbeute.einheit;
     if (preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit) {
       if (typeof a.preis === "number" && preis !== null) preisMerken(a, heute());
-      a.preis = preis; a.packung = { menge, einheit }; a.preisBasis = "netto";
+      a.preis = preis; a.packung = { menge, einheit }; a.preisBasis = "netto"; a.preisQuelle = "errechnet"; // W2-K2
     }
     a.status = preis === null ? "offen" : "errechnet"; a.zwischenFehlt = z.fehlt;
     if (preis !== null && z.richtpreis) a.zwischenRichtpreis = true; else delete a.zwischenRichtpreis;
