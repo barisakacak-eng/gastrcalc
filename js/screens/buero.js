@@ -65,7 +65,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   const z = zaehlerImTakt(stand, heuteGeschaeft()); // W2-D; Paket 3, M7: Zähler nach Geschäftstag, Belehrungen/Ordner (H) nach Kalender
   const inv = inventurenFertig(stand).pop();
   const zeile = (ziel, symbol, titel, unter, wert = "") => `<button type="button" class="b-zeile" ${zielAttr(ziel)}><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</button>`;
-  const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}" title="${esc(t("gehirn.ausblick"))}"><small class="b-ausblick">${esc(t("gehirn.ausblick"))}</small> ${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
+  const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}" title="${esc(t("gehirn.ausblick"))}" aria-label="${esc(t("gehirn.ausblick"))}">${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   const codeAn = pinGesetzt(wurzel);
   // Entrümpelung Punkt 3 (19.10.2026, freigegeben 18.10.): 3 Ordner + 4 Bereiche statt 27 Einträge. Jeder Bereich zeigt nur seine „Uhrzeit“,
@@ -77,7 +77,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   // Masterauftrag „Gehirn“ 0.1 (28.10.2026): eine Wahrheit – oben steht dieselbe Zahl wie auf Heute; das Monatsergebnis ist „Ausblick“.
   const HG = heuteGeschaeft(); let hz = null; try { hz = heuteZiel(stand, z, HG); } catch { hz = null; }
   const hauptzahl = !hz ? "" : hz.fehlt
-    ? `<button type="button" class="karte b-hauptzahl" ${zielAttr(hz.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })}><small>${esc(t("nutzen.stufe.bisNull"))} · ${esc(monatName(HG))}</small><b>?</b><span class="b-hauptzahl-knopf">${esc(t("heute.fehlt." + hz.fehlt))}</span></button>`
+    ? `<button type="button" class="karte b-hauptzahl" ${zielAttr(hz.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} aria-label="${esc(t("nutzen.stufe.bisNull"))}"><b>?</b><span class="b-hauptzahl-knopf">${esc(t("heute.fehlt." + hz.fehlt))}</span></button>`
     : hz.zahl === null ? "" : `<button type="button" class="karte b-hauptzahl" data-a="nav" data-wert="umsatz"><small>${esc(t("nutzen.stufe." + hz.stufe))} · ${esc(monatName(HG))}</small><b class="zahl">${esc((hz.m.geschaetzt ? "≈ " : "") + (hz.stufe === "ueberZiel" ? "+" : "") + fmtEuro(hz.zahl))}</b></button>`;
   // Masterauftrag 1.1: Mindestlohn-Karte ≈ 3 Monate vorher bis 1 Monat danach, nur mit Wirkung
   let ml = null; try { ml = mindestlohnKarteZeigen(stand, HG); } catch { ml = null; }
