@@ -5,7 +5,7 @@ import { sym, SYMBOLE } from "../symbole.js";
 import { wareBildQuelle } from "../bilder.js"; // Einkaufspreise als Bilderwand (20.10.2026): dieselbe Fotozuordnung wie Müll und Inventur
 import { gerichtBild } from "./vergleich.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
-import { t, einheitLabel, artikelText, gerichtText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
+import { t, einheitLabel, artikelText, gerichtText, mengenText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heute } from "../util.js";
 import { KATALOG, WARENGRUPPEN, PRODUKT_INDEX, EINHEITEN } from "../data/katalog.js";
 import { vorlagenSortiert, zutatenSuchen, ladenArtVon } from "../profil.js";
@@ -120,7 +120,7 @@ function waageView(stand) {
   const chips = schnellwahl(f.menge, f.einheit);
   return `
     <p class="tipp">${esc(t("waage.schritt", waage.k + 1, waage.fragen.length))}</p>
-    <h1 class="frage">${esc(t("waage.frage", artikelText(f.name), g.name))}</h1>
+    <h1 class="frage">${esc(t("waage.frage", mengenText(f.name), g.name, f.einheit))}</h1>
     <p class="hinweis">${esc(t("waage.startwert", `${fmtZahl(f.menge)} ${einheitLabel(f.einheit)}`))}</p>
     <div class="stepper gross"><button type="button" data-a="waage-d" data-d="-1" aria-label="−">−</button><div class="wert">${esc(fmtZahl(waage.wert))} ${esc(einheitLabel(f.einheit))}</div><button type="button" data-a="waage-d" data-d="1" aria-label="+">+</button></div>
     <div class="chips">${chips.map((c) => `<button type="button" class="chip ${c === waage.wert ? "an" : ""}" data-a="waage-chip" data-wert="${c}">${esc(fmtZahl(c))} ${esc(einheitLabel(f.einheit))}</button>`).join("")}</div>
@@ -215,7 +215,7 @@ export const rezepte = {
         if (name === "waage-ok") {
           const geld = geldSatz(stand, f.name, f.menge, waage.wert, f.einheit);
           const r = familieAnpassen(stand, { gerichtId: g.id, zutat: f.name, wert: waage.wert, datum: heute() });
-          waage.meldungen.push(t("waage.gelernt", artikelText(f.name), r.geaendert.length + 1));
+          waage.meldungen.push(t("waage.gelernt", mengenText(f.name), r.geaendert.length + 1));
           if (geld !== null && Math.abs(geld) >= 0.01) waage.meldungen.push(t(geld > 0 ? "waage.geldMehr" : "waage.geldWeniger", fmtEuro(Math.abs(geld), { dezimal: 2 }), g.name));
         }
         waage.k += 1;

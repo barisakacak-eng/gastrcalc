@@ -162,7 +162,10 @@ export function preisAnzeige(x) {
 
 // Trennung 2 (17.10.2026): Belegzeilen nach dem Zerlegen vorbereiten (vorher in js/screens/beleg.js, Handlung „beleg-zerlegen“).
 // (1) Trifft ein Artikel mehrere Zeilen, ist die Zuordnung unsicher: alle diese Zeilen werden gefragt (bekannt → vorschlag).
-// (2) Preissprung über 40 %: Rückfrage statt Durchwinken. Gibt neue Zeilen-Kopien zurück, der Beleg bleibt unverändert.
+// (2) Preissprung über PREISSPRUNG_AB: Rückfrage statt Durchwinken. Masterauftrag „Gehirn“ 1.4 (28.10.2026): von 40 % auf ≈ 10 % gesenkt
+// (Setzung) – schon 10 % mehr beim Fleisch kosten einen Imbiss im Monat spürbar Geld; der Chef soll es sehen, nicht nur Tippfehler.
+// Gibt neue Zeilen-Kopien zurück, der Beleg bleibt unverändert.
+export const PREISSPRUNG_AB = 0.10;
 export function belegZeilenVorbereiten(stand, beleg) {
   const zeilen = beleg.zeilen.map((z) => ({ ...z }));
   const treffer = {}; for (const z of zeilen) if (z.bekannt) treffer[z.bekannt] = (treffer[z.bekannt] || 0) + 1;
@@ -172,7 +175,7 @@ export function belegZeilenVorbereiten(stand, beleg) {
   for (const z of zeilen) {
     if (!z.bekannt || z.frage) continue;
     const sp = preisSprung(stand, z, basis);
-    if (sp && Math.abs(sp.prozent) > 0.4) z.frage = { art: "preis", text: t("beleg.preisSprungText", z.bekannt, fmtEuro(sp.alt * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtEuro(sp.neu * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtZahl(sp.prozent * 100, 0)), optionen: [{ text: t("beleg.uebernehmen"), wert: {} }] };
+    if (sp && Math.abs(sp.prozent) > PREISSPRUNG_AB) z.frage = { art: "preis", text: t("beleg.preisSprungText", z.bekannt, fmtEuro(sp.alt * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtEuro(sp.neu * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtZahl(sp.prozent * 100, 0)), optionen: [{ text: t("beleg.uebernehmen"), wert: {} }] };
   }
   return zeilen;
 }

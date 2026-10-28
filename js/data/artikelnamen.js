@@ -589,6 +589,21 @@ Object.assign(ARTIKELNAMEN, {
   }
 });
 
+// Mengenfrage (Baris 28.10.2026: „Wie viel Dönerspieß kommt in deinen Döner“ ist falsch – in den Döner kommt das Fleisch, nicht der Spieß):
+// Wort für das, was wirklich in die Portion kommt. Fehlt ein Eintrag, gilt der Anzeigename ohne Zusatz in Klammern bzw. hinter „/“.
+export const MENGEN_NAMEN = {
+  "Dönerspieß Kalb/Pute": { de: "Dönerfleisch", tr: "döner eti", en: "döner meat" },
+  "Hähnchenspieß": { de: "Hähnchenfleisch", tr: "tavuk döner eti", en: "chicken döner meat" },
+  "Dönerbrot / Fladen": { de: "Dönerbrot", tr: "döner ekmeği", en: "döner bread" },
+  "Hirtenkäse / Feta": { de: "Feta", tr: "beyaz peynir", en: "feta" },
+};
+export function mengenName(name, sprache) {
+  const e = MENGEN_NAMEN[name]; if (e) return e[sprache] || e.en || e.de;
+  const n = String(artikelAnzeige(name, sprache) || "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s*\/.*$/, "").trim() || name;
+  // Mitten im Satz klein (außer Deutsch und Abkürzungen wie „BBQ“): „kaç gram domates“, „grams of tomatoes“
+  if (!sprache || sprache === "de" || !/^\p{Lu}\p{Ll}/u.test(n)) return n;
+  return n.charAt(0).toLocaleLowerCase(sprache) + n.slice(1);
+}
 export function artikelAnzeige(name, sprache) {
   if (!name || !sprache || sprache === "de") return name;
   const e = ARTIKELNAMEN[name] || MENUE_GERICHTNAMEN[name];
