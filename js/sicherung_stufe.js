@@ -9,6 +9,20 @@ export function sicherungStufe(wurzel, jetzt = Date.now()) {
   return { stufe: tage === null ? (n >= 5 ? "rot" : null) : tage >= 7 ? "rot" : (tage >= 3 || neu >= 20) ? "gelb" : null, tage, neu, n };
 }
 
+// Sicherung Stufe 1 (Masterauftrag „Gehirn“ 0.3, 28.10.2026): Wann erinnert Zeki an „Sicherung schicken“?
+//   nie gesichert und schon ≥ 5 Einträge → grund "nie" · letzte Sicherung ≥ 7 Tage alt → "woche"
+//   in den ersten 7 Tagen eines Monats, letzte Sicherung vor dem Monatsersten und seitdem neue Einträge → "monat" (Monat ist abgeschlossen)
+// Rückgabe: null | { grund, tage } (tage = null bei „nie“). Kalendertage nach Ortszeit des Handys.
+export const SICHERUNG_MONAT_TAGE = 7; // Setzung 28.10.2026
+export function sicherungFaellig(wurzel, jetzt = Date.now()) {
+  const s = sicherungStufe(wurzel, jetzt); if (!s) return null;
+  if (s.tage === null) return s.n >= 5 ? { grund: "nie", tage: null } : null;
+  if (s.tage >= 7) return { grund: "woche", tage: s.tage };
+  const d = new Date(jetzt); const erster = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+  if (d.getDate() <= SICHERUNG_MONAT_TAGE && Date.parse(wurzel.letzteSicherung) < erster && s.neu > 0) return { grund: "monat", tage: s.tage };
+  return null;
+}
+
 // Laden-Umbau (20.10.2026): Nach dem Teilen fragt die App „Wo liegt sie jetzt?“. Nur „woanders“ (anderes Gerät, Mail, Cloud) zählt als
 // Sicherung und setzt die Erinnerung zurück. „handy“ (nur auf diesem Handy) zählt NICHT – geht das Handy verloren, ist beides weg
 // (Eigentümer-Entscheidung 20.10.2026). Rückgabe: true = als Sicherung gezählt.

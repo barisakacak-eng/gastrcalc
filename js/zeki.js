@@ -37,7 +37,8 @@ export const ZEKI_PRUEFUNGEN = {
     const z = zaehler(s, { datum: H }); try { const m = monatsZiel(s, z, H); return m.stufe === "bisNull" && m.fehltNull > 0 ? { betrag: fmtEuro(m.fehltNull, { dezimal: 0 }) } : null; } catch { return null; } // Nachtest 27.10.: dieselbe Monatszahl wie Heute, nicht der Tagesstand
   },
   inventur_faellig: (s, H) => { const f = inventurenFertig(s); if (!f.length) return null; const t = tageZwischen(f[f.length - 1].datum, H); return t >= 30 ? { tage: String(t) } : null; },
-  sicherung_alt: (s, H, o) => (typeof o.sicherungTage === "number" && o.sicherungTage >= 7 ? { tage: String(o.sicherungTage) } : null),
+  // 0.3 (28.10.2026): mit o.sicherung (sicherungFaellig) auch „nie gesichert“ und „neuer Monat“; Sätze mit {tage} fallen bei „nie“ von selbst weg
+  sicherung_alt: (s, H, o) => (o.sicherung ? (typeof o.sicherung.tage === "number" ? { tage: String(o.sicherung.tage) } : {}) : typeof o.sicherungTage === "number" && o.sicherungTage >= 7 ? { tage: String(o.sicherungTage) } : null),
   hinweis_neu: (s) => (hinweiseFuer(s).some((h) => h.status === "neu") ? {} : null),
 };
 
@@ -59,12 +60,12 @@ const fuellen = (text, w) => { let fehlt = false; const t = String(text || "").r
 
 // Der eine Moment: { id, ausloeser, art, bewegung, text } oder null.
 // opts: H (Geschäftstag), sprache ("de"|"tr"|"en"), gesehen (Set „ausloeser:H“ schon gezeigt), sicherungTage, nur (Liste erlaubter Auslöser)
-export function zekiMoment(stand, { H, sprache = "de", gesehen = new Set(), sicherungTage = null, nur = null } = {}) {
+export function zekiMoment(stand, { H, sprache = "de", gesehen = new Set(), sicherungTage = null, sicherung = null, nur = null } = {}) {
   if (!stand || !H) return null;
   for (const a of ZEKI_AUSLOESER) {
     if (nur && !nur.includes(a)) continue;
     if (gesehen.has(`${a}:${H}`)) continue;
-    let werte = null; try { werte = ZEKI_PRUEFUNGEN[a](stand, H, { sicherungTage }); } catch { werte = null; }
+    let werte = null; try { werte = ZEKI_PRUEFUNGEN[a](stand, H, { sicherungTage, sicherung }); } catch { werte = null; }
     if (!werte) continue;
     const saetze = ZEKI_SAETZE.filter((x) => x.ausloeser === a);
     // gleichbleibend je Tag, wechselt von Tag zu Tag (keine Zufallszahl → testbar)

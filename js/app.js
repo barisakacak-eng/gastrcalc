@@ -26,7 +26,7 @@ import { parseTemperatur } from "./util.js"; // Trennung (17.10.2026)
 import { putzplanView, putzplanAktion, putzplanZurueck, putzplanZuruecksetzen } from "./screens/putzplan.js";
 import { planSicherstellen } from "./putzplan.js"; // Laden-Umbau (20.10.2026): Putzplan im Laden ohne Geräte-Auswahl
 import { umsatzLadenView, umsatzLadenAktion, umsatzLadenEingabe, umsatzLadenZuruecksetzen, umsatzLadenKennung } from "./screens/umsatz_laden.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden
-import { sicherungStufe, sicherungOrtSetzen, sicherungZeitraum } from "./sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Wo liegt sie jetzt?“
+import { sicherungStufe, sicherungFaellig, sicherungOrtSetzen, sicherungZeitraum } from "./sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Wo liegt sie jetzt?“
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
@@ -1122,7 +1122,7 @@ function zekiBildschirm() {
   const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
   if (zekiGerade && Date.now() - zekiGerade.t < 7000) gesehen.delete(zekiGerade.key);
   let zm = null;
-  try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
+  try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, sicherung: personalAktiv() ? null : sicherungFaellig(wurzel), nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
   if (!zm) return;
   // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter
   if (ansicht === "start" && zm.ausloeser !== "kuehl_abweichung" && zm.ausloeser !== "muell_hoch") return;
