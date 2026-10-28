@@ -120,8 +120,8 @@ test("Sicherung: Blatt hat „Mit Passwort“ vorgewählt und „Ohne Fotos“ a
   const eb = fs.readFileSync(new URL("../js/screens/ebene.js", import.meta.url), "utf8");
   assert.match(eb, /pw = \{ zweck, sichtbar: false, mitPasswort: true, ohneFotos: false \}/, "Passwort vorgewählt");
   assert.ok(eb.includes('schalter("sicherung-pw-schalter", true') && eb.includes('schalter("sicherung-fotos-schalter", false'));
-  assert.equal(i18n.t("ladenSchirm.sicherung.letzteWeg", 9), "Letzte vom Handy weg: vor 9 Tagen");
-  assert.equal(i18n.t("ladenSchirm.sicherung.letzteWeg", 1), "Letzte vom Handy weg: vor 1 Tag");
+  assert.equal(i18n.t("ladenSchirm.sicherung.letzteWeg", 9), "Zuletzt gesichert: vor 9 Tagen");
+  assert.equal(i18n.t("ladenSchirm.sicherung.letzteWeg", 1), "Zuletzt gesichert: vor 1 Tag");
 });
 
 // ---------- Putzen ----------

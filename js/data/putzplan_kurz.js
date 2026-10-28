@@ -7,7 +7,7 @@ export const PUTZ_KURZ = {
     R16: "Fettfilter waschen", R17: "Haube und Fettrinne", R18: "Abluftkanal (Firma)", R19: "Saladette-Behälter", R20: "Saladette innen", R21: "Kühlschrank innen",
     R22: "Kühlschrank gründlich", R23: "Tiefkühler abtauen", R24: "Schneidemaschine", R25: "Eismaschine", R27: "Eisprobe Labor", R28: "Kaffeemaschine", R29: "Kaffee entkalken",
     R30: "Gäste-WC", R31: "Gäste-WC desinfizieren", R32: "Regale und Lager", R33: "Mülleimer", R34: "Mülltonnen", R35: "Schädlinge prüfen", R36: "Wände und Decke", R37: "Belehrung Infektionsschutz" },
-  tr: { R01: "Tezgâhlar", R02: "Çiğ etten sonra yüzey", R03: "Tahta ve bıçaklar", R04: "Zemin ve gider", R05: "El yıkama lavabosu", R06: "Kollar ve düğmeler",
+  tr: { R01: "Tezgâhlar", R02: "Çiğ etten sonra yüzey", R03: "Tahta ve bıçaklar", R04: "Zemin ve gider", R05: "El yıkama lavabosu", R06: "Kulplar ve düğmeler",
     R07: "Döner bıçağı", R08: "Izgara", R09: "Kalan döner", R10: "Izgara detaylı", R11: "Kızartma yağı", R13: "Fritöz detaylı", R14: "Pizza fırını", R15: "Yağ filtresine bak",
     R16: "Yağ filtresini yıka", R17: "Davlumbaz ve oluk", R18: "Havalandırma (firma)", R19: "Saladet kapları", R20: "Saladet içi", R21: "Buzdolabı içi",
     R22: "Buzdolabı detaylı", R23: "Dondurucu buz çöz", R24: "Dilimleme makinesi", R25: "Buz makinesi", R27: "Buz numunesi laboratuvar", R28: "Kahve makinesi", R29: "Kahve kireç çöz",
