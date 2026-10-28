@@ -85,5 +85,13 @@ Jede Zahl mit Quelle und Abrufdatum; Setzungen sind eigene Schwellen ohne Branch
 | Stoßzeiten (keine Erinnerungen) | Standard 11:30–14:00, 17:30–20:30, je Laden einstellbar | `js/offen.js` RUHEZEITEN_STANDARD | Setzung |
 | Sicherung | Erinnerung: nie gesichert ab 5 Einträgen, nach 7 Tagen, erste 7 Tage im neuen Monat | `js/sicherung_stufe.js` sicherungFaellig | Setzung |
 | Erste Zahl | ohne Miete (Gruppe „miete“) oder Löhne keine Euro-Zahl | `js/laden_zahlen.js` ersteZahlFehlt | Regel (Gremium 28.10.2026) |
+| Preisrunden-Rechner | Schwelle = 1 − DB alt / DB neu (DB = Preis netto − Ware); Goldwert 7,11 → 7,61 € = 9,37 % | `js/preisrunde.js` | Rechnung (Gremium R3) |
+| Euro-Hebel | +0,30 € brutto ÷ (1 + MwSt) × Menge im Monat | `js/hebel.js` HEBEL_CENT | Setzung 0,30 € |
+| Preis-Schritt im Rechner | 10 Cent | `js/screens/preisrunde.js` PREIS_STUFE | Setzung |
+| Renner & Penner | Grenzen = Mittel der Menge, mengengewichtetes Mittel des Deckungsbeitrags; nur mit eingetragenen Mengen | `js/hebel.js` rennerPenner | Rechnung (Menü-Matrix) |
+| Preisdrift | Preis vor 91 Tagen gegen heute je Basis × Verbrauch laut Rezept; nur echte Belege, ab 3 % | `js/preisdrift.js` DRIFT_TAGE, DRIFT_AB | Setzung |
+| Extras | Preis ÷ (1 + MwSt des Gerichts) − Ware des Extras | `js/extras.js` | Rechnung |
+| Menü-Bündel | Menüpreis netto = Menüpreis × Σ netto ÷ Σ brutto (Verhältnis der Einzelpreise); Rabatt = Σ brutto − Menüpreis | `js/extras.js`, `js/deal.js` | Rechnung, Aufteilung mit dem Steuerberater klären |
+| Nutzen-Posten „preis“ | übernommene Preisrunden: (neu − alt) ÷ (1 + MwSt) × Menge im Monat, immer ≈ | `js/nutzen.js` postenPreis | Rechnung, nicht gemessen |
 
 Nach Register „Zahlen und Fristen“ 28.10.2026 (ab 16:30 maßgeblich): BGN ≈ 1,04 % des Bruttoentgelts im Arbeitgeber-Aufschlag (angestellt ≈ 24,88 %, Minijob ≈ 32,21 %, immer ≈, hängt an der Krankenkasse); Sachbezug SvEV nach Datum (2026: 2,37/4,57 €; ab 01.01.2027 geplant 2,43/4,70 €); Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage als ≈ Lohnkosten (`sachbezugAbgabenMonat`), die Ware selbst nicht doppelt. Pauschbetrag 2027 nicht vorab eingebaut. Feiertage BW 2026/2027 per Test gegen das Register geprüft (Gründonnerstag kein Feiertag). Aufbewahrung Belege 8 Jahre (Hinweis-Karte).
