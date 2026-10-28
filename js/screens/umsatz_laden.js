@@ -168,7 +168,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   }
   if (name !== "ul-speichern" && name !== "ul-ja") return false;
   const text = entwurf ?? (umsatzEintrag(stand, heuteGeschaeft()) ? wertAnzeige(umsatzEintrag(stand, heuteGeschaeft()).umsatz) : "");
-  const p = umsatzHeutePruefen(name === "ul-ja" ? String(rueckfrage ?? "") : text, { bestaetigt: name === "ul-ja" });
+  const p = umsatzHeutePruefen(name === "ul-ja" ? String(rueckfrage ?? "") : text, { bestaetigt: name === "ul-ja", stand, datum: H });
   if (p.status === "leer") return { meldung: t("teamTag.umsatzLeer") };
   if (p.status === "ungueltig") return { meldung: t("allgemein.zahlUngueltig", String(text).trim().slice(0, 20)) };
   if (p.status === "rueckfrage") { rueckfrage = p.betrag; return "zeichnen"; }

@@ -5,6 +5,7 @@ import { tagesnotizSetzen, tagesnotizenFestschreiben, aktiveStellen } from "./en
 import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichung, tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { zaehler, monatsZiel, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
+import { umsatzRueckfrage } from "./umsatz_pruefung.js";
 
 // Erste Zahl vertrauenswürdig (Masterauftrag „Gehirn“ 0.1, 28.10.2026): Ohne Miete und ohne Löhne ist „bis null“ nur der Richtwert des
 // eigenen Lohns – die Zahl sieht echt aus und ist es nicht (Gremium: leerer Laden zeigte „≈ 487 €“). Dann fehlt eine Euro-Zahl, und die App
@@ -98,11 +99,14 @@ export function tagesBilanz(stand, H, K = heute()) {
 // statt still zu speichern – die Grenze ist eine Plausibilitätsgrenze für einen Imbiss-Tag, keine Rechenregel.
 export const UMSATZ_RUECKFRAGE_AB = 100000;
 // Rückgabe: { status: "leer" | "ungueltig" | "rueckfrage" | "ok", betrag }
-export function umsatzHeutePruefen(eingabe, { bestaetigt = false } = {}) {
+// Masterauftrag „Gehirn“ 0.1 (28.10.2026): mit stand auch Rückfrage bei weniger als 10 % oder mehr als dem Dreifachen des üblichen Tages
+// (Median der letzten 14 Tage, ab 5 Tagen; js/umsatz_pruefung.js).
+export function umsatzHeutePruefen(eingabe, { bestaetigt = false, stand = null, datum = heuteGeschaeft() } = {}) {
   if (eingabe === null || eingabe === undefined || String(eingabe).trim() === "") return { status: "leer", betrag: null };
   const n = parseZahl(eingabe);
   if (n === null) return { status: "ungueltig", betrag: null };
   if (n > UMSATZ_RUECKFRAGE_AB && !bestaetigt) return { status: "rueckfrage", betrag: n };
+  if (stand && !bestaetigt && umsatzRueckfrage(stand, datum, n)) return { status: "rueckfrage", betrag: n };
   return { status: "ok", betrag: n };
 }
 // Speichert den Tagesumsatz für den Geschäftstag (Standard: heute bis 4 Uhr). Rückgabe: der gültige Eintrag.

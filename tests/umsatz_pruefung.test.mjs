@@ -32,3 +32,13 @@ test("≈ über den gemeinsamen Helfer", async () => {
   assert.equal(fmtEuroGeschaetzt(487, false), fmtEuro(487));
   assert.equal(fmtEuroGeschaetzt(null, true), "–");
 });
+
+test("Laden-Eingabe fragt bei Ausreißer einmal nach", async () => {
+  const { umsatzHeutePruefen } = await import("../js/laden_zahlen.js");
+  const s = stand([["2026-10-21", 600], ["2026-10-22", 800], ["2026-10-23", 1000], ["2026-10-24", 700], ["2026-10-25", 900], ["2026-10-27", 750]]);
+  assert.equal(umsatzHeutePruefen("80", { stand: s, datum: "2026-10-28" }).status, "ok"); // 80 ≥ 77,50
+  assert.equal(umsatzHeutePruefen("7", { stand: s, datum: "2026-10-28" }).status, "rueckfrage");
+  assert.equal(umsatzHeutePruefen("7", { stand: s, datum: "2026-10-28", bestaetigt: true }).status, "ok");
+  assert.equal(umsatzHeutePruefen("8000", { stand: s, datum: "2026-10-28" }).status, "rueckfrage");
+  assert.equal(umsatzHeutePruefen("8000").status, "ok"); // ohne Verlauf nur die alte Grenze
+});
