@@ -96,5 +96,12 @@ Jede Zahl mit Quelle und Abrufdatum; Setzungen sind eigene Schwellen ohne Branch
 | Hebel-Untergrenze / Liste | unter 1 € im Monat nicht gezeigt; im Rechner die 3 größten | `js/hebel.js` HEBEL_MIN_EURO, HEBEL_LISTE | Setzung |
 | Rechner Start / Untergrenze | öffnet mit +0,50 €, kleinster Preis 0,10 € | `js/screens/preisrunde.js` START_AUFSCHLAG, MIN_PREIS | Setzung |
 | Vorlagen: Mengenwörter | doppel/double, triple, XXL, groß, klein, Kinder nur auf einer Seite → Ähnlichkeit − 0,25 | `js/karte_lesen.js` MENGENWORT_ABSCHLAG | Setzung (Burger-Test 28.10.2026) |
+| Portion in Euro (2.1) | (gewogen − Rezept) → Rohmenge (Garverlust) × Preis je Basis; im Jahr × Menge im Monat × 12 | `js/ware.js` portionEuro | Rechnung, ≈ bei geschätzten Mengen |
+| Spieß-Bilanz (2.2) | Kosten = Roh × Preis; je Portion = Kosten ÷ Portionen; Rest × Rohpreis (≈); Garverlust nie vorgegeben | `js/ware.js` spiessBilanz | Rechnung |
+| A-Artikel (2.3) | 5–8 teuerste Zutaten im Wochenverbrauch, bis ≈ 80 % des Wertes | `js/ware.js` A_MIN, A_MAX, A_ANTEIL | Setzung (ABC-Analyse) |
+| Müll-Rangliste (2.4) | Woche nach Gruppe Fleisch/Brot/Salat/Soße/Sonstiges, Gericht nach Warenwert der Zutaten verteilt; „zu viel vorbereitet“ ab 15 % an mind. 3 von 14 Tagen | `js/ware.js` MUELL_GRUPPEN, UEBRIG_AB, UEBRIG_TAGE, UEBRIG_MIN_TAGE | Setzung (Masterauftrag 2.4: 15 %) |
+| Lieferantenvergleich (2.5) | letzter Preis je Basis je Lieferant aus Belegen; nur gleiche Basis und Packung ± 10 % | `js/ware.js` LIEFERANT_INHALT_TOLERANZ | Setzung |
+| Selbst oder kaufen (2.6) | (Material + Minuten × Minutensatz) ÷ Ausbeute gegen Zukaufpreis je kg/l/Stück × Jahresverbrauch | `js/ware.js` selbstOderKaufen | Rechnung |
+| Einkauf nächste Woche (2.7) | Summe Bestellvorschlag, bestellen in den nächsten 7 Tagen | `js/ware.js` einkaufNaechsteWoche | Rechnung |
 
 Nach Register „Zahlen und Fristen“ 28.10.2026 (ab 16:30 maßgeblich): BGN ≈ 1,04 % des Bruttoentgelts im Arbeitgeber-Aufschlag (angestellt ≈ 24,88 %, Minijob ≈ 32,21 %, immer ≈, hängt an der Krankenkasse); Sachbezug SvEV nach Datum (2026: 2,37/4,57 €; ab 01.01.2027 geplant 2,43/4,70 €); Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage als ≈ Lohnkosten (`sachbezugAbgabenMonat`), die Ware selbst nicht doppelt. Pauschbetrag 2027 nicht vorab eingebaut. Feiertage BW 2026/2027 per Test gegen das Register geprüft (Gründonnerstag kein Feiertag). Aufbewahrung Belege 8 Jahre (Hinweis-Karte).
