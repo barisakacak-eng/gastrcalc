@@ -65,3 +65,20 @@ Regeln:
 
 ## 3. Verboten in beiden Verträgen
 Wörter: rechtssicher, steuersicher, betriebsprüfungsfest, GoBD-konform, revolutionär, disruptiv, Marktführer, KI-Steuerberater, lückenlos, zertifiziert, manipulationssicher, HACCP-konform, „so sparst“ (Liste = VERBOTEN in js/hinweis.js). Keine Wirkungsbehauptung („hat dir gebracht“) ohne Beleg der Ursache. Erfundene Beträge. Rechenregeln außerhalb des Rechenwerks.
+
+## 4. Zahlen und Setzungen aus dem Masterauftrag „Gehirn“ (28.10.2026, Zoro)
+
+Jede Zahl mit Quelle und Abrufdatum; Setzungen sind eigene Schwellen ohne Branchenbeleg.
+
+| Zahl | Wert | Wo | Quelle / Art |
+|---|---|---|---|
+| Mindestlohn 2026 / ab 01.01.2027 | 13,90 € / 14,60 € je Stunde | `js/data/mindestlohn.js` | Mindestlohnanpassungsverordnung; haufe.de Gesetzesradar, lohndialog.de (Abruf 28.10.2026) |
+| Minijob-Grenze 2026 / 2027 | 603 € / 633 € im Monat | `js/data/mindestlohn.js` | § 8 Abs. 1a SGB IV (Mindestlohn × 130 / 3, aufgerundet); lohndialog.de (Abruf 28.10.2026) |
+| Richtwert eigener Lohn | Mindestlohn × 173 Std, auf 50 € gerundet (2.400 € / 2.550 €) | `js/engine.js` eigenerLohnRichtwert | Rechnung, ≈ |
+| Mindestlohn-Vorschau | Stunden der letzten 28 Tage × 30,4/28 × Differenz × (1 + Arbeitgeberanteil); Umsatz = Mehrkosten ÷ (1 − Warenquote) × (1 + USt) | `js/mindestlohn.js` | Rechnung, immer ≈ (ohne Berufsgenossenschaft) |
+| Karte Mindestlohn | ab 92 Tage vorher bis 31 Tage danach | `js/mindestlohn.js` | Setzung |
+| Umsatz-Rückfrage | unter 10 % oder über 3× Median der letzten 14 Tage, ab 5 Tagen | `js/umsatz_pruefung.js` | Setzung |
+| Sicherung | Erinnerung: nie gesichert ab 5 Einträgen, nach 7 Tagen, erste 7 Tage im neuen Monat | `js/sicherung_stufe.js` sicherungFaellig | Setzung |
+| Erste Zahl | ohne Miete (Gruppe „miete“) oder Löhne keine Euro-Zahl | `js/laden_zahlen.js` ersteZahlFehlt | Regel (Gremium 28.10.2026) |
+
+Bewusst nicht eingerechnet (Entscheidung Zoro 28.10.2026): Berufsgenossenschaft (kein belegter Satz) und Sachbezug Personalessen als Lohnkosten (die Ware zählt schon als Wareneinsatz ohne Umsatz) – Begründung in `js/data/lohnkosten.js`.
