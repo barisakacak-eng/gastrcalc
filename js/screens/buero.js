@@ -78,7 +78,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   const HG = heuteGeschaeft(); let hz = null; try { hz = heuteZiel(stand, z, HG); } catch { hz = null; }
   const hauptzahl = !hz ? "" : hz.fehlt
     ? `<button type="button" class="karte b-hauptzahl" ${zielAttr(hz.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })}><small>${esc(t("nutzen.stufe.bisNull"))} · ${esc(monatName(HG))}</small><b>?</b><span class="b-hauptzahl-knopf">${esc(t("heute.fehlt." + hz.fehlt))}</span></button>`
-    : hz.zahl === null ? "" : `<button type="button" class="karte b-hauptzahl" data-a="nav" data-wert="umsatz"><small>${esc(t("nutzen.stufe." + hz.stufe))} · ${esc(monatName(HG))}</small><b class="zahl">${esc((hz.stufe === "ueberZiel" ? "+" : "") + fmtEuroGeschaetzt(hz.zahl, hz.m.geschaetzt))}</b></button>`;
+    : hz.zahl === null ? "" : `<button type="button" class="karte b-hauptzahl" data-a="nav" data-wert="umsatz"><small>${esc(t("nutzen.stufe." + hz.stufe))} · ${esc(monatName(HG))}</small><b class="zahl">${esc((hz.m.geschaetzt ? "≈ " : "") + (hz.stufe === "ueberZiel" ? "+" : "") + fmtEuro(hz.zahl))}</b></button>`;
   // Masterauftrag 1.1: Mindestlohn-Karte ≈ 3 Monate vorher bis 1 Monat danach, nur mit Wirkung
   let ml = null; try { ml = mindestlohnKarteZeigen(stand, HG); } catch { ml = null; }
   const mlDatum = ml ? datumLesbar(ml.ab) : "";
