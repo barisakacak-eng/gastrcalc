@@ -19,7 +19,10 @@ import { monatName, datumLesbar } from "./tag.js";
 import { verkaufSichtbar } from "../verkauf.js"; // E7 (17.10.2026): Einstieg „Verkauf je Gericht“ nur mit Schalter oder im Beispiel-Laden
 import { bestandUhrzeit, lieferUhrzeit } from "../bestand.js"; // Lieferanten (18.10.2026): lieferUhrzeit als Unterzeile „Lieferanten“ // Bestand (17.10.2026): Einstieg „Lager & Bestellen“, Unterzeile = die Uhrzeit
 import { haltbarUhrzeit } from "../haltbar.js"; // Stufe 1 (17.10.2026): Einstieg „Aktionen & Haltbarkeit“, Unterzeile = die Uhrzeit
-import { aktionUhrzeit } from "../aktion_plan.js"; // Aktion planen (18.10.2026): Satz zur laufenden Aktion
+import { aktionUhrzeit } from "../aktion_plan.js";
+import { heuteZiel } from "../laden_zahlen.js"; // Masterauftrag 0.1: Büro-Start zeigt dieselbe Hauptzahl wie Heute
+import { mindestlohnKarteZeigen } from "../mindestlohn.js"; // Masterauftrag 1.1
+import { fmtEuroGeschaetzt } from "../util.js"; // Aktion planen (18.10.2026): Satz zur laufenden Aktion
 
 // Symbole, die es in symbole.js (noch) nicht gibt – Lucide, ISC-Lizenz wie dort. Eigene Liste, damit symbole.js unberührt bleibt.
 const EXTRA = {
@@ -62,7 +65,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   const z = zaehlerImTakt(stand, heuteGeschaeft()); // W2-D; Paket 3, M7: Zähler nach Geschäftstag, Belehrungen/Ordner (H) nach Kalender
   const inv = inventurenFertig(stand).pop();
   const zeile = (ziel, symbol, titel, unter, wert = "") => `<button type="button" class="b-zeile" ${zielAttr(ziel)}><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</button>`;
-  const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}">${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
+  const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}" title="${esc(t("gehirn.ausblick"))}"><small class="b-ausblick">${esc(t("gehirn.ausblick"))}</small> ${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
   const e = einrichtungImTakt(stand, wurzel); // W2-D
   const codeAn = pinGesetzt(wurzel);
   // Entrümpelung Punkt 3 (19.10.2026, freigegeben 18.10.): 3 Ordner + 4 Bereiche statt 27 Einträge. Jeder Bereich zeigt nur seine „Uhrzeit“,
@@ -71,9 +74,25 @@ export function bueroView(stand, wurzel, extra = {}) {
   const karteSatz = haltbarUhrzeit(stand) || aktionUhrzeit(stand);
   const bereich = (id, symbol, titel, satz, rot, inhalt, wert = "") => `<details class="b-bereich" data-bereich="${id}"><summary class="b-zeile b-bereichkopf"><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${satz ? `<small class="${rot ? "rot" : ""}">${esc(satz)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</summary><div class="karte b-liste">${inhalt}</div></details>`;
   const [erster, ...rest] = offen;
+  // Masterauftrag „Gehirn“ 0.1 (28.10.2026): eine Wahrheit – oben steht dieselbe Zahl wie auf Heute; das Monatsergebnis ist „Ausblick“.
+  const HG = heuteGeschaeft(); let hz = null; try { hz = heuteZiel(stand, z, HG); } catch { hz = null; }
+  const hauptzahl = !hz ? "" : hz.fehlt
+    ? `<button type="button" class="karte b-hauptzahl" ${zielAttr(hz.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })}><small>${esc(t("nutzen.stufe.bisNull"))} · ${esc(monatName(HG))}</small><b>?</b><span class="b-hauptzahl-knopf">${esc(t("heute.fehlt." + hz.fehlt))}</span></button>`
+    : hz.zahl === null ? "" : `<button type="button" class="karte b-hauptzahl" data-a="nav" data-wert="umsatz"><small>${esc(t("nutzen.stufe." + hz.stufe))} · ${esc(monatName(HG))}</small><b class="zahl">${esc((hz.stufe === "ueberZiel" ? "+" : "") + fmtEuroGeschaetzt(hz.zahl, hz.m.geschaetzt))}</b></button>`;
+  // Masterauftrag 1.1: Mindestlohn-Karte ≈ 3 Monate vorher bis 1 Monat danach, nur mit Wirkung
+  let ml = null; try { ml = mindestlohnKarteZeigen(stand, HG); } catch { ml = null; }
+  const mlDatum = ml ? datumLesbar(ml.ab) : "";
+  const mindestlohnKarte = !ml ? "" : `<div class="karte b-mindestlohn">
+      <b>${esc(t(ml.seit ? "gehirn.mindestlohn.titelSeit" : "gehirn.mindestlohn.titel", mlDatum, fmtEuro(ml.neu, { dezimal: 2 })))}</b>
+      <p>${esc(t("gehirn.mindestlohn.satz", fmtEuro(ml.mehrMonat), fmtEuro(ml.umsatzMehrMonat)))}</p>
+      ${ml.grundlage === "team" ? `<small>${esc(t("gehirn.mindestlohn.annahme"))}</small>` : ""}${ml.offen ? `<small>${esc(t("gehirn.mindestlohn.offen", ml.offen))}</small>` : ""}
+      <button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("gehirn.mindestlohn.knopf"))}</button>
+      <small class="b-quelle">${esc(t("gehirn.mindestlohn.quelle"))}</small>
+    </div>`;
   return `<div class="buero b-ruhig">${kopf({ ziel: "start", text: t("buero.zurueck") }, t("buero.titel"))}
     <div class="b-inhalt">
       ${erster ? `<button type="button" class="zeki-zeile b-zeki ${erster.farbe === "rot" ? "a-rot" : ""}" ${zielAttr(erster.ziel)}>${esc(erster.text)}</button>${rest.length ? `<details class="b-offen-mehr"><summary class="b-mehr-zeile">${esc(t("buero.ruhig.mehr", rest.length))}</summary><div class="b-offen">${rest.map(chip).join("")}</div></details>` : ""}` : ""}
+      ${hauptzahl}${mindestlohnKarte}
       <div class="b-gruppe" aria-hidden="true"></div>
       <div class="karte b-liste b-ordnerliste">${ordnerZeile("amt", "shield-check", k.amt)}${ordnerZeile("steuer", "calculator", k.steuer)}${ordnerZeile("buch", "receipt", k.buch)}</div>
       <div class="b-gruppe" aria-hidden="true"></div>
