@@ -1159,7 +1159,7 @@ export default {
       personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   menueReferenz: { hinweis: "Składniki z karty. Sprawdź ilości, czas przygotowania i cały przepis." }, // 26.10.2026
-  heute: { introGruss: "Cześć, szefie!", rezeptErinnerung: { frage: "Szefie, wpisałeś już swoje przepisy?", jetzt: "Teraz", stand: (n, g) => `${n} z ${g} dań ma twój przepis.` }, bewegung: (b) => `od wczoraj ${b}`,
+  heute: { introGruss: "Cześć, szefie!", rezeptErinnerung: { frage: "Szefie, wpisałeś już swoje przepisy?", knopf: "Wpisz przepis", stand: (n, g) => `${n} z ${g} dań ma twój przepis.` }, bewegung: (b) => `od wczoraj ${b}`,
     nullKurz: "Zero przy", zielKurz: "Cel",
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
