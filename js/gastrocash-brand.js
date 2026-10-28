@@ -1,9 +1,10 @@
 // Darstellung und Bewegung. Keine Sätze, Ereignisentscheidungen oder Speicherung.
 import {ZEKI_SVG} from './zeki-svg.js';
 import {ZEKI_BILDER} from './zeki-bilder.js';
+import {zekiPuppeSpielen,zekiPuppeName} from './zeki-puppe.js';
 const own=(o,k)=>typeof k==='string'&&Object.hasOwn(o,k);
 const states={neutral:'neutral',freude:'freude',nachdenklich:'import',warnung:'warnung',freundlich:'freude',ernst:'warnung',erfolg:'freude',frage:'frage',import:'import',preis:'preis',hilfe:'hilfe',bestaetigt:'bestaetigt',aufmerksam:'aufmerksam',erleichtert:'erleichtert',fehler:'fehler'};
-const motions={none:'none',idle:'none',atmen:'none',zwinkern:'zwinkern',grinsen:'grinsen',laecheln:'grinsen',hand:'hand',nicken:'nicken',kopfschuetteln:'kopfschuetteln',pruefen:'pruefen',preis:'preis',thumb:'hand',celebrate:'grinsen',turn:'pruefen'};
+const motions={none:'none',idle:'none',atmen:'none',zwinkern:'zwinkern',grinsen:'grinsen',laecheln:'grinsen',hand:'hand',nicken:'nicken',kopfschuetteln:'kopfschuetteln',pruefen:'pruefen',preis:'preis',thumb:'hand',celebrate:'grinsen',turn:'pruefen',winken:'winken',nachdenken:'nachdenken',freuen:'freuen','zeigen-rechts':'zeigen-rechts','zeigen-links':'zeigen-links','zeigen-oben':'zeigen-oben','zeigen-unten':'zeigen-unten',auftreten:'auftreten',abgehen:'abgehen'};
 let instance=0;const runs=new WeakMap();
 export function mascotMarkup(zustand='neutral',bewegung='none'){
  const s=own(states,zustand)?zustand:'neutral',m=own(motions,bewegung)?bewegung:'none',prefix='zeki-'+(++instance)+'-';
@@ -15,6 +16,8 @@ export function zekiMimik(element,zustand='neutral'){
 export function zekiSpielen(element,bewegung='none'){
  const svg=element?.matches?.('.zeki')?element:element?.querySelector?.('.zeki');if(!svg||!own(motions,bewegung))return false;runs.get(svg)?.();const m=motions[bewegung];if(m==='none')return true;
  if(svg.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches)return true;
+ /* 28.10.2026: Zeki als Gliederpuppe – Gelenke statt Bildfolge; die Bildfolge bleibt nur als Rückfall */
+ if(zekiPuppeName(bewegung)||zekiPuppeName(m)){const stopp=zekiPuppeSpielen(svg,zekiPuppeName(bewegung)?bewegung:m,{fertig:()=>{if(runs.get(svg)===stopp)runs.delete(svg)}});if(stopp){runs.set(svg,stopp);return true}}
  const info=ZEKI_BILDER[m],film=svg.querySelector('[data-zeki-teil="film"]');if(!info||!film)return false;
  let cancelled=false,timer;const cleanup=()=>{cancelled=true;clearTimeout(timer);film.removeEventListener('animationend',end);film.removeEventListener('animationcancel',end);if(runs.get(svg)===cleanup){svg.classList.remove('zeki--spielt');runs.delete(svg);}};const end=e=>{if(e.target===film)cleanup()};runs.set(svg,cleanup);
  const url=new URL('../assets/brand/zeki/'+info.datei,import.meta.url).href,img=new svg.ownerDocument.defaultView.Image();img.onload=()=>{if(cancelled)return;film.setAttribute('href',url);film.setAttribute('width','1385');film.setAttribute('height','1720');svg.style.setProperty('--zeki-ablauf','zeki3d-'+m);svg.style.setProperty('--zeki-dauer',info.dauer+'ms');film.addEventListener('animationend',end);film.addEventListener('animationcancel',end);const win=svg.ownerDocument.defaultView,los=()=>{if(cancelled)return;void film.getBoundingClientRect();svg.classList.add('zeki--spielt');timer=setTimeout(cleanup,info.dauer+450)};/* 26.10.2026 Flackern: erst wenn das Bild dekodiert und gemalt ist, vom Vektor auf die Bildfolge wechseln (iPhone zeigte sonst kurz eine leere Figur) */(img.decode?img.decode().catch(()=>{}):Promise.resolve()).then(()=>win.requestAnimationFrame(()=>win.requestAnimationFrame(los)))};img.onerror=cleanup;img.src=url;return true;

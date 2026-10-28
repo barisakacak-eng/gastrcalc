@@ -6,7 +6,7 @@
 // Nur Anzeige. Bei Warnung (zustand warnung/fehler) keine fröhlichen Gesten (Maskottchen-Regel vom 23.10.2026).
 import { zekiSpielen } from "../gastrocash-brand.js";
 
-const FOLGE = { ruhig: ["nicken", "hand", "pruefen"], ernst: ["pruefen", "nicken"] };
+const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freuen"], ernst: ["nachdenken", "nicken"] }; // 28.10.2026 Puppe: mehr Abwechslung, nie zweimal dieselbe
 export const ZEKI_ERSTES_ZEICHEN_MS = 1000;
 export const ZEKI_BLINZELN_MS = [2500, 6000];
 export const ZEKI_GESTE_MS = [14000, 22000];
@@ -21,7 +21,7 @@ export function zekiNaechsteBewegung(zustand, n) {
 }
 
 export function zekiBlinzeln(svg, doppelt = false) {
-  if (!svg || svg.classList.contains("zeki--spielt")) return false;
+  if (!svg || svg.classList.contains("zeki--spielt") || svg.classList.contains("zeki--puppe")) return false;
   const win = svg.ownerDocument?.defaultView;
   if (win?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return false;
   const zu = () => svg.classList.add("zeki--blinzeln"), auf = () => svg.classList.remove("zeki--blinzeln");
@@ -39,7 +39,7 @@ export function zekiTaktStarten(doc = typeof document !== "undefined" ? document
       if (!svg.isConnected || !svg.getClientRects().length) return;
       let p = plan.get(svg);
       if (!p) { p = { blinzeln: jetzt + ZEKI_ERSTES_ZEICHEN_MS - ZEKI_TAKT_MS / 2, geste: jetzt + zwischen([6000, 9000]) }; plan.set(svg, p); }
-      if (svg.classList.contains("zeki--spielt")) return;
+      if (svg.classList.contains("zeki--spielt") || svg.classList.contains("zeki--puppe")) return;
       if (jetzt >= p.geste) {
         schritt++; zekiSpielen(svg, zekiNaechsteBewegung(svg.dataset.zekiZustand || "", schritt));
         plan.set(svg, { geste: jetzt + zwischen(ZEKI_GESTE_MS), blinzeln: Math.max(p.blinzeln, jetzt + 2000) }); return;

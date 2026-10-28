@@ -61,3 +61,6 @@
 .rg-punkte i{background:rgba(255,255,255,.35)}
 .rg-loch{box-shadow:0 0 0 9999px rgba(14,20,16,.88)!important}
 .rg-blase p{text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 18px rgba(0,0,0,.6)}
+/* Zeki als Gliederpuppe (28.10.2026): Zwinkern über das Lid, Augen bleiben sonst unverändert */
+.zeki--zwinkern-r [data-zeki-teil="auge-r"] .zeki-variante { opacity: 0 !important; }
+.zeki--zwinkern-r [data-zeki-teil="lid-r"] [data-variante="lid"] { opacity: 1 !important; }
