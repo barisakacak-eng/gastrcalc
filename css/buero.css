@@ -209,3 +209,14 @@ button.b-zeile:active { background: var(--papier); }
 .ds-karte p{margin:0 0 6px;line-height:1.45}
 .ds-karte .ds-verantwortlich{margin-top:14px;font-weight:700}
 .b-einstellungen .einstellungen-inhalt>details.ds-karte.karte,.ds-karte{padding:16px 18px!important;display:block} /* facelift setzt :first-of-type auf 0 – details ist das erste seiner Art */
+/* Masterauftrag „Gehirn“ (28.10.2026): Hauptzahl wie auf Heute, Mindestlohn-Karte, Ausblick am Monatsergebnis */
+.b-hauptzahl { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; text-align: start; min-height: 44px; }
+.b-hauptzahl small { color: var(--tinte-weich); }
+.b-hauptzahl b { font-size: calc(34rem / 17); line-height: 1.1; }
+.b-hauptzahl-knopf { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; background: var(--aktion); color: var(--aktion-text); font-weight: 700; }
+.b-mindestlohn { display: flex; flex-direction: column; gap: 6px; border-inline-start: 4px solid var(--kupfer-dunkel); }
+.b-mindestlohn p { margin: 0; }
+.b-mindestlohn small { color: var(--tinte-weich); }
+.b-mindestlohn .knopf { align-self: flex-start; min-height: 44px; }
+.b-mindestlohn .b-quelle { font-size: calc(12rem / 17); }
+.b-ausblick { display: block; font-size: calc(11rem / 17); font-weight: 400; color: var(--tinte-weich); }

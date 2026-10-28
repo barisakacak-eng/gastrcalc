@@ -91,6 +91,7 @@ test("Offen im Büro: Einrichtung, Kosten, graue Karte, Putzplan, Sicherung, neu
 test("Laden „Heute“: höchstens eine Jetzt-dran-Karte, kein Ring, kein Spruch, keine Monatskurve, ≤ 15 Wörter", () => {
   const s = mitKuehlung(laden()); s.messungen = [messung("k1", 9, { abw: true })];
   s.kosten = [{ id: "k", kategorie: "miete", posten: "miete", betrag: 2000, status: "bekannt", periode: "monat", basis: "netto" }];
+  s.team.lohnkosten = 3000; // Masterauftrag 0.1 (28.10.2026): ohne Löhne zeigt Heute keine Euro-Zahl, sondern „Trag die Löhne ein“
   navKontext(s, wurzelVon(s));
   const html = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
   const inhalt = html.slice(0, html.indexOf("</div>\n    <header") > 0 ? html.indexOf("</div>\n    <header") : html.length);
@@ -200,4 +201,17 @@ test("Zeki auf Heute (27.10.2026): keine zweite Figur im Inhalt, der Jetzt-Knopf
   const { readFileSync } = await import("node:fs");
   const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
   assert.match(app, /ansicht === "start" \? null : ZEKI_BILDSCHIRM\[ansicht\]/, "Heute nutzt die Sprechblase oben rechts mit allen Lagen");
+});
+
+test("Masterauftrag 0.1: ohne Miete bzw. Löhne keine Euro-Zahl, sondern der nächste Eintrag", () => {
+  const s = laden(); s.kosten = []; s.team.lohnkosten = null;
+  navKontext(s, wurzelVon(s));
+  let html = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
+  assert.ok(html.includes('data-fehlt="miete"') && html.includes('data-schritt="kosten-miete"') && !/h-ziel-fehlt[^]*?€/.test(html.slice(html.indexOf("h-ziel-fehlt"), html.indexOf("h-ziel-fehlt") + 400)));
+  s.kosten = [{ id: "k", kategorie: "miete", posten: "miete", betrag: 2000, status: "bekannt", periode: "monat", basis: "netto" }];
+  html = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
+  assert.ok(html.includes('data-fehlt="personal"') && html.includes('data-schritt="lohn"'));
+  s.team.lohnkosten = 3000;
+  html = startView(s, { wurzel: wurzelVon(s), jetzt: um(19) });
+  assert.ok(!html.includes("data-fehlt="));
 });
