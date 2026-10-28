@@ -145,6 +145,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "îți rămâne", pruefen: "≈ verifică: cântărește", eigen: "rețeta ta", geschaetzt: "estimat", abwiegen: "Cântărește", zekiOhne: "Atinge un fel și scrie cantitatea ta.", zekiPruefen: (n) => `„${n}“: ≈ verifică: cântărește. Cantitatea doar o ghicesc.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Ștergi numărul pentru hit?",
     wegFrage: (n) => `Scoți „${n}” din meniu? Prețul și cantitățile se pierd.`,
     frage: "Ce ai în meniu?",
@@ -1159,7 +1160,7 @@ export default {
       personal: "Introdu deșeuri, măsoară răcirea, bifează curățenia. Înapoi doar cu codul de birou.",
       buero: "Aici stau toate calculele, listele și setările. Dosarele le dai autorității, consultantului fiscal sau contabilului." } },
   menueReferenz: { hinweis: "Ingrediente din meniu. Verifică cantitățile, timpul de preparare și rețeta completă." }, // 26.10.2026
-  heute: { introGruss: "Bună, șefule!", bewegung: (b) => `de ieri ${b}`,
+  heute: { introGruss: "Bună, șefule!", rezeptErinnerung: { frage: "Șefule, ți-ai trecut deja rețetele?", jetzt: "Acum", stand: (n, g) => `${n} din ${g} feluri au rețeta ta.` }, bewegung: (b) => `de ieri ${b}`,
     nullKurz: "Zero la", zielKurz: "Țintă",
     zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },

@@ -144,6 +144,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "të mbetet", pruefen: "≈ kontrollo: peshoje", eigen: "receta jote", geschaetzt: "e vlerësuar", abwiegen: "Peshoje", zekiOhne: "Prek një gatim dhe shkruaj sasinë tënde.", zekiPruefen: (n) => `„${n}“: ≈ kontrollo: peshoje. Sasinë vetëm e hamendësoj.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Ta fshij numrin e shitjeve të hitit?",
     wegFrage: (n) => `Ta heq “${n}” nga menyja? Çmimi dhe sasitë humbasin.`,
     frage: "Çfarë ke në meny?",
@@ -1158,7 +1159,7 @@ export default {
       personal: "Shëno mbetjet, mat ftohjen, shëno pastrimin. Kthim vetëm me kodin e zyrës.",
       buero: "Këtu janë të gjitha llogaritë, listat dhe rregullimet. Dosjet ua jep inspektimit, këshilltarit tatimor ose kontabilistit." } },
   menueReferenz: { hinweis: "Përbërësit nga menuja. Kontrollo sasitë, kohën e përgatitjes dhe recetën e plotë." }, // 26.10.2026
-  heute: { introGruss: "Përshëndetje, shef!", bewegung: (b) => `që dje ${b}`,
+  heute: { introGruss: "Përshëndetje, shef!", rezeptErinnerung: { frage: "Shef, i ke futur recetat e tua?", jetzt: "Tani", stand: (n, g) => `${n} nga ${g} gatime kanë recetën tënde.` }, bewegung: (b) => `që dje ${b}`,
     nullKurz: "Zero te", zielKurz: "Synimi",
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },

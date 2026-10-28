@@ -141,6 +141,23 @@ export function wareneinsatzSicherheit(stand) {
   return { anteilGeschaetzt: anteil, unsicher: anteil > 0.5, zaehl, fortschritt };
 }
 
+// Mitmach-Rundgang (28.10.2026, Konzept 7.3): Wie viele Gerichte haben schon ein eigenes Rezept? „Eigen“ heißt: der Stempel ist nicht
+// mehr „schaetzung“ (gewogen, abgeleitet oder belegt). Getränke und Gerichte ohne Zutaten zählen nicht. Verkaufsrenner = Gerichte mit
+// Tagesmenge; ist keine eingetragen, zählen alle Gerichte. rennerFertig: alle Verkaufsrenner haben ein eigenes Rezept.
+const speise = (g) => !!g && g.klasse !== "getraenk" && !!rezeptStempel(g).stufe;
+export const hatEigenesRezept = (g) => { const s = rezeptStempel(g).stufe; return !!s && s !== "schaetzung"; };
+export function rezeptFortschritt(stand) {
+  const alle = (stand?.gerichte || []).filter(speise);
+  const renner = alle.some((g) => Number(g.mengeTag) > 0) ? alle.filter((g) => Number(g.mengeTag) > 0) : alle;
+  return { mit: alle.filter(hatEigenesRezept).length, gesamt: alle.length, rennerFertig: renner.every(hatEigenesRezept) };
+}
+// Das nächste Gericht für „Jetzt abwiegen“: noch geschätzt, meistverkauft zuerst, dann eines mit Waage-Frage, sonst Reihenfolge der Karte.
+export function naechstesRezept(stand) {
+  const offen = (stand?.gerichte || []).filter((g) => speise(g) && !hatEigenesRezept(g));
+  const frage = (g) => (waageFragen(stand, g, 1).length ? 1 : 0);
+  return [...offen].sort((a, b) => (Number(b.mengeTag) || 0) - (Number(a.mengeTag) || 0) || frage(b) - frage(a))[0] || null;
+}
+
 // Kein rotes Minus aus Startwerten (Masterauftrag „Gehirn“ 0.1, 28.10.2026): Ist ein Gericht rot, aber das Rezept nur geschätzt
 // (Vorlage, Baukasten) oder ein Preis nur Richtwert, ist das Minus nicht belegt. Die Oberfläche zeigt dann „≈ prüfen: abwiegen“ statt Rot.
 export function minusUnsicher(zeile, gericht) {

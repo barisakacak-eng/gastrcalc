@@ -30,7 +30,8 @@ import { sicherungStufe, sicherungFaellig, sicherungOrtSetzen, sicherungZeitraum
 import { kuehlView, kuehlAktion, kuehlEingabe, kuehlZurueck, kuehlZuruecksetzen, kuehlFormGueltig, kuehlKennung } from "./screens/kuehl.js";
 import { laedenView, laedenAktion, laedenEingabe, laedenZuruecksetzen } from "./screens/laeden.js"; // Eigentümer-Ebene (18.10.2026)
 import { vergleichView, vergleichModus, vergleichZuruecksetzen } from "./screens/vergleich.js"; // Paket 2: Zurücksetzer
-import { karteZuruecksetzen } from "./screens/karte.js"; // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
+import { karteZuruecksetzen, rezeptDirektOeffnen } from "./screens/karte.js";
+import { naechstesRezept, rezeptFortschritt } from "./rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.3/7.4): Rezept in höchstens 2 Tipps // Paket 2: Zurücksetzer der Einrichtungs-Schritte (Karte, Rezepte, Preise)
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
@@ -316,6 +317,16 @@ function bearbeiten(vonId, bisId) {
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
   speichern(wurzel); zeichne();
+}
+
+// Mitmach-Rundgang (28.10.2026, 7.4): Tipp aufs Gericht (Laden-Karte) oder „Jetzt“ (Heute) → sofort die erste Mengenfrage.
+// Ohne Kennung nimmt Zeki das nächste geschätzte Gericht (meistverkauft zuerst). Danach geht es zurück dorthin, wo der Chef herkam.
+function rezeptDirekt(gid, { max = 3 } = {}) {
+  const g = gid ? stand.gerichte.find((x) => x.id === gid) : naechstesRezept(stand);
+  if (!g) return bearbeiten("karte", "rezepte");
+  rezeptDirektOeffnen(stand, g.id, { max });
+  ereignis("rezept-direkt", { laden: stand.id, ort: ansicht });
+  return bearbeiten("rezepte");
 }
 
 // Neuer Laden: Sprache ist schon gewählt, also beginnt der neue Laden beim Format (Schritt 1).
@@ -641,6 +652,7 @@ async function aufKlick(ev) {
     if (ziel === ansicht) { if (ziel === "muell") muellZuruecksetzen(); if (ziel === "kuehl") kuehlZuruecksetzen(); if (ziel === "beleg") belegZuruecksetzen(); if (ziel === "putzplan") putzplanZuruecksetzen(); } // Menüpunkt der aktuellen Seite: zurück auf deren Anfang
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
+  if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
   if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }
@@ -698,6 +710,7 @@ async function aufKlick(ev) {
   if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)
     const r = karteLadenAktion(name, el, stand);
     if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
+    if (r && r.rezept) return rezeptDirekt(r.rezept); // 28.10.2026: Tipp aufs Gericht → erste Mengenfrage
     if (r && r.gespeichert) { ereignis("preis-geaendert", { laden: stand.id, gericht: r.id, vorher: r.vorher ?? null, preis: r.preis, ort: "laden" }); meldung(t("kartelaeden.gespeichert")); await sofortSpeichern(wurzel); return zeichne(); }
     if (r) return zeichne();
   }
@@ -1122,6 +1135,12 @@ function zekiBildschirm() {
   const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
   if (zekiGerade && Date.now() - zekiGerade.t < 7000) gesehen.delete(zekiGerade.key);
   let zm = null;
+  // Mitmach-Rundgang (28.10.2026, 7.3): erstes eigenes Rezept da, aber noch nicht alle Verkaufsrenner → höchstens einmal am Tag leise „3 von 12 …“
+  if (ansicht === "start" && !personalAktiv()) { const r = rezeptFortschritt(stand); const key = `rezepte:${H}`;
+    if (r.mit > 0 && !r.rennerFertig && (!gesehen.has(key) || zekiGerade?.key === key) && !root.querySelector('[data-dran="kuehlAlarm"]')) {
+      const laeuft = zekiGerade?.key === key;
+      zekiSprechblase(root, { ausloeser: "rezepte", text: t("heute.rezeptErinnerung.stand", r.mit, r.gesamt), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
+      zekiGesehenMerken(key); return; } }
   try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, sicherung: personalAktiv() ? null : sicherungFaellig(wurzel), nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
   if (!zm) return;
   // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter

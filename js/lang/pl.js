@@ -144,6 +144,7 @@ export default {
 
 
   karte: {
+    kurz: { bleibt: "zostaje ci", pruefen: "≈ sprawdź: zważ", eigen: "twój przepis", geschaetzt: "szacunek", abwiegen: "Zważ", zekiOhne: "Dotknij dania i wpisz swoją ilość.", zekiPruefen: (n) => `„${n}“: ≈ sprawdź: zważ. Ilość tylko zgaduję.` }, // Mitmach (28.10.2026, 7.4): Laden-Karte kurz
     bestsellerWeg: "Usunąć liczbę dla hitu?",
     wegFrage: (n) => `Zdjąć „${n}” z karty? Cena i ilości do tego przepadną.`,
     frage: "Co masz w karcie?",
@@ -1158,7 +1159,7 @@ export default {
       personal: "Wpisz odpady, zmierz chłodzenie, odhacz sprzątanie. Powrót tylko z kodem biura.",
       buero: "Tu są wszystkie rachunki, listy i ustawienia. Teczki dajesz urzędowi, doradcy podatkowemu lub księgowemu." } },
   menueReferenz: { hinweis: "Składniki z karty. Sprawdź ilości, czas przygotowania i cały przepis." }, // 26.10.2026
-  heute: { introGruss: "Cześć, szefie!", bewegung: (b) => `od wczoraj ${b}`,
+  heute: { introGruss: "Cześć, szefie!", rezeptErinnerung: { frage: "Szefie, wpisałeś już swoje przepisy?", jetzt: "Teraz", stand: (n, g) => `${n} z ${g} dań ma twój przepis.` }, bewegung: (b) => `od wczoraj ${b}`,
     nullKurz: "Zero przy", zielKurz: "Cel",
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
