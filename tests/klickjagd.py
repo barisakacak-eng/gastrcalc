@@ -380,9 +380,13 @@ class Lauf:
                         if DEBUG: print(f"    {gname} {beschr}: geändert {geaendert} lang {lt:.0f} anker {await pg.evaluate('window.__kl.anker()')}", file=sys.stderr, flush=True)
                         if druck: info["gedrueckt"] += 1; self.druecke += 1
                         else: info["getippt"] += 1; self.tipps += 1
-                        if geaendert is None:
-                            hinweis = " – Element ist schon aktiv/gewählt (aria-current, aria-pressed, Klasse an)" if el["aktuell"] else (" – der Tipp davor hatte gewirkt, Zustand evtl. schon gesetzt" if druck and tipp_wirkte else "")
-                            await self.befund(scr, beschr, "tot", FENSTER_MS, f"keine Änderung in {FENSTER_MS} ms nach dem Loslassen (Länge, Ansicht, Fokus, Blatt){hinweis}", gname)
+                        # Fable 30.10.2026 (Prüfung des Agenten-Ergebnisses): „tot“ nur für den kurzen Tipp auf ein Element, das noch nicht aktiv ist.
+                        # Langes Drücken (850 ms) darf laut Soll-Liste 7.2 gerade NICHTS auslösen – keine Änderung ist dort das richtige Verhalten;
+                        # ein Tipp auf den schon gewählten Reiter/Chip ändert ebenfalls nichts. Beides wird gezählt, nicht gemeldet.
+                        if geaendert is None and druck: info["druck_ohne_wirkung"] = info.get("druck_ohne_wirkung", 0) + 1
+                        elif geaendert is None and el["aktuell"]: info["tipp_auf_aktives"] = info.get("tipp_auf_aktives", 0) + 1
+                        elif geaendert is None:
+                            await self.befund(scr, beschr, "tot", FENSTER_MS, f"keine Änderung in {FENSTER_MS} ms nach dem Loslassen (Länge, Ansicht, Fokus, Blatt)", gname)
                         if not druck: tipp_wirkte = geaendert is not None
                         if lt > HAENGER_MS: await self.befund(scr, beschr, "haenger", lt, f"lange Aufgabe {int(lt)} ms (> {HAENGER_MS} ms)", gname)
                         elif lt > LANG_MS: await self.befund(scr, beschr, "lang", lt, f"lange Aufgabe {int(lt)} ms (> {LANG_MS} ms)", gname)
