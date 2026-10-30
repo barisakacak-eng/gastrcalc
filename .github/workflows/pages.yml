@@ -77,8 +77,40 @@ jobs:
             grep -E "Error|assert|Timeout|Fehler" personal.txt | tail -8 | while read -r l; do echo "::warning::personal Versuch $versuch: $l"; done
           done
           exit 1
+  # Pilotfest E1 (30.10.2026): Funktionstests der Bedienschicht und Einrichtung jeder Ladenart, dazu der kurze Crawler.
+  # Jeder Lauf darf einmal wiederholt werden (langsamer erster Service-Worker-Start auf GitHub-Rechnern), der zweite Fehlschlag blockiert.
+  funktionen:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install playwright==1.56.0 && python -m playwright install --with-deps chromium
+      - name: Bedienschicht (U1–U5)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8840 python tests/bedienung_browser.py > bedienung.txt 2>&1; then exit 0; fi
+            grep -E "FEHLT|Error|assert|Timeout" bedienung.txt | tail -8 | while read -r l; do echo "::warning::bedienung Versuch $versuch: $l"; done
+          done
+          tail -40 bedienung.txt; exit 1
+      - name: Erststart jeder Ladenart (de, drei Ladenarten)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8850 ERSTSTART_SPRACHEN=de ERSTSTART_ARTEN=doener,pizza,cafe python tests/erststart_alle.py > erststart.txt 2>&1; then exit 0; fi
+            grep -E "^ -|Error|assert|Timeout" erststart.txt | tail -8 | while read -r l; do echo "::warning::erststart Versuch $versuch: $l"; done
+          done
+          tail -40 erststart.txt; exit 1
+      - name: Kurzer Crawler (tote Tipps, Hänger, Konsolenfehler)
+        if: hashFiles('tests/klickjagd.py') != ''
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8860 python tests/klickjagd.py --kurz > klickjagd.txt 2>&1; then exit 0; fi
+            grep -E "Klasse [AB]|Error|assert|Timeout" klickjagd.txt | tail -8 | while read -r l; do echo "::warning::klickjagd Versuch $versuch: $l"; done
+          done
+          tail -40 klickjagd.txt; exit 1
   deploy:
-    needs: [test, regeln]
+    needs: [test, regeln, funktionen]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     environment:

@@ -1,6 +1,7 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
+import { fehlerSammlerStarten, fehlerText, fehlerLeeren } from "./fehler.js"; // Fehler-Rucksack (Pilotfest E3, 30.10.2026)
 import { kurzStarten, kurzOffen } from "./screens/rundgang_kurz.js"; // 6b R1 (Entwurf, nur mit window.__gc6b)
 import { erstSatz, erstZeigen } from "./screens/zeki_erst.js"; // 6b R2 (Entwurf, nur mit window.__gc6b)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
@@ -90,6 +91,7 @@ const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
+fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?.phase === "app" ? `${modus()}/${ansicht}` : `einrichtung/${stand?.schrittId || "?"}`) }); // E3: die letzten 50 Fehler, ohne Namen und Zahlen
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
 let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
@@ -1185,7 +1187,7 @@ muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && mue
 
 // Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)
 if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) || new URLSearchParams(location.search).has("test"))
-  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document) };
+  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document), fehlerText: () => fehlerText(localStorage, { fassung: APP_FASSUNG, sprache: aktuelleSprache() }), fehlerLeeren: () => fehlerLeeren(localStorage) };
 
 // Zeki (26.10.2026): Welche Lage Zeki heute schon gesagt hat – nur Anzeige-Komfort im Browser, nicht im Betriebsstand.
 // Fehlt der Speicher (privates Fenster), sagt Zeki seinen Satz eben noch einmal.
