@@ -177,7 +177,6 @@ body.blatt-da { overflow: hidden; }
 .ebene-blatt.blatt-hilfe > .knopf[data-a="blatt-zu"] { position: sticky; bottom: 0; margin: 0 -16px; width: calc(100% + 32px); border-radius: 0; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); min-height: calc(56px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -8px 16px var(--papier); }
 /* Pilotfest P6 (2), 30.10.2026: Blätter wischbar (Griff oben), Zeki-Hilfe kurz */
 .ebene-blatt.wischbar { touch-action: pan-y; will-change: transform; transition: transform .18s ease-out; }
-.ebene-blatt.wischbar::before { content: ""; display: block; width: 44px; height: 5px; border-radius: 3px; margin: -6px auto 10px; background: rgba(31, 42, 36, .22); }
 .hilfe-inhalt.kurz p { font-size: 1.15rem; line-height: 1.35; margin: 6px 0 10px; }
 .hilfe-inhalt.kurz .zeki-fragen { margin-top: 4px; }
 .hilfe-inhalt.kurz .hilfe-mehr-knopf { display: block; margin: 8px auto 0; }
@@ -194,3 +193,4 @@ body.blatt-da { overflow: hidden; }
 .fortschritt-stufen li.laeuft { color: var(--b-text, #1d2a22); font-weight: 700; }
 .fortschritt-stufen li.fertig::before { content: "✓ "; color: var(--b-kupfer, #b5683a); }
 @media (prefers-reduced-motion: reduce) { .fortschritt-balken { animation: none; width: var(--bis, 50%); } }
+.karte.serie .fortschritt.rund { width: 64px; height: 8px; margin: 0; flex: none; align-self: center; }

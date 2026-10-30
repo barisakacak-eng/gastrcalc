@@ -152,7 +152,7 @@ export function karteFotoView(stand) {
   return `
     <h1 class="frage">${esc(t(st.aufgenommen ? "foto.karteWeitere" : "foto.karteFrage"))}</h1>
     <p class="hinweis">${esc(t(st.aufgenommen ? "foto.serieHinweis" : "foto.karteHinweis"))}</p>
-    ${st.aufgenommen ? `<div class="karte serie" role="status" aria-live="polite">${st.laeuft ? `<div class="kreisel klein" aria-hidden="true"></div>` : `<span class="haken" aria-hidden="true">✓</span>`}
+    ${st.aufgenommen ? `<div class="karte serie" role="status" aria-live="polite">${st.laeuft ? (pilotC() ? `<div class="fortschritt stufe-${fortschrittStufe()} rund" aria-hidden="true"><div class="fortschritt-balken"></div></div>` : `<div class="kreisel klein" aria-hidden="true"></div>`) : `<span class="haken" aria-hidden="true">✓</span>`}
       <div><b>${esc(t("foto.serieFotos", st.aufgenommen, st.gelesen))}</b><small class="marke block">${esc(t("foto.serieGerichte", st.gerichte))}${st.fehler ? " · " + esc(t("foto.serieFehler", st.fehler)) : ""}</small></div></div>` : ""}
     ${lauf?.status === "fehler" && !st.aufgenommen ? `<div class="tipp warnband">${esc(lauf.fehler)}</div>` : ""}
     ${lauf?.hinweis ? `<p class="tipp">${esc(lauf.hinweis)}</p>` : ""}
