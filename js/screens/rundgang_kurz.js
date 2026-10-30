@@ -30,10 +30,10 @@ function zeigen(doc) {
   const o = { top: Math.max(0, r.top - P), left: Math.max(0, r.left - P), right: Math.min(w, r.right + P), bottom: Math.min(h, r.bottom + P) };
   const letzte = i === KURZ_STATIONEN.length - 1;
   huelle.innerHTML = `<div class="rg-loch" style="top:${Math.round(o.top)}px;left:${Math.round(o.left)}px;width:${Math.round(o.right - o.left)}px;height:${Math.round(o.bottom - o.top)}px"></div>
-    <button type="button" class="rg-ueberspringen" data-rk="weg">${esc(t("rundgang.mitmach.ueberspringen"))}</button>
     <div class="rg-karte rk-karte"><span class="rg-zeki">${mascotMarkup("hilfe", "none")}</span>
-      <div class="rg-blase"><p dir="auto">${esc(M(st.text))}</p><div class="rg-fuss"><span class="rg-punkte" aria-hidden="true">${KURZ_STATIONEN.map((_, k) => `<i class="${k === i ? "an" : k < i ? "da" : ""}"></i>`).join("")}</span>
+      <div class="rg-blase"><p dir="auto">${esc(M(st.text))}</p><div class="rg-fuss"><button type="button" class="leise rg-ueberspringen rk-weg" data-rk="weg">${esc(t("rundgang.mitmach.ueberspringen"))}</button><span class="rg-punkte" aria-hidden="true">${KURZ_STATIONEN.map((_, k) => `<i class="${k === i ? "an" : k < i ? "da" : ""}"></i>`).join("")}</span>
       <button type="button" class="knopf rg-weiter" data-rk="weiter">${esc(letzte ? t("allgemein.fertig") : t("allgemein.weiter"))}</button></div></div></div>`;
+  // Klicker K3 (30.10.2026): „Überspringen“ stand oben rechts über Zeki bzw. in ar über dem Menü-Symbol – jetzt in der Karte, links im Fuß
   const karte = huelle.querySelector(".rk-karte"); const kh = karte.getBoundingClientRect().height || 140;
   const top = h - o.bottom >= kh + 24 ? o.bottom + 14 : o.top >= kh + 24 ? o.top - kh - 14 : Math.max(60, h - kh - 90);
   karte.style.top = Math.round(top) + "px";

@@ -764,6 +764,7 @@ async function aufKlick(ev) {
   if (ansicht === "umsatzheute") { // Laden-Umbau (20.10.2026): „Umsatz heute“ – Speichern, Rückfrage über 100.000 €
     const r = umsatzLadenAktion(name, el, stand, wurzel); if (!r) return;
     if (r === "zeichnen") { zeichne(); root.querySelector('[data-f="ul-umsatz"]')?.focus(); return; }
+    if (r.teil) { meldung(r.meldung); ereignis("umsatz-laden", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); root.querySelector('[data-f="ul-team-satz"]')?.focus(); return; } // K1: Umsatz gespeichert, Lohn je Stunde fehlt noch
     if (r.meldung) { meldung(r.meldung); return; }
     if (r.gespeichert) { ereignis("umsatz-laden", { laden: stand.id }); await sofortSpeichern(wurzel); if (r.weiter) return zeichne(); ansicht = herkunft === "abschluss" ? "abschluss" : startAnsicht(wurzel); return zeichne(); }
     if (r.fertig) { meldung(t("tag.gespeichert")); await sofortSpeichern(wurzel); ansicht = herkunft === "abschluss" ? "abschluss" : startAnsicht(wurzel); return zeichne(); } // Mitarbeiter heute (27.10.2026)
