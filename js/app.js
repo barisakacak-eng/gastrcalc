@@ -97,7 +97,7 @@ let aktualisierung = null;  // wartender Service Worker (neue Fassung liegt bere
 let offlineStand = "laedt";   // "laedt" | "bereit" | "keinSw"
 let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner stehen, bis es wieder klappt
 let ruheBis = 0, tippX = -99, tippY = -99, tippZeit = 0; // Pilotfest U1 (30.10.2026): tippZeit – nur ein ECHTER Doppeltipp (zweiter Tipp < 300 ms nach dem ersten) wird geschluckt
-const DOPPELTIPP_MS = 300; // Setzung 30.10.2026: so schnell tippt niemand zweimal mit Absicht; „Weiter → Weiter“ liegt darüber
+const DOPPELTIPP_MS = 180; // Setzung 30.10.2026: ein versehentlicher Doppeltipp liegt bei ≈ 100–150 ms; „Weiter → Weiter“ eines schnellen Menschen braucht ≈ 250 ms und mehr
 // // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
 
 function aktivSetzen(id) {
