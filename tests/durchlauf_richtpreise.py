@@ -96,6 +96,8 @@ async def main():
 
             # ---- Cockpit (Laden „Heute“): ≈-Zahl und Richtwert-Zeile, Quote aus der Karte mit Richtpreisen
             z1 = await zaehler(); assert z1["quelle"] == "karte" and z1["rp"] and z1["geschaetzt"], z1
+            # Welle 0 (28.10.2026): ohne Miete zeigt „Heute“ „?“ und „Miete eintragen“ – für die ≈-Zahl braucht der Laden feste Kosten
+            await pg.evaluate("import('./js/stamm.js').then(m => { const s = window.__gastrocalc.stand; m.kostenBetragSetzen(s, 'miete', 'miete', 1500); s.team.personen = 0; window.__gastrocalc.zeichne(); })")
             await nav_hilfe.geh(pg, "start"); await pg.wait_for_selector(".h-ziel")
             riesig = await pg.inner_text(".h-riesig"); assert riesig.startswith("≈"), riesig
             assert await pg.locator(".h-richtwert").count() == 0, "Laden-Umbau (20.10.2026): Richtwert-Zeile wohnt im Büro, nicht im Laden"

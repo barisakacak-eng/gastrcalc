@@ -36,6 +36,9 @@ export function ebeneWiederherstellen(wurzel) {
   if (wurzel.modus === "buero" && codeAktiv(wurzel)) modusSetzen(wurzel, "laden");
   if (wurzel.modus === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) modusSetzen(wurzel, "laden");
 }
+// Übungsmodus zurücknehmen (30.10.2026): war vor der Übung kein Modus gesetzt, verschwinden Feld UND Spiegel – sonst stand nach dem
+// nächsten Laden „laden“ im Stand, und die Sicherung war nicht mehr byte-gleich (Befund tests/durchlauf_mitmach.py).
+export function modusVergessen(wurzel) { if (wurzel) delete wurzel.modus; merke(SCHLUESSEL.modus, null); }
 // „Alles löschen": auch den Spiegel vergessen.
 export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESSEL.pinAlt, null); }
 

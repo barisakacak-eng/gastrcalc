@@ -41,7 +41,7 @@ import { naechstesRezept, rezeptFortschritt, waageFragen } from "./rezept_quelle
 import { onboardingZuruecksetzen } from "./screens/onboarding.js"; // Paket 2: „?“-Hilfe des Schnellwegs
 import { nav, navKontext } from "./screens/nav.js";
 // Drei Ebenen (Entwickler A): Modus je Handy, Menü-Blatt/Hilfe/Büro-Code in eigener Hülle außerhalb von #app
-import { bioKennung, bioSetzen, BUERO_OFFEN_MS } from "./modus.js";
+import { bioKennung, bioSetzen, BUERO_OFFEN_MS, modusVergessen } from "./modus.js";
 import { bioPruefen, bioEinrichten } from "./schloss_bio.js";
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt, codeAktiv, testphaseOhneCode, testphaseSetzen } from "./modus.js"; // W2-S: Sperrliste Personal
 import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, pinZweckJetzt, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
@@ -185,7 +185,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
+        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gcFuehrungZeigen) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -362,7 +362,7 @@ function rundgangApi() {
       if (!uebung) return;
       speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();
       const m0 = uebung.modus; uebungZuruecknehmen(wurzel, uebung); uebung = null; speichernPausieren(false);
-      modusSetzen(wurzel, m0 || "laden"); if (m0 === undefined) delete wurzel.modus; // Modus gilt auch je Handy (Gerätespeicher): mit zurücklegen, Stand bleibt byte-gleich
+      if (m0 === undefined) modusVergessen(wurzel); else modusSetzen(wurzel, m0); // Modus gilt auch je Handy (Gerätespeicher): mit zurücklegen, Stand bleibt byte-gleich
       stand = wurzel.betriebe.find((b) => b.id === wurzel.aktiv) || stand; ansicht = startAnsicht(wurzel);
       for (const e of uebungLog) zekiLogAnhaengen(stand, e); uebungLog = [];
       await ohneStempelSpeichern(); zeichne();
