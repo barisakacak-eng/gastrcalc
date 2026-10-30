@@ -96,7 +96,9 @@ let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die S
 let aktualisierung = null;  // wartender Service Worker (neue Fassung liegt bereit)
 let offlineStand = "laedt";   // "laedt" | "bereit" | "keinSw"
 let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner stehen, bis es wieder klappt
-let ruheBis = 0, tippX = -99, tippY = -99; // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
+let ruheBis = 0, tippX = -99, tippY = -99, tippZeit = 0; // Pilotfest U1 (30.10.2026): tippZeit – nur ein ECHTER Doppeltipp (zweiter Tipp < 300 ms nach dem ersten) wird geschluckt
+const DOPPELTIPP_MS = 300; // Setzung 30.10.2026: so schnell tippt niemand zweimal mit Absicht; „Weiter → Weiter“ liegt darüber
+// // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
 
 function aktivSetzen(id) {
   if (stand && stand.id !== id) alleZuruecksetzen(); // offene Formulare gehören zum alten Laden (W2-D: zentrale Liste)
@@ -181,7 +183,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        setTimeout(() => { if (ansicht !== "start" || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gc6b) kurzStarten(document); else fuehrungStarten(document, rundgangApi()); }, 400); // Mitmach-Rundgang (28.10.2026)
+        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gc6b) kurzStarten(document); else fuehrungStarten(document, rundgangApi()); }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -662,8 +664,8 @@ async function allesLoeschenJetzt() {
 async function aufKlick(ev) {
   const el = ev.target.closest("[data-a]"); if (!el) return;
   const name = el.dataset.a;
-  const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; tippX = ev.clientX; tippY = ev.clientY;
-  if (nah && Date.now() < ruheBis) return; // zweiter Tipp eines Doppeltipps auf dem schon gewechselten Bildschirm
+  const jetzt = Date.now(); const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; const schnell = jetzt - tippZeit < DOPPELTIPP_MS; tippX = ev.clientX; tippY = ev.clientY; tippZeit = jetzt;
+  if (nah && schnell && jetzt < ruheBis) return; // zweiter Tipp eines ECHTEN Doppeltipps auf dem schon gewechselten Bildschirm (U1: vorher verlor „Weiter → Weiter“ den zweiten Tipp)
   if (!stand && !notfall) return; // Rettung (17.10.2026): auf der Fehlerseite gibt es evtl. keinen Laden – Sicherung einlesen und Löschen gehen trotzdem
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
   if (name === "best-wa" && ansicht === "bestand") { const l = bestandLink(stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten (18.10.2026): WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
