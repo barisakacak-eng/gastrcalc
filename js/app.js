@@ -1,6 +1,8 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
+import { kurzStarten, kurzOffen } from "./screens/rundgang_kurz.js"; // 6b R1 (Entwurf, nur mit window.__gc6b)
+import { erstSatz, erstZeigen } from "./screens/zeki_erst.js"; // 6b R2 (Entwurf, nur mit window.__gc6b)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
 import { zekiLogAnhaengen, zekiLogLoeschen, rundgangAbschliessen, uebungStarten, uebungZuruecknehmen, uebungRezepteMerken, uebungRezepteBehalten } from "./stamm.js";
 import { datenschutzText } from "./data/datenschutz.js";
@@ -179,7 +181,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        setTimeout(() => { if (ansicht === "start" && !stand.fuehrung && !fuehrungOffen()) fuehrungStarten(document, rundgangApi()); }, 400); // Mitmach-Rundgang (28.10.2026)
+        setTimeout(() => { if (ansicht !== "start" || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gc6b) kurzStarten(document); else fuehrungStarten(document, rundgangApi()); }, 400); // Mitmach-Rundgang (28.10.2026)
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -686,6 +688,7 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
+    if (window.__gc6b) { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = erstSatz(ziel, { speicher: sp, stunde: new Date().getHours(), stand }); if (satz) setTimeout(() => erstZeigen(document, ziel, satz, sp), 350); } // 6b R2 Entwurf
     if (ziel === "ware") wareZuruecksetzen(); // Welle 2
     if (ziel === "portion") portionOeffnen(stand, el.dataset.id || null); // 2.1
     if (ziel === "preisrunde") preisrundeOeffnen(stand, el.dataset.id || null, el.dataset.cent || null); // Masterauftrag 1.2
@@ -1180,7 +1183,7 @@ muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && mue
 
 // Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)
 if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) || new URLSearchParams(location.search).has("test"))
-  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne };
+  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document) };
 
 // Zeki (26.10.2026): Welche Lage Zeki heute schon gesagt hat – nur Anzeige-Komfort im Browser, nicht im Betriebsstand.
 // Fehlt der Speicher (privates Fenster), sagt Zeki seinen Satz eben noch einmal.

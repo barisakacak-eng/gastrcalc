@@ -123,3 +123,18 @@
 .rg-mitmach .rg-karte{pointer-events:none}
 .rg-mitmach .rg-karte button,.rg-mitmach .rg-karte a,.rg-mitmach .rg-karte input{pointer-events:auto}
 .rg-mitmach .rg-tipphier{position:absolute;left:50%;top:-14px;transform:translate(-50%,-100%);white-space:nowrap;background:var(--glut);color:var(--weiss);font:700 calc(14rem / 17)/1 var(--schrift);padding:6px 10px;border-radius:999px;pointer-events:none}
+/* 6b R1/R2 (Entwurf 28.10.2026): kurzer Rundgang und Zeki beim ersten Tipp */
+.rg-kurz{position:fixed;inset:0;z-index:9000}
+.rg-kurz .rg-loch{position:fixed;border-radius:var(--radius-gross);box-shadow:0 0 0 9999px color-mix(in srgb,var(--tinte) 80%,transparent);pointer-events:none}
+.rg-kurz .rg-loch::after{content:"";position:absolute;inset:-3px;border:3px solid var(--glut);border-radius:inherit}
+.rg-kurz .rk-karte{position:fixed;left:16px;right:16px;display:flex;gap:10px;align-items:flex-end}
+.rg-kurz .rg-blase{background:var(--weiss);color:var(--tinte);border-radius:var(--radius-gross);padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.rg-kurz .rg-blase p{margin:0;font-size:1.05rem;font-weight:600;color:var(--tinte)}
+.rg-kurz .rg-zeki{width:64px;flex:0 0 64px}
+.rg-kurz .rg-fuss{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rg-kurz .rg-ueberspringen{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;min-height:44px;padding:0 16px;border-radius:22px;border:1px solid color-mix(in srgb,var(--weiss) 55%,transparent);background:color-mix(in srgb,var(--tinte) 70%,transparent);color:var(--weiss);font:700 1rem/1 var(--schrift)}
+.zeki-erst{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:8500;animation:rgEin .25s ease both}
+.zeki-erst .ze-karte{display:flex;gap:10px;align-items:flex-end}
+.zeki-erst .ze-zeki{width:58px;flex:0 0 58px}
+.zeki-erst .ze-blase{flex:1;background:var(--weiss);border:2px solid var(--salbei-tief);border-radius:var(--radius-gross);padding:12px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 24px rgba(20,30,22,.18)}
+.zeki-erst .ze-blase p{margin:0;font-weight:600;color:var(--tinte)}

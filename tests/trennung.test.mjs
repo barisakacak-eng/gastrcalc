@@ -45,6 +45,8 @@ const AUSNAHMEN = {
   "putzplan.js": { entwurf: "Entwurf Putzplan (Modulzustand)" },
   "ware.js": { karten: "lokale Liste der Karten", posten: "lokale Liste der Zählung", zaehlen: "Entwurf Wochenzählung (Modulzustand)" }, // Welle 2 (28.10.2026)
   "portion.js": { p: "Portions-Entwurf (Modulzustand)" }, // Welle 2 (28.10.2026)
+  "rundgang_kurz.js": { huelle: "DOM", karte: "DOM" }, // 6b R1 (28.10.2026)
+  "zeki_erst.js": { el: "DOM" }, // 6b R2 (28.10.2026)
   "umsatz.js": { out: "lokale Liste", tage: "lokale Liste" },
   "verkauf.js": { zeilen: "lokale Liste von Sätzen", entwurf: "Entwurf Handeingabe (Modulzustand)" },
 };
