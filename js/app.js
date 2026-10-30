@@ -92,7 +92,7 @@ let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
 if (window.__gcC?.zeki) document.body.classList.add("zeki-platz-" + window.__gcC.zeki); // P6 (3) Entwurf: Platz-Variante a|b
-fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?.phase === "app" ? `${modus()}/${ansicht}` : `einrichtung/${stand?.schrittId || "?"}`) }); // E3: die letzten 50 Fehler, ohne Namen und Zahlen
+fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?.phase === "app" ? `${modus(wurzel)}/${ansicht}` : `einrichtung/${stand?.schrittId || "?"}`) }); // E3: die letzten 50 Fehler, ohne Namen und Zahlen
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
 let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
