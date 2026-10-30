@@ -97,6 +97,8 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
     const zwischen = zweck !== "speisekarte" ? null : (text) => { if (verworfen()) return; const neu = vorschlaegeAusText(text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
       mein.schritt = "mehr"; // P6 (4): zweite Lesart läuft
+      // Durchsicht 30.10.2026 (Fund 2): vorläufige Zeilen sind markiert; die zweite Lesart ersetzt sie, sofern der Chef sie nicht angefasst hat
+      for (const v of neu) v.vorab = true;
       if (neu.length) { vorschlaege.push(...neu); mein.vorlaeufig = true; mein.neuVorab = neu.length; } neuZeichnen(); };
     const r = await auswerten(datei, { zweck, zwischen, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
     mein.vorlaeufig = false;
@@ -105,7 +107,10 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
     mein.text = r.text; mein.dauerMs = r.dauerMs; mein.status = "fertig";
     if (r.nichtGelesen) mein.hinweis = t("foto.seitenGrenze", r.seiten, r.seiten + r.nichtGelesen);
     if (zweck === "speisekarte") {
+      // Fund 2: unangetastete vorläufige Zeilen raus – die saubere zweite Lesart liefert sie neu (sonst „Döner (kein) mit Sala“ neben „Döner (klein) mit Salat“)
+      const vorab = vorschlaege.filter((v) => v.vorab); for (const v of vorab) { const i = vorschlaege.indexOf(v); if (i >= 0) vorschlaege.splice(i, 1); if (aufgeklappt === v.id) aufgeklappt = null; }
       const neu = vorschlaegeAusText(r.text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
+      mein.neuVorab = 0;
       // Trennung (17.10.2026): Gruppe einmal beim Hinzufügen festlegen (vorher beim Zeichnen), damit ein Gericht beim Korrigieren nicht wegspringt.
       // „Bitte prüfen" nur für Lesefehler (Name, Preis); eine Rezept-Rückfrage steht als Hinweis in der Zeile unter „Erkannt"
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
@@ -116,6 +121,7 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
     } else if (!r.text.trim()) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
   } catch (e) {
     console.warn(e);
+    mein.vorlaeufig = false; for (const v of vorschlaege) delete v.vorab; // Fund 3: Balken „Nachlesen“ nicht hängen lassen; vorläufige Gerichte bleiben, was da ist
     uploadAendern(mein.upload, { status: "fehler" });
     if (verworfen()) return null;
     mein.status = "fehler";
@@ -221,13 +227,14 @@ export function kartePruefenEingabe(feld, wert) {
   const m = feld.match(/^fv-(name|preis):(.+)$/); if (!m) return false;
   const v = vorschlaege.find((x) => x.id === m[2]); if (!v) return false;
   if (m[1] === "name") { v.name = wert.slice(0, 80); v.pruefen = false; } else { Object.assign(v, { preis: parseZahl(wert), preisPruefen: false, preisHoch: false, preisGeprueft: true }); }
+  delete v.vorab; // angefasst → bleibt
   return false;
 }
 
 export function kartePruefenAktion(name, el) {
   if (name === "fv-fertig") { sammelnBeenden(); return true; }
   if (name === "fv-mehr") { sammeln = true; return true; }
-  const v = vorschlaege.find((x) => x.id === el.dataset.id);
+  const v = vorschlaege.find((x) => x.id === el.dataset.id); if (v) delete v.vorab; // angefasst → bleibt
   if (name === "fv-an" && v) { v.an = !v.an; if (!v.an && aufgeklappt === v.id) aufgeklappt = null; return true; }
   if (name === "fv-auf" && v) { aufgeklappt = aufgeklappt === v.id ? null : v.id; return true; }
   if (name === "fv-stimmt" && v) { Object.assign(v, { pruefen: false, preisPruefen: false, preisHoch: false, preisGeprueft: true }); return true; } // Baris 19.10.2026: Name und Preis stimmen – bestätigen ohne zu tippen

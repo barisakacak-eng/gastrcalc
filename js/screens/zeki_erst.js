@@ -30,8 +30,10 @@ export function erstZeigen(doc, punkt, satz, speicher) {
     <button type="button" class="knopf" data-ze="ok">${esc(t("rundgang.erst.ok"))}</button></div></div>`;
   doc.body.appendChild(el);
   // Pilotfest 30.10.2026 (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
-  const zu = () => { erstGesehen(punkt, speicher); el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
+  const weg = () => { el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
+  const zu = () => { erstGesehen(punkt, speicher); weg(); };
   const draussen = (e) => { if (!el.contains(e.target)) zu(); };
+  el.__weg = weg; // Durchsicht 30.10.2026: ein Blatt räumt die Karte samt Listener weg, ohne „gesehen“ zu setzen
   el.querySelector('[data-ze="ok"]').addEventListener("click", zu);
   setTimeout(() => { if (el.isConnected) doc.addEventListener("pointerdown", draussen, true); }, 50);
   setTimeout(() => { if (el.isConnected) zu(); }, ERST_DAUER_MS); // nach 7 s von allein weg (gilt als gesehen)

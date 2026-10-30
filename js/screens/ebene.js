@@ -36,20 +36,23 @@ export const pinZweckJetzt = () => (offen === "pin" && pin ? { zweck: pin.zweck,
 // Pilotfest P6 (2), 30.10.2026 (Bildpaket C freigegeben): Blätter schließen per Wischen nach unten; Zeki-Hilfe kurz.
 export const WISCH_ZU_PX = 90; // Setzung 30.10.2026: ab 90 px Zug nach unten (bei Blatt oben) schließt das Blatt
 function wischenAnhaengen(blatt) {
-  let y0 = null, zieht = false;
-  const ende = () => { if (y0 === null) return; const dy = zieht; y0 = null; zieht = false; blatt.style.transform = ""; blatt.style.transition = "";
+  // Touch zuerst (echte Handys): am oberen Rand des Blatts (scrollTop 0) ziehen wir das Blatt selbst und halten dem Browser das Scrollen
+  // per preventDefault weg (touch-action bleibt frei, sonst käme nach wenigen Pixeln pointercancel – Durchsicht 30.10.2026). Maus/Stift über Pointer-Events.
+  let y0 = null, zug = 0;
+  const start = (y) => { if (blatt.scrollTop > 0) return; y0 = y; zug = 0; blatt.style.transition = "none"; };
+  const ziehen = (y) => { if (y0 === null) return false; const dy = y - y0; if (dy <= 0) { zug = 0; blatt.style.transform = ""; return false; } zug = dy; blatt.style.transform = `translateY(${Math.min(dy, 160)}px)`; return true; };
+  const ende = () => { if (y0 === null) return; const dy = zug; y0 = null; zug = 0; blatt.style.transform = ""; blatt.style.transition = "";
     if (dy >= WISCH_ZU_PX) { const d = huelle?.querySelector('.ebene-dimmer[data-a="blatt-zu"]'); if (d) d.click(); else blattSchliessen(); } };
-  blatt.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" && e.button !== 0) return; if (blatt.scrollTop > 0) return; y0 = e.clientY; zieht = 0; blatt.style.transition = "none"; }, { passive: true });
-  blatt.addEventListener("pointermove", (e) => { if (y0 === null) return; const dy = e.clientY - y0; if (dy <= 0) { zieht = 0; blatt.style.transform = ""; return; } zieht = dy; blatt.style.transform = `translateY(${Math.min(dy, 160)}px)`; }, { passive: true });
-  blatt.addEventListener("pointerup", ende); blatt.addEventListener("pointercancel", ende);
-  // Touch ohne Pointer-Events (ältere WebKit-Stände)
-  blatt.addEventListener("touchstart", (e) => { if (!("PointerEvent" in window) && blatt.scrollTop === 0) { y0 = e.touches[0].clientY; zieht = 0; } }, { passive: true });
-  blatt.addEventListener("touchmove", (e) => { if (!("PointerEvent" in window) && y0 !== null) { zieht = Math.max(0, e.touches[0].clientY - y0); blatt.style.transform = `translateY(${Math.min(zieht, 160)}px)`; } }, { passive: true });
-  blatt.addEventListener("touchend", () => { if (!("PointerEvent" in window)) ende(); });
+  blatt.addEventListener("touchstart", (e) => { if (e.touches.length === 1) start(e.touches[0].clientY); }, { passive: true });
+  blatt.addEventListener("touchmove", (e) => { if (y0 !== null && ziehen(e.touches[0].clientY) && e.cancelable) e.preventDefault(); }, { passive: false });
+  blatt.addEventListener("touchend", ende); blatt.addEventListener("touchcancel", ende);
+  blatt.addEventListener("pointerdown", (e) => { if (e.pointerType !== "touch" && e.button === 0) start(e.clientY); });
+  blatt.addEventListener("pointermove", (e) => { if (e.pointerType !== "touch") ziehen(e.clientY); });
+  blatt.addEventListener("pointerup", (e) => { if (e.pointerType !== "touch") ende(); }); blatt.addEventListener("pointercancel", (e) => { if (e.pointerType !== "touch") ende(); });
 }
 function zeigen(art, html) {
   const h = ebeneHuelle(); const neu = offen !== art && !offen;
-  document.querySelector(".zeki-erst")?.remove(); // 6b R2 live: Zekis Erst-Karte nie unter einem Blatt stehen lassen
+  { const z = document.querySelector(".zeki-erst"); if (z) (z.__weg || (() => z.remove()))(); } // 6b R2 live: Zekis Erst-Karte nie unter einem Blatt stehen lassen (Listener mit weg, kein „gesehen“)
   h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "sicherungort" ? t("ladenSchirm.sicherung.woFrage") : art === "rettung" || art === "rettungscode" ? t("rettung.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
   h.classList.add("da"); document.body.classList.add("blatt-da"); offen = art;
   if (art !== "pin" && art !== "passwort") { const b = h.querySelector(".ebene-blatt"); if (b) { b.classList.add("wischbar"); wischenAnhaengen(b); } }

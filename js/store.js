@@ -450,6 +450,13 @@ function tafelSauber(x) {
     aktionen: t.aktionen !== false, sprache: SPRACH_CODES.includes(t.sprache) ? t.sprache : "de" };
 }
 // Menütafel (18.10.2026): Zusammenführen – Aktionen beider Handys bleiben (Vereinigung nach Kennung); „beendet“ gewinnt immer.
+// Vereinigung zweier Listen mit Kennung: Sieger-Fassung gewinnt je id, Rest des Verlierers kommt dazu, Reihenfolge nach datum/erfasst, dann id.
+function listeNachId(sieger, verlierer) {
+  const m = new Map(); for (const x of Array.isArray(sieger) ? sieger : []) if (istObjekt(x) && typeof x.id === "string") m.set(x.id, structuredClone(x));
+  for (const x of Array.isArray(verlierer) ? verlierer : []) if (istObjekt(x) && typeof x.id === "string" && !m.has(x.id)) m.set(x.id, structuredClone(x));
+  if (!m.size) return sieger === undefined && verlierer === undefined ? undefined : [];
+  return [...m.values()].sort((x, y) => String(x.datum || x.erfasst || "").localeCompare(String(y.datum || y.erfasst || "")) || String(x.id).localeCompare(String(y.id)));
+}
 function aktionenVereinigen(sieger, verlierer) {
   const m = new Map(); for (const a of sieger || []) if (istObjekt(a) && typeof a.id === "string") m.set(a.id, { ...a });
   for (const a of verlierer || []) {
@@ -743,7 +750,9 @@ export const BEREICHE = {
   kosten: ["kosten", "kostenKategorienGeprueft", "team"],
   gerichte: ["gerichte", "selbst", "selbstAutoArt", "adanaBrot"], // 20.10.2026: Antwort auf die Brot-Frage zum Adana
   artikel: ["artikel"],
-  betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt", "ladenArten"], // P6 (1): mehrere Ladenarten
+  betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt"],
+  ladenArten: ["ladenArten"], // P6 (1), Durchsicht 30.10.2026 (Fund 4): eigener Bereich – der Fingerabdruck „betrieb“ alter Läden bleibt, sonst kippt bereichWahl beim Abgleich zweier Handys
+  wochen: ["wochenZaehlungen"], spiesse: ["spiesse"], portionen: ["portionMessungen"], // Welle 2, Durchsicht Fund 5: eigene Bereiche, beim Zusammenführen nach id vereinigt (vorher fielen Einträge des anderen Handys still weg)
   kuehl: ["kuehlstellen", "kuehl"],
   putzplan: ["putzplan", "putzplanSpaeter"],
   personen: ["personen"],
@@ -1304,6 +1313,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
     if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
     if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel (18.10.2026)
+    if (a === "wochen" || a === "spiesse" || a === "portionen") { const k = BEREICHE[a][0]; basis[k] = listeNachId(sieger[k], verlierer[k]); } // Fund 5
     if (a === "lieferanten") { basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten (18.10.2026)
       if (lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); } // Prüfgremium 18.10.2026 (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
     if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));

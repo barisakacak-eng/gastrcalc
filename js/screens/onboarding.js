@@ -448,7 +448,8 @@ const LADEN_FOTO = { imbiss: ["laden-burger", "laden-imbiss", "laden-kiosk"], ca
 const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
   return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`; };
 // Pilotfest P6 (1), 30.10.2026 (Bildpaket C freigegeben): mehrere Ladenarten zugleich wählbar, erste = Hauptart.
-const ladenArtAn = (stand, id) => ladenArtenVon(stand).includes(id);
+// Durchsicht 30.10.2026 (Fund 1): nur wirklich gewählte Arten markieren – kein Rückfall auf „anders“/Format, solange nichts getippt ist
+const ladenArtAn = (stand, id) => (Array.isArray(stand.ladenArten) ? stand.ladenArten : stand.ladenArt ? [stand.ladenArt] : []).includes(id);
 const ladenSchnell = {
   id: "laden-schnell",
   view: (stand) => `

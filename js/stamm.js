@@ -36,7 +36,7 @@ export function ladenArtUmschalten(stand, art, arten) {
   const i = l.indexOf(art.id); if (i >= 0) l.splice(i, 1); else l.push(art.id);
   stand.ladenArten = l; stand.ladenArt = l[0] || null;
   const gewaehlt = l.map((id) => arten.find((a) => a.id === id)).filter(Boolean);
-  stand.betrieb.format = gewaehlt[0]?.format || stand.betrieb.format; stand.betrieb.kuechen = [...new Set(gewaehlt.flatMap((a) => a.kuechen))];
+  stand.betrieb.format = gewaehlt[0]?.format || null; stand.betrieb.kuechen = [...new Set(gewaehlt.flatMap((a) => a.kuechen))]; // Durchsicht Fund 1: alles abgewählt → Format weg, sonst bleibt eine Ersatzart „gewählt“
 }
 export const kleinunternehmerUmschalten = (stand) => { stand.betrieb.kleinunternehmer = !stand.betrieb.kleinunternehmer; };
 // Einstellungen: eigene Warenquote / eigener Steuersatz in Prozent (null = Feld leer → Rechenwerk nimmt seinen Wert)

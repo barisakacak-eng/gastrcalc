@@ -70,6 +70,15 @@ async def main():
             await pg.mouse.move(x, y); await pg.mouse.down(); await pg.mouse.move(x, y + 40, steps=3); await pg.mouse.up(); await pg.wait_for_timeout(300)
             pruefe(await pg.locator("#ebene-huelle .ebene-blatt").count() == 1, "C2 kurzer Zug (40 px) schließt nicht")
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(200)
+            # echte Touch-Geste (CDP): Finger auf dem Blatt 130 px nach unten ziehen
+            await nav_hilfe.menue(pg); await pg.wait_for_timeout(300)
+            bl = await pg.locator("#ebene-huelle .ebene-blatt").bounding_box(); x, y = bl["x"] + bl["width"] / 2, bl["y"] + 30
+            cdp = await ctx.new_cdp_session(pg)
+            await cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
+            for k in range(1, 8): await cdp.send("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": [{"x": x, "y": y + 20 * k}]}); await pg.wait_for_timeout(16)
+            await cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []}); await pg.wait_for_timeout(400)
+            pruefe(await pg.locator("#ebene-huelle .ebene-blatt").count() == 0, "C2 Menü-Blatt schließt per echter Touch-Wischgeste (CDP)")
+            await pg.keyboard.press("Escape"); await pg.wait_for_timeout(200)
             # ---- C6 Büro Fehler melden
             await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300); await pg.click('#app [data-a="nav"][data-wert="einstellungen"]'); await pg.wait_for_timeout(400)
             pruefe(await pg.locator(".fehler-karte").count() == 1 and await pg.locator('[data-a="fehler-melden"]').count() == 1, "C6 Karte „Fehler melden“ in den Einstellungen")

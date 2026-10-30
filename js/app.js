@@ -91,6 +91,9 @@ const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
+// Durchsicht 30.10.2026 (Fund 7): localStorage kann selbst werfen (gesperrter Speicher) – ein Ersatz ohne Speicher statt Absturz
+const SPEICHER_LEER = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+const speicherLokal = () => { try { return window.localStorage || SPEICHER_LEER; } catch { return SPEICHER_LEER; } };
 fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?.phase === "app" ? `${modus(wurzel)}/${ansicht}` : `einrichtung/${stand?.schrittId || "?"}`) }); // E3: die letzten 50 Fehler, ohne Namen und Zahlen
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
@@ -151,7 +154,7 @@ function zeichne() {
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
-        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(localStorage).length }) // W2-D
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length }) // W2-D
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
         : ansicht === "muell" ? muellView(stand)
@@ -709,8 +712,8 @@ async function aufKlick(ev) {
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
   if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
-  if (name === "fehler-melden") { textTeilen(fehlerText(localStorage, { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
-  if (name === "fehler-leeren") { fehlerLeeren(localStorage); return zeichne(); }
+  if (name === "fehler-melden") { textTeilen(fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
+  if (name === "fehler-leeren") { fehlerLeeren(speicherLokal()); return zeichne(); }
   if (name === "zeki-erst-wieder") { let sp = null; try { sp = localStorage; } catch { sp = null; } erstWiederZeigen(sp); meldung(t("rundgang.erst.wiederOk")); return true; } // 6b R2 live: Zeki erklärt jede Stelle wieder beim ersten Tipp
   if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
@@ -1191,7 +1194,7 @@ muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && mue
 
 // Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)
 if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) || new URLSearchParams(location.search).has("test"))
-  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document), fehlerText: () => fehlerText(localStorage, { fassung: APP_FASSUNG, sprache: aktuelleSprache() }), fehlerLeeren: () => fehlerLeeren(localStorage) };
+  window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document), fehlerText: () => fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache() }), fehlerLeeren: () => fehlerLeeren(speicherLokal()) };
 
 // Zeki (26.10.2026): Welche Lage Zeki heute schon gesagt hat – nur Anzeige-Komfort im Browser, nicht im Betriebsstand.
 // Fehlt der Speicher (privates Fenster), sagt Zeki seinen Satz eben noch einmal.
