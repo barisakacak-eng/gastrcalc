@@ -104,10 +104,8 @@ jobs:
       - name: Kurzer Crawler (tote Tipps, Hänger, Konsolenfehler)
         if: hashFiles('tests/klickjagd.py') != ''
         run: |
-          for versuch in 1 2; do
-            if DURCHLAUF_PORT=8860 python tests/klickjagd.py --kurz > klickjagd.txt 2>&1; then exit 0; fi
-            grep -E "Klasse [AB]|Error|assert|Timeout" klickjagd.txt | tail -8 | while read -r l; do echo "::warning::klickjagd Versuch $versuch: $l"; done
-          done
+          if DURCHLAUF_PORT=8860 python tests/klickjagd.py --kurz > klickjagd.txt 2>&1; then grep -E "Befunde gesamt" klickjagd.txt | while read -r l; do echo "::notice::klickjagd: $l"; done; exit 0; fi
+          grep -E "tot|haenger|konsole|Error|Timeout" klickjagd.txt | tail -12 | while read -r l; do echo "::warning::klickjagd: $l"; done
           tail -40 klickjagd.txt; exit 1
   deploy:
     needs: [test, regeln, funktionen]
