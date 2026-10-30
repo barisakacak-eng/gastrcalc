@@ -181,3 +181,16 @@ body.blatt-da { overflow: hidden; }
 .hilfe-inhalt.kurz p { font-size: 1.15rem; line-height: 1.35; margin: 6px 0 10px; }
 .hilfe-inhalt.kurz .zeki-fragen { margin-top: 4px; }
 .hilfe-inhalt.kurz .hilfe-mehr-knopf { display: block; margin: 8px auto 0; }
+/* Pilotfest P6 (4), 30.10.2026: Fortschritt Speisekarte – drei Stufen */
+.fortschritt { width: min(320px, 86%); height: 10px; margin: 18px auto 10px; border-radius: 6px; background: rgba(31, 42, 36, .12); overflow: hidden; }
+.fortschritt.schmal { height: 6px; margin: 4px auto 10px; }
+.fortschritt-balken { height: 100%; border-radius: 6px; background: var(--b-kupfer, #b5683a); width: 4%; animation: fortschrittLauf 1.2s ease-out forwards; }
+.fortschritt.stufe-1 .fortschritt-balken { --von: 4%; --bis: 28%; animation-duration: 1.2s; }
+.fortschritt.stufe-2 .fortschritt-balken { --von: 28%; --bis: 78%; animation-duration: 6s; }
+.fortschritt.stufe-3 .fortschritt-balken { --von: 78%; --bis: 97%; animation-duration: 4s; }
+@keyframes fortschrittLauf { from { width: var(--von, 4%); } to { width: var(--bis, 97%); } }
+.fortschritt-stufen { display: flex; justify-content: space-between; gap: 8px; list-style: none; margin: 0 auto 12px; padding: 0; width: min(320px, 86%); font-size: .9rem; color: var(--b-text-leise, #5b655c); }
+.fortschritt-stufen li { flex: 1; text-align: center; }
+.fortschritt-stufen li.laeuft { color: var(--b-text, #1d2a22); font-weight: 700; }
+.fortschritt-stufen li.fertig::before { content: "✓ "; color: var(--b-kupfer, #b5683a); }
+@media (prefers-reduced-motion: reduce) { .fortschritt-balken { animation: none; width: var(--bis, 50%); } }

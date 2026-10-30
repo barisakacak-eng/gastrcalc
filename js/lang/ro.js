@@ -913,7 +913,7 @@ export default {
     journal: { schwund: "Gunoi", tagesnotizen: "Vânzări", messungen: "Răcire", lieferungen: "Livrări", abschluesse: "Închideri de zi", kostenbelege: "Facturi de costuri", putzlog: "Plan de curățenie", belehrungen: "Instruiri de igienă", rundgaenge: "Ture de răcire", inventuren: "Inventare", uploads: "Poze", artikel: "Mărfuri", gerichte: "Preparate", anderes: "Date" },
     bereich: { lieferanten: "Furnizori", kombis: "Meniuri combo", kosten: "Costuri", gerichte: "Preparate și rețete", artikel: "Mărfuri și prețuri", betrieb: "Local", kuehl: "Locuri de răcire", putzplan: "Plan de curățenie", personen: "Persoane", lager: "Stoc" },
   },
-  einstellungen: { ruhe: { titel: "Ore de vârf", hinweis: "În aceste ore aplicația nu arată mementouri care pot aștepta.", von: "de la", bis: "până la" }, kleinunternehmer: "Firmă mică (fără TVA deductibil)", kleinunternehmerHinweis: "Pornit: sumele brute contează integral, nu se scade TVA.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Ore de vârf", hinweis: "În aceste ore aplicația nu arată mementouri care pot aștepta.", von: "de la", bis: "până la" }, kleinunternehmer: "Firmă mică (fără TVA deductibil)", kleinunternehmerHinweis: "Pornit: sumele brute contează integral, nu se scade TVA.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Pozele cu facturi, gunoi și preparate sunt în fișierul de copie. De aceea fișierul e mai mare.",
     bereichBetrieb: "Local, zile, sezon",
     bereichTeam: "Echipă",
@@ -1001,6 +1001,7 @@ export default {
     ablegen: "Salvez poza …", lesen: "Îți citesc meniul …", lesenRechnung: "Citesc factura …",
     seite: (a, b) => `Citesc pagina ${a} din ${b} …`,
     lesenHinweis: "Asta se întâmplă pe telefonul tău. Prima dată aplicația descarcă o singură dată recunoașterea textului (cam 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "N-am putut citi nimic. Încă o dată: drept, luminos, mai aproape.",
     fehlerLesen: "Citirea n-a mers. Încearcă din nou sau ia altă poză.",
     fehlerArt: "Fișierul ăsta nu-l pot citi. Dă-mi o poză (JPG, PNG) sau un PDF.",

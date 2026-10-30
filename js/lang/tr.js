@@ -907,7 +907,7 @@ export default {
     journal: { schwund: "Çöp", tagesnotizen: "Ciro", messungen: "Soğutma", lieferungen: "Teslimatlar", abschluesse: "Gün kapanışları", kostenbelege: "Masraf belgeleri", putzlog: "Temizlik planı", belehrungen: "Hijyen eğitimleri", rundgaenge: "Soğutma turları", inventuren: "Sayımlar", uploads: "Fotoğraflar", artikel: "Mallar", gerichte: "Yemekler", anderes: "Veriler" },
     bereich: { lieferanten: "Tedarikçiler", kombis: "Kombi menüler", kosten: "Masraflar", gerichte: "Yemekler ve tarifler", artikel: "Mallar ve fiyatlar", betrieb: "İşletme", kuehl: "Soğutucular", putzplan: "Temizlik planı", personen: "Kişiler", lager: "Depo" },
   },
-  einstellungen: { ruhe: { titel: "Yoğun saatler", hinweis: "Bu saatlerde uygulama bekleyebilecek hatırlatmaları göstermez.", von: "başlangıç", bis: "bitiş" }, kleinunternehmer: "Küçük işletme (KDV iadesi yok)", kleinunternehmerHinweis: "Açık: brüt tutarlar tam sayılır, KDV düşülmez.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Hata bildir", keine: "Kayıtlı hata yok.", anzahl: (n) => `${n} hata kayıtlı.`, hinweis: "Uygulama son 50 hatayı sadece bu telefonda, isim ve rakam olmadan tutar. Metni kendin gönderirsin.", melden: "Hata bildir", leeren: "Listeyi temizle", kopiert: "Metin kopyalandı – şimdi yapıştır ve gönder." }, ruhe: { titel: "Yoğun saatler", hinweis: "Bu saatlerde uygulama bekleyebilecek hatırlatmaları göstermez.", von: "başlangıç", bis: "bitiş" }, kleinunternehmer: "Küçük işletme (KDV iadesi yok)", kleinunternehmerHinweis: "Açık: brüt tutarlar tam sayılır, KDV düşülmez.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Fatura, çöp ve yemek fotoğrafları yedek dosyasında var. Dosya bu yüzden büyür.",
     bereichBetrieb: "Dükkân, günler, sezon",
     bereichTeam: "Ekip",
@@ -995,6 +995,7 @@ export default {
     ablegen: "Fotoğraf kaydediliyor …", lesen: "Menünü okuyorum …", lesenRechnung: "Faturayı okuyorum …",
     seite: (a, b) => `${b} sayfanın ${a}. sayfasını okuyorum …`,
     lesenHinweis: "Bu işlem telefonunda olur. İlk seferde uygulama yazı tanımayı bir kez yükler (yaklaşık 13 MB).",
+    stufe1: "Resmi hazırla", stufe2: "Okuma", stufe3: "Tekrar okuma",
     nichtsErkannt: "Hiçbir şey okuyamadım. Lütfen tekrar: düz, aydınlık, daha yakından.",
     fehlerLesen: "Okuma olmadı. Lütfen tekrar dene veya başka bir fotoğraf kullan.",
     fehlerArt: "Bu dosyayı okuyamıyorum. Lütfen fotoğraf (JPG, PNG) veya PDF.",

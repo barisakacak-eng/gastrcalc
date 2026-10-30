@@ -912,7 +912,7 @@ export default {
     journal: { schwund: "Відходи", tagesnotizen: "Виторг", messungen: "Охолодження", lieferungen: "Постачання", abschluesse: "Закриття дня", kostenbelege: "Рахунки витрат", putzlog: "План прибирання", belehrungen: "Гігієнічні інструктажі", rundgaenge: "Обходи охолодження", inventuren: "Інвентаризації", uploads: "Фото", artikel: "Товари", gerichte: "Страви", anderes: "Дані" },
     bereich: { lieferanten: "Постачальники", kombis: "Комбо-меню", kosten: "Витрати", gerichte: "Страви й рецепти", artikel: "Товари й ціни", betrieb: "Заклад", kuehl: "Холодильні місця", putzplan: "План прибирання", personen: "Люди", lager: "Склад" },
   },
-  einstellungen: { ruhe: { titel: "Години пік", hinweis: "У ці години застосунок не показує нагадувань, які можуть зачекати.", von: "з", bis: "до" }, kleinunternehmer: "Малий бізнес (без відшкодування ПДВ)", kleinunternehmerHinweis: "Увімк.: суми брутто рахуються повністю, ПДВ не віднімається.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Години пік", hinweis: "У ці години застосунок не показує нагадувань, які можуть зачекати.", von: "з", bis: "до" }, kleinunternehmer: "Малий бізнес (без відшкодування ПДВ)", kleinunternehmerHinweis: "Увімк.: суми брутто рахуються повністю, ПДВ не віднімається.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Фото рахунків, відходів і страв входять у файл копії. Тому файл більший.",
     bereichBetrieb: "Заклад, дні, сезон",
     bereichTeam: "Команда",
@@ -1000,6 +1000,7 @@ export default {
     ablegen: "Фото зберігається …", lesen: "Читаю твоє меню …", lesenRechnung: "Читаю рахунок …",
     seite: (a, b) => `Читаю сторінку ${a} з ${b} …`,
     lesenHinweis: "Усе відбувається на твоєму телефоні. Першого разу застосунок один раз завантажить розпізнавання тексту (приблизно 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Нічого не зміг прочитати. Ще раз, будь ласка: рівно, світло, ближче.",
     fehlerLesen: "Прочитати не вдалося. Спробуй ще раз або візьми інше фото.",
     fehlerArt: "Цей файл я прочитати не можу. Потрібне фото (JPG, PNG) або PDF.",

@@ -907,7 +907,7 @@ export default {
     journal: { schwund: "Déchets", tagesnotizen: "Chiffre d'affaires", messungen: "Froid", lieferungen: "Livraisons", abschluesse: "Clôtures du jour", kostenbelege: "Justificatifs de frais", putzlog: "Plan de nettoyage", belehrungen: "Formations hygiène", rundgaenge: "Tournées de froid", inventuren: "Inventaires", uploads: "Photos", artikel: "Marchandises", gerichte: "Plats", anderes: "Données" },
     bereich: { lieferanten: "Fournisseurs", kombis: "Menus combinés", kosten: "Frais", gerichte: "Plats et recettes", artikel: "Marchandises et prix", betrieb: "Commerce", kuehl: "Points de froid", putzplan: "Plan de nettoyage", personen: "Personnes", lager: "Stock" },
   },
-  einstellungen: { ruhe: { titel: "Heures de pointe", hinweis: "Pendant ces heures, l’appli n’affiche pas les rappels qui peuvent attendre.", von: "de", bis: "à" }, kleinunternehmer: "Petite entreprise (pas de TVA déductible)", kleinunternehmerHinweis: "Activé : les montants TTC comptent en entier, aucune TVA n’est déduite.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Heures de pointe", hinweis: "Pendant ces heures, l’appli n’affiche pas les rappels qui peuvent attendre.", von: "de", bis: "à" }, kleinunternehmer: "Petite entreprise (pas de TVA déductible)", kleinunternehmerHinweis: "Activé : les montants TTC comptent en entier, aucune TVA n’est déduite.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Les photos de factures, déchets et plats sont dans le fichier de sauvegarde. Le fichier est donc plus gros.",
     bereichBetrieb: "Resto, jours, saison",
     bereichTeam: "Équipe",
@@ -995,6 +995,7 @@ export default {
     ablegen: "Enregistrement de la photo…", lesen: "Je lis ta carte…", lesenRechnung: "Je lis la facture…",
     seite: (a, b) => `Je lis la page ${a} sur ${b}…`,
     lesenHinweis: "Ça se passe sur ton téléphone. La première fois, l’appli télécharge une seule fois la reconnaissance de texte (environ 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Je n’ai rien pu lire. Encore une fois s’il te plaît : droit, éclairé, plus près.",
     fehlerLesen: "La lecture n’a pas marché. Réessaie ou prends une autre photo.",
     fehlerArt: "Je ne peux pas lire ce fichier. Prends une photo (JPG, PNG) ou un PDF.",

@@ -906,7 +906,7 @@ export default {
     journal: { schwund: "زباله", tagesnotizen: "فروش", messungen: "سرمایش", lieferungen: "تحویل‌ها", abschluesse: "بستن روز", kostenbelege: "رسیدهای هزینه", putzlog: "برنامه نظافت", belehrungen: "آموزش‌های بهداشت", rundgaenge: "دورهای سرمایش", inventuren: "انبارگردانی", uploads: "عکس‌ها", artikel: "کالاها", gerichte: "غذاها", anderes: "داده‌ها" },
     bereich: { lieferanten: "تأمین‌کنندگان", kombis: "منوهای ترکیبی", kosten: "هزینه‌ها", gerichte: "غذاها و دستورها", artikel: "کالاها و قیمت‌ها", betrieb: "مغازه", kuehl: "جاهای سرمایش", putzplan: "برنامه نظافت", personen: "افراد", lager: "انبار" },
   },
-  einstellungen: { ruhe: { titel: "ساعت‌های شلوغ", hinweis: "در این ساعت‌ها برنامه یادآوری‌هایی را که می‌توانند صبر کنند نشان نمی‌دهد.", von: "از", bis: "تا" }, kleinunternehmer: "کسب‌وکار کوچک (بدون بازپرداخت مالیات)", kleinunternehmerHinweis: "روشن: مبالغ ناخالص کامل حساب می‌شوند، مالیاتی کم نمی‌شود.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "ساعت‌های شلوغ", hinweis: "در این ساعت‌ها برنامه یادآوری‌هایی را که می‌توانند صبر کنند نشان نمی‌دهد.", von: "از", bis: "تا" }, kleinunternehmer: "کسب‌وکار کوچک (بدون بازپرداخت مالیات)", kleinunternehmerHinweis: "روشن: مبالغ ناخالص کامل حساب می‌شوند، مالیاتی کم نمی‌شود.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "عکس فاکتورها، زباله و غذاها در فایل پشتیبان هست. برای همین فایل بزرگ‌تر می‌شود.",
     bereichBetrieb: "مغازه، روزها، فصل",
     bereichTeam: "تیم",
@@ -994,6 +994,7 @@ export default {
     ablegen: "عکس دارد ذخیره می‌شود …", lesen: "دارم منویت را می‌خوانم …", lesenRechnung: "دارم فاکتور را می‌خوانم …",
     seite: (a, b) => `دارم صفحه‌ی ${a} از ${b} را می‌خوانم …`,
     lesenHinweis: "این کار روی گوشی خودت انجام می‌شود. بار اول اپ یک بار متن‌خوان را دانلود می‌کند (حدود 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "چیزی نتوانستم بخوانم. لطفاً دوباره: صاف، روشن، نزدیک‌تر.",
     fehlerLesen: "خواندن نشد. لطفاً دوباره امتحان کن یا عکس دیگری بگیر.",
     fehlerArt: "این فایل را نمی‌توانم بخوانم. لطفاً یک عکس (JPG، PNG) یا یک PDF.",

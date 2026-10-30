@@ -96,7 +96,8 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
     // P4 (30.10.2026): erste Lesart → Gerichte sofort zeigen (vorläufig), die zweite Lesart ergänzt danach
     const zwischen = zweck !== "speisekarte" ? null : (text) => { if (verworfen()) return; const neu = vorschlaegeAusText(text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
-      if (neu.length) { vorschlaege.push(...neu); mein.vorlaeufig = true; mein.neuVorab = neu.length; mein.schritt = "mehr"; neuZeichnen(); } };
+      mein.schritt = "mehr"; // P6 (4): zweite Lesart läuft
+      if (neu.length) { vorschlaege.push(...neu); mein.vorlaeufig = true; mein.neuVorab = neu.length; } neuZeichnen(); };
     const r = await auswerten(datei, { zweck, zwischen, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
     mein.vorlaeufig = false;
     uploadAendern(mein.upload, { status: "gelesen", auswertung: { quelle: r.quelle, art: r.art, dauerMs: r.dauerMs, zeichen: r.text.length } });
@@ -128,6 +129,15 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
 let gewaermt = false;
 export function fotoVorbereiten() { if (!gewaermt) { gewaermt = true; vorwaermen(); } }
 
+// Pilotfest P6 (4), 30.10.2026 (Entwurf hinter window.__gcC): drei Stufen statt Kreisel – Bild vorbereiten · Lesen · Nachlesen.
+// Der Balken läuft zeitgesteuert bis kurz vor das Stufenende (die Erkennung meldet keinen Zwischenstand), springt beim nächsten Schritt weiter.
+const pilotC = () => typeof window !== "undefined" && !!window.__gcC;
+const fortschrittStufe = () => !lauf || lauf.schritt === "ablegen" ? 1 : lauf.schritt === "mehr" ? 3 : 2;
+export function fortschrittHtml() {
+  const n = fortschrittStufe(); const namen = ["foto.stufe1", "foto.stufe2", "foto.stufe3"];
+  return `<div class="fortschritt stufe-${n}" aria-hidden="true"><div class="fortschritt-balken"></div></div>
+    <ol class="fortschritt-stufen" aria-hidden="true">${namen.map((k, i) => `<li class="${i + 1 < n ? "fertig" : i + 1 === n ? "laeuft" : ""}">${esc(t(k))}</li>`).join("")}</ol>`;
+}
 const schrittText = () => !lauf ? t("foto.lesen") : lauf.schritt === "seite" ? t("foto.seite", lauf.seite, lauf.von) : lauf.schritt === "ablegen" ? t("foto.ablegen") : t("foto.lesen");
 
 // ---------- Speisekarte: aufnehmen ----------
@@ -135,7 +145,7 @@ export function karteFotoView(stand) {
   fotoVorbereiten();
   const modus = karteModus();
   if (modus === "warten") { const st = serieStand(); return `
-    <div class="fotolauf" role="status" aria-live="polite"><div class="kreisel" aria-hidden="true"></div><h1 class="frage">${esc(st.aufgenommen > 1 ? t("foto.wartenAufLesen") : schrittText())}</h1>
+    <div class="fotolauf" role="status" aria-live="polite">${pilotC() ? fortschrittHtml() : `<div class="kreisel" aria-hidden="true"></div>`}<h1 class="frage">${esc(st.aufgenommen > 1 ? t("foto.wartenAufLesen") : schrittText())}</h1>
       <p class="hinweis">${st.aufgenommen > 1 ? esc(t("foto.serieFotos", st.aufgenommen, st.gelesen)) + " · " + esc(t("foto.serieGerichte", st.gerichte)) : esc(t("foto.lesenHinweis"))}</p>
       <button type="button" class="leise" data-a="foto-abbrechen">${esc(t(st.gerichte ? "foto.lesenStoppen" : "allgemein.abbrechen"))}</button></div>`; }
   const st = serieStand();
@@ -201,6 +211,7 @@ export function kartePruefenView() {
     <div class="s2kopf s2zeki fvzeki"><div class="s2zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(offen ? "frage" : "freude")}</div>
       <div class="s2zeki-blase"><h1 class="frage" dir="auto">${esc(t("foto.zeki.titel", vorschlaege.length))}</h1>
       <p class="s2zeki-hilfe">${esc(offen ? t("foto.zeki.pruefen", offen) : t("foto.zeki.alle"))}</p></div></div>
+    ${pilotC() && lauf?.vorlaeufig ? `<div class="fortschritt stufe-3 schmal" role="status" aria-live="polite" aria-label="${esc(t("foto.stufe3"))}"><div class="fortschritt-balken"></div></div>` : ""}
     ${pr.length ? `<div class="fvkarten">${pr.map(pruefKarte).join("")}</div>` : ""}
     ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.zeki.erkannt", ok.length))}</h2>
     <div class="fvliste">${ok.map(fvZeile).join("")}</div>` : ""}

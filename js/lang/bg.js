@@ -912,7 +912,7 @@ export default {
     journal: { schwund: "Отпадъци", tagesnotizen: "Оборот", messungen: "Охлаждане", lieferungen: "Доставки", abschluesse: "Приключване на деня", kostenbelege: "Разходни документи", putzlog: "План за почистване", belehrungen: "Хигиенни инструктажи", rundgaenge: "Обиколки охлаждане", inventuren: "Инвентаризации", uploads: "Снимки", artikel: "Стоки", gerichte: "Ястия", anderes: "Данни" },
     bereich: { lieferanten: "Доставчици", kombis: "Комбо менюта", kosten: "Разходи", gerichte: "Ястия и рецепти", artikel: "Стоки и цени", betrieb: "Обект", kuehl: "Хладилни места", putzplan: "План за почистване", personen: "Хора", lager: "Склад" },
   },
-  einstellungen: { ruhe: { titel: "Пикови часове", hinweis: "В тези часове приложението не показва напомняния, които могат да почакат.", von: "от", bis: "до" }, kleinunternehmer: "Малък бизнес (без приспадане на ДДС)", kleinunternehmerHinweis: "Вкл.: брутните суми се броят изцяло, ДДС не се приспада.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Пикови часове", hinweis: "В тези часове приложението не показва напомняния, които могат да почакат.", von: "от", bis: "до" }, kleinunternehmer: "Малък бизнес (без приспадане на ДДС)", kleinunternehmerHinweis: "Вкл.: брутните суми се броят изцяло, ДДС не се приспада.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Снимките на фактури, отпадъци и ястия са във файла с копието. Затова файлът е по-голям.",
     bereichBetrieb: "Заведение, дни, сезон",
     bereichTeam: "Екип",
@@ -1000,6 +1000,7 @@ export default {
     ablegen: "Запазвам снимката …", lesen: "Чета менюто ти …", lesenRechnung: "Чета фактурата …",
     seite: (a, b) => `Чета страница ${a} от ${b} …`,
     lesenHinweis: "Това става на твоя телефон. Първия път приложението сваля еднократно разпознаването на текст (около 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Не успях да прочета нищо. Още веднъж: право, светло, по-отблизо.",
     fehlerLesen: "Четенето не стана. Опитай пак или вземи друга снимка.",
     fehlerArt: "Този файл не мога да го прочета. Дай снимка (JPG, PNG) или PDF.",

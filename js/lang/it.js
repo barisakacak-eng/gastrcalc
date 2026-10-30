@@ -907,7 +907,7 @@ export default {
     journal: { schwund: "Rifiuti", tagesnotizen: "Incasso", messungen: "Refrigerazione", lieferungen: "Consegne", abschluesse: "Chiusure del giorno", kostenbelege: "Ricevute di costo", putzlog: "Piano pulizie", belehrungen: "Formazioni igiene", rundgaenge: "Giri di refrigerazione", inventuren: "Inventari", uploads: "Foto", artikel: "Merci", gerichte: "Piatti", anderes: "Dati" },
     bereich: { lieferanten: "Fornitori", kombis: "Menù combo", kosten: "Costi", gerichte: "Piatti e ricette", artikel: "Merci e prezzi", betrieb: "Locale", kuehl: "Punti di refrigerazione", putzplan: "Piano pulizie", personen: "Persone", lager: "Magazzino" },
   },
-  einstellungen: { ruhe: { titel: "Ore di punta", hinweis: "In queste ore l'app non mostra promemoria che possono aspettare.", von: "dalle", bis: "alle" }, kleinunternehmer: "Piccola impresa (senza IVA detraibile)", kleinunternehmerHinweis: "Attivo: gli importi lordi contano per intero, nessuna IVA viene detratta.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Ore di punta", hinweis: "In queste ore l'app non mostra promemoria che possono aspettare.", von: "dalle", bis: "alle" }, kleinunternehmer: "Piccola impresa (senza IVA detraibile)", kleinunternehmerHinweis: "Attivo: gli importi lordi contano per intero, nessuna IVA viene detratta.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Le foto di fatture, rifiuti e piatti sono nel file di backup. Per questo il file è più grande.",
     bereichBetrieb: "Locale, giorni, stagione",
     bereichTeam: "Team",
@@ -995,6 +995,7 @@ export default {
     ablegen: "Salvo la foto …", lesen: "Sto leggendo il tuo menù …", lesenRechnung: "Sto leggendo la fattura …",
     seite: (a, b) => `Sto leggendo la pagina ${a} di ${b} …`,
     lesenHinweis: "Succede sul tuo telefono. La prima volta l'app carica una volta sola il riconoscimento del testo (circa 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Non sono riuscito a leggere niente. Un'altra volta: dritto, con luce, più vicino.",
     fehlerLesen: "La lettura non è riuscita. Riprova o prendi un'altra foto.",
     fehlerArt: "Questo file non lo so leggere. Serve una foto (JPG, PNG) o un PDF.",

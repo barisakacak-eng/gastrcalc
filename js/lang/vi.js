@@ -907,7 +907,7 @@ export default {
     journal: { schwund: "Rác", tagesnotizen: "Doanh thu", messungen: "Làm lạnh", lieferungen: "Giao hàng", abschluesse: "Đóng ngày", kostenbelege: "Hóa đơn chi phí", putzlog: "Kế hoạch vệ sinh", belehrungen: "Hướng dẫn vệ sinh", rundgaenge: "Vòng kiểm lạnh", inventuren: "Kiểm kho", uploads: "Ảnh", artikel: "Hàng hóa", gerichte: "Món ăn", anderes: "Dữ liệu" },
     bereich: { lieferanten: "Nhà cung cấp", kombis: "Combo", kosten: "Chi phí", gerichte: "Món và công thức", artikel: "Hàng và giá", betrieb: "Quán", kuehl: "Chỗ làm lạnh", putzplan: "Kế hoạch vệ sinh", personen: "Người", lager: "Kho" },
   },
-  einstellungen: { ruhe: { titel: "Giờ cao điểm", hinweis: "Trong giờ này, ứng dụng không hiện nhắc nhở có thể chờ.", von: "từ", bis: "đến" }, kleinunternehmer: "Doanh nghiệp nhỏ (không khấu trừ VAT)", kleinunternehmerHinweis: "Bật: số tiền gộp tính đủ, không trừ VAT.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Giờ cao điểm", hinweis: "Trong giờ này, ứng dụng không hiện nhắc nhở có thể chờ.", von: "từ", bis: "đến" }, kleinunternehmer: "Doanh nghiệp nhỏ (không khấu trừ VAT)", kleinunternehmerHinweis: "Bật: số tiền gộp tính đủ, không trừ VAT.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Ảnh hóa đơn, rác và món ăn có trong file sao lưu. Vì vậy file lớn hơn.",
     bereichBetrieb: "Quán, ngày mở, mùa",
     bereichTeam: "Nhân viên",
@@ -995,6 +995,7 @@ export default {
     ablegen: "Đang lưu ảnh …", lesen: "Em đang đọc thực đơn của sếp …", lesenRechnung: "Em đang đọc hóa đơn …",
     seite: (a, b) => `Đang đọc trang ${a}/${b} …`,
     lesenHinweis: "Việc này chạy ngay trên điện thoại của sếp. Lần đầu app tải phần đọc chữ một lần (khoảng 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Em không đọc được gì. Thử lại nhé: chụp thẳng, sáng, gần hơn.",
     fehlerLesen: "Đọc không được. Thử lại hoặc chụp ảnh khác.",
     fehlerArt: "Em không đọc được file này. Hãy dùng ảnh (JPG, PNG) hoặc PDF.",

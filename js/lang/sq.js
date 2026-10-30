@@ -912,7 +912,7 @@ export default {
     journal: { schwund: "Mbeturina", tagesnotizen: "Xhiro", messungen: "Ftohja", lieferungen: "Dorëzimet", abschluesse: "Mbylljet e ditës", kostenbelege: "Faturat e kostove", putzlog: "Plani i pastrimit", belehrungen: "Trajnimet e higjienës", rundgaenge: "Raundet e ftohjes", inventuren: "Inventarët", uploads: "Fotot", artikel: "Mallrat", gerichte: "Pjatat", anderes: "Të dhënat" },
     bereich: { lieferanten: "Furnitorët", kombis: "Menu kombo", kosten: "Kostot", gerichte: "Pjatat dhe recetat", artikel: "Mallrat dhe çmimet", betrieb: "Lokali", kuehl: "Vendet e ftohjes", putzplan: "Plani i pastrimit", personen: "Personat", lager: "Magazina" },
   },
-  einstellungen: { ruhe: { titel: "Orët e pikut", hinweis: "Në këto orë aplikacioni nuk tregon kujtesa që mund të presin.", von: "nga", bis: "deri" }, kleinunternehmer: "Biznes i vogël (pa zbritje TVSH)", kleinunternehmerHinweis: "Ndezur: shumat bruto numërohen të plota, TVSH nuk zbritet.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Orët e pikut", hinweis: "Në këto orë aplikacioni nuk tregon kujtesa që mund të presin.", von: "nga", bis: "deri" }, kleinunternehmer: "Biznes i vogël (pa zbritje TVSH)", kleinunternehmerHinweis: "Ndezur: shumat bruto numërohen të plota, TVSH nuk zbritet.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Fotot e faturave, mbeturinave dhe pjatave janë në skedarin e kopjes. Prandaj skedari është më i madh.",
     bereichBetrieb: "Lokali, ditët, sezoni",
     bereichTeam: "Ekipi",
@@ -1000,6 +1000,7 @@ export default {
     ablegen: "Fotoja po ruhet …", lesen: "Po lexoj menynë tënde …", lesenRechnung: "Po lexoj faturën …",
     seite: (a, b) => `Po lexoj faqen ${a} nga ${b} …`,
     lesenHinweis: "Kjo ndodh në telefonin tënd. Herën e parë aplikacioni ngarkon një herë njohjen e tekstit (rreth 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Nuk lexova dot asgjë. Edhe një herë të lutem: drejt, me dritë, më afër.",
     fehlerLesen: "Leximi nuk doli. Provo përsëri ose merr një foto tjetër.",
     fehlerArt: "Këtë skedar nuk e lexoj dot. Të lutem një foto (JPG, PNG) ose një PDF.",

@@ -914,7 +914,7 @@ export default {
     journal: { schwund: "Otpad", tagesnotizen: "Promet", messungen: "Hlađenje", lieferungen: "Isporuke", abschluesse: "Zatvaranja dana", kostenbelege: "Računi troškova", putzlog: "Plan čišćenja", belehrungen: "Higijenske obuke", rundgaenge: "Obilasci hlađenja", inventuren: "Inventure", uploads: "Slike", artikel: "Roba", gerichte: "Jela", anderes: "Podaci" },
     bereich: { lieferanten: "Dobavljači", kombis: "Kombo meniji", kosten: "Troškovi", gerichte: "Jela i recepti", artikel: "Roba i cijene", betrieb: "Lokal", kuehl: "Mjesta hlađenja", putzplan: "Plan čišćenja", personen: "Osobe", lager: "Skladište" },
   },
-  einstellungen: { ruhe: { titel: "Gužva", hinweis: "U ovim satima aplikacija ne prikazuje podsjetnike koji mogu čekati.", von: "od", bis: "do" }, kleinunternehmer: "Mali preduzetnik (bez odbitka PDV-a)", kleinunternehmerHinweis: "Uključeno: bruto iznosi se računaju u cijelosti, PDV se ne odbija.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Gužva", hinweis: "U ovim satima aplikacija ne prikazuje podsjetnike koji mogu čekati.", von: "od", bis: "do" }, kleinunternehmer: "Mali preduzetnik (bez odbitka PDV-a)", kleinunternehmerHinweis: "Uključeno: bruto iznosi se računaju u cijelosti, PDV se ne odbija.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Slike računa, otpada i jela su u fajlu kopije. Zato je fajl veći.",
     bereichBetrieb: "Lokal, dani, sezona",
     bereichTeam: "Tim",
@@ -1002,6 +1002,7 @@ export default {
     ablegen: "Slika se čuva …", lesen: "Čitam tvoj jelovnik …", lesenRechnung: "Čitam račun …",
     seite: (a, b) => `Čitam stranu ${a} od ${b} …`,
     lesenHinweis: "To se dešava na tvom telefonu. Prvi put aplikacija jednom učita prepoznavanje teksta (oko 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Nisam mogao ništa pročitati. Molim te još jednom: ravno, svijetlo, bliže.",
     fehlerLesen: "Čitanje nije uspjelo. Pokušaj ponovo ili uzmi drugu sliku.",
     fehlerArt: "Ovaj fajl ne mogu pročitati. Molim te sliku (JPG, PNG) ili PDF.",

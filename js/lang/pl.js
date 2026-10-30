@@ -912,7 +912,7 @@ export default {
     journal: { schwund: "Odpady", tagesnotizen: "Utarg", messungen: "Chłodzenie", lieferungen: "Dostawy", abschluesse: "Zamknięcia dnia", kostenbelege: "Rachunki kosztów", putzlog: "Plan sprzątania", belehrungen: "Szkolenia higieniczne", rundgaenge: "Obchody chłodzenia", inventuren: "Inwentaryzacje", uploads: "Zdjęcia", artikel: "Towary", gerichte: "Dania", anderes: "Dane" },
     bereich: { lieferanten: "Dostawcy", kombis: "Zestawy combo", kosten: "Koszty", gerichte: "Dania i przepisy", artikel: "Towary i ceny", betrieb: "Lokal", kuehl: "Miejsca chłodzenia", putzplan: "Plan sprzątania", personen: "Osoby", lager: "Magazyn" },
   },
-  einstellungen: { ruhe: { titel: "Godziny szczytu", hinweis: "W tych godzinach aplikacja nie pokazuje przypomnień, które mogą poczekać.", von: "od", bis: "do" }, kleinunternehmer: "Mała firma (bez odliczenia VAT)", kleinunternehmerHinweis: "Wł.: kwoty brutto liczą się w całości, VAT nie jest odliczany.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Godziny szczytu", hinweis: "W tych godzinach aplikacja nie pokazuje przypomnień, które mogą poczekać.", von: "od", bis: "do" }, kleinunternehmer: "Mała firma (bez odliczenia VAT)", kleinunternehmerHinweis: "Wł.: kwoty brutto liczą się w całości, VAT nie jest odliczany.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Zdjęcia rachunków, odpadów i dań są w pliku kopii. Przez to plik jest większy.",
     bereichBetrieb: "Lokal, dni, sezon",
     bereichTeam: "Zespół",
@@ -1000,6 +1000,7 @@ export default {
     ablegen: "Zapisuję zdjęcie …", lesen: "Czytam twoją kartę …", lesenRechnung: "Czytam fakturę …",
     seite: (a, b) => `Czytam stronę ${a} z ${b} …`,
     lesenHinweis: "To dzieje się na twoim telefonie. Za pierwszym razem aplikacja jednorazowo pobiera rozpoznawanie tekstu (około 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Nic nie udało mi się przeczytać. Spróbuj jeszcze raz: prosto, jasno, bliżej.",
     fehlerLesen: "Czytanie się nie udało. Spróbuj jeszcze raz albo weź inne zdjęcie.",
     fehlerArt: "Tego pliku nie umiem przeczytać. Daj zdjęcie (JPG, PNG) albo PDF.",

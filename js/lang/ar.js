@@ -909,7 +909,7 @@ export default {
     journal: { schwund: "النفايات", tagesnotizen: "المبيعات", messungen: "التبريد", lieferungen: "التوريدات", abschluesse: "إغلاق اليوم", kostenbelege: "فواتير التكاليف", putzlog: "خطة التنظيف", belehrungen: "تعليمات النظافة", rundgaenge: "جولات التبريد", inventuren: "الجرد", uploads: "الصور", artikel: "البضائع", gerichte: "الأطباق", anderes: "البيانات" },
     bereich: { lieferanten: "الموردون", kombis: "قوائم الكومبو", kosten: "التكاليف", gerichte: "الأطباق والوصفات", artikel: "البضائع والأسعار", betrieb: "المحل", kuehl: "أماكن التبريد", putzplan: "خطة التنظيف", personen: "الأشخاص", lager: "المخزون" },
   },
-  einstellungen: { ruhe: { titel: "ساعات الذروة", hinweis: "في هذه الأوقات لا يعرض التطبيق تذكيرات يمكنها الانتظار.", von: "من", bis: "إلى" }, kleinunternehmer: "منشأة صغيرة (بدون استرداد ضريبة)", kleinunternehmerHinweis: "مفعّل: المبالغ الإجمالية تُحسب كاملة، لا تُخصم ضريبة.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "الإبلاغ عن خطأ", keine: "لا توجد أخطاء محفوظة.", anzahl: (n) => `${n} أخطاء محفوظة.`, hinweis: "يحفظ التطبيق آخر 50 خطأ على هذا الهاتف فقط، بدون أسماء أو أرقام. أنت ترسل النص بنفسك.", melden: "الإبلاغ عن خطأ", leeren: "مسح القائمة", kopiert: "تم نسخ النص – الصقه وأرسله." }, ruhe: { titel: "ساعات الذروة", hinweis: "في هذه الأوقات لا يعرض التطبيق تذكيرات يمكنها الانتظار.", von: "من", bis: "إلى" }, kleinunternehmer: "منشأة صغيرة (بدون استرداد ضريبة)", kleinunternehmerHinweis: "مفعّل: المبالغ الإجمالية تُحسب كاملة، لا تُخصم ضريبة.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "صور الفواتير والنفايات والأطباق موجودة في ملف النسخة. لذلك يصبح الملف أكبر.",
     bereichBetrieb: "المحل، الأيام، الموسم",
     bereichTeam: "الفريق",
@@ -997,6 +997,7 @@ export default {
     ablegen: "جاري حفظ الصورة …", lesen: "أقرأ منيوك …", lesenRechnung: "أقرأ الفاتورة …",
     seite: (a, b) => `أقرأ الصفحة ${a} من ${b} …`,
     lesenHinweis: "هذا يحدث على هاتفك. في المرة الأولى يحمّل التطبيق قارئ النص مرة واحدة (حوالي 13 MB).",
+    stufe1: "تجهيز الصورة", stufe2: "القراءة", stufe3: "قراءة ثانية",
     nichtsErkannt: "لم أستطع قراءة شيء. مرة أخرى من فضلك: مستقيم، مضيء، أقرب.",
     fehlerLesen: "القراءة لم تنجح. حاول مرة أخرى أو خذ صورة أخرى.",
     fehlerArt: "لا أستطيع قراءة هذا الملف. من فضلك صورة (JPG، PNG) أو PDF.",

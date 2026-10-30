@@ -906,7 +906,7 @@ export default {
     journal: { schwund: "Waste", tagesnotizen: "Sales", messungen: "Cooling", lieferungen: "Deliveries", abschluesse: "Day closings", kostenbelege: "Cost receipts", putzlog: "Cleaning plan", belehrungen: "Hygiene trainings", rundgaenge: "Cooling rounds", inventuren: "Stock counts", uploads: "Photos", artikel: "Goods", gerichte: "Dishes", anderes: "Data" },
     bereich: { lieferanten: "Suppliers", kombis: "Combo menus", kosten: "Costs", gerichte: "Dishes and recipes", artikel: "Goods and prices", betrieb: "Business", kuehl: "Cooling points", putzplan: "Cleaning plan", personen: "People", lager: "Stock" },
   },
-  einstellungen: { ruhe: { titel: "Rush hours", hinweis: "During these times the app shows no reminders that can wait.", von: "from", bis: "to" }, kleinunternehmer: "Small business (no input VAT)", kleinunternehmerHinweis: "On: gross amounts count in full, no VAT is deducted.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Rush hours", hinweis: "During these times the app shows no reminders that can wait.", von: "from", bis: "to" }, kleinunternehmer: "Small business (no input VAT)", kleinunternehmerHinweis: "On: gross amounts count in full, no VAT is deducted.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Photos of invoices, waste and dishes are included in the backup file. This makes the file bigger.",
     bereichBetrieb: "Place, days, season",
     bereichTeam: "Team",
@@ -994,6 +994,7 @@ export default {
     ablegen: "Saving the photo …", lesen: "Reading your menu …", lesenRechnung: "Reading the invoice …",
     seite: (a, b) => `Reading page ${a} of ${b} …`,
     lesenHinweis: "This happens on your phone. The first time, the app loads the text recognition once (about 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "I could not read anything. Please try again: straight, bright, closer.",
     fehlerLesen: "Reading did not work. Please try again or use another photo.",
     fehlerArt: "I cannot read this file. Please use a photo (JPG, PNG) or a PDF.",

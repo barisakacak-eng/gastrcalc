@@ -912,7 +912,7 @@ export default {
     journal: { schwund: "Отходы", tagesnotizen: "Выручка", messungen: "Охлаждение", lieferungen: "Поставки", abschluesse: "Закрытия дня", kostenbelege: "Счета расходов", putzlog: "План уборки", belehrungen: "Гигиенические инструктажи", rundgaenge: "Обходы охлаждения", inventuren: "Инвентаризации", uploads: "Фото", artikel: "Товары", gerichte: "Блюда", anderes: "Данные" },
     bereich: { lieferanten: "Поставщики", kombis: "Комбо-меню", kosten: "Расходы", gerichte: "Блюда и рецепты", artikel: "Товары и цены", betrieb: "Заведение", kuehl: "Холодильные места", putzplan: "План уборки", personen: "Люди", lager: "Склад" },
   },
-  einstellungen: { ruhe: { titel: "Часы пик", hinweis: "В эти часы приложение не показывает напоминания, которые могут подождать.", von: "с", bis: "до" }, kleinunternehmer: "Малый бизнес (без вычета НДС)", kleinunternehmerHinweis: "Вкл.: суммы брутто считаются полностью, НДС не вычитается.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Часы пик", hinweis: "В эти часы приложение не показывает напоминания, которые могут подождать.", von: "с", bis: "до" }, kleinunternehmer: "Малый бизнес (без вычета НДС)", kleinunternehmerHinweis: "Вкл.: суммы брутто считаются полностью, НДС не вычитается.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Фото счетов, отходов и блюд входят в файл копии. Поэтому файл больше.",
     bereichBetrieb: "Заведение, дни, сезон",
     bereichTeam: "Команда",
@@ -1000,6 +1000,7 @@ export default {
     ablegen: "Фото сохраняется …", lesen: "Читаю твоё меню …", lesenRechnung: "Читаю счёт …",
     seite: (a, b) => `Читаю страницу ${a} из ${b} …`,
     lesenHinweis: "Всё происходит на твоём телефоне. В первый раз приложение один раз загрузит распознавание текста (примерно 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Ничего не смог прочитать. Ещё раз, пожалуйста: ровно, светло, ближе.",
     fehlerLesen: "Прочитать не получилось. Попробуй ещё раз или возьми другое фото.",
     fehlerArt: "Этот файл я прочитать не могу. Нужно фото (JPG, PNG) или PDF.",

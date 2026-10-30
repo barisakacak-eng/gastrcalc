@@ -907,7 +907,7 @@ export default {
     journal: { schwund: "Basura", tagesnotizen: "Ventas", messungen: "Refrigeración", lieferungen: "Entregas", abschluesse: "Cierres del día", kostenbelege: "Recibos de gastos", putzlog: "Plan de limpieza", belehrungen: "Formaciones de higiene", rundgaenge: "Rondas de frío", inventuren: "Inventarios", uploads: "Fotos", artikel: "Productos", gerichte: "Platos", anderes: "Datos" },
     bereich: { lieferanten: "Proveedores", kombis: "Menús combo", kosten: "Gastos", gerichte: "Platos y recetas", artikel: "Productos y precios", betrieb: "Local", kuehl: "Puntos de frío", putzplan: "Plan de limpieza", personen: "Personas", lager: "Almacén" },
   },
-  einstellungen: { ruhe: { titel: "Horas punta", hinweis: "En estas horas la app no muestra avisos que pueden esperar.", von: "de", bis: "a" }, kleinunternehmer: "Pequeña empresa (sin IVA deducible)", kleinunternehmerHinweis: "Activado: los importes brutos cuentan enteros, no se descuenta IVA.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Horas punta", hinweis: "En estas horas la app no muestra avisos que pueden esperar.", von: "de", bis: "a" }, kleinunternehmer: "Pequeña empresa (sin IVA deducible)", kleinunternehmerHinweis: "Activado: los importes brutos cuentan enteros, no se descuenta IVA.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Las fotos de facturas, basura y platos van en el archivo de copia. Por eso el archivo es más grande.",
     bereichBetrieb: "Local, días, temporada",
     bereichTeam: "Equipo",
@@ -995,6 +995,7 @@ export default {
     ablegen: "Guardando la foto…", lesen: "Estoy leyendo tu carta…", lesenRechnung: "Estoy leyendo la factura…",
     seite: (a, b) => `Estoy leyendo la página ${a} de ${b}…`,
     lesenHinweis: "Esto pasa en tu móvil. La primera vez la app descarga una sola vez el reconocimiento de texto (unos 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "No he podido leer nada. Otra vez, por favor: recto, con luz, más cerca.",
     fehlerLesen: "La lectura no ha funcionado. Vuelve a intentarlo o usa otra foto.",
     fehlerArt: "Este archivo no lo puedo leer. Usa una foto (JPG, PNG) o un PDF.",

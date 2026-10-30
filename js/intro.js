@@ -40,6 +40,7 @@ export function introStarten(doc = document, { speicher, an = INTRO_AN } = {}) {
     gruss.remove(); if (knopf.isConnected) zekiSpielen(knopf, "none"); // beendet die laufende Bewegung sofort
   };
   doc.addEventListener("pointerdown", ende, true); doc.addEventListener("keydown", ende, true); // nur lauschen, nichts abfangen
+  if (win.__gcC) { knopf.classList.add("einlauf"); zeiten.push(setTimeout(() => knopf.classList.remove("einlauf"), INTRO_AUFTRETEN_MS + 50)); } // P6 (3): Einlauf von rechts
   zekiSpielen(knopf, "auftreten", INTRO_AUFTRETEN_MS);
   zeiten.push(setTimeout(() => {
     if (aus || !knopf.isConnected) return ende();

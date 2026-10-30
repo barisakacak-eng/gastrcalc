@@ -906,7 +906,7 @@ export default {
     journal: { schwund: "Çop", tagesnotizen: "Firotin", messungen: "Sarkirin", lieferungen: "Radestkirin", abschluesse: "Girtina rojê", kostenbelege: "Belgeyên lêçûnê", putzlog: "Plana paqijiyê", belehrungen: "Perwerdeyên paqijiyê", rundgaenge: "Gerên sarkirinê", inventuren: "Jimartin", uploads: "Wêne", artikel: "Mal", gerichte: "Xwarin", anderes: "Dane" },
     bereich: { lieferanten: "Pêşkêşvan", kombis: "Menûyên kombo", kosten: "Lêçûn", gerichte: "Xwarin û reçete", artikel: "Mal û biha", betrieb: "Kar", kuehl: "Cihên sarkirinê", putzplan: "Plana paqijiyê", personen: "Kes", lager: "Embar" },
   },
-  einstellungen: { ruhe: { titel: "Demên qelebalix", hinweis: "Di van deman de sepan bîranînên ku dikarin li bendê bin nîşan nade.", von: "ji", bis: "heta" }, kleinunternehmer: "Karsaziya biçûk (bê vegera KDV)", kleinunternehmerHinweis: "Vekirî: mîqdarên brût tam tên hesibandin, KDV nayê kêmkirin.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Demên qelebalix", hinweis: "Di van deman de sepan bîranînên ku dikarin li bendê bin nîşan nade.", von: "ji", bis: "heta" }, kleinunternehmer: "Karsaziya biçûk (bê vegera KDV)", kleinunternehmerHinweis: "Vekirî: mîqdarên brût tam tên hesibandin, KDV nayê kêmkirin.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Wêneyên fatûre, çop û xwarinan di dosyaya kopiyê de ne. Ji ber vê dosya mezintir dibe.",
     bereichBetrieb: "Dikan, roj, demsal",
     bereichTeam: "Tîm",
@@ -994,6 +994,7 @@ export default {
     ablegen: "Wêne tê tomarkirin …", lesen: "Ez menûya te dixwînim …", lesenRechnung: "Ez fatûreyê dixwînim …",
     seite: (a, b) => `Ez rûpela ${a} ji ${b} dixwînim …`,
     lesenHinweis: "Ev li ser telefona te dibe. Cara yekem app xwendina nivîsê carekê bar dike (nêzîkî 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Min nikarîbû tiştekî bixwînim. Ji kerema xwe careke din: rast, ronak, nêzîktir.",
     fehlerLesen: "Xwendin bi ser neket. Ji kerema xwe dîsa biceribîne an wêneyekî din bigire.",
     fehlerArt: "Ez nikarim vê dosyayê bixwînim. Ji kerema xwe wêneyek (JPG, PNG) an PDF.",

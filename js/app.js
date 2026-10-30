@@ -1,7 +1,7 @@
 // GastroCalc – Einstieg. Hält die Wurzel (alle Läden dieses Handys), zeichnet den aktuellen Bildschirm des aktiven Ladens,
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
-import { offeneKlappen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
-import { fehlerSammlerStarten, fehlerText, fehlerLeeren } from "./fehler.js"; // Fehler-Rucksack (Pilotfest E3, 30.10.2026)
+import { offeneKlappen, textTeilen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
+import { fehlerSammlerStarten, fehlerText, fehlerLeeren, fehlerLesen } from "./fehler.js"; // Fehler-Rucksack (Pilotfest E3, 30.10.2026)
 import { kurzStarten, kurzOffen } from "./screens/rundgang_kurz.js"; // 6b R1 (Entwurf, nur mit window.__gc6b)
 import { erstSatz, erstZeigen } from "./screens/zeki_erst.js"; // 6b R2 (Entwurf, nur mit window.__gc6b)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
@@ -91,6 +91,7 @@ const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
+if (window.__gcC?.zeki) document.body.classList.add("zeki-platz-" + window.__gcC.zeki); // P6 (3) Entwurf: Platz-Variante a|b
 fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?.phase === "app" ? `${modus()}/${ansicht}` : `einrichtung/${stand?.schrittId || "?"}`) }); // E3: die letzten 50 Fehler, ohne Namen und Zahlen
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
@@ -151,7 +152,7 @@ function zeichne() {
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
-        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG }) // W2-D
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(localStorage).length }) // W2-D
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
         : ansicht === "muell" ? muellView(stand)
@@ -709,6 +710,8 @@ async function aufKlick(ev) {
     if (el.dataset.anker) setTimeout(() => document.getElementById(el.dataset.anker)?.scrollIntoView({ block: "start" }), 60); if (ziel === "kartefoto" || ansicht === "kartefoto") fotoZuruecksetzen(); if (ziel !== ansicht) { if (ansicht === "beleg") belegZuruecksetzen(); if (ansicht === "abschluss") abschlussZuruecksetzen(); if (ziel === "muell" || ziel === "umsatz" || ziel === "abschluss") { tagZuruecksetzen(); muellZuruecksetzen(); umsatzZuruecksetzen(); } } ansicht = ziel; return zeichne(); }
   if (name === "diagnose-kopieren") return diagnoseKopieren(); // W2-D
   if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
+  if (name === "fehler-melden") { textTeilen(fehlerText(localStorage, { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
+  if (name === "fehler-leeren") { fehlerLeeren(localStorage); return zeichne(); }
   if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }

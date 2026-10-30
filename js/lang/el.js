@@ -907,7 +907,7 @@ export default {
     journal: { schwund: "Απορρίμματα", tagesnotizen: "Τζίρος", messungen: "Ψύξη", lieferungen: "Παραδόσεις", abschluesse: "Κλεισίματα ημέρας", kostenbelege: "Παραστατικά εξόδων", putzlog: "Πλάνο καθαρισμού", belehrungen: "Εκπαιδεύσεις υγιεινής", rundgaenge: "Γύροι ψύξης", inventuren: "Απογραφές", uploads: "Φωτογραφίες", artikel: "Εμπορεύματα", gerichte: "Πιάτα", anderes: "Δεδομένα" },
     bereich: { lieferanten: "Προμηθευτές", kombis: "Μενού κόμπο", kosten: "Έξοδα", gerichte: "Πιάτα και συνταγές", artikel: "Εμπορεύματα και τιμές", betrieb: "Μαγαζί", kuehl: "Σημεία ψύξης", putzplan: "Πλάνο καθαρισμού", personen: "Άτομα", lager: "Αποθήκη" },
   },
-  einstellungen: { ruhe: { titel: "Ώρες αιχμής", hinweis: "Αυτές τις ώρες η εφαρμογή δεν δείχνει υπενθυμίσεις που μπορούν να περιμένουν.", von: "από", bis: "έως" }, kleinunternehmer: "Μικρή επιχείρηση (χωρίς έκπτωση ΦΠΑ)", kleinunternehmerHinweis: "Ενεργό: τα μικτά ποσά μετρούν ολόκληρα, δεν αφαιρείται ΦΠΑ.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Report a problem", keine: "No errors stored.", anzahl: (n) => n === 1 ? "1 error stored." : `${n} errors stored.`, hinweis: "The app keeps the last 50 errors only on this phone, without names or numbers. You send the text yourself.", melden: "Report a problem", leeren: "Clear list", kopiert: "Text copied – paste it and send." }, ruhe: { titel: "Ώρες αιχμής", hinweis: "Αυτές τις ώρες η εφαρμογή δεν δείχνει υπενθυμίσεις που μπορούν να περιμένουν.", von: "από", bis: "έως" }, kleinunternehmer: "Μικρή επιχείρηση (χωρίς έκπτωση ΦΠΑ)", kleinunternehmerHinweis: "Ενεργό: τα μικτά ποσά μετρούν ολόκληρα, δεν αφαιρείται ΦΠΑ.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Οι φωτογραφίες τιμολογίων, απορριμμάτων και πιάτων είναι μέσα στο αρχείο αντιγράφου. Γι' αυτό το αρχείο γίνεται μεγαλύτερο.",
     bereichBetrieb: "Μαγαζί, μέρες, σεζόν",
     bereichTeam: "Ομάδα",
@@ -995,6 +995,7 @@ export default {
     ablegen: "Η φωτογραφία αποθηκεύεται …", lesen: "Διαβάζω το μενού σου …", lesenRechnung: "Διαβάζω τον λογαριασμό …",
     seite: (a, b) => `Διαβάζω τη σελίδα ${a} από ${b} …`,
     lesenHinweis: "Αυτό γίνεται στο κινητό σου. Την πρώτη φορά η εφαρμογή φορτώνει μία φορά την αναγνώριση κειμένου (περίπου 13 MB).",
+    stufe1: "Preparing image", stufe2: "Reading", stufe3: "Second pass",
     nichtsErkannt: "Δεν μπόρεσα να διαβάσω τίποτα. Άλλη μια φορά: ίσια, φωτεινά, πιο κοντά.",
     fehlerLesen: "Το διάβασμα δεν πέτυχε. Δοκίμασε ξανά ή πάρε άλλη φωτογραφία.",
     fehlerArt: "Αυτό το αρχείο δεν μπορώ να το διαβάσω. Δώσε μια φωτογραφία (JPG, PNG) ή ένα PDF.",

@@ -915,7 +915,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     journal: { schwund: "Müll", tagesnotizen: "Umsatz", messungen: "Kühlung", lieferungen: "Lieferungen", abschluesse: "Tagesabschlüsse", kostenbelege: "Kostenbelege", putzlog: "Putzplan", belehrungen: "Belehrungen", rundgaenge: "Kühl-Rundgänge", inventuren: "Inventuren", uploads: "Fotos", artikel: "Waren", gerichte: "Gerichte", anderes: "Daten" },
     bereich: { lieferanten: "Lieferanten", kombis: "Kombi-Menüs", kosten: "Kosten", gerichte: "Gerichte und Rezepte", artikel: "Waren und Preise", betrieb: "Betrieb", kuehl: "Kühlstellen", putzplan: "Putzplan", personen: "Personen", lager: "Lager" },
   },
-  einstellungen: { ruhe: { titel: "Stoßzeiten", hinweis: "In diesen Zeiten zeigt dir die App keine Erinnerungen, die warten können.", von: "von", bis: "bis" }, kleinunternehmer: "Kleinunternehmer (keine Vorsteuer)", kleinunternehmerHinweis: "An: Bruttobeträge zählen voll, keine Umsatzsteuer wird abgezogen.", // Paket 3 (16.10.2026), M1
+  einstellungen: { fehler: { titel: "Fehler melden", keine: "Keine Fehler gespeichert.", anzahl: (n) => n === 1 ? "1 Fehler gespeichert." : `${n} Fehler gespeichert.`, hinweis: "Die App merkt sich die letzten 50 Fehler nur auf diesem Handy, ohne Namen und Zahlen. Du schickst den Text selbst ab.", melden: "Fehler melden", leeren: "Liste leeren", kopiert: "Text kopiert – jetzt einfügen und abschicken." }, ruhe: { titel: "Stoßzeiten", hinweis: "In diesen Zeiten zeigt dir die App keine Erinnerungen, die warten können.", von: "von", bis: "bis" }, kleinunternehmer: "Kleinunternehmer (keine Vorsteuer)", kleinunternehmerHinweis: "An: Bruttobeträge zählen voll, keine Umsatzsteuer wird abgezogen.", // Paket 3 (16.10.2026), M1
     fotosNichtDrin: "Fotos von Rechnungen, Müll und Gerichten sind mit in der Sicherungsdatei. Die Datei wird dadurch größer.",
     bereichBetrieb: "Laden, Tage, Saison",
     bereichTeam: "Team",
@@ -1002,6 +1002,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     ablegen: "Foto wird gespeichert …", lesen: "Ich lese deine Karte …", lesenRechnung: "Ich lese die Rechnung …",
     seite: (a, b) => `Ich lese Seite ${a} von ${b} …`,
     lesenHinweis: "Das passiert auf deinem Handy. Beim ersten Mal lädt die App einmalig die Texterkennung (etwa 13 MB).",
+    stufe1: "Bild vorbereiten", stufe2: "Lesen", stufe3: "Nachlesen",
     nichtsErkannt: "Ich konnte nichts lesen. Bitte noch einmal: gerade, hell, näher dran.",
     fehlerLesen: "Das Lesen hat nicht geklappt. Bitte noch einmal versuchen oder ein anderes Foto nehmen.",
     fehlerArt: "Diese Datei kann ich nicht lesen. Bitte ein Foto (JPG, PNG) oder eine PDF.",

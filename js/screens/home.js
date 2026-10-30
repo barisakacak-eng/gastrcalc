@@ -225,6 +225,13 @@ export function karteView(stand) {
     ${nav("kartebuero")}`;
 }
 
+// Pilotfest P6 (6), 30.10.2026 (Entwurf hinter window.__gcC): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
+function fehlerKarte(n) {
+  return `<div class="karte fehler-karte"><h2>${esc(t("einstellungen.fehler.titel"))}</h2>
+    <p class="hinweis">${esc(n ? t("einstellungen.fehler.anzahl", n) : t("einstellungen.fehler.keine"))} ${esc(t("einstellungen.fehler.hinweis"))}</p>
+    <div class="knopfreihe"><button type="button" class="knopf zweit" data-a="fehler-melden">${sym("send")} ${esc(t("einstellungen.fehler.melden"))}</button>
+    ${n ? `<button type="button" class="leise" data-a="fehler-leeren">${esc(t("einstellungen.fehler.leeren"))}</button>` : ""}</div></div>`;
+}
 // Datenschutz im Büro (Baris 27.10.2026: Verantwortlicher als Platzhalter bis zur Firma); Text in js/data/datenschutz.js
 function datenschutzKarte() {
   const d = datenschutzText(sprache());
@@ -302,6 +309,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <button type="button" class="zeileknopf" data-a="diagnose-kopieren"><b>${esc(t("w2d.diagnose"))}</b><small>${esc(t("w2d.diagnoseUnter"))}</small><span class="pfeil">›</span></button>
       </div>
       ${datenschutzKarte()}
+      ${typeof window !== "undefined" && window.__gcC ? fehlerKarte(extra.fehlerAnzahl || 0) : ""}
       <div class="karte">
         <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button>
       </div>
