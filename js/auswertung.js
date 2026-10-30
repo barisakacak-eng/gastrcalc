@@ -22,7 +22,7 @@ let worker = null; let naechste = 1; const offen = new Map();
 function ocrWorker() {
   if (worker) return worker;
   worker = new Worker(new URL("./ocr-worker.js", import.meta.url));
-  worker.onmessage = (e) => { const p = offen.get(e.data.id); if (!p) return; offen.delete(e.data.id); if (e.data.fehler) p.rej(new Error(e.data.fehler)); else p.res(e.data); };
+  worker.onmessage = (e) => { const p = offen.get(e.data.id); if (!p) return; if (e.data.teil) { p.teil?.(e.data.text || ""); return; } offen.delete(e.data.id); if (e.data.fehler) p.rej(new Error(e.data.fehler)); else p.res(e.data); }; // P4: teil = Zwischenstand
   worker.onerror = (e) => { e.preventDefault?.(); abbruch(Object.assign(new Error(e.message || "Texterkennung abgestürzt"), { grund: "laden" })); };
   return worker;
 }
@@ -30,11 +30,11 @@ function ocrWorker() {
 function abbruch(fehler) { for (const p of offen.values()) p.rej(fehler); offen.clear(); try { worker?.terminate(); } catch (_) {} worker = null; }
 const ZEITGRENZE_MS = 180000; // Modell „best" ist genauer, aber langsamer
 // Rückgabe: Text. modus "karte" liest zusätzlich spaltenweise und nimmt die bessere Lesart.
-async function ocrAuftrag(bild, modus = "block") {
+async function ocrAuftrag(bild, modus = "block", teil = null) {
   const r = await new Promise((res, rej) => {
     const id = naechste++;
     const uhr = setTimeout(() => abbruch(Object.assign(new Error("Zeitgrenze"), { grund: "zeit" })), ZEITGRENZE_MS);
-    offen.set(id, { res: (x) => { clearTimeout(uhr); res(x); }, rej: (f) => { clearTimeout(uhr); rej(/Sprachmodell|importScripts|NetworkError|Failed to fetch|Load failed/i.test(f.message) ? Object.assign(f, { grund: "laden" }) : f); } });
+    offen.set(id, { teil, res: (x) => { clearTimeout(uhr); res(x); }, rej: (f) => { clearTimeout(uhr); rej(/Sprachmodell|importScripts|NetworkError|Failed to fetch|Load failed/i.test(f.message) ? Object.assign(f, { grund: "laden" }) : f); } });
     ocrWorker().postMessage({ id, bild, modus }, [bild.buffer]);
   });
   return modus === "karte" ? besteKartenLesart(r.text || "", r.tsv) : (r.text || "");
@@ -109,7 +109,8 @@ async function pdfAuswerten(datei, fortschritt, modus) {
 
 // ---------- Der eine Aufruf ----------
 // zweck: "speisekarte" | "rechnung" | "kosten"  ·  fortschritt({schritt}) für die Anzeige
-export async function auswerten(datei, { zweck = "rechnung", fortschritt = null } = {}) {
+// zwischen(text): erste Lesart der Speisekarte, sobald sie da ist (P4, 30.10.2026) – die Seite zeigt damit schon Gerichte
+export async function auswerten(datei, { zweck = "rechnung", fortschritt = null, zwischen = null } = {}) {
   const t0 = Date.now();
   if (auswerter === "ki") throw Object.assign(new Error("KI-Auswertung ist noch nicht eingerichtet"), { grund: "ki" });
   let r;
@@ -117,7 +118,7 @@ export async function auswerten(datei, { zweck = "rechnung", fortschritt = null 
   if (istPdf(datei)) r = await pdfAuswerten(datei, fortschritt, modus);
   else if (istBild(datei)) {
     fortschritt?.({ schritt: "lesen" });
-    r = { text: await ocrAuftrag(await bildVorbereiten(datei), modus), art: "bild", seiten: 1, nichtGelesen: 0 };
+    r = { text: await ocrAuftrag(await bildVorbereiten(datei), modus, zwischen), art: "bild", seiten: 1, nichtGelesen: 0 };
   } else throw Object.assign(new Error("Dateiart nicht unterstützt"), { grund: "art" });
   return { ...r, quelle: auswerter, dauerMs: Date.now() - t0, felder: null };
 }

@@ -25,7 +25,7 @@ let serie = { aufgenommen: 0, gelesen: 0, fehler: 0 };
 export const fotoLauf = () => lauf;
 export function fotoZuruecksetzen() { lauf = null; vorschlaege = []; seiten = 0; laufUploads = []; warteschlange = []; laeuft = false; generation += 1; sammeln = true; serie = { aufgenommen: 0, gelesen: 0, fehler: 0 }; }
 // Was die Speisekarten-Strecke gerade zeigt: Fotos sammeln, auf das Lesen warten oder die Prüfliste
-export const karteModus = () => (sammeln ? "sammeln" : laeuft || warteschlange.length ? "warten" : vorschlaege.length ? "pruefen" : "sammeln");
+export const karteModus = () => (sammeln ? "sammeln" : vorschlaege.length ? "pruefen" : laeuft || warteschlange.length ? "warten" : "sammeln"); // P4 (30.10.2026): sobald Gerichte da sind, die Prüfliste zeigen – auch wenn die Erkennung noch läuft
 export function sammelnBeenden() { sammeln = false; if (!vorschlaege.length && !laeuft && !warteschlange.length) sammeln = true; }
 // Abbrechen während des Wartens: Warteschlange stoppen, bereits Gefundenes bleibt in der Prüfliste.
 export function serieAbbrechen() { warteschlange = []; generation += 1; laeuft = false; lauf = null; if (!vorschlaege.length) fotoZuruecksetzen(); }
@@ -93,7 +93,12 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
   if (verworfen()) return null;
   try {
     mein.schritt = "lesen"; neuZeichnen();
-    const r = await auswerten(datei, { zweck, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
+    // P4 (30.10.2026): erste Lesart → Gerichte sofort zeigen (vorläufig), die zweite Lesart ergänzt danach
+    const zwischen = zweck !== "speisekarte" ? null : (text) => { if (verworfen()) return; const neu = vorschlaegeAusText(text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
+      for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
+      if (neu.length) { vorschlaege.push(...neu); mein.vorlaeufig = true; mein.neuVorab = neu.length; mein.schritt = "mehr"; neuZeichnen(); } };
+    const r = await auswerten(datei, { zweck, zwischen, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
+    mein.vorlaeufig = false;
     uploadAendern(mein.upload, { status: "gelesen", auswertung: { quelle: r.quelle, art: r.art, dauerMs: r.dauerMs, zeichen: r.text.length } });
     if (verworfen()) return null;
     mein.text = r.text; mein.dauerMs = r.dauerMs; mein.status = "fertig";
@@ -105,8 +110,8 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
       vorschlaege.push(...neu); seiten += 1;
       for (const v of vorschlaege) if (v.gruppe === "erkannt" && !v.preisGeprueft && preisAuffaellig(v, vorschlaege)) Object.assign(v, { preisHoch: true, gruppe: "pruefen" });
-      mein.neu = neu.length;
-      if (!neu.length) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
+      mein.neu = neu.length + (mein.neuVorab || 0); // P4: die erste Lesart hat evtl. schon alles gefunden
+      if (!mein.neu) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
     } else if (!r.text.trim()) { mein.status = "fehler"; mein.fehler = t("foto.nichtsErkannt"); }
   } catch (e) {
     console.warn(e);

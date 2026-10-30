@@ -47,6 +47,8 @@ self.onmessage = async (e) => {
     // block: ein Textblock (Rechnung, Bon) – Zeilen bleiben zusammen (Modus 6).
     // karte: zusätzlich die automatische Aufteilung (Modus 3) mit Wort-Positionen, für zweispaltige Karten; die Seite wählt das bessere Ergebnis.
     lauf(6); const text = api.GetUTF8Text();
+    // Pilotfest P4 (30.10.2026): die erste Lesart sofort melden (teil: true) – die Seite zeigt damit schon Gerichte, während die zweite Lesart läuft
+    if (modus === "karte") self.postMessage({ id, teil: true, text });
     let tsv = null; if (modus === "karte") { lauf(3); tsv = api.GetTSVText(0); }
     self.postMessage({ id, text, tsv });
   } catch (f) { self.postMessage({ id, fehler: String(f.message || f) }); }

@@ -49,6 +49,11 @@ async def main():
             assert await pg.locator('input[data-f="foto"][capture]').count() == 1, "Kamera-Eingang fehlt"
             await pg.locator('input[data-f="foto"]:not([capture])').set_input_files(str(BILD / "karte_foto.jpg"))
             await pg.wait_for_selector('[data-a="fv-uebernehmen"]', timeout=60000); await pg.wait_for_timeout(300)
+            # P4 (30.10.2026): die Prüfliste steht schon nach der ersten Lesart – fertig gelesen ist die Seite erst, wenn der Upload „gelesen“ ist
+            for _ in range(600):
+                s = await stand()
+                if s["uploads"] and s["uploads"][0]["status"] == "gelesen": break
+                await pg.wait_for_timeout(100)
             await bild("karte-pruefen")
             s = await stand(); assert len(s["uploads"]) == 1 and s["uploads"][0]["status"] == "gelesen", s["uploads"]
             namen = await pg.evaluate("[...document.querySelectorAll('.fvz')].map(z => z.querySelector('[data-f^=\\'fv-name:\\']')?.value || z.querySelector('.n')?.firstChild?.textContent || '')")
