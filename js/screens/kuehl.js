@@ -312,13 +312,14 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "blatt-monat") { blattMonat = Number(el.dataset.wert); return true; }
   if (name === "blatt-drucken") { window.print(); return false; }
   // Einrichtung
-  if (name === "stelle-neu") { const n = neuName.trim(); if (!n) return false; kuehlstelleAnlegen(stand, { name: n, art: "kuehl" }); neuName = ""; return true; }
+  // Klickjagd 30.10.2026: „Hinzufügen“ ohne Namen tat nichts – jetzt springt der Fokus ins Feld, der Chef sieht, was fehlt
+  if (name === "stelle-neu") { const n = neuName.trim(); if (!n) { el.closest(".neu")?.querySelector("input")?.focus(); return false; } kuehlstelleAnlegen(stand, { name: n, art: "kuehl" }); neuName = ""; return true; }
   if (name === "stelle-art") return kuehlstelleArtSetzen(stand, el.dataset.id, el.dataset.wert);
   if (name === "stelle-archiv") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k || !confirm(t("kuehl.stelleWegFrage", kn(k)))) return false; return kuehlstelleArchivieren(stand, k.id); } // nie löschen – alte Messungen behalten ihre Stelle
   if (name === "stelle-hoch" || name === "stelle-runter") return kuehlstelleVerschieben(stand, el.dataset.id, name === "stelle-hoch" ? -1 : 1);
   if (name === "kuehl-takt") { kuehlTaktSetzen(stand, el.dataset.wert); return true; }
   if (name === "kuehl-ruhetag") { ruhetagUmschalten(stand, Number(el.dataset.wert)); return true; } // W2-H: gilt ab heute (Verlauf), sieben Ruhetage gibt es nicht
-  if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) return false; personAnlegen(stand, k); neuKuerzel = ""; return true; }
+  if (name === "person-neu") { const k = neuKuerzel.trim(); if (!k) { el.closest(".neu")?.querySelector("input")?.focus(); return false; } personAnlegen(stand, k); neuKuerzel = ""; return true; }
   if (name === "person-weg") { const p = stand.personen.find((x) => x.id === el.dataset.id); if (!p || !confirm(t("amtW2.personWegFrage", p.kuerzel))) return false; return personEntfernen(stand, p.id, heute()); } // W2-H (p03 H3): Kürzel bleibt in alten Einträgen, gekennzeichnet „ausgeschieden“
   // Rundgang starten
   if (name === "start-von") { startVon = el.dataset.id; return true; }
