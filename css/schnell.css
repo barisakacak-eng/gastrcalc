@@ -146,3 +146,7 @@
 .pin-bio{margin-top:10px}
 /* Masterauftrag 0.3 (28.10.2026): Umzug auf eine neue Adresse – „Sicherung einlesen“ steht sichtbar unter „Weiter“ statt verdeckt dahinter */
 .fuss .ob-import { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 8px; text-align: center; }
+/* Pilotfest P6 (1), 30.10.2026: mehrere Ladenarten – Hinweiszeile und Häkchen auf gewählten Kacheln */
+.s2mehrere { margin: 6px 2px -2px; font-size: .95rem; color: var(--b-text-leise, #5b655c); }
+.s2arten.mehrfach .kachel.an { position: relative; }
+.s2arten.mehrfach .kachel.an::after { content: "✓"; position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; background: var(--b-kupfer, #b5683a); color: #fff; font-weight: 800; font-size: .9rem; display: grid; place-items: center; }

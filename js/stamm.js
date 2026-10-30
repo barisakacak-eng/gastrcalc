@@ -29,7 +29,15 @@ export const betriebFormatSetzen = (stand, format) => { stand.betrieb.format = f
 export function kuecheUmschalten(stand, id) { const k = stand.betrieb.kuechen; const i = k.indexOf(id); if (i >= 0) k.splice(i, 1); else k.push(id); }
 export function betriebTageAendern(stand, d) { stand.betrieb.tageProWoche = Math.min(7, Math.max(1, stand.betrieb.tageProWoche + d)); }
 export function betriebMonateAendern(stand, d) { stand.betrieb.monate = Math.min(12, Math.max(1, stand.betrieb.monate + d)); }
-export function ladenArtSetzen(stand, art) { stand.ladenArt = art.id; stand.betrieb.format = art.format; stand.betrieb.kuechen = [...art.kuechen]; }
+export function ladenArtSetzen(stand, art) { stand.ladenArt = art.id; stand.ladenArten = [art.id]; stand.betrieb.format = art.format; stand.betrieb.kuechen = [...art.kuechen]; }
+// Pilotfest P6 (1), 30.10.2026: mehrere Ladenarten zugleich. `arten` = Liste aller Kacheln (LADEN_ARTEN). Erste gewählte = Hauptart.
+export function ladenArtUmschalten(stand, art, arten) {
+  const l = Array.isArray(stand.ladenArten) && stand.ladenArten.length ? [...stand.ladenArten] : stand.ladenArt ? [stand.ladenArt] : [];
+  const i = l.indexOf(art.id); if (i >= 0) l.splice(i, 1); else l.push(art.id);
+  stand.ladenArten = l; stand.ladenArt = l[0] || null;
+  const gewaehlt = l.map((id) => arten.find((a) => a.id === id)).filter(Boolean);
+  stand.betrieb.format = gewaehlt[0]?.format || stand.betrieb.format; stand.betrieb.kuechen = [...new Set(gewaehlt.flatMap((a) => a.kuechen))];
+}
 export const kleinunternehmerUmschalten = (stand) => { stand.betrieb.kleinunternehmer = !stand.betrieb.kleinunternehmer; };
 // Einstellungen: eigene Warenquote / eigener Steuersatz in Prozent (null = Feld leer → Rechenwerk nimmt seinen Wert)
 export function warenQuoteSetzen(stand, prozent) { stand.verkauf.warenQuote = prozent !== null && prozent < 90 ? prozent / 100 : null; }

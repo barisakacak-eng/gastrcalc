@@ -1079,6 +1079,7 @@ export default {
     hilfe: "Kısaca", sprache: "Dil",
     laden: "Dükkânın", namePlatzhalter: "Dükkânın adı",
     ladenHilfe: "Dükkân türü tarifler, soğutma ve temizlik planı için başlangıç değerleri verir. Hepsini sonra büroda değiştirebilirsin.",
+    artenMehrere: "Birden fazla seçebilirsin",
     allesGenau: "Her şeyi ayrıntılı kur",
     karte: "Menün", karteFoto: "Menüyü fotoğrafla", karteVorlagen: "Şablondan seç", karteGalerie: "Fotoğraf veya PDF", spaeter: "Sonra",
     karteHilfe: "Uygulama yemekleri ve fiyatları fotoğraftan okur. Kendin yaptıklarını büroda Tarifler bölümünde ayarlarsın.",
@@ -1142,7 +1143,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem “?“
   ebene: { tabs: { start: "Bugün", muell: "Çöp", kuehl: "Soğutma", putzplan: "Temizlik", karte: "Yemekler" },
-    leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", zekiFragen: "Zeki'ye sor", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
+    mehr: "Daha fazla", leiste: "Dükkân", menueAuf: "Menüyü aç", schliessen: "Kapat", hilfeAuf: "Yardım", zekiFragen: "Zeki'ye sor", deinLaden: "Dükkânın", abschluss: "Günü kapat", personal: "Personel modu", buero: "Büro", ladenWechseln: "Dükkân değiştir", sprache: "Dil", zumLaden: "Dükkân", zumBuero: "Büro", schlossCode: "Büro kodunu gir",
     pin: { titel: "Büro kodu", neu: "Yeni kod seç", nochmal: "Bir kez daha", falsch: "Yanlış kod", ungleich: "Aynı değil. Yeniden seç.", gesetzt: "Büro kodu kaydedildi", entfernt: "Büro kodu kaldırıldı", setzen: "Büro kodu belirle", aendern: "Büro kodunu değiştir", entfernen: "Kodu kaldır", ohne: "Kod yoksa herkes büroya girer.", mit: "Büro bir kodla korunuyor.", loeschen: "Rakamı sil", testphase: "Deneme aşaması: kodsuz. Herkes büroya ve personel moduna girer. Büyük pilottan önce tekrar aç.", testphaseAn: "Kodsuz deneme aşamasını aç", testphaseAus: "Kodu tekrar aç" },
     hilfeText: {
       allgemein: "Alttaki çubuk dükkânda gereken her şeye götürür. Hesap, kurulum ve listeler büroda.",

@@ -1084,6 +1084,7 @@ export default {
     hilfe: "Коротко", sprache: "Мова",
     laden: "Твій заклад", namePlatzhalter: "Назва закладу",
     ladenHilfe: "Тип закладу дає стартові значення для рецептів, холоду й плану прибирання. Усе можна змінити потім в офісі.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Налаштувати все докладно",
     karte: "Твоє меню", karteFoto: "Сфотографувати меню", karteVorlagen: "Вибрати із шаблонів", karteGalerie: "Фото або PDF", spaeter: "Потім",
     karteHilfe: "Застосунок читає страви й ціни з фото. Що ви робите самі, вкажеш в офісі в розділі «Рецепти».",
@@ -1147,7 +1148,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сьогодні", muell: "Відходи", kuehl: "Холод", putzplan: "Прибирання", karte: "Меню" },
-    leiste: "Заклад", menueAuf: "Відкрити меню", schliessen: "Закрити", hilfeAuf: "Допомога", zekiFragen: "Запитай Зекі", deinLaden: "Твій заклад", abschluss: "Закрити день", personal: "Режим персоналу", buero: "Офіс", ladenWechseln: "Змінити заклад", sprache: "Мова", zumLaden: "Заклад", zumBuero: "Офіс", schlossCode: "Введи код офісу",
+    mehr: "More", leiste: "Заклад", menueAuf: "Відкрити меню", schliessen: "Закрити", hilfeAuf: "Допомога", zekiFragen: "Запитай Зекі", deinLaden: "Твій заклад", abschluss: "Закрити день", personal: "Режим персоналу", buero: "Офіс", ladenWechseln: "Змінити заклад", sprache: "Мова", zumLaden: "Заклад", zumBuero: "Офіс", schlossCode: "Введи код офісу",
     pin: { titel: "Код офісу", neu: "Обери новий код", nochmal: "Ще раз", falsch: "Неправильний код", ungleich: "Не збігається. Обери знову.", gesetzt: "Код офісу збережено", entfernt: "Код офісу видалено", setzen: "Встановити код офісу", aendern: "Змінити код офісу", entfernen: "Видалити код", ohne: "Без коду до офісу може зайти будь-хто.", mit: "Офіс захищений кодом.", loeschen: "Стерти цифру", testphase: "Тестова фаза: без коду. Усі заходять в офіс і в режим персоналу. Перед великим пілотом знову увімкнути код.", testphaseAn: "Увімкнути тестову фазу без коду", testphaseAus: "Знову увімкнути код" },
     hilfeText: {
       allgemein: "Панель унизу веде до всього, що потрібно в закладі. Розрахунки, налаштування й списки — в офісі.",

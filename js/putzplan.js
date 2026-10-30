@@ -3,14 +3,14 @@
 import { imTakt } from "./takt.js";
 import { AUFGABEN, TAKT_TAGE, GERAETE_JE_ART, STANDARD_AUS } from "./data/putzplan.js";
 import { heute, uid } from "./util.js";
-import { ladenArtVon } from "./profil.js";
+import { ladenArtVon, ladenArtenVon } from "./profil.js";
 
 export const planVon = (stand) => stand.putzplan || null;
 
 // Plan anlegen: Geräte aus Laden-Art und Kühlstellen vorschlagen
 export function planVorschlag(stand) {
-  const art = ladenArtVon(stand) || "anders";
-  const g = new Set(GERAETE_JE_ART[art] || GERAETE_JE_ART.anders);
+  const arten = ladenArtenVon(stand); if (!arten.length) arten.push(ladenArtVon(stand) || "anders");
+  const g = new Set(arten.flatMap((art) => GERAETE_JE_ART[art] || GERAETE_JE_ART.anders)); // P6 (1): Geräte aller gewählten Arten
   for (const k of stand.kuehlstellen || []) { if (k.archiviert) continue;
     if (k.art === "tk") g.add("tiefkuehler"); else if (k.art === "kuehl") g.add((k.typ === "saladette" || /theke|saladet|vitrine/i.test(k.name || "")) ? "saladette" : "kuehlschrank"); }
   return { aktiv: false, geraete: [...g], aus: [...STANDARD_AUS], seit: null };

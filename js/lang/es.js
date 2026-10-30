@@ -1078,6 +1078,7 @@ export default {
     hilfe: "En breve", sprache: "Idioma",
     laden: "Tu local", namePlatzhalter: "Nombre del local",
     ladenHilfe: "El tipo de local da valores iniciales para recetas, frío y limpieza. Todo se puede cambiar luego en la oficina.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Configurar todo en detalle",
     karte: "Tu carta", karteFoto: "Fotografiar la carta", karteVorlagen: "Elegir de plantillas", karteGalerie: "Fotos o PDF", spaeter: "Luego",
     karteHilfe: "La app lee platos y precios de la foto. Lo que hacéis vosotros lo pones en la oficina, en Recetas.",
@@ -1142,7 +1143,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hoy", muell: "Desperdicio", kuehl: "Frío", putzplan: "Limpieza", karte: "Carta" },
-    leiste: "Local", menueAuf: "Abrir menú", schliessen: "Cerrar", hilfeAuf: "Ayuda", zekiFragen: "Pregunta a Zeki", deinLaden: "Tu local", abschluss: "Cerrar el día", personal: "Modo personal", buero: "Oficina", ladenWechseln: "Cambiar de local", sprache: "Idioma", zumLaden: "Local", zumBuero: "Oficina", schlossCode: "Introduce el código de oficina",
+    mehr: "More", leiste: "Local", menueAuf: "Abrir menú", schliessen: "Cerrar", hilfeAuf: "Ayuda", zekiFragen: "Pregunta a Zeki", deinLaden: "Tu local", abschluss: "Cerrar el día", personal: "Modo personal", buero: "Oficina", ladenWechseln: "Cambiar de local", sprache: "Idioma", zumLaden: "Local", zumBuero: "Oficina", schlossCode: "Introduce el código de oficina",
     pin: { titel: "Código de oficina", neu: "Elige un código nuevo", nochmal: "Otra vez", falsch: "Código incorrecto", ungleich: "No coincide. Elige de nuevo.", gesetzt: "Código de oficina guardado", entfernt: "Código de oficina eliminado", setzen: "Fijar código de oficina", aendern: "Cambiar código de oficina", entfernen: "Quitar código", ohne: "Sin código, cualquiera entra en la oficina.", mit: "La oficina está protegida con un código.", loeschen: "Borrar cifra", testphase: "Fase de prueba: sin código. Todos entran en la oficina y en el modo personal. Vuelve a activar el código antes del gran piloto.", testphaseAn: "Activar fase de prueba sin código", testphaseAus: "Volver a activar el código" },
     hilfeText: {
       allgemein: "La barra de abajo lleva a todo lo que necesitas en el local. Cuentas, ajustes y listas están en la oficina.",

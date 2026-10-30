@@ -1084,6 +1084,7 @@ export default {
     hilfe: "Накратко", sprache: "Език",
     laden: "Твоят обект", namePlatzhalter: "Име на обекта",
     ladenHilfe: "Видът на обекта дава начални стойности за рецепти, охлаждане и график за почистване. Всичко можеш да смениш после в офиса.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Настрой всичко точно",
     karte: "Твоето меню", karteFoto: "Снимай менюто", karteVorlagen: "Избери от шаблони", karteGalerie: "Снимки или PDF", spaeter: "По-късно",
     karteHilfe: "Приложението чете ястията и цените от снимката. Каквото правите сами, настройваш в офиса в Рецепти.",
@@ -1147,7 +1148,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Днес", muell: "Отпадъци", kuehl: "Охлаждане", putzplan: "Почистване", karte: "Меню" },
-    leiste: "Обект", menueAuf: "Отвори менюто", schliessen: "Затвори", hilfeAuf: "Помощ", zekiFragen: "Попитай Зеки", deinLaden: "Твоят обект", abschluss: "Приключи деня", personal: "Режим персонал", buero: "Офис", ladenWechseln: "Смени обекта", sprache: "Език", zumLaden: "Обект", zumBuero: "Офис", schlossCode: "Въведи кода за офиса",
+    mehr: "More", leiste: "Обект", menueAuf: "Отвори менюто", schliessen: "Затвори", hilfeAuf: "Помощ", zekiFragen: "Попитай Зеки", deinLaden: "Твоят обект", abschluss: "Приключи деня", personal: "Режим персонал", buero: "Офис", ladenWechseln: "Смени обекта", sprache: "Език", zumLaden: "Обект", zumBuero: "Офис", schlossCode: "Въведи кода за офиса",
     pin: { titel: "Код за офиса", neu: "Избери нов код", nochmal: "Още веднъж", falsch: "Грешен код", ungleich: "Не съвпада. Избери отново.", gesetzt: "Кодът за офиса е запазен", entfernt: "Кодът за офиса е премахнат", setzen: "Задай код за офиса", aendern: "Смени кода за офиса", entfernen: "Премахни кода", ohne: "Без код всеки влиза в офиса.", mit: "Офисът е защитен с код.", loeschen: "Изтрий цифра", testphase: "Тестова фаза: без код. Всеки влиза в офиса и в режим персонал. Включи кода отново преди големия пилот.", testphaseAn: "Включи тестова фаза без код", testphaseAus: "Включи кода отново" },
     hilfeText: {
       allgemein: "Лентата долу води до всичко, което ти трябва в обекта. Сметки, настройки и списъци има в офиса.",

@@ -1078,6 +1078,7 @@ export default {
     hilfe: "En bref", sprache: "Langue",
     laden: "Ton commerce", namePlatzhalter: "Nom du commerce",
     ladenHilfe: "Le type de commerce donne des valeurs de départ pour recettes, froid et nettoyage. Tu peux tout changer plus tard au bureau.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Tout régler en détail",
     karte: "Ta carte", karteFoto: "Photographier la carte", karteVorlagen: "Choisir un modèle", karteGalerie: "Photos ou PDF", spaeter: "Plus tard",
     karteHilfe: "L’appli lit plats et prix sur la photo. Ce que vous faites vous-mêmes se règle au bureau, sous Recettes.",
@@ -1142,7 +1143,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Aujourd'hui", muell: "Déchets", kuehl: "Froid", putzplan: "Nettoyage", karte: "Carte" },
-    leiste: "Commerce", menueAuf: "Ouvrir le menu", schliessen: "Fermer", hilfeAuf: "Aide", zekiFragen: "Demande à Zeki", deinLaden: "Ton commerce", abschluss: "Clôturer la journée", personal: "Mode équipe", buero: "Bureau", ladenWechseln: "Changer de commerce", sprache: "Langue", zumLaden: "Commerce", zumBuero: "Bureau", schlossCode: "Saisis le code bureau",
+    mehr: "More", leiste: "Commerce", menueAuf: "Ouvrir le menu", schliessen: "Fermer", hilfeAuf: "Aide", zekiFragen: "Demande à Zeki", deinLaden: "Ton commerce", abschluss: "Clôturer la journée", personal: "Mode équipe", buero: "Bureau", ladenWechseln: "Changer de commerce", sprache: "Langue", zumLaden: "Commerce", zumBuero: "Bureau", schlossCode: "Saisis le code bureau",
     pin: { titel: "Code bureau", neu: "Choisis un nouveau code", nochmal: "Encore une fois", falsch: "Code erroné", ungleich: "Pas identique. Choisis à nouveau.", gesetzt: "Code bureau enregistré", entfernt: "Code bureau supprimé", setzen: "Définir le code bureau", aendern: "Changer le code bureau", entfernen: "Supprimer le code", ohne: "Sans code, tout le monde entre au bureau.", mit: "Le bureau est protégé par un code.", loeschen: "Effacer le chiffre", testphase: "Phase de test : sans code. Tout le monde entre au bureau et en mode équipe. Réactive le code avant le grand pilote.", testphaseAn: "Activer la phase de test sans code", testphaseAus: "Réactiver le code" },
     hilfeText: {
       allgemein: "La barre du bas mène à tout ce qu'il te faut au commerce. Calculs, réglages et listes sont au bureau.",

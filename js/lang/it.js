@@ -1078,6 +1078,7 @@ export default {
     hilfe: "In breve", sprache: "Lingua",
     laden: "Il tuo locale", namePlatzhalter: "Nome del locale",
     ladenHilfe: "Il tipo di locale dà valori di partenza per ricette, frigo e pulizie. Puoi cambiare tutto dopo in ufficio.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Imposta tutto nel dettaglio",
     karte: "Il tuo menu", karteFoto: "Fotografa il menu", karteVorlagen: "Scegli dai modelli", karteGalerie: "Foto o PDF", spaeter: "Dopo",
     karteHilfe: "L'app legge piatti e prezzi dalla foto. Quello che fate voi lo imposti in ufficio sotto Ricette.",
@@ -1142,7 +1143,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Oggi", muell: "Scarti", kuehl: "Frigo", putzplan: "Pulizie", karte: "Menu" },
-    leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", zekiFragen: "Chiedi a Zeki", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
+    mehr: "More", leiste: "Locale", menueAuf: "Apri il menu", schliessen: "Chiudi", hilfeAuf: "Aiuto", zekiFragen: "Chiedi a Zeki", deinLaden: "Il tuo locale", abschluss: "Chiudi la giornata", personal: "Modalità personale", buero: "Ufficio", ladenWechseln: "Cambia locale", sprache: "Lingua", zumLaden: "Locale", zumBuero: "Ufficio", schlossCode: "Inserisci il codice ufficio",
     pin: { titel: "Codice ufficio", neu: "Scegli un nuovo codice", nochmal: "Ancora una volta", falsch: "Codice errato", ungleich: "Non coincide. Scegli di nuovo.", gesetzt: "Codice ufficio salvato", entfernt: "Codice ufficio rimosso", setzen: "Imposta codice ufficio", aendern: "Cambia codice ufficio", entfernen: "Rimuovi codice", ohne: "Senza codice chiunque entra in ufficio.", mit: "L'ufficio è protetto da un codice.", loeschen: "Cancella cifra", testphase: "Fase di prova: senza codice. Tutti entrano in ufficio e nella modalità personale. Riattiva il codice prima del grande pilota.", testphaseAn: "Attiva la fase di prova senza codice", testphaseAus: "Riattiva il codice" },
     hilfeText: {
       allgemein: "La barra in basso porta a tutto ciò che ti serve nel locale. Conti, impostazioni e liste sono in ufficio.",

@@ -1084,6 +1084,7 @@ export default {
     hilfe: "W skrócie", sprache: "Język",
     laden: "Twój lokal", namePlatzhalter: "Nazwa lokalu",
     ladenHilfe: "Rodzaj lokalu daje wartości startowe dla przepisów, chłodzenia i planu sprzątania. Wszystko zmienisz potem w biurze.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Ustaw wszystko dokładnie",
     karte: "Twoja karta", karteFoto: "Zrób zdjęcie karty", karteVorlagen: "Wybierz z szablonów", karteGalerie: "Zdjęcia lub PDF", spaeter: "Później",
     karteHilfe: "Aplikacja czyta dania i ceny ze zdjęcia. To, co robicie sami, ustawisz w biurze w Przepisach.",
@@ -1147,7 +1148,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Dziś", muell: "Odpady", kuehl: "Chłodzenie", putzplan: "Sprzątanie", karte: "Menu" },
-    leiste: "Lokal", menueAuf: "Otwórz menu", schliessen: "Zamknij", hilfeAuf: "Pomoc", zekiFragen: "Zapytaj Zekiego", deinLaden: "Twój lokal", abschluss: "Zamknij dzień", personal: "Tryb personelu", buero: "Biuro", ladenWechseln: "Zmień lokal", sprache: "Język", zumLaden: "Lokal", zumBuero: "Biuro", schlossCode: "Wpisz kod biura",
+    mehr: "More", leiste: "Lokal", menueAuf: "Otwórz menu", schliessen: "Zamknij", hilfeAuf: "Pomoc", zekiFragen: "Zapytaj Zekiego", deinLaden: "Twój lokal", abschluss: "Zamknij dzień", personal: "Tryb personelu", buero: "Biuro", ladenWechseln: "Zmień lokal", sprache: "Język", zumLaden: "Lokal", zumBuero: "Biuro", schlossCode: "Wpisz kod biura",
     pin: { titel: "Kod biura", neu: "Wybierz nowy kod", nochmal: "Jeszcze raz", falsch: "Zły kod", ungleich: "Nie zgadza się. Wybierz ponownie.", gesetzt: "Kod biura zapisany", entfernt: "Kod biura usunięty", setzen: "Ustaw kod biura", aendern: "Zmień kod biura", entfernen: "Usuń kod", ohne: "Bez kodu każdy wejdzie do biura.", mit: "Biuro jest chronione kodem.", loeschen: "Usuń cyfrę", testphase: "Faza testów: bez kodu. Każdy wejdzie do biura i do trybu personelu. Przed dużym pilotażem włącz kod ponownie.", testphaseAn: "Włącz fazę testów bez kodu", testphaseAus: "Włącz kod ponownie" },
     hilfeText: {
       allgemein: "Pasek na dole prowadzi do wszystkiego, czego potrzebujesz w lokalu. Liczenie, ustawienia i listy są w biurze.",

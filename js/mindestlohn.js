@@ -70,8 +70,9 @@ export function mindestlohnKarteZeigen(stand, datum) {
   const alle = mindestlohnAlle(datum);
   for (const ab of alle) {
     const tage = Math.round((Date.parse(ab + "T12:00:00Z") - Date.parse(datum + "T12:00:00Z")) / 864e5);
-    if (tage >= 0 && tage <= VORSCHAU_TAGE_VORHER) { const v = mindestlohnVorschau(stand, datum); return v && v.mehrMonat > 0 ? v : null; }
-    if (tage < 0 && -tage <= VORSCHAU_TAGE_NACHHER) { const v = mindestlohnVorschau(stand, tagPlus(ab, -1)); return v && v.mehrMonat > 0 ? { ...v, seit: true } : null; }
+    if (tage > 0 && tage <= VORSCHAU_TAGE_VORHER) { const v = mindestlohnVorschau(stand, datum); return v && v.mehrMonat > 0 ? v : null; }
+    // Pilotfest P5 (30.10.2026): am Stichtag selbst gilt der neue Satz schon → „seit“ (vorher fehlte die Karte genau an diesem Tag)
+    if (tage <= 0 && -tage <= VORSCHAU_TAGE_NACHHER) { const v = mindestlohnVorschau(stand, tagPlus(ab, -1)); return v && v.mehrMonat > 0 ? { ...v, seit: true } : null; }
   }
   return null;
 }

@@ -1078,6 +1078,7 @@ export default {
     hilfe: "Με λίγα λόγια", sprache: "Γλώσσα",
     laden: "Το μαγαζί σου", namePlatzhalter: "Όνομα μαγαζιού",
     ladenHilfe: "Το είδος του μαγαζιού δίνει αρχικές τιμές για συνταγές, ψύξη και καθαριότητα. Όλα αλλάζουν μετά στο γραφείο.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Ρύθμισε τα πάντα αναλυτικά",
     karte: "Το μενού σου", karteFoto: "Φωτογράφισε το μενού", karteVorlagen: "Διάλεξε από πρότυπα", karteGalerie: "Φωτογραφίες ή PDF", spaeter: "Αργότερα",
     karteHilfe: "Η εφαρμογή διαβάζει πιάτα και τιμές από τη φωτογραφία. Ό,τι φτιάχνετε μόνοι σας το βάζεις στο γραφείο στις Συνταγές.",
@@ -1142,7 +1143,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Σήμερα", muell: "Απορρίμματα", kuehl: "Ψύξη", putzplan: "Καθάρισμα", karte: "Μενού" },
-    leiste: "Μαγαζί", menueAuf: "Άνοιγμα μενού", schliessen: "Κλείσιμο", hilfeAuf: "Βοήθεια", zekiFragen: "Ρώτα τον Ζέκι", deinLaden: "Το μαγαζί σου", abschluss: "Κλείσιμο ημέρας", personal: "Λειτουργία προσωπικού", buero: "Γραφείο", ladenWechseln: "Αλλαγή μαγαζιού", sprache: "Γλώσσα", zumLaden: "Μαγαζί", zumBuero: "Γραφείο", schlossCode: "Βάλε τον κωδικό γραφείου",
+    mehr: "More", leiste: "Μαγαζί", menueAuf: "Άνοιγμα μενού", schliessen: "Κλείσιμο", hilfeAuf: "Βοήθεια", zekiFragen: "Ρώτα τον Ζέκι", deinLaden: "Το μαγαζί σου", abschluss: "Κλείσιμο ημέρας", personal: "Λειτουργία προσωπικού", buero: "Γραφείο", ladenWechseln: "Αλλαγή μαγαζιού", sprache: "Γλώσσα", zumLaden: "Μαγαζί", zumBuero: "Γραφείο", schlossCode: "Βάλε τον κωδικό γραφείου",
     pin: { titel: "Κωδικός γραφείου", neu: "Διάλεξε νέο κωδικό", nochmal: "Άλλη μία φορά", falsch: "Λάθος κωδικός", ungleich: "Δεν ταιριάζει. Διάλεξε ξανά.", gesetzt: "Ο κωδικός γραφείου αποθηκεύτηκε", entfernt: "Ο κωδικός γραφείου αφαιρέθηκε", setzen: "Όρισε κωδικό γραφείου", aendern: "Άλλαξε τον κωδικό γραφείου", entfernen: "Αφαίρεση κωδικού", ohne: "Χωρίς κωδικό μπαίνει ο καθένας στο γραφείο.", mit: "Το γραφείο προστατεύεται με κωδικό.", loeschen: "Σβήσε ψηφίο", testphase: "Δοκιμαστική φάση: χωρίς κωδικό. Όλοι μπαίνουν στο γραφείο και στη λειτουργία προσωπικού. Άνοιξε ξανά τον κωδικό πριν από τον μεγάλο πιλότο.", testphaseAn: "Άνοιξε δοκιμαστική φάση χωρίς κωδικό", testphaseAus: "Άνοιξε ξανά τον κωδικό" },
     hilfeText: {
       allgemein: "Η μπάρα κάτω οδηγεί σε ό,τι χρειάζεσαι στο μαγαζί. Υπολογισμοί, ρυθμίσεις και λίστες είναι στο γραφείο.",

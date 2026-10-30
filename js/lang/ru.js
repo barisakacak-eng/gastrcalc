@@ -1084,6 +1084,7 @@ export default {
     hilfe: "Коротко", sprache: "Язык",
     laden: "Твоё заведение", namePlatzhalter: "Название заведения",
     ladenHilfe: "Тип заведения даёт стартовые значения для рецептов, холода и плана уборки. Всё можно поменять потом в офисе.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Настроить всё подробно",
     karte: "Твоё меню", karteFoto: "Сфотографировать меню", karteVorlagen: "Выбрать из шаблонов", karteGalerie: "Фото или PDF", spaeter: "Потом",
     karteHilfe: "Приложение читает блюда и цены с фото. Что вы делаете сами, укажешь в офисе в разделе «Рецепты».",
@@ -1147,7 +1148,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Сегодня", muell: "Отходы", kuehl: "Холод", putzplan: "Уборка", karte: "Меню" },
-    leiste: "Заведение", menueAuf: "Открыть меню", schliessen: "Закрыть", hilfeAuf: "Помощь", zekiFragen: "Спроси Зеки", deinLaden: "Твоё заведение", abschluss: "Закрыть день", personal: "Режим персонала", buero: "Офис", ladenWechseln: "Сменить заведение", sprache: "Язык", zumLaden: "Заведение", zumBuero: "Офис", schlossCode: "Введи код офиса",
+    mehr: "More", leiste: "Заведение", menueAuf: "Открыть меню", schliessen: "Закрыть", hilfeAuf: "Помощь", zekiFragen: "Спроси Зеки", deinLaden: "Твоё заведение", abschluss: "Закрыть день", personal: "Режим персонала", buero: "Офис", ladenWechseln: "Сменить заведение", sprache: "Язык", zumLaden: "Заведение", zumBuero: "Офис", schlossCode: "Введи код офиса",
     pin: { titel: "Код офиса", neu: "Выбери новый код", nochmal: "Ещё раз", falsch: "Неверный код", ungleich: "Не совпадает. Выбери заново.", gesetzt: "Код офиса сохранён", entfernt: "Код офиса удалён", setzen: "Задать код офиса", aendern: "Изменить код офиса", entfernen: "Удалить код", ohne: "Без кода в офис может войти любой.", mit: "Офис защищён кодом.", loeschen: "Стереть цифру", testphase: "Тестовый режим: без кода. Все заходят в офис и в режим персонала. Перед большим пилотом снова включить код.", testphaseAn: "Включить тестовый режим без кода", testphaseAus: "Снова включить код" },
     hilfeText: {
       allgemein: "Панель внизу ведёт ко всему, что нужно в заведении. Расчёты, настройки и списки находятся в офисе.",

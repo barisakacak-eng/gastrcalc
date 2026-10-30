@@ -543,11 +543,12 @@ function mitCode(zweck, ziel, weiter) {
 }
 
 // Blätter (Menü, Sprache, Läden, Hilfe, Code) – nur die Hülle ändert sich, der Bildschirm darunter bleibt stehen.
-const BLATT_INTERN = new Set(["pin-bio", "menue-auf", "blatt-zu", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "sicherung-pw-schalter", "sicherung-fotos-schalter", "sicherung-ort", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
+const BLATT_INTERN = new Set(["pin-bio", "menue-auf", "blatt-zu", "hilfe-mehr", "blatt-sprache", "blatt-laeden", "menue-zurueck", "hilfe-auf", "pin-taste", "pin-weg", "passwort-zeigen", "sicherung-teilen", "sicherung-ohne", "sicherung-einlesen", "sicherung-pw-schalter", "sicherung-fotos-schalter", "sicherung-ort", "rettung-start", "rettung-pruefen", "rettung-ok"]); // E5: Passwort-Blatt; Rettung (17.10.2026)
 async function ebeneAktion(name, el) {
   if (name === "menue-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); menueZeigen(stand, wurzel); return true; }
   if (name === "menue-zurueck") { menueZeigen(stand, wurzel); return true; }
   if (name === "blatt-zu") { blattSchliessen(); einleseDatei = null; einleseErsetzen = false; return true; } // E5: wartende Sicherungsdatei loslassen
+  if (name === "hilfe-mehr") { hilfeZeigen(el.dataset.wert, true); return true; } // P6 (2): ganze Hilfe nach „Mehr“
   if (name === "blatt-sprache") { spracheZeigen(); return true; }
   if (name === "blatt-laeden") { laedenZeigen(wurzel); return true; }
   if (name === "hilfe-auf") { if (!blattOffen()) history.pushState({ blatt: true }, ""); hilfeZeigen(ansicht); return true; }

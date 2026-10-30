@@ -1086,6 +1086,7 @@ export default {
     hilfe: "Ukratko", sprache: "Jezik",
     laden: "Tvoj lokal", namePlatzhalter: "Ime lokala",
     ladenHilfe: "Vrsta lokala daje početne vrijednosti za recepte, hlađenje i plan čišćenja. Sve možeš kasnije promijeniti u uredu.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Podesi sve tačno",
     karte: "Tvoj jelovnik", karteFoto: "Slikaj jelovnik", karteVorlagen: "Izaberi iz predložaka", karteGalerie: "Slike ili PDF", spaeter: "Kasnije",
     karteHilfe: "Aplikacija čita jela i cijene sa slike. Šta pravite sami, podesiš u uredu pod Recepti.",
@@ -1149,7 +1150,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Danas", muell: "Otpad", kuehl: "Hlađenje", putzplan: "Čišćenje", karte: "Meni" },
-    leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", zekiFragen: "Pitaj Zekija", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi kod ureda",
+    mehr: "More", leiste: "Lokal", menueAuf: "Otvori meni", schliessen: "Zatvori", hilfeAuf: "Pomoć", zekiFragen: "Pitaj Zekija", deinLaden: "Tvoj lokal", abschluss: "Zatvori dan", personal: "Način za osoblje", buero: "Ured", ladenWechseln: "Promijeni lokal", sprache: "Jezik", zumLaden: "Lokal", zumBuero: "Ured", schlossCode: "Unesi kod ureda",
     pin: { titel: "Kod ureda", neu: "Odaberi novi kod", nochmal: "Još jednom", falsch: "Pogrešan kod", ungleich: "Ne poklapa se. Odaberi ponovo.", gesetzt: "Kod ureda spremljen", entfernt: "Kod ureda uklonjen", setzen: "Postavi kod ureda", aendern: "Promijeni kod ureda", entfernen: "Ukloni kod", ohne: "Bez koda svako ulazi u ured.", mit: "Ured je zaštićen kodom.", loeschen: "Obriši cifru", testphase: "Testna faza: bez koda. Svi ulaze u ured i u način za osoblje. Prije velikog pilota ponovo uključi kod.", testphaseAn: "Uključi testnu fazu bez koda", testphaseAus: "Ponovo uključi kod" },
     hilfeText: {
       allgemein: "Traka dolje vodi do svega što ti treba u lokalu. Računanje, podešavanje i liste su u uredu.",

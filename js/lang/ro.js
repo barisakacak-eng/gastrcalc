@@ -1085,6 +1085,7 @@ export default {
     hilfe: "Pe scurt", sprache: "Limba",
     laden: "Localul tău", namePlatzhalter: "Numele localului",
     ladenHilfe: "Tipul localului dă valori de start pentru rețete, răcire și planul de curățenie. Poți schimba totul mai târziu în birou.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Configurează totul exact",
     karte: "Meniul tău", karteFoto: "Fotografiază meniul", karteVorlagen: "Alege din șabloane", karteGalerie: "Poze sau PDF", spaeter: "Mai târziu",
     karteHilfe: "Aplicația citește preparatele și prețurile din poză. Ce faceți voi singuri setezi în birou, la Rețete.",
@@ -1148,7 +1149,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Azi", muell: "Deșeuri", kuehl: "Răcire", putzplan: "Curățenie", karte: "Meniu" },
-    leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", zekiFragen: "Întreabă-l pe Zeki", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossCode: "Introdu codul de birou",
+    mehr: "More", leiste: "Local", menueAuf: "Deschide meniul", schliessen: "Închide", hilfeAuf: "Ajutor", zekiFragen: "Întreabă-l pe Zeki", deinLaden: "Localul tău", abschluss: "Închide ziua", personal: "Mod personal", buero: "Birou", ladenWechseln: "Schimbă localul", sprache: "Limba", zumLaden: "Local", zumBuero: "Birou", schlossCode: "Introdu codul de birou",
     pin: { titel: "Cod de birou", neu: "Alege un cod nou", nochmal: "Încă o dată", falsch: "Cod greșit", ungleich: "Nu se potrivește. Alege din nou.", gesetzt: "Codul de birou a fost salvat", entfernt: "Codul de birou a fost șters", setzen: "Setează codul de birou", aendern: "Schimbă codul de birou", entfernen: "Șterge codul", ohne: "Fără cod, oricine intră în birou.", mit: "Biroul este protejat cu un cod.", loeschen: "Șterge cifra", testphase: "Fază de test: fără cod. Toată lumea intră în birou și în modul personal. Pornește codul din nou înainte de pilotul mare.", testphaseAn: "Pornește faza de test fără cod", testphaseAus: "Pornește din nou codul" },
     hilfeText: {
       allgemein: "Bara de jos duce la tot ce îți trebuie în local. Calculele, configurarea și listele sunt în birou.",

@@ -1084,6 +1084,7 @@ export default {
     hilfe: "Shkurt", sprache: "Gjuha",
     laden: "Lokali yt", namePlatzhalter: "Emri i lokalit",
     ladenHilfe: "Lloji i lokalit jep vlera fillestare për recetat, ftohjen dhe planin e pastrimit. Gjithçka mund ta ndryshosh më vonë në zyrë.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Rregullo gjithçka me saktësi",
     karte: "Menyja jote", karteFoto: "Fotografo menynë", karteVorlagen: "Zgjidh nga shabllonet", karteGalerie: "Foto ose PDF", spaeter: "Më vonë",
     karteHilfe: "Aplikacioni lexon pjatat dhe çmimet nga foto. Çfarë bëni vetë, e vendos në zyrë te Recetat.",
@@ -1147,7 +1148,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Sot", muell: "Mbetje", kuehl: "Ftohja", putzplan: "Pastrimi", karte: "Menuja" },
-    leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", zekiFragen: "Pyet Zekin", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossCode: "Shkruaj kodin e zyrës",
+    mehr: "More", leiste: "Lokali", menueAuf: "Hap menunë", schliessen: "Mbyll", hilfeAuf: "Ndihmë", zekiFragen: "Pyet Zekin", deinLaden: "Lokali yt", abschluss: "Mbyll ditën", personal: "Modaliteti i stafit", buero: "Zyra", ladenWechseln: "Ndërro lokalin", sprache: "Gjuha", zumLaden: "Lokali", zumBuero: "Zyra", schlossCode: "Shkruaj kodin e zyrës",
     pin: { titel: "Kodi i zyrës", neu: "Zgjidh një kod të ri", nochmal: "Edhe një herë", falsch: "Kod i gabuar", ungleich: "Nuk përputhet. Zgjidh përsëri.", gesetzt: "Kodi i zyrës u ruajt", entfernt: "Kodi i zyrës u hoq", setzen: "Vendos kodin e zyrës", aendern: "Ndrysho kodin e zyrës", entfernen: "Hiq kodin", ohne: "Pa kod, kushdo hyn në zyrë.", mit: "Zyra është e mbrojtur me kod.", loeschen: "Fshi shifrën", testphase: "Fazë prove: pa kod. Të gjithë hyjnë në zyrë dhe në modalitetin e stafit. Ndize përsëri kodin para pilotit të madh.", testphaseAn: "Ndiz fazën e provës pa kod", testphaseAus: "Ndize përsëri kodin" },
     hilfeText: {
       allgemein: "Shiriti poshtë të çon te gjithçka që të duhet në lokal. Llogaritë, rregullimet dhe listat janë në zyrë.",

@@ -1081,6 +1081,7 @@ export default {
     hilfe: "شرح سريع", sprache: "اللغة",
     laden: "محلك", namePlatzhalter: "اسم المحل",
     ladenHilfe: "نوع المحل يعطي قيمًا أولية للوصفات والتبريد وخطة التنظيف. تغيّر كل شيء لاحقًا في المكتب.",
+    artenMehrere: "يمكنك اختيار أكثر من واحد",
     allesGenau: "إعداد كل شيء بالتفصيل",
     karte: "قائمتك", karteFoto: "صوّر القائمة", karteVorlagen: "اختر من القوالب", karteGalerie: "صور أو PDF", spaeter: "لاحقًا",
     karteHilfe: "التطبيق يقرأ الأطباق والأسعار من الصورة. ما تحضّرونه بأنفسكم تضبطه في المكتب تحت «الوصفات».",
@@ -1144,7 +1145,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "اليوم", muell: "الهدر", kuehl: "التبريد", putzplan: "التنظيف", karte: "القائمة" },
-    leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", zekiFragen: "اسأل زكي", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
+    mehr: "المزيد", leiste: "المحل", menueAuf: "افتح القائمة", schliessen: "إغلاق", hilfeAuf: "مساعدة", zekiFragen: "اسأل زكي", deinLaden: "محلك", abschluss: "أغلق اليوم", personal: "وضع الموظفين", buero: "المكتب", ladenWechseln: "بدّل المحل", sprache: "اللغة", zumLaden: "المحل", zumBuero: "المكتب", schlossCode: "أدخل رمز المكتب",
     pin: { titel: "رمز المكتب", neu: "اختر رمزًا جديدًا", nochmal: "مرة أخرى", falsch: "رمز خاطئ", ungleich: "غير متطابق. اختر من جديد.", gesetzt: "تم حفظ رمز المكتب", entfernt: "تمت إزالة رمز المكتب", setzen: "حدّد رمز المكتب", aendern: "غيّر رمز المكتب", entfernen: "أزل الرمز", ohne: "بلا رمز يدخل أي شخص إلى المكتب.", mit: "المكتب محمي برمز.", loeschen: "احذف الرقم", testphase: "مرحلة تجربة: بلا رمز. يدخل الجميع إلى المكتب ووضع الموظفين. شغّل الرمز من جديد قبل التجربة الكبيرة.", testphaseAn: "شغّل مرحلة التجربة بلا رمز", testphaseAus: "شغّل الرمز من جديد" },
     hilfeText: {
       allgemein: "الشريط في الأسفل يأخذك إلى كل ما تحتاجه في المحل. الحسابات والإعداد والقوائم في المكتب.",

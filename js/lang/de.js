@@ -1091,6 +1091,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     hilfe: "Kurz erklärt", sprache: "Sprache",
     laden: "Dein Laden", namePlatzhalter: "Name des Ladens",
     ladenHilfe: "Die Laden-Art gibt Startwerte für Rezepte, Kühlung und Putzplan. Alles kannst du später im Büro ändern.",
+    artenMehrere: "Mehrere möglich",
     allesGenau: "Alles genau einrichten",
     karte: "Deine Karte", karteFoto: "Karte fotografieren", karteVorlagen: "Aus Vorlagen wählen", karteGalerie: "Fotos oder PDF", spaeter: "Später",
     karteHilfe: "Die App liest Gerichte und Preise vom Foto. Was ihr selbst macht, stellst du im Büro unter Rezepte ein.",
@@ -1158,7 +1159,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Heute", muell: "Müll", kuehl: "Kühlung", putzplan: "Putzen", karte: "Karte" },
-    leiste: "Laden", menueAuf: "Menü öffnen", schliessen: "Schließen", hilfeAuf: "Hilfe", zekiFragen: "Frag Zeki", deinLaden: "Dein Laden", abschluss: "Tag abschließen", personal: "Personal-Modus", buero: "Büro", ladenWechseln: "Laden wechseln", sprache: "Sprache", zumLaden: "Laden", zumBuero: "Büro", schlossCode: "Büro-Code eingeben",
+    mehr: "Mehr", leiste: "Laden", menueAuf: "Menü öffnen", schliessen: "Schließen", hilfeAuf: "Hilfe", zekiFragen: "Frag Zeki", deinLaden: "Dein Laden", abschluss: "Tag abschließen", personal: "Personal-Modus", buero: "Büro", ladenWechseln: "Laden wechseln", sprache: "Sprache", zumLaden: "Laden", zumBuero: "Büro", schlossCode: "Büro-Code eingeben",
     pin: { titel: "Büro-Code", neu: "Neuen Code wählen", nochmal: "Noch einmal", falsch: "Falscher Code", ungleich: "Nicht gleich. Bitte neu wählen.", gesetzt: "Büro-Code gespeichert", entfernt: "Büro-Code entfernt", setzen: "Büro-Code festlegen", aendern: "Büro-Code ändern", entfernen: "Code entfernen", ohne: "Ohne Code kommt jeder ins Büro.", mit: "Das Büro ist mit einem Code geschützt.", loeschen: "Ziffer löschen", testphase: "Testphase: ohne Code. Jeder kommt ins Büro und in den Personal-Modus. Vor dem großen Pilot wieder einschalten.", testphaseAn: "Testphase ohne Code einschalten", testphaseAus: "Code wieder einschalten" },
     hilfeText: {
       allgemein: "Die Leiste unten führt zu allem, was du im Laden brauchst. Rechnen, Einrichten und Listen findest du im Büro.",

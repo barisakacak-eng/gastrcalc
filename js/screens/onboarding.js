@@ -11,10 +11,11 @@ import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from ".
 import { reinigungVon, putzzeitMonat } from "../reinigung.js";
 import { FORMATE, FORMAT_GRUPPEN, findeFormat } from "../data/formate.js";
 import { KUECHEN } from "../data/kuechen.js";
+import { ladenArtenVon } from "../profil.js"; // P6 (1)
 import { KATEGORIEN, postenJeKategorie, istTypisch, basisStandard, satzStandard } from "../data/kosten.js";
 // Trennung (17.10.2026): alle Schreibvorgänge der Einrichtung laufen über js/stamm.js
 import { schrittSetzen, einrichtungWegSetzen, schnellErgebnisSetzen, schnellFertig, karteWegSetzen, betriebNameSetzen, betriebFormatSetzen, kuecheUmschalten, betriebTageAendern, betriebMonateAendern,
-  ladenArtSetzen, teamFeldSetzen, lohnkostenSetzen, lohnkostenOffen, eigenerLohnSetzen, eigenerLohnOffen, kostenBetragSetzen, kostenPostenUmschalten, kostenPeriodeSetzen,
+  ladenArtSetzen, ladenArtUmschalten, teamFeldSetzen, lohnkostenSetzen, lohnkostenOffen, eigenerLohnSetzen, eigenerLohnOffen, kostenBetragSetzen, kostenPostenUmschalten, kostenPeriodeSetzen,
   kostenPostenOffen, kostenBasisSetzen, kostenSatzSetzen, kostenKategorieGeprueft, kostenSchnellSetzen, kanalUmschalten, portalAnlegen, portalEntfernen, portalBasisSetzen,
   portalFeldSetzen, reinigungAendern, reinigungMinutenAendern, kuehlstelleAnlegen, kuehlstelleArtWaehlen, kuehlstelleNameSetzen, kuehlstelleWegnehmen, kuehlEingerichtetSetzen } from "../stamm.js";
 import { VORSTEUER_SAETZE } from "../engine.js"; // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten
@@ -446,17 +447,21 @@ const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
 const LADEN_FOTO = { imbiss: ["laden-burger", "laden-imbiss", "laden-kiosk"], cafe: ["laden-cafe", "laden-baeckerei"] }; // erst eigenes Foto, sonst das ähnlichste Ladenbild
 const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
   return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`; };
+// Pilotfest P6 (1), 30.10.2026 (Entwurf hinter window.__gcC bis zum Ja): mehrere Ladenarten zugleich wählbar, erste = Hauptart.
+const pilotC = () => typeof window !== "undefined" && !!window.__gcC;
+const ladenArtAn = (stand, id) => (pilotC() ? ladenArtenVon(stand).includes(id) : stand.ladenArt === id);
 const ladenSchnell = {
   id: "laden-schnell",
   view: (stand) => `
     ${kopfS2("laden-schnell", t("schnell2.laden"), t("schnell2.ladenHilfe"), `<button type="button" class="leise" data-a="weg-genau">${esc(t("schnell2.allesGenau"))}</button>`)}
     <input class="textfeld s2name" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("schnell2.namePlatzhalter"))}" aria-label="${esc(t("schnell2.namePlatzhalter"))}" autocomplete="off">
-    <div class="kacheln fotokacheln s2arten">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${stand.ladenArt === a.id ? "an" : ""}" aria-pressed="${stand.ladenArt === a.id}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>`,
+    ${pilotC() ? `<p class="s2mehrere">${esc(t("schnell2.artenMehrere"))}</p>` : ""}
+    <div class="kacheln fotokacheln s2arten ${pilotC() ? "mehrfach" : ""}">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${ladenArtAn(stand, a.id) ? "an" : ""}" aria-pressed="${ladenArtAn(stand, a.id)}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
   eingabe(feld, wert, stand) { if (feld === "betrieb.name") betriebNameSetzen(stand, wert); },
   aktion(name, el, stand) {
     if (hilfeAktion(name, el)) return true;
-    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; ladenArtSetzen(stand, a); return true; }
+    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; if (pilotC()) ladenArtUmschalten(stand, a, LADEN_ARTEN); else ladenArtSetzen(stand, a); return true; }
     if (name === "weg-genau") { hilfeAuf = null; einrichtungWegSetzen(stand, "genau", schrittIndex("format"), "format"); return true; }
   },
   beimVerlassen(stand) { selbstStandard(stand); },

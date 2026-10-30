@@ -1078,6 +1078,7 @@ export default {
     hilfe: "Giải thích ngắn", sprache: "Ngôn ngữ",
     laden: "Quán của sếp", namePlatzhalter: "Tên quán",
     ladenHilfe: "Loại quán cho sẵn số liệu ban đầu cho công thức, làm lạnh và dọn dẹp. Sau này đổi được hết ở văn phòng.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Cài đặt chi tiết",
     karte: "Thực đơn của sếp", karteFoto: "Chụp thực đơn", karteVorlagen: "Chọn từ mẫu", karteGalerie: "Ảnh hoặc PDF", spaeter: "Để sau",
     karteHilfe: "App đọc món và giá từ ảnh. Món quán tự làm thì sếp nhập ở văn phòng, mục Công thức.",
@@ -1142,7 +1143,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Hôm nay", muell: "Rác", kuehl: "Làm lạnh", putzplan: "Dọn dẹp", karte: "Thực đơn" },
-    leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", zekiFragen: "Hỏi Zeki", deinLaden: "Quán của sếp", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
+    mehr: "More", leiste: "Quán", menueAuf: "Mở menu", schliessen: "Đóng", hilfeAuf: "Trợ giúp", zekiFragen: "Hỏi Zeki", deinLaden: "Quán của sếp", abschluss: "Kết thúc ngày", personal: "Chế độ nhân viên", buero: "Văn phòng", ladenWechseln: "Đổi quán", sprache: "Ngôn ngữ", zumLaden: "Quán", zumBuero: "Văn phòng", schlossCode: "Nhập mã văn phòng",
     pin: { titel: "Mã văn phòng", neu: "Chọn mã mới", nochmal: "Nhập lại lần nữa", falsch: "Sai mã", ungleich: "Không khớp. Hãy chọn lại.", gesetzt: "Đã lưu mã văn phòng", entfernt: "Đã xóa mã văn phòng", setzen: "Đặt mã văn phòng", aendern: "Đổi mã văn phòng", entfernen: "Xóa mã", ohne: "Không có mã thì ai cũng vào được văn phòng.", mit: "Văn phòng được bảo vệ bằng mã.", loeschen: "Xóa chữ số", testphase: "Giai đoạn thử: không có mã. Ai cũng vào được văn phòng và chế độ nhân viên. Bật lại mã trước đợt thử lớn.", testphaseAn: "Bật giai đoạn thử không mã", testphaseAus: "Bật lại mã" },
     hilfeText: {
       allgemein: "Thanh bên dưới dẫn đến mọi thứ cần trong quán. Tính toán, cài đặt và danh sách nằm ở văn phòng.",

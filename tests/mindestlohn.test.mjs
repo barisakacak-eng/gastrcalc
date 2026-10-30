@@ -66,6 +66,8 @@ test("ohne Team keine Wirkung; Karte nur im Zeitfenster", () => {
   assert.equal(mindestlohnKarteZeigen(s, "2026-09-01"), null); // mehr als 92 Tage vorher
   assert.ok(mindestlohnKarteZeigen(s, "2026-10-28")); // 65 Tage vorher
   assert.equal(mindestlohnKarteZeigen(s, "2027-01-15").seit, true); // im Januar: „seit Januar …“
+  assert.equal(mindestlohnKarteZeigen(s, "2026-12-31").seit, undefined); // Silvester: noch „vorher“
+  assert.equal(mindestlohnKarteZeigen(s, "2027-01-01")?.seit, true); // Pilotfest P5: am Stichtag selbst nicht verschwinden (Generalprobe-Befund 30.10.2026)
   assert.equal(mindestlohnKarteZeigen(s, "2027-03-01"), null);
   assert.equal(mindestlohnVorschau(s, "2027-02-01"), null); // keine weitere Erhöhung bekannt
 });

@@ -743,7 +743,7 @@ export const BEREICHE = {
   kosten: ["kosten", "kostenKategorienGeprueft", "team"],
   gerichte: ["gerichte", "selbst", "selbstAutoArt", "adanaBrot"], // 20.10.2026: Antwort auf die Brot-Frage zum Adana
   artikel: ["artikel"],
-  betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt"],
+  betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt", "ladenArten"], // P6 (1): mehrere Ladenarten
   kuehl: ["kuehlstellen", "kuehl"],
   putzplan: ["putzplan", "putzplanSpaeter"],
   personen: ["personen"],

@@ -33,7 +33,7 @@ const AUSNAHMEN = {
     hbEntwurf: "Entwurf Haltbarkeit (Modulzustand)", angaben: "lokales Objekt für haltbarSetzen", zeilen: "gelesene Belegzeilen (Modulzustand)", zuordnung: "Auswahl je Zeile (Modulzustand)", genommen: "lokale Liste für lieferungAnlegen" },
   "bestand.js": { z: "lokale Liste von Hinweis-Sätzen", entwurf: "Entwurf Mindestbestand (Modulzustand)" },
   "buero.js": { offen: "lokale Liste der Büro-Chips" },
-  "ebene.js": { huelle: "DOM", h: "DOM", m: "DOM", k: "DOM", feld: "DOM", pin: "PIN-Blatt (Modulzustand)", p: "PIN-Blatt (Modulzustand)", pw: "Passwort-Blatt (Modulzustand)" },
+  "ebene.js": { huelle: "DOM", h: "DOM", m: "DOM", k: "DOM", feld: "DOM", blatt: "DOM: Blatt beim Wischen (P6)", pin: "PIN-Blatt (Modulzustand)", p: "PIN-Blatt (Modulzustand)", pw: "Passwort-Blatt (Modulzustand)" },
   "foto.js": { warteschlange: "Foto-Warteschlange (Modulzustand)", serie: "Zähler der Serie (Modulzustand)", mein: "laufendes Foto (Modulzustand lauf)", laufUploads: "Merkliste dieser Prüfliste (Modulzustand)",
     v: "Vorschlag der Prüfliste (flüchtig, erst „Übernehmen“ schreibt)", vorschlaege: "Prüfliste (Modulzustand)" },
   "karte.js": { waage: "Waage-Check (Modulzustand)" },

@@ -9,11 +9,20 @@ const ALLE_BEREICHE = Object.keys(KATALOG);
 
 // Laden-Art des Ladens: Schnellstart setzt sie direkt, die genaue Einrichtung über Format und Küche.
 export function ladenArtVon(stand) {
+  if (Array.isArray(stand?.ladenArten) && stand.ladenArten.length && PROFILE[stand.ladenArten[0]]) return stand.ladenArten[0]; // Pilotfest P6 (1): erste = Hauptart
   if (stand?.ladenArt && PROFILE[stand.ladenArt]) return stand.ladenArt;
   const b = stand?.betrieb || {};
   if (ART_JE_FORMAT[b.format]) return ART_JE_FORMAT[b.format];
   for (const k of b.kuechen || []) if (ART_JE_KUECHE[k]) return ART_JE_KUECHE[k];
   return "anders";
+}
+
+// Pilotfest P6 (1), 30.10.2026: ein Laden kann mehrere Arten zugleich sein (Döner + Pizza). Erste Art = Hauptart (Bild, Format, Amt-Dokument),
+// Profil, Vorlagen-Enge und Putzplan-Geräte sind die Vereinigung aller gewählten Arten. Alte Stände ohne ladenArten: genau die eine ladenArt.
+export function ladenArtenVon(stand) {
+  const l = Array.isArray(stand?.ladenArten) ? stand.ladenArten.filter((a) => PROFILE[a]) : [];
+  if (l.length) return [...new Set(l)];
+  const eine = ladenArtVon(stand); return eine ? [eine] : [];
 }
 
 // Bereiche der Gerichte auf der Karte mit ihrem Anteil (Getränke zählen nicht mit).
@@ -32,10 +41,12 @@ export function profilAusKarte(stand) {
 // Das wirksame Profil. quelle: "art" | "karte" | "wirt" (was zuletzt etwas geändert hat).
 export function profilFuer(stand) {
   const art = ladenArtVon(stand);
+  const arten = ladenArtenVon(stand).filter((a) => a !== "anders"); // „Etwas anderes“ neben einer echten Art bringt kein eigenes Profil
   const basis = PROFILE[art];
   let kern = [...basis.kern], oft = [...basis.oft], quelle = "art";
+  for (const a of arten.slice(1)) { for (const b of PROFILE[a].kern) if (!kern.includes(b)) { kern.push(b); oft = oft.filter((x) => x !== b); } for (const b of PROFILE[a].oft) if (!kern.includes(b) && !oft.includes(b)) oft.push(b); }
   const ausKarte = profilAusKarte(stand);
-  if (art === "anders") {
+  if (art === "anders" && !arten.length) {
     if (ausKarte.length) { kern = ausKarte; quelle = "karte"; }
     else kern = ALLE_BEREICHE.filter((b) => !GRUNDBEDARF.includes(b)); // ohne Karte: alles wie bisher
   } else {
@@ -58,11 +69,19 @@ export function bereicheSortiert(stand) {
 
 export const imProfil = (stand, bereich) => { const p = profilFuer(stand); return p.kern.includes(bereich) || p.oft.includes(bereich); };
 
+// Enge je Bereich bei mehreren Arten: Vereinigung der Listen; hat eine Art für einen Bereich keine Enge, gilt dort keine.
+export function vorlagenEngeFuer(stand) {
+  const arten = ladenArtenVon(stand); if (arten.length <= 1) return VORLAGEN_ENGE[arten[0]] || {};
+  const out = {}; const bereiche = new Set(arten.flatMap((a) => Object.keys(VORLAGEN_ENGE[a] || {})));
+  for (const b of bereiche) { if (arten.some((a) => !(VORLAGEN_ENGE[a] || {})[b])) continue; out[b] = [...new Set(arten.flatMap((a) => VORLAGEN_ENGE[a][b]))]; }
+  return out;
+}
+
 // Alle Vorlagen mit Bereich, nach Profil geordnet (Kern, Oft, Weitere).
 // Engere Auswahl je Laden-Art (VORLAGEN_ENGE): Gerichte außerhalb der Liste rutschen aus Kern/Oft nach „Weitere“ (zugeklappt, per Suche auffindbar).
 export function vorlagenSortiert(stand) {
   const s = bereicheSortiert(stand);
-  const enge = VORLAGEN_ENGE[ladenArtVon(stand)] || {};
+  const enge = vorlagenEngeFuer(stand);
   const mit = (liste) => liste.flatMap((b) => (VORLAGEN[b] || []).filter((v) => !enge[b] || enge[b].includes(v.name)).map((v) => ({ ...v, bereich: b })));
   const draussen = Object.keys(enge).flatMap((b) => (VORLAGEN[b] || []).filter((v) => !enge[b].includes(v.name)).map((v) => ({ ...v, bereich: b })));
   return { kern: mit(s.kern), oft: mit(s.oft), weitere: [...mit(s.weitere), ...draussen] };

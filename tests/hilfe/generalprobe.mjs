@@ -441,4 +441,5 @@ console.log(`\n==== Zusammenfassung Generalprobe: ${TAGE.length} Tage (${TAGE[0]
 for (const X of ["A", "B"]) console.log(`Einträge ${X} ${shop(X).betrieb.name}: ${JSON.stringify(eintraege(X))}; Teamtage ${shop(X).teamTage?.length || 0}; Umsatz ${r2([...L[X].umsatz.values()].reduce((a, v) => a + v, 0))} €`);
 for (const kl of ["A", "B", "C", "D"]) { const l = [...jeId.values()].filter((y) => y.klasse === kl); console.log(`Klasse ${kl}: ${l.length}`); for (const x of l) console.log(`[${x.klasse}] ${x.id} – erstmals ${x.tag}, ${x.n}×: ${x.text}${x.daten ? " · " + JSON.stringify(x.daten).slice(0, 400) : ""}`); }
 if (ARG.json) fs.writeFileSync(ARG.json, JSON.stringify([...jeId.values()].map((x) => ({ ...x, tage: [...x.tage] })), null, 1));
-process.exitCode = jeId.size ? 1 : 0;
+// Rot nur bei A–C. Klasse D (Schönheit, z. B. ergänzte Standardfelder beim Laden) wird gemeldet, hält den Wächter aber nicht auf (Fable 30.10.2026).
+process.exitCode = [...jeId.values()].some((x) => x.klasse !== "D") ? 1 : 0;

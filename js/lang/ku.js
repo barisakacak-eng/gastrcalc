@@ -1078,6 +1078,7 @@ export default {
     hilfe: "Bi kurtî", sprache: "Ziman",
     laden: "Dikana te", namePlatzhalter: "Navê dikanê",
     ladenHilfe: "Cureya dikanê ji bo reçete, sarkirin û plana paqijiyê nirxên destpêkê dide. Paşê her tiştî di ofîsê de diguherînî.",
+    artenMehrere: "Pick more than one if you like",
     allesGenau: "Her tiştî bi hûrgilî saz bike",
     karte: "Menûya te", karteFoto: "Wêneyê menûyê bikişîne", karteVorlagen: "Ji şablonan hilbijêre", karteGalerie: "Wêne an PDF", spaeter: "Paşê",
     karteHilfe: "Sepan xwarin û bihayan ji wêneyê dixwîne. Tiştên ku hûn bi xwe çêdikin, di ofîsê de li bin “Reçete” saz bike.",
@@ -1141,7 +1142,7 @@ export default {
   },
   // Drei Ebenen (Entwickler A): Leiste unten, Menü-Blatt, Büro-Code, Hilfe hinter dem „?“
   ebene: { tabs: { start: "Îro", muell: "Çop", kuehl: "Sarkirin", putzplan: "Paqijî", karte: "Menû" },
-    leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", zekiFragen: "Ji Zekî bipirse", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
+    mehr: "More", leiste: "Dikan", menueAuf: "Menûyê veke", schliessen: "Bigire", hilfeAuf: "Alîkarî", zekiFragen: "Ji Zekî bipirse", deinLaden: "Dikana te", abschluss: "Rojê bigire", personal: "Moda karmendan", buero: "Ofîs", ladenWechseln: "Dikanê biguherîne", sprache: "Ziman", zumLaden: "Dikan", zumBuero: "Ofîs", schlossCode: "Koda ofîsê binivîse",
     pin: { titel: "Koda ofîsê", neu: "Kodeke nû hilbijêre", nochmal: "Carek din", falsch: "Koda şaş", ungleich: "Ne wekhev e. Ji nû ve hilbijêre.", gesetzt: "Koda ofîsê hat tomarkirin", entfernt: "Koda ofîsê hat rakirin", setzen: "Koda ofîsê diyar bike", aendern: "Koda ofîsê biguherîne", entfernen: "Kodê rake", ohne: "Bê kod her kes dikare bikeve ofîsê.", mit: "Ofîs bi kodekê tê parastin.", loeschen: "Hejmarê jê bibe", testphase: "Qonaxa ceribandinê: bê kod. Her kes dikare bikeve ofîsê û moda karmendan. Berî pîlota mezin kodê dîsa vêxe.", testphaseAn: "Qonaxa ceribandinê bê kod vêxe", testphaseAus: "Kodê dîsa vêxe" },
     hilfeText: {
       allgemein: "Darika jêrîn te dibe her tiştê ku di dikanê de pêwîst e. Hesab, sazkirin û lîste di ofîsê de ne.",
