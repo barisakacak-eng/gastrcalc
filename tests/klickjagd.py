@@ -556,6 +556,8 @@ async def variante(b, v, kappung, minuten, nur):
 
 
 def main():
+    if "--kurz" in sys.argv:  # Wächter (E1): eine Variante, 40 Elemente je Bildschirm, 12 Minuten
+        os.environ.setdefault("KLICK_SCHNELL", "1"); os.environ.setdefault("KLICK_MAX", "40"); os.environ.setdefault("KLICK_MINUTEN", "12")
     t0 = time.time(); OUT.mkdir(parents=True, exist_ok=True)
     for alt in OUT.glob("*.png"): alt.unlink()
     kappung = int(os.environ["KLICK_MAX"]) if os.environ.get("KLICK_MAX") else None
