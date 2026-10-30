@@ -21,12 +21,12 @@ async def rundgang_weg(pg):
     await pg.wait_for_timeout(450)
     for _ in range(100):
         if await pg.locator(".rg-huelle").count() == 0: return False
-        for sel in ('.rg-huelle [data-rg="verstanden"]:not([disabled])', '.rg-huelle [data-rg="spaeter"]', '.rg-huelle [data-rg="verwerfen"]', '.rg-huelle [data-rg="ueberspringen"]'):
+        for sel in ('.rg-huelle [data-rk="weg"]', '.rg-huelle [data-rg="verstanden"]:not([disabled])', '.rg-huelle [data-rg="spaeter"]', '.rg-huelle [data-rg="verwerfen"]', '.rg-huelle [data-rg="ueberspringen"]'):  # 6b R1 live (30.10.2026): kurzer Rundgang zuerst
             if await pg.locator(sel).count():
                 try: await pg.locator(sel).first.click(timeout=2000)  # die Testhilfe aufklappen.js tippt evtl. gleichzeitig
                 except Exception: pass
                 await pg.wait_for_timeout(150)
-                if "verstanden" in sel: return True
+                if "verstanden" in sel or "weg" in sel: return True
                 break
         else:
             await pg.wait_for_timeout(150)

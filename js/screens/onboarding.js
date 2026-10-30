@@ -447,21 +447,20 @@ const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
 const LADEN_FOTO = { imbiss: ["laden-burger", "laden-imbiss", "laden-kiosk"], cafe: ["laden-cafe", "laden-baeckerei"] }; // erst eigenes Foto, sonst das ähnlichste Ladenbild
 const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
   return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`; };
-// Pilotfest P6 (1), 30.10.2026 (Entwurf hinter window.__gcC bis zum Ja): mehrere Ladenarten zugleich wählbar, erste = Hauptart.
-const pilotC = () => typeof window !== "undefined" && !!window.__gcC;
-const ladenArtAn = (stand, id) => (pilotC() ? ladenArtenVon(stand).includes(id) : stand.ladenArt === id);
+// Pilotfest P6 (1), 30.10.2026 (Bildpaket C freigegeben): mehrere Ladenarten zugleich wählbar, erste = Hauptart.
+const ladenArtAn = (stand, id) => ladenArtenVon(stand).includes(id);
 const ladenSchnell = {
   id: "laden-schnell",
   view: (stand) => `
     ${kopfS2("laden-schnell", t("schnell2.laden"), t("schnell2.ladenHilfe"), `<button type="button" class="leise" data-a="weg-genau">${esc(t("schnell2.allesGenau"))}</button>`)}
     <input class="textfeld s2name" data-f="betrieb.name" maxlength="40" value="${esc(stand.betrieb.name)}" placeholder="${esc(t("schnell2.namePlatzhalter"))}" aria-label="${esc(t("schnell2.namePlatzhalter"))}" autocomplete="off">
-    ${pilotC() ? `<p class="s2mehrere">${esc(t("schnell2.artenMehrere"))}</p>` : ""}
-    <div class="kacheln fotokacheln s2arten ${pilotC() ? "mehrfach" : ""}">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${ladenArtAn(stand, a.id) ? "an" : ""}" aria-pressed="${ladenArtAn(stand, a.id)}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>`,
+    <p class="s2mehrere">${esc(t("schnell2.artenMehrere"))}</p>
+    <div class="kacheln fotokacheln s2arten mehrfach">${LADEN_ARTEN.map((a) => `<button type="button" class="kachel fotokachel ${ladenArtAn(stand, a.id) ? "an" : ""}" aria-pressed="${ladenArtAn(stand, a.id)}" data-a="laden-art" data-wert="${a.id}">${ladenBild(a.id)}<b>${esc(t("schnell.arten." + a.id))}</b></button>`).join("")}</div>`,
   fuss: (stand) => stand.ladenArt ? knopfWeiter() : "",
   eingabe(feld, wert, stand) { if (feld === "betrieb.name") betriebNameSetzen(stand, wert); },
   aktion(name, el, stand) {
     if (hilfeAktion(name, el)) return true;
-    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; if (pilotC()) ladenArtUmschalten(stand, a, LADEN_ARTEN); else ladenArtSetzen(stand, a); return true; }
+    if (name === "laden-art") { const a = LADEN_ARTEN.find((x) => x.id === el.dataset.wert); if (!a) return false; ladenArtUmschalten(stand, a, LADEN_ARTEN); return true; }
     if (name === "weg-genau") { hilfeAuf = null; einrichtungWegSetzen(stand, "genau", schrittIndex("format"), "format"); return true; }
   },
   beimVerlassen(stand) { selbstStandard(stand); },

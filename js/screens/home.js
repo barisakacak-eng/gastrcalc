@@ -225,7 +225,7 @@ export function karteView(stand) {
     ${nav("kartebuero")}`;
 }
 
-// Pilotfest P6 (6), 30.10.2026 (Entwurf hinter window.__gcC): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
+// Pilotfest P6 (6), 30.10.2026 (Bildpaket C freigegeben): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
 function fehlerKarte(n) {
   return `<div class="karte fehler-karte"><h2>${esc(t("einstellungen.fehler.titel"))}</h2>
     <p class="hinweis">${esc(n ? t("einstellungen.fehler.anzahl", n) : t("einstellungen.fehler.keine"))} ${esc(t("einstellungen.fehler.hinweis"))}</p>
@@ -238,7 +238,8 @@ function datenschutzKarte() {
   return `<details class="karte ds-karte" id="datenschutz"><summary><h2>${esc(d.titel)}</h2><small>${esc(d.stand)}</small></summary>
     ${d.abschnitte.map(([k, x]) => `<h3>${esc(k)}</h3><p>${esc(x)}</p>`).join("")}
     <p class="ds-verantwortlich">${esc(d.verantwortlich)}</p>
-    <button type="button" class="knopf zweit" data-a="zeki-log-loeschen">${esc(d.zekiLoeschen)}</button></details>`;
+    <button type="button" class="knopf zweit" data-a="zeki-log-loeschen">${esc(d.zekiLoeschen)}</button>
+    <button type="button" class="knopf zweit" data-a="zeki-erst-wieder">${esc(t("rundgang.erst.wieder"))}</button></details>`;
 }
 export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
   const m = monatsLast(stand); const q = warenQuote(stand); const st = umsatzSteuerSatz(stand);
@@ -309,7 +310,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <button type="button" class="zeileknopf" data-a="diagnose-kopieren"><b>${esc(t("w2d.diagnose"))}</b><small>${esc(t("w2d.diagnoseUnter"))}</small><span class="pfeil">›</span></button>
       </div>
       ${datenschutzKarte()}
-      ${typeof window !== "undefined" && window.__gcC ? fehlerKarte(extra.fehlerAnzahl || 0) : ""}
+      ${fehlerKarte(extra.fehlerAnzahl || 0)}
       <div class="karte">
         <button type="button" class="knopf warn" data-a="loeschen">${esc(t("einstellungen.loeschenAlles"))}</button>
       </div>

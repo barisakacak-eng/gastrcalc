@@ -129,9 +129,8 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
 let gewaermt = false;
 export function fotoVorbereiten() { if (!gewaermt) { gewaermt = true; vorwaermen(); } }
 
-// Pilotfest P6 (4), 30.10.2026 (Entwurf hinter window.__gcC): drei Stufen statt Kreisel – Bild vorbereiten · Lesen · Nachlesen.
+// Pilotfest P6 (4), 30.10.2026 (Bildpaket C freigegeben): drei Stufen statt Kreisel – Bild vorbereiten · Lesen · Nachlesen.
 // Der Balken läuft zeitgesteuert bis kurz vor das Stufenende (die Erkennung meldet keinen Zwischenstand), springt beim nächsten Schritt weiter.
-const pilotC = () => typeof window !== "undefined" && !!window.__gcC;
 const fortschrittStufe = () => !lauf || lauf.schritt === "ablegen" ? 1 : lauf.schritt === "mehr" ? 3 : 2;
 export function fortschrittHtml() {
   const n = fortschrittStufe(); const namen = ["foto.stufe1", "foto.stufe2", "foto.stufe3"];
@@ -145,14 +144,14 @@ export function karteFotoView(stand) {
   fotoVorbereiten();
   const modus = karteModus();
   if (modus === "warten") { const st = serieStand(); return `
-    <div class="fotolauf" role="status" aria-live="polite">${pilotC() ? fortschrittHtml() : `<div class="kreisel" aria-hidden="true"></div>`}<h1 class="frage">${esc(st.aufgenommen > 1 ? t("foto.wartenAufLesen") : schrittText())}</h1>
+    <div class="fotolauf" role="status" aria-live="polite">${fortschrittHtml()}<h1 class="frage">${esc(st.aufgenommen > 1 ? t("foto.wartenAufLesen") : schrittText())}</h1>
       <p class="hinweis">${st.aufgenommen > 1 ? esc(t("foto.serieFotos", st.aufgenommen, st.gelesen)) + " · " + esc(t("foto.serieGerichte", st.gerichte)) : esc(t("foto.lesenHinweis"))}</p>
       <button type="button" class="leise" data-a="foto-abbrechen">${esc(t(st.gerichte ? "foto.lesenStoppen" : "allgemein.abbrechen"))}</button></div>`; }
   const st = serieStand();
   return `
     <h1 class="frage">${esc(t(st.aufgenommen ? "foto.karteWeitere" : "foto.karteFrage"))}</h1>
     <p class="hinweis">${esc(t(st.aufgenommen ? "foto.serieHinweis" : "foto.karteHinweis"))}</p>
-    ${st.aufgenommen ? `<div class="karte serie" role="status" aria-live="polite">${st.laeuft ? (pilotC() ? `<div class="fortschritt stufe-${fortschrittStufe()} rund" aria-hidden="true"><div class="fortschritt-balken"></div></div>` : `<div class="kreisel klein" aria-hidden="true"></div>`) : `<span class="haken" aria-hidden="true">✓</span>`}
+    ${st.aufgenommen ? `<div class="karte serie" role="status" aria-live="polite">${st.laeuft ? `<div class="fortschritt stufe-${fortschrittStufe()} rund" aria-hidden="true"><div class="fortschritt-balken"></div></div>` : `<span class="haken" aria-hidden="true">✓</span>`}
       <div><b>${esc(t("foto.serieFotos", st.aufgenommen, st.gelesen))}</b><small class="marke block">${esc(t("foto.serieGerichte", st.gerichte))}${st.fehler ? " · " + esc(t("foto.serieFehler", st.fehler)) : ""}</small></div></div>` : ""}
     ${lauf?.status === "fehler" && !st.aufgenommen ? `<div class="tipp warnband">${esc(lauf.fehler)}</div>` : ""}
     ${lauf?.hinweis ? `<p class="tipp">${esc(lauf.hinweis)}</p>` : ""}
@@ -211,7 +210,7 @@ export function kartePruefenView() {
     <div class="s2kopf s2zeki fvzeki"><div class="s2zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(offen ? "frage" : "freude")}</div>
       <div class="s2zeki-blase"><h1 class="frage" dir="auto">${esc(t("foto.zeki.titel", vorschlaege.length))}</h1>
       <p class="s2zeki-hilfe">${esc(offen ? t("foto.zeki.pruefen", offen) : t("foto.zeki.alle"))}</p></div></div>
-    ${pilotC() && lauf?.vorlaeufig ? `<div class="fortschritt stufe-3 schmal" role="status" aria-live="polite" aria-label="${esc(t("foto.stufe3"))}"><div class="fortschritt-balken"></div></div>` : ""}
+    ${lauf?.vorlaeufig ? `<div class="fortschritt stufe-3 schmal" role="status" aria-live="polite" aria-label="${esc(t("foto.stufe3"))}"><div class="fortschritt-balken"></div></div>` : ""}
     ${pr.length ? `<div class="fvkarten">${pr.map(pruefKarte).join("")}</div>` : ""}
     ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.zeki.erkannt", ok.length))}</h2>
     <div class="fvliste">${ok.map(fvZeile).join("")}</div>` : ""}

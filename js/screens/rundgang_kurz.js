@@ -1,4 +1,4 @@
-// Sonderauftrag 6b R1 (28.10.2026, ENTWURF – wartet auf Baris' Ja): kurzer Rundgang mit höchstens 5 Stationen.
+// Sonderauftrag 6b R1 (28.10.2026, live seit 30.10.2026): kurzer Rundgang mit höchstens 5 Stationen.
 // Zeigt nur, wo was ist; nichts wird geübt, nichts gespeichert. Jede Station: Lichtkegel auf ein Ziel von „Heute“, ein Satz (≤ 15 Wörter),
 // genau eine Handlung („Weiter“ bzw. „Fertig“). „Überspringen“ steht immer oben rechts, weil Zeki später beim ersten Tipp erklärt (R2).
 import { t } from "../i18n.js";

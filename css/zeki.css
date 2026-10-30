@@ -134,6 +134,7 @@
 .rg-kurz .rg-fuss{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .rg-kurz .rg-ueberspringen{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;min-height:44px;padding:0 16px;border-radius:22px;border:1px solid color-mix(in srgb,var(--weiss) 55%,transparent);background:color-mix(in srgb,var(--tinte) 70%,transparent);color:var(--weiss);font:700 1rem/1 var(--schrift)}
 .zeki-erst{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:8500;animation:rgEin .25s ease both}
+.zeki-erst{pointer-events:none} .zeki-erst .ze-blase .knopf{pointer-events:auto} /* 30.10.2026 live: die Karte steht nie im Weg – nur „Verstanden“ fängt Tipps, alles andere geht durch */
 .zeki-erst .ze-karte{display:flex;gap:10px;align-items:flex-end}
 .zeki-erst .ze-zeki{width:58px;flex:0 0 58px}
 .zeki-erst .ze-blase{flex:1;background:var(--weiss);border:2px solid var(--salbei-tief);border-radius:var(--radius-gross);padding:12px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 24px rgba(20,30,22,.18)}
@@ -141,8 +142,6 @@
 /* Pilotfest P6 (3), 30.10.2026 (Entwurf hinter window.__gcC): Zeki läuft von rechts nach links an seinen Platz ein; zwei Vorschläge für den sichtbaren Platz. */
 @keyframes zekiEinlauf{from{transform:translateX(96px);opacity:0}60%{opacity:1}to{transform:translateX(0);opacity:1}}
 .appleiste .ikonknopf.zeki-knopf.einlauf{animation:zekiEinlauf 1s cubic-bezier(.2,.8,.3,1) both,zekiGewicht 11s ease-in-out 1s infinite}
-/* Vorschlag A „Teller“: kupferner Standring unter Zekis Füßen, immer da – auch wenn Zeki gerade spricht oder sich bewegt */
-body.zeki-platz-a .appleiste .ikonknopf.zeki-knopf::after{left:6px;right:6px;bottom:-4px;height:12px;background:radial-gradient(closest-side,rgba(181,104,58,.55) 0 58%,rgba(181,104,58,.18) 59% 100%);box-shadow:0 2px 3px rgba(31,42,36,.18)}
-/* Vorschlag B „Sockel“: kurzes Brett in Kupfer unter Zekis Füßen (wie ein Tresenrand), mit Schatten darunter – der Platz bleibt auch ohne Figur sichtbar */
-body.zeki-platz-b .appleiste .ikonknopf.zeki-knopf::after{left:2px;right:2px;bottom:-5px;height:7px;border-radius:3px;background:linear-gradient(180deg,#c9825a,#9c552c);box-shadow:0 3px 4px rgba(31,42,36,.25),inset 0 1px 0 rgba(255,255,255,.35)}
+/* Zekis Platz (Bildpaket C, Vorschlag A „Teller“, Annahme Zoro 30.10.2026 – Baris gab das Paket frei, ohne A oder B zu nennen): kupferner Standring unter den Füßen */
+.appleiste .ikonknopf.zeki-knopf::after{left:6px;right:6px;bottom:-4px;height:12px;background:radial-gradient(closest-side,rgba(181,104,58,.55) 0 58%,rgba(181,104,58,.18) 59% 100%);box-shadow:0 2px 3px rgba(31,42,36,.18)}
 @media (prefers-reduced-motion: reduce){.appleiste .ikonknopf.zeki-knopf.einlauf{animation:none}}

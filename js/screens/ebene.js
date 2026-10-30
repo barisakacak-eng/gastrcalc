@@ -33,8 +33,7 @@ export const blattOffen = () => offen;
 export const pinOffen = () => offen === "pin";
 export const pinZweckJetzt = () => (offen === "pin" && pin ? { zweck: pin.zweck, ziel: pin.ziel } : null);
 
-// Pilotfest P6 (2), 30.10.2026 (Entwurf hinter window.__gcC bis zum Ja): Blätter schließen per Wischen nach unten; Zeki-Hilfe kurz.
-const pilotC = () => typeof window !== "undefined" && !!window.__gcC;
+// Pilotfest P6 (2), 30.10.2026 (Bildpaket C freigegeben): Blätter schließen per Wischen nach unten; Zeki-Hilfe kurz.
 export const WISCH_ZU_PX = 90; // Setzung 30.10.2026: ab 90 px Zug nach unten (bei Blatt oben) schließt das Blatt
 function wischenAnhaengen(blatt) {
   let y0 = null, zieht = false;
@@ -50,9 +49,10 @@ function wischenAnhaengen(blatt) {
 }
 function zeigen(art, html) {
   const h = ebeneHuelle(); const neu = offen !== art && !offen;
+  document.querySelector(".zeki-erst")?.remove(); // 6b R2 live: Zekis Erst-Karte nie unter einem Blatt stehen lassen
   h.innerHTML = `<div class="ebene-dimmer" data-a="blatt-zu"></div><div class="ebene-blatt blatt-${art}${neu ? " rein" : ""}" role="dialog" aria-modal="true" aria-label="${esc(art === "pin" ? t("ebene.pin.titel") : art === "passwort" ? t("passwort.titel") : art === "sicherungort" ? t("ladenSchirm.sicherung.woFrage") : art === "rettung" || art === "rettungscode" ? t("rettung.titel") : art === "hilfe" ? t("ebene.hilfeAuf") : t("ebene.menueAuf"))}"><div class="griff" aria-hidden="true"></div>${html}</div>`;
   h.classList.add("da"); document.body.classList.add("blatt-da"); offen = art;
-  if (pilotC() && art !== "pin" && art !== "passwort") { const b = h.querySelector(".ebene-blatt"); if (b) { b.classList.add("wischbar"); wischenAnhaengen(b); } }
+  if (art !== "pin" && art !== "passwort") { const b = h.querySelector(".ebene-blatt"); if (b) { b.classList.add("wischbar"); wischenAnhaengen(b); } }
   h.querySelector(".ebene-blatt button")?.focus({ preventScroll: true });
 }
 export function blattSchliessen() {
@@ -110,7 +110,7 @@ export const ersterSatz = (text) => { const m = String(text || "").match(/^.*?[.
 let hilfeVoll = false;
 export function hilfeZeigen(ansicht, voll = false) {
   const k = HILFE.includes(ansicht) ? ansicht : "allgemein";
-  hilfeVoll = !!voll; if (pilotC() && !voll) return hilfeKurzZeigen(k);
+  hilfeVoll = !!voll; if (!voll) return hilfeKurzZeigen(k);
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
   const mehr = (HILFE_MEHR[k] || []).map((key) => `<p class="hilfe-mehr">${esc(t(key))}</p>`).join("");
   zeigen("hilfe", `<div class="hilfe-inhalt"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}${zekiFragenHtml(k)}</div>

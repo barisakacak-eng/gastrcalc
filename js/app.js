@@ -2,8 +2,8 @@
 // speichert nach jeder Änderung. Etappe 5: Cockpit, Müll in zwei Tipps, Umsatz und Zähler, Belege, Tag abschließen.
 import { offeneKlappen, textTeilen } from "./screens/bausteine.js"; // Entrümpelung Punkt 4 (19.10.2026)
 import { fehlerSammlerStarten, fehlerText, fehlerLeeren, fehlerLesen } from "./fehler.js"; // Fehler-Rucksack (Pilotfest E3, 30.10.2026)
-import { kurzStarten, kurzOffen } from "./screens/rundgang_kurz.js"; // 6b R1 (Entwurf, nur mit window.__gc6b)
-import { erstSatz, erstZeigen } from "./screens/zeki_erst.js"; // 6b R2 (Entwurf, nur mit window.__gc6b)
+import { kurzStarten, kurzOffen } from "./screens/rundgang_kurz.js"; // 6b R1 (live seit 30.10.2026)
+import { erstSatz, erstZeigen, erstWiederZeigen } from "./screens/zeki_erst.js"; // 6b R2 (live seit 30.10.2026)
 import { rundgangStarten as fuehrungStarten, rundgangOffen as fuehrungOffen } from "./screens/rundgang.js"; // Rundgang mit Zeki (Entwurf 26.10.2026)
 import { zekiLogAnhaengen, zekiLogLoeschen, rundgangAbschliessen, uebungStarten, uebungZuruecknehmen, uebungRezepteMerken, uebungRezepteBehalten } from "./stamm.js";
 import { datenschutzText } from "./data/datenschutz.js";
@@ -91,7 +91,6 @@ const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
-if (window.__gcC?.zeki) document.body.classList.add("zeki-platz-" + window.__gcC.zeki); // P6 (3) Entwurf: Platz-Variante a|b
 fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?.phase === "app" ? `${modus(wurzel)}/${ansicht}` : `einrichtung/${stand?.schrittId || "?"}`) }); // E3: die letzten 50 Fehler, ohne Namen und Zahlen
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
@@ -186,7 +185,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gc6b) kurzStarten(document); else fuehrungStarten(document, rundgangApi()); }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
+        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -694,7 +693,7 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
-    if (window.__gc6b) { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = erstSatz(ziel, { speicher: sp, stunde: new Date().getHours(), stand }); if (satz) setTimeout(() => erstZeigen(document, ziel, satz, sp), 350); } // 6b R2 Entwurf
+    { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = erstSatz(ziel, { speicher: sp, stunde: new Date().getHours(), stand }); if (satz) setTimeout(() => erstZeigen(document, ziel, satz, sp), 350); } // 6b R2 Entwurf
     if (ziel === "ware") wareZuruecksetzen(); // Welle 2
     if (ziel === "portion") portionOeffnen(stand, el.dataset.id || null); // 2.1
     if (ziel === "preisrunde") preisrundeOeffnen(stand, el.dataset.id || null, el.dataset.cent || null); // Masterauftrag 1.2
@@ -712,6 +711,7 @@ async function aufKlick(ev) {
   if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
   if (name === "fehler-melden") { textTeilen(fehlerText(localStorage, { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
   if (name === "fehler-leeren") { fehlerLeeren(localStorage); return zeichne(); }
+  if (name === "zeki-erst-wieder") { let sp = null; try { sp = localStorage; } catch { sp = null; } erstWiederZeigen(sp); meldung(t("rundgang.erst.wiederOk")); return true; } // 6b R2 live: Zeki erklärt jede Stelle wieder beim ersten Tipp
   if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
   if (name === "foto-abbrechen") { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); }

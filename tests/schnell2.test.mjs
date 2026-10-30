@@ -133,8 +133,10 @@ test("Selbst gemacht: Vorauswahl nach Laden-Art wird beim Verlassen des Laden-Sc
   const s = ladenSchnell("doener");
   schritt("laden-schnell").beimVerlassen(s);
   assert.deepEqual([...s.selbst].sort(), [...vorauswahlFuer("doener")].sort());
-  // Laden-Art geändert, keine eigene Antwort → neue Vorauswahl
+  // P6 (1), 30.10.2026: zweite Laden-Art dazu → Vorauswahl beider Arten; Döner abgewählt → nur Pizza
   schritt("laden-schnell").aktion("laden-art", { dataset: { wert: "pizza" } }, s); schritt("laden-schnell").beimVerlassen(s);
+  assert.deepEqual([...s.selbst].sort(), [...new Set([...vorauswahlFuer("doener"), ...vorauswahlFuer("pizza")])].sort());
+  schritt("laden-schnell").aktion("laden-art", { dataset: { wert: "doener" } }, s); schritt("laden-schnell").beimVerlassen(s);
   assert.deepEqual([...s.selbst].sort(), [...vorauswahlFuer("pizza")].sort());
   // eigene Antwort (im Büro geändert) bleibt
   s.selbst = []; assert.equal(selbstStandard(s), false); assert.deepEqual(s.selbst, []);

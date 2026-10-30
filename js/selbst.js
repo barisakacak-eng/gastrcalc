@@ -1,10 +1,12 @@
 // Eigene Herstellung (Punkt 2): Antwort auf „Was macht ihr selbst?" in die Artikel übertragen.
 import { ZWISCHENREZEPTE, vorauswahlFuer } from "./data/zwischen.js";
 import { PRODUKT_INDEX } from "./data/katalog.js";
-import { ladenArtVon } from "./profil.js";
+import { ladenArtVon, ladenArtenVon } from "./profil.js";
 
 // Die gewählten Kacheln: eigene Antwort, sonst die Vorauswahl der Laden-Art.
-export const selbstGewaehlt = (stand) => (Array.isArray(stand.selbst) ? stand.selbst : vorauswahlFuer(ladenArtVon(stand)));
+// P6 (1), 30.10.2026: bei mehreren Ladenarten die Vereinigung der Vorauswahlen.
+export const vorauswahlFuerArten = (arten) => [...new Set(arten.flatMap((a) => vorauswahlFuer(a)))];
+export const selbstGewaehlt = (stand) => (Array.isArray(stand.selbst) ? stand.selbst : vorauswahlFuerArten(ladenArtenVon(stand)));
 
 const neuerArtikel = (name, einheit) => {
   const kat = PRODUKT_INDEX[name]; const e = kat?.e || (einheit === "stk" ? "stk" : "kg");
@@ -37,9 +39,11 @@ export function selbstAnwenden(stand, ids = selbstGewaehlt(stand)) {
 // Vorauswahl „selbst gemacht“ nach Laden-Art – still angewendet, ohne Frage. Eine eigene Antwort des Wirts (im Büro geändert) bleibt.
 const gleich = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
 export function selbstStandard(stand) {
-  const art = ladenArtVon(stand); if (!art) return false;
-  const eigeneAntwort = Array.isArray(stand.selbst) && !(stand.selbstAutoArt && gleich(stand.selbst, vorauswahlFuer(stand.selbstAutoArt)));
+  const arten = ladenArtenVon(stand); if (!arten.length) return false;
+  const art = arten.join("+"); // selbstAutoArt merkt sich, für welche Art(en) die Vorauswahl galt
+  const autoArten = (x) => String(x || "").split("+").filter(Boolean);
+  const eigeneAntwort = Array.isArray(stand.selbst) && !(stand.selbstAutoArt && gleich(stand.selbst, vorauswahlFuerArten(autoArten(stand.selbstAutoArt))));
   if (eigeneAntwort) return false;
-  selbstAnwenden(stand, vorauswahlFuer(art)); stand.selbstAutoArt = art;
+  selbstAnwenden(stand, vorauswahlFuerArten(arten)); stand.selbstAutoArt = art;
   return true;
 }
