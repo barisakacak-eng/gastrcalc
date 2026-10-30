@@ -12,6 +12,10 @@ body {
 }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
+/* Pilotfest U6 (30.10.2026): iOS Safari liefert einen Tipp auf ein <div>/<span> nur dann an einen Eltern-Listener, wenn das Element „klickbar“
+   aussieht (cursor: pointer). Sonst bleibt z. B. der Tipp auf den Dimmer zum Schließen eines Blatts stumm. Darum: alles mit data-a ist klickbar,
+   und touch-action: manipulation nimmt iOS den Doppeltipp-Zoom auf diesen Elementen. */
+[data-a], summary, label.knopf, label.leise, label.bildwahl, label.fotoknopf { cursor: pointer; touch-action: manipulation; }
 h1, h2, h3, p { margin: 0; }
 
 /* Grundgerüst */
@@ -138,6 +142,8 @@ h1, h2, h3, p { margin: 0; }
 .meldung.da { opacity: 1; }
 
 .versteckt { display: none !important; }
+label:has(> input[type="file"]) { position: relative; }
+input[type="file"].versteckt { display: block !important; position: absolute; inset: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; } /* U6: iOS öffnet die Dateiwahl aus einem Label nur sicher, wenn das Feld nicht display:none ist */
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 :focus-visible { outline: 3px solid var(--glut); outline-offset: 2px; }
