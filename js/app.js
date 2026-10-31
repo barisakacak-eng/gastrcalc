@@ -742,6 +742,7 @@ async function aufKlick(ev) {
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
   if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") { kuehlAktion(modus(wurzel) === "buero" ? "kuehl-rundgang" : "kuehl-rundgang-los", el, stand, wurzel); speichern(wurzel); } return zeichne(); } // Laden-Umbau (20.10.2026): im Laden direkt zur ersten Stelle
   if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
+  if (name === "kuehl-blatt-oeffnen") { ansicht = "kuehl"; kuehlZuruecksetzen(); if (kuehlBereit(stand)) kuehlAktion("kuehl-blatt", el, stand, wurzel); else kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); } // Lauf 2, K2 C4: Büro-Zeile „Kontrollblatt“ öffnet das Blatt selbst
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
   if (name === "laden-loeschen") { if (wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // W2-S: mit Büro-Code
   if (name === "beispiel-anlegen") return beispielAnlegen(); // Beispiel-Laden (17.10.2026)
