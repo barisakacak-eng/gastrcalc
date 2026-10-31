@@ -145,3 +145,7 @@
 /* Zekis Platz (Bildpaket C, Vorschlag A „Teller“, Annahme Zoro 30.10.2026 – Baris gab das Paket frei, ohne A oder B zu nennen): kupferner Standring unter den Füßen */
 .appleiste .ikonknopf.zeki-knopf::after{left:6px;right:6px;bottom:-4px;height:12px;background:radial-gradient(closest-side,rgba(181,104,58,.55) 0 58%,rgba(181,104,58,.18) 59% 100%);box-shadow:0 2px 3px rgba(31,42,36,.18)}
 @media (prefers-reduced-motion: reduce){.appleiste .ikonknopf.zeki-knopf.einlauf{animation:none}}
+
+/* Lauf 2, Bildpaket D (2) – Vorschlag B „Nische/Sockel“ (nur Vorschau, Klasse setzt app.js mit window.__gcD.zeki = "b"): kurzes Kupferbrett
+   unter Zekis Füßen mit Schatten – der Platz bleibt auch ohne Figur sichtbar. A „Teller“ (live) ist der Kupferring oben in dieser Datei. */
+body.zeki-platz-b .appleiste .ikonknopf.zeki-knopf::after{left:2px;right:2px;bottom:-5px;height:7px;border-radius:3px;background:linear-gradient(180deg,#c9825a,#9c552c);box-shadow:0 3px 4px rgba(31,42,36,.25),inset 0 1px 0 rgba(255,255,255,.35)}

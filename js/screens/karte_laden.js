@@ -5,7 +5,9 @@
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
 import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
-import { verkaufspreisSetzen } from "../karte_daten.js"; // Trennung (17.10.2026)
+import { verkaufspreisSetzen, zutatMengeSetzen } from "../karte_daten.js"; // Trennung (17.10.2026); Lauf 2 Bildpaket D (3): Mengen im Laden-Blatt
+import { t as tt, einheitLabel, artikelText } from "../i18n.js";
+import { quelleVon } from "../rezept_quelle.js";
 import { gerichtBild } from "./vergleich.js";
 import { nav } from "./nav.js";
 import { mehrImMonat, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3
@@ -122,6 +124,7 @@ function bleibtInnen(z, preis, last) {
 }
 export function karteLadenBlatt(stand) {
   if (!blatt) return "";
+  if (blatt.rezept) return rezeptBlatt(stand);
   const x = zeilenVon(stand).find((y) => y.g.id === blatt.id); if (!x) { blatt = null; return ""; }
   const geaendert = blatt.alt === null || cent(blatt.alt) !== cent(blatt.preis);
   return `<div class="kl-dimmer" data-a="kl-zu"></div>
@@ -142,6 +145,23 @@ export function karteLadenBlatt(stand) {
     </div>`;
 }
 
+// Lauf 2 (31.10.2026), Bildpaket D (3) Variante B: alle Zutaten des Gerichts im Laden-Blatt, je Zeile −  Menge  + ; „≈“ = geschätzt, Punkt grün = selbst gesetzt.
+// Höchstens 15 erklärende Wörter: Kopf (Gerichtname), Zeilen (Daten), „Fertig“.
+function rezeptBlatt(stand) {
+  const g = stand.gerichte.find((x) => x.id === blatt.rezept); if (!g) { blatt = null; return ""; }
+  const zeile = (z, i) => { const q = quelleVon(z, g); return `<li class="kl-zutat q-${q}"><span class="kl-zname">${esc(artikelText(z.name))}</span>
+      <button type="button" class="kl-rund klein" data-a="kl-zd" data-i="${i}" data-d="-1" aria-label="−">${zeichen("minus")}</button>
+      <b class="kl-zmenge">${q === "schaetzung" ? "≈ " : ""}${esc(fmtZahl(z.menge))} <small>${esc(einheitLabel(z.einheit))}</small></b>
+      <button type="button" class="kl-rund klein" data-a="kl-zd" data-i="${i}" data-d="1" aria-label="+">${zeichen("plus")}</button></li>`; };
+  return `<div class="kl-dimmer" data-a="kl-zu"></div>
+    <div class="kl-blatt kl-rezeptblatt" role="dialog" aria-modal="true" aria-label="${esc(g.name)}">
+      <span class="kl-griff" aria-hidden="true"></span>
+      <div class="kl-preiskopf">${gerichtBild(g)}<div><b>${esc(g.name)}</b><small>${esc(tt("rezepte.zusammenfassung", g.zutaten.length, g.zeit))}</small></div>
+        <button type="button" class="kl-x" data-a="kl-zu" aria-label="${esc(tt("kartelaeden.schliessen"))}">${sym("x")}</button></div>
+      <ul class="kl-zutaten">${g.zutaten.map(zeile).join("")}</ul>
+      <button type="button" class="knopf glut kl-speichern" data-a="kl-zu">${esc(tt("allgemein.fertig"))}</button>
+    </div>`;
+}
 // Aktionen: true = neu zeichnen, "blatt" = nur das Blatt neu, { gespeichert } = Preis übernommen (app.js speichert und meldet)
 export function karteLadenAktion(name, el, stand) {
   if (name === "kl-filter") { filter = el.dataset.wert === "billig" ? "billig" : "alle"; return true; }
@@ -156,7 +176,15 @@ export function karteLadenAktion(name, el, stand) {
   if (name === "kl-rezept") { // 28.10.2026: app.js öffnet die Mengenfrage; Getränke (ohne Rezept) öffnen gleich das Preis-Blatt
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false;
     if (g.klasse === "getraenk" || !rezeptStempel(g).stufe) return karteLadenAktion("kl-auf", el, stand);
+    if (globalThis.__gcD?.rezept === "alle" && g.zutaten.length) { blatt = { rezept: g.id }; return true; } // Bildpaket D (3), Variante B: alle Zutaten im Laden-Blatt
     blatt = null; return { rezept: g.id };
+  }
+  if (name === "kl-zd" && blatt?.rezept) { // Variante B: Menge einer Zutat mit −/+ (Schritt 5 g ab 50, 1 g darunter, 1 Stück), sofort gespeichert
+    const g = stand.gerichte.find((x) => x.id === blatt.rezept); const z = g?.zutaten[Number(el.dataset.i)]; if (!z) return false;
+    const schritt = z.einheit === "stk" ? 1 : Number(z.menge) >= 50 ? 5 : 1;
+    const neu = Math.max(schritt, Math.round((Number(z.menge) + Number(el.dataset.d) * schritt) * 10) / 10);
+    zutatMengeSetzen(stand, g.id, Number(el.dataset.i), neu, new Date().toISOString().slice(0, 10));
+    return { gespeichert: true, id: g.id, rezept: true };
   }
   if (!blatt) return false;
   if (name === "kl-minus") { blatt.preis = Math.max(0, cent(blatt.preis - 0.1)); return "blatt"; }

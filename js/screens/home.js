@@ -39,6 +39,7 @@ export function startView(stand, extra = {}) {
     <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
+      ${homeKarteLaden(extra.home)}
       ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${zekiReihe(stand, H, dran, { ...extra, fehlt: heuteZiel(stand, z, H).fehlt ?? null })}
@@ -226,6 +227,20 @@ export function karteView(stand) {
 }
 
 // Pilotfest P6 (6), 30.10.2026 (Bildpaket C freigegeben): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
+// Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm. Laden: ein Satz (≤ 15 Wörter), einmal, „OK“. Büro (Sicherung): Weg in zwei Schritten + Warum.
+function homeKarteLaden(h) {
+  if (!h) return "";
+  return `<div class="karte home-karte" role="status"><span class="home-sym">${sym(h.plattform === "android" ? "download" : "share")}</span><p>${esc(t(h.plattform === "android" ? "home.ladenAndroid" : "home.laden"))}</p><button type="button" class="leise" data-a="home-weg">${esc(t("home.ok"))}</button></div>`;
+}
+function homeBlockBuero(h) {
+  if (!h) return "";
+  if (h.standalone) return `<p class="home-schon">${sym("check")} ${esc(t("home.schon"))}</p>`;
+  const a = h.plattform === "android";
+  return `<div class="home-buero"><b>${esc(t("home.titel"))}</b>
+    <ol class="home-schritte"><li>${sym(a ? "menu" : "share")} ${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${sym(a ? "download" : "plus")} ${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol>
+    ${h.knopf ? `<button type="button" class="knopf zweit" data-a="home-installieren">${esc(t("home.installieren"))}</button>` : ""}
+    <p class="hinweis">${esc(t("home.warum"))}</p></div>`;
+}
 function fehlerKarte(n) {
   return `<div class="karte fehler-karte"><h2>${esc(t("einstellungen.fehler.titel"))}</h2>
     <p class="hinweis">${esc(n ? t("einstellungen.fehler.anzahl", n) : t("einstellungen.fehler.keine"))} ${esc(t("einstellungen.fehler.hinweis"))}</p>
@@ -296,6 +311,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <h2>${esc(t("einstellungen.sicherung"))}</h2>
         ${(() => { const tg = sicherungStufe(wurzel)?.tage ?? null; return `<p class="pw-letzte ${tg === null || tg >= 7 ? "rot" : ""}">${esc(tg === null ? t("ladenSchirm.sicherung.nieWeg") : t("ladenSchirm.sicherung.letzteWeg", tg))}</p>`; })()}
         <p class="hinweis">${esc(t("einstellungen.sicherungText"))}</p>
+        ${homeBlockBuero(extra.home)}
         <p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
         <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>

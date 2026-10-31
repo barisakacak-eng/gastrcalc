@@ -42,6 +42,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `extras.js` – Extras, Größen, Menü-Bündel.
 - `fassung.js` – Fassungsnummer, von `tools/sw_liste.py` geschrieben.
 - `fehler.js` – Fehler-Rucksack: letzte 50 Fehler lokal, ohne Namen und Zahlen; Text zum Teilen.
+- `homebildschirm.js` – Home-Bildschirm-Führung: läuft die App standalone? Weg je Gerät (iPhone: Teilen → Zum Home-Bildschirm; Android: Menü → App installieren); Laden-Hinweis einmal (Marke in der Wurzel). Quelle: webkit.org 24.03.2020 (7-Tage-Löschung).
 - `feiertage.js` – gesetzliche Feiertage für Liefertermine und Umsatzvergleich.
 - `gastrocash-brand.js` – Zeki-Darstellung und Bewegung (Bildfolgen).
 - `gerichte_vergleich.js` – Deckungsbeitrag und Marge je Gericht.

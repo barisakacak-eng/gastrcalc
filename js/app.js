@@ -77,6 +77,7 @@ import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Me
 import { hinweiseView } from "./screens/hinweise.js"; // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
+import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung – nur mit window.__gcD.home
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
@@ -142,6 +143,7 @@ async function eigeneFotosLaden() {
 
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
+  if (typeof document !== "undefined") document.body.classList.toggle("zeki-platz-b", schalterD().zeki === "b"); // Bildpaket D (2): Platz B nur zur Ansicht
   // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
   if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } } // Trennung (17.10.2026): Person nachtragen beim Speichern (unten), nicht im Zeichnen
   const kennung = schirmKennung();
@@ -154,7 +156,7 @@ function zeichne() {
       navKontext(stand, wurzel, ansicht);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
-        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length }) // W2-D
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length, home: homeLage({ buero: true }) }) // W2-D
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
         : ansicht === "muell" ? muellView(stand)
@@ -184,7 +186,7 @@ function zeichne() {
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
-        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
+        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null, home: homeLage() });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
@@ -504,6 +506,18 @@ function dauerhaftAnfragen() {
   wurzel.persistGefragt = true; speichern(wurzel);
   speicherDauerhaftPruefen({ anfragen: true }).then((ok) => { ereignis("speicher-dauerhaft", { ok }); if (ansicht === "einstellungen") zeichne(); });
 }
+// Lauf 2 (31.10.2026), Bildpaket D – Entwurf hinter window.__gcD = { home, zeki: "a"|"b", rezept: "alle", c }. Ohne Schalter: alles wie bisher.
+const schalterD = () => (typeof window !== "undefined" && window.__gcD) || {};
+let installAufforderung = null; // Android/Chrome: „beforeinstallprompt“ aufheben → Knopf „Installieren“ im Büro (Sicherung)
+if (typeof window !== "undefined") window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installAufforderung = e; if (ansicht === "einstellungen") zeichne(); });
+// Lage für die Ansichten: null = kein Hinweis. Laden: nur einmal, nicht während des Rundgangs. Büro: immer (Sicherung), auch „liegt schon dort“.
+function homeLage({ buero = false } = {}) {
+  const d = schalterD(); if (!d.home) return null;
+  const z = installZustand(d.homeGeraet ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: d.homeGeraet === "android" ? "Android" : "iPhone" } } : globalThis); // homeGeraet: nur für Bildproben
+  if (buero) return { ...z, knopf: !!installAufforderung };
+  if (fuehrungOffen() || kurzOffen() || !stand?.fuehrung || !homeHinweisFaellig(wurzel, z)) return null; // erst nach dem Rundgang
+  return z;
+}
 // W2-D: „Diagnose kopieren“ – Fassung, Browser, Speicher, Anzahl Einträge. Keine Namen, keine Zahlen aus dem Laden.
 async function diagnoseKopieren() {
   const sp = await speicherBelegt(); const mb = (n) => (typeof n === "number" ? (n / 1048576).toFixed(1) + " MB" : "?");
@@ -714,6 +728,8 @@ async function aufKlick(ev) {
   if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
   if (name === "fehler-melden") { textTeilen(fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
   if (name === "fehler-leeren") { fehlerLeeren(speicherLokal()); return zeichne(); }
+  if (name === "home-weg") { homeHinweisGesehen(wurzel); speichern(wurzel); return zeichne(); } // Bildpaket D (1): Laden-Hinweis einmal, dann weg
+  if (name === "home-installieren") { const p = installAufforderung; installAufforderung = null; if (p) { p.prompt(); p.userChoice?.then(() => zeichne()); } return true; }
   if (name === "zeki-erst-wieder") { let sp = null; try { sp = localStorage; } catch { sp = null; } erstWiederZeigen(sp); meldung(t("rundgang.erst.wiederOk")); return true; } // 6b R2 live: Zeki erklärt jede Stelle wieder beim ersten Tipp
   if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
@@ -773,6 +789,7 @@ async function aufKlick(ev) {
   if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)
     const r = karteLadenAktion(name, el, stand);
     if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
+    if (r && r.gespeichert && r.rezept === true) { artikelAbgleichen(stand); ereignis("rezept-laden", { laden: stand.id, gericht: r.id }); await sofortSpeichern(wurzel); const bl = root.querySelector(".kl-blatt"); if (bl) { root.querySelector(".kl-dimmer")?.remove(); bl.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; } // Bildpaket D (3) B: Menge geändert, Blatt bleibt offen
     if (r && r.rezept) return rezeptDirekt(r.rezept, { max: fuehrungOffen() ? 1 : 3 }); // 28.10.2026: Tipp aufs Gericht → erste Mengenfrage (im Rundgang eine Frage)
     if (r && r.gespeichert) { ereignis("preis-geaendert", { laden: stand.id, gericht: r.id, vorher: r.vorher ?? null, preis: r.preis, ort: "laden" }); meldung(t("kartelaeden.gespeichert")); await sofortSpeichern(wurzel); return zeichne(); }
     if (r) return zeichne();

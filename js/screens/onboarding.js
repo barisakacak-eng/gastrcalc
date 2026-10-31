@@ -5,6 +5,7 @@ import { einrichtungStand } from "../einrichtung.js";
 import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
+import { installZustand } from "../homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1) – nur mit window.__gcD.home
 import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache as aktiveSprache } from "../i18n.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from "../util.js";
@@ -584,6 +585,14 @@ const geld = {
 
 // Fertig: großer Haken, Einrichtungsring, EIN Hauptknopf (ohne Gerichte: Karte fotografieren, sonst „Los geht's“), leise „Büro-Code festlegen“.
 // 26.10.2026: Ring nur bei mehr als 0 % – kein „0 % eingerichtet“ direkt nach „Fertig!“
+// Bildpaket D (1): am Ende der Einrichtung der Weg auf den Home-Bildschirm – nur wenn die App nicht schon als Home-App läuft
+function homeKarteEinrichtung() {
+  const d = globalThis.__gcD; if (!d?.home) return "";
+  const z = installZustand(d.homeGeraet ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: d.homeGeraet === "android" ? "Android" : "iPhone" } } : globalThis);
+  if (z.standalone) return "";
+  const a = z.plattform === "android";
+  return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><ol class="home-schritte"><li>${sym(a ? "menu" : "share")} ${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${sym(a ? "download" : "plus")} ${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></div>`;
+}
 const fertigSchnell = {
   id: "fertig-schnell",
   view(stand) {
@@ -593,6 +602,7 @@ const fertigSchnell = {
         <div class="s2zeki-intro zeki-lebt" aria-hidden="true">${mascotMarkup("bestaetigt", "nicken")}</div>
         <h1 class="frage" dir="auto">${esc(zekiSatz("fertig", t("schnell2.fertig")))}</h1>
         ${""/* 27.10.2026 (Persona-Test): „Fertig“ und „14 %“ zugleich verwirrt – Einrichtungsstand steht im Büro */}
+        ${homeKarteEinrichtung()}
         ${globalThis.__gastrocalc?.wurzel?.bueroPin ? "" : `<button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>`}
       </div>`; // 27.10.2026 (Persona-Test Wirt): Code schon im Schloss-Schritt gesetzt → kein zweites Angebot
   },
