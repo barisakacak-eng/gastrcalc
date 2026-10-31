@@ -1,4 +1,4 @@
-import { teamTag, teamTagKosten, abwesendMonat, abwesendKosten, lieferTag, lieferProvision, lieferKosten } from "./stamm.js";
+import { teamTag, teamTagKosten, teamTagKostenRichtwert, teamTagLohnFehlt, abwesendMonat, abwesendKosten, lieferTag, lieferProvision, lieferKosten } from "./stamm.js";
 import { inventurenFertig, inventurVergleich } from "./inventur.js";
 // Etappe 5: der Break-even-Zähler (Wunsch Baris 12.10.2026). Reine Funktionen, keine Oberfläche.
 // Jeden Tag: alles, was bis heute an Kosten angefallen ist, gegen alles, was bis heute (netto) reingekommen ist.
@@ -165,7 +165,10 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const lohnAnteilig = gewichtMonat > 0 ? lohnStundenMonat / gewichtMonat : 0;
   // Ein Eintrag zählt nur, wenn bei allen Personen der Stundenlohn da ist – sonst bleibt der Tag beim Anteil (Gegenprüfung 27.10.: fehlender Lohn ≠ 0 €).
   const lohnAm = (d, gewicht) => { const e = teamTag(stand, d); const vollstaendig = e && (e.keine || e.eintraege.every((x) => x.satz > 0));
-    return vollstaendig ? { betrag: teamTagKosten(e), echt: true, untypisch: !!e.untypisch } : { betrag: lohnAnteilig * gewicht, echt: false }; };
+    if (vollstaendig) return { betrag: teamTagKosten(e), echt: true, untypisch: !!e.untypisch };
+    // Lauf 2 (4a): Stunden da, Lohn fehlt → Mindestlohn als Richtwert (≈) statt Monatsanteil – sonst stünde nach dem ersten Umsatz „?“
+    if (teamTagLohnFehlt(e) && !(lohnStundenMonat > 0)) return { betrag: teamTagKostenRichtwert(e, d), echt: false, richtwert: true, untypisch: !!e.untypisch }; // mit Monats-Lohnsumme bleibt der Anteil (Gegenprüfung 27.10.)
+    return { betrag: lohnAnteilig * gewicht, echt: false }; };
   const anteil = (betrag) => gewichtMonat > 0 ? (betrag || 0) / gewichtMonat : 0;
 
   // Ab Start bis heute: Umsatz, Ware, Müll, Kosten je Tag aufsummieren
@@ -173,7 +176,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const prov = lieferProvision(stand); let provisionSumme = 0, lieferBrutto = 0, lieferBasisBrutto = 0; // Lieferdienst (27.10.2026)
   let standGestern = 0, kippTag = null, letzterStand = 0;
   let schwundSumme = 0; let muellNurPrognose = 0; // Gegenprüfung F6: Müll, den die Monatsrechnung braucht, wenn in Stufe 3 die Kartenquote gilt
-  let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0, lohnEchtSummeOffen = 0;
+  let lohnBis = 0, lohnEchtTage = 0, lohnEchtSumme = 0, lohnEchtGewicht = 0, lohnGeschaetztTage = 0, lohnEchtSummeOffen = 0, lohnRichtwertTage = 0;
   for (const t of tage) {
     if (t.datum > datum) { t.status = "zukunft"; continue; }
     if (t.datum < start) { t.status = "vorher"; t.stand = 0; continue; }
@@ -184,7 +187,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     const m = stufe === 3 ? 0 : (muell[t.datum] || 0); // Stufe 3: echte Belege enthalten den weggeworfenen Einkauf schon
     if (stufe === 3 && !belegQuoteZaehlt) muellNurPrognose += muell[t.datum] || 0;
     const lt = lohnAm(t.datum, t.gewicht); t.lohn = lt.betrag; t.lohnEcht = lt.echt;
-    if (lt.echt) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; if (!lt.untypisch) { lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } } // Baris 27.10.2026 (B): „kein normaler Tag“ zählt heute, aber nicht für die Vorhersage else if (t.gewicht > 0) lohnGeschaetztTage += 1;
+    if (lt.echt || lt.richtwert) { lohnEchtTage += 1; lohnEchtSumme += lt.betrag; if (!lt.untypisch) { lohnEchtGewicht += t.gewicht; if (t.gewicht > 0) lohnEchtSummeOffen += lt.betrag; } if (lt.richtwert) lohnRichtwertTage += 1; } // Baris 27.10.2026 (B): „kein normaler Tag“ zählt heute, aber nicht für die Vorhersage else if (t.gewicht > 0) lohnGeschaetztTage += 1;
     lohnBis += lt.betrag;
     const ab = abwesendMonat(stand, M.von.slice(0, 7)); if (ab && ab.datum === t.datum) { const k = abwesendKosten(ab); lt.betrag += k; lohnBis += k; } // Urlaub/Krankheit am Tag der Antwort
     kosten += tageskostenFest * t.gewicht + lt.betrag; gewichtBisHeute += t.gewicht;
@@ -223,10 +226,10 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const unvollstaendig = last.offen > 0;
   // Paket 3 (16.10.2026), M2/M15: geschätzt, wenn der Mischsatz ohne echte Mengen gewichtet ist, die Quote vom Richtwert kommt oder der
   // eigene Lohn ein Richtwert ist – unter Stufe 3 ist die Ware ohnehin eine Schätzung aus der Karte.
-  const lohnGeschaetzt = lohnStundenMonat > 0 && lohnGeschaetztTage > 0;
+  const lohnGeschaetzt = (lohnStundenMonat > 0 && lohnGeschaetztTage > 0) || lohnRichtwertTage > 0; // Lauf 2 (4a): Mindestlohn-Richtwert macht die Zahl zur Schätzung
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0 || lohnGeschaetzt;
   return {
-    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, provision: provisionSumme, lieferAnteil: lieferBasisBrutto > 0 ? lieferBrutto / lieferBasisBrutto : 0, provisionJeBrutto: pJB, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme,
+    datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, provision: provisionSumme, lieferAnteil: lieferBasisBrutto > 0 ? lieferBrutto / lieferBasisBrutto : 0, provisionJeBrutto: pJB, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme, lohnRichtwertTage,
     nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff) - (Number(brutto) || 0) * pJB, // Lieferdienst (Persona-Test 27.10.): Provision je Euro wie im Tagesschnitt
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen + (last.sachbezugAbgaben || 0)) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
@@ -301,7 +304,7 @@ export function monatsZiel(stand, z, H) {
     darueber: ziel === null ? null : Math.max(0, summe - ziel), tage,
     // Paket 3 (16.10.2026), M2/M15/E2: ausdrücklich geschätzt, wenn der eigene Lohn ein Richtwert ist ODER die Warenquote vom Branchen-
     // Richtwert kommt ODER der Mischsatz ohne echte Mengen gewichtet ist (dazu wie bisher: Ware unter Stufe 3, Fixkosten geschätzt).
-    geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 || z.last?.eigen?.status === "geschaetzt" || z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis || !!z.steuerGeschaetzt,
+    geschaetzt: z.stufe < 3 || z.last?.fix?.geschaetzt > 0 || z.last?.eigen?.status === "geschaetzt" || z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis || !!z.steuerGeschaetzt || (z.lohnRichtwertTage || 0) > 0, // Lauf 2 (4a): Mindestlohn-Richtwert → ≈
     richtwertWare: z.quoteQuelle === "richtwert" || !!z.quoteRichtpreis, richtwertLohn: z.last?.eigen?.status === "geschaetzt" };
 }
 // Wareneinsatz in % vom Netto-Umsatz: Stufe 3 aus Belegen und Umsatz, Stufe 2 aus Karte oder eigener Quote, sonst (Paket 3, M15/E2)

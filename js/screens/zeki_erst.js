@@ -16,6 +16,7 @@ const schreiben = (sp, set) => { try { sp?.setItem(ERST_KEY, JSON.stringify([...
 // Soll Zeki jetzt etwas sagen? Gibt den Satz zurück oder null (schon gesehen, Stoßzeit, kein bekannter Punkt).
 export function erstSatz(punkt, { speicher, stunde, stand } = {}) {
   if (!ERST_PUNKTE.includes(punkt) || lesen(speicher).has(punkt)) return null;
+  if (punkt === "karte" && globalThis.__gcD?.c && !(stand?.gerichte || []).length) return null; // Lauf 2 (4e): Farberklärung erst, wenn Gerichte da sind (bleibt ungesehen)
   if (typeof stunde === "number" && istHauptzeit(stunde, stand)) return null;
   return t("rundgang.erst." + punkt.replace("-", "_"));
 }

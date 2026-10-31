@@ -208,3 +208,15 @@ body.blatt-da { overflow: hidden; }
 .home-buero .knopf{margin-top:.5rem}
 .home-schon{display:flex;align-items:center;gap:.4rem;color:var(--salbei-tief);margin:.4rem 0}
 .home-schon .sym{width:1rem;height:1rem}
+
+/* Lauf 2, Bildpaket D (4d): Monatsblatt im Laden */
+.blatt-monat .mb-zeilen{display:grid;gap:.5rem;margin:.4rem 0 1rem}
+.blatt-monat .mb-zeile{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.7rem .9rem;background:var(--papier-tief);border-radius:var(--radius)}
+.blatt-monat .mb-zeile b{font-size:1.35rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.blatt-monat .mb-zeile.plus b{color:var(--gruen)}
+.blatt-monat .mb-knoepfe{display:grid;gap:.5rem}
+/* Lauf 2, Bildpaket D (4f) – nur mit body.entwurf-d: Zeki-Kopf nicht mehr am oberen Rand angeschnitten, „?“-Karte ruhiger (Zeichen und Knopf mittig, kein Riesen-Zeichen am Rand) */
+body.entwurf-d .appleiste .ikonknopf.zeki-knopf .zeki{width:52px;height:72px}
+body.entwurf-d .appleiste .ikonknopf.hilfe.zeki-knopf{margin-bottom:-6px}
+body.entwurf-d .karte.h-ziel.h-ziel-fehlt{align-items:center;justify-content:center;min-height:150px;text-align:center}
+body.entwurf-d .h-ziel-fehlt .h-riesig{font-size:calc(40rem / 17);line-height:1;opacity:.85}

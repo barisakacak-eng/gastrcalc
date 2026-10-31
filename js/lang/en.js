@@ -1162,6 +1162,7 @@ export default {
     nullKurz: "Break-even", zielKurz: "Goal",
     zielLinie: "zero + target profit",
     stufe: { bisNull: "Left to break-even", bisZiel: "Left to target", ueberZiel: "Above target" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Enter rent", personal: "Enter wages" }, tempoGut: (d) => `On track · ${d}`, tempoKnapp: (b) => `${b} / day needed`, ohneKosten: "Fixed costs missing",
     kachel: { umsatz: "Sales today", muell: "Waste today", kuehlung: "Fridges", putzen: "Cleaning" },
     ok: "OK", offenN: (n) => `${n} open`, jetztDran: "Up next",

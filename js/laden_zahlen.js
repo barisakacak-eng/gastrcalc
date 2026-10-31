@@ -19,6 +19,8 @@ export function ersteZahlFehlt(stand, last) {
   if (last && last.lohn === null && stand.team?.personen !== 0) return "personal";
   return null;
 }
+// Lauf 2 (4a): „personal“ fehlt, aber im Monat stehen schon Stunden → die Zahl gibt es als Richtwert (≈, Mindestlohn), dazu „Löhne eintragen“
+export const lohnRichtwertMoeglich = (stand, m) => (m?.lohnRichtwertTage || 0) > 0;
 
 // Zielkarte im Laden. stufe: "bisNull" | "bisZiel" | "ueberZiel" (ohne Ziel = "bisNull"); zahl = die große Zahl (null = keine Kosten);
 // marke = Zielmarke des Balkens (bis null: Umsatz + was fehlt, danach das Monatsziel); anteil 0–1;

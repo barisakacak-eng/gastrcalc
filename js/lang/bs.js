@@ -1169,6 +1169,7 @@ export default {
     nullKurz: "Nula kod", zielKurz: "Cilj",
     zielLinie: "nula + ciljna dobit",
     stufe: { bisNull: "Do nule fali", bisZiel: "Do cilja", ueberZiel: "Iznad cilja" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Upiši kiriju", personal: "Upiši plate" }, tempoGut: (d) => `Po planu · ${d}`, tempoKnapp: (b) => `Treba ${b} / dan`, ohneKosten: "Fale fiksni troškovi",
     kachel: { umsatz: "Promet danas", muell: "Otpad danas", kuehlung: "Hlađenje", putzen: "Čišćenje" },
     ok: "OK", offenN: (n) => `${n} otvoreno`, jetztDran: "Sada",

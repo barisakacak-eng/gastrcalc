@@ -44,7 +44,8 @@ import { nav, navKontext } from "./screens/nav.js";
 import { bioKennung, bioSetzen, BUERO_OFFEN_MS, modusVergessen } from "./modus.js";
 import { bioPruefen, bioEinrichten } from "./schloss_bio.js";
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt, codeAktiv, testphaseOhneCode, testphaseSetzen } from "./modus.js"; // W2-S: Sperrliste Personal
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, pinZweckJetzt, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { zaehler, monatsZiel } from "./zaehler.js"; // Lauf 2 (4d): Monatsblatt im Laden
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, monatBlattZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, pinZweckJetzt, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
@@ -144,6 +145,7 @@ async function eigeneFotosLaden() {
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
   if (typeof document !== "undefined") document.body.classList.toggle("zeki-platz-b", schalterD().zeki === "b"); // Bildpaket D (2): Platz B nur zur Ansicht
+  if (typeof document !== "undefined") document.body.classList.toggle("entwurf-d", !!schalterD().c); // Bildpaket D (4f): Layout-Feinheiten nur zur Ansicht
   // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
   if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } } // Trennung (17.10.2026): Person nachtragen beim Speichern (unten), nicht im Zeichnen
   const kennung = schirmKennung();
@@ -186,7 +188,7 @@ function zeichne() {
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
-        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null, home: homeLage() });
+        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null, home: homeLage(), entwurfC: !!schalterD().c });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
@@ -728,6 +730,8 @@ async function aufKlick(ev) {
   if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
   if (name === "fehler-melden") { textTeilen(fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
   if (name === "fehler-leeren") { fehlerLeeren(speicherLokal()); return zeichne(); }
+  if (name === "monat-blatt") { if (!blattOffen()) history.pushState({ blatt: true }, ""); const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const m = monatsZiel(stand, z, H); 
+    monatBlattZeigen(stand, { umsatz: m.umsatz, nullpunkt: m.nullpunkt, ziel: m.ziel, geschaetzt: m.geschaetzt }); return true; } // Bildpaket D (4d): große Zahl → Blatt im Laden
   if (name === "home-weg") { homeHinweisGesehen(wurzel); speichern(wurzel); return zeichne(); } // Bildpaket D (1): Laden-Hinweis einmal, dann weg
   if (name === "home-installieren") { const p = installAufforderung; installAufforderung = null; if (p) { p.prompt(); p.userChoice?.then(() => zeichne()); } return true; }
   if (name === "zeki-erst-wieder") { let sp = null; try { sp = localStorage; } catch { sp = null; } erstWiederZeigen(sp); meldung(t("rundgang.erst.wiederOk")); return true; } // 6b R2 live: Zeki erklärt jede Stelle wieder beim ersten Tipp

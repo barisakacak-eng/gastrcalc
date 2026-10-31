@@ -1168,6 +1168,7 @@ export default {
     nullKurz: "Zero la", zielKurz: "Țintă",
     zielLinie: "zero + profit țintă",
     stufe: { bisNull: "Până la zero lipsesc", bisZiel: "Până la țintă", ueberZiel: "Peste țintă" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Trece chiria", personal: "Trece salariile" }, tempoGut: (d) => `În plan · ${d}`, tempoKnapp: (b) => `${b} / zi necesar`, ohneKosten: "Lipsesc costurile fixe",
     kachel: { umsatz: "Încasări azi", muell: "Deșeuri azi", kuehlung: "Răcire", putzen: "Curățenie" },
     ok: "OK", offenN: (n) => `${n} deschise`, jetztDran: "Acum",

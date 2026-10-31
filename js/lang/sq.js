@@ -1167,6 +1167,7 @@ export default {
     nullKurz: "Zero te", zielKurz: "Synimi",
     zielLinie: "zero + fitimi i synuar",
     stufe: { bisNull: "Deri në zero mungojnë", bisZiel: "Deri te objektivi", ueberZiel: "Mbi objektivin" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Shkruaj qiranë", personal: "Shkruaj rrogat" }, tempoGut: (d) => `Sipas planit · ${d}`, tempoKnapp: (b) => `Duhen ${b} / ditë`, ohneKosten: "Mungojnë shpenzimet fikse",
     kachel: { umsatz: "Xhiroja sot", muell: "Mbeturina sot", kuehlung: "Ftohja", putzen: "Pastrimi" },
     ok: "OK", offenN: (n) => `${n} të hapura`, jetztDran: "Tani",

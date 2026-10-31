@@ -1162,6 +1162,7 @@ export default {
     nullKurz: "Μηδέν στα", zielKurz: "Στόχος",
     zielLinie: "μηδέν + στόχος κέρδους",
     stufe: { bisNull: "Μέχρι το μηδέν λείπουν", bisZiel: "Μέχρι τον στόχο", ueberZiel: "Πάνω από τον στόχο" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Γράψε το ενοίκιο", personal: "Γράψε τους μισθούς" }, tempoGut: (d) => `Εντός πλάνου · ${d}`, tempoKnapp: (b) => `Χρειάζονται ${b} / μέρα`, ohneKosten: "Λείπουν πάγια έξοδα",
     kachel: { umsatz: "Τζίρος σήμερα", muell: "Σκουπίδια σήμερα", kuehlung: "Ψύξη", putzen: "Καθάρισμα" },
     ok: "OK", offenN: (n) => `${n} εκκρεμούν`, jetztDran: "Σειρά σου",

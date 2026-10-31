@@ -1162,6 +1162,7 @@ export default {
     nullKurz: "Hòa vốn", zielKurz: "Mục tiêu",
     zielLinie: "hòa vốn + lãi mục tiêu",
     stufe: { bisNull: "Còn thiếu để hòa vốn", bisZiel: "Đến mục tiêu", ueberZiel: "Vượt mục tiêu" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Điền tiền thuê", personal: "Điền tiền lương" }, tempoGut: (d) => `Đúng kế hoạch · ${d}`, tempoKnapp: (b) => `Cần ${b} / ngày`, ohneKosten: "Thiếu chi phí cố định",
     kachel: { umsatz: "Doanh thu hôm nay", muell: "Rác hôm nay", kuehlung: "Làm lạnh", putzen: "Dọn dẹp" },
     ok: "OK", offenN: (n) => `${n} chưa xong`, jetztDran: "Làm ngay",

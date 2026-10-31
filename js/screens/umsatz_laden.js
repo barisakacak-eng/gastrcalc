@@ -185,7 +185,10 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   const satz = satzNeu ?? (Number(stand.team?.stundenlohn) > 0 ? stand.team.stundenlohn : null);
   if (std === null || (teamEntwurf.satz && satzNeu === null)) return { meldung: t("allgemein.zahlUngueltig", String(std === null ? stdText : teamEntwurf.satz).trim().slice(0, 20)) };
   // Klicker K1 (30.10.2026): fehlt nur der Stundenlohn, wird der Umsatz trotzdem gespeichert; der Bildschirm bleibt offen und das Lohn-Feld geht auf
-  if (std > 0 && !satz) { umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null }); if (prov) lieferTagSetzen(stand, H, liefer); entwurf = null; rueckfrage = null; satzAuf = true; return { teil: true, betrag: p.betrag, meldung: t("teamTag.satzFehlt") }; }
+  if (std > 0 && !satz) { umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null }); if (prov) lieferTagSetzen(stand, H, liefer);
+    // Lauf 2 (31.10.2026), Bildpaket D (4a): die Stunden gehen nicht verloren – Team-Tag ohne Satz speichern; der Zähler rechnet bis zum echten Lohn mit dem Mindestlohn (≈)
+    teamTagSetzen(stand, H, [{ person: null, name: `${pers || 1}`, kompakt: true, personen: pers || 1, stunden: std, satz: null, art: "angestellt", modell: "stunde" }]);
+    entwurf = null; rueckfrage = null; satzAuf = true; return { teil: true, betrag: p.betrag, meldung: t("teamTag.satzFehlt") }; }
   // Nachtest 27.10.2026: unplausible Werte nicht still speichern (1.400 €/Std. ergab „bis null ≈ 409.027 €“)
   if ((satz && (satz < 5 || satz > 80)) || (std > 0 && std > 24 * Math.max(1, pers || 1)) || (pers && pers > 60)) return { meldung: t("teamTag.unplausibel") };
   umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null });

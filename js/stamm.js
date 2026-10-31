@@ -1,3 +1,4 @@
+import { mindestlohnAm } from "./data/mindestlohn.js"; // Lauf 2 (4a): Richtwert für fehlenden Stundenlohn
 import { kostenJeStunde } from "./data/lohnkosten.js";
 // Trennung (17.10.2026): Schreib-Funktionen für die Stammdaten eines Ladens (Betrieb, Team, Kosten, Kanäle, Reinigung,
 // Kühlstellen, Personen, Einrichtungs-Schalter). Vorher schrieben die Bildschirme (js/screens/*.js, app.js) diese Felder selbst.
@@ -263,6 +264,10 @@ export function normalTagSetzen(stand, datum, normal) { const e = teamTag(stand,
 export function teamStundenlohnSetzen(stand, satz) { stand.team ??= {}; stand.team.stundenlohn = Math.round(satz * 100) / 100; } // Lohn je Stunde für „Mitarbeiter heute“ kompakt (27.10.2026)
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);
+// Lauf 2, Bildpaket D (4a) – 31.10.2026: Stunden ohne Stundenlohn zählen mit dem gesetzlichen Mindestlohn des Tages (js/data/mindestlohn.js,
+// MiLoG: 13,90 € 2026, 14,60 € ab 01.01.2027) × Arbeitgeberanteil – als Richtwert (≈), bis der Chef den echten Lohn einträgt. Kein Satz = nie 0 €.
+export const teamTagKostenRichtwert = (e, datum) => (e?.eintraege || []).reduce((s, x) => s + (x.stunden > 0 ? x.stunden * kostenJeStunde(x.satz > 0 ? x.satz : mindestlohnAm(datum || e.datum).satz, x.art) : 0), 0);
+export const teamTagLohnFehlt = (e) => !!e && !e.keine && (e.eintraege || []).some((x) => x.stunden > 0 && !(x.satz > 0));
 
 // Urlaub und Krankheit (Baris 27.10.2026, 12:25): gegen Monatsende einmal „Waren diesen Monat Mitarbeiter krank oder im Urlaub?“.
 // Bei Stundenlohn zahlt der Chef diese Tage trotzdem (Lohnfortzahlung/Urlaubsentgelt) – Tage × übliche Stunden × Brutto × Arbeitgeberanteil.

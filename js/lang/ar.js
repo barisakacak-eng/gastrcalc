@@ -1164,6 +1164,7 @@ export default {
     nullKurz: "نقطة الصفر", zielKurz: "الهدف",
     zielLinie: "صفر + الربح المستهدف",
     stufe: { bisNull: "ينقص حتى الصفر", bisZiel: "حتى الهدف", ueberZiel: "فوق الهدف" },
+    blatt: { titel: "شهرك", umsatz: "الإيراد حتى اليوم", nullpunkt: "المطلوب للوصول إلى الصفر", ziel: "هدفك", buero: "المزيد في المكتب" }, // Lauf 2 (4d)
     fehlt: { miete: "أدخل الإيجار", personal: "أدخل الأجور" }, tempoGut: (d) => `حسب الخطة · ${d}`, tempoKnapp: (b) => `مطلوب ${b} / يوم`, ohneKosten: "التكاليف الثابتة ناقصة",
     kachel: { umsatz: "مبيعات اليوم", muell: "هدر اليوم", kuehlung: "التبريد", putzen: "التنظيف" },
     ok: "OK", offenN: (n) => `مفتوح: ${n}`, jetztDran: "الآن",

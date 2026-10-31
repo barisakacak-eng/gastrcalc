@@ -1162,6 +1162,7 @@ export default {
     nullKurz: "Cero en", zielKurz: "Meta",
     zielLinie: "cero + beneficio objetivo",
     stufe: { bisNull: "Para llegar a cero faltan", bisZiel: "Hasta el objetivo", ueberZiel: "Por encima del objetivo" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Pon el alquiler", personal: "Pon los sueldos" }, tempoGut: (d) => `En plan · ${d}`, tempoKnapp: (b) => `Hacen falta ${b} / día`, ohneKosten: "Faltan gastos fijos",
     kachel: { umsatz: "Ventas hoy", muell: "Basura hoy", kuehlung: "Frío", putzen: "Limpieza" },
     ok: "OK", offenN: (n) => `${n} pendientes`, jetztDran: "Ahora toca",

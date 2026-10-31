@@ -1167,6 +1167,7 @@ export default {
     nullKurz: "Zero przy", zielKurz: "Cel",
     zielLinie: "zero + zysk docelowy",
     stufe: { bisNull: "Do zera brakuje", bisZiel: "Do celu", ueberZiel: "Ponad cel" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Wpisz czynsz", personal: "Wpisz pensje" }, tempoGut: (d) => `W planie · ${d}`, tempoKnapp: (b) => `Potrzeba ${b} / dzień`, ohneKosten: "Brak stałych kosztów",
     kachel: { umsatz: "Utarg dziś", muell: "Odpady dziś", kuehlung: "Chłodzenie", putzen: "Sprzątanie" },
     ok: "OK", offenN: (n) => `${n} otwarte`, jetztDran: "Teraz",

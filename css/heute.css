@@ -176,3 +176,7 @@
 .kl-zutat.q-eigen .kl-zmenge::after{content:"";display:inline-block;width:.45rem;height:.45rem;border-radius:50%;background:var(--gruen);margin-inline-start:.35rem;vertical-align:middle}
 .kl-rund.klein{width:48px;height:48px}
 .kl-rund.klein .sym{width:22px;height:22px}
+
+/* Lauf 2, Bildpaket D (4a): kleiner Hinweis unter der Zielkarte, wenn die Zahl mit Mindestlohn-Richtwert gerechnet ist */
+.h-lohn-tipp{display:flex;align-items:center;justify-content:center;gap:.2rem;margin:-.3rem auto .5rem;color:var(--glut);font-weight:600}
+.h-lohn-tipp .h-pfeil{width:1rem;height:1rem}

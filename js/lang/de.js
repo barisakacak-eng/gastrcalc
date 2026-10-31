@@ -1179,6 +1179,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
     nullKurz: "Null bei", zielKurz: "Ziel",
     zielLinie: "null + Zielgewinn",
     stufe: { bisNull: "Bis null fehlen", bisZiel: "Bis zum Ziel", ueberZiel: "Über dem Ziel" },
+    blatt: { titel: "Dein Monat", umsatz: "Umsatz bis heute", nullpunkt: "Bis null brauchst du", ziel: "Dein Ziel", buero: "Mehr im Büro" }, // Lauf 2 (4d)
     fehlt: { miete: "Miete eintragen", personal: "Löhne eintragen" }, tempoGut: (d) => `Im Plan · ${d}`, tempoKnapp: (b) => `${b} / Tag nötig`, ohneKosten: "Feste Kosten fehlen",
     kachel: { umsatz: "Umsatz heute", muell: "Müll heute", kuehlung: "Kühlung", putzen: "Putzen" },
     ok: "OK", offenN: (n) => `${n} offen`, jetztDran: "Jetzt dran",

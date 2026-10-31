@@ -15,6 +15,7 @@ import { nav } from "./nav.js";
 import { bueroCodeKarte } from "./ebene.js"; // Drei Ebenen (A): Büro-Code in den Einstellungen
 import { einrichtungStand } from "../einrichtung.js";
 import { sym } from "../symbole.js";
+import { muellHeute } from "../muell.js"; // Lauf 2 (4b): Müll ohne Preis als „n×“
 import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
 import { bueroKopf } from "./buero.js";
@@ -38,10 +39,10 @@ export function startView(stand, extra = {}) {
   return `
     <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
-      ${heuteZielKarte(stand, z, H)}
+      ${heuteZielKarte(stand, z, H, !!extra.entwurfC)}
       ${homeKarteLaden(extra.home)}
       ${nutzenKarte(nutzen)}
-      <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
+      <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H, !!extra.entwurfC)}</div>
       ${zekiReihe(stand, H, dran, { ...extra, fehlt: heuteZiel(stand, z, H).fehlt ?? null })}
       ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
@@ -69,23 +70,25 @@ function zielTexte(stand, z, H) {
   const tempo = !w.tempo ? null : w.tempo.art === "gut" ? { art: "gut", text: t("heute.tempoGut", datumLesbar(w.tempo.am).slice(0, 6)) } : { art: "knapp", text: t("heute.tempoKnapp", fmtEuro(w.tempo.proTag, { dezimal: 0 })) };
   return { ...w, tempo };
 }
-function heuteZielKarte(stand, z, H) {
+function heuteZielKarte(stand, z, H, entwurf = false) {
   const w = zielTexte(stand, z, H); const { m } = w;
+  // Lauf 2, Bildpaket D (4a): Löhne fehlen, aber Stunden stehen schon → ≈-Zahl mit Mindestlohn-Richtwert (zaehler.js) und kleiner Hinweis „Löhne eintragen“
+  const richtwertLohn = entwurf && w.fehlt === "personal" && (z?.lohnRichtwertTage || 0) > 0;
   // Masterauftrag „Gehirn“ 0.1 (28.10.2026): ohne Miete oder Löhne keine Euro-Zahl, sondern der nächste Eintrag
-  if (w.fehlt) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
+  if (w.fehlt && !richtwertLohn) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
     <span class="h-riesig leicht" aria-label="${esc(t("nutzen.stufe.bisNull"))}">?</span>
     <span class="h-fehlt-knopf">${esc(t("heute.fehlt." + w.fehlt))}${sym("chevron-right", "h-pfeil")}</span>
   </button>`;
   // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
-  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
+  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" ${entwurf ? 'data-a="monat-blatt"' : 'data-a="nav" data-wert="umsatz"'} aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `<bdi dir="ltr">${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}</bdi>`}</span>
     ${w.stufe === "bisNull" && w.bewegung && Math.abs(w.bewegung.betrag) >= 1 ? `<span class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</span>` : ""}
     ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
     ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z, w.stufe)}
-  </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
+  </button>${richtwertLohn ? `<button type="button" class="leise h-lohn-tipp" ${zielAttr({ aktion: "bearbeiten", schritt: "lohn" })}>${esc(t("heute.fehlt.personal"))}${sym("chevron-right", "h-pfeil")}</button>` : ""}`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
 
 // Kursdiagramm der Zielkarte (Sanji-Entwurf 20.10.2026): x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
@@ -123,13 +126,15 @@ function kachelTexte(stand, ks, H) {
   const putz = w.putz ? { wert: `\u2066${w.putz.erledigt}/${w.putz.gesamt}\u2069`, alarm: w.putz.alarm } : { wert: "–", alarm: false };
   return { umsatz: w.umsatz, muell: w.muell, kuehl, putz };
 }
-function heuteKachelnLaden(stand, ks, H) {
+function heuteKachelnLaden(stand, ks, H, entwurf = false) {
   const w = kachelTexte(stand, ks, H);
+  // Lauf 2, Bildpaket D (4b): Müll ohne Preis überall gleich – „1×“ wie auf der Kachel im Müll-Bildschirm, statt „0,00 €“ hier und „–“ dort
+  const mh = entwurf ? muellHeute(stand, H) : null; const muellOhnePreis = mh && mh.anzahl > 0 && mh.offen === mh.anzahl;
   // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
   const symbole = { umsatz: "wallet", muell: "trash-2", kuehl: "snowflake", putz: "spray-can" };
   const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`; // Baris 24.10.2026: ein Wort unter jedem Icon
   return feld("umsatz", "ladenSchirm.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatzheute"', false, w.umsatz === null && t("schnellknopf.umsatz"))
-    + feld("muell", "ebene.tabs.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
+    + feld("muell", "ebene.tabs.muell", muellOhnePreis ? `${fmtZahl(mh.anzahl)}×` : w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
     + feld("kuehl", "ebene.tabs.kuehl", w.kuehl.wert, 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, !ks.eingerichtet && t("schnellknopf.kuehl"), w.kuehl.html || w.kuehl.alarm)
     + feld("putz", "ebene.tabs.putzplan", w.putz.wert, 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
 }

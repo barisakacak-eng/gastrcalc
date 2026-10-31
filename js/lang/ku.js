@@ -1161,6 +1161,7 @@ export default {
     nullKurz: "Sifir li", zielKurz: "Armanc",
     zielLinie: "sifir + qezenca armanc",
     stufe: { bisNull: "Heta sifirê kêm e", bisZiel: "Heta armancê", ueberZiel: "Ser armancê" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Kirêyê binivîse", personal: "Meaşan binivîse" }, tempoGut: (d) => `Li gorî planê · ${d}`, tempoKnapp: (b) => `${b} / roj pêwîst e`, ohneKosten: "Lêçûnên sabît kêm in",
     kachel: { umsatz: "Firotina îro", muell: "Çopa îro", kuehlung: "Sarkirin", putzen: "Paqijî" },
     ok: "OK", offenN: (n) => `${n} vekirî`, jetztDran: "Niha",

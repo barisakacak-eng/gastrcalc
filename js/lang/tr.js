@@ -1163,6 +1163,7 @@ export default {
     nullKurz: "Sıfır noktası", zielKurz: "Hedef",
     zielLinie: "sıfır + hedef kâr",
     stufe: { bisNull: "Sıfıra kalan", bisZiel: "Hedefe kalan", ueberZiel: "Hedefin üstünde" },
+    blatt: { titel: "Bu ay", umsatz: "Bugüne kadar ciro", nullpunkt: "Sıfır için gereken", ziel: "Hedefin", buero: "Ofiste devamı" }, // Lauf 2 (4d)
     fehlt: { miete: "Kirayı gir", personal: "Maaşları gir" }, tempoGut: (d) => `Planda · ${d}`, tempoKnapp: (b) => `Günde ${b} gerekli`, ohneKosten: "Sabit giderler eksik",
     kachel: { umsatz: "Bugünkü ciro", muell: "Bugünkü çöp", kuehlung: "Soğutma", putzen: "Temizlik" },
     ok: "Tamam", offenN: (n) => `${n} bekliyor`, jetztDran: "Şimdi sırada",

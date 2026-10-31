@@ -1161,6 +1161,7 @@ export default {
     nullKurz: "صفر در", zielKurz: "هدف",
     zielLinie: "صفر + سود هدف",
     stufe: { bisNull: "تا صفر کم است", bisZiel: "تا هدف", ueberZiel: "بالای هدف" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "اجاره را وارد کن", personal: "دستمزدها را وارد کن" }, tempoGut: (d) => `طبق برنامه · ${d}`, tempoKnapp: (b) => `${b} / روز لازم است`, ohneKosten: "هزینه‌های ثابت وارد نشده",
     kachel: { umsatz: "فروش امروز", muell: "دورریز امروز", kuehlung: "سرمایش", putzen: "نظافت" },
     ok: "OK", offenN: (n) => `${n} باز`, jetztDran: "همین حالا",

@@ -1167,6 +1167,7 @@ export default {
     nullKurz: "Ноль при", zielKurz: "Цель",
     zielLinie: "ноль + целевая прибыль",
     stufe: { bisNull: "До нуля не хватает", bisZiel: "До цели", ueberZiel: "Выше цели" },
+    blatt: { titel: "Your month", umsatz: "Sales so far", nullpunkt: "Needed to reach zero", ziel: "Your target", buero: "More in the office" }, // Lauf 2 (4d)
     fehlt: { miete: "Впиши аренду", personal: "Впиши зарплаты" }, tempoGut: (d) => `По плану · ${d}`, tempoKnapp: (b) => `Нужно ${b} / день`, ohneKosten: "Не внесены постоянные расходы",
     kachel: { umsatz: "Выручка сегодня", muell: "Отходы сегодня", kuehlung: "Холод", putzen: "Уборка" },
     ok: "OK", offenN: (n) => `Открыто: ${n}`, jetztDran: "Сделать сейчас",
