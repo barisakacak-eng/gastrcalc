@@ -31,6 +31,8 @@ export function parseZahl(v) {
   return Number.isFinite(n) && n >= 0 && n <= MAX_ZAHL ? n : null;
 }
 
+// Setzung (Lauf 2, 31.10.2026, Prüfung A2): Zahlen und Euro in ALLEN Sprachen im deutschen Format („7,50 €“, westliche Ziffern) – die App läuft nur in
+// Deutschland, Kassenbon, Lieferschein und Steuerberater schreiben so; wer Englisch oder Arabisch wählt, soll dieselbe Zahl wie auf dem Bon sehen.
 const EURO_FMT = {}; const ZAHL_FMT = {};
 export function fmtEuro(n, opts = {}) {
   if (n === null || n === undefined || !Number.isFinite(n)) return "–";
