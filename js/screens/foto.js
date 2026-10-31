@@ -218,7 +218,7 @@ export function kartePruefenView() {
       <p class="s2zeki-hilfe">${esc(offen ? t("foto.zeki.pruefen", offen) : t("foto.zeki.alle"))}</p></div></div>
     ${lauf?.vorlaeufig ? `<div class="fortschritt stufe-3 schmal" role="status" aria-live="polite" aria-label="${esc(t("foto.stufe3"))}"><div class="fortschritt-balken"></div></div>` : ""}
     ${pr.length ? `<div class="fvkarten">${pr.map(pruefKarte).join("")}</div>` : ""}
-    ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.zeki.erkannt", ok.length))}</h2>
+    ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.zeki.erkannt", ok.filter((v) => v.an).length))}</h2>
     <div class="fvliste">${ok.map(fvZeile).join("")}</div>` : ""}
     <div class="fotofeld">${fotoKnoepfe("speisekarte", { kamera: "foto.nochSeite", datei: "foto.nochDatei" })}</div>`;
 }
