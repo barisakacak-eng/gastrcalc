@@ -85,7 +85,7 @@ export function muellView(stand) {
 function rasterView(stand, D, nach) {
   const alle = haeufigsteMuell(stand, { datum: D, max: 10000 });
   const nurTyp = grund === "roh" ? "artikel" : "gericht";
-  const kacheln = alle.filter((x) => x.typ === nurTyp).slice(0, 5); const zaehl = tippsHeute(stand, D); // 5 + „Andere“ = 2 × 3, passt ohne Scrollen const zaehl = tippsHeute(stand, D);
+  const kacheln = alle.filter((x) => x.typ === nurTyp).slice(0, 5); const zaehl = tippsHeute(stand, D, grund); // 5 + „Andere“ = 2 × 3, passt ohne Scrollen const zaehl = tippsHeute(stand, D);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   const h = muellHeute(stand, D);
   const satz = grund === "ausgegeben" ? t("muell.zeki.ausgegeben") : grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");
@@ -104,7 +104,7 @@ function rasterView(stand, D, nach) {
 // „Übrig geblieben“ (Baris 24.10.2026, ersetzt die Eimer-Waage): abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
 function stationView(stand, D) {
   const waren = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true });
-  const zaehl = tippsHeute(stand, D);
+  const zaehl = tippsHeute(stand, D, grund);
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell-station">
     <div class="muell-station-kopf">
@@ -121,7 +121,7 @@ function stationView(stand, D) {
 
 // Nach einem Tipp nur die getippte Kachel, die Kopfzahl und den Hinweis tauschen – nicht den ganzen Bildschirm (< 100 ms).
 export function muellTippZeigen(root, stand) {
-  const D = tagGewaehlt(); const zaehl = tippsHeute(stand, D);
+  const D = tagGewaehlt(); const zaehl = tippsHeute(stand, D, grund);
   const raster = root.querySelector(".muellraster"); if (!raster) return false;
   for (const alt of raster.querySelectorAll(".ware.frisch")) { alt.classList.remove("frisch"); alt.querySelector(".haken")?.remove(); }
   const ziel = zuletzt ? raster.querySelector(`.ware[data-k="${CSS.escape(zuletzt.schluessel)}"]`) : null;
@@ -136,7 +136,7 @@ export function muellTippZeigen(root, stand) {
 }
 // Rückgängig aus dem Hinweis: stornieren, Kachel und Zahl auffrischen
 export function muellZurueckZeigen(root, stand) {
-  const raster = root.querySelector(".muellraster"); const D = tagGewaehlt(); const zaehl = tippsHeute(stand, D);
+  const raster = root.querySelector(".muellraster"); const D = tagGewaehlt(); const zaehl = tippsHeute(stand, D, grund);
   if (raster) for (const w of raster.querySelectorAll(".ware[data-k]")) { if (!w.classList.contains("frisch") && !w.querySelector(".zaehler")) continue; const x = kachelDaten(w.querySelector("[data-a='muell-tipp']"), stand); if (x) w.outerHTML = kachelHtml(stand, x, zaehl, null, ansicht === "station"); }
   const p = root.querySelector("#muell-heute"); if (p) p.outerHTML = pilleHtml(stand, D);
   root.querySelector(".muelltoast")?.remove();

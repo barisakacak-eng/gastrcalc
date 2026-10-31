@@ -224,9 +224,10 @@ export function schwundNachweisSetzen(stand, ids, { foto = null, von = null } = 
 }
 
 // Wie oft eine Kachel heute getippt wurde (Zähler „2ד) – Müll-Einträge, nicht Personalessen.
-export function tippsHeute(stand, datum = heuteGeschaeft()) {
-  const out = {};
-  for (const e of stand.schwund || []) if (!e.storniert && e.datum === datum && (e.art === "gericht" || e.art === "rohware")) { const k = muellSchluessel(e); out[k] = (out[k] || 0) + 1; }
+// Lauf 2 (31.10.2026), Klicker K1 C2: auch Personalessen und Ausgegeben bekommen ihr „1×“ – je Grund gezählt (grund: roh | personal | ausgegeben | bruch | null = alle Müll-Arten)
+export function tippsHeute(stand, datum = heuteGeschaeft(), grund = null) {
+  const out = {}; const arten = grund === "personal" ? ["personal"] : grund === "ausgegeben" ? ["ausgegeben"] : grund === "bruch" ? ["gericht"] : grund === "roh" ? ["rohware"] : ["gericht", "rohware", "personal", "ausgegeben"];
+  for (const e of stand.schwund || []) if (!e.storniert && e.datum === datum && arten.includes(e.art)) { const k = muellSchluessel(e); out[k] = (out[k] || 0) + 1; }
   return out;
 }
 

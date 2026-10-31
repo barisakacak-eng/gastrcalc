@@ -103,7 +103,7 @@ function teamFeld(stand, H) {
   const unter = satzGemerkt && !satzAuf ? `<button type="button" class="ul-team-satz-zeile" data-a="ul-satz-auf">${esc(t("teamTag.kompaktKosten", fmtEuro(satzGemerkt, { dezimal: 2 }), kosten !== null ? fmtEuro(kosten, { dezimal: 0 }) : "–"))}</button>` : "";
   const zahl = (f, w, e, im) => `<label class="ul-team-zahl"><input inputmode="${im}" enterkeyhint="done" autocomplete="off" data-f="${f}" value="${esc(w)}" placeholder="0" aria-label="${esc(e)}"><span class="einheit">${esc(e)}</span></label>`;
   return `<div class="ul-feld ul-team-kompakt"><span class="ul-liefer-text">${esc(t("teamTag.heute"))}${unter}</span>
-      <div class="ul-team-zahlen">${zahl("ul-team-pers", pers, t("teamTag.pers"), "numeric")}${zahl("ul-team-std", std, t("teamTag.std"), "decimal")}</div></div>
+      <div class="ul-team-zahlen">${zahl("ul-team-pers", pers, t("teamTag.pers"), "numeric")}${zahl("ul-team-std", std, t("teamTag.stdZusammen"), "decimal")}</div></div>
     ${!satzGemerkt || satzAuf ? `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("teamTag.satz"))}</span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-team-satz" value="${esc(teamEntwurf.satz ?? (satzGemerkt ? wertAnzeige(satzGemerkt) : ""))}" placeholder="0,00" aria-label="${esc(t("teamTag.satz"))}"><span class="einheit">€</span></label>` : ""}`;
 }
 function lieferFeld(stand, H) {

@@ -64,6 +64,7 @@ function bilanzView(stand, H) {
         <details class="ab-details">
           <summary>${esc(t("start.mehr"))}<span aria-hidden="true">⌄</span></summary>
         <div class="summenzeile"><span>${esc(t("abschluss.fixTag"))}</span><span class="wert">− ${fmtEuro(z.tageskosten)}</span></div>
+        ${(() => { const lh = z.tage.find((x) => x.datum === H)?.lohn || 0; return lh > 0.5 ? `<div class="summenzeile"><span>${esc(t("abschluss.lohnTag"))}</span><span class="wert">− ${z.tage.find((x) => x.datum === H)?.lohnEcht ? "" : "≈ "}${fmtEuro(lh)}</span></div>` : ""; })()}
         <div class="summenzeile"><span>${esc(t("abschluss.tonne"))}</span><span class="wert rot">${sw.anzahl ? "− " + fmtEuro(sw.muellwert, { dezimal: 2 }) : "–"}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.kuehl"))}</span><span class="wert ${ks.eingerichtet && ks.heuteGemessen >= ks.stellen ? (ks.nachkontrollen > 0 ? "rot" : "gruen") : ""}">${ks.eingerichtet ? `${ks.heuteGemessen}/${ks.stellen} · ${esc(ks.nachkontrollen > 0 ? t("abschluss.nachkontrolle", ks.nachkontrollen) : t("abschluss.rundgaenge", rundgaenge))}` : "–"}</span></div>
         </details>

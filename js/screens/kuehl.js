@@ -93,7 +93,7 @@ export function kuehlView(stand, { buero = false } = {}) {
       ${nk.length ? `<div class="karte hinweisgelb"><h2>${esc(t("kuehl.nachkontrollenTitel"))}</h2>
         ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">\u2066${fmtZahl(x.messung.wert, 1)}\u00a0°C\u2069 · ${esc(zeitOderStrich(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitOderStrich(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}</div>` : ""}
       <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
-        <button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit && !offen ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.abweichung ? `<small class="rot">${esc(grenzen(k))}</small>` : ""}</span>
+        <button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.abweichung ? `<small class="rot">${esc(grenzen(k))}</small>` : ""}</span>
           <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : "–"}</span></button>`; }).join("")}</div>
       ${buero ? `<button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>
       ${pers ? "" : `<button type="button" class="knopf weich" data-a="kuehl-einrichtung">${esc(t("kuehl.einrichtungAendern"))}</button>`}
@@ -304,6 +304,10 @@ export function kuehlAktion(name, el, stand, wurzel) {
     station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null;
     return true;
   }
+  if (name === "kuehl-einzel" && kuehlBereit(stand) && rundgangOffen(stand)) { // Lauf 2 (K1 B2): offener Rundgang → gleich an diese Station, statt toter Zeile
+    const r = rundgangOffen(stand); ansicht = "rundgang"; station = el.dataset.id; const m = r.messungen.find((x) => x.stelle === station); form = leeresForm(); form.k = aktiveStellen(stand).find((x) => x.id === station);
+    if (m) { form.wert = m.wert; form.wertText = wertAnzeige(m.wert); form.grund = m.grund; form.massnahmen = [...m.massnahmen]; form.notiz = m.notiz; form.nachkontrolle = m.nachkontrolle || "h2"; form.weg = (m.weg || []).map((w) => ({ ...w })); }
+    return true; }
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id;
     if (personalAktiv()) { startVon = schichtPerson(stand) || ""; return kuehlAktion("rundgang-start", el, stand); } // 27.10.2026: Schicht-Person misst, direkt ins Messfeld
     if (globalThis.__gcD?.c && !stand.personen.some((p) => !p.entfernt && p.aktiv)) { startVon = ""; return kuehlAktion("rundgang-start", el, stand); } // Lauf 2 (4c): ohne Kürzel gleich ins Messfeld – kein Erklärtext
