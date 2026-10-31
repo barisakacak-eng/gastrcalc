@@ -1298,3 +1298,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .kl-zeile .kl-nutzen.pruefen b{max-width:none}
 /* Lauf 2 (31.10.2026), Klicker K2 C2: Wert rechts in einer Zeile („offen“, „14 %“) bricht nicht mehr zu „offe/n“ – ein Wort, sonst Ellipse. */
 .zeileknopf > small{flex:none;white-space:nowrap;max-width:42%;overflow:hidden;text-overflow:ellipsis;word-break:normal;overflow-wrap:normal}
+/* Lauf 2 (31.10.2026), Crawler tr: der Wert rechts in Summenzeilen („0,00 €“, „18:07“) ragte bei langen türkischen Beschriftungen 4–6 px hinaus –
+   der Wert schrumpft nie, der Text links bricht um. */
+.summenzeile > .wert{flex:none;white-space:nowrap;margin-inline-start:8px}
+.summenzeile > span:first-child{flex:1 1 auto;min-width:0}
