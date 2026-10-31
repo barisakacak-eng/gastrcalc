@@ -29,7 +29,8 @@ PORT = int(os.environ.get("DURCHLAUF_PORT", "8820"))
 CODE = "1234"
 VARIANTEN = [  # (Name, Sprache, Breite, Höhe, CPU-Drossel)
     ("de-390x844", "de", 390, 844, 1), ("tr-390x844", "tr", 390, 844, 1), ("ar-390x844", "ar", 390, 844, 1),
-    ("de-360x780", "de", 360, 780, 1), ("tr-360x780", "tr", 360, 780, 1), ("de-390x844-cpu4x", "de", 390, 844, 4)]
+    ("de-360x780", "de", 360, 780, 1), ("tr-360x780", "tr", 360, 780, 1), ("de-390x844-cpu4x", "de", 390, 844, 4),
+    ("ar-360x780", "ar", 360, 780, 1)]  # Lauf 2 (31.10.2026): Arabisch auch schmal
 AUSLASSEN = {"laden-loeschen", "loeschen", "beispiel-loeschen", "export", "ordner-schicken", "akt-teilen", "best-teilen", "tf-teilen", "ordner-teilen",
              "eig-druck", "pp-drucken", "blatt-drucken", "aktualisieren", "pin-entfernen", "zeki-log-loeschen"}
 AUSLASSEN_LAUF = {"laden-neu": "legt einen neuen Laden an und wechselt ihn", "laden-wechseln": "wechselt den Laden", "beispiel-anlegen": "legt den Beispiel-Laden an und wechselt ihn",
