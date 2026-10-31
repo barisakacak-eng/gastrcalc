@@ -279,6 +279,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
     s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
   s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
+  preisQuelleNachtragen(s); // Lauf 2, A5 (31.10.2026): Bestandsläden ohne preisQuelle (Durchsicht-Fund 6)
   for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
   s.lieferanten = lieferantenSauber(s.lieferanten); lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium 18.10.2026 (N3): gleiche Namen zusammenlegen
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
@@ -592,6 +593,24 @@ function stempeln(wurzel) {
 //  4. im Leerlauf und beim Verlassen der App wird jedes Teil ganz verglichen – das fängt auch tiefe Änderungen an alten Einträgen.
 // Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über die Felder aus 2. geändert
 // (oder durch ein neues Objekt ersetzt) – dann ist die Änderung sofort gespeichert, sonst erst bei 4.
+// Lauf 2, A5 (31.10.2026) – Durchsicht Pilotfest, Fund 6: Seit W2-K2 (28.10.2026) trägt jeder Artikelpreis seine Herkunft (preisQuelle
+// "beleg" | "hand" | "errechnet"); Preisänderungen (lieferung.preisAenderungen) und Preisdrift (preisdrift.js) zählen nur Preise vom Beleg.
+// Läden von vor dem 28.10. haben Preise ohne Herkunft – für sie blieben beide Karten still. Nachtragen, einmal beim Laden, ohne Datenverlust:
+// Richtpreis bleibt Richtpreis (eigene Markierung); steht der Artikel mit Preis auf einer nicht zurückgenommenen Lieferung bis zum Preisdatum
+// (oder trägt die Historie „beleg“), ist die Quelle "beleg"; sonst "hand" (der Wirt hat ihn eingetragen). Ohne Preis passiert nichts.
+export function preisQuelleNachtragen(s) {
+  const QUELLEN = ["beleg", "hand", "errechnet"]; let n = 0;
+  const belegt = new Map(); // Artikelname → letztes Lieferdatum mit Preis
+  for (const l of s.lieferungen || []) { if (l.storniert || typeof l.datum !== "string") continue;
+    for (const z of l.zeilen || []) { const name = z.artikel || z.name; if (typeof name !== "string" || !(typeof z.netto === "number" || typeof z.preis === "number")) continue; if (!belegt.has(name) || belegt.get(name) < l.datum) belegt.set(name, l.datum); } }
+  for (const a of s.artikel || []) {
+    if (QUELLEN.includes(a.preisQuelle) || typeof a.preis !== "number" || a.richtpreis) continue;
+    const ausHistorie = (a.preisHistorie || []).some((h) => h.herkunft === "beleg");
+    const d = belegt.get(a.name);
+    a.preisQuelle = ausHistorie || (d && (!a.preisDatum || d <= a.preisDatum || d === a.preisDatum)) ? "beleg" : "hand"; n += 1;
+  }
+  return n;
+}
 export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads", "verkaeufe"]; // W2-D: belehrungen als Journal (Schema 6); E7 (17.10.2026): verkaeufe
 const JOURNAL_SET = new Set(JOURNALE);
 // Stammdaten, die groß werden (Waren mit Preisverlauf, Gerichte mit Zutaten): je Laden ein eigenes Teil "ladenId|artikel|alle",
