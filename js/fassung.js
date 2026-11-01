@@ -1,2 +1,2 @@
 // Wird von tools/sw_liste.py geschrieben – nicht von Hand ändern.
-export const FASSUNG = "2026-11-01.4";
+export const FASSUNG = "2026-11-01.5";

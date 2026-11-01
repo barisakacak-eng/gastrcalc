@@ -469,8 +469,8 @@ class Lauf:
             start = '.ebene-kopf.buero .zurueckzeile[data-a="modus"]'
             for _ in range(8):
                 if await pg.locator(start).count(): return
-                if await pg.locator('.ebene-kopf.buero .zurueckzeile[data-a="nav"][data-wert="buero"]').count():
-                    await nav_hilfe._tipp(pg, '.ebene-kopf [data-a="nav"][data-wert="buero"]', 350)
+                if await pg.locator('.ebene-kopf.buero .zurueckzeile[data-a="nav"]').count():  # 01.11.2026: Zurück = eine Ebene, notfalls mehrmals
+                    await nav_hilfe._tipp(pg, '.ebene-kopf.buero .zurueckzeile[data-a="nav"]', 350)
                 else:
                     await self.neu_laden(); await self.zu_modus("buero")
                 await pg.wait_for_timeout(200)

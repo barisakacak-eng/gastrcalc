@@ -94,6 +94,13 @@ jobs:
             grep -E "FEHLT|Error|assert|Timeout" bedienung.txt | tail -8 | while read -r l; do echo "::warning::bedienung Versuch $versuch: $l"; done
           done
           tail -40 bedienung.txt; exit 1
+      - name: Büro „Zurück“ eine Ebene (01.11.2026)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8845 python tests/buero_zurueck_browser.py > zurueck.txt 2>&1; then exit 0; fi
+            grep -E "FEHLT|Error|Timeout" zurueck.txt | tail -8 | while read -r l; do echo "::warning::zurueck Versuch $versuch: $l"; done
+          done
+          tail -30 zurueck.txt; exit 1
       - name: Erststart jeder Ladenart (de, drei Ladenarten)
         run: |
           for versuch in 1 2; do

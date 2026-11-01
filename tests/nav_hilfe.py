@@ -58,8 +58,11 @@ async def ins_buero(pg, warte=420):
     """In den Büro-Start (ohne Büro-Code)."""
     m = await modus(pg)
     if m == "buero":
-        if await pg.locator('.ebene-kopf [data-a="nav"][data-wert="buero"]').count():
-            await _tipp(pg, '.ebene-kopf [data-a="nav"][data-wert="buero"]', warte)
+        # 01.11.2026: „Zurück“ im Büro geht eine Ebene zurück – so oft tippen, bis der Büro-Start (‹ Laden) steht
+        for _ in range(12):
+            if await pg.locator('.ebene-kopf [data-a="modus"][data-wert="laden"]').count(): break
+            if not await pg.locator('.ebene-kopf .zurueckzeile').count(): break
+            await _tipp(pg, '.ebene-kopf .zurueckzeile', warte)
         return
     await menue(pg)
     await _tipp(pg, '#ebene-huelle [data-a="modus"][data-wert="buero"]', warte)

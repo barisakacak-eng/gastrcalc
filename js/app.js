@@ -92,6 +92,7 @@ function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } cat
 const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
+let bueroWeg = [];         // 01.11.2026: Büro-Weg für „Zurück“ (siehe bueroWegFuehren)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
 // Durchsicht 30.10.2026 (Fund 7): localStorage kann selbst werfen (gesperrter Speicher) – ein Ersatz ohne Speicher statt Absturz
 const SPEICHER_LEER = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
@@ -153,7 +154,7 @@ function zeichne() {
     else {
       if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
       if (ansicht === "verkauf" && !verkaufSichtbar(stand)) ansicht = startAnsicht(wurzel); // E7 (17.10.2026): ohne Schalter gibt es den Bereich nicht
-      navKontext(stand, wurzel, ansicht);
+      navKontext(stand, wurzel, ansicht, modus(wurzel) === "buero" ? bueroWeg : []);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
         : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length, home: homeLage({ buero: true }) }) // W2-D
@@ -330,7 +331,7 @@ function bearbeiten(vonId, bisId) {
   ({ von: vonId, bis: bisId } = bearbeitenZiel(stand, vonId, bisId)); // 17.10.2026 Fehler F1: ohne Gerichte erst die Gerichte-Auswahl
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : ansicht === "kartefoto" ? "kartebuero" : ansicht.startsWith("ordner-") ? "buero" : "start" }; // 17.10.2026 Fehler F1: aus „Karte per Foto“ zurück zur Speisekarte
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) || (modus(wurzel) === "buero" && !ansicht.startsWith("ordner-") && ansicht !== "kartefoto") ? ansicht : ansicht === "kartefoto" ? "kartebuero" : ansicht.startsWith("ordner-") ? "buero" : "start" }; // 17.10.2026 Fehler F1: aus „Karte per Foto“ zurück zur Speisekarte
   schrittBetreten();
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
@@ -534,6 +535,7 @@ async function diagnoseKopieren() {
 // ---------- Ebenen: Laden · Personal · Büro (Entwickler A) ----------
 
 function ebeneWechseln(m, ziel) {
+  bueroWeg = []; // 01.11.2026: Ebenenwechsel beginnt den Büro-Weg neu
   if (m === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) return; // W2-S: Personal nur mit Büro-Code – außer in der Testphase ohne Code
   if (m === "personal" && modus(wurzel) !== "personal") schichtPersonVergessen(stand); // 27.10.2026 (Persona-Test): Chef gibt das Handy weiter → neu fragen „Wer arbeitet?“, sonst bucht der Nächste unter dem alten Namen
   if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
@@ -704,7 +706,8 @@ async function aufKlick(ev) {
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav" && el.dataset.wert !== ansicht) { if (ansicht.startsWith("ordner-")) ordnerZuruecksetzen(); if (ansicht === "buero") bueroZuruecksetzen(); } // Entwickler C: Büro zu, wenn es in den Laden geht
-  if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) return bueroBetreten(nz.ansicht); // Büro-Bildschirm aus dem Laden: erst ins Büro
+  if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) { bueroWeg = []; return bueroBetreten(nz.ansicht); } // Büro-Bildschirm aus dem Laden: erst ins Büro
+    if (modus(wurzel) === "buero") bueroWegFuehren(nz.ansicht, !!el.dataset.zurueck); // 01.11.2026: Zurück im Büro = eine Ebene
     if (nz.ansicht === "preise") return bearbeiten("preise"); // Paket 3 (16.10.2026): Richtwert-Zeile „Preise eintragen“ – im Büro direkt in den Schritt
     const ziel = nz.ansicht; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
@@ -1042,6 +1045,15 @@ root.addEventListener("keydown", (ev) => {
 
 // Zurück-Geste des Handys / Browser-Zurück: ein Schritt zurück statt App verlassen.
 let herkunft = null; // vorige Ansicht (für die Zurück-Geste aus Listen und Beleg)
+// Baris 01.11.2026 (Klicker K2 Runde 2, B1): Büro-Weg – die vorher besuchten Büro-Bildschirme, damit „Zurück“ eine Ebene zurück führt
+// statt immer zum Büro-Start. Büro-Start leert den Weg; „Zurück“ nimmt den letzten Eintrag ab; höchstens 12 Einträge.
+function bueroWegFuehren(ziel, zurueck) {
+  if (ziel === ansicht) return;
+  if (ziel === "buero") { bueroWeg = []; return; }
+  if (zurueck) { bueroWeg.pop(); return; }
+  const i = bueroWeg.lastIndexOf(ziel); if (i >= 0) { bueroWeg = bueroWeg.slice(0, i); return; } // schon auf dem Weg: dorthin zurückspringen, keine Schleife
+  if (ansicht !== "buero") bueroWeg = [...bueroWeg, ansicht].slice(-12);
+}
 window.addEventListener("popstate", () => {
   if (!stand) return;
   if (fuehrungOffen()) { history.pushState({ schritt: stand.schritt }, ""); return; } // Mitmach-Rundgang: Zurück-Geste wirkt nicht, Station 16 lässt sich nicht schließen
@@ -1067,6 +1079,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = m === "buero" ? "kartebuero" : anfang; } // Persona-Test 27.10.: nach der Einrichtung (Laden) zurück zu Heute, nicht ins Büro
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro
     else if (ansicht === "karte" && karteLadenZurueck()) { /* erst das Preis-Blatt schließen */ }
+    else if (m === "buero" && bueroWeg.length) { ansicht = bueroWeg.pop(); } // 01.11.2026: Büro – eine Ebene zurück
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = anfang; } // Laden-Reiter stapeln nicht: Zurück = Heute; Büro → Büro-Start; Personal → drei Kacheln
     if (!ansichtErlaubt(wurzel, ansicht)) ansicht = anfang;
     zeichne();
