@@ -64,7 +64,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   // Büro ruhig (Baris 26.10.2026 23:56, Zwiebel + Uhrwerk): eine einheitliche Liste, eine Farbe, Status als leiser Satz.
   const ordnerZeile = (id, symbol, s) => `<button type="button" class="b-zeile" data-a="nav" data-wert="ordner-${id}"><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(t(`ordner.${id}.kachel`))}</b><small class="${s.farbe === "rot" ? "rot" : ""}">${esc(s.text)}</small></span>${bsym("chevron-right", "b-pfeil")}</button>`;
   const kachel = (id, symbol, s) => `<button type="button" class="karte b-ordnerkachel" data-a="nav" data-wert="ordner-${id}"><span class="b-ks ${id}">${bsym(symbol)}</span><b>${esc(t(`ordner.${id}.kachel`))}</b><small><i class="b-punkt ${s.farbe}" aria-hidden="true"></i>${esc(s.text)}</small></button>`;
-  const z = zaehlerImTakt(stand, heuteGeschaeft()); // W2-D; Paket 3, M7: Zähler nach Geschäftstag, Belehrungen/Ordner (H) nach Kalender
+  const HG = heuteGeschaeft(); const z = zaehlerImTakt(stand, HG); // K1 Runde 2 (01.11.2026): Monatsname zur Geld-Zeile nach Geschäftstag, sonst steht nach Mitternacht „November“ über Oktober-Zahlen // W2-D; Paket 3, M7: Zähler nach Geschäftstag, Belehrungen/Ordner (H) nach Kalender
   const inv = inventurenFertig(stand).pop();
   const zeile = (ziel, symbol, titel, unter, wert = "") => `<button type="button" class="b-zeile" ${zielAttr(ziel)}><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${unter ? `<small>${esc(unter)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</button>`;
   const monatWert = z.keinUmsatz ? "" : `<span class="b-wert zahl ${z.stand >= 0 ? "plus" : "minus"}" title="${esc(t("gehirn.ausblick"))}" aria-label="${esc(t("gehirn.ausblick"))}">${z.stand >= 0 ? "+ " : "− "}${esc(fmtEuro(Math.abs(z.stand)))}</span>`;
@@ -77,7 +77,7 @@ export function bueroView(stand, wurzel, extra = {}) {
   const bereich = (id, symbol, titel, satz, rot, inhalt, wert = "") => `<details class="b-bereich" data-bereich="${id}"><summary class="b-zeile b-bereichkopf"><span class="b-zs">${bsym(symbol)}</span><span class="b-zt"><b>${esc(titel)}</b>${satz ? `<small class="${rot ? "rot" : ""}">${esc(satz)}</small>` : ""}</span>${wert}${bsym("chevron-right", "b-pfeil")}</summary><div class="karte b-liste">${inhalt}</div></details>`;
   const [erster, ...rest] = offen;
   // Masterauftrag „Gehirn“ 0.1 (28.10.2026): eine Wahrheit – oben steht dieselbe Zahl wie auf Heute; das Monatsergebnis ist „Ausblick“.
-  const HG = heuteGeschaeft(); let hz = null; try { hz = heuteZiel(stand, z, HG); } catch { hz = null; }
+  let hz = null; try { hz = heuteZiel(stand, z, HG); } catch { hz = null; }
   const hauptzahl = !hz ? "" : hz.fehlt
     ? `<button type="button" class="karte b-hauptzahl" ${zielAttr(hz.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} aria-label="${esc(t("nutzen.stufe.bisNull"))}"><b>?</b><span class="b-hauptzahl-knopf">${esc(t("heute.fehlt." + hz.fehlt))}</span></button>`
     : hz.zahl === null ? "" : `<button type="button" class="karte b-hauptzahl" data-a="nav" data-wert="umsatz"><small>${esc(t("nutzen.stufe." + hz.stufe))} · ${esc(monatName(HG))}</small><b class="zahl">${esc((hz.m.geschaetzt ? "≈ " : "") + (hz.stufe === "ueberZiel" ? "+" : "") + fmtEuro(hz.zahl))}</b></button>`;
@@ -108,8 +108,8 @@ export function bueroView(stand, wurzel, extra = {}) {
       <div class="karte b-liste b-ordnerliste">${ordnerZeile("amt", "shield-check", k.amt)}${ordnerZeile("steuer", "calculator", k.steuer)}${ordnerZeile("buch", "receipt", k.buch)}</div>
       <div class="b-gruppe" aria-hidden="true"></div>
       <div class="b-bereiche">
-      ${bereich("geld", "trending-up", t("buero.abschnitt.geld"), t("buero.zahlen.monatUnter", monatName(H)), false, `
-        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(H))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("zaehler.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}
+      ${bereich("geld", "trending-up", t("buero.abschnitt.geld"), t("buero.zahlen.monatUnter", monatName(HG)), false, `
+        ${zeile({ aktion: "nav", wert: "umsatz" }, "trending-up", t("buero.zahlen.monat"), `${t("buero.zahlen.monatUnter", monatName(HG))}${z.quoteQuelle === "richtwert" || z.quoteRichtpreis ? ` · ${t("buero.zahlen.richtwert")}` : ""}${wareneinsatzWarnung(z.quote) ? ` · ${t("zaehler.quoteHoch", Math.round(z.quote * 100))}` : ""}`, monatWert)}
         ${zeile({ aktion: "nav", wert: "vergleich" }, "chart-column", t("buero.zahlen.vergleich"), t("buero.zahlen.vergleichUnter"))}
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
         ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}

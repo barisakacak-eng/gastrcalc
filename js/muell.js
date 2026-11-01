@@ -226,8 +226,9 @@ export function schwundNachweisSetzen(stand, ids, { foto = null, von = null } = 
 // Wie oft eine Kachel heute getippt wurde (Zähler „2ד) – Müll-Einträge, nicht Personalessen.
 // Lauf 2 (31.10.2026), Klicker K1 C2: auch Personalessen und Ausgegeben bekommen ihr „1×“ – je Grund gezählt (grund: roh | personal | ausgegeben | bruch | null = alle Müll-Arten)
 export function tippsHeute(stand, datum = heuteGeschaeft(), grund = null) {
-  const out = {}; const arten = grund === "personal" ? ["personal"] : grund === "ausgegeben" ? ["ausgegeben"] : grund === "bruch" ? ["gericht"] : grund === "roh" ? ["rohware"] : ["gericht", "rohware", "personal", "ausgegeben"];
-  for (const e of stand.schwund || []) if (!e.storniert && e.datum === datum && arten.includes(e.art)) { const k = muellSchluessel(e); out[k] = (out[k] || 0) + 1; }
+  // Grund „uebrig“ (K1 Runde 2, 01.11.2026): nur abends als „übrig geblieben“ getippte Einträge; die Reiter zählen ohne sie
+  const out = {}; const arten = grund === "personal" ? ["personal"] : grund === "ausgegeben" ? ["ausgegeben"] : grund === "bruch" ? ["gericht"] : grund === "roh" ? ["rohware"] : grund === "uebrig" ? ["gericht", "rohware"] : ["gericht", "rohware", "personal", "ausgegeben"];
+  for (const e of stand.schwund || []) if (!e.storniert && e.datum === datum && arten.includes(e.art) && (grund === null || !!e.uebrig === (grund === "uebrig"))) { const k = muellSchluessel(e); out[k] = (out[k] || 0) + 1; }
   return out;
 }
 

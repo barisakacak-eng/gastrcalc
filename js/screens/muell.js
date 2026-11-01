@@ -104,7 +104,7 @@ function rasterView(stand, D, nach) {
 // „Übrig geblieben“ (Baris 24.10.2026, ersetzt die Eimer-Waage): abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
 function stationView(stand, D) {
   const waren = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true });
-  const zaehl = tippsHeute(stand, D, grund);
+  const zaehl = tippsHeute(stand, D, "uebrig"); // K1 Runde 2 (01.11.2026): hier zählen nur die Übrig-Einträge, nicht die des offenen Reiters
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell-station">
     <div class="muell-station-kopf">

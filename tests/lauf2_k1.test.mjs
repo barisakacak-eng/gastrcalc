@@ -36,3 +36,13 @@ test("K1 C2: Zähler je Grund – Personalessen und Ausgegeben bekommen ihr 1×,
   assert.deepEqual(tippsHeute(b, H, "roh"), {});
   assert.equal(tippsHeute(b, H)["g:g1"], 3, "ohne Grund alle Müll-Arten zusammen");
 });
+
+test("K1 Runde 2 C4: „Übrig“ zählt nur Übrig-Einträge, die Reiter zählen ohne sie", async () => {
+  const { muellTippEintragen } = await import("../js/muell.js");
+  const b = laden(); b.gerichte = [{ id: "g1", name: "Döner", zutaten: [], preis: 7, klasse: "speise" }];
+  gerichtWeg(b, b.gerichte[0], { datum: H }); gerichtWeg(b, b.gerichte[0], { datum: H });
+  muellTippEintragen(b, { typ: "gericht", id: "g1", gericht: b.gerichte[0] }, { datum: H, uebrig: true });
+  assert.deepEqual(tippsHeute(b, H, "uebrig"), { "g:g1": 1 });
+  assert.deepEqual(tippsHeute(b, H, "bruch"), { "g:g1": 2 });
+  assert.equal(tippsHeute(b, H)["g:g1"], 3);
+});

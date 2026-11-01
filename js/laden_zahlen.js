@@ -88,7 +88,7 @@ export function tagesBilanz(stand, H, K = heute()) {
   const restTage = z.nullTag && !z.imPlus ? Math.round(z.tage.filter((x) => x.datum > H && x.datum <= z.nullTag).reduce((s, x) => s + x.gewicht, 0)) : null;
   return {
     z, vor, nach, besser: nach - vor, umsatz: u, netto: u ? z.nettoVon(u.umsatz) : 0, bleibt: u ? z.bleibtVon(u.umsatz) : 0, tageskosten: z.tageskosten,
-    muell: { anzahl: sw.anzahl, wert: sw.muellwert },
+    muell: { anzahl: sw.anzahl, wert: sw.muellwert, ohneWert: sw.ohneWert || 0 },
     kuehl: { eingerichtet: ks.eingerichtet, gemessen: ks.heuteGemessen, stellen: ks.stellen, fertig: ks.eingerichtet && ks.heuteGemessen >= ks.stellen },
     rundgaenge: (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === K).length,
     vergleich, tonne, restTage,
