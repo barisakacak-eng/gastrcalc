@@ -27,6 +27,8 @@ let blatt = null;         // { id, preis (Entwurf, brutto), alt }
 export const karteLadenKennung = () => filter; // Blatt auf/zu ändert die Kennung nicht – die Scrollposition im Raster bleibt
 export function karteLadenZuruecksetzen() { filter = "alle"; alle = false; blatt = null; }
 export const karteLadenBlattOffen = () => !!blatt;
+// Bildpaket D (3) B (Ja 01.11.2026): Tipp aufs Gericht öffnet das Zutaten-Blatt; ohne Zutaten (oder im Rundgang, app.js) die Mengenfrage wie bisher
+export function karteLadenRezeptBlatt(stand, gid) { const g = stand.gerichte.find((x) => x.id === gid); if (!g || !g.zutaten?.length) return false; blatt = { rezept: g.id }; return true; }
 // Zurück-Geste: erst das Blatt schließen
 export function karteLadenZurueck() { if (blatt) { blatt = null; return true; } return false; }
 
@@ -176,7 +178,6 @@ export function karteLadenAktion(name, el, stand) {
   if (name === "kl-rezept") { // 28.10.2026: app.js öffnet die Mengenfrage; Getränke (ohne Rezept) öffnen gleich das Preis-Blatt
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false;
     if (g.klasse === "getraenk" || !rezeptStempel(g).stufe) return karteLadenAktion("kl-auf", el, stand);
-    if (globalThis.__gcD?.rezept === "alle" && g.zutaten.length) { blatt = { rezept: g.id }; return true; } // Bildpaket D (3), Variante B: alle Zutaten im Laden-Blatt
     blatt = null; return { rezept: g.id };
   }
   if (name === "kl-zd" && blatt?.rezept) { // Variante B: Menge einer Zutat mit −/+ (Schritt 5 g ab 50, 1 g darunter, 1 Stück), sofort gespeichert

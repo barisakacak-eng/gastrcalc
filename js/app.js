@@ -57,7 +57,7 @@ import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen,
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
 import { inventurView, inventurAktion, inventurEingabe, inventurZurueck, inventurZuruecksetzen, inventurKennung } from "./screens/inventur.js";
 // Entwickler B (Drei Ebenen): Laden-Karte als Fotoraster mit Preis-Blatt
-import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZurueck, karteLadenZuruecksetzen, karteLadenKennung } from "./screens/karte_laden.js";
+import { karteLadenRezeptBlatt, karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZurueck, karteLadenZuruecksetzen, karteLadenKennung } from "./screens/karte_laden.js";
 // Drei Ebenen (Entwickler C): Büro-Startseite und die drei Ordner
 import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen } from "./screens/buero.js";
 import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
@@ -78,7 +78,7 @@ import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Me
 import { hinweiseView } from "./screens/hinweise.js"; // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
-import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung – nur mit window.__gcD.home
+import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
@@ -144,8 +144,6 @@ async function eigeneFotosLaden() {
 
 function zeichne() {
   kalkulationNeuerTakt(); // Zahlen dieses Bildes einmal rechnen
-  if (typeof document !== "undefined") document.body.classList.toggle("zeki-platz-b", schalterD().zeki === "b"); // Bildpaket D (2): Platz B nur zur Ansicht
-  if (typeof document !== "undefined") document.body.classList.toggle("entwurf-d", !!schalterD().c); // Bildpaket D (4f): Layout-Feinheiten nur zur Ansicht
   // D (Personal-Modus): nur Personal-Start, Müll, Kühlung, Putzen; neue Einträge bekommen die Schicht-Person
   if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) { if (!["personal", "muell", "kuehl", "putzplan"].includes(ansicht)) ansicht = "personal"; } } // Trennung (17.10.2026): Person nachtragen beim Speichern (unten), nicht im Zeichnen
   const kennung = schirmKennung();
@@ -188,7 +186,7 @@ function zeichne() {
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
-        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null, home: homeLage(), entwurfC: !!schalterD().c });
+        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null, home: homeLage() });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
@@ -508,14 +506,15 @@ function dauerhaftAnfragen() {
   wurzel.persistGefragt = true; speichern(wurzel);
   speicherDauerhaftPruefen({ anfragen: true }).then((ok) => { ereignis("speicher-dauerhaft", { ok }); if (ansicht === "einstellungen") zeichne(); });
 }
-// Lauf 2 (31.10.2026), Bildpaket D – Entwurf hinter window.__gcD = { home, zeki: "a"|"b", rezept: "alle", c }. Ohne Schalter: alles wie bisher.
-const schalterD = () => (typeof window !== "undefined" && window.__gcD) || {};
+// Lauf 2 (31.10.2026), Bildpaket D – Baris' Ja am 01.11.2026: Home-Bildschirm-Führung, Rezept-Blatt im Laden und die Klicker-Befunde sind Standard.
+// Testhaken window.__gcD.homeGeraet ("ios" | "android") stellt das Gerät nur für Bildproben; sonst zählt der echte Browser.
+const probeGeraet = () => (typeof window !== "undefined" && window.__gcD?.homeGeraet) || null;
 let installAufforderung = null; // Android/Chrome: „beforeinstallprompt“ aufheben → Knopf „Installieren“ im Büro (Sicherung)
 if (typeof window !== "undefined") window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installAufforderung = e; if (ansicht === "einstellungen") zeichne(); });
 // Lage für die Ansichten: null = kein Hinweis. Laden: nur einmal, nicht während des Rundgangs. Büro: immer (Sicherung), auch „liegt schon dort“.
 function homeLage({ buero = false } = {}) {
-  const d = schalterD(); if (!d.home) return null;
-  const z = installZustand(d.homeGeraet ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: d.homeGeraet === "android" ? "Android" : "iPhone" } } : globalThis); // homeGeraet: nur für Bildproben
+  const g = probeGeraet();
+  const z = installZustand(g ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: g === "android" ? "Android" : "iPhone" } } : globalThis);
   if (buero) return { ...z, knopf: !!installAufforderung };
   if (fuehrungOffen() || kurzOffen() || !stand?.fuehrung || !homeHinweisFaellig(wurzel, z)) return null; // erst nach dem Rundgang
   return z;
@@ -795,7 +794,8 @@ async function aufKlick(ev) {
     const r = karteLadenAktion(name, el, stand);
     if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
     if (r && r.gespeichert && r.rezept === true) { artikelAbgleichen(stand); ereignis("rezept-laden", { laden: stand.id, gericht: r.id }); await sofortSpeichern(wurzel); const bl = root.querySelector(".kl-blatt"); if (bl) { root.querySelector(".kl-dimmer")?.remove(); bl.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; } // Bildpaket D (3) B: Menge geändert, Blatt bleibt offen
-    if (r && r.rezept) return rezeptDirekt(r.rezept, { max: fuehrungOffen() ? 1 : 3 }); // 28.10.2026: Tipp aufs Gericht → erste Mengenfrage (im Rundgang eine Frage)
+    if (r && r.rezept && !fuehrungOffen() && karteLadenRezeptBlatt(stand, r.rezept)) return zeichne(); // Bildpaket D (3) B, Ja 01.11.2026: alle Zutaten im Laden-Blatt
+    if (r && r.rezept) return rezeptDirekt(r.rezept, { max: fuehrungOffen() ? 1 : 3 }); // 28.10.2026: im Rundgang (und ohne Zutaten) die Mengenfrage
     if (r && r.gespeichert) { ereignis("preis-geaendert", { laden: stand.id, gericht: r.id, vorher: r.vorher ?? null, preis: r.preis, ort: "laden" }); meldung(t("kartelaeden.gespeichert")); await sofortSpeichern(wurzel); return zeichne(); }
     if (r) return zeichne();
   }

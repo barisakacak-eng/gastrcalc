@@ -118,7 +118,7 @@ test("Frische Einträge dieser Sitzung werden ganz verglichen (eigenen Eintrag n
   const e = b.schwund.at(-1); e.menge = 3.5; // in-place, weder storniert noch erfasst
   const ab = schreibAb(a); await st.sofortSpeichern(w);
   assert.ok(r !== undefined);
-  assert.deepEqual(teilPuts(ab()), [`${b.id}|schwund|${U.heute().slice(0, 7)}`]);
+  assert.deepEqual(teilPuts(ab()), [`${b.id}|schwund|${U.heuteGeschaeft().slice(0, 7)}`]); // Lauf 2 (01.11.2026, 01:30): Müll bucht auf den Geschäftstag (bis 4 Uhr)
   assert.equal((await st.laden()).betriebe[0].schwund.at(-1).menge, 3.5);
 });
 

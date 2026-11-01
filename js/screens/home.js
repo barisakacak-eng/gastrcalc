@@ -39,10 +39,10 @@ export function startView(stand, extra = {}) {
   return `
     <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
-      ${heuteZielKarte(stand, z, H, !!extra.entwurfC)}
+      ${heuteZielKarte(stand, z, H)}
       ${homeKarteLaden(extra.home)}
       ${nutzenKarte(nutzen)}
-      <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H, !!extra.entwurfC)}</div>
+      <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${zekiReihe(stand, H, dran, { ...extra, fehlt: heuteZiel(stand, z, H).fehlt ?? null })}
       ${extra.aktualisierung ? `<button type="button" class="leise" data-a="aktualisieren">${esc(t("heute.offen.fassung"))}</button>` : ""}
     </div>
@@ -70,10 +70,10 @@ function zielTexte(stand, z, H) {
   const tempo = !w.tempo ? null : w.tempo.art === "gut" ? { art: "gut", text: t("heute.tempoGut", datumLesbar(w.tempo.am).slice(0, 6)) } : { art: "knapp", text: t("heute.tempoKnapp", fmtEuro(w.tempo.proTag, { dezimal: 0 })) };
   return { ...w, tempo };
 }
-function heuteZielKarte(stand, z, H, entwurf = false) {
+function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
   // Lauf 2, Bildpaket D (4a): Löhne fehlen, aber Stunden stehen schon → ≈-Zahl mit Mindestlohn-Richtwert (zaehler.js) und kleiner Hinweis „Löhne eintragen“
-  const richtwertLohn = entwurf && w.fehlt === "personal" && (z?.lohnRichtwertTage || 0) > 0;
+  const richtwertLohn = w.fehlt === "personal" && (z?.lohnRichtwertTage || 0) > 0;
   // Masterauftrag „Gehirn“ 0.1 (28.10.2026): ohne Miete oder Löhne keine Euro-Zahl, sondern der nächste Eintrag
   if (w.fehlt && !richtwertLohn) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
     <span class="h-riesig leicht" aria-label="${esc(t("nutzen.stufe.bisNull"))}">?</span>
@@ -81,7 +81,7 @@ function heuteZielKarte(stand, z, H, entwurf = false) {
   </button>`;
   // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
-  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" ${entwurf ? 'data-a="monat-blatt"' : 'data-a="nav" data-wert="umsatz"'} aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
+  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="monat-blatt" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `<bdi dir="ltr">${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}</bdi>`}</span>
@@ -126,10 +126,10 @@ function kachelTexte(stand, ks, H) {
   const putz = w.putz ? { wert: `\u2066${w.putz.erledigt}/${w.putz.gesamt}\u2069`, alarm: w.putz.alarm } : { wert: "–", alarm: false };
   return { umsatz: w.umsatz, muell: w.muell, kuehl, putz };
 }
-function heuteKachelnLaden(stand, ks, H, entwurf = false) {
+function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
   // Lauf 2, Bildpaket D (4b): Müll ohne Preis überall gleich – „1×“ wie auf der Kachel im Müll-Bildschirm, statt „0,00 €“ hier und „–“ dort
-  const mh = entwurf ? muellHeute(stand, H) : null; const muellOhnePreis = mh && mh.anzahl > 0 && mh.offen === mh.anzahl;
+  const mh = muellHeute(stand, H); const muellOhnePreis = mh.anzahl > 0 && mh.offen === mh.anzahl;
   // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
   const symbole = { umsatz: "wallet", muell: "trash-2", kuehl: "snowflake", putz: "spray-can" };
   const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`; // Baris 24.10.2026: ein Wort unter jedem Icon
@@ -235,7 +235,7 @@ export function karteView(stand) {
 // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm. Laden: ein Satz (≤ 15 Wörter), einmal, „OK“. Büro (Sicherung): Weg in zwei Schritten + Warum.
 function homeKarteLaden(h) {
   if (!h) return "";
-  return `<div class="karte home-karte" role="status"><span class="home-sym">${sym(h.plattform === "android" ? "download" : "share")}</span><p>${esc(t(h.plattform === "android" ? "home.ladenAndroid" : "home.laden"))}</p><button type="button" class="leise" data-a="home-weg">${esc(t("home.ok"))}</button></div>`;
+  return `<div class="karte home-karte kompakt" role="status"><span class="home-sym">${sym(h.plattform === "android" ? "download" : "share")}</span><p>${esc(t(h.plattform === "android" ? "home.ladenAndroid" : "home.laden"))}</p><button type="button" class="leise" data-a="home-weg">${esc(t("home.ok"))}</button></div>`;
 }
 function homeBlockBuero(h) {
   if (!h) return "";

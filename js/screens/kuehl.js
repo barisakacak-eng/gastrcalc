@@ -197,7 +197,7 @@ function rundgangStartView(stand) {
       <div class="karte">
         <h2>${esc(t("kuehl.werMisst"))}</h2>
         ${startStelle ? `<div class="hinweis">${esc(t("kuehl.nurStelle", aktiveStellen(stand).find((k) => k.id === startStelle)?.name || ""))}</div>` : ""}
-        ${personen.length ? `<div class="chips">${personen.map((p) => `<button type="button" class="chip ${startVon === p.id ? "an" : ""}" data-a="start-von" data-id="${esc(p.id)}">${esc(p.kuerzel)}</button>`).join("")}<button type="button" class="chip ${startVon === "" ? "an" : ""}" data-a="start-von" data-id="">${esc(t("kuehl.ohneKuerzel"))}</button></div>` : globalThis.__gcD?.c && startStelle ? "" : `<div class="hinweis">${esc(t("kuehl.keinePersonen"))}</div>`}
+        ${personen.length ? `<div class="chips">${personen.map((p) => `<button type="button" class="chip ${startVon === p.id ? "an" : ""}" data-a="start-von" data-id="${esc(p.id)}">${esc(p.kuerzel)}</button>`).join("")}<button type="button" class="chip ${startVon === "" ? "an" : ""}" data-a="start-von" data-id="">${esc(t("kuehl.ohneKuerzel"))}</button></div>` : startStelle ? "" : `<div class="hinweis">${esc(t("kuehl.keinePersonen"))}</div>`}
         ${personalAktiv() ? "" : `<h2>${esc(t("kuehl.fuerWann"))}</h2>
         <div class="chips">${tage.map((d, i) => `<button type="button" class="chip klein ${(startNach || H) === d ? "an" : ""}" data-a="start-datum" data-wert="${d}">${esc(i === 0 ? t("tag.titel") : i === 1 ? t("tag.gestern") : datumLesbar(d).slice(0, 5))}</button>`).join("")}</div>
         ${startNach && startNach !== H ? `<span class="marke offen">${esc(t("kuehl.nacherfassungHinweis"))}</span>` : ""}`}
@@ -310,7 +310,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     return true; }
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id;
     if (personalAktiv()) { startVon = schichtPerson(stand) || ""; return kuehlAktion("rundgang-start", el, stand); } // 27.10.2026: Schicht-Person misst, direkt ins Messfeld
-    if (globalThis.__gcD?.c && !stand.personen.some((p) => !p.entfernt && p.aktiv)) { startVon = ""; return kuehlAktion("rundgang-start", el, stand); } // Lauf 2 (4c): ohne Kürzel gleich ins Messfeld – kein Erklärtext
+    if (!stand.personen.some((p) => !p.entfernt && p.aktiv)) { startVon = ""; return kuehlAktion("rundgang-start", el, stand); } // Lauf 2 (4c), Ja 01.11.2026: ohne Kürzel gleich ins Messfeld – kein Erklärtext
     return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
