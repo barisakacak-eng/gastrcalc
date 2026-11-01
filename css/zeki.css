@@ -146,3 +146,7 @@
 .appleiste .ikonknopf.zeki-knopf::after{left:6px;right:6px;bottom:-4px;height:12px;background:radial-gradient(closest-side,rgba(181,104,58,.55) 0 58%,rgba(181,104,58,.18) 59% 100%);box-shadow:0 2px 3px rgba(31,42,36,.18)}
 @media (prefers-reduced-motion: reduce){.appleiste .ikonknopf.zeki-knopf.einlauf{animation:none}}
 /* Lauf 2, Bildpaket D (2): Baris wählte am 01.11.2026 Platz A „Teller“ (Kupferring oben); der Sockel-Vorschlag B ist entfernt. */
+/* K2 Runde 2 (01.11.2026): die Blase des kurzen Rundgangs durfte nicht schmaler werden als ihr Fuß (Überspringen · Punkte · Weiter) und ragte in de rechts aus dem Bild */
+.rg-kurz .rg-blase{min-width:0}
+.rg-kurz .rg-fuss{flex-wrap:wrap}
+.rg-kurz .rg-fuss .rg-weiter{margin-inline-start:auto}

@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { standTagZeile: (d, b) => `Di ${d} de tu li ${b} bûyî`, standErklaerung: "Heta îro hatiye hesabkirin. Mayîna mehê hê lêçûn e.", zumZiel: (m) => `Heta armancê di ${m} de dimîne`, standHeuteZeile: (b) => `Îro tu li ${b} yî`, lohnTageZeile: (n) => `Meaş: ${n} roj hatin nivîsîn, yên din ≈ ji tevahiya mehê`,
+  zaehler: { standTagZeile: (d, b) => `Di ${d} de tu li ${b} bûyî`, standErklaerung: "Heta îro hatiye hesabkirin. Mayîna mehê hê lêçûn e.", zumZiel: (m) => `Heta armancê di ${m} de dimîne`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Îro tu li ${b} yî`, lohnTageZeile: (n) => `Meaş: ${n} roj hatin nivîsîn, yên din ≈ ji tevahiya mehê`,
     sonderBis: (n) => `Fatûreyên yekcarî heta îro (${n})`,
     frueher: "Berê …",
     zaehltAb: (d) => `ji ${d} ve tê hesabkirin`,

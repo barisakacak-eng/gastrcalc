@@ -691,7 +691,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { standTagZeile: (d, b) => `Na dan ${d} bio si na ${b}`, standErklaerung: "Računato do danas. Ostatak mjeseca još košta.", zumZiel: (m) => `Do cilja fali u ${m}`, standHeuteZeile: (b) => `Danas si na ${b}`, lohnTageZeile: (n) => `Plate: ${n} dana upisano, ostalo ≈ iz mjesečnog iznosa`,
+  zaehler: { standTagZeile: (d, b) => `Na dan ${d} bio si na ${b}`, standErklaerung: "Računato do danas. Ostatak mjeseca još košta.", zumZiel: (m) => `Do cilja fali u ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Danas si na ${b}`, lohnTageZeile: (n) => `Plate: ${n} dana upisano, ostalo ≈ iz mjesečnog iznosa`,
     sonderBis: (n) => `Jednokratni računi do danas (${n})`,
     frueher: "Ranije …",
     zaehltAb: (d) => `broji se od ${d}`,

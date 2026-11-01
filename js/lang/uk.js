@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Тест",
   },
 
-  zaehler: { standTagZeile: (d, b) => `${d} у тебе було ${b}`, standErklaerung: "Пораховано до сьогодні. Решта місяця ще коштує.", zumZiel: (m) => `До мети лишилося у ${m}`, standHeuteZeile: (b) => `Сьогодні ти на ${b}`, lohnTageZeile: (n) => `Зарплати: внесено днів — ${n}, решта ≈ з місячної суми`,
+  zaehler: { standTagZeile: (d, b) => `${d} у тебе було ${b}`, standErklaerung: "Пораховано до сьогодні. Решта місяця ще коштує.", zumZiel: (m) => `До мети лишилося у ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Сьогодні ти на ${b}`, lohnTageZeile: (n) => `Зарплати: внесено днів — ${n}, решта ≈ з місячної суми`,
     sonderBis: (n) => `Разові рахунки по сьогодні (${n})`,
     frueher: "Раніше …",
     zaehltAb: (d) => `рахується від ${d}`,

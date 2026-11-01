@@ -690,7 +690,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { standTagZeile: (d, b) => `Pe ${d} erai la ${b}`, standErklaerung: "Calculat până azi. Restul lunii încă costă.", zumZiel: (m) => `Până la obiectiv lipsesc în ${m}`, standHeuteZeile: (b) => `Azi ești la ${b}`, lohnTageZeile: (n) => `Salarii: ${n} zile introduse, restul ≈ din suma lunară`,
+  zaehler: { standTagZeile: (d, b) => `Pe ${d} erai la ${b}`, standErklaerung: "Calculat până azi. Restul lunii încă costă.", zumZiel: (m) => `Până la obiectiv lipsesc în ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Azi ești la ${b}`, lohnTageZeile: (n) => `Salarii: ${n} zile introduse, restul ≈ din suma lunară`,
     sonderBis: (n) => `Facturi unice până azi (${n})`,
     frueher: "Mai devreme …",
     zaehltAb: (d) => `contează de pe ${d}`,

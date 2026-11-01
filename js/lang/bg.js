@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Тест",
   },
 
-  zaehler: { standTagZeile: (d, b) => `На ${d} беше на ${b}`, standErklaerung: "Сметнато до днес. Остатъкът от месеца още струва.", zumZiel: (m) => `До целта остават през ${m}`, standHeuteZeile: (b) => `Днес си на ${b}`, lohnTageZeile: (n) => `Заплати: ${n} дни въведени, останалото ≈ от месечната сума`,
+  zaehler: { standTagZeile: (d, b) => `На ${d} беше на ${b}`, standErklaerung: "Сметнато до днес. Остатъкът от месеца още струва.", zumZiel: (m) => `До целта остават през ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Днес си на ${b}`, lohnTageZeile: (n) => `Заплати: ${n} дни въведени, останалото ≈ от месечната сума`,
     sonderBis: (n) => `Еднократни сметки до днес (${n})`,
     frueher: "По-рано …",
     zaehltAb: (d) => `брои се от ${d}`,

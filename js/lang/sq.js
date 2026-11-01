@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Provë",
   },
 
-  zaehler: { standTagZeile: (d, b) => `Më ${d} ishe në ${b}`, standErklaerung: "Llogaritur deri sot. Pjesa tjetër e muajit ende kushton.", zumZiel: (m) => `Deri te synimi mungojnë në ${m}`, standHeuteZeile: (b) => `Sot je në ${b}`, lohnTageZeile: (n) => `Pagat: ${n} ditë të shënuara, pjesa tjetër ≈ nga shuma mujore`,
+  zaehler: { standTagZeile: (d, b) => `Më ${d} ishe në ${b}`, standErklaerung: "Llogaritur deri sot. Pjesa tjetër e muajit ende kushton.", zumZiel: (m) => `Deri te synimi mungojnë në ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Sot je në ${b}`, lohnTageZeile: (n) => `Pagat: ${n} ditë të shënuara, pjesa tjetër ≈ nga shuma mujore`,
     sonderBis: (n) => `Fatura të njëhershme deri sot (${n})`,
     frueher: "Më parë …",
     zaehltAb: (d) => `llogaritet nga ${d}`,

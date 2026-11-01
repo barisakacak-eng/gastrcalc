@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "آزمایشی",
   },
 
-  zaehler: { standTagZeile: (d, b) => `در ${d} وضعیتت ${b} بود`, standErklaerung: "تا امروز حساب شده. بقیهٔ ماه هنوز هزینه دارد.", zumZiel: (m) => `تا هدف در ${m} مانده`, standHeuteZeile: (b) => `امروز در ${b} هستی`, lohnTageZeile: (n) => `دستمزد: ${n} روز ثبت شده، بقیه ≈ از جمع ماهانه`,
+  zaehler: { standTagZeile: (d, b) => `در ${d} وضعیتت ${b} بود`, standErklaerung: "تا امروز حساب شده. بقیهٔ ماه هنوز هزینه دارد.", zumZiel: (m) => `تا هدف در ${m} مانده`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `امروز در ${b} هستی`, lohnTageZeile: (n) => `دستمزد: ${n} روز ثبت شده، بقیه ≈ از جمع ماهانه`,
     sonderBis: (n) => `فاکتورهای یک‌باره تا امروز (${n})`,
     frueher: "قبل‌تر …",
     zaehltAb: (d) => `از ${d} حساب می‌شود`,

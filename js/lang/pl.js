@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { standTagZeile: (d, b) => `${d} byłeś na ${b}`, standErklaerung: "Liczone do dziś. Reszta miesiąca jeszcze kosztuje.", zumZiel: (m) => `Do celu brakuje w ${m}`, standHeuteZeile: (b) => `Dziś jesteś na ${b}`, lohnTageZeile: (n) => `Płace: wpisane ${n} dni, reszta ≈ z sumy miesięcznej`,
+  zaehler: { standTagZeile: (d, b) => `${d} byłeś na ${b}`, standErklaerung: "Liczone do dziś. Reszta miesiąca jeszcze kosztuje.", zumZiel: (m) => `Do celu brakuje w ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Dziś jesteś na ${b}`, lohnTageZeile: (n) => `Płace: wpisane ${n} dni, reszta ≈ z sumy miesięcznej`,
     sonderBis: (n) => `Jednorazowe rachunki do dziś (${n})`,
     frueher: "Wcześniej …",
     zaehltAb: (d) => `liczy się od ${d}`,

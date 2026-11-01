@@ -684,7 +684,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { standTagZeile: (d, b) => `${d} tarihinde durumun: ${b}`, standErklaerung: "Bugüne kadar hesaplandı. Ayın geri kalanının da masrafı var.", zumZiel: (m) => `${m} ayında hedefe kalan`, standHeuteZeile: (b) => `Bugün durumun: ${b}`, lohnTageZeile: (n) => `Maaş: ${n} gün girildi, kalanı ≈ aylık toplamdan`,
+  zaehler: { standTagZeile: (d, b) => `${d} tarihinde durumun: ${b}`, standErklaerung: "Bugüne kadar hesaplandı. Ayın geri kalanının da masrafı var.", zumZiel: (m) => `${m} ayında hedefe kalan`, ueberZiel: (m) => `${m} ayında hedefin üstünde`, standHeuteZeile: (b) => `Bugün durumun: ${b}`, lohnTageZeile: (n) => `Maaş: ${n} gün girildi, kalanı ≈ aylık toplamdan`,
     sonderBis: (n) => `Bugüne kadar tek seferlik faturalar (${n})`,
     frueher: "Daha önce …",
     zaehltAb: (d) => `${d} tarihinden itibaren sayıyor`,

@@ -42,7 +42,7 @@ function bilanzView(stand, H) {
   const hz = heuteZiel(stand, z, H);
   const zielLabel = t("nutzen.stufe." + hz.stufe);
   const zielWert = hz.zahl === null ? "–" : `${hz.stufe === "ueberZiel" ? "+ " : ""}${hz.m.geschaetzt ? "≈ " : ""}${fmtEuro(hz.zahl, { dezimal: 0 })}`;
-  const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert, ohneWert: b.muell.ohneWert || 0 }; // K1 Runde 2 (01.11.2026): ohne Preis kein „− 0,00 €“ const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen, nachkontrollen: b.kuehl.nachkontrollen || 0 };
+  const sw = { anzahl: b.muell.anzahl, muellwert: b.muell.wert, ohneWert: b.muell.ohneWert || 0 }; /* K1 Runde 2 (01.11.2026): ohne Preis kein „− 0,00 €“ */ const ks = { eingerichtet: b.kuehl.eingerichtet, heuteGemessen: b.kuehl.gemessen, stellen: b.kuehl.stellen, nachkontrollen: b.kuehl.nachkontrollen || 0 };
   const tag = t("abschluss.tage." + b.vergleich.wochentag);
   const v = b.vergleich;
   const vergleich = v.art === "kein" ? t("abschluss.keinVergleich") : v.art === "gleich" ? t("abschluss.gleich", tag) : v.art === "besser" ? t("abschluss.besser", tag, fmtEuro(v.differenz)) : t("abschluss.schlechter", tag, fmtEuro(v.differenz));

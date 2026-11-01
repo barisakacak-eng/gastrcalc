@@ -27,7 +27,8 @@ export function portionView(stand) {
   }
   return `<div class="inhalt po"><h1 class="frage">${esc(t("gehirn.portion.frage", mengenText(p.zutat), g.name, p.einheit))}</h1>
     <div class="stepper gross"><button type="button" data-a="po-d" data-d="-1" aria-label="−">−</button><label class="wert po-wert"><input type="text" inputmode="numeric" data-f="po-wert" value="${esc(String(p.wert))}" aria-label="${esc(t("gehirn.portion.pruefen"))}" autocomplete="off"><span>${esc(p.einheit)}</span></label><button type="button" data-a="po-d" data-d="1" aria-label="+">+</button></div>
-    <button type="button" class="knopf glut" data-a="po-pruefen">${esc(t("gehirn.portion.pruefen"))}</button></div>${nav("karte")}`;
+    <button type="button" class="knopf glut" data-a="po-pruefen">${esc(t("gehirn.portion.pruefen"))}</button>
+    <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte")}`; // K2 Runde 2 (01.11.2026): Weg zurück zur Karte ohne Prüfung
 }
 
 export function portionAktion(name, el, stand, { datum } = {}) {

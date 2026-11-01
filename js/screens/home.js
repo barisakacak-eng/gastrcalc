@@ -40,7 +40,7 @@ export function startView(stand, extra = {}) {
     <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
-      ${homeKarteLaden(extra.home)}
+      ${zielTexte(stand, z, H).fehlt ? "" : homeKarteLaden(extra.home)} <!-- Setzung 01.11.2026: Fehlt noch Miete/Lohn, hat Heute schon eine Haupthandlung; der Home-Hinweis wartet (15-Wörter-Budget, work_integration_browser) -->
       ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${zekiReihe(stand, H, dran, { ...extra, fehlt: heuteZiel(stand, z, H).fehlt ?? null })}
@@ -183,7 +183,7 @@ export function zaehlerKarte(z, H, { tipp = true, ziel = null } = {}) {
 
 function zaehlerKarteMonat(z, H, w) {
   const monat = monatName(H); const g = w.m.geschaetzt ? "≈ " : "";
-  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("cockpit.verdient", monat);
+  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("zaehler.ueberZiel", monat); // K2 Runde 2 (01.11.2026): die Zahl ist Umsatz über dem Ziel, kein Gewinn – „Verdient“ war irreführend (Netto-Ergebnis steht in Monat & Zähler unten)
   const zahl = `${g}${w.stufe === "ueberZiel" ? "+ " : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`;
   // Persona-Test Wirt (27.10.2026): an einem Vortag stand „Heute stehst du bei …“ und „seit gestern“ – jetzt mit Datum, ohne Tagesvergleich.
   const istHeute = H === heuteGeschaeft(); const betrag = `${z.stand >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.stand), { dezimal: 0 })}`;

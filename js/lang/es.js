@@ -684,7 +684,7 @@ export default {
     entwurfKurz: "Prueba",
   },
 
-  zaehler: { standTagZeile: (d, b) => `El ${d} estabas en ${b}`, standErklaerung: "Calculado hasta hoy. El resto del mes todavía cuesta.", zumZiel: (m) => `Falta para tu meta en ${m}`, standHeuteZeile: (b) => `Hoy estás en ${b}`, lohnTageZeile: (n) => `Sueldos: ${n} días anotados, el resto ≈ del total mensual`,
+  zaehler: { standTagZeile: (d, b) => `El ${d} estabas en ${b}`, standErklaerung: "Calculado hasta hoy. El resto del mes todavía cuesta.", zumZiel: (m) => `Falta para tu meta en ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Hoy estás en ${b}`, lohnTageZeile: (n) => `Sueldos: ${n} días anotados, el resto ≈ del total mensual`,
     sonderBis: (n) => `Facturas únicas hasta hoy (${n})`,
     frueher: "Antes…",
     zaehltAb: (d) => `cuenta desde el ${d}`,

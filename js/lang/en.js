@@ -683,7 +683,7 @@ export default {
     entwurfKurz: "Test",
   },
 
-  zaehler: { standTagZeile: (d, b) => `On ${d} you stood at ${b}`, standErklaerung: "Counted up to today. The rest of the month still costs.", zumZiel: (m) => `Left to your goal in ${m}`, standHeuteZeile: (b) => `Today you stand at ${b}`, lohnTageZeile: (n) => `Wages: ${n} days entered, rest ≈ from the monthly total`,
+  zaehler: { standTagZeile: (d, b) => `On ${d} you stood at ${b}`, standErklaerung: "Counted up to today. The rest of the month still costs.", zumZiel: (m) => `Left to your goal in ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Today you stand at ${b}`, lohnTageZeile: (n) => `Wages: ${n} days entered, rest ≈ from the monthly total`,
     sonderBis: (n) => `One-off invoices until today (${n})`,
     frueher: "Earlier …",
     zaehltAb: (d) => `counting from ${d}`,

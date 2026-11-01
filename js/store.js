@@ -558,6 +558,7 @@ export function migrierenWurzel(w) {
     if (w.persistGefragt === true) out.persistGefragt = true;
     if (typeof w.letzteSicherungGroesse === "number") out.letzteSicherungGroesse = w.letzteSicherungGroesse;
     if (["laden", "personal", "buero"].includes(w.modus)) out.modus = w.modus; // Drei Ebenen: Modus je Handy
+    if (/^\d{4}-\d{2}-\d{2}$/.test(w.homeHinweisGesehen || "")) out.homeHinweisGesehen = w.homeHinweisGesehen; // Bildpaket D (1), K3 Runde 2 (01.11.2026): „OK“ am Home-Hinweis übersteht den Neustart
     if (pinWertGueltig(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern (W2-S: auch PBKDF2 mit Salz)
     { const sp = sperreSauber(w.pinSperre); if (sp) out.pinSperre = sp; } // W2-S: Fehlversuche übersteht den Neustart
     if (pinWertGueltig(w.rettungPin) && w.rettungPin.includes("$")) out.rettungPin = w.rettungPin; // Rettung (17.10.2026): nur der Prüfwert des Rettungscodes

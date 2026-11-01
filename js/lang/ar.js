@@ -687,7 +687,7 @@ export default {
     entwurfKurz: "تجربة",
   },
 
-  zaehler: { standTagZeile: (d, b) => `في ${d} كان وضعك ${b}`, standErklaerung: "محسوب حتى اليوم. باقي الشهر ما زال يكلّف.", zumZiel: (m) => `المتبقي للهدف في ${m}`, standHeuteZeile: (b) => `وضعك اليوم: ${b}`, lohnTageZeile: (n) => `الأجور: ${n} أيام مسجلة، والباقي ≈ من المجموع الشهري`,
+  zaehler: { standTagZeile: (d, b) => `في ${d} كان وضعك ${b}`, standErklaerung: "محسوب حتى اليوم. باقي الشهر ما زال يكلّف.", zumZiel: (m) => `المتبقي للهدف في ${m}`, ueberZiel: (m) => `فوق الهدف في ${m}`, standHeuteZeile: (b) => `وضعك اليوم: ${b}`, lohnTageZeile: (n) => `الأجور: ${n} أيام مسجلة، والباقي ≈ من المجموع الشهري`,
     sonderBis: (n) => `فواتير لمرة واحدة حتى اليوم (${n})`,
     frueher: "سابقًا …",
     zaehltAb: (d) => `يُحسب من ${d}`,

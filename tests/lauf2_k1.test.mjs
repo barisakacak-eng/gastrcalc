@@ -46,3 +46,12 @@ test("K1 Runde 2 C4: „Übrig“ zählt nur Übrig-Einträge, die Reiter zähle
   assert.deepEqual(tippsHeute(b, H, "bruch"), { "g:g1": 2 });
   assert.equal(tippsHeute(b, H)["g:g1"], 3);
 });
+
+test("K3 Runde 2 B1: „OK“ am Home-Hinweis übersteht das Neuladen (Wurzel-Normalisierung)", async () => {
+  const S2 = await import("../js/store.js"); const { homeHinweisGesehen, homeHinweisFaellig } = await import("../js/homebildschirm.js");
+  const w = S2.leereWurzel(); w.betriebe = [laden()]; w.aktiv = w.betriebe[0].id;
+  homeHinweisGesehen(w, "2026-11-01");
+  const w2 = S2.migrierenWurzel(JSON.parse(JSON.stringify(w)));
+  assert.equal(w2.homeHinweisGesehen, "2026-11-01");
+  assert.equal(homeHinweisFaellig(w2, { standalone: false, weg: "teilen" }), false);
+});

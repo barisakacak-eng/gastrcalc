@@ -684,7 +684,7 @@ export default {
     entwurfKurz: "Δοκιμή",
   },
 
-  zaehler: { standTagZeile: (d, b) => `Στις ${d} ήσουν στα ${b}`, standErklaerung: "Υπολογισμένο ως σήμερα. Το υπόλοιπο του μήνα κοστίζει ακόμα.", zumZiel: (m) => `Μέχρι τον στόχο λείπουν τον ${m}`, standHeuteZeile: (b) => `Σήμερα είσαι στα ${b}`, lohnTageZeile: (n) => `Μισθοί: ${n} μέρες καταχωρημένες, τα υπόλοιπα ≈ από το μηνιαίο σύνολο`,
+  zaehler: { standTagZeile: (d, b) => `Στις ${d} ήσουν στα ${b}`, standErklaerung: "Υπολογισμένο ως σήμερα. Το υπόλοιπο του μήνα κοστίζει ακόμα.", zumZiel: (m) => `Μέχρι τον στόχο λείπουν τον ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Σήμερα είσαι στα ${b}`, lohnTageZeile: (n) => `Μισθοί: ${n} μέρες καταχωρημένες, τα υπόλοιπα ≈ από το μηνιαίο σύνολο`,
     sonderBis: (n) => `Έκτακτοι λογαριασμοί ως σήμερα (${n})`,
     frueher: "Παλαιότερα …",
     zaehltAb: (d) => `μετράει από ${d}`,

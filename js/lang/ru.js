@@ -689,7 +689,7 @@ export default {
     entwurfKurz: "Тест",
   },
 
-  zaehler: { standTagZeile: (d, b) => `${d} у тебя было ${b}`, standErklaerung: "Посчитано до сегодня. Остаток месяца ещё стоит денег.", zumZiel: (m) => `До цели осталось в ${m}`, standHeuteZeile: (b) => `Сегодня ты на ${b}`, lohnTageZeile: (n) => `Зарплаты: внесено дней — ${n}, остальное ≈ из месячной суммы`,
+  zaehler: { standTagZeile: (d, b) => `${d} у тебя было ${b}`, standErklaerung: "Посчитано до сегодня. Остаток месяца ещё стоит денег.", zumZiel: (m) => `До цели осталось в ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Сегодня ты на ${b}`, lohnTageZeile: (n) => `Зарплаты: внесено дней — ${n}, остальное ≈ из месячной суммы`,
     sonderBis: (n) => `Разовые счета по сегодня (${n})`,
     frueher: "Раньше …",
     zaehltAb: (d) => `считается с ${d}`,

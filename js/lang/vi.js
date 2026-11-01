@@ -684,7 +684,7 @@ export default {
     entwurfKurz: "Thử",
   },
 
-  zaehler: { standTagZeile: (d, b) => `Ngày ${d} sếp ở mức ${b}`, standErklaerung: "Tính đến hôm nay. Phần còn lại của tháng vẫn còn chi phí.", zumZiel: (m) => `Còn thiếu đến mục tiêu trong ${m}`, standHeuteZeile: (b) => `Hôm nay sếp đang ở ${b}`, lohnTageZeile: (n) => `Lương: đã ghi ${n} ngày, còn lại ≈ từ tổng tháng`,
+  zaehler: { standTagZeile: (d, b) => `Ngày ${d} sếp ở mức ${b}`, standErklaerung: "Tính đến hôm nay. Phần còn lại của tháng vẫn còn chi phí.", zumZiel: (m) => `Còn thiếu đến mục tiêu trong ${m}`, ueberZiel: (m) => `Above your goal in ${m}`, standHeuteZeile: (b) => `Hôm nay sếp đang ở ${b}`, lohnTageZeile: (n) => `Lương: đã ghi ${n} ngày, còn lại ≈ từ tổng tháng`,
     sonderBis: (n) => `Hóa đơn một lần đến hôm nay (${n})`,
     frueher: "Trước đó …",
     zaehltAb: (d) => `tính từ ngày ${d}`,
