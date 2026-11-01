@@ -18,3 +18,6 @@ Die Illustrationen zeigen schematische Browseroberflächen, **keine authentische
 2. Türkisch ist KI-Übersetzung und benötigt muttersprachliche Prüfung.
 3. Die dargestellten Steuerelemente auf echten iOS-26-/Android-Geräten gegenprüfen, da Illustrationen keine echten Screenshots sind.
 4. Bestehende App-Dateien nicht ändern, keine Merge-Freigabe ohne vollständige Prüfung.
+
+## Korrektur vom 01.11.2026
+Auf Bild 02 ist die markierte Safari-Menüzeile **„Zum Home-Bildschirm“** (nicht „Zu Home-Bildschirm“). Die PNG-Abbildung wird passend zur SVG korrigiert. Baris prüft auf seinem iPhone vor jeder Merge-Freigabe. PR bleibt Entwurf.
