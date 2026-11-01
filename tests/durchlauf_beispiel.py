@@ -83,6 +83,14 @@ async def main():
             await nav_hilfe.geh(pg, "ordner-amt"); t = await text()
             assert "Kühl" in t, t[:500]
             await bild("ordner_amt", True)
+            # 01.11.2026: Der Abweichungstag liegt ≈ 12 Tage zurück; in den ersten Monatstagen fällt er nicht in den voreingestellten
+            # Monat. Dann Zeitraum „Frei“ ab 30 Tagen zurück wählen (so wie es der Inhaber am Monatsanfang täte).
+            abw = await pg.evaluate("(() => { const m = (window.__gastrocalc.stand.messungen || []).find(x => x.wert === 9.4); return m ? m.datum : null; })()")
+            H = await pg.evaluate("import('./js/util.js').then(u => u.heute())")
+            if abw and abw[:7] != H[:7]:
+                await tipp('#app [data-a="ordner-zeit"][data-wert="frei"]'); await pg.wait_for_timeout(300)
+                von = await pg.evaluate(f"(() => {{ const d = new Date('{H}T12:00:00'); d.setDate(d.getDate() - 30); return d.toISOString().slice(0, 10); }})()")
+                await pg.fill('#app input[data-f="amt-von"]', von); await pg.dispatch_event('#app input[data-f="amt-von"]', "change"); await pg.wait_for_timeout(400)
             await tipp('#app [data-a="ordner-vorschau"]'); await pg.wait_for_timeout(400)
             html = await pg.evaluate("(() => { const f = document.querySelector('#app iframe'); return f ? (f.srcdoc || '') : document.querySelector('#app').innerHTML; })()")
             assert "BEISPIEL – keine echten Daten" in html, html[:300]
