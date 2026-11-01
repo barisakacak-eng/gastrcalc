@@ -2,7 +2,7 @@
 
 **01.11.2026 · nur Designübergabe, kein App-Code**
 
-In diesem Branch liegen 5 editierbare SVG-Grafiken in 1080 × 1350. Die 5 passenden PNG-Exporte (ebenfalls 1080 × 1350) sind in der ChatGPT-Ausgabe als `Sanji_2026-11-01_Home-Bildschirm_A.zip` verfügbar. **PNG sind hier noch nicht hochgeladen. PR darf deswegen nicht gemergt werden.**
+In diesem Branch liegen **5 PNG (1080 × 1350)** und **5 editierbare SVG**, jeweils im selben Gestaltungsstil. Zusätzlich steht das komplette ZIP in der ChatGPT-Ausgabe bereit. **Die Browser-UI ist schematisch, nicht vom echten Gerät aufgenommen.**
 
 ## Quellen und Grenzen
 
@@ -14,7 +14,7 @@ Die Illustrationen zeigen schematische Browseroberflächen, **keine authentische
 
 ## QA vor Zoros Integration
 
-1. Die fünf PNG aus dem freigegebenen ZIP in diesen Ordner aufnehmen und mit den SVG vergleichen; ggf. SVG auf den finalen PNG-Stand bringen.
+1. Alle fünf PNG und fünf SVG liegen vor; die SVG vor Merge mit den finalen PNG auf Darstellungsgleichheit prüfen (insbesondere Icons, Layout, Textumbruch).
 2. Türkisch ist KI-Übersetzung und benötigt muttersprachliche Prüfung.
 3. Die dargestellten Steuerelemente auf echten iOS-26-/Android-Geräten gegenprüfen, da Illustrationen keine echten Screenshots sind.
 4. Bestehende App-Dateien nicht ändern, keine Merge-Freigabe ohne vollständige Prüfung.
