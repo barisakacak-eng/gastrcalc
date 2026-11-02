@@ -39,7 +39,7 @@ const stunde = (d) => d.getHours() + d.getMinutes() / 60;
 //  5. ab 18 Uhr bis 4 Uhr früh: Tag abschließen (wenn der Geschäftstag noch nicht abgeschlossen ist; Paket 3, M7)
 //  6. Einkaufspreise, dann eigene Rezepte – bis sie echt eingetragen sind (19.10.2026)
 // Rückgabe: null oder { id, ton: "rot" | "normal", symbol, titel, knopf, ziel }
-export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
+export function jetztDran(stand, wurzel, { jetzt = new Date(), leererRundgangZaehltNicht = false } = {}) { // leererRundgangZaehltNicht: Bildpaket E2 (Entwurf 02.11.2026)
   const h = stunde(jetzt); const H = heute(jetzt);
   const ks = kuehlStatus(stand);
   if (ks.eingerichtet) {
@@ -51,7 +51,9 @@ export function jetztDran(stand, wurzel, { jetzt = new Date() } = {}) {
       const m = abw?.m || nk[0].messung; const zuKalt = typeof m.min === "number" && typeof m.wert === "number" && m.wert < m.min;
       return { id: "kuehlAlarm", ton: "rot", symbol: "thermometer", titel: t(zuKalt ? "heute.dran.zuKalt" : "heute.dran.zuWarm", (stelle && kuehlstelleAnzeige(stelle)) || t("heute.kachel.kuehlung")), knopf: t("heute.dran.nachmessen"), ziel: { aktion: "nav", wert: "kuehl" } };
     }
-    if (ks.offenerRundgang) return { id: "rundgangOffen", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgangWeiter"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } };
+    // E2 (Klicker K1 C5, Entwurf): ein angefangener Rundgang ohne einen einzigen Wert, während heute alle Stellen schon gemessen sind, ist nichts „dran“
+    const leer = leererRundgangZaehltNicht && ks.offenerRundgang && !(rundgangOffen(stand)?.messungen || []).length && ks.heuteGemessen >= ks.stellen;
+    if (ks.offenerRundgang && !leer) return { id: "rundgangOffen", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgangWeiter"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } };
     if (ks.heuteGemessen < ks.stellen && (h < 15 || h >= 17) && !ruhetageAm(stand, H).includes(wochentag(H))) return { id: "rundgang", ton: "normal", symbol: "snowflake", titel: t("heute.dran.rundgang"), knopf: t("heute.dran.los"), ziel: { aktion: "kuehl-rundgang-start", offen: "0" } }; // Schwadron 18.10.2026, N2: am Ruhetag kein Rundgang
   }
   if (stand.putzplan?.aktiv) { const pg = planGruppen(stand, H); if (pg.ueberfaellig) return { id: "putzen", ton: "normal", symbol: "spray-can", titel: t("heute.dran.putzen", pg.ueberfaellig), knopf: t("heute.dran.los"), ziel: { aktion: "nav", wert: "putzplan" } }; }

@@ -152,7 +152,9 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (name === "ul-abw-tage" && abwesend) { const i = Number(el.dataset.i); abwesend = abwesend.map((x, k) => (k === i ? { ...x, tage: Math.max(0, Math.min(31, x.tage + Number(el.dataset.d))) } : x)); return "zeichnen"; }
   if (name === "ul-abw-fertig" && abwesend) { abwesendSetzen(stand, H, abwesend); schritt = "feld"; abwesend = null; return { fertig: true }; }
   if (name === "ul-satz-auf") { satzAuf = true; return "zeichnen"; }
-  if (name === "ul-normal-ja" || name === "ul-normal-nein") { normalAntwort = name === "ul-normal-ja"; normalTagSetzen(stand, H, normalAntwort); schritt = "normal-info"; return "zeichnen"; }
+  if (name === "ul-normal-ja" || name === "ul-normal-nein") { normalAntwort = name === "ul-normal-ja"; normalTagSetzen(stand, H, normalAntwort);
+    if (globalThis.window?.__gcE === true || globalThis.window?.__gcE?.e3) return weiterOderFertig(); // Bildpaket E3 (Entwurf 02.11.2026, K1 C7): Antwort genügt – keine Zwischenseite „Gut. Ab jetzt …“
+    schritt = "normal-info"; return "zeichnen"; }
   if (name === "ul-normal-fertig") return weiterOderFertig();
   if (name === "ul-team-nein") { teamTagSetzen(stand, H, []); return weiterOderFertig(); }
   if (name === "ul-team-ja") { team = teamStart(stand, H); schritt = "liste"; return "zeichnen"; }

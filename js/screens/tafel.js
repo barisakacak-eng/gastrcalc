@@ -12,6 +12,8 @@ import { nav } from "./nav.js";
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 const ue = (text) => `<h2 class="inv-ue">${esc(text)}</h2>`;
 
+// Bildpaket E4 (Entwurf 02.11.2026, K2 C5): Gerichte mit Preis da, aber die gewählten Gruppen sind leer → das sagen statt „Erst die Karte füllen“
+const tafelLeerText = (stand) => ((globalThis.window?.__gcE === true || globalThis.window?.__gcE?.e4) && (stand.gerichte || []).some((g) => Number(g.preis) > 0) ? "tafel.leerGruppen" : "tafel.leer");
 export function tafelView(stand) {
   const e = tafelEinstellung(stand); const b = tafelBeschreibung(stand, { einstellung: e });
   const kopf = `<div class="kopfband"><h1>${esc(t("tafel.titel"))}</h1><div class="unter">${esc(t("tafel.unter"))}</div></div>`;
@@ -20,7 +22,7 @@ export function tafelView(stand) {
   const rahmen = (i) => `<div><iframe class="b-vorschau-dok" data-tafel-seite="${i}" height="196" title="${esc(t("tafel.vorschau"))} ${i + 1}" srcdoc="${esc(tafelHtml(b, { eingebettet: false, skript: false, nurSeite: b.seiten.length ? i : null }))}"></iframe></div>`;
   const vorschau = `${ue(t("tafel.vorschau"))}<div class="karte" data-tafel-vorschau="${b.seiten.length}">${b.leer ? "" : `<h2>${esc(t("tafel.seiten", b.seiten.length))} · ${esc(t("tafel.sekunden", e.sekunden))}</h2>`}${Array.from({ length: n }, (_, i) => rahmen(i)).join("")}</div>`;
   const hinweise = b.hinweise.length ? `<div class="karte hinweisgelb" data-tafel-hinweise="${b.hinweise.length}"><h2>${esc(t("tafel.hinweisTitel"))}</h2>${b.hinweise.map((h) => `<p>${esc(t("tafel.hinweis." + h.art, h.name))}</p>`).join("")}</div>` : "";
-  const teilen = b.leer ? `<div class="karte leer"><div>${esc(t("tafel.leer"))}</div></div>`
+  const teilen = b.leer ? `<div class="karte leer"><div>${esc(t(tafelLeerText(stand)))}</div></div>`
     : `<button type="button" class="knopf glut" data-a="tf-teilen">${esc(t("tafel.teilen"))}</button>`;
   const kasse = `<p class="hinweis">${esc(t("tafel.kasse"))}</p>`;
   // laufende Aktionen
