@@ -4,9 +4,11 @@ import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, wasBleibt, prueferBlick } from "../steuertopf.js";
-import { termineLaden, liquiditaetLaden, ustRhythmusSetzen, dauerfristUmschalten, chefStundenSetzen, geldHeuteSetzen } from "../welle3.js";
+import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, chefStundenSetzen, geldHeuteSetzen } from "../welle3.js";
 import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden } from "../schichten.js";
 
+// Setzung 03.11.2026: unter 15 % Wareneinsatz aus Belegen fehlen vermutlich Belege (Richtsatz Imbiss ≈ 32 %) – dann keine Kennzahlen, nur dieser Hinweis
+const PLAUSIBEL_AB = 0.15;
 export const geld3An = () => typeof globalThis !== "undefined" && globalThis.__gcW3 === true;
 const karte = (id, titel, zahl, inhalt) => `<details class="karte auf g3-karte" data-g3="${id}"><summary><span><b>${esc(titel)}</b>${zahl ? `<small class="g3-zahl">${zahl}</small>` : ""}</span></summary>${inhalt}</details>`;
 const z = (text, wert, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${wert}</span></div>`;
@@ -24,14 +26,16 @@ export function geld3View(stand) {
     ${tl.map((x) => z(t("w3.termine.art." + x.art), esc(datumLesbar(x.datum).slice(0, 6)) + (x.verschoben ? " *" : ""))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
     ${tl.some((x) => x.verschoben) ? `<small>${esc(t("w3.termine.verschoben"))}</small>` : ""}<small>${esc(t("w3.termine.erinnerung"))}</small>`);
   // 3.4 Was bleibt
-  const wb = wasBleibt(stand, monat); const std = stand.chef?.stundenMonat || null;
-  const bleibt = karte("bleibt", t("w3.bleibt.titel"), wb.jeStunde !== null ? `≈ ${esc(fmtEuro(wb.jeStunde, { dezimal: 2 }))} / h` : "",
-    `${z(t("w3.bleibt.ergebnis"), `≈ ${esc(fmtEuro(wb.ergebnis))}`)}<div class="feldzeile"><label>${esc(t("w3.bleibt.stunden"))}</label><div class="betrag klein"><input inputmode="decimal" data-f="g3-stunden" value="${std ? esc(wertAnzeige(std)) : ""}" placeholder="260"><span class="einheit">h</span></div></div>
+  // 3.4/3.5 auf dem letzten vollen Monat (mitten im Monat stünden volle Monatskosten gegen halben Umsatz); ohne Vormonat mit Umsatz: noch nichts
+  const vm = monatPlus(monat, -1); const vmDa = (stand.tagesnotizen || []).some((n) => !n.storniert && typeof n.umsatz === "number" && n.umsatz > 0 && n.datum.startsWith(vm));
+  const wb = vmDa ? wasBleibt(stand, vm) : null; const std = stand.chef?.stundenMonat || null;
+  const bleibt = !wb ? karte("bleibt", t("w3.bleibt.titel"), "", `<p>${esc(t("w3.bleibt.ersterMonat"))}</p>`) : karte("bleibt", t("w3.bleibt.titel"), wb.jeStunde !== null ? `≈ ${esc(fmtEuro(wb.jeStunde, { dezimal: 2 }))} / h` : "",
+    `<small>${esc(t("w3.pruefer.monat", vm.split("-").reverse().join(".")))}</small>${z(t("w3.bleibt.ergebnis"), `≈ ${esc(fmtEuro(wb.ergebnis))}`)}<div class="feldzeile"><label>${esc(t("w3.bleibt.stunden"))}</label><div class="betrag klein"><input inputmode="decimal" data-f="g3-stunden" value="${std ? esc(wertAnzeige(std)) : ""}" placeholder="260"><span class="einheit">h</span></div></div>
     <small class="marke">${esc(t("w3.bleibt.muss"))}</small>`);
   // 3.5 Prüfer-Blick
-  const pb = prueferBlick(stand, monat);
+  const pb = vmDa ? prueferBlick(stand, vm) : { quote: null };
   const pruefer = karte("pruefer", t("w3.pruefer.titel"), pb.quote !== null ? `${esc(fmtZahl(pb.quote * 100, 1))} %` : "",
-    pb.quote === null ? `<p>${esc(t("w3.pruefer.leer"))}</p>` : `${z(t("w3.pruefer.quote"), `${esc(fmtZahl(pb.quote * 100, 1))} %`)}${z(t("w3.pruefer.aufschlag"), `${esc(fmtZahl(pb.rohaufschlag * 100, 0))} %`)}
+    pb.quote === null ? `<p>${esc(t(vmDa ? "w3.pruefer.leer" : "w3.bleibt.ersterMonat"))}</p>` : pb.quote < PLAUSIBEL_AB ? `<p class="minus">${esc(t("w3.pruefer.belegeFehlen", fmtZahl(pb.quote * 100, 1)))}</p>` : `<small>${esc(t("w3.pruefer.monat", vm.split("-").reverse().join(".")))}</small>${z(t("w3.pruefer.quote"), `${esc(fmtZahl(pb.quote * 100, 1))} %`)}${z(t("w3.pruefer.aufschlag"), `${esc(fmtZahl(pb.rohaufschlag * 100, 0))} %`)}
     ${pb.abweichung !== null ? z(t("w3.pruefer.vormonat"), `${pb.abweichung > 0 ? "+" : ""}${esc(fmtZahl(pb.abweichung, 1))}`, pb.notizPflicht ? "rot" : "") : ""}
     ${pb.notizPflicht ? `<p class="minus">${esc(t("w3.pruefer.warum"))}</p>` : ""}<small class="marke">${esc(t("w3.pruefer.richtsatz", fmtZahl(pb.richtsatz.rohgewinn1 * 100, 0), fmtZahl(pb.richtsatz.rohaufschlag * 100, 0)))}</small>`);
   // 3.7 Liquidität

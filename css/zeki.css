@@ -194,3 +194,7 @@ details.karte.auf[open]>summary::after{transform:rotate(180deg)}
 details.karte.auf>summary h2,details.karte.auf>summary b{margin:0}
 @media (prefers-reduced-motion: reduce){details.karte.auf>summary::after{transition:none}}
 details.karte.auf:not([open])>:not(summary){display:none}
+/* Welle 3 (hinter Schalter): Kopf der Geld-Karten – Titel links, Zahl darunter */
+.g3-karte>summary>span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.g3-karte .g3-zahl{font-weight:750;color:var(--gc-deep,#24412f)}
+.g3-karte small{display:block}
