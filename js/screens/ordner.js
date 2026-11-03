@@ -85,7 +85,8 @@ const beilagenKarte = (art, stand = null, zeitraum = null) => {
   const bereit = stand && zeitraum ? beilagenBereit(stand, art, zeitraum) : null;
   const zeile = (b) => bereit ? `<button type="button" class="b-beilage ${bereit.has(b) ? "an" : ""}" data-a="beilage-bereit" data-wert="${esc(b)}" aria-pressed="${bereit.has(b)}"><span class="b-kasten" aria-hidden="true">${bereit.has(b) ? "✓" : ""}</span><span>${esc(t("ordnerC.teile." + b))}</span></button>` : `<li>${esc(t("ordnerC.teile." + b))}</li>`;
   const liste = (BEILAGEN[art] || []).map(zeile).join("");
-  return `<div class="karte b-beilagen"><b>${esc(t(bereit ? "ordnerC.selbstTitel" : "ordnerC.karteTitel"))}</b>${bereit ? `<div class="b-beilagenliste">${liste}</div>` : `<ul>${liste}</ul>`}${art === "amt" ? "" : `<small class="b-leise">${esc(t("ordnerC.hinweis"))}</small>`}</div>`;
+  // Vorab-Prüfung 03.11.2026 (C12): aufklappbar (Buchhalter-Ordner 141 Wörter, Maß 120); offen, sobald etwas abgehakt ist
+  return `<details class="karte b-beilagen auf" ${bereit && bereit.size ? "open" : ""}><summary><b>${esc(t(bereit ? "ordnerC.selbstTitel" : "ordnerC.karteTitel"))}</b></summary>${bereit ? `<div class="b-beilagenliste">${liste}</div>` : `<ul>${liste}</ul>`}${art === "amt" ? "" : `<small class="b-leise">${esc(t("ordnerC.hinweis"))}</small>`}</details>`;
 };
 // Steuerberater: offene Hinweis-Karten als „Fragen an dich“ (Weg zum Bildschirm Hinweise)
 const fragenKarte = (stand) => { let n = 0; try { n = hinweiseFuer(stand).filter((h) => h.status === "neu" || h.status === "offen").length; } catch { n = 0; }

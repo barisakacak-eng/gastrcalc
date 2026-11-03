@@ -38,6 +38,7 @@ MESSEN_JS = r"""
   const stil = (el) => getComputedStyle(el);
   const sichtbar = (el) => { if (!el || el.nodeType !== 1) return false; const s = stil(el);
     if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
+    if (el.closest("details:not([open])") && !el.closest("summary")) return false; // 03.11.2026: zugeklappter Inhalt zählt nicht
     const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
   const inLeiste = (el) => !!el.closest(".tableiste");
   const sauber = (s) => s.replace(/­/g, "");

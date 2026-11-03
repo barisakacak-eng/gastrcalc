@@ -293,13 +293,22 @@ export function monatsZiel(stand, z, H) {
   const stufe = nullpunkt === null ? "ohne" : summe < nullpunkt ? "bisNull" : summe < ziel ? "bisZiel" : "ueberZiel";
   const fehltNullZ = nullpunkt === null ? null : Math.max(0, nullpunkt - summe);
   let erreichtAm = null, proTagNoetig = null;
-  if (stufe === "bisNull" && !z.keinUmsatz) { erreichtAm = z.nullTag || null; if (!erreichtAm && z.noetigProTag) proTagNoetig = z.noetigProTag / (nenner > 0.02 ? nenner : (1 - q) / brutto); }
+  // Vorab-Prüfung 03.11.2026 (C3): „Null am“ und der Monatskalender folgen derselben Rechnung wie die Hauptzahl („bis null fehlen x €“):
+  // der Tag, an dem der Umsatz des Monats den Nullpunkt erreicht (schon erreicht = dieser Tag; sonst mit dem bisherigen Tempo je Öffnungstag hochgerechnet).
+  // Vorher kam „Null am“ aus dem Tagesstand des Zählers (anteilige Kosten bis heute) – „Null am 01.01.“ stand neben „bis null fehlen ≈ 7.370 €“.
+  let nullAm = null;
+  if (nullpunkt !== null && !z.keinUmsatz) {
+    nullAm = tage.find((x) => x.kumuliert >= nullpunkt && x.kumuliert > 0)?.datum || null;
+    if (!nullAm) { const gB = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a2, x) => a2 + (x.gewicht || 0), 0);
+      if (gB > 0 && summe > 0) { const tempo = summe / gB; let s3 = summe; for (const x of z.tage) { if (x.datum <= H) continue; s3 += tempo * (x.gewicht || 0); if (s3 >= nullpunkt) { nullAm = x.datum; break; } } } }
+  }
+  if (stufe === "bisNull" && !z.keinUmsatz) { erreichtAm = nullAm; if (!erreichtAm && z.noetigProTag) proTagNoetig = z.noetigProTag / (nenner > 0.02 ? nenner : (1 - q) / brutto); }
   if (stufe === "bisZiel") { // Tempo: Umsatz je Öffnungstag bisher, hochgerechnet auf die restlichen Öffnungstage
     const gBis = (z.tage || []).filter((x) => x.datum <= H && (!z.start || x.datum >= z.start)).reduce((a2, x) => a2 + (x.gewicht || 0), 0);
     if (gBis > 0 && summe > 0) { const tempo = summe / gBis; let s2 = summe;
       for (const x of z.tage) { if (x.datum <= H) continue; s2 += tempo * (x.gewicht || 0); if (s2 >= ziel) { erreichtAm = x.datum; break; } }
       if (!erreichtAm) { const rest = (z.tage || []).filter((x) => x.datum > H).reduce((a2, x) => a2 + (x.gewicht || 0), 0); proTagNoetig = rest > 0 ? (ziel - summe) / rest : null; } } }
-  return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe, erreichtAm, proTagNoetig,
+  return { ziel, nullpunkt, gewinnAnteil: g, umsatz: summe, stufe, erreichtAm, nullAm, proTagNoetig,
     fehlt: ziel === null ? null : Math.max(0, ziel - summe), fehltNull: nullpunkt === null ? null : fehltNullZ,
     darueber: ziel === null ? null : Math.max(0, summe - ziel), tage,
     // Paket 3 (16.10.2026), M2/M15/E2: ausdrücklich geschätzt, wenn der eigene Lohn ein Richtwert ist ODER die Warenquote vom Branchen-
@@ -335,7 +344,10 @@ export function zaehlerStrecke(z, beispiel = 1000) {
   return { heute: pos(z.stand), null: pos(0), nullTag: z.nullTag, beispiel, bringt: z.bleibtVon(beispiel) };
 }
 // Monatsstreifen: Zustand eines Tages – "offen" (vor dem Start / ohne Stand) | "frei" (Ruhetag) | "ziel" (im Plus) | "zukunft" | "minus".
-export function monatTagStatus(x, z) {
+// nullAm (C3, 03.11.2026): Tag, an dem der Monat den Nullpunkt erreicht (aus monatsZiel). Mit nullAm: grün ab diesem Tag, davor rot/offen –
+// dieselbe Aussage wie die Hauptzahl. Ohne nullAm (undefined) wie bisher nach dem Tagesstand des Zählers.
+export function monatTagStatus(x, z, nullAm) {
+  if (nullAm !== undefined) return x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : nullAm && x.datum >= nullAm ? "ziel" : x.status === "zukunft" ? "zukunft" : "minus";
   return x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus");
 }
 // Spalte (1 = Montag … 7 = Sonntag) des ersten Monatstags im Kalender.

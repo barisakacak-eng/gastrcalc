@@ -55,7 +55,7 @@ export function umsatzView(stand) {
       ${prognoseKarte(z, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
       ${gesternKarte(stand, z, D)}
       ${rechnungKarte(z)}
-      ${monatKarte(z, D)}
+      ${monatKarte(z, D, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
       ${preiseKarte(stand, D)}
       <button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("zaehler.listen"))}</b><small>${esc(t("zaehler.listenKurz"))}</small></span><span class="pfeil">›</span></button>
       <button type="button" class="zeileknopf" data-a="nav" data-wert="beleg"><span><b>${esc(t("beleg.belege"))}</b><small>${esc(t("zaehler.belegeKurz"))}</small></span><span class="pfeil">›</span></button>
@@ -76,13 +76,13 @@ function streckeKarte(z, st) {
 function prognoseKarte(z, mz = null) { // Nachtest 27.10.2026: „Null am“ aus der Monatsrechnung (mz), nicht aus dem Tagesstand
   if (z.dbProTag === null) return "";
   const zeile = (k, v) => `<div class="summenzeile"><span>${esc(t("zaehler." + k))}</span><span class="wert">${v}</span></div>`;
-  return `<div class="karte"><h2>${esc(t("zaehler.wennSoWeiter"))}</h2>
+  return `<details class="karte auf"><summary><h2>${esc(t("zaehler.wennSoWeiter"))}</h2></summary>
     ${zeile("nullAm", mz?.stufe && mz.stufe !== "bisNull" ? `<span class="gruen">✓</span>` : mz?.erreichtAm ? esc(datumLesbar(mz.erreichtAm).slice(0, 6)) : !mz && z.nullTag ? esc(datumLesbar(z.nullTag).slice(0, 6)) : `<span class="rot">${esc(t("zaehler.nieDiesenMonat"))}</span>`)}
     ${zeile("monatsende", `<span class="${z.monatsende >= 0 ? "gruen" : "rot"}">${z.monatsende >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.monatsende))}</span>`)}
     ${zeile("tagesschnitt", fmtEuro(z.dbProTag))}
     ${zeile("tageskosten", fmtEuro(z.tageskosten))}
     ${z.noetigProTag !== null && !z.imPlus ? zeile("noetig", fmtEuro(z.noetigProTag)) : ""}
-  </div>`;
+  </details>`;
 }
 
 function gesternKarte(stand, z, D) {
@@ -99,7 +99,7 @@ function gesternKarte(stand, z, D) {
 
 function rechnungKarte(z) {
   const zeile = (text, v, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${v}</span></div>`;
-  return `<div class="karte"><h2>${esc(t("zaehler.soRechnet"))}</h2>
+  return `<details class="karte auf"><summary><h2>${esc(t("zaehler.soRechnet"))}</h2></summary>
     ${zeile(t("zaehler.fixBis"), fmtEuro(z.fix))}
     ${zeile(t("zaehler.lohnBis"), z.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.lohn))}
     ${zeile(t("zaehler.eigenBis"), z.last.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.eigen))}
@@ -110,21 +110,21 @@ function rechnungKarte(z) {
     <small class="marke">${esc(t("zaehler.umsatzBruttoHinweis", fmtEuro(z.umsatzBrutto), fmtZahl(z.steuer * 100, 1)))} · ${esc(t("zaehler.steuerQuelle." + z.steuerQuelle))} · ${esc(t("zaehler.quoteQuelle." + z.quoteQuelle))}${z.start > z.monat.von ? ` · ${esc(t("zaehler.zaehltAb", datumLesbar(z.start).slice(0, 6)))}` : ""}</small>
     ${z.quoteQuelle === "richtwert" ? `<span class="marke geschaetzt">${esc(t("zaehler.richtwertErklaerung", fmtZahl(RICHTWERT_WARENEINSATZ.min * 100, 0), fmtZahl(RICHTWERT_WARENEINSATZ.max * 100, 0), RICHTWERT_WARENEINSATZ.quelle))}</span>` : ""}
     ${wareneinsatzWarnung(z.quoteEff) && z.quoteQuelle !== "richtwert" ? `<span class="marke offen">${esc(t("zaehler.quoteHoch", fmtZahl(z.quoteEff * 100, 0)))}</span>` : ""}
-  </div>`;
+  </details>`;
 }
 
-function monatKarte(z, D) {
+function monatKarte(z, D, mz = null) { // C3 (03.11.2026): Farben nach dem Monats-Nullpunkt wie die Hauptzahl
   return `<div class="karte"><h2>${esc(t("zaehler.monat"))}</h2>
-    <div class="monat">${wochentagKopf()}${z.tage.map((x, i) => { const cls = monatTagStatus(x, z); return `<i class="${cls} ${x.datum === D ? "heute" : ""}"${i === 0 ? ` style="grid-column-start:${wochentagSpalte(x.datum)}"` : ""}>${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
+    <div class="monat">${wochentagKopf()}${z.tage.map((x, i) => { const cls = monatTagStatus(x, z, mz ? mz.nullAm ?? null : undefined); return `<i class="${cls} ${x.datum === D ? "heute" : ""}"${i === 0 ? ` style="grid-column-start:${wochentagSpalte(x.datum)}"` : ""}>${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
     <small class="marke">${esc(t("zaehler.legendeMonat"))}</small></div>`;
 }
 
 function preiseKarte(stand, D) {
   const l = preisAenderungen(stand, { datum: D }).slice(0, 8);
   const einheit = (e) => (e === "stk" ? t("allgemein.stueck") : e); // Trennung 2 (17.10.2026): Basis aus preisAnzeige() (js/lieferung.js)
-  return `<div class="karte"><h2>${esc(t("zaehler.preise"))}</h2>
+  return `<details class="karte auf"><summary><h2>${esc(t("zaehler.preise"))}</h2></summary>
     ${l.length ? l.map((x) => { const p = preisAnzeige(x); return `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${fmtEuro(p.alt, { dezimal: 2 })} → ${fmtEuro(p.neu, { dezimal: 2 })} / ${esc(einheit(p.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`; }).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
-  </div>`;
+  </details>`;
 }
 
 // ---------- Aktionen und Eingaben ----------
