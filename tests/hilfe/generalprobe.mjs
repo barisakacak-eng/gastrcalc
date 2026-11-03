@@ -1,6 +1,8 @@
 // Generalprobe P5 (30.10.2026): 14 Geschäftstage, zwei Läden auf EINEM Handy (eine Wurzel), Weihnachten bis Neujahr 2026/27.
 // Vorbild: tests/hilfe/sim30.mjs (feste Uhr, fester Zufall, IndexedDB-Attrappe, Befund-Mechanik). Nur Rechenwerk (js/*.js) + Speicherung (js/store.js), keine Bildschirme.
-// Aufruf:  TZ=Europe/Berlin node tests/hilfe/generalprobe.mjs [--leise] [--json=pfad]      Exit 1 bei Befunden.
+// Aufruf:  TZ=Europe/Berlin node tests/hilfe/generalprobe.mjs [--leise] [--json=pfad] [--sicherung=ordner]      Exit 1 bei Befunden.
+// --sicherung (02.11.2026, Prüfstand Freitag): schreibt am Ende die Sicherungsdatei beider Läden und die Sollwerte (Cockpit, Tage) als JSON in den Ordner.
+// Kürzel der Kräfte seit 02.11.2026 AB/CD/EF (erfunden, keine echten Initialen).
 // Befund-Klassen: A = falsche Zahl / Datenverlust · B = Ablauf kaputt · C = Lücke · D = Schönheit.
 // Setzungen 30.10.2026 (alle im Kommentar „Setzung 30.10.2026“ genannt):
 //  - Zeitraum Tag 1 = 2026-12-19 (Sa) bis Tag 14 = 2027-01-01 (Fr); beide Läden an allen 14 Tagen offen (tageProWoche 7, keine Ruhetage, Feiertage zählen als Öffnungstage).
@@ -115,9 +117,9 @@ function ladenBauen({ name, art, miete, strom = null, lohnkosten, personen, kuer
 // Setzung 30.10.2026: „grill“ ist keine Küche der App (js/data/kuechen.js:4-13, „doener“ heißt dort „Döner und Grill“); store.js:267 verwirft unbekannte Küchen beim Laden.
 // Darum kommt als zweite Küche „pizza“ dazu (Lahmacun/Pide) – derselbe Weg: stamm.kuecheUmschalten.
 const KUECHE_2 = "pizza";
-const baueA = ladenBauen({ name: "Döner-Grill (Probe)", art: ART_DOENER, miete: 1500, strom: 595, lohnkosten: 2400, personen: 2, kuerzel: ["BA", "MK"], takt: 2, stellen: [["Kühlschrank", "kuehl", "kuehlschrank"], ["Tiefkühler", "tk", "tiefkuehler"]] });
+const baueA = ladenBauen({ name: "Döner-Grill (Probe)", art: ART_DOENER, miete: 1500, strom: 595, lohnkosten: 2400, personen: 2, kuerzel: ["AB", "CD"], takt: 2, stellen: [["Kühlschrank", "kuehl", "kuehlschrank"], ["Tiefkühler", "tk", "tiefkuehler"]] });
 stamm.kuecheUmschalten(baueA.s, KUECHE_2);
-const baueB = ladenBauen({ name: "Burger-Truck (Probe)", art: ART_TRUCK, miete: 900, lohnkosten: 1200, personen: 1, kuerzel: ["TK"], takt: 1, stellen: [["Kühlschrank", "kuehl", "kuehlschrank"], ["Saladette", "kuehl", "saladette"]] });
+const baueB = ladenBauen({ name: "Burger-Truck (Probe)", art: ART_TRUCK, miete: 900, lohnkosten: 1200, personen: 1, kuerzel: ["EF"], takt: 1, stellen: [["Kühlschrank", "kuehl", "kuehlschrank"], ["Saladette", "kuehl", "saladette"]] });
 const sA = st.migrierenBetrieb(baueA.s), sB = st.migrierenBetrieb(baueB.s); const idA = sA.id, idB = sB.id;
 w.betriebe.push(sA, sB); w.aktiv = idA;
 const SH = { A: { id: idA, name: "A", sprache: "tr", ks: baueA.ks.map((k) => k.id), ps: baueA.ps.map((p) => p.id) }, B: { id: idB, name: "B", sprache: "en", ks: baueB.ks.map((k) => k.id), ps: baueB.ps.map((p) => p.id) } };
@@ -208,8 +210,8 @@ function putzen(X, D, i) {
   if (i === 0 && faellig.length === 0) befund("C", "putzplan-leer", `Putzplan ${X} hat am ersten Tag nichts Fälliges`);
 }
 function personal(X, D, i) {
-  const s = shop(X); const sz = mindestlohnAm(D).satz; const ps = SH[X].ps; const e = [{ person: ps[0], name: "BA", stunden: X === "A" ? 8 : 6, satz: sz, art: "angestellt" }];
-  if (X === "A" && i % 5 !== 4) e.push({ person: ps[1], name: "MK", stunden: 3, satz: sz, art: "minijob" });
+  const s = shop(X); const sz = mindestlohnAm(D).satz; const ps = SH[X].ps; const e = [{ person: ps[0], name: "AB", stunden: X === "A" ? 8 : 6, satz: sz, art: "angestellt" }];
+  if (X === "A" && i % 5 !== 4) e.push({ person: ps[1], name: "CD", stunden: 3, satz: sz, art: "minijob" });
   stamm.teamTagSetzen(s, D, e); L[X].team.set(D, e);
   const t = stamm.teamTag(s, D); if (!t || t.eintraege.length !== e.length) befund("A", "team-tag", `teamTagSetzen ${X} ${D}: ${t?.eintraege.length} statt ${e.length} Einträge`);
 }
@@ -426,7 +428,17 @@ TAG = "Stichtag"; uhr("2027-01-01", 23, 50);
 
 // ---------- Ende: Sicherung am Schluss in Profil 2, Texte in tr, Speichern rund ----------
 TAG = "Ende"; uhr("2027-01-01", 23, 58);
-{ const { blob } = await st.exportDatei(w); await profilZwei(blob, "2027-01-01", "Ende"); await speicherRund("2027-01-01");
+{ const { blob } = await st.exportDatei(w);
+  if (ARG.sicherung) { // Prüfstand (02.11.2026): Datei + Sollwerte VOR dem Einlesen, aus genau diesem Stand
+    const Z = await import(R + "zaehler.js"); const LZ = await import(R + "laden_zahlen.js"); const H = "2027-01-01";
+    fs.mkdirSync(ARG.sicherung, { recursive: true }); fs.writeFileSync(ARG.sicherung + "/pruefstand_sicherung.zip", Buffer.from(await blob.arrayBuffer()));
+    const soll = { datum: H, erzeugt: "tests/hilfe/generalprobe.mjs --sicherung (Generalprobe 19.12.2026–01.01.2027, alle Daten erfunden)", laeden: w.betriebe.map((b) => {
+      const z = Z.zaehler(b, { datum: H }); const hz = LZ.heuteZiel(b, z, H);
+      return { name: b.betrieb.name, ladenArt: b.ladenArt, tage: [...new Set((b.tagesnotizen || []).filter((n) => !n.storniert && typeof n.umsatz === "number").map((n) => n.datum))].sort(),
+        cockpit: { stufe: hz.stufe, zahl: hz.zahl === null ? null : Math.round(hz.zahl * 100) / 100 }, zaehlerStand: Math.round(z.stand * 100) / 100,
+        eintraege: Object.fromEntries(JOURNALE.map((j) => [j, (b[j] || []).length]).filter(([, n]) => n)) }; }) };
+    fs.writeFileSync(ARG.sicherung + "/pruefstand_soll.json", JSON.stringify(soll, null, 1) + "\n"); }
+  await profilZwei(blob, "2027-01-01", "Ende"); await speicherRund("2027-01-01");
   for (const X of ["A", "B"]) { const s = shop(X); try { const doks = {};
     for (const c of [SH[X].sprache, "de"]) { i18n.setzeSprache(c); const o = EA.ordnerAmt(s, EA.zeitraumFuer("monat", { datum: "2026-12-31" }), { datum: "2027-01-01" }); const p = ES.monatsPaket(s, ES.monatVon("2026-12-31"), "buch");
       doks[c] = { amt: alsJson(OT.amtDokument(s, o)), paket: alsJson(OT.paketDokument(s, p)), zahl: alsJson({ o, p }) }; scan(doks[c], `Dokument ${X} ${c}`); }

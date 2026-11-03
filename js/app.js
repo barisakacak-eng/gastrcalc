@@ -44,7 +44,8 @@ import { nav, navKontext } from "./screens/nav.js";
 import { bioKennung, bioSetzen, BUERO_OFFEN_MS, modusVergessen } from "./modus.js";
 import { bioPruefen, bioEinrichten } from "./schloss_bio.js";
 import { modus, modusSetzen, startAnsicht, navZiel, ansichtErlaubt, ebeneWiederherstellen, ebeneVergessen, pinGesetzt, pinSetzen, personalGesperrt, personalFeldGesperrt, codeAktiv, testphaseOhneCode, testphaseSetzen } from "./modus.js"; // W2-S: Sperrliste Personal
-import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, pinZweckJetzt, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { zaehler, monatsZiel } from "./zaehler.js"; // Lauf 2 (4d): Monatsblatt im Laden
+import { ebeneHuelle, blattOffen, blattSchliessen, menueZeigen, monatBlattZeigen, spracheZeigen, laedenZeigen, hilfeZeigen, pinStarten, pinTaste, pinZweckJetzt, passwortStarten, passwortWert, passwortZeigen, passwortMeldung, sicherungSchalter, sicherungWahl, ortFrageZeigen, pinZweck, rettungStarten, rettungWert, rettungMeldung, rettungZiel, rettungOffen, rettungWarteText, rettungscodeZeigen } from "./screens/ebene.js"; // E5 (16.10.2026): Passwort der Sicherung
 import { passwortGueltig } from "./schluessel.js"; // E5
 import { rettungVersuch, rettungAnlegen, wurzelErsetzen, rettungErlaubt } from "./rettung.js"; // Rettung (17.10.2026): Rettungscode, Sicherung ersetzt alles (Fehlerseite)
 import { muellView, muellAktion, muellEingabe, muellZurueck, muellZuruecksetzen, muellFormGueltig, muellKennung, muellRueckgaengig, muellFotoSetzen,
@@ -56,7 +57,7 @@ import { belegView, belegAktion, belegEingabe, belegZurueck, belegZuruecksetzen,
 import { abschlussView, abschlussAktion, abschlussZuruecksetzen, abschlussKennung } from "./screens/abschluss.js";
 import { inventurView, inventurAktion, inventurEingabe, inventurZurueck, inventurZuruecksetzen, inventurKennung } from "./screens/inventur.js";
 // Entwickler B (Drei Ebenen): Laden-Karte als Fotoraster mit Preis-Blatt
-import { karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZurueck, karteLadenZuruecksetzen, karteLadenKennung } from "./screens/karte_laden.js";
+import { karteLadenRezeptBlatt, karteLadenView, karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZurueck, karteLadenZuruecksetzen, karteLadenKennung } from "./screens/karte_laden.js";
 // Drei Ebenen (Entwickler C): Büro-Startseite und die drei Ordner
 import { bueroView, bueroAktion, bueroEingabe, bueroSperren, bueroZuruecksetzen } from "./screens/buero.js";
 import { ordnerAmtView, ordnerPaketView, ordnerAktion, ordnerEingabe, ordnerZuruecksetzen, ordnerVorschauOffen } from "./screens/ordner.js";
@@ -77,6 +78,7 @@ import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Me
 import { hinweiseView } from "./screens/hinweise.js"; // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
+import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 
@@ -90,6 +92,7 @@ function alleZuruecksetzen() { for (const f of ZURUECKSETZER) { try { f(); } cat
 const root = document.getElementById("app");
 let wurzel = null;
 let stand = null;           // der aktive Laden (ein Eintrag aus wurzel.betriebe)
+let bueroWeg = [];         // 01.11.2026: Büro-Weg für „Zurück“ (siehe bueroWegFuehren)
 let ansicht = "start";      // in Phase "app": start | karte | muell | kuehl | umsatz | listen | laeden | beleg | abschluss | einstellungen | inventur
 // Durchsicht 30.10.2026 (Fund 7): localStorage kann selbst werfen (gesperrter Speicher) – ein Ersatz ohne Speicher statt Absturz
 const SPEICHER_LEER = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
@@ -151,10 +154,10 @@ function zeichne() {
     else {
       if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
       if (ansicht === "verkauf" && !verkaufSichtbar(stand)) ansicht = startAnsicht(wurzel); // E7 (17.10.2026): ohne Schalter gibt es den Bereich nicht
-      navKontext(stand, wurzel, ansicht);
+      navKontext(stand, wurzel, ansicht, modus(wurzel) === "buero" ? bueroWeg : []);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
-        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length }) // W2-D
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length, home: homeLage({ buero: true }) }) // W2-D
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
         : ansicht === "muell" ? muellView(stand)
@@ -184,11 +187,11 @@ function zeichne() {
         : ansicht === "ordner-amt" ? ordnerAmtView(stand)
         : ansicht === "ordner-steuer" ? ordnerPaketView(stand, "steuer")
         : ansicht === "ordner-buch" ? ordnerPaketView(stand, "buch")
-        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null });
+        : startView(stand, { aktualisierung: !!aktualisierung, wurzel, ...zekiLage(), sicherungTage: sicherungStufe(wurzel)?.tage ?? null, home: homeLage() });
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gcFuehrungZeigen) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
+        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gcFuehrungZeigen) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); if (ansicht === "start" && stand.phase === "app") zeichne(); /* K3 Runde 2 (01.11.2026): Heute sofort neu, damit der Home-Hinweis nicht erst nach einem Tabwechsel kommt */ } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -328,7 +331,7 @@ function bearbeiten(vonId, bisId) {
   ({ von: vonId, bis: bisId } = bearbeitenZiel(stand, vonId, bisId)); // 17.10.2026 Fehler F1: ohne Gerichte erst die Gerichte-Auswahl
   const i = schrittIndex(vonId); if (i < 0) return;
   stand.weg = "genau"; // Bearbeiten nutzt immer die einzelnen Schritte
-  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) ? ansicht : ansicht === "kartefoto" ? "kartebuero" : ansicht.startsWith("ordner-") ? "buero" : "start" }; // 17.10.2026 Fehler F1: aus „Karte per Foto“ zurück zur Speisekarte
+  stand.phase = "onboarding"; stand.schritt = i; stand.rueckkehr = { von: vonId, bis: bisId || vonId, ansicht: ["einstellungen", "karte", "kartebuero", "inventur", "buero"].includes(ansicht) || (modus(wurzel) === "buero" && !ansicht.startsWith("ordner-") && ansicht !== "kartefoto") ? ansicht : ansicht === "kartefoto" ? "kartebuero" : ansicht.startsWith("ordner-") ? "buero" : "start" }; // 17.10.2026 Fehler F1: aus „Karte per Foto“ zurück zur Speisekarte
   schrittBetreten();
   ereignis("bearbeiten", { schritt: vonId });
   history.pushState({ schritt: i }, "");
@@ -504,6 +507,19 @@ function dauerhaftAnfragen() {
   wurzel.persistGefragt = true; speichern(wurzel);
   speicherDauerhaftPruefen({ anfragen: true }).then((ok) => { ereignis("speicher-dauerhaft", { ok }); if (ansicht === "einstellungen") zeichne(); });
 }
+// Lauf 2 (31.10.2026), Bildpaket D – Baris' Ja am 01.11.2026: Home-Bildschirm-Führung, Rezept-Blatt im Laden und die Klicker-Befunde sind Standard.
+// Testhaken window.__gcD.homeGeraet ("ios" | "android") stellt das Gerät nur für Bildproben; sonst zählt der echte Browser.
+const probeGeraet = () => (typeof window !== "undefined" && window.__gcD?.homeGeraet) || null;
+let installAufforderung = null; // Android/Chrome: „beforeinstallprompt“ aufheben → Knopf „Installieren“ im Büro (Sicherung)
+if (typeof window !== "undefined") window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installAufforderung = e; if (ansicht === "einstellungen") zeichne(); });
+// Lage für die Ansichten: null = kein Hinweis. Laden: nur einmal, nicht während des Rundgangs. Büro: immer (Sicherung), auch „liegt schon dort“.
+function homeLage({ buero = false } = {}) {
+  const g = probeGeraet();
+  const z = installZustand(g ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: g === "android" ? "Android" : "iPhone" } } : globalThis);
+  if (buero) return { ...z, knopf: !!installAufforderung };
+  if (fuehrungOffen() || kurzOffen() || !stand?.fuehrung || !homeHinweisFaellig(wurzel, z)) return null; // erst nach dem Rundgang
+  return z;
+}
 // W2-D: „Diagnose kopieren“ – Fassung, Browser, Speicher, Anzahl Einträge. Keine Namen, keine Zahlen aus dem Laden.
 async function diagnoseKopieren() {
   const sp = await speicherBelegt(); const mb = (n) => (typeof n === "number" ? (n / 1048576).toFixed(1) + " MB" : "?");
@@ -519,6 +535,7 @@ async function diagnoseKopieren() {
 // ---------- Ebenen: Laden · Personal · Büro (Entwickler A) ----------
 
 function ebeneWechseln(m, ziel) {
+  bueroWeg = []; // 01.11.2026: Ebenenwechsel beginnt den Büro-Weg neu
   if (m === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) return; // W2-S: Personal nur mit Büro-Code – außer in der Testphase ohne Code
   if (m === "personal" && modus(wurzel) !== "personal") schichtPersonVergessen(stand); // 27.10.2026 (Persona-Test): Chef gibt das Handy weiter → neu fragen „Wer arbeitet?“, sonst bucht der Nächste unter dem alten Namen
   if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
@@ -689,7 +706,8 @@ async function aufKlick(ev) {
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav" && el.dataset.wert !== ansicht) { if (ansicht.startsWith("ordner-")) ordnerZuruecksetzen(); if (ansicht === "buero") bueroZuruecksetzen(); } // Entwickler C: Büro zu, wenn es in den Laden geht
-  if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) return bueroBetreten(nz.ansicht); // Büro-Bildschirm aus dem Laden: erst ins Büro
+  if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) { bueroWeg = []; return bueroBetreten(nz.ansicht); } // Büro-Bildschirm aus dem Laden: erst ins Büro
+    if (modus(wurzel) === "buero") bueroWegFuehren(nz.ansicht, !!el.dataset.zurueck); // 01.11.2026: Zurück im Büro = eine Ebene
     if (nz.ansicht === "preise") return bearbeiten("preise"); // Paket 3 (16.10.2026): Richtwert-Zeile „Preise eintragen“ – im Büro direkt in den Schritt
     const ziel = nz.ansicht; if (ziel !== ansicht) herkunft = ansicht; // Prüfung 15.10.: Zurück führt dorthin, wo man herkam
     if (ziel === "inventur") inventurZuruecksetzen(); // Inventur aus dem Menü: offene Zählung oder Übersicht
@@ -714,6 +732,10 @@ async function aufKlick(ev) {
   if (name === "rezept-direkt" && stand.phase === "app") return rezeptDirekt(el.dataset.id || null); // 28.10.2026: Heute „Jetzt“
   if (name === "fehler-melden") { textTeilen(fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache(), geraet: navigator.userAgent.replace(/\(.*?\)/g, "").trim().slice(0, 60) }), t("einstellungen.fehler.titel")).then((r) => { if (r === "kopiert") meldung(t("einstellungen.fehler.kopiert")); }); return true; } // P6 (6)
   if (name === "fehler-leeren") { fehlerLeeren(speicherLokal()); return zeichne(); }
+  if (name === "monat-blatt") { if (!blattOffen()) history.pushState({ blatt: true }, ""); const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const m = monatsZiel(stand, z, H); 
+    monatBlattZeigen(stand, { umsatz: m.umsatz, nullpunkt: m.nullpunkt, ziel: m.ziel, geschaetzt: m.geschaetzt }); return true; } // Bildpaket D (4d): große Zahl → Blatt im Laden
+  if (name === "home-weg") { homeHinweisGesehen(wurzel); speichern(wurzel); return zeichne(); } // Bildpaket D (1): Laden-Hinweis einmal, dann weg
+  if (name === "home-installieren") { const p = installAufforderung; installAufforderung = null; if (p) { p.prompt(); p.userChoice?.then(() => zeichne()); } return true; }
   if (name === "zeki-erst-wieder") { let sp = null; try { sp = localStorage; } catch { sp = null; } erstWiederZeigen(sp); meldung(t("rundgang.erst.wiederOk")); return true; } // 6b R2 live: Zeki erklärt jede Stelle wieder beim ersten Tipp
   if (name === "zeki-log-loeschen") { const n = zekiLogLoeschen(stand); speichern(wurzel); meldung(datenschutzText(aktuelleSprache())[n ? "zekiGeloescht" : "zekiLeer"]); return zeichne(); } // Datenschutz (27.10.2026)
   if (name === "abgleich-ok") { abgleichHinweisQuittieren(stand); speichern(wurzel); return zeichne(); } // W2-D: Hinweis „Beim Zusammenführen …“ gelesen
@@ -722,6 +744,7 @@ async function aufKlick(ev) {
   if (name === "aktualisieren") { if (aktualisierung) { aktualisierungKlick = true; aktualisierung.postMessage("uebernehmen"); } return; }
   if (name === "kuehl-rundgang-start") { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = "kuehl"; if (el.dataset.offen !== "1") { kuehlAktion(modus(wurzel) === "buero" ? "kuehl-rundgang" : "kuehl-rundgang-los", el, stand, wurzel); speichern(wurzel); } return zeichne(); } // Laden-Umbau (20.10.2026): im Laden direkt zur ersten Stelle
   if (name === "kuehl-einrichtung-oeffnen") { ansicht = "kuehl"; kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); }
+  if (name === "kuehl-blatt-oeffnen") { ansicht = "kuehl"; kuehlZuruecksetzen(); if (kuehlBereit(stand)) kuehlAktion("kuehl-blatt", el, stand, wurzel); else kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); } // Lauf 2, K2 C4: Büro-Zeile „Kontrollblatt“ öffnet das Blatt selbst
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
   if (name === "laden-loeschen") { if (wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // W2-S: mit Büro-Code
   if (name === "beispiel-anlegen") return beispielAnlegen(); // Beispiel-Laden (17.10.2026)
@@ -773,7 +796,9 @@ async function aufKlick(ev) {
   if (ansicht === "karte") { // B: Laden-Karte – Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen)
     const r = karteLadenAktion(name, el, stand);
     if (r === "blatt") { const b = root.querySelector(".kl-blatt"); if (b) { root.querySelector(".kl-dimmer")?.remove(); b.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; }
-    if (r && r.rezept) return rezeptDirekt(r.rezept, { max: fuehrungOffen() ? 1 : 3 }); // 28.10.2026: Tipp aufs Gericht → erste Mengenfrage (im Rundgang eine Frage)
+    if (r && r.gespeichert && r.rezept === true) { artikelAbgleichen(stand); ereignis("rezept-laden", { laden: stand.id, gericht: r.id }); await sofortSpeichern(wurzel); const bl = root.querySelector(".kl-blatt"); if (bl) { root.querySelector(".kl-dimmer")?.remove(); bl.outerHTML = karteLadenBlatt(stand); eigeneFotosLaden(); } else zeichne(); return; } // Bildpaket D (3) B: Menge geändert, Blatt bleibt offen
+    if (r && r.rezept && !fuehrungOffen() && karteLadenRezeptBlatt(stand, r.rezept)) return zeichne(); // Bildpaket D (3) B, Ja 01.11.2026: alle Zutaten im Laden-Blatt
+    if (r && r.rezept) return rezeptDirekt(r.rezept, { max: fuehrungOffen() ? 1 : 3 }); // 28.10.2026: im Rundgang (und ohne Zutaten) die Mengenfrage
     if (r && r.gespeichert) { ereignis("preis-geaendert", { laden: stand.id, gericht: r.id, vorher: r.vorher ?? null, preis: r.preis, ort: "laden" }); meldung(t("kartelaeden.gespeichert")); await sofortSpeichern(wurzel); return zeichne(); }
     if (r) return zeichne();
   }
@@ -1020,6 +1045,15 @@ root.addEventListener("keydown", (ev) => {
 
 // Zurück-Geste des Handys / Browser-Zurück: ein Schritt zurück statt App verlassen.
 let herkunft = null; // vorige Ansicht (für die Zurück-Geste aus Listen und Beleg)
+// Baris 01.11.2026 (Klicker K2 Runde 2, B1): Büro-Weg – die vorher besuchten Büro-Bildschirme, damit „Zurück“ eine Ebene zurück führt
+// statt immer zum Büro-Start. Büro-Start leert den Weg; „Zurück“ nimmt den letzten Eintrag ab; höchstens 12 Einträge.
+function bueroWegFuehren(ziel, zurueck) {
+  if (ziel === ansicht) return;
+  if (ziel === "buero") { bueroWeg = []; return; }
+  if (zurueck) { bueroWeg.pop(); return; }
+  const i = bueroWeg.lastIndexOf(ziel); if (i >= 0) { bueroWeg = bueroWeg.slice(0, i); return; } // schon auf dem Weg: dorthin zurückspringen, keine Schleife
+  if (ansicht !== "buero") bueroWeg = [...bueroWeg, ansicht].slice(-12);
+}
 window.addEventListener("popstate", () => {
   if (!stand) return;
   if (fuehrungOffen()) { history.pushState({ schritt: stand.schritt }, ""); return; } // Mitmach-Rundgang: Zurück-Geste wirkt nicht, Station 16 lässt sich nicht schließen
@@ -1045,6 +1079,7 @@ window.addEventListener("popstate", () => {
     else if (ansicht === "kartefoto") { fotoZuruecksetzen(); ansicht = m === "buero" ? "kartebuero" : anfang; } // Persona-Test 27.10.: nach der Einrichtung (Laden) zurück zu Heute, nicht ins Büro
     else if (ansicht.startsWith("ordner-")) { if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); ansicht = "buero"; } } // Vorschau zu, dann ins Büro
     else if (ansicht === "karte" && karteLadenZurueck()) { /* erst das Preis-Blatt schließen */ }
+    else if (m === "buero" && bueroWeg.length) { ansicht = bueroWeg.pop(); } // 01.11.2026: Büro – eine Ebene zurück
     else { if (ansicht === "abschluss") abschlussZuruecksetzen(); ansicht = anfang; } // Laden-Reiter stapeln nicht: Zurück = Heute; Büro → Büro-Start; Personal → drei Kacheln
     if (!ansichtErlaubt(wurzel, ansicht)) ansicht = anfang;
     zeichne();

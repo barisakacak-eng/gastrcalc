@@ -29,7 +29,8 @@ PORT = int(os.environ.get("DURCHLAUF_PORT", "8820"))
 CODE = "1234"
 VARIANTEN = [  # (Name, Sprache, Breite, Höhe, CPU-Drossel)
     ("de-390x844", "de", 390, 844, 1), ("tr-390x844", "tr", 390, 844, 1), ("ar-390x844", "ar", 390, 844, 1),
-    ("de-360x780", "de", 360, 780, 1), ("tr-360x780", "tr", 360, 780, 1), ("de-390x844-cpu4x", "de", 390, 844, 4)]
+    ("de-360x780", "de", 360, 780, 1), ("tr-360x780", "tr", 360, 780, 1), ("de-390x844-cpu4x", "de", 390, 844, 4),
+    ("ar-360x780", "ar", 360, 780, 1)]  # Lauf 2 (31.10.2026): Arabisch auch schmal
 AUSLASSEN = {"laden-loeschen", "loeschen", "beispiel-loeschen", "export", "ordner-schicken", "akt-teilen", "best-teilen", "tf-teilen", "ordner-teilen",
              "eig-druck", "pp-drucken", "blatt-drucken", "aktualisieren", "pin-entfernen", "zeki-log-loeschen"}
 AUSLASSEN_LAUF = {"laden-neu": "legt einen neuen Laden an und wechselt ihn", "laden-wechseln": "wechselt den Laden", "beispiel-anlegen": "legt den Beispiel-Laden an und wechselt ihn",
@@ -468,8 +469,8 @@ class Lauf:
             start = '.ebene-kopf.buero .zurueckzeile[data-a="modus"]'
             for _ in range(8):
                 if await pg.locator(start).count(): return
-                if await pg.locator('.ebene-kopf.buero .zurueckzeile[data-a="nav"][data-wert="buero"]').count():
-                    await nav_hilfe._tipp(pg, '.ebene-kopf [data-a="nav"][data-wert="buero"]', 350)
+                if await pg.locator('.ebene-kopf.buero .zurueckzeile[data-a="nav"]').count():  # 01.11.2026: Zurück = eine Ebene, notfalls mehrmals
+                    await nav_hilfe._tipp(pg, '.ebene-kopf.buero .zurueckzeile[data-a="nav"]', 350)
                 else:
                     await self.neu_laden(); await self.zu_modus("buero")
                 await pg.wait_for_timeout(200)
@@ -563,7 +564,9 @@ def main():
     if "--kurz" in sys.argv:  # Wächter (E1): eine Variante, 40 Elemente je Bildschirm, 12 Minuten
         os.environ.setdefault("KLICK_SCHNELL", "1"); os.environ.setdefault("KLICK_MAX", "40"); os.environ.setdefault("KLICK_MINUTEN", "12")
     t0 = time.time(); OUT.mkdir(parents=True, exist_ok=True)
-    for alt in OUT.glob("*.png"): alt.unlink()
+    # Lauf 2 (31.10.2026): bei KLICK_VARIANTE nur die Bilder dieser Variante räumen – sonst löscht der zweite Lauf die Befund-Bilder des ersten
+    nurVar = os.environ.get("KLICK_VARIANTE"); praefix = VARIANTEN[int(nurVar) - 1][0] if nurVar else ""
+    for alt in OUT.glob(f"{praefix}*.png"): alt.unlink()
     kappung = int(os.environ["KLICK_MAX"]) if os.environ.get("KLICK_MAX") else None
     minuten = float(os.environ.get("KLICK_MINUTEN", "15"))
     nur = [n for n in os.environ.get("KLICK_NUR", "").split(",") if n]

@@ -194,3 +194,36 @@ body.blatt-da { overflow: hidden; }
 .fortschritt-stufen li.fertig::before { content: "✓ "; color: var(--b-kupfer, #b5683a); }
 @media (prefers-reduced-motion: reduce) { .fortschritt-balken { animation: none; width: var(--bis, 50%); } }
 .karte.serie .fortschritt.rund { width: 64px; height: 8px; margin: 0; flex: none; align-self: center; }
+
+/* Lauf 2, Bildpaket D (1): Home-Bildschirm-Hinweis im Laden (einmal) und in der Einrichtung */
+.home-karte{display:flex;flex-direction:row;align-items:center;gap:.6rem;padding:.7rem .9rem;margin:0 0 .6rem;border:1px solid var(--holz)}
+.home-karte .home-sym{display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--kupfer-hell);color:var(--glut);flex:none}
+.home-karte .home-sym .sym{width:1.25rem;height:1.25rem}
+.home-karte p{margin:0;flex:1;font-size:.95rem;line-height:1.3}
+.home-karte .leise{margin:0;flex:none}
+.home-karte.s2home{display:block;text-align:start}
+.home-schritte{margin:.4rem 0 0;padding:0 0 0 1.2rem;display:grid;gap:.3rem;font-size:.95rem}
+.home-schritte .sym{width:1rem;height:1rem;vertical-align:-.15em;color:var(--glut)}
+.home-buero{margin:.6rem 0 .2rem}
+.home-buero .knopf{margin-top:.5rem}
+.home-schon{display:flex;align-items:center;gap:.4rem;color:var(--salbei-tief);margin:.4rem 0}
+.home-schon .sym{width:1rem;height:1rem}
+
+/* Lauf 2, Bildpaket D (4d): Monatsblatt im Laden */
+.blatt-monat .mb-zeilen{display:grid;gap:.5rem;margin:.4rem 0 1rem}
+.blatt-monat .mb-zeile{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.7rem .9rem;background:var(--papier-tief);border-radius:var(--radius)}
+.blatt-monat .mb-zeile b{font-size:1.35rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.blatt-monat .mb-zeile.plus b{color:var(--gruen)}
+.blatt-monat .mb-knoepfe{display:grid;gap:.5rem}
+/* Lauf 2, Bildpaket D (4f), Ja 01.11.2026: Zeki-Kopf nicht mehr am oberen Rand angeschnitten, „?“-Karte ruhiger (Zeichen und Knopf mittig, kein Riesen-Zeichen am Rand) */
+.appleiste .ikonknopf.zeki-knopf .zeki{width:52px;height:72px}
+.appleiste .ikonknopf.hilfe.zeki-knopf{margin-bottom:-6px}
+.karte.h-ziel.h-ziel-fehlt{align-items:center;justify-content:center;min-height:150px;text-align:center}
+.h-ziel-fehlt .h-riesig{font-size:calc(40rem / 17);line-height:1;opacity:.85}
+
+/* Home-Hinweis im Laden: eine Zeile, kein Scrollen auf 360×780 */
+.home-karte.kompakt{padding:.45rem .7rem;margin:0 0 .5rem;gap:.5rem}
+.home-karte.kompakt .home-sym{width:1.8rem;height:1.8rem}
+.home-karte.kompakt .home-sym .sym{width:1.05rem;height:1.05rem}
+.home-karte.kompakt p{font-size:.88rem;line-height:1.25}
+.home-karte.kompakt .leise{padding:.3rem .6rem;min-height:44px;min-width:44px}

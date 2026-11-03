@@ -8,8 +8,16 @@ import { modus, LADEN_TABS } from "../modus.js";
 import { sym } from "../symbole.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
 
-let kontext = { stand: null, wurzel: null, ansicht: "start" };
-export const navKontext = (stand, wurzel, ansicht = "start") => { kontext = { stand, wurzel, ansicht }; };
+let kontext = { stand: null, wurzel: null, ansicht: "start", weg: [] };
+export const navKontext = (stand, wurzel, ansicht = "start", weg = []) => { kontext = { stand, wurzel, ansicht, weg }; };
+// Baris 01.11.2026 (Klicker K2 Runde 2, B1): „Zurück“ im Büro führt eine Ebene zurück – zum vorigen Büro-Bildschirm, sonst zum Büro-Start.
+// weg = Liste der vorher besuchten Büro-Bildschirme (app.js); data-zurueck sagt app.js, dass der Eintrag vom Weg genommen wird.
+export function bueroZurueckKnopf() {
+  const vorher = kontext.weg?.length ? kontext.weg[kontext.weg.length - 1] : null;
+  return vorher && vorher !== "buero"
+    ? `<button type="button" class="zurueckzeile" data-a="nav" data-wert="${esc(vorher)}" data-zurueck="1">${sym("chevron-left")}<span>${esc(t("allgemein.zurueck"))}</span></button>`
+    : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="buero" data-zurueck="1">${sym("chevron-left")}<span>${esc(t("ebene.zumBuero"))}</span></button>`;
+}
 
 // Trennung (17.10.2026): sicherungStufe → js/sicherung_stufe.js, menueZaehler und ladenPunkt → js/offen.js (Rechenwerk).
 
@@ -36,7 +44,7 @@ export function nav(aktiv, _alt = {}) {
   if (m === "buero") {
     const start = ansicht === "buero";
     const links = start ? `<button type="button" class="zurueckzeile" data-a="modus" data-wert="laden">${sym("chevron-left")}<span>${esc(t("ebene.zumLaden"))}</span></button>`
-      : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="buero">${sym("chevron-left")}<span>${esc(t("ebene.zumBuero"))}</span></button>`;
+      : bueroZurueckKnopf();
     return `<header class="appleiste ebene-kopf buero">${links}<span class="kopftitel">${start ? esc(t("ebene.buero")) : ""}</span>${hilfeKnopf()}</header>`;
   }
   const tab = LADEN_TABS.includes(ansicht) ? ansicht : LADEN_TABS.includes(aktiv) ? aktiv : null;

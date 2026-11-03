@@ -11,12 +11,13 @@ let p = null; // { gid, zutat, soll, einheit, wert, fertig }
 export const portionZuruecksetzen = () => { p = null; };
 export function portionOeffnen(stand, gid) {
   const g = (stand.gerichte || []).find((x) => x.id === gid); const h = g ? hauptZutat(stand, g) : null;
-  p = h ? { gid, zutat: h.name, soll: h.menge, einheit: h.einheit, wert: h.menge, fertig: false } : null; return !!p;
+  // K1 Runde 2 (01.11.2026): Gericht mit Rezept, aber ohne bepreiste Hauptzutat → eigener Hinweis statt „kein eigenes Rezept“
+  p = h ? { gid, zutat: h.name, soll: h.menge, einheit: h.einheit, wert: h.menge, fertig: false } : g ? { gid, zutat: null } : null; return !!p;
 }
 
 export function portionView(stand) {
   const g = p && (stand.gerichte || []).find((x) => x.id === p.gid);
-  if (!g) return `<div class="inhalt po"><p>${esc(t("gehirn.portion.leer"))}</p><button type="button" class="knopf" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte")}`;
+  if (!g || !p.zutat) return `<div class="inhalt po"><p>${esc(t(g ? "gehirn.portion.ohnePreis" : "gehirn.portion.leer"))}</p><button type="button" class="knopf" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte")}`;
   if (p.fertig) {
     const r = portionEuro(stand, p.gid, p.zutat, p.wert); const d = p.wert - p.soll;
     const satz = !r || Math.abs(d) < 0.5 ? t("gehirn.portion.genau") : t(d > 0 ? "gehirn.portion.mehr" : "gehirn.portion.weniger", fmtEuroGeschaetzt(Math.abs(r.jahr), true));
@@ -26,7 +27,8 @@ export function portionView(stand) {
   }
   return `<div class="inhalt po"><h1 class="frage">${esc(t("gehirn.portion.frage", mengenText(p.zutat), g.name, p.einheit))}</h1>
     <div class="stepper gross"><button type="button" data-a="po-d" data-d="-1" aria-label="−">−</button><label class="wert po-wert"><input type="text" inputmode="numeric" data-f="po-wert" value="${esc(String(p.wert))}" aria-label="${esc(t("gehirn.portion.pruefen"))}" autocomplete="off"><span>${esc(p.einheit)}</span></label><button type="button" data-a="po-d" data-d="1" aria-label="+">+</button></div>
-    <button type="button" class="knopf glut" data-a="po-pruefen">${esc(t("gehirn.portion.pruefen"))}</button></div>${nav("karte")}`;
+    <button type="button" class="knopf glut" data-a="po-pruefen">${esc(t("gehirn.portion.pruefen"))}</button>
+    <button type="button" class="leise" data-a="nav" data-wert="karte">${esc(t("allgemein.zurueck"))}</button></div>${nav("karte")}`; // K2 Runde 2 (01.11.2026): Weg zurück zur Karte ohne Prüfung
 }
 
 export function portionAktion(name, el, stand, { datum } = {}) {

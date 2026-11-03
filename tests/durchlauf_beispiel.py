@@ -66,8 +66,9 @@ async def main():
             for k in ["Kühlschrank", "Kühlschrank 2", "Tiefkühler", "Saladette"]: assert k in t, (k, t[:500])
             assert "°C" in t, t[:500]
             await bild("kuehl", True)
-            await nav_hilfe.ins_buero(pg); await tipp('#app [data-a="nav"][data-wert="kuehl"]')  # Laden-Umbau (20.10.2026): Monatsblatt wohnt im Büro
-            await tipp('#app [data-a="kuehl-blatt"]'); t = await text()
+            # Lauf 2, K2 C4 (31.10.2026): das Kontrollblatt öffnet direkt aus der Büro-Zeile „Kontrollblatt“ (vorher Büro → Kühlung → Blatt)
+            await nav_hilfe.ins_buero(pg); await pg.evaluate("() => { for (const d of document.querySelectorAll('#app details')) d.open = true; }")
+            await tipp('#app [data-a="kuehl-blatt-oeffnen"]'); t = await text()
             assert "°C" in t or "9,4" in t, t[:500]
             await bild("kuehl_blatt", True)
             # Putzen
@@ -83,6 +84,14 @@ async def main():
             await nav_hilfe.geh(pg, "ordner-amt"); t = await text()
             assert "Kühl" in t, t[:500]
             await bild("ordner_amt", True)
+            # 01.11.2026: Der Abweichungstag liegt ≈ 12 Tage zurück; in den ersten Monatstagen fällt er nicht in den voreingestellten
+            # Monat. Dann Zeitraum „Frei“ ab 30 Tagen zurück wählen (so wie es der Inhaber am Monatsanfang täte).
+            abw = await pg.evaluate("(() => { const m = (window.__gastrocalc.stand.messungen || []).find(x => x.wert === 9.4); return m ? m.datum : null; })()")
+            H = await pg.evaluate("import('./js/util.js').then(u => u.heute())")
+            if abw and abw[:7] != H[:7]:
+                await tipp('#app [data-a="ordner-zeit"][data-wert="frei"]'); await pg.wait_for_timeout(300)
+                von = await pg.evaluate(f"(() => {{ const d = new Date('{H}T12:00:00'); d.setDate(d.getDate() - 30); return d.toISOString().slice(0, 10); }})()")
+                await pg.fill('#app input[data-f="amt-von"]', von); await pg.dispatch_event('#app input[data-f="amt-von"]', "change"); await pg.wait_for_timeout(400)
             await tipp('#app [data-a="ordner-vorschau"]'); await pg.wait_for_timeout(400)
             html = await pg.evaluate("(() => { const f = document.querySelector('#app iframe'); return f ? (f.srcdoc || '') : document.querySelector('#app').innerHTML; })()")
             assert "BEISPIEL – keine echten Daten" in html, html[:300]

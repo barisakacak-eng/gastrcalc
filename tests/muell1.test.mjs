@@ -101,7 +101,7 @@ test("Personal-Modus: Person einmal je Schicht wählen; Einträge tragen von", (
   assert.equal(schichtPerson(s), "p1"); assert.equal(schichtPerson(s, "2099-01-01"), null, "neue Schicht = neu wählen");
   const h = personalView(s);
   assert.ok(h.includes("Ayşe") && h.includes('data-wert="muell"') && h.includes('data-wert="kuehl"') && h.includes('data-wert="putzplan"'));
-  assert.ok(h.includes("m-eimer-foto") && h.includes("k-getraenke-foto"));
+  assert.ok(h.includes("m-eimer-foto") && h.includes("k-kuehlschrank-lebensmittel-foto") && !h.includes("k-getraenke-foto"), "03.11.2026: Kühlung-Kachel zeigt den Lebensmittel-Kühlschrank, nicht den Getränkekühlschrank");
   muellZuruecksetzen(); const r = muellTipp(kachel("artikel", "", "Fladenbrot"), s);
   assert.equal(r.eintrag.von, "p1");
   assert.equal(personalVon(s), "p1");

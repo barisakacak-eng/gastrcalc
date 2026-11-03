@@ -930,11 +930,13 @@ export function abweichungStand(stand, m) {
 export const letzteMessung = (stand, stelleId) => messungenDerStelle(stand, stelleId).filter((m) => typeof m.wert === "number").pop() || null;
 // Trennung (17.10.2026): aus js/screens/home.js (Laden-Kachel Kühlung) – die schlimmste Abweichung: letzter Wert je Stelle, offener
 // Rundgang (W2-H, p01 K3) und heutige Messungen am Kalendertag K; sortiert nach Abstand zur Grenze. null = keine.
+// Lauf 2 (31.10.2026), Klicker K1 A1: Die Kachel „Kühlung“ bleibt rot, solange die LETZTE Messung einer Stelle (vom Tag K) abweicht oder eine offene
+// Rundgang-Messung abweicht. Vorher zählte jede Abweichung des Tages bis Mitternacht – nach einer Nachkontrolle mit 5 °C stand weiter „9 °C“ rot.
+// Die Abweichung selbst bleibt im Kontrollblatt und in der Nachkontroll-Liste dokumentiert; hier geht es nur um die Ampel im Laden.
 export function kuehlSchlimmsteAbweichung(stand, K = heute()) {
-  const abw = (stand.messungen || []).filter((m) => m.datum === K && !m.storniert && m.abweichung && typeof m.wert === "number");
-  const stellenAbw = [...aktiveStellen(stand).map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.abweichung && typeof m.wert === "number"), ...rundgangAbweichungen(stand)];
+  const stellenAbw = [...aktiveStellen(stand).map((k) => letzteMessung(stand, k.id)).filter((m) => m && m.datum === K && m.abweichung && typeof m.wert === "number"), ...rundgangAbweichungen(stand)];
   const aus = (m) => typeof m.max === "number" && m.wert > m.max ? m.wert - m.max : typeof m.min === "number" && m.wert < m.min ? m.min - m.wert : 0; // wie weit außerhalb der Grenze
-  return [...stellenAbw, ...abw].sort((a, b) => aus(b) - aus(a))[0] || null;
+  return stellenAbw.sort((a, b) => aus(b) - aus(a))[0] || null;
 }
 
 // Offene Nachkontrollen: Abweichung mit Nachkontrolle, nach der noch keine spätere Messung derselben Stelle liegt.

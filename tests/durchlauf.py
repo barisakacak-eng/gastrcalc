@@ -20,6 +20,9 @@ Summe Netto 66,30
 MwSt A 7% 3,97
 MwSt B 19% 1,82
 Gesamtbetrag 72,09"""
+# 01.11.2026: Belegdatum = heutiger Geschäftstag, sonst fällt der Beleg am Monatsanfang aus dem Zähler-Monat (vorher fest 11.10.2026)
+import datetime as _dt
+BELEG = BELEG.replace("11.10.2026", (_dt.datetime.now() - _dt.timedelta(hours=4)).strftime("%d.%m.%Y"))
 
 async def main():
     srv = subprocess.Popen([sys.executable, "-m", "http.server", str(PORT), "--bind", "127.0.0.1"], cwd=APP, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

@@ -127,6 +127,12 @@ async def lauf(b, breite, hoehe, fehler):
     try:
         await schnellstart.schnellstart(pg, PORT, name="Döner Test")
         stand = await pg.evaluate("window.__gastrocalc.stand"); aus = ausschluss_fuer(stand, "Döner Test")
+        # Lauf 2 (31.10.2026): in tr/ar zeigt die App Artikel- und Gerichtnamen übersetzt (i18n.artikelText/gerichtText) – auch die sind Daten, keine Erklärwörter
+        for n in await pg.evaluate("""async () => { const i = await import('./js/i18n.js'); const s = window.__gastrocalc.stand;
+            return [...(s.artikel || []).map((a) => i.artikelText(a.name)), ...(s.gerichte || []).map((g) => i.gerichtText(g.name)), ...(s.kuehlstellen || []).map((k) => k.name)]; }"""):
+            for t in re.split(r"\s+", n or ""):
+                t = re.sub(r"^[^\w]+|[^\w]+$", "", t)
+                if t: aus.add(t.lower())
         n = 0
         async def bild(name):
             nonlocal n; n += 1; await pg.screenshot(path=str(OUT / f"{vp}_{n:02d}_{name}.png"), full_page=False)

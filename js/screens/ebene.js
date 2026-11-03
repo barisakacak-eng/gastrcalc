@@ -4,7 +4,7 @@
 // „personal" (Entwickler D, screens/personal.js) und „buero" (Entwickler C, screens/buero.js) haben eigene Bildschirme.
 import { t, sprache, SPRACHEN, SPRACH_NAMEN, spracheName } from "../i18n.js";
 import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen (26.10.2026)
-import { esc } from "../util.js";
+import { esc, fmtEuro } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
 import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText, testphaseOhneCode } from "../modus.js";
@@ -67,6 +67,18 @@ export function blattSchliessen() {
 const ladenBild = (stand) => { const art = ladenArtVon(stand); return `bilder/laden-${["doener", "pizza", "burger", "asia", "baeckerei", "cafe", "foodtruck"].includes(art) ? art : "anders"}.svg`; };
 
 // ---------- Menü-Blatt (Laden) ----------
+// Lauf 2, Bildpaket D (4d) – 31.10.2026: Tipp auf die große Zahl bleibt im Laden. Ein Blatt mit drei Zeilen (Umsatz, Kosten bis heute, bis null / über null),
+// „Umsatz eintragen“ und „Mehr im Büro“. m = monatsZiel() aus js/zaehler.js (fertig gerechnet, hier nur gezeigt). Höchstens 15 erklärende Wörter.
+export function monatBlattZeigen(stand, d) {
+  // d = { umsatz, nullpunkt, ziel, geschaetzt } aus monatsZiel() – drei Zeilen, die zur großen Zahl passen: Ziel − Umsatz = die Karte
+  const u = d?.umsatz || 0; const np = d?.nullpunkt ?? null; const ziel = d?.ziel ?? null;
+  const zeile = (k, wert, kl = "") => `<div class="mb-zeile ${kl}"><span>${esc(t("heute.blatt." + k))}</span><b>${wert}</b></div>`;
+  const g = d?.geschaetzt ? "≈ " : "";
+  zeigen("monat", `<div class="blattkopf"><div><b>${esc(t("heute.blatt.titel"))}</b><small>${esc(stand?.betrieb?.name || "")}</small></div>
+      <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
+    <div class="mb-zeilen">${zeile("umsatz", fmtEuro(u, { dezimal: 0 }))}${np === null ? "" : zeile("nullpunkt", g + fmtEuro(np, { dezimal: 0 }), u >= np ? "plus" : "")}${ziel === null || ziel === np ? "" : zeile("ziel", g + fmtEuro(ziel, { dezimal: 0 }), u >= ziel ? "plus" : "")}</div>
+    <div class="mb-knoepfe"><button type="button" class="knopf glut" data-a="nav" data-wert="umsatzheute">${esc(t("schnellknopf.umsatz"))}</button><button type="button" class="knopf zweit" data-a="nav" data-wert="umsatz">${esc(t("heute.blatt.buero"))}</button></div>`);
+}
 export function menueZeigen(stand, wurzel) {
   const mehrere = (wurzel?.betriebe || []).filter((b) => b.phase === "app").length > 1;
   const punktBuero = sicherungStufe(wurzel)?.stufe === "rot"; // erst beim Öffnen gerechnet

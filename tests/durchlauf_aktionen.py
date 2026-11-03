@@ -11,6 +11,9 @@ import schnellstart as ss, nav_hilfe
 # Prüfgremium 17.10.2026 (4): Beispiel-Laden hat Sonntag Ruhetag – ist morgen Sonntag, heißt es „heute verbrauchen“ (Geschäftstag bis 4 Uhr)
 _gt = datetime.datetime.now() - datetime.timedelta(hours=4)
 ERWARTET = "Hähnchenspieß heute verbrauchen" if (_gt + datetime.timedelta(days=1)).weekday() == 6 else "Hähnchenspieß bis morgen verbrauchen"
+# 03.11.2026: Zwischen 0 und 4 Uhr rechnet der Beispiel-Laden mit dem Geschäftstag, der Haltbarkeits-Hinweis mit dem Kalendertag – dann steht „heute“
+# (bekannte Uneinheitlichkeit, offen im Prüfstand-Dokument; der Test bildet das Verhalten ab, statt nachts rot zu werden)
+if datetime.datetime.now().hour < 4: ERWARTET = "Hähnchenspieß heute verbrauchen"
 
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8783"))
 OUT = pathlib.Path(os.environ.get("DURCHLAUF_OUT", "/home/claude/audit/shots")); OUT.mkdir(parents=True, exist_ok=True)

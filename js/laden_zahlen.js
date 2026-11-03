@@ -19,6 +19,8 @@ export function ersteZahlFehlt(stand, last) {
   if (last && last.lohn === null && stand.team?.personen !== 0) return "personal";
   return null;
 }
+// Lauf 2 (4a): „personal“ fehlt, aber im Monat stehen schon Stunden → die Zahl gibt es als Richtwert (≈, Mindestlohn), dazu „Löhne eintragen“
+export const lohnRichtwertMoeglich = (stand, m) => (m?.lohnRichtwertTage || 0) > 0;
 
 // Zielkarte im Laden. stufe: "bisNull" | "bisZiel" | "ueberZiel" (ohne Ziel = "bisNull"); zahl = die große Zahl (null = keine Kosten);
 // marke = Zielmarke des Balkens (bis null: Umsatz + was fehlt, danach das Monatsziel); anteil 0–1;
@@ -86,7 +88,7 @@ export function tagesBilanz(stand, H, K = heute()) {
   const restTage = z.nullTag && !z.imPlus ? Math.round(z.tage.filter((x) => x.datum > H && x.datum <= z.nullTag).reduce((s, x) => s + x.gewicht, 0)) : null;
   return {
     z, vor, nach, besser: nach - vor, umsatz: u, netto: u ? z.nettoVon(u.umsatz) : 0, bleibt: u ? z.bleibtVon(u.umsatz) : 0, tageskosten: z.tageskosten,
-    muell: { anzahl: sw.anzahl, wert: sw.muellwert },
+    muell: { anzahl: sw.anzahl, wert: sw.muellwert, ohneWert: sw.ohneWert || 0 },
     kuehl: { eingerichtet: ks.eingerichtet, gemessen: ks.heuteGemessen, stellen: ks.stellen, fertig: ks.eingerichtet && ks.heuteGemessen >= ks.stellen },
     rundgaenge: (stand.rundgaenge || []).filter((r) => r.abgeschlossen && r.datum === K).length,
     vergleich, tonne, restTage,

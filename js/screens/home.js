@@ -15,6 +15,7 @@ import { nav } from "./nav.js";
 import { bueroCodeKarte } from "./ebene.js"; // Drei Ebenen (A): Büro-Code in den Einstellungen
 import { einrichtungStand } from "../einrichtung.js";
 import { sym } from "../symbole.js";
+import { muellHeute } from "../muell.js"; // Lauf 2 (4b): Müll ohne Preis als „n×“
 import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
 import { bueroKopf } from "./buero.js";
@@ -39,6 +40,7 @@ export function startView(stand, extra = {}) {
     <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
+      ${zielTexte(stand, z, H).fehlt ? "" : homeKarteLaden(extra.home)} <!-- Setzung 01.11.2026: Fehlt noch Miete/Lohn, hat Heute schon eine Haupthandlung; der Home-Hinweis wartet (15-Wörter-Budget, work_integration_browser) -->
       ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${zekiReihe(stand, H, dran, { ...extra, fehlt: heuteZiel(stand, z, H).fehlt ?? null })}
@@ -70,21 +72,23 @@ function zielTexte(stand, z, H) {
 }
 function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
+  // Lauf 2, Bildpaket D (4a): Löhne fehlen, aber Stunden stehen schon → ≈-Zahl mit Mindestlohn-Richtwert (zaehler.js) und kleiner Hinweis „Löhne eintragen“
+  const richtwertLohn = w.fehlt === "personal" && (z?.lohnRichtwertTage || 0) > 0;
   // Masterauftrag „Gehirn“ 0.1 (28.10.2026): ohne Miete oder Löhne keine Euro-Zahl, sondern der nächste Eintrag
-  if (w.fehlt) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
+  if (w.fehlt && !richtwertLohn) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
     <span class="h-riesig leicht" aria-label="${esc(t("nutzen.stufe.bisNull"))}">?</span>
     <span class="h-fehlt-knopf">${esc(t("heute.fehlt." + w.fehlt))}${sym("chevron-right", "h-pfeil")}</span>
   </button>`;
   // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
-  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="nav" data-wert="umsatz" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
+  return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="monat-blatt" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
     <span class="h-zielkopf"><span data-t="nutzen.stufe.${esc(w.stufe)}">${esc(t("nutzen.stufe." + w.stufe))}</span></span>
     <span class="h-riesig ${m.geschaetzt ? "leicht" : ""}">${w.zahl === null ? "–" : `<bdi dir="ltr">${m.geschaetzt ? "≈ " : ""}${w.stufe === "ueberZiel" ? "+" : ""}${fmtEuro(w.zahl, { dezimal: 0 })}</bdi>`}</span>
     ${w.stufe === "bisNull" && w.bewegung && Math.abs(w.bewegung.betrag) >= 1 ? `<span class="h-bewegung ${w.bewegung.betrag < 0 ? "gut" : "schlecht"}">${esc(t("heute.bewegung", (w.bewegung.betrag < 0 ? "−" : "+") + " " + fmtEuro(Math.abs(w.bewegung.betrag), { dezimal: 0 })))}</span>` : ""}
     ${""/* Baris 24.10.2026: Wort „Schätzung“ entfällt im Laden (≈ vor der Zahl reicht, 15-Wörter-Budget wegen Wörtern unter den Icons) */}
     ${m.ziel === null ? `<span class="h-unter" data-t="nutzen.ohneKosten">${esc(t("nutzen.ohneKosten"))}</span>` : kursDiagramm(m, w.marke, z, w.stufe)}
-  </button>`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
+  </button>${richtwertLohn ? `<button type="button" class="leise h-lohn-tipp" ${zielAttr({ aktion: "bearbeiten", schritt: "lohn" })}>${esc(t("heute.fehlt.personal"))}${sym("chevron-right", "h-pfeil")}</button>` : ""}`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
 
 // Kursdiagramm der Zielkarte (Sanji-Entwurf 20.10.2026): x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
@@ -124,11 +128,13 @@ function kachelTexte(stand, ks, H) {
 }
 function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
+  // Lauf 2, Bildpaket D (4b): Müll ohne Preis überall gleich – „1×“ wie auf der Kachel im Müll-Bildschirm, statt „0,00 €“ hier und „–“ dort
+  const mh = muellHeute(stand, H); const muellOhnePreis = mh.anzahl > 0 && mh.offen === mh.anzahl;
   // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
   const symbole = { umsatz: "wallet", muell: "trash-2", kuehl: "snowflake", putz: "spray-can" };
   const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`; // Baris 24.10.2026: ein Wort unter jedem Icon
   return feld("umsatz", "ladenSchirm.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatzheute"', false, w.umsatz === null && t("schnellknopf.umsatz"))
-    + feld("muell", "ebene.tabs.muell", w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
+    + feld("muell", "ebene.tabs.muell", muellOhnePreis ? `${fmtZahl(mh.anzahl)}×` : w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
     + feld("kuehl", "ebene.tabs.kuehl", w.kuehl.wert, 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, !ks.eingerichtet && t("schnellknopf.kuehl"), w.kuehl.html || w.kuehl.alarm)
     + feld("putz", "ebene.tabs.putzplan", w.putz.wert, 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
 }
@@ -177,7 +183,7 @@ export function zaehlerKarte(z, H, { tipp = true, ziel = null } = {}) {
 
 function zaehlerKarteMonat(z, H, w) {
   const monat = monatName(H); const g = w.m.geschaetzt ? "≈ " : "";
-  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("cockpit.verdient", monat);
+  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("zaehler.ueberZiel", monat); // K2 Runde 2 (01.11.2026): die Zahl ist Umsatz über dem Ziel, kein Gewinn – „Verdient“ war irreführend (Netto-Ergebnis steht in Monat & Zähler unten)
   const zahl = `${g}${w.stufe === "ueberZiel" ? "+ " : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`;
   // Persona-Test Wirt (27.10.2026): an einem Vortag stand „Heute stehst du bei …“ und „seit gestern“ – jetzt mit Datum, ohne Tagesvergleich.
   const istHeute = H === heuteGeschaeft(); const betrag = `${z.stand >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.stand), { dezimal: 0 })}`;
@@ -226,6 +232,20 @@ export function karteView(stand) {
 }
 
 // Pilotfest P6 (6), 30.10.2026 (Bildpaket C freigegeben): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
+// Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm. Laden: ein Satz (≤ 15 Wörter), einmal, „OK“. Büro (Sicherung): Weg in zwei Schritten + Warum.
+function homeKarteLaden(h) {
+  if (!h) return "";
+  return `<div class="karte home-karte kompakt" role="status"><span class="home-sym">${sym(h.plattform === "android" ? "download" : "share")}</span><p>${esc(t(h.plattform === "android" ? "home.ladenAndroid" : "home.laden"))}</p><button type="button" class="leise" data-a="home-weg">${esc(t("home.ok"))}</button></div>`;
+}
+function homeBlockBuero(h) {
+  if (!h) return "";
+  if (h.standalone) return `<p class="home-schon">${sym("check")} ${esc(t("home.schon"))}</p>`;
+  const a = h.plattform === "android";
+  return `<div class="home-buero"><b>${esc(t("home.titel"))}</b>
+    <ol class="home-schritte"><li>${sym(a ? "menu" : "share")} ${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${sym(a ? "download" : "plus")} ${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol>
+    ${h.knopf ? `<button type="button" class="knopf zweit" data-a="home-installieren">${esc(t("home.installieren"))}</button>` : ""}
+    <p class="hinweis">${esc(t("home.warum"))}</p></div>`;
+}
 function fehlerKarte(n) {
   return `<div class="karte fehler-karte"><h2>${esc(t("einstellungen.fehler.titel"))}</h2>
     <p class="hinweis">${esc(n ? t("einstellungen.fehler.anzahl", n) : t("einstellungen.fehler.keine"))} ${esc(t("einstellungen.fehler.hinweis"))}</p>
@@ -296,6 +316,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <h2>${esc(t("einstellungen.sicherung"))}</h2>
         ${(() => { const tg = sicherungStufe(wurzel)?.tage ?? null; return `<p class="pw-letzte ${tg === null || tg >= 7 ? "rot" : ""}">${esc(tg === null ? t("ladenSchirm.sicherung.nieWeg") : t("ladenSchirm.sicherung.letzteWeg", tg))}</p>`; })()}
         <p class="hinweis">${esc(t("einstellungen.sicherungText"))}</p>
+        ${homeBlockBuero(extra.home)}
         <p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
         <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>

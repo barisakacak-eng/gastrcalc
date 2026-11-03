@@ -1,0 +1,73 @@
+{
+ "datum": "2027-01-01",
+ "erzeugt": "tests/hilfe/generalprobe.mjs --sicherung (Generalprobe 19.12.2026–01.01.2027, alle Daten erfunden)",
+ "laeden": [
+  {
+   "name": "Döner-Grill (Probe)",
+   "ladenArt": "doener",
+   "tage": [
+    "2026-12-19",
+    "2026-12-20",
+    "2026-12-21",
+    "2026-12-22",
+    "2026-12-23",
+    "2026-12-24",
+    "2026-12-25",
+    "2026-12-26",
+    "2026-12-27",
+    "2026-12-28",
+    "2026-12-29",
+    "2026-12-30",
+    "2026-12-31",
+    "2027-01-01"
+   ],
+   "cockpit": {
+    "stufe": "bisNull",
+    "zahl": 12376.42
+   },
+   "zaehlerStand": 415.59,
+   "eintraege": {
+    "schwund": 42,
+    "tagesnotizen": 14,
+    "messungen": 57,
+    "lieferungen": 2,
+    "abschluesse": 14,
+    "putzlog": 135,
+    "rundgaenge": 29
+   }
+  },
+  {
+   "name": "Burger-Truck (Probe)",
+   "ladenArt": "foodtruck",
+   "tage": [
+    "2026-12-19",
+    "2026-12-20",
+    "2026-12-21",
+    "2026-12-22",
+    "2026-12-23",
+    "2026-12-24",
+    "2026-12-25",
+    "2026-12-26",
+    "2026-12-27",
+    "2026-12-28",
+    "2026-12-29",
+    "2026-12-30",
+    "2026-12-31",
+    "2027-01-01"
+   ],
+   "cockpit": {
+    "stufe": "bisNull",
+    "zahl": 7369.85
+   },
+   "zaehlerStand": 121.49,
+   "eintraege": {
+    "schwund": 41,
+    "tagesnotizen": 14,
+    "messungen": 29,
+    "abschluesse": 14,
+    "putzlog": 105,
+    "rundgaenge": 15
+   }
+  }
+ ]
+}
