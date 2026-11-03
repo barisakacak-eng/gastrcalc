@@ -88,7 +88,7 @@ async def main():
             satz = await pg.locator('#app [data-eig-satz]').inner_text()
             assert satz.startswith("Döner Zwei:") or satz.startswith("Döner Eins:"), satz
             assert "Beispiel-Döner" in t and await pg.locator(f'#app [data-eig-laden][data-eig-laden="{(await pg.evaluate("window.__gastrocalc.wurzel.betriebe.find((x) => x.beispiel).id"))}"]').count() == 0, "Beispiel-Laden in der Ebene"
-            assert "Umsatz" in t and "Wareneinsatz" in t and "Weggeworfen" in t and "Bis null" in t and "Lager-Wert" in t, t[:800]
+            assert "Umsatz" in t and "Wareneinsatz" in t and "Weggeworfen" in t and "Ergebnis bisher" in t and "Lager-Wert" in t, t[:800]  # C2 (03.11.2026): „Ergebnis bisher“ statt „Bis null“
             assert "850" in t, "Umsatz von Döner Zwei fehlt auf der Karte"
             assert "Unvollständig" in t and "fehlt" in t, "Kennzeichnung unvollständiger Daten fehlt"
             assert "NaN" not in t and "undefined" not in t
