@@ -122,6 +122,13 @@ jobs:
             grep -E "NEULADEN|Error|Timeout" einrichtung_neuladen_browser.txt | tail -8 | while read -r l; do echo "::warning::einrichtung_neuladen_browser Versuch $versuch: $l"; done
           done
           tail -30 einrichtung_neuladen_browser.txt; exit 1
+      - name: Schnelle Mehrfach-Tipps (Vorab-Prüfung B1–B4, 03.11.2026)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8851 python tests/zaehl_tipps_browser.py > zaehl_tipps.txt 2>&1; then exit 0; fi
+            grep -E "TIPPS|Error|Timeout" zaehl_tipps.txt | tail -8 | while read -r l; do echo "::warning::zaehl_tipps Versuch $versuch: $l"; done
+          done
+          tail -30 zaehl_tipps.txt; exit 1
       - name: Erststart jeder Ladenart (de, drei Ladenarten)
         run: |
           for versuch in 1 2; do

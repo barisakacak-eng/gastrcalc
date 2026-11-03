@@ -136,7 +136,7 @@ export function karteLadenBlatt(stand) {
         <button type="button" class="kl-x" data-a="kl-zu" aria-label="${esc(t("kartelaeden.schliessen"))}">${sym("x")}</button></div>
       <div class="kl-preisrad">
         <button type="button" class="kl-rund" data-a="kl-minus" aria-label="−0,10 €" ${blatt.preis <= 0 ? "disabled" : ""}>${zeichen("minus")}</button>
-        <label class="kl-gross"><input inputmode="decimal" data-f="kl-preis" value="${esc(wertAnzeige(blatt.preis.toFixed(2)))}" aria-label="${esc(t("kartelaeden.preis"))}" autocomplete="off"><span>€</span></label>
+        <label class="kl-gross"><input inputmode="decimal" data-f="kl-preis" value="${blatt.preis > 0 ? esc(wertAnzeige(blatt.preis.toFixed(2))) : ""}" placeholder="0,00" aria-label="${esc(t("kartelaeden.preis"))}" autocomplete="off"><span>€</span></label>
         <button type="button" class="kl-rund" data-a="kl-plus" aria-label="+0,10 €">${zeichen("plus")}</button>
       </div>
       ${bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z))}

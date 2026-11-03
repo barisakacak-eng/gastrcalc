@@ -241,10 +241,11 @@ function wahlAus(el, stand) {
 
 // ---------- Aktionen ----------
 // Ein Tipp auf ein Foto: sofort eintragen. Rückgabe { eintrag } oder false. Doppeltipp (< 350 ms auf dieselbe Kachel) zählt einmal.
+const GEISTER_TIPP_MS = 60;
 export function muellTipp(el, stand) {
   const x = kachelDaten(el, stand); if (!x) return false;
   const k = muellSchluessel(x); const jetzt = Date.now();
-  if (letzterTipp.id === "tipp:" + k && jetzt - letzterTipp.zeit < 350) return false;
+  if (letzterTipp.id === "tipp:" + k && jetzt - letzterTipp.zeit < GEISTER_TIPP_MS) return false; // Vorab-Prüfung 03.11.2026 (B1): vorher 350 ms – bei 100 ms Abstand zählten 2 von 5; jetzt zählt jeder Tipp, nur doppelt gefeuerte Ereignisse (< 60 ms) nicht
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
   const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station", grund: ansicht === "station" ? null : grund === "personal" || grund === "ausgegeben" ? grund : null });
   if (!e) return false;
