@@ -75,7 +75,8 @@ import { getraenkeView, getraenkeAktion, getraenkeEingabe, getraenkeZuruecksetze
 import { lieferantenView, lieferantenAktion, lieferantenEingabe, lieferantenZuruecksetzen, lieferantenZurueck, lieferantenKennung } from "./screens/lieferanten.js"; // Lieferanten (18.10.2026): Büro „Lieferanten“ // Getränke (18.10.2026): Büro „Getränke“
 import { aktionenAbschliessen } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Bilanz beendeter Aktionen beim Betreten speichern
 import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Menütafel (18.10.2026): Büro „Menütafel“
-import { hinweiseView } from "./screens/hinweise.js"; // Hinweis-Karten (23.10.2026): Büro „Hinweise“
+import { hinweiseView } from "./screens/hinweise.js";
+import { geld3View, geld3Aktion, geld3Eingabe } from "./screens/geld3.js"; // Welle 3 (03.11.2026): nur hinter window.__gcW3 // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
@@ -180,6 +181,7 @@ function zeichne() {
         : ansicht === "aktionen" ? aktionenView(stand) // Stufe 1 (17.10.2026)
         : ansicht === "tafel" ? tafelView(stand) // Menütafel (18.10.2026)
         : ansicht === "hinweise" ? hinweiseView(stand) // Hinweis-Karten (23.10.2026)
+        : ansicht === "geld3" ? geld3View(stand) // Welle 3 Bildpaket W3 (hinter Schalter)
         : ansicht === "getraenke" ? getraenkeView(stand) // Getränke (18.10.2026)
         : ansicht === "lieferanten" ? lieferantenView(stand) // Lieferanten (18.10.2026)
         : ansicht === "kuehlware" ? kuehlWareView(stand) // Trennung (17.10.2026), Punkt 4
@@ -632,6 +634,7 @@ async function ebeneAktion(name, el) {
     await sicherungEinlesen(einleseDatei, p); return true;
   }
   if (name === "rechtsform" && stand.phase === "app") { if (rechtsformSetzen(stand, el.dataset.wert)) { ereignis("rechtsform", { laden: stand.id, wert: el.dataset.wert }); meldung(t("rechtsform.gesetzt")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Rechtsform (23.10.2026)
+  if (name.startsWith("g3-") && geld3Aktion(name, el, stand)) { speichern(wurzel); return zeichne(); } // Welle 3
   if (name === "hinweis-status") { if (hinweisStatusSetzen(stand, el.dataset.id, el.dataset.status)) { ereignis("hinweis-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); meldung(t(el.dataset.status === "erledigt" ? "hinweise.erledigtMeldung" : "hinweise.spaeterMeldung")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Hinweis-Karten (23.10.2026)
   if (name === "testphase-code") { testphaseSetzen(wurzel, !testphaseOhneCode(wurzel)); meldung(t(testphaseOhneCode(wurzel) ? "ebene.pin.testphaseAn" : "ebene.pin.testphaseAus")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }
@@ -969,6 +972,11 @@ root.addEventListener("input", (ev) => {
     const r = getraenkeEingabe(el.dataset.f, el.value); if (r === "zeichnen") { zeichne(); return; } return;
   } else if (ansicht === "bestand") { // Bestand (17.10.2026): Mindestbestand ist ein Entwurf bis „Speichern“
     if (bestandEingabe(el.dataset.f, el.value) === "entwurf") return;
+  } else if (ansicht === "geld3") { // Welle 3: speichern, neu rechnen, Fokus und offene Karten bleiben
+    if (geld3Eingabe(el.dataset.f, el.value, stand)) { speichern(wurzel); const f = el.dataset.f; const offen = [...root.querySelectorAll("details[data-g3][open]")].map((d) => d.dataset.g3);
+      zeichne(); for (const id of offen) root.querySelector(`details[data-g3="${id}"]`)?.setAttribute("open", "");
+      const neuEl = root.querySelector(`[data-f="${f}"]`); if (neuEl) { neuEl.focus(); try { neuEl.setSelectionRange(neuEl.value.length, neuEl.value.length); } catch { /* egal */ } } }
+    return;
   } else if (ansicht === "kuehl") {
     neu = kuehlEingabe(el.dataset.f, el.value, stand);
     if (neu === "knopf") { neu = false; const k = root.querySelector('[data-a="station-speichern"]'); if (k) k.disabled = !kuehlFormGueltig(); }

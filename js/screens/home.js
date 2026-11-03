@@ -190,6 +190,16 @@ function zaehlerKarteMonat(z, H, w) {
   // Nachtest 27.10.2026: „Heute stehst du bei + 500 €“ neben „bis null fehlen 4.065 €“ verwirrte – eine Zahl (Baris B, 02:13); nur an Vortagen der Stand mit Datum
   const heuteZeile = z.keinUmsatz ? t("cockpit.keinUmsatz") : istHeute ? "" : t("zaehler.standTagZeile", datumLesbar(H).slice(0, 6), betrag);
   const erklaerung = "";
+  // Welle 3 (K2 A1, Hochtouren 03.11.2026, hinter Schalter window.__gcW3): Über dem Ziel ist im Büro das Netto-Ergebnis die große Zahl
+  // (voraussichtlich am Monatsende, wie „Monatsende“ in „Wenn es so weiterläuft“); der Umsatz über dem Ziel steht darunter.
+  const w3 = typeof globalThis !== "undefined" && globalThis.__gcW3 === true && w.stufe === "ueberZiel" && typeof z.monatsende === "number";
+  if (w3) return `<div class="karte dunkel zaehler ${z.monatsende >= 0 ? "plus" : "minus"}">
+    <small class="lbl">${esc(t("zaehler.ergebnisMonatsende", monat))}</small>
+    <span class="riesig">${g}${z.monatsende >= 0 ? "+ " : "− "}${fmtEuro(Math.abs(z.monatsende), { dezimal: 0 })}</span>
+    <small>${esc(t("zaehler.ueberZielZeile", g + fmtEuro(w.zahl, { dezimal: 0 })))}</small>
+    ${z.unvollstaendig ? `<small class="warn">${esc(t("cockpit.unvollstaendig"))}</small>` : ""}
+    <small class="fein">${esc(t("cockpit.kalkulatorisch"))} · ${esc(t("zaehler.lohnTageZeile", z.lohnEchtTage || 0))}</small>
+  </div>`;
   return `<div class="karte dunkel zaehler ${w.stufe === "bisNull" ? "minus" : "plus"}">
     <small class="lbl">${esc(label)}</small>
     <span class="riesig">${zahl}</span>

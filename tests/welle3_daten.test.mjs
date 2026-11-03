@@ -40,8 +40,8 @@ test("Rundreise: Schichtzeiten und Monatsabschlüsse überstehen Sicherung → E
   teamTagSetzen(b, "2026-12-31", [{ person: "a", name: "AB", stunden: 10, satz: 14, von: "16:00", bis: "02:00" }]);
   b.tagesnotizen.push({ id: "t1", datum: "2026-11-02", umsatz: 800, erfasst: "2026-11-02T20:00:00Z" }); monatEinfrieren(b, "2026-11", { jetzt: "2026-12-01T08:00:00Z" });
   w.betriebe.push(b); w.aktiv = b.id;
-  const datei = await st.exportDatei(w, { mitAblage: false });
-  const imp = await st.importSicherung(datei); const w2 = st.leereWurzel(); st.zusammenfuehren(w2, imp.wurzel);
+  const { blob } = await st.exportDatei(w, { mitAblage: false });
+  const imp = await st.importSicherung(blob); const w2 = st.leereWurzel(); st.zusammenfuehren(w2, imp.wurzel);
   const b2 = w2.betriebe.find((x) => x.betrieb.name === "Rundreise"); assert.ok(b2);
   assert.deepEqual(schichtenAusLaden(b2, "a", "2026-12-01", "2026-12-31"), [{ datum: "2026-12-31", von: "16:00", bis: "02:00" }]);
   assert.equal(eingefroren(b2, "2026-11").umsatzBrutto, 800);

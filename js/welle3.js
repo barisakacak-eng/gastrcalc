@@ -1,0 +1,45 @@
+// Welle 3 (Hochtouren 03.11.2026): Einstellungen und Laden-Anbindung der Rechenkerne für den Büro-Bildschirm „Geld & Finanzamt“
+// (hinter dem Schalter window.__gcW3, Bildpaket W3). Schreibt nur hier ins Laden-Objekt (Trennung Rechenwerk/Bildschirm).
+// Felder: betrieb.ustRhythmus ("monat" | "quartal" | null), betrieb.dauerfrist (bool), betrieb.svLand (Land der Krankenkasse oder null),
+//         chef.stundenMonat (Zahl), liquiditaet = { betrag, datum }.
+import { heute } from "./util.js";
+import { umsatzEintrag, fixkosten, monatsLast, tagPlus } from "./engine.js";
+import { warenQuote } from "./zaehler.js";
+import { steuerTopf, kleinunternehmer } from "./steuertopf.js";
+import { pflichtTermine } from "./fristen.js";
+import { liquiditaet, nachfragen } from "./liquiditaet.js";
+
+const r2 = (n) => Math.round(n * 100) / 100;
+export function ustRhythmusSetzen(stand, w) { stand.betrieb.ustRhythmus = w === "monat" || w === "quartal" ? w : null; }
+export function dauerfristUmschalten(stand) { stand.betrieb.dauerfrist = !stand.betrieb.dauerfrist; }
+export function chefStundenSetzen(stand, n) { stand.chef ??= {}; stand.chef.stundenMonat = Number.isFinite(n) && n > 0 && n <= 744 ? Math.round(n) : null; }
+export function geldHeuteSetzen(stand, betrag, datum = heute()) { stand.liquiditaet = Number.isFinite(betrag) ? { betrag: r2(betrag), datum } : null; }
+
+const monatPlus = (m, n) => { const [j, mm] = m.split("-").map(Number); const x = j * 12 + (mm - 1) + n; return `${Math.floor(x / 12)}-${String((x % 12) + 1).padStart(2, "0")}`; };
+const wochentag = (tag) => new Date(tag + "T12:00:00Z").getUTCDay();
+
+// Pflichttermine der nächsten 60 Tage für diesen Laden
+export function termineLaden(stand, ab = heute(), tage = 60) {
+  return pflichtTermine(ab, tagPlus(ab, tage), { rhythmus: stand.betrieb?.ustRhythmus || null, dauerfrist: !!stand.betrieb?.dauerfrist,
+    kleinunternehmer: kleinunternehmer(stand), personal: (stand.personen || []).some((p) => !p.entfernt), landKasse: stand.betrieb?.svLand || null, land: stand.betrieb?.bundesland || "BW" });
+}
+
+// Liquidität 8 Wochen aus dem Laden (≈): Einnahmen = Schnitt der letzten 28 Tage mit Umsatz je Öffnungstag (Mo–Sa bzw. tageProWoche ab Montag),
+// Ware wöchentlich am Montag (Umsatz × Warenquote ÷ 1 + USt ≈ brutto), feste Kosten am 1., Lohn am 28., Steuer-Topf des Vormonats am Termin der USt-VA.
+// Alles Schätzung aus den eigenen Zahlen; ohne Eingabe „Geld heute“ keine Rechnung.
+export function liquiditaetLaden(stand, H = heute()) {
+  const e = stand.liquiditaet; if (!e || typeof e.betrag !== "number") return { fehlt: "geld", nachfragen: true };
+  let summe = 0, n = 0; for (let i = 0; i < 28; i++) { const u = umsatzEintrag(stand, tagPlus(H, -i)); if (u && u.umsatz > 0) { summe += u.umsatz; n += 1; } }
+  if (!n) return { fehlt: "umsatz", nachfragen: nachfragen(e, H) };
+  const schnitt = summe / n; const tpw = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));
+  const offen = [1, 2, 3, 4, 5, 6, 0].slice(0, tpw); const q = warenQuote(stand).quote || 0;
+  const fk = fixkosten(stand); const ml = monatsLast(stand, H);
+  const posten = [{ betrag: schnitt, wochentage: offen }, { betrag: -(schnitt * tpw * q), wochentage: [1] }, { betrag: -(fk.gesamt || 0), tagImMonat: 1 }];
+  if (ml.lohn) posten.push({ betrag: -ml.lohn, tagImMonat: 28 });
+  if (!kleinunternehmer(stand) && stand.betrieb?.ustRhythmus) {
+    for (const t of termineLaden(stand, e.datum, 56).filter((x) => x.art === "ust")) { const st = /^\d{4}-\d{2}$/.test(t.zeitraum) ? steuerTopf(stand, t.zeitraum) : null; if (st && st.zahllast > 0) posten.push({ betrag: -st.zahllast, datum: t.datum }); }
+  }
+  const l = liquiditaet({ start: e.betrag, ab: e.datum, posten });
+  return { ...l, geschaetzt: true, nachfragen: nachfragen(e, H), schnitt: r2(schnitt) };
+}
+export { monatPlus, wochentag };

@@ -60,6 +60,12 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `laden_zahlen.js` – Zahlen für „Heute“ und „Tag abschließen“.
 - `lieferant.js`, `lieferung.js` – Lieferanten als Stammdaten; Belege werden Lieferungen (Herkunft „beleg“).
 - `mindestlohn.js` – Mindestlohn-Vorschau (14,60 € ab 1.1.2027, Minijob 633 €).
+- `steuertopf.js` – Welle 3: Steuer-Topf (USt − Vorsteuer, Schätzung), Was bleibt dir, Prüfer-Blick.
+- `fristen.js` – Welle 3: Pflichtenkalender (USt-VA, ESt-VZ, Lohnsteuer, SV; § 108 AO).
+- `liquiditaet.js` – Welle 3: Geld 8 Wochen (Stand am Tagesende).
+- `schichten.js` – Welle 3: Schichtzeiten, § 3b-Zähler, Minijob- und 70-Tage-Zähler.
+- `monatsabschluss.js` – Welle 3: Monat einfrieren, Vormonat/Vorjahr.
+- `welle3.js` – Welle 3: Einstellungen und Laden-Anbindung für „Geld & Finanzamt“.
 - `modus.js` – drei Ebenen Laden/Personal/Büro, Büro-Code, Zeitfenster.
 - `muell.js` – Müll in zwei Tipps, Personalessen.
 - `nutzen.js` – Euro-Zähler „Weniger Verlust seit Start“.
@@ -111,6 +117,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `foto.js` – Speisekarte fotografieren, Prüfliste (zeigt erste Gerichte vor dem Ende der Erkennung).
 - `getraenke.js` – Büro „Getränke“.
 - `hinweise.js` – Büro Hinweis-Karten.
+- `geld3.js` – Welle 3: Büro „Geld & Finanzamt“ (nur hinter Schalter window.__gcW3).
 - `home.js` – Startseite „Heute“, Einstellungen, Karte (Büro-Sicht).
 - `inventur.js` – Inventur (Büro).
 - `karte.js` – Einrichtung: Karte wählen, Rezepte prüfen, Preise, Ergebnis; Rezept-Editor (alle Zutaten).
