@@ -112,6 +112,7 @@ const HILFE_MEHR = {
   kuehl: ["kuehl.stellenTippen", "kuehl.einrichtenText", "kuehl.haftung"],
   putzplan: ["putzplan.erklaerung", "putzplan.quellenHinweis"],
   abschluss: ["abschluss.ohneUmsatz", "abschluss.hinweis"],
+  start: ["zaehler.zielBewegt"], buero: ["zaehler.zielBewegt"], // Vorab-Prüfung 03.11.2026 (C4): gewollt – echte Tageslöhne ersetzen den geschätzten Tagesanteil
 };
 const HILFE = ["start", "muell", "kuehl", "putzplan", "karte", "abschluss", "laeden", "personal", "buero"];
 // Zeki beantwortet Fragen (Baris 26.10.2026, Variante C): fester, geprüfter Katalog, offline. Aufklappen ohne Skript (details).

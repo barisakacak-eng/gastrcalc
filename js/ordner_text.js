@@ -137,7 +137,7 @@ export const BEILAGEN = { buch: ["zbon", "karten", "bank", "rechnungen", "ausgan
 // Erster Abschnitt jedes Ordners: Inhalt (was die App liefert, mit Stand) und Beilagen (was du beilegst). dok = fertiges Druckmodell.
 export function inhaltAbschnitt(dok, art) {
   const zeilen = []; let nr = 0;
-  for (const a of dok.abschnitte) zeilen.push({ warn: !!a.warn, zellen: [String(++nr), a.titel, t("ordnerC.app"), a.warn ? t(a.notiz ? "ordnerC.notiz" : "ordnerC.pruefen") : t("ordnerC.liegtBei")] });
+  for (const a of dok.abschnitte) zeilen.push({ warn: !!a.warn, zellen: [String(++nr), a.titel, t("ordnerC.app"), a.warn ? t(a.notiz ? "ordnerC.notiz" : "ordnerC.pruefen") : Array.isArray(a.zeilen) && a.zeilen.length === 0 ? t("ordnerC.leer") : t("ordnerC.liegtBei")] }); // Vorab-Prüfung 03.11.2026 (C10): leere Liste heißt „leer“, nicht „liegt bei“
   for (const b of BEILAGEN[art] || []) zeilen.push({ warn: false, zellen: [String(++nr), t("ordnerC.teile." + b), t("ordnerC.du"), t("ordnerC.beilegen")] });
   return { titel: t("ordnerC.titel"), info: art === "amt" ? "" : t("ordnerC.hinweis"), kopf: t("ordnerC.kopf"), rechts: [0], zeilen };
 }

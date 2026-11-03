@@ -1071,7 +1071,17 @@ function leerlaufPlanen() {
   }, { timeout: 10000 });
 }
 
-export const speichern = debounce((wurzel) => { schreiben(wurzel, { stempel: true }); }, 900); // Stresstest 15.10.: seltener schreiben; beim Verlassen der App wird sofort gesichert
+// Vorab-Prüfung 03.11.2026 (A1): Der erste Eintrag nach einer Pause wird SOFORT geschrieben – vorher wartete jedes Speichern 900 ms, und ein Neuladen
+// 100–700 ms nach dem Tipp verlor den Eintrag (pagehide sichert asynchron, das reicht beim Neuladen nicht). Folgen weitere Tipps dicht auf,
+// werden sie gebündelt und spätestens nach SPEICHER_BUENDEL_MS geschrieben (Stresstest 15.10.: nicht bei jedem Tipp den ganzen Stand schreiben).
+export const SPEICHER_BUENDEL_MS = 250;
+let zuletztGeschrieben = 0;
+const speichernSpaeter = debounce((wurzel) => { zuletztGeschrieben = Date.now(); schreiben(wurzel, { stempel: true }); }, SPEICHER_BUENDEL_MS);
+export const speichern = Object.assign((wurzel) => {
+  const jetzt = Date.now();
+  if (jetzt - zuletztGeschrieben > SPEICHER_BUENDEL_MS) { speichernSpaeter.abbrechen(); zuletztGeschrieben = jetzt; schreiben(wurzel, { stempel: true }); }
+  else speichernSpaeter(wurzel);
+}, { abbrechen: () => speichernSpaeter.abbrechen() });
 
 export function sofortSpeichern(wurzel, { stempel = true } = {}) {
   return schreiben(wurzel, { stempel });

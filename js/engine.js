@@ -499,6 +499,8 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
 // Einordnung: BMF-Richtsatzsammlung 2024, Imbissstuben u. Ä. (Umsatz über 100.000 €): Reingewinn 8–39 %, Mittel 24 % vom Umsatz –
 // dort OHNE Unternehmerlohn; unsere Rechnung zieht den eigenen Lohn ab und ist damit strenger.
 // Quelle: https://www.ihk-muenchen.de/ihk/documents/Recht-Steuern/Steuerrecht/Einkommensteuer/2025-12-08-download-richtsatzsammlung-2024.pdf (geprüft 19.10.2026)
+// Vorab-Prüfung 03.11.2026 (C13): Richtsatzsammlung 2025 = Kalenderjahr 2025, BMF-Schreiben 25.06.2026 (iww.de, abgerufen 03.11.2026); Reingewinn Imbiss Mittel 24 %
+// laut Wiedergabe im Prüfpaket Welle 3 (Original gesperrt). Grenzen 10/19 % bleiben Setzung; der Hinweistext nennt jetzt die Sammlung 2025 statt „Datenjahr 2024“.
 export const AMPEL_GRENZEN = { rot: 0.10, gruen: 0.19 };
 // zeile braucht sk, mwst, waren (wie in kalkulation().zeilen). Ampel rechnet auf den Cent, so wie die Zahlen angezeigt werden.
 export function preisAmpel(zeile, preisBrutto) {

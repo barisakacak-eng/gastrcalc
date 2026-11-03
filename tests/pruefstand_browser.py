@@ -31,6 +31,17 @@ async def main():
                 if x["tage"] != len(L["tage"]): befunde.append(f"{L['name']}: {x['tage']} statt {len(L['tage'])} Tage")
                 if x["cockpit"] != L["cockpit"]: befunde.append(f"{L['name']}: Cockpit {x['cockpit']} statt {L['cockpit']}")
                 print("ok  " if x["cockpit"] == L["cockpit"] else "FEHLT", L["name"], x)
+            # Nachtrag 03.11.2026: nach dem Einlesen startet der kurze Rundgang im eingelesenen Laden nicht neu und blockiert keine Tipps
+            await nav_hilfe.geh(pg, "laeden"); await pg.wait_for_timeout(500)
+            for z in await pg.locator('#app [data-a="laden-wechseln"]').all():
+                if "Döner-Grill (Probe)" in (await z.inner_text()): await z.click(); break
+            await pg.wait_for_timeout(800); await nav_hilfe.zum_laden(pg); await pg.wait_for_timeout(2000)
+            aktiv = await pg.evaluate("window.__gastrocalc.stand.betrieb.name")
+            if aktiv != "Döner-Grill (Probe)": befunde.append(f"Wechsel in den Prüf-Laden ging nicht ({aktiv})")
+            if await pg.locator(".rg-huelle").count(): befunde.append("kurzer Rundgang startet nach dem Einlesen neu")
+            await pg.locator('.tableiste [data-a="nav"][data-wert="muell"]').click(); await pg.wait_for_timeout(500)
+            if not await pg.locator('.tableiste .tab.an[data-wert="muell"]').count(): befunde.append("Tipp auf Müll kam nicht an")
+            else: print("ok   Prüf-Laden: kein Rundgang, Tipps kommen an")
             await b.close()
     finally: srv.terminate()
     if fehler: befunde.append(f"Konsole: {fehler[:3]}")

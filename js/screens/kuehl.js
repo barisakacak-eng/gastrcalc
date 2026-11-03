@@ -238,6 +238,7 @@ function stationView(stand, r, k) {
       </div>` : ""}`}
       ${typeof wert === "number" ? "" : kurzForm && !f.grund && !f.nichtAuf ? `<button type="button" class="leise" data-a="station-nicht-auf">${esc(t("kuehl.nichtGemessenKurz"))} ›</button>` : kurzForm ? grundChips : `<h2>${esc(t("kuehl.nichtGemessen"))}</h2>
       ${grundChips}`}
+      ${typeof wert === "number" && abw && !minusOffen && !f.massnahmen.length ? `<p class="kuehl-erst-massnahme">${esc(t("kuehl.erstMassnahme"))}</p>` : ""}${""/* Klasse D 03.11.2026: sagen, warum „Eintragen“ grau ist */}
       <button type="button" class="knopf glut" data-a="station-speichern" ${kannSpeichern ? "" : "disabled"}>${esc(t("kuehl.stationFertig"))}</button>
       <button type="button" class="leise" data-a="station-zu">${esc(t("allgemein.abbrechen"))}</button>
     </div>`;

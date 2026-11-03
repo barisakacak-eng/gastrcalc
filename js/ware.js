@@ -88,6 +88,9 @@ export function zuVielVorbereitet(stand, datum) {
   const out = [];
   for (const [id, x] of je) {
     if (x.tage.size < UEBRIG_MIN_TAGE) continue;
+    // Vorab-Prüfung 03.11.2026 (C6): ohne echte Verkaufsmenge rechnet mengenJeMonat mit 1 je Tag (Platzhalter) – dann kam bei 1 Portion Müll
+    // am Tag für jedes Gericht „50 % bleibt übrig“. Ohne Menge (Gericht oder Bestellungen je Tag) jetzt keine Aussage.
+    const g = (stand.gerichte || []).find((y) => y.id === id); if (!(g?.mengeTag > 0) && !(Number(stand.verkauf?.bestellungenTag) > 0)) continue;
     const verkauft = (mengen[id] || 0) / tageMonat * x.tage.size; const anteil = x.menge / (verkauft + x.menge);
     if (anteil > UEBRIG_AB) out.push({ id, name: (stand.gerichte || []).find((g) => g.id === id)?.name || "", anteil, tage: x.tage.size });
   }

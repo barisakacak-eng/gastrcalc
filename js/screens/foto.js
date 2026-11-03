@@ -223,11 +223,18 @@ export function kartePruefenView() {
     <div class="fotofeld">${fotoKnoepfe("speisekarte", { kamera: "foto.nochSeite", datei: "foto.nochDatei" })}</div>`;
 }
 
+function kopfNachziehen(v) {
+  if (typeof document === "undefined") return;
+  const k = [...document.querySelectorAll('[data-a="fv-auf"]')].find((b) => b.dataset.id === v.id); if (!k) return;
+  const kopfName = k.querySelector(".n")?.firstChild; if (kopfName && kopfName.nodeType === 3) kopfName.nodeValue = v.name;
+  const kopfPreis = k.querySelector(".p"); if (kopfPreis) { kopfPreis.textContent = v.preis === null ? t("foto.fehlt") : fmtEuro(v.preis, { dezimal: 2 }); kopfPreis.classList.toggle("leer", v.preis === null); }
+}
 export function kartePruefenEingabe(feld, wert) {
   const m = feld.match(/^fv-(name|preis):(.+)$/); if (!m) return false;
   const v = vorschlaege.find((x) => x.id === m[2]); if (!v) return false;
   if (m[1] === "name") { v.name = wert.slice(0, 80); v.pruefen = false; } else { Object.assign(v, { preis: parseZahl(wert), preisPruefen: false, preisHoch: false, preisGeprueft: true }); }
   delete v.vorab; // angefasst → bleibt
+  kopfNachziehen(v); // Klasse D 03.11.2026: die Kopfzeile zeigt beim Tippen den neuen Namen und Preis, nicht den alten
   return false;
 }
 

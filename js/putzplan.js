@@ -11,6 +11,8 @@ export const planVon = (stand) => stand.putzplan || null;
 export function planVorschlag(stand) {
   const arten = ladenArtenVon(stand); if (!arten.length) arten.push(ladenArtVon(stand) || "anders");
   const g = new Set(arten.flatMap((art) => GERAETE_JE_ART[art] || GERAETE_JE_ART.anders)); // P6 (1): Geräte aller gewählten Arten
+  // Vorab-Prüfung 03.11.2026 (C9): Sind Kühlgeräte gewählt, kommt „Saladette“ nur aus einer gewählten Saladette, nicht aus der Ladenart
+  if ((stand.kuehlstellen || []).some((k) => !k.archiviert)) g.delete("saladette");
   for (const k of stand.kuehlstellen || []) { if (k.archiviert) continue;
     if (k.art === "tk") g.add("tiefkuehler"); else if (k.art === "kuehl") g.add((k.typ === "saladette" || /theke|saladet|vitrine/i.test(k.name || "")) ? "saladette" : "kuehlschrank"); }
   return { aktiv: false, geraete: [...g], aus: [...STANDARD_AUS], seit: null };

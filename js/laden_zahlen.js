@@ -1,7 +1,7 @@
 // Trennung 2 (17.10.2026): Zahlen für die Laden-Bildschirme „Heute“ und „Tag abschließen“ – ohne Text und ohne HTML.
 // Vorher in js/screens/home.js (heuteZielWerte, heuteKachelWerte) und js/screens/abschluss.js (Haken, Bilanz, Vergleiche).
 import { heute, heuteGeschaeft, parseZahl } from "./util.js";
-import { tagesnotizSetzen, tagesnotizenFestschreiben, aktiveStellen } from "./engine.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ und Kühl-Rundgang im Laden
+import { tagesnotizSetzen, tagesnotizenFestschreiben, aktiveStellen, messungenDerStelle } from "./engine.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ und Kühl-Rundgang im Laden
 import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichung, tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { zaehler, monatsZiel, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
@@ -129,7 +129,10 @@ export function kuehlWerVorschlag(stand) {
 // Erste Stelle im Rundgang, die noch keinen Wert hat (in der Reihenfolge der Einrichtung); alle gemessen = null.
 export function kuehlNaechsteStelle(stand, r) {
   if (!r) return null;
-  const k = aktiveStellen(stand).find((x) => !r.messungen.some((m) => m.stelle === x.id));
+  // Vorab-Prüfung 03.11.2026 (C5): zuerst eine Stelle, die heute noch gar nicht gemessen ist („1 offen“ führt zu genau dieser),
+  // danach – wie bisher – jede Stelle, die in diesem Rundgang noch fehlt.
+  const stellen = aktiveStellen(stand); const H = r.datum || heute(); const imRundgang = (x) => r.messungen.some((m) => m.stelle === x.id);
+  const k = stellen.find((x) => !imRundgang(x) && !messungenDerStelle(stand, x.id).some((m) => m.datum === H)) || stellen.find((x) => !imRundgang(x));
   return k ? k.id : null;
 }
 // Wer misst, lässt sich im offenen Rundgang ändern (nur aktive Personen; nach dem Abschluss nicht mehr). Rückgabe: true = geändert.

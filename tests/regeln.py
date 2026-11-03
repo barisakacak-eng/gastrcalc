@@ -25,7 +25,7 @@ WOERTER_SOLL = {"laden": 15, "personal": 10, "buero": 120}
 KNOPF_SOLL, SCHRIFT_SOLL, TIPP_SOLL, KONTRAST_SOLL, ABSATZ_WOERTER = 64, 12, 44, 4.5, 12
 
 # Was nicht als fester Text zählt: Einheiten, Wochentage, Monate (deutsch), dazu je Lauf Gericht-, Kühlstellen-, Sprach- und Ladenname
-AUSGESCHLOSSEN = set("""€ % °c ° kg g ml l cl min std h uhr
+AUSGESCHLOSSEN = set("""€ % °c ° kg g ml l cl min std h uhr غ كغ مل ل
 montag dienstag mittwoch donnerstag freitag samstag sonntag mo di mi do fr sa so
 januar februar märz april mai juni juli august september oktober november dezember jan feb mär apr jun jul aug sep sept okt nov dez""".split())
 
@@ -38,6 +38,7 @@ MESSEN_JS = r"""
   const stil = (el) => getComputedStyle(el);
   const sichtbar = (el) => { if (!el || el.nodeType !== 1) return false; const s = stil(el);
     if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return false;
+    if (el.closest("details:not([open])") && !el.closest("summary")) return false; // 03.11.2026: zugeklappter Inhalt zählt nicht
     const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
   const inLeiste = (el) => !!el.closest(".tableiste");
   const sauber = (s) => s.replace(/­/g, "");

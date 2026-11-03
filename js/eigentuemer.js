@@ -43,8 +43,16 @@ export function eigentuemerZeitraum(wahl = { art: "woche" }, H = heuteGeschaeft(
 
 // ---------- je Laden ----------
 // Öffnungstage im Zeitraum (gewichtet wie im Zähler: Ruhetage 0, sonst tageProWoche/7) – gerundet, mindestens 1 bei Tagen ≥ 1
+// Vorab-Prüfung 03.11.2026 (C7): erst ab dem Tag, an dem es den Laden in der App gibt (angelegt, sonst erster Eintrag) – ein neuer Laden
+// meldete am ersten Tag „5 Tage ohne Umsatz-Eintrag“ (Zeitraum 7 Tage zurück).
+function ladenSeit(stand) {
+  const a = typeof stand.angelegt === "string" ? stand.angelegt.slice(0, 10) : null;
+  const erste = (stand.tagesnotizen || []).map((n) => n.datum).filter(Boolean).sort()[0] || null;
+  return [a, erste].filter(Boolean).sort()[0] || null;
+}
 function erwarteteTage(stand, z) {
-  let g = 0; for (let d = z.von; d <= z.bis; d = tagPlus(d, 1)) g += tagGewicht(stand, d);
+  const seit = ladenSeit(stand); const von = seit && seit > z.von ? seit : z.von;
+  let g = 0; for (let d = von; d <= z.bis; d = tagPlus(d, 1)) g += tagGewicht(stand, d);
   return Math.max(1, Math.round(g));
 }
 // Umsatz im Zeitraum mit Herkunft: die Tagesnotiz (vom Wirt getippt) ist die Zahl, mit der die App rechnet. Daneben zählt, an wie vielen
