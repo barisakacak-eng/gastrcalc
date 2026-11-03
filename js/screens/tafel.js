@@ -12,8 +12,8 @@ import { nav } from "./nav.js";
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 const ue = (text) => `<h2 class="inv-ue">${esc(text)}</h2>`;
 
-// Bildpaket E4 (Entwurf 02.11.2026, K2 C5): Gerichte mit Preis da, aber die gewählten Gruppen sind leer → das sagen statt „Erst die Karte füllen“
-const tafelLeerText = (stand) => ((globalThis.window?.__gcE === true || globalThis.window?.__gcE?.e4) && (stand.gerichte || []).some((g) => Number(g.preis) > 0) ? "tafel.leerGruppen" : "tafel.leer");
+// Bildpaket E4 (Baris Ja 03.11.2026, K2 C5): Gerichte mit Preis da, aber die gewählten Gruppen sind leer → das sagen statt „Erst die Karte füllen“
+const tafelLeerText = (stand) => ((stand.gerichte || []).some((g) => Number(g.preis) > 0) ? "tafel.leerGruppen" : "tafel.leer");
 export function tafelView(stand) {
   const e = tafelEinstellung(stand); const b = tafelBeschreibung(stand, { einstellung: e });
   const kopf = `<div class="kopfband"><h1>${esc(t("tafel.titel"))}</h1><div class="unter">${esc(t("tafel.unter"))}</div></div>`;

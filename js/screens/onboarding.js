@@ -635,11 +635,9 @@ const schlossSchnell = {
   aktion(name, el) { return hilfeAktion(name, el); },
 };
 export const SCHNELL = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, kuehlSchnell, geld, fertigSchnell];
-// Bildpaket E1 (Entwurf 02.11.2026, nur mit window.__gcE): „Aus Vorlagen wählen“ öffnet die Gerichtewahl sofort – vor Kühlung, Geld und
-// Abschlussbildschirm – statt erst nach „Fertig“. Ohne Schalter unverändert.
-export const gcE = (k) => { const f = globalThis.window?.__gcE; return f === true || !!(f && f[k]); };
+// Bildpaket E1 (Baris Ja 03.11.2026): „Aus Vorlagen wählen“ öffnet die Gerichtewahl sofort – vor Kühlung, Geld und Abschlussbildschirm.
 const SCHNELL_E1 = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, karte, kuehlSchnell, geld, fertigSchnell];
-export const schritteFuer = (stand) => (stand?.weg === "schnell" ? (gcE("e1") && stand.karteWeg === "vorlagen" ? SCHNELL_E1 : SCHNELL) : SCHRITTE);
+export const schritteFuer = (stand) => (stand?.weg === "schnell" ? (stand.karteWeg === "vorlagen" ? SCHNELL_E1 : SCHNELL) : SCHRITTE);
 
 // ---------- Gespeicherter Schritt: nach Kennung, nicht nur nach Nummer ----------
 // stand.schritt (Nummer) bleibt für app.js; stand.schrittId (neu) ist maßgeblich beim Laden. So verschiebt ein neuer

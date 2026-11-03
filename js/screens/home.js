@@ -30,7 +30,7 @@ import { rezeptFortschritt } from "../rezept_quelle.js"; // Mitmach-Rundgang (28
 // (Spruch, Monatsbalken, Einrichtungskarte, Instrumente, Band) sind entfernt; der Monatsbalken im Büro ist umsatz.js.
 export function startView(stand, extra = {}) {
   const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand); // Kühl-Kachel bleibt am Kalendertag (kuehlStatus intern)
-  const dran = jetztDran(stand, extra.wurzel, { jetzt: extra.jetzt || new Date(), leererRundgangZaehltNicht: globalThis.window?.__gcE === true || !!globalThis.window?.__gcE?.e2 }); // Bildpaket E2 (Entwurf 02.11.2026)
+  const dran = jetztDran(stand, extra.wurzel, { jetzt: extra.jetzt || new Date() });
   const nutzen = nutzenStand(stand, H);
   // Nur die Bildwelt folgt der echten Ladenart: Döner und Smash Burger sind beide Pilotbetriebe.
   const burgerPilot = stand.ladenArt === "imbiss" ||

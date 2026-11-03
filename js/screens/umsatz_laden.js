@@ -153,8 +153,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (name === "ul-abw-fertig" && abwesend) { abwesendSetzen(stand, H, abwesend); schritt = "feld"; abwesend = null; return { fertig: true }; }
   if (name === "ul-satz-auf") { satzAuf = true; return "zeichnen"; }
   if (name === "ul-normal-ja" || name === "ul-normal-nein") { normalAntwort = name === "ul-normal-ja"; normalTagSetzen(stand, H, normalAntwort);
-    if (globalThis.window?.__gcE === true || globalThis.window?.__gcE?.e3) return weiterOderFertig(); // Bildpaket E3 (Entwurf 02.11.2026, K1 C7): Antwort genügt – keine Zwischenseite „Gut. Ab jetzt …“
-    schritt = "normal-info"; return "zeichnen"; }
+    return weiterOderFertig(); } // Bildpaket E3 (Baris Ja 03.11.2026, K1 C7): Antwort genügt – keine Zwischenseite „Gut. Ab jetzt …“ mehr
   if (name === "ul-normal-fertig") return weiterOderFertig();
   if (name === "ul-team-nein") { teamTagSetzen(stand, H, []); return weiterOderFertig(); }
   if (name === "ul-team-ja") { team = teamStart(stand, H); schritt = "liste"; return "zeichnen"; }
