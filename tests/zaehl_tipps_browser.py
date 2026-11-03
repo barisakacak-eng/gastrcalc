@@ -1,7 +1,7 @@
 """Vorab-Prüfung 03.11.2026, B1–B3: schnelle Mehrfach-Tipps.
 B1 Müll-Kachel 5× im Abstand von 100 ms → 5 Einträge (Zähl-Kacheln zählen jeden Tipp; der Doppeltipp-Schutz gilt nur für Navigation).
 B2 Putzplan: Doppeltipp (80 ms) auf die erste Aufgabe hakt genau EINE Aufgabe ab (vorher traf der zweite Tipp die nachgerückte Zeile).
-B3 Einrichtung: Doppeltipp (230 ms) auf „Weiter“ überspringt keinen Schritt (vorher: Kartenschritt übersprungen).
+B3 Einrichtung: Doppeltipp (150 ms) auf „Weiter“ überspringt keinen Schritt (vorher: Kartenschritt übersprungen).
 Aufruf: DURCHLAUF_PORT=8851 python3 tests/zaehl_tipps_browser.py"""
 import asyncio, os, sys, pathlib, subprocess, time
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
@@ -32,14 +32,14 @@ async def main():
             await pg.fill('[data-f="betrieb.name"]', "Doppel"); await pg.click('[data-a="laden-art"][data-wert="doener"]'); await pg.wait_for_timeout(300)
             schritte = []
             vor = await pg.evaluate("window.__gastrocalc.stand.schrittId")
-            await tipps(pg, '[data-a="weiter"]', 2, 230); await pg.wait_for_timeout(700)
+            await tipps(pg, '[data-a="weiter"]', 2, 150); await pg.wait_for_timeout(700)
             nach = await pg.evaluate("window.__gastrocalc.stand.schrittId"); schritte.append((vor, nach))
             # Gerichte aus Vorlagen wählen, dann Doppeltipp „Weiter“ (Vorab-Prüfung: übersprang den Kühlgeräte-Schritt)
             if nach == "karte-foto":
                 await pg.click('[data-a="karte-vorlagen"]'); await pg.wait_for_timeout(700)
                 for i in range(2): await pg.locator('#app [data-a="vorlage"]').nth(i).click(); await pg.wait_for_timeout(200)
                 vor = await pg.evaluate("window.__gastrocalc.stand.schrittId")
-                await tipps(pg, '[data-a="weiter"]', 2, 230); await pg.wait_for_timeout(900)
+                await tipps(pg, '[data-a="weiter"]', 2, 150); await pg.wait_for_timeout(900)
                 nach = await pg.evaluate("window.__gastrocalc.stand.schrittId"); schritte.append((vor, nach))
             print("B3 Schritte:", schritte)
             if schritte[0] != ("laden-schnell", "karte-foto"): befunde.append(f"B3: Doppeltipp „Weiter“ im ersten Schritt: {schritte[0]}")
