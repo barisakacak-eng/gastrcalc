@@ -28,13 +28,13 @@ export function geld3View(stand) {
   // 3.4 Was bleibt
   // 3.4/3.5 auf dem letzten vollen Monat (mitten im Monat stünden volle Monatskosten gegen halben Umsatz); ohne Vormonat mit Umsatz: noch nichts
   const vm = monatPlus(monat, -1); const vmDa = (stand.tagesnotizen || []).some((n) => !n.storniert && typeof n.umsatz === "number" && n.umsatz > 0 && n.datum.startsWith(vm));
+  const pb = vmDa ? prueferBlick(stand, vm) : { quote: null }; const unplausibel = pb.quote !== null && pb.quote < PLAUSIBEL_AB;
   const wb = vmDa ? wasBleibt(stand, vm) : null; const std = stand.chef?.stundenMonat || null;
-  const bleibt = !wb ? karte("bleibt", t("w3.bleibt.titel"), "", `<p>${esc(t("w3.bleibt.ersterMonat"))}</p>`) : karte("bleibt", t("w3.bleibt.titel"), wb.jeStunde !== null ? `≈ ${esc(fmtEuro(wb.jeStunde, { dezimal: 2 }))} / h` : "",
+  const bleibt = unplausibel ? karte("bleibt", t("w3.bleibt.titel"), "", `<p class="minus">${esc(t("w3.pruefer.belegeFehlen", fmtZahl(pb.quote * 100, 1)))}</p>`) : !wb ? karte("bleibt", t("w3.bleibt.titel"), "", `<p>${esc(t("w3.bleibt.ersterMonat"))}</p>`) : karte("bleibt", t("w3.bleibt.titel"), wb.jeStunde !== null ? `≈ ${esc(fmtEuro(wb.jeStunde, { dezimal: 2 }))} / h` : "",
     `<small>${esc(t("w3.pruefer.monat", vm.split("-").reverse().join(".")))}</small>${z(t("w3.bleibt.ergebnis"), `≈ ${esc(fmtEuro(wb.ergebnis))}`)}<div class="feldzeile"><label>${esc(t("w3.bleibt.stunden"))}</label><div class="betrag klein"><input inputmode="decimal" data-f="g3-stunden" value="${std ? esc(wertAnzeige(std)) : ""}" placeholder="260"><span class="einheit">h</span></div></div>
     <small class="marke">${esc(t("w3.bleibt.muss"))}</small>`);
   // 3.5 Prüfer-Blick
-  const pb = vmDa ? prueferBlick(stand, vm) : { quote: null };
-  const pruefer = karte("pruefer", t("w3.pruefer.titel"), pb.quote !== null ? `${esc(fmtZahl(pb.quote * 100, 1))} %` : "",
+  const pruefer = karte("pruefer", t("w3.pruefer.titel"), pb.quote !== null && !unplausibel ? `${esc(fmtZahl(pb.quote * 100, 1))} %` : "",
     pb.quote === null ? `<p>${esc(t(vmDa ? "w3.pruefer.leer" : "w3.bleibt.ersterMonat"))}</p>` : pb.quote < PLAUSIBEL_AB ? `<p class="minus">${esc(t("w3.pruefer.belegeFehlen", fmtZahl(pb.quote * 100, 1)))}</p>` : `<small>${esc(t("w3.pruefer.monat", vm.split("-").reverse().join(".")))}</small>${z(t("w3.pruefer.quote"), `${esc(fmtZahl(pb.quote * 100, 1))} %`)}${z(t("w3.pruefer.aufschlag"), `${esc(fmtZahl(pb.rohaufschlag * 100, 0))} %`)}
     ${pb.abweichung !== null ? z(t("w3.pruefer.vormonat"), `${pb.abweichung > 0 ? "+" : ""}${esc(fmtZahl(pb.abweichung, 1))}`, pb.notizPflicht ? "rot" : "") : ""}
     ${pb.notizPflicht ? `<p class="minus">${esc(t("w3.pruefer.warum"))}</p>` : ""}<small class="marke">${esc(t("w3.pruefer.richtsatz", fmtZahl(pb.richtsatz.rohgewinn1 * 100, 0), fmtZahl(pb.richtsatz.rohaufschlag * 100, 0)))}</small>`);
