@@ -385,7 +385,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Mời khách: ${e} chưa thuế · rút cho mục đích riêng, hỏi lại cố vấn thuế`, pausch: (p) => `Bữa ăn của sếp: mức khoán 2026 ${p} mỗi người mỗi năm, trẻ em 2 đến 12 tuổi một nửa. Khi đó sếp không cần ghi từng bữa. Hãy hỏi cố vấn thuế.`, kennung: "Ghi chú – không phải báo cáo Z, không dùng để hạch toán", steuerZbon: "Thuế VAT xin lấy từ báo cáo Z của máy tính tiền.", kasse: "Doanh thu chỉ là ghi chú. Máy tính tiền của sếp (báo cáo Z) mới có giá trị.",
-    allesDa: "Chứng từ và danh sách đầy đủ", umsatzZeile: (n, e) => `${n} ngày · ${e} gộp · ghi chú, máy tính tiền có giá trị`, status: { notiz: "Ghi chú, máy tính tiền có giá trị", pruefen: "kiểm tra" },
+    allesDa: "Chứng từ và danh sách đầy đủ", umsatzZeile: (n, e) => `${n} ngày · ${e} gộp · Ghi chú – không phải Z-Bon`, status: { notiz: "Ghi chú – không phải Z-Bon", pruefen: "kiểm tra" },
     inventurPruefen: (n) => `${n} hàng không có giá – kiểm tra`, wertFehlt: "Giá trị chưa được ghi",
     personalOhne: (n) => `${n} suất ăn không có người – kiểm tra`, kostenZeile: (n) => `${n} khoản · không gồm lương của sếp`,
     kostenInfo: (a, b, c) => `Mỗi tháng như đã nhập: ${a} ròng, ${b} gộp, lương ${c}. Không gồm lương của sếp, không quy đổi.`,
@@ -594,7 +594,7 @@ export default {
     notizPlatzhalter: "Ghi chú, không bắt buộc",
     nachkontrolle: "Đo lại",
     nachkontrollen: { h1: "sau 1 giờ", h2: "sau 2 giờ", naechste: "lần đo tới" },
-    stationFertig: "Ghi",
+    stationFertig: "Ghi", erstMassnahme: "Choose an action above first.",
     wegTitel: "Bên trong có gì?",
     wegHinweis: "Mặt hàng và số lượng – app tính giá trị theo giá mua. Nếu không biết giá, giá trị để trống và hiện thành một mục ở trang chính.",
     wegPlatzhalter: "Mặt hàng",

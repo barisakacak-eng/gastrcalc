@@ -191,7 +191,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || fuehrungOffen() || kurzOffen()) return; if (window.__gcFuehrungZeigen) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); if (ansicht === "start" && stand.phase === "app") zeichne(); /* K3 Runde 2 (01.11.2026): Heute sofort neu, damit der Home-Hinweis nicht erst nach einem Tabwechsel kommt */ } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
+        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || (wurzel?.betriebe || []).some((b) => b.fuehrung) || fuehrungOffen() || kurzOffen()) return; /* 03.11.2026: Rundgang je Gerät einmal – auch nicht nach dem Einlesen eines Ladens ohne Merker */ if (window.__gcFuehrungZeigen) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); if (ansicht === "start" && stand.phase === "app") zeichne(); /* K3 Runde 2 (01.11.2026): Heute sofort neu, damit der Home-Hinweis nicht erst nach einem Tabwechsel kommt */ } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -517,7 +517,7 @@ function homeLage({ buero = false } = {}) {
   const g = probeGeraet();
   const z = installZustand(g ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: g === "android" ? "Android" : "iPhone" } } : globalThis);
   if (buero) return { ...z, knopf: !!installAufforderung };
-  if (fuehrungOffen() || kurzOffen() || !stand?.fuehrung || !homeHinweisFaellig(wurzel, z)) return null; // erst nach dem Rundgang
+  if (fuehrungOffen() || kurzOffen() || !(stand?.fuehrung || (wurzel?.betriebe || []).some((b) => b.fuehrung)) || !homeHinweisFaellig(wurzel, z)) return null; // erst nach dem Rundgang (03.11.2026: Rundgang je Gerät, also auch im zweiten Laden)
   return z;
 }
 // W2-D: „Diagnose kopieren“ – Fassung, Browser, Speicher, Anzahl Einträge. Keine Namen, keine Zahlen aus dem Laden.

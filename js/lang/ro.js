@@ -391,7 +391,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Oferit invitaților: ${e} net · prelevare în scop privat, clarifică cu consultantul fiscal`, pausch: (p) => `Mâncarea ta: suma forfetară 2026 ${p} de persoană pe an, copiii de 2–12 ani jumătate. Atunci nu trebuie să o notezi pe rând. Clarifică cu consultantul fiscal.`, kennung: "Notă – nu e raport Z, nu pentru contabilitate", steuerZbon: "TVA te rog din raportul Z al casei.", kasse: "Vânzările sunt doar note. Valabilă e casa ta (raport Z).",
-    allesDa: "Documente și liste complete", umsatzZeile: (n, e) => `${n} zile · ${e} brut · note, casa e valabilă`, status: { notiz: "Notă, casa e valabilă", pruefen: "verifică" },
+    allesDa: "Documente și liste complete", umsatzZeile: (n, e) => `${n} zile · ${e} brut · Notă – nu este Z-Bon`, status: { notiz: "Notă – nu este Z-Bon", pruefen: "verifică" },
     inventurPruefen: (n) => `${n} mărfuri fără preț – verifică`, wertFehlt: "Valoare neînregistrată",
     personalOhne: (n) => `${n} mese fără persoană – verifică`, kostenZeile: (n) => `${n} poziții · fără salariul tău`,
     kostenInfo: (a, b, c) => `Lunar, cum s-a introdus: ${a} net, ${b} brut, salarii ${c}. Fără salariul tău, fără conversie.`,
@@ -600,7 +600,7 @@ export default {
     notizPlatzhalter: "Notiță, opțional",
     nachkontrolle: "Remăsurare",
     nachkontrollen: { h1: "peste 1 oră", h2: "peste 2 ore", naechste: "următoarea măsurare" },
-    stationFertig: "Trece",
+    stationFertig: "Trece", erstMassnahme: "Choose an action above first.",
     wegTitel: "Ce era înăuntru?",
     wegHinweis: "Articol și cantitate – valoarea o calculează aplicația din prețul de cumpărare. Dacă nu știi prețul, valoarea rămâne deschisă și apare ca punct pe pagina de start.",
     wegPlatzhalter: "Articol",

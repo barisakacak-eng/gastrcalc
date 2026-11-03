@@ -63,7 +63,7 @@ function bilanzView(stand, H) {
         <div class="summenzeile"><span>${esc(t("abschluss.bleibt"))}</span><span class="wert">${u ? fmtEuro(bleibt) : "–"}</span></div>
         <details class="ab-details">
           <summary>${esc(t("start.mehr"))}<span aria-hidden="true">⌄</span></summary>
-        <div class="summenzeile"><span>${esc(t("abschluss.fixTag"))}</span><span class="wert">− ${fmtEuro(z.tageskosten)}</span></div>
+        <div class="summenzeile"><span>${esc(t("abschluss.fixTag"))}</span><span class="wert">− ${fmtEuro(z.tageskostenFest ?? z.tageskosten)}</span></div>${""/* Vorab-Prüfung 03.11.2026 (A2): ohne den Monatslohn – der steht als „Löhne heute“ darunter, sonst sah er doppelt aus */}
         ${(() => { const lh = z.tage.find((x) => x.datum === H)?.lohn || 0; return lh > 0.5 ? `<div class="summenzeile"><span>${esc(t("abschluss.lohnTag"))}</span><span class="wert">− ${z.tage.find((x) => x.datum === H)?.lohnEcht ? "" : "≈ "}${fmtEuro(lh)}</span></div>` : ""; })()}
         <div class="summenzeile"><span>${esc(t("abschluss.tonne"))}</span><span class="wert rot">${!sw.anzahl ? "–" : sw.ohneWert >= sw.anzahl ? `${sw.anzahl}×` : (sw.ohneWert ? "≈ " : "") + "− " + fmtEuro(sw.muellwert, { dezimal: 2 })}</span></div>
         <div class="summenzeile"><span>${esc(t("abschluss.kuehl"))}</span><span class="wert ${ks.eingerichtet && ks.heuteGemessen >= ks.stellen ? (ks.nachkontrollen > 0 ? "rot" : "gruen") : ""}">${ks.eingerichtet ? `${ks.heuteGemessen}/${ks.stellen} · ${esc(ks.nachkontrollen > 0 ? t("abschluss.nachkontrolle", ks.nachkontrollen) : t("abschluss.rundgaenge", rundgaenge))}` : "–"}</span></div>

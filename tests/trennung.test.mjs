@@ -34,7 +34,7 @@ const AUSNAHMEN = {
   "bestand.js": { z: "lokale Liste von Hinweis-Sätzen", entwurf: "Entwurf Mindestbestand (Modulzustand)" },
   "buero.js": { offen: "lokale Liste der Büro-Chips" },
   "ebene.js": { huelle: "DOM", h: "DOM", m: "DOM", k: "DOM", feld: "DOM", blatt: "DOM: Blatt beim Wischen (P6)", pin: "PIN-Blatt (Modulzustand)", p: "PIN-Blatt (Modulzustand)", pw: "Passwort-Blatt (Modulzustand)" },
-  "foto.js": { warteschlange: "Foto-Warteschlange (Modulzustand)", serie: "Zähler der Serie (Modulzustand)", mein: "laufendes Foto (Modulzustand lauf)", laufUploads: "Merkliste dieser Prüfliste (Modulzustand)",
+  "foto.js": { kopfName: "DOM (Kopfzeile der Prüfliste, 03.11.2026)", kopfPreis: "DOM (Kopfzeile der Prüfliste, 03.11.2026)", warteschlange: "Foto-Warteschlange (Modulzustand)", serie: "Zähler der Serie (Modulzustand)", mein: "laufendes Foto (Modulzustand lauf)", laufUploads: "Merkliste dieser Prüfliste (Modulzustand)",
     v: "Vorschlag der Prüfliste (flüchtig, erst „Übernehmen“ schreibt)", vorschlaege: "Prüfliste (Modulzustand)" },
   "karte.js": { waage: "Waage-Check (Modulzustand)" },
   "karte_laden.js": { blatt: "Preis-Blatt-Entwurf (Modulzustand)" },

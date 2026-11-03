@@ -390,7 +390,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Qerasur mysafirëve: ${e} neto · tërheqje private, sqaroje me këshilltarin tatimor`, pausch: (p) => `Ushqimi yt: shuma fikse 2026 ${p} për person në vit, fëmijët 2 deri 12 vjeç gjysma. Atëherë nuk duhet ta shënosh një nga një. Sqaroje me këshilltarin tatimor.`, kennung: "Shënim – jo raport Z, jo për kontabilitet", steuerZbon: "TVSH-në të lutem nga raporti Z i arkës.", kasse: "Shitjet janë vetëm shënime. Vlen arka jote (raporti Z).",
-    allesDa: "Dokumentet dhe listat të plota", umsatzZeile: (n, e) => `${n} ditë · ${e} bruto · shënime, vlen arka`, status: { notiz: "Shënim, vlen arka", pruefen: "kontrollo" },
+    allesDa: "Dokumentet dhe listat të plota", umsatzZeile: (n, e) => `${n} ditë · ${e} bruto · Shënim – nuk është Z-Bon`, status: { notiz: "Shënim – nuk është Z-Bon", pruefen: "kontrollo" },
     inventurPruefen: (n) => `${n} mallra pa çmim – kontrollo`, wertFehlt: "Vlera nuk u ruajt",
     personalOhne: (n) => `${n} vakte pa person – kontrollo`, kostenZeile: (n) => `${n} zëra · pa pagën tënde`,
     kostenInfo: (a, b, c) => `Në muaj, si u fut: ${a} neto, ${b} bruto, paga ${c}. Pa pagën tënde, pa konvertim.`,
@@ -599,7 +599,7 @@ export default {
     notizPlatzhalter: "Shënim, sipas dëshirës",
     nachkontrolle: "Matja e dytë",
     nachkontrollen: { h1: "pas 1 ore", h2: "pas 2 orësh", naechste: "matja e radhës" },
-    stationFertig: "Shëno",
+    stationFertig: "Shëno", erstMassnahme: "Choose an action above first.",
     wegTitel: "Çfarë kishte brenda?",
     wegHinweis: "Artikulli dhe sasia – vlerën e llogarit aplikacioni nga çmimi i blerjes. Nëse nuk e di çmimin, vlera mbetet e hapur dhe del si pikë në faqen kryesore.",
     wegPlatzhalter: "Artikulli",

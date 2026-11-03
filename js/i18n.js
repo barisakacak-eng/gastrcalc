@@ -74,7 +74,9 @@ export function fehlendeSchluessel(code) {
 }
 
 // Einheiten-Beschriftung: "Stück" ist das einzige Wort, die Kürzel g/kg/ml/l sind in allen drei Sprachen gleich.
-export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === "portion" ? t("tag.portionen") : (e || ""));
+// Klasse D 03.11.2026: Einheiten in der Schrift der Sprache (nur wo der Glossar es vorgibt; sonst g/kg/ml/l wie auf der Packung)
+const EINHEIT_SCHRIFT = { ar: { g: "غ", kg: "كغ", ml: "مل", l: "ل" } };
+export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === "portion" ? t("tag.portionen") : (EINHEIT_SCHRIFT[aktiv]?.[e] ?? (e || ""))); // Klasse D 03.11.2026: Arabisch „غ“ statt „g“
 
 // Paket 6 (17.10.2026): Katalog-Artikelname in der aktiven Sprache – nur Anzeige, gespeichert bleibt der deutsche Name.
 export const artikelText = (name) => artikelAnzeige(name, aktiv);

@@ -392,7 +392,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Častio goste: ${e} neto · privatno uzimanje, provjeri s poreznim savjetnikom`, pausch: (p) => `Tvoja hrana: paušal 2026 ${p} po osobi godišnje, djeca od 2 do 12 pola. Onda je ne moraš upisivati pojedinačno. Provjeri s poreznim savjetnikom.`, kennung: "Bilješka – nije Z-izvještaj, nije za knjiženje", steuerZbon: "PDV molim iz Z-izvještaja kase.", kasse: "Prometi su samo bilješke. Važi tvoja kasa (Z-izvještaj).",
-    allesDa: "Računi i liste potpuni", umsatzZeile: (n, e) => `${n} dana · ${e} bruto · bilješke, važi kasa`, status: { notiz: "Bilješka, važi kasa", pruefen: "provjeri" },
+    allesDa: "Računi i liste potpuni", umsatzZeile: (n, e) => `${n} dana · ${e} bruto · Bilješka – nije Z-Bon`, status: { notiz: "Bilješka – nije Z-Bon", pruefen: "provjeri" },
     inventurPruefen: (n) => `${n} roba bez cijene – provjeri`, wertFehlt: "Vrijednost nije zabilježena",
     personalOhne: (n) => `${n} obroka bez osobe – provjeri`, kostenZeile: (n) => `${n} stavki · bez tvoje plate`,
     kostenInfo: (a, b, c) => `Mjesečno kako je uneseno: ${a} neto, ${b} bruto, plate ${c}. Bez tvoje plate, bez preračuna.`,
@@ -601,7 +601,7 @@ export default {
     notizPlatzhalter: "Bilješka, nije obavezno",
     nachkontrolle: "Ponovna kontrola",
     nachkontrollen: { h1: "za 1 sat", h2: "za 2 sata", naechste: "sljedeće mjerenje" },
-    stationFertig: "Upiši",
+    stationFertig: "Upiši", erstMassnahme: "Choose an action above first.",
     wegTitel: "Šta je bilo unutra?",
     wegHinweis: "Artikal i količina – vrijednost aplikacija računa iz nabavne cijene. Ako ne znaš cijenu, vrijednost ostaje otvorena i stoji kao stavka na početnoj strani.",
     wegPlatzhalter: "Artikal",

@@ -385,7 +385,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Offerto agli ospiti: ${e} netto · prelievo privato, da chiarire con il commercialista`, pausch: (p) => `Il tuo pasto: forfait 2026 ${p} a persona all'anno, bambini da 2 a 12 anni la metà. Così non devi annotarlo uno per uno. Chiariscilo con il tuo commercialista.`, kennung: "Nota – non è uno scontrino Z, non per la contabilità", steuerZbon: "L'IVA per favore dal rapporto Z della cassa.", kasse: "Gli incassi sono solo note. Vale la tua cassa (rapporto Z).",
-    allesDa: "Documenti e liste completi", umsatzZeile: (n, e) => `${n} giorni · ${e} lordo · note, vale la cassa`, status: { notiz: "Nota, vale la cassa", pruefen: "verificare" },
+    allesDa: "Documenti e liste completi", umsatzZeile: (n, e) => `${n} giorni · ${e} lordo · Nota – non è uno Z-Bon`, status: { notiz: "Nota – non è uno Z-Bon", pruefen: "verificare" },
     inventurPruefen: (n) => `${n} merci senza prezzo – verificare`, wertFehlt: "Valore non registrato",
     personalOhne: (n) => `${n} pasti senza persona – verificare`, kostenZeile: (n) => `${n} voci · senza il tuo stipendio`,
     kostenInfo: (a, b, c) => `Al mese come inserito: ${a} netto, ${b} lordo, salari ${c}. Senza il tuo stipendio, senza conversione.`,
@@ -594,7 +594,7 @@ export default {
     notizPlatzhalter: "Nota, facoltativa",
     nachkontrolle: "Ricontrollo",
     nachkontrollen: { h1: "tra 1 ora", h2: "tra 2 ore", naechste: "prossima misura" },
-    stationFertig: "Inserisci",
+    stationFertig: "Inserisci", erstMassnahme: "Choose an action above first.",
     wegTitel: "Cosa c'era dentro?",
     wegHinweis: "Articolo e quantità – il valore lo calcola l'app dal prezzo d'acquisto. Se non conosci il prezzo, il valore resta aperto e compare come punto nella pagina iniziale.",
     wegPlatzhalter: "Articolo",

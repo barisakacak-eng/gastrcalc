@@ -384,7 +384,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Ji mêvanan re belaş: ${e} net · kişandina taybet, bi şêwirmendê bacê re zelal bike`, pausch: (p) => `Xwarina te bi xwe: mîqdara giştî ya 2026 ${p} ji bo her kesî salê, zarokên 2 heta 12 salî nîv. Wê demê ne hewce ye tu yek bi yek binivîsî. Bi şêwirmendê bacê re zelal bike.`, kennung: "Not – ne raporta Z ye, ne ji bo hesabdariyê", steuerZbon: "Bacê ji raporta Z ya kasê bigire.", kasse: "Firotin tenê not in. Kasa te (raporta Z) derbasdar e.",
-    allesDa: "Belge û lîste temam in", umsatzZeile: (n, e) => `${n} roj · ${e} brut · not, kasa derbasdar e`, status: { notiz: "Not, kasa derbasdar e", pruefen: "kontrol bike" },
+    allesDa: "Belge û lîste temam in", umsatzZeile: (n, e) => `${n} roj · ${e} brut · Nîşe – ne Z-Bon e`, status: { notiz: "Nîşe – ne Z-Bon e", pruefen: "kontrol bike" },
     inventurPruefen: (n) => `${n} mal bê biha – kontrol bike`, wertFehlt: "Nirx nehatiye tomarkirin",
     personalOhne: (n) => `${n} xwarin bê kes – kontrol bike`, kostenZeile: (n) => `${n} xal · bê meaşê te`,
     kostenInfo: (a, b, c) => `Mehane wekî hatiye nivîsîn: ${a} net, ${b} brut, meaş ${c}. Bê meaşê te, bê guherandin.`,
@@ -593,7 +593,7 @@ export default {
     notizPlatzhalter: "Not, ne mecbûrî",
     nachkontrolle: "Kontrola duyem",
     nachkontrollen: { h1: "piştî 1 saetê", h2: "piştî 2 saetan", naechste: "pîvandina din" },
-    stationFertig: "Tomar bike",
+    stationFertig: "Tomar bike", erstMassnahme: "Choose an action above first.",
     wegTitel: "Çi tê de bû?",
     wegHinweis: "Mal û mîqdar – app nirxê ji bihayê kirînê hesab dike. Heke tu bihayê nizanî, nirx vala dimîne û wek xal li rûpela destpêkê xuya dike.",
     wegPlatzhalter: "Mal",

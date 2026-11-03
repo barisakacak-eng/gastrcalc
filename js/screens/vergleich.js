@@ -48,7 +48,7 @@ export function vergleichView(stand) {
       </div></div>`;
   return `<div class="kopfband"><h1>${esc(t("vergleich.titel"))}</h1><div class="unter">${esc(t("vergleich.unter"))}</div></div>
     <div class="inhalt vergleich">
-      <div class="seg umschalter" role="tablist">${["db", "marge", "renner"].map((m) => `<button type="button" role="tab" aria-selected="${modus === m}" class="${modus === m ? "an" : ""}" data-a="vergleich-modus" data-wert="${m}">${esc(t("vergleich.tab." + m))}</button>`).join("")}</div>
+      <div class="seg umschalter" role="tablist">${["db", "marge", "renner"].map((m) => `<button type="button" role="tab" aria-selected="${modus === m}" class="${modus === m ? "an" : ""}" data-a="vergleich-modus" data-wert="${m}">${esc(t("vergleich.tab." + m).replace(/ %$/, "\u00a0%"))}</button>`).join("")}</div>
       ${modus === "renner" ? rennerView(stand) : mit.length ? mit.map(karte).join("") : `<div class="karte leer"><div>${esc(t("vergleich.leer"))}</div><button type="button" class="knopf zweit" data-a="bearbeiten" data-schritt="preise">${esc(t("start.preiseAendern"))}</button></div>`}
       ${modus !== "renner" && ohne.length ? `<div class="karte"><h2>${esc(t("vergleich.ohneZahlen", ohne.length))}</h2>${ohne.map((x) => `<div class="vk-ohne">${esc(x.z.name)} · <small>${esc(x.z.preisBrutto === null ? t("ergebnis.preisFehlt") : !(x.g?.zutaten || []).length ? t("kartelaeden.ohneRezept") : t("vergleich.einkaufFehlt"))}</small></div>`).join("")}</div>` : ""}
       ${modus !== "renner" && geschaetzt ? `<p class="hinweis geschaetzt-hinweis">≈ ${esc(t("vergleich.hinweis"))}</p>` : ""}

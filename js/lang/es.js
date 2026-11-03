@@ -385,7 +385,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Invitado a clientes: ${e} neto · retiro para uso privado, consúltalo con tu asesor fiscal`, pausch: (p) => `Tu propia comida: importe fijo 2026 ${p} por persona y año, niños de 2 a 12 la mitad. Así no tienes que anotarla una a una. Consúltalo con tu asesor fiscal.`, kennung: "Nota – no es informe Z, no para contabilidad", steuerZbon: "El IVA, por favor, del informe Z de la caja.", kasse: "Las ventas son solo notas. Vale tu caja (informe Z).",
-    allesDa: "Justificantes y listas completos", umsatzZeile: (n, e) => `${n} días · ${e} bruto · notas, vale la caja`, status: { notiz: "Nota, vale la caja", pruefen: "revisar" },
+    allesDa: "Justificantes y listas completos", umsatzZeile: (n, e) => `${n} días · ${e} bruto · Nota – no es un Z-Bon`, status: { notiz: "Nota – no es un Z-Bon", pruefen: "revisar" },
     inventurPruefen: (n) => `${n} artículos sin precio – revisar`, wertFehlt: "Valor no registrado",
     personalOhne: (n) => `${n} comidas sin persona – revisar`, kostenZeile: (n) => `${n} partidas · sin tu sueldo`,
     kostenInfo: (a, b, c) => `Al mes como se introdujo: ${a} neto, ${b} bruto, sueldos ${c}. Sin tu sueldo, sin conversión.`,
@@ -594,7 +594,7 @@ export default {
     notizPlatzhalter: "Nota, opcional",
     nachkontrolle: "Revisión",
     nachkontrollen: { h1: "en 1 hora", h2: "en 2 horas", naechste: "próxima medición" },
-    stationFertig: "Anotar",
+    stationFertig: "Anotar", erstMassnahme: "Choose an action above first.",
     wegTitel: "¿Qué había dentro?",
     wegHinweis: "Artículo y cantidad: el valor lo calcula la app con el precio de compra. Si no sabes el precio, el valor queda pendiente y sale como punto en el inicio.",
     wegPlatzhalter: "Artículo",

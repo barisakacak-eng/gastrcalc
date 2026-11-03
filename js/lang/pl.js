@@ -390,7 +390,7 @@ export default {
   },
   // W2-T (Prüfung p04)
   ordnerT: { ausgegeben: (e) => `Postawione gościom: ${e} netto · pobranie na cele prywatne, ustal z doradcą podatkowym`, pausch: (p) => `Twoje własne jedzenie: ryczałt 2026 ${p} na osobę rocznie, dzieci od 2 do 12 lat połowa. Wtedy nie musisz zapisywać każdego posiłku. Ustal to z doradcą podatkowym.`, kennung: "Notatka – nie raport Z, nie do księgowania", steuerZbon: "VAT proszę wziąć z raportu Z kasy.", kasse: "Obroty to tylko notatki. Ważna jest twoja kasa (raport Z).",
-    allesDa: "Dowody i listy kompletne", umsatzZeile: (n, e) => `${n} dni · ${e} brutto · notatki, ważna kasa`, status: { notiz: "Notatka, ważna kasa", pruefen: "sprawdź" },
+    allesDa: "Dowody i listy kompletne", umsatzZeile: (n, e) => `${n} dni · ${e} brutto · Notatka – nie Z-Bon`, status: { notiz: "Notatka – nie Z-Bon", pruefen: "sprawdź" },
     inventurPruefen: (n) => `${n} towary bez ceny – sprawdź`, wertFehlt: "Wartość nie zapisana",
     personalOhne: (n) => `${n} posiłki bez osoby – sprawdź`, kostenZeile: (n) => `${n} pozycje · bez twojej pensji`,
     kostenInfo: (a, b, c) => `Miesięcznie jak wpisano: ${a} netto, ${b} brutto, płace ${c}. Bez twojej pensji, bez przeliczania.`,
@@ -599,7 +599,7 @@ export default {
     notizPlatzhalter: "Notatka, nieobowiązkowo",
     nachkontrolle: "Ponowny pomiar",
     nachkontrollen: { h1: "za 1 godzinę", h2: "za 2 godziny", naechste: "następny pomiar" },
-    stationFertig: "Wpisz",
+    stationFertig: "Wpisz", erstMassnahme: "Choose an action above first.",
     wegTitel: "Co było w środku?",
     wegHinweis: "Towar i ilość – wartość aplikacja liczy z ceny zakupu. Jeśli nie znasz ceny, wartość zostaje otwarta i pojawi się jako punkt na stronie głównej.",
     wegPlatzhalter: "Towar",

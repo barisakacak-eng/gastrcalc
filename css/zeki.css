@@ -150,3 +150,39 @@
 .rg-kurz .rg-blase{min-width:0}
 .rg-kurz .rg-fuss{flex-wrap:wrap}
 .rg-kurz .rg-fuss .rg-weiter{margin-inline-start:auto}
+
+/* Klasse D (03.11.2026, Prüfstand Freitag Abschnitt 4) – nur Layout, keine Rechnung */
+/* Büro › Start: Zekis Satz in der Kopfzeile bekommt die Breite, die der Titel nicht braucht („Rechtsform eintragen“ einzeilig) */
+.ebene-kopf.buero.spricht{grid-template-columns:auto minmax(0,1fr) auto}
+.ebene-kopf.buero.spricht .zeki-stimme{padding-inline:8px 6px}
+.ebene-kopf.buero.spricht .zeki-stimme>.zeki-zeile{text-wrap:balance;line-height:1.2}
+/* Büro › Start: weniger Leerraum zwischen den Ordnern und den Bereichen */
+.b-ruhig .b-bereiche{margin-top:0}
+.b-ruhig .b-gruppe+.b-bereiche{margin-top:0}
+/* Büro › Untertitel rechts bei 360 px: umbrechen statt „…“ (ein Wort bleibt ganz) */
+.zeileknopf>small{white-space:normal;overflow:visible;text-overflow:clip;text-align:end;max-width:50%}
+/* Büro › Gerichte im Vergleich: Reiter ruhig zweizeilig, aber „%“ nie allein */
+.umschalter button{line-height:1.2;padding:6px 6px;text-wrap:balance}
+/* Laden › Müll-Kachel: der Haken liegt über dem „…“ und verdeckt es nicht mehr halb */
+.inhalt.muell1 .muellraster .ware.frisch .ware-mehr::before{opacity:0}
+.ware .haken{z-index:3}
+/* Laden › Putzen: „?“-Kreis mit Abstand zum Kartenrand */
+.p-schablone .pzeile.p2{padding-inline-end:8px;gap:4px}
+.p-schablone .pzeile.p2 .aufgabe{padding-inline-end:4px}
+/* Laden › Hilfe-Blatt: OK-Knopf mit Rand und runden Ecken, bleibt unten sichtbar */
+.ebene-blatt.blatt-hilfe>.knopf[data-a="blatt-zu"]{margin:8px 0 calc(env(safe-area-inset-bottom,0px) + 12px);width:100%;border-radius:var(--radius-knopf,16px);padding-bottom:0;min-height:56px;bottom:12px;box-shadow:0 -10px 14px var(--papier),0 12px 0 var(--papier)}
+/* Laden › Kopfzeile: Zekis Kopf ragt nicht mehr über den Bildschirmrand */
+.appleiste .ikonknopf.zeki-knopf .zeki{width:54px;height:74px}
+/* Laden › erster Besuch: Zekis Erst-Karte oben unter der Kopfzeile statt über der letzten Kachelzeile */
+.zeki-erst{top:calc(78px + env(safe-area-inset-top,0px));bottom:auto}
+/* Laden › Kühlung: Satz unter den Maßnahmen, solange „Eintragen“ grau ist */
+.kuehl-erst-massnahme{margin:0;text-align:center;font-weight:650;color:var(--rot,#9a2c1a)}
+/* Einrichtung › Speisekarte prüfen: ein Rahmen ums Preisfeld; Preise in Arabisch wie auf der Karte („8,90 €“) */
+.betrag input:focus-visible{outline:none}
+[dir="rtl"] .fvtipp .p,[dir="rtl"] .fvk .betrag,[dir="rtl"] .fvbearb .betrag{direction:ltr;unicode-bidi:isolate}
+/* Tagesabschluss: grüne Karte so hoch wie ihr Inhalt; eine Linie über „Mehr“ */
+.ab-bilanz .karte.ab-hero{min-height:0}
+.ab-bilanz .ab-zahlen .summenzeile:has(+ .ab-details){border-bottom:0}
+[dir="rtl"] .muellsumme .zahl{direction:ltr;unicode-bidi:isolate}
+/* 03.11.2026: Überschriften in aufklappbaren Einstellungs-Karten brechen nie mitten im Wort („Datenschut/z“) */
+summary>h2{overflow-wrap:normal;word-break:normal;hyphens:auto;min-width:0}

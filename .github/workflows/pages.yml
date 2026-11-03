@@ -101,6 +101,27 @@ jobs:
             grep -E "FEHLT|Error|Timeout" zurueck.txt | tail -8 | while read -r l; do echo "::warning::zurueck Versuch $versuch: $l"; done
           done
           tail -30 zurueck.txt; exit 1
+      - name: Prüfstand einlesen (02.11./03.11.2026)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8846 python tests/pruefstand_browser.py > pruefstand.txt 2>&1; then exit 0; fi
+            grep -E "FEHLT|Error|Timeout|PRÜFSTAND" pruefstand.txt | tail -8 | while read -r l; do echo "::warning::pruefstand Versuch $versuch: $l"; done
+          done
+          tail -30 pruefstand.txt; exit 1
+      - name: Laden-Einträge überstehen Neuladen nach 100 ms (Vorab-Prüfung A1, 03.11.2026)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8847 python tests/speichern_sofort_browser.py > speichern_sofort_browser.txt 2>&1; then exit 0; fi
+            grep -E "SOFORT|Error|Timeout" speichern_sofort_browser.txt | tail -8 | while read -r l; do echo "::warning::speichern_sofort_browser Versuch $versuch: $l"; done
+          done
+          tail -30 speichern_sofort_browser.txt; exit 1
+      - name: Einrichtung übersteht Neuladen (Vorab-Prüfung A3, 03.11.2026)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8849 python tests/einrichtung_neuladen_browser.py > einrichtung_neuladen_browser.txt 2>&1; then exit 0; fi
+            grep -E "NEULADEN|Error|Timeout" einrichtung_neuladen_browser.txt | tail -8 | while read -r l; do echo "::warning::einrichtung_neuladen_browser Versuch $versuch: $l"; done
+          done
+          tail -30 einrichtung_neuladen_browser.txt; exit 1
       - name: Erststart jeder Ladenart (de, drei Ladenarten)
         run: |
           for versuch in 1 2; do
