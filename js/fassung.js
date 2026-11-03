@@ -1,2 +1,2 @@
 // Wird von tools/sw_liste.py geschrieben – nicht von Hand ändern.
-export const FASSUNG = "2026-11-03.16";
+export const FASSUNG = "2026-11-03.17";
