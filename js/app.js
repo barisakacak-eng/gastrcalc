@@ -106,11 +106,11 @@ let offlineStand = "laedt";   // "laedt" | "bereit" | "keinSw"
 let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner stehen, bis es wieder klappt
 let ruheBis = 0, tippX = -99, tippY = -99, tippZeit = 0; // Pilotfest U1 (30.10.2026): tippZeit – nur ein ECHTER Doppeltipp (zweiter Tipp < 300 ms nach dem ersten) wird geschluckt
 // Vorab-Prüfung 03.11.2026 (B3): Doppeltipp mit ≈ 230 ms auf „Weiter“ übersprang einen Einrichtungsschritt, „Speichern“ im Preis-Blatt traf danach die Tab-Leiste.
-// Neu: Hat der erste Tipp den Bildschirm unter dem Finger verändert (sein Element ist weg), zählt ein zweiter Tipp an derselben Stelle binnen 400 ms nicht (Setzung).
+// Neu: Hat der erste Tipp den Bildschirm unter dem Finger verändert (sein Element ist weg), zählt ein zweiter Tipp an derselben Stelle binnen 240 ms nicht (Setzung).
 // Zähl-Tipps (Müll-Kachel, −/+) sind ausgenommen – dort zählt jeder Tipp (B1).
-const FLAECHE_NEU_MS = 400;
-const ZAEHL_TIPPS = new Set(["muell-tipp", "kl-minus", "kl-plus", "minus", "plus", "ul-team-plus"]);
-let tippEl = null;
+const FLAECHE_NEU_MS = 240; // zwischen Doppeltipp (≈ 100–230 ms) und bewusstem schnellen Weitertippen (≥ 250 ms, U1)
+const ZAEHL_TIPPS = new Set(["muell-tipp", "kl-minus", "kl-plus", "minus", "plus", "ul-team-plus", "pin-taste", "pin-weg", "s2-kuehl"]);
+let tippEl = null, tippSchutz = false;
 const DOPPELTIPP_MS = 180; // Setzung 30.10.2026: ein versehentlicher Doppeltipp liegt bei ≈ 100–150 ms; „Weiter → Weiter“ eines schnellen Menschen braucht ≈ 250 ms und mehr
 // // nach einem Bildschirmwechsel 350 ms lang keinen Tipp an derselben Stelle annehmen (zweiter Tipp eines Doppeltipps)
 
@@ -695,8 +695,9 @@ async function aufKlick(ev) {
   if (el.type === "submit") ev.preventDefault(); // Vorab-Prüfung 03.11.2026 (B5): Formulare der Blätter nie wirklich absenden – der Klick schließt das Blatt, danach meldete Chrome „form is not connected“
   const name = el.dataset.a;
   const jetzt = Date.now(); const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; const abstand = jetzt - tippZeit; const schnell = abstand < DOPPELTIPP_MS;
-  const flaecheNeu = !!tippEl && tippEl !== el && !tippEl.isConnected; // unter dem Finger liegt jetzt etwas anderes (Schritt gewechselt, Blatt zu, Liste nachgerückt)
-  tippX = ev.clientX; tippY = ev.clientY; tippZeit = jetzt; tippEl = el;
+  // unter dem Finger liegt jetzt etwas anderes – nur in der Einrichtung und vom Preis-/Rezept-Blatt auf die Tab-Leiste (U1: sonst zählt ein schneller zweiter Tipp)
+  const flaecheNeu = !!tippEl && tippEl !== el && !tippEl.isConnected && (stand?.phase === "onboarding" || (tippSchutz && !!el.closest(".tableiste")));
+  tippX = ev.clientX; tippY = ev.clientY; tippZeit = jetzt; tippEl = el; tippSchutz = !!el.closest(".kl-blatt"); // Preis-/Rezept-Blatt zu → Tab-Leiste darunter
   if (nah && !ZAEHL_TIPPS.has(name) && ((schnell && jetzt < ruheBis) || (flaecheNeu && abstand < FLAECHE_NEU_MS))) return; // zweiter Tipp eines Doppeltipps (U1, Vorab-Prüfung B3)
   if (!stand && !notfall) return; // Rettung (17.10.2026): auf der Fehlerseite gibt es evtl. keinen Laden – Sicherung einlesen und Löschen gehen trotzdem
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
