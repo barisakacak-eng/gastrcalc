@@ -1,0 +1,31 @@
+// Welle 3, 3.7 Liquidität 8 Wochen (Bau-Chat 03.11.2026). Reine Rechnung, keine Oberfläche, kein Bankanschluss.
+// Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte 28.10.2026“, Teil B.
+// Eine Eingabe von Hand: „Geld auf Konto und Kasse heute“ (stand.liquiditaet = { betrag, datum }). Die Zahl veraltet, deshalb fragt
+// die App nach NACHFRAGE_TAGE neu. Gerechnet wird mit dem Stand am Tagesende (alle Einnahmen und Ausgaben des Tages);
+// unter der Zahl steht deshalb „Kann am Tag selbst knapper sein.“
+export const WOCHEN = 8;
+export const NACHFRAGE_TAGE = 7; // Prüfpaket B: wöchentlich neu fragen (Setzung)
+const z2 = (n) => String(n).padStart(2, "0");
+const plus = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); return `${x.getUTCFullYear()}-${z2(x.getUTCMonth() + 1)}-${z2(x.getUTCDate())}`; };
+const wochentag = (tag) => { const [j, m, d] = tag.split("-").map(Number); return new Date(Date.UTC(j, m - 1, d)).getUTCDay(); };
+const cent = (n) => Math.round(n * 100);
+
+// posten: [{ betrag (+ Einnahme, − Ausgabe), datum } | { betrag, tagImMonat } | { betrag, wochentage: [1..6] }]
+// Rückgabe: Tagesstände, tiefster Stand mit Datum, Endstand, Urteil „reicht“ / „fehlt“ (nur Rechnung, kein Rat)
+export function liquiditaet({ start, ab, wochen = WOCHEN, posten = [] }) {
+  if (typeof start !== "number" || !Number.isFinite(start) || !/^\d{4}-\d{2}-\d{2}$/.test(ab || "")) return null;
+  const tage = []; let stand = cent(start); let tief = null;
+  for (let i = 0; i < wochen * 7; i++) {
+    const d = plus(ab, i); const w = wochentag(d); const tim = Number(d.slice(8));
+    let rein = 0, raus = 0;
+    for (const p of posten) {
+      const trifft = p.datum ? p.datum === d : p.tagImMonat ? p.tagImMonat === tim : p.wochentage ? p.wochentage.includes(w) : false;
+      if (!trifft) continue; const c = cent(p.betrag); if (c >= 0) rein += c; else raus -= c;
+    }
+    stand += rein - raus; tage.push({ datum: d, rein: rein / 100, raus: raus / 100, stand: stand / 100 });
+    if (tief === null || stand < tief.c) tief = { c: stand, datum: d };
+  }
+  const tiefster = { betrag: tief.c / 100, datum: tief.datum };
+  return { start, ab, bis: tage[tage.length - 1].datum, tage, tiefster, ende: stand / 100, reicht: tief.c >= 0, fehlt: tief.c < 0 ? Math.ceil(-tief.c / 100) : 0 };
+}
+export const nachfragen = (eingabe, heute) => !eingabe || typeof eingabe.betrag !== "number" || !eingabe.datum || plus(eingabe.datum, NACHFRAGE_TAGE) <= heute;

@@ -227,13 +227,15 @@ export function kontaktSetzen(stand, art, email) {
 
 // Mitarbeiter heute (Baris 27.10.2026, 11:14): beim Tagesumsatz „Waren heute Mitarbeiter da?“ – bis eine Personalanbindung kommt, von Hand.
 // stand.teamTage = [{ datum, eintraege: [{ person (id | null), name, stunden, satz }], keine, erfasst }] – je Datum gilt der jüngste Eintrag.
+// Welle 3 (3.8, 03.11.2026): Schichtzeiten „HH:MM“ je Eintrag, freiwillig; ohne Zeiten bleibt der Eintrag wie bisher (nur Stunden)
+const schichtZeit = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${m[1].padStart(2, "0")}:${m[2]}` : null; };
 export const teamTag = (stand, datum) => [...(stand?.teamTage || [])].reverse().find((x) => x.datum === datum) || null;
 export function teamTagSetzen(stand, datum, eintraege) {
   stand.teamTage ??= [];
   // Fester Monatslohn: wird an der Person gemerkt und zählt nicht als Tageseintrag
   for (const x of eintraege || []) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.modell === "monat" && x.monatsBrutto > 0) { p.lohnModell = "monat"; p.monatsBrutto = Math.round(x.monatsBrutto * 100) / 100; p.lohnArt = x.art === "minijob" ? "minijob" : "angestellt"; } else if (p && x.modell === "stunde") p.lohnModell = "stunde"; }
   eintraege = (eintraege || []).filter((x) => x.modell !== "monat");
-  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), ...(x.kompakt ? { kompakt: true, personen: Math.max(1, Math.round(Number(x.personen) || 1)) } : {}), stunden: Math.round(Math.min(400, x.stunden) * 4) / 4, satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
+  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), ...(x.kompakt ? { kompakt: true, personen: Math.max(1, Math.round(Number(x.personen) || 1)) } : {}), stunden: Math.round(Math.min(400, x.stunden) * 4) / 4, ...(schichtZeit(x.von) && schichtZeit(x.bis) ? { von: schichtZeit(x.von), bis: schichtZeit(x.bis) } : {}), satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
   stand.teamTage.push(e);
   for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) { p.stundenlohn = x.satz; p.lohnArt = x.art; } }
   return e;

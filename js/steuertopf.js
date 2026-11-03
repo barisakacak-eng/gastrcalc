@@ -6,6 +6,7 @@ import { belege, monatVon, monatPlus } from "./export_steuer.js";
 import { warenQuote } from "./zaehler.js";
 
 const rund2 = (n) => Math.round(n * 100) / 100;
+const rund4 = (n) => Math.round(n * 10000) / 10000;
 const SATZ_7 = 0.07, SATZ_19 = 0.19;
 
 // Anteil des Tagesumsatzes, der zu 19 % besteuert wird (Getränke, Außer-Haus-Getränke …), aus dem Mischsatz der App:
@@ -31,13 +32,17 @@ export function steuerTopf(stand, monat) {
   const z = monatVon(monat + "-01"); const { anteil, geschaetzt } = anteil19(stand);
   const b = belege(stand, z);
   const vorsteuerJeTag = {}; for (const x of b.zeilen) { const v = (x.ust7 || 0) + (x.ust19 || 0); vorsteuerJeTag[x.datum] = (vorsteuerJeTag[x.datum] || 0) + v; }
-  const tage = []; let ust7 = 0, ust19 = 0, umsatz = 0;
+  // Tageszeilen kumuliert gerundet (03.11.2026): jede Zeile = gerundete Summe bis heute − gerundete Summe bis gestern.
+  // So ist die Summe der Tageszeilen auf den Cent gleich der Monatszahl (Prüfpaket A: „Summe über den Monat = Monatszahl“);
+  // einzelne Tage weichen dafür um 1 Cent ab (Nov-Test: 92,70 € und 92,69 €).
+  const tage = []; let ust7 = 0, ust19 = 0, umsatz = 0, bisher = 0;
   for (let d = z.von; d <= z.bis; d = naechsterTag(d)) {
     const e = umsatzEintrag(stand, d); const vs = vorsteuerJeTag[d] || 0;
     if (!e && !vs) continue;
     const u = e ? ustImUmsatz(e.umsatz, anteil) : { ust7: 0, ust19: 0 };
     ust7 += u.ust7; ust19 += u.ust19; umsatz += e ? e.umsatz : 0;
-    tage.push({ datum: d, umsatz: e ? e.umsatz : 0, ust: rund2(u.ust7 + u.ust19), vorsteuer: rund2(vs), topf: rund2(u.ust7 + u.ust19 - vs) });
+    const ustTag = rund2(rund2(ust7 + ust19) - bisher); bisher = rund2(ust7 + ust19);
+    tage.push({ datum: d, umsatz: e ? e.umsatz : 0, ust: ustTag, vorsteuer: rund2(vs), topf: rund2(ustTag - vs) });
   }
   const vorsteuer = rund2(b.ust7 + b.ust19);
   const ustGesamt = ust7 + ust19;
@@ -56,14 +61,16 @@ const naechsterTag = (iso) => { const [j, m, d] = iso.split("-").map(Number); co
 // Umsatz netto − Ware netto − Energie netto − Miete − Personal − Sonstiges = Ergebnis; − Tilgung; ÷ Chef-Stunden.
 // chefStunden: Stunden des Chefs im Monat (Eingabe im Büro, stand.chef.stundenMonat), tilgung: Kreditrate (kosten „kredit“) oder Angabe.
 // Muss-Satz daneben (Text in den Sprachtabellen): „vor Einkommensteuer und deiner eigenen Kranken- und Rentenversicherung“.
-export function wasBleibt(stand, monat, { chefStunden = null, tilgung = null, posten = null } = {}) {
-  const p = posten || monatsPosten(stand, monat);
+// Reine Rechnung (Goldwert-Test): posten { umsatzNetto, ware, energie, miete, personal, sonstiges, tilgung }, chefStunden oder null
+export function wasBleibtAus(p, chefStunden = null) {
   const ergebnisVorTilgung = p.umsatzNetto - p.ware - p.energie - p.miete - p.personal - p.sonstiges;
-  const til = tilgung ?? p.tilgung;
-  const ergebnis = ergebnisVorTilgung - til;
+  const ergebnis = ergebnisVorTilgung - (p.tilgung || 0); const std = Number(chefStunden) > 0 ? Number(chefStunden) : null;
+  return { ergebnisVorTilgung: rund2(ergebnisVorTilgung), tilgung: rund2(p.tilgung || 0), ergebnis: rund2(ergebnis), chefStunden: std, jeStunde: std ? rund2(ergebnis / std) : null };
+}
+export function wasBleibt(stand, monat, { chefStunden = null, tilgung = null, posten = null } = {}) {
+  const p = { ...(posten || monatsPosten(stand, monat)) }; if (tilgung !== null) p.tilgung = tilgung;
   const std = chefStunden ?? (Number(stand?.chef?.stundenMonat) > 0 ? stand.chef.stundenMonat : null);
-  return { monat, ...p, ergebnisVorTilgung: rund2(ergebnisVorTilgung), tilgung: rund2(til), ergebnis: rund2(ergebnis), chefStunden: std,
-    jeStunde: std ? rund2(ergebnis / std) : null, geschaetzt: p.geschaetzt };
+  return { monat, ...p, ...wasBleibtAus(p, std), geschaetzt: p.geschaetzt };
 }
 
 // Monatsposten aus der App: Umsatz netto aus den Tagesumsätzen (Mischsatz), Ware netto aus den Belegen, Kosten aus den festen Posten.
@@ -90,16 +97,18 @@ export function monatsPosten(stand, monat) {
 export const RICHTSATZ_IMBISS = { rohgewinn1: 0.68, rohaufschlag: 2.13, quelle: "Richtsatzsammlung 2025, BMF 25.06.2026, Imbissstuben u. Ä. (Mittelwerte)", stand: "2026-06-25" };
 export const NOTIZ_AB_PUNKTEN = 2; // Setzung Prüfpaket Welle 3 (28.10.2026): ab 2 Punkten Abweichung zum Vormonat ist die Notiz „Warum?“ Pflicht
 
+// Reine Rechnung (Goldwert-Test): posten { umsatzNetto, ware }, Quote des Vormonats (0–1) oder null
+export function prueferAus(p, vor = null) {
+  if (!(p.umsatzNetto > 0) || !(p.ware > 0)) return { quote: null, rohgewinn1: null, rohaufschlag: null, abweichung: null, notizPflicht: false, richtsatz: RICHTSATZ_IMBISS };
+  const quote = p.ware / p.umsatzNetto;
+  const abweichung = typeof vor === "number" ? rund2(rund4(quote) * 100 - vor * 100) : null; // in Prozentpunkten, aus der gezeigten Quote
+  return { quote: rund4(quote), rohgewinn1: rund4(1 - quote), rohaufschlag: rund4((p.umsatzNetto - p.ware) / p.ware), abweichung,
+    notizPflicht: abweichung !== null && Math.abs(abweichung) >= NOTIZ_AB_PUNKTEN, richtsatz: RICHTSATZ_IMBISS };
+}
 export function prueferBlick(stand, monat, { posten = null, vormonat = null } = {}) {
   const p = posten || monatsPosten(stand, monat);
-  if (!(p.umsatzNetto > 0) || !(p.ware > 0)) return { monat, quote: null, rohgewinn1: null, rohaufschlag: null, abweichung: null, notizPflicht: false, richtsatz: RICHTSATZ_IMBISS, geschaetzt: p.geschaetzt };
-  const quote = p.ware / p.umsatzNetto;
-  const vor = vormonat ?? vormonatsQuote(stand, monat);
-  const abweichung = typeof vor === "number" ? (quote - vor) * 100 : null; // in Prozentpunkten
-  return { monat, quote: rund4(quote), rohgewinn1: rund4(1 - quote), rohaufschlag: rund4((p.umsatzNetto - p.ware) / p.ware), abweichung: abweichung === null ? null : rund2(abweichung),
-    notizPflicht: abweichung !== null && Math.abs(abweichung) >= NOTIZ_AB_PUNKTEN, richtsatz: RICHTSATZ_IMBISS, geschaetzt: p.geschaetzt };
+  return { monat, ...prueferAus(p, vormonat ?? vormonatsQuote(stand, monat)), geschaetzt: p.geschaetzt };
 }
-const rund4 = (n) => Math.round(n * 10000) / 10000;
 // Quote des Vormonats: aus dem eingefrorenen Abschluss (3.3), sonst live gerechnet
 export function vormonatsQuote(stand, monat) {
   const vm = monatPlus(monat, -1);
