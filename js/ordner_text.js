@@ -206,8 +206,8 @@ export function paketDokument(stand, p) {
     zeilen: p.reinigung.zeilen.map((x) => [datumDe(x.datum), x.lieferant || "–", x.artikel, euro(x.netto)]), summe: p.reinigung.zeilen.length ? [t("ordner.dok.summe"), "", "", euro(p.reinigung.netto)] : null, leer: t("ordner.zeile.keine") });
   if (p.kosten) a.push({ titel: t("ordner.teil.kosten"), info: t("ordnerT.kostenInfo", euro(p.kosten.netto), euro(p.kosten.brutto), euro(p.kosten.lohn)), warn: !!(p.kosten.offen || p.kosten.geschaetzt), kopf: t("ordnerT.druck.kosten"), rechts: [1, 4],
     zeilen: p.kosten.zeilen.map((x) => ({ warn: x.status === "geschaetzt", zellen: [n.posten(x.posten) + (x.status === "geschaetzt" ? ` (${n.pstatus(x.status)})` : ""), euro(x.betrag), n.periode(x.periode), n.basis(x.basis), euro(x.jeMonat)] })), leer: t("ordner.zeile.kostenKeine") });
-  // W3b (04.11.2026, hinter window.__gcW3b): Arbeitszeiten mit Beginn/Ende im Buchhalter-Ordner (§ 17 MiLoG, Gaststätten)
-  if (art === "buch" && typeof globalThis !== "undefined" && globalThis.__gcW3b === true) { const az = arbeitszeitListe(stand, p.zeitraum.von, p.zeitraum.bis);
+  // W3b (Baris Ja 04.11.2026): Arbeitszeiten mit Beginn/Ende im Buchhalter-Ordner (§ 17 MiLoG, Gaststätten)
+  if (art === "buch") { const az = arbeitszeitListe(stand, p.zeitraum.von, p.zeitraum.bis);
     a.push({ titel: t("w3b.az.titel"), info: [t("w3b.az.info"), az.ohneZeiten ? t("w3b.az.ohneZeiten", az.ohneZeiten) : "", az.spaet ? t("w3b.az.spaet", az.spaet) : ""].filter(Boolean).join(" · "), warn: !az.vollstaendig && az.zeilen.length > 0,
       kopf: t("w3b.az.kopf"), rechts: [4], zeilen: az.zeilen.map((x) => ({ warn: !x.von || !x.rechtzeitig, zellen: [datumDe(x.datum), x.wer, x.von || "–", x.bis || "–", fmtZahl(x.stunden, 2), x.erfasst ? datumDe(x.erfasst) : "–"] })), leer: t("w3b.az.leer") }); }
   a.push({ titel: t("ordnerT.aenderungen"), info: t("ordnerT.aenderungenInfo"), kopf: t("ordnerT.druck.aenderungen"), rechts: [4, 5],

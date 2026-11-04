@@ -7,7 +7,7 @@ import { steuerTopf, steuerTopfTag, kleinunternehmer, wasBleibt, prueferBlick } 
 import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, chefStundenSetzen, geldHeuteSetzen, svLandSetzen } from "../welle3.js";
 import { monatEinfrieren, eingefroren, monatVergleich } from "../monatsabschluss.js";
 import { BUNDESLAENDER } from "../feiertage.js";
-const w3b = () => typeof globalThis !== "undefined" && globalThis.__gcW3b === true; // W3b (04.11.2026): Monat abschließen, Sitz der Krankenkasse – Entwurf hinter Schalter
+const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
 import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragen, schichtStunden } from "../schichten.js";
 let schichtEntwurf = { person: null, datum: null, von: "", bis: "" }; // W3b: Formular „Schicht eintragen“ (Entwurf bis zum Tipp)
 

@@ -1,7 +1,7 @@
 {
- "datum": "2026-10-24 20:42",
- "fassung": "acd5a0a",
- "dauer_s": 45.0,
+ "datum": "2026-11-04 23:07",
+ "fassung": "e5f9d06",
+ "dauer_s": 72.5,
  "soll": {
   "woerter": {
    "laden": 15,
@@ -19,34 +19,30 @@
    "heute": {
     "worte": 12,
     "wortliste": [
-     "Bis",
-     "null",
-     "Ab",
-     "erstem",
-     "Müll-Eintrag",
-     "Umsatz",
-     "Müll",
-     "Kühlung",
-     "Putzen",
-     "Kühlrundgang",
+     "Kas",
+     "Çar",
+     "Kirayı",
+     "gir",
+     "Ciro",
+     "Çöp",
+     "Soğutma",
+     "Temizlik",
+     "Soğutma",
+     "turu",
      "Gastro",
      "Cash"
     ],
     "texte": [
      "Döner Test",
-     "Sa., 24. Okt.",
-     "Bis null",
-     "≈ 975 €",
-     "975 €",
-     "⁦01.10.⁩",
-     "⁦31.10.⁩",
-     "Ab erstem Müll-Eintrag",
-     "Umsatz",
-     "Müll",
+     "4 Kas Çar",
+     "?",
+     "Kirayı gir",
+     "Ciro",
+     "Çöp",
      "2",
-     "Kühlung",
-     "Putzen",
-     "Kühlrundgang",
+     "Soğutma",
+     "Temizlik",
+     "Soğutma turu",
      "Gastro",
      "Cash"
     ],
@@ -54,7 +50,7 @@
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Kühlrundgang",
+      "text": "Soğutma turu",
       "h": 71,
       "w": 358,
       "haupt": true,
@@ -65,69 +61,77 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "975 €"
+     "text": "Ciro"
     },
     "tippKlein": [],
     "tippAnzahl": 13,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "muell": {
-    "worte": 8,
+    "worte": 13,
     "wortliste": [
-     "Müll",
-     "heute",
-     "Eimer",
-     "gewogen",
-     "Stück",
-     "Andere",
-     "Gastro",
-     "Cash"
+     "Bugünkü",
+     "çöp",
+     "Artan",
+     "Mal",
+     "Personel",
+     "İkram",
+     "Kırık",
+     "adet",
+     "Diğer",
+     "Bugün",
+     "ne",
+     "çöpe",
+     "gitti"
     ],
     "texte": [
-     "Müll heute",
+     "Bugünkü çöp",
      "0,00 €",
-     "Eimer gewogen",
-     "Pizzateig",
+     "Artan",
+     "Mal",
+     "Personel",
+     "İkram",
+     "Kırık",
+     "Pizza hamuru",
      "250 g",
      "…",
-     "Pide-Teig",
+     "Pide hamuru",
      "250 g",
      "…",
-     "Lahmacun-Teig",
+     "Lahmacun hamuru",
      "250 g",
      "…",
-     "Dönerbrot / Fladen",
-     "1 Stück",
+     "Döner ekmeği / pide",
+     "1 adet",
      "…",
-     "Knoblauchsauce",
+     "Sarımsaklı sos",
      "250 g",
      "…",
-     "Andere",
-     "Gastro",
-     "Cash"
+     "Diğer",
+     "Bugün ne çöpe gitti?"
     ],
     "hoehe": 844,
     "innen": 844,
@@ -139,60 +143,59 @@
      "text": "250 g"
     },
     "tippKlein": [],
-    "tippAnzahl": 19,
+    "tippAnzahl": 23,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "kuehlung": {
-    "worte": 7,
+    "worte": 9,
     "wortliste": [
-     "Kühlung",
-     "Heute",
-     "gemessen",
-     "Rundgang",
-     "starten",
-     "Gastro",
-     "Cash"
+     "Soğutma",
+     "Turu",
+     "başlat",
+     "cihaz",
+     "daha",
+     "ölçülecek",
+     "Bir",
+     "dakika",
+     "sürer"
     ],
     "texte": [
-     "Kühlung",
-     "Heute gemessen",
-     "⁦0 / 2⁩",
-     "Rundgang starten",
-     "Kühlschrank",
+     "Soğutma",
+     "Turu başlat",
+     "Buzdolabı",
      "–",
-     "Tiefkühler",
+     "Derin dondurucu",
      "–",
-     "Gastro",
-     "Cash"
+     "2 cihaz daha ölçülecek. Bir dakika sürer."
     ],
     "hoehe": 844,
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Rundgang starten",
+      "text": "Turu başlat",
       "h": 64,
       "w": 320,
       "haupt": true,
@@ -202,105 +205,108 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 17,
-     "text": "Heute gemessen"
+     "px": 16,
+     "text": "2 cihaz daha ölçülecek. Bir da"
     },
     "tippKlein": [],
     "tippAnzahl": 10,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "putzen": {
-    "worte": 3,
+    "worte": 7,
     "wortliste": [
-     "Putzen",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün",
+     "iş",
+     "kaldı",
+     "Tezgâhlar",
+     "ile",
+     "başla"
     ],
     "texte": [
-     "Putzen",
-     "⁦0 / 9⁩",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün 8 iş kaldı. “Tezgâhlar” ile başla."
     ],
-    "hoehe": 974,
+    "hoehe": 904,
     "innen": 844,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 17,
-     "text": "GastroCash"
+     "px": 16,
+     "text": "Bugün 8 iş kaldı. “Tezgâhlar” "
     },
     "tippKlein": [],
-    "tippAnzahl": 25,
+    "tippAnzahl": 23,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
     "plan": true,
-    "aufgaben": 9
+    "aufgaben": 8
    },
    "karte": {
-    "worte": 9,
+    "worte": 10,
     "wortliste": [
-     "Karte",
-     "Gerichte",
-     "Noch",
-     "keine",
-     "Gerichte",
-     "Karte",
-     "fotografieren",
+     "Menü",
+     "yemek",
+     "Henüz",
+     "yemek",
+     "yok",
+     "Menünün",
+     "fotoğrafını",
+     "çek",
      "Gastro",
      "Cash"
     ],
     "texte": [
-     "Karte",
-     "0 Gerichte",
-     "Noch keine Gerichte",
-     "Karte fotografieren",
+     "Menü",
+     "0 yemek",
+     "Henüz yemek yok",
+     "Menünün fotoğrafını çek",
      "Gastro",
      "Cash"
     ],
@@ -308,7 +314,7 @@
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Karte fotografieren",
+      "text": "Menünün fotoğrafını çek",
       "h": 64,
       "w": 324,
       "haupt": true,
@@ -319,30 +325,30 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "0 Gerichte"
+     "text": "0 yemek"
     },
     "tippKlein": [],
     "tippAnzahl": 8,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 5.78
      }
     ],
@@ -350,22 +356,29 @@
     "gerichte": 0
    },
    "umsatz-heute": {
-    "worte": 8,
+    "worte": 11,
     "wortliste": [
-     "Umsatz",
-     "heute",
-     "Aus",
-     "der",
-     "Kasse",
-     "Speichern",
+     "Bugünkü",
+     "ciro",
+     "Bugün",
+     "personel",
+     "kişi",
+     "toplam",
+     "Saatlik",
+     "brüt",
+     "Kaydet",
      "Gastro",
      "Cash"
     ],
     "texte": [
-     "Umsatz heute",
-     "Aus der Kasse",
+     "Bugünkü ciro",
      "€",
-     "Speichern",
+     "Bugün personel",
+     "kişi",
+     "sa. toplam",
+     "Saatlik brüt",
+     "€",
+     "Kaydet",
      "Gastro",
      "Cash"
     ],
@@ -373,7 +386,7 @@
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Speichern",
+      "text": "Kaydet",
       "h": 64,
       "w": 358,
       "haupt": true,
@@ -384,65 +397,63 @@
     "absaetze": [],
     "minFont": {
      "px": 16,
-     "text": "Aus der Kasse"
+     "text": "Bugün personel"
     },
     "tippKlein": [],
-    "tippAnzahl": 9,
+    "tippAnzahl": 12,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "abschluss": {
-    "worte": 13,
+    "worte": 11,
     "wortliste": [
-     "Tag",
-     "abschließen",
-     "Umsatz",
-     "heute",
-     "Aus",
-     "der",
-     "Kasse",
-     "Müll",
-     "Kühlung",
-     "Tag",
-     "abschließen",
+     "Günü",
+     "kapat",
+     "Bugünkü",
+     "ciro",
+     "Kasadan",
+     "Çöp",
+     "Soğutma",
+     "Günü",
+     "kapat",
      "Gastro",
      "Cash"
     ],
     "texte": [
-     "Tag abschließen",
-     "Umsatz heute",
-     "Aus der Kasse",
+     "Günü kapat",
+     "Bugünkü ciro",
+     "Kasadan",
      "–",
      "›",
-     "Müll",
+     "Çöp",
      "–",
      "›",
-     "Kühlung",
+     "Soğutma",
      "⁦0 / 2⁩",
      "›",
-     "Tag abschließen",
+     "Günü kapat",
      "Gastro",
      "Cash"
     ],
@@ -450,7 +461,7 @@
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Tag abschließen",
+      "text": "Günü kapat",
       "h": 64,
       "w": 356,
       "haupt": true,
@@ -461,30 +472,30 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "Aus der Kasse"
+     "text": "Kasadan"
     },
     "tippKlein": [],
     "tippAnzahl": 11,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
@@ -493,23 +504,23 @@
    "menue": {
     "worte": 8,
     "wortliste": [
-     "Dein",
-     "Laden",
-     "Tag",
-     "abschließen",
-     "Personal-Modus",
+     "Dükkânın",
+     "Günü",
+     "kapat",
+     "Personel",
+     "modu",
      "Büro",
-     "Sprache",
-     "Deutsch"
+     "Dil",
+     "Türkçe"
     ],
     "texte": [
      "Döner Test",
-     "Dein Laden",
-     "Tag abschließen",
-     "Personal-Modus",
+     "Dükkânın",
+     "Günü kapat",
+     "Personel modu",
      "Büro",
-     "Sprache",
-     "Deutsch"
+     "Dil",
+     "Türkçe"
     ],
     "hoehe": 844,
     "innen": 844,
@@ -518,281 +529,284 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Dein Laden"
+     "text": "Dükkânın"
     },
     "tippKlein": [],
     "tippAnzahl": 5,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "buero": {
-    "worte": 117,
+    "worte": 120,
     "wortliste": [
-     "Laden",
+     "Dükkân",
+     "Şirket",
+     "türü",
+     "açık",
+     "Kurulum",
+     "sıradaki",
+     "Yemek",
+     "listesi",
+     "Giderler",
+     "veya",
+     "maaşlar",
+     "eksik",
+     "Kirayı",
+     "gir",
+     "Sağlık",
+     "dairesi",
+     "içinden",
+     "Mali",
+     "müşavir",
+     "Yıl",
+     "Muhasebeci",
+     "henüz",
+     "boş",
+     "Para",
+     "Kasım",
+     "şimdiye",
+     "kadar",
+     "Ay",
+     "ve",
+     "sayaç",
+     "Kasım",
+     "şimdiye",
+     "kadar",
+     "Mal",
+     "tahmini",
+     "Yemek",
+     "karşılaştırması",
+     "Porsiyon",
+     "kârı",
+     "Yemek",
+     "başına",
+     "satış",
+     "Kasa",
+     "satmayanlar",
+     "fire",
+     "Listeler",
+     "Çöp",
+     "ve",
+     "personel",
+     "yemeği",
+     "İpuçları",
+     "Vergi",
+     "ve",
+     "daire",
+     "Para",
+     "ve",
+     "vergi",
+     "Mal",
+     "Sayım",
+     "yok",
+     "Malzeme",
+     "fire",
+     "Depo",
+     "ve",
+     "sipariş",
+     "Stok",
+     "ve",
+     "eksikler",
+     "Sayım",
+     "Sayım",
+     "yok",
+     "Tedarikçiler",
+     "Teslim",
+     "günleri",
+     "ve",
+     "sipariş",
+     "Alış",
+     "fiyatları",
+     "Fişler",
+     "İçecekler",
+     "Menü",
+     "ve",
+     "fiyatlar",
+     "Yemek",
+     "listesi",
+     "Tarifler",
+     "Satış",
+     "fiyatları",
+     "Fotoğrafla",
+     "menü",
+     "Kampanya",
+     "ve",
+     "raf",
+     "ömrü",
+     "Ne",
+     "bitiyor",
+     "ne",
+     "kazandırır",
+     "Menü",
+     "panosu",
+     "Dükkânı",
+     "kur",
+     "Kurulum",
+     "Kurulum",
+     "Soğutucular",
+     "Kontrol",
+     "çizelgesi",
+     "Tüm",
+     "ölçümler",
+     "yazdır",
+     "Temizlik",
+     "planı",
+     "Sabit",
+     "giderler",
+     "Dükkânlar",
      "Büro",
-     "Rechtsform",
-     "eintragen",
-     "Einrichtung",
-     "als",
-     "Nächstes",
-     "Speisekarte",
-     "Feste",
-     "Kosten",
-     "oder",
-     "Löhne",
-     "unvollständig",
-     "Gesundheitsamt",
-     "von",
-     "Steuerberater",
-     "Buchhalter",
-     "noch",
-     "leer",
-     "Einstellungen",
-     "Sicherung",
-     "Geld",
-     "bisher",
-     "Monat",
-     "Zähler",
-     "bisher",
-     "Richtwert",
-     "Ware",
-     "Gerichte",
-     "im",
-     "Vergleich",
-     "Was",
-     "bleibt",
-     "pro",
-     "Stück",
-     "Verkauf",
-     "je",
-     "Gericht",
-     "Kasse",
-     "einlesen",
-     "Ladenhüter",
-     "Schwund",
-     "Listen",
-     "Müll",
-     "Schwund",
-     "Personalessen",
-     "Hinweise",
-     "Steuer",
-     "und",
-     "Amt",
-     "aus",
-     "deinen",
-     "Daten",
-     "Ware",
-     "Noch",
-     "nie",
-     "gezählt",
-     "Lager",
-     "Bestellen",
-     "Was",
-     "da",
-     "ist",
-     "und",
-     "was",
-     "du",
-     "bestellen",
-     "musst",
-     "Inventur",
-     "Noch",
-     "nie",
-     "gezählt",
-     "Lieferanten",
-     "Liefertage",
-     "Bestellschluss",
-     "Bestellweg",
-     "Einkaufspreise",
-     "Belege",
-     "Getränke",
-     "Karte",
-     "Preise",
-     "Speisekarte",
-     "Rezepte",
-     "Verkaufspreise",
-     "Karte",
-     "per",
-     "Foto",
-     "Aktionen",
-     "Haltbarkeit",
-     "Was",
-     "abläuft",
-     "und",
-     "welches",
-     "Angebot",
-     "sich",
-     "lohnt",
-     "Menütafel",
-     "Laden",
-     "einrichten",
-     "Einrichtung",
-     "Einrichtung",
-     "Kühlstellen",
-     "Kontrollblatt",
-     "Alle",
-     "Messungen",
-     "je",
-     "Stelle",
-     "mit",
-     "Lücken",
-     "zum",
-     "Drucken",
-     "Putzplan",
-     "bearbeiten",
-     "Feste",
-     "Kosten",
-     "Läden",
-     "Büro-Code",
-     "an"
+     "kodu",
+     "açık",
+     "Ayarlar",
+     "Yedek"
     ],
     "texte": [
-     "Laden",
-     "Büro",
-     "Rechtsform eintragen",
-     "+ 2",
-     "Einrichtung 14 % – als Nächstes: Speisekarte",
-     "Feste Kosten oder Löhne unvollständig",
-     "Gesundheits­amt",
-     "0 von 3",
-     "Steuer­berater",
-     "September",
-     "Buch­halter",
-     "noch leer",
-     "Einstellungen",
-     "Sicherung",
-     "Geld",
-     "Oktober bisher",
-     "Monat & Zähler",
-     "Oktober bisher · Richtwert Ware",
-     "Gerichte im Vergleich",
-     "Was bleibt pro Stück",
-     "Verkauf je Gericht",
-     "Kasse einlesen, Ladenhüter, Schwund",
-     "Listen",
-     "Müll, Schwund, Personalessen",
-     "Hinweise",
-     "Steuer und Amt, aus deinen Daten",
-     "Ware",
-     "Noch nie gezählt",
-     "Lager & Bestellen",
-     "Was da ist und was du bestellen musst",
-     "Inventur",
-     "Noch nie gezählt",
-     "Lieferanten",
-     "Liefertage, Bestellschluss, Bestellweg",
-     "Einkaufs­preise",
-     "Belege",
-     "Getränke",
-     "Karte & Preise",
-     "Speisekarte",
-     "Rezepte",
-     "Verkaufs­preise",
-     "Karte per Foto",
-     "Aktionen & Haltbarkeit",
-     "Was abläuft und welches Angebot sich lohnt",
-     "Menütafel",
-     "Laden einrichten",
-     "Einrichtung 14 %",
-     "Einrichtung",
+     "Dükkân",
+     "Şirket türü",
+     "2 açık",
+     "Kurulum %14 – sıradaki: Yemek listesi",
+     "Giderler veya maaşlar eksik",
+     "?",
+     "Kirayı gir",
+     "Sağlık dairesi",
+     "3 içinden 0",
+     "Mali müşavir",
+     "Yıl 2026",
+     "Muhasebeci",
+     "henüz boş",
+     "Para",
+     "Kasım şimdiye kadar",
+     "Ay ve sayaç",
+     "Kasım şimdiye kadar · Mal tahmini",
+     "Yemek karşılaştırması",
+     "Porsiyon kârı",
+     "Yemek başına satış",
+     "Kasa, satmayanlar, fire",
+     "Listeler",
+     "Çöp ve personel yemeği",
+     "İpuçları",
+     "Vergi ve daire",
+     "Para ve vergi",
+     "Mal",
+     "Sayım yok",
+     "Malzeme & fire",
+     "Depo ve sipariş",
+     "Stok ve eksikler",
+     "Sayım",
+     "Sayım yok",
+     "Tedarikçiler",
+     "Teslim günleri ve sipariş",
+     "Alış fiyatları",
+     "Fişler",
+     "İçecekler",
+     "Menü ve fiyatlar",
+     "Yemek listesi",
+     "Tarifler",
+     "Satış fiyatları",
+     "Fotoğrafla menü",
+     "Kampanya ve raf ömrü",
+     "Ne bitiyor, ne kazandırır",
+     "Menü panosu",
+     "Dükkânı kur",
+     "Kurulum 14 %",
+     "Kurulum",
      "14 %",
-     "Kühlstellen",
-     "Kontrollblatt",
-     "Alle Messungen je Stelle, mit Lücken, zum Drucken",
-     "Putzplan bearbeiten",
-     "Feste Kosten",
-     "Läden",
-     "Büro-Code",
-     "an"
+     "Soğutucular",
+     "Kontrol çizelgesi",
+     "Tüm ölçümler, yazdır",
+     "Temizlik planı",
+     "Sabit giderler",
+     "Dükkânlar",
+     "Büro kodu",
+     "açık",
+     "Ayarlar",
+     "Yedek"
     ],
-    "hoehe": 2687,
+    "hoehe": 3052,
     "innen": 844,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
      "px": 13,
-     "text": "Oktober bisher · Richtwert War"
+     "text": "3 içinden 0"
     },
     "tippKlein": [],
-    "tippAnzahl": 34,
+    "tippAnzahl": 37,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Laden",
-      "verhaeltnis": 13.74
-     },
-     {
-      "text": "Büro",
+      "text": "Dükkân",
       "verhaeltnis": 13.74
      }
     ],
     "ebene": "buero"
    },
    "personal": {
-    "worte": 7,
+    "worte": 9,
     "wortliste": [
      "Gastro",
      "Cash",
-     "Hallo",
-     "Müll",
-     "Kühlung",
-     "offen",
-     "Putzen"
+     "Merhaba",
+     "Kasım",
+     "Çarşamba",
+     "Çöp",
+     "Soğutma",
+     "açık",
+     "Temizlik"
     ],
     "texte": [
      "Gastro",
      "Cash",
-     "?",
-     "Hallo",
-     "Samstag, 24. Oktober",
-     "Müll",
-     "Kühlung",
-     "2 offen",
-     "Putzen",
-     "0 / 9"
+     "Merhaba",
+     "4 Kasım Çarşamba",
+     "Çöp",
+     "Soğutma",
+     "2 açık",
+     "Temizlik",
+     "0 / 8"
     ],
     "hoehe": 844,
     "innen": 844,
     "knoepfe": [
      {
-      "text": "Müll",
+      "text": "Çöp",
       "h": 168,
       "w": 350,
       "haupt": false,
       "kachel": true
      },
      {
-      "text": "Kühlung2 offen",
+      "text": "Soğutma2 açık",
       "h": 168,
       "w": 350,
       "haupt": false,
       "kachel": true
      },
      {
-      "text": "Putzen0 / 9",
+      "text": "Temizlik0 / 8",
       "h": 168,
       "w": 350,
       "haupt": false,
@@ -803,7 +817,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Samstag, 24. Oktober"
+     "text": "4 Kasım Çarşamba"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -812,89 +826,87 @@
     "ebene": "personal"
    },
    "putzen-plan": {
-    "worte": 3,
+    "worte": 7,
     "wortliste": [
-     "Putzen",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün",
+     "iş",
+     "kaldı",
+     "Tezgâhlar",
+     "ile",
+     "başla"
     ],
     "texte": [
-     "Putzen",
-     "⁦0 / 9⁩",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün 8 iş kaldı. “Tezgâhlar” ile başla."
     ],
-    "hoehe": 974,
+    "hoehe": 904,
     "innen": 844,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 17,
-     "text": "GastroCash"
+     "px": 16,
+     "text": "Bugün 8 iş kaldı. “Tezgâhlar” "
     },
     "tippKlein": [],
-    "tippAnzahl": 25,
+    "tippAnzahl": 23,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
     "plan": true,
-    "aufgaben": 9
+    "aufgaben": 8
    }
   },
   "360x780": {
    "heute": {
     "worte": 12,
     "wortliste": [
-     "Bis",
-     "null",
-     "Ab",
-     "erstem",
-     "Müll-Eintrag",
-     "Umsatz",
-     "Müll",
-     "Kühlung",
-     "Putzen",
-     "Kühlrundgang",
+     "Kas",
+     "Çar",
+     "Kirayı",
+     "gir",
+     "Ciro",
+     "Çöp",
+     "Soğutma",
+     "Temizlik",
+     "Soğutma",
+     "turu",
      "Gastro",
      "Cash"
     ],
     "texte": [
      "Döner Test",
-     "Sa., 24. Okt.",
-     "Bis null",
-     "≈ 975 €",
-     "975 €",
-     "⁦01.10.⁩",
-     "⁦31.10.⁩",
-     "Ab erstem Müll-Eintrag",
-     "Umsatz",
-     "Müll",
+     "4 Kas Çar",
+     "?",
+     "Kirayı gir",
+     "Ciro",
+     "Çöp",
      "2",
-     "Kühlung",
-     "Putzen",
-     "Kühlrundgang",
+     "Soğutma",
+     "Temizlik",
+     "Soğutma turu",
      "Gastro",
      "Cash"
     ],
@@ -902,7 +914,7 @@
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Kühlrundgang",
+      "text": "Soğutma turu",
       "h": 71,
       "w": 328,
       "haupt": true,
@@ -913,69 +925,77 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "975 €"
+     "text": "Ciro"
     },
     "tippKlein": [],
     "tippAnzahl": 13,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "muell": {
-    "worte": 8,
+    "worte": 13,
     "wortliste": [
-     "Müll",
-     "heute",
-     "Eimer",
-     "gewogen",
-     "Stück",
-     "Andere",
-     "Gastro",
-     "Cash"
+     "Bugünkü",
+     "çöp",
+     "Artan",
+     "Mal",
+     "Personel",
+     "İkram",
+     "Kırık",
+     "adet",
+     "Diğer",
+     "Bugün",
+     "ne",
+     "çöpe",
+     "gitti"
     ],
     "texte": [
-     "Müll heute",
+     "Bugünkü çöp",
      "0,00 €",
-     "Eimer gewogen",
-     "Pizzateig",
+     "Artan",
+     "Mal",
+     "Personel",
+     "İkram",
+     "Kırık",
+     "Pizza hamuru",
      "250 g",
      "…",
-     "Pide-Teig",
+     "Pide hamuru",
      "250 g",
      "…",
-     "Lahmacun-Teig",
+     "Lahmacun hamuru",
      "250 g",
      "…",
-     "Dönerbrot / Fladen",
-     "1 Stück",
+     "Döner ekmeği / pide",
+     "1 adet",
      "…",
-     "Knoblauchsauce",
+     "Sarımsaklı sos",
      "250 g",
      "…",
-     "Andere",
-     "Gastro",
-     "Cash"
+     "Diğer",
+     "Bugün ne çöpe gitti?"
     ],
     "hoehe": 780,
     "innen": 780,
@@ -984,63 +1004,62 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "Eimer gewogen"
+     "text": "Artan"
     },
     "tippKlein": [],
-    "tippAnzahl": 19,
+    "tippAnzahl": 23,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "kuehlung": {
-    "worte": 7,
+    "worte": 9,
     "wortliste": [
-     "Kühlung",
-     "Heute",
-     "gemessen",
-     "Rundgang",
-     "starten",
-     "Gastro",
-     "Cash"
+     "Soğutma",
+     "Turu",
+     "başlat",
+     "cihaz",
+     "daha",
+     "ölçülecek",
+     "Bir",
+     "dakika",
+     "sürer"
     ],
     "texte": [
-     "Kühlung",
-     "Heute gemessen",
-     "⁦0 / 2⁩",
-     "Rundgang starten",
-     "Kühlschrank",
+     "Soğutma",
+     "Turu başlat",
+     "Buzdolabı",
      "–",
-     "Tiefkühler",
+     "Derin dondurucu",
      "–",
-     "Gastro",
-     "Cash"
+     "2 cihaz daha ölçülecek. Bir dakika sürer."
     ],
     "hoehe": 780,
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Rundgang starten",
+      "text": "Turu başlat",
       "h": 64,
       "w": 290,
       "haupt": true,
@@ -1050,105 +1069,108 @@
     "anzahlKnoepfe": 1,
     "absaetze": [],
     "minFont": {
-     "px": 14.875,
-     "text": "GastroCash"
+     "px": 16,
+     "text": "2 cihaz daha ölçülecek. Bir da"
     },
     "tippKlein": [],
     "tippAnzahl": 10,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "putzen": {
-    "worte": 3,
+    "worte": 7,
     "wortliste": [
-     "Putzen",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün",
+     "iş",
+     "kaldı",
+     "Tezgâhlar",
+     "ile",
+     "başla"
     ],
     "texte": [
-     "Putzen",
-     "⁦0 / 9⁩",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün 8 iş kaldı. “Tezgâhlar” ile başla."
     ],
-    "hoehe": 972,
+    "hoehe": 904,
     "innen": 780,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 14.875,
-     "text": "GastroCash"
+     "px": 16,
+     "text": "Bugün 8 iş kaldı. “Tezgâhlar” "
     },
     "tippKlein": [],
-    "tippAnzahl": 25,
+    "tippAnzahl": 23,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
     "plan": true,
-    "aufgaben": 9
+    "aufgaben": 8
    },
    "karte": {
-    "worte": 9,
+    "worte": 10,
     "wortliste": [
-     "Karte",
-     "Gerichte",
-     "Noch",
-     "keine",
-     "Gerichte",
-     "Karte",
-     "fotografieren",
+     "Menü",
+     "yemek",
+     "Henüz",
+     "yemek",
+     "yok",
+     "Menünün",
+     "fotoğrafını",
+     "çek",
      "Gastro",
      "Cash"
     ],
     "texte": [
-     "Karte",
-     "0 Gerichte",
-     "Noch keine Gerichte",
-     "Karte fotografieren",
+     "Menü",
+     "0 yemek",
+     "Henüz yemek yok",
+     "Menünün fotoğrafını çek",
      "Gastro",
      "Cash"
     ],
@@ -1156,7 +1178,7 @@
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Karte fotografieren",
+      "text": "Menünün fotoğrafını çek",
       "h": 64,
       "w": 294,
       "haupt": true,
@@ -1167,30 +1189,30 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "0 Gerichte"
+     "text": "0 yemek"
     },
     "tippKlein": [],
     "tippAnzahl": 8,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 5.78
      }
     ],
@@ -1198,22 +1220,29 @@
     "gerichte": 0
    },
    "umsatz-heute": {
-    "worte": 8,
+    "worte": 11,
     "wortliste": [
-     "Umsatz",
-     "heute",
-     "Aus",
-     "der",
-     "Kasse",
-     "Speichern",
+     "Bugünkü",
+     "ciro",
+     "Bugün",
+     "personel",
+     "kişi",
+     "toplam",
+     "Saatlik",
+     "brüt",
+     "Kaydet",
      "Gastro",
      "Cash"
     ],
     "texte": [
-     "Umsatz heute",
-     "Aus der Kasse",
+     "Bugünkü ciro",
      "€",
-     "Speichern",
+     "Bugün personel",
+     "kişi",
+     "sa. toplam",
+     "Saatlik brüt",
+     "€",
+     "Kaydet",
      "Gastro",
      "Cash"
     ],
@@ -1221,7 +1250,7 @@
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Speichern",
+      "text": "Kaydet",
       "h": 64,
       "w": 328,
       "haupt": true,
@@ -1235,62 +1264,60 @@
      "text": "GastroCash"
     },
     "tippKlein": [],
-    "tippAnzahl": 9,
+    "tippAnzahl": 12,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "abschluss": {
-    "worte": 13,
+    "worte": 11,
     "wortliste": [
-     "Tag",
-     "abschließen",
-     "Umsatz",
-     "heute",
-     "Aus",
-     "der",
-     "Kasse",
-     "Müll",
-     "Kühlung",
-     "Tag",
-     "abschließen",
+     "Günü",
+     "kapat",
+     "Bugünkü",
+     "ciro",
+     "Kasadan",
+     "Çöp",
+     "Soğutma",
+     "Günü",
+     "kapat",
      "Gastro",
      "Cash"
     ],
     "texte": [
-     "Tag abschließen",
-     "Umsatz heute",
-     "Aus der Kasse",
+     "Günü kapat",
+     "Bugünkü ciro",
+     "Kasadan",
      "–",
      "›",
-     "Müll",
+     "Çöp",
      "–",
      "›",
-     "Kühlung",
+     "Soğutma",
      "⁦0 / 2⁩",
      "›",
-     "Tag abschließen",
+     "Günü kapat",
      "Gastro",
      "Cash"
     ],
@@ -1298,7 +1325,7 @@
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Tag abschließen",
+      "text": "Günü kapat",
       "h": 64,
       "w": 336,
       "haupt": true,
@@ -1309,30 +1336,30 @@
     "absaetze": [],
     "minFont": {
      "px": 12.75,
-     "text": "Aus der Kasse"
+     "text": "Kasadan"
     },
     "tippKlein": [],
     "tippAnzahl": 11,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
@@ -1341,23 +1368,23 @@
    "menue": {
     "worte": 8,
     "wortliste": [
-     "Dein",
-     "Laden",
-     "Tag",
-     "abschließen",
-     "Personal-Modus",
+     "Dükkânın",
+     "Günü",
+     "kapat",
+     "Personel",
+     "modu",
      "Büro",
-     "Sprache",
-     "Deutsch"
+     "Dil",
+     "Türkçe"
     ],
     "texte": [
      "Döner Test",
-     "Dein Laden",
-     "Tag abschließen",
-     "Personal-Modus",
+     "Dükkânın",
+     "Günü kapat",
+     "Personel modu",
      "Büro",
-     "Sprache",
-     "Deutsch"
+     "Dil",
+     "Türkçe"
     ],
     "hoehe": 780,
     "innen": 780,
@@ -1366,281 +1393,284 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Dein Laden"
+     "text": "Dükkânın"
     },
     "tippKlein": [],
     "tippAnzahl": 5,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden"
    },
    "buero": {
-    "worte": 117,
+    "worte": 120,
     "wortliste": [
-     "Laden",
+     "Dükkân",
+     "Şirket",
+     "türü",
+     "açık",
+     "Kurulum",
+     "sıradaki",
+     "Yemek",
+     "listesi",
+     "Giderler",
+     "veya",
+     "maaşlar",
+     "eksik",
+     "Kirayı",
+     "gir",
+     "Sağlık",
+     "dairesi",
+     "içinden",
+     "Mali",
+     "müşavir",
+     "Yıl",
+     "Muhasebeci",
+     "henüz",
+     "boş",
+     "Para",
+     "Kasım",
+     "şimdiye",
+     "kadar",
+     "Ay",
+     "ve",
+     "sayaç",
+     "Kasım",
+     "şimdiye",
+     "kadar",
+     "Mal",
+     "tahmini",
+     "Yemek",
+     "karşılaştırması",
+     "Porsiyon",
+     "kârı",
+     "Yemek",
+     "başına",
+     "satış",
+     "Kasa",
+     "satmayanlar",
+     "fire",
+     "Listeler",
+     "Çöp",
+     "ve",
+     "personel",
+     "yemeği",
+     "İpuçları",
+     "Vergi",
+     "ve",
+     "daire",
+     "Para",
+     "ve",
+     "vergi",
+     "Mal",
+     "Sayım",
+     "yok",
+     "Malzeme",
+     "fire",
+     "Depo",
+     "ve",
+     "sipariş",
+     "Stok",
+     "ve",
+     "eksikler",
+     "Sayım",
+     "Sayım",
+     "yok",
+     "Tedarikçiler",
+     "Teslim",
+     "günleri",
+     "ve",
+     "sipariş",
+     "Alış",
+     "fiyatları",
+     "Fişler",
+     "İçecekler",
+     "Menü",
+     "ve",
+     "fiyatlar",
+     "Yemek",
+     "listesi",
+     "Tarifler",
+     "Satış",
+     "fiyatları",
+     "Fotoğrafla",
+     "menü",
+     "Kampanya",
+     "ve",
+     "raf",
+     "ömrü",
+     "Ne",
+     "bitiyor",
+     "ne",
+     "kazandırır",
+     "Menü",
+     "panosu",
+     "Dükkânı",
+     "kur",
+     "Kurulum",
+     "Kurulum",
+     "Soğutucular",
+     "Kontrol",
+     "çizelgesi",
+     "Tüm",
+     "ölçümler",
+     "yazdır",
+     "Temizlik",
+     "planı",
+     "Sabit",
+     "giderler",
+     "Dükkânlar",
      "Büro",
-     "Rechtsform",
-     "eintragen",
-     "Einrichtung",
-     "als",
-     "Nächstes",
-     "Speisekarte",
-     "Feste",
-     "Kosten",
-     "oder",
-     "Löhne",
-     "unvollständig",
-     "Gesundheitsamt",
-     "von",
-     "Steuerberater",
-     "Buchhalter",
-     "noch",
-     "leer",
-     "Einstellungen",
-     "Sicherung",
-     "Geld",
-     "bisher",
-     "Monat",
-     "Zähler",
-     "bisher",
-     "Richtwert",
-     "Ware",
-     "Gerichte",
-     "im",
-     "Vergleich",
-     "Was",
-     "bleibt",
-     "pro",
-     "Stück",
-     "Verkauf",
-     "je",
-     "Gericht",
-     "Kasse",
-     "einlesen",
-     "Ladenhüter",
-     "Schwund",
-     "Listen",
-     "Müll",
-     "Schwund",
-     "Personalessen",
-     "Hinweise",
-     "Steuer",
-     "und",
-     "Amt",
-     "aus",
-     "deinen",
-     "Daten",
-     "Ware",
-     "Noch",
-     "nie",
-     "gezählt",
-     "Lager",
-     "Bestellen",
-     "Was",
-     "da",
-     "ist",
-     "und",
-     "was",
-     "du",
-     "bestellen",
-     "musst",
-     "Inventur",
-     "Noch",
-     "nie",
-     "gezählt",
-     "Lieferanten",
-     "Liefertage",
-     "Bestellschluss",
-     "Bestellweg",
-     "Einkaufspreise",
-     "Belege",
-     "Getränke",
-     "Karte",
-     "Preise",
-     "Speisekarte",
-     "Rezepte",
-     "Verkaufspreise",
-     "Karte",
-     "per",
-     "Foto",
-     "Aktionen",
-     "Haltbarkeit",
-     "Was",
-     "abläuft",
-     "und",
-     "welches",
-     "Angebot",
-     "sich",
-     "lohnt",
-     "Menütafel",
-     "Laden",
-     "einrichten",
-     "Einrichtung",
-     "Einrichtung",
-     "Kühlstellen",
-     "Kontrollblatt",
-     "Alle",
-     "Messungen",
-     "je",
-     "Stelle",
-     "mit",
-     "Lücken",
-     "zum",
-     "Drucken",
-     "Putzplan",
-     "bearbeiten",
-     "Feste",
-     "Kosten",
-     "Läden",
-     "Büro-Code",
-     "an"
+     "kodu",
+     "açık",
+     "Ayarlar",
+     "Yedek"
     ],
     "texte": [
-     "Laden",
-     "Büro",
-     "Rechtsform eintragen",
-     "+ 2",
-     "Einrichtung 14 % – als Nächstes: Speisekarte",
-     "Feste Kosten oder Löhne unvollständig",
-     "Gesundheits­amt",
-     "0 von 3",
-     "Steuer­berater",
-     "September",
-     "Buch­halter",
-     "noch leer",
-     "Einstellungen",
-     "Sicherung",
-     "Geld",
-     "Oktober bisher",
-     "Monat & Zähler",
-     "Oktober bisher · Richtwert Ware",
-     "Gerichte im Vergleich",
-     "Was bleibt pro Stück",
-     "Verkauf je Gericht",
-     "Kasse einlesen, Ladenhüter, Schwund",
-     "Listen",
-     "Müll, Schwund, Personalessen",
-     "Hinweise",
-     "Steuer und Amt, aus deinen Daten",
-     "Ware",
-     "Noch nie gezählt",
-     "Lager & Bestellen",
-     "Was da ist und was du bestellen musst",
-     "Inventur",
-     "Noch nie gezählt",
-     "Lieferanten",
-     "Liefertage, Bestellschluss, Bestellweg",
-     "Einkaufs­preise",
-     "Belege",
-     "Getränke",
-     "Karte & Preise",
-     "Speisekarte",
-     "Rezepte",
-     "Verkaufs­preise",
-     "Karte per Foto",
-     "Aktionen & Haltbarkeit",
-     "Was abläuft und welches Angebot sich lohnt",
-     "Menütafel",
-     "Laden einrichten",
-     "Einrichtung 14 %",
-     "Einrichtung",
+     "Dükkân",
+     "Şirket türü",
+     "2 açık",
+     "Kurulum %14 – sıradaki: Yemek listesi",
+     "Giderler veya maaşlar eksik",
+     "?",
+     "Kirayı gir",
+     "Sağlık dairesi",
+     "3 içinden 0",
+     "Mali müşavir",
+     "Yıl 2026",
+     "Muhasebeci",
+     "henüz boş",
+     "Para",
+     "Kasım şimdiye kadar",
+     "Ay ve sayaç",
+     "Kasım şimdiye kadar · Mal tahmini",
+     "Yemek karşılaştırması",
+     "Porsiyon kârı",
+     "Yemek başına satış",
+     "Kasa, satmayanlar, fire",
+     "Listeler",
+     "Çöp ve personel yemeği",
+     "İpuçları",
+     "Vergi ve daire",
+     "Para ve vergi",
+     "Mal",
+     "Sayım yok",
+     "Malzeme & fire",
+     "Depo ve sipariş",
+     "Stok ve eksikler",
+     "Sayım",
+     "Sayım yok",
+     "Tedarikçiler",
+     "Teslim günleri ve sipariş",
+     "Alış fiyatları",
+     "Fişler",
+     "İçecekler",
+     "Menü ve fiyatlar",
+     "Yemek listesi",
+     "Tarifler",
+     "Satış fiyatları",
+     "Fotoğrafla menü",
+     "Kampanya ve raf ömrü",
+     "Ne bitiyor, ne kazandırır",
+     "Menü panosu",
+     "Dükkânı kur",
+     "Kurulum 14 %",
+     "Kurulum",
      "14 %",
-     "Kühlstellen",
-     "Kontrollblatt",
-     "Alle Messungen je Stelle, mit Lücken, zum Drucken",
-     "Putzplan bearbeiten",
-     "Feste Kosten",
-     "Läden",
-     "Büro-Code",
-     "an"
+     "Soğutucular",
+     "Kontrol çizelgesi",
+     "Tüm ölçümler, yazdır",
+     "Temizlik planı",
+     "Sabit giderler",
+     "Dükkânlar",
+     "Büro kodu",
+     "açık",
+     "Ayarlar",
+     "Yedek"
     ],
-    "hoehe": 2743,
+    "hoehe": 3052,
     "innen": 780,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
      "px": 13,
-     "text": "Oktober bisher · Richtwert War"
+     "text": "3 içinden 0"
     },
     "tippKlein": [],
-    "tippAnzahl": 34,
+    "tippAnzahl": 37,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Laden",
-      "verhaeltnis": 13.74
-     },
-     {
-      "text": "Büro",
+      "text": "Dükkân",
       "verhaeltnis": 13.74
      }
     ],
     "ebene": "buero"
    },
    "personal": {
-    "worte": 7,
+    "worte": 9,
     "wortliste": [
      "Gastro",
      "Cash",
-     "Hallo",
-     "Müll",
-     "Kühlung",
-     "offen",
-     "Putzen"
+     "Merhaba",
+     "Kasım",
+     "Çarşamba",
+     "Çöp",
+     "Soğutma",
+     "açık",
+     "Temizlik"
     ],
     "texte": [
      "Gastro",
      "Cash",
-     "?",
-     "Hallo",
-     "Samstag, 24. Oktober",
-     "Müll",
-     "Kühlung",
-     "2 offen",
-     "Putzen",
-     "0 / 9"
+     "Merhaba",
+     "4 Kasım Çarşamba",
+     "Çöp",
+     "Soğutma",
+     "2 açık",
+     "Temizlik",
+     "0 / 8"
     ],
     "hoehe": 780,
     "innen": 780,
     "knoepfe": [
      {
-      "text": "Müll",
+      "text": "Çöp",
       "h": 168,
       "w": 320,
       "haupt": false,
       "kachel": true
      },
      {
-      "text": "Kühlung2 offen",
+      "text": "Soğutma2 açık",
       "h": 168,
       "w": 320,
       "haupt": false,
       "kachel": true
      },
      {
-      "text": "Putzen0 / 9",
+      "text": "Temizlik0 / 8",
       "h": 168,
       "w": 320,
       "haupt": false,
@@ -1651,7 +1681,7 @@
     "absaetze": [],
     "minFont": {
      "px": 14,
-     "text": "Samstag, 24. Oktober"
+     "text": "4 Kasım Çarşamba"
     },
     "tippKlein": [],
     "tippAnzahl": 4,
@@ -1660,55 +1690,57 @@
     "ebene": "personal"
    },
    "putzen-plan": {
-    "worte": 3,
+    "worte": 7,
     "wortliste": [
-     "Putzen",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün",
+     "iş",
+     "kaldı",
+     "Tezgâhlar",
+     "ile",
+     "başla"
     ],
     "texte": [
-     "Putzen",
-     "⁦0 / 9⁩",
-     "Gastro",
-     "Cash"
+     "Temizlik",
+     "Bugün 8 iş kaldı. “Tezgâhlar” ile başla."
     ],
-    "hoehe": 972,
+    "hoehe": 904,
     "innen": 780,
     "knoepfe": [],
     "anzahlKnoepfe": 0,
     "absaetze": [],
     "minFont": {
-     "px": 14.875,
-     "text": "GastroCash"
+     "px": 16,
+     "text": "Bugün 8 iş kaldı. “Tezgâhlar” "
     },
     "tippKlein": [],
-    "tippAnzahl": 25,
+    "tippAnzahl": 23,
     "verboten": [],
     "kontrast": [
      {
-      "text": "Heute",
+      "text": "Bugün",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Müll",
+      "text": "Çöp",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Kühlung",
+      "text": "Soğutma",
       "verhaeltnis": 6.32
      },
      {
-      "text": "Putzen",
+      "text": "Temizlik",
       "verhaeltnis": 5.78
      },
      {
-      "text": "Karte",
+      "text": "Yemekler",
       "verhaeltnis": 6.32
      }
     ],
     "ebene": "laden",
     "plan": true,
-    "aufgaben": 9
+    "aufgaben": 8
    }
   }
  },
@@ -1747,7 +1779,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "975 €"
+   "hinweis": "Ciro"
   },
   {
    "viewport": "390x844",
@@ -1790,7 +1822,7 @@
    "bildschirm": "muell",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 13,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -1853,7 +1885,7 @@
    "bildschirm": "kuehlung",
    "regel": "woerter",
    "ok": true,
-   "ist": 7,
+   "ist": 9,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -1880,9 +1912,9 @@
    "bildschirm": "kuehlung",
    "regel": "schrift",
    "ok": true,
-   "ist": 17,
+   "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "Heute gemessen"
+   "hinweis": "2 cihaz daha ölçülecek. Bir da"
   },
   {
    "viewport": "390x844",
@@ -1925,7 +1957,7 @@
    "bildschirm": "putzen",
    "regel": "woerter",
    "ok": true,
-   "ist": 3,
+   "ist": 7,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -1934,7 +1966,7 @@
    "bildschirm": "putzen",
    "regel": "scroll",
    "ok": true,
-   "ist": "974 px",
+   "ist": "904 px",
    "soll": "≤ 844 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -1952,9 +1984,9 @@
    "bildschirm": "putzen",
    "regel": "schrift",
    "ok": true,
-   "ist": 17,
+   "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "GastroCash"
+   "hinweis": "Bugün 8 iş kaldı. “Tezgâhlar” "
   },
   {
    "viewport": "390x844",
@@ -1988,7 +2020,7 @@
    "bildschirm": "karte",
    "regel": "woerter",
    "ok": true,
-   "ist": 9,
+   "ist": 10,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2017,7 +2049,7 @@
    "ok": true,
    "ist": 14,
    "soll": "≥ 12 px",
-   "hinweis": "0 Gerichte"
+   "hinweis": "0 yemek"
   },
   {
    "viewport": "390x844",
@@ -2060,7 +2092,7 @@
    "bildschirm": "umsatz-heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2089,7 +2121,7 @@
    "ok": true,
    "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "Aus der Kasse"
+   "hinweis": "Bugün personel"
   },
   {
    "viewport": "390x844",
@@ -2132,7 +2164,7 @@
    "bildschirm": "abschluss",
    "regel": "woerter",
    "ok": true,
-   "ist": 13,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2161,7 +2193,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Aus der Kasse"
+   "hinweis": "Kasadan"
   },
   {
    "viewport": "390x844",
@@ -2222,7 +2254,7 @@
    "bildschirm": "buero",
    "regel": "woerter",
    "ok": true,
-   "ist": 117,
+   "ist": 120,
    "soll": "≤ 120",
    "hinweis": ""
   },
@@ -2240,7 +2272,7 @@
    "bildschirm": "personal",
    "regel": "woerter",
    "ok": true,
-   "ist": 7,
+   "ist": 9,
    "soll": "≤ 10",
    "hinweis": ""
   },
@@ -2267,7 +2299,7 @@
    "bildschirm": "putzen-plan",
    "regel": "woerter",
    "ok": true,
-   "ist": 3,
+   "ist": 7,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2276,7 +2308,7 @@
    "bildschirm": "putzen-plan",
    "regel": "scroll",
    "ok": true,
-   "ist": "974 px",
+   "ist": "904 px",
    "soll": "≤ 844 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -2294,9 +2326,9 @@
    "bildschirm": "putzen-plan",
    "regel": "schrift",
    "ok": true,
-   "ist": 17,
+   "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "GastroCash"
+   "hinweis": "Bugün 8 iş kaldı. “Tezgâhlar” "
   },
   {
    "viewport": "390x844",
@@ -2359,7 +2391,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "975 €"
+   "hinweis": "Ciro"
   },
   {
    "viewport": "360x780",
@@ -2402,7 +2434,7 @@
    "bildschirm": "muell",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 13,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2431,7 +2463,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Eimer gewogen"
+   "hinweis": "Artan"
   },
   {
    "viewport": "360x780",
@@ -2465,7 +2497,7 @@
    "bildschirm": "kuehlung",
    "regel": "woerter",
    "ok": true,
-   "ist": 7,
+   "ist": 9,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2492,9 +2524,9 @@
    "bildschirm": "kuehlung",
    "regel": "schrift",
    "ok": true,
-   "ist": 14.875,
+   "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "GastroCash"
+   "hinweis": "2 cihaz daha ölçülecek. Bir da"
   },
   {
    "viewport": "360x780",
@@ -2537,7 +2569,7 @@
    "bildschirm": "putzen",
    "regel": "woerter",
    "ok": true,
-   "ist": 3,
+   "ist": 7,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2546,7 +2578,7 @@
    "bildschirm": "putzen",
    "regel": "scroll",
    "ok": true,
-   "ist": "972 px",
+   "ist": "904 px",
    "soll": "≤ 780 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -2564,9 +2596,9 @@
    "bildschirm": "putzen",
    "regel": "schrift",
    "ok": true,
-   "ist": 14.875,
+   "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "GastroCash"
+   "hinweis": "Bugün 8 iş kaldı. “Tezgâhlar” "
   },
   {
    "viewport": "360x780",
@@ -2600,7 +2632,7 @@
    "bildschirm": "karte",
    "regel": "woerter",
    "ok": true,
-   "ist": 9,
+   "ist": 10,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2629,7 +2661,7 @@
    "ok": true,
    "ist": 14,
    "soll": "≥ 12 px",
-   "hinweis": "0 Gerichte"
+   "hinweis": "0 yemek"
   },
   {
    "viewport": "360x780",
@@ -2672,7 +2704,7 @@
    "bildschirm": "umsatz-heute",
    "regel": "woerter",
    "ok": true,
-   "ist": 8,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2744,7 +2776,7 @@
    "bildschirm": "abschluss",
    "regel": "woerter",
    "ok": true,
-   "ist": 13,
+   "ist": 11,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2773,7 +2805,7 @@
    "ok": true,
    "ist": 12.75,
    "soll": "≥ 12 px",
-   "hinweis": "Aus der Kasse"
+   "hinweis": "Kasadan"
   },
   {
    "viewport": "360x780",
@@ -2834,7 +2866,7 @@
    "bildschirm": "buero",
    "regel": "woerter",
    "ok": true,
-   "ist": 117,
+   "ist": 120,
    "soll": "≤ 120",
    "hinweis": ""
   },
@@ -2852,7 +2884,7 @@
    "bildschirm": "personal",
    "regel": "woerter",
    "ok": true,
-   "ist": 7,
+   "ist": 9,
    "soll": "≤ 10",
    "hinweis": ""
   },
@@ -2879,7 +2911,7 @@
    "bildschirm": "putzen-plan",
    "regel": "woerter",
    "ok": true,
-   "ist": 3,
+   "ist": 7,
    "soll": "≤ 15",
    "hinweis": ""
   },
@@ -2888,7 +2920,7 @@
    "bildschirm": "putzen-plan",
    "regel": "scroll",
    "ok": true,
-   "ist": "972 px",
+   "ist": "904 px",
    "soll": "≤ 780 px",
    "hinweis": "Ausnahme nach Regel"
   },
@@ -2906,9 +2938,9 @@
    "bildschirm": "putzen-plan",
    "regel": "schrift",
    "ok": true,
-   "ist": 14.875,
+   "ist": 16,
    "soll": "≥ 12 px",
-   "hinweis": "GastroCash"
+   "hinweis": "Bugün 8 iş kaldı. “Tezgâhlar” "
   },
   {
    "viewport": "360x780",

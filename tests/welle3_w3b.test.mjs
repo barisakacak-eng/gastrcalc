@@ -1,4 +1,4 @@
-// Welle 3 W3b (04.11.2026): Arbeitszeit-Liste, Sitz der Krankenkasse, Monat abschließen – Rechenteil (Oberfläche hinter window.__gcW3b).
+// Welle 3 W3b (04.11.2026): Arbeitszeit-Liste, Sitz der Krankenkasse, Monat abschließen – Rechenteil (Oberfläche live nach Baris' Ja 04.11.2026).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
@@ -18,11 +18,10 @@ test("W3b Arbeitszeit-Liste: Zeile je Eintrag, ohne Zeiten und nach dem 7. Tag m
   assert.equal(l.zeilen.length, 2); assert.deepEqual(l.zeilen[1], { datum: "2026-12-27", wer: "AB", von: "18:00", bis: "03:00", stunden: 9, erfasst: "2026-12-28", rechtzeitig: true, kompakt: false });
   assert.equal(l.zeilen[0].rechtzeitig, false, "01.12. erst am 10.12. erfasst (> 7 Tage)"); assert.equal(l.ohneZeiten, 1); assert.equal(l.spaet, 1); assert.equal(l.vollstaendig, false);
 });
-test("W3b Buchhalter-Ordner: Abschnitt Arbeitszeiten nur mit Schalter", () => {
+test("W3b Buchhalter-Ordner: Abschnitt Arbeitszeiten (Schalter seit Baris' Ja entfernt)", () => {
   const b = S.leererBetrieb(); b.personen = [{ id: "a", kuerzel: "AB" }]; teamTagSetzen(b, "2026-11-03", [{ person: "a", name: "AB", stunden: 8, satz: 14, von: "10:00", bis: "18:00" }]);
   const p = monatsPaket(b, { von: "2026-11-01", bis: "2026-11-30" }, "buch");
-  delete globalThis.__gcW3b; assert.ok(!paketDokument(b, p).abschnitte.some((a) => a.titel === i18n.t("w3b.az.titel")));
-  globalThis.__gcW3b = true; const d = paketDokument(b, p); delete globalThis.__gcW3b;
+  const d = paketDokument(b, p);
   const a = d.abschnitte.find((x) => x.titel === i18n.t("w3b.az.titel")); assert.ok(a); assert.deepEqual(a.zeilen[0].zellen.slice(1, 4), ["AB", "10:00", "18:00"]);
 });
 test("W3b Sitz der Krankenkasse: SV-Termin Mai 2027 – NI 27.05., BW 26.05., unbekannt 26.05.", () => {
