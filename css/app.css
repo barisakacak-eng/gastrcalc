@@ -493,3 +493,5 @@ svg.ring { width: 64px; height: 64px; flex: none; } .ring circle { fill: none; s
 .menueknopf .sym, .fab .sym { width: 26px; height: 26px; }
 .instrument .kopfzeile { display: flex; align-items: center; gap: 6px; }
 
+/* Vorab-Prüfung D (04.11.2026): Kostenbetrag bei 360 px – „im Monat/im Jahr“ in eine eigene Zeile, damit 10 Stellen ins Feld passen */
+@media (max-width: 400px) { .liste .zeile .betrag { flex-wrap: wrap; } .liste .zeile .betrag .periode { flex-basis: 100%; } }

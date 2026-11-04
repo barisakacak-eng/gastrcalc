@@ -13,7 +13,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Test verzija" },
 
   allgemein: {
-    weiter: "Dalje", zurueck: "Nazad", fertig: "Gotovo", speichern: "Sačuvaj", abbrechen: "Odustani", stueck: "kom.", bearbeiten: "Uredi", zahlZuGross: (v) => `„${v}“ je previše – ide do deset miliona.`, uebernehmen: "Preuzmi", zahlUngueltig: (v) => `„${v}“ nije broj. Samo brojke i jedan zarez.`,
+    ok: "OK", weiter: "Dalje", zurueck: "Nazad", fertig: "Gotovo", speichern: "Sačuvaj", abbrechen: "Odustani", stueck: "kom.", bearbeiten: "Uredi", zahlZuGross: (v) => `„${v}“ je previše – ide do deset miliona.`, uebernehmen: "Preuzmi", zahlUngueltig: (v) => `„${v}“ nije broj. Samo brojke i jedan zarez.`,
     weissNicht: "Trenutno ne znam", spaeter: "Kasnije", ja: "Da", nein: "Ne", loeschen: "Obriši",
     proMonat: "mjesečno", proJahr: "godišnje", euro: "€", personen: "osoba", stunden: "sati", prozent: "%",
     schaetzung: "Procjena", offen: "otvoreno", bekannt: "upisano", hinzufuegen: "Dodaj",
@@ -1469,7 +1469,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: trošak robe ${p} poena iznad ${b}`, minus: (l, e) => `${l}: ${e} do nule`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "dan" : "dana"} bez unosa prometa`, bestellen: (l, n) => `${l}: naruči ${n} ${n === 1 ? "robu" : "roba"} danas`,
       inventurFehlt: (l) => `${l}: još nema popisa`, umsatzKeiner: (l) => `${l}: nema prometa u periodu`, gut: "Sve radnje: ništa otvoreno" },
     vergleich: "Poređenje", vergleichAb: "Poređenje od dvije radnje", keineLaeden: "Nema radnje s podacima", bericht: "Izvještaj za vlasnika", datei: "Vlasnik", drucken: "Štampaj izvještaj", csv: "CSV", geteilt: "Izvještaj podijeljen",
-    dok: { zahlen: "Pokazatelji po radnji", hinweis: "≈ = procijenjeno (orijentacione cijene, orijentir ili procjena). „nedostaje“ = nema podataka u periodu. Samo radnje na ovom telefonu, brojevi iz unosa u aplikaciji.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Pokazatelji po radnji", hinweis: "≈ = procijenjeno (orijentacione cijene, orijentir ili procjena). „nedostaje“ = nema podataka u periodu. Samo radnje na ovom telefonu, brojevi iz unosa u aplikaciji.",
       kopf: ["Radnja", "Promet", "Trošak robe", "Bačeno", "Sumnja na manjak", "Otvorene obaveze", "Result so far", "Vrijednost zalihe", "Naručiti"], laden: "Radnja", vergleich: "Poređenje", vergleichInfo: "Rang samo između radnji s istom bazom podataka.",
       trend: "Trend prema prethodnom periodu", daten: "Baza podataka", fehlt: "Nepotpuno", tage: "dana", quelle: "Izvor troška robe", fuss: "GastroCash · Izvještaj za vlasnika. Brojevi iz unosa u aplikaciji – nije knjigovodstvo, nisu podaci kase." },
   },

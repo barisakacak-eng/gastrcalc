@@ -4,7 +4,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Test version" },
 
   allgemein: {
-    weiter: "Next", zurueck: "Back", fertig: "Done", speichern: "Save", abbrechen: "Cancel", stueck: "pcs", bearbeiten: "Editing", zahlZuGross: (v) => `"${v}" is too large – up to ten million works.`, uebernehmen: "Apply", zahlUngueltig: (v) => `"${v}" is not a number. Digits and one decimal separator only.`,
+    ok: "OK", weiter: "Next", zurueck: "Back", fertig: "Done", speichern: "Save", abbrechen: "Cancel", stueck: "pcs", bearbeiten: "Editing", zahlZuGross: (v) => `"${v}" is too large – up to ten million works.`, uebernehmen: "Apply", zahlUngueltig: (v) => `"${v}" is not a number. Digits and one decimal separator only.`,
     weissNicht: "I don't know right now", spaeter: "Later", ja: "Yes", nein: "No", loeschen: "Delete",
     proMonat: "per month", proJahr: "per year", euro: "€", personen: "people", stunden: "hours", prozent: "%",
     schaetzung: "estimate", offen: "open", bekannt: "entered", hinzufuegen: "Add",
@@ -1448,7 +1448,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: food cost ${p} points above ${b}`, minus: (l, e) => `${l}: ${e} to zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "day" : "days"} without sales entry`, bestellen: (l, n) => `${l}: order ${n} ${n === 1 ? "item" : "items"} today`,
       inventurFehlt: (l) => `${l}: no stock count yet`, umsatzKeiner: (l) => `${l}: no sales in this period`, gut: "All shops: nothing open" },
     vergleich: "Comparison", vergleichAb: "Comparison needs two shops", keineLaeden: "No shop with data", bericht: "Owner report", datei: "Owner", drucken: "Print report", csv: "CSV", geteilt: "Report shared",
-    dok: { zahlen: "Figures per shop", hinweis: "≈ = estimated (guide prices, guide value or estimate). “missing” = no data in the period. Only shops on this phone, figures from the app's entries.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Figures per shop", hinweis: "≈ = estimated (guide prices, guide value or estimate). “missing” = no data in the period. Only shops on this phone, figures from the app's entries.",
       kopf: ["Shop", "Sales", "Food cost", "Thrown away", "Suspected loss", "Duties open", "Result so far", "Stock value", "Order"], laden: "Shop", vergleich: "Comparison", vergleichInfo: "Rank only between shops with the same data basis.",
       trend: "Trend vs. previous period", daten: "Data basis", fehlt: "Incomplete", tage: "days", quelle: "Food cost source", fuss: "GastroCash · Owner report. Figures from the app's entries – not bookkeeping, not till data." },
   },

@@ -5,7 +5,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Testfassung" },
 
   allgemein: {
-    weiter: "Weiter", zurueck: "Zurück", fertig: "Fertig", speichern: "Speichern", abbrechen: "Abbrechen", stueck: "Stück", bearbeiten: "Bearbeiten", zahlZuGross: (v) => `„${v}“ ist zu groß – bis zehn Millionen geht.`, uebernehmen: "Übernehmen", zahlUngueltig: (v) => `„${v}“ ist keine Zahl. Bitte nur Ziffern und ein Komma.`,
+    ok: "OK", weiter: "Weiter", zurueck: "Zurück", fertig: "Fertig", speichern: "Speichern", abbrechen: "Abbrechen", stueck: "Stück", bearbeiten: "Bearbeiten", zahlZuGross: (v) => `„${v}“ ist zu groß – bis zehn Millionen geht.`, uebernehmen: "Übernehmen", zahlUngueltig: (v) => `„${v}“ ist keine Zahl. Bitte nur Ziffern und ein Komma.`,
     weissNicht: "Weiß ich gerade nicht", spaeter: "Später", ja: "Ja", nein: "Nein", loeschen: "Löschen",
     proMonat: "im Monat", proJahr: "im Jahr", euro: "€", personen: "Personen", stunden: "Stunden", prozent: "%",
     schaetzung: "Schätzung", offen: "offen", bekannt: "eingetragen", hinzufuegen: "Hinzufügen",
@@ -1416,7 +1416,7 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
       wareUeber: (l, p, b) => `${l}: Wareneinsatz ${p} Punkte über ${b}`, minus: (l, e) => `${l}: ${e} bis null`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "Tag" : "Tage"} ohne Umsatz-Eintrag`, bestellen: (l, n) => `${l}: ${n} ${n === 1 ? "Ware" : "Waren"} heute bestellen`,
       inventurFehlt: (l) => `${l}: noch keine Inventur`, umsatzKeiner: (l) => `${l}: kein Umsatz im Zeitraum`, gut: "Alle Läden: nichts offen" },
     vergleich: "Vergleich", vergleichAb: "Vergleich ab zwei Läden", keineLaeden: "Kein Laden mit Daten", bericht: "Eigentümer-Bericht", datei: "Eigentuemer", drucken: "Bericht drucken", csv: "CSV", geteilt: "Bericht geteilt",
-    dok: { zahlen: "Kennzahlen je Laden", hinweis: "≈ = geschätzt (Richtpreise, Richtwert oder Schätzung). „fehlt“ = keine Daten im Zeitraum. Nur Läden auf diesem Handy, Zahlen aus den Einträgen der App.",
+    dok: { zahlKopf: (k) => `${k} (Zahl)`, zahlen: "Kennzahlen je Laden", hinweis: "≈ = geschätzt (Richtpreise, Richtwert oder Schätzung). „fehlt“ = keine Daten im Zeitraum. Nur Läden auf diesem Handy, Zahlen aus den Einträgen der App.",
       kopf: ["Laden", "Umsatz", "Wareneinsatz", "Weggeworfen", "Schwund-Verdacht", "Pflichten offen", "Ergebnis bisher", "Lager-Wert", "Bestellen"], laden: "Laden", vergleich: "Vergleich", vergleichInfo: "Rang nur zwischen Läden mit gleicher Datenbasis.",
       trend: "Trend zum Vorzeitraum", daten: "Datenbasis", fehlt: "Unvollständig", tage: "Tage", quelle: "Quelle Wareneinsatz", fuss: "GastroCash · Eigentümer-Bericht. Kennzahlen aus den Einträgen der App – keine Buchhaltung, keine Kassendaten." },
   },

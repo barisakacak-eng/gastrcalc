@@ -12,7 +12,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Versiune de test" },
 
   allgemein: {
-    weiter: "Mai departe", zurueck: "Înapoi", fertig: "Gata", speichern: "Salvează", abbrechen: "Anulează", stueck: "buc.", bearbeiten: "Modifică", zahlZuGross: (v) => `„${v}” e prea mare – merge până la zece milioane.`, uebernehmen: "Preia", zahlUngueltig: (v) => `„${v}” nu e un număr. Doar cifre și o virgulă.`,
+    ok: "OK", weiter: "Mai departe", zurueck: "Înapoi", fertig: "Gata", speichern: "Salvează", abbrechen: "Anulează", stueck: "buc.", bearbeiten: "Modifică", zahlZuGross: (v) => `„${v}” e prea mare – merge până la zece milioane.`, uebernehmen: "Preia", zahlUngueltig: (v) => `„${v}” nu e un număr. Doar cifre și o virgulă.`,
     weissNicht: "Nu știu acum", spaeter: "Mai târziu", ja: "Da", nein: "Nu", loeschen: "Șterge",
     proMonat: "pe lună", proJahr: "pe an", euro: "€", personen: "persoane", stunden: "ore", prozent: "%",
     schaetzung: "estimare", offen: "deschis", bekannt: "completat", hinzufuegen: "Adaugă",
@@ -1468,7 +1468,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: costul mărfii cu ${p} puncte peste ${b}`, minus: (l, e) => `${l}: ${e} până la zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "zi" : "zile"} fără încasări înregistrate`, bestellen: (l, n) => `${l}: comandă ${n} ${n === 1 ? "marfă" : "mărfuri"} azi`,
       inventurFehlt: (l) => `${l}: încă fără inventar`, umsatzKeiner: (l) => `${l}: fără încasări în perioadă`, gut: "Toate localurile: nimic deschis" },
     vergleich: "Comparație", vergleichAb: "Comparație de la două localuri", keineLaeden: "Niciun local cu date", bericht: "Raportul proprietarului", datei: "Proprietar", drucken: "Tipărește raportul", csv: "CSV", geteilt: "Raport partajat",
-    dok: { zahlen: "Cifre pe local", hinweis: "≈ = estimat (prețuri orientative, valoare orientativă sau estimare). „lipsește” = fără date în perioadă. Doar localurile de pe acest telefon, cifre din înregistrările aplicației.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Cifre pe local", hinweis: "≈ = estimat (prețuri orientative, valoare orientativă sau estimare). „lipsește” = fără date în perioadă. Doar localurile de pe acest telefon, cifre din înregistrările aplicației.",
       kopf: ["Local", "Încasări", "Costul mărfii", "Aruncat", "Suspiciune de pierdere", "Obligații deschise", "Result so far", "Valoarea stocului", "Comandă"], laden: "Local", vergleich: "Comparație", vergleichInfo: "Clasament doar între localuri cu aceeași bază de date.",
       trend: "Tendință față de perioada anterioară", daten: "Bază de date", fehlt: "Incomplet", tage: "zile", quelle: "Sursa costului mărfii", fuss: "GastroCash · Raportul proprietarului. Cifre din înregistrările aplicației – nu contabilitate, nu date de casă." },
   },

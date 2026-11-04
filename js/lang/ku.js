@@ -5,7 +5,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Guhertoya ceribandinê" },
 
   allgemein: {
-    weiter: "Pêş de", zurueck: "Paş de", fertig: "Qediya", speichern: "Tomar bike", abbrechen: "Betal bike", stueck: "hebe", bearbeiten: "Biguherîne", zahlZuGross: (v) => `“${v}” pir mezin e – heta deh milyonan dibe.`, uebernehmen: "Bipejirîne", zahlUngueltig: (v) => `“${v}” ne hejmar e. Tenê reqam û yek bêhnok binivîse.`,
+    ok: "OK", weiter: "Pêş de", zurueck: "Paş de", fertig: "Qediya", speichern: "Tomar bike", abbrechen: "Betal bike", stueck: "hebe", bearbeiten: "Biguherîne", zahlZuGross: (v) => `“${v}” pir mezin e – heta deh milyonan dibe.`, uebernehmen: "Bipejirîne", zahlUngueltig: (v) => `“${v}” ne hejmar e. Tenê reqam û yek bêhnok binivîse.`,
     weissNicht: "Niha nizanim", spaeter: "Paşê", ja: "Erê", nein: "Na", loeschen: "Jê bibe",
     proMonat: "di mehê de", proJahr: "di salê de", euro: "€", personen: "kes", stunden: "saet", prozent: "%",
     schaetzung: "texmîn", offen: "vala", bekannt: "tomarkirî", hinzufuegen: "Lê zêde bike",
@@ -1461,7 +1461,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: mesrefa malê ${p} xal ji ${b} bilindtir`, minus: (l, e) => `${l}: ${e} heta sifir`, umsatzFehlt: (l, n) => `${l}: ${n} roj bê nivîsîna dahatê`, bestellen: (l, n) => `${l}: îro ${n} malan sipariş bike`,
       inventurFehlt: (l) => `${l}: hîn hejmartin tune`, umsatzKeiner: (l) => `${l}: di vê demê de dahat tune`, gut: "Hemû dikan: tiştek vekirî nîne" },
     vergleich: "Berawirdkirin", vergleichAb: "Berawirdkirin ji du dikanan", keineLaeden: "Dikaneke bi dane tune", bericht: "Rapora xwediyê", datei: "Xwedi", drucken: "Raporê çap bike", csv: "CSV", geteilt: "Rapor hat parvekirin",
-    dok: { zahlen: "Hejmar li gorî dikanê", hinweis: "≈ = texmînî (bihayên rêber, nirxa rêber an texmîn). „kêm e“ = di demê de dane tune. Tenê dikanên li ser vê telefonê, hejmar ji tomarên sepanê.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Hejmar li gorî dikanê", hinweis: "≈ = texmînî (bihayên rêber, nirxa rêber an texmîn). „kêm e“ = di demê de dane tune. Tenê dikanên li ser vê telefonê, hejmar ji tomarên sepanê.",
       kopf: ["Dikan", "Dahat", "Mesrefa malê", "Avêtî", "Guman a kêmbûnê", "Erkên vekirî", "Result so far", "Nirxa depoyê", "Sipariş"], laden: "Dikan", vergleich: "Berawirdkirin", vergleichInfo: "Rêz tenê di navbera dikanên bi heman bingeha daneyan.",
       trend: "Meyl li gorî dema berê", daten: "Bingeha daneyan", fehlt: "Netemam", tage: "roj", quelle: "Çavkaniya mesrefa malê", fuss: "GastroCash · Rapora xwediyê. Hejmar ji tomarên sepanê – ne hesabdarî, ne daneyên kaseyê." },
   },

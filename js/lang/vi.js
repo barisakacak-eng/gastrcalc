@@ -6,7 +6,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Bản dùng thử" },
 
   allgemein: {
-    weiter: "Tiếp", zurueck: "Quay lại", fertig: "Xong", speichern: "Lưu", abbrechen: "Hủy", stueck: "cái", bearbeiten: "Sửa", zahlZuGross: (v) => `“${v}” lớn quá – tối đa mười triệu.`, uebernehmen: "Áp dụng", zahlUngueltig: (v) => `“${v}” không phải là số. Chỉ nhập chữ số và một dấu phẩy.`,
+    ok: "OK", weiter: "Tiếp", zurueck: "Quay lại", fertig: "Xong", speichern: "Lưu", abbrechen: "Hủy", stueck: "cái", bearbeiten: "Sửa", zahlZuGross: (v) => `“${v}” lớn quá – tối đa mười triệu.`, uebernehmen: "Áp dụng", zahlUngueltig: (v) => `“${v}” không phải là số. Chỉ nhập chữ số và một dấu phẩy.`,
     weissNicht: "Giờ chưa biết", spaeter: "Để sau", ja: "Có", nein: "Không", loeschen: "Xóa",
     proMonat: "mỗi tháng", proJahr: "mỗi năm", euro: "€", personen: "người", stunden: "giờ", prozent: "%",
     schaetzung: "ước tính", offen: "chưa điền", bekannt: "đã điền", hinzufuegen: "Thêm",
@@ -1462,7 +1462,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: chi phí nguyên liệu cao hơn ${b} ${p} điểm`, minus: (l, e) => `${l}: còn ${e} đến hòa vốn`, umsatzFehlt: (l, n) => `${l}: ${n} ngày chưa nhập doanh thu`, bestellen: (l, n) => `${l}: đặt ${n} mặt hàng hôm nay`,
       inventurFehlt: (l) => `${l}: chưa kiểm kho`, umsatzKeiner: (l) => `${l}: không có doanh thu trong kỳ`, gut: "Tất cả cửa hàng: không có gì còn mở" },
     vergleich: "So sánh", vergleichAb: "So sánh từ hai cửa hàng", keineLaeden: "Không có cửa hàng nào có dữ liệu", bericht: "Báo cáo chủ", datei: "Chu", drucken: "In báo cáo", csv: "CSV", geteilt: "Đã chia sẻ báo cáo",
-    dok: { zahlen: "Chỉ số theo cửa hàng", hinweis: "≈ = ước tính (giá tham khảo, giá trị tham khảo hoặc ước tính). „thiếu“ = không có dữ liệu trong kỳ. Chỉ các cửa hàng trên điện thoại này, số liệu từ các mục nhập trong ứng dụng.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Chỉ số theo cửa hàng", hinweis: "≈ = ước tính (giá tham khảo, giá trị tham khảo hoặc ước tính). „thiếu“ = không có dữ liệu trong kỳ. Chỉ các cửa hàng trên điện thoại này, số liệu từ các mục nhập trong ứng dụng.",
       kopf: ["Cửa hàng", "Doanh thu", "Chi phí nguyên liệu", "Bỏ đi", "Nghi hao hụt", "Việc còn mở", "Result so far", "Giá trị kho", "Đặt hàng"], laden: "Cửa hàng", vergleich: "So sánh", vergleichInfo: "Xếp hạng chỉ giữa các cửa hàng có cùng cơ sở dữ liệu.",
       trend: "Xu hướng so với kỳ trước", daten: "Cơ sở dữ liệu", fehlt: "Chưa đủ", tage: "ngày", quelle: "Nguồn chi phí nguyên liệu", fuss: "GastroCash · Báo cáo chủ. Số liệu từ các mục nhập trong ứng dụng – không phải kế toán, không phải dữ liệu máy tính tiền." },
   },

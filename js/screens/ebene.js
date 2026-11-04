@@ -130,7 +130,7 @@ export function hilfeZeigen(ansicht, voll = false) {
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
   const mehr = (HILFE_MEHR[k] || []).map((key) => `<p class="hilfe-mehr">${esc(t(key))}</p>`).join("");
   zeigen("hilfe", `<div class="hilfe-inhalt"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}${zekiFragenHtml(k)}</div>
-    <button type="button" class="knopf" data-a="blatt-zu">OK</button>`);
+    <button type="button" class="knopf" data-a="blatt-zu">${esc(t("allgemein.ok"))}</button>`);
 }
 
 function hilfeKurzZeigen(k) {
@@ -140,7 +140,7 @@ function hilfeKurzZeigen(k) {
   zeigen("hilfe", `<div class="hilfe-inhalt kurz"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(ersterSatz(t("ebene.hilfeText." + k)))}</p>
     ${fragen.length ? `<div class="zeki-fragen">${fragen.map((q) => `<details class="zeki-frage"><summary>${esc(q.f)}</summary><p>${esc(q.a)}</p></details>`).join("")}</div>` : ""}
     ${mehrDa ? `<button type="button" class="leise hilfe-mehr-knopf" data-a="hilfe-mehr" data-wert="${esc(k)}">${esc(t("ebene.mehr"))}</button>` : ""}</div>
-    <button type="button" class="knopf" data-a="blatt-zu">OK</button>`);
+    <button type="button" class="knopf" data-a="blatt-zu">${esc(t("allgemein.ok"))}</button>`);
 }
 export const hilfeIstKurz = () => offen === "hilfe" && !hilfeVoll;
 

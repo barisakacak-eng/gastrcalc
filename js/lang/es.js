@@ -6,7 +6,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Versión de prueba" },
 
   allgemein: {
-    weiter: "Siguiente", zurueck: "Atrás", fertig: "Listo", speichern: "Guardar", abbrechen: "Cancelar", stueck: "ud.", bearbeiten: "Editar", zahlZuGross: (v) => `“${v}” es demasiado grande: hasta diez millones.`, uebernehmen: "Aplicar", zahlUngueltig: (v) => `“${v}” no es un número. Solo cifras y una coma.`,
+    ok: "OK", weiter: "Siguiente", zurueck: "Atrás", fertig: "Listo", speichern: "Guardar", abbrechen: "Cancelar", stueck: "ud.", bearbeiten: "Editar", zahlZuGross: (v) => `“${v}” es demasiado grande: hasta diez millones.`, uebernehmen: "Aplicar", zahlUngueltig: (v) => `“${v}” no es un número. Solo cifras y una coma.`,
     weissNicht: "Ahora no lo sé", spaeter: "Luego", ja: "Sí", nein: "No", loeschen: "Borrar",
     proMonat: "al mes", proJahr: "al año", euro: "€", personen: "personas", stunden: "horas", prozent: "%",
     schaetzung: "estimación", offen: "pendiente", bekannt: "anotado", hinzufuegen: "Añadir",
@@ -1462,7 +1462,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: coste de mercancía ${p} puntos por encima de ${b}`, minus: (l, e) => `${l}: ${e} hasta cero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "día" : "días"} sin registro de ventas`, bestellen: (l, n) => `${l}: pedir ${n} ${n === 1 ? "artículo" : "artículos"} hoy`,
       inventurFehlt: (l) => `${l}: aún sin inventario`, umsatzKeiner: (l) => `${l}: sin ventas en el periodo`, gut: "Todos los locales: nada abierto" },
     vergleich: "Comparación", vergleichAb: "Comparación a partir de dos locales", keineLaeden: "Ningún local con datos", bericht: "Informe del propietario", datei: "Propietario", drucken: "Imprimir informe", csv: "CSV", geteilt: "Informe compartido",
-    dok: { zahlen: "Cifras por local", hinweis: "≈ = estimado (precios orientativos, valor orientativo o estimación). «falta» = sin datos en el periodo. Solo locales en este móvil, cifras de los registros de la app.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Cifras por local", hinweis: "≈ = estimado (precios orientativos, valor orientativo o estimación). «falta» = sin datos en el periodo. Solo locales en este móvil, cifras de los registros de la app.",
       kopf: ["Local", "Ventas", "Coste de mercancía", "Tirado", "Sospecha de merma", "Obligaciones abiertas", "Result so far", "Valor del almacén", "Pedir"], laden: "Local", vergleich: "Comparación", vergleichInfo: "Clasificación solo entre locales con la misma base de datos.",
       trend: "Tendencia frente al periodo anterior", daten: "Base de datos", fehlt: "Incompleto", tage: "días", quelle: "Origen coste de mercancía", fuss: "GastroCash · Informe del propietario. Cifras de los registros de la app – no es contabilidad ni datos de caja." },
   },

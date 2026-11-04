@@ -70,7 +70,7 @@ export function personalView(stand) {
   const kuehlPille = z.kuehlOffen === null ? "" : z.kuehlOffen > 0 ? `<span class="pille">${esc(t("personal.offen", z.kuehlOffen))}</span>` : `<span class="pille ruhig">${sym("check")}</span>`;
   const putzPille = z.putzen ? `<span class="pille ruhig zahl">${z.putzen.erledigt} / ${z.putzen.gesamt}</span>` : "";
   return `${personalLeiste()}<div class="inhalt personalstart">
-    <div class="personalkopf"><span class="avatar">${esc((name || "?").slice(0, 1).toUpperCase())}</span><div><b>${esc(name ? t("personal.hallo", name) : t("personal.halloOhne"))}</b><small>${esc(datum)}</small></div>
+    <div class="personalkopf">${name ? `<span class="avatar">${esc(name.slice(0, 1).toUpperCase())}</span>` : ""}<div><b>${esc(name ? t("personal.hallo", name) : t("personal.halloOhne"))}</b><small>${esc(datum)}</small></div>
       ${personen.length ? `<button type="button" class="leise personwechsel" data-a="personal-wechseln">${esc(t("personal.wechseln"))}</button>` : ""}</div>
     ${kachel("muell", "m-eimer-foto", "trash-2", "--muell", t("personal.muell"), "")}
     ${kachel("kuehl", "k-kuehlschrank-lebensmittel-foto", "snowflake", "--branche", t("personal.kuehlung"), kuehlPille)}

@@ -129,6 +129,13 @@ jobs:
             grep -E "TIPPS|Error|Timeout" zaehl_tipps.txt | tail -8 | while read -r l; do echo "::warning::zaehl_tipps Versuch $versuch: $l"; done
           done
           tail -30 zaehl_tipps.txt; exit 1
+      - name: Sprach- und Anzeigereste ar/tr bei 360 px (Vorab-Prüfung D, 04.11.2026)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8852 python tests/vorab_d_browser.py > vorab_d.txt 2>&1; then exit 0; fi
+            grep -E "VORAB-D|Error|Timeout" vorab_d.txt | tail -8 | while read -r l; do echo "::warning::vorab_d Versuch $versuch: $l"; done
+          done
+          tail -30 vorab_d.txt; exit 1
       - name: Erststart jeder Ladenart (de, drei Ladenarten)
         run: |
           for versuch in 1 2; do
