@@ -203,3 +203,4 @@ details.karte.auf:not([open])>:not(summary){display:none}
 .g3-schicht-form select,.g3-schicht-form input{min-height:44px;border:1px solid var(--gc-line,#d8cdbb);border-radius:12px;padding:4px 10px;font:inherit;background:var(--gc-white,#fff)}
 .g3-zeiten{display:flex;align-items:center;gap:6px}.g3-zeiten input{flex:1;min-width:0}
 .g3-kasse{display:flex;flex-direction:column;gap:6px;margin-top:8px}.g3-kasse select{min-height:44px;border:1px solid var(--gc-line,#d8cdbb);border-radius:12px;padding:4px 10px;font:inherit}
+.g3-karte .summenzeile>span:first-child{flex-shrink:0;white-space:nowrap}.g3-karte .summenzeile>.wert{flex-shrink:1;min-width:0;white-space:normal;overflow-wrap:anywhere;text-align:end}
