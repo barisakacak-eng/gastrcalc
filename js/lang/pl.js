@@ -11,7 +11,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Wersja testowa" },
 
   allgemein: {
-    weiter: "Dalej", zurueck: "Wstecz", fertig: "Gotowe", speichern: "Zapisz", abbrechen: "Anuluj", stueck: "szt.", bearbeiten: "Edytuj", zahlZuGross: (v) => `„${v}” to za dużo – maksymalnie dziesięć milionów.`, uebernehmen: "Zastosuj", zahlUngueltig: (v) => `„${v}” to nie liczba. Wpisz tylko cyfry i jeden przecinek.`,
+    ok: "OK", weiter: "Dalej", zurueck: "Wstecz", fertig: "Gotowe", speichern: "Zapisz", abbrechen: "Anuluj", stueck: "szt.", bearbeiten: "Edytuj", zahlZuGross: (v) => `„${v}” to za dużo – maksymalnie dziesięć milionów.`, uebernehmen: "Zastosuj", zahlUngueltig: (v) => `„${v}” to nie liczba. Wpisz tylko cyfry i jeden przecinek.`,
     weissNicht: "Teraz nie wiem", spaeter: "Później", ja: "Tak", nein: "Nie", loeschen: "Usuń",
     proMonat: "miesięcznie", proJahr: "rocznie", euro: "€", personen: "osób", stunden: "godzin", prozent: "%",
     schaetzung: "szacunek", offen: "otwarte", bekannt: "wpisane", hinzufuegen: "Dodaj",
@@ -1469,7 +1469,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: koszt towaru ${p} pkt powyżej ${b}`, minus: (l, e) => `${l}: ${e} do zera`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "dzień" : "dni"} bez wpisu obrotu`, bestellen: (l, n) => `${l}: zamów ${n} ${n === 1 ? "towar" : "towarów"} dziś`,
       inventurFehlt: (l) => `${l}: jeszcze brak inwentaryzacji`, umsatzKeiner: (l) => `${l}: brak obrotu w okresie`, gut: "Wszystkie lokale: nic otwartego" },
     vergleich: "Porównanie", vergleichAb: "Porównanie od dwóch lokali", keineLaeden: "Brak lokalu z danymi", bericht: "Raport właściciela", datei: "Wlasciciel", drucken: "Drukuj raport", csv: "CSV", geteilt: "Raport udostępniony",
-    dok: { zahlen: "Wskaźniki według lokalu", hinweis: "≈ = szacunek (ceny orientacyjne, wartość orientacyjna lub szacunek). „brak” = brak danych w okresie. Tylko lokale na tym telefonie, liczby z wpisów w aplikacji.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Wskaźniki według lokalu", hinweis: "≈ = szacunek (ceny orientacyjne, wartość orientacyjna lub szacunek). „brak” = brak danych w okresie. Tylko lokale na tym telefonie, liczby z wpisów w aplikacji.",
       kopf: ["Lokal", "Obrót", "Koszt towaru", "Wyrzucone", "Podejrzenie ubytku", "Otwarte obowiązki", "Result so far", "Wartość magazynu", "Zamówić"], laden: "Lokal", vergleich: "Porównanie", vergleichInfo: "Ranking tylko między lokalami o tej samej bazie danych.",
       trend: "Trend do poprzedniego okresu", daten: "Baza danych", fehlt: "Niekompletne", tage: "dni", quelle: "Źródło kosztu towaru", fuss: "GastroCash · Raport właściciela. Liczby z wpisów w aplikacji – to nie księgowość ani dane z kasy." },
   },

@@ -6,7 +6,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Versione di prova" },
 
   allgemein: {
-    weiter: "Avanti", zurueck: "Indietro", fertig: "Fatto", speichern: "Salva", abbrechen: "Annulla", stueck: "pz.", bearbeiten: "Modifica", zahlZuGross: (v) => `“${v}” è troppo grande – si arriva fino a dieci milioni.`, uebernehmen: "Applica", zahlUngueltig: (v) => `“${v}” non è un numero. Solo cifre e una virgola.`,
+    ok: "OK", weiter: "Avanti", zurueck: "Indietro", fertig: "Fatto", speichern: "Salva", abbrechen: "Annulla", stueck: "pz.", bearbeiten: "Modifica", zahlZuGross: (v) => `“${v}” è troppo grande – si arriva fino a dieci milioni.`, uebernehmen: "Applica", zahlUngueltig: (v) => `“${v}” non è un numero. Solo cifre e una virgola.`,
     weissNicht: "Adesso non lo so", spaeter: "Più tardi", ja: "Sì", nein: "No", loeschen: "Elimina",
     proMonat: "al mese", proJahr: "all'anno", euro: "€", personen: "persone", stunden: "ore", prozent: "%",
     schaetzung: "Stima", offen: "aperto", bekannt: "inserito", hinzufuegen: "Aggiungi",
@@ -1464,7 +1464,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: costo merce ${p} punti sopra ${b}`, minus: (l, e) => `${l}: ${e} fino a zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "giorno" : "giorni"} senza incasso registrato`, bestellen: (l, n) => `${l}: ordinare ${n} ${n === 1 ? "articolo" : "articoli"} oggi`,
       inventurFehlt: (l) => `${l}: ancora nessun inventario`, umsatzKeiner: (l) => `${l}: nessun incasso nel periodo`, gut: "Tutti i locali: niente di aperto" },
     vergleich: "Confronto", vergleichAb: "Confronto da due locali", keineLaeden: "Nessun locale con dati", bericht: "Rapporto del proprietario", datei: "Proprietario", drucken: "Stampa rapporto", csv: "CSV", geteilt: "Rapporto condiviso",
-    dok: { zahlen: "Cifre per locale", hinweis: "≈ = stimato (prezzi indicativi, valore indicativo o stima). «manca» = nessun dato nel periodo. Solo locali su questo telefono, cifre dalle registrazioni dell'app.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Cifre per locale", hinweis: "≈ = stimato (prezzi indicativi, valore indicativo o stima). «manca» = nessun dato nel periodo. Solo locali su questo telefono, cifre dalle registrazioni dell'app.",
       kopf: ["Locale", "Incasso", "Costo merce", "Buttato", "Sospetto di perdita", "Obblighi aperti", "Result so far", "Valore magazzino", "Ordinare"], laden: "Locale", vergleich: "Confronto", vergleichInfo: "Classifica solo tra locali con la stessa base dati.",
       trend: "Andamento rispetto al periodo precedente", daten: "Base dati", fehlt: "Incompleto", tage: "giorni", quelle: "Fonte costo merce", fuss: "GastroCash · Rapporto del proprietario. Cifre dalle registrazioni dell'app – non contabilità, non dati di cassa." },
   },

@@ -287,6 +287,13 @@ export function eigentuemerCsv(ue) {
   const z = ue.zeitraum;
   const kopf = [...t("eigentuemer.dok.kopf"), `${t("eigentuemer.kennzahl.umsatz")} (${t("eigentuemer.dok.tage")})`, t("eigentuemer.dok.quelle"), t("eigentuemer.kennzahl.personal"), t("eigentuemer.kennzahl.aktionen"), t("eigentuemer.dok.fehlt")];
   const zeilen = ue.laeden.map((l) => { const c = ladenZellen(l); return [l.name + (l.beispiel ? ` (${t("eigentuemer.beispiel")})` : ""), c.umsatz, c.ware, c.muell, c.schwund, c.pflichtenZahl, c.bisNull, c.lager, c.bestellen, `${l.umsatz.tage}/${l.umsatz.erwartet}`, c.wareQuelle, c.personal, c.aktionen, c.fehlt]; });
+  // Vorab-Prüfung D (04.11.2026): eigene Zahlenspalten ohne „€“/„≈“ für die Weiterverarbeitung (leer = keine Daten)
+  const k = t("eigentuemer.dok.kopf"); const zk = (i) => t("eigentuemer.dok.zahlKopf", k[i]);
+  kopf.push(zk(1), zk(2), zk(3), zk(4), zk(6), zk(7));
+  const r2 = (x) => (Number.isFinite(x) ? Math.round(x * 100) / 100 : null);
+  ue.laeden.forEach((l, i) => { const u = l.umsatz, w = l.ware, m = l.muell, sw = l.schwund, n = l.bisNull, g = l.lager;
+    zeilen[i].push(u.tage ? r2(u.summe) : null, w.quote === null || w.unplausibel ? null : r2(w.quote * 100), m.anzahl ? r2(m.wert) : null,
+      sw && sw.anzahl ? r2(sw.wert) : null, n.keinUmsatz ? null : r2(n.stand), g.ohneInventur ? null : r2(g.wert)); });
   const text = csvText(kopf, zeilen, { dezimal: [] });
   const bom = text.startsWith("﻿") ? "﻿" : "";
   return { name: `${t("eigentuemer.datei")}_${z.von}_${z.bis}.csv`, text: `${bom}${t("eigentuemer.bericht")} ${datumDe(z.von)} – ${datumDe(z.bis)}${ue.beispielZeigen ? ` · ${t("beispiel.export")}` : ""}\r\n${bom ? text.slice(1) : text}` };

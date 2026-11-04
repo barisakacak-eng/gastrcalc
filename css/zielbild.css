@@ -366,3 +366,8 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .vk-ampel .punkt.rot { background: var(--rot); } .vk-ampel .punkt.gelb { background: var(--gelb); } .vk-ampel .punkt.gruen { background: var(--gruen); }
 /* 27.10.2026 (Persona-Test Arabisch): „g 250“ → „250 g“ – Mengen mit lateinischer Einheit in Kacheln, Chips und Untertiteln nach dem ersten starken Zeichen ausrichten */
 [dir="rtl"] small, [dir="rtl"] .chip, [dir="rtl"] .kwert, [dir="rtl"] .marke { unicode-bidi: plaintext; }
+/* Vorab-Prüfung D (04.11.2026): Weiter-Pfeile in Arabisch nach links. Über „scale“, damit offene Klapp-Drehungen (transform) erhalten bleiben;
+   Stellen, die schon eigens gespiegelt sind (Zurück-Zeilen, Sprachzeile, Personal-Zurück), sind ausgenommen. */
+[dir="rtl"] svg.sym.richtung:not(.zurueckzeile .sym):not(.zurueckknopf .sym):not(.blattkopf.nur .ikonknopf .sym):not(.sprachzeile .sz-wert .sym):not(.personalzurueck .sym) { scale: -1 1; }
+[dir="rtl"] .s2arten .fotokachel b, [dir="rtl"] .fotokachel b { text-align: right; }
+[dir="rtl"] .monatskurve { scale: -1 1; } /* Vorab-Prüfung D: Monatskurve läuft in Arabisch von rechts nach links, wie der Fortschrittsbalken */

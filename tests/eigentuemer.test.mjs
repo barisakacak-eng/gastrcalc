@@ -174,10 +174,20 @@ test("Druck und CSV: ohne NaN/undefined, mit ≈ und Vollständigkeits-Hinweis, 
   assert.match(html, /^<!doctype html>/); assert.ok(html.includes("Eigentümer-Bericht") && html.includes("Kennzahlen je Laden") && html.includes("Platz 1 von 2"));
   assert.ok(html.includes("Trend zum Vorzeitraum") && html.includes("Datenbasis"));
   assert.match(csv.name, /^Eigentuemer_\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.csv$/);
-  const zeilen = csv.text.split("\r\n").filter(Boolean); assert.equal(zeilen.length, 2 + 3, "Titel, Kopf, drei Läden"); assert.equal(zeilen[1].split(";").length, 14);
+  const zeilen = csv.text.split("\r\n").filter(Boolean); assert.equal(zeilen.length, 2 + 3, "Titel, Kopf, drei Läden"); assert.equal(zeilen[1].split(";").length, 20);
   assert.equal(zeilen[2].split(";")[0], "Laden Eins"); assert.equal(zeilen[4].split(";")[1], "fehlt");
   const dok = E.eigentuemerDokument(ue); assert.equal(dok.beispiel, null); assert.equal(dok.abschnitte.length, 4); assert.equal(dok.abschnitte[0].kopf.length, 9);
   for (const ab of dok.abschnitte) for (const z of ab.zeilen) for (const zelle of (z.zellen || z)) assert.equal(typeof zelle, "string", ab.titel);
+});
+
+test("Vorab-Prüfung D: CSV hat eigene Zahlenspalten ohne € und ≈, leer ohne Daten", () => {
+  const a = laden("Laden Eins", "a"), c = leer("Laden Drei", "c"); const ue = E.eigentuemerUebersicht(wurzelMit(a, c), { art: "monat" }, { H, K });
+  const zeilen = E.eigentuemerCsv(ue).text.split("\r\n").filter(Boolean); const kopf = zeilen[1].split(";");
+  assert.deepEqual(kopf.slice(14), ["Umsatz (Zahl)", "Wareneinsatz (Zahl)", "Weggeworfen (Zahl)", "Schwund-Verdacht (Zahl)", "Ergebnis bisher (Zahl)", "Lager-Wert (Zahl)"]);
+  const eins = zeilen[2].split(";").slice(14), drei = zeilen[3].split(";").slice(14); const l = ue.laeden.find((x) => x.id === "a");
+  for (const z of eins) assert.match(z, /^(-?\d+(,\d{2})?)?$/, "Zahl ohne Zeichen: " + z);
+  assert.equal(eins[0], (Math.round(l.umsatz.summe * 100) / 100).toFixed(2).replace(".", ","), "Umsatz-Zahl gleich der Summe");
+  assert.deepEqual(drei.slice(0, 1), [""], "leerer Laden: Umsatz leer statt 0");
 });
 
 test("Alle 18 Sprachen: Sätze und Zellen liefern Text, keine verbotenen Wörter", async () => {

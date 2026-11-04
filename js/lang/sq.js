@@ -11,7 +11,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Version prove" },
 
   allgemein: {
-    weiter: "Vazhdo", zurueck: "Mbrapa", fertig: "Gati", speichern: "Ruaj", abbrechen: "Anulo", stueck: "copë", bearbeiten: "Ndrysho", zahlZuGross: (v) => `“${v}” është shumë e madhe – deri në dhjetë milionë.`, uebernehmen: "Merre", zahlUngueltig: (v) => `“${v}” nuk është numër. Vetëm shifra dhe një presje.`,
+    ok: "OK", weiter: "Vazhdo", zurueck: "Mbrapa", fertig: "Gati", speichern: "Ruaj", abbrechen: "Anulo", stueck: "copë", bearbeiten: "Ndrysho", zahlZuGross: (v) => `“${v}” është shumë e madhe – deri në dhjetë milionë.`, uebernehmen: "Merre", zahlUngueltig: (v) => `“${v}” nuk është numër. Vetëm shifra dhe një presje.`,
     weissNicht: "Tani për tani nuk e di", spaeter: "Më vonë", ja: "Po", nein: "Jo", loeschen: "Fshi",
     proMonat: "në muaj", proJahr: "në vit", euro: "€", personen: "persona", stunden: "orë", prozent: "%",
     schaetzung: "Përafërsisht", offen: "bosh", bekannt: "plotësuar", hinzufuegen: "Shto",
@@ -1469,7 +1469,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: kosto e mallit ${p} pikë mbi ${b}`, minus: (l, e) => `${l}: ${e} deri në zero`, umsatzFehlt: (l, n) => `${l}: ${n} ${n === 1 ? "ditë" : "ditë"} pa regjistrim xhiroje`, bestellen: (l, n) => `${l}: porosit ${n} ${n === 1 ? "mall" : "mallra"} sot`,
       inventurFehlt: (l) => `${l}: ende pa inventar`, umsatzKeiner: (l) => `${l}: pa xhiro në periudhë`, gut: "Të gjitha lokalet: asgjë e hapur" },
     vergleich: "Krahasim", vergleichAb: "Krahasimi nga dy lokale", keineLaeden: "Asnjë lokal me të dhëna", bericht: "Raporti i pronarit", datei: "Pronari", drucken: "Printo raportin", csv: "CSV", geteilt: "Raporti u nda",
-    dok: { zahlen: "Shifra për lokal", hinweis: "≈ = i vlerësuar (çmime orientuese, vlerë orientuese ose vlerësim). „mungon“ = pa të dhëna në periudhë. Vetëm lokalet në këtë telefon, shifra nga regjistrimet e aplikacionit.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Shifra për lokal", hinweis: "≈ = i vlerësuar (çmime orientuese, vlerë orientuese ose vlerësim). „mungon“ = pa të dhëna në periudhë. Vetëm lokalet në këtë telefon, shifra nga regjistrimet e aplikacionit.",
       kopf: ["Lokali", "Xhiro", "Kosto e mallit", "Hedhur", "Dyshim për humbje", "Detyrime të hapura", "Result so far", "Vlera e magazinës", "Porosit"], laden: "Lokali", vergleich: "Krahasim", vergleichInfo: "Renditje vetëm midis lokaleve me të njëjtën bazë të dhënash.",
       trend: "Prirja ndaj periudhës së mëparshme", daten: "Baza e të dhënave", fehlt: "E paplotë", tage: "ditë", quelle: "Burimi i kostos së mallit", fuss: "GastroCash · Raporti i pronarit. Shifra nga regjistrimet e aplikacionit – jo kontabilitet, jo të dhëna arke." },
   },

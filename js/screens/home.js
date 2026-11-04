@@ -276,7 +276,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
   return `
     <div class="buero b-einstellungen">
     ${bueroKopf({ ziel: "buero", text: t("buero.titel") }, t("einstellungen.titel"))}
-    <div class="kopfband"><h1>${esc(t("einstellungen.titel"))}</h1><div class="unter">${esc(t("einstellungen.fassung"))}${extra.fassung ? ` · ${esc(extra.fassung)}` : ""}</div></div>
+    <div class="kopfband"><h1>${esc(t("einstellungen.titel"))}</h1><div class="unter">${esc(t("einstellungen.fassung"))}${extra.fassung ? ` · <bdi dir="ltr" class="fassung-nr">${esc(extra.fassung)}</bdi>` : ""}</div></div>
     <div class="inhalt einstellungen-inhalt">
       <button type="button" class="knopf zweit b-sicherung-link" data-a="nav" data-wert="einstellungen" data-anker="sicherung">${sym("download")} ${esc(t("einstellungen.sicherung"))}</button>
       <div class="karte">

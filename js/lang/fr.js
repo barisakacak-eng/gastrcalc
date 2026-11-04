@@ -6,7 +6,7 @@ export default {
   app: { name: "GastroCash", entwurf: "Version de test" },
 
   allgemein: {
-    weiter: "Suivant", zurueck: "Retour", fertig: "Terminé", speichern: "Enregistrer", abbrechen: "Annuler", stueck: "pièce", bearbeiten: "Modifier", zahlZuGross: (v) => `« ${v} » est trop grand – jusqu’à dix millions, ça passe.`, uebernehmen: "Valider", zahlUngueltig: (v) => `« ${v} » n’est pas un nombre. Uniquement des chiffres et une virgule.`,
+    ok: "OK", weiter: "Suivant", zurueck: "Retour", fertig: "Terminé", speichern: "Enregistrer", abbrechen: "Annuler", stueck: "pièce", bearbeiten: "Modifier", zahlZuGross: (v) => `« ${v} » est trop grand – jusqu’à dix millions, ça passe.`, uebernehmen: "Valider", zahlUngueltig: (v) => `« ${v} » n’est pas un nombre. Uniquement des chiffres et une virgule.`,
     weissNicht: "Je ne sais pas pour l’instant", spaeter: "Plus tard", ja: "Oui", nein: "Non", loeschen: "Supprimer",
     proMonat: "par mois", proJahr: "par an", euro: "€", personen: "personnes", stunden: "heures", prozent: "%",
     schaetzung: "estimation", offen: "à remplir", bekannt: "rempli", hinzufuegen: "Ajouter",
@@ -1464,7 +1464,7 @@ export default {
       wareUeber: (l, p, b) => `${l} : coût matière ${p} points au-dessus de ${b}`, minus: (l, e) => `${l} : ${e} jusqu'à zéro`, umsatzFehlt: (l, n) => `${l} : ${n} ${n === 1 ? "jour" : "jours"} sans saisie de chiffre`, bestellen: (l, n) => `${l} : commander ${n} ${n === 1 ? "article" : "articles"} aujourd'hui`,
       inventurFehlt: (l) => `${l} : pas encore d'inventaire`, umsatzKeiner: (l) => `${l} : pas de chiffre sur la période`, gut: "Tous les commerces : rien d'ouvert" },
     vergleich: "Comparaison", vergleichAb: "Comparaison à partir de deux commerces", keineLaeden: "Aucun commerce avec des données", bericht: "Rapport du propriétaire", datei: "Proprietaire", drucken: "Imprimer le rapport", csv: "CSV", geteilt: "Rapport partagé",
-    dok: { zahlen: "Chiffres par commerce", hinweis: "≈ = estimé (prix indicatifs, valeur indicative ou estimation). « manque » = pas de données sur la période. Seulement les commerces sur ce téléphone, chiffres tirés des saisies de l'appli.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "Chiffres par commerce", hinweis: "≈ = estimé (prix indicatifs, valeur indicative ou estimation). « manque » = pas de données sur la période. Seulement les commerces sur ce téléphone, chiffres tirés des saisies de l'appli.",
       kopf: ["Commerce", "Chiffre d'affaires", "Coût matière", "Jeté", "Soupçon de perte", "Obligations ouvertes", "Result so far", "Valeur du stock", "Commander"], laden: "Commerce", vergleich: "Comparaison", vergleichInfo: "Classement uniquement entre commerces ayant la même base de données.",
       trend: "Tendance par rapport à la période précédente", daten: "Base de données", fehlt: "Incomplet", tage: "jours", quelle: "Source coût matière", fuss: "GastroCash · Rapport du propriétaire. Chiffres tirés des saisies de l'appli – ni comptabilité, ni données de caisse." },
   },

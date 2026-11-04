@@ -5,7 +5,7 @@ export default {
   app: { name: "GastroCash", entwurf: "نسخه‌ی آزمایشی" },
 
   allgemein: {
-    weiter: "بعدی", zurueck: "برگشت", fertig: "تمام", speichern: "ذخیره", abbrechen: "لغو", stueck: "عدد", bearbeiten: "ویرایش", zahlZuGross: (v) => `«${v}» خیلی بزرگ است – تا ده میلیون می‌شود.`, uebernehmen: "تأیید", zahlUngueltig: (v) => `«${v}» عدد نیست. فقط رقم و یک ویرگول بنویس.`,
+    ok: "OK", weiter: "بعدی", zurueck: "برگشت", fertig: "تمام", speichern: "ذخیره", abbrechen: "لغو", stueck: "عدد", bearbeiten: "ویرایش", zahlZuGross: (v) => `«${v}» خیلی بزرگ است – تا ده میلیون می‌شود.`, uebernehmen: "تأیید", zahlUngueltig: (v) => `«${v}» عدد نیست. فقط رقم و یک ویرگول بنویس.`,
     weissNicht: "الان نمی‌دانم", spaeter: "بعداً", ja: "بله", nein: "نه", loeschen: "حذف",
     proMonat: "در ماه", proJahr: "در سال", euro: "€", personen: "نفر", stunden: "ساعت", prozent: "%",
     schaetzung: "تخمین", offen: "خالی", bekannt: "وارد شده", hinzufuegen: "اضافه کن",
@@ -1463,7 +1463,7 @@ export default {
       wareUeber: (l, p, b) => `${l}: هزینهٔ مواد ${p} واحد بالاتر از ${b}`, minus: (l, e) => `${l}: ${e} تا صفر`, umsatzFehlt: (l, n) => `${l}: ${n} روز بدون ثبت فروش`, bestellen: (l, n) => `${l}: امروز ${n} کالا سفارش بده`,
       inventurFehlt: (l) => `${l}: هنوز انبارگردانی ندارد`, umsatzKeiner: (l) => `${l}: در این دوره فروش ندارد`, gut: "همهٔ مغازه‌ها: چیزی باز نیست" },
     vergleich: "مقایسه", vergleichAb: "مقایسه از دو مغازه", keineLaeden: "مغازه‌ای با داده نیست", bericht: "گزارش مالک", datei: "Malek", drucken: "چاپ گزارش", csv: "CSV", geteilt: "گزارش به اشتراک گذاشته شد",
-    dok: { zahlen: "شاخص‌ها به تفکیک مغازه", hinweis: "≈ = تخمینی (قیمت راهنما، مقدار راهنما یا تخمین). «ندارد» = داده‌ای در دوره نیست. فقط مغازه‌های روی این گوشی، اعداد از ثبت‌های برنامه.",
+    dok: { zahlKopf: (k) => `${k} (number)`, zahlen: "شاخص‌ها به تفکیک مغازه", hinweis: "≈ = تخمینی (قیمت راهنما، مقدار راهنما یا تخمین). «ندارد» = داده‌ای در دوره نیست. فقط مغازه‌های روی این گوشی، اعداد از ثبت‌های برنامه.",
       kopf: ["مغازه", "فروش", "هزینهٔ مواد", "دورریخته", "شک به کسری", "وظایف باز", "Result so far", "ارزش انبار", "سفارش"], laden: "مغازه", vergleich: "مقایسه", vergleichInfo: "رتبه فقط بین مغازه‌هایی با پایهٔ دادهٔ یکسان.",
       trend: "روند نسبت به دورهٔ قبل", daten: "پایهٔ داده", fehlt: "ناقص", tage: "روز", quelle: "منبع هزینهٔ مواد", fuss: "GastroCash · گزارش مالک. اعداد از ثبت‌های برنامه – نه حسابداری، نه دادهٔ صندوق." },
   },
