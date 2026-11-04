@@ -60,13 +60,26 @@ export function zaehlerSumme(schichten, opt = {}) {
   return s;
 }
 
-// Schichten einer Person aus dem Laden (stand.teamTage, je Datum gilt der jüngste Eintrag), Zeitraum von–bis (JJJJ-MM-TT)
+// Schichten einer Person aus dem Laden, Zeitraum von–bis (JJJJ-MM-TT). Quellen: stand.schichten (Büro „Schicht eintragen“, W3b 04.11.2026)
+// und Beginn/Ende in stand.teamTage (je Datum gilt der jüngste Eintrag). Für denselben Tag und dieselbe Person gilt der Büro-Eintrag.
 export function schichtenAusLaden(stand, personId, von, bis) {
+  const out = new Map();
   const jeTag = new Map(); for (const e of stand?.teamTage || []) if (e.datum >= von && e.datum <= bis) jeTag.set(e.datum, e);
-  const out = []; for (const e of [...jeTag.values()].sort((a, b) => (a.datum < b.datum ? -1 : 1))) for (const x of e.eintraege || []) if (x.person === personId && x.von && x.bis) out.push({ datum: e.datum, von: x.von, bis: x.bis });
-  return out;
+  for (const e of [...jeTag.values()]) for (const x of e.eintraege || []) if (x.person === personId && x.von && x.bis) out.set(e.datum, { datum: e.datum, von: x.von, bis: x.bis });
+  for (const x of stand?.schichten || []) if (!x.storniert && x.person === personId && x.datum >= von && x.datum <= bis) out.set(x.datum, { datum: x.datum, von: x.von, bis: x.bis });
+  return [...out.values()].sort((a, b) => (a.datum < b.datum ? -1 : 1));
 }
-
+// W3b (04.11.2026): Schicht im Büro eintragen – getrennt von „Mitarbeiter heute“ (Lohnkosten bleiben, wie sie sind; das hier ist die Zeit-Aufzeichnung).
+// Gleicher Tag + gleiche Person ersetzt den alten Eintrag (der alte bleibt als storniert stehen). Rückgabe: Eintrag oder null bei ungültigen Zeiten.
+const zeitOk = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${m[1].padStart(2, "0")}:${m[2]}` : null; };
+export function schichtEintragen(stand, { datum, person, von, bis, jetzt = new Date().toISOString() }) {
+  const a = zeitOk(von), b = zeitOk(bis); if (!/^\d{4}-\d{2}-\d{2}$/.test(datum || "") || !person || !a || !b || schichtStunden(a, b) === null) return null;
+  if (!(stand.personen || []).some((p) => p.id === person && !p.entfernt)) return null;
+  stand.schichten ??= [];
+  for (const x of stand.schichten) if (!x.storniert && x.datum === datum && x.person === person) x.storniert = jetzt;
+  const e = { id: `s-${datum}-${person}-${stand.schichten.length}`, datum, person, von: a, bis: b, erfasst: jetzt, storniert: false };
+  stand.schichten.push(e); return e;
+}
 // Minijob-Wächter: Stunden bis zur Grenze, abgerundet auf 0,01 h (Prüfpaket D: 43,36 h × 14,60 € = 633,06 € läge schon darüber)
 export function minijobGrenzeStunden(datum, satz = null) {
   const m = mindestlohnAm(datum); const s = satz > 0 ? satz : m.satz;
@@ -84,3 +97,21 @@ export function tageZaehler(bisherTage, neueTage) {
 // Arbeitszeit-Aufzeichnung Gaststätten (§ 17 MiLoG i. V. m. § 2a SchwarzArbG): Beginn, Ende, Dauer spätestens am 7. Tag, 2 Jahre aufbewahren
 export const AUFZEICHNUNG_TAGE = 7, AUFBEWAHRUNG_JAHRE = 2;
 export const aufzeichnungFaellig = (arbeitstag) => plus(arbeitstag, AUFZEICHNUNG_TAGE);
+
+// Arbeitszeit-Liste (W3b, 04.11.2026) für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am 7. Tag
+// nach dem Arbeitstag erfasst (§ 17 Abs. 1 MiLoG; Gaststätten nach § 2a SchwarzArbG). Einträge nur mit Stunden zeigen „ohne Zeiten“ – sie zählen,
+// erfüllen die Aufzeichnung aber nicht. Nur eine Liste, keine Bewertung.
+export function arbeitszeitListe(stand, von, bis) {
+  const name = (id, fallback) => { const p = (stand.personen || []).find((q) => q.id === id); return p?.kuerzel || p?.name || fallback || "–"; };
+  const zeilen = new Map(); // Schlüssel Datum|Person
+  const jeTag = new Map(); for (const e of stand?.teamTage || []) if (e.datum >= von && e.datum <= bis && !e.keine) jeTag.set(e.datum, e);
+  for (const e of jeTag.values()) for (const [i, x] of (e.eintraege || []).entries()) {
+    const erfasst = typeof e.erfasst === "string" ? e.erfasst.slice(0, 10) : null;
+    zeilen.set(`${e.datum}|${x.person || "k" + i}`, { datum: e.datum, wer: name(x.person, x.name), von: x.von || null, bis: x.bis || null, stunden: eintragStunden(x), erfasst, kompakt: !!x.kompakt });
+  }
+  for (const x of stand?.schichten || []) if (!x.storniert && x.datum >= von && x.datum <= bis)
+    zeilen.set(`${x.datum}|${x.person}`, { datum: x.datum, wer: name(x.person), von: x.von, bis: x.bis, stunden: schichtStunden(x.von, x.bis), erfasst: x.erfasst.slice(0, 10), kompakt: false });
+  const liste = [...zeilen.values()].map((z) => ({ ...z, rechtzeitig: !z.erfasst || z.erfasst <= aufzeichnungFaellig(z.datum) })).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.wer.localeCompare(b.wer)));
+  const ohneZeiten = liste.filter((z) => !z.von || !z.bis).length, spaet = liste.filter((z) => !z.rechtzeitig).length;
+  return { zeilen: liste, ohneZeiten, spaet, vollstaendig: liste.length > 0 && ohneZeiten === 0 && spaet === 0 };
+}

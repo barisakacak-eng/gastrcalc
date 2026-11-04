@@ -1,5 +1,5 @@
 // Welle 3 (Hochtouren 03.11.2026): Einstellungen und Laden-Anbindung der Rechenkerne für den Büro-Bildschirm „Geld & Finanzamt“
-// (hinter dem Schalter window.__gcW3, Bildpaket W3). Schreibt nur hier ins Laden-Objekt (Trennung Rechenwerk/Bildschirm).
+// (Bildpaket W3, Baris Ja 04.11.2026). Schreibt nur hier ins Laden-Objekt (Trennung Rechenwerk/Bildschirm).
 // Felder: betrieb.ustRhythmus ("monat" | "quartal" | null), betrieb.dauerfrist (bool), betrieb.svLand (Land der Krankenkasse oder null),
 //         chef.stundenMonat (Zahl), liquiditaet = { betrag, datum }.
 import { heute } from "./util.js";
@@ -7,12 +7,15 @@ import { umsatzEintrag, fixkosten, monatsLast, tagPlus } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
 import { steuerTopf, kleinunternehmer } from "./steuertopf.js";
 import { pflichtTermine } from "./fristen.js";
+import { LAND_CODES } from "./feiertage.js";
 import { liquiditaet, nachfragen } from "./liquiditaet.js";
 
 const r2 = (n) => Math.round(n * 100) / 100;
 export function ustRhythmusSetzen(stand, w) { stand.betrieb.ustRhythmus = w === "monat" || w === "quartal" ? w : null; }
 export function dauerfristUmschalten(stand) { stand.betrieb.dauerfrist = !stand.betrieb.dauerfrist; }
 export function chefStundenSetzen(stand, n) { stand.chef ??= {}; stand.chef.stundenMonat = Number.isFinite(n) && n > 0 && n <= 744 ? Math.round(n) : null; }
+// W3b (04.11.2026): Land, in dem die Krankenkasse sitzt (SV-Termin Mai 2027 hängt daran); null = weiß nicht → früherer Termin
+export function svLandSetzen(stand, code) { stand.betrieb.svLand = LAND_CODES.includes(code) ? code : null; }
 export function geldHeuteSetzen(stand, betrag, datum = heute()) { stand.liquiditaet = Number.isFinite(betrag) ? { betrag: r2(betrag), datum } : null; }
 
 const monatPlus = (m, n) => { const [j, mm] = m.split("-").map(Number); const x = j * 12 + (mm - 1) + n; return `${Math.floor(x / 12)}-${String((x % 12) + 1).padStart(2, "0")}`; };

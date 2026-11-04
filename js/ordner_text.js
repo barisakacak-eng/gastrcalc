@@ -2,6 +2,7 @@
 // Rechnet nur aus js/export_amt.js und js/export_steuer.js, kein HTML außer dem fertigen Druckdokument (druckHtml). Sprache aus i18n.js.
 // Vorher in js/screens/ordner.js; der Bildschirm behält Aufbau, Zeitraum-Wahl, Drucken und Teilen.
 import { t, sprache } from "./i18n.js";
+import { arbeitszeitListe } from "./schichten.js"; // W3b (04.11.2026)
 import { fmtEuro, fmtZahl, heute } from "./util.js";
 import { ordnerAmt, amtCsv, druckHtml, zeitraumFuer, AMT_TEILE } from "./export_amt.js";
 import { monatsPaket, teilCsv, monatVon, monatPlus, datumDe, zeitDe, jahrVon } from "./export_steuer.js";
@@ -205,6 +206,10 @@ export function paketDokument(stand, p) {
     zeilen: p.reinigung.zeilen.map((x) => [datumDe(x.datum), x.lieferant || "–", x.artikel, euro(x.netto)]), summe: p.reinigung.zeilen.length ? [t("ordner.dok.summe"), "", "", euro(p.reinigung.netto)] : null, leer: t("ordner.zeile.keine") });
   if (p.kosten) a.push({ titel: t("ordner.teil.kosten"), info: t("ordnerT.kostenInfo", euro(p.kosten.netto), euro(p.kosten.brutto), euro(p.kosten.lohn)), warn: !!(p.kosten.offen || p.kosten.geschaetzt), kopf: t("ordnerT.druck.kosten"), rechts: [1, 4],
     zeilen: p.kosten.zeilen.map((x) => ({ warn: x.status === "geschaetzt", zellen: [n.posten(x.posten) + (x.status === "geschaetzt" ? ` (${n.pstatus(x.status)})` : ""), euro(x.betrag), n.periode(x.periode), n.basis(x.basis), euro(x.jeMonat)] })), leer: t("ordner.zeile.kostenKeine") });
+  // W3b (04.11.2026, hinter window.__gcW3b): Arbeitszeiten mit Beginn/Ende im Buchhalter-Ordner (§ 17 MiLoG, Gaststätten)
+  if (art === "buch" && typeof globalThis !== "undefined" && globalThis.__gcW3b === true) { const az = arbeitszeitListe(stand, p.zeitraum.von, p.zeitraum.bis);
+    a.push({ titel: t("w3b.az.titel"), info: [t("w3b.az.info"), az.ohneZeiten ? t("w3b.az.ohneZeiten", az.ohneZeiten) : "", az.spaet ? t("w3b.az.spaet", az.spaet) : ""].filter(Boolean).join(" · "), warn: !az.vollstaendig && az.zeilen.length > 0,
+      kopf: t("w3b.az.kopf"), rechts: [4], zeilen: az.zeilen.map((x) => ({ warn: !x.von || !x.rechtzeitig, zellen: [datumDe(x.datum), x.wer, x.von || "–", x.bis || "–", fmtZahl(x.stunden, 2), x.erfasst ? datumDe(x.erfasst) : "–"] })), leer: t("w3b.az.leer") }); }
   a.push({ titel: t("ordnerT.aenderungen"), info: t("ordnerT.aenderungenInfo"), kopf: t("ordnerT.druck.aenderungen"), rechts: [4, 5],
     zeilen: p.aenderungen.zeilen.map((x) => [datumDe(x.datum), n.aart(x.art), n.vorgang(x.vorgang), x.art === "kosten" ? [n.stelle(x.stelle), x.text].filter(Boolean).join(" · ") : (x.text || "–"), x.alt === null ? "–" : `${euro(x.alt)} ${n.basis(x.basis)}`, x.neu === null ? "–" : euro(x.neu), zeitDe(x.zeit)]), leer: t("ordnerT.aenderungenKeine") });
   return { titel: t(`ordner.${art}.titel`), laden: stand.betrieb?.name || "", beispiel: beispielKopf(stand), zeitraum: art === "steuer" ? t("ordner.zeit.jahr", Number(p.zeitraum.von.slice(0, 4))) : monatLang(p.zeitraum.von), erstellt: erstelltText(), sprache: sprache(), abschnitte: a, fuss: t("ordnerT.fuss") };

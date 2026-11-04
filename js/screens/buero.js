@@ -115,7 +115,7 @@ export function bueroView(stand, wurzel, extra = {}) {
         ${verkaufSichtbar(stand) ? zeile({ aktion: "nav", wert: "verkauf" }, "receipt", t("verkaeufe.einstieg"), t("verkaeufe.einstiegUnter")) : ""}
         ${zeile({ aktion: "nav", wert: "listen" }, "file-text", t("buero.zahlen.listen"), t("buero.zahlen.listenUnter"))}
         ${zeile({ aktion: "nav", wert: "hinweise" }, "lightbulb", t("hinweise.einstieg"), hinweiseAnzahl(stand) ? t("hinweise.einstiegNeu", hinweiseAnzahl(stand)) : t("hinweise.einstiegUnter"))}
-        ${typeof globalThis !== "undefined" && globalThis.__gcW3 === true ? zeile({ aktion: "nav", wert: "geld3" }, "wallet", t("w3.titel"), t("w3.unter")) : ""}`, monatWert)}
+        ${zeile({ aktion: "nav", wert: "geld3" }, "wallet", t("w3.titel"), t("w3.unter"))}`, monatWert)}
       ${bereich("ware", "package", t("buero.abschnitt.ware"), ware?.text || (inv ? t("buero.zahlen.inventurUnter", datumLesbar(inv.datum)) : t("buero.zahlen.inventurNie")), bu?.ton === "rot", `
         ${zeile({ aktion: "nav", wert: "ware" }, "scale", t("gehirn.ware.titel"), "")}
         ${zeile({ aktion: "nav", wert: "bestand" }, "package", t("bestand.einstieg"), bu?.text || t("bestand.einstiegUnter"))}

@@ -76,7 +76,7 @@ import { lieferantenView, lieferantenAktion, lieferantenEingabe, lieferantenZuru
 import { aktionenAbschliessen } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Bilanz beendeter Aktionen beim Betreten speichern
 import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Menütafel (18.10.2026): Büro „Menütafel“
 import { hinweiseView } from "./screens/hinweise.js";
-import { geld3View, geld3Aktion, geld3Eingabe } from "./screens/geld3.js"; // Welle 3 (03.11.2026): nur hinter window.__gcW3 // Hinweis-Karten (23.10.2026): Büro „Hinweise“
+import { geld3View, geld3Aktion, geld3Eingabe } from "./screens/geld3.js"; // Welle 3 (03.11.2026, Baris Ja 04.11.2026) // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
