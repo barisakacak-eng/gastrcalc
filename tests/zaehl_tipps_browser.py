@@ -57,6 +57,18 @@ async def main():
             vor = await pg.evaluate(ZAHL, "putzlog"); await tipps(pg, '#app [data-a="pp-haken"]', 2, 80); await pg.wait_for_timeout(900)
             n = await pg.evaluate(ZAHL, "putzlog") - vor; print("B2 Putzen Doppeltipp →", n)
             if n != 1: befunde.append(f"B2: Doppeltipp hakte {n} Aufgaben ab")
+            # Ausschuss Lauf 3, P4 B1: Doppeltipp auf die Heute-Kachel „Müll“ bucht nichts auf dem neuen Müll-Bildschirm (60–350 ms)
+            for ms in (60, 200, 330):
+                await nav_hilfe.geh(pg, "start"); await pg.wait_for_timeout(500)
+                vor = await pg.evaluate(ZAHL, "schwund"); await tipps(pg, '#app .h-feld.muell', 2, ms); await pg.wait_for_timeout(900)
+                n = await pg.evaluate(ZAHL, "schwund") - vor; print(f"P4 B1 Heute-Müll Doppeltipp {ms} ms →", n)
+                if n != 0: befunde.append(f"P4 B1: Doppeltipp {ms} ms auf Heute-Müll buchte {n} Eintrag")
+            # Ausschuss Lauf 3, P4 B2: Doppeltipp auf ☰ lässt das Menü offen (vorher auf und gleich wieder zu)
+            await nav_hilfe.geh(pg, "start"); await pg.wait_for_timeout(500)
+            await tipps(pg, '[data-a="menue-auf"]', 2, 150); await pg.wait_for_timeout(700)
+            offen = await pg.locator("#ebene-huelle .blatt-menue").count(); print("P4 B2 Menü nach Doppeltipp offen:", offen)
+            if not offen: befunde.append("P4 B2: Doppeltipp auf ☰ schließt das Menü gleich wieder")
+            if offen: await pg.click('#ebene-huelle button[data-a="blatt-zu"]'); await pg.wait_for_timeout(400)
             # B4: Preis-Blatt eines Gerichts ohne Preis – Tippen „750“ ergibt 7,50 bzw. „750“, nie „0750,00“
             await pg.evaluate("""async () => { const kl = await import('./js/karte_lesen.js'); const s = window.__gastrocalc.stand;
               kl.vorschlaegeUebernehmen(s, kl.vorschlaegeAusText("Döner Kebab ⋯ 7,50\\nOhnepreis Teller", s).map((v) => ({ ...v, an: true }))); window.__gastrocalc.zeichne(); }""")

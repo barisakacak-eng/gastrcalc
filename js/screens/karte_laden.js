@@ -105,7 +105,7 @@ function zekiZeile(liste, unsicher) {
 // darunter „Wohin geht dein Preis?“ – Balken aus Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn (engine.preisAufteilung).
 const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
 // 27.10.2026 Fehler (Baris-Foto 23:49): Beim Tippen wurde nur „Bleibt dir“ ersetzt, „Wohin geht dein Preis?“ blieb stehen → dreifach. Jetzt eine Hülle für beides.
-function bleibtZeile(z, preis, last, monat = "") { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last)}${monat}</div>`; }
+function bleibtZeile(z, preis, last, monat = "", unscharf = false) { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last, unscharf)}${monat}</div>`; }
 // Masterauftrag 1.3 (28.10.2026): Euro-Hebel im Laden nur hier, beim Preis ändern – „Das bringt dir ≈ x € im Monat“ (bei gleicher Menge, js/hebel.js)
 function monatZeile(stand, z) {
   if (!blatt || blatt.alt === null || Math.abs(blatt.preis - blatt.alt) < 0.004) return "";
@@ -113,9 +113,9 @@ function monatZeile(stand, z) {
   return m.euro > 0 ? `<p class="kl-monat">${esc(t("gehirn.hebel.laden", fmtEuroGeschaetzt(m.euro, true)))}</p>`
     : `<p class="kl-monat minus">${esc(t("gehirn.hebel.ladenMinus", fmtEuroGeschaetzt(-m.euro, true)))}</p>`; // Preissenkung: was sie im Monat kostet (Burger-Test)
 }
-function bleibtInnen(z, preis, last) {
+function bleibtInnen(z, preis, last, unscharf = false) { // Ausschuss Lauf 3, P2 A1: Schätzung trägt „≈“ wie die Karten-Zeile
   const a = preisAmpel(z, preis);
-  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : vorzeichen(a.gewinn) + fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
+  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : (unscharf ? "≈ " : "") + vorzeichen(a.gewinn) + fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
   const tl = preisAufteilung(z, last, preis);
   if (!tl || !(preis > 0)) return zeile;
   const breite = (v) => Math.max(0, v) / preis * 100;
@@ -139,7 +139,7 @@ export function karteLadenBlatt(stand) {
         <label class="kl-gross"><input inputmode="decimal" data-f="kl-preis" value="${blatt.preis > 0 ? esc(wertAnzeige(blatt.preis.toFixed(2))) : ""}" placeholder="0,00" aria-label="${esc(t("kartelaeden.preis"))}" autocomplete="off"><span>€</span></label>
         <button type="button" class="kl-rund" data-a="kl-plus" aria-label="+0,10 €">${zeichen("plus")}</button>
       </div>
-      ${bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z))}
+      ${bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z), kalkulation(stand).geschaetzt || !!x.z.warenGeschaetzt || !!x.z.warenRichtpreis)}
       ${x.z.sk === null ? `<p class="kl-ohne">${esc(t(x.z.warenFehlt?.[0] === "rezept" ? "kartelaeden.ohneRezept" : "kartelaeden.ohnePreise"))}</p><button type="button" class="knopf zweit" data-a="nav" data-wert="kartebuero">${esc(t("kartelaeden.rezeptKnopf"))}</button>` : ""}
       ${x.g.klasse !== "getraenk" && hatEigenesRezept(x.g) ? `<button type="button" class="knopf zweit" data-a="nav" data-wert="portion" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("gehirn.portion.knopf"))}</button>` // Masterauftrag 2.1: eigenes Rezept → Portion prüfen
         : x.g.klasse !== "getraenk" && rezeptStempel(x.g).stufe ? `<button type="button" class="knopf zweit" data-a="kl-rezept" data-id="${esc(x.g.id)}">${sym("scale")} ${esc(t("karte.kurz.abwiegen"))}</button>` : ""}
@@ -208,5 +208,5 @@ export function karteLadenTeile(stand) {
   if (!blatt) return null;
   const x = zeilenVon(stand).find((y) => y.g.id === blatt.id); if (!x) return null;
   const geaendert = blatt.alt === null || cent(blatt.alt) !== cent(blatt.preis);
-  return { bleibt: bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z)), speichernAn: geaendert && blatt.preis > 0 };
+  return { bleibt: bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z), kalkulation(stand).geschaetzt || !!x.z.warenGeschaetzt || !!x.z.warenRichtpreis), speichernAn: geaendert && blatt.preis > 0 };
 }

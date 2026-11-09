@@ -109,6 +109,7 @@ let ruheBis = 0, tippX = -99, tippY = -99, tippZeit = 0; // Pilotfest U1 (30.10.
 // Vorab-Prüfung 03.11.2026 (B3): Doppeltipp mit ≈ 230 ms auf „Weiter“ übersprang einen Einrichtungsschritt, „Speichern“ im Preis-Blatt traf danach die Tab-Leiste.
 // Neu: Hat der erste Tipp den Bildschirm unter dem Finger verändert (sein Element ist weg), zählt ein zweiter Tipp an derselben Stelle binnen 240 ms nicht (Setzung).
 // Zähl-Tipps (Müll-Kachel, −/+) sind ausgenommen – dort zählt jeder Tipp (B1).
+const WECHSEL_SCHUTZ_MS = 450; // Ausschuss Lauf 3, P4 B1/B2 (Fund bis 350 ms, dazu Zeichnen)
 const FLAECHE_NEU_MS = 240; // zwischen Doppeltipp (≈ 100–230 ms) und bewusstem schnellen Weitertippen (≥ 250 ms, U1)
 const ZAEHL_TIPPS = new Set(["muell-tipp", "kl-minus", "kl-plus", "minus", "plus", "ul-team-plus", "pin-taste", "pin-weg", "s2-kuehl"]);
 let tippEl = null, tippSchutz = false;
@@ -700,8 +701,13 @@ async function aufKlick(ev) {
   const jetzt = Date.now(); const nah = Math.hypot(ev.clientX - tippX, ev.clientY - tippY) < 40; const abstand = jetzt - tippZeit; const schnell = abstand < DOPPELTIPP_MS;
   // unter dem Finger liegt jetzt etwas anderes – nur in der Einrichtung und vom Preis-/Rezept-Blatt auf die Tab-Leiste (U1: sonst zählt ein schneller zweiter Tipp)
   const flaecheNeu = !!tippEl && tippEl !== el && !tippEl.isConnected && (stand?.phase === "onboarding" || (tippSchutz && !!el.closest(".tableiste")));
+  const prevEl = tippEl;
   tippX = ev.clientX; tippY = ev.clientY; tippZeit = jetzt; tippEl = el; tippSchutz = !!el.closest(".kl-blatt"); // Preis-/Rezept-Blatt zu → Tab-Leiste darunter
   if (nah && !ZAEHL_TIPPS.has(name) && ((schnell && jetzt < ruheBis) || (flaecheNeu && abstand < FLAECHE_NEU_MS))) return; // zweiter Tipp eines Doppeltipps (U1, Vorab-Prüfung B3)
+  // Ausschuss Lauf 3 (09.11.2026), P4 B1: Hat der erste Tipp den Bildschirm gewechselt (sein Element ist weg), zählt ein Zähl-Tipp an derselben Stelle
+  // binnen 450 ms nicht – sonst bucht der zweite Tipp auf „Müll“ (Heute) gleich eine Kachel. P4 B2: Ein „…-zu“ an derselben Stelle binnen 450 ms nach
+  // dem Tipp, der das Blatt geöffnet hat, schließt es nicht wieder. 350 ms = Grenze aus dem Fund (60–350 ms); bewusstes Tippen auf neuem Schirm dauert länger.
+  if (nah && abstand < WECHSEL_SCHUTZ_MS && prevEl && prevEl !== el && ((ZAEHL_TIPPS.has(name) && !prevEl.isConnected && prevEl.dataset?.a !== name) || (/(^|-)zu$/.test(name) && !/(^|-)zu$/.test(prevEl.dataset?.a || "")))) return;
   if (!stand && !notfall) return; // Rettung (17.10.2026): auf der Fehlerseite gibt es evtl. keinen Laden – Sicherung einlesen und Löschen gehen trotzdem
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
   if (name === "best-wa" && ansicht === "bestand") { const l = bestandLink(stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten (18.10.2026): WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
@@ -1245,7 +1251,12 @@ async function speicherGesperrtSchirm() {
 
 // D: lang drücken auf ein Müll-Foto öffnet das Detail (Menge, Foto, Personalessen)
 // Vorab-Prüfung 03.11.2026 (B4): Zahlenfelder markieren beim Antippen ihren Inhalt – „750“ ersetzt „0,00“ statt „0750,00“ zu ergeben
-root.addEventListener("focusin", (ev) => { const i = ev.target; if (i instanceof HTMLInputElement && i.inputMode === "decimal" && i.value) setTimeout(() => { if (document.activeElement === i) { try { i.select(); } catch { /* egal */ } } }, 0); });
+// Ausschuss Lauf 3 (09.11.2026), P5 B1/B2: nur markieren, wenn der Finger das Feld angetippt hat – nicht, wenn die App nach dem Neuzeichnen den Fokus
+// zurückgibt (sonst ersetzte jede zweite Ziffer alles: „3000“ → „0“, „98“ → „8“). Ein Antippen markiert genau einmal.
+let zeigerAufFeld = null;
+root.addEventListener("pointerdown", (ev) => { const i = ev.target; zeigerAufFeld = i instanceof HTMLInputElement && i.inputMode === "decimal" ? i : null; }, true);
+root.addEventListener("focusin", (ev) => { const i = ev.target; if (!(i instanceof HTMLInputElement && i.inputMode === "decimal" && i.value) || zeigerAufFeld !== i) return; zeigerAufFeld = null;
+  const vorher = i.value; setTimeout(() => { if (document.activeElement === i && i.value === vorher) { try { i.select(); } catch { /* egal */ } } }, 0); }); // schon getippt: nichts überschreiben
 muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });
 
 // Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)

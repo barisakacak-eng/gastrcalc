@@ -327,11 +327,23 @@ export function warenGericht(gericht, artikelIndex) {
   return { waren, fehlt, geschaetzt, richtpreis, vollstaendig: fehlt.length === 0 };
 }
 
+// Bestellungen je Tag aus dem Umsatz (≈): letzte 28 Kalendertage bis zum jüngsten Umsatztag, Schnitt je Tag mit Umsatz ÷ mittlerer Kartenpreis. 0 = keine Daten.
+export function bestellungenAusUmsatz(stand) {
+  const tage = [...new Set((stand.tagesnotizen || []).filter((n) => n && !n.storniert && typeof n.umsatz === "number" && n.umsatz > 0 && typeof n.datum === "string").map((n) => n.datum))].sort();
+  const preise = (stand.gerichte || []).map((g) => g.preis).filter((p) => typeof p === "number" && p > 0);
+  if (!tage.length || !preise.length) return 0;
+  const bis = tage[tage.length - 1], von = tagPlus(bis, -27);
+  const imFenster = tage.filter((d) => d >= von); const summe = imFenster.reduce((s, d) => s + (umsatzEintrag(stand, d)?.umsatz || 0), 0);
+  const schnittPreis = preise.reduce((s, p) => s + p, 0) / preise.length;
+  return Math.round(summe / imFenster.length / schnittPreis);
+}
 // Verkaufsmengen je Monat, grob (Prüfung: „drei meistverkaufte Gerichte" reichen für den Start):
 // Bestseller mit eigener Tageszahl, der Rest teilt sich die übrigen Bestellungen des Tages gleichmäßig.
 export function mengenJeMonat(stand) {
   const tage = (Number(stand.betrieb.tageProWoche) || 6) * 52 / 12;
-  const gesamtTag = Number(stand.verkauf?.bestellungenTag) || 0;
+  // Ausschuss Lauf 3, P2 A1: Ohne „Gerichte am Tag“ zählte jedes Gericht 1× am Tag – ein Döner trug dann ≈ 47 € Miete und Lohn („Bleibt dir −44,78 €“).
+  // Jetzt Schätzung aus dem eigenen Umsatz: Schnitt je Umsatztag (letzte 28 Tage mit Eintrag) ÷ Durchschnittspreis der Karte. Bleibt „geschätzt“ (≈).
+  const gesamtTag = Number(stand.verkauf?.bestellungenTag) || bestellungenAusUmsatz(stand);
   const out = {}; let bekannt = 0, nBest = 0;
   for (const g of stand.gerichte) if (g.mengeTag > 0) { out[g.id] = g.mengeTag * tage; bekannt += g.mengeTag; nBest += 1; }
   const rest = stand.gerichte.length - nBest;
@@ -687,7 +699,9 @@ const tagesEntwurf = (stand, datum, geraet) => (stand.tagesnotizen || []).find((
 function tagesEntwurfAnlegen(stand, datum, umsatz, { nacherfasst, geraet, jetzt }) {
   const n = { id: uid(), datum, umsatz, erfasst: jetzt, nacherfasst: !!nacherfasst, sitzung: SITZUNG, geraet, storniert: false, entwurf: true };
   // Korrektur: die bisher gültigen Einträge dieses Geräts (und alte ohne Gerät) für den Tag bleiben stehen und zeigen auf den neuen
-  for (const x of stand.tagesnotizen) if (x.datum === datum && !x.storniert && (!x.geraet || x.geraet === geraet)) { x.storniert = true; x.storniertZeit = jetzt; x.ersetzt = n.id; }
+  // Ausschuss Lauf 3, P5 A1: dazu der Eintrag, der gerade gilt (auch von einem anderen Handy) – den hat der Chef gesehen und korrigiert
+  const gilt = umsatzEintrag(stand, datum);
+  for (const x of stand.tagesnotizen) if (x.datum === datum && !x.storniert && (!x.geraet || x.geraet === geraet || x === gilt)) { x.storniert = true; x.storniertZeit = jetzt; x.ersetzt = n.id; }
   stand.tagesnotizen.push(n); return n;
 }
 export function tagesnotizSetzen(stand, datum, umsatz, { nacherfasst = false, geraet = null } = {}) {
