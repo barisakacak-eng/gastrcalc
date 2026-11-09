@@ -1,6 +1,6 @@
 """Paket 7 (16.10.2026): Regelprüfung im Browser – macht die verbindlichen Vorgaben der App messbar.
 Schnellstart (Deutsch, Dönerladen, Karte „Später“, 1 Kühlschrank + 1 Tiefkühler, Kosten leer) in 390×844 und 360×780, dann je Bildschirm:
-  woerter      sichtbarer fester Text ohne Zahlen, Datum, Einheiten, Gericht-/Kühlstellen-/Sprachnamen, Putzaufgaben, Antwort-Knöpfe (Chips), ohne Leiste unten (Laden ≤ 15, Personal ≤ 10, Büro ≤ 120)
+  woerter      sichtbarer fester Text ohne Zahlen, Datum, Einheiten, Gericht- und Warennamen, Putzaufgaben, ohne Leiste unten (Regel Lauf 3, 09.11.2026) (Laden ≤ 15, Personal ≤ 10, Büro ≤ 120)
   scroll       Seitenhöhe gegen Viewport (Laden scrollt nicht; Ausnahme Karte > 8 Gerichte, Putzliste > 6 Aufgaben)
   knopfhoehe   Hauptknopf (.knopf.glut) ≥ 64 px; dazu die Zahl der Knöpfe mit Klasse knopf/glut
   absaetze     Erklärabsätze (p, small, .hinweis, .fein, .unter, li) mit ≥ 12 Wörtern im Laden: 0
@@ -24,7 +24,7 @@ VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betri
 WOERTER_SOLL = {"laden": 15, "personal": 10, "buero": 120}
 KNOPF_SOLL, SCHRIFT_SOLL, TIPP_SOLL, KONTRAST_SOLL, ABSATZ_WOERTER = 64, 12, 44, 4.5, 12
 
-# Was nicht als fester Text zählt: Einheiten, Wochentage, Monate (deutsch), dazu je Lauf Gericht-, Kühlstellen-, Sprach- und Ladenname
+# Was nicht als fester Text zählt: Einheiten, Wochentage, Monate (gehören zu Zahl und Datum), dazu je Lauf Gericht- und Warennamen
 AUSGESCHLOSSEN = set("""€ % °c ° kg g ml l cl min std h uhr غ كغ مل ل
 montag dienstag mittwoch donnerstag freitag samstag sonntag mo di mi do fr sa so
 januar februar märz april mai juni juli august september oktober november dezember jan feb mär apr jun jul aug sep sept okt nov dez""".split())
@@ -48,7 +48,7 @@ MESSEN_JS = r"""
   // sichtbare Textknoten
   const texte = []; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let n; while ((n = w.nextNode())) { const t = n.textContent.replace(/\s+/g, " ").trim(); if (!t) continue; const p = n.parentElement;
-    if (!p || inLeiste(p) || p.closest("script,style") || p.closest(".aufgabe .atext b, .phinweis, .chips .chip, .team-art .chip") /* Baris 27.10.2026: Antwort-Knöpfe zählen nicht, nur Lesetext */ || !sichtbar(p)) continue; texte.push(t); } // Laden-Umbau (20.10.2026): Putzaufgaben zählen wie Gerichtnamen nicht
+    if (!p || inLeiste(p) || p.closest("script,style") || p.closest(".aufgabe .atext b, .phinweis") /* Lauf 3 (09.11.2026): Antwort-Knöpfe zählen wieder – „alles andere Sichtbare zählt“ */ || !sichtbar(p)) continue; texte.push(t); } // Laden-Umbau (20.10.2026): Putzaufgaben zählen wie Gerichtnamen nicht
   const ganz = texte.join(" ");
   const wortliste = ganz.split(/\s+/).map(token).filter(istWort);
   // Knöpfe
@@ -87,7 +87,9 @@ MESSEN_JS = r"""
 
 def ausschluss_fuer(stand, name):
     s = set(AUSGESCHLOSSEN)
-    namen = [g.get("name", "") for g in stand.get("gerichte", [])] + [a.get("name", "") for a in stand.get("artikel", [])] + [k.get("name", "") for k in stand.get("kuehlstellen", [])] + [name]  # Artikel = Zutatenliste im Müll
+    # Lauf 3 (09.11.2026), Regel Baris: Tab-Leiste, Zahlen (mit Einheit und Datum), Gericht- und Warennamen, Putzaufgaben zählen nicht;
+    # alles andere Sichtbare zählt – auch Kühlstellen- und Ladenname und Antwort-Knöpfe. „name“ bleibt als Parameter für alte Aufrufer.
+    namen = [g.get("name", "") for g in stand.get("gerichte", [])] + [a.get("name", "") for a in stand.get("artikel", [])]  # Artikel = Waren (Zutatenliste im Müll)
     for n in namen:
         for t in re.split(r"\s+", n):
             t = re.sub(r"^[^\w]+|[^\w]+$", "", t)
@@ -130,7 +132,7 @@ async def lauf(b, breite, hoehe, fehler):
         stand = await pg.evaluate("window.__gastrocalc.stand"); aus = ausschluss_fuer(stand, "Döner Test")
         # Lauf 2 (31.10.2026): in tr/ar zeigt die App Artikel- und Gerichtnamen übersetzt (i18n.artikelText/gerichtText) – auch die sind Daten, keine Erklärwörter
         for n in await pg.evaluate("""async () => { const i = await import('./js/i18n.js'); const s = window.__gastrocalc.stand;
-            return [...(s.artikel || []).map((a) => i.artikelText(a.name)), ...(s.gerichte || []).map((g) => i.gerichtText(g.name)), ...(s.kuehlstellen || []).map((k) => k.name)]; }"""):
+            return [...(s.artikel || []).map((a) => i.artikelText(a.name)), ...(s.gerichte || []).map((g) => i.gerichtText(g.name))]; }"""):
             for t in re.split(r"\s+", n or ""):
                 t = re.sub(r"^[^\w]+|[^\w]+$", "", t)
                 if t: aus.add(t.lower())

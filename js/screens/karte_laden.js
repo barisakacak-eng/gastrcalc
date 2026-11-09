@@ -115,7 +115,7 @@ function monatZeile(stand, z) {
 }
 function bleibtInnen(z, preis, last) {
   const a = preisAmpel(z, preis);
-  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}<small>${esc(t("kartelaeden.nachAllem"))}</small></span><b>${a.gewinn === null ? "–" : vorzeichen(a.gewinn) + fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
+  const zeile = `<div class="kl-bleibt a-${a.ampel}"><span>${esc(t("kartelaeden.bleibt"))}${globalThis.__gcL15 === true ? "" /* Lauf 3, L15-Entwurf: Untertitel weg, „Wohin geht dein Preis?“ erklärt es */ : `<small>${esc(t("kartelaeden.nachAllem"))}</small>`}</span><b>${a.gewinn === null ? "–" : vorzeichen(a.gewinn) + fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}<i class="kl-punkt ${PUNKT[a.ampel]}" aria-label="${esc(t("kartelaeden.ampel." + a.ampel))}"></i></b></div>`;
   const tl = preisAufteilung(z, last, preis);
   if (!tl || !(preis > 0)) return zeile;
   const breite = (v) => Math.max(0, v) / preis * 100;
