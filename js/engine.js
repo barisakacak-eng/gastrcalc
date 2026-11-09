@@ -339,11 +339,11 @@ export function bestellungenAusUmsatz(stand) {
 }
 // Verkaufsmengen je Monat, grob (Prüfung: „drei meistverkaufte Gerichte" reichen für den Start):
 // Bestseller mit eigener Tageszahl, der Rest teilt sich die übrigen Bestellungen des Tages gleichmäßig.
-export function mengenJeMonat(stand) {
+export function mengenJeMonat(stand, { ausUmsatz = false } = {}) { // ausUmsatz: nur für die Verteilung der Fixkosten in kalkulation()
   const tage = (Number(stand.betrieb.tageProWoche) || 6) * 52 / 12;
   // Ausschuss Lauf 3, P2 A1: Ohne „Gerichte am Tag“ zählte jedes Gericht 1× am Tag – ein Döner trug dann ≈ 47 € Miete und Lohn („Bleibt dir −44,78 €“).
   // Jetzt Schätzung aus dem eigenen Umsatz: Schnitt je Umsatztag (letzte 28 Tage mit Eintrag) ÷ Durchschnittspreis der Karte. Bleibt „geschätzt“ (≈).
-  const gesamtTag = Number(stand.verkauf?.bestellungenTag) || bestellungenAusUmsatz(stand);
+  const gesamtTag = Number(stand.verkauf?.bestellungenTag) || (ausUmsatz ? bestellungenAusUmsatz(stand) : 0);
   const out = {}; let bekannt = 0, nBest = 0;
   for (const g of stand.gerichte) if (g.mengeTag > 0) { out[g.id] = g.mengeTag * tage; bekannt += g.mengeTag; nBest += 1; }
   const rest = stand.gerichte.length - nBest;
@@ -461,17 +461,21 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
   const last = monatsLast(stand);
   const artikelIndex = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   const { mengen, geschaetzt: mengenGeschaetzt } = mengenJeMonat(stand);
+  // Ausschuss Lauf 3, P2 A1: Fixkosten je Portion nach geschätzten echten Mengen (aus dem Umsatz), nicht nach „1 je Gericht und Tag“.
+  // Nur für die Verteilung (kFix, faktor); Gewichte und Mengen der Zeilen bleiben, damit Monatszahlen nicht vom jüngsten Umsatztag abhängen.
+  const mengenFix = mengenJeMonat(stand, { ausUmsatz: true }).mengen;
   const minutensatz = lohnMinutensatz(stand.team, produktivAnteil);
   const g = (Number(stand.verkauf?.zielgewinn) || 0) / 100;
   const gerichteMitMenge = stand.gerichte.map((x) => ({ ...x, zeit: zeitMitZwischen(x, artikelIndex), menge: mengen[x.id] || 0 }));
   const tQuer = gewichteteZeit(gerichteMitMenge);
-  const kFix = fixkostenJeGericht(gerichteMitMenge, last.gesamt);
+  const gerichteFix = gerichteMitMenge.map((x) => ({ ...x, menge: mengenFix[x.id] || 0 }));
+  const kFix = fixkostenJeGericht(gerichteFix, last.gesamt);
   const portal = (stand.kanaele?.portale || []).find((p) => p.provision > 0) || null;
   // 27.10.2026 (Prüfung fest/beweglich, F2): Die Untergrenze „Anteil nie unter 0“ (schnelle Getränke) hob die Summe aller Anteile über die
   // Monatskosten (Beispiel ≈ 711 €/Monat zu viel). Was unten abgeschnitten wird, ziehen wir jetzt anteilig bei den übrigen Gerichten wieder ab.
   const roh = new Map(gerichteMitMenge.map((x) => [x.id, (kFix(x) ?? 0) + (minutensatz === null ? 0 : zeitzuschlag(x, tQuer, minutensatz))]));
   let abgeschnitten = 0, positiv = 0;
-  for (const x of gerichteMitMenge) { const r = roh.get(x.id); const m = x.menge || 0; if (r < 0) abgeschnitten += -r * m; else positiv += r * m; }
+  for (const x of gerichteFix) { const r = roh.get(x.id); const m = x.menge || 0; if (r < 0) abgeschnitten += -r * m; else positiv += r * m; }
   const faktor = positiv > 0 ? Math.max(0, (positiv - abgeschnitten) / positiv) : 1;
   const zeilen = gerichteMitMenge.map((x) => {
     const w = warenGericht(x, artikelIndex);

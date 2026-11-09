@@ -39,7 +39,7 @@ test("P2 A1: Mengen ohne Angabe kommen aus dem Umsatz (≈), nicht aus 1 je Geri
   const stand = { betrieb: { tageProWoche: 7 }, verkauf: {}, gerichte: [{ id: "a", preis: 7.5, zutaten: [] }, { id: "b", preis: 7.5, zutaten: [] }],
     tagesnotizen: Array.from({ length: 14 }, (_, i) => ({ id: "t" + i, datum: `2026-12-${String(i + 18).padStart(2, "0")}`, umsatz: 1300, storniert: false })) };
   assert.equal(bestellungenAusUmsatz(stand), 173); // 1.300 € ÷ 7,50 €
-  const m = mengenJeMonat(stand);
+  const m = mengenJeMonat(stand, { ausUmsatz: true });
   assert.ok(m.mengen.a > 2500 && m.mengen.a < 2700, String(m.mengen.a)); // ≈ 86,5 je Tag × 30,3 Tage
   assert.equal(m.geschaetzt, true, "bleibt Schätzung");
   assert.equal(bestellungenAusUmsatz({ gerichte: [], tagesnotizen: [] }), 0);
