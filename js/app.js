@@ -80,6 +80,8 @@ import { geld3View, geld3Aktion, geld3Eingabe } from "./screens/geld3.js"; // We
 import { hinweisStatusSetzen } from "./hinweis.js";
 import { hmStatusSetzen, hmFrageSetzen, hmFuerBuero, hmGezeigtMerken, hmLadenZeile, hmLadenGezeigt } from "./hinweis_motor.js"; // Lauf 3 (09.11.2026): Entwurf hinter window.__gcHM
 import { hmUi } from "./data/hm_texte.js";
+import { fristErinnerungHeute } from "./welle3.js"; // Lauf 3, Phase 6: Frist-Erinnerung auf Heute
+import { fristSatz } from "./data/frist_texte.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
@@ -1297,6 +1299,12 @@ function zekiBildschirm() {
       const laeuft = zekiGerade?.key === key;
       zekiSprechblase(root, { ausloeser: "rezepte", text: t("heute.rezeptErinnerung.stand", r.mit, r.gesamt), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
       zekiGesehenMerken(key); return; } }
+  // Lauf 3, Phase 6 (09.11.2026): 5 Tage vor einem Pflichttermin sagt Zeki auf Heute einen Satz, höchstens einmal am Tag, nie über einem Kühl-Alarm
+  if (ansicht === "start" && !personalAktiv() && !root.querySelector('[data-dran="kuehlAlarm"]')) { const key = `frist:${H}`;
+    if (!gesehen.has(key) || zekiGerade?.key === key) { let f = null; try { f = fristErinnerungHeute(stand, heute()); } catch { f = null; }
+      if (f) { const laeuft = zekiGerade?.key === key; const arten = f.arten.map((a) => t("w3.termine.art." + a)).join(", ");
+        zekiSprechblase(root, { ausloeser: "frist", text: fristSatz(aktuelleSprache(), arten, f.datum.slice(8, 10) + "." + f.datum.slice(5, 7) + "."), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
+        zekiGesehenMerken(key); return; } } }
   // Lauf 3 (09.11.2026), Hinweis-Motor hinter window.__gcHM: im Laden höchstens einmal je 7 Tage ein Satz, nie in der Stoßzeit, nie über einem Kühl-Alarm
   if (ansicht === "start" && !personalAktiv() && globalThis.__gcHM === true && !root.querySelector('[data-dran="kuehlAlarm"]')) {
     let k = null; try { k = hmLadenZeile(stand, { jetzt: new Date() }); } catch { k = null; }
