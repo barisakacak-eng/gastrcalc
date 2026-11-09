@@ -50,6 +50,8 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `haltbar.js` – Haltbarkeit und Abverkauf.
 - `hebel.js` – Euro-Hebel je Gericht, Renner/Penner.
 - `hinweis.js` – Hinweis-Karten im Büro (Vertrag `docs/vertraege.md` Abschnitt 2).
+- `hinweis_motor.js` – Hinweis-Motor „Was dir zusteht“ (Lauf 3): 13 Regeln aus dem Hinweis-Katalog mit Quelle, Takt, Büro-Auswahl (höchstens 3), Laden-Zeile für Zeki. Anzeige hinter `window.__gcHM`.
+- `hm_angaben.js` – säubert `stand.betrieb.hmAngaben` (Büro-Fragen, Status, Takt) ohne Importe, für die Migration in `store.js`.
 - `i18n.js` – Sprachtabelle, `t()`, Datumsformat, Sprachen laden.
 - `intro.js` – Zeki-Auftritt beim Start (nur Anzeige).
 - `inventur.js` – Inventur zählen und bewerten.

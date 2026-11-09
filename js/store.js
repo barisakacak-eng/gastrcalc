@@ -12,6 +12,7 @@
 // Kennungen), dazu je Laden stammZeit (Zeitstempel je Bereich; der Fingerabdruck liegt im Speicher-Kopf) und abgleich (Stand des letzten Zusammenführens).
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
+import { hmAngabenSauber } from "./hm_angaben.js"; // Lauf 3 (09.11.2026): Hinweis-Motor
 import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
@@ -256,6 +257,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
   // Gremium 2 (24.10.2026): Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
   s.betrieb.hinweise = hinweiseSauber(s.betrieb.hinweise);
+  if (s.betrieb.hmAngaben !== undefined) s.betrieb.hmAngaben = hmAngabenSauber(s.betrieb.hmAngaben); // Lauf 3, Hinweis-Motor (js/hm_angaben.js)
   if (s.betrieb.rechtsform !== undefined && !["einzel", "gbr", "gmbh", "ug", "kg_ohg", "unbekannt"].includes(s.betrieb.rechtsform)) delete s.betrieb.rechtsform;
   if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage (18.10.2026): Bundesland des Ladens (optional)
   if (s.betrieb.ruhezeiten !== undefined && !(Array.isArray(s.betrieb.ruhezeiten) && s.betrieb.ruhezeiten.every((x) => Array.isArray(x) && x.length === 2 && x.every((y) => typeof y === "number" && y >= 0 && y < 24)))) delete s.betrieb.ruhezeiten; // K4
