@@ -1,0 +1,55 @@
+# Lauf 3, Phase 7 (09.11.2026): Umzug vorbereiten – NICHTS ist eingeschaltet. Läuft nur, wenn die Secrets existieren; sonst überspringt
+# der Lauf sauber mit einer Notiz. Kein Hostname, kein Benutzer, kein Schlüssel im Repo: alles kommt aus GitHub-Secrets (Namen unten).
+# Ablauf: nach grünem „Pages“-Lauf (Wächter) auf main → rsync in den Webroot. Ziel zuerst die Test-Subdomain (UBERSPACE_WEBROOT zeigt dorthin).
+# Anleitung: docs/umzug-uberspace.md
+name: deploy-uberspace
+on:
+  workflow_run:
+    workflows: [Pages]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: deploy-uberspace
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    env:
+      HAT_SCHLUESSEL: ${{ secrets.UBERSPACE_SSH_KEY != '' && secrets.UBERSPACE_HOST != '' && secrets.UBERSPACE_USER != '' && secrets.UBERSPACE_WEBROOT != '' }}
+    steps:
+      - name: Secrets vorhanden?
+        run: |
+          if [ "$HAT_SCHLUESSEL" != "true" ]; then
+            echo "::notice::deploy-uberspace übersprungen: Secrets UBERSPACE_SSH_KEY, UBERSPACE_HOST, UBERSPACE_USER, UBERSPACE_WEBROOT fehlen (noch nicht eingerichtet)."
+          fi
+      - uses: actions/checkout@v4
+        if: env.HAT_SCHLUESSEL == 'true'
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: SSH vorbereiten
+        if: env.HAT_SCHLUESSEL == 'true'
+        env:
+          KEY: ${{ secrets.UBERSPACE_SSH_KEY }}
+          HOST: ${{ secrets.UBERSPACE_HOST }}
+          KNOWN: ${{ secrets.UBERSPACE_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          if [ -n "$KNOWN" ]; then printf '%s\n' "$KNOWN" > ~/.ssh/known_hosts; else ssh-keyscan -H "$HOST" > ~/.ssh/known_hosts 2>/dev/null; fi
+      - name: rsync in den Webroot
+        if: env.HAT_SCHLUESSEL == 'true'
+        env:
+          HOST: ${{ secrets.UBERSPACE_HOST }}
+          NUTZER: ${{ secrets.UBERSPACE_USER }}
+          ZIEL: ${{ secrets.UBERSPACE_WEBROOT }}
+        run: |
+          rsync -az --delete --delay-updates \
+            --exclude '.git/' --exclude '.github/' --exclude 'tests/' --exclude 'tools/' --exclude 'docs/' --exclude 'bruecke/' --exclude 'design-handoffs/' --exclude '*.md' \
+            -e "ssh -i ~/.ssh/deploy -o IdentitiesOnly=yes" ./ "$NUTZER@$HOST:$ZIEL/"
+      - name: Schlüssel löschen
+        if: always() && env.HAT_SCHLUESSEL == 'true'
+        run: rm -f ~/.ssh/deploy
