@@ -62,7 +62,10 @@ function zekiKuehl(stand, st, fertig) {
   const warm = aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m?.abweichung && x.m.datum === heute());
   if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(anredeTeam(t("kuehl.zeki.warm", kn(warm.k)), stand))}</p>`;
   if (fertig) return `<p class="zeki-zeile a-gruen" role="status">${esc(t("kuehl.zeki.fertig"))}</p>`;
-  return `<p class="zeki-zeile" role="status">${esc(t("kuehl.zeki.offen", Math.max(0, st.stellen - st.heuteGemessen)))}</p>`;
+  // Ausschuss Lauf 3, P1 A1: Werte aus dem offenen Rundgang zählen mit (vorher „Noch 2 Geräte“ und „–“ nach Zurück – sah aus wie verloren)
+  const r = rundgangOffen(stand); const H = heute();
+  const fehlt = r ? aktiveStellen(stand).filter((k) => !r.messungen.some((m) => m.stelle === k.id) && letzteMessung(stand, k.id)?.datum !== H).length : Math.max(0, st.stellen - st.heuteGemessen);
+  return `<p class="zeki-zeile" role="status">${esc(t("kuehl.zeki.offen", fehlt))}</p>`;
 }
 
 export function kuehlView(stand, { buero = false } = {}) {
@@ -92,7 +95,7 @@ export function kuehlView(stand, { buero = false } = {}) {
       </div>
       ${nk.length ? `<div class="karte hinweisgelb"><h2>${esc(t("kuehl.nachkontrollenTitel"))}</h2>
         ${nk.map((x) => `<div class="summenzeile"><span>${esc(kn(stand.kuehlstellen.find((k) => k.id === x.messung.stelle)) || "?")} <small class="marke">\u2066${fmtZahl(x.messung.wert, 1)}\u00a0°C\u2069 · ${esc(zeitOderStrich(x.messung.zeit))}</small></span><span class="wert ${x.ueberfaellig ? "rot" : ""}">${esc(x.faellig ? t(x.ueberfaellig ? "kuehl.ueberfaellig" : "kuehl.faelligUm", zeitOderStrich(x.faellig)) : t("kuehl.naechsteMessung"))}</span></div>`).join("")}</div>` : ""}
-      <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = letzteMessung(stand, k.id); return `
+      <div class="liste eng kuehlliste">${aktiveStellen(stand).map((k) => { const m = (offen?.messungen || []).find((x) => x.stelle === k.id && typeof x.wert === "number") || letzteMessung(stand, k.id); return `
         <button type="button" class="zeileknopf ${m?.abweichung ? "abw" : ""}" data-a="kuehl-einzel" data-id="${esc(k.id)}" ${st.bereit ? "" : "disabled"} aria-label="${esc(kn(k))} · ${esc(grenzen(k))}">${stelleBild(k)}<span><b>${esc(kn(k))}</b>${m?.abweichung ? `<small class="rot">${esc(grenzen(k))}</small>` : ""}</span>
           <span class="kwert ${m ? (m.abweichung ? "rot" : "ok") : "marke"}">${m ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : "–"}</span></button>`; }).join("")}</div>
       ${buero ? `<button type="button" class="zeileknopf" data-a="kuehl-blatt"><span><b>${esc(t("kuehl.blatt"))}</b><small>${esc(t("kuehl.blattKurz"))}</small></span><span class="pfeil">›</span></button>

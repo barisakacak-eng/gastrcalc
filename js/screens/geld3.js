@@ -1,5 +1,6 @@
 // Welle 3 (Hochtouren 03.11.2026, Bildpaket W3): Büro-Bildschirm „Geld & Finanzamt“ – Baris Ja am 04.11.2026; live nach dem Prüfungsausschuss (06.11.).
 // Je Thema eine aufklappbare Karte (Überschrift + eine Zahl), Inhalt auf Tipp – Büro-Maß 120 Wörter. Nur Anzeige; Zahlen aus den Rechenkernen.
+import { nav } from "./nav.js";
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
@@ -71,7 +72,7 @@ export function geld3View(stand) {
       ab ? `<p>${esc(t("w3b.monat.abgeschlossen", mname, datumLesbar(ab.eingefroren.slice(0, 10)).slice(0, 6)))}</p>${z(t("w3b.monat.umsatz"), esc(fmtEuro(ab.umsatzBrutto)))}${vgl?.zumVormonat ? z(t("w3b.monat.zumVormonat"), `${vgl.zumVormonat.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVormonat.umsatz)))}`) : ""}${vgl?.zumVorjahr ? z(t("w3b.monat.zumVorjahr"), `${vgl.zumVorjahr.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVorjahr.umsatz)))}`) : ""}`
         : vmDa ? `<p>${esc(t("w3b.monat.satz"))}</p><button type="button" class="knopf" data-a="g3-monat-zu">${esc(t("w3b.monat.knopf", mname))}</button>` : `<p>${esc(t("w3.bleibt.ersterMonat"))}</p>`); }
   return `<div class="kopfband"><h1>${esc(t("w3.titel"))}</h1><div class="unter">${esc(t("w3.unter"))}</div></div>
-    <div class="inhalt buero g3">${topf}${termine2}${bleibt}${pruefer}${monatKarte}${liq}${schicht}<p class="hinweis">${esc(t("w3.fuss"))}</p></div>`;
+    <div class="inhalt buero g3">${topf}${termine2}${bleibt}${pruefer}${monatKarte}${liq}${schicht}<p class="hinweis">${esc(t("w3.fuss"))}</p></div>${nav("geld3")}`; // Ausschuss Lauf 3, P3 B1: Kopfleiste mit „‹ Zurück“
 }
 
 export function geld3Aktion(name, el, stand) {

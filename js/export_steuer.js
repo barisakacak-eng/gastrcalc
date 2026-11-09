@@ -144,6 +144,7 @@ function lieferungSteuer(l, netto, pfand) {
   const zl = (l.zeilen || []).filter((r) => typeof r.netto === "number" && Math.abs(r.netto) > 0.004);
   const ust = { 0.07: null, 0.19: null };
   if (brutto === null) return { brutto, ust, hinweis: "ohneBrutto" };
+  if (brutto >= 0 && netto > 0 && brutto + 0.005 < netto + pfand) return { brutto, ust, hinweis: "pruefen" }; // Ausschuss Lauf 3, P3 A1: Brutto unter Netto ist ein Lesefehler
   if (!zl.length || zl.some((r) => !SAETZE.includes(r.steuersatz))) return { brutto, ust, hinweis: "ohneSatz" };
   // 20.10.2026 (Export F2): Gutschrift/Retoure mit negativem Brutto trägt negative Steuer – das Vorzeichen muss zum Brutto passen, nicht immer ≥ 0 sein
   const gesamt = rund2(brutto - netto - pfand); if (gesamt * (brutto < 0 ? -1 : 1) < -0.005) return { brutto, ust, hinweis: "pruefen" };

@@ -50,7 +50,7 @@ async def main():
             pruefe(await pg.locator('#app [data-a="nav"][data-wert="inventur"]').count() > 0, "Zurück-Geste aus der Inventur → Lager")
             await zurueck(pg)
             # Ordner Steuer und Einstellungen: vom Büro-Start aus → Zurück = Büro-Start
-            for ziel in ("ordner-steuer", "einstellungen"):
+            for ziel in ("ordner-steuer", "einstellungen", "geld3"):  # Ausschuss Lauf 3, P3 B1: Geld & Finanzamt ohne Zurück
                 await pg.evaluate("""() => { for (const d of document.querySelectorAll('#app details')) d.open = true; }""")
                 await pg.locator(f'#app [data-a="nav"][data-wert="{ziel}"]').first.click(); await pg.wait_for_timeout(400)
                 offen = await ansicht(pg); pruefe(offen != "buero", f"{ziel} offen ({offen[:40]})")

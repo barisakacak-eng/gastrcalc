@@ -76,7 +76,7 @@ export function amtHinweis(o) {
 export function paketUnter(teil, p) {
   if (teil === "umsatz") return p.umsatz.tage ? t("ordnerT.umsatzZeile", p.umsatz.tage, fmtEuro(p.umsatz.summe.brutto)) : t("ordner.zeile.umsatzKeine"); // W2-T
   if (teil === "personal") return p.personal.zeilen.length ? t("ordner.zeile.personal", fmtZahl(p.personal.anzahl), euro(p.personal.sachbezug)) + (p.personal.ohnePerson ? " · " + t("ordnerT.personalOhne", p.personal.ohnePerson) : "") : t("ordner.zeile.keine");
-  if (teil === "schwund") return p.schwund.zeilen.length ? (p.schwund.ohneWert ? t("ordner.zeile.schwundOffen", euro(p.schwund.muellwert), p.schwund.ohneWert) : t("ordner.zeile.schwund", euro(p.schwund.muellwert))) : t("ordner.zeile.keine");
+  if (teil === "schwund") return p.schwund.zeilen.length ? (p.schwund.ohneWert ? t("ordner.zeile.schwundOffen", euro(p.schwund.summeMuell ?? p.schwund.muellwert), p.schwund.ohneWert) : t("ordner.zeile.schwund", euro(p.schwund.summeMuell ?? p.schwund.muellwert)) /* Ausschuss Lauf 3, P3 A2: wie die gedruckte Summe */) : t("ordner.zeile.keine");
   if (teil === "belege") return p.belege.anzahl ? t("ordner.zeile.belege", p.belege.anzahl, fmtEuro(p.belege.netto)) : t("ordner.zeile.belegeKeine");
   if (teil === "inventur") { const l = p.inventur.zeilen.filter((x) => !x.vorher).pop(); if (!l) return t("ordner.zeile.inventurKeine"); // W2-T: 0 € oder ohne Preis = prüfen
     return `${datumDe(l.datum)} · ${l.wert === null ? t("ordnerT.wertFehlt") : euro(l.wert)}${l.ohnePreis ? " · " + t("ordnerT.inventurPruefen", l.ohnePreis) : !(l.wert > 0) && l.wert !== null ? " · " + t("ordnerT.status.pruefen") : ""}`; }
