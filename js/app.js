@@ -78,7 +78,7 @@ import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Me
 import { hinweiseView } from "./screens/hinweise.js";
 import { geld3View, geld3Aktion, geld3Eingabe } from "./screens/geld3.js"; // Welle 3 (03.11.2026, Baris Ja 04.11.2026) // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
-import { hmStatusSetzen, hmFrageSetzen, hmFuerBuero, hmGezeigtMerken, hmLadenZeile, hmLadenGezeigt } from "./hinweis_motor.js"; // Lauf 3 (09.11.2026): Entwurf hinter window.__gcHM
+import { hmStatusSetzen, hmFrageSetzen, hmFuerBuero, hmGezeigtMerken, hmLadenZeile, hmLadenGezeigt } from "./hinweis_motor.js"; // Lauf 3 (09.11.2026), live seit Baris’ Ja 17:21
 import { hmUi } from "./data/hm_texte.js";
 import { fristErinnerungHeute } from "./welle3.js"; // Lauf 3, Phase 6: Frist-Erinnerung auf Heute
 import { fristSatz } from "./data/frist_texte.js";
@@ -646,8 +646,8 @@ async function ebeneAktion(name, el) {
   }
   if (name === "rechtsform" && stand.phase === "app") { if (rechtsformSetzen(stand, el.dataset.wert)) { ereignis("rechtsform", { laden: stand.id, wert: el.dataset.wert }); meldung(t("rechtsform.gesetzt")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Rechtsform (23.10.2026)
   if (name.startsWith("g3-") && geld3Aktion(name, el, stand)) { speichern(wurzel); return zeichne(); } // Welle 3
-  if (name === "hm-status") { if (globalThis.__gcHM === true && hmStatusSetzen(stand, el.dataset.id, el.dataset.status, { datum: heute() })) { ereignis("hm-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); await sofortSpeichern(wurzel); } zeichne(); return true; } // Lauf 3, Hinweis-Motor
-  if (name === "hm-frage") { if (globalThis.__gcHM !== true) return true; const f = el.dataset.frage, w = el.dataset.wert;
+  if (name === "hm-status") { if (hmStatusSetzen(stand, el.dataset.id, el.dataset.status, { datum: heute() })) { ereignis("hm-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); await sofortSpeichern(wurzel); } zeichne(); return true; } // Lauf 3, Hinweis-Motor
+  if (name === "hm-frage") { const f = el.dataset.frage, w = el.dataset.wert;
     const wert = w === "ja" ? true : w === "nein" ? false : w === "nie" ? "nie" : el.closest(".hm-frage")?.querySelector(".hm-datum")?.value || "";
     if (hmFrageSetzen(stand, f, wert, { bisHeute: heute() })) await sofortSpeichern(wurzel);
     zeichne(); return true; }
@@ -742,7 +742,7 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
-    { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = erstSatz(ziel, { speicher: sp, stunde: new Date().getHours(), stand }); if (satz) setTimeout(() => erstZeigen(document, ziel, satz, sp), 350); } // 6b R2 Entwurf
+    { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = fuehrungOffen() ? null : erstSatz(ziel, { speicher: sp, stunde: new Date().getHours(), stand }); if (satz) setTimeout(() => { if (!fuehrungOffen()) erstZeigen(document, ziel, satz, sp); }, 350); } /* Lauf 3 Nachtrag: nie während des Mitmach-Rundgangs – Zekis Erst-Karte lag über dem Rundgang-Ziel (Station 9), der Tipp traf „Verstanden“ statt das Gericht */ // 6b R2 Entwurf
     if (ziel === "ware") wareZuruecksetzen(); // Welle 2
     if (ziel === "portion") portionOeffnen(stand, el.dataset.id || null); // 2.1
     if (ziel === "preisrunde") preisrundeOeffnen(stand, el.dataset.id || null, el.dataset.cent || null); // Masterauftrag 1.2
@@ -1292,9 +1292,9 @@ function zekiGesehenMerken(key) {
 
 // Zeki auf jedem Bildschirm (26.10.2026): Lage nur aus ZEKI_BILDSCHIRM[ansicht]; Heute macht das selbst (zekiReihe).
 // Personal sieht keine Euro: dort keine Lage mit Betrag.
-// Lauf 3 (09.11.2026): Hinweis-Motor hinter window.__gcHM – was heute zum ersten Mal im Büro steht, merkt sich der Takt (eine neue Karte je 7 Tage).
+// Lauf 3 (09.11.2026, Baris Ja 17:21): Hinweis-Motor – was heute zum ersten Mal im Büro steht, merkt sich der Takt (eine neue Karte je 7 Tage).
 function hinweiseMitHm() {
-  if (globalThis.__gcHM === true) { try { const d = heute(); if (hmGezeigtMerken(stand, hmFuerBuero(stand, { datum: d }).neu, d)) sofortSpeichern(wurzel); } catch { /* Takt ist Komfort, kein Absturz */ } }
+  { try { const d = heute(); if (hmGezeigtMerken(stand, hmFuerBuero(stand, { datum: d }).neu, d)) sofortSpeichern(wurzel); } catch { /* Takt ist Komfort, kein Absturz */ } }
   return hinweiseView(stand);
 }
 function zekiBildschirm() {
@@ -1316,8 +1316,8 @@ function zekiBildschirm() {
       if (f) { const laeuft = zekiGerade?.key === key; const arten = f.arten.map((a) => t("w3.termine.art." + a)).join(", ");
         zekiSprechblase(root, { ausloeser: "frist", text: fristSatz(aktuelleSprache(), arten, f.datum.slice(8, 10) + "." + f.datum.slice(5, 7) + "."), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
         zekiGesehenMerken(key); return; } } }
-  // Lauf 3 (09.11.2026), Hinweis-Motor hinter window.__gcHM: im Laden höchstens einmal je 7 Tage ein Satz, nie in der Stoßzeit, nie über einem Kühl-Alarm
-  if (ansicht === "start" && !personalAktiv() && globalThis.__gcHM === true && !root.querySelector('[data-dran="kuehlAlarm"]')) {
+  // Lauf 3 (09.11.2026, Baris Ja 17:21), Hinweis-Motor: im Laden höchstens einmal je 7 Tage ein Satz, nie in der Stoßzeit, nie über einem Kühl-Alarm
+  if (ansicht === "start" && !personalAktiv() && !root.querySelector('[data-dran="kuehlAlarm"]')) {
     let k = null; try { k = hmLadenZeile(stand, { jetzt: new Date() }); } catch { k = null; }
     if (k) { zekiSprechblase(root, { ausloeser: "hm", text: hmUi(aktuelleSprache(), k === "hm.zeki.geld" ? "zekiGeld" : "zekiPflicht"), bewegung: "nicken" }, { restMs: 7000, bewegen: true });
       hmLadenGezeigt(stand, heute()); sofortSpeichern(wurzel); return; } }

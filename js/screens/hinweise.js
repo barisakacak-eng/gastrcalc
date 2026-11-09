@@ -7,13 +7,13 @@ import { esc } from "../util.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
 import { hinweiseFuer, BELEG_KNOPF } from "../hinweis.js";
-import { hmFuerBuero, hmOffeneFragen, hmErledigtZahl } from "../hinweis_motor.js"; // Lauf 3 (09.11.2026): Entwurf hinter window.__gcHM
+import { hmFuerBuero, hmOffeneFragen, hmErledigtZahl } from "../hinweis_motor.js"; // Lauf 3 (09.11.2026), live seit Baris' Ja 17:21
 import { hmUi, hmAnzeige } from "../data/hm_texte.js";
 import { heute } from "../util.js";
 
 const datumKurz = (iso) => iso.split("-").reverse().join(".");
 // Hinweis-Motor „Was dir zusteht“: höchstens 3 Karten nach Nutzen (Auswahl und Takt in js/hinweis_motor.js), darunter nur die Fragen,
-// die ein Hinweis braucht. Nur sichtbar mit window.__gcHM === true (Klasse C, live erst nach Baris' Ja).
+// die ein Hinweis braucht. Baris Ja 09.11.2026 17:21 (Bildpaket HM).
 export function hmBlock(stand, sp, datum = heute()) {
   const u = (k, w) => hmUi(sp, k, w);
   const { karten } = hmFuerBuero(stand, { datum }); const fragen = hmOffeneFragen(stand); const n = hmErledigtZahl(stand);
@@ -49,7 +49,7 @@ export function hinweiseView(stand) {
   return `<div class="kopfband"><h1>${esc(t("hinweise.titel"))}</h1><div class="unter">${esc(t("hinweise.unter"))}</div></div>
     <div class="inhalt hinweise">
       <p class="hinweis pflicht">${sym("circle-help", "klein")} ${esc(t("hinweise.pflicht"))}</p>
-      ${globalThis.__gcHM === true ? hmBlock(stand, sprache()) : ""}
+      ${hmBlock(stand, sprache())}
       ${karten.length ? karten.map(karte).join("") : `<div class="karte leer"><div>${esc(t("hinweise.leer"))}</div></div>`}
     </div>${nav("hinweise")}`;
 }

@@ -1,4 +1,4 @@
-// Texte des Hinweis-Motors (Lauf 3, Phase 5, 09.11.2026) – Entwurf hinter window.__gcHM. Deutsch führt (Inhalt in js/hinweis_motor.js).
+// Texte des Hinweis-Motors (Lauf 3, Phase 5, 09.11.2026) – live seit Baris' Ja 09.11.2026 17:21. Deutsch führt (Inhalt in js/hinweis_motor.js).
 // Hier: Oberflächen-Wörter in de/tr/en/ar und die Hinweise selbst in tr und en. Fehlt eine Sprache oder ein Hinweis, zeigt die App Deutsch
 // (übrige Sprachen Beta, wie im Katalog Abschnitt 4). Quelle und Paragraf bleiben immer Deutsch.
 export const HM_UI = {
