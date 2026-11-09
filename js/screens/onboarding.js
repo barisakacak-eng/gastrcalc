@@ -591,6 +591,11 @@ function homeKarteEinrichtung() {
   const z = installZustand(g ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: g === "android" ? "Android" : "iPhone" } } : globalThis);
   if (z.standalone) return "";
   const a = z.plattform === "android";
+  // Lauf 3, Phase 6 (Klasse C, Entwurf hinter window.__gcL15): Sanjis Bilder (PR #21, design-handoffs/sanji/home-bildschirm, schematisch, de/tr beschriftet)
+  // statt der zwei Textschritte; nur in de/tr, weil die Bilder nur diese Sprachen tragen. Die Textschritte bleiben als „Als Text“ aufklappbar.
+  if (globalThis.__gcL15 === true && ["de", "tr"].includes(aktiveSprache())) { const bilder = a ? ["04_android", "05_android"] : ["01_ios", "02_ios", "03_ios"];
+    return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><div class="home-bilder">${bilder.map((b, i) => `<img src="bilder/home/home_${b}.svg" alt="${i + 1}" loading="lazy" width="216" height="270">`).join("")}</div>
+      <details><summary>${esc(t("home.titel"))}</summary><ol class="home-schritte"><li>${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></details></div>`; }
   return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><ol class="home-schritte"><li>${sym(a ? "menu" : "share")} ${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${sym(a ? "download" : "plus")} ${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></div>`;
 }
 const fertigSchnell = {

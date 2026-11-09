@@ -202,6 +202,9 @@ body.blatt-da { overflow: hidden; }
 .home-karte p{margin:0;flex:1;font-size:.95rem;line-height:1.3}
 .home-karte .leise{margin:0;flex:none}
 .home-karte.s2home{display:block;text-align:start}
+.home-karte .home-bilder{display:flex;gap:.4rem;margin:.5rem 0;overflow-x:auto;scroll-snap-type:x mandatory} /* Lauf 3, L15-Entwurf: Sanjis Home-Bildschirm-Bilder */
+.home-karte .home-bilder img{flex:0 0 calc(33% - .3rem);min-width:6.5rem;height:auto;border-radius:.6rem;border:1px solid var(--holz);scroll-snap-align:start;background:#fff}
+.home-karte details summary{font-size:.85rem;color:var(--tinte-leise,#555);margin-top:.2rem}
 .home-schritte{margin:.4rem 0 0;padding:0 0 0 1.2rem;display:grid;gap:.3rem;font-size:.95rem}
 .home-schritte .sym{width:1rem;height:1rem;vertical-align:-.15em;color:var(--glut)}
 .home-buero{margin:.6rem 0 .2rem}
