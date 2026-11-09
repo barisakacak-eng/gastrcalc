@@ -15,7 +15,7 @@ import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernS
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
 import { t, sprache as aktuelleSprache, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen, datumText } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen, beiAblageFehler } from "./ablage.js"; // W2-D: ablageZuruecklegen
-import { esc, parseZahl, heuteGeschaeft } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
+import { esc, parseZahl, heuteGeschaeft, heute } from "./util.js"; // W2-S: heute für die Personal-Sperre; Paket 3 (16.10.2026), M7: Geschäftstag
 import { SCHRITTE, schrittIndex, schritteFuer, bearbeitenZiel } from "./screens/onboarding.js";
 import { schrittWiederherstellen, schrittIdMerken } from "./screens/onboarding.js"; // E: Schritt nach Kennung merken
 import { fehlendeRezepteErgaenzen } from "./rezept_baukasten.js";
@@ -78,6 +78,10 @@ import { tafelView, tafelAktion, tafelEingabe } from "./screens/tafel.js"; // Me
 import { hinweiseView } from "./screens/hinweise.js";
 import { geld3View, geld3Aktion, geld3Eingabe } from "./screens/geld3.js"; // Welle 3 (03.11.2026, Baris Ja 04.11.2026) // Hinweis-Karten (23.10.2026): Büro „Hinweise“
 import { hinweisStatusSetzen } from "./hinweis.js";
+import { hmStatusSetzen, hmFrageSetzen, hmFuerBuero, hmGezeigtMerken, hmLadenZeile, hmLadenGezeigt } from "./hinweis_motor.js"; // Lauf 3 (09.11.2026): Entwurf hinter window.__gcHM
+import { hmUi } from "./data/hm_texte.js";
+import { fristErinnerungHeute } from "./welle3.js"; // Lauf 3, Phase 6: Frist-Erinnerung auf Heute
+import { fristSatz } from "./data/frist_texte.js";
 import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
@@ -187,7 +191,7 @@ function zeichne() {
         : ansicht === "bestand" ? bestandView(stand) // Bestand (17.10.2026)
         : ansicht === "aktionen" ? aktionenView(stand) // Stufe 1 (17.10.2026)
         : ansicht === "tafel" ? tafelView(stand) // Menütafel (18.10.2026)
-        : ansicht === "hinweise" ? hinweiseView(stand) // Hinweis-Karten (23.10.2026)
+        : ansicht === "hinweise" ? hinweiseMitHm() // Hinweis-Karten (23.10.2026); Lauf 3: Takt des Hinweis-Motors merken
         : ansicht === "geld3" ? geld3View(stand) // Welle 3 Bildpaket W3 (hinter Schalter)
         : ansicht === "getraenke" ? getraenkeView(stand) // Getränke (18.10.2026)
         : ansicht === "lieferanten" ? lieferantenView(stand) // Lieferanten (18.10.2026)
@@ -642,6 +646,11 @@ async function ebeneAktion(name, el) {
   }
   if (name === "rechtsform" && stand.phase === "app") { if (rechtsformSetzen(stand, el.dataset.wert)) { ereignis("rechtsform", { laden: stand.id, wert: el.dataset.wert }); meldung(t("rechtsform.gesetzt")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Rechtsform (23.10.2026)
   if (name.startsWith("g3-") && geld3Aktion(name, el, stand)) { speichern(wurzel); return zeichne(); } // Welle 3
+  if (name === "hm-status") { if (globalThis.__gcHM === true && hmStatusSetzen(stand, el.dataset.id, el.dataset.status, { datum: heute() })) { ereignis("hm-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); await sofortSpeichern(wurzel); } zeichne(); return true; } // Lauf 3, Hinweis-Motor
+  if (name === "hm-frage") { if (globalThis.__gcHM !== true) return true; const f = el.dataset.frage, w = el.dataset.wert;
+    const wert = w === "ja" ? true : w === "nein" ? false : w === "nie" ? "nie" : el.closest(".hm-frage")?.querySelector(".hm-datum")?.value || "";
+    if (hmFrageSetzen(stand, f, wert, { bisHeute: heute() })) await sofortSpeichern(wurzel);
+    zeichne(); return true; }
   if (name === "hinweis-status") { if (hinweisStatusSetzen(stand, el.dataset.id, el.dataset.status)) { ereignis("hinweis-status", { laden: stand.id, id: el.dataset.id, status: el.dataset.status }); meldung(t(el.dataset.status === "erledigt" ? "hinweise.erledigtMeldung" : "hinweise.spaeterMeldung")); await sofortSpeichern(wurzel); } zeichne(); return true; } // Hinweis-Karten (23.10.2026)
   if (name === "testphase-code") { testphaseSetzen(wurzel, !testphaseOhneCode(wurzel)); meldung(t(testphaseOhneCode(wurzel) ? "ebene.pin.testphaseAn" : "ebene.pin.testphaseAus")); await sofortSpeichern(wurzel); zeichne(); return true; }
   if (name === "pin-entfernen") { await pinSetzen(wurzel, null); meldung(t("ebene.pin.entfernt")); await sofortSpeichern(wurzel); zeichne(); return true; }
@@ -1283,6 +1292,11 @@ function zekiGesehenMerken(key) {
 
 // Zeki auf jedem Bildschirm (26.10.2026): Lage nur aus ZEKI_BILDSCHIRM[ansicht]; Heute macht das selbst (zekiReihe).
 // Personal sieht keine Euro: dort keine Lage mit Betrag.
+// Lauf 3 (09.11.2026): Hinweis-Motor hinter window.__gcHM – was heute zum ersten Mal im Büro steht, merkt sich der Takt (eine neue Karte je 7 Tage).
+function hinweiseMitHm() {
+  if (globalThis.__gcHM === true) { try { const d = heute(); if (hmGezeigtMerken(stand, hmFuerBuero(stand, { datum: d }).neu, d)) sofortSpeichern(wurzel); } catch { /* Takt ist Komfort, kein Absturz */ } }
+  return hinweiseView(stand);
+}
 function zekiBildschirm() {
   if (fuehrungOffen() || (ansicht === "start" && !stand?.fuehrung && modus(wurzel) === "laden")) return; // Führung zuerst, keine zweite Blase darüber
   if (root.querySelector(".zeki-zeile, .kl-zeki, .zeki-stimme > *")) return; // 27.10.2026: Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
@@ -1296,6 +1310,17 @@ function zekiBildschirm() {
       const laeuft = zekiGerade?.key === key;
       zekiSprechblase(root, { ausloeser: "rezepte", text: t("heute.rezeptErinnerung.stand", r.mit, r.gesamt), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
       zekiGesehenMerken(key); return; } }
+  // Lauf 3, Phase 6 (09.11.2026): 5 Tage vor einem Pflichttermin sagt Zeki auf Heute einen Satz, höchstens einmal am Tag, nie über einem Kühl-Alarm
+  if (ansicht === "start" && !personalAktiv() && !root.querySelector('[data-dran="kuehlAlarm"]')) { const key = `frist:${H}`;
+    if (!gesehen.has(key) || zekiGerade?.key === key) { let f = null; try { f = fristErinnerungHeute(stand, heute()); } catch { f = null; }
+      if (f) { const laeuft = zekiGerade?.key === key; const arten = f.arten.map((a) => t("w3.termine.art." + a)).join(", ");
+        zekiSprechblase(root, { ausloeser: "frist", text: fristSatz(aktuelleSprache(), arten, f.datum.slice(8, 10) + "." + f.datum.slice(5, 7) + "."), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - zekiGerade.t) : 7000, bewegen: !laeuft });
+        zekiGesehenMerken(key); return; } } }
+  // Lauf 3 (09.11.2026), Hinweis-Motor hinter window.__gcHM: im Laden höchstens einmal je 7 Tage ein Satz, nie in der Stoßzeit, nie über einem Kühl-Alarm
+  if (ansicht === "start" && !personalAktiv() && globalThis.__gcHM === true && !root.querySelector('[data-dran="kuehlAlarm"]')) {
+    let k = null; try { k = hmLadenZeile(stand, { jetzt: new Date() }); } catch { k = null; }
+    if (k) { zekiSprechblase(root, { ausloeser: "hm", text: hmUi(aktuelleSprache(), k === "hm.zeki.geld" ? "zekiGeld" : "zekiPflicht"), bewegung: "nicken" }, { restMs: 7000, bewegen: true });
+      hmLadenGezeigt(stand, heute()); sofortSpeichern(wurzel); return; } }
   try { zm = zekiMoment(stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(wurzel)?.tage ?? null, sicherung: personalAktiv() ? null : sicherungFaellig(wurzel), nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
   if (!zm) return;
   // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter

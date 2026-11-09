@@ -6,7 +6,7 @@ import { heute } from "./util.js";
 import { umsatzEintrag, fixkosten, monatsLast, tagPlus } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
 import { steuerTopf, kleinunternehmer } from "./steuertopf.js";
-import { pflichtTermine } from "./fristen.js";
+import { pflichtTermine, ERINNERUNG_TAGE } from "./fristen.js";
 import { LAND_CODES } from "./feiertage.js";
 import { liquiditaet, nachfragen } from "./liquiditaet.js";
 
@@ -25,6 +25,13 @@ const wochentag = (tag) => new Date(tag + "T12:00:00Z").getUTCDay();
 export function termineLaden(stand, ab = heute(), tage = 60) {
   return pflichtTermine(ab, tagPlus(ab, tage), { rhythmus: stand.betrieb?.ustRhythmus || null, dauerfrist: !!stand.betrieb?.dauerfrist,
     kleinunternehmer: kleinunternehmer(stand), personal: (stand.personen || []).some((p) => !p.entfernt), landKasse: stand.betrieb?.svLand || null, land: stand.betrieb?.bundesland || "BW" });
+}
+
+// Lauf 3, Phase 6 (09.11.2026): Erinnerung auf Heute, 5 Tage vor einem Pflichttermin (ERINNERUNG_TAGE). Der früheste Termin, dessen Erinnerung
+// erreicht ist und der noch nicht vorbei ist; sonst null. Die Oberfläche sagt einen Satz (Zeki), höchstens einmal am Tag.
+export function fristErinnerungHeute(stand, tag = heute()) {
+  const f = termineLaden(stand, tag, ERINNERUNG_TAGE).filter((x) => (x.erinnerung || x.datum) <= tag && x.datum >= tag); if (!f.length) return null;
+  const datum = f[0].datum; return { datum, arten: [...new Set(f.filter((x) => x.datum === datum).map((x) => x.art))] }; // { datum, arten: ["est", "ust", …] }
 }
 
 // Liquidität 8 Wochen aus dem Laden (≈): Einnahmen = Schnitt der letzten 28 Tage mit Umsatz je Öffnungstag (Mo–Sa bzw. tageProWoche ab Montag),

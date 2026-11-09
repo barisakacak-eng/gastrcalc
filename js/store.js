@@ -12,6 +12,7 @@
 // Kennungen), dazu je Laden stammZeit (Zeitstempel je Bereich; der Fingerabdruck liegt im Speicher-Kopf) und abgleich (Stand des letzten Zusammenführens).
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
+import { hmAngabenSauber } from "./hm_angaben.js"; // Lauf 3 (09.11.2026): Hinweis-Motor
 import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
@@ -256,6 +257,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
   // Gremium 2 (24.10.2026): Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
   s.betrieb.hinweise = hinweiseSauber(s.betrieb.hinweise);
+  if (s.betrieb.hmAngaben !== undefined) s.betrieb.hmAngaben = hmAngabenSauber(s.betrieb.hmAngaben); // Lauf 3, Hinweis-Motor (js/hm_angaben.js)
   if (s.betrieb.rechtsform !== undefined && !["einzel", "gbr", "gmbh", "ug", "kg_ohg", "unbekannt"].includes(s.betrieb.rechtsform)) delete s.betrieb.rechtsform;
   if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage (18.10.2026): Bundesland des Ladens (optional)
   if (s.betrieb.ruhezeiten !== undefined && !(Array.isArray(s.betrieb.ruhezeiten) && s.betrieb.ruhezeiten.every((x) => Array.isArray(x) && x.length === 2 && x.every((y) => typeof y === "number" && y >= 0 && y < 24)))) delete s.betrieb.ruhezeiten; // K4
@@ -1332,6 +1334,19 @@ function abgleichMerken(b, a, hF) {
 }
 export function abgleichGrundlage(b) { for (const a of BEREICH_NAMEN) abgleichMerken(b, a, null); return b; }
 
+// Lauf 3, Phase 6 (09.11.2026): Monatsabschlüsse zweier Handys vereinigen. Gleicher Eintrag (Monat + Zeitpunkt) zählt einmal. Haben beide denselben
+// Monat abgeschlossen, bleibt der frühere gültig; der spätere bleibt sichtbar als „ersetzt“ (nichts verschwindet still, js/monatsabschluss.js).
+export function monatsabschluesseVereinigen(a, b) {
+  const alle = new Map();
+  for (const x of [...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]) if (istObjekt(x) && typeof x.monat === "string" && typeof x.eingefroren === "string") {
+    const k = x.monat + "|" + x.eingefroren; const da = alle.get(k);
+    if (!da || (x.ersetzt && !da.ersetzt)) alle.set(k, structuredClone(x)); // „ersetzt“ von einer Seite gewinnt
+  }
+  const liste = [...alle.values()].sort((x, y) => (x.monat < y.monat ? -1 : x.monat > y.monat ? 1 : x.eingefroren.localeCompare(y.eingefroren)));
+  const gueltig = new Map();
+  for (const x of liste) { if (x.ersetzt) continue; const g = gueltig.get(x.monat); if (!g) gueltig.set(x.monat, x); else x.ersetzt = x.eingefroren; }
+  return liste;
+}
 export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   const basis = structuredClone(lokal); // Rest (Einrichtungsstand, Hinweise …) bleibt vom eigenen Handy
   if ((lokal.phase === "app" || fremd.phase === "app") && basis.phase !== "app") { basis.phase = "app"; basis.rueckkehr = null; }
@@ -1366,6 +1381,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   const invFertig = journalVereinigen((lokal.inventuren || []).filter((i) => i.abgeschlossen), (fremd.inventuren || []).filter((i) => i.abgeschlossen));
   const fertigIds = new Set(invFertig.map((i) => i.id)); // lokal offen, in der Datei schon fertig → nur die fertige behalten (Review 15.10.)
   basis.inventuren = [...invFertig, ...(lokal.inventuren || []).filter((i) => !i.abgeschlossen && !fertigIds.has(i.id))];
+  if (lokal.monatsabschluesse || fremd.monatsabschluesse) basis.monatsabschluesse = monatsabschluesseVereinigen(lokal.monatsabschluesse, fremd.monatsabschluesse); // Lauf 3, Phase 6: Abschlüsse beider Handys
   basis.geaendert = [zeitKappen(lokal.geaendert, jetzt), zeitKappen(fremd.geaendert, jetzt)].filter(Boolean).sort().pop() || new Date(jetzt).toISOString();
   Object.defineProperty(basis, "_bericht", { value: bericht, enumerable: false, configurable: true }); // nur für zusammenfuehren
   if (bericht.beide.length || bericht.zukunft || bericht.konflikte) {
