@@ -110,7 +110,7 @@ export function arbeitszeitListe(stand, von, bis) {
     zeilen.set(`${e.datum}|${x.person || "k" + i}`, { datum: e.datum, wer: name(x.person, x.name), von: x.von || null, bis: x.bis || null, stunden: eintragStunden(x), erfasst, kompakt: !!x.kompakt });
   }
   for (const x of stand?.schichten || []) if (!x.storniert && x.datum >= von && x.datum <= bis)
-    zeilen.set(`${x.datum}|${x.person}`, { datum: x.datum, wer: name(x.person), von: x.von, bis: x.bis, stunden: schichtStunden(x.von, x.bis), erfasst: x.erfasst.slice(0, 10), kompakt: false });
+    zeilen.set(`${x.datum}|${x.person}`, { datum: x.datum, wer: name(x.person), von: x.von, bis: x.bis, stunden: schichtStunden(x.von, x.bis), erfasst: typeof x.erfasst === "string" ? x.erfasst.slice(0, 10) : null, kompakt: false }); // Lauf 4: alte Schicht ohne „erfasst“ darf nicht abstürzen
   const liste = [...zeilen.values()].map((z) => ({ ...z, rechtzeitig: !z.erfasst || z.erfasst <= aufzeichnungFaellig(z.datum) })).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.wer.localeCompare(b.wer)));
   const ohneZeiten = liste.filter((z) => !z.von || !z.bis).length, spaet = liste.filter((z) => !z.rechtzeitig).length;
   return { zeilen: liste, ohneZeiten, spaet, vollstaendig: liste.length > 0 && ohneZeiten === 0 && spaet === 0 };

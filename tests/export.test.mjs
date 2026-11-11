@@ -119,7 +119,7 @@ test("Monatspaket Steuerberater/Buchhalter: Umsatz netto, Sachbezug, Schwund, Be
   s.inventuren = [{ id: "i", datum: "2026-09-30", abgeschlossen: "x", posten: {}, ausgeblendet: [], wert: 412.37 }];
   const z = St.monatVon("2026-09-01"); const p0 = St.monatsPaket(s, z, "buch"); const ps = St.monatsPaket(s, z, "steuer"); // getrennt 26.10.2026
   const p = { ...p0, schwund: ps.schwund, inventur: ps.inventur, stand: { ...p0.stand, schwund: ps.stand.schwund, inventur: ps.stand.inventur } };
-  assert.deepEqual(St.TEILE.buch, ["umsatz", "belege", "kosten", "personal", "reinigung"]); assert.deepEqual(St.TEILE.steuer, ["inventur", "schwund", "personal"]);
+  assert.deepEqual(St.TEILE.buch, ["umsatz", "belege", "kosten", "personal", "reinigung", "arbeitszeiten"]); /* Lauf 4, P3 C4 */ assert.deepEqual(St.TEILE.steuer, ["inventur", "schwund", "personal"]);
   assert.equal(p.umsatz.tage, 1); assert.equal(p.umsatz.zeilen[0].brutto, 214); assert.equal(p.umsatz.zeilen[0].netto, undefined, "W2-T: keine Steuer aus dem Mischsatz"); assert.equal(p.stand.umsatz, "notiz");
   assert.equal(p.personal.sachbezug, 4.74); assert.equal(p.personal.zeilen[0].person, "Ayşe");
   assert.equal(p.schwund.muellwert, 2.5); assert.equal(p.schwund.ohneWert, 1); assert.equal(p.stand.schwund, "luecke");

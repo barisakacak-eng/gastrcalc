@@ -101,3 +101,11 @@ test("P5 C2: mit L15b zeigt die Schichten-Karte auch den Vormonat", async () => 
     globalThis.__gcL15b = false; assert.doesNotMatch(text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]), /Dezember 2026/); }
   finally { globalThis.__gcL15b = false; mock.timers.reset(); }
 });
+
+// Lauf 4, eigener Fund beim Bildpaket: Schicht ohne „erfasst“ (alte oder eingelesene Daten) ließ die Arbeitszeiten-Liste abstürzen –
+// seit P3 C4 steht die Liste im Monatspaket, damit wäre der ganze Büro-Start rot geworden
+test("Arbeitszeiten: Schicht ohne erfasst stürzt nicht ab", async () => {
+  const { arbeitszeitListe } = await import("../js/schichten.js"); const s = laden();
+  s.schichten = [{ id: "x", person: "p", datum: "2026-11-03", von: "11:00", bis: "19:00" }];
+  const r = arbeitszeitListe(s, "2026-11-01", "2026-11-30"); assert.equal(r.zeilen.length, 1); assert.equal(r.zeilen[0].erfasst, null);
+});
