@@ -506,6 +506,7 @@ export default {
     obHinweis: "Sarinc, cemidok, odeya sar, germker. Tu dikarî navan bitikînî û biguherînî.",
     obKeine: "Amûr tune – paşê di “Bêtir” de lê zêde bike",
     obName: (n) => `Sarinc ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Cemidok",
     obNameWarm: "Germker",
     artKurz: { kuehl: "Sar", tk: "Cemidî", warm: "Germ" },

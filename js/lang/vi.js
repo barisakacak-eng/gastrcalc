@@ -507,6 +507,7 @@ export default {
     obHinweis: "Tủ lạnh, tủ đông, kho lạnh, tủ giữ nóng. Chạm vào tên để đổi.",
     obKeine: "Không có điểm lạnh – tạo sau ở mục Thêm",
     obName: (n) => `Tủ lạnh ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Tủ đông",
     obNameWarm: "Tủ giữ nóng",
     artKurz: { kuehl: "Lạnh", tk: "Đông", warm: "Nóng" },

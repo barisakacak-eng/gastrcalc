@@ -512,6 +512,7 @@ export default {
     obHinweis: "Холодильники, морозилки, холодильная камера, мармиты. Названия можно нажать и поменять.",
     obKeine: "Нет точек замера – добавить позже в «Ещё»",
     obName: (n) => `Холодильник ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Морозилка",
     obNameWarm: "Мармит",
     artKurz: { kuehl: "Холод", tk: "Мороз", warm: "Тепло" },

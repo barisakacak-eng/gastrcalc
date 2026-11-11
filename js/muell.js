@@ -146,6 +146,7 @@ export function muellMonatVergleich(stand, datum = heuteGeschaeft()) {
 }
 
 // Die 12 Kacheln „Was ist weg?": nach Häufigkeit der letzten 30 Tage (bei Gleichstand zuletzt benutzt); ohne Verlauf erst Gerichte, dann Artikel.
+const DOENER_VORNE = [/^Dönerspieß/i, /^Hähnchenspieß/i, /^Pommes/i, /^Cola/i];
 export function haeufigsteMuell(stand, opts = {}) { return imTakt(stand, "hm:" + JSON.stringify(opts), () => haeufigsteMuellRechnen(stand, opts)); }
 function haeufigsteMuellRechnen(stand, { tage = 30, max = 12, datum = heuteGeschaeft(), mischen = false } = {}) {
   if (mischen) return gemischt(stand, haeufigsteMuell(stand, { tage, max: 10000, datum }), { tage, max, datum });
@@ -160,7 +161,11 @@ function haeufigsteMuellRechnen(stand, { tage = 30, max = 12, datum = heuteGesch
     ...(stand.artikel || []).filter((a) => a.benutzt !== false && a.gruppe !== "verpackung").map((a) => ({ typ: "artikel", name: a.name, einheit: a.packung?.einheit || a.einheit || "stk", gruppe: a.gruppe, k: "a:" + a.name })),
   ];
   const rang = (x) => zahl.get(x.k) || { n: 0, zuletzt: "" };
-  return kandidaten.map((x, i) => ({ ...x, i })).sort((a, b) => rang(b).n - rang(a).n || rang(b).zuletzt.localeCompare(rang(a).zuletzt) || a.i - b.i).slice(0, max).map(({ k, i, ...x }) => x);
+  // Lauf 5 (Ausschuss P1 D5, Pilot Tag 0): Im Döner-Laden stehen Spieß, Pommes und Cola vorne, solange noch nichts weggeworfen wurde –
+  // nur wenn die Ware im Laden angelegt ist; danach entscheidet wie bisher die Häufigkeit.
+  const vorrang = (x) => (stand.betrieb?.kuechen || []).includes("doener") && x.typ === "artikel" ? DOENER_VORNE.findIndex((r) => r.test(x.name)) : -1;
+  const vr = (x) => { const v = vorrang(x); return v < 0 ? DOENER_VORNE.length : v; };
+  return kandidaten.map((x, i) => ({ ...x, i })).sort((a, b) => rang(b).n - rang(a).n || rang(b).zuletzt.localeCompare(rang(a).zuletzt) || vr(a) - vr(b) || a.i - b.i).slice(0, max).map(({ k, i, ...x }) => x);
 }
 
 // Foto-Raster (Drei Ebenen): erst was schon weg war (nach Häufigkeit), dann abwechselnd Gericht und Rohware –

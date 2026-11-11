@@ -512,6 +512,7 @@ export default {
     obHinweis: "Lodówki, zamrażarki, chłodnia, podgrzewacze. Nazwy możesz dotknąć i zmienić.",
     obKeine: "Brak punktów chłodzenia – dodam później w Więcej",
     obName: (n) => `Lodówka ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Zamrażarka",
     obNameWarm: "Podgrzewacz",
     artKurz: { kuehl: "Chłodz.", tk: "Mroż.", warm: "Ciepło" },

@@ -512,6 +512,7 @@ export default {
     obHinweis: "Хладилници, фризери, хладилна камера, топловитрини. Можеш да докоснеш името и да го смениш.",
     obKeine: "Няма хладилни точки – ще добавя по-късно в Още",
     obName: (n) => `Хладилник ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Фризер",
     obNameWarm: "Топловитрина",
     artKurz: { kuehl: "Хлад.", tk: "Фриз.", warm: "Топло" },

@@ -507,6 +507,7 @@ export default {
     obHinweis: "Frigos, congélateurs, chambre froide, maintien au chaud. Touche les noms pour les changer.",
     obKeine: "Pas de points froids – à créer plus tard dans Plus",
     obName: (n) => `Frigo ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Congélateur",
     obNameWarm: "Maintien au chaud",
     artKurz: { kuehl: "Froid", tk: "Congél.", warm: "Chaud" },

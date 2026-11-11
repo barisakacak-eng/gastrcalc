@@ -505,6 +505,7 @@ export default {
     obHinweis: "Fridges, freezers, cold room, hot holding. Tap a name to change it.",
     obKeine: "No cooling units – set up later under More",
     obName: (n) => `Fridge ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Freezer",
     obNameWarm: "Hot holding",
     artKurz: { kuehl: "Cold", tk: "Frozen", warm: "Hot" },

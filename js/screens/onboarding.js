@@ -283,6 +283,8 @@ const kanaele = {
 };
 
 // Etappe 5 (Baris 12.10.): Kühlstellen direkt im Onboarding – wie viele, Namen, Art. Keine Grenzen: Standard nach Gesetz gilt, eigene später unter Mehr.
+// Lauf 5 (Ausschuss P1 D5): Kühlstellen-Vorschlag für den Döner-Laden – nur Arten (Typen gibt es seit 24.10.2026), keine neuen Grenzwerte.
+const DOENER_KUEHL = [{ typ: "kuehlschrank", art: "kuehl" }, { typ: "getraenke", art: "kuehl" }, { typ: "tiefkuehler", art: "tk" }];
 const kuehlstellen = {
   id: "kuehlstellen",
   view(stand) {
@@ -292,6 +294,7 @@ const kuehlstellen = {
       <h1 class="frage">${esc(t("kuehl.obFrage"))}</h1>
       <p class="hinweis">${esc(t("kuehl.obHinweis"))}</p>
       ${stepper("stellen", stellen.length, String(stellen.length))}
+      ${!stellen.length && (stand.betrieb?.kuechen || []).includes("doener") ? `<button type="button" class="knopf zweit" data-a="ob-kuehl-vorschlag">${esc(t("kuehl.vorschlagDoener", DOENER_KUEHL.map((x) => t("schnell2.arten." + x.typ)).join(", ")))}</button>` : "" /* Lauf 5 (P1 D5): Vorschlag nur Arten, Grenzen wie bisher je Typ */}
       <div class="liste">${stellen.map((k) => `
         <div class="zeile an">
           <input class="textfeld" data-f="ob-stelle:${esc(k.id)}" value="${esc(kuehlstelleAnzeige(k))}" maxlength="40" placeholder="${esc(t("kuehl.namePlatzhalter"))}" autocomplete="off">
@@ -311,6 +314,7 @@ const kuehlstellen = {
       kuehlstelleAnlegen(stand, { name: nameNeu, art, typ: art === "tk" ? "tiefkuehler" : "kuehlschrank" }); return true;
     }
     if (name === "minus" && el.dataset.feld === "stellen") { const l = aktiv(); const k = l[l.length - 1]; if (!k) return false; return kuehlstelleWegnehmen(stand, k.id); }
+    if (name === "ob-kuehl-vorschlag") { if (aktiv().length) return false; for (const x of DOENER_KUEHL) kuehlstelleAnlegen(stand, { name: t("schnell2.arten." + x.typ), art: x.art, typ: x.typ }); return true; }
     if (name === "ob-art") return kuehlstelleArtWaehlen(stand, el.dataset.id, el.dataset.wert, { tk: t("kuehl.obNameTk"), warm: t("kuehl.obNameWarm") });
   },
   beimVerlassen(stand) { kuehlEingerichtetSetzen(stand); },
@@ -540,12 +544,14 @@ const kuehlSchnell = {
             <span class="s2anzahl" aria-live="polite">${n}</span>
             <button type="button" data-a="s2-kuehl" data-wert="${T.typ}" data-d="1" aria-label="${esc(name)} +">+</button>
           </div></div>`;
-      }).join("")}</div>`;
+      }).join("")}</div>
+      ${!alle.length && (stand.betrieb?.kuechen || []).includes("doener") ? `<button type="button" class="knopf zweit" data-a="s2-kuehl-vorschlag">${esc(t("kuehl.vorschlagDoener", DOENER_KUEHL.map((x) => t("schnell2.arten." + x.typ)).join(", ")))}</button>` : "" /* Lauf 5 (P1 D5) */}`;
   },
   fuss: () => knopfWeiter(),
   aktion(name, el, stand) {
     if (hilfeAktion(name, el)) return true;
     if (name === "s2-kuehl") return kuehlAnzahlAendern(stand, el.dataset.wert, Number(el.dataset.d));
+    if (name === "s2-kuehl-vorschlag") { if (aktiveStellen(stand).length) return false; for (const x of DOENER_KUEHL) kuehlAnzahlAendern(stand, x.typ, 1); return true; }
   },
   beimVerlassen(stand) { kuehlEingerichtetSetzen(stand); },
 };

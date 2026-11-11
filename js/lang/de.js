@@ -514,6 +514,7 @@ titel: "Büro", zurueck: "Laden",
     obHinweis: "Kühlschränke, Tiefkühler, Kühlzelle, Warmhalter. Namen kannst du antippen und ändern.",
     obKeine: "Keine Kühlstellen – später unter Mehr anlegen",
     obName: (n) => `Kühlschrank ${n}`,
+    vorschlagDoener: (l) => `Für Döner übernehmen: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Tiefkühler",
     obNameWarm: "Warmhalter",
     artKurz: { kuehl: "Kühl", tk: "TK", warm: "Warm" },

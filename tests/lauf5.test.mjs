@@ -23,3 +23,40 @@ test("L15b ist Standard: Kühl-Alarm kurz, ohne window-Schalter", async () => {
   assert.equal(l15bAn(), true); assert.equal(l15b("de", "warm", "Kühlschrank 1"), "Kühlschrank 1 zu warm. Gleich nachsehen.");
   assert.equal(l15b("de", "abgaben", "28", "gemischt"), "Mit ≈ 28 % Abgaben des Arbeitgebers (Angestellte und Minijob, gewichtet).");
 });
+
+// P1 D5: Döner-Laden ohne Müll-Verlauf – Spieß, Pommes, Cola vorne (nur angelegte Waren)
+test("Müll-Kacheln Döner: Spieß, Pommes, Cola vorne", async () => {
+  const { haeufigsteMuell } = await import("../js/muell.js");
+  const art = (name, gruppe) => ({ name, gruppe, einheit: "kg", benutzt: true });
+  const s = { betrieb: { kuechen: ["doener", "pizza"] }, gerichte: [], schwund: [],
+    artikel: [art("Pizzateig", "teig"), art("Knoblauchsauce", "sauce"), art("Ayran 0,25 l", "getraenk"), art("Cola 0,33 l", "getraenk"), art("Pommes frites", "teig"), art("Dönerspieß Kalb/Pute", "fleisch")] };
+  const namen = haeufigsteMuell(s, { datum: "2026-11-12", max: 10000 }).filter((x) => x.typ === "artikel").slice(0, 3).map((x) => x.name);
+  assert.deepEqual(namen, ["Dönerspieß Kalb/Pute", "Pommes frites", "Cola 0,33 l"]);
+  s.betrieb.kuechen = ["pizza"];
+  assert.equal(haeufigsteMuell(s, { datum: "2026-11-12", max: 10000 })[0].name, "Pizzateig", "ohne Döner bleibt die alte Reihenfolge");
+});
+
+// P1 D5: Einrichtung schlug für Döner keine Kühlstellen vor (alle 0)
+test("Einrichtung Döner: Vorschlag Kühlschrank, Getränkekühlschrank, Tiefkühler", async () => {
+  const { leererStand } = await import("../js/store.js").catch(() => ({}));
+  const { SCHNELL } = await import("../js/screens/onboarding.js");
+  const k = SCHNELL.find((x) => x.id === "kuehl-schnell");
+  const s = { betrieb: { kuechen: ["doener"] }, kuehlstellen: [], kuehl: {} };
+  assert.match(k.view(s), /data-a="s2-kuehl-vorschlag"/);
+  assert.equal(k.aktion("s2-kuehl-vorschlag", { dataset: {} }, s), true);
+  assert.deepEqual(s.kuehlstellen.map((x) => [x.typ, x.art]), [["kuehlschrank", "kuehl"], ["getraenke", "kuehl"], ["tiefkuehler", "tk"]]);
+  assert.ok(s.kuehlstellen.every((x) => x.min === null && x.max === null), "keine eigenen Grenzwerte – es gilt der Standard je Art");
+  assert.doesNotMatch(k.view(s), /s2-kuehl-vorschlag/, "nach dem Übernehmen kein Vorschlag mehr");
+  assert.doesNotMatch(k.view({ betrieb: { kuechen: ["pizza"] }, kuehlstellen: [], kuehl: {} }), /s2-kuehl-vorschlag/);
+});
+
+// P1 D5: Schicht „Speichern“ ohne Bestätigung, Karte klappte zu
+test("Schicht speichern: kurze Bestätigung, Karte bleibt offen", async () => {
+  const { leererBetrieb } = await import("../js/store.js"); const g = await import("../js/screens/geld3.js");
+  const s = leererBetrieb(); s.betrieb = { ...s.betrieb, name: "T", format: "imbiss", ustRhythmus: "monat" }; s.personen = [{ id: "p", kuerzel: "AB", aktiv: true }];
+  g.geld3Eingabe("g3-s-von", "11:00", s); g.geld3Eingabe("g3-s-bis", "19:00", s);
+  assert.equal(g.geld3Aktion("g3-schicht", { dataset: {} }, s), true); assert.equal((s.schichten || []).length, 1);
+  const html = g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0];
+  assert.match(html, /data-klapp="g3-schicht" open/); assert.match(html, /role="status">Eingetragen\./);
+  g.geld3Eingabe("g3-s-von", "12:00", s); assert.doesNotMatch(g.geld3View(s), /role="status">Eingetragen\./, "neue Eingabe: Bestätigung weg");
+});

@@ -507,6 +507,7 @@ export default {
     obHinweis: "Frigoriferi, congelatori, cella frigo, scaldavivande. Puoi toccare i nomi e cambiarli.",
     obKeine: "Nessun apparecchio frigo – aggiungili dopo sotto Altro",
     obName: (n) => `Frigo ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Congelatore",
     obNameWarm: "Scaldavivande",
     artKurz: { kuehl: "Frigo", tk: "Congel.", warm: "Caldo" },

@@ -514,6 +514,7 @@ export default {
     obHinweis: "Frižideri, zamrzivači, hladnjača, grijači za hranu. Imena možeš dodirnuti i promijeniti.",
     obKeine: "Nema rashladnih uređaja – dodaj kasnije pod Više",
     obName: (n) => `Frižider ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Zamrzivač",
     obNameWarm: "Grijač za hranu",
     artKurz: { kuehl: "Hlađ.", tk: "Zamrz.", warm: "Toplo" },

@@ -281,3 +281,6 @@ button.b-zeile:active { background: var(--papier); }
 .po-ergebnis p { margin: 0; font-size: 1.1rem; font-weight: 600; }
 .po-wert { display: inline-flex; align-items: baseline; gap: 4px; }
 .po-wert input { width: 4.2ch; font: inherit; text-align: end; border: 0; border-bottom: 2px solid var(--holz); background: transparent; color: inherit; padding: 0; }
+/* Lauf 5 (Ausschuss P1 D5): Uhrzeit-Felder bei 390 px nicht abschneiden (12-h-Anzeige „11:30 AM“ braucht mehr Platz); Haken der gewählten Rechtsform liegt nicht über dem Wort */
+.b-ruhezeiten .ruhezeile input[type="time"] { width: 9.5em; max-width: 100%; }
+.rechtsformwahl .kachel.an { padding-right: 40px; }

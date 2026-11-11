@@ -506,6 +506,7 @@ export default {
     obHinweis: "یخچال، فریزر، سردخانه، گرم‌نگه‌دار. اسم‌ها را می‌توانی بزنی و عوض کنی.",
     obKeine: "دستگاهی ندارم – بعداً از «بیشتر» اضافه می‌کنم",
     obName: (n) => `یخچال ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "فریزر",
     obNameWarm: "گرم‌نگه‌دار",
     artKurz: { kuehl: "سرد", tk: "فریزر", warm: "گرم" },

@@ -513,6 +513,7 @@ export default {
     obHinweis: "Frigidere, congelatoare, cameră frigorifică, încălzitoare. Poți atinge numele și să-l schimbi.",
     obKeine: "Niciun punct de răcire – adaug mai târziu la Mai mult",
     obName: (n) => `Frigider ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Congelator",
     obNameWarm: "Încălzitor",
     artKurz: { kuehl: "Rece", tk: "Congel.", warm: "Cald" },

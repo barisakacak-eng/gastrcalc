@@ -507,6 +507,7 @@ export default {
     obHinweis: "Neveras, congeladores, cámara, mantenedores de calor. Toca los nombres para cambiarlos.",
     obKeine: "Ningún punto de frío – crearlo luego en Más",
     obName: (n) => `Nevera ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Congelador",
     obNameWarm: "Mantenedor de calor",
     artKurz: { kuehl: "Frío", tk: "Cong.", warm: "Calor" },

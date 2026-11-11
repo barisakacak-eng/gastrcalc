@@ -512,6 +512,7 @@ export default {
     obHinweis: "Frigoriferë, ngrirës, dhomë ftohëse, mbajtës të ngrohtë. Emrat mund t’i prekësh dhe t’i ndryshosh.",
     obKeine: "Pa pika matjeje – krijoji më vonë te “Më shumë”",
     obName: (n) => `Frigoriferi ${n}`,
+    vorschlagDoener: (l) => `Add for döner: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Ngrirësi",
     obNameWarm: "Mbajtësi i ngrohtë",
     artKurz: { kuehl: "Ftohtë", tk: "Ngrirë", warm: "Ngrohtë" },

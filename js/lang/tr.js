@@ -506,6 +506,7 @@ export default {
     obHinweis: "Buzdolapları, derin dondurucular, soğuk oda, sıcak tutma. İsme dokunup değiştirebilirsin.",
     obKeine: "Soğutucu yok – sonra “Daha fazla“ bölümünden ekle",
     obName: (n) => `Buzdolabı ${n}`,
+    vorschlagDoener: (l) => `Döner için ekle: ${l}`, // Lauf 5 (P1 D5)
     obNameTk: "Derin dondurucu",
     obNameWarm: "Sıcak tutma",
     artKurz: { kuehl: "Soğuk", tk: "Donuk", warm: "Sıcak" },
