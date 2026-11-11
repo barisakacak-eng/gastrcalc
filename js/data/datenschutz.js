@@ -1,8 +1,9 @@
 // Datenschutz in der App (Baris 27.10.2026: Verantwortlicher als Platzhalter bis zur Firma).
 // Entwurf, nicht anwaltlich geprüft – Grundlage: Code-Prüfung main (keine Server-Abrufe, kein Tracking), Doc „GastroCash Datenschutz-Entwurf“.
 // Quelle Hosting: https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages (Abruf 27.10.2026).
-// Fehlt eine Sprache, zeigt die App Englisch.
-const VERANTWORTLICH = { de: "Verantwortlich: wird vor dem Pilotstart ergänzt (Name und Anschrift).", en: "Controller: will be added before the pilot starts (name and address)." };
+// Fehlt eine Sprache, zeigt die App Englisch. Seit Lauf 4 auch Türkisch und Arabisch.
+const VERANTWORTLICH = { de: "Verantwortlich: wird vor dem Pilotstart ergänzt (Name und Anschrift).", en: "Controller: will be added before the pilot starts (name and address).",
+  tr: "Sorumlu: pilot başlamadan önce eklenecek (ad ve adres).", ar: "المسؤول: يُضاف قبل بدء التجربة (الاسم والعنوان)." };
 export const DATENSCHUTZ = {
   de: { titel: "Datenschutz", stand: "Entwurf, Stand 27.10.2026", abschnitte: [
     ["Kurz gesagt", "Deine Daten bleiben auf diesem Handy. GastroCash hat keinen eigenen Server und sieht deine Zahlen nicht."],
@@ -26,5 +27,28 @@ export const DATENSCHUTZ = {
     ["No cookies, no tracking", "The app sets no advertising or analytics cookies."],
     ["Your rights", "You can delete everything at any time: Settings → “Delete everything”. You can complain to a data protection authority; in Baden-Württemberg the LfDI (baden-wuerttemberg.datenschutz.de)."],
   ], verantwortlich: VERANTWORTLICH.en, zekiLoeschen: "Delete Zeki history", zekiGeloescht: "Zeki history deleted", zekiLeer: "No Zeki history stored" },
+  // Lauf 4 (11.11.2026), P1 C3: Türkisch und Arabisch statt Englisch – KI-Übersetzung, ein Muttersprachler prüft gegen (wie bei den Rechtstexten).
+  tr: { titel: "Gizlilik", stand: "Taslak, 27.10.2026 itibarıyla", abschnitte: [
+    ["Kısaca", "Verilerin bu telefonda kalır. GastroCash'in kendi sunucusu yok ve rakamlarını görmez."],
+    ["Ne kaydedilir", "Dükkan adı, yemekler, fiyatlar, tarifler, alışlar, ciro, çöp, soğutma ve temizlik listeleri, çalışan adları (girersen) ve menü ile fiş fotoğrafları – sadece bu telefonun hafızasında. Büroyu bir büro koduyla koru."],
+    ["Zeki ve soruların", "Zeki'ye sorduklarını ve turdaki cevaplarını uygulama bu telefonda saklar (en fazla 1.000 kayıt), Zeki sonra daha iyi yardım etsin diye. Hiçbir şey gönderilmez. Geçmişi burada silebilirsin."],
+    ["Face ID / parmak izi", "Uygulama telefonunun kilit açmasını kullanır. Yüz veya parmak telefonda kalır, uygulama sadece bir „evet“ alır."],
+    ["Fotoğraflar", "Menü ve fişler telefonda okunur, yüklenmez. Fişten sadece ürün, miktar, fiyat, satıcı ve tarih kalır."],
+    ["Bir şey gönderirsen", "Yedekleri, daire, mali müşavir ve muhasebeci listelerini ve e-postaları sen gönderirsin – telefonunla veya e-posta programınla. O zaman seçtiğin hizmetin kuralları geçerlidir. Yedekleri şifreyle koruyabilirsin."],
+    ["Barındırma", "Uygulama GitHub Pages (GitHub, Inc., ABD) üzerinden gelir. GitHub kendi açıklamasına göre yüklemede güvenlik için IP adresini kaydeder. Sonra uygulama çevrimdışı çalışır."],
+    ["Çerez yok, takip yok", "Uygulama reklam veya analiz çerezi kullanmaz."],
+    ["Hakların", "Her şeyi istediğin zaman silebilirsin: Ayarlar → „Her şeyi sil“. Bir veri koruma denetim makamına şikâyet edebilirsin; Baden-Württemberg'de LfDI (baden-wuerttemberg.datenschutz.de)."],
+  ], verantwortlich: VERANTWORTLICH.tr, zekiLoeschen: "Zeki geçmişini sil", zekiGeloescht: "Zeki geçmişi silindi", zekiLeer: "Kayıtlı Zeki geçmişi yok" },
+  ar: { titel: "الخصوصية", stand: "مسودة، بتاريخ 27.10.2026", abschnitte: [
+    ["باختصار", "بياناتك تبقى على هذا الهاتف. ليس لـ GastroCash خادم خاص ولا يرى أرقامك."],
+    ["ما الذي يُحفظ", "اسم المحل والأطباق والأسعار والوصفات والمشتريات والمبيعات والهدر وقوائم التبريد والتنظيف وأسماء الموظفين (إن أدخلتها) وصور القائمة والفواتير – فقط في ذاكرة هذا الهاتف. احمِ المكتب برمز المكتب."],
+    ["زكي وأسئلتك", "ما تسأله لزكي وإجاباتك في الجولة يحفظها التطبيق على هذا الهاتف (1.000 إدخال كحد أقصى) ليساعدك زكي لاحقًا بشكل أفضل. لا يُرسل شيء. يمكنك حذف السجل هنا."],
+    ["Face ID / البصمة", "يستخدم التطبيق فتح قفل هاتفك. الوجه أو الإصبع يبقيان في الهاتف، والتطبيق يحصل فقط على „نعم“."],
+    ["الصور", "تُقرأ القائمة والفواتير على الهاتف ولا تُرفع. من الفاتورة يبقى فقط الصنف والكمية والسعر والمورد والتاريخ."],
+    ["عندما ترسل شيئًا", "النسخ الاحتياطية وقوائم الدائرة والمستشار الضريبي والمحاسب والرسائل ترسلها أنت – عبر هاتفك أو برنامج البريد. عندها تسري قواعد الخدمة التي تختارها. يمكنك تشفير النسخ الاحتياطية بكلمة مرور."],
+    ["الاستضافة", "يأتي التطبيق عبر GitHub Pages (GitHub, Inc.، الولايات المتحدة). بحسب GitHub يُسجَّل عنوان IP عند التحميل لأسباب أمنية. بعد ذلك يعمل التطبيق دون إنترنت."],
+    ["لا ملفات تعريف ارتباط، لا تتبّع", "لا يضع التطبيق ملفات تعريف ارتباط إعلانية أو تحليلية."],
+    ["حقوقك", "يمكنك حذف كل شيء في أي وقت: الإعدادات ← „احذف كل شيء“. يمكنك الشكوى لدى جهة رقابة حماية البيانات؛ في بادن-فورتمبيرغ لدى LfDI (baden-wuerttemberg.datenschutz.de)."],
+  ], verantwortlich: VERANTWORTLICH.ar, zekiLoeschen: "احذف سجل زكي", zekiGeloescht: "تم حذف سجل زكي", zekiLeer: "لا يوجد سجل لزكي" },
 };
 export const datenschutzText = (sprache) => DATENSCHUTZ[sprache] || DATENSCHUTZ.en;

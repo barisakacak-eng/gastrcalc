@@ -55,3 +55,16 @@ test("P3 C5/C6: kein „Daten bleiben sicher“, Belehrung „in der Regel“, A
   assert.match(de, /az: \{ titel: "Arbeitszeiten", info: "[^"]*Mit deinem Steuerberater klären\."/);
   const { HINWEISE } = await import("../js/hinweis.js"); assert.match(HINWEISE.find((h) => h.id === "belehrung").satz, /in der Regel Betriebsausgaben/);
 });
+
+// P1 C2: Schichten ohne Team-Kürzel – kein Formular und kein Hinweis, wo man Personen anlegt
+test("P1 C2: ohne Team zeigt die Schicht-Karte den Weg zu „Kühlstellen und Team ändern“", async () => {
+  const s = laden(); s.personen = [];
+  const g = await import("../js/screens/geld3.js"); const html = g.geld3View(s);
+  assert.match(html, /data-a="kuehl-einrichtung-oeffnen"/); assert.match(text(html), /erst dein Team/);
+});
+
+// P1 C3: Datenschutz-Karte im Türkischen komplett Englisch
+test("P1 C3: Datenschutz gibt es auf Türkisch und Arabisch, gleiche Abschnitte wie Deutsch", async () => {
+  const { datenschutzText, DATENSCHUTZ } = await import("../js/data/datenschutz.js");
+  for (const sp of ["tr", "ar"]) { const d = datenschutzText(sp); assert.notEqual(d, DATENSCHUTZ.en, sp); assert.equal(d.abschnitte.length, DATENSCHUTZ.de.abschnitte.length, sp); assert.doesNotMatch(JSON.stringify(d), /Privacy|Delete Zeki/); }
+});

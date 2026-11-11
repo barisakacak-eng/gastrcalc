@@ -56,7 +56,7 @@ export function geld3View(stand) {
     return z(p.kuerzel || p.name || "?", esc(t("w3.schicht.zeile", fmtZahl(zs.gesamt, 1), fmtZahl(zs.nacht25 + zs.nacht40, 1), fmtZahl(zs.sonntag + zs.feiertag125 + zs.feiertag150, 1)) + mini)); }).join("");
   // W3b: Schicht im Büro eintragen (Beginn/Ende je Person) – die Laden-Eingabe „Mitarbeiter heute“ bleibt, wie sie ist
   const se = schichtEntwurf; const sp = se.person || pers[0]?.id || ""; const sd = se.datum || H;
-  const form = !w3b() || !pers.length ? "" : `<div class="g3-schicht-form"><b>${esc(t("w3b.schicht.titel"))}</b>
+  const form = !w3b() ? "" : !pers.length ? `<div class="g3-schicht-form"><p class="hinweis">${esc(t("w3b.schicht.keinTeam"))}</p><button type="button" class="knopf zweit" data-a="kuehl-einrichtung-oeffnen">${esc(t("kuehl.einrichtungAendern"))}</button></div>` /* Lauf 4, P1 C2: Weg zum Team */ : `<div class="g3-schicht-form"><b>${esc(t("w3b.schicht.titel"))}</b>
     <select data-f="g3-s-person" aria-label="${esc(t("w3b.schicht.person"))}">${pers.map((p) => `<option value="${esc(p.id)}" ${p.id === sp ? "selected" : ""}>${esc(p.kuerzel || p.name || "?")}</option>`).join("")}</select>
     <input type="date" data-f="g3-s-datum" value="${esc(sd)}" aria-label="${esc(t("w3b.schicht.datum"))}">
     <div class="g3-zeiten"><input type="time" data-f="g3-s-von" value="${esc(se.von)}" aria-label="${esc(t("teamTag.von"))}"><span aria-hidden="true">–</span><input type="time" data-f="g3-s-bis" value="${esc(se.bis)}" aria-label="${esc(t("teamTag.bis"))}"></div>
