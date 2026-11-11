@@ -26,6 +26,6 @@ export function liquiditaet({ start, ab, wochen = WOCHEN, posten = [] }) {
     if (tief === null || stand < tief.c) tief = { c: stand, datum: d };
   }
   const tiefster = { betrag: tief.c / 100, datum: tief.datum };
-  return { start, ab, bis: tage[tage.length - 1].datum, tage, tiefster, ende: stand / 100, reicht: tief.c >= 0, fehlt: tief.c < 0 ? Math.ceil(-tief.c / 100) : 0 };
+  return { start, ab, bis: tage[tage.length - 1].datum, tage, tiefster, ende: stand / 100, reicht: tief.c >= 0, fehlt: tief.c < 0 ? Math.max(1, Math.round(-tief.c / 100)) : 0 }; // Lauf 4 (P2 C3): gleich gerundet wie der tiefste Stand (vorher ceil: 898 gegen −897)
 }
 export const nachfragen = (eingabe, heute) => !eingabe || typeof eingabe.betrag !== "number" || !eingabe.datum || plus(eingabe.datum, NACHFRAGE_TAGE) <= heute;

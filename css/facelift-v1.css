@@ -1310,3 +1310,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
 .h-nutzen-l15b .h-nutzen-summe{font-size:1.15rem}
 .h-nutzen-l15b[open] .h-nutzen-titel{display:block;margin-top:4px;font-size:.9rem;opacity:.8}
 .kl-kurz .kl-pruefen-kopf{margin:4px 6px 2px;font-size:.92rem;font-weight:600;color:var(--gelb-tief,#8a6a00)}
+/* Lauf 4 (P4 C3): „Pers.“/„Std. zusammen“ waren größer als die Zahl (.ul-feld .einheit 28px schlug .ul-team-zahl .einheit) – Entwurf */
+.ul-team-l15b .ul-team-zahl .einheit{font-size:calc(14rem / 17);line-height:1.15;font-weight:600}
+[dir="rtl"] .ul-team-l15b .ul-team-zahl .einheit{direction:rtl}

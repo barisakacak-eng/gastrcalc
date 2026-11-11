@@ -1,7 +1,9 @@
 // Welle 3 (Hochtouren 03.11.2026, Bildpaket W3): Büro-Bildschirm „Geld & Finanzamt“ – Baris Ja am 04.11.2026; live nach dem Prüfungsausschuss (06.11.).
 // Je Thema eine aufklappbare Karte (Überschrift + eine Zahl), Inhalt auf Tipp – Büro-Maß 120 Wörter. Nur Anzeige; Zahlen aus den Rechenkernen.
 import { nav } from "./nav.js";
-import { t } from "../i18n.js";
+import { t, sprache } from "../i18n.js";
+import { l15bAn } from "../data/l15b_texte.js";
+const tagPlusG3 = (d, n) => { const x = new Date(d + "T12:00:00Z"); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, wasBleibt, prueferBlick } from "../steuertopf.js";
@@ -10,12 +12,14 @@ import { monatEinfrieren, eingefroren, monatVergleich } from "../monatsabschluss
 import { BUNDESLAENDER } from "../feiertage.js";
 const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
 import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragen, schichtStunden } from "../schichten.js";
+import { offeneKlappen } from "./bausteine.js"; // Ausschuss P4 (Lauf 4): offene Karte bleibt nach einer Aktion offen
+const dk = (d) => `\u2066${datumLesbar(d).slice(0, 6)}\u2069`; // Lauf 4 (P4 C2): Datum im Arabischen isoliert, sonst „.10.12“
 let schichtEntwurf = { person: null, datum: null, von: "", bis: "" }; // W3b: Formular „Schicht eintragen“ (Entwurf bis zum Tipp)
 
 // Setzung 03.11.2026: unter 15 % Wareneinsatz aus Belegen fehlen vermutlich Belege (Richtsatz Imbiss ≈ 32 %) – dann keine Kennzahlen, nur dieser Hinweis
 const PLAUSIBEL_AB = 0.15;
 export const geld3An = () => true; // Baris Ja zu Bildpaket W3 (04.11.2026): kein Schalter mehr
-const karte = (id, titel, zahl, inhalt) => `<details class="karte auf g3-karte" data-g3="${id}"><summary><span><b>${esc(titel)}</b>${zahl ? `<small class="g3-zahl">${zahl}</small>` : ""}</span></summary>${inhalt}</details>`;
+const karte = (id, titel, zahl, inhalt) => `<details class="karte auf g3-karte" data-g3="${id}" data-klapp="g3-${id}"${offeneKlappen.has("g3-" + id) ? " open" : ""}><summary><span><b>${esc(titel)}</b>${zahl ? `<small class="g3-zahl">${zahl}</small>` : ""}</span></summary>${inhalt}</details>`;
 const z = (text, wert, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${wert}</span></div>`;
 
 export function geld3View(stand) {
@@ -27,8 +31,8 @@ export function geld3View(stand) {
   // 3.2 Termine
   const rh = stand.betrieb?.ustRhythmus || null; const tl = termineLaden(stand, H, 60).slice(0, 10); // Lauf 4, P3 C1: alle Termine der 60 Tage (vorher nur 4)
   const rhChips = `<div class="chips">${["monat", "quartal"].map((w) => `<button type="button" class="chip klein ${rh === w ? "an" : ""}" data-a="g3-rhythmus" data-wert="${w}" aria-pressed="${rh === w}">${esc(t("w3.termine." + w))}</button>`).join("")}</div>`;
-  const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(datumLesbar(tl[0].datum).slice(0, 6)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}`}
-    ${!rh && !ku ? z(t("w3.termine.art.ust"), esc(t("w3.termine.rhythmusWaehlen"))) : "" /* Lauf 4, P3 C3 */}${tl.map((x) => z(t("w3.termine.art." + x.art), esc(datumLesbar(x.datum).slice(0, 6)) + (x.verschoben ? " *" : "") + (x.art === "sv" && x.nachweis ? " · " + esc(t("w3.termine.nachweis", datumLesbar(x.nachweis).slice(0, 6))) : "" /* Lauf 4, P3 C2: Beitragsnachweis */))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
+  const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(dk(tl[0].datum)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}`}
+    ${!rh && !ku ? z(t("w3.termine.art.ust"), esc(t("w3.termine.rhythmusWaehlen"))) : "" /* Lauf 4, P3 C3 */}${tl.map((x) => z(t("w3.termine.art." + x.art), esc(dk(x.datum)) + (x.verschoben ? " *" : "") + (x.art === "sv" && x.nachweis ? " · " + esc(t("w3.termine.nachweis", dk(x.nachweis))) : "" /* Lauf 4, P3 C2: Beitragsnachweis */))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
     ${tl.some((x) => x.verschoben) ? `<small>${esc(t("w3.termine.verschoben"))}</small>` : ""}<small>${esc(t("w3.termine.erinnerung"))}</small>`);
   // 3.4 Was bleibt
   // 3.4/3.5 auf dem letzten vollen Monat (mitten im Monat stünden volle Monatskosten gegen halben Umsatz); ohne Vormonat mit Umsatz: noch nichts
@@ -47,13 +51,17 @@ export function geld3View(stand) {
   const lq = liquiditaetLaden(stand, H); const geld = stand.liquiditaet;
   const lqZahl = lq.tiefster ? (lq.reicht ? esc(t("w3.geld.reicht")) : `≈ ${esc(fmtEuro(lq.fehlt))}`) : "";
   const liq = karte("geld", t("w3.geld.titel"), lqZahl, `<div class="feldzeile"><label>${esc(t("w3.geld.frage"))}</label><div class="betrag"><input inputmode="decimal" data-f="g3-geld" value="${geld ? esc(wertAnzeige(geld.betrag)) : ""}" placeholder="0"><span class="einheit">€</span></div></div>
-    ${lq.tiefster ? `<p>${esc(lq.reicht ? t("w3.geld.reichtSatz", datumLesbar(lq.bis).slice(0, 6)) : t("w3.geld.fehltSatz", datumLesbar(lq.tiefster.datum).slice(0, 6), fmtEuro(lq.fehlt)))}</p>${z(t("w3.geld.tiefster"), `≈ ${esc(fmtEuro(lq.tiefster.betrag))} · ${esc(datumLesbar(lq.tiefster.datum).slice(0, 6))}`)}<small>${esc(t("w3.geld.knapper"))}</small>`
+    ${lq.tiefster ? `<p>${esc(lq.reicht ? t("w3.geld.reichtSatz", dk(lq.bis)) : t("w3.geld.fehltSatz", dk(lq.tiefster.datum), fmtEuro(lq.fehlt)))}</p>${z(t("w3.geld.tiefster"), `≈ ${esc(fmtEuro(lq.tiefster.betrag))} · ${esc(dk(lq.tiefster.datum))}`)}<small>${esc(t("w3.geld.knapper"))}</small>`
       : `<small>${esc(t(lq.fehlt === "umsatz" ? "w3.geld.ohneUmsatz" : "w3.geld.ohneGeld"))}</small>`}${lq.nachfragen && geld ? `<small class="marke offen">${esc(t("w3.geld.neu"))}</small>` : ""}`);
   // 3.8 Schichten
   const von = monat + "-01"; const pers = (stand.personen || []).filter((p) => !p.entfernt);
-  const zeilen = pers.map((p) => { const s = schichtenAusLaden(stand, p.id, von, H); if (!s.length) return ""; const zs = zaehlerSumme(s, { land: stand.betrieb?.bundesland || "BW" });
+  const zeilenFuer = (von, H) => pers.map((p) => { const s = schichtenAusLaden(stand, p.id, von, H); if (!s.length) return ""; const zs = zaehlerSumme(s, { land: stand.betrieb?.bundesland || "BW" });
     const mini = p.lohnArt === "minijob" ? ` · ${t("w3.schicht.minijob", fmtZahl(zs.gesamt, 1), fmtZahl(minijobGrenzeStunden(H), 2))}` : "";
     return z(p.kuerzel || p.name || "?", esc(t("w3.schicht.zeile", fmtZahl(zs.gesamt, 1), fmtZahl(zs.nacht25 + zs.nacht40, 1), fmtZahl(zs.sonntag + zs.feiertag125 + zs.feiertag150, 1)) + mini)); }).join("");
+  const zeilen = zeilenFuer(von, H);
+  // Lauf 4 (P5 C2), Entwurf hinter window.__gcL15b: auch der Vormonat ist sichtbar (vorher nur der laufende Monat)
+  const vorm = (() => { if (!l15bAn()) return ""; const d = new Date(Number(monat.slice(0, 4)), Number(monat.slice(5, 7)) - 2, 1); const vm = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const r = zeilenFuer(vm + "-01", tagPlusG3(von, -1)); return r ? `<small class="marke">${esc(d.toLocaleDateString(sprache(), { month: "long", year: "numeric" }))}</small>${r}` : ""; })();
   // W3b: Schicht im Büro eintragen (Beginn/Ende je Person) – die Laden-Eingabe „Mitarbeiter heute“ bleibt, wie sie ist
   const se = schichtEntwurf; const sp = se.person || pers[0]?.id || ""; const sd = se.datum || H;
   const form = !w3b() ? "" : !pers.length ? `<div class="g3-schicht-form"><p class="hinweis">${esc(t("w3b.schicht.keinTeam"))}</p><button type="button" class="knopf zweit" data-a="kuehl-einrichtung-oeffnen">${esc(t("kuehl.einrichtungAendern"))}</button></div>` /* Lauf 4, P1 C2: Weg zum Team */ : `<div class="g3-schicht-form"><b>${esc(t("w3b.schicht.titel"))}</b>
@@ -61,15 +69,15 @@ export function geld3View(stand) {
     <input type="date" data-f="g3-s-datum" value="${esc(sd)}" aria-label="${esc(t("w3b.schicht.datum"))}">
     <div class="g3-zeiten"><input type="time" data-f="g3-s-von" value="${esc(se.von)}" aria-label="${esc(t("teamTag.von"))}"><span aria-hidden="true">–</span><input type="time" data-f="g3-s-bis" value="${esc(se.bis)}" aria-label="${esc(t("teamTag.bis"))}"></div>
     <button type="button" class="knopf zweit" data-a="g3-schicht">${esc(t("w3b.schicht.knopf"))}</button></div>`;
-  const letzte = !w3b() ? "" : (stand.schichten || []).filter((x) => !x.storniert && x.datum >= von).slice(-5).reverse().map((x) => z(`${datumLesbar(x.datum).slice(0, 6)} · ${(pers.find((p) => p.id === x.person) || {}).kuerzel || "?"}`, `${esc(x.von)}–${esc(x.bis)} · ${esc(t("w3b.schicht.std", fmtZahl(schichtStunden(x.von, x.bis), 2)))}`)).join("");
-  const schicht = karte("schicht", t("w3.schicht.titel"), "", (zeilen || `<p>${esc(t("w3.schicht.leer"))}</p>`) + letzte + form) ;
+  const letzte = !w3b() ? "" : (stand.schichten || []).filter((x) => !x.storniert && x.datum >= von).slice(-5).reverse().map((x) => z(`${dk(x.datum)} · ${(pers.find((p) => p.id === x.person) || {}).kuerzel || "?"}`, `${esc(x.von)}–${esc(x.bis)} · ${esc(t("w3b.schicht.std", fmtZahl(schichtStunden(x.von, x.bis), 2)))}`)).join("");
+  const schicht = karte("schicht", t("w3.schicht.titel"), "", (zeilen || `<p>${esc(t("w3.schicht.leer"))}</p>`) + vorm + letzte + form) ;
   // W3b: Sitz der Krankenkasse (nur mit Personal) und Monat abschließen
   const kasse = !w3b() || !(stand.personen || []).some((p) => !p.entfernt) ? "" : `<label class="feldzeile g3-kasse"><span>${esc(t("w3b.kasse.frage"))}</span><select data-f="g3-svland"><option value="">${esc(t("w3b.kasse.weissNicht"))}</option>${BUNDESLAENDER.map((l) => `<option value="${l.code}" ${stand.betrieb?.svLand === l.code ? "selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>`;
   const termine2 = kasse ? termine.replace("</details>", kasse + "</details>") : termine;
   let monatKarte = "";
   if (w3b()) { const ab = eingefroren(stand, vm); const vgl = ab ? monatVergleich(stand, vm) : null; const mname = vm.split("-").reverse().join(".");
     monatKarte = karte("monat", t("w3b.monat.titel"), ab ? esc(t("w3b.monat.zu")) : vmDa ? esc(t("w3b.monat.offen")) : "",
-      ab ? `<p>${esc(t("w3b.monat.abgeschlossen", mname, datumLesbar(ab.eingefroren.slice(0, 10)).slice(0, 6)))}</p>${z(t("w3b.monat.umsatz"), esc(fmtEuro(ab.umsatzBrutto)))}${vgl?.zumVormonat ? z(t("w3b.monat.zumVormonat"), `${vgl.zumVormonat.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVormonat.umsatz)))}`) : ""}${vgl?.zumVorjahr ? z(t("w3b.monat.zumVorjahr"), `${vgl.zumVorjahr.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVorjahr.umsatz)))}`) : ""}`
+      ab ? `<p>${esc(t("w3b.monat.abgeschlossen", mname, dk(ab.eingefroren.slice(0, 10))))}</p>${z(t("w3b.monat.umsatz"), esc(fmtEuro(ab.umsatzBrutto)))}${vgl?.zumVormonat ? z(t("w3b.monat.zumVormonat"), `${vgl.zumVormonat.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVormonat.umsatz)))}`) : ""}${vgl?.zumVorjahr ? z(t("w3b.monat.zumVorjahr"), `${vgl.zumVorjahr.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVorjahr.umsatz)))}`) : ""}`
         : vmDa ? `<p>${esc(t("w3b.monat.satz"))}</p><button type="button" class="knopf" data-a="g3-monat-zu">${esc(t("w3b.monat.knopf", mname))}</button>` : `<p>${esc(t("w3.bleibt.ersterMonat"))}</p>`); }
   return `<div class="kopfband"><h1>${esc(t("w3.titel"))}</h1><div class="unter">${esc(t("w3.unter"))}</div></div>
     <div class="inhalt buero g3">${topf}${termine2}${bleibt}${pruefer}${monatKarte}${liq}${schicht}<p class="hinweis">${esc(t("w3.fuss"))}</p></div>${nav("geld3")}`; // Ausschuss Lauf 3, P3 B1: Kopfleiste mit „‹ Zurück“

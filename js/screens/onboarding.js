@@ -7,6 +7,7 @@ import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
 import { installZustand } from "../homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1)
 import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache as aktiveSprache } from "../i18n.js";
+import { l15b } from "../data/l15b_texte.js"; // Lauf 4 (P1 C6): Zwischenstand meint alle festen Kosten, Entwurf
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6 (17.10.2026)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from "../util.js";
 import { reinigungVon, putzzeitMonat } from "../reinigung.js";
@@ -216,7 +217,7 @@ function kostenSchritt(kat) {
               </div>`;
           }).join("")}
         </div>
-        <p class="hinweis">${esc(t("kosten.zwischenstand", fmtEuro(fk.gesamt)))}</p>`;
+        <p class="hinweis">${esc(l15b(aktiveSprache(), "zwischenstand", fmtEuro(fk.gesamt)) ?? t("kosten.zwischenstand", fmtEuro(fk.gesamt)))}</p>`;
     },
     fuss(stand) {
       const aktiv = stand.kosten.some((k) => k.kategorie === kat && k.status !== "aus");

@@ -3,7 +3,7 @@ import test, { mock } from "node:test";
 import assert from "node:assert/strict";
 import { leererBetrieb } from "../js/store.js";
 
-const text = (html) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+const text = (html) => html.replace(/<[^>]+>/g, " ").replace(/[\u2066-\u2069]/g, "").replace(/\s+/g, " ");
 function laden(extra = {}) { const s = leererBetrieb(); s.betrieb = { name: "T", format: "imbiss", ustRhythmus: "monat", rechtsform: "einzel", ...extra }; s.personen = [{ id: "p", kuerzel: "AB", aktiv: true }]; return s; }
 async function geld3Text(s, jetzt) {
   mock.timers.enable({ apis: ["Date"], now: jetzt });
@@ -67,4 +67,37 @@ test("P1 C2: ohne Team zeigt die Schicht-Karte den Weg zu „Kühlstellen und Te
 test("P1 C3: Datenschutz gibt es auf Türkisch und Arabisch, gleiche Abschnitte wie Deutsch", async () => {
   const { datenschutzText, DATENSCHUTZ } = await import("../js/data/datenschutz.js");
   for (const sp of ["tr", "ar"]) { const d = datenschutzText(sp); assert.notEqual(d, DATENSCHUTZ.en, sp); assert.equal(d.abschnitte.length, DATENSCHUTZ.de.abschnitte.length, sp); assert.doesNotMatch(JSON.stringify(d), /Privacy|Delete Zeki/); }
+});
+
+// P2 C3: „Am 04.01. fehlen ≈ 898 €“, aber „Tiefster Stand ≈ −897 €“ – beide Zahlen müssen gleich gerundet sein
+test("P2 C3: fehlt und tiefster Stand runden gleich", async () => {
+  const { liquiditaet } = await import("../js/liquiditaet.js"); const { fmtEuro } = await import("../js/util.js");
+  const r = liquiditaet({ start: 0, ab: "2027-01-01", wochen: 1, posten: [{ betrag: -897.3, datum: "2027-01-04" }] });
+  assert.equal(fmtEuro(r.fehlt), fmtEuro(-r.tiefster.betrag));
+});
+
+// P4 C2: Im Arabischen erschien „10.12.“ als „.10.12“ – jedes Datum auf „Geld & Finanzamt“ steht jetzt in einer LTR-Isolierung
+test("P4 C2: Daten auf Geld & Finanzamt sind bidi-isoliert", async () => {
+  mock.timers.enable({ apis: ["Date"], now: new Date(2027, 0, 1, 20, 0) });
+  try { const g = await import("../js/screens/geld3.js"); const html = g.geld3View(laden());
+    const nackt = html.replace(/⁦\d{2}\.\d{2}\.⁩/g, "").match(/>[^<]*\b\d{2}\.\d{2}\.(?!\d)/g) || [];
+    assert.deepEqual(nackt, []); } finally { mock.timers.reset(); }
+});
+
+// P4: Karte „Geld & Finanzamt“ klappte nach jeder Aktion zu – offene Karten bleiben jetzt offen (gleicher Weg wie die Einklapp-Bausteine)
+test("P4: geöffnete Geld-Karte bleibt nach dem Neuzeichnen offen", async () => {
+  const { offeneKlappen } = await import("../js/screens/bausteine.js"); const g = await import("../js/screens/geld3.js");
+  offeneKlappen.add("g3-termine");
+  try { assert.match(g.geld3View(laden()), /data-g3="termine" data-klapp="g3-termine" open/); } finally { offeneKlappen.delete("g3-termine"); }
+});
+
+// P5 C2: Schichten zeigten nur den laufenden Monat – im Entwurf L15b steht der Vormonat darunter
+test("P5 C2: mit L15b zeigt die Schichten-Karte auch den Vormonat", async () => {
+  const s = laden(); const pid = (s.personen || [])[0]?.id; assert.ok(pid, "Testladen ohne Person");
+  s.schichten = [{ id: "s1", person: pid, datum: "2026-12-20", von: "16:00", bis: "22:00" }];
+  mock.timers.enable({ apis: ["Date"], now: new Date(2027, 0, 1, 20, 0) });
+  try { const g = await import("../js/screens/geld3.js"); globalThis.__gcL15b = true;
+    const k = text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]); assert.match(k, /Dezember 2026 AB 6,0/);
+    globalThis.__gcL15b = false; assert.doesNotMatch(text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]), /Dezember 2026/); }
+  finally { globalThis.__gcL15b = false; mock.timers.reset(); }
 });

@@ -8,6 +8,7 @@ import { umsatzHeutePruefen, umsatzHeuteSpeichern } from "../laden_zahlen.js";
 import { nav } from "./nav.js";
 import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision, normalFrageNoetig, normalTagSetzen, teamStundenlohnSetzen } from "../stamm.js";
 import { sym } from "../symbole.js";
+import { l15bAn } from "../data/l15b_texte.js"; // Lauf 4 (P4 C3): Einheiten-Schrift der Team-Kacheln, Entwurf
 
 let teamEntwurf = { pers: null, std: null, satz: null }; let satzAuf = false; // Baris 27.10.2026 18:10: Mitarbeiter kompakt unter dem Umsatz (Personen, Stunden zusammen, Lohn je Stunde einmal)
 let lieferEntwurf = null; // „davon Lieferdienst“ (27.10.2026), nur wenn ein Portal mit Provision eingerichtet ist
@@ -103,7 +104,7 @@ function teamFeld(stand, H) {
   const unter = satzGemerkt && !satzAuf ? `<button type="button" class="ul-team-satz-zeile" data-a="ul-satz-auf">${esc(t("teamTag.kompaktKosten", fmtEuro(satzGemerkt, { dezimal: 2 }), kosten !== null ? fmtEuro(kosten, { dezimal: 0 }) : "–"))}</button>` : "";
   const zahl = (f, w, e, im) => `<label class="ul-team-zahl"><input inputmode="${im}" enterkeyhint="done" autocomplete="off" data-f="${f}" value="${esc(w)}" placeholder="0" aria-label="${esc(e)}"><span class="einheit">${esc(e)}</span></label>`;
   return `<div class="ul-feld ul-team-kompakt"><span class="ul-liefer-text">${esc(t("teamTag.heute"))}${unter}</span>
-      <div class="ul-team-zahlen">${zahl("ul-team-pers", pers, t("teamTag.pers"), "numeric")}${zahl("ul-team-std", std, t("teamTag.stdZusammen"), "decimal")}</div></div>
+      <div class="ul-team-zahlen${l15bAn() ? " ul-team-l15b" : ""}">${zahl("ul-team-pers", pers, t("teamTag.pers"), "numeric")}${zahl("ul-team-std", std, t("teamTag.stdZusammen"), "decimal")}</div></div>
     ${!satzGemerkt || satzAuf ? `<label class="ul-feld ul-liefer"><span class="ul-liefer-text">${esc(t("teamTag.satz"))}</span><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-f="ul-team-satz" value="${esc(teamEntwurf.satz ?? (satzGemerkt ? wertAnzeige(satzGemerkt) : ""))}" placeholder="0,00" aria-label="${esc(t("teamTag.satz"))}"><span class="einheit">€</span></label>` : ""}`;
 }
 function lieferFeld(stand, H) {
