@@ -98,7 +98,7 @@ test("P5 C2: mit L15b zeigt die Schichten-Karte auch den Vormonat", async () => 
   mock.timers.enable({ apis: ["Date"], now: new Date(2027, 0, 1, 20, 0) });
   try { const g = await import("../js/screens/geld3.js"); globalThis.__gcL15b = true;
     const k = text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]); assert.match(k, /Dezember 2026 AB 6,0/);
-    globalThis.__gcL15b = false; assert.doesNotMatch(text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]), /Dezember 2026/); }
+    /* Lauf 5: L15b ist Standard, kein Schalter mehr */ }
   finally { globalThis.__gcL15b = false; mock.timers.reset(); }
 });
 

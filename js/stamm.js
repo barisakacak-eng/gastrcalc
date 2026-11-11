@@ -1,5 +1,5 @@
 import { mindestlohnAm } from "./data/mindestlohn.js"; // Lauf 2 (4a): Richtwert für fehlenden Stundenlohn
-import { kostenJeStunde } from "./data/lohnkosten.js";
+import { kostenJeStunde, LOHN_AUFSCHLAG, LOHN_STANDARD } from "./data/lohnkosten.js";
 // Trennung (17.10.2026): Schreib-Funktionen für die Stammdaten eines Ladens (Betrieb, Team, Kosten, Kanäle, Reinigung,
 // Kühlstellen, Personen, Einrichtungs-Schalter). Vorher schrieben die Bildschirme (js/screens/*.js, app.js) diese Felder selbst.
 // Regel: die Bildschirme fragen nach (confirm), lesen Eingaben und rufen eine dieser Funktionen; danach speichert app.js.
@@ -229,6 +229,14 @@ export function kontaktSetzen(stand, art, email) {
 // stand.teamTage = [{ datum, eintraege: [{ person (id | null), name, stunden, satz }], keine, erfasst }] – je Datum gilt der jüngste Eintrag.
 // Welle 3 (3.8, 03.11.2026): Schichtzeiten „HH:MM“ je Eintrag, freiwillig; ohne Zeiten bleibt der Eintrag wie bisher (nur Stunden)
 const schichtZeit = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${m[1].padStart(2, "0")}:${m[2]}` : null; };
+// Lauf 5 (Baris 11.11. 23:14): Abgaben-Satz der eingetragenen Stunden im Zeitraum, gewichtet mit dem Brutto (Stunden × Stundenlohn; ohne Lohn zählen die Stunden).
+// Nur Einträge aus „Mitarbeiter heute“ – die Monats-Lohnsumme der Einrichtung enthält die Abgaben schon. Ergebnis: { satz, art: "angestellt" | "minijob" | "gemischt" } oder null.
+export function abgabenSatz(stand, von, bis) {
+  const tage = new Map(); for (const e of stand?.teamTage || []) if (e.datum >= von && e.datum <= bis) tage.set(e.datum, e); // je Datum gilt der jüngste Eintrag
+  let b = 0, k = 0; const arten = new Set();
+  for (const e of tage.values()) for (const x of e.keine ? [] : e.eintraege || []) { if (!(x.stunden > 0)) continue; const art = LOHN_AUFSCHLAG[x.art] ? x.art : LOHN_STANDARD; const w = x.stunden * (x.satz > 0 ? x.satz : 1); b += w; k += w * LOHN_AUFSCHLAG[art].satz; arten.add(art); }
+  return b > 0 ? { satz: k / b, art: arten.size > 1 ? "gemischt" : [...arten][0] } : null;
+}
 export const teamTag = (stand, datum) => [...(stand?.teamTage || [])].reverse().find((x) => x.datum === datum) || null;
 export function teamTagSetzen(stand, datum, eintraege) {
   stand.teamTage ??= [];
