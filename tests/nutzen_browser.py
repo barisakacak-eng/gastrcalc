@@ -37,10 +37,8 @@ async def pruefe_nutzen(pg, art, lang, width, out, pruefe_heute):
             else:
                 wert=await pg.evaluate("""async n=>{const{fmtEuro}=await import('./js/util.js');return fmtEuro(n,{dezimal:2})}""",erwartung['summe'])
                 assert await karte.locator('.h-nutzen-summe').inner_text()==wert
-                if erwartung['geschaetzt']>0:
-                    assert '≈' in await karte.locator('.h-nutzen-geschaetzt').inner_text()
-                    farben=await karte.evaluate("""k=>({ist:getComputedStyle(k.querySelector('.h-nutzen-geschaetzt')).color,soll:getComputedStyle(document.documentElement).getPropertyValue('--tinte-weich').trim()})""")
-                    assert farben['ist'] in ('rgb(98, 95, 87)',farben['soll']),farben
+                # Lauf 5 (L15b Standard, Baris 11.11.): im Laden nur Symbol und Summe – geschätzte Posten stehen nicht mehr im Laden
+                assert await karte.locator('.h-nutzen-geschaetzt').count()==0
             state='freundlich' if erwartung['summe']>0 else 'neutral'
             assert await pg.locator('.zeki-knopf .gc-bot--'+state+'.gc-motion--none').count()==1
             assert await karte.locator('button,a,input').count()==0,"Nutzenkarte führt keine zweite Hauptaktion ein"
