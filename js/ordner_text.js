@@ -82,6 +82,7 @@ export function paketUnter(teil, p) {
     return `${datumDe(l.datum)} · ${l.wert === null ? t("ordnerT.wertFehlt") : euro(l.wert)}${l.ohnePreis ? " · " + t("ordnerT.inventurPruefen", l.ohnePreis) : !(l.wert > 0) && l.wert !== null ? " · " + t("ordnerT.status.pruefen") : ""}`; }
   if (teil === "reinigung") return p.reinigung.zeilen.length ? t("ordner.zeile.reinigung", euro(p.reinigung.netto)) : t("ordner.zeile.keine");
   if (teil === "kosten") return p.kosten.zeilen.length ? t("ordnerT.kostenZeile", p.kosten.zeilen.length) : t("ordner.zeile.kostenKeine"); // W2-T: ohne eigenen Lohn
+  if (teil === "arbeitszeiten") { const a = p.arbeitszeiten; if (!a.zeilen.length) return t("w3b.az.leer"); const h = a.zeilen.reduce((s, x) => s + (x.stunden || 0), 0); return `${a.zeilen.length} · ${fmtZahl(h, 1)} h` + (a.ohneZeiten ? " · " + t("w3b.az.ohneZeiten", a.ohneZeiten) : ""); } // Lauf 4, P3 C4
   return "";
 }
 
@@ -129,12 +130,12 @@ function rueckText(x) {
   return "";
 }
 const KOPF_W2 = { muell: () => t("amtW2.muellKopfCsv"), rueck: () => t("amtW2.rueckKopfCsv"), kuehl: () => [...t("ordner.dok.kopf.kuehl"), t("amtW2.nachgetragenAm"), t("amtW2.lfd"), t("amtW2.abwStand")] };
-const kopfVon = (teil) => (KOPF_W2[teil] ? KOPF_W2[teil]() : teil === "belege" ? [t("ordnerC.belegNr"), ...t("ordnerT.kopf.belege")] : ["umsatz", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-H + W2-T; Paket C: Beleg-Nr.
+const kopfVon = (teil) => (teil === "arbeitszeiten" ? t("w3b.az.kopf") : KOPF_W2[teil] ? KOPF_W2[teil]() : teil === "belege" ? [t("ordnerC.belegNr"), ...t("ordnerT.kopf.belege")] : ["umsatz", "kosten", "aenderungen"].includes(teil) ? t("ordnerT.kopf." + teil) : t("ordner.dok.kopf." + teil)); // W2-H + W2-T; Paket C: Beleg-Nr.
 
 // Paket C (19.10.2026): Was der Inhaber selbst beilegt (Originale aus Kasse, Bank, Lieferant, Amt) – je Ordner.
 // Grundlage: Kanzlei-Pendelordner und Behörden-Merkblätter (Recherche 19.10.2026, Projekt-Dokument „GastroCalc Recherche 1“).
 // 26.10.2026 getrennt: Monatliches zum Buchhalter, Jährliches zum Steuerberater (Grundlage zusätzlich Frankys Checkliste vom 24.10.2026 – nur Zweitquellen, vor dem Pilot mit einem Steuerberater klären).
-export const BEILAGEN = { buch: ["zbon", "karten", "bank", "rechnungen", "ausgang", "arbeitszeiten", "bewirtung"], steuer: ["geraete", "darlehen", "vertraege", "kassenzaehl", "fapost"], amt: ["lieferscheine", "ifsg", "schaedling", "haccp"] };
+export const BEILAGEN = { buch: ["zbon", "karten", "bank", "rechnungen", "ausgang", "bewirtung"] /* Lauf 4, P3 C4: Arbeitszeiten liefert die App selbst */, steuer: ["geraete", "darlehen", "vertraege", "kassenzaehl", "fapost"], amt: ["lieferscheine", "ifsg", "schaedling", "haccp"] };
 // Erster Abschnitt jedes Ordners: Inhalt (was die App liefert, mit Stand) und Beilagen (was du beilegst). dok = fertiges Druckmodell.
 export function inhaltAbschnitt(dok, art) {
   const zeilen = []; let nr = 0;
@@ -224,7 +225,7 @@ export function csvDateien(stand, ansicht, nurTeil = null, wahl = {}) { // Beisp
     return AMT_TEILE.filter((x) => !nurTeil || x === nurTeil).map((teil) => ({ name: dateiName(stand, dateiTeil(teil), z), text: mitBeispiel(stand, amtCsv(o, teil, kopfVon(teil), n)) })); }
   const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const z = paketZeitVon(wahl.paketMonat, art, H, stand?.angelegt); const p = monatsPaket(stand, z, art);
   const teile = nurTeil ? p.teile.filter((x) => x === nurTeil) : [...p.teile, "aenderungen"]; // W2-T: Aenderungen.csv gehört zu jedem Monatspaket
-  return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : t("ordner.datei." + teil), z), text: mitBeispiel(stand, teilCsv(p, teil, kopfVon(teil), n)) }));
+  return teile.map((teil) => ({ name: dateiName(stand, teil === "aenderungen" ? t("ordnerT.datei") : teil === "arbeitszeiten" ? t("w3b.az.titel") : t("ordner.datei." + teil), z), text: mitBeispiel(stand, teilCsv(p, teil, kopfVon(teil), n)) }));
 }
 export function dokumentFuer(stand, ansicht, wahl = {}) {
   const H = heute();

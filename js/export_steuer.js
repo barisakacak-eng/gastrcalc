@@ -9,6 +9,7 @@ import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
 import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
+import { arbeitszeitListe } from "./schichten.js"; // Lauf 4, P3 C4
 import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt 27.10.2026: Lieferanteil in der Tagesliste
 
 // ---------- CSV ----------
@@ -246,7 +247,7 @@ export function festeKosten(stand, z) {
 // Vollständigkeit (W2-T, Prüfung p04 Nr. 2): nur Belege, Kosten und Listen zählen. Tagesumsätze sind Notizen (Stand "notiz"),
 // maßgeblich ist die Kasse – sie machen den Ordner nie „vollständig“.
 // Ordner getrennt (Baris Ja 26.10.2026): Buchhalter = jeden Monat alles zum Buchen; Steuerberater = einmal im Jahr alles zum Abschluss.
-export const TEILE = { steuer: ["inventur", "schwund", "personal"], buch: ["umsatz", "belege", "kosten", "personal", "reinigung"] };
+export const TEILE = { steuer: ["inventur", "schwund", "personal"], buch: ["umsatz", "belege", "kosten", "personal", "reinigung", "arbeitszeiten"] }; // Lauf 4, P3 C4: Arbeitszeiten als eigener Teil mit CSV
 // Jahr des Steuerberater-Pakets: 1.1. bis 31.12. (laufendes Jahr bis heute). monat trägt das Jahr ("JJJJ"), damit Vergleiche gleich bleiben.
 export function jahrVon(jahr, H = heute()) {
   const j = String(jahr); const bis = j === H.slice(0, 4) ? H : `${j}-12-31`;
@@ -261,9 +262,10 @@ export function monatsPaket(stand, z, art = "steuer") {
   if (teile.includes("inventur")) p.inventur = inventurwerte(stand, z);
   if (teile.includes("reinigung")) p.reinigung = reinigungsmittel(stand, z);
   if (teile.includes("kosten")) p.kosten = festeKosten(stand, z);
+  if (teile.includes("arbeitszeiten")) p.arbeitszeiten = arbeitszeitListe(stand, z.von, z.bis);
   p.aenderungen = aenderungen(stand, z);
   p.stand = Object.fromEntries(teile.map((t) => [t, teilStand(p, t)]));
-  p.pruefTeile = teile.filter((t) => !["umsatz", "personal", "reinigung"].includes(t)); // 26.10.2026: Personalessen und Reinigungsmittel sind Zusatz – leer zählt nicht als „fertig“
+  p.pruefTeile = teile.filter((t) => !["umsatz", "personal", "reinigung", "arbeitszeiten"].includes(t)); // 26.10.2026: Personalessen und Reinigungsmittel sind Zusatz – leer zählt nicht als „fertig“
   p.vollstaendig = p.pruefTeile.filter((t) => p.stand[t] === "ok").length;
   return p;
 }
@@ -275,6 +277,7 @@ function teilStand(p, t) {
   if (t === "schwund") return p.schwund.ohneWert ? "luecke" : "ok";
   if (t === "personal") return p.personal.ohnePerson ? "pruefen" : "ok";
   if (t === "kosten") return !p.kosten.zeilen.length ? "luecke" : p.kosten.offen || p.kosten.geschaetzt ? "pruefen" : "ok";
+  if (t === "arbeitszeiten") return !p.arbeitszeiten.zeilen.length ? "ok" : p.arbeitszeiten.vollstaendig ? "ok" : "pruefen"; // Lauf 4: Zeiten ohne Beginn/Ende oder zu spät → prüfen
   return "ok"; // Reinigungsmittel: leer ist erlaubt
 }
 
@@ -288,6 +291,7 @@ export function teilCsv(p, teil, kopf, namen = {}) {
   if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [x.belegNr, datumDe(x.datum), csvCode(x.rechnungNr), x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, [x.hinweis ? n("hinweis", x.hinweis) : x.klein && namen.kleinbetrag ? namen.kleinbetrag() : "", x.nachgetragen && namen.nachgetragen ? namen.nachgetragen(datumDe(x.nachgetragen)) : ""].filter(Boolean).join(" · ")]));
   if (teil === "inventur") return csvText(kopf, p.inventur.zeilen.map((x) => [datumDe(x.datum), x.wert, x.gezaehlt, x.ohnePreis]), { dezimal: [0, 2, 0, 0] });
   if (teil === "reinigung") return csvText(kopf, p.reinigung.zeilen.map((x) => [datumDe(x.datum), x.lieferant, x.artikel, x.netto]));
+  if (teil === "arbeitszeiten") return csvText(kopf, p.arbeitszeiten.zeilen.map((x) => [datumDe(x.datum), x.wer, x.von || "", x.bis || "", x.stunden, x.erfasst ? datumDe(x.erfasst) : ""]), { dezimal: [0, 0, 0, 0, 2, 0] }); // Lauf 4, P3 C4
   if (teil === "kosten") return csvText(kopf, p.kosten.zeilen.map((x) => [n("posten", x.posten), x.betrag, n("periode", x.periode), n("basis", x.basis), x.jeMonat, n("pstatus", x.status)]));
   if (teil === "aenderungen") return csvText(kopf, p.aenderungen.zeilen.map((x) => [datumDe(x.datum), n("aart", x.art), n("vorgang", x.vorgang), x.art === "kosten" ? [n("stelle", x.stelle), x.text].filter(Boolean).join(" · ") : x.text, x.alt, x.neu, n("basis", x.basis), zeitDe(x.zeit)]));
   return csvText(kopf, []);

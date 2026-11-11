@@ -117,7 +117,7 @@ export function ordnerAmtView(stand) {
 }
 
 // ---------- Steuerberater und Buchhalter ----------
-const TEIL_SYM = { umsatz: "trending-up", personal: "users", schwund: "trash-2", belege: "receipt", inventur: "clipboard-list", reinigung: "spray-can", kosten: "calculator" };
+const TEIL_SYM = { umsatz: "trending-up", personal: "users", schwund: "trash-2", belege: "receipt", inventur: "clipboard-list", reinigung: "spray-can", kosten: "calculator", arbeitszeiten: "clock" };
 
 export function ordnerPaketView(stand, art) {
   const H = heute(); const z = paketZeit(art, H, stand); const p = monatsPaket(stand, z, art);
@@ -128,7 +128,7 @@ export function ordnerPaketView(stand, art) {
       <div class="b-monat"><button type="button" class="b-rund" data-a="ordner-monat" data-wert="-1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.vorJahr" : "ordner.zeit.vor"))}">${bsym("chevron-left")}</button><b>${esc(art === "steuer" ? t("ordner.zeit.jahr", z.jahr) : monatLang(z.von))}</b><button type="button" class="b-rund" data-a="ordner-monat" data-wert="1" aria-label="${esc(t(art === "steuer" ? "ordner.zeit.nachJahr" : "ordner.zeit.nach"))}" ${istAktuell ? "disabled" : ""}>${bsym("chevron-right")}</button></div>
       ${schickenKarte(stand, art)}
       ${standKarte(p.vollstaendig, p.pruefTeile.length, art === "steuer" ? "" : t("ordnerT.kasse"), t("ordnerT.allesDa"))}
-      <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
+      <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], teil === "arbeitszeiten" ? t("w3b.az.titel") : t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
       ${art === "steuer" ? fragenKarte(stand) : ""}
       ${beilagenKarte(art, stand, z.monat)}
       ${knoepfe()}

@@ -25,10 +25,10 @@ export function geld3View(stand) {
   const topf = ku ? karte("topf", t("w3.topf.titel"), "", `<p>${esc(t("w3.topf.klein"))}</p>`)
     : karte("topf", t("w3.topf.titel"), st ? `≈ ${esc(fmtEuro(Math.max(0, st.zahllast)))}` : "", `${z(t("w3.topf.monat"), `≈ ${esc(fmtEuro(Math.max(0, st?.zahllast || 0)))}`)}${z(t("w3.topf.heute"), `≈ ${esc(fmtEuro(tag?.topf || 0, { dezimal: 2 }))}`)}<small class="marke geschaetzt">${esc(t("w3.topf.schaetzung"))}</small>`);
   // 3.2 Termine
-  const rh = stand.betrieb?.ustRhythmus || null; const tl = termineLaden(stand, H, 60).slice(0, 4);
+  const rh = stand.betrieb?.ustRhythmus || null; const tl = termineLaden(stand, H, 60).slice(0, 10); // Lauf 4, P3 C1: alle Termine der 60 Tage (vorher nur 4)
   const rhChips = `<div class="chips">${["monat", "quartal"].map((w) => `<button type="button" class="chip klein ${rh === w ? "an" : ""}" data-a="g3-rhythmus" data-wert="${w}" aria-pressed="${rh === w}">${esc(t("w3.termine." + w))}</button>`).join("")}</div>`;
   const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(datumLesbar(tl[0].datum).slice(0, 6)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}`}
-    ${tl.map((x) => z(t("w3.termine.art." + x.art), esc(datumLesbar(x.datum).slice(0, 6)) + (x.verschoben ? " *" : ""))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
+    ${!rh && !ku ? z(t("w3.termine.art.ust"), esc(t("w3.termine.rhythmusWaehlen"))) : "" /* Lauf 4, P3 C3 */}${tl.map((x) => z(t("w3.termine.art." + x.art), esc(datumLesbar(x.datum).slice(0, 6)) + (x.verschoben ? " *" : "") + (x.art === "sv" && x.nachweis ? " · " + esc(t("w3.termine.nachweis", datumLesbar(x.nachweis).slice(0, 6))) : "" /* Lauf 4, P3 C2: Beitragsnachweis */))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
     ${tl.some((x) => x.verschoben) ? `<small>${esc(t("w3.termine.verschoben"))}</small>` : ""}<small>${esc(t("w3.termine.erinnerung"))}</small>`);
   // 3.4 Was bleibt
   // 3.4/3.5 auf dem letzten vollen Monat (mitten im Monat stünden volle Monatskosten gegen halben Umsatz); ohne Vormonat mit Umsatz: noch nichts
