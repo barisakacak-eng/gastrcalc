@@ -55,7 +55,7 @@ export function umsatzView(stand) {
       ${streckeKarte(z, st)}
       ${prognoseKarte(z, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
       ${gesternKarte(stand, z, D)}
-      ${rechnungKarte(z)}
+      ${rechnungKarte(z, stand)}
       ${monatKarte(z, D, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
       ${preiseKarte(stand, D)}
       <button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("zaehler.listen"))}</b><small>${esc(t("zaehler.listenKurz"))}</small></span><span class="pfeil">›</span></button>
@@ -98,7 +98,7 @@ function gesternKarte(stand, z, D) {
     <small class="marke">${(() => { const b = (() => { try { return heuteZiel(stand, z, D).bewegung; } catch { return null; } })(); return !b || Math.abs(b.betrag) < 1 ? "" : esc(b.betrag <= 0 ? t("zaehler.naeher", fmtEuro(-b.betrag)) : t("zaehler.weiterWeg", fmtEuro(b.betrag))); })()}${sw.muellwert > 0 && z.stufe !== 3 ? " " + esc(t("zaehler.tonneGefressen", fmtEuro(sw.muellwert, { dezimal: 2 }))) : ""}</small></div>`;
 }
 
-function rechnungKarte(z) {
+function rechnungKarte(z, stand) {
   const zeile = (text, v, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${v}</span></div>`;
   return `<details class="karte auf"><summary><h2>${esc(t("zaehler.soRechnet"))}</h2></summary>
     ${zeile(t("zaehler.fixBis"), fmtEuro(z.fix))}

@@ -41,7 +41,7 @@ test("Fortschritt: Getränke zählen nicht, geschätzt ist kein eigenes Rezept, 
 test("Heute: ohne eigenes Rezept steht Zekis feste Frage mit „Jetzt“ statt der Jetzt-dran-Karte, danach nicht mehr", () => {
   const s = laden(); const w = wurzelVon(s); navKontext(s, w);
   const html = startView(s, { wurzel: w });
-  assert.ok(text(html).includes(t("heute.rezeptErinnerung.frage")));
+  assert.ok(text(html).includes("Chef, Rezepturen schon eingetragen?")); // Lauf 5: L15b-Satz ist Standard
   assert.equal((html.match(/data-a="rezept-direkt"/g) || []).length, 2, "Satz und Knopf führen direkt zur Mengenfrage");
   assert.match(html, /class="zeki-zeile h-rezept-text/, "steht als Zekis Satz oben (ersetzt das Logo, kommt nicht dazu)");
   assert.equal((html.match(/class="jetzt h-jetzt/g) || []).length, 1, "nur eine Haupthandlung");

@@ -27,15 +27,14 @@ test("ohne Messung bleibt ausschließlich der Messbeginn, auch bei vorhandener S
 test("groß steht nur die gelieferte Summe; geschätzte Posten bleiben separat mit ≈", () => {
   const html = nutzenKarte({ ...leer, leer: false, summe: 96, geschaetzt: 60 });
   assert.match(html, new RegExp(`h-nutzen-summe">${fmtEuro(96, { dezimal: 2 })}`));
-  assert.ok(html.includes(`≈ ${fmtEuro(60, { dezimal: 2 })}`));
+  // Lauf 5 (L15b Standard, Baris 11.11.): im Laden nur Symbol und Summe; die geschätzten Posten stehen nicht mehr im Laden
   assert.ok(!html.includes(fmtEuro(156, { dezimal: 2 })), "keine Addition im Bildschirm");
-  assert.match(html, /h-nutzen-geschaetzt/);
+  assert.doesNotMatch(html, /h-nutzen-geschaetzt/);
 });
 
 test("Postenquelle wird maskiert und kann kein HTML einschleusen", () => {
   const html = nutzenKarte({ ...leer, leer: false, summe: 0, posten: [{ ...leer.posten[0], quelle: '<img src=x onerror="boom">' }] });
-  assert.doesNotMatch(html, /<img|<script/);
-  assert.match(html, /&lt;img/);
+  assert.doesNotMatch(html, /<img|<script/); // Lauf 5: Quelle steht nicht mehr im Laden (L15b)
   assert.match(html, /h-nutzen-null/);
 });
 
