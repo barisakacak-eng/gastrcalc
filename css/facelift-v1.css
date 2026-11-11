@@ -1302,3 +1302,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(-
    der Wert schrumpft nie, der Text links bricht um. */
 .summenzeile > .wert{flex:none;white-space:nowrap;margin-inline-start:8px}
 .summenzeile > span:first-child{flex:1 1 auto;min-width:0}
+/* Lauf 4 (11.11.2026), Bildpaket L15b – nur wirksam mit window.__gcL15b (Klassen entstehen nur dann) */
+.h-nutzen-l15b{padding:8px 12px}
+.h-nutzen-l15b summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;min-height:44px}
+.h-nutzen-l15b summary::-webkit-details-marker{display:none}
+.h-nutzen-l15b summary .sym{width:22px;height:22px;color:var(--kraut,#2f5d3a)}
+.h-nutzen-l15b .h-nutzen-summe{font-size:1.15rem}
+.h-nutzen-l15b[open] .h-nutzen-titel{display:block;margin-top:4px;font-size:.9rem;opacity:.8}
+.kl-kurz .kl-pruefen-kopf{margin:4px 6px 2px;font-size:.92rem;font-weight:600;color:var(--gelb-tief,#8a6a00)}

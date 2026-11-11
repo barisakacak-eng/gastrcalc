@@ -97,6 +97,17 @@ def ausschluss_fuer(stand, name):
     return s
 
 
+DATUMSNAMEN_JS = """() => { const sp = document.documentElement.lang || 'de'; const out = new Set();
+  for (const o of [{ month: 'short' }, { month: 'long' }, { weekday: 'short' }, { weekday: 'long' }])
+    for (let i = 0; i < 12; i++) { try { const t = new Intl.DateTimeFormat(sp, o).format(new Date(2026, i, 1 + i)); for (const w of t.split(/\\s+/)) out.add(w.replace(/[.,،]/g, '').toLowerCase()); } catch (e) {} }
+  return [...out]; }"""
+
+
+async def datumsnamen(pg):
+    """Lauf 4 (11.11.2026): Monats- und Wochentagsnamen der App-Sprache gehören zum Datum (Regel „Zahlen zählen nicht“), nicht nur die deutschen."""
+    return set(await pg.evaluate(DATUMSNAMEN_JS))
+
+
 async def messen(pg, wurzel, ausschluss):
     return await pg.evaluate(MESSEN_JS, {"wurzel": wurzel, "ausschluss": sorted(ausschluss), "verboten": VERBOTEN, "absatzWoerter": ABSATZ_WOERTER, "tippSoll": TIPP_SOLL})
 
@@ -129,7 +140,7 @@ async def lauf(b, breite, hoehe, fehler):
     stand_mess = {}; befunde = []
     try:
         await schnellstart.schnellstart(pg, PORT, name="Döner Test")
-        stand = await pg.evaluate("window.__gastrocalc.stand"); aus = ausschluss_fuer(stand, "Döner Test")
+        stand = await pg.evaluate("window.__gastrocalc.stand"); aus = ausschluss_fuer(stand, "Döner Test") | await datumsnamen(pg)
         # Lauf 2 (31.10.2026): in tr/ar zeigt die App Artikel- und Gerichtnamen übersetzt (i18n.artikelText/gerichtText) – auch die sind Daten, keine Erklärwörter
         for n in await pg.evaluate("""async () => { const i = await import('./js/i18n.js'); const s = window.__gastrocalc.stand;
             return [...(s.artikel || []).map((a) => i.artikelText(a.name)), ...(s.gerichte || []).map((g) => i.gerichtText(g.name))]; }"""):

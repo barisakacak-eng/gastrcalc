@@ -1,3 +1,4 @@
+import { l15b, l15bAn } from "../data/l15b_texte.js"; // Lauf 4, Bildpaket L15b (Entwurf hinter window.__gcL15b)
 import { datenschutzText } from "../data/datenschutz.js";
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
@@ -40,7 +41,7 @@ export function startView(stand, extra = {}) {
     <div class="inhalt cockpit heute-laden ${burgerPilot ? "pilot-burger" : "pilot-doener"} hat-nutzen">
       <div class="h-kopf"><div><div class="h-ladenname">${esc(stand.betrieb.name || t("menue.deinLaden"))}</div></div><div class="h-datum">${esc(tagKurz(H))}</div></div>
       ${heuteZielKarte(stand, z, H)}
-      ${zielTexte(stand, z, H).fehlt ? "" : homeKarteLaden(extra.home)} <!-- Setzung 01.11.2026: Fehlt noch Miete/Lohn, hat Heute schon eine Haupthandlung; der Home-Hinweis wartet (15-Wörter-Budget, work_integration_browser) -->
+      ${zielTexte(stand, z, H).fehlt || l15bAn() /* L15b-Entwurf: Home-Hinweis nur im Büro (Sicherung) */ ? "" : homeKarteLaden(extra.home)} <!-- Setzung 01.11.2026: Fehlt noch Miete/Lohn, hat Heute schon eine Haupthandlung; der Home-Hinweis wartet (15-Wörter-Budget, work_integration_browser) -->
       ${nutzenKarte(nutzen)}
       <div class="h-kacheln h-reihe">${heuteKachelnLaden(stand, ks, H)}</div>
       ${zekiReihe(stand, H, dran, { ...extra, fehlt: heuteZiel(stand, z, H).fehlt ?? null })}
@@ -55,6 +56,8 @@ export function nutzenKarte(nutzen) {
   if (nutzen.leer) return `<section class="karte h-nutzen h-nutzen-leer" aria-label="${esc(t("nutzen.titel"))}"><span data-t="nutzen.laueft">${esc(nutzen.ab ? t("nutzen.laueft", datumLesbar(nutzen.ab)) : t("nutzen.start"))}</span></section>`;
   const symbole = { muell: "trash-2", preis: "receipt", lager: "package", papier: "file-text" };
   const geschaetzte = nutzen.posten.filter((p) => !p.gemessen && !p.verlust && typeof p.euro === "number" && p.euro > 0); // W2-K1: Schwund-Verdacht steht nicht unter „gespart“
+  // L15b-Entwurf: im Laden nur die Zahl; „Gespart pro Woche“ und die Posten erst auf Tipp (aufklappbar)
+  if (l15bAn()) return `<details class="karte h-nutzen h-nutzen-l15b ${nutzen.summe > 0 ? "h-nutzen-plus" : "h-nutzen-null"}"><summary aria-label="${esc(t("nutzen.titel"))}: ${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}">${sym("wallet")}<b class="h-nutzen-summe">${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}</b></summary><span class="h-nutzen-titel">${esc(t("nutzen.titel"))}</span></details>`;
   return `<section class="karte h-nutzen ${nutzen.summe > 0 ? "h-nutzen-plus" : "h-nutzen-null"}" aria-label="${esc(t("nutzen.titel"))}" aria-description="${esc(nutzen.posten.filter((p) => p.gemessen).map((p) => p.quelle).join(" · "))}">
     <span class="h-nutzen-titel" data-t="nutzen.titel">${esc(t("nutzen.titel"))}</span>
     <b class="h-nutzen-summe">${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}</b>
@@ -149,7 +152,7 @@ export function zekiReihe(stand, H, dran, extra = {}) {
   // Mengenfrage). Sie ersetzt die Zeile (15-Wörter-Regel) und geht der Zeki-Rotation vor; nur ein Kühl-Alarm bleibt wichtiger.
   // Eine Haupthandlung (Gegenprüfung 28.10.2026): fehlt noch Miete oder Personal (heuteZiel().fehlt), kommt das zuerst – das Rezept wartet.
   const r = rezeptFortschritt(stand);
-  if (r.gesamt && !r.mit && dran?.id !== "kuehlAlarm" && !extra.fehlt) { const frage = t("heute.rezeptErinnerung.frage"), jetzt = t("heute.rezeptErinnerung.knopf");
+  if (r.gesamt && !r.mit && dran?.id !== "kuehlAlarm" && !extra.fehlt) { const frage = l15b(sprache(), "rezeptFrage") ?? t("heute.rezeptErinnerung.frage"), jetzt = t("heute.rezeptErinnerung.knopf");
     return `<button type="button" class="zeki-zeile h-rezept-text a-gelb" data-a="rezept-direkt" dir="auto">${esc(frage)}</button>
       <div class="h-zeki h-zeki--ohne-figur h-rezept"><button type="button" class="jetzt h-jetzt h-haupt h-rezept-jetzt normal" data-a="rezept-direkt" data-ort="heute" aria-label="${esc(frage)} ${esc(jetzt)}"><span class="ks">${sym("scale")}</span><span class="h-jetzt-text"><b>${esc(jetzt)}</b></span>${sym("chevron-right", "h-pfeil")}</button></div>`; }
   return dran ? `<div class="h-zeki h-zeki--ohne-figur">${jetztKarte(dran)}</div>` : "";
