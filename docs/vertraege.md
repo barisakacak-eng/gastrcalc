@@ -105,3 +105,33 @@ Jede Zahl mit Quelle und Abrufdatum; Setzungen sind eigene Schwellen ohne Branch
 | Einkauf nächste Woche (2.7) | Summe Bestellvorschlag, bestellen in den nächsten 7 Tagen | `js/ware.js` einkaufNaechsteWoche | Rechnung |
 
 Nach Register „Zahlen und Fristen“ 28.10.2026 (ab 16:30 maßgeblich): BGN ≈ 1,04 % des Bruttoentgelts im Arbeitgeber-Aufschlag (angestellt ≈ 24,88 %, Minijob ≈ 32,21 %, immer ≈, hängt an der Krankenkasse); Sachbezug SvEV nach Datum (2026: 2,37/4,57 €; ab 01.01.2027 geplant 2,43/4,70 €); Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage als ≈ Lohnkosten (`sachbezugAbgabenMonat`), die Ware selbst nicht doppelt. Pauschbetrag 2027 nicht vorab eingebaut. Feiertage BW 2026/2027 per Test gegen das Register geprüft (Gründonnerstag kein Feiertag). Aufbewahrung Belege 8 Jahre (Hinweis-Karte).
+
+## 5. Abgleich, Einlesen und Sicherung (Lauf 6, Etappe 5, 13.11.2026, Zoro)
+
+Rechenwerk: `js/store.js`, `js/abgleich_felder.js`, `js/zip.js`, `js/monatsabschluss.js`; Sätze für die Oberfläche: `js/data/l6y_texte.js` (`l6yText(schluessel, sprache)`, `l6ySatz(schluessel, sprache, …)`); Tests: `tests/lauf6_e5_daten.test.mjs`. Leitsatz: Nichts geht beim Abgleich still verloren; zwei Handys kommen zum selben Ergebnis, egal wer zuerst einliest.
+
+**5.1 Jedes Feld eines Ladens hat genau ein Verfahren.** Bereich (`BEREICHE`), Journal (`JOURNALE`), `FELD_ABGLEICH` (Stunden `teamTage`, `lieferTage`, `abwesend`, `preisRunden`, `schichten`, `chef`, `liquiditaet`, `zekiLog`, `zekiLogGeloescht`, `branchenVersion`), eigene Regel in `verschmelzen` (`IN_VERSCHMELZEN`: `geaendert`, `phase`, `rueckkehr`, `stammZeit`, `abgleich`, `abgleichHinweis`, `monatsabschluesse`) oder bewusst nur am eigenen Handy (`NUR_LOKAL`, je Feld mit Grund). Ein neues Feld ohne Eintrag macht den Registertest rot.
+
+**5.2 Bericht von `zusammenfuehren` / `zusammenfuehrenSicher` / `einlesenSicher`** (`.bericht`, nicht aufgezählt):
+```js
+{ beide: [bereich],                          // beide Handys haben den Bereich geändert
+  zukunft: number,                           // Einträge mit Datum in der Zukunft: übernommen, mit datumPruefen: true markiert
+  konflikte: number,                         // HACCP-Eintrag gleicher Kennung, anderer Inhalt: eigener Eintrag daneben
+  eintraege: [{ laden, bereich, kennung, art: "verschieden"|"geloeschtGeaendert", lokal, fremd, behalten: "lokal"|"fremd" }], // B1, beide Werte kurz
+  unterschiede: [{ laden, bereich, lokal, fremd }],  // B1: Bereiche ohne Kennung, beide geändert – die gewählte Seite gilt, beide Werte stehen hier
+  umsatzKonflikte: [{ laden, tag, lokal, fremd, gilt }], // B2: derselbe Tag, zwei Handys, verschiedener Betrag; der jüngste gilt weiter still
+  ungueltig: number }                        // C5: beim Einlesen übersprungene Einträge
+```
+`stand.abgleichHinweis` trägt dieselben Listen (`eintraege`, `unterschiede`, `umsatzKonflikte`, je höchstens 20) zusätzlich zu `bereiche`, `zukunft`, `konflikte`. Gerichte, Kosten und Waren (`gerichte`: id, `kosten`: id, `artikel`: name) werden bei „beide geändert“ und beim ersten Abgleich je Eintrag zusammengeführt; Grundlage ist der Stand je Eintrag beim letzten Abgleich (`stand.abgleich[bereich].eintraege = { kennung: Fingerabdruck }`).
+
+**5.3 Monatsabschluss.** `monatsabschluesse[].abdruck` (Fingerabdruck der Umsatzeinträge des Monats, beim Einfrieren geschrieben); `abschlussVeraltet(stand, monat)` ist wahr, wenn sich die Einträge seitdem geändert haben; alte Abschlüsse ohne `abdruck` sind nie veraltet.
+
+**5.4 Datei aus neuerer Fassung.** Ist `schema` im Kopf ODER in `wurzel` höher als `SCHEMA`, wirft `importDatei` `grund: "neuer"`. Unbekannte Felder an Wurzel, Laden und Einträgen bleiben erhalten (durchgereicht, nicht gedeutet). `SCHEMA` bleibt 6: alle neuen Felder (`datumPruefen`, `abgleich.*.eintraege`, `abdruck`, `rohteile`, `testphase`, `bio`) sind optional; eine ältere App ignoriert sie, eine neuere liest sie.
+
+**5.5 Grenzen beim Einlesen.** Datei höchstens 200 MB, ein entpackter Eintrag oder Text höchstens 50 MB (`grund: "gross"`): ein Jahr Daten ≈ 5 MB (Stresstest 15.10.2026), 50 MB wären rund zehn Jahre in einer Datei; die Foto-Ablage nimmt höchstens 15 MB je Datei, 200 MB tragen mehrere hundert Belegfotos. Beträge endlich, ≥ 0, ≤ `MAX_ZAHL` (1e7); Tage nur echte Daten (`gueltigerTag`); Ladenname höchstens 80 Zeichen (länger: gekürzt auf 40 und gezählt). Ungültige Einträge werden gezählt (`bericht.ungueltig`) und übersprungen.
+
+**5.6 Rückholpunkt.** `einlesenSicher(wurzel, importiert)` führt auf einer Kopie zusammen (Fehler → Wurzel unverändert), merkt die alte Wurzel (`rueckholpunkt`, Speicher `stand`, Schlüssel `rueckhol`, Info unter `rueckhol-info`) und übernimmt dann. `zurueckholen(aktuelleWurzel)` stellt sie wieder her und verbraucht den Punkt; `rueckholpunktInfo()` sagt, ob es einen gibt.
+
+**5.7 Gerettete Monatsteile.** Ein halb abgeschnittener Journal-Teil wird bis zum letzten vollständigen Eintrag gelesen; `ladeFehler` bekommt `grund: "gerettet"` mit `gerettet: Anzahl`; der Rohtext liegt im Speicher `stand` unter `roh` und geht als `rohteile` in jede Vollsicherung.
+
+**5.8 Ereignisprotokoll.** „app-sichtbar“ höchstens einmal je Stunde; beim Kürzen auf 2000 bleiben `import*`, `export*`, `abgleich*`, `sicherung*`, `speicher*`, `fehler*`, `einlesen*`, `fremde-fassung` bevorzugt.
