@@ -24,6 +24,10 @@ export const HINWEIS_TEXTE = {
     trinkgeld: { titel: "Separate tips correctly", satz: "Tips from guests to your staff are tax-free for the staff. Tips for yourself are income with VAT. Keep a list, check with your tax advisor.", belege: ["Tip list"] },
     gutschein: { titel: "Book vouchers correctly", satz: "Voucher for an amount for food and drinks: tax when redeemed. Voucher for a specific dish: tax already at sale. Check with your tax advisor.", belege: ["Voucher list"] },
     pfand: { titel: "Deposit like the drink", satz: "Deposit on bottles gets the same tax rate as the drink inside, usually 19 %. Separate it in the till and check with your tax advisor.", belege: ["Deposit journal"] },
+    belegausgabe: { titel: "Every customer gets receipt", satz: "With an electronic till you must offer a receipt for every sale right away, on paper or digital. Check with your tax advisor.", belege: ["Z report"] },
+    kasse_melden: { titel: "Register till with office", satz: "An electronic till must be reported to the tax office within one month of buying or retiring it, electronically. Check with your tax advisor.", belege: ["Confirmation of the report"] },
+    gewerbesteuer_vz: { titel: "Trade tax four times", satz: "If your town sets trade tax prepayments, they are due on 15 February, May, August and November. Read the notice and check with your tax advisor.", belege: ["Trade tax notice"] },
+    sondervorauszahlung: { titel: "Extension needs special prepayment", satz: "Permanent deadline extension with monthly VAT returns: each year a special prepayment is due, one eleventh of last year's prepayments. Check with your tax advisor.", belege: ["Application for the extension"] },
   },
   tr: {
     steuer_sieben: { titel: "Yemekte % 7", satz: "2026'dan beri yemeklerde % 7, içeceklerde % 19 KDV geçerli. Kasayı buna göre ayarla ve mali müşavirinle görüş.", belege: ["Z raporu", "Kasa ayarı"] },
@@ -43,6 +47,10 @@ export const HINWEIS_TEXTE = {
     trinkgeld: { titel: "Bahşişi doğru ayır", satz: "Müşterilerin personele verdiği bahşiş personel için vergisizdir. Kendine gelen bahşiş KDV'li gelirdir. Liste tut, mali müşavirinle görüş.", belege: ["Bahşiş listesi"] },
     gutschein: { titel: "Hediye çekini doğru kaydet", satz: "Yemek ve içecek için tutarlı çek: vergi kullanımda. Belirli bir yemek için çek: vergi satışta. Mali müşavirinle görüş.", belege: ["Hediye çeki listesi"] },
     pfand: { titel: "Depozito içecek gibi", satz: "Şişe depozitosu içindeki içecekle aynı vergi oranını alır, genelde % 19. Kasada ayır ve mali müşavirinle görüş.", belege: ["Depozito defteri"] },
+    belegausgabe: { titel: "Her müşteriye fiş", satz: "Elektronik kasan varsa her satışta hemen fiş sunmalısın, kâğıt ya da dijital. Mali müşavirinle görüş.", belege: ["Z raporu"] },
+    kasse_melden: { titel: "Kasayı vergi dairesine bildir", satz: "Elektronik kasa vergi dairesine bildirilmiş olmalı: alındıktan ya da kullanımdan kalktıktan sonra bir ay içinde, elektronik olarak. Mali müşavirinle görüş.", belege: ["Bildirim onayı"] },
+    gewerbesteuer_vz: { titel: "Gewerbesteuer yılda dört kez", satz: "Belediye Gewerbesteuer ön ödemesi belirlediyse 15 Şubat, Mayıs, Ağustos ve Kasım'da ödenir. Karara bak ve mali müşavirinle görüş.", belege: ["Gewerbesteuer kararı"] },
+    sondervorauszahlung: { titel: "Süre uzatması ön ödeme ister", satz: "Aylık KDV bildiriminde kalıcı süre uzatması: her yıl özel ön ödeme gerekir, geçen yılın ön ödemelerinin on birde biri. Mali müşavirinle görüş.", belege: ["Süre uzatma başvurusu"] },
   },
 };
 

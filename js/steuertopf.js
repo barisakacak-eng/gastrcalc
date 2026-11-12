@@ -1,6 +1,7 @@
 // Welle 3 (Masterauftrag „Gehirn“ 3.1, 3.4, 3.5 – Lauf 2, 31.10.2026): Steuer-Topf, „Was bleibt dir“ und Prüfer-Blick.
 // Reine Rechnungen, keine Oberfläche, keine Speicherung. Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte 28.10.2026“, Teil A.
 // Alles hier ist eine SCHÄTZUNG aus den Tagesumsätzen und Belegen der App – keine Voranmeldung, keine Steuerberatung.
+import { wert as regelWert } from "./data/regelwerk.js";
 import { umsatzEintrag, umsatzSteuerSatz, fixkosten, monatsLast } from "./engine.js";
 import { belege, monatVon, monatPlus } from "./export_steuer.js";
 import { warenQuote } from "./zaehler.js";
@@ -25,6 +26,16 @@ export function ustImUmsatz(brutto, a19) {
 }
 
 export const kleinunternehmer = (stand) => !!stand?.betrieb?.kleinunternehmer;
+
+// Grenzprüfung für Kleinunternehmer (§ 19 Abs. 1 UStG, Grenzen aus dem Regelwerk): Umsatz des Vorjahres und des laufenden Jahres aus den
+// Tagesumsätzen des Ladens. Nur ein Hinweis – die App schaltet nichts um. Rückgabe null, wenn der Schalter aus ist.
+export function kleinunternehmerPruefung(stand, tag) {
+  if (!kleinunternehmer(stand)) return null;
+  const jahr = tag.slice(0, 4), vorjahr = String(Number(jahr) - 1); let laufend = 0, vor = 0;
+  for (const n of stand.tagesnotizen || []) { if (!n || n.storniert || typeof n.umsatz !== "number") continue; if (n.datum.startsWith(jahr)) laufend += n.umsatz; else if (n.datum.startsWith(vorjahr)) vor += n.umsatz; }
+  const gV = regelWert("kleinunternehmer_vorjahr", tag), gL = regelWert("kleinunternehmer_laufend", tag);
+  return { laufend, vorjahr: vor, grenzeVorjahr: gV, grenzeLaufend: gL, ueberVorjahr: vor > gV, ueberLaufend: laufend > gL };
+}
 
 // Steuer-Topf eines Monats: USt aus allen Tagesumsätzen minus Vorsteuer aus den Belegen des Monats (ust7/ust19 je Beleg aus export_steuer).
 // Rückgabe null für Kleinunternehmer (§ 19 UStG: keine Umsatzsteuer, kein Topf). Tage: je Öffnungstag mit Umsatz eine Zeile.

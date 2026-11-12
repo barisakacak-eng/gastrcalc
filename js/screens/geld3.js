@@ -6,7 +6,8 @@ import { l15bAn } from "../data/l15b_texte.js";
 const tagPlusG3 = (d, n) => { const x = new Date(d + "T12:00:00Z"); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
-import { steuerTopf, steuerTopfTag, kleinunternehmer, wasBleibt, prueferBlick } from "../steuertopf.js";
+import { steuerTopf, steuerTopfTag, kleinunternehmer, kleinunternehmerPruefung, wasBleibt, prueferBlick } from "../steuertopf.js";
+import { wert as regelWert } from "../data/regelwerk.js";
 import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, lstRhythmusSetzen, lstVorjahrSetzen, lstVorschlag, estBescheidUmschalten, chefStundenSetzen, geldHeuteSetzen, svLandSetzen } from "../welle3.js";
 import { monatEinfrieren, eingefroren, monatVergleich } from "../monatsabschluss.js";
 import { istPersonen } from "../rechtsform.js";
@@ -27,7 +28,8 @@ export function geld3View(stand) {
   const H = heuteGeschaeft(); const monat = H.slice(0, 7); const ku = kleinunternehmer(stand);
   // 3.1 Steuer-Topf
   const st = ku ? null : steuerTopf(stand, monat); const tag = ku ? null : steuerTopfTag(stand, H);
-  const topf = ku ? karte("topf", t("w3.topf.titel"), "", `<p>${esc(t("w3.topf.klein"))}</p>`)
+  const kp = kleinunternehmerPruefung(stand, H);
+  const topf = ku ? karte("topf", t("w3.topf.titel"), "", `<p>${esc(t("w3.topf.klein"))}</p>${kp.ueberVorjahr ? `<p class="minus">${esc(t("w3.topf.kleinGrenze", t("w3.topf.kleinVorjahr"), fmtZahl(kp.grenzeVorjahr)))}</p>` : ""}${kp.ueberLaufend ? `<p class="minus">${esc(t("w3.topf.kleinGrenze", t("w3.topf.kleinLaufend"), fmtZahl(kp.grenzeLaufend)))}</p>` : ""}`)
     : karte("topf", t("w3.topf.titel"), st ? `≈ ${esc(fmtEuro(Math.max(0, st.zahllast)))}` : "", `${z(t("w3.topf.monat"), `≈ ${esc(fmtEuro(Math.max(0, st?.zahllast || 0)))}`)}${z(t("w3.topf.heute"), `≈ ${esc(fmtEuro(tag?.topf || 0, { dezimal: 2 }))}`)}<small class="marke geschaetzt">${esc(t("w3.topf.schaetzung"))}</small>`);
   // 3.2 Termine
   const rh = stand.betrieb?.ustRhythmus || null; const tl = termineLaden(stand, H, 60).slice(0, 10); // Lauf 4, P3 C1: alle Termine der 60 Tage (vorher nur 4)
@@ -37,7 +39,7 @@ export function geld3View(stand) {
   const lstTeil = !personal ? "" : `<p class="hinweis">${esc(t("w3.termine.lstFrage"))}</p><div class="chips">${["monat", "quartal", "jahr"].map((w) => `<button type="button" class="chip klein ${lr === w ? "an" : ""}" data-a="g3-lst-rhythmus" data-wert="${w}" aria-pressed="${lr === w}">${esc(t("w3.termine." + w))}</button>`).join("")}</div>
     <div class="feldzeile"><label>${esc(t("w3.termine.lstVorjahr"))}</label><div class="betrag klein"><input inputmode="decimal" data-f="g3-lst-vorjahr" value="${typeof stand.betrieb?.lstVorjahr === "number" ? esc(wertAnzeige(stand.betrieb.lstVorjahr)) : ""}"><span class="einheit">€</span></div></div>${lv ? `<small>${esc(t("w3.termine.lstVorschlag", t("w3.termine." + lv)))}</small>` : ""}`;
   const estTeil = !istPersonen(stand) ? "" : `<div class="chips"><button type="button" class="chip klein ${stand.betrieb?.estBescheid ? "an" : ""}" data-a="g3-est-bescheid" aria-pressed="${!!stand.betrieb?.estBescheid}">${esc(t("w3.termine.estBescheid"))}</button></div>`;
-  const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(dk(tl[0].datum)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}`}${lstTeil}${estTeil}
+  const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(dk(tl[0].datum)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}${regelWert("ust_gruender_monatlich", H) ? `<small>${esc(t("w3.topf.gruender"))}</small>` : ""}`}${lstTeil}${estTeil}
     ${!rh && !ku ? z(t("w3.termine.art.ust"), esc(t("w3.termine.rhythmusWaehlen"))) : ""}${personal && !lr ? z(t("w3.termine.art.lohnsteuer"), esc(t("w3.termine.rhythmusWaehlen"))) : ""}${tl.map((x) => z(t("w3.termine.art." + x.art), esc(dk(x.datum)) + (x.verschoben ? " *" : "") + (x.art === "sv" && x.nachweis ? " · " + esc(t("w3.termine.nachweis", dk(x.nachweis))) : "" /* Lauf 4, P3 C2: Beitragsnachweis */))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
     ${tl.some((x) => x.verschoben) ? `<small>${esc(t("w3.termine.verschoben"))}</small>` : ""}<small>${esc(t("w3.termine.erinnerung"))}</small>`);
   // 3.4 Was bleibt

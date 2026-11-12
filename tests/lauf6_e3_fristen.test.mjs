@@ -47,3 +47,17 @@ test("Einstellen im Laden: Rhythmus und Vorjahreswert; Bildschirm zeigt die Knö
   s.betrieb.rechtsform = "einzel"; s.personen = []; h = geld3View(s);
   assert.ok(!h.includes('data-a="g3-lst-rhythmus"'), "ohne Personal keine Lohnsteuer-Frage"); assert.ok(h.includes('data-a="g3-est-bescheid"'));
 });
+
+import { kleinunternehmerPruefung } from "../js/steuertopf.js";
+test("Kleinunternehmer-Grenzprüfung: 25.000 € Vorjahr, 100.000 € laufendes Jahr (§ 19 UStG), genau die Grenze ist noch erlaubt", () => {
+  const laden = (v, l, ku = true) => ({ betrieb: { kleinunternehmer: ku }, personen: [], tagesnotizen: [{ datum: "2025-06-01", umsatz: v }, { datum: "2026-03-01", umsatz: l }, { datum: "2026-04-01", umsatz: 5, storniert: true }] });
+  assert.equal(kleinunternehmerPruefung(laden(1, 1, false), "2026-11-12"), null);
+  let p = kleinunternehmerPruefung(laden(25000, 100000), "2026-11-12"); assert.deepEqual([p.ueberVorjahr, p.ueberLaufend, p.vorjahr, p.laufend], [false, false, 25000, 100000]);
+  p = kleinunternehmerPruefung(laden(25000.01, 100000.01), "2026-11-12"); assert.deepEqual([p.ueberVorjahr, p.ueberLaufend], [true, true]);
+  const s = { id: "l", ...laden(30000, 10), kosten: [], gerichte: [], artikel: [] }; const h = geld3View(s);
+  assert.ok(h.includes("25.000 €") && h.includes("im Vorjahr"), "Hinweis mit Grenze"); assert.ok(!h.includes("100.000 €"));
+});
+test("Gründer-Satz zur monatlichen Voranmeldung erscheint erst ab 2027 (§ 18 Abs. 2 Satz 4 und 6 UStG)", async () => {
+  const { wert } = await import("../js/data/regelwerk.js");
+  assert.equal(wert("ust_gruender_monatlich", "2026-12-31"), false); assert.equal(wert("ust_gruender_monatlich", "2027-01-01"), true);
+});
