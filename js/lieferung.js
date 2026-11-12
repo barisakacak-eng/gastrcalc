@@ -167,6 +167,9 @@ export function preisAnzeige(x) {
 // (Setzung) – schon 10 % mehr beim Fleisch kosten einen Imbiss im Monat spürbar Geld; der Chef soll es sehen, nicht nur Tippfehler.
 // Gibt neue Zeilen-Kopien zurück, der Beleg bleibt unverändert.
 export const PREISSPRUNG_AB = 0.10;
+// Rückfrage erst über 10 %, in beide Richtungen gleich. Auf ein Zehntel Promille gerundet, sonst fragt die App bei 10,00 € → 9,00 € nach
+// (Rechenrest −0,10000000000000009) und bei 10,00 € → 11,00 € nicht.
+export const preisSprungAuffaellig = (prozent) => Math.round(Math.abs(prozent) * 10000) / 10000 > PREISSPRUNG_AB;
 export function belegZeilenVorbereiten(stand, beleg) {
   const zeilen = beleg.zeilen.map((z) => ({ ...z }));
   const treffer = {}; for (const z of zeilen) if (z.bekannt) treffer[z.bekannt] = (treffer[z.bekannt] || 0) + 1;
@@ -176,7 +179,7 @@ export function belegZeilenVorbereiten(stand, beleg) {
   for (const z of zeilen) {
     if (!z.bekannt || z.frage) continue;
     const sp = preisSprung(stand, z, basis);
-    if (sp && Math.abs(sp.prozent) > PREISSPRUNG_AB) z.frage = { art: "preis", text: t("beleg.preisSprungText", z.bekannt, fmtEuro(sp.alt * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtEuro(sp.neu * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtZahl(sp.prozent * 100, 0)), optionen: [{ text: t("beleg.uebernehmen"), wert: {} }] };
+    if (sp && preisSprungAuffaellig(sp.prozent)) z.frage = { art: "preis", text: t("beleg.preisSprungText", z.bekannt, fmtEuro(sp.alt * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtEuro(sp.neu * (sp.einheit === "stk" ? 1 : 1000), { dezimal: 2 }), fmtZahl(sp.prozent * 100, 0)), optionen: [{ text: t("beleg.uebernehmen"), wert: {} }] };
   }
   return zeilen;
 }
