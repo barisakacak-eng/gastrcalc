@@ -3,7 +3,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { beispielLaden } from "../js/beispiel.js";
 import { karteLadenAktion, karteLadenEingabe, karteLadenTeile, karteLadenBlatt, karteLadenZuruecksetzen } from "../js/screens/karte_laden.js";
-import { readFileSync } from "node:fs";
 
 test("Preis-Blatt: „Bleibt dir“ und „Wohin geht dein Preis?“ stecken in EINER austauschbaren Hülle", () => {
   karteLadenZuruecksetzen();
@@ -13,7 +12,6 @@ test("Preis-Blatt: „Bleibt dir“ und „Wohin geht dein Preis?“ stecken in 
   assert.equal((html.match(/kl-bleibt-teil/g) || []).length, 1);
   assert.ok((html.match(/class="kl-wohin"/g) || []).length <= 1);
   for (const w of ["5", "5,", "5,5"]) { assert.equal(karteLadenEingabe("kl-preis", w), "teil"); const t = karteLadenTeile(s); assert.ok(t.bleibt.startsWith('<div class="kl-bleibt-teil">'), w); }
-  const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  assert.match(app, /querySelector\("\.kl-bleibt-teil"\)/, "app.js tauscht die ganze Hülle aus");
+  // „app.js tauscht die ganze Hülle aus“ (Verdrahtung): Wächter in tests/quelltext_waechter_teil1.mjs
   karteLadenZuruecksetzen();
 });

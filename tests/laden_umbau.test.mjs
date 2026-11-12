@@ -3,7 +3,6 @@
 // „Ohne Fotos“ lässt die Ablage weg), Putzplan ohne Geräte-Auswahl im Laden, Kühl-Rundgang mit vorbelegtem Namen.
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
 globalThis.document ??= { documentElement: {} };
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 const st = await import("../js/store.js");
@@ -89,15 +88,11 @@ test("Sicherung: „Nur auf diesem Handy“ setzt die Erinnerung NICHT zurück, 
   assert.equal(sicherungOrtSetzen(w, "woanders"), true);
   assert.notEqual(w.letzteSicherung, vorher); assert.equal(w.sicherungZaehler, st.eintraegeZaehlen(w));
   assert.equal(sicherungStufe(w).stufe, null, "Erinnerung zurückgesetzt"); assert.equal(sicherungStufe(w).tage, 0);
-  // app.js setzt letzteSicherung nur über sicherungOrtSetzen (nicht mehr gleich nach dem Teilen)
-  const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  const teilen = app.slice(app.indexOf("async function sicherungTeilen("), app.indexOf("// Einlesen führt zusammen:"));
-  assert.ok(!/letzteSicherung\s*=/.test(teilen) && !/sicherungZaehler\s*=/.test(teilen), "Teilen allein zählt nicht als Sicherung");
-  assert.ok(teilen.includes("ortFrageZeigen()"), "nach dem Teilen kommt die Frage „Wo liegt sie jetzt?“");
-  assert.match(app, /sicherungOrtSetzen\(wurzel, el\.dataset\.wert\)/);
+  // Verdrahtung in app.js (Teilen setzt letzteSicherung nicht selbst: Wächter „Teilen allein zählt nicht als Sicherung“ in quelltext_waechter_teil1.mjs;
+  // nach dem Teilen die Frage „Wo liegt sie jetzt?“ und der Klick auf sicherung-ort -> sicherungOrtSetzen: tests/sicherung_status_browser.py, tests/durchlauf_e5.py)
 });
 
-test("Sicherung: „Ohne Fotos“ lässt die abgelegten Fotos weg, sonst sind sie drin; app.js reicht mitAblage durch", async () => {
+test("Sicherung: „Ohne Fotos“ lässt die abgelegten Fotos weg, sonst sind sie drin; Verdrahtung: Wächter", async () => {
   idbAttrappe(); await st.laden();
   const s = laden(); const w = wurzelVon(s);
   const meta = await ablegen(new Blob([new Uint8Array(2048).fill(7)], { type: "image/jpeg" }), { name: "beleg.jpg", zweck: "rechnung", laden: s.id });
@@ -111,15 +106,27 @@ test("Sicherung: „Ohne Fotos“ lässt die abgelegten Fotos weg, sonst sind si
   const r = await st.importSicherung(ohne.blob); assert.equal(r.pruefsumme, "ok", "die kleine Datei lässt sich einlesen");
   // mit Passwort und ohne Fotos zusammen
   const beides = await st.exportDatei(w, { mitAblage: false, passwort: "laden2026" }); assert.equal(beides.verschluesselt, true);
-  const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  assert.match(app, /exportDatei\(wurzel, \{ passwort, mitAblage \}\)/, "app.js reicht „Ohne Fotos“ an exportDatei durch");
-  assert.match(app, /sicherungTeilen\((p|null), \{ mitAblage: !w\.ohneFotos \}\)/);
+  // „app.js reicht mitAblage durch“: Wächter in tests/quelltext_waechter_teil1.mjs
 });
 
-test("Sicherung: Blatt hat „Mit Passwort“ vorgewählt und „Ohne Fotos“ als Schalter (Texte in allen Sprachen)", () => {
-  const eb = fs.readFileSync(new URL("../js/screens/ebene.js", import.meta.url), "utf8");
-  assert.match(eb, /pw = \{ zweck, sichtbar: false, mitPasswort: true, ohneFotos: false \}/, "Passwort vorgewählt");
-  assert.ok(eb.includes('schalter("sicherung-pw-schalter", true') && eb.includes('schalter("sicherung-fotos-schalter", false'));
+test("Sicherung: Blatt hat „Mit Passwort“ vorgewählt und „Ohne Fotos“ als Schalter (Texte in allen Sprachen)", async () => {
+  // Blatt wirklich erzeugen: kleine Attrappe für die Hülle (kein Browser nötig)
+  const kind = () => ({ addEventListener() {}, focus() {}, setAttribute() {}, value: "", classList: { add() {}, remove() {}, toggle() {} }, querySelector: () => kind(), querySelectorAll: () => [], textContent: "", click() {} });
+  const huelle = { ...kind(), innerHTML: "" };
+  const dok = globalThis.document; const alt = { gid: dok.getElementById, body: dok.body, qs: dok.querySelector };
+  dok.getElementById = () => huelle; dok.body = { classList: { add() {}, remove() {} }, appendChild() {} }; dok.querySelector = () => null;
+  try {
+    const eb = await import("../js/screens/ebene.js");
+    eb.passwortStarten("teilen", { tage: 3 });
+    const knopf = (name) => (huelle.innerHTML.match(new RegExp('<button[^>]*data-a="' + name + '"[^>]*>')) || [""])[0];
+    assert.match(knopf("sicherung-pw-schalter"), /class="schalter an"/, "Passwort vorgewählt");
+    assert.match(knopf("sicherung-fotos-schalter"), /class="schalter "/, "Ohne Fotos zunächst aus");
+    assert.deepEqual(eb.sicherungWahl(), { mitPasswort: true, ohneFotos: false });
+    assert.deepEqual(eb.sicherungSchalter("fotos"), { mitPasswort: true, ohneFotos: true });
+    assert.deepEqual(eb.sicherungSchalter("passwort"), { mitPasswort: false, ohneFotos: true });
+    assert.deepEqual(eb.sicherungWahl(), { mitPasswort: false, ohneFotos: true });
+    eb.blattSchliessen();
+  } finally { dok.getElementById = alt.gid; dok.body = alt.body; dok.querySelector = alt.qs; }
   assert.equal(i18n.t("ladenSchirm.sicherung.letzteWeg", 9), "Zuletzt gesichert: vor 9 Tagen");
   assert.equal(i18n.t("ladenSchirm.sicherung.letzteWeg", 1), "Zuletzt gesichert: vor 1 Tag");
 });
@@ -144,9 +151,8 @@ test("Putzen im Laden: ohne Plan wird still der Vorschlag nach Laden-Art überno
   // im Büro ohne Plan: Einrichtung mit Geräte-Auswahl
   const s2 = laden(); s2.ladenArt = "pizza"; P.putzplanZuruecksetzen();
   assert.ok(P.putzplanView(s2, { buero: true }).includes('data-a="pp-geraet"'));
-  // app.js übernimmt den Vorschlag nur im Laden-Modus beim Betreten
-  const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  assert.match(app, /ziel === "putzplan" && modus\(wurzel\) === "laden" && planSicherstellen\(stand\)/);
+  // app.js übernimmt den Vorschlag nur im Laden-Modus beim Betreten: Wächter in tests/quelltext_waechter_teil1.mjs
+  // (Browser: tests/durchlauf_personal.py prüft nur „Plan kommt beim Betreten“, nicht die Modus-Bedingung)
 });
 
 // ---------- Kühlung ----------

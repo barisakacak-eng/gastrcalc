@@ -198,9 +198,9 @@ test("Zeki auf Heute (27.10.2026): keine zweite Figur im Inhalt, der Jetzt-Knopf
   const inhalt = html.slice(html.indexOf('<div class="inhalt'));
   assert.ok(!inhalt.includes("h-zeki-figur") && !inhalt.includes("h-zeki-blase"), "keine zweite Figur");
   assert.ok(inhalt.includes('class="jetzt '), "Knopf bleibt");
-  const { readFileSync } = await import("node:fs");
-  const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  assert.match(app, /ansicht === "start" \? null : ZEKI_BILDSCHIRM\[ansicht\]/, "Heute nutzt die Sprechblase oben rechts mit allen Lagen");
+  // „Heute nutzt die Sprechblase oben rechts mit allen Lagen“ (Verdrahtung in app.js): Wächter in tests/quelltext_waechter_teil1.mjs
+  const { ZEKI_BILDSCHIRM } = await import("../js/zeki.js");
+  assert.equal(ZEKI_BILDSCHIRM.start, undefined, "Heute hat keine eigene Lagen-Liste, es nimmt alle");
 });
 
 test("Masterauftrag 0.1: ohne Miete bzw. Löhne keine Euro-Zahl, sondern der nächste Eintrag", () => {

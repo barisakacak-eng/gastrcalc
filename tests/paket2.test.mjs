@@ -2,7 +2,6 @@
 // (Generationszähler), Zurücksetzer beim Ladenwechsel, Sicherungs-Hinweis. Läuft gegen tests/hilfe/idb_attrappe.mjs.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 import { jahresStand } from "./hilfe/jahr.mjs";
 const st = await import("../js/store.js");
@@ -157,14 +156,8 @@ test("Paket 2 (2): alter Kopf ohne gen lädt weiter (gen fehlt = 0) und bekommt 
 
 // ---------- 3./4. app.js: controllerchange ohne eigenen Tipp, Zurücksetzer ----------
 test("Paket 2 (3): controllerchange ohne eigenen „Aktualisieren“-Tipp lädt neu, sobald kein Formular offen ist", () => {
-  const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  assert.match(app, /addEventListener\("controllerchange", \(\) => \{[^}]*\}\s*if \(aktualisierungKlick\) location\.reload\(\); else fremdeFassungUebernehmen\(\);/);
-  // 27.10.2026: der erste Wechsel beim allerersten Besuch (clients.claim, noch kein Controller) lädt NICHT neu
-  assert.match(app, /let ersteUebernahme = !navigator\.serviceWorker\.controller;/);
-  assert.match(app, /if \(ersteUebernahme\) \{ ersteUebernahme = false; return; \}/);
-  assert.match(app, /function fremdeFassungUebernehmen\(\)/);
-  assert.match(app, /function formularOffen\(\)/);
-  assert.match(app, /window\.addEventListener\(FREMDER_STAND/);
+  // Reine Verdrahtung in app.js: Wächter in tests/quelltext_waechter_teil1.mjs. Der erste Wechsel beim allerersten Besuch
+  // (clients.claim) lädt nicht neu, ein echtes Update ohne eigenen Tipp schon nicht still: Browser-Test tests/durchlauf_erststart.py
 });
 
 test("Paket 2 (4): karte.js, vergleich.js und onboarding.js haben Zurücksetzer, die den flüchtigen Zustand leeren", async () => {
@@ -173,9 +166,7 @@ test("Paket 2 (4): karte.js, vergleich.js und onboarding.js haben Zurücksetzer,
   k.karteZuruecksetzen(); v.vergleichZuruecksetzen(); o.onboardingZuruecksetzen();
   // Vergleich: Modus „marge“ gesetzt → nach dem Zurücksetzen wieder Deckungsbeitrag
   v.vergleichModus("marge"); assert.equal(v.vergleichModusAktuell(), "marge"); v.vergleichZuruecksetzen(); assert.equal(v.vergleichModusAktuell(), "db");
-  const app = fs.readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
-  const liste = app.slice(app.indexOf("const ZURUECKSETZER = ["), app.indexOf("];", app.indexOf("const ZURUECKSETZER = [")));
-  for (const n of ["karteZuruecksetzen", "vergleichZuruecksetzen", "onboardingZuruecksetzen"]) assert.ok(liste.includes(n), n + " in ZURUECKSETZER");
+  // „stehen in der zentralen Liste ZURUECKSETZER“: Wächter in tests/quelltext_waechter_teil1.mjs
 });
 
 // ---------- 5. Sicherungs-Hinweis ----------
