@@ -607,7 +607,7 @@ function homeKarteEinrichtung() {
 }
 const fertigSchnell = {
   id: "fertig-schnell",
-  view(stand) {
+  view(stand, wurzel) { // Lauf 6, E5 (E): die Wurzel kommt als Parameter von js/app.js – kein Griff mehr auf das Debug-Objekt (das gibt es nur auf localhost)
     const e = einrichtungStand(stand);
     return `
       <div class="s2fertig">
@@ -615,7 +615,7 @@ const fertigSchnell = {
         <h1 class="frage" dir="auto">${esc(zekiSatz("fertig", t("schnell2.fertig")))}</h1>
         ${""/* 27.10.2026 (Persona-Test): „Fertig“ und „14 %“ zugleich verwirrt – Einrichtungsstand steht im Büro */}
         ${homeKarteEinrichtung()}
-        ${globalThis.__gastrocalc?.wurzel?.bueroPin ? "" : `<button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>`}
+        ${wurzel?.bueroPin ? "" : `<button type="button" class="leise" data-a="ob-fertig" data-ziel="buero" data-pin="1">${esc(t("schnell2.pin"))}</button>`}
       </div>`; // 27.10.2026 (Persona-Test Wirt): Code schon im Schloss-Schritt gesetzt → kein zweites Angebot
   },
   fuss: (stand) => stand && !stand.gerichte.length && stand.karteWeg !== "spaeter" // 28.10.2026: wer bei der Karte „Später“ getippt hat, bekommt am Ende nur „Los geht's“
@@ -634,8 +634,8 @@ const fertigSchnell = {
 // Schloss (Baris 26.10.2026 23:44): gleich nach der Sprache ein Code für den Chef, dazu Face ID. Später fragt die App nur noch kurz beim Büro.
 const schlossSchnell = {
   id: "schloss",
-  view: () => {
-    const w = globalThis.__gastrocalc?.wurzel; const code = !!w?.bueroPin; const bio = !!w?.bio?.id; // nur Anzeige
+  view: (stand, w) => {
+    const code = !!w?.bueroPin; const bio = !!w?.bio?.id; // nur Anzeige – w = Wurzel, von js/app.js durchgereicht (Lauf 6, E5, E)
     return `
     ${kopfS2("schloss", t("schloss.titel"), t("schloss.hilfe"))}
     <div class="s2schloss">
