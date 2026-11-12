@@ -61,7 +61,8 @@ jobs:
         run: |
           mkdir -p tests/facelift-artifacts
           if test -d ../audit/regeln; then find ../audit/regeln -maxdepth 1 -name '*.png' -print0 | xargs -0 -r -I{} cp "{}" tests/facelift-artifacts/; fi
-          if test -f tests/regeln_stand.json; then cp tests/regeln_stand.json tests/facelift-artifacts/; fi
+          stand="${REGELN_STAND:-$(python -c 'import tempfile; print(tempfile.gettempdir())')/regeln_stand.json}" # tests/regeln.py schreibt den Messstand außerhalb des Repos
+          if test -f "$stand"; then cp "$stand" tests/facelift-artifacts/; fi
       - name: Facelift Browser-Screenshots sichern
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4

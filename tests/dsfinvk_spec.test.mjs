@@ -10,10 +10,10 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { dsfinvkLesen } from "../js/verkauf.js";
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const spec = JSON.parse(fs.readFileSync(path.join(HIER, "daten", "dsfinvk_spec", "felder.json"), "utf8"));
-const quelltext = fs.readFileSync(path.join(HIER, "..", "js", "verkauf.js"), "utf8");
 
 // Was verkauf.js liest (Datei → Spalten). Quelle: js/verkauf.js Kopfkommentar Z. 9–12; bonSchluessel/abschlussSchluessel Z. 130–131;
 // TABELLEN Z. 106–111; dsfinvkLesen Z. 160–185.
@@ -37,15 +37,71 @@ test("DSFinV-K: Prüfdaten stammen aus dem Original (sonst keine Aussage)", { sk
   assert.ok(Object.keys(spec.tabellen).length >= 4);
 });
 
-test("DSFinV-K: die Liste VERWENDET stimmt mit dem Quelltext von verkauf.js überein", () => {
-  for (const [datei, spalten] of Object.entries(VERWENDET)) {
-    assert.ok(quelltext.includes(datei), "Dateiname fehlt in verkauf.js: " + datei);
-    for (const s of spalten) assert.ok(new RegExp("\\b" + s + "\\b").test(quelltext), "Spalte fehlt in verkauf.js: " + s);
-  }
-  // Keine Spalte in verkauf.js lesen, die hier nicht gepflegt ist: alle r.GROSSBUCHSTABEN-Zugriffe im Leser müssen in VERWENDET stehen.
-  const alle = new Set(Object.values(VERWENDET).flat());
-  const zugriffe = [...quelltext.matchAll(/\b(?:r|bon)\??\.([A-Z][A-Z0-9_]{2,})\b/g)].map((m) => m[1]);
-  for (const z of new Set(zugriffe)) assert.ok(alle.has(z), "verkauf.js liest eine Spalte, die nicht in VERWENDET gepflegt ist: " + z);
+// --- Verhalten statt Quelltext: ein Export, gebaut NUR aus den Spalten der Liste VERWENDET (Spaltennamen exakt wie in der Spec), durch den echten Leser.
+const csvText = (datei, zeilen, { trenner = ";", punkt = false } = {}) => {
+  const alle = [VERWENDET[datei], ...zeilen.map((z) => VERWENDET[datei].map((sp) => z[sp] ?? ""))];
+  return alle.map((r) => r.map((x) => (punkt ? String(x).replace(/^(-?\d+),(\d+)$/, "$1.$2") : x)).map((x) => (String(x).includes(trenner) ? '"' + x + '"' : x)).join(trenner)).join("\n") + "\n";
+};
+const bytes = (name, text) => ({ name, bytes: new TextEncoder().encode(text) });
+const KOPF = { Z_KASSE_ID: "K1", Z_ERSTELLUNG: "2026-10-16T01:00:00+02:00", Z_NR: "7" };
+const zl = (bon, pos, extra) => ({ ...KOPF, BON_ID: bon, POS_ZEILE: pos, GV_TYP: "Umsatz", FAKTOR: "1,000", EINHEIT: "Stück", ...extra });
+const bk = (bon, typ, storno = "0") => ({ ...KOPF, BON_ID: bon, BON_TYP: typ, BON_STORNO: storno, BON_START: "2026-10-15T12:00:00+02:00", BON_ENDE: "2026-10-15T12:05:00+02:00" });
+function exportBauen(opt = {}) {
+  const lines = [
+    zl("1", "1", { ARTIKELTEXT: "Döner", ART_NR: "101", MENGE: "2,000", STK_BR: "8,00" }),                               // POS_BRUTTO aus lines_vat (15,00) geht vor STK_BR × MENGE (16,00)
+    zl("1", "2", { ARTIKELTEXT: "Cola 0,33 l", ART_NR: "111", MENGE: "1,000", FAKTOR: "6,000", STK_BR: "2,50" }),         // 6er-Gebinde: Menge 1 × 6 = 6, Umsatz 2,50 × 6 = 15,00
+    zl("1", "3", { ARTIKELTEXT: "Rabatt", GV_TYP: "Rabatt", MENGE: "1,000", STK_BR: "-3,00" }),                           // wird auf die drei Umsatz-Zeilen des Bons verteilt
+    zl("1", "4", { ARTIKELTEXT: "Döner", ART_NR: "101", MENGE: "5,000", STK_BR: "8,00", P_STORNO: "1" }),                 // Positionsstorno: zählt nicht
+    zl("1", "5", { ARTIKELTEXT: "Hackfleisch", ART_NR: "900", MENGE: "1,500", EINHEIT: "kg", STK_BR: "10,00" }),          // andere Einheit als Stück: „nach Menge“
+    zl("2", "1", { ARTIKELTEXT: "Döner", ART_NR: "101", MENGE: "1,000", STK_BR: "8,00" }),                                // BON_TYP AVTraining: kein Verkauf
+    zl("3", "1", { ARTIKELTEXT: "Döner", ART_NR: "101", MENGE: "-1,000", STK_BR: "8,00" }),                               // Stornobeleg: Vorzeichen wie geliefert
+  ];
+  const tx = [bk("1", "Beleg"), bk("2", "AVTraining"), bk("3", "Beleg", "1")];
+  const abschluss = [{ ...KOPF, Z_BUCHUNGSTAG: "2026-10-15" }];
+  const vat = [{ ...KOPF, BON_ID: "1", POS_ZEILE: "1", POS_BRUTTO: "15,00" }];
+  const o = { punkt: !!opt.punkt, trenner: opt.trenner || ";" };
+  return [bytes("lines.csv", csvText("lines.csv", lines, o)), bytes("transactions.csv", csvText("transactions.csv", tx, o)),
+    bytes("cashpointclosing.csv", csvText("cashpointclosing.csv", abschluss, o)), bytes("lines_vat.csv", csvText("lines_vat.csv", vat, o))];
+}
+// Von Hand gerechnet (Rabatt −3,00 auf je 15,00 / 15,00 / 15,00 → −1,00 je Zeile):
+// Cola 6 Stück, 15,00 − 1,00 = 14,00 · Döner (Bon 1) 2 Stück, 15,00 − 1,00 = 14,00, dazu Stornobeleg −1 Stück, −8,00 → 1 Stück, 6,00 · Hackfleisch 1,5 kg, 15,00 − 1,00 = 14,00.
+const ERWARTET = [
+  { datum: "2026-10-15", kasse: "K1", plu: "111", text: "Cola 0,33 l", menge: 6, umsatzBrutto: 14, zeilen: 1 },
+  { datum: "2026-10-15", kasse: "K1", plu: "101", text: "Döner", menge: 1, umsatzBrutto: 6, zeilen: 2 },
+  { datum: "2026-10-15", kasse: "K1", plu: "900", text: "Hackfleisch", einheit: "kg", menge: 1.5, umsatzBrutto: 14, zeilen: 1 },
+];
+
+test("DSFinV-K: der Leser versteht einen Export, der nur die Spalten aus VERWENDET hat – Summen, Storno, Rabatt, Gebinde, Einheit, Bon-Typ", () => {
+  const r = dsfinvkLesen(exportBauen());
+  assert.deepEqual(r.bericht.fehler, []);
+  assert.deepEqual(r.positionen, ERWARTET);
+  assert.deepEqual(r.tage, ["2026-10-15"]);
+  const b = r.bericht;
+  assert.equal(b.positionsStorno, 1, "P_STORNO = 1 wird übersprungen");
+  assert.equal(b.stornoBons, 1); assert.equal(b.stornoZeilen, 1); assert.equal(b.stornoRueck, 0, "negative Menge im Stornobeleg ist keine stornierte Rücknahme");
+  assert.deepEqual(b.bonTyp, { Beleg: 2, AVTraining: 1 });
+  assert.equal(b.nichtArtikel["bonTyp:AVTraining"].zeilen, 1, "Training zählt nicht als Verkauf");
+  assert.equal(b.nichtArtikel.Rabatt.zeilen, 1); assert.equal(b.verteilt, -3);
+  assert.equal(b.faktor, 1); assert.equal(b.nachMenge, 1); assert.equal(b.gezaehlt, 4);
+  assert.deepEqual(b.datumQuelle, { abschluss: 4, bon: 0, erstellung: 0 }, "Datum aus Z_BUCHUNGSTAG");
+});
+
+test("DSFinV-K: Zeichensatz, Trenner und Dezimalzeichen kommen aus der index.xml; ohne sie erkennt der Leser sie (Abweichung 3)", () => {
+  const index = '<?xml version="1.0"?><DataSet><Media><Table><VariableLength><DecimalSymbol>.</DecimalSymbol><ColumnDelimiter>|</ColumnDelimiter><TextEncapsulator>&quot;</TextEncapsulator></VariableLength></Table></Media></DataSet>';
+  const basis = dsfinvkLesen(exportBauen());
+  const ohne = dsfinvkLesen(exportBauen({ punkt: true, trenner: "," }));
+  const mit = dsfinvkLesen([...exportBauen({ punkt: true, trenner: "|" }), bytes("index.xml", index)]);
+  assert.deepEqual(ohne.positionen, ERWARTET, "Erkennung ohne index.xml (Komma als Trenner, Punkt als Dezimalzeichen)");
+  assert.deepEqual(mit.positionen, ERWARTET, "Vorgabe aus index.xml");
+  assert.equal(mit.fingerabdruck, basis.fingerabdruck); assert.equal(ohne.fingerabdruck, basis.fingerabdruck);
+});
+
+test("DSFinV-K: Stornobeleg ohne erzwungenes Minus – eine positive Menge im Stornobeleg wird addiert und im Bericht gezählt (4.2.2; Abweichung 4)", () => {
+  const dat = exportBauen().map((d) => (d.name !== "lines.csv" ? d : { ...d, bytes: new TextEncoder().encode(new TextDecoder().decode(d.bytes).replace("-1,000", "1,000")) }));
+  const r = dsfinvkLesen(dat);
+  assert.equal(r.bericht.stornoRueck, 1);
+  const doener = r.positionen.find((p) => p.text === "Döner");
+  assert.equal(doener.menge, 3, "2 + 1: Vorzeichen wie geliefert, kein -Math.abs");
 });
 
 test("DSFinV-K: Dateinamen und Tabellennamen (Anhang E Inhaltsverzeichnis S. 66–104)", { skip: nurOriginal ? false : "keine Originalquelle" }, () => {
@@ -79,37 +135,26 @@ test("DSFinV-K: Wertelisten BON_TYP (Anhang B) und GV_TYP (Anhang C) wie in verk
   assert.deepEqual([...BON_TYP_KOMMENTAR].sort(), [...bonTyp].sort(), "BON_TYP-Liste in verkauf.js ≠ Anhang B");
   assert.deepEqual(spec.wertelisten.BON_TYP.abschluss_relevant, ["Beleg"], "verkauf.js zählt nur BON_TYP „Beleg“ – laut Spec der einzige abschlussrelevante Typ");
   for (const g of GV_TYP_VERWENDET) assert.ok(spec.wertelisten.GV_TYP.werte.includes(g), "GV_TYP fehlt in Anhang C: " + g);
-  assert.ok(/VERTEILEN = new Set\(\["rabatt", "aufschlag"\]\)/.test(quelltext), "verkauf.js verteilt „Rabatt“/„Aufschlag“ auf die Umsatz-Zeilen des Bons (Prüfung 18.10.2026, Abweichung 2)");
-  // verkauf.js vergleicht klein geschrieben („beleg“, „umsatz“) – lax, aber die Spec-Werte sind dadurch sicher abgedeckt.
-  assert.ok(/toLowerCase\(\) !== "beleg"/.test(quelltext) && /gvKlein = gv\.toLowerCase\(\)/.test(quelltext) && /gvKlein !== "umsatz"/.test(quelltext));
 });
 
 test("DSFinV-K: Storno-Kennzeichen „1“ und negative MENGE (Abschnitt 4.2, S. 35–38)", { skip: nurOriginal ? false : "keine Originalquelle" }, () => {
   const regeln = spec.wertelisten.STORNO.regeln.join(" ");
   assert.ok(/BON_STORNO = „1“/.test(regeln) && /P_STORNO = „1“/.test(regeln));
-  assert.ok(/r\.P_STORNO === "1"/.test(quelltext), "verkauf.js prüft P_STORNO auf „1“");
-  assert.ok(/BON_STORNO === "1"/.test(quelltext), "verkauf.js prüft BON_STORNO auf „1“");
   assert.ok(/negiertem Vorzeichen/.test(regeln), "Spec: Positionsstorno auch als Zeile mit negativer MENGE – verkauf.js summiert MENGE vorzeichengerecht");
 });
 
 test("DSFinV-K: Felder MENGE, FAKTOR, EINHEIT (S. 17) werden alle drei gelesen (Prüfung 18.10.2026, Abweichung 1)", { skip: nurOriginal ? false : "keine Originalquelle" }, () => {
   const l = specFelder("lines.csv");
-  for (const f of ["MENGE", "FAKTOR", "EINHEIT"]) { assert.ok(l.includes(f)); assert.ok(VERWENDET["lines.csv"].includes(f), "VERWENDET ohne " + f); assert.ok(new RegExp("r\\." + f + "\\b").test(quelltext), "verkauf.js liest " + f + " nicht"); }
+  for (const f of ["MENGE", "FAKTOR", "EINHEIT"]) { assert.ok(l.includes(f)); assert.ok(VERWENDET["lines.csv"].includes(f), "VERWENDET ohne " + f); }
   assert.equal(spec.felder.find((x) => x.datei === "lines.csv" && x.feld === "FAKTOR").beschreibung, "Faktor, z. B. Gebindegrößen");
   assert.match(spec.felder.find((x) => x.datei === "lines.csv" && x.feld === "EINHEIT").beschreibung, /kg, Liter oder Stück/);
 });
 
-test("DSFinV-K: Kopfkommentar behauptet keine Formatvorgabe mehr – Zeichensatz/Trenner kommen aus der index.xml (GoBD), sonst Erkennung (Abweichung 3)", { skip: nurOriginal ? false : "keine Originalquelle" }, () => {
+test("DSFinV-K: Spec legt Zeichensatz/Trenner nicht fest (Leser-Verhalten dazu: index.xml-Test oben, Abweichung 3)", { skip: nurOriginal ? false : "keine Originalquelle" }, () => {
   assert.match(spec.format.befund, /legt Zeichensatz, Spaltentrenner, Textbegrenzer und Dezimalzeichen NICHT fest/);
-  const kopf = quelltext.split("\nimport ")[0];
-  assert.ok(!/Format laut Beschreibung \(index\.xml\)/.test(kopf), "alter Satz (Formatvorgabe) steht noch im Kopfkommentar");
-  assert.ok(/legt die DSFinV-K selbst NICHT fest/.test(kopf) && /index\.xml/.test(kopf) && /GoBD/.test(kopf) && /Erkennung/.test(kopf), "Kopfkommentar nennt index.xml (GoBD) und den Rückfall auf Erkennung nicht");
-  assert.ok(/indexXmlLesen/.test(quelltext) && /trennerErkennen/.test(quelltext), "Leser liest index.xml und erkennt sonst");
 });
 
 test("DSFinV-K: Stornobeleg ohne erzwungenes Minus – Vorzeichen wie geliefert (4.2.2, Anhang B S. 46; Abweichung 4)", { skip: nurOriginal ? false : "keine Originalquelle" }, () => {
   assert.match(spec.wertelisten.BON_TYP.anmerkung, /nicht die negative Darstellung eines Beleges/);
   assert.match(spec.wertelisten.STORNO.regeln.join(" "), /Stornobeleg ist ein separater Beleg/);
-  assert.ok(!/-Math\.abs\(/.test(quelltext), "verkauf.js erzwingt beim Stornobeleg noch ein Minus (-Math.abs)");
-  assert.ok(/stornoRueck/.test(quelltext), "stornierte Rücknahmen (positive Menge im Stornobeleg) werden im Bericht gezählt");
 });

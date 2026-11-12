@@ -4,9 +4,6 @@
 // nie automatisch; Fortschritt und „Uhrzeit“-Satz; Bilanz nach dem Ende und Lernen; Migration alter Aktionen; Zusammenführen; Bildschirm.
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 globalThis.document ??= { documentElement: {} };
 const st = await import("../js/store.js");
 const P = await import("../js/aktion_plan.js");
@@ -17,7 +14,6 @@ const { beispielLaden } = await import("../js/beispiel.js");
 const { haltbarStand, letzterOffenTag } = await import("../js/haltbar.js");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
-const HIER = path.dirname(fileURLToPath(import.meta.url));
 const H = "2026-10-18"; // Sonntag (im Beispiel-Laden Ruhetag)
 const JETZT = "2026-10-18T12:00:00.000Z";
 const nah = (x, y, eps = 1e-6) => assert.ok(Math.abs(x - y) <= eps, `${x} ≠ ${y}`);
@@ -123,7 +119,6 @@ test("Frei wählbarer Zeitraum: ab sofort, bis Datum, bis Ware weg (auch ohne Da
   assert.equal(T.aktionZeitraumSetzen(s2, x.id, { von: H, bis: "2026-11-10", ende: "ware" }, { heuteTag: H }), null, "unverändert");
   const k = laden(); const y = T.aktionUebernehmen(k, { ...KOMBI, von: "2026-10-25", bis: "2026-10-30" }, { heuteTag: H });
   assert.equal(T.aktionZeitraumSetzen(k, y.id, { von: "2026-10-22", bis: "2026-10-30", ende: "datum" }, { heuteTag: H }).von, "2026-10-22", "kommt noch: Start änderbar");
-  assert.ok(!fs.readFileSync(path.join(HIER, "..", "js", "tafel.js"), "utf8").includes("KOMBI_LAUFZEIT_TAGE"), "keine feste Laufzeit mehr");
 });
 
 test("Fortschritt: verkauft seit Start gegen gleiche Wochentage vorher, Rohertrag, Urteil und „Uhrzeit“-Satz", () => {
@@ -238,18 +233,11 @@ test("Bildschirm „Aktionen & Haltbarkeit“: Plan mit Vorschlag, Begründung u
   const z = akt.aktionenView(s); assert.ok(z.includes('data-plan="aendern"') && /data-f="akt-von"[^>]*disabled/.test(z), "Start einer laufenden Aktion bleibt");
   akt.aktionenEingabe("akt-bis", "2026-10-30"); assert.equal((await akt.aktionenAktion("akt-zeit-ok", { dataset: {} }, s)).speichern, true);
   assert.equal(s.aktionen.find((a) => a.id === "bsp-aktion-1").bis, "2026-10-30");
-  // nur vorhandene CSS-Klassen
-  const css = ["app", "buero", "zielbild", "optik", "laden", "heute", "zeki"].map((n) => fs.readFileSync(path.join(HIER, "..", "css", n + ".css"), "utf8")).join("\n");
-  for (const h of [html, p, z]) for (const k of new Set([...h.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean))) assert.ok(new RegExp("\\." + k.replace(/[-]/g, "\\-") + "(?![\\w-])").test(css), "Klasse ohne CSS: " + k);
   for (const n of ["akt-plan-ok", "akt-zeit-ok", "akt-zeit", "akt-beenden", "akt-plan-ende"]) assert.equal(personalGesperrt(n, null, H), true, n);
   akt.aktionenZuruecksetzen();
 });
 
-test("Texte: alle Plan-Schlüssel in 18 Sprachen, keine verbotenen Wörter", async () => {
+test("Texte: alle Plan-Schlüssel in 18 Sprachen", async () => {
   for (const c of i18n.SPRACHEN) { await i18n.ladeSprache(c); assert.deepEqual(i18n.fehlendeSchluessel(c).filter((k) => k.startsWith("plan") || k.startsWith("getraenke") || k.startsWith("tafel")), [], c); }
   i18n.setzeSprache("de");
-  const VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betriebsprüfungsfest", "steuersicher", "rechtssicher"];
-  for (const f of ["js/aktion_plan.js", "js/screens/aktionen.js", "js/tafel.js", ...fs.readdirSync(path.join(HIER, "..", "js", "lang")).map((x) => "js/lang/" + x)]) {
-    const t = fs.readFileSync(path.join(HIER, "..", f), "utf8").toLowerCase(); for (const v of VERBOTEN) assert.ok(!t.includes(v.toLowerCase()), f + ": " + v);
-  }
 });

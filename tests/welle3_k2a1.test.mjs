@@ -9,9 +9,13 @@ const z = { monatsende: 2345.4, lohnEchtTage: 3, unvollstaendig: false, stand: 9
 test("K2 A1: über dem Ziel → Netto-Ergebnis groß, Umsatz über Ziel klein", () => {
   const neu = zaehlerKarte(z, "2026-11-20", { tipp: false, ziel: { zahl: 1200, stufe: "ueberZiel", m: { nullpunkt: 9000, geschaetzt: false } } });
   assert.match(neu, new RegExp(`<span class="riesig">\\+ ${fmtEuro(2345.4, { dezimal: 0 }).replace(/\./g, "\\.")}</span>`));
+  // Von Hand: 2345,40 € auf ganze Euro gerundet, deutsches Tausenderpunkt-Format, Plus davor (Gewinn) → „+ 2.345 €“
+  assert.equal(neu.match(/<span class="riesig">([^<]*)<\/span>/)[1].replace(/\s/g, " "), "+ 2.345 €");
   assert.ok(neu.includes(i18n.t("zaehler.ueberZielZeile", fmtEuro(1200, { dezimal: 0 }))));
 });
 test("K2 A1: bis null bleibt die große Zahl der fehlende Umsatz", () => {
   const alt = zaehlerKarte(z, "2026-11-20", { tipp: false, ziel: { zahl: 1200, stufe: "bisNull", m: { nullpunkt: 9000, geschaetzt: false } } });
+  // Von Hand: fehlende 1200 Umsatz bis null → „1.200 €“ als große Zahl
+  assert.equal(alt.match(/<span class="riesig">([^<]*)<\/span>/)[1].replace(/\s/g, " "), "1.200 €");
   assert.ok(alt.includes(fmtEuro(1200, { dezimal: 0 })) && !alt.includes(i18n.t("zaehler.ergebnisMonatsende", "November")));
 });

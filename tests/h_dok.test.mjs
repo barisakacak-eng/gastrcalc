@@ -26,6 +26,10 @@ test("Amt-Dokument: Nachtrag, Maßnahme offen, verspätet, Rücknahmen, Müll, A
   for (const text of ["Nachgetragen am", "04.10.2026 *", "05.10.2026 10:20", "Maßnahme offen", "Nachkontrolle verspätet (nach 24 Std.)", "Zurückgenommen / geändert", "Weggeworfene Ware", "MZ (ausgeschieden am 03.10.2026)",
     "Geräte und Grenzen", "counter(pages)", "Diese Liste ersetzt kein HACCP-Konzept", 'class="nach"', 'class="spaet"'])
     assert.ok(html.includes(text), "fehlt: " + text);
+  // Von Hand gezählt aus den fünf Messungen oben: nur die vom 04.10. wurde nachgetragen (Stern am Datum, Zeile mit class "nach"); eine Nachkontrolle ist verspätet (02.10., nie erledigt, Zeile "spaet").
+  assert.equal((html.match(/<tr class="nach"><td class="r">\d+<\/td><td>\d\d\.\d\d\.\d{4} \*<\/td>/g) || []).length, 1, "genau eine nachgetragene Messung");
+  assert.equal((html.match(/<tr class="spaet">/g) || []).length, 1, "genau eine verspätete Nachkontrolle");
+  assert.equal(html.split("Weggeworfene Ware").length, 2, "Abschnitt Müll steht genau einmal");
   assert.ok(!html.includes("nie gelöscht"));
   assert.ok(!/12,00|12 €/.test(html.split("Weggeworfene Ware")[1].split("</section>")[0]), "kein Euro im Müll-Abschnitt");
   assert.ok(!E.GRENZEN_WARE.hack);

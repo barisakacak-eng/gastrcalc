@@ -6,16 +6,18 @@ Schnellstart (Deutsch, Dönerladen, Karte „Später“, 1 Kühlschrank + 1 Tief
   absaetze     Erklärabsätze (p, small, .hinweis, .fein, .unter, li) mit ≥ 12 Wörtern im Laden: 0
   verboten     verbotene Wörter im sichtbaren Text und in js/lang/de.js: 0 Treffer
   schrift      kleinste Schrift im Laden ≥ 12 px · tippflaeche: Tippflächen ≥ 44 px · kontrast: Leisten-Beschriftung ≥ 4,5:1
-Schreibt tests/regeln_stand.json und eine Zusammenfassung auf die Konsole. Bekannte Verletzungen stehen in tests/regeln_ausnahmen.json
+Schreibt den Messstand (regeln_stand.json) NICHT ins Repo, sondern nach REGELN_STAND (Pfad) bzw. in den Temp-Ordner des Systems, und eine Zusammenfassung auf die Konsole. Bekannte Verletzungen stehen in tests/regeln_ausnahmen.json
 (Bildschirm, Regel, Grund) – nur Verletzungen außerhalb dieser Liste geben Exit 1.
 Start: python3 tests/regeln.py   (Webserver Port 8797; REGELN_OUT setzt den Ordner für Bilder)"""
-import asyncio, json, os, pathlib, re, subprocess, sys, time
+import asyncio, json, os, pathlib, re, subprocess, sys, tempfile, time
 from playwright.async_api import async_playwright
 import nav_hilfe, schnellstart, pilot_karten_browser, abschluss_browser
 
 APP = schnellstart.APP
 TESTS = APP / "tests"
 OUT = pathlib.Path(os.environ.get("REGELN_OUT", APP.parent / "audit" / "regeln")); OUT.mkdir(parents=True, exist_ok=True)
+# Messstand liegt außerhalb des Repos (sonst ändert jeder Lauf eine eingecheckte Datei): REGELN_STAND = voller Dateipfad, sonst <Temp-Ordner>/regeln_stand.json
+STAND = pathlib.Path(os.environ.get("REGELN_STAND") or pathlib.Path(tempfile.gettempdir()) / "regeln_stand.json")
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8797"))
 VIEWPORTS = [(390, 844), (360, 780)]
 
@@ -239,7 +241,8 @@ def main():
     unnoetig = sorted(k for k in bekannt if not any((b["bildschirm"], b["regel"]) == k for b in verletzt))
     try: fassung = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=APP, capture_output=True, text=True).stdout.strip()
     except Exception: fassung = ""
-    (TESTS / "regeln_stand.json").write_text(json.dumps({"datum": time.strftime("%Y-%m-%d %H:%M"), "fassung": fassung, "dauer_s": round(time.time() - t0, 1),
+    STAND.parent.mkdir(parents=True, exist_ok=True)
+    STAND.write_text(json.dumps({"datum": time.strftime("%Y-%m-%d %H:%M"), "fassung": fassung, "dauer_s": round(time.time() - t0, 1),
         "soll": {"woerter": WOERTER_SOLL, "knopfhoehe": KNOPF_SOLL, "schrift": SCHRIFT_SOLL, "tippflaeche": TIPP_SOLL, "kontrast": KONTRAST_SOLL, "absatzWoerter": ABSATZ_WOERTER},
         "bildschirme": stand, "befunde": befunde, "de_js": de_treffer, "neueVerletzungen": neu, "ausnahmenOhneBefund": unnoetig, "konsolenfehler": fehler}, ensure_ascii=False, indent=1), encoding="utf-8")
     # ---- Zusammenfassung
@@ -254,7 +257,7 @@ def main():
     print(f"\nVerletzungen: {len(verletzt)} · davon bekannt (Ausnahmen): {len(verletzt) - len(neu)} · neu: {len(neu)}")
     if unnoetig: print("Ausnahmen ohne Befund (können raus):", ", ".join(f"{a}/{r}" for a, r in unnoetig))
     if fehler: print("Konsolenfehler:", fehler)
-    print("Messwerte:", TESTS / "regeln_stand.json", "· Bilder:", OUT)
+    print("Messwerte:", STAND, "· Bilder:", OUT)
     if neu or fehler:
         for b in neu: print(f"NEU: {b['viewport']} {b['bildschirm']} {b['regel']} ist {b['ist']} soll {b['soll']}")
         sys.exit(1)
