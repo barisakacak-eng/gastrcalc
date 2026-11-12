@@ -1,6 +1,7 @@
 // Eigene Herstellung (Punkt 2): Antwort auf „Was macht ihr selbst?" in die Artikel übertragen.
 import { ZWISCHENREZEPTE, vorauswahlFuer } from "./data/zwischen.js";
 import { PRODUKT_INDEX } from "./data/katalog.js";
+import { zwischenpreiseSetzen } from "./engine.js"; // Lauf 6 (P1 B6)
 import { ladenArtVon, ladenArtenVon } from "./profil.js";
 
 // Die gewählten Kacheln: eigene Antwort, sonst die Vorauswahl der Laden-Art.
@@ -32,6 +33,7 @@ export function selbstAnwenden(stand, ids = selbstGewaehlt(stand)) {
       const v = a.gekauftVorher; a.preis = v?.preis ?? null; a.packung = v?.packung || { menge: null, einheit: a.einheit }; a.preisBasis = v?.preisBasis || "netto"; a.status = a.preis === null ? "offen" : "bekannt";
     }
   }
+  zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6): hier wird geschrieben, die selbst gemachten Teile bekommen ihren Preis jetzt hier (kalkulation() schreibt nicht mehr)
   return stand;
 }
 
