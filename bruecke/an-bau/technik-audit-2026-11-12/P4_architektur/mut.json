@@ -1,0 +1,22 @@
+[
+["M01","js/zaehler.js","const nenner = (1 - q) / brutto - pS;","const nenner = (1 - q) / brutto + pS;","Nullpunkt: Provision-Abzug − zu +"],
+["M02","js/zaehler.js","const nennerZ = (1 - q - g) / brutto - pS;","const nennerZ = (1 - q + g) / brutto - pS;","Ziel: Zielgewinn − zu +"],
+["M03","js/zaehler.js","summe < nullpunkt ? \"bisNull\"","summe <= nullpunkt ? \"bisNull\"","Stufe bis-null: < zu <="],
+["M04","js/zaehler.js","Math.round(betrag * (1 + satz) * 100) / 100 : betrag","betrag * (1 + satz) : betrag","Netto→Brutto Umsatz: Rundung weg"],
+["M05","js/preisrunde.js","const dbAlt = pa / (1 + mwst) - w,","const dbAlt = pa / (1 + mwst) + w,","Preisrunde: DB alt Ware − zu +"],
+["M06","js/steuertopf.js","SATZ_19 = 0.19;","SATZ_19 = 0.18;","Steuertopf: Satz 19 % zu 18 %"],
+["M07","js/steuertopf.js","zahllast: rund2(ustGesamt - vorsteuer)","zahllast: rund2(ustGesamt + vorsteuer)","Zahllast: USt − Vorsteuer, − zu +"],
+["M08","js/steuertopf.js","rund2(rund2(ust7 + ust19) - bisher)","rund2(ust7 + ust19 - bisher)","Steuertopf-Tageszeile: kumulierte Rundung weg"],
+["M09","js/umsatz_pruefung.js","b < m * UMSATZ_PRUEFUNG.unten","b <= m * UMSATZ_PRUEFUNG.unten","Umsatz-Rückfrage 10 %: < zu <="],
+["M10","js/feiertage.js","fronleichnam: plusTage(o, 60)","fronleichnam: plusTage(o, 61)","Fronleichnam Ostern+60 zu +61"],
+["M11","js/mindestlohn.js","p.stunden * MONATSTAGE / 28","p.stunden * MONATSTAGE / 29","Mindestlohn-Vorschau: 28-Tage-Fenster /28 zu /29"],
+["M12","js/ware.js","jahr: jePortion * monat * 12","jahr: jePortion * monat * 11","Portion in Euro: Jahr 12 zu 11 Monate"],
+["M13","js/engine.js","export const VORSTEUER = 0.19;","export const VORSTEUER = 0.07;","Vorsteuer-Standard 0,19 zu 0,07"],
+["M14","js/lieferung.js","Math.abs(sp.prozent) > PREISSPRUNG_AB","Math.abs(sp.prozent) >= PREISSPRUNG_AB","Preissprung-Rückfrage 10 %: > zu >="],
+["M15","js/schichten.js","mt >= 20 * 60 || mt < 6 * 60","mt >= 21 * 60 || mt < 6 * 60","Nachtzuschlag-Beginn 20 Uhr zu 21 Uhr"],
+["M16","js/engine.js","(Number(betrag) || 0) / (1 + (Number(satz) || 0))","(Number(betrag) || 0) * (1 + (Number(satz) || 0))","nettoVonBrutto: / zu *"],
+["M17","js/hebel.js","euroMonat: cent / (1 + z.mwst)","euroMonat: cent * (1 + z.mwst)","Euro-Hebel: / zu *"],
+["M18","js/liquiditaet.js","reicht: tief.c >= 0","reicht: tief.c > 0","Liquidität reicht: >= zu >"],
+["M19","js/engine.js","kuehl: { min: null, max: 7 }","kuehl: { min: null, max: 8 }","Kühlgrenze 7 °C zu 8 °C"],
+["M20","js/liquiditaet.js","plus(eingabe.datum, NACHFRAGE_TAGE) <= heute","plus(eingabe.datum, NACHFRAGE_TAGE) < heute","Nachfrage-Frist: <= zu <"]
+]
