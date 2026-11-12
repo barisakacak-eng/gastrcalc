@@ -85,7 +85,7 @@ test("3.2 SV 2027 (AOK-Liste): Beitragsnachweis und FÃ¤lligkeit je Monat; Mai hÃ
   assert.equal(svTermin(2026, 11).faellig, "2026-11-26"); assert.equal(svTermin(2026, 12).faellig, "2026-12-28");
 });
 test("3.2 Kalender: nie ein Text mit Schonfrist; Termine sortiert, SV nur mit Personal", () => {
-  const t = pflichtTermine("2026-11-01", "2027-12-31", { rhythmus: "monat", personal: true });
+  const t = pflichtTermine("2026-11-01", "2027-12-31", { rhythmus: "monat", personal: true, lstRhythmus: "monat", est: true });
   assert.ok(t.length > 40); assert.ok(t.every((x, i) => i === 0 || t[i - 1].datum <= x.datum));
   assert.ok(!pflichtTermine("2026-11-01", "2027-12-31", { rhythmus: "monat" }).some((x) => x.art === "sv"));
   assert.ok(!JSON.stringify(t).toLowerCase().includes("schonfrist"));

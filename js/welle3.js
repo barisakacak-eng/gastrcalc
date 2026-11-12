@@ -6,12 +6,20 @@ import { heute } from "./util.js";
 import { umsatzEintrag, fixkosten, monatsLast, tagPlus } from "./engine.js";
 import { warenQuote } from "./zaehler.js";
 import { steuerTopf, kleinunternehmer } from "./steuertopf.js";
-import { pflichtTermine, ERINNERUNG_TAGE } from "./fristen.js";
+import { pflichtTermine, ERINNERUNG_TAGE, lstRhythmusVorschlag } from "./fristen.js";
+import { istPersonen } from "./rechtsform.js";
 import { LAND_CODES } from "./feiertage.js";
 import { liquiditaet, nachfragen } from "./liquiditaet.js";
 
 const r2 = (n) => Math.round(n * 100) / 100;
 export function ustRhythmusSetzen(stand, w) { stand.betrieb.ustRhythmus = w === "monat" || w === "quartal" ? w : null; }
+// Lohnsteuer-Anmeldung: Rhythmus nach § 41a Abs. 2 EStG, wird abgefragt (nie geraten). lstVorjahr = Lohnsteuer des Vorjahres in Euro, nur für den Vorschlag.
+export function lstRhythmusSetzen(stand, w) { stand.betrieb.lstRhythmus = ["monat", "quartal", "jahr"].includes(w) ? w : null; }
+export function lstVorjahrSetzen(stand, n) { stand.betrieb.lstVorjahr = Number.isFinite(n) && n >= 0 && n < 1e7 ? r2(n) : null; }
+export const lstVorschlag = (stand, tag = heute()) => lstRhythmusVorschlag(stand.betrieb?.lstVorjahr ?? NaN, tag);
+// Einkommensteuer-Vorauszahlung: nur wer einen Bescheid hat, bekommt die vier Termine (§ 37 Abs. 3 EStG); nur Einzelunternehmen und Personengesellschaft.
+export function estBescheidUmschalten(stand) { stand.betrieb.estBescheid = !stand.betrieb.estBescheid; }
+export const estTermineAn = (stand) => istPersonen(stand) && !!stand.betrieb?.estBescheid;
 export function dauerfristUmschalten(stand) { stand.betrieb.dauerfrist = !stand.betrieb.dauerfrist; }
 export function chefStundenSetzen(stand, n) { stand.chef ??= {}; stand.chef.stundenMonat = Number.isFinite(n) && n > 0 && n <= 744 ? Math.round(n) : null; }
 // W3b (04.11.2026): Land, in dem die Krankenkasse sitzt (SV-Termin Mai 2027 hängt daran); null = weiß nicht → früherer Termin
@@ -24,7 +32,7 @@ const wochentag = (tag) => new Date(tag + "T12:00:00Z").getUTCDay();
 // Pflichttermine der nächsten 60 Tage für diesen Laden
 export function termineLaden(stand, ab = heute(), tage = 60) {
   return pflichtTermine(ab, tagPlus(ab, tage), { rhythmus: stand.betrieb?.ustRhythmus || null, dauerfrist: !!stand.betrieb?.dauerfrist,
-    kleinunternehmer: kleinunternehmer(stand), personal: (stand.personen || []).some((p) => !p.entfernt), landKasse: stand.betrieb?.svLand || null, land: stand.betrieb?.bundesland || "BW" });
+    kleinunternehmer: kleinunternehmer(stand), personal: (stand.personen || []).some((p) => !p.entfernt), lstRhythmus: stand.betrieb?.lstRhythmus || null, est: estTermineAn(stand), landKasse: stand.betrieb?.svLand || null, land: stand.betrieb?.bundesland || "BW" });
 }
 
 // Lauf 3, Phase 6 (09.11.2026): Erinnerung auf Heute, 5 Tage vor einem Pflichttermin (ERINNERUNG_TAGE). Der früheste Termin, dessen Erinnerung

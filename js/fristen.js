@@ -6,13 +6,16 @@
 //   Sonntag oder einen Feiertag, gilt der nächste Werktag (§ 108 Abs. 3 AO). Gerechnet mit den Feiertagen des Ladens (Standard BW).
 // - Dauerfristverlängerung (§ 46 UStDV): jeder USt-Termin einen Monat später. Schalter, nie geraten.
 // - Rhythmus monatlich / vierteljährlich wird abgefragt, nie geraten (Gründer-Ausnahme 2027 nicht belegt, Markt-Radar).
-// - ESt-Vorauszahlungen: 10.03., 10.06., 10.09., 10.12. (§ 37 Abs. 1 EStG), ebenfalls nach § 108 Abs. 3 AO verschoben.
+// - ESt-Vorauszahlungen: 10.03., 10.06., 10.09., 10.12. (§ 37 Abs. 1 EStG), ebenfalls nach § 108 Abs. 3 AO verschoben. Nur mit Bescheid
+//   und nur bei Einzelunternehmen oder Personengesellschaft (einstellung.est).
+// - Lohnsteuer-Anmeldung: monatlich, vierteljährlich oder jährlich (§ 41a Abs. 2 EStG), wird abgefragt (einstellung.lstRhythmus).
 // - SV-Beiträge: drittletzter Bankarbeitstag des Monats (§ 23 Abs. 1 SGB IV); Beitragsnachweis zwei Bankarbeitstage vorher, 0:00 Uhr.
 //   Bankarbeitstag = Mo–Fr ohne bundesweite Feiertage, ohne 24.12. und 31.12., ohne die Feiertage im Land der Krankenkasse.
 //   Maßgeblich ist der Sitz der Krankenkasse, nicht der Laden. Unbekannt → der frühere Termin (Prüfpaket C, Mai 2027: 26.05. statt 27.05.).
 // - Die Schonfrist von 3 Tagen gilt nur für die Zahlung, nicht für die Abgabe: die App sagt nie „du hast noch 3 Tage“.
 // - Erinnerung 5 Tage vor dem Termin (Masterauftrag 3.2, Setzung).
 import { feiertagAm, LAND_CODES } from "./feiertage.js";
+import { wert } from "./data/regelwerk.js";
 
 export const ERINNERUNG_TAGE = 5; // Setzung Masterauftrag „Gehirn“ 3.2
 const z2 = (n) => String(n).padStart(2, "0");
@@ -40,10 +43,21 @@ export function ustTermine(jahr, { rhythmus = null, dauerfrist = false, land = "
   }
   return out;
 }
-// Lohnsteuer-Anmeldung (monatlich angenommen, wenn Personal da ist; der Rhythmus folgt der Lohnsteuer des Vorjahres – im Büro einstellbar)
-export function lohnsteuerTermine(jahr, { land = "BW" } = {}) {
-  return ustTermine(jahr, { rhythmus: "monat", land }).map((x) => ({ ...x, art: "lohnsteuer" }));
+// Lohnsteuer-Anmeldung nach § 41a Abs. 2 EStG: Kalendermonat, Kalendervierteljahr oder Kalenderjahr – je nach Lohnsteuer des Vorjahres.
+// rhythmus "monat" | "quartal" | "jahr" | null. null = nicht abgefragt → keine Termine (wie bei der Umsatzsteuer: nie geraten).
+// Abgabe immer am 10. nach Ablauf des Zeitraums (§ 41a Abs. 1), verschoben nach § 108 Abs. 3 AO. Keine Dauerfristverlängerung.
+export function lohnsteuerTermine(jahr, { rhythmus = null, land = "BW" } = {}) {
+  if (!rhythmus) return [];
+  if (rhythmus === "jahr") return [frist("lohnsteuer", String(jahr - 1), iso(jahr, 1, 10), land)];
+  return ustTermine(jahr, { rhythmus, land }).map((x) => ({ ...x, art: "lohnsteuer" }));
 }
+// Vorschlag für den Rhythmus aus der Lohnsteuer des Vorjahres (Grenzen aus dem Regelwerk). Kein Betrag → kein Vorschlag.
+export function lstRhythmusVorschlag(lstVorjahr, tag) {
+  if (!Number.isFinite(lstVorjahr) || lstVorjahr < 0) return null;
+  return lstVorjahr <= wert("lst_jahr_bis", tag) ? "jahr" : lstVorjahr <= wert("lst_quartal_bis", tag) ? "quartal" : "monat";
+}
+// Einkommensteuer-Vorauszahlungen (§ 37 Abs. 1 EStG): 10.03., 10.06., 10.09., 10.12. Es gibt sie nur mit Vorauszahlungsbescheid (§ 37 Abs. 3)
+// und nur, wenn der Inhaber selbst Einkommensteuer zahlt (Einzelunternehmen, Personengesellschaft). Das entscheidet pflichtTermine.
 export function estVorauszahlungen(jahr, { land = "BW" } = {}) {
   return [3, 6, 9, 12].map((m) => frist("est", `${jahr}-Q${m / 3}`, iso(jahr, m, 10), land));
 }
@@ -69,12 +83,12 @@ export function svTermin(jahr, monat, { landKasse = null } = {}) {
 }
 export const svTermine = (jahr, opt = {}) => Array.from({ length: 12 }, (_, i) => svTermin(jahr, i + 1, opt));
 
-// Alle Pflichttermine zwischen zwei Tagen (einschließlich), nach Datum. einstellung: { rhythmus, dauerfrist, kleinunternehmer, personal, landKasse, land }
+// Alle Pflichttermine zwischen zwei Tagen (einschließlich), nach Datum. einstellung: { rhythmus, dauerfrist, kleinunternehmer, personal, lstRhythmus, est, landKasse, land }
 export function pflichtTermine(von, bis, einstellung = {}) {
   const land = einstellung.land || "BW"; const out = [];
   for (let j = Number(von.slice(0, 4)); j <= Number(bis.slice(0, 4)); j++) {
-    out.push(...ustTermine(j, { ...einstellung, land }), ...estVorauszahlungen(j, { land }));
-    if (einstellung.personal) { out.push(...lohnsteuerTermine(j, { land })); for (const s of svTermine(j, { landKasse: einstellung.landKasse || null })) out.push({ art: "sv", zeitraum: s.monat, regulaer: s.faellig, datum: s.faellig, verschoben: false, nachweis: s.nachweis, erinnerung: plus(s.nachweis, -ERINNERUNG_TAGE), sitzBekannt: s.sitzBekannt }); }
+    out.push(...ustTermine(j, { ...einstellung, land })); if (einstellung.est) out.push(...estVorauszahlungen(j, { land }));
+    if (einstellung.personal) { out.push(...lohnsteuerTermine(j, { rhythmus: einstellung.lstRhythmus || null, land })); for (const s of svTermine(j, { landKasse: einstellung.landKasse || null })) out.push({ art: "sv", zeitraum: s.monat, regulaer: s.faellig, datum: s.faellig, verschoben: false, nachweis: s.nachweis, erinnerung: plus(s.nachweis, -ERINNERUNG_TAGE), sitzBekannt: s.sitzBekannt }); }
   }
   return out.filter((x) => x.datum >= von && x.datum <= bis).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.art.localeCompare(b.art)));
 }

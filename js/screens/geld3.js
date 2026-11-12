@@ -7,8 +7,9 @@ const tagPlusG3 = (d, n) => { const x = new Date(d + "T12:00:00Z"); x.setUTCDate
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, wasBleibt, prueferBlick } from "../steuertopf.js";
-import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, chefStundenSetzen, geldHeuteSetzen, svLandSetzen } from "../welle3.js";
+import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, lstRhythmusSetzen, lstVorjahrSetzen, lstVorschlag, estBescheidUmschalten, chefStundenSetzen, geldHeuteSetzen, svLandSetzen } from "../welle3.js";
 import { monatEinfrieren, eingefroren, monatVergleich } from "../monatsabschluss.js";
+import { istPersonen } from "../rechtsform.js";
 import { BUNDESLAENDER } from "../feiertage.js";
 const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
 import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragen, schichtStunden } from "../schichten.js";
@@ -31,8 +32,13 @@ export function geld3View(stand) {
   // 3.2 Termine
   const rh = stand.betrieb?.ustRhythmus || null; const tl = termineLaden(stand, H, 60).slice(0, 10); // Lauf 4, P3 C1: alle Termine der 60 Tage (vorher nur 4)
   const rhChips = `<div class="chips">${["monat", "quartal"].map((w) => `<button type="button" class="chip klein ${rh === w ? "an" : ""}" data-a="g3-rhythmus" data-wert="${w}" aria-pressed="${rh === w}">${esc(t("w3.termine." + w))}</button>`).join("")}</div>`;
-  const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(dk(tl[0].datum)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}`}
-    ${!rh && !ku ? z(t("w3.termine.art.ust"), esc(t("w3.termine.rhythmusWaehlen"))) : "" /* Lauf 4, P3 C3 */}${tl.map((x) => z(t("w3.termine.art." + x.art), esc(dk(x.datum)) + (x.verschoben ? " *" : "") + (x.art === "sv" && x.nachweis ? " · " + esc(t("w3.termine.nachweis", dk(x.nachweis))) : "" /* Lauf 4, P3 C2: Beitragsnachweis */))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
+  // Lohnsteuer-Rhythmus (§ 41a Abs. 2 EStG) – nur mit Personal; ESt-Vorauszahlung nur bei Einzelunternehmen/Personengesellschaft mit Bescheid
+  const personal = (stand.personen || []).some((p) => !p.entfernt); const lr = stand.betrieb?.lstRhythmus || null; const lv = lstVorschlag(stand, H);
+  const lstTeil = !personal ? "" : `<p class="hinweis">${esc(t("w3.termine.lstFrage"))}</p><div class="chips">${["monat", "quartal", "jahr"].map((w) => `<button type="button" class="chip klein ${lr === w ? "an" : ""}" data-a="g3-lst-rhythmus" data-wert="${w}" aria-pressed="${lr === w}">${esc(t("w3.termine." + w))}</button>`).join("")}</div>
+    <div class="feldzeile"><label>${esc(t("w3.termine.lstVorjahr"))}</label><div class="betrag klein"><input inputmode="decimal" data-f="g3-lst-vorjahr" value="${typeof stand.betrieb?.lstVorjahr === "number" ? esc(wertAnzeige(stand.betrieb.lstVorjahr)) : ""}"><span class="einheit">€</span></div></div>${lv ? `<small>${esc(t("w3.termine.lstVorschlag", t("w3.termine." + lv)))}</small>` : ""}`;
+  const estTeil = !istPersonen(stand) ? "" : `<div class="chips"><button type="button" class="chip klein ${stand.betrieb?.estBescheid ? "an" : ""}" data-a="g3-est-bescheid" aria-pressed="${!!stand.betrieb?.estBescheid}">${esc(t("w3.termine.estBescheid"))}</button></div>`;
+  const termine = karte("termine", t("w3.termine.titel"), tl[0] ? esc(dk(tl[0].datum)) : "", `${ku ? "" : `<p class="hinweis">${esc(t("w3.termine.rhythmusFrage"))}</p>${rhChips}`}${lstTeil}${estTeil}
+    ${!rh && !ku ? z(t("w3.termine.art.ust"), esc(t("w3.termine.rhythmusWaehlen"))) : ""}${personal && !lr ? z(t("w3.termine.art.lohnsteuer"), esc(t("w3.termine.rhythmusWaehlen"))) : ""}${tl.map((x) => z(t("w3.termine.art." + x.art), esc(dk(x.datum)) + (x.verschoben ? " *" : "") + (x.art === "sv" && x.nachweis ? " · " + esc(t("w3.termine.nachweis", dk(x.nachweis))) : "" /* Lauf 4, P3 C2: Beitragsnachweis */))).join("") || `<p>${esc(t("w3.termine.keine"))}</p>`}
     ${tl.some((x) => x.verschoben) ? `<small>${esc(t("w3.termine.verschoben"))}</small>` : ""}<small>${esc(t("w3.termine.erinnerung"))}</small>`);
   // 3.4 Was bleibt
   // 3.4/3.5 auf dem letzten vollen Monat (mitten im Monat stünden volle Monatskosten gegen halben Umsatz); ohne Vormonat mit Umsatz: noch nichts
@@ -88,6 +94,8 @@ export function geld3Aktion(name, el, stand) {
   if (name !== "g3-schicht") schichtOk = false;
   if (name === "g3-rhythmus") { ustRhythmusSetzen(stand, stand.betrieb.ustRhythmus === el.dataset.wert ? null : el.dataset.wert); return true; }
   if (name === "g3-dauerfrist") { dauerfristUmschalten(stand); return true; }
+  if (name === "g3-lst-rhythmus") { lstRhythmusSetzen(stand, stand.betrieb.lstRhythmus === el.dataset.wert ? null : el.dataset.wert); return true; }
+  if (name === "g3-est-bescheid") { estBescheidUmschalten(stand); return true; }
   if (name === "g3-schicht" && w3b()) { const pers = (stand.personen || []).filter((p) => !p.entfernt);
     const e = schichtEintragen(stand, { datum: schichtEntwurf.datum || heuteGeschaeft(), person: schichtEntwurf.person || pers[0]?.id, von: schichtEntwurf.von, bis: schichtEntwurf.bis });
     if (e) schichtEntwurf = { person: e.person, datum: e.datum, von: "", bis: "" }; schichtOk = !!e; if (e) offeneKlappen.add("g3-schicht"); return true; }
@@ -95,6 +103,7 @@ export function geld3Aktion(name, el, stand) {
   return false;
 }
 export function geld3Eingabe(feld, wert, stand) {
+  if (feld === "g3-lst-vorjahr") { lstVorjahrSetzen(stand, wert.trim() === "" ? NaN : parseZahl(wert)); return true; }
   if (feld === "g3-stunden") { chefStundenSetzen(stand, parseZahl(wert)); return true; }
   const sm = /^g3-s-(person|datum|von|bis)$/.exec(feld); if (sm) { schichtOk = false; schichtEntwurf = { ...schichtEntwurf, [sm[1]]: wert }; return false; } // Entwurf, nicht neu zeichnen
   if (feld === "g3-svland" && w3b()) { svLandSetzen(stand, wert || null); return true; }
