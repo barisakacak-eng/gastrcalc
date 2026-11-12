@@ -389,7 +389,7 @@ export function artikelAusGerichten(stand) {
   }
   for (const a of Object.values(neu)) a.benutzt = benutzt.has(a.name);
   const liste = Object.values(neu);
-  zwischenpreiseRechnen({ ...stand, artikel: liste });
+  zwischenpreiseSetzen({ ...stand, artikel: liste });
   return liste;
 }
 
@@ -427,16 +427,37 @@ export function selbstWerte(a) {
   };
 }
 
-// Rechnet die Preise aller selbst gemachten Artikel neu und schreibt sie wie einen Einkaufspreis (netto, je Ausbeute) an den Artikel.
+// Lauf 6 (P1 B6): Lesen darf nichts erzeugen. Der Preis eines selbst gemachten Teils (Material ÷ Ausbeute) wird in zwei getrennten Schritten gerechnet:
+//  1. artikelMitZwischenpreisen(stand) – rein: liefert die Artikelliste, in der die selbst gemachten Teile ihre errechneten Preise tragen (Kopien,
+//     der Stand bleibt unberührt). kalkulation() rechnet damit. Selbst gemachte Teile hängen nur von gekauften Rohstoffen ab, die Reihenfolge spielt keine Rolle.
+//  2. zwischenpreiseSetzen(stand) – schreibend: trägt dieselben Preise in den Stand ein und merkt den alten Preis im Preisverlauf („Preise, die sich
+//     geändert haben“). Aufgerufen, wo heute schon geschrieben wird: Artikelpreis ändern (karte_daten.js), Beleg übernehmen (lieferung.js),
+//     Artikelliste abgleichen (artikelAusGerichten), Richtpreise einsetzen/entfernen.
+function zwischenErgebnis(a, index) {
+  const z = zwischenpreis(a, index);
+  const preis = z.preis === null ? null : Math.round(z.preis * 10000) / 10000;
+  const menge = a.rezept.ausbeute?.menge, einheit = a.rezept.ausbeute?.einheit;
+  return { z, preis, menge, einheit, geaendert: preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit };
+}
+export function artikelMitZwischenpreisen(stand) {
+  const liste = stand.artikel || []; const index = Object.fromEntries(liste.map((a) => [a.name, a]));
+  return liste.map((a) => {
+    if (a.herkunft !== "selbst" || !a.rezept) return a;
+    const { z, preis, menge, einheit, geaendert } = zwischenErgebnis(a, index); const k = { ...a };
+    if (geaendert) { k.preis = preis; k.packung = { menge, einheit }; k.preisBasis = "netto"; k.preisQuelle = "errechnet"; }
+    k.status = preis === null ? "offen" : "errechnet"; k.zwischenFehlt = z.fehlt;
+    if (preis !== null && z.richtpreis) k.zwischenRichtpreis = true; else delete k.zwischenRichtpreis;
+    return k;
+  });
+}
+// Schreibt die Preise aller selbst gemachten Artikel in den Stand wie einen Einkaufspreis (netto, je Ausbeute).
 // Ändert sich der Preis (Mehl teurer), kommt der alte in den Preisverlauf – so erscheint das Teil in „Preise, die sich geändert haben".
-export function zwischenpreiseRechnen(stand) {
+export function zwischenpreiseSetzen(stand) {
   const index = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   for (const a of stand.artikel || []) {
     if (a.herkunft !== "selbst" || !a.rezept) continue;
-    const z = zwischenpreis(a, index);
-    const preis = z.preis === null ? null : Math.round(z.preis * 10000) / 10000;
-    const menge = a.rezept.ausbeute.menge, einheit = a.rezept.ausbeute.einheit;
-    if (preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit) {
+    const { z, preis, menge, einheit, geaendert } = zwischenErgebnis(a, index);
+    if (geaendert) {
       if (typeof a.preis === "number" && preis !== null) preisMerken(a, heute());
       a.preis = preis; a.packung = { menge, einheit }; a.preisBasis = "netto"; a.preisQuelle = "errechnet"; // W2-K2
     }
@@ -444,6 +465,7 @@ export function zwischenpreiseRechnen(stand) {
     if (preis !== null && z.richtpreis) a.zwischenRichtpreis = true; else delete a.zwischenRichtpreis;
   }
 }
+export const zwischenpreiseRechnen = zwischenpreiseSetzen; // alter Name (beispiel.js, Tests)
 
 // Zubereitungszeit eines Gerichts plus der anteiligen Arbeit an selbst gemachten Teilen (Pizza: 20 min je 1650 g Teig × 280 g ≈ 3,4 min).
 export function zeitMitZwischen(gericht, artikelIndex) {
@@ -469,8 +491,9 @@ export function kalkulation(stand, opts = {}) {
   if (kalkAktiv && opts.produktivAnteil === undefined) { const m = kalkMemo.get(stand); if (m && m.takt === kalkTakt) return m.wert; const wert = kalkulationRechnen(stand, opts); kalkMemo.set(stand, { takt: kalkTakt, wert }); return wert; }
   return kalkulationRechnen(stand, opts);
 }
-function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
-  zwischenpreiseRechnen(stand); // selbst gemachte Teile folgen den Rohstoffpreisen (Mehl teurer → Pide teurer)
+function kalkulationRechnen(standOriginal, { produktivAnteil = 0.7 } = {}) {
+  // selbst gemachte Teile folgen den Rohstoffpreisen (Mehl teurer → Pide teurer) – nur im Ergebnis, der Stand bleibt unberührt (Lauf 6, P1 B6)
+  const stand = { ...standOriginal, artikel: artikelMitZwischenpreisen(standOriginal) };
   const last = monatsLast(stand);
   const artikelIndex = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   const { mengen, geschaetzt: mengenGeschaetzt } = mengenJeMonat(stand);

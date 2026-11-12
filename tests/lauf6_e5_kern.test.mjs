@@ -126,3 +126,24 @@ test("Mischsatz: Umsatz netto im Monatsposten (Was bleibt dir, Monatsabschluss) 
   // Gewinn je Gericht: die Zeile der Kalkulation trägt dieselbe Zahl wie preisAmpel
   for (const x of E.kalkulation(s).zeilen) if (x.preisBrutto !== null && x.sk !== null) assert.equal(x.ampelGewinn, E.preisAmpel(x, x.preisBrutto).gewinn);
 });
+
+// ---------------------------------------------------------------- P1 B6
+const tiefFrieren = (o) => { if (o && typeof o === "object" && !Object.isFrozen(o)) { Object.freeze(o); for (const k of Object.keys(o)) tiefFrieren(o[k]); } return o; };
+test("P1 B6: kalkulation() ist rein – tief eingefrorener Stand wirft nicht und liefert dieselben Zahlen; Zwischenpreise setzt eine eigene Funktion", async () => {
+  const E = await import("../js/engine.js"); const K = await import("../js/karte_daten.js");
+  const s = beispielLaden("2026-11-10");
+  const selbst = s.artikel.filter((a) => a.herkunft === "selbst"); assert.ok(selbst.length > 0, "Beispiel-Laden hat selbst gemachte Teile");
+  // vorbereiten: ein Rohstoffpreis ändert sich, die Teile sind noch nicht nachgezogen
+  const roh = s.artikel.find((a) => a.herkunft !== "selbst" && typeof a.preis === "number" && s.artikel.some((t) => t.herkunft === "selbst" && (t.rezept?.zutaten || []).some((z) => z.name === a.name)));
+  assert.ok(roh, "gekaufter Rohstoff, den ein selbst gemachtes Teil braucht"); roh.preis = roh.preis * 1.5;
+  const vorher = JSON.stringify(s);
+  const k1 = E.kalkulation(s); assert.equal(JSON.stringify(s), vorher, "Lesen ändert den Stand nicht");
+  const eingefroren = tiefFrieren(structuredClone(s));
+  const k2 = E.kalkulation(eingefroren); assert.deepEqual(JSON.parse(JSON.stringify(k2)), JSON.parse(JSON.stringify(k1)), "dieselben Zahlen");
+  // Setzen: eigene Funktion, danach rechnet die Karte dasselbe wie vorher im Ergebnis
+  E.zwischenpreiseSetzen(s); assert.notEqual(JSON.stringify(s), vorher, "Setzen schreibt");
+  assert.deepEqual(JSON.parse(JSON.stringify(E.kalkulation(s).zeilen)), JSON.parse(JSON.stringify(k1.zeilen)), "Karte nach dem Setzen = Karte davor");
+  // Artikelpreis ändern ruft das Setzen
+  const s2 = beispielLaden("2026-11-10"); const r2 = s2.artikel.find((a) => a.name === roh.name); const t2 = s2.artikel.find((a) => a.herkunft === "selbst" && (a.rezept?.zutaten || []).some((z) => z.name === roh.name));
+  const alt = t2.preis; K.artikelFeldSetzen(s2, r2.name, "preis", r2.preis * 2, "2026-11-10"); assert.notEqual(t2.preis, alt, "selbst gemachtes Teil folgt beim Ändern des Preises");
+});

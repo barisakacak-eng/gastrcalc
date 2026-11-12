@@ -8,7 +8,7 @@ const RICHTPREIS_INDEX = { ...ERZEUGT, ...Object.fromEntries(RICHTPREIS_NACHTRAG
 for (const [kat, ziel] of Object.entries(RICHTPREIS_ALIAS)) if (!RICHTPREIS_INDEX[kat] && RICHTPREIS_INDEX[ziel]) RICHTPREIS_INDEX[kat] = RICHTPREIS_INDEX[ziel];
 export const richtpreisFuer = (name) => RICHTPREIS_INDEX[name] || null;
 import { EINHEITEN, inBasis } from "./data/katalog.js";
-import { preisJeBasis, istRichtpreis } from "./engine.js";
+import { preisJeBasis, istRichtpreis, zwischenpreiseSetzen } from "./engine.js";
 import { heute } from "./util.js";
 
 export { istRichtpreis };
@@ -39,6 +39,7 @@ export function richtpreiseEinsetzen(stand, { datum = heute() } = {}) {
     if (a.preisHistorie.length > 24) a.preisHistorie.splice(0, a.preisHistorie.length - 24);
     out.gesetzt += 1;
   }
+  zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6): selbst gemachte Teile folgen den neuen Rohstoffpreisen (kalkulation() schreibt nicht mehr)
   return out;
 }
 
@@ -55,6 +56,7 @@ export function richtpreiseEntfernen(stand) {
     } else out.behalten += 1;
     delete a.richtpreis;
   }
+  zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6)
   return out;
 }
 

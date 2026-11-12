@@ -5,7 +5,7 @@ import { uid, heute, fmtEuro, fmtZahl } from "./util.js";
 import { t } from "./i18n.js"; // Trennung 2 (17.10.2026): Rückfrage-Satz beim Preissprung
 import { PRODUKT_INDEX } from "./data/katalog.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
-import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis } from "./engine.js";
+import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis, zwischenpreiseSetzen } from "./engine.js";
 import { preisJeEinheit } from "./beleg.js";
 import { uploadAendern } from "./stamm.js"; // Trennung (17.10.2026)
 import { lieferantenAusBelegen } from "./lieferant.js"; // Lieferanten (18.10.2026): neuer Händlername → neuer Lieferant
@@ -110,6 +110,7 @@ export function preiseUebernehmen(stand, lieferung) {
     if (alt !== null && neu !== null && Math.abs(neu - alt) > 1e-9) aenderungen.push({ name: a.name, alt, neu, prozent: alt > 0 ? (neu - alt) / alt : null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
     else if (alt === null && neu !== null) aenderungen.push({ name: a.name, alt: null, neu, prozent: null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
   }
+  zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6): Beleg übernommen → selbst gemachte Teile folgen den neuen Rohstoffpreisen (kalkulation() schreibt nicht mehr)
   return aenderungen;
 }
 
