@@ -132,3 +132,22 @@ test("P2 B1: Bereiche ohne Kennung (Betrieb): wie bisher gewinnt eine Seite, abe
   assert.deepEqual(wa.betriebe[0].abgleichHinweis.unterschiede.map((x) => x.bereich), ["betrieb"]);
   assert.match(l6y.l6ySatz("bereichUnterschied", "de", "Betrieb", u.lokal, u.fremd), /Nord A/);
 });
+
+// ---------- P2 B2: Tagesumsatz ----------
+const umsatz = (b, datum, betrag, erfasst, id) => b.tagesnotizen.push({ id, datum, umsatz: betrag, erfasst, nacherfasst: false, storniert: false });
+test("P2 B2: derselbe Tag auf beiden Handys mit verschiedenem Umsatz – der jüngere gilt wie bisher, der Konflikt steht im Bericht und im abgleichHinweis", async () => {
+  const { umsatzEintrag } = await import("../js/engine.js");
+  const a = laden(), b = laden(); umsatz(a, "2026-11-10", 800, "2026-11-10T21:00:00.000Z", "ta1"); umsatz(b, "2026-11-10", 950, "2026-11-10T22:30:00.000Z", "tb1");
+  umsatz(a, "2026-11-11", 700, "2026-11-11T21:00:00.000Z", "ta2"); umsatz(b, "2026-11-11", 700, "2026-11-11T21:05:00.000Z", "tb2"); // gleicher Betrag: kein Konflikt
+  const wa = wurzelMit(a), wb = wurzelMit(b); const vb = J(wb);
+  const r = st.zusammenfuehren(wa, vb, { jetzt: JETZT });
+  assert.deepEqual(r.bericht.umsatzKonflikte, [{ laden: "L1", tag: "2026-11-10", lokal: 800, fremd: 950, gilt: "fremd" }]);
+  assert.equal(umsatzEintrag(wa.betriebe[0], "2026-11-10").umsatz, 950, "der Wert selbst: jüngster");
+  assert.deepEqual(wa.betriebe[0].abgleichHinweis.umsatzKonflikte, [{ tag: "2026-11-10", lokal: 800, fremd: 950, gilt: "fremd" }]);
+  const r2 = st.zusammenfuehren(wa, J(vb), { jetzt: JETZT }); assert.deepEqual(r2.bericht.umsatzKonflikte, [], "zweites Einlesen zählt nicht noch einmal");
+  assert.equal(wa.betriebe[0].abgleichHinweis.umsatzKonflikte.length, 1);
+  // Korrektur auf einem Handy (alter Eintrag dort storniert) ist kein Konflikt
+  const c = laden(), d = J(c); umsatz(c, "2026-11-10", 800, "2026-11-10T21:00:00.000Z", "tc1"); const d2 = J(c); d2.tagesnotizen[0].storniert = true; umsatz(d2, "2026-11-10", 820, "2026-11-10T22:00:00.000Z", "tc2");
+  const wc = wurzelMit(c); assert.deepEqual(st.zusammenfuehren(wc, wurzelMit(d2), { jetzt: JETZT }).bericht.umsatzKonflikte, []);
+  assert.ok(d);
+});
