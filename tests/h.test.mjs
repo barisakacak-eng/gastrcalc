@@ -12,7 +12,7 @@ function laden({ takt = 1 } = {}) {
   s.kuehl = { takt, ruhetage: [], eingerichtet: true, seit: "2026-09-01" };
   s.kuehlstellen = [{ id: "k", name: "Theke", art: "kuehl", min: null, max: null, reihe: 0, archiviert: false }];
   s.personen = [{ id: "a", kuerzel: "AK", aktiv: true, entfernt: false }, { id: "b", kuerzel: "MZ", aktiv: true, entfernt: false }];
-  const m = (datum, uhr, wert, extra = {}) => { const x = { id: `m${datum}${uhr}${wert}`, stelle: "k", datum, zeit: uhr ? `${datum}T${uhr}:00` : null, wert, min: null, max: 7, abweichung: typeof wert === "number" && wert > 7,
+  const m = (datum, uhr, wert, extra = {}) => { const x = { id: `m${datum}${uhr}${wert}`, stelle: "k", datum, zeit: uhr ? `${datum}T${uhr}:00+02:00` : null, wert, min: null, max: 7, abweichung: typeof wert === "number" && wert > 7,
     massnahmen: [], nachkontrolle: null, von: "a", nacherfasst: false, storniert: false, grund: null, ...extra }; s.messungen.push(x); return x; };
   return { s, m };
 }
@@ -72,7 +72,7 @@ test("Putzplan mit Gültig-ab: alte Tage nach altem Plan, Rücknahme mit Person"
 
 test("Nachkontrolle mit Zeitfenster, „Chef angerufen“ allein = Maßnahme offen, Ware-Entscheidung schließt", () => {
   const { s, m } = laden();
-  const a = m("2026-10-02", "09:05", 11, { massnahmen: ["tuer"], nachkontrolle: { art: "h2", faellig: "2026-10-02T11:05:00" } });
+  const a = m("2026-10-02", "09:05", 11, { massnahmen: ["tuer"], nachkontrolle: { art: "h2", faellig: "2026-10-02T11:05:00+02:00" } });
   m("2026-10-03", "09:05", 4);
   assert.equal(E.nachkontrolleStand(s, a).status, "verspaetet"); assert.equal(E.nachkontrolleStand(s, a).stunden, 24);
   assert.equal(E.abweichungStand(s, a), "verspaetet");

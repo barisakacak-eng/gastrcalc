@@ -9,6 +9,7 @@ import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
 import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
+import { plusMonate, plusTage, uhr, monatsLetzter } from "./zeit.js";
 import { arbeitszeitListe } from "./schichten.js"; // Lauf 4, P3 C4
 import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt 27.10.2026: Lieferanteil in der Tagesliste
 
@@ -45,12 +46,10 @@ export function csvText(kopf, zeilen, { dezimal = [] } = {}) {
 }
 
 // ---------- Zeitraum ----------
+export { plusMonate as monatPlus }; // Monat plus n Monate (Quelle: js/zeit.js)
 export function monatVon(iso) {
-  const [j, m] = iso.split("-").map(Number);
-  const ende = new Date(j, m, 0);
-  return { von: `${iso.slice(0, 7)}-01`, bis: heute(ende), monat: iso.slice(0, 7) };
+  return { von: `${iso.slice(0, 7)}-01`, bis: monatsLetzter(iso.slice(0, 7)), monat: iso.slice(0, 7) };
 }
-export function monatPlus(monat, n) { const [j, m] = monat.split("-").map(Number); const d = new Date(j, m - 1 + n, 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; }
 
 const imZeitraum = (d, { von, bis }) => typeof d === "string" && d >= von && d <= bis;
 const nachDatum = (a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.zeit || a.erfasst || "").localeCompare(String(b.zeit || b.erfasst || ""));
@@ -161,8 +160,8 @@ function lieferungSteuer(l, netto, pfand) {
 // warum er im Paket steht, das er vielleicht schon hatte. Liefert das Erfassungsdatum (JJJJ-MM-TT) oder null.
 function nachtrag(x) {
   if (typeof x.erfasst !== "string" || typeof x.datum !== "string") return null;
-  const e = heute(new Date(x.erfasst)); const grenze = new Date(x.datum + "T12:00:00"); grenze.setDate(grenze.getDate() + 7);
-  return e > heute(grenze) ? e : null;
+  const e = heute(new Date(x.erfasst));
+  return e > plusTage(x.datum, 7) ? e : null;
 }
 export function belege(stand, z) {
   const zeilen = [];
@@ -297,4 +296,4 @@ export function teilCsv(p, teil, kopf, namen = {}) {
   return csvText(kopf, []);
 }
 // Zeitpunkt einer Änderung, Ortszeit: TT.MM.JJJJ HH:MM
-export const zeitDe = (iso) => { if (typeof iso !== "string" || isNaN(Date.parse(iso))) return ""; const d = new Date(iso); return `${datumDe(heute(d))} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+export const zeitDe = (iso) => { if (typeof iso !== "string" || isNaN(Date.parse(iso))) return ""; const d = new Date(iso); return `${datumDe(heute(d))} ${uhr(d)}`; };

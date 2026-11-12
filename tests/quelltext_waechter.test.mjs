@@ -95,7 +95,21 @@ const TEIL3 = [
   { name: "CSS: keine festen px-Schriftgrößen", dateien: ["css"], darfNicht: /(?<![-\w])(?:font-size|font|line-height)\s*:\s*[^;}\n]*(?<![\w.])\d+(?:\.\d+)?px/ },
 ];
 
-const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3];
+
+// ───── Teil 4 (Lauf 6, Etappe 4): Zeit und Geld aus je einer Quelle ─────
+// Alle Dateien unter js/ außer den genannten Ausnahmen (Orte als Einzeldateien, damit der Wächter je Ausnahme begründet bleibt).
+function jsOhne(...ausnahmen) {
+  const out = []; const gehe = (rel) => { for (const e of fs.readdirSync(path.join(WURZEL, rel)).sort()) { const u = rel + "/" + e; if (fs.statSync(path.join(WURZEL, u)).isDirectory()) gehe(u); else if (e.endsWith(".js") && !ausnahmen.includes(u)) out.push(u); } };
+  gehe("js"); return out;
+}
+const TEIL4 = [
+  // Ausnahme: js/zeit.js selbst (dort steht die Erklärzeile, warum das Muster verboten ist)
+  { name: "Zeit: toISOString().slice(0, 10) nur in js/zeit.js (Erklärzeile) – das ist der Tag in UTC", dateien: jsOhne("js/zeit.js"), darfNicht: /toISOString\(\)\.slice\(0, ?10\)/ },
+  // Ausnahme: js/zeit.js – die einzige Definition. Weiterreichen (export { wochentag }, export const tagPlus = plusTage) ist keine Definition.
+  { name: "Zeit: tageZwischen, plusTage und wochentag sind nur in js/zeit.js definiert", dateien: jsOhne("js/zeit.js"), darfNicht: /(?:const|let|var|function)\s+(?:tageZwischen|plusTage|wochentag|tagMinus|minusTage|naechsterTag)\b/ },
+];
+
+const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4];
 test("Quelltext-Wächter: jeder Eintrag nennt mindestens einen Ort, den es gibt", () => {
   for (const w of WAECHTER) assert.ok(w.dateien.some((d) => fs.existsSync(path.join(WURZEL, d))), w.name + ": keiner der Orte existiert (" + w.dateien.join(", ") + ")");
 });

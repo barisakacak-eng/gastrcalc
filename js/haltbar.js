@@ -15,6 +15,7 @@ import { tagGewicht } from "./zaehler.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
 import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang mit Ausschankmenge
+import { tageZwischen } from "./zeit.js";
 
 export const HALTBAR_ARTEN = ["mhd", "verbrauch"];
 export const ABVERKAUF_TAGE = 7;   // Stufe 1 (17.10.2026): MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
@@ -67,7 +68,6 @@ export function haltbarSetzen(stand, lieferungId, angaben, { jetzt = new Date().
 }
 
 // ---------- Hilfen ----------
-const tageZwischen = (von, bis) => Math.round((Date.parse(bis + "T12:00:00Z") - Date.parse(von + "T12:00:00Z")) / 86400e3);
 // Menge einer Belegzeile in der Grundeinheit – über einkaufMengen (js/verkauf.js), keine eigene Umrechnung. null = Menge unklar.
 function zeileMenge(l, z) {
   const e = einkaufMengen({ lieferungen: [{ datum: l.datum, zeilen: [z] }] }, { von: l.datum, bis: l.datum })[z.artikel];

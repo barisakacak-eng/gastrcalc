@@ -11,26 +11,26 @@ const MWST_REGEL = 0.19; // Regelsatz für Dienstleistung und Putzmittel
 // Paket 3 (16.10.2026), M1: Kleinunternehmer bekommen keine Vorsteuer zurück – der Bruttobetrag zählt, wie er ist.
 const vorsteuer = (stand) => (stand.betrieb?.kleinunternehmer ? 0 : MWST_REGEL);
 // Öffnungstag-Gewicht wie im Zähler (zaehler.js tagGewicht), hier nachgebaut, damit engine.js ohne Kreisimport rechnen kann.
-const tagGewicht = (stand, datum) => { const ruhe = ruhetageAm(stand, datum); if (ruhe.length) return ruhe.includes(new Date(datum + "T12:00").getDay()) ? 0 : 1;
+const tagGewicht = (stand, datum) => { const ruhe = ruhetageAm(stand, datum); if (ruhe.length) return ruhe.includes(wochentag(datum)) ? 0 : 1;
   return Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6)) / 7; };
 
 import { istBetriebsmittel } from "./betriebsmittel.js";
+import { plusTage, wochentag } from "./zeit.js";
 export { istBetriebsmittel };
 
 export const REINIGUNG_LEER = { wer: null, firmaBetrag: null, minutenTag: 45, durch: "team", mittelSchaetzung: null };
 export const reinigungVon = (stand) => ({ ...REINIGUNG_LEER, ...(stand.betrieb?.reinigung || {}) });
 
-const tagMinus = (iso, n) => { const d = new Date(iso + "T12:00"); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); };
 
 // Öffnungstage in einem Monat (30 Kalendertage ab heute rückwärts, gewichtet wie im Zähler)
 export function oeffnungstageMonat(stand, datum = heute()) {
-  let s = 0; for (let i = 0; i < 30; i++) s += tagGewicht(stand, tagMinus(datum, i));
+  let s = 0; for (let i = 0; i < 30; i++) s += tagGewicht(stand, plusTage(datum, -i));
   return s;
 }
 
 // Putzmittel & Co. aus Belegen: Summe der letzten 60 Tage, auf 30 Tage umgerechnet.
 export function mittelAusBelegen(stand, datum = heute()) {
-  const von = tagMinus(datum, 59); let summe = 0; const belege = new Set();
+  const von = plusTage(datum, -59); let summe = 0; const belege = new Set();
   for (const l of stand.lieferungen || []) {
     if (l.storniert || l.datum < von || l.datum > datum) continue;
     for (const z of l.zeilen || []) if (typeof z.netto === "number" && z.netto > 0 && istBetriebsmittel(z.artikel || z.name)) { summe += z.netto; belege.add(l.id); }

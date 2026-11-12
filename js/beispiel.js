@@ -23,13 +23,14 @@ import { inventurStarten, inventurAbschliessen, artikelFuerInventur, mengeSetzen
 import { bedarfGericht, sollVerbrauch, schwundVerbrauch, einkaufMengen } from "./verkauf.js"; // E7 (17.10.2026)
 import { getraenkSetzen } from "./getraenk.js"; // Getränke (18.10.2026): Gebinde, Marke, Pfand, offener Ausschank im Beispiel
 import { aktionVorschlag } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Vorschlag mit Begründung an der Beispiel-Aktion
+import { berlinZeitpunkt } from "./zeit.js";
 
 export const BEISPIEL_NAME = "Beispiel-Döner";
 export const BEISPIEL_TAGE = 30;           // so viele Tage vor heute sind gefüllt (heute selbst ist noch offen)
 const PERSON = { ab: "bsp-p-ab", cd: "bsp-p-cd" };
 
-// Beispiel-Laden (17.10.2026): Ortszeit eines Tages als ISO-Zeitstempel
-const zeit = (datum, h, m = 0) => { const [j, mo, d] = datum.split("-").map(Number); return new Date(j, mo - 1, d, h, m).toISOString(); };
+// Beispiel-Laden (17.10.2026): Berliner Uhrzeit eines Tages als ISO-Zeitstempel
+const zeit = (datum, h, m = 0) => berlinZeitpunkt(datum, h, m).toISOString();
 const rund2 = (x) => Math.round(x * 100) / 100;
 
 // Beispiel-Laden (17.10.2026): Karte – [Name, Verkaufspreis brutto (Beispiel), Portionen je Tag (Beispiel), eigenes Gericht?]

@@ -10,11 +10,11 @@
 // Mindestanzahl: ohne Preisänderung mit echtem Beleg schweigt die Funktion (leere Liste).
 import { kalkulation, mengenJeMonat, preisJeBasis, istRichtpreis } from "./engine.js";
 import { sollVerbrauch } from "./verkauf.js";
+import { plusTage } from "./zeit.js";
 
 export const DRIFT_TAGE = 91; // Setzung 28.10.2026: „seit 3 Monaten“ ≈ 13 Wochen
 export const DRIFT_AB = 0.03; // Setzung 28.10.2026: kleinere Änderungen als 3 % zeigt die App nicht (Rundung, Packungswechsel)
 
-const minusTage = (datum, n) => new Date(Date.parse(datum + "T12:00:00Z") - n * 864e5).toISOString().slice(0, 10);
 
 // Preis je Basis, der am Tag `grenze` galt, oder null (keine Änderung seither, oder nur Richtpreise)
 function preisDamals(a, grenze) {
@@ -27,7 +27,7 @@ function preisDamals(a, grenze) {
 
 // Rückgabe: { zutaten: [{ name, alt, neu, prozent, euroMonat, geschaetzt }], gerutscht: [{ id, name, zielBrutto, preisBrutto }], geschaetzt }
 export function preisDrift(stand, { datum, tage = DRIFT_TAGE } = {}) {
-  const grenze = minusTage(datum, tage);
+  const grenze = plusTage(datum, -tage);
   const { mengen, geschaetzt } = mengenJeMonat(stand);
   const verbrauch = sollVerbrauch(stand, mengen).artikel;
   const zutaten = []; const damals = new Map();

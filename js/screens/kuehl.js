@@ -21,6 +21,7 @@ import { personalAktiv, anredeTeam, schichtPerson } from "./personal.js"; // D: 
 import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
 import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
+import { plusTage, plusMonate, monatsErster, monatsLetzter } from "../zeit.js";
 
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : k.typ === "getraenke" ? "k-getraenke" : "k-kuehlschrank";
@@ -194,7 +195,7 @@ function personenWahl(stand, r) {
 
 function rundgangStartView(stand) {
   const personen = stand.personen.filter((p) => !p.entfernt && p.aktiv);
-  const H = heute(); const tage = []; for (let i = 0; i < 7; i++) { const d = new Date(); d.setDate(d.getDate() - i); tage.push(heute(d)); }
+  const H = heute(); const tage = []; for (let i = 0; i < 7; i++) tage.push(plusTage(H, -i));
   return `
     <div class="kopfband"><h1>${esc(t("kuehl.rundgang"))}</h1><div class="unter">${esc(stand.betrieb.name)}</div></div>
     <div class="inhalt">
@@ -263,8 +264,8 @@ function wegView(stand, k) {
 function blattView(stand) {
   const stellen = [...aktiveStellen(stand), ...(stand.kuehlstellen || []).filter((x) => x.archiviert && messungenDerStelle(stand, x.id).length)];
   const k = stellen.find((x) => x.id === blattStelle) || stellen[0];
-  const d = new Date(); d.setMonth(d.getMonth() + blattMonat, 1);
-  const von = heute(d); const ende = new Date(d.getFullYear(), d.getMonth() + 1, 0); const bis = heute(ende) > heute() ? heute() : heute(ende);
+  const monat = plusMonate(heute().slice(0, 7), blattMonat); const d = new Date(Number(monat.slice(0, 4)), Number(monat.slice(5, 7)) - 1, 1); // d nur für die Überschrift
+  const von = monatsErster(monat); const ende = monatsLetzter(monat); const bis = ende > heute() ? heute() : ende;
   const mb = k ? monatsblatt(stand, k.id, { von, bis }) : { tage: [], zaehl: {} };
   const monatText = datumText(d, { month: "long", year: "numeric" });
   return `

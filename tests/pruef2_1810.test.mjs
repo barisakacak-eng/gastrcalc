@@ -2,6 +2,7 @@
 // Jeder Test war vor der Korrektur rot (Nachweis: /home/claude/audit/pruef2_fix.md). Alle Bons sind erfunden.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { berlinZeitpunkt } from "../js/zeit.js";
 globalThis.document ??= { documentElement: {} };
 globalThis.localStorage ??= { getItem: () => null, setItem() {}, removeItem() {} };
 const st = await import("../js/store.js");
@@ -17,7 +18,7 @@ const { beispielLaden } = await import("../js/beispiel.js");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
 const H = "2026-10-18";
-const um = (tag, h, m = 0) => new Date(`${tag}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`);
+const um = (tag, h, m = 0) => berlinZeitpunkt(tag, h, m); // Berliner Zeit
 
 function laden() {
   const b = st.leererBetrieb(); b.phase = "app"; b.betrieb.name = "Test";
@@ -37,7 +38,7 @@ test("H1: Aktion „bis Ware weg“ ohne Enddatum – Menütafel-Bildschirm, Taf
   const html = TS.tafelView(s); assert.ok(html.includes("data-tafel-aktion"), "Aktion steht in der Liste");
   assert.ok(!/undefined|NaN/.test(html));
   const b = T.tafelBeschreibung(s, { heuteTag: H, jetzt: "2026-10-18T10:00:00Z" });
-  const datei = T.tafelHtml(b); assert.ok(datei.includes('data-bis=""')); assert.equal(T.tafelAktionSichtbar({ von: a.von, bis: "" }, Date.parse("2026-12-01T12:00:00")), true);
+  const datei = T.tafelHtml(b); assert.ok(datei.includes('data-bis=""')); assert.equal(T.tafelAktionSichtbar({ von: a.von, bis: "" }, Date.parse("2026-12-01T12:00:00+01:00")), true);
   assert.ok(AP.aktionZeitraumText(a).length > 0); assert.ok(Array.isArray(AP.fortschrittZeilen(AP.aktionFortschritt(s, a, { heuteTag: H }))));
   assert.equal(AP.aktionBilanz(s, a, { heuteTag: H }).bis, H);
   assert.equal(AP.aktionZeitraumText({ von: H, bis: null }).includes("undefined"), false, "auch ohne ende: kein Absturz");

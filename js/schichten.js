@@ -14,19 +14,24 @@
 import { feiertagAm } from "./feiertage.js";
 import { MINDESTLOHN, mindestlohnAm } from "./data/mindestlohn.js";
 import { wert } from "./data/regelwerk.js";
+import { plusTage, wochentag, berlin, berlinZeitpunkt } from "./zeit.js";
 
-const z2 = (n) => String(n).padStart(2, "0");
-const plus = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); return `${x.getUTCFullYear()}-${z2(x.getUTCMonth() + 1)}-${z2(x.getUTCDate())}`; };
-const wochentag = (tag) => { const [j, m, d] = tag.split("-").map(Number); return new Date(Date.UTC(j, m - 1, d)).getUTCDay(); };
 const minuten = (hhmm) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || "")); if (!m) return null; const h = Number(m[1]), mi = Number(m[2]); return h <= 24 && mi < 60 ? h * 60 + mi : null; };
 
-// Dauer einer Schicht in Stunden (über Mitternacht erlaubt); null, wenn Zeiten fehlen
-export function schichtStunden(von, bis) {
+// Echte Dauer in Minuten von Beginn a (Minute im Tag) bis Ende b am Tag oder Folgetag: in der Nacht der Zeitumstellung ist die Wanduhr-Rechnung falsch
+// (22:00–06:00 am 25.10.2026 sind 9 Stunden, am 29.03.2026 nur 7). Ohne Datum gilt die Wanduhr (wie bisher).
+const echteMinuten = (datum, a, b) => {
+  const ende = b > a ? datum : plusTage(datum, 1); const von = berlinZeitpunkt(datum, Math.floor(a / 60), a % 60), bis = berlinZeitpunkt(ende, Math.floor(b / 60), b % 60);
+  return Math.round((bis.getTime() - von.getTime()) / 60000);
+};
+// Dauer einer Schicht in Stunden (über Mitternacht erlaubt); null, wenn Zeiten fehlen. Mit `datum` (Tag des Beginns) zählt die echte Dauer in Berlin.
+export function schichtStunden(von, bis, datum = null) {
   const a = minuten(von), b = minuten(bis); if (a === null || b === null) return null;
-  const d = b > a ? b - a : b + 1440 - a; return d > 0 && d <= 1440 ? d / 60 : null;
+  const d = b > a ? b - a : b + 1440 - a; if (!(d > 0 && d <= 1440)) return null;
+  return datum && /^\d{4}-\d{2}-\d{2}$/.test(datum) ? echteMinuten(datum, a, b) / 60 : d / 60;
 }
-// Stunden eines Eintrags: aus Zeiten, sonst die gespeicherten Stunden (alte Daten)
-export const eintragStunden = (x) => schichtStunden(x?.von, x?.bis) ?? (Number(x?.stunden) || 0);
+// Stunden eines Eintrags: aus Zeiten, sonst die gespeicherten Stunden (alte Daten); `datum` = Tag der Schicht (Standard: x.datum)
+export const eintragStunden = (x, datum = x?.datum) => schichtStunden(x?.von, x?.bis, datum) ?? (Number(x?.stunden) || 0);
 
 // Sonn-/Feiertagsstufe einer Minute an einem Kalendertag: 0 keine, 50 Sonntag, 125, 150
 const prozent = (id, tag) => Math.round(wert(id, tag) * 100);
@@ -40,17 +45,21 @@ function stufe(tag, minuteImTag, land) {
 
 // Zähler einer Schicht in Stunden: { gesamt, nacht25, nacht40, sonntag, feiertag125, feiertag150 }
 export function schichtZaehler(datum, von, bis, { land = "BW" } = {}) {
-  const a = minuten(von), dauer = schichtStunden(von, bis); const z = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
+  const a = minuten(von), dauer = schichtStunden(von, bis, datum); const z = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
   if (a === null || dauer === null) return z;
   const nachtAb = wert("nacht_beginn_uhr", datum) * 60, nachtBis = wert("nacht_ende_uhr", datum) * 60; // Nacht nach dem Tag der Schicht
   const sSo = prozent("zuschlag_sonntag", datum), sFt = prozent("zuschlag_feiertag", datum), sWe = prozent("zuschlag_weihnachten", datum);
+  const startMs = berlinZeitpunkt(datum, Math.floor(a / 60), a % 60).getTime();
+  const umstellung = Math.round(dauer * 60) !== (minuten(bis) > a ? minuten(bis) - a : minuten(bis) + 1440 - a); // nur in der Nacht der Zeitumstellung: Wanduhr je Minute aus dem echten Zeitpunkt
   for (let m = 0; m < Math.round(dauer * 60); m++) { // je Minute: genau, auch bei 23:30
-    const abs = a + m; const tagN = Math.floor(abs / 1440); const tag = tagN ? plus(datum, tagN) : datum; const mt = abs % 1440;
+    let tagN, tag, mt;
+    if (umstellung) { const bz = berlin(new Date(startMs + m * 60000)); tag = bz.tag; tagN = tag === datum ? 0 : 1; mt = bz.stunde * 60 + bz.minute; }
+    else { const abs = a + m; tagN = Math.floor(abs / 1440); tag = tagN ? plusTage(datum, tagN) : datum; mt = abs % 1440; }
     const vorNullBegonnen = tagN > 0; // die Schicht hat vor 0 Uhr dieses Tages begonnen
     // Nacht
     if (vorNullBegonnen && mt < 4 * 60) z.nacht40 += 1; else if (mt >= nachtAb || mt < nachtBis) z.nacht25 += 1;
     // Sonn-/Feiertag: höchste Stufe; 0–4 Uhr nach Beginn vor 0 Uhr zählt auch die Stufe des Vortags (Ende des Vortags)
-    let s = stufe(tag, mt, land); if (vorNullBegonnen && mt < 4 * 60) s = Math.max(s, stufe(plus(tag, -1), 1439, land));
+    let s = stufe(tag, mt, land); if (vorNullBegonnen && mt < 4 * 60) s = Math.max(s, stufe(plusTage(tag, -1), 1439, land));
     if (s === sWe) z.feiertag150 += 1; else if (s === sFt) z.feiertag125 += 1; else if (s === sSo) z.sonntag += 1;
     z.gesamt += 1;
   }
@@ -101,7 +110,7 @@ export function tageZaehler(bisherTage, neueTage) {
 }
 // Arbeitszeit-Aufzeichnung Gaststätten (§ 17 MiLoG i. V. m. § 2a SchwarzArbG): Beginn, Ende, Dauer bis zur Frist, dann aufbewahren (Regelwerk: arbeitszeit_frist_tage, arbeitszeit_aufheben_jahre)
 export const AUFZEICHNUNG_TAGE = wert("arbeitszeit_frist_tage", "2026-12-31"), AUFBEWAHRUNG_JAHRE = wert("arbeitszeit_aufheben_jahre", "2026-12-31");
-export const aufzeichnungFaellig = (arbeitstag) => plus(arbeitstag, wert("arbeitszeit_frist_tage", arbeitstag));
+export const aufzeichnungFaellig = (arbeitstag) => plusTage(arbeitstag, wert("arbeitszeit_frist_tage", arbeitstag));
 
 // Arbeitszeit-Liste (W3b, 04.11.2026) für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am Tag der Frist
 // (arbeitszeit_frist_tage) nach dem Arbeitstag erfasst (§ 17 Abs. 1 MiLoG; Gaststätten nach § 2a SchwarzArbG). Einträge nur mit Stunden zeigen „ohne Zeiten“ – sie zählen,
@@ -112,10 +121,10 @@ export function arbeitszeitListe(stand, von, bis) {
   const jeTag = new Map(); for (const e of stand?.teamTage || []) if (e.datum >= von && e.datum <= bis && !e.keine) jeTag.set(e.datum, e);
   for (const e of jeTag.values()) for (const [i, x] of (e.eintraege || []).entries()) {
     const erfasst = typeof e.erfasst === "string" ? e.erfasst.slice(0, 10) : null;
-    zeilen.set(`${e.datum}|${x.person || "k" + i}`, { datum: e.datum, wer: name(x.person, x.name), von: x.von || null, bis: x.bis || null, stunden: eintragStunden(x), erfasst, kompakt: !!x.kompakt });
+    zeilen.set(`${e.datum}|${x.person || "k" + i}`, { datum: e.datum, wer: name(x.person, x.name), von: x.von || null, bis: x.bis || null, stunden: eintragStunden(x, e.datum), erfasst, kompakt: !!x.kompakt });
   }
   for (const x of stand?.schichten || []) if (!x.storniert && x.datum >= von && x.datum <= bis)
-    zeilen.set(`${x.datum}|${x.person}`, { datum: x.datum, wer: name(x.person), von: x.von, bis: x.bis, stunden: schichtStunden(x.von, x.bis), erfasst: typeof x.erfasst === "string" ? x.erfasst.slice(0, 10) : null, kompakt: false }); // Lauf 4: alte Schicht ohne „erfasst“ darf nicht abstürzen
+    zeilen.set(`${x.datum}|${x.person}`, { datum: x.datum, wer: name(x.person), von: x.von, bis: x.bis, stunden: schichtStunden(x.von, x.bis, x.datum), erfasst: typeof x.erfasst === "string" ? x.erfasst.slice(0, 10) : null, kompakt: false }); // Lauf 4: alte Schicht ohne „erfasst“ darf nicht abstürzen
   const liste = [...zeilen.values()].map((z) => ({ ...z, rechtzeitig: !z.erfasst || z.erfasst <= aufzeichnungFaellig(z.datum) })).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.wer.localeCompare(b.wer)));
   const ohneZeiten = liste.filter((z) => !z.von || !z.bis).length, spaet = liste.filter((z) => !z.rechtzeitig).length;
   return { zeilen: liste, ohneZeiten, spaet, vollstaendig: liste.length > 0 && ohneZeiten === 0 && spaet === 0 };

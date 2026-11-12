@@ -19,6 +19,7 @@ import { monatsZahlen, eingefroren } from "./monatsabschluss.js";
 import { PERSONEN, rechtsform } from "./rechtsform.js";
 import { istHauptzeit } from "./offen.js";
 import { HM_FRAGEN, HM_STATUS, HM_ID_LISTE, hmAngabenSauber } from "./hm_angaben.js";
+import { plusTage, plusMonate, tagPlusMonate, isoTag, stundeBruch } from "./zeit.js";
 export { HM_FRAGEN, HM_STATUS, hmAngabenSauber };
 
 export const HM_TAKT_TAGE = 7;
@@ -28,10 +29,6 @@ export const HM_ELEKTRO_MONATE = 6;     // BGN ASI 3.10 Abschnitt 7: Orientierun
 export const HM_ABWESEND_MONATE = 3;    // Abwesenheit der letzten 3 Monate zählt für U1
 export const HM_PFLICHT = "Mit deinem Steuerberater klären.";
 
-const z2 = (n) => String(n).padStart(2, "0");
-const tagPlus = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); return `${x.getUTCFullYear()}-${z2(x.getUTCMonth() + 1)}-${z2(x.getUTCDate())}`; };
-const monatPlus = (m, n) => { const [j, mm] = m.split("-").map(Number); const x = j * 12 + (mm - 1) + n; return `${Math.floor(x / 12)}-${z2((x % 12) + 1)}`; };
-const monatePlus = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1 + n, 1)); const letzter = new Date(Date.UTC(x.getUTCFullYear(), x.getUTCMonth() + 1, 0)).getUTCDate(); return `${x.getUTCFullYear()}-${z2(x.getUTCMonth() + 1)}-${z2(Math.min(d, letzter))}`; };
 const gueltigTag = (x) => typeof x === "string" && /^\d{4}-\d{2}-\d{2}$/.test(x);
 const istJa = (x) => x === true;
 
@@ -60,7 +57,7 @@ export function monatsLohn(stand, person, monat) {
   for (const e of stand?.teamTage || []) if (e && typeof e.datum === "string" && e.datum.startsWith(monat) && !e.keine)
     for (const x of e.eintraege || []) if (x && x.person === person.id && x.stunden > 0) tage.set(e.datum, x.stunden * satzVon(x));
   for (const x of stand?.schichten || []) if (x && !x.storniert && x.person === person.id && typeof x.datum === "string" && x.datum.startsWith(monat))
-    tage.set(x.datum, (schichtStunden(x.von, x.bis) || 0) * satzVon(null));
+    tage.set(x.datum, (schichtStunden(x.von, x.bis, x.datum) || 0) * satzVon(null));
   return Math.round([...tage.values()].reduce((s, v) => s + v, 0) * 100) / 100;
 }
 const minijobNahe = (stand, datum) => {
@@ -68,11 +65,11 @@ const minijobNahe = (stand, datum) => {
   return aktivePersonen(stand).filter((p) => p.lohnArt === "minijob").some((p) => monatsLohn(stand, p, monat) >= grenze * HM_NAHE_GRENZE);
 };
 const abwesendKuerzlich = (stand, datum) => {
-  const ab = monatPlus(datum.slice(0, 7), -(HM_ABWESEND_MONATE - 1));
+  const ab = plusMonate(datum.slice(0, 7), -(HM_ABWESEND_MONATE - 1));
   return (stand?.abwesend || []).some((e) => e && typeof e.monat === "string" && e.monat >= ab && e.monat <= datum.slice(0, 7) && (e.eintraege || []).some((x) => x && x.tage > 0));
 };
 const ergebnisVon = (stand, monat) => { const e = eingefroren(stand, monat); if (e) return e.umsatzBrutto > 0 ? e.ergebnis : null; const z = monatsZahlen(stand, monat); return z.umsatzBrutto > 0 ? z.ergebnis : null; };
-const zweiMonateMinus = (stand, datum) => { const m = datum.slice(0, 7); const a = ergebnisVon(stand, monatPlus(m, -1)), b = ergebnisVon(stand, monatPlus(m, -2)); return a !== null && b !== null && a < 0 && b < 0; };
+const zweiMonateMinus = (stand, datum) => { const m = datum.slice(0, 7); const a = ergebnisVon(stand, plusMonate(m, -1)), b = ergebnisVon(stand, plusMonate(m, -2)); return a !== null && b !== null && a < 0 && b < 0; };
 const ausserHaus = (stand) => { const k = stand?.kanaele || {}; return k.abholung === true || k.eigeneLieferung === true || (Array.isArray(k.portale) && k.portale.length > 0); };
 const nichtQuittiert = (stand, id) => { const q = new Set(hmAngaben(stand).quittiert[id] || []); return aktivePersonen(stand).filter((p) => !q.has(p.id)); };
 
@@ -107,7 +104,7 @@ export const HM_HINWEISE = [
     genau: "Gilt auch für Minijobber. Die Liste {arbeitszeit_aufheben_jahre} Jahre aufheben. Im Büro unter Geld & Finanzamt siehst du, welche Tage fehlen.",
     quelle: "§ 17 Abs. 1, § 21 Abs. 1 Nr. 8 und Abs. 3 MiLoG", abruf: "2026-11-12",
     url: "https://www.gesetze-im-internet.de/milog/__21.html",
-    ausloeser: (s, d) => { const a = arbeitszeitListe(s, tagPlus(d, -13), d); return a.ohneZeiten > 0 || a.spaet > 0; } },
+    ausloeser: (s, d) => { const a = arbeitszeitListe(s, plusTage(d, -13), d); return a.ohneZeiten > 0 || a.spaet > 0; } },
   { id: "hm_sofortmeldung", katalog: "H2-03", nutzen: 5, frist: true, proPerson: true, euro: "Bußgeld bis {bussgeld_sofortmeldung} €",
     titel: "Sofortmeldung vor dem Start",
     satz: "Neue Leute, auch Aushilfen, müssen spätestens beim ersten Arbeitstag gemeldet sein. Das gilt im Gastgewerbe. Mit deinem Steuerberater klären.",
@@ -170,7 +167,7 @@ export const HM_HINWEISE = [
     genau: "Die genaue Frist legst du in deiner Gefährdungsbeurteilung fest. Prüfbericht aufheben. Trag das Datum der letzten Prüfung ein, dann meldet sich die App erst wieder nach 6 Monaten.",
     quelle: "BGN ASI 3.10, Abschnitt 7; BGN Prüffristen", abruf: "2026-10-28",
     url: "https://vorschriften.bgn-branchenwissen.de/daten/asi/a3_10_0/7.htm",
-    ausloeser: (s, d) => { if (!aktivePersonen(s).length) return false; const g = hmAngaben(s).elektroGeprueft; return !gueltigTag(g) || monatePlus(g, HM_ELEKTRO_MONATE) <= d; } },
+    ausloeser: (s, d) => { if (!aktivePersonen(s).length) return false; const g = hmAngaben(s).elektroGeprueft; return !gueltigTag(g) || tagPlusMonate(g, HM_ELEKTRO_MONATE) <= d; } },
 ];
 const HM_IDS = new Set(HM_ID_LISTE);
 if (HM_HINWEISE.some((h) => !HM_IDS.has(h.id)) || HM_ID_LISTE.length !== HM_HINWEISE.length) throw new Error("HM_ID_LISTE (js/hm_angaben.js) passt nicht zu HM_HINWEISE");
@@ -207,7 +204,7 @@ export function hmAusgeloest(stand, { datum }) {
 // 7 Tagen kein anderer zum ersten Mal gezeigt wurde. Fristen kommen immer. Rückgabe: { karten, neu } – neu = ids, die heute zum ersten Mal kommen.
 export function hmFuerBuero(stand, { datum }) {
   const a = hmAngaben(stand); const offen = hmAusgeloest(stand, { datum }).filter((h) => h.status === "offen");
-  const vorTakt = tagPlus(datum, -(HM_TAKT_TAGE - 1));
+  const vorTakt = plusTage(datum, -(HM_TAKT_TAGE - 1));
   let taktFrei = !Object.entries(a.gezeigt).some(([id, d]) => d >= vorTakt && d <= datum && !hmMitId(id)?.frist);
   const karten = [], neu = [];
   for (const h of offen) {
@@ -245,9 +242,9 @@ export const hmErledigtZahl = (stand) => Object.values(hmAngaben(stand).status).
 // Laden: höchstens eine Zeki-Zeile je 7 Tage, nie in der Stoßzeit, nur wenn im Büro ein Hinweis offen ist.
 // Rückgabe: Text-Schlüssel ("hm.zeki.geld" | "hm.zeki.pflicht") oder null. Gemerkt wird erst mit hmLadenGezeigt.
 export function hmLadenZeile(stand, { jetzt }) {
-  const datum = `${jetzt.getFullYear()}-${z2(jetzt.getMonth() + 1)}-${z2(jetzt.getDate())}`;
-  if (istHauptzeit(jetzt.getHours() + jetzt.getMinutes() / 60, stand)) return null;
-  const z = hmAngaben(stand).ladenZuletzt; if (z && z > tagPlus(datum, -HM_TAKT_TAGE)) return null;
+  const datum = isoTag(jetzt);
+  if (istHauptzeit(stundeBruch(jetzt), stand)) return null;
+  const z = hmAngaben(stand).ladenZuletzt; if (z && z > plusTage(datum, -HM_TAKT_TAGE)) return null;
   const { karten } = hmFuerBuero(stand, { datum }); if (!karten.length) return null;
   return karten.some((h) => h.geld) ? "hm.zeki.geld" : "hm.zeki.pflicht";
 }

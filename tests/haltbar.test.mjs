@@ -4,6 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
+import { berlinZeitpunkt } from "../js/zeit.js";
 const st = await import("../js/store.js");
 const h = await import("../js/haltbar.js");
 const vk = await import("../js/verkauf.js");
@@ -196,12 +197,12 @@ test("Oberfläche: Büro-Einstieg und Hinweis, Bereich mit drei Teilen und Kasse
   const { aktionenView, aktionenAktion, aktionenTextFuer, aktionenZuruecksetzen } = await import("../js/screens/aktionen.js");
   const { offenImBuero, jetztDran } = await import("../js/offen.js");
   const { navZiel, ansichtErlaubt } = await import("../js/modus.js");
-  t.mock.timers.enable({ apis: ["Date"], now: new Date(`${H}T12:00:00`) }); // 19.10.2026: Bildschirme rechnen mit der echten Uhr – hier fest Sa 17.10. mittags
+  t.mock.timers.enable({ apis: ["Date"], now: berlinZeitpunkt(H, 12) }); // 19.10.2026: Bildschirme rechnen mit der echten Uhr – hier fest Sa 17.10. mittags
   const s = beispielLaden(H); const w = st.leereWurzel(); w.betriebe.push(s); w.aktiv = s.id;
   const b = bueroView(s, w); assert.ok(b.includes('data-wert="aktionen"')); assert.ok(b.includes("Hähnchenspieß heute verbrauchen"), "Sa 17.10., So Ruhetag (Prüfgremium 17.10.2026)");
   const eigen = laden(); assert.ok(bueroView(eigen, { betriebe: [eigen] }).includes('data-wert="aktionen"'), "für alle sichtbar");
   assert.ok(offenImBuero(s, w).some((o) => o.id === "haltbar" && o.farbe === "rot" && o.ziel.wert === "aktionen"));
-  for (const std of [8, 12, 19, 23]) { const j = jetztDran(s, w, { jetzt: new Date(`${H}T${String(std).padStart(2, "0")}:00:00`) }); assert.ok(!j || j.id !== "haltbar", "Laden: nichts"); }
+  for (const std of [8, 12, 19, 23]) { const j = jetztDran(s, w, { jetzt: berlinZeitpunkt(H, std) }); assert.ok(!j || j.id !== "haltbar", "Laden: nichts"); }
   aktionenZuruecksetzen();
   const html = aktionenView(s);
   for (const x of ["Aktionen &amp; Haltbarkeit", "Läuft ab", "Hähnchenspieß", "nicht mehr verwenden ab", "Abverkauf", "Ayran 0,25 l für 1,50", "Wegwerfen kostet", "Kombi-Angebot", "Vorschläge",
@@ -280,6 +281,6 @@ test("Prüfgremium (2): Haltbarkeit zählt ab dem Kalendertag – um 01:30 ist W
   assert.equal(h.haltbarUhrzeit(s, { heuteTag: "2026-10-16" }).text, "Hackfleisch gemischt heute verbrauchen", "fester Tag ohne Kalendertag: wie bisher");
   const { offenImBuero } = await import("../js/offen.js");
   const w = st.leereWurzel(); w.betriebe.push(s); w.aktiv = s.id;
-  const o = offenImBuero(s, w, { jetzt: new Date(2026, 9, 17, 1, 30) }).find((x) => x.id === "haltbar");
+  const o = offenImBuero(s, w, { jetzt: new Date("2026-10-17T01:30:00+02:00") }).find((x) => x.id === "haltbar");
   assert.equal(o.text, "Hackfleisch gemischt: Verbrauchsdatum vorbei – nicht mehr verwenden", "Büro-Hinweis um 01:30 nach der Freitagsschicht");
 });

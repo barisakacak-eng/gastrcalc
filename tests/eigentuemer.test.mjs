@@ -4,7 +4,7 @@
 // vertrauliche Felder (Büro-Code, Kundennummer, Kontakt), Personal-Modus gesperrt, Bildschirm zeichnet ohne zu schreiben.
 import test, { mock } from "node:test";
 // Feste Uhr (Sonntag 18.10.2026, 12 Uhr): Der Beispiel-Laden hat einen Ruhetag, sonst hängen „6 Tage“ und der Trend vom Wochentag ab.
-mock.timers.enable({ apis: ["Date"], now: new Date("2026-10-18T12:00:00") });
+mock.timers.enable({ apis: ["Date"], now: berlinZeitpunkt("2026-10-18", 12) });
 import assert from "node:assert/strict";
 import { leereWurzel, leererBetrieb } from "../js/store.js";
 import { beispielLaden } from "../js/beispiel.js";
@@ -15,6 +15,7 @@ import { aufgabenFuer } from "../js/putzplan.js";
 import { lieferantAnlegen } from "../js/lieferant.js";
 import { personalGesperrt, ansichtErlaubt } from "../js/modus.js";
 import * as E from "../js/eigentuemer.js";
+import { berlinZeitpunkt } from "../js/zeit.js";
 
 const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
 const H = heuteGeschaeft(), K = heute();

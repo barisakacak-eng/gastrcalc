@@ -26,6 +26,7 @@ import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, S
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
 import { ablageKennungen, ablageLesen } from "./ablage.js";
 import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
+import { berlin } from "./zeit.js";
 
 export const SCHEMA = 6;
 export const APP_FASSUNG = FASSUNG;
@@ -363,7 +364,7 @@ function haltbarVereinigen(liste, lokal, fremd) {
 // idempotent (danach passt das Datum zum Geschäftstag) und auf jedem Handy gleich.
 function inventurGeschaeftstag(i) {
   if (typeof i.abgeschlossen !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(i.datum)) return i.datum;
-  const d = new Date(i.abgeschlossen); if (!Number.isFinite(d.getTime()) || d.getHours() >= GESCHAEFTSTAG_BIS_STUNDE) return i.datum;
+  const d = new Date(i.abgeschlossen); if (!Number.isFinite(d.getTime()) || berlin(d).stunde >= GESCHAEFTSTAG_BIS_STUNDE) return i.datum;
   return heute(d) === i.datum ? heuteGeschaeft(d) : i.datum;
 }
 // E7 (17.10.2026): Kassen-Artikelnummer (plu) und gelernte Kassentexte (kassenNamen) je Gericht – nur Text, sonst weg

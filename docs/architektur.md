@@ -98,6 +98,8 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `takt.js` – Zwischenspeicher für ein Bild beim Zeichnen.
 - `umsatz_pruefung.js` – Rückfrage bei unplausiblem Tagesumsatz.
 - `util.js` – kleine Helfer: `esc`, `parseZahl`, Geschäftstag.
+- `zeit.js` – Zeit aus einer Quelle: Tage als Text "JJJJ-MM-TT" in Europe/Berlin (isoTag, geschaeftstag, plusTage, tageZwischen, wochentag, Monatshelfer).
+- `geld.js` – Geld aus einer Quelle: Cent, eine Rundung (rund2), Umsatzsteuer-Sätze aus dem Regelwerk (mwst), nettoVonBrutto, aufteilen, verteilen.
 - `verkauf.js` – Verkauf je Gericht (Kassen-Export, Hand, Z-Bon).
 - `ware.js` – Welle 2 „Ware und Schwund“: Spieß, Wochenzählung, Zukauf, Portion.
 - `zaehler.js` – Break-even-Zähler („bis null plus Zielgewinn“).

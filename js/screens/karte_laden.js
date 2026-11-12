@@ -4,7 +4,7 @@
 // Kein Rezept, kein Wareneinsatz, keine Kosten – das wohnt im Büro (Ansicht „kartebuero“, karte.js-Schritte). Gerechnet wird nur im Rechenwerk.
 import { l15bAn } from "../data/l15b_texte.js"; // Lauf 4, Bildpaket L15b (Entwurf hinter window.__gcL15b)
 import { t } from "../i18n.js";
-import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
+import { esc, fmtEuro, fmtZahl, heute, parseZahl, wertAnzeige } from "../util.js";
 import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
 import { verkaufspreisSetzen, zutatMengeSetzen } from "../karte_daten.js"; // Trennung (17.10.2026); Lauf 2 Bildpaket D (3): Mengen im Laden-Blatt
 import { t as tt, einheitLabel, artikelText } from "../i18n.js";
@@ -186,7 +186,7 @@ export function karteLadenAktion(name, el, stand) {
     const g = stand.gerichte.find((x) => x.id === blatt.rezept); const z = g?.zutaten[Number(el.dataset.i)]; if (!z) return false;
     const schritt = z.einheit === "stk" ? 1 : Number(z.menge) >= 50 ? 5 : 1;
     const neu = Math.max(schritt, Math.round((Number(z.menge) + Number(el.dataset.d) * schritt) * 10) / 10);
-    zutatMengeSetzen(stand, g.id, Number(el.dataset.i), neu, new Date().toISOString().slice(0, 10));
+    zutatMengeSetzen(stand, g.id, Number(el.dataset.i), neu, heute());
     return { gespeichert: true, id: g.id, rezept: true };
   }
   if (!blatt) return false;

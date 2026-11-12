@@ -1,3 +1,4 @@
+import { heuteGeschaeft } from "./util.js";
 // Home-Bildschirm-Führung (Lauf 2, Bildpaket D Punkt 1 – 31.10.2026). Hintergrund: Safari löscht den Speicher einer Website nach
 // sieben Safari-Tagen ohne Nutzung; Web-Apps auf dem Home-Bildschirm sind davon ausgenommen (webkit.org, „Full Third-Party Cookie
 // Blocking and More“, 24.03.2020). Darum zeigt die App – nur solange sie NICHT als Home-App läuft – den Weg dorthin:
@@ -16,4 +17,4 @@ export function homeHinweisFaellig(wurzel, zustand) {
   if (!wurzel || zustand.standalone || !zustand.weg) return false;
   return !wurzel.homeHinweisGesehen;
 }
-export function homeHinweisGesehen(wurzel, datum = new Date().toISOString().slice(0, 10)) { if (wurzel) wurzel.homeHinweisGesehen = datum; }
+export function homeHinweisGesehen(wurzel, datum = heuteGeschaeft()) { if (wurzel) wurzel.homeHinweisGesehen = datum; }

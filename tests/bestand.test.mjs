@@ -4,6 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
+import { berlinZeitpunkt } from "../js/zeit.js";
 const st = await import("../js/store.js");
 const b = await import("../js/bestand.js");
 const vk = await import("../js/verkauf.js");
@@ -278,23 +279,23 @@ function sfLaden() {
 }
 const sfZaehlen = (s, datum, menge, lokal) => { const i = inv.inventurStarten(s, { datum, jetzt: lokal.toISOString() }); inv.mengeSetzen(i, "Fleisch", menge); inv.inventurAbschliessen(s, i, { datum, jetzt: lokal.toISOString() }); return i; };
 test("Schwadron M2: Inventur morgens vor dem Öffnen – Verkäufe des Zähltags werden abgezogen; nach Ladenschluss wie bisher", () => {
-  const s = sfLaden(); const i = sfZaehlen(s, "2026-10-14", 2, new Date(2026, 9, 14, 8, 0));
+  const s = sfLaden(); const i = sfZaehlen(s, "2026-10-14", 2, new Date("2026-10-14T08:00:00+02:00"));
   assert.equal(i.zeitpunkt, "vor"); assert.equal(inv.inventurAbTag(i), "2026-10-14");
   vk.handVerkaufSetzen(s, "2026-10-14", "g1", 50); // 9 kg
   nah(ware(b.bestandStand(s, { heuteTag: "2026-10-14" }), "Fleisch").bestand, 11000);
   nah(ware(b.bestandStand(s, { heuteTag: "2026-10-15" }), "Fleisch").bestand, 11000);
   // nach Ladenschluss (22:30) gezählt: die Verkäufe des Tags stecken schon in der Zählung
-  const t = sfLaden(); const j = sfZaehlen(t, "2026-10-14", 2, new Date(2026, 9, 14, 22, 30)); vk.handVerkaufSetzen(t, "2026-10-14", "g1", 50);
+  const t = sfLaden(); const j = sfZaehlen(t, "2026-10-14", 2, new Date("2026-10-14T22:30:00+02:00")); vk.handVerkaufSetzen(t, "2026-10-14", "g1", 50);
   assert.equal(j.zeitpunkt, "nach"); nah(ware(b.bestandStand(t, { heuteTag: "2026-10-15" }), "Fleisch").bestand, 20000);
   // nach Mitternacht (01:15) gehört die Zählung zum Vortag und gilt als „nach“
-  const u = sfLaden(); const k = sfZaehlen(u, "2026-10-14", 2, new Date(2026, 9, 15, 1, 15)); assert.equal(k.datum, "2026-10-14"); assert.equal(k.zeitpunkt, "nach");
+  const u = sfLaden(); const k = sfZaehlen(u, "2026-10-14", 2, new Date("2026-10-15T01:15:00+02:00")); assert.equal(k.datum, "2026-10-14"); assert.equal(k.zeitpunkt, "nach");
   // Abgleich zwischen zwei Inventuren nutzt dieselbe Regel: morgens gezählt → der Zähltag gehört zum nächsten Zeitraum
-  const v = sfLaden(); sfZaehlen(v, "2026-10-12", 2, new Date(2026, 9, 12, 22, 0)); vk.handVerkaufSetzen(v, "2026-10-13", "g1", 10); vk.handVerkaufSetzen(v, "2026-10-14", "g1", 50);
-  const i2 = sfZaehlen(v, "2026-10-14", 1.8, new Date(2026, 9, 14, 8, 0)); assert.equal(inv.inventurBisTag(i2), "2026-10-13");
+  const v = sfLaden(); sfZaehlen(v, "2026-10-12", 2, new Date("2026-10-12T22:00:00+02:00")); vk.handVerkaufSetzen(v, "2026-10-13", "g1", 10); vk.handVerkaufSetzen(v, "2026-10-14", "g1", 50);
+  const i2 = sfZaehlen(v, "2026-10-14", 1.8, new Date("2026-10-14T08:00:00+02:00")); assert.equal(inv.inventurBisTag(i2), "2026-10-13");
   const a = vk.abgleichInventur(v); assert.equal(a.bis, "2026-10-13"); assert.equal(a.zeilen.find((x) => x.name === "Fleisch").status, "ok");
 });
 test("Schwadron M3: Bestellvorschlag zieht Ware mit vorbeigegangenem Verbrauchsdatum vom Bestand ab", () => {
-  const s = sfLaden(); sfZaehlen(s, "2026-10-05", 0.25, new Date(2026, 9, 5, 23, 0));
+  const s = sfLaden(); sfZaehlen(s, "2026-10-05", 0.25, new Date("2026-10-05T23:00:00+02:00"));
   for (const d of ["2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09"]) vk.handVerkaufSetzen(s, d, "g1", 40);
   s.lieferungen.push({ id: "l1", datum: "2026-10-06", erfasst: "2026-10-06T08:00:00Z", lieferant: "Test", zeilen: [{ artikel: "Fleisch", menge: 3, inhaltMenge: 10, inhaltEinheit: "kg", netto: 240, haltbar: { art: "verbrauch", datum: "2026-10-08" } }], storniert: false });
   const bs = b.bestandStand(s, { heuteTag: "2026-10-10" }); nah(ware(bs, "Fleisch").bestand, 3700);
@@ -306,7 +307,7 @@ test("Schwadron M3: Bestellvorschlag zieht Ware mit vorbeigegangenem Verbrauchsd
 });
 test("Schwadron N1: Bestellliste ohne dringende Zeile meldet den nächsten Bestelltag statt „Alles reicht“", async () => {
   const { heuteGeschaeft } = await import("../js/util.js"); const T = heuteGeschaeft(); const d = (n) => tagPlus(T, n);
-  const s = sfLaden(); const [j, mo, ta] = d(-8).split("-").map(Number); sfZaehlen(s, d(-8), 4, new Date(j, mo - 1, ta, 21, 0)); // abends gezählt
+  const s = sfLaden(); sfZaehlen(s, d(-8), 4, berlinZeitpunkt(d(-8), 21, 0)); // abends gezählt
   for (const n of [-6, -5, -4]) vk.handVerkaufSetzen(s, d(n), "g1", 20);
   const v = b.bestellVorschlag(s); assert.equal(v.zeilen.length, 1); assert.equal(v.zeilen[0].dringend, "spaeter"); assert.equal(b.bestandUhrzeit(s), null);
   assert.equal(v.naechste, v.zeilen[0].bestellenAm);

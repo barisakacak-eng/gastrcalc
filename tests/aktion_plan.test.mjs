@@ -4,6 +4,7 @@
 // nie automatisch; Fortschritt und „Uhrzeit“-Satz; Bilanz nach dem Ende und Lernen; Migration alter Aktionen; Zusammenführen; Bildschirm.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { berlinZeitpunkt } from "../js/zeit.js";
 globalThis.document ??= { documentElement: {} };
 const st = await import("../js/store.js");
 const P = await import("../js/aktion_plan.js");
@@ -107,7 +108,7 @@ test("Frei wählbarer Zeitraum: ab sofort, bis Datum, bis Ware weg (auch ohne Da
   assert.deepEqual([w.von, w.bis, w.ende], [H, null, "ware"], "ab sofort, bis die Ware weg ist");
   const sw = laden(); sw.aktionen = [w];
   const b = T.tafelBeschreibung(sw, { heuteTag: "2027-03-01" }); assert.equal(b.aktionen.length, 1, "ohne Datum läuft sie, bis der Wirt sie beendet"); assert.equal(b.aktionen[0].laufText, "solange der Vorrat reicht");
-  assert.equal(T.tafelAktionSichtbar({ von: H, bis: "" }, new Date(2027, 2, 1, 12).getTime()), true);
+  assert.equal(T.tafelAktionSichtbar({ von: H, bis: "" }, new Date("2027-03-01T12:00:00+01:00").getTime()), true);
   const wb = T.aktionUebernehmen(laden(), { ...KOMBI, ende: "ware", von: "2026-10-20", bis: "2026-10-27" }, { heuteTag: H });
   const lt = T.tafelBeschreibung({ ...laden(), aktionen: [wb] }, { heuteTag: H }).aktionen[0].laufText; assert.equal(lt, "ab Di 20.10., solange der Vorrat reicht, längstens bis Di 27.10.");
   // ändern: Ende verschieben, „bis Ware weg“, Unsinn abweisen; läuft sie schon, bleibt der Start
@@ -151,11 +152,11 @@ test("„Uhrzeit“ im Büro: Hinweis-Chip (ein Satz je Bereich, Haltbarkeit hat
   const von = tagPlus(H, -7); const s = laden({ tage: 35, je: (d) => (d >= von ? { menue: 10 } : { d1: 10, c1: 10 }) });
   T.aktionUebernehmen(s, { ...KOMBI, von, bis: tagPlus(H, 6) }, { heuteTag: von });
   const w = st.leereWurzel(); w.betriebe = [s]; w.aktiv = s.id;
-  const o = offenImBuero(s, w, { jetzt: new Date(2026, 9, 18, 12) }).find((x) => x.id === "aktion");
+  const o = offenImBuero(s, w, { jetzt: new Date("2026-10-18T12:00:00+02:00") }).find((x) => x.id === "aktion");
   assert.deepEqual([o?.text, o?.ziel.wert, o?.farbe], ["Kombi bringt bisher weniger – beenden?", "aktionen", "gelb"]);
-  for (const std of [9, 13, 20]) { const j = jetztDran(s, w, { jetzt: new Date(2026, 9, 18, std) }); assert.ok(!j || j.id !== "aktion", "Laden: nichts"); }
+  for (const std of [9, 13, 20]) { const j = jetztDran(s, w, { jetzt: berlinZeitpunkt("2026-10-18", std) }); assert.ok(!j || j.id !== "aktion", "Laden: nichts"); }
   const bsp = beispielLaden(H); const wb = st.leereWurzel(); wb.betriebe = [bsp]; wb.aktiv = bsp.id;
-  const ob = offenImBuero(bsp, wb, { jetzt: new Date(2026, 9, 18, 12) }).filter((x) => x.ziel?.wert === "aktionen");
+  const ob = offenImBuero(bsp, wb, { jetzt: new Date("2026-10-18T12:00:00+02:00") }).filter((x) => x.ziel?.wert === "aktionen");
   assert.deepEqual(ob.map((x) => x.id), ["haltbar"], "Verbrauchsdatum zuerst, nur ein Hinweis");
 });
 
@@ -176,7 +177,7 @@ test("Bilanz nach dem Ende und Lernen: gespeichert, die nächste gleiche Aktion 
   // Beenden durch den Wirt: Bilanz sofort; andere Gerichte lernen nicht davon
   const s3 = laden({ tage: 35, je: (d) => (d >= tagPlus(H, -5) ? { menue: 12 } : { d1: 10, c1: 10 }) });
   const x = T.aktionUebernehmen(s3, { ...KOMBI, von: tagPlus(H, -5), bis: tagPlus(H, 5) }, { heuteTag: tagPlus(H, -5) });
-  assert.equal(T.aktionBeenden(s3, x.id, { jetzt: new Date(2026, 9, 18, 12).toISOString() }), true);
+  assert.equal(T.aktionBeenden(s3, x.id, { jetzt: new Date("2026-10-18T12:00:00+02:00").toISOString() }), true);
   const e = s3.aktionen[0]; assert.equal(e.entfernt, true); assert.ok(e.bilanz && e.bilanz.vergleichbar >= 3); assert.equal(e.bilanz.bis, H);
   assert.equal(P.letzteBilanz(s3, { art: "abverkauf", gerichte: ["d1"] }, { heuteTag: H }), null);
 });
@@ -213,7 +214,7 @@ test("Migration alter Aktionen: Laufzeit bleibt, ende „datum“; „bis Ware w
 
 test("Bildschirm „Aktionen & Haltbarkeit“: Plan mit Vorschlag, Begründung und änderbarem Zeitraum; laufende Aktion mit Fortschritt; Personal gesperrt", async (ctx) => {
   // Bildschirm und Beispieldaten müssen denselben Geschäftstag verwenden.
-  ctx.mock.timers.enable({ apis: ["Date"], now: new Date(`${H}T12:00:00`) });
+  ctx.mock.timers.enable({ apis: ["Date"], now: berlinZeitpunkt(H, 12) });
   const akt = await import("../js/screens/aktionen.js"); const { personalGesperrt } = await import("../js/modus.js");
   akt.aktionenZuruecksetzen();
   const s = beispielLaden(H); const vor = JSON.stringify(s);

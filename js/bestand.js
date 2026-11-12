@@ -19,6 +19,7 @@ import { imTakt } from "./takt.js";
 import { chargenStand } from "./haltbar.js";
 import { hauptLieferant, zweitLieferant, liefertermine, liefertAm, lieferantMitId, lieferantenAktiv, whatsappNummer, whatsappLink } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, Liefertage, Bestellschluss; vorher nur Beleg-Name bzw. Getränke-Lieferant
 import { fmtEuro } from "./util.js";
+import { tageZwischen, berlin } from "./zeit.js";
 
 // Bestand (17.10.2026): Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
 export const LAGER_STANDARD = { tage: 7, puffer: 2 };
@@ -42,7 +43,6 @@ const artikelIndex = (stand) => Object.fromEntries((stand.artikel || []).map((a)
 const inhaltJetzt = (a) => (a && a.packung?.menge > 0 && EINHEITEN[a.packung.einheit] ? inBasis(a.packung.menge, a.packung.einheit) : null);
 const basisVon = (a) => EINHEITEN[a?.packung?.einheit || a?.einheit]?.basis || null;
 const viertel = (x) => Math.round(x * 4) / 4;
-const tageZwischen = (von, bis) => Math.round((Date.parse(bis + "T12:00:00Z") - Date.parse(von + "T12:00:00Z")) / 86400e3);
 const ruhetageBekannt = (stand, d) => ruhetageAm(stand, d).length > 0;
 
 // Verkäufe im Zeitraum je Tag als { gerichtId: Portionen } (beste Herkunft je Tag, wie verkaufJeGericht)
@@ -417,7 +417,7 @@ export function lieferSaetze(stand, { heuteTag = heuteGeschaeft(), jetzt = null,
     if (g?.mindest && tm && (tm.schlussTag === kal || tm.schlussTag === morgen)) { out.push({ id: "lf:" + lf.id, art: "mindest", lieferantId: lf.id, ton: "gelb", text: mindestSatz(g.mindest), ziel }); continue; }
     if (tm && n && tm.schlussTag === morgen) { out.push({ id: "lf:" + lf.id, art: "schlussMorgen", lieferantId: lf.id, ton: "gelb", text: tm.abholung ? t("lieferanten.satz.abholenMorgen", lf.name, n) : t("lieferanten.satz.schlussMorgen", lf.name, uhrText(tm.uhr), n), ziel }); continue; }
     const zl = { aktion: "nav", wert: "lieferanten" };
-    if (liefertAm(stand, lf, kal) && J.getHours() < 14) { out.push({ id: "lf:" + lf.id, art: "kommtHeute", lieferantId: lf.id, ton: "gelb", text: t(lf.modus === "abholung" ? "lieferanten.satz.abholungHeute" : "lieferanten.satz.kommtHeute", lf.name), ziel: zl }); continue; }
+    if (liefertAm(stand, lf, kal) && berlin(J).stunde < 14) { out.push({ id: "lf:" + lf.id, art: "kommtHeute", lieferantId: lf.id, ton: "gelb", text: t(lf.modus === "abholung" ? "lieferanten.satz.abholungHeute" : "lieferanten.satz.kommtHeute", lf.name), ziel: zl }); continue; }
     if (liefertAm(stand, lf, morgen)) out.push({ id: "lf:" + lf.id, art: "kommtMorgen", lieferantId: lf.id, ton: "gelb", text: t(lf.modus === "abholung" ? "lieferanten.satz.abholungMorgen" : "lieferanten.satz.kommtMorgen", lf.name), ziel: zl });
   }
   const rang = { schluss: 0, mindest: 1, schlussMorgen: 2, kommtHeute: 3, kommtMorgen: 4 };

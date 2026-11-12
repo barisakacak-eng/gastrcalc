@@ -16,7 +16,7 @@ test("parseZahl: Unsinn wird abgelehnt", () => {
   for (const x of ["", "abc", "-5", "1e5", "0x10", "1,2,3", "1.2.3", null, undefined]) assert.equal(parseZahl(x), null, String(x));
 });
 test("heute: Ortszeit, nicht UTC", () => {
-  assert.equal(heute(new Date(2026, 9, 10, 0, 30)), "2026-10-10");
+  assert.equal(heute(new Date("2026-10-10T00:30:00+02:00")), "2026-10-10");
 });
 test("esc: Attribute und Text bleiben dicht", () => {
   assert.equal(esc(`a"b<c>&'`), "a&quot;b&lt;c&gt;&amp;&#39;");

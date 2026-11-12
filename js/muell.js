@@ -53,7 +53,8 @@ export function eimerVerrechnen(stand, datum, kg) {
 }
 
 // Mahlzeit nach echter Uhrzeit; 00:00–03:59 ist noch „abend“ des Geschäftstags, nicht Frühstück (Paket 3, M7).
-export const mahlzeitJetzt = (d = new Date()) => (d.getHours() < GESCHAEFTSTAG_BIS_STUNDE ? "abend" : d.getHours() < 11 ? "fruehstueck" : d.getHours() < 16 ? "mittag" : "abend");
+const stundeBerlin = (d) => berlin(d).stunde;
+export const mahlzeitJetzt = (d = new Date()) => (stundeBerlin(d) < GESCHAEFTSTAG_BIS_STUNDE ? "abend" : stundeBerlin(d) < 11 ? "fruehstueck" : stundeBerlin(d) < 16 ? "mittag" : "abend");
 
 function neu(datum, art, ref, menge, einheit, extra = {}) {
   return { id: uid(), datum, erfasst: new Date().toISOString(), art, vorgang: SCHWUND_ARTEN[art], ref, menge, einheit, nacherfasst: datum !== heuteGeschaeft(), storniert: false, ...extra };
@@ -107,7 +108,7 @@ export function letzterEintrag(stand, datum, art, gerichtId) {
 
 // ---------- Etappe 6, Punkt 1: Müll-Zentrale (Baris 13.10., 12:45) ----------
 import { schwundAuswertung, preisJeBasis } from "./engine.js";
-const tagMinus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); return heute(new Date(j, m - 1, d - n)); };
+import { plusTage, berlin, plusMonate, monatsErster, monatsLetzter, tagPlusMonate } from "./zeit.js";
 const istMuell = (e) => !e.storniert && (SCHWUND_ARTEN[e.art] || 1) === 1;
 
 // Gewicht eines Eintrags in kg (Teller über das Rezept, Rohware über die Einheit, Eimer = Rest-kg). Stück ohne Gewicht: 0.
@@ -119,8 +120,8 @@ export function kgEintrag(e, stand) {
 
 // Die letzten 7 Tage bis datum: Summe in Euro (nur bewertete Einträge), kg, Portionen zum Reinholen, je Tag und die drei größten Verursacher.
 export function muellWoche(stand, datum = heuteGeschaeft()) {
-  const von = tagMinus(datum, 6);
-  const tage = []; for (let i = 6; i >= 0; i--) tage.push({ datum: tagMinus(datum, i), wert: 0, kg: 0, anzahl: 0 });
+  const von = plusTage(datum, -6);
+  const tage = []; for (let i = 6; i >= 0; i--) tage.push({ datum: plusTage(datum, -i), wert: 0, kg: 0, anzahl: 0 });
   const je = new Map(); let kg = 0;
   for (const e of stand.schwund || []) {
     if (!istMuell(e) || e.datum < von || e.datum > datum) continue;
@@ -138,10 +139,10 @@ export function muellWoche(stand, datum = heuteGeschaeft()) {
 // Monat bis heute gegen Vormonat bis zum selben Tag (ohne Einträge im Vormonat: keine Vergleichslinie)
 export function muellMonatVergleich(stand, datum = heuteGeschaeft()) {
   const [j, m, d] = datum.split("-").map(Number);
-  const vm = new Date(j, m - 2, 1); const vmEnde = new Date(j, m - 1, 0).getDate();
-  const vVon = heute(vm); const vBis = heute(new Date(vm.getFullYear(), vm.getMonth(), Math.min(d, vmEnde)));
+  const vm = plusMonate(datum.slice(0, 7), -1); const vmEnde = monatsLetzter(vm);
+  const vVon = monatsErster(vm); const vBis = tagPlusMonate(datum, -1); // gleicher Tag im Vormonat, höchstens dessen letzter
   const summe = (von, bis) => (stand.schwund || []).filter((e) => istMuell(e) && e.datum >= von && e.datum <= bis).reduce((s, e) => s + (eintragWert(e, stand) ?? 0), 0); // Paket 3, M6
-  const hatVormonat = (stand.schwund || []).some((e) => istMuell(e) && e.datum >= vVon && e.datum <= heute(new Date(j, m - 1, 0)));
+  const hatVormonat = (stand.schwund || []).some((e) => istMuell(e) && e.datum >= vVon && e.datum <= vmEnde);
   return { monat: summe(datum.slice(0, 8) + "01", datum), vormonat: hatVormonat ? summe(vVon, vBis) : null, tag: d };
 }
 
@@ -150,7 +151,7 @@ const DOENER_VORNE = [/^Dönerspieß/i, /^Hähnchenspieß/i, /^Pommes/i, /^Cola/
 export function haeufigsteMuell(stand, opts = {}) { return imTakt(stand, "hm:" + JSON.stringify(opts), () => haeufigsteMuellRechnen(stand, opts)); }
 function haeufigsteMuellRechnen(stand, { tage = 30, max = 12, datum = heuteGeschaeft(), mischen = false } = {}) {
   if (mischen) return gemischt(stand, haeufigsteMuell(stand, { tage, max: 10000, datum }), { tage, max, datum });
-  const von = tagMinus(datum, tage - 1); const zahl = new Map();
+  const von = plusTage(datum, -(tage - 1)); const zahl = new Map();
   for (const e of stand.schwund || []) {
     if (e.storniert || e.datum < von || e.datum > datum || !e.ref || e.art === "eimer") continue;
     const k = e.ref.typ === "gericht" ? "g:" + e.ref.id : "a:" + e.ref.name;
@@ -171,7 +172,7 @@ function haeufigsteMuellRechnen(stand, { tage = 30, max = 12, datum = heuteGesch
 // Foto-Raster (Drei Ebenen): erst was schon weg war (nach Häufigkeit), dann abwechselnd Gericht und Rohware –
 // Rohware nach Zahl der Gerichte, die sie brauchen (Fladenbrot, Fleisch, Salat vor Gewürzen). Getränke nicht.
 function gemischt(stand, alle, { tage, max, datum }) {
-  const von = tagMinus(datum, tage - 1); const benutzt = new Set();
+  const von = plusTage(datum, -(tage - 1)); const benutzt = new Set();
   for (const e of stand.schwund || []) if (!e.storniert && e.datum >= von && e.datum <= datum && e.ref && e.art !== "eimer") benutzt.add(muellSchluessel(e));
   const vorne = alle.filter((x) => benutzt.has(muellSchluessel(x)));
   const rest = alle.filter((x) => !benutzt.has(muellSchluessel(x)) && x.gruppe !== "getraenk");

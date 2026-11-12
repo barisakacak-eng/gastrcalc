@@ -101,7 +101,7 @@ test("Müll: Gericht weg bewertet zum Wareneinsatz, Eimer zieht gemeldete Teller
   const z = M.heuteJeGericht(b, "2026-10-12"); assert.equal(z.d, 1);
   const p = M.personalessen(b, b.gerichte[0], { datum: "2026-10-12", mahlzeit: "mittag" }); assert.equal(p.vorgang, 2);
   const sw = E.schwundAuswertung(b, { von: "2026-10-12", bis: "2026-10-12" }); nah(sw.muellwert, e.wert + r.wert + ei.wert); assert.equal(sw.personal.anzahl, 1);
-  assert.equal(M.mahlzeitJetzt(new Date(2026, 9, 12, 9)), "fruehstueck"); assert.equal(M.mahlzeitJetzt(new Date(2026, 9, 12, 19)), "abend");
+  assert.equal(M.mahlzeitJetzt(new Date("2026-10-12T09:00:00+02:00")), "fruehstueck"); assert.equal(M.mahlzeitJetzt(new Date("2026-10-12T19:00:00+02:00")), "abend");
   // Eimer ohne Karte: kein Preis je kg → Wert offen
   const c = laden(); c.gerichte = []; const e2 = M.eimerEintragen(c, { datum: "2026-10-12", kg: 1 }); assert.equal(e2.wert, null); assert.equal(e2.wertOffen, true);
 });

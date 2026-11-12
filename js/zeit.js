@@ -37,3 +37,20 @@ export const monatVon = (tag) => tag.slice(0, 7);
 export const monatsErster = (monat) => `${monat}-01`;
 export const monatsLetzter = (monat) => { const [j, m] = monat.split("-").map(Number); return text(Date.UTC(j, m, 0)); };
 export const plusMonate = (monat, n) => { const [j, m] = monat.split("-").map(Number); const x = j * 12 + (m - 1) + n; return `${Math.floor(x / 12)}-${z2((x % 12) + 1)}`; };
+// Lauf 6, Etappe 4 – kleine Helfer für die übrigen Module (nichts Vorhandenes geändert)
+// Tag aus Jahr, Monat, Tag (Zahlen) als Text: tagVon(2026, 3, 9) = "2026-03-09"
+export const tagVon = (j, m, d) => `${j}-${z2(m)}-${z2(d)}`;
+// Zahl der Tage eines Monats: tageImMonat(2028, 2) = 29
+export const tageImMonat = (j, m) => Number(monatsLetzter(`${j}-${z2(m)}`).slice(8));
+// Uhrzeit eines Zeitpunkts in Berlin als "HH:MM" und als Dezimalstunde (14:30 = 14.5)
+export const uhr = (d = new Date()) => { const b = berlin(d); return `${z2(b.stunde)}:${z2(b.minute)}`; };
+export const stundeBruch = (d = new Date()) => { const b = berlin(d); return b.stunde + b.minute / 60; };
+// Tag plus n Monate; ist der Zieltag im Zielmonat nicht vorhanden, gilt der letzte Tag des Zielmonats (29.02. → 28.02.)
+export const tagPlusMonate = (tag, n) => { const m = plusMonate(tag.slice(0, 7), n); const [j, mm] = m.split("-").map(Number); return tagVon(j, mm, Math.min(Number(tag.slice(8)), tageImMonat(j, mm))); };
+// Zeitpunkt (Date) einer Berliner Uhrzeit an einem Tag: berlinZeitpunkt("2026-10-25", 22, 0) = 22:00 Berliner Zeit (Sommer- oder Winterzeit je nach Tag).
+// Zeiten, die es am Umstellungstag nicht gibt (02:30 am 29.03.2026), landen eine Stunde später; doppelte (02:30 am 25.10.2026) auf der Sommerzeit-Seite.
+export function berlinZeitpunkt(tag, stunde = 0, minute = 0) {
+  const ziel = utc(tag) + (stunde * 60 + minute) * 60000; let t = ziel;
+  for (let i = 0; i < 4; i++) { const b = berlin(new Date(t)); const wand = utc(b.tag) + (b.stunde * 60 + b.minute) * 60000; const diff = ziel - wand; if (!diff) break; t += diff; }
+  return new Date(t);
+}

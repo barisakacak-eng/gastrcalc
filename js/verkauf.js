@@ -27,7 +27,7 @@ import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026)
 import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNettoGebinde, istRichtpreis, tagPlus, SCHWUND_ARTEN, mengeInArtikelBasis, mengeInBasisVon, stueckGewicht } from "./engine.js";
 import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber, inventurAbTag, inventurBisTag } from "./inventur.js";
-import { uid, heute, heuteGeschaeft, geschaeftstag } from "./util.js";
+import { uid, heute, heuteGeschaeft } from "./util.js";
 import { zipLesen, istZip } from "./zip.js";
 
 export const HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
@@ -144,7 +144,7 @@ function geschaeftstagVon(iso) {
   if (typeof iso !== "string" || !iso) return null;
   const ms = Date.parse(iso); if (!Number.isFinite(ms)) { const m = DATUM.exec(iso); return m ? m[1] : null; }
   if (!/T\d/.test(iso)) { const m = DATUM.exec(iso); return m ? m[1] : null; }
-  return heute(geschaeftstag(new Date(ms)));
+  return heuteGeschaeft(new Date(ms));
 }
 
 // EINHEIT (Bonpos) → null für Stück (auch leer), sonst kurze Einheit („kg“, „g“, „l“, „ml“ oder der gelieferte Text, gekürzt).

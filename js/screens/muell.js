@@ -23,6 +23,7 @@ export function wareBild(x) {
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 import { datumLesbar, tagGewaehlt, eintragName, tagLesbar } from "./tag.js";
+import { plusTage, wochentag } from "../zeit.js";
 
 let ansicht = "start";   // "start" (Foto-Raster) | "station" (Vollbild ohne Euro/Leiste) | "eingabe" (Detail)
 let rueckkehr = "start"; // Detail-Eingabe kehrt bei der Müll-Station zu deren Vollbild zurück
@@ -43,8 +44,8 @@ export function muellFotoSetzen(eintrag) { foto = eintrag; }
 export function muellZurueck() { if (auswahlOffen) { auswahlOffen = false; if (!wahl) ansicht = rueckkehr; return true; } if (ansicht !== "start") { ansicht = ansicht === "eingabe" ? rueckkehr : "start"; wahl = null; return true; } return false; }
 export const muellAnsicht = () => ansicht;
 
-const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Paket 3, M7: Geschäftstage
-const kurzTag = (iso) => t("kuehl.tage." + new Date(iso + "T12:00:00").getDay());
+const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) out.push(plusTage(heute(), -i)); return out; }; // Paket 3, M7: Geschäftstage
+const kurzTag = (iso) => t("kuehl.tage." + wochentag(iso));
 const mengeText = mengeEinheitText; // Trennung (17.10.2026): ./bausteine.js
 // Paket 6 (17.10.2026): Artikel in der aktiven Sprache anzeigen; Gerichte heißen, wie der Wirt sie nennt. data-name bleibt deutsch.
 const zeigName = (x) => (x && x.typ === "artikel" ? artikelText(x.name) : x?.name || "");

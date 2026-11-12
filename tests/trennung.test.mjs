@@ -8,6 +8,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { berlinZeitpunkt } from "../js/zeit.js";
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const JS = path.join(HIER, "..", "js");
 const SCREENS = path.join(JS, "screens");
@@ -171,7 +172,7 @@ test("Trennung: alle Ansichten auf dem Beispiel-Laden zeichnen, ohne den Stand z
   const H = new Date().toISOString().slice(0, 10);
   const s = beispielLaden(H, { jetzt: new Date().toISOString() });
   // offene Kühl-Abweichung für „Ware nach Kühl-Abweichung“; ein Artikel ohne Eintrag, damit „Einkaufspreise“ beim Zeichnen etwas abgleichen MÜSSTE
-  s.messungen.push({ id: "m-abw", stelle: s.kuehlstellen[0].id, datum: H, zeit: H + "T09:00:00", wert: 12, min: null, max: 7, abweichung: true, massnahmen: ["chef"], nachkontrolle: null, von: null, nacherfasst: false, storniert: false });
+  s.messungen.push({ id: "m-abw", stelle: s.kuehlstellen[0].id, datum: H, zeit: berlinZeitpunkt(H, 9).toISOString(), wert: 12, min: null, max: 7, abweichung: true, massnahmen: ["chef"], nachkontrolle: null, von: null, nacherfasst: false, storniert: false });
   s.gerichte[0].zutaten.push({ name: "Sumach", menge: 2, einheit: "g" });
   const w = st.leereWurzel(); w.betriebe = [s]; w.aktiv = s.id;
   const { navKontext } = await import("../js/screens/nav.js");
@@ -235,8 +236,8 @@ async function ladenMitAbweichung() {
   s.kuehlstellen = [{ id: "k1", name: "Kühlschrank 1", art: "kuehl", min: null, max: 7, reihe: 0, archiviert: false }];
   s.artikel = [{ name: "Hackfleisch gemischt", gruppe: "fleisch", einheit: "kg", packung: { menge: 2, einheit: "kg" }, gebinde: { art: "packung", zwischen: null }, preis: 14, preisBasis: "netto", status: "bekannt" }];
   const H = new Date().toISOString().slice(0, 10);
-  const m = (id, wert, extra = {}) => { const x = { id, stelle: "k1", datum: H, zeit: H + "T09:00:00", wert, min: null, max: 7, abweichung: wert > 7, massnahmen: ["chef"], nachkontrolle: null, von: null, nacherfasst: false, storniert: false, ...extra }; s.messungen.push(x); return x; };
-  m("a1", 11); m("a2", 12); m("ok", 5, { zeit: H + "T08:00:00" });
+  const m = (id, wert, extra = {}) => { const x = { id, stelle: "k1", datum: H, zeit: berlinZeitpunkt(H, 9).toISOString(), wert, min: null, max: 7, abweichung: wert > 7, massnahmen: ["chef"], nachkontrolle: null, von: null, nacherfasst: false, storniert: false, ...extra }; s.messungen.push(x); return x; };
+  m("a1", 11); m("a2", 12); m("ok", 5, { zeit: berlinZeitpunkt(H, 8).toISOString() });
   return { s, H };
 }
 

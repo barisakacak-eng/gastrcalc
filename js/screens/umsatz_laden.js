@@ -9,6 +9,7 @@ import { nav } from "./nav.js";
 import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwesendSetzen, stundenJeTag, lieferTag, lieferTagSetzen, lieferProvision, normalFrageNoetig, normalTagSetzen, teamStundenlohnSetzen } from "../stamm.js";
 import { sym } from "../symbole.js";
 import { l15bAn } from "../data/l15b_texte.js"; // Lauf 4 (P4 C3): Einheiten-Schrift der Team-Kacheln, Entwurf
+import { tageImMonat } from "../zeit.js";
 
 let teamEntwurf = { pers: null, std: null, satz: null }; let satzAuf = false; // Baris 27.10.2026 18:10: Mitarbeiter kompakt unter dem Umsatz (Personen, Stunden zusammen, Lohn je Stunde einmal)
 let lieferEntwurf = null; // „davon Lieferdienst“ (27.10.2026), nur wenn ein Portal mit Provision eingerichtet ist
@@ -41,7 +42,7 @@ function zeileLohn(x, i) {
 // Monatsende (Baris 27.10.2026): in den letzten 3 Tagen des Monats einmal fragen, ob Stundenkräfte krank oder im Urlaub waren
 const stundenLeute = (stand) => (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false && p.lohnModell !== "monat" && p.stundenlohn > 0);
 export function abwesendFrageNoetig(stand, H) {
-  const [j, m] = H.split("-").map(Number); const letzter = new Date(j, m, 0).getDate();
+  const [j, m] = H.split("-").map(Number); const letzter = tageImMonat(j, m);
   return Number(H.slice(8, 10)) >= letzter - 2 && !abwesendMonat(stand, H.slice(0, 7)) && stundenLeute(stand).length > 0;
 }
 let abwesend = null; // [{ person, name, tage, satz, art, stundenTag }]

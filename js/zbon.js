@@ -14,6 +14,7 @@ import { normKasse, zahlLesen, importVorschau, importUebernehmen, zuordnen } fro
 import { verkaeufeEntdoppeln } from "./store.js"; // Prüfgremium 18.10.2026 (H2): dieselbe Regel wie beim Zusammenführen und Laden
 import { tagPlus } from "./engine.js";
 import { heute } from "./util.js";
+import { gueltigerTag } from "./zeit.js";
 
 // ---------- Zeichen und Zahlen ----------
 // Lesefehler nur in Teilen, die schon eine Ziffer enthalten (sonst würde aus „Cola“ nichts, aus „SB“ aber „58“)
@@ -59,7 +60,7 @@ function isoDatum(j, m, d) {
   const jj = j < 100 ? 2000 + j : j;
   if (jj < 2000 || jj > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
   const iso = `${jj}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-  const x = new Date(jj, m - 1, d); return x.getMonth() === m - 1 ? iso : null;
+  return gueltigerTag(iso) ? iso : null;
 }
 // Datum des Geschäftstags: das Datum auf dem Bon; steht eine Uhrzeit vor 4 Uhr dabei, gehört der Bon zum Vortag (Geschäftstag bis 4 Uhr).
 // Bevorzugt die Zeile mit „Datum“, „Z-Bon“ oder „Abschluss“, sonst das erste gültige Datum. Nie in der Zukunft.

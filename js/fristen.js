@@ -16,21 +16,18 @@
 // - Erinnerung 5 Tage vor dem Termin (Masterauftrag 3.2, Setzung).
 import { feiertagAm, LAND_CODES } from "./feiertage.js";
 import { wert } from "./data/regelwerk.js";
+import { tagVon, plusTage, wochentag, tageImMonat, plusMonate } from "./zeit.js";
 
 export const ERINNERUNG_TAGE = 5; // Setzung Masterauftrag „Gehirn“ 3.2
-const z2 = (n) => String(n).padStart(2, "0");
-const iso = (j, m, d) => `${j}-${z2(m)}-${z2(d)}`;
-const plus = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); return iso(x.getUTCFullYear(), x.getUTCMonth() + 1, x.getUTCDate()); };
-const wochentag = (tag) => { const [j, m, d] = tag.split("-").map(Number); return new Date(Date.UTC(j, m - 1, d)).getUTCDay(); }; // 0 = So
-const letzterTag = (j, m) => new Date(Date.UTC(j, m, 0)).getUTCDate();
-const monatPlus = (j, m, n) => { const x = (j * 12 + (m - 1)) + n; return [Math.floor(x / 12), (x % 12) + 1]; };
+const letzterTag = tageImMonat;
+const jahrMonatPlus = (j, m, n) => plusMonate(tagVon(j, m, 1).slice(0, 7), n).split("-").map(Number); // → [Jahr, Monat]
 
 // § 108 Abs. 3 AO: Samstag, Sonntag, Feiertag → nächster Werktag
 export function werktagAb(tag, land = "BW") {
-  let t = tag; while (wochentag(t) === 0 || wochentag(t) === 6 || feiertagAm(t, land)) t = plus(t, 1);
+  let t = tag; while (wochentag(t) === 0 || wochentag(t) === 6 || feiertagAm(t, land)) t = plusTage(t, 1);
   return t;
 }
-const frist = (art, zeitraum, datum, land) => { const f = werktagAb(datum, land); return { art, zeitraum, regulaer: datum, datum: f, verschoben: f !== datum, erinnerung: plus(f, -ERINNERUNG_TAGE) }; };
+const frist = (art, zeitraum, datum, land) => { const f = werktagAb(datum, land); return { art, zeitraum, regulaer: datum, datum: f, verschoben: f !== datum, erinnerung: plusTage(f, -ERINNERUNG_TAGE) }; };
 
 // USt-Voranmeldungen, die in einem Kalenderjahr fällig werden. rhythmus "monat" | "quartal" | null (null = nicht abgefragt → keine Termine).
 export function ustTermine(jahr, { rhythmus = null, dauerfrist = false, land = "BW", kleinunternehmer = false } = {}) {
@@ -38,8 +35,8 @@ export function ustTermine(jahr, { rhythmus = null, dauerfrist = false, land = "
   const out = []; const versatz = 1 + (dauerfrist ? 1 : 0);
   for (let zj = jahr - 1; zj <= jahr; zj++) for (let zm = 1; zm <= 12; zm++) {
     if (rhythmus === "quartal" && zm % 3 !== 0) continue;
-    const [fj, fm] = monatPlus(zj, zm, versatz); if (fj !== jahr) continue;
-    out.push(frist("ust", rhythmus === "quartal" ? `${zj}-Q${zm / 3}` : iso(zj, zm, 1).slice(0, 7), iso(fj, fm, 10), land));
+    const [fj, fm] = jahrMonatPlus(zj, zm, versatz); if (fj !== jahr) continue;
+    out.push(frist("ust", rhythmus === "quartal" ? `${zj}-Q${zm / 3}` : tagVon(zj, zm, 1).slice(0, 7), tagVon(fj, fm, 10), land));
   }
   return out;
 }
@@ -48,7 +45,7 @@ export function ustTermine(jahr, { rhythmus = null, dauerfrist = false, land = "
 // Abgabe immer am 10. nach Ablauf des Zeitraums (§ 41a Abs. 1), verschoben nach § 108 Abs. 3 AO. Keine Dauerfristverlängerung.
 export function lohnsteuerTermine(jahr, { rhythmus = null, land = "BW" } = {}) {
   if (!rhythmus) return [];
-  if (rhythmus === "jahr") return [frist("lohnsteuer", String(jahr - 1), iso(jahr, 1, 10), land)];
+  if (rhythmus === "jahr") return [frist("lohnsteuer", String(jahr - 1), tagVon(jahr, 1, 10), land)];
   return ustTermine(jahr, { rhythmus, land }).map((x) => ({ ...x, art: "lohnsteuer" }));
 }
 // Vorschlag für den Rhythmus aus der Lohnsteuer des Vorjahres (Grenzen aus dem Regelwerk). Kein Betrag → kein Vorschlag.
@@ -59,7 +56,7 @@ export function lstRhythmusVorschlag(lstVorjahr, tag) {
 // Einkommensteuer-Vorauszahlungen (§ 37 Abs. 1 EStG): 10.03., 10.06., 10.09., 10.12. Es gibt sie nur mit Vorauszahlungsbescheid (§ 37 Abs. 3)
 // und nur, wenn der Inhaber selbst Einkommensteuer zahlt (Einzelunternehmen, Personengesellschaft). Das entscheidet pflichtTermine.
 export function estVorauszahlungen(jahr, { land = "BW" } = {}) {
-  return [3, 6, 9, 12].map((m) => frist("est", `${jahr}-Q${m / 3}`, iso(jahr, m, 10), land));
+  return [3, 6, 9, 12].map((m) => frist("est", `${jahr}-Q${m / 3}`, tagVon(jahr, m, 10), land));
 }
 
 // Bankarbeitstag für die SV-Fälligkeit. landKasse = Kürzel des Lands, in dem die Krankenkasse sitzt; null = unbekannt.
@@ -69,17 +66,17 @@ function bankarbeitstag(tag, landKasse) {
   return !feiertagAm(tag, landKasse);
 }
 function svTerminLand(jahr, monat, landKasse) {
-  let t = iso(jahr, monat, letzterTag(jahr, monat)); let n = 0;
-  for (;;) { if (bankarbeitstag(t, landKasse)) { n += 1; if (n === 3) break; } t = plus(t, -1); }
-  let nw = t; let k = 0; while (k < 2) { nw = plus(nw, -1); if (bankarbeitstag(nw, landKasse)) k += 1; }
+  let t = tagVon(jahr, monat, letzterTag(jahr, monat)); let n = 0;
+  for (;;) { if (bankarbeitstag(t, landKasse)) { n += 1; if (n === 3) break; } t = plusTage(t, -1); }
+  let nw = t; let k = 0; while (k < 2) { nw = plusTage(nw, -1); if (bankarbeitstag(nw, landKasse)) k += 1; }
   return { faellig: t, nachweis: nw };
 }
 // SV-Termin eines Monats. Sitz unbekannt → der früheste Termin über alle Länder (Prüfpaket C: „im Zweifel früher“).
 export function svTermin(jahr, monat, { landKasse = null } = {}) {
-  if (landKasse) return { monat: iso(jahr, monat, 1).slice(0, 7), ...svTerminLand(jahr, monat, landKasse), sitzBekannt: true };
+  if (landKasse) return { monat: tagVon(jahr, monat, 1).slice(0, 7), ...svTerminLand(jahr, monat, landKasse), sitzBekannt: true };
   let best = null;
   for (const l of [null, ...LAND_CODES]) { const x = svTerminLand(jahr, monat, l); if (!best || x.faellig < best.faellig) best = x; }
-  return { monat: iso(jahr, monat, 1).slice(0, 7), ...best, sitzBekannt: false };
+  return { monat: tagVon(jahr, monat, 1).slice(0, 7), ...best, sitzBekannt: false };
 }
 export const svTermine = (jahr, opt = {}) => Array.from({ length: 12 }, (_, i) => svTermin(jahr, i + 1, opt));
 
@@ -88,9 +85,9 @@ export function pflichtTermine(von, bis, einstellung = {}) {
   const land = einstellung.land || "BW"; const out = [];
   for (let j = Number(von.slice(0, 4)); j <= Number(bis.slice(0, 4)); j++) {
     out.push(...ustTermine(j, { ...einstellung, land })); if (einstellung.est) out.push(...estVorauszahlungen(j, { land }));
-    if (einstellung.personal) { out.push(...lohnsteuerTermine(j, { rhythmus: einstellung.lstRhythmus || null, land })); for (const s of svTermine(j, { landKasse: einstellung.landKasse || null })) out.push({ art: "sv", zeitraum: s.monat, regulaer: s.faellig, datum: s.faellig, verschoben: false, nachweis: s.nachweis, erinnerung: plus(s.nachweis, -ERINNERUNG_TAGE), sitzBekannt: s.sitzBekannt }); }
+    if (einstellung.personal) { out.push(...lohnsteuerTermine(j, { rhythmus: einstellung.lstRhythmus || null, land })); for (const s of svTermine(j, { landKasse: einstellung.landKasse || null })) out.push({ art: "sv", zeitraum: s.monat, regulaer: s.faellig, datum: s.faellig, verschoben: false, nachweis: s.nachweis, erinnerung: plusTage(s.nachweis, -ERINNERUNG_TAGE), sitzBekannt: s.sitzBekannt }); }
   }
   return out.filter((x) => x.datum >= von && x.datum <= bis).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.art.localeCompare(b.art)));
 }
 // Fällige Erinnerungen an einem Tag: Termine, deren Erinnerung erreicht und deren Datum noch nicht vorbei ist
-export const erinnerungenAm = (tag, einstellung = {}) => pflichtTermine(tag, plus(tag, 40), einstellung).filter((x) => x.erinnerung <= tag && x.datum >= tag);
+export const erinnerungenAm = (tag, einstellung = {}) => pflichtTermine(tag, plusTage(tag, 40), einstellung).filter((x) => x.erinnerung <= tag && x.datum >= tag);

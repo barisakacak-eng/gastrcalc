@@ -3,7 +3,6 @@
 import { nav } from "./nav.js";
 import { t, sprache } from "../i18n.js";
 import { l15bAn } from "../data/l15b_texte.js";
-const tagPlusG3 = (d, n) => { const x = new Date(d + "T12:00:00Z"); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, kleinunternehmerPruefung, wasBleibt, prueferBlick } from "../steuertopf.js";
@@ -15,6 +14,7 @@ import { BUNDESLAENDER } from "../feiertage.js";
 const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
 import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragen, schichtStunden } from "../schichten.js";
 import { offeneKlappen } from "./bausteine.js"; // Ausschuss P4 (Lauf 4): offene Karte bleibt nach einer Aktion offen
+import { plusTage, plusMonate } from "../zeit.js";
 const dk = (d) => `\u2066${datumLesbar(d).slice(0, 6)}\u2069`; // Lauf 4 (P4 C2): Datum im Arabischen isoliert, sonst „.10.12“
 let schichtEntwurf = { person: null, datum: null, von: "", bis: "" }; // W3b: Formular „Schicht eintragen“ (Entwurf bis zum Tipp)
 
@@ -68,8 +68,8 @@ export function geld3View(stand) {
     return z(p.kuerzel || p.name || "?", esc(t("w3.schicht.zeile", fmtZahl(zs.gesamt, 1), fmtZahl(zs.nacht25 + zs.nacht40, 1), fmtZahl(zs.sonntag + zs.feiertag125 + zs.feiertag150, 1)) + mini)); }).join("");
   const zeilen = zeilenFuer(von, H);
   // Lauf 4 (P5 C2), Entwurf hinter window.__gcL15b: auch der Vormonat ist sichtbar (vorher nur der laufende Monat)
-  const vorm = (() => { if (!l15bAn()) return ""; const d = new Date(Number(monat.slice(0, 4)), Number(monat.slice(5, 7)) - 2, 1); const vm = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const r = zeilenFuer(vm + "-01", tagPlusG3(von, -1)); return r ? `<small class="marke">${esc(d.toLocaleDateString(sprache(), { month: "long", year: "numeric" }))}</small>${r}` : ""; })();
+  const vorm = (() => { if (!l15bAn()) return ""; const vm = plusMonate(monat, -1); const d = new Date(Number(vm.slice(0, 4)), Number(vm.slice(5, 7)) - 1, 1);
+    const r = zeilenFuer(vm + "-01", plusTage(von, -1)); return r ? `<small class="marke">${esc(d.toLocaleDateString(sprache(), { month: "long", year: "numeric" }))}</small>${r}` : ""; })();
   // W3b: Schicht im Büro eintragen (Beginn/Ende je Person) – die Laden-Eingabe „Mitarbeiter heute“ bleibt, wie sie ist
   const se = schichtEntwurf; const sp = se.person || pers[0]?.id || ""; const sd = se.datum || H;
   const form = !w3b() ? "" : !pers.length ? `<div class="g3-schicht-form"><p class="hinweis">${esc(t("w3b.schicht.keinTeam"))}</p><button type="button" class="knopf zweit" data-a="kuehl-einrichtung-oeffnen">${esc(t("kuehl.einrichtungAendern"))}</button></div>` /* Lauf 4, P1 C2: Weg zum Team */ : `<div class="g3-schicht-form"><b>${esc(t("w3b.schicht.titel"))}</b>
@@ -77,7 +77,7 @@ export function geld3View(stand) {
     <input type="date" data-f="g3-s-datum" value="${esc(sd)}" aria-label="${esc(t("w3b.schicht.datum"))}">
     <div class="g3-zeiten"><input type="time" data-f="g3-s-von" value="${esc(se.von)}" aria-label="${esc(t("teamTag.von"))}"><span aria-hidden="true">–</span><input type="time" data-f="g3-s-bis" value="${esc(se.bis)}" aria-label="${esc(t("teamTag.bis"))}"></div>
     ${schichtOk ? `<p class="hinweis ok" role="status">${esc(t("tag.gespeichert"))}</p>` : "" /* Lauf 5 (P1 D5): kurze Bestätigung nach „Speichern“ */}<button type="button" class="knopf zweit" data-a="g3-schicht">${esc(t("w3b.schicht.knopf"))}</button></div>`;
-  const letzte = !w3b() ? "" : (stand.schichten || []).filter((x) => !x.storniert && x.datum >= von).slice(-5).reverse().map((x) => z(`${dk(x.datum)} · ${(pers.find((p) => p.id === x.person) || {}).kuerzel || "?"}`, `${esc(x.von)}–${esc(x.bis)} · ${esc(t("w3b.schicht.std", fmtZahl(schichtStunden(x.von, x.bis), 2)))}`)).join("");
+  const letzte = !w3b() ? "" : (stand.schichten || []).filter((x) => !x.storniert && x.datum >= von).slice(-5).reverse().map((x) => z(`${dk(x.datum)} · ${(pers.find((p) => p.id === x.person) || {}).kuerzel || "?"}`, `${esc(x.von)}–${esc(x.bis)} · ${esc(t("w3b.schicht.std", fmtZahl(schichtStunden(x.von, x.bis, x.datum), 2)))}`)).join("");
   const schicht = karte("schicht", t("w3.schicht.titel"), "", (zeilen || `<p>${esc(t("w3.schicht.leer"))}</p>`) + vorm + letzte + form) ;
   // W3b: Sitz der Krankenkasse (nur mit Personal) und Monat abschließen
   const kasse = !w3b() || !(stand.personen || []).some((p) => !p.entfernt) ? "" : `<label class="feldzeile g3-kasse"><span>${esc(t("w3b.kasse.frage"))}</span><select data-f="g3-svland"><option value="">${esc(t("w3b.kasse.weissNicht"))}</option>${BUNDESLAENDER.map((l) => `<option value="${l.code}" ${stand.betrieb?.svLand === l.code ? "selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>`;

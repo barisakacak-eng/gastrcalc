@@ -10,8 +10,8 @@ import { inventurenFertig } from "./inventur.js";
 import { hinweiseFuer } from "./hinweis.js";
 import { planGruppen } from "./putzplan.js";
 import { fmtEuro } from "./util.js";
+import { tageZwischen } from "./zeit.js";
 
-const tageZwischen = (a, b) => Math.round((Date.parse(b + "T12:00:00") - Date.parse(a + "T12:00:00")) / 86400000);
 const stelleName = (stand, id) => (stand.kuehlstellen || []).find((k) => k.id === id)?.name || "";
 const istMuell = (e) => e && !e.storniert && (SCHWUND_ARTEN[e.art] || 1) === 1;
 

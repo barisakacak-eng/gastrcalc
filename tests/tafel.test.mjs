@@ -4,6 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
+import { berlinZeitpunkt } from "../js/zeit.js";
 globalThis.document ??= { documentElement: {} };
 const st = await import("../js/store.js");
 const T = await import("../js/tafel.js");
@@ -109,7 +110,7 @@ test("Abgelaufene Aktion: die in die Datei eingebettete Funktion blendet nach de
   const s = laden(); T.aktionUebernehmen(s, { art: "kombi", gerichte: ["d1", "c1"], preis: 9, von: "2026-10-20", bis: "2026-10-24" }, { heuteTag: H });
   const html = T.tafelHtml(T.tafelBeschreibung(s, { heuteTag: H }), { eingebettet: true });
   const sichtbar = eingebettet(html); const a = { von: "2026-10-20", bis: "2026-10-24" };
-  const um = (t, h, m = 0) => new Date(2026, 9, t, h, m).getTime(); // Ortszeit des Anzeigegeräts
+  const um = (t, h, m = 0) => berlinZeitpunkt(`2026-10-${String(t).padStart(2, "0")}`, h, m).getTime(); // Berliner Zeit
   assert.equal(sichtbar(a, um(19, 23)), false, "vor dem Start"); assert.equal(sichtbar(a, um(20, 3, 59)), false, "20.10. 3:59 gehört noch zum 19.");
   assert.equal(sichtbar(a, um(20, 4)), true); assert.equal(sichtbar(a, um(24, 23, 59)), true);
   assert.equal(sichtbar(a, um(25, 3, 30)), true, "Nacht nach dem letzten Tag: bis 4 Uhr"); assert.equal(sichtbar(a, um(25, 4)), false, "abgelaufen");
@@ -218,7 +219,7 @@ test("Speichern, Sicherung und Zusammenführen: Aktionen beider Handys bleiben, 
 
 test("Oberfläche: Büro-Kachel für alle, Bereich mit Vorschau/Einstellungen/Teilen und Kassen-Hinweis; Laden und Personal ohne Tafel", async (ctx) => {
   // Bildschirm und Beispieldaten müssen denselben Geschäftstag verwenden.
-  ctx.mock.timers.enable({ apis: ["Date"], now: new Date(`${H}T12:00:00`) });
+  ctx.mock.timers.enable({ apis: ["Date"], now: berlinZeitpunkt(H, 12) });
   const { bueroView } = await import("../js/screens/buero.js");
   const { tafelView, tafelAktion, tafelEingabe } = await import("../js/screens/tafel.js");
   const { navZiel, ansichtErlaubt, personalGesperrt } = await import("../js/modus.js");

@@ -72,7 +72,7 @@ test("Umsatz heute: normaler Betrag speichert sofort, am Geschäftstag, festgesc
   // Geschäftstag bis 4 Uhr: umsatzHeuteSpeichern nimmt standardmäßig heuteGeschaeft()
   const s2 = laden(); LZ.umsatzHeuteSpeichern(s2, 500, { datum: tagPlus(H, -1) });
   assert.equal(umsatzEintrag(s2, tagPlus(H, -1)).umsatz, 500);
-  assert.equal(heuteGeschaeft(new Date(2026, 9, 21, 2, 30)), "2026-10-20", "02:30 gehört zum Vortag");
+  assert.equal(heuteGeschaeft(new Date("2026-10-21T02:30:00+02:00")), "2026-10-20", "02:30 gehört zum Vortag");
 });
 
 // ---------- Sicherung ----------

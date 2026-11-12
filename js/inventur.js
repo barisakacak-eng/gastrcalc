@@ -17,6 +17,7 @@ import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung,
 import { warenQuote } from "./zaehler.js";
 import { artikelText, sprache } from "./i18n.js"; // Trennung 2 (17.10.2026): Reihenfolge nach dem angezeigten Namen
 import { normalisieren, suchRang } from "./data/suchnamen.js";
+import { tageZwischen, berlin } from "./zeit.js";
 
 export const LAGERORTE = ["kuehlhaus", "tiefkuehler", "trockenlager", "verpackung", "reinigung"];
 const KUEHL_GRUPPEN = new Set(["fleisch", "fisch", "kaese", "gemuese"]);
@@ -63,7 +64,7 @@ export const VOR_VERKAUF_BIS_STUNDE = 11;
 export function inventurVorVerkauf(inv) {
   if (inv?.zeitpunkt === "vor") return true; if (inv?.zeitpunkt === "nach") return false;
   const d = new Date(inv?.abgeschlossen); if (typeof inv?.abgeschlossen !== "string" || !Number.isFinite(d.getTime())) return false;
-  return heute(d) === inv.datum && d.getHours() >= GESCHAEFTSTAG_BIS_STUNDE && d.getHours() < VOR_VERKAUF_BIS_STUNDE;
+  const h = berlin(d).stunde; return heute(d) === inv.datum && h >= GESCHAEFTSTAG_BIS_STUNDE && h < VOR_VERKAUF_BIS_STUNDE;
 }
 // Erster Tag, dessen Verkäufe, Müll und Einkauf NACH der Zählung liegen; letzter Tag, der noch VOR der Zählung liegt.
 export const inventurAbTag = (inv) => (inventurVorVerkauf(inv) ? inv.datum : tagPlus(inv.datum, 1));
@@ -212,14 +213,15 @@ export function betriebsmittelEinkauf(stand, { von, bis }) {
     for (const z of l.zeilen || []) if (typeof z.netto === "number" && lagerortFuer({ name: z.artikel || z.name }) === "reinigung") summe += z.netto; }
   return summe;
 }
-const tageZwischen = (von, bis) => Math.round((Date.parse(bis + "T12:00:00Z") - Date.parse(von + "T12:00:00Z")) / 86400e3) + 1;
+// Zahl der Tage von bis einschließlich beider Tage (von = bis → 1)
+const tageInklusive = (von, bis) => tageZwischen(von, bis) + 1;
 
 // Der Vergleich A–E. null, solange es keine vorige fertige Inventur gibt (erste Inventur).
 export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv)) {
   if (!inv || !vorher) return null;
   const anfang = inventurWert(stand, vorher); const ende = inventurWert(stand, inv);
   const von = inventurAbTag(vorher), bis = inventurBisTag(inv); // Schwadron 18.10.2026, M2: Zählung vor dem Verkauf zählt den Tag mit
-  const tage = bis >= von ? tageZwischen(von, bis) : 0;
+  const tage = bis >= von ? tageInklusive(von, bis) : 0;
   const einkauf = tage > 0 ? einkaufZeitraum(stand, { von, bis }) : { summe: 0, belege: 0, lieferanten: [] };
   // Putzmittel & Co. sind kein Wareneinsatz: getrennt rechnen (Punkt 5, Zeile „Reinigung & Betriebsmittel“ im Zähler)
   const bmEinkauf = tage > 0 ? betriebsmittelEinkauf(stand, { von, bis }) : 0;

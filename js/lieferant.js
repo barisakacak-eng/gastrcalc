@@ -31,6 +31,7 @@ import { heute } from "./util.js";
 import { tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { getraenkArtikelVon } from "./getraenk_feld.js";
 import { feiertagImLaden, feiertagZu } from "./feiertage.js"; // Feiertage (18.10.2026)
+import { berlinZeitpunkt } from "./zeit.js";
 
 export const LIEFERANT_ARTEN = ["grosshandel", "lieferdienst", "supermarkt", "getraenke", "baeckerei", "sonstiges"];
 export const LIEFER_MODI = ["lieferung", "abholung"];
@@ -205,7 +206,7 @@ export function liefertermine(stand, lf, { jetzt = new Date(), anzahl = 3 } = {}
   for (let i = 0, d = heute(J); i < HORIZONT && out.length < anzahl; i++, d = tagPlus(d, 1)) {
     if (!lf.tage.includes(wochentag(d)) || (!abholung && ruhetag(stand, d)) || feiertag(stand, d)) continue;
     const schlussTag = tagPlus(d, -tageVorher);
-    if (new Date(`${schlussTag}T${uhr || "23:59"}:00`) <= J) continue;
+    { const [uh, um] = (uhr || "23:59").split(":").map(Number); if (berlinZeitpunkt(schlussTag, uh, um) <= J) continue; }
     out.push({ tag: d, schlussTag, uhr });
   }
   return out;

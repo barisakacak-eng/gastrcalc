@@ -30,7 +30,7 @@ test("anzeige_text: Datum, Monat, Wochentag, Uhrzeit", () => {
   assert.equal(A.monatName("2026-10-01"), "Oktober");
   assert.match(A.tagLesbar("2026-10-17"), /Samstag/);
   assert.equal(A.zeitKurz("nix"), "–");
-  assert.match(A.zeitKurz(new Date(2026, 9, 17, 7, 5).toISOString()), /^07:05$/);
+  assert.match(A.zeitKurz(new Date("2026-10-17T07:05:00+02:00").toISOString()), /^07:05$/);
 });
 test("anzeige_text: Name und Menge eines Schwund-Eintrags", () => {
   const s = { gerichte: [{ id: "g1", name: "Döner" }] };

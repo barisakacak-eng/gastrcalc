@@ -105,8 +105,8 @@ export const MUTATIONEN = [
     verhalten: "Kühlgrenze 7 °C zu 8 °C",
     tests: ["export.test.mjs","h.test.mjs","kuehl.test.mjs","kuehlgrenzen.test.mjs"] },
   { id: "M20", datei: "js/liquiditaet.js",
-    such: "plus(eingabe.datum, NACHFRAGE_TAGE) <= heute",
-    ersatz: "plus(eingabe.datum, NACHFRAGE_TAGE) < heute",
+    such: "plusTage(eingabe.datum, NACHFRAGE_TAGE) <= heute",
+    ersatz: "plusTage(eingabe.datum, NACHFRAGE_TAGE) < heute",
     verhalten: "Nachfrage-Frist: <= zu <",
     tests: ["grenzen.test.mjs"] },
 ];

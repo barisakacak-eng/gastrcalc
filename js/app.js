@@ -86,6 +86,7 @@ import { rechtsformSetzen } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebildschirm.js"; // Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm-Führung
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
+import { berlin } from "./zeit.js";
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
@@ -729,7 +730,7 @@ async function aufKlick(ev) {
   if (name === "kuehl-keine") { kuehlKeineSetzen(stand); speichern(wurzel); return zeichne(); }
   if (name === "branchen-ok") { branchenMeldungQuittieren(stand); speichern(wurzel); return zeichne(); }
   if (name === "kleinunternehmer") { kleinunternehmerUmschalten(stand); speichern(wurzel); return zeichne(); } // Paket 3 (16.10.2026), M1: keine Vorsteuer – alle Posten Satz 0
-  if (name === "waage-vorschlag") { waageVorschlagGesehen(stand, new Date().toISOString().slice(0, 10)); speichern(wurzel); return bearbeiten("rezepte"); }
+  if (name === "waage-vorschlag") { waageVorschlagGesehen(stand, heuteGeschaeft()); speichern(wurzel); return bearbeiten("rezepte"); }
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
@@ -742,7 +743,7 @@ async function aufKlick(ev) {
     if (ziel === "verkauf") verkaufZuruecksetzen(); // E7 (17.10.2026)
     if (ziel === "bestand") bestandZuruecksetzen(); // Bestand (17.10.2026)
     if (ziel === "aktionen") aktionenZuruecksetzen(); // Stufe 1 (17.10.2026)
-    { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = fuehrungOffen() ? null : erstSatz(ziel, { speicher: sp, stunde: new Date().getHours(), stand }); if (satz) setTimeout(() => { if (!fuehrungOffen()) erstZeigen(document, ziel, satz, sp); }, 350); } /* Lauf 3 Nachtrag: nie während des Mitmach-Rundgangs – Zekis Erst-Karte lag über dem Rundgang-Ziel (Station 9), der Tipp traf „Verstanden“ statt das Gericht */ // 6b R2 Entwurf
+    { let sp = null; try { sp = localStorage; } catch { sp = null; } const satz = fuehrungOffen() ? null : erstSatz(ziel, { speicher: sp, stunde: berlin().stunde, stand }); if (satz) setTimeout(() => { if (!fuehrungOffen()) erstZeigen(document, ziel, satz, sp); }, 350); } /* Lauf 3 Nachtrag: nie während des Mitmach-Rundgangs – Zekis Erst-Karte lag über dem Rundgang-Ziel (Station 9), der Tipp traf „Verstanden“ statt das Gericht */ // 6b R2 Entwurf
     if (ziel === "ware") wareZuruecksetzen(); // Welle 2
     if (ziel === "portion") portionOeffnen(stand, el.dataset.id || null); // 2.1
     if (ziel === "preisrunde") preisrundeOeffnen(stand, el.dataset.id || null, el.dataset.cent || null); // Masterauftrag 1.2
@@ -1231,7 +1232,7 @@ async function startNachLaden() {
   if (BRANCHENWERTE.werte.length) for (const b of wurzel.betriebe) {
     if ((b.branchenVersion || 0) >= BRANCHENWERTE.version) continue;
     const r = branchenwerteAnwenden(b, BRANCHENWERTE.werte); b.branchenVersion = BRANCHENWERTE.version;
-    if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: new Date().toISOString().slice(0, 10) };
+    if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: heute() };
     speichern(wurzel);
   }
   serviceWorkerStarten();

@@ -14,9 +14,9 @@ test("Amt-Dokument: Nachtrag, Maßnahme offen, verspätet, Rücknahmen, Müll, A
   s.kuehl = { takt: 1, ruhetage: [], eingerichtet: true, seit: "2026-09-01" };
   s.kuehlstellen = [{ id: "k", name: "Theke", art: "kuehl", min: null, max: null, reihe: 0, archiviert: false }];
   s.personen = [{ id: "a", kuerzel: "AK", aktiv: true, entfernt: false }, { id: "b", kuerzel: "MZ", aktiv: false, entfernt: true, ausgeschieden: "2026-10-03" }];
-  const m = (datum, uhr, wert, extra = {}) => s.messungen.push({ id: `m${datum}${uhr}`, stelle: "k", datum, zeit: uhr ? `${datum}T${uhr}:00` : null, wert, min: null, max: 7, abweichung: wert > 7, massnahmen: [], nachkontrolle: null, von: "a", nacherfasst: false, storniert: false, ...extra });
-  m("2026-10-01", "09:00", 4, { von: "b" }); m("2026-10-02", "09:05", 11, { massnahmen: ["tuer"], nachkontrolle: { art: "h2", faellig: "2026-10-02T11:05:00" } });
-  m("2026-10-03", "09:05", 4); m("2026-10-04", null, 4.5, { nacherfasst: true, erfasst: "2026-10-05T10:20:00" }); m("2026-10-05", "09:00", 9.5, { massnahmen: ["chef"] });
+  const m = (datum, uhr, wert, extra = {}) => s.messungen.push({ id: `m${datum}${uhr}`, stelle: "k", datum, zeit: uhr ? `${datum}T${uhr}:00+02:00` : null, wert, min: null, max: 7, abweichung: wert > 7, massnahmen: [], nachkontrolle: null, von: "a", nacherfasst: false, storniert: false, ...extra });
+  m("2026-10-01", "09:00", 4, { von: "b" }); m("2026-10-02", "09:05", 11, { massnahmen: ["tuer"], nachkontrolle: { art: "h2", faellig: "2026-10-02T11:05:00+02:00" } });
+  m("2026-10-03", "09:05", 4); m("2026-10-04", null, 4.5, { nacherfasst: true, erfasst: "2026-10-05T10:20:00+02:00" }); m("2026-10-05", "09:00", 9.5, { massnahmen: ["chef"] });
   s.putzplan = { aktiv: true, geraete: ["kuehlschrank"], aus: [], seit: "2026-10-01" };
   const id = P.aufgabenFuer(s.putzplan).find((a) => a.takt === "tag").id; P.abhaken(s, id, { datum: "2026-10-01", von: "a" }); P.zuruecknehmen(s, id, "2026-10-01", { von: "a" });
   s.schwund.push({ id: "w", datum: "2026-10-02", art: "verderb", vorgang: 1, ref: { typ: "frei", name: "Hack" }, menge: 2, einheit: "kg", grund: "Theke", wert: 12, quelle: "kuehl", storniert: false });

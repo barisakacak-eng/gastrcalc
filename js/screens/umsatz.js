@@ -11,11 +11,12 @@ import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
 import { zaehlerKarte } from "./home.js";
 import { heuteZiel } from "../laden_zahlen.js"; // 27.10.2026 (Persona-Test Wirt): vor dem ersten Umsatz dieselbe Zahl wie auf Heute
 import { l15b } from "../data/l15b_texte.js"; import { abgabenSatz } from "../stamm.js"; // Lauf 4 (P2 C1): Arbeitgeber-Aufschlag erklärt, Entwurf
+import { plusTage } from "../zeit.js";
 
 let umsatzBasis = "brutto"; // Schalter am Feld: Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert (der Zähler rechnet netto)
 let mehrTage = false;       // Datumsleiste bis zum Monatsanfang ausgeklappt (Nachtest Etappe 5, Punkt 4)
 
-const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); out.push(heute(d)); } return out; }; // Geschäftstage rückwärts
+const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) out.push(plusTage(heute(), -i)); return out; }; // Geschäftstage rückwärts
 // Chips: die letzten 7 Tage, dazu auf Wunsch alle Tage bis zum Monatsanfang (und der Vormonat ab dem 7. Tag nicht mehr)
 function tagChips(D) {
   const H = heute(); const tage = letzteTage(7);

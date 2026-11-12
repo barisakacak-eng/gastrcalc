@@ -1,5 +1,6 @@
 import { festPersonalMonat, LOHN_AUFSCHLAG } from "./data/lohnkosten.js";
 import { regel, wert as regelwert } from "./data/regelwerk.js";
+import { plusTage, wochentag, berlinZeitpunkt } from "./zeit.js";
 import { mindestlohnAm } from "./data/mindestlohn.js";
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
@@ -661,8 +662,7 @@ export function dbJePortion(stand) {
 }
 
 // Paket 3 (16.10.2026), M7: Schwund-Zeiträume enden am Geschäftstag (bis 4 Uhr zählt die Nacht zum Vortag).
-const tagMinus = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return heuteGeschaeft(d); };
-export const zeitraumTage = (n) => ({ von: tagMinus(n - 1), bis: heuteGeschaeft() });
+export const zeitraumTage = (n) => ({ von: plusTage(heuteGeschaeft(), -(n - 1)), bis: heuteGeschaeft() });
 export const monatsZeitraum = () => { const h = heuteGeschaeft(); return { von: h.slice(0, 8) + "01", bis: h }; };
 
 // Auswertung der Schwund-Einträge in einem Zeitraum (Datum als "JJJJ-MM-TT", Grenzen einschließlich).
@@ -885,7 +885,7 @@ export function nachkontrolleErledigt(stand, m) {
 // W2-H (p03 H2): Nachkontrolle mit Zeitfenster. Frist = fälliger Zeitpunkt + 1 Stunde Puffer; bei „nächste Messung“ (und ohne
 // gewählte Nachkontrolle) das Ende des Tages der Abweichung. Eine spätere gute Messung nach der Frist heißt „verspätet“, nicht „erledigt“.
 export const NACHKONTROLLE_PUFFER_MIN = 60;
-const tagesEnde = (iso) => { const [j, mo, d] = iso.split("-").map(Number); return new Date(j, mo - 1, d, 23, 59, 59, 999).getTime(); };
+const tagesEnde = (iso) => berlinZeitpunkt(plusTage(iso, 1)).getTime() - 1; // 23:59:59.999 Berliner Zeit
 export function nachkontrolleFrist(m) {
   const f = m?.nachkontrolle?.faellig ? Date.parse(m.nachkontrolle.faellig) : NaN;
   return Number.isFinite(f) ? f + NACHKONTROLLE_PUFFER_MIN * 60e3 : tagesEnde(m.datum);
@@ -979,8 +979,9 @@ export function offeneNachkontrollen(stand) {
   return out;
 }
 
-export const tagPlus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + n); return heute(x); };
-export const wochentag = (iso) => { const [j, m, d] = iso.split("-").map(Number); return new Date(j, m - 1, d).getDay(); };
+// Tage rechnen kommt aus js/zeit.js (Text "JJJJ-MM-TT", ohne Uhrzeit). Die Namen bleiben hier exportiert, weil viele Module sie von der Engine holen.
+export const tagPlus = (iso, n) => plusTage(iso, n);
+export { wochentag };
 
 // W2-H (p03 K2): Ruhetage mit Gültig-ab. stand.kuehl.ruhetageVerlauf = [{ ab: "JJJJ-MM-TT" | "", tage, erfasst }]; ab "" = von Anfang an.
 // Eine Änderung gilt ab heute; frühere Lücken bleiben Lücken. Ohne Verlauf (alte Daten) gelten die heutigen Ruhetage wie bisher.
@@ -995,6 +996,7 @@ export function ruhetageAm(stand, datum) {
 export function ruhetageSetzen(stand, tage, datum = heute(), jetzt = new Date().toISOString()) {
   stand.kuehl ??= { takt: 1, ruhetage: [], eingerichtet: false, seit: null };
   const neu = [...new Set(tage)].filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
+  if (neu.length > 6) return null; // sieben Ruhetage gibt es nicht (wie die Oberfläche: höchstens sechs) – nichts wird geändert
   const v = verlaufVon(stand.kuehl.ruhetageVerlauf);
   if (!v.length) v.push({ ab: "", tage: [...(stand.kuehl.ruhetage || [])], erfasst: null });
   const letzte = v[v.length - 1];

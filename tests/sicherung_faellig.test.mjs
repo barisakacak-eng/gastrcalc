@@ -9,19 +9,19 @@ const mitEintraegen = (n) => { const w = leereWurzel(); w.betriebe.push(leererBe
 const t = (iso) => Date.parse(iso);
 
 test("nie gesichert: erst ab 5 Einträgen", () => {
-  assert.equal(sicherungFaellig(mitEintraegen(2), t("2026-10-20T12:00:00")), null);
-  assert.deepEqual(sicherungFaellig(mitEintraegen(6), t("2026-10-20T12:00:00")), { grund: "nie", tage: null });
+  assert.equal(sicherungFaellig(mitEintraegen(2), t("2026-10-20T12:00:00+02:00")), null);
+  assert.deepEqual(sicherungFaellig(mitEintraegen(6), t("2026-10-20T12:00:00+02:00")), { grund: "nie", tage: null });
 });
 
 test("Woche und Monat", () => {
   const w = mitEintraegen(6); w.letzteSicherung = "2026-10-20T10:00:00.000Z"; w.sicherungZaehler = 3;
-  assert.equal(sicherungFaellig(w, t("2026-10-24T12:00:00")), null);
-  assert.equal(sicherungFaellig(w, t("2026-10-27T12:00:00")).grund, "woche");
+  assert.equal(sicherungFaellig(w, t("2026-10-24T12:00:00+02:00")), null);
+  assert.equal(sicherungFaellig(w, t("2026-10-27T12:00:00+01:00")).grund, "woche");
   w.letzteSicherung = "2026-10-29T10:00:00.000Z";
-  assert.deepEqual(sicherungFaellig(w, t("2026-11-02T12:00:00")), { grund: "monat", tage: 4 });
-  assert.equal(sicherungFaellig(w, t("2026-11-09T12:00:00")).grund, "woche"); // 11 Tage
+  assert.deepEqual(sicherungFaellig(w, t("2026-11-02T12:00:00+01:00")), { grund: "monat", tage: 4 });
+  assert.equal(sicherungFaellig(w, t("2026-11-09T12:00:00+01:00")).grund, "woche"); // 11 Tage
   w.sicherungZaehler = 1e9; w.letzteSicherung = "2026-10-31T10:00:00.000Z";
-  assert.equal(sicherungFaellig(w, t("2026-11-02T12:00:00")), null); // nichts Neues seit der Sicherung
+  assert.equal(sicherungFaellig(w, t("2026-11-02T12:00:00+01:00")), null); // nichts Neues seit der Sicherung
 });
 
 test("Zeki sagt etwas, auch wenn nie gesichert", () => {

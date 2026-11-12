@@ -14,14 +14,14 @@ import { ladenArtVon } from "./profil.js";
 import { esc, heute, uid } from "./util.js"; // W2-D: uid für Belehrungen
 import { wert } from "./data/regelwerk.js";
 import { csvText, datumDe, schwund } from "./export_steuer.js";
+import { tageZwischen, uhr, tagPlusMonate, wochentag, monatsLetzter } from "./zeit.js";
 
 export const BELEHRUNG_MONATE = wert("belehrung_monate", "2026-12-31");  // Folgebelehrung, Abstand im Regelwerk (belehrung_monate)
 export const BELEHRUNG_BALD_TAGE = 60; // ab zwei Monaten vorher: „bald fällig“ (Erinnerung im Büro, nicht im Laden)
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const gueltig = (d) => typeof d === "string" && ISO.test(d) && !Number.isNaN(Date.parse(d + "T12:00:00"));
-const tageZwischen = (a, b) => Math.round((Date.parse(b + "T12:00:00") - Date.parse(a + "T12:00:00")) / 86400e3);
 const min = (a, b) => (a < b ? a : b), max = (a, b) => (a > b ? a : b);
-const zeitAus = (iso) => { if (!iso) return ""; const d = new Date(iso); return Number.isNaN(d.getTime()) ? "" : `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+const zeitAus = (iso) => { if (!iso) return ""; const d = new Date(iso); return Number.isNaN(d.getTime()) ? "" : uhr(d); };
 const tagAus = (iso) => { if (!iso) return ""; const d = new Date(iso); return Number.isNaN(d.getTime()) ? "" : heute(d); };
 const person = (stand, id) => (stand.personen || []).find((p) => p.id === id) || null;
 const personName = (stand, id) => person(stand, id)?.kuerzel || "";
@@ -32,7 +32,7 @@ const personInfo = (stand, id) => { const p = person(stand, id); return { von: p
 // ---------- Zeitraum: Monat | Quartal | Frei ----------
 export function zeitraumFuer(art, { datum = heute(), von = null, bis = null } = {}) {
   const [j, m] = datum.split("-").map(Number);
-  const ende = (jj, mm) => heute(new Date(jj, mm, 0)); // letzter Tag des Monats mm (1–12)
+  const ende = (jj, mm) => monatsLetzter(`${jj}-${String(mm).padStart(2, "0")}`); // letzter Tag des Monats mm (1–12)
   if (art === "quartal") { const q0 = Math.floor((m - 1) / 3) * 3 + 1; return { art, von: `${j}-${String(q0).padStart(2, "0")}-01`, bis: ende(j, q0 + 2), quartal: (q0 + 2) / 3 }; }
   if (art === "frei" && gueltig(von) && gueltig(bis)) return { art, von: min(von, bis), bis: max(von, bis) };
   if (art === "frei") { const mo = zeitraumFuer("monat", { datum }); return { art, von: gueltig(von) ? von : mo.von, bis: gueltig(bis) ? bis : mo.bis }; }
@@ -88,7 +88,7 @@ export function putznachweis(stand, z, { datum = heute() } = {}) {
   const start = max(z.von, plan.seit && gueltig(plan.seit) ? plan.seit : z.von); const ende = min(z.bis, datum);
   let tage = 0, tageGesamt = 0; const luecken = [];
   for (let d = start; d <= ende; d = tagPlus(d, 1)) {
-    if (ruhetageAm(stand, d).includes(new Date(d + "T12:00:00").getDay()) && !jeTag[d]) continue;
+    if (ruhetageAm(stand, d).includes(wochentag(d)) && !jeTag[d]) continue;
     const tagIds = tagIdsAm(d);
     const voll = tagIds.length > 0 && tagIds.every((id) => jeTag[d]?.has(id));
     if (d === datum && !voll) continue; // heute ist noch nicht vorbei
@@ -102,9 +102,7 @@ export function putznachweis(stand, z, { datum = heute() } = {}) {
 
 // ---------- Belehrungen (§ 43 IfSG) ----------
 export function faelligAm(iso, monate = wert("belehrung_monate", iso)) {
-  const [j, m, d] = iso.split("-").map(Number);
-  const x = new Date(j, m - 1 + monate, 1); const letzter = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate();
-  x.setDate(Math.min(d, letzter)); return heute(x); // 29.02. → 28.02. bzw. Monatsende statt Sprung in den Folgemonat
+  return tagPlusMonate(iso, monate); // 29.02. → 28.02. bzw. Monatsende statt Sprung in den Folgemonat
 }
 export function belehrungStatus(person, datum = heute()) {
   const liste = (person?.belehrungen || []).filter((b) => b && gueltig(b.datum)).slice().sort((a, b) => a.datum.localeCompare(b.datum));

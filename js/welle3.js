@@ -10,6 +10,7 @@ import { pflichtTermine, ERINNERUNG_TAGE, lstRhythmusVorschlag } from "./fristen
 import { istPersonen } from "./rechtsform.js";
 import { LAND_CODES } from "./feiertage.js";
 import { liquiditaet, nachfragen } from "./liquiditaet.js";
+import { plusMonate, wochentag } from "./zeit.js";
 
 const r2 = (n) => Math.round(n * 100) / 100;
 export function ustRhythmusSetzen(stand, w) { stand.betrieb.ustRhythmus = w === "monat" || w === "quartal" ? w : null; }
@@ -26,8 +27,6 @@ export function chefStundenSetzen(stand, n) { stand.chef ??= {}; stand.chef.stun
 export function svLandSetzen(stand, code) { stand.betrieb.svLand = LAND_CODES.includes(code) ? code : null; }
 export function geldHeuteSetzen(stand, betrag, datum = heute()) { stand.liquiditaet = Number.isFinite(betrag) ? { betrag: r2(betrag), datum } : null; }
 
-const monatPlus = (m, n) => { const [j, mm] = m.split("-").map(Number); const x = j * 12 + (mm - 1) + n; return `${Math.floor(x / 12)}-${String((x % 12) + 1).padStart(2, "0")}`; };
-const wochentag = (tag) => new Date(tag + "T12:00:00Z").getUTCDay();
 
 // Pflichttermine der nächsten 60 Tage für diesen Laden
 export function termineLaden(stand, ab = heute(), tage = 60) {
@@ -60,4 +59,4 @@ export function liquiditaetLaden(stand, H = heute()) {
   const l = liquiditaet({ start: e.betrag, ab: e.datum, posten });
   return { ...l, geschaetzt: true, nachfragen: nachfragen(e, H), schnitt: r2(schnitt) };
 }
-export { monatPlus, wochentag };
+export { plusMonate as monatPlus, wochentag };

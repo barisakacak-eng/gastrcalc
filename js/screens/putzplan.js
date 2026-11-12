@@ -13,6 +13,7 @@ import { nav } from "./nav.js";
 import { putzplanSpaeterSetzen } from "../stamm.js"; // Trennung (17.10.2026)
 import { personalAktiv, schichtPerson } from "./personal.js";
 import { FOTOS } from "../data/fotos.js"; // W2-S: Einrichten nur außerhalb des Personal-Modus
+import { plusTage } from "../zeit.js";
 
 let ansicht = "plan"; // plan | einrichten | nachweis
 let entwurf = null;   // Plan während des Einrichtens
@@ -111,7 +112,7 @@ function planView(stand, { buero = false } = {}) {
 }
 
 function nachweisView(stand) {
-  const bis = heute(); const d = new Date(bis + "T12:00"); d.setDate(d.getDate() - 29); const von = d.toISOString().slice(0, 10);
+  const bis = heute(); const von = plusTage(bis, -29);
   const es = nachweis(stand, von, bis); const tage = [...new Set(es.map((e) => e.datum))];
   const name = (id) => { const a = AUFGABEN.find((x) => x.id === id); return a ? text(a) : id; };
   return `<div class="kopfband"><h1>${esc(t("putzplan.nachweisTitel"))}</h1><div class="unter">${esc(stand.betrieb.name || "")} · ${esc(datumLesbar(von))} – ${esc(datumLesbar(bis))}</div></div>

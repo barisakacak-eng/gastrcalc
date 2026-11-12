@@ -15,6 +15,7 @@ import { tagPlus, wochentag } from "./engine.js";
 import { kurzName } from "./haltbar.js";
 import { getraenkVon, literAusText, literText, nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Ausschankmenge aus dem Feld
 import { aktionVorschlag, aktionBilanz, PLAN_TAGE } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Zeitraum-Vorschlag und Bilanz
+import { isoTag, uhr } from "./zeit.js";
 
 export const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 export const TAFEL_SEKUNDEN = [8, 12, 20, 30];   // Auswahl im Büro (gespeichert werden 5–120 s, store.js)
@@ -121,10 +122,12 @@ export function aktionBeenden(stand, id, { jetzt = new Date().toISOString(), heu
 // Eingebettet in die Tafel-Datei: Ist die Aktion an diesem Gerät gerade gültig? Geschäftstag bis 4 Uhr (wie die App, util.js).
 // ES5, keine Bezüge nach außen – der Text dieser Funktion steht 1:1 in der Datei.
 export function tafelAktionSichtbar(a, jetzt) {
-  var d = new Date(jetzt);
-  if (d.getHours() < 4) d.setDate(d.getDate() - 1);
-  var z = function (n) { return (n < 10 ? "0" : "") + n; };
-  var tag = d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate());
+  var d = new Date(jetzt), p = {}, z = function (n) { return (n < 10 ? "0" : "") + n; };
+  // Tag und Stunde in Berliner Zeit (wie die App, js/zeit.js) – auch wenn das Gerät der Tafel anders eingestellt ist
+  try { new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23" }).formatToParts(d).forEach(function (x) { p[x.type] = x.value; }); }
+  catch (e) { p = { year: d.getFullYear(), month: z(d.getMonth() + 1), day: z(d.getDate()), hour: d.getHours() }; }
+  var x = new Date(Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day) - (Number(p.hour) < 4 ? 1 : 0)));
+  var tag = x.getUTCFullYear() + "-" + z(x.getUTCMonth() + 1) + "-" + z(x.getUTCDate());
   return (!a.von || a.von <= tag) && (!a.bis || tag <= a.bis);
 }
 export const TAFEL_STUNDE = 4; // muss GESCHAEFTSTAG_BIS_STUNDE (util.js) sein – geprüft in tests/tafel.test.mjs
@@ -134,7 +137,7 @@ export const tafelStundeStimmt = () => TAFEL_STUNDE === GESCHAEFTSTAG_BIS_STUNDE
 const euro = (n) => fmtEuro(n, { dezimal: 2 });
 const z2 = (n) => String(n).padStart(2, "0");
 export const tafelDatum = (sprache, iso) => { if (typeof iso !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; const l = tIn(sprache, "aktionen.wt"); return `${(Array.isArray(l) && l[wochentag(iso)]) || ""} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`.trim(); };
-export const tafelStandText = (jetzt) => { const d = new Date(jetzt); return `${z2(d.getDate())}.${z2(d.getMonth() + 1)}.${d.getFullYear()} ${z2(d.getHours())}:${z2(d.getMinutes())}`; };
+export const tafelStandText = (jetzt) => { const d = new Date(jetzt); const tag = isoTag(d); return `${tag.slice(8)}.${tag.slice(5, 7)}.${tag.slice(0, 4)} ${uhr(d)}`; }; // Berliner Zeit
 // Gleichmäßig auf Spalten verteilen: 9 → 5 + 4 (nicht 6 + 3)
 function stuecke(liste, max) { const n = Math.ceil(liste.length / max); const out = []; let i = 0; for (let k = 0; k < n; k++) { const g = Math.ceil((liste.length - i) / (n - k)); out.push(liste.slice(i, i + g)); i += g; } return out; }
 

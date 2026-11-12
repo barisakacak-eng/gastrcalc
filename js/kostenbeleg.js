@@ -11,6 +11,7 @@
 import { uid, heute } from "./util.js";
 import { basisStandard } from "./data/kosten.js";
 import { POSTEN } from "./data/kosten.js";
+import { plusMonate } from "./zeit.js";
 
 export const VERTEILUNGEN = ["monatlich", "jaehrlich", "einmalig", "verteilt"];
 
@@ -64,7 +65,6 @@ export function kostenbelegLesen(text) {
 }
 
 const monatVon = (iso) => iso.slice(0, 7);
-const monatPlus = (m, n) => { const [j, mo] = m.split("-").map(Number); const d = new Date(j, mo - 1 + n, 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; };
 
 // Legt den Kostenbeleg an (Journal stand.kostenbelege, nur anhängen) und setzt bei monatlich/jährlich den Kostenposten.
 // betrag ist der Betrag, wie er auf der Rechnung steht; basis "netto" | "brutto".
@@ -104,7 +104,7 @@ export function anteilImMonat(e, monat, vorsteuer = 0.19) {
   if (e.storniert || !(e.verteilung === "einmalig" || e.verteilung === "verteilt")) return 0;
   const netto = e.basis === "brutto" ? e.betrag / (1 + (typeof e.satz === "number" ? e.satz : vorsteuer)) : e.betrag;
   const n = e.monate || 1;
-  for (let i = 0; i < n; i++) if (monatPlus(e.ab, i) === monat) return netto / n;
+  for (let i = 0; i < n; i++) if (plusMonate(e.ab, i) === monat) return netto / n;
   return 0;
 }
 

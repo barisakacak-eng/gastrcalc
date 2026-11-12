@@ -3,9 +3,9 @@
 // ein neuer Abschluss desselben Monats ersetzt ihn nur ausdrücklich (neu: true) und behält den alten als „ersetzt“ (nichts wird still überschrieben).
 // stand.monatsabschluesse = [{ monat, eingefroren, umsatzBrutto, umsatzNetto, ware, quote, personal, personalQuote, ergebnis, geschaetzt, ersetzt? }]
 import { monatsPosten, wasBleibtAus, prueferAus } from "./steuertopf.js";
+import { plusMonate } from "./zeit.js";
 
 const r2 = (n) => Math.round(n * 100) / 100, r4 = (n) => Math.round(n * 10000) / 10000;
-const monatPlus = (m, n) => { const [j, mm] = m.split("-").map(Number); const x = j * 12 + (mm - 1) + n; return `${Math.floor(x / 12)}-${String((x % 12) + 1).padStart(2, "0")}`; };
 
 export function monatsZahlen(stand, monat) {
   const p = monatsPosten(stand, monat); const w = wasBleibtAus(p, null); const q = prueferAus(p, null);
@@ -27,6 +27,6 @@ export function monatVergleich(stand, monat) {
   const jetzt = hol(monat); const diff = (a, b) => !a || !b ? null : {
     umsatz: r2(a.umsatzBrutto - b.umsatzBrutto), quotePunkte: a.quote !== null && b.quote !== null ? r2((a.quote - b.quote) * 100) : null,
     personalPunkte: a.personalQuote !== null && b.personalQuote !== null ? r2((a.personalQuote - b.personalQuote) * 100) : null, ergebnis: r2(a.ergebnis - b.ergebnis) };
-  const vm = hol(monatPlus(monat, -1)), vj = hol(monatPlus(monat, -12));
+  const vm = hol(plusMonate(monat, -1)), vj = hol(plusMonate(monat, -12));
   return { monat, jetzt, vormonat: vm, vorjahr: vj, zumVormonat: diff(jetzt, vm), zumVorjahr: diff(jetzt, vj) };
 }

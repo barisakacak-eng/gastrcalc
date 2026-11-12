@@ -7,6 +7,7 @@ import { GRUNDREZEPTE } from "./rezept_baukasten.js";
 import { preisJeBasis } from "./engine.js";
 import { inBasis } from "./data/katalog.js";
 import { heute } from "./util.js";
+import { plusTage } from "./zeit.js";
 
 export const RANG = { schaetzung: 1, pilot: 2, branche: 3, "eigen-abgeleitet": 4, eigen: 5 };
 const HAUPT_GRUPPEN = ["fleisch", "fisch", "kaese", "teig"];
@@ -122,7 +123,6 @@ export function branchenwerteZuruecknehmen(stand, { datum = heute() } = {}) {
   }
   delete stand.branchenUndo; return n;
 }
-const plusTage = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + n); return heute(x); };
 
 // Wie sicher ist der Wareneinsatz? Anteil des Umsatzes (Preis × Tagesmenge, sonst Preis) aus Gerichten mit geschätztem Stempel.
 export function wareneinsatzSicherheit(stand) {

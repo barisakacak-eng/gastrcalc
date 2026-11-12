@@ -64,7 +64,7 @@ function amtLaden() {
   s.kuehl = { takt: 1, ruhetage: [], eingerichtet: true, seit: "2026-10-01" };
   s.kuehlstellen = [{ id: "k", name: "Theke", art: "kuehl", min: null, max: null, reihe: 0, archiviert: false }];
   s.personen = [{ id: "a", kuerzel: "Ayşe", aktiv: true, entfernt: false }];
-  const m = (d, wert, extra = {}) => s.messungen.push({ id: "m" + d + wert, stelle: "k", datum: `2026-10-${String(d).padStart(2, "0")}`, zeit: `2026-10-${String(d).padStart(2, "0")}T09:00:00`, wert, min: null, max: 7, abweichung: wert > 7, massnahmen: [], nachkontrolle: null, von: "a", nacherfasst: false, storniert: false, ...extra });
+  const m = (d, wert, extra = {}) => s.messungen.push({ id: "m" + d + wert, stelle: "k", datum: `2026-10-${String(d).padStart(2, "0")}`, zeit: `2026-10-${String(d).padStart(2, "0")}T09:00:00+02:00`, wert, min: null, max: 7, abweichung: wert > 7, massnahmen: [], nachkontrolle: null, von: "a", nacherfasst: false, storniert: false, ...extra });
   for (let d = 1; d <= 4; d++) m(d, 4);
   return { s, m };
 }
@@ -74,13 +74,13 @@ test("Kühlprotokoll: Lücken bis gestern, Abweichung erst mit Maßnahme und erl
   let k = A.kuehlprotokoll(s, z, { datum: "2026-10-05" });
   assert.equal(k.anzahl, 4); assert.deepEqual(k.luecken, []); assert.equal(k.vollstaendig, true); // heute (5.) ist noch offen, keine Lücke
   k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.deepEqual(k.luecken, ["2026-10-05", "2026-10-06"]); assert.equal(k.vollstaendig, false);
-  m(5, 9.5, { zeit: "2026-10-05T10:00:00", massnahmen: [], nachkontrolle: null });
+  m(5, 9.5, { zeit: "2026-10-05T10:00:00+02:00", massnahmen: [], nachkontrolle: null });
   m(6, 4);
   k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.equal(k.abweichungen, 1); assert.equal(k.offen, 1); assert.equal(k.vollstaendig, false);
   s.messungen.find((x) => x.wert === 9.5).massnahmen = ["tuer"]; s.messungen.find((x) => x.wert === 9.5).nachkontrolle = { art: "h1", faellig: null };
   // W2-H: ohne Fälligkeit gilt das Tagesende – die gute Messung am Folgetag ist „verspätet“, nicht „erledigt“
   k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.equal(k.behoben, 0); assert.equal(k.zeilen.find((x) => x.abweichung).nachkontrolle, "verspaetet");
-  m(5, 5, { zeit: "2026-10-05T10:50:00" }); // pünktlich am selben Tag
+  m(5, 5, { zeit: "2026-10-05T10:50:00+02:00" }); // pünktlich am selben Tag
   k = A.kuehlprotokoll(s, z, { datum: "2026-10-07" }); assert.equal(k.behoben, 1); assert.equal(k.zeilen.find((x) => x.abweichung).nachkontrolle, "erledigt"); assert.equal(k.vollstaendig, true);
   const csv = A.amtCsv(A.ordnerAmt(s, z, { datum: "2026-10-07" }), "kuehl", ["D", "U", "S", "W", "Mi", "Ma", "Ab", "M", "N", "Na", "Nt", "NA", "L", "St"], { ja: () => "ja", massnahme: (x) => x, nachkontrolle: (x) => x.nachkontrolle });
   assert.match(csv, /05\.10\.2026;10:00;Theke;9,5;;7,0;ja;tuer;erledigt;Ayşe;/);

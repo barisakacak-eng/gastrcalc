@@ -5,12 +5,11 @@ import { heuteGeschaeft } from "./util.js";
 import { eintragWert, SCHWUND_ARTEN } from "./engine.js";
 import { inventurenFertig, inventurWert } from "./inventur.js";
 import { schwundVerdacht } from "./ware.js"; // W2-K1
+import { tageZwischen, plusTage } from "./zeit.js";
 
 export const AUSGANGSWERT_TAGE = 14; // Wochen 1–2 nach Messbeginn (Baris 21.10.2026)
 
 const istMuell = (e) => e && !e.storniert && typeof e.datum === "string" && (SCHWUND_ARTEN[e.art] || 1) === 1;
-const tagPlus = (iso, n) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + n); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`; };
-const tageZwischen = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
 const rund = (x) => Math.round(x * 100) / 100;
 
 // Messbeginn: der früheste Müll-Eintrag oder Tagesabschluss. null ohne beides.
@@ -36,10 +35,10 @@ export function postenMuell(stand, H, ab) {
   if (!ab) return { art: "muell", euro: null, gemessen: false, stand: "fehlt", quelle: "Noch kein Müll erfasst" };
   const tag = tageZwischen(ab, H) + 1; // Tag 1 = Messbeginn
   if (tag < AUSGANGSWERT_TAGE) return { art: "muell", euro: null, gemessen: false, stand: "laeuft", quelle: `Ausgangswert läuft, Tag ${tag} von ${AUSGANGSWERT_TAGE}` };
-  const basisEnde = tagPlus(ab, AUSGANGSWERT_TAGE - 1);
+  const basisEnde = plusTage(ab, AUSGANGSWERT_TAGE - 1);
   const basis = muellWert(stand, ab, basisEnde);
   const basisWoche = basis.wert / (AUSGANGSWERT_TAGE / 7);
-  const woche = muellWert(stand, tagPlus(H, -6), H);
+  const woche = muellWert(stand, plusTage(H, -6), H);
   if (basis.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "fehlt", quelle: "Ausgangswert ohne bewerteten Müll-Eintrag" }; // Gremium 2: Basis 0 € ist keine Messung
   if (tag < AUSGANGSWERT_TAGE + 7 || woche.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "laeuft", quelle: `Ausgangswert ${rund(basisWoche)} € je Woche, Vergleichswoche läuft` };
   const nutzen = Math.max(0, rund(basisWoche - woche.wert));

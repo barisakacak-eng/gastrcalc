@@ -17,6 +17,7 @@ import { rettungFehlt } from "./rettung.js"; // Rettung (17.10.2026)
 import { haltbarUhrzeit } from "./haltbar.js"; // Stufe 1 (17.10.2026): Ablauf/Aktion als Büro-Hinweis (im Laden nichts)
 import { bestandUhrzeit, lieferUhrzeit } from "./bestand.js"; // Bestand (17.10.2026): „die Uhrzeit“ als Büro-Hinweis (im Laden noch nicht – gibt der Eigentümer frei)
 import { aktionUhrzeit } from "./aktion_plan.js"; // Aktion planen (18.10.2026)
+import { stundeBruch } from "./zeit.js";
 const JOURNAL_TEXT = { schwund: 1, tagesnotizen: 1, messungen: 1, lieferungen: 1, abschluesse: 1, kostenbelege: 1, putzlog: 1, belehrungen: 1, rundgaenge: 1, inventuren: 1, uploads: 1, artikel: 1, gerichte: 1 }; // W2-D
 // W2-D (Leistung Büro): Zähler und Einrichtungsstand je Bild nur einmal rechnen – Büro-Start und „Offen“ fragen beide
 export const zaehlerImTakt = (stand, H) => imTakt(stand, "zaehler:" + H, () => zaehler(stand, { datum: H }));
@@ -27,7 +28,7 @@ export const einrichtungImTakt = (stand, wurzel) => imTakt(stand, "einrichtung",
 export const RUHEZEITEN_STANDARD = [[11.5, 14], [17.5, 20.5]];
 export const ruhezeitenVon = (stand) => (Array.isArray(stand?.betrieb?.ruhezeiten) ? stand.betrieb.ruhezeiten : RUHEZEITEN_STANDARD);
 export const istHauptzeit = (h, stand = null) => ruhezeitenVon(stand).some(([v, b]) => (v <= b ? h >= v && h < b : h >= v || h < b));
-const stunde = (d) => d.getHours() + d.getMinutes() / 60;
+const stunde = stundeBruch; // Uhrzeit in Berliner Zeit
 
 // Trennung (17.10.2026): zielAttr (ziel → data-Attribute) wohnt jetzt bei den Anzeige-Bausteinen (js/screens/bausteine.js).
 
@@ -99,7 +100,7 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (z.unvollstaendig) add("kosten", t("heute.offen.kosten"), z.last?.fix?.offen ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-sonstiges" } : { aktion: "bearbeiten", schritt: "lohn" });
   if (stand.gerichte?.length) { const grau = kalkulation(stand).zaehl.grau; if (grau) add("karteGrau", t("heute.offen.karteGrau", grau), { aktion: "nav", wert: "kartebuero" }); }
   const schaetz = wareneinsatzSicherheit(stand).zaehl?.schaetzung || 0;
-  if (schaetz > 0 && stand.waageVorschlag !== H) add("waage", t("heute.offen.waage", schaetz), { aktion: "waage-vorschlag" });
+  if (schaetz > 0 && stand.waageVorschlag !== heuteGeschaeft(jetzt)) add("waage", t("heute.offen.waage", schaetz), { aktion: "waage-vorschlag" });
   if (!stand.putzplan?.aktiv && !(stand.putzplanSpaeter && stand.putzplanSpaeter > tagPlus(H, -7))) add("putzplan", t("heute.offen.putzplan"), { aktion: "nav", wert: "putzplan" });
   // Laden-Umbau (20.10.2026): Lücken der Kühlmessung (letzte 7 Tage) stehen nicht mehr im Laden, sondern hier
   { const ks = kuehlStatus(stand); if (ks.eingerichtet && ks.fehlt7) add("kuehlLuecken", t("kuehl.luecken7", ks.fehlt7), { aktion: "nav", wert: "kuehl" }); }

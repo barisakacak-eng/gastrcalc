@@ -6,6 +6,7 @@ import { umsatzEintrag, umsatzSteuerSatz, fixkosten, monatsLast } from "./engine
 import { belege, monatVon, monatPlus } from "./export_steuer.js";
 import { warenQuote } from "./zaehler.js";
 import { wert } from "./data/regelwerk.js";
+import { plusTage } from "./zeit.js";
 
 const rund2 = (n) => Math.round(n * 100) / 100;
 const rund4 = (n) => Math.round(n * 10000) / 10000;
@@ -48,7 +49,7 @@ export function steuerTopf(stand, monat) {
   // So ist die Summe der Tageszeilen auf den Cent gleich der Monatszahl (Prüfpaket A: „Summe über den Monat = Monatszahl“);
   // einzelne Tage weichen dafür um 1 Cent ab (Nov-Test: 92,70 € und 92,69 €).
   const tage = []; let ust7 = 0, ust19 = 0, umsatz = 0, bisher = 0;
-  for (let d = z.von; d <= z.bis; d = naechsterTag(d)) {
+  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) {
     const e = umsatzEintrag(stand, d); const vs = vorsteuerJeTag[d] || 0;
     if (!e && !vs) continue;
     const u = e ? ustImUmsatz(e.umsatz, anteil) : { ust7: 0, ust19: 0 };
@@ -67,7 +68,6 @@ export function steuerTopfTag(stand, datum) {
   const t = steuerTopf(stand, datum.slice(0, 7)); if (!t) return null;
   return t.tage.find((x) => x.datum === datum) || { datum, umsatz: 0, ust: 0, vorsteuer: 0, topf: 0 };
 }
-const naechsterTag = (iso) => { const [j, m, d] = iso.split("-").map(Number); const x = new Date(j, m - 1, d + 1); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`; };
 
 // ---------- 3.4 Was bleibt dir ----------
 // Umsatz netto − Ware netto − Energie netto − Miete − Personal − Sonstiges = Ergebnis; − Tilgung; ÷ Chef-Stunden.
@@ -90,7 +90,7 @@ export function wasBleibt(stand, monat, { chefStunden = null, tilgung = null, po
 export function monatsPosten(stand, monat) {
   const z = monatVon(monat + "-01"); const { anteil } = anteil19(stand);
   let brutto = 0, netto = 0;
-  for (let d = z.von; d <= z.bis; d = naechsterTag(d)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
+  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
   const b = belege(stand, z);
   const wareBeleg = b.zeilen.filter((x) => x.quelle === "lieferung").reduce((s, x) => s + (x.netto || 0), 0);
   const kostenBeleg = (stelle) => b.zeilen.filter((x) => x.quelle === "kosten" && x.stelle === stelle).reduce((s, x) => s + (x.netto ?? x.brutto ?? 0), 0);

@@ -1,4 +1,5 @@
 // Feiertage (18.10.2026): gesetzliche Feiertage in Deutschland – für Liefertermine (Lieferanten liefern an Feiertagen nicht) und, wenn der Wirt es
+import { tagVon, plusTage } from "./zeit.js";
 // so einstellt, für Tage, an denen der Laden zu hat. Reine Funktionen, keine Oberfläche, kein Netz. Start nur in Deutschland.
 //
 // Feiertagsrecht ist Ländersache; bundesrechtlich festgelegt ist nur der 3. Oktober (Einigungsvertrag Art. 2 Abs. 2).
@@ -53,12 +54,8 @@ export function ostersonntag(jahr) {
   const a = jahr % 19, b = Math.floor(jahr / 100), c = jahr % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
   const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
   const monat = Math.floor((h + l - 7 * m + 114) / 31), tag = ((h + l - 7 * m + 114) % 31) + 1;
-  return iso(jahr, monat, tag);
+  return tagVon(jahr, monat, tag);
 }
-const z2 = (n) => String(n).padStart(2, "0");
-const iso = (j, m, d) => `${j}-${z2(m)}-${z2(d)}`;
-// Tage rechnen in UTC – unabhängig von Zeitzone und Sommerzeit des Geräts
-const plusTage = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); return iso(x.getUTCFullYear(), x.getUTCMonth() + 1, x.getUTCDate()); };
 
 // Schlüssel = Text in js/lang/*.js (feiertage.<schluessel>)
 export const BUNDESWEIT = ["neujahr", "karfreitag", "ostermontag", "maifeiertag", "himmelfahrt", "pfingstmontag", "einheit", "weihnachten1", "weihnachten2"];
@@ -92,13 +89,13 @@ export const landGeprueft = (code) => !!LAND_FEIERTAGE[code];
 // Buß- und Bettag: der Mittwoch vor dem 23. November (also zwischen 16. und 22. November)
 export function bussBettag(jahr) {
   const wt = new Date(Date.UTC(jahr, 10, 22)).getUTCDay(); // 0 = So … 3 = Mi
-  return iso(jahr, 11, 22 - ((wt - 3 + 7) % 7));
+  return tagVon(jahr, 11, 22 - ((wt - 3 + 7) % 7));
 }
 function tageImJahr(jahr) {
   const o = ostersonntag(jahr);
-  return { neujahr: iso(jahr, 1, 1), dreikoenige: iso(jahr, 1, 6), frauentag: iso(jahr, 3, 8), karfreitag: plusTage(o, -2), ostermontag: plusTage(o, 1), maifeiertag: iso(jahr, 5, 1),
-    himmelfahrt: plusTage(o, 39), pfingstmontag: plusTage(o, 50), fronleichnam: plusTage(o, 60), mariaehimmelfahrt: iso(jahr, 8, 15), weltkindertag: iso(jahr, 9, 20), einheit: iso(jahr, 10, 3),
-    reformationstag: iso(jahr, 10, 31), allerheiligen: iso(jahr, 11, 1), bussbettag: bussBettag(jahr), weihnachten1: iso(jahr, 12, 25), weihnachten2: iso(jahr, 12, 26) };
+  return { neujahr: tagVon(jahr, 1, 1), dreikoenige: tagVon(jahr, 1, 6), frauentag: tagVon(jahr, 3, 8), karfreitag: plusTage(o, -2), ostermontag: plusTage(o, 1), maifeiertag: tagVon(jahr, 5, 1),
+    himmelfahrt: plusTage(o, 39), pfingstmontag: plusTage(o, 50), fronleichnam: plusTage(o, 60), mariaehimmelfahrt: tagVon(jahr, 8, 15), weltkindertag: tagVon(jahr, 9, 20), einheit: tagVon(jahr, 10, 3),
+    reformationstag: tagVon(jahr, 10, 31), allerheiligen: tagVon(jahr, 11, 1), bussbettag: bussBettag(jahr), weihnachten1: tagVon(jahr, 12, 25), weihnachten2: tagVon(jahr, 12, 26) };
 }
 const cache = new Map();
 // Feiertage eines Jahres: [{ datum, schluessel }] nach Datum; land = Kürzel oder null (nur bundesweit)

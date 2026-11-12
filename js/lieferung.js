@@ -9,6 +9,7 @@ import { preisMerken, preisJeBasis, preisNettoGebinde, istRichtpreis } from "./e
 import { preisJeEinheit } from "./beleg.js";
 import { uploadAendern } from "./stamm.js"; // Trennung (17.10.2026)
 import { lieferantenAusBelegen } from "./lieferant.js"; // Lieferanten (18.10.2026): neuer Händlername → neuer Lieferant
+import { plusTage } from "./zeit.js";
 
 // Belegeinheit → App-Einheit für packung.einheit
 const EINHEIT_APP = { kg: "kg", g: "g", l: "l", ml: "ml", cl: "ml", stk: "stk" };
@@ -113,7 +114,7 @@ export function preiseUebernehmen(stand, lieferung) {
 
 // Preisänderungen der letzten `tage` Tage aus dem Verlauf (für Zähler-Seite und Beleg-Bestätigung).
 export function preisAenderungen(stand, { tage = 30, datum = heute() } = {}) {
-  const grenze = new Date(Date.parse(datum) - tage * 86400e3).toISOString().slice(0, 10);
+  const grenze = plusTage(datum, -tage);
   const out = [];
   for (const a of stand.artikel || []) {
     if (a.preisQuelle !== "beleg") continue; // W2-K2 (28.10.2026): nur Preise vom Beleg, keine Handkorrektur

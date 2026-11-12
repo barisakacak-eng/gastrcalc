@@ -16,11 +16,11 @@ import { sonderkostenImMonat } from "./kostenbeleg.js";
 import { heute, heuteGeschaeft, uid } from "./util.js";
 import { lieferungTeile } from "./betriebsmittel.js";
 import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus, ruhetageAm, eintragWert, RICHTWERT_WARENEINSATZ } from "./engine.js";
+import { monatsLetzter } from "./zeit.js";
 
 export function monatsGrenzen(datum) {
   const [j, m] = datum.split("-").map(Number);
-  const ende = new Date(j, m - 1 + 1, 0);
-  return { von: `${datum.slice(0, 8)}01`, bis: heute(ende), jahr: j, monat: m };
+  return { von: `${datum.slice(0, 8)}01`, bis: monatsLetzter(datum.slice(0, 7)), jahr: j, monat: m };
 }
 
 // Gewicht eines Kalendertags als Öffnungstag: 1 oder 0 bei bekannten Ruhetagen, sonst tageProWoche/7.
@@ -351,4 +351,4 @@ export function monatTagStatus(x, z, nullAm) {
   return x.status === "vorher" ? "offen" : x.gewicht === 0 ? "frei" : x.status === "zukunft" ? (x.stand === undefined ? "offen" : x.stand >= 0 ? "ziel" : "zukunft") : (x.stand >= 0 && !z.keinUmsatz ? "ziel" : "minus");
 }
 // Spalte (1 = Montag … 7 = Sonntag) des ersten Monatstags im Kalender.
-export const wochentagSpalte = (iso) => ((new Date(iso + "T12:00").getDay() + 6) % 7) + 1;
+export const wochentagSpalte = (iso) => ((wochentag(iso) + 6) % 7) + 1;

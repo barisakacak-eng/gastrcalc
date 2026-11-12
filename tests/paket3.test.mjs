@@ -16,11 +16,12 @@ import { navKontext } from "../js/screens/nav.js";
 import { jetztDran } from "../js/offen.js";
 import { tagGewaehlt, tagAktion } from "../js/screens/tag.js";
 import { satzStandard } from "../js/data/kosten.js";
+import { berlinZeitpunkt } from "../js/zeit.js";
 // 19.10.2026: Erinnerung „Einkaufspreise/Rezepte“ ist die niedrigste Stufe – hier geht es um die Fälle davor
 const ohneErinnerung = (x) => (x && ["einkauf", "rezepte"].includes(x.id) ? null : x);
 
 const nah = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${a} ≠ ${b}`);
-const um = (hh, mm = 0, tag = 15) => new Date(2026, 9, tag, hh, mm, 0, 0); // Oktober 2026, Ortszeit
+const um = (hh, mm = 0, tag = 15) => berlinZeitpunkt(`2026-10-${String(tag).padStart(2, "0")}`, hh, mm); // Oktober 2026, Berliner Zeit
 
 function laden() {
   const b = leererBetrieb(); b.phase = "app";
@@ -120,10 +121,10 @@ test("M6: Alt-Eintrag ohne wert-Feld – schwundAuswertung, Zähler und muellHeu
 test("M7: Geschäftstag bis 4 Uhr – Umsatz um 01:30 auf dem Vortag, Monatswechsel, Kühlmessung behält das echte Datum", () => {
   assert.equal(U.heuteGeschaeft(um(1, 30)), "2026-10-14"); assert.equal(U.heute(um(1, 30)), "2026-10-15");
   assert.equal(U.heuteGeschaeft(um(3, 59)), "2026-10-14"); assert.equal(U.heuteGeschaeft(um(4, 0)), "2026-10-15"); assert.equal(U.heuteGeschaeft(um(23, 59)), "2026-10-15");
-  assert.equal(U.heuteGeschaeft(new Date(2026, 10, 1, 2, 0)), "2026-10-31"); // 1.11. 02:00 → Oktober
+  assert.equal(U.heuteGeschaeft(new Date("2026-11-01T02:00:00+01:00")), "2026-10-31"); // 1.11. 02:00 → Oktober
   // Zähler am 1. des Monats um 02:00 rechnet den Vormonat
   const b = laden(); umsatz(b, "2026-10-31", 1070);
-  const z = Z.zaehler(b, { datum: U.heuteGeschaeft(new Date(2026, 10, 1, 2, 0)) }); assert.equal(z.monat.monat, 10); assert.equal(z.datum, "2026-10-31"); nah(z.umsatzBrutto, 1070);
+  const z = Z.zaehler(b, { datum: U.heuteGeschaeft(new Date("2026-11-01T02:00:00+01:00")) }); assert.equal(z.monat.monat, 10); assert.equal(z.datum, "2026-10-31"); nah(z.umsatzBrutto, 1070);
   // Umsatz-Eingabe: der gewählte Tag ist der Geschäftstag; tagesnotizLoeschen kennzeichnet nach Geschäftstag
   const D = tagGewaehlt(); assert.equal(D, U.heuteGeschaeft());
   tagAktion("tag-datum", { dataset: { wert: U.heuteGeschaeft() } }, b); assert.equal(tagGewaehlt(), U.heuteGeschaeft());

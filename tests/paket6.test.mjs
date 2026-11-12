@@ -82,7 +82,7 @@ test("Export bleibt deutsch, auch wenn die App auf Türkisch läuft", () => {
   const s = leererBetrieb(); s.phase = "app"; s.betrieb.name = "Test";
   s.kuehl = { takt: 1, ruhetage: [], eingerichtet: true, seit: "2026-10-01" };
   s.kuehlstellen = [{ id: "k", name: "Kühlschrank", art: "kuehl", typ: "kuehlschrank", min: null, max: null, reihe: 0, archiviert: false }];
-  s.messungen.push({ id: "m1", stelle: "k", datum: "2026-10-05", zeit: "2026-10-05T09:00:00", wert: 4, min: null, max: 7, abweichung: false, massnahmen: [], nachkontrolle: null, von: null, nacherfasst: false, storniert: false });
+  s.messungen.push({ id: "m1", stelle: "k", datum: "2026-10-05", zeit: "2026-10-05T09:00:00+02:00", wert: 4, min: null, max: 7, abweichung: false, massnahmen: [], nachkontrolle: null, von: null, nacherfasst: false, storniert: false });
   const z = A.zeitraumFuer("monat", { datum: "2026-10-07" });
   const csv = A.amtCsv(A.ordnerAmt(s, z, { datum: "2026-10-07" }), "kuehl", ["D", "U", "S", "W", "Mi", "Ma", "Ab", "M", "N", "Na", "Nt", "NA", "L", "St"], { ja: () => "ja", massnahme: (x) => x, nachkontrolle: (x) => x.nachkontrolle });
   assert.match(csv, /;Kühlschrank;/); assert.doesNotMatch(csv, /Buzdolabı/);

@@ -11,10 +11,11 @@ import { kalkulation, preisAmpel, tagPlus } from "../js/engine.js";
 import { startView } from "../js/screens/home.js";
 import { karteLadenView, karteLadenAktion, karteLadenZuruecksetzen, karteLadenEingabe, karteLadenTeile } from "../js/screens/karte_laden.js";
 import { navKontext } from "../js/screens/nav.js";
+import { berlinZeitpunkt } from "../js/zeit.js";
 // 19.10.2026: Erinnerung „Einkaufspreise/Rezepte“ ist die niedrigste Stufe – hier geht es um die Fälle davor
 const ohneErinnerung = (x) => (x && ["einkauf", "rezepte"].includes(x.id) ? null : x);
 
-const um = (hh, mm = 0) => { const d = new Date(); d.setHours(hh, mm, 0, 0); return d; };
+const um = (hh, mm = 0) => berlinZeitpunkt(heute(), hh, mm); // heute um hh:mm Berliner Zeit
 const H = heute();
 const wurzelVon = (s, tage = 1) => ({ betriebe: [s], letzteSicherung: new Date(Date.now() - tage * 86400e3).toISOString(), sicherungZaehler: 0 });
 const laden = () => { const s = leererBetrieb(); s.phase = "app"; s.betrieb.name = "Test"; return s; };
@@ -174,7 +175,7 @@ test("Schwadron N2: am Ruhetag zeigt die Kühl-Kachel „Ruhetag“ statt „3 o
 test("Jetzt dran 6 (19.10.2026): Einkaufspreise, dann Rezepte – nicht in Hauptzeiten, nicht im Beispiel-Laden", () => {
   const s = laden(); s.gerichte = [{ id: "a", name: "Döner", klasse: "haupt", preis: 8, zutaten: [{ name: "Fleisch", menge: 150, einheit: "g" }] }];
   s.artikel = [{ name: "Fleisch", gruppe: "fleisch", einheit: "kg", benutzt: true, preis: null }];
-  const um = (h) => { const d = new Date("2026-10-19T00:00:00"); d.setHours(h); return d; };
+  const um = (h) => berlinZeitpunkt("2026-10-19", h);
   assert.equal(jetztDran(s, null, { jetzt: um(10) })?.id, "einkauf");
   assert.equal(jetztDran(s, null, { jetzt: um(12) }), null, "Mittagsgeschäft: keine Erinnerung");
   s.artikel[0].preis = 12; s.artikel[0].packung = { menge: 1, einheit: "kg" }; s.artikel[0].preisBasis = "netto";

@@ -167,15 +167,15 @@ test("Fragen: nur offene, Schwangerschaft und Elektro nur mit Personal", () => {
 test("Laden-Zeile: nur außerhalb der Stoßzeit, höchstens einmal je 7 Tage, Geld-Text nur bei Geld-Hinweis", () => {
   const s = laden(); s.personen = [person("p1")]; hmStatusSetzen(s, "hm_sofortmeldung", "erledigt", { datum: TAG }); hmStatusSetzen(s, "hm_ausweis", "erledigt", { datum: TAG });
   s.personen[0].belehrungen = [{ datum: "2026-06-01", art: "erst" }]; hmFrageSetzen(s, "elektroGeprueft", "2026-12-01", { bisHeute: TAG });
-  assert.equal(hmLadenZeile(s, { jetzt: new Date(2027, 0, 1, 16, 0) }), null, "nichts offen");
+  assert.equal(hmLadenZeile(s, { jetzt: new Date("2027-01-01T16:00:00+01:00") }), null, "nichts offen");
   hmFrageSetzen(s, "schwanger", true);
-  assert.equal(hmLadenZeile(s, { jetzt: new Date(2027, 0, 1, 12, 30) }), null, "Mittags-Stoßzeit (Standard 11:30–14:00)");
-  assert.equal(hmLadenZeile(s, { jetzt: new Date(2027, 0, 1, 16, 0) }), "hm.zeki.geld");
+  assert.equal(hmLadenZeile(s, { jetzt: new Date("2027-01-01T12:30:00+01:00") }), null, "Mittags-Stoßzeit (Standard 11:30–14:00)");
+  assert.equal(hmLadenZeile(s, { jetzt: new Date("2027-01-01T16:00:00+01:00") }), "hm.zeki.geld");
   hmLadenGezeigt(s, TAG);
-  assert.equal(hmLadenZeile(s, { jetzt: new Date(2027, 0, 5, 16, 0) }), null, "schon diese Woche");
-  assert.equal(hmLadenZeile(s, { jetzt: new Date(2027, 0, 8, 16, 0) }), "hm.zeki.geld");
+  assert.equal(hmLadenZeile(s, { jetzt: new Date("2027-01-05T16:00:00+01:00") }), null, "schon diese Woche");
+  assert.equal(hmLadenZeile(s, { jetzt: new Date("2027-01-08T16:00:00+01:00") }), "hm.zeki.geld");
   hmFrageSetzen(s, "schwanger", false); hmFrageSetzen(s, "musik", true);
-  assert.equal(hmLadenZeile(s, { jetzt: new Date(2027, 0, 8, 16, 0) }), "hm.zeki.pflicht", "GEMA ist kein Geld-Hinweis");
+  assert.equal(hmLadenZeile(s, { jetzt: new Date("2027-01-08T16:00:00+01:00") }), "hm.zeki.pflicht", "GEMA ist kein Geld-Hinweis");
 });
 
 test("Migration: kaputte Angaben werden gesäubert, unbekannte Kennungen fallen weg; Rundreise über JSON bleibt gleich", () => {

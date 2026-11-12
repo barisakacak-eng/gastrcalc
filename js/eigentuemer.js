@@ -16,13 +16,13 @@ import { bestandStand, bestellVorschlag } from "./bestand.js";
 import { aktionUhrzeit } from "./aktion_plan.js";
 import { imTakt } from "./takt.js";
 import { csvText, datumDe } from "./export_steuer.js";
+import { tageZwischen } from "./zeit.js";
 
 export const EIG_ZEITRAEUME = ["woche", "monat", "frei"];
 export const WARE_PUNKTE_SATZ = 3;        // ab 3 Prozentpunkten Unterschied im Wareneinsatz sagt der Satz es (Annahme der App, kein Branchenwert)
 export const KENNZAHLEN = ["umsatz", "ware", "muell", "pflichten", "bisNull"]; // nur diese bekommen Rang und Abstand
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const gueltig = (d) => typeof d === "string" && ISO.test(d);
-const tageZwischen = (a, b) => Math.round((Date.parse(b + "T12:00:00") - Date.parse(a + "T12:00:00")) / 86400e3);
 
 // ---------- Zeitraum ----------
 // wahl = { art: "woche" | "monat" | "frei", von?, bis? }. Woche = die letzten 7 Geschäftstage bis heute, Monat = 1. bis heute,

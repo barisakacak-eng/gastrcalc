@@ -5,9 +5,9 @@
 import { mengenJeMonat, preisJeBasis, preisGeschaetzt, mengeInArtikelBasis, rohmengeFuer, garverlustAnteil, eintragWert, SCHWUND_ARTEN, zwischenpreis } from "./engine.js";
 import { bedarfGericht, sollVerbrauch, abgleichInventur } from "./verkauf.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
+import { plusTage } from "./zeit.js";
 
 const idxVon = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
-const minusTage = (datum, n) => new Date(Date.parse(datum + "T12:00:00Z") - n * 864e5).toISOString().slice(0, 10);
 export const WOCHEN_JE_MONAT = 52 / 12;
 
 // ---------- 2.1 Portion in Euro ----------
@@ -61,7 +61,7 @@ export function aArtikel(stand) {
 export const MUELL_GRUPPEN = { fleisch: "fleisch", fisch: "fleisch", teig: "brot", gemuese: "salat", sauce: "sosse" }; // Rest → „sonstiges“
 const gruppeVon = (a) => (/falafel/i.test(a?.name || "") ? "sonstiges" : MUELL_GRUPPEN[a?.gruppe] || "sonstiges"); // W2-K4: Falafel ist kein Fleisch (Katalog-Gruppe bleibt für Garverlust und Steuer)
 export function muellRangliste(stand, datum) {
-  const von = minusTage(datum, 6); const idx = idxVon(stand); const gr = { fleisch: 0, brot: 0, salat: 0, sosse: 0, sonstiges: 0 }; let summe = 0, ohneWert = 0;
+  const von = plusTage(datum, -6); const idx = idxVon(stand); const gr = { fleisch: 0, brot: 0, salat: 0, sosse: 0, sonstiges: 0 }; let summe = 0, ohneWert = 0;
   for (const e of stand.schwund || []) {
     if (!e || e.storniert || (SCHWUND_ARTEN[e.art] || 1) !== 1 || typeof e.datum !== "string" || e.datum < von || e.datum > datum) continue;
     const w = eintragWert(e, stand); if (w === null) { ohneWert += 1; continue; }
@@ -79,7 +79,7 @@ export function muellRangliste(stand, datum) {
 // Gericht mit regelmäßig viel „übrig“ (nicht verkauft): Anteil weggeworfen ÷ (verkauft/geschätzt + weggeworfen) über 14 Tage über UEBRIG_AB
 export const UEBRIG_AB = 0.15, UEBRIG_TAGE = 14, UEBRIG_MIN_TAGE = 3; // Setzung (Masterauftrag 2.4: > 15 %), mindestens an 3 Tagen
 export function zuVielVorbereitet(stand, datum) {
-  const von = minusTage(datum, UEBRIG_TAGE - 1); const { mengen } = mengenJeMonat(stand); const tageMonat = (Number(stand.betrieb?.tageProWoche) || 6) * WOCHEN_JE_MONAT;
+  const von = plusTage(datum, -(UEBRIG_TAGE - 1)); const { mengen } = mengenJeMonat(stand); const tageMonat = (Number(stand.betrieb?.tageProWoche) || 6) * WOCHEN_JE_MONAT;
   const je = new Map();
   for (const e of stand.schwund || []) {
     if (!e || e.storniert || !["nichtverkauft", "gericht"].includes(e.art) || e.ref?.typ !== "gericht" || e.datum < von || e.datum > datum) continue;
@@ -142,7 +142,7 @@ export function selbstOderKaufen(stand, name, minutensatz) {
 // ---------- 2.7 Einkauf nächste Woche ----------
 // Summe des Bestellvorschlags (bestand.bestellVorschlag) für Waren, die in den nächsten 7 Tagen zu bestellen sind.
 export function einkaufNaechsteWoche(vorschlag) {
-  if (!vorschlag?.zeilen) return null; const bis = minusTage(vorschlag.heute, -7);
+  if (!vorschlag?.zeilen) return null; const bis = plusTage(vorschlag.heute, 7);
   const z = vorschlag.zeilen.filter((x) => x.bestellenAm && x.bestellenAm <= bis);
   return { summe: z.reduce((s, x) => s + (x.wert || 0), 0), ohneWert: z.filter((x) => x.wert === null).length, anzahl: z.length, geschaetzt: z.some((x) => x.geschaetzt) };
 }

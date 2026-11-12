@@ -1,3 +1,4 @@
+import { isoTag, uhr } from "./zeit.js";
 // Fehler-Rucksack (Pilotfest E3, 30.10.2026): die letzten 50 Fehler bleiben im Browser (localStorage), ohne Namen und ohne Zahlen.
 // Der Chef teilt den Text im Büro über „Fehler melden“ (Oberfläche P6). Nichts geht von allein irgendwohin.
 export const FEHLER_KEY = "gc-fehler";
@@ -34,8 +35,8 @@ export function fehlerText(speicher, { fassung, geraet = "", sprache = "" } = {}
   const liste = fehlerLesen(speicher).slice().reverse();
   const kopf = `GastroCash ${fassung || ""} · ${sprache} · ${geraet}`.replace(/\s+·\s+$/, "").trim();
   if (!liste.length) return kopf + "\nKeine Fehler gespeichert.";
-  const zeile = (f) => { const d = new Date(f.zeit); const hh = String(d.getHours()).padStart(2, "0"), mm = String(d.getMinutes()).padStart(2, "0");
-    return `${d.toISOString().slice(0, 10)} ${hh}:${mm} · ${f.fassung || "?"} · ${f.ansicht || "?"}${f.n > 1 ? ` · ${f.n}×` : ""}\n  ${f.text}`; };
+  const zeile = (f) => { const d = new Date(f.zeit); // Datum und Uhrzeit in Berliner Zeit (js/zeit.js)
+    return `${isoTag(d)} ${uhr(d)} · ${f.fassung || "?"} · ${f.ansicht || "?"}${f.n > 1 ? ` · ${f.n}×` : ""}\n  ${f.text}`; };
   return [kopf, ...liste.map(zeile)].join("\n");
 }
 

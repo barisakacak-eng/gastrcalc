@@ -1,6 +1,7 @@
 // Trennung (17.10.2026): Sicherungsstufe aus js/screens/nav.js ins Rechenwerk verschoben – rein rechnend, ohne Oberfläche.
 // Sicherung: gelb ab 3 Tagen oder 20 neuen Einträgen, rot ab 7 Tagen (wie Etappe 5)
 import { eintraegeZaehlen } from "./store.js";
+import { isoTag, monatsErster, monatVon } from "./zeit.js";
 
 export function sicherungStufe(wurzel, jetzt = Date.now()) {
   if (!wurzel) return null;
@@ -12,14 +13,14 @@ export function sicherungStufe(wurzel, jetzt = Date.now()) {
 // Sicherung Stufe 1 (Masterauftrag „Gehirn“ 0.3, 28.10.2026): Wann erinnert Zeki an „Sicherung schicken“?
 //   nie gesichert und schon ≥ 5 Einträge → grund "nie" · letzte Sicherung ≥ 7 Tage alt → "woche"
 //   in den ersten 7 Tagen eines Monats, letzte Sicherung vor dem Monatsersten und seitdem neue Einträge → "monat" (Monat ist abgeschlossen)
-// Rückgabe: null | { grund, tage } (tage = null bei „nie“). Kalendertage nach Ortszeit des Handys.
+// Rückgabe: null | { grund, tage } (tage = null bei „nie“). Kalendertage in Berliner Zeit.
 export const SICHERUNG_MONAT_TAGE = 7; // Setzung 28.10.2026
 export function sicherungFaellig(wurzel, jetzt = Date.now()) {
   const s = sicherungStufe(wurzel, jetzt); if (!s) return null;
   if (s.tage === null) return s.n >= 5 ? { grund: "nie", tage: null } : null;
   if (s.tage >= 7) return { grund: "woche", tage: s.tage };
-  const d = new Date(jetzt); const erster = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
-  if (d.getDate() <= SICHERUNG_MONAT_TAGE && Date.parse(wurzel.letzteSicherung) < erster && s.neu > 0) return { grund: "monat", tage: s.tage };
+  const tag = isoTag(new Date(jetzt)); const ls = Date.parse(wurzel.letzteSicherung);
+  if (Number(tag.slice(8)) <= SICHERUNG_MONAT_TAGE && Number.isFinite(ls) && isoTag(new Date(ls)) < monatsErster(monatVon(tag)) && s.neu > 0) return { grund: "monat", tage: s.tage };
   return null;
 }
 

@@ -1,3 +1,4 @@
+import { plusTage } from "../zeit.js";
 // Regelwerk: JEDER Fachwert der App (Satz, Grenze, Frist, Betrag) steht hier – mit Gültigkeit und Quelle. Nirgends sonst.
 // Eintrag: { wert, ab, bis, quelle, url, abgerufen, status }.
 //   ab/bis   = erster und letzter Tag der Gültigkeit (JJJJ-MM-TT), bis: null = gilt weiter. Die App rechnet erst ab 2025;
@@ -107,7 +108,7 @@ export function regel(id, tag) {
 export const wert = (id, tag) => regel(id, tag).wert;
 // Einträge, die in den nächsten n Tagen auslaufen, ohne dass ein Nachfolger eingetragen ist (für den Warn-Test und das Büro)
 export function laeuftAus(tag, n = 60) {
-  const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); const grenze = x.toISOString().slice(0, 10);
+  const grenze = plusTage(tag, n);
   const out = [];
   for (const [id, liste] of Object.entries(REGELN)) for (const r of liste) {
     if (r.bis && r.bis >= tag && r.bis <= grenze && !liste.some((y) => y.ab > r.bis)) out.push({ id, bis: r.bis });

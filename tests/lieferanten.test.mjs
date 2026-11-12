@@ -4,6 +4,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
+import { berlinZeitpunkt } from "../js/zeit.js";
 const st = await import("../js/store.js");
 const L = await import("../js/lieferant.js");
 const b = await import("../js/bestand.js");
@@ -16,7 +17,7 @@ const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
 const MO = "2026-10-19"; // Montag
 const nb = (x) => (Array.isArray(x) ? x.map(nb) : String(x).replace(/\s/g, " ")); // Euro-Beträge tragen ein festes Leerzeichen
-const um = (tag, h, m = 0) => new Date(`${tag}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`);
+const um = (tag, h, m = 0) => berlinZeitpunkt(tag, h, m); // Berliner Zeit
 
 // Testladen: Sonntag Ruhetag. Fleisch (Karton 10 kg, 80 €) 2 kg je Öffnungstag, Cola (Kiste 24, 12 €) 24 je Öffnungtag (10 Tage Verkauf vor dem 19.10.).
 // Inventur So 18.10. abends: Fleisch 0,3 Karton (3 kg), Cola 7 Kisten (168). Beide zuletzt bei „Metro“ gekauft.
@@ -144,7 +145,7 @@ test("Bestellvorschlag: Ruhetage zählen nicht als Bedarf und nicht als Lieferta
 
 test("Zweitlieferant: reicht die Ware nicht bis zur Lieferung und kommt der Zweitlieferant früher, steht er dabei", (ctx) => {
   // Bildschirm und Beispieldaten müssen denselben Geschäftstag verwenden.
-  ctx.mock.timers.enable({ apis: ["Date"], now: new Date(`${MO}T12:00:00`) });
+  ctx.mock.timers.enable({ apis: ["Date"], now: berlinZeitpunkt(MO, 12) });
   const s = laden(); setze(s, { tage: [5], uhr: "18:00", tageVorher: 1 }); // Metro nur Fr
   const z = L.lieferantAnlegen(s, { name: "Markt um die Ecke", art: "supermarkt", modus: "abholung", tage: [2] }).lieferant;
   L.artikelLieferantSetzen(s, "Fleisch", { zweit: z.id });
@@ -333,7 +334,7 @@ test("Kürzel ausgeschiedener Mitarbeiter: nicht mehr in Auswahl-Listen (Schicht
   s.kuehlstellen = [{ id: "k", name: "Theke", art: "kuehl", min: null, max: 7, reihe: 0, archiviert: false }];
   s.personen = [{ id: "a", kuerzel: "AK", aktiv: true, entfernt: false }, { id: "m", kuerzel: "MZ", aktiv: true, entfernt: false }];
   s.gerichte = [{ id: "g", name: "Döner", preis: 8, klasse: "haupt", zutaten: [] }];
-  s.messungen.push({ id: "m1", stelle: "k", datum: "2026-10-02", zeit: "2026-10-02T09:00:00", wert: 4, min: null, max: 7, abweichung: false, massnahmen: [], nachkontrolle: null, von: "m", nacherfasst: false, storniert: false });
+  s.messungen.push({ id: "m1", stelle: "k", datum: "2026-10-02", zeit: "2026-10-02T09:00:00+02:00", wert: 4, min: null, max: 7, abweichung: false, massnahmen: [], nachkontrolle: null, von: "m", nacherfasst: false, storniert: false });
   const pe = muell.personalessen(s, s.gerichte[0], { datum: "2026-10-03", mahlzeit: "mittag" }); pe.von = "m";
   assert.equal(personEntfernen(s, "m", "2026-10-12"), true);
   const p = s.personen.find((x) => x.id === "m"); assert.deepEqual([p.entfernt, p.aktiv, p.ausgeschieden], [true, false, "2026-10-12"]);

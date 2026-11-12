@@ -10,6 +10,7 @@ import de from "./lang/de.js"; // W2-T: feste deutsche Kennzeichnung der Umsatz-
 import { imTakt } from "./takt.js";
 import { PAUSCHBETRAG_EIGEN_2026, GRENZEN_QUELLE, svevAm } from "./engine.js"; // P1 (20.10.2026)
 import { monatName } from "./anzeige_text.js";
+import { uhr } from "./zeit.js";
 
 // Beispiel-Laden (17.10.2026): Kennzeichnung in Druck- und CSV-Kopf (null = echter Laden) – immer auch deutsch, wie die Umsatz-Kennung
 export const beispielKopf = (stand) => (stand?.beispiel ? de.beispiel.export + (sprache() !== "de" ? ` / ${t("beispiel.export")}` : "") : null);
@@ -118,7 +119,7 @@ const kennung = () => (sprache() === "de" ? t("ordnerT.kennung") : `${t("ordnerT
 // W2-H: Texte für Nachkontrolle mit Zeitfenster, Rücknahmen und Kopfzeilen der neuen Teile
 const GRUENDE = ["geschlossen", "geraetAus", "leer"];
 const nkText = (x) => x.nachkontrolle === "verspaetet" ? (x.nkStunden ? t("amtW2.nkVerspaetet", x.nkStunden) : t("amtW2.nkVerspaetetKurz")) : t("ordner.dok.nk." + x.nachkontrolle);
-const stempelText = (iso) => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? "" : `${datumDe(heute(d))} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+const stempelText = (iso) => { const d = new Date(iso); return Number.isNaN(d.getTime()) ? "" : `${datumDe(heute(d))} ${uhr(d)}`; };
 const tageText = (l) => (l?.length ? [1, 2, 3, 4, 5, 6, 0].filter((d) => l.includes(d)).map((d) => t("kuehl.tage." + d)).join(", ") : t("amtW2.keine"));
 function rueckText(x) {
   if (x.bereich === "kuehl") return t("amtW2.rueck.kuehl", x.stelle, typeof x.wert === "number" ? grad(x.wert) : t("ordner.dok.nichtGemessen"));
