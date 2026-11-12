@@ -7,7 +7,8 @@ import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen (26.10.2
 import { esc, fmtEuro } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
-import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, fehlversuch, sperreLoesen, restText, testphaseOhneCode } from "../modus.js";
+import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, sperreRestUhr, hartGesperrt, fehlversuch, sperreLoesen, restText, testphaseOhneCode } from "../modus.js";
+import { l6z } from "../data/l6z_texte.js"; // Lauf 6, E5 (G)
 import { rettungGesetzt, rettungErlaubt, rettungAnlegen, rettungBloecke, RETTUNG_LAENGE } from "../rettung.js"; // Rettung (17.10.2026)
 import { nav } from "./nav.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
@@ -151,7 +152,9 @@ export function pinStarten(zweck, ziel = null, wurzel = null, meldung = null) {
   pin = { zweck, ziel, eingabe: "", erste: null, meldung, fehler: false, wurzel }; pinZeichnen();
 }
 function uhrStop() { if (uhr) { clearInterval(uhr); uhr = null; } }
-function warteText(rest) { return t("sicherheit.warten", restText(rest)); }
+const wartezeitText = (rest) => t("sicherheit.warten", restText(rest));
+// Lauf 6, E5 (G): nach 10 Fehlversuchen in Folge keine Uhr mehr, sondern „nur noch der Rettungscode“ (js/modus.js, hartGesperrt)
+function warteText(rest) { return pin?.wurzel && hartGesperrt(pin.wurzel) ? l6z(sprache(), "nurRettung") : wartezeitText(rest); }
 function uhrStarten() {
   uhrStop(); if (!pin?.wurzel || typeof setInterval === "undefined") return;
   uhr = setInterval(() => {
@@ -206,13 +209,13 @@ export const pinZweck = () => (pin ? { zweck: pin.zweck, ziel: pin.ziel } : null
 // Eingabe des Rettungscodes. ziel: was nach dem neuen Büro-Code passieren soll ({ zweck, ziel } der Code-Abfrage)
 export function rettungStarten(ziel, wurzel) {
   rett = { ziel };
-  const rest = sperreRest(wurzel);
+  const rest = sperreRestUhr(wurzel); // Lauf 6, E5 (G): die harte Sperre gilt dem Büro-Code, der Rettungscode bleibt offen
   zeigen("rettung", `<div class="blattkopf nur"><span class="ks pw-ks">${sym("key-round")}</span><b>${esc(t("rettung.titel"))}</b>
       <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
     <form class="pw-form" autocomplete="off">
       <p class="hinweis">${esc(t("rettung.eingeben"))}</p>
       <input class="textfeld gross" type="text" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" maxlength="${RETTUNG_LAENGE + 6}" data-f="rettungscode" placeholder="XXXX-XXXX-XXXX" aria-label="${esc(t("rettung.titel"))}"${rest ? " disabled" : ""}>
-      <small class="pin-meldung${rest ? " fehler" : ""}" role="status" aria-live="polite">${rest ? esc(warteText(rest)) : ""}</small>
+      <small class="pin-meldung${rest ? " fehler" : ""}" role="status" aria-live="polite">${rest ? esc(wartezeitText(rest)) : ""}</small>
       <button type="submit" class="knopf" data-a="rettung-pruefen"${rest ? " disabled" : ""}>${esc(t("allgemein.weiter"))}</button>
     </form>`);
   const f = huelle.querySelector(".pw-form"); f.addEventListener("submit", (ev) => ev.preventDefault());
@@ -229,7 +232,7 @@ export function rettungMeldung(text, { laeuft = false, gesperrt = false } = {}) 
   if (k) k.disabled = laeuft || gesperrt; if (feld) feld.disabled = gesperrt;
   if (text && !laeuft && !gesperrt) { feld?.focus({ preventScroll: true }); feld?.select?.(); }
 }
-export const rettungWarteText = (ms) => warteText(ms);
+export const rettungWarteText = (ms) => wartezeitText(ms);
 // Neuer Rettungscode: einmal zeigen. Der Klartext steht nur in diesem Blatt; „Aufgeschrieben“ schließt es, danach ist er weg.
 export function rettungscodeZeigen(code, ziel = null) {
   rett = { ziel };
@@ -307,7 +310,7 @@ export function passwortMeldung(text, { laeuft = false } = {}) {
 // Karte „Büro-Code" für Büro-Start und Einstellungen
 export function bueroCodeKarte(wurzel) {
   const da = pinGesetzt(wurzel); const tp = testphaseOhneCode(wurzel);
-  return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(tp ? "ebene.pin.testphase" : da ? "ebene.pin.mit" : "sicherheit.ohneCode"))}</p>
+  return `<div class="karte buerocode"><h2>${sym("lock")} ${esc(t("ebene.pin.titel"))}</h2><p class="hinweis">${esc(t(tp ? "ebene.pin.testphase" : da ? "ebene.pin.mit" : "sicherheit.ohneCode"))}</p><p class="hinweis b-ehrlich">${esc(l6z(sprache(), "schlossEhrlich"))}</p>
     <button type="button" class="knopf zweit" data-a="testphase-code">${esc(t(tp ? "ebene.pin.testphaseAus" : "ebene.pin.testphaseAn"))}</button>
     <button type="button" class="knopf zweit" data-a="pin-setzen">${esc(t(da ? "ebene.pin.aendern" : "ebene.pin.setzen"))}</button>
     ${da ? `<button type="button" class="leise" data-a="rettung-neu">${esc(t(rettungGesetzt(wurzel) ? "rettung.neuAnlegen" : "rettung.anlegen"))}</button>` : ""}

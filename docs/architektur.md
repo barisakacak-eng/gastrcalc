@@ -28,6 +28,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `aktion_plan.js` – Aktion planen: Zeitraum-Vorschlag, Fortschritt, Bilanz.
 - `anzeige_text.js` – Texte aus Daten (Datum, Monat, Mengen, Bruchzahlen).
 - `app.js` – Einstieg und Bedienschicht: Zustand, Zeichnen, Klick-Verteiler, Service Worker, Rundgang-Start.
+- `bedienhilfe.js` – kleine reine Helfer der Bedienschicht: Doppeltipp-Sperre, Tageswechsel bei offener App, Speicher-Banner.
 - `auswertung.js` – ein Weg vom Foto/PDF zum Text (OCR-Auftrag an den Worker, Zwischenstand „erste Gerichte“ seit P4).
 - `beispiel.js` – Beispiel-Laden zum Ausprobieren.
 - `beleg.js` – Belegzerleger (Lieferschein/Rechnung → Zeilen).
@@ -70,7 +71,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `schichten.js` – Welle 3: Schichtzeiten, § 3b-Zähler, Minijob- und 70-Tage-Zähler.
 - `monatsabschluss.js` – Welle 3: Monat einfrieren, Vormonat/Vorjahr.
 - `welle3.js` – Welle 3: Einstellungen und Laden-Anbindung für „Geld & Finanzamt“.
-- `modus.js` – drei Ebenen Laden/Personal/Büro, Büro-Code, Zeitfenster.
+- `modus.js` – drei Ebenen Laden/Personal/Büro (Personal als Positivliste), Büro-Code, Wartezeit und harte Sperre nach 10 Fehlversuchen.
 - `muell.js` – Müll in zwei Tipps, Personalessen.
 - `nutzen.js` – Euro-Zähler „Weniger Verlust seit Start“.
 - `ocr-worker.js` – Texterkennung (tesseract WASM) im eigenen Faden; meldet im Modus „karte“ nach der ersten Lesart einen Zwischenstand.
@@ -85,6 +86,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `rechtsform.js` – Rechtsform des Betriebs für Steuer-Hinweise.
 - `rahmen.js` – Schutz gegen Einrahmen: kleines Skript vor der App, versteckt die Seite in einem fremden Rahmen.
 - `reinigung.js` – Reinigung & Betriebsmittel im Kostenzähler.
+- `rahmen.js` – Schutz gegen Einrahmen durch fremde Seiten (läuft vor der App, siehe index.html).
 - `rettung.js` – Rettungscode und „Sicherung ersetzt alles“.
 - `rezept_baukasten.js` – jedes Gericht bekommt sofort ein Rezept mit Mengen (144 Vorlagen).
 - `rezept_quelle.js` – woher jede Menge kommt; Mengenfrage im Laden; Branchenwerte anwenden.
@@ -111,6 +113,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `zip.js` – kleines ZIP ohne Fremdbibliothek: schreibt „store“, liest auch „deflate“ (DecompressionStream) und entfernt einen gemeinsamen Ordner; Größengrenzen (200 MB gesamt, 50 MB je Eintrag).
 - `data/` – Branchenwerte, Vorlagen, Datenschutztext (Daten, keine Logik).
 - `data/l6x_texte.js` – neue Sätze aus Lauf 6 (E5-X) in de/tr/ar/en, Abruf `l6x(sprache, schlüssel, …)`; andere Sprachen fallen auf Englisch zurück.
+- `data/l6z_texte.js` – drei Sätze der Bedienschicht aus Lauf 6 (Speicher voll, Schloss ehrlich, Rettungscode) in de/tr/ar/en.
 
 **Eine Stelle je Kennzahl (Lauf 6, E5-X).** „Bis null“/„bis Ziel“ rechnet nur `monatsZiel` (js/zaehler.js, über `heuteZiel`); der laufende Stand (Kosten bis heute) heißt überall „Verlauf“. Warenquote: nur `warenQuote(stand)` mit einem Deckel (`QUOTE_MAX`); Wareneinsatz aus Belegen: nur `wareNettoAusBelegen` (Putzmittel als eigene Zeile). Öffnungstage: nur `oeffnungstage` (js/engine.js, inkl. „an Feiertagen zu“). Fixkosten je Tag: nur `fixkostenJeTag` (Monatskosten geteilt durch die wirklichen Öffnungstage des Kalendermonats). „Wochen je Monat“ (`WOCHEN_JE_MONAT` = 52/12, für Mengen aus der Karte) und „Tage je Monat“ (`TAGE_JE_MONAT` = 30,4, für Mindestlohn-Vorschau und 30-Tage-Fenster) sind zwei bewusst getrennte, dokumentierte Konstanten in js/engine.js; sie zu vereinen würde angezeigte Beträge um ≈ 0,2 % ändern und ist Baris’ Entscheidung. Kostenänderungen gelten ab einem Datum (`kosten[].verlauf`, wie `ruhetageVerlauf`); `kalkulation()` ist rein, Zwischenpreise schreibt nur `zwischenpreiseSetzen`.
 - `lang/` – Sprachtabellen (`de.js` Leitsprache).

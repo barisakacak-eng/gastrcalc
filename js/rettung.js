@@ -2,7 +2,7 @@
 // Reine Logik ohne Oberfläche. Der Rettungscode wird einmal gezeigt (ebene.js) und nie im Klartext gespeichert:
 // in der Wurzel steht nur sein Prüfwert (wurzel.rettungPin, gleiches Format wie wurzel.bueroPin: PBKDF2-SHA-256 mit Salz).
 // Fehlversuche zählen in derselben Bremse wie der Büro-Code (wurzel.pinSperre) – zwei Wege, ein Zähler.
-import { pinHash, pinGesetzt, pinWertGueltig, pruefwertStimmt, sperreRest, fehlversuch, sperreLoesen, MODI, modus } from "./modus.js";
+import { pinHash, pinGesetzt, pinWertGueltig, pruefwertStimmt, sperreRestUhr, fehlversuch, sperreLoesen, MODI, modus } from "./modus.js";
 
 // 31 Zeichen ohne die leicht verwechselbaren 0/O, 1/I/L (und ohne Kleinbuchstaben). 12 Zeichen ≈ 59 Bit Zufall.
 export const RETTUNG_ZEICHEN = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
@@ -48,7 +48,7 @@ export async function rettungAnlegen(wurzel, { zufall } = {}) {
 //   { fehler: true, dauer: ms }     falsch – Zähler erhöht (dauer > 0: ab jetzt Wartezeit), bitte speichern
 // Ein Text in falscher Form zählt auch als Fehlversuch (sonst ließe sich die Bremse mit Unsinn umgehen – kostet nichts, verrät nichts).
 export async function rettungVersuch(wurzel, text, { jetzt = Date.now() } = {}) {
-  const rest = sperreRest(wurzel, jetzt); if (rest) return { gesperrt: rest };
+  const rest = sperreRestUhr(wurzel, jetzt); if (rest) return { gesperrt: rest }; // Lauf 6, E5 (G): nur die Uhr – die harte Sperre (10 Fehlversuche) gilt dem Büro-Code, nicht dem Rettungscode
   const ok = rettungGesetzt(wurzel) && rettungGueltig(text) && (await pruefwertStimmt(wurzel.rettungPin, rettungNormal(text)));
   if (ok) { sperreLoesen(wurzel); return { ok: true }; }
   return { fehler: true, dauer: fehlversuch(wurzel, jetzt) };

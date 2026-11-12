@@ -11,7 +11,7 @@ import { zekiTaktStarten, zekiSprechblase, zekiStimmeEinsetzen } from "./screens
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
 import { introStarten } from "./intro.js"; // Zeki-Auftritt beim App-Start (27.10.2026), Schalter INTRO_AN in js/intro.js
-import { laden, speichern as speichernStore, sofortSpeichern as sofortSpeichernStore, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
+import { laden, speichern as speichernVerzoegert, sofortSpeichern as sofortSpeichernRoh, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
 import { t, sprache as aktuelleSprache, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen, datumText } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen, beiAblageFehler } from "./ablage.js"; // W2-D: ablageZuruecklegen
@@ -87,6 +87,8 @@ import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebi
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 import { berlin } from "./zeit.js";
+import { aktionsSperre, aktionsSchluessel, tagStand, tagGewechselt, feldMitText, speicherProblemArt, problemNachErfolg, dauerhaftFaellig } from "./bedienhilfe.js"; // Lauf 6, E5: Doppeltipp-Sperre, Tageswechsel, Speicher-Banner
+import { l6z } from "./data/l6z_texte.js";
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
@@ -107,9 +109,10 @@ fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
 let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
+let gezeichneterTag = null; // Lauf 6, E5 (B): Geschäftstag + Kalendertag des letzten Bildes (js/bedienhilfe.js)
 let aktualisierung = null;  // wartender Service Worker (neue Fassung liegt bereit)
 let offlineStand = "laedt";   // "laedt" | "bereit" | "keinSw"
-let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner stehen, bis es wieder klappt
+let speicherProblem = null;   // "speichern" | "voll" | "fassung" | "ablage" – Banner; „speichern“ und „voll“ gehen nach dem nächsten erfolgreichen Schreiben weg (Lauf 6, E5, C)
 let ruheBis = 0, tippX = -99, tippY = -99, tippZeit = 0; // Pilotfest U1 (30.10.2026): tippZeit – nur ein ECHTER Doppeltipp (zweiter Tipp < 300 ms nach dem ersten) wird geschluckt
 // Vorab-Prüfung 03.11.2026 (B3): Doppeltipp mit ≈ 230 ms auf „Weiter“ übersprang einen Einrichtungsschritt, „Speichern“ im Preis-Blatt traf danach die Tab-Leiste.
 // Neu: Hat der erste Tipp den Bildschirm unter dem Finger verändert (sein Element ist weg), zählt ein zweiter Tipp an derselben Stelle binnen 240 ms nicht (Setzung).
@@ -136,6 +139,14 @@ function aktivSetzen(id) {
 function schrittBetreten() { if (stand?.phase !== "onboarding") return; schrittIdMerken(stand); const s = schritteFuer(stand)[stand.schritt]; if (s?.beimBetreten) s.beimBetreten(stand); }
 // Trennung (17.10.2026): Personal-Modus – neue Einträge bekommen die Schicht-Person, bevor gespeichert wird (vorher schrieb das Zeichnen das nach).
 function personNachtragen() { if (wurzel && stand) { personalKontext(wurzel); if (personalAktiv()) personalNachtragen(stand); } }
+// Lauf 6, E5 (C): Ein erfolgreiches Schreiben nimmt das Fehler-Banner weg. Das verzögerte Speichern meldet sein Ergebnis nicht –
+// solange ein Speicherproblem offen ist, geht darum jedes Speichern über den sofortigen Weg, dessen Ergebnis bekannt ist.
+function speicherErgebnis(ok) {
+  if (ok === true) { const neu = problemNachErfolg(speicherProblem); if (neu !== speicherProblem) { speicherProblem = neu; if (!neu) root.querySelector(".speicherband")?.remove(); } }
+  return ok;
+}
+const sofortSpeichernStore = (w, opts) => sofortSpeichernRoh(w, opts).then(speicherErgebnis);
+const speichernStore = (w) => { if (speicherProblem === "speichern" || speicherProblem === "voll") { speichernAbbrechen(); return sofortSpeichernStore(w); } return speichernVerzoegert(w); };
 function speichern(w) { personNachtragen(); return speichernStore(w); }
 function sofortSpeichern(w, opts) { personNachtragen(); return sofortSpeichernStore(w, opts); } // K5 (28.10.2026): Optionen (stempel) weiterreichen
 
@@ -215,11 +226,11 @@ function zeichne() {
   }
   if (!speicherVerfuegbar() || speicherProblem) {
     const b = document.createElement("div"); b.className = "tipp warnband"; b.style.margin = "12px 20px 0";
-    b.textContent = t(speicherProblem === "fassung" ? "einstellungen.andereFassung" : speicherProblem ? "einstellungen.speichernFehlgeschlagen" : "einstellungen.speicherFehlt");
+    b.classList.add("speicherband"); b.textContent = speicherProblem ? speicherText(speicherProblem) : t("einstellungen.speicherFehlt");
     root.prepend(b);
   }
   if (kennung !== letzterSchirm) { ruheBis = Date.now() + 250; meldungBeiWechsel(); }
-  letzterSchirm = kennung;
+  letzterSchirm = kennung; gezeichneterTag = tagStand();
   window.scrollTo(0, y);
 }
 
@@ -268,7 +279,7 @@ function zeichneOnboarding() {
           ${zeigeFortschritt ? `<span class="schrittzahl">${esc(t("allgemein.schrittVon", i, SCHRITTE.length - 1))}</span>` : bearbeitet ? `<span class="schrittzahl">${esc(t("allgemein.bearbeiten"))}</span>` : ""}
         </div>
       </div>
-      <div class="inhalt">${s.view(stand)}</div>
+      <div class="inhalt">${s.view(stand, wurzel)}</div>
       <div class="fuss">${s.fuss ? s.fuss(stand) : ""}${i === 0 && wurzel.betriebe.length === 1 ? `<label class="leise ob-import">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>` : ""}</div>
     </div>`;
   if (bearbeitet && stand.rueckkehr.bis === s.id) { const k = root.querySelector('.fuss [data-a="weiter"]'); if (k) k.textContent = t("allgemein.uebernehmen"); }
@@ -516,10 +527,13 @@ async function sicherungErsetzen(gelesen) {
 }
 
 // W2-D: dauerhaften Speicher einmal anfragen (nach der Einrichtung); das Ergebnis zeigen die Einstellungen
+// Lauf 6, E5 (C): gemerkt wird nur ein „Ja“ (persistGefragt = true). Lehnt der Browser ab, fragt die App beim nächsten Start noch einmal;
+// innerhalb eines Starts höchstens einmal (dauerhaftVersucht).
+let dauerhaftVersucht = false;
 function dauerhaftAnfragen() {
-  if (!wurzel || wurzel.persistGefragt) return;
-  wurzel.persistGefragt = true; speichern(wurzel);
-  speicherDauerhaftPruefen({ anfragen: true }).then((ok) => { ereignis("speicher-dauerhaft", { ok }); if (ansicht === "einstellungen") zeichne(); });
+  if (!dauerhaftFaellig(wurzel) || dauerhaftVersucht) return;
+  dauerhaftVersucht = true;
+  speicherDauerhaftPruefen({ anfragen: true }).then((ok) => { if (ok === true && wurzel && wurzel.persistGefragt !== true) { wurzel.persistGefragt = true; speichern(wurzel); } ereignis("speicher-dauerhaft", { ok }); if (ansicht === "einstellungen") zeichne(); });
 }
 // Lauf 2 (31.10.2026), Bildpaket D – Baris' Ja am 01.11.2026: Home-Bildschirm-Führung, Rezept-Blatt im Laden und die Klicker-Befunde sind Standard.
 // Testhaken window.__gcD.homeGeraet ("ios" | "android") stellt das Gerät nur für Bildproben; sonst zählt der echte Browser.
@@ -704,6 +718,7 @@ async function allesLoeschenJetzt() {
   setzeSprache(spracheDesGeraets()); return zeichne();
 }
 
+const AKTIONS_SPERRE = aktionsSperre();
 async function aufKlick(ev) {
   const el = ev.target.closest("[data-a]"); if (!el) return;
   if (el.type === "submit") ev.preventDefault(); // Vorab-Prüfung 03.11.2026 (B5): Formulare der Blätter nie wirklich absenden – der Klick schließt das Blatt, danach meldete Chrome „form is not connected“
@@ -722,6 +737,15 @@ async function aufKlick(ev) {
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
   if (name === "best-wa" && ansicht === "bestand") { const l = bestandLink(stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten (18.10.2026): WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
 
+  // Lauf 6, E5 (A): Doppeltipp-Sperre. Solange dieselbe Aktion (Name + Wert + Kennung) mit `await` läuft, startet sie nicht noch einmal –
+  // sonst ergab „Tag abschließen“ zweimal getippt (0–30 ms) zwei Abschlüsse. Zähl-Tipps sind ausgenommen (jeder Tipp zählt).
+  if (ZAEHL_TIPPS.has(name)) return aufKlickAktion(ev, el, name);
+  const sperrSchluessel = aktionsSchluessel(name, el.dataset.wert, el.dataset.id);
+  if (!AKTIONS_SPERRE.belegen(sperrSchluessel)) return;
+  try { return await aufKlickAktion(ev, el, name); } finally { AKTIONS_SPERRE.freigeben(sperrSchluessel); }
+}
+
+async function aufKlickAktion(ev, el, name) {
   // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
   if (await ebeneAktion(name, el)) return;
   if (blattOffen() && !BLATT_INTERN.has(name)) blattSchliessen();
@@ -841,6 +865,7 @@ async function aufKlick(ev) {
   }
   if (ansicht === "abschluss") {
     const r = abschlussAktion(name, el, stand, wurzel);
+    if (r === "schon") return zeichne(); // Lauf 6, E5 (A): dieser Tag ist schon abgeschlossen – nur die Bilanz zeigen, kein zweiter Abschluss
     if (r) { ereignis("tag-abgeschlossen", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); }
   }
   if (ansicht === "putzplan") {
@@ -1126,8 +1151,18 @@ window.addEventListener("pagehide", () => { if (wurzel) sofortSpeichern(wurzel, 
 document.addEventListener("visibilitychange", () => {
   if (!wurzel) return;
   if (document.visibilityState === "hidden") sofortSpeichern(wurzel, { stempel: false });
-  else { ereignis("app-sichtbar", { phase: stand.phase }); ereignisAnzahl += 1; }
+  else { ereignis("app-sichtbar", { phase: stand.phase }); ereignisAnzahl += 1; tagPruefen(); }
 });
+window.addEventListener("pageshow", () => tagPruefen());
+root.addEventListener("focusout", () => setTimeout(tagPruefen, 200)); // Feld mit Text wurde verlassen: Tageswechsel nachholen
+// Lauf 6, E5 (B): Zurück in der App, oder die Uhr läuft über 04:00 (Geschäftstag) bzw. 00:00 (Kalendertag): neu zeichnen – sonst zeigt Heute,
+// Putzplan und Kühlung noch gestern. Nicht, solange ein Feld mit Text den Fokus hat (dann beim Verlassen) oder eine Führung läuft.
+function tagPruefen() {
+  if (!wurzel || !stand || notfall || !tagGewechselt(gezeichneterTag)) return;
+  const a = document.activeElement; const feld = a?.matches?.("input, textarea, select") ? { aktiv: true, value: a.value } : null;
+  if (feldMitText(feld) || fuehrungOffen() || kurzOffen()) return;
+  zeichne();
+}
 
 function spracheDesGeraets() {
   const code = (navigator.language || "de").slice(0, 2).toLowerCase();
@@ -1189,9 +1224,11 @@ async function serviceWorkerStarten() {
   } catch (e) { console.warn("Kein Service Worker:", e); offlineStand = "keinSw"; }
 }
 
-const speicherFehlerZeigen = (art) => { speicherProblem = art; meldung(t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen")); zeichne(); };
-beiAblageFehler(speicherFehlerZeigen); // 20.10.2026: auch ein Foto, das nicht auf das Gerät passt, zeigt das Banner
-beiSpeicherFehler((art) => { speicherProblem = art; meldung(t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen")); zeichne(); });
+// Lauf 6, E5 (C): „Speicher voll“ (QuotaExceededError) bekommt einen eigenen, verständlichen Satz im selben Banner; sonst der bisherige Text.
+const speicherText = (art) => (art === "voll" ? l6z(aktuelleSprache(), "speicherVoll") : t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen"));
+const speicherFehlerZeigen = (art, fehler) => { speicherProblem = speicherProblemArt(art, fehler); meldung(speicherText(speicherProblem)); zeichne(); };
+beiAblageFehler(() => speicherFehlerZeigen("ablage")); // 20.10.2026: auch ein Foto, das nicht auf das Gerät passt, zeigt das Banner
+beiSpeicherFehler(speicherFehlerZeigen);
 // Paket 2 (16.10.2026): ein zweites Fenster derselben Fassung hat geschrieben (store.js, Generationszähler). store.js hat die eigenen
 // Änderungen in den frischen Stand gemischt und geschrieben (zusammengefuehrt: true) – oder aufgegeben (false: eigene Kopie verworfen).
 // So oder so: den gelieferten Stand übernehmen, Bildschirm-Zustände verwerfen, neu zeichnen. Hinweis (vorhandener Toast) nur im
@@ -1235,7 +1272,7 @@ async function startNachLaden() {
     if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: heute() };
     speichern(wurzel);
   }
-  serviceWorkerStarten();
+  serviceWorkerStarten(); setInterval(tagPruefen, 60e3); // Lauf 6, E5 (B): Minuten-Takt für den Tageswechsel bei offener App
   speicherDauerhaftPruefen().then(() => { if (wurzel.betriebe.some((b) => b.phase === "app")) dauerhaftAnfragen(); }); // W2-D: einmal nach der Einrichtung (auch für schon eingerichtete Läden)
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
   await ladeSprache(wurzel.sprache || spracheDesGeraets()); setzeSprache(wurzel.sprache || spracheDesGeraets());

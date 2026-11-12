@@ -1,7 +1,7 @@
 // Etappe 5: „Tag abschließen" – drei Haken (Umsatz, Müll, Kühlung), dann die Bilanz des Tages. Das Abendritual.
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute as kalendertag, heuteGeschaeft as heute } from "../util.js"; // Paket 3 (16.10.2026), M7: Abschluss um 01:30 gehört zum Vortag (Geschäftstag); Kühlung bleibt am Kalendertag
-import { tagAbschliessen } from "../zaehler.js";
+import { tagAbschliessen, abschlussVon } from "../zaehler.js";
 import { abschlussHaken, tagesBilanz, heuteZiel } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026)
 import { nav } from "./nav.js";
 import { zeitKurz } from "./tag.js";
@@ -75,7 +75,13 @@ function bilanzView(stand, H) {
     ${nav("start")}`;
 }
 
+// Lauf 6, E5 (A): gibt es für diesen Geschäftstag schon einen aktiven (nicht stornierten) Abschluss? Reine Funktion.
+export const tagSchonAbgeschlossen = (stand, datum) => !!abschlussVon(stand, datum);
 export function abschlussAktion(name, el, stand, wurzel) {
-  if (name === "abschluss-fertig") { tagAbschliessen(stand, { datum: heute(), geraet: wurzel?.geraet || null }); bilanz = true; return "abgeschlossen"; }
+  if (name === "abschluss-fertig") {
+    const H = heute();
+    if (tagSchonAbgeschlossen(stand, H)) { bilanz = true; return "schon"; } // zweiter Tipp, zweites Fenster, alter Bildschirm: kein zweiter Abschluss, nur die Bilanz
+    tagAbschliessen(stand, { datum: H, geraet: wurzel?.geraet || null }); bilanz = true; return "abgeschlossen";
+  }
   return false;
 }
