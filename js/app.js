@@ -222,7 +222,7 @@ function zeichne() {
     root.prepend(b);
   }
   if (kennung !== letzterSchirm) { ruheBis = Date.now() + 250; meldungBeiWechsel(); }
-  letzterSchirm = kennung;
+  letzterSchirm = kennung; gezeichneterTag = tagStand();
   window.scrollTo(0, y);
 }
 
@@ -1140,7 +1140,7 @@ window.addEventListener("pagehide", () => { if (wurzel) sofortSpeichern(wurzel, 
 document.addEventListener("visibilitychange", () => {
   if (!wurzel) return;
   if (document.visibilityState === "hidden") sofortSpeichern(wurzel, { stempel: false });
-  else { ereignis("app-sichtbar", { phase: stand.phase }); ereignisAnzahl += 1; }
+  else { ereignis("app-sichtbar", { phase: stand.phase }); ereignisAnzahl += 1; tagPruefen(); }
 });
 
 function spracheDesGeraets() {
@@ -1153,6 +1153,16 @@ function spracheDesGeraets() {
 let aktualisierungKlick = false;
 // W2-D: im Laden (und Personal-Modus) still auf die neue Fassung wechseln, wenn die App 30 Minuten nicht bedient wurde und nichts offen ist
 let zuletztBedient = Date.now();
+window.addEventListener("pageshow", () => tagPruefen());
+root.addEventListener("focusout", () => setTimeout(tagPruefen, 200)); // Feld mit Text wurde verlassen: Tageswechsel nachholen
+// Lauf 6, E5 (B): Zurück in der App, oder die Uhr läuft über 04:00 (Geschäftstag) bzw. 00:00 (Kalendertag): neu zeichnen – sonst zeigt Heute,
+// Putzplan und Kühlung noch gestern. Nicht, solange ein Feld mit Text den Fokus hat (dann beim Verlassen) oder eine Führung läuft.
+function tagPruefen() {
+  if (!wurzel || !stand || notfall || !tagGewechselt(gezeichneterTag)) return;
+  const a = document.activeElement; const feld = a?.matches?.("input, textarea, select") ? { aktiv: true, value: a.value } : null;
+  if (feldMitText(feld) || fuehrungOffen() || kurzOffen()) return;
+  zeichne();
+}
 for (const e of ["pointerdown", "keydown", "input"]) document.addEventListener(e, () => { zuletztBedient = Date.now(); }, { capture: true, passive: true });
 // Paket 2 (16.10.2026): „kein Formular offen“ an einer Stelle – für das stille Update und für den fremden Fassungswechsel (unten)
 function formularOffen() {
@@ -1249,7 +1259,7 @@ async function startNachLaden() {
     if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: heute() };
     speichern(wurzel);
   }
-  serviceWorkerStarten();
+  serviceWorkerStarten(); setInterval(tagPruefen, 60e3); // Lauf 6, E5 (B): Minuten-Takt für den Tageswechsel bei offener App
   speicherDauerhaftPruefen().then(() => { if (wurzel.betriebe.some((b) => b.phase === "app")) dauerhaftAnfragen(); }); // W2-D: einmal nach der Einrichtung (auch für schon eingerichtete Läden)
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
   await ladeSprache(wurzel.sprache || spracheDesGeraets()); setzeSprache(wurzel.sprache || spracheDesGeraets());
