@@ -2,6 +2,12 @@
 // Fotos sind schon JPEG/WebP (Komprimieren bringt nichts), die Daten-JSON ist klein. Kein ZIP64: eine Sicherung bleibt unter 4 GB.
 // Schreiben: zipBlob([{ name, daten: Blob|Uint8Array|Text }]) → Blob. Die Dateien werden einzeln gelesen (CRC), nie alle auf einmal im Speicher.
 // Lesen: zipLesen(blob) → [{ name, groesse, crc, blob(), crcOk() }] über das Inhaltsverzeichnis am Ende der Datei.
+// Lauf 6, E5 (C4): zipLesen kann auch „deflate“ (Windows-Explorer, Mac-Archivierung, Kassen-Exporte) und entfernt einen gemeinsamen Ordner vor allen Namen
+// („gastrocash-sicherung/gastrocalc-sicherung.json“ → „gastrocalc-sicherung.json“); Ordner-Einträge, „__MACOSX/“ und Rückwärts-Schrägstriche werden bereinigt.
+// Entpackt wird im Browser UND in Node 22 mit demselben globalen DecompressionStream („deflate-raw“) – der App-Code importiert kein node:.
+// Grenzen (Lauf 6, E5 C5): ein entpackter Eintrag höchstens ZIP_EINZEL_MAX Byte (Schutz vor Zip-Bomben), die Datei insgesamt höchstens ZIP_GESAMT_MAX.
+export const ZIP_GESAMT_MAX = 200 * 1024 * 1024; // 200 MB: Foto-Ablage bis 15 MB je Datei (js/ablage.js MAX_BYTES) – 200 MB tragen mehrere hundert Belegfotos plus Daten
+export const ZIP_EINZEL_MAX = 50 * 1024 * 1024;  // 50 MB je Eintrag: ein Jahr Daten ≈ 5 MB (Stresstest 15.10.2026), 50 MB wären rund zehn Jahre Daten in EINER Textdatei
 
 let TAB = null;
 function tabelle() {
@@ -65,10 +71,23 @@ const dec = new TextDecoder();
 // E7 (17.10.2026): gepackt: true liest auch „deflate“-Einträge (Kassen-Exporte sind fast immer gepackt). Entpackt wird mit dem
 // Browser selbst (DecompressionStream „deflate-raw“), ohne Fremdbibliothek. Ohne diese Fähigkeit: Eintrag mit gepackt: true und bytes() wirft.
 // Ohne die Option bleibt alles wie bisher (die Sicherung liest nur „store“).
-async function entpacken(teil) {
+async function entpacken(teil, max = ZIP_EINZEL_MAX) {
   if (typeof DecompressionStream !== "function") throw Object.assign(new Error("zip"), { grund: "gepackt" });
-  const strom = teil.stream().pipeThrough(new DecompressionStream("deflate-raw"));
-  return new Uint8Array(await new Response(strom).arrayBuffer());
+  const leser = teil.stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader(); const stuecke = []; let n = 0;
+  for (;;) {
+    const { done, value } = await leser.read(); if (done) break;
+    n += value.length; if (n > max) { try { await leser.cancel(); } catch (_) { /* egal */ } throw Object.assign(new Error("zip"), { grund: "gross" }); }
+    stuecke.push(value);
+  }
+  const out = new Uint8Array(n); let o = 0; for (const x of stuecke) { out.set(x, o); o += x.length; }
+  return out;
+}
+// Namen bereinigen: „\“ → „/“, „./“ weg; Ordner-Einträge (Name endet auf „/“) und „__MACOSX/“ fallen weg; gemeinsamer Ordner vor allen Dateien wird entfernt.
+function ordnerEntfernen(liste) {
+  const dateien = liste.filter((e) => !e.name.endsWith("/") && !e.name.startsWith("__MACOSX/") && !/(^|\/)\.DS_Store$/.test(e.name));
+  const ersten = dateien.map((e) => e.name.split("/")[0]);
+  const prefix = dateien.length && dateien.every((e) => e.name.includes("/")) && ersten.every((x) => x === ersten[0]) ? ersten[0] + "/" : "";
+  return dateien.map((e) => (prefix ? { ...e, name: e.name.slice(prefix.length) } : e)).filter((e) => e.name);
 }
 export async function zipLesen(blob, { gepackt = false } = {}) {
   const fehler = () => Object.assign(new Error("zip"), { grund: "format" });
@@ -85,9 +104,10 @@ export async function zipLesen(blob, { gepackt = false } = {}) {
     if (q + 46 > z.length || dv.getUint32(q, true) !== 0x02014b50) throw fehler();
     const art = dv.getUint16(q + 10, true), crc = dv.getUint32(q + 16, true), groesse = dv.getUint32(q + 20, true), roh = dv.getUint32(q + 24, true);
     const nl = dv.getUint16(q + 28, true), xl = dv.getUint16(q + 30, true), kl = dv.getUint16(q + 32, true), lokal = dv.getUint32(q + 42, true);
-    const name = dec.decode(z.subarray(q + 46, q + 46 + nl)); q += 46 + nl + xl + kl;
+    const name = dec.decode(z.subarray(q + 46, q + 46 + nl)).replace(/\\/g, "/").replace(/^(\.\/)+/, ""); q += 46 + nl + xl + kl;
     const deflate = gepackt && art === 8; // E7 (17.10.2026)
     if (!deflate && (art !== 0 || groesse !== roh)) continue; // nur „store“ – fremde, gepackte Einträge überspringen
+    if (name.endsWith("/")) { out.push({ name, groesse: 0, crc: 0, blob: () => new Blob([]), bytes: async () => new Uint8Array(0), crcOk: async () => true }); continue; } // Ordner-Eintrag (fällt unten weg)
     const kopf = new DataView(await blob.slice(lokal, lokal + 30).arrayBuffer());
     if (kopf.byteLength < 30 || kopf.getUint32(0, true) !== 0x04034b50) throw fehler();
     const start = lokal + 30 + kopf.getUint16(26, true) + kopf.getUint16(28, true);
@@ -98,7 +118,7 @@ export async function zipLesen(blob, { gepackt = false } = {}) {
       continue;
     }
     const teil = () => blob.slice(start, start + groesse);
-    out.push({ name, groesse, crc, blob: teil, async bytes() { return new Uint8Array(await teil().arrayBuffer()); }, async crcOk() { return crc32(new Uint8Array(await teil().arrayBuffer())) === crc; } });
+    out.push({ name, groesse, crc, blob: teil, async bytes() { if (groesse > ZIP_EINZEL_MAX) throw Object.assign(new Error("zip"), { grund: "gross" }); return new Uint8Array(await teil().arrayBuffer()); }, async crcOk() { return crc32(new Uint8Array(await teil().arrayBuffer())) === crc; } });
   }
-  return out;
+  return ordnerEntfernen(out);
 }

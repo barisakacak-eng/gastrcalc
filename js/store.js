@@ -23,7 +23,7 @@ import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber, liefe
 import { LAND_CODES } from "./feiertage.js"; // Feiertage (18.10.2026)
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
-import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
+import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen, ZIP_GESAMT_MAX, ZIP_EINZEL_MAX } from "./zip.js";
 import { ablageKennungen, ablageLesen } from "./ablage.js";
 import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
 import { berlin } from "./zeit.js";
@@ -1237,8 +1237,9 @@ async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
 // E5 (16.10.2026): Liegt sicherung.enc in der ZIP, braucht es ein Passwort: ohne → { passwortNoetig: true }; mit → entschlüsseln und
 // wie bisher weiter. Falsches Passwort wirft Fehler mit grund "passwort". Unverschlüsselte Dateien laufen ohne Rückfrage.
 export async function importSicherung(datei, { passwort = null } = {}) {
+  if (datei && datei.size > ZIP_GESAMT_MAX) throw Object.assign(new Error("gross"), { grund: "gross", maxMB: Math.round(ZIP_GESAMT_MAX / 1048576) }); // Lauf 6, E5 (C5): Satz „zuGross“ in js/data/l6y_texte.js
   if (await istZip(datei)) {
-    let eintraege; try { eintraege = await zipLesen(datei); } catch (_) { throw Object.assign(new Error("format"), { grund: "format" }); }
+    let eintraege; try { eintraege = await zipLesen(datei, { gepackt: true }); } catch (_) { throw Object.assign(new Error("format"), { grund: "format" }); } // Lauf 6, E5 (C4): auch gepackte ZIPs (Windows) und Ordner
     const enc = eintraege.find((e) => e.name === SICHERUNG_ENC);
     if (enc) {
       if (passwort === null || passwort === undefined) return { passwortNoetig: true, zip: true, verschluesselt: true };
@@ -1258,6 +1259,7 @@ export async function importSicherung(datei, { passwort = null } = {}) {
     r.ablage = eintraege.filter((e) => e.name.startsWith("ablage/") && e.name.length > 7).map((e) => { const id = e.name.slice(7); return { id, typ: typeof liste[id]?.typ === "string" ? liste[id].typ : "", eintrag: e }; });
     r.zip = true; r.verschluesselt = false; return r;
   }
+  if (datei.size > ZIP_EINZEL_MAX) throw Object.assign(new Error("gross"), { grund: "gross", maxMB: Math.round(ZIP_EINZEL_MAX / 1048576) }); // Lauf 6, E5 (C5): einzelne Textdatei
   const r = await importDatei(await datei.text()); r.ablage = []; r.zip = false; r.verschluesselt = false; return r;
 }
 // Fotos/Belege aus dem ZIP zurück in die Ablage (vorhandene bleiben). zuruecklegen = ablageZuruecklegen aus ablage.js.
@@ -1277,6 +1279,9 @@ export async function ablageAusSicherung(liste, zuruecklegen) {
 // wirft Fehler mit .grund = "format" | "neuer".
 export async function importDatei(text) {
   const fehler = (grund) => { const e = new Error(grund); e.grund = grund; return e; };
+  if (typeof text !== "string") throw fehler("format");
+  if (text.length > ZIP_EINZEL_MAX) throw Object.assign(fehler("gross"), { maxMB: Math.round(ZIP_EINZEL_MAX / 1048576) }); // Lauf 6, E5 (C5)
+  ungueltigZaehler = 0; // zählt unten migrierenWurzel mit (bericht.ungueltig)
   let d, pruefsumme = "fehlt";
   const nl = text.indexOf("\n");
   const kopfText = nl > 0 ? text.slice(0, nl).trim() : "";

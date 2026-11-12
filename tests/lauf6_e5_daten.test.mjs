@@ -267,3 +267,47 @@ test("P2 B6: völlig unlesbarer Teil wirft nichts, wird wie bisher als „kaputt
   await st.sofortSpeichern(wurzelMit(b), { stempel: false }); const teil = [...a.speicher("gastrocalc", "teile").values()].find((v) => v.j === "messungen"); teil.t = "%%%";
   const g = await st.laden(); assert.equal(g.ladeFehler[0].grund, "kaputt"); assert.deepEqual(st.arrayRetten("%%%"), []); assert.deepEqual(st.arrayRetten(undefined), []);
 });
+
+// ---------- P2 C4: ZIP von Windows oder mit Ordner ----------
+import zlib from "node:zlib";
+const crcTab = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc = (b) => { let c = 0xffffffff; for (const x of b) c = crcTab[(c ^ x) & 255] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+// ZIP wie vom Windows-Explorer: Ordner-Einträge, Deflate (Methode 8), Namen mit Ordner; per node:zlib erzeugt, nur im Test
+function zipWindows(eintraege, { methode = 8, trenner = "/" } = {}) {
+  const teile = [], zentral = []; let off = 0;
+  for (const e of eintraege) {
+    const name = Buffer.from(e.name.replace(/\//g, trenner)), roh = Buffer.from(e.daten ?? ""); const istOrdner = e.name.endsWith("/");
+    const dat = istOrdner ? Buffer.alloc(0) : methode === 8 ? zlib.deflateRawSync(roh) : roh; const m = istOrdner ? 0 : methode;
+    const h = Buffer.alloc(30); h.writeUInt32LE(0x04034b50, 0); h.writeUInt16LE(20, 4); h.writeUInt16LE(0x0800, 6); h.writeUInt16LE(m, 8); h.writeUInt32LE(istOrdner ? 0 : crc(roh), 14); h.writeUInt32LE(dat.length, 18); h.writeUInt32LE(roh.length, 22); h.writeUInt16LE(name.length, 26);
+    teile.push(h, name, dat);
+    const z = Buffer.alloc(46); z.writeUInt32LE(0x02014b50, 0); z.writeUInt16LE(20, 4); z.writeUInt16LE(20, 6); z.writeUInt16LE(0x0800, 8); z.writeUInt16LE(m, 10); z.writeUInt32LE(istOrdner ? 0 : crc(roh), 16); z.writeUInt32LE(dat.length, 20); z.writeUInt32LE(roh.length, 24); z.writeUInt16LE(name.length, 28); z.writeUInt32LE(off, 42);
+    zentral.push(z, name); off += 30 + name.length + dat.length;
+  }
+  const zg = zentral.reduce((s, x) => s + x.length, 0); const ende = Buffer.alloc(22); ende.writeUInt32LE(0x06054b50, 0); ende.writeUInt16LE(eintraege.length, 8); ende.writeUInt16LE(eintraege.length, 10); ende.writeUInt32LE(zg, 12); ende.writeUInt32LE(off, 16);
+  return new Blob([...teile, ...zentral, ende], { type: "application/zip" });
+}
+test("P2 C4: ZIP mit Deflate (per node:zlib erzeugt, Methode 8) wird gelesen – Node 22 hat DecompressionStream global, derselbe App-Code läuft im Browser", async () => {
+  assert.equal(typeof DecompressionStream, "function");
+  const zip = await import("../js/zip.js");
+  const z = zipWindows([{ name: "a.txt", daten: "Hallo ".repeat(500) }, { name: "b.json", daten: '{"x":1}' }]);
+  assert.equal((await zip.zipLesen(z)).length, 0, "ohne Option bleibt es wie bisher (gepackte überspringen, tests/verkauf)");
+  const e = await zip.zipLesen(z, { gepackt: true }); assert.deepEqual(e.map((x) => x.name), ["a.txt", "b.json"]);
+  assert.equal(new TextDecoder().decode(await e[0].bytes()), "Hallo ".repeat(500)); assert.equal(await e[0].crcOk(), true); assert.equal(e[0].gepackt, true);
+  const sicher = zipWindows([{ name: "x.bin", daten: "A".repeat(1000) }]); const x = (await zip.zipLesen(sicher, { gepackt: true }))[0]; assert.equal(await x.crcOk(), true);
+});
+test("P2 C4: Windows-ZIP einer Sicherung (Deflate, Ordner „gastrocash-sicherung/“, Ordner-Einträge, Rückwärts-Schrägstriche, __MACOSX) wird eingelesen wie das Original", async () => {
+  idbAttrappe(); await st.laden();
+  const b = laden("W1"); stamm.teamTagSetzen(b, "2027-01-02", [{ person: "p1", name: "A", stunden: 6 }]);
+  const orig = await st.exportDatei(wurzelMit(b), { mitAblage: false }); const zip = await import("../js/zip.js");
+  const eint = await zip.zipLesen(orig.blob); const json = new TextDecoder().decode(await eint.find((x) => x.name === st.SICHERUNG_JSON).bytes());
+  const mitOrdner = (opt) => zipWindows([{ name: "gastrocash-sicherung/" }, { name: "gastrocash-sicherung/" + st.SICHERUNG_JSON, daten: json }, { name: "gastrocash-sicherung/ablage.json", daten: JSON.stringify({ foto1: { typ: "image/jpeg", groesse: 3 } }) },
+    { name: "gastrocash-sicherung/ablage/" }, { name: "gastrocash-sicherung/ablage/foto1", daten: "abc" }, { name: "__MACOSX/gastrocash-sicherung/._x", daten: "x" }], opt);
+  for (const opt of [{ methode: 8 }, { methode: 0 }, { methode: 8, trenner: "\\" }]) {
+    const r = await st.importSicherung(mitOrdner(opt));
+    assert.equal(r.pruefsumme, "ok", JSON.stringify(opt)); assert.equal(r.wurzel.betriebe[0].teamTage.length, 1); assert.deepEqual(r.ablage.map((x) => [x.id, x.typ]), [["foto1", "image/jpeg"]]);
+    assert.equal(new TextDecoder().decode(await r.ablage[0].eintrag.bytes()), "abc");
+  }
+  // zwei verschiedene Ordner: nichts wird abgeschnitten
+  const zwei = await zip.zipLesen(zipWindows([{ name: "a/x.txt", daten: "1" }, { name: "b/y.txt", daten: "2" }]), { gepackt: true }); assert.deepEqual(zwei.map((x) => x.name), ["a/x.txt", "b/y.txt"]);
+  const eins = await zip.zipLesen(zipWindows([{ name: "a/x.txt", daten: "1" }, { name: "y.txt", daten: "2" }]), { gepackt: true }); assert.deepEqual(eins.map((x) => x.name), ["a/x.txt", "y.txt"]);
+});

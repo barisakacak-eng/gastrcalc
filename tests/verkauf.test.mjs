@@ -138,7 +138,7 @@ test("E7 CSV: Trennzeichen, Anführungszeichen, Dezimalzeichen und Kodierung def
   assert.equal(vk.textAusBytes(new TextEncoder().encode("﻿Döner")).text, "Döner");
 });
 
-test("E7 ZIP: gepackte Einträge nur mit Option – die Sicherung liest weiter nur ungepackte", async () => {
+test("E7 ZIP: gepackte Einträge nur mit Option (zipLesen ohne Option überspringt sie; die Sicherung setzt die Option seit Lauf 6, E5 C4)", async () => {
   const z = zipBlob();
   assert.equal((await zip.zipLesen(z)).length, 0, "ohne Option: gepackte Einträge übersprungen (wie bisher)");
   const e = await zip.zipLesen(z, { gepackt: true }); assert.equal(e.length, 5);
