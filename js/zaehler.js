@@ -346,11 +346,12 @@ export function zaehlerVerlauf(z) {
 export const umsatzAnzeigeWert = (brutto, basis, satz) => (brutto === null || brutto === undefined ? null : basis === "netto" ? rund2(nettoVonBrutto(brutto, satz)) : brutto);
 export const umsatzAusEingabe = (betrag, basis, satz) => (basis === "netto" ? rund2(betrag * (1 + satz)) : betrag);
 // Strecke von „alle Kosten offen“ (links, 0 %) bis Monatsende (rechts): Lage von heute und null in Prozent; bringt = was ein Beispielumsatz übrig lässt.
-export function zaehlerStrecke(z, beispiel = 1000) {
+// Lauf 6 (P1 B1): der Tag der „null“-Marke kommt aus monatsZiel (mz.nullAm), nie aus dem Tagesstand (z.nullTag) – ohne mz keine Beschriftung.
+export function zaehlerStrecke(z, beispiel = 1000, mz = null) {
   if (z.keinUmsatz) return null;
   const min = -Math.max(z.last.gesamt, 1); const max = Math.max(z.monatsende ?? 0, z.stand, Math.abs(min) * 0.3);
   const pos = (v) => Math.round(Math.min(1, Math.max(0, (v - min) / (max - min))) * 100);
-  return { heute: pos(z.stand), null: pos(0), nullTag: z.nullTag, beispiel, bringt: z.bleibtVon(beispiel) };
+  return { heute: pos(z.stand), null: pos(0), nullTag: mz?.nullAm ?? null, beispiel, bringt: z.bleibtVon(beispiel) };
 }
 // Monatsstreifen: Zustand eines Tages – "offen" (vor dem Start / ohne Stand) | "frei" (Ruhetag) | "ziel" (im Plus) | "zukunft" | "minus".
 // nullAm (C3, 03.11.2026): Tag, an dem der Monat den Nullpunkt erreicht (aus monatsZiel). Mit nullAm: grün ab diesem Tag, davor rot/offen –

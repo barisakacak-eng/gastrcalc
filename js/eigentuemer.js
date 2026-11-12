@@ -9,7 +9,7 @@
 import { t, sprache } from "./i18n.js";
 import { heute, heuteGeschaeft, fmtEuro, fmtZahl } from "./util.js";
 import { tagPlus, umsatzEintrag, umsatzZeitraum, schwundAuswertung } from "./engine.js";
-import { zaehler, wareneinsatzQuote, tagGewicht } from "./zaehler.js";
+import { zaehler, monatsZiel, wareneinsatzQuote, tagGewicht } from "./zaehler.js";
 import { ordnerAmt, druckHtml } from "./export_amt.js";
 import { abgleichInventur, verkaeufeImZeitraum } from "./verkauf.js";
 import { bestandStand, bestellVorschlag } from "./bestand.js";
@@ -18,6 +18,7 @@ import { imTakt } from "./takt.js";
 import { csvText, datumDe } from "./export_steuer.js";
 import { tageZwischen } from "./zeit.js";
 import { rund2 } from "./geld.js";
+import { l6x } from "./data/l6x_texte.js"; // Lauf 6 (P1 B1)
 
 export const EIG_ZEITRAEUME = ["woche", "monat", "frei"];
 export const WARE_PUNKTE_SATZ = 3;        // ab 3 Prozentpunkten Unterschied im Wareneinsatz sagt der Satz es (Annahme der App, kein Branchenwert)
@@ -103,10 +104,13 @@ export function ladenKennzahlen(stand, z, { H = heuteGeschaeft(), K = heute(), n
   pflichten.offen = pflichten.kuehlFehlt + pflichten.kuehlOffen + pflichten.putzFehlt + pflichten.belehrungFaellig;
   pflichten.basis = pflichten.kuehlEingerichtet || pflichten.putzAktiv || pflichten.personen ? "voll" : "keine";
   if (pflichten.basis === "keine") fehlt.push("pflichten");
-  // Bis null: der Zähler des laufenden Monats (Stand heute)
+  // Bis null: dieselbe Zahl wie im Laden (Karte „Heute“) und im Büro – monatsZiel (Umsatz, der diesen Monat noch bis zum Nullpunkt fehlt; Lauf 6, P1 B1).
+  // Der laufende Stand des Zählers (Kosten nur bis heute) bleibt als „Verlauf“ (stand, imPlus, nullTag, kippTag) und heißt nirgends „bis null“.
   const zh = z.bis === H ? zl : imTakt(stand, "eig:zaehler:" + H, () => zaehler(stand, { datum: H }));
-  const bisNull = { stand: zh.stand, imPlus: zh.imPlus, keinUmsatz: zh.keinUmsatz, geschaetzt: zh.geschaetzt, kostenOffen: zh.unvollstaendig, nullTag: zh.nullTag, stufe: zh.stufe,
-    basis: zh.keinUmsatz ? "keine" : zh.unvollstaendig ? "teil" : "voll" };
+  const mz = imTakt(stand, "eig:ziel:" + H, () => monatsZiel(stand, zh, H));
+  const bisNull = { fehlt: mz.fehltNull, fehltZiel: mz.fehlt, nullpunkt: mz.nullpunkt, ziel: mz.ziel, monatStufe: mz.stufe, geschaetzt: mz.geschaetzt, keinUmsatz: zh.keinUmsatz, kostenOffen: zh.unvollstaendig, stufe: zh.stufe,
+    basis: zh.keinUmsatz || mz.nullpunkt === null ? "keine" : zh.unvollstaendig ? "teil" : "voll",
+    verlauf: { stand: zh.stand, imPlus: zh.imPlus, nullTag: zh.nullTag, kippTag: zh.kippTag, geschaetzt: zh.geschaetzt }, stand: zh.stand, imPlus: zh.imPlus, nullTag: zh.nullTag };
   if (zh.unvollstaendig) fehlt.push("kosten");
   // Lager und Bestellbedarf (bestand.js)
   const bs = bestandStand(stand, { heuteTag: H });
@@ -158,7 +162,7 @@ const WERT = {
   ware: { von: (l) => l.ware.quote, basis: (l) => (l.ware.unplausibel ? "unplausibel" : l.ware.basis), hoch: false, ordnung: ["belege", "karte"], einheit: "punkte" },
   muell: { von: (l) => l.muell.anteil, basis: (l) => l.muell.basis, hoch: false, ordnung: ["voll", "teil"], einheit: "punkte" },
   pflichten: { von: (l) => l.pflichten.offen, basis: (l) => l.pflichten.basis, hoch: false, ordnung: ["voll"], einheit: "zahl" },
-  bisNull: { von: (l) => l.bisNull.stand, basis: (l) => l.bisNull.basis, hoch: true, ordnung: ["voll", "teil"], einheit: "euro" },
+  bisNull: { von: (l) => l.bisNull.fehlt, basis: (l) => l.bisNull.basis, hoch: false, ordnung: ["voll", "teil"], einheit: "euro" }, // Lauf 6 (P1 B1): was bis null fehlt – weniger ist besser
 };
 export function eigentuemerVergleich(laeden) {
   const out = {};
@@ -209,7 +213,8 @@ function satzAus(laeden, vergleich) {
   const vw = vergleich.ware;
   if (vw.vergleichbar) { const schlecht = laeden.filter((x) => vw.je[x.id].rang !== null && vw.je[x.id].abstand >= WARE_PUNKTE_SATZ).sort((a, b) => vw.je[b.id].abstand - vw.je[a.id].abstand)[0];
     if (schlecht) { const best = laeden.find((x) => x.id === vw.bester); return satz("ware", "gelb", t("eigentuemer.satz.wareUeber", schlecht.name, fmtZahl(vw.je[schlecht.id].abstand, 0), best.name) + (schlecht.ware.geschaetzt || best.ware.geschaetzt ? " ≈" : ""), schlecht); } }
-  if ((l = minVon(laeden.filter((x) => !x.bisNull.keinUmsatz && x.bisNull.stand < 0), (x) => x.bisNull.stand))) return satz("minus", "gelb", t("eigentuemer.satz.minus", l.name, (l.bisNull.geschaetzt ? "≈ " : "") + fmtEuro(-l.bisNull.stand)), l);
+  // Lauf 6 (P1 B1): der Betrag ist „bis null fehlen“ aus monatsZiel (wie im Laden); der laufende Stand (Verlauf) entscheidet nur, ob der Satz gesagt wird
+  if ((l = maxVon(laeden.filter((x) => !x.bisNull.keinUmsatz && x.bisNull.stand < 0 && x.bisNull.fehlt > 0), (x) => x.bisNull.fehlt))) return satz("minus", "gelb", t("eigentuemer.satz.minus", l.name, (l.bisNull.geschaetzt ? "≈ " : "") + fmtEuro(l.bisNull.fehlt)), l);
   if ((l = maxVon(laeden.filter((x) => x.umsatz.tage > 0), (x) => x.umsatz.erwartet - x.umsatz.tage))) return satz("umsatzFehlt", "gelb", t("eigentuemer.satz.umsatzFehlt", l.name, l.umsatz.erwartet - l.umsatz.tage), l);
   if ((l = maxVon(laeden, (x) => x.lager.bestellenJetzt))) return satz("bestellen", "gelb", t("eigentuemer.satz.bestellen", l.name, l.lager.bestellenJetzt), l);
   if ((l = laeden.find((x) => x.lager.ohneInventur && x.umsatz.tage > 0))) return satz("inventur", "gelb", t("eigentuemer.satz.inventurFehlt", l.name), l);
@@ -240,7 +245,8 @@ export function ladenZellen(l) {
     personal: l.personal.anzahl ? `${fmtZahl(l.personal.anzahl)} · ${euro(l.personal.svev)}` : "–",
     pflichten: p.basis === "keine" ? t("eigentuemer.pflicht.keineDaten") : pfl.length ? pfl.join(" · ") : t("eigentuemer.pflicht.keine"),
     pflichtenZahl: p.basis === "keine" ? FEHLT() : String(p.offen),
-    bisNull: n.keinUmsatz ? FEHLT() : ca(n.geschaetzt, (n.stand >= 0 ? "+ " : "− ") + fmtEuro(Math.abs(n.stand))),
+    bisNull: n.keinUmsatz ? FEHLT() : ca(n.verlauf.geschaetzt, (n.stand >= 0 ? "+ " : "− ") + fmtEuro(Math.abs(n.stand))), // Verlauf: Ergebnis bisher (Kosten bis heute)
+    bisNullFehlt: n.keinUmsatz || n.fehlt === null || !(n.fehlt > 0) ? "" : l6x(sprache(), "bisNullFehlt", ca(n.geschaetzt, fmtEuro(n.fehlt))), // dieselbe Zahl wie „Heute“ im Laden
     lager: g.ohneInventur ? t("eigentuemer.keineInventur") : ca(g.geschaetzt, euro(g.wert)) + (g.ohnePreis ? ` (${t("eigentuemer.ohnePreis", g.ohnePreis)})` : ""),
     bestellen: g.ohneInventur ? "" : g.bestellenJetzt ? t("eigentuemer.bestellen.jetzt", g.bestellenJetzt) : g.bestellenMorgen ? t("eigentuemer.bestellen.morgen", g.bestellenMorgen) : t("eigentuemer.bestellen.keine"),
     aktionen: l.aktionen.laufend ? t("eigentuemer.aktionenLaufend", l.aktionen.laufend) : t("eigentuemer.aktionenKeine"),

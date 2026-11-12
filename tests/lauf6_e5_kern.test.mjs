@@ -200,3 +200,18 @@ test("P1 B4: Rundreise Stand → JSON → Stand (und Einlesen über store.js) er
   // alter Stand ohne Feld: gilt schon immer
   const alt = JSON.parse(JSON.stringify(s)); delete alt.kosten.find((k) => k.posten === "miete").verlauf; assert.equal(E.monatsLast(alt, "2026-10-15").fix.jeKategorie.miete.summe, 3000);
 });
+
+// ---------------------------------------------------------------- P1 B1
+test("P1 B1: „bis null“ ist überall dieselbe Zahl – Übersicht (Eigentümer) und Laden („Heute“) nennen am 10.11.2026 denselben Betrag", async () => {
+  const U = await import("../js/eigentuemer.js"), LZ = await import("../js/laden_zahlen.js"), Z = await import("../js/zaehler.js"), { fmtEuro } = await import("../js/util.js");
+  await mitUhr("2026-11-10", () => {
+    const s = beispielLaden("2026-11-10"); const H = "2026-11-10";
+    const hz = LZ.heuteZiel(s, Z.zaehler(s, { datum: H }), H);
+    const ue = U.eigentuemerUebersicht({ betriebe: [s] }, { art: "monat" }, { H, K: H }); const l = ue.laeden[0];
+    assert.equal(hz.stufe, "bisNull", "Beispiel-Laden steht am 10.11. noch vor dem Nullpunkt"); assert.ok(hz.zahl > 0);
+    assert.equal(l.bisNull.fehlt, hz.zahl, "Übersicht rechnet mit monatsZiel, nicht mit dem laufenden Stand");
+    const zellen = U.ladenZellen(l); assert.ok(zellen.bisNullFehlt.includes(fmtEuro(hz.zahl)), `Zelle „${zellen.bisNullFehlt}“ nennt ${fmtEuro(hz.zahl)}`);
+    assert.notEqual(l.bisNull.fehlt, -l.bisNull.stand, "laufender Stand bleibt als Verlauf getrennt");
+    if (ue.satz && ue.satz.art === "minus") assert.ok(ue.satz.text.includes(fmtEuro(hz.zahl)), "Satz nennt dieselbe Zahl");
+  });
+});
