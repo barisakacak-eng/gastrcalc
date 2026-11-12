@@ -15,7 +15,8 @@ export function cent(eur) {
   return n < 0 ? -r : r;
 }
 export const euro = (c) => c / 100;
-export const rund2 = (eur) => euro(cent(eur));
+// Kein Betrag (Text, leer, NaN) bleibt „kein Betrag“ (NaN) – die Anzeige zeigt dann „–“ statt fälschlich 0 €.
+export const rund2 = (eur) => (eur === null || eur === undefined || !Number.isFinite(Number(eur)) ? NaN : euro(cent(eur)));
 // Summe von Euro-Beträgen, auf den Cent genau (jeder Posten wird zuerst zu Cent)
 export const summe = (liste) => euro(liste.reduce((s, x) => s + cent(x), 0));
 
