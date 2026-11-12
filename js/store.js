@@ -28,6 +28,7 @@ import { ablageKennungen, ablageLesen } from "./ablage.js";
 import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
 import { berlin } from "./zeit.js";
 import { rund2, mwstProzent } from "./geld.js";
+import { felderVerschmelzen, felderSauber } from "./abgleich_felder.js"; // Lauf 6, E5 (A1): Stunden, Schichten, Abwesenheit … werden beim Abgleich vereinigt
 
 export const SCHEMA = 6;
 export const APP_FASSUNG = FASSUNG;
@@ -217,6 +218,9 @@ async function umziehen(w) {
 }
 
 const istObjekt = (x) => x && typeof x === "object" && !Array.isArray(x);
+// Lauf 6, E5 (C5): Einträge, die beim Laden oder Einlesen als ungültig übersprungen werden, werden gezählt (importDatei meldet die Zahl als bericht.ungueltig)
+let ungueltigZaehler = 0;
+const zaehleUngueltig = (n = 1) => { ungueltigZaehler += n; };
 function kurzHash(str) { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h.toString(36); }
 
 function ergaenze(ziel, vorlage) {
@@ -323,6 +327,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   // W2-D (Schema 6): Putz-Nachweis und Belehrungen – jeder Eintrag braucht eine eigene Kennung (bis Schema 5 trugen „storniert“ und
   // „neu eingetragen“ am selben Tag dieselbe Kennung, beim Zusammenführen gewann dann das Storno). Fehlende oder doppelte Kennungen
   // werden aus dem Inhalt abgeleitet – auf jedem Handy gleich, damit dieselbe Belehrung nach dem Zusammenführen nicht doppelt steht.
+  felderSauber(s, zaehleUngueltig); // Lauf 6, E5 (A1/C5): teamTage, lieferTage, abwesend, preisRunden, zekiLog, schichten, chef, liquiditaet grob prüfen; Rest bleibt unverändert
   s.putzlog = eindeutigeIds(s.putzlog.filter(istObjekt), "putz");
   s.belehrungen = eindeutigeIds(s.belehrungen.filter(istObjekt), "bel");
   if (s.putzplan !== null && !istObjekt(s.putzplan)) s.putzplan = null;
@@ -1373,6 +1378,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
   for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7 (17.10.2026): verkaeufe
     basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
+  felderVerschmelzen(basis, lokal, fremd); // Lauf 6, E5 (A1): teamTage, schichten, abwesend, lieferTage, preisRunden, chef, zekiLog, liquiditaet – nichts geht verloren
   basis.verkaeufe = verkaeufeEntdoppeln(basis.verkaeufe); // Prüfgremium 17.10.2026 (1): gleiche Verkäufe von zwei Handys zählen einmal
   basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1 (17.10.2026)
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand

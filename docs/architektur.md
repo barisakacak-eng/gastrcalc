@@ -23,6 +23,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 
 ## 4. Module – Rechenwerk (`js/`)
 
+- `abgleich_felder.js` – Abgleich zweier Handys für Felder ohne Bereich/Journal (Stunden, Schichten, Abwesenheit, Lieferdienst, Preisrunden, Chef, Zeki-Verlauf): ein Verfahren je Feld, `NUR_LOKAL` und `IN_VERSCHMELZEN` mit Grund, grobe Prüfung beim Laden (`felderSauber`).
 - `ablage.js` – ein Weg für jedes Foto und jede Datei (IndexedDB-Ablage).
 - `aktion_plan.js` – Aktion planen: Zeitraum-Vorschlag, Fortschritt, Bilanz.
 - `anzeige_text.js` – Texte aus Daten (Datum, Monat, Mengen, Bruchzahlen).
@@ -82,6 +83,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `profil.js` – Laden-Profil (welche Bereiche zuerst).
 - `putzplan.js` – Putzplan als Stammdaten, Abhaken als Protokoll.
 - `rechtsform.js` – Rechtsform des Betriebs für Steuer-Hinweise.
+- `rahmen.js` – Schutz gegen Einrahmen: kleines Skript vor der App, versteckt die Seite in einem fremden Rahmen.
 - `reinigung.js` – Reinigung & Betriebsmittel im Kostenzähler.
 - `rettung.js` – Rettungscode und „Sicherung ersetzt alles“.
 - `rezept_baukasten.js` – jedes Gericht bekommt sofort ein Rezept mit Mengen (144 Vorlagen).

@@ -2,6 +2,7 @@
 // Vor Lauf 6 blieb bei diesen Feldern einfach der Stand des eigenen Handys stehen – Stunden, Schichten und Abwesenheiten des anderen
 // Handys gingen still verloren (Audit P2 A1). Regel jetzt: nichts geht verloren, beide Handys kommen zum selben Ergebnis, egal wer zuerst einliest.
 // Jedes Feld hat genau ein Verfahren. tests/abgleich_felder.test.mjs prüft, dass JEDES Feld eines Ladens ein Verfahren hat (Registertest).
+import { gueltigerTag } from "./zeit.js";
 const istObjekt = (x) => x !== null && typeof x === "object" && !Array.isArray(x);
 const text = (x) => JSON.stringify(x, Object.keys(x).sort());
 // Zwei Protokoll-Listen vereinigen: gleicher Inhalt zählt einmal, Reihenfolge nach Zeit (danach nach Inhalt, damit sie auf beiden Handys gleich ist).
@@ -47,6 +48,9 @@ export const FELD_ABGLEICH = {
   zekiLogGeloescht: (a, b) => [a, b].filter((x) => typeof x === "string").sort().pop(),
   schichten,
   chef: juengererWert,                                                    // Stunden des Chefs im Monat
+  // Version der eingespielten Branchenwerte: die kleinere gilt – das Handy mit der älteren Version spielt die neuen Werte beim Start noch einmal ein
+  // (sie ersetzen nur Schätzungen, eigene Werte bleiben); so geht keine Branchenwert-Änderung verloren.
+  branchenVersion: (a, b) => { const n = Math.min(Number(a) || 0, Number(b) || 0); return n > 0 ? n : undefined; },
   liquiditaet: (a, b) => { if (!istObjekt(b)) return a ?? null; if (!istObjekt(a)) return structuredClone(b); return structuredClone(String(b.datum ?? "") > String(a.datum ?? "") ? b : a); }, // „Geld heute“: der jüngere Tag gilt
 };
 export function felderVerschmelzen(basis, lokal, fremd) {
@@ -55,4 +59,66 @@ export function felderVerschmelzen(basis, lokal, fremd) {
     const r = f(lokal[feld], fremd[feld], lokal, fremd); if (r === undefined) delete basis[feld]; else basis[feld] = r;
   }
   return basis;
+}
+
+// ---------- Felder ohne Abgleich, mit Grund (Lauf 6, E5, A1-Registertest) ----------
+// Jedes Feld eines Ladens hat GENAU EIN Verfahren: Bereich (store.js BEREICHE), Journal (store.js JOURNALE), FELD_ABGLEICH (oben),
+// eine eigene Regel in `verschmelzen` (IN_VERSCHMELZEN) oder es bleibt bewusst am eigenen Handy (NUR_LOKAL, mit Grund).
+// tests/lauf6_e5_daten.test.mjs zählt alle Felder eines voll benutzten Ladens auf und wird rot, wenn eines in keiner Liste steht.
+export const IN_VERSCHMELZEN = {
+  geaendert: "jüngere der beiden Zeiten (gekappt), in verschmelzen",
+  phase: "app gewinnt: ist ein Handy schon eingerichtet, gilt das, in verschmelzen",
+  rueckkehr: "wird mit phase zurückgesetzt, in verschmelzen",
+  stammZeit: "Zeitstempel je Bereich, folgt dem Sieger-Bereich, in verschmelzen",
+  abgleich: "Merkzettel des Abgleichs je Bereich (abgleichMerken), in verschmelzen",
+  abgleichHinweis: "Hinweis im Büro, wird in verschmelzen fortgeschrieben",
+  monatsabschluesse: "monatsabschluesseVereinigen: gleicher Abschluss einmal, der frühere gilt, in verschmelzen",
+};
+export const NUR_LOKAL = {
+  id: "Kennung des Ladens: auf beiden Handys gleich, sonst wären es zwei Läden",
+  angelegt: "Anlagezeit des Ladens: auf beiden Handys gleich",
+  schritt: "Position in der Einrichtung dieses Handys, kein Datenbestand",
+  schrittId: "wie schritt: Bildschirm der Einrichtung auf diesem Handy",
+  weg: "Einrichtungsweg (schnell/genau) dieses Handys; die Einrichtung ist mit phase abgeglichen",
+  schnellErgebnis: "Zwischenstand der Schnell-Einrichtung auf diesem Handy, wird nach der Einrichtung gelöscht",
+  karteWeg: "Wunsch „Aus Vorlagen wählen“ bis zum Ende der Einrichtung dieses Handys",
+  pinFestlegen: "Merker: auf diesem Handy muss noch ein Büro-Code gesetzt werden",
+  einrichtungFertig: "Einrichtung dieses Handys abgeschlossen; die Daten kommen über phase und die Bereiche",
+  branchenMeldung: "Meldung „Branchenwerte geändert“ für diesen Laden auf diesem Handy, wird quittiert",
+  branchenUndo: "Rückgängig-Merker der Branchenwerte auf diesem Handy",
+  waageVorschlag: "Tag, an dem dieses Handy den Waage-Vorschlag gesehen hat",
+  neuAus: "Hinweis „Neu seit …“ gesehen auf diesem Handy",
+  fuehrung: "Stand der Führung (Rundgang durch die App) auf diesem Handy",
+  beispiel: "Beispiel-Laden: Merkmal bleibt am Laden, der Laden wird nie abgeglichen",
+  ladeFehler: "Lade-Probleme dieses Handys (Wurzel, nicht Laden)",
+};
+export const FELD_VERFAHREN = (feld) => (feld in FELD_ABGLEICH ? "feld" : feld in IN_VERSCHMELZEN ? "verschmelzen" : feld in NUR_LOKAL ? "lokal" : null);
+
+// ---------- Grobe Prüfung beim Laden und Einlesen (Audit C5) ----------
+// Kaputte Einträge (zum Beispiel teamTage: [{ datum: 5 }]) werden verworfen statt später einen TypeError in der Anzeige zu werfen.
+// Gültige Einträge bleiben unverändert (dasselbe Objekt, dieselbe Reihenfolge) – die Rundreise ändert nichts.
+// zaehle(n) bekommt die Zahl verworfener Einträge (bericht.ungueltig).
+const zahl01 = (x, max = 1e7) => typeof x === "number" && Number.isFinite(x) && x >= 0 && x <= max;
+const MONAT_RE = /^\d{4}-\d{2}$/;
+const pruefungen = {
+  teamTage: (x) => gueltigerTag(x.datum) && Array.isArray(x.eintraege),
+  lieferTage: (x) => gueltigerTag(x.datum) && zahl01(x.betrag),
+  abwesend: (x) => typeof x.monat === "string" && MONAT_RE.test(x.monat) && Array.isArray(x.eintraege),
+  preisRunden: (x) => gueltigerTag(x.datum),
+  zekiLog: (x) => typeof x.t === "string",
+  schichten: (x) => gueltigerTag(x.datum),
+};
+export function felderSauber(b, zaehle = () => {}) {
+  if (!istObjekt(b)) return b;
+  for (const [feld, ok] of Object.entries(pruefungen)) {
+    if (b[feld] === undefined) continue;
+    if (!Array.isArray(b[feld])) { zaehle(1); delete b[feld]; continue; }
+    const liste = b[feld].filter((x) => { const gut = istObjekt(x) && ok(x); if (!gut) zaehle(1); return gut; });
+    if (feld === "teamTage" || feld === "abwesend") for (const x of liste) if (x.eintraege.some((e) => !istObjekt(e))) { zaehle(x.eintraege.filter((e) => !istObjekt(e)).length); x.eintraege = x.eintraege.filter(istObjekt); }
+    if (liste.length !== b[feld].length) b[feld] = liste;
+  }
+  if (b.chef !== undefined && !istObjekt(b.chef)) { zaehle(1); delete b.chef; }
+  if (b.liquiditaet !== undefined && b.liquiditaet !== null && !(istObjekt(b.liquiditaet) && Number.isFinite(b.liquiditaet.betrag) && typeof b.liquiditaet.datum === "string")) { zaehle(1); delete b.liquiditaet; }
+  if (b.zekiLogGeloescht !== undefined && typeof b.zekiLogGeloescht !== "string") delete b.zekiLogGeloescht;
+  return b;
 }
