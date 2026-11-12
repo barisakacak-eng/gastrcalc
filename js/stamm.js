@@ -275,7 +275,7 @@ export function teamStundenlohnSetzen(stand, satz) { stand.team ??= {}; stand.te
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);
 // Lauf 2, Bildpaket D (4a) – 31.10.2026: Stunden ohne Stundenlohn zählen mit dem gesetzlichen Mindestlohn des Tages (js/data/mindestlohn.js,
-// MiLoG: 13,90 € 2026, 14,60 € ab 01.01.2027) × Arbeitgeberanteil – als Richtwert (≈), bis der Chef den echten Lohn einträgt. Kein Satz = nie 0 €.
+// Mindestlohn je Tag aus dem Regelwerk) × Arbeitgeberanteil – als Richtwert (≈), bis der Chef den echten Lohn einträgt. Kein Satz = nie 0 €.
 export const teamTagKostenRichtwert = (e, datum) => (e?.eintraege || []).reduce((s, x) => s + (x.stunden > 0 ? x.stunden * kostenJeStunde(x.satz > 0 ? x.satz : mindestlohnAm(datum || e.datum).satz, x.art) : 0), 0);
 export const teamTagLohnFehlt = (e) => !!e && !e.keine && (e.eintraege || []).some((x) => x.stunden > 0 && !(x.satz > 0));
 

@@ -3,7 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { leererBetrieb, migrierenBetrieb } from "../js/store.js";
 import { HM_HINWEISE, HM_WEGGELASSEN, HM_PFLICHT, hmAusgeloest, hmFuerBuero, hmPruefen, hmStatusSetzen, hmFrageSetzen, hmGezeigtMerken,
-  hmLadenZeile, hmLadenGezeigt, hmOffeneFragen, hmAngaben, hmAngabenSauber, monatsLohn, hmErledigtZahl, hmMitId } from "../js/hinweis_motor.js";
+  hmLadenZeile, hmLadenGezeigt, hmOffeneFragen, hmAngaben, hmAngabenSauber, monatsLohn, hmErledigtZahl, hmMitId, hmFeld } from "../js/hinweis_motor.js";
 
 const TAG = "2027-01-01";
 function laden() {
@@ -68,7 +68,10 @@ test("hm_arbeitszeit: an bei Eintrag ohne Beginn/Ende, aus wenn alle Zeiten steh
   s.teamTage = [{ datum: "2026-12-30", eintraege: [{ person: "p1", stunden: 6, satz: 14 }], erfasst: "2026-12-30T20:00:00.000Z" }];
   assert.equal(an(s, "hm_arbeitszeit"), true);
   s.teamTage[0].eintraege[0].von = "10:00"; s.teamTage[0].eintraege[0].bis = "16:00"; assert.equal(an(s, "hm_arbeitszeit"), false);
-  assert.equal(hmMitId("hm_arbeitszeit").euro, "Bußgeld bis 30.000 €"); assert.match(hmMitId("hm_arbeitszeit").quelle, /§ 17 Abs\. 1 MiLoG/);
+  assert.equal(hmMitId("hm_arbeitszeit").euro, "Bußgeld bis {bussgeld_arbeitszeit} €", "Rohform mit Platzhalter");
+  assert.equal(hmFeld(hmMitId("hm_arbeitszeit"), "euro", TAG), "Bußgeld bis 50.000 €"); assert.match(hmMitId("hm_arbeitszeit").quelle, /§ 17 Abs\. 1, § 21 Abs\. 1 Nr\. 8 und Abs\. 3 MiLoG/);
+  assert.equal(hmMitId("hm_arbeitszeit").url, "https://www.gesetze-im-internet.de/milog/__21.html"); assert.equal(hmMitId("hm_arbeitszeit").abruf, "2026-11-12");
+  assert.match(hmFeld(hmMitId("hm_arbeitszeit"), "satz", TAG), /spätestens am 7\. Tag/); assert.match(hmFeld(hmMitId("hm_arbeitszeit"), "genau", TAG), /2 Jahre aufheben/);
 });
 
 test("hm_sofortmeldung und hm_ausweis: je neue Person; „erledigt“ gilt für die heutigen Personen, eine neue löst neu aus", () => {
@@ -79,7 +82,7 @@ test("hm_sofortmeldung und hm_ausweis: je neue Person; „erledigt“ gilt für 
     s.personen.push(person("p2")); const h = hmAusgeloest(s, { datum: TAG }).find((x) => x.id === id);
     assert.ok(h, id + " neue Person"); assert.equal(h.status, "offen");
   }
-  assert.equal(hmMitId("hm_sofortmeldung").euro, "Bußgeld bis 25.000 €"); assert.equal(hmMitId("hm_ausweis").euro, "Bußgeld bis 5.000 €");
+  assert.equal(hmFeld(hmMitId("hm_sofortmeldung"), "euro", TAG), "Bußgeld bis 25.000 €"); assert.equal(hmFeld(hmMitId("hm_ausweis"), "euro", TAG), "Bußgeld bis 5.000 €");
   assert.match(hmMitId("hm_ausweis").quelle, /§ 2a/);
 });
 
@@ -92,6 +95,8 @@ test("hm_midijob: an ab 90 % der Minijob-Grenze des Datums (2027: 633 €), Satz
   s.schichten = tage(10); // 40 h × 14,60 = 584 € ≥ 569,70 €
   assert.equal(an(s, "hm_midijob"), true);
   assert.match(hmAusgeloest(s, { datum: TAG }).find((h) => h.id === "hm_midijob").satz, /633 €/);
+  assert.match(hmFeld(hmMitId("hm_midijob"), "genau", TAG, s), /bis 2\.000 € im Monat\. Grenze heute: 633 €\.$/, "ab 2027: keine spätere Grenze");
+  assert.match(hmFeld(hmMitId("hm_midijob"), "genau", "2026-11-12", s), /Grenze heute: 603 €, ab 01\.01\.2027: 633 €\.$/, "2026: die nächste mit Datum");
   s.personen[0].lohnArt = "angestellt"; assert.equal(an(s, "hm_midijob"), false, "nur Minijobber");
 });
 
@@ -99,7 +104,7 @@ test("hm_gema: an nur mit Angabe „Musik: ja“; Tarif aus der Quelle", () => {
   const s = laden(); assert.equal(an(s, "hm_gema"), false);
   hmFrageSetzen(s, "musik", true); assert.equal(an(s, "hm_gema"), true);
   hmFrageSetzen(s, "musik", false); assert.equal(an(s, "hm_gema"), false);
-  assert.match(hmMitId("hm_gema").euro, /395,90 € netto/); assert.match(hmMitId("hm_gema").quelle, /GEMA Tarifübersicht Gaststätten 2026/);
+  assert.match(hmFeld(hmMitId("hm_gema"), "euro", TAG), /395,90 € netto/); assert.match(hmMitId("hm_gema").quelle, /GEMA Tarifübersicht Gaststätten 2026/);
 });
 
 test("hm_rundfunk: an ab 9 Personen ohne Minijob, Minijobber zählen nicht", () => {
@@ -107,7 +112,7 @@ test("hm_rundfunk: an ab 9 Personen ohne Minijob, Minijobber zählen nicht", () 
   assert.equal(an(s, "hm_rundfunk"), false);
   s.personen.push(person("m1", { lohnArt: "minijob" })); assert.equal(an(s, "hm_rundfunk"), false, "Minijobber zählt nicht");
   s.personen.push(person("a9")); assert.equal(an(s, "hm_rundfunk"), true);
-  assert.match(hmMitId("hm_rundfunk").euro, /18,36 €/);
+  assert.match(hmFeld(hmMitId("hm_rundfunk"), "euro", TAG), /18,36 € statt 6,12 €/); assert.match(hmFeld(hmMitId("hm_rundfunk"), "genau", TAG), /Stufe 0 bis 8 Beschäftigte: 6,12 € im Monat, 9 bis 19: 18,36 €/);
 });
 
 test("hm_lucid: an bei Abholung, Lieferung oder Portal; aus nur vor Ort", () => {

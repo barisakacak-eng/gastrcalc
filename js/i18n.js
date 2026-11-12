@@ -3,6 +3,7 @@ import de from "./lang/de.js";
 import tr from "./lang/tr.js";
 import en from "./lang/en.js";
 import { artikelAnzeige, gerichtAnzeige, mengenName } from "./data/artikelnamen.js";
+import { fuelleRegeln } from "./regeltext.js";
 
 // Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
 // wenn jemand sie wählt (15.10.2026: 18 Sprachen, die App bleibt trotzdem klein und schnell).
@@ -45,7 +46,7 @@ export function t(pfad, ...args) {
   let v = hole(TABELLEN[aktiv], pfad);
   if (v === undefined) v = hole(de, pfad);
   if (v === undefined) return pfad;
-  return typeof v === "function" ? v(...args) : v;
+  return fuelleRegeln(typeof v === "function" ? v(...args) : v); // Fachwerte stehen als {regel_id} im Text und kommen aus dem Regelwerk (js/regeltext.js)
 }
 
 // Menütafel (18.10.2026): Text in einer bestimmten Sprache (die Sprache der Tafel, nicht die der App). Nicht geladen → Deutsch.
@@ -53,11 +54,11 @@ export function tIn(code, pfad, ...args) {
   let v = hole(TABELLEN[code] || de, pfad);
   if (v === undefined) v = hole(de, pfad);
   if (v === undefined) return pfad;
-  return typeof v === "function" ? v(...args) : v;
+  return fuelleRegeln(typeof v === "function" ? v(...args) : v);
 }
 
 // Alle Sprachen eines Schlüssels (für dreisprachige Kacheln): { de, tr, en }.
-export function tAlle(pfad) { const out = {}; for (const c of SPRACHEN) { const v = hole(TABELLEN[c], pfad); out[c] = typeof v === "string" ? v : hole(de, pfad); } return out; }
+export function tAlle(pfad) { const out = {}; for (const c of SPRACHEN) { const v = hole(TABELLEN[c], pfad); out[c] = fuelleRegeln(typeof v === "string" ? v : hole(de, pfad)); } return out; }
 
 // Selbstprüfung: fehlende Schlüssel je Sprache (für die Entwicklung, läuft in den Tests).
 export function fehlendeSchluessel(code) {

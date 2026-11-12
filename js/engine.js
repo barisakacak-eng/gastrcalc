@@ -1,4 +1,5 @@
 import { festPersonalMonat, LOHN_AUFSCHLAG } from "./data/lohnkosten.js";
+import { regel, wert as regelwert } from "./data/regelwerk.js";
 import { mindestlohnAm } from "./data/mindestlohn.js";
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
@@ -29,7 +30,7 @@ export function betragJeMonat(posten, betrieb = null) {
 
 // Eigener Lohn (Etappe 5, Wunsch Baris 12.10.): eigene Kostenzeile, damit der Zähler erst grün wird, wenn auch der Chef bezahlt ist.
 // Richtwert: gesetzlicher Mindestlohn (js/data/mindestlohn.js, nach Datum) × 173 Std, auf 50 € gerundet – als Schätzung gekennzeichnet,
-// der Wirt überschreibt. 2026: 13,90 × 173 = 2.404,70 → 2.400 €. Ab 01.01.2027: 14,60 × 173 = 2.525,80 → 2.550 € (Masterauftrag 1.1).
+// der Wirt überschreibt. Der Satz je Tag steht im Regelwerk (mindestlohn), × 173 Std, auf 50 € gerundet (Masterauftrag 1.1).
 export const EIGENER_LOHN_STUNDEN = 173;
 export const eigenerLohnRichtwert = (datum = heuteGeschaeft()) => Math.round(mindestlohnAm(datum).satz * EIGENER_LOHN_STUNDEN / 50) * 50;
 export const EIGENER_LOHN_RICHTWERT = eigenerLohnRichtwert("2026-01-01"); // Wert 2026, nur noch für alte Tests; die App nimmt eigenerLohnRichtwert(datum)
@@ -579,8 +580,8 @@ export function wareneinsatzWarnung(quote) {
 
 // Paket 3 (16.10.2026), M15/E2: Branchen-Richtwert Wareneinsatz, wenn weder Belege noch eine Karte mit Einkaufspreisen eine Quote liefern.
 // Quelle (geprüft 16.10.2026): BMF-Richtsatzsammlung für das Kalenderjahr 2025, Gewerbeklasse „Imbissstuben u. Ä.“ (56103.0/56109.0),
-// Rohgewinn I 59–68–77 % des wirtschaftlichen Umsatzes → Wareneinsatz 23–32–41 %, Mittel 32 %. Immer als Schätzung (≈) gekennzeichnet.
-export const RICHTWERT_WARENEINSATZ = { quote: 0.32, min: 0.23, max: 0.41, quelle: "BMF-Richtsatzsammlung Kalenderjahr 2025, Imbissstuben u. Ä. (56103.0)", stand: "2026-10-16" };
+// Rohgewinn I (Mittel und Grenzen) → Wareneinsatz: die Werte stehen im Regelwerk (richtsatz_wareneinsatz, _min, _max). Immer als Schätzung (≈) gekennzeichnet.
+export const RICHTWERT_WARENEINSATZ = { quote: regelwert("richtsatz_wareneinsatz", "2026-12-31"), min: regelwert("richtsatz_wareneinsatz_min", "2026-12-31"), max: regelwert("richtsatz_wareneinsatz_max", "2026-12-31"), quelle: "BMF-Richtsatzsammlung Kalenderjahr 2025, Imbissstuben u. Ä. (56103.0)", stand: "2026-10-16" };
 
 // Einheit wechseln, Zahl mitnehmen: 180 g -> 0,18 kg, 10 kg -> 10000 g (Review Etappe 2, Punkt 5).
 export function mengeUmrechnen(menge, von, nach) {
@@ -601,16 +602,23 @@ import { reinigungMonat } from "./reinigung.js";
 // Etappe 5: drei Wege in zwei Tipps – gericht (Teller weg), rohware (Artikel weg), eimer (nur gewogen). Alte Arten bleiben lesbar.
 export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3, ausgegeben: 4 }; // ausgegeben (27.10.2026): Essen, das der Chef Gästen ausgibt – nicht im Pauschbetrag
 export const FRAKTIONEN = ["bio", "rest", "verpackung", "glas", "papier", "fett"];
-// Sachbezugswerte 2026 (SvEV): 345 € je Monat, kalendertäglich 11,50 €, Frühstück 2,37 €, Mittag und Abend je 4,57 € (Prüfung Teil 3).
-// Pauschbetrag unentgeltliche Wertabgaben 2026, Gaststätten aller Art mit kalten und warmen Speisen, je Person und Jahr netto
-// (3.173 € zu 7 % + 828 € zu 19 %): BMF-Schreiben vom 23.12.2025, IV D 3 - S 1547/00006/007/021 – gelesen bei steuerschroeder.de
-// (Rechtsstand 02.07.2026) und steuertipps.de, Abruf 20.10.2026. Nur zum Vergleich im Steuer-Ordner, keine Buchung (Baris 20.10.2026: P1).
-export const PAUSCHBETRAG_EIGEN_2026 = 4001;
-export const SVEV_2026 = { fruehstueck: 2.37, mittag: 4.57, abend: 4.57, tag: 11.5, monat: 345 };
-// 2027 (Register 28.10.2026, Punkt 6): 17. Änderungsverordnung SvEV, BR-Drs. 503/26 vom 03.09.2026 – Monat 355 €, Frühstück 2,43 €,
-// Mittag/Abend je 4,70 €. Status „geplant“ (Bundesrat-Zustimmung nicht belegt) → geplant: true, Anzeige mit ≈.
-export const SVEV_2027 = { fruehstueck: 2.43, mittag: 4.70, abend: 4.70, tag: 11.83, monat: 355, geplant: true };
-export const svevAm = (datum) => (typeof datum === "string" && datum >= "2027-01-01" ? SVEV_2027 : SVEV_2026);
+// Sachbezugswerte (SvEV) und Pauschbetrag Eigenverbrauch: alle Beträge mit Quelle und Gültigkeit stehen NUR im Regelwerk
+// (js/data/regelwerk.js: sachbezug_fruehstueck, sachbezug_mittag, sachbezug_monat, eigenverbrauch_pauschale). Hier wird nur gelesen.
+// Tageswert = Monatswert ÷ 30 auf zwei Stellen. Mittag und Abend haben denselben Wert. geplant: true = der Eintrag im Regelwerk hat status
+// „geplant“ (Anzeige mit ≈). Die Namen SVEV_2026 / SVEV_2027 / PAUSCHBETRAG_EIGEN_2026 bleiben als Werte für den Stichtag 31.12.2026 bzw. 01.01.2027.
+// Pauschbetrag unentgeltliche Wertabgaben, Gaststätten aller Art mit kalten und warmen Speisen, je Person und Jahr netto: nur zum Vergleich im
+// Steuer-Ordner, keine Buchung (Baris 20.10.2026: P1).
+export const PAUSCHBETRAG_EIGEN_2026 = regelwert("eigenverbrauch_pauschale", "2026-12-31");
+const SVEV_TABELLEN = new Map(); // gleiche Inhalte = dasselbe Objekt
+function svevTabelle(tag) {
+  const mo = regel("sachbezug_monat", tag), fr = regel("sachbezug_fruehstueck", tag), mi = regel("sachbezug_mittag", tag);
+  const x = { fruehstueck: fr.wert, mittag: mi.wert, abend: mi.wert, tag: Math.round(mo.wert / 30 * 100) / 100, monat: mo.wert };
+  if (fr.status === "geplant" || mi.status === "geplant" || mo.status === "geplant") x.geplant = true;
+  const k = JSON.stringify(x); if (!SVEV_TABELLEN.has(k)) SVEV_TABELLEN.set(k, x); return SVEV_TABELLEN.get(k);
+}
+export const SVEV_2026 = svevTabelle("2026-12-31");
+export const SVEV_2027 = svevTabelle("2027-01-01");
+export const svevAm = (datum) => svevTabelle(typeof datum === "string" && /^\d{4}-\d{2}-\d{2}/.test(datum) ? datum.slice(0, 10) : "2026-12-31");
 // Trennung 2 (17.10.2026): Sachbezug eines Personalessens = Menge × Satz der Mahlzeit (ohne Mahlzeit: Mittag). Vorher zweimal im Bildschirm.
 // 28.10.2026: Satz nach dem Datum des Essens (ohne Datum: heute).
 export const sachbezugWert = (menge, mahlzeit, datum = heuteGeschaeft()) => { const t = svevAm(datum); return (Number(menge) || 0) * (t[mahlzeit] ?? t.mittag); };

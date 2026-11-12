@@ -19,7 +19,7 @@ export function hmBlock(stand, sp, datum = heute()) {
   const { karten } = hmFuerBuero(stand, { datum }); const fragen = hmOffeneFragen(stand); const n = hmErledigtZahl(stand);
   if (!karten.length && !fragen.length && !n) return "";
   const knopf = (id, st, key) => `<button type="button" class="knopf zweit" data-a="hm-status" data-id="${esc(id)}" data-status="${st}">${esc(u(key))}</button>`;
-  const karte = (h0, i) => { const h = hmAnzeige(h0, sp, h0.werte);
+  const karte = (h0, i) => { const h = hmAnzeige(h0, sp, h0.werte, datum);
     return `<details class="karte hinweiskarte hm-karte ${h.frist ? "frist" : ""}" data-hm="${esc(h.id)}" ${i === 0 ? "open" : ""}>
       <summary class="hk-kopf"><b>${esc(h.titel)}</b>${h.euro ? `<small dir="auto">${esc(h.euro)}</small>` : ""}</summary>
       <p dir="auto">${esc(h.satz)}</p>

@@ -5,13 +5,15 @@
 // Endet die Schicht vor ihrem Beginn, endet sie am Folgetag (22:00–05:00). Alte Einträge ohne Zeiten bleiben gültig (nur Stunden).
 //
 // Fenster nach § 3b EStG (gesetze-im-internet.de, im Prüfpaket wörtlich geprüft):
-//   Nacht 20–6 Uhr 25 %; 0–4 Uhr 40 %, wenn die Arbeit vor 0 Uhr begonnen hat (Abs. 3 Nr. 1)
-//   Sonntag 0–24 Uhr 50 %; gesetzlicher Feiertag und 31.12. ab 14 Uhr 125 %; 24.12. ab 14 Uhr, 25./26.12. und 1. Mai 150 %
+//   Nacht (Beginn und Ende der Nacht im Regelwerk: nacht_beginn_uhr, nacht_ende_uhr) mit Zuschlag zuschlag_nacht; 0–4 Uhr zuschlag_nacht_0_4, wenn die Arbeit vor 0 Uhr begonnen hat (Abs. 3 Nr. 1)
+//   Sonntag 0–24 Uhr zuschlag_sonntag; gesetzlicher Feiertag und 31.12. ab 14 Uhr zuschlag_feiertag; 24.12. ab 14 Uhr, 25./26.12. und 1. Mai zuschlag_weihnachten
+//   Alle Sätze stehen NUR im Regelwerk (js/data/regelwerk.js); hier wird nur gelesen. Die Stufen heißen weiter 50 / 125 / 150 (Prozent), die Zähler nacht25 / nacht40 (Namen der Felder).
 //   Begann die Arbeit vor 0 Uhr, gelten 0–4 Uhr des Folgetags noch als Sonn- oder Feiertag des Vortags (Abs. 3 Nr. 2).
 // Zählregel (Prüfpaket D): jede Stunde zählt in genau einem der Fenster Sonntag / 125 % / 150 %, immer im höchsten; die Nacht zählt zusätzlich.
 // Feiertage nach dem Land des Ladens (Standard BW; 31.12. ist in BW kein Feiertag).
 import { feiertagAm } from "./feiertage.js";
 import { MINDESTLOHN, mindestlohnAm } from "./data/mindestlohn.js";
+import { wert } from "./data/regelwerk.js";
 
 const z2 = (n) => String(n).padStart(2, "0");
 const plus = (tag, n) => { const [j, m, d] = tag.split("-").map(Number); const x = new Date(Date.UTC(j, m - 1, d + n)); return `${x.getUTCFullYear()}-${z2(x.getUTCMonth() + 1)}-${z2(x.getUTCDate())}`; };
@@ -27,11 +29,12 @@ export function schichtStunden(von, bis) {
 export const eintragStunden = (x) => schichtStunden(x?.von, x?.bis) ?? (Number(x?.stunden) || 0);
 
 // Sonn-/Feiertagsstufe einer Minute an einem Kalendertag: 0 keine, 50 Sonntag, 125, 150
+const prozent = (id, tag) => Math.round(wert(id, tag) * 100);
 function stufe(tag, minuteImTag, land) {
   const md = tag.slice(5); const f = feiertagAm(tag, land);
-  if (md === "12-25" || md === "12-26" || md === "05-01" || (md === "12-24" && minuteImTag >= 14 * 60)) return 150;
-  if (f || (md === "12-31" && minuteImTag >= 14 * 60)) return 125;
-  if (wochentag(tag) === 0) return 50;
+  if (md === "12-25" || md === "12-26" || md === "05-01" || (md === "12-24" && minuteImTag >= 14 * 60)) return prozent("zuschlag_weihnachten", tag);
+  if (f || (md === "12-31" && minuteImTag >= 14 * 60)) return prozent("zuschlag_feiertag", tag);
+  if (wochentag(tag) === 0) return prozent("zuschlag_sonntag", tag);
   return 0;
 }
 
@@ -39,14 +42,16 @@ function stufe(tag, minuteImTag, land) {
 export function schichtZaehler(datum, von, bis, { land = "BW" } = {}) {
   const a = minuten(von), dauer = schichtStunden(von, bis); const z = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
   if (a === null || dauer === null) return z;
+  const nachtAb = wert("nacht_beginn_uhr", datum) * 60, nachtBis = wert("nacht_ende_uhr", datum) * 60; // Nacht nach dem Tag der Schicht
+  const sSo = prozent("zuschlag_sonntag", datum), sFt = prozent("zuschlag_feiertag", datum), sWe = prozent("zuschlag_weihnachten", datum);
   for (let m = 0; m < Math.round(dauer * 60); m++) { // je Minute: genau, auch bei 23:30
     const abs = a + m; const tagN = Math.floor(abs / 1440); const tag = tagN ? plus(datum, tagN) : datum; const mt = abs % 1440;
     const vorNullBegonnen = tagN > 0; // die Schicht hat vor 0 Uhr dieses Tages begonnen
     // Nacht
-    if (vorNullBegonnen && mt < 4 * 60) z.nacht40 += 1; else if (mt >= 20 * 60 || mt < 6 * 60) z.nacht25 += 1;
+    if (vorNullBegonnen && mt < 4 * 60) z.nacht40 += 1; else if (mt >= nachtAb || mt < nachtBis) z.nacht25 += 1;
     // Sonn-/Feiertag: höchste Stufe; 0–4 Uhr nach Beginn vor 0 Uhr zählt auch die Stufe des Vortags (Ende des Vortags)
     let s = stufe(tag, mt, land); if (vorNullBegonnen && mt < 4 * 60) s = Math.max(s, stufe(plus(tag, -1), 1439, land));
-    if (s === 150) z.feiertag150 += 1; else if (s === 125) z.feiertag125 += 1; else if (s === 50) z.sonntag += 1;
+    if (s === sWe) z.feiertag150 += 1; else if (s === sFt) z.feiertag125 += 1; else if (s === sSo) z.sonntag += 1;
     z.gesamt += 1;
   }
   for (const k of Object.keys(z)) z[k] = Math.round((z[k] / 60) * 100) / 100;
@@ -80,7 +85,7 @@ export function schichtEintragen(stand, { datum, person, von, bis, jetzt = new D
   const e = { id: `s-${datum}-${person}-${stand.schichten.length}`, datum, person, von: a, bis: b, erfasst: jetzt, storniert: false };
   stand.schichten.push(e); return e;
 }
-// Minijob-Wächter: Stunden bis zur Grenze, abgerundet auf 0,01 h (Prüfpaket D: 43,36 h × 14,60 € = 633,06 € läge schon darüber)
+// Minijob-Wächter: Stunden bis zur Grenze, abgerundet auf 0,01 h (Prüfpaket D: 43,36 h zum Satz 2027 läge schon über der Grenze)
 export function minijobGrenzeStunden(datum, satz = null) {
   const m = mindestlohnAm(datum); const s = satz > 0 ? satz : m.satz;
   return Math.floor(Math.round((m.minijob / s) * 1e6) / 1e4) / 100;
@@ -88,18 +93,18 @@ export function minijobGrenzeStunden(datum, satz = null) {
 export const MINIJOB_QUELLE = MINDESTLOHN; // Werte mit Quelle: js/data/mindestlohn.js
 
 // 70-Tage-Zähler kurzfristige Beschäftigung (§ 8 Abs. 1 Nr. 2 SGB IV): Arbeitstage im Kalenderjahr. Nur Zähler, kein Urteil –
-// bei 5 oder mehr Tagen je Woche kann statt 70 Tagen die 3-Monats-Grenze gelten (laut Prüfpaket nicht im Original gelesen).
-export const KURZFRISTIG_TAGE = 70;
+// bei 5 oder mehr Tagen je Woche kann statt der Tage-Grenze die 3-Monats-Grenze gelten (laut Prüfpaket nicht im Original gelesen).
+export const KURZFRISTIG_TAGE = wert("kurzfristig_tage", "2026-12-31"); // Regelwerk: kurzfristig_tage
 export function tageZaehler(bisherTage, neueTage) {
   const n = (Number(bisherTage) || 0) + new Set(neueTage || []).size;
   return { tage: n, grenze: KURZFRISTIG_TAGE, rest: Math.max(0, KURZFRISTIG_TAGE - n) };
 }
-// Arbeitszeit-Aufzeichnung Gaststätten (§ 17 MiLoG i. V. m. § 2a SchwarzArbG): Beginn, Ende, Dauer spätestens am 7. Tag, 2 Jahre aufbewahren
-export const AUFZEICHNUNG_TAGE = 7, AUFBEWAHRUNG_JAHRE = 2;
-export const aufzeichnungFaellig = (arbeitstag) => plus(arbeitstag, AUFZEICHNUNG_TAGE);
+// Arbeitszeit-Aufzeichnung Gaststätten (§ 17 MiLoG i. V. m. § 2a SchwarzArbG): Beginn, Ende, Dauer bis zur Frist, dann aufbewahren (Regelwerk: arbeitszeit_frist_tage, arbeitszeit_aufheben_jahre)
+export const AUFZEICHNUNG_TAGE = wert("arbeitszeit_frist_tage", "2026-12-31"), AUFBEWAHRUNG_JAHRE = wert("arbeitszeit_aufheben_jahre", "2026-12-31");
+export const aufzeichnungFaellig = (arbeitstag) => plus(arbeitstag, wert("arbeitszeit_frist_tage", arbeitstag));
 
-// Arbeitszeit-Liste (W3b, 04.11.2026) für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am 7. Tag
-// nach dem Arbeitstag erfasst (§ 17 Abs. 1 MiLoG; Gaststätten nach § 2a SchwarzArbG). Einträge nur mit Stunden zeigen „ohne Zeiten“ – sie zählen,
+// Arbeitszeit-Liste (W3b, 04.11.2026) für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am Tag der Frist
+// (arbeitszeit_frist_tage) nach dem Arbeitstag erfasst (§ 17 Abs. 1 MiLoG; Gaststätten nach § 2a SchwarzArbG). Einträge nur mit Stunden zeigen „ohne Zeiten“ – sie zählen,
 // erfüllen die Aufzeichnung aber nicht. Nur eine Liste, keine Bewertung.
 export function arbeitszeitListe(stand, von, bis) {
   const name = (id, fallback) => { const p = (stand.personen || []).find((q) => q.id === id); return p?.kuerzel || p?.name || fallback || "–"; };

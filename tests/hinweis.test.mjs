@@ -2,6 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { leererBetrieb } from "../js/store.js";
+import { fuelleRegeln } from "../js/regeltext.js";
 import { HINWEISE, AUSLOESER, hinweiseFuer, hinweiseAnzahl, hinweisStatusSetzen, hinweisPruefen, hinweisMitId, KNOPF } from "../js/hinweis.js";
 
 function laden() { const b = leererBetrieb(); b.betrieb = { name: "Test", format: "imbiss" }; return b; }
@@ -93,7 +94,7 @@ test("Hinweis-Texte en/tr: jede geprüfte Karte übersetzt, höchstens 25 Wörte
       assert.match(x.satz, pflicht, `${sp} ${h.id}: Steuerberater-Satz fehlt`);
       assert.ok(!verboten.test(x.titel + " " + x.satz), `${sp} ${h.id}: verbotenes Wort`);
       assert.ok(x.titel.split(/\s+/).length <= 5, `${sp} ${h.id}: Titel zu lang`);
-      const a = hinweisAnzeige(h, sp); assert.equal(a.quelle, h.quelle); assert.equal(a.titel, x.titel);
+      const a = hinweisAnzeige(h, sp, "2026-11-12"); assert.equal(a.quelle, h.quelle); assert.equal(a.titel, fuelleRegeln(x.titel, "2026-11-12")); assert.doesNotMatch(a.titel + a.satz, /\{/, `${sp} ${h.id}: Platzhalter ungefüllt`);
     }
     assert.equal(Object.keys(HINWEIS_TEXTE[sp]).length, HINWEISE.length, `${sp}: verwaiste Übersetzungen`);
   }

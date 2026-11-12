@@ -4,6 +4,7 @@
 import { umsatzEintrag, umsatzSteuerSatz, fixkosten, monatsLast } from "./engine.js";
 import { belege, monatVon, monatPlus } from "./export_steuer.js";
 import { warenQuote } from "./zaehler.js";
+import { wert } from "./data/regelwerk.js";
 
 const rund2 = (n) => Math.round(n * 100) / 100;
 const rund4 = (n) => Math.round(n * 10000) / 10000;
@@ -92,9 +93,10 @@ export function monatsPosten(stand, monat) {
 }
 
 // ---------- 3.5 Prüfer-Blick ----------
-// Richtsatzsammlung 2025 (BMF-Schreiben 25.06.2026), Zeile „Imbissstuben u. Ä.“, laut Wiedergabe (Original gesperrt): Rohgewinn I Mittel 68 %,
-// Rohaufschlag Mittel 213 %. Nur Orientierung mit Quelle, nie Urteil. Quelle und Datum stehen hier, damit die Oberfläche sie zeigt.
-export const RICHTSATZ_IMBISS = { rohgewinn1: 0.68, rohaufschlag: 2.13, quelle: "Richtsatzsammlung 2025, BMF 25.06.2026, Imbissstuben u. Ä. (Mittelwerte)", stand: "2026-06-25" };
+// Richtsatzsammlung 2025 (BMF-Schreiben 25.06.2026), Zeile „Imbissstuben u. Ä.“, laut Wiedergabe (Original gesperrt): Rohgewinn I Mittel = 1 − Wareneinsatz,
+// Rohaufschlag Mittel. Die Werte stehen im Regelwerk (richtsatz_wareneinsatz, richtsatz_rohaufschlag). Nur Orientierung mit Quelle, nie Urteil.
+// Quelle und Datum stehen hier, damit die Oberfläche sie zeigt.
+export const RICHTSATZ_IMBISS = { rohgewinn1: rund4(1 - wert("richtsatz_wareneinsatz", "2026-12-31")), rohaufschlag: wert("richtsatz_rohaufschlag", "2026-12-31"), quelle: "Richtsatzsammlung 2025, BMF 25.06.2026, Imbissstuben u. Ä. (Mittelwerte)", stand: "2026-06-25" };
 export const NOTIZ_AB_PUNKTEN = 2; // Setzung Prüfpaket Welle 3 (28.10.2026): ab 2 Punkten Abweichung zum Vormonat ist die Notiz „Warum?“ Pflicht
 
 // Reine Rechnung (Goldwert-Test): posten { umsatzNetto, ware }, Quote des Vormonats (0–1) oder null

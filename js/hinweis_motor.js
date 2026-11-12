@@ -12,7 +12,9 @@
 // Rein: schreibt nur stand.betrieb.hmAngaben (Bereich betrieb) über die Funktionen unten.
 import { aktivePersonen, belehrungen } from "./export_amt.js";
 import { arbeitszeitListe, schichtStunden } from "./schichten.js";
-import { mindestlohnAm } from "./data/mindestlohn.js";
+import { mindestlohnAm, naechsteErhoehung } from "./data/mindestlohn.js";
+import { wert } from "./data/regelwerk.js";
+import { fuelleRegeln } from "./regeltext.js";
 import { monatsZahlen, eingefroren } from "./monatsabschluss.js";
 import { PERSONEN, rechtsform } from "./rechtsform.js";
 import { istHauptzeit } from "./offen.js";
@@ -99,21 +101,21 @@ export const HM_HINWEISE = [
     genau: "Ausgelöst, weil die letzten zwei Monate mit Minus endeten. Anpassen geht bis zum Ende des 15. Monats nach dem Jahr. Kein Anspruch: Das Finanzamt entscheidet. Zu niedrig angesetzt heißt später Nachzahlung.",
     quelle: "§ 37 Abs. 3 EStG", abruf: "2026-10-28", url: "https://www.gesetze-im-internet.de/estg/__37.html",
     ausloeser: (s, d) => zweiMonateMinus(s, d) },
-  { id: "hm_arbeitszeit", katalog: "H2-05", nutzen: 4, frist: true, euro: "Bußgeld bis 30.000 €",
+  { id: "hm_arbeitszeit", katalog: "H2-05", nutzen: 4, frist: true, euro: "Bußgeld bis {bussgeld_arbeitszeit} €",
     titel: "Arbeitszeit aufschreiben",
-    satz: "Beginn, Ende und Dauer jeder Schicht müssen spätestens am 7. Tag notiert sein. In der App fehlen Zeiten. Mit deinem Steuerberater klären.",
-    genau: "Gilt auch für Minijobber. Die Liste zwei Jahre aufheben. Im Büro unter Geld & Finanzamt siehst du, welche Tage fehlen.",
-    quelle: "§ 17 Abs. 1 MiLoG; Bußgeld laut Senatsverwaltung Berlin, Schwarzarbeitsbekämpfung", abruf: "2026-10-28",
-    url: "https://www.gesetze-im-internet.de/milog/__17.html",
+    satz: "Beginn, Ende und Dauer jeder Schicht müssen spätestens am {arbeitszeit_frist_tage}. Tag notiert sein. In der App fehlen Zeiten. Mit deinem Steuerberater klären.",
+    genau: "Gilt auch für Minijobber. Die Liste {arbeitszeit_aufheben_jahre} Jahre aufheben. Im Büro unter Geld & Finanzamt siehst du, welche Tage fehlen.",
+    quelle: "§ 17 Abs. 1, § 21 Abs. 1 Nr. 8 und Abs. 3 MiLoG", abruf: "2026-11-12",
+    url: "https://www.gesetze-im-internet.de/milog/__21.html",
     ausloeser: (s, d) => { const a = arbeitszeitListe(s, tagPlus(d, -13), d); return a.ohneZeiten > 0 || a.spaet > 0; } },
-  { id: "hm_sofortmeldung", katalog: "H2-03", nutzen: 5, frist: true, proPerson: true, euro: "Bußgeld bis 25.000 €",
+  { id: "hm_sofortmeldung", katalog: "H2-03", nutzen: 5, frist: true, proPerson: true, euro: "Bußgeld bis {bussgeld_sofortmeldung} €",
     titel: "Sofortmeldung vor dem Start",
     satz: "Neue Leute, auch Aushilfen, müssen spätestens beim ersten Arbeitstag gemeldet sein. Das gilt im Gastgewerbe. Mit deinem Steuerberater klären.",
     genau: "Die Sofortmeldung geht an die Rentenversicherung und ersetzt die normale Anmeldung nicht. „Erledigt“ gilt für alle, die heute im Team stehen.",
     quelle: "§ 28a Abs. 4 SGB IV laut Informationsportal Steckbrief Sofortmeldung (Stand 04.07.2022) und DRV-Lexikon", abruf: "2026-10-28",
     url: "https://www.deutsche-rentenversicherung.de/DRV/DE/Experten/Arbeitgeber-und-Steuerberater/summa-summarum/Lexikon/S/sofortmeldung.html",
     ausloeser: (s) => nichtQuittiert(s, "hm_sofortmeldung").length > 0 },
-  { id: "hm_ausweis", katalog: "H2-04", nutzen: 6, frist: true, proPerson: true, euro: "Bußgeld bis 5.000 €",
+  { id: "hm_ausweis", katalog: "H2-04", nutzen: 6, frist: true, proPerson: true, euro: "Bußgeld bis {bussgeld_ausweis} €",
     titel: "Ausweis-Hinweis schriftlich",
     satz: "Sag neuen Leuten vor dem ersten Tag schriftlich, dass sie den Ausweis mitführen müssen. Nachweis aufheben. Mit deinem Steuerberater klären.",
     genau: "Den Nachweis so lange aufheben, wie die Person bei dir arbeitet. Kopie in die Personalakte. „Erledigt“ gilt für alle, die heute im Team stehen.",
@@ -123,24 +125,24 @@ export const HM_HINWEISE = [
   { id: "hm_midijob", katalog: "H2-07", nutzen: 7, frist: true,
     titel: "Minijob-Grenze erreicht",
     satz: "Ein Minijob-Lohn liegt nahe an der Grenze von {grenze} € im Monat. Darüber wird es ein Midijob mit Beiträgen. Mit deinem Steuerberater klären.",
-    genau: "Übergangsbereich (Midijob) bis 2.000 € im Monat. Grenze 2026: 603 €, ab 2027: 633 €.",
+    genau: "Übergangsbereich (Midijob) bis {midijob_obergrenze} € im Monat. Grenze heute: {grenze} €{naechste}.",
     quelle: "Deutsche Rentenversicherung, Pressemeldung 23.02.2026; Grenze 2027 laut Haufe Gesetzesradar", abruf: "2026-10-28",
     url: "https://www.deutsche-rentenversicherung.de/DRV/DE/Ueber-uns-und-Presse/Presse/Meldungen/2026/260223-minijob-midijob-verdienstgrenzen-steigen.html",
-    ausloeser: (s, d) => minijobNahe(s, d), werte: (s, d) => ({ grenze: mindestlohnAm(d).minijob }) },
-  { id: "hm_gema", katalog: "B_gema", nutzen: 8, frage: "musik", euro: "Tarif 2026: 395,90 € netto im Jahr (Gaststätte bis 100 m², Radio)",
+    ausloeser: (s, d) => minijobNahe(s, d), werte: (s, d) => { const n = naechsteErhoehung(d); return { grenze: mindestlohnAm(d).minijob, naechste: n ? `, ab ${n.ab.split("-").reverse().join(".")}: ${n.minijob} €` : "" }; } },
+  { id: "hm_gema", katalog: "B_gema", nutzen: 8, frage: "musik", euro: "Tarif 2026: {gema_radio_jahr} € netto im Jahr (Gaststätte bis 100 m², Radio)",
     titel: "Musik braucht Lizenz",
     satz: "Hören Gäste Radio oder Musik, brauchst du vorher eine GEMA-Lizenz. Der Rundfunkbeitrag ersetzt sie nicht. Mit deinem Steuerberater klären.",
     genau: "Mit Gesamtvertrag über einen Verband gibt es 20 % Nachlass. Welcher Verband, steht nicht in der Quelle.",
     quelle: "GEMA Tarifübersicht Gaststätten 2026; IHK Konstanz", abruf: "2026-10-28",
     url: "https://www.gema.de/documents/d/guest/user_upload-dokumente-musiknutzer-tarife-tarife_ad-tarifuebersicht_gaststaetten-pdf",
     ausloeser: (s) => istJa(hmAngaben(s).musik) },
-  { id: "hm_rundfunk", katalog: "B_rundfunk", nutzen: 9, euro: "18,36 € statt 6,12 € im Monat je Laden",
+  { id: "hm_rundfunk", katalog: "B_rundfunk", nutzen: 9, euro: "{rundfunk_voll} € statt {rundfunk_drittel} € im Monat je Laden",
     titel: "Rundfunkbeitrag prüfen",
-    satz: "Ab 9 Beschäftigten mit Sozialversicherung steigt der Rundfunkbeitrag je Laden. Minijobber und du zählen nicht. Mit deinem Steuerberater klären.",
-    genau: "Stufe 0 bis 8 Beschäftigte: 6,12 € im Monat, 9 bis 19: 18,36 €. Änderungen bis 31. März melden. Erstes Auto je Laden frei.",
+    satz: "Ab {rundfunk_stufe_ab} Beschäftigten mit Sozialversicherung steigt der Rundfunkbeitrag je Laden. Minijobber und du zählen nicht. Mit deinem Steuerberater klären.",
+    genau: "Stufe 0 bis {rundfunk_stufe_bis} Beschäftigte: {rundfunk_drittel} € im Monat, {rundfunk_stufe_ab} bis 19: {rundfunk_voll} €. Änderungen bis 31. März melden. Erstes Auto je Laden frei.",
     quelle: "Bayernportal Rundfunkbeitrag für Betriebsstätten (ohne Seitendatum); IHK München", abruf: "2026-10-28",
     url: "https://www.bayernportal.de/dokumente/leistung/6293692188184",
-    ausloeser: (s) => angestellte(s).length >= 9 },
+    ausloeser: (s, d) => angestellte(s).length >= wert("rundfunk_stufe_ab", d) },
   { id: "hm_lucid", katalog: "B_lucid", nutzen: 10,
     titel: "Verpackungsregister LUCID",
     satz: "Gibst du Essen in Kartons, Bechern oder Tüten mit, musst du dich vorher im Verpackungsregister LUCID eintragen. Mit deinem Steuerberater klären.",
@@ -150,7 +152,7 @@ export const HM_HINWEISE = [
     ausloeser: (s) => ausserHaus(s) },
   { id: "hm_belehrung", katalog: "H2-06", nutzen: 11,
     titel: "Belehrung erneuern",
-    satz: "Wer mit Lebensmitteln arbeitet, braucht alle zwei Jahre eine Folgebelehrung. Bei mindestens einer Person ist sie bald fällig oder fehlt. Mit deinem Steuerberater klären.",
+    satz: "Wer mit Lebensmitteln arbeitet, braucht alle {belehrung_jahre} Jahre eine Folgebelehrung. Bei mindestens einer Person ist sie bald fällig oder fehlt. Mit deinem Steuerberater klären.",
     genau: "Die Folgebelehrung darfst du selbst machen. Die Erstbelehrung kommt vom Gesundheitsamt. Daten trägst du im Amt-Ordner ein.",
     quelle: "§ 43 Abs. 4 IfSG laut IHK Karlsruhe, Pflichtschulungen im Lebensmittelbereich", abruf: "2026-10-28",
     url: "https://www.ihk.de/karlsruhe/fachthemen/tourismus-gastronomie/pflichtschulungen-im-lebensmittelbereich-4175492",
@@ -179,7 +181,11 @@ export const HM_WEGGELASSEN = [
 ];
 
 const passtRechtsform = (h, stand) => !h.rechtsformen || h.rechtsformen.includes(rechtsform(stand));
-const satzMitWerten = (h, s, d) => { const w = h.werte ? h.werte(s, d) : {}; return h.satz.replace(/\{(\w+)\}/g, (_, k) => (w[k] ?? "")); };
+// Text eines Hinweises füllen: erst die eigenen Werte des Hinweises (werte: grenze, naechste), dann die Fachwerte aus dem Regelwerk ({regel_id}, js/regeltext.js).
+const feldMitWerten = (h, feld, s, d) => { const w = h.werte ? h.werte(s, d) : {}; const t = h[feld]; return typeof t === "string" ? fuelleRegeln(t.replace(/\{(\w+)\}/g, (m, k) => (k in w ? w[k] : m)), d) : t; };
+const satzMitWerten = (h, s, d) => feldMitWerten(h, "satz", s, d);
+// Für Tests und Anzeige: ein Feld (titel, satz, genau, euro) eines Hinweises mit Werten am Tag datum (stand darf null sein)
+export const hmFeld = (h, feld, datum, stand = null) => feldMitWerten(h, feld, stand, datum);
 
 // Alle Hinweise, deren Auslöser heute greift, mit Status. Ohne Takt, ohne Begrenzung (für Tests und das Büro-Archiv).
 export function hmAusgeloest(stand, { datum }) {
@@ -192,7 +198,7 @@ export function hmAusgeloest(stand, { datum }) {
     // Pro-Person-Hinweise: „erledigt“ gilt nur für quittierte Personen; der Auslöser greift nur bei neuen. Darum hier wieder „offen“.
     const status = h.proPerson && st === "erledigt" ? "offen" : st;
     out.push({ id: h.id, katalog: h.katalog, nutzen: h.nutzen, frist: !!h.frist, geld: !!h.geld, titel: h.titel, satz: satzMitWerten(h, stand, datum),
-      genau: h.genau, euro: h.euro || null, werte: h.werte ? h.werte(stand, datum) : {}, quelle: h.quelle, abruf: h.abruf, url: h.url, status, gezeigt: a.gezeigt[h.id] || null });
+      genau: feldMitWerten(h, "genau", stand, datum), euro: h.euro ? feldMitWerten(h, "euro", stand, datum) : null, werte: h.werte ? h.werte(stand, datum) : {}, quelle: h.quelle, abruf: h.abruf, url: h.url, status, gezeigt: a.gezeigt[h.id] || null });
   }
   return out.sort((x, y) => x.nutzen - y.nutzen);
 }

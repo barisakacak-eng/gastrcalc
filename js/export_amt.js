@@ -6,15 +6,16 @@
 // Belehrungen je Person. Gelesen aus person.belehrungen = [{ datum, art }] UND aus dem Journal stand.belehrungen =
 // [{ id, person, datum: "JJJJ-MM-TT", art: "erst" | "folge", erfasst, storniert }]. Geschrieben wird ins Journal am Laden, weil
 // migrierenBetrieb (store.js) Personen auf wenige Felder zurechtschneidet – person.belehrungen ginge beim Laden verloren.
-// Erstbelehrung macht das Gesundheitsamt (oder ein beauftragter Arzt), danach belehrt der Arbeitgeber alle zwei Jahre (§ 43 Abs. 4 IfSG).
+// Erstbelehrung macht das Gesundheitsamt (oder ein beauftragter Arzt), danach belehrt der Arbeitgeber im Abstand aus dem Regelwerk (belehrung_monate, § 43 Abs. 4 IfSG).
 import { aktiveStellen, grenzenVon, monatsblatt, nachkontrolleStand, abweichungStand, wareEntscheidung, tagPlus, ruhetageAm, ruhetageVerlauf, MASSNAHMEN } from "./engine.js";
 import { aufgabenFuer, nachweis, planAm, putzplanVerlauf, zurueckgenommen } from "./putzplan.js";
 import { AUFGABEN } from "./data/putzplan.js";
 import { ladenArtVon } from "./profil.js";
 import { esc, heute, uid } from "./util.js"; // W2-D: uid für Belehrungen
+import { wert } from "./data/regelwerk.js";
 import { csvText, datumDe, schwund } from "./export_steuer.js";
 
-export const BELEHRUNG_MONATE = 24;  // Folgebelehrung alle zwei Jahre
+export const BELEHRUNG_MONATE = wert("belehrung_monate", "2026-12-31");  // Folgebelehrung, Abstand im Regelwerk (belehrung_monate)
 export const BELEHRUNG_BALD_TAGE = 60; // ab zwei Monaten vorher: „bald fällig“ (Erinnerung im Büro, nicht im Laden)
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const gueltig = (d) => typeof d === "string" && ISO.test(d) && !Number.isNaN(Date.parse(d + "T12:00:00"));
@@ -100,7 +101,7 @@ export function putznachweis(stand, z, { datum = heute() } = {}) {
 }
 
 // ---------- Belehrungen (§ 43 IfSG) ----------
-export function faelligAm(iso, monate = BELEHRUNG_MONATE) {
+export function faelligAm(iso, monate = wert("belehrung_monate", iso)) {
   const [j, m, d] = iso.split("-").map(Number);
   const x = new Date(j, m - 1 + monate, 1); const letzter = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate();
   x.setDate(Math.min(d, letzter)); return heute(x); // 29.02. → 28.02. bzw. Monatsende statt Sprung in den Folgemonat
