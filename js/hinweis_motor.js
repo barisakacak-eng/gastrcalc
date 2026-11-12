@@ -123,7 +123,7 @@ export const HM_HINWEISE = [
   { id: "hm_midijob", katalog: "H2-07", nutzen: 7, frist: true,
     titel: "Minijob-Grenze erreicht",
     satz: "Ein Minijob-Lohn liegt nahe an der Grenze von {grenze} € im Monat. Darüber wird es ein Midijob mit Beiträgen. Mit deinem Steuerberater klären.",
-    genau: "Übergangsbereich (Midijob) bis 2.000 € im Monat. Für dich als Chef wird es meist teurer als die Minijob-Pauschale. Grenze 2026: 603 €, ab 2027: 633 €.",
+    genau: "Übergangsbereich (Midijob) bis 2.000 € im Monat. Grenze 2026: 603 €, ab 2027: 633 €.",
     quelle: "Deutsche Rentenversicherung, Pressemeldung 23.02.2026; Grenze 2027 laut Haufe Gesetzesradar", abruf: "2026-10-28",
     url: "https://www.deutsche-rentenversicherung.de/DRV/DE/Ueber-uns-und-Presse/Presse/Meldungen/2026/260223-minijob-midijob-verdienstgrenzen-steigen.html",
     ausloeser: (s, d) => minijobNahe(s, d), werte: (s, d) => ({ grenze: mindestlohnAm(d).minijob }) },

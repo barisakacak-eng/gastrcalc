@@ -1268,8 +1268,8 @@ root.addEventListener("focusin", (ev) => { const i = ev.target; if (!(i instance
   const vorher = i.value; setTimeout(() => { if (document.activeElement === i && i.value === vorher) { try { i.select(); } catch { /* egal */ } } }, 0); }); // schon getippt: nichts überschreiben
 muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });
 
-// Für Tests und Fehlersuche – nur am eigenen Rechner (localhost/127.0.0.1) oder mit ?test in der Adresse (W2-S, p07 M11)
-if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname) || new URLSearchParams(location.search).has("test"))
+// Für Tests und Fehlersuche – nur am eigenen Rechner (localhost, 127.0.0.1, [::1]). In der echten App gibt es dieses Objekt nicht.
+if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname))
   window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document), fehlerText: () => fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache() }), fehlerLeeren: () => fehlerLeeren(speicherLokal()) };
 
 // Zeki (26.10.2026): Welche Lage Zeki heute schon gesagt hat – nur Anzeige-Komfort im Browser, nicht im Betriebsstand.

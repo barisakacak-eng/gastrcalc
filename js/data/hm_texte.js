@@ -5,19 +5,19 @@ export const HM_UI = {
   de: { kopf: "Was dir zusteht", erledigtZahl: "Erledigt: {n}", quelle: "Quelle", abgerufen: "abgerufen", erledigt: "Erledigt", geklaert: "Mit Steuerberater geklärt",
     passt: "Passt nicht", frageMusik: "Hören Gäste Radio oder Musik?", frageSchwanger: "Ist eine Mitarbeiterin schwanger?", frageSchwangerKlein: "Nur für den Hinweis, ohne Namen.",
     frageElektro: "Letzte Prüfung der Elektrogeräte?", nie: "Noch nie", speichern: "Speichern", ja: "Ja", nein: "Nein",
-    zekiGeld: "Im Büro wartet ein Hinweis, der dir Geld bringen kann.", zekiPflicht: "Im Büro wartet ein wichtiger Hinweis." },
+    zekiGeld: "Im Büro wartet ein Hinweis zu Geld und Pflichten.", zekiPflicht: "Im Büro wartet ein wichtiger Hinweis." },
   tr: { kopf: "Sana ne düşüyor", erledigtZahl: "Tamam: {n}", quelle: "Kaynak", abgerufen: "bakıldı", erledigt: "Tamam", geklaert: "Mali müşavirle konuşuldu",
     passt: "Uymuyor", frageMusik: "Müşteriler radyo veya müzik duyuyor mu?", frageSchwanger: "Hamile bir çalışan var mı?", frageSchwangerKlein: "Sadece hatırlatma için, isimsiz.",
     frageElektro: "Elektrikli aletler en son ne zaman kontrol edildi?", nie: "Hiç", speichern: "Kaydet", ja: "Evet", nein: "Hayır",
-    zekiGeld: "Büroda sana para getirebilecek bir not var.", zekiPflicht: "Büroda önemli bir not var." },
+    zekiGeld: "Büroda para ve yükümlülüklerle ilgili bir not var.", zekiPflicht: "Büroda önemli bir not var." },
   en: { kopf: "What you are owed", erledigtZahl: "Done: {n}", quelle: "Source", abgerufen: "retrieved", erledigt: "Done", geklaert: "Settled with tax advisor",
     passt: "Does not apply", frageMusik: "Do guests hear radio or music?", frageSchwanger: "Is an employee pregnant?", frageSchwangerKlein: "Only for the hint, no names.",
     frageElektro: "Last check of electrical devices?", nie: "Never", speichern: "Save", ja: "Yes", nein: "No",
-    zekiGeld: "A hint in the office could bring you money.", zekiPflicht: "An important hint is waiting in the office." },
+    zekiGeld: "A hint about money and duties is waiting in the office.", zekiPflicht: "An important hint is waiting in the office." },
   ar: { kopf: "ما يحق لك", erledigtZahl: "تم: {n}", quelle: "المصدر", abgerufen: "تاريخ الاطلاع", erledigt: "تم", geklaert: "تم مع المستشار الضريبي",
     passt: "لا ينطبق", frageMusik: "هل يسمع الزبائن راديو أو موسيقى؟", frageSchwanger: "هل توجد موظفة حامل؟", frageSchwangerKlein: "للتنبيه فقط، بدون أسماء.",
     frageElektro: "آخر فحص للأجهزة الكهربائية؟", nie: "أبداً", speichern: "حفظ", ja: "نعم", nein: "لا",
-    zekiGeld: "في المكتب تنبيه قد يجلب لك المال.", zekiPflicht: "في المكتب تنبيه مهم." },
+    zekiGeld: "في المكتب تنبيه عن المال والواجبات.", zekiPflicht: "في المكتب تنبيه مهم." },
 };
 export const hmUi = (sprache, key, werte = {}) => String((HM_UI[sprache] || HM_UI.de)[key] ?? HM_UI.de[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => werte[k] ?? "");
 
