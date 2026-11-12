@@ -111,15 +111,23 @@ export function rechnungsNummerLesen(text) {
   return null;
 }
 
-// Personalessen mit amtlichem Sachbezugswert (SvEV 2026) je Mahlzeit, dazu je Person (wenn der Eintrag eine Person trägt)
+// Personalessen mit amtlichem Sachbezugswert (SvEV 2026) je Mahlzeit; Paket und CSV zeigen nur Summen je Tag und Mahlzeit
 export function personalessen(stand, z) {
   const zeilen = (stand.schwund || []).filter((e) => !e.storniert && e.art === "personal" && imZeitraum(e.datum, z)).sort(nachDatum).map((e) => {
     const je = sachbezugWert(1, e.mahlzeit, e.datum); const menge = Number(e.menge) || 0;
     return { datum: e.datum, gericht: e.ref?.name || "", mahlzeit: e.mahlzeit || "mittag", menge, je, sachbezug: rund2(menge * je), waren: schwundWert(e, stand), person: personName(stand, e.von), ...personAus(stand, e.von) };
   });
-  const jePerson = {};
-  for (const x of zeilen) { const k = x.person || ""; jePerson[k] ??= { anzahl: 0, sachbezug: 0 }; jePerson[k].anzahl += x.menge; jePerson[k].sachbezug += x.sachbezug; }
-  return { zeilen, jePerson, anzahl: zeilen.reduce((s, x) => s + x.menge, 0), sachbezug: zeilen.reduce((s, x) => s + x.sachbezug, 0), ohnePerson: zeilen.filter((x) => !x.person).length };
+  // Lauf 6, E5 (D – Audit P3 C9): In den Paketen steht das Personalessen nur als SUMME je Tag und Mahlzeit, ohne Kürzel der Person
+  // (wer wann was gegessen hat, ist Verhalten einer einzelnen Person und gehört nicht in die Unterlagen). Die Zeilen mit Person bleiben
+  // im Laden-Stand (zeilen, für die Prüfung „Essen ohne Person“); gedruckt und exportiert wird nur `tage`.
+  const tage = [];
+  for (const x of zeilen) {
+    let t = tage.find((y) => y.datum === x.datum && y.mahlzeit === x.mahlzeit);
+    if (!t) { t = { datum: x.datum, mahlzeit: x.mahlzeit, menge: 0, je: x.je, sachbezug: 0, waren: 0 }; tage.push(t); }
+    t.menge += x.menge; t.sachbezug = rund2(t.sachbezug + x.sachbezug);
+    t.waren = t.waren === null || typeof x.waren !== "number" ? null : rund2(t.waren + x.waren);
+  }
+  return { zeilen, tage, anzahl: zeilen.reduce((s, x) => s + x.menge, 0), sachbezug: zeilen.reduce((s, x) => s + x.sachbezug, 0), ohnePerson: zeilen.filter((x) => !x.person).length };
 }
 
 // Müll und Schwund (Vorgang 1, Warenwert netto zum Einkaufspreis) und Eigenverbrauch (Vorgang 3), Summen aus schwundAuswertung
@@ -283,12 +291,14 @@ function teilStand(p, t) {
   return "ok"; // Reinigungsmittel: leer ist erlaubt
 }
 
+// Kopfzeile des Personalessens ohne „Person“ und „Gericht“ (Spalte 2 und 3 der achtspaltigen Kopfzeile aus der Sprachtabelle)
+export const personalKopf = (kopf) => (Array.isArray(kopf) && kopf.length === 8 ? [0, 3, 4, 5, 6, 7].map((i) => kopf[i]) : kopf);
 // CSV je Teil. kopf: übersetzte Spaltenköpfe (von der Ansicht), namen: Übersetzer für Kennungen (art, mahlzeit, stelle, quelle, kennung, hinweis …)
 export function teilCsv(p, teil, kopf, namen = {}) {
   const n = (f, k) => (namen[f] ? namen[f](k) : k);
   if (teil === "umsatz") return csvText(p.umsatz.mitLiefer ? [...kopf, n("liefer", "liefer")] : kopf, p.umsatz.zeilen.map((x) => [datumDe(x.datum), x.brutto, x.nacherfasst ? n("ja", "x") : "", x.geaendert, n("kennung", "notiz"), ...(p.umsatz.mitLiefer ? [x.liefer ?? ""] : [])]));
-  const wer = (x) => (!x.person ? "" : !x.personAus ? x.person : x.personAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.person, x.personAusAm) : n("ausgeschieden", x.person)); // Kürzel ausgeschiedener Mitarbeiter (18.10.2026)
-  if (teil === "personal") return csvText(kopf, p.personal.zeilen.map((x) => [datumDe(x.datum), wer(x), x.gericht, n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 0, 0, 2, 2, 2] });
+  // Lauf 6, E5 (D): Personalessen nur als Summe je Tag und Mahlzeit – die Spalten „Person“ (Kürzel) und „Gericht“ entfallen (Kopf der Sprache: Datum, Person, Gericht, Mahlzeit, Anzahl, je, Sachbezug, Warenwert)
+  if (teil === "personal") return csvText(personalKopf(kopf), p.personal.tage.map((x) => [datumDe(x.datum), n("mahlzeit", x.mahlzeit), x.menge, x.je, x.sachbezug, x.waren]), { dezimal: [0, 0, 0, 2, 2, 2] });
   if (teil === "schwund") return csvText(kopf, p.schwund.zeilen.map((x) => [datumDe(x.datum), n("art", x.art), x.name, x.menge, x.einheit, x.wert, x.grund]), { dezimal: [0, 0, 0, 2, 0, 2] });
   if (teil === "belege") return csvText(kopf, p.belege.zeilen.map((x) => [x.belegNr, datumDe(x.datum), csvCode(x.rechnungNr), x.lieferant, n("stelle", x.stelle), x.netto, x.ust7, x.ust19, x.pfand, x.brutto, x.betriebsmittel, [x.hinweis ? n("hinweis", x.hinweis) : x.klein && namen.kleinbetrag ? namen.kleinbetrag() : "", x.nachgetragen && namen.nachgetragen ? namen.nachgetragen(datumDe(x.nachgetragen)) : ""].filter(Boolean).join(" · ")]));
   if (teil === "inventur") return csvText(kopf, p.inventur.zeilen.map((x) => [datumDe(x.datum), x.wert, x.gezaehlt, x.ohnePreis]), { dezimal: [0, 2, 0, 0] });

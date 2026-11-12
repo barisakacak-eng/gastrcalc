@@ -351,8 +351,8 @@ test("Kürzel ausgeschiedener Mitarbeiter: nicht mehr in Auswahl-Listen (Schicht
   assert.ok(A.ausgeschiedenePersonen(s).some((x) => x.id === "m"), "steht in Einträgen");
   const paket = T.monatsPaket(s, z, "steuer"); const x = paket.personal.zeilen[0];
   assert.deepEqual([x.person, x.personAus, x.personAusAm], ["MZ", true, "2026-10-12"]);
-  assert.match(T.teilCsv(paket, "personal", ["a"], NAMEN), /MZ \(ausgeschieden am 12\.10\.2026\)/);
-  assert.match(A.druckHtml(O.paketDokument(s, paket)), /MZ \(ausgeschieden am 12\.10\.2026\)/);
+  assert.doesNotMatch(T.teilCsv(paket, "personal", ["a"], NAMEN), /MZ/, "Lauf 6, E5 (D): Personalessen in den Paketen nur als Summe, kein Kürzel (auch kein ausgeschiedenes)");
+  assert.doesNotMatch(A.druckHtml(O.paketDokument(s, paket)), /MZ/);
   // nur im Müll/Personalessen benutzt: zählt auch als „steht in Einträgen“
   const s2 = structuredClone(s); s2.messungen = []; assert.ok(A.ausgeschiedenePersonen(s2).some((y) => y.id === "m"));
   // Hinweis im Büro (Kühl-Einrichtung: Personen) – Liste mit Datum und der Satz, dass alte Nachweise bleiben

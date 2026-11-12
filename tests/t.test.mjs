@@ -97,5 +97,5 @@ test("Inventur: 0,00 € oder Waren ohne Preis → prüfen, nie Neubewertung; Pe
     { id: "p2", datum: "2026-09-03", art: "personal", menge: 1, mahlzeit: "mittag", ref: { name: "Döner" }, wert: 2, storniert: false }];
   p = St.monatsPaket(s, Z, "steuer");
   assert.deepEqual(p.personal.zeilen.map((x) => x.person), ["Ayşe", null]); assert.equal(p.personal.ohnePerson, 1); assert.equal(p.stand.personal, "pruefen");
-  const html = druckHtml(paketDokument(s, p)); assert.match(html, /Ayşe: 1/);
+  const html = druckHtml(paketDokument(s, p)); assert.doesNotMatch(html, /Ayşe/, "Lauf 6, E5 (D): Personalessen nur als Summe, kein Kürzel"); assert.match(html, /Personalessen/);
 });
