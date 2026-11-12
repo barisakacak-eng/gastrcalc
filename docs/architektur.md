@@ -110,6 +110,9 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `zeki.js` – Zekis Kopf: welche Lage ist wichtig, welcher Satz passt.
 - `zip.js` – kleines ZIP ohne Fremdbibliothek: schreibt „store“, liest auch „deflate“ (DecompressionStream) und entfernt einen gemeinsamen Ordner; Größengrenzen (200 MB gesamt, 50 MB je Eintrag).
 - `data/` – Branchenwerte, Vorlagen, Datenschutztext (Daten, keine Logik).
+- `data/l6x_texte.js` – neue Sätze aus Lauf 6 (E5-X) in de/tr/ar/en, Abruf `l6x(sprache, schlüssel, …)`; andere Sprachen fallen auf Englisch zurück.
+
+**Eine Stelle je Kennzahl (Lauf 6, E5-X).** „Bis null“/„bis Ziel“ rechnet nur `monatsZiel` (js/zaehler.js, über `heuteZiel`); der laufende Stand (Kosten bis heute) heißt überall „Verlauf“. Warenquote: nur `warenQuote(stand)` mit einem Deckel (`QUOTE_MAX`); Wareneinsatz aus Belegen: nur `wareNettoAusBelegen` (Putzmittel als eigene Zeile). Öffnungstage: nur `oeffnungstage` (js/engine.js, inkl. „an Feiertagen zu“). Fixkosten je Tag: nur `fixkostenJeTag` (Monatskosten geteilt durch die wirklichen Öffnungstage des Kalendermonats). „Wochen je Monat“ (`WOCHEN_JE_MONAT` = 52/12, für Mengen aus der Karte) und „Tage je Monat“ (`TAGE_JE_MONAT` = 30,4, für Mindestlohn-Vorschau und 30-Tage-Fenster) sind zwei bewusst getrennte, dokumentierte Konstanten in js/engine.js; sie zu vereinen würde angezeigte Beträge um ≈ 0,2 % ändern und ist Baris’ Entscheidung. Kostenänderungen gelten ab einem Datum (`kosten[].verlauf`, wie `ruhetageVerlauf`); `kalkulation()` ist rein, Zwischenpreise schreibt nur `zwischenpreiseSetzen`.
 - `lang/` – Sprachtabellen (`de.js` Leitsprache).
 
 ## 5. Module – Bildschirme (`js/screens/`)

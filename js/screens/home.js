@@ -1,3 +1,4 @@
+import { l6x } from "../data/l6x_texte.js"; // Lauf 6 (P1 B1)
 import { l15b, l15bAn } from "../data/l15b_texte.js"; // Lauf 4, Bildpaket L15b (Entwurf hinter window.__gcL15b)
 import { datenschutzText } from "../data/datenschutz.js";
 // Etappe 5: das Cockpit (Startseite) – eine große Zahl, drei kleine, „Jetzt dran", die Woche, die Türen. Dazu „Mehr" und die Karte.
@@ -173,9 +174,10 @@ export function zaehlerKarte(z, H, { tipp = true, ziel = null } = {}) {
   const vorUmsatz = null;
   const monat = monatName(H);
   const grau = z.keinUmsatz;
-  const satz = grau ? t("cockpit.keinUmsatz") : z.imPlus ? (z.kippTag ? t("cockpit.seitArbeitest", datumLesbar(z.kippTag).slice(0, 6)) : "") : z.reichtNicht ? t("cockpit.reichtNicht") : z.nullTag ? t("cockpit.nullAm", datumLesbar(z.nullTag).slice(0, 6)) : "";
+  // Lauf 6 (P1 B1): ohne monatsZiel (kein Ziel, keine Kosten) zeigt diese Ersatzkarte nur den Verlauf (Stand bisher, Plus seit …) – nie „bis null“ oder „Null am …“
+  const satz = grau ? t("cockpit.keinUmsatz") : z.imPlus ? (z.kippTag ? t("cockpit.seitArbeitest", datumLesbar(z.kippTag).slice(0, 6)) : "") : "";
   return `<${tipp ? 'button type="button" data-a="nav" data-wert="umsatz"' : "div"} class="karte dunkel zaehler ${grau ? "grau" : z.imPlus ? "plus" : "minus"}">
-    <small class="lbl">${esc(z.imPlus ? t("cockpit.verdient", monat) : t("cockpit.bisNull", monat))}</small>
+    <small class="lbl">${esc(z.imPlus ? t("cockpit.verdient", monat) : l6x(sprache(), "verlaufMonat", monat))}</small>
     <span class="riesig">${grau ? (vorUmsatz ? `${vorUmsatz.geschaetzt ? "≈ " : ""}${fmtEuro(vorUmsatz.zahl, { dezimal: 0 })}` : "–") : `${z.imPlus ? "+" : "−"} ${fmtEuro(Math.abs(z.stand))}`}</span>
     ${grau ? "" : monatsKurve(z, H)}
     <small>${esc(satz)}</small>

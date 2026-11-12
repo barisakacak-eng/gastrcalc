@@ -6,7 +6,7 @@ import { leererBetrieb } from "../js/store.js";
 import { PRODUKT_INDEX } from "../js/data/katalog.js";
 import { ZWISCHENREZEPTE, SELBST_KACHELN, kachelnFuer, vorauswahlFuer } from "../js/data/zwischen.js";
 import { selbstAnwenden, selbstGewaehlt } from "../js/selbst.js";
-import { artikelAusGerichten, kalkulation, zwischenpreis, zeitMitZwischen, preisJeBasis } from "../js/engine.js";
+import { artikelAusGerichten, kalkulation, zwischenpreiseSetzen, zwischenpreis, zeitMitZwischen, preisJeBasis } from "../js/engine.js";
 import { rezeptBauen } from "../js/rezept_baukasten.js";
 import { vorschlaegeAusText, vorschlaegeUebernehmen } from "../js/karte_lesen.js";
 
@@ -49,13 +49,13 @@ test("Teig selbst: Preis aus Rohstoffen, Mehl teurer → Pizza teurer; Wechsel a
   const teig = s.artikel.find((a) => a.name === "Pizzateig");
   assert.equal(teig.herkunft, "selbst"); assert.equal(teig.preis, null, "ohne Rohstoffpreise bleibt der Preis offen");
   assert.ok(s.artikel.some((a) => a.name === "Pizzamehl Typ 00" && a.benutzt), "Rohstoff steht in der Inventur");
-  rohpreise(s); kalkulation(s);
+  rohpreise(s); zwischenpreiseSetzen(s); kalkulation(s); // Lauf 6 (P1 B6): kalkulation() schreibt nicht mehr – das Setzen ist eine eigene Funktion
   // 1000 g Mehl à 0,48 €/kg + 20 g Hefe à 4 €/kg + 20 g Salz à 1 €/kg + 30 ml Öl à 8 €/l = 0,48 + 0,08 + 0,02 + 0,24 = 0,82 € für 1650 g
   assert.ok(Math.abs(teig.preis - 0.82) < 1e-9, String(teig.preis)); assert.equal(teig.packung.menge, 1650); assert.equal(teig.status, "errechnet");
   const pizza = () => kalkulation(s).zeilen.find((z) => z.name === "Pizza Margherita");
   const vorher = s.gerichte.find((g) => g.name === "Pizza Margherita").zutaten.map((z) => z.name).join();
   const w0 = pizza().waren;
-  preis(s, "Pizzamehl Typ 00", 24, 25, "kg"); // Mehl doppelt so teuer
+  preis(s, "Pizzamehl Typ 00", 24, 25, "kg"); zwischenpreiseSetzen(s); // Mehl doppelt so teuer (Lauf 6, P1 B6: der Schreibweg setzt die Zwischenpreise, kalkulation() nicht)
   const w1 = pizza().waren; const teig1 = s.artikel.find((a) => a.name === "Pizzateig");
   assert.ok(teig1.preis > 0.82 && teig1.preisHistorie.length >= 1, "alter Teigpreis im Verlauf");
   if (w0 !== null && w1 !== null) assert.ok(w1 > w0);

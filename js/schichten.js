@@ -16,6 +16,7 @@ import { MINDESTLOHN, mindestlohnAm } from "./data/mindestlohn.js";
 import { wert } from "./data/regelwerk.js";
 import { plusTage, wochentag, berlin, berlinZeitpunkt } from "./zeit.js";
 import { rund2 } from "./geld.js";
+import { schichtKennung } from "./abgleich_felder.js";
 
 const minuten = (hhmm) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || "")); if (!m) return null; const h = Number(m[1]), mi = Number(m[2]); return h <= 24 && mi < 60 ? h * 60 + mi : null; };
 
@@ -87,14 +88,21 @@ export function schichtenAusLaden(stand, personId, von, bis) {
 // W3b (04.11.2026): Schicht im Büro eintragen – getrennt von „Mitarbeiter heute“ (Lohnkosten bleiben, wie sie sind; das hier ist die Zeit-Aufzeichnung).
 // Gleicher Tag + gleiche Person ersetzt den alten Eintrag (der alte bleibt als storniert stehen). Rückgabe: Eintrag oder null bei ungültigen Zeiten.
 const zeitOk = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${m[1].padStart(2, "0")}:${m[2]}` : null; };
-export function schichtEintragen(stand, { datum, person, von, bis, jetzt = new Date().toISOString() }) {
-  const a = zeitOk(von), b = zeitOk(bis); if (!/^\d{4}-\d{2}-\d{2}$/.test(datum || "") || !person || !a || !b || schichtStunden(a, b) === null) return null;
-  if (!(stand.personen || []).some((p) => p.id === person && !p.entfernt)) return null;
+// Lauf 6 (P1 B5): gleicher Beginn und gleiches Ende zählten 24 Stunden – das ist fast immer ein Tippfehler. Jetzt wird nichts eingetragen,
+// und der Bildschirm bekommt den Grund ("gleich" | "ungueltig" | "person") für einen Hinweis. Die Kennung kommt aus dem Inhalt (schichtKennung,
+// js/abgleich_felder.js) und nicht mehr aus der Listenlänge – die war auf zwei Handys gleich.
+export function schichtEintragenMitGrund(stand, { datum, person, von, bis, jetzt = new Date().toISOString() }) {
+  const a = zeitOk(von), b = zeitOk(bis); if (!/^\d{4}-\d{2}-\d{2}$/.test(datum || "") || !person || !a || !b) return { eintrag: null, grund: "ungueltig" };
+  if (a === b) return { eintrag: null, grund: "gleich" };
+  if (schichtStunden(a, b) === null) return { eintrag: null, grund: "ungueltig" };
+  if (!(stand.personen || []).some((p) => p.id === person && !p.entfernt)) return { eintrag: null, grund: "person" };
   stand.schichten ??= [];
   for (const x of stand.schichten) if (!x.storniert && x.datum === datum && x.person === person) x.storniert = jetzt;
-  const e = { id: `s-${datum}-${person}-${stand.schichten.length}`, datum, person, von: a, bis: b, erfasst: jetzt, storniert: false };
-  stand.schichten.push(e); return e;
+  const e = { id: schichtKennung({ datum, person, erfasst: jetzt }), datum, person, von: a, bis: b, erfasst: jetzt, storniert: false };
+  stand.schichten.push(e); return { eintrag: e, grund: null };
 }
+// Wie bisher: der Eintrag oder null (ohne Grund).
+export const schichtEintragen = (stand, args) => schichtEintragenMitGrund(stand, args).eintrag;
 // Minijob-Wächter: Stunden bis zur Grenze, abgerundet auf 0,01 h (Prüfpaket D: 43,36 h zum Satz 2027 läge schon über der Grenze)
 export function minijobGrenzeStunden(datum, satz = null) {
   const m = mindestlohnAm(datum); const s = satz > 0 ? satz : m.satz;

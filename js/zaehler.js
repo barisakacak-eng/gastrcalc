@@ -11,11 +11,10 @@ import { inventurenFertig, inventurVergleich } from "./inventur.js";
 //  - Netto rechnen: Tagesumsatz aus der Kasse ist brutto, der Mischsatz kommt aus der Karte oder vom Wirt.
 //  - Durch Öffnungstage teilen: Ruhetage (aus der Kühlkontrolle) zählen nicht; ohne Ruhetage gilt der Anteil tageProWoche/7 je Kalendertag.
 //  - Unvollständig (Kosten offen, kein Umsatz eingetragen) wird gesagt, nicht erfunden.
-import { feiertagZu } from "./feiertage.js"; // Feiertage (18.10.2026)
 import { sonderkostenImMonat } from "./kostenbeleg.js";
 import { heute, heuteGeschaeft, uid } from "./util.js";
 import { lieferungTeile } from "./betriebsmittel.js";
-import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus, ruhetageAm, eintragWert, RICHTWERT_WARENEINSATZ } from "./engine.js";
+import { tagGewicht, oeffnungstage, monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus, ruhetageAm, eintragWert, RICHTWERT_WARENEINSATZ } from "./engine.js";
 import { monatsLetzter } from "./zeit.js";
 import { rund2, nettoVonBrutto } from "./geld.js";
 
@@ -24,21 +23,16 @@ export function monatsGrenzen(datum) {
   return { von: `${datum.slice(0, 8)}01`, bis: monatsLetzter(datum.slice(0, 7)), jahr: j, monat: m };
 }
 
-// Gewicht eines Kalendertags als Öffnungstag: 1 oder 0 bei bekannten Ruhetagen, sonst tageProWoche/7.
-// Paket 3 (16.10.2026), M5: Ruhetage mit Gültig-ab-Verlauf (ruhetageAm) – eine Änderung mitten im Monat ändert vergangene Tage nicht.
-export function tagGewicht(stand, datum) {
-  if (feiertagZu(stand, datum)) return 0; // Feiertage (18.10.2026): nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
-  const ruhetage = ruhetageAm(stand, datum);
-  if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
-  const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));
-  return t / 7;
-}
+// Gewicht eines Kalendertags als Öffnungstag: eine Regel in js/engine.js (tagGewicht, Lauf 6 P1 C3), hier nur weitergereicht – viele Module holen sie von hier.
+export { tagGewicht };
 
+// Lauf 6 (P1 C4): EIN Deckel für jede Warenquote (Karte, Belege, Monatsziel, Kombi-Grenze). Vorher: 0,89 in der Karte, 0,9 hier, 0,9 im Monatsziel, 0,9 im Deal.
+export const QUOTE_MAX = 0.9;
 // Warenquote (Anteil Wareneinsatz am Nettoumsatz): eigener Wert vor Karte (mengengewichtet über Gerichte mit Preis und vollständigem Rezept).
 // Paket 3 (16.10.2026), M15/E2: liefert die Karte keine Quote, gilt der Branchen-Richtwert (RICHTWERT_WARENEINSATZ) als Schätzung –
 // quelle "richtwert", geschaetzt true. Vorher stand hier Quote 0 (Ziel zu niedrig). Karte und eigener Wert: geschaetzt false.
 export function warenQuote(stand) {
-  if (typeof stand.verkauf?.warenQuote === "number") return { quote: stand.verkauf.warenQuote, quelle: "eigen", geschaetzt: false };
+  if (typeof stand.verkauf?.warenQuote === "number") return { quote: Math.min(QUOTE_MAX, stand.verkauf.warenQuote), quelle: "eigen", geschaetzt: false };
   const richtwert = { quote: RICHTWERT_WARENEINSATZ.quote, quelle: "richtwert", geschaetzt: true };
   if (!(stand.gerichte || []).length) return richtwert;
   const k = kalkulation(stand);
@@ -46,7 +40,7 @@ export function warenQuote(stand) {
   for (const z of k.zeilen) if (z.waren !== null && z.preisNetto !== null && z.preisNetto > 0) { const m = z.menge || 1; w += z.waren * m; u += z.preisNetto * m; if (z.warenRichtpreis) richtpreis = true; }
   if (!(u > 0)) return richtwert;
   // Richtpreise (17.10.2026): steckt in der Karten-Quote ein Richtpreis, ist sie eine Schätzung (≈, Zeile „Richtwert · Preise eintragen“)
-  return { quote: Math.min(0.89, w / u), quelle: "karte", geschaetzt: richtpreis, ...(richtpreis ? { richtpreis: true } : {}) };
+  return { quote: Math.min(QUOTE_MAX, w / u), quelle: "karte", geschaetzt: richtpreis, ...(richtpreis ? { richtpreis: true } : {}) };
 }
 
 // Müllwert je Tag (Vorgang 1, bewertete Einträge), als Karte datum → €.
@@ -60,21 +54,25 @@ function muellJeTag(stand, von, bis) {
   }
   return out;
 }
-// Einkauf je Tag aus eingelesenen Belegen (netto), Stufe 3.
-function einkaufJeTag(stand, von, bis) {
-  const out = {}; let n = 0;
+// Lauf 6 (P1 B3): Wareneinsatz aus Belegen – die EINZIGE Definition (vorher: Zähler zog Putzmittel ab, „Was bleibt dir“ und Prüfer-Blick zählten sie als Ware).
+// Netto je Beleg ohne Betriebsmittel-Zeilen (Putzmittel, Müllbeutel, Handschuhe … – js/betriebsmittel.js); die Betriebsmittel stehen als EIGENE Summe daneben
+// (Zeile „Reinigung & Betriebsmittel“), nie im Wareneinsatz. Zurückgenommene Belege zählen nicht. von/bis eingeschlossen (JJJJ-MM-TT).
+// Rückgabe: { ware, betriebsmittel, jeTag (Ware je Datum), betriebsmittelJeTag, anzahl (Belege im Zeitraum) } – ungerundet; gerundet wird, wo gezeigt wird.
+export function wareNettoAusBelegen(stand, von, bis) {
+  const jeTag = {}, betriebsmittelJeTag = {}; let ware = 0, betriebsmittel = 0, anzahl = 0;
   for (const l of stand.lieferungen || []) {
     if (l.storniert || typeof l.datum !== "string" || l.datum < von || l.datum > bis) continue;
-    const netto = lieferungTeile(l).ware; // Putzmittel & Co. sind kein Wareneinsatz (eigene Zeile „Reinigung & Betriebsmittel“)
-    out[l.datum] = (out[l.datum] || 0) + netto; n += 1;
+    const teile = lieferungTeile(l);
+    jeTag[l.datum] = (jeTag[l.datum] || 0) + teile.ware; betriebsmittelJeTag[l.datum] = (betriebsmittelJeTag[l.datum] || 0) + teile.betriebsmittel;
+    ware += teile.ware; betriebsmittel += teile.betriebsmittel; anzahl += 1;
   }
-  return { jeTag: out, anzahl: n };
+  return { ware, betriebsmittel, jeTag, betriebsmittelJeTag, anzahl };
 }
+const einkaufJeTag = wareNettoAusBelegen; // Stufe 3 des Zählers: Ware je Tag aus Belegen
 
 // Schwadron 18.10.2026, H1: geglättete Belegquote für die Prognose – Einkauf netto / Umsatz netto der letzten PROGNOSE_FENSTER Kalendertage.
 // null, solange der erste Eintrag (Umsatz oder Beleg) jünger ist als das Fenster: dann zählt der Aufbau des Lagers noch als „Ware“.
 export const PROGNOSE_FENSTER = 28;
-export const QUOTE_MAX = 0.9;
 export function belegQuoteFenster(stand, datum, satz) {
   const von = tagPlus(datum, -(PROGNOSE_FENSTER - 1));
   let erster = null;
@@ -100,6 +98,18 @@ export function belegQuoteTeil(stand, datum, satz) {
   const ek = einkaufJeTag(stand, von, datum); const belege = Object.values(ek.jeTag).reduce((a, b) => a + b, 0);
   let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += nettoVonBrutto(e.umsatz, satz); }
   return u > 0 ? { quote: belege / u, gewicht, tage } : null;
+}
+
+// Lauf 6 (P1 C5): Fixkosten je Öffnungstag – die einzige Stelle, die Monatskosten durch Öffnungstage teilt.
+// jeTag = (Monatslast + Sonderkosten) ÷ Öffnungstage des Kalendermonats von `datum` (tagGewicht, Ruhetage und Feiertage wie überall);
+// fest = dasselbe ohne den Stundenlohn-Anteil (nur feste Kosten + feste Monatslöhne). Die Summe über den Monat ergibt genau die Monatskosten,
+// darum teilt der Zähler durch die wirklichen Öffnungstage und nicht durch einen Durchschnitt (WOCHEN_JE_MONAT in js/engine.js gilt für Mengen).
+export function fixkostenJeTag(stand, datum = heuteGeschaeft(), last = monatsLast(stand, datum)) {
+  const M = monatsGrenzen(datum); const gewichtMonat = oeffnungstage(stand, M.von, M.bis);
+  const sonder = sonderkostenImMonat(stand, M.von.slice(0, 7));
+  const lohnMonat = last.lohn ?? 0; const festPersonal = last.festPersonal || 0;
+  return { gewichtMonat, sonder, jeTag: gewichtMonat > 0 ? (last.gesamt + sonder.summe) / gewichtMonat : 0,
+    fest: gewichtMonat > 0 ? (last.gesamt - lohnMonat + festPersonal + sonder.summe) / gewichtMonat : 0 };
 }
 
 // Der Zähler für den Monat, in dem `datum` liegt, Stand am Abend von `datum`. Paket 3, M7: Standard ist der Geschäftstag (bis 4 Uhr = Vortag).
@@ -151,17 +161,15 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const quoteEff = stufe === 3 ? Math.min(QUOTE_MAX, Math.max(q.quote, quoteBeleg ?? q.quote)) : (q.quote ?? 0);
   const belegQuoteZaehlt = stufe === 3 && quoteFenster !== null && quoteFenster !== undefined && quoteFenster >= q.quote;
 
-  // Öffnungstage des Monats (gewichtet) und Tageskosten
-  const tage = []; let gewichtMonat = 0;
-  for (let d = M.von; d <= M.bis; d = tagPlus(d, 1)) { const w = tagGewicht(stand, d); gewichtMonat += w; tage.push({ datum: d, gewicht: w }); }
-  // Sonderkosten des Monats aus Kostenbelegen (einmalig / auf Monate verteilt), Etappe 6a – kommen zur Monatslast dazu
-  const sonder = sonderkostenImMonat(stand, M.von.slice(0, 7));
-  const tageskosten = gewichtMonat > 0 ? (last.gesamt + sonder.summe) / gewichtMonat : 0;
+  // Öffnungstage des Monats (gewichtet) und Tageskosten – eine Funktion (Lauf 6, P1 C5: fixkostenJeTag)
+  const tage = []; for (let d = M.von; d <= M.bis; d = tagPlus(d, 1)) tage.push({ datum: d, gewicht: tagGewicht(stand, d) });
+  const fjt = fixkostenJeTag(stand, datum, last); const gewichtMonat = fjt.gewichtMonat; const sonder = fjt.sonder;
+  const tageskosten = fjt.jeTag;
   // 27.10.2026 (Baris: Mitarbeiter sind bewegliche Kosten): Lohn je Tag aus „Mitarbeiter heute“ (Brutto × Arbeitgeberanteil), sonst die
   // Monatssumme anteilig als Schätzung. Tageskosten ohne Lohn sind die festen Kosten des Tages.
   // Feste Monatslöhne (lohnModell "monat") sind feste Kosten; der Rest der Lohnsumme ist der geschätzte Stundenlohn-Anteil.
   const lohnMonat = last.lohn ?? 0; const festPersonal = last.festPersonal || 0;
-  const tageskostenFest = gewichtMonat > 0 ? (last.gesamt - lohnMonat + festPersonal + sonder.summe) / gewichtMonat : 0;
+  const tageskostenFest = fjt.fest;
   const lohnStundenMonat = Math.max(0, lohnMonat - festPersonal);
   const lohnAnteilig = gewichtMonat > 0 ? lohnStundenMonat / gewichtMonat : 0;
   // Ein Eintrag zählt nur, wenn bei allen Personen der Stundenlohn da ist – sonst bleibt der Tag beim Anteil (Gegenprüfung 27.10.: fehlender Lohn ≠ 0 €).
@@ -278,7 +286,7 @@ export function monatsZiel(stand, z, H) {
   const kosten = typeof z.kosten === "number" && z.tageskostenPrognose !== undefined
     ? z.kosten + (z.tageskostenPrognose || 0) * (z.gewichtZukunft || 0) + (z.muell || 0) + (z.muellPrognose || 0) + (z.schwund || 0)
     : kostenMonat + (z.muell || 0);
-  const q = Math.min(0.9, Math.max(0, z.quoteEff || 0));
+  const q = Math.min(QUOTE_MAX, Math.max(0, z.quoteEff || 0));
   const g = Math.min(0.5, Math.max(0, (Number(stand.verkauf?.zielgewinn) || 0) / 100));
   const brutto = 1 + (z.steuer || 0);
   // Lieferdienst (27.10.2026): Provision je Euro Brutto-Umsatz (bisheriger Anteil über Lieferdienste × Satz) senkt, was jeder Euro übrig lässt.
@@ -338,11 +346,12 @@ export function zaehlerVerlauf(z) {
 export const umsatzAnzeigeWert = (brutto, basis, satz) => (brutto === null || brutto === undefined ? null : basis === "netto" ? rund2(nettoVonBrutto(brutto, satz)) : brutto);
 export const umsatzAusEingabe = (betrag, basis, satz) => (basis === "netto" ? rund2(betrag * (1 + satz)) : betrag);
 // Strecke von „alle Kosten offen“ (links, 0 %) bis Monatsende (rechts): Lage von heute und null in Prozent; bringt = was ein Beispielumsatz übrig lässt.
-export function zaehlerStrecke(z, beispiel = 1000) {
+// Lauf 6 (P1 B1): der Tag der „null“-Marke kommt aus monatsZiel (mz.nullAm), nie aus dem Tagesstand (z.nullTag) – ohne mz keine Beschriftung.
+export function zaehlerStrecke(z, beispiel = 1000, mz = null) {
   if (z.keinUmsatz) return null;
   const min = -Math.max(z.last.gesamt, 1); const max = Math.max(z.monatsende ?? 0, z.stand, Math.abs(min) * 0.3);
   const pos = (v) => Math.round(Math.min(1, Math.max(0, (v - min) / (max - min))) * 100);
-  return { heute: pos(z.stand), null: pos(0), nullTag: z.nullTag, beispiel, bringt: z.bleibtVon(beispiel) };
+  return { heute: pos(z.stand), null: pos(0), nullTag: mz?.nullAm ?? null, beispiel, bringt: z.bleibtVon(beispiel) };
 }
 // Monatsstreifen: Zustand eines Tages – "offen" (vor dem Start / ohne Stand) | "frei" (Ruhetag) | "ziel" (im Plus) | "zukunft" | "minus".
 // nullAm (C3, 03.11.2026): Tag, an dem der Monat den Nullpunkt erreicht (aus monatsZiel). Mit nullAm: grün ab diesem Tag, davor rot/offen –

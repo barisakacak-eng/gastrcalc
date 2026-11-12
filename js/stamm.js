@@ -7,7 +7,7 @@ import { kostenJeStunde, LOHN_AUFSCHLAG, LOHN_STANDARD } from "./data/lohnkosten
 import { uid, heute } from "./util.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
 import { REINIGUNG_LEER } from "./reinigung.js";
-import { VORSTEUER_SAETZE, aktiveStellen } from "./engine.js";
+import { VORSTEUER_SAETZE, aktiveStellen, kostenBetragMitVerlauf } from "./engine.js";
 import { TYP_AUS_ART } from "./kuehlname.js";
 import { rund2, nettoVonBrutto } from "./geld.js";
 
@@ -60,7 +60,7 @@ export function kostenPosten(stand, postenId, kat) {
   if (!e) { e = { id: uid(), posten: postenId, kategorie: kat, betrag: null, status: "aus", periode: "monat", basis: basisStandard(postenId), satz: satzStandard(postenId) }; stand.kosten.push(e); }
   return e;
 }
-export function kostenBetragSetzen(stand, postenId, kat, betrag) { const e = kostenPosten(stand, postenId, kat); e.betrag = betrag; e.status = e.betrag === null ? "offen" : "bekannt"; return e; }
+export function kostenBetragSetzen(stand, postenId, kat, betrag) { const e = kostenPosten(stand, postenId, kat); kostenBetragMitVerlauf(stand, e, betrag); e.status = e.betrag === null ? "offen" : "bekannt"; return e; }
 // Schalter des Postens: an → Richtwert (geschätzt) oder offen; aus → Betrag weg
 export function kostenPostenUmschalten(stand, postenId, kat, richtwert) {
   const e = kostenPosten(stand, postenId, kat);
@@ -81,7 +81,7 @@ export function kostenKategorieGeprueft(stand, kat) { if (!stand.kostenKategorie
 // Schnellweg „Geld“: Miete und Strom (Sammelposten Strom & Gas, brutto) – leer = Posten aus
 export function kostenSchnellSetzen(stand, postenId, kat, betrag) {
   const e = kostenPosten(stand, postenId, kat);
-  e.betrag = betrag; e.status = betrag === null ? "aus" : "bekannt"; e.periode = "monat";
+  kostenBetragMitVerlauf(stand, e, betrag); e.status = betrag === null ? "aus" : "bekannt"; e.periode = "monat"; // Lauf 6 (P1 B4): gültig ab Monat der Änderung
   if (postenId === "strom") { e.sammel = "strom-gas"; e.basis = "brutto"; }
   return e;
 }

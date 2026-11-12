@@ -12,7 +12,8 @@ import { monatEinfrieren, eingefroren, monatVergleich } from "../monatsabschluss
 import { istPersonen } from "../rechtsform.js";
 import { BUNDESLAENDER } from "../feiertage.js";
 const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
-import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragen, schichtStunden } from "../schichten.js";
+import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragenMitGrund, schichtStunden } from "../schichten.js";
+import { l6x } from "../data/l6x_texte.js"; // Lauf 6 (P1 B5): Hinweis „Beginn und Ende sind gleich“
 import { offeneKlappen } from "./bausteine.js"; // Ausschuss P4 (Lauf 4): offene Karte bleibt nach einer Aktion offen
 import { plusTage, plusMonate } from "../zeit.js";
 const dk = (d) => `\u2066${datumLesbar(d).slice(0, 6)}\u2069`; // Lauf 4 (P4 C2): Datum im Arabischen isoliert, sonst „.10.12“
@@ -76,7 +77,7 @@ export function geld3View(stand) {
     <select data-f="g3-s-person" aria-label="${esc(t("w3b.schicht.person"))}">${pers.map((p) => `<option value="${esc(p.id)}" ${p.id === sp ? "selected" : ""}>${esc(p.kuerzel || p.name || "?")}</option>`).join("")}</select>
     <input type="date" data-f="g3-s-datum" value="${esc(sd)}" aria-label="${esc(t("w3b.schicht.datum"))}">
     <div class="g3-zeiten"><input type="time" data-f="g3-s-von" value="${esc(se.von)}" aria-label="${esc(t("teamTag.von"))}"><span aria-hidden="true">–</span><input type="time" data-f="g3-s-bis" value="${esc(se.bis)}" aria-label="${esc(t("teamTag.bis"))}"></div>
-    ${schichtOk ? `<p class="hinweis ok" role="status">${esc(t("tag.gespeichert"))}</p>` : "" /* Lauf 5 (P1 D5): kurze Bestätigung nach „Speichern“ */}<button type="button" class="knopf zweit" data-a="g3-schicht">${esc(t("w3b.schicht.knopf"))}</button></div>`;
+    ${schichtHinweis ? `<p class="hinweis warn" role="alert">${esc(l6x(sprache(), "schichtGleich"))}</p>` : ""}${schichtOk ? `<p class="hinweis ok" role="status">${esc(t("tag.gespeichert"))}</p>` : "" /* Lauf 5 (P1 D5): kurze Bestätigung nach „Speichern“ */}<button type="button" class="knopf zweit" data-a="g3-schicht">${esc(t("w3b.schicht.knopf"))}</button></div>`;
   const letzte = !w3b() ? "" : (stand.schichten || []).filter((x) => !x.storniert && x.datum >= von).slice(-5).reverse().map((x) => z(`${dk(x.datum)} · ${(pers.find((p) => p.id === x.person) || {}).kuerzel || "?"}`, `${esc(x.von)}–${esc(x.bis)} · ${esc(t("w3b.schicht.std", fmtZahl(schichtStunden(x.von, x.bis, x.datum), 2)))}`)).join("");
   const schicht = karte("schicht", t("w3.schicht.titel"), "", (zeilen || `<p>${esc(t("w3.schicht.leer"))}</p>`) + vorm + letzte + form) ;
   // W3b: Sitz der Krankenkasse (nur mit Personal) und Monat abschließen
@@ -92,14 +93,15 @@ export function geld3View(stand) {
 }
 
 let schichtOk = false; // Bestätigung bis zur nächsten Eingabe
+let schichtHinweis = false; // Lauf 6 (P1 B5): Beginn = Ende, nichts eingetragen
 export function geld3Aktion(name, el, stand) {
-  if (name !== "g3-schicht") schichtOk = false;
+  if (name !== "g3-schicht") { schichtOk = false; schichtHinweis = false; }
   if (name === "g3-rhythmus") { ustRhythmusSetzen(stand, stand.betrieb.ustRhythmus === el.dataset.wert ? null : el.dataset.wert); return true; }
   if (name === "g3-dauerfrist") { dauerfristUmschalten(stand); return true; }
   if (name === "g3-lst-rhythmus") { lstRhythmusSetzen(stand, stand.betrieb.lstRhythmus === el.dataset.wert ? null : el.dataset.wert); return true; }
   if (name === "g3-est-bescheid") { estBescheidUmschalten(stand); return true; }
   if (name === "g3-schicht" && w3b()) { const pers = (stand.personen || []).filter((p) => !p.entfernt);
-    const e = schichtEintragen(stand, { datum: schichtEntwurf.datum || heuteGeschaeft(), person: schichtEntwurf.person || pers[0]?.id, von: schichtEntwurf.von, bis: schichtEntwurf.bis });
+    const r = schichtEintragenMitGrund(stand, { datum: schichtEntwurf.datum || heuteGeschaeft(), person: schichtEntwurf.person || pers[0]?.id, von: schichtEntwurf.von, bis: schichtEntwurf.bis }); const e = r.eintrag; schichtHinweis = r.grund === "gleich";
     if (e) schichtEntwurf = { person: e.person, datum: e.datum, von: "", bis: "" }; schichtOk = !!e; if (e) offeneKlappen.add("g3-schicht"); return true; }
   if (name === "g3-monat-zu" && w3b()) { monatEinfrieren(stand, monatPlus(heuteGeschaeft().slice(0, 7), -1)); return true; }
   return false;
@@ -107,7 +109,7 @@ export function geld3Aktion(name, el, stand) {
 export function geld3Eingabe(feld, wert, stand) {
   if (feld === "g3-lst-vorjahr") { lstVorjahrSetzen(stand, wert.trim() === "" ? NaN : parseZahl(wert)); return true; }
   if (feld === "g3-stunden") { chefStundenSetzen(stand, parseZahl(wert)); return true; }
-  const sm = /^g3-s-(person|datum|von|bis)$/.exec(feld); if (sm) { schichtOk = false; schichtEntwurf = { ...schichtEntwurf, [sm[1]]: wert }; return false; } // Entwurf, nicht neu zeichnen
+  const sm = /^g3-s-(person|datum|von|bis)$/.exec(feld); if (sm) { schichtOk = false; schichtHinweis = false; schichtEntwurf = { ...schichtEntwurf, [sm[1]]: wert }; return false; } // Entwurf, nicht neu zeichnen
   if (feld === "g3-svland" && w3b()) { svLandSetzen(stand, wert || null); return true; }
   if (feld === "g3-geld") { geldHeuteSetzen(stand, parseZahl(wert), heute()); return true; }
   return false;

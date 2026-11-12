@@ -83,7 +83,7 @@ function eigKarte(l, ue, aktiv) {
         ${feld(t("eigentuemer.kennzahl.ware"), c.ware, [c.wareQuelle, rang("ware")].filter(Boolean).join(" · "))}
         ${feld(t("eigentuemer.kennzahl.muell"), c.muell, [c.muellPortionen, rang("muell"), trendText(tr?.muell)].filter(Boolean).join(" · "))}
         ${feld(t("eigentuemer.kennzahl.schwund"), c.schwund, c.schwundZeitraum)}
-        ${feld(t("eigentuemer.kennzahl.bisNull"), c.bisNull, rang("bisNull"))}
+        ${feld(t("eigentuemer.kennzahl.bisNull"), c.bisNull, [c.bisNullFehlt, rang("bisNull")].filter(Boolean).join(" · "))}
         ${feld(t("eigentuemer.kennzahl.lager"), c.lager, c.bestellen)}
       </div>
       <div class="hinweis">${esc(zeile)}</div>

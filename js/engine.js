@@ -2,6 +2,7 @@ import { festPersonalMonat, LOHN_AUFSCHLAG } from "./data/lohnkosten.js";
 import { regel, wert as regelwert } from "./data/regelwerk.js";
 import { plusTage, wochentag, berlinZeitpunkt } from "./zeit.js";
 import { mindestlohnAm } from "./data/mindestlohn.js";
+import { feiertagZu } from "./feiertage.js"; // Lauf 6 (P1 C3): tagGewicht lebt jetzt hier
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
 // Die Oberfläche darf nichts rechnen, was hier nicht steht. So reden Rechnung und Gestaltung nicht aneinander vorbei.
@@ -22,10 +23,39 @@ export function vorsteuerSatz(posten, betrieb = null) {
   return VORSTEUER_SAETZE.includes(s) ? s / 100 : VORSTEUER;
 }
 
+// Lauf 6 (P1 B4): „gültig ab“ für Kostenposten. Ändert der Wirt einen Betrag (Miete 2.400 → 3.000 €), gilt der neue ab dem MONAT der Änderung; vergangene Monate
+// rechnen mit dem Betrag von damals. posten.verlauf = [{ ab: "JJJJ-MM" | "", wert: Zahl | null }] (wie ruhetageVerlauf: ab "" = von Anfang an). Posten ohne
+// Verlauf (alte Daten, nie geändert) gelten schon immer; ab dem Monat des letzten Eintrags gilt der Betrag des Postens selbst (posten.betrag).
+export const kostenVerlauf = (posten) => (Array.isArray(posten?.verlauf) ? posten.verlauf : []).filter((x) => x && typeof x.ab === "string" && (x.wert === null || (typeof x.wert === "number" && Number.isFinite(x.wert)))).slice().sort((a, b) => (a.ab < b.ab ? -1 : a.ab > b.ab ? 1 : 0));
+export function betragAm(posten, monat) {
+  const v = kostenVerlauf(posten);
+  if (!v.length || !monat || monat >= v[v.length - 1].ab) return posten.betrag;
+  let x = v[0]; for (const e of v) { if (e.ab <= monat) x = e; else break; }
+  return x.wert;
+}
+// Neuen Betrag setzen und den alten festhalten – aber nur, wenn es etwas zu bewahren gibt: der Posten hatte einen Betrag UND der Laden hat vor diesem Monat
+// schon Umsatz oder Belege (sonst wäre das Tippen der ersten Zahl, Ziffer für Ziffer, ein „Verlauf“). Rückgabe: true, wenn ein Verlauf geschrieben wurde.
+export function kostenBetragMitVerlauf(stand, posten, neu, monat = heuteGeschaeft().slice(0, 7)) {
+  const alt = posten.betrag; let gemerkt = false;
+  const frueher = (stand.tagesnotizen || []).some((n) => !n.storniert && typeof n.umsatz === "number" && typeof n.datum === "string" && n.datum.slice(0, 7) < monat)
+    || (stand.lieferungen || []).some((l) => !l.storniert && typeof l.datum === "string" && l.datum.slice(0, 7) < monat);
+  if (typeof alt === "number" && neu !== alt && frueher) {
+    const v = kostenVerlauf(posten).map((x) => ({ ...x })); if (!v.length) v.push({ ab: "", wert: alt });
+    const letzte = v[v.length - 1];
+    if (letzte.ab === monat) letzte.wert = neu; else v.push({ ab: monat, wert: neu });
+    if (v.length > 1 && v[v.length - 1].ab === monat && v[v.length - 2].wert === v[v.length - 1].wert) v.pop(); // im selben Monat zurückgestellt
+    posten.verlauf = v.length > 1 || v[0].ab !== "" ? v : undefined; if (posten.verlauf === undefined) delete posten.verlauf;
+    gemerkt = true;
+  }
+  posten.betrag = neu; return gemerkt;
+}
+
 // Betrag eines Postens je Monat, netto. periode "jahr" wird durch 12 geteilt, basis "brutto" durch (1 + Satz des Postens).
-export function betragJeMonat(posten, betrieb = null) {
-  if (posten.betrag === null || posten.betrag === undefined) return null;
-  const b = posten.basis === "brutto" ? nettoVonBrutto(posten.betrag, vorsteuerSatz(posten, betrieb)) : posten.betrag;
+// monat ("JJJJ-MM", optional): der Betrag, der in diesem Monat galt (Verlauf); ohne Monat der aktuelle.
+export function betragJeMonat(posten, betrieb = null, monat = null) {
+  const betrag = betragAm(posten, monat);
+  if (betrag === null || betrag === undefined) return null;
+  const b = posten.basis === "brutto" ? nettoVonBrutto(betrag, vorsteuerSatz(posten, betrieb)) : betrag;
   return posten.periode === "jahr" ? b / 12 : b;
 }
 
@@ -43,11 +73,11 @@ export function eigenerLohnJeMonat(team, datum = heuteGeschaeft()) {
 
 // Summe der festen Kosten je Monat, getrennt nach Status.
 // status: "bekannt" (echte Zahl), "geschaetzt" (Richtwert übernommen), "offen" (weiß ich nicht, kein Betrag).
-export function fixkosten(stand) {
+export function fixkosten(stand, monat = null) { // monat: Lauf 6 (P1 B4) – die Beträge, die in diesem Monat galten; ohne Monat die aktuellen
   const out = { gesamt: 0, bekannt: 0, geschaetzt: 0, offen: 0, jeKategorie: {} };
   for (const p of stand.kosten) {
     if (p.status === "aus") continue; // ausgeschaltet = gibt es in diesem Betrieb nicht, zählt nirgends
-    const b = betragJeMonat(p, stand.betrieb); // Paket 3, M1: Satz je Posten, Kleinunternehmer ohne Vorsteuer
+    const b = betragJeMonat(p, stand.betrieb, monat); // Paket 3, M1: Satz je Posten, Kleinunternehmer ohne Vorsteuer
     out.jeKategorie[p.kategorie] ??= { summe: 0, offen: 0, geschaetzt: 0 };
     if (p.status === "offen" || b === null) { out.offen += 1; out.jeKategorie[p.kategorie].offen += 1; continue; }
     out.gesamt += b;
@@ -76,14 +106,14 @@ export function lohnJeMonat(team) {
 // Löhne werden NICHT mit 12/monate hochgerechnet: In der Saison fallen sie nur in den offenen Monaten an (Prüfung Teil 4 Nr. 11,
 // Lohnsplit saisonal/ganzjährig kommt später). Ergebnis-Objekt sagt, ob Teile offen sind.
 export function monatsLast(stand, datum = heuteGeschaeft()) {
-  const fk = fixkosten(stand);
+  const fk = fixkosten(stand, typeof datum === "string" ? datum.slice(0, 7) : null); // Lauf 6 (P1 B4): Beträge des Monats (gültig ab)
   // 27.10.2026: Lohn im Monat = eingetragene Lohnkosten, mindestens aber die festen Monatslöhne der Personen (Brutto + Arbeitgeberanteil)
   const lohnEingetragen = lohnJeMonat(stand.team); const festPersonal = festPersonalMonat(stand);
   const lohn = festPersonal > 0 ? Math.max(lohnEingetragen ?? 0, festPersonal) : lohnEingetragen;
   const eigen = eigenerLohnJeMonat(stand.team, datum);
   const sachbezugAbgaben = sachbezugAbgabenMonat(stand, datum);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
-  const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
+  const reinigung = reinigungMonat(stand, { datum }); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt); Lauf 6 (P1 B2): mit dem Datum des Monats, nicht mit dem von heute
   return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, sachbezugAbgaben, gesamt: fixJeOffen + (lohn ?? 0) + sachbezugAbgaben + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
 }
 
@@ -339,10 +369,20 @@ export function bestellungenAusUmsatz(stand) {
   const schnittPreis = preise.reduce((s, p) => s + p, 0) / preise.length;
   return Math.round(summe / imFenster.length / schnittPreis);
 }
+// Lauf 6 (P1 C5): Wochen und Tage je Monat – EINE dokumentierte Stelle (vorher 52/12 in der Karte, 30,4 im Mindestlohn, 30 in der Reinigung).
+//  WOCHEN_JE_MONAT: 52 Wochen im Jahr ÷ 12 Monate = 4,333… Für alles, was „je Woche“ bekannt ist und auf den Monat hochgerechnet wird
+//  (Verkaufsmengen der Karte: Gerichte am Tag × Öffnungstage je Woche × WOCHEN_JE_MONAT; Ware, Bestand).
+//  TAGE_JE_MONAT: Kalendertage je Monat im Schnitt, 365 ÷ 12 ≈ 30,42, als Setzung auf 30,4 gerundet. Nur für Stunden aus Kalendertagen
+//  (Mindestlohn-Vorschau: Stunden der letzten 28 Tage × 30,4 ÷ 28). Absichtlich nicht 7 × WOCHEN_JE_MONAT (30,33): das würde die Vorschau um 0,2 % senken
+//  und die Goldwerte (tests/mindestlohn.test.mjs) ändern – Entscheidung steht bei Baris.
+//  Die Fixkosten je Öffnungstag im Zähler teilen dagegen durch die wirklichen Öffnungstage des Kalendermonats (js/zaehler.js, fixkostenJeTag),
+//  damit die Tageskosten eines Monats genau die Monatskosten ergeben; sie schwanken darum mit der Monatslänge – gewollt, siehe docs/architektur.md.
+export const WOCHEN_JE_MONAT = 52 / 12;
+export const TAGE_JE_MONAT = 30.4;
 // Verkaufsmengen je Monat, grob (Prüfung: „drei meistverkaufte Gerichte" reichen für den Start):
 // Bestseller mit eigener Tageszahl, der Rest teilt sich die übrigen Bestellungen des Tages gleichmäßig.
 export function mengenJeMonat(stand, { ausUmsatz = false } = {}) { // ausUmsatz: nur für die Verteilung der Fixkosten in kalkulation()
-  const tage = (Number(stand.betrieb.tageProWoche) || 6) * 52 / 12;
+  const tage = (Number(stand.betrieb.tageProWoche) || 6) * WOCHEN_JE_MONAT;
   // Ausschuss Lauf 3, P2 A1: Ohne „Gerichte am Tag“ zählte jedes Gericht 1× am Tag – ein Döner trug dann ≈ 47 € Miete und Lohn („Bleibt dir −44,78 €“).
   // Jetzt Schätzung aus dem eigenen Umsatz: Schnitt je Umsatztag (letzte 28 Tage mit Eintrag) ÷ Durchschnittspreis der Karte. Bleibt „geschätzt“ (≈).
   const gesamtTag = Number(stand.verkauf?.bestellungenTag) || (ausUmsatz ? bestellungenAusUmsatz(stand) : 0);
@@ -378,7 +418,7 @@ export function artikelAusGerichten(stand) {
   }
   for (const a of Object.values(neu)) a.benutzt = benutzt.has(a.name);
   const liste = Object.values(neu);
-  zwischenpreiseRechnen({ ...stand, artikel: liste });
+  zwischenpreiseSetzen({ ...stand, artikel: liste });
   return liste;
 }
 
@@ -416,16 +456,37 @@ export function selbstWerte(a) {
   };
 }
 
-// Rechnet die Preise aller selbst gemachten Artikel neu und schreibt sie wie einen Einkaufspreis (netto, je Ausbeute) an den Artikel.
+// Lauf 6 (P1 B6): Lesen darf nichts erzeugen. Der Preis eines selbst gemachten Teils (Material ÷ Ausbeute) wird in zwei getrennten Schritten gerechnet:
+//  1. artikelMitZwischenpreisen(stand) – rein: liefert die Artikelliste, in der die selbst gemachten Teile ihre errechneten Preise tragen (Kopien,
+//     der Stand bleibt unberührt). kalkulation() rechnet damit. Selbst gemachte Teile hängen nur von gekauften Rohstoffen ab, die Reihenfolge spielt keine Rolle.
+//  2. zwischenpreiseSetzen(stand) – schreibend: trägt dieselben Preise in den Stand ein und merkt den alten Preis im Preisverlauf („Preise, die sich
+//     geändert haben“). Aufgerufen, wo heute schon geschrieben wird: Artikelpreis ändern (karte_daten.js), Beleg übernehmen (lieferung.js),
+//     Artikelliste abgleichen (artikelAusGerichten), Richtpreise einsetzen/entfernen.
+function zwischenErgebnis(a, index) {
+  const z = zwischenpreis(a, index);
+  const preis = z.preis === null ? null : Math.round(z.preis * 10000) / 10000;
+  const menge = a.rezept.ausbeute?.menge, einheit = a.rezept.ausbeute?.einheit;
+  return { z, preis, menge, einheit, geaendert: preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit };
+}
+export function artikelMitZwischenpreisen(stand) {
+  const liste = stand.artikel || []; const index = Object.fromEntries(liste.map((a) => [a.name, a]));
+  return liste.map((a) => {
+    if (a.herkunft !== "selbst" || !a.rezept) return a;
+    const { z, preis, menge, einheit, geaendert } = zwischenErgebnis(a, index); const k = { ...a };
+    if (geaendert) { k.preis = preis; k.packung = { menge, einheit }; k.preisBasis = "netto"; k.preisQuelle = "errechnet"; }
+    k.status = preis === null ? "offen" : "errechnet"; k.zwischenFehlt = z.fehlt;
+    if (preis !== null && z.richtpreis) k.zwischenRichtpreis = true; else delete k.zwischenRichtpreis;
+    return k;
+  });
+}
+// Schreibt die Preise aller selbst gemachten Artikel in den Stand wie einen Einkaufspreis (netto, je Ausbeute).
 // Ändert sich der Preis (Mehl teurer), kommt der alte in den Preisverlauf – so erscheint das Teil in „Preise, die sich geändert haben".
-export function zwischenpreiseRechnen(stand) {
+export function zwischenpreiseSetzen(stand) {
   const index = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   for (const a of stand.artikel || []) {
     if (a.herkunft !== "selbst" || !a.rezept) continue;
-    const z = zwischenpreis(a, index);
-    const preis = z.preis === null ? null : Math.round(z.preis * 10000) / 10000;
-    const menge = a.rezept.ausbeute.menge, einheit = a.rezept.ausbeute.einheit;
-    if (preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit) {
+    const { z, preis, menge, einheit, geaendert } = zwischenErgebnis(a, index);
+    if (geaendert) {
       if (typeof a.preis === "number" && preis !== null) preisMerken(a, heute());
       a.preis = preis; a.packung = { menge, einheit }; a.preisBasis = "netto"; a.preisQuelle = "errechnet"; // W2-K2
     }
@@ -433,6 +494,7 @@ export function zwischenpreiseRechnen(stand) {
     if (preis !== null && z.richtpreis) a.zwischenRichtpreis = true; else delete a.zwischenRichtpreis;
   }
 }
+export const zwischenpreiseRechnen = zwischenpreiseSetzen; // alter Name (beispiel.js, Tests)
 
 // Zubereitungszeit eines Gerichts plus der anteiligen Arbeit an selbst gemachten Teilen (Pizza: 20 min je 1650 g Teig × 280 g ≈ 3,4 min).
 export function zeitMitZwischen(gericht, artikelIndex) {
@@ -458,8 +520,9 @@ export function kalkulation(stand, opts = {}) {
   if (kalkAktiv && opts.produktivAnteil === undefined) { const m = kalkMemo.get(stand); if (m && m.takt === kalkTakt) return m.wert; const wert = kalkulationRechnen(stand, opts); kalkMemo.set(stand, { takt: kalkTakt, wert }); return wert; }
   return kalkulationRechnen(stand, opts);
 }
-function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
-  zwischenpreiseRechnen(stand); // selbst gemachte Teile folgen den Rohstoffpreisen (Mehl teurer → Pide teurer)
+function kalkulationRechnen(standOriginal, { produktivAnteil = 0.7 } = {}) {
+  // selbst gemachte Teile folgen den Rohstoffpreisen (Mehl teurer → Pide teurer) – nur im Ergebnis, der Stand bleibt unberührt (Lauf 6, P1 B6)
+  const stand = { ...standOriginal, artikel: artikelMitZwischenpreisen(standOriginal) };
   const last = monatsLast(stand);
   const artikelIndex = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   const { mengen, geschaetzt: mengenGeschaetzt } = mengenJeMonat(stand);
@@ -992,6 +1055,21 @@ export function ruhetageAm(stand, datum) {
   if (!v.length) return stand.kuehl?.ruhetage || [];
   let x = v[0]; for (const e of v) { if (e.ab <= datum) x = e; else break; }
   return x.tage;
+}
+// Lauf 6 (P1 C3): EINE Regel für „ist der Laden an diesem Tag offen“ – vorher baute js/reinigung.js sie nach und kannte „an Feiertagen zu“ nicht
+// (22 Öffnungstage im Zähler, 25 in der Reinigung). Gewicht eines Kalendertags: 0 an Feiertagen, wenn der Wirt „an Feiertagen zu“ gewählt hat; 1 oder 0
+// nach den Ruhetagen mit Gültig-ab-Verlauf; ohne bekannte Ruhetage tageProWoche/7. Zähler, Reinigung, Eigentümer, Bestand rufen diese Funktion.
+export function tagGewicht(stand, datum) {
+  if (feiertagZu(stand, datum)) return 0; // Feiertage (18.10.2026): nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
+  const ruhetage = ruhetageAm(stand, datum);
+  if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
+  const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));
+  return t / 7;
+}
+// Öffnungstage von–bis (beide Tage eingeschlossen), gewichtet wie tagGewicht. Die einzige Summe über Tage: Kalendermonat im Zähler, 30 Tage in der Reinigung.
+export function oeffnungstage(stand, von, bis) {
+  let g = 0; for (let d = von; d <= bis; d = plusTage(d, 1)) g += tagGewicht(stand, d);
+  return g;
 }
 export function ruhetageSetzen(stand, tage, datum = heute(), jetzt = new Date().toISOString()) {
   stand.kuehl ??= { takt: 1, ruhetage: [], eingerichtet: false, seit: null };

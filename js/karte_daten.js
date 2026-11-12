@@ -4,7 +4,7 @@ import { gerichtText } from "./i18n.js"; // Perfektionswoche 24.10.2026
 import { uid } from "./util.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { rezeptBauen } from "./rezept_baukasten.js";
-import { klasseFuerBereich, artikelAusGerichten, steuersatzAusZutaten, mengeUmrechnen, preisJeBasis, preisMerken, istRichtpreis } from "./engine.js";
+import { klasseFuerBereich, artikelAusGerichten, steuersatzAusZutaten, mengeUmrechnen, preisJeBasis, preisMerken, istRichtpreis, zwischenpreiseSetzen } from "./engine.js";
 import { selbstAnwenden, selbstGewaehlt } from "./selbst.js";
 import { rund2, mwstHeute } from "./geld.js";
 
@@ -94,7 +94,8 @@ export function artikelFeldSetzen(stand, name, feld, wert, datum) {
   if (feld === "stueckGewicht") { if (wert > 0) a.stueckGewicht = wert; else delete a.stueckGewicht; } // Stück-Ware, die ein Rezept in Gramm braucht
   if (feld === "roh") { a.garverlust ??= {}; a.garverlust.roh = wert; }
   if (feld === "gar") { a.garverlust ??= {}; a.garverlust.gar = wert; }
-  statusNeu(a); return true;
+  statusNeu(a); zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6): hier wird geschrieben, also folgen auch die selbst gemachten Teile (kalkulation() schreibt nicht mehr)
+  return true;
 }
 export function packungEinheitSetzen(stand, name, einheit) {
   const a = artikel(stand, name); if (!a) return false;
@@ -107,6 +108,7 @@ export function packungEinheitSetzen(stand, name, einheit) {
   }
   if (a.gebinde?.stueck) { delete a.gebinde.stueck; }
   if (a.packung.einheit !== einheit) { a.packung.menge = mengeUmrechnen(a.packung.menge, a.packung.einheit, einheit); a.packung.einheit = einheit; }
+  zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6)
   return true;
 }
 export function gebindeArtSetzen(stand, name, art) { const a = artikel(stand, name); if (!a) return false; a.gebinde ??= { art: "packung", zwischen: null }; a.gebinde.art = art; if (art === "lose") a.gebinde.zwischen = null; return true; }
@@ -114,6 +116,7 @@ export function preisBasisSetzen(stand, name, basis) {
   const a = artikel(stand, name); if (!a) return false;
   a.preisBasis = basis === "brutto" ? "brutto" : "netto";
   if (a.richtpreis && !istRichtpreis(a)) { delete a.richtpreis; a.status = preisJeBasis(a) !== null ? "bekannt" : "offen"; }
+  zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6)
   return true;
 }
 // Teil 2 (19.10.2026): Art der inneren Packung (Karton à 4 Beutel / à 6 Dosen). Ohne Anzahl merkt sie sich die Art schon vor.

@@ -39,6 +39,7 @@ export function umsatzView(stand) {
   const notiz = umsatzEintrag(stand, D); const konflikte = umsatzKonflikte(stand);
   const wert = notiz ? umsatzAnzeigeWert(notiz.umsatz, umsatzBasis, st.satz) : null; // Trennung 2 (17.10.2026)
   const tageBis = Math.round(z.gewichtBisHeute), tageMonat = Math.round(z.gewichtMonat);
+  const hz = (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })(); // Lauf 6 (P1 B1): „bis null“ kommt nur aus monatsZiel (über heuteZiel), einmal gerechnet
   return `
     <div class="kopfband"><h1>${esc(t("zaehler.titel"))}</h1><div class="unter">${esc(t("zaehler.unter", monatName(D), tageBis, tageMonat))}</div></div>
     <div class="inhalt">
@@ -52,12 +53,12 @@ export function umsatzView(stand) {
         <span class="marke">${esc(umsatzBasis === "netto" && notiz ? t("zaehler.nettoGespeichert", fmtEuro(notiz.umsatz, { dezimal: 2 })) : t("tag.umsatzHinweis"))}</span>
         ${lieferBuero(stand, D, st)}
       </div>
-      ${zaehlerKarte(z, D, { tipp: false, ziel: (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })() })}
-      ${streckeKarte(z, st)}
-      ${prognoseKarte(z, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
+      ${zaehlerKarte(z, D, { tipp: false, ziel: hz })}
+      ${streckeKarte(z, st, hz?.m)}
+      ${prognoseKarte(z, hz?.m ?? null)}
       ${gesternKarte(stand, z, D)}
       ${rechnungKarte(z, stand)}
-      ${monatKarte(z, D, (() => { try { return heuteZiel(stand, z, D).m; } catch { return null; } })())}
+      ${monatKarte(z, D, hz?.m ?? null)}
       ${preiseKarte(stand, D)}
       <button type="button" class="zeileknopf" data-a="nav" data-wert="listen"><span><b>${esc(t("zaehler.listen"))}</b><small>${esc(t("zaehler.listenKurz"))}</small></span><span class="pfeil">›</span></button>
       <button type="button" class="zeileknopf" data-a="nav" data-wert="beleg"><span><b>${esc(t("beleg.belege"))}</b><small>${esc(t("zaehler.belegeKurz"))}</small></span><span class="pfeil">›</span></button>
@@ -67,9 +68,9 @@ export function umsatzView(stand) {
 }
 
 // Die Strecke: von „alle Kosten des Monats offen" (links) bis „Monatsende" (rechts), Marke heute und Marke null.
-function streckeKarte(z, st) {
+function streckeKarte(z, st, mz = null) { // Lauf 6 (P1 B1): „null“-Marke mit dem Tag aus monatsZiel (nullAm), nicht aus dem Tagesstand
   if (z.keinUmsatz) return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2><p class="hinweis">${esc(t("zaehler.nochKeinSchnitt"))}</p></div>`;
-  const sk = zaehlerStrecke(z); // Trennung 2 (17.10.2026): Lage in Prozent aus js/zaehler.js
+  const sk = zaehlerStrecke(z, 1000, mz); // Trennung 2 (17.10.2026): Lage in Prozent aus js/zaehler.js
   return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2>
     <div class="strecke" style="--null:${sk.null}%"><i class="heute" style="left:${sk.heute}%" data-l="${esc(t("zaehler.heute"))}"></i><i class="null" style="left:${sk.null}%" data-l="${esc(t("zaehler.null"))}${sk.nullTag ? " · " + esc(datumLesbar(sk.nullTag).slice(0, 6)) : ""}"></i></div>
     <small class="marke">${esc(t("zaehler.jederTag", fmtEuro(sk.beispiel), fmtEuro(sk.bringt)))} ${esc(t("zaehler.legendeStrecke"))}</small></div>`;
@@ -79,11 +80,11 @@ function prognoseKarte(z, mz = null) { // Nachtest 27.10.2026: „Null am“ aus
   if (z.dbProTag === null) return "";
   const zeile = (k, v) => `<div class="summenzeile"><span>${esc(t("zaehler." + k))}</span><span class="wert">${v}</span></div>`;
   return `<details class="karte auf"><summary><h2>${esc(t("zaehler.wennSoWeiter"))}</h2></summary>
-    ${zeile("nullAm", mz?.stufe && mz.stufe !== "bisNull" ? `<span class="gruen">✓</span>` : mz?.erreichtAm ? esc(datumLesbar(mz.erreichtAm).slice(0, 6)) : !mz && z.nullTag ? esc(datumLesbar(z.nullTag).slice(0, 6)) : `<span class="rot">${esc(t("zaehler.nieDiesenMonat"))}</span>`)}
+    ${zeile("nullAm", mz?.stufe && mz.stufe !== "bisNull" ? `<span class="gruen">✓</span>` : mz?.erreichtAm ? esc(datumLesbar(mz.erreichtAm).slice(0, 6)) : !mz ? "–" : `<span class="rot">${esc(t("zaehler.nieDiesenMonat"))}</span>`)}
     ${zeile("monatsende", `<span class="${z.monatsende >= 0 ? "gruen" : "rot"}">${z.monatsende >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.monatsende))}</span>`)}
     ${zeile("tagesschnitt", fmtEuro(z.dbProTag))}
     ${zeile("tageskosten", fmtEuro(z.tageskosten))}
-    ${z.noetigProTag !== null && !z.imPlus ? zeile("noetig", fmtEuro(z.noetigProTag)) : ""}
+    ${mz?.stufe === "bisNull" && mz.proTagNoetig ? zeile("noetig", fmtEuro(mz.proTagNoetig)) : ""}
   </details>`;
 }
 

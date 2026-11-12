@@ -85,7 +85,9 @@ export function tagesBilanz(stand, H, K = heute()) {
   const vergleich = u && uv ? (Math.abs(u.umsatz - uv.umsatz) < 1 ? { art: "gleich", differenz: 0 } : u.umsatz > uv.umsatz ? { art: "besser", differenz: u.umsatz - uv.umsatz } : { art: "schlechter", differenz: uv.umsatz - u.umsatz }) : { art: "kein", differenz: null };
   vergleich.wochentag = wochentag(H);
   const tonne = u && uv && (sw.anzahl || swv.anzahl) ? (Math.abs(sw.muellwert - swv.muellwert) < 0.5 ? { art: "gleich", differenz: 0 } : sw.muellwert > swv.muellwert ? { art: "mehr", differenz: sw.muellwert - swv.muellwert } : { art: "weniger", differenz: swv.muellwert - sw.muellwert }) : null;
-  const restTage = z.nullTag && !z.imPlus ? Math.round(z.tage.filter((x) => x.datum > H && x.datum <= z.nullTag).reduce((s, x) => s + x.gewicht, 0)) : null;
+  // Lauf 6 (P1 B1): Tage bis null aus monatsZiel (Tag, an dem der Monatsumsatz den Nullpunkt erreicht), nicht aus dem Tagesstand des Zählers
+  const mz = monatsZiel(stand, z, H);
+  const restTage = mz.stufe === "bisNull" && mz.erreichtAm ? Math.round(z.tage.filter((x) => x.datum > H && x.datum <= mz.erreichtAm).reduce((s, x) => s + x.gewicht, 0)) : null;
   return {
     z, vor, nach, besser: nach - vor, umsatz: u, netto: u ? z.nettoVon(u.umsatz) : 0, bleibt: u ? z.bleibtVon(u.umsatz) : 0, tageskosten: z.tageskosten,
     muell: { anzahl: sw.anzahl, wert: sw.muellwert, ohneWert: sw.ohneWert || 0 },

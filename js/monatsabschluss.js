@@ -4,6 +4,7 @@
 // stand.monatsabschluesse = [{ monat, eingefroren, umsatzBrutto, umsatzNetto, ware, quote, personal, personalQuote, ergebnis, geschaetzt, ersetzt? }]
 import { monatsPosten, wasBleibtAus, prueferAus } from "./steuertopf.js";
 import { plusMonate } from "./zeit.js";
+import { heuteGeschaeft } from "./util.js";
 import { rund2 } from "./geld.js";
 import { umsatzEintrag } from "./engine.js";
 
@@ -35,6 +36,16 @@ export function monatEinfrieren(stand, monat, { jetzt = new Date().toISOString()
   if (alt) alt.ersetzt = jetzt;
   const e = { ...monatsZahlen(stand, monat), eingefroren: jetzt, abdruck: umsatzAbdruck(stand, monat) };
   stand.monatsabschluesse.push(e); return e;
+}
+// Lauf 6 (P1 B4): der gerade vergangene Monat wird beim ersten Rechnen/Speichern nach dem Monatswechsel eingefroren – spätere Änderungen an Kosten
+// oder Nachträge ändern ihn dann nicht mehr. SCHREIBENDE Aktion (legt stand.monatsabschluesse an): die Bedienschicht ruft sie beim Start und nach dem
+// Speichern auf (nicht in js/app.js verdrahtet, siehe Bericht). tag = Geschäftstag (Standard heute). Rückgabe: der neue Abschluss, oder null, wenn nichts zu
+// tun war (Vormonat schon eingefroren, oder im Vormonat gab es keinen Umsatz – ein Laden, der den Monat nicht nutzte, bekommt keinen leeren Abschluss).
+export function vormonatEinfrierenWennNoetig(stand, tag = heuteGeschaeft(), { jetzt = new Date().toISOString() } = {}) {
+  const vm = plusMonate(String(tag).slice(0, 7), -1);
+  if (eingefroren(stand, vm)) return null;
+  if (!(monatsZahlen(stand, vm).umsatzBrutto > 0)) return null;
+  return monatEinfrieren(stand, vm, { jetzt });
 }
 // Vergleich: dieser Monat (eingefroren, sonst live) gegen Vormonat und Vorjahresmonat. Differenzen in € bzw. Prozentpunkten.
 export function monatVergleich(stand, monat) {
