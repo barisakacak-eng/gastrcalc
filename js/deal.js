@@ -9,6 +9,7 @@
 //   Break-even-Mehrmenge = (Rohertrag einzeln − Rohertrag Kombi) / Rohertrag Kombi: so viel mehr Kombis braucht es, damit
 //   unterm Strich gleich viel Rohertrag bleibt wie beim Einzelverkauf.
 import { kalkulation, RICHTWERT_WARENEINSATZ, wareneinsatzWarnung } from "./engine.js";
+import { warenQuote } from "./zaehler.js";
 import { verkaufJeGericht, auswertungZeitraum, ladenhueter } from "./verkauf.js";
 import { haltbarStand, preisStufeNah, preisStufeAuf, PREIS_SCHRITT, kurzName } from "./haltbar.js";
 import { heuteGeschaeft, fmtEuro } from "./util.js";
@@ -22,11 +23,16 @@ export const KOMBI_MIN = 2, KOMBI_MAX = 4;
 export const RABATT_STUFEN = [{ stufe: "vorsichtig", rabatt: 0.05 }, { stufe: "normal", rabatt: 0.10 }, { stufe: "stark", rabatt: 0.15 }];
 const EPS = 1e-9;
 
-// Grenze für die Warnung: eigene Wareneinsatz-Quote des Ladens (Einstellungen), sonst der Branchen-Richtwert (≈ 32 %, BMF-Richtsatzsammlung 2025)
+// Grenze für die Warnung: die Warenquote des Ladens – dieselbe Funktion wie im Zähler (warenQuote, js/zaehler.js, Lauf 6 P1 C4): eigener Wert vor Karte
+// vor Branchen-Richtwert (≈ 32 %, BMF-Richtsatzsammlung 2025), ein Deckel (QUOTE_MAX). Vorher nahm der Deal die Karte nicht und den Richtwert.
+// Die Karten-Quote ist der Schnitt der eigenen Preise, kein Ziel: ein Rabatt hebt die Quote einer Kombi fast immer über diesen Schnitt, und jede Kombi
+// würde warnen. Darum gilt sie als Grenze nur, wenn sie über dem Richtwert liegt (ein Laden mit teurer Ware wird nicht bei 32 % gewarnt);
+// darunter bleibt der Richtwert. Eigene Quote 0 = nicht gesetzt.
 export function kombiGrenze(stand) {
-  const q = stand?.verkauf?.warenQuote;
-  if (typeof q === "number" && q > 0 && q < 0.9) return { quote: q, quelle: "eigen", geschaetzt: false };
-  return { quote: RICHTWERT_WARENEINSATZ.quote, quelle: "richtwert", geschaetzt: true };
+  const q = warenQuote(stand); const richtwert = { quote: RICHTWERT_WARENEINSATZ.quote, quelle: "richtwert", geschaetzt: true };
+  if (q.quelle === "eigen") return q.quote > 0 ? { quote: q.quote, quelle: "eigen", geschaetzt: false } : richtwert;
+  if (q.quelle === "karte" && q.quote > richtwert.quote) return { quote: q.quote, quelle: "karte", geschaetzt: !!q.geschaetzt };
+  return richtwert;
 }
 
 // Gerichte, die sich für eine Kombi rechnen lassen: Kartenpreis und vollständiger Wareneinsatz

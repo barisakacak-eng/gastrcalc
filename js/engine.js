@@ -2,6 +2,7 @@ import { festPersonalMonat, LOHN_AUFSCHLAG } from "./data/lohnkosten.js";
 import { regel, wert as regelwert } from "./data/regelwerk.js";
 import { plusTage, wochentag, berlinZeitpunkt } from "./zeit.js";
 import { mindestlohnAm } from "./data/mindestlohn.js";
+import { feiertagZu } from "./feiertage.js"; // Lauf 6 (P1 C3): tagGewicht lebt jetzt hier
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
 // Die Oberfläche darf nichts rechnen, was hier nicht steht. So reden Rechnung und Gestaltung nicht aneinander vorbei.
@@ -83,7 +84,7 @@ export function monatsLast(stand, datum = heuteGeschaeft()) {
   const eigen = eigenerLohnJeMonat(stand.team, datum);
   const sachbezugAbgaben = sachbezugAbgabenMonat(stand, datum);
   const fixJeOffen = fixkostenJeOffenenMonat(fk.gesamt, stand.betrieb.monate);
-  const reinigung = reinigungMonat(stand); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt)
+  const reinigung = reinigungMonat(stand, { datum }); // Punkt 5: Firma + Putzmittel, eigene Zeile im Zähler (null, wenn nie gefragt); Lauf 6 (P1 B2): mit dem Datum des Monats, nicht mit dem von heute
   return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, sachbezugAbgaben, gesamt: fixJeOffen + (lohn ?? 0) + sachbezugAbgaben + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
 }
 
@@ -339,10 +340,20 @@ export function bestellungenAusUmsatz(stand) {
   const schnittPreis = preise.reduce((s, p) => s + p, 0) / preise.length;
   return Math.round(summe / imFenster.length / schnittPreis);
 }
+// Lauf 6 (P1 C5): Wochen und Tage je Monat – EINE dokumentierte Stelle (vorher 52/12 in der Karte, 30,4 im Mindestlohn, 30 in der Reinigung).
+//  WOCHEN_JE_MONAT: 52 Wochen im Jahr ÷ 12 Monate = 4,333… Für alles, was „je Woche“ bekannt ist und auf den Monat hochgerechnet wird
+//  (Verkaufsmengen der Karte: Gerichte am Tag × Öffnungstage je Woche × WOCHEN_JE_MONAT; Ware, Bestand).
+//  TAGE_JE_MONAT: Kalendertage je Monat im Schnitt, 365 ÷ 12 ≈ 30,42, als Setzung auf 30,4 gerundet. Nur für Stunden aus Kalendertagen
+//  (Mindestlohn-Vorschau: Stunden der letzten 28 Tage × 30,4 ÷ 28). Absichtlich nicht 7 × WOCHEN_JE_MONAT (30,33): das würde die Vorschau um 0,2 % senken
+//  und die Goldwerte (tests/mindestlohn.test.mjs) ändern – Entscheidung steht bei Baris.
+//  Die Fixkosten je Öffnungstag im Zähler teilen dagegen durch die wirklichen Öffnungstage des Kalendermonats (js/zaehler.js, fixkostenJeTag),
+//  damit die Tageskosten eines Monats genau die Monatskosten ergeben; sie schwanken darum mit der Monatslänge – gewollt, siehe docs/architektur.md.
+export const WOCHEN_JE_MONAT = 52 / 12;
+export const TAGE_JE_MONAT = 30.4;
 // Verkaufsmengen je Monat, grob (Prüfung: „drei meistverkaufte Gerichte" reichen für den Start):
 // Bestseller mit eigener Tageszahl, der Rest teilt sich die übrigen Bestellungen des Tages gleichmäßig.
 export function mengenJeMonat(stand, { ausUmsatz = false } = {}) { // ausUmsatz: nur für die Verteilung der Fixkosten in kalkulation()
-  const tage = (Number(stand.betrieb.tageProWoche) || 6) * 52 / 12;
+  const tage = (Number(stand.betrieb.tageProWoche) || 6) * WOCHEN_JE_MONAT;
   // Ausschuss Lauf 3, P2 A1: Ohne „Gerichte am Tag“ zählte jedes Gericht 1× am Tag – ein Döner trug dann ≈ 47 € Miete und Lohn („Bleibt dir −44,78 €“).
   // Jetzt Schätzung aus dem eigenen Umsatz: Schnitt je Umsatztag (letzte 28 Tage mit Eintrag) ÷ Durchschnittspreis der Karte. Bleibt „geschätzt“ (≈).
   const gesamtTag = Number(stand.verkauf?.bestellungenTag) || (ausUmsatz ? bestellungenAusUmsatz(stand) : 0);
@@ -992,6 +1003,21 @@ export function ruhetageAm(stand, datum) {
   if (!v.length) return stand.kuehl?.ruhetage || [];
   let x = v[0]; for (const e of v) { if (e.ab <= datum) x = e; else break; }
   return x.tage;
+}
+// Lauf 6 (P1 C3): EINE Regel für „ist der Laden an diesem Tag offen“ – vorher baute js/reinigung.js sie nach und kannte „an Feiertagen zu“ nicht
+// (22 Öffnungstage im Zähler, 25 in der Reinigung). Gewicht eines Kalendertags: 0 an Feiertagen, wenn der Wirt „an Feiertagen zu“ gewählt hat; 1 oder 0
+// nach den Ruhetagen mit Gültig-ab-Verlauf; ohne bekannte Ruhetage tageProWoche/7. Zähler, Reinigung, Eigentümer, Bestand rufen diese Funktion.
+export function tagGewicht(stand, datum) {
+  if (feiertagZu(stand, datum)) return 0; // Feiertage (18.10.2026): nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
+  const ruhetage = ruhetageAm(stand, datum);
+  if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
+  const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));
+  return t / 7;
+}
+// Öffnungstage von–bis (beide Tage eingeschlossen), gewichtet wie tagGewicht. Die einzige Summe über Tage: Kalendermonat im Zähler, 30 Tage in der Reinigung.
+export function oeffnungstage(stand, von, bis) {
+  let g = 0; for (let d = von; d <= bis; d = plusTage(d, 1)) g += tagGewicht(stand, d);
+  return g;
 }
 export function ruhetageSetzen(stand, tage, datum = heute(), jetzt = new Date().toISOString()) {
   stand.kuehl ??= { takt: 1, ruhetage: [], eingerichtet: false, seit: null };

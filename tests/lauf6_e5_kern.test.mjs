@@ -36,3 +36,93 @@ test("P1 B5: Büro-Bildschirm zeigt bei Beginn = Ende den Hinweis statt „Einge
     const t2 = text(g.geld3View(s)); assert.ok(!/Beginn und Ende sind gleich/.test(t2)); assert.equal(s.schichten.length, 1);
   });
 });
+
+// ---------------------------------------------------------------- Hilfen für die Rechen-Funde
+const tagesumsatz = async (s, tag, betrag) => { const E = await import("../js/engine.js"); E.tagesnotizSetzen(s, tag, betrag); E.tagesnotizenFestschreiben(s); };
+const beleg = (id, datum, zeilen) => ({ id, datum, lieferant: "Großhandel", zeilen, summeNetto: zeilen.reduce((a, z) => a + z.netto, 0), storniert: false, erfasst: datum + "T08:00:00.000Z" });
+function ladenMit(extra = {}) { const s = leererBetrieb(); s.phase = "app"; s.betrieb = { ...s.betrieb, name: "T", format: "imbiss", rechtsform: "einzel", ...extra }; return s; }
+
+// ---------------------------------------------------------------- P1 B2
+test("P1 B2: ein vergangener Monat rechnet die Reinigung mit dem Datum des Monats – egal ob jetzt 12.11.2026 oder 01.03.2027 ist", async () => {
+  const E = await import("../js/engine.js");
+  const s = ladenMit(); s.betrieb.reinigung = { wer: "firma", firmaBetrag: 120, basis: "netto", mittelSchaetzung: null, minutenTag: 45, durch: "team" };
+  s.lieferungen = [beleg("a", "2026-03-05", [{ artikel: "Spülmittel", netto: 100 }]), beleg("b", "2027-02-10", [{ artikel: "Spülmittel", netto: 400 }])]; // b liegt nach dem Monat
+  s.inventuren = [{ id: "i", datum: "2027-02-20", abgeschlossen: true, betriebsmittelJeMonat: 999 }]; // auch eine spätere Inventur zählt für März 2026 nicht
+  const a = await mitUhr("2026-11-12", () => E.monatsLast(s, "2026-03-15"));
+  const b = await mitUhr("2027-03-01", () => E.monatsLast(s, "2026-03-15"));
+  assert.deepEqual(a.reinigung, b.reinigung); assert.equal(a.gesamt, b.gesamt);
+  assert.equal(a.reinigung.mittel, 50, "nur der Beleg vom 05.03.2026 (100 € in 60 Tagen → 50 €/Monat)"); assert.equal(a.reinigung.stufe, "beleg"); assert.equal(a.reinigung.betrag, 170);
+});
+
+// ---------------------------------------------------------------- P1 B3
+test("P1 B3: Beleg 1.000 € netto mit 200 € Spülmittel → überall 800 € Ware und 200 € Putzmittel (Zähler, Was bleibt dir, Prüfer-Blick, Monatsabschluss)", async () => {
+  const Z = await import("../js/zaehler.js"), T = await import("../js/steuertopf.js"), M = await import("../js/monatsabschluss.js"), X = await import("../js/export_steuer.js");
+  await mitUhr("2026-11-20", async () => {
+    const s = ladenMit(); s.lieferungen = [beleg("l1", "2026-11-05", [{ artikel: "Rindfleisch", netto: 800 }, { artikel: "Spülmittel", netto: 200 }])];
+    for (const d of ["2026-11-04", "2026-11-05", "2026-11-06"]) await tagesumsatz(s, d, 1190);
+    const w = Z.wareNettoAusBelegen(s, "2026-11-01", "2026-11-30"); assert.equal(w.ware, 800); assert.equal(w.betriebsmittel, 200); assert.equal(w.anzahl, 1);
+    assert.equal(Z.zaehler(s, { datum: "2026-11-20" }).belegSumme, 800, "Zähler (Stufe 3): Ware 800");
+    const p = T.monatsPosten(s, "2026-11"); assert.equal(p.ware, 800, "Was bleibt dir: Ware 800"); assert.equal(p.putzmittel, 200, "Putzmittel als eigene Zeile");
+    assert.equal(T.prueferBlick(s, "2026-11").quote, Math.round(800 / p.umsatzNetto * 1e4) / 1e4, "Prüfer-Blick: Quote aus 800");
+    assert.equal(M.monatsZahlen(s, "2026-11").ware, 800, "Monatsabschluss: Ware 800");
+    const wb = T.wasBleibtAus(p, null); assert.equal(wb.ergebnis, Math.round((p.umsatzNetto - 800 - 200 - p.energie - p.miete - p.personal - p.sonstiges - p.tilgung) * 100) / 100, "Putzmittel zählt als Kosten, nicht als Ware");
+    const bl = X.belege(s, { von: "2026-11-01", bis: "2026-11-30" }).zeilen[0]; assert.equal(bl.betriebsmittel, 200, "Beleg-Liste: gleiche 200 €");
+  });
+});
+
+// ---------------------------------------------------------------- P1 C3
+test("P1 C3: eine Öffnungstage-Regel – Reinigung kennt „an Feiertagen zu“ wie der Zähler", async () => {
+  const E = await import("../js/engine.js"), Z = await import("../js/zaehler.js"), R = await import("../js/reinigung.js"), F = await import("../js/feiertage.js");
+  assert.equal(Z.tagGewicht, E.tagGewicht, "dieselbe Funktion");
+  const s = ladenMit(); s.betrieb.reinigung = { wer: "selbst", minutenTag: 45, durch: "team" };
+  const offen = R.oeffnungstageMonat(s, "2026-12-31");
+  assert.equal(F.feiertagSetzen(s, "offen", false), true); // „an Feiertagen zu“
+  const zu = R.oeffnungstageMonat(s, "2026-12-31"); // 02.–31.12.: 25. und 26.12. sind Feiertage
+  assert.ok(Math.abs((offen - zu) - 2 * 6 / 7) < 1e-9, `Unterschied ${offen - zu}`);
+  assert.equal(zu, E.oeffnungstage(s, "2026-12-02", "2026-12-31"));
+  assert.equal(Z.zaehler(s, { datum: "2026-12-20" }).gewichtMonat, E.oeffnungstage(s, "2026-12-01", "2026-12-31"), "Zähler: derselbe Zähler über Tage");
+  assert.ok(Math.abs(R.putzzeitMonat(s, "2026-12-31").stunden - 45 * zu / 60) < 1e-9);
+});
+
+// ---------------------------------------------------------------- P1 C4
+test("P1 C4: eine Warenquote – Karte, Zähler, Monatsziel, Mindestlohn und Kombi-Grenze rufen warenQuote, ein Deckel", async () => {
+  const Z = await import("../js/zaehler.js"), D = await import("../js/deal.js"), ML = await import("../js/mindestlohn.js"), E = await import("../js/engine.js");
+  const s = beispielLaden("2026-11-10"); const q = Z.warenQuote(s);
+  assert.equal(q.quelle, "karte"); assert.ok(q.quote > E.RICHTWERT_WARENEINSATZ.quote);
+  assert.equal(D.kombiGrenze(s).quote, q.quote, "Kombi-Grenze = Quote der Karte (über dem Richtwert)"); assert.equal(D.kombiGrenze(s).quelle, "karte");
+  assert.equal(Z.zaehler(s, { datum: "2026-11-09" }).quote, q.quote);
+  // ein Deckel: eigener Wert 95 % → überall höchstens QUOTE_MAX
+  const e = beispielLaden("2026-11-10"); e.verkauf.warenQuote = 0.95;
+  assert.equal(Z.QUOTE_MAX, 0.9); assert.equal(Z.warenQuote(e).quote, Z.QUOTE_MAX);
+  const z = Z.zaehler(e, { datum: "2026-11-09" }); assert.ok(z.quoteEff <= Z.QUOTE_MAX);
+  const quelltext = fs.readFileSync(new URL("../js/zaehler.js", import.meta.url), "utf8") + fs.readFileSync(new URL("../js/deal.js", import.meta.url), "utf8");
+  assert.ok(!/0\.89\b/.test(quelltext), "kein zweiter Deckel 0,89"); assert.ok(!/Math\.min\(0\.9,/.test(quelltext), "kein Deckel als Literal");
+  // unter dem Richtwert bleibt der Richtwert die Grenze (sonst warnt jede Kombi)
+  assert.equal(ML.MONATSTAGE, E.TAGE_JE_MONAT);
+});
+
+// ---------------------------------------------------------------- P1 C5
+test("P1 C5: Fixkosten je Tag aus einer Funktion, Wochen/Tage je Monat aus einer Stelle (keine angezeigte Zahl ändert sich)", async () => {
+  const Z = await import("../js/zaehler.js"), E = await import("../js/engine.js"), W = await import("../js/ware.js"), ML = await import("../js/mindestlohn.js");
+  assert.equal(E.WOCHEN_JE_MONAT, 52 / 12); assert.equal(W.WOCHEN_JE_MONAT, E.WOCHEN_JE_MONAT); assert.equal(ML.MONATSTAGE, 30.4);
+  const s = beispielLaden("2026-11-10");
+  for (const H of ["2026-10-15", "2026-11-09"]) {
+    const f = Z.fixkostenJeTag(s, H); const z = Z.zaehler(s, { datum: H });
+    assert.equal(f.jeTag, z.tageskosten); assert.equal(f.fest, z.tageskostenFest);
+    assert.ok(Math.abs(f.jeTag * f.gewichtMonat - (E.monatsLast(s, H).gesamt + f.sonder.summe)) < 1e-9, "Summe über den Monat = Monatskosten");
+  }
+  // Karte: Mengen = Gerichte am Tag × Öffnungstage je Woche × Wochen je Monat
+  const m = ladenMit({ tageProWoche: 6 }); m.gerichte = [{ id: "g", name: "A", mengeTag: 10, preis: 5, zutaten: [] }];
+  assert.ok(Math.abs(E.mengenJeMonat(m).mengen.g - 10 * 6 * E.WOCHEN_JE_MONAT) < 1e-9);
+});
+
+// ---------------------------------------------------------------- Mischsatz / Gewinn je Gericht
+test("Mischsatz: Umsatz netto im Monatsposten (Was bleibt dir, Monatsabschluss) = Umsatz netto im Zähler; Gewinn je Gericht aus einer Funktion", async () => {
+  const Z = await import("../js/zaehler.js"), T = await import("../js/steuertopf.js"), E = await import("../js/engine.js");
+  const s = beispielLaden("2026-11-10");
+  const z = Z.zaehler(s, { datum: "2026-10-31" }); const p = T.monatsPosten(s, "2026-10");
+  assert.equal(p.umsatzBrutto, Math.round(z.umsatzBrutto * 100) / 100); assert.equal(p.umsatzNetto, Math.round(z.umsatzNetto * 100) / 100);
+  const a = T.anteil19(s); const sa = E.umsatzSteuerSatz(s); assert.ok(Math.abs((0.07 * (1 - a.anteil) + 0.19 * a.anteil) - sa.satz) < 1e-3, "anteil19 leitet sich aus demselben Mischsatz ab");
+  // Gewinn je Gericht: die Zeile der Kalkulation trägt dieselbe Zahl wie preisAmpel
+  for (const x of E.kalkulation(s).zeilen) if (x.preisBrutto !== null && x.sk !== null) assert.equal(x.ampelGewinn, E.preisAmpel(x, x.preisBrutto).gewinn);
+});

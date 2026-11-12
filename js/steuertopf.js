@@ -4,11 +4,11 @@
 import { wert as regelWert } from "./data/regelwerk.js";
 import { umsatzEintrag, umsatzSteuerSatz, fixkosten, monatsLast } from "./engine.js";
 import { belege, monatVon, monatPlus } from "./export_steuer.js";
-import { warenQuote } from "./zaehler.js";
+import { warenQuote, wareNettoAusBelegen } from "./zaehler.js";
 import { wert } from "./data/regelwerk.js";
 import { plusTage } from "./zeit.js";
 import { heute } from "./util.js";
-import { rund2, mwst } from "./geld.js";
+import { rund2, mwst, nettoVonBrutto } from "./geld.js";
 
 const rund4 = (n) => Math.round(n * 10000) / 10000;
 // Die beiden Sätze kommen aus dem Regelwerk (geld.mwst), am Tag des Umsatzes; ohne Tag am heutigen.
@@ -74,12 +74,12 @@ export function steuerTopfTag(stand, datum) {
 }
 
 // ---------- 3.4 Was bleibt dir ----------
-// Umsatz netto − Ware netto − Energie netto − Miete − Personal − Sonstiges = Ergebnis; − Tilgung; ÷ Chef-Stunden.
+// Umsatz netto − Ware netto − Putzmittel & Betriebsmittel − Energie netto − Miete − Personal − Sonstiges = Ergebnis; − Tilgung; ÷ Chef-Stunden.
 // chefStunden: Stunden des Chefs im Monat (Eingabe im Büro, stand.chef.stundenMonat), tilgung: Kreditrate (kosten „kredit“) oder Angabe.
 // Muss-Satz daneben (Text in den Sprachtabellen): „vor Einkommensteuer und deiner eigenen Kranken- und Rentenversicherung“.
-// Reine Rechnung (Goldwert-Test): posten { umsatzNetto, ware, energie, miete, personal, sonstiges, tilgung }, chefStunden oder null
+// Reine Rechnung (Goldwert-Test): posten { umsatzNetto, ware, putzmittel (optional), energie, miete, personal, sonstiges, tilgung }, chefStunden oder null
 export function wasBleibtAus(p, chefStunden = null) {
-  const ergebnisVorTilgung = p.umsatzNetto - p.ware - p.energie - p.miete - p.personal - p.sonstiges;
+  const ergebnisVorTilgung = p.umsatzNetto - p.ware - (p.putzmittel || 0) - p.energie - p.miete - p.personal - p.sonstiges; // Lauf 6 (P1 B3): Putzmittel als eigene Zeile, nicht im Wareneinsatz
   const ergebnis = ergebnisVorTilgung - (p.tilgung || 0); const std = Number(chefStunden) > 0 ? Number(chefStunden) : null;
   return { ergebnisVorTilgung: rund2(ergebnisVorTilgung), tilgung: rund2(p.tilgung || 0), ergebnis: rund2(ergebnis), chefStunden: std, jeStunde: std ? rund2(ergebnis / std) : null };
 }
@@ -92,18 +92,23 @@ export function wasBleibt(stand, monat, { chefStunden = null, tilgung = null, po
 // Monatsposten aus der App: Umsatz netto aus den Tagesumsätzen (Mischsatz), Ware netto aus den Belegen, Kosten aus den festen Posten.
 // Fehlen Belege, wird die Ware aus Umsatz × Warenquote geschätzt (≈).
 export function monatsPosten(stand, monat) {
-  const z = monatVon(monat + "-01"); const { anteil } = anteil19(stand, z.von);
+  const z = monatVon(monat + "-01");
+  // Lauf 6 (Mischsatz): Umsatz netto wie im Zähler – Brutto ÷ (1 + Mischsatz des Ladens, umsatzSteuerSatz). Vorher teilte diese Funktion den Umsatz nach dem
+  // 19-%-Anteil auf und kam so auf einen anderen Netto-Betrag als der Zähler für denselben Monat (Beispiel-Laden Oktober: 16.643,59 € gegen 16.629,62 €).
+  // Die Umsatzsteuer je Satz (Steuer-Topf) rechnet weiter mit dem Anteil (anteil19, ustImUmsatz): das ist eine andere Zahl.
+  const satz = umsatzSteuerSatz(stand).satz;
   let brutto = 0, netto = 0;
-  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil, d); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
+  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; brutto += e.umsatz; netto += nettoVonBrutto(e.umsatz, satz); }
   const b = belege(stand, z);
-  const wareBeleg = b.zeilen.filter((x) => x.quelle === "lieferung").reduce((s, x) => s + (x.netto || 0), 0);
+  // Lauf 6 (P1 B3): Ware = dieselbe Funktion wie im Zähler (ohne Putzmittel); die Putzmittel stehen als eigene Zeile „putzmittel“
+  const wb = wareNettoAusBelegen(stand, z.von, z.bis); const wareBeleg = rund2(wb.ware); const putzmittel = rund2(wb.betriebsmittel);
   const kostenBeleg = (stelle) => b.zeilen.filter((x) => x.quelle === "kosten" && x.stelle === stelle).reduce((s, x) => s + (x.netto ?? x.brutto ?? 0), 0);
   const q = warenQuote(stand); const geschaetzt = !(wareBeleg > 0);
   const ware = wareBeleg > 0 ? wareBeleg : netto * q.quote;
   const fk = fixkosten(stand); const kat = (k) => fk.jeKategorie[k]?.summe || 0;
   const ml = monatsLast(stand, z.bis);
   const energie = kostenBeleg("energie") > 0 ? kostenBeleg("energie") : kat("energie");
-  return { umsatzBrutto: rund2(brutto), umsatzNetto: rund2(netto), ware: rund2(ware), energie: rund2(energie), miete: rund2(kat("miete")), personal: rund2(ml.lohn || 0),
+  return { umsatzBrutto: rund2(brutto), umsatzNetto: rund2(netto), ware: rund2(ware), energie: rund2(energie), putzmittel, miete: rund2(kat("miete")), personal: rund2(ml.lohn || 0),
     sonstiges: rund2(fk.gesamt - kat("miete") - kat("energie") - kat("kredite")), tilgung: rund2(kat("kredite")), geschaetzt };
 }
 

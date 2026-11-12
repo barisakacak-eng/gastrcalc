@@ -2,13 +2,13 @@
 // Grundlage sind vorhandene Bausteine: Rezept-Bedarf (verkauf.bedarfGericht), Preise je Basis (engine.preisJeBasis), Mengen im Monat
 // (engine.mengenJeMonat), Müll-Journal (stand.schwund), Belege (stand.lieferungen), Bestellvorschlag (bestand.bestellVorschlag).
 // Euro-Zahlen sind Schätzungen (≈), sobald Mengen, Garverlust oder Preise geschätzt sind – jede Funktion liefert dafür „geschaetzt“.
-import { mengenJeMonat, preisJeBasis, preisGeschaetzt, mengeInArtikelBasis, rohmengeFuer, garverlustAnteil, eintragWert, SCHWUND_ARTEN, zwischenpreis } from "./engine.js";
+import { WOCHEN_JE_MONAT, mengenJeMonat, preisJeBasis, preisGeschaetzt, mengeInArtikelBasis, rohmengeFuer, garverlustAnteil, eintragWert, SCHWUND_ARTEN, zwischenpreis } from "./engine.js";
 import { bedarfGericht, sollVerbrauch, abgleichInventur } from "./verkauf.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { plusTage } from "./zeit.js";
 
 const idxVon = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
-export const WOCHEN_JE_MONAT = 52 / 12;
+export { WOCHEN_JE_MONAT }; // Lauf 6 (P1 C5): die Konstante steht jetzt in js/engine.js
 
 // ---------- 2.1 Portion in Euro ----------
 // Abweichung je Portion (gewogen − Rezept, in der Einheit des Rezepts) → Rohmenge (Garverlust) × Preis je Basis.

@@ -6,16 +6,12 @@
 //   inventur   – Einkauf minus Bestand aus zwei Inventuren (genauer geht es nicht; kommt mit Punkt 3)
 // Eigene Putzzeit ist KEIN Geld vom Konto: Teamlohn steckt schon im Personal, Inhaberzeit kostet kein Geld. Sie wird nur als Einsicht gezeigt.
 import { heute } from "./util.js";
-import { ruhetageAm } from "./engine.js"; // Paket 3 (16.10.2026), M5: Ruhetage mit Gültig-ab-Verlauf; Kreisimport ist unschädlich, weil nur zur Laufzeit aufgerufen
+import { oeffnungstage } from "./engine.js"; // Lauf 6 (P1 C3): dieselbe Öffnungstage-Regel wie im Zähler (inkl. „an Feiertagen zu“); Kreisimport ist unschädlich, weil nur zur Laufzeit aufgerufen
 // Paket 3 (16.10.2026), M1: Kleinunternehmer bekommen keine Vorsteuer zurück – der Bruttobetrag zählt, wie er ist.
 // Sonst gilt der Regelsatz (Regelwerk mwst_voll) für Dienstleistung und Putzmittel, am Tag des Vorgangs.
 const vorsteuer = (stand, tag = heute()) => (stand.betrieb?.kleinunternehmer ? 0 : mwst("voll", tag));
-// Öffnungstag-Gewicht wie im Zähler (zaehler.js tagGewicht), hier nachgebaut, damit engine.js ohne Kreisimport rechnen kann.
-const tagGewicht = (stand, datum) => { const ruhe = ruhetageAm(stand, datum); if (ruhe.length) return ruhe.includes(wochentag(datum)) ? 0 : 1;
-  return Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6)) / 7; };
-
 import { istBetriebsmittel } from "./betriebsmittel.js";
-import { plusTage, wochentag } from "./zeit.js";
+import { plusTage } from "./zeit.js";
 import { nettoVonBrutto, mwst } from "./geld.js";
 export { istBetriebsmittel };
 
@@ -25,8 +21,7 @@ export const reinigungVon = (stand) => ({ ...REINIGUNG_LEER, ...(stand.betrieb?.
 
 // Öffnungstage in einem Monat (30 Kalendertage ab heute rückwärts, gewichtet wie im Zähler)
 export function oeffnungstageMonat(stand, datum = heute()) {
-  let s = 0; for (let i = 0; i < 30; i++) s += tagGewicht(stand, plusTage(datum, -i));
-  return s;
+  return oeffnungstage(stand, plusTage(datum, -29), datum);
 }
 
 // Putzmittel & Co. aus Belegen: Summe der letzten 60 Tage, auf 30 Tage umgerechnet.
@@ -41,8 +36,9 @@ export function mittelAusBelegen(stand, datum = heute()) {
 
 // Die Zeile im Kostenzähler. null = Reinigung wurde nie gefragt (alte Läden): dann gibt es die Zeile nicht.
 // inventurMittel: optionaler Verbrauch je Monat aus zwei Inventuren (Punkt 3), wird vom Aufrufer übergeben.
-const ausInventur = (stand) => { const f = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.betriebsmittelJeMonat === "number").sort((a, b) => a.datum.localeCompare(b.datum)).pop(); return f ? f.betriebsmittelJeMonat : null; };
-export function reinigungMonat(stand, { datum = heute(), inventurMittel = ausInventur(stand) } = {}) {
+// Lauf 6 (P1 B2): nur Inventuren bis zum Rechentag – sonst rechnet ein vergangener Monat mit einer Inventur aus der Zukunft.
+const ausInventur = (stand, datum = heute()) => { const f = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.betriebsmittelJeMonat === "number" && !(typeof i.datum === "string" && i.datum > datum)).sort((a, b) => a.datum.localeCompare(b.datum)).pop(); return f ? f.betriebsmittelJeMonat : null; };
+export function reinigungMonat(stand, { datum = heute(), inventurMittel = ausInventur(stand, datum) } = {}) {
   const r = stand.betrieb?.reinigung; if (!r || !r.wer) return null;
   // Eingaben stehen meist brutto auf der Rechnung (Review 15.10.): wie die anderen Kosten auf netto umrechnen (19 %), Schalter je Feld.
   const netto = (x) => (r.basis === "netto" ? x : nettoVonBrutto(x, vorsteuer(stand, datum))); // Paket 3, M1
