@@ -1172,9 +1172,15 @@ export function eintraegeZaehlen(wurzel) {
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
+// Lauf 6, E5 (C6): „app-sichtbar“ (jedes Zurückkehren zur App) füllte den Deckel von 2000 und drängte Spuren von Import, Abgleich und Sicherung hinaus.
+// Zwei Maßnahmen: „app-sichtbar“ wird höchstens einmal je Stunde protokolliert, und beim Kürzen bleiben wichtige Ereignisse bevorzugt erhalten (ereignisWichtig).
+export const SICHTBAR_ABSTAND_MS = 3600e3;
+let sichtbarZuletzt = 0;
+export const ereignisWichtig = (art) => /^(import|export|abgleich|sicherung|speicher|fehler|einlesen|fremde-fassung)/.test(String(art));
 export async function ereignis(art, daten = {}) {
   const e = { id: uid(), zeit: new Date().toISOString(), art, fassung: APP_FASSUNG, ...daten };
   if (!verfuegbar || !db || pausiert) return e; // Übungsmodus: kein Eintrag im Ereignis-Journal
+  if (art === "app-sichtbar") { const jetzt = Date.now(); if (jetzt - sichtbarZuletzt < SICHTBAR_ABSTAND_MS) return e; sichtbarZuletzt = jetzt; }
   try { await tx("ereignisse", "readwrite", (st) => st.add(e)); } catch (_) {}
   return e;
 }
@@ -1184,12 +1190,16 @@ export async function alleEreignisse() {
   return tx("ereignisse", "readonly", (st) => st.getAll());
 }
 
-// Deckel: die ältesten Einträge fliegen, sobald es mehr als EREIGNISSE_MAX sind.
+// Deckel: sobald es mehr als EREIGNISSE_MAX sind, fliegen zuerst die ältesten gewöhnlichen Einträge; wichtige (ereignisWichtig) erst, wenn nichts anderes mehr da ist.
 async function ereignisseDeckeln() {
   const n = await tx("ereignisse", "readonly", (st) => st.count());
   if (n <= EREIGNISSE_MAX) return;
-  let weg = n - EREIGNISSE_MAX;
-  await tx("ereignisse", "readwrite", (st) => { const c = st.openCursor(); c.onsuccess = () => { const cur = c.result; if (cur && weg > 0) { cur.delete(); weg -= 1; cur.continue(); } }; });
+  const [schluessel, werte] = await tx("ereignisse", "readonly", (st) => [st.getAllKeys(), st.getAll()]);
+  let weg = schluessel.length - EREIGNISSE_MAX; if (weg <= 0) return;
+  const gewoehnlich = [], wichtig = [];
+  schluessel.forEach((k, i) => (ereignisWichtig(werte[i]?.art) ? wichtig : gewoehnlich).push(k)); // in Speicher-Reihenfolge = älteste zuerst
+  const loeschen = [...gewoehnlich, ...wichtig].slice(0, weg);
+  await tx("ereignisse", "readwrite", (st) => { for (const k of loeschen) st.delete(k); });
 }
 
 // ---------- Sicherungsdatei ----------
@@ -1664,6 +1674,6 @@ export async function allesLoeschen() {
   if (!verfuegbar || !db) return false;
   try { await txMehr(["stand", "teile", "ereignisse"], "readwrite", (t) => { for (const n of ["stand", "teile", "ereignisse"]) t.objectStore(n).clear(); }); }
   catch (e) { console.warn("Löschen fehlgeschlagen:", e); return false; }
-  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map(); genGelesen = 0; rueckholMem = null; rohGefunden = []; // Paket 2: Kopf ist weg, Zähler beginnt neu
+  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map(); genGelesen = 0; rueckholMem = null; rohGefunden = []; sichtbarZuletzt = 0; // Paket 2: Kopf ist weg, Zähler beginnt neu
   return true;
 }

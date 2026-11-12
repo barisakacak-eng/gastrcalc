@@ -364,3 +364,21 @@ test("P2 C5: Rückholpunkt – einlesenSicher merkt die alte Wurzel im eigenen S
   assert.equal(await st.zurueckholen(), null, "nichts mehr da");
   assert.match(l6y.l6yText("rueckgaengig", "de"), /rückgängig/);
 });
+
+// ---------- P2 C6: Ereignisprotokoll ----------
+test("P2 C6: „app-sichtbar“ wird höchstens einmal je Stunde protokolliert; beim Kürzen auf 2000 bleiben Import, Abgleich, Sicherung und Fehler erhalten", async () => {
+  const a = idbAttrappe(); await st.laden();
+  for (let i = 0; i < 6; i++) await st.ereignis("app-sichtbar", { phase: "app" });
+  assert.equal((await st.alleEreignisse()).filter((e) => e.art === "app-sichtbar").length, 1, "sechs Rückkehr-Meldungen, ein Eintrag");
+  await st.ereignis("import", { betriebe: 1 }); assert.equal((await st.alleEreignisse()).filter((e) => e.art === "import").length, 1, "andere Ereignisse nicht gebremst");
+  // Speicher bis über den Deckel füllen: die wichtigen stehen ganz vorn (am ältesten)
+  const store = a.speicher("gastrocalc", "ereignisse"); store.clear(); let k = 0;
+  const wichtig = ["import", "abgleich", "sicherung-ort", "speicher-fremder-stand", "fehler", "export", "einlesen-zurueck", "import-ersetzt"];
+  for (const art of wichtig) store.set(++k, { id: "w" + k, zeit: "2026-10-01T00:00:00.000Z", art });
+  for (let i = 0; i < 2300; i++) store.set(++k, { id: "x" + k, zeit: "2026-10-02T00:00:00.000Z", art: i % 2 ? "app-sichtbar" : "umsatz-laden" });
+  await st.laden(); // Deckel greift beim Laden
+  const e = await st.alleEreignisse(); assert.equal(e.length, 2000);
+  for (const art of wichtig) assert.ok(e.some((x) => x.art === art), "wichtig bleibt: " + art);
+  assert.ok(e.at(-1).id === "x" + k, "die neuesten gewöhnlichen bleiben");
+  assert.equal(st.ereignisWichtig("import-pruefsumme"), true); assert.equal(st.ereignisWichtig("app-sichtbar"), false);
+});
