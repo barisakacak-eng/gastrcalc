@@ -93,12 +93,12 @@ export function wasBleibt(stand, monat, { chefStunden = null, tilgung = null, po
 // Fehlen Belege, wird die Ware aus Umsatz × Warenquote geschätzt (≈).
 export function monatsPosten(stand, monat) {
   const z = monatVon(monat + "-01");
-  // Lauf 6 (Mischsatz): Umsatz netto wie im Zähler – Brutto ÷ (1 + Mischsatz des Ladens, umsatzSteuerSatz). Vorher teilte diese Funktion den Umsatz nach dem
-  // 19-%-Anteil auf und kam so auf einen anderen Netto-Betrag als der Zähler für denselben Monat (Beispiel-Laden Oktober: 16.643,59 € gegen 16.629,62 €).
-  // Die Umsatzsteuer je Satz (Steuer-Topf) rechnet weiter mit dem Anteil (anteil19, ustImUmsatz): das ist eine andere Zahl.
-  const satz = umsatzSteuerSatz(stand).satz;
+  // Umsatz netto = Brutto minus die Umsatzsteuer je Satz (dieselbe Aufteilung wie im Steuer-Topf: anteil19, ustImUmsatz). So gilt für jeden Monat
+  // Umsatz netto + Umsatzsteuer des Steuer-Topfs = Umsatz brutto. Der Zähler im Laden rechnet dagegen als Schätzung mit Brutto ÷ (1 + Mischsatz);
+  // das weicht um ≈ 0,1 % ab (Beispiel-Laden Oktober: 16.643,59 € genau gegen 16.629,62 € im Zähler) und ist dort mit ≈ gekennzeichnet.
+  const { anteil } = anteil19(stand, z.von);
   let brutto = 0, netto = 0;
-  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; brutto += e.umsatz; netto += nettoVonBrutto(e.umsatz, satz); }
+  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil, d); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
   const b = belege(stand, z);
   // Lauf 6 (P1 B3): Ware = dieselbe Funktion wie im Zähler (ohne Putzmittel); die Putzmittel stehen als eigene Zeile „putzmittel“
   const wb = wareNettoAusBelegen(stand, z.von, z.bis); const wareBeleg = rund2(wb.ware); const putzmittel = rund2(wb.betriebsmittel);

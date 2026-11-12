@@ -117,11 +117,14 @@ test("P1 C5: Fixkosten je Tag aus einer Funktion, Wochen/Tage je Monat aus einer
 });
 
 // ---------------------------------------------------------------- Mischsatz / Gewinn je Gericht
-test("Mischsatz: Umsatz netto im Monatsposten (Was bleibt dir, Monatsabschluss) = Umsatz netto im Zähler; Gewinn je Gericht aus einer Funktion", async () => {
+test("Mischsatz: Umsatz netto im Monatsposten + Umsatzsteuer des Steuer-Topfs = Umsatz brutto; Gewinn je Gericht aus einer Funktion", async () => {
   const Z = await import("../js/zaehler.js"), T = await import("../js/steuertopf.js"), E = await import("../js/engine.js");
   const s = beispielLaden("2026-11-10");
   const z = Z.zaehler(s, { datum: "2026-10-31" }); const p = T.monatsPosten(s, "2026-10");
-  assert.equal(p.umsatzBrutto, Math.round(z.umsatzBrutto * 100) / 100); assert.equal(p.umsatzNetto, Math.round(z.umsatzNetto * 100) / 100);
+  assert.equal(p.umsatzBrutto, Math.round(z.umsatzBrutto * 100) / 100);
+  const topf = T.steuerTopf(s, "2026-10"); assert.ok(Math.abs(p.umsatzNetto + topf.ust - p.umsatzBrutto) < 0.02, "Netto + Umsatzsteuer = Brutto (auf zwei Cent wegen der Tagesrundung)");
+  assert.equal(p.umsatzNetto, 16643.59); // Wert vor Lauf 6 – unverändert. Der Zähler schätzt mit Brutto ÷ (1 + Mischsatz): ≈ 0,1 % weniger
+  assert.ok(Math.abs(p.umsatzNetto - z.umsatzNetto) / p.umsatzNetto < 0.002);
   const a = T.anteil19(s); const sa = E.umsatzSteuerSatz(s); assert.ok(Math.abs((0.07 * (1 - a.anteil) + 0.19 * a.anteil) - sa.satz) < 1e-3, "anteil19 leitet sich aus demselben Mischsatz ab");
   // Gewinn je Gericht: die Zeile der Kalkulation trägt dieselbe Zahl wie preisAmpel
   for (const x of E.kalkulation(s).zeilen) if (x.preisBrutto !== null && x.sk !== null) assert.equal(x.ampelGewinn, E.preisAmpel(x, x.preisBrutto).gewinn);
