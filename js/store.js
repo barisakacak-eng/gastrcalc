@@ -218,6 +218,18 @@ async function umziehen(w) {
 }
 
 const istObjekt = (x) => x && typeof x === "object" && !Array.isArray(x);
+// Lauf 6, E5 (B5): Felder, die diese App nicht kennt (aus einer neueren Fassung), bleiben an Wurzel, Laden und Einträgen erhalten – durchgereicht, nicht gedeutet.
+// Bei Einträgen, die ein Prüfer neu aufbaut, kommen alle Felder zurück, die weder der Prüfer schreibt noch in `bekannt` stehen (bekannt = Felder, die er absichtlich verwerfen darf).
+const mitRest = (alt, neu, bekannt) => { if (istObjekt(alt)) for (const k of Object.keys(alt)) if (k !== "__proto__" && !(k in neu) && !bekannt.includes(k)) neu[k] = alt[k]; return neu; };
+const PERSON_FELDER = ["id", "kuerzel", "aktiv", "entfernt", "ausgeschieden", "stundenlohn", "lohnArt", "lohnModell", "monatsBrutto"];
+const KUEHLSTELLE_FELDER = ["id", "name", "art", "min", "max", "reihe", "archiviert", "ware", "typ"];
+const NOTIZ_FELDER = ["id", "datum", "umsatz", "erfasst", "nacherfasst", "storniert", "geraet", "storniertZeit", "ersetzt", "entwurf", "sitzung", "geaendert"]; // entwurf/sitzung: ein Entwurf ist nach dem Neustart fest
+const AKTION_FELDER = ["id", "art", "gerichte", "preis", "statt", "von", "bis", "ende", "ware", "plan", "geaendertZeit", "bilanz", "erfasst", "entfernt", "entferntZeit", "doppelt"];
+const KOMBI_FELDER = ["id", "name", "kassenNamen", "plu", "teile"];
+const TAFEL_FELDER = ["sekunden", "gruppen", "aktionen", "sprache"];
+const PORTAL_FELDER = ["id", "name", "provision", "basis"];
+const LIEFERANT_FELDER = ["id", "name", "namen", "art", "modus", "tage", "schluss", "lieferzeit", "mindestwert", "weg", "kontakt", "kundennummer", "notiz", "erfasst", "geaendert", "entfernt", "entferntZeit", "auto", "doppelt"];
+const WURZEL_FELDER = ["schema", "sprache", "aktiv", "geraet", "lfd", "letzteSicherung", "sicherungZaehler", "betriebe", "ladeFehler", "persistGefragt", "letzteSicherungGroesse", "modus", "homeHinweisGesehen", "bueroPin", "pinSperre", "rettungPin", "testphase", "bio"];
 // Lauf 6, E5 (C5): Einträge, die beim Laden oder Einlesen als ungültig übersprungen werden, werden gezählt (importDatei meldet die Zahl als bericht.ungueltig)
 let ungueltigZaehler = 0;
 const zaehleUngueltig = (n = 1) => { ungueltigZaehler += n; };
@@ -270,8 +282,8 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   if (s.betrieb.feiertagOffen !== false) delete s.betrieb.feiertagOffen;      // Standard: an Feiertagen offen wie an einem normalen Wochentag
   if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
   if (typeof s.verkauf.warenQuote !== "number" || !(s.verkauf.warenQuote >= 0 && s.verkauf.warenQuote < 0.9)) s.verkauf.warenQuote = null;
-  s.kanaele.portale = s.kanaele.portale.filter(istObjekt).map((p) => ({ id: String(p.id || uid()), name: String(p.name || ""),
-    provision: typeof p.provision === "number" ? p.provision : null, basis: ["netto", "brutto", "unbekannt"].includes(p.basis) ? p.basis : "unbekannt" }));
+  s.kanaele.portale = s.kanaele.portale.filter(istObjekt).map((p) => mitRest(p, { id: String(p.id || uid()), name: String(p.name || ""),
+    provision: typeof p.provision === "number" ? p.provision : null, basis: ["netto", "brutto", "unbekannt"].includes(p.basis) ? p.basis : "unbekannt" }, PORTAL_FELDER));
   s.betrieb.name = String(s.betrieb.name || "").slice(0, 40); s.betrieb.kuechen = s.betrieb.kuechen.filter((k) => KUECHEN.some((x) => x.id === k));
   if (!FORMATE.some((f) => f.id === s.betrieb.format)) s.betrieb.format = null; // unbekannte Kennungen aus fremden Dateien
   s.betrieb.tageProWoche = Math.min(7, Math.max(1, Number(s.betrieb.tageProWoche) || 6));
@@ -285,11 +297,11 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   for (const a of s.artikel) artikelLieferantSauber(a); // Lieferanten (18.10.2026): Haupt-/Zweitlieferant nur als Kennung
   for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
   { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
-    s.lager = { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }; }
+    s.lager = mitRest(s.lager, { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }, []); }
   s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
   preisQuelleNachtragen(s); // Lauf 2, A5 (31.10.2026): Bestandsläden ohne preisQuelle (Durchsicht-Fund 6)
   for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
-  s.lieferanten = lieferantenSauber(s.lieferanten); lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium 18.10.2026 (N3): gleiche Namen zusammenlegen
+  { const roh = new Map((Array.isArray(s.lieferanten) ? s.lieferanten : []).filter((x) => istObjekt(x) && typeof x.id === "string").map((x) => [x.id.trim().slice(0, 60), x])); s.lieferanten = lieferantenSauber(s.lieferanten).map((x) => mitRest(roh.get(x.id), x, LIEFERANT_FELDER)); } lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium 18.10.2026 (N3): gleiche Namen zusammenlegen
   s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
   s.kostenbelege = mitId(s.kostenbelege).filter((k) => typeof k.stelle === "string" && typeof k.betrag === "number" && typeof k.ab === "string").map((k) => ({ ...k, storniert: !!k.storniert }));
@@ -301,16 +313,16 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.aktionen = aktionenEntdoppeln(aktionenSauber(s.aktionen)); s.tafel = tafelSauber(s.tafel); // Menütafel (18.10.2026); Prüfgremium 18.10.2026 (M1): Doppel aus älteren Ständen
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
-    .map((n) => ({ id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
+    .map((n) => mitRest(n, { id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
       erfasst: typeof n.erfasst === "string" ? n.erfasst : (n.geaendert || n.datum + "T00:00:00.000Z"), nacherfasst: !!n.nacherfasst, storniert: !!n.storniert,
       // W2-T: Spur der Korrekturen bleibt beim Laden erhalten (Gerät, Rücknahmezeit, Nachfolger); ein Entwurf ist nach dem Neustart fest
       ...(typeof n.geraet === "string" ? { geraet: n.geraet } : {}), ...(typeof n.storniertZeit === "string" ? { storniertZeit: n.storniertZeit } : {}),
-      ...(typeof n.ersetzt === "string" || n.ersetzt === true ? { ersetzt: n.ersetzt } : {}) }));
-  s.personen = mitId(s.personen).map((p) => ({ id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt, ...(typeof p.ausgeschieden === "string" ? { ausgeschieden: p.ausgeschieden } : {}), ...(typeof p.stundenlohn === "number" && p.stundenlohn > 0 ? { stundenlohn: p.stundenlohn } : {}), ...(p.lohnArt === "minijob" || p.lohnArt === "angestellt" ? { lohnArt: p.lohnArt } : {}), ...(p.lohnModell === "monat" || p.lohnModell === "stunde" ? { lohnModell: p.lohnModell } : {}), ...(typeof p.monatsBrutto === "number" && p.monatsBrutto > 0 ? { monatsBrutto: p.monatsBrutto } : {}) })); // 27.10.2026: Stundenlohn für „Mitarbeiter heute“ // W2-H: Datum „ausgeschieden“ bleibt
+      ...(typeof n.ersetzt === "string" || n.ersetzt === true ? { ersetzt: n.ersetzt } : {}) }, NOTIZ_FELDER));
+  s.personen = mitId(s.personen).map((p) => mitRest(p, { id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt, ...(typeof p.ausgeschieden === "string" ? { ausgeschieden: p.ausgeschieden } : {}), ...(typeof p.stundenlohn === "number" && p.stundenlohn > 0 ? { stundenlohn: p.stundenlohn } : {}), ...(p.lohnArt === "minijob" || p.lohnArt === "angestellt" ? { lohnArt: p.lohnArt } : {}), ...(p.lohnModell === "monat" || p.lohnModell === "stunde" ? { lohnModell: p.lohnModell } : {}), ...(typeof p.monatsBrutto === "number" && p.monatsBrutto > 0 ? { monatsBrutto: p.monatsBrutto } : {}) }, PERSON_FELDER)); // 27.10.2026: Stundenlohn für „Mitarbeiter heute“ // W2-H: Datum „ausgeschieden“ bleibt
   s.kuehl.takt = s.kuehl.takt === 2 ? 2 : 1; if (typeof s.kuehl.seit !== "string") s.kuehl.seit = null; s.kuehl.ruhetage = (Array.isArray(s.kuehl.ruhetage) ? s.kuehl.ruhetage : []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
-  s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => ({ id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm", "eis"].includes(k.art) ? k.art : "kuehl",
+  s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => mitRest(k, { id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm", "eis"].includes(k.art) ? k.art : "kuehl",
     min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, reihe: Number.isFinite(k.reihe) ? k.reihe : i, archiviert: !!k.archiviert, ...(typeof k.ware === "string" ? { ware: k.ware } : {}),
-    ...(["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"].includes(k.typ) ? { typ: k.typ } : {}) })); // Paket 6 (17.10.2026): Typ-Schlüssel bleibt erhalten (Anzeige-Name folgt der Sprache) // W2-H: Datenstelle Grenze je Ware
+    ...(["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"].includes(k.typ) ? { typ: k.typ } : {}) }, KUEHLSTELLE_FELDER)); // Paket 6 (17.10.2026): Typ-Schlüssel bleibt erhalten (Anzeige-Name folgt der Sprache) // W2-H: Datenstelle Grenze je Ware
   s.rundgaenge = mitId(s.rundgaenge).filter((r) => typeof r.datum === "string").map((r) => ({ ...r, messungen: Array.isArray(r.messungen) ? r.messungen.filter(istObjekt) : [] }));
   s.messungen = mitId(s.messungen).filter((m) => typeof m.datum === "string" && typeof m.stelle === "string").map((m) => ({ ...m,
     wert: typeof m.wert === "number" ? m.wert : null, massnahmen: Array.isArray(m.massnahmen) ? m.massnahmen.filter((x) => typeof x === "string") : [],
@@ -383,10 +395,10 @@ function gerichtKasse(g) {
 // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – Kennung, Name, gelernte Kassentexte, Nummer, Teile (Gericht-Kennung × Menge > 0)
 function kombisSauber(liste, gerichte) {
   const ids = new Set((gerichte || []).map((g) => g.id));
-  return mitId(Array.isArray(liste) ? liste : []).map((k) => ({ id: k.id, name: String(k.name ?? "").slice(0, 120),
+  return mitId(Array.isArray(liste) ? liste : []).map((k) => mitRest(k, { id: k.id, name: String(k.name ?? "").slice(0, 120),
     kassenNamen: [...new Set((Array.isArray(k.kassenNamen) ? k.kassenNamen : []).filter((x) => typeof x === "string").map((x) => x.trim().slice(0, 120)).filter(Boolean))].slice(0, 40),
     plu: typeof k.plu === "string" && k.plu.trim() ? k.plu.trim().slice(0, 50) : null,
-    teile: (Array.isArray(k.teile) ? k.teile : []).filter((x) => istObjekt(x) && ids.has(x.gericht) && Number(x.menge) > 0).map((x) => ({ gericht: x.gericht, menge: Number(x.menge) })) }));
+    teile: (Array.isArray(k.teile) ? k.teile : []).filter((x) => istObjekt(x) && ids.has(x.gericht) && Number(x.menge) > 0).map((x) => ({ gericht: x.gericht, menge: Number(x.menge) })) }, KOMBI_FELDER));
 }
 // Menütafel (18.10.2026): übernommene Aktionen – Kennung, Gerichte (Kennungen, 1–4), Preis > 0, von ≤ bis als JJJJ-MM-TT; Ungültiges fällt weg.
 // Gerichte, die es nicht mehr gibt, bleiben in der Liste (die Tafel lässt die Aktion dann weg und sagt es im Büro) – so geht beim Zusammenführen nichts verloren.
@@ -413,7 +425,7 @@ function hinweiseSauber(liste) {
   for (const e of Array.isArray(liste) ? liste : []) {
     if (!istObjekt(e) || typeof e.id !== "string" || !["neu", "spaeter", "erledigt"].includes(e.status)) continue;
     const zeit = typeof e.zeit === "string" ? e.zeit : "";
-    const alt = m.get(e.id); if (!alt || zeit > alt.zeit) m.set(e.id, { id: e.id, status: e.status, zeit });
+    const alt = m.get(e.id); if (!alt || zeit > alt.zeit) m.set(e.id, mitRest(e, { id: e.id, status: e.status, zeit }, []));
   }
   return [...m.values()].sort((x, y) => x.id.localeCompare(y.id));
 }
@@ -422,14 +434,14 @@ export const hinweiseVereinigen = (a, b) => hinweiseSauber([...(Array.isArray(a)
 function aktionenSauber(liste) {
   return mitId(Array.isArray(liste) ? liste : []).map((a) => {
     const ende = a.ende === "ware" ? "ware" : "datum"; const plan = planSauber(a.plan), bilanz = bilanzSauber(a.bilanz);
-    return { id: a.id, art: ["abverkauf", "kombi"].includes(a.art) ? a.art : "kombi",
+    return mitRest(a, { id: a.id, art: ["abverkauf", "kombi"].includes(a.art) ? a.art : "kombi",
       gerichte: [...new Set((Array.isArray(a.gerichte) ? a.gerichte : []).filter((x) => typeof x === "string" && x))].slice(0, 4),
       preis: typeof a.preis === "number" && Number.isFinite(a.preis) && a.preis > 0 && a.preis < 10000 ? rund2(a.preis) : null,
       statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? rund2(a.statt) : null,
       von: tagOder(a.von), bis: tagOder(a.bis), ende,
       ...(typeof a.ware === "string" && a.ware.trim() ? { ware: a.ware.trim().slice(0, 120) } : {}), ...(plan ? { plan } : {}), ...(typeof a.geaendertZeit === "string" ? { geaendertZeit: a.geaendertZeit } : {}), ...(bilanz ? { bilanz } : {}),
       erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}),
-      ...(typeof a.doppelt === "string" && a.doppelt ? { doppelt: a.doppelt.slice(0, 60) } : {}) };
+      ...(typeof a.doppelt === "string" && a.doppelt ? { doppelt: a.doppelt.slice(0, 60) } : {}) }, AKTION_FELDER);
   }).filter((a) => a.gerichte.length && a.preis !== null && a.von && (a.bis ? a.von <= a.bis : a.ende === "ware"));
 }
 // Prüfgremium 18.10.2026 (M1): Dieselbe Aktion auf zwei Handys angelegt (gleiche Art, gleiche Gerichte, gleicher Preis, beide laufend) ist EINE Aktion.
@@ -456,8 +468,8 @@ const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 function tafelSauber(x) {
   const t = istObjekt(x) ? x : {}; const sek = Math.round(Number(t.sekunden));
   const gruppen = TAFEL_GRUPPEN.filter((g) => Array.isArray(t.gruppen) && t.gruppen.includes(g));
-  return { sekunden: typeof t.sekunden === "number" && sek >= 5 && sek <= 120 ? sek : 12, gruppen: Array.isArray(t.gruppen) && gruppen.length ? gruppen : [...TAFEL_GRUPPEN],
-    aktionen: t.aktionen !== false, sprache: SPRACH_CODES.includes(t.sprache) ? t.sprache : "de" };
+  return mitRest(t, { sekunden: typeof t.sekunden === "number" && sek >= 5 && sek <= 120 ? sek : 12, gruppen: Array.isArray(t.gruppen) && gruppen.length ? gruppen : [...TAFEL_GRUPPEN],
+    aktionen: t.aktionen !== false, sprache: SPRACH_CODES.includes(t.sprache) ? t.sprache : "de" }, TAFEL_FELDER);
 }
 // Menütafel (18.10.2026): Zusammenführen – Aktionen beider Handys bleiben (Vereinigung nach Kennung); „beendet“ gewinnt immer.
 // Vereinigung zweier Listen mit Kennung: Sieger-Fassung gewinnt je id, Rest des Verlierers kommt dazu, Reihenfolge nach datum/erfasst, dann id.
@@ -571,6 +583,10 @@ export function migrierenWurzel(w) {
     if (pinWertGueltig(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern (W2-S: auch PBKDF2 mit Salz)
     { const sp = sperreSauber(w.pinSperre); if (sp) out.pinSperre = sp; } // W2-S: Fehlversuche übersteht den Neustart
     if (pinWertGueltig(w.rettungPin) && w.rettungPin.includes("$")) out.rettungPin = w.rettungPin; // Rettung (17.10.2026): nur der Prüfwert des Rettungscodes
+    // Lauf 6, E5 (B7/C3): testphase.ohneCode (Wahrheitswert) und bio.id (Text) gingen beim Neustart verloren – hier durchreichen, nur gültige Werte
+    if (istObjekt(w.testphase) && typeof w.testphase.ohneCode === "boolean") out.testphase = { ...w.testphase };
+    if (istObjekt(w.bio) && typeof w.bio.id === "string" && w.bio.id) out.bio = { ...w.bio };
+    mitRest(w, out, WURZEL_FELDER); // Lauf 6, E5 (B5): unbekannte Felder aus einer neueren Fassung bleiben (durchgereicht, nicht gedeutet)
     return out;
   }
   // Schema 1: der alte Einzelbetrieb. Er hatte keine Kennung; sie wird aus Anlagezeit und Namen abgeleitet,
@@ -1228,11 +1244,12 @@ export async function importDatei(text) {
     try { d = JSON.parse(inhalt); } catch (_) { throw fehler("format"); }
     if (typeof kopf.sha256 === "string") { const sha = await sha256Hex(inhalt); pruefsumme = sha === null ? "fehlt" : sha === kopf.sha256 ? "ok" : "abweichung"; }
     if (!istObjekt(d) || !istObjekt(d.wurzel)) throw fehler("format");
+    if (Number(d.wurzel.schema) > SCHEMA) throw fehler("neuer"); // Lauf 6, E5 (B5): auch das Schema in der Wurzel zählt, nicht nur der Kopf
     return { wurzel: ohneCode(migrierenWurzel(d.wurzel)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme }; // W2-S
   }
   try { d = JSON.parse(text); } catch (_) { throw fehler("format"); }
   if (!istObjekt(d) || d.typ !== "gastrocalc-sicherung" || !(istObjekt(d.wurzel) || istObjekt(d.stand))) throw fehler("format");
-  if (Number(d.schema) > SCHEMA) throw fehler("neuer");
+  if (Number(d.schema) > SCHEMA || Number((d.wurzel || d.stand).schema) > SCHEMA) throw fehler("neuer");
   return { wurzel: ohneCode(migrierenWurzel(d.wurzel || d.stand)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme: "fehlt" }; // W2-S
 }
 // W2-S (p07 M3): Code und Fehlversuche aus einer Datei gelten nie – jedes Handy behält seinen eigenen Büro-Code

@@ -190,3 +190,51 @@ test("P2 B4: Datei mit 398 Zukunfts-Einträgen in ein leeres Handy – 398 sind 
   // in ein vorhandenes Handy (verschmelzen): ebenfalls übernommen
   const a = laden("Z1"); const v = st.verschmelzen(a, b, { jetzt }); assert.equal(v.messungen.filter((x) => x.datumPruefen).length, 398);
 });
+
+// ---------- P2 B5: Datei aus neuerer Fassung ----------
+test("P2 B5: unbekannte Felder an Wurzel, Laden und Einträgen bleiben erhalten (Rundreise über Speichern-Form, Sicherung und Einlesen)", async () => {
+  idbAttrappe(); await st.laden();
+  const b = mitGerichten();
+  b.zukunftsFeld = { x: [1, 2] }; b.gerichte[0].neuesFeld = "g"; b.artikel[0].artikelNeu = 5; b.kosten[0].kostenNeu = true;
+  b.personen[0].personNeu = "p"; b.tagesnotizen.push({ id: "t1", datum: "2026-11-10", umsatz: 5, erfasst: "2026-11-10T20:00:00.000Z", nacherfasst: false, storniert: false, notizNeu: 1 });
+  b.kuehlstellen = [{ id: "ks1", name: "K", art: "kuehl", min: null, max: null, reihe: 0, archiviert: false, kuehlNeu: "k" }];
+  b.lieferanten = [{ id: "li1", name: "Metro", namen: ["Metro"], art: "sonstiges", modus: "lieferung", tage: [], schluss: null, lieferzeit: null, mindestwert: null, weg: null, kontakt: "", kundennummer: "", notiz: "", erfasst: null, geaendert: null, entfernt: false, lieferNeu: 1 }];
+  b.kassenKombis = [{ id: "kk1", name: "Menü", kassenNamen: [], plu: null, teile: [], kombiNeu: 1 }];
+  b.tafel = { sekunden: 12, gruppen: ["speisen"], aktionen: true, sprache: "de", tafelNeu: 1 }; b.lager = { tage: 7, puffer: 2, lagerNeu: 1 };
+  b.betrieb.hinweise = [{ id: "h1", status: "neu", zeit: "2026-11-01T00:00:00.000Z", hinweisNeu: 1 }];
+  b.messungen.push({ id: "m1", lfd: 1, stelle: "k1", datum: "2026-11-10", zeit: "2026-11-10T06:00:00.000Z", wert: 4, erfasst: "2026-11-10T06:00:00.000Z", storniert: false, messNeu: [1] });
+  const w = wurzelMit(b); w.wurzelNeu = { a: 1 }; w.schema = 6;
+  const geladen = st.migrierenWurzel(J(w));
+  const pruefen = (g, wo) => { const l = g.betriebe[0];
+    if (wo !== "Einlesen") assert.deepEqual(g.wurzelNeu, { a: 1 }, wo + " Wurzel"); // Einlesen: die Wurzel gehört zu diesem Handy, nur die Läden kommen herüber
+    assert.deepEqual(l.zukunftsFeld, { x: [1, 2] }, wo + " Laden"); assert.equal(l.gerichte[0].neuesFeld, "g"); assert.equal(l.artikel[0].artikelNeu, 5); assert.equal(l.kosten[0].kostenNeu, true);
+    assert.equal(l.personen[0].personNeu, "p"); assert.equal(l.tagesnotizen[0].notizNeu, 1); assert.equal(l.kuehlstellen[0].kuehlNeu, "k"); assert.equal(l.lieferanten[0].lieferNeu, 1); assert.equal(l.kassenKombis[0].kombiNeu, 1);
+    assert.equal(l.tafel.tafelNeu, 1); assert.equal(l.lager.lagerNeu, 1); assert.equal(l.betrieb.hinweise[0].hinweisNeu, 1); assert.deepEqual(l.messungen[0].messNeu, [1]); };
+  pruefen(geladen, "Laden");
+  const s1 = await st.exportDatei(geladen, { mitAblage: false }); const r1 = await st.importSicherung(s1.blob); pruefen(r1.wurzel, "Sicherung");
+  const leer = st.leereWurzel(); st.zusammenfuehren(leer, r1.wurzel, { jetzt: JETZT }); pruefen(leer, "Einlesen");
+  // speichern → laden (IndexedDB-Attrappe)
+  assert.equal(await st.sofortSpeichern(J(geladen), { stempel: false }), true); const aus = await st.laden(); pruefen(aus, "Speicher");
+});
+test("P2 B5: Schema der Datei höher als das der App wird mit EINEM Grund abgelehnt – Kopf schema 6 mit wurzel.schema 7, Kopf 7, altes Format", async () => {
+  const wurzel = J(wurzelMit(laden())); const inhalt = JSON.stringify({ exportiert: "2026-11-12T00:00:00.000Z", geraet: "g", fassung: "x", wurzel: { ...wurzel, schema: st.SCHEMA + 1 }, ereignisse: [] });
+  const grund = async (text) => { try { await st.importDatei(text); return null; } catch (e) { return e.grund; } };
+  assert.equal(await grund(JSON.stringify({ typ: "gastrocalc-sicherung", schema: st.SCHEMA, sha256: null }) + "\n" + inhalt), "neuer", "Kopf 6, Wurzel 7");
+  assert.equal(await grund(JSON.stringify({ typ: "gastrocalc-sicherung", schema: st.SCHEMA + 1, sha256: null }) + "\n" + inhalt), "neuer", "Kopf 7");
+  assert.equal(await grund(JSON.stringify({ typ: "gastrocalc-sicherung", schema: st.SCHEMA, wurzel: { ...wurzel, schema: st.SCHEMA + 1 } })), "neuer", "altes Format");
+  const gut = { typ: "gastrocalc-sicherung", schema: st.SCHEMA, sha256: null }; assert.equal(await grund(JSON.stringify(gut) + "\n" + JSON.stringify({ wurzel: { ...wurzel, schema: st.SCHEMA }, ereignisse: [] })), null);
+  // über die ZIP-Sicherung
+  idbAttrappe(); await st.laden(); const zip = await import("../js/zip.js"); const blob = await zip.zipBlob([{ name: st.SICHERUNG_JSON, daten: JSON.stringify({ typ: "gastrocalc-sicherung", schema: st.SCHEMA, sha256: null }) + "\n" + inhalt }]);
+  await assert.rejects(st.importSicherung(blob), (e) => e.grund === "neuer");
+  assert.match(l6y.l6yText("neuer", "de"), /neueren App.*aktualisieren/); for (const sp of ["tr", "ar", "en", "fr"]) assert.ok(l6y.l6yText("neuer", sp).length > 10, sp);
+});
+test("P2 B7/C3: testphase.ohneCode und bio.id gehen beim Neustart nicht verloren (Wurzel → Speichern-Form → migrierenWurzel)", async () => {
+  const modus = await import("../js/modus.js");
+  const w = wurzelMit(laden()); modus.testphaseSetzen(w, true); modus.bioSetzen(w, "bio-123");
+  const geladen = st.migrierenWurzel(J(w)); assert.equal(geladen.testphase.ohneCode, true); assert.equal(modus.testphaseOhneCode(geladen), true); assert.equal(geladen.bio.id, "bio-123"); assert.equal(modus.bioKennung(geladen), "bio-123");
+  idbAttrappe(); await st.laden(); await st.sofortSpeichern(w, { stempel: false }); const aus = await st.laden(); assert.equal(aus.testphase.ohneCode, true); assert.equal(aus.bio.id, "bio-123");
+  // kaputte Werte fallen weg
+  const k = st.migrierenWurzel({ schema: 6, betriebe: [], testphase: { ohneCode: "ja" }, bio: { id: 5 } }); assert.equal(k.testphase, undefined); assert.equal(k.bio, undefined);
+  // die Sicherung nimmt sie mit, das Einlesen übernimmt sie nicht in ein fremdes Handy (gehört zu diesem Handy: zusammenfuehren ändert die Wurzel nicht)
+  const leer = st.leereWurzel(); st.zusammenfuehren(leer, geladen, { jetzt: JETZT }); assert.equal(leer.testphase, undefined);
+});
