@@ -151,3 +151,23 @@ test("P2 B2: derselbe Tag auf beiden Handys mit verschiedenem Umsatz – der jü
   const wc = wurzelMit(c); assert.deepEqual(st.zusammenfuehren(wc, wurzelMit(d2), { jetzt: JETZT }).bericht.umsatzKonflikte, []);
   assert.ok(d);
 });
+
+// ---------- P2 B3: Monatsabschluss nach dem Abgleich ----------
+test("P2 B3: eingefrorener Monat trägt einen Fingerabdruck der Umsatzeinträge; kommen nach dem Abgleich Tage dazu, ist er veraltet; alte Abschlüsse ohne Fingerabdruck nie", async () => {
+  const ma = await import("../js/monatsabschluss.js");
+  const a = beispielLaden("2026-11-13"); const b = J(a);
+  const monat = "2026-10";
+  const e = ma.monatEinfrieren(a, monat, { jetzt: "2026-11-02T10:00:00.000Z" });
+  assert.equal(typeof e.abdruck, "string"); assert.equal(ma.abschlussVeraltet(a, monat), false);
+  assert.equal(ma.abschlussVeraltet(a, "2026-09"), false, "nicht eingefroren: nicht veraltet");
+  // das andere Handy hat für den Oktober noch einen Tag eingetragen; der Abgleich bringt ihn herüber
+  b.tagesnotizen.push({ id: "spaet-1", datum: "2026-10-31", umsatz: 123, erfasst: "2026-11-05T10:00:00.000Z", nacherfasst: true, storniert: false });
+  const m = st.verschmelzen(a, b, { jetzt: JETZT });
+  assert.equal(ma.eingefroren(m, monat).umsatzBrutto, e.umsatzBrutto, "der eingefrorene Monat bleibt stehen");
+  assert.equal(ma.abschlussVeraltet(m, monat), true, "… wird aber als veraltet erkannt");
+  assert.equal(ma.abschlussVeraltet(m, "2026-11"), false);
+  // Rundreise über JSON: der Fingerabdruck bleibt am Abschluss
+  const w = st.migrierenWurzel({ schema: 6, aktiv: m.id, betriebe: [J(m)] }); assert.equal(ma.eingefroren(w.betriebe[0], monat).abdruck, e.abdruck);
+  // alter Abschluss ohne Fingerabdruck
+  const alt = J(m); delete ma.eingefroren(alt, monat).abdruck; assert.equal(ma.abschlussVeraltet(alt, monat), false);
+});
