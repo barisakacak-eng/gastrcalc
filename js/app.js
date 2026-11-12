@@ -87,6 +87,8 @@ import { installZustand, homeHinweisFaellig, homeHinweisGesehen } from "./homebi
 import { tafelEinstellung } from "./tafel.js"; // Menütafel (18.10.2026): Sprache der Tafel beim Betreten nachladen
 import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetzen, kuehlWareZurueck, kuehlWareKennung, kuehlWareGrundGueltig } from "./screens/kuehl_ware.js"; // Trennung (17.10.2026), Punkt 4: Ware nach Kühl-Abweichung (Büro) // Stufe 1 (17.10.2026): Aktionen & Haltbarkeit (Büro)
 import { berlin } from "./zeit.js";
+import { aktionsSperre, aktionsSchluessel, tagStand, tagGewechselt, feldMitText, speicherProblemArt, problemNachErfolg, dauerhaftFaellig } from "./bedienhilfe.js"; // Lauf 6, E5: Doppeltipp-Sperre, Tageswechsel, Speicher-Banner
+import { l6z } from "./data/l6z_texte.js";
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
@@ -107,6 +109,7 @@ fehlerSammlerStarten(window, { fassung: APP_FASSUNG, ansichtJetzt: () => (stand?
 let ereignisAnzahl = 0;
 let wechselt = false;       // Sperre gegen Doppeltipp auf Weiter / Kacheln
 let letzterSchirm = "";     // damit ein Neuzeichnen desselben Bildschirms die Scrollposition behält
+let gezeichneterTag = null; // Lauf 6, E5 (B): Geschäftstag + Kalendertag des letzten Bildes (js/bedienhilfe.js)
 let aktualisierung = null;  // wartender Service Worker (neue Fassung liegt bereit)
 let offlineStand = "laedt";   // "laedt" | "bereit" | "keinSw"
 let speicherProblem = null;   // "speichern" | "fassung" – bleibt als Banner stehen, bis es wieder klappt
@@ -715,6 +718,7 @@ async function aufKlick(ev) {
   tippX = ev.clientX; tippY = ev.clientY; tippZeit = jetzt; tippEl = el; tippSchutz = !!el.closest(".kl-blatt"); // Preis-/Rezept-Blatt zu → Tab-Leiste darunter
   if (nah && !ZAEHL_TIPPS.has(name) && ((schnell && jetzt < ruheBis) || (flaecheNeu && abstand < FLAECHE_NEU_MS))) return; // zweiter Tipp eines Doppeltipps (U1, Vorab-Prüfung B3)
   // Ausschuss Lauf 3 (09.11.2026), P4 B1: Hat der erste Tipp den Bildschirm gewechselt (sein Element ist weg), zählt ein Zähl-Tipp an derselben Stelle
+const AKTIONS_SPERRE = aktionsSperre();
   // binnen 450 ms nicht – sonst bucht der zweite Tipp auf „Müll“ (Heute) gleich eine Kachel. P4 B2: Ein „…-zu“ an derselben Stelle binnen 450 ms nach
   // dem Tipp, der das Blatt geöffnet hat, schließt es nicht wieder. 350 ms = Grenze aus dem Fund (60–350 ms); bewusstes Tippen auf neuem Schirm dauert länger.
   if (nah && abstand < WECHSEL_SCHUTZ_MS && prevEl && prevEl !== el && ((ZAEHL_TIPPS.has(name) && !prevEl.isConnected && prevEl.dataset?.a !== name) || (/(^|-)zu$/.test(name) && !/(^|-)zu$/.test(prevEl.dataset?.a || "")))) return;
@@ -733,6 +737,15 @@ async function aufKlick(ev) {
   if (name === "waage-vorschlag") { waageVorschlagGesehen(stand, heuteGeschaeft()); speichern(wurzel); return bearbeiten("rezepte"); }
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
+  // Lauf 6, E5 (A): Doppeltipp-Sperre. Solange dieselbe Aktion (Name + Wert + Kennung) mit `await` läuft, startet sie nicht noch einmal –
+  // sonst ergab „Tag abschließen“ zweimal getippt (0–30 ms) zwei Abschlüsse. Zähl-Tipps sind ausgenommen (jeder Tipp zählt).
+  if (ZAEHL_TIPPS.has(name)) return aufKlickAktion(ev, el, name);
+  const sperrSchluessel = aktionsSchluessel(name, el.dataset.wert, el.dataset.id);
+  if (!AKTIONS_SPERRE.belegen(sperrSchluessel)) return;
+  try { return await aufKlickAktion(ev, el, name); } finally { AKTIONS_SPERRE.freigeben(sperrSchluessel); }
+}
+
+async function aufKlickAktion(ev, el, name) {
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav" && el.dataset.wert !== ansicht) { if (ansicht.startsWith("ordner-")) ordnerZuruecksetzen(); if (ansicht === "buero") bueroZuruecksetzen(); } // Entwickler C: Büro zu, wenn es in den Laden geht
   if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) { bueroWeg = []; return bueroBetreten(nz.ansicht); } // Büro-Bildschirm aus dem Laden: erst ins Büro
@@ -852,6 +865,7 @@ async function aufKlick(ev) {
     if (r) {
       if (r === "abgeschlossen") { ereignis("inventur-fertig", { laden: stand.id }); await sofortSpeichern(wurzel); }
       else if (r === "sofort" || r.sofort) await sofortSpeichern(wurzel); else speichern(wurzel);
+    if (r === "schon") return zeichne(); // Lauf 6, E5 (A): dieser Tag ist schon abgeschlossen – nur die Bilanz zeigen, kein zweiter Abschluss
       if (r.meldung) meldung(r.meldung);
       zeichne();
     }
