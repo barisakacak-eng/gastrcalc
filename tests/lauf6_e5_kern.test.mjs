@@ -215,3 +215,39 @@ test("P1 B1: „bis null“ ist überall dieselbe Zahl – Übersicht (Eigentüm
     if (ue.satz && ue.satz.art === "minus") assert.ok(ue.satz.text.includes(fmtEuro(hz.zahl)), "Satz nennt dieselbe Zahl");
   });
 });
+
+// ---------------------------------------------------------------- gleiche Kennzahl = gleicher Wert auf allen Bildschirmen
+// Beispiel-Laden (10.11.2026) und ein Prüfstand-Laden (Sicherung, Uhr: Ende des 14. Tages) – Heute, Zähler, Eigentümer-Übersicht, Rechenwerk.
+async function bildschirme(s, H) {
+  const Hm = await import("../js/screens/home.js"), Um = await import("../js/screens/umsatz.js"), U = await import("../js/eigentuemer.js"), LZ = await import("../js/laden_zahlen.js"), Z = await import("../js/zaehler.js"), { fmtEuro, fmtZahl } = await import("../js/util.js");
+  const z = Z.zaehler(s, { datum: H }); const hz = LZ.heuteZiel(s, z, H);
+  const heute_ = text(Hm.startView(s)), zaehl = text(Um.umsatzView(s));
+  const l = U.eigentuemerUebersicht({ betriebe: [s] }, { art: "monat" }, { H, K: H }).laeden[0]; const zellen = U.ladenZellen(l);
+  const fj = Z.fixkostenJeTag(s, H); const wq = Z.warenQuote(s);
+  return { z, hz, heute_, zaehl, zellen, l, fj, wq, fmtEuro, fmtZahl };
+}
+function gleichGerechnet(b, wo) {
+  const { z, hz, l, fj, wq } = b; const n = (x) => x.replace(/[\s\u00a0\u202f]+/g, " "); const heute_ = n(b.heute_), zaehl = n(b.zaehl), zellen = { ...b.zellen, bisNullFehlt: n(b.zellen.bisNullFehlt) }; const fmtEuro = (x) => n(b.fmtEuro(x));
+  if (hz.stufe === "bisNull") {
+    const betrag = fmtEuro(hz.zahl);
+    assert.ok(heute_.includes(betrag), `${wo}: Heute nennt ${betrag}`); assert.ok(zaehl.includes(betrag), `${wo}: Zähler nennt ${betrag}`);
+    assert.ok(zellen.bisNullFehlt.includes(betrag), `${wo}: Übersicht nennt ${betrag}`);
+  }
+  assert.equal(l.bisNull.fehlt, hz.m.fehltNull, `${wo}: Übersicht = monatsZiel`);
+  // Wareneinsatz/Warenquote: Zähler-Quote = warenQuote(stand) = Übersicht
+  assert.equal(z.quote, wq.quote, `${wo}: Zähler nutzt warenQuote`); assert.equal(l.ware.quote, wq.quote, `${wo}: Übersicht nutzt warenQuote`);
+  assert.ok(zaehl.includes(`${Math.round(wq.quote * 100)} %`), `${wo}: Zähler-Bildschirm nennt ${Math.round(wq.quote * 100)} % Ware`);
+  // Fixkosten je Tag
+  assert.equal(z.tageskosten, fj.jeTag, `${wo}: Fixkosten je Tag`); assert.ok(zaehl.includes(fmtEuro(fj.jeTag)), `${wo}: Zähler-Bildschirm nennt ${fmtEuro(fj.jeTag)} je Öffnungstag`);
+}
+test("gleiche Kennzahl = gleicher Wert auf allen Bildschirmen: Beispiel-Laden", async () => {
+  await mitUhr("2026-11-10", async () => { gleichGerechnet(await bildschirme(beispielLaden("2026-11-10"), "2026-11-10"), "Beispiel-Laden"); });
+});
+test("gleiche Kennzahl = gleicher Wert auf allen Bildschirmen: Prüfstand-Läden (Sicherung)", async () => {
+  const { idbAttrappe } = await import("./hilfe/idb_attrappe.mjs"); idbAttrappe();
+  const st = await import("../js/store.js"); await st.laden(); const w = st.leereWurzel();
+  const imp = await st.importSicherung(new Blob([fs.readFileSync(new URL("./fixtures/pruefstand/pruefstand_sicherung.zip", import.meta.url))])); st.zusammenfuehren(w, imp.wurzel);
+  assert.equal(w.betriebe.length, 2);
+  mock.timers.enable({ apis: ["Date"], now: Date.parse("2027-01-01T22:59:00Z") });
+  try { for (const b of w.betriebe) gleichGerechnet(await bildschirme(b, "2027-01-01"), b.betrieb.name); } finally { mock.timers.reset(); }
+});
