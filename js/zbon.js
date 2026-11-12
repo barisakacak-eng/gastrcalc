@@ -15,6 +15,7 @@ import { verkaeufeEntdoppeln } from "./store.js"; // Prüfgremium 18.10.2026 (H2
 import { tagPlus } from "./engine.js";
 import { heute } from "./util.js";
 import { gueltigerTag } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
 // ---------- Zeichen und Zahlen ----------
 // Lesefehler nur in Teilen, die schon eine Ziffer enthalten (sonst würde aus „Cola“ nichts, aus „SB“ aber „58“)
@@ -34,7 +35,7 @@ const istBetrag = (t) => BETRAG.test(t);
 const istMenge = (t) => MENGE.test(t);
 const betragVon = (t) => { const n = zahlLesen(t.replace(/-$/, "").replace(/^-/, ""), ","); return n === null ? null : (/^-|-$/.test(t) ? -n : n); };
 const mengeVon = (t) => { const neg = /^-|-$/.test(t); const x = t.replace(/^-|-$/g, ""); const n = /[.,]\d{3}$/.test(x) ? Number(x.replace(",", ".")) : Number(x); return Number.isFinite(n) ? (neg ? -n : n) : null; };
-const rund = (x, n = 2) => { const f = 10 ** n; return Math.round(x * f) / f; };
+const rund = (x, n = 2) => { if (n === 2) return rund2(x); const f = 10 ** n; return Math.round(x * f) / f; }; // 2 Stellen: die eine Rundung aus js/geld.js
 
 // ---------- Zeilen, die keine Artikel sind ----------
 // Anfang des Kassentexts (nach einem möglichen „Storno“): Summen, Zahlungsarten, Steuer, Kopf- und Fußzeilen des Bons

@@ -7,15 +7,16 @@
 // Eigene Putzzeit ist KEIN Geld vom Konto: Teamlohn steckt schon im Personal, Inhaberzeit kostet kein Geld. Sie wird nur als Einsicht gezeigt.
 import { heute } from "./util.js";
 import { ruhetageAm } from "./engine.js"; // Paket 3 (16.10.2026), M5: Ruhetage mit Gültig-ab-Verlauf; Kreisimport ist unschädlich, weil nur zur Laufzeit aufgerufen
-const MWST_REGEL = 0.19; // Regelsatz für Dienstleistung und Putzmittel
 // Paket 3 (16.10.2026), M1: Kleinunternehmer bekommen keine Vorsteuer zurück – der Bruttobetrag zählt, wie er ist.
-const vorsteuer = (stand) => (stand.betrieb?.kleinunternehmer ? 0 : MWST_REGEL);
+// Sonst gilt der Regelsatz (Regelwerk mwst_voll) für Dienstleistung und Putzmittel, am Tag des Vorgangs.
+const vorsteuer = (stand, tag = heute()) => (stand.betrieb?.kleinunternehmer ? 0 : mwst("voll", tag));
 // Öffnungstag-Gewicht wie im Zähler (zaehler.js tagGewicht), hier nachgebaut, damit engine.js ohne Kreisimport rechnen kann.
 const tagGewicht = (stand, datum) => { const ruhe = ruhetageAm(stand, datum); if (ruhe.length) return ruhe.includes(wochentag(datum)) ? 0 : 1;
   return Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6)) / 7; };
 
 import { istBetriebsmittel } from "./betriebsmittel.js";
 import { plusTage, wochentag } from "./zeit.js";
+import { nettoVonBrutto, mwst } from "./geld.js";
 export { istBetriebsmittel };
 
 export const REINIGUNG_LEER = { wer: null, firmaBetrag: null, minutenTag: 45, durch: "team", mittelSchaetzung: null };
@@ -44,7 +45,7 @@ const ausInventur = (stand) => { const f = (stand.inventuren || []).filter((i) =
 export function reinigungMonat(stand, { datum = heute(), inventurMittel = ausInventur(stand) } = {}) {
   const r = stand.betrieb?.reinigung; if (!r || !r.wer) return null;
   // Eingaben stehen meist brutto auf der Rechnung (Review 15.10.): wie die anderen Kosten auf netto umrechnen (19 %), Schalter je Feld.
-  const netto = (x) => (r.basis === "netto" ? x : x / (1 + vorsteuer(stand))); // Paket 3, M1
+  const netto = (x) => (r.basis === "netto" ? x : nettoVonBrutto(x, vorsteuer(stand, datum))); // Paket 3, M1
   const firma = r.wer === "selbst" ? 0 : (typeof r.firmaBetrag === "number" ? netto(r.firmaBetrag) : null);
   const schaetzung = typeof r.mittelSchaetzung === "number" ? netto(r.mittelSchaetzung) : null;
   let mittel = null, stufe = "offen", belege = 0;

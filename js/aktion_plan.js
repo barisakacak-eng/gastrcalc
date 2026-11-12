@@ -27,6 +27,7 @@ import { aktionBreakEven } from "./deal.js";
 import { tagGewicht } from "./zaehler.js";
 import { heuteGeschaeft, fmtEuro } from "./util.js";
 import { t, artikelText } from "./i18n.js";
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 export const PLAN_TAGE = 7;             // Grundlänge (Annahme, s. oben)
 export const PLAN_TAGE_SINKT = 14;      // bei sinkendem Interesse
@@ -37,7 +38,6 @@ export const WT_MIN = 2;                // Ø je Wochentag ab 2 Werten
 export const KNAPP_TAGE = 2;            // „reicht nur noch …“ ab 2 Öffnungstagen Rest
 const HORIZONT = 90;
 const EPS = 1e-9;
-const r2 = (x) => Math.round(x * 100) / 100;
 const artikelIndex = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
 const zeilenVon = (k) => new Map(k.zeilen.map((z) => [z.id, z]));
 const tagVon = (iso) => heuteGeschaeft(new Date(iso));
@@ -65,7 +65,7 @@ function reihe(stand, ids, { von, bis }, zeilen) {
       if (!set.has(x.gericht)) return;
       const z = zeilen.get(x.gericht); const n = v.menge * x.menge; tag.menge += n; tag.je[x.gericht] = (tag.je[x.gericht] || 0) + n;
       if (z && z.waren !== null) tag.ware += n * z.waren; else tag.wareFehlt = true;
-      if (v.umsatzBrutto !== null && v.umsatzBrutto !== undefined) tag.netto += v.umsatzBrutto * (gs > 0 ? gew[i] / gs : 1 / teile.length) / (1 + (z?.mwst ?? 0));
+      if (v.umsatzBrutto !== null && v.umsatzBrutto !== undefined) tag.netto += nettoVonBrutto(v.umsatzBrutto * (gs > 0 ? gew[i] / gs : 1 / teile.length), z?.mwst ?? 0);
       else { tag.ohneUmsatz += 1; tag.netto += n * (z?.preisNetto ?? 0); if (!(z?.preisNetto > 0)) tag.wareFehlt = true; }
     });
   }
@@ -233,8 +233,8 @@ export function aktionVergleich(stand, a, { von = a.von, bis, k = kalkulation(st
     if (l.some((y) => y.ohneUmsatz)) geschaetzt = true; if (l.some((y) => y.wareFehlt)) fehlt = true;
   }
   if ([...ids].some((id) => zeilen.get(id)?.warenGeschaetzt)) geschaetzt = true;
-  return { von, bis, tage: akt.size, vergleichbar, verkauft: r2(verkauft), vorher: r2(vorher), mehrAnteil: vorher > EPS ? verkauft / vorher - 1 : null,
-    rohertrag: fehlt ? null : r2(roh), rohertragVorher: fehlt ? null : r2(rohVor), verkauftGesamt: r2(gesamt), rohertragGesamt: fehlt ? null : r2(rohGesamt), geschaetzt };
+  return { von, bis, tage: akt.size, vergleichbar, verkauft: rund2(verkauft), vorher: rund2(vorher), mehrAnteil: vorher > EPS ? verkauft / vorher - 1 : null,
+    rohertrag: fehlt ? null : rund2(roh), rohertragVorher: fehlt ? null : rund2(rohVor), verkauftGesamt: rund2(gesamt), rohertragGesamt: fehlt ? null : rund2(rohGesamt), geschaetzt };
 }
 
 // Laufende Aktion: Vergleich seit Start, Restbestand und „reicht bis“ der knappsten Ware, Urteil (zuFrueh | gut | weniger | wareWeg).

@@ -32,6 +32,7 @@ import { tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { getraenkArtikelVon } from "./getraenk_feld.js";
 import { feiertagImLaden, feiertagZu } from "./feiertage.js"; // Feiertage (18.10.2026)
 import { berlinZeitpunkt } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
 export const LIEFERANT_ARTEN = ["grosshandel", "lieferdienst", "supermarkt", "getraenke", "baeckerei", "sonstiges"];
 export const LIEFER_MODI = ["lieferung", "abholung"];
@@ -79,7 +80,7 @@ export function lieferantSauber(x) {
   if (!istObj(x) || typeof x.id !== "string" || !x.id.trim()) return null;
   const name = text(x.name, 40); if (!name) return null;
   const tage = [...new Set((Array.isArray(x.tage) ? x.tage : []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6))].sort((a, b) => WOCHE.indexOf(a) - WOCHE.indexOf(b));
-  const mw = typeof x.mindestwert === "number" && Number.isFinite(x.mindestwert) && x.mindestwert > 0 && x.mindestwert <= LIEFERANT_GRENZEN.mindestwert[1] ? Math.round(x.mindestwert * 100) / 100 : null;
+  const mw = typeof x.mindestwert === "number" && Number.isFinite(x.mindestwert) && x.mindestwert > 0 && x.mindestwert <= LIEFERANT_GRENZEN.mindestwert[1] ? rund2(x.mindestwert) : null;
   return { id: x.id.trim().slice(0, 60), name, namen: [...new Set((Array.isArray(x.namen) ? x.namen : []).map((n) => text(n, 60)).filter(Boolean))].slice(0, 12),
     art: LIEFERANT_ARTEN.includes(x.art) ? x.art : "sonstiges", modus: x.modus === "abholung" ? "abholung" : "lieferung", tage,
     schluss: schlussSauber(x.schluss), lieferzeit: ganz(x.lieferzeit, LIEFERANT_GRENZEN.lieferzeit), mindestwert: mw,
@@ -233,7 +234,7 @@ function felderPruefen(stand, f, alt = null) {
     w.schluss = uhr || tv !== null ? { uhr: uhr || null, tageVorher: tv ?? 1 } : null;
   }
   if ("lieferzeit" in f) { const v = f.lieferzeit === null || f.lieferzeit === "" ? null : ganz(f.lieferzeit, LIEFERANT_GRENZEN.lieferzeit); if (v === null && f.lieferzeit !== null && f.lieferzeit !== "") return fehler("lieferzeit"); w.lieferzeit = v; }
-  if ("mindestwert" in f) { const v = f.mindestwert; if (v === null || v === "" || v === 0) w.mindestwert = null; else { const n = Number(v); if (!Number.isFinite(n) || n < 0 || n > LIEFERANT_GRENZEN.mindestwert[1]) return fehler("mindestwert"); w.mindestwert = Math.round(n * 100) / 100; } }
+  if ("mindestwert" in f) { const v = f.mindestwert; if (v === null || v === "" || v === 0) w.mindestwert = null; else { const n = Number(v); if (!Number.isFinite(n) || n < 0 || n > LIEFERANT_GRENZEN.mindestwert[1]) return fehler("mindestwert"); w.mindestwert = rund2(n); } }
   if ("weg" in f) { if (f.weg !== null && f.weg !== "" && !BESTELLWEGE.includes(f.weg)) return fehler("weg"); w.weg = f.weg || null; }
   for (const [k, max] of [["kontakt", 80], ["kundennummer", 30], ["notiz", 200]]) if (k in f) w[k] = text(f[k], max);
   return { ok: true, werte: w };

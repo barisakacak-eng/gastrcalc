@@ -24,6 +24,7 @@ export function wareBild(x) {
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
 import { datumLesbar, tagGewaehlt, eintragName, tagLesbar } from "./tag.js";
 import { plusTage, wochentag } from "../zeit.js";
+import { rund2 } from "../geld.js";
 
 let ansicht = "start";   // "start" (Foto-Raster) | "station" (Vollbild ohne Euro/Leiste) | "eingabe" (Detail)
 let rueckkehr = "start"; // Detail-Eingabe kehrt bei der Müll-Station zu deren Vollbild zurück
@@ -267,7 +268,7 @@ export function muellAktion(name, el, stand) {
   if (name === "muell-auswahl-zu") { auswahlOffen = false; if (!wahl) ansicht = rueckkehr; return true; }
   if (name === "muell-kachel") { const w = wahlAus(el, stand); if (!w) return false; wahl = w; auswahlOffen = false; return true; }
   if (!wahl) return false;
-  if (name === "muell-d") { const s = wahl.typ === "gericht" || wahl.einheit === "stk" ? 1 : wahl.einheit === "g" || wahl.einheit === "ml" ? 50 : 0.1; wahl.menge = Math.max(0, Math.round(((Number(wahl.menge) || 0) + Number(el.dataset.d) * s) * 100) / 100) || null; return true; }
+  if (name === "muell-d") { const s = wahl.typ === "gericht" || wahl.einheit === "stk" ? 1 : wahl.einheit === "g" || wahl.einheit === "ml" ? 50 : 0.1; wahl.menge = Math.max(0, rund2(((Number(wahl.menge) || 0) + Number(el.dataset.d) * s))) || null; return true; }
   if (name === "muell-chip") { wahl.menge = Number(el.dataset.wert); return true; }
   if (name === "muell-einheit") { wahl.menge = mengeUmrechnen(wahl.menge, wahl.einheit, el.dataset.wert); wahl.einheit = el.dataset.wert; return true; }
   if (name === "muell-personal") { wahl.personal = !wahl.personal; return true; }

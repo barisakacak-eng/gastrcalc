@@ -18,6 +18,7 @@ import { warenQuote } from "./zaehler.js";
 import { artikelText, sprache } from "./i18n.js"; // Trennung 2 (17.10.2026): Reihenfolge nach dem angezeigten Namen
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { tageZwischen, berlin } from "./zeit.js";
+import { nettoVonBrutto } from "./geld.js";
 
 export const LAGERORTE = ["kuehlhaus", "tiefkuehler", "trockenlager", "verpackung", "reinigung"];
 const KUEHL_GRUPPEN = new Set(["fleisch", "fisch", "kaese", "gemuese"]);
@@ -231,7 +232,7 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
   const verbrauch = (anfang.summe - bmAnfang) + (einkauf.summe - bmEinkauf) - (ende.summe - bmEnde);
   const st = umsatzSteuerSatz(stand);
   const u = tage > 0 ? umsatzZeitraum(stand, { von, bis }) : { summe: 0, tage: 0 };
-  const umsatzNetto = u.summe / (1 + st.satz);
+  const umsatzNetto = nettoVonBrutto(u.summe, st.satz);
   const q = warenQuote(stand); if (q.quelle === "richtwert") q.quote = null; // Paket 3 (16.10.2026): die Inventur vergleicht echte Zahlen, kein Branchen-Richtwert
   const echteQuote = umsatzNetto > 0 ? verbrauch / umsatzNetto : null;
   const sollWare = umsatzNetto > 0 && q.quote !== null ? umsatzNetto * q.quote : null;

@@ -12,10 +12,10 @@ import { mindestlohnAm } from "./data/mindestlohn.js";
 // weil der Betrieb die Vorsteuer zurückbekommt (Regelbesteuerung).
 // Paket 3 (16.10.2026), M1: Steuersatz je Posten (Feld satz: 19, 7 oder 0 in Prozent), Standard 19; Wasser 7. Kleinunternehmer
 // (betrieb.kleinunternehmer, Schalter im Büro) bekommen keine Vorsteuer zurück: dann zählt jeder Bruttobetrag, wie er ist (Satz 0).
-export const VORSTEUER = 0.19;
-export const nettoVonBrutto = (betrag, satz) => (Number(betrag) || 0) / (1 + (Number(satz) || 0));
-export const VORSTEUER_SAETZE = [19, 7, 0];
-// Vorsteuersatz eines Postens als Anteil (0.19 / 0.07 / 0): alte Daten ohne satz = 19 % (Fallback, keine Migration nötig).
+export const VORSTEUER = mwstHeute("voll"); // Regelsatz (Regelwerk mwst_voll) – Fallback für alte Posten ohne Satz
+export { nettoVonBrutto }; // eine Definition: js/geld.js (Weiterreichen, weil viele Module sie von der Engine holen)
+export const VORSTEUER_SAETZE = [mwstProzent("voll"), mwstProzent("ermaessigt"), 0]; // in Prozent, wie Posten sie speichern: [19, 7, 0]
+// Vorsteuersatz eines Postens als Anteil (Regelsatz / ermäßigt / 0): alte Daten ohne satz = 19 % (Fallback, keine Migration nötig).
 export function vorsteuerSatz(posten, betrieb = null) {
   if (betrieb?.kleinunternehmer) return 0;
   const s = Number(posten?.satz);
@@ -151,7 +151,7 @@ export function rohmengeFuer(fertigMenge, garverlust) {
 // Warnung ab g+p ≥ 0,65, Sperre ab 0,85.
 // basis "unbekannt" wird wie "brutto" gerechnet – das ist die vorsichtige Variante (höherer Preis), und die Oberfläche sagt das dazu.
 export const basisFuerRechnung = (basis) => (basis === "netto" ? "netto" : "brutto");
-export function nettoPreis(selbstkosten, g, p, { basis = "netto", mwst = 0.07 } = {}) {
+export function nettoPreis(selbstkosten, g, p, { basis = "netto", mwst = mwstHeute("ermaessigt") } = {}) {
   const gg = Number(g) || 0, pp = Number(p) || 0;
   const last = basisFuerRechnung(basis) === "brutto" ? gg + pp * (1 + mwst) : gg + pp;
   const EPS = 1e-9; // 0,35 + 0,30 ist im Rechner 0,6499999…, die Schwelle soll trotzdem greifen
@@ -212,16 +212,16 @@ export const klasseFuerBereich = (b) => KLASSE_JE_BEREICH[b] || "haupt";
 // Steuersatz eines Gerichts (Prüfung Befund 7): Getränke 19 %, Speisen 7 % (Stand Oktober 2026, dauerhaft 7 % seit 1.1.2026).
 export function steuersatzGericht(gericht) {
   if (typeof gericht.steuer === "number") return gericht.steuer;
-  return gericht.klasse === "getraenk" ? 0.19 : 0.07;
+  return gericht.klasse === "getraenk" ? mwstHeute("voll") : mwstHeute("ermaessigt");
 }
 // Steuersatz beim Anlegen aus der ersten Zutat ableiten (Getränk 19 %, sonst 7 %) – bleibt am Gericht, auch wenn die Klasse wechselt.
 export function steuersatzAusZutaten(zutaten) {
   const g = PRODUKT_INDEX[zutaten?.[0]?.name]?.g;
-  return STEUER_JE_GRUPPE[g] ?? 0.07;
+  return mwstHeute(STEUER_JE_GRUPPE[g] ?? "ermaessigt");
 }
 
 // Steuersatz eines Artikels beim Einkauf: Getränke 19 %, Lebensmittel 7 %. Verpackung 19 %.
-export const steuersatzArtikel = (artikel) => STEUER_JE_GRUPPE[artikel?.gruppe] ?? (artikel?.gruppe === "verpackung" ? 0.19 : 0.07);
+export const steuersatzArtikel = (artikel) => mwstHeute(STEUER_JE_GRUPPE[artikel?.gruppe] ?? (artikel?.gruppe === "verpackung" ? "voll" : "ermaessigt"));
 // Nettopreis je Gebinde: ein brutto eingetragener Preis (Supermarktbon) wird um die Steuer bereinigt.
 // Paket 3 (16.10.2026), M3: Preis 0 ist kein Preis (sonst wird das Gericht grün statt grau) – gilt wie null als „fehlt“.
 export function preisNettoGebinde(artikel) {
@@ -499,7 +499,7 @@ function kalkulationRechnen(stand, { produktivAnteil = 0.7 } = {}) {
       portalBrutto = r.netto === null ? null : r.netto * (1 + mwst); portalStufe = r.stufe;
     }
     const preisBrutto = typeof x.preis === "number" ? x.preis : null;
-    const preisNetto = preisBrutto === null ? null : preisBrutto / (1 + mwst);
+    const preisNetto = preisBrutto === null ? null : nettoVonBrutto(preisBrutto, mwst);
     const { ampel, db, gewinn: ampelGewinn, quote: ampelQuote } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto); // Gremium 2 (24.10.2026): eine Rechnung für Ampel und Anzeige
     return { id: x.id, name: x.name, klasse: x.klasse, menge: x.menge, waren: w.vollstaendig ? w.waren : null, warenFehlt: w.fehlt, warenGeschaetzt: w.geschaetzt, warenRichtpreis: w.richtpreis,
       fix, zeit, sk, mwst, preisBrutto, preisNetto, zielNetto, zielBrutto, zielAufschlag, zielStufe: ziel.stufe, portalBrutto, portalStufe, portalName: portal?.name || null, portalBasis: portal ? basisFuerRechnung(portal.basis) : null, portalBasisUnbekannt: portal ? portal.basis !== "netto" && portal.basis !== "brutto" : false, ampel, db,
@@ -524,9 +524,8 @@ export const AMPEL_GRENZEN = { rot: 0.10, gruen: 0.19 };
 export function preisAmpel(zeile, preisBrutto) {
   const { sk = null, mwst = 0, waren = null } = zeile || {};
   const brutto = typeof preisBrutto === "number" && Number.isFinite(preisBrutto) ? preisBrutto : null;
-  const preisNetto = brutto === null ? null : brutto / (1 + mwst);
-  const cent = (v) => Math.round(v * 100) / 100;
-  const gewinn = sk === null || preisNetto === null ? null : cent(preisNetto) - cent(sk);
+  const preisNetto = brutto === null ? null : nettoVonBrutto(brutto, mwst);
+  const gewinn = sk === null || preisNetto === null ? null : rund2(preisNetto) - rund2(sk);
   const quote = gewinn === null || !(preisNetto > 0) ? null : gewinn / preisNetto;
   const ampel = quote === null ? "grau" : quote < AMPEL_GRENZEN.rot - 1e-9 ? "rot" : quote < AMPEL_GRENZEN.gruen - 1e-9 ? "gelb" : "gruen";
   const db = preisNetto === null || waren === null ? null : preisNetto - waren; // Deckungsbeitrag nach Ware (Rohgewinn) je Portion
@@ -566,7 +565,7 @@ export function umsatzSteuerSatz(stand) {
     for (const g of mitPreis) { const w = g.preis * (mengen[g.id] || 1); s += w * steuersatzGericht(g); n += w; }
     if (n > 0) return { satz: Math.round(s / n * 10000) / 10000, quelle: "karte", geschaetzt };
   }
-  return { satz: 0.07, quelle: "standard", geschaetzt: true };
+  return { satz: mwstHeute("ermaessigt"), quelle: "standard", geschaetzt: true };
 }
 
 // Paket 3 (16.10.2026), M4: eine Warnstufe für den Wareneinsatz-Anteil am Nettoumsatz, für Umsatz-Seite, Büro „Monat & Zähler“ und
@@ -595,6 +594,7 @@ export function mengeUmrechnen(menge, von, nach) {
 // ======================= Etappe 3: Schwund, Tagesnotiz, Läden-Übersicht =======================
 import { heute, heuteGeschaeft, uid, SITZUNG } from "./util.js";
 import { reinigungMonat } from "./reinigung.js";
+import { rund2, nettoVonBrutto, mwstHeute, mwstProzent } from "./geld.js";
 
 // Vorgangsarten nach Dossier C9 (drei Arten, nie vermischt):
 //  1 = Verderb, Bruch, Zubereitungsfehler, nicht verkauft – bewertet zu Einkaufspreisen
@@ -613,7 +613,7 @@ export const PAUSCHBETRAG_EIGEN_2026 = regelwert("eigenverbrauch_pauschale", "20
 const SVEV_TABELLEN = new Map(); // gleiche Inhalte = dasselbe Objekt
 function svevTabelle(tag) {
   const mo = regel("sachbezug_monat", tag), fr = regel("sachbezug_fruehstueck", tag), mi = regel("sachbezug_mittag", tag);
-  const x = { fruehstueck: fr.wert, mittag: mi.wert, abend: mi.wert, tag: Math.round(mo.wert / 30 * 100) / 100, monat: mo.wert };
+  const x = { fruehstueck: fr.wert, mittag: mi.wert, abend: mi.wert, tag: rund2(mo.wert / 30), monat: mo.wert };
   if (fr.status === "geplant" || mi.status === "geplant" || mo.status === "geplant") x.geplant = true;
   const k = JSON.stringify(x); if (!SVEV_TABELLEN.has(k)) SVEV_TABELLEN.set(k, x); return SVEV_TABELLEN.get(k);
 }

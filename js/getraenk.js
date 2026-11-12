@@ -11,6 +11,7 @@ import { lieferantVon } from "./bestand.js";
 import { uid } from "./util.js";
 import { getraenkVon, getraenkArtikelVon, getraenkGerichtSauber, getraenkArtikelSauber, istGetraenkGericht, istGetraenkArtikel, literText,
   GEBINDE_VERKAUF, GEBINDE_EINKAUF, MENGE_GRENZEN, SCHANKVERLUST_MAX, PFAND_MAX } from "./getraenk_feld.js";
+import { rund2, mwstHeute } from "./geld.js";
 
 export { GETRAENK_VORLAGEN };
 const basisVon = (a) => EINHEITEN[a?.packung?.einheit || a?.einheit]?.basis || null;
@@ -115,8 +116,8 @@ export function getraenkAnlegen(stand, angaben = {}) {
   } else if (quelle && basisVon(idx[quelle]) !== "ml") return { ok: false, grund: "quelleEinheit" };
   if (!quelle && !idx[name]) stand.artikel.push(getraenkArtikelNeu(name, "getraenk", "stk"));
   const zutaten = quelle ? [{ name: quelle, menge: Math.round((menge || 0) * 1000) || null, einheit: "ml" }] : [{ name, menge: 1, einheit: "stk" }];
-  const preis = typeof angaben.preis === "number" && angaben.preis > 0 && angaben.preis < 1000 ? Math.round(angaben.preis * 100) / 100 : null;
-  const g = { id: uid(), name, bereich: "alkoholfrei", klasse: "getraenk", zeit: 1, vorlage: false, zutaten, preis, mengeTag: null, steuer: 0.19, // Getränke in der Gastronomie: 19 %
+  const preis = typeof angaben.preis === "number" && angaben.preis > 0 && angaben.preis < 1000 ? rund2(angaben.preis) : null;
+  const g = { id: uid(), name, bereich: "alkoholfrei", klasse: "getraenk", zeit: 1, vorlage: false, zutaten, preis, mengeTag: null, steuer: mwstHeute("voll"), // Getränke in der Gastronomie: 19 %
     getraenk: getraenkGerichtSauber({ menge, gebinde, quelle }) };
   stand.gerichte = [...(stand.gerichte || []), g];
   const rest = {}; for (const k of ["schankverlust", "marke", "pfand", "lieferant", "flasche"]) if (angaben[k] !== undefined) rest[k] = angaben[k];

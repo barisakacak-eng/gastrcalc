@@ -29,6 +29,7 @@ import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNet
 import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber, inventurAbTag, inventurBisTag } from "./inventur.js";
 import { uid, heute, heuteGeschaeft } from "./util.js";
 import { zipLesen, istZip } from "./zip.js";
+import { rund2 } from "./geld.js";
 
 export const HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
 // Gibt es für einen Tag Kassendaten und Handeingabe, zählt die Kasse (genauer als abgelesen).
@@ -242,7 +243,7 @@ export function dsfinvkLesen(dateien) {
   const tage = [...new Set(positionen.map((p) => p.datum))].sort();
   return { positionen, tage, bericht, fingerabdruck: "imp-" + kurzHash(positionen.map((p) => [p.datum, p.kasse || "", p.plu, p.text, p.einheit || "", p.menge, p.umsatzBrutto].join("|")).join("\n")) };
 }
-const rund = (x, n) => { const f = 10 ** n; return Math.round(x * f) / f; };
+const rund = (x, n) => { if (n === 2) return rund2(x); const f = 10 ** n; return Math.round(x * f) / f; }; // 2 Stellen: die eine Rundung aus js/geld.js
 
 // Alles in einem Schritt für die Oberfläche: Dateien → Ergebnis mit Bericht
 export async function exportEinlesen(dateien) {

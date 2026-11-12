@@ -22,7 +22,7 @@ export const POSTEN = [
   { id: "strom",        kat: "energie",      typisch: ALLE, basis: "brutto", rw: () => null },
   { id: "gas",          kat: "energie",      typisch: ALLE, basis: "brutto", rw: () => null },
   { id: "heizung",      kat: "energie",      typisch: ALLE, basis: "brutto", rw: () => null },
-  { id: "wasser",       kat: "energie",      typisch: ALLE, basis: "brutto", satz: 7, rw: () => null }, // Trinkwasser 7 % (Paket 3, M1)
+  { id: "wasser",       kat: "energie",      typisch: ALLE, basis: "brutto", satz: mwstProzent("ermaessigt"), rw: () => null }, // Trinkwasser ermäßigt (7 %) (Paket 3, M1)
   // Versicherungen – ein Betrag
   { id: "versicherungen", kat: "versicherung", typisch: ALLE, basis: "netto", rw: () => null },
   // Verträge und Abos – ein Betrag, dazu die zwei, die fast jeder einzeln kennt
@@ -53,8 +53,10 @@ export const POSTEN = [
 ];
 
 export const basisStandard = (postenId) => POSTEN.find((p) => p.id === postenId)?.basis || "brutto";
-export const satzStandard = (postenId) => POSTEN.find((p) => p.id === postenId)?.satz ?? 19; // Paket 3, M1
+export const satzStandard = (postenId) => POSTEN.find((p) => p.id === postenId)?.satz ?? mwstProzent("voll"); // Paket 3, M1: Standard = Regelsatz
 
 export const postenJeKategorie = (kat) => POSTEN.filter((p) => p.kat === kat);
 
 export const istTypisch = (p, formatId) => p.typisch === ALLE || (formatId && p.typisch.includes(formatId));
+
+import { mwstProzent } from "../geld.js";

@@ -12,6 +12,7 @@ import { uid, heute } from "./util.js";
 import { basisStandard } from "./data/kosten.js";
 import { POSTEN } from "./data/kosten.js";
 import { plusMonate } from "./zeit.js";
+import { nettoVonBrutto, mwst } from "./geld.js";
 
 export const VERTEILUNGEN = ["monatlich", "jaehrlich", "einmalig", "verteilt"];
 
@@ -100,9 +101,9 @@ export function postenVorher(stand, stelle) {
 }
 
 // Netto-Anteil eines Kostenbelegs für einen Monat "JJJJ-MM" (nur einmalig/verteilt; monatlich/jährlich laufen über den Kostenposten).
-export function anteilImMonat(e, monat, vorsteuer = 0.19) {
+export function anteilImMonat(e, monat, vorsteuer = mwst("voll", monat + "-01")) {
   if (e.storniert || !(e.verteilung === "einmalig" || e.verteilung === "verteilt")) return 0;
-  const netto = e.basis === "brutto" ? e.betrag / (1 + (typeof e.satz === "number" ? e.satz : vorsteuer)) : e.betrag;
+  const netto = e.basis === "brutto" ? nettoVonBrutto(e.betrag, typeof e.satz === "number" ? e.satz : vorsteuer) : e.betrag;
   const n = e.monate || 1;
   for (let i = 0; i < n; i++) if (plusMonate(e.ab, i) === monat) return netto / n;
   return 0;

@@ -16,6 +16,7 @@ import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
 import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang mit Ausschankmenge
 import { tageZwischen } from "./zeit.js";
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 export const HALTBAR_ARTEN = ["mhd", "verbrauch"];
 export const ABVERKAUF_TAGE = 7;   // Stufe 1 (17.10.2026): MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
@@ -177,12 +178,12 @@ export function abverkaufVorschlaege(stand, kandidat, { k = kalkulation(stand), 
     if (!(P > 0)) { out.push({ ...basis, art: "ohnePreis" }); continue; }
     if (z.waren === null) { out.push({ ...basis, art: "ohneWareneinsatz" }); continue; }
     if (V === null) { out.push({ ...basis, art: "ohneEinkaufspreis" }); continue; }
-    const N = basis.portionen, mwst = z.mwst, Pnet = P / (1 + mwst), w = z.waren;
+    const N = basis.portionen, mwst = z.mwst, Pnet = nettoVonBrutto(P, mwst), w = z.waren;
     const untergrenze = Math.max(w, Pnet - V / N);
-    const A = Math.round(preisStufeAuf(untergrenze * (1 + mwst)) * 100) / 100;
+    const A = rund2(preisStufeAuf(untergrenze * (1 + mwst)));
     const geschaetzt = !!(kandidat.geschaetzt || z.warenGeschaetzt);
     if (A >= P - EPS) { out.push({ ...basis, art: "lohntNicht", geschaetzt, verlust: V }); continue; }
-    const Anet = A / (1 + mwst);
+    const Anet = nettoVonBrutto(A, mwst);
     out.push({ ...basis, art: "aktion", aktionspreis: A, nachlass: P - A, nachlassGesamtNetto: N * (Pnet - Anet), rohertragJePortion: Anet - w, wareneinsatz: w,
       verlust: V, vorteil: N * (Anet - w) + V, geschaetzt, untergrenzeWare: untergrenze === w });
   }

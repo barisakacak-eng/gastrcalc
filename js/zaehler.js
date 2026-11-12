@@ -17,6 +17,7 @@ import { heute, heuteGeschaeft, uid } from "./util.js";
 import { lieferungTeile } from "./betriebsmittel.js";
 import { monatsLast, umsatzEintrag, umsatzSteuerSatz, kalkulation, SCHWUND_ARTEN, tagPlus, wochentag, schwundAuswertung, kuehlStatus, ruhetageAm, eintragWert, RICHTWERT_WARENEINSATZ } from "./engine.js";
 import { monatsLetzter } from "./zeit.js";
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 export function monatsGrenzen(datum) {
   const [j, m] = datum.split("-").map(Number);
@@ -81,7 +82,7 @@ export function belegQuoteFenster(stand, datum, satz) {
   for (const l of stand.lieferungen || []) if (!l.storniert && typeof l.datum === "string" && (erster === null || l.datum < erster)) erster = l.datum;
   if (erster === null || erster > von) return null;
   const ek = einkaufJeTag(stand, von, datum); const belege = Object.values(ek.jeTag).reduce((a, b) => a + b, 0);
-  let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += e.umsatz / (1 + satz); }
+  let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += nettoVonBrutto(e.umsatz, satz); }
   return u > 0 ? belege / u : null;
 }
 
@@ -97,7 +98,7 @@ export function belegQuoteTeil(stand, datum, satz) {
   // ganze Wochen rückwärts ab heute: ein Wocheneinkauf steht so gegen den Umsatz der Woche, die er versorgt (kein Sägezahn am Einkaufstag)
   const von = tagPlus(datum, -(Math.floor(tage / 7) * 7 - 1));
   const ek = einkaufJeTag(stand, von, datum); const belege = Object.values(ek.jeTag).reduce((a, b) => a + b, 0);
-  let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += e.umsatz / (1 + satz); }
+  let u = 0; for (let d = von; d <= datum; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) u += nettoVonBrutto(e.umsatz, satz); }
   return u > 0 ? { quote: belege / u, gewicht, tage } : null;
 }
 
@@ -125,7 +126,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   if (startFest < start) start = startFest > datum ? datum : startFest;
   // Umsatz netto gesamt vorab, für die Belegquote
   let umsatzNettoGesamt = 0;
-  for (let d = start; d <= datum && d <= M.bis; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) umsatzNettoGesamt += e.umsatz / (1 + steuer.satz); }
+  for (let d = start; d <= datum && d <= M.bis; d = tagPlus(d, 1)) { const e = umsatzEintrag(stand, d); if (e) umsatzNettoGesamt += nettoVonBrutto(e.umsatz, steuer.satz); }
   // Stufe 3 nur mit Karte (sonst gibt es keine Schätzung zum Vergleichen) und wenn der Einkauf aus Belegen mindestens so hoch ist wie die
   // Schätzung aus der Karte – ein einzelner Beleg würde den Zähler sonst zu grün machen. Lieber zu rot als zu grün: es zählt die höhere Zahl.
   // Paket 3 (16.10.2026), M15/E2: Stufe 1 = ohne Karte, rechnet jetzt mit dem Branchen-Richtwert (quelle "richtwert") statt mit Quote 0;
@@ -182,7 +183,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
     if (t.datum < start) { t.status = "vorher"; t.stand = 0; continue; }
     t.status = t.datum === datum ? "heute" : "vergangen";
     const e = umsatzEintrag(stand, t.datum);
-    const ub = e ? e.umsatz : 0; const un = ub / (1 + steuer.satz);
+    const ub = e ? e.umsatz : 0; const un = nettoVonBrutto(ub, steuer.satz);
     const w = stufe === 3 ? (einkauf.jeTag[t.datum] || 0) : un * quoteEff; // Paket 3: Stufe 1 schätzt die Ware mit dem Richtwert
     const m = stufe === 3 ? 0 : (muell[t.datum] || 0); // Stufe 3: echte Belege enthalten den weggeworfenen Einkauf schon
     if (stufe === 3 && !belegQuoteZaehlt) muellNurPrognose += muell[t.datum] || 0;
@@ -230,7 +231,7 @@ export function zaehler(stand, { datum = heuteGeschaeft() } = {}) {
   const geschaetzt = stufe < 3 || !!steuer.geschaetzt || !!q.geschaetzt || last.eigen.status === "geschaetzt" || last.fix.geschaetzt > 0 || lohnGeschaetzt;
   return {
     datum, monat: M, stufe, quote: q.quote, quoteEff, quoteFenster, quoteGleitend: gleitend, provision: provisionSumme, lieferAnteil: lieferBasisBrutto > 0 ? lieferBrutto / lieferBasisBrutto : 0, provisionJeBrutto: pJB, belegQuoteMonat, quoteQuelle: q.quelle, quoteGeschaetzt: !!q.geschaetzt, quoteRichtpreis: !!q.richtpreis, steuer: steuer.satz, steuerQuelle: steuer.quelle, steuerGeschaetzt: !!steuer.geschaetzt, geschaetzt, start, belegSumme, lohnRichtwertTage,
-    nettoVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz), bleibtVon: (brutto) => (Number(brutto) || 0) / (1 + steuer.satz) * (1 - quoteEff) - (Number(brutto) || 0) * pJB, // Lieferdienst (Persona-Test 27.10.): Provision je Euro wie im Tagesschnitt
+    nettoVon: (brutto) => nettoVonBrutto(brutto, steuer.satz), bleibtVon: (brutto) => nettoVonBrutto(brutto, steuer.satz) * (1 - quoteEff) - (Number(brutto) || 0) * pJB, // Lieferdienst (Persona-Test 27.10.): Provision je Euro wie im Tagesschnitt
     stand: standHeute, standGestern, bewegungHeute: standHeute - standGestern, imPlus: standHeute >= 0 && tageMitUmsatz > 0,
     kosten, fix: anteil(last.fixJeOffen + (last.sachbezugAbgaben || 0)) * gewichtBisHeute, lohn: lohnBis, lohnEchtTage, lohnGeschaetzt, tageskostenFest, tageskostenPrognose, gewichtZukunft, eigen: anteil(last.eigen.betrag ?? 0) * gewichtBisHeute, sonderBis: anteil(sonder.summe) * gewichtBisHeute,
     umsatzBrutto, umsatzNetto, ware, muell: muellSumme, muellPrognose: muellNurPrognose, schwund: schwundSumme, tageskosten, gewichtMonat, gewichtBisHeute, tageMitUmsatz,
@@ -333,9 +334,9 @@ export function zaehlerVerlauf(z) {
 }
 
 // ---------- Trennung 2 (17.10.2026): Zahlen der Seite „Monat & Zähler“ (vorher in js/screens/umsatz.js) ----------
-// Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert. satz = Umsatzsteuer-Satz (z. B. 0,07).
-export const umsatzAnzeigeWert = (brutto, basis, satz) => (brutto === null || brutto === undefined ? null : basis === "netto" ? Math.round(brutto / (1 + satz) * 100) / 100 : brutto);
-export const umsatzAusEingabe = (betrag, basis, satz) => (basis === "netto" ? Math.round(betrag * (1 + satz) * 100) / 100 : betrag);
+// Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert. satz = Umsatzsteuer-Satz (Anteil, z. B. der ermäßigte aus dem Regelwerk).
+export const umsatzAnzeigeWert = (brutto, basis, satz) => (brutto === null || brutto === undefined ? null : basis === "netto" ? rund2(nettoVonBrutto(brutto, satz)) : brutto);
+export const umsatzAusEingabe = (betrag, basis, satz) => (basis === "netto" ? rund2(betrag * (1 + satz)) : betrag);
 // Strecke von „alle Kosten offen“ (links, 0 %) bis Monatsende (rechts): Lage von heute und null in Prozent; bringt = was ein Beispielumsatz übrig lässt.
 export function zaehlerStrecke(z, beispiel = 1000) {
   if (z.keinUmsatz) return null;

@@ -1,4 +1,5 @@
-const heuteLokal = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+import { heute as heuteBerlin } from "../js/util.js";
+const heuteLokal = () => heuteBerlin(); // Kalendertag in Berlin
 import test from "node:test";
 import assert from "node:assert/strict";
 import * as Z from "../js/zaehler.js";

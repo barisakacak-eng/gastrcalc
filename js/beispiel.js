@@ -24,14 +24,16 @@ import { bedarfGericht, sollVerbrauch, schwundVerbrauch, einkaufMengen } from ".
 import { getraenkSetzen } from "./getraenk.js"; // Getränke (18.10.2026): Gebinde, Marke, Pfand, offener Ausschank im Beispiel
 import { aktionVorschlag } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Vorschlag mit Begründung an der Beispiel-Aktion
 import { berlinZeitpunkt } from "./zeit.js";
+import { rund2, mwst, mwstProzent } from "./geld.js";
 
 export const BEISPIEL_NAME = "Beispiel-Döner";
-export const BEISPIEL_TAGE = 30;           // so viele Tage vor heute sind gefüllt (heute selbst ist noch offen)
+export // Steuersätze der Beispiel-Daten aus dem Regelwerk (einmal beim Start gelesen; der Beispiel-Laden speichert sie wie jeder Laden als Zahl)
+const VOLL = mwst("voll", "2026-01-01"), ERM = mwst("ermaessigt", "2026-01-01"), PROZ_VOLL = mwstProzent("voll", "2026-01-01");
+const BEISPIEL_TAGE = 30;           // so viele Tage vor heute sind gefüllt (heute selbst ist noch offen)
 const PERSON = { ab: "bsp-p-ab", cd: "bsp-p-cd" };
 
 // Beispiel-Laden (17.10.2026): Berliner Uhrzeit eines Tages als ISO-Zeitstempel
 const zeit = (datum, h, m = 0) => berlinZeitpunkt(datum, h, m).toISOString();
-const rund2 = (x) => Math.round(x * 100) / 100;
 
 // Beispiel-Laden (17.10.2026): Karte – [Name, Verkaufspreis brutto (Beispiel), Portionen je Tag (Beispiel), eigenes Gericht?]
 // Döner-Box, Pide und Ayran gibt es nicht als Vorlage: eigenes Gericht, Rezept aus dem Baukasten (Ayran: Getränk mit 1 Flasche).
@@ -47,22 +49,22 @@ const UMSATZ_TAG = { 1: 790, 2: 830, 3: 870, 4: 920, 5: 1180, 6: 1350 };
 // E7 (17.10.2026): Die Anzahl je Beleg wird jetzt aus den Beispielverkäufen abgeleitet (damit Einkauf, Verkauf und Inventur zusammenpassen);
 // die Anzahl hier gilt nur noch, wenn eine Ware in keinem Rezept steht.
 const LIEFERUNG = [
-  ["Dönerspieß Kalb/Pute", 6, "karton", 15, "kg", 156.0, 0.07], ["Hähnchenspieß", 2, "karton", 10, "kg", 79.0, 0.07],
-  ["Pommes frites", 10, "karton", 2.5, "kg", 6.9, 0.07], ["Eisbergsalat", 15, "lose", 1, "kg", 1.9, 0.07],
-  ["Tomaten", 3, "kiste", 5, "kg", 11.0, 0.07], ["Cola 0,33 l", 6, "kiste", 24, "stk", 13.9, 0.19],
-  ["Ayran 0,25 l", 4, "kiste", 20, "stk", 9.0, 0.07], ["Dönertüte", 1, "karton", 1000, "stk", 29.0, 0.19],
-  ["Weizenmehl Typ 550", 2, "sack", 25, "kg", 17.5, 0.07], ["Frischhefe", 1, "karton", 1, "kg", 3.2, 0.07], ["Salz", 1, "sack", 5, "kg", 2.4, 0.07],
-  ["Joghurt natur", 2, "eimer", 10, "kg", 17.5, 0.07], ["Mayonnaise", 1, "eimer", 10, "kg", 26.0, 0.07], ["Knoblauch", 1, "sack", 2, "kg", 6.8, 0.07],
-  ["Petersilie", 1, "kiste", 1, "kg", 4.5, 0.07], ["Lammhackfleisch", 1, "karton", 5, "kg", 44.0, 0.07], ["Pizzakäse gerieben", 1, "beutel", 2, "kg", 12.6, 0.07],
-  ["Alufolie-Bogen", 1, "karton", 500, "stk", 15.9, 0.19], ["Pommesschale", 1, "karton", 500, "stk", 18.5, 0.19],
-  ["Mineralwasser 0,25 l", 2, "kiste", 24, "stk", 7.2, 0.19], ["Eistee", 1, "kiste", 9, "l", 8.1, 0.19],
+  ["Dönerspieß Kalb/Pute", 6, "karton", 15, "kg", 156.0, ERM], ["Hähnchenspieß", 2, "karton", 10, "kg", 79.0, ERM],
+  ["Pommes frites", 10, "karton", 2.5, "kg", 6.9, ERM], ["Eisbergsalat", 15, "lose", 1, "kg", 1.9, ERM],
+  ["Tomaten", 3, "kiste", 5, "kg", 11.0, ERM], ["Cola 0,33 l", 6, "kiste", 24, "stk", 13.9, VOLL],
+  ["Ayran 0,25 l", 4, "kiste", 20, "stk", 9.0, ERM], ["Dönertüte", 1, "karton", 1000, "stk", 29.0, VOLL],
+  ["Weizenmehl Typ 550", 2, "sack", 25, "kg", 17.5, ERM], ["Frischhefe", 1, "karton", 1, "kg", 3.2, ERM], ["Salz", 1, "sack", 5, "kg", 2.4, ERM],
+  ["Joghurt natur", 2, "eimer", 10, "kg", 17.5, ERM], ["Mayonnaise", 1, "eimer", 10, "kg", 26.0, ERM], ["Knoblauch", 1, "sack", 2, "kg", 6.8, ERM],
+  ["Petersilie", 1, "kiste", 1, "kg", 4.5, ERM], ["Lammhackfleisch", 1, "karton", 5, "kg", 44.0, ERM], ["Pizzakäse gerieben", 1, "beutel", 2, "kg", 12.6, ERM],
+  ["Alufolie-Bogen", 1, "karton", 500, "stk", 15.9, VOLL], ["Pommesschale", 1, "karton", 500, "stk", 18.5, VOLL],
+  ["Mineralwasser 0,25 l", 2, "kiste", 24, "stk", 7.2, VOLL], ["Eistee", 1, "kiste", 9, "l", 8.1, VOLL],
 ];
 // E7 (17.10.2026): Waren, die bisher ohne Beleg blieben, kommen mit auf den Beleg – Preis je Gebinde = bisheriger (Richt-)Preis je Einheit × Inhalt,
 // damit die Kalkulation gleich bleibt. [Artikel, Gebinde, Inhalt, Einheit, USt]. Adana-Spieß und Pide-Brot bleiben ohne Beleg (Ladenhüter, totes Lager).
 const ZUKAUF = [
-  ["Zwiebeln", "sack", 10, "kg", 0.07], ["Weißkohl", "kiste", 10, "kg", 0.07], ["Dürüm-Wrap", "karton", 100, "stk", 0.07], ["Hirtenkäse / Feta", "eimer", 2, "kg", 0.07],
-  ["Menüschale", "karton", 250, "stk", 0.19], ["Joghurtsauce", "eimer", 5, "kg", 0.07], ["Dönergewürz", "packung", 1, "kg", 0.07], ["Sonnenblumenöl", "kanister", 10, "l", 0.07],
-  ["Pizzakarton 30 cm", "karton", 100, "stk", 0.19], ["Falafelbällchen", "karton", 200, "stk", 0.07], ["Beilagenschale", "karton", 500, "stk", 0.19], ["Trinkbecher 0,3 l", "karton", 1000, "stk", 0.19],
+  ["Zwiebeln", "sack", 10, "kg", ERM], ["Weißkohl", "kiste", 10, "kg", ERM], ["Dürüm-Wrap", "karton", 100, "stk", ERM], ["Hirtenkäse / Feta", "eimer", 2, "kg", ERM],
+  ["Menüschale", "karton", 250, "stk", VOLL], ["Joghurtsauce", "eimer", 5, "kg", ERM], ["Dönergewürz", "packung", 1, "kg", ERM], ["Sonnenblumenöl", "kanister", 10, "l", ERM],
+  ["Pizzakarton 30 cm", "karton", 100, "stk", VOLL], ["Falafelbällchen", "karton", 200, "stk", ERM], ["Beilagenschale", "karton", 500, "stk", VOLL], ["Trinkbecher 0,3 l", "karton", 1000, "stk", VOLL],
 ];
 // E7 (17.10.2026): Beispielverkäufe – Adana-Spieß verkauft sich im Beispiel nicht (Ladenhüter); Cola fehlt bei der zweiten Inventur (Schwund-Verdacht)
 const VERKAUF_FEST = { "Adana-Spieß": 0 };
@@ -119,9 +121,9 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
   // Beispiel-Laden (17.10.2026): Kosten je Monat (Beispielbeträge)
   s.team = { personen: 2, stundenProPerson: 160, lohnkosten: 6200, eigenerLohn: 3000, eigenerLohnStatus: "eigen" };
   s.kosten = [
-    { id: "bsp-kosten-miete", posten: "miete", kategorie: "miete", betrag: 2400, status: "bekannt", periode: "monat", basis: "netto", satz: 19 },
-    { id: "bsp-kosten-strom", posten: "strom", kategorie: "energie", betrag: 520, status: "bekannt", periode: "monat", basis: "brutto", satz: 19, sammel: "strom-gas" },
-    { id: "bsp-kosten-vers", posten: "versicherungen", kategorie: "versicherung", betrag: 140, status: "bekannt", periode: "monat", basis: "netto", satz: 19 },
+    { id: "bsp-kosten-miete", posten: "miete", kategorie: "miete", betrag: 2400, status: "bekannt", periode: "monat", basis: "netto", satz: PROZ_VOLL },
+    { id: "bsp-kosten-strom", posten: "strom", kategorie: "energie", betrag: 520, status: "bekannt", periode: "monat", basis: "brutto", satz: PROZ_VOLL, sammel: "strom-gas" },
+    { id: "bsp-kosten-vers", posten: "versicherungen", kategorie: "versicherung", betrag: 140, status: "bekannt", periode: "monat", basis: "netto", satz: PROZ_VOLL },
   ];
   s.kostenKategorienGeprueft = [...KATEGORIEN];
   s.verkauf = { zielgewinn: 10, zielgewinnStatus: "vorschlag", bestellungenTag: KARTE.reduce((n, k) => n + k[2], 0), warenQuote: null };
@@ -137,7 +139,7 @@ export function beispielLaden(heute, { name = BEISPIEL_NAME, jetzt = null } = {}
     const id = `bsp-g-${i + 1}`;
     if (art === "getraenk") { const zutaten = [{ name: n, menge: 1, einheit: "stk" }];
       return { id, name: n, bereich: "alkoholfrei", klasse: "getraenk", zeit: 1, vorlage: false, zutaten, preis, mengeTag, steuer: steuersatzAusZutaten(zutaten) }; }
-    if (art === "eigen") return { id, name: n, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis, mengeTag, steuer: 0.07 };
+    if (art === "eigen") return { id, name: n, bereich: null, klasse: "haupt", zeit: 5, vorlage: false, zutaten: [], preis, mengeTag, steuer: ERM };
     return { ...gerichtAusVorlage(vorlage(n)), id, preis, mengeTag };
   });
   s.gerichte.forEach((g, i) => { g.plu = String(101 + i); });

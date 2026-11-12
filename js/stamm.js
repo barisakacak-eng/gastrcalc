@@ -9,6 +9,7 @@ import { basisStandard, satzStandard } from "./data/kosten.js";
 import { REINIGUNG_LEER } from "./reinigung.js";
 import { VORSTEUER_SAETZE, aktiveStellen } from "./engine.js";
 import { TYP_AUS_ART } from "./kuehlname.js";
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 // ---------- Ablauf der Einrichtung (gespeichert am Laden) ----------
 export function schrittSetzen(stand, nummer, id) { stand.schritt = nummer; stand.schrittId = id; }
@@ -241,9 +242,9 @@ export const teamTag = (stand, datum) => [...(stand?.teamTage || [])].reverse().
 export function teamTagSetzen(stand, datum, eintraege) {
   stand.teamTage ??= [];
   // Fester Monatslohn: wird an der Person gemerkt und zählt nicht als Tageseintrag
-  for (const x of eintraege || []) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.modell === "monat" && x.monatsBrutto > 0) { p.lohnModell = "monat"; p.monatsBrutto = Math.round(x.monatsBrutto * 100) / 100; p.lohnArt = x.art === "minijob" ? "minijob" : "angestellt"; } else if (p && x.modell === "stunde") p.lohnModell = "stunde"; }
+  for (const x of eintraege || []) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.modell === "monat" && x.monatsBrutto > 0) { p.lohnModell = "monat"; p.monatsBrutto = rund2(x.monatsBrutto); p.lohnArt = x.art === "minijob" ? "minijob" : "angestellt"; } else if (p && x.modell === "stunde") p.lohnModell = "stunde"; }
   eintraege = (eintraege || []).filter((x) => x.modell !== "monat");
-  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), ...(x.kompakt ? { kompakt: true, personen: Math.max(1, Math.round(Number(x.personen) || 1)) } : {}), stunden: Math.round(Math.min(400, x.stunden) * 4) / 4, ...(schichtZeit(x.von) && schichtZeit(x.bis) ? { von: schichtZeit(x.von), bis: schichtZeit(x.bis) } : {}), satz: x.satz > 0 ? Math.round(x.satz * 100) / 100 : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
+  const e = { datum, eintraege: (eintraege || []).filter((x) => x.stunden > 0).map((x) => ({ person: x.person || null, name: String(x.name || "").slice(0, 20), ...(x.kompakt ? { kompakt: true, personen: Math.max(1, Math.round(Number(x.personen) || 1)) } : {}), stunden: Math.round(Math.min(400, x.stunden) * 4) / 4, ...(schichtZeit(x.von) && schichtZeit(x.bis) ? { von: schichtZeit(x.von), bis: schichtZeit(x.bis) } : {}), satz: x.satz > 0 ? rund2(x.satz) : null, art: x.art === "minijob" ? "minijob" : "angestellt" })), keine: !(eintraege || []).some((x) => x.stunden > 0), erfasst: new Date().toISOString() };
   stand.teamTage.push(e);
   for (const x of e.eintraege) { const p = (stand.personen || []).find((q) => q.id === x.person); if (p && x.satz) { p.stundenlohn = x.satz; p.lohnArt = x.art; } }
   return e;
@@ -253,7 +254,7 @@ export function teamTagSetzen(stand, datum, eintraege) {
 export const lieferTag = (stand, datum) => [...(stand?.lieferTage || [])].reverse().find((x) => x.datum === datum) || null;
 export function lieferTagSetzen(stand, datum, betrag) {
   stand.lieferTage ??= [];
-  const e = { datum, betrag: Math.max(0, Math.round((Number(betrag) || 0) * 100) / 100), erfasst: new Date().toISOString() };
+  const e = { datum, betrag: Math.max(0, rund2((Number(betrag) || 0))), erfasst: new Date().toISOString() };
   // Tippen im Büro (jede Taste): der eigene Eintrag der letzten Minute wird ersetzt statt eine lange Liste zu bauen
   const i = stand.lieferTage.length - 1; const l = stand.lieferTage[i];
   if (l && l.datum === datum && Date.now() - Date.parse(l.erfasst) < 60000) { stand.lieferTage[i] = e; return e; }
@@ -266,12 +267,12 @@ export function lieferProvision(stand) {
   return { satz, basis: p.every((x) => x.basis === "netto") ? "netto" : "brutto", anzahl: p.length };
 }
 // Provision eines Betrags (brutto eingegeben); bei Netto-Basis vom Netto-Betrag.
-export const lieferKosten = (betrag, prov, mwst) => !prov || !(betrag > 0) ? 0 : (prov.basis === "netto" ? betrag / (1 + (mwst || 0)) : betrag) * prov.satz;
+export const lieferKosten = (betrag, prov, mwst) => !prov || !(betrag > 0) ? 0 : (prov.basis === "netto" ? nettoVonBrutto(betrag, mwst) : betrag) * prov.satz;
 // satz = Brutto-Stundenlohn; art = "angestellt" | "minijob". Kosten = Brutto × Arbeitgeber-Aufschlag (js/data/lohnkosten.js)
 // Baris 27.10.2026 (B): nach den ersten Stunden einmal „Ist das ein normaler Tag?“ – nur ohne Monatssumme für Löhne und nur einmal je Laden.
 export const normalFrageNoetig = (stand, datum) => { const e = teamTag(stand, datum); return !!e && !e.keine && e.eintraege.length > 0 && !(Number(stand?.team?.lohnkosten) > 0) && !stand?.team?.normalGefragt; };
 export function normalTagSetzen(stand, datum, normal) { const e = teamTag(stand, datum); if (e && !normal) e.untypisch = true; stand.team ??= {}; stand.team.normalGefragt = true; }
-export function teamStundenlohnSetzen(stand, satz) { stand.team ??= {}; stand.team.stundenlohn = Math.round(satz * 100) / 100; } // Lohn je Stunde für „Mitarbeiter heute“ kompakt (27.10.2026)
+export function teamStundenlohnSetzen(stand, satz) { stand.team ??= {}; stand.team.stundenlohn = rund2(satz); } // Lohn je Stunde für „Mitarbeiter heute“ kompakt (27.10.2026)
 export const teamTagLohn = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * x.satz : 0), 0);
 export const teamTagKosten = (e) => (e?.eintraege || []).reduce((s, x) => s + (x.satz ? x.stunden * kostenJeStunde(x.satz, x.art) : 0), 0);
 // Lauf 2, Bildpaket D (4a) – 31.10.2026: Stunden ohne Stundenlohn zählen mit dem gesetzlichen Mindestlohn des Tages (js/data/mindestlohn.js,

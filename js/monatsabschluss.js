@@ -4,8 +4,9 @@
 // stand.monatsabschluesse = [{ monat, eingefroren, umsatzBrutto, umsatzNetto, ware, quote, personal, personalQuote, ergebnis, geschaetzt, ersetzt? }]
 import { monatsPosten, wasBleibtAus, prueferAus } from "./steuertopf.js";
 import { plusMonate } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
-const r2 = (n) => Math.round(n * 100) / 100, r4 = (n) => Math.round(n * 10000) / 10000;
+const r4 = (n) => Math.round(n * 10000) / 10000;
 
 export function monatsZahlen(stand, monat) {
   const p = monatsPosten(stand, monat); const w = wasBleibtAus(p, null); const q = prueferAus(p, null);
@@ -25,8 +26,8 @@ export function monatEinfrieren(stand, monat, { jetzt = new Date().toISOString()
 export function monatVergleich(stand, monat) {
   const hol = (m) => eingefroren(stand, m) || (monatsZahlen(stand, m).umsatzBrutto > 0 ? monatsZahlen(stand, m) : null);
   const jetzt = hol(monat); const diff = (a, b) => !a || !b ? null : {
-    umsatz: r2(a.umsatzBrutto - b.umsatzBrutto), quotePunkte: a.quote !== null && b.quote !== null ? r2((a.quote - b.quote) * 100) : null,
-    personalPunkte: a.personalQuote !== null && b.personalQuote !== null ? r2((a.personalQuote - b.personalQuote) * 100) : null, ergebnis: r2(a.ergebnis - b.ergebnis) };
+    umsatz: rund2(a.umsatzBrutto - b.umsatzBrutto), quotePunkte: a.quote !== null && b.quote !== null ? rund2((a.quote - b.quote) * 100) : null,
+    personalPunkte: a.personalQuote !== null && b.personalQuote !== null ? rund2((a.personalQuote - b.personalQuote) * 100) : null, ergebnis: rund2(a.ergebnis - b.ergebnis) };
   const vm = hol(plusMonate(monat, -1)), vj = hol(plusMonate(monat, -12));
   return { monat, jetzt, vormonat: vm, vorjahr: vj, zumVormonat: diff(jetzt, vm), zumVorjahr: diff(jetzt, vj) };
 }

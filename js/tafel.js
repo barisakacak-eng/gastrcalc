@@ -16,6 +16,7 @@ import { kurzName } from "./haltbar.js";
 import { getraenkVon, literAusText, literText, nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Ausschankmenge aus dem Feld
 import { aktionVorschlag, aktionBilanz, PLAN_TAGE } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Zeitraum-Vorschlag und Bilanz
 import { isoTag, uhr } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
 export const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 export const TAFEL_SEKUNDEN = [8, 12, 20, 30];   // Auswahl im Büro (gespeichert werden 5–120 s, store.js)
@@ -86,11 +87,11 @@ export function aktionUebernehmen(stand, { art, gerichte, preis, statt = null, v
   const e = ende === "ware" || ende === "datum" ? ende : vs.moeglich ? vs.ende : "datum";
   let b = bis && bis >= v ? bis : null;
   if (!b && !(e === "ware" && bis === "")) b = vs.moeglich && vs.bis >= v ? vs.bis : tagPlus(v, PLAN_TAGE - 1); // bis "" + „bis Ware weg“ = ohne letztes Datum
-  const p = Math.round(preis * 100) / 100; const schluessel = [...ids].sort().join("|");
+  const p = rund2(preis); const schluessel = [...ids].sort().join("|");
   const da = aktiveAktionen(stand, { heuteTag }).find((a) => [...a.gerichte].sort().join("|") === schluessel && a.preis === p);
   if (da) return da;
   const vorschlag = plan && plan.von ? plan : vs.moeglich ? { von: vs.von, bis: vs.bis, ende: vs.ende, satz: vs.satz, erwartung: Math.round(vs.erwartung.mehrAnteil * 10000) / 10000, quelle: vs.erwartung.quelle } : null;
-  const a = { id: "akt-" + uid(), art: artSauber, gerichte: ids, preis: p, statt: statt > p ? Math.round(statt * 100) / 100 : null, von: v, bis: b, ende: e,
+  const a = { id: "akt-" + uid(), art: artSauber, gerichte: ids, preis: p, statt: statt > p ? rund2(statt) : null, von: v, bis: b, ende: e,
     ...(ware ? { ware: String(ware) } : {}), ...(vorschlag ? { plan: { ...vorschlag, erstellt: jetzt } } : {}), erfasst: jetzt, entfernt: false };
   stand.aktionen = [...(stand.aktionen || []), a];
   return a;

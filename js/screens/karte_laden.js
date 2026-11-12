@@ -15,6 +15,7 @@ import { mehrImMonat, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3
 import { fmtEuroGeschaetzt } from "../util.js";
 import { sym } from "../symbole.js";
 import { minusUnsicher, rezeptStempel, hatEigenesRezept } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.4)
+import { rund2 } from "../geld.js";
 
 const ERSTE = 60; // so viele Kacheln sofort; der Rest auf Tipp („Alle zeigen“) – lange Karten bleiben schnell
 const PUNKT = { gruen: "g", gelb: "y", rot: "r", grau: "grau" };
@@ -38,7 +39,6 @@ const zeilenVon = (stand) => { const k = kalkulation(stand); const m = new Map(k
 const zuBillig = (x) => x.z.ampel === "rot" && !minusUnsicher(x.z, x.g); // 28.10.2026: ein nur geschätztes Minus ist nicht „zu billig“
 // Gegenprüfung 28.10.2026: Spalte „bleibt dir“ nur, wenn es für mindestens ein Gericht eine Zahl (oder „≈ prüfen“) gibt
 const mitZahl = (x) => { const a = preisAmpel(x.z, x.z.preisBrutto); return (a.gewinn !== null && a.quote !== null) || minusUnsicher({ ...x.z, ampel: a.ampel }, x.g); };
-const cent = (v) => Math.round(v * 100) / 100;
 // Eine Zahl nach allen Kosten, mit Vorzeichen (Baris 27.10.2026, B): „+ 2,10 €“ oder „− 0,80 €“
 const vorzeichen = (v) => v > 0.004 ? "+ " : v < -0.004 ? "− " : "";
 
@@ -130,7 +130,7 @@ export function karteLadenBlatt(stand) {
   if (!blatt) return "";
   if (blatt.rezept) return rezeptBlatt(stand);
   const x = zeilenVon(stand).find((y) => y.g.id === blatt.id); if (!x) { blatt = null; return ""; }
-  const geaendert = blatt.alt === null || cent(blatt.alt) !== cent(blatt.preis);
+  const geaendert = blatt.alt === null || rund2(blatt.alt) !== rund2(blatt.preis);
   return `<div class="kl-dimmer" data-a="kl-zu"></div>
     <div class="kl-blatt" role="dialog" aria-modal="true" aria-label="${esc(x.g.name)}">
       <span class="kl-griff" aria-hidden="true"></span>
@@ -190,11 +190,11 @@ export function karteLadenAktion(name, el, stand) {
     return { gespeichert: true, id: g.id, rezept: true };
   }
   if (!blatt) return false;
-  if (name === "kl-minus") { blatt.preis = Math.max(0, cent(blatt.preis - 0.1)); return "blatt"; }
-  if (name === "kl-plus") { blatt.preis = Math.min(999, cent(blatt.preis + 0.1)); return "blatt"; }
+  if (name === "kl-minus") { blatt.preis = Math.max(0, rund2(blatt.preis - 0.1)); return "blatt"; }
+  if (name === "kl-plus") { blatt.preis = Math.min(999, rund2(blatt.preis + 0.1)); return "blatt"; }
   if (name === "kl-speichern") {
     const g = stand.gerichte.find((x) => x.id === blatt.id); if (!g || !(blatt.preis > 0)) return false;
-    const vorher = g.preis; verkaufspreisSetzen(stand, g.id, cent(blatt.preis)); blatt = null;
+    const vorher = g.preis; verkaufspreisSetzen(stand, g.id, rund2(blatt.preis)); blatt = null;
     return { gespeichert: true, id: g.id, vorher, preis: g.preis };
   }
   return false;
@@ -203,12 +203,12 @@ export function karteLadenAktion(name, el, stand) {
 export function karteLadenEingabe(feld, wert) {
   if (feld !== "kl-preis" || !blatt) return false;
   const n = parseZahl(wert); if (n === null || n < 0 || n > 999) return false;
-  blatt.preis = cent(n); return "teil";
+  blatt.preis = rund2(n); return "teil";
 }
 // Teile des Blatts, die sich beim Tippen ändern (ohne das Eingabefeld)
 export function karteLadenTeile(stand) {
   if (!blatt) return null;
   const x = zeilenVon(stand).find((y) => y.g.id === blatt.id); if (!x) return null;
-  const geaendert = blatt.alt === null || cent(blatt.alt) !== cent(blatt.preis);
+  const geaendert = blatt.alt === null || rund2(blatt.alt) !== rund2(blatt.preis);
   return { bleibt: bleibtZeile(x.z, blatt.preis, lastVon(stand), monatZeile(stand, x.z), kalkulation(stand).geschaetzt || !!x.z.warenGeschaetzt || !!x.z.warenRichtpreis), speichernAn: geaendert && blatt.preis > 0 };
 }

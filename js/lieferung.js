@@ -10,6 +10,7 @@ import { preisJeEinheit } from "./beleg.js";
 import { uploadAendern } from "./stamm.js"; // Trennung (17.10.2026)
 import { lieferantenAusBelegen } from "./lieferant.js"; // Lieferanten (18.10.2026): neuer Händlername → neuer Lieferant
 import { plusTage } from "./zeit.js";
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 // Belegeinheit → App-Einheit für packung.einheit
 const EINHEIT_APP = { kg: "kg", g: "g", l: "l", ml: "ml", cl: "ml", stk: "stk" };
@@ -22,7 +23,7 @@ export function journalZeile(z, belegBasis) {
   const basis = belegBasis === "brutto" ? "brutto" : "netto";
   const je = preisJeEinheit(z, basis);
   const satz = typeof z.steuersatz === "number" ? z.steuersatz : null;
-  const netto = z.gesamt === null ? null : basis === "brutto" ? (satz === null ? null : z.gesamt / (1 + satz)) : z.gesamt;
+  const netto = z.gesamt === null ? null : basis === "brutto" ? (satz === null ? null : nettoVonBrutto(z.gesamt, satz)) : z.gesamt;
   const inhaltEinheit = z.inhalt?.einheit ? EINHEIT_APP[z.inhalt.einheit] || "stk" : null;
   const inhaltMenge = z.inhalt?.groesse !== null && z.inhalt?.groesse !== undefined ? (z.inhalt.anzahl ?? 1) * z.inhalt.groesse * (z.inhalt.einheit === "cl" ? 10 : 1) : (z.inhalt?.anzahl ?? null);
   // Teil 2 (19.10.2026): „Falafel 50x20g“ – das Stückgewicht steckt in der Größe je Stück (bei Stück-Ware in inhaltAlt)
@@ -104,7 +105,7 @@ export function preiseUebernehmen(stand, lieferung) {
     a.gebinde = { art: gebindeArtApp(z.gebinde), zwischen: !stueckModus && z.inhaltAnzahl > 1 && z.inhaltMenge !== z.inhaltAnzahl ? { art: "packung", anzahl: z.inhaltAnzahl } : null };
     if (stueckModus) a.gebinde.stueck = { anzahl: z.inhaltAnzahl, gewicht: z.stueckGewicht };
     if (z.stueckGewicht > 0 && (stueckModus || z.inhaltEinheit === "stk")) a.stueckGewicht = z.stueckGewicht; // Gramm-Rezepte für Stück-Ware
-    a.preis = Math.round(preisNetto * 100) / 100; a.preisBasis = "netto"; a.preisQuelle = "beleg"; a.status = "bekannt"; a.preisDatum = lieferung.datum; delete a.richtpreis; // W2-K2: preisQuelle = Preis vom Beleg
+    a.preis = rund2(preisNetto); a.preisBasis = "netto"; a.preisQuelle = "beleg"; a.status = "bekannt"; a.preisDatum = lieferung.datum; delete a.richtpreis; // W2-K2: preisQuelle = Preis vom Beleg
     const neu = preisJeBasis(a);
     if (alt !== null && neu !== null && Math.abs(neu - alt) > 1e-9) aenderungen.push({ name: a.name, alt, neu, prozent: alt > 0 ? (neu - alt) / alt : null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });
     else if (alt === null && neu !== null) aenderungen.push({ name: a.name, alt: null, neu, prozent: null, einheit: EINHEITEN[a.packung.einheit]?.basis || "stk", datum: lieferung.datum });

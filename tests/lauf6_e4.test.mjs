@@ -69,3 +69,42 @@ test("Uhr 23:00 bis 04:30 Berliner Zeit: heute() und heuteGeschaeft() aus util.j
   assert.equal(heute(new Date("2026-11-12T23:30:00+01:00")), "2026-11-12"); assert.equal(heute(new Date("2026-11-13T00:30:00+01:00")), "2026-11-13");
   assert.equal(isoTag(new Date("2026-11-12T23:30:00Z")), "2026-11-13", "23:30 UTC ist in Berlin schon der nächste Tag");
 });
+
+// ───── Teil B ─────
+import { leererBetrieb } from "../js/store.js";
+import { steuerTopf } from "../js/steuertopf.js";
+import * as Geld from "../js/geld.js";
+import * as Engine from "../js/engine.js";
+import { teamStundenlohnSetzen } from "../js/stamm.js";
+import { satzStandard } from "../js/data/kosten.js";
+import { STEUER_JE_GRUPPE } from "../js/data/katalog.js";
+
+function zufall(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+test("Steuer-Topf: ust7 + ust19 ergeben genau ust (1.000 Fälle mit festem Zufall)", () => {
+  const r = zufall(20261113); let ungleichVorher = 0;
+  for (let i = 0; i < 1000; i++) {
+    const s = leererBetrieb(); s.phase = "app";
+    s.betrieb.steuerSatz = 0.07 + Math.floor(r() * 13) / 100; // 7 … 19 %
+    const tage = 1 + Math.floor(r() * 28);
+    for (let d = 1; d <= tage; d++) s.tagesnotizen.push({ id: "n" + d, datum: `2026-10-${String(d).padStart(2, "0")}`, umsatz: Math.floor(r() * 300000) / 100, storniert: false, erfasst: "2026-10-31T10:00:00+01:00" });
+    const t = steuerTopf(s, "2026-10"); assert.ok(t, "Topf vorhanden");
+    const c = (x) => Math.round(x * 100);
+    assert.equal(c(t.ust7) + c(t.ust19), c(t.ust), `Fall ${i}: ${t.ust7} + ${t.ust19} ≠ ${t.ust}`);
+    assert.equal(c(t.zahllast), c(t.ust) - c(t.vorsteuer) , "Zahllast bleibt ust − Vorsteuer"); // Vorsteuer 0 in diesem Aufbau
+    assert.equal(t.tage.reduce((x, z) => x + c(z.ust), 0), c(t.ust), "Summe der Tageszeilen = ust (wie bisher)");
+  }
+});
+
+test("Geld aus einer Quelle: eine Rundung, ein nettoVonBrutto, Sätze aus dem Regelwerk – Speicherformat unverändert", () => {
+  const s = { team: {} }; teamStundenlohnSetzen(s, 1.005); assert.equal(s.team.stundenlohn, 1.01, "kaufmännisch: 1,005 → 1,01 (Math.round(x * 100) / 100 gab 1)");
+  assert.equal(Engine.nettoVonBrutto, Geld.nettoVonBrutto, "die Engine reicht dieselbe Funktion weiter");
+  assert.equal(Engine.nettoVonBrutto(107, 0.07), Geld.nettoVonBrutto(107, 0.07));
+  assert.equal(Engine.VORSTEUER, 0.19); assert.deepEqual(Engine.VORSTEUER_SAETZE, [19, 7, 0], "Posten speichern Prozent als Zahl wie bisher");
+  assert.equal(satzStandard("miete"), 19); assert.equal(satzStandard("wasser"), 7);
+  assert.deepEqual(STEUER_JE_GRUPPE, { getraenk: "voll", spirituose: "voll" });
+  assert.equal(Engine.steuersatzGericht({ klasse: "getraenk" }), 0.19); assert.equal(Engine.steuersatzGericht({ klasse: "haupt" }), 0.07);
+  assert.equal(Engine.steuersatzArtikel({ gruppe: "getraenk" }), 0.19); assert.equal(Engine.steuersatzArtikel({ gruppe: "verpackung" }), 0.19); assert.equal(Engine.steuersatzArtikel({ gruppe: "fleisch" }), 0.07);
+  const b = beispielLaden("2026-11-10"); assert.ok(b.gerichte.every((g) => g.steuer === 0.07 || g.steuer === 0.19), "Beispiel-Laden speichert Sätze als Zahl");
+  assert.ok(b.kosten.every((k) => [19, 7, 0].includes(k.satz) || k.satz === undefined), "Kostensätze als Prozent-Zahl");
+});

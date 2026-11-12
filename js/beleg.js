@@ -4,6 +4,7 @@
 // Abschnitt 5; jede Regel steht hier als benannte Funktion mit Hinweis, wo sie bricht.
 // Es wird nie geraten: Jede Zeile trägt `sicher` und bei Unsicherheit eine Frage mit Antwortmöglichkeiten.
 import { parseZahl } from "./util.js";
+import { rund2, mwstHeute } from "./geld.js";
 
 export const GEBINDE_KUERZEL = { KT: "karton", KAR: "karton", KA: "kanister", KAN: "kanister", KI: "kiste", KS: "kasten", ST: "stueck", STK: "stueck", PK: "packung", PCK: "packung", BTL: "beutel", BT: "beutel", FL: "flasche", SA: "sack", SCK: "sack", TR: "tray", DS: "dose", EI: "eimer", GL: "glas", NE: "netz", LA: "laib", PAL: "palette", DI: "display", KEG: "fass", FASS: "fass" };
 
@@ -17,7 +18,6 @@ const RE_PREIS = /^(-?)(\d{1,3}(?:\.\d{3})+,\d{2}|\d+,\d{2}|\d+\.\d{2})(-?)(\/kg
 const RE_GANZ = /^-?\d{1,4}$/;                                 // Mengen haben höchstens vier Stellen; längere Zahlen sind Nummern
 const RE_WORT = /^[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß.\-]*$/;
 
-const r2 = (n) => Math.round(n * 100) / 100;
 const r3 = (n) => Math.round(n * 1000) / 1000;
 const gleich = (a, b, tol = 0.011) => a !== null && b !== null && Math.abs(a - b) <= tol;
 const fmt = (n) => n === null || n === undefined ? "–" : n.toFixed(2).replace(".", ",") + " €";
@@ -83,8 +83,8 @@ function steuerAbtrennen(tokens) {
 }
 function steuersatzAus(zeichen, karte) {
   if (!zeichen) return null;
-  if (/^7%?$/.test(zeichen)) return 0.07;
-  if (/^19%?$/.test(zeichen)) return 0.19;
+  if (/^7%?$/.test(zeichen)) return mwstHeute("ermaessigt");
+  if (/^19%?$/.test(zeichen)) return mwstHeute("voll");
   return karte[zeichen] ?? null;
 }
 
@@ -218,8 +218,8 @@ function zeilenArt(line) {
 
 // Regel 9: Fußzeile auswerten – Steuerzeichen lernen („MwSt B 19 %“, „B = 19,00 %“, „19 % (B)“) und Summen lesen.
 function fussAuswerten(line, f) {
-  for (const m of line.matchAll(/\b([A-C])\b\s*[=:]?\s*(?:mwst|ust)?\.?\s*(7|19)(?:[,.]0{1,2})?\s*%/gi)) f.zeichen[m[1].toUpperCase()] = m[2] === "7" ? 0.07 : 0.19;
-  for (const m of line.matchAll(/(?<![\d,.])(7|19)(?:[,.]0{1,2})?\s*%\s*\(?\s*(?:mwst|ust)?\.?\s*([A-C])\b/gi)) f.zeichen[m[2].toUpperCase()] = m[1] === "7" ? 0.07 : 0.19;
+  for (const m of line.matchAll(/\b([A-C])\b\s*[=:]?\s*(?:mwst|ust)?\.?\s*(7|19)(?:[,.]0{1,2})?\s*%/gi)) f.zeichen[m[1].toUpperCase()] = m[2] === "7" ? mwstHeute("ermaessigt") : mwstHeute("voll");
+  for (const m of line.matchAll(/(?<![\d,.])(7|19)(?:[,.]0{1,2})?\s*%\s*\(?\s*(?:mwst|ust)?\.?\s*([A-C])\b/gi)) f.zeichen[m[2].toUpperCase()] = m[1] === "7" ? mwstHeute("ermaessigt") : mwstHeute("voll");
   const preisNach = (re) => {
     const m = re.exec(line);
     if (!m) return null;
@@ -268,7 +268,7 @@ function gruppeZerlegen(lines, ctx) {
   let nameEnde = tokens.length, mengeInfo = null;
 
   const kg = kgWare(tokens, start);
-  if (kg && gleich(r2(kg.gewicht * kg.preis), kg.gesamt)) {
+  if (kg && gleich(rund2(kg.gewicht * kg.preis), kg.gesamt)) {
     // Regel 6a: Menge 1, Inhalt = Liefergewicht, Einzelpreis je kg
     menge = 1; einzel = kg.preis; gesamt = kg.gesamt; jeKg = true; nameEnde = kg.idx;
     inhalt = { anzahl: 1, groesse: kg.gewicht, einheit: "kg" };
@@ -300,7 +300,7 @@ function gruppeZerlegen(lines, ctx) {
         if (gleich(a * i * einzel, gesamt)) {
           menge = a; inhalt.anzahl = i;
           fr = frage("preis", `„${a} x ${i}“: ${a} Gebinde à ${i} Stück, Preis ${fmt(einzel)} je Stück – oder ${a * i} einzelne Stück?`, [
-            { text: `${a} Gebinde à ${i}, ${fmt(r2(einzel * i))} je Gebinde`, wert: { menge: a, einzelpreis: r2(einzel * i) } },
+            { text: `${a} Gebinde à ${i}, ${fmt(rund2(einzel * i))} je Gebinde`, wert: { menge: a, einzelpreis: rund2(einzel * i) } },
             { text: `${a * i} Stück à ${fmt(einzel)}`, wert: { menge: a * i, einzelpreis: einzel } },
           ]);
           return fertig({ aussenInnen: true });
@@ -312,7 +312,7 @@ function gruppeZerlegen(lines, ctx) {
       if (menge === null && !kopf.nr && /^\d{1,4}$/.test(tokens[start] ?? "") && !RE_X.test(tokens[start + 1] ?? "") && gleich(Number(tokens[start]) * einzel, gesamt)) { menge = Number(tokens[start]); start += 1; }
       if (menge === null) {
         if (gleich(einzel, gesamt)) menge = 1;
-        else if (einzel !== 0 && Number.isInteger(r2(gesamt / einzel)) && Math.abs(gesamt / einzel) <= 9999) {
+        else if (einzel !== 0 && Number.isInteger(rund2(gesamt / einzel)) && Math.abs(gesamt / einzel) <= 9999) {
           menge = Math.round(gesamt / einzel);
           fr = frage("menge", `„${fmt(einzel)} … ${fmt(gesamt)}“: Menge fehlt auf der Zeile – ${menge} Gebinde?`, [
             { text: `${menge} Gebinde à ${fmt(einzel)}`, wert: { menge } },
@@ -333,10 +333,10 @@ function gruppeZerlegen(lines, ctx) {
         ]);
       }
       else {
-        einzel = p.wert; gesamt = r2(menge * p.wert); jeKg = p.jeKg;
+        einzel = p.wert; gesamt = rund2(menge * p.wert); jeKg = p.jeKg;
         fr = frage("preis", `„${menge} … ${fmt(p.wert)}“: ist ${fmt(p.wert)} der Preis je Gebinde oder der Zeilenwert?`, [
-          { text: `je Gebinde (Zeile = ${fmt(r2(menge * p.wert))})`, wert: { einzelpreis: p.wert, gesamt: r2(menge * p.wert) } },
-          { text: `Zeilenwert (je Gebinde = ${fmt(r2(p.wert / menge))})`, wert: { einzelpreis: r2(p.wert / menge), gesamt: p.wert } },
+          { text: `je Gebinde (Zeile = ${fmt(rund2(menge * p.wert))})`, wert: { einzelpreis: p.wert, gesamt: rund2(menge * p.wert) } },
+          { text: `Zeilenwert (je Gebinde = ${fmt(rund2(p.wert / menge))})`, wert: { einzelpreis: rund2(p.wert / menge), gesamt: p.wert } },
         ]);
       }
     } else {
@@ -379,7 +379,7 @@ function gruppeZerlegen(lines, ctx) {
     }
     // Regel 6b: Kilopreis in der Zeile („7,49/kg“) → Inhalt = geliefertes Gewicht aus Gesamt / Preis, „ca.“-Gewicht nur zur Bestätigung
     if (jeKg && einzel && gesamt !== null && inhalt.groesse === null) {
-      const gew = ia.ca !== null && gleich(r2(ia.ca * einzel * (menge ?? 1)), gesamt) ? ia.ca : r3(gesamt / einzel / (menge ?? 1));
+      const gew = ia.ca !== null && gleich(rund2(ia.ca * einzel * (menge ?? 1)), gesamt) ? ia.ca : r3(gesamt / einzel / (menge ?? 1));
       inhalt = { anzahl: 1, groesse: gew, einheit: "kg" };
     }
     if (inhalt.anzahl === null && inhalt.groesse === null && gebinde === "stueck") inhalt = { anzahl: 1, groesse: null, einheit: "stk" };
@@ -394,11 +394,11 @@ function gruppeZerlegen(lines, ctx) {
     let probe = null;
     if (menge !== null && einzel !== null && gesamt !== null) {
       const soll = jeKg ? menge * (inhalt.groesse ?? 0) * einzel : menge * einzel;
-      probe = gleich(r2(soll + rabattSpalte), gesamt);
+      probe = gleich(rund2(soll + rabattSpalte), gesamt);
       if (!probe && !fr) {
-        const opt = [{ text: `Gesamt ${fmt(r2(soll))}`, wert: { gesamt: r2(soll) } }, { text: `Einzelpreis ${fmt(r2(gesamt / menge))}`, wert: { einzelpreis: r2(gesamt / menge) } }];
-        if (einzel !== 0 && Number.isInteger(r2(gesamt / einzel))) opt.push({ text: `Menge ${Math.round(gesamt / einzel)}`, wert: { menge: Math.round(gesamt / einzel) } });
-        fr = frage("preis", `„${menge} × ${fmt(einzel)}“ ergibt ${fmt(r2(soll))}, auf dem Beleg steht ${fmt(gesamt)} – was stimmt?`, opt);
+        const opt = [{ text: `Gesamt ${fmt(rund2(soll))}`, wert: { gesamt: rund2(soll) } }, { text: `Einzelpreis ${fmt(rund2(gesamt / menge))}`, wert: { einzelpreis: rund2(gesamt / menge) } }];
+        if (einzel !== 0 && Number.isInteger(rund2(gesamt / einzel))) opt.push({ text: `Menge ${Math.round(gesamt / einzel)}`, wert: { menge: Math.round(gesamt / einzel) } });
+        fr = frage("preis", `„${menge} × ${fmt(einzel)}“ ergibt ${fmt(rund2(soll))}, auf dem Beleg steht ${fmt(gesamt)} – was stimmt?`, opt);
       }
     }
     if (!fr && gesamt === null && ctx.hatPreise && !pfand) {
@@ -411,7 +411,7 @@ function gruppeZerlegen(lines, ctx) {
     if (!fr && ia.amAnfang && inhalt.anzahl > 1 && menge !== null && einzel !== null) {
       fr = frage("inhalt", `„${ia.treffer}“ steht vor dem Namen: ${menge} Gebinde mit ${inhalt.anzahl} × ${inhalt.groesse} ${inhalt.einheit}, oder ${inhalt.anzahl * menge} einzelne Gebinde à ${inhalt.groesse} ${inhalt.einheit}?`, [
         { text: `${menge} Gebinde mit ${inhalt.anzahl} × ${inhalt.groesse} ${inhalt.einheit}`, wert: { menge, inhalt: { ...inhalt } } },
-        { text: `${inhalt.anzahl * menge} Gebinde à ${inhalt.groesse} ${inhalt.einheit}`, wert: { menge: inhalt.anzahl * menge, inhalt: { anzahl: 1, groesse: inhalt.groesse, einheit: inhalt.einheit }, einzelpreis: r2(einzel / inhalt.anzahl) } },
+        { text: `${inhalt.anzahl * menge} Gebinde à ${inhalt.groesse} ${inhalt.einheit}`, wert: { menge: inhalt.anzahl * menge, inhalt: { anzahl: 1, groesse: inhalt.groesse, einheit: inhalt.einheit }, einzelpreis: rund2(einzel / inhalt.anzahl) } },
       ]);
     }
     // OCR-Reparatur im Namensteil (z. B. „1O l“ → „10 l“) kann nicht gegengeprüft werden → Frage
@@ -494,8 +494,8 @@ export function belegZerlegen(text, { bekannt = [] } = {}) {
       let ziel = e.referenz ? zeilen.find((z) => z.artikelnummer === e.referenz) : null;
       if (!ziel) ziel = zeilen[zeilen.length - 1] ?? null;
       if (ziel) {
-        ziel.rabatt = r2(ziel.rabatt + e.betrag);
-        if (ziel.gesamt !== null) ziel.gesamt = r2(ziel.gesamt + e.betrag);
+        ziel.rabatt = rund2(ziel.rabatt + e.betrag);
+        if (ziel.gesamt !== null) ziel.gesamt = rund2(ziel.gesamt + e.betrag);
         ziel.roh += "\n" + e.roh;
       } else {
         zeilen.push({ roh: e.roh, name: e.text, artikelnummer: null, bekannt: null, gebinde: null, inhalt: leer(), menge: 1, einzelpreis: e.betrag, jeKg: false, gesamt: e.betrag, rabatt: 0, steuer: e.steuer, steuersatz: steuersatzAus(e.steuer, fuss.zeichen), sicher: false,
@@ -507,8 +507,8 @@ export function belegZerlegen(text, { bekannt = [] } = {}) {
   }
 
   // Regel 9: netto oder brutto nur über die Fußzeile, Zeilensumme ohne Pfand (Pfand zusätzlich erlaubt)
-  const zeilenSumme = r2(zeilen.reduce((s, z) => s + (z.gesamt ?? 0), 0));
-  const pfandSumme = r2(pfand.reduce((s, p) => s + (p.betrag ?? 0), 0));
+  const zeilenSumme = rund2(zeilen.reduce((s, z) => s + (z.gesamt ?? 0), 0));
+  const pfandSumme = rund2(pfand.reduce((s, p) => s + (p.betrag ?? 0), 0));
   const passt = (s) => s !== null && (Math.abs(zeilenSumme - s) <= 0.05 || Math.abs(zeilenSumme + pfandSumme - s) <= 0.05);
   let basis = "unklar", summeStimmt = null;
   if (passt(fuss.netto)) { basis = "netto"; summeStimmt = true; }
@@ -529,7 +529,7 @@ export function belegZerlegen(text, { bekannt = [] } = {}) {
 export function zeileAnwenden(zeile, wert) {
   const z = { ...zeile, ...(wert ?? {}), sicher: true, frage: null };
   if (wert && wert.inhalt) z.inhalt = { ...leer(), ...wert.inhalt };
-  if (wert && !("gesamt" in wert) && ("menge" in wert || "einzelpreis" in wert) && z.menge !== null && z.einzelpreis !== null && !z.jeKg) z.gesamt = r2(z.menge * z.einzelpreis + (z.rabatt ?? 0));
+  if (wert && !("gesamt" in wert) && ("menge" in wert || "einzelpreis" in wert) && z.menge !== null && z.einzelpreis !== null && !z.jeKg) z.gesamt = rund2(z.menge * z.einzelpreis + (z.rabatt ?? 0));
   return z;
 }
 
@@ -544,10 +544,10 @@ export function preisJeEinheit(zeile, basis = zeile.basis ?? "netto") {
   const faktor = { kg: 1, g: 0.001, l: 1, ml: 0.001, cl: 0.01 };
   if (groesse !== null && einheit && faktor[einheit]) {
     const basisEinheit = einheit === "kg" || einheit === "g" ? "kg" : "l";
-    return { preis: r2(jeGebinde / ((anzahl ?? 1) * groesse * faktor[einheit])), einheit: basisEinheit };
+    return { preis: rund2(jeGebinde / ((anzahl ?? 1) * groesse * faktor[einheit])), einheit: basisEinheit };
   }
-  if (anzahl !== null) { const je = jeGebinde / anzahl; return { preis: je < 1 ? Math.round(je * 10000) / 10000 : r2(je), einheit: "stk" }; } // 20.10.2026: kleine Stückpreise (Servietten 0,0089 €) nicht auf Cent runden
-  if (zeile.gebinde === "stueck") return { preis: r2(jeGebinde), einheit: "stk" };
+  if (anzahl !== null) { const je = jeGebinde / anzahl; return { preis: je < 1 ? Math.round(je * 10000) / 10000 : rund2(je), einheit: "stk" }; } // 20.10.2026: kleine Stückpreise (Servietten 0,0089 €) nicht auf Cent runden
+  if (zeile.gebinde === "stueck") return { preis: rund2(jeGebinde), einheit: "stk" };
   return n();
 }
 

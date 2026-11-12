@@ -6,6 +6,7 @@ import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { rezeptBauen } from "./rezept_baukasten.js";
 import { klasseFuerBereich, artikelAusGerichten, steuersatzAusZutaten, mengeUmrechnen, preisJeBasis, preisMerken, istRichtpreis } from "./engine.js";
 import { selbstAnwenden, selbstGewaehlt } from "./selbst.js";
+import { rund2, mwstHeute } from "./geld.js";
 
 // ---------- Artikelliste ----------
 // Artikelliste aus den Gerichten neu aufbauen und speichern (eingetragene Preise bleiben). Vorher „stand.artikel = artikelAusGerichten(stand)“ an sieben Stellen.
@@ -34,7 +35,7 @@ export function nameUndPreis(text) {
 export function gerichtEigenAnlegen(stand, eingabe) {
   const { name, preis } = nameUndPreis(eingabe);
   const klasse = GETRAENK_RE.test(name) ? "getraenk" : KLEIN_RE.test(name) ? "kleinigkeit" : "haupt";
-  const g = { id: uid(), name, bereich: null, klasse, zeit: klasse === "haupt" ? 5 : 2, vorlage: false, zutaten: [], preis, mengeTag: null, steuer: 0.07 };
+  const g = { id: uid(), name, bereich: null, klasse, zeit: klasse === "haupt" ? 5 : 2, vorlage: false, zutaten: [], preis, mengeTag: null, steuer: mwstHeute("ermaessigt") };
   stand.gerichte.push(g); startRezept(stand, g); return g;
 }
 // Persona-Test Wirt (27.10.2026): Ein eigenes Gericht bekam das Start-Rezept aus dem Baukasten erst beim nächsten App-Start –
@@ -88,7 +89,7 @@ export function artikelFeldSetzen(stand, name, feld, wert, datum) {
     st[feld === "stk-anzahl" ? "anzahl" : "gewicht"] = wert > 0 ? wert : null;
     if (st.gewicht > 0) a.stueckGewicht = st.gewicht; else delete a.stueckGewicht;
     const basis = EINHEITEN[a.einheit]?.basis === "ml" ? "ml" : "g";
-    a.packung = { menge: st.anzahl > 0 && st.gewicht > 0 ? Math.round(st.anzahl * st.gewicht * 100) / 100 : null, einheit: basis };
+    a.packung = { menge: st.anzahl > 0 && st.gewicht > 0 ? rund2(st.anzahl * st.gewicht) : null, einheit: basis };
   }
   if (feld === "stueckGewicht") { if (wert > 0) a.stueckGewicht = wert; else delete a.stueckGewicht; } // Stück-Ware, die ein Rezept in Gramm braucht
   if (feld === "roh") { a.garverlust ??= {}; a.garverlust.roh = wert; }
@@ -137,7 +138,7 @@ const basisEinheit = (e) => (e === "kg" || e === "g" ? "g" : e === "l" || e === 
 function stueckAusbeute(r) {
   const s = r.stueck; if (!s) return;
   if (s.masse > 0 && s.gewicht > 0) { s.anzahl = Math.floor(s.masse / s.gewicht + 1e-9) || null; r.ausbeute = { menge: s.masse, einheit: "g" }; return; }
-  if (s.anzahl > 0 && s.gewicht > 0) r.ausbeute = { menge: Math.round(s.anzahl * s.gewicht * 100) / 100, einheit: "g" };
+  if (s.anzahl > 0 && s.gewicht > 0) r.ausbeute = { menge: rund2(s.anzahl * s.gewicht), einheit: "g" };
   else if (s.anzahl > 0) r.ausbeute = { menge: s.anzahl, einheit: "stk" };
 }
 export function selbstFeldSetzen(stand, name, feld, roh, datum) {

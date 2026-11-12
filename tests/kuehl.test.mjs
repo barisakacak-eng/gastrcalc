@@ -3,11 +3,12 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import * as E from "../js/engine.js";
 import { heute } from "../js/util.js";
+import { plusTage } from "../js/zeit.js";
 globalThis.indexedDB = undefined;
 const S = await import("../js/store.js");
 
 const H = heute();
-const tag = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return heute(d); };
+const tag = (n) => plusTage(heute(), n);
 const laden = () => { const b = S.leererBetrieb(); b.phase = "app";
   b.kuehlstellen = [{ id: "k1", name: "Theke", art: "kuehl", min: null, max: 7, reihe: 0, archiviert: false }, { id: "k2", name: "TK Keller", art: "tk", min: null, max: -18, reihe: 1, archiviert: false }, { id: "k3", name: "Bain-Marie", art: "warm", min: 65, max: null, reihe: 2, archiviert: false }];
   b.kuehl = { takt: 1, ruhetage: [], eingerichtet: true }; b.personen = [{ id: "p1", kuerzel: "MU", aktiv: true, entfernt: false }]; return b; };

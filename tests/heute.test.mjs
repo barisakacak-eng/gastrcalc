@@ -165,7 +165,7 @@ test("Schwadron N2: am Ruhetag zeigt die Kühl-Kachel „Ruhetag“ statt „3 o
   for (const n of ["Kühlschrank", "Saladette", "Tiefkühler"]) stamm.kuehlstelleAnlegen(s, { name: n, art: n === "Tiefkühler" ? "tk" : "kuehl" }); stamm.kuehlEingerichtetSetzen(s);
   const K = heute(); E.ruhetageSetzen(s, [E.wochentag(K)], tagPlus(K, -14)); // heute ist Ruhetag
   assert.deepEqual(LZ.heuteKachelZahlen(s, E.kuehlStatus(s), K, K).kuehl, { art: "ruhetag", alarm: false });
-  const morgens = new Date(); morgens.setHours(9, 0, 0, 0);
+  const morgens = berlinZeitpunkt(K, 9); // heute 09:00 Berliner Zeit
   assert.notEqual(jetztDran(s, null, { jetzt: morgens })?.id, "rundgang");
   E.ruhetageSetzen(s, [(E.wochentag(K) + 1) % 7], K); // kein Ruhetag mehr: wieder „3 offen“
   assert.equal(LZ.heuteKachelZahlen(s, E.kuehlStatus(s), K, K).kuehl.art, "offen");

@@ -6,11 +6,11 @@ import { eintragWert, SCHWUND_ARTEN } from "./engine.js";
 import { inventurenFertig, inventurWert } from "./inventur.js";
 import { schwundVerdacht } from "./ware.js"; // W2-K1
 import { tageZwischen, plusTage } from "./zeit.js";
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 export const AUSGANGSWERT_TAGE = 14; // Wochen 1–2 nach Messbeginn (Baris 21.10.2026)
 
 const istMuell = (e) => e && !e.storniert && typeof e.datum === "string" && (SCHWUND_ARTEN[e.art] || 1) === 1;
-const rund = (x) => Math.round(x * 100) / 100;
 
 // Messbeginn: der früheste Müll-Eintrag oder Tagesabschluss. null ohne beides.
 export function messbeginn(stand) {
@@ -40,9 +40,9 @@ export function postenMuell(stand, H, ab) {
   const basisWoche = basis.wert / (AUSGANGSWERT_TAGE / 7);
   const woche = muellWert(stand, plusTage(H, -6), H);
   if (basis.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "fehlt", quelle: "Ausgangswert ohne bewerteten Müll-Eintrag" }; // Gremium 2: Basis 0 € ist keine Messung
-  if (tag < AUSGANGSWERT_TAGE + 7 || woche.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "laeuft", quelle: `Ausgangswert ${rund(basisWoche)} € je Woche, Vergleichswoche läuft` };
-  const nutzen = Math.max(0, rund(basisWoche - woche.wert));
-  return { art: "muell", euro: nutzen, gemessen: true, stand: "gemessen", quelle: `Müll je Woche: ${rund(basisWoche)} € am Anfang, ${rund(woche.wert)} € zuletzt` };
+  if (tag < AUSGANGSWERT_TAGE + 7 || woche.anzahl === 0) return { art: "muell", euro: null, gemessen: false, stand: "laeuft", quelle: `Ausgangswert ${rund2(basisWoche)} € je Woche, Vergleichswoche läuft` };
+  const nutzen = Math.max(0, rund2(basisWoche - woche.wert));
+  return { art: "muell", euro: nutzen, gemessen: true, stand: "gemessen", quelle: `Müll je Woche: ${rund2(basisWoche)} € am Anfang, ${rund2(woche.wert)} € zuletzt` };
 }
 
 // Posten Lager: erste gegen letzte fertige Inventur. Gebundenes Geld ist kein Gewinn → nie gemessen, nie in der Summe.
@@ -52,8 +52,8 @@ export function postenLager(stand) {
   const erste = inventurWert(stand, fertig[0]); const letzte = inventurWert(stand, fertig[fertig.length - 1]);
   const w = (x) => (typeof x?.wert === "number" ? x.wert : typeof x?.summe === "number" ? x.summe : null);
   if (w(erste) === null || w(letzte) === null) return { art: "lager", euro: null, gemessen: false, stand: "fehlt", quelle: "Inventur ohne Preise" };
-  const diff = rund(w(erste) - w(letzte));
-  return { art: "lager", euro: Math.max(0, diff), gemessen: false, stand: "geschaetzt", quelle: diff > 0 ? `Weniger gebundenes Geld im Lager (${rund(w(erste))} € → ${rund(w(letzte))} €), kein Gewinn` : "Lagerwert nicht gesunken" };
+  const diff = rund2(w(erste) - w(letzte));
+  return { art: "lager", euro: Math.max(0, diff), gemessen: false, stand: "geschaetzt", quelle: diff > 0 ? `Weniger gebundenes Geld im Lager (${rund2(w(erste))} € → ${rund2(w(letzte))} €), kein Gewinn` : "Lagerwert nicht gesunken" };
 }
 
 // Posten Papierkram: nur mit der Vorher-Schätzung des Wirts (Minuten je Monat, Stundensatz). Bleibt eine Schätzung.
@@ -61,7 +61,7 @@ export function postenPapier(stand) {
   const n = stand.betrieb?.nutzen || {};
   const min = Number(n.papierMinutenVorher) || 0; const satz = Number(n.stundensatz) || 0;
   if (!(min > 0) || !(satz > 0)) return { art: "papier", euro: null, gemessen: false, stand: "fehlt", quelle: "Vorher-Schätzung des Wirts fehlt (Minuten je Monat, Stundensatz)" };
-  return { art: "papier", euro: rund((min / 60) * satz), gemessen: false, stand: "geschaetzt", quelle: `≈ ${min} Minuten Papierkram je Monat vorher, Schätzung des Wirts` };
+  return { art: "papier", euro: rund2((min / 60) * satz), gemessen: false, stand: "geschaetzt", quelle: `≈ ${min} Minuten Papierkram je Monat vorher, Schätzung des Wirts` };
 }
 
 // Posten Preis (Masterauftrag 1.4, 28.10.2026): Preisrunden, die der Wirt im Preisrunden-Rechner übernommen hat (stand.preisRunden).
@@ -70,9 +70,9 @@ export function postenPapier(stand) {
 export function postenPreis(stand) {
   const r = (stand?.preisRunden || []).filter((x) => x && x.neu > 0 && x.alt > 0 && x.mengeMonat > 0); // Senkungen zählen mit (Kanzlei-Test 28.10.2026)
   if (!r.length) return { art: "preis", euro: null, gemessen: false, stand: "fehlt", quelle: "Noch keine Preisrunde im Preisrunden-Rechner übernommen" };
-  const monat = r.reduce((s, x) => s + (x.neu - x.alt) / (1 + (Number(x.mwst) || 0)) * x.mengeMonat, 0);
+  const monat = r.reduce((s, x) => s + nettoVonBrutto(x.neu - x.alt, x.mwst) * x.mengeMonat, 0);
   // Je Woche wie die übrigen Posten („pro Woche“ auf Heute): Monat × 12 / 52
-  return { art: "preis", euro: rund(Math.max(0, monat) * 12 / 52), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Woche bei gleicher Menge` };
+  return { art: "preis", euro: rund2(Math.max(0, monat) * 12 / 52), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Woche bei gleicher Menge` };
 }
 
 // Posten Schwund (W2-K1, 28.10.2026): Euro aus der Wochenzählung, Ampel „melden“, ab der zweiten Zählung. Immer ≈ (Rezept und Verkäufe
@@ -80,13 +80,13 @@ export function postenPreis(stand) {
 export function postenSchwund(stand) {
   let v = null; try { v = schwundVerdacht(stand); } catch { v = null; }
   if (!v) return { art: "schwund", euro: null, gemessen: false, verlust: true, stand: "fehlt", quelle: "Noch keine zwei Wochenzählungen" };
-  return { art: "schwund", euro: rund(v.euro), gemessen: false, verlust: true, stand: "geschaetzt", quelle: `≈ Schwund-Verdacht ${v.von} bis ${v.bis}: ${v.zeilen.map((z) => z.name).join(", ") || "keiner"}` };
+  return { art: "schwund", euro: rund2(v.euro), gemessen: false, verlust: true, stand: "geschaetzt", quelle: `≈ Schwund-Verdacht ${v.von} bis ${v.bis}: ${v.zeilen.map((z) => z.name).join(", ") || "keiner"}` };
 }
 
 export function nutzenStand(stand, H = heuteGeschaeft()) {
   const ab = messbeginn(stand);
   const posten = [postenMuell(stand, H, ab), postenPreis(stand), postenLager(stand), postenPapier(stand), postenSchwund(stand)];
-  const summe = rund(posten.filter((p) => p.gemessen && !p.verlust && p.euro > 0).reduce((s, p) => s + p.euro, 0));
-  const geschaetzt = rund(posten.filter((p) => !p.gemessen && !p.verlust && typeof p.euro === "number" && p.euro > 0).reduce((s, p) => s + p.euro, 0)); // W2-K1: Verlust-Verdacht ist keine Ersparnis
+  const summe = rund2(posten.filter((p) => p.gemessen && !p.verlust && p.euro > 0).reduce((s, p) => s + p.euro, 0));
+  const geschaetzt = rund2(posten.filter((p) => !p.gemessen && !p.verlust && typeof p.euro === "number" && p.euro > 0).reduce((s, p) => s + p.euro, 0)); // W2-K1: Verlust-Verdacht ist keine Ersparnis
   return { ab, tage: ab ? tageZwischen(ab, H) + 1 : 0, leer: !posten.some((p) => p.gemessen), summe, geschaetzt, posten };
 }

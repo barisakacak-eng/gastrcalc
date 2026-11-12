@@ -27,6 +27,7 @@ import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen } from "./zip.js";
 import { ablageKennungen, ablageLesen } from "./ablage.js";
 import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
 import { berlin } from "./zeit.js";
+import { rund2, mwstProzent } from "./geld.js";
 
 export const SCHEMA = 6;
 export const APP_FASSUNG = FASSUNG;
@@ -253,7 +254,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
                    // Schema ≤ 3 kannte keine Basis: eingetragene Zahlen bleiben, wie sie sind (netto = so verrechnen, wie eingetragen)
                    basis: k.basis === "brutto" || k.basis === "netto" ? k.basis : (alt ? "netto" : basisStandard(k.posten)),
                    // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten; alte Daten ohne Feld bekommen den Standard (19, Wasser 7)
-                   satz: [19, 7, 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) }));
+                   satz: [mwstProzent("voll"), mwstProzent("ermaessigt"), 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) })); // Prozent wie gespeichert: 19, 7, 0 – aus dem Regelwerk
   if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
   // Gremium 2 (24.10.2026): Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
@@ -418,8 +419,8 @@ function aktionenSauber(liste) {
     const ende = a.ende === "ware" ? "ware" : "datum"; const plan = planSauber(a.plan), bilanz = bilanzSauber(a.bilanz);
     return { id: a.id, art: ["abverkauf", "kombi"].includes(a.art) ? a.art : "kombi",
       gerichte: [...new Set((Array.isArray(a.gerichte) ? a.gerichte : []).filter((x) => typeof x === "string" && x))].slice(0, 4),
-      preis: typeof a.preis === "number" && Number.isFinite(a.preis) && a.preis > 0 && a.preis < 10000 ? Math.round(a.preis * 100) / 100 : null,
-      statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? Math.round(a.statt * 100) / 100 : null,
+      preis: typeof a.preis === "number" && Number.isFinite(a.preis) && a.preis > 0 && a.preis < 10000 ? rund2(a.preis) : null,
+      statt: typeof a.statt === "number" && Number.isFinite(a.statt) && a.statt > 0 && a.statt < 10000 ? rund2(a.statt) : null,
       von: tagOder(a.von), bis: tagOder(a.bis), ende,
       ...(typeof a.ware === "string" && a.ware.trim() ? { ware: a.ware.trim().slice(0, 120) } : {}), ...(plan ? { plan } : {}), ...(typeof a.geaendertZeit === "string" ? { geaendertZeit: a.geaendertZeit } : {}), ...(bilanz ? { bilanz } : {}),
       erfasst: typeof a.erfasst === "string" ? a.erfasst : null, entfernt: a.entfernt === true, ...(typeof a.entferntZeit === "string" ? { entferntZeit: a.entferntZeit } : {}),
@@ -507,7 +508,7 @@ function zbonZielGruppen(liste) {
     x.zeilen.push([String(v.text || v.name || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim(), Math.round(Number(v.menge) * 1000) / 1000, v.umsatzBrutto ?? ""].join("|"));
     imp.set(k, x);
   }
-  const out = new Map(); const liste2 = [...imp.entries()].map(([k, x]) => ({ k, ...x, summe: Math.round(x.summe * 100) / 100, abdruck: x.zeilen.sort().join("\n") }));
+  const out = new Map(); const liste2 = [...imp.entries()].map(([k, x]) => ({ k, ...x, summe: rund2(x.summe), abdruck: x.zeilen.sort().join("\n") }));
   for (const o of liste2) {
     if (o.kasse && Z_NR.test(o.kasse)) continue;
     const ziele = new Set(liste2.filter((n) => n.datum === o.datum && n.kasse && Z_NR.test(n.kasse) && ([...o.uploads].some((u) => n.uploads.has(u)) || (o.summe > 0.004 && Math.abs(n.summe - o.summe) <= 0.005) || n.abdruck === o.abdruck)).map((n) => n.kasse));

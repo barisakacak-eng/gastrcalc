@@ -9,9 +9,10 @@ import { umsatzEintrag, schwundAuswertung, wertEintrag, SCHWUND_ARTEN, SVEV_2026
 import { lieferungTeile, istBetriebsmittel } from "./betriebsmittel.js";
 import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKurz
 import { heute } from "./util.js";
-import { plusMonate, plusTage, uhr, monatsLetzter } from "./zeit.js";
+import { plusMonate, plusTage, uhr, monatsLetzter, gueltigerTag } from "./zeit.js";
 import { arbeitszeitListe } from "./schichten.js"; // Lauf 4, P3 C4
 import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt 27.10.2026: Lieferanteil in der Tagesliste
+import { rund2, nettoVonBrutto, mwst } from "./geld.js";
 
 // ---------- CSV ----------
 export const CSV_BOM = "﻿";
@@ -55,7 +56,6 @@ const imZeitraum = (d, { von, bis }) => typeof d === "string" && d >= von && d <
 const nachDatum = (a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.zeit || a.erfasst || "").localeCompare(String(b.zeit || b.erfasst || ""));
 // Wert eines Schwund-Eintrags: die beim Eintragen festgehaltene Momentaufnahme, wie in schwundAuswertung (engine.js)
 const schwundWert = (e, stand) => ("wert" in e ? (typeof e.wert === "number" ? e.wert : null) : wertEintrag(e, stand));
-const rund2 = (n) => Math.round(n * 100) / 100;
 const personName = (stand, id) => (stand.personen || []).find((p) => p.id === id)?.kuerzel || null;
 // Kürzel ausgeschiedener Mitarbeiter (18.10.2026): alte Personalessen zeigen das Kürzel weiter, gekennzeichnet mit dem Austrittsdatum
 const personAus = (stand, id) => { const p = (stand.personen || []).find((x) => x.id === id); return p && (p.entfernt || p.aktiv === false) ? { personAus: true, personAusAm: p.ausgeschieden || null } : { personAus: false, personAusAm: null }; };
@@ -138,22 +138,25 @@ export function schwund(stand, z) {
 // Umsatzsteuer steht nur da, wo der Steuersatz auf dem Beleg erkannt wurde, getrennt nach 7 % und 19 %. Pfand ist eine eigene Spalte,
 // so dass Netto + USt 7 % + USt 19 % + Pfand = Brutto. Ohne erkannten Satz bleibt der eingegebene Betrag stehen, wie er ist (netto
 // oder brutto, je nach Eingabe), ohne Aufschlag. hinweis: null | "ohneSatz" | "ohneBrutto" | "pruefen".
-const SAETZE = [0.07, 0.19];
+// Die zwei Sätze kommen aus dem Regelwerk, am Tag des Belegs (ohne gültigen Tag: heute).
+const tagFuer = (d) => (gueltigerTag(d) ? d : heute());
+const satz7 = (d) => mwst("ermaessigt", tagFuer(d)), satz19 = (d) => mwst("voll", tagFuer(d));
+const saetzeAm = (d) => [satz7(d), satz19(d)];
 function lieferungSteuer(l, netto, pfand) {
   const brutto = typeof l.summeBrutto === "number" ? l.summeBrutto : null;
   const zl = (l.zeilen || []).filter((r) => typeof r.netto === "number" && Math.abs(r.netto) > 0.004);
-  const ust = { 0.07: null, 0.19: null };
+  const S7 = satz7(l.datum), S19 = satz19(l.datum); const ust = { [S7]: null, [S19]: null };
   if (brutto === null) return { brutto, ust, hinweis: "ohneBrutto" };
   if (brutto >= 0 && netto > 0 && brutto + 0.005 < netto + pfand) return { brutto, ust, hinweis: "pruefen" }; // Ausschuss Lauf 3, P3 A1: Brutto unter Netto ist ein Lesefehler
-  if (!zl.length || zl.some((r) => !SAETZE.includes(r.steuersatz))) return { brutto, ust, hinweis: "ohneSatz" };
+  if (!zl.length || zl.some((r) => !saetzeAm(l.datum).includes(r.steuersatz))) return { brutto, ust, hinweis: "ohneSatz" };
   // 20.10.2026 (Export F2): Gutschrift/Retoure mit negativem Brutto trägt negative Steuer – das Vorzeichen muss zum Brutto passen, nicht immer ≥ 0 sein
   const gesamt = rund2(brutto - netto - pfand); if (gesamt * (brutto < 0 ? -1 : 1) < -0.005) return { brutto, ust, hinweis: "pruefen" };
   const saetze = [...new Set(zl.map((r) => r.steuersatz))];
   // Ein Satz auf dem Beleg: die Steuer ist Brutto − Netto − Pfand, genau wie auf der Rechnung
   if (saetze.length === 1) { ust[saetze[0]] = gesamt; return { brutto, ust, hinweis: null }; }
-  const u7 = rund2(zl.filter((r) => r.steuersatz === 0.07).reduce((s, r) => s + r.netto, 0) * 0.07), u19 = rund2(zl.filter((r) => r.steuersatz === 0.19).reduce((s, r) => s + r.netto, 0) * 0.19);
+  const u7 = rund2(zl.filter((r) => r.steuersatz === S7).reduce((s, r) => s + r.netto, 0) * S7), u19 = rund2(zl.filter((r) => r.steuersatz === S19).reduce((s, r) => s + r.netto, 0) * S19);
   if (Math.abs(u7 + u19 - gesamt) > 0.05) return { brutto, ust, hinweis: "pruefen" }; // passt nicht zum Beleg: nicht raten
-  ust[0.07] = u7; ust[0.19] = rund2(gesamt - u7); // Rundungscent in den 19-%-Teil, damit die Zeile aufgeht
+  ust[S7] = u7; ust[S19] = rund2(gesamt - u7); // Rundungscent in den 19-%-Teil, damit die Zeile aufgeht
   return { brutto, ust, hinweis: null };
 }
 // 20.10.2026 (Prüfgremium): Ein Beleg, der mehr als 7 Tage nach seinem Datum erfasst wurde, trägt den Tag der Erfassung – der Steuerberater sieht so,
@@ -170,17 +173,17 @@ export function belege(stand, z) {
     const teile = lieferungTeile(l);
     const netto = rund2(typeof l.summeNetto === "number" ? l.summeNetto : teile.ware + teile.betriebsmittel); const pfand = rund2(Number(l.pfand) || 0);
     const st = lieferungSteuer(l, netto, pfand);
-    zeilen.push({ nachgetragen: nachtrag(l), datum: l.datum, quelle: "lieferung", rechnungNr: l.rechnungNr || null, lieferant: l.lieferant || "", stelle: "ware", netto, ust7: st.ust[0.07], ust19: st.ust[0.19], pfand, brutto: st.brutto, betriebsmittel: rund2(teile.betriebsmittel), hinweis: st.hinweis, id: l.id });
+    zeilen.push({ nachgetragen: nachtrag(l), datum: l.datum, quelle: "lieferung", rechnungNr: l.rechnungNr || null, lieferant: l.lieferant || "", stelle: "ware", netto, ust7: st.ust[satz7(l.datum)], ust19: st.ust[satz19(l.datum)], pfand, brutto: st.brutto, betriebsmittel: rund2(teile.betriebsmittel), hinweis: st.hinweis, id: l.id });
   }
   for (const k of stand.kostenbelege || []) {
     if (k.storniert || !imZeitraum(k.datum, z)) continue;
     // Versicherungen tragen Versicherungsteuer, keine Umsatzsteuer: ein „19 %“ im Text ist dort kein Vorsteuersatz
-    const satz = SAETZE.includes(k.satz) && k.stelle !== "versicherungen" ? k.satz : null;
+    const satz = saetzeAm(k.datum).includes(k.satz) && k.stelle !== "versicherungen" ? k.satz : null;
     let netto = null, brutto = null, ust = null;
     if (satz === null) { if (k.basis === "brutto") brutto = rund2(k.betrag); else netto = rund2(k.betrag); }
-    else if (k.basis === "brutto") { brutto = rund2(k.betrag); netto = rund2(k.betrag / (1 + satz)); ust = rund2(brutto - netto); }
+    else if (k.basis === "brutto") { brutto = rund2(k.betrag); netto = rund2(nettoVonBrutto(k.betrag, satz)); ust = rund2(brutto - netto); }
     else { netto = rund2(k.betrag); ust = rund2(k.betrag * satz); brutto = rund2(netto + ust); }
-    zeilen.push({ nachgetragen: nachtrag(k), datum: k.datum, quelle: "kosten", rechnungNr: k.rechnungNr || null, lieferant: k.lieferant || "", stelle: k.stelle, netto, ust7: satz === 0.07 ? ust : null, ust19: satz === 0.19 ? ust : null, pfand: 0, brutto, betriebsmittel: 0, hinweis: satz === null ? "ohneSatz" : null, verteilung: k.verteilung, id: k.id });
+    zeilen.push({ nachgetragen: nachtrag(k), datum: k.datum, quelle: "kosten", rechnungNr: k.rechnungNr || null, lieferant: k.lieferant || "", stelle: k.stelle, netto, ust7: satz === satz7(k.datum) ? ust : null, ust19: satz === satz19(k.datum) ? ust : null, pfand: 0, brutto, betriebsmittel: 0, hinweis: satz === null ? "ohneSatz" : null, verteilung: k.verteilung, id: k.id });
   }
   zeilen.sort(nachDatum);
   // Paket C (19.10.2026): fortlaufende Beleg-Nr. je Monat (JJJJ-MM-001 …) – dieselbe Nummer schreibt der Inhaber auf den Beleg;

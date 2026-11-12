@@ -8,6 +8,7 @@ import { profilFuer } from "./profil.js";
 import { klasseFuerBereich, steuersatzAusZutaten } from "./engine.js";
 import { uid } from "./util.js";
 import { rezeptBauen, BEREICH_JE_FAMILIE } from "./rezept_baukasten.js";
+import { mwstHeute } from "./geld.js";
 
 const PREIS = /(\d{1,3})\s?[.,]\s?(\d{2})(?!\d)\s*(?:€|eur(?:o)?|e)?/gi;
 const RAUSCHEN = /(preise?\s+inkl|inkl\.?\s*mwst|\bmwst\b|\btel\b\.?|telefon|\bfax\b|www\.|@|stra(ss|ß)e\b|\bstr\.|öffnungszeiten|offnungszeiten|ruhetag|mindestbestell|allergene|zusatzstoffe|^\s*seite\s+\d)/iu;
@@ -293,9 +294,9 @@ export function vorschlaegeUebernehmen(stand, vorschlaege) {
     }
     else if (v.getraenk) {
       // Getränk ohne Vorlage: es wird 1:1 eingekauft und verkauft – Zutat ist das Getränk selbst
-      zutaten = [{ name, menge: 1, einheit: "stk" }]; klasse = "getraenk"; steuer = 0.19;
+      zutaten = [{ name, menge: 1, einheit: "stk" }]; klasse = "getraenk"; steuer = mwstHeute("voll");
       if (!stand.artikel.some((a) => a.name === name)) stand.artikel.push({ name, gruppe: "getraenk", einheit: "stk", packung: { menge: null, einheit: "stk" }, gebinde: { art: "kiste", zwischen: null }, preis: null, preisBasis: "netto", preisHistorie: [], status: "offen", benutzt: true });
-    } else { zutaten = []; klasse = "haupt"; steuer = 0.07; ohneRezept += 1; }
+    } else { zutaten = []; klasse = "haupt"; steuer = mwstHeute("ermaessigt"); ohneRezept += 1; }
     stand.gerichte.push({ id: uid(), name, vorlageName: vl?.name || null, bereich, klasse, zeit: vl?.zeit ?? (baukasten ? (rezeptBauen(name, { rubrik: v.rubrik })?.zeit ?? 4) : 4), vorlage: !!vl, zutaten, ...(v.rubrik ? { rubrik: v.rubrik } : {}),
       ...(baukasten ? { rezeptQuelle: "baukasten", rezeptFamilie: baukasten } : vl ? { rezeptFamilie: rezeptBauen(name, { rubrik: v.rubrik })?.familie || null } : {}),
       preis: typeof v.preis === "number" ? v.preis : null, mengeTag: null, steuer, quelle: "foto" });

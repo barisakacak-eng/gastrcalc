@@ -20,6 +20,7 @@ import { PERSONEN, rechtsform } from "./rechtsform.js";
 import { istHauptzeit } from "./offen.js";
 import { HM_FRAGEN, HM_STATUS, HM_ID_LISTE, hmAngabenSauber } from "./hm_angaben.js";
 import { plusTage, plusMonate, tagPlusMonate, isoTag, stundeBruch } from "./zeit.js";
+import { rund2 } from "./geld.js";
 export { HM_FRAGEN, HM_STATUS, hmAngabenSauber };
 
 export const HM_TAKT_TAGE = 7;
@@ -58,7 +59,7 @@ export function monatsLohn(stand, person, monat) {
     for (const x of e.eintraege || []) if (x && x.person === person.id && x.stunden > 0) tage.set(e.datum, x.stunden * satzVon(x));
   for (const x of stand?.schichten || []) if (x && !x.storniert && x.person === person.id && typeof x.datum === "string" && x.datum.startsWith(monat))
     tage.set(x.datum, (schichtStunden(x.von, x.bis, x.datum) || 0) * satzVon(null));
-  return Math.round([...tage.values()].reduce((s, v) => s + v, 0) * 100) / 100;
+  return rund2([...tage.values()].reduce((s, v) => s + v, 0));
 }
 const minijobNahe = (stand, datum) => {
   const grenze = mindestlohnAm(datum).minijob; const monat = datum.slice(0, 7);

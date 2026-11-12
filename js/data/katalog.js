@@ -790,7 +790,7 @@ export const GETRAENK_EINKAUF = {
 };
 
 // Steuersatz je Warengruppe (Prüfung Befund 7): Speisen 7 %, Getränke 19 %. Gilt für das fertige Gericht über seine Hauptzutat.
-export const STEUER_JE_GRUPPE = { getraenk: 0.19, spirituose: 0.19 };
+export const STEUER_JE_GRUPPE = { getraenk: "voll", spirituose: "voll" }; // Schlüssel für geld.mwstHeute (Regelwerk); Gruppen ohne Eintrag: ermäßigt, Verpackung: voll
 
 export function bereicheFuer(formatId, kuechen) {
   const set = new Set();

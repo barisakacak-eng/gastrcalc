@@ -13,6 +13,7 @@ import { verkaufJeGericht, auswertungZeitraum, ladenhueter } from "./verkauf.js"
 import { haltbarStand, preisStufeNah, preisStufeAuf, PREIS_SCHRITT, kurzName } from "./haltbar.js";
 import { heuteGeschaeft, fmtEuro } from "./util.js";
 import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang-Text mit Ausschankmenge (§ 13 PAngV)
+import { rund2, nettoVonBrutto } from "./geld.js";
 
 export const KOMBI_MIN = 2, KOMBI_MAX = 4;
 // Stufe 1 (17.10.2026): Rabatt-Stufen auf die Summe der Einzelpreise. KEINE Branchenzahl – eine Annahme der App, damit der Wirt drei
@@ -20,7 +21,6 @@ export const KOMBI_MIN = 2, KOMBI_MAX = 4;
 // 15 % eine deutliche Ansage. Gerundet wird danach auf 50 Cent (wie die Abverkaufs-Preise, js/haltbar.js).
 export const RABATT_STUFEN = [{ stufe: "vorsichtig", rabatt: 0.05 }, { stufe: "normal", rabatt: 0.10 }, { stufe: "stark", rabatt: 0.15 }];
 const EPS = 1e-9;
-const r2 = (x) => Math.round(x * 100) / 100;
 
 // Grenze für die Warnung: eigene Wareneinsatz-Quote des Ladens (Einstellungen), sonst der Branchen-Richtwert (≈ 32 %, BMF-Richtsatzsammlung 2025)
 export function kombiGrenze(stand) {
@@ -32,8 +32,8 @@ export function kombiGrenze(stand) {
 // Gerichte, die sich für eine Kombi rechnen lassen: Kartenpreis und vollständiger Wareneinsatz
 export function kombiTeile(stand, k = kalkulation(stand)) {
   const gs = new Map((stand.gerichte || []).map((g) => [g.id, g]));
-  return k.zeilen.filter((z) => z.preisBrutto > 0 && z.waren !== null).map((z) => ({ id: z.id, name: z.name, klasse: z.klasse, preis: z.preisBrutto, netto: z.preisBrutto / (1 + z.mwst), mwst: z.mwst,
-    waren: z.waren, rohertrag: z.preisBrutto / (1 + z.mwst) - z.waren, geschaetzt: !!z.warenGeschaetzt, aushang: nameMitMenge(gs.get(z.id), kurzName(z.name)) }));
+  return k.zeilen.filter((z) => z.preisBrutto > 0 && z.waren !== null).map((z) => ({ id: z.id, name: z.name, klasse: z.klasse, preis: z.preisBrutto, netto: nettoVonBrutto(z.preisBrutto, z.mwst), mwst: z.mwst,
+    waren: z.waren, rohertrag: nettoVonBrutto(z.preisBrutto, z.mwst) - z.waren, geschaetzt: !!z.warenGeschaetzt, aushang: nameMitMenge(gs.get(z.id), kurzName(z.name)) }));
 }
 
 // Aktion planen (18.10.2026): Break-even-Mehrmenge für EINEN Aktionspreis (Kombi aus 2–4 Gerichten oder ein Gericht im Abverkauf) – dieselbe Rechnung
@@ -59,9 +59,9 @@ export function kombiRechnen(stand, ids, { k = kalkulation(stand) } = {}) {
   const R = Snet - W; const faktor = Snet / S; const grenze = kombiGrenze(stand);
   const geschaetzt = teile.some((x) => x.geschaetzt);
   // Untergrenze: netto nie unter dem Wareneinsatz (kein Verkauf unter Einkauf); höchstens S − 50 Cent (sonst ist es kein Angebot)
-  const minPreis = r2(preisStufeAuf(W / faktor)); const maxPreis = r2(S - PREIS_SCHRITT);
+  const minPreis = rund2(preisStufeAuf(W / faktor)); const maxPreis = rund2(S - PREIS_SCHRITT);
   const stufen = RABATT_STUFEN.map(({ stufe, rabatt }) => {
-    let A = r2(preisStufeNah(S * (1 - rabatt)));
+    let A = rund2(preisStufeNah(S * (1 - rabatt)));
     if (A > maxPreis) A = maxPreis;
     let amBoden = false; if (A < minPreis) { A = minPreis; amBoden = true; }
     if (A > maxPreis + EPS || !(A > 0)) return { stufe, rabattStufe: rabatt, moeglich: false };

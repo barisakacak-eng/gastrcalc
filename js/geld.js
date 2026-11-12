@@ -6,6 +6,7 @@
 // Umsatzsteuer: Die Sätze kommen aus dem Regelwerk (mwst). Brutto teilt sich so in Netto und Steuer, dass die Teile zusammen
 // immer genau das Ganze ergeben (aufteilen): Netto wird gerundet, die Steuer ist der Rest.
 import { wert } from "./data/regelwerk.js";
+import { isoTag } from "./zeit.js";
 
 // Euro (Kommazahl) → ganze Cent. toPrecision(15) entfernt den Rechenrest der Kommazahl (1.005 × 100 = 100.49999999999999 → 100.5 → 101).
 export function cent(eur) {
@@ -33,3 +34,8 @@ export function verteilen(betragCent, gewichte) {
   for (let k = 0; rest > 0; k++, rest--) teile[reihen[k % reihen.length][1]] += 1;
   return teile;
 }
+// Lauf 6, Etappe 4 – Sätze für Stellen ohne Vorgangsdatum und in der Schreibweise, in der die App sie speichert
+// Satz am heutigen Kalendertag (Berlin): mwstHeute("voll") ist der Regelsatz, mwstHeute("ermaessigt") der ermäßigte
+export const mwstHeute = (art) => mwst(art, isoTag());
+// Satz als ganze Prozent, wie ihn Kostenposten speichern (19 / 7): mwstProzent("voll") = 19. Das Speicherformat bleibt, nur die Quelle ist das Regelwerk.
+export const mwstProzent = (art, tag = isoTag()) => Math.round(mwst(art, tag) * 100);

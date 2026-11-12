@@ -7,23 +7,25 @@ import { belege, monatVon, monatPlus } from "./export_steuer.js";
 import { warenQuote } from "./zaehler.js";
 import { wert } from "./data/regelwerk.js";
 import { plusTage } from "./zeit.js";
+import { heute } from "./util.js";
+import { rund2, mwst } from "./geld.js";
 
-const rund2 = (n) => Math.round(n * 100) / 100;
 const rund4 = (n) => Math.round(n * 10000) / 10000;
-const SATZ_7 = 0.07, SATZ_19 = 0.19;
+// Die beiden Sätze kommen aus dem Regelwerk (geld.mwst), am Tag des Umsatzes; ohne Tag am heutigen.
+const SATZ_7 = (tag = heute()) => mwst("ermaessigt", tag), SATZ_19 = (tag = heute()) => mwst("voll", tag);
 
 // Anteil des Tagesumsatzes, der zu 19 % besteuert wird (Getränke, Außer-Haus-Getränke …), aus dem Mischsatz der App:
-// Mischsatz s = 0,07·(1−a) + 0,19·a  →  a = (s − 0,07) / 0,12. Eigener Satz im Büro = nicht geschätzt; Karte/Standard = Schätzung.
-export function anteil19(stand) {
-  const s = umsatzSteuerSatz(stand);
-  const a = Math.min(1, Math.max(0, (s.satz - SATZ_7) / (SATZ_19 - SATZ_7)));
+// Mischsatz s = s7·(1−a) + s19·a  →  a = (s − s7) / (s19 − s7) (Sätze aus dem Regelwerk). Eigener Satz im Büro = nicht geschätzt; Karte/Standard = Schätzung.
+export function anteil19(stand, tag = heute()) {
+  const s = umsatzSteuerSatz(stand); const s7 = SATZ_7(tag), s19 = SATZ_19(tag);
+  const a = Math.min(1, Math.max(0, (s.satz - s7) / (s19 - s7)));
   return { anteil: a, geschaetzt: s.geschaetzt, quelle: s.quelle };
 }
 
 // Umsatzsteuer, die in einem Brutto-Tagesumsatz steckt (ungerundet; gerundet wird erst, wo gezeigt wird)
-export function ustImUmsatz(brutto, a19) {
-  const b19 = brutto * a19, b7 = brutto - b19;
-  return { ust7: b7 * SATZ_7 / (1 + SATZ_7), ust19: b19 * SATZ_19 / (1 + SATZ_19) };
+export function ustImUmsatz(brutto, a19, tag = heute()) {
+  const b19 = brutto * a19, b7 = brutto - b19; const s7 = SATZ_7(tag), s19 = SATZ_19(tag);
+  return { ust7: b7 * s7 / (1 + s7), ust19: b19 * s19 / (1 + s19) };
 }
 
 export const kleinunternehmer = (stand) => !!stand?.betrieb?.kleinunternehmer;
@@ -42,7 +44,7 @@ export function kleinunternehmerPruefung(stand, tag) {
 // Rückgabe null für Kleinunternehmer (§ 19 UStG: keine Umsatzsteuer, kein Topf). Tage: je Öffnungstag mit Umsatz eine Zeile.
 export function steuerTopf(stand, monat) {
   if (kleinunternehmer(stand)) return null;
-  const z = monatVon(monat + "-01"); const { anteil, geschaetzt } = anteil19(stand);
+  const z = monatVon(monat + "-01"); const { anteil, geschaetzt } = anteil19(stand, z.von);
   const b = belege(stand, z);
   const vorsteuerJeTag = {}; for (const x of b.zeilen) { const v = (x.ust7 || 0) + (x.ust19 || 0); vorsteuerJeTag[x.datum] = (vorsteuerJeTag[x.datum] || 0) + v; }
   // Tageszeilen kumuliert gerundet (03.11.2026): jede Zeile = gerundete Summe bis heute − gerundete Summe bis gestern.
@@ -52,14 +54,16 @@ export function steuerTopf(stand, monat) {
   for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) {
     const e = umsatzEintrag(stand, d); const vs = vorsteuerJeTag[d] || 0;
     if (!e && !vs) continue;
-    const u = e ? ustImUmsatz(e.umsatz, anteil) : { ust7: 0, ust19: 0 };
+    const u = e ? ustImUmsatz(e.umsatz, anteil, d) : { ust7: 0, ust19: 0 };
     ust7 += u.ust7; ust19 += u.ust19; umsatz += e ? e.umsatz : 0;
     const ustTag = rund2(rund2(ust7 + ust19) - bisher); bisher = rund2(ust7 + ust19);
     tage.push({ datum: d, umsatz: e ? e.umsatz : 0, ust: ustTag, vorsteuer: rund2(vs), topf: rund2(ustTag - vs) });
   }
   const vorsteuer = rund2(b.ust7 + b.ust19);
   const ustGesamt = ust7 + ust19;
-  return { monat, umsatzBrutto: rund2(umsatz), ust7: rund2(ust7), ust19: rund2(ust19), ust: rund2(ustGesamt), vorsteuer, zahllast: rund2(ustGesamt - vorsteuer),
+  // ust7 und ust19 ergeben zusammen genau ust (auf den Cent): der 19-%-Teil ist der Rest, wie bei aufteilen() in js/geld.js. Zahllast und ust bleiben wie sie waren.
+  const ustR = rund2(ustGesamt), ust7R = rund2(ust7);
+  return { monat, umsatzBrutto: rund2(umsatz), ust7: ust7R, ust19: rund2(ustR - ust7R), ust: ustR, vorsteuer, zahllast: rund2(ustGesamt - vorsteuer),
     anteil19: anteil, geschaetzt, tage, oeffnungstage: tage.filter((t) => t.umsatz > 0).length, hinweis: "schaetzung" };
 }
 // „Heute ≈ x € in den Steuer-Topf“: USt des Tages minus Vorsteuer der an diesem Tag erfassten Belege
@@ -88,9 +92,9 @@ export function wasBleibt(stand, monat, { chefStunden = null, tilgung = null, po
 // Monatsposten aus der App: Umsatz netto aus den Tagesumsätzen (Mischsatz), Ware netto aus den Belegen, Kosten aus den festen Posten.
 // Fehlen Belege, wird die Ware aus Umsatz × Warenquote geschätzt (≈).
 export function monatsPosten(stand, monat) {
-  const z = monatVon(monat + "-01"); const { anteil } = anteil19(stand);
+  const z = monatVon(monat + "-01"); const { anteil } = anteil19(stand, z.von);
   let brutto = 0, netto = 0;
-  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
+  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil, d); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
   const b = belege(stand, z);
   const wareBeleg = b.zeilen.filter((x) => x.quelle === "lieferung").reduce((s, x) => s + (x.netto || 0), 0);
   const kostenBeleg = (stelle) => b.zeilen.filter((x) => x.quelle === "kosten" && x.stelle === stelle).reduce((s, x) => s + (x.netto ?? x.brutto ?? 0), 0);

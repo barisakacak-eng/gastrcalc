@@ -1,12 +1,12 @@
 // Welle 3, 3.7 Liquidität 8 Wochen (Bau-Chat 03.11.2026). Reine Rechnung, keine Oberfläche, kein Bankanschluss.
 import { plusTage, wochentag } from "./zeit.js";
+import { cent } from "./geld.js";
 // Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte 28.10.2026“, Teil B.
 // Eine Eingabe von Hand: „Geld auf Konto und Kasse heute“ (stand.liquiditaet = { betrag, datum }). Die Zahl veraltet, deshalb fragt
 // die App nach NACHFRAGE_TAGE neu. Gerechnet wird mit dem Stand am Tagesende (alle Einnahmen und Ausgaben des Tages);
 // unter der Zahl steht deshalb „Kann am Tag selbst knapper sein.“
 export const WOCHEN = 8;
 export const NACHFRAGE_TAGE = 7; // Prüfpaket B: wöchentlich neu fragen (Setzung)
-const cent = (n) => Math.round(n * 100);
 
 // posten: [{ betrag (+ Einnahme, − Ausgabe), datum } | { betrag, tagImMonat } | { betrag, wochentage: [1..6] }]
 // Rückgabe: Tagesstände, tiefster Stand mit Datum, Endstand, Urteil „reicht“ / „fehlt“ (nur Rechnung, kein Rat)

@@ -9,6 +9,7 @@
 import { warenGericht } from "./engine.js";
 import { aktionBreakEven } from "./deal.js";
 import { kalkulation } from "./engine.js";
+import { nettoVonBrutto, mwstHeute } from "./geld.js";
 
 const idx = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
 
@@ -16,9 +17,9 @@ const idx = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.na
 export function extraRechnen(stand, gerichtId, extraId) {
   const g = (stand.gerichte || []).find((x) => x.id === gerichtId); if (!g) return null;
   const e = (g.extras || []).find((x) => x.id === extraId); if (!e || !(Number(e.preis) > 0)) return null;
-  const z = kalkulation(stand).zeilen.find((x) => x.id === gerichtId); const mwst = z ? z.mwst : 0.07;
+  const z = kalkulation(stand).zeilen.find((x) => x.id === gerichtId); const mwst = z ? z.mwst : mwstHeute("ermaessigt");
   const w = warenGericht({ zutaten: e.zutaten || [], schank: g.schank }, idx(stand));
-  const netto = Number(e.preis) / (1 + mwst);
+  const netto = nettoVonBrutto(Number(e.preis), mwst);
   return { name: e.name, preis: Number(e.preis), netto, ware: w.vollstaendig ? w.waren : null, bringt: w.vollstaendig ? netto - w.waren : null,
     geschaetzt: w.geschaetzt, vollstaendig: w.vollstaendig, fehlt: w.fehlt };
 }

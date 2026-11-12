@@ -17,6 +17,7 @@ import { aktionUhrzeit } from "./aktion_plan.js";
 import { imTakt } from "./takt.js";
 import { csvText, datumDe } from "./export_steuer.js";
 import { tageZwischen } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
 export const EIG_ZEITRAEUME = ["woche", "monat", "frei"];
 export const WARE_PUNKTE_SATZ = 3;        // ab 3 Prozentpunkten Unterschied im Wareneinsatz sagt der Satz es (Annahme der App, kein Branchenwert)
@@ -290,7 +291,7 @@ export function eigentuemerCsv(ue) {
   // Vorab-Prüfung D (04.11.2026): eigene Zahlenspalten ohne „€“/„≈“ für die Weiterverarbeitung (leer = keine Daten)
   const k = t("eigentuemer.dok.kopf"); const zk = (i) => t("eigentuemer.dok.zahlKopf", k[i]);
   kopf.push(zk(1), zk(2), zk(3), zk(4), zk(6), zk(7));
-  const r2 = (x) => (Number.isFinite(x) ? Math.round(x * 100) / 100 : null);
+  const r2 = (x) => (Number.isFinite(x) ? rund2(x) : null); // nur endliche Zahlen, sonst null
   ue.laeden.forEach((l, i) => { const u = l.umsatz, w = l.ware, m = l.muell, sw = l.schwund, n = l.bisNull, g = l.lager;
     zeilen[i].push(u.tage ? r2(u.summe) : null, w.quote === null || w.unplausibel ? null : r2(w.quote * 100), m.anzahl ? r2(m.wert) : null,
       sw && sw.anzahl ? r2(sw.wert) : null, n.keinUmsatz ? null : r2(n.stand), g.ohneInventur ? null : r2(g.wert)); });

@@ -10,13 +10,13 @@ import { hebelJeGericht, HEBEL_MIN_EURO, HEBEL_LISTE } from "../hebel.js";
 import { extrasVon } from "../extras.js";
 import { nav } from "./nav.js";
 import { preisRundeUebernehmen, extraDazu, extraWeg } from "../stamm.js";
+import { rund2 } from "../geld.js";
 
 export const PREIS_STUFE = 0.10; // Setzung 28.10.2026: Schritt der Knöpfe −/+ (10 Cent)
 export const START_AUFSCHLAG = 0.50; // Setzung 28.10.2026: Rechner öffnet mit +0,50 € (Goldwert-Beispiel des Masterauftrags)
 export const MIN_PREIS = 0.10; // Setzung 28.10.2026: kleinster Preis im Rechner
 let gerichtId = null, preisNeu = null; let entwurf = { name: "", preis: "", zutat: "", menge: "" };
 export const preisrundeZuruecksetzen = () => { gerichtId = null; preisNeu = null; entwurf = { name: "", preis: "", zutat: "", menge: "" }; };
-const r2 = (x) => Math.round(x * 100) / 100;
 
 // Rechenbare Gerichte: Preis und Ware bekannt (ohne Getränke)
 const rechenbar = (stand) => kalkulation(stand).zeilen.filter((z) => z.klasse !== "getraenk" && z.preisBrutto > 0 && z.waren !== null);
@@ -26,7 +26,7 @@ export function preisrundeOeffnen(stand, id, cent) {
   const zs = rechenbar(stand); const h = hebelJeGericht(stand).filter((x) => zs.some((z) => z.id === x.id));
   gerichtId = zs.some((z) => z.id === id) ? id : h[0]?.id || zs[0]?.id || null;
   const z = zs.find((x) => x.id === gerichtId);
-  preisNeu = z ? r2(z.preisBrutto + (Number(cent) > 0 ? Number(cent) / 100 : START_AUFSCHLAG)) : null;
+  preisNeu = z ? rund2(z.preisBrutto + (Number(cent) > 0 ? Number(cent) / 100 : START_AUFSCHLAG)) : null;
   entwurf = { name: "", preis: "", zutat: "", menge: "" };
 }
 
@@ -79,7 +79,7 @@ const einheitVon = (stand, name) => { const a = (stand.artikel || []).find((x) =
 
 // Klicks. Rückgabe { speichern, meldung } oder true (nur zeichnen) oder null (nicht von hier)
 export function preisrundeAktion(name, el, stand, { datum } = {}) {
-  if (name === "pr-preis") { preisNeu = Math.max(MIN_PREIS, r2(preisNeu + Number(el.dataset.wert) / 100)); return true; }
+  if (name === "pr-preis") { preisNeu = Math.max(MIN_PREIS, rund2(preisNeu + Number(el.dataset.wert) / 100)); return true; }
   if (name === "pr-gericht") { preisrundeOeffnen(stand, el.dataset.wert, 30); return true; }
   if (name === "pr-uebernehmen") {
     const g = stand.gerichte.find((x) => x.id === gerichtId); const z = rechenbar(stand).find((x) => x.id === gerichtId); if (!g || !z) return null;

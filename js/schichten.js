@@ -15,6 +15,7 @@ import { feiertagAm } from "./feiertage.js";
 import { MINDESTLOHN, mindestlohnAm } from "./data/mindestlohn.js";
 import { wert } from "./data/regelwerk.js";
 import { plusTage, wochentag, berlin, berlinZeitpunkt } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
 const minuten = (hhmm) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || "")); if (!m) return null; const h = Number(m[1]), mi = Number(m[2]); return h <= 24 && mi < 60 ? h * 60 + mi : null; };
 
@@ -63,14 +64,14 @@ export function schichtZaehler(datum, von, bis, { land = "BW" } = {}) {
     if (s === sWe) z.feiertag150 += 1; else if (s === sFt) z.feiertag125 += 1; else if (s === sSo) z.sonntag += 1;
     z.gesamt += 1;
   }
-  for (const k of Object.keys(z)) z[k] = Math.round((z[k] / 60) * 100) / 100;
+  for (const k of Object.keys(z)) z[k] = rund2((z[k] / 60));
   return z;
 }
 // Summe über viele Schichten [{ datum, von, bis }]
 export function zaehlerSumme(schichten, opt = {}) {
   const s = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
   for (const x of schichten || []) { const z = schichtZaehler(x.datum, x.von, x.bis, opt); for (const k of Object.keys(s)) s[k] += z[k]; }
-  for (const k of Object.keys(s)) s[k] = Math.round(s[k] * 100) / 100;
+  for (const k of Object.keys(s)) s[k] = rund2(s[k]);
   return s;
 }
 

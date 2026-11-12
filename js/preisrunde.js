@@ -5,11 +5,12 @@
 // Das ist eine Schwelle, keine Vorhersage: wie viele wirklich wegbleiben, weiß niemand vorher.
 // Goldwert (Gremium R3, 28.10.2026): 7,11 € brutto, 7 % USt, Ware 32 % vom Nettopreis, +0,50 € → 9,37 %.
 import { kalkulation, mengenJeMonat } from "./engine.js";
+import { nettoVonBrutto, mwstHeute } from "./geld.js";
 
-export function preisRunde({ preisAlt, preisNeu, mwst = 0.07, ware }) {
+export function preisRunde({ preisAlt, preisNeu, mwst = mwstHeute("ermaessigt"), ware }) {
   const pa = Number(preisAlt), pn = Number(preisNeu), w = Number(ware) || 0;
   if (!(pa > 0) || !(pn > 0)) return null;
-  const dbAlt = pa / (1 + mwst) - w, dbNeu = pn / (1 + mwst) - w;
+  const dbAlt = nettoVonBrutto(pa, mwst) - w, dbNeu = nettoVonBrutto(pn, mwst) - w;
   if (!(dbNeu > 0)) return { schwelle: null, dbAlt, dbNeu, mehrJeStueck: dbNeu - dbAlt };
   const schwelle = pn > pa ? 1 - dbAlt / dbNeu : null; // bei Preissenkung: wie viele Gäste mehr nötig (siehe mehrGaesteNoetig)
   const mehrGaesteNoetig = pn < pa && dbNeu > 0 ? dbAlt / dbNeu - 1 : null;

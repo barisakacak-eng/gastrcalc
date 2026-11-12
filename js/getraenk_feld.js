@@ -19,6 +19,7 @@
 // kein Feld hat. Steht keine Menge im Namen, bleibt das Feld leer – die App rät nicht, das Büro zeigt einen Hinweis.
 
 import { GETRAENK_EINKAUF } from "./data/katalog.js";
+import { rund2 } from "./geld.js";
 
 export const GEBINDE_VERKAUF = ["dose", "glas", "pet", "offen", "becher"];
 export const GEBINDE_EINKAUF = ["dose", "glas", "pet", "becher", "box", "fass"];
@@ -62,7 +63,7 @@ export function getraenkGerichtSauber(x) {
 }
 export function getraenkArtikelSauber(x) {
   const o = istObjekt(x) ? x : {};
-  const pfand = typeof o.pfand === "number" && Number.isFinite(o.pfand) && o.pfand > 0 && o.pfand <= PFAND_MAX ? Math.round(o.pfand * 100) / 100 : null;
+  const pfand = typeof o.pfand === "number" && Number.isFinite(o.pfand) && o.pfand > 0 && o.pfand <= PFAND_MAX ? rund2(o.pfand) : null;
   return { menge: menge(o.menge), gebinde: GEBINDE_EINKAUF.includes(o.gebinde) ? o.gebinde : null, marke: text(o.marke), pfand, lieferant: text(o.lieferant) };
 }
 // Aus einem alten Feld „ausschank“ (Text, Tafel bis 18.10.2026) oder dem Namen – sonst null (nie raten)

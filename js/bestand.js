@@ -20,6 +20,7 @@ import { chargenStand } from "./haltbar.js";
 import { hauptLieferant, zweitLieferant, liefertermine, liefertAm, lieferantMitId, lieferantenAktiv, whatsappNummer, whatsappLink } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, Liefertage, Bestellschluss; vorher nur Beleg-Name bzw. Getränke-Lieferant
 import { fmtEuro } from "./util.js";
 import { tageZwischen, berlin } from "./zeit.js";
+import { rund2 } from "./geld.js";
 
 // Bestand (17.10.2026): Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
 export const LAGER_STANDARD = { tage: 7, puffer: 2 };
@@ -352,7 +353,7 @@ function abgelaufenJeWare(stand, heuteTag, bs) {
 const GEBINDE_DE = { karton: ["Karton", "Kartons"], kiste: ["Kiste", "Kisten"], beutel: ["Beutel", "Beutel"], packung: ["Packung", "Packungen"], kanister: ["Kanister", "Kanister"],
   eimer: ["Eimer", "Eimer"], sack: ["Sack", "Säcke"], flasche: ["Flasche", "Flaschen"], dose: ["Dose", "Dosen"] };
 const WT_DE = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-const zahlDe = (n) => String(Math.round(n * 100) / 100).replace(".", ",");
+const zahlDe = (n) => String(rund2(n)).replace(".", ",");
 export function mengeDeutsch(z) {
   if (z.gebinde !== null && z.gebindeArt !== "lose" && GEBINDE_DE[z.gebindeArt]) return `${z.gebinde} ${GEBINDE_DE[z.gebindeArt][z.gebinde === 1 ? 0 : 1]}`;
   const m = z.menge;
