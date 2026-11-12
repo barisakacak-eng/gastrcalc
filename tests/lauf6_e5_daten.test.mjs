@@ -238,3 +238,32 @@ test("P2 B7/C3: testphase.ohneCode und bio.id gehen beim Neustart nicht verloren
   // die Sicherung nimmt sie mit, das Einlesen übernimmt sie nicht in ein fremdes Handy (gehört zu diesem Handy: zusammenfuehren ändert die Wurzel nicht)
   const leer = st.leereWurzel(); st.zusammenfuehren(leer, geladen, { jetzt: JETZT }); assert.equal(leer.testphase, undefined);
 });
+
+// ---------- P2 B6: kaputter Monatsteil ----------
+test("P2 B6: halb abgeschnittener Teil messungen|2026-11 – die Einträge bis zum letzten vollständigen werden gerettet, ladeFehler sagt „gerettet“, der Rohtext geht in die Vollsicherung", async () => {
+  const a = idbAttrappe(); await st.laden();
+  const b = laden("R1");
+  for (let i = 0; i < 20; i++) b.messungen.push({ id: "m" + i, lfd: i + 1, stelle: "k1", datum: "2026-11-" + String(i + 1).padStart(2, "0"), zeit: `2026-11-${String(i + 1).padStart(2, "0")}T06:00:00.000Z`, wert: 4, erfasst: `2026-11-${String(i + 1).padStart(2, "0")}T06:00:00.000Z`, storniert: false, notiz: "mit \"Anführungszeichen\" und } Klammern {" });
+  b.messungen.push({ id: "okt", lfd: 99, stelle: "k1", datum: "2026-10-05", zeit: "2026-10-05T06:00:00.000Z", wert: 3, erfasst: "2026-10-05T06:00:00.000Z", storniert: false });
+  const w = wurzelMit(b); await st.sofortSpeichern(w, { stempel: false });
+  const teil = [...a.speicher("gastrocalc", "teile").values()].find((v) => v.j === "messungen" && v.m === "2026-11"); assert.ok(teil);
+  const voll = teil.t; teil.t = voll.slice(0, Math.floor(voll.length * 0.7)); // mitten in einem Eintrag abgeschnitten
+  const heil = st.arrayRetten(teil.t); assert.ok(heil.length > 5 && heil.length < 20);
+  let geladen; await assert.doesNotReject(async () => { geladen = await st.laden(); });
+  const l = geladen.betriebe[0];
+  assert.equal(l.messungen.filter((x) => x.datum.startsWith("2026-11")).length, heil.length, "gerettete Zahl");
+  assert.equal(l.messungen.filter((x) => x.datum.startsWith("2026-10")).length, 1, "der andere Monat ist heil");
+  const f = geladen.ladeFehler.find((x) => x.journal === "messungen" && x.monat === "2026-11"); assert.equal(f.grund, "gerettet"); assert.equal(f.gerettet, heil.length); assert.equal(f.roh, undefined);
+  assert.equal(st.ladeProbleme().fehlt.some((x) => x.grund === "gerettet"), true);
+  // nach dem nächsten Speichern liegt der gerettete Teil ordentlich im Speicher, der Rohtext aber noch in der Vollsicherung
+  await st.sofortSpeichern(geladen, { stempel: false }); const spaeter = [...a.speicher("gastrocalc", "teile").values()].find((v) => v.j === "messungen" && v.m === "2026-11"); assert.equal(JSON.parse(spaeter.t).length, heil.length);
+  const s = await st.exportDatei(geladen, { mitAblage: false }); const r = await st.importSicherung(s.blob);
+  assert.equal(r.rohteile.length, 1); assert.equal(r.rohteile[0].text, teil.t); assert.equal(r.rohteile[0].journal, "messungen"); assert.equal(r.rohteile[0].monat, "2026-11");
+  // noch einmal laden: der Rohtext bleibt, wird nicht doppelt
+  await st.laden(); const s2 = await st.importSicherung((await st.exportDatei(geladen, { mitAblage: false })).blob); assert.equal(s2.rohteile.length, 1);
+});
+test("P2 B6: völlig unlesbarer Teil wirft nichts, wird wie bisher als „kaputt“ gemeldet", async () => {
+  const a = idbAttrappe(); await st.laden(); const b = laden("R2"); b.messungen.push({ id: "m1", lfd: 1, stelle: "k1", datum: "2026-11-01", zeit: "2026-11-01T06:00:00.000Z", wert: 4, erfasst: "2026-11-01T06:00:00.000Z", storniert: false });
+  await st.sofortSpeichern(wurzelMit(b), { stempel: false }); const teil = [...a.speicher("gastrocalc", "teile").values()].find((v) => v.j === "messungen"); teil.t = "%%%";
+  const g = await st.laden(); assert.equal(g.ladeFehler[0].grund, "kaputt"); assert.deepEqual(st.arrayRetten("%%%"), []); assert.deepEqual(st.arrayRetten(undefined), []);
+});

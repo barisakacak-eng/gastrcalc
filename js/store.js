@@ -148,7 +148,7 @@ export async function laden() {
 // Stand aus der offenen Datenbank lesen (Paket 2, 16.10.2026: aus laden() herausgelöst, damit ein fremder Stand ohne neues Öffnen nachgeladen wird)
 async function standLesen() {
   {
-    ladeBericht = { gesperrt: false, grund: null, fehlt: [] }; bereichH = new Map();
+    ladeBericht = { gesperrt: false, grund: null, fehlt: [] }; bereichH = new Map(); rohGefunden = [];
     grundlageVerwerfen(); altModus = false; leerlaufAbbrechen(); speichern.abbrechen(); // Paket 2: alte Planungen gehören zum alten Stand
     const [kopf, alt] = await tx("stand", "readonly", (st) => [st.get("kopf"), st.get("main")]);
     genGelesen = istObjekt(kopf) ? Number(kopf.gen) || 0 : 0; // Paket 2: alte Köpfe ohne gen = 0
@@ -163,7 +163,7 @@ async function standLesen() {
         // Der alte Gesamt-Datensatz ist noch da (Umzug nicht bestätigt): von ihm aus neu umziehen
         if (!alt) { try { roh = zusammensetzen(kopf, teile, fehlt); } catch (_) { roh = ausTeilenRetten(teile, fehlt); } }
       }
-      if (roh) { const w = migrierenWurzel(roh); ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); if (istObjekt(kopf.bereiche)) bereichH = new Map(Object.entries(kopf.bereiche).filter(([, v]) => istObjekt(v))); return w; }
+      if (roh) { const w = migrierenWurzel(roh); await ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); if (istObjekt(kopf.bereiche)) bereichH = new Map(Object.entries(kopf.bereiche).filter(([, v]) => istObjekt(v))); return w; }
     }
     if (alt) {
       if (Number(alt.schema) > SCHEMA) throw fehlerNeuer();
@@ -171,11 +171,12 @@ async function standLesen() {
       await umziehen(w);
       return w;
     }
-    if (teile.length) { const fehlt = []; const roh = ausTeilenRetten(teile, fehlt); if (roh) { const w = migrierenWurzel(roh); ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); return w; } }
+    if (teile.length) { const fehlt = []; const roh = ausTeilenRetten(teile, fehlt); if (roh) { const w = migrierenWurzel(roh); await ladeFehlerMerken(w, fehlt); grundlageSetzen(w, teile, fehlt); return w; } }
     return leereWurzel();
   }
 }
-function ladeFehlerMerken(w, fehlt) {
+async function ladeFehlerMerken(w, fehlt) {
+  if (rohGefunden.length) { const n = rohGefunden; rohGefunden = []; await rohSichern(n); } // Lauf 6, E5 (B6): Rohtext gerettet-er Teile bleibt erhalten
   if (!fehlt.length) return;
   ladeBericht.fehlt = fehlt;
   const jetzt = new Date().toISOString(); const da = new Set((w.ladeFehler || []).map((x) => x.laden + "|" + x.journal + "|" + x.monat));
@@ -971,33 +972,72 @@ async function fremderStand(wurzel, genDa, { stempel = true, zweiter = false } =
   return ok;
 }
 
+// Lauf 6, E5 (B6): Ein halb abgeschnittener Teil (Strom weg beim Schreiben, voller Speicher) bleibt nicht mehr verwaist. Aus dem Text wird gerettet, was als
+// vollständiger Eintrag lesbar ist (alle Einträge bis zum letzten vollständigen); der abgeschnittene Rest wird nicht gedeutet. Der Rohtext geht NICHT verloren:
+// er liegt im Speicher "stand" unter dem Schlüssel "roh" und geht in jede Vollsicherung als `rohteile` mit (exportDatei).
+export function arrayRetten(t) {
+  if (typeof t !== "string") return [];
+  const a = t.indexOf("["); if (a < 0) return [];
+  const out = []; let tiefe = 0, start = -1, inStr = false, esc = false;
+  for (let i = a + 1; i < t.length; i++) {
+    const c = t[i];
+    if (inStr) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') inStr = false; continue; }
+    if (c === '"') { inStr = true; continue; }
+    if (c === "{" || c === "[") { if (tiefe === 0) start = i; tiefe += 1; }
+    else if (c === "}" || c === "]") {
+      tiefe -= 1; if (tiefe < 0) break;
+      if (tiefe === 0 && start >= 0) { try { out.push(JSON.parse(t.slice(start, i + 1))); } catch (_) { break; } start = -1; }
+    }
+  }
+  return out;
+}
+let rohGefunden = []; // Rohtexte gerettet-er Teile aus dem letzten standLesen: [{ laden, journal, monat, text }]
+const ROH_MAX = 8, ROH_BYTES = 20e6;
+async function rohSichern(neue) {
+  if (!neue.length || !verfuegbar || !db) return;
+  try {
+    const [alt] = await tx("stand", "readonly", (st) => [st.get("roh")]);
+    const liste = Array.isArray(alt?.teile) ? alt.teile.filter((x) => istObjekt(x) && typeof x.text === "string") : [];
+    for (const n of neue) if (!liste.some((x) => x.laden === n.laden && x.journal === n.journal && x.monat === n.monat && x.text === n.text)) liste.push({ ...n, zeit: new Date().toISOString() });
+    let summe = 0; const behalten = []; for (const x of liste.slice(-ROH_MAX).reverse()) { summe += x.text.length; if (summe <= ROH_BYTES) behalten.unshift(x); }
+    await tx("stand", "readwrite", (st) => st.put({ teile: behalten }, "roh"));
+  } catch (e) { console.warn("Rohtext gerettet-er Teile nicht gesichert:", e); }
+}
+async function rohLesen() {
+  if (!verfuegbar || !db) return [];
+  try { const [r] = await tx("stand", "readonly", (st) => [st.get("roh")]); return Array.isArray(r?.teile) ? r.teile.filter((x) => istObjekt(x) && typeof x.text === "string") : []; } catch (_) { return []; }
+}
+
 // Kopf + Teile → Wurzel in genau der Form, wie sie gespeichert wurde.
 // W2-D: Ein fehlendes oder kaputtes Teil bricht nicht mehr alles ab – nur dieses Teil fehlt, alle anderen Monate laden.
 // Was fehlt, landet in `fehlt` ([{ laden, journal, monat, grund }]) und wird im Büro gemeldet. Wirft nur, wenn der Kopf selbst unlesbar ist.
 function zusammensetzen(kopf, teile, fehlt = null) {
   if (!istObjekt(kopf) || kopf.format !== FORMAT_GETEILT || typeof kopf.wurzel !== "string") throw new Error("Kopf unbekannt");
-  const melden = (sid, j, m, grund) => { if (fehlt) fehlt.push({ laden: String(sid).split("~")[0], journal: j, monat: m, grund }); else throw new Error("Teil " + grund + ": " + sid + "|" + j + "|" + m); };
+  const melden = (sid, j, m, grund, mehr = {}) => { if (fehlt) fehlt.push({ laden: String(sid).split("~")[0], journal: j, monat: m, grund, ...mehr }); else throw new Error("Teil " + grund + ": " + sid + "|" + j + "|" + m); };
   const nachSchluessel = new Map();
   for (const v of teile || []) if (istObjekt(v)) nachSchluessel.set(v.s + "|" + v.j + "|" + v.m, v);
   if (!fehlt) for (const [key, h] of Object.entries(kopf.teile || {})) { const v = nachSchluessel.get(key); if (!v || v.h !== h) throw new Error("Teil fehlt oder veraltet: " + key); }
   const lies = (v) => { try { const e = JSON.parse(v.t); return Array.isArray(e) ? e : null; } catch (_) { return null; } };
+  // B6: nicht lesbarer Teil → Einträge bis zum letzten vollständigen retten (nur im Lade-Modus mit `fehlt`; sonst bleibt es ein Fehler wie bisher)
+  const rette = (sid, j, m, v) => { if (!fehlt) return null; const e = arrayRetten(v.t); if (!e.length) return null; rohGefunden.push({ laden: String(sid).split("~")[0], journal: j, monat: m, text: v.t }); melden(sid, j, m, "gerettet", { gerettet: e.length }); return e; };
   const w = JSON.parse(kopf.wurzel); const stempel = JSON.parse(kopf.stempel || "[]");
   (w.betriebe || []).forEach((b, i) => {
     if ("geaendert" in b) b.geaendert = stempel[i] ?? null;
     const ord = kopf.ordnung?.[i] || {}; const sid = kopf.ids?.[i] ?? String(b?.id ?? "");
     for (const j of Object.keys(ord)) {
       if (ord[j] === STAMM) {
-        const v = nachSchluessel.get(sid + "|" + j + "|" + STAMM); const liste = v ? lies(v) : null;
-        if (!v) melden(sid, j, STAMM, "fehlt"); else if (!liste) melden(sid, j, STAMM, "kaputt");
+        const v = nachSchluessel.get(sid + "|" + j + "|" + STAMM); let liste = v ? lies(v) : null;
+        if (!v) melden(sid, j, STAMM, "fehlt"); else if (!liste) { liste = rette(sid, j, STAMM, v); if (!liste) melden(sid, j, STAMM, "kaputt"); }
         b[j] = liste || []; continue;
       }
       const liste = []; const zeiger = new Map();
       for (const [m, n] of ord[j]) {
         let z = zeiger.get(m);
         if (!z) {
-          const v = nachSchluessel.get(sid + "|" + j + "|" + m); const e = v ? lies(v) : null;
+          const v = nachSchluessel.get(sid + "|" + j + "|" + m); let e = v ? lies(v) : null; let gerettet = false;
+          if (v && !e) { e = rette(sid, j, m, v); gerettet = !!e; }
           if (!v) melden(sid, j, m, "fehlt"); else if (!e) melden(sid, j, m, "kaputt");
-          else if (e.length !== v.n) melden(sid, j, m, "unvollstaendig");
+          else if (!gerettet && e.length !== v.n) melden(sid, j, m, "unvollstaendig");
           z = { e: e || [], i: 0 }; zeiger.set(m, z);
         }
         for (let k = 0; k < n && z.i < z.e.length; k++) liste.push(z.e[z.i++]);
@@ -1015,7 +1055,8 @@ function ausTeilenRetten(teile, fehlt) {
   const laeden = new Map();
   for (const v of teile || []) {
     if (!istObjekt(v) || typeof v.s !== "string" || typeof v.j !== "string") continue;
-    let e; try { e = JSON.parse(v.t); } catch (_) { e = null; } if (!Array.isArray(e)) continue;
+    let e; try { e = JSON.parse(v.t); } catch (_) { e = null; }
+    if (!Array.isArray(e)) { const r = arrayRetten(v.t); if (!r.length) continue; e = r; rohGefunden.push({ laden: v.s.split("~")[0], journal: v.j, monat: v.m, text: v.t }); fehlt.push({ laden: v.s.split("~")[0], journal: v.j, monat: v.m, grund: "gerettet", gerettet: r.length }); } // Lauf 6, E5 (B6)
     const sid = v.s.split("~")[0]; let b = laeden.get(sid);
     if (!b) { b = leererBetrieb(); b.id = sid; b.phase = "app"; b.weg = "genau"; laeden.set(sid, b); }
     if (STAMM_SET.has(v.j) && v.m === STAMM) b[v.j] = e;
@@ -1054,6 +1095,7 @@ function grundlageSetzen(w, teile, fehlt = []) {
   });
   const behalten = new Set(fehlt.filter((x) => x.grund !== "fehlt").map((x) => x.laden + "|" + x.journal + "|" + x.monat)); // W2-D: kaputte Teile nicht löschen (vielleicht noch zu retten)
   for (const key of gespeichert.keys()) if (!da.has(key) && !behalten.has(key)) loeschenOffen.add(key);
+  for (const x of fehlt) if (x.grund === "gerettet" && x.laden) zwang.add(`${x.laden}|${x.journal}|${x.monat}`); // Lauf 6, E5 (B6): der gerettete Teil wird beim nächsten Speichern ordentlich geschrieben (der Rohtext liegt dann schon unter „roh“)
   bekanntGueltig = true; letzteWurzel = w;
 }
 
@@ -1174,7 +1216,8 @@ async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
   const ereignisse = await alleEreignisse();
   // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
   const { bueroPin: _pin, pinSperre: _sperre, rettungPin: _rettung, ...ohneCode } = wurzel; // W2-S (p07 M3): der Büro-Code wandert nicht in die Sicherung (das Einlesen übernimmt ihn ohnehin nicht)
-  const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel: ohneCode, ereignisse }));
+  const rohteile = await rohLesen(); // Lauf 6, E5 (B6): Rohtext halb abgeschnittener Teile geht in jede Vollsicherung mit
+  const bytes = new TextEncoder().encode(JSON.stringify({ exportiert: new Date().toISOString(), geraet: wurzel.geraet, fassung: APP_FASSUNG, wurzel: ohneCode, ereignisse, ...(rohteile.length ? { rohteile } : {}) }));
   const sha = await sha256Hex(bytes);
   const kopf = new TextEncoder().encode(JSON.stringify({ typ: "gastrocalc-sicherung", schema: SCHEMA, sha256: sha }) + "\n");
   const json = new Uint8Array(kopf.length + bytes.length); json.set(kopf, 0); json.set(bytes, kopf.length);
@@ -1245,7 +1288,7 @@ export async function importDatei(text) {
     if (typeof kopf.sha256 === "string") { const sha = await sha256Hex(inhalt); pruefsumme = sha === null ? "fehlt" : sha === kopf.sha256 ? "ok" : "abweichung"; }
     if (!istObjekt(d) || !istObjekt(d.wurzel)) throw fehler("format");
     if (Number(d.wurzel.schema) > SCHEMA) throw fehler("neuer"); // Lauf 6, E5 (B5): auch das Schema in der Wurzel zählt, nicht nur der Kopf
-    return { wurzel: ohneCode(migrierenWurzel(d.wurzel)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme }; // W2-S
+    return { wurzel: ohneCode(migrierenWurzel(d.wurzel)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme, ...(Array.isArray(d.rohteile) && d.rohteile.length ? { rohteile: d.rohteile.filter(istObjekt) } : {}) }; // W2-S
   }
   try { d = JSON.parse(text); } catch (_) { throw fehler("format"); }
   if (!istObjekt(d) || d.typ !== "gastrocalc-sicherung" || !(istObjekt(d.wurzel) || istObjekt(d.stand))) throw fehler("format");
