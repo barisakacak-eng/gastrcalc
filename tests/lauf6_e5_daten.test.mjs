@@ -9,6 +9,7 @@ const stamm = await import("../js/stamm.js");
 const sch = await import("../js/schichten.js");
 const w3 = await import("../js/welle3.js");
 const { beispielLaden } = await import("../js/beispiel.js");
+const l6y = await import("../js/data/l6y_texte.js");
 
 const J = (x) => (x === undefined ? undefined : JSON.parse(JSON.stringify(x)));
 const JETZT = Date.parse("2026-11-12T12:00:00Z");
@@ -81,4 +82,53 @@ test("P2 A1: Rundreise – Stand → Sicherung → einlesen in leeres Handy → 
   const norm = (w) => { const o = ohneAbgleichSpuren(w.betriebe[0]); delete o.geaendert; return o; };
   assert.deepEqual(norm(r2.wurzel), norm(r1.wurzel), "Laden nach der Rundreise exakt gleich");
   for (const f of A1_FELDER) assert.deepEqual(r2.wurzel.betriebe[0][f], b[f], f);
+});
+
+// ---------- P2 B1: Stammdaten laufen auseinander ----------
+const synchron = (mk) => { // zwei Handys mit gleichem Anfangsstand, einmal abgeglichen (Grundlage für den Vergleich je Eintrag)
+  const a = mk(), b = mk(); const wa = wurzelMit(a), wb = wurzelMit(b);
+  const va = J(wa), vb = J(wb); st.zusammenfuehren(wa, vb, { jetzt: JETZT }); st.zusammenfuehren(wb, va, { jetzt: JETZT });
+  return [wa, wb];
+};
+const mitGerichten = () => { const b = laden(); b.gerichte = [{ id: "g1", name: "Döner", zutaten: [], preis: 7 }, { id: "g2", name: "Pizza", zutaten: [], preis: 9 }]; b.artikel = [{ name: "Fleisch", preis: 8, einheit: "kg" }, { name: "Brot", preis: 1, einheit: "stk" }]; b.kosten = [{ id: "k1", kategorie: "miete", posten: "miete", betrag: 1000, status: "bekannt", periode: "monat", basis: "netto", satz: 19 }, { id: "k2", kategorie: "energie", posten: "strom", betrag: 300, status: "bekannt", periode: "monat", basis: "brutto", satz: 19 }]; return b; };
+const tauschen = (wa, wb) => { const va = J(wa), vb = J(wb); const r1 = st.zusammenfuehren(wa, vb, { jetzt: JETZT }); const r2 = st.zusammenfuehren(wb, va, { jetzt: JETZT }); return [r1, r2]; };
+test("P2 B1: A ändert Preis Gericht 1, B ändert Preis Gericht 2 – nach Austausch in beide Richtungen haben beide Handys beide Änderungen (Gerichte, Waren, Kosten)", () => {
+  const [wa, wb] = synchron(mitGerichten);
+  wa.betriebe[0].gerichte[0].preis = 7.5; wb.betriebe[0].gerichte[1].preis = 9.5;
+  wa.betriebe[0].artikel[0].preis = 8.5; wb.betriebe[0].artikel[1].preis = 1.2;
+  wa.betriebe[0].kosten[0].betrag = 1100; wb.betriebe[0].kosten[1].betrag = 350;
+  const [r1, r2] = tauschen(wa, wb);
+  for (const w of [wa, wb]) { const l = w.betriebe[0];
+    assert.deepEqual(l.gerichte.map((g) => [g.id, g.preis]), [["g1", 7.5], ["g2", 9.5]]);
+    assert.deepEqual(l.artikel.map((x) => [x.name, x.preis]), [["Fleisch", 8.5], ["Brot", 1.2]]);
+    assert.deepEqual(l.kosten.map((k) => [k.id, k.betrag]), [["k1", 1100], ["k2", 350]]); }
+  assert.deepEqual(r1.bericht.eintraege, []); assert.deepEqual(r2.bericht.eintraege, [], "keine echten Konflikte, kein Vermerk");
+  assert.deepEqual(J(wa.betriebe[0].gerichte), J(wb.betriebe[0].gerichte), "beide Handys gleich");
+  // doppelt einlesen ändert nichts
+  const vorher = J(wa.betriebe[0].gerichte); st.zusammenfuehren(wa, J(wb), { jetzt: JETZT }); assert.deepEqual(J(wa.betriebe[0].gerichte), vorher);
+});
+test("P2 B1: derselbe Eintrag auf beiden Handys verschieden – die gewählte Seite gilt, im Bericht steht Bereich, Kennung und beide Werte, im abgleichHinweis ebenso", () => {
+  const [wa, wb] = synchron(mitGerichten);
+  wa.betriebe[0].gerichte[0].preis = 7.5; wb.betriebe[0].gerichte[0].preis = 8; wb.betriebe[0].gerichte[1].preis = 9.5; // g1 auf beiden verschieden, g2 nur auf B
+  const r = st.zusammenfuehren(wa, J(wb), { jetzt: JETZT });
+  const l = wa.betriebe[0];
+  assert.equal(l.gerichte[0].preis, 7.5, "bereichWahl: bei „beide geändert“ bleibt dieses Handy"); assert.equal(l.gerichte[1].preis, 9.5, "die Änderung nur auf B kommt trotzdem");
+  assert.equal(r.bericht.eintraege.length, 1);
+  const v = r.bericht.eintraege[0]; assert.equal(v.bereich, "gerichte"); assert.equal(v.kennung, "g1"); assert.match(v.lokal, /7\.5/); assert.match(v.fremd, /\b8\b/); assert.equal(v.behalten, "lokal");
+  assert.equal(l.abgleichHinweis.eintraege.length, 1); assert.deepEqual(l.abgleichHinweis.bereiche.includes("gerichte"), true);
+  // Löschen auf der einen, Ändern auf der anderen Seite: das Gericht bleibt, mit Vermerk
+  const [xa, xb] = synchron(mitGerichten); xa.betriebe[0].gerichte.splice(1, 1); xb.betriebe[0].gerichte[1].preis = 9.9; xb.betriebe[0].gerichte[0].preis = 7.1; xa.betriebe[0].gerichte[0].preis = 7.2;
+  const r2 = st.zusammenfuehren(xa, J(xb), { jetzt: JETZT }); assert.deepEqual(xa.betriebe[0].gerichte.map((g) => g.id), ["g1", "g2"]); assert.ok(r2.bericht.eintraege.some((e) => e.kennung === "g2" && e.art === "geloeschtGeaendert"));
+  // Löschen auf der einen, unverändert auf der anderen Seite: bleibt gelöscht
+  const [ya, yb] = synchron(mitGerichten); ya.betriebe[0].gerichte.splice(1, 1); yb.betriebe[0].gerichte[0].preis = 7.7; ya.betriebe[0].kosten[0].betrag = 1; 
+  st.zusammenfuehren(ya, J(yb), { jetzt: JETZT }); assert.deepEqual(ya.betriebe[0].gerichte.map((g) => [g.id, g.preis]), [["g1", 7.7]]);
+});
+test("P2 B1: Bereiche ohne Kennung (Betrieb): wie bisher gewinnt eine Seite, aber abgleichHinweis trägt beide Werte", () => {
+  const [wa, wb] = synchron(mitGerichten);
+  wa.betriebe[0].betrieb.name = "Nord A"; wb.betriebe[0].betrieb.name = "Nord B";
+  const r = st.zusammenfuehren(wa, J(wb), { jetzt: JETZT });
+  assert.equal(wa.betriebe[0].betrieb.name, "Nord A");
+  assert.equal(r.bericht.unterschiede.length, 1); const u = r.bericht.unterschiede[0]; assert.equal(u.bereich, "betrieb"); assert.match(u.lokal, /Nord A/); assert.match(u.fremd, /Nord B/);
+  assert.deepEqual(wa.betriebe[0].abgleichHinweis.unterschiede.map((x) => x.bereich), ["betrieb"]);
+  assert.match(l6y.l6ySatz("bereichUnterschied", "de", "Betrieb", u.lokal, u.fremd), /Nord A/);
 });
