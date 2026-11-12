@@ -718,6 +718,7 @@ async function allesLoeschenJetzt() {
   setzeSprache(spracheDesGeraets()); return zeichne();
 }
 
+const AKTIONS_SPERRE = aktionsSperre();
 async function aufKlick(ev) {
   const el = ev.target.closest("[data-a]"); if (!el) return;
   if (el.type === "submit") ev.preventDefault(); // Vorab-Prüfung 03.11.2026 (B5): Formulare der Blätter nie wirklich absenden – der Klick schließt das Blatt, danach meldete Chrome „form is not connected“
@@ -729,7 +730,6 @@ async function aufKlick(ev) {
   tippX = ev.clientX; tippY = ev.clientY; tippZeit = jetzt; tippEl = el; tippSchutz = !!el.closest(".kl-blatt"); // Preis-/Rezept-Blatt zu → Tab-Leiste darunter
   if (nah && !ZAEHL_TIPPS.has(name) && ((schnell && jetzt < ruheBis) || (flaecheNeu && abstand < FLAECHE_NEU_MS))) return; // zweiter Tipp eines Doppeltipps (U1, Vorab-Prüfung B3)
   // Ausschuss Lauf 3 (09.11.2026), P4 B1: Hat der erste Tipp den Bildschirm gewechselt (sein Element ist weg), zählt ein Zähl-Tipp an derselben Stelle
-const AKTIONS_SPERRE = aktionsSperre();
   // binnen 450 ms nicht – sonst bucht der zweite Tipp auf „Müll“ (Heute) gleich eine Kachel. P4 B2: Ein „…-zu“ an derselben Stelle binnen 450 ms nach
   // dem Tipp, der das Blatt geöffnet hat, schließt es nicht wieder. 350 ms = Grenze aus dem Fund (60–350 ms); bewusstes Tippen auf neuem Schirm dauert länger.
   if (nah && abstand < WECHSEL_SCHUTZ_MS && prevEl && prevEl !== el && ((ZAEHL_TIPPS.has(name) && !prevEl.isConnected && prevEl.dataset?.a !== name) || (/(^|-)zu$/.test(name) && !/(^|-)zu$/.test(prevEl.dataset?.a || "")))) return;
@@ -737,6 +737,15 @@ const AKTIONS_SPERRE = aktionsSperre();
   if (modus(wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
   if (name === "best-wa" && ansicht === "bestand") { const l = bestandLink(stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten (18.10.2026): WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
 
+  // Lauf 6, E5 (A): Doppeltipp-Sperre. Solange dieselbe Aktion (Name + Wert + Kennung) mit `await` läuft, startet sie nicht noch einmal –
+  // sonst ergab „Tag abschließen“ zweimal getippt (0–30 ms) zwei Abschlüsse. Zähl-Tipps sind ausgenommen (jeder Tipp zählt).
+  if (ZAEHL_TIPPS.has(name)) return aufKlickAktion(ev, el, name);
+  const sperrSchluessel = aktionsSchluessel(name, el.dataset.wert, el.dataset.id);
+  if (!AKTIONS_SPERRE.belegen(sperrSchluessel)) return;
+  try { return await aufKlickAktion(ev, el, name); } finally { AKTIONS_SPERRE.freigeben(sperrSchluessel); }
+}
+
+async function aufKlickAktion(ev, el, name) {
   // Blätter öffnen/schließen ohne Neuzeichnen; jede andere Handlung aus einem Blatt schließt es zuerst
   if (await ebeneAktion(name, el)) return;
   if (blattOffen() && !BLATT_INTERN.has(name)) blattSchliessen();
@@ -748,15 +757,6 @@ const AKTIONS_SPERRE = aktionsSperre();
   if (name === "waage-vorschlag") { waageVorschlagGesehen(stand, heuteGeschaeft()); speichern(wurzel); return bearbeiten("rezepte"); }
   if (name === "zurueck") return schrittZurueck();
   if (name === "weiter") return schrittWeiter();
-  // Lauf 6, E5 (A): Doppeltipp-Sperre. Solange dieselbe Aktion (Name + Wert + Kennung) mit `await` läuft, startet sie nicht noch einmal –
-  // sonst ergab „Tag abschließen“ zweimal getippt (0–30 ms) zwei Abschlüsse. Zähl-Tipps sind ausgenommen (jeder Tipp zählt).
-  if (ZAEHL_TIPPS.has(name)) return aufKlickAktion(ev, el, name);
-  const sperrSchluessel = aktionsSchluessel(name, el.dataset.wert, el.dataset.id);
-  if (!AKTIONS_SPERRE.belegen(sperrSchluessel)) return;
-  try { return await aufKlickAktion(ev, el, name); } finally { AKTIONS_SPERRE.freigeben(sperrSchluessel); }
-}
-
-async function aufKlickAktion(ev, el, name) {
   if (name === "bearbeiten") return bearbeiten(el.dataset.schritt, el.dataset.bis);
   if (name === "nav" && el.dataset.wert !== ansicht) { if (ansicht.startsWith("ordner-")) ordnerZuruecksetzen(); if (ansicht === "buero") bueroZuruecksetzen(); } // Entwickler C: Büro zu, wenn es in den Laden geht
   if (name === "nav") { const nz = navZiel(wurzel, el.dataset.wert); if (nz.buero) { bueroWeg = []; return bueroBetreten(nz.ansicht); } // Büro-Bildschirm aus dem Laden: erst ins Büro
@@ -865,6 +865,7 @@ async function aufKlickAktion(ev, el, name) {
   }
   if (ansicht === "abschluss") {
     const r = abschlussAktion(name, el, stand, wurzel);
+    if (r === "schon") return zeichne(); // Lauf 6, E5 (A): dieser Tag ist schon abgeschlossen – nur die Bilanz zeigen, kein zweiter Abschluss
     if (r) { ereignis("tag-abgeschlossen", { laden: stand.id }); await sofortSpeichern(wurzel); zeichne(); }
   }
   if (ansicht === "putzplan") {
@@ -876,7 +877,6 @@ async function aufKlickAktion(ev, el, name) {
     if (r) {
       if (r === "abgeschlossen") { ereignis("inventur-fertig", { laden: stand.id }); await sofortSpeichern(wurzel); }
       else if (r === "sofort" || r.sofort) await sofortSpeichern(wurzel); else speichern(wurzel);
-    if (r === "schon") return zeichne(); // Lauf 6, E5 (A): dieser Tag ist schon abgeschlossen – nur die Bilanz zeigen, kein zweiter Abschluss
       if (r.meldung) meldung(r.meldung);
       zeichne();
     }
@@ -1153,6 +1153,16 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") sofortSpeichern(wurzel, { stempel: false });
   else { ereignis("app-sichtbar", { phase: stand.phase }); ereignisAnzahl += 1; tagPruefen(); }
 });
+window.addEventListener("pageshow", () => tagPruefen());
+root.addEventListener("focusout", () => setTimeout(tagPruefen, 200)); // Feld mit Text wurde verlassen: Tageswechsel nachholen
+// Lauf 6, E5 (B): Zurück in der App, oder die Uhr läuft über 04:00 (Geschäftstag) bzw. 00:00 (Kalendertag): neu zeichnen – sonst zeigt Heute,
+// Putzplan und Kühlung noch gestern. Nicht, solange ein Feld mit Text den Fokus hat (dann beim Verlassen) oder eine Führung läuft.
+function tagPruefen() {
+  if (!wurzel || !stand || notfall || !tagGewechselt(gezeichneterTag)) return;
+  const a = document.activeElement; const feld = a?.matches?.("input, textarea, select") ? { aktiv: true, value: a.value } : null;
+  if (feldMitText(feld) || fuehrungOffen() || kurzOffen()) return;
+  zeichne();
+}
 
 function spracheDesGeraets() {
   const code = (navigator.language || "de").slice(0, 2).toLowerCase();
@@ -1164,16 +1174,6 @@ function spracheDesGeraets() {
 let aktualisierungKlick = false;
 // W2-D: im Laden (und Personal-Modus) still auf die neue Fassung wechseln, wenn die App 30 Minuten nicht bedient wurde und nichts offen ist
 let zuletztBedient = Date.now();
-window.addEventListener("pageshow", () => tagPruefen());
-root.addEventListener("focusout", () => setTimeout(tagPruefen, 200)); // Feld mit Text wurde verlassen: Tageswechsel nachholen
-// Lauf 6, E5 (B): Zurück in der App, oder die Uhr läuft über 04:00 (Geschäftstag) bzw. 00:00 (Kalendertag): neu zeichnen – sonst zeigt Heute,
-// Putzplan und Kühlung noch gestern. Nicht, solange ein Feld mit Text den Fokus hat (dann beim Verlassen) oder eine Führung läuft.
-function tagPruefen() {
-  if (!wurzel || !stand || notfall || !tagGewechselt(gezeichneterTag)) return;
-  const a = document.activeElement; const feld = a?.matches?.("input, textarea, select") ? { aktiv: true, value: a.value } : null;
-  if (feldMitText(feld) || fuehrungOffen() || kurzOffen()) return;
-  zeichne();
-}
 for (const e of ["pointerdown", "keydown", "input"]) document.addEventListener(e, () => { zuletztBedient = Date.now(); }, { capture: true, passive: true });
 // Paket 2 (16.10.2026): „kein Formular offen“ an einer Stelle – für das stille Update und für den fremden Fassungswechsel (unten)
 function formularOffen() {

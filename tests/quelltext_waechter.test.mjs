@@ -114,7 +114,27 @@ const TEIL4 = [
   { name: "Geld: kein Steuersatz-Literal 0.19 / 0.07 (auch 1.19 / 1.07, mit Komma) außerhalb js/data/regelwerk.js – Sätze kommen aus geld.mwst", dateien: jsOhne("js/data/regelwerk.js", "js/data/richtpreise.js", "js/data/richtpreise_nachtrag.js", "js/zeki-svg.js"), darfNicht: /^(?!\s*\/\/)(?!.*AMPEL_GRENZEN).*?(?<![\d.,])[01][.,](?:19|07)(?!\d)/m },
 ];
 
-const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4];
+// ───── Teil 5 (Lauf 6, Etappe 5): Bedienschicht – Verdrahtung, die nur im Browser (tests/doppeltipp_browser.py, tests/echt_browser.py) als Verhalten prüfbar ist ─────
+const TEIL5 = [
+  { name: "A Doppeltipp: aufKlick belegt vor jeder Aktion die Sperre (aktionsSperre) und gibt sie im finally wieder frei", dateien: APP, muss: /AKTIONS_SPERRE\.belegen\([\s\S]*?finally \{ AKTIONS_SPERRE\.freigeben/ },
+  { name: "A Doppeltipp: der Tagesabschluss prüft, ob der Geschäftstag schon einen aktiven Abschluss hat (tagSchonAbgeschlossen)", dateien: ["js/screens/abschluss.js"], muss: /tagSchonAbgeschlossen\(stand, H\)/ },
+  { name: "B Tageswechsel: visibilitychange (sichtbar) ruft tagPruefen", dateien: APP, muss: /ereignisAnzahl \+= 1; tagPruefen\(\);/ },
+  { name: "B Tageswechsel: ein Minuten-Takt ruft tagPruefen", dateien: APP, muss: /setInterval\(tagPruefen, 60e3\)/ },
+  { name: "B Tageswechsel: zeichne() merkt sich den gezeichneten Tag (gezeichneterTag = tagStand())", dateien: APP, muss: /gezeichneterTag = tagStand\(\)/ },
+  { name: "C Speicher: der Dauerspeicher gilt nur bei „Ja“ als gefragt (persistGefragt nur mit ok === true)", dateien: APP, muss: /ok === true[^\n]*persistGefragt = true/ },
+  { name: "C Speicher: persistGefragt wird nie vor dem Ergebnis gesetzt", dateien: APP, darfNicht: /persistGefragt = true; speichern\(wurzel\);\s*speicherDauerhaftPruefen/ },
+  { name: "C Speicher: das Fehler-Banner wird nach erfolgreichem Schreiben zurückgesetzt (problemNachErfolg) und kennt „Speicher voll“ (speicherProblemArt)", dateien: APP, muss: /problemNachErfolg\(speicherProblem\)[\s\S]*speicherProblemArt\(art, fehler\)/ },
+  { name: "C Speicher: der Satz „Speicher voll …“ kommt aus js/data/l6z_texte.js", dateien: APP, muss: /l6z\(aktuelleSprache\(\), "speicherVoll"\)/ },
+  { name: "E Echte App = Test-App: kein Bildschirm greift auf das Debug-Objekt __gastrocalc zu (das gibt es nur auf localhost)", dateien: ["js/screens"], darfNicht: /__gastrocalc/ },
+  { name: "E Echte App = Test-App: app.js reicht die Wurzel an die Schritte der Einrichtung durch (s.view(stand, wurzel))", dateien: APP, muss: /s\.view\(stand, wurzel\)/ },
+  { name: "F Personal-Modus: app.js weist Aktionen über personalGesperrt ab (Positivliste in js/modus.js)", dateien: APP, muss: /modus\(wurzel\) === "personal" && personalGesperrt\(/ },
+  { name: "G Büro-Code: das Schloss-Blatt kennt die harte Sperre nach 10 Fehlversuchen (hartGesperrt)", dateien: ["js/screens/ebene.js"], muss: /hartGesperrt\(pin\.wurzel\)/ },
+  { name: "G Büro-Code: der Rettungscode rechnet nur mit der Uhr (sperreRestUhr), damit er bei der harten Sperre offen bleibt", dateien: ["js/rettung.js"], muss: /sperreRestUhr\(wurzel, jetzt\)/ },
+  { name: "H Einrahmen: index.html lädt js/rahmen.js VOR js/app.js", dateien: ["index.html"], muss: /js\/rahmen\.js[\s\S]*js\/app\.js/ },
+  { name: "H Einrahmen: .htaccess enthält frame-ancestors", dateien: [".htaccess"], muss: /frame-ancestors/ },
+];
+
+const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5];
 test("Quelltext-Wächter: jeder Eintrag nennt mindestens einen Ort, den es gibt", () => {
   for (const w of WAECHTER) assert.ok(w.dateien.some((d) => fs.existsSync(path.join(WURZEL, d))), w.name + ": keiner der Orte existiert (" + w.dateien.join(", ") + ")");
 });

@@ -27,6 +27,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `aktion_plan.js` – Aktion planen: Zeitraum-Vorschlag, Fortschritt, Bilanz.
 - `anzeige_text.js` – Texte aus Daten (Datum, Monat, Mengen, Bruchzahlen).
 - `app.js` – Einstieg und Bedienschicht: Zustand, Zeichnen, Klick-Verteiler, Service Worker, Rundgang-Start.
+- `bedienhilfe.js` – kleine reine Helfer der Bedienschicht: Doppeltipp-Sperre, Tageswechsel bei offener App, Speicher-Banner.
 - `auswertung.js` – ein Weg vom Foto/PDF zum Text (OCR-Auftrag an den Worker, Zwischenstand „erste Gerichte“ seit P4).
 - `beispiel.js` – Beispiel-Laden zum Ausprobieren.
 - `beleg.js` – Belegzerleger (Lieferschein/Rechnung → Zeilen).
@@ -69,7 +70,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `schichten.js` – Welle 3: Schichtzeiten, § 3b-Zähler, Minijob- und 70-Tage-Zähler.
 - `monatsabschluss.js` – Welle 3: Monat einfrieren, Vormonat/Vorjahr.
 - `welle3.js` – Welle 3: Einstellungen und Laden-Anbindung für „Geld & Finanzamt“.
-- `modus.js` – drei Ebenen Laden/Personal/Büro, Büro-Code, Zeitfenster.
+- `modus.js` – drei Ebenen Laden/Personal/Büro (Personal als Positivliste), Büro-Code, Wartezeit und harte Sperre nach 10 Fehlversuchen.
 - `muell.js` – Müll in zwei Tipps, Personalessen.
 - `nutzen.js` – Euro-Zähler „Weniger Verlust seit Start“.
 - `ocr-worker.js` – Texterkennung (tesseract WASM) im eigenen Faden; meldet im Modus „karte“ nach der ersten Lesart einen Zwischenstand.
@@ -83,6 +84,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `putzplan.js` – Putzplan als Stammdaten, Abhaken als Protokoll.
 - `rechtsform.js` – Rechtsform des Betriebs für Steuer-Hinweise.
 - `reinigung.js` – Reinigung & Betriebsmittel im Kostenzähler.
+- `rahmen.js` – Schutz gegen Einrahmen durch fremde Seiten (läuft vor der App, siehe index.html).
 - `rettung.js` – Rettungscode und „Sicherung ersetzt alles“.
 - `rezept_baukasten.js` – jedes Gericht bekommt sofort ein Rezept mit Mengen (144 Vorlagen).
 - `rezept_quelle.js` – woher jede Menge kommt; Mengenfrage im Laden; Branchenwerte anwenden.
@@ -107,7 +109,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `zeki-bilder.js`, `zeki-puppe.js`, `zeki-svg.js` – Zekis Bilder, Gliederpuppe, Vektorfigur.
 - `zeki.js` – Zekis Kopf: welche Lage ist wichtig, welcher Satz passt.
 - `zip.js` – kleines ZIP ohne Fremdbibliothek.
-- `data/` – Branchenwerte, Vorlagen, Datenschutztext (Daten, keine Logik).
+- `data/` – Branchenwerte, Vorlagen, Datenschutztext (Daten, keine Logik); `data/l6z_texte.js` hat drei Sätze der Bedienschicht (Speicher voll, Schloss ehrlich, nur noch Rettungscode).
 - `lang/` – Sprachtabellen (`de.js` Leitsprache).
 
 ## 5. Module – Bildschirme (`js/screens/`)
