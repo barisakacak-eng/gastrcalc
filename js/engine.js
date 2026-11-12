@@ -23,10 +23,39 @@ export function vorsteuerSatz(posten, betrieb = null) {
   return VORSTEUER_SAETZE.includes(s) ? s / 100 : VORSTEUER;
 }
 
+// Lauf 6 (P1 B4): „gültig ab“ für Kostenposten. Ändert der Wirt einen Betrag (Miete 2.400 → 3.000 €), gilt der neue ab dem MONAT der Änderung; vergangene Monate
+// rechnen mit dem Betrag von damals. posten.verlauf = [{ ab: "JJJJ-MM" | "", wert: Zahl | null }] (wie ruhetageVerlauf: ab "" = von Anfang an). Posten ohne
+// Verlauf (alte Daten, nie geändert) gelten schon immer; ab dem Monat des letzten Eintrags gilt der Betrag des Postens selbst (posten.betrag).
+export const kostenVerlauf = (posten) => (Array.isArray(posten?.verlauf) ? posten.verlauf : []).filter((x) => x && typeof x.ab === "string" && (x.wert === null || (typeof x.wert === "number" && Number.isFinite(x.wert)))).slice().sort((a, b) => (a.ab < b.ab ? -1 : a.ab > b.ab ? 1 : 0));
+export function betragAm(posten, monat) {
+  const v = kostenVerlauf(posten);
+  if (!v.length || !monat || monat >= v[v.length - 1].ab) return posten.betrag;
+  let x = v[0]; for (const e of v) { if (e.ab <= monat) x = e; else break; }
+  return x.wert;
+}
+// Neuen Betrag setzen und den alten festhalten – aber nur, wenn es etwas zu bewahren gibt: der Posten hatte einen Betrag UND der Laden hat vor diesem Monat
+// schon Umsatz oder Belege (sonst wäre das Tippen der ersten Zahl, Ziffer für Ziffer, ein „Verlauf“). Rückgabe: true, wenn ein Verlauf geschrieben wurde.
+export function kostenBetragMitVerlauf(stand, posten, neu, monat = heuteGeschaeft().slice(0, 7)) {
+  const alt = posten.betrag; let gemerkt = false;
+  const frueher = (stand.tagesnotizen || []).some((n) => !n.storniert && typeof n.umsatz === "number" && typeof n.datum === "string" && n.datum.slice(0, 7) < monat)
+    || (stand.lieferungen || []).some((l) => !l.storniert && typeof l.datum === "string" && l.datum.slice(0, 7) < monat);
+  if (typeof alt === "number" && neu !== alt && frueher) {
+    const v = kostenVerlauf(posten).map((x) => ({ ...x })); if (!v.length) v.push({ ab: "", wert: alt });
+    const letzte = v[v.length - 1];
+    if (letzte.ab === monat) letzte.wert = neu; else v.push({ ab: monat, wert: neu });
+    if (v.length > 1 && v[v.length - 1].ab === monat && v[v.length - 2].wert === v[v.length - 1].wert) v.pop(); // im selben Monat zurückgestellt
+    posten.verlauf = v.length > 1 || v[0].ab !== "" ? v : undefined; if (posten.verlauf === undefined) delete posten.verlauf;
+    gemerkt = true;
+  }
+  posten.betrag = neu; return gemerkt;
+}
+
 // Betrag eines Postens je Monat, netto. periode "jahr" wird durch 12 geteilt, basis "brutto" durch (1 + Satz des Postens).
-export function betragJeMonat(posten, betrieb = null) {
-  if (posten.betrag === null || posten.betrag === undefined) return null;
-  const b = posten.basis === "brutto" ? nettoVonBrutto(posten.betrag, vorsteuerSatz(posten, betrieb)) : posten.betrag;
+// monat ("JJJJ-MM", optional): der Betrag, der in diesem Monat galt (Verlauf); ohne Monat der aktuelle.
+export function betragJeMonat(posten, betrieb = null, monat = null) {
+  const betrag = betragAm(posten, monat);
+  if (betrag === null || betrag === undefined) return null;
+  const b = posten.basis === "brutto" ? nettoVonBrutto(betrag, vorsteuerSatz(posten, betrieb)) : betrag;
   return posten.periode === "jahr" ? b / 12 : b;
 }
 
@@ -44,11 +73,11 @@ export function eigenerLohnJeMonat(team, datum = heuteGeschaeft()) {
 
 // Summe der festen Kosten je Monat, getrennt nach Status.
 // status: "bekannt" (echte Zahl), "geschaetzt" (Richtwert übernommen), "offen" (weiß ich nicht, kein Betrag).
-export function fixkosten(stand) {
+export function fixkosten(stand, monat = null) { // monat: Lauf 6 (P1 B4) – die Beträge, die in diesem Monat galten; ohne Monat die aktuellen
   const out = { gesamt: 0, bekannt: 0, geschaetzt: 0, offen: 0, jeKategorie: {} };
   for (const p of stand.kosten) {
     if (p.status === "aus") continue; // ausgeschaltet = gibt es in diesem Betrieb nicht, zählt nirgends
-    const b = betragJeMonat(p, stand.betrieb); // Paket 3, M1: Satz je Posten, Kleinunternehmer ohne Vorsteuer
+    const b = betragJeMonat(p, stand.betrieb, monat); // Paket 3, M1: Satz je Posten, Kleinunternehmer ohne Vorsteuer
     out.jeKategorie[p.kategorie] ??= { summe: 0, offen: 0, geschaetzt: 0 };
     if (p.status === "offen" || b === null) { out.offen += 1; out.jeKategorie[p.kategorie].offen += 1; continue; }
     out.gesamt += b;
@@ -77,7 +106,7 @@ export function lohnJeMonat(team) {
 // Löhne werden NICHT mit 12/monate hochgerechnet: In der Saison fallen sie nur in den offenen Monaten an (Prüfung Teil 4 Nr. 11,
 // Lohnsplit saisonal/ganzjährig kommt später). Ergebnis-Objekt sagt, ob Teile offen sind.
 export function monatsLast(stand, datum = heuteGeschaeft()) {
-  const fk = fixkosten(stand);
+  const fk = fixkosten(stand, typeof datum === "string" ? datum.slice(0, 7) : null); // Lauf 6 (P1 B4): Beträge des Monats (gültig ab)
   // 27.10.2026: Lohn im Monat = eingetragene Lohnkosten, mindestens aber die festen Monatslöhne der Personen (Brutto + Arbeitgeberanteil)
   const lohnEingetragen = lohnJeMonat(stand.team); const festPersonal = festPersonalMonat(stand);
   const lohn = festPersonal > 0 ? Math.max(lohnEingetragen ?? 0, festPersonal) : lohnEingetragen;

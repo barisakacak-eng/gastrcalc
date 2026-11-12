@@ -147,3 +147,56 @@ test("P1 B6: kalkulation() ist rein – tief eingefrorener Stand wirft nicht und
   const s2 = beispielLaden("2026-11-10"); const r2 = s2.artikel.find((a) => a.name === roh.name); const t2 = s2.artikel.find((a) => a.herkunft === "selbst" && (a.rezept?.zutaten || []).some((z) => z.name === roh.name));
   const alt = t2.preis; K.artikelFeldSetzen(s2, r2.name, "preis", r2.preis * 2, "2026-11-10"); assert.notEqual(t2.preis, alt, "selbst gemachtes Teil folgt beim Ändern des Preises");
 });
+
+// ---------------------------------------------------------------- P1 B4
+async function ladenMitMiete() {
+  const S = await import("../js/stamm.js");
+  const s = ladenMit({ monate: 12 }); S.kostenBetragSetzen(s, "miete", "miete", 2400); s.kosten.find((k) => k.posten === "miete").basis = "netto";
+  s.team.lohnkosten = 0; s.team.eigenerLohn = 0; s.team.eigenerLohnStatus = "eigen";
+  await mitUhr("2026-10-20", async () => { for (const d of ["2026-09-10", "2026-10-10", "2026-10-11"]) await tagesumsatz(s, d, 900); });
+  return { s, S };
+}
+const mieteIm = (E, s, monat) => E.monatsLast(s, monat + "-15").fix.jeKategorie.miete.summe;
+test("P1 B4: Miete heute von 2.400 auf 3.000 € ändert den Oktober nicht (gültig ab Monat der Änderung)", async () => {
+  const E = await import("../js/engine.js"); const { s, S } = await ladenMitMiete();
+  assert.equal(mieteIm(E, s, "2026-10"), 2400);
+  await mitUhr("2026-11-12", () => S.kostenBetragSetzen(s, "miete", "miete", 3000));
+  const m = s.kosten.find((k) => k.posten === "miete"); assert.deepEqual(m.verlauf, [{ ab: "", wert: 2400 }, { ab: "2026-11", wert: 3000 }]); assert.equal(m.betrag, 3000);
+  assert.equal(mieteIm(E, s, "2026-09"), 2400); assert.equal(mieteIm(E, s, "2026-10"), 2400, "Oktober bleibt");
+  assert.equal(mieteIm(E, s, "2026-11"), 3000); assert.equal(mieteIm(E, s, "2026-12"), 3000, "ab November und später der neue Betrag");
+  assert.equal(E.monatsLast(s, "2026-10-31").gesamt + 600, E.monatsLast(s, "2026-11-30").gesamt);
+  // Tippen Ziffer für Ziffer im selben Monat ergibt einen Eintrag
+  await mitUhr("2026-11-12", () => { for (const w of [4, 40, 400, 4000]) S.kostenBetragSetzen(s, "miete", "miete", w); });
+  assert.deepEqual(m.verlauf, [{ ab: "", wert: 2400 }, { ab: "2026-11", wert: 4000 }]);
+  // Zurückgestellt im selben Monat: kein Verlauf mehr
+  await mitUhr("2026-11-13", () => S.kostenBetragSetzen(s, "miete", "miete", 2400)); assert.equal(m.verlauf, undefined);
+  assert.equal(mieteIm(E, s, "2026-10"), 2400);
+});
+test("P1 B4: erste Zahl im ersten Monat ist kein Verlauf; Betrag ohne frühere Daten gilt schon immer", async () => {
+  const S = await import("../js/stamm.js"); const s = ladenMit();
+  await mitUhr("2026-11-12", () => { for (const w of [2, 24, 240, 2400]) S.kostenBetragSetzen(s, "miete", "miete", w); });
+  assert.equal(s.kosten.find((k) => k.posten === "miete").verlauf, undefined);
+});
+test("P1 B4: Vormonat wird beim ersten Rechnen nach dem Monatswechsel eingefroren; eingefrorene Monate bleiben unverändert", async () => {
+  const E = await import("../js/engine.js"), M = await import("../js/monatsabschluss.js"); const { s, S } = await ladenMitMiete();
+  assert.equal(M.vormonatEinfrierenWennNoetig(s, "2026-09-05"), null, "August: kein Umsatz, nichts einzufrieren");
+  const a = await mitUhr("2026-11-02", () => M.vormonatEinfrierenWennNoetig(s, "2026-11-02", { jetzt: "2026-11-02T08:00:00.000Z" }));
+  assert.equal(a.monat, "2026-10"); assert.equal(a.umsatzBrutto, 1800); const vorher = JSON.stringify(M.eingefroren(s, "2026-10"));
+  assert.equal(M.vormonatEinfrierenWennNoetig(s, "2026-11-03"), null, "zweiter Aufruf tut nichts"); assert.equal(s.monatsabschluesse.length, 1);
+  await mitUhr("2026-11-12", () => S.kostenBetragSetzen(s, "miete", "miete", 3000));
+  await tagesumsatz(s, "2026-10-12", 500); // Nachtrag in den Oktober
+  assert.equal(JSON.stringify(M.eingefroren(s, "2026-10")), vorher, "eingefrorener Monat unverändert");
+  assert.equal(M.monatVergleich(s, "2026-10").jetzt.umsatzBrutto, 1800);
+  // September (nicht eingefroren) rechnet live – aber mit dem Betrag von damals
+  assert.equal(M.monatsZahlen(s, "2026-09").personal, 0); assert.equal(E.monatsLast(s, "2026-09-30").fix.jeKategorie.miete.summe, 2400);
+});
+test("P1 B4: Rundreise Stand → JSON → Stand (und Einlesen über store.js) ergibt dieselben Monatszahlen", async () => {
+  const M = await import("../js/monatsabschluss.js"), E = await import("../js/engine.js"), st = await import("../js/store.js"); const { s, S } = await ladenMitMiete();
+  await mitUhr("2026-11-12", () => S.kostenBetragSetzen(s, "miete", "miete", 3000));
+  const zahlen = (x) => ["2026-09", "2026-10", "2026-11"].map((m) => ({ m: E.monatsLast(x, m + "-15").gesamt, z: M.monatsZahlen(x, m) }));
+  const j = JSON.parse(JSON.stringify(s)); assert.deepEqual(zahlen(j), zahlen(s));
+  const geladen = st.migrierenBetrieb(JSON.parse(JSON.stringify(s))); assert.deepEqual(geladen.kosten.find((k) => k.posten === "miete").verlauf, [{ ab: "", wert: 2400 }, { ab: "2026-11", wert: 3000 }], "store.js reicht verlauf durch");
+  assert.deepEqual(zahlen(geladen), zahlen(s));
+  // alter Stand ohne Feld: gilt schon immer
+  const alt = JSON.parse(JSON.stringify(s)); delete alt.kosten.find((k) => k.posten === "miete").verlauf; assert.equal(E.monatsLast(alt, "2026-10-15").fix.jeKategorie.miete.summe, 3000);
+});

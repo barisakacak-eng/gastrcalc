@@ -105,7 +105,7 @@ export function monatsPosten(stand, monat) {
   const kostenBeleg = (stelle) => b.zeilen.filter((x) => x.quelle === "kosten" && x.stelle === stelle).reduce((s, x) => s + (x.netto ?? x.brutto ?? 0), 0);
   const q = warenQuote(stand); const geschaetzt = !(wareBeleg > 0);
   const ware = wareBeleg > 0 ? wareBeleg : netto * q.quote;
-  const fk = fixkosten(stand); const kat = (k) => fk.jeKategorie[k]?.summe || 0;
+  const fk = fixkosten(stand, monat); const kat = (k) => fk.jeKategorie[k]?.summe || 0;
   const ml = monatsLast(stand, z.bis);
   const energie = kostenBeleg("energie") > 0 ? kostenBeleg("energie") : kat("energie");
   return { umsatzBrutto: rund2(brutto), umsatzNetto: rund2(netto), ware: rund2(ware), energie: rund2(energie), putzmittel, miete: rund2(kat("miete")), personal: rund2(ml.lohn || 0),
