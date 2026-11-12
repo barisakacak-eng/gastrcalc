@@ -1,0 +1,106 @@
+// Quelltext-Wächter: die EINE Datei, die Quelltext liest statt Verhalten zu prüfen.
+// Hier steht nur, was sich in Node nicht als Verhalten prüfen lässt: Verdrahtung in der Bedienschicht ohne Browser-Test,
+// Verbote (Wörter, Fremdadressen) und wenige Regeln fürs CSS. Alle anderen Tests importieren Module und prüfen Ergebnisse.
+// Eintrag: { name, dateien: [Datei oder Ordner, …], muss: /regex/ } oder { …, darfNicht: /regex/ }.
+// Ordner zählen mit allen Dateien darunter zusammen; fehlende Pfade (z. B. js/bedienung vor dem Zerlegen) werden übersprungen.
+// So macht ein Umzug von Code zwischen den genannten Dateien nichts rot. Wird dieser Test rot, ist entweder die Regel verletzt
+// oder der Code ist an einen Ort gezogen, den der Eintrag nicht nennt – dann den Eintrag anpassen, nicht die Regel streichen.
+import test from "node:test"; import assert from "node:assert/strict"; import fs from "node:fs"; import path from "node:path"; import { fileURLToPath } from "node:url";
+
+const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+function lesen(p) {
+  const voll = path.join(WURZEL, p); if (!fs.existsSync(voll)) return "";
+  if (fs.statSync(voll).isFile()) return fs.readFileSync(voll, "utf8");
+  return fs.readdirSync(voll).sort().map((e) => { const u = path.join(p, e); return fs.statSync(path.join(WURZEL, u)).isDirectory() || /\.(js|mjs|css|html)$/.test(e) ? lesen(u) : ""; }).join("\n");
+}
+
+// ───── Teil 1 ─────
+const APP = ["js/app.js", "js/bedienung"];
+
+// Alle *Zuruecksetzen-Exporte aus js/screens müssen in app.js (Liste ZURUECKSETZER) vorkommen: Import plus Eintrag = mindestens zwei Treffer.
+const zuruecksetzer = [];
+try {
+  const dir = new URL("../js/screens/", import.meta.url);
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith(".js")) continue;
+    for (const m of fs.readFileSync(new URL(f, dir), "utf8").matchAll(/export (?:function|const) (\w+Zuruecksetzen)\b/g)) {
+      zuruecksetzer.push({ name: `Ladenwechsel: ${m[1]} (${f}) steht in der Zurücksetzer-Liste`, dateien: APP, muss: new RegExp(`\\b${m[1]}\\b[\\s\\S]*\\b${m[1]}\\b`) });
+    }
+  }
+} catch { /* ohne Ordner keine dynamischen Wächter */ }
+
+const TEIL1 = [
+  { name: "Teilen allein zählt nicht als Sicherung: letzteSicherung wird in der Bedienung nie direkt gesetzt (nur über sicherungOrtSetzen)", dateien: APP, darfNicht: /letzteSicherung\s*=[^=]/ },
+  { name: "Teilen allein zählt nicht als Sicherung: sicherungZaehler wird in der Bedienung nie direkt gesetzt", dateien: APP, darfNicht: /sicherungZaehler\s*=[^=]/ },
+  { name: "Sicherung: „Ohne Fotos“ (mitAblage) wird an exportDatei durchgereicht", dateien: APP, muss: /exportDatei\([^)]*mitAblage/ },
+  { name: "Sicherung: der Schalter „Ohne Fotos“ (ohneFotos) bestimmt mitAblage beim Teilen", dateien: APP, muss: /mitAblage[^\n]*ohneFotos/ },
+  { name: "Putzplan: Vorschlag nach Laden-Art wird beim Betreten nur im Laden-Modus übernommen (planSicherstellen)", dateien: APP, muss: /putzplan[^\n]*laden[^\n]*planSicherstellen|planSicherstellen[^\n]*putzplan[^\n]*laden/ },
+  { name: "Heute: Zeki spricht oben rechts mit allen Lagen (ZEKI_BILDSCHIRM nur für andere Bildschirme als start)", dateien: APP, muss: /["']start["'][^\n]*ZEKI_BILDSCHIRM/ },
+  { name: "Update: controllerchange wird behandelt", dateien: APP, muss: /controllerchange/ },
+  { name: "Update: fremde Fassung wird erst übernommen, wenn kein Formular offen ist (fremdeFassungUebernehmen, formularOffen)", dateien: APP, muss: /fremdeFassungUebernehmen[\s\S]*formularOffen|formularOffen[\s\S]*fremdeFassungUebernehmen/ },
+  { name: "Update: erster Wechsel beim allerersten Besuch lädt nicht neu (ersteUebernahme)", dateien: APP, muss: /ersteUebernahme/ },
+  { name: "Zwei Fenster: der Ereignis-Name FREMDER_STAND wird abgehört", dateien: APP, muss: /addEventListener\(\s*FREMDER_STAND/ },
+  { name: "Ladenwechsel: bei anderem Laden werden alle Bildschirm-Zustände zurückgesetzt (alleZuruecksetzen)", dateien: APP, muss: /alleZuruecksetzen/ },
+  { name: "Preis-Blatt: app.js tauscht die ganze Hülle .kl-bleibt-teil aus", dateien: APP, muss: /kl-bleibt-teil/ },
+  ...zuruecksetzer,
+];
+
+// ───── Teil 2 ─────
+const VERBOTEN2 = /revolutionär|disruptiv|marktführer|gobd-konform|betriebsprüfungsfest|steuersicher|rechtssicher/i;
+
+const TEIL2 = [
+  // Verbotene Wörter (Projektregel) in den Dateien der Lieferanten-, Bestand-, Haltbarkeits-/Aktions- und Verkaufs-Bereiche und in allen Sprachtabellen.
+  // (hinweis.js und hinweis_motor.js führen die Wörter bewusst als Sperrliste und sind darum nicht dabei.)
+  { name: "Keine verbotenen Wörter in Lieferanten, Bestand, Aktionen, Beleg, Verkauf und Sprachtabellen",
+    dateien: ["js/lieferant.js", "js/bestand.js", "js/haltbar.js", "js/deal.js", "js/verkauf.js", "js/screens/lieferanten.js", "js/screens/bestand.js", "js/screens/aktionen.js", "js/screens/beleg.js", "js/screens/verkauf.js", "js/lang"],
+    darfNicht: VERBOTEN2 },
+
+  // Verdrahtung ohne Browser-Test: beim Betreten des Lieferanten-Bildschirms wird dessen Zustand zurückgesetzt.
+  { name: "Lieferanten-Bildschirm wird beim Betreten zurückgesetzt", dateien: ["js/app.js", "js/bedienung"], muss: /lieferantenZuruecksetzen/ },
+
+  // Rettungscode: das Blatt „Code vergessen?“ nutzt die zentrale Regel aus rettung.js (kein Browser-Test für diese Verdrahtung).
+  { name: "Zeki-Blatt (ebene.js) fragt rettungErlaubt aus rettung.js", dateien: ["js/screens"], muss: /rettungErlaubt\(/ },
+
+  // Rundgang: Station 12 zeigt „Senden“ nur und löst es nie aus (Overlay braucht den Browser).
+  { name: "Rundgang Station 12: nur zeigen, nie auslösen", dateien: ["js/screens/rundgang.js"], muss: /nurZeigen: true, umschlag: true/ },
+  // Kommentare mit „//“ sind ausgenommen: die Zeile darf DATEV nur hinter einem „/“ nennen.
+  { name: "Kein DATEV im Rundgang (außer in Kommentaren)", dateien: ["js/screens/rundgang.js"], darfNicht: /^[^/\n]*DATEV/m },
+
+  // Arabisch: Richtungs-Pfeile werden in RTL gespiegelt (Funktion, kein Aussehen). css-Ordner, damit eine Neuordnung nichts rot macht.
+  { name: "RTL spiegelt Richtungs-Pfeile (svg.sym.richtung)", dateien: ["css"], muss: /\[dir="rtl"\][^{]*svg\.sym\.richtung/ },
+
+  // Türkisch: Zeki-Blatt hat kein festes „OK“, der Knopf kommt aus der Sprachdatei.
+  { name: "Zeki-Blatt ohne festes „OK“", dateien: ["js/screens/ebene.js"], darfNicht: />OK</ },
+];
+
+// ───── Teil 3 ─────
+const VERBOTEN3 = /revolution(ä|ae)r|disruptiv|marktf(ü|ue)hrer|gobd-konform|betriebspr(ü|ue)fungsfest|steuersicher|rechtssicher/i;
+
+const TEIL3 = [
+  // aus tafel.test.mjs: „Keine verbotenen Wörter in den neuen Dateien“ (Projektregel: verbotene Wörter)
+  { name: "Menütafel: keine verbotenen Wörter", dateien: ["js/tafel.js", "js/screens/tafel.js", "js/bedienung", "js/lang"], darfNicht: VERBOTEN3 },
+  // aus aktion_plan.test.mjs: dieselbe Regel für Aktionsplanung
+  { name: "Aktionsplanung: keine verbotenen Wörter", dateien: ["js/aktion_plan.js", "js/screens/aktionen.js", "js/tafel.js", "js/bedienung", "js/lang"], darfNicht: VERBOTEN3 },
+  // aus aktion_plan.test.mjs: Laufzeit einer Aktion ist immer variabel (Vorgabe des Eigentümers 18.10.2026), keine feste Konstante mehr
+  { name: "Aktion: keine feste Laufzeit (KOMBI_LAUFZEIT_TAGE)", dateien: ["js/tafel.js"], darfNicht: /KOMBI_LAUFZEIT_TAGE/ },
+  // aus gastrocash-brand.test.mjs: Markenpaket nutzt nur lokale Dateien, respektiert reduzierte Bewegung
+  { name: "CSS: keine Fremdadressen und kein @import", dateien: ["css"], darfNicht: /@import|https?:\/\/(?!www\.w3\.org\/)/ },
+  { name: "CSS: reduzierte Bewegung wird beachtet", dateien: ["css"], muss: /prefers-reduced-motion/ },
+  { name: "index.html lädt das alte Marken-CSS nicht", dateien: ["index.html"], darfNicht: /css\/gastrocash-brand\.css/ },
+  // aus gastrocash-brand.test.mjs: der Küchenhelfer sitzt in Navigation, Hilfe und Tagesabschluss
+  { name: "Navigation zeigt den Küchenhelfer", dateien: ["js/screens", "js/bedienung"], muss: /mascotMarkup/ },
+  { name: "Hilfe hat den Küchenhelfer", dateien: ["js/screens", "js/bedienung"], muss: /gc-help-bot/ },
+  { name: "Tagesabschluss hat Küchenhelfer und wählt seinen Zustand nach der Lage", dateien: ["js/screens", "js/bedienung"], muss: /(?=[\s\S]*gc-ab-mascot)(?=[\s\S]*mascotResultState)/ },
+  // aus u.test.mjs: Schrift wächst mit der Handy-Einstellung – keine festen px bei font-size/font/line-height
+  { name: "CSS: keine festen px-Schriftgrößen", dateien: ["css"], darfNicht: /(?<![-\w])(?:font-size|font|line-height)\s*:\s*[^;}\n]*(?<![\w.])\d+(?:\.\d+)?px/ },
+];
+
+const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3];
+test("Quelltext-Wächter: jeder Eintrag nennt mindestens einen Ort, den es gibt", () => {
+  for (const w of WAECHTER) assert.ok(w.dateien.some((d) => fs.existsSync(path.join(WURZEL, d))), w.name + ": keiner der Orte existiert (" + w.dateien.join(", ") + ")");
+});
+for (const w of WAECHTER) test("Quelltext-Wächter: " + w.name, () => {
+  const text = w.dateien.map(lesen).join("\n");
+  if (w.muss) assert.match(text, w.muss, "fehlt in " + w.dateien.join(", "));
+  if (w.darfNicht) { const m = text.match(w.darfNicht); assert.equal(m, null, "verboten in " + w.dateien.join(", ") + ": " + (m && m[0])); }
+});

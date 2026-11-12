@@ -28,6 +28,8 @@ jobs:
       - run: TZ=UTC node --test tests/*.mjs
       - run: TZ=Europe/Berlin node --test tests/*.mjs
       - run: node tools/sprachpruefung.mjs
+      # 20 absichtliche Rechenfehler: jeder muss von den genannten Tests bemerkt werden (≈ 10 s)
+      - run: node tools/mutation.mjs
   # 17.10.2026 (Paket 7): Regelprüfung und Personal-Durchlauf im echten Browser. Seit 17.10. mittags blockierend
   # (5 stabile Läufe): neue Regelverstöße oder ein kaputter Personal-Modus gehen nicht mehr live.
   regeln:
