@@ -122,7 +122,7 @@ test("Abgleich: nur fremd geändert → fremd; beide geändert → eigener Stand
 });
 
 // ---------- 4. HACCP-Einträge ----------
-test("Einlesen ändert keine vorhandenen HACCP-Einträge; Zukunftsdaten werden nicht übernommen", () => {
+test("Einlesen ändert keine vorhandenen HACCP-Einträge; Zukunftsdaten werden übernommen und als „Datum prüfen“ markiert (Lauf 6, E5 B4: vorher verworfen)", () => {
   const jetzt = Date.parse("2026-10-15T12:00:00Z");
   const a = laden1(); a.messungen = [{ id: "m1", stelle: "k", datum: "2026-10-14", zeit: "2026-10-14T06:00:00Z", wert: 4, storniert: false }];
   const f = structuredClone(a); f.messungen[0].wert = 2; // bearbeitete Sicherung
@@ -131,7 +131,7 @@ test("Einlesen ändert keine vorhandenen HACCP-Einträge; Zukunftsdaten werden n
   const m = st.verschmelzen(a, f, { jetzt });
   assert.equal(m.messungen.find((x) => x.id === "m1").wert, 4, "eigener Wert bleibt");
   const k = m.messungen.find((x) => x.konfliktMit === "m1"); assert.ok(k); assert.equal(k.wert, 2); assert.equal(k.quelle, "sicherung"); assert.equal(k.importiert, true);
-  assert.equal(m.messungen.some((x) => x.id === "m2"), false, "Datum in der Zukunft nicht übernommen");
+  assert.equal(m.messungen.find((x) => x.id === "m2")?.datumPruefen, true, "Datum in der Zukunft übernommen und markiert (B4)");
   assert.equal(m.putzlog.length, 1, "neue Einträge kommen dazu");
   assert.deepEqual([m.abgleichHinweis.zukunft, m.abgleichHinweis.konflikte], [1, 1]);
   // erlaubt bleibt: Storno und nachgetragener Wert

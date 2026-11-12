@@ -1241,7 +1241,7 @@ function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; delete w.rettungPi
 // ---------- Zusammenführen ----------
 // W2-D (15.10.2026): Journale werden vereinigt (wie bisher). Stammdaten gewinnen nicht mehr als ganzer Laden, sondern je Bereich (BEREICHE).
 // HACCP-Nachweise (Messungen, Rundgänge, Putz-Nachweis, Belehrungen, Abschlüsse) werden beim Einlesen nie verändert: gleiche Kennung mit
-// anderem Inhalt kommt als eigener Eintrag daneben (quelle "sicherung", konfliktMit), Einträge mit Datum in der Zukunft werden nicht übernommen.
+// anderem Inhalt kommt als eigener Eintrag daneben (quelle "sicherung", konfliktMit). Einträge mit Datum in der Zukunft werden übernommen und mit datumPruefen: true markiert (Lauf 6, E5 B4).
 const TAG_MS = 86400e3;
 const HACCP = new Set(["messungen", "rundgaenge", "putzlog", "belehrungen", "abschluesse"]);
 // Zeitstempel aus der Zukunft (mehr als 1 Tag nach jetzt) zählen als jetzt – eine falsch gestellte Handy-Uhr gewinnt sonst jeden Abgleich
@@ -1260,7 +1260,7 @@ function stabil(x) {
   if (x && typeof x === "object") return "{" + Object.keys(x).filter((k) => x[k] !== undefined).sort().map((k) => JSON.stringify(k) + ":" + stabil(x[k])).join(",") + "}";
   return JSON.stringify(x ?? null);
 }
-const FLAGGEN = new Set(["storniert", "storniertZeit", "importiert", "konfliktMit", "quelleVorher"]);
+const FLAGGEN = new Set(["storniert", "storniertZeit", "importiert", "konfliktMit", "quelleVorher", "datumPruefen"]);
 function kern(e, ohneWert) { const o = {}; for (const k of Object.keys(e)) if (!FLAGGEN.has(k) && !(ohneWert && k === "wert")) o[k] = e[k]; return stabil(o); }
 
 // Journale: Vereinigung nach Kennung, Kennzeichen (storniert, entfernt, archiviert) gewinnen immer.
@@ -1272,14 +1272,15 @@ function journalVereinigen(a, b, kennzeichen = ["storniert"], { schutz = false, 
     if (!e || typeof e.id !== "string") continue;
     const alt = m.get(e.id);
     if (!alt) {
-      if (schutz && inZukunft(e, jetzt)) { if (bericht) bericht.zukunft += 1; continue; }
+      // Lauf 6, E5 (B4): Einträge mit Datum in der Zukunft werden NICHT mehr verworfen (HACCP-Nachweise gingen so still verloren), sondern übernommen und markiert
+      if (schutz && inZukunft(e, jetzt)) { if (bericht) bericht.zukunft += 1; m.set(e.id, { ...e, datumPruefen: true }); continue; }
       m.set(e.id, e); continue;
     }
     if (schutz && lokal.has(e.id)) {
       const ohneWert = alt.wert === null || e.wert === null;
       if (kern(alt, ohneWert) !== kern(e, ohneWert)) {
         const id = e.id + "~s" + kurzHash(stabil(e));
-        if (!m.has(id) && !inZukunft(e, jetzt)) { m.set(id, { ...e, id, quelleVorher: e.quelle ?? null, quelle: "sicherung", importiert: true, konfliktMit: e.id }); if (bericht) bericht.konflikte += 1; }
+        if (!m.has(id)) { const zuk = inZukunft(e, jetzt); m.set(id, { ...e, id, quelleVorher: e.quelle ?? null, quelle: "sicherung", importiert: true, konfliktMit: e.id, ...(zuk ? { datumPruefen: true } : {}) }); if (bericht) { bericht.konflikte += 1; if (zuk) bericht.zukunft += 1; } }
         continue;
       }
       const neu = { ...alt };

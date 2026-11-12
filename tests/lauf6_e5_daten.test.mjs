@@ -171,3 +171,22 @@ test("P2 B3: eingefrorener Monat trägt einen Fingerabdruck der Umsatzeinträge;
   // alter Abschluss ohne Fingerabdruck
   const alt = J(m); delete ma.eingefroren(alt, monat).abdruck; assert.equal(ma.abschlussVeraltet(alt, monat), false);
 });
+
+// ---------- P2 B4: Zukunftsregel ----------
+test("P2 B4: Datei mit 398 Zukunfts-Einträgen in ein leeres Handy – 398 sind da, alle als „Datum prüfen“ markiert, bericht.zukunft zählt weiter", async () => {
+  idbAttrappe(); await st.laden();
+  const b = laden("Z1"); const jetzt = Date.parse("2026-11-12T12:00:00Z");
+  for (let i = 0; i < 398; i++) b.messungen.push({ id: "z" + i, lfd: i + 1, stelle: "k1", datum: "2027-03-" + String((i % 28) + 1).padStart(2, "0"), zeit: "2027-03-01T06:00:00.000Z", wert: 4, erfasst: "2027-03-01T06:00:00.000Z", storniert: false });
+  b.messungen.push({ id: "heute", lfd: 999, stelle: "k1", datum: "2026-11-12", zeit: "2026-11-12T06:00:00.000Z", wert: 4, erfasst: "2026-11-12T06:00:00.000Z", storniert: false });
+  const { blob } = await st.exportDatei(wurzelMit(b), { mitAblage: false }); const r = await st.importSicherung(blob);
+  const leer = st.leereWurzel(); const bericht = st.zusammenfuehren(leer, r.wurzel, { jetzt }).bericht;
+  const m = leer.betriebe[0].messungen;
+  assert.equal(m.length, 399); assert.equal(m.filter((x) => x.datumPruefen === true).length, 398); assert.equal(m.find((x) => x.id === "heute").datumPruefen, undefined);
+  assert.equal(bericht.zukunft, 398); assert.equal(leer.betriebe[0].abgleichHinweis.zukunft, 398);
+  // zweites Einlesen derselben Datei: nichts doppelt, nichts neu gezählt
+  const r2 = st.zusammenfuehren(leer, (await st.importSicherung(blob)).wurzel, { jetzt }); assert.equal(leer.betriebe[0].messungen.length, 399); assert.equal(r2.bericht.zukunft, 0); assert.equal(r2.bericht.konflikte, 0);
+  // Rundreise: die Markierung übersteht Speichern und Laden
+  const w2 = st.migrierenWurzel(J(leer)); assert.equal(w2.betriebe[0].messungen.filter((x) => x.datumPruefen === true).length, 398);
+  // in ein vorhandenes Handy (verschmelzen): ebenfalls übernommen
+  const a = laden("Z1"); const v = st.verschmelzen(a, b, { jetzt }); assert.equal(v.messungen.filter((x) => x.datumPruefen).length, 398);
+});
