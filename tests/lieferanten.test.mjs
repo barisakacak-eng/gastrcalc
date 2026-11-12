@@ -3,9 +3,6 @@
 // Zusammenführen, Oberfläche. Dazu: Kürzel ausgeschiedener Mitarbeiter (Auswahl-Listen, alte Nachweise mit Datum, Hinweis im Büro).
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 const st = await import("../js/store.js");
 const L = await import("../js/lieferant.js");
@@ -17,7 +14,6 @@ const { beispielLaden } = await import("../js/beispiel.js");
 const B = await import("../js/screens/bestand.js");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
-const HIER = path.dirname(fileURLToPath(import.meta.url));
 const MO = "2026-10-19"; // Montag
 const nb = (x) => (Array.isArray(x) ? x.map(nb) : String(x).replace(/\s/g, " ")); // Euro-Beträge tragen ein festes Leerzeichen
 const um = (tag, h, m = 0) => new Date(`${tag}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`);
@@ -318,15 +314,13 @@ test("Oberfläche: Büro-Einstieg, Liste, Bearbeiten, Waren zuordnen, Anzeigen s
   for (const n of ["lf-neu", "lf-auf", "lf-speichern", "lf-anlegen", "lf-entfernen", "lf-zuordnen", "lf-tag"]) assert.equal(M.personalGesperrt(n, null, MO), true, n);
   assert.deepEqual(M.navZiel({ modus: "laden" }, "lieferanten"), { ansicht: "lieferanten", buero: true });
   // Texte: alle Schlüssel in allen 18 Sprachen, keine verbotenen Wörter
-  const de = (await import("../js/lang/de.js")).default; const codes = fs.readdirSync(path.join(HIER, "..", "js", "lang")).filter((f) => f.endsWith(".js")).map((f) => f.slice(0, -3)); assert.equal(codes.length, 18);
+  const de = (await import("../js/lang/de.js")).default; const codes = [...i18n.SPRACHEN]; assert.equal(codes.length, 18);
   const flach = (o, p = "") => Object.entries(o).flatMap(([k, v]) => (v && typeof v === "object" && !Array.isArray(v) ? flach(v, p + k + ".") : [p + k]));
   const hol = (o, k) => k.split(".").reduce((x, y) => x?.[y], o);
   for (const c of codes) { const tab = (await import(`../js/lang/${c}.js`)).default;
     for (const k of flach(de.lieferanten)) assert.ok(hol(tab.lieferanten, k) !== undefined, `${c}: lieferanten.${k}`);
     for (const k of ["ausgeschiedeneListe", "personAltHinweis"]) assert.ok(tab.amtW2[k], `${c}: amtW2.${k}`); }
-  const VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betriebsprüfungsfest", "steuersicher", "rechtssicher"];
-  for (const f of ["js/lieferant.js", "js/bestand.js", "js/screens/lieferanten.js", "js/screens/bestand.js", ...codes.map((c) => `js/lang/${c}.js`)]) { const src = fs.readFileSync(path.join(HIER, "..", f), "utf8"); for (const v of VERBOTEN) assert.ok(!src.includes(v), `${f}: ${v}`); }
-  assert.match(fs.readFileSync(path.join(HIER, "..", "js", "app.js"), "utf8"), /lieferantenZuruecksetzen/);
+  // verbotene Wörter in Quelltext und Sprachtabellen sowie die Verdrahtung lieferantenZuruecksetzen (app.js): tests/quelltext_waechter_teil2.mjs
 });
 
 // ---------- Kürzel ausgeschiedener Mitarbeiter ----------

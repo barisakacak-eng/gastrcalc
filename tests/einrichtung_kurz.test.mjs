@@ -2,7 +2,7 @@
 // „Später“ bei der Karte wird respektiert, Vorlage „Döner & Grill“ nur mit passenden Gerichten, keine Fachwörter in der Einrichtung.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
+import { einstellungenView } from "../js/screens/home.js";
 import { leererBetrieb } from "../js/store.js";
 import { SCHNELL, SCHRITTE } from "../js/screens/onboarding.js";
 import { vorlagenSortiert } from "../js/profil.js";
@@ -26,7 +26,8 @@ test("Rechtsform steht in keiner Einrichtung mehr, im Büro bleibt die Auswahl",
     assert.ok(!html.includes('data-a="rechtsform"'), st.id + " zeigt Rechtsform");
     assert.ok(!/GbR|OHG|haftungsbeschränkt/.test(html), st.id + " zeigt Rechtsformnamen");
   }
-  assert.ok(fs.readFileSync(new URL("../js/screens/home.js", import.meta.url), "utf8").includes('data-a="rechtsform"'), "Büro (Einstellungen) bietet die Auswahl");
+  const w = { betriebe: [s], aktiv: s.id };
+  assert.ok(einstellungenView(s, 0, w, {}).includes('data-a="rechtsform"'), "Büro (Einstellungen) bietet die Auswahl");
 });
 
 test("ohne Rechtsform: Steuer-Hinweise für alle laufen, Büro meldet „Rechtsform fehlt“, Setzen im Büro wirkt", () => {

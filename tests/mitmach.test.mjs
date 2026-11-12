@@ -2,7 +2,6 @@
 // (JSON-Vergleich; nur das Merkzeichen „Rundgang gesehen“ und der angehängte Zeki-Verlauf kommen dazu). Läuft gegen die IndexedDB-Attrappe.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
 globalThis.document ??= { documentElement: {} };
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 import { jahresStand } from "./hilfe/jahr.mjs";
@@ -87,7 +86,5 @@ test("Rundgang-Texte: jede Blase höchstens 15 Wörter (de, tr, en), kein DATEV,
     assert.ok(woerter(frage) <= 15, `${sp} Station 9: ${frage}`);
   }
   i18n.setzeSprache("de");
-  const quelle = fs.readFileSync(new URL("../js/screens/rundgang.js", import.meta.url), "utf8");
-  assert.ok(!/DATEV/.test(quelle.replace(/\/\/.*$/gm, "")), "kein DATEV im Rundgang");
-  assert.match(quelle, /nurZeigen: true, umschlag: true/, "Station 12 zeigt Senden nur, löst es nie aus");
+  // „kein DATEV im Rundgang“ und „Station 12 zeigt Senden nur“ (Overlay braucht den Browser): tests/quelltext_waechter_teil2.mjs
 });

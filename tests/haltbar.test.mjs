@@ -3,9 +3,6 @@
 // Speichern/Sicherung rund, Zusammenführen, Beispiel-Laden an jedem Wochentag, Oberfläche (Büro ja, Laden nein, Personal gesperrt).
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 const st = await import("../js/store.js");
 const h = await import("../js/haltbar.js");
@@ -15,7 +12,6 @@ const { tagPlus, wochentag } = await import("../js/engine.js");
 const { beispielLaden, HALTBAR_BEISPIEL } = await import("../js/beispiel.js");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
-const HIER = path.dirname(fileURLToPath(import.meta.url));
 
 const H = "2026-10-17"; // Samstag
 const nah = (x, y, eps = 1e-6) => assert.ok(Math.abs(x - y) <= eps, `${x} ≠ ${y}`);
@@ -222,10 +218,7 @@ test("Oberfläche: Büro-Einstieg und Hinweis, Bereich mit drei Teilen und Kasse
   const k = aktionenView(s); assert.ok(k.includes('data-kombi="1"') && k.includes('data-stufe="vorsichtig"') && k.includes('data-stufe="stark"'), "drei Stufen");
   assert.match(aktionenTextFuer(s, "kombi", "normal"), /^Döner Kebab \+ Pommes frites \+ Cola 0,33 l nur \d+,\d0\s€$/);
   assert.equal(await aktionenAktion("akt-kombi-leeren", { dataset: {} }, s), true); assert.ok(!aktionenView(s).includes('data-kombi="1"'));
-  const VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betriebsprüfungsfest", "steuersicher", "rechtssicher"];
-  for (const f of ["js/haltbar.js", "js/deal.js", "js/screens/aktionen.js", "js/screens/beleg.js", ...fs.readdirSync(path.join(HIER, "..", "js", "lang")).map((x) => "js/lang/" + x)]) {
-    const t = fs.readFileSync(path.join(HIER, "..", f), "utf8").toLowerCase(); for (const v of VERBOTEN) assert.ok(!t.includes(v.toLowerCase()), f + ": " + v);
-  }
+  // verbotene Wörter im Quelltext: tests/quelltext_waechter_teil2.mjs
   for (const c of i18n.SPRACHEN) { await i18n.ladeSprache(c); assert.deepEqual(i18n.fehlendeSchluessel(c).filter((k) => k.startsWith("aktionen")), [], c); }
   i18n.setzeSprache("de");
 });

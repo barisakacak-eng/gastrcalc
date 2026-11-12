@@ -351,8 +351,7 @@ test("E7 Oberfläche: Büro-Einstieg nur mit Schalter; Texte in allen Sprachen o
   assert.ok(bueroView(b, w).includes('data-wert="verkauf"'), "Beispiel-Laden: Einstieg sichtbar");
   const { verkaufView } = await import("../js/screens/verkauf.js");
   const html = verkaufView(b); assert.match(html, /Cola 0,33 l/); assert.match(html, /Adana-Spieß/); assert.ok(!/undefined|NaN/.test(html), "keine Lücken im Text");
-  const VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betriebsprüfungsfest", "steuersicher", "rechtssicher"];
-  for (const f of ["js/verkauf.js", "js/screens/verkauf.js"]) { const t = fs.readFileSync(path.join(HIER, "..", f), "utf8").toLowerCase(); for (const v of VERBOTEN) assert.ok(!t.includes(v.toLowerCase()), f + ": " + v); }
+  // verbotene Wörter im Quelltext: tests/quelltext_waechter_teil2.mjs
 });
 
 test("E7: Inventur merkt den Packungsinhalt; Abgleich nutzt ihn auch nach einem Gebinde-Wechsel", async () => {

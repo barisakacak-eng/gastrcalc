@@ -3,9 +3,6 @@
 // Migration, Sicherung rund, Beispiel-Laden, Oberfläche.
 import test from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 const st = await import("../js/store.js");
 const b = await import("../js/bestand.js");
@@ -16,7 +13,6 @@ const { tagPlus, wochentag } = await import("../js/engine.js");
 const { beispielLaden, KNAPP_BEISPIEL } = await import("../js/beispiel.js");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
-const HIER = path.dirname(fileURLToPath(import.meta.url));
 
 const H = "2026-10-17"; // Samstag
 const nah = (x, y, eps = 1e-6) => assert.ok(Math.abs(x - y) <= eps, `${x} ≠ ${y}`);
@@ -256,10 +252,7 @@ test("Oberfläche: Büro-Einstieg für alle, Bereich mit Uhrzeit, Bestellliste, 
   // Personal-Modus: nicht erreichbar; Laden: führt ins Büro
   assert.equal(navZiel({ modus: "personal" }, "bestand").ansicht, "personal"); assert.equal(ansichtErlaubt({ modus: "personal" }, "bestand"), false);
   assert.equal(navZiel({ modus: "laden" }, "bestand").buero, true);
-  const VERBOTEN = ["revolutionär", "disruptiv", "Marktführer", "GoBD-konform", "betriebsprüfungsfest", "steuersicher", "rechtssicher"];
-  for (const f of ["js/bestand.js", "js/screens/bestand.js", ...fs.readdirSync(path.join(HIER, "..", "js", "lang")).map((x) => "js/lang/" + x)]) {
-    const t = fs.readFileSync(path.join(HIER, "..", f), "utf8").toLowerCase(); for (const v of VERBOTEN) assert.ok(!t.includes(v.toLowerCase()), f + ": " + v);
-  }
+  // verbotene Wörter im Quelltext: tests/quelltext_waechter_teil2.mjs
   for (const c of i18n.SPRACHEN) { await i18n.ladeSprache(c); assert.deepEqual(i18n.fehlendeSchluessel(c).filter((k) => k.startsWith("bestand")), [], c); }
 });
 

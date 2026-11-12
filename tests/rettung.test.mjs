@@ -1,7 +1,6 @@
 // Rettung (17.10.2026): Rettungscode für den Büro-Code (nur Prüfwert gespeichert, gleiche Bremse) und „Sicherung ersetzt alles“ auf der Fehlerseite.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
 const M = await import("../js/modus.js");
 const R = await import("../js/rettung.js");
 const S = await import("../js/store.js");
@@ -90,8 +89,7 @@ test("Personal-Modus: „Code vergessen?“ nur am Schloss, sonst kein Zugriff a
   // gleiche Bremse wie überall
   for (let i = 0; i < M.SPERRE_AB; i++) await R.rettungVersuch(w, "ZZZZ-ZZZZ-ZZZZ", { jetzt: 1e12 });
   assert.ok(M.sperreRest(w, 1e12) > 0, "Bremse greift auch vom Schloss aus");
-  const src = fs.readFileSync(new URL("../js/screens/ebene.js", import.meta.url), "utf8");
-  assert.match(src, /rettungErlaubt\(p\.wurzel, p\.zweck\)/, "Blatt nutzt die Regel aus rettung.js");
+  // Dass das Blatt in screens/ebene.js diese Regel nutzt: tests/quelltext_waechter_teil2.mjs
 });
 
 test("Migration und Sicherung: Abdruck übersteht den Neustart, geht nie in die Sicherung, Einlesen übernimmt ihn nicht", async () => {
@@ -122,7 +120,7 @@ test("Fehlerseite: Sicherung ersetzt den Stand, Büro-Code und Rettungscode des 
 });
 
 test("Texte: in allen 18 Sprachen, ohne verbotene Wörter", async () => {
-  const dir = new URL("../js/lang/", import.meta.url); const codes = fs.readdirSync(dir).map((f) => f.replace(".js", ""));
+  const codes = [...(await import("../js/i18n.js")).SPRACHEN];
   assert.equal(codes.length, 18);
   const verboten = /revolution|disrupt|marktführer|gobd-konform|betriebsprüfungsfest|steuersicher|rechtssicher/i;
   const de = (await import("../js/lang/de.js")).default.rettung;

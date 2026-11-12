@@ -12,6 +12,7 @@ for (const s of SPRACHEN) {
 }
 test("Speicher behält jede Sprache der App", async () => {
   const { SPRACH_NAMEN } = await import("../js/i18n.js");
-  const src = (await import("node:fs")).readFileSync(new URL("../js/store.js", import.meta.url), "utf8");
-  for (const c of Object.keys(SPRACH_NAMEN)) assert.ok(src.includes(`"${c}"`), c);
+  const { migrierenWurzel } = await import("../js/store.js");
+  for (const c of Object.keys(SPRACH_NAMEN)) assert.equal(migrierenWurzel({ betriebe: [], sprache: c }).sprache, c, c);
+  assert.equal(migrierenWurzel({ betriebe: [], sprache: "xx" }).sprache, null, "unbekannter Code fällt weg");
 });
