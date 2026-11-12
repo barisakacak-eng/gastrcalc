@@ -1,0 +1,218 @@
+[
+  {
+    "name": "I.1 Start",
+    "pose": "start",
+    "title": "Heute",
+    "satz": "Kühlung prüfen",
+    "action": "Starten",
+    "nav": true,
+    "extra": ""
+  },
+  {
+    "name": "I.2 Foto-Auswahl",
+    "pose": "foto-auswahl",
+    "title": "Müll",
+    "satz": "Was ist weg?",
+    "action": "Weiter",
+    "nav": false,
+    "extra": "gc-muell"
+  },
+  {
+    "name": "I.3 Zahl eingeben",
+    "pose": "zahl-eingeben",
+    "title": "Müll",
+    "satz": "Menge eintragen",
+    "action": "Speichern",
+    "nav": false,
+    "extra": "gc-muell"
+  },
+  {
+    "name": "I.4 Rundgang",
+    "pose": "rundgang",
+    "title": "Kühlung",
+    "satz": "Kühlschrank 1",
+    "action": "Speichern",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.5 Abhak-Liste",
+    "pose": "abhak-liste",
+    "title": "Putzen",
+    "satz": "Was ist heute dran?",
+    "action": "Tag abschließen",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.6 Geschafft",
+    "pose": "geschafft",
+    "title": "Fertig",
+    "satz": "Tag geschafft",
+    "action": "Zur Übersicht",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.7 Büro",
+    "pose": "buero",
+    "title": "Büro",
+    "satz": "Was möchtest du wissen?",
+    "action": null,
+    "nav": true,
+    "extra": ""
+  },
+  {
+    "name": "I.8 Eintragsliste",
+    "pose": "eintragsliste",
+    "title": "Karte",
+    "satz": "Deine Gerichte",
+    "action": "Hinzufügen",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.9 Eintrag ändern",
+    "pose": "eintrag-aendern",
+    "title": "Karte",
+    "satz": "Gericht bearbeiten",
+    "action": "Speichern",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.10 Zahlen und Verlauf",
+    "pose": "zahlen-verlauf",
+    "title": "Umsatz",
+    "satz": "Wie lese ich das?",
+    "action": null,
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.11 Papier und Aushang",
+    "pose": "papier-aushang",
+    "title": "Nachweise",
+    "satz": "Deine Unterlagen",
+    "action": "PDF öffnen",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "I.12 Blatt und Sperre",
+    "pose": "blatt-sperre",
+    "title": "Büro",
+    "satz": "Büro entsperren",
+    "action": "Entsperren",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.1 Intro",
+    "pose": "intro",
+    "title": "Intro",
+    "satz": "",
+    "action": null,
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.2 Sprache",
+    "pose": "sprache",
+    "title": "Sprache",
+    "satz": "Selam, Chef! Ich bin Zeki.",
+    "action": "Weiter",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.3 Laden",
+    "pose": "laden",
+    "title": "Laden",
+    "satz": "Wie heißt dein Laden? Und was verkaufst du?",
+    "action": "Weiter",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.4 Karte fotografieren",
+    "pose": "karte-fotografieren",
+    "title": "Karte",
+    "satz": "Fotografiere deine Karte. Ich lese Gerichte und Preise.",
+    "action": null,
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.5 Kühlgeräte",
+    "pose": "kuehlgeraete",
+    "title": "Kühlgeräte",
+    "satz": "Welche Kühlgeräte hast du? Drück einfach Plus.",
+    "action": "Weiter",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.6 Kosten",
+    "pose": "kosten",
+    "title": "Monatskosten",
+    "satz": "Was kostet der Laden im Monat? Ungefähr reicht.",
+    "action": "Weiter",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.7 Fertig",
+    "pose": "fertig",
+    "title": "Fertig",
+    "satz": "Stark, Chef! Ab jetzt bin ich immer da.",
+    "action": "Los geht’s",
+    "nav": false,
+    "extra": ""
+  },
+  {
+    "name": "II.8 Führung",
+    "pose": "fuehrung",
+    "title": "Heute",
+    "satz": "",
+    "action": null,
+    "nav": false,
+    "extra": "gc-tour"
+  },
+  {
+    "name": "II.9 Heute morgens",
+    "pose": "heute-morgen",
+    "title": "Heute",
+    "satz": "Hallo, Chef!",
+    "action": null,
+    "nav": true,
+    "extra": ""
+  },
+  {
+    "name": "II.10 Heute mittendrin",
+    "pose": "heute-mittendrin",
+    "title": "Heute",
+    "satz": "Jetzt ist der Putzplan dran.",
+    "action": null,
+    "nav": true,
+    "extra": ""
+  },
+  {
+    "name": "II.11 Heute abends",
+    "pose": "heute-abend",
+    "title": "Heute",
+    "satz": "Für heute alles erledigt.",
+    "action": null,
+    "nav": true,
+    "extra": ""
+  },
+  {
+    "name": "II.12 Menü-Blatt",
+    "pose": "menue-blatt",
+    "title": "Heute",
+    "satz": "",
+    "action": null,
+    "nav": false,
+    "extra": ""
+  }
+]

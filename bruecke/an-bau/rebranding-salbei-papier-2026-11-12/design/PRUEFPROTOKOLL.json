@@ -1,0 +1,535 @@
+{
+  "quelle_commit": "8685f0997a4d7a4c62bce503f9a6f2b787417888",
+  "dateien": 249,
+  "html_bildverweise_fehlen": [],
+  "svg_viewBox": "0 0 237 328",
+  "svg_teile_vollstaendig": true,
+  "skript_dateien_im_paket": [],
+  "raster": [
+    {
+      "datei": "assets/brand/zeki/auftreten.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/kopf-drehen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/grinsen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/zahlen-zeigen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/zeigen-rechts.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/pruefen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/jubeln.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/zeigen-unten.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/zeigen-oben.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/nachdenken.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/zeigen-links.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/kopfschuetteln.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/schreiben.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/daumen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/hand.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/nicken.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/warten.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/foto.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/schuerze.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/abgehen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/zwinkern.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/muenze.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/suchen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/papier-zeigen.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    },
+    {
+      "datei": "assets/brand/zeki/preis.webp",
+      "masse": [
+        2560,
+        3180
+      ],
+      "rgba": true,
+      "rand_4px": true,
+      "stil_abgenommen": false
+    }
+  ],
+  "haltungen": [
+    {
+      "datei": "start.webp",
+      "bytes": 11760,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "blatt-sperre.webp",
+      "bytes": 10702,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "geschafft.webp",
+      "bytes": 11650,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "buero.webp",
+      "bytes": 10702,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "menue-blatt.webp",
+      "bytes": 11022,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "zahl-eingeben.webp",
+      "bytes": 10554,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "intro.webp",
+      "bytes": 8484,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "kosten.webp",
+      "bytes": 10972,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "heute-morgen.webp",
+      "bytes": 11760,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "zahlen-verlauf.webp",
+      "bytes": 10904,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "karte-fotografieren.webp",
+      "bytes": 9768,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "sprache.webp",
+      "bytes": 11760,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "papier-aushang.webp",
+      "bytes": 11016,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "heute-abend.webp",
+      "bytes": 11252,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "eintragsliste.webp",
+      "bytes": 11434,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "rundgang.webp",
+      "bytes": 10702,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "abhak-liste.webp",
+      "bytes": 11022,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "kuehlgeraete.webp",
+      "bytes": 10702,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "fertig.webp",
+      "bytes": 11650,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "heute-mittendrin.webp",
+      "bytes": 11710,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "laden.webp",
+      "bytes": 11022,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "foto-auswahl.webp",
+      "bytes": 11710,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "eintrag-aendern.webp",
+      "bytes": 10972,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    },
+    {
+      "datei": "fuehrung.webp",
+      "bytes": 11470,
+      "unter_60KB": true,
+      "masse": [
+        512,
+        460
+      ],
+      "gemalte_endfassung": false
+    }
+  ],
+  "fonts": [
+    {
+      "datei": "NotoSans-Bold.ttf",
+      "tuerkisch": true,
+      "griechisch": true,
+      "kyrillisch": true,
+      "arabisch": false
+    },
+    {
+      "datei": "NotoSansArabic-Regular.ttf",
+      "tuerkisch": false,
+      "griechisch": false,
+      "kyrillisch": false,
+      "arabisch": true
+    },
+    {
+      "datei": "NotoSans-Regular.ttf",
+      "tuerkisch": true,
+      "griechisch": true,
+      "kyrillisch": true,
+      "arabisch": false
+    },
+    {
+      "datei": "NotoSansArabic-Bold.ttf",
+      "tuerkisch": false,
+      "griechisch": false,
+      "kyrillisch": false,
+      "arabisch": true
+    }
+  ],
+  "browserpruefung": "NICHT AUSGEFUEHRT: Chromium Start abgebrochen: socket() failed Operation not permitted",
+  "gesamtstatus": "NICHT ABNAHMEFAEHIG – B4/B5/B6 gemalter Stil und Gelenkqualitaet offen; B2/B3 nicht im Browser abgenommen",
+  "svg_unter20KB": true
+}

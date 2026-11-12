@@ -1,0 +1,477 @@
+{
+  "status": "Technische Proofs; nicht als gemalte Endfassung freigegeben.",
+  "raster": [
+    {
+      "name": "zwinkern",
+      "datei": "zwinkern.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "grinsen",
+      "datei": "grinsen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "hand",
+      "datei": "hand.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "nicken",
+      "datei": "nicken.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "kopfschuetteln",
+      "datei": "kopfschuetteln.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "pruefen",
+      "datei": "pruefen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "preis",
+      "datei": "preis.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "zeigen-links",
+      "datei": "zeigen-links.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "zeigen-rechts",
+      "datei": "zeigen-rechts.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "zeigen-oben",
+      "datei": "zeigen-oben.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "zeigen-unten",
+      "datei": "zeigen-unten.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "kopf-drehen",
+      "datei": "kopf-drehen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "warten",
+      "datei": "warten.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "auftreten",
+      "datei": "auftreten.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 2400,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "abgehen",
+      "datei": "abgehen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 2400,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "schuerze",
+      "datei": "schuerze.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "daumen",
+      "datei": "daumen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "nachdenken",
+      "datei": "nachdenken.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "schreiben",
+      "datei": "schreiben.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "suchen",
+      "datei": "suchen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "zahlen-zeigen",
+      "datei": "zahlen-zeigen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "papier-zeigen",
+      "datei": "papier-zeigen.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "jubeln",
+      "datei": "jubeln.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "foto",
+      "datei": "foto.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    },
+    {
+      "name": "muenze",
+      "datei": "muenze.webp",
+      "raster": [
+        5,
+        5
+      ],
+      "zelle": [
+        512,
+        636
+      ],
+      "dauer_ms": 1800,
+      "status": "Technischer Vektor-Proof, gemalter Stil offen"
+    }
+  ],
+  "buehne": [
+    {
+      "bauart": "start",
+      "haltung": "hand",
+      "datei": "assets/brand/zeki-buehne/start.webp"
+    },
+    {
+      "bauart": "foto-auswahl",
+      "haltung": "zeigen-unten",
+      "datei": "assets/brand/zeki-buehne/foto-auswahl.webp"
+    },
+    {
+      "bauart": "zahl-eingeben",
+      "haltung": "schreiben",
+      "datei": "assets/brand/zeki-buehne/zahl-eingeben.webp"
+    },
+    {
+      "bauart": "rundgang",
+      "haltung": "pruefen",
+      "datei": "assets/brand/zeki-buehne/rundgang.webp"
+    },
+    {
+      "bauart": "abhak-liste",
+      "haltung": "zeigen-links",
+      "datei": "assets/brand/zeki-buehne/abhak-liste.webp"
+    },
+    {
+      "bauart": "geschafft",
+      "haltung": "jubeln",
+      "datei": "assets/brand/zeki-buehne/geschafft.webp"
+    },
+    {
+      "bauart": "buero",
+      "haltung": "nachdenken",
+      "datei": "assets/brand/zeki-buehne/buero.webp"
+    },
+    {
+      "bauart": "eintragsliste",
+      "haltung": "suchen",
+      "datei": "assets/brand/zeki-buehne/eintragsliste.webp"
+    },
+    {
+      "bauart": "eintrag-aendern",
+      "haltung": "preis",
+      "datei": "assets/brand/zeki-buehne/eintrag-aendern.webp"
+    },
+    {
+      "bauart": "zahlen-verlauf",
+      "haltung": "zahlen-zeigen",
+      "datei": "assets/brand/zeki-buehne/zahlen-verlauf.webp"
+    },
+    {
+      "bauart": "papier-aushang",
+      "haltung": "papier-zeigen",
+      "datei": "assets/brand/zeki-buehne/papier-aushang.webp"
+    },
+    {
+      "bauart": "blatt-sperre",
+      "haltung": "pruefen",
+      "datei": "assets/brand/zeki-buehne/blatt-sperre.webp"
+    },
+    {
+      "bauart": "intro",
+      "haltung": "auftreten",
+      "datei": "assets/brand/zeki-buehne/intro.webp"
+    },
+    {
+      "bauart": "sprache",
+      "haltung": "hand",
+      "datei": "assets/brand/zeki-buehne/sprache.webp"
+    },
+    {
+      "bauart": "laden",
+      "haltung": "zeigen-links",
+      "datei": "assets/brand/zeki-buehne/laden.webp"
+    },
+    {
+      "bauart": "karte-fotografieren",
+      "haltung": "foto",
+      "datei": "assets/brand/zeki-buehne/karte-fotografieren.webp"
+    },
+    {
+      "bauart": "kuehlgeraete",
+      "haltung": "pruefen",
+      "datei": "assets/brand/zeki-buehne/kuehlgeraete.webp"
+    },
+    {
+      "bauart": "kosten",
+      "haltung": "preis",
+      "datei": "assets/brand/zeki-buehne/kosten.webp"
+    },
+    {
+      "bauart": "fertig",
+      "haltung": "jubeln",
+      "datei": "assets/brand/zeki-buehne/fertig.webp"
+    },
+    {
+      "bauart": "fuehrung",
+      "haltung": "zeigen-oben",
+      "datei": "assets/brand/zeki-buehne/fuehrung.webp"
+    },
+    {
+      "bauart": "heute-morgen",
+      "haltung": "hand",
+      "datei": "assets/brand/zeki-buehne/heute-morgen.webp"
+    },
+    {
+      "bauart": "heute-mittendrin",
+      "haltung": "zeigen-unten",
+      "datei": "assets/brand/zeki-buehne/heute-mittendrin.webp"
+    },
+    {
+      "bauart": "heute-abend",
+      "haltung": "nicken",
+      "datei": "assets/brand/zeki-buehne/heute-abend.webp"
+    },
+    {
+      "bauart": "menue-blatt",
+      "haltung": "zeigen-links",
+      "datei": "assets/brand/zeki-buehne/menue-blatt.webp"
+    }
+  ]
+}

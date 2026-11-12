@@ -1,0 +1,1247 @@
+[
+  {
+    "pfad": "LIESMICH_SANJI.md",
+    "bytes": 13040,
+    "sha256": "8dd9594dba55da9f9b98c4d0d0c6d5bd5277e5c3cfcddff4db7b402ff528e867"
+  },
+  {
+    "pfad": "assets/brand/mienen/aufmerksam.svg",
+    "bytes": 63270,
+    "sha256": "4ed259b6d79d05ce0ec44d588081344c51e9e74d9f5124b7948adec6eb8b730a"
+  },
+  {
+    "pfad": "assets/brand/mienen/bestaetigt.svg",
+    "bytes": 63270,
+    "sha256": "133eab042605682b03cab7c8c3a04c207d3830e6b1c38dd6c72140240306b410"
+  },
+  {
+    "pfad": "assets/brand/mienen/erleichtert.svg",
+    "bytes": 63272,
+    "sha256": "50ffef63a362855d740e288a2b1bbd2b1a65443e82a3af4622bbe2af3504b79b"
+  },
+  {
+    "pfad": "assets/brand/mienen/fehler.svg",
+    "bytes": 63262,
+    "sha256": "cdec94dd01c3e61014082c89b078e29ea9edeafdfbbea356cf4c6a8bdd92b896"
+  },
+  {
+    "pfad": "assets/brand/mienen/frage.svg",
+    "bytes": 63260,
+    "sha256": "d75ac54731ea2ab334e672f8ad307394f207205eb7575418808d939b8f2db145"
+  },
+  {
+    "pfad": "assets/brand/mienen/freude.svg",
+    "bytes": 63262,
+    "sha256": "2bcca405322161d486d1d11ba67a05377d9e29b05a34763ae399d91197d1bb29"
+  },
+  {
+    "pfad": "assets/brand/mienen/hilfe.svg",
+    "bytes": 63260,
+    "sha256": "843b37166bf9b98ab3730c5fbf0480174acf8aab0483799301b5db9278e4f8a8"
+  },
+  {
+    "pfad": "assets/brand/mienen/import.svg",
+    "bytes": 63262,
+    "sha256": "30b0959764071802af5d48861456af5c7fb9ba8b3b503194deacf261e77e72be"
+  },
+  {
+    "pfad": "assets/brand/mienen/neutral.svg",
+    "bytes": 63264,
+    "sha256": "ff0a4f1dd3781ebda49b39c7840bbf63475d49758d5c6ddb9f3bba896b9062bf"
+  },
+  {
+    "pfad": "assets/brand/mienen/preis.svg",
+    "bytes": 63260,
+    "sha256": "33162af855622338e37ab9023d75d3923bde60b0f87d854e39fe1b55135683bd"
+  },
+  {
+    "pfad": "assets/brand/mienen/warnung.svg",
+    "bytes": 63264,
+    "sha256": "59355da36a1dc073ceaf9520faaa13c3e2b5bcc93f600bd7de460c4bb71df657"
+  },
+  {
+    "pfad": "assets/brand/zeki/abgehen.webp",
+    "bytes": 527636,
+    "sha256": "3adb623908693ab06ec85d85dedc3b76d126d5b8272ffb5907ddab78421bfc6d"
+  },
+  {
+    "pfad": "assets/brand/zeki/auftreten.webp",
+    "bytes": 526484,
+    "sha256": "f0de48ae6ce1568c5fd6253df630a2a129a2429bd14a5911dc8c10f92187e00a"
+  },
+  {
+    "pfad": "assets/brand/zeki/daumen.webp",
+    "bytes": 599426,
+    "sha256": "40a9e58f580801fe4e8764bd09abad5cf8861936302f32817fde1e72f8cf5f86"
+  },
+  {
+    "pfad": "assets/brand/zeki/foto.webp",
+    "bytes": 573830,
+    "sha256": "5d96fe39a0d50b7b6120b7ea0a45c99807fb995ba5251611e4692c9877c7833d"
+  },
+  {
+    "pfad": "assets/brand/zeki/grinsen.webp",
+    "bytes": 619872,
+    "sha256": "3304bbd950ae406742cef28fb5e3a342a561863aaef5617f93012ebdff40dc55"
+  },
+  {
+    "pfad": "assets/brand/zeki/hand.webp",
+    "bytes": 597424,
+    "sha256": "4bf91882f809a024da20ca5d4beccfb35a01c9850c9aa224235e5555e4b09468"
+  },
+  {
+    "pfad": "assets/brand/zeki/jubeln.webp",
+    "bytes": 629976,
+    "sha256": "6d17c1f0ce070955f75808f8bce3cadb23523c080fefd0fc7288bdc5654f54b1"
+  },
+  {
+    "pfad": "assets/brand/zeki/kopf-drehen.webp",
+    "bytes": 641500,
+    "sha256": "ea58780333c79608f413641bbed569d5e0abfecf3ed8e434af207206d9ccf448"
+  },
+  {
+    "pfad": "assets/brand/zeki/kopfschuetteln.webp",
+    "bytes": 642284,
+    "sha256": "95d9cd7eb2786057c55e8c7b2257c7b7e0aaa7ceda0cea78ac4c017a0ea133e8"
+  },
+  {
+    "pfad": "assets/brand/zeki/muenze.webp",
+    "bytes": 594074,
+    "sha256": "16a39bc7ba0a054a3f7772f8efe22b5ebbb29e3e84c48a9c9676e7804ebbc2c1"
+  },
+  {
+    "pfad": "assets/brand/zeki/nachdenken.webp",
+    "bytes": 570284,
+    "sha256": "b8c39482de54385b4ee276d88c35eb64a36ec2efba0425e04a487c6907d3db1f"
+  },
+  {
+    "pfad": "assets/brand/zeki/nicken.webp",
+    "bytes": 622500,
+    "sha256": "fdd500bc5ca48373a09e762db3e0b6113970e741346cc79e341e6b544e29a9f3"
+  },
+  {
+    "pfad": "assets/brand/zeki/papier-zeigen.webp",
+    "bytes": 603446,
+    "sha256": "aef2160ccc7046942c3027a5ad160ad3780317098768a86e021023e24fc81929"
+  },
+  {
+    "pfad": "assets/brand/zeki/preis.webp",
+    "bytes": 591160,
+    "sha256": "f088692c7ff00066d7d167bb8e16cb28cb6717b40e095dd8b5f6f687fca8f98b"
+  },
+  {
+    "pfad": "assets/brand/zeki/pruefen.webp",
+    "bytes": 570284,
+    "sha256": "b8c39482de54385b4ee276d88c35eb64a36ec2efba0425e04a487c6907d3db1f"
+  },
+  {
+    "pfad": "assets/brand/zeki/schreiben.webp",
+    "bytes": 591724,
+    "sha256": "446c56f9ca9653600db6f5d8993d4881861c9d348313ec5159b4960a5c308df7"
+  },
+  {
+    "pfad": "assets/brand/zeki/schuerze.webp",
+    "bytes": 594074,
+    "sha256": "16a39bc7ba0a054a3f7772f8efe22b5ebbb29e3e84c48a9c9676e7804ebbc2c1"
+  },
+  {
+    "pfad": "assets/brand/zeki/suchen.webp",
+    "bytes": 614172,
+    "sha256": "aa28d60702c2c3428cf7dbfa389528fc3176966e4a3673fe4021194ee25c79a3"
+  },
+  {
+    "pfad": "assets/brand/zeki/warten.webp",
+    "bytes": 689166,
+    "sha256": "18922fdb6cbad996b8eeff604edc5adc78cfbbce7aa0601ddeb0a482cbbbcc51"
+  },
+  {
+    "pfad": "assets/brand/zeki/zahlen-zeigen.webp",
+    "bytes": 600118,
+    "sha256": "a74845444c84783ca228e31666519e9ede29ce8afc8347945a9543c0c3a5b421"
+  },
+  {
+    "pfad": "assets/brand/zeki/zeigen-links.webp",
+    "bytes": 595476,
+    "sha256": "4f29499c1a3908cd64e644cad00f1078e44fd6cae9bc59d785c73c4d7b178b2e"
+  },
+  {
+    "pfad": "assets/brand/zeki/zeigen-oben.webp",
+    "bytes": 598790,
+    "sha256": "2d2ee8bf2f10e1027d976580e431c128e260eede7cc12010a3631ff89f16154d"
+  },
+  {
+    "pfad": "assets/brand/zeki/zeigen-rechts.webp",
+    "bytes": 591160,
+    "sha256": "f088692c7ff00066d7d167bb8e16cb28cb6717b40e095dd8b5f6f687fca8f98b"
+  },
+  {
+    "pfad": "assets/brand/zeki/zeigen-unten.webp",
+    "bytes": 611450,
+    "sha256": "8a1d8040e066c1448bf23974dff7b716544a25e4ccbd10b2f597598df1b977a4"
+  },
+  {
+    "pfad": "assets/brand/zeki/zwinkern.webp",
+    "bytes": 592532,
+    "sha256": "b367409ca89dcd046c2f30ed9527d1406e959923bed318883900d8c99fa5d32b"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/abhak-liste.webp",
+    "bytes": 11022,
+    "sha256": "984bc82c87329368067b2d23b0ec45669aa98aed8daacf99ca6ce9059ce8e283"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/blatt-sperre.webp",
+    "bytes": 10702,
+    "sha256": "fbaeceb238ad8e5b9a3d7047375264402ad9043b72b9b76882cfbf02bc255c59"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/buero.webp",
+    "bytes": 10702,
+    "sha256": "fbaeceb238ad8e5b9a3d7047375264402ad9043b72b9b76882cfbf02bc255c59"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/eintrag-aendern.webp",
+    "bytes": 10972,
+    "sha256": "018161ffda68f58f5dd60ed0d2da823a9f9da08d99c71860e230793eed8df350"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/eintragsliste.webp",
+    "bytes": 11434,
+    "sha256": "d8483c92bfb8b44e4e095341f3cd3a85db394d9dfca7f71fc05085c618ec2ca4"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/fertig.webp",
+    "bytes": 11650,
+    "sha256": "07f37f8b67e41abbca45c2ca663b44f7723bc9fbaa6eafed140b120387fc7fc2"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/foto-auswahl.webp",
+    "bytes": 11710,
+    "sha256": "5eba4cde52c630e07655f5fb2102ce01b7194a0426892d46097473759347312b"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/fuehrung.webp",
+    "bytes": 11470,
+    "sha256": "4f04799edeaaac9b54fcf7d1893e6ce25b0133397ad33051417f73bd58f8b508"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/geschafft.webp",
+    "bytes": 11650,
+    "sha256": "07f37f8b67e41abbca45c2ca663b44f7723bc9fbaa6eafed140b120387fc7fc2"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/heute-abend.webp",
+    "bytes": 11252,
+    "sha256": "32217099e55acf50999d678b1ae1c51474b0406620910382c93f308fe2afc701"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/heute-mittendrin.webp",
+    "bytes": 11710,
+    "sha256": "5eba4cde52c630e07655f5fb2102ce01b7194a0426892d46097473759347312b"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/heute-morgen.webp",
+    "bytes": 11760,
+    "sha256": "9cae205687bc8dfddf8b742ec15ff0de513ea4d26c088d765b4c32f17842dd80"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/intro.webp",
+    "bytes": 8484,
+    "sha256": "344150a81262297f5aa3512e66957a44d485cfdefd5c2d7ff0599495a707c4c1"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/karte-fotografieren.webp",
+    "bytes": 9768,
+    "sha256": "d58e9789b858e163290cea2772fc448709a60c9cec51aafc450b0a02e901ba1c"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/kosten.webp",
+    "bytes": 10972,
+    "sha256": "018161ffda68f58f5dd60ed0d2da823a9f9da08d99c71860e230793eed8df350"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/kuehlgeraete.webp",
+    "bytes": 10702,
+    "sha256": "fbaeceb238ad8e5b9a3d7047375264402ad9043b72b9b76882cfbf02bc255c59"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/laden.webp",
+    "bytes": 11022,
+    "sha256": "984bc82c87329368067b2d23b0ec45669aa98aed8daacf99ca6ce9059ce8e283"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/menue-blatt.webp",
+    "bytes": 11022,
+    "sha256": "984bc82c87329368067b2d23b0ec45669aa98aed8daacf99ca6ce9059ce8e283"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/papier-aushang.webp",
+    "bytes": 11016,
+    "sha256": "4054aae5a0438832264bc23df431a04bf5cba45dc2f39d4a9d5d09a181bd449e"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/rundgang.webp",
+    "bytes": 10702,
+    "sha256": "fbaeceb238ad8e5b9a3d7047375264402ad9043b72b9b76882cfbf02bc255c59"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/sprache.webp",
+    "bytes": 11760,
+    "sha256": "9cae205687bc8dfddf8b742ec15ff0de513ea4d26c088d765b4c32f17842dd80"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/start.webp",
+    "bytes": 11760,
+    "sha256": "9cae205687bc8dfddf8b742ec15ff0de513ea4d26c088d765b4c32f17842dd80"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/zahl-eingeben.webp",
+    "bytes": 10554,
+    "sha256": "26027a2c55d5636753cabfda4701a4ca5fb8e1cb95b6aa9f9d8d86b3ea790400"
+  },
+  {
+    "pfad": "assets/brand/zeki-buehne/zahlen-verlauf.webp",
+    "bytes": 10904,
+    "sha256": "8133b57382e0e60460e6b173fe4c930ca496f024a9dba307c7600cd97ac847eb"
+  },
+  {
+    "pfad": "assets/brand/zeki-schatten.svg",
+    "bytes": 283,
+    "sha256": "a70a2f0ab61ac9e28a25d3058131a80a7b58476f45b817cfbbc2eb520d890577"
+  },
+  {
+    "pfad": "assets/brand/zeki.svg",
+    "bytes": 63264,
+    "sha256": "ff0a4f1dd3781ebda49b39c7840bbf63475d49758d5c6ddb9f3bba896b9062bf"
+  },
+  {
+    "pfad": "bilder/LIZENZEN-SYMBOLE.txt",
+    "bytes": 1108,
+    "sha256": "71a08e36df3ea8f01d8b8adfd186b625ddd9f9d4e196eba34318827151d8707f"
+  },
+  {
+    "pfad": "bilder/g-asia-nudeln.svg",
+    "bytes": 511,
+    "sha256": "129d59478d93fac93df014ab5464097728cce0a723081e7c7e2554a4365bc27b"
+  },
+  {
+    "pfad": "bilder/g-boerek.svg",
+    "bytes": 471,
+    "sha256": "ec45a4ee77dd59322c6c24b08ed7b1e086dc789e99f8b08277a825a5b13cb071"
+  },
+  {
+    "pfad": "bilder/g-box.svg",
+    "bytes": 454,
+    "sha256": "eb7679f97f1cc7c8663486b7339db81686ff84054ebb734ac024662132815c9f"
+  },
+  {
+    "pfad": "bilder/g-burger.svg",
+    "bytes": 538,
+    "sha256": "644c3c39a99b632b59a9527523eb2703e787aaf113e0c4b2f7e173eb7ca7d141"
+  },
+  {
+    "pfad": "bilder/g-currywurst.svg",
+    "bytes": 501,
+    "sha256": "9f68d33fe099042e0622d7dd85512facf39eead8085d04f1a6a6f64b49187ec2"
+  },
+  {
+    "pfad": "bilder/g-doener.svg",
+    "bytes": 479,
+    "sha256": "c3c8a342f0f1113863118f1465886af758a46b0fb6f9002cfc9571cd25125d68"
+  },
+  {
+    "pfad": "bilder/g-duerum.svg",
+    "bytes": 483,
+    "sha256": "6345c9a8b2adaa08c57e767b4660d517c58b8c43a8e9567d161f8a65937d4e39"
+  },
+  {
+    "pfad": "bilder/g-extra.svg",
+    "bytes": 465,
+    "sha256": "16d413057bebce40b6f41b4767759b1e9337d09da621543fee1a6874ddd20826"
+  },
+  {
+    "pfad": "bilder/g-falafel.svg",
+    "bytes": 579,
+    "sha256": "90ed6c0730c416da57697c86f94ab5fca1d5c31dc1c620ec59fb5d0085766402"
+  },
+  {
+    "pfad": "bilder/g-lahmacun.svg",
+    "bytes": 534,
+    "sha256": "ce95ee4db5920a49acf87819a8450d2c17ad6679e9df01ec2b08e1a1207fc749"
+  },
+  {
+    "pfad": "bilder/g-nudeln.svg",
+    "bytes": 483,
+    "sha256": "961af22f06d80f732dd3fc6ca13f95ae090713b66a33030b1db5112c32c0ed6c"
+  },
+  {
+    "pfad": "bilder/g-pide.svg",
+    "bytes": 505,
+    "sha256": "855c3ae6310e12c9bd34e058e18048c0b6295ad20ae496216ef227f44724f941"
+  },
+  {
+    "pfad": "bilder/g-pizza.svg",
+    "bytes": 520,
+    "sha256": "d606eb66af1d23b88ac7890ba30b5450f0532cc17b20aa7fb9a471a0b29631c9"
+  },
+  {
+    "pfad": "bilder/g-pommes.svg",
+    "bytes": 484,
+    "sha256": "556e1caabe6af6bf2ab50c2725ae62c78da93019073df971da607d0e26177b60"
+  },
+  {
+    "pfad": "bilder/g-salat.svg",
+    "bytes": 494,
+    "sha256": "023d036777853d170c7ede8624dfbae10c4f39dcd1c8d260394f0c7798d99d60"
+  },
+  {
+    "pfad": "bilder/g-seele.svg",
+    "bytes": 467,
+    "sha256": "70a7bd140f4df2a86ddf551b57e1aad1c53a54703080b6add05e6f78f4402a29"
+  },
+  {
+    "pfad": "bilder/g-teller.svg",
+    "bytes": 513,
+    "sha256": "76d0caf800bf2647a92e60f8c8384f3784b4c64c9faae1451cfdda8c1d995729"
+  },
+  {
+    "pfad": "bilder/k-kuehlschrank.svg",
+    "bytes": 492,
+    "sha256": "2f6676eb7651e8a1e972ca41bc9a842002872f06e559aecaa054d8114f2e392d"
+  },
+  {
+    "pfad": "bilder/k-theke.svg",
+    "bytes": 473,
+    "sha256": "eb408d6b7706788dd84c5731864fac40baccf1b2c982a18d9569f35551769a9c"
+  },
+  {
+    "pfad": "bilder/k-tiefkuehler.svg",
+    "bytes": 477,
+    "sha256": "f85d585ecfc68e8a50d64b5b9aef03223c3928178e4470fca87bb5ef109afbfb"
+  },
+  {
+    "pfad": "bilder/k-warmhalter.svg",
+    "bytes": 566,
+    "sha256": "236f8f05dbcb9a2abda37b0759bcb7b956a2c05168fcbab04a09873f53cdbf4b"
+  },
+  {
+    "pfad": "bilder/kamera.svg",
+    "bytes": 510,
+    "sha256": "0c15c3a250de93c9931bbc3a7c207ee40264b80f95b91c8aafa1430d06e84982"
+  },
+  {
+    "pfad": "bilder/laden-anders.svg",
+    "bytes": 493,
+    "sha256": "7c96fb90dc5787d5a76eb2aab89bb0b63635e52bfc38d292619cce108c57a704"
+  },
+  {
+    "pfad": "bilder/laden-asia.svg",
+    "bytes": 508,
+    "sha256": "0f20283b1cca93a895e99ee280506eda273a470619e97f3d9ff7023c1b65ad37"
+  },
+  {
+    "pfad": "bilder/laden-baeckerei.svg",
+    "bytes": 512,
+    "sha256": "27806801158751b888feef7e5f67097ac0d118b80e3933fdda0e6f4da94fe10c"
+  },
+  {
+    "pfad": "bilder/laden-burger.svg",
+    "bytes": 542,
+    "sha256": "678c7a73564efb6d08f5e3d78aac2333576ba80c7d419cfc5bcf802eae1279a0"
+  },
+  {
+    "pfad": "bilder/laden-cafe.svg",
+    "bytes": 511,
+    "sha256": "f4d5b3ad932fd21e0d8896fda2634b0824f6c847ce5152e7127f7acbd1e57791"
+  },
+  {
+    "pfad": "bilder/laden-doener.svg",
+    "bytes": 510,
+    "sha256": "7eca8bba949332337291731a278df775f1e7bae5733fd5e8ab5e25e25734d349"
+  },
+  {
+    "pfad": "bilder/laden-foodtruck.svg",
+    "bytes": 533,
+    "sha256": "6cdecb7afc9c69ff232f57e4ddc711a3420a56253bfadbc760698cf2d67ea062"
+  },
+  {
+    "pfad": "bilder/laden-pizza.svg",
+    "bytes": 524,
+    "sha256": "284055d383c8dfe559a04bf016c2198ff58c26cf3b6cc7473c28acc4646b9bb8"
+  },
+  {
+    "pfad": "bilder/m-eimer.svg",
+    "bytes": 454,
+    "sha256": "447002039a39b6c5f221324744178aba9431f95e11e3cffe16865439a5fb9e3c"
+  },
+  {
+    "pfad": "bilder/m-tonne.svg",
+    "bytes": 459,
+    "sha256": "d3dfec34d8b6208288a42c7d531baaf20a9b4fd58c5b1f331a5692674d5f7209"
+  },
+  {
+    "pfad": "bilder/r-burgerbroetchen.svg",
+    "bytes": 538,
+    "sha256": "469c82e3b8f376aeacfd8440eaf5e6aa8cbab2c134caac5eeae6b657b5892cf3"
+  },
+  {
+    "pfad": "bilder/r-cheddar.svg",
+    "bytes": 524,
+    "sha256": "fdf63de87011c6543470803f2864a3a3a2a8d8c385c8c5a2e7d64f68cdc5dce8"
+  },
+  {
+    "pfad": "bilder/r-patty.svg",
+    "bytes": 523,
+    "sha256": "acbd255188897d0a10a0860460e5adbbcb54d8c6487a36078620fbe401e0ab29"
+  },
+  {
+    "pfad": "bilder/r-pickles.svg",
+    "bytes": 734,
+    "sha256": "159d46fd2dfd9fc6093ce33515ceb55a4e3a93566470794e1a67566170c2172e"
+  },
+  {
+    "pfad": "bilder/r-sauce.svg",
+    "bytes": 522,
+    "sha256": "0351e29788b9d5afb698fcbf6091f9ca79ef50e91c9c56b4638d7aa0dd535d7a"
+  },
+  {
+    "pfad": "bilder/rechnung.svg",
+    "bytes": 462,
+    "sha256": "3eddce0246812e50e505c2f0dbc9cbdb44cb70285e8283aeb3f7ff41589a4306"
+  },
+  {
+    "pfad": "bilder/selbst-ayran.svg",
+    "bytes": 478,
+    "sha256": "1724ccd082fa804460c808a3e0393c0bfc7ef913757e2d89291500ee18d2be7e"
+  },
+  {
+    "pfad": "bilder/selbst-brot.svg",
+    "bytes": 500,
+    "sha256": "c1ba339e6e2560950807256c4881a86598c5a72d46f42dd75dcb44911d47c191"
+  },
+  {
+    "pfad": "bilder/selbst-dumplings.svg",
+    "bytes": 516,
+    "sha256": "ee246cdcf5e16de648c44e2d04b063199d2eefb9361c869e195c8bca7f6f47ae"
+  },
+  {
+    "pfad": "bilder/selbst-lahmacun.svg",
+    "bytes": 539,
+    "sha256": "94016ebe9320593a6c8526196d0ce80b60f4e1a3c5414592068d45b104e48d3c"
+  },
+  {
+    "pfad": "bilder/selbst-patty.svg",
+    "bytes": 499,
+    "sha256": "98297b6cc19806f2d9aa561ecd3374931bb16dd4913878613d778873979c3075"
+  },
+  {
+    "pfad": "bilder/selbst-salat.svg",
+    "bytes": 499,
+    "sha256": "7896452e9ace3ab1d4d68645fa72e48929607fafc453bc226b130355d55bf474"
+  },
+  {
+    "pfad": "bilder/selbst-sossen.svg",
+    "bytes": 496,
+    "sha256": "07ed8f182187bb821eaf5057c7a4e51ae20c48d7908b9fa602d97ac379d948f5"
+  },
+  {
+    "pfad": "bilder/selbst-spiess.svg",
+    "bytes": 487,
+    "sha256": "17eac1ef48757036d699d40750ff33f924f63728cb6223177ef14ff0c8d18093"
+  },
+  {
+    "pfad": "bilder/selbst-teig.svg",
+    "bytes": 493,
+    "sha256": "585014c16c365bb040b6fa397362c20b44a48bcbe58c22bdb478897c81d1c9fe"
+  },
+  {
+    "pfad": "bilder/selbst-tomatensosse.svg",
+    "bytes": 525,
+    "sha256": "8bb03b3f7dbe54bf4fdfd956cc8bc8e67ee52466202dc93711b98d371e573faf"
+  },
+  {
+    "pfad": "bilder/ui/calculator.svg",
+    "bytes": 441,
+    "sha256": "38eaa81e6645bf64c924846c52f28e919f24cca51e5c50bfce441190a776bf4c"
+  },
+  {
+    "pfad": "bilder/ui/camera.svg",
+    "bytes": 299,
+    "sha256": "9d485a24f7068e8c76fa480dcb3c3873a8a38ec34257fea73dcd504adb6ed05d"
+  },
+  {
+    "pfad": "bilder/ui/chart-column.svg",
+    "bytes": 262,
+    "sha256": "c9d9c1579359021ad8a1bc828eb2ac8e4dcfb8ee1727ee401def1757d8239bfd"
+  },
+  {
+    "pfad": "bilder/ui/check.svg",
+    "bytes": 193,
+    "sha256": "7b7223c3092f9c793f32db4da848d24e9ca70a5d57e5ac24281518b8206b0b5d"
+  },
+  {
+    "pfad": "bilder/ui/chef-hat.svg",
+    "bytes": 357,
+    "sha256": "745654e6d64d5f35247af47407d8a71b30ec6098f68e2d53d0de02fe4036ae20"
+  },
+  {
+    "pfad": "bilder/ui/chevron-down.svg",
+    "bytes": 190,
+    "sha256": "d0bc08118243e6de09497c87bcb6e1fb286410fc8bdfc00b27c521fc8d085836"
+  },
+  {
+    "pfad": "bilder/ui/chevron-left.svg",
+    "bytes": 192,
+    "sha256": "b1e25466175fc6ef9ff9ea8bd13a00a37586561daea5ae608428a2e7811cd41b"
+  },
+  {
+    "pfad": "bilder/ui/chevron-right.svg",
+    "bytes": 191,
+    "sha256": "a2c95328b66bdb69d44cb0017a83f7a5ede534fe99f8a2fbe1739b5feca646a1"
+  },
+  {
+    "pfad": "bilder/ui/chevron-up.svg",
+    "bytes": 192,
+    "sha256": "19b3c9e33f8f87ca66f96339c8232c32d1c8343609e0ec9d1cafeab924f47765"
+  },
+  {
+    "pfad": "bilder/ui/circle-alert.svg",
+    "bytes": 278,
+    "sha256": "c4226b6d02ddeb19a47c9d9f4cdb2bc8e5be17cff492d6d48c285255116ed306"
+  },
+  {
+    "pfad": "bilder/ui/circle-help.svg",
+    "bytes": 268,
+    "sha256": "25e7f520f0fd8a73fbe5ae94ff962949ca62ae69299e83fe6bbe7934b099c471"
+  },
+  {
+    "pfad": "bilder/ui/clock.svg",
+    "bytes": 235,
+    "sha256": "283a519e460539e98248c5d65fc91f2bce161bcf24c47ef6fe155b2f83c2b0bc"
+  },
+  {
+    "pfad": "bilder/ui/coffee.svg",
+    "bytes": 321,
+    "sha256": "47b72a8f397881f6b6c7898f6a506bb934732f13289c7b988bf643165e85fe5f"
+  },
+  {
+    "pfad": "bilder/ui/croissant.svg",
+    "bytes": 567,
+    "sha256": "a96404de0ff13acdebf3c73e6b01cebe81637048043f8452d0737d98fe1334cd"
+  },
+  {
+    "pfad": "bilder/ui/delete.svg",
+    "bytes": 337,
+    "sha256": "4333e73fccafaba6a036eba5e3d9471e75c2941b34ea68b7f82fe8de2999c9e5"
+  },
+  {
+    "pfad": "bilder/ui/download.svg",
+    "bytes": 294,
+    "sha256": "140ec0d94e68e5d9ed2a196895c2e2c275aad21f1794b5f64d4f2e379df7e391"
+  },
+  {
+    "pfad": "bilder/ui/eye-off.svg",
+    "bytes": 446,
+    "sha256": "3d703eb5bcbacabe033999a2898a27cfbc201d2d8f8d5ff4cc79926203615a00"
+  },
+  {
+    "pfad": "bilder/ui/eye.svg",
+    "bytes": 310,
+    "sha256": "65b51212be1f970ce7ce5675f8ee67da78d623079cda34f225431bda3c81e585"
+  },
+  {
+    "pfad": "bilder/ui/file-text.svg",
+    "bytes": 330,
+    "sha256": "62543944e1bf3bfb28dd3665bd7d4405d74af40189a7ddc992dc0f1578e23dfc"
+  },
+  {
+    "pfad": "bilder/ui/flame.svg",
+    "bytes": 347,
+    "sha256": "05bd32d63d2c51e39848cb30a0ca64fd2ff8702a59570cb79c6673f083a01f7a"
+  },
+  {
+    "pfad": "bilder/ui/house.svg",
+    "bytes": 341,
+    "sha256": "e8cd5b153b6c7129aaf1984071409d6c64c9a8fa717a10d3074104ce5bea99d4"
+  },
+  {
+    "pfad": "bilder/ui/key-round.svg",
+    "bytes": 403,
+    "sha256": "78c3cf988c88ac0013efa77ef0fd217fe7c4e449c90543b786121f6085c53409"
+  },
+  {
+    "pfad": "bilder/ui/languages.svg",
+    "bytes": 296,
+    "sha256": "9a6bee9ee9b9b94c90353d66eca5fca64f0f0139b6cfeb8a73addc01a0a565a8"
+  },
+  {
+    "pfad": "bilder/ui/leaf.svg",
+    "bytes": 318,
+    "sha256": "e7b356b654f1f1eb502e8439ab2e1623425c30d66f42d6fae355a459879b2dd6"
+  },
+  {
+    "pfad": "bilder/ui/lock.svg",
+    "bytes": 259,
+    "sha256": "4e0a6daa81127f5afade1052cb4630286a6a603afff7962a716bd22eb8e6a1c0"
+  },
+  {
+    "pfad": "bilder/ui/menu.svg",
+    "bytes": 278,
+    "sha256": "7863446cfe15c98e26529ac0dcc0a859a691e867dd645117959d847d34022653"
+  },
+  {
+    "pfad": "bilder/ui/minus.svg",
+    "bytes": 186,
+    "sha256": "5d115638a3602af4247dbbdd8a773bde6910870e061bdb7a124d8aa089a7e004"
+  },
+  {
+    "pfad": "bilder/ui/moon.svg",
+    "bytes": 212,
+    "sha256": "1735873d42ae5c103b5866c8f89fe2feaea165f72c4bfc7ecf61ba9b960f08a1"
+  },
+  {
+    "pfad": "bilder/ui/package.svg",
+    "bytes": 402,
+    "sha256": "66938b7be73a76944cc1c0cc06fc037463fa26c8fb3306698ce6e1e5fb3fefdc"
+  },
+  {
+    "pfad": "bilder/ui/pizza.svg",
+    "bytes": 444,
+    "sha256": "5b94b139c2039cd1e1877cf6d0c304f82c3c63e75884937bac6108a00c0147db"
+  },
+  {
+    "pfad": "bilder/ui/plus.svg",
+    "bytes": 206,
+    "sha256": "efaa4b5b35d11f5f27958db6dbcb19ddc6028544e3c59e566479b3b612708508"
+  },
+  {
+    "pfad": "bilder/ui/receipt.svg",
+    "bytes": 325,
+    "sha256": "c9ceeb71f84e60d5c2dc14b774f8a95852ece1c35152edf5000d9869e28f32c3"
+  },
+  {
+    "pfad": "bilder/ui/sandwich.svg",
+    "bytes": 439,
+    "sha256": "becc51e50466e709c6c99d41ca8ff48718a7140c8083b2ed5d1c4e23ccb5d008"
+  },
+  {
+    "pfad": "bilder/ui/scale.svg",
+    "bytes": 369,
+    "sha256": "b64dce560dfede5f5a244219537165ad6c7b0f581399fc2d763b731c91920fac"
+  },
+  {
+    "pfad": "bilder/ui/settings.svg",
+    "bytes": 774,
+    "sha256": "731999973b9089b1cef3377d76dd523c4dffcc23f0fa10df7c3163ab00dfbb2a"
+  },
+  {
+    "pfad": "bilder/ui/share.svg",
+    "bytes": 291,
+    "sha256": "601ddb2edbeeb3e25c572f8b75fe21e19c1b5241cd74e57614a179d576d7bde7"
+  },
+  {
+    "pfad": "bilder/ui/shield-check.svg",
+    "bytes": 365,
+    "sha256": "af82bd9462c675fffa13b200922de33505c852c9a0b5de9fd9ac0a568ed9f76c"
+  },
+  {
+    "pfad": "bilder/ui/shopping-cart.svg",
+    "bytes": 319,
+    "sha256": "47715af2e59f439dc3ee46d4a7a8478b7bccd2ace8d99a7c9a2ab86d5ce034c2"
+  },
+  {
+    "pfad": "bilder/ui/snowflake.svg",
+    "bytes": 342,
+    "sha256": "11aaf27a9bb7fd8cc8322349424e59b885a8e44bc9470ffda0d83759739c0173"
+  },
+  {
+    "pfad": "bilder/ui/soup.svg",
+    "bytes": 513,
+    "sha256": "015707ddb451ee3cdeb497e4a239633e22c54703792ae2f4366b01f5b988a782"
+  },
+  {
+    "pfad": "bilder/ui/spray-can.svg",
+    "bytes": 436,
+    "sha256": "72882e1d0f9eeb6ff82920009dea1a44fd49245075395919fe5408fd407edd7c"
+  },
+  {
+    "pfad": "bilder/ui/sprout.svg",
+    "bytes": 418,
+    "sha256": "8e1ae3d82929395608a2f3594e72b819378824674105829a14d1b3acda4a52c3"
+  },
+  {
+    "pfad": "bilder/ui/store.svg",
+    "bytes": 646,
+    "sha256": "18a245d23c85cc8172aa85db72d1df1139b908b56bf6901348af1a4eb142359a"
+  },
+  {
+    "pfad": "bilder/ui/target.svg",
+    "bytes": 260,
+    "sha256": "e75eee45926fd960d4ff13b04af006b3637c251547e0486ab021c75f9e55f9cf"
+  },
+  {
+    "pfad": "bilder/ui/thermometer.svg",
+    "bytes": 220,
+    "sha256": "6f9784b12f41ba0be0cc4625915151d1f9ea0282ce7f967da3e969e977c19a33"
+  },
+  {
+    "pfad": "bilder/ui/trash-2.svg",
+    "bytes": 358,
+    "sha256": "b8651b6556b0ffa3bcb80334eb7c90d9dacf37a99336ab87915aba3514adc674"
+  },
+  {
+    "pfad": "bilder/ui/trending-down.svg",
+    "bytes": 252,
+    "sha256": "2e1c954aa6fc71d4df5ed1a3ac9163317175ee52a340eb74a2ba5b14bd484318"
+  },
+  {
+    "pfad": "bilder/ui/trending-up.svg",
+    "bytes": 251,
+    "sha256": "81fbdc8cb08254a90f89ba472e26711aebbee81d01e6ef4f02cd37e022791dd0"
+  },
+  {
+    "pfad": "bilder/ui/truck.svg",
+    "bytes": 407,
+    "sha256": "8608fd4457b45ffa3cce5481077767a821b5a6b96847dc78d78e2167b1e18a92"
+  },
+  {
+    "pfad": "bilder/ui/undo-2.svg",
+    "bytes": 259,
+    "sha256": "3def0b3ebd254d455aec7bf6df4272dece3b6c0f1ff628da35e27b3d2f44ceb2"
+  },
+  {
+    "pfad": "bilder/ui/users.svg",
+    "bytes": 323,
+    "sha256": "760e7d9818fee3e56328ebf0e5745a17622eefefc39651766031ea32b9643d7e"
+  },
+  {
+    "pfad": "bilder/ui/utensils-crossed.svg",
+    "bytes": 369,
+    "sha256": "a5c1379b2dc9f1866cbad2e0f717c4be9dce181255ebdd1bc5cdcf706685a5cc"
+  },
+  {
+    "pfad": "bilder/ui/utensils.svg",
+    "bytes": 238,
+    "sha256": "9d22ef08973d720439bf881f4966a1bbc65212d90f2c917fe74dad60f2de58b1"
+  },
+  {
+    "pfad": "bilder/ui/wallet.svg",
+    "bytes": 337,
+    "sha256": "d5f8565d1dfcd1f42ad2b5dc2199319bd431b42dbcf34f31324dadf073b65833"
+  },
+  {
+    "pfad": "bilder/ui/x.svg",
+    "bytes": 210,
+    "sha256": "b548c385801b7dfcb9e34d197c5ac8ca1aab98747fe8ce81dbc6c86ac4b9f360"
+  },
+  {
+    "pfad": "bilder/v-alufolie.svg",
+    "bytes": 533,
+    "sha256": "8956854d57db654fea01a94a7a3634dd4ff49c39901187bc8d216ecb8cc1066c"
+  },
+  {
+    "pfad": "bilder/v-asiabox.svg",
+    "bytes": 486,
+    "sha256": "2f3380096bfcf35d7749afef01de10b38af93cd456a725d18396f340c1c34380"
+  },
+  {
+    "pfad": "bilder/v-becher.svg",
+    "bytes": 504,
+    "sha256": "75ed6da00a860ab46c7c087da335c01afe56bdb63436b38fe3732d6c3adb5a84"
+  },
+  {
+    "pfad": "bilder/v-burgerbox.svg",
+    "bytes": 479,
+    "sha256": "7b33753fcfd60c0b1ccf3e0751b6e208c170aa461d985887ee52d9685809f46a"
+  },
+  {
+    "pfad": "bilder/v-doenertuete.svg",
+    "bytes": 470,
+    "sha256": "74da3c8717b10d9c2c752fcb8fe93a04df43d641b18e4972bb2aa84f6fea1d5a"
+  },
+  {
+    "pfad": "bilder/v-dressingbecher.svg",
+    "bytes": 520,
+    "sha256": "22be2d3b3881e5a111e33c2cc95e9133c8542c2f4c71cb8d8fa1dd1aa8a4ef32"
+  },
+  {
+    "pfad": "bilder/v-handschuhe.svg",
+    "bytes": 498,
+    "sha256": "c5bb7aabc9dafee7ad2b2a3e4511df82f43963e58099dcc91ae3c531d8cca4bd"
+  },
+  {
+    "pfad": "bilder/v-menueschale.svg",
+    "bytes": 488,
+    "sha256": "639e56bd1b28106842d650d39245113915df4efeef0df5de86a440055b33ee1f"
+  },
+  {
+    "pfad": "bilder/v-pizzakarton.svg",
+    "bytes": 487,
+    "sha256": "e8ab478f39f1ff619b78a04936880e92a10030952270d5264401fb07ac943b01"
+  },
+  {
+    "pfad": "bilder/v-pommesschale.svg",
+    "bytes": 488,
+    "sha256": "919f3a1e9e67335d75f741c33368a89bc182b75f89d56c17d371ed3159e53ec7"
+  },
+  {
+    "pfad": "bilder/v-salatschale.svg",
+    "bytes": 494,
+    "sha256": "45ce3f49384b5c755d749f708f1eff98768d602313a0a1fce62422ba03a41d80"
+  },
+  {
+    "pfad": "bilder/v-serviette.svg",
+    "bytes": 472,
+    "sha256": "d32825e102d012f299d08067231ce4a0dddd087f0f4151efbf8ee683124a0b83"
+  },
+  {
+    "pfad": "bilder/v-tragetasche.svg",
+    "bytes": 463,
+    "sha256": "d814366ed49a3fa0d40441103aeffc54992a383a7e1a4d55bc2a1a710b303b0e"
+  },
+  {
+    "pfad": "bilder/w-ananas.svg",
+    "bytes": 515,
+    "sha256": "47e5cddb65832ef093cb8a9e9079394b178232293bd954b4da3473551adbb06e"
+  },
+  {
+    "pfad": "bilder/w-brot.svg",
+    "bytes": 495,
+    "sha256": "77d27dbde7efecd656fb8e175fc9778719e6593183779a8e692a7d2b37d1f223"
+  },
+  {
+    "pfad": "bilder/w-champignon.svg",
+    "bytes": 521,
+    "sha256": "0502091200d53adea089536f1ea42605325e951dbef6d3db1a3e48a20be9cf0b"
+  },
+  {
+    "pfad": "bilder/w-doenerfleisch.svg",
+    "bytes": 486,
+    "sha256": "a483108e75e0cc2c5f0c9f33340b73160571de3170267be53991f37238fa8485"
+  },
+  {
+    "pfad": "bilder/w-ei.svg",
+    "bytes": 449,
+    "sha256": "33da725d9caf14570c612c398ab2d545eb78872799b2871119be67f1cdd45baa"
+  },
+  {
+    "pfad": "bilder/w-falafel.svg",
+    "bytes": 539,
+    "sha256": "057cb0a608b59c9f48cb205f5ca6ed5bb57a7ab124cfd5f07e868623fcc24917"
+  },
+  {
+    "pfad": "bilder/w-feta.svg",
+    "bytes": 467,
+    "sha256": "f0d984438967f52ccc14e672cee8f0e5ac4499b5f07ba04448ed249675a5ddc6"
+  },
+  {
+    "pfad": "bilder/w-fingerfood-tk.svg",
+    "bytes": 545,
+    "sha256": "92797335e0317ec1b6fb08df03bc0812cca91e6070e0ebbaeff3fa04d43884da"
+  },
+  {
+    "pfad": "bilder/w-getraenk.svg",
+    "bytes": 476,
+    "sha256": "c7c0f41829f3b9fdd562b0d83168b9a44b3728b283b4038978923df2833ef2f9"
+  },
+  {
+    "pfad": "bilder/w-gewuerz.svg",
+    "bytes": 566,
+    "sha256": "40ae905de5017c6ae1e5d10883ada61a71829c538fb6eee6eb633f9c05da703a"
+  },
+  {
+    "pfad": "bilder/w-gurke.svg",
+    "bytes": 476,
+    "sha256": "91d89cae3b01f8d7caf686c8242ebe3809b6f2d7bb1547f173739f9803e6354d"
+  },
+  {
+    "pfad": "bilder/w-hack.svg",
+    "bytes": 502,
+    "sha256": "16cd01d3f00e4088936b97c3f80d31340f5b073d87831268c0a2c5471ed4bb2c"
+  },
+  {
+    "pfad": "bilder/w-haehnchen.svg",
+    "bytes": 505,
+    "sha256": "46685b092ddc3305b08728fd3e9697aa7588e980e72095303b7b0851482bc7c3"
+  },
+  {
+    "pfad": "bilder/w-joghurt.svg",
+    "bytes": 505,
+    "sha256": "3fcba0d6eb7c797df601edbce023a7202936a1147bc50ebf4b37db883a85481a"
+  },
+  {
+    "pfad": "bilder/w-kaese.svg",
+    "bytes": 510,
+    "sha256": "0369ac4e3f723a6c61447c61e33993f546f9498beb421aa0703e83175b956c86"
+  },
+  {
+    "pfad": "bilder/w-knoblauch.svg",
+    "bytes": 528,
+    "sha256": "ca48d7bea10c17c5f19bc6daf7790407f04e516758c81a82b53b39ae3bd08497"
+  },
+  {
+    "pfad": "bilder/w-kohl.svg",
+    "bytes": 485,
+    "sha256": "8123f0dd96e3ee57d86d510e893852bd1242667f711bacd288efd6e62935f063"
+  },
+  {
+    "pfad": "bilder/w-mais.svg",
+    "bytes": 516,
+    "sha256": "d7a36812d8b0f0f8cae57e766939c700d8d12204a097ebd9f5732dfa1b95c6e1"
+  },
+  {
+    "pfad": "bilder/w-mehl.svg",
+    "bytes": 473,
+    "sha256": "bdbb78f261224efe68911811625e0450e38baecf7229a00d9cad6b819771bfc9"
+  },
+  {
+    "pfad": "bilder/w-nudeln.svg",
+    "bytes": 481,
+    "sha256": "43fda7687ab8942fa84896f775e36144b4e407be14ca7af1f57afb7c58b63f8a"
+  },
+  {
+    "pfad": "bilder/w-oel.svg",
+    "bytes": 536,
+    "sha256": "a3066db2f706eded73ca7c6ff7dceb66b9e152166ac83bfe2021488ce5019e78"
+  },
+  {
+    "pfad": "bilder/w-oliven.svg",
+    "bytes": 572,
+    "sha256": "4cd39a878d8f59233b8595866131e06694bc793b8a540e39512fa0c1a8d2a268"
+  },
+  {
+    "pfad": "bilder/w-paprika.svg",
+    "bytes": 507,
+    "sha256": "304389027b0060efced197d9a3a7f3a41b345f3bb866b316c8391ddf8a161d56"
+  },
+  {
+    "pfad": "bilder/w-peperoni.svg",
+    "bytes": 546,
+    "sha256": "438ecb5dd519147c4a69f88da62d031238fff0c5342cb402e1e4cb48f797ced1"
+  },
+  {
+    "pfad": "bilder/w-petersilie.svg",
+    "bytes": 534,
+    "sha256": "2762a52b924c385ea8ec9bed261c2058506bfad229efce61cedada7c2d1003af"
+  },
+  {
+    "pfad": "bilder/w-pommes-tk.svg",
+    "bytes": 487,
+    "sha256": "cf93fa067952504840a3682605be68e450ae4cd055fb951fb6905cb1ac8e8e63"
+  },
+  {
+    "pfad": "bilder/w-reis.svg",
+    "bytes": 530,
+    "sha256": "d8e8206d93032f060d67e2427bf5f95705e2e6a4095a3d14f0a9ad3e0ebd41c0"
+  },
+  {
+    "pfad": "bilder/w-salami.svg",
+    "bytes": 514,
+    "sha256": "352080d64bc8c68725d62366baf619d4fdc6107fba20def5e7764b5c82564cae"
+  },
+  {
+    "pfad": "bilder/w-salat.svg",
+    "bytes": 496,
+    "sha256": "7f27ea7f6f925ea584a28002802169686dc79901985227ccf114325ad6b9e298"
+  },
+  {
+    "pfad": "bilder/w-schinken.svg",
+    "bytes": 494,
+    "sha256": "854c7d9200d5eb018168a6ed07ee17f4b425a2a1b807b74331f7d840c0d54006"
+  },
+  {
+    "pfad": "bilder/w-sosse.svg",
+    "bytes": 490,
+    "sha256": "cd0b93d782446bedf80275dab581dad8fe7636336534f205b24c767ead320e3e"
+  },
+  {
+    "pfad": "bilder/w-spinat.svg",
+    "bytes": 501,
+    "sha256": "23f3a0605ad5d1fd350aaca9ead2a4afb9ce2ea7eb3a8d86313196cc22e093b8"
+  },
+  {
+    "pfad": "bilder/w-sucuk.svg",
+    "bytes": 507,
+    "sha256": "b6792891b0dddeced710dfecdb7f6974cd204cbe0a7a8388628ce9d9b7f3e415"
+  },
+  {
+    "pfad": "bilder/w-thunfisch.svg",
+    "bytes": 544,
+    "sha256": "5ff0f14409a09061a05d7d1bee9a9594e3fc641f5ef33d6020cc8706a43fb745"
+  },
+  {
+    "pfad": "bilder/w-tomate.svg",
+    "bytes": 482,
+    "sha256": "230406458f40053f6c4eb413d69a5803bc7e972e11cfbc035dccbf6f8c5d26c5"
+  },
+  {
+    "pfad": "bilder/w-ware.svg",
+    "bytes": 469,
+    "sha256": "44099cdc3c06e4a72a6cdd8442c8342083d2c619370b5cac289bc982406b0d3b"
+  },
+  {
+    "pfad": "bilder/w-wurst.svg",
+    "bytes": 498,
+    "sha256": "000af381b80ea405f2ec2a740d4c9345313f28266730105a00dad36f2fd514b8"
+  },
+  {
+    "pfad": "bilder/w-zwiebel.svg",
+    "bytes": 508,
+    "sha256": "b898781caac7ce7abfa16d78c4435986856cf969e077d75b6f542ff038268924"
+  },
+  {
+    "pfad": "bilder/waage.svg",
+    "bytes": 487,
+    "sha256": "f0384756bac16f0f7f2f8aaa0c73694666618d994cddd20389e6378f9e6c50cb"
+  },
+  {
+    "pfad": "css/optik.css",
+    "bytes": 9762,
+    "sha256": "88f7a6c49115755aab1d8acb3e107a7d0957b6095d66864a08f91a3a8e0ffef2"
+  },
+  {
+    "pfad": "css/tokens.css",
+    "bytes": 4236,
+    "sha256": "3083af3a31902f0d2f1d8adbb43b26f51fc1375e76f2e1647088f108c300d280"
+  },
+  {
+    "pfad": "design/PRUEFPROTOKOLL.json",
+    "bytes": 10274,
+    "sha256": "ca96fbc4db6c33be9351cea3b50b8a9ce195d4b73d87fc02effbc2bfd4d2d361"
+  },
+  {
+    "pfad": "design/Sanji_2026-11-12_Tafel_II.png",
+    "bytes": 1900874,
+    "sha256": "14cf1c45c1b490f3eddef28197e4ac63f56b627661db3fe417bad13526828bd1"
+  },
+  {
+    "pfad": "design/ansichten.json",
+    "bytes": 4494,
+    "sha256": "f679f3e1b635eb9a1e6865c99f534e78588f50d0e2e1600bf039fa61e8391e09"
+  },
+  {
+    "pfad": "design/dateien.json",
+    "bytes": 37025,
+    "sha256": "219aa713964a402f42623d9df733a7113988215c083a27531b9bb8890c1dab01"
+  },
+  {
+    "pfad": "design/grundlagen/Tafel_I_gewaehlt.jpeg",
+    "bytes": 524813,
+    "sha256": "466e7c2f1c778a9eb457ef189b291eea0727ce1df7a8b11f773edcc0096122d3"
+  },
+  {
+    "pfad": "design/grundlagen/visual-vertrag.md",
+    "bytes": 5684,
+    "sha256": "d4bb8fca5350653c942bba1aca94069b1de8ea42e063e5b8e46492b0cfb4fa35"
+  },
+  {
+    "pfad": "design/grundlagen/zielbild-zeki-und-schablone-2026-10-27.md",
+    "bytes": 7021,
+    "sha256": "de5f8d796fa0dacd8e4bc25ecba8289307ec63441bcb2304bfe60c41acb5d5d7"
+  },
+  {
+    "pfad": "design/repo-quelle.json",
+    "bytes": 128,
+    "sha256": "fc8da6bd26c5f23dec935b5154d900a026a5701a51f68f790b1e436b8f68b56b"
+  },
+  {
+    "pfad": "design/schablone.html",
+    "bytes": 160635,
+    "sha256": "54fbc92eb3f8e809da45b638ed4ed193aab1acb20eada6337a434e364b9e5f3e"
+  },
+  {
+    "pfad": "design/zeki-zuordnung.json",
+    "bytes": 9732,
+    "sha256": "7eb545007d559c9ef99085268370d38a77bbeeb7a212d2b1ec90ab72de93926f"
+  },
+  {
+    "pfad": "fonts/Noto-LIZENZ.txt",
+    "bytes": 5208,
+    "sha256": "075f91382875da1c4b491f1facf2586f55448705133264d98ce15cab6211b125"
+  },
+  {
+    "pfad": "fonts/NotoSans-Bold.ttf",
+    "bytes": 515752,
+    "sha256": "e83493c945848ecd4a9ad0f6d19164541a0d3e23a9c952304a00a46e00272ac5"
+  },
+  {
+    "pfad": "fonts/NotoSans-Regular.ttf",
+    "bytes": 512672,
+    "sha256": "89c3c497f618fdaa0b2d1e98fef93582f28c71debd2c4a8cdf41f190ced2909d"
+  },
+  {
+    "pfad": "fonts/NotoSansArabic-Bold.ttf",
+    "bytes": 252940,
+    "sha256": "ded6fc7359ca36d15d7aab9ef0c066e21ce48b26a069994d6602fa2cb9a1b952"
+  },
+  {
+    "pfad": "fonts/NotoSansArabic-Regular.ttf",
+    "bytes": 244072,
+    "sha256": "504d7407d86875acf7d04dfaa0fd7524d0b8797723bc4aa18022f29db25b0b6e"
+  },
+  {
+    "pfad": "foto/g-brot.webp",
+    "bytes": 13228,
+    "sha256": "630dae871f10f4d3f83f0e4bbd7a16c42a16e8b16174a6192b69448a007ef688"
+  },
+  {
+    "pfad": "foto/g-pizza.webp",
+    "bytes": 31414,
+    "sha256": "f05867c289b1c28525294ce969dbb6e67c0f912f0a4f8922bf15af4a5d5b9ace"
+  },
+  {
+    "pfad": "foto/hero-doenergrill.webp",
+    "bytes": 24160,
+    "sha256": "2693c63c8bb8e3037e1440a17adfb7a4148f6b37037f91971cfdb3290534f2f1"
+  },
+  {
+    "pfad": "foto/k-kuehlschrank-lebensmittel-foto.webp",
+    "bytes": 38170,
+    "sha256": "2196ad52a70dd57c365738f1baa5f9f43953f9cfb0e86919d68e3962fa8e63ca"
+  },
+  {
+    "pfad": "foto/k-saladette-foto.webp",
+    "bytes": 21480,
+    "sha256": "bdcfc119cc0f8c305ebd857ca316301c9a5b61900064bd4de2a06711c92d01e9"
+  },
+  {
+    "pfad": "foto/k-tiefkuehler-foto.webp",
+    "bytes": 15252,
+    "sha256": "d6fe2ae3b750f7ece58614c16808f967120d63094859192c6e254070fd097b56"
+  },
+  {
+    "pfad": "foto/k-warmhalter-foto.webp",
+    "bytes": 27444,
+    "sha256": "8839a82aaadde9e57229027deebe82b0c412721bf73945d4af8ac2314e9e3335"
+  },
+  {
+    "pfad": "foto/laden-asia.webp",
+    "bytes": 29900,
+    "sha256": "2fbdd55af73ebac36bea97422296d8303fb5218717f548233970554c1c17cec0"
+  },
+  {
+    "pfad": "foto/laden-baeckerei.webp",
+    "bytes": 35324,
+    "sha256": "f83a0f2167708bb9e5c3cc26c90db9ac9bf7049a51774640d0991be110582248"
+  },
+  {
+    "pfad": "foto/laden-cafe.webp",
+    "bytes": 24102,
+    "sha256": "f06c1fd4f40a8bccf4a0794b903c0c892cd2821fe12b0125f9c8019b7ceb2a8b"
+  },
+  {
+    "pfad": "foto/laden-doener.webp",
+    "bytes": 35352,
+    "sha256": "b40acd2d046bed22ff9a3450ad6f6c15f8474bb3129508864bc4f5c105ae1a50"
+  },
+  {
+    "pfad": "foto/laden-foodtruck.webp",
+    "bytes": 27550,
+    "sha256": "8b374e40075c7347b181ef4f971d53902a6fc4e1d6ca16e039fc4693f113bbc5"
+  },
+  {
+    "pfad": "foto/laden-pizza.webp",
+    "bytes": 26718,
+    "sha256": "afee24fc2ce87c2f31ca613ef72aac3285c01dcec63072e155b37378aa9d2a23"
+  }
+]
