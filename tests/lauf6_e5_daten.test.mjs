@@ -311,3 +311,56 @@ test("P2 C4: Windows-ZIP einer Sicherung (Deflate, Ordner „gastrocash-sicherun
   const zwei = await zip.zipLesen(zipWindows([{ name: "a/x.txt", daten: "1" }, { name: "b/y.txt", daten: "2" }]), { gepackt: true }); assert.deepEqual(zwei.map((x) => x.name), ["a/x.txt", "b/y.txt"]);
   const eins = await zip.zipLesen(zipWindows([{ name: "a/x.txt", daten: "1" }, { name: "y.txt", daten: "2" }]), { gepackt: true }); assert.deepEqual(eins.map((x) => x.name), ["a/x.txt", "y.txt"]);
 });
+
+// ---------- P2 C5: Größen- und Wertegrenzen, Einlesen als ein Vorgang, Rückholpunkt ----------
+test("P2 C5: Wertegrenzen – unendliche, negative und zu große Beträge, ungültige Daten, zu langer Ladenname werden gezählt und übersprungen (bericht.ungueltig), nie still übernommen", async () => {
+  idbAttrappe(); await st.laden();
+  const b = laden("V1"); b.betrieb.name = "N".repeat(100);
+  b.tagesnotizen = [{ id: "t1", datum: "2026-11-01", umsatz: 500, erfasst: "2026-11-01T20:00:00.000Z", storniert: false }, { id: "t2", datum: "2026-11-02", umsatz: 1e9, erfasst: "x" }, { id: "t3", datum: "2026-02-30", umsatz: 5, erfasst: "x" }, { id: "t4", datum: "2026-11-04", umsatz: -3, erfasst: "x" }, { id: "t5", datum: "2026-11-05", umsatz: 5e6, erfasst: "2026-11-05T20:00:00.000Z" }];
+  b.kosten = [{ id: "k1", kategorie: "miete", posten: "miete", betrag: 1000 }, { id: "k2", kategorie: "miete", posten: "x", betrag: -5 }, { id: "k3", kategorie: "miete", posten: "y", betrag: 2e7 }, { id: "k4", kategorie: "miete", posten: "z", betrag: null }];
+  b.schwund = [{ id: "s1", datum: "2026-11-01" }, { id: "s2", datum: "gestern" }]; b.kostenbelege = [{ id: "b1", stelle: "x", betrag: Infinity, ab: "2026-11-01" }];
+  const text = JSON.stringify({ typ: "gastrocalc-sicherung", schema: st.SCHEMA, sha256: null }) + "\n" + JSON.stringify({ wurzel: { ...J(wurzelMit(b)), betriebe: [JSON.parse(JSON.stringify(b, (k, v) => (v === Infinity ? 1e400 : v)))] }, ereignisse: [] });
+  const r = await st.importDatei(text.replace('"betrag":null,"ab"', '"betrag":1e999,"ab"'));
+  const l = r.wurzel.betriebe[0];
+  assert.deepEqual(l.tagesnotizen.map((x) => x.id), ["t1", "t5"]); assert.deepEqual(l.kosten.map((x) => x.id), ["k1", "k4"]); assert.deepEqual(l.schwund.map((x) => x.id), ["s1"]); assert.equal(l.kostenbelege.length, 0);
+  assert.equal(l.betrieb.name.length, 40);
+  assert.equal(r.ungueltig, 3 + 2 + 1 + 1 + 1, "t2, t3, t4 · k2, k3 · s2 · Beleg mit unendlichem Betrag · Ladenname > 80"); 
+  const leer = st.leereWurzel(); const bericht = st.zusammenfuehren(leer, r.wurzel, { jetzt: JETZT }).bericht; assert.equal(bericht.ungueltig, 8);
+  const sauber = await st.importDatei(JSON.stringify({ typ: "gastrocalc-sicherung", schema: st.SCHEMA, wurzel: J(wurzelMit(laden("V2"))) })); assert.equal(sauber.ungueltig, 0);
+});
+test("P2 C5: Größengrenzen – Datei über 200 MB, Text über 50 MB und eine entpackte Zip-Bombe werden abgelehnt (grund „gross“)", async () => {
+  const gross = async (f) => { try { await f(); return null; } catch (e) { return e.grund; } };
+  assert.equal(await gross(() => st.importSicherung({ size: 201 * 1024 * 1024 })), "gross");
+  assert.equal(await gross(() => st.importDatei("x".repeat(51 * 1024 * 1024))), "gross");
+  const zip = await import("../js/zip.js"); assert.equal(zip.ZIP_GESAMT_MAX, 200 * 1024 * 1024); assert.equal(zip.ZIP_EINZEL_MAX, 50 * 1024 * 1024);
+  const bombe = zipWindows([{ name: st.SICHERUNG_JSON, daten: Buffer.alloc(51 * 1024 * 1024, 32) }]); assert.ok(bombe.size < 1024 * 1024, "klein gepackt");
+  assert.equal(await gross(() => st.importSicherung(bombe)), "gross");
+  assert.match(l6y.l6ySatz("zuGross", "de", 200), /200 MB/);
+});
+test("P2 C5: zusammenfuehren ist ein Vorgang – bei einem Fehler mitten im Einlesen bleibt die Wurzel unverändert (alte und sichere Variante)", async () => {
+  const a = laden("L1"), c = laden("L2"); a.betrieb.name = "A-alt"; const w = wurzelMit(a, c); const vorher = JSON.stringify(w);
+  const fremdA = J(a); fremdA.betrieb.name = "A-neu"; fremdA.stammZeit = { betrieb: "2030-01-01T00:00:00Z" }; fremdA.teamTage = [{ datum: "2027-01-02", eintraege: [] }];
+  const kaputt = { betriebe: [fremdA, null], aktiv: "L1", sprache: "de" }; // der zweite Laden wirft beim Zusammenführen
+  assert.throws(() => st.zusammenfuehren(w, kaputt, { jetzt: JETZT })); assert.equal(JSON.stringify(w), vorher, "alte Signatur: nichts halb geändert");
+  assert.throws(() => st.zusammenfuehrenSicher(w, kaputt, { jetzt: JETZT })); assert.equal(JSON.stringify(w), vorher, "sichere Variante");
+  idbAttrappe(); await st.laden(); await assert.rejects(st.einlesenSicher(w, kaputt, { jetzt: JETZT })); assert.equal(JSON.stringify(w), vorher); assert.equal(await st.rueckholpunktInfo(), null, "kein Rückholpunkt nach Fehler");
+  // gutes Einlesen: die sichere Variante gibt eine Kopie zurück, die Wurzel bleibt, bis die App übernimmt
+  const gut = { betriebe: [fremdA], aktiv: "L1", sprache: "de" };
+  const s = st.zusammenfuehrenSicher(w, gut, { jetzt: JETZT }); assert.equal(JSON.stringify(w), vorher); assert.equal(s.wurzel.betriebe[0].teamTage.length, 1); assert.equal(s.wurzel.betriebe[1], w.betriebe[1], "unberührter Laden bleibt dasselbe Objekt");
+  const alt = st.zusammenfuehren(w, gut, { jetzt: JETZT }); assert.equal(alt.ersetzt, 1); assert.equal(alt.neu, 0); assert.equal(w.betriebe[0].teamTage.length, 1); assert.ok(alt.bericht);
+});
+test("P2 C5: Rückholpunkt – einlesenSicher merkt die alte Wurzel im eigenen Schlüssel „rueckhol“ neben dem Kopf, zurueckholen stellt sie wieder her", async () => {
+  const a = idbAttrappe(); await st.laden();
+  const l = laden("L1"); stamm.teamTagSetzen(l, "2027-01-02", [{ person: "p1", name: "A", stunden: 6 }]); const w = wurzelMit(l); await st.sofortSpeichern(w, { stempel: false });
+  const vorher = JSON.stringify(st.migrierenWurzel(J(w)));
+  const fremd = J(l); fremd.teamTage = []; stamm.teamTagSetzen(fremd, "2027-01-05", [{ person: "p1", name: "A", stunden: 3 }]);
+  const r = await st.einlesenSicher(w, { betriebe: [fremd], aktiv: "L1" }, { jetzt: JETZT });
+  assert.equal(r.rueckhol, true); assert.equal(w.betriebe[0].teamTage.length, 2); const stand = a.speicher("gastrocalc", "stand");
+  assert.ok(stand.has("rueckhol") && stand.has("kopf") && stand.has("rueckhol-info"), "eigener Schlüssel neben dem Kopf"); assert.equal(stand.get("rueckhol").wurzel.betriebe[0].teamTage.length, 1);
+  const info = await st.rueckholpunktInfo(); assert.equal(info.grund, "einlesen"); assert.ok(info.zeit);
+  await st.sofortSpeichern(w, { stempel: false }); // wie die App nach dem Einlesen speichert
+  const z = await st.zurueckholen(w); assert.equal(JSON.stringify(z.wurzel), vorher, "Stand von vor dem Einlesen ist zurück");
+  assert.equal((await st.laden()).betriebe[0].teamTage.length, 1, "auch im Speicher"); assert.equal(await st.rueckholpunktInfo(), null, "Punkt verbraucht"); assert.equal(stand.has("rueckhol"), false);
+  assert.equal(await st.zurueckholen(), null, "nichts mehr da");
+  assert.match(l6y.l6yText("rueckgaengig", "de"), /rückgängig/);
+});

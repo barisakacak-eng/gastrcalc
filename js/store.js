@@ -13,7 +13,7 @@
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
 import { hmAngabenSauber } from "./hm_angaben.js"; // Lauf 3 (09.11.2026): Hinweis-Motor
-import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js";
+import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE, MAX_ZAHL } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
@@ -26,7 +26,7 @@ import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, S
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen, ZIP_GESAMT_MAX, ZIP_EINZEL_MAX } from "./zip.js";
 import { ablageKennungen, ablageLesen } from "./ablage.js";
 import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
-import { berlin } from "./zeit.js";
+import { berlin, gueltigerTag } from "./zeit.js";
 import { rund2, mwstProzent } from "./geld.js";
 import { felderVerschmelzen, felderSauber } from "./abgleich_felder.js"; // Lauf 6, E5 (A1): Stunden, Schichten, Abwesenheit … werden beim Abgleich vereinigt
 
@@ -234,6 +234,9 @@ const WURZEL_FELDER = ["schema", "sprache", "aktiv", "geraet", "lfd", "letzteSic
 // Lauf 6, E5 (C5): Einträge, die beim Laden oder Einlesen als ungültig übersprungen werden, werden gezählt (importDatei meldet die Zahl als bericht.ungueltig)
 let ungueltigZaehler = 0;
 const zaehleUngueltig = (n = 1) => { ungueltigZaehler += n; };
+const zaehlt = (ok) => (x) => { const g = ok(x); if (!g) ungueltigZaehler += 1; return g; }; // Filter, der verworfene Einträge mitzählt
+// Wertegrenzen beim Laden und Einlesen (Audit C5): Betrag endlich, ≥ 0 und höchstens MAX_ZAHL (1e7, wie js/util.js); Tag muss ein echtes Datum sein (js/zeit.js gueltigerTag)
+const betragOk = (x) => typeof x === "number" && Number.isFinite(x) && x >= 0 && x <= MAX_ZAHL;
 function kurzHash(str) { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h.toString(36); }
 
 function ergaenze(ziel, vorlage) {
@@ -256,7 +259,7 @@ function eindeutigeIds(liste, vor) {
     da.add(id); return id === e.id ? e : { ...e, id };
   });
 }
-const mitId = (liste) => liste.filter((e) => istObjekt(e) && typeof e.id === "string");
+const mitId = (liste) => liste.filter(zaehlt((e) => istObjekt(e) && typeof e.id === "string"));
 
 // Ein einzelner Betrieb (Schema 1, 2 oder 3) wird geprüft und vervollständigt.
 export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stammt aus Schema ≤ 3
@@ -264,7 +267,7 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   const leer = leererBetrieb();
   if (typeof s.id !== "string" || !s.id) s.id = leer.id;
   ergaenze(s, leer);
-  s.kosten = s.kosten.filter((k) => istObjekt(k) && typeof k.posten === "string" && typeof k.kategorie === "string")
+  s.kosten = s.kosten.filter(zaehlt((k) => istObjekt(k) && typeof k.posten === "string" && typeof k.kategorie === "string" && (typeof k.betrag !== "number" || betragOk(k.betrag))))
     .map((k) => ({ ...k, betrag: typeof k.betrag === "number" && Number.isFinite(k.betrag) ? k.betrag : null,
                    status: ["aus", "bekannt", "geschaetzt", "offen"].includes(k.status) ? k.status : "offen",
                    periode: k.periode === "jahr" ? "jahr" : "monat",
@@ -285,12 +288,13 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   if (typeof s.verkauf.warenQuote !== "number" || !(s.verkauf.warenQuote >= 0 && s.verkauf.warenQuote < 0.9)) s.verkauf.warenQuote = null;
   s.kanaele.portale = s.kanaele.portale.filter(istObjekt).map((p) => mitRest(p, { id: String(p.id || uid()), name: String(p.name || ""),
     provision: typeof p.provision === "number" ? p.provision : null, basis: ["netto", "brutto", "unbekannt"].includes(p.basis) ? p.basis : "unbekannt" }, PORTAL_FELDER));
+  if (String(s.betrieb.name || "").length > 80) zaehleUngueltig(); // Lauf 6, E5 (C5): Ladenname höchstens 80 Zeichen – ein längerer Name wird gekürzt (wie bisher auf 40) und gezählt
   s.betrieb.name = String(s.betrieb.name || "").slice(0, 40); s.betrieb.kuechen = s.betrieb.kuechen.filter((k) => KUECHEN.some((x) => x.id === k));
   if (!FORMATE.some((f) => f.id === s.betrieb.format)) s.betrieb.format = null; // unbekannte Kennungen aus fremden Dateien
   s.betrieb.tageProWoche = Math.min(7, Math.max(1, Number(s.betrieb.tageProWoche) || 6));
   s.betrieb.monate = Math.min(12, Math.max(1, Number(s.betrieb.monate) || 12));
   s.gerichte = mitId(s.gerichte).map((g) => getraenkGerichtMigrieren(gerichtKasse({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }))); // Getränke (18.10.2026): Feld getraenk, Größe aus dem Namen
-  s.artikel = s.artikel.filter((a) => istObjekt(a) && typeof a.name === "string").map((a) => ({ ...a,
+  s.artikel = s.artikel.filter(zaehlt((a) => istObjekt(a) && typeof a.name === "string")).map((a) => ({ ...a,
     gebinde: istObjekt(a.gebinde) && GEBINDE_ARTEN.includes(a.gebinde.art) ? { art: a.gebinde.art, zwischen: istObjekt(a.gebinde.zwischen) && Number(a.gebinde.zwischen.anzahl) > 0 ? { art: String(a.gebinde.zwischen.art || "beutel"), anzahl: Number(a.gebinde.zwischen.anzahl) } : null } : { art: "packung", zwischen: null },
     preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
     preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
@@ -299,21 +303,21 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
   { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
     s.lager = mitRest(s.lager, { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }, []); }
-  s.lieferungen = mitId(s.lieferungen).filter((l) => typeof l.datum === "string").map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
+  s.lieferungen = mitId(s.lieferungen).filter(zaehlt((l) => gueltigerTag(l.datum))).map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
   preisQuelleNachtragen(s); // Lauf 2, A5 (31.10.2026): Bestandsläden ohne preisQuelle (Durchsicht-Fund 6)
   for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
   { const roh = new Map((Array.isArray(s.lieferanten) ? s.lieferanten : []).filter((x) => istObjekt(x) && typeof x.id === "string").map((x) => [x.id.trim().slice(0, 60), x])); s.lieferanten = lieferantenSauber(s.lieferanten).map((x) => mitRest(roh.get(x.id), x, LIEFERANT_FELDER)); } lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium 18.10.2026 (N3): gleiche Namen zusammenlegen
-  s.abschluesse = mitId(s.abschluesse).filter((a) => typeof a.datum === "string");
+  s.abschluesse = mitId(s.abschluesse).filter(zaehlt((a) => gueltigerTag(a.datum)));
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
-  s.kostenbelege = mitId(s.kostenbelege).filter((k) => typeof k.stelle === "string" && typeof k.betrag === "number" && typeof k.ab === "string").map((k) => ({ ...k, storniert: !!k.storniert }));
+  s.kostenbelege = mitId(s.kostenbelege).filter(zaehlt((k) => typeof k.stelle === "string" && betragOk(k.betrag) && typeof k.ab === "string")).map((k) => ({ ...k, storniert: !!k.storniert }));
   // Läden, die schon vor Etappe 6a mitten in der Einrichtung waren, bleiben auf dem genauen Weg
   if (!["schnell", "genau"].includes(s.weg)) s.weg = alt || s.schritt > 0 || s.phase === "app" ? "genau" : "schnell";
-  s.schwund = mitId(s.schwund).filter((e) => typeof e.datum === "string");
+  s.schwund = mitId(s.schwund).filter(zaehlt((e) => gueltigerTag(e.datum)));
   s.verkaeufe = verkaeufeEntdoppeln(verkaeufeSauber(s.verkaeufe), { nur: "zbon" }); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste; Prüfgremium 18.10.2026 (H2): Z-Bon-Doppel aus älteren Ständen bereinigen
   s.kassenKombis = kombisSauber(s.kassenKombis, s.gerichte); // Schwadron 18.10.2026, M1
   s.aktionen = aktionenEntdoppeln(aktionenSauber(s.aktionen)); s.tafel = tafelSauber(s.tafel); // Menütafel (18.10.2026); Prüfgremium 18.10.2026 (M1): Doppel aus älteren Ständen
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
-  s.tagesnotizen = s.tagesnotizen.filter((n) => istObjekt(n) && typeof n.datum === "string" && typeof n.umsatz === "number")
+  s.tagesnotizen = s.tagesnotizen.filter(zaehlt((n) => istObjekt(n) && gueltigerTag(n.datum) && betragOk(n.umsatz)))
     .map((n) => mitRest(n, { id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
       erfasst: typeof n.erfasst === "string" ? n.erfasst : (n.geaendert || n.datum + "T00:00:00.000Z"), nacherfasst: !!n.nacherfasst, storniert: !!n.storniert,
       // W2-T: Spur der Korrekturen bleibt beim Laden erhalten (Gerät, Rücknahmezeit, Nachfolger); ein Entwurf ist nach dem Neustart fest
@@ -324,15 +328,15 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => mitRest(k, { id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm", "eis"].includes(k.art) ? k.art : "kuehl",
     min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, reihe: Number.isFinite(k.reihe) ? k.reihe : i, archiviert: !!k.archiviert, ...(typeof k.ware === "string" ? { ware: k.ware } : {}),
     ...(["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"].includes(k.typ) ? { typ: k.typ } : {}) }, KUEHLSTELLE_FELDER)); // Paket 6 (17.10.2026): Typ-Schlüssel bleibt erhalten (Anzeige-Name folgt der Sprache) // W2-H: Datenstelle Grenze je Ware
-  s.rundgaenge = mitId(s.rundgaenge).filter((r) => typeof r.datum === "string").map((r) => ({ ...r, messungen: Array.isArray(r.messungen) ? r.messungen.filter(istObjekt) : [] }));
-  s.messungen = mitId(s.messungen).filter((m) => typeof m.datum === "string" && typeof m.stelle === "string").map((m) => ({ ...m,
+  s.rundgaenge = mitId(s.rundgaenge).filter(zaehlt((r) => gueltigerTag(r.datum))).map((r) => ({ ...r, messungen: Array.isArray(r.messungen) ? r.messungen.filter(istObjekt) : [] }));
+  s.messungen = mitId(s.messungen).filter(zaehlt((m) => gueltigerTag(m.datum) && typeof m.stelle === "string")).map((m) => ({ ...m,
     wert: typeof m.wert === "number" ? m.wert : null, massnahmen: Array.isArray(m.massnahmen) ? m.massnahmen.filter((x) => typeof x === "string") : [],
     notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.nacherfasst ? null : m.datum + "T00:00:00.000Z" })); // W2-H: Nachtrag ohne Uhrzeit bleibt ohne
   // Stresstest 15.10.: abgeschlossene Rundgänge tragen keine doppelte Kopie ihrer Messungen mehr (stehen vollständig im Journal)
   s.rundgaenge = s.rundgaenge.map((r) => (rundeDoppelt(r, s) ? { ...r, messungen: [] } : r));
   rundgangDoppelBereinigen(s); // Schwadron 18.10.2026, H3: falsche „Sicherungs-Kopien“ gleicher Rundgänge aus früherem Zusammenführen entfernen
   // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)
-  s.inventuren = mitId(s.inventuren).filter((i) => typeof i.datum === "string").map((i) => ({ ...i, datum: inventurGeschaeftstag(i),
+  s.inventuren = mitId(s.inventuren).filter(zaehlt((i) => gueltigerTag(i.datum))).map((i) => ({ ...i, datum: inventurGeschaeftstag(i),
     begonnen: typeof i.begonnen === "string" ? i.begonnen : i.datum + "T00:00:00.000Z", abgeschlossen: typeof i.abgeschlossen === "string" ? i.abgeschlossen : null,
     posten: Object.fromEntries(Object.entries(istObjekt(i.posten) ? i.posten : {}).map(([n, m]) => [n, typeof m === "number" && Number.isFinite(m) && m >= 0 ? m : null])),
     ausgeblendet: (Array.isArray(i.ausgeblendet) ? i.ausgeblendet : []).filter((n) => typeof n === "string") }));
@@ -495,7 +499,7 @@ function aktionenVereinigen(sieger, verlierer) {
 // E7 (17.10.2026): Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
 const VERKAUF_HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
 function verkaeufeSauber(liste) {
-  return mitId(Array.isArray(liste) ? liste : []).map(({ kombi, ...v }) => (typeof kombi === "string" && kombi ? { ...v, kombi } : v)).filter((v) => typeof v.datum === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v.datum) && Number.isFinite(Number(v.menge)) && v.menge !== null && v.menge !== "")
+  return mitId(Array.isArray(liste) ? liste : []).map(({ kombi, ...v }) => (typeof kombi === "string" && kombi ? { ...v, kombi } : v)).filter(zaehlt((v) => gueltigerTag(v.datum) && Number.isFinite(Number(v.menge)) && Math.abs(Number(v.menge)) <= MAX_ZAHL && v.menge !== null && v.menge !== "" && (typeof v.umsatzBrutto !== "number" || !Number.isFinite(v.umsatzBrutto) || Math.abs(v.umsatzBrutto) <= MAX_ZAHL)))
     .map((v) => ({ ...v, menge: Number(v.menge), gericht: typeof v.gericht === "string" && v.gericht ? v.gericht : null, name: String(v.name ?? "").slice(0, 120),
       umsatzBrutto: typeof v.umsatzBrutto === "number" && Number.isFinite(v.umsatzBrutto) ? v.umsatzBrutto : null, herkunft: VERKAUF_HERKUNFT.includes(v.herkunft) ? v.herkunft : "hand",
       importId: typeof v.importId === "string" && v.importId ? v.importId : null, erfasst: typeof v.erfasst === "string" ? v.erfasst : v.datum + "T00:00:00.000Z", storniert: !!v.storniert,
@@ -1293,14 +1297,16 @@ export async function importDatei(text) {
     if (typeof kopf.sha256 === "string") { const sha = await sha256Hex(inhalt); pruefsumme = sha === null ? "fehlt" : sha === kopf.sha256 ? "ok" : "abweichung"; }
     if (!istObjekt(d) || !istObjekt(d.wurzel)) throw fehler("format");
     if (Number(d.wurzel.schema) > SCHEMA) throw fehler("neuer"); // Lauf 6, E5 (B5): auch das Schema in der Wurzel zählt, nicht nur der Kopf
-    return { wurzel: ohneCode(migrierenWurzel(d.wurzel)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme, ...(Array.isArray(d.rohteile) && d.rohteile.length ? { rohteile: d.rohteile.filter(istObjekt) } : {}) }; // W2-S
+    return { wurzel: eingelesen(migrierenWurzel(d.wurzel)), ungueltig: ungueltigZaehler, ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme, ...(Array.isArray(d.rohteile) && d.rohteile.length ? { rohteile: d.rohteile.filter(istObjekt) } : {}) }; // W2-S
   }
   try { d = JSON.parse(text); } catch (_) { throw fehler("format"); }
   if (!istObjekt(d) || d.typ !== "gastrocalc-sicherung" || !(istObjekt(d.wurzel) || istObjekt(d.stand))) throw fehler("format");
   if (Number(d.schema) > SCHEMA || Number((d.wurzel || d.stand).schema) > SCHEMA) throw fehler("neuer");
-  return { wurzel: ohneCode(migrierenWurzel(d.wurzel || d.stand)), ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme: "fehlt" }; // W2-S
+  return { wurzel: eingelesen(migrierenWurzel(d.wurzel || d.stand)), ungueltig: ungueltigZaehler, ereignisse: Array.isArray(d.ereignisse) ? d.ereignisse.filter(istObjekt) : [], pruefsumme: "fehlt" }; // W2-S
 }
 // W2-S (p07 M3): Code und Fehlversuche aus einer Datei gelten nie – jedes Handy behält seinen eigenen Büro-Code
+// Lauf 6, E5 (C5): die Zahl übersprungener Einträge hängt (nicht aufgezählt, geht nie in eine Sicherung) an der eingelesenen Wurzel; zusammenfuehren nennt sie bericht.ungueltig
+function eingelesen(w) { ohneCode(w); Object.defineProperty(w, "_ungueltig", { value: ungueltigZaehler, enumerable: false, configurable: true }); return w; }
 function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; delete w.rettungPin; return w; } // Rettung (17.10.2026): auch der Rettungscode bleibt am Handy
 
 // ---------- Zusammenführen ----------
@@ -1558,7 +1564,64 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   return basis;
 }
 
-export function zusammenfuehren(wurzel, importiert, { jetzt = Date.now() } = {}) {
+// Lauf 6, E5 (C5): Einlesen als EIN Vorgang. zusammenfuehrenSicher arbeitet auf einer Kopie der Wurzel-Liste (verschmelzen klont jeden Laden selbst; Läden, die die Datei
+// nicht berührt, bleiben dieselben Objekte) und gibt sie zurück: { wurzel, ersetzt, neu, bericht }. Wirft etwas, bleibt die übergebene Wurzel UNVERÄNDERT.
+// Die Datei selbst wird vorher geklont, damit auch sie nach einem Fehler unverändert ist. bericht.ungueltig = Zahl der beim Einlesen übersprungenen Einträge.
+export function zusammenfuehrenSicher(wurzel, importiert, opt = {}) {
+  const arbeit = { ...wurzel, betriebe: [...wurzel.betriebe] };
+  const r = zusammenfuehrenRoh(arbeit, structuredClone(importiert), opt);
+  const bericht = { ...r.bericht, ungueltig: Number(importiert?._ungueltig) || 0 };
+  return { wurzel: arbeit, ersetzt: r.ersetzt, neu: r.neu, bericht };
+}
+// Die bisherige Signatur bleibt: ändert die Wurzel direkt (in place), aber erst, wenn der ganze Vorgang gelungen ist – bei einem Fehler bleibt nichts Halbes zurück.
+export function zusammenfuehren(wurzel, importiert, opt = {}) {
+  const r = zusammenfuehrenSicher(wurzel, importiert, opt);
+  wurzel.betriebe.splice(0, wurzel.betriebe.length, ...r.wurzel.betriebe);
+  for (const k of ["aktiv", "sprache", "lfd"]) wurzel[k] = r.wurzel[k];
+  return Object.defineProperty({ ersetzt: r.ersetzt, neu: r.neu }, "bericht", { value: r.bericht, enumerable: false });
+}
+// ---------- Rückholpunkt (Lauf 6, E5 C5) ----------
+// Vor dem Übernehmen einer Sicherung wird die alte Wurzel gemerkt: im Speicher "stand" unter dem eigenen Schlüssel "rueckhol" (neben dem Kopf; "rueckhol-info" trägt nur
+// Zeit und Grund, damit die Oberfläche billig fragen kann, ob es etwas zurückzuholen gibt). Ohne IndexedDB (privater Modus, Tests) bleibt er im Arbeitsspeicher.
+// Die Oberfläche bietet „Rückgängig“ (Satz „rueckgaengig“ in js/data/l6y_texte.js) direkt nach dem Einlesen und danach im Büro unter Einstellungen → Sicherung,
+// solange rueckholpunktInfo() etwas liefert; ein Tipp ruft zurueckholen(wurzel).
+let rueckholMem = null;
+export async function rueckholpunkt(wurzel, { grund = "einlesen" } = {}) {
+  const punkt = { zeit: new Date().toISOString(), grund, schema: Number(wurzel?.schema) || SCHEMA, wurzel: structuredClone(wurzel) };
+  rueckholMem = punkt;
+  if (!verfuegbar || !db) return true; // nur im Arbeitsspeicher – gilt bis zum Neustart
+  try { await tx("stand", "readwrite", (st) => [st.put(punkt, "rueckhol"), st.put({ zeit: punkt.zeit, grund }, "rueckhol-info")]); return true; }
+  catch (e) { console.warn("Rückholpunkt nicht gespeichert:", e); return false; }
+}
+export async function rueckholpunktInfo() {
+  if (verfuegbar && db) { try { const [i] = await tx("stand", "readonly", (st) => [st.get("rueckhol-info")]); if (istObjekt(i) && typeof i.zeit === "string") return { zeit: i.zeit, grund: i.grund || "einlesen" }; } catch (_) { /* Arbeitsspeicher */ } }
+  return rueckholMem ? { zeit: rueckholMem.zeit, grund: rueckholMem.grund } : null;
+}
+// Holt den gemerkten Stand zurück: gibt { wurzel, zeit } zurück (die App arbeitet mit dieser Wurzel weiter) und schreibt sie in den Speicher; danach ist der Punkt verbraucht.
+// aktuelle = die Wurzel, mit der die App bis jetzt gearbeitet hat – sie wird nicht mehr geschrieben (auch nicht vom noch anstehenden verzögerten Speichern).
+export async function zurueckholen(aktuelle = null) {
+  let punkt = null;
+  if (verfuegbar && db) { try { [punkt] = await tx("stand", "readonly", (st) => [st.get("rueckhol")]); } catch (_) { punkt = null; } }
+  if (!istObjekt(punkt) || !istObjekt(punkt.wurzel)) punkt = rueckholMem;
+  if (!istObjekt(punkt) || !istObjekt(punkt.wurzel)) return null;
+  speichern.abbrechen(); if (aktuelle) verworfen.add(aktuelle);
+  const w = migrierenWurzel(structuredClone(punkt.wurzel));
+  const ok = await schreiben(w, { stempel: false }); if (verfuegbar && db && ok === false) return null; // Schreiben misslungen: Punkt bleibt, nichts ist zurückgeholt
+  rueckholMem = null;
+  if (verfuegbar && db) { try { await txMehr(["stand"], "readwrite", (t) => { t.objectStore("stand").delete("rueckhol"); t.objectStore("stand").delete("rueckhol-info"); }); } catch (_) { /* egal */ } }
+  ereignis("einlesen-zurueck", { zeit: punkt.zeit });
+  return { wurzel: w, zeit: punkt.zeit };
+}
+// Einlesen als ein Vorgang MIT Rückholpunkt: erst auf einer Kopie zusammenführen (Fehler → Wurzel unverändert, kein Punkt), dann alte Wurzel merken, dann übernehmen.
+// Rückgabe { ersetzt, neu, bericht, rueckhol } (rueckhol false = Punkt konnte nicht gespeichert werden; die Oberfläche sagt dann nichts von „Rückgängig“).
+export async function einlesenSicher(wurzel, importiert, opt = {}) {
+  const r = zusammenfuehrenSicher(wurzel, importiert, opt);
+  const rueckhol = await rueckholpunkt(wurzel);
+  wurzel.betriebe.splice(0, wurzel.betriebe.length, ...r.wurzel.betriebe);
+  for (const k of ["aktiv", "sprache", "lfd"]) wurzel[k] = r.wurzel[k];
+  return { ersetzt: r.ersetzt, neu: r.neu, bericht: r.bericht, rueckhol };
+}
+function zusammenfuehrenRoh(wurzel, importiert, { jetzt = Date.now() } = {}) {
   const ids = new Set(wurzel.betriebe.map((b) => b.id));
   let ersetzt = 0, neu = 0;
   const bericht = { beide: [], zukunft: 0, konflikte: 0, eintraege: [], unterschiede: [], umsatzKonflikte: [] };
@@ -1601,6 +1664,6 @@ export async function allesLoeschen() {
   if (!verfuegbar || !db) return false;
   try { await txMehr(["stand", "teile", "ereignisse"], "readwrite", (t) => { for (const n of ["stand", "teile", "ereignisse"]) t.objectStore(n).clear(); }); }
   catch (e) { console.warn("Löschen fehlgeschlagen:", e); return false; }
-  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map(); genGelesen = 0; // Paket 2: Kopf ist weg, Zähler beginnt neu
+  grundlageVerwerfen(); altModus = false; letzteWurzel = null; bereichH = new Map(); genGelesen = 0; rueckholMem = null; rohGefunden = []; // Paket 2: Kopf ist weg, Zähler beginnt neu
   return true;
 }
