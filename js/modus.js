@@ -42,20 +42,40 @@ export function modusVergessen(wurzel) { if (wurzel) delete wurzel.modus; merke(
 // „Alles löschen": auch den Spiegel vergessen.
 export function ebeneVergessen() { merke(SCHLUESSEL.modus, null); merke(SCHLUESSEL.pinAlt, null); }
 
-// Personal-Modus (W2-S, p02 K2): diese Handlungen gibt es dort nicht – Einrichtung, Grenzen, Personen, Verwerfen,
-// Nachtragen für Vortage, Putzplan einrichten, Sprache dauerhaft, Code, Laden löschen. („Alles löschen" auf der Fehlerseite geht mit Code.) Die Knöpfe fehlen dort, app.js weist sie zusätzlich ab.
-const PERSONAL_GESPERRT = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffnen", "kuehl-einrichtung-fertig", "kuehl-keine", "kuehl-takt", "kuehl-ruhetag",
-  "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "muell1-nachtragen",
-  "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter", "rg-von", // Laden-Umbau (20.10.2026)
-  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "laden-loeschen", "laden-neu", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export",
-  "rettung-neu"]); // Rettung (17.10.2026): kein neuer Rettungscode; „Code vergessen?“ nur am Schloss (rettungErlaubt in rettung.js, app.js prüft)
+// Personal-Modus als POSITIVLISTE (Lauf 6, E5, F – Audit P3 C2): ausgeführt wird nur, was hier ausdrücklich steht. Was neu dazukommt
+// (ein neuer Knopf, eine neue Aktion), ist im Personal-Modus von selbst gesperrt, bis jemand es bewusst freigibt.
+// Die Liste folgt dem, was Personal-Start, Müll, Kühlung und Putzplan (Laden-Ansicht) wirklich anbieten, dazu Schloss, Code-Blatt und Hilfe.
+// tests/lauf6_e5_bedienung.test.mjs: jeder data-a-Name aus js/screens ist nur erlaubt, wenn er hier steht; hier steht nichts aus PERSONAL_NIE.
+export const PERSONAL_ERLAUBT = new Set([
+  // Schloss, Code-Blatt, Hilfe, Navigation (nav: nur mit Ziel aus PERSONAL_ANSICHTEN, siehe personalErlaubt)
+  "schloss", "pin-taste", "pin-weg", "pin-bio", "rettung-start", "rettung-pruefen", "rettung-ok", "blatt-zu", "hilfe-auf", "hilfe-mehr",
+  // Personal-Start: Person wählen, Kachel öffnen
+  "personal-wer", "personal-wechseln", "personal-ziel",
+  // Müll
+  "muell-andere", "muell-auswahl", "muell-auswahl-zu", "muell-chip", "muell-d", "muell-detail", "muell-einheit", "muell-grund", "muell-kachel", "muell-personal",
+  "muell-start", "muell-station-auf", "muell-station-zu", "muell-tipp", "muell-weg-damit", "muell1-zurueck", "muell-rueckgaengig",
+  // Kühlung: messen, Maßnahmen, Ware weg, Rundgang abschließen – ohne Einrichtung, Grenzen, Personen, Verwerfen, Vortage
+  "kuehl-rundgang-los", "kuehl-einzel", "kuehl-start", "rundgang-start", "rundgang-abschluss", "station", "station-zu", "station-minus", "station-plus-ok", "station-grund",
+  "station-nicht-auf", "station-nk-auf", "station-speichern", "massnahme", "nachkontrolle", "weg-artikel", "weg-hinzu", "weg-alles", "weg-weg",
+  // Putzplan: abhaken und „Warum?“
+  "pp-haken", "pp-mehr",
+]);
+// Was im Personal-Modus NIE erlaubt sein darf: Einrichtung, Grenzen, Personen, Verwerfen, Nachtragen für Vortage, Putzplan einrichten, Sprache dauerhaft,
+// Code, Laden löschen, Euro-Bildschirme, Büro, Einstellungen. Die Positivliste lässt davon nichts durch (Test); diese Liste ist die Gegenprobe.
+export const PERSONAL_NIE = new Set(["kuehl-einrichtung", "kuehl-einrichtung-oeffnen", "kuehl-einrichtung-fertig", "kuehl-keine", "kuehl-takt", "kuehl-ruhetag", "kuehl-blatt", "kuehl-blatt-oeffnen", "kuehl-rundgang", "kuehl-rundgang-start",
+  "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "start-von", "rg-von", "muell1-nachtragen",
+  "pp-geraet", "pp-aufgabe", "pp-uebernehmen", "pp-spaeter", "pp-ansicht", "pp-wer",
+  "sprache", "blatt-sprache", "pin-setzen", "pin-entfernen", "testphase-code", "laden-loeschen", "laden-neu", "laden-wechseln", "blatt-laeden", "beispiel-anlegen", "beispiel-loeschen", "einrichtung-fertig-ok", "bearbeiten", "export",
+  "rettung-neu", "loeschen", "modus", "menue-auf", "menue-zurueck", "monat-blatt", "umsatz-speichern", "ul-speichern", "abschluss-fertig", "diagnose-kopieren", "fehler-melden", "aktualisieren", "home-installieren"]);
+export const PERSONAL_NIE_VORSILBEN = /^stelle-|^kw-|^vk-|^tf-|^akt-|^gt-|^lf-|^eig-|^buero-|^ordner-|^ul-|^hm-|^g3-|^best-|^wa-|^pr-|^po-|^kl-/; // Eigentümer-Ebene (eig-), Lieferanten (lf-), Getränke (gt-), Menütafel (tf-), Aktionen (akt-), Verkauf (vk-), Kühl-Ware (kw-), Einrichtung (stelle-), Büro/Ordner, Umsatz, Hinweise, Geld, Bestand, Ware, Preise, Portion, Laden-Karte
 // heute: Datum „heute" (JJJJ-MM-TT) – Müll und Kühlung dürfen im Personal-Modus nur für heute eingetragen werden.
-export function personalGesperrt(name, wert, heute) {
-  if (PERSONAL_GESPERRT.has(name) || /^stelle-|^kw-|^vk-|^tf-|^akt-|^gt-|^lf-|^eig-/.test(name)) return true; // Eigentümer-Ebene (18.10.2026): eig- nur im Büro // Lieferanten (18.10.2026): lf- nur im Büro // Getränke (18.10.2026): gt- nur im Büro // Menütafel (18.10.2026): tf- (Menütafel) und akt- (Aktionen) nur im Büro // vk- (18.10.2026): Verkauf je Gericht und Z-Bon nur im Büro // Trennung (17.10.2026): kw- = Büro „Ware nach Kühl-Abweichung“
-  if (name === "pp-ansicht" && wert === "einrichten") return true;
-  if (name === "tag-datum" && wert !== heute) return true;
-  return false;
+export function personalErlaubt(name, wert, heute) {
+  if (PERSONAL_NIE.has(name) || PERSONAL_NIE_VORSILBEN.test(name)) return false;
+  if (name === "tag-datum") return wert === heute;
+  if (name === "nav") return PERSONAL_ANSICHTEN.includes(wert);
+  return PERSONAL_ERLAUBT.has(name);
 }
+export const personalGesperrt = (name, wert, heute) => !personalErlaubt(name, wert, heute);
 // Eingabefelder der Einrichtung (Kühlstellen, Grenzen, Kürzel) – im Personal-Modus ohne Wirkung.
 export const personalFeldGesperrt = (feld) => /^stelle-|^person-neu$/.test(String(feld || ""));
 
@@ -143,6 +163,7 @@ export const pruefwertStimmt = (wert, text) => (typeof wert === "string" && NEU.
 // Prüft den Code. Ein alter Prüfwert (ohne Salz) wird dabei gleich auf den neuen umgestellt – danach speichern.
 export async function pinPruefen(wurzel, pin) {
   if (!pinGesetzt(wurzel) || !pinGueltig(pin)) return false;
+  if (hartGesperrt(wurzel)) return false; // Lauf 6, E5 (G): nach 10 Fehlversuchen nur noch der Rettungscode
   const ok = await pinStimmt(wurzel.bueroPin, String(pin));
   if (ok && pinVeraltet(wurzel)) wurzel.bueroPin = await pinHash(pin);
   return ok;
@@ -153,10 +174,20 @@ export async function pinPruefen(wurzel, pin) {
 // Ab dem 5. Fehlversuch: 30 s, dann je Fehlversuch doppelt so lang, höchstens 15 min. Ein richtiger Code setzt zurück.
 export const SPERRE_AB = 5, SPERRE_START_MS = 30000, SPERRE_MAX_MS = 15 * 60000;
 export const sperreDauer = (fehler) => (fehler < SPERRE_AB ? 0 : Math.min(SPERRE_MAX_MS, SPERRE_START_MS * 2 ** (fehler - SPERRE_AB)));
-export function sperreRest(wurzel, jetzt = Date.now()) {
+// Lauf 6, E5 (G – Audit P3 C1/B2): Die Wartezeit hängt an der Handy-Uhr; wer die Uhr vorstellt, umgeht sie. Darum zusätzlich ein Zähler:
+// Nach 10 Fehlversuchen in Folge geht nur noch der Rettungscode (rettung.js), egal was die Uhr sagt. Ein richtiger Code oder der Rettungscode
+// setzt den Zähler zurück (sperreLoesen). Gilt nur, wenn ein Rettungscode angelegt ist – sonst käme niemand mehr ins Büro (dann bleibt die Wartezeit).
+// Der Büro-Code bleibt vierstellig (Entscheidung des Inhabers): „Schloss gegen neugierige Blicke, kein Tresor.“
+export const SPERRE_HART_AB = 10;
+const rettungDa = (wurzel) => typeof wurzel?.rettungPin === "string" && NEU.test(wurzel.rettungPin);
+export const hartGesperrt = (wurzel) => (Number(wurzel?.pinSperre?.fehler) || 0) >= SPERRE_HART_AB && rettungDa(wurzel);
+// Nur die Uhr (Wartezeit nach 5+ Fehlversuchen) – so rechnet auch der Rettungscode, damit er bei der harten Sperre offen bleibt
+export function sperreRestUhr(wurzel, jetzt = Date.now()) {
   const bis = Number(wurzel?.pinSperre?.bis) || 0; if (bis <= jetzt) return 0;
   return Math.min(bis - jetzt, SPERRE_MAX_MS); // Uhr zurückgestellt: nie länger als die größte Wartezeit
 }
+// Rest der Sperre für den Büro-Code: hart gesperrt = immer die größte Wartezeit, unabhängig von der Uhr
+export function sperreRest(wurzel, jetzt = Date.now()) { return hartGesperrt(wurzel) ? SPERRE_MAX_MS : sperreRestUhr(wurzel, jetzt); }
 export function fehlversuch(wurzel, jetzt = Date.now()) {
   const fehler = Math.max(0, Number(wurzel.pinSperre?.fehler) || 0) + 1; const d = sperreDauer(fehler);
   wurzel.pinSperre = { fehler, bis: d ? jetzt + d : 0 };

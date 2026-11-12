@@ -47,9 +47,9 @@ test("Sperrliste im Personal-Modus", () => {
   const H = "2026-10-15";
   for (const a of ["kuehl-einrichtung", "stelle-neu", "stelle-archiv", "person-neu", "person-weg", "rundgang-verwerfen", "start-datum", "pp-uebernehmen", "pp-geraet", "sprache", "pin-entfernen", "muell1-nachtragen"])
     assert.equal(M.personalGesperrt(a, undefined, H), true, a);
-  assert.equal(M.personalGesperrt("pp-ansicht", "einrichten", H), true); assert.equal(M.personalGesperrt("pp-ansicht", "nachweis", H), false);
+  assert.equal(M.personalGesperrt("pp-ansicht", "einrichten", H), true); assert.equal(M.personalGesperrt("pp-ansicht", "nachweis", H), true); /* Lauf 6, E5 (F): Positivliste – der Nachweis ist ein Büro-Bildschirm */
   assert.equal(M.personalGesperrt("tag-datum", "2026-10-14", H), true); assert.equal(M.personalGesperrt("tag-datum", H, H), false);
-  for (const a of ["muell-tipp", "station", "station-speichern", "rundgang-abschluss", "pp-haken", "schloss", "pin-taste", "loeschen"]) assert.equal(M.personalGesperrt(a, undefined, H), false, a);
+  for (const a of ["muell-tipp", "station", "station-speichern", "rundgang-abschluss", "pp-haken", "schloss", "pin-taste"]) assert.equal(M.personalGesperrt(a, undefined, H), false, a); assert.equal(M.personalGesperrt("loeschen", undefined, H), true, "Lauf 6, E5 (F): Alles löschen gibt es im Personal-Modus nicht");
   assert.equal(M.personalFeldGesperrt("stelle-max:k1"), true); assert.equal(M.personalFeldGesperrt("person-neu"), true); assert.equal(M.personalFeldGesperrt("station-wert"), false);
 });
 
