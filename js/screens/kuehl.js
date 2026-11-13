@@ -172,7 +172,7 @@ function rundgangView(stand) {
       ${k ? stationView(stand, r, k) : `
       <div class="liste">${stellen.map((x) => { const m = r.messungen.find((y) => y.stelle === x.id); const letzte = letzteMessung(stand, x.id); return `
         <button type="button" class="wahl ${m ? "an" : ""} ${m?.abweichung ? "warnung" : ""}" data-a="station" data-id="${esc(x.id)}">
-          <span class="haken">${m ? (m.abweichung ? "!" : "✓") : ""}</span>
+          <span class="haken">${m ? (m.abweichung ? "!" : "✓") : ""}</span>${stelleBild(x)}
           <span class="fuell"><b>${esc(kn(x))}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : ""}</small></span>
           <span style="font-weight:800;white-space:nowrap" class="${m?.abweichung ? "rot" : ""}">${m ? (typeof m.wert === "number" ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : esc(t("kuehl.nichtGemessenKurz"))) : "›"}</span>
         </button>`; }).join("")}</div>
@@ -226,7 +226,7 @@ function stationView(stand, r, k) {
   const grundChips = `<div class="chips">${NICHT_GEMESSEN.map((g) => `<button type="button" class="chip klein ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>`;
   return `
     <div class="karte formular">
-      <h2>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></h2>
+      <h2 class="stationkopf">${stelleBild(k)}<span>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></span></h2>
       ${f.grund ? "" : `
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       ${marke ? `<span class="marke">${esc(marke)}</span>` : ""}

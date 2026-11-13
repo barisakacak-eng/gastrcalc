@@ -71,7 +71,7 @@ export function personalView(stand) {
   return `${personalLeiste()}<div class="inhalt personalstart">
     <div class="personalkopf">${name ? `<span class="avatar">${esc(name.slice(0, 1).toUpperCase())}</span>` : ""}<div><b>${esc(name ? t("personal.hallo", name) : t("personal.halloOhne"))}</b><small>${esc(datum)}</small></div>
       ${personen.length ? `<button type="button" class="leise personwechsel" data-a="personal-wechseln">${esc(t("personal.wechseln"))}</button>` : ""}</div>
-    ${kachel("muell", "m-eimer-foto", "trash-2", "--muell", t("personal.muell"), "")}
+    ${kachel("muell", "m-eimer-foto", "trash-2", "--salbei-tief", t("personal.muell"), "")}
     ${kachel("kuehl", "k-kuehlschrank-lebensmittel-foto", "snowflake", "--branche", t("personal.kuehlung"), kuehlPille)}
     ${kachel("putzplan", null, "spray-can", "--salbei-tief", t("personal.putzen"), putzPille, "putz")}
   </div>`;

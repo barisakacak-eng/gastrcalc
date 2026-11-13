@@ -92,16 +92,24 @@ function rasterView(stand, D, nach) {
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   const h = muellHeute(stand, D);
   const satz = grund === "ausgegeben" ? t("muell.zeki.ausgegeben") : grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");
+  // Frischer Döner-Laden ohne Dönerspieß, Hähnchenspieß, Pommes, Cola (DOENER_VORNE in js/muell.js greift nur bei angelegten Waren): „Andere“ steht gut sichtbar zuerst. Es wird nichts angelegt.
+  const andereZuerst = grund === "roh" && _andereZuerst(stand);
   const reiter = ["roh", "personal", "ausgegeben", "bruch"].filter((g) => g !== "ausgegeben" || !personalAktiv()); // Persona-Test Team 27.10.: Personalessen auch für das Team // „Ausgegeben“ nur für den Chef
   return `<div class="inhalt muell1 m-schablone">
     <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.uebrig"))}">${sym("moon")}<span>${esc(t("muell.uebrig"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
     <p class="zeki-zeile" role="status">${esc(satz)}</p>
     <div class="m-reiter" role="tablist">${reiter.map((g) => `<button type="button" role="tab" aria-selected="${grund === g}" class="${grund === g ? "an" : ""}" data-a="muell-grund" data-wert="${g}">${esc(t("muell.grund." + g))}</button>`).join("")}</div>
-    <div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
-      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>
+    <div class="muellraster ${andereZuerst ? "andere-zuerst" : ""}">${andereZuerst ? andereKachel() : ""}${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
+      ${andereZuerst ? "" : andereKachel()}</div>
   </div>${toastHtml()}`;
 }
+
+// „Andere“: Kachel mit Piktogramm (jede Kachel der Liste trägt ein Bild) – öffnet die Suche
+const ANDERE_BILD = "bilder/ui/plus.svg";
+const andereKachel = () => `<button type="button" class="karte ware andere" data-a="muell-andere"><img class="gerichtbild mini pikto" src="${ANDERE_BILD}" alt="" loading="lazy"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>`;
+const DOENER_WAREN = [/^Dönerspieß/i, /^Hähnchenspieß/i, /^Pommes/i, /^Cola/i]; // dieselben Namen wie DOENER_VORNE in js/muell.js (dort unverändert)
+export const _andereZuerst = (stand) => !(stand.schwund || []).length && (stand.betrieb?.kuechen || []).includes("doener") && !(stand.artikel || []).some((a) => DOENER_WAREN.some((r) => r.test(a.name)));
 
 // Dieselben Daten und Schreibfunktionen wie L2: kein zweiter Zähler, keine Rechenlogik.
 // „Übrig geblieben“: abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
@@ -117,7 +125,7 @@ function stationView(stand, D) {
     </div>
     <div class="muellraster muell-station-raster">
       ${waren.map((x) => kachelHtml(stand, x, zaehl, frisch, true)).join("")}
-      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>
+      ${andereKachel()}
     </div>
   </div>${toastHtml()}`;
 }
