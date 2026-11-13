@@ -1343,8 +1343,22 @@ function stabil(x) {
   if (x && typeof x === "object") return "{" + Object.keys(x).filter((k) => x[k] !== undefined).sort().map((k) => JSON.stringify(k) + ":" + stabil(x[k])).join(",") + "}";
   return JSON.stringify(x ?? null);
 }
-const FLAGGEN = new Set(["storniert", "storniertZeit", "importiert", "konfliktMit", "quelleVorher", "datumPruefen"]);
-function kern(e, ohneWert) { const o = {}; for (const k of Object.keys(e)) if (!FLAGGEN.has(k) && !(ohneWert && k === "wert")) o[k] = e[k]; return stabil(o); }
+// Lauf 6, E11 (A2): JEDES Feld, das ein Storno setzt, ist ein Kennzeichen (storniert, storniertZeit, storniertVon, …) und gehört nicht zum Inhalt – sonst gilt eine
+// Rücknahme auf dem anderen Handy als „anderer Inhalt“ (HACCP-Konflikt, Kopie, Haken bleibt erledigt).
+const istStornoFeld = (k) => typeof k === "string" && k.startsWith("storniert");
+const FLAGGEN_FIX = new Set(["importiert", "konfliktMit", "quelleVorher", "datumPruefen"]);
+const istFlagge = (k) => FLAGGEN_FIX.has(k) || istStornoFeld(k);
+function kern(e, ohneWert) { const o = {}; for (const k of Object.keys(e)) if (!istFlagge(k) && !(ohneWert && k === "wert")) o[k] = e[k]; return stabil(o); }
+// Storno beider Seiten zusammenführen: „storniert“ gewinnt immer; haben beide storniert, gilt die frühere Rücknahme (mit ihren Begleitfeldern) – auf beiden Handys dieselbe.
+function stornoVereinen(neu, alt, e) {
+  const sa = !!alt.storniert, se = !!e.storniert;
+  for (const k of Object.keys(neu)) if (istStornoFeld(k) && k !== "storniert") delete neu[k];
+  if (!sa && !se) return neu;
+  const felder = (x) => Object.fromEntries(Object.keys(x).filter((k) => istStornoFeld(k) && k !== "storniert" && x[k] !== undefined).map((k) => [k, x[k]]));
+  let q = sa ? alt : e;
+  if (sa && se) { const za = String(alt.storniertZeit ?? "~"), ze = String(e.storniertZeit ?? "~"); q = za !== ze ? (za < ze ? alt : e) : (stabil(felder(alt)) >= stabil(felder(e)) ? alt : e); }
+  Object.assign(neu, felder(q)); return neu;
+}
 
 // Journale: Vereinigung nach Kennung, Kennzeichen (storniert, entfernt, archiviert) gewinnen immer.
 // schutz (HACCP): vorhandene lokale Einträge ändern sich nur über Kennzeichen (Storno, nachgetragener Wert); bericht zählt Konflikte und Zukunft.
@@ -1368,7 +1382,8 @@ function journalVereinigen(a, b, kennzeichen = ["storniert"], { schutz = false, 
       }
       const neu = { ...alt };
       for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
-      if (!alt.storniertZeit && e.storniertZeit) neu.storniertZeit = e.storniertZeit;
+      if (kennzeichen.includes("storniert")) stornoVereinen(neu, alt, e);
+      if (alt.datumPruefen || e.datumPruefen) neu.datumPruefen = true; // E11: das Merkmal „Datum prüfen“ geht nicht verloren und steht auf beiden Handys
       if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert; // nachgetragener Wert gewinnt über „offen"
       m.set(e.id, neu); continue;
     }
@@ -1382,7 +1397,8 @@ function vereinige(alt, e, kennzeichen) {
   const neu = { ...aelter, ...juenger };
   for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
   if (kennzeichen.includes("entfernt") && (alt.entfernt || e.entfernt)) { const q = alt.entfernt ? alt : e; neu.kuerzel = q.kuerzel; neu.aktiv = false; } // Pseudonym bleibt
-  if (alt.storniertZeit || e.storniertZeit) neu.storniertZeit = alt.storniertZeit || e.storniertZeit;
+  if (kennzeichen.includes("storniert")) stornoVereinen(neu, alt, e);
+  if (alt.datumPruefen || e.datumPruefen) neu.datumPruefen = true;
   if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert;
   if (typeof alt.wert === "number" && e.wert === null) neu.wert = alt.wert;
   return neu;
