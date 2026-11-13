@@ -81,6 +81,27 @@ const F = {
     ar: (n) => `${n} إدخالات بتاريخ في المستقبل. يرجى التحقق من التاريخ.`,
     en: (n) => `${n} entries have a date in the future. Please check the date.`,
   },
+  // Bei „mehr als drei Zeilen“ im Büro-Hinweis nach dem Abgleich (Lauf 6, E5-Draht 7)
+  weitere: {
+    de: (n) => `… und ${n} weitere`,
+    tr: (n) => `… ve ${n} tane daha`,
+    ar: (n) => `… و${n} أخرى`,
+    en: (n) => `… and ${n} more`,
+  },
+  // Wie eintragUnterschied, aber der Wert vom anderen Handy hat gewonnen (bericht.eintraege[].behalten === "fremd")
+  eintragUnterschiedFremd: {
+    de: (was, a, b) => `${was}: dieses Handy ${a}, anderes Handy ${b}. Der Wert vom anderen Handy gilt.`,
+    tr: (was, a, b) => `${was}: bu telefon ${a}, diğer telefon ${b}. Diğer telefonun değeri geçerli.`,
+    ar: (was, a, b) => `${was}: هذا الهاتف ${a}، الهاتف الآخر ${b}. تسري قيمة الهاتف الآخر.`,
+    en: (was, a, b) => `${was}: this phone ${a}, other phone ${b}. The other phone's value applies.`,
+  },
+  // Wie bereichUnterschied, aber die Seite des anderen Handys gilt (abgleichHinweis.unterschiede[].gilt === "fremd")
+  bereichUnterschiedFremd: {
+    de: (was, a, b) => `${was} war auf beiden Handys verschieden (hier ${a}, dort ${b}). Dort gilt ${b}.`,
+    tr: (was, a, b) => `${was} iki telefonda farklıydı (burada ${a}, orada ${b}). Orada ${b} geçerli.`,
+    ar: (was, a, b) => `${was} كان مختلفاً على الهاتفين (هنا ${a}، هناك ${b}). هناك يسري ${b}.`,
+    en: (was, a, b) => `${was} differed on the two phones (here ${a}, there ${b}). There ${b} applies.`,
+  },
   // Datei zu groß
   zuGross: {
     de: (mb) => `Die Datei ist zu groß (mehr als ${mb} MB).`,

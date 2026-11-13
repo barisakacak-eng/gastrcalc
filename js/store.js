@@ -1488,10 +1488,10 @@ function eintraegeVerschmelzen(a, basis, lokal, fremd, w, bericht) {
 // Bereiche ohne Kennungen (Betrieb, Kanäle, Verkauf …), bei denen beide Handys etwas geändert haben: die gewählte Seite gilt wie bisher,
 // aber beide Werte werden im abgleichHinweis festgehalten (Satz „bereichUnterschied“ in js/data/l6y_texte.js).
 const OHNE_UNTERSCHIED = new Set(["kuehl", "aktionen", "wochen", "spiesse", "portionen", "lieferanten", "personen", "gerichte", "artikel", "kosten"]);
-function unterschiedMerken(a, lokal, fremd, bericht) {
+function unterschiedMerken(a, lokal, fremd, bericht, gilt = "lokal") { // gilt: welche Seite die Bereichswahl gewonnen hat (E5-Draht 7: der Satz im Büro nennt die richtige)
   const f = (x) => Object.fromEntries(BEREICHE[a].map((k) => [k, x[k]]));
   const u = unterschiedKurz(f(lokal), f(fremd), "", ["hinweise"]);
-  if (u.lokal || u.fremd) bericht.unterschiede.push({ bereich: a, lokal: u.lokal, fremd: u.fremd });
+  if (u.lokal || u.fremd) bericht.unterschiede.push({ bereich: a, lokal: u.lokal, fremd: u.fremd, gilt });
 }
 export function abgleichGrundlage(b) { for (const a of BEREICH_NAMEN) abgleichMerken(b, a, null); return b; }
 
@@ -1534,7 +1534,7 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     const [sieger, verlierer] = w.q === "fremd" ? [fremd, lokal] : [lokal, fremd];
     for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
     if (EINTRAG_BEREICHE[a] && (w.art === "beide" || w.art === "zeit")) eintraegeVerschmelzen(a, basis, lokal, fremd, w, bericht); // Lauf 6, E5 (B1): je Eintrag statt je Bereich
-    else if (w.art === "beide" && !OHNE_UNTERSCHIED.has(a)) unterschiedMerken(a, lokal, fremd, bericht);
+    else if (w.art === "beide" && !OHNE_UNTERSCHIED.has(a)) unterschiedMerken(a, lokal, fremd, bericht, w.q === "fremd" ? "fremd" : "lokal");
     if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
     if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel (18.10.2026)
     if (a === "wochen" || a === "spiesse" || a === "portionen") { const k = BEREICHE[a][0]; basis[k] = listeNachId(sieger[k], verlierer[k]); } // Fund 5

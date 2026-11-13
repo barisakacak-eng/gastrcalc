@@ -2,7 +2,10 @@
 // Laden „Heute“ zeigt höchstens EINE Aufgabe („Jetzt dran“) aus einer festen Liste (jetztDran). Alles andere, was früher das Cockpit
 // gefüllt hat (Einrichtungsring, Kostenlücken, Waage-Vorschlag, graue Gerichte, Hinweise, neue Fassung …), liefert offenImBuero()
 // als Liste für die Büro-Startseite. Reine Logik, kein HTML.
-import { t, artikelText } from "./i18n.js";
+import { t, artikelText, sprache } from "./i18n.js";
+import { l6ySatz } from "./data/l6y_texte.js"; // Lauf 6, E5-Draht (7)
+import { fmtEuro } from "./util.js";
+import { datumLesbar } from "./anzeige_text.js";
 import { rechtsformBekannt } from "./rechtsform.js"; // Rechtsform (23.10.2026)
 import { kuehlstelleAnzeige } from "./kuehlname.js"; // Paket 6 (17.10.2026)
 import { heute, heuteGeschaeft } from "./util.js"; // Paket 3 (16.10.2026), M7
@@ -83,10 +86,17 @@ export function offenImBuero(stand, wurzel, { jetzt = new Date(), aktualisierung
   if (rettungFehlt(wurzel)) add("rettung", t("rettung.offen"), { aktion: "rettung-neu" }); // Rettung (17.10.2026): Büro-Code ohne Rettungscode (ältere Läden)
   // W2-D: übersprungene Speicherteile (welcher Monat, welches Journal) und Hinweise vom Zusammenführen
   for (const x of (wurzel?.ladeFehler || []).filter((x) => !x.laden || x.laden === stand.id).slice(0, 3))
-    add("ladeFehler", x.journal === "kopf" ? t("w2d.offen.kopf") : t("w2d.offen.teil", t("w2d.journal." + (x.journal in JOURNAL_TEXT ? x.journal : "anderes")), x.monat && x.monat !== "alle" && x.monat !== "ohne" ? x.monat.slice(5, 7) + "/" + x.monat.slice(0, 4) : ""), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });
+    add("ladeFehler", x.grund === "gerettet" ? l6ySatz("gerettet", sprache(), x.gerettet ?? 0) : x.journal === "kopf" ? t("w2d.offen.kopf") : t("w2d.offen.teil", t("w2d.journal." + (x.journal in JOURNAL_TEXT ? x.journal : "anderes")), x.monat && x.monat !== "alle" && x.monat !== "ohne" ? x.monat.slice(5, 7) + "/" + x.monat.slice(0, 4) : ""), { aktion: "nav", wert: "einstellungen", anker: "sicherung" });
   const ah = stand.abgleichHinweis;
   if (ah?.bereiche?.length) add("abgleich", t("w2d.offen.abgleich", ah.bereiche.map((b) => t("w2d.bereich." + b)).join(", ")), { aktion: "abgleich-ok" });
-  if (ah?.zukunft) add("abgleichZukunft", t("w2d.offen.zukunft", ah.zukunft), { aktion: "abgleich-ok" });
+  if (ah?.zukunft) add("abgleichZukunft", l6ySatz("zukunftPruefen", sprache(), ah.zukunft), { aktion: "abgleich-ok" }); // E5-Draht (7): „übernommen, bitte Datum prüfen“ (vorher fälschlich „nicht übernommen“)
+  // E5-Draht (7): je Art höchstens drei Zeilen mit beiden Werten, bei mehr „… und n weitere“. Beträge über fmtEuro, Namen aus dem Laden.
+  { const zeilen = (id, liste, satz) => { const l = Array.isArray(liste) ? liste : []; l.slice(0, 3).forEach((x, i) => add(id + i, satz(x), { aktion: "abgleich-ok" })); if (l.length > 3) add(id + "Mehr", l6ySatz("weitere", sprache(), l.length - 3), { aktion: "abgleich-ok" }); };
+    const sp = sprache(); const bereichName = (b) => { const k = t("w2d.bereich." + b); return k && !String(k).startsWith("w2d.") ? k : b; };
+    const eintragName = (x) => { const e = x.bereich === "gerichte" ? (stand.gerichte || []).find((g) => g.id === x.kennung) : x.bereich === "kosten" ? (stand.kosten || []).find((k) => k.id === x.kennung) : null; return `${bereichName(x.bereich)} ${e?.name || e?.posten || x.kennung}`; };
+    zeilen("abgleichEintrag", ah?.eintraege, (x) => l6ySatz(x.behalten === "fremd" ? "eintragUnterschiedFremd" : "eintragUnterschied", sp, eintragName(x), x.lokal, x.fremd));
+    zeilen("abgleichBereich", ah?.unterschiede, (x) => l6ySatz(x.gilt === "fremd" ? "bereichUnterschiedFremd" : "bereichUnterschied", sp, bereichName(x.bereich), x.lokal, x.fremd));
+    zeilen("abgleichUmsatz", ah?.umsatzKonflikte, (x) => l6ySatz("umsatzKonflikt", sp, datumLesbar(x.tag), fmtEuro(x.lokal, { dezimal: 2 }), fmtEuro(x.fremd, { dezimal: 2 }))); }
   if (ah?.konflikte) add("abgleichKonflikt", t("w2d.offen.konflikt", ah.konflikte), { aktion: "abgleich-ok" });
   { const u = bestandUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt) }); if (u) out.push({ id: "bestand", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Bestand (17.10.2026)
   { const u = lieferUhrzeit(stand, { heuteTag: heuteGeschaeft(jetzt), jetzt }); if (u) out.push({ id: "lieferant", text: u.text, ziel: u.ziel, farbe: u.ton === "rot" ? "rot" : "gelb" }); } // Lieferanten (18.10.2026): Bestellschluss, Mindestbestellwert, Liefertag – nur im Büro

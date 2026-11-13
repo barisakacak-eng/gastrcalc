@@ -100,3 +100,37 @@ test("Draht 6: geld3View zeigt den Satz „Daten seit Abschluss geändert.“ nu
     assert.ok(karte(a).includes(satz), "nach nachgetragenem Tag: Hinweis steht in der Karte");
   } finally { mock.timers.reset(); }
 });
+
+// ---------- 7: Büro-Hinweis nach dem Abgleich trägt die Zeilen ----------
+test("Draht 7: Büro zeigt je Art höchstens drei Zeilen mit den Sätzen aus l6y_texte.js, bei mehr „… und n weitere“; gerettet statt „Teil fehlt“", async () => {
+  const { bueroView } = await import("../js/screens/buero.js"); const { fmtEuro } = await import("../js/util.js"); const { datumLesbar } = await import("../js/anzeige_text.js");
+  const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
+  const s = beispielLaden("2026-11-13"); s.id = "L1"; s.beispiel = false; s.kosten = s.kosten.slice(0, 1); const gn = s.gerichte[0].name; s.gerichte[0].id = "g1";
+  const eintraege = [0, 1, 2, 3, 4].map((i) => ({ laden: "L1", bereich: i === 0 ? "gerichte" : "kosten", kennung: i === 0 ? "g1" : "k" + i, art: "verschieden", lokal: `preis ${i}`, fremd: `preis ${i + 10}`, behalten: i === 1 ? "fremd" : "lokal" }));
+  const unterschiede = [{ laden: "L1", bereich: "betrieb", lokal: "name Nord A", fremd: "name Nord B", gilt: "fremd" }];
+  const umsatzKonflikte = [0, 1, 2, 3].map((i) => ({ laden: "L1", tag: `2026-11-0${i + 1}`, lokal: 800 + i, fremd: 900 + i, gilt: "fremd" }));
+  s.abgleichHinweis = { zeit: "2026-11-13T10:00:00.000Z", bereiche: [], zukunft: 2, konflikte: 0, eintraege, unterschiede, umsatzKonflikte };
+  const w = wurzelMit(s); w.ladeFehler = [{ laden: "L1", journal: "tagesnotizen", monat: "2026-10", grund: "gerettet", gerettet: 17 }, { laden: "L1", journal: "messungen", monat: "2026-09", grund: "kaputt" }];
+  const html = bueroView(s, w, {}); const text = html.replace(/<[^>]+>/g, "\n").split("\n").map((x) => x.trim()).filter(Boolean);
+  const zeile = (x) => text.filter((z) => z === x);
+  // je Art höchstens drei Zeilen + eine „weitere“-Zeile
+  const e = (x) => l6y.l6ySatz(x.behalten === "fremd" ? "eintragUnterschiedFremd" : "eintragUnterschied", "de", x.bereich === "gerichte" ? "Gerichte und Rezepte " + gn : "Kosten " + x.kennung, x.lokal, x.fremd);
+  for (const x of eintraege.slice(0, 3)) assert.equal(zeile(e(x)).length, 1, e(x));
+  assert.equal(text.filter((z) => z.startsWith("Kosten k") || z.startsWith("Gerichte und Rezepte " + gn)).length, 3, "höchstens drei Eintrag-Zeilen");
+  assert.equal(zeile("… und 2 weitere").length, 1, "Eintrag: … und 2 weitere");
+  assert.equal(zeile("… und 1 weitere").length, 1, "Umsatz: … und 1 weitere");
+  assert.equal(zeile(l6y.l6ySatz("bereichUnterschiedFremd", "de", "Betrieb", "name Nord A", "name Nord B")).length, 1, "Bereich: dort gilt");
+  assert.equal(text.filter((z) => z.startsWith("Umsatz am ")).length, 3);
+  assert.equal(zeile(l6y.l6ySatz("umsatzKonflikt", "de", datumLesbar("2026-11-01"), fmtEuro(800, { dezimal: 2 }), fmtEuro(900, { dezimal: 2 }))).length, 1, "Beträge über fmtEuro");
+  assert.equal(zeile(l6y.l6ySatz("zukunftPruefen", "de", 2)).length, 1);
+  assert.equal(zeile(l6y.l6ySatz("gerettet", "de", 17)).length, 1, "gerettet");
+  assert.ok(!text.some((z) => /Ein Teil fehlt \(Tagesumsätze/.test(z)) && text.some((z) => /^Ein Teil fehlt/.test(z)), "gerettet ersetzt „Teil fehlt“, der kaputte Teil bleibt");
+  // „Dieses Handy behält …“ steht nur, wo es stimmt
+  assert.ok(!zeile(l6y.l6ySatz("eintragUnterschied", "de", "Kosten k1", "preis 1", "preis 11")).length, "k1: anderes Handy gewinnt → Fremd-Satz");
+});
+test("Draht 7: verschmelzen merkt, welche Seite bei einem Bereich gilt (unterschiede[].gilt)", () => {
+  const a = laden("L1"), b = laden("L1"); a.betrieb.name = "Nord A"; b.betrieb.name = "Nord B";
+  a.stammZeit = { betrieb: "2026-11-01T10:00:00.000Z" }; b.stammZeit = { betrieb: "2026-11-02T10:00:00.000Z" };
+  const m = st.verschmelzen(a, b, { jetzt: Date.parse("2026-11-13T12:00:00Z") });
+  for (const u of m.abgleichHinweis?.unterschiede || []) assert.ok(u.gilt === "lokal" || u.gilt === "fremd");
+});
