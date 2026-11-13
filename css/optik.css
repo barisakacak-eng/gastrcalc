@@ -22,7 +22,7 @@ input[type=checkbox]{accent-color:var(--salbei);inline-size:22px;block-size:22px
 .ik,svg.ik{inline-size:24px;block-size:24px;stroke-width:1.7}.ikonknopf{min-inline-size:44px;min-block-size:44px;border:0;background:transparent;color:inherit;display:inline-grid;place-items:center}
 .blattkopf{display:flex;align-items:center;gap:12px}.blattkopf .zu{margin-inline-start:auto}.ebene-blatt{background:var(--papier);color:var(--tinte);border-radius:22px 22px 0 0;box-shadow:var(--schatten-menu);padding:12px 20px 24px;max-block-size:90dvh;overflow:auto;animation:gcBlatt var(--dauer-blatt) var(--kurve)}.griff{inline-size:40px;block-size:4px;background:var(--holz-tief);border-radius:4px;margin:0 auto 16px}.ebene-dimmer{background:color-mix(in srgb,var(--tinte) 72%,transparent)}
 .a-gruen,.a-gelb,.a-rot{padding:12px;border-radius:8px;border-inline-start:3px solid var(--salbei);background:var(--salbei-hell);color:var(--tinte)}.a-gelb{border-inline-start-color:var(--holz-tief);border-style:dashed;background:var(--papier-tief)}.a-rot{border-inline-start-color:var(--rot);border-width:2px;background:var(--papier-tief);font-weight:700}
-.geschaetzt{border:1px dashed var(--holz-tief)}.plus{color:var(--salbei-tief)}.minus{color:var(--rot)}
+.geschaetzt{border:1px dashed var(--holz-tief)}.plus{color:var(--salbei-text)}.minus{color:var(--rot)}
 .h-riesig,.grosse-zahl{font-size:var(--text-zahl);line-height:1.2;font-weight:700;font-variant-numeric:var(--zahlen)}
 .h-ziel,.h-kachel,.h-dran{border-radius:var(--radius);box-shadow:var(--schatten-karte)}.h-kacheln{gap:8px}.h-ladenname{font:700 1.0588rem/1.3 var(--schrift)}
 .buero-liste,.b-bereiche{gap:0}.buero-liste>.zeile,.b-bereiche>.b-bereich{box-shadow:none;border-radius:0;border-width:0 0 1px;background:var(--papier)}
@@ -68,7 +68,7 @@ input[type=checkbox]{accent-color:var(--salbei);inline-size:22px;block-size:22px
 .inhalt.muellform:not(.muell-station-detail) .formkacheln .karte,.inhalt.muellform:not(.muell-station-detail) .formkacheln button{min-height:64px}
 
 /* Weinrot gehört nur auf die Müll-Bühne: das Müll-Symbol auf Kacheln (Heute, Personal) bleibt Salbei */
-.ks.muell,.riesenkachel .rt .ks.muell{background:var(--salbei-hell);color:var(--salbei-tief)}
+.ks.muell,.riesenkachel .rt .ks.muell{background:var(--salbei-hell);color:var(--salbei-text)}
 
 /* Piktogramme aus bilder/ sind Strichzeichnungen in currentColor; als <img> würden sie schwarz: im Dunkeln hell darstellen */
 :root[data-theme=dark] img.pikto,:root[data-theme=dark] .ep-ohne img{filter:invert(.92)}

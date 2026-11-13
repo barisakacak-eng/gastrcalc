@@ -22,7 +22,7 @@ MESSEN = r"""
     return rgba(s); };
   const ueber = (v, h) => { const a = v[3] + h[3] * (1 - v[3]); if (a <= 0) return [0, 0, 0, 0]; return [0, 1, 2].map((i) => (v[i] * v[3] + h[i] * h[3] * (1 - v[3])) / a).concat([a]); };
   const lum = (c) => { const f = (x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
-  const sichtbar = (e) => { for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const s = getComputedStyle(x); if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) < 0.05) return false; if (x.closest && x.parentElement && x.parentElement.tagName === "DETAILS" && !x.parentElement.open && x.tagName !== "SUMMARY") return false; } const r = e.getBoundingClientRect(); return r.width > 1 && r.height > 1; };
+  const sichtbar = (e) => { if (e.closest("[disabled],[aria-disabled=true]")) return false; /* deaktivierte Bedienelemente sind von der Kontrastpflicht ausgenommen (WCAG 1.4.3) */ for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const s = getComputedStyle(x); if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) < 0.05) return false; if (x.closest && x.parentElement && x.parentElement.tagName === "DETAILS" && !x.parentElement.open && x.tagName !== "SUMMARY") return false; } const r = e.getBoundingClientRect(); return r.width > 1 && r.height > 1; };
   const nm = (e) => e.tagName.toLowerCase() + (typeof e.className === "string" && e.className.trim() ? "." + e.className.trim().split(/\s+/).slice(0, 3).join(".") : "") + (e.getAttribute("data-a") ? "[" + e.getAttribute("data-a") + "]" : "");
   const funde = [], foto = []; let n = 0;
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -43,6 +43,7 @@ MESSEN = r"""
     let grund = [255, 255, 255, 1]; // Seitenfläche
     const bodyBg = roh(getComputedStyle(document.body).backgroundColor); const htmlBg = roh(getComputedStyle(document.documentElement).backgroundColor);
     let base = ueber(bodyBg, ueber(htmlBg, [255, 255, 255, 1]));
+    if (e.closest('.schirm[class*="weg-"]>.kopf')) { const tmp = document.createElement('i'); tmp.style.background = 'var(--buehne)'; document.body.appendChild(tmp); base = roh(getComputedStyle(tmp).backgroundColor); tmp.remove(); schichten = []; } // Zurück-Pfeil und Fortschritt der Einrichtung liegen über der Bühne
     for (const sch of schichten.reverse()) base = ueber(sch, base);
     grund = base; farbe = [farbe[0], farbe[1], farbe[2], farbe[3] * opa]; const f = ueber(farbe, grund);
     const l1 = lum(f), l2 = lum(grund), v = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);

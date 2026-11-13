@@ -7,7 +7,7 @@
 --papier:#F5EDE2;--tinte:#22301F;--salbei:#4C6B55;--glut:#E8763A;--holz:#E2CDB2;--weinrot:#8B3A2E;
 --papier-tief:color-mix(in srgb,var(--papier) 88%,var(--holz));--weiss:var(--papier);
 --tinte-weich:color-mix(in srgb,var(--tinte) 78%,var(--papier));
---salbei-tief:color-mix(in srgb,var(--salbei) 75%,var(--tinte));--salbei-hell:color-mix(in srgb,var(--salbei) 12%,var(--papier));
+--salbei-tief:color-mix(in srgb,var(--salbei) 75%,var(--tinte));--salbei-text:var(--salbei-tief);--auf-farbe:var(--papier);--salbei-hell:color-mix(in srgb,var(--salbei) 12%,var(--papier));
 --holz-tief:color-mix(in srgb,var(--holz) 72%,var(--tinte));--lehm:var(--tinte-weich);
 --gruen:var(--salbei);--rot:color-mix(in srgb,var(--glut) 45%,var(--tinte));--gelb:color-mix(in srgb,var(--holz) 70%,var(--glut));
 --eigen:var(--salbei);--eigen-hell:var(--salbei-hell);--geschaetzt:var(--holz-tief);--geschaetzt-hell:var(--papier-tief);--geschaetzt-text:var(--tinte);
@@ -22,5 +22,5 @@
 --bewegung:180ms;--dauer-blatt:260ms;--dauer-bestaetigung:220ms;--dauer-zeki:1800ms;--kurve:cubic-bezier(.2,.7,.2,1);
 }
 [lang=ar],[lang=fa]{--schrift:NotoSansArabic,NotoSans,system-ui,sans-serif}
-[data-theme=dark]{--papier:#22301F;--tinte:#F5EDE2;--papier-tief:color-mix(in srgb,#22301F 85%,#4C6B55);--tinte-weich:color-mix(in srgb,#F5EDE2 80%,#22301F);--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion:#4C6B55;--aktion-text:#F5EDE2;--linie:color-mix(in srgb,#F5EDE2 28%,#22301F)}
-@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]){--papier:#22301F;--tinte:#F5EDE2;--papier-tief:#2A3B2E;--tinte-weich:#D2CCBD;--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion-text:#F5EDE2;--linie:#57634F}}
+[data-theme=dark]{--auf-farbe:#F5EDE2;--salbei-text:color-mix(in srgb,#4C6B55 45%,#F5EDE2);--muell:color-mix(in srgb,#8B3A2E 55%,#F5EDE2);--papier:#22301F;--tinte:#F5EDE2;--papier-tief:color-mix(in srgb,#22301F 85%,#4C6B55);--tinte-weich:color-mix(in srgb,#F5EDE2 80%,#22301F);--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion:#4C6B55;--aktion-text:#F5EDE2;--linie:color-mix(in srgb,#F5EDE2 28%,#22301F)}
+@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]){--auf-farbe:#F5EDE2;--salbei-text:color-mix(in srgb,#4C6B55 45%,#F5EDE2);--muell:color-mix(in srgb,#8B3A2E 55%,#F5EDE2);--papier:#22301F;--tinte:#F5EDE2;--papier-tief:#2A3B2E;--tinte-weich:#D2CCBD;--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion-text:#F5EDE2;--linie:#57634F}}

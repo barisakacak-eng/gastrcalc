@@ -170,14 +170,14 @@ summary>h2{overflow-wrap:normal;word-break:normal;hyphens:auto;min-width:0}
 /* Vorab-Prüfung 03.11.2026 (C12): aufklappbare Büro-Karten – Überschrift tippen, Inhalt erscheint */
 details.karte.auf>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
 details.karte.auf>summary::-webkit-details-marker{display:none}
-details.karte.auf>summary::after{content:"⌄";font-size:1.4rem;line-height:1;color:var(--salbei-tief);transition:transform .15s;flex:none}
+details.karte.auf>summary::after{content:"⌄";font-size:1.4rem;line-height:1;color:var(--salbei-text);transition:transform .15s;flex:none}
 details.karte.auf[open]>summary::after{transform:rotate(180deg)}
 details.karte.auf>summary h2,details.karte.auf>summary b{margin:0}
 @media (prefers-reduced-motion: reduce){details.karte.auf>summary::after{transition:none}}
 details.karte.auf:not([open])>:not(summary){display:none}
 /* Welle 3 (hinter Schalter): Kopf der Geld-Karten – Titel links, Zahl darunter */
 .g3-karte>summary>span{display:flex;flex-direction:column;gap:2px;min-width:0}
-.g3-karte .g3-zahl{font-weight:750;color:var(--salbei-tief)}
+.g3-karte .g3-zahl{font-weight:750;color:var(--salbei-text)}
 .g3-karte small{display:block}
 /* Welle 3 W3b (hinter Schalter): Schicht im Büro eintragen */
 .g3-schicht-form{display:flex;flex-direction:column;gap:8px;margin-top:10px}

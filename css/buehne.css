@@ -29,7 +29,7 @@
 /* Alte Kopfbänder und Köpfe unter der Bühne: kein eigenes Band, kein Rand, Schrift in Bühnenfarbe */
 .gc-buehne .kopfband,.gc-buehne .kl-kopf,.gc-buehne .h-kopf,.gc-buehne .personalkopf{display:block;background:none;color:inherit;padding:0;margin:0;border:0;border-radius:0;box-shadow:none;min-block-size:0}
 .gc-buehne .kopfband h1,.gc-buehne .kl-kopf h1,.gc-buehne h1{color:inherit;font-family:var(--schrift);font-size:1.2941rem;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
-.gc-buehne .kopfband .unter,.gc-buehne .kl-kopf small,.gc-buehne .h-datum,.gc-buehne .personalkopf small{display:block;color:color-mix(in srgb,var(--buehne-text) 85%,transparent);font-size:0.8235rem;line-height:1.35;margin:2px 0 0}
+.gc-buehne .kopfband .unter,.gc-buehne .kl-kopf small,.gc-buehne .h-datum,.gc-buehne .personalkopf small{display:block;color:color-mix(in srgb,var(--buehne-text) 94%,transparent);font-size:0.8235rem;line-height:1.35;margin:2px 0 0}
 .gc-buehne .kopfband .zahl{font-weight:700}
 .gc-buehne .h-kopf,.gc-buehne .personalkopf{display:grid;gap:2px}
 .gc-buehne .h-ladenname,.gc-buehne .personalkopf b{display:block;color:inherit;font:700 1.2941rem/1.2 var(--schrift)}

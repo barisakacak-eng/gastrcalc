@@ -6,7 +6,8 @@
 body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .schirm,#app:has(.appleiste.buero) .schirm:has(> .buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .buero:not(.appleiste){background:var(--papier);background-image:none;color:var(--tinte);display:flex;flex-direction:column;min-block-size:0}
-#app:has(.appleiste.buero) .buero:not(.appleiste) button{font-family:inherit;line-height:inherit;color:inherit}
+#app:has(.appleiste.buero) .buero:not(.appleiste) button{font-family:inherit;line-height:inherit}
+#app:has(.appleiste.buero) .buero:not(.appleiste) button:not(.knopf):not(.an){color:inherit}
 #app:has(.appleiste.buero) .inhalt,#app:has(.appleiste.buero) .b-inhalt{display:flex;flex-direction:column;gap:12px;padding:16px 16px 40px;max-inline-size:640px;inline-size:100%;margin-inline:auto;background:none}
 #app:has(.appleiste.buero) .inhalt>*,#app:has(.appleiste.buero) .b-inhalt>*{min-inline-size:0}
 #app:has(.appleiste.buero) .kopfband:not(.gc-buehne .kopfband){background:none;border-radius:0;box-shadow:none;padding:0}
@@ -124,7 +125,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .karte.b-hauptzahl{display:flex;flex-direction:row;align-items:center;gap:14px;inline-size:100%;padding:14px 16px;text-align:start;min-block-size:72px}
 #app:has(.appleiste.buero) .b-hauptzahl small{color:var(--tinte-weich);display:block}
 #app:has(.appleiste.buero) .b-hauptzahl b{font-size:2rem;line-height:1.1;font-weight:700;color:var(--tinte)}
-#app:has(.appleiste.buero) .b-hauptzahl:has(.b-hauptzahl-knopf)>b{display:grid;place-items:center;inline-size:44px;block-size:44px;border-radius:50%;background:var(--salbei-hell);color:var(--salbei-tief);font-size:1.5rem;flex:none}
+#app:has(.appleiste.buero) .b-hauptzahl:has(.b-hauptzahl-knopf)>b{display:grid;place-items:center;inline-size:44px;block-size:44px;border-radius:50%;background:var(--salbei-hell);color:var(--salbei-text);font-size:1.5rem;flex:none}
 #app:has(.appleiste.buero) .b-hauptzahl-knopf{display:inline-flex;align-items:center;justify-content:center;min-block-size:var(--tippflaeche);padding:0 18px;border-radius:var(--radius);background:var(--aktion);color:var(--aktion-text);font-weight:700;margin-inline-start:auto}
 #app:has(.appleiste.buero) .karte.b-mindestlohn{display:flex;flex-direction:column;gap:8px;padding:16px;border-inline-start:1px solid var(--linie);background:var(--papier)}
 #app:has(.appleiste.buero) .b-mindestlohn p{margin:0}
@@ -138,14 +139,14 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .b-zeile{display:flex;align-items:center;gap:12px;inline-size:100%;min-block-size:64px;padding:10px 14px;border:0;border-block-end:1px solid var(--linie);border-radius:0;background:transparent;color:var(--tinte);text-align:start;box-shadow:none}
 #app:has(.appleiste.buero) .b-liste>.b-zeile:last-child,#app:has(.appleiste.buero) .b-liste>.b-zeile-wrap:last-child .b-zeile,#app:has(.appleiste.buero) .b-werkzeuge>.b-zeile:last-child,#app:has(.appleiste.buero) .b-ordnerliste>.b-zeile:last-child{border-block-end:0}
 #app:has(.appleiste.buero) button.b-zeile:active,#app:has(.appleiste.buero) summary.b-zeile:active{background:var(--papier-tief)}
-#app:has(.appleiste.buero) .b-zs{display:grid;place-items:center;flex:0 0 44px;inline-size:44px;block-size:44px;border-radius:12px;background:var(--salbei-hell);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-zs{display:grid;place-items:center;flex:0 0 44px;inline-size:44px;block-size:44px;border-radius:12px;background:var(--salbei-hell);color:var(--salbei-text)}
 #app:has(.appleiste.buero) .b-zs .sym,#app:has(.appleiste.buero) .b-zs svg{inline-size:22px;block-size:22px}
 #app:has(.appleiste.buero) .b-zt{flex:1 1 0;min-inline-size:0}
 #app:has(.appleiste.buero) .b-zt b{display:block;font-size:1rem;font-weight:700;letter-spacing:0;line-height:1.3;color:var(--tinte)}
 #app:has(.appleiste.buero) .b-zt small{display:block;color:var(--tinte-weich);font-size:.8125rem;line-height:1.35;overflow-wrap:anywhere}
 #app:has(.appleiste.buero) .b-zt small.rot{color:var(--tinte);font-weight:700}
 #app:has(.appleiste.buero) .b-wert{font-weight:700;white-space:nowrap;color:var(--tinte-weich);font-variant-numeric:var(--zahlen)}
-#app:has(.appleiste.buero) .b-wert.plus{color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-wert.plus{color:var(--salbei-text)}
 #app:has(.appleiste.buero) .b-wert.minus{color:var(--tinte)}
 #app:has(.appleiste.buero) .b-pfeil{inline-size:20px;block-size:20px;color:var(--holz-tief);flex:none}
 [dir=rtl] #app:has(.appleiste.buero) .b-pfeil{transform:scaleX(-1)}
@@ -171,7 +172,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .b-frei label{min-inline-size:0}
 #app:has(.appleiste.buero) .b-monat{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px}
 #app:has(.appleiste.buero) .b-monat b{font-size:1.0625rem;text-align:center}
-#app:has(.appleiste.buero) .b-rund{display:inline-grid;place-items:center;inline-size:48px;block-size:48px;min-inline-size:48px;border:0;border-radius:12px;background:var(--papier-tief);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-rund{display:inline-grid;place-items:center;inline-size:48px;block-size:48px;min-inline-size:48px;border:0;border-radius:12px;background:var(--papier-tief);color:var(--salbei-text)}
 #app:has(.appleiste.buero) .b-rund:disabled{opacity:.35}
 [dir=rtl] #app:has(.appleiste.buero) .b-rund .sym{transform:scaleX(-1)}
 #app:has(.appleiste.buero) .karte.b-stand{display:flex;flex-direction:row;align-items:center;gap:14px;padding:14px 16px}
@@ -179,10 +180,10 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .b-stand small{display:block;color:var(--tinte-weich);font-size:.8125rem}
 #app:has(.appleiste.buero) .b-ring{flex:none}
 #app:has(.appleiste.buero) .b-status{display:inline-grid;place-items:center;inline-size:28px;block-size:28px;border-radius:50%;flex:none;background:var(--papier-tief);color:var(--tinte);font-weight:700}
-#app:has(.appleiste.buero) .b-status.ok{background:var(--salbei-hell);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-status.ok{background:var(--salbei-hell);color:var(--salbei-text)}
 #app:has(.appleiste.buero) .b-status.ok .sym{inline-size:16px;block-size:16px;stroke-width:2.6}
 #app:has(.appleiste.buero) .b-status.luecke,#app:has(.appleiste.buero) .b-status.info{background:var(--papier-tief);color:var(--tinte);border:1px solid var(--holz-tief);font-size:.9375rem}
-#app:has(.appleiste.buero) .b-mini{flex:none;min-inline-size:48px;padding:0 10px;font-size:.75rem;letter-spacing:.02em;color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-mini{flex:none;min-inline-size:48px;padding:0 10px;font-size:.75rem;letter-spacing:.02em;color:var(--salbei-text)}
 #app:has(.appleiste.buero) .b-zeile>.b-mini,#app:has(.appleiste.buero) .b-zeile>.b-status{flex:none}
 #app:has(.appleiste.buero) .b-zeile-wrap{display:block}
 #app:has(.appleiste.buero) .b-trenner{block-size:1px;background:var(--linie)}
@@ -193,7 +194,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .b-person-eingabe input{grid-column:1/-1}
 #app:has(.appleiste.buero) .b-person-eingabe .knopf,#app:has(.appleiste.buero) .b-person-neu .knopf{min-block-size:var(--knopf-hoehe);padding:8px 10px;font-size:.875rem}
 #app:has(.appleiste.buero) .b-person-neu{display:grid;grid-template-columns:1fr auto;gap:8px}
-#app:has(.appleiste.buero) .b-pille{border-radius:999px;padding:4px 10px;font-size:.8125rem;font-weight:700;background:var(--salbei-hell);color:var(--salbei-tief);white-space:nowrap}
+#app:has(.appleiste.buero) .b-pille{border-radius:999px;padding:4px 10px;font-size:.8125rem;font-weight:700;background:var(--salbei-hell);color:var(--salbei-text);white-space:nowrap}
 #app:has(.appleiste.buero) .b-pille.bald{background:var(--papier-tief);color:var(--tinte);border:1px solid var(--holz-tief)}
 #app:has(.appleiste.buero) .b-pille.ueberfaellig,#app:has(.appleiste.buero) .b-pille.fehlt{background:var(--papier-tief);color:var(--tinte);border:1px solid var(--tinte)}
 #app:has(.appleiste.buero) .b-schicken{display:flex;flex-direction:column;gap:10px;padding:14px}
@@ -234,7 +235,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .karte.inv-zaehler{background:var(--salbei);border:1px solid var(--salbei-tief);color:var(--buehne-text);box-shadow:var(--schatten-karte)}
 #app:has(.appleiste.buero) .karte.inv-zaehler *{color:inherit}
 #app:has(.appleiste.buero) .strecke{position:relative;block-size:18px;border-radius:9px;background:var(--papier-tief);border:1px solid var(--linie);margin:26px 8px 30px}
-#app:has(.appleiste.buero) .plus,#app:has(.appleiste.buero) .b-wert.plus{color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .plus,#app:has(.appleiste.buero) .b-wert.plus{color:var(--salbei-text)}
 #app:has(.appleiste.buero) .minus{color:var(--tinte);font-weight:700}
 #app:has(.appleiste.buero) .pr{display:flex;flex-direction:column;gap:12px}
 #app:has(.appleiste.buero) .pr-karte{display:flex;flex-direction:column;gap:12px}
@@ -243,7 +244,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .pr-preis{display:flex;flex-direction:column;align-items:center}
 #app:has(.appleiste.buero) .pr-preis b{font-size:2rem;line-height:1.1;font-variant-numeric:var(--zahlen);color:var(--tinte)}
 #app:has(.appleiste.buero) .pr-ergebnis{background:var(--papier-tief);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
-#app:has(.appleiste.buero) .pr-gross{font-size:1.75rem;color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .pr-gross{font-size:1.75rem;color:var(--salbei-text)}
 #app:has(.appleiste.buero) .pr-gross.minus{font-size:1.125rem;color:var(--tinte)}
 #app:has(.appleiste.buero) .pr-satz{margin:0}
 #app:has(.appleiste.buero) .pr-satz.minus{color:var(--tinte);font-weight:700}
@@ -252,10 +253,10 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .pr-hebelzeile,#app:has(.appleiste.buero) .rp-zeile{inline-size:100%;min-block-size:44px;text-align:start;background:none;border:0;border-block-start:1px solid var(--linie);padding:10px 0;color:var(--tinte)}
 #app:has(.appleiste.buero) .pr-extra-neu{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 #app:has(.appleiste.buero) .pr-extra-neu input[data-f=pr-ex-name],#app:has(.appleiste.buero) .pr-extra-neu .knopf{grid-column:1/-1}
-#app:has(.appleiste.buero) .vk-hebel{min-block-size:44px;display:inline-flex;align-items:center;align-self:flex-start;background:none;border:0;padding:4px 0;font-size:.875rem;font-weight:700;color:var(--salbei-tief);text-align:start}
+#app:has(.appleiste.buero) .vk-hebel{min-block-size:44px;display:inline-flex;align-items:center;align-self:flex-start;background:none;border:0;padding:4px 0;font-size:.875rem;font-weight:700;color:var(--salbei-text);text-align:start}
 #app:has(.appleiste.buero) .rp-stern,#app:has(.appleiste.buero) .rp-pferd,#app:has(.appleiste.buero) .rp-raetsel,#app:has(.appleiste.buero) .rp-hund{border-inline-start:4px solid var(--holz-tief)}
 #app:has(.appleiste.buero) .rp-stern{border-inline-start-color:var(--salbei)}
-#app:has(.appleiste.buero) .kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-text)}
 #app:has(.appleiste.buero) .kl-monat.minus{color:var(--tinte)}
 #app:has(.appleiste.buero) .wa-karte p{margin:0}
 #app:has(.appleiste.buero) .wa-zahl{font-size:1.75rem}
@@ -273,7 +274,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .karte .zeile:last-child,#app:has(.appleiste.buero) .karte>.zeileknopf:last-child{border-block-end:0}
 #app:has(.appleiste.buero) .zeileknopf b{flex:1;min-inline-size:0;font-weight:700}
 #app:has(.appleiste.buero) .zeileknopf small{color:var(--tinte-weich);font-size:.8125rem}
-#app:has(.appleiste.buero) .zeileknopf .pfeil,#app:has(.appleiste.buero) .zeile .pfeil{color:var(--holz-tief);font-size:1.4rem;line-height:1;flex:none}
+#app:has(.appleiste.buero) .zeileknopf .pfeil,#app:has(.appleiste.buero) .zeile .pfeil{color:var(--tinte-weich);font-size:1.4rem;line-height:1;flex:none}
 [dir=rtl] #app:has(.appleiste.buero) .zeileknopf .pfeil,[dir=rtl] #app:has(.appleiste.buero) .zeile .pfeil{display:inline-block;transform:scaleX(-1)}
 #app:has(.appleiste.buero) .schalter{inline-size:52px;block-size:32px;min-block-size:44px;min-inline-size:52px;border-radius:999px;border:1px solid var(--linie);background:var(--papier-tief);position:relative;flex:none}
 #app:has(.appleiste.buero) .schalter::after{content:"";position:absolute;inset-block-start:50%;inset-inline-start:6px;inline-size:24px;block-size:24px;margin-block-start:-12px;border-radius:50%;background:var(--tinte-weich);transition:inset-inline-start var(--bewegung) var(--kurve)}
@@ -282,7 +283,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .abzeichen{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--papier-tief);border:1px solid var(--holz-tief);color:var(--tinte);font-size:.75rem;font-weight:700}
 #app:has(.appleiste.buero) .gross{font-size:1.75rem;font-weight:700;font-variant-numeric:var(--zahlen);color:var(--tinte)}
 #app:has(.appleiste.buero) .einrichtungzeile{display:flex;align-items:center;justify-content:center;inline-size:100%;min-block-size:var(--tippflaeche);padding:8px 14px;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier-tief);color:var(--tinte);font-size:.875rem;font-weight:700;text-align:center}
-#app:has(.appleiste.buero) .topzeile .rang{background:var(--salbei-hell);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .topzeile .rang{background:var(--salbei-hell);color:var(--salbei-text)}
 #app:has(.appleiste.buero) .summenzeile{flex-wrap:wrap;gap:4px 12px}
 #app:has(.appleiste.buero) .summenzeile>span:first-child{flex:1 1 9rem;min-inline-size:0;overflow-wrap:break-word;word-break:normal}
 #app:has(.appleiste.buero) .summenzeile>.wert{flex:none;margin-inline-start:auto;text-align:end;max-inline-size:100%}
@@ -351,11 +352,11 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 .po-ergebnis{text-align:center;padding:28px 16px;border-radius:var(--radius);background:var(--papier-tief);display:flex;flex-direction:column;gap:8px}
 .po-gross{font-size:3rem;line-height:1;font-variant-numeric:var(--zahlen);color:var(--tinte);font-weight:700}
 .po-ergebnis.mehr .po-gross{color:var(--tinte)}
-.po-ergebnis.gut .po-gross{color:var(--salbei-tief)}
+.po-ergebnis.gut .po-gross{color:var(--salbei-text)}
 .po-ergebnis p{margin:0;font-size:1.0625rem;font-weight:700}
 .po-wert{display:inline-flex;align-items:baseline;gap:4px}
 .po-wert input{inline-size:4.2ch;font:inherit;text-align:end;border:0;border-block-end:2px solid var(--holz);background:transparent;color:inherit;padding:0;min-block-size:0}
-.kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-tief)}
+.kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-text)}
 .kl-monat.minus{color:var(--tinte)}
 
 /* ---------- Foto links in Listenzeilen ---------- */
