@@ -134,3 +134,17 @@ test("Draht 7: verschmelzen merkt, welche Seite bei einem Bereich gilt (untersch
   const m = st.verschmelzen(a, b, { jetzt: Date.parse("2026-11-13T12:00:00Z") });
   for (const u of m.abgleichHinweis?.unterschiede || []) assert.ok(u.gilt === "lokal" || u.gilt === "fremd");
 });
+
+// ---------- 9: Der ehrliche Satz zum Büro-Code steht in den Einstellungen ----------
+test("Draht 9: einstellungenView zeigt „Schloss gegen neugierige Blicke, kein Tresor.“ (de), mit und ohne Büro-Code", async () => {
+  const { einstellungenView } = await import("../js/screens/home.js");
+  const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
+  const s = beispielLaden("2026-11-13"); const w = wurzelMit(s);
+  const text = (h) => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  assert.ok(text(einstellungenView(s, 0, w, {})).includes("Schloss gegen neugierige Blicke, kein Tresor."), "ohne Code");
+  w.bueroPin = { hash: "x", salz: "y" }; // gesetztes Schloss
+  assert.ok(text(einstellungenView(s, 0, w, {})).includes("Schloss gegen neugierige Blicke, kein Tresor."), "mit Code");
+  assert.equal(l6y.l6yText("rueckgaengig", "de"), "Einlesen rückgängig machen.");
+  assert.ok(einstellungenView(s, 0, w, { rueckhol: { zeit: "2026-11-13T10:00:00.000Z", grund: "einlesen" } }).includes('data-a="sicherung-zurueckholen"'), "Rückgängig-Knopf erscheint mit Info");
+  assert.ok(!einstellungenView(s, 0, w, {}).includes('data-a="sicherung-zurueckholen"'), "ohne Info kein Knopf");
+});

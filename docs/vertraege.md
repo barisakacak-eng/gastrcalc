@@ -118,7 +118,7 @@ Rechenwerk: `js/store.js`, `js/abgleich_felder.js`, `js/zip.js`, `js/monatsabsch
   zukunft: number,                           // Einträge mit Datum in der Zukunft: übernommen, mit datumPruefen: true markiert
   konflikte: number,                         // HACCP-Eintrag gleicher Kennung, anderer Inhalt: eigener Eintrag daneben
   eintraege: [{ laden, bereich, kennung, art: "verschieden"|"geloeschtGeaendert", lokal, fremd, behalten: "lokal"|"fremd" }], // B1, beide Werte kurz
-  unterschiede: [{ laden, bereich, lokal, fremd }],  // B1: Bereiche ohne Kennung, beide geändert – die gewählte Seite gilt, beide Werte stehen hier
+  unterschiede: [{ laden, bereich, lokal, fremd, gilt: "lokal"|"fremd" }],  // B1: Bereiche ohne Kennung, beide geändert – die gewählte Seite gilt, beide Werte stehen hier
   umsatzKonflikte: [{ laden, tag, lokal, fremd, gilt }], // B2: derselbe Tag, zwei Handys, verschiedener Betrag; der jüngste gilt weiter still
   ungueltig: number }                        // C5: beim Einlesen übersprungene Einträge
 ```
@@ -135,3 +135,5 @@ Rechenwerk: `js/store.js`, `js/abgleich_felder.js`, `js/zip.js`, `js/monatsabsch
 **5.7 Gerettete Monatsteile.** Ein halb abgeschnittener Journal-Teil wird bis zum letzten vollständigen Eintrag gelesen; `ladeFehler` bekommt `grund: "gerettet"` mit `gerettet: Anzahl`; der Rohtext liegt im Speicher `stand` unter `roh` und geht als `rohteile` in jede Vollsicherung.
 
 **5.8 Ereignisprotokoll.** „app-sichtbar“ höchstens einmal je Stunde; beim Kürzen auf 2000 bleiben `import*`, `export*`, `abgleich*`, `sicherung*`, `speicher*`, `fehler*`, `einlesen*`, `fremde-fassung` bevorzugt.
+
+**5.9 Verdrahtung in der Oberfläche (E5-Draht, 13.11.2026).** `js/app.js`: `vormonatEinfrierenWennNoetig` beim Start und beim Tageswechsel; Einlesen über `einlesenSicher` (Rückholpunkt), Knopf „Einlesen rückgängig machen“ (`data-a="sicherung-zurueckholen"`, Büro → Einstellungen → Sicherung, solange `rueckholpunktInfo()` etwas liefert); Fehlergründe `neuer` und `gross` mit Sätzen aus `l6y_texte.js`. `js/offen.js`: je Art höchstens drei Zeilen aus `abgleichHinweis` (`eintraege`, `unterschiede`, `umsatzKonflikte`), „… und n weitere“, `zukunft`, gerettete Teile. `js/ablage.js`: `ablegen` wirft bei Schreibfehler der Ablage `grund: "speicher"` (`voll: true` bei Speicher voll) und meldet über `beiAblageFehler(art, fehler)` das Banner. Tests: `tests/lauf6_e5_draht.test.mjs`, `tests/lauf6_e5_draht_ablage.test.mjs`, `tests/rueckhol_browser.py`.
