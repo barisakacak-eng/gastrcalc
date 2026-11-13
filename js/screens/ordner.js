@@ -72,11 +72,12 @@ const vorschauBlatt = () => !vorschauHtml ? "" : `<div class="b-vorschau" role="
     <iframe class="b-vorschau-dok" title="${esc(t("ordner.knopf.vorschau"))}" srcdoc="${esc(vorschauHtml)}"></iframe></div>`;
 
 function kopfOrdner(stand, art, symbol, unter) {
-  return `<div class="b-ordnerkopf"><span class="b-ks ${art}">${bsym(symbol)}</span><div><b>${esc(t(`ordner.${art}.titel`))}</b><small>${esc(stand.betrieb?.name || t("menue.deinLaden"))} · ${esc(unter)}</small></div></div>`;
+  // Titel und Unterzeile wandern in die Bühne (kopfband, buehne_dom.js); das Symbol steht dort nicht mehr
+  return `<div class="kopfband b-ordnerkopf"><h1>${esc(t(`ordner.${art}.titel`))}</h1><p class="unter">${esc(stand.betrieb?.name || t("menue.deinLaden"))} · ${esc(unter)}</p></div>`;
 }
 function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
   const fertig = gesamt > 0 && von === gesamt;
-  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: fertig ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(!gesamt ? t("ordner.leer") : fertig ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
+  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: fertig ? "var(--salbei)" : "var(--holz-tief)", text: true })}<div><b>${esc(!gesamt ? t("ordner.leer") : fertig ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
 }
 
 // Paket C: was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“

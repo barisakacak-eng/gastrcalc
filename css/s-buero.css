@@ -1,0 +1,365 @@
+/* Büro im Aussehen „Salbei & Papier“ – Bauarten 7 bis 11 (Büro-Übersicht, Liste, Eintrag ändern, Zahlen, Papier).
+   Wird nach css/buehne.css geladen und löst css/buero.css ab. Nur Tokens aus css/tokens.css: keine Hex-Farben, kein rgb(), kein !important.
+   Alle Regeln gelten nur im Büro (die Bühne trägt dort die Klasse „buero“): Laden und Personal bleiben unberührt. */
+
+/* ---------- Grund: Papier, kein heller Verlauf, keine alten Kopfbänder ---------- */
+body:has(.appleiste.buero){background:var(--papier);background-image:none}
+#app:has(.appleiste.buero) .schirm,#app:has(.appleiste.buero) .schirm:has(> .buero){background:var(--papier);background-image:none}
+#app:has(.appleiste.buero) .buero:not(.appleiste){background:var(--papier);background-image:none;color:var(--tinte);display:flex;flex-direction:column;min-block-size:0}
+#app:has(.appleiste.buero) .buero:not(.appleiste) button{font-family:inherit;line-height:inherit;color:inherit}
+#app:has(.appleiste.buero) .inhalt,#app:has(.appleiste.buero) .b-inhalt{display:flex;flex-direction:column;gap:12px;padding:16px 16px 40px;max-inline-size:640px;inline-size:100%;margin-inline:auto;background:none}
+#app:has(.appleiste.buero) .inhalt>*,#app:has(.appleiste.buero) .b-inhalt>*{min-inline-size:0}
+#app:has(.appleiste.buero) .kopfband:not(.gc-buehne .kopfband){background:none;border-radius:0;box-shadow:none;padding:0}
+#app:has(.appleiste.buero) .zahl,#app:has(.appleiste.buero) .wert,#app:has(.appleiste.buero) .zahlen{font-variant-numeric:var(--zahlen)}
+#app:has(.appleiste.buero) .b-leise,#app:has(.appleiste.buero) .hinweis,#app:has(.appleiste.buero) .marke,#app:has(.appleiste.buero) small{color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .hinweis{max-inline-size:none;font-size:var(--text-klein);line-height:1.45;margin:0}
+#app:has(.appleiste.buero) .b-fehler,#app:has(.appleiste.buero) .fehler{color:var(--tinte);font-weight:700;margin:0}
+
+/* ---------- Überschriften über Gruppen (ruhig, kein Großbuchstaben-Schrei) ---------- */
+#app:has(.appleiste.buero) .inv-ue,#app:has(.appleiste.buero) .b-abschnitt,#app:has(.appleiste.buero) .ue{font-size:var(--text-klein);font-weight:700;letter-spacing:0;text-transform:none;color:var(--tinte-weich);margin:8px 4px 0;line-height:1.3}
+#app:has(.appleiste.buero) .inhalt>h2,#app:has(.appleiste.buero) .b-inhalt>h2,#app:has(.appleiste.buero) .inhalt>.frage{font-family:var(--schrift);font-weight:700;letter-spacing:-.005em;font-size:var(--text);color:var(--tinte);margin:8px 4px 0}
+#app:has(.appleiste.buero) .karte>h2,#app:has(.appleiste.buero) .karte h2,#app:has(.appleiste.buero) .karte h3{font-family:var(--schrift);font-weight:700;letter-spacing:-.005em;font-size:var(--text);line-height:1.3;color:var(--tinte);margin:0 0 4px}
+
+/* ---------- Karten: Papier, feine Linie, weiche Tiefe ---------- */
+#app:has(.appleiste.buero) .karte,#app:has(.appleiste.buero) .b-person,#app:has(.appleiste.buero) .b-monat,#app:has(.appleiste.buero) .einklapp,#app:has(.appleiste.buero) .zeile,#app:has(.appleiste.buero) .b-bereich{background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);color:var(--tinte)}
+#app:has(.appleiste.buero) .karte{padding:16px;gap:10px;border-style:solid}
+#app:has(.appleiste.buero) .karte.leer{border:1px solid var(--linie);color:var(--tinte-weich);text-align:center;padding:20px 16px}
+#app:has(.appleiste.buero) .karte.gruenrand{border-color:var(--salbei)}
+#app:has(.appleiste.buero) .karte.hinweisgelb,#app:has(.appleiste.buero) .karte.hinweisrot,#app:has(.appleiste.buero) .tipp,#app:has(.appleiste.buero) .tipp.warnband,#app:has(.appleiste.buero) .a-gelb,#app:has(.appleiste.buero) .a-rot,#app:has(.appleiste.buero) .a-gruen{background:var(--papier-tief);border:1px solid var(--linie);border-inline-start:4px solid var(--holz-tief);border-radius:var(--radius);color:var(--tinte);box-shadow:none;font-weight:400}
+#app:has(.appleiste.buero) .karte.hinweisrot,#app:has(.appleiste.buero) .tipp.warnband,#app:has(.appleiste.buero) .a-rot{border-inline-start-color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .a-gruen,#app:has(.appleiste.buero) .tipp.gruen{border-inline-start-color:var(--salbei);background:var(--salbei-hell);color:var(--tinte)}
+#app:has(.appleiste.buero) .karte.hinweisgelb p,#app:has(.appleiste.buero) .karte.hinweisrot p{margin:0}
+#app:has(.appleiste.buero) .marke.offen,#app:has(.appleiste.buero) .marke.geschaetzt,#app:has(.appleiste.buero) .marke.gruen{color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .marke.hell{color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .karte.gesamt,#app:has(.appleiste.buero) .summenzeile.gesamt{border-block-start:2px solid var(--salbei)}
+
+/* ---------- Zeilen und Listen (Bauart 8): Foto links, Name, Zahl rechts, Pfeil ---------- */
+#app:has(.appleiste.buero) .liste,#app:has(.appleiste.buero) .lf-liste{display:grid;gap:10px}
+#app:has(.appleiste.buero) .zeile{display:flex;align-items:center;gap:12px;padding:12px 14px;min-block-size:56px}
+#app:has(.appleiste.buero) .zeile .oben{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#app:has(.appleiste.buero) .zeile .name,#app:has(.appleiste.buero) .karte .name{font-weight:700;color:var(--tinte)}
+#app:has(.appleiste.buero) .zeile.offen{background:var(--papier-tief);border:1px solid var(--linie)}
+#app:has(.appleiste.buero) .zeileknopf,#app:has(.appleiste.buero) .zeilentipp{display:flex;align-items:center;gap:12px;inline-size:100%;min-block-size:56px;padding:10px 14px;text-align:start;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);color:var(--tinte)}
+#app:has(.appleiste.buero) .gerichtbild,#app:has(.appleiste.buero) .titelbild,#app:has(.appleiste.buero) .zeile img,#app:has(.appleiste.buero) .zeileknopf img{inline-size:52px;block-size:48px;object-fit:cover;border-radius:var(--radius-klein);flex:none}
+#app:has(.appleiste.buero) .summenzeile{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border:0;border-block-end:1px solid var(--linie)}
+#app:has(.appleiste.buero) .summenzeile:last-child{border-block-end:0}
+#app:has(.appleiste.buero) .summenzeile .wert{font-weight:700;color:var(--tinte);white-space:nowrap}
+#app:has(.appleiste.buero) .summenzeile.gesamt{padding-block-start:12px;margin-block-start:4px}
+#app:has(.appleiste.buero) .summenzeile.gesamt .wert{font-size:1.25rem}
+#app:has(.appleiste.buero) .summenzeile .wert .leise.klein{display:inline-flex;margin-inline-start:8px}
+
+/* ---------- Knöpfe: ein Hauptknopf in Salbei, Zweit-Knöpfe leise, alle ≥ 44 px ---------- */
+#app:has(.appleiste.buero) .knopf,#app:has(.appleiste.buero) .knopf.glut,#app:has(.appleiste.buero) .b-haupt{display:flex;align-items:center;justify-content:center;gap:8px;min-block-size:var(--knopf-hoehe);padding:10px 16px;border:1px solid var(--salbei);border-radius:var(--radius);background:var(--aktion);color:var(--aktion-text);font-weight:700;box-shadow:none;text-align:center}
+#app:has(.appleiste.buero) .knopf:active,#app:has(.appleiste.buero) .knopf.glut:active{background:var(--salbei-tief)}
+#app:has(.appleiste.buero) .knopf.zweit,#app:has(.appleiste.buero) .knopf.leise,#app:has(.appleiste.buero) .knopf.weich,#app:has(.appleiste.buero) .knopf.warn{background:transparent;color:var(--tinte);border:1px solid var(--linie);min-block-size:var(--knopf-hoehe)}
+#app:has(.appleiste.buero) .knopf.warn{border-color:var(--tinte)}
+#app:has(.appleiste.buero) .leise,#app:has(.appleiste.buero) .leise.klein,#app:has(.appleiste.buero) .b-mini,#app:has(.appleiste.buero) .zurueckklein{min-block-size:var(--tippflaeche);min-inline-size:var(--tippflaeche);padding:8px 14px;border-radius:var(--radius);background:transparent;color:var(--tinte);border:1px solid var(--linie);font-size:.875rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+#app:has(.appleiste.buero) .knopf .sym,#app:has(.appleiste.buero) .b-haupt .sym{inline-size:20px;block-size:20px;flex:none}
+#app:has(.appleiste.buero) .fuss,#app:has(.appleiste.buero) .b-unten{display:flex;flex-direction:column;gap:8px}
+#app:has(.appleiste.buero) .b-knopfreihe{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#app:has(.appleiste.buero) .b-knopfreihe .knopf{min-block-size:var(--knopf-hoehe);font-size:.9375rem;padding:10px}
+
+/* ---------- Formulare (Bauart 9): Beschriftung über dem Feld, Felder 48 px ---------- */
+#app:has(.appleiste.buero) .feldzeile{display:flex;flex-direction:column;gap:6px}
+#app:has(.appleiste.buero) .feldzeile>label,#app:has(.appleiste.buero) .feldzeile>span:first-child,#app:has(.appleiste.buero) label.feld,#app:has(.appleiste.buero) .b-frei label,#app:has(.appleiste.buero) .pr-wahl,#app:has(.appleiste.buero) .b-feld{font-size:.875rem;font-weight:700;color:var(--tinte);display:flex;flex-direction:column;gap:6px}
+#app:has(.appleiste.buero) input:not([type=checkbox]):not([type=radio]):not([type=range]),#app:has(.appleiste.buero) select,#app:has(.appleiste.buero) textarea,#app:has(.appleiste.buero) .textfeld{min-block-size:48px;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);padding:10px 12px;font-size:1rem;box-shadow:none}
+#app:has(.appleiste.buero) input:focus,#app:has(.appleiste.buero) select:focus,#app:has(.appleiste.buero) textarea:focus{border-color:var(--salbei);outline:2px solid var(--salbei);outline-offset:1px}
+#app:has(.appleiste.buero) textarea{min-block-size:96px}
+#app:has(.appleiste.buero) .betrag{display:flex;align-items:center;gap:10px}
+#app:has(.appleiste.buero) .betrag input,#app:has(.appleiste.buero) .zahlfeld input{border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);font-size:1.25rem;font-weight:700;padding:8px 12px;min-block-size:48px}
+#app:has(.appleiste.buero) .betrag.geschaetzt input{border-style:dashed;border-color:var(--holz-tief);color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .betrag.offen input{border-color:var(--holz-tief)}
+#app:has(.appleiste.buero) .einheit{color:var(--tinte-weich);font-weight:700}
+#app:has(.appleiste.buero) .stepper{display:flex;align-items:center;gap:8px}
+#app:has(.appleiste.buero) .stepper button{min-inline-size:48px;min-block-size:48px;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .stepper .wert{flex:1;text-align:center;font-weight:700}
+#app:has(.appleiste.buero) .schmal input,#app:has(.appleiste.buero) input.schmal{max-inline-size:120px}
+
+/* Aufklappbare Bereiche: Tippfläche ≥ 44 px, Pfeil rechts (im Arabischen links) */
+#app:has(.appleiste.buero) details.einklapp{margin:0}
+#app:has(.appleiste.buero) .einklapp-kopf,#app:has(.appleiste.buero) summary.hk-kopf,#app:has(.appleiste.buero) .ds-karte summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;min-block-size:48px;padding:0 16px;font-weight:700;font-size:1rem;color:var(--tinte)}
+#app:has(.appleiste.buero) .einklapp-kopf::-webkit-details-marker,#app:has(.appleiste.buero) summary.hk-kopf::-webkit-details-marker,#app:has(.appleiste.buero) .ds-karte summary::-webkit-details-marker{display:none}
+#app:has(.appleiste.buero) summary.hk-kopf{padding:0}
+#app:has(.appleiste.buero) .einklapp-kopf::after,#app:has(.appleiste.buero) summary.hk-kopf::after,#app:has(.appleiste.buero) .ds-karte summary::after{content:"›";font-size:1.5rem;line-height:1;color:var(--tinte-weich);transition:transform var(--bewegung) var(--kurve);flex:none}
+[dir=rtl] #app:has(.appleiste.buero) .einklapp-kopf::after,[dir=rtl] #app:has(.appleiste.buero) summary.hk-kopf::after,[dir=rtl] #app:has(.appleiste.buero) .ds-karte summary::after{content:"‹"}
+#app:has(.appleiste.buero) details[open]>.einklapp-kopf::after,#app:has(.appleiste.buero) details[open]>summary.hk-kopf::after,#app:has(.appleiste.buero) details[open]>.ds-karte summary::after{transform:rotate(90deg)}
+#app:has(.appleiste.buero) .ds-karte{padding:0;display:block}
+#app:has(.appleiste.buero) .ds-karte>*:not(summary){margin-inline:16px}
+#app:has(.appleiste.buero) .ds-karte>*:last-child{margin-block-end:16px}
+#app:has(.appleiste.buero) .einklapp-inhalt{padding:0 14px 14px;display:grid;gap:10px}
+#app:has(.appleiste.buero) .einklapp-inhalt>.karte{box-shadow:none;border:0;padding:0;background:none}
+
+/* ---------- Chips und Umschalter ---------- */
+#app:has(.appleiste.buero) .chips{display:flex;flex-wrap:wrap;gap:8px}
+#app:has(.appleiste.buero) .chip{display:inline-flex;align-items:center;justify-content:center;min-block-size:44px;padding:8px 16px;border:1px solid var(--linie);border-radius:999px;background:var(--papier);color:var(--tinte);font-weight:700;font-size:.9375rem}
+#app:has(.appleiste.buero) .chip.an{background:var(--salbei);border-color:var(--salbei);color:var(--aktion-text)}
+#app:has(.appleiste.buero) .chip.klein{min-block-size:44px;padding:8px 14px;font-size:.875rem}
+#app:has(.appleiste.buero) .seg,#app:has(.appleiste.buero) .b-segment,#app:has(.appleiste.buero) .umschalter{display:flex;gap:4px;background:var(--papier-tief);border:1px solid var(--linie);border-radius:12px;padding:4px}
+#app:has(.appleiste.buero) .seg button,#app:has(.appleiste.buero) .b-segment button,#app:has(.appleiste.buero) .umschalter button{flex:1;min-inline-size:0;min-block-size:44px;border:0;border-radius:9px;background:transparent;color:var(--tinte);font-weight:700;font-size:.875rem;padding:6px 10px}
+#app:has(.appleiste.buero) .seg button.an,#app:has(.appleiste.buero) .seg [aria-selected=true],#app:has(.appleiste.buero) .b-segment button.an,#app:has(.appleiste.buero) .umschalter button.an{background:var(--salbei);color:var(--aktion-text)}
+#app:has(.appleiste.buero) .seg.klein button{min-block-size:44px;padding:6px 10px;font-size:.875rem}
+
+/* ---------- Büro-Start (Bauart 7): ruhige Zeilen mit Piktogramm, Name, Pfeil ---------- */
+#app:has(.appleiste.buero) .b-ruhig .b-inhalt{gap:12px}
+#app:has(.appleiste.buero) .b-gruppe{block-size:4px}
+#app:has(.appleiste.buero) .b-offen{display:grid;gap:0;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);overflow:hidden}
+#app:has(.appleiste.buero) .b-chip{display:flex;align-items:center;gap:12px;inline-size:100%;min-block-size:52px;padding:8px 14px;border:0;border-block-end:1px solid var(--linie);border-radius:0;background:transparent;color:var(--tinte);font-size:.9375rem;font-weight:700;text-align:start;box-shadow:none}
+#app:has(.appleiste.buero) .b-chip:last-child{border-block-end:0}
+#app:has(.appleiste.buero) .b-chip span{overflow-wrap:anywhere;flex:1;min-inline-size:0}
+#app:has(.appleiste.buero) .b-chip::after{content:"›";font-size:1.4rem;line-height:1;color:var(--holz-tief);flex:none}
+[dir=rtl] #app:has(.appleiste.buero) .b-chip::after{content:"‹"}
+#app:has(.appleiste.buero) .b-punkt,#app:has(.appleiste.buero) .b-punkt.rot,#app:has(.appleiste.buero) .b-punkt.gelb,#app:has(.appleiste.buero) .b-punkt.gruen,#app:has(.appleiste.buero) .b-punkt.grau{inline-size:10px;block-size:10px;border-radius:50%;flex:none;display:inline-block;background:var(--holz-tief)}
+#app:has(.appleiste.buero) .b-punkt.rot{background:var(--tinte)}
+#app:has(.appleiste.buero) .b-punkt.gruen{background:var(--salbei)}
+#app:has(.appleiste.buero) .b-offen-mehr{display:block;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);overflow:hidden}
+#app:has(.appleiste.buero) .b-offen-mehr>.b-offen{border:0;border-radius:0;box-shadow:none;border-block-start:1px solid var(--linie)}
+#app:has(.appleiste.buero) .b-mehr-zeile{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;min-block-size:52px;padding:0 14px;margin:0;font-weight:700;color:var(--tinte)}
+#app:has(.appleiste.buero) .b-mehr-zeile::-webkit-details-marker{display:none}
+#app:has(.appleiste.buero) .b-mehr-zeile::after{content:"›";font-size:1.4rem;line-height:1;color:var(--holz-tief);transition:transform var(--bewegung) var(--kurve)}
+[dir=rtl] #app:has(.appleiste.buero) .b-mehr-zeile::after{content:"‹"}
+#app:has(.appleiste.buero) .b-offen-mehr[open]>.b-mehr-zeile::after{transform:rotate(90deg)}
+#app:has(.appleiste.buero) .b-zeki.zeki-zeile{display:block}
+
+/* Karte „?“ mit „Miete eintragen“ und die Hinweiskarten (Mindestlohn, Preisdrift) */
+#app:has(.appleiste.buero) .karte.b-hauptzahl{display:flex;flex-direction:row;align-items:center;gap:14px;inline-size:100%;padding:14px 16px;text-align:start;min-block-size:72px}
+#app:has(.appleiste.buero) .b-hauptzahl small{color:var(--tinte-weich);display:block}
+#app:has(.appleiste.buero) .b-hauptzahl b{font-size:2rem;line-height:1.1;font-weight:700;color:var(--tinte)}
+#app:has(.appleiste.buero) .b-hauptzahl:has(.b-hauptzahl-knopf)>b{display:grid;place-items:center;inline-size:44px;block-size:44px;border-radius:50%;background:var(--salbei-hell);color:var(--salbei-tief);font-size:1.5rem;flex:none}
+#app:has(.appleiste.buero) .b-hauptzahl-knopf{display:inline-flex;align-items:center;justify-content:center;min-block-size:var(--tippflaeche);padding:0 18px;border-radius:var(--radius);background:var(--aktion);color:var(--aktion-text);font-weight:700;margin-inline-start:auto}
+#app:has(.appleiste.buero) .karte.b-mindestlohn{display:flex;flex-direction:column;gap:8px;padding:16px;border-inline-start:1px solid var(--linie);background:var(--papier)}
+#app:has(.appleiste.buero) .b-mindestlohn p{margin:0}
+#app:has(.appleiste.buero) .b-mindestlohn small{color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .b-mindestlohn .knopf{align-self:stretch}
+#app:has(.appleiste.buero) .b-drift .minus{color:var(--tinte);font-weight:700}
+
+/* Ordner, Bereiche, Werkzeuge: je eine ruhige Karte aus Zeilen */
+#app:has(.appleiste.buero) .b-liste,#app:has(.appleiste.buero) .b-bereiche,#app:has(.appleiste.buero) .b-werkzeuge,#app:has(.appleiste.buero) .b-ordnerliste{display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte)}
+#app:has(.appleiste.buero) .karte.b-liste{padding:0}
+#app:has(.appleiste.buero) .b-zeile{display:flex;align-items:center;gap:12px;inline-size:100%;min-block-size:64px;padding:10px 14px;border:0;border-block-end:1px solid var(--linie);border-radius:0;background:transparent;color:var(--tinte);text-align:start;box-shadow:none}
+#app:has(.appleiste.buero) .b-liste>.b-zeile:last-child,#app:has(.appleiste.buero) .b-liste>.b-zeile-wrap:last-child .b-zeile,#app:has(.appleiste.buero) .b-werkzeuge>.b-zeile:last-child,#app:has(.appleiste.buero) .b-ordnerliste>.b-zeile:last-child{border-block-end:0}
+#app:has(.appleiste.buero) button.b-zeile:active,#app:has(.appleiste.buero) summary.b-zeile:active{background:var(--papier-tief)}
+#app:has(.appleiste.buero) .b-zs{display:grid;place-items:center;flex:0 0 44px;inline-size:44px;block-size:44px;border-radius:12px;background:var(--salbei-hell);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-zs .sym,#app:has(.appleiste.buero) .b-zs svg{inline-size:22px;block-size:22px}
+#app:has(.appleiste.buero) .b-zt{flex:1 1 0;min-inline-size:0}
+#app:has(.appleiste.buero) .b-zt b{display:block;font-size:1rem;font-weight:700;letter-spacing:0;line-height:1.3;color:var(--tinte)}
+#app:has(.appleiste.buero) .b-zt small{display:block;color:var(--tinte-weich);font-size:.8125rem;line-height:1.35;overflow-wrap:anywhere}
+#app:has(.appleiste.buero) .b-zt small.rot{color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .b-wert{font-weight:700;white-space:nowrap;color:var(--tinte-weich);font-variant-numeric:var(--zahlen)}
+#app:has(.appleiste.buero) .b-wert.plus{color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-wert.minus{color:var(--tinte)}
+#app:has(.appleiste.buero) .b-pfeil{inline-size:20px;block-size:20px;color:var(--holz-tief);flex:none}
+[dir=rtl] #app:has(.appleiste.buero) .b-pfeil{transform:scaleX(-1)}
+#app:has(.appleiste.buero) .b-bereiche{overflow:hidden}
+#app:has(.appleiste.buero) .b-bereich{border:0;border-radius:0;box-shadow:none;background:transparent;margin:0;overflow:hidden}
+#app:has(.appleiste.buero) .b-bereich+.b-bereich{border-block-start:1px solid var(--linie)}
+#app:has(.appleiste.buero) .b-bereich>summary{list-style:none;cursor:pointer;min-block-size:68px;border-block-end:0}
+#app:has(.appleiste.buero) .b-bereich>summary::-webkit-details-marker{display:none}
+#app:has(.appleiste.buero) .b-bereich>summary .b-pfeil{transition:transform var(--bewegung) var(--kurve)}
+#app:has(.appleiste.buero) .b-bereich[open]>summary .b-pfeil{transform:rotate(90deg)}
+#app:has(.appleiste.buero) .b-bereich[open]>summary{border-block-end:1px solid var(--linie)}
+#app:has(.appleiste.buero) .b-bereich>.b-liste{border:0;border-radius:0;box-shadow:none;background:var(--papier-tief)}
+#app:has(.appleiste.buero) .b-bereich>.b-liste .b-zs{background:var(--papier);color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .b-bereich>.b-liste .b-zeile{min-block-size:60px}
+#app:has(.appleiste.buero) .b-leise.b-werkzeuge{margin-block-start:8px}
+@media (prefers-reduced-motion:reduce){#app:has(.appleiste.buero) .b-bereich>summary .b-pfeil,#app:has(.appleiste.buero) .b-mehr-zeile::after{transition:none}}
+
+/* ---------- Papier (Bauart 11): Ordner Amt, Steuerberater, Buchhalter ---------- */
+#app:has(.appleiste.buero) .b-ordnerseite{gap:12px}
+#app:has(.appleiste.buero) .b-ordnerkopf{display:block}
+#app:has(.appleiste.buero) .b-segment{margin:0}
+#app:has(.appleiste.buero) .b-frei{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#app:has(.appleiste.buero) .b-frei label{min-inline-size:0}
+#app:has(.appleiste.buero) .b-monat{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px}
+#app:has(.appleiste.buero) .b-monat b{font-size:1.0625rem;text-align:center}
+#app:has(.appleiste.buero) .b-rund{display:inline-grid;place-items:center;inline-size:48px;block-size:48px;min-inline-size:48px;border:0;border-radius:12px;background:var(--papier-tief);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-rund:disabled{opacity:.35}
+[dir=rtl] #app:has(.appleiste.buero) .b-rund .sym{transform:scaleX(-1)}
+#app:has(.appleiste.buero) .karte.b-stand{display:flex;flex-direction:row;align-items:center;gap:14px;padding:14px 16px}
+#app:has(.appleiste.buero) .b-stand b{display:block;font-size:1.0625rem;line-height:1.3}
+#app:has(.appleiste.buero) .b-stand small{display:block;color:var(--tinte-weich);font-size:.8125rem}
+#app:has(.appleiste.buero) .b-ring{flex:none}
+#app:has(.appleiste.buero) .b-status{display:inline-grid;place-items:center;inline-size:28px;block-size:28px;border-radius:50%;flex:none;background:var(--papier-tief);color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .b-status.ok{background:var(--salbei-hell);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-status.ok .sym{inline-size:16px;block-size:16px;stroke-width:2.6}
+#app:has(.appleiste.buero) .b-status.luecke,#app:has(.appleiste.buero) .b-status.info{background:var(--papier-tief);color:var(--tinte);border:1px solid var(--holz-tief);font-size:.9375rem}
+#app:has(.appleiste.buero) .b-mini{flex:none;min-inline-size:48px;padding:0 10px;font-size:.75rem;letter-spacing:.02em;color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .b-zeile>.b-mini,#app:has(.appleiste.buero) .b-zeile>.b-status{flex:none}
+#app:has(.appleiste.buero) .b-zeile-wrap{display:block}
+#app:has(.appleiste.buero) .b-trenner{block-size:1px;background:var(--linie)}
+#app:has(.appleiste.buero) .b-belehrung{padding:6px 14px 14px;border-block-end:1px solid var(--linie);display:flex;flex-direction:column;gap:10px;background:var(--papier-tief)}
+#app:has(.appleiste.buero) .b-person{padding:10px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:none}
+#app:has(.appleiste.buero) .b-person-kopf{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#app:has(.appleiste.buero) .b-person-eingabe{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+#app:has(.appleiste.buero) .b-person-eingabe input{grid-column:1/-1}
+#app:has(.appleiste.buero) .b-person-eingabe .knopf,#app:has(.appleiste.buero) .b-person-neu .knopf{min-block-size:var(--knopf-hoehe);padding:8px 10px;font-size:.875rem}
+#app:has(.appleiste.buero) .b-person-neu{display:grid;grid-template-columns:1fr auto;gap:8px}
+#app:has(.appleiste.buero) .b-pille{border-radius:999px;padding:4px 10px;font-size:.8125rem;font-weight:700;background:var(--salbei-hell);color:var(--salbei-tief);white-space:nowrap}
+#app:has(.appleiste.buero) .b-pille.bald{background:var(--papier-tief);color:var(--tinte);border:1px solid var(--holz-tief)}
+#app:has(.appleiste.buero) .b-pille.ueberfaellig,#app:has(.appleiste.buero) .b-pille.fehlt{background:var(--papier-tief);color:var(--tinte);border:1px solid var(--tinte)}
+#app:has(.appleiste.buero) .b-schicken{display:flex;flex-direction:column;gap:10px;padding:14px}
+#app:has(.appleiste.buero) .b-beilagenliste{display:flex;flex-direction:column;margin-block-start:6px}
+#app:has(.appleiste.buero) .b-beilage{display:flex;align-items:center;gap:12px;min-block-size:48px;padding:6px 0;border:0;border-block-start:1px solid var(--linie);background:none;text-align:start;color:inherit;inline-size:100%}
+#app:has(.appleiste.buero) .b-beilage:first-child{border-block-start:0}
+#app:has(.appleiste.buero) .b-kasten{flex:none;inline-size:24px;block-size:24px;border:2px solid var(--salbei);border-radius:6px;display:grid;place-items:center;font-weight:700;color:var(--aktion-text)}
+#app:has(.appleiste.buero) .b-beilage.an .b-kasten{background:var(--salbei)}
+#app:has(.appleiste.buero) .karte.b-beilagen{padding:0}
+#app:has(.appleiste.buero) .karte.b-beilagen>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-block-size:48px;padding:0 16px}
+#app:has(.appleiste.buero) .karte.b-beilagen>summary::-webkit-details-marker{display:none}
+#app:has(.appleiste.buero) .karte.b-beilagen>summary::after{content:"›";font-size:1.5rem;line-height:1;color:var(--tinte-weich);transition:transform var(--bewegung) var(--kurve)}
+[dir=rtl] #app:has(.appleiste.buero) .karte.b-beilagen>summary::after{content:"‹"}
+#app:has(.appleiste.buero) .karte.b-beilagen[open]>summary::after{transform:rotate(90deg)}
+#app:has(.appleiste.buero) .karte.b-beilagen>:not(summary){margin-inline:16px}
+#app:has(.appleiste.buero) .karte.b-beilagen>:last-child{margin-block-end:14px}
+#app:has(.appleiste.buero) .karte.b-beilagen ul{padding-inline-start:20px;margin-block:4px}
+#app:has(.appleiste.buero) .karte.b-fragen{display:flex;flex-direction:row;align-items:center;gap:12px;padding:14px 16px;text-align:start;inline-size:100%}
+#app:has(.appleiste.buero) .b-fragen span{flex:1;display:flex;flex-direction:column;min-inline-size:0}
+[dir=rtl] #app:has(.appleiste.buero) .b-fragen>.sym:last-child{transform:scaleX(-1)}
+/* Vorschau des Dokuments: ein Blatt auf Papier */
+#app:has(.appleiste.buero) .b-vorschau{position:fixed;inset:0;z-index:70;background:var(--papier-tief);display:flex;flex-direction:column}
+#app:has(.appleiste.buero) .b-vorschau-leiste{display:flex;gap:8px;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 8px;background:var(--papier);border-block-end:1px solid var(--linie)}
+#app:has(.appleiste.buero) .b-vorschau-leiste .knopf{flex:1;min-inline-size:0;min-block-size:var(--knopf-hoehe);padding:8px;font-size:.875rem}
+#app:has(.appleiste.buero) .b-vorschau-dok{flex:1;inline-size:calc(100% - 24px);margin:12px auto;border:1px solid var(--linie);border-radius:var(--radius-klein);background:var(--papier);box-shadow:var(--schatten-karte);color-scheme:light}
+
+/* ---------- Einstellungen und Datenschutz ---------- */
+#app:has(.appleiste.buero) .einstellungen-inhalt{gap:12px}
+#app:has(.appleiste.buero) .ruhezeile{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#app:has(.appleiste.buero) .b-ruhezeiten .ruhezeile input[type=time]{inline-size:9.5em;max-inline-size:100%;min-block-size:48px}
+#app:has(.appleiste.buero) .ds-karte h3{margin:14px 0 4px;font-size:1rem}
+#app:has(.appleiste.buero) .ds-karte p{margin:0 0 6px;line-height:1.45}
+#app:has(.appleiste.buero) .ds-karte .ds-verantwortlich{margin-block-start:14px;font-weight:700}
+#app:has(.appleiste.buero) .rechtsformwahl .kachel.an{padding-inline-end:40px}
+
+/* ---------- Zahlen und Verlauf (Bauart 10): große Zahl, Segment, Balken Salbei, Prognose Holz ---------- */
+#app:has(.appleiste.buero) .grosse-zahl,#app:has(.appleiste.buero) .h-riesig,#app:has(.appleiste.buero) .pr-gross,#app:has(.appleiste.buero) .po-gross,#app:has(.appleiste.buero) .wa-zahl,#app:has(.appleiste.buero) .g3-zahl{font-variant-numeric:var(--zahlen);font-weight:700;line-height:1.15;color:var(--tinte)}
+#app:has(.appleiste.buero) .karte.inv-zaehler{background:var(--salbei);border:1px solid var(--salbei-tief);color:var(--buehne-text);box-shadow:var(--schatten-karte)}
+#app:has(.appleiste.buero) .karte.inv-zaehler *{color:inherit}
+#app:has(.appleiste.buero) .strecke{position:relative;block-size:18px;border-radius:9px;background:var(--papier-tief);border:1px solid var(--linie);margin:26px 8px 30px}
+#app:has(.appleiste.buero) .plus,#app:has(.appleiste.buero) .b-wert.plus{color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .minus{color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .pr{display:flex;flex-direction:column;gap:12px}
+#app:has(.appleiste.buero) .pr-karte{display:flex;flex-direction:column;gap:12px}
+#app:has(.appleiste.buero) .pr-schritt{display:grid;grid-template-columns:56px 1fr 56px;align-items:center;gap:10px}
+#app:has(.appleiste.buero) .pr-schritt .knopf{min-block-size:56px;font-size:1.5rem;padding:0}
+#app:has(.appleiste.buero) .pr-preis{display:flex;flex-direction:column;align-items:center}
+#app:has(.appleiste.buero) .pr-preis b{font-size:2rem;line-height:1.1;font-variant-numeric:var(--zahlen);color:var(--tinte)}
+#app:has(.appleiste.buero) .pr-ergebnis{background:var(--papier-tief);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+#app:has(.appleiste.buero) .pr-gross{font-size:1.75rem;color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .pr-gross.minus{font-size:1.125rem;color:var(--tinte)}
+#app:has(.appleiste.buero) .pr-satz{margin:0}
+#app:has(.appleiste.buero) .pr-satz.minus{color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .pr-euro{margin:0;font-weight:700}
+#app:has(.appleiste.buero) .pr-grenze{color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .pr-hebelzeile,#app:has(.appleiste.buero) .rp-zeile{inline-size:100%;min-block-size:44px;text-align:start;background:none;border:0;border-block-start:1px solid var(--linie);padding:10px 0;color:var(--tinte)}
+#app:has(.appleiste.buero) .pr-extra-neu{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#app:has(.appleiste.buero) .pr-extra-neu input[data-f=pr-ex-name],#app:has(.appleiste.buero) .pr-extra-neu .knopf{grid-column:1/-1}
+#app:has(.appleiste.buero) .vk-hebel{min-block-size:44px;display:inline-flex;align-items:center;align-self:flex-start;background:none;border:0;padding:4px 0;font-size:.875rem;font-weight:700;color:var(--salbei-tief);text-align:start}
+#app:has(.appleiste.buero) .rp-stern,#app:has(.appleiste.buero) .rp-pferd,#app:has(.appleiste.buero) .rp-raetsel,#app:has(.appleiste.buero) .rp-hund{border-inline-start:4px solid var(--holz-tief)}
+#app:has(.appleiste.buero) .rp-stern{border-inline-start-color:var(--salbei)}
+#app:has(.appleiste.buero) .kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .kl-monat.minus{color:var(--tinte)}
+#app:has(.appleiste.buero) .wa-karte p{margin:0}
+#app:has(.appleiste.buero) .wa-zahl{font-size:1.75rem}
+#app:has(.appleiste.buero) .wa-hinweis{color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .wa-liste{color:var(--tinte-weich);font-size:.875rem}
+#app:has(.appleiste.buero) .wa-melden .wert{color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .wa-zaehlzeile{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-block-start:1px solid var(--linie)}
+#app:has(.appleiste.buero) .wa-zaehlzeile span{display:flex;flex-direction:column;min-inline-size:0}
+#app:has(.appleiste.buero) .wa-zaehlzeile input,#app:has(.appleiste.buero) .wa-zukauf input{inline-size:96px;min-block-size:48px;font-size:1.0625rem;text-align:center}
+#app:has(.appleiste.buero) .wa-zukauf{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.875rem;color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .wa-selbst{padding:6px 0;border-block-start:1px solid var(--linie)}
+
+/* ---------- Zeilen in Karten sind flach (keine Karte in der Karte) ---------- */
+#app:has(.appleiste.buero) .karte .zeile,#app:has(.appleiste.buero) .einklapp .zeile,#app:has(.appleiste.buero) .karte>.zeileknopf,#app:has(.appleiste.buero) .karte .zeileknopf{background:none;border:0;border-block-end:1px solid var(--linie);border-radius:0;box-shadow:none;padding-inline:0}
+#app:has(.appleiste.buero) .karte .zeile:last-child,#app:has(.appleiste.buero) .karte>.zeileknopf:last-child{border-block-end:0}
+#app:has(.appleiste.buero) .zeileknopf b{flex:1;min-inline-size:0;font-weight:700}
+#app:has(.appleiste.buero) .zeileknopf small{color:var(--tinte-weich);font-size:.8125rem}
+#app:has(.appleiste.buero) .zeileknopf .pfeil,#app:has(.appleiste.buero) .zeile .pfeil{color:var(--holz-tief);font-size:1.4rem;line-height:1;flex:none}
+[dir=rtl] #app:has(.appleiste.buero) .zeileknopf .pfeil,[dir=rtl] #app:has(.appleiste.buero) .zeile .pfeil{display:inline-block;transform:scaleX(-1)}
+#app:has(.appleiste.buero) .schalter{inline-size:52px;block-size:32px;min-block-size:44px;min-inline-size:52px;border-radius:999px;border:1px solid var(--linie);background:var(--papier-tief);position:relative;flex:none}
+#app:has(.appleiste.buero) .schalter::after{content:"";position:absolute;inset-block-start:50%;inset-inline-start:6px;inline-size:24px;block-size:24px;margin-block-start:-12px;border-radius:50%;background:var(--tinte-weich);transition:inset-inline-start var(--bewegung) var(--kurve)}
+#app:has(.appleiste.buero) .schalter.an{background:var(--salbei);border-color:var(--salbei)}
+#app:has(.appleiste.buero) .schalter.an::after{inset-inline-start:22px;background:var(--aktion-text)}
+#app:has(.appleiste.buero) .abzeichen{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--papier-tief);border:1px solid var(--holz-tief);color:var(--tinte);font-size:.75rem;font-weight:700}
+#app:has(.appleiste.buero) .gross{font-size:1.75rem;font-weight:700;font-variant-numeric:var(--zahlen);color:var(--tinte)}
+#app:has(.appleiste.buero) .einrichtungzeile{display:flex;align-items:center;justify-content:center;inline-size:100%;min-block-size:var(--tippflaeche);padding:8px 14px;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier-tief);color:var(--tinte);font-size:.875rem;font-weight:700;text-align:center}
+#app:has(.appleiste.buero) .topzeile .rang{background:var(--salbei-hell);color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .summenzeile{flex-wrap:wrap;gap:4px 12px}
+#app:has(.appleiste.buero) .summenzeile>span:first-child{flex:1 1 9rem;min-inline-size:0;overflow-wrap:break-word;word-break:normal}
+#app:has(.appleiste.buero) .summenzeile>.wert{flex:none;margin-inline-start:auto;text-align:end;max-inline-size:100%}
+#app:has(.appleiste.buero) .karte>.zeileknopf{padding-inline:0}
+
+/* ---------- Hinweis-Karten: ruhig, ohne schwarzen Balken ---------- */
+#app:has(.appleiste.buero) .karte.hinweisgelb,#app:has(.appleiste.buero) .karte.hinweisrot,#app:has(.appleiste.buero) .tipp,#app:has(.appleiste.buero) .tipp.warnband{border-inline-start:3px solid var(--holz-tief)}
+#app:has(.appleiste.buero) .karte.hinweisrot,#app:has(.appleiste.buero) .tipp.warnband{border-inline-start-color:var(--salbei-tief)}
+#app:has(.appleiste.buero) .geschaetzt,#app:has(.appleiste.buero) .marke.geschaetzt,#app:has(.appleiste.buero) .geschaetzt-hinweis{border:1px dashed var(--holz-tief);background:var(--papier-tief);color:var(--tinte);border-radius:var(--radius-klein);padding:2px 8px}
+#app:has(.appleiste.buero) .marke.geschaetzt.unvollstaendig{border-style:solid;border-color:var(--linie)}
+#app:has(.appleiste.buero) .geschaetzt-hinweis{padding:8px 12px;font-size:var(--text-klein)}
+#app:has(.appleiste.buero) .stempel-schaetzung{border:1px dashed var(--holz-tief);background:var(--papier-tief);color:var(--tinte)}
+
+/* ---------- Müll-Wochenkarte in Listen: Papier, Balken Salbei (Weinrot gehört nur in den Müll-Ablauf) ---------- */
+#app:has(.appleiste.buero) .muellkarte{background:var(--papier);color:var(--tinte);border:1px solid var(--linie)}
+#app:has(.appleiste.buero) .muellkarte .lbl{color:var(--tinte-weich);font-weight:700}
+#app:has(.appleiste.buero) .muellkopf{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#app:has(.appleiste.buero) .muellkarte .riesig,#app:has(.appleiste.buero) .riesig{font-size:2rem;font-weight:700;line-height:1.1;font-variant-numeric:var(--zahlen);color:var(--tinte)}
+#app:has(.appleiste.buero) .monatstonne{position:relative;inline-size:40px;block-size:56px;border:2px solid var(--linie);border-block-start-width:4px;border-radius:4px 4px 8px 8px;background:var(--papier-tief);overflow:hidden;flex:none}
+#app:has(.appleiste.buero) .monatstonne .fuellung{position:absolute;inset-inline:0;bottom:0;background:var(--salbei)}
+#app:has(.appleiste.buero) .monatstonne .vormonat{position:absolute;inset-inline:-2px;border-block-start:2px dashed var(--holz-tief)}
+#app:has(.appleiste.buero) .balken.muell{display:flex;align-items:flex-end;gap:6px;block-size:48px;margin-block-start:10px}
+#app:has(.appleiste.buero) .balken.muell i{flex:1;block-size:100%;position:relative;display:block}
+#app:has(.appleiste.buero) .balken.muell b{position:absolute;bottom:0;inset-inline:0;display:block;background:var(--salbei);border-radius:3px 3px 0 0;min-block-size:2px}
+#app:has(.appleiste.buero) .balken.muell i.heute b{background:var(--salbei-tief)}
+#app:has(.appleiste.buero) .muellkarte .tage{display:flex;justify-content:space-between;font-size:.75rem;opacity:1;color:var(--tinte-weich)}
+#app:has(.appleiste.buero) .muellkarte .besser,#app:has(.appleiste.buero) .muellkarte .schlechter{color:var(--tinte);font-weight:700}
+#app:has(.appleiste.buero) .topzeile{align-items:center}
+#app:has(.appleiste.buero) .topzeile .rang{display:inline-grid;place-items:center;inline-size:28px;block-size:28px;border-radius:8px;flex:none}
+
+/* ---------- Zähler (Umsatz): große Zahl auf Salbei; Balken Salbei, Prognose Holz ---------- */
+#app:has(.appleiste.buero) .karte.dunkel,#app:has(.appleiste.buero) .karte.zaehler{background:var(--buehne);color:var(--buehne-text);border:1px solid var(--buehne);box-shadow:var(--schatten-karte)}
+#app:has(.appleiste.buero) .karte.dunkel h2,#app:has(.appleiste.buero) .karte.zaehler .lbl,#app:has(.appleiste.buero) .karte.zaehler small,#app:has(.appleiste.buero) .karte.zaehler small.fein,#app:has(.appleiste.buero) .karte.zaehler small.warn{color:var(--buehne-text);text-transform:none;letter-spacing:0}
+#app:has(.appleiste.buero) .karte.zaehler .riesig,#app:has(.appleiste.buero) .karte.zaehler.minus .riesig,#app:has(.appleiste.buero) .karte.zaehler.plus .riesig,#app:has(.appleiste.buero) .karte.zaehler.grau .riesig{color:var(--buehne-text);font-size:2.25rem}
+#app:has(.appleiste.buero) .karte.zaehler .bewegung .alt,#app:has(.appleiste.buero) .karte.zaehler .bewegung .pfeil{color:var(--buehne-text)}
+#app:has(.appleiste.buero) .monatskurve .ist{stroke:var(--buehne-text)}
+#app:has(.appleiste.buero) .monatskurve .prognose{stroke:var(--holz);opacity:1}
+#app:has(.appleiste.buero) .monatskurve .nulllinie{stroke:color-mix(in srgb,var(--buehne-text) 45%,transparent)}
+#app:has(.appleiste.buero) .monatskurve .heute{fill:var(--buehne-text)}
+#app:has(.appleiste.buero) .monatskurve .nulltag{fill:var(--holz)}
+#app:has(.appleiste.buero) .balken i b{background:var(--salbei)}
+#app:has(.appleiste.buero) .balken i s{background:var(--holz)}
+#app:has(.appleiste.buero) .balken i.heute b{background:var(--salbei-tief)}
+#app:has(.appleiste.buero) .kennzahlen span{white-space:normal}
+#app:has(.appleiste.buero) .kennzahlen b{overflow-wrap:anywhere;white-space:normal;text-overflow:clip}
+#app:has(.appleiste.buero) .seg,#app:has(.appleiste.buero) .b-segment,#app:has(.appleiste.buero) .umschalter{align-self:stretch}
+#app:has(.appleiste.buero) .bestzeile{display:flex;align-items:center;gap:12px}
+#app:has(.appleiste.buero) .zeile>.oben{flex:1;min-inline-size:0}
+#app:has(.appleiste.buero) .zeile .oben .name,#app:has(.appleiste.buero) .karte.laden .oben>div{flex:1 1 55%;min-inline-size:0}
+#app:has(.appleiste.buero) .zeile .oben .name small,#app:has(.appleiste.buero) .zeile .oben small{display:block;color:var(--tinte-weich);font-weight:400;font-size:.8125rem}
+#app:has(.appleiste.buero) .vk-rang{margin-inline-end:6px;color:var(--tinte-weich)}
+
+/* ---------- Zekis Satz im Büro-Start: kleiner Knopf neben Zeki (kein Titel) ---------- */
+#app:has(.appleiste.buero) .gc-buehne button.zeki-zeile.b-zeki{display:inline-flex;align-items:center;align-self:flex-start;justify-self:start;inline-size:auto;min-block-size:var(--tippflaeche);padding:6px 14px;border:1px solid color-mix(in srgb,var(--buehne-text) 60%,transparent);border-radius:999px;font-size:.9375rem;text-decoration:none}
+#app:has(.appleiste.buero) .gc-buehne .gc-buehne-text>button.zeki-zeile.b-zeki:first-child{font-size:.9375rem;line-height:1.3}
+
+/* ---------- Dunkel: Piktogramme und Pluszahlen in Tinte (hell auf dunklem Papier) ---------- */
+#app:has(.appleiste.buero){--s-ikon:var(--salbei-tief)}
+[data-theme=dark] #app:has(.appleiste.buero){--s-ikon:var(--tinte)}
+@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]) #app:has(.appleiste.buero){--s-ikon:var(--tinte)}}
+#app:has(.appleiste.buero) .b-zs,#app:has(.appleiste.buero) .b-wert.plus,#app:has(.appleiste.buero) .plus,#app:has(.appleiste.buero) .b-status.ok,#app:has(.appleiste.buero) .b-mini,#app:has(.appleiste.buero) .pr-gross,#app:has(.appleiste.buero) .kl-monat,#app:has(.appleiste.buero) .vk-hebel,#app:has(.appleiste.buero) .b-rund,#app:has(.appleiste.buero) .b-pille,#app:has(.appleiste.buero) .topzeile .rang{color:var(--s-ikon)}
+#app:has(.appleiste.buero) .b-bereich>.b-liste .b-zs{color:var(--s-ikon)}
+
+/* ---------- Reste der alten Büro-Schicht, die Laden-Bildschirme noch brauchen (gelten überall, nur Tokens) ---------- */
+.po{display:flex;flex-direction:column;gap:18px;padding-block-start:12px}
+.po-ergebnis{text-align:center;padding:28px 16px;border-radius:var(--radius);background:var(--papier-tief);display:flex;flex-direction:column;gap:8px}
+.po-gross{font-size:3rem;line-height:1;font-variant-numeric:var(--zahlen);color:var(--tinte);font-weight:700}
+.po-ergebnis.mehr .po-gross{color:var(--tinte)}
+.po-ergebnis.gut .po-gross{color:var(--salbei-tief)}
+.po-ergebnis p{margin:0;font-size:1.0625rem;font-weight:700}
+.po-wert{display:inline-flex;align-items:baseline;gap:4px}
+.po-wert input{inline-size:4.2ch;font:inherit;text-align:end;border:0;border-block-end:2px solid var(--holz);background:transparent;color:inherit;padding:0;min-block-size:0}
+.kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-tief)}
+.kl-monat.minus{color:var(--tinte)}
+
+/* ---------- Foto links in Listenzeilen ---------- */
+#app:has(.appleiste.buero) .summenzeile.mit-foto{flex-wrap:nowrap;align-items:center;gap:12px}
+#app:has(.appleiste.buero) .summenzeile.mit-foto>.gerichtbild{flex:none;inline-size:52px;block-size:48px;border-radius:var(--radius-klein);object-fit:cover}
+#app:has(.appleiste.buero) .summenzeile.mit-foto>.gerichtbild.pikto{object-fit:contain;padding:6px;background:var(--papier-tief)}
+#app:has(.appleiste.buero) .summenzeile.mit-foto>span:not(.wert){flex:1 1 0;min-inline-size:0}
