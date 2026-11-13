@@ -182,12 +182,15 @@ async def lauf(b, sprache, br, ho, art, name, befund, fehler):
     await nav_hilfe.ins_buero(pg)
     if not await pg.locator("#ebene-huelle .blatt-pin").count(): await pg.click('[data-a="menue-auf"]') if False else None
     await pg.wait_for_selector("#ebene-huelle .blatt-pin")
-    for _ in range(9):  # 5 Fehlversuche sperren; unter Last kann die Prüfung (PBKDF2) einen Tipp-Durchgang verschlucken, darum bis zu 9 Anläufe
+    zaehler = "() => Number(window.__gastrocalc?.wurzel?.pinSperre?.fehler) || 0"
+    for _ in range(9):  # 5 Fehlversuche sperren; jeder Anlauf wartet, bis der Fehlversuch gezählt ist (die Prüfung rechnet, PBKDF2)
         if await pg.locator('#ebene-huelle .pintaste[data-wert="9"][disabled]').count(): break
+        vorher = await pg.evaluate(zaehler)
         await schnellstart.code_tippen(pg, "9999")
-        for _ in range(130):  # die Prüfung rechnet (PBKDF2): warten, bis die Punkte wieder leer sind oder die Wartezeit steht
+        for _ in range(200):
             await pg.wait_for_timeout(150)
-            if await pg.locator('#ebene-huelle .pin-punkte i.voll').count() == 0: break
+            if await pg.evaluate(zaehler) > vorher: break
+        await pg.wait_for_timeout(300)
     await pruefe("b9-wartezeit", False, blatt=True)
     if not await pg.locator("#ebene-huelle .pin-meldung").inner_text(): befund.append(f"[{sprache}] Wartezeit-Text fehlt")
     await pg.click('#ebene-huelle .pintaste.leer[data-a="blatt-zu"]'); await pg.wait_for_timeout(300)
