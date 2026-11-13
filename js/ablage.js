@@ -8,11 +8,13 @@
 // Ohne IndexedDB (Tests, privater Modus) liegt die Datei im Arbeitsspeicher und ist nach dem Neuladen weg – das sagt die App.
 
 import { uid } from "./util.js";
+import { istSpeicherVoll } from "./bedienhilfe.js"; // Lauf 6, E5-Draht (8)
 
 // 20.10.2026 (Sicherungs-Test, Fund 1): Konnte ein Foto nicht auf dem Gerät abgelegt werden (Speicher voll), lebte es nur bis zum Neustart –
 // ohne Meldung. Jetzt meldet die Ablage es über denselben Weg wie der Speicher (Banner „Speichern fehlgeschlagen“, app.js).
 let ablageFehler = null;
-export function beiAblageFehler(fn) { ablageFehler = fn; }
+export function beiAblageFehler(fn) { ablageFehler = fn; } // fn(art "ablage", fehler)
+export const istAblageFehler = (e) => e?.grund === "speicher"; // Lauf 6, E5-Draht (8): „Datei ließ sich nicht auf dem Gerät ablegen“ (Speicher voll o. Ä.)
 
 const DB_NAME = "gastrocalc-dateien";
 const DB_VERSION = 1;
@@ -36,7 +38,13 @@ function lokalOrt() {
       if (!fluechtig) {
         for (let versuch = 0; versuch < 2; versuch++) {
           try { await tx("readwrite", (s) => s.put(blob, id)); return; }
-          catch (e) { db = null; if (versuch) { console.warn("Ablage auf dem Gerät nicht möglich, diese Datei nur in dieser Sitzung:", e); try { ablageFehler?.("speichern"); } catch (_) {} } } // iOS trennt die Verbindung manchmal: einmal neu öffnen
+          catch (e) { db = null; if (versuch) { // iOS trennt die Verbindung manchmal: einmal neu öffnen – dann ist es ein echter Fehler
+            // Lauf 6, E5-Draht (8): Ein Schreibfehler gilt nicht mehr als Erfolg. Die Datei liegt NICHT still im Arbeitsspeicher; ablegen wirft einen erkennbaren Fehler (grund "speicher",
+            // voll = Speicher voll), und die Bedienschicht zeigt das Banner (beiAblageFehler). Ohne IndexedDB (Tests, privater Modus) bleibt es beim Arbeitsspeicher – das sagt die App (ablageFluechtig).
+            console.warn("Ablage auf dem Gerät nicht möglich:", e);
+            try { ablageFehler?.("ablage", e); } catch (_) { /* Banner ist Zugabe */ }
+            throw Object.assign(new Error("Ablage nicht möglich"), { grund: "speicher", voll: istSpeicherVoll(e), cause: e });
+          } }
         }
       }
       speicher.set(id, blob);

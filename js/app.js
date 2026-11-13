@@ -1259,9 +1259,9 @@ async function serviceWorkerStarten() {
 }
 
 // Lauf 6, E5 (C): „Speicher voll“ (QuotaExceededError) bekommt einen eigenen, verständlichen Satz im selben Banner; sonst der bisherige Text.
-const speicherText = (art) => (art === "voll" ? l6z(aktuelleSprache(), "speicherVoll") : t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen"));
+const speicherText = (art) => (art === "voll" || art === "ablageVoll" ? l6z(aktuelleSprache(), "speicherVoll") : t(art === "fassung" ? "einstellungen.andereFassung" : "einstellungen.speichernFehlgeschlagen"));
 const speicherFehlerZeigen = (art, fehler) => { speicherProblem = speicherProblemArt(art, fehler); meldung(speicherText(speicherProblem)); zeichne(); };
-beiAblageFehler(() => speicherFehlerZeigen("ablage")); // 20.10.2026: auch ein Foto, das nicht auf das Gerät passt, zeigt das Banner
+beiAblageFehler((art, fehler) => speicherFehlerZeigen(art || "ablage", fehler)); // 20.10.2026: auch ein Foto, das nicht auf das Gerät passt, zeigt das Banner
 beiSpeicherFehler(speicherFehlerZeigen);
 // Paket 2 (16.10.2026): ein zweites Fenster derselben Fassung hat geschrieben (store.js, Generationszähler). store.js hat die eigenen
 // Änderungen in den frischen Stand gemischt und geschrieben (zusammengefuehrt: true) – oder aufgegeben (false: eigene Kopie verworfen).

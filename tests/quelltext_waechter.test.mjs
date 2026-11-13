@@ -140,6 +140,7 @@ const TEIL6 = [
   { name: "Einlesen: sicherungUebernehmen nutzt einlesenSicher (Rückholpunkt), nicht zusammenfuehren", dateien: APP, muss: /await einlesenSicher\(wurzel, importiert\)/, darfNicht: /zusammenfuehren\(wurzel/ },
   { name: "Einlesen: Fehlergründe „neuer“ und „gross“ melden die Sätze aus l6y_texte.js", dateien: APP, muss: /l6yText\("neuer"[\s\S]*l6ySatz\("zuGross"/ },
   { name: "Einlesen: „Einlesen rückgängig machen“ ruft zurueckholen(wurzel) und arbeitet mit der zurückgegebenen Wurzel weiter", dateien: APP, muss: /await zurueckholen\(wurzel\)[\s\S]{0,400}wurzel = r\.wurzel/ },
+  { name: "Ablage: Schreibfehler der Ablage zeigen das Banner mit dem Fehler („Speicher voll“ über ablageVoll)", dateien: APP, muss: /beiAblageFehler\(\(art, fehler\) => speicherFehlerZeigen\(art \|\| "ablage", fehler\)\)[\s\S]*art === "voll" \|\| art === "ablageVoll"|art === "voll" \|\| art === "ablageVoll"[\s\S]*beiAblageFehler\(\(art, fehler\)/ },
 ];
 
 const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5, ...TEIL6];

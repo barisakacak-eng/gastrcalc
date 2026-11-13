@@ -32,7 +32,7 @@ export function istSpeicherVoll(e) {
   return e?.code === 22 || /quota/i.test(String(e?.message || e?.target?.error?.message || ""));
 }
 // Welche Art Problem zeigt das Banner? "voll" (Speicher voll), "speichern", "fassung" (anderes Fenster), "ablage" (Foto passte nicht)
-export const speicherProblemArt = (art, fehler) => (art === "speichern" && istSpeicherVoll(fehler) ? "voll" : art);
+export const speicherProblemArt = (art, fehler) => (art === "speichern" && istSpeicherVoll(fehler) ? "voll" : art === "ablage" && istSpeicherVoll(fehler) ? "ablageVoll" : art); // E5-Draht (8): Foto passte nicht, weil der Speicher voll ist
 // Nach einem erfolgreichen Schreiben verschwindet das Banner – außer „fassung“ (braucht Neuladen) und „ablage“ (das Foto ist trotzdem verloren)
 export const problemNachErfolg = (problem) => (problem === "voll" || problem === "speichern" ? null : problem);
 // Dauerhaften Speicher anfragen, solange er nicht bewilligt ist (Flag nur bei true)
