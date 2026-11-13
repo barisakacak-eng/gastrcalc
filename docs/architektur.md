@@ -166,3 +166,11 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - Browser (Playwright, Chromium, 390×844 und 360×780): `tests/regeln.py` (Wörter, verbotene Wörter, Knopfhöhen je Bildschirm), `tests/bedienung_browser.py` (Bedienschicht U1–U5), `tests/erststart_alle.py` (Einrichtung jeder Ladenart mit Zeiten), `tests/klickjagd.py` (Crawler: tote Tipps, Hänger, Konsolenfehler), `tests/durchlauf_*.py` (Abläufe je Bereich), `tests/umzug_browser.py`, `tests/sicherung_rundreise.test.mjs`.
 - Wächter: `.github/workflows/pages.yml` – Pages veröffentlicht nur, wenn Node-Tests (beide Zeitzonen), Sprachprüfung, Regeln, Funktionstests und kurzer Crawler grün sind. Keine Secrets.
 - Vor jedem Push: `python3 tools/sw_liste.py`, Tests, `node tools/sprachpruefung.mjs`, `python3 tests/regeln.py` (der Messstand liegt außerhalb des Repos: `REGELN_STAND` oder Temp-Ordner).
+
+## 7. Test-Haken
+
+Browser-Tests schalten die App mit wenigen Merkern am `window`-Objekt um. Sie wirken nur am eigenen Rechner (`localhost`, `127.0.0.1`, `[::1]`): `js/adapter/testhaken.js` (`testHaken(name)`, `nurLokal()`) gibt außerhalb davon immer „aus“ zurück, in Node ebenso. In der echten App sind sie wirkungslos.
+
+- `window.__gastrocalc` – Debug-Objekt (Stand, Wurzel, `zeichne`, Fehlertext). Wird in `js/app.js` nur auf localhost angelegt. Benutzt von fast allen `tests/*.py` (Zustand lesen, Beispieldaten einspielen).
+- `window.__gcD.homeGeraet` (`"ios"` oder `"android"`) – stellt das Gerät für den Home-Bildschirm-Hinweis (`homeLage` in `js/bedienung/`, `js/screens/onboarding.js`) für Bildproben ein, damit Desktop-Chromium den iPhone- oder Android-Weg zeigt. Kein Test im Repo setzt ihn; er dient den Bildproben.
+- `window.__gcFuehrungZeigen` (`true`) – lässt den langen Mitmach-Rundgang (12 Stationen) laufen statt des kurzen. Benutzt von `tests/durchlauf_mitmach.py` und (zum Wegschalten der Führung) `tests/hilfe/aufklappen.js`.

@@ -2,6 +2,7 @@
 // jeder Schritt lässt sich mit „weiß ich gerade nicht" offen lassen. Nichts blockiert.
 import { selbstAnwenden, selbstStandard } from "../selbst.js"; // Trennung (17.10.2026): selbstStandard wohnt im Rechenwerk
 import { einrichtungStand } from "../einrichtung.js";
+import { testHaken } from "../adapter/testhaken.js"; // Test-Haken nur auf localhost
 import { ring } from "./bausteine.js"; // Trennung (17.10.2026)
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
@@ -593,7 +594,7 @@ const geld = {
 // 26.10.2026: Ring nur bei mehr als 0 % – kein „0 % eingerichtet“ direkt nach „Fertig!“
 // Bildpaket D (1): am Ende der Einrichtung der Weg auf den Home-Bildschirm – nur wenn die App nicht schon als Home-App läuft
 function homeKarteEinrichtung() {
-  const g = globalThis.__gcD?.homeGeraet || null; // Testhaken für Bildproben
+  const g = testHaken("__gcD")?.homeGeraet || null; // Testhaken für Bildproben (nur localhost)
   const z = installZustand(g ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: g === "android" ? "Android" : "iPhone" } } : globalThis);
   if (z.standalone) return "";
   const a = z.plattform === "android";

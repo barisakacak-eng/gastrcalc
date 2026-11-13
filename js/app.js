@@ -10,6 +10,7 @@ import { datenschutzText } from "./data/datenschutz.js";
 import { zekiTaktStarten, zekiSprechblase, zekiStimmeEinsetzen } from "./screens/zeki_takt.js";
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
+import { testHaken, nurLokal } from "./adapter/testhaken.js"; // Test-Haken nur auf localhost
 import { introStarten } from "./intro.js"; // Zeki-Auftritt beim App-Start (27.10.2026), Schalter INTRO_AN in js/intro.js
 import { laden, speichern as speichernVerzoegert, sofortSpeichern as sofortSpeichernRoh, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
@@ -220,7 +221,7 @@ function zeichne() {
       root.innerHTML = `<div class="schirm">${v}</div>`;
       zekiGesehenMerken(root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(root); zekiBildschirm(); zekiTaktStarten();
       if (ansicht === "start" && !stand.fuehrung && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) // erster Besuch auf Heute: Führung mit Zeki
-        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || (wurzel?.betriebe || []).some((b) => b.fuehrung) || fuehrungOffen() || kurzOffen()) return; /* 03.11.2026: Rundgang je Gerät einmal – auch nicht nach dem Einlesen eines Ladens ohne Merker */ if (window.__gcFuehrungZeigen) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); if (ansicht === "start" && stand.phase === "app") zeichne(); /* K3 Runde 2 (01.11.2026): Heute sofort neu, damit der Home-Hinweis nicht erst nach einem Tabwechsel kommt */ } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
+        { const nr = eingabeNr; setTimeout(() => { if (ansicht !== "start" || stand.phase !== "app" || eingabeNr !== nr || stand.fuehrung || (wurzel?.betriebe || []).some((b) => b.fuehrung) || fuehrungOffen() || kurzOffen()) return; /* 03.11.2026: Rundgang je Gerät einmal – auch nicht nach dem Einlesen eines Ladens ohne Merker */ if (testHaken("__gcFuehrungZeigen")) fuehrungStarten(document, rundgangApi()); /* Testhaken: der lange Mitmach-Rundgang (12 Stationen) bleibt prüfbar */ else kurzStarten(document, { fertig: () => { rundgangAbschliessen(stand, "kurz"); ereignis("rundgang-kurz", { laden: stand.id }); ohneStempelSpeichern(); if (ansicht === "start" && stand.phase === "app") zeichne(); /* K3 Runde 2 (01.11.2026): Heute sofort neu, damit der Home-Hinweis nicht erst nach einem Tabwechsel kommt */ } }); /* 6b R1 live (Baris 30.10.2026): kurzer Rundgang statt 12 Stationen; „Fertig“ und „Überspringen“ merken „gesehen“ */ }, 400); } // Mitmach-Rundgang (28.10.2026); U3 (30.10.2026): nicht mehr, wenn der Chef inzwischen getippt hat oder in der Einrichtung/Mengenfrage ist
       else if (ansicht === "start" && modus(wurzel) === "laden" && !personalAktiv() && !fuehrungOffen()) introStarten(document); // höchstens einmal je App-Start
       eigeneFotosLaden();
     }
@@ -562,7 +563,7 @@ function dauerhaftAnfragen() {
 }
 // Lauf 2 (31.10.2026), Bildpaket D – Baris' Ja am 01.11.2026: Home-Bildschirm-Führung, Rezept-Blatt im Laden und die Klicker-Befunde sind Standard.
 // Testhaken window.__gcD.homeGeraet ("ios" | "android") stellt das Gerät nur für Bildproben; sonst zählt der echte Browser.
-const probeGeraet = () => (typeof window !== "undefined" && window.__gcD?.homeGeraet) || null;
+const probeGeraet = () => testHaken("__gcD")?.homeGeraet || null;
 let installAufforderung = null; // Android/Chrome: „beforeinstallprompt“ aufheben → Knopf „Installieren“ im Büro (Sicherung)
 if (typeof window !== "undefined") window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installAufforderung = e; if (ansicht === "einstellungen") zeichne(); });
 // Lage für die Ansichten: null = kein Hinweis. Laden: nur einmal, nicht während des Rundgangs. Büro: immer (Sicherung), auch „liegt schon dort“.
@@ -1343,7 +1344,7 @@ root.addEventListener("focusin", (ev) => { const i = ev.target; if (!(i instance
 muellLangdruckEinrichten(root, (el) => { if (ansicht === "muell" && stand && muellAktion("muell-detail", el, stand)) zeichne(); });
 
 // Für Tests und Fehlersuche – nur am eigenen Rechner (localhost, 127.0.0.1, [::1]). In der echten App gibt es dieses Objekt nicht.
-if (["localhost", "127.0.0.1", "[::1]"].includes(location.hostname))
+if (nurLokal())
   window.__gastrocalc = { get stand() { return stand; }, get wurzel() { return wurzel; }, zeichne, kurzStarten: () => kurzStarten(document), fehlerText: () => fehlerText(speicherLokal(), { fassung: APP_FASSUNG, sprache: aktuelleSprache() }), fehlerLeeren: () => fehlerLeeren(speicherLokal()) };
 
 // Zeki (26.10.2026): Welche Lage Zeki heute schon gesagt hat – nur Anzeige-Komfort im Browser, nicht im Betriebsstand.
