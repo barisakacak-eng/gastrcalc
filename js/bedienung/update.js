@@ -31,12 +31,14 @@ function stillAktualisieren() {
 // Ein ANDERES Fenster hat „Aktualisieren“ getippt. Der neue Service Worker löscht beim Aktivieren den alten Cache (sw.js activate).
 // Dieses Fenster läuft dann mit altem app.js weiter, holt Nachlader (Sprachdateien, OCR-Worker) aber aus dem neuen Cache – ein Mischstand
 // aus zwei Fassungen. Darum: neu laden, sobald hier kein Formular offen ist (sonst alle 2 s nachsehen), vorher sichern.
-// Im Onboarding ist jeder Schritt ein Formular: dort wird erst beim nächsten Start neu geladen (pagehide sichert).
 function fremdeFassungUebernehmen() {
   if (Z.aktualisierungKlick || Z.fremdeFassung) return;
   Z.fremdeFassung = true; ereignis("fremde-fassung", {});
   const versuch = () => {
-    if (!Z.wurzel || !Z.stand || Z.stand.phase !== "app" || formularOffen()) { setTimeout(versuch, 2000); return; }
+    // In der Einrichtung wird neu geladen, sobald kein Feld den Fokus hat: jeder Schritt wird sofort gespeichert und steht nach dem Neuladen wieder da.
+    const einrichtung = Z.stand?.phase === "onboarding";
+    const wartet = !Z.wurzel || !Z.stand || (einrichtung ? (blattOffen() || fotoLauf() || !!document.activeElement?.matches?.("input, textarea, select")) : (Z.stand.phase !== "app" || formularOffen()));
+    if (wartet) { setTimeout(versuch, 2000); return; }
     Z.aktualisierungKlick = true; // ab jetzt kein zweiter Anlauf
     sofortSpeichern(Z.wurzel, { stempel: false }).finally(() => location.reload());
   };

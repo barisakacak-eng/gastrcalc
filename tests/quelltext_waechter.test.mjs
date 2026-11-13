@@ -143,7 +143,12 @@ const TEIL6 = [
   { name: "Ablage: Schreibfehler der Ablage zeigen das Banner mit dem Fehler („Speicher voll“ über ablageVoll)", dateien: APP, muss: /beiAblageFehler\(\(art, fehler\) => speicherFehlerZeigen\(art \|\| "ablage", fehler\)\)[\s\S]*art === "voll" \|\| art === "ablageVoll"|art === "voll" \|\| art === "ablageVoll"[\s\S]*beiAblageFehler\(\(art, fehler\)/ },
 ];
 
-const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5, ...TEIL6];
+// ───── Teil 8 (Etappe 8) ─────
+const TEIL8 = [
+  { name: "Einlesen: die sichtbare Sprache bleibt (Zusammenführen und Ersetzen)", dateien: ["js/bedienung/sicherung.js"], muss: /sprache \|\|= aktuelleSprache\(\)[\s\S]*spracheVorher/ },
+  { name: "Fremdes Update: auch in der Einrichtung wird neu geladen, sobald kein Feld offen ist", dateien: ["js/bedienung/update.js"], muss: /einrichtung \? \(blattOffen\(\)/ },
+];
+const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5, ...TEIL6, ...TEIL8];
 test("Quelltext-Wächter: jeder Eintrag nennt mindestens einen Ort, den es gibt", () => {
   for (const w of WAECHTER) assert.ok(w.dateien.some((d) => fs.existsSync(path.join(WURZEL, d))), w.name + ": keiner der Orte existiert (" + w.dateien.join(", ") + ")");
 });

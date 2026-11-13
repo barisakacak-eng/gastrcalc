@@ -96,6 +96,7 @@ async function sicherungUebernehmen(gelesen) {
     const neu = importiert.betriebe.filter((b) => !Z.wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     if (!confirm(zeitraumZeile(importiert) + t("einstellungen.importFrage", neu, gleich))) return; // Datensicherung: Tage und Zeitraum zuerst
     const leerVorher = Z.stand && Z.stand.phase === "onboarding" && !Z.stand.betrieb.name && !Z.stand.kosten.length && !Z.stand.gerichte.length ? Z.stand.id : null;
+    Z.wurzel.sprache ||= aktuelleSprache(); // die Sprache, die gerade zu sehen ist, bleibt – die Datei ändert sie nicht
     const r = (await einlesenSicher(Z.wurzel, importiert)).bericht; // Lauf 6, E5-Draht (4): sicher, mit Rückholpunkt
     if (leerVorher && Z.wurzel.betriebe.length > 1) { Z.wurzel.betriebe = Z.wurzel.betriebe.filter((b) => b.id !== leerVorher); if (Z.wurzel.aktiv === leerVorher) Z.wurzel.aktiv = importiert.aktiv; }
     alleZuruecksetzen(); Z.stand = null; aktivSetzen(Z.wurzel.aktiv); // der eigene aktive Laden bleibt, die Datei ändert ihn nicht; Bildschirm-Zustände gehören zum alten Objekt
@@ -117,7 +118,9 @@ async function sicherungErsetzen(gelesen) {
     const namen = importiert.betriebe.map((b) => b.betrieb?.name || t("ebene.deinLaden"));
     if (!confirm(zeitraumZeile(importiert) + t("rettung.ersetzenFrage", namen.join(", ")))) return;
     speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();
+    const spracheVorher = Z.wurzel?.sprache || aktuelleSprache(); // die Sprache, die gerade zu sehen ist, bleibt auch beim Ersetzen
     Z.wurzel = wurzelErsetzen(Z.wurzel || leereWurzel(), importiert); Z.stand = null; aktivSetzen(Z.wurzel.aktiv);
+    if (spracheVorher) Z.wurzel.sprache = spracheVorher;
     const fotos = ablage?.length ? await ablageAusSicherung(ablage, ablageZuruecklegen) : { neu: 0, kaputt: 0, da: 0 };
     await ladeSprache(Z.wurzel.sprache || spracheDesGeraets()).catch(() => {}); setzeSprache(Z.wurzel.sprache || spracheDesGeraets());
     await sofortSpeichern(Z.wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import-ersetzt", { anzahl: ereignisse.length, laeden: importiert.betriebe.length, pruefsumme, fotos: fotos.neu, fotosKaputt: fotos.kaputt });

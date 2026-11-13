@@ -4,8 +4,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-// Braucht den Parser „acorn“ (npm install acorn oder ein globaler Ordner); er gehört nicht zur App und wird nur von diesem Werkzeug gebraucht.
-const acorn = await import("acorn").catch(() => import("/opt/npm-tools/node_modules/acorn/dist/acorn.mjs"));
+// Braucht den Parser „acorn“ (liegt als tools/vendor/acorn.mjs bei, MIT-Lizenz); er gehört nicht zur App und wird nur von diesem Werkzeug gebraucht.
+const acorn = await import("./vendor/acorn.mjs");
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const lesen = (f) => fs.readFileSync(path.join(WURZEL, f), "utf8");

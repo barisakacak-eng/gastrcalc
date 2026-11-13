@@ -1,13 +1,13 @@
 // Misst die Bedienschicht (js/app.js und js/bedienung/): Zeilen von app.js, längste Funktion, Zeilen über 400 Zeichen.
 // Aufruf: node tools/bedienung_masse.mjs   Als Funktion: import { messen } from "./bedienung_masse.mjs".
-// Die Funktionslänge braucht den Parser „acorn“ (npm install acorn oder ein globaler Ordner); ohne ihn zählt nur, was ohne Parser geht
+// Die Funktionslänge braucht den Parser „acorn“ (liegt als tools/vendor/acorn.mjs bei, MIT-Lizenz); ohne ihn zählt nur, was ohne Parser geht
 // (Funktionen, die in Spalte 0 beginnen und in Spalte 0 enden) – dann steht in „parser“ false.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const acorn = await import("acorn").catch(() => import("/opt/npm-tools/node_modules/acorn/dist/acorn.mjs")).catch(() => null);
+const acorn = await import("./vendor/acorn.mjs").catch(() => null);
 
 const dateienDerSchicht = () => ["js/app.js", ...fs.readdirSync(path.join(WURZEL, "js/bedienung")).filter((f) => f.endsWith(".js")).sort().map((f) => "js/bedienung/" + f)];
 const FUNKTION = new Set(["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"]);
