@@ -9,7 +9,7 @@
 
 /* ---------- Grund: Papier, ruhige Karten mit weicher Tiefe ---------- */
 #app .inhalt{background:transparent;padding:14px 16px 20px;gap:10px;display:flex;flex-direction:column}
-body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset-bottom,0px) + 80px)}
+body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset-bottom,0px) + 72px)}
 #app .inhalt>*{min-inline-size:0}
 #app .karte{background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);background-image:none}
 #app .gerichtbild.mini{inline-size:52px;block-size:52px;border-radius:10px;object-fit:cover;flex:none}
@@ -79,8 +79,9 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .muellraster .ware-tipp{display:flex;flex-direction:column;align-items:stretch;padding:0;border:0;background:transparent;text-align:start;min-block-size:44px;inline-size:100%;box-shadow:none;border-radius:0}
 #app .muellraster .ware-tipp .gerichtbild{inline-size:100%;block-size:auto;aspect-ratio:4/3;border-radius:0;object-fit:cover}
 #app .muellraster .ware-tipp .gerichtbild.pikto{padding:14px;object-fit:contain}
-#app .muellraster .ware-tipp .wt{display:grid;gap:0;padding:6px 6px 8px;min-inline-size:0}
-#app .muellraster .ware-tipp .wt b{font-size:.7647rem;line-height:1.2;font-weight:700;overflow-wrap:break-word;hyphens:auto;color:var(--tinte)}
+#app .muellraster .ware .ware-mehr::before{content:none}
+#app .muellraster .ware-tipp .wt{display:grid;gap:0;padding:4px 4px 6px;min-inline-size:0}
+#app .muellraster .ware-tipp .wt b{font-size:.7rem;line-height:1.2;font-weight:700;overflow-wrap:break-word;hyphens:auto;color:var(--tinte)}
 #app .muellraster .ware-tipp .wt small{font-size:.75rem;color:var(--tinte-weich);font-weight:600}
 #app .muellraster .karte.ware.frisch{outline:2px solid var(--muell);outline-offset:-2px}
 #app .muellraster .ware .haken{position:absolute;inset-inline-start:6px;inset-block-start:6px;inline-size:28px;block-size:28px;border-radius:50%;background:var(--muell);color:var(--papier);display:grid;place-items:center}
