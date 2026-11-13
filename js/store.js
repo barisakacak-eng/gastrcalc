@@ -275,6 +275,8 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
                    basis: k.basis === "brutto" || k.basis === "netto" ? k.basis : (alt ? "netto" : basisStandard(k.posten)),
                    // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten; alte Daten ohne Feld bekommen den Standard (19, Wasser 7)
                    satz: [mwstProzent("voll"), mwstProzent("ermaessigt"), 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) })); // Prozent wie gespeichert: 19, 7, 0 – aus dem Regelwerk
+  // Lauf 6, E5-Draht (2): Betrags-Verlauf eines Postens ([{ ab: "JJJJ-MM" (oder "" = von Anfang an), wert }]) bleibt, nur gültige Einträge; ohne gültigen Eintrag fällt das Feld weg.
+  for (const k of s.kosten) if (k.verlauf !== undefined) { const v = Array.isArray(k.verlauf) ? k.verlauf.filter((e) => istObjekt(e) && typeof e.ab === "string" && /^(\d{4}-\d{2})?$/.test(e.ab) && typeof e.wert === "number" && betragOk(e.wert)) : []; if (v.length) k.verlauf = v; else delete k.verlauf; }
   if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
   // Gremium 2 (24.10.2026): Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
