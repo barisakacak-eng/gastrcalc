@@ -85,7 +85,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .muellraster .karte.ware.frisch{outline:2px solid var(--muell);outline-offset:-2px}
 #app .muellraster .ware .haken{position:absolute;inset-inline-start:6px;inset-block-start:6px;inline-size:28px;block-size:28px;border-radius:50%;background:var(--muell);color:var(--papier);display:grid;place-items:center}
 #app .muellraster .ware .haken .sym{inline-size:16px;block-size:16px}
-#app .muellraster .ware .zaehler{position:absolute;inset-inline-start:6px;inset-block-start:6px;background:var(--papier);color:var(--tinte);border-radius:999px;padding:0 8px;font-size:.75rem;font-weight:700;line-height:24px;box-shadow:var(--schatten-karte)}
+#app .muellraster .ware .zaehler{position:absolute;inset-inline-start:6px;inset-block-start:6px;background:var(--papier);color:var(--tinte);border-radius:999px;padding:0 8px;font-size:.75rem;font-weight:700;line-height:1.9;box-shadow:var(--schatten-karte)}
 #app .muellraster .ware-mehr{position:absolute;inset-inline-end:0;inset-block-start:0;inline-size:44px;block-size:44px;min-inline-size:44px;min-block-size:44px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:1rem;line-height:1;color:var(--tinte);display:grid;place-items:center;background:radial-gradient(circle at center,var(--papier) 14px,transparent 15px)}
 #app .muellraster .karte.ware.andere{align-items:center;justify-content:center;gap:4px;padding:10px 6px;min-block-size:44px;color:var(--tinte);text-align:center}
 #app .muellraster .karte.ware.andere .rund{display:none}
