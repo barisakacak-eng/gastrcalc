@@ -41,6 +41,7 @@ async function gerichtFotoAenderung(el, dateien) {
 // Foto (optional) beim Müll – nur ablegen, nicht lesen; hängt am nächsten Eintrag.
 async function muellFotoAenderung(el, dateien) {
   const datei = dateien[0];
+  if (!/^image\//i.test(String(datei?.type || ""))) return; // nur Bilddateien; anderes wird still abgewiesen
   const kopf = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: Z.wurzel.geraet, status: "abgelegt" };
   try {
     const abgelegt = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: Z.stand.id });
@@ -73,6 +74,7 @@ export const AENDERUNG = {
 
 export async function aufAenderung(ev) {
   const el = ev.target; if (!el.files?.[0]) return;
+  if (modus(Z.wurzel) === "personal" && el.dataset.f !== "muell-foto") return; // Personal-Modus: nur das Müll-Foto, nichts einlesen, nichts ablegen
   const dateien = [...el.files]; el.value = "";
   if (Object.hasOwn(AENDERUNG, el.dataset.f)) return AENDERUNG[el.dataset.f](el, dateien);
 }
