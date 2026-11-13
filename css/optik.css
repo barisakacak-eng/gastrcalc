@@ -52,3 +52,16 @@ input[type=checkbox]{accent-color:var(--salbei);inline-size:22px;block-size:22px
 .karte.h-ziel:not(.h-ziel-kurs) .h-balken{background:color-mix(in srgb,var(--tinte) 12%,transparent)}
 .karte.h-ziel:not(.h-ziel-kurs) .h-balken i{background:var(--salbei)}
 .h-ziel-fehlt .h-fehlt-knopf{background:var(--aktion);color:var(--aktion-text)}
+
+/* Putzplan: acht Zeilen passen bei 390 × 844 ohne Scrollen (Laden: kein senkrechtes Scrollen) */
+.putzplan .planliste{gap:7px}
+.putzplan .pzeile{min-height:64px}
+.p-schablone .pzeile.p2 .aufgabe{min-height:60px;padding-block:5px}
+.putzplan .pbild{width:48px;height:48px}
+.putzplan .pmehr{width:46px;height:46px;min-height:46px;min-width:46px}
+
+/* Müll-Eintrag (Menge): alles samt „Müll eintragen“ passt bei 390 × 844 über die Tableiste, ohne Scrollen */
+.inhalt.muellform:not(.muell-station-detail){gap:11px;padding-top:10px}
+.inhalt.muellform:not(.muell-station-detail) .auswahlkarte{min-height:72px;padding-block:8px}
+.inhalt.muellform:not(.muell-station-detail) .mengekarte{gap:8px;padding-block:12px}
+.inhalt.muellform:not(.muell-station-detail) .formkacheln .karte,.inhalt.muellform:not(.muell-station-detail) .formkacheln button{min-height:64px}
