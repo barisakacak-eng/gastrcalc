@@ -123,11 +123,11 @@ const TEIL5 = [
   { name: "B Tageswechsel: zeichne() merkt sich den gezeichneten Tag (gezeichneterTag = tagStand())", dateien: APP, muss: /gezeichneterTag = tagStand\(\)/ },
   { name: "C Speicher: der Dauerspeicher gilt nur bei „Ja“ als gefragt (persistGefragt nur mit ok === true)", dateien: APP, muss: /ok === true[^\n]*persistGefragt = true/ },
   { name: "C Speicher: persistGefragt wird nie vor dem Ergebnis gesetzt", dateien: APP, darfNicht: /persistGefragt = true; speichern\(wurzel\);\s*speicherDauerhaftPruefen/ },
-  { name: "C Speicher: das Fehler-Banner wird nach erfolgreichem Schreiben zurückgesetzt (problemNachErfolg) und kennt „Speicher voll“ (speicherProblemArt)", dateien: APP, muss: /problemNachErfolg\(speicherProblem\)[\s\S]*speicherProblemArt\(art, fehler\)/ },
+  { name: "C Speicher: das Fehler-Banner wird nach erfolgreichem Schreiben zurückgesetzt (problemNachErfolg) und kennt „Speicher voll“ (speicherProblemArt)", dateien: APP, muss: /problemNachErfolg\((?:Z\.)?speicherProblem\)[\s\S]*speicherProblemArt\(art, fehler\)/ },
   { name: "C Speicher: der Satz „Speicher voll …“ kommt aus js/data/l6z_texte.js", dateien: APP, muss: /l6z\(aktuelleSprache\(\), "speicherVoll"\)/ },
   { name: "E Echte App = Test-App: kein Bildschirm greift auf das Debug-Objekt __gastrocalc zu (das gibt es nur auf localhost)", dateien: ["js/screens"], darfNicht: /__gastrocalc/ },
-  { name: "E Echte App = Test-App: app.js reicht die Wurzel an die Schritte der Einrichtung durch (s.view(stand, wurzel))", dateien: APP, muss: /s\.view\(stand, wurzel\)/ },
-  { name: "F Personal-Modus: app.js weist Aktionen über personalGesperrt ab (Positivliste in js/modus.js)", dateien: APP, muss: /modus\(wurzel\) === "personal" && personalGesperrt\(/ },
+  { name: "E Echte App = Test-App: app.js reicht die Wurzel an die Schritte der Einrichtung durch (s.view(stand, wurzel))", dateien: APP, muss: /s\.view\((?:Z\.)?stand, (?:Z\.)?wurzel\)/ },
+  { name: "F Personal-Modus: app.js weist Aktionen über personalGesperrt ab (Positivliste in js/modus.js)", dateien: APP, muss: /modus\((?:Z\.)?wurzel\) === "personal" && personalGesperrt\(/ },
   { name: "G Büro-Code: das Schloss-Blatt kennt die harte Sperre nach 10 Fehlversuchen (hartGesperrt)", dateien: ["js/screens/ebene.js"], muss: /hartGesperrt\(pin\.wurzel\)/ },
   { name: "G Büro-Code: der Rettungscode rechnet nur mit der Uhr (sperreRestUhr), damit er bei der harten Sperre offen bleibt", dateien: ["js/rettung.js"], muss: /sperreRestUhr\(wurzel, jetzt\)/ },
   { name: "H Einrahmen: index.html lädt js/rahmen.js VOR js/app.js", dateien: ["index.html"], muss: /js\/rahmen\.js[\s\S]*js\/app\.js/ },
@@ -137,9 +137,9 @@ const TEIL5 = [
 // ───── Teil 6 (Lauf 6, E5-Draht): Verdrahtung der neuen Fähigkeiten des Rechenwerks ─────
 const TEIL6 = [
   { name: "Bedienschicht ruft vormonatEinfrierenWennNoetig (beim Start und beim Tageswechsel)", dateien: APP, muss: /(?=[\s\S]*vormonatEinfrierenWennNoetig\(b, H\))(?=[\s\S]*vormonatEinfrieren\(\);\n  zeichne\(\);)(?=[\s\S]*async function startNachLaden[\s\S]*vormonatEinfrieren\(\);)/ },
-  { name: "Einlesen: sicherungUebernehmen nutzt einlesenSicher (Rückholpunkt), nicht zusammenfuehren", dateien: APP, muss: /await einlesenSicher\(wurzel, importiert\)/, darfNicht: /zusammenfuehren\(wurzel/ },
+  { name: "Einlesen: sicherungUebernehmen nutzt einlesenSicher (Rückholpunkt), nicht zusammenfuehren", dateien: APP, muss: /await einlesenSicher\((?:Z\.)?wurzel, importiert\)/, darfNicht: /zusammenfuehren\((?:Z\.)?wurzel/ },
   { name: "Einlesen: Fehlergründe „neuer“ und „gross“ melden die Sätze aus l6y_texte.js", dateien: APP, muss: /l6yText\("neuer"[\s\S]*l6ySatz\("zuGross"/ },
-  { name: "Einlesen: „Einlesen rückgängig machen“ ruft zurueckholen(wurzel) und arbeitet mit der zurückgegebenen Wurzel weiter", dateien: APP, muss: /await zurueckholen\(wurzel\)[\s\S]{0,400}wurzel = r\.wurzel/ },
+  { name: "Einlesen: „Einlesen rückgängig machen“ ruft zurueckholen(wurzel) und arbeitet mit der zurückgegebenen Wurzel weiter", dateien: APP, muss: /await zurueckholen\((?:Z\.)?wurzel\)[\s\S]{0,400}(?:Z\.)?wurzel = r\.wurzel/ },
   { name: "Ablage: Schreibfehler der Ablage zeigen das Banner mit dem Fehler („Speicher voll“ über ablageVoll)", dateien: APP, muss: /beiAblageFehler\(\(art, fehler\) => speicherFehlerZeigen\(art \|\| "ablage", fehler\)\)[\s\S]*art === "voll" \|\| art === "ablageVoll"|art === "voll" \|\| art === "ablageVoll"[\s\S]*beiAblageFehler\(\(art, fehler\)/ },
 ];
 
