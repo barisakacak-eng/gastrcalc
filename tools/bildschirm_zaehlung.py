@@ -379,7 +379,11 @@ class Lauf:
 # ---------------------------------------------------------------- Vorbereitung je Lauf
 async def beispiel_laden(l):
     await nav_hilfe.geh(l.pg, "laeden")
-    await l.pg.locator('#app [data-a="beispiel-anlegen"]').first.click(); await l.pg.wait_for_timeout(900)
+    for _ in range(4):  # der kurze Rundgang kann nachträglich aufgehen und das Tippen abfangen – wegtippen wie ein Mensch
+        if await l.pg.locator(".rg-huelle").count(): await nav_hilfe.rundgang_weg(l.pg)
+        try: await l.pg.locator('#app [data-a="beispiel-anlegen"]').first.click(timeout=4000); break
+        except Exception: await l.pg.wait_for_timeout(600)
+    await l.pg.wait_for_timeout(900)
     s = await l.pg.evaluate("window.__gastrocalc.stand.beispiel")
     assert s, "Beispiel-Laden nicht aktiv"
 
