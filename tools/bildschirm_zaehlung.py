@@ -34,6 +34,9 @@ MAX_JE_EBENE = int(os.environ.get("ZAEHLUNG_MAX", "170"))
 MAX_KNOEPFE = 45
 NUR = [x for x in os.environ.get("ZAEHLUNG_NUR", "einrichtung,laden,buero,personal").split(",") if x]
 CODE = "1234"
+SPRACHE = os.environ.get("SCHNELLSTART_SPRACHE", "de")           # Sprache über die Sprachwahl der App (wie tests/schnellstart.py)
+FARBE = "dark" if os.environ.get("ZAEHLUNG_DUNKEL") == "1" else "light"
+LOCALE = {"de": "de-DE", "tr": "tr-TR", "ar": "ar-SA"}.get(SPRACHE, SPRACHE)
 LADEN_GRENZE = 15
 
 # Knöpfe, die nicht angetippt werden: zerstören Daten, wechseln Sprache/Ebene/Laden, setzen den Code, öffnen Dateiauswahl,
@@ -44,18 +47,21 @@ SPERRE = re.compile(r"^(nav|modus|sprache|laden-wechseln|pin-taste|pin-zurueck|b
 
 # ---------------------------------------------------------------- Bildschirme aus dem Code
 def ansichten_aus_code():
-    app = (APP / "js" / "app.js").read_text(encoding="utf-8")
-    weiche = re.findall(r'ansicht === "([a-z-]+)" \? (\w+)\(', app)
+    # Seit dem Umbau liegt die Zeichen-Weiche (ANSICHT_VIEW) in js/bedienung/zeichnen.js; die Views stammen aus js/screens/*.js oder js/bedienung/*.js
+    quelle = (APP / "js" / "bedienung" / "zeichnen.js").read_text(encoding="utf-8")
+    block = re.search(r"const ANSICHT_VIEW = \{(.*?)\n\};", quelle, re.S).group(1)
+    weiche = re.findall(r'^\s*"?([a-z0-9-]+)"?: \(\) => (\w+)\(', block, re.M)
     imp = {}
-    for namen, datei in re.findall(r'import \{([^}]*)\} from "\./screens/([a-z_]+)\.js"', app):
-        for n in namen.split(","):
+    for m in re.finditer(r'import \{([^}]*)\} from "(\.\.?/[a-z_0-9/]+)\.js"', quelle):
+        pfad = m.group(2).replace("../", "").replace("./", "bedienung/")
+        for n in m.group(1).split(","):
             n = n.strip().split(" as ")[0].strip()
-            if n: imp[n] = datei
+            if n: imp[n] = pfad
     ansichten, schon = [], set()
-    for a, f in weiche:  # nur die Zeichen-Weiche (…View / …Schirm), nicht die Kennungs-Kette davor
-        if f.endswith("Kennung") or a in schon: continue
-        schon.add(a); ansichten.append({"ansicht": a, "funktion": f, "datei": imp.get(f, "app.js (eigene Funktion)")})
-    ansichten.append({"ansicht": "start", "funktion": "startView", "datei": imp.get("startView", "home")})  # „sonst“-Zweig der Weiche
+    for a, f in weiche:
+        if a in schon: continue
+        schon.add(a); ansichten.append({"ansicht": a, "funktion": f, "datei": imp.get(f, "bedienung/zeichnen.js (eigene Funktion)")})
+    ansichten.append({"ansicht": "start", "funktion": "startView", "datei": imp.get("startView", "screens/home")})  # „sonst“-Zweig der Weiche
     modus = (APP / "js" / "modus.js").read_text(encoding="utf-8")
     tabs = re.findall(r'"([a-z]+)"', re.search(r"LADEN_TABS = \[([^\]]*)\]", modus).group(1))
     laden_extra = re.findall(r'"([a-z]+)"', re.search(r"LADEN_ANSICHTEN = \[\.\.\.LADEN_TABS, ([^\]]*)\]", modus).group(1))
@@ -165,7 +171,7 @@ class Lauf:
 
     async def start(self):
         self.srv = schnellstart.server(self.port)
-        self.ctx = await self.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
+        self.ctx = await self.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE)
         await self.ctx.add_init_script(path=str(APP / "tests" / "hilfe" / "aufklappen.js"))
         await self.ctx.add_init_script(script="window.print = () => { window.__druck = (window.__druck || 0) + 1; };")
         self.pg = pg = await self.ctx.new_page()
@@ -384,7 +390,7 @@ async def einrichtung(l):
         if await pg.evaluate("!!navigator.serviceWorker.controller"): break
         await pg.wait_for_timeout(500)
     await l.foto("schnell-sprache", ["start"])
-    await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
+    await pg.select_option('[data-f="sprache-wahl"]', SPRACHE); await pg.click(f'[data-a="sprache"][data-wert="{SPRACHE}"]'); await nav_hilfe.nach_sprache(pg); await pg.wait_for_selector('[data-a="laden-art"]')
     await l.foto("schnell-laden", ["sprache de"])
     # Hilfe „?“ des Schnellwegs
     if await pg.locator('[data-a="s2-hilfe"]').count():
@@ -405,7 +411,7 @@ async def einrichtung(l):
     await weiter("geld"); await l.foto("schnell-geld", ["weiter"])
     await weiter("fertig-schnell"); await l.foto("schnell-fertig", ["weiter"])
     # „Alles genau einrichten“: neuer Kontext, jeder Schritt mit „Weiter“
-    ctx2 = await l.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
+    ctx2 = await l.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE)
     await ctx2.add_init_script(path=str(APP / "tests" / "hilfe" / "aufklappen.js"))
     pg2 = await ctx2.new_page()
     pg2.on("console", lambda m: l.fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
@@ -414,7 +420,7 @@ async def einrichtung(l):
     alt = l.pg; l.pg = pg2
     try:
         await pg2.goto(f"http://127.0.0.1:{l.port}/index.html"); await pg2.wait_for_selector('[data-f="sprache-wahl"]')
-        await pg2.select_option('[data-f="sprache-wahl"]', "de"); await pg2.click('[data-a="sprache"][data-wert="de"]'); await pg2.wait_for_timeout(400)
+        await pg2.select_option('[data-f="sprache-wahl"]', SPRACHE); await pg2.click(f'[data-a="sprache"][data-wert="{SPRACHE}"]'); await nav_hilfe.nach_sprache(pg2); await pg2.wait_for_timeout(400)
         await pg2.click('[data-a="s2-hilfe"]'); await pg2.wait_for_timeout(300)
         await pg2.click('[data-a="weg-genau"]'); await pg2.wait_for_timeout(500)
         vorige = None; gleich = 0
