@@ -20,7 +20,7 @@ const katalogGetraenk = (name) => { const p = PRODUKT_INDEX[name]; return p && (
 const mengeOk = (l) => typeof l === "number" && Number.isFinite(l) && l >= MENGE_GRENZEN[0] - 1e-9 && l <= MENGE_GRENZEN[1] + 1e-9;
 
 // Der gekaufte Artikel eines Getränks: offen → das Großgebinde (quelle); sonst die erste Zutat aus Getränke/Spirituosen
-export function getraenkArtikel(stand, g, idx = index(stand)) {
+function getraenkArtikel(stand, g, idx = index(stand)) {
   const x = getraenkVon(g); if (!x) return null;
   if (x.quelle) return idx[x.quelle] || null;
   const z = (g.zutaten || []).find((z) => (idx[z.name] ? istGetraenkArtikel(idx[z.name]) : katalogGetraenk(z.name)));

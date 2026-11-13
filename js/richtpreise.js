@@ -12,7 +12,6 @@ import { preisJeBasis, istRichtpreis, zwischenpreiseSetzen } from "./engine.js";
 import { heute } from "./util.js";
 
 export { istRichtpreis };
-export const RICHTPREIS_STAND = STAND;
 const rund4 = (x) => Math.round(x * 10000) / 10000;
 
 // Hat der Artikel einen eigenen Preis? Errechnete Teile (selbst gemacht) und ein Preis ohne Packungsinhalt zählen als eigen:

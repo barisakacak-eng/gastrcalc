@@ -31,6 +31,9 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `bedienhilfe.js` – kleine reine Helfer der Bedienschicht: Doppeltipp-Sperre, Tageswechsel bei offener App, Speicher-Banner.
 - `auswertung.js` – ein Weg vom Foto/PDF zum Text (OCR-Auftrag an den Worker, Zwischenstand „erste Gerichte“ seit P4).
 - `beispiel.js` – Beispiel-Laden zum Ausprobieren.
+- `bestand_stand.js` – Teil 1 von `bestand.js`: laufender Bestand, Ø-Verbrauch, Reichweite (eigene Datei, damit `haltbar.js` ihn ohne Importkreis lesen kann; `bestand.js` reicht alles weiter).
+- `oeffnung.js` – Öffnungstage: Ruhetage mit Gültig-ab, „an Feiertagen zu“, `tagGewicht`, `oeffnungstage` (aus `engine.js`, das sie weiterreicht).
+- `warenquote.js` – Warenquote und ihr Deckel `QUOTE_MAX` (aus `zaehler.js`, das sie weiterreicht).
 - `beleg.js` – Belegzerleger (Lieferschein/Rechnung → Zeilen).
 - `bestand.js` – laufender Bestand und Bestellvorschlag.
 - `betriebsmittel.js` – Verbrauchsmaterial, das nicht verkauft wird.
@@ -152,6 +155,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `rundgang_kurz.js` – kurzer Rundgang (6b R1, ≤ 5 Stationen).
 - `tafel.js` – Büro „Menütafel“.
 - `tag.js` – Listen (Schwund, Müll, Personalessen).
+- `tag_wahl.js` – der gewählte Tag auf „Heute“ (Zustand, den `tag.js` und `muell.js` teilen).
 - `umsatz.js` – Büro „Umsatz“ und Zähler-Seite.
 - `umsatz_laden.js` – Laden „Umsatz heute“.
 - `vergleich.js` – Büro „Gerichte im Vergleich“.

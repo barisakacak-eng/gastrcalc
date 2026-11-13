@@ -7,9 +7,9 @@ import { esc } from "../util.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
 import { istHauptzeit } from "../offen.js";
 
-export const ERST_KEY = "gc-zeki-erst";
-export const ERST_DAUER_MS = 7000; // Setzung 30.10.2026: Zekis Erst-Satz steht höchstens 7 s
-export const ERST_PUNKTE = ["muell", "kuehl", "putzplan", "karte", "umsatzheute", "ware", "preisrunde", "vergleich", "inventur", "bestand", "ordner-amt", "ordner-steuer", "ordner-buch", "personal", "listen", "aktionen"];
+const ERST_KEY = "gc-zeki-erst";
+const ERST_DAUER_MS = 7000; // Setzung 30.10.2026: Zekis Erst-Satz steht höchstens 7 s
+const ERST_PUNKTE = ["muell", "kuehl", "putzplan", "karte", "umsatzheute", "ware", "preisrunde", "vergleich", "inventur", "bestand", "ordner-amt", "ordner-steuer", "ordner-buch", "personal", "listen", "aktionen"];
 const lesen = (sp) => { try { return new Set(JSON.parse(sp?.getItem(ERST_KEY) || "[]")); } catch { return new Set(); } };
 const schreiben = (sp, set) => { try { sp?.setItem(ERST_KEY, JSON.stringify([...set])); } catch { /* privat: dann eben jedes Mal */ } };
 

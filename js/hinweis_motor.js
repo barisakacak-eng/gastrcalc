@@ -23,11 +23,11 @@ import { plusTage, plusMonate, tagPlusMonate, isoTag, stundeBruch } from "./zeit
 import { rund2 } from "./geld.js";
 export { HM_FRAGEN, HM_STATUS, hmAngabenSauber };
 
-export const HM_TAKT_TAGE = 7;
-export const HM_MAX_BUERO = 3;
-export const HM_NAHE_GRENZE = 0.9;      // Setzung Bau-Chat: „nahe an der Minijob-Grenze“ = ab 90 % (Katalog nennt keine Zahl)
-export const HM_ELEKTRO_MONATE = 6;     // BGN ASI 3.10 Abschnitt 7: Orientierungswert 6 Monate
-export const HM_ABWESEND_MONATE = 3;    // Abwesenheit der letzten 3 Monate zählt für U1
+const HM_TAKT_TAGE = 7;
+const HM_MAX_BUERO = 3;
+const HM_NAHE_GRENZE = 0.9;      // Setzung Bau-Chat: „nahe an der Minijob-Grenze“ = ab 90 % (Katalog nennt keine Zahl)
+const HM_ELEKTRO_MONATE = 6;     // BGN ASI 3.10 Abschnitt 7: Orientierungswert 6 Monate
+const HM_ABWESEND_MONATE = 3;    // Abwesenheit der letzten 3 Monate zählt für U1
 export const HM_PFLICHT = "Mit deinem Steuerberater klären.";
 
 const gueltigTag = (x) => typeof x === "string" && /^\d{4}-\d{2}-\d{2}$/.test(x);

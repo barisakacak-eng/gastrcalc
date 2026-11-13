@@ -8,7 +8,7 @@ import { PERSONEN, KAPITAL, passtZurRechtsform } from "./rechtsform.js"; // Rech
 import { fuelleRegeln } from "./regeltext.js";
 import { heute } from "./util.js";
 
-export const HINWEIS_STATUS = ["neu", "erledigt", "spaeter"];
+const HINWEIS_STATUS = ["neu", "erledigt", "spaeter"];
 export const KNOPF = "Belege bereitlegen";
 
 // Auslöser: nur aus vorhandenen App-Daten (Vertrag). Jede Funktion liefert true/false, nie einen Betrag.

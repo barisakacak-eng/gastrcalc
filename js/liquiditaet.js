@@ -5,7 +5,7 @@ import { cent } from "./geld.js";
 // Eine Eingabe von Hand: „Geld auf Konto und Kasse heute“ (stand.liquiditaet = { betrag, datum }). Die Zahl veraltet, deshalb fragt
 // die App nach NACHFRAGE_TAGE neu. Gerechnet wird mit dem Stand am Tagesende (alle Einnahmen und Ausgaben des Tages);
 // unter der Zahl steht deshalb „Kann am Tag selbst knapper sein.“
-export const WOCHEN = 8;
+const WOCHEN = 8;
 export const NACHFRAGE_TAGE = 7; // Prüfpaket B: wöchentlich neu fragen (Setzung)
 
 // posten: [{ betrag (+ Einnahme, − Ausgabe), datum } | { betrag, tagImMonat } | { betrag, wochentage: [1..6] }]

@@ -154,7 +154,7 @@ export function aktionenTextFuer(stand, art, wert) {
 }
 // Menütafel (18.10.2026): Angaben für „Auf die Tafel“ aus dem gezeigten Vorschlag (Abverkauf: ein Gericht, Ware mit MHD; Kombi: Stufe).
 // Aktion planen (18.10.2026): den Zeitraum schlägt aktionVorschlag vor, der Wirt bestätigt oder ändert ihn (planView).
-export function aktionTafelAngaben(stand, art, wert) {
+function aktionTafelAngaben(stand, art, wert) {
   if (art === "abverkauf") { const x = haltbarStand(stand).abverkauf[Number(wert)]; const v = x?.bester; return v ? { art, gerichte: [v.gericht], preis: v.aktionspreis, statt: v.preis, ware: x.name } : null; }
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? { art, gerichte: kb.teile.map((x) => x.id), preis: s.preis, statt: kb.summe } : null; }
   return null;

@@ -7,7 +7,7 @@
 // Ein Tag ist überall der Text "JJJJ-MM-TT". Rechnen mit Tagen (plusTage, tageZwischen, wochentag) geschieht rein auf diesem Text,
 // ohne Uhrzeit und ohne Zeitzone – darum gibt es keine Fehler an den Tagen der Zeitumstellung.
 // Kein anderes Modul darf toISOString().slice(0, 10) benutzen (das ist der Tag in UTC, zwischen 00:00 und 02:00 Uhr der falsche).
-export const ZEITZONE = "Europe/Berlin";
+const ZEITZONE = "Europe/Berlin";
 export const GESCHAEFTSTAG_BIS_STUNDE = 4;
 
 const FMT = new Intl.DateTimeFormat("en-CA", { timeZone: ZEITZONE, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });

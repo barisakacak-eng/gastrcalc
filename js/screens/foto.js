@@ -138,7 +138,7 @@ export function fotoVorbereiten() { if (!gewaermt) { gewaermt = true; vorwaermen
 // Pilotfest P6 (4), 30.10.2026 (Bildpaket C freigegeben): drei Stufen statt Kreisel – Bild vorbereiten · Lesen · Nachlesen.
 // Der Balken läuft zeitgesteuert bis kurz vor das Stufenende (die Erkennung meldet keinen Zwischenstand), springt beim nächsten Schritt weiter.
 const fortschrittStufe = () => !lauf || lauf.schritt === "ablegen" ? 1 : lauf.schritt === "mehr" ? 3 : 2;
-export function fortschrittHtml() {
+function fortschrittHtml() {
   const n = fortschrittStufe(); const namen = ["foto.stufe1", "foto.stufe2", "foto.stufe3"];
   return `<div class="fortschritt stufe-${n}" aria-hidden="true"><div class="fortschritt-balken"></div></div>
     <ol class="fortschritt-stufen" aria-hidden="true">${namen.map((k, i) => `<li class="${i + 1 < n ? "fertig" : i + 1 === n ? "laeuft" : ""}">${esc(t(k))}</li>`).join("")}</ol>`;

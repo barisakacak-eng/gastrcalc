@@ -15,8 +15,8 @@ import { warenQuote } from "./zaehler.js";
 import { umsatzSteuerSatz, tagPlus, TAGE_JE_MONAT } from "./engine.js";
 
 export const MONATSTAGE = TAGE_JE_MONAT; // Durchschnitt 365 / 12 ≈ 30,42 Tage, gerundet auf 30,4 – eine Stelle: js/engine.js (Lauf 6, P1 C5)
-export const VORSCHAU_TAGE_VORHER = 92; // Setzung 28.10.2026: Karte ab ≈ 3 Monate vor der Erhöhung
-export const VORSCHAU_TAGE_NACHHER = 31; // Setzung 28.10.2026: und noch einen Monat danach („seit Januar …“)
+const VORSCHAU_TAGE_VORHER = 92; // Setzung 28.10.2026: Karte ab ≈ 3 Monate vor der Erhöhung
+const VORSCHAU_TAGE_NACHHER = 31; // Setzung 28.10.2026: und noch einen Monat danach („seit Januar …“)
 
 // Stunden und letzter Stundenlohn je Person aus den Tageseinträgen der letzten 28 Tage (je Datum gilt der jüngste Eintrag)
 function personenStunden(stand, datum) {

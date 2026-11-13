@@ -17,7 +17,7 @@ export function monatsZahlen(stand, monat) {
 }
 // Lauf 6, E5 (B3): Fingerabdruck der Umsatzeinträge des Monats (je Tag der gültige, jüngste Eintrag: Tag, Betrag, Zeitpunkt). Er wird beim Einfrieren mitgeschrieben;
 // kommen nach einem Abgleich Tage dazu oder ändert sich ein Betrag, passt er nicht mehr → abschlussVeraltet. Reine Funktion, ändert nichts.
-export function umsatzAbdruck(stand, monat) {
+function umsatzAbdruck(stand, monat) {
   const tage = [...new Set((stand?.tagesnotizen || []).filter((n) => n && typeof n.datum === "string" && n.datum.startsWith(monat + "-")).map((n) => n.datum))].sort();
   const text = tage.map((d) => umsatzEintrag(stand, d)).filter(Boolean).map((n) => `${n.datum}|${n.umsatz}|${n.erfasst || ""}`).join("\n");
   let a = 5381, b = 0x811c9dc5; for (let i = 0; i < text.length; i++) { const c = text.charCodeAt(i); a = (Math.imul(a, 33) + c) | 0; b = Math.imul(b ^ c, 16777619); }

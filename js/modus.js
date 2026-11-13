@@ -106,7 +106,7 @@ export function ansichtErlaubt(wurzel, ansicht) {
 //   "salz$<runden>$<salz>$<hash>"    ohne crypto.subtle (http im WLAN): SHA-256 von Hand, gesalzen und wiederholt
 //   64 Hex-Zeichen                   alter Prüfwert (SHA-256 ohne Salz) – wird beim nächsten richtigen Code umgestellt
 export const PBKDF2_RUNDEN = 600000;   // OWASP Password Storage Cheat Sheet: 600.000 Runden für PBKDF2-HMAC-SHA256 (Stand 2023); steht im Prüfwert, lässt sich später ändern
-export const ERSATZ_RUNDEN = 5000;     // von Hand gerechnet, damit ein altes Handy nicht hängt
+const ERSATZ_RUNDEN = 5000;     // von Hand gerechnet, damit ein altes Handy nicht hängt
 const ALT = /^[0-9a-f]{64}$/;
 const NEU = /^(pbkdf2|salz)\$([1-9][0-9]{0,7})\$([0-9a-f]{32})\$([0-9a-f]{64})$/;
 export const pinWertGueltig = (v) => typeof v === "string" && (ALT.test(v) || NEU.test(v));
@@ -117,7 +117,7 @@ export const testphaseOhneCode = (wurzel) => wurzel?.testphase?.ohneCode === tru
 export const codeAktiv = (wurzel) => pinGesetzt(wurzel) && !testphaseOhneCode(wurzel);
 export function testphaseSetzen(wurzel, an) { if (!wurzel) return false; const vorher = testphaseOhneCode(wurzel); wurzel.testphase = { ...(wurzel.testphase || {}), ohneCode: !!an }; return vorher !== !!an; }
 export const pinGueltig = (pin) => /^[0-9]{4}$/.test(String(pin ?? ""));
-export const pinVeraltet = (wurzel) => typeof wurzel?.bueroPin === "string" && ALT.test(wurzel.bueroPin);
+const pinVeraltet = (wurzel) => typeof wurzel?.bueroPin === "string" && ALT.test(wurzel.bueroPin);
 
 const hex = (bytes) => [...bytes].map((x) => x.toString(16).padStart(2, "0")).join("");
 function zufallSalz() {
@@ -178,7 +178,7 @@ export const sperreDauer = (fehler) => (fehler < SPERRE_AB ? 0 : Math.min(SPERRE
 // Nach 10 Fehlversuchen in Folge geht nur noch der Rettungscode (rettung.js), egal was die Uhr sagt. Ein richtiger Code oder der Rettungscode
 // setzt den Zähler zurück (sperreLoesen). Gilt nur, wenn ein Rettungscode angelegt ist – sonst käme niemand mehr ins Büro (dann bleibt die Wartezeit).
 // Der Büro-Code bleibt vierstellig (Entscheidung des Inhabers): „Schloss gegen neugierige Blicke, kein Tresor.“
-export const SPERRE_HART_AB = 10;
+const SPERRE_HART_AB = 10;
 const rettungDa = (wurzel) => typeof wurzel?.rettungPin === "string" && NEU.test(wurzel.rettungPin);
 export const hartGesperrt = (wurzel) => (Number(wurzel?.pinSperre?.fehler) || 0) >= SPERRE_HART_AB && rettungDa(wurzel);
 // Nur die Uhr (Wartezeit nach 5+ Fehlversuchen) – so rechnet auch der Rettungscode, damit er bei der harten Sperre offen bleibt

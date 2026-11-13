@@ -2,7 +2,8 @@ import { festPersonalMonat, LOHN_AUFSCHLAG } from "./data/lohnkosten.js";
 import { regel, wert as regelwert } from "./data/regelwerk.js";
 import { plusTage, wochentag, berlinZeitpunkt } from "./zeit.js";
 import { mindestlohnAm } from "./data/mindestlohn.js";
-import { feiertagZu } from "./feiertage.js"; // Lauf 6 (P1 C3): tagGewicht lebt jetzt hier
+import { verlaufVon, ruhetageVerlauf, ruhetageAm, tagGewicht, oeffnungstage } from "./oeffnung.js"; // Öffnungstage wohnen in js/oeffnung.js
+export { ruhetageVerlauf, ruhetageAm, tagGewicht, oeffnungstage }; // viele Module holen sie von der Engine
 // Rechenwerk von GastroCalc. Reine Funktionen, keine Oberfläche, keine Speicherung.
 // Jede Formel trägt ihre Quelle: "Prüfung" = GastroCalc Prüfung Oktober 2026, "C" = Dossier C.
 // Die Oberfläche darf nichts rechnen, was hier nicht steht. So reden Rechnung und Gestaltung nicht aneinander vorbei.
@@ -17,7 +18,7 @@ export const VORSTEUER = mwstHeute("voll"); // Regelsatz (Regelwerk mwst_voll) �
 export { nettoVonBrutto }; // eine Definition: js/geld.js (Weiterreichen, weil viele Module sie von der Engine holen)
 export const VORSTEUER_SAETZE = [mwstProzent("voll"), mwstProzent("ermaessigt"), 0]; // in Prozent, wie Posten sie speichern: [19, 7, 0]
 // Vorsteuersatz eines Postens als Anteil (Regelsatz / ermäßigt / 0): alte Daten ohne satz = 19 % (Fallback, keine Migration nötig).
-export function vorsteuerSatz(posten, betrieb = null) {
+function vorsteuerSatz(posten, betrieb = null) {
   if (betrieb?.kleinunternehmer) return 0;
   const s = Number(posten?.satz);
   return VORSTEUER_SAETZE.includes(s) ? s / 100 : VORSTEUER;
@@ -26,8 +27,8 @@ export function vorsteuerSatz(posten, betrieb = null) {
 // Lauf 6 (P1 B4): „gültig ab“ für Kostenposten. Ändert der Wirt einen Betrag (Miete 2.400 → 3.000 €), gilt der neue ab dem MONAT der Änderung; vergangene Monate
 // rechnen mit dem Betrag von damals. posten.verlauf = [{ ab: "JJJJ-MM" | "", wert: Zahl | null }] (wie ruhetageVerlauf: ab "" = von Anfang an). Posten ohne
 // Verlauf (alte Daten, nie geändert) gelten schon immer; ab dem Monat des letzten Eintrags gilt der Betrag des Postens selbst (posten.betrag).
-export const kostenVerlauf = (posten) => (Array.isArray(posten?.verlauf) ? posten.verlauf : []).filter((x) => x && typeof x.ab === "string" && (x.wert === null || (typeof x.wert === "number" && Number.isFinite(x.wert)))).slice().sort((a, b) => (a.ab < b.ab ? -1 : a.ab > b.ab ? 1 : 0));
-export function betragAm(posten, monat) {
+const kostenVerlauf = (posten) => (Array.isArray(posten?.verlauf) ? posten.verlauf : []).filter((x) => x && typeof x.ab === "string" && (x.wert === null || (typeof x.wert === "number" && Number.isFinite(x.wert)))).slice().sort((a, b) => (a.ab < b.ab ? -1 : a.ab > b.ab ? 1 : 0));
+function betragAm(posten, monat) {
   const v = kostenVerlauf(posten);
   if (!v.length || !monat || monat >= v[v.length - 1].ab) return posten.betrag;
   let x = v[0]; for (const e of v) { if (e.ab <= monat) x = e; else break; }
@@ -62,9 +63,9 @@ export function betragJeMonat(posten, betrieb = null, monat = null) {
 // Eigener Lohn (Etappe 5, Wunsch Baris 12.10.): eigene Kostenzeile, damit der Zähler erst grün wird, wenn auch der Chef bezahlt ist.
 // Richtwert: gesetzlicher Mindestlohn (js/data/mindestlohn.js, nach Datum) × 173 Std, auf 50 € gerundet – als Schätzung gekennzeichnet,
 // der Wirt überschreibt. Der Satz je Tag steht im Regelwerk (mindestlohn), × 173 Std, auf 50 € gerundet (Masterauftrag 1.1).
-export const EIGENER_LOHN_STUNDEN = 173;
+const EIGENER_LOHN_STUNDEN = 173;
 export const eigenerLohnRichtwert = (datum = heuteGeschaeft()) => Math.round(mindestlohnAm(datum).satz * EIGENER_LOHN_STUNDEN / 50) * 50;
-export const EIGENER_LOHN_RICHTWERT = eigenerLohnRichtwert("2026-01-01"); // Wert 2026, nur noch für alte Tests; die App nimmt eigenerLohnRichtwert(datum)
+ // Wert 2026, nur noch für alte Tests; die App nimmt eigenerLohnRichtwert(datum)
 export function eigenerLohnJeMonat(team, datum = heuteGeschaeft()) {
   if (team.eigenerLohnStatus === "offen") return { betrag: null, status: "offen" };
   if (typeof team.eigenerLohn === "number") return { betrag: team.eigenerLohn, status: team.eigenerLohnStatus === "geschaetzt" ? "geschaetzt" : "eigen" };
@@ -97,7 +98,7 @@ export function fixkostenJeOffenenMonat(kostenJeMonat, monate) {
 
 // Lohnkosten je Monat inkl. Personal; eigener Lohn ist bewusst NICHT hier (C7.3: errechnet, nicht erfragt).
 // null = offen (nicht eingetragen). Die Oberfläche zeigt dann "offen", nie "0 €".
-export function lohnJeMonat(team) {
+function lohnJeMonat(team) {
   const l = team.lohnkosten;
   return l === null || l === undefined ? null : Number(l) || 0;
 }
@@ -152,7 +153,7 @@ export function zeitzuschlag(gericht, tQuer, minutensatz) {
 
 // Fixkostenanteil nach Äquivalenzziffern (Prüfung Befund 3): kB = K / Σ(m_i·äz_i), k_i = kB·äz_i.
 // Vier Klassen in Küchensprache: Getränk 0,3 · Kleinigkeit 0,6 · Hauptgericht 1,0 · großes Gericht 1,5.
-export const AEQUIVALENZ = { getraenk: 0.3, kleinigkeit: 0.6, haupt: 1.0, gross: 1.5 };
+const AEQUIVALENZ = { getraenk: 0.3, kleinigkeit: 0.6, haupt: 1.0, gross: 1.5 };
 export function fixkostenJeGericht(gerichte, fixkostenGesamt) {
   let nenner = 0;
   for (const g of gerichte) nenner += (Number(g.menge) || 0) * (AEQUIVALENZ[g.klasse] ?? 1);
@@ -221,7 +222,7 @@ export function stueckpreis(gebindepreis, gebindemenge) {
 }
 
 // Provision eines Portals aus der Kanalliste holen (Anteil 0..1).
-export function provisionAnteil(portal) {
+function provisionAnteil(portal) {
   return (Number(portal?.provision) || 0) / 100;
 }
 
@@ -468,7 +469,7 @@ function zwischenErgebnis(a, index) {
   const menge = a.rezept.ausbeute?.menge, einheit = a.rezept.ausbeute?.einheit;
   return { z, preis, menge, einheit, geaendert: preis !== a.preis || a.packung?.menge !== menge || a.packung?.einheit !== einheit };
 }
-export function artikelMitZwischenpreisen(stand) {
+function artikelMitZwischenpreisen(stand) {
   const liste = stand.artikel || []; const index = Object.fromEntries(liste.map((a) => [a.name, a]));
   return liste.map((a) => {
     if (a.herkunft !== "selbst" || !a.rezept) return a;
@@ -633,7 +634,7 @@ export function umsatzSteuerSatz(stand) {
 
 // Paket 3 (16.10.2026), M4: eine Warnstufe für den Wareneinsatz-Anteil am Nettoumsatz, für Umsatz-Seite, Büro „Monat & Zähler“ und
 // Gerichte im Vergleich. null = unauffällig; "hoch" ab 50 %, "sehrHoch" ab 65 %. Im Laden (home.js) wird sie bewusst NICHT gezeigt.
-export const WARENEINSATZ_WARNUNG_AB = 0.5;
+const WARENEINSATZ_WARNUNG_AB = 0.5;
 export function wareneinsatzWarnung(quote) {
   if (typeof quote !== "number" || !Number.isFinite(quote)) return null;
   if (quote >= 0.65 - 1e-9) return "sehrHoch";
@@ -665,7 +666,6 @@ import { rund2, nettoVonBrutto, mwstHeute, mwstProzent } from "./geld.js";
 //  3 = Eigenverzehr des Inhabers – BMF-Pauschbeträge oder Einzelaufzeichnung; hier Einzelaufzeichnung
 // Etappe 5: drei Wege in zwei Tipps – gericht (Teller weg), rohware (Artikel weg), eimer (nur gewogen). Alte Arten bleiben lesbar.
 export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3, ausgegeben: 4 }; // ausgegeben (27.10.2026): Essen, das der Chef Gästen ausgibt – nicht im Pauschbetrag
-export const FRAKTIONEN = ["bio", "rest", "verpackung", "glas", "papier", "fett"];
 // Sachbezugswerte (SvEV) und Pauschbetrag Eigenverbrauch: alle Beträge mit Quelle und Gültigkeit stehen NUR im Regelwerk
 // (js/data/regelwerk.js: sachbezug_fruehstueck, sachbezug_mittag, sachbezug_monat, eigenverbrauch_pauschale). Hier wird nur gelesen.
 // Tageswert = Monatswert ÷ 30 auf zwei Stellen. Mittag und Abend haben denselben Wert. geplant: true = der Eintrag im Regelwerk hat status
@@ -681,7 +681,6 @@ function svevTabelle(tag) {
   const k = JSON.stringify(x); if (!SVEV_TABELLEN.has(k)) SVEV_TABELLEN.set(k, x); return SVEV_TABELLEN.get(k);
 }
 export const SVEV_2026 = svevTabelle("2026-12-31");
-export const SVEV_2027 = svevTabelle("2027-01-01");
 export const svevAm = (datum) => svevTabelle(typeof datum === "string" && /^\d{4}-\d{2}-\d{2}/.test(datum) ? datum.slice(0, 10) : "2026-12-31");
 // Trennung 2 (17.10.2026): Sachbezug eines Personalessens = Menge × Satz der Mahlzeit (ohne Mahlzeit: Mittag). Vorher zweimal im Bildschirm.
 // 28.10.2026: Satz nach dem Datum des Essens (ohne Datum: heute).
@@ -842,7 +841,7 @@ export const KUEHL_ARTEN = ["kuehl", "tk", "warm", "eis"]; // eis = Speiseeis-Th
 export const MASSNAHMEN = ["tuer", "eingeraeumt", "eingestellt", "umgeraeumt", "stecker", "chef", "techniker", "weggeworfen"];
 export const NICHT_GEMESSEN = ["geschlossen", "geraetAus", "leer"];
 export const NACHKONTROLLE_STUNDEN = { h1: 1, h2: 2, naechste: null };
-export const WOCHENTAGE = [0, 1, 2, 3, 4, 5, 6]; // 0 = Sonntag (JavaScript)
+ // 0 = Sonntag (JavaScript)
 
 // Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt ein Standard-Anhaltswert; eigene Werte überschreiben ihn,
 // das Blatt sagt, welcher galt. Korrekturauftrag K1/K2/K3 (Abnahme Welle 0, 28.10.2026) – Quellen, Abruf 28.10.2026:
@@ -947,9 +946,9 @@ export function nachkontrolleErledigt(stand, m) {
 
 // W2-H (p03 H2): Nachkontrolle mit Zeitfenster. Frist = fälliger Zeitpunkt + 1 Stunde Puffer; bei „nächste Messung“ (und ohne
 // gewählte Nachkontrolle) das Ende des Tages der Abweichung. Eine spätere gute Messung nach der Frist heißt „verspätet“, nicht „erledigt“.
-export const NACHKONTROLLE_PUFFER_MIN = 60;
+const NACHKONTROLLE_PUFFER_MIN = 60;
 const tagesEnde = (iso) => berlinZeitpunkt(plusTage(iso, 1)).getTime() - 1; // 23:59:59.999 Berliner Zeit
-export function nachkontrolleFrist(m) {
+function nachkontrolleFrist(m) {
   const f = m?.nachkontrolle?.faellig ? Date.parse(m.nachkontrolle.faellig) : NaN;
   return Number.isFinite(f) ? f + NACHKONTROLLE_PUFFER_MIN * 60e3 : tagesEnde(m.datum);
 }
@@ -963,7 +962,7 @@ export function nachkontrolleStand(stand, m) {
 }
 
 // W2-H (p03 H1): Was ist mit der Ware? Nur Daten – die Knöpfe baut die Optik-Runde. „Ware weggeworfen“ als Maßnahme zählt schon heute.
-export const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen", "behalten"]; // Trennung (17.10.2026), Punkt 4: „behalten“ mit Begründung (Büro)
+const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen", "behalten"]; // Trennung (17.10.2026), Punkt 4: „behalten“ mit Begründung (Büro)
 export function wareEntscheidung(m) {
   if (m?.ware && WARE_ENTSCHEIDUNGEN.includes(m.ware.art)) return m.ware.art;
   if ((m?.massnahmen || []).includes("weggeworfen")) return "weggeworfen";
@@ -1046,31 +1045,6 @@ export function offeneNachkontrollen(stand) {
 export const tagPlus = (iso, n) => plusTage(iso, n);
 export { wochentag };
 
-// W2-H (p03 K2): Ruhetage mit Gültig-ab. stand.kuehl.ruhetageVerlauf = [{ ab: "JJJJ-MM-TT" | "", tage, erfasst }]; ab "" = von Anfang an.
-// Eine Änderung gilt ab heute; frühere Lücken bleiben Lücken. Ohne Verlauf (alte Daten) gelten die heutigen Ruhetage wie bisher.
-const verlaufVon = (v) => (Array.isArray(v) ? v : []).filter((e) => e && typeof e.ab === "string" && Array.isArray(e.tage)).slice().sort((a, b) => vgl(a.ab, b.ab));
-export const ruhetageVerlauf = (stand) => verlaufVon(stand.kuehl?.ruhetageVerlauf);
-export function ruhetageAm(stand, datum) {
-  const v = verlaufVon(stand.kuehl?.ruhetageVerlauf);
-  if (!v.length) return stand.kuehl?.ruhetage || [];
-  let x = v[0]; for (const e of v) { if (e.ab <= datum) x = e; else break; }
-  return x.tage;
-}
-// Lauf 6 (P1 C3): EINE Regel für „ist der Laden an diesem Tag offen“ – vorher baute js/reinigung.js sie nach und kannte „an Feiertagen zu“ nicht
-// (22 Öffnungstage im Zähler, 25 in der Reinigung). Gewicht eines Kalendertags: 0 an Feiertagen, wenn der Wirt „an Feiertagen zu“ gewählt hat; 1 oder 0
-// nach den Ruhetagen mit Gültig-ab-Verlauf; ohne bekannte Ruhetage tageProWoche/7. Zähler, Reinigung, Eigentümer, Bestand rufen diese Funktion.
-export function tagGewicht(stand, datum) {
-  if (feiertagZu(stand, datum)) return 0; // Feiertage (18.10.2026): nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
-  const ruhetage = ruhetageAm(stand, datum);
-  if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
-  const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));
-  return t / 7;
-}
-// Öffnungstage von–bis (beide Tage eingeschlossen), gewichtet wie tagGewicht. Die einzige Summe über Tage: Kalendermonat im Zähler, 30 Tage in der Reinigung.
-export function oeffnungstage(stand, von, bis) {
-  let g = 0; for (let d = von; d <= bis; d = plusTage(d, 1)) g += tagGewicht(stand, d);
-  return g;
-}
 export function ruhetageSetzen(stand, tage, datum = heute(), jetzt = new Date().toISOString()) {
   stand.kuehl ??= { takt: 1, ruhetage: [], eingerichtet: false, seit: null };
   const neu = [...new Set(tage)].filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);

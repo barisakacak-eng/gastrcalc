@@ -52,7 +52,6 @@ export function personalNachtragen(stand) { return personalAktiv() ? vonNachtrag
 // Trennung 2 (17.10.2026): personalZahlen wohnt in js/personal.js
 
 const SCHLOSS = `<svg class="sym" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
-export const schlossKnopf = () => `<button type="button" class="schlossknopf" data-a="ebene-verlassen" aria-label="${esc(t("personal.verlassen"))}">${SCHLOSS}</button>`;
 // Kopfleiste im Personal-Modus: links frei oder Zurück, Mitte Logo, rechts Schloss
 // Kopf im Personal-Modus kommt aus nav.js (Zurück, Logo, Schloss – fragt immer den Büro-Code) – eine Leiste für alle Personal-Bildschirme.
 export const personalLeiste = () => nav("personal");

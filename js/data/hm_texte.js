@@ -4,7 +4,7 @@
 import { fuelleRegeln } from "../regeltext.js";
 import { heute } from "../util.js";
 
-export const HM_UI = {
+const HM_UI = {
   de: { kopf: "Was dir zusteht", erledigtZahl: "Erledigt: {n}", quelle: "Quelle", abgerufen: "abgerufen", erledigt: "Erledigt", geklaert: "Mit Steuerberater geklärt",
     passt: "Passt nicht", frageMusik: "Hören Gäste Radio oder Musik?", frageSchwanger: "Ist eine Mitarbeiterin schwanger?", frageSchwangerKlein: "Nur für den Hinweis, ohne Namen.",
     frageElektro: "Letzte Prüfung der Elektrogeräte?", nie: "Noch nie", speichern: "Speichern", ja: "Ja", nein: "Nein",
@@ -24,7 +24,7 @@ export const HM_UI = {
 };
 export const hmUi = (sprache, key, werte = {}) => String((HM_UI[sprache] || HM_UI.de)[key] ?? HM_UI.de[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => werte[k] ?? "");
 
-export const HM_TEXTE = {
+const HM_TEXTE = {
   tr: {
     hm_u2: { titel: "Annelik izni: maaş geri", satz: "Annelik izni veya çalışma yasağında U2 kasası maaşın %100'ünü öder, her işletmede. Başvuru yap. Mali müşavirinle konuş." },
     hm_u1: { titel: "Hastalıkta maaş geri", satz: "Bir çalışan hasta olduysa U1 kasası ödenen maaşın çoğu zaman %80'ine kadarını geri öder. Başvuruyu sen yap. Mali müşavirinle konuş." },

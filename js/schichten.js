@@ -108,18 +108,18 @@ export function minijobGrenzeStunden(datum, satz = null) {
   const m = mindestlohnAm(datum); const s = satz > 0 ? satz : m.satz;
   return Math.floor(Math.round((m.minijob / s) * 1e6) / 1e4) / 100;
 }
-export const MINIJOB_QUELLE = MINDESTLOHN; // Werte mit Quelle: js/data/mindestlohn.js
+ // Werte mit Quelle: js/data/mindestlohn.js
 
 // 70-Tage-Zähler kurzfristige Beschäftigung (§ 8 Abs. 1 Nr. 2 SGB IV): Arbeitstage im Kalenderjahr. Nur Zähler, kein Urteil –
 // bei 5 oder mehr Tagen je Woche kann statt der Tage-Grenze die 3-Monats-Grenze gelten (laut Prüfpaket nicht im Original gelesen).
-export const KURZFRISTIG_TAGE = wert("kurzfristig_tage", "2026-12-31"); // Regelwerk: kurzfristig_tage
+const KURZFRISTIG_TAGE = wert("kurzfristig_tage", "2026-12-31"); // Regelwerk: kurzfristig_tage
 export function tageZaehler(bisherTage, neueTage) {
   const n = (Number(bisherTage) || 0) + new Set(neueTage || []).size;
   return { tage: n, grenze: KURZFRISTIG_TAGE, rest: Math.max(0, KURZFRISTIG_TAGE - n) };
 }
 // Arbeitszeit-Aufzeichnung Gaststätten (§ 17 MiLoG i. V. m. § 2a SchwarzArbG): Beginn, Ende, Dauer bis zur Frist, dann aufbewahren (Regelwerk: arbeitszeit_frist_tage, arbeitszeit_aufheben_jahre)
-export const AUFZEICHNUNG_TAGE = wert("arbeitszeit_frist_tage", "2026-12-31"), AUFBEWAHRUNG_JAHRE = wert("arbeitszeit_aufheben_jahre", "2026-12-31");
-export const aufzeichnungFaellig = (arbeitstag) => plusTage(arbeitstag, wert("arbeitszeit_frist_tage", arbeitstag));
+const AUFZEICHNUNG_TAGE = wert("arbeitszeit_frist_tage", "2026-12-31"), AUFBEWAHRUNG_JAHRE = wert("arbeitszeit_aufheben_jahre", "2026-12-31");
+const aufzeichnungFaellig = (arbeitstag) => plusTage(arbeitstag, wert("arbeitszeit_frist_tage", arbeitstag));
 
 // Arbeitszeit-Liste (W3b, 04.11.2026) für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am Tag der Frist
 // (arbeitszeit_frist_tage) nach dem Arbeitstag erfasst (§ 17 Abs. 1 MiLoG; Gaststätten nach § 2a SchwarzArbG). Einträge nur mit Stunden zeigen „ohne Zeiten“ – sie zählen,

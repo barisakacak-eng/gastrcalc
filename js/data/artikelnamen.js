@@ -591,7 +591,7 @@ Object.assign(ARTIKELNAMEN, {
 
 // Mengenfrage (Baris 28.10.2026: „Wie viel Dönerspieß kommt in deinen Döner“ ist falsch – in den Döner kommt das Fleisch, nicht der Spieß):
 // Wort für das, was wirklich in die Portion kommt. Fehlt ein Eintrag, gilt der Anzeigename ohne Zusatz in Klammern bzw. hinter „/“.
-export const MENGEN_NAMEN = {
+const MENGEN_NAMEN = {
   "Dönerspieß Kalb/Pute": { de: "Dönerfleisch", tr: "döner eti", en: "döner meat" },
   "Hähnchenspieß": { de: "Hähnchenfleisch", tr: "tavuk döner eti", en: "chicken döner meat" },
   "Dönerbrot / Fladen": { de: "Dönerbrot", tr: "döner ekmeği", en: "döner bread" },

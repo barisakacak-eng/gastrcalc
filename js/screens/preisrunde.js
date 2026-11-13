@@ -12,9 +12,9 @@ import { nav } from "./nav.js";
 import { preisRundeUebernehmen, extraDazu, extraWeg } from "../stamm.js";
 import { rund2 } from "../geld.js";
 
-export const PREIS_STUFE = 0.10; // Setzung 28.10.2026: Schritt der Knöpfe −/+ (10 Cent)
-export const START_AUFSCHLAG = 0.50; // Setzung 28.10.2026: Rechner öffnet mit +0,50 € (Goldwert-Beispiel des Masterauftrags)
-export const MIN_PREIS = 0.10; // Setzung 28.10.2026: kleinster Preis im Rechner
+ // Setzung 28.10.2026: Schritt der Knöpfe −/+ (10 Cent)
+const START_AUFSCHLAG = 0.50; // Setzung 28.10.2026: Rechner öffnet mit +0,50 € (Goldwert-Beispiel des Masterauftrags)
+const MIN_PREIS = 0.10; // Setzung 28.10.2026: kleinster Preis im Rechner
 let gerichtId = null, preisNeu = null; let entwurf = { name: "", preis: "", zutat: "", menge: "" };
 export const preisrundeZuruecksetzen = () => { gerichtId = null; preisNeu = null; entwurf = { name: "", preis: "", zutat: "", menge: "" }; };
 

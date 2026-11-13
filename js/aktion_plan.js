@@ -32,10 +32,10 @@ import { rund2, nettoVonBrutto } from "./geld.js";
 export const PLAN_TAGE = 7;             // Grundlänge (Annahme, s. oben)
 export const PLAN_TAGE_SINKT = 14;      // bei sinkendem Interesse
 export const RUECKBLICK_TAGE = 28;      // Interesse und Vergleich: 4 Wochen
-export const TREND_SCHWELLE = 0.1;      // ±10 % zwischen den beiden 14-Tage-Hälften gilt als „steigt“/„sinkt“ (Annahme der App)
-export const MIN_DATENTAGE = 3;         // so viele Tage mit Verkaufsdaten braucht ein Urteil (Trend je Hälfte, Fortschritt, Bilanz)
-export const WT_MIN = 2;                // Ø je Wochentag ab 2 Werten
-export const KNAPP_TAGE = 2;            // „reicht nur noch …“ ab 2 Öffnungstagen Rest
+const TREND_SCHWELLE = 0.1;      // ±10 % zwischen den beiden 14-Tage-Hälften gilt als „steigt“/„sinkt“ (Annahme der App)
+const MIN_DATENTAGE = 3;         // so viele Tage mit Verkaufsdaten braucht ein Urteil (Trend je Hälfte, Fortschritt, Bilanz)
+const WT_MIN = 2;                // Ø je Wochentag ab 2 Werten
+const KNAPP_TAGE = 2;            // „reicht nur noch …“ ab 2 Öffnungstagen Rest
 const HORIZONT = 90;
 const EPS = 1e-9;
 const artikelIndex = (stand) => Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
@@ -43,8 +43,8 @@ const zeilenVon = (k) => new Map(k.zeilen.map((z) => [z.id, z]));
 const tagVon = (iso) => heuteGeschaeft(new Date(iso));
 
 // Gerichte einer Aktion (alle müssen da sein) und ihr Kurzname für Sätze: Kombi → „Kombi“, Abverkauf → Gerichtname
-export const aktionGerichteVon = (stand, a) => (a?.gerichte || []).map((id) => (stand.gerichte || []).find((g) => g.id === id)).filter(Boolean);
-export function aktionKurz(stand, a, { mehrereKombis = false } = {}) {
+const aktionGerichteVon = (stand, a) => (a?.gerichte || []).map((id) => (stand.gerichte || []).find((g) => g.id === id)).filter(Boolean);
+function aktionKurz(stand, a, { mehrereKombis = false } = {}) {
   const gs = aktionGerichteVon(stand, a);
   if (a.art === "kombi") return mehrereKombis && gs[0] ? t("plan.kombiMit", kurzName(gs[0].name)) : t("plan.kombi");
   return kurzName(gs[0]?.name || "");
@@ -159,7 +159,7 @@ export function letzteBilanz(stand, a, { heuteTag = heuteGeschaeft(), k = kalkul
 }
 export const aktionVorbei = (a, heuteTag = heuteGeschaeft()) => !!a.entfernt || (!!a.bis && a.bis < heuteTag);
 // letzter Tag der Aktion: beendet → Geschäftstag des Beendens (höchstens bis), sonst bis (bei „bis Ware weg“ ohne Datum: heute)
-export function endeTag(a, heuteTag = heuteGeschaeft()) {
+function endeTag(a, heuteTag = heuteGeschaeft()) {
   const e = a.entfernt && a.entferntZeit ? tagVon(a.entferntZeit) : null;
   const b = a.bis || heuteTag;
   return e && e < b ? e : b;
@@ -219,7 +219,7 @@ export function aktionVorschlag(stand, aktion, { heuteTag = heuteGeschaeft(), k 
 
 // ---------- Vergleich (Fortschritt und Bilanz) ----------
 // von..bis (Geschäftstage): je Tag mit Verkaufsdaten die beteiligten Gerichte gegen den Ø desselben Wochentags in den 4 Wochen vor `von`.
-export function aktionVergleich(stand, a, { von = a.von, bis, k = kalkulation(stand) } = {}) {
+function aktionVergleich(stand, a, { von = a.von, bis, k = kalkulation(stand) } = {}) {
   const ids = a.gerichte || []; const zeilen = zeilenVon(k);
   const akt = reihe(stand, ids, { von, bis }, zeilen);
   const vor = reihe(stand, ids, { von: tagPlus(von, -RUECKBLICK_TAGE), bis: tagPlus(von, -1) }, zeilen);

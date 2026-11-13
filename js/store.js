@@ -436,7 +436,7 @@ function hinweiseSauber(liste) {
   }
   return [...m.values()].sort((x, y) => x.id.localeCompare(y.id));
 }
-export const hinweiseVereinigen = (a, b) => hinweiseSauber([...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]);
+const hinweiseVereinigen = (a, b) => hinweiseSauber([...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]);
 
 function aktionenSauber(liste) {
   return mitId(Array.isArray(liste) ? liste : []).map((a) => {
@@ -454,7 +454,7 @@ function aktionenSauber(liste) {
 // Prüfgremium 18.10.2026 (M1): Dieselbe Aktion auf zwei Handys angelegt (gleiche Art, gleiche Gerichte, gleicher Preis, beide laufend) ist EINE Aktion.
 // Die zuerst angelegte bleibt (bei gleicher Zeit die kleinere Kennung); die anderen gelten als beendet (entfernt, doppelt = Kennung der bleibenden,
 // keine eigene Bilanz). Ein später geänderter Zeitraum einer Kopie geht auf die bleibende über. Rein aus der Liste – beide Handys rechnen gleich.
-export function aktionenEntdoppeln(liste) {
+function aktionenEntdoppeln(liste) {
   const l = Array.isArray(liste) ? liste : []; const gruppen = new Map();
   const sch = (a) => `${a.art}|${[...(a.gerichte || [])].sort().join("|")}|${a.preis}`;
   for (const a of l) if (a && !a.entfernt) { const k = sch(a); if (!gruppen.has(k)) gruppen.set(k, []); gruppen.get(k).push(a); }
@@ -854,7 +854,6 @@ let kette = Promise.resolve(), laufend = 0;
 // Der Stand vor dem Rundgang liegt damit unverändert im Speicher: Abbruch oder Neuladen nehmen alle Übungseinträge spurlos zurück.
 let pausiert = false;
 export function speichernPausieren(an) { pausiert = !!an; }
-export const speichernPausiert = () => pausiert;
 function schreiben(wurzel, opt) {
   if (!verfuegbar || !db) return Promise.resolve(false);
   if (pausiert) return Promise.resolve(true);
@@ -1147,7 +1146,7 @@ function leerlaufPlanen() {
 // Vorab-Prüfung 03.11.2026 (A1): Der erste Eintrag nach einer Pause wird SOFORT geschrieben – vorher wartete jedes Speichern 900 ms, und ein Neuladen
 // 100–700 ms nach dem Tipp verlor den Eintrag (pagehide sichert asynchron, das reicht beim Neuladen nicht). Folgen weitere Tipps dicht auf,
 // werden sie gebündelt und spätestens nach SPEICHER_BUENDEL_MS geschrieben (Stresstest 15.10.: nicht bei jedem Tipp den ganzen Stand schreiben).
-export const SPEICHER_BUENDEL_MS = 250;
+const SPEICHER_BUENDEL_MS = 250;
 let zuletztGeschrieben = 0;
 const speichernSpaeter = debounce((wurzel) => { zuletztGeschrieben = Date.now(); schreiben(wurzel, { stempel: true }); }, SPEICHER_BUENDEL_MS);
 export const speichern = Object.assign((wurzel) => {
@@ -1176,7 +1175,7 @@ export function eintraegeZaehlen(wurzel) {
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
 // Lauf 6, E5 (C6): „app-sichtbar“ (jedes Zurückkehren zur App) füllte den Deckel von 2000 und drängte Spuren von Import, Abgleich und Sicherung hinaus.
 // Zwei Maßnahmen: „app-sichtbar“ wird höchstens einmal je Stunde protokolliert, und beim Kürzen bleiben wichtige Ereignisse bevorzugt erhalten (ereignisWichtig).
-export const SICHTBAR_ABSTAND_MS = 3600e3;
+const SICHTBAR_ABSTAND_MS = 3600e3;
 let sichtbarZuletzt = 0;
 export const ereignisWichtig = (art) => /^(import|export|abgleich|sicherung|speicher|fehler|einlesen|fremde-fassung)/.test(String(art));
 export async function ereignis(art, daten = {}) {
@@ -1598,7 +1597,7 @@ export function zusammenfuehren(wurzel, importiert, opt = {}) {
 // Die Oberfläche bietet „Rückgängig“ (Satz „rueckgaengig“ in js/data/l6y_texte.js) direkt nach dem Einlesen und danach im Büro unter Einstellungen → Sicherung,
 // solange rueckholpunktInfo() etwas liefert; ein Tipp ruft zurueckholen(wurzel).
 let rueckholMem = null;
-export async function rueckholpunkt(wurzel, { grund = "einlesen" } = {}) {
+async function rueckholpunkt(wurzel, { grund = "einlesen" } = {}) {
   const punkt = { zeit: new Date().toISOString(), grund, schema: Number(wurzel?.schema) || SCHEMA, wurzel: structuredClone(wurzel) };
   rueckholMem = punkt;
   if (!verfuegbar || !db) return true; // nur im Arbeitsspeicher – gilt bis zum Neustart

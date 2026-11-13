@@ -77,7 +77,7 @@ export const KNAPP_BEISPIEL = { name: "Dönerspieß Kalb/Pute", tage: 1.5 };
 export const HALTBAR_BEISPIEL = [{ name: "Hähnchenspieß", art: "verbrauch", tage: 1 }, { name: "Ayran 0,25 l", art: "mhd", tage: 3 }];
 const FEIN = ["Ayran 0,25 l", "Cola 0,33 l", "Pommes frites (Beilage)", "Lahmacun", "Döner Kebab"]; // damit die Tagessumme genau aufgeht
 // Mengen je Gericht für einen Tag: Portionen der Karte, auf den Tagesumsatz skaliert, mit fester Schwankung, dann genau auf den Umsatz gebracht
-export function beispielVerkaufTag(umsatz, i) {
+function beispielVerkaufTag(umsatz, i) {
   const preis = KARTE.map((k) => k[1]); const cent = preis.map((p) => Math.round(p * 100));
   const basis = KARTE.map(([n, , m]) => (n in VERKAUF_FEST ? VERKAUF_FEST[n] : m));
   const f = umsatz / basis.reduce((x, m, k) => x + m * preis[k], 0);

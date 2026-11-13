@@ -5,7 +5,7 @@ import { t } from "../i18n.js";
 import { esc } from "../util.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
 
-export const KURZ_STATIONEN = [
+const KURZ_STATIONEN = [
   { ziel: "#app .h-ziel, #app .b-hauptzahl", text: "k1" },
   { ziel: '#app [data-a="nav"][data-wert="umsatzheute"]', text: "k2" },
   { ziel: ".tableiste", text: "k3" },

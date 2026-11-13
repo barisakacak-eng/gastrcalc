@@ -15,7 +15,7 @@ import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt 27
 import { rund2, nettoVonBrutto, mwst } from "./geld.js";
 
 // ---------- CSV ----------
-export const CSV_BOM = "﻿";
+const CSV_BOM = "﻿";
 // Zahl mit Dezimalkomma, ohne Tausenderpunkt (Excel liest „1234,50“ sicher als Zahl, „1.234,50“ nicht immer)
 export function zahlDe(n, dezimal = 2) {
   if (n === null || n === undefined || !Number.isFinite(Number(n))) return "";
@@ -210,7 +210,7 @@ export function belege(stand, z) {
 }
 
 // Reinigungs- und Betriebsmittel aus den Belegzeilen (Putzmittel, Müllbeutel, Handschuhe …)
-export function reinigungsmittel(stand, z) {
+function reinigungsmittel(stand, z) {
   const zeilen = [];
   for (const l of stand.lieferungen || []) {
     if (l.storniert || !imZeitraum(l.datum, z)) continue;
@@ -222,7 +222,7 @@ export function reinigungsmittel(stand, z) {
 
 // Inventurwerte (W2-T, Prüfung p04 Nr. 9): abgeschlossene Zählungen im Zeitraum; ohne Zählung im Zeitraum die letzte davor (Stichtag Monatsanfang).
 // Es zählt nur der beim Abschluss festgehaltene Wert, nie eine Neubewertung zu heutigen Preisen (wert null = nicht festgehalten).
-export function inventurwerte(stand, z) {
+function inventurwerte(stand, z) {
   const fertig = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.datum === "string").sort((a, b) => a.datum.localeCompare(b.datum));
   const zeile = (i, vorher = false) => { const w = inventurKurz(i) || inventurWert(stand, i); return { datum: i.datum, wert: typeof i.wert === "number" ? rund2(i.wert) : null, gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, richtpreise: Array.isArray(i.richtpreise) ? i.richtpreise.length : 0, vorher }; }; // Richtpreise (17.10.2026): Zahl der Posten zu Richtpreisen · W2-T Wert nur aus Abschluss, W2-D schneller Weg
   const drin = fertig.filter((i) => imZeitraum(i.datum, z)).map((i) => zeile(i));

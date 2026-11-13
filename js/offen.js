@@ -28,7 +28,7 @@ export const einrichtungImTakt = (stand, wurzel) => imTakt(stand, "einrichtung",
 
 // Hauptzeiten im Laden: da stört keine Erinnerung, die warten kann (Sicherung).
 // K4 (Abnahme Welle 0, 28.10.2026): je Laden einstellbar (stand.betrieb.ruhezeiten = [[von, bis], …] in Stunden), Standard wie bisher.
-export const RUHEZEITEN_STANDARD = [[11.5, 14], [17.5, 20.5]];
+const RUHEZEITEN_STANDARD = [[11.5, 14], [17.5, 20.5]];
 export const ruhezeitenVon = (stand) => (Array.isArray(stand?.betrieb?.ruhezeiten) ? stand.betrieb.ruhezeiten : RUHEZEITEN_STANDARD);
 export const istHauptzeit = (h, stand = null) => ruhezeitenVon(stand).some(([v, b]) => (v <= b ? h >= v && h < b : h >= v || h < b));
 const stunde = stundeBruch; // Uhrzeit in Berliner Zeit

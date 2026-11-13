@@ -16,7 +16,7 @@ export function gewichtGericht(g) {
 }
 
 // Wareneinsatz je Kilogramm über die Karte, mengengewichtet – damit ein gewogener Eimer einen Euro-Wert bekommt.
-export function preisJeKgKarte(stand) {
+function preisJeKgKarte(stand) {
   if (!(stand.gerichte || []).length) return null;
   const k = kalkulation(stand);
   let w = 0, kg = 0;
@@ -29,7 +29,7 @@ export function preisJeKgKarte(stand) {
   return kg > 0 ? w / kg : null;
 }
 
-export function fraktionFuer(ref, stand) {
+function fraktionFuer(ref, stand) {
   if (ref?.typ === "artikel") { const a = (stand.artikel || []).find((x) => x.name === ref.name); return a?.gruppe === "verpackung" ? "verpackung" : a?.gruppe === "getraenk" ? "glas" : "bio"; }
   return "bio";
 }
@@ -101,10 +101,6 @@ export function heuteJeGericht(stand, datum = heuteGeschaeft(), art = "gericht")
   return out;
 }
 // Letzter Eintrag eines Gerichts heute (für „Rückgängig" direkt an der Kachel).
-export function letzterEintrag(stand, datum, art, gerichtId) {
-  const l = (stand.schwund || []).filter((e) => !e.storniert && e.datum === datum && e.art === art && e.ref?.id === gerichtId);
-  return l[l.length - 1] || null;
-}
 
 // ---------- Etappe 6, Punkt 1: Müll-Zentrale (Baris 13.10., 12:45) ----------
 import { schwundAuswertung, preisJeBasis } from "./engine.js";
@@ -112,7 +108,7 @@ import { plusTage, berlin, plusMonate, monatsErster, monatsLetzter, tagPlusMonat
 const istMuell = (e) => !e.storniert && (SCHWUND_ARTEN[e.art] || 1) === 1;
 
 // Gewicht eines Eintrags in kg (Teller über das Rezept, Rohware über die Einheit, Eimer = Rest-kg). Stück ohne Gewicht: 0.
-export function kgEintrag(e, stand) {
+function kgEintrag(e, stand) {
   if (e.art === "eimer") return Number(e.menge) || 0;
   if (e.ref?.typ === "gericht") { const g = (stand.gerichte || []).find((x) => x.id === e.ref.id); return (g ? gewichtGericht(g) : 0) / 1000 * (Number(e.menge) || 0); }
   const b = EINHEITEN[e.einheit]?.basis; return b === "g" || b === "ml" ? inBasis(e.menge, e.einheit) / 1000 : 0;
@@ -184,7 +180,7 @@ function gemischt(stand, alle, { tage, max, datum }) {
 }
 
 // Vorschau „= 1,92 € in der Tonne" für das Blatt (ohne zu speichern)
-export function muellVorschau(stand, wahl, D = heuteGeschaeft()) {
+function muellVorschau(stand, wahl, D = heuteGeschaeft()) {
   if (!(wahl?.menge > 0)) return null;
   const e = wahl.typ === "gericht" ? { art: wahl.personal ? "personal" : "gericht", ref: { typ: "gericht", id: wahl.id, name: wahl.name }, menge: wahl.menge, einheit: "portion", datum: D, mahlzeit: mahlzeitJetzt() }
     : { art: "rohware", ref: { typ: "artikel", name: wahl.name }, menge: wahl.menge, einheit: wahl.einheit, datum: D };

@@ -6,7 +6,7 @@
 
 const NS = "http://www.w3.org/2000/svg";
 // Gelenke in Einheiten der viewBox (0 0 237 328), gemessen an den Clip-Formen der Figur.
-export const GELENKE = {
+const GELENKE = {
   zeki: [118, 318], kopf: [118, 146], "arm-l": [48, 160], "arm-r": [189, 160],
   "fuss-l": [86, 290], "fuss-r": [150, 290], "auge-l": [88, 82], "auge-r": [140, 82],
 };
@@ -30,7 +30,7 @@ const FORMEN = {
   "fuss-l": `M-60 ${FUSS_OBEN - 8} L${M} ${FUSS_OBEN - 8} L${M} 420 L-60 420 Z`,
   "fuss-r": `M${M} ${FUSS_OBEN - 8} L297 ${FUSS_OBEN - 8} L297 420 L${M} 420 Z`,
 };
-export function zekiPuppeVorbereiten(svg) {
+function zekiPuppeVorbereiten(svg) {
   if (!svg || svg.dataset.zekiPuppe === "1") return !!svg;
   const doc = svg.ownerDocument, koerper = teil(svg, "koerper"), use = koerper?.querySelector("use");
   const m = (use?.getAttribute("clip-path") || "").match(/url\(#(.*)clip-koerper\)/);
@@ -78,7 +78,7 @@ const t = (x, y = 0, g = 0) => ({ transform: `translate(${x}px, ${y}px) rotate($
 const weich = "cubic-bezier(.45,.05,.35,1)";
 
 // Jede Bewegung: { dauer, mimik (Zustand während der Bewegung), teile: { teil: [Keyframes, Optionen?] } }
-export const BEWEGUNGEN = {
+const BEWEGUNGEN = {
   winken: { dauer: 2000, mimik: "freude", teile: {
     "arm-r": [[r(0), { ...r(-135), offset: 0.18 }, { ...r(-112), offset: 0.32 }, { ...r(-138), offset: 0.46 }, { ...r(-112), offset: 0.6 }, { ...r(-135), offset: 0.74 }, r(0)]],
     kopf: [[r(0), { ...r(4), offset: 0.3 }, { ...r(4), offset: 0.75 }, r(0)]],
@@ -147,7 +147,7 @@ function schritte(n, x0, x1) {
 }
 
 // Ältere Namen aus Sätzen und Bildfolgen zeigen auf die Puppe.
-export const ALIAS = { hand: "winken", thumb: "freuen", daumen: "freuen", grinsen: "freuen", laecheln: "freuen", celebrate: "freuen", pruefen: "nachdenken", turn: "nachdenken", preis: "zeigen-rechts", zeigen: "zeigen-rechts" };
+const ALIAS = { hand: "winken", thumb: "freuen", daumen: "freuen", grinsen: "freuen", laecheln: "freuen", celebrate: "freuen", pruefen: "nachdenken", turn: "nachdenken", preis: "zeigen-rechts", zeigen: "zeigen-rechts" };
 export const zekiPuppeName = (b) => (BEWEGUNGEN[b] ? b : ALIAS[b] && BEWEGUNGEN[ALIAS[b]] ? ALIAS[b] : null);
 
 // Spielt eine Bewegung. Gibt eine Abbruch-Funktion zurück (oder null, wenn es die Bewegung nicht gibt).

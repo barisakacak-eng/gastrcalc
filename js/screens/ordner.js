@@ -146,7 +146,7 @@ function schickenKarte(stand, art) {
       <button type="button" class="knopf glut" data-a="ordner-schicken" data-wert="${art}">${bsym("share")} ${esc(t(`ordnerMail.knopf.${art}`))}</button>
     </div>`;
 }
-export function mailText(stand, art, zeitraum) {
+function mailText(stand, art, zeitraum) {
   const an = stand.betrieb?.kontakte?.[art];
   return t(`ordnerMail.text.${art}`, { an: an || "", laden: stand.betrieb?.name || "[Name deines Ladens]", zeitraum });
 }

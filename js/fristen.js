@@ -90,4 +90,3 @@ export function pflichtTermine(von, bis, einstellung = {}) {
   return out.filter((x) => x.datum >= von && x.datum <= bis).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.art.localeCompare(b.art)));
 }
 // Fällige Erinnerungen an einem Tag: Termine, deren Erinnerung erreicht und deren Datum noch nicht vorbei ist
-export const erinnerungenAm = (tag, einstellung = {}) => pflichtTermine(tag, plusTage(tag, 40), einstellung).filter((x) => x.erinnerung <= tag && x.datum >= tag);

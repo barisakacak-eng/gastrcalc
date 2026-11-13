@@ -23,7 +23,7 @@ import { rund2 } from "./geld.js";
 
 export const GEBINDE_VERKAUF = ["dose", "glas", "pet", "offen", "becher"];
 export const GEBINDE_EINKAUF = ["dose", "glas", "pet", "becher", "box", "fass"];
-export const GROSSGEBINDE = ["glas", "pet", "box", "fass"];           // daraus wird offen ausgeschenkt
+           // daraus wird offen ausgeschenkt
 export const GROESSEN = [0.2, 0.25, 0.3, 0.33, 0.4, 0.5, 1, 1.5];     // Auswahl im Büro (Vorgabe 0,2–1,5 l); frei bleibt jede Menge in MENGE_GRENZEN
 export const MENGE_GRENZEN = [0.02, 30];                               // 2 cl Schnaps bis 30-l-Fass
 export const SCHANKVERLUST_MAX = 0.5;
@@ -86,7 +86,6 @@ export function getraenkArtikelMigrieren(a) {
 // Lesen: das Feld, solange der Stand migriert ist; ein frisch angelegtes Gericht ohne Feld (vor dem nächsten Laden) wie bei der Migration
 export const getraenkVon = (g) => (!istGetraenkGericht(g) ? null : istObjekt(g.getraenk) ? getraenkGerichtSauber(g.getraenk) : getraenkGerichtSauber({ menge: mengeAlt(g) }));
 export const getraenkArtikelVon = (a) => (!istGetraenkArtikel(a) ? null : istObjekt(a.getraenk) ? getraenkArtikelSauber(a.getraenk) : getraenkArtikelSauber({ menge: literAusText(a.name), gebinde: GETRAENK_EINKAUF[a.name]?.gebinde }));
-export const istOffen = (g) => !!getraenkVon(g)?.quelle;
 
 // Schankverlust für eine Zutat des Gerichts: nur die Zutat aus dem Großgebinde (quelle) eines offenen Getränks, sonst 0
 export function schankAnteil(g, zutatName) {

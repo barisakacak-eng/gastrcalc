@@ -20,9 +20,9 @@ import { tageZwischen } from "./zeit.js";
 import { rund2 } from "./geld.js";
 import { l6x } from "./data/l6x_texte.js"; // Lauf 6 (P1 B1)
 
-export const EIG_ZEITRAEUME = ["woche", "monat", "frei"];
-export const WARE_PUNKTE_SATZ = 3;        // ab 3 Prozentpunkten Unterschied im Wareneinsatz sagt der Satz es (Annahme der App, kein Branchenwert)
-export const KENNZAHLEN = ["umsatz", "ware", "muell", "pflichten", "bisNull"]; // nur diese bekommen Rang und Abstand
+const EIG_ZEITRAEUME = ["woche", "monat", "frei"];
+const WARE_PUNKTE_SATZ = 3;        // ab 3 Prozentpunkten Unterschied im Wareneinsatz sagt der Satz es (Annahme der App, kein Branchenwert)
+const KENNZAHLEN = ["umsatz", "ware", "muell", "pflichten", "bisNull"]; // nur diese bekommen Rang und Abstand
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const gueltig = (d) => typeof d === "string" && ISO.test(d);
 
@@ -138,7 +138,7 @@ const trendVon = (jetzt, vorher, vorherDa) => {
   const a = (jetzt - vorher) / vorher;
   return { vorher, aenderung: a, richtung: Math.abs(a) < 0.02 ? "gleich" : a > 0 ? "hoch" : "runter" };
 };
-export function ladenTrend(stand, z) {
+function ladenTrend(stand, z) {
   const j = zeitraumZahlen(stand, z), v = zeitraumZahlen(stand, z.vorher);
   return { umsatz: trendVon(j.umsatz, v.umsatz, v.umsatzTage > 0 && j.umsatzTage > 0), muell: trendVon(j.muell, v.muell, v.muellAnzahl > 0 || j.muellAnzahl > 0), personal: trendVon(j.personal, v.personal, v.personal > 0 || j.personal > 0) };
 }
@@ -146,7 +146,7 @@ export function ladenTrend(stand, z) {
 // ---------- welche Läden ----------
 const hatDaten = (s) => !!((s.tagesnotizen || []).some((n) => !n.storniert && typeof n.umsatz === "number") || (s.schwund || []).some((e) => !e.storniert) || (s.verkaeufe || []).some((v) => !v.storniert) || (s.messungen || []).length || (s.lieferungen || []).some((l) => !l.storniert));
 // Gezeigt werden die eingerichteten eigenen Läden. Der Beispiel-Laden nur, wenn kein eigener Laden Daten hat (dann mit Kennzeichnung).
-export function eigentuemerLaeden(wurzel) {
+function eigentuemerLaeden(wurzel) {
   const alle = wurzel?.betriebe || [];
   const eigene = alle.filter((b) => !b.beispiel && b.phase === "app");
   const beispiel = alle.find((b) => b.beispiel && b.phase === "app") || null;
@@ -164,7 +164,7 @@ const WERT = {
   pflichten: { von: (l) => l.pflichten.offen, basis: (l) => l.pflichten.basis, hoch: false, ordnung: ["voll"], einheit: "zahl" },
   bisNull: { von: (l) => l.bisNull.fehlt, basis: (l) => l.bisNull.basis, hoch: false, ordnung: ["voll", "teil"], einheit: "euro" }, // Lauf 6 (P1 B1): was bis null fehlt – weniger ist besser
 };
-export function eigentuemerVergleich(laeden) {
+function eigentuemerVergleich(laeden) {
   const out = {};
   for (const kz of KENNZAHLEN) {
     const w = WERT[kz]; const je = {};

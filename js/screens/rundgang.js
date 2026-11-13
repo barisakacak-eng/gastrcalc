@@ -51,7 +51,7 @@ const STATIONEN = {
 };
 // Gespielte Reihenfolge: Station 8 (Rechnung) kommt nach 10, damit alle Büro-Stationen (8, 11, 12, 13) an einem Stück laufen –
 // ein Weg ins Büro (Büro-Code höchstens einmal), kein Hin und Her zwischen Laden und Büro.
-export const MITMACH_REIHE = [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 8, 11, 12, 13, 14, 15, 16];
+const MITMACH_REIHE = [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 8, 11, 12, 13, 14, 15, 16];
 // Fortsetzen nach Abbruch/Neuladen: Stationen mitten in einem Ablauf beginnen bei dessen Anfang
 const FORTSETZEN = { 3: 2, 5: 4, 10: 9, 11: 8, 12: 8, 13: 8 };
 
@@ -60,7 +60,6 @@ let pos = 0, sub = 0, schritt = null, rect = null, folge = null, warte = null, f
 const fuellen = (el, html) => el.replaceChildren(el.ownerDocument.createRange().createContextualFragment(html)); // nur Anzeige
 
 export const rundgangOffen = () => !!huelle;
-export const mitmachStation = () => (huelle ? MITMACH_REIHE[pos] ?? null : null);
 
 // Station und Schritt stehen an der Hülle (für Vorlesehilfen und die Browser-Prüfung)
 function marke(station, s) { huelle?.setAttribute("data-station", String(station)); huelle?.setAttribute("data-schritt", String(s)); }

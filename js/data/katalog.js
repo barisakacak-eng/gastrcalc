@@ -8,8 +8,6 @@ export const EINHEITEN = {
   l: { basis: "ml", f: 1000, label: "l" }, ml: { basis: "ml", f: 1, label: "ml" },
   stk: { basis: "stk", f: 1, label: "Stück" },
 };
-export const BASIS_LABEL = { g: "kg", ml: "l", stk: "Stück" };
-export const BASIS_FAKTOR = { g: 1000, ml: 1000, stk: 1 };
 export const inBasis = (menge, einheit) => (Number(menge) || 0) * (EINHEITEN[einheit]?.f || 1);
 
 export const K = (n, e, g) => ({ n, e, g });
@@ -411,7 +409,7 @@ export const KATALOG = {
 // Öffentliche Speisekarte: Artikel ohne Preise, fehlende Gewichte bleiben offen.
 for (const [n,e,g] of MENUE_ARTIKEL) if (!KATALOG.burger.produkte.some((p) => p.n === n)) KATALOG.burger.produkte.push(K(n,e,g));
 
-export const BEREICHE_JE_BETRIEB = {
+const BEREICHE_JE_BETRIEB = {
   restaurant: ["fleischgericht", "suppe", "salat", "beilagen", "kuchen", "eis", "kaffee", "bar", "bier", "alkoholfrei", "grundzutaten", "verpackung"],
   bar: ["bar", "bier", "alkoholfrei", "fingerfood", "kaffee", "grundzutaten", "verpackung"],
   cafe: ["kaffee", "kuchen", "fruehstueck", "salat", "eis", "alkoholfrei", "grundzutaten", "verpackung"],
@@ -761,7 +759,7 @@ export const MENUE_VORLAGEN_ENTWURF = MENUE_GERICHTE.filter((g) => !MENUE_FREIGE
 /** Vorlagen, die zur Betriebsart passen – mit Herkunftsbereich. */
 
 // Küche (zweite Achse des Onboardings) -> Bereiche des Katalogs. Format-Bereiche kommen dazu (BEREICHE_JE_BETRIEB).
-export const BEREICHE_JE_KUECHE = {
+const BEREICHE_JE_KUECHE = {
   doener: ["doener", "beilagen", "salat"],
   pizza: ["pizza", "salat", "fleischgericht"],
   deutsch: ["fleischgericht", "suppe", "salat", "beilagen", "kuchen", "bier"],
@@ -792,7 +790,7 @@ export const GETRAENK_EINKAUF = {
 // Steuersatz je Warengruppe (Prüfung Befund 7): Speisen 7 %, Getränke 19 %. Gilt für das fertige Gericht über seine Hauptzutat.
 export const STEUER_JE_GRUPPE = { getraenk: "voll", spirituose: "voll" }; // Schlüssel für geld.mwstHeute (Regelwerk); Gruppen ohne Eintrag: ermäßigt, Verpackung: voll
 
-export function bereicheFuer(formatId, kuechen) {
+function bereicheFuer(formatId, kuechen) {
   const set = new Set();
   for (const k of kuechen || []) for (const b of BEREICHE_JE_KUECHE[k] || []) set.add(b);
   for (const b of BEREICHE_JE_BETRIEB[formatId] || []) set.add(b);

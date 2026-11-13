@@ -15,7 +15,7 @@ const RAUSCHEN = /(preise?\s+inkl|inkl\.?\s*mwst|\bmwst\b|\btel\b\.?|telefon|\bf
 const GROESSEN = /(?<!\p{L})(klein|mittel|gro(?:ß|ss)|normal|maxi|mini|xl|jumbo|kids?|kinder)(?!\p{L})/giu;
 const GETRAENK = /\b(\d[.,]\d{1,2}\s?l|\d{2,3}\s?ml|\d{2}\s?cl|cola|fanta|sprite|mezzo|spezi|ayran|wasser|sprudel|schorle|saft|limo|limonade|eistee|ice\s?tea|red\s?bull|energy|bier|pils|radler|weizen|tee|çay|cay|kaffee|espresso|cappuccino|latte|uluda[gğ]|capri|wein|sekt|fritz|dose|flasche|softdrink|mate|club.?mate)\b/i;
 
-export const normName = (s) => String(s || "").toLowerCase()
+const normName = (s) => String(s || "").toLowerCase()
   .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
   .replace(/[ğ]/g, "g").replace(/[ş]/g, "s").replace(/[ç]/g, "c").replace(/[ı]/g, "i").replace(/[éè]/g, "e")
   .replace(/durum/g, "dueruem").replace(/\bd[eo]?o?ner/g, "doener")
@@ -101,7 +101,7 @@ export function istZutatenZeile(z) {
 // die andere ergänzt fehlende Gerichte und unlesbare Preise. Ähnliche Namen („Döner (kein) mit Sala" ~ „Döner (klein) mit Salat") zählen als dasselbe Gericht.
 // Rubrik-Überschriften („Vegane Gerichte", „Pide aus dem Steinofen", „Nudeln") sind keine Gerichte, auch wenn ein Preis danebenrutscht
 const RUBRIK = /^(?:[\p{L}-]+\s){0,2}(gerichte|speisen|getränke|getraenke|beilagen|desserts?|vorspeisen|hauptspeisen|nudeln|salate|menüs|extras)$|\s(aus|qu\/?|au\/?|a\w{1,2})\s+dem\s+[\p{L}]+$/iu;
-export const istRubrik = (n) => RUBRIK.test(String(n || "").trim());
+const istRubrik = (n) => RUBRIK.test(String(n || "").trim());
 const nameGuete = (p) => -(p.pruefen ? 5 : 0) - p.name.split(/\s+/).filter((x) => x.replace(/[.,()]/g, "").length <= 2 && !/^(&|zu|im|in|am|an|und|xl)$/i.test(x)).length * 2 - (p.name.match(/[^\p{L}\d\s,.()&\-]/gu) || []).length - (p.name.match(/ı/g) || []).length + Math.min(p.name.length, 40) / 100;
 function aehnlichName(a, b) {
   const x = normName(a), y = normName(b); if (x === y) return true;
@@ -195,7 +195,7 @@ function positionenEinerLesart(text) {
 // Mengenwörter (Burger-Test 28.10.2026: „Cheeseburger“ bekam das Rezept „Doppel-Cheeseburger“ mit 2 Patties): steht so ein Wort nur auf
 // einer Seite, ist es ein anderes Gericht – Abschlag MENGENWORT_ABSCHLAG (Setzung), damit die einfache Vorlage gewinnt.
 const MENGENWORT = /\b(doppel\w*|double|dopp|triple|dreifach|xxl|xl|mega|maxi|mini|kids?|kinder|gross|grosse|klein|kleine)\b/g;
-export const MENGENWORT_ABSCHLAG = 0.25;
+const MENGENWORT_ABSCHLAG = 0.25;
 export function aehnlichkeit(kartenName, vorlageName) {
   const roh = aehnlichkeitRoh(kartenName, vorlageName); if (!roh) return 0;
   const einheitlich = (w) => /^(doppel|double|dopp)/.test(w) ? "2" : /^(triple|dreifach)/.test(w) ? "3" : /^gross/.test(w) ? "gross" : /^klein/.test(w) ? "klein" : /^(kid|kinder)/.test(w) ? "kids" : w;
@@ -221,7 +221,7 @@ function aehnlichkeitRoh(kartenName, vorlageName) {
 
 // Laden-Profil (Punkt 9): Vorlagen außerhalb von Kern und „Oft dabei“ brauchen einen deutlich besseren Treffer (0,15 Vorsprung).
 // Der Vorsprung gilt nur für die Rangfolge; „sicher“ (≥ 0,75) misst weiter die echte Ähnlichkeit.
-export const PROFIL_VORSPRUNG = 0.15;
+const PROFIL_VORSPRUNG = 0.15;
 function besteVorlage(name, stand) {
   const p = profilFuer(stand); const kern = new Set(p.kern), oft = new Set(p.oft);
   let best = null;

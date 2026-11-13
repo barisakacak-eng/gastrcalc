@@ -506,7 +506,7 @@ const karteSchnell = {
 
 // Kühlung: vier Foto-Zeilen mit Anzahl. Jede Stelle bekommt `typ` (neu, tolerant), damit die Zeile weiß, was zu ihr gehört.
 // Namen ändert man später (Büro → Kühlstellen); die Grenzwerte gelten nach Gesetz (Standard), wie bisher.
-export const KUEHL_TYPEN = [ // Baris 24.10.2026: Getränkekühlschrank (das bisherige Foto zeigt einen) und Kühlschrank für Lebensmittel (Foto von Sanji folgt, bis dahin Piktogramm)
+const KUEHL_TYPEN = [ // Baris 24.10.2026: Getränkekühlschrank (das bisherige Foto zeigt einen) und Kühlschrank für Lebensmittel (Foto von Sanji folgt, bis dahin Piktogramm)
   { typ: "getraenke", art: "kuehl", foto: "k-getraenke-foto", pikto: "k-kuehlschrank" },
   { typ: "kuehlschrank", art: "kuehl", foto: "k-kuehlschrank-lebensmittel-foto", pikto: "k-kuehlschrank" },
   { typ: "saladette", art: "kuehl", foto: "k-saladette-foto", pikto: "k-theke" },

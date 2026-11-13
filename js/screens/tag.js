@@ -5,12 +5,11 @@ import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; /
 import { eintragWert, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SVEV_2026, svevAm, sachbezugWert, schwundEintraege } from "../engine.js"; // Trennung 2 (17.10.2026): Sachbezug, Liste und Wert aus dem Rechenwerk
 import { nav } from "./nav.js";
 import { muellStornieren } from "../muell.js"; // Trennung (17.10.2026): Storno über das Rechenwerk
+import { tagGewaehlt, tagZuruecksetzen, tagWaehlen } from "./tag_wahl.js";
 import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
 
 let listenZeitraum = "woche"; // "woche" | "monat"
-let tagDatum = null;          // gewählter Tag auf „Heute" (null = heute); Vergangenheit = Nacherfassung, gekennzeichnet
-export const tagGewaehlt = () => tagDatum || heuteGeschaeft();
-export function tagZuruecksetzen() { tagDatum = null; }
+export { tagGewaehlt, tagZuruecksetzen }; // der gewählte Tag wohnt in tag_wahl.js (damit muell.js ihn ohne Importkreis lesen kann)
 
 // Trennung 2 (17.10.2026): eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz wohnen in js/anzeige_text.js
 import { eintragName, eintragMenge, datumLesbar } from "../anzeige_text.js";
@@ -67,7 +66,7 @@ function eintragText(e, stand) {
 
 // ---------- Aktionen und Eingaben (von app.js aufgerufen) ----------
 export function tagAktion(name, el, stand) {
-  if (name === "tag-datum") { tagDatum = el.dataset.wert === heuteGeschaeft() ? null : el.dataset.wert; return true; }
+  if (name === "tag-datum") { tagWaehlen(el.dataset.wert === heuteGeschaeft() ? null : el.dataset.wert); return true; }
   if (name === "listen-zeitraum") { listenZeitraum = el.dataset.wert; return true; }
   if (name === "schwund-storno") {
     const e = stand.schwund.find((x) => x.id === el.dataset.id); if (!e || e.storniert) return false;

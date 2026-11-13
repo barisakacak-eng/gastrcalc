@@ -89,7 +89,7 @@ function heuteZielKarte(stand, z, H) {
 
 // Kursdiagramm der Zielkarte (Sanji-Entwurf 20.10.2026): x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
 // Daten aus monatsZiel (m.tage: kumuliert bis heute) – die Oberfläche rechnet nichts Neues, sie zeichnet nur.
-export function kursDiagramm(m, marke, z, stufe = "bisZiel") {
+function kursDiagramm(m, marke, z, stufe = "bisZiel") {
   const alle = z?.tage || []; const n = Math.max(2, alle.length); const ist = (m.tage || []).filter((x) => x.umsatz !== null || x.kumuliert > 0);
   const W = 312, X0 = 4, Y0 = 142, HH = 126;
   const max = Math.max(marke || 0, ...(m.tage || []).map((x) => x.kumuliert || 0), 1) * 1.12;
@@ -155,7 +155,7 @@ function jetztKarte(d) {
 }
 
 // Schmale Zeile auf anderen Seiten, solange ein offener Schritt die Seite betrifft
-export function einrichtungZeile(e, ids) {
+function einrichtungZeile(e, ids) {
   if (e.prozent >= 100 || !e.schritte.some((x) => ids.includes(x.id) && !x.fertig)) return "";
   return `<button type="button" class="einrichtungzeile" data-a="nav" data-wert="start">${esc(t("einrichtung.kurz", e.prozent))}</button>`;
 }

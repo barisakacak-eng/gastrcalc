@@ -10,7 +10,7 @@ import { REGELN, regel } from "./data/regelwerk.js";
 import { fmtZahl, heute } from "./util.js";
 
 const PERSISCH = "۰۱۲۳۴۵۶۷۸۹";
-export const persischeZiffern = (s) => String(s).replace(/\d/g, (d) => PERSISCH[d]);
+const persischeZiffern = (s) => String(s).replace(/\d/g, (d) => PERSISCH[d]);
 const zahl = (n) => (Number.isInteger(n) ? fmtZahl(n, 0) : fmtZahl(n, 2));
 const prozent = (n) => { const p = Math.round(n * 1e4) / 100; return Number.isInteger(p) ? fmtZahl(p, 0) : fmtZahl(p, 2); };
 const TAG = /^\d{4}-\d{2}-\d{2}$/;
@@ -18,7 +18,7 @@ const TAG = /^\d{4}-\d{2}-\d{2}$/;
 const enZahl = (n) => new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, minimumFractionDigits: Number.isInteger(n) ? 0 : 2 }).format(n);
 const cache = new Map();
 // Alle Platzhalter-Texte für einen Tag: { id: "800", id_pct: "32", … }
-export function regelZahlen(tag = heute()) {
+function regelZahlen(tag = heute()) {
   const t = TAG.test(tag) ? tag : heute();
   let z = cache.get(t); if (z) return z;
   z = {};

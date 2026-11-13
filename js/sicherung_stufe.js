@@ -14,7 +14,7 @@ export function sicherungStufe(wurzel, jetzt = Date.now()) {
 //   nie gesichert und schon ≥ 5 Einträge → grund "nie" · letzte Sicherung ≥ 7 Tage alt → "woche"
 //   in den ersten 7 Tagen eines Monats, letzte Sicherung vor dem Monatsersten und seitdem neue Einträge → "monat" (Monat ist abgeschlossen)
 // Rückgabe: null | { grund, tage } (tage = null bei „nie“). Kalendertage in Berliner Zeit.
-export const SICHERUNG_MONAT_TAGE = 7; // Setzung 28.10.2026
+const SICHERUNG_MONAT_TAGE = 7; // Setzung 28.10.2026
 export function sicherungFaellig(wurzel, jetzt = Date.now()) {
   const s = sicherungStufe(wurzel, jetzt); if (!s) return null;
   if (s.tage === null) return s.n >= 5 ? { grund: "nie", tage: null } : null;
@@ -27,7 +27,7 @@ export function sicherungFaellig(wurzel, jetzt = Date.now()) {
 // Laden-Umbau (20.10.2026): Nach dem Teilen fragt die App „Wo liegt sie jetzt?“. Nur „woanders“ (anderes Gerät, Mail, Cloud) zählt als
 // Sicherung und setzt die Erinnerung zurück. „handy“ (nur auf diesem Handy) zählt NICHT – geht das Handy verloren, ist beides weg
 // (Eigentümer-Entscheidung 20.10.2026). Rückgabe: true = als Sicherung gezählt.
-export const SICHERUNG_ORTE = ["woanders", "handy"];
+const SICHERUNG_ORTE = ["woanders", "handy"];
 export function sicherungOrtSetzen(wurzel, ort, { jetzt = new Date() } = {}) {
   if (!wurzel || !SICHERUNG_ORTE.includes(ort) || ort !== "woanders") return false;
   wurzel.letzteSicherung = jetzt.toISOString(); wurzel.sicherungZaehler = eintraegeZaehlen(wurzel);

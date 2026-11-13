@@ -251,7 +251,7 @@ function warteRoh(z, k) { let j = k - 1; while (j >= 0 && !z[j].trim()) j -= 1; 
 
 // Plausibilität: Summe der Positionen (Storno abgezogen) gegen die Bon-Summe. Abweichung zeigen, nie raten.
 // Pfand steht oft in der Bon-Summe, ist aber kein Gericht: passt es nur mit Pfand, heißt das „passtMitPfand“.
-export function plausibel(zeilen, bonSumme, pfand = 0) {
+function plausibel(zeilen, bonSumme, pfand = 0) {
   const mitBetrag = (zeilen || []).filter((z) => typeof z.betrag === "number");
   const summe = rund(mitBetrag.reduce((t, z) => t + z.betrag, 0));
   const ohneBetrag = (zeilen || []).length - mitBetrag.length;
@@ -321,7 +321,7 @@ export function zbonZiel(stand, lesung) {
   return { kasse: null, modus: "alle", kassen, neuNr };
 }
 // Ohne Bestand: nur aus der Lesung (Z-Nummer) – für Aufrufer ohne Laden; mit Laden wie zbonZiel
-export const zbonSchluessel = (lesung, stand = null) => (stand ? zbonZiel(stand, lesung).kasse : lesung?.zNr ? ("Z-" + String(lesung.zNr)).slice(0, 50) : null);
+const zbonSchluessel = (lesung, stand = null) => (stand ? zbonZiel(stand, lesung).kasse : lesung?.zNr ? ("Z-" + String(lesung.zNr)).slice(0, 50) : null);
 
 // ---------- in den Aufbau der Kassen-Daten (wie dsfinvkLesen) ----------
 // Gleicher Kassentext (oder gleiche Nummer) wird zusammengezählt; eine Storno-Zeile zieht beim gleichnamigen Artikel ab

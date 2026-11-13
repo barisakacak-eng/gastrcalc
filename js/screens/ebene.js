@@ -32,11 +32,10 @@ export function ebeneHuelle() {
   return huelle;
 }
 export const blattOffen = () => offen;
-export const pinOffen = () => offen === "pin";
 export const pinZweckJetzt = () => (offen === "pin" && pin ? { zweck: pin.zweck, ziel: pin.ziel } : null);
 
 // Pilotfest P6 (2), 30.10.2026 (Bildpaket C freigegeben): Blätter schließen per Wischen nach unten; Zeki-Hilfe kurz.
-export const WISCH_ZU_PX = 90; // Setzung 30.10.2026: ab 90 px Zug nach unten (bei Blatt oben) schließt das Blatt
+const WISCH_ZU_PX = 90; // Setzung 30.10.2026: ab 90 px Zug nach unten (bei Blatt oben) schließt das Blatt
 function wischenAnhaengen(blatt) {
   // Touch zuerst (echte Handys): am oberen Rand des Blatts (scrollTop 0) ziehen wir das Blatt selbst und halten dem Browser das Scrollen
   // per preventDefault weg (touch-action bleibt frei, sonst käme nach wenigen Pixeln pointercancel – Durchsicht 30.10.2026). Maus/Stift über Pointer-Events.
@@ -124,7 +123,7 @@ function zekiFragenHtml(k) {
   return `<div class="zeki-fragen"><b class="zeki-fragen-titel">${esc(t("ebene.zekiFragen"))}</b>${fragen.map((q) => `<details class="zeki-frage"><summary>${esc(q.f)}</summary><p>${esc(q.a)}</p></details>`).join("")}</div>`;
 }
 // P6 (2): erster Satz des Hilfetexts; „Mehr“ zeigt den Rest.
-export const ersterSatz = (text) => { const m = String(text || "").match(/^.*?[.!?](?=\s|$)/); return m ? m[0] : String(text || ""); };
+const ersterSatz = (text) => { const m = String(text || "").match(/^.*?[.!?](?=\s|$)/); return m ? m[0] : String(text || ""); };
 let hilfeVoll = false;
 export function hilfeZeigen(ansicht, voll = false) {
   const k = HILFE.includes(ansicht) ? ansicht : "allgemein";
@@ -144,7 +143,6 @@ function hilfeKurzZeigen(k) {
     ${mehrDa ? `<button type="button" class="leise hilfe-mehr-knopf" data-a="hilfe-mehr" data-wert="${esc(k)}">${esc(t("ebene.mehr"))}</button>` : ""}</div>
     <button type="button" class="knopf" data-a="blatt-zu">${esc(t("allgemein.ok"))}</button>`);
 }
-export const hilfeIstKurz = () => offen === "hilfe" && !hilfeVoll;
 
 // ---------- Büro-Code (4 Ziffern) ----------
 // zweck "buero": Laden → Büro. zweck "personal": Personal → Laden. zweck "setzen": neuen Code wählen (zweimal; ziel "personal" = danach in Personal).
@@ -247,7 +245,6 @@ export function rettungscodeZeigen(code, ziel = null) {
 // ---------- Passwort der Sicherung (E5, 16.10.2026) ----------
 // zweck "teilen": Blatt vor dem Teilen (Hauptknopf „Sicherung teilen“, leiser Knopf „Ohne Passwort teilen“).
 // zweck "einlesen": Datei ist verschlüsselt, Passwort abfragen (Knopf „Einlesen“). Das Passwort wird nie gespeichert – es steht nur im Feld.
-export const passwortOffen = () => offen === "passwort";
 // Laden-Umbau (20.10.2026), zweck "teilen": Kopf „Sicherung“, „Letzte vom Handy weg: vor n Tagen“, Schalter „Mit Passwort“ (vorgewählt –
 // wer ihn ausschaltet, teilt ohne Passwort), Schalter „Ohne Fotos (klein, für Mail)“, ein Knopf „Sicherung verschicken“.
 // extra.tage: Tage seit der letzten Sicherung, die vom Handy weg ist (null = noch nie).
@@ -284,7 +281,6 @@ export function sicherungSchalter(art) {
 }
 export const sicherungWahl = () => (pw && pw.zweck === "teilen" ? { mitPasswort: pw.mitPasswort, ohneFotos: pw.ohneFotos } : { mitPasswort: true, ohneFotos: false });
 // Nach dem Teilen/Herunterladen: einmal fragen, wo die Datei jetzt liegt. Nur „Anderes Gerät, Mail, Cloud“ zählt als Sicherung (app.js).
-export const ortFrageOffen = () => offen === "sicherungort";
 export function ortFrageZeigen() {
   zeigen("sicherungort", `<div class="hilfe-inhalt"><span class="ks">${sym("package")}</span><b>${esc(t("ladenSchirm.sicherung.woFrage"))}</b></div>
     <button type="button" class="knopf" data-a="sicherung-ort" data-wert="woanders">${esc(t("ladenSchirm.sicherung.woanders"))}</button>

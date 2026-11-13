@@ -12,8 +12,8 @@ import { kalkulation, mengenJeMonat, preisJeBasis, istRichtpreis } from "./engin
 import { sollVerbrauch } from "./verkauf.js";
 import { plusTage } from "./zeit.js";
 
-export const DRIFT_TAGE = 91; // Setzung 28.10.2026: „seit 3 Monaten“ ≈ 13 Wochen
-export const DRIFT_AB = 0.03; // Setzung 28.10.2026: kleinere Änderungen als 3 % zeigt die App nicht (Rundung, Packungswechsel)
+const DRIFT_TAGE = 91; // Setzung 28.10.2026: „seit 3 Monaten“ ≈ 13 Wochen
+const DRIFT_AB = 0.03; // Setzung 28.10.2026: kleinere Änderungen als 3 % zeigt die App nicht (Rundung, Packungswechsel)
 
 
 // Preis je Basis, der am Tag `grenze` galt, oder null (keine Änderung seither, oder nur Richtpreise)

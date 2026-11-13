@@ -10,12 +10,12 @@ import { fuelleRegeln } from "./regeltext.js";
 const TABELLEN = { de, tr, en };
 export const SPRACH_NAMEN = { de: "Deutsch", tr: "Türkçe", en: "English", ar: "العربية", fa: "فارسی", ku: "Kurdî (Kurmancî)", pl: "Polski", ro: "Română", bg: "Български",
   ru: "Русский", uk: "Українська", sq: "Shqip", bs: "Bosanski · Hrvatski · Srpski", el: "Ελληνικά", it: "Italiano", es: "Español", fr: "Français", vi: "Tiếng Việt" };
-export const NACHLADBAR = ["ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
+const NACHLADBAR = ["ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
 export const SPRACHEN = ["de", "tr", "en", ...NACHLADBAR];
 export const RTL = new Set(["ar", "fa"]);
 // Masterauftrag „Gehirn“ 0.6 (28.10.2026): Sprachen ohne vollständige Prüfung tragen „Beta“ (de führend, tr/en vollständig gepflegt).
 // Kein Muttersprachler hat bisher gegengelesen – das steht im Projektstand, nicht hier.
-export const SPRACHE_BETA = new Set(NACHLADBAR);
+const SPRACHE_BETA = new Set(NACHLADBAR);
 export const spracheName = (c) => (SPRACH_NAMEN[c] || c) + (SPRACHE_BETA.has(c) ? " · Beta" : "");
 let aktiv = "de";
 export const spracheGeladen = (c) => !!TABELLEN[c];
@@ -58,7 +58,6 @@ export function tIn(code, pfad, ...args) {
 }
 
 // Alle Sprachen eines Schlüssels (für dreisprachige Kacheln): { de, tr, en }.
-export function tAlle(pfad) { const out = {}; for (const c of SPRACHEN) { const v = hole(TABELLEN[c], pfad); out[c] = fuelleRegeln(typeof v === "string" ? v : hole(de, pfad)); } return out; }
 
 // Selbstprüfung: fehlende Schlüssel je Sprache (für die Entwicklung, läuft in den Tests).
 export function fehlendeSchluessel(code) {

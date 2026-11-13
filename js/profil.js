@@ -67,7 +67,6 @@ export function bereicheSortiert(stand) {
   return { kern: p.kern.filter((b) => KATALOG[b]), oft: p.oft.filter((b) => KATALOG[b]), weitere };
 }
 
-export const imProfil = (stand, bereich) => { const p = profilFuer(stand); return p.kern.includes(bereich) || p.oft.includes(bereich); };
 
 // Enge je Bereich bei mehreren Arten: Vereinigung der Listen; hat eine Art für einen Bereich keine Enge, gilt dort keine.
 export function vorlagenEngeFuer(stand) {
@@ -88,7 +87,7 @@ export function vorlagenSortiert(stand) {
 }
 
 // Produkt → Bereiche, in denen es im Katalog steht (für die Zutatensuche „aus: Burger“).
-export const PRODUKT_BEREICHE = (() => {
+const PRODUKT_BEREICHE = (() => {
   const m = {};
   for (const b of ALLE_BEREICHE) for (const p of KATALOG[b].produkte) (m[p.n] ||= []).push(b);
   return m;

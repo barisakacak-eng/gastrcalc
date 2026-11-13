@@ -50,4 +50,3 @@ export function introStarten(doc = document, { speicher, an = INTRO_AN } = {}) {
   return true;
 }
 // nur für Tests
-export const introZuruecksetzen = () => { gestartet = false; };

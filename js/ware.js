@@ -46,7 +46,7 @@ export function spiessVergleich(a, b, portionenMonat = 0) {
 
 // ---------- 2.3 A-Artikel für die Wochenzählung ----------
 // Die 5–8 teuersten Zutaten nach Wert im Wochenverbrauch (Rezept × Menge). Setzung: höchstens 8, und so viele, bis ≈ 80 % des Wertes erfasst sind.
-export const A_MIN = 5, A_MAX = 8, A_ANTEIL = 0.8; // Setzung 28.10.2026 (ABC-Analyse: wenige Artikel tragen den Großteil des Wertes)
+const A_MIN = 5, A_MAX = 8, A_ANTEIL = 0.8; // Setzung 28.10.2026 (ABC-Analyse: wenige Artikel tragen den Großteil des Wertes)
 export function aArtikel(stand) {
   const { mengen, geschaetzt } = mengenJeMonat(stand);
   const woche = Object.fromEntries(Object.entries(mengen).map(([k, v]) => [k, v / WOCHEN_JE_MONAT]));
@@ -58,7 +58,7 @@ export function aArtikel(stand) {
 
 // ---------- 2.4 Müll-Rangliste in Euro ----------
 // Woche (7 Tage bis einschließlich datum) nach Gruppe. Gericht-Einträge werden nach dem Warenwert ihrer Zutaten auf die Gruppen verteilt.
-export const MUELL_GRUPPEN = { fleisch: "fleisch", fisch: "fleisch", teig: "brot", gemuese: "salat", sauce: "sosse" }; // Rest → „sonstiges“
+const MUELL_GRUPPEN = { fleisch: "fleisch", fisch: "fleisch", teig: "brot", gemuese: "salat", sauce: "sosse" }; // Rest → „sonstiges“
 const gruppeVon = (a) => (/falafel/i.test(a?.name || "") ? "sonstiges" : MUELL_GRUPPEN[a?.gruppe] || "sonstiges"); // W2-K4: Falafel ist kein Fleisch (Katalog-Gruppe bleibt für Garverlust und Steuer)
 export function muellRangliste(stand, datum) {
   const von = plusTage(datum, -6); const idx = idxVon(stand); const gr = { fleisch: 0, brot: 0, salat: 0, sosse: 0, sonstiges: 0 }; let summe = 0, ohneWert = 0;
@@ -77,7 +77,7 @@ export function muellRangliste(stand, datum) {
   return { von, bis: datum, summe, rang, groesste: rang[0] || null, ohneWert };
 }
 // Gericht mit regelmäßig viel „übrig“ (nicht verkauft): Anteil weggeworfen ÷ (verkauft/geschätzt + weggeworfen) über 14 Tage über UEBRIG_AB
-export const UEBRIG_AB = 0.15, UEBRIG_TAGE = 14, UEBRIG_MIN_TAGE = 3; // Setzung (Masterauftrag 2.4: > 15 %), mindestens an 3 Tagen
+const UEBRIG_AB = 0.15, UEBRIG_TAGE = 14, UEBRIG_MIN_TAGE = 3; // Setzung (Masterauftrag 2.4: > 15 %), mindestens an 3 Tagen
 export function zuVielVorbereitet(stand, datum) {
   const von = plusTage(datum, -(UEBRIG_TAGE - 1)); const { mengen } = mengenJeMonat(stand); const tageMonat = (Number(stand.betrieb?.tageProWoche) || 6) * WOCHEN_JE_MONAT;
   const je = new Map();
@@ -100,7 +100,7 @@ export function zuVielVorbereitet(stand, datum) {
 // ---------- 2.5 Lieferantenvergleich aus eigenen Belegen ----------
 // Je Ware und Lieferant der letzte Preis je Basiseinheit (netto ÷ (Menge × Inhalt)). Nur gleiche Basis (kg/l/Stück) und gleicher Packungsinhalt
 // (± LIEFERANT_INHALT_TOLERANZ) werden verglichen, sonst kein Sieger. Ersparnis im Jahr = Preisunterschied × Jahresverbrauch laut Rezept.
-export const LIEFERANT_INHALT_TOLERANZ = 0.1; // Setzung 28.10.2026: Packungsgröße darf um 10 % abweichen
+const LIEFERANT_INHALT_TOLERANZ = 0.1; // Setzung 28.10.2026: Packungsgröße darf um 10 % abweichen
 export function lieferantenVergleich(stand) {
   const je = new Map(); // ware → lieferant → { preis, inhalt, basis, datum }
   for (const l of [...(stand.lieferungen || [])].filter((x) => !x.storniert).sort((a, b) => (a.datum < b.datum ? -1 : 1))) {
@@ -152,7 +152,7 @@ export function einkaufNaechsteWoche(vorschlag) {
 // Sie liegt in stand.wochenZaehlungen und zählt NICHT als Inventur (kein Einfluss auf Bestand, Wareneinsatz, Steuer).
 // Soll-Ist wie die Inventur (verkauf.abgleichInventur): Ist = Anfang + Einkauf − Ende, erwartet = Rezept × Verkäufe + Müll + Personalessen.
 // Abweichung in Prozentpunkten des erwarteten Verbrauchs: unter WOCHE_RUHIG ruhig, ab WOCHE_MELDEN melden (Setzung nach Anbieterwerten 2026, Recherchebericht).
-export const WOCHE_RUHIG = 1.5, WOCHE_MELDEN = 3; // Setzung (Masterauftrag 2.3)
+const WOCHE_RUHIG = 1.5, WOCHE_MELDEN = 3; // Setzung (Masterauftrag 2.3)
 export function wochenSollIst(stand, jetzt, vorher, abgleich) {
   if (!jetzt || !vorher) return null;
   const r = abgleich(stand, { ...jetzt, abgeschlossen: jetzt.abgeschlossen || jetzt.datum + "T08:00:00" }, { ...vorher, abgeschlossen: vorher.abgeschlossen || vorher.datum + "T08:00:00" });

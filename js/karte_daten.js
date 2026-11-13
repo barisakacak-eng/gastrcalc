@@ -217,7 +217,7 @@ export function gerichtFotoSetzen(stand, id, meta, { geraet = null, jetzt = new 
 // das aus der Vorlage „Adana-Spieß“ stammt, und wird am Stand gemerkt (keine zweite Frage). Wahl: pide | pideHalb | fladen | kein.
 export const ADANA_BROT = { pide: { name: "Pide-Brot", menge: 1 }, pideHalb: { name: "Pide-Brot", menge: 0.5 }, fladen: { name: "Dürüm-Wrap", menge: 1 }, kein: null };
 const BROTE = new Set(["Pide-Brot", "Dürüm-Wrap", "Dönerbrot / Fladen"]);
-export const adanaGerichte = (stand) => (stand.gerichte || []).filter((g) => g.vorlageName === "Adana-Spieß");
+const adanaGerichte = (stand) => (stand.gerichte || []).filter((g) => g.vorlageName === "Adana-Spieß");
 export const adanaBrotOffen = (stand) => !stand.adanaBrot && adanaGerichte(stand).length > 0;
 export function adanaBrotSetzen(stand, wahl) {
   if (!(wahl in ADANA_BROT)) return false;

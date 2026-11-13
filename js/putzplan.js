@@ -21,7 +21,7 @@ export function planVorschlag(stand) {
 
 export const aufgabenFuer = (plan) => AUFGABEN.filter((a) => (a.gilt === "alle" || plan.geraete.includes(a.gilt)) && !plan.aus.includes(a.id));
 
-export function letzteErledigung(stand, id) {
+function letzteErledigung(stand, id) {
   const letzte = imTakt(stand, "putzLetzte", () => { const m = new Map();
     for (const e of stand.putzlog || []) { if (e.storniert) continue; const l = m.get(e.aufgabe); if (!l || e.datum > l.datum || (e.datum === l.datum && e.zeit > l.zeit)) m.set(e.aufgabe, e); }
     return m; });

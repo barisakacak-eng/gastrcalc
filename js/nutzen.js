@@ -46,7 +46,7 @@ export function postenMuell(stand, H, ab) {
 }
 
 // Posten Lager: erste gegen letzte fertige Inventur. Gebundenes Geld ist kein Gewinn → nie gemessen, nie in der Summe.
-export function postenLager(stand) {
+function postenLager(stand) {
   const fertig = inventurenFertig(stand);
   if (fertig.length < 2) return { art: "lager", euro: null, gemessen: false, stand: "fehlt", quelle: fertig.length ? "Zweite Inventur fehlt" : "Noch keine Inventur" };
   const erste = inventurWert(stand, fertig[0]); const letzte = inventurWert(stand, fertig[fertig.length - 1]);
@@ -57,7 +57,7 @@ export function postenLager(stand) {
 }
 
 // Posten Papierkram: nur mit der Vorher-Schätzung des Wirts (Minuten je Monat, Stundensatz). Bleibt eine Schätzung.
-export function postenPapier(stand) {
+function postenPapier(stand) {
   const n = stand.betrieb?.nutzen || {};
   const min = Number(n.papierMinutenVorher) || 0; const satz = Number(n.stundensatz) || 0;
   if (!(min > 0) || !(satz > 0)) return { art: "papier", euro: null, gemessen: false, stand: "fehlt", quelle: "Vorher-Schätzung des Wirts fehlt (Minuten je Monat, Stundensatz)" };
@@ -67,7 +67,7 @@ export function postenPapier(stand) {
 // Posten Preis (Masterauftrag 1.4, 28.10.2026): Preisrunden, die der Wirt im Preisrunden-Rechner übernommen hat (stand.preisRunden).
 // Je Runde: (neu − alt) / (1 + MwSt) × Menge im Monat zum Zeitpunkt der Änderung = Mehr-Deckungsbeitrag im Monat, wenn alle Gäste bleiben.
 // Immer ≈ geschätzt (nicht gemessen): ob Gäste weggeblieben sind, weiß die App nicht. Ohne Runde ehrlich „fehlt“.
-export function postenPreis(stand) {
+function postenPreis(stand) {
   const r = (stand?.preisRunden || []).filter((x) => x && x.neu > 0 && x.alt > 0 && x.mengeMonat > 0); // Senkungen zählen mit (Kanzlei-Test 28.10.2026)
   if (!r.length) return { art: "preis", euro: null, gemessen: false, stand: "fehlt", quelle: "Noch keine Preisrunde im Preisrunden-Rechner übernommen" };
   const monat = r.reduce((s, x) => s + nettoVonBrutto(x.neu - x.alt, x.mwst) * x.mengeMonat, 0);
@@ -77,7 +77,7 @@ export function postenPreis(stand) {
 
 // Posten Schwund (W2-K1, 28.10.2026): Euro aus der Wochenzählung, Ampel „melden“, ab der zweiten Zählung. Immer ≈ (Rezept und Verkäufe
 // sind Durchschnitte), nie „gemessen“: es ist ein Verdacht, kein belegter Verlust. Euro = je Woche (Zeitraum zwischen den Zählungen).
-export function postenSchwund(stand) {
+function postenSchwund(stand) {
   let v = null; try { v = schwundVerdacht(stand); } catch { v = null; }
   if (!v) return { art: "schwund", euro: null, gemessen: false, verlust: true, stand: "fehlt", quelle: "Noch keine zwei Wochenzählungen" };
   return { art: "schwund", euro: rund2(v.euro), gemessen: false, verlust: true, stand: "geschaetzt", quelle: `≈ Schwund-Verdacht ${v.von} bis ${v.bis}: ${v.zeilen.map((z) => z.name).join(", ") || "keiner"}` };

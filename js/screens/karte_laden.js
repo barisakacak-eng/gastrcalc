@@ -27,7 +27,6 @@ let alle = false;         // mehr als ERSTE Kacheln zeigen
 let blatt = null;         // { id, preis (Entwurf, brutto), alt }
 export const karteLadenKennung = () => filter; // Blatt auf/zu ändert die Kennung nicht – die Scrollposition im Raster bleibt
 export function karteLadenZuruecksetzen() { filter = "alle"; alle = false; blatt = null; }
-export const karteLadenBlattOffen = () => !!blatt;
 // Bildpaket D (3) B (Ja 01.11.2026): Tipp aufs Gericht öffnet das Zutaten-Blatt; ohne Zutaten (oder im Rundgang, app.js) die Mengenfrage wie bisher
 export function karteLadenRezeptBlatt(stand, gid) { const g = stand.gerichte.find((x) => x.id === gid); if (!g || !g.zutaten?.length) return false; blatt = { rezept: g.id }; return true; }
 // Zurück-Geste: erst das Blatt schließen

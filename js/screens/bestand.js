@@ -20,8 +20,8 @@ export function bestandZuruecksetzen() { mindestOffen = false; entwurf = {}; }
 // Zurück-Geste: erst die Mindestbestand-Liste zu; false = den Bereich verlassen
 export function bestandZurueck() { if (!mindestOffen) return false; mindestOffen = false; entwurf = {}; return true; }
 
-export const TAGE_WAHL = [3, 5, 7, 10, 14];
-export const PUFFER_WAHL = [0, 1, 2, 3, 5];
+const TAGE_WAHL = [3, 5, 7, 10, 14];
+const PUFFER_WAHL = [0, 1, 2, 3, 5];
 
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 const euro = (v, ca = true) => (v === null || v === undefined ? t("inventur.preisFehlt") : (ca ? "≈ " : "") + fmtEuro(v, { dezimal: Math.abs(v) < 100 ? 2 : 0 }));
@@ -111,7 +111,7 @@ function einstellungenView(stand, bs) {
 
 // ---------- Teilen ----------
 // Wie die App sonst teilt (Sicherung, Ordner): navigator.share, sonst Kopieren, sonst zum Abschreiben zeigen.
-export async function bestandTeilen(stand, i) {
+async function bestandTeilen(stand, i) {
   const g = bestellVorschlag(stand).gruppen[Number(i)]; if (!g) return null;
   const text = bestellNachricht(stand, g).text; // Lieferanten (18.10.2026): mit Liefertag und Kundennummer
   return { text, weg: await textTeilen(text, t("bestand.teilen")) }; // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)

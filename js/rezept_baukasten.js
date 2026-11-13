@@ -99,7 +99,7 @@ export const GRUNDREZEPTE = [
 ];
 
 // Belag: Wort im Namen → Zutat und Menge je Portion (für ein Hauptgericht; „extra" und „Portion" skalieren über belagFaktor)
-export const BELAEGE = [
+const BELAEGE = [
   [/putenbrustschinken|putenschinken|schinken/i, Z("Putenbrustschinken", 50)],
   [/truthahnsalami|putensalami|salami/i, Z("Truthahnsalami", 40)],
   [/d[öo]nerfl|d[öo]ner(?!.?(teller|box|salat))|drehspie(ß|ss)|kalbfleisch|keba[bp]fleisch/i, Z("Dönerspieß Kalb/Pute", 80)],

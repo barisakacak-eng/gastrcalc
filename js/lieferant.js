@@ -39,7 +39,7 @@ export const LIEFER_MODI = ["lieferung", "abholung"];
 export const BESTELLWEGE = ["whatsapp", "telefon", "mail", "webshop", "vorort"];
 export const WOCHE = [1, 2, 3, 4, 5, 6, 0]; // Reihenfolge für Auswahl und Anzeige: Montag zuerst
 export const VORHER_WAHL = [0, 1, 2, 3];
-export const LIEFERANT_GRENZEN = { tageVorher: [0, 7], lieferzeit: [0, 14], mindestwert: [0, 100000] };
+const LIEFERANT_GRENZEN = { tageVorher: [0, 7], lieferzeit: [0, 14], mindestwert: [0, 100000] };
 const HORIZONT = 35; // so weit schaut die Suche nach Liefertagen (5 Wochen)
 
 const istObj = (x) => !!x && typeof x === "object" && !Array.isArray(x);
@@ -53,12 +53,12 @@ export function uhrLesen(v) {
   const h = Number(m[1]); if (h > 23) return null; return `${String(h).padStart(2, "0")}:${m[2]}`;
 }
 // Vergleichsform eines Händlernamens: klein, ohne Akzente und Satzzeichen („Großhandel (Beispiel)“ = „grosshandelbeispiel“)
-export const lieferantNorm = (s) => String(s ?? "").toLowerCase().replace(/ß/g, "ss").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "");
+const lieferantNorm = (s) => String(s ?? "").toLowerCase().replace(/ß/g, "ss").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "");
 function hash36(s) { let a = 5381, b = 0x811c9dc5; for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); a = (Math.imul(a, 33) + c) | 0; b = Math.imul(b ^ c, 16777619); } return (a >>> 0).toString(36) + (b >>> 0).toString(36).slice(0, 4); }
 // Kennung aus dem Namen: auf jedem Handy gleich – derselbe Beleg-Name ergibt nach dem Zusammenführen keinen doppelten Lieferanten
 export const lieferantKennung = (name) => "lf-" + hash36(lieferantNorm(name) || "leer");
 // Art aus allgemeinen Wörtern im Namen erraten (keine Markennamen); sonst „sonstiges“
-export function artRaten(name) {
+function artRaten(name) {
   const n = lieferantNorm(name);
   if (/getrank|getraenk|brauerei|wasser/.test(n)) return "getraenke";
   if (/backer|baecker|backwaren|backerei/.test(n)) return "baeckerei";
@@ -76,7 +76,7 @@ function schlussSauber(x) {
   if (uhr === null && tageVorher === null) return null;
   return { uhr, tageVorher: tageVorher ?? 1 };
 }
-export function lieferantSauber(x) {
+function lieferantSauber(x) {
   if (!istObj(x) || typeof x.id !== "string" || !x.id.trim()) return null;
   const name = text(x.name, 40); if (!name) return null;
   const tage = [...new Set((Array.isArray(x.tage) ? x.tage : []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6))].sort((a, b) => WOCHE.indexOf(a) - WOCHE.indexOf(b));
@@ -150,7 +150,7 @@ export function lieferantenEntdoppeln(stand) {
 }
 
 // ---------- Lesen ----------
-export const lieferantenAlle = (stand) => (Array.isArray(stand?.lieferanten) ? stand.lieferanten : []);
+const lieferantenAlle = (stand) => (Array.isArray(stand?.lieferanten) ? stand.lieferanten : []);
 export const lieferantenAktiv = (stand) => lieferantenAlle(stand).filter((l) => !l.entfernt).slice().sort((a, b) => a.name.localeCompare(b.name, "de"));
 export const lieferantMitId = (stand, id) => (id ? lieferantenAlle(stand).find((l) => l.id === id && !l.entfernt) || null : null);
 // Lieferant zu einem Beleg-Namen (Name oder einer der Beleg-Namen); entfernte zählen nicht
@@ -193,7 +193,7 @@ const ruhetag = (stand, d) => ruhetageAm(stand, d).includes(wochentag(d)) || fei
 // Lieferant und der Großmarkt hat zu – der Bestellvorschlag springt zum nächsten Liefertag. Bestellschluss bleibt der des Liefertags.
 const feiertag = (stand, d) => !!feiertagImLaden(stand, d);
 // Wie viele Tage vor dem Liefertag ist Bestellschluss, bis wann? Abholung: am Tag selbst, ohne Uhrzeit.
-export function bestellFrist(lf) {
+function bestellFrist(lf) {
   if (lf.modus === "abholung") return { tageVorher: 0, uhr: null };
   if (lf.schluss) return { tageVorher: lf.schluss.tageVorher, uhr: lf.schluss.uhr };
   return { tageVorher: lf.lieferzeit ?? 1, uhr: null };

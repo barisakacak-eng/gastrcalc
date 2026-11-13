@@ -72,7 +72,6 @@ const ORTE = { lokal: lokalOrt(), cloud: cloudOrt };
 let aktiv = "lokal";
 export const ablageOrt = () => aktiv;
 export const ablageFluechtig = () => ORTE[aktiv].fluechtig;
-export function ablageOrtSetzen(name) { if (!ORTE[name]) throw new Error("unbekannter Ablageort"); aktiv = name; }
 
 export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell", "gericht", "zbon"]; // zbon (18.10.2026): Foto des Z-Bons, nachvollziehbar für Amt/Steuerberater
 

@@ -16,7 +16,8 @@ import { heuteGeschaeft, fmtEuro } from "./util.js";
 import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang-Text mit Ausschankmenge (§ 13 PAngV)
 import { rund2, nettoVonBrutto } from "./geld.js";
 
-export const KOMBI_MIN = 2, KOMBI_MAX = 4;
+const KOMBI_MIN = 2;
+export const KOMBI_MAX = 4;
 // Stufe 1 (17.10.2026): Rabatt-Stufen auf die Summe der Einzelpreise. KEINE Branchenzahl – eine Annahme der App, damit der Wirt drei
 // Richtungen vergleichen kann: 5 % ist bei 10–15 € Kombi ≈ 50–75 Cent (eine Preisstufe, „kleiner Rabatt“), 10 % ≈ ein Getränk billiger,
 // 15 % eine deutliche Ansage. Gerundet wird danach auf 50 Cent (wie die Abverkaufs-Preise, js/haltbar.js).
@@ -36,7 +37,7 @@ export function kombiGrenze(stand) {
 }
 
 // Gerichte, die sich für eine Kombi rechnen lassen: Kartenpreis und vollständiger Wareneinsatz
-export function kombiTeile(stand, k = kalkulation(stand)) {
+function kombiTeile(stand, k = kalkulation(stand)) {
   const gs = new Map((stand.gerichte || []).map((g) => [g.id, g]));
   return k.zeilen.filter((z) => z.preisBrutto > 0 && z.waren !== null).map((z) => ({ id: z.id, name: z.name, klasse: z.klasse, preis: z.preisBrutto, netto: nettoVonBrutto(z.preisBrutto, z.mwst), mwst: z.mwst,
     waren: z.waren, rohertrag: nettoVonBrutto(z.preisBrutto, z.mwst) - z.waren, geschaetzt: !!z.warenGeschaetzt, aushang: nameMitMenge(gs.get(z.id), kurzName(z.name)) }));

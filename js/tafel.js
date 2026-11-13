@@ -22,7 +22,7 @@ export const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 export const TAFEL_SEKUNDEN = [8, 12, 20, 30];   // Auswahl im Büro (gespeichert werden 5–120 s, store.js)
 export const ZEILEN_JE_SPALTE = 6;                // so viele Gerichte stehen in einer Spalte (lesbar aus 3–4 m auf 40–55 Zoll, Annahme)
 export const SPALTEN_JE_SEITE = 2;
-export const AKTIONEN_JE_SEITE = 3;
+const AKTIONEN_JE_SEITE = 3;
 const GRUPPE_JE_KLASSE = { haupt: "speisen", gross: "speisen", kleinigkeit: "beilagen", getraenk: "getraenke" };
 
 // ---------- Einstellungen ----------
@@ -44,7 +44,7 @@ export function tafelSetzen(stand, feld, wert) {
 }
 
 // ---------- Gerichte ----------
-export const tafelGruppe = (g) => GRUPPE_JE_KLASSE[g?.klasse] || "speisen";
+const tafelGruppe = (g) => GRUPPE_JE_KLASSE[g?.klasse] || "speisen";
 // Ausschankmenge aus Text: „Cola 0,33 l“, „Wasser 0.5l“, „Bier 500 ml“, „Saft 20 cl“, „Ayran 0,25 Liter“ → „0,33 l“ … (wie geschrieben, Komma, kleine Einheit)
 const MENGE_RE = /(\d+(?:[.,]\d+)?)\s*(ml|cl|liter|l)(?![a-zäöüß])/i;
 export function mengeAusText(text) {
@@ -54,7 +54,7 @@ export function mengeAusText(text) {
 }
 // Getränke (18.10.2026): { menge, imNamen, anders } aus dem Feld getraenk.menge. imNamen: der Name nennt dieselbe Menge (dann nicht doppelt
 // anschreiben); anders: der Name nennt eine andere Menge als das Feld (das Feld gilt, Hinweis im Büro). menge null = fehlt.
-export function ausschankMenge(g) {
+function ausschankMenge(g) {
   const x = getraenkVon(g); const feld = x?.menge ?? null; const imName = literAusText(g?.name);
   if (!feld) return { menge: null, imNamen: false, anders: false };
   return { menge: literText(feld), imNamen: imName !== null && Math.abs(imName - feld) < 1e-6, anders: imName !== null && Math.abs(imName - feld) >= 1e-6 };
@@ -137,8 +137,8 @@ export const tafelStundeStimmt = () => TAFEL_STUNDE === GESCHAEFTSTAG_BIS_STUNDE
 // ---------- Beschreibung ----------
 const euro = (n) => fmtEuro(n, { dezimal: 2 });
 const z2 = (n) => String(n).padStart(2, "0");
-export const tafelDatum = (sprache, iso) => { if (typeof iso !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; const l = tIn(sprache, "aktionen.wt"); return `${(Array.isArray(l) && l[wochentag(iso)]) || ""} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`.trim(); };
-export const tafelStandText = (jetzt) => { const d = new Date(jetzt); const tag = isoTag(d); return `${tag.slice(8)}.${tag.slice(5, 7)}.${tag.slice(0, 4)} ${uhr(d)}`; }; // Berliner Zeit
+const tafelDatum = (sprache, iso) => { if (typeof iso !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; const l = tIn(sprache, "aktionen.wt"); return `${(Array.isArray(l) && l[wochentag(iso)]) || ""} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.`.trim(); };
+const tafelStandText = (jetzt) => { const d = new Date(jetzt); const tag = isoTag(d); return `${tag.slice(8)}.${tag.slice(5, 7)}.${tag.slice(0, 4)} ${uhr(d)}`; }; // Berliner Zeit
 // Gleichmäßig auf Spalten verteilen: 9 → 5 + 4 (nicht 6 + 3)
 function stuecke(liste, max) { const n = Math.ceil(liste.length / max); const out = []; let i = 0; for (let k = 0; k < n; k++) { const g = Math.ceil((liste.length - i) / (n - k)); out.push(liste.slice(i, i + g)); i += g; } return out; }
 
@@ -184,7 +184,7 @@ export function tafelBeschreibung(stand, { heuteTag = heuteGeschaeft(), jetzt = 
 
 // ---------- Datei ----------
 // Bild-Schlüssel: gleiche Quelle = ein eingebettetes Bild (ein Foto für mehrere Gerichte nur einmal in der Datei)
-export const bildSchluessel = (b) => (!b ? null : b.eigen ? "eigen:" + b.eigen : b.foto ? "foto:" + b.foto : b.pikto ? "pikto:" + b.pikto : null);
+const bildSchluessel = (b) => (!b ? null : b.eigen ? "eigen:" + b.eigen : b.foto ? "foto:" + b.foto : b.pikto ? "pikto:" + b.pikto : null);
 const bildPfad = (b) => (b?.foto ? `foto/${b.foto}.webp` : b?.pikto ? `bilder/${b.pikto}.svg` : null);
 // Alle Bilder, die die Tafel braucht (je Schlüssel einmal), mit Quelle – für tafelBilder
 export function tafelBildListe(b) {
@@ -222,7 +222,7 @@ body{background:${farben.tinte};color:${farben.weiss};font-family:system-ui,-app
 .beispiel{color:${farben.gelbHell};font-weight:800}.leer{font-size:3rem;padding-top:10rem;text-align:center}`;
 // Farben aus css/tokens.css (Kräuter & Kupfer, Sanji 15.10.2026) – fest übernommen, weil die Datei ohne die App läuft.
 // Kontrast (WCAG): Weiß auf Salbei-tief 10,6:1; Preis-Gelb (Kurve Prognose) auf Salbei-tief 8,5:1; Kupfer-dunkel auf Papier 6,3:1.
-export const TAFEL_FARBEN = { tinte: "#1F2A24", tinteDunkel: "#1F2A24", tinteWeich: "#55604F", weiss: "#FFFDF8", salbeiTief: "#2E4034", holz: "#DDC9AD", holzTief: "#C9A87C",
+const TAFEL_FARBEN = { tinte: "#1F2A24", tinteDunkel: "#1F2A24", tinteWeich: "#55604F", weiss: "#FFFDF8", salbeiTief: "#2E4034", holz: "#DDC9AD", holzTief: "#C9A87C",
   lehm: "#78583F", glut: "#C97A3E", papier: "#F5EBDD", kupferDunkel: "#8A4C20", gelbHell: "#F6D686" };
 
 // Seitenwechsel, Ablauf der Aktionen, Vollbild per Tipp. ES5 für alte Fernseh-Browser. Der Text von tafelAktionSichtbar wird eingesetzt.
@@ -262,7 +262,7 @@ ${inhalt}
 }
 
 // Dateiname: menuetafel-<laden>-JJJJ-MM-TT.html
-export function tafelDateiName(b) {
+function tafelDateiName(b) {
   const slug = String(b.laden || "").toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
   return `menuetafel-${slug ? slug + "-" : ""}${heute(new Date(b.jetzt))}.html`;
 }
@@ -284,7 +284,7 @@ async function verkleinert(blob, max = 640) {
   const c = document.createElement("canvas"); c.width = Math.round(bm.width * f); c.height = Math.round(bm.height * f);
   c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height); bm.close?.(); return c.toDataURL("image/jpeg", 0.82);
 }
-export async function tafelBildLesen(bild) {
+async function tafelBildLesen(bild) {
   if (bild?.eigen) { const { holen } = await import("./ablage.js"); const blob = bild.meta ? await holen(bild.meta) : null; if (blob) return verkleinert(blob); if (!bild.pikto) return null; bild = { pikto: bild.pikto }; }
   const pfad = bildPfad(bild); if (!pfad || typeof fetch !== "function") return null;
   const r = await fetch(pfad); if (!r.ok) return null;

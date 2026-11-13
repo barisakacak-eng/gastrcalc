@@ -53,7 +53,7 @@ export const SELBST_KACHELN = [
 ];
 
 // Welche Kacheln eine Laden-Art überhaupt sieht (Reihenfolge = Anzeige). Foodtruck und „Etwas anderes": alle.
-export const KACHELN_JE_ART = {
+const KACHELN_JE_ART = {
   doener: ["teig", "brot", "lahmacun", "sossen", "patty", "tomatensosse"],
   imbiss: ["patty", "sossen", "brot", "teig"],
   pizza: ["teig", "tomatensosse", "sossen"],

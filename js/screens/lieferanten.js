@@ -26,7 +26,7 @@ const ue = (text) => `<h2 class="inv-ue">${esc(text)}</h2>`;
 const tageText = (tage) => tage.map((d) => t("kuehl.tage." + d)).join(", ");
 const vorherText = (n) => t("lieferanten.vorher." + Math.min(3, n));
 // Rhythmus in einem Satz: „liefert Di, Fr · Bestellschluss am Vortag 18 Uhr“ / „Abholung Mi“ / „keine festen Liefertage“
-export function rhythmusText(lf) {
+function rhythmusText(lf) {
   if (!lf.tage.length) return lf.lieferzeit ? t("lieferanten.ohneTageLieferzeit", lf.lieferzeit) : t("lieferanten.ohneTage");
   if (lf.modus === "abholung") return t("lieferanten.abholungAn", tageText(lf.tage));
   const schluss = lf.schluss ? t("lieferanten.schlussText", vorherText(lf.schluss.tageVorher), uhrText(lf.schluss.uhr)) : lf.lieferzeit ? t("lieferanten.lieferzeitText", lf.lieferzeit) : "";

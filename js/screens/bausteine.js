@@ -50,7 +50,7 @@ export const mengeEinheitText = (menge, einheit) => einheit === "portion" ? t("m
 // „2 × Kiste“ (sprachneutral). Vorher bestand.js (von aktionen.js und verkauf.js importiert).
 // Prüfer 19.10.2026: Gebinde in Vierteln statt „0,50“ – so zählt man im Lager („½ Karton“, „1 ¼ Kisten“)
 const VIERTEL = { 0.25: "¼", 0.5: "½", 0.75: "¾" };
-export const anzahlViertel = (anzahl) => { const q = Math.round(anzahl * 4) / 4; if (q === 0 && anzahl > 0) return "< ¼"; const g = Math.floor(q); const r = VIERTEL[q - g]; return r ? (g ? `${fmtZahl(g, 0)} ${r}` : r) : fmtZahl(q, 0); };
+const anzahlViertel = (anzahl) => { const q = Math.round(anzahl * 4) / 4; if (q === 0 && anzahl > 0) return "< ¼"; const g = Math.floor(q); const r = VIERTEL[q - g]; return r ? (g ? `${fmtZahl(g, 0)} ${r}` : r) : fmtZahl(q, 0); };
 export const gebindeAnzahl = (anzahl, art) => `${anzahlViertel(anzahl)} × ${t("gebinde.arten." + (art || "packung"))}`;
 
 // ---------- Teilen (Browser) ----------

@@ -16,8 +16,8 @@ import { wert } from "./data/regelwerk.js";
 import { csvText, datumDe, schwund } from "./export_steuer.js";
 import { tageZwischen, uhr, tagPlusMonate, wochentag, monatsLetzter } from "./zeit.js";
 
-export const BELEHRUNG_MONATE = wert("belehrung_monate", "2026-12-31");  // Folgebelehrung, Abstand im Regelwerk (belehrung_monate)
-export const BELEHRUNG_BALD_TAGE = 60; // ab zwei Monaten vorher: „bald fällig“ (Erinnerung im Büro, nicht im Laden)
+  // Folgebelehrung, Abstand im Regelwerk (belehrung_monate)
+const BELEHRUNG_BALD_TAGE = 60; // ab zwei Monaten vorher: „bald fällig“ (Erinnerung im Büro, nicht im Laden)
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const gueltig = (d) => typeof d === "string" && ISO.test(d) && !Number.isNaN(Date.parse(d + "T12:00:00"));
 const min = (a, b) => (a < b ? a : b), max = (a, b) => (a > b ? a : b);
@@ -112,7 +112,7 @@ export function belehrungStatus(person, datum = heute()) {
   const faellig = faelligAm(letzte.datum); const tage = tageZwischen(datum, faellig);
   return { status: tage < 0 ? "ueberfaellig" : tage <= BELEHRUNG_BALD_TAGE ? "bald" : "ok", erst: erst?.datum || null, letzte: letzte.datum, letzteArt: letzte.art, faellig, tage };
 }
-export const belehrungenVon = (stand, p) => [...(p?.belehrungen || []), ...(stand?.belehrungen || []).filter((b) => b && !b.storniert && b.person === p?.id)];
+const belehrungenVon = (stand, p) => [...(p?.belehrungen || []), ...(stand?.belehrungen || []).filter((b) => b && !b.storniert && b.person === p?.id)];
 export const aktivePersonen = (stand) => (stand.personen || []).filter((p) => p && p.aktiv !== false && !p.entfernt);
 // W2-H (p03 H3): Ausgeschiedene bleiben im Ordner, wenn sie Belehrungen haben oder in Einträgen stehen – mit Status „ausgeschieden“,
 // ohne in die Zählung (vollständig, fällig) einzugehen.
@@ -146,7 +146,7 @@ export function belehrungEntfernen(stand, personId, datum, art) {
 
 // ---------- Geräte und Grenzen (Übersicht, kein HACCP-Konzept) ----------
 // W2-H (p03 H7): kein „vollständig“ mehr – nur „Geräteliste vorhanden“. vollstaendig bleibt null (neutral, kein grüner Haken).
-export function eigenkontrolle(stand) {
+function eigenkontrolle(stand) {
   const plan = stand.putzplan?.aktiv ? stand.putzplan : null;
   const kuehlstellen = aktiveStellen(stand).map((k) => { const g = grenzenVon(k); return { name: k.name || "?", art: k.art || "kuehl", ware: k.ware || null, min: g.min, max: g.max, standard: g.standard, wareOhneGrenze: !!g.wareOhneGrenze }; });
   const aufgaben = plan ? aufgabenFuer(plan) : [];
@@ -158,7 +158,7 @@ export function eigenkontrolle(stand) {
 
 // ---------- Weggeworfene Ware (W2-H, p03 M3) ----------
 // Müll und Verderb (Vorgang 1) ohne Euro – die Werte gehören ins Steuerpaket. Herkunft „kuehl“ = aus einer Kühl-Abweichung.
-export function muellAmt(stand, z) {
+function muellAmt(stand, z) {
   const zeilen = schwund(stand, z).zeilen.filter((x) => x.vorgang === 1).map((x) => ({ datum: x.datum, art: x.art, name: x.name, menge: x.menge, einheit: x.einheit, grund: x.grund }));
   const kuehl = new Set((stand.schwund || []).filter((e) => !e.storniert && e.quelle === "kuehl").map((e) => e.datum + "|" + (e.ref?.name || "")));
   for (const x of zeilen) x.ausKuehlung = kuehl.has(x.datum + "|" + x.name);

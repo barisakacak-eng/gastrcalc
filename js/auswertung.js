@@ -14,8 +14,6 @@ export function besteKartenLesart(text, tsv) {
 }
 
 let auswerter = "geraet";
-export const auswerterName = () => auswerter;
-export function auswerterSetzen(name) { if (!["geraet", "ki"].includes(name)) throw new Error("unbekannt"); auswerter = name; }
 
 // ---------- Texterkennung im Arbeitsfaden ----------
 let worker = null; let naechste = 1; const offen = new Map();
@@ -45,7 +43,7 @@ export function vorwaermen() { if (typeof Worker === "undefined") return; try { 
 // Bild für die Erkennung vorbereiten: richtig drehen (EXIF), lange Seite höchstens LANGE_SEITE_ERKENNUNG, Graustufen, leichter Kontrast. Ergebnis PNG-Bytes.
 // Setzung (28.10.2026, F3): längste Seite 1920 px (vorher 2400). Ein Handyfoto hat 12 MP; weniger Pixel heißt weniger Arbeit beim Vorbereiten und Erkennen.
 // Geprüft an drei Testbildern (26 Gerichte, kleine und große Schrift): gleich viele Gerichte erkannt wie mit 2400 px. Unter 1600 px nicht gewählt, zu wenig Reserve für echte Fotos.
-export const LANGE_SEITE_ERKENNUNG = 1920;
+const LANGE_SEITE_ERKENNUNG = 1920;
 // Ältere iPhones (vor iOS 17) kennen die Option imageOrientation nicht: dann ohne, und notfalls über ein <img> (dreht laut EXIF).
 async function bildLesen(datei) {
   try { return await createImageBitmap(datei, { imageOrientation: "from-image" }); } catch (_) {}

@@ -112,4 +112,3 @@ const F = {
 };
 export const l6yText = (schluessel, sprache = "de") => { const x = T[schluessel]; return x ? (x[sprache] ?? x.en ?? x.de) : ""; };
 export const l6ySatz = (schluessel, sprache, ...args) => { const x = F[schluessel]; return x ? (x[sprache] ?? x.en ?? x.de)(...args) : ""; };
-export const L6Y_SCHLUESSEL = [...Object.keys(T), ...Object.keys(F)];

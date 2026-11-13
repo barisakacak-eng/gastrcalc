@@ -18,7 +18,7 @@ export function quelleVon(z, gericht) {
   if (z?.quelle && RANG[z.quelle]) return z.quelle;
   return gericht?.rezeptQuelle === "eigen" && !gericht.vorlage ? "eigen" : "schaetzung";
 }
-export const istHauptzutat = (name) => HAUPT_GRUPPEN.includes(PRODUKT_INDEX[name]?.g) || /teig|patty|spie(ß|ss)/i.test(name);
+const istHauptzutat = (name) => HAUPT_GRUPPEN.includes(PRODUKT_INDEX[name]?.g) || /teig|patty|spie(ß|ss)/i.test(name);
 
 // Stempel des Rezepts: die schwächste Hauptzutat (Verpackung zählt nicht). Ohne Hauptzutat: schwächste Zutat überhaupt.
 export function rezeptStempel(gericht) {
@@ -32,7 +32,7 @@ export function rezeptStempel(gericht) {
   return { stufe: schwach.q, datum: schwach.z.quelleInfo?.datum || null, quellen: schwach.z.quelleInfo?.quellen || null };
 }
 // Für Zähler und Balken: eigen-abgeleitet zählt als eigen
-export const stempelGruppe = (stufe) => (stufe === "eigen" || stufe === "eigen-abgeleitet" ? "eigen" : stufe === "branche" || stufe === "pilot" ? "branche" : stufe ? "schaetzung" : null);
+const stempelGruppe = (stufe) => (stufe === "eigen" || stufe === "eigen-abgeleitet" ? "eigen" : stufe === "branche" || stufe === "pilot" ? "branche" : stufe ? "schaetzung" : null);
 
 // Waage-Check: höchstens 3 Fragen je Gericht – Hauptzutaten, die noch nicht selbst gewogen sind. Reihenfolge: nach Geldwert, wenn Preise da sind,
 // sonst Fleisch, Käse, Teig; bei Gleichstand die Zutat, mit der die meisten Gerichte mitlernen.
@@ -81,8 +81,8 @@ export function geldSatz(stand, zutat, alt, neu, einheit) {
 
 // Branchenwerte einspielen (7.4): nur Mengen mit Quelle „schaetzung" werden ersetzt; Ausreißer abgelehnt; Rückgängig 7 Tage.
 // daten: [{ familie, zutat, menge, min, max, quellen[], stufe: "branche"|"pilot" }]
-export const PLAUSI = { fleisch: [30, 400], fisch: [30, 300], kaese: [10, 200], teig: [50, 600], gemuese: [5, 300], sauce: [5, 150] };
-export function branchenwertPruefen(w) {
+const PLAUSI = { fleisch: [30, 400], fisch: [30, 300], kaese: [10, 200], teig: [50, 600], gemuese: [5, 300], sauce: [5, 150] };
+function branchenwertPruefen(w) {
   if (!w || !PRODUKT_INDEX[w.zutat] || !(w.menge > 0)) return "unbekannt";
   if (w.stufe === "branche" && !((w.quellen || []).length >= 2)) return "zuWenigQuellen";
   const g = PLAUSI[PRODUKT_INDEX[w.zutat].g]; if (g && PRODUKT_INDEX[w.zutat].e !== "stk" && (w.menge < g[0] || w.menge > g[1])) return "ausreisser";

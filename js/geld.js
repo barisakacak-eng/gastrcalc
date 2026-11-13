@@ -24,7 +24,6 @@ export const summe = (liste) => euro(liste.reduce((s, x) => s + cent(x), 0));
 export const mwst = (art, tag) => wert(art === "ermaessigt" ? "mwst_ermaessigt" : "mwst_voll", tag);
 // Netto aus Brutto als Kommazahl (Zwischenwert, ungerundet – gerundet wird erst an der Schnittstelle)
 export const nettoVonBrutto = (betrag, satz) => (Number(betrag) || 0) / (1 + (Number(satz) || 0));
-export const bruttoVonNetto = (betrag, satz) => (Number(betrag) || 0) * (1 + (Number(satz) || 0));
 // Brutto (Cent) in Netto und Steuer (Cent) teilen: netto + ust = brutto, immer.
 export function aufteilen(bruttoCent, satz) { const netto = cent(nettoVonBrutto(bruttoCent, satz) / 100); return { netto, ust: bruttoCent - netto }; }
 // Einen Betrag (Cent) nach Gewichten auf Teile verteilen, ohne dass ein Cent verloren geht (größter Rest bekommt den Rest-Cent)

@@ -14,7 +14,7 @@ import { heute } from "../util.js";
 const datumKurz = (iso) => iso.split("-").reverse().join(".");
 // Hinweis-Motor „Was dir zusteht“: höchstens 3 Karten nach Nutzen (Auswahl und Takt in js/hinweis_motor.js), darunter nur die Fragen,
 // die ein Hinweis braucht. Baris Ja 09.11.2026 17:21 (Bildpaket HM).
-export function hmBlock(stand, sp, datum = heute()) {
+function hmBlock(stand, sp, datum = heute()) {
   const u = (k, w) => hmUi(sp, k, w);
   const { karten } = hmFuerBuero(stand, { datum }); const fragen = hmOffeneFragen(stand); const n = hmErledigtZahl(stand);
   if (!karten.length && !fragen.length && !n) return "";

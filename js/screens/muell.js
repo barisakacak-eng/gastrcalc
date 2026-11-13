@@ -22,7 +22,8 @@ export function wareBild(x) {
 }
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
-import { datumLesbar, tagGewaehlt, eintragName, tagLesbar } from "./tag.js";
+import { datumLesbar, eintragName, tagLesbar } from "../anzeige_text.js";
+import { tagGewaehlt } from "./tag_wahl.js";
 import { plusTage, wochentag } from "../zeit.js";
 import { rund2 } from "../geld.js";
 

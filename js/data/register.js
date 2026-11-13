@@ -67,5 +67,4 @@ export const PAKETE = [
 export const STUFEN = ["beleg", "branche", "pilot", "schaetzung"];
 
 // Sanji-Lieferungen schreiben „burger“ (bruecke/LIESMICH.md); in der App heißt die Laden-Art „imbiss“ (Imbiss, Burger, Pommes).
-export const LADEN_ART_ALIAS = { burger: "imbiss" };
-export const ladenArtAusLieferung = (x) => LADEN_ART_ALIAS[x] || x;
+const LADEN_ART_ALIAS = { burger: "imbiss" };

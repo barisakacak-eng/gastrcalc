@@ -15,8 +15,7 @@ export function lohnAufschlag(art, tag) {
   return { satz: wert("abgaben_angestellt", tag) + wert("umlagen_angestellt", tag) + bgn, geschaetzt: true, stand: regel("abgaben_angestellt", tag).ab.slice(0, 4) };
 }
 // Stichtag für die alten Namen unten: Ende 2026 (alle Sätze 2026 gelten dann noch; Ergebnisse wie bisher).
-export const LOHN_STICHTAG = "2026-12-31";
-export const BGN_ANTEIL = wert("bgn_anteil", LOHN_STICHTAG);
+const LOHN_STICHTAG = "2026-12-31";
 export const LOHN_AUFSCHLAG = {
   angestellt: lohnAufschlag("angestellt", LOHN_STICHTAG),
   minijob: lohnAufschlag("minijob", LOHN_STICHTAG),

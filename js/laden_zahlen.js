@@ -20,7 +20,6 @@ export function ersteZahlFehlt(stand, last) {
   return null;
 }
 // Lauf 2 (4a): „personal“ fehlt, aber im Monat stehen schon Stunden → die Zahl gibt es als Richtwert (≈, Mindestlohn), dazu „Löhne eintragen“
-export const lohnRichtwertMoeglich = (stand, m) => (m?.lohnRichtwertTage || 0) > 0;
 
 // Zielkarte im Laden. stufe: "bisNull" | "bisZiel" | "ueberZiel" (ohne Ziel = "bisNull"); zahl = die große Zahl (null = keine Kosten);
 // marke = Zielmarke des Balkens (bis null: Umsatz + was fehlt, danach das Monatsziel); anteil 0–1;
@@ -63,7 +62,7 @@ export function heuteKachelZahlen(stand, ks, H, K = heute()) {
 }
 
 // Schwadron 18.10.2026, N2: Kalendertag K ist ein Ruhetag (Ruhetage der Kühlkontrolle, mit Gültig-ab-Verlauf)
-export const istRuhetag = (stand, K = heute()) => ruhetageAm(stand, K).includes(wochentag(K));
+const istRuhetag = (stand, K = heute()) => ruhetageAm(stand, K).includes(wochentag(K));
 
 // „Tag abschließen“ – die drei Haken. H = Geschäftstag. umsatz: Notiz oder null; muell: Auswertung des Tages;
 // kuehl: { eingerichtet, gemessen, stellen, fertig }; schon: letzter Abschluss dieses Tages oder null.

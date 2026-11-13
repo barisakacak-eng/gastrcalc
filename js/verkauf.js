@@ -31,14 +31,14 @@ import { uid, heute, heuteGeschaeft } from "./util.js";
 import { zipLesen, istZip } from "./zip.js";
 import { rund2 } from "./geld.js";
 
-export const HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
+const HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
 // Gibt es für einen Tag Kassendaten und Handeingabe, zählt die Kasse (genauer als abgelesen).
 const RANG = { dsfinvk: 3, kasse: 3, zbon: 2, hand: 1 };
 
 // ---------- Schalter (Entwurf, nur versteckt sichtbar) ----------
 // Der Eigentümer gibt jede sichtbare Änderung erst nach einem Entwurf frei: der Büro-Einstieg „Verkauf“ erscheint nur mit ?verkauf=1
 // (wird im Gerät gemerkt, ?verkauf=0 nimmt ihn weg) oder im Beispiel-Laden.
-export const SCHALTER_KEY = "gc-verkauf";
+const SCHALTER_KEY = "gc-verkauf";
 export function verkaufSchalter({ suche = globalThis.location?.search || "", speicher } = {}) {
   let wert = null; try { wert = new URLSearchParams(suche).get("verkauf"); } catch (_) { wert = null; }
   try {
@@ -122,7 +122,7 @@ const TABELLEN = {
 const basisName = (n) => String(n || "").split(/[\\/]/).pop().toLowerCase();
 
 // Datei(en) des Nutzers → [{ name, bytes }]. ZIP wird ausgepackt (auch gepackte Einträge, js/zip.js), CSV/XML einzeln.
-export async function dateienLesen(dateien) {
+async function dateienLesen(dateien) {
   const out = []; const fehler = [];
   for (const d of dateien || []) {
     try {
@@ -277,7 +277,7 @@ export function zuordnen(stand, { plu = null, text = "", einheit = null } = {}) 
 // „Menü Döner+Pommes+Cola“ ist EIN Kassenartikel, aber drei Gerichte: Bestand, Verbrauch und Rang je Gericht zählen jeden Bestandteil.
 // stand.kassenKombis: [{ id, name, kassenNamen: [Kassentext], plu, teile: [{ gericht, menge }] }]. Gelernt wird wie bei Gerichten (Text/Nummer).
 export const kombisVon = (stand) => (Array.isArray(stand?.kassenKombis) ? stand.kassenKombis : []);
-export const kombiVon = (stand, id) => kombisVon(stand).find((k) => k.id === id) || null;
+const kombiVon = (stand, id) => kombisVon(stand).find((k) => k.id === id) || null;
 const teileSauber = (stand, teile) => { const ids = new Set((stand.gerichte || []).map((g) => g.id)); const m = new Map();
   for (const x of teile || []) { const n = Number(x?.menge); if (ids.has(x?.gericht) && Number.isFinite(n) && n > 0) m.set(x.gericht, (m.get(x.gericht) || 0) + Math.round(n * 1000) / 1000); }
   return [...m.entries()].map(([gericht, menge]) => ({ gericht, menge })); };
@@ -345,7 +345,7 @@ export function gerichtVon(stand, e) {
 const aktiv = (stand) => (stand.verkaeufe || []).filter((v) => !v.storniert);
 // Prüfgremium 17.10.2026 (5): Kassen-ID (Z_KASSE_ID) gehört zum Ersetzungsschlüssel. Dieselbe Kasse und derselbe Tag ersetzt, eine andere Kasse addiert.
 // Einträge von vor dieser Änderung tragen kein Feld „kasse“: sie gelten als derselbe Stand wie die neue Datei (Verhalten wie bisher, kein Doppeltzählen).
-export const kasseVon = (p) => (typeof p?.kasse === "string" && p.kasse ? p.kasse : null);
+const kasseVon = (p) => (typeof p?.kasse === "string" && p.kasse ? p.kasse : null);
 const gleicheKasse = (v, k) => !("kasse" in v) || kasseVon(v) === k;
 const kassenGruppen = (pos) => { const m = new Map(); for (const p of pos) { const k = kasseVon(p); if (!m.has(k)) m.set(k, []); m.get(k).push(p); } return m; };
 const abdruck = (liste) => liste.map((p) => [p.plu || "", normKasse(p.text || p.name), p.einheit || "", rund(p.menge, 3), p.umsatzBrutto ?? ""].join("|")).sort().join("\n");
@@ -566,7 +566,7 @@ export function einkaufMengen(stand, { von, bis }) {
 
 // Grenze, ab der eine Differenz auffällt: gezählt wird in Vierteln eines Gebindes (zweimal gezählt → ¼ Gebinde Spielraum),
 // Rezepte sind Durchschnitte (5 % der erwarteten Menge). Annahme E7 (17.10.2026), im Bericht e7.md beschrieben.
-export const TOLERANZ_GEBINDE = 0.25, TOLERANZ_ANTEIL = 0.05;
+const TOLERANZ_GEBINDE = 0.25, TOLERANZ_ANTEIL = 0.05;
 
 // (c) Abgleich mit der Inventur: Ist-Verbrauch = Anfang + Einkauf − Ende (zwischen zwei abgeschlossenen Inventuren, Zeitraum wie inventurVergleich:
 // Tag nach der vorigen Inventur bis einschließlich Tag dieser). Erwartet = Soll aus Verkäufen + erfasster Müll + Personalessen.
@@ -620,7 +620,7 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
 
 // (d) Ladenhüter: Gerichte ohne Verkauf oder mit sehr wenig (unter 10 % des Durchschnitts der verkauften Gerichte) im Zeitraum.
 // Totes Lager: Ware im Bestand der letzten Inventur, die kein verkauftes Gericht braucht – mit gebundenem Geld (Bestand × Preis der Inventur).
-export const WENIG_ANTEIL = 0.1;
+const WENIG_ANTEIL = 0.1;
 export function ladenhueter(stand, z, vk = verkaufJeGericht(stand, z)) {
   if (!(vk.menge > 0)) return { gerichte: [], totesLager: [], gebunden: 0, ohneDaten: true };
   const verkauft = vk.zeilen.filter((r) => r.menge > 0); const schnitt = verkauft.reduce((s, r) => s + r.menge, 0) / verkauft.length;

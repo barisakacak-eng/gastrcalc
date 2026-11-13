@@ -14,7 +14,7 @@ import { uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js"
 import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus, istRichtpreis } from "./engine.js";
-import { warenQuote } from "./zaehler.js";
+import { warenQuote } from "./warenquote.js";
 import { artikelText, sprache } from "./i18n.js"; // Trennung 2 (17.10.2026): Reihenfolge nach dem angezeigten Namen
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { tageZwischen, berlin } from "./zeit.js";
@@ -53,7 +53,7 @@ export function anbruchSetzen(alt, t) {
   return ganz + viertel(t);
 }
 
-export const inventurenAlle = (stand) => Array.isArray(stand.inventuren) ? stand.inventuren : [];
+const inventurenAlle = (stand) => Array.isArray(stand.inventuren) ? stand.inventuren : [];
 export const inventurOffen = (stand) => inventurenAlle(stand).find((i) => !i.abgeschlossen) || null;
 export const inventurenFertig = (stand) => inventurenAlle(stand).filter((i) => i.abgeschlossen)
   .sort((a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.abgeschlossen).localeCompare(String(b.abgeschlossen)));
@@ -61,7 +61,7 @@ export const inventurenFertig = (stand) => inventurenAlle(stand).filter((i) => i
 // Regel: abgeschlossen am Kalendertag des Zähltags zwischen 04:00 (Beginn des Geschäftstags) und 11:00 → „vor“ (wie mahlzeitJetzt in
 // js/muell.js: bis 11 Uhr ist Frühstück, der Verkauf eines Imbisses beginnt danach). Alles andere (auch 01:15 nach Mitternacht) → „nach“.
 // Beim Abschluss steht das Ergebnis als inv.zeitpunkt fest ("vor" | "nach"); alte Inventuren ohne Feld bekommen es aus der Uhrzeit.
-export const VOR_VERKAUF_BIS_STUNDE = 11;
+const VOR_VERKAUF_BIS_STUNDE = 11;
 export function inventurVorVerkauf(inv) {
   if (inv?.zeitpunkt === "vor") return true; if (inv?.zeitpunkt === "nach") return false;
   const d = new Date(inv?.abgeschlossen); if (typeof inv?.abgeschlossen !== "string" || !Number.isFinite(d.getTime())) return false;
@@ -71,7 +71,6 @@ export function inventurVorVerkauf(inv) {
 export const inventurAbTag = (inv) => (inventurVorVerkauf(inv) ? inv.datum : tagPlus(inv.datum, 1));
 export const inventurBisTag = (inv) => (inventurVorVerkauf(inv) ? tagPlus(inv.datum, -1) : inv.datum);
 // Von Hand ändern (Büro, falls die Uhrzeit täuscht): "vor" | "nach"
-export function inventurZeitpunktSetzen(inv, wert) { if (!inv || !["vor", "nach"].includes(wert)) return false; inv.zeitpunkt = wert; return true; }
 
 // Die fertige Inventur direkt vor `inv` (nach Datum und Abschlusszeit); für eine offene die letzte fertige.
 export function inventurVorher(stand, inv) {
@@ -198,7 +197,7 @@ export function inventurVerwerfen(stand, inv) {
 }
 
 // Einkauf aus Belegen (netto) in einem Zeitraum, stornierte zählen nicht – wie im Zähler (Stufe 3).
-export function einkaufZeitraum(stand, { von, bis }) {
+function einkaufZeitraum(stand, { von, bis }) {
   let summe = 0, belege = 0; const lieferanten = new Set();
   for (const l of stand.lieferungen || []) {
     if (l.storniert || typeof l.datum !== "string" || l.datum < von || l.datum > bis) continue;
@@ -208,7 +207,7 @@ export function einkaufZeitraum(stand, { von, bis }) {
   return { summe, belege, lieferanten: [...lieferanten] };
 }
 // Einkauf an Betriebsmitteln (Putzmittel, Müllbeutel, Handschuhe …) aus Belegzeilen im Zeitraum
-export function betriebsmittelEinkauf(stand, { von, bis }) {
+function betriebsmittelEinkauf(stand, { von, bis }) {
   let summe = 0;
   for (const l of stand.lieferungen || []) { if (l.storniert || typeof l.datum !== "string" || l.datum < von || l.datum > bis) continue;
     for (const z of l.zeilen || []) if (typeof z.netto === "number" && lagerortFuer({ name: z.artikel || z.name }) === "reinigung") summe += z.netto; }

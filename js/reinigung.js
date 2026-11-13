@@ -6,7 +6,7 @@
 //   inventur   – Einkauf minus Bestand aus zwei Inventuren (genauer geht es nicht; kommt mit Punkt 3)
 // Eigene Putzzeit ist KEIN Geld vom Konto: Teamlohn steckt schon im Personal, Inhaberzeit kostet kein Geld. Sie wird nur als Einsicht gezeigt.
 import { heute } from "./util.js";
-import { oeffnungstage } from "./engine.js"; // Lauf 6 (P1 C3): dieselbe Öffnungstage-Regel wie im Zähler (inkl. „an Feiertagen zu“); Kreisimport ist unschädlich, weil nur zur Laufzeit aufgerufen
+import { oeffnungstage } from "./oeffnung.js"; // dieselbe Öffnungstage-Regel wie im Zähler (inkl. „an Feiertagen zu“)
 // Paket 3 (16.10.2026), M1: Kleinunternehmer bekommen keine Vorsteuer zurück – der Bruttobetrag zählt, wie er ist.
 // Sonst gilt der Regelsatz (Regelwerk mwst_voll) für Dienstleistung und Putzmittel, am Tag des Vorgangs.
 const vorsteuer = (stand, tag = heute()) => (stand.betrieb?.kleinunternehmer ? 0 : mwst("voll", tag));

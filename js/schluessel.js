@@ -5,7 +5,7 @@
 // Das Passwort wird nirgends gespeichert – es lebt nur im Aufruf.
 import { PBKDF2_RUNDEN } from "./modus.js";
 
-export const KENNUNG = "GCS1";
+const KENNUNG = "GCS1";
 export const SICHERUNG_ENC = "sicherung.enc";
 export const LIESMICH_NAME = "LIESMICH.txt";
 export const PASSWORT_MIN = 6;

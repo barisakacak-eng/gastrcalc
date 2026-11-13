@@ -7,7 +7,7 @@
 // Außen steht nur ein Satz (haltbarUhrzeit), im Laden nichts.
 import { EINHEITEN } from "./data/katalog.js";
 import { kalkulation, tagPlus, wochentag } from "./engine.js";
-import { bestandStand, bedarfAm, datumKurzDe } from "./bestand.js";
+import { bestandStand, bedarfAm, datumKurzDe } from "./bestand_stand.js";
 import { einkaufMengen, bedarfGericht } from "./verkauf.js";
 import { heute, heuteGeschaeft } from "./util.js";
 import { fmtEuro } from "./util.js";
@@ -19,8 +19,8 @@ import { tageZwischen } from "./zeit.js";
 import { rund2, nettoVonBrutto } from "./geld.js";
 
 export const HALTBAR_ARTEN = ["mhd", "verbrauch"];
-export const ABVERKAUF_TAGE = 7;   // Stufe 1 (17.10.2026): MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
-export const VORLAUF_TAGE = 7;     // Verbrauchsdatum: so weit voraus zeigt „Läuft ab“ (Annahme Stufe 1)
+const ABVERKAUF_TAGE = 7;   // Stufe 1 (17.10.2026): MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
+const VORLAUF_TAGE = 7;     // Verbrauchsdatum: so weit voraus zeigt „Läuft ab“ (Annahme Stufe 1)
 export const RUECKBLICK_TAGE = 7;  // abgelaufene Ware mit Rest: so lange zurück wird noch erinnert, danach gilt sie als erledigt (Annahme)
 // Stufe 1 (17.10.2026): Preisstufe für Aktionspreise. Die App rundet Zielpreise sonst nur auf 10 Cent (engine.js aufrunden10Cent);
 // eine Regel ,00/,50/,90 gibt es nicht – deshalb wie im Auftrag 50-Cent-Schritte.
@@ -43,7 +43,7 @@ export function haltbarVorschlag(a) {
 }
 export const haltbarArtVon = (a) => (HALTBAR_ARTEN.includes(a?.haltbarArt) ? a.haltbarArt : haltbarVorschlag(a));
 // Für store.js (Migration): nur gültige Angaben bleiben, sonst null
-export function haltbarSauber(h) {
+function haltbarSauber(h) {
   if (!h || typeof h !== "object" || !HALTBAR_ARTEN.includes(h.art) || typeof h.datum !== "string" || !DATUM.test(h.datum)) return null;
   return { art: h.art, datum: h.datum, ...(typeof h.erfasst === "string" ? { erfasst: h.erfasst } : {}) };
 }
@@ -75,7 +75,7 @@ function zeileMenge(l, z) {
   return e && !e.unklar && e.menge > 0 ? { menge: e.menge, basis: e.basis } : null;
 }
 // Verbrauch von `start` bis einschließlich `bis` (Ø je Öffnungstag, Wochentage und Ruhetage wie im Bestand). null = Verbrauch unbekannt.
-export function verbrauchBis(stand, s, start, bis) {
+function verbrauchBis(stand, s, start, bis) {
   if (!s || s.schnitt === null || s.schnitt === undefined) return null;
   if (bis < start || !(s.schnitt > 0)) return 0;
   let summe = 0; for (let d = start; d <= bis; d = tagPlus(d, 1)) summe += bedarfAm(stand, s, d).menge;
@@ -198,7 +198,7 @@ export const kurzName = (n) => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").t
 // ---------- 4. „Die Uhrzeit“ ----------
 // Höchstens EIN Satz für den Büro-Hinweis. Reihenfolge: Verbrauchsdatum heute/morgen/vorbei (rot) → lohnende Aktion (gelb) →
 // Verbrauchsdatum in 2–3 Tagen (gelb) → MHD vorbei (gelb). Im Laden steht nichts.
-export const wtKurz = (iso) => { const l = t("aktionen.wt"); return (Array.isArray(l) && l[wochentag(iso)]) || iso.slice(5); };
+const wtKurz = (iso) => { const l = t("aktionen.wt"); return (Array.isArray(l) && l[wochentag(iso)]) || iso.slice(5); };
 export const datumKurz = (iso) => (typeof iso === "string" && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${wtKurz(iso)} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.` : ""); // „Mo 20.10.“ in der Sprache der App; Prüfgremium 18.10.2026 (H1): ohne Datum leer statt Absturz
 // Prüfgremium 17.10.2026 (4): Letzter Öffnungstag bis zum Ablauf (einschließlich). Ist der Ablauftag ein Ruhetag, muss die Ware vorher weg –
 // „bis morgen“ wäre dann falsch. Gibt es keinen Öffnungstag dazwischen (heute zu, morgen Ablauf und zu), gilt heute.

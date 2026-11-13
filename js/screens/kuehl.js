@@ -36,7 +36,6 @@ let neuKuerzel = "";
 let startVon = null, startNach = null; // Rundgang-Start: gewählte Person (""= ausdrücklich ohne), Nacherfassungs-Datum
 let startStelle = null;         // Nachmessen einer einzelnen Stelle
 
-export const kuehlAnsicht = () => ansicht;
 export const kuehlKennung = () => `${ansicht}:${station || ""}:${rundgangOffen ? "" : ""}`; // für den Doppeltipp-Schutz: jede Ebene ist ein eigener Bildschirm
 export function kuehlZuruecksetzen() { ansicht = "start"; station = null; form = null; }
 export function kuehlZurueck() { // Zurück-Geste: eine Ebene hoch; true = behandelt

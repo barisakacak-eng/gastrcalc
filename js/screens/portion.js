@@ -6,7 +6,7 @@ import { hauptZutat, portionEuro } from "../ware.js";
 import { portionMessungSpeichern } from "../stamm.js";
 import { nav } from "./nav.js";
 
-export const PORTION_SCHRITT = 5; // Setzung 28.10.2026: −/+ in 5 g (bzw. 5 ml)
+const PORTION_SCHRITT = 5; // Setzung 28.10.2026: −/+ in 5 g (bzw. 5 ml)
 let p = null; // { gid, zutat, soll, einheit, wert, fertig }
 export const portionZuruecksetzen = () => { p = null; };
 export function portionOeffnen(stand, gid) {

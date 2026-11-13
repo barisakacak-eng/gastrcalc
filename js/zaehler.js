@@ -1,5 +1,6 @@
 import { teamTag, teamTagKosten, teamTagKostenRichtwert, teamTagLohnFehlt, abwesendMonat, abwesendKosten, lieferTag, lieferProvision, lieferKosten } from "./stamm.js";
 import { inventurenFertig, inventurVergleich } from "./inventur.js";
+import { QUOTE_MAX, warenQuote } from "./warenquote.js";
 // Etappe 5: der Break-even-Zähler (Wunsch Baris 12.10.2026). Reine Funktionen, keine Oberfläche.
 // Jeden Tag: alles, was bis heute an Kosten angefallen ist, gegen alles, was bis heute (netto) reingekommen ist.
 // Rot im Minus („bis null fehlen"), grün im Plus („verdient diesen Monat"). Kalkulatorisch, kein Kontostand.
@@ -26,22 +27,7 @@ export function monatsGrenzen(datum) {
 // Gewicht eines Kalendertags als Öffnungstag: eine Regel in js/engine.js (tagGewicht, Lauf 6 P1 C3), hier nur weitergereicht – viele Module holen sie von hier.
 export { tagGewicht };
 
-// Lauf 6 (P1 C4): EIN Deckel für jede Warenquote (Karte, Belege, Monatsziel, Kombi-Grenze). Vorher: 0,89 in der Karte, 0,9 hier, 0,9 im Monatsziel, 0,9 im Deal.
-export const QUOTE_MAX = 0.9;
-// Warenquote (Anteil Wareneinsatz am Nettoumsatz): eigener Wert vor Karte (mengengewichtet über Gerichte mit Preis und vollständigem Rezept).
-// Paket 3 (16.10.2026), M15/E2: liefert die Karte keine Quote, gilt der Branchen-Richtwert (RICHTWERT_WARENEINSATZ) als Schätzung –
-// quelle "richtwert", geschaetzt true. Vorher stand hier Quote 0 (Ziel zu niedrig). Karte und eigener Wert: geschaetzt false.
-export function warenQuote(stand) {
-  if (typeof stand.verkauf?.warenQuote === "number") return { quote: Math.min(QUOTE_MAX, stand.verkauf.warenQuote), quelle: "eigen", geschaetzt: false };
-  const richtwert = { quote: RICHTWERT_WARENEINSATZ.quote, quelle: "richtwert", geschaetzt: true };
-  if (!(stand.gerichte || []).length) return richtwert;
-  const k = kalkulation(stand);
-  let w = 0, u = 0, richtpreis = false;
-  for (const z of k.zeilen) if (z.waren !== null && z.preisNetto !== null && z.preisNetto > 0) { const m = z.menge || 1; w += z.waren * m; u += z.preisNetto * m; if (z.warenRichtpreis) richtpreis = true; }
-  if (!(u > 0)) return richtwert;
-  // Richtpreise (17.10.2026): steckt in der Karten-Quote ein Richtpreis, ist sie eine Schätzung (≈, Zeile „Richtwert · Preise eintragen“)
-  return { quote: Math.min(QUOTE_MAX, w / u), quelle: "karte", geschaetzt: richtpreis, ...(richtpreis ? { richtpreis: true } : {}) };
-}
+export { QUOTE_MAX, warenQuote }; // wohnen in js/warenquote.js (damit js/inventur.js sie ohne Importkreis nutzen kann)
 
 // Müllwert je Tag (Vorgang 1, bewertete Einträge), als Karte datum → €.
 function muellJeTag(stand, von, bis) {
@@ -72,8 +58,8 @@ const einkaufJeTag = wareNettoAusBelegen; // Stufe 3 des Zählers: Ware je Tag a
 
 // Schwadron 18.10.2026, H1: geglättete Belegquote für die Prognose – Einkauf netto / Umsatz netto der letzten PROGNOSE_FENSTER Kalendertage.
 // null, solange der erste Eintrag (Umsatz oder Beleg) jünger ist als das Fenster: dann zählt der Aufbau des Lagers noch als „Ware“.
-export const PROGNOSE_FENSTER = 28;
-export function belegQuoteFenster(stand, datum, satz) {
+const PROGNOSE_FENSTER = 28;
+function belegQuoteFenster(stand, datum, satz) {
   const von = tagPlus(datum, -(PROGNOSE_FENSTER - 1));
   let erster = null;
   for (const n of stand.tagesnotizen || []) if (!n.storniert && typeof n.umsatz === "number" && typeof n.datum === "string" && (erster === null || n.datum < erster)) erster = n.datum;
@@ -85,7 +71,7 @@ export function belegQuoteFenster(stand, datum, satz) {
 }
 
 // Glättung Stufe 3 (27.10.2026): Belegquote über die vorhandenen Tage (weniger als 28), mit Gewicht 0 bis Tag 7, dann linear bis 1 an Tag 28.
-export function belegQuoteTeil(stand, datum, satz) {
+function belegQuoteTeil(stand, datum, satz) {
   let erster = null;
   for (const n of stand.tagesnotizen || []) if (!n.storniert && typeof n.umsatz === "number" && typeof n.datum === "string" && (erster === null || n.datum < erster)) erster = n.datum;
   for (const l of stand.lieferungen || []) if (!l.storniert && typeof l.datum === "string" && (erster === null || l.datum < erster)) erster = l.datum;

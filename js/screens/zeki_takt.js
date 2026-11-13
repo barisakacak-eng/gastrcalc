@@ -10,7 +10,7 @@ const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freue
 export const ZEKI_ERSTES_ZEICHEN_MS = 1000;
 export const ZEKI_BLINZELN_MS = [2500, 6000];
 export const ZEKI_GESTE_MS = [14000, 22000];
-export const ZEKI_TAKT_MS = 250; // Prüftakt, keine Bewegung
+const ZEKI_TAKT_MS = 250; // Prüftakt, keine Bewegung
 let uhr = null; let schritt = 0;
 const plan = new WeakMap();
 const zwischen = ([a, b], r = Math.random()) => a + Math.round((b - a) * r);
@@ -20,7 +20,7 @@ export function zekiNaechsteBewegung(zustand, n) {
   return folge[((n % folge.length) + folge.length) % folge.length];
 }
 
-export function zekiBlinzeln(svg, doppelt = false) {
+function zekiBlinzeln(svg, doppelt = false) {
   if (!svg || svg.classList.contains("zeki--spielt") || svg.classList.contains("zeki--puppe")) return false;
   const win = svg.ownerDocument?.defaultView;
   if (win?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return false;

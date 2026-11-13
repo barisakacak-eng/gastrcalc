@@ -5,9 +5,6 @@ const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/
 const vonB64 = (s) => Uint8Array.from(atob(String(s).replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
 const zufall = (n) => crypto.getRandomValues(new Uint8Array(n));
 
-export async function bioVerfuegbar() {
-  try { return !!(globalThis.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch { return false; }
-}
 // Neues Schlüsselpaar im Gerät anlegen; Rückgabe: Kennung (Text) oder null
 export async function bioEinrichten() {
   try {

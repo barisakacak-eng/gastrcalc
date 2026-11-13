@@ -21,7 +21,7 @@ let schichtEntwurf = { person: null, datum: null, von: "", bis: "" }; // W3b: Fo
 
 // Setzung 03.11.2026: unter 15 % Wareneinsatz aus Belegen fehlen vermutlich Belege (Richtsatz Imbiss ≈ 32 %) – dann keine Kennzahlen, nur dieser Hinweis
 const PLAUSIBEL_AB = 0.15;
-export const geld3An = () => true; // Baris Ja zu Bildpaket W3 (04.11.2026): kein Schalter mehr
+ // Baris Ja zu Bildpaket W3 (04.11.2026): kein Schalter mehr
 const karte = (id, titel, zahl, inhalt) => `<details class="karte auf g3-karte" data-g3="${id}" data-klapp="g3-${id}"${offeneKlappen.has("g3-" + id) ? " open" : ""}><summary><span><b>${esc(titel)}</b>${zahl ? `<small class="g3-zahl">${zahl}</small>` : ""}</span></summary>${inhalt}</details>`;
 const z = (text, wert, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${wert}</span></div>`;
 
@@ -114,4 +114,4 @@ export function geld3Eingabe(feld, wert, stand) {
   if (feld === "g3-geld") { geldHeuteSetzen(stand, parseZahl(wert), heute()); return true; }
   return false;
 }
-export const geld3Stunden = eintragStunden; // für spätere Anzeige der Stunden je Eintrag
+ // für spätere Anzeige der Stunden je Eintrag

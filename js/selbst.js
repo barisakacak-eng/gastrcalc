@@ -6,7 +6,7 @@ import { ladenArtVon, ladenArtenVon } from "./profil.js";
 
 // Die gewählten Kacheln: eigene Antwort, sonst die Vorauswahl der Laden-Art.
 // P6 (1), 30.10.2026: bei mehreren Ladenarten die Vereinigung der Vorauswahlen.
-export const vorauswahlFuerArten = (arten) => [...new Set(arten.flatMap((a) => vorauswahlFuer(a)))];
+const vorauswahlFuerArten = (arten) => [...new Set(arten.flatMap((a) => vorauswahlFuer(a)))];
 export const selbstGewaehlt = (stand) => (Array.isArray(stand.selbst) ? stand.selbst : vorauswahlFuerArten(ladenArtenVon(stand)));
 
 const neuerArtikel = (name, einheit) => {
