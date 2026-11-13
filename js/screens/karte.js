@@ -3,7 +3,7 @@ import { MENUE_GERICHTE } from "../data/burger_ergaenzung.js";
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
 import { sym, SYMBOLE } from "../symbole.js";
 import { wareBildQuelle } from "../bilder.js"; // Einkaufspreise als Bilderwand (20.10.2026): dieselbe Fotozuordnung wie Müll und Inventur
-import { gerichtBild } from "./vergleich.js";
+import { gerichtBild } from "./gerichtbild.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, einheitLabel, artikelText, gerichtText, mengenText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heute } from "../util.js";

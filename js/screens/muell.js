@@ -13,7 +13,7 @@ import { nav } from "./nav.js";
 import { mengeEinheitText } from "./bausteine.js"; // Trennung
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
-import { gerichtBild } from "./vergleich.js";
+import { gerichtBild } from "./gerichtbild.js";
 import { wareBildQuelle } from "../bilder.js"; // Trennung 2: Bildzuordnung
 import { personalAktiv, personalVon, personalLeiste } from "./personal.js";
 export function wareBild(x) {

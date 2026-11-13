@@ -136,6 +136,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `beleg.js` – Beleg einlesen (Büro).
 - `bestand.js` – Büro „Lager & Bestellen“.
 - `buero.js` – Büro-Startseite.
+- `buero_kopf.js` – Büro-Kopf und Büro-Symbole (klein, damit die Einstellungen im Laden nicht das ganze Büro laden).
 - `ebene.js` – Blätter über dem Bildschirm: Menü, Sprache, Läden, Hilfe, Code, Passwort.
 - `foto.js` – Speisekarte fotografieren, Prüfliste (zeigt erste Gerichte vor dem Ende der Erkennung).
 - `getraenke.js` – Büro „Getränke“.
@@ -166,6 +167,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `umsatz.js` – Büro „Umsatz“ und Zähler-Seite.
 - `umsatz_laden.js` – Laden „Umsatz heute“.
 - `vergleich.js` – Büro „Gerichte im Vergleich“.
+- `gerichtbild.js` – Bild eines Gerichts (Foto oder Piktogramm) für Laden und Büro.
 - `verkauf.js` – Büro „Verkauf je Gericht“.
 - `ware.js` – Büro „Ware & Schwund“.
 - `zeki_erst.js` – Zeki beim ersten Tipp (6b R2).

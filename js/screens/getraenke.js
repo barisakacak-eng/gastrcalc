@@ -7,7 +7,7 @@ import { esc, fmtEuro, fmtZahl, parseZahl } from "../util.js";
 import { getraenkeListe, getraenkHinweise, getraenkSetzen, getraenkAnlegen, grossgebindeWahl, GETRAENK_VORLAGEN } from "../getraenk.js";
 import { GEBINDE_VERKAUF, GROESSEN, literText, literEingabe } from "../getraenk_feld.js";
 import { nav } from "./nav.js";
-import { gerichtBild } from "./vergleich.js"; // Foto links in der Zeile (Zuordnung js/bilder.js)
+import { gerichtBild } from "./gerichtbild.js"; // Foto links in der Zeile (Zuordnung js/bilder.js)
 
 // flüchtiger Bildschirmzustand: offenes Formular { id | "neu", werte: { … als Text } }
 let form = null;
