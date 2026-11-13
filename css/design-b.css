@@ -93,20 +93,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .aufgabe.erledigt .box { background: var(--b-gruen-ok); border-color: var(--b-gruen-ok); }
 .karte.ringkopf { border: 1px solid var(--b-linie); }
 /* Büro: Ordner als große farbige Kacheln mit Status-Pille */
-.b-ordnerkachel { align-items: center !important; text-align: center; min-height: 128px; border: 1px solid var(--b-linie) !important; }
-.b-ordnerkachel .b-ks { width: 52px; height: 52px; border-radius: 14px; }
-.b-ordnerkachel .b-ks .sym { width: 28px; height: 28px; }
-.b-ordnerkachel small { margin-top: auto; padding: 4px 10px; border-radius: 999px; background: var(--papier-tief); color: var(--b-text); font-weight: 700; }
-.b-ordnerkachel small .b-punkt { display: none; }
-.b-ordnerkachel:has(.b-punkt.rot) small { background: var(--b-rot-text); color: #FFFFFF; }
-.b-ordnerkachel:has(.b-punkt.gelb) small { background: var(--b-gelb); color: var(--b-text); }
-.b-ordnerkachel:has(.b-punkt.gruen) small { background: var(--b-primaer-hell); color: var(--b-gruen-ok); }
-.b-ks.amt { background: var(--b-rot-hell); color: var(--b-rot-text); }
-.b-ks.steuer { background: var(--b-gelb-hell); color: var(--b-gelb-text); }
-.b-ks.buch { background: #EEF2EF; color: var(--b-text-leise); }
-.b-chip { border-color: var(--b-linie); }
-.b-bereich { border-radius: 14px; }
-.b-bereich > summary .b-zt b { font-size: calc(18rem / 17); font-weight: 800; }
 .s2willkommen { min-height: calc(100dvh - 200px); }
 .s2willkommen .s2logo { height: 110px; }
 /* Müll (Screen 4): zwei große Fotokacheln je Reihe, Heute-Betrag als rote Karte */
@@ -167,8 +153,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 @media (max-height: 800px) { .muell-anleitung { margin: 0 4px 6px; font-size: calc(13rem / 17); } }
 /* ---- Prüfer-Durchlauf 19.10.2026 (46 Befunde) – Darstellung, Listen, Schrift ---- */
 /* 2: Untertitel nicht unter Knöpfe laufen lassen */
-.b-zeile > span:first-child, .b-zeile .b-zt { min-width: 0; flex: 1 1 auto; }
-.b-zeile small { overflow-wrap: anywhere; }
 /* 3: keine Karte in der eingeklappten Karte; Werte im Rand halten */
 .einklapp-inhalt > .karte { box-shadow: none; border: 0; padding: 0; margin: 0; background: transparent; }
 .summenzeile { gap: 12px; } .summenzeile > span:first-child { min-width: 0; }
@@ -197,7 +181,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 /* 27: Zahlen-Chips mindestens 44 px */
 .chip.klein { min-width: 44px; min-height: 44px; justify-content: center; }
 /* 29: Ordnernamen ohne harte Trennung */
-.b-ordnerkachel b { hyphens: auto; overflow-wrap: normal; word-break: normal; font-size: calc(14.5rem / 17); }
 /* 38: Reiternamen lesbarer */
 .tab { font-size: calc(12rem / 17); }
 /* 39: Listen-Kopf ohne schweren Rotverlauf */
@@ -205,7 +188,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 /* 40: „Andere“ mit durchgezogener Linie */
 .ware.andere { border: 1.5px solid var(--b-linie); }
 /* 46: Bereichstitel klar größer */
-.b-bereich > summary .b-zt b { font-size: calc(19rem / 17); }
 /* Preis-Blatt (19.10.2026): Gewinn nach allen Kosten + „Wohin geht dein Preis?“ */
 .kl-bleibt span small { display: block; font-size: calc(12.5rem / 17); font-weight: 500; color: var(--b-text-leise); }
 .kl-wohin { margin: -4px 0 14px; padding: 12px 14px; border: 1px solid var(--b-linie); border-radius: 14px; background: var(--b-karte); }
@@ -221,9 +203,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .t-ware i, i.t-ware { background: #E29A5B; } .t-personal i, i.t-personal { background: #5B8DB8; } .t-miete i, i.t-miete { background: #8E7CC3; }
 .t-neben i, i.t-neben { background: #A7B3AD; } .t-steuer i, i.t-steuer { background: #D9C27A; } .t-gewinn i, i.t-gewinn { background: var(--b-gruen-ok); }
 /* Paket C: „Das legst du selbst bei“ */
-.b-beilagen { margin-top: 12px; border: 1px solid var(--b-linie); }
-.b-beilagen b { display: block; font-size: calc(16rem / 17); margin-bottom: 6px; }
-.b-beilagen ul { margin: 0 0 8px; padding-left: 20px; } .b-beilagen li { margin: 4px 0; font-size: calc(15rem / 17); }
 /* Paket D (Prüfer-Rest, 19.10.2026) */
 .knopf .sym { width: 20px; height: 20px; vertical-align: -4px; margin-right: 4px; }
 span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
@@ -244,8 +223,6 @@ span.pstufe, .pstufe.pflicht { font-size: calc(12rem / 17); }
 .lf-z .sym { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--b-text-leise); }
 .vk-rang { display: inline-block; min-width: 2.2em; color: var(--b-text-leise); font-variant-numeric: tabular-nums; } /* gleicher Platz: Nummer nur einmal */
 /* Amt-Ordner: Pflichtnachweise oben (gezählt), darunter Angaben ohne Haken (Prüfer 19.10.2026) */
-.b-status.info { background: var(--papier-tief); color: var(--b-text-leise); font-weight: 800; font-size: calc(13rem / 17); }
-.b-trenner { height: 1px; background: var(--b-linie); margin: 6px 0; }
 
 /* Selbst gemacht als Unterrezept (19.10.2026, Teil 1): Ansatz-Editor in der Einkaufsliste */
 .sz { display: grid; gap: calc(8rem/17); }

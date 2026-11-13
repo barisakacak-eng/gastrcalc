@@ -87,7 +87,7 @@ function eigKarte(l, ue, aktiv) {
         ${feld(t("eigentuemer.kennzahl.lager"), c.lager, c.bestellen)}
       </div>
       <div class="hinweis">${esc(zeile)}</div>
-      ${c.fehlt ? `<span class="marke geschaetzt">${esc(c.fehlt)}</span>` : ""}
+      ${c.fehlt ? `<span class="marke geschaetzt unvollstaendig">${esc(c.fehlt)}</span>` : ""}
     </div>`;
 }
 

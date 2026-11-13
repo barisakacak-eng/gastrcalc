@@ -49,6 +49,7 @@ async def main():
                     await ctx.add_init_script("Object.defineProperty(navigator,'serviceWorker',{value:{controller:{},ready:Promise.resolve(),register:()=>Promise.resolve({}),addEventListener(){},getRegistrations:()=>Promise.resolve([])},configurable:true})")
                     pg = await ctx.new_page(); pg.on("pageerror", lambda e: fehler.append(str(e)))
                     await schnellstart.schnellstart(pg, PORT); await H.beispiel_laden(pg)
+                    print(f"-- {sprache} {w}x{h}", flush=True)
                     for z in ZIELE:
                         try:
                             await H.zu_ziel(pg, z)
@@ -67,7 +68,7 @@ async def main():
                                 if len(r["glut"]) > 1: befunde.append(f"{wo}: mehr als ein Element in Glut: {r['glut'][:5]}")
                                 if r["buehnen"] != 1: befunde.append(f"{wo}: {r['buehnen']} Bühnen")
                         except Exception as e:
-                            befunde.append(f"{sprache} {w}x{h} {z}: Fehler {repr(e)[:160]}")
+                            print("Fehler", z, repr(e)[:100], flush=True); befunde.append(f"{sprache} {w}x{h} {z}: Fehler {repr(e)[:160]}")
                     if fehler: befunde.append(f"{sprache} {w}x{h}: JS-Fehler {fehler[:2]}")
                     await ctx.close()
             await b.close()
