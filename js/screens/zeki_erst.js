@@ -35,7 +35,7 @@ export function erstZeigen(doc, punkt, satz, speicher) {
     <button type="button" class="knopf" data-ze="ok">${esc(t("rundgang.erst.ok"))}</button></div></div>`;
   doc.body.appendChild(el);
   el.dataset.punkt = punkt;
-  const buehne = doc.querySelector(".gc-buehne"); if (buehne) el.style.top = Math.round(buehne.getBoundingClientRect().bottom + 8) + "px"; // direkt unter der Bühne, die jetzt leer ist
+  // Die Karte sitzt unten über der Leiste (css/zeki.css) und deckt weder Titel noch die erste Zeile zu; die Bühne ist dabei leer.
   // Pilotfest (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
   const weg = () => { el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
   const zu = () => { erstGesehen(punkt, speicher); weg(); };

@@ -376,3 +376,5 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 /* Sicht-Gremium Runde 1: Putzplan-Zeilen im Büro auf Papier, auch im Dunkeln */
 #app .putzplan .aufgabe{display:flex;align-items:center;gap:12px;inline-size:100%;background:var(--papier);color:var(--tinte);border:1px solid var(--linie);border-radius:var(--radius);text-align:start;padding:8px 12px}
 #app .putzplan .aufgabe.ueberfaellig{border-inline-start:4px solid var(--rot)}
+/* Sicht-Gremium Runde 3: Kopf des Kontrollblatts steht nicht mehr am Rand */
+@media screen{#app .kopfband.druckkopf{padding-inline:16px}}

@@ -47,7 +47,7 @@ body:has(.zeki-intro) .gc-buehne .gc-figur-knopf,body:has(.rg-abgang) .gc-buehne
 
 /* ---------- Erster Tipp: Zeki steht neben seinem Satz und „Verstanden“ – eine Karte unter der Bühne, kein Kreis, kein Zipfel ---------- */
 /* Erst-Hinweis: deckende Papier-Karte direkt unter der (jetzt leeren) Bühne – nie halb durchsichtig (die Einblendung bewegt nur, sie blendet nicht über). Sie deckt nur den Kopf der Seite (Stand, Zahl), die Haupthandlung darunter bleibt frei und tippbar (pointer-events: none außer „Verstanden“) */
-.zeki-erst{position:fixed;left:12px;right:12px;top:calc(176px + env(safe-area-inset-top,0px));bottom:auto;z-index:8500;animation:erstEin .25s ease both;pointer-events:none}
+.zeki-erst{position:fixed;left:12px;right:12px;top:auto;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:8500;animation:erstEin .25s ease both;pointer-events:none}
 @keyframes erstEin{from{transform:translateY(12px)}to{transform:none}}
 .zeki-erst .ze-karte{display:flex;gap:6px;align-items:flex-end;padding:12px 14px 12px 10px;background:var(--papier);color:var(--tinte);border:1px solid var(--holz);border-radius:var(--radius-gross);box-shadow:var(--schatten-menu)}
 .zeki-erst .ze-zeki{flex:none;line-height:0}
