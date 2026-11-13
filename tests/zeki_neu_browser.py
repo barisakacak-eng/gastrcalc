@@ -122,7 +122,24 @@ async def main():
                 if m["figuren"] != 1: befund.append(f"[{modus}] fuehrung: erwartet genau 1 Zeki, sichtbar {m['figuren']}")
                 await pg.click('.rg-huelle [data-rk="weiter"]'); await los(); await pg.wait_for_timeout(300)
                 m = await pruefe("fuehrung-station-2", None)
-                await nav_hilfe.rundgang_weg(pg); await ctx.close()
+                await nav_hilfe.rundgang_weg(pg)
+                # aus dem alten tests/zeki_browser.py übernommen (Puppe gibt es nicht mehr): die Folgen laufen bis zum Ende und räumen auf; bei „Bewegung reduzieren“ läuft keine
+                r = await pg.evaluate("""async (reduziert) => {
+                  const z = await import('./js/zeki_figur.js'); const aus = [];
+                  for (const name of ['nicken', 'kopfschuetteln', 'zeigen-rechts', 'zeigen-oben', 'pruefen']) {
+                    const h = document.createElement('div'); h.innerHTML = z.vornHtml({ miene: 'neutral' }); document.body.appendChild(h);
+                    const lauf = z.zekiSpielen(h.querySelector('[data-zeki-vorn]'), name);
+                    if (!lauf) { aus.push(name + ':null'); h.remove(); continue; }
+                    const ende = await Promise.race([lauf.fertig, new Promise((r) => setTimeout(() => r('zeit'), 6000))]);
+                    aus.push(name + ':' + ende + ':' + [...h.querySelectorAll('.gc-zeki-folge')].filter((o) => getComputedStyle(o).display !== 'none').length); h.remove();
+                  }
+                  return aus;
+                }""", reduziert)
+                if reduziert: 
+                    if not all(x.endswith(':null') for x in r): befund.append(f"[{modus}] Folgen laufen trotz „Bewegung reduzieren“: {r}")
+                elif not all(x.split(':')[1] == 'ende' and x.split(':')[2] == '0' for x in r): befund.append(f"[{modus}] Folge endet nicht von selbst: {r}")
+                print(f"[{modus}] Folgen einzeln: {r}", flush=True)
+                await ctx.close()
             await b.close()
     finally: srv.terminate()
     if fehler: befund += ["JS-Fehler: " + f[:150] for f in fehler[:5]]
