@@ -9,9 +9,9 @@ APP = pathlib.Path(__file__).resolve().parent.parent
 SLOW4G = dict(offline=False, downloadThroughput=1.6 * 1024 * 1024 / 8 * 0.9, uploadThroughput=750 * 1024 / 8 * 0.9, latency=150 * 1.25)
 
 
-async def lauf(p, url, name, cpu, netz, warm=False):
+async def lauf(p, url, name, cpu, netz, warm=False, locale="en-US"):
     b = await p.chromium.launch()
-    ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
+    ctx = await b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale=locale)
     page = await ctx.new_page()
     cdp = await ctx.new_cdp_session(page)
     if warm:  # erster Besuch ungedrosselt: Service Worker und Speicher füllen, „alles da“ abwarten
@@ -41,27 +41,27 @@ async def lauf(p, url, name, cpu, netz, warm=False):
     return out
 
 
-async def messen(url, welche):
+async def messen(url, welche, locale="en-US"):
     erg = {}
     async with async_playwright() as p:
         plan = {"kalt": (1, None, False), "gedrosselt": (4, SLOW4G, False), "warm": (4, SLOW4G, True), "warm_frei": (1, None, True)}
         for n in welche:
             cpu, netz, warm = plan[n]
-            erg[n] = await lauf(p, url, n, cpu, netz, warm)
+            erg[n] = await lauf(p, url, n, cpu, netz, warm, locale)
     return erg
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=int(os.environ.get("DURCHLAUF_PORT", "9060")))
-    ap.add_argument("--url"); ap.add_argument("--nur", default="kalt,gedrosselt,warm,warm_frei"); ap.add_argument("--liste", action="store_true")
+    ap.add_argument("--url"); ap.add_argument("--nur", default="kalt,gedrosselt,warm,warm_frei"); ap.add_argument("--liste", action="store_true"); ap.add_argument("--locale", default="en-US")
     a = ap.parse_args(argv)
     srv = None; url = a.url
     if not url:
         srv = subprocess.Popen([sys.executable, "-m", "http.server", str(a.port), "--bind", "127.0.0.1"], cwd=APP, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(0.8); url = f"http://127.0.0.1:{a.port}/index.html"
     try:
-        erg = asyncio.run(messen(url, a.nur.split(",")))
+        erg = asyncio.run(messen(url, a.nur.split(","), a.locale))
     finally:
         if srv: srv.terminate()
     for e in erg.values():

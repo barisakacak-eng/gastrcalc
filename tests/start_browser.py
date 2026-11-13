@@ -10,7 +10,7 @@ import startmessung
 from playwright.async_api import async_playwright
 APP = pathlib.Path(__file__).parent.parent; PORT = int(os.environ.get("DURCHLAUF_PORT", "9060"))
 # Obergrenzen (hart): Anfragen, Bytes (unkomprimiert, nur Antwortkörper), Sekunden (mit 30 % Spielraum)
-GRENZE = {"anfragen": 190, "bytes": 3_300_000}
+GRENZE = {"anfragen": 190, "bytes": 2_800_000}
 ZEIT = {"kalt": 3.0, "gedrosselt": 18.0, "warm": 5.0}
 NICHT_VORM_BILD = ("js/screens/buero.js", "js/screens/ordner.js", "js/bedienung/paket_buero.js", "js/data/namen_mehr.js", "js/data/zeki_mehrsprachig.js", "js/lang/tr.js", "js/lang/en.js", "assets/brand/zeki-klein/")
 
@@ -21,7 +21,7 @@ async def main():
         print(("ok   " if ok else "FEHLT ") + text, flush=True)
         if not ok: befunde.append(text)
     try:
-        erg = await startmessung.messen(f"http://127.0.0.1:{PORT}/index.html", ["kalt", "gedrosselt", "warm"])
+        erg = await startmessung.messen(f"http://127.0.0.1:{PORT}/index.html", ["kalt", "gedrosselt", "warm"], "de-DE")  # Gerät auf Deutsch: nur Deutsch wird geladen
         k = erg["kalt"]
         pruefe(k["anfragen"] <= GRENZE["anfragen"], f"kalt: {k['anfragen']} Anfragen bis zum ersten bedienbaren Bild (Grenze {GRENZE['anfragen']})")
         pruefe(k["bytes"] <= GRENZE["bytes"], f"kalt: {k['bytes'] / 1e6:.2f} MB bis zum ersten bedienbaren Bild (Grenze {GRENZE['bytes'] / 1e6:.2f} MB)")
