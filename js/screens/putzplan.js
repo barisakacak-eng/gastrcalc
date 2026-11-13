@@ -69,7 +69,7 @@ const PUTZ_BILD = { R01: ["p-arbeitsflaechen"], R02: ["p-arbeitsflaechen"], R03:
   R19: ["k-saladette-foto"], R20: ["k-saladette-foto"], R21: ["p-kuehlschrank-innen", "k-kuehlschrank-lebensmittel-foto"], R22: ["p-kuehlschrank-innen", "k-kuehlschrank-lebensmittel-foto"],
   R23: ["k-tiefkuehler-foto"], R32: ["p-lager"], R33: ["p-muelltonnen", "m-eimer-foto"], R34: ["p-muelltonnen", "m-biotonne-foto"] };
 const putzBild = (a) => { const f = (PUTZ_BILD[a.id] || []).find((n) => FOTOS.has(n));
-  return f ? `<img class="pbild" src="foto/${f}.webp" alt="" loading="lazy">` : `<span class="pbild pikto" aria-hidden="true">${sym("spray-can")}</span>`; };
+  return f ? `<img class="pbild" src="foto/${f}.webp" alt="" loading="lazy" decoding="async">` : `<span class="pbild pikto" aria-hidden="true">${sym("spray-can")}</span>`; };
 // Vorab-Prüfung 03.11.2026 (B2): nach einem Haken rückt die Liste nach – ein zweiter Tipp binnen 400 ms (Doppeltipp) traf die nächste Zeile
 // und hakte sie mit ab. Jetzt zählt in diesem Fenster nur der erste Tipp (Setzung 400 ms; ein bewusster zweiter Haken braucht länger).
 const HAKEN_RUHE_MS = 400; let hakenZeit = 0;

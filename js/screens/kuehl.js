@@ -25,8 +25,8 @@ import { plusTage, plusMonate, monatsErster, monatsLetzter } from "../zeit.js";
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : k.typ === "getraenke" ? "k-getraenke" : "k-kuehlschrank";
   const f = { "k-theke": "k-saladette-foto", "k-kuehlschrank": "k-kuehlschrank-lebensmittel-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden; Getränke/Lebensmittel getrennt
-  if (n === "k-getraenke" && !FOTOS.has(f)) return `<img class="gerichtbild mini pikto" src="bilder/k-kuehlschrank.svg" alt="">`;
-  return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">`; };
+  if (n === "k-getraenke" && !FOTOS.has(f)) return `<img class="gerichtbild mini pikto" src="bilder/k-kuehlschrank.svg" alt="" loading="lazy" decoding="async">`;
+  return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="" loading="lazy" decoding="async">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy" decoding="async">`; };
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
 let station = null;             // id der Stelle, die im Rundgang gerade offen ist
 let form = null;                // Eingabe der offenen Station

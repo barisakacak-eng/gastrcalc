@@ -64,7 +64,7 @@ export function personalView(stand) {
   const name = wer ? nameVon(stand, wer) : "";
   const datum = datumText(new Date(), { weekday: "long", day: "numeric", month: "long" });
   const kachel = (ziel, bild, symbol, farbe, titel, pille, klasse = "") => `<button type="button" class="riesenkachel ${klasse}" data-a="personal-ziel" data-wert="${ziel}">
-      ${bild ? `<img src="foto/${bild}.webp" alt="">` : `<span class="putzmuster" aria-hidden="true">${sym("spray-can")}</span>`}
+      ${bild ? `<img src="foto/${bild}.webp" alt="" loading="lazy" decoding="async">` : `<span class="putzmuster" aria-hidden="true">${sym("spray-can")}</span>`}
       <span class="rt"><span class="ks" style="color:var(${farbe})">${sym(symbol)}</span><b>${esc(titel)}</b>${pille || ""}</span></button>`;
   const kuehlPille = z.kuehlOffen === null ? "" : z.kuehlOffen > 0 ? `<span class="pille">${esc(t("personal.offen", z.kuehlOffen))}</span>` : `<span class="pille ruhig">${sym("check")}</span>`;
   const putzPille = z.putzen ? `<span class="pille ruhig zahl">${z.putzen.erledigt} / ${z.putzen.gesamt}</span>` : "";
