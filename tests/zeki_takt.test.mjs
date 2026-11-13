@@ -1,29 +1,56 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { zekiNaechsteBewegung, ZEKI_ERSTES_ZEICHEN_MS, ZEKI_BLINZELN_MS, ZEKI_GESTE_MS } from "../js/screens/zeki_takt.js";
+import fs from "node:fs";
+import * as T from "../js/screens/zeki_takt.js";
+import { ZEKI_SAETZE } from "../js/data/zeki_saetze.js";
 
-test("Zeki natürlich (Baris 26.10.2026 23:14): erstes Lebenszeichen nach ≈ 1 s, Blinzeln unregelmäßig, Gesten selten, nie Leerlauf-Zwinkern", () => {
-  // Von Hand begründet: Baris wollte das erste Lebenszeichen „nach etwa einer Sekunde“ – das sind 1000 ms.
-  assert.equal(ZEKI_ERSTES_ZEICHEN_MS, 1000);
-  assert.equal(ZEKI_BLINZELN_MS.length, 2, "Blinzeln hat eine Spanne von … bis …");
-  assert.ok(ZEKI_BLINZELN_MS[0] >= 2000 && ZEKI_BLINZELN_MS[1] <= 7000 && ZEKI_BLINZELN_MS[0] < ZEKI_BLINZELN_MS[1]);
-  assert.ok(ZEKI_GESTE_MS[0] >= 10000);
-  assert.ok(ZEKI_GESTE_MS[0] > ZEKI_BLINZELN_MS[1], "Gesten sind seltener als Blinzeln");
+const q = (p) => fs.readFileSync(new URL("../" + p, import.meta.url), "utf8");
 
-  const ruhig = [0, 1, 2, 3, 4, 5].map((n) => zekiNaechsteBewegung("hilfe", n));
-  assert.ok(new Set(ruhig).size >= 3, "wechselt ab");
-  assert.ok(!ruhig.includes("zwinkern"), "kein Zwinkern im Leerlauf");
-
-  // Die Folge wiederholt sich (Länge = Zahl der verschiedenen Gesten), auch rückwärts gezählt: Schritt −1 ist der letzte der Folge.
-  const lang = Array.from({ length: 30 }, (_, n) => zekiNaechsteBewegung("hilfe", n));
-  const laenge = new Set(lang).size;
-  assert.equal(zekiNaechsteBewegung("hilfe", laenge), zekiNaechsteBewegung("hilfe", 0), "Folge beginnt nach einem Durchlauf von vorn");
-  assert.equal(zekiNaechsteBewegung("hilfe", -1), zekiNaechsteBewegung("hilfe", laenge - 1), "negative Schritte stürzen nicht ab");
-
-  // Bei Warnung/Fehler nur ernste Gesten (Maskottchen-Regel 23.10.2026): genau diese zwei, beide kommen vor.
-  for (const z of ["warnung", "fehler"]) {
-    const ernst = Array.from({ length: 10 }, (_, n) => zekiNaechsteBewegung(z, n));
-    assert.deepEqual([...new Set(ernst)].sort(), ["nachdenken", "nicken"], z);
-  }
-  for (let n = 0; n < 8; n++) assert.notEqual(zekiNaechsteBewegung("hilfe", n), zekiNaechsteBewegung("hilfe", n + 1), "nie zweimal dieselbe");
+test("Satz → Ereignis: Warnung kopfschütteln, Tag geschafft jubeln, Zwinkern nur beim Lob, „keine“ bleibt stehen", () => {
+  const f = T.zekiEreignisFuerMoment;
+  assert.equal(f({ ausloeser: "kuehl_abweichung", bewegung: "kopfschuetteln" }), "warnung");
+  assert.equal(f({ ausloeser: "muell_hoch", bewegung: "hand" }), "warnung", "Warnung bleibt Warnung, egal welche Geste im Satz steht");
+  assert.equal(f({ ausloeser: "muell_hoch", bewegung: "keine" }), null);
+  assert.equal(f({ ausloeser: "ziel_erreicht", bewegung: "grinsen" }), "tagGeschafft");
+  assert.equal(f({ ausloeser: "tag_abgeschlossen", bewegung: "zwinkern" }), "lob");
+  assert.equal(f({ ausloeser: "tag_abgeschlossen", bewegung: "nicken" }), "erfolg");
+  assert.equal(f({ ausloeser: "kuehl_offen", bewegung: "zwinkern" }), null, "zwinkern ist Lob, keine Frage");
+  assert.equal(f({ ausloeser: "putzen_offen", bewegung: "nicken" }), "erfolg");
+  assert.equal(f({ ausloeser: "putzen_offen", bewegung: "hand" }), null);
+  assert.equal(f(null), null);
+  // jeder echte Satz ergibt ein bekanntes Ereignis oder null – nie ein Grinsen bei Warnung
+  for (const s of ZEKI_SAETZE) { const e = f(s); assert.ok(e === null || ["warnung", "tagGeschafft", "lob", "erfolg"].includes(e), s.id); if (T.ERNST_AUSLOESER.includes(s.ausloeser)) assert.ok(e === null || e === "warnung", s.id); }
+});
+test("Erfolg und Tag geschafft: speichernde Knöpfe merken ein Ereignis vor, es gilt 1,5 s und genau einmal", () => {
+  T.zekiVorgemerktes(null, 0); // leeren
+  T.zekiAktionMerken("pp-haken", 1000); assert.equal(T.zekiVorgemerktes(null, 1500), null, "ohne Bühne bleibt es beim Vormerken, wird aber verbraucht");
+  T.zekiAktionMerken("abschluss-fertig", 2000); T.zekiAktionMerken("muell-tipp", 2100); // zweiter Knopf zählt nicht und überschreibt nichts
+  assert.equal(T.zekiVorgemerktes(null, 2000 + T.VORMERKEN_MS + 1), null, "abgelaufen");
+  const log = []; const root = { querySelector: () => null };
+  T.zekiVormerken("erfolg", 5000); assert.equal(T.zekiVorgemerktes(root, 5100), null);
+  assert.ok(T.ERFOLG_AKTIONEN.test("pp-haken") && T.ERFOLG_AKTIONEN.test("station-speichern") && !T.ERFOLG_AKTIONEN.test("nav") && !T.ERFOLG_AKTIONEN.test("hilfe-auf"));
+  assert.ok(T.TAG_AKTIONEN.test("abschluss-fertig") && !T.TAG_AKTIONEN.test("abschluss"));
+});
+// kleine Attrappe einer Bühne: .gc-buehne .gc-figur[data-zeki-buehne] mit Bild
+function bauen(schluessel, { reduziert = false } = {}) {
+  const bild = { style: {}, getAttribute: (n) => (n === "width" ? "116" : null), setAttribute(n, v) { this[n] = v; } };
+  const doc = { defaultView: { matchMedia: () => ({ matches: reduziert }), Image: class { set src(v) { setTimeout(() => this.onload?.(), 0); } } } };
+  const attr = { "data-zeki-buehne": schluessel };
+  const fig = { isConnected: true, ownerDocument: doc, getAttribute: (n) => attr[n] ?? null, setAttribute: (n, v) => { attr[n] = v; }, appendChild() {}, querySelector: (s) => (s === "img.gc-zeki" ? bild : null) };
+  return { fig, bild, attr, root: { querySelector: (s) => (s === ".gc-buehne .gc-figur[data-zeki-buehne]" ? fig : null) } };
+}
+test("Bewegung reduzieren: weder Ankommen noch Ereignis noch Leerlauf – nichts wird vorgeladen, nichts versteckt", () => {
+  const g = bauen("start", { reduziert: true });
+  assert.equal(T.zekiAnkommen(g.root), null); assert.equal(T.zekiBewegt(g.root, "erfolg"), null); assert.notEqual(g.bild.style.visibility, "hidden");
+});
+test("Warnung: das ruhende Bild wechselt zur ernsten Haltung (warten + Miene warnung), nie ein Grinsen", () => {
+  const g = bauen("kuehlgeraete"); assert.equal(T.zekiErnst(g.root), true);
+  assert.equal(g.attr["data-zeki-buehne"], "blatt-sperre"); assert.match(g.bild.src, /zeki-buehne\/blatt-sperre\.webp/);
+  assert.equal(T.zekiErnst({ querySelector: () => null }), false);
+});
+test("Quelltext: kein Blinzeln im Vektor, kein setInterval-Takt mehr, keine Sprechblase in der Stimme", () => {
+  const s = q("js/screens/zeki_takt.js");
+  assert.doesNotMatch(s, /setInterval|zeki--blinzeln|zeki--spielt|zekiNaechsteBewegung|gastrocash-brand/);
+  assert.match(s, /zekiEreignis/); assert.match(s, /folgeVorladen/);
+  assert.match(q("js/bedienung/zeki.js"), /zekiAnkommen/);
 });

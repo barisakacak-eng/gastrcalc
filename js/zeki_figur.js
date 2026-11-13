@@ -1,7 +1,7 @@
 // Zeki neu (Salbei & Papier, 12.11.2026): ruhende Haltung für die Bühne, Mienen-Bilder, Bewegungs-Folgen und ein kleiner Abspieler.
 // Reine Funktionen plus zekiSpielen(el, name): kein Zugriff auf document/window auf Modulebene, darum in Node importierbar und testbar.
 // Quelle der Zahlen: assets/brand/zeki-buehne/zuordnung.json, assets/brand/zeki/ablauf.json, assets/brand/zeki-gelenke.json (tests/zeki_figur.test.mjs prüft Gleichheit).
-// Kein Zugriff auf die alte Gliederpuppe (js/zeki-puppe.js): Der neue Zeki besteht aus gemalten Flächen und wird nur als Bild und als Raster-Folge gezeigt.
+// Die frühere Vektorfigur und ihre Gliederpuppe gibt es nicht mehr: Der neue Zeki besteht aus gemalten Flächen und wird nur als Bild und als Raster-Folge gezeigt.
 import { esc } from "./util.js";
 import { berlin } from "./zeit.js";
 
