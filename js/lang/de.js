@@ -1436,6 +1436,13 @@ nichtsGefunden: "Nichts gefunden. Anders schreiben oder „Eimer gewogen“ nehm
   hinweise: { einstieg: "Hinweise", einstiegUnter: "Steuer und Amt", einstiegNeu: (n) => `${n} ${n === 1 ? "neuer Hinweis" : "neue Hinweise"}`, titel: "Hinweise", unter: "Aus deinen Daten. Allgemein, keine Beratung.", pflicht: "Allgemeiner Hinweis, keine Steuerberatung – mit deinem Steuerberater klären.", leer: "Gerade kein Hinweis. Mit mehr Daten kommen Hinweise dazu.", quelle: "Quelle", belege: "Belege bereitlegen", spaeterKnopf: "Später", spaeter: "später", erledigt: "Erledigt", erledigtMeldung: "Hinweis erledigt", spaeterMeldung: "Hinweis nach hinten gestellt" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Rechtsform", hinweis: "Steht auf deiner Gewerbeanmeldung oder im Impressum. e.K. zählt als Einzelunternehmen, GmbH & Co. KG als KG.", offen: "Rechtsform eintragen", gesetzt: "Rechtsform gespeichert", namen: { einzel: "Einzel\u00ADunternehmen", gbr: "GbR", gmbh: "GmbH", ug: "UG (haftungs\u00ADbeschränkt)", kg_ohg: "KG oder OHG", unbekannt: "Weiß ich nicht" } }, // Rechtsform (23.10.2026)
   home: { titel: "Auf den Home-Bildschirm", laden: "Teilen → Zum Home-Bildschirm", ladenAndroid: "Menü → App installieren", ios1: "Unten „Teilen“ antippen", ios2: "„Zum Home-Bildschirm“ wählen", android1: "Oben „Menü ⋮“ antippen", android2: "„App installieren“ wählen", installieren: "Installieren", warum: "Als Home-App bleiben deine Daten länger auf dem Handy. Sichern musst du trotzdem. Im Browser kann Safari sie nach 7 Tagen ohne Nutzung löschen (webkit.org, 24.03.2020).", schon: "Liegt auf dem Home-Bildschirm.", ok: "OK", spaeter: "Später" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme.
+  l15b: {
+    zwischenstand: (b) => `Alle festen Kosten zusammen: ${b} im Monat`,
+    abgaben: (p, a) => `Mit ≈ ${p} % Abgaben des Arbeitgebers (${{ angestellt: "Angestellte", minijob: "Minijob", gemischt: "Angestellte und Minijob, gewichtet" }[a]}).`,
+    warm: (k) => `${k} zu warm. Gleich nachsehen.`,
+    rezeptFrage: "Chef, Rezepturen schon eingetragen?",
+  },
 };
 
 // Sanji: Texte nur für die Design-Abnahme; keine neuen App-Funktionen.

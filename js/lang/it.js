@@ -1482,4 +1482,11 @@ export default {
   hinweise: { einstieg: "Avvisi", einstiegUnter: "Tasse e uffici, dai tuoi dati", einstiegNeu: (n) => (n === 1 ? "1 nuovo avviso" : `${n} nuovi avvisi`), titel: "Avvisi", unter: "Dai tuoi dati. In generale, non è consulenza.", pflicht: "Avviso generale, non consulenza fiscale – chiariscilo con il tuo commercialista.", leer: "Al momento nessun avviso. Con più dati arrivano altri avvisi.", quelle: "Fonte", belege: "Prepara le ricevute", spaeterKnopf: "Più tardi", spaeter: "più tardi", erledigt: "Fatto", erledigtMeldung: "Avviso fatto", spaeterMeldung: "Avviso rimandato" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forma giuridica", hinweis: "È sulla tua registrazione dell’attività (Gewerbeanmeldung) o nell’Impressum. e.K. conta come impresa individuale, GmbH & Co. KG come KG.", offen: "Inserisci la forma giuridica", gesetzt: "Forma giuridica salvata", namen: { einzel: "Impresa individuale", gbr: "GbR", gmbh: "GmbH", ug: "UG (a responsabilità limitata)", kg_ohg: "KG o OHG", unbekannt: "Non lo so" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Finora ${summe} al mese`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Capo, in “${k}” fa troppo caldo. Controlla subito, per favore.`,
+    rezeptFrage: "Capo, hai già inserito le tue ricette?",
+  },
 };

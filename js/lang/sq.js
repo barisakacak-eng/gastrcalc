@@ -1487,4 +1487,11 @@ export default {
   hinweise: { einstieg: "Njoftime", einstiegUnter: "Taksat dhe zyrat, nga të dhënat e tua", einstiegNeu: (n) => sn(n, "njoftim i ri", "njoftime të reja"), titel: "Njoftime", unter: "Nga të dhënat e tua. Të përgjithshme, jo këshillim.", pflicht: "Njoftim i përgjithshëm, jo këshillim tatimor – sqaroje me këshilltarin tatimor.", leer: "Tani nuk ka njoftim. Me më shumë të dhëna vijnë njoftime.", quelle: "Burimi", belege: "Përgatit faturat", spaeterKnopf: "Më vonë", spaeter: "më vonë", erledigt: "U krye", erledigtMeldung: "Njoftimi u krye", spaeterMeldung: "Njoftimi u shty" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forma ligjore", hinweis: "Shkruhet në regjistrimin e biznesit (Gewerbeanmeldung) ose në Impressum. e.K. llogaritet si biznes individual, GmbH & Co. KG si KG.", offen: "Shkruaj formën ligjore", gesetzt: "Forma ligjore u ruajt", namen: { einzel: "Biznes individual", gbr: "GbR", gmbh: "GmbH", ug: "UG (me përgjegjësi të kufizuar)", kg_ohg: "KG ose OHG", unbekannt: "Nuk e di" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Deri tani ${summe} në muaj`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Shef, te “${k}” është shumë ngrohtë. Kontrollo menjëherë, të lutem.`,
+    rezeptFrage: "Shef, i ke futur recetat e tua?",
+  },
 };

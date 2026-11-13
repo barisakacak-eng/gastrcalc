@@ -1487,4 +1487,11 @@ export default {
   hinweise: { einstieg: "Подсказки", einstiegUnter: "Налоги и ведомства, из твоих данных", einstiegNeu: (n) => pn(n, "новая подсказка", "новые подсказки", "новых подсказок"), titel: "Подсказки", unter: "Из твоих данных. Общая информация, не консультация.", pflicht: "Общая подсказка, не налоговая консультация – уточни у налогового консультанта.", leer: "Сейчас подсказок нет. С новыми данными появятся новые.", quelle: "Источник", belege: "Подготовить чеки", spaeterKnopf: "Позже", spaeter: "позже", erledigt: "Готово", erledigtMeldung: "Подсказка выполнена", spaeterMeldung: "Подсказка отложена" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Правовая форма", hinweis: "Указана в регистрации промысла (Gewerbeanmeldung) или в Impressum. e.K. считается индивидуальным предприятием, GmbH & Co. KG — как KG.", offen: "Внести правовую форму", gesetzt: "Правовая форма сохранена", namen: { einzel: "Индивидуальное предприятие", gbr: "GbR", gmbh: "GmbH", ug: "UG (с ограниченной ответственностью)", kg_ohg: "KG или OHG", unbekannt: "Не знаю" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Пока ${summe} в месяц`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Шеф, в «${k}» слишком тепло. Проверь прямо сейчас.`,
+    rezeptFrage: "Шеф, ты уже внёс свои рецепты?",
+  },
 };

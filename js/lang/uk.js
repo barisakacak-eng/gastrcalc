@@ -1487,4 +1487,11 @@ export default {
   hinweise: { einstieg: "Підказки", einstiegUnter: "Податки й установи, з твоїх даних", einstiegNeu: (n) => pn(n, "нова підказка", "нові підказки", "нових підказок"), titel: "Підказки", unter: "З твоїх даних. Загальна інформація, не консультація.", pflicht: "Загальна підказка, не податкова консультація – уточни з податковим консультантом.", leer: "Зараз підказок немає. З новими даними з’являться нові.", quelle: "Джерело", belege: "Підготувати чеки", spaeterKnopf: "Пізніше", spaeter: "пізніше", erledigt: "Готово", erledigtMeldung: "Підказку виконано", spaeterMeldung: "Підказку відкладено" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Правова форма", hinweis: "Вказана в реєстрації промислу (Gewerbeanmeldung) або в Impressum. e.K. вважається одноосібним підприємством, GmbH & Co. KG — як KG.", offen: "Внести правову форму", gesetzt: "Правову форму збережено", namen: { einzel: "Одноосібне підприємство", gbr: "GbR", gmbh: "GmbH", ug: "UG (з обмеженою відповідальністю)", kg_ohg: "KG або OHG", unbekannt: "Не знаю" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Поки ${summe} на місяць`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Шефе, у «${k}» занадто тепло. Перевір негайно.`,
+    rezeptFrage: "Шефе, ти вже вніс свої рецепти?",
+  },
 };

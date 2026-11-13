@@ -18,10 +18,10 @@ test("Abgaben: Angestellte ≈ 25 %, Minijob ≈ 32 %, gemischt gewichtet ≈ 28
   assert.equal(abgabenSatz({ teamTage: [] }, "2026-11-01", "2026-11-30"), null, "nur Monats-Lohnsumme: kein Satz (Abgaben schon drin)");
   assert.equal(abgabenSatz({ teamTage: [tag("2026-10-30", "minijob", 10, 13)] }, "2026-11-01", "2026-11-30"), null, "Vormonat zählt nicht");
 });
-test("L15b ist Standard: Kühl-Alarm kurz, ohne window-Schalter", async () => {
-  delete globalThis.__gcL15b; const { l15b, l15bAn } = await import("../js/data/l15b_texte.js");
-  assert.equal(l15bAn(), true); assert.equal(l15b("de", "warm", "Kühlschrank 1"), "Kühlschrank 1 zu warm. Gleich nachsehen.");
-  assert.equal(l15b("de", "abgaben", "28", "gemischt"), "Mit ≈ 28 % Abgaben des Arbeitgebers (Angestellte und Minijob, gewichtet).");
+test("Kurze Laden-Sätze kommen aus der Sprachdatei (l15b): Kühl-Alarm und Abgaben", async () => {
+  const { t, setzeSprache } = await import("../js/i18n.js"); setzeSprache("de");
+  assert.equal(t("l15b.warm", "Kühlschrank 1"), "Kühlschrank 1 zu warm. Gleich nachsehen.");
+  assert.equal(t("l15b.abgaben", "28", "gemischt"), "Mit ≈ 28 % Abgaben des Arbeitgebers (Angestellte und Minijob, gewichtet).");
 });
 
 // P1 D5: Döner-Laden ohne Müll-Verlauf – Spieß, Pommes, Cola vorne (nur angelegte Waren)

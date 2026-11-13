@@ -96,10 +96,9 @@ test("P5 C2: mit L15b zeigt die Schichten-Karte auch den Vormonat", async () => 
   const s = laden(); const pid = (s.personen || [])[0]?.id; assert.ok(pid, "Testladen ohne Person");
   s.schichten = [{ id: "s1", person: pid, datum: "2026-12-20", von: "16:00", bis: "22:00" }];
   mock.timers.enable({ apis: ["Date"], now: new Date("2027-01-01T20:00:00+01:00") });
-  try { const g = await import("../js/screens/geld3.js"); globalThis.__gcL15b = true;
-    const k = text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]); assert.match(k, /Dezember 2026 AB 6,0/);
-    /* Lauf 5: L15b ist Standard, kein Schalter mehr */ }
-  finally { globalThis.__gcL15b = false; mock.timers.reset(); }
+  try { const g = await import("../js/screens/geld3.js");
+    const k = text(g.geld3View(s).match(/data-g3="schicht"[\s\S]*?<\/details>/)[0]); assert.match(k, /Dezember 2026 AB 6,0/);}
+  finally { mock.timers.reset(); }
 });
 
 // Lauf 4, eigener Fund beim Bildpaket: Schicht ohne „erfasst“ (alte oder eingelesene Daten) ließ die Arbeitszeiten-Liste abstürzen –

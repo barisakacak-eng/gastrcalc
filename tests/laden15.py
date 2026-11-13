@@ -12,7 +12,7 @@ from playwright.async_api import async_playwright
 
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8861")); SP = os.environ.get("SCHNELLSTART_SPRACHE", "de"); AN = os.environ.get("L15") == "1"
 OUT = pathlib.Path(os.environ.get("L15_OUT", "/tmp/laden15")); OUT.mkdir(parents=True, exist_ok=True)
-ART = ("l15b" if os.environ.get("L15B") == "1" else "nachher") if AN else "vorher"; VOLL = os.environ.get("L15_VOLL") == "1"
+ART = "nachher" if AN else "vorher"; VOLL = os.environ.get("L15_VOLL") == "1"
 KARTE = "Döner Kebab 7,50\nDürüm 8,00\nLahmacun 5,50\nPommes 3,50\nAyran 2,00"
 
 
@@ -29,7 +29,6 @@ async def main():
             b = await p.chromium.launch()
             ctx, pg = await schnellstart.kontext(b, 390, 844, fehler)
             await ctx.add_init_script("try { localStorage.setItem('gc-zeki-erst', JSON.stringify(['muell','kuehl','putzplan','karte','umsatzheute','abschluss'])); } catch (e) {}")
-            if os.environ.get("L15B") == "1": await ctx.add_init_script("window.__gcL15b = true;")  # Lauf 4: Entwurf L15b
             await schnellstart.schnellstart(pg, PORT, name="Imbiss Test")
             await pg.evaluate("""async (txt) => { const kl = await import('./js/karte_lesen.js'); const s = window.__gastrocalc.stand;
               kl.vorschlaegeUebernehmen(s, kl.vorschlaegeAusText(txt, s).map((v) => ({ ...v, an: true }))); window.__gastrocalc.zeichne(); }""", KARTE)

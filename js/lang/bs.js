@@ -1489,4 +1489,11 @@ export default {
   hinweise: { einstieg: "Napomene", einstiegUnter: "Porez i uredi, iz tvojih podataka", einstiegNeu: (n) => `${n} ${pl(n, "nova napomena", "nove napomene", "novih napomena")}`, titel: "Napomene", unter: "Iz tvojih podataka. Općenito, nije savjet.", pflicht: "Opća napomena, nije porezni savjet – razjasni s poreznim savjetnikom.", leer: "Trenutno nema napomene. S više podataka dolaze napomene.", quelle: "Izvor", belege: "Pripremi račune", spaeterKnopf: "Kasnije", spaeter: "kasnije", erledigt: "Gotovo", erledigtMeldung: "Napomena riješena", spaeterMeldung: "Napomena odgođena" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Pravni oblik", hinweis: "Piše na tvojoj prijavi obrta (Gewerbeanmeldung) ili u Impressumu. e.K. se računa kao samostalni obrt, GmbH & Co. KG kao KG.", offen: "Unesi pravni oblik", gesetzt: "Pravni oblik sačuvan", namen: { einzel: "Samostalni obrt", gbr: "GbR", gmbh: "GmbH", ug: "UG (s ograničenom odgovornošću)", kg_ohg: "KG ili OHG", unbekannt: "Ne znam" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Dosad ${summe} mjesečno`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Šefe, u „${k}“ je pretoplo. Molim te, odmah provjeri.`,
+    rezeptFrage: "Šefe, jesi li već upisao svoje recepte?",
+  },
 };

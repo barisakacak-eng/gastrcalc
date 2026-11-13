@@ -1487,4 +1487,11 @@ export default {
   hinweise: { einstieg: "Wskazówki", einstiegUnter: "Podatki i urzędy, z twoich danych", einstiegNeu: (n) => `${n} ${lm(n, "nowa wskazówka", "nowe wskazówki", "nowych wskazówek")}`, titel: "Wskazówki", unter: "Z twoich danych. Ogólnie, bez doradztwa.", pflicht: "Ogólna wskazówka, nie porada podatkowa – wyjaśnij z doradcą podatkowym.", leer: "Teraz brak wskazówek. Z większą ilością danych pojawią się nowe.", quelle: "Źródło", belege: "Przygotuj paragony i faktury", spaeterKnopf: "Później", spaeter: "później", erledigt: "Zrobione", erledigtMeldung: "Wskazówka zrobiona", spaeterMeldung: "Wskazówka odłożona na później" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forma prawna", hinweis: "Jest na twoim zgłoszeniu działalności (Gewerbeanmeldung) albo w nocie prawnej (Impressum). e.K. liczy się jako jednoosobowa działalność, GmbH & Co. KG jako KG.", offen: "Wpisz formę prawną", gesetzt: "Forma prawna zapisana", namen: { einzel: "Jednoosobowa działalność", gbr: "GbR", gmbh: "GmbH", ug: "UG (z ograniczoną odpowiedzialnością)", kg_ohg: "KG lub OHG", unbekannt: "Nie wiem" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Na razie ${summe} miesięcznie`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Szefie, w „${k}” jest za ciepło. Sprawdź od razu.`,
+    rezeptFrage: "Szefie, wpisałeś już swoje przepisy?",
+  },
 };

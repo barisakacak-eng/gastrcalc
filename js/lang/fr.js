@@ -1482,4 +1482,11 @@ export default {
   hinweise: { einstieg: "Infos", einstiegUnter: "Impôts et administration, d’après tes données", einstiegNeu: (n) => (n <= 1 ? `${n} nouvelle info` : `${n} nouvelles infos`), titel: "Infos", unter: "D’après tes données. Général, pas un conseil.", pflicht: "Info générale, pas un conseil fiscal – à voir avec ton expert-comptable.", leer: "Aucune info pour l’instant. Avec plus de données, d’autres infos arrivent.", quelle: "Source", belege: "Préparer les justificatifs", spaeterKnopf: "Plus tard", spaeter: "plus tard", erledigt: "Fait", erledigtMeldung: "Info réglée", spaeterMeldung: "Info remise à plus tard" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forme juridique", hinweis: "Elle figure sur ta déclaration d’activité (Gewerbeanmeldung) ou dans les mentions légales (Impressum). e.K. compte comme entreprise individuelle, GmbH & Co. KG comme KG.", offen: "Saisir la forme juridique", gesetzt: "Forme juridique enregistrée", namen: { einzel: "Entreprise individuelle", gbr: "GbR", gmbh: "GmbH", ug: "UG (responsabilité limitée)", kg_ohg: "KG ou OHG", unbekannt: "Je ne sais pas" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Pour l’instant ${summe} par mois`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Chef, la température de « ${k} » est trop haute. Vérifie tout de suite.`,
+    rezeptFrage: "Chef, tu as déjà saisi tes recettes ?",
+  },
 };

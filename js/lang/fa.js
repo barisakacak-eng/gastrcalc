@@ -1481,4 +1481,11 @@ export default {
   hinweise: { einstieg: "نکته‌ها", einstiegUnter: "مالیات و اداره، از داده‌های تو", einstiegNeu: (n) => `${n} نکته‌ی جدید`, titel: "نکته‌ها", unter: "از داده‌های تو. کلی، نه مشاوره.", pflicht: "نکته‌ی کلی، نه مشاوره‌ی مالیاتی – با مشاور مالیاتی‌ات روشن کن.", leer: "الان نکته‌ای نیست. با داده‌ی بیشتر نکته‌های بیشتری می‌آید.", quelle: "منبع", belege: "رسیدها را آماده کن", spaeterKnopf: "بعداً", spaeter: "بعداً", erledigt: "انجام شد", erledigtMeldung: "نکته انجام شد", spaeterMeldung: "نکته به بعد موکول شد" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "شکل حقوقی", hinweis: "روی ثبت کسب‌وکارت (Gewerbeanmeldung) یا در Impressum نوشته شده. e.K. کسب‌وکار تک‌نفره حساب می‌شود، GmbH & Co. KG هم KG.", offen: "شکل حقوقی را وارد کن", gesetzt: "شکل حقوقی ذخیره شد", namen: { einzel: "کسب‌وکار تک‌نفره", gbr: "GbR", gmbh: "GmbH", ug: "UG (با مسئولیت محدود)", kg_ohg: "KG یا OHG", unbekannt: "نمی‌دانم" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `تا اینجا ${summe} در ماه`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `رئیس، «${k}» زیادی گرم است. لطفاً همین الان بررسی کن.`,
+    rezeptFrage: "رئیس، دستور پخت‌هایت را وارد کرده‌ای؟",
+  },
 };

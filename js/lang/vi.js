@@ -1482,4 +1482,11 @@ export default {
   hinweise: { einstieg: "Lưu ý", einstiegUnter: "Thuế và cơ quan, từ dữ liệu của sếp", einstiegNeu: (n) => `${n} lưu ý mới`, titel: "Lưu ý", unter: "Từ dữ liệu của sếp. Thông tin chung, không phải tư vấn.", pflicht: "Lưu ý chung, không phải tư vấn thuế – hãy hỏi lại cố vấn thuế của sếp.", leer: "Hiện chưa có lưu ý. Có thêm dữ liệu thì sẽ có thêm lưu ý.", quelle: "Nguồn", belege: "Chuẩn bị hóa đơn", spaeterKnopf: "Để sau", spaeter: "để sau", erledigt: "Xong", erledigtMeldung: "Đã xong lưu ý", spaeterMeldung: "Đã dời lưu ý lại" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Loại hình kinh doanh", hinweis: "Ghi trên giấy đăng ký kinh doanh (Gewerbeanmeldung) hoặc trong Impressum. e.K. tính là doanh nghiệp cá thể, GmbH & Co. KG tính là KG.", offen: "Nhập loại hình kinh doanh", gesetzt: "Đã lưu loại hình kinh doanh", namen: { einzel: "Doanh nghiệp cá thể", gbr: "GbR", gmbh: "GmbH", ug: "UG (trách nhiệm hữu hạn)", kg_ohg: "KG hoặc OHG", unbekannt: "Không biết" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Đến giờ ${summe} mỗi tháng`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Sếp ơi, “${k}” nóng quá. Kiểm tra ngay nhé.`,
+    rezeptFrage: "Sếp đã nhập công thức của mình chưa?",
+  },
 };

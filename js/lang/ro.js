@@ -1488,4 +1488,11 @@ export default {
   hinweise: { einstieg: "Indicații", einstiegUnter: "Taxe și autorități, din datele tale", einstiegNeu: (n) => nr(n, "indicație nouă", "indicații noi"), titel: "Indicații", unter: "Din datele tale. General, nu consultanță.", pflicht: "Indicație generală, nu consultanță fiscală – lămurește cu consultantul tău fiscal.", leer: "Acum nu e nicio indicație. Cu mai multe date vin și indicații.", quelle: "Sursă", belege: "Pregătește bonurile", spaeterKnopf: "Mai târziu", spaeter: "mai târziu", erledigt: "Gata", erledigtMeldung: "Indicație rezolvată", spaeterMeldung: "Indicație amânată" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forma juridică", hinweis: "Scrie pe înregistrarea activității (Gewerbeanmeldung) sau în Impressum. e.K. se socotește întreprindere individuală, GmbH & Co. KG ca KG.", offen: "Scrie forma juridică", gesetzt: "Forma juridică salvată", namen: { einzel: "Întreprindere individuală", gbr: "GbR", gmbh: "GmbH", ug: "UG (cu răspundere limitată)", kg_ohg: "KG sau OHG", unbekannt: "Nu știu" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Până acum ${summe} pe lună`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Șefu', în „${k}” e prea cald. Verifică imediat, te rog.`,
+    rezeptFrage: "Șefule, ți-ai trecut deja rețetele?",
+  },
 };

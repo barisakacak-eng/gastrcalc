@@ -1481,4 +1481,11 @@ export default {
   hinweise: { einstieg: "Nîşe", einstiegUnter: "Bac û dayre, ji daneyên te", einstiegNeu: (n) => (n === 1 ? "1 nîşeya nû" : `${n} nîşeyên nû`), titel: "Nîşe", unter: "Ji daneyên te. Giştî, ne şêwir.", pflicht: "Nîşeya giştî, ne şêwira bacê – bi şêwirmendê xwe yê bacê re zelal bike.", leer: "Niha tu nîşe tune. Bi daneyên zêdetir nîşe tên.", quelle: "Çavkanî", belege: "Belgeyan amade bike", spaeterKnopf: "Paşê", spaeter: "paşê", erledigt: "Qediya", erledigtMeldung: "Nîşe qediya", spaeterMeldung: "Nîşe hat paşxistin" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forma hiqûqî", hinweis: "Li ser qeyda karê te (Gewerbeanmeldung) an di Impressumê de ye. e.K. wek karsaziya yekkesî tê hesibandin, GmbH & Co. KG wek KG.", offen: "Forma hiqûqî binivîse", gesetzt: "Forma hiqûqî hat tomarkirin", namen: { einzel: "Karsaziya yekkesî", gbr: "GbR", gmbh: "GmbH", ug: "UG (berpirsiyariya sînorkirî)", kg_ohg: "KG an OHG", unbekannt: "Nizanim" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Heta niha ${summe} di mehê de`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Hosta, “${k}” zêde germ e. Ji kerema xwe yekser lê binêre.`,
+    rezeptFrage: "Şef, te reçeteyên xwe nivîsandin?",
+  },
 };

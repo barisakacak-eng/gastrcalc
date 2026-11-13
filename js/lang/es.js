@@ -1482,4 +1482,11 @@ export default {
   hinweise: { einstieg: "Avisos", einstiegUnter: "Impuestos y administración, con tus datos", einstiegNeu: (n) => (n === 1 ? "1 aviso nuevo" : `${n} avisos nuevos`), titel: "Avisos", unter: "Con tus datos. General, no es asesoría.", pflicht: "Aviso general, no es asesoría fiscal – consúltalo con tu asesor fiscal.", leer: "Ahora no hay avisos. Con más datos llegan más avisos.", quelle: "Fuente", belege: "Preparar recibos", spaeterKnopf: "Más tarde", spaeter: "más tarde", erledigt: "Hecho", erledigtMeldung: "Aviso hecho", spaeterMeldung: "Aviso aplazado" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Forma jurídica", hinweis: "Aparece en tu alta de actividad (Gewerbeanmeldung) o en el aviso legal (Impressum). e.K. cuenta como empresa individual, GmbH & Co. KG como KG.", offen: "Anotar forma jurídica", gesetzt: "Forma jurídica guardada", namen: { einzel: "Empresa individual", gbr: "GbR", gmbh: "GmbH", ug: "UG (responsabilidad limitada)", kg_ohg: "KG u OHG", unbekannt: "No lo sé" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Por ahora ${summe} al mes`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Jefe, “${k}” está demasiado caliente. Revísalo ya, por favor.`,
+    rezeptFrage: "Jefe, ¿ya metiste tus recetas?",
+  },
 };

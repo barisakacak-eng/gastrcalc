@@ -2,7 +2,6 @@
 // Etappe 4: Kühlkontrolle – Einrichtung der Kühlstellen, der Rundgang, das Monatsblatt.
 // Regeln aus der Vorprüfung des Gremiums: Grenzen setzt der Betrieb (die App nennt nur Anhaltspunkte), kein Wert ist vorbelegt,
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
-import { l15b } from "../data/l15b_texte.js"; // Lauf 4, Bildpaket L15b (Entwurf hinter window.__gcL15b)
 import { einklappen } from "./bausteine.js"; // Prüfer 19.10.2026: Haftungstext eingeklappt (15-Wörter-Regel im Laden)
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
@@ -62,7 +61,7 @@ const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit
 // Laden-Schablone (27.10.2026): Zeki sagt in einem Satz, was los ist – statt „0 / 4“.
 function zekiKuehl(stand, st, fertig) {
   const warm = aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m?.abweichung && x.m.datum === heute());
-  if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(l15b(sprache(), "warm", kn(warm.k)) ?? anredeTeam(t("kuehl.zeki.warm", kn(warm.k)), stand))}</p>`; // L15b-Entwurf: ≤ 6 Wörter
+  if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(anredeTeam(t("l15b.warm", kn(warm.k)), stand))}</p>`; // kurzer Satz: höchstens 6 Wörter
   if (fertig) return `<p class="zeki-zeile a-gruen" role="status">${esc(t("kuehl.zeki.fertig"))}</p>`;
   // Ausschuss Lauf 3, P1 A1: Werte aus dem offenen Rundgang zählen mit (vorher „Noch 2 Geräte“ und „–“ nach Zurück – sah aus wie verloren)
   const r = rundgangOffen(stand); const H = heute();

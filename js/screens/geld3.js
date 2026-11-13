@@ -2,7 +2,6 @@
 // Je Thema eine aufklappbare Karte (Überschrift + eine Zahl), Inhalt auf Tipp – Büro-Maß 120 Wörter. Nur Anzeige; Zahlen aus den Rechenkernen.
 import { nav } from "./nav.js";
 import { t, sprache } from "../i18n.js";
-import { l15bAn } from "../data/l15b_texte.js";
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
 import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, kleinunternehmerPruefung, wasBleibt, prueferBlick } from "../steuertopf.js";
@@ -69,8 +68,8 @@ export function geld3View(stand) {
     const mini = p.lohnArt === "minijob" ? ` · ${t("w3.schicht.minijob", fmtZahl(zs.gesamt, 1), fmtZahl(minijobGrenzeStunden(H), 2))}` : "";
     return z(p.kuerzel || p.name || "?", esc(t("w3.schicht.zeile", fmtZahl(zs.gesamt, 1), fmtZahl(zs.nacht25 + zs.nacht40, 1), fmtZahl(zs.sonntag + zs.feiertag125 + zs.feiertag150, 1)) + mini)); }).join("");
   const zeilen = zeilenFuer(von, H);
-  // Lauf 4 (P5 C2), Entwurf hinter window.__gcL15b: auch der Vormonat ist sichtbar (vorher nur der laufende Monat)
-  const vorm = (() => { if (!l15bAn()) return ""; const vm = plusMonate(monat, -1); const d = new Date(Number(vm.slice(0, 4)), Number(vm.slice(5, 7)) - 1, 1);
+  // Auch der Vormonat ist sichtbar, nicht nur der laufende Monat
+  const vorm = (() => { const vm = plusMonate(monat, -1); const d = new Date(Number(vm.slice(0, 4)), Number(vm.slice(5, 7)) - 1, 1);
     const r = zeilenFuer(vm + "-01", plusTage(von, -1)); return r ? `<small class="marke">${esc(d.toLocaleDateString(sprache(), { month: "long", year: "numeric" }))}</small>${r}` : ""; })();
   // W3b: Schicht im Büro eintragen (Beginn/Ende je Person) – die Laden-Eingabe „Mitarbeiter heute“ bleibt, wie sie ist
   const se = schichtEntwurf; const sp = se.person || pers[0]?.id || ""; const sd = se.datum || H;

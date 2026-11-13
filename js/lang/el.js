@@ -1482,4 +1482,11 @@ export default {
   hinweise: { einstieg: "Υποδείξεις", einstiegUnter: "Φόροι και υπηρεσίες, από τα δεδομένα σου", einstiegNeu: (n) => (n === 1 ? "1 νέα υπόδειξη" : `${n} νέες υποδείξεις`), titel: "Υποδείξεις", unter: "Από τα δεδομένα σου. Γενικά, όχι συμβουλή.", pflicht: "Γενική υπόδειξη, όχι φορολογική συμβουλή – ξεκαθάρισέ το με τον λογιστή σου.", leer: "Τώρα καμία υπόδειξη. Με περισσότερα δεδομένα έρχονται υποδείξεις.", quelle: "Πηγή", belege: "Ετοίμασε αποδείξεις", spaeterKnopf: "Αργότερα", spaeter: "αργότερα", erledigt: "Έγινε", erledigtMeldung: "Η υπόδειξη έγινε", spaeterMeldung: "Η υπόδειξη μετατέθηκε" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Νομική μορφή", hinweis: "Γράφεται στη δήλωση επιχείρησης (Gewerbeanmeldung) ή στο Impressum. Η e.K. μετράει ως ατομική επιχείρηση, η GmbH & Co. KG ως KG.", offen: "Γράψε νομική μορφή", gesetzt: "Η νομική μορφή αποθηκεύτηκε", namen: { einzel: "Ατομική επιχείρηση", gbr: "GbR", gmbh: "GmbH", ug: "UG (περιορισμένης ευθύνης)", kg_ohg: "KG ή OHG", unbekannt: "Δεν ξέρω" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Μέχρι τώρα ${summe} τον μήνα`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Αφεντικό, «${k}»: πολύ υψηλή θερμοκρασία. Έλεγξέ το αμέσως.`,
+    rezeptFrage: "Αφεντικό, έβαλες ήδη τις συνταγές σου;",
+  },
 };

@@ -2,7 +2,6 @@
 // Oben „Alle | Zu billig · n“. Tipp auf ein Gericht → Preis-Blatt: alter Preis durchgestrichen, großer neuer Preis mit −/+ in 10-Cent-Schritten
 // (Tipp auf die Zahl = tippen), „Bleibt dir“ = Deckungsbeitrag je Stück mit Ampelpunkt, „Speichern“.
 // Kein Rezept, kein Wareneinsatz, keine Kosten – das wohnt im Büro (Ansicht „kartebuero“, karte.js-Schritte). Gerechnet wird nur im Rechenwerk.
-import { l15bAn } from "../data/l15b_texte.js"; // Lauf 4, Bildpaket L15b (Entwurf hinter window.__gcL15b)
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, parseZahl, wertAnzeige } from "../util.js";
 import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
@@ -56,7 +55,7 @@ export function karteLadenView(stand) {
     const a = preisAmpel(x.z, x.z.preisBrutto); const getraenk = x.g.klasse === "getraenk";
     const valid = a.gewinn !== null && a.quote !== null; const pruefen = minusUnsicher({ ...x.z, ampel: a.ampel }, x.g);
     const unscharf = unsicher || x.z.warenGeschaetzt || x.z.warenRichtpreis;
-    const betrag = pruefen ? (l15bAn() ? "≈" : t("karte.kurz.pruefen")) : valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : ""; // Gegenprüfung 28.10.: nicht berechenbar → keine Zahl statt „–“
+    const betrag = pruefen ? "≈" : valid ? `${unscharf ? "≈ " : ""}${vorzeichen(a.gewinn)}${fmtEuro(Math.abs(a.gewinn), { dezimal: 2 })}` : ""; // Gegenprüfung 28.10.: nicht berechenbar → keine Zahl statt „–“
     const eigen = hatEigenesRezept(x.g); const quelle = getraenk || !rezeptStempel(x.g).stufe ? "" : eigen ? "eigen" : "geschaetzt";
     const preis = x.z.preisBrutto === null ? "–" : fmtEuro(x.z.preisBrutto, { dezimal: 2 });
     const ampel = pruefen ? "pruefen" : a.ampel;
@@ -76,7 +75,7 @@ export function karteLadenView(stand) {
         <button type="button" role="tab" aria-selected="${filter === "alle"}" class="${filter === "alle" ? "an" : ""}" data-a="kl-filter" data-wert="alle">${esc(t("kartelaeden.alle"))}</button>
         <button type="button" role="tab" aria-selected="${filter === "billig"}" class="${filter === "billig" ? "an" : ""}" data-a="kl-filter" data-wert="billig"><i class="kl-punkt r klein" aria-hidden="true"></i>${esc(t("kartelaeden.zuBillig", billig))}</button>
       </div>` : ""}
-      ${l15bAn() && zeig.some((x) => minusUnsicher({ ...x.z, ampel: preisAmpel(x.z, x.z.preisBrutto).ampel }, x.g)) ? `<p class="kl-pruefen-kopf a-gelb">${esc(t("karte.kurz.pruefen"))}</p>` : "" /* L15b-Entwurf: einmal über der Liste statt je Zeile */}
+      ${zeig.some((x) => minusUnsicher({ ...x.z, ampel: preisAmpel(x.z, x.z.preisBrutto).ampel }, x.g)) ? `<p class="kl-pruefen-kopf a-gelb">${esc(t("karte.kurz.pruefen"))}</p>` : "" /* einmal über der Liste statt je Zeile */}
       <div class="kl-liste" role="list">${liste.some(mitZahl) ? `<div class="kl-spalten" aria-hidden="true"><span></span><span>${esc(t("karte.kurz.bleibt"))}</span><span></span></div>` : ""}${zeig.map(zeile).join("")}</div>
       ${zeig.length < sicht.length ? `<button type="button" class="knopf zweit" data-a="kl-alle">${esc(t("kartelaeden.mehr", sicht.length - zeig.length))}</button>` : ""}`}
     </div>

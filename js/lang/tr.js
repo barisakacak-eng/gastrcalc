@@ -1469,6 +1469,13 @@ export default {
   hinweise: { einstieg: "İpuçları", einstiegUnter: "Vergi ve daire", einstiegNeu: (n) => `${n} yeni ipucu`, titel: "İpuçları", unter: "Senin verilerinden. Genel bilgi, danışmanlık değil.", pflicht: "Genel bilgi, vergi danışmanlığı değil – mali müşavirinle görüş.", leer: "Şu an ipucu yok. Daha fazla veriyle ipuçları gelir.", quelle: "Kaynak", belege: "Belgeleri hazırla", spaeterKnopf: "Sonra", spaeter: "sonra", erledigt: "Tamam", erledigtMeldung: "İpucu tamamlandı", spaeterMeldung: "İpucu sonraya alındı" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Şirket türü", hinweis: "İşyeri kaydında (Gewerbeanmeldung) veya künyede yazar. e.K. şahıs işletmesi sayılır, GmbH & Co. KG ise KG.", offen: "Şirket türü", gesetzt: "Şirket türü kaydedildi", namen: { einzel: "Şahıs işletmesi", gbr: "GbR", gmbh: "GmbH", ug: "UG (sınırlı sorumlu)", kg_ohg: "KG veya OHG", unbekannt: "Bilmiyorum" } }, // Rechtsform (23.10.2026)
   home: { titel: "Ana ekrana ekle", laden: "Ana ekran: Paylaş → Ana Ekrana Ekle", ladenAndroid: "Ana ekran: Menü → Uygulamayı yükle", ios1: "Altta “Paylaş”a dokun", ios2: "“Ana Ekrana Ekle”yi seç", android1: "Üstte “Menü ⋮”ye dokun", android2: "“Uygulamayı yükle”yi seç", installieren: "Yükle", warum: "Ana ekran uygulaması olarak veriler telefonda daha uzun kalır. Yine de yedek al. Tarayıcıda Safari 7 gün kullanılmazsa silebilir (webkit.org, 24.03.2020).", schon: "Ana ekranda duruyor.", ok: "Tamam", spaeter: "Sonra" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme.
+  l15b: {
+    zwischenstand: (b) => `Tüm sabit giderler: ayda ${b}`,
+    abgaben: (p, a) => `İşveren payı ≈ %${p} dahil (${{ angestellt: "çalışan", minijob: "minijob", gemischt: "çalışan ve minijob, ağırlıklı" }[a]}).`,
+    warm: (k) => `${k} fazla sıcak. Hemen bak.`,
+    rezeptFrage: "Usta, tarifler girildi mi?",
+  },
 };
 
 // Sanji: Texte nur für die Design-Abnahme; keine neuen App-Funktionen.

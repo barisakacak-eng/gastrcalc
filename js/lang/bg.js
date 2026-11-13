@@ -1487,4 +1487,11 @@ export default {
   hinweise: { einstieg: "Подсказки", einstiegUnter: "Данъци и служби, от твоите данни", einstiegNeu: (n) => br(n, "нова подсказка", "нови подсказки"), titel: "Подсказки", unter: "От твоите данни. Общо, не съвет.", pflicht: "Обща подсказка, не данъчен съвет – изясни със счетоводителя си.", leer: "Сега няма подсказка. С повече данни идват още.", quelle: "Източник", belege: "Приготви бележките", spaeterKnopf: "По-късно", spaeter: "по-късно", erledigt: "Готово", erledigtMeldung: "Подсказката е готова", spaeterMeldung: "Подсказката е отложена" }, // Hinweis-Karten (23.10.2026)
   rechtsform: { titel: "Правна форма", hinweis: "Пише в регистрацията на дейността (Gewerbeanmeldung) или в Impressum. e.K. се брои за едноличен търговец, GmbH & Co. KG за KG.", offen: "Въведи правна форма", gesetzt: "Правната форма е запазена", namen: { einzel: "Едноличен търговец", gbr: "GbR", gmbh: "GmbH", ug: "UG (с ограничена отговорност)", kg_ohg: "KG или OHG", unbekannt: "Не знам" } }, // Rechtsform (23.10.2026)
   home: { titel: "Add to Home Screen", laden: "Home Screen: Share → Add to Home Screen", ladenAndroid: "Home Screen: Menu → Install app", ios1: "Tap “Share” at the bottom", ios2: "Choose “Add to Home Screen”", android1: "Tap “Menu ⋮” at the top", android2: "Choose “Install app”", installieren: "Install", warum: "As a Home Screen app your data stays on the phone longer. Still make backups. In the browser, Safari may delete it after 7 days without use (webkit.org, 24 Mar 2020).", schon: "On the Home Screen.", ok: "OK", spaeter: "Later" }, // Lauf 2, Bildpaket D (1) – Home-Bildschirm
+  // Feste Sätze der Laden-Bildschirme (l15b). Wie bisher zeigt diese Sprache hier ihren bisherigen Text; abgaben nur in de, tr, ar, en.
+  l15b: {
+    zwischenstand: (summe) => `Досега ${summe} на месец`,
+    abgaben: (p, a) => `Includes ≈ ${p} % employer contributions (${{ angestellt: "employees", minijob: "mini-job", gemischt: "employees and mini-job, weighted" }[a]}).`,
+    warm: (k) => `Шефе, в „${k}“ е твърде топло. Провери веднага.`,
+    rezeptFrage: "Шефе, въведе ли вече рецептите си?",
+  },
 };

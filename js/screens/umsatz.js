@@ -10,7 +10,9 @@ import { nav } from "./nav.js";
 import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
 import { zaehlerKarte } from "./home.js";
 import { heuteZiel } from "../laden_zahlen.js"; // 27.10.2026 (Persona-Test Wirt): vor dem ersten Umsatz dieselbe Zahl wie auf Heute
-import { l15b } from "../data/l15b_texte.js"; import { abgabenSatz } from "../stamm.js"; // Lauf 4 (P2 C1): Arbeitgeber-Aufschlag erklärt, Entwurf
+// Der Hinweis „Abgaben des Arbeitgebers“ steht nur in diesen Sprachen (in den anderen gab es ihn nie).
+const ABGABEN_SPRACHEN = ["de", "tr", "ar", "en"];
+import { abgabenSatz } from "../stamm.js"; // Lauf 4 (P2 C1): Arbeitgeber-Aufschlag erklärt, Entwurf
 import { plusTage } from "../zeit.js";
 
 let umsatzBasis = "brutto"; // Schalter am Feld: Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert (der Zähler rechnet netto)
@@ -104,7 +106,7 @@ function rechnungKarte(z, stand) {
   const zeile = (text, v, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${v}</span></div>`;
   return `<details class="karte auf"><summary><h2>${esc(t("zaehler.soRechnet"))}</h2></summary>
     ${zeile(t("zaehler.fixBis"), fmtEuro(z.fix))}
-    ${zeile(t("zaehler.lohnBis"), z.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.lohn))}${(() => { const g = !z.last.lohnOffen && z.lohn > 0 ? abgabenSatz(stand, z.monat.von, z.datum) : null; const x = g ? l15b(sprache(), "abgaben", fmtZahl(g.satz * 100, 0), g.art) : null; return x ? `<small class="marke">${esc(x)}</small>` : ""; })()}
+    ${zeile(t("zaehler.lohnBis"), z.last.lohnOffen ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.lohn))}${(() => { const g = !z.last.lohnOffen && z.lohn > 0 ? abgabenSatz(stand, z.monat.von, z.datum) : null; const x = g && ABGABEN_SPRACHEN.includes(sprache()) ? t("l15b.abgaben", fmtZahl(g.satz * 100, 0), g.art) : null; return x ? `<small class="marke">${esc(x)}</small>` : ""; })()}
     ${zeile(t("zaehler.eigenBis"), z.last.eigen.betrag === null ? `<span class="marke offen">${esc(t("allgemein.offen"))}</span>` : fmtEuro(z.eigen))}
     ${z.sonderBis > 0 ? zeile(t("zaehler.sonderBis", z.sonder.belege.length), fmtEuro(z.sonderBis)) : ""}
     ${zeile(z.stufe === 3 ? t("zaehler.wareBelege") : z.stufe === 2 ? t("zaehler.wareGeschaetzt", fmtZahl(z.quote * 100, 0)) : t("zaehler.wareRichtwert", fmtZahl(z.quote * 100, 0)), `${z.stufe < 3 ? "≈ " : ""}${fmtEuro(z.ware)}`)}
