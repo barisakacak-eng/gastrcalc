@@ -18,7 +18,8 @@ const SATZ_7 = (tag = heute()) => mwst("ermaessigt", tag), SATZ_19 = (tag = heut
 // Mischsatz s = s7·(1−a) + s19·a  →  a = (s − s7) / (s19 − s7) (Sätze aus dem Regelwerk). Eigener Satz im Büro = nicht geschätzt; Karte/Standard = Schätzung.
 export function anteil19(stand, tag = heute()) {
   const s = umsatzSteuerSatz(stand);
-  if (s.quelle === "kleinunternehmer") return { anteil: 0, geschaetzt: false, quelle: s.quelle, keineUst: true }; // § 19 UStG: keine Umsatzsteuer (Lauf 6, E11 A1) const s7 = SATZ_7(tag), s19 = SATZ_19(tag);
+  if (s.quelle === "kleinunternehmer") return { anteil: 0, geschaetzt: false, quelle: s.quelle, keineUst: true }; // § 19 UStG: keine Umsatzsteuer (Lauf 6, E11 A1)
+  const s7 = SATZ_7(tag), s19 = SATZ_19(tag);
   const a = Math.min(1, Math.max(0, (s.satz - s7) / (s19 - s7)));
   return { anteil: a, geschaetzt: s.geschaetzt, quelle: s.quelle };
 }
