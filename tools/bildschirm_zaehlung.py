@@ -36,6 +36,10 @@ NUR = [x for x in os.environ.get("ZAEHLUNG_NUR", "einrichtung,laden,buero,person
 CODE = "1234"
 SPRACHE = os.environ.get("SCHNELLSTART_SPRACHE", "de")           # Sprache über die Sprachwahl der App (wie tests/schnellstart.py)
 FARBE = "dark" if os.environ.get("ZAEHLUNG_DUNKEL") == "1" else "light"
+GROESSE = (390, 844)
+KEIN_FOTO = False      # Prüfwerkzeuge (tests/tor_browser.py) messen nur und legen keine Bilder ab
+REDUZIERT = False      # reduced_motion="reduce"
+NACH_FOTO = None       # async (Lauf, Eintrag, Zustand) → Messung je neuem Bildschirm (Haken für tests/tor_browser.py)
 LOCALE = {"de": "de-DE", "tr": "tr-TR", "ar": "ar-SA"}.get(SPRACHE, SPRACHE)
 LADEN_GRENZE = 15
 
@@ -171,7 +175,7 @@ class Lauf:
 
     async def start(self):
         self.srv = schnellstart.server(self.port)
-        self.ctx = await self.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE)
+        self.ctx = await self.b.new_context(viewport={"width": GROESSE[0], "height": GROESSE[1]}, device_scale_factor=1 if KEIN_FOTO else 2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE, **({"reduced_motion": "reduce"} if REDUZIERT else {}))
         await self.ctx.add_init_script(path=str(APP / "tests" / "hilfe" / "aufklappen.js"))
         await self.ctx.add_init_script(script="window.print = () => { window.__druck = (window.__druck || 0) + 1; };")
         self.pg = pg = await self.ctx.new_page()
@@ -211,7 +215,7 @@ class Lauf:
             except Exception: await self.pg.wait_for_timeout(500)
         return await self.pg.evaluate(LESEN_JS)
 
-    async def foto(self, name, weg, z=None):
+    async def foto(self, name, weg, z=None, ansicht=None):
         z = z or await self.z()
         fp = fingerabdruck(z)
         if fp in self.gesehen: return None
@@ -220,20 +224,24 @@ class Lauf:
         while any(s["name"] == n for s in self.schirme): n = f"{name}-{i}"; i += 1
         self.gesehen[fp] = n
         datei = OUT / f"{self.modus}-{n}.png"
-        try:
-            await self.pg.screenshot(path=str(datei), full_page=True, timeout=15000)
-        except Exception as e:
-            self.notizen.append(f"Foto {n}: {e}")
+        if not KEIN_FOTO:
+            try:
+                await self.pg.screenshot(path=str(datei), full_page=True, timeout=15000)
+            except Exception as e:
+                self.notizen.append(f"Foto {n}: {e}")
         for k in z["knoepfe"]:
             if k["a"] == "nav" and k["wert"]: self.nav_gefunden.add(k["wert"])
         v, s_, ol = woerter(z["voll"]), woerter(z["sicht"]), woerter(z["ohneLeiste"])
-        eintrag = {"modus": self.modus, "name": n, "datei": datei.name, "weg": weg, "titel": z["titel"], "blatt": z["blatt"],
+        eintrag = {"modus": self.modus, "name": n, "ansicht": ansicht, "datei": datei.name, "weg": weg, "titel": z["titel"], "blatt": z["blatt"],
                    "phase": z["phase"], "schritt": z["schritt"], "ebeneIst": z["modus"],
                    "woerter": len(v), "woerterSicht": len(s_), "woerterOhneLeiste": len(ol), "text": z["voll"][:4000],
                    "seiteBreit": z["seiteBreit"], "ueber": z["ueber"], "abgeschnitten": z["abgeschnitten"],
                    "fehler": list(dict.fromkeys(self.fehler)), "dialoge": list(dict.fromkeys(self.dialoge)), "knoepfe": len(z["knoepfe"])}
         self.fehler.clear(); self.dialoge.clear()
         self.schirme.append(eintrag)
+        if NACH_FOTO:
+            try: eintrag["messung"] = await NACH_FOTO(self, eintrag, z)
+            except Exception as ex: self.notizen.append(f"Messung {n}: {ex!r}"[:200])
         return eintrag
 
     async def blatt_zu(self):
@@ -252,12 +260,14 @@ class Lauf:
         """Nach „Bearbeiten“ steht die App in einem Einrichtungs-Schritt – mit „Weiter“ zurück in die App."""
         for _ in range(25):
             if await self.pg.evaluate("window.__gastrocalc.stand.phase") != "onboarding": return True
-            k = self.pg.locator('[data-a="weiter"], [data-a="ob-fertig"]')
+            k = self.pg.locator('[data-a="weiter"], [data-a="ob-fertig"], [data-a="waage-weiss-nicht"], [data-a="zurueck"]')  # Rezept-Frage („Weiß ich nicht“) und „Zurück“ gibt es ohne „Weiter“
             if await k.count():
                 try: await k.first.click(timeout=2000)
                 except Exception: pass
             await self.pg.wait_for_timeout(300)
-        return False
+        try: await self.pg.reload(); await self.pg.wait_for_selector('[data-a="menue-auf"], .schirm', timeout=15000)  # letzter Ausweg
+        except Exception: pass
+        return await self.pg.evaluate("window.__gastrocalc.stand.phase") != "onboarding"
 
     async def nav(self, ziel):
         await self.pg.evaluate("z => { const b = document.createElement('button'); b.type = 'button'; b.dataset.a = 'nav'; b.dataset.wert = z; b.hidden = true; (document.querySelector('#app') || document.body).appendChild(b); b.click(); b.remove(); }", ziel)
@@ -334,7 +344,7 @@ class Lauf:
                                      "woerterSicht": 0, "woerterOhneLeiste": 0, "text": " | ".join(self.dialoge), "seiteBreit": 0, "ueber": [], "abgeschnitten": [],
                                      "fehler": list(self.fehler), "dialoge": list(self.dialoge), "knoepfe": 0})
                 self.fehler.clear(); self.dialoge.clear(); continue
-            e = await self.foto(name, list(weg) + [sel], z2)
+            e = await self.foto(name, list(weg) + [sel], z2, ansicht)
             if e and z2["phase"] != "onboarding" and z2["modus"] == self.modus:
                 await self.erkunden(e["name"], ansicht, list(weg) + [sel], z2, tiefe + 1)
 
@@ -353,7 +363,7 @@ class Lauf:
                                          "phase": z["phase"], "schritt": None, "ebeneIst": z["modus"], "woerter": 0, "woerterSicht": 0, "woerterOhneLeiste": 0, "text": "",
                                          "seiteBreit": 0, "ueber": [], "abgeschnitten": [], "fehler": [], "dialoge": [], "knoepfe": 0, "zurueck": True})
                     continue
-                e = await self.foto(ansicht, ["nav:" + ansicht], z)
+                e = await self.foto(ansicht, ["nav:" + ansicht], z, ansicht)
                 if e is None:
                     self.notizen.append(f"Ansicht „{ansicht}“ sieht aus wie ein schon fotografierter Bildschirm ({self.gesehen.get(fingerabdruck(z))})")
                     continue
@@ -411,7 +421,7 @@ async def einrichtung(l):
     await weiter("geld"); await l.foto("schnell-geld", ["weiter"])
     await weiter("fertig-schnell"); await l.foto("schnell-fertig", ["weiter"])
     # „Alles genau einrichten“: neuer Kontext, jeder Schritt mit „Weiter“
-    ctx2 = await l.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE)
+    ctx2 = await l.b.new_context(viewport={"width": GROESSE[0], "height": GROESSE[1]}, device_scale_factor=1 if KEIN_FOTO else 2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE, **({"reduced_motion": "reduce"} if REDUZIERT else {}))
     await ctx2.add_init_script(path=str(APP / "tests" / "hilfe" / "aufklappen.js"))
     pg2 = await ctx2.new_page()
     pg2.on("console", lambda m: l.fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
@@ -584,6 +594,7 @@ figure.warn small{{color:var(--warn);opacity:1}}
 async def main():
     ansichten, je_modus, _ = ansichten_aus_code()
     for p in OUT.glob("*.png"): p.unlink()
+    OUT.mkdir(parents=True, exist_ok=True)
     t0 = time.time(); ergebnisse = {}
     async with async_playwright() as p:
         b = await p.chromium.launch()
