@@ -68,3 +68,7 @@ input[type=checkbox]{accent-color:var(--salbei);inline-size:22px;block-size:22px
 
 /* Weinrot gehört nur auf die Müll-Bühne: das Müll-Symbol auf Kacheln (Heute, Personal) bleibt Salbei */
 .ks.muell,.riesenkachel .rt .ks.muell{background:var(--salbei-hell);color:var(--salbei-tief)}
+
+/* Piktogramme aus bilder/ sind Strichzeichnungen in currentColor; als <img> würden sie schwarz: im Dunkeln hell darstellen */
+:root[data-theme=dark] img.pikto,:root[data-theme=dark] .ep-ohne img{filter:invert(.92)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) img.pikto,:root:not([data-theme=light]) .ep-ohne img{filter:invert(.92)}}

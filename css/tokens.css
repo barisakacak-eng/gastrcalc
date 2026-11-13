@@ -27,5 +27,5 @@
 --b-primaer:var(--salbei);--b-primaer-hell:var(--salbei-hell);--b-akzent:var(--salbei);--b-akzent-hell:var(--salbei-hell);--b-hintergrund:var(--papier);--b-karte:var(--papier);--b-text:var(--tinte);--b-text-leise:var(--tinte-weich);--b-linie:var(--linie);--b-gruen-ok:var(--salbei);--b-rot:var(--rot);--b-rot-text:var(--tinte);--b-rot-hell:var(--papier-tief);--b-gelb:var(--holz-tief);--b-gelb-text:var(--tinte);--b-gelb-hell:var(--papier-tief);
 }
 [lang=ar],[lang=fa]{--schrift:NotoSansArabic,NotoSans,system-ui,sans-serif}
-[data-theme=dark],.dunkel{--papier:#22301F;--tinte:#F5EDE2;--papier-tief:color-mix(in srgb,#22301F 85%,#4C6B55);--tinte-weich:color-mix(in srgb,#F5EDE2 80%,#22301F);--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion:#4C6B55;--aktion-text:#F5EDE2;--linie:color-mix(in srgb,#F5EDE2 28%,#22301F)}
+[data-theme=dark]{--papier:#22301F;--tinte:#F5EDE2;--papier-tief:color-mix(in srgb,#22301F 85%,#4C6B55);--tinte-weich:color-mix(in srgb,#F5EDE2 80%,#22301F);--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion:#4C6B55;--aktion-text:#F5EDE2;--linie:color-mix(in srgb,#F5EDE2 28%,#22301F)}
 @media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]){--papier:#22301F;--tinte:#F5EDE2;--papier-tief:#2A3B2E;--tinte-weich:#D2CCBD;--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion-text:#F5EDE2;--linie:#57634F}}

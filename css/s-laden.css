@@ -3,9 +3,6 @@
    Alle Regeln beginnen mit #app, damit sie die alten Schichten (app, zielbild, design-b, facelift-v1) bei gleicher Art schlagen.
    Weinrot nur über --muell (Müll). Glut höchstens einmal je Bildschirm: das, was gerade dran ist. */
 
-/* Die Klasse .dunkel dreht die Tokens im Teilbaum um (tokens.css). Hier steht der Wert des Wurzelelements als Alias, damit Zeilen mit .dunkel (Heute „Jetzt dran“, Bilanz) trotzdem Papier und Tinte behalten. */
-:root{--l-papier:var(--papier);--l-tinte:var(--tinte);--l-tinte-weich:var(--tinte-weich);--l-papier-tief:var(--papier-tief);--l-linie:var(--linie)}
-#app .h-jetzt.dunkel,#app .ab-hero.dunkel,#app .jetzt.dunkel{--papier:var(--l-papier);--tinte:var(--l-tinte);--tinte-weich:var(--l-tinte-weich);--papier-tief:var(--l-papier-tief);--linie:var(--l-linie)}
 
 /* ---------- Grund: Papier, ruhige Karten mit weicher Tiefe ---------- */
 #app .inhalt{background:transparent;padding:14px 16px 20px;gap:10px;display:flex;flex-direction:column}
