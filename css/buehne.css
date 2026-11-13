@@ -23,7 +23,8 @@
 .gc-buehne .gc-kopf .sym{inline-size:24px;block-size:24px}
 /* Innenbereich: Text links (RTL rechts), Zeki gegenüber */
 .gc-buehne .gc-buehne-innen{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:center;min-block-size:113px;padding:0}
-.gc-buehne.gc-buehne-niedrig .gc-buehne-innen{min-block-size:60px;padding-block-end:0}
+.gc-buehne.gc-buehne-niedrig .gc-buehne-innen{min-block-size:32px;padding-block-end:0}
+@media (max-height:760px){.gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen{min-block-size:56px;grid-template-columns:minmax(0,1fr) 96px}.gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen button.gc-figur-knopf{transform:scale(.56);transform-origin:100% 100%}[dir=rtl] .gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen button.gc-figur-knopf{transform-origin:0 100%}}
 .gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform:scale(.52);transform-origin:100% 100%}
 [dir=rtl] .gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform-origin:0 100%}
 .gc-buehne .gc-buehne-text{display:grid;gap:4px;align-content:center;min-inline-size:0;padding-block:2px}

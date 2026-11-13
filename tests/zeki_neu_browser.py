@@ -106,7 +106,7 @@ async def main():
                 await pg.keyboard.press("Escape"); await pg.wait_for_timeout(500)
                 if await pg.locator("#ebene-huelle .ebene-blatt").count(): await pg.click('#ebene-huelle [data-a="blatt-zu"] >> nth=0', force=True); await pg.wait_for_timeout(400)
                 # Büro-Start (Haltung „warten“: beim Ankommen keine Folge)
-                await los(); await nav_hilfe.geh(pg, "buero"); await pruefe("buero-start", 0)
+                await los(); await nav_hilfe.geh(pg, "buero"); await pruefe("buero-start", 1)  # im Büro läuft die Leerlauf-Folge warten (einmal)
                 # Personal-Start
                 await schnellstart.code_setzen(pg, "1234"); await nav_hilfe.geh(pg, "start"); await nav_hilfe.menue(pg)
                 await los(); await pg.click('#ebene-huelle [data-a="modus"][data-wert="personal"]'); await pg.wait_for_selector(".riesenkachel"); await pruefe("personal-start", 1)
