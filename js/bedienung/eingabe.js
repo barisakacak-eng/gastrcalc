@@ -14,13 +14,14 @@ import { t } from "../i18n.js";
 import { umsatzEingabe, umsatzFeldVerlassen } from "../screens/umsatz.js";
 import { tagWertUebernehmen } from "../screens/tag.js";
 import { ANSICHT_EINGABE as EINGABE_LADEN } from "./laden.js";
-import { ANSICHT_EINGABE as EINGABE_BUERO } from "./buero.js";
+import { bueroPaket } from "./nachladen.js";
 import { aufAenderung } from "./fotos.js";
 
-const ANSICHT_EINGABE = zusammenfuehren(EINGABE_LADEN, EINGABE_BUERO);
+const KERN_EINGABE = zusammenfuehren(EINGABE_LADEN); // dazu kommen die Büro-Ansichten aus dem Büro-Paket (bueroPaket().ANSICHT_EINGABE)
 
 function eingabeWert(el) {
   if (Z.stand.phase === "onboarding") return onboardingEingabe(el);
+  const ANSICHT_EINGABE = { ...KERN_EINGABE, ...bueroPaket()?.ANSICHT_EINGABE };
   const h = Z.ansicht.startsWith("ordner-") ? ANSICHT_EINGABE["ordner-"] : Object.hasOwn(ANSICHT_EINGABE, Z.ansicht) ? ANSICHT_EINGABE[Z.ansicht] : null;
   return h ? h(el) : false;
 }

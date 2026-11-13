@@ -21,17 +21,13 @@ import {
 } from "../screens/muell.js";
 import { umsatzLadenAktion, umsatzLadenEingabe } from "../screens/umsatz_laden.js";
 import { startAnsicht, modus } from "../modus.js";
-import { belegAktion, belegEingabe, belegTextDa } from "../screens/beleg.js";
-import { abschlussAktion, abschlussZuruecksetzen } from "../screens/abschluss.js";
 import { putzplanAktion } from "../screens/putzplan.js";
-import { inventurAktion, inventurEingabe } from "../screens/inventur.js";
 import { kuehlAktion, kuehlZuruecksetzen, kuehlEingabe, kuehlFormGueltig } from "../screens/kuehl.js";
-import { kuehlWareAktion, kuehlWareEingabe, kuehlWareGrundGueltig } from "../screens/kuehl_ware.js";
 import { umsatzAktion, umsatzEingabe } from "../screens/umsatz.js";
-import { vergleichModus } from "../screens/vergleich.js";
 import { kuehlBereit } from "../engine.js";
 import { FERTIG } from "./tabellen.js";
-import { parseZahl } from "../util.js";
+import { abgleichHinweisQuittieren } from "../stamm.js";
+import { bueroPaket } from "./nachladen.js";
 
 // Laden-Karte: Plus/Minus tauschen nur das Blatt aus (Raster und Bilder bleiben stehen).
 function karteBlattTauschen() {
@@ -92,31 +88,11 @@ async function umsatzHeuteKlick(name, el) {
   if (r.fertig) { meldung(t("tag.gespeichert")); await sofortSpeichern(Z.wurzel); return danach(); } // Mitarbeiter heute
 }
 
-async function belegKlick(name, el) {
-  const r = belegAktion(name, el, Z.stand, Z.wurzel);
-  if (!r) return;
-  if (r.meldung) meldung(r.meldung);
-  if (r === "uebernommen") { ereignis("beleg-uebernommen", { laden: Z.stand.id }); await sofortSpeichern(Z.wurzel); } else speichern(Z.wurzel);
-  zeichne();
-}
-async function abschlussKlick(name, el) {
-  const r = abschlussAktion(name, el, Z.stand, Z.wurzel);
-  if (r === "schon") return zeichne(); // dieser Tag ist schon abgeschlossen – nur die Bilanz zeigen, kein zweiter Abschluss
-  if (r) { ereignis("tag-abgeschlossen", { laden: Z.stand.id }); await sofortSpeichern(Z.wurzel); zeichne(); }
-}
 async function putzplanKlick(name, el) {
   const r = putzplanAktion(name, el, Z.stand);
   if (!r) return;
   if (r === "zurueck") { Z.ansicht = startAnsicht(Z.wurzel); speichern(Z.wurzel); } else if (r === "speichern") await sofortSpeichern(Z.wurzel);
   return zeichne();
-}
-async function inventurKlick(name, el) {
-  const r = inventurAktion(name, el, Z.stand);
-  if (!r) return;
-  if (r === "abgeschlossen") { ereignis("inventur-fertig", { laden: Z.stand.id }); await sofortSpeichern(Z.wurzel); }
-  else if (r === "sofort" || r.sofort) await sofortSpeichern(Z.wurzel); else speichern(Z.wurzel);
-  if (r.meldung) meldung(r.meldung);
-  zeichne();
 }
 async function kuehlKlick(name, el) {
   const r = kuehlAktion(name, el, Z.stand, Z.wurzel);
@@ -125,31 +101,21 @@ async function kuehlKlick(name, el) {
   const feld = Z.root.querySelector('[data-f="station-wert"]'); if (feld && !feld.value) feld.focus(); // Tastatur gleich hoch, der nächste Schritt ist Tippen
   if (r === "abgeschlossen") { ereignis("rundgang-fertig", { laden: Z.stand.id }); meldung(t("kuehl.abgeschlossen")); await sofortSpeichern(Z.wurzel); } else speichern(Z.wurzel);
 }
-// Ware nach einer Kühl-Abweichung: weggeworfen (Müll) oder behalten (Begründung).
-async function kuehlWareKlick(name, el) {
-  const r = kuehlWareAktion(name, el, Z.stand);
-  if (r) { if (r.speichern) await sofortSpeichern(Z.wurzel); if (r.meldung) meldung(r.meldung); zeichne(); }
-}
-
 export const ANSICHT_KLICK = {
   karte: karteKlick,
   kartefoto: kartefotoKlick,
   muell: muellKlick,
   umsatz: (name, el) => { if (umsatzAktion(name, el)) zeichne(); },
   umsatzheute: umsatzHeuteKlick,
-  beleg: belegKlick,
-  abschluss: abschlussKlick,
   putzplan: putzplanKlick,
-  inventur: inventurKlick,
   kuehl: kuehlKlick,
-  kuehlware: kuehlWareKlick,
 };
 
 export const KLICK = {
-  "vergleich-modus": (el) => { vergleichModus(el.dataset.wert); return zeichne(); },
+  "abgleich-ok": () => { abgleichHinweisQuittieren(Z.stand); speichern(Z.wurzel); return zeichne(); }, // Hinweis „Beim Zusammenführen …“ gelesen (Büro-Chip und Heute)
   "foto-abbrechen": () => { if (fotoLauf()?.zweck === "speisekarte" || hatVorschlaege()) serieAbbrechen(); else fotoZuruecksetzen(); return zeichne(); },
   "kuehl-rundgang-start": (el) => { // im Laden direkt zur ersten Stelle
-    if (Z.ansicht === "abschluss") abschlussZuruecksetzen();
+    if (Z.ansicht === "abschluss") bueroPaket()?.abschlussZuruecksetzen();
     Z.ansicht = "kuehl";
     if (el.dataset.offen !== "1") { kuehlAktion(modus(Z.wurzel) === "buero" ? "kuehl-rundgang" : "kuehl-rundgang-los", el, Z.stand, Z.wurzel); speichern(Z.wurzel); }
     return zeichne();
@@ -177,32 +143,16 @@ function muellEingabeTeil(el) {
   if (neu === "knopf") { knopf('[data-a="muell-weg-damit"]', muellFormGueltig()); return false; }
   return neu;
 }
-function belegEingabeTeil(el) {
-  const neu = belegEingabe(el.dataset.f, el.value);
-  if (neu === "knopf") { knopf('[data-a="beleg-zerlegen"]', belegTextDa()); return false; }
-  if (neu === "knopf-zw") { knopf('[data-a="zw-speichern"]', parseZahl(el.value) > 0); return false; }
-  return neu;
-}
 function kuehlEingabeTeil(el) {
   const neu = kuehlEingabe(el.dataset.f, el.value, Z.stand);
   if (neu === "knopf") { knopf('[data-a="station-speichern"]', kuehlFormGueltig()); return false; }
   return neu;
 }
-function kuehlWareEingabeTeil(el) { // Entwurf; Begründung schaltet nur den Knopf
-  const neu = kuehlWareEingabe(el.dataset.f, el.value, Z.stand);
-  if (neu === "knopf") { knopf('[data-a="kw-behalten-speichern"]', kuehlWareGrundGueltig()); return FERTIG; }
-  return neu === true ? neu : FERTIG;
-}
-
 export const ANSICHT_EINGABE = {
   karte: karteEingabe,
   kartefoto: (el) => kartePruefenEingabe(el.dataset.f, el.value),
   umsatzheute: (el) => { umsatzLadenEingabe(el.dataset.f, el.value); return FERTIG; }, // nur merken – gespeichert wird mit „Speichern“
   umsatz: (el) => umsatzEingabe(el.dataset.f, el.value, Z.stand, Z.wurzel),
-  abschluss: (el) => umsatzEingabe(el.dataset.f, el.value, Z.stand, Z.wurzel),
   muell: muellEingabeTeil,
-  beleg: belegEingabeTeil,
-  inventur: (el) => inventurEingabe(el.dataset.f, el.value),
-  kuehlware: kuehlWareEingabeTeil,
   kuehl: kuehlEingabeTeil,
 };

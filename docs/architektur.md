@@ -69,7 +69,8 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `karte_daten.js` – Setzer für Speisekarte, Rezepte, Verkaufs- und Einkaufspreise (Herkunft „hand“).
 - `karte_lesen.js` – aus erkanntem Text Gerichte mit Preis, Vorlagen zuordnen.
 - `kostenbeleg.js` – Kostenbelege, die keine Ware sind.
-- `kuehlname.js` – Kühlstellen-Namen.
+- `kuehlname.js` – Kühlstellen-Namen (liest den Auszug `data/kuehl_namen.js`, nicht die ganzen Sprachtabellen).
+- `sprachdaten.js` – große Sprachdaten (Namen, Zeki-Sätze weiterer Sprachen): im Browser erst mit der gewählten Sprache geladen, in Node sofort da.
 - `laden_zahlen.js` – Zahlen für „Heute“ und „Tag abschließen“.
 - `lieferant.js`, `lieferung.js` – Lieferanten als Stammdaten; Belege werden Lieferungen (Herkunft „beleg“).
 - `mindestlohn.js` – Mindestlohn-Vorschau (14,60 € ab 1.1.2027, Minijob 633 €).
@@ -136,6 +137,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `beleg.js` – Beleg einlesen (Büro).
 - `bestand.js` – Büro „Lager & Bestellen“.
 - `buero.js` – Büro-Startseite.
+- `buero_kopf.js` – Büro-Kopf und Büro-Symbole (klein, damit die Einstellungen im Laden nicht das ganze Büro laden).
 - `ebene.js` – Blätter über dem Bildschirm: Menü, Sprache, Läden, Hilfe, Code, Passwort.
 - `foto.js` – Speisekarte fotografieren, Prüfliste (zeigt erste Gerichte vor dem Ende der Erkennung).
 - `getraenke.js` – Büro „Getränke“.
@@ -166,6 +168,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `umsatz.js` – Büro „Umsatz“ und Zähler-Seite.
 - `umsatz_laden.js` – Laden „Umsatz heute“.
 - `vergleich.js` – Büro „Gerichte im Vergleich“.
+- `gerichtbild.js` – Bild eines Gerichts (Foto oder Piktogramm) für Laden und Büro.
 - `verkauf.js` – Büro „Verkauf je Gericht“.
 - `ware.js` – Büro „Ware & Schwund“.
 - `zeki_erst.js` – Zeki beim ersten Tipp (6b R2).
@@ -186,7 +189,8 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 - `ebene.js` – Laden · Personal · Büro, Blätter, Büro-Code, Rettung, Hinweise.
 - `einrichtung.js` – Einrichtung: Weiter, Zurück, Fertig, Bearbeiten, Rezept-Direkt.
 - `navigation.js` – Tab-Leiste und Menü, Büro-Weg. `zurueck.js` – Zurück-Geste.
-- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan, Beleg, Abschluss, Inventur).
+- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan).
+- `laden_buero.js` – Büro-Teil davon (Beleg, Abschluss, Inventur, Ware nach Kühl-Abweichung); kommt mit dem Büro-Paket.
 - `buero.js` – Büro-Bildschirme (Büro, Ordner, Verkauf, Bestand, Waren, Preise, Aktionen, Lieferanten, Getränke, Tafel, Läden, Geld, Einstellungen).
 - `personal.js` – Personal-Modus. `ladenverwaltung.js` – Läden anlegen, wechseln, löschen, „Alles löschen“.
 - `sicherung.js` – Sicherung, Rückholpunkt, Diagnose, Fehlerliste. `update.js` – neue Fassung, Service Worker, zweites Fenster.
@@ -194,10 +198,12 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 - `zeichnen.js` – `zeichne()` und das Banner. `speichern.js` – Speichern mit Fehler-Banner. `meldung.js` – kurze Meldungen.
 - `sprache.js` – Sprache setzen. `zeki.js` – Zeki auf dem Bildschirm. `rundgang.js` – Mitmach-Rundgang und erste Führung.
 - `zuruecksetzen.js` – EINE Liste aller Bildschirm-Zustände.
+- `nachladen.js` – Büro-Paket erst bei Bedarf laden (`bueroPaket()`, `bueroPaketLaden()`); der alte Bildschirm bleibt stehen, bis das Paket da ist.
+- `paket_buero.js` – das Büro-Paket: alle Büro-Bildschirme mit Klick- und Eingabe-Tabellen (`VIEW`, `ANSICHT_KLICK`, `ANSICHT_EINGABE`, `ZIEL`, `EBENE_ZURUECK`).
 
 Adapter: Hier und nur hier (neben `app.js`, `bedienung/`, `screens/`, `rahmen.js`) darf der Browser berührt werden.
 
-- `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
+- `umgebung.js` – Browser oder Node (`imBrowser`): große Sprachdaten laden im Browser erst bei Bedarf. `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
 - `leinwand.js` – Zeichenfläche. `pdfjs.js` – PDF-Leser nachladen. `webauthn.js` – Passkey. `seite.js` – Dokument-Attribute, Sichtbarkeit, Fenster-Ereignis, Speicher-API.
 - `brand_start.js` – startet Zekis Bewegungen beim Erscheinen.
 

@@ -54,7 +54,7 @@ const knopfOffen = (text = t("allgemein.weissNicht")) => `<button type="button" 
 const sprache = {
   id: "sprache",
   view: () => `
-    ${FOTOS.has("hero-doenergrill") ? `<img class="titelbild" src="foto/hero-doenergrill.webp" alt="">` : ""}
+    ${FOTOS.has("hero-doenergrill") ? `<img class="titelbild" src="foto/hero-doenergrill.webp" alt="" loading="lazy" decoding="async">` : ""}
     <h1 class="frage">${esc(t("sprache.frage"))}</h1>
     <p class="hinweis">${esc(t("sprache.hinweis"))}</p>
     <div class="kacheln">
@@ -466,7 +466,7 @@ const spracheSchnell = {
 // Foto je Laden-Art (foto/laden-*.webp, sobald Sanjis Bildpaket da ist), sonst Sanjis Piktogramm
 const LADEN_FOTO = { imbiss: ["laden-burger", "laden-imbiss", "laden-kiosk"], cafe: ["laden-cafe", "laden-baeckerei"] }; // erst eigenes Foto, sonst das ähnlichste Ladenbild
 const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
-  return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<span class="kachelfoto pikto" aria-hidden="true">${sym("store")}</span>`; }; // kein Foto für diese Art: ruhiges Symbol auf Holz (Sanjis Piktogramm hat Strichfarbe = Hintergrund und bliebe als <img> leer)
+  return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">` : `<span class="kachelfoto pikto" aria-hidden="true">${sym("store")}</span>`; }; // kein Foto für diese Art: ruhiges Symbol auf Holz (Sanjis Piktogramm hat Strichfarbe = Hintergrund und bliebe als <img loading="lazy" decoding="async"> leer)
 // Pilotfest P6 (1), (Bildpaket C freigegeben): mehrere Ladenarten zugleich wählbar, erste = Hauptart.
 // Durchsicht (Fund 1): nur wirklich gewählte Arten markieren – kein Rückfall auf „anders“/Format, solange nichts getippt ist
 const ladenArtAn = (stand, id) => (Array.isArray(stand.ladenArten) ? stand.ladenArten : stand.ladenArt ? [stand.ladenArt] : []).includes(id);
@@ -499,7 +499,7 @@ const karteSchnell = {
     return `
       ${kopfS2("karte-foto", t("schnell2.karte"), t("schnell2.karteHilfe"))}
       <label class="s2fotoflaeche">
-        ${FOTOS.has("g-doener-teller") ? `<img src="foto/g-doener-teller.webp" alt="" aria-hidden="true">` : ""}
+        ${FOTOS.has("g-doener-teller") ? `<img src="foto/g-doener-teller.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">` : ""}
         <span class="s2fotoknopf"><span class="s2kamera" aria-hidden="true">${sym("camera")}</span>${esc(t("schnell2.karteFoto"))}</span>
         <input type="file" accept="image/*" capture="environment" data-f="foto" data-zweck="speisekarte" class="dateifeld">
       </label>
@@ -551,7 +551,7 @@ const kuehlSchnell = {
       <div class="s2kuehl">${KUEHL_TYPEN.map((T) => {
         const n = alle.filter((k) => kuehlTyp(k) === T.typ).length; const name = t("schnell2.arten." + T.typ);
         return `<div class="s2kuehlzeile ${n ? "an" : ""}">
-          ${FOTOS.has(T.foto) ? `<img src="foto/${T.foto}.webp" alt="" aria-hidden="true">` : `<img class="pikto" src="bilder/${T.pikto}.svg" alt="" aria-hidden="true">`}
+          ${FOTOS.has(T.foto) ? `<img src="foto/${T.foto}.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">` : `<img class="pikto" src="bilder/${T.pikto}.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">`}
           <b>${esc(name)}</b>
           <div class="s2zaehler">
             <button type="button" data-a="s2-kuehl" data-wert="${T.typ}" data-d="-1" aria-label="${esc(name)} −" ${n ? "" : "disabled"}>−</button>
@@ -615,7 +615,7 @@ function homeKarteEinrichtung() {
   // Lauf 3, Phase 6: Sanjis Bilder (PR #21, design-handoffs/sanji/home-bildschirm, schematisch, de/tr beschriftet)
   // statt der zwei Textschritte; nur in de/tr, weil die Bilder nur diese Sprachen tragen. Die Textschritte bleiben als „Als Text“ aufklappbar.
   if (["de", "tr"].includes(aktiveSprache())) { const bilder = a ? ["04_android", "05_android"] : ["01_ios", "02_ios", "03_ios"];
-    return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><div class="home-bilder">${bilder.map((b, i) => `<img src="bilder/home/home_${b}.svg" alt="${i + 1}" loading="lazy" width="216" height="270">`).join("")}</div>
+    return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><div class="home-bilder">${bilder.map((b, i) => `<img src="bilder/home/home_${b}.svg" alt="${i + 1}" loading="lazy" width="216" height="270" decoding="async">`).join("")}</div>
       <details><summary>${esc(t("home.titel"))}</summary><ol class="home-schritte"><li>${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></details></div>`; }
   return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><ol class="home-schritte"><li>${sym(a ? "menu" : "share")} ${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${sym(a ? "download" : "plus")} ${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></div>`;
 }

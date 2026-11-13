@@ -13,12 +13,12 @@ import { nav } from "./nav.js";
 import { mengeEinheitText } from "./bausteine.js"; // Trennung
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
-import { gerichtBild } from "./vergleich.js";
+import { gerichtBild } from "./gerichtbild.js";
 import { wareBildQuelle } from "../bilder.js"; // Trennung 2: Bildzuordnung
 import { personalAktiv, personalVon, personalLeiste } from "./personal.js";
 export function wareBild(x) {
   const q = wareBildQuelle(x); // Trennung 2: Zuordnung in js/bilder.js
-  return q.foto ? `<img class="gerichtbild mini" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`;
+  return q.foto ? `<img class="gerichtbild mini" src="foto/${q.foto}.webp" alt="" loading="lazy" decoding="async">` : `<img class="gerichtbild mini pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy" decoding="async">`;
 }
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
@@ -107,7 +107,7 @@ function rasterView(stand, D, nach) {
 
 // „Andere“: Kachel mit Piktogramm (jede Kachel der Liste trägt ein Bild) – öffnet die Suche
 const ANDERE_BILD = "bilder/ui/plus.svg";
-const andereKachel = () => `<button type="button" class="karte ware andere" data-a="muell-andere"><img class="gerichtbild mini pikto" src="${ANDERE_BILD}" alt="" loading="lazy"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>`;
+const andereKachel = () => `<button type="button" class="karte ware andere" data-a="muell-andere"><img class="gerichtbild mini pikto" src="${ANDERE_BILD}" alt="" loading="lazy" decoding="async"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>`;
 const DOENER_WAREN = [/^Dönerspieß/i, /^Hähnchenspieß/i, /^Pommes/i, /^Cola/i]; // dieselben Namen wie DOENER_VORNE in js/muell.js (dort unverändert)
 export const _andereZuerst = (stand) => !(stand.schwund || []).length && (stand.betrieb?.kuechen || []).includes("doener") && !(stand.artikel || []).some((a) => DOENER_WAREN.some((r) => r.test(a.name)));
 
@@ -207,7 +207,7 @@ function eingabeView(stand, D) {
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
       ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${bildFuer(stand, x)}<b>${esc(zeigName(x))}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-${nurGerichte ? "" : `<button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>`}
+${nurGerichte ? "" : `<button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="" loading="lazy" decoding="async">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="" loading="lazy" decoding="async">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>`}
     </div>
     ${!kacheln.length && q ? `<p class="hinweis">${esc(t("muell.nichtsGefunden"))}</p>` : ""}
   </div>`;

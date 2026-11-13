@@ -107,7 +107,7 @@ export function spracheZeigen() {
 
 export function laedenZeigen(wurzel) {
   zeigen("laeden", `<div class="blattkopf nur blatt-zeki klein"><button type="button" class="ikonknopf" data-a="menue-zurueck" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button>${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("ebene.ladenWechseln"))}</b></div></div>
-    <div class="blattliste">${wurzel.betriebe.filter((b) => b.phase === "app").map((b) => `<button type="button" class="blattzeile laden ${b.id === wurzel.aktiv ? "an" : ""}" data-a="laden-wechseln" data-id="${esc(b.id)}"><img src="${ladenBild(b)}" alt=""><span>${esc(b.betrieb.name || t("ebene.deinLaden"))}</span>${b.id === wurzel.aktiv ? sym("check") : ""}</button>`).join("")}</div>`);
+    <div class="blattliste">${wurzel.betriebe.filter((b) => b.phase === "app").map((b) => `<button type="button" class="blattzeile laden ${b.id === wurzel.aktiv ? "an" : ""}" data-a="laden-wechseln" data-id="${esc(b.id)}"><img src="${ladenBild(b)}" alt="" loading="lazy" decoding="async"><span>${esc(b.betrieb.name || t("ebene.deinLaden"))}</span>${b.id === wurzel.aktiv ? sym("check") : ""}</button>`).join("")}</div>`);
 }
 
 // ---------- Hilfe „?" ----------

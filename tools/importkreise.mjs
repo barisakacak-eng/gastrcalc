@@ -11,13 +11,14 @@ const gehe = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e
 export function importGraph(wurzel = WURZEL) {
   const dateien = gehe(path.join(wurzel, "js")).filter((f) => f.endsWith(".js")).map((f) => path.relative(wurzel, f).split(path.sep).join("/"));
   const g = {};
-  const re = /(?:import|export)\s[^"';]*?from\s*["']([^"']+)["']|import\s*["']([^"']+)["']|import\(\s*["']([^"']+)["']\s*\)/g;
+  // Nachgeladene Module (import("…") mitten im Code) zählen nicht: sie werden erst zur Laufzeit geholt und machen keine Ladereihenfolge (Etappe 10, Nachladen).
+  const re = /(?:import|export)\s[^"';]*?from\s*["']([^"']+)["']|import\s*["']([^"']+)["']/g;
   for (const f of dateien) {
     g[f] = new Set();
     const s = fs.readFileSync(path.join(wurzel, f), "utf8");
     let m; re.lastIndex = 0;
     while ((m = re.exec(s))) {
-      const sp = m[1] || m[2] || m[3];
+      const sp = m[1] || m[2];
       if (!sp.startsWith(".")) continue;
       g[f].add(path.posix.normalize(path.posix.join(path.posix.dirname(f), sp)));
     }

@@ -6,7 +6,6 @@ import { Z } from "../bedienung/zustand.js";
 import { heute, heuteGeschaeft } from "../util.js";
 import { hmGezeigtMerken, hmFuerBuero, hmLadenZeile, hmLadenGezeigt } from "../hinweis_motor.js";
 import { sofortSpeichern } from "./speichern.js";
-import { hinweiseView } from "../screens/hinweise.js";
 import { rundgangOffen as fuehrungOffen } from "../screens/rundgang.js";
 import { modus } from "../modus.js";
 import { ZEKI_BILDSCHIRM, zekiMoment } from "../zeki.js";
@@ -41,10 +40,6 @@ export function zekiGesehenMerken(key) {
   try { const tag = key.split(":").pop(); const a = [...zekiGesehenLesen()].filter((k) => k.endsWith(":" + tag)); if (!a.includes(key)) a.push(key); localStorage.setItem(ZEKI_SCHLUESSEL, JSON.stringify(a)); } catch { /* ohne Speicher kein Merken */ }
 }
 
-export function hinweiseMitHm() {
-  { try { const d = heute(); if (hmGezeigtMerken(Z.stand, hmFuerBuero(Z.stand, { datum: d }).neu, d)) sofortSpeichern(Z.wurzel); } catch { /* Takt ist Komfort, kein Absturz */ } }
-  return hinweiseView(Z.stand);
-}
 
 // Beim Zeichnen: Zekis Satz einsetzen (zekiSatz) und seine Bewegung planen. Ankommen heißt: ein anderer Bildschirm als beim letzten Zeichnen – dann spielt er EINMAL die Bewegung seiner Haltung;
 // ein Neuzeichnen desselben Bildschirms (Tipp, Eintrag) lässt ihn stehen, außer ein Erfolg ist vorgemerkt (Haken, Speichern, Tag geschafft). Während Führung oder Hinweis ist die Bühne leer: keine Bewegung.

@@ -20,7 +20,7 @@ import { sym } from "../symbole.js";
 import { muellHeute } from "../muell.js"; // Lauf 2 (4b): Müll ohne Preis als „n×“
 import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau: „Letzte vom Handy weg“
-import { bueroKopf } from "./buero.js";
+import { bueroKopf } from "./buero_kopf.js";
 import { nutzenStand } from "../nutzen.js";
 import { zekiMoment } from "../zeki.js"; // Zeki auf Heute
 import { mascotMarkup } from "../gastrocash-brand.js";

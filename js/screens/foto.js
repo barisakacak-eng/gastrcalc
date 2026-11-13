@@ -192,7 +192,7 @@ function fvZeile(v) {
 // Entwurf (Baris: „Wo ist Zeki, die einfache Sprache, wo sind unsere Bilder?“): Zeki sagt oben in einem Satz, was los ist;
 // jedes Gericht mit Bild, Name, Preis und einem Knopf. Rezept-Zeilen gehören ins Büro (Rezepte), nicht hierher.
 const fvBild = (v) => { const q = gerichtBildQuelle({ name: v.vorlage || v.name, vorlageName: v.vorlage || undefined });
-  return q.foto ? `<img class="fvbild" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="fvbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`; };
+  return q.foto ? `<img class="fvbild" src="foto/${q.foto}.webp" alt="" loading="lazy" decoding="async">` : `<img class="fvbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy" decoding="async">`; };
 const GRUND_TEXT = { preis: "foto.preisFehltKurz", preisHoch: "foto.preisHochKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", zweiPreise: "foto.zweiPreiseKurz", rezept: "foto.rezeptBestaetigen" };
 function pruefKarte(v) {
   const g = grund(v);

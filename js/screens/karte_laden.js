@@ -8,7 +8,7 @@ import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
 import { verkaufspreisSetzen, zutatMengeSetzen } from "../karte_daten.js"; // Trennung; Lauf 2 Bildpaket D (3): Mengen im Laden-Blatt
 import { t as tt, einheitLabel, artikelText } from "../i18n.js";
 import { quelleVon } from "../rezept_quelle.js";
-import { gerichtBild } from "./vergleich.js";
+import { gerichtBild } from "./gerichtbild.js";
 import { nav } from "./nav.js";
 import { mehrImMonat, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3
 import { fmtEuroGeschaetzt } from "../util.js";
