@@ -67,3 +67,6 @@ body:has(.zeki-erst) .gc-buehne .zeki-zeile,body:has(.zeki-erst) .gc-buehne .kl-
 /* Ziffernfelder werden nie gespiegelt: 1-2-3 bleibt 1-2-3, auch im Arabischen und Persischen */
 .pin-tasten,.gc-keypad,input[inputmode=decimal],input[inputmode=numeric],input[type=number]{direction:ltr}
 @keyframes zekiStimmeEin{from{opacity:0}to{opacity:1}}
+
+/* Müll (höchstens 15 Wörter): spricht Zeki, bleibt die Marke im Kopf unsichtbar (wie vorher: .appleiste.spricht blendete sie aus) */
+.gc-buehne.gc-muell.spricht .gc-brand{visibility:hidden}

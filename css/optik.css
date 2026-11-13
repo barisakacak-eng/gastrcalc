@@ -65,3 +65,6 @@ input[type=checkbox]{accent-color:var(--salbei);inline-size:22px;block-size:22px
 .inhalt.muellform:not(.muell-station-detail) .auswahlkarte{min-height:72px;padding-block:8px}
 .inhalt.muellform:not(.muell-station-detail) .mengekarte{gap:8px;padding-block:12px}
 .inhalt.muellform:not(.muell-station-detail) .formkacheln .karte,.inhalt.muellform:not(.muell-station-detail) .formkacheln button{min-height:64px}
+
+/* Weinrot gehört nur auf die Müll-Bühne: das Müll-Symbol auf Kacheln (Heute, Personal) bleibt Salbei */
+.ks.muell,.riesenkachel .rt .ks.muell{background:var(--salbei-hell);color:var(--salbei-tief)}
