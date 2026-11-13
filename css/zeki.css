@@ -190,3 +190,6 @@ details.karte.auf:not([open])>:not(summary){display:none}
 .g3-kasse{display:flex;flex-direction:column;gap:6px;margin-top:8px}.g3-kasse select{min-height:44px;border:1px solid var(--linie);border-radius:12px;padding:4px 10px;font:inherit}
 .g3-karte .summenzeile>span:first-child{flex-shrink:0;white-space:nowrap}.g3-karte .summenzeile>.wert{flex-shrink:1;min-width:0;white-space:normal;overflow-wrap:anywhere;text-align:end}
 
+/* Sicht-Gremium Runde 1: der Schleier der Führung bleibt auch im Dunkeln dunkel (heller Text darauf) */
+@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]) .rg-huelle{--tinte:var(--schleier);--weiss:var(--schleier-text)}}
+html[data-theme=dark] .rg-huelle{--tinte:var(--schleier);--weiss:var(--schleier-text)}

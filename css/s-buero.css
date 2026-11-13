@@ -372,3 +372,7 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 @media screen{#app:has(.appleiste.buero) .druckkopf{padding:6px 16px 0}
 #app:has(.appleiste.buero) .druckkopf h1{font-family:var(--schrift);font-size:1.2941rem;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0;color:var(--tinte)}
 #app:has(.appleiste.buero) .druckkopf .unter{font-size:.8235rem;line-height:1.35;color:var(--tinte-weich);margin:2px 0 0}}
+
+/* Sicht-Gremium Runde 1: Putzplan-Zeilen im Büro auf Papier, auch im Dunkeln */
+#app .putzplan .aufgabe{display:flex;align-items:center;gap:12px;inline-size:100%;background:var(--papier);color:var(--tinte);border:1px solid var(--linie);border-radius:var(--radius);text-align:start;padding:8px 12px}
+#app .putzplan .aufgabe.ueberfaellig{border-inline-start:4px solid var(--rot)}

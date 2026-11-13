@@ -23,9 +23,11 @@
 .gc-buehne .gc-kopf .sym{inline-size:24px;block-size:24px}
 /* Innenbereich: Text links (RTL rechts), Zeki gegenüber */
 .gc-buehne .gc-buehne-innen{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:center;min-block-size:113px;padding:0}
-.gc-buehne.gc-buehne-niedrig .gc-buehne-innen{min-block-size:32px;padding-block-end:0}
+.gc-buehne.gc-buehne-niedrig .gc-buehne-innen{min-block-size:56px;padding-block-end:0}
+@media (max-height:760px){.gc-buehne.gc-buehne-niedrig .gc-buehne-innen{min-block-size:32px}}
 @media (max-height:760px){.gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen{min-block-size:56px;grid-template-columns:minmax(0,1fr) 96px}.gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen button.gc-figur-knopf{transform:scale(.56);transform-origin:100% 100%}[dir=rtl] .gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen button.gc-figur-knopf{transform-origin:0 100%}}
-.gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform:scale(.52);transform-origin:100% 100%}
+.gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform:scale(.6);transform-origin:100% 100%}
+@media (max-height:760px){.gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform:scale(.52)}}
 [dir=rtl] .gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform-origin:0 100%}
 .gc-buehne .gc-buehne-text{display:grid;gap:4px;align-content:center;min-inline-size:0;padding-block:2px}
 .gc-buehne .gc-buehne-text>*{min-inline-size:0;margin:0}
@@ -61,7 +63,7 @@
 .gc-buehne .zeki-stimme>.zeki-sprech{animation:zekiStimmeEin .35s ease both,zekiBlaseAus .35s ease var(--zeki-rest,7s) forwards}
 .gc-buehne .zeki-stimme>.zeki-sprech--ernst{text-decoration:underline;text-underline-offset:4px}
 /* Öffnet sich ein Blatt von unten, die Führung oder ein Hinweis mit Zeki, verlässt er die Bühne: nie zwei Zekis, Bühne leer */
-body:has(#ebene-huelle .ebene-blatt) .gc-buehne .gc-figur-knopf,body:has(.rg-huelle) .gc-buehne .gc-figur-knopf,body:has(.zeki-erst) .gc-buehne .gc-figur-knopf{visibility:hidden}
+body:has(#ebene-huelle .ebene-blatt) .gc-buehne .gc-figur-knopf,body:has(.rg-huelle) .gc-buehne .gc-figur-knopf,body:has(.zeki-erst) .gc-buehne .gc-figur-knopf,body:has(.zeki-erst) .gc-buehne .gc-figur{visibility:hidden}
 body:has(#ebene-huelle .ebene-blatt) .gc-buehne .zeki-zeile,body:has(#ebene-huelle .ebene-blatt) .gc-buehne .kl-zeki,body:has(#ebene-huelle .ebene-blatt) .gc-buehne .zeki-stimme,
 body:has(.rg-huelle) .gc-buehne .zeki-zeile,body:has(.rg-huelle) .gc-buehne .kl-zeki,body:has(.rg-huelle) .gc-buehne .zeki-stimme,
 body:has(.zeki-erst) .gc-buehne .zeki-zeile,body:has(.zeki-erst) .gc-buehne .kl-zeki,body:has(.zeki-erst) .gc-buehne .zeki-stimme{visibility:hidden}
@@ -75,3 +77,6 @@ body:has(.rg-huelle[data-station="14"]) .gc-buehne .gc-figur-knopf{visibility:vi
 
 /* Müll (höchstens 15 Wörter): spricht Zeki, bleibt die Marke im Kopf unsichtbar (wie vorher: .appleiste.spricht blendete sie aus) */
 .gc-buehne.gc-muell.spricht .gc-brand{visibility:hidden}
+
+/* Sicht-Gremium Runde 1: lange Titel trennen an der Silbe statt mitten im Wort */
+.gc-buehne .gc-buehne-text h1{font-size:1.1765rem;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;word-break:normal}

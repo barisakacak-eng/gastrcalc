@@ -35,7 +35,7 @@ _heute = datetime.date.today().isoformat(); _n = int(_m.group(2)) + 1 if _m and 
 # ---- alle App-Dateien
 alle = []; fotos = {}
 for p in sorted(APP.rglob("*")):
-    if p.is_file() and p.suffix in ENDUNGEN and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js" and not any(t.startswith(".") for t in p.relative_to(APP).parts) and not ({"design", "design-handoffs", "bruecke", "node_modules"} & set(p.parts)):
+    if p.is_file() and p.suffix in ENDUNGEN and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js" and not any(t.startswith((".", "_")) for t in p.relative_to(APP).parts) and not ({"design", "design-handoffs", "bruecke", "node_modules"} & set(p.parts)):
         rel = p.relative_to(APP).as_posix()
         if rel in NUR_ENTWURF: continue
         if rel.startswith(NACHLADE): fotos[rel] = hash8(rel); continue  # Fotos und Zeki-Folgen (3,5 MB): eigener Cache, nur Geändertes neu laden
