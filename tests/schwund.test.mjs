@@ -78,7 +78,7 @@ test("Speicher: Schema 1 wird zu einer Wurzel mit einem Laden, Schema 2 bleibt, 
   assert.equal(w.betriebe[0].betrieb.name, "Alt"); assert.equal(w.betriebe[0].schema, undefined);
   const w2 = S.migrierenWurzel({ schema: 2, sprache: "de", aktiv: "x", betriebe: [ { id: "x", betrieb: { name: "X" } }, { id: "y", betrieb: { name: "Y" } } ] });
   assert.equal(w2.betriebe.length, 2); assert.equal(w2.aktiv, "x");
-  const imp = S.migrierenWurzel({ schema: 2, aktiv: "y", betriebe: [ { id: "y", betrieb: { name: "Y neu" } }, { id: "z", betrieb: { name: "Z" } } ] });
+  const imp = S.migrierenWurzel({ schema: 2, aktiv: "y", betriebe: [ { id: "y", geaendert: "2027-01-02T10:00:00.000Z", betrieb: { name: "Y neu" } }, { id: "z", betrieb: { name: "Z" } } ] });
   const r = S.zusammenfuehren(w2, imp);
   assert.deepEqual(r, { ersetzt: 1, neu: 1 }); assert.equal(w2.betriebe.length, 3);
   assert.equal(w2.betriebe.find((b) => b.id === "y").betrieb.name, "Y neu"); assert.equal(w2.aktiv, "x");
