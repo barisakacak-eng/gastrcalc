@@ -53,6 +53,19 @@ body:has(.zeki-intro) .gc-buehne .gc-figur-knopf,body:has(.rg-abgang) .gc-buehne
 .zeki-erst .ze-blase .knopf{pointer-events:auto}
 
 /* ---------- Führung (Mitmach-Rundgang und kurzer Rundgang): Lichtkegel, Zeki vorn, sein Satz als Zeile daneben ---------- */
+/* Grundgerüst der Führung (stand früher in der alten optik.css): Hülle über allem, auch über der unteren Leiste (z-index 35); Endkarten füllen den Schirm */
+body.rg-aktiv{overflow:hidden}
+.rg-huelle{position:fixed;inset:0;z-index:9000}
+.rg-fuss{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.rg-fuss .knopf{inline-size:auto;min-inline-size:120px;margin:0}
+.rg-punkte{display:flex;gap:6px}.rg-punkte i{inline-size:8px;block-size:8px;border-radius:999px}
+.rg-punkte i.an{background:var(--weiss)}
+.rg-ende{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:24px 20px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;animation:rgEin .3s ease both}
+.rg-ende h2{text-align:center;font-size:1.5rem;margin:4px 0 12px}
+.rg-ende .knopf{margin:0}
+.rg-fragen{justify-content:flex-start}.rg-fragen .rg-zeki{margin:0 auto}
+.rg-danke{margin:0;padding:10px 14px;border-radius:14px;background:var(--salbei-hell);color:var(--tinte);font-weight:600}
+.rg-text{font:inherit;font-size:calc(16rem / 17)}
 /* Mitmach-Rundgang (28.10.2026): Lichtkegel mit antippbarem Ziel, Sperrflächen ringsum, Zeki mit Blase, „Überspringen“ ≥ 44 px.
    Farben nur aus css/tokens.css. */
 .rg-mitmach .rg-loch{position:fixed;border-radius:var(--radius-gross);box-shadow:0 0 0 9999px color-mix(in srgb,var(--tinte) 90%,transparent);pointer-events:none;transition:top .25s ease,left .25s ease,width .25s ease,height .25s ease}
@@ -60,6 +73,7 @@ body:has(.zeki-intro) .gc-buehne .gc-figur-knopf,body:has(.rg-abgang) .gc-buehne
 @keyframes rgPuls{0%,100%{opacity:.35}50%{opacity:1}}
 .rg-mitmach .rg-sperre{position:fixed;background:transparent}
 .rg-mitmach .rg-deckel{position:fixed;background:transparent;cursor:not-allowed}
+/* Die Führung liegt über allem, auch über der unteren Leiste (z-index 35) */
 /* Die Hülle selbst fängt keine Tipps: nur Sperrflächen, Blase und Knöpfe; durch den Lichtkegel geht der Tipp an die echte App */
 .rg-mitmach{pointer-events:none}.rg-mitmach>*:not(.rg-loch){pointer-events:auto}
 .rg-mitmach.rg-pause{display:none}
@@ -141,7 +155,7 @@ body:has(.zeki-intro) .gc-buehne .gc-figur-knopf,body:has(.rg-abgang) .gc-buehne
 .p-schablone .pzeile.p2{padding-inline-end:8px;gap:4px}
 .p-schablone .pzeile.p2 .aufgabe{padding-inline-end:4px}
 /* Laden › Hilfe-Blatt: OK-Knopf mit Rand und runden Ecken, bleibt unten sichtbar */
-.ebene-blatt.blatt-hilfe>.knopf[data-a="blatt-zu"]{margin:8px 0 calc(env(safe-area-inset-bottom,0px) + 12px);width:100%;border-radius:var(--radius-knopf,16px);padding-bottom:0;min-height:56px;bottom:12px;box-shadow:0 -10px 14px var(--papier),0 12px 0 var(--papier)}
+.ebene-blatt.blatt-hilfe>.knopf[data-a="blatt-zu"]{margin:8px 0 calc(env(safe-area-inset-bottom,0px) + 12px);width:100%;border-radius:var(--radius);padding-bottom:0;min-height:56px;bottom:12px;box-shadow:0 -10px 14px var(--papier),0 12px 0 var(--papier)}
 /* Laden › Kühlung: Satz unter den Maßnahmen, solange „Eintragen“ grau ist */
 .kuehl-erst-massnahme{margin:0;text-align:center;font-weight:650;color:var(--rot)}
 /* Einrichtung › Speisekarte prüfen: ein Rahmen ums Preisfeld; Preise in Arabisch wie auf der Karte („8,90 €“) */
@@ -156,19 +170,19 @@ summary>h2{overflow-wrap:normal;word-break:normal;hyphens:auto;min-width:0}
 /* Vorab-Prüfung 03.11.2026 (C12): aufklappbare Büro-Karten – Überschrift tippen, Inhalt erscheint */
 details.karte.auf>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
 details.karte.auf>summary::-webkit-details-marker{display:none}
-details.karte.auf>summary::after{content:"⌄";font-size:1.4rem;line-height:1;color:var(--gc-deep);transition:transform .15s;flex:none}
+details.karte.auf>summary::after{content:"⌄";font-size:1.4rem;line-height:1;color:var(--salbei-text);transition:transform .15s;flex:none}
 details.karte.auf[open]>summary::after{transform:rotate(180deg)}
 details.karte.auf>summary h2,details.karte.auf>summary b{margin:0}
 @media (prefers-reduced-motion: reduce){details.karte.auf>summary::after{transition:none}}
 details.karte.auf:not([open])>:not(summary){display:none}
 /* Welle 3 (hinter Schalter): Kopf der Geld-Karten – Titel links, Zahl darunter */
 .g3-karte>summary>span{display:flex;flex-direction:column;gap:2px;min-width:0}
-.g3-karte .g3-zahl{font-weight:750;color:var(--gc-deep)}
+.g3-karte .g3-zahl{font-weight:750;color:var(--salbei-text)}
 .g3-karte small{display:block}
 /* Welle 3 W3b (hinter Schalter): Schicht im Büro eintragen */
 .g3-schicht-form{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.g3-schicht-form select,.g3-schicht-form input{min-height:44px;border:1px solid var(--gc-line);border-radius:12px;padding:4px 10px;font:inherit;background:var(--gc-white)}
+.g3-schicht-form select,.g3-schicht-form input{min-height:44px;border:1px solid var(--linie);border-radius:12px;padding:4px 10px;font:inherit;background:var(--papier)}
 .g3-zeiten{display:flex;align-items:center;gap:6px}.g3-zeiten input{flex:1;min-width:0}
-.g3-kasse{display:flex;flex-direction:column;gap:6px;margin-top:8px}.g3-kasse select{min-height:44px;border:1px solid var(--gc-line);border-radius:12px;padding:4px 10px;font:inherit}
+.g3-kasse{display:flex;flex-direction:column;gap:6px;margin-top:8px}.g3-kasse select{min-height:44px;border:1px solid var(--linie);border-radius:12px;padding:4px 10px;font:inherit}
 .g3-karte .summenzeile>span:first-child{flex-shrink:0;white-space:nowrap}.g3-karte .summenzeile>.wert{flex-shrink:1;min-width:0;white-space:normal;overflow-wrap:anywhere;text-align:end}
 

@@ -1,8 +1,8 @@
-/* Zeki neu – Ergänzung zu neu-optik.css (Fundament, noch nicht eingebunden). Maße passen zu js/zeki_figur.js: Bühnen-Bild 512 × 354, bei 116 px Breite 116 × 80 px. */
-.gc-figur{block-size:80px}
-.gc-figur img{block-size:80px;object-fit:fill}
+/* Zeki neu – Ergänzung zu neu-optik.css (Fundament, noch nicht eingebunden). Maße passen zu js/zeki_figur.js: Bühnen-Bild 512 × 354, bei 164 px Breite 164 × 113 px. */
+.gc-figur{block-size:113px}
+.gc-figur img{block-size:113px;object-fit:fill}
 .gc-figur[data-gespiegelt]{transform:scaleX(-1)}
-.gc-buehne-niedrig .gc-buehne-innen{min-block-size:80px;padding-block-end:0}
+.gc-buehne-niedrig .gc-buehne-innen{min-block-size:113px;padding-block-end:0}
 
 /* ---------- Die Bühne als gemeinsamer Kopf aller Ansichten (Salbei & Papier, Tafel I) ----------
    js/buehne.js baut sie (nav.js), js/screens/buehne_dom.js setzt Titel und Zekis Satz hinein. Diese Datei wird als letzte geladen. */
@@ -22,14 +22,17 @@
 .gc-buehne .gc-kopf .schlossknopf .schlossring{stroke:var(--buehne-text)}
 .gc-buehne .gc-kopf .sym{inline-size:24px;block-size:24px}
 /* Innenbereich: Text links (RTL rechts), Zeki gegenüber */
-.gc-buehne .gc-buehne-innen{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:12px;align-items:center;min-block-size:88px;padding:0 0 14px}
+.gc-buehne .gc-buehne-innen{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:12px;align-items:center;min-block-size:113px;padding:0}
 .gc-buehne.gc-buehne-niedrig .gc-buehne-innen{min-block-size:32px;padding-block-end:0}
+@media (max-height:760px){.gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen{min-block-size:56px;grid-template-columns:minmax(0,1fr) 96px}.gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen button.gc-figur-knopf{transform:scale(.56);transform-origin:100% 100%}[dir=rtl] .gc-buehne:not(.gc-buehne-niedrig) .gc-buehne-innen button.gc-figur-knopf{transform-origin:0 100%}}
+.gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform:scale(.52);transform-origin:100% 100%}
+[dir=rtl] .gc-buehne.gc-buehne-niedrig .gc-figur-knopf{transform-origin:0 100%}
 .gc-buehne .gc-buehne-text{display:grid;gap:4px;align-content:center;min-inline-size:0;padding-block:2px}
 .gc-buehne .gc-buehne-text>*{min-inline-size:0;margin:0}
 /* Alte Kopfbänder und Köpfe unter der Bühne: kein eigenes Band, kein Rand, Schrift in Bühnenfarbe */
 .gc-buehne .kopfband,.gc-buehne .kl-kopf,.gc-buehne .h-kopf,.gc-buehne .personalkopf{display:block;background:none;color:inherit;padding:0;margin:0;border:0;border-radius:0;box-shadow:none;min-block-size:0}
 .gc-buehne .kopfband h1,.gc-buehne .kl-kopf h1,.gc-buehne h1{color:inherit;font-family:var(--schrift);font-size:1.2941rem;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
-.gc-buehne .kopfband .unter,.gc-buehne .kl-kopf small,.gc-buehne .h-datum,.gc-buehne .personalkopf small{display:block;color:color-mix(in srgb,var(--buehne-text) 85%,transparent);font-size:0.8235rem;line-height:1.35;margin:2px 0 0}
+.gc-buehne .kopfband .unter,.gc-buehne .kl-kopf small,.gc-buehne .h-datum,.gc-buehne .personalkopf small{display:block;color:color-mix(in srgb,var(--buehne-text) 94%,transparent);font-size:0.8235rem;line-height:1.35;margin:2px 0 0}
 .gc-buehne .kopfband .zahl{font-weight:700}
 .gc-buehne .h-kopf,.gc-buehne .personalkopf{display:grid;gap:2px}
 .gc-buehne .h-ladenname,.gc-buehne .personalkopf b{display:block;color:inherit;font:700 1.2941rem/1.2 var(--schrift)}
@@ -45,12 +48,12 @@
 .gc-buehne .zeki-zeile.a-rot,.gc-buehne .kl-zeki.a-rot,.gc-buehne .zeki-zeile.a-gelb,.gc-buehne .kl-zeki.a-gelb,.gc-buehne .zeki-zeile.a-gruen{background:none;border:0;color:inherit;padding:0;box-shadow:none;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
 .gc-buehne .zeki-zeile.a-gruen{text-decoration:none}
 /* Zeki: selbst der Hilfe-Knopf; steht hinter der unteren Kante der Bühne (Hüfte aufwärts), weicher Schatten auf der Kante, nie über Inhalt */
-.gc-buehne .gc-figur-knopf{position:absolute;inset-inline-end:0;inset-block-end:0;z-index:1;inline-size:116px;block-size:80px;min-inline-size:116px;min-block-size:80px;margin:0;padding:0;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.gc-buehne .gc-figur-knopf .gc-figur{position:static;inset:auto;inline-size:116px;block-size:80px;overflow:hidden;pointer-events:none;animation:none;transform-origin:50% 100%}
+.gc-buehne .gc-buehne-innen button.gc-figur-knopf{position:absolute;inset-inline-end:-12px;inset-block-end:0;z-index:1;inline-size:164px;block-size:113px;min-inline-size:164px;min-block-size:113px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gc-buehne .gc-figur-knopf .gc-figur{position:static;inset:auto;inline-size:164px;block-size:113px;overflow:hidden;pointer-events:none;animation:none;transform-origin:50% 100%}
 .gc-buehne .gc-figur-knopf .gc-figur[data-gespiegelt]{transform:scaleX(-1)}
-.gc-buehne .gc-figur-knopf .gc-figur img{display:block;inline-size:116px;block-size:80px;object-fit:fill}
+.gc-buehne .gc-figur-knopf .gc-figur img{display:block;inline-size:164px;block-size:113px;object-fit:fill}
 .gc-buehne .gc-figur-knopf:focus-visible{outline:3px solid var(--buehne-text);outline-offset:-3px}
-.gc-buehne .gc-figur::after{inset-inline:0;block-size:7px;background:linear-gradient(transparent,color-mix(in srgb,var(--tinte) 34%,transparent));-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent)}
+.gc-buehne .gc-figur::after{inset-inline:0;block-size:7px;background:linear-gradient(transparent,color-mix(in srgb,var(--tinte) 34%,transparent));-webkit-mask-image:linear-gradient(90deg,transparent,var(--tinte) 22%,var(--tinte) 78%,transparent);mask-image:linear-gradient(90deg,transparent,var(--tinte) 22%,var(--tinte) 78%,transparent)}
 .gc-buehne .intro-gruss{display:none}
 /* Ein flüchtiger Satz (Lage des Tages) ersetzt Titel und Satz kurz */
 .gc-buehne.gc-spricht-kurz .gc-buehne-text>:is(.zeki-zeile,.kl-zeki){display:none}
@@ -62,6 +65,8 @@ body:has(#ebene-huelle .ebene-blatt) .gc-buehne .gc-figur-knopf,body:has(.rg-hue
 body:has(#ebene-huelle .ebene-blatt) .gc-buehne .zeki-zeile,body:has(#ebene-huelle .ebene-blatt) .gc-buehne .kl-zeki,body:has(#ebene-huelle .ebene-blatt) .gc-buehne .zeki-stimme,
 body:has(.rg-huelle) .gc-buehne .zeki-zeile,body:has(.rg-huelle) .gc-buehne .kl-zeki,body:has(.rg-huelle) .gc-buehne .zeki-stimme,
 body:has(.zeki-erst) .gc-buehne .zeki-zeile,body:has(.zeki-erst) .gc-buehne .kl-zeki,body:has(.zeki-erst) .gc-buehne .zeki-stimme{visibility:hidden}
+/* Ausnahme: Station 14 der Führung zeigt auf Zeki in der Bühne (Lichtkegel auf dem Hilfe-Knopf), der Knopf muss dafür sichtbar bleiben */
+body:has(.rg-huelle[data-station="14"]) .gc-buehne .gc-figur-knopf{visibility:visible}
 /* Müll: die Bühne in Weinrot, sonst nirgends */
 .gc-buehne.gc-muell{--buehne:var(--weinrot)}
 /* Ziffernfelder werden nie gespiegelt: 1-2-3 bleibt 1-2-3, auch im Arabischen und Persischen */

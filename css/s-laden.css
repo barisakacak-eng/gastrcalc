@@ -3,9 +3,6 @@
    Alle Regeln beginnen mit #app, damit sie die alten Schichten (app, zielbild, design-b, facelift-v1) bei gleicher Art schlagen.
    Weinrot nur über --muell (Müll). Glut höchstens einmal je Bildschirm: das, was gerade dran ist. */
 
-/* Die Klasse .dunkel dreht die Tokens im Teilbaum um (tokens.css). Hier steht der Wert des Wurzelelements als Alias, damit Zeilen mit .dunkel (Heute „Jetzt dran“, Bilanz) trotzdem Papier und Tinte behalten. */
-:root{--l-papier:var(--papier);--l-tinte:var(--tinte);--l-tinte-weich:var(--tinte-weich);--l-papier-tief:var(--papier-tief);--l-linie:var(--linie)}
-#app .h-jetzt.dunkel,#app .ab-hero.dunkel,#app .jetzt.dunkel{--papier:var(--l-papier);--tinte:var(--l-tinte);--tinte-weich:var(--l-tinte-weich);--papier-tief:var(--l-papier-tief);--linie:var(--l-linie)}
 
 /* ---------- Grund: Papier, ruhige Karten mit weicher Tiefe ---------- */
 #app .inhalt{background:transparent;padding:14px 16px 20px;gap:10px;display:flex;flex-direction:column}
@@ -21,7 +18,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .heute-laden .h-lorbeer{display:none}
 #app .heute-laden .karte.h-ziel .h-zielkopf{font-size:.8235rem;font-weight:700;color:var(--tinte-weich);text-shadow:none;min-block-size:0;font-family:var(--schrift);letter-spacing:0}
 #app .heute-laden .karte.h-ziel .h-riesig,#app .heute-laden .karte.h-ziel.plus .h-riesig,#app .heute-laden .karte.h-ziel .h-riesig.leicht{font-size:2.25rem;line-height:1.1;margin:2px 0 4px;color:var(--tinte);text-shadow:none;font-family:var(--schrift);font-variant-numeric:var(--zahlen)}
-#app .heute-laden .h-bewegung{display:block;font-size:.8235rem;font-weight:700;color:var(--salbei-tief)}
+#app .heute-laden .h-bewegung{display:block;font-size:.8235rem;font-weight:700;color:var(--salbei-text)}
 #app .heute-laden .h-bewegung.schlecht{color:var(--tinte)}
 #app .heute-laden .h-ziel .h-kurs{block-size:84px;margin:6px 0 0}
 #app .heute-laden .h-kurs .h-kurs-achse{stroke:var(--linie);stroke-opacity:1}
@@ -35,32 +32,32 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .heute-laden .h-ziel-fehlt .h-fehlt-knopf{display:inline-flex;align-items:center;gap:6px;min-block-size:44px;padding:0 16px;border-radius:var(--radius);background:var(--aktion);color:var(--aktion-text);font-weight:700}
 #app .heute-laden .h-nutzen{padding:0 14px;min-block-size:48px;display:flex;align-items:center}
 #app .heute-laden .h-nutzen summary{min-block-size:48px;display:flex;align-items:center;gap:10px;color:var(--tinte)}
-#app .heute-laden .h-nutzen summary .sym{inline-size:22px;block-size:22px;color:var(--salbei)}
+#app .heute-laden .h-nutzen summary .sym{inline-size:22px;block-size:22px;color:var(--salbei-text)}
 #app .heute-laden .h-nutzen .h-nutzen-summe{font-size:1.0588rem;font-variant-numeric:var(--zahlen)}
 #app .heute-laden .h-nutzen-leer{font-size:.8235rem;color:var(--tinte-weich)}
 /* die vier Felder: ruhige Reihe – Symbol, Zahl, ein Wort */
 #app .heute-laden .h-kacheln.h-reihe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 #app .heute-laden .karte.h-kachel.h-feld{min-block-size:76px;padding:8px 2px;gap:2px;background:var(--papier);background-image:none;border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);align-items:center;justify-content:center;display:flex;flex-direction:column;color:var(--tinte)}
-#app .heute-laden .h-feld .h-feld-symbol{inline-size:22px;block-size:22px;color:var(--salbei)}
+#app .heute-laden .h-feld .h-feld-symbol{inline-size:22px;block-size:22px;color:var(--salbei-text)}
 #app .heute-laden .h-feld .ks{display:none}
 #app .heute-laden .h-feld b,#app .heute-laden .h-feld b.zahl,#app .heute-laden .h-feld.umsatz:not(.leer) .zahl,#app .heute-laden .h-feld.muell:not(.leer) .zahl{font-size:1rem;color:var(--tinte);font-weight:700;line-height:1.2}
 #app .heute-laden .h-feld small{font-size:.75rem;color:var(--tinte-weich);font-weight:600}
-#app .heute-laden .h-feld b.handgriff{inline-size:28px;block-size:28px;border:1.5px solid var(--salbei);color:var(--salbei);margin:0}
-#app .heute-laden .h-feld b .sym{color:var(--salbei);inline-size:20px;block-size:20px}
+#app .heute-laden .h-feld b.handgriff{inline-size:28px;block-size:28px;border:1.5px solid var(--salbei);color:var(--salbei-text);margin:0}
+#app .heute-laden .h-feld b .sym{color:var(--salbei-text);inline-size:20px;block-size:20px}
 #app .heute-laden .karte.h-kachel.h-feld.alarm{background:var(--papier);border-color:var(--tinte)}
 #app .heute-laden .h-feld.alarm b{color:var(--tinte)}
 /* was gerade dran ist: die große Zeile, das eine in Glut */
 #app .heute-laden .h-zeki{margin:0;display:block}
 #app .heute-laden .jetzt.h-jetzt,#app .heute-laden .jetzt.h-jetzt.h-haupt,#app .heute-laden .jetzt.h-jetzt.h-haupt.normal,#app .heute-laden .jetzt.h-jetzt.h-haupt.dunkel,#app .heute-laden .jetzt.h-jetzt.h-haupt.rot{
   display:flex;align-items:center;gap:12px;inline-size:100%;min-block-size:84px;padding:12px 14px;background:var(--papier);color:var(--tinte);border:1px solid var(--linie);border-inline-start:6px solid var(--glut);border-radius:var(--radius);box-shadow:var(--schatten-karte);text-align:start}
-#app .heute-laden .h-jetzt .ks,#app .heute-laden .h-haupt .ks,#app .heute-laden .h-haupt.rot .ks{inline-size:48px;block-size:48px;border-radius:12px;background:var(--salbei-hell);color:var(--salbei-tief);border:0;box-shadow:none;display:grid;place-items:center;flex:none}
+#app .heute-laden .h-jetzt .ks,#app .heute-laden .h-haupt .ks,#app .heute-laden .h-haupt.rot .ks{inline-size:48px;block-size:48px;border-radius:12px;background:var(--salbei-hell);color:var(--salbei-text);border:0;box-shadow:none;display:grid;place-items:center;flex:none}
 #app .heute-laden .h-jetzt .ks .sym{inline-size:26px;block-size:26px}
 #app .heute-laden .h-haupt .h-jetzt-text b,#app .heute-laden .h-jetzt-text b{font:700 1.2353rem/1.2 var(--schrift);color:var(--tinte);overflow-wrap:anywhere}
 #app .heute-laden .h-haupt .h-jetzt-text small,#app .heute-laden .h-haupt.rot .h-jetzt-text small{color:var(--tinte-weich);font-size:.8235rem}
 #app .heute-laden .h-haupt .h-pfeil,#app .heute-laden .h-jetzt .h-pfeil{inline-size:44px;block-size:44px;padding:10px;border-radius:50%;background:var(--aktion);color:var(--aktion-text);flex:none;stroke-width:2.6}
 [dir=rtl] #app .heute-laden .h-jetzt .h-pfeil{transform:scaleX(-1)}
-#app .heute-laden .h-rezept-jetzt .ks{background:var(--salbei-hell);color:var(--salbei-tief)}
-#app .heute-laden .h-lohn-tipp{color:var(--salbei-tief);min-block-size:44px;margin:0}
+#app .heute-laden .h-rezept-jetzt .ks{background:var(--salbei-hell);color:var(--salbei-text)}
+#app .heute-laden .h-lohn-tipp{color:var(--salbei-text);min-block-size:44px;margin:0}
 #app .heute-laden>.leise{min-block-size:44px}
 
 /* ---------- Bauart 2 · Müll heute (Auswahl mit Fotos) ---------- */
@@ -70,14 +67,14 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .muellkopf1 .heutewert h1{margin:0;font:700 1rem/1.2 var(--schrift);color:var(--tinte)}
 #app .muellkopf1 .heutewert .zahl{font:700 1.2353rem/1.1 var(--schrift);color:color-mix(in srgb,var(--muell) 55%,var(--tinte));font-variant-numeric:var(--zahlen)}
 #app .muell-station-start{inline-size:100%;display:flex;align-items:center;justify-content:center;gap:8px;min-block-size:44px;background:transparent;border:1px solid var(--linie);border-radius:var(--radius);color:var(--tinte);font-weight:700;box-shadow:none}
-#app .muell-station-start .sym{inline-size:20px;block-size:20px;color:var(--salbei)}
+#app .muell-station-start .sym{inline-size:20px;block-size:20px;color:var(--salbei-text)}
 #app .m-reiter{display:flex;gap:4px;background:var(--papier-tief);border-radius:10px;padding:4px}
 #app .m-reiter button{flex:1;min-inline-size:0;min-block-size:44px;border:0;border-radius:8px;background:transparent;font-size:.8235rem;font-weight:700;color:var(--tinte-weich);padding:4px}
 #app .m-reiter button.an,#app .m-reiter button[aria-selected=true]{background:var(--papier);color:var(--tinte);box-shadow:var(--schatten-karte);outline:0}
 #app .muellraster{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 #app .muellraster .karte.ware{position:relative;padding:0;overflow:hidden;display:flex;flex-direction:column;min-inline-size:0;background:var(--papier)}
 #app .muellraster .ware-tipp{display:flex;flex-direction:column;align-items:stretch;padding:0;border:0;background:transparent;text-align:start;min-block-size:44px;inline-size:100%;box-shadow:none;border-radius:0}
-#app .muellraster .ware-tipp .gerichtbild{inline-size:100%;block-size:auto;aspect-ratio:4/3;border-radius:0;object-fit:cover}
+#app .muellraster .ware-tipp .gerichtbild{inline-size:100%;block-size:auto;aspect-ratio:16/11;border-radius:0;object-fit:cover}
 #app .muellraster .ware-tipp .gerichtbild.pikto{padding:14px;object-fit:contain}
 #app .muellraster .ware .ware-mehr::before{content:none}
 #app .muellraster .ware-tipp .wt{display:grid;gap:0;padding:4px 2px 6px;min-inline-size:0}
@@ -128,7 +125,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .formkacheln{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #app .formkacheln .karte.formkachel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-block-size:64px;padding:8px;color:var(--tinte)}
 #app .formkacheln .karte.formkachel.an{outline:2px solid var(--salbei);outline-offset:-2px}
-#app .formkacheln .kachelsym .sym{inline-size:22px;block-size:22px;color:var(--salbei)}
+#app .formkacheln .kachelsym .sym{inline-size:22px;block-size:22px;color:var(--salbei-text)}
 #app .formkacheln b{font-size:.8235rem}
 #app .formkacheln .karte.formkachel.fotokachel-muell{flex-direction:row;gap:10px;min-block-size:48px;padding:4px 12px}
 #app .muellform{gap:8px}
@@ -167,7 +164,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .po-ergebnis{display:grid;gap:8px;padding:20px 16px;text-align:center;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte)}
 #app .po-ergebnis .po-gross{font-size:2.5rem;line-height:1.1;font-variant-numeric:var(--zahlen);color:var(--tinte)}
 #app .po-ergebnis p{margin:0;color:var(--tinte)}
-#app .po-ergebnis.gut .po-gross{color:var(--salbei-tief)}
+#app .po-ergebnis.gut .po-gross{color:var(--salbei-text)}
 /* Umsatz heute */
 #app .umsatz-laden{gap:12px}
 #app .umsatz-laden .ul-kopf h1{margin:0;font-size:1.1765rem}
@@ -193,7 +190,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .zeileknopf>span:first-of-type{flex:1;min-inline-size:0}
 #app .zeileknopf .gerichtbild{inline-size:52px;block-size:52px}
 #app .zeileknopf .kwert{font-size:1.2353rem;font-weight:700;white-space:nowrap;color:var(--tinte);font-variant-numeric:var(--zahlen)}
-#app .zeileknopf .kwert.ok{color:var(--salbei-tief)}
+#app .zeileknopf .kwert.ok{color:var(--salbei-text)}
 #app .zeileknopf .kwert.rot,#app .zeileknopf small.rot{color:var(--tinte);font-weight:700}
 #app .zeileknopf.abw{border-color:var(--tinte)}
 #app .liste>.wahl,#app .liste .wahl{display:flex;align-items:center;gap:10px;inline-size:100%;min-block-size:64px;padding:8px 14px 8px 10px;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);text-align:start;color:var(--tinte)}
@@ -213,7 +210,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .p-schablone .pzeile.p2{position:relative;flex-wrap:wrap}
 #app .p-schablone .pzeile.p2 .aufgabe{flex:1;min-inline-size:0;display:flex;align-items:center;gap:12px;min-block-size:60px;padding:6px 12px 6px 8px;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte);text-align:start;color:var(--tinte)}
 #app .putzplan .pbild{inline-size:48px;block-size:48px;border-radius:10px;object-fit:cover;flex:none}
-#app .putzplan .pbild.pikto{display:grid;place-items:center;background:var(--salbei-hell);color:var(--salbei)}
+#app .putzplan .pbild.pikto{display:grid;place-items:center;background:var(--salbei-hell);color:var(--salbei-text)}
 #app .putzplan .pbild.pikto .sym{inline-size:26px;block-size:26px}
 #app .putzplan .atext{flex:1;min-inline-size:0}
 #app .putzplan .atext b{font-size:1rem;overflow-wrap:anywhere}
@@ -236,7 +233,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .ab-zeile b{font-size:1rem}
 #app .ab-zeile small{display:block;font-size:.75rem;color:var(--tinte-weich)}
 #app .ab-zeile .ab-wert{font-weight:700;font-variant-numeric:var(--zahlen);color:var(--tinte)}
-#app .ab-zeile .gruen{color:var(--salbei-tief)}
+#app .ab-zeile .gruen{color:var(--salbei-text)}
 #app .ab-zeile .rot{color:var(--tinte)}
 #app .abschluss-laden .ab-zeile::before{position:static;inset:auto;inline-size:28px;block-size:28px;border-radius:8px;flex:none}
 #app .abschluss-laden .ab-zeile.fertig::before{content:"\2713";display:grid;place-items:center;background:var(--salbei);border:0;color:var(--aktion-text);font-weight:700}
@@ -253,7 +250,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .ab-hero.karte.dunkel{background:var(--papier);background-image:none;color:var(--tinte);border:1px solid var(--linie);display:grid;gap:2px;padding:14px 16px;box-shadow:var(--schatten-karte);min-block-size:0}
 #app .ab-hero .lbl{font-size:.8235rem;font-weight:700;color:var(--tinte-weich)}
 #app .ab-hero .riesig{font-size:2.25rem;line-height:1.1;color:var(--tinte);font-weight:700;font-variant-numeric:var(--zahlen);text-shadow:none}
-#app .ab-hero .ab-verlauf{font-size:.8235rem;font-weight:700;color:var(--salbei-tief)}
+#app .ab-hero .ab-verlauf{font-size:.8235rem;font-weight:700;color:var(--salbei-text)}
 #app .ab-hero .fein{font-size:.75rem;color:var(--tinte-weich)}
 #app .ab-zahlen{padding:4px 14px}
 #app .ab-zahlen .summenzeile{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-block-end:1px solid var(--linie);min-block-size:44px;align-items:center}
@@ -293,7 +290,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .kl-zeile-haupt .kl-quelle.geschaetzt{background:var(--holz-tief)}
 #app .kl-zeile-haupt .kl-quelle.ohne{display:none}
 #app .kl-zeile-haupt .kl-gn{grid-area:name;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;hyphens:auto;font-size:.9412rem;font-weight:700;line-height:1.2;display:block;max-inline-size:none}
-#app .kl-zeile-haupt .kl-nutzen{grid-area:nutzen;flex:none;padding:0;margin:0;background:none;border:0;text-align:end;font-size:.8235rem;color:var(--salbei-tief);white-space:nowrap}
+#app .kl-zeile-haupt .kl-nutzen{grid-area:nutzen;flex:none;padding:0;margin:0;background:none;border:0;text-align:end;font-size:.8235rem;color:var(--salbei-text);white-space:nowrap}
 #app .kl-zeile-haupt .kl-nutzen.pruefen{color:var(--tinte-weich);flex:none;padding:0}
 #app .kl-zeile-haupt .kl-nutzen.pruefen b{white-space:nowrap;padding:2px 8px;font-size:.8235rem}
 #app .kl-zeile-haupt .kl-nutzen.ohne-wert{display:none}
@@ -322,7 +319,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .kl-gross span{font-size:1.2353rem;font-weight:700;color:var(--tinte-weich)}
 #app .kl-bleibt{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--papier-tief);border-radius:var(--radius-klein)}
 #app .kl-wohin summary{min-block-size:44px;display:flex;align-items:center;color:var(--tinte-weich);font-weight:700}
-#app .kl-monat{margin:0;font-size:.8235rem;font-weight:700;color:var(--salbei-tief)}
+#app .kl-monat{margin:0;font-size:.8235rem;font-weight:700;color:var(--salbei-text)}
 #app .kl-monat.minus{color:var(--tinte)}
 #app .kl-zutaten{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 #app .kl-zutat{display:flex;align-items:center;gap:8px;min-block-size:48px}
@@ -337,8 +334,17 @@ body[data-modus] #app .inhalt:has(.karte.hinweisrot){padding-block-end:12px;gap:
 #app .inhalt:has(.karte.hinweisrot) .karte.formular{gap:6px;padding:8px 12px}
 #app .inhalt:has(.karte.hinweisrot) .stationkopf .gerichtbild{inline-size:40px;block-size:40px}
 #app .inhalt:has(.karte.hinweisrot) .zahlfeld input{min-block-size:52px;font-size:2rem}
+/* Warnzustand: niedrigere Bühne, Zeki verkleinert (Bild und Folge skalieren gemeinsam), damit alles ohne Scrollen passt */
+body:has(#app .karte.hinweisrot) .gc-buehne .gc-buehne-innen{min-block-size:60px}
+body:has(#app .karte.hinweisrot) .gc-buehne .gc-kopf{min-block-size:44px}
+body:has(#app .karte.hinweisrot) .gc-buehne .gc-figur-knopf{transform:scale(.52);transform-origin:100% 100%}
+[dir=rtl] body:has(#app .karte.hinweisrot) .gc-buehne .gc-figur-knopf,body:has(#app .karte.hinweisrot)[dir=rtl] .gc-buehne .gc-figur-knopf{transform-origin:0 100%}
+#app .karte.hinweisrot{grid-template-columns:minmax(0,1fr) auto}
+#app .karte.hinweisrot>*{grid-column:1/-1}
+#app .karte.hinweisrot>[data-f="station-notiz"]{grid-column:1}
+#app .karte.hinweisrot>.leise{grid-column:2;padding-inline:10px;white-space:nowrap}
 #app .karte.hinweisrot .chips{gap:4px}
-#app .karte.hinweisrot .chip{padding:0 8px;min-block-size:44px;font-size:.8235rem}
+#app .karte.hinweisrot .chip{padding:0 6px;min-block-size:44px;font-size:.8235rem}
 #app .inhalt:has(.karte.hinweisrot) .kuehl-stellen,#app .inhalt:has(.karte.hinweisrot) .m-reiter{margin:0}
 #app .inhalt:has(.karte.hinweisrot){padding-block-start:6px}
 #app .inhalt:has(.karte.hinweisrot) .zeit,#app .inhalt:has(.karte.hinweisrot) .zuletzt{margin:0}

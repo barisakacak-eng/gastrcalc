@@ -10,7 +10,7 @@ export const FILMFENSTER = [-80, -45, 420, 521.71875]; // Ausschnitt der Figur-K
 export const ZELLE_KLEIN = [256, 318];                 // eine Zelle der Folgen in assets/brand/zeki-klein/ (Raster 5 × 5)
 export const BUEHNE_MASSE = [512, 354];                // ein Bühnen-Bild: oberer Teil der Figur, oben links bündig mit der Zelle (bis schnitt_y)
 export const SCHNITT_Y = 245;                          // Figur-Koordinate der unteren Bühnenkante: Hüfte aufwärts
-export const DARSTELLUNG_BREITE = 116;                 // Breite der Figur in der Bühne (CSS-px, .gc-figur)
+export const DARSTELLUNG_BREITE = 164;                 // Breite der Figur in der Bühne (CSS-px, .gc-figur)
 export const SPALTEN = 5, ZEILEN = 5, BILDER = 25;
 export const ORDNER_BUEHNE = "assets/brand/zeki-buehne/", ORDNER_FOLGEN = "assets/brand/zeki-klein/", ORDNER_MIENEN = "assets/brand/zeki-mienen/";
 
@@ -58,7 +58,7 @@ export function folge(name) {
 export function ausschnitt(breite = DARSTELLUNG_BREITE) {
   const zelleH = breite * ZELLE_KLEIN[1] / ZELLE_KLEIN[0];
   return {
-    breite, hoehe: breite * BUEHNE_MASSE[1] / BUEHNE_MASSE[0], // sichtbarer Bereich = Größe des Bühnen-Bildes (116 × 80,2)
+    breite, hoehe: breite * BUEHNE_MASSE[1] / BUEHNE_MASSE[0], // sichtbarer Bereich = Größe des Bühnen-Bildes (164 × 113,4)
     zelleB: breite, zelleH, bildB: breite * SPALTEN, bildH: zelleH * ZEILEN, // Größe des ganzen Rasters als background-size
     position: (i) => [-(i % SPALTEN) * breite, -Math.floor(i / SPALTEN) * zelleH], // background-position für Bild Nummer i (0–24, zeilenweise)
   };
