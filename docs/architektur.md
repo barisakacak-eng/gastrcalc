@@ -188,7 +188,8 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 - `ebene.js` – Laden · Personal · Büro, Blätter, Büro-Code, Rettung, Hinweise.
 - `einrichtung.js` – Einrichtung: Weiter, Zurück, Fertig, Bearbeiten, Rezept-Direkt.
 - `navigation.js` – Tab-Leiste und Menü, Büro-Weg. `zurueck.js` – Zurück-Geste.
-- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan, Beleg, Abschluss, Inventur).
+- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan).
+- `laden_buero.js` – Büro-Teil davon (Beleg, Abschluss, Inventur, Ware nach Kühl-Abweichung); kommt mit dem Büro-Paket.
 - `buero.js` – Büro-Bildschirme (Büro, Ordner, Verkauf, Bestand, Waren, Preise, Aktionen, Lieferanten, Getränke, Tafel, Läden, Geld, Einstellungen).
 - `personal.js` – Personal-Modus. `ladenverwaltung.js` – Läden anlegen, wechseln, löschen, „Alles löschen“.
 - `sicherung.js` – Sicherung, Rückholpunkt, Diagnose, Fehlerliste. `update.js` – neue Fassung, Service Worker, zweites Fenster.
@@ -196,6 +197,8 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 - `zeichnen.js` – `zeichne()` und das Banner. `speichern.js` – Speichern mit Fehler-Banner. `meldung.js` – kurze Meldungen.
 - `sprache.js` – Sprache setzen. `zeki.js` – Zeki auf dem Bildschirm. `rundgang.js` – Mitmach-Rundgang und erste Führung.
 - `zuruecksetzen.js` – EINE Liste aller Bildschirm-Zustände.
+- `nachladen.js` – Büro-Paket erst bei Bedarf laden (`bueroPaket()`, `bueroPaketLaden()`); der alte Bildschirm bleibt stehen, bis das Paket da ist.
+- `paket_buero.js` – das Büro-Paket: alle Büro-Bildschirme mit Klick- und Eingabe-Tabellen (`VIEW`, `ANSICHT_KLICK`, `ANSICHT_EINGABE`, `ZIEL`, `EBENE_ZURUECK`).
 
 Adapter: Hier und nur hier (neben `app.js`, `bedienung/`, `screens/`, `rahmen.js`) darf der Browser berührt werden.
 

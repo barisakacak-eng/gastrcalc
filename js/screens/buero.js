@@ -5,6 +5,7 @@ import { t } from "../i18n.js";
 import { bsym, bueroKopf } from "./buero_kopf.js"; // Kopf und Symbole liegen in einer eigenen kleinen Datei (Einstellungen brauchen sie im Laden)
 export { bsym, bueroKopf };
 const kopf = bueroKopf;
+export function bueroZuruecksetzen() {}
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft } from "../util.js";
 import { sym } from "../symbole.js";
 import { bueroRing, zielAttr as zielAttrAlle } from "./bausteine.js"; // Trennung (17.10.2026)

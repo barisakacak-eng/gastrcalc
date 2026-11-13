@@ -32,7 +32,7 @@ import { rechtsformSetzen } from "../rechtsform.js";
 import { hmFrageSetzen, hmStatusSetzen } from "../hinweis_motor.js";
 import { heute } from "../util.js";
 import { hinweisStatusSetzen } from "../hinweis.js";
-import { geld3Aktion } from "../screens/geld3.js";
+import { bueroPaket } from "./nachladen.js";
 
 export function ebeneWechseln(m, ziel) {
   Z.bueroWeg = []; // Ebenenwechsel beginnt den Büro-Weg neu
@@ -220,6 +220,6 @@ export const KLICK = {
 
 // Geld-Seite (Welle 3): alle Namen mit „g3-“ gehören den Geld-Karten.
 export function praefixKlick(name, el) {
-  if (name.startsWith("g3-") && geld3Aktion(name, el, Z.stand)) { speichern(Z.wurzel); return zeichne(); }
+  if (name.startsWith("g3-") && bueroPaket()?.geld3Aktion(name, el, Z.stand)) { speichern(Z.wurzel); return zeichne(); }
   return NICHT;
 }

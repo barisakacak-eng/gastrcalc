@@ -21,7 +21,6 @@ const EXTRA = {
 export const bsym = (name, klasse = "") => EXTRA[name] ? `<svg class="sym ${klasse}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${EXTRA[name]}</svg>` : sym(name, klasse);
 
 // Gleiche Leiste wie alle Büro-Bildschirme (nav.js): Ziel „start" heißt zurück in den Laden.
- export function bueroZuruecksetzen() {}
 const kopf = (zurueck, titel) => bueroBuehne(zurueck.ziel === "start"
     ? `<button type="button" class="zurueckzeile" data-a="modus" data-wert="laden">${bsym("chevron-left")}<span>${esc(t("ebene.zumLaden"))}</span></button>`
     : zurueck.ziel === "buero" ? bueroZurueckKnopf() // 01.11.2026: eine Ebene zurück
