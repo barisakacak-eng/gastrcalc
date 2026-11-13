@@ -167,6 +167,13 @@ jobs:
             grep -E "VERSTOSS|Error|Timeout" tippziele.txt | tail -8 | while read -r l; do echo "::warning::tippziele Versuch $versuch: $l"; done
           done
           tail -40 tippziele.txt; exit 1
+      - name: Bühne und Zeki (ein Zeki je Schirm, hinter der Kante, keine Sprechblase)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8854 python tests/buehne_browser.py > buehne.txt 2>&1; then exit 0; fi
+            grep -E "Error|Timeout" buehne.txt | tail -8 | while read -r l; do echo "::warning::buehne Versuch $versuch: $l"; done
+          done
+          tail -40 buehne.txt; exit 1
       - name: Personal-Modus (Müll mit Foto, Kühlung, Putzen, Schloss, Wartezeit, Rettungscode)
         run: |
           for versuch in 1 2; do
