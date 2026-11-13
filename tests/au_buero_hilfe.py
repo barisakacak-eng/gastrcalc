@@ -26,3 +26,6 @@ async def zu_ziel(pg, ziel):
     else:
         await nav_hilfe.geh(pg, ziel)
     await pg.wait_for_timeout(450)
+    for _ in range(4):  # Zekis erster Besuch (zeki_erst) wie ein Mensch wegtippen
+        if not await pg.locator('.zeki-erst [data-ze="ok"]').count(): break
+        await pg.locator('.zeki-erst [data-ze="ok"]').first.click(); await pg.wait_for_timeout(350)

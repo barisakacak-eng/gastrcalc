@@ -25,6 +25,7 @@ async def main():
             for n in namen:
                 try:
                     await H.zu_ziel(pg, n)
+                    while await pg.locator('.zeki-erst [data-ze="ok"]').count(): await pg.locator('.zeki-erst [data-ze="ok"]').first.click(); await pg.wait_for_timeout(350)
                     if os.environ.get("OFFEN") == "1": await pg.evaluate(nav_hilfe.OEFFNEN, "details"); await pg.wait_for_timeout(200)
                     pfad = OUT / f"{n}{suffix}.png"; await pg.screenshot(path=str(pfad), full_page=True)
                     from PIL import Image  # lange Seiten in Stücke zu je 1000 px teilen (Lesbarkeit)
