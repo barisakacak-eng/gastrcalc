@@ -55,7 +55,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .heute-laden .h-haupt .h-jetzt-text b,#app .heute-laden .h-jetzt-text b{font:700 1.2353rem/1.2 var(--schrift);color:var(--tinte);overflow-wrap:anywhere}
 #app .heute-laden .h-haupt .h-jetzt-text small,#app .heute-laden .h-haupt.rot .h-jetzt-text small{color:var(--tinte-weich);font-size:.8235rem}
 #app .heute-laden .h-haupt .h-pfeil,#app .heute-laden .h-jetzt .h-pfeil{inline-size:44px;block-size:44px;padding:10px;border-radius:50%;background:var(--aktion);color:var(--aktion-text);flex:none;stroke-width:2.6}
-[dir=rtl] #app .heute-laden .h-jetzt .h-pfeil{transform:scaleX(-1)}
+[dir=rtl] #app .heute-laden .h-jetzt .h-pfeil{transform:none;scale:-1 1}
 #app .heute-laden .h-rezept-jetzt .ks{background:var(--salbei-hell);color:var(--salbei-text)}
 #app .heute-laden .h-lohn-tipp{color:var(--salbei-text);min-block-size:44px;margin:0}
 #app .heute-laden>.leise{min-block-size:44px}

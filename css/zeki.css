@@ -5,6 +5,8 @@
    --zw ist die Breite der Zelle; die leeren Ränder werden abgezogen, damit nur die Figur Platz braucht. Das Bild (Miene) und die Folge liegen deckungsgleich übereinander. */
 .gc-zeki-vorn{--zw:128px;position:relative;display:block;flex:none;box-sizing:content-box;inline-size:var(--zw);aspect-ratio:256/318;pointer-events:none;
   margin-block:calc(var(--zw) * -0.124) calc(var(--zw) * -0.379);margin-inline:calc(var(--zw) * -0.24) calc(var(--zw) * -0.29)}
+/* Die Figur sitzt im Bild links (x 24–71 %): von rechts nach links tauschen die logischen Ränder die Seite, die physischen müssen bleiben */
+[dir=rtl] .gc-zeki-vorn{margin-inline:calc(var(--zw) * -0.29) calc(var(--zw) * -0.24)}
 .gc-zeki-vorn>img.gc-zeki{display:block;inline-size:100%;block-size:100%;object-fit:fill}
 .gc-zeki-folge{pointer-events:none}
 /* Wo Zeki vorn steht, ist die Bühne leer (Hinweis, Intro, Abgang; Blatt und Führung regelt css/buehne.css) */
