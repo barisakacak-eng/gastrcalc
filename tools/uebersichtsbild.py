@@ -105,16 +105,20 @@ async def lauf_voll(ordner, sprache="de", farbe="light"):
     await Z.main()
 
 
-async def nachspielen(b, quelle, ziel, sprache, farbe, port):
-    """Die Wege aus quelle/daten.json noch einmal gehen und nur fotografieren. Einrichtung: eigener Durchgang."""
+async def nachspielen(b, quelle, ziel, sprache, farbe, port, modi=("einrichtung", "laden", "buero", "personal"), groesse=(390, 844), reduziert=False, messen=None, lauf_ctx=None):
+    """Die Wege aus quelle/daten.json noch einmal gehen und nur fotografieren. Einrichtung: eigener Durchgang.
+    messen(Lauf, Eintrag) statt Foto (tests/tor_browser.py): misst nach jedem Weg; lauf_ctx wird dem Lauf als .tor mitgegeben."""
     daten = json.loads((pathlib.Path(quelle) / "daten.json").read_text(encoding="utf-8"))["schirme"]
-    ziel = pathlib.Path(ziel); ziel.mkdir(parents=True, exist_ok=True)
-    for p in ziel.glob("*.png"): p.unlink()
-    Z.OUT = ziel; Z.SPRACHE = sprache; Z.FARBE = farbe; Z.LOCALE = {"de": "de-DE", "tr": "tr-TR", "ar": "ar-SA"}.get(sprache, sprache); Z.GROESSE = (390, 844)
+    if ziel:
+        ziel = pathlib.Path(ziel); ziel.mkdir(parents=True, exist_ok=True)
+        for p in ziel.glob("*.png"): p.unlink()
+        Z.OUT = ziel
+    Z.SPRACHE = sprache; Z.FARBE = farbe; Z.LOCALE = {"de": "de-DE", "tr": "tr-TR", "ar": "ar-SA"}.get(sprache, sprache); Z.GROESSE = groesse; Z.REDUZIERT = reduziert
+    Z.KEIN_FOTO = messen is not None
     os.environ["SCHNELLSTART_SPRACHE"] = sprache
     _, je_modus, _ = Z.ansichten_aus_code(); notizen = []; neu = []
     async def eine_ebene(modus, i):
-        l = Z.Lauf(b, modus, port + i, je_modus)
+        l = Z.Lauf(b, modus, port + i, je_modus); l.tor = lauf_ctx
         try:
             await l.start()
             if modus == "einrichtung":
@@ -129,9 +133,11 @@ async def nachspielen(b, quelle, ziel, sprache, farbe, port):
                         ok = await l.hin(ansicht, weg)
                         if not ok: notizen.append(f"{modus}-{e['name']}: Weg nicht nachspielbar"); continue
                         await l.pg.wait_for_timeout(300)
-                        z = await l.z(); datei = ziel / f"{modus}-{e['name']}.png"
+                        z = await l.z()
+                        if messen: await messen(l, e, z); neu.append(e); continue
+                        datei = ziel / f"{modus}-{e['name']}.png"
                         await l.pg.screenshot(path=str(datei), full_page=True, timeout=15000)
-                        neu.append({"modus": modus, "name": e["name"], "datei": datei.name, "titel": z["titel"], "blatt": z["blatt"], "ansicht": ansicht})
+                        neu.append({"modus": modus, "name": e["name"], "datei": datei.name, "titel": z["titel"], "blatt": z["blatt"], "ansicht": ansicht, "phase": z["phase"]})
                     except Exception as ex:
                         notizen.append(f"{modus}-{e['name']}: {ex!r}"[:150])
             notizen.extend(f"{modus}: {n}" for n in l.notizen)
@@ -139,9 +145,25 @@ async def nachspielen(b, quelle, ziel, sprache, farbe, port):
             notizen.append(f"{modus}: Abbruch {ex!r}"[:200])
         finally:
             await l.ende()
-    await asyncio.gather(*[eine_ebene(m, i) for i, m in enumerate(["einrichtung", "laden", "buero", "personal"])])
-    (ziel / "daten.json").write_text(json.dumps({"schirme": neu, "notizen": notizen}, ensure_ascii=False, indent=1), encoding="utf-8")
+    await asyncio.gather(*[eine_ebene(m, i) for i, m in enumerate(modi)])
+    if ziel: (ziel / "daten.json").write_text(json.dumps({"schirme": neu, "notizen": notizen}, ensure_ascii=False, indent=1), encoding="utf-8")
     return neu, notizen
+
+
+def zusammenfuehren(teile, ziel):
+    """Läufe je Ebene (jeder mit eigenem daten.json) zu einem Ordner mit einem daten.json zusammenlegen."""
+    ziel = pathlib.Path(ziel); ziel.mkdir(parents=True, exist_ok=True); alle = []; notizen = []
+    for t in teile:
+        t = pathlib.Path(t)
+        if not (t / "daten.json").exists(): continue
+        d = json.loads((t / "daten.json").read_text(encoding="utf-8"))
+        for e in d["schirme"]:
+            if e.get("datei") and (t / e["datei"]).exists():
+                if t != ziel: (ziel / e["datei"]).write_bytes((t / e["datei"]).read_bytes())
+            alle.append(e)
+        notizen += d.get("notizen", [])
+    (ziel / "daten.json").write_text(json.dumps({"schirme": alle, "notizen": notizen}, ensure_ascii=False, indent=1), encoding="utf-8")
+    return len(alle)
 
 
 # ---------------------------------------------------------------- Bogen bauen
@@ -153,7 +175,7 @@ def schrift(gr, fett=False):
 
 
 def gruppe_von(e):
-    if e["modus"] == "einrichtung": return "einrichtung"
+    if e["modus"] == "einrichtung" or e.get("phase") == "onboarding": return "einrichtung"
     if e["modus"] == "sonder" or e.get("blatt"): return "blaetter"
     if e["modus"] == "laden" and (e.get("ansicht") == "start" or e["name"].split("-")[0] == "start"): return "start"
     return e["modus"]
@@ -227,6 +249,7 @@ async def main():
         b = await p.chromium.launch(args=["--no-sandbox"])
         if (not (quelle / "daten.json").exists()) or os.environ.get("UEBERSICHT_NEU") == "1":
             print("== voller Lauf de-hell", flush=True); await lauf_voll(quelle)
+            for k in (quelle / "daten.json", ): pass
         for fassung in wahl:
             sp, farbe = FASSUNGEN[fassung]; t0 = time.time()
             if fassung == "de-hell": ordner = quelle

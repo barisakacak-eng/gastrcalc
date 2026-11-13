@@ -1,5 +1,6 @@
 """Das „Tor“ (13.11.2026): Zählung über ALLE Bildschirme der App (dieselbe Liste wie tools/bildschirm_zaehlung.py: Einrichtung, Laden, Personal, Büro,
 jeweils mit dem Beispiel-Laden und allen Unterseiten/Blättern, die das Werkzeug durch Klicken erreicht) nach den Regeln des Aussehens „Salbei & Papier“.
+Die Liste kommt aus dem Ordner TOR_QUELLE (daten.json des Zählwerkzeugs; die Wege werden in jeder Sprache/Größe nachgespielt, die Einrichtung läuft als Durchgang).
 Je Bildschirm wird gemessen – Rückgabecode 1 bei Verstoß:
   a  Zeki-Figuren sichtbar ≤ 1 (Bühne .gc-figur, vorn .gc-zeki-vorn / mascotMarkup, Folgen-Überzug .gc-zeki-folge, alte Figuren .zeki; sichtbar = im Bild, nicht hidden/none/opacity 0)
   b  kein Zeki in der Kopfzeile (.gc-kopf, .ebene-kopf, header außerhalb der Bühne)
@@ -14,7 +15,7 @@ Je Bildschirm wird gemessen – Rückgabecode 1 bei Verstoß:
   k  Dunkel (color_scheme="dark") für Laden und Büro-Start: dieselben Zählungen a–f
 Läufe: de, tr, ar bei 390 × 844 (hell); Laden und Personal zusätzlich bei 360 × 740; Dunkel (de): Laden + Büro; reduzierte Bewegung (de): Laden, Personal, Büro.
 Dazu die Sonderbildschirme aus tools/uebersichtsbild.py (Führung, Intro, Menü-Blatt, Hilfe-Blatt, Büro-Code-Blatt).
-Umgebung: DURCHLAUF_PORT (Standard 9020; jeder Lauf nutzt bis zu 4 Ports ab dort) · TOR_SPRACHEN=de,tr,ar · TOR_TIEFE=1 (Klicktiefe der Erkundung) · TOR_LAEUFE=hell,klein,dunkel,reduziert · TOR_OUT=/home/claude/uebersicht
+Umgebung: DURCHLAUF_PORT (Standard 9020; jeder Lauf nutzt bis zu 4 Ports ab dort) · TOR_SPRACHEN=de,tr,ar · TOR_QUELLE=<Ordner mit daten.json> · TOR_TEIL=<name> (Teil-Lauf, danach --zusammen) · TOR_LAEUFE=hell,klein,dunkel,reduziert · TOR_OUT=/home/claude/uebersicht
 Aufruf: python3 tools/sw_liste.py && DURCHLAUF_PORT=9020 python3 tests/tor_browser.py"""
 import asyncio, json, os, pathlib, sys, time
 
@@ -33,6 +34,7 @@ LAEUFE = os.environ.get("TOR_LAEUFE", "hell,klein,dunkel,reduziert").split(",")
 Z.TIEFE = int(os.environ.get("TOR_TIEFE", "1"))
 NUR_EBENEN = [x for x in os.environ.get("TOR_EBENEN", "").split(",") if x]  # zum Ausprobieren: nur diese Ebenen
 Z.KEIN_FOTO = True
+QUELLE = pathlib.Path(os.environ.get("TOR_QUELLE", "/home/claude/uebersicht/zaehlung-de"))  # Liste der Bildschirme (daten.json) aus tools/bildschirm_zaehlung.py
 
 REGELN = {"a": "Zeki-Figuren > 1", "b": "Zeki in der Kopfzeile", "c": "Sprechblase", "d": "mehr als ein Blatt offen", "e": "doppeltes Feld/Knopf",
           "f": "Überlauf", "g": "Euro im Personal", "h": "Code-Tasten nicht 1-2-3 links→rechts (ar)", "i": "Weinrot/Glut", "j": "Bewegung trotz „reduzieren“", "k": "Dunkel (a–f)"}
@@ -178,15 +180,12 @@ async def messen_haken(lauf, eintrag, zustand):
 
 
 async def lauf_gruppe(b, ctx, modi, port):
-    """Ein Satz Läufe (je Ebene ein eigener Kontext und Server) mit den Einstellungen aus ctx."""
-    Z.SPRACHE = ctx["sprache"]; Z.LOCALE = {"de": "de-DE", "tr": "tr-TR", "ar": "ar-SA"}.get(ctx["sprache"], ctx["sprache"])
-    Z.GROESSE = ctx["groesse"]; Z.FARBE = ctx["farbe"]; Z.REDUZIERT = ctx["reduziert"]
-    os.environ["SCHNELLSTART_SPRACHE"] = ctx["sprache"]
-    _, je_modus, _ = Z.ansichten_aus_code()
-    ergebnisse = {}
-    Z.Lauf.tor = ctx  # jeder Lauf kennt seine Einstellungen (messen_haken)
-    await asyncio.gather(*[Z.lauf(b, m, port + i, je_modus, ergebnisse) for i, m in enumerate(modi)])
-    return ergebnisse
+    """Ein Satz Läufe (je Ebene ein eigener Kontext und Server): die Wege der Liste aus tools/bildschirm_zaehlung.py (daten.json, Ordner QUELLE) werden
+    nachgespielt und an jedem Bildschirm gemessen. Die Einrichtung läuft als eigener Durchgang mit Messung je Schritt."""
+    async def messen(l, e, z):
+        await messen_haken(l, e, z)
+    neu, notizen = await U.nachspielen(b, QUELLE, None, ctx["sprache"], ctx["farbe"], port, modi=modi, groesse=ctx["groesse"], reduziert=ctx["reduziert"], messen=messen, lauf_ctx=ctx)
+    return notizen
 
 
 async def sonderlauf(b, ctx, port):
@@ -206,9 +205,9 @@ async def main():
     for sp in SPRACHEN:
         if "hell" in LAEUFE: plan.append(("hell", sp, (390, 844), "light", False, ["einrichtung", "laden", "personal", "buero"]))
         if "klein" in LAEUFE: plan.append(("klein", sp, (360, 740), "light", False, ["laden", "personal"]))
-    if "dunkel" in LAEUFE: plan.append(("dunkel", "de", (390, 844), "dark", False, ["laden", "buero"]))
-    if "reduziert" in LAEUFE: plan.append(("reduziert", "de", (390, 844), "light", True, ["laden", "personal", "buero"]))
-    Z.NACH_FOTO = messen_haken
+    if "dunkel" in LAEUFE and "de" in SPRACHEN: plan.append(("dunkel", "de", (390, 844), "dark", False, ["laden", "buero"]))
+    if "reduziert" in LAEUFE and "de" in SPRACHEN: plan.append(("reduziert", "de", (390, 844), "light", True, ["laden", "personal", "buero"]))
+    Z.NACH_FOTO = messen_haken  # gilt nur für die Einrichtung (Z.einrichtung ruft foto auf)
     async with async_playwright() as p:
         b = await p.chromium.launch(args=["--no-sandbox"])
         for name, sp, gr, farbe, red, ebenen in plan:
@@ -216,14 +215,29 @@ async def main():
             ctx = {"lauf": name, "sprache": sp, "groesse": gr, "farbe": farbe, "reduziert": red, "zeilen": zeilen, "ausnahmen": ausnahmen}
             t1 = time.time()
             print(f"== Lauf {name}: {sp} {gr[0]}x{gr[1]} {farbe}{' reduziert' if red else ''} – Ebenen {','.join(ebenen)}", flush=True)
-            erg = await lauf_gruppe(b, ctx, ebenen, PORT)
-            for m, l in erg.items(): notizen += [f"{name}/{sp}/{m}: {n}" for n in dict.fromkeys(l.notizen)]
+            nz = await lauf_gruppe(b, ctx, ebenen, PORT)
+            notizen += [f"{name}/{sp}: {n}" for n in dict.fromkeys(nz)]
             if name in ("hell", "dunkel", "reduziert"):
                 try: await sonderlauf(b, ctx, PORT)
                 except Exception as e: notizen.append(f"{name}/{sp}/sonder: {e!r}"[:300])
             print(f"   {sum(1 for z in zeilen if z['sprache'] == sp)} Messungen bisher ({time.time() - t1:.0f} s)", flush=True)
         await b.close()
     Z.NACH_FOTO = None
+    teil = os.environ.get("TOR_TEIL")
+    if teil:  # Teil-Lauf (parallel mit anderen Sprachen): Rohdaten ablegen, ausgewertet wird mit --zusammen
+        (OUT / f"tor-teil-{teil}.json").write_text(json.dumps({"zeilen": zeilen, "ausnahmen": sorted(ausnahmen), "notizen": notizen, "dauer": time.time() - t0}, ensure_ascii=False), encoding="utf-8")
+        print(f"Teil {teil}: {len(zeilen)} Messungen → tor-teil-{teil}.json"); return
+    auswerten(zeilen, ausnahmen, notizen, time.time() - t0)
+
+
+def zusammen():
+    zeilen, ausnahmen, notizen, dauer = [], set(), [], 0
+    for f in sorted(OUT.glob("tor-teil-*.json")):
+        d = json.loads(f.read_text(encoding="utf-8")); zeilen += d["zeilen"]; ausnahmen |= {tuple(x) for x in d["ausnahmen"]}; notizen += d["notizen"]; dauer = max(dauer, d["dauer"])
+    auswerten(zeilen, ausnahmen, notizen, dauer)
+
+
+def auswerten(zeilen, ausnahmen, notizen, dauer):
     # ---- Auswertung
     je_regel = {r: [] for r in REGELN}
     for z in zeilen:
@@ -233,7 +247,7 @@ async def main():
     zaehl = {}
     for z in zeilen:
         k = (z["ebene"], z["sprache"], z["groesse"], z["farbe"], z["bewegung"]); zaehl[k] = zaehl.get(k, 0) + 1
-    ergebnis = {"stand": time.strftime("%d.%m.%Y %H:%M"), "dauer_min": round((time.time() - t0) / 60, 1), "regeln": REGELN,
+    ergebnis = {"stand": time.strftime("%d.%m.%Y %H:%M"), "dauer_min": round(dauer / 60, 1), "regeln": REGELN,
                 "verstoesse_je_regel": {r: len(v) for r, v in je_regel.items()}, "ausnahmen": sorted(f"{n}: {g}" for n, g in ausnahmen), "notizen": notizen,
                 "bildschirme_je_lauf": [{"ebene": k[0], "sprache": k[1], "groesse": k[2], "farbe": k[3], "bewegung": k[4], "anzahl": n} for k, n in sorted(zaehl.items())],
                 "tabelle": zeilen}
@@ -260,4 +274,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    if "--zusammen" in sys.argv: zusammen()
+    else: asyncio.run(main())

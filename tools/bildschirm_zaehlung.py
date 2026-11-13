@@ -31,7 +31,8 @@ OUT = pathlib.Path(os.environ.get("ZAEHLUNG_OUT", "/tmp/zaehlung")); OUT.mkdir(p
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8790"))
 TIEFE = int(os.environ.get("ZAEHLUNG_TIEFE", "2"))
 MAX_JE_EBENE = int(os.environ.get("ZAEHLUNG_MAX", "170"))
-MAX_KNOEPFE = 45
+MAX_KNOEPFE = int(os.environ.get("ZAEHLUNG_KNOEPFE", "45"))
+MAX_GLEICHE = int(os.environ.get("ZAEHLUNG_GLEICHE", "3"))  # höchstens so viele Knöpfe mit gleichem data-a (verschiedenem data-wert) je Bildschirm antippen
 NUR = [x for x in os.environ.get("ZAEHLUNG_NUR", "einrichtung,laden,buero,personal").split(",") if x]
 CODE = "1234"
 SPRACHE = os.environ.get("SCHNELLSTART_SPRACHE", "de")           # Sprache über die Sprachwahl der App (wie tests/schnellstart.py)
@@ -320,6 +321,7 @@ class Lauf:
             if SPERRE.search(k["a"]): continue
             key = (k["a"], k["wert"], k["imBlatt"])
             if key in schl: continue
+            if sum(1 for x in kand if x["a"] == k["a"] and x["imBlatt"] == k["imBlatt"]) >= MAX_GLEICHE: continue  # viele Zeilen derselben Art (je Datum, je Ware …): die ersten genügen
             schl.add(key); kand.append(k)
         for k in kand[:MAX_KNOEPFE]:
             if len(self.schirme) >= MAX_JE_EBENE: self.notizen.append(f"Obergrenze {MAX_JE_EBENE} Bildschirme erreicht"); return
