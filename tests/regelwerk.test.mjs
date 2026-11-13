@@ -86,8 +86,6 @@ const REGEXE = [...MUSTER.map((m) => [m, alsZahl(m)]), ["25.000 €", /(?<![\w.,
 // Ausnahmen mit Begründung: [Datei (relativ zu js/), Muster, Grund]
 const AUSNAHMEN = [
   ["symbole.js", "2.37", "SVG-Pfad der Ikone „sandwich“ (m2.37 11.223 …), keine Fachzahl"],
-  ["zeki-svg.js", "18.36", "SVG-Zeichnung der Figur Zeki: Pfad-Koordinaten, keine Fachzahl"],
-  ["zeki-svg.js", "6.12", "SVG-Zeichnung der Figur Zeki: Pfad-Koordinaten, keine Fachzahl"],
 ];
 const ausgenommen = (datei, m) => AUSNAHMEN.some(([d, p]) => d === datei && (p === "*" || p === m));
 function dateien(dir, out = []) {

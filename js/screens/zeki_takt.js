@@ -1,53 +1,68 @@
-// Zeki lebt (Baris 26.10.2026, 23:14 nachgeschärft): natürlich wie ein Mensch.
-// – Erstes Lebenszeichen nach ≈ 1 s (Blinzeln), danach Blinzeln in unregelmäßigen Abständen (2,5–6 s, manchmal doppelt).
-//   Blinzeln läuft nur im Vektor (Lider), kein Wechsel auf die Bildfolge → kein Flackern.
-// – Gesten (Bildfolge) selten: alle 14–22 s eine ruhige Geste. Zwinkern NIE im Leerlauf, nur gezielt (Sprechblase, Erfolg).
-// – Ruht, wenn die App im Hintergrund ist; bei „reduzierte Bewegung“ weder Blinzeln noch Gesten.
-// Nur Anzeige. Bei Warnung (zustand warnung/fehler) keine fröhlichen Gesten (Maskottchen-Regel vom 23.10.2026).
-import { zekiSpielen } from "../gastrocash-brand.js";
+// Zeki lebt (Salbei & Papier, 13.11.2026): Die Bühnen-Figur bewegt sich selten und ruhig – immer genau eine Folge (assets/brand/zeki-klein/), danach steht wieder das ruhende Bild.
+// – Ankommen auf einem Bildschirm: EINMAL die Bewegung der Haltung (zekiEreignis „ankommen:<haltung>“). Folgen werden erst geladen, wenn sie gebraucht werden (folgeVorladen), nie alle auf einmal.
+// – Leerlauf: „warten“ (atmen, blinzeln) in unregelmäßigen Abständen – nur über der Ruhe-Haltung; eine gehaltene Pose (Hand oben …) bleibt stehen. Zwinkern gibt es im Leerlauf nie.
+// – Ereignisse: Erfolg (Eintrag gespeichert, Haken gesetzt) → nicken · Tag geschafft → jubeln · Lob → zwinkern (einzelne kurze Bewegung) · Warnung/Fehler → kopfschütteln bzw. prüfen, Miene „warnung“, nie Grinsen.
+// – „Bewegung reduzieren“: gar keine Bewegung, nur das ruhende Bild. Nur Anzeige.
+import { buehnenBild, folgeFuer, folgeVorladen, zekiEreignis, zekiSpielen, LEERLAUF_FOLGE } from "../zeki_figur.js";
 import { buehneEinrichten } from "./buehne_dom.js";
 
-const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freuen"], ernst: ["nachdenken", "nicken"] }; // 28.10.2026 Puppe: mehr Abwechslung, nie zweimal dieselbe
-export const ZEKI_ERSTES_ZEICHEN_MS = 1000;
-export const ZEKI_BLINZELN_MS = [2500, 6000];
-export const ZEKI_GESTE_MS = [14000, 22000];
-const ZEKI_TAKT_MS = 250; // Prüftakt, keine Bewegung
-let uhr = null; let schritt = 0;
-const plan = new WeakMap();
-const zwischen = ([a, b], r = Math.random()) => a + Math.round((b - a) * r);
+const ZEKI_ANKOMMEN_FRIST_MS = 1500; // ist die Folge so lange nach dem Ankommen noch nicht geladen, bleibt es beim ruhenden Bild
+export const ERNST_AUSLOESER = ["kuehl_abweichung", "muell_hoch"];
+const reduziert = (el) => { try { return !!el?.ownerDocument?.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches; } catch { return false; } };
+export const buehnenFigur = (root) => root?.querySelector?.(".gc-buehne .gc-figur[data-zeki-buehne]") || null;
 
-export function zekiNaechsteBewegung(zustand, n) {
-  const folge = zustand === "warnung" || zustand === "fehler" ? FOLGE.ernst : FOLGE.ruhig;
-  return folge[((n % folge.length) + folge.length) % folge.length];
+// Beim Zeichnen eines Bildschirms: Leerlauf anmelden und – beim Ankommen auf einem neuen Bildschirm – die Bewegung der Haltung spielen. Rückgabe: Handle der Folge oder null.
+export function zekiAnkommen(root, { neu = true } = {}) {
+  const fig = buehnenFigur(root); if (!fig || reduziert(fig)) return null;
+  zekiSpielen(fig, LEERLAUF_FOLGE); // gibt null, solange die Haltung keine Ruhe ist
+  const haltung = buehnenBild(fig.getAttribute("data-zeki-buehne"))?.haltung; if (!neu || !haltung) return null;
+  const e = `ankommen:${haltung}`, name = folgeFuer(e); if (!name) return null;
+  const h = zekiEreignis(fig, e); if (h) return h;
+  const t0 = Date.now(); // noch nicht geladen: jetzt laden; kommt sie rechtzeitig, läuft die Ankunft doch noch
+  folgeVorladen(fig, name).then((ok) => { if (ok && fig.isConnected && Date.now() - t0 < ZEKI_ANKOMMEN_FRIST_MS) zekiEreignis(fig, e); }).catch(() => {});
+  return null;
 }
 
-function zekiBlinzeln(svg, doppelt = false) {
-  if (!svg || svg.classList.contains("zeki--spielt") || svg.classList.contains("zeki--puppe")) return false;
-  const win = svg.ownerDocument?.defaultView;
-  if (win?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return false;
-  const zu = () => svg.classList.add("zeki--blinzeln"), auf = () => svg.classList.remove("zeki--blinzeln");
-  zu(); setTimeout(auf, 130);
-  if (doppelt) { setTimeout(zu, 300); setTimeout(auf, 430); }
-  return true;
+// Ein Ereignis (erfolg | tagGeschafft | lob | warnung | fehler) an der Bühnen-Figur dieses Bildschirms
+export function zekiBewegt(root, ereignis) {
+  const fig = buehnenFigur(root); if (!fig || reduziert(fig) || !folgeFuer(ereignis)) return null;
+  return zekiEreignis(fig, ereignis);
 }
 
+// Bei einer Warnung wird Zeki ernst: das ruhende Bild wechselt zur Haltung „warten“ mit Miene „warnung“ (Bühnen-Bild blatt-sperre), danach schüttelt er den Kopf.
+export function zekiErnst(root) {
+  const fig = buehnenFigur(root), bild = fig?.querySelector("img.gc-zeki"), ernst = buehnenBild("blatt-sperre"); if (!fig || !bild || !ernst) return false;
+  fig.setAttribute("data-zeki-buehne", "blatt-sperre"); bild.setAttribute("src", ernst.datei); return true;
+}
+
+// Welches Ereignis gehört zu einem Satz von Zeki (js/zeki.js zekiMoment: ausloeser, bewegung)? null = Zeki bleibt stehen.
+export function zekiEreignisFuerMoment(moment) {
+  if (!moment || moment.bewegung === "keine") return null;
+  if (ERNST_AUSLOESER.includes(moment.ausloeser)) return "warnung";
+  if (moment.ausloeser === "ziel_erreicht") return "tagGeschafft";
+  if (moment.ausloeser === "tag_abgeschlossen") return moment.bewegung === "zwinkern" ? "lob" : "erfolg";
+  return moment.bewegung === "nicken" ? "erfolg" : null; // zwinkern nur beim Lob, hand und grinsen stehen lassen
+}
+
+// Erfolg und „Tag geschafft“: Ein Tipp auf einen speichernden Knopf merkt das Ereignis vor; nach dem Neuzeichnen (die Bühne ist dann neu) läuft die Bewegung einmal.
+// Welche Knöpfe gelten, steht hier; die Namen (data-a) gehören den Bildschirmen und ändern sich nicht.
+export const ERFOLG_AKTIONEN = /^(pp-haken|muell-weg-damit|station-speichern|ul-speichern|zw-speichern|vk-hand-speichern|vk-kombi-speichern|kl-speichern|hb-speichern|kw-weg-speichern|kw-behalten-speichern|bel-eintragen)$/;
+export const TAG_AKTIONEN = /^abschluss-fertig$/;
+export const VORMERKEN_MS = 1500;
+let offen = null, angemeldet = false;
+export function zekiVormerken(ereignis, jetzt = Date.now()) { offen = { ereignis, bis: jetzt + VORMERKEN_MS }; }
+export function zekiAktionMerken(aktion, jetzt = Date.now()) {
+  if (TAG_AKTIONEN.test(aktion)) zekiVormerken("tagGeschafft", jetzt); else if (ERFOLG_AKTIONEN.test(aktion)) zekiVormerken("erfolg", jetzt);
+}
+// Wird beim Zeichnen gefragt: gibt es ein vorgemerktes Ereignis, das noch gilt? Dann läuft es (und ersetzt die Ankunft); sonst null.
+export function zekiVorgemerktes(root, jetzt = Date.now()) {
+  const o = offen; offen = null; if (!o || jetzt > o.bis) return null;
+  return zekiBewegt(root, o.ereignis);
+}
+// Anmeldung beim Start der Bedienung (js/bedienung/zeichnen.js): lauscht nur, fängt nichts ab
 export function zekiTaktStarten(doc = typeof document !== "undefined" ? document : null) {
-  if (!doc || uhr || typeof setInterval === "undefined") return;
-  uhr = setInterval(() => {
-    if (doc.hidden) return;
-    const jetzt = Date.now();
-    doc.querySelectorAll(".zeki-lebt .zeki").forEach((svg) => {
-      if (!svg.isConnected || !svg.getClientRects().length) return;
-      let p = plan.get(svg);
-      if (!p) { p = { blinzeln: jetzt + ZEKI_ERSTES_ZEICHEN_MS - ZEKI_TAKT_MS / 2, geste: jetzt + zwischen([6000, 9000]) }; plan.set(svg, p); }
-      if (svg.classList.contains("zeki--spielt") || svg.classList.contains("zeki--puppe")) return;
-      if (jetzt >= p.geste) {
-        schritt++; zekiSpielen(svg, zekiNaechsteBewegung(svg.dataset.zekiZustand || "", schritt));
-        plan.set(svg, { geste: jetzt + zwischen(ZEKI_GESTE_MS), blinzeln: Math.max(p.blinzeln, jetzt + 2000) }); return;
-      }
-      if (jetzt >= p.blinzeln) { zekiBlinzeln(svg, Math.random() < 0.15); plan.set(svg, { ...p, blinzeln: jetzt + zwischen(ZEKI_BLINZELN_MS) }); }
-    });
-  }, ZEKI_TAKT_MS);
+  if (!doc?.addEventListener || angemeldet) return; angemeldet = true;
+  doc.addEventListener("click", (ev) => { const a = ev.target?.closest?.("[data-a]")?.getAttribute?.("data-a"); if (a) zekiAktionMerken(a); }, true);
 }
 
 // Zekis Stimme: Was Zeki sagt, steht in der Bühne direkt neben ihm – keine Sprechblase, kein Kasten, nie über dem Inhalt (Salbei & Papier).
@@ -80,6 +95,7 @@ export function zekiSprechblase(root, moment, { restMs = 7000, bewegen = true } 
   };
   satz.addEventListener("click", weg); satz.addEventListener("animationend", (e) => { if (e.animationName === "zekiBlaseAus") weg(); });
   p.platz.replaceChildren(satz); p.leiste.classList.add("gc-spricht-kurz");
-  if (bewegen && moment.bewegung && moment.bewegung !== "keine" && p.kopf) zekiSpielen(p.kopf, moment.bewegung);
+  if (ernst) zekiErnst(root);
+  const e = bewegen ? zekiEreignisFuerMoment(moment) : null; if (e) zekiBewegt(root, e);
   return true;
 }

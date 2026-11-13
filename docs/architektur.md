@@ -118,7 +118,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `zbon.js` – Z-Bon per Foto.
 - `buehne.js` – Salbei & Papier: der gemeinsame Kopf „Bühne“ als HTML-Text (Kopfzeile, Titel, Zekis Satz als Zeile oder Knopf, Figur, optional die Figur als Hilfe-Knopf); rein. nav.js baut damit den Kopf aller Ansichten.
 - `zeki_figur.js` – Zeki neu: Bühnen-Bild je Ansicht (Bauart 1–12), Mienen, Bewegungs-Folgen, Ereignis → Folge, Abspieler (requestAnimationFrame, „Bewegung reduzieren“); rein bis auf den Abspieler, der nur ein übergebenes Element steuert.
-- `zeki-bilder.js`, `zeki-puppe.js`, `zeki-svg.js` – Zekis Bilder, Gliederpuppe, Vektorfigur.
+- `zeki_figur.js` – die neue Zeki-Figur: Mienen-Bild, Folgen (Bildreihen), Ereignisse.
 - `zeki.js` – Zekis Kopf: welche Lage ist wichtig, welcher Satz passt.
 - `zip.js` – kleines ZIP ohne Fremdbibliothek: schreibt „store“, liest auch „deflate“ (DecompressionStream) und entfernt einen gemeinsamen Ordner; Größengrenzen (200 MB gesamt, 50 MB je Eintrag).
 - `data/` – Branchenwerte, Vorlagen, Datenschutztext (Daten, keine Logik).

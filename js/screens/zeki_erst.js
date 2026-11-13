@@ -30,6 +30,7 @@ export function erstZeigen(doc, punkt, satz, speicher) {
   el.innerHTML = `<div class="ze-karte"><span class="ze-zeki">${mascotMarkup("hilfe", "none")}</span><div class="ze-blase"><p dir="auto">${esc(satz)}</p>
     <button type="button" class="knopf" data-ze="ok">${esc(t("rundgang.erst.ok"))}</button></div></div>`;
   doc.body.appendChild(el);
+  const buehne = doc.querySelector(".gc-buehne"); if (buehne) el.style.top = Math.round(buehne.getBoundingClientRect().bottom + 8) + "px"; // direkt unter der Bühne, die jetzt leer ist
   // Pilotfest (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
   const weg = () => { el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
   const zu = () => { erstGesehen(punkt, speicher); weg(); };

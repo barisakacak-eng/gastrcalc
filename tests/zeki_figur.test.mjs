@@ -235,3 +235,35 @@ test("Leerlauf nur in der Ruhe-Haltung: über einer gehaltenen Pose bleibt Zeki 
   const pose = bauenMitBuehne("start"); assert.equal(Z.zekiSpielen(pose.el, "warten", pose.opt()), null);
   const ruheg = bauenMitBuehne("intro"); const h = Z.zekiSpielen(ruheg.el, "warten", ruheg.opt()); assert.ok(h); ruheg.el.isConnected = false; await ruheg.tick(7000); assert.equal(await h.fertig, "abbruch");
 });
+
+// ---------- Zeki vorn (Führung, Intro, Blatt): ganze Zelle, Größe in Prozent ----------
+test("Zeki vorn: Überzug deckt die ganze Zelle (100 % × 100 %, Raster 500 %), Bilder in Reihenfolge, Ruhebild danach wieder da", async () => {
+  const g = bauen(); g.el.hasAttribute = (n) => n === "data-zeki-vorn";
+  const h = Z.zekiSpielen(g.el, "zeigen-links", g.opt()); assert.ok(h); await g.tick(1500); assert.equal(await h.fertig, "ende");
+  const o = g.kinder[0]; assert.equal(o.style.width, "100%"); assert.equal(o.style.height, "100%"); assert.equal(o.style.backgroundSize, "500% 500%");
+  const pos = [...new Set(frames(g))];
+  assert.deepEqual(pos, Array.from({ length: 25 }, (_, i) => `${(i % 5) * 25}% ${Math.floor(i / 5) * 25}%`));
+  assert.equal(o.style.display, "none"); assert.equal(g.bild.style.visibility, "");
+});
+test("Zeki vorn: auftreten versteckt das Bild sofort (er kommt erst herein); fehlt die Folge, steht er trotzdem da; reduziert: gar nichts", async () => {
+  const g = bauen(); g.el.hasAttribute = (n) => n === "data-zeki-vorn";
+  const h = Z.zekiSpielen(g.el, "auftreten", g.opt()); assert.equal(g.bild.style.visibility, "hidden"); await g.tick(2600); assert.equal(await h.fertig, "ende"); assert.equal(g.bild.style.visibility, "");
+  const g2 = bauen(); const h2 = Z.zekiSpielen(g2.el, "auftreten", g2.opt({ laden: async () => false })); await g2.tick(100); assert.equal(await h2.fertig, "fehlt"); assert.equal(g2.bild.style.visibility, "", "Zeki bleibt sichtbar");
+  const g3 = bauen(); assert.equal(Z.zekiSpielen(g3.el, "auftreten", g3.opt({ reduziert: true })), null); assert.notEqual(g3.bild.style.visibility, "hidden");
+});
+test("Abgang am Ende der Führung: loser Nachlauf ohne Dunkelfläche an der Stelle der Figur, nur wenn „abgehen“ geladen ist (folgeBereit); danach weg", async () => {
+  const kinder = []; const body = { appendChild: (k) => { kinder.push(k); k.isConnected = true; } };
+  const mk = () => ({ style: {}, className: "", isConnected: false, setAttribute(n, v) { this[n] = v; }, appendChild() {}, remove() { this.isConnected = false; }, querySelector: () => this.inner || null });
+  const win = { matchMedia: () => ({ matches: false }) };
+  const inner = { isConnected: true, style: {}, ownerDocument: null, hasAttribute: () => true, appendChild() {}, querySelector: () => null };
+  const doc = { defaultView: win, body, createElement: () => { const w = mk(); w.querySelector = () => inner; return w; } }; inner.ownerDocument = doc;
+  const vorn = { isConnected: true, ownerDocument: doc, getBoundingClientRect: () => ({ left: 20.4, top: 300.2, width: 150, height: 186 }) };
+  await Z.folgeVorladen(vorn, "abgehen", { laden: async () => true }); assert.ok(Z.folgeBereit("abgehen"));
+  assert.equal(Z.zekiAbgang({ ...vorn, isConnected: false }), null);
+  assert.equal(Z.zekiAbgang(vorn, { reduziert: true }), null, "Bewegung reduzieren: Zeki ist einfach weg");
+  assert.equal(kinder.length, 0);
+  const lauf = Z.zekiAbgang(vorn, { laden: async () => true, raf: () => 1, caf() {}, setTimeout: () => 1, clearTimeout() {}, jetzt: () => 0 });
+  assert.ok(lauf, "Abgang läuft"); assert.equal(kinder.length, 1); assert.equal(kinder[0].class, "rg-abgang"); assert.match(kinder[0].style.cssText, /left:20px;top:300px;width:150px;height:186px/);
+  assert.match(kinder[0].innerHTML, /data-zeki-vorn="1"/); assert.doesNotMatch(kinder[0].innerHTML, /dunkel|blase/i);
+  lauf.abbrechen(); await lauf.fertig; await new Promise((r) => setImmediate(r)); assert.equal(kinder[0].isConnected, false, "nach dem Abgang entfernt");
+});

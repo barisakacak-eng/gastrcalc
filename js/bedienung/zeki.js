@@ -12,7 +12,7 @@ import { modus } from "../modus.js";
 import { ZEKI_BILDSCHIRM, zekiMoment } from "../zeki.js";
 import { personalAktiv, anredeTeam } from "../screens/personal.js";
 import { rezeptFortschritt } from "../rezept_quelle.js";
-import { zekiSprechblase } from "../screens/zeki_takt.js";
+import { zekiSprechblase, zekiAnkommen, zekiVorgemerktes, buehnenFigur } from "../screens/zeki_takt.js";
 import { t, sprache as aktuelleSprache } from "../i18n.js";
 import { fristErinnerungHeute } from "../welle3.js";
 import { fristSatz } from "../data/frist_texte.js";
@@ -46,7 +46,19 @@ export function hinweiseMitHm() {
   return hinweiseView(Z.stand);
 }
 
+// Beim Zeichnen: Zekis Satz einsetzen (zekiSatz) und seine Bewegung planen. Ankommen heißt: ein anderer Bildschirm als beim letzten Zeichnen – dann spielt er EINMAL die Bewegung seiner Haltung;
+// ein Neuzeichnen desselben Bildschirms (Tipp, Eintrag) lässt ihn stehen, außer ein Erfolg ist vorgemerkt (Haken, Speichern, Tag geschafft). Während Führung oder Hinweis ist die Bühne leer: keine Bewegung.
+let letzteAnkunft = "";
 export function zekiBildschirm() {
+  const fig = buehnenFigur(Z.root), key = fig ? [Z.stand?.id, Z.ansicht, modus(Z.wurzel), fig.getAttribute("data-zeki-buehne")].join("|") : "";
+  try { zekiSatz(); } finally {
+    if (fig && !fuehrungOffen() && !kurzOffen()) {
+      const neu = key !== letzteAnkunft; letzteAnkunft = key;
+      const gespielt = zekiVorgemerktes(Z.root); zekiAnkommen(Z.root, { neu: neu && !gespielt });
+    }
+  }
+}
+function zekiSatz() {
   if (fuehrungOffen() || (Z.ansicht === "start" && !Z.stand?.fuehrung && modus(Z.wurzel) === "laden")) return; // Führung zuerst, keine zweite Blase darüber
   if (Z.root.querySelector(".zeki-zeile, .kl-zeki, .zeki-stimme > *")) return; // Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
   const nur = Z.ansicht === "start" ? null : ZEKI_BILDSCHIRM[Z.ansicht]; if ((Z.ansicht !== "start" && !nur) || !Z.stand) return; // Heute: alle Lagen, Zeki spricht oben rechts

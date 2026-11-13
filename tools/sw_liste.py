@@ -3,6 +3,7 @@ Aufruf vor jeder Veröffentlichung: python3 tools/sw_liste.py"""
 import pathlib, re, datetime, hashlib
 APP = pathlib.Path(__file__).resolve().parent.parent
 NACHLADE = ("foto/", "assets/brand/zeki-klein/")  # Ordner mit eigenem Nachlade-Cache (sw.js: FOTOS_H, Cache „gcf“); gleiche Liste in sw.js (NACHLADE)
+NUR_ENTWURF = ("assets/brand/zeki.svg",)  # Zeki als Vektor-Entwurf (design): die App lädt sie zur Laufzeit nicht, darum nicht in den Offline-Speicher
 dateien = ["./", "index.html"]; fotos = {}
 # W2-D: Fassungsnummer auch für die App selbst (Einstellungen, Diagnose, Sicherung) – js/fassung.js, gleiche Nummer wie sw.js
 _sw = (APP / "sw.js").read_text(); _m = re.search(r'const V = "(\d{4}-\d{2}-\d{2})\.(\d+)"', _sw)
@@ -11,6 +12,7 @@ _heute = datetime.date.today().isoformat(); _n = int(_m.group(2)) + 1 if _m and 
 for p in sorted(APP.rglob("*")):
     if p.is_file() and p.suffix in (".js", ".css", ".png", ".jpeg", ".svg", ".webp", ".woff2", ".woff", ".ttf", ".webmanifest") and "tests" not in p.parts and "tools" not in p.parts and "vendor" not in p.parts and p.name != "sw.js" and not any(t.startswith(".") for t in p.relative_to(APP).parts) and not ({"design", "design-handoffs", "bruecke", "node_modules"} & set(p.parts)):
         rel = p.relative_to(APP).as_posix()
+        if rel in NUR_ENTWURF: continue
         if rel.startswith("js/lang/") and p.stem not in ("de", "tr", "en"): continue  # weitere Sprachen: erst beim Wählen laden und dann zwischenspeichern
         if rel.startswith(NACHLADE): fotos[rel] = hashlib.sha1(p.read_bytes()).hexdigest()[:8]; continue  # Fotos und Zeki-Folgen (3,5 MB): eigener Cache, nur Geändertes neu laden, nicht in der Start-Liste
         if rel not in dateien: dateien.append(rel)
