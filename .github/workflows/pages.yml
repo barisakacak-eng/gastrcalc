@@ -160,6 +160,13 @@ jobs:
             grep -E "VORAB-D|Error|Timeout" vorab_d.txt | tail -8 | while read -r l; do echo "::warning::vorab_d Versuch $versuch: $l"; done
           done
           tail -30 vorab_d.txt; exit 1
+      - name: Tippziele mindestens 44 px (Einrichtung, Laden, Personal, Büro-Start, Einstellungen; 390 und 360 px)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8853 python tests/tippziele_browser.py > tippziele.txt 2>&1; then exit 0; fi
+            grep -E "VERSTOSS|Error|Timeout" tippziele.txt | tail -8 | while read -r l; do echo "::warning::tippziele Versuch $versuch: $l"; done
+          done
+          tail -40 tippziele.txt; exit 1
       - name: Personal-Modus (Müll mit Foto, Kühlung, Putzen, Schloss, Wartezeit, Rettungscode)
         run: |
           for versuch in 1 2; do
