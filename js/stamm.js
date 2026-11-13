@@ -182,7 +182,7 @@ export const beilagenBereit = (stand, art, zeitraum) => new Set(stand?.betrieb?.
 // Zeki lernt mit (Baris 26.10.2026): Fragen, getippte Antworten und das Ende des Rundgangs bleiben lokal im Laden.
 // Grundlage für den späteren KI-Zeki; verlässt das Gerät nur über die Sicherung oder einen ausdrücklichen Export (DSGVO).
 // Datenschutz (27.10.2026): Zeki-Verlauf auf Wunsch löschen – gibt zurück, wie viele Einträge weg sind
-export function zekiLogLoeschen(stand) { const n = (stand?.zekiLog || []).length; if (stand) stand.zekiLog = []; return n; }
+export function zekiLogLoeschen(stand) { const n = (stand?.zekiLog || []).length; if (stand) { stand.zekiLog = []; stand.zekiLogGeloescht = new Date().toISOString(); } return n; } // Lauf 6, E5-Draht (3): Löschzeit – beim Abgleich kommt Gelöschtes nicht zurück (js/abgleich_felder.js)
 export function zekiLogAnhaengen(stand, eintrag) {
   if (!stand || !eintrag?.art) return 0;
   const l = (stand.zekiLog ??= []);
