@@ -155,15 +155,15 @@ test("Zeki führt durch den Schnellweg: Begrüßung, Frage je Schritt, kein ?-Kn
   const fs = await import("node:fs");
   const s = ladenSchnell();
   const hallo = schritt("sprache").view(s);
-  assert.match(hallo, /s2zeki-intro/); assert.match(hallo, new RegExp(de.schnell2.zeki.hallo.replace(/[!?.]/g, ".")));
+  assert.match(hallo, /gc-buehne/); assert.ok(!/gc-figur-knopf/.test(hallo)); assert.ok(!/s2zeki-introblase/.test(hallo)); /* Salbei & Papier: die Begrüßung steht in der Bühne, Zeki ist die Figur dort */ assert.match(hallo, new RegExp(de.schnell2.zeki.hallo.replace(/[!?.]/g, ".")));
   for (const id of ["laden-schnell", "karte-foto", "kuehl-schnell", "geld"]) {
     const html = schritt(id).view(s);
-    assert.match(html, /class="s2zeki-figur zeki-lebt"/, id);
+    assert.match(html, /class="gc-figur-knopf s2zeki-figur zeki-lebt"/, id); assert.equal((html.match(/gc-figur"/g) || []).length, 1, `${id}: genau ein Zeki`);
     assert.ok(!html.includes("s2fragezeichen"), id);
     assert.ok(de.schnell2.zeki[id], id);
     assert.ok(de.schnell2.zeki[id].split(/\s+/).length <= 10, `${id}: Zeki-Satz höchstens 10 Wörter`);
   }
-  assert.match(schritt("fertig-schnell").view(s), /zeki/);
+  assert.match(schritt("fertig-schnell").view(s), /gc-buehne/);
   for (const f of fs.readdirSync(new URL("../js/lang/", import.meta.url))) {
     const t = (await import(`../js/lang/${f}`)).default;
     for (const k of ["hallo", "rolle", "laden-schnell", "karte-foto", "kuehl-schnell", "geld", "fertig"]) assert.ok(t.schnell2?.zeki?.[k], `${f}: schnell2.zeki.${k}`);
