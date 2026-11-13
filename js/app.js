@@ -89,6 +89,8 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 import { berlin } from "./zeit.js";
 import { aktionsSperre, aktionsSchluessel, tagStand, tagGewechselt, feldMitText, speicherProblemArt, problemNachErfolg, dauerhaftFaellig } from "./bedienhilfe.js"; // Lauf 6, E5: Doppeltipp-Sperre, Tageswechsel, Speicher-Banner
 import { l6z } from "./data/l6z_texte.js";
+import { vormonatEinfrierenWennNoetig } from "./monatsabschluss.js"; // Lauf 6, E5-Draht (1): Vormonat beim Start und beim Tageswechsel einfrieren
+
 
 // W2-D: EINE Liste aller Bildschirm-Zustände (alle *Zuruecksetzen-Exporte aus js/screens). Ladenwechsel, Einlesen und „Alles löschen“
 // setzen alle zurück – ein neuer Bildschirm wird nur hier eingetragen (tests/d.test.mjs prüft, dass keiner fehlt).
@@ -1157,10 +1159,18 @@ window.addEventListener("pageshow", () => tagPruefen());
 root.addEventListener("focusout", () => setTimeout(tagPruefen, 200)); // Feld mit Text wurde verlassen: Tageswechsel nachholen
 // Lauf 6, E5 (B): Zurück in der App, oder die Uhr läuft über 04:00 (Geschäftstag) bzw. 00:00 (Kalendertag): neu zeichnen – sonst zeigt Heute,
 // Putzplan und Kühlung noch gestern. Nicht, solange ein Feld mit Text den Fokus hat (dann beim Verlassen) oder eine Führung läuft.
+// Lauf 6, E5-Draht (1): friert in jedem eingerichteten Laden den Vormonat ein (nur wenn nötig); hat es etwas getan, wird gespeichert.
+function vormonatEinfrieren() {
+  let n = 0; const H = heuteGeschaeft();
+  for (const b of wurzel?.betriebe || []) { if (b.phase === "app" && vormonatEinfrierenWennNoetig(b, H)) n += 1; }
+  if (n) speichern(wurzel);
+  return n;
+}
 function tagPruefen() {
   if (!wurzel || !stand || notfall || !tagGewechselt(gezeichneterTag)) return;
   const a = document.activeElement; const feld = a?.matches?.("input, textarea, select") ? { aktiv: true, value: a.value } : null;
   if (feldMitText(feld) || fuehrungOffen() || kurzOffen()) return;
+  vormonatEinfrieren();
   zeichne();
 }
 
@@ -1272,6 +1282,7 @@ async function startNachLaden() {
     if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: heute() };
     speichern(wurzel);
   }
+  vormonatEinfrieren(); // Lauf 6, E5-Draht (1): nach dem Laden des Standes, nur Läden in der Phase „app“
   serviceWorkerStarten(); setInterval(tagPruefen, 60e3); // Lauf 6, E5 (B): Minuten-Takt für den Tageswechsel bei offener App
   speicherDauerhaftPruefen().then(() => { if (wurzel.betriebe.some((b) => b.phase === "app")) dauerhaftAnfragen(); }); // W2-D: einmal nach der Einrichtung (auch für schon eingerichtete Läden)
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.

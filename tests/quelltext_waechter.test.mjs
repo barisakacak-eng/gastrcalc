@@ -134,7 +134,12 @@ const TEIL5 = [
   { name: "H Einrahmen: .htaccess enthält frame-ancestors", dateien: [".htaccess"], muss: /frame-ancestors/ },
 ];
 
-const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5];
+// ───── Teil 6 (Lauf 6, E5-Draht): Verdrahtung der neuen Fähigkeiten des Rechenwerks ─────
+const TEIL6 = [
+  { name: "Bedienschicht ruft vormonatEinfrierenWennNoetig (beim Start und beim Tageswechsel)", dateien: APP, muss: /(?=[\s\S]*vormonatEinfrierenWennNoetig\(b, H\))(?=[\s\S]*vormonatEinfrieren\(\);\n  zeichne\(\);)(?=[\s\S]*async function startNachLaden[\s\S]*vormonatEinfrieren\(\);)/ },
+];
+
+const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5, ...TEIL6];
 test("Quelltext-Wächter: jeder Eintrag nennt mindestens einen Ort, den es gibt", () => {
   for (const w of WAECHTER) assert.ok(w.dateien.some((d) => fs.existsSync(path.join(WURZEL, d))), w.name + ": keiner der Orte existiert (" + w.dateien.join(", ") + ")");
 });
