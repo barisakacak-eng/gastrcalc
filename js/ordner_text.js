@@ -83,7 +83,7 @@ export function paketUnter(teil, p) {
     return `${datumDe(l.datum)} · ${l.wert === null ? t("ordnerT.wertFehlt") : euro(l.wert)}${l.ohnePreis ? " · " + t("ordnerT.inventurPruefen", l.ohnePreis) : !(l.wert > 0) && l.wert !== null ? " · " + t("ordnerT.status.pruefen") : ""}`; }
   if (teil === "reinigung") return p.reinigung.zeilen.length ? t("ordner.zeile.reinigung", euro(p.reinigung.netto)) : t("ordner.zeile.keine");
   if (teil === "kosten") return p.kosten.zeilen.length ? t("ordnerT.kostenZeile", p.kosten.zeilen.length) : t("ordner.zeile.kostenKeine"); // W2-T: ohne eigenen Lohn
-  if (teil === "arbeitszeiten") { const a = p.arbeitszeiten; if (!a.zeilen.length) return t("w3b.az.leer"); const h = a.zeilen.reduce((s, x) => s + (x.stunden || 0), 0); return `${a.zeilen.length} · ${fmtZahl(h, 1)} h` + (a.ohneZeiten ? " · " + t("w3b.az.ohneZeiten", a.ohneZeiten) : ""); } // Lauf 4, P3 C4
+  if (teil === "arbeitszeiten") { const a = p.arbeitszeiten; if (!a.zeilen.length) return t("w3b.az.leer"); const h = a.zeilen.reduce((s, x) => s + (x.stunden || 0), 0); return `${a.zeilen.length} · ${t("w3b.schicht.std", fmtZahl(h, 1))}` + (a.ohneZeiten ? " · " + t("w3b.az.ohneZeiten", a.ohneZeiten) : ""); } // Lauf 4, P3 C4
   return "";
 }
 
