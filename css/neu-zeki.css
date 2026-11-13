@@ -1,0 +1,5 @@
+/* Zeki neu – Ergänzung zu neu-optik.css (Fundament, noch nicht eingebunden). Maße passen zu js/zeki_figur.js: Bühnen-Bild 512 × 354, bei 116 px Breite 116 × 80 px. */
+.gc-figur{block-size:80px}
+.gc-figur img{block-size:80px;object-fit:fill}
+.gc-figur[data-gespiegelt]{transform:scaleX(-1)}
+.gc-buehne-niedrig .gc-buehne-innen{min-block-size:80px;padding-block-end:0}
