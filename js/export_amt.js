@@ -220,7 +220,7 @@ const cssText = (s) => `"${String(s ?? "").replace(/[\\"]/g, "\\$&").replace(/[\
 export function druckHtml(dok) {
   const klasse = (z) => [z.warn ? "warn" : "", z.klasse || ""].filter(Boolean).join(" ");
   const abschnitt = (a) => `<section><h2>${esc(a.titel)}</h2>${a.info ? `<p class="info${a.warn ? " warn" : ""}">${esc(a.info)}</p>` : ""}
-    ${a.zeilen?.length ? `<div class="tab"><table><thead><tr>${a.kopf.map((k, i) => `<th${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(k)}</th>`).join("")}</tr></thead>
+    ${a.zeilen?.length ? `<div class="tab"><table${a.kopf.length >= 4 ? ' class="breit"' : ""}><thead><tr>${a.kopf.map((k, i) => `<th${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(k)}</th>`).join("")}</tr></thead>
     <tbody>${a.zeilen.map((z) => `<tr${klasse(z) ? ` class="${klasse(z)}"` : ""}>${(z.zellen || z).map((c, i) => `<td${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>
     ${a.summe ? `<tfoot><tr>${a.summe.map((c, i) => `<td${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(c)}</td>`).join("")}</tr></tfoot>` : ""}</table></div>` : a.leer ? `<p class="leer">${esc(a.leer)}</p>` : ""}</section>`;
   const seite = Array.isArray(dok.seite) && dok.seite.length === 2 ? dok.seite : null;
@@ -243,7 +243,9 @@ p.leer { margin: 0; color: #4C6B55; font-style: italic; }
 table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
 th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #E2CDB2; vertical-align: top; overflow-wrap: break-word; }
 .tab { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-@media screen and (max-width: 640px) { body { padding: 14px; font-size: 10pt; } table { min-width: 560px; } h1 { font-size: 15pt; } }
+@media screen and (max-width: 640px) { body { padding: 14px; font-size: 10pt; } table.breit { min-width: 560px; } h1 { font-size: 15pt; } }
+/* Breite Tabellen scrollen in ihrem Rahmen; ein weicher Rand zeigt, dass es weitergeht */
+@media screen { .tab { background: linear-gradient(to right, #F5EDE2 30%, rgba(245,237,226,0)) 0 0 / 28px 100% no-repeat local, linear-gradient(to left, #F5EDE2 30%, rgba(245,237,226,0)) 100% 0 / 28px 100% no-repeat local, linear-gradient(to right, rgba(34,48,31,.16), rgba(34,48,31,0)) 0 0 / 10px 100% no-repeat scroll, linear-gradient(to left, rgba(34,48,31,.16), rgba(34,48,31,0)) 100% 0 / 10px 100% no-repeat scroll; } }
 th { background: #F5EDE2; font-weight: 700; border-bottom: 1px solid #E2CDB2; }
 thead { display: table-header-group; } tr { break-inside: avoid; }
 td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
