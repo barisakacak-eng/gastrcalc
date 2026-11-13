@@ -11,7 +11,7 @@ import { zekiTaktStarten, zekiSprechblase, zekiStimmeEinsetzen } from "./screens
 import { zekiMoment, ZEKI_BILDSCHIRM } from "./zeki.js"; // Zeki lebt (26.10.2026)
 import { kalkulationNeuerTakt } from "./engine.js";
 import { introStarten } from "./intro.js"; // Zeki-Auftritt beim App-Start (27.10.2026), Schalter INTRO_AN in js/intro.js
-import { laden, speichern as speichernVerzoegert, sofortSpeichern as sofortSpeichernRoh, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, zusammenfuehren, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
+import { laden, speichern as speichernVerzoegert, sofortSpeichern as sofortSpeichernRoh, speichernAbbrechen, ereignis, alleEreignisse, exportDatei, ereignisseUebernehmen, allesLoeschen, leererBetrieb, leereWurzel, speicherVerfuegbar, beiSpeicherFehler, eintraegeZaehlen, FREMDER_STAND } from "./store.js"; // Paket 2: FREMDER_STAND
 import { importSicherung, ablageAusSicherung, ladeProbleme, speicherDauerhaftPruefen, speicherIstDauerhaft, speicherBelegt, APP_FASSUNG, SCHEMA } from "./store.js"; // W2-D
 import { t, sprache as aktuelleSprache, setzeSprache as setzeSpracheI18n, SPRACHEN, ladeSprache, spracheGeladen, datumText } from "./i18n.js";
 import { ablageLeeren, ablegen, bildFuerAblage, holen, ablageZuruecklegen, beiAblageFehler } from "./ablage.js"; // W2-D: ablageZuruecklegen
@@ -89,6 +89,8 @@ import { kuehlWareView, kuehlWareAktion, kuehlWareEingabe, kuehlWareZuruecksetze
 import { berlin } from "./zeit.js";
 import { aktionsSperre, aktionsSchluessel, tagStand, tagGewechselt, feldMitText, speicherProblemArt, problemNachErfolg, dauerhaftFaellig } from "./bedienhilfe.js"; // Lauf 6, E5: Doppeltipp-Sperre, Tageswechsel, Speicher-Banner
 import { l6z } from "./data/l6z_texte.js";
+import { einlesenSicher, rueckholpunktInfo, zurueckholen } from "./store.js"; // Lauf 6, E5-Draht (4): Einlesen mit Rückholpunkt
+import { l6yText, l6ySatz } from "./data/l6y_texte.js";
 import { vormonatEinfrierenWennNoetig } from "./monatsabschluss.js"; // Lauf 6, E5-Draht (1): Vormonat beim Start und beim Tageswechsel einfrieren
 
 
@@ -183,7 +185,7 @@ function zeichne() {
       navKontext(stand, wurzel, ansicht, modus(wurzel) === "buero" ? bueroWeg : []);
       document.body.dataset.modus = modus(wurzel);
       const v = ansicht === "buero" ? bueroView(stand, wurzel, { aktualisierung: !!aktualisierung }) // Büro-Start (Entwickler C); W2-D: Update-Hinweis
-        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length, home: homeLage({ buero: true }) }) // W2-D
+        : ansicht === "einstellungen" ? einstellungenView(stand, ereignisAnzahl, wurzel, { offline: offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length, home: homeLage({ buero: true }), rueckhol: rueckholInfo }) // W2-D; E5-Draht (4): Rückholpunkt vorhanden?
         : ansicht === "karte" ? karteLadenView(stand) // Laden-Karte (Fotoraster mit Ampel)
         : ansicht === "kartebuero" ? karteView(stand) // Karten-Übersicht mit Kalkulation – im Büro
         : ansicht === "muell" ? muellView(stand)
@@ -475,13 +477,34 @@ async function sicherungTeilen(passwort = null, { mitAblage = true } = {}) {
 let einleseDatei = null, einleseErsetzen = false;
 // Datensicherung (28.10.2026, Bauplan Prompt 12): Vorschau „wie viele Tage, von wann bis wann“ vor dem Einlesen
 const zeitraumZeile = (w) => { const z = sicherungZeitraum(w); if (!z.tage) return ""; const d = (x) => datumText(new Date(x + "T12:00:00"), { day: "2-digit", month: "2-digit", year: "numeric" }); return t("einstellungen.importZeitraum", z.tage, d(z.von), d(z.bis)) + " "; };
+// Lauf 6, E5-Draht (4): Fehlergrund des Einlesens → Satz. „neuer“ und „gross“ haben eigene Sätze (js/data/l6y_texte.js), alles andere bleibt die bisherige Meldung.
+function einlesenFehlerText(e) {
+  if (e?.grund === "neuer") return l6yText("neuer", aktuelleSprache());
+  if (e?.grund === "gross") return l6ySatz("zuGross", aktuelleSprache(), e.maxMB ?? 200);
+  return t("einstellungen.importFehler");
+}
+// „Einlesen rückgängig machen“: Info über den Rückholpunkt kommt asynchron (IndexedDB) – beim Start und nach jedem Einlesen holen, die Ansicht bekommt nur den Zustand.
+let rueckholInfo = null;
+async function rueckholInfoHolen() { try { rueckholInfo = await rueckholpunktInfo(); } catch (_) { rueckholInfo = null; } if (stand?.phase === "app" && ansicht === "einstellungen") zeichne(); }
+async function sicherungZurueckholen() {
+  if (!rueckholInfo || !confirm(l6yText("rueckgaengig", aktuelleSprache()))) return;
+  const r = await zurueckholen(wurzel);
+  if (!r) { meldung(t("einstellungen.importFehler")); await rueckholInfoHolen(); return; }
+  speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();
+  wurzel = r.wurzel; stand = null; aktivSetzen(wurzel.aktiv);
+  await ladeSprache(wurzel.sprache || spracheDesGeraets()).catch(() => {}); setzeSprache(wurzel.sprache || spracheDesGeraets(), () => zeichne());
+  await sofortSpeichern(wurzel); await ereignis("einlesen-rueckgaengig", { zeit: r.zeit }); ereignisAnzahl = (await alleEreignisse()).length;
+  if (!ansichtErlaubt(wurzel, ansicht)) ansicht = startAnsicht(wurzel);
+  rueckholInfo = null; await rueckholInfoHolen();
+  meldung(l6yText("zurueckgeholt", aktuelleSprache())); zeichne();
+}
 async function sicherungEinlesen(datei, passwort = null, { ersetzen = einleseErsetzen } = {}) {
   einleseErsetzen = !!ersetzen && notfall && modus(wurzel) !== "personal"; // Rettung (17.10.2026): nur von der Fehlerseite
   let r;
   try { r = await importSicherung(datei, { passwort }); }
   catch (e) {
     if (e.grund === "passwort") { passwortMeldung(t("passwort.falsch")); return; } // Blatt bleibt offen
-    console.warn(e); blattSchliessen(); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); return;
+    console.warn(e); blattSchliessen(); meldung(einlesenFehlerText(e)); return;
   }
   if (r.passwortNoetig) { einleseDatei = datei; if (!blattOffen()) history.pushState({ blatt: true }, ""); passwortStarten("einlesen"); return; }
   blattSchliessen(); einleseDatei = null;
@@ -496,18 +519,18 @@ async function sicherungUebernehmen(gelesen) {
     const neu = importiert.betriebe.filter((b) => !wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     if (!confirm(zeitraumZeile(importiert) + t("einstellungen.importFrage", neu, gleich))) return; // Datensicherung 28.10.2026: Tage und Zeitraum zuerst
     const leerVorher = stand && stand.phase === "onboarding" && !stand.betrieb.name && !stand.kosten.length && !stand.gerichte.length ? stand.id : null;
-    const r = zusammenfuehren(wurzel, importiert).bericht;
+    const r = (await einlesenSicher(wurzel, importiert)).bericht; // Lauf 6, E5-Draht (4): sicher, mit Rückholpunkt
     if (leerVorher && wurzel.betriebe.length > 1) { wurzel.betriebe = wurzel.betriebe.filter((b) => b.id !== leerVorher); if (wurzel.aktiv === leerVorher) wurzel.aktiv = importiert.aktiv; }
     alleZuruecksetzen(); stand = null; aktivSetzen(wurzel.aktiv); // der eigene aktive Laden bleibt, die Datei ändert ihn nicht; Bildschirm-Zustände gehören zum alten Objekt
     const fotos = ablage.length ? await ablageAusSicherung(ablage, ablageZuruecklegen) : { neu: 0, kaputt: 0, da: 0 };
     delete wurzel.ladeFehler; // eine Sicherung ist eingelesen: die Meldung über fehlende Teile ist erledigt
     setzeSprache(wurzel.sprache || spracheDesGeraets(), () => zeichne());
     await sofortSpeichern(wurzel); await ereignisseUebernehmen(ereignisse); await ereignis("import", { anzahl: ereignisse.length, neu: neu.length, gleich: gleich.length, pruefsumme, fotos: fotos.neu, fotosKaputt: fotos.kaputt, beide: r.beide, zukunft: r.zukunft, konflikte: r.konflikte });
-    ereignisAnzahl = (await alleEreignisse()).length;
+    ereignisAnzahl = (await alleEreignisse()).length; await rueckholInfoHolen();
     ansicht = wurzel.betriebe.length > 1 ? "laeden" : "start"; if (stand.phase === "onboarding") ansicht = "start";
     const zusatz = [fotos.neu ? t("w2d.importFotos", fotos.neu) : "", fotos.kaputt ? t("w2d.importFotosKaputt", fotos.kaputt) : "", r.zukunft ? t("w2d.importZukunft", r.zukunft) : "", r.beide.length ? t("w2d.importBeide") : "", !wurzel.bueroPin ? t("w2d.importOhneCode") : ""].filter(Boolean).join(" ");
     meldung(t(pruefsumme === "ok" ? "einstellungen.importOk" : pruefsumme === "abweichung" ? "einstellungen.importTrotzAbweichung" : "einstellungen.importOhnePruefsumme") + (zusatz ? " " + zusatz : "")); zeichne();
-  } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
+  } catch (e) { console.warn(e); meldung(einlesenFehlerText(e)); }
 }
 
 // Rettung (17.10.2026): Fehlerseite – die Sicherung ersetzt den Stand auf diesem Handy. Büro-Code, Rettungscode und Fehlversuche bleiben (rettung.js).
@@ -525,7 +548,7 @@ async function sicherungErsetzen(gelesen) {
     ereignisAnzahl = (await alleEreignisse()).length;
     notfall = false; ansicht = startAnsicht(wurzel);
     meldung(t("rettung.ersetzt") + (fotos.neu ? " " + t("w2d.importFotos", fotos.neu) : "")); zeichne();
-  } catch (e) { console.warn(e); meldung(t(e.grund === "neuer" ? "einstellungen.importNeuer" : "einstellungen.importFehler")); }
+  } catch (e) { console.warn(e); meldung(einlesenFehlerText(e)); }
 }
 
 // W2-D: dauerhaften Speicher einmal anfragen (nach der Einrichtung); das Ergebnis zeigen die Einstellungen
@@ -802,6 +825,7 @@ async function aufKlickAktion(ev, el, name) {
   if (name === "kuehl-blatt-oeffnen") { ansicht = "kuehl"; kuehlZuruecksetzen(); if (kuehlBereit(stand)) kuehlAktion("kuehl-blatt", el, stand, wurzel); else kuehlAktion("kuehl-einrichtung", el, stand, wurzel); return zeichne(); } // Lauf 2, K2 C4: Büro-Zeile „Kontrollblatt“ öffnet das Blatt selbst
   if (name === "laden-wechseln") return ladenWechseln(el.dataset.id);
   if (name === "laden-loeschen") { if (wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // W2-S: mit Büro-Code
+  if (name === "sicherung-zurueckholen") return sicherungZurueckholen(); // Lauf 6, E5-Draht (4)
   if (name === "beispiel-anlegen") return beispielAnlegen(); // Beispiel-Laden (17.10.2026)
   if (name === "beispiel-loeschen") { if (!stand.beispiel || wurzel.betriebe.length < 2) return; return mitCode("ladenLoeschen", stand.id, () => ladenLoeschenJetzt(stand.id)); } // Beispiel-Laden (17.10.2026): gleiche Rückfrage wie „Laden löschen“
   if (name === "loeschen") return mitCode("loeschen", null, () => allesLoeschenJetzt()); // W2-S: mit Büro-Code (auch auf der Fehlerseite)
@@ -1282,6 +1306,7 @@ async function startNachLaden() {
     if (r.geaendert) b.branchenMeldung = { geaendert: r.geaendert, uebersprungenEigen: r.uebersprungenEigen, datum: heute() };
     speichern(wurzel);
   }
+  rueckholInfoHolen(); // Lauf 6, E5-Draht (4)
   vormonatEinfrieren(); // Lauf 6, E5-Draht (1): nach dem Laden des Standes, nur Läden in der Phase „app“
   serviceWorkerStarten(); setInterval(tagPruefen, 60e3); // Lauf 6, E5 (B): Minuten-Takt für den Tageswechsel bei offener App
   speicherDauerhaftPruefen().then(() => { if (wurzel.betriebe.some((b) => b.phase === "app")) dauerhaftAnfragen(); }); // W2-D: einmal nach der Einrichtung (auch für schon eingerichtete Läden)

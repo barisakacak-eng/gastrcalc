@@ -137,6 +137,9 @@ const TEIL5 = [
 // ───── Teil 6 (Lauf 6, E5-Draht): Verdrahtung der neuen Fähigkeiten des Rechenwerks ─────
 const TEIL6 = [
   { name: "Bedienschicht ruft vormonatEinfrierenWennNoetig (beim Start und beim Tageswechsel)", dateien: APP, muss: /(?=[\s\S]*vormonatEinfrierenWennNoetig\(b, H\))(?=[\s\S]*vormonatEinfrieren\(\);\n  zeichne\(\);)(?=[\s\S]*async function startNachLaden[\s\S]*vormonatEinfrieren\(\);)/ },
+  { name: "Einlesen: sicherungUebernehmen nutzt einlesenSicher (Rückholpunkt), nicht zusammenfuehren", dateien: APP, muss: /await einlesenSicher\(wurzel, importiert\)/, darfNicht: /zusammenfuehren\(wurzel/ },
+  { name: "Einlesen: Fehlergründe „neuer“ und „gross“ melden die Sätze aus l6y_texte.js", dateien: APP, muss: /l6yText\("neuer"[\s\S]*l6ySatz\("zuGross"/ },
+  { name: "Einlesen: „Einlesen rückgängig machen“ ruft zurueckholen(wurzel) und arbeitet mit der zurückgegebenen Wurzel weiter", dateien: APP, muss: /await zurueckholen\(wurzel\)[\s\S]{0,400}wurzel = r\.wurzel/ },
 ];
 
 const WAECHTER = [...TEIL1, ...TEIL2, ...TEIL3, ...TEIL4, ...TEIL5, ...TEIL6];

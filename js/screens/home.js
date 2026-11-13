@@ -5,6 +5,7 @@ import { datenschutzText } from "../data/datenschutz.js";
 // Jede Eingabe endet wieder hier. Alles, was hier steht, kommt aus dem Rechenwerk (engine, zaehler); die Oberfläche rechnet nicht selbst.
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache, datumText } from "../i18n.js";
+import { l6yText } from "../data/l6y_texte.js"; // Lauf 6, E5-Draht (4)
 import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform (23.10.2026)
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
@@ -335,6 +336,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
         <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>
+        ${extra.rueckhol ? `<button type="button" class="knopf weich" data-a="sicherung-zurueckholen">${esc(l6yText("rueckgaengig", sprache()))}</button>` : ""}
         <span class="marke">${esc(t("einstellungen.ereignisse", ereignisAnzahl))}${wurzel?.letzteSicherung ? ` · ${esc(t("einstellungen.letzteSicherung", datumLesbar(wurzel.letzteSicherung.slice(0, 10))))}` : ""}${typeof wurzel?.letzteSicherungGroesse === "number" ? ` · ${esc(t("w2d.groesse", Math.max(0.1, Math.round(wurzel.letzteSicherungGroesse / 104857.6) / 10)))}` : ""}</span>
         <p class="hinweis">${esc(t("einstellungen.pruefsummeText"))}</p>
       </div>
