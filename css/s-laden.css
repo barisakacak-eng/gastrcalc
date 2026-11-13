@@ -360,5 +360,6 @@ body:has(#app .karte.hinweisrot) .gc-buehne .gc-figur-knopf{transform:scale(.52)
   #app .kl-zeile-haupt .kl-gn{font-size:.875rem}
 }
 /* Umsatz heute: „Std. zusammen“ bleibt in der Karte */
-#app .ul-team-zahl input{flex:0 0 64px;inline-size:64px;min-inline-size:0}
-#app .ul-team-zahl .einheit{flex:1 1 0;min-inline-size:0;overflow-wrap:anywhere}
+#app .ul-team-zahl{flex:1 1 auto}
+#app .ul-team-zahl input{flex:0 0 72px;inline-size:72px;min-inline-size:0}
+#app .ul-team-zahl .einheit{flex:0 1 auto;min-inline-size:0;white-space:nowrap;font-size:.875rem}

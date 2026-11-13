@@ -181,6 +181,8 @@
 #ebene-huelle .mb-knoepfe{display:grid;gap:8px}
 #ebene-huelle .mb-knoepfe .knopf{inline-size:100%}
 #ebene-huelle .mb-knoepfe .knopf.glut{background:var(--glut);color:var(--auf-glut);border-color:transparent}
+/* Glut höchstens einmal je Schirm: trägt der Start darunter schon den Glut-Knopf, bleibt der Blatt-Knopf Salbei */
+body:has(#app .h-rezept-jetzt) #ebene-huelle .mb-knoepfe .knopf.glut{background:var(--salbei);color:var(--auf-farbe);border-color:var(--salbei)}
 
 /* ============================== 3 Büro-Code und Sperre ============================== */
 /* Punkte, Ziffernfeld (3 Spalten, nie gespiegelt: 1-2-3), „Code vergessen?“ und Wartezeit-Text */
