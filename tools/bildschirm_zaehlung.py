@@ -3,7 +3,7 @@
 in allen Ebenen – Laden, Personal (mit Büro-Code), Büro – plus die Einrichtung (Schnellweg und „Alles genau einrichten“).
 
 Woher die Bildschirme kommen:
-  1. aus dem Code: alle Ansichten aus der Zeichen-Weiche in js/app.js (ansicht === "…" ? …View) und die erlaubten Ansichten je
+  1. aus dem Code: alle Ansichten aus der Zeichen-Weiche ANSICHT_VIEW in js/bedienung/zeichnen.js (seit dem Umbau; früher js/app.js) und die erlaubten Ansichten je
      Ebene aus js/modus.js (LADEN_ANSICHTEN, PERSONAL_ANSICHTEN). Jede Ansicht wird über einen Nav-Knopf geöffnet, den das Werkzeug
      in die Seite legt (genau der Weg, den die App selbst für data-a="nav" nimmt).
   2. durch Klicken: auf jedem Bildschirm wird jeder sichtbare Knopf mit data-a einmal angetippt (bis Tiefe 2). Ändert sich danach
@@ -13,7 +13,7 @@ Woher die Bildschirme kommen:
 
 Je Bildschirm: Foto, sichtbarer Text, Wortzahl (ganzer Bildschirm und nur der sichtbare Ausschnitt), Laden-Regel (≤ 15 Wörter),
 Konsolenfehler, waagerechter Überlauf (Seite und einzelne Elemente), abgeschnittene Texte.
-Ausgabe (außerhalb des Repos): /tmp/zaehlung/<modus>-<name>.png, /tmp/zaehlung/bericht.md, /tmp/zaehlung/wand.html, /tmp/zaehlung/daten.json
+Ausgabe (außerhalb des Repos; ZAEHLUNG_OUT): /tmp/zaehlung/<modus>-<name>.png, /tmp/zaehlung/bericht.md, /tmp/zaehlung/wand.html, /tmp/zaehlung/daten.json
 
 Start:  python3 tools/bildschirm_zaehlung.py      (eigene Webserver auf DURCHLAUF_PORT … +3, Standard 8790)
 Umgebung: ZAEHLUNG_OUT=/tmp/zaehlung  ZAEHLUNG_TIEFE=2  ZAEHLUNG_MAX=170 (Bildschirme je Ebene)  ZAEHLUNG_NUR=laden,buero,personal,einrichtung
@@ -536,7 +536,7 @@ def bericht(ergebnisse, ansichten, je_modus, dauer):
         z += ["", "## Browser-Dialoge (confirm/alert)", ""]
         for s in dl: z.append(f"- {s['modus']}-{s['name']}: " + " ⏐ ".join(d[:200] for d in s["dialoge"]))
     # Ansichten aus dem Code
-    z += ["", "## Ansichten aus dem Code (js/app.js) – erreicht?", "", "| Ansicht | Funktion | Datei | Laden | Personal | Büro | als echter Knopf gesehen |", "|---|---|---|---|---|---|---|"]
+    z += ["", "## Ansichten aus dem Code (js/bedienung/zeichnen.js, ANSICHT_VIEW) – erreicht?", "", "| Ansicht | Funktion | Datei | Laden | Personal | Büro | als echter Knopf gesehen |", "|---|---|---|---|---|---|---|"]
     def status(m, a):
         if m not in ergebnisse: return "–"
         if a not in je_modus.get(m, []) and not (m == "laden" and a == "start") and not (m == "personal" and a == "personal"): return "·"
