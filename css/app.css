@@ -34,8 +34,9 @@ h1, h2, h3, p{margin:0}
 .zeile{flex-direction:column}
 .zeile.an{border-color:var(--salbei)}
 .zeile.offen{border-color:var(--gelb)}
-.schalter{width:64px;transition:background .15s}
-.schalter::after{left:3px}
+.schalter{flex:none;width:64px;border:0;border-radius:22px;background:var(--holz-tief);position:relative;padding:0;transition:background .15s}
+.schalter::after{content:"";position:absolute;left:3px;border-radius:50%;background:var(--weiss);box-shadow:var(--schatten-karte);transition:left .15s}
+.schalter.an{background:var(--salbei)}
 .betrag input{flex:1;min-width:0;outline:none}
 .betrag input::placeholder{color:var(--holz-tief);font-weight:600}
 .betrag.geschaetzt input{border-bottom-color:var(--holz-tief);color:var(--tinte-weich)}

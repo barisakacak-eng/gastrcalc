@@ -248,3 +248,19 @@
 #ebene-huelle .grosskachel.dunkel b{color:var(--buehne-text)}
 #ebene-huelle .pw-schalter{display:block;inline-size:100%}
 #ebene-huelle .pw-schalter .oben{inline-size:100%;justify-content:space-between}
+
+/* ============================== Kostenschritte (Zeilen, Beträge, Schalter) ============================== */
+/* Dieselbe Bauart wie im Büro (css/s-buero.css), hier für die Einrichtung: Name und Hinweis untereinander, Zahl rechts. */
+.schirm[class*="weg-"] .liste{display:grid;gap:10px}
+.schirm[class*="weg-"] .zeile{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px;min-block-size:56px;background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte)}
+.schirm[class*="weg-"] .zeile .oben{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.schirm[class*="weg-"] .zeile .name{display:block;font-weight:700;color:var(--tinte)}
+.schirm[class*="weg-"] .zeile .name small{display:block;font-weight:400;color:var(--tinte-weich);font-size:0.8235rem;line-height:1.3}
+.schirm[class*="weg-"] .zeile.an{background:var(--salbei-hell);border-color:var(--salbei)}
+.schirm[class*="weg-"] .betrag{display:flex;align-items:center;gap:10px}
+.schirm[class*="weg-"] .betrag input{border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);font-size:1.25rem;font-weight:700;padding:8px 12px;min-block-size:48px}
+.schirm[class*="weg-"] .betrag.geschaetzt input{border-style:dashed;border-color:var(--holz-tief);color:var(--tinte-weich)}
+.schirm[class*="weg-"] .einheit{color:var(--tinte-weich);font-weight:700}
+.schirm[class*="weg-"] .seg{display:flex;gap:4px;background:var(--papier-tief);border:1px solid var(--linie);border-radius:12px;padding:4px}
+.schirm[class*="weg-"] .seg button{flex:1;min-inline-size:0;min-block-size:44px;border:0;border-radius:9px;background:transparent;color:var(--tinte);font-weight:700;font-size:0.875rem;padding:6px 10px}
+.schirm[class*="weg-"] .seg button.an{background:var(--salbei);color:var(--aktion-text)}
