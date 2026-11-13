@@ -43,7 +43,7 @@ async function ocrAuftrag(bild, modus = "block", teil = null) {
 export function vorwaermen() { if (typeof Worker === "undefined") return; try { const w = ocrWorker(); offen.set("vorwaermen", { res() {}, rej() {} }); w.postMessage({ id: "vorwaermen" }); } catch (_) {} }
 
 // Bild für die Erkennung vorbereiten: richtig drehen (EXIF), lange Seite höchstens LANGE_SEITE_ERKENNUNG, Graustufen, leichter Kontrast. Ergebnis PNG-Bytes.
-// Setzung (28.10.2026, F3): längste Seite 1920 px (vorher 2400). Ein Handyfoto hat 12 MP; weniger Pixel heißt weniger Arbeit beim Vorbereiten und Erkennen.
+// Setzung: längste Seite 1920 px (vorher 2400). Ein Handyfoto hat 12 MP; weniger Pixel heißt weniger Arbeit beim Vorbereiten und Erkennen.
 // Geprüft an drei Testbildern (26 Gerichte, kleine und große Schrift): gleich viele Gerichte erkannt wie mit 2400 px. Unter 1600 px nicht gewählt, zu wenig Reserve für echte Fotos.
 const LANGE_SEITE_ERKENNUNG = 1920;
 // Ältere iPhones (vor iOS 17) kennen die Option imageOrientation nicht: dann ohne, und notfalls über ein <img> (dreht laut EXIF).
@@ -102,7 +102,7 @@ async function pdfAuswerten(datei, fortschritt, modus) {
 
 // ---------- Der eine Aufruf ----------
 // zweck: "speisekarte" | "rechnung" | "kosten"  ·  fortschritt({schritt}) für die Anzeige
-// zwischen(text): erste Lesart der Speisekarte, sobald sie da ist (P4, 30.10.2026) – die Seite zeigt damit schon Gerichte
+// zwischen(text): erste Lesart der Speisekarte, sobald sie da ist – die Seite zeigt damit schon Gerichte
 export async function auswerten(datei, { zweck = "rechnung", fortschritt = null, zwischen = null } = {}) {
   const t0 = Date.now();
   if (auswerter === "ki") throw Object.assign(new Error("KI-Auswertung ist noch nicht eingerichtet"), { grund: "ki" });

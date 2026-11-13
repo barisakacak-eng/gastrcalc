@@ -1,7 +1,7 @@
-// Welle 3, 3.8 Schichtzeiten (Bau-Chat 03.11.2026). Reine Rechnung, keine Oberfläche. Nur Zähler und Listen – ob Zuschläge gezahlt werden,
-// entscheiden Vertrag und Lohnbüro. Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte 28.10.2026“, Teil D.
+// Welle 3, 3.8 Schichtzeiten. Reine Rechnung, keine Oberfläche. Nur Zähler und Listen – ob Zuschläge gezahlt werden,
+// entscheiden Vertrag und Lohnbüro. Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte“, Teil D.
 //
-// Datenmodell (03.11.2026): ein Eintrag in stand.teamTage[].eintraege[] darf zusätzlich { von: "HH:MM", bis: "HH:MM" } tragen.
+// Datenmodell: ein Eintrag in stand.teamTage[].eintraege[] darf zusätzlich { von: "HH:MM", bis: "HH:MM" } tragen.
 // Endet die Schicht vor ihrem Beginn, endet sie am Folgetag (22:00–05:00). Alte Einträge ohne Zeiten bleiben gültig (nur Stunden).
 //
 // Fenster nach § 3b EStG (gesetze-im-internet.de, im Prüfpaket wörtlich geprüft):
@@ -21,7 +21,7 @@ import { schichtKennung } from "./abgleich_felder.js";
 const minuten = (hhmm) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm || "")); if (!m) return null; const h = Number(m[1]), mi = Number(m[2]); return h <= 24 && mi < 60 ? h * 60 + mi : null; };
 
 // Echte Dauer in Minuten von Beginn a (Minute im Tag) bis Ende b am Tag oder Folgetag: in der Nacht der Zeitumstellung ist die Wanduhr-Rechnung falsch
-// (22:00–06:00 am 25.10.2026 sind 9 Stunden, am 29.03.2026 nur 7). Ohne Datum gilt die Wanduhr (wie bisher).
+//. Ohne Datum gilt die Wanduhr (wie bisher).
 const echteMinuten = (datum, a, b) => {
   const ende = b > a ? datum : plusTage(datum, 1); const von = berlinZeitpunkt(datum, Math.floor(a / 60), a % 60), bis = berlinZeitpunkt(ende, Math.floor(b / 60), b % 60);
   return Math.round((bis.getTime() - von.getTime()) / 60000);
@@ -76,7 +76,7 @@ export function zaehlerSumme(schichten, opt = {}) {
   return s;
 }
 
-// Schichten einer Person aus dem Laden, Zeitraum von–bis (JJJJ-MM-TT). Quellen: stand.schichten (Büro „Schicht eintragen“, W3b 04.11.2026)
+// Schichten einer Person aus dem Laden, Zeitraum von–bis (JJJJ-MM-TT). Quellen: stand.schichten
 // und Beginn/Ende in stand.teamTage (je Datum gilt der jüngste Eintrag). Für denselben Tag und dieselbe Person gilt der Büro-Eintrag.
 export function schichtenAusLaden(stand, personId, von, bis) {
   const out = new Map();
@@ -85,7 +85,7 @@ export function schichtenAusLaden(stand, personId, von, bis) {
   for (const x of stand?.schichten || []) if (!x.storniert && x.person === personId && x.datum >= von && x.datum <= bis) out.set(x.datum, { datum: x.datum, von: x.von, bis: x.bis });
   return [...out.values()].sort((a, b) => (a.datum < b.datum ? -1 : 1));
 }
-// W3b (04.11.2026): Schicht im Büro eintragen – getrennt von „Mitarbeiter heute“ (Lohnkosten bleiben, wie sie sind; das hier ist die Zeit-Aufzeichnung).
+// W3b: Schicht im Büro eintragen – getrennt von „Mitarbeiter heute“ (Lohnkosten bleiben, wie sie sind; das hier ist die Zeit-Aufzeichnung).
 // Gleicher Tag + gleiche Person ersetzt den alten Eintrag (der alte bleibt als storniert stehen). Rückgabe: Eintrag oder null bei ungültigen Zeiten.
 const zeitOk = (v) => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim()); return m && Number(m[1]) < 24 && Number(m[2]) < 60 ? `${m[1].padStart(2, "0")}:${m[2]}` : null; };
 // Lauf 6 (P1 B5): gleicher Beginn und gleiches Ende zählten 24 Stunden – das ist fast immer ein Tippfehler. Jetzt wird nichts eingetragen,
@@ -121,7 +121,7 @@ export function tageZaehler(bisherTage, neueTage) {
 const AUFZEICHNUNG_TAGE = wert("arbeitszeit_frist_tage", "2026-12-31"), AUFBEWAHRUNG_JAHRE = wert("arbeitszeit_aufheben_jahre", "2026-12-31");
 const aufzeichnungFaellig = (arbeitstag) => plusTage(arbeitstag, wert("arbeitszeit_frist_tage", arbeitstag));
 
-// Arbeitszeit-Liste (W3b, 04.11.2026) für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am Tag der Frist
+// Arbeitszeit-Liste für den Buchhalter-Ordner: je Eintrag mit Beginn und Ende eine Zeile. „rechtzeitig“ = spätestens am Tag der Frist
 // (arbeitszeit_frist_tage) nach dem Arbeitstag erfasst (§ 17 Abs. 1 MiLoG; Gaststätten nach § 2a SchwarzArbG). Einträge nur mit Stunden zeigen „ohne Zeiten“ – sie zählen,
 // erfüllen die Aufzeichnung aber nicht. Nur eine Liste, keine Bewertung.
 export function arbeitszeitListe(stand, von, bis) {

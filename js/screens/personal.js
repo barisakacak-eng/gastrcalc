@@ -1,13 +1,13 @@
-// Personal-Modus (Drei Ebenen, Punkt 9 – 15.10.2026): drei Fotokacheln Müll · Kühlung · Putzen, kein einziger Euro.
+// Personal-Modus: drei Fotokacheln Müll · Kühlung · Putzen, kein einziger Euro.
 // Die Person wird einmal je Schicht gewählt (je Gerät gemerkt) und steht danach an jedem Eintrag (von: personId).
 // Verlassen nur mit Büro-Code über das Schloss in der Kopfleiste (nav.js, data-a="schloss"); ohne Code gibt es keinen Personal-Modus (W2-S).
 import { t, sprache, datumText } from "../i18n.js";
-import { esc, heuteGeschaeft as heute } from "../util.js"; // Paket 3 (16.10.2026), M7: eine Schicht endet mit dem Geschäftstag (4 Uhr), nicht um Mitternacht
+import { esc, heuteGeschaeft as heute } from "../util.js"; // Paket 3, M7: eine Schicht endet mit dem Geschäftstag (4 Uhr), nicht um Mitternacht
 import { sym } from "../symbole.js";
-import { personalZahlen } from "../personal.js"; // Trennung 2 (17.10.2026)
+import { personalZahlen } from "../personal.js"; // Trennung 2
 import { modus } from "../modus.js";
 import { nav } from "./nav.js";
-import { vonNachtragen as vonNachtragenR } from "../stamm.js"; // Trennung (17.10.2026)
+import { vonNachtragen as vonNachtragenR } from "../stamm.js"; // Trennung
 
 // ---------- Kontext: ist gerade Personal-Modus? (app.js setzt die Wurzel bei jedem Zeichnen) ----------
 let kontextWurzel = null;
@@ -45,11 +45,11 @@ export function schichtPersonVergessen(stand) {
 export const personalVon = (stand) => (personalAktiv() ? schichtPerson(stand) || null : null);
 const nameVon = (stand, id) => aktive(stand).find((p) => p.id === id)?.kuerzel || "";
 
-// Einträge seit dem Eintritt in den Personal-Modus ohne Person bekommen die Schicht-Person. Trennung (17.10.2026): geschrieben wird in js/stamm.js.
+// Einträge seit dem Eintritt in den Personal-Modus ohne Person bekommen die Schicht-Person. Trennung: geschrieben wird in js/stamm.js.
 export const vonNachtragen = (stand, von, ab = seit) => vonNachtragenR(stand, von, ab);
 export function personalNachtragen(stand) { return personalAktiv() ? vonNachtragen(stand, schichtPerson(stand)) : 0; }
 
-// Trennung 2 (17.10.2026): personalZahlen wohnt in js/personal.js
+// Trennung 2: personalZahlen wohnt in js/personal.js
 
 const SCHLOSS = `<svg class="sym" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 // Kopfleiste im Personal-Modus: links frei oder Zurück, Mitte Logo, rechts Schloss
@@ -93,7 +93,7 @@ export function personalAktion(name, el, stand) {
   return false;
 }
 
-// Andere Anrede im Personal-Modus (Baris 27.10.2026, 10:51: „nur ne andere Anrede“): Zeki sagt dort nicht „Chef“,
+// Andere Anrede im Personal-Modus: Zeki sagt dort nicht „Chef“,
 // sondern spricht den Mitarbeiter mit seinem Namen an (ohne Namen: ohne Anrede). Gilt für alle 18 Sprachen.
 const ANREDE = /^(Chef|Usta|Boss|يا معلّم|رئیس|Hosta|Szefie|Șefu'|Шефе|Šefe|Шеф|Shef|Αφεντικό|Capo|Jefe|Sếp ơi|Sếp)\s*[,،!]\s*/u;
 export function anredeTeam(satz, stand) {

@@ -1,4 +1,4 @@
-// Stufe 1 (17.10.2026): Kombi-Deal-Rechner. Reine Funktionen, keine Oberfläche, keine Speicherung, kein Netz.
+// Stufe 1: Kombi-Deal-Rechner. Reine Funktionen, keine Oberfläche, keine Speicherung, kein Netz.
 // Eingabe: 2–4 Gerichte der Karte (z. B. Döner + Pommes + Ayran). Preise, Wareneinsatz und Steuersatz kommen aus kalkulation() (js/engine.js) –
 // hier gibt es keine zweite Kalkulation. Die App schlägt vor, der Wirt entscheidet.
 //
@@ -13,12 +13,12 @@ import { warenQuote } from "./zaehler.js";
 import { verkaufJeGericht, auswertungZeitraum, ladenhueter } from "./verkauf.js";
 import { haltbarStand, preisStufeNah, preisStufeAuf, PREIS_SCHRITT, kurzName } from "./haltbar.js";
 import { heuteGeschaeft, fmtEuro } from "./util.js";
-import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang-Text mit Ausschankmenge (§ 13 PAngV)
+import { nameMitMenge } from "./getraenk_feld.js"; // Getränke: Aushang-Text mit Ausschankmenge (§ 13 PAngV)
 import { rund2, nettoVonBrutto } from "./geld.js";
 
 const KOMBI_MIN = 2;
 export const KOMBI_MAX = 4;
-// Stufe 1 (17.10.2026): Rabatt-Stufen auf die Summe der Einzelpreise. KEINE Branchenzahl – eine Annahme der App, damit der Wirt drei
+// Stufe 1: Rabatt-Stufen auf die Summe der Einzelpreise. KEINE Branchenzahl – eine Annahme der App, damit der Wirt drei
 // Richtungen vergleichen kann: 5 % ist bei 10–15 € Kombi ≈ 50–75 Cent (eine Preisstufe, „kleiner Rabatt“), 10 % ≈ ein Getränk billiger,
 // 15 % eine deutliche Ansage. Gerundet wird danach auf 50 Cent (wie die Abverkaufs-Preise, js/haltbar.js).
 export const RABATT_STUFEN = [{ stufe: "vorsichtig", rabatt: 0.05 }, { stufe: "normal", rabatt: 0.10 }, { stufe: "stark", rabatt: 0.15 }];
@@ -43,7 +43,7 @@ function kombiTeile(stand, k = kalkulation(stand)) {
     waren: z.waren, rohertrag: nettoVonBrutto(z.preisBrutto, z.mwst) - z.waren, geschaetzt: !!z.warenGeschaetzt, aushang: nameMitMenge(gs.get(z.id), kurzName(z.name)) }));
 }
 
-// Aktion planen (18.10.2026): Break-even-Mehrmenge für EINEN Aktionspreis (Kombi aus 2–4 Gerichten oder ein Gericht im Abverkauf) – dieselbe Rechnung
+// Aktion planen: Break-even-Mehrmenge für EINEN Aktionspreis (Kombi aus 2–4 Gerichten oder ein Gericht im Abverkauf) – dieselbe Rechnung
 // wie in kombiRechnen: so viel mehr muss verkauft werden, damit gleich viel Rohertrag bleibt wie zum Kartenpreis. null = nicht rechenbar
 // (Gericht ohne Preis/Wareneinsatz); lohntNie = der Aktionspreis deckt die Ware nicht. Grundlage der erwarteten Mehrmenge (js/aktion_plan.js).
 export function aktionBreakEven(stand, ids, preis, { k = kalkulation(stand) } = {}) {
@@ -82,7 +82,7 @@ export function kombiRechnen(stand, ids, { k = kalkulation(stand) } = {}) {
 }
 
 // Text zum Teilen (Aushang, WhatsApp-Status) – Deutsch wie der Bestelltext: „Döner Kebab + Pommes frites + Ayran nur 11,50 €“
-export const kombiText = (kombi, stufe) => `${kombi.teile.map((x) => x.aushang || kurzName(x.name)).join(" + ")} nur ${fmtEuro(stufe.preis, { dezimal: 2 })}`; // Getränke (18.10.2026): mit Ausschankmenge
+export const kombiText = (kombi, stufe) => `${kombi.teile.map((x) => x.aushang || kurzName(x.name)).join(" + ")} nur ${fmtEuro(stufe.preis, { dezimal: 2 })}`; // Getränke: mit Ausschankmenge
 
 // ---------- Automatische Vorschläge ----------
 // Bis zu 3 Kombis: (1) Renner – meistverkauftes Hauptgericht + Beilage + Getränk; (2) mit einer Abverkaufs-Ware (MHD läuft ab);
@@ -114,7 +114,7 @@ export function kombiVorschlaege(stand, { heuteTag = heuteGeschaeft(), k = kalku
   return out;
 }
 
-// Trennung 2 (17.10.2026): Kombi-Teile für die Auswahl-Chips – Hauptgericht, Kleinigkeit, Getränk, dann nach Name (vorher js/screens/aktionen.js).
+// Trennung 2: Kombi-Teile für die Auswahl-Chips – Hauptgericht, Kleinigkeit, Getränk, dann nach Name (vorher js/screens/aktionen.js).
 const ORDNUNG = { haupt: 0, gross: 0, kleinigkeit: 1, getraenk: 2 };
 export const kombiTeileSortiert = (stand, k = kalkulation(stand)) => kombiTeile(stand, k).sort((a, b) => (ORDNUNG[a.klasse] ?? 1) - (ORDNUNG[b.klasse] ?? 1) || a.name.localeCompare(b.name, "de"));
 // Auswahl ohne Teile, die es nicht mehr gibt (Gericht gelöscht oder ohne Preis).

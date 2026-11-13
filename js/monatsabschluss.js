@@ -1,4 +1,4 @@
-// Welle 3, 3.3 Monatsabschluss (Bau-Chat 03.11.2026): Monatsergebnis einfrieren, Vormonat und Vorjahr vergleichen.
+// Welle 3, 3.3 Monatsabschluss: Monatsergebnis einfrieren, Vormonat und Vorjahr vergleichen.
 // Eingefroren wird, was die App am Abschluss-Tag rechnet (Umsatz, Ware, Quoten, Ergebnis). Spätere Nachträge ändern den eingefrorenen Monat nicht;
 // ein neuer Abschluss desselben Monats ersetzt ihn nur ausdrücklich (neu: true) und behält den alten als „ersetzt“ (nichts wird still überschrieben).
 // stand.monatsabschluesse = [{ monat, eingefroren, umsatzBrutto, umsatzNetto, ware, quote, personal, personalQuote, ergebnis, geschaetzt, ersetzt? }]

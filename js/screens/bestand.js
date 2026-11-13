@@ -1,16 +1,16 @@
-// Bestand (17.10.2026): Büro-Bereich „Lager & Bestellen“. Oben ein Satz (bestandUhrzeit), darunter „Bestellen“ je Lieferant mit Teilen-Knopf,
+// Bestand: Büro-Bereich „Lager & Bestellen“. Oben ein Satz (bestandUhrzeit), darunter „Bestellen“ je Lieferant mit Teilen-Knopf,
 // „Lager jetzt“ (Bestand, Reichweite, Wert, Sicherheit in einfachen Wörtern) und die Einstellungen (Tage, Puffer, Mindestbestand je Ware).
 // Rechnen tut nur js/bestand.js; hier stehen Aufbau, Texte und data-Attribute. Nur vorhandene Klassen der Büro-Bildschirme, kein eigenes CSS.
 // Personal-Modus: der Bereich ist dort nicht erreichbar (modus.js lässt nur Personal, Müll, Kühlung, Putzen zu).
 import { einklappen } from "./bausteine.js"; // Entrümpelung Punkt 4
-import { wareBild } from "./muell.js"; // Design B (19.10.2026): Foto je Bestellzeile
+import { wareBild } from "./muell.js"; // Design B: Foto je Bestellzeile
 import { t, einheitLabel, artikelText } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, parseZahl, wertAnzeige } from "../util.js";
-import { bestandStand, bestellVorschlag, bestandUhrzeit, bestellNachricht, lagerSetzen, mindestbestandSetzen, lieferSaetze, mindestSatz, uhrText } from "../bestand.js"; // Lieferanten (18.10.2026): bestellNachricht, Sätze
+import { bestandStand, bestellVorschlag, bestandUhrzeit, bestellNachricht, lagerSetzen, mindestbestandSetzen, lieferSaetze, mindestSatz, uhrText } from "../bestand.js"; // Lieferanten: bestellNachricht, Sätze
 import { tagKurz } from "../anzeige_text.js";
 import { datumLesbar } from "./tag.js";
 import { nav } from "./nav.js";
-import { mengeBasisText, gebindeAnzahl, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
+import { mengeBasisText, gebindeAnzahl, textTeilen } from "./bausteine.js"; // Trennung
 
 let mindestOffen = false;  // Liste „Mindestbestand je Ware“ aufgeklappt
 let entwurf = {};          // Mindestbestand: Warenname → getippter Text (bis „Speichern“)
@@ -26,11 +26,11 @@ const PUFFER_WAHL = [0, 1, 2, 3, 5];
 const was = (text) => `<p class="inv-was"><b>${esc(t("inventur.wasHeisst"))}</b> ${esc(text)}</p>`;
 const euro = (v, ca = true) => (v === null || v === undefined ? t("inventur.preisFehlt") : (ca ? "≈ " : "") + fmtEuro(v, { dezimal: Math.abs(v) < 100 ? 2 : 0 }));
 const kurz = (iso) => datumLesbar(iso).slice(0, 6);
-// Trennung (17.10.2026): mengeText (jetzt mengeBasisText) und gebindeAnzahl wohnen in ./bausteine.js
+// Trennung: mengeText (jetzt mengeBasisText) und gebindeAnzahl wohnen in ./bausteine.js
 const mengeText = (menge, basis) => mengeBasisText(menge, basis);
 const gebindeText = (anzahl, art, menge, basis) => (anzahl !== null && art !== "lose" ? gebindeAnzahl(anzahl, art) : mengeText(menge, basis));
 const reichtText = (w) => (w.schnitt === null ? t("bestand.verbrauchUnbekannt") : !(w.schnitt > 0) ? t("bestand.keinVerbrauch") : w.lange ? t("bestand.reichtLange") : (w.reichweite ?? 0) < 1 ? t("bestand.reichtKurz") : t("bestand.reicht", Math.floor(w.reichweite)));
-// Lieferanten (18.10.2026): reicht nicht bis zur nächsten Lieferung → das sagen (statt „heute bestellen“), dazu der Zweitlieferant, wenn er früher kommt
+// Lieferanten: reicht nicht bis zur nächsten Lieferung → das sagen (statt „heute bestellen“), dazu der Zweitlieferant, wenn er früher kommt
 const dringendText = (z) => {
   if (z.grund === "vorLieferung" && z.lieferung && z.dringend !== "leer") return t("lieferanten.knappVor", tagKurz(z.lieferung)) + (z.ausweich ? " · " + (z.ausweich.tag ? t("lieferanten.ausweich", z.ausweich.name, tagKurz(z.ausweich.tag)) : t("lieferanten.ausweichOhne", z.ausweich.name)) : "");
   return z.dringend === "spaeter" && z.bestellenAm ? t("bestand.dringend.spaeter", kurz(z.bestellenAm)) : t("bestand.dringend." + z.dringend);
@@ -50,18 +50,18 @@ export function bestandView(stand) {
   if (bs.ohneInventur) return `${kopf}<div class="inhalt"><div class="karte hinweisgelb"><p>${esc(t("bestand.ohneInventur"))}</p>
       <button type="button" class="knopf zweit" data-a="nav" data-wert="inventur">${esc(t("bestand.inventurKnopf"))}</button></div>${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
   const v = bestellVorschlag(stand, { bs }); const uhr = bestandUhrzeit(stand);
-  const lsatz = lieferSaetze(stand, { bs }).filter((x) => x.art === "schluss" || x.art === "schlussMorgen" || x.art === "kommtHeute" || x.art === "kommtMorgen").slice(0, 2); // Lieferanten (18.10.2026)
-  const oben = uhr ? `<div class="karte bestand-oben ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>`; // Schwadron 18.10.2026, N1
+  const lsatz = lieferSaetze(stand, { bs }).filter((x) => x.art === "schluss" || x.art === "schlussMorgen" || x.art === "kommtHeute" || x.art === "kommtMorgen").slice(0, 2); // Lieferanten
+  const oben = uhr ? `<div class="karte bestand-oben ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>` : `<div class="karte"><h2>${esc(v.zeilen.length ? t("bestand.nichtsDringend", v.naechste ? kurz(v.naechste) : "") : t("bestand.allesGut"))}</h2>${lsatz.map((x) => `<p>${esc(x.text)}</p>`).join("")}</div>`; // Schwadron, N1
   return `${kopf}<div class="inhalt">${oben}${bestellenView(stand, v)}<button type="button" class="knopf zweit" data-a="nav" data-wert="lieferanten">${esc(t("lieferanten.einstieg"))}</button>${lagerView(bs)}${hinweiseView(bs)}${einstellungenView(stand, bs)}</div>${nav("bestand", { schnell: false })}`;
 }
 
 // ---------- Bestellen je Lieferant ----------
 function bestellenView(stand, v) {
-  const mitTermin = v.gruppen.filter((g) => g.termin).length; // Lieferanten (18.10.2026): mit Liefertagen gilt „bis zur Lieferung danach“ statt fester Tage
+  const mitTermin = v.gruppen.filter((g) => g.termin).length; // Lieferanten: mit Liefertagen gilt „bis zur Lieferung danach“ statt fester Tage
   const fuer = [mitTermin < v.gruppen.length || !v.gruppen.length ? t("bestand.bestellenFuer", v.tage, v.puffer) : "", mitTermin ? t("lieferanten.bestellenZyklus", v.puffer) : ""].filter(Boolean);
   const ue = `<h2 class="inv-ue">${esc(t("bestand.bestellenTitel"))}</h2>${fuer.map((x) => `<p class="hinweis">${esc(x)}</p>`).join("")}`;
   if (!v.gruppen.length) return `${ue}<div class="karte leer"><div>${esc(t("bestand.nichtsBestellen"))}</div></div>`;
-  // Lieferanten (18.10.2026): Liefertermin je Gruppe, Mindestbestellwert-Vorschlag, WhatsApp nur mit gepflegter Nummer (sonst Teilen wie bisher)
+  // Lieferanten: Liefertermin je Gruppe, Mindestbestellwert-Vorschlag, WhatsApp nur mit gepflegter Nummer (sonst Teilen wie bisher)
   const gruppe = (g, i) => { const nachricht = bestellNachricht(stand, g);
     return `<div class="karte" data-lieferant="${i}"${g.lieferantId ? ` data-lieferant-id="${esc(g.lieferantId)}"` : ""}><h2>${esc(g.lieferant || t("bestand.ohneLieferant"))}</h2>
       ${g.termin ? `<p class="hinweis" data-best-termin="${esc(g.termin.tag)}">${esc(terminText(g))}</p>` : ""}
@@ -113,11 +113,11 @@ function einstellungenView(stand, bs) {
 // Wie die App sonst teilt (Sicherung, Ordner): navigator.share, sonst Kopieren, sonst zum Abschreiben zeigen.
 async function bestandTeilen(stand, i) {
   const g = bestellVorschlag(stand).gruppen[Number(i)]; if (!g) return null;
-  const text = bestellNachricht(stand, g).text; // Lieferanten (18.10.2026): mit Liefertag und Kundennummer
-  return { text, weg: await textTeilen(text, t("bestand.teilen")) }; // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
+  const text = bestellNachricht(stand, g).text; // Lieferanten: mit Liefertag und Kundennummer
+  return { text, weg: await textTeilen(text, t("bestand.teilen")) }; // Trennung: gemeinsames Teilen (./bausteine.js)
 }
 
-// Lieferanten (18.10.2026): WhatsApp-Adresse der Gruppe i (nur mit Bestellweg WhatsApp und Nummer) – app.js öffnet sie gleich beim Tipp
+// Lieferanten: WhatsApp-Adresse der Gruppe i (nur mit Bestellweg WhatsApp und Nummer) – app.js öffnet sie gleich beim Tipp
 export function bestandLink(stand, i) { const g = bestellVorschlag(stand).gruppen[Number(i)]; return g ? bestellNachricht(stand, g).link : null; }
 
 // ---------- Aktionen ----------

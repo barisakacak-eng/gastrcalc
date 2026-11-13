@@ -1,15 +1,15 @@
 // Etappe 5: „Umsatz" – Tagesumsatz eintragen und die Zähler-Seite (Strecke, Prognose, Rechnung, Monatsstreifen, Preise).
 import { t, sprache, artikelText } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: auf dieser Seite ist „heute“ der Geschäftstag (bis 4 Uhr = Vortag)
-import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung, wareneinsatzWarnung, RICHTWERT_WARENEINSATZ } from "../engine.js"; // Paket 3 (16.10.2026), M4/M15
-import { zaehler, monatsGrenzen, umsatzAnzeigeWert, umsatzAusEingabe, zaehlerStrecke, monatTagStatus, wochentagSpalte } from "../zaehler.js"; // Trennung 2 (17.10.2026)
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3, M7: auf dieser Seite ist „heute“ der Geschäftstag (bis 4 Uhr = Vortag)
+import { umsatzEintrag, umsatzKonflikte, tagesnotizSetzen, tagesnotizLoeschen, tagesnotizenFestschreiben, umsatzSteuerSatz, schwundAuswertung, wareneinsatzWarnung, RICHTWERT_WARENEINSATZ } from "../engine.js"; // Paket 3, M4/M15
+import { zaehler, monatsGrenzen, umsatzAnzeigeWert, umsatzAusEingabe, zaehlerStrecke, monatTagStatus, wochentagSpalte } from "../zaehler.js"; // Trennung 2
 import { tagPlus } from "../engine.js";
-import { lieferTag, lieferTagSetzen, lieferProvision, lieferKosten } from "../stamm.js"; // Lieferdienst (27.10.2026): Vortage im Büro nachtragen
+import { lieferTag, lieferTagSetzen, lieferProvision, lieferKosten } from "../stamm.js"; // Lieferdienst: Vortage im Büro nachtragen
 import { preisAenderungen, preisAnzeige } from "../lieferung.js";
 import { nav } from "./nav.js";
 import { datumLesbar, monatName, tagGewaehlt } from "./tag.js";
 import { zaehlerKarte } from "./home.js";
-import { heuteZiel } from "../laden_zahlen.js"; // 27.10.2026 (Persona-Test Wirt): vor dem ersten Umsatz dieselbe Zahl wie auf Heute
+import { heuteZiel } from "../laden_zahlen.js"; // (Persona-Test Wirt): vor dem ersten Umsatz dieselbe Zahl wie auf Heute
 // Der Hinweis „Abgaben des Arbeitgebers“ steht nur in diesen Sprachen (in den anderen gab es ihn nie).
 const ABGABEN_SPRACHEN = ["de", "tr", "ar", "en"];
 import { abgabenSatz } from "../stamm.js"; // Lauf 4 (P2 C1): Arbeitgeber-Aufschlag erklärt, Entwurf
@@ -27,7 +27,7 @@ function tagChips(D) {
 }
 
 // Wochentage Mo–So in der App-Sprache (Kalender mit 7 Spalten, Prüfung 15.10.)
-// 27.10.2026 (Persona-Test Vietnamesisch): „Th 2“…„Th 7“ wurden zu „Th“ abgeschnitten – Tage mit Nummer werden „T2“…, sonst 2 Buchstaben
+// (Persona-Test Vietnamesisch): „Th 2“…„Th 7“ wurden zu „Th“ abgeschnitten – Tage mit Nummer werden „T2“…, sonst 2 Buchstaben
 const kurzWt = (s) => (/\d/.test(s) ? s.replace(/^Th\s?/u, "T") : s.slice(0, 2));
 const wochentagKopf = () => { const f = new Intl.DateTimeFormat(sprache(), { weekday: "short" }); return Array.from({ length: 7 }, (_, i) => `<span class="wt">${kurzWt(f.format(new Date(2026, 9, 12 + i)).replace(".", ""))}</span>`).join(""); };
 function lieferBuero(stand, D, st) {
@@ -39,7 +39,7 @@ export function umsatzView(stand) {
   const H = heute(); const D = tagGewaehlt(); const nach = D !== H;
   const z = zaehler(stand, { datum: D }); const st = umsatzSteuerSatz(stand);
   const notiz = umsatzEintrag(stand, D); const konflikte = umsatzKonflikte(stand);
-  const wert = notiz ? umsatzAnzeigeWert(notiz.umsatz, umsatzBasis, st.satz) : null; // Trennung 2 (17.10.2026)
+  const wert = notiz ? umsatzAnzeigeWert(notiz.umsatz, umsatzBasis, st.satz) : null; // Trennung 2
   const tageBis = Math.round(z.gewichtBisHeute), tageMonat = Math.round(z.gewichtMonat);
   const hz = (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })(); // Lauf 6 (P1 B1): „bis null“ kommt nur aus monatsZiel (über heuteZiel), einmal gerechnet
   return `
@@ -72,13 +72,13 @@ export function umsatzView(stand) {
 // Die Strecke: von „alle Kosten des Monats offen" (links) bis „Monatsende" (rechts), Marke heute und Marke null.
 function streckeKarte(z, st, mz = null) { // Lauf 6 (P1 B1): „null“-Marke mit dem Tag aus monatsZiel (nullAm), nicht aus dem Tagesstand
   if (z.keinUmsatz) return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2><p class="hinweis">${esc(t("zaehler.nochKeinSchnitt"))}</p></div>`;
-  const sk = zaehlerStrecke(z, 1000, mz); // Trennung 2 (17.10.2026): Lage in Prozent aus js/zaehler.js
+  const sk = zaehlerStrecke(z, 1000, mz); // Trennung 2: Lage in Prozent aus js/zaehler.js
   return `<div class="karte"><h2>${esc(t("zaehler.strecke"))}</h2>
     <div class="strecke" style="--null:${sk.null}%"><i class="heute" style="left:${sk.heute}%" data-l="${esc(t("zaehler.heute"))}"></i><i class="null" style="left:${sk.null}%" data-l="${esc(t("zaehler.null"))}${sk.nullTag ? " · " + esc(datumLesbar(sk.nullTag).slice(0, 6)) : ""}"></i></div>
     <small class="marke">${esc(t("zaehler.jederTag", fmtEuro(sk.beispiel), fmtEuro(sk.bringt)))} ${esc(t("zaehler.legendeStrecke"))}</small></div>`;
 }
 
-function prognoseKarte(z, mz = null) { // Nachtest 27.10.2026: „Null am“ aus der Monatsrechnung (mz), nicht aus dem Tagesstand
+function prognoseKarte(z, mz = null) { // Nachtest: „Null am“ aus der Monatsrechnung (mz), nicht aus dem Tagesstand
   if (z.dbProTag === null) return "";
   const zeile = (k, v) => `<div class="summenzeile"><span>${esc(t("zaehler." + k))}</span><span class="wert">${v}</span></div>`;
   return `<details class="karte auf"><summary><h2>${esc(t("zaehler.wennSoWeiter"))}</h2></summary>
@@ -93,7 +93,7 @@ function prognoseKarte(z, mz = null) { // Nachtest 27.10.2026: „Null am“ aus
 function gesternKarte(stand, z, D) {
   if (z.keinUmsatz || !z.tage.find((x) => x.datum === D)?.umsatz) return "";
   const sw = schwundAuswertung(stand, { von: D, bis: D });
-  // Nachtest 27.10.2026: gestern als dieselbe Monatszahl „bis null“ wie oben, nicht der Tagesstand
+  // Nachtest: gestern als dieselbe Monatszahl „bis null“ wie oben, nicht der Tagesstand
   const hz = (() => { try { return heuteZiel(stand, z, D); } catch { return null; } })();
   if (!hz?.bewegung || hz.m.fehltNull === null) return "";
   const vor = hz.m.fehltNull - hz.bewegung.betrag;
@@ -118,7 +118,7 @@ function rechnungKarte(z, stand) {
   </details>`;
 }
 
-function monatKarte(z, D, mz = null) { // C3 (03.11.2026): Farben nach dem Monats-Nullpunkt wie die Hauptzahl
+function monatKarte(z, D, mz = null) { // C3: Farben nach dem Monats-Nullpunkt wie die Hauptzahl
   return `<div class="karte"><h2>${esc(t("zaehler.monat"))}</h2>
     <div class="monat">${wochentagKopf()}${z.tage.map((x, i) => { const cls = monatTagStatus(x, z, mz ? mz.nullAm ?? null : undefined); return `<i class="${cls} ${x.datum === D ? "heute" : ""}"${i === 0 ? ` style="grid-column-start:${wochentagSpalte(x.datum)}"` : ""}>${Number(x.datum.slice(8))}</i>`; }).join("")}</div>
     <small class="marke">${esc(t("zaehler.legendeMonat"))}</small></div>`;
@@ -126,7 +126,7 @@ function monatKarte(z, D, mz = null) { // C3 (03.11.2026): Farben nach dem Monat
 
 function preiseKarte(stand, D) {
   const l = preisAenderungen(stand, { datum: D }).slice(0, 8);
-  const einheit = (e) => (e === "stk" ? t("allgemein.stueck") : e); // Trennung 2 (17.10.2026): Basis aus preisAnzeige() (js/lieferung.js)
+  const einheit = (e) => (e === "stk" ? t("allgemein.stueck") : e); // Trennung 2: Basis aus preisAnzeige() (js/lieferung.js)
   return `<details class="karte auf"><summary><h2>${esc(t("zaehler.preise"))}</h2></summary>
     ${l.length ? l.map((x) => { const p = preisAnzeige(x); return `<div class="summenzeile"><span>${esc(artikelText(x.name))}<small class="marke block">${fmtEuro(p.alt, { dezimal: 2 })} → ${fmtEuro(p.neu, { dezimal: 2 })} / ${esc(einheit(p.einheit))}</small></span><span class="wert ${x.prozent > 0 ? "rot" : "gruen"}">${x.prozent > 0 ? "+" : ""}${fmtZahl(x.prozent * 100, 0)} %</span></div>`; }).join("") : `<p class="hinweis">${esc(t("zaehler.preiseLeer"))}</p>`}
   </details>`;
@@ -143,7 +143,7 @@ export function umsatzEingabe(feld, wert, stand, wurzel) {
   if (feld !== "umsatz") return false;
   const n = parseZahl(wert); const D = tagGewaehlt(); const st = umsatzSteuerSatz(stand);
   if (n === null) tagesnotizLoeschen(stand, D, wurzel?.geraet || null);
-  else tagesnotizSetzen(stand, D, umsatzAusEingabe(n, umsatzBasis, st.satz), { // Trennung 2 (17.10.2026)
+  else tagesnotizSetzen(stand, D, umsatzAusEingabe(n, umsatzBasis, st.satz), { // Trennung 2
     nacherfasst: D !== heute(), geraet: wurzel?.geraet || null });
   return false;
 }

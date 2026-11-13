@@ -1,4 +1,4 @@
-// E5 (16.10.2026): Passwort für die Sicherungsdatei – reine Funktionen ohne Oberfläche, damit Node sie testen kann.
+// E5: Passwort für die Sicherungsdatei – reine Funktionen ohne Oberfläche, damit Node sie testen kann.
 // Die fertige ZIP wird als Ganzes mit AES-GCM (256 Bit) verschlüsselt. Schlüssel aus dem Passwort über PBKDF2-SHA-256 mit
 // denselben Runden wie der Büro-Code (modus.js). Aufbau der Datei sicherung.enc: 4 Byte Kennung „GCS1“, 16 Byte Salz, 12 Byte IV,
 // dann der Chiffretext (mit GCM-Prüfanhang). Falsches Passwort → AES-GCM schlägt fehl → Fehler mit grund "passwort".

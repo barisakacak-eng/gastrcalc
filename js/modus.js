@@ -1,4 +1,4 @@
-// Drei Ebenen (15.10.2026, Entwickler A): LADEN (während der Arbeit), PERSONAL (Aushilfe, kein Euro), BÜRO (Rechnen, Einrichten, Abgeben).
+// Drei Ebenen: LADEN (während der Arbeit), PERSONAL (Aushilfe, kein Euro), BÜRO (Rechnen, Einrichten, Abgeben).
 // Der Modus gilt je Handy und steht auf der Wurzel (wurzel.modus), der Büro-Code nur als Prüfwert (wurzel.bueroPin = PBKDF2 mit Salz, nie die Ziffern).
 // Reine Logik ohne Oberfläche – alle anderen Bausteine dürfen das hier importieren.
 
@@ -8,7 +8,7 @@ export function modus(wurzel) { return MODI.includes(wurzel?.modus) ? wurzel.mod
 // Laden-Leiste unten: genau diese fünf Reiter, in dieser Reihenfolge.
 export const LADEN_TABS = ["start", "muell", "kuehl", "putzplan", "karte"];
 // Im Laden erreichbar: die Reiter plus das, was das Menü-Blatt öffnet.
-export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto", "umsatzheute", "portion"]; // portion: Masterauftrag 2.1 (28.10.2026) // Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden // Laden wechseln geht im Blatt; „Alle Läden" mit Zahlen wohnt im Büro
+export const LADEN_ANSICHTEN = [...LADEN_TABS, "abschluss", "kartefoto", "umsatzheute", "portion"]; // portion: Masterauftrag 2.1 // Laden-Umbau: „Umsatz heute“ im Laden // Laden wechseln geht im Blatt; „Alle Läden" mit Zahlen wohnt im Büro
 // Personal: drei Kacheln, sonst nichts.
 export const PERSONAL_ANSICHTEN = ["personal", "muell", "kuehl", "putzplan"];
 
@@ -37,7 +37,7 @@ export function ebeneWiederherstellen(wurzel) {
   if (wurzel.modus === "buero" && codeAktiv(wurzel)) modusSetzen(wurzel, "laden");
   if (wurzel.modus === "personal" && !pinGesetzt(wurzel) && !testphaseOhneCode(wurzel)) modusSetzen(wurzel, "laden");
 }
-// Übungsmodus zurücknehmen (30.10.2026): war vor der Übung kein Modus gesetzt, verschwinden Feld UND Spiegel – sonst stand nach dem
+// Übungsmodus zurücknehmen: war vor der Übung kein Modus gesetzt, verschwinden Feld UND Spiegel – sonst stand nach dem
 // nächsten Laden „laden“ im Stand, und die Sicherung war nicht mehr byte-gleich (Befund tests/durchlauf_mitmach.py).
 export function modusVergessen(wurzel) { if (wurzel) delete wurzel.modus; merke(SCHLUESSEL.modus, null); }
 // „Alles löschen": auch den Spiegel vergessen.
@@ -112,7 +112,7 @@ const ALT = /^[0-9a-f]{64}$/;
 const NEU = /^(pbkdf2|salz)\$([1-9][0-9]{0,7})\$([0-9a-f]{32})\$([0-9a-f]{64})$/;
 export const pinWertGueltig = (v) => typeof v === "string" && (ALT.test(v) || NEU.test(v));
 export const pinGesetzt = (wurzel) => pinWertGueltig(wurzel?.bueroPin);
-// Testphase ohne Code (Baris 21.10.2026): Bis der Pilot in größerer Zahl läuft, muss niemand ständig Codes eintippen.
+// Testphase ohne Code: Bis der Pilot in größerer Zahl läuft, muss niemand ständig Codes eintippen.
 // Der gespeicherte Büro-Code bleibt erhalten; der Schalter setzt ihn nur außer Kraft. Personal-Modus geht in der Testphase auch ohne Code.
 export const testphaseOhneCode = (wurzel) => wurzel?.testphase?.ohneCode === true;
 export const codeAktiv = (wurzel) => pinGesetzt(wurzel) && !testphaseOhneCode(wurzel);
@@ -146,9 +146,9 @@ export async function pinHash(pin, salz = zufallSalz()) {
   return `salz$${ERSATZ_RUNDEN}$${salz}$${ersatzHash(pin, salz, ERSATZ_RUNDEN)}`;
 }
 export async function pinSetzen(wurzel, pin) {
-  if (pin === null) { wurzel.bueroPin = null; delete wurzel.pinSperre; delete wurzel.rettungPin; return true; } // Rettung (17.10.2026): ohne Büro-Code kein Rettungscode
+  if (pin === null) { wurzel.bueroPin = null; delete wurzel.pinSperre; delete wurzel.rettungPin; return true; } // Rettung: ohne Büro-Code kein Rettungscode
   if (!pinGueltig(pin)) return false;
-  wurzel.bueroPin = await pinHash(pin); delete wurzel.pinSperre; delete wurzel.rettungPin; return true; // Rettung (17.10.2026): neuer Code = alter Rettungscode gilt nicht mehr (rettung.js legt gleich einen neuen an)
+  wurzel.bueroPin = await pinHash(pin); delete wurzel.pinSperre; delete wurzel.rettungPin; return true; // Rettung: neuer Code = alter Rettungscode gilt nicht mehr (rettung.js legt gleich einen neuen an)
 }
 // Gleichlang vergleichen (kein früher Abbruch)
 const gleich = (a, b) => { if (a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; };
@@ -159,7 +159,7 @@ async function pinStimmt(wert, pin) {
   if (art === "pbkdf2") { const h = await pbkdf2(pin, salz, runden); return h !== null && gleich(h, soll); } // ohne crypto.subtle lässt sich ein PBKDF2-Wert nicht prüfen
   return gleich(ersatzHash(pin, salz, Math.min(runden, 200000)), soll);
 }
-// Rettung (17.10.2026): derselbe Vergleich für den Rettungscode (rettung.js) – nur gesalzene Prüfwerte, nie alte ohne Salz
+// Rettung: derselbe Vergleich für den Rettungscode (rettung.js) – nur gesalzene Prüfwerte, nie alte ohne Salz
 export const pruefwertStimmt = (wert, text) => (typeof wert === "string" && NEU.test(wert) ? pinStimmt(wert, String(text)) : Promise.resolve(false));
 // Prüft den Code. Ein alter Prüfwert (ohne Salz) wird dabei gleich auf den neuen umgestellt – danach speichern.
 export async function pinPruefen(wurzel, pin) {
@@ -228,8 +228,8 @@ export function sha256Hex(text) {
   return H.map((x) => x.toString(16).padStart(8, "0")).join("");
 }
 
-// Face ID (27.10.2026): nur die Kennung des Geräte-Schlüssels in der Wurzel, kein Geheimnis.
+// Face ID: nur die Kennung des Geräte-Schlüssels in der Wurzel, kein Geheimnis.
 export const bioKennung = (wurzel) => (typeof wurzel?.bio?.id === "string" ? wurzel.bio.id : null);
 export function bioSetzen(wurzel, id) { if (!wurzel) return false; if (id) wurzel.bio = { id, seit: new Date().toISOString() }; else delete wurzel.bio; return true; }
-// Büro bleibt nach dem Aufschließen eine Weile offen (Baris 26.10.2026: „nicht bei jedem Wechsel neu fragen“)
+// Büro bleibt nach dem Aufschließen eine Weile offen
 export const BUERO_OFFEN_MS = 15 * 60 * 1000;

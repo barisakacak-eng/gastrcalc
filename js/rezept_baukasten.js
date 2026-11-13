@@ -1,4 +1,4 @@
-// Rezept-Baukasten – jedes Gericht von der Karte bekommt sofort ein Rezept mit Mengen (Grammatur). Pilot 14.10.2026, Baris:
+// Rezept-Baukasten – jedes Gericht von der Karte bekommt sofort ein Rezept mit Mengen (Grammatur). Pilot, Baris:
 // „Es darf nicht sein, dass nach dem Onboarding und dem Hochladen immer noch eine leere App da ist."
 //
 // Prinzip: Gericht = Grundrezept (aus dem Namen erkannt: Pide, Lahmacun, Döner, Teller, Seele …) + Belag (aus „mit X, Y, Z")

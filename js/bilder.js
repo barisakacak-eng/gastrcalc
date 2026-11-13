@@ -1,5 +1,5 @@
 import { MENUE_GERICHTE, MENUE_WAREN_FOTO } from "./data/burger_ergaenzung.js";
-// Trennung 2 (17.10.2026): Bildzuordnung per Regeln – welches Foto/Piktogramm zu einem Gericht oder einer Ware gehört.
+// Trennung 2: Bildzuordnung per Regeln – welches Foto/Piktogramm zu einem Gericht oder einer Ware gehört.
 // Gibt nur Namen zurück (foto/<name>.webp, bilder/<name>.svg), kein HTML. Vorher in js/screens/vergleich.js und js/screens/muell.js.
 import { fotoSlug } from "./util.js";
 import { FOTOS } from "./data/fotos.js";
@@ -21,7 +21,7 @@ const NAME_FOTO = [[/adana|urfa|spie(ß|ss)/i, "g-adana", "g-koefte"], [/lasagne
 const BEREICH_FOTO = { doener: "g-doener", pizza: "g-pizza", burger: "g-burger", currywurst: "g-currywurst", asia: "g-asia-reis", salat: "g-salat", fingerfood: "g-fingerfood",
   beilagen: "g-pommes", alkoholfrei: "g-getraenk", suppe: "g-suppe", kuchen: "g-kuchen", kaffee: "g-kaffee", fruehstueck: "g-fruehstueck", eis: "g-eis", bier: "g-bier", fleischgericht: "g-fleischgericht" };
 export function fotoName(g) {
-  g = { ...g, name: g.vorlageName || g.name }; // Perfektionswoche 24.10.2026: Fotos hängen am deutschen Vorlagennamen, auch wenn der Wirt türkisch oder englisch benennt
+  g = { ...g, name: g.vorlageName || g.name }; // Perfektionswoche: Fotos hängen am deutschen Vorlagennamen, auch wenn der Wirt türkisch oder englisch benennt
   const f = g.rezeptFamilie || "";
   const menue = MENUE_GERICHTE.find((v) => v.name === (g.vorlageName || g.name));
   if (menue && FOTOS.has(menue.foto)) return menue.foto;
@@ -37,7 +37,7 @@ export function fotoName(g) {
     [/burger.*men[üu]/i, "g-burger-menue"]
   ].find(([re]) => re.test(g.name || ""));
   const kandidaten = [...(pilotGericht ? [pilotGericht[1]] : []),
-    nameFoto === "g-doener-kebab" ? "g-doener" : nameFoto]; // 17.10.2026: Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
+    nameFoto === "g-doener-kebab" ? "g-doener" : nameFoto]; // Einzelbild je Gericht zuerst (Bildliste), dann Familie, Name, Bereich
   if (g.klasse === "getraenk") for (const [re, ...namen] of NAME_FOTO) if (re.test(g.name || "") && namen.some((n) => /ayran|getraenk|^d-/.test(n))) kandidaten.push(...namen); // Getränk nie mit Gerichtfoto
   if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   if (f) kandidaten.push(FOTO[f] || "g-" + f);
@@ -46,7 +46,7 @@ export function fotoName(g) {
   if (g.klasse === "getraenk") kandidaten.push("g-getraenk");
   return kandidaten.find((n) => n && FOTOS.has(n)) || null;
 }
-// Trennung 2 (17.10.2026): Bildquelle eines Gerichts ohne HTML – { eigen } (Ablage-Verweis, Piktogramm als Platzhalter), { foto } oder { pikto }.
+// Trennung 2: Bildquelle eines Gerichts ohne HTML – { eigen } (Ablage-Verweis, Piktogramm als Platzhalter), { foto } oder { pikto }.
 export const piktoName = (g) => PIKTO[g.rezeptFamilie || ""] || "g-teller";
 export function gerichtBildQuelle(g) {
   const pikto = piktoName(g);
@@ -62,7 +62,7 @@ const VERP = [[/handschuh/i, "v-handschuhe"], [/tragetasche|tasche/i, "v-trageta
 const WARE = [[/brot|fladen|wrap|yufka|lavash|bun\b|br[öo]tchen|baguette|toast|tortilla/i, "w-brot"], [/onion|stick|nugget|frikandel|fingerfood|wings/i, "w-fingerfood-tk"],
   [/so(ß|ss)e|sauce|mayo|ketchup|dip|dressing|remoulade|aioli|hummus|ajvar|senf|pesto|tzatziki|cac[iı]k/i, "w-sosse"],
   [/gew[üu]rz|salz|pfeffer|oregano|pulver|kreuzk|kumin|flocken|pul biber|sumach|thymian|zimt/i, "w-gewuerz"], [/joghurt|quark|sahne|schmand|cr[eè]me/i, "w-joghurt"],
-  [/falafel/i, "w-falafel"], [/sucuk/i, "w-sucuk"], [/salami/i, "w-salami"], [/schinken/i, "w-schinken"], [/patty|hackfleisch/i, "w-hack"], [/d[öo]ner|gyros|kalb|lamm|rind/i, "w-doenerfleisch"], // Patty/Hack vor „rind“ (Sanji-Befund 26.10.2026: „Rinderpatty 150 g“ zeigte den Spieß)
+  [/falafel/i, "w-falafel"], [/sucuk/i, "w-sucuk"], [/salami/i, "w-salami"], [/schinken/i, "w-schinken"], [/patty|hackfleisch/i, "w-hack"], [/d[öo]ner|gyros|kalb|lamm|rind/i, "w-doenerfleisch"], // Patty/Hack vor „rind“
   [/h[äa]hnchen|chicken|pute|truthahn/i, "w-haehnchen"], [/spie(ß|ss)/i, "w-doenerfleisch"], [/hack|patty|k[öo]fte|cevapi/i, "w-hack"], [/wurst|krakauer|wiener/i, "w-wurst"],
   [/feta|hirten|schafsk|wei(ß|ss)k[äa]se/i, "w-feta"], [/k[äa]se|mozzarella|cheddar|gouda|emmentaler|halloumi/i, "w-kaese"], [/thunfisch/i, "w-thunfisch"],
   [/champignon|pilz/i, "w-champignon"], [/peperoni|jalape|chili/i, "w-peperoni"], [/paprika/i, "w-paprika"], [/knoblauch/i, "w-knoblauch"], [/zwiebel/i, "w-zwiebel"],
@@ -79,11 +79,11 @@ const R_ALIAS = { "w-doenerfleisch": (n) => /h[äa]hnchen|pute/i.test(n) ? "r-ha
   "w-brot": (n) => /yufka|wrap|d[üu]r[üu]m|lavash|tortilla/i.test(n) ? "r-yufka" : /vollkorn.*(bun|br[öo]tchen)/i.test(n) ? "r-vollkorn-bun" : /burger.*(bun|br[öo]tchen)|\bbun\b/i.test(n) ? "r-burger-bun" : /br[öo]tchen/i.test(n) ? "r-buns" : "r-fladenbrot",
   "w-falafel": () => "r-falafel-tk", "w-mehl": (n) => /pide/i.test(n) ? "r-pide-teig" : /pizza/i.test(n) ? "r-pizzateig" : /lahmacun/i.test(n) ? "r-lahmacun-teig" : "r-mehl", "w-hack": (n) => /patty/i.test(n) ? "r-patty" : "r-hack" };
 const fotoFuer = (n, name) => { const kand = n.startsWith("v-") ? n : R_ALIAS[n] ? R_ALIAS[n](name) : "r-" + n.slice(2); return FOTOS.has(kand) ? kand : null; };
-// Trennung 2 (17.10.2026): Bildquelle einer Ware ohne HTML – { foto } (foto/<name>.webp) oder { pikto } (bilder/<name>.svg).
+// Trennung 2: Bildquelle einer Ware ohne HTML – { foto } (foto/<name>.webp) oder { pikto } (bilder/<name>.svg).
 export function wareBildQuelle(x) {
   const menueFoto = MENUE_WAREN_FOTO[x.name];
   if (menueFoto) return FOTOS.has(menueFoto) ? { foto: menueFoto } : { pikto: "w-ware" };
-  // 17.10.2026: Einzelbild je Artikel zuerst (Bildliste: r-/v-/d- + fotoSlug(Name)), dann Sammelbild, dann Piktogramm
+  // Einzelbild je Artikel zuerst (Bildliste: r-/v-/d- + fotoSlug(Name)), dann Sammelbild, dann Piktogramm
   const eigen = (x.gruppe === "verpackung" ? "v-" : x.gruppe === "getraenk" || x.gruppe === "spirituose" ? "d-" : "r-") + fotoSlug(x.name);
   if (FOTOS.has(eigen)) return { foto: eigen };
   // PILOTBURGER: ein sachlich falsches Foto ist schlechter als ein klares Piktogramm.

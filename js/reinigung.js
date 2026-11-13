@@ -1,4 +1,4 @@
-// Reinigung & Betriebsmittel (Etappe 6, Punkt 5 – Entscheidung Baris 15.10.2026, 12:43: Onboarding B1, Zeile im Kostenzähler BZ).
+// Reinigung & Betriebsmittel.
 // Grundsatz wie überall: keine erfundenen Branchenwerte. Die Zahl hat eine von drei ehrlichen Stufen:
 //   offen      – nichts bekannt (der Zähler zeigt „noch offen“)
 //   schaetzung – der Wirt hat einen Monatsbetrag geschätzt (≈)
@@ -7,7 +7,7 @@
 // Eigene Putzzeit ist KEIN Geld vom Konto: Teamlohn steckt schon im Personal, Inhaberzeit kostet kein Geld. Sie wird nur als Einsicht gezeigt.
 import { heute } from "./util.js";
 import { oeffnungstage } from "./oeffnung.js"; // dieselbe Öffnungstage-Regel wie im Zähler (inkl. „an Feiertagen zu“)
-// Paket 3 (16.10.2026), M1: Kleinunternehmer bekommen keine Vorsteuer zurück – der Bruttobetrag zählt, wie er ist.
+// Paket 3, M1: Kleinunternehmer bekommen keine Vorsteuer zurück – der Bruttobetrag zählt, wie er ist.
 // Sonst gilt der Regelsatz (Regelwerk mwst_voll) für Dienstleistung und Putzmittel, am Tag des Vorgangs.
 const vorsteuer = (stand, tag = heute()) => (stand.betrieb?.kleinunternehmer ? 0 : mwst("voll", tag));
 import { istBetriebsmittel } from "./betriebsmittel.js";

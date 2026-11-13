@@ -1,4 +1,4 @@
-// Lieferanten (18.10.2026): Lieferanten als Stammdaten. Bis hierher war der Lieferant nur ein Text am Beleg (lieferung.lieferant).
+// Lieferanten: Lieferanten als Stammdaten. Bis hierher war der Lieferant nur ein Text am Beleg (lieferung.lieferant).
 // Reine Funktionen, keine Oberfläche, kein Netz. Geschrieben wird nur über die Funktionen unten (Anlegen, Ändern, Entfernen, Zuordnen,
 // Abgleich aus den Belegen) – Bildschirme rufen sie auf (tests/trennung.test.mjs).
 //
@@ -30,7 +30,7 @@
 import { heute } from "./util.js";
 import { tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { getraenkArtikelVon } from "./getraenk_feld.js";
-import { feiertagImLaden, feiertagZu } from "./feiertage.js"; // Feiertage (18.10.2026)
+import { feiertagImLaden, feiertagZu } from "./feiertage.js"; // Feiertage
 import { berlinZeitpunkt } from "./zeit.js";
 import { rund2 } from "./geld.js";
 
@@ -116,7 +116,7 @@ export function lieferantenAusBelegen(stand) {
   return neu.size;
 }
 
-// ---------- Doppelte zusammenlegen (Prüfgremium 18.10.2026, N3) ----------
+// ---------- Doppelte zusammenlegen ----------
 // Handy A benennt „Metro“ in „Großmarkt“ um, Handy B legt „Großmarkt“ neu an: nach dem Zusammenführen zwei Lieferanten mit gleichem Namen
 // (verschiedene Kennungen). Gleicher Vergleichsname (lieferantNorm) unter den nicht entfernten = ein Lieferant. Es bleibt der zuerst angelegte
 // (bei gleicher Zeit die kleinere Kennung); Leeres an ihm füllt der andere auf (Liefertage, Bestellschluss, Kontakt …), Beleg-Namen werden vereinigt.
@@ -189,7 +189,7 @@ export const lieferantZweitWaren = (stand, id) => (stand.artikel || []).filter((
 
 // ---------- Liefertermine ----------
 const ruhetag = (stand, d) => ruhetageAm(stand, d).includes(wochentag(d)) || feiertagZu(stand, d);
-// Feiertage (18.10.2026): An gesetzlichen Feiertagen (bundesweit und, wenn eingestellt, im Bundesland des Ladens; js/feiertage.js) liefert kein
+// Feiertage: An gesetzlichen Feiertagen (bundesweit und, wenn eingestellt, im Bundesland des Ladens; js/feiertage.js) liefert kein
 // Lieferant und der Großmarkt hat zu – der Bestellvorschlag springt zum nächsten Liefertag. Bestellschluss bleibt der des Liefertags.
 const feiertag = (stand, d) => !!feiertagImLaden(stand, d);
 // Wie viele Tage vor dem Liefertag ist Bestellschluss, bis wann? Abholung: am Tag selbst, ohne Uhrzeit.

@@ -1,4 +1,4 @@
-// Büro-Ordner „Gesundheitsamt“ (Drei Ebenen, 15.10.2026): Eigenkontrollen als reine Daten, CSV und druckbares Dokument.
+// Büro-Ordner „Gesundheitsamt“: Eigenkontrollen als reine Daten, CSV und druckbares Dokument.
 // Teile: Kühlprotokoll, Putzplan-Liste, Belehrungen (§ 43 IfSG), Geräte und Grenzen (Übersicht, kein HACCP-Konzept),
 // Weggeworfene Ware, Zurückgenommen / geändert (Welle 2, p03). Gezählt für „x von y vollständig“ werden nur die drei Pflichtlisten.
 // Keine Oberfläche, keine Übersetzung – die Ansicht (screens/ordner.js) gibt Texte hinein. Testbar in node (tests/export.test.mjs, tests/h.test.mjs).
@@ -56,7 +56,7 @@ export function kuehlprotokoll(stand, z, { datum = heute() } = {}) {
       grund: m.grund || null, min: m.min ?? null, max: m.max ?? null, abweichung: !!m.abweichung, massnahmen: m.massnahmen || [], nachkontrolle: nk, nkStunden: nks?.stunden ?? null,
       ware: m.abweichung ? wareEntscheidung(m) : null, status, behoben: m.abweichung ? status === "behoben" : null, ...personInfo(stand, m.von),
       nacherfasst: !!m.nacherfasst, erfasst: m.nacherfasst ? m.erfasst || null : null, lfd: m.lfd ?? null, notiz: m.notiz || "",
-      wareGrund: m.abweichung && m.ware?.art === "behalten" ? m.ware.grund || null : null }; // Trennung (17.10.2026), Punkt 4: Begründung „Ware behalten“
+      wareGrund: m.abweichung && m.ware?.art === "behalten" ? m.ware.grund || null : null }; // Trennung, Punkt 4: Begründung „Ware behalten“
   });
   const abweichungen = zeilen.filter((x) => x.abweichung).length;
   const behoben = zeilen.filter((x) => x.abweichung && x.behoben).length;
@@ -117,7 +117,7 @@ export const aktivePersonen = (stand) => (stand.personen || []).filter((p) => p 
 // W2-H (p03 H3): Ausgeschiedene bleiben im Ordner, wenn sie Belehrungen haben oder in Einträgen stehen – mit Status „ausgeschieden“,
 // ohne in die Zählung (vollständig, fällig) einzugehen.
 export function ausgeschiedenePersonen(stand) {
-  // Kürzel ausgeschiedener Mitarbeiter (18.10.2026): auch Rundgänge und Müll/Personalessen zählen als „steht in Einträgen“
+  // Kürzel ausgeschiedener Mitarbeiter: auch Rundgänge und Müll/Personalessen zählen als „steht in Einträgen“
   const benutzt = new Set([...(stand.messungen || []).map((m) => m.von), ...(stand.putzlog || []).map((e) => e.von), ...(stand.rundgaenge || []).map((r) => r.von), ...(stand.schwund || []).map((e) => e.von)].filter(Boolean));
   return (stand.personen || []).filter((p) => p && istAus(p) && (benutzt.has(p.id) || belehrungenVon(stand, p).length));
 }
@@ -199,7 +199,7 @@ export function ordnerAmt(stand, z, { datum = heute() } = {}) {
 const stempel = (iso) => (iso ? `${datumDe(tagAus(iso))} ${zeitAus(iso)}` : "");
 export function amtCsv(o, teil, kopf, namen = {}) {
   const n = (f, k) => (namen[f] ? namen[f](k) : k);
-  // Kürzel ausgeschiedener Mitarbeiter (18.10.2026): mit Datum, wenn bekannt („AB (ausgeschieden 12.10.2026)“)
+  // Kürzel ausgeschiedener Mitarbeiter: mit Datum, wenn bekannt („AB“)
   const wer = (x) => (x.von && x.vonAus ? (x.vonAusAm && namen.ausgeschiedenAm ? namen.ausgeschiedenAm(x.von, x.vonAusAm) : n("ausgeschieden", x.von)) : x.von);
   if (teil === "kuehl") return csvText(kopf, o.teile.kuehl.zeilen.map((x) => [datumDe(x.datum), x.zeit, x.stelle, x.wert ?? n("grund", x.grund), x.min, x.max, x.abweichung ? n("ja", "x") : "", x.massnahmen.map((m) => n("massnahme", m)).join(", "), x.nachkontrolle ? n("nachkontrolle", x) : "", wer(x), x.nacherfasst ? n("ja", "x") : "",
     x.nacherfasst ? stempel(x.erfasst) : "", x.lfd === null ? "" : String(x.lfd), x.status ? n("abwStatus", x.status) : ""]), { dezimal: [0, 0, 0, 1, 1, 1] });
@@ -212,7 +212,7 @@ export function amtCsv(o, teil, kopf, namen = {}) {
 }
 
 // ---------- Druckdokument ----------
-// Beispiel-Laden (17.10.2026): dok.beispiel = Kennzeichnung („BEISPIEL – keine echten Daten“) in Kopf, Titel und Fußzeile, sonst leer.
+// Beispiel-Laden: dok.beispiel = Kennzeichnung („BEISPIEL – keine echten Daten“) in Kopf, Titel und Fußzeile, sonst leer.
 // dok = { titel, laden, zeitraum, erstellt, sprache, seite: ["Seite", "von"], abschnitte: [{ titel, info, kopf: [..], zeilen: [[..] | { zellen, warn, klasse }], rechts, leer, warn }], unterschrift, fuss }
 // Alle Zellen sind schon fertige Texte; hier wird nur escaped und gesetzt. Eigenes CSS, A4, ohne App-Stile, ohne Verbindung nach außen.
 // W2-H (p03 M2): Seitenzahlen über @page-Ränder (Chrome ab 131, Safari ab 18.2 – andere Browser lassen sie weg) und Laden/Zeitraum unten links.

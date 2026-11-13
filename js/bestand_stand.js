@@ -10,11 +10,11 @@ import { imTakt } from "./takt.js";
 import { tageZwischen } from "./zeit.js";
 
 
-// Bestand (17.10.2026): Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
+// Bestand: Standard je Laden – bestellen für 7 Tage, 2 Tage Puffer. Annahme, kein Branchenwert; im Büro einstellbar.
 const LAGER_STANDARD = { tage: 7, puffer: 2 };
 export const LAGER_GRENZEN = { tage: [1, 60], puffer: [0, 30] };
-const SICHER_GUT_TAGE = 14;     // Inventur höchstens so alt für „gut“ (Auftrag 17.10.2026)
-const SICHER_GROB_TAGE = 28;    // älter: „grob“ (Annahme Bestand 17.10.2026)
+const SICHER_GUT_TAGE = 14;     // Inventur höchstens so alt für „gut“
+const SICHER_GROB_TAGE = 28;    // älter: „grob“
 const FENSTER_TAGE = 28;        // Ø aus den letzten 28 Öffnungstagen
 const WOCHENTAG_MIN = 4;        // Wochentage erst ab 4 Werten je Wochentag (≈ 4 Wochen Verkaufsdaten)
 const HORIZONT = 120;                  // weiter schaut die Reichweite nicht (Tage)
@@ -38,7 +38,7 @@ const ruhetageBekannt = (stand, d) => ruhetageAm(stand, d).length > 0;
 function verkaufJeTag(stand, z) {
   const out = new Map();
   for (const v of verkaeufeImZeitraum(stand, z).eintraege) {
-    const m = out.get(v.datum) || {}; for (const x of teileVon(stand, v)) m[x.gericht] = (m[x.gericht] || 0) + v.menge * x.menge; out.set(v.datum, m); // Schwadron 18.10.2026, M1: Menü → Teile
+    const m = out.get(v.datum) || {}; for (const x of teileVon(stand, v)) m[x.gericht] = (m[x.gericht] || 0) + v.menge * x.menge; out.set(v.datum, m); // Schwadron, M1: Menü → Teile
   }
   return out;
 }
@@ -118,7 +118,7 @@ export function verbrauchSchnitt(stand, { heuteTag = heuteGeschaeft(), idx = art
 
 // Bedarf an einem Tag: mit Wochentagen der Wert des Wochentags (Wochentag ohne Verkauf = geschlossen), sonst Ø × Gewicht des Tags
 // (Ruhetag 0, ohne bekannte Ruhetage Tage-je-Woche/7 wie im Zähler).
-export function bedarfAm(stand, s, d) { // Stufe 1 (17.10.2026): exportiert für js/haltbar.js (Verbrauch bis zum Ablaufdatum) – keine zweite Rechnung
+export function bedarfAm(stand, s, d) { // Stufe 1: exportiert für js/haltbar.js (Verbrauch bis zum Ablaufdatum) – keine zweite Rechnung
   if (s.jeWochentag) {
     const w = s.jeWochentag[wochentag(d)]; const bekannt = ruhetageBekannt(stand, d); const g = bekannt ? tagGewicht(stand, d) : 1;
     if (w === null) return bekannt && g > 0 ? { menge: s.schnitt * g, gewicht: g } : { menge: 0, gewicht: 0 }; // Wochentag ohne Werte: offen laut Ruhetagen → Ø
@@ -150,7 +150,7 @@ export function bedarfTage(stand, s, n, start) {
   return summe;
 }
 
-// Lieferant einer Ware laut Beleg: wohnt seit Lieferanten (18.10.2026) in js/lieferant.js (dort auch Stammdaten und Liefertermine)
+// Lieferant einer Ware laut Beleg: wohnt seit Lieferanten in js/lieferant.js (dort auch Stammdaten und Liefertermine)
 export { lieferantVon } from "./lieferant.js";
 
 // ---------- 1. Laufender Bestand ----------
@@ -165,7 +165,7 @@ function bestandRechnen(stand, heuteTag) {
   const einstellungen = lagerEinstellungen(stand); const idx = artikelIndex(stand);
   const inv = inventurenFertig(stand).filter((i) => i.datum <= heuteTag).pop() || null;
   if (!inv) return { heute: heuteTag, inventur: null, ohneInventur: true, einstellungen, start: heuteTag, waren: [], hinweise: [] };
-  // Schwadron 18.10.2026, M2: morgens vor dem Öffnen gezählt → Verkäufe, Müll und Einkauf des Zähltags zählen ab (sonst ab dem Tag danach)
+  // Schwadron, M2: morgens vor dem Öffnen gezählt → Verkäufe, Müll und Einkauf des Zähltags zählen ab (sonst ab dem Tag danach)
   const vorVerkauf = inventurVorVerkauf(inv); const von = inventurAbTag(inv), bis = heuteTag; const seit = bis >= von;
   const jeTag = seit ? verkaufJeTag(stand, { von, bis }) : new Map();
   const soll = sollVerbrauch(stand, summeMengen(jeTag), idx);

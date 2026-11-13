@@ -1,11 +1,11 @@
-// Drei Ebenen (15.10.2026, Entwickler B): Laden „Karte“ – Fotoraster der Gerichte (2 Spalten): Foto, Name, Preis, Ampelpunkt.
+// Drei Ebenen: Laden „Karte“ – Fotoraster der Gerichte (2 Spalten): Foto, Name, Preis, Ampelpunkt.
 // Oben „Alle | Zu billig · n“. Tipp auf ein Gericht → Preis-Blatt: alter Preis durchgestrichen, großer neuer Preis mit −/+ in 10-Cent-Schritten
 // (Tipp auf die Zahl = tippen), „Bleibt dir“ = Deckungsbeitrag je Stück mit Ampelpunkt, „Speichern“.
 // Kein Rezept, kein Wareneinsatz, keine Kosten – das wohnt im Büro (Ansicht „kartebuero“, karte.js-Schritte). Gerechnet wird nur im Rechenwerk.
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, parseZahl, wertAnzeige } from "../util.js";
 import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
-import { verkaufspreisSetzen, zutatMengeSetzen } from "../karte_daten.js"; // Trennung (17.10.2026); Lauf 2 Bildpaket D (3): Mengen im Laden-Blatt
+import { verkaufspreisSetzen, zutatMengeSetzen } from "../karte_daten.js"; // Trennung; Lauf 2 Bildpaket D (3): Mengen im Laden-Blatt
 import { t as tt, einheitLabel, artikelText } from "../i18n.js";
 import { quelleVon } from "../rezept_quelle.js";
 import { gerichtBild } from "./vergleich.js";
@@ -13,7 +13,7 @@ import { nav } from "./nav.js";
 import { mehrImMonat, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3
 import { fmtEuroGeschaetzt } from "../util.js";
 import { sym } from "../symbole.js";
-import { minusUnsicher, rezeptStempel, hatEigenesRezept } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026, 7.4)
+import { minusUnsicher, rezeptStempel, hatEigenesRezept } from "../rezept_quelle.js"; // Mitmach-Rundgang
 import { rund2 } from "../geld.js";
 
 const ERSTE = 60; // so viele Kacheln sofort; der Rest auf Tipp („Alle zeigen“) – lange Karten bleiben schnell
@@ -27,17 +27,17 @@ let alle = false;         // mehr als ERSTE Kacheln zeigen
 let blatt = null;         // { id, preis (Entwurf, brutto), alt }
 export const karteLadenKennung = () => filter; // Blatt auf/zu ändert die Kennung nicht – die Scrollposition im Raster bleibt
 export function karteLadenZuruecksetzen() { filter = "alle"; alle = false; blatt = null; }
-// Bildpaket D (3) B (Ja 01.11.2026): Tipp aufs Gericht öffnet das Zutaten-Blatt; ohne Zutaten (oder im Rundgang, app.js) die Mengenfrage wie bisher
+// Bildpaket D (3) B: Tipp aufs Gericht öffnet das Zutaten-Blatt; ohne Zutaten (oder im Rundgang, app.js) die Mengenfrage wie bisher
 export function karteLadenRezeptBlatt(stand, gid) { const g = stand.gerichte.find((x) => x.id === gid); if (!g || !g.zutaten?.length) return false; blatt = { rezept: g.id }; return true; }
 // Zurück-Geste: erst das Blatt schließen
 export function karteLadenZurueck() { if (blatt) { blatt = null; return true; } return false; }
 
 const lastVon = (stand) => kalkulation(stand).last;
 const zeilenVon = (stand) => { const k = kalkulation(stand); const m = new Map(k.zeilen.map((z) => [z.id, z])); return stand.gerichte.map((g) => ({ g, z: m.get(g.id) })).filter((x) => x.z); };
-const zuBillig = (x) => x.z.ampel === "rot" && !minusUnsicher(x.z, x.g); // 28.10.2026: ein nur geschätztes Minus ist nicht „zu billig“
-// Gegenprüfung 28.10.2026: Spalte „bleibt dir“ nur, wenn es für mindestens ein Gericht eine Zahl (oder „≈ prüfen“) gibt
+const zuBillig = (x) => x.z.ampel === "rot" && !minusUnsicher(x.z, x.g); // ein nur geschätztes Minus ist nicht „zu billig“
+// Gegenprüfung: Spalte „bleibt dir“ nur, wenn es für mindestens ein Gericht eine Zahl (oder „≈ prüfen“) gibt
 const mitZahl = (x) => { const a = preisAmpel(x.z, x.z.preisBrutto); return (a.gewinn !== null && a.quote !== null) || minusUnsicher({ ...x.z, ampel: a.ampel }, x.g); };
-// Eine Zahl nach allen Kosten, mit Vorzeichen (Baris 27.10.2026, B): „+ 2,10 €“ oder „− 0,80 €“
+// Eine Zahl nach allen Kosten, mit Vorzeichen: „+ 2,10 €“ oder „− 0,80 €“
 const vorzeichen = (v) => v > 0.004 ? "+ " : v < -0.004 ? "− " : "";
 
 export function karteLadenView(stand) {
@@ -45,7 +45,7 @@ export function karteLadenView(stand) {
   if (filter === "billig" && !billig) filter = "alle";
   const sicht = filter === "billig" ? liste.filter(zuBillig) : liste;
   const zeig = alle ? sicht : sicht.slice(0, ERSTE);
-  // Mitmach-Rundgang (28.10.2026, Konzept 7.4 „Karte entschlacken“): eine Zeile je Gericht – kleines Bild, Punkt (grün = dein Rezept,
+  // Mitmach-Rundgang: eine Zeile je Gericht – kleines Bild, Punkt (grün = dein Rezept,
   // kupfer = geschätzt), Name, was dir bleibt, Preis. Tipp aufs Gericht → gleich die erste Mengenfrage (app.js, Waage); Tipp auf den Preis → Preis-Blatt
   // mit den Details. Erklärtexte wohnen im Büro. Gewinn und Ampel kommen weiter nur aus engine.preisAmpel. Rot aus geschätztem Rezept oder
   // Richtpreis (rezept_quelle.minusUnsicher) ist kein belegtes Minus: dann „≈ prüfen: abwiegen“ statt Rot.
@@ -82,8 +82,8 @@ export function karteLadenView(stand) {
     ${nav("karte")}`;
 }
 
-// Zeki in einem Satz (Baris 26.10.2026 23:52): Grün ruhig, Gelb leise, Rot hervorgehoben mit „Anschauen?“ – nicht bei jedem Gericht.
-// 28.10.2026: Rot aus Schätzung → „≈ prüfen: abwiegen“ (Tipp führt zur Mengenfrage); ganz ohne Zahlen → „Tipp auf ein Gericht …“.
+// Zeki in einem Satz: Grün ruhig, Gelb leise, Rot hervorgehoben mit „Anschauen?“ – nicht bei jedem Gericht.
+// Rot aus Schätzung → „≈ prüfen: abwiegen“ (Tipp führt zur Mengenfrage); ganz ohne Zahlen → „Tipp auf ein Gericht …“.
 function zekiZeile(liste, unsicher) {
   if (!liste.length) return "";
   const mit = liste.map((x) => ({ x, a: preisAmpel(x.z, x.z.preisBrutto) })).filter((y) => y.a.gewinn !== null && y.a.quote !== null);
@@ -101,12 +101,12 @@ function zekiZeile(liste, unsicher) {
     : `<button type="button" class="kl-zeki a-${art}" data-a="kl-auf" data-id="${esc(y.x.g.id)}">${esc(satz)}</button>`;
 }
 
-// „Bleibt dir“-Zeile (19.10.2026): Gewinn nach allen Kosten je Stück und in %, Punkt in Ampelfarbe (engine.preisAmpel);
+// „Bleibt dir“-Zeile: Gewinn nach allen Kosten je Stück und in %, Punkt in Ampelfarbe (engine.preisAmpel);
 // darunter „Wohin geht dein Preis?“ – Balken aus Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn (engine.preisAufteilung).
 const TEILE = ["ware", "personal", "miete", "neben", "steuer", "gewinn"];
-// 27.10.2026 Fehler (Baris-Foto 23:49): Beim Tippen wurde nur „Bleibt dir“ ersetzt, „Wohin geht dein Preis?“ blieb stehen → dreifach. Jetzt eine Hülle für beides.
+// Fehler (Baris-Foto 23:49): Beim Tippen wurde nur „Bleibt dir“ ersetzt, „Wohin geht dein Preis?“ blieb stehen → dreifach. Jetzt eine Hülle für beides.
 function bleibtZeile(z, preis, last, monat = "", unscharf = false) { return `<div class="kl-bleibt-teil">${bleibtInnen(z, preis, last, unscharf)}${monat}</div>`; }
-// Masterauftrag 1.3 (28.10.2026): Euro-Hebel im Laden nur hier, beim Preis ändern – „Das bringt dir ≈ x € im Monat“ (bei gleicher Menge, js/hebel.js)
+// Masterauftrag 1.3: Euro-Hebel im Laden nur hier, beim Preis ändern – „Das bringt dir ≈ x € im Monat“ (bei gleicher Menge, js/hebel.js)
 function monatZeile(stand, z) {
   if (!blatt || blatt.alt === null || Math.abs(blatt.preis - blatt.alt) < 0.004) return "";
   const m = mehrImMonat(stand, z.id, blatt.alt, blatt.preis); if (!(Math.abs(m.euro) >= HEBEL_MIN_EURO)) return "";
@@ -119,7 +119,7 @@ function bleibtInnen(z, preis, last, unscharf = false) { // Ausschuss Lauf 3, P2
   const tl = preisAufteilung(z, last, preis);
   if (!tl || !(preis > 0)) return zeile;
   const breite = (v) => Math.max(0, v) / preis * 100;
-  // Details nur auf Tipp (Baris 27.10.2026, B): zu, bis der Chef „Wohin geht dein Preis?“ antippt
+  // Details nur auf Tipp: zu, bis der Chef „Wohin geht dein Preis?“ antippt
   return zeile + `<details class="kl-wohin"><summary>${esc(t("kartelaeden.wohin"))}</summary>
     <div class="kl-balken" aria-hidden="true">${TEILE.map((k) => breite(tl[k]) > 0.4 ? `<i class="t-${k}" style="width:${breite(tl[k]).toFixed(1)}%"></i>` : "").join("")}</div>
     <ul class="kl-teile">${TEILE.map((k) => `<li class="t-${k}${k === "gewinn" && tl.gewinn < 0 ? " minus" : ""}"><i></i><span>${esc(t("kartelaeden.teil." + k))}</span><b>${fmtEuro(tl[k], { dezimal: 2 })}</b></li>`).join("")}</ul></details>`;
@@ -147,7 +147,7 @@ export function karteLadenBlatt(stand) {
     </div>`;
 }
 
-// Lauf 2 (31.10.2026), Bildpaket D (3) Variante B: alle Zutaten des Gerichts im Laden-Blatt, je Zeile −  Menge  + ; „≈“ = geschätzt, Punkt grün = selbst gesetzt.
+// Lauf 2, Bildpaket D (3) Variante B: alle Zutaten des Gerichts im Laden-Blatt, je Zeile −  Menge  + ; „≈“ = geschätzt, Punkt grün = selbst gesetzt.
 // Höchstens 15 erklärende Wörter: Kopf (Gerichtname), Zeilen (Daten), „Fertig“.
 function rezeptBlatt(stand) {
   const g = stand.gerichte.find((x) => x.id === blatt.rezept); if (!g) { blatt = null; return ""; }
@@ -175,7 +175,7 @@ export function karteLadenAktion(name, el, stand) {
     blatt = { id: g.id, alt, preis: alt ?? (z?.zielBrutto ?? 0) }; return true;
   }
   if (name === "kl-zu") { blatt = null; return true; }
-  if (name === "kl-rezept") { // 28.10.2026: app.js öffnet die Mengenfrage; Getränke (ohne Rezept) öffnen gleich das Preis-Blatt
+  if (name === "kl-rezept") { // app.js öffnet die Mengenfrage; Getränke (ohne Rezept) öffnen gleich das Preis-Blatt
     const g = stand.gerichte.find((x) => x.id === el.dataset.id); if (!g) return false;
     if (g.klasse === "getraenk" || !rezeptStempel(g).stufe) return karteLadenAktion("kl-auf", el, stand);
     blatt = null; return { rezept: g.id };

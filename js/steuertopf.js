@@ -1,5 +1,5 @@
-// Welle 3 (Masterauftrag „Gehirn“ 3.1, 3.4, 3.5 – Lauf 2, 31.10.2026): Steuer-Topf, „Was bleibt dir“ und Prüfer-Blick.
-// Reine Rechnungen, keine Oberfläche, keine Speicherung. Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte 28.10.2026“, Teil A.
+// Welle 3: Steuer-Topf, „Was bleibt dir“ und Prüfer-Blick.
+// Reine Rechnungen, keine Oberfläche, keine Speicherung. Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte“, Teil A.
 // Alles hier ist eine SCHÄTZUNG aus den Tagesumsätzen und Belegen der App – keine Voranmeldung, keine Steuerberatung.
 import { wert as regelWert } from "./data/regelwerk.js";
 import { umsatzEintrag, umsatzSteuerSatz, fixkosten, monatsLast } from "./engine.js";
@@ -47,7 +47,7 @@ export function steuerTopf(stand, monat) {
   const z = monatVon(monat + "-01"); const { anteil, geschaetzt } = anteil19(stand, z.von);
   const b = belege(stand, z);
   const vorsteuerJeTag = {}; for (const x of b.zeilen) { const v = (x.ust7 || 0) + (x.ust19 || 0); vorsteuerJeTag[x.datum] = (vorsteuerJeTag[x.datum] || 0) + v; }
-  // Tageszeilen kumuliert gerundet (03.11.2026): jede Zeile = gerundete Summe bis heute − gerundete Summe bis gestern.
+  // Tageszeilen kumuliert gerundet: jede Zeile = gerundete Summe bis heute − gerundete Summe bis gestern.
   // So ist die Summe der Tageszeilen auf den Cent gleich der Monatszahl (Prüfpaket A: „Summe über den Monat = Monatszahl“);
   // einzelne Tage weichen dafür um 1 Cent ab (Nov-Test: 92,70 € und 92,69 €).
   const tage = []; let ust7 = 0, ust19 = 0, umsatz = 0, bisher = 0;
@@ -113,11 +113,11 @@ export function monatsPosten(stand, monat) {
 }
 
 // ---------- 3.5 Prüfer-Blick ----------
-// Richtsatzsammlung 2025 (BMF-Schreiben 25.06.2026), Zeile „Imbissstuben u. Ä.“, laut Wiedergabe (Original gesperrt): Rohgewinn I Mittel = 1 − Wareneinsatz,
+// Richtsatzsammlung 2025, Zeile „Imbissstuben u. Ä.“, laut Wiedergabe (Original gesperrt): Rohgewinn I Mittel = 1 − Wareneinsatz,
 // Rohaufschlag Mittel. Die Werte stehen im Regelwerk (richtsatz_wareneinsatz, richtsatz_rohaufschlag). Nur Orientierung mit Quelle, nie Urteil.
 // Quelle und Datum stehen hier, damit die Oberfläche sie zeigt.
 const RICHTSATZ_IMBISS = { rohgewinn1: rund4(1 - wert("richtsatz_wareneinsatz", "2026-12-31")), rohaufschlag: wert("richtsatz_rohaufschlag", "2026-12-31"), quelle: "Richtsatzsammlung 2025, BMF 25.06.2026, Imbissstuben u. Ä. (Mittelwerte)", stand: "2026-06-25" };
-const NOTIZ_AB_PUNKTEN = 2; // Setzung Prüfpaket Welle 3 (28.10.2026): ab 2 Punkten Abweichung zum Vormonat ist die Notiz „Warum?“ Pflicht
+const NOTIZ_AB_PUNKTEN = 2; // Setzung Prüfpaket Welle 3: ab 2 Punkten Abweichung zum Vormonat ist die Notiz „Warum?“ Pflicht
 
 // Reine Rechnung (Goldwert-Test): posten { umsatzNetto, ware }, Quote des Vormonats (0–1) oder null
 export function prueferAus(p, vor = null) {

@@ -35,12 +35,12 @@ import { hinweisStatusSetzen } from "../hinweis.js";
 import { geld3Aktion } from "../screens/geld3.js";
 
 export function ebeneWechseln(m, ziel) {
-  Z.bueroWeg = []; // 01.11.2026: Ebenenwechsel beginnt den Büro-Weg neu
+  Z.bueroWeg = []; // Ebenenwechsel beginnt den Büro-Weg neu
   if (m === "personal" && !pinGesetzt(Z.wurzel) && !testphaseOhneCode(Z.wurzel)) return; // W2-S: Personal nur mit Büro-Code – außer in der Testphase ohne Code
-  if (m === "personal" && modus(Z.wurzel) !== "personal") schichtPersonVergessen(Z.stand); // 27.10.2026 (Persona-Test): Chef gibt das Handy weiter → neu fragen „Wer arbeitet?“, sonst bucht der Nächste unter dem alten Namen
+  if (m === "personal" && modus(Z.wurzel) !== "personal") schichtPersonVergessen(Z.stand); // (Persona-Test): Chef gibt das Handy weiter → neu fragen „Wer arbeitet?“, sonst bucht der Nächste unter dem alten Namen
   if (m === "personal") { tagZuruecksetzen(); muellZuruecksetzen(); kuehlZuruecksetzen(); putzplanZuruecksetzen(); } // W2-S: kein gewählter Vortag, keine offene Einrichtung
   modusSetzen(Z.wurzel, m); blattSchliessen();
-  Z.ansicht = ziel === "preise" ? "buero" : (ziel || startAnsicht(Z.wurzel)); // Paket 3 (16.10.2026): Nav-Ziel „preise“ = Büro, dann der Schritt Einkaufspreise
+  Z.ansicht = ziel === "preise" ? "buero" : (ziel || startAnsicht(Z.wurzel)); // Paket 3: Nav-Ziel „preise“ = Büro, dann der Schritt Einkaufspreise
   ereignis("modus", { modus: m, laden: Z.stand.id });
   if (m === "buero") history.pushState({ buero: true }, "");
   Z.ruheBis = Date.now() + 350; speichern(Z.wurzel);

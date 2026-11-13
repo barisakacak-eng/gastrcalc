@@ -17,7 +17,7 @@ export function ladenArtVon(stand) {
   return "anders";
 }
 
-// Pilotfest P6 (1), 30.10.2026: ein Laden kann mehrere Arten zugleich sein (Döner + Pizza). Erste Art = Hauptart (Bild, Format, Amt-Dokument),
+// Pilotfest P6 (1),: ein Laden kann mehrere Arten zugleich sein (Döner + Pizza). Erste Art = Hauptart (Bild, Format, Amt-Dokument),
 // Profil, Vorlagen-Enge und Putzplan-Geräte sind die Vereinigung aller gewählten Arten. Alte Stände ohne ladenArten: genau die eine ladenArt.
 export function ladenArtenVon(stand) {
   const l = Array.isArray(stand?.ladenArten) ? stand.ladenArten.filter((a) => PROFILE[a]) : [];

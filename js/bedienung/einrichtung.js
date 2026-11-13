@@ -67,7 +67,7 @@ async function fertig(ziel = "start") {
   if (Z.wechselt) return; Z.wechselt = true;
   try {
     Z.stand.phase = "app"; Z.stand.rueckkehr = null; delete Z.stand.neuAus;
-    if (ziel === "vorlagen") { // Gremium 1 (24.10.2026): Karte aus Vorlagen gleich nach der Einrichtung – die Schritte Karte → Rezepte → Preise, zurück auf Heute
+    if (ziel === "vorlagen") { // Gremium 1: Karte aus Vorlagen gleich nach der Einrichtung – die Schritte Karte → Rezepte → Preise, zurück auf Heute
       Z.ansicht = "start"; await ereignis("onboarding-fertig", { laden: Z.stand.id }); dauerhaftAnfragen(); await sofortSpeichern(Z.wurzel);
       Z.wechselt = false; bearbeiten("karte", "verkauf"); zeichne(); return; // bis Verkaufspreise (Nachtest Gremium 1: „preise“ = Einkaufspreise, danach fehlten die Verkaufspreise)
     }

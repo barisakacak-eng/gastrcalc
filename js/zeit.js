@@ -48,7 +48,7 @@ export const stundeBruch = (d = new Date()) => { const b = berlin(d); return b.s
 // Tag plus n Monate; ist der Zieltag im Zielmonat nicht vorhanden, gilt der letzte Tag des Zielmonats (29.02. → 28.02.)
 export const tagPlusMonate = (tag, n) => { const m = plusMonate(tag.slice(0, 7), n); const [j, mm] = m.split("-").map(Number); return tagVon(j, mm, Math.min(Number(tag.slice(8)), tageImMonat(j, mm))); };
 // Zeitpunkt (Date) einer Berliner Uhrzeit an einem Tag: berlinZeitpunkt("2026-10-25", 22, 0) = 22:00 Berliner Zeit (Sommer- oder Winterzeit je nach Tag).
-// Zeiten, die es am Umstellungstag nicht gibt (02:30 am 29.03.2026), landen eine Stunde später; doppelte (02:30 am 25.10.2026) auf der Sommerzeit-Seite.
+// Zeiten, die es am Umstellungstag nicht gibt, landen eine Stunde später; doppelte auf der Sommerzeit-Seite.
 export function berlinZeitpunkt(tag, stunde = 0, minute = 0) {
   const ziel = utc(tag) + (stunde * 60 + minute) * 60000; let t = ziel;
   for (let i = 0; i < 4; i++) { const b = berlin(new Date(t)); const wand = utc(b.tag) + (b.stunde * 60 + b.minute) * 60000; const diff = ziel - wand; if (!diff) break; t += diff; }

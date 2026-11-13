@@ -1,27 +1,27 @@
-// Blätter über dem Bildschirm (15.10.2026, Entwickler A): Menü-Blatt mit vier Kacheln, Sprache, Laden wechseln, Hilfe „?", Büro-Code.
+// Blätter über dem Bildschirm: Menü-Blatt mit vier Kacheln, Sprache, Laden wechseln, Hilfe „?", Büro-Code.
 // Leistung (Stresstest 15.10.): Die Blätter wohnen in einer eigenen Hülle außerhalb von #app. Öffnen und Schließen zeichnet den
 // Bildschirm darunter NICHT neu; teure Zahlen werden erst beim Öffnen gerechnet.
 // „personal" (Entwickler D, screens/personal.js) und „buero" (Entwickler C, screens/buero.js) haben eigene Bildschirme.
 import { t, sprache, SPRACHEN, SPRACH_NAMEN, spracheName } from "../i18n.js";
 import { l6yText } from "../data/l6y_texte.js"; // Lauf 6, E5-Draht (5)
-import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen (26.10.2026)
+import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen
 import { esc, fmtEuro } from "../util.js";
 import { sym } from "../symbole.js";
 import { ladenArtVon } from "../profil.js";
 import { pinGesetzt, pinPruefen, pinSetzen, pinGueltig, sperreRest, sperreRestUhr, hartGesperrt, fehlversuch, sperreLoesen, restText, testphaseOhneCode } from "../modus.js";
 import { l6z } from "../data/l6z_texte.js"; // Lauf 6, E5 (G)
-import { rettungGesetzt, rettungErlaubt, rettungAnlegen, rettungBloecke, RETTUNG_LAENGE } from "../rettung.js"; // Rettung (17.10.2026)
+import { rettungGesetzt, rettungErlaubt, rettungAnlegen, rettungBloecke, RETTUNG_LAENGE } from "../rettung.js"; // Rettung
 import { nav } from "./nav.js";
-import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung (17.10.2026)
+import { sicherungStufe } from "../sicherung_stufe.js"; // Trennung
 import { PASSWORT_MIN } from "../schluessel.js";
-import { mascotMarkup } from "../gastrocash-brand.js"; // E5 (16.10.2026): Passwort der Sicherung
+import { mascotMarkup } from "../gastrocash-brand.js"; // E5: Passwort der Sicherung
 
 let huelle = null;
-let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort" | "rettung" | "rettungscode" | "sicherungort" (Laden-Umbau 20.10.2026)
+let offen = null;     // "menue" | "sprache" | "laeden" | "hilfe" | "pin" | "passwort" | "rettung" | "rettungscode" | "sicherungort"
 let pin = null;       // { zweck: "buero" | "personal" | "setzen" | "loeschen" | "ladenLoeschen", ziel, eingabe, erste, meldung, fehler, wurzel }
 let uhr = null;       // Restzeit der Wartezeit sekündlich nachführen (W2-S)
-let rett = null;      // Rettung (17.10.2026): { ziel } – wohin es nach dem Rettungscode geht. Der Code selbst steht nur im Blatt, nie hier
-let pw = null;        // E5 (16.10.2026): { zweck: "teilen" | "einlesen", sichtbar } – das Passwort selbst steht nur im Feld, nie hier
+let rett = null;      // Rettung: { ziel } – wohin es nach dem Rettungscode geht. Der Code selbst steht nur im Blatt, nie hier
+let pw = null;        // E5: { zweck: "teilen" | "einlesen", sichtbar } – das Passwort selbst steht nur im Feld, nie hier
 
 // Die Hülle hängt direkt am <body>; app.js hängt seine Klick-Weiche auch hier ein.
 export function ebeneHuelle() {
@@ -34,11 +34,11 @@ export function ebeneHuelle() {
 export const blattOffen = () => offen;
 export const pinZweckJetzt = () => (offen === "pin" && pin ? { zweck: pin.zweck, ziel: pin.ziel } : null);
 
-// Pilotfest P6 (2), 30.10.2026 (Bildpaket C freigegeben): Blätter schließen per Wischen nach unten; Zeki-Hilfe kurz.
-const WISCH_ZU_PX = 90; // Setzung 30.10.2026: ab 90 px Zug nach unten (bei Blatt oben) schließt das Blatt
+// Pilotfest P6 (2), (Bildpaket C freigegeben): Blätter schließen per Wischen nach unten; Zeki-Hilfe kurz.
+const WISCH_ZU_PX = 90; // Setzung: ab 90 px Zug nach unten (bei Blatt oben) schließt das Blatt
 function wischenAnhaengen(blatt) {
   // Touch zuerst (echte Handys): am oberen Rand des Blatts (scrollTop 0) ziehen wir das Blatt selbst und halten dem Browser das Scrollen
-  // per preventDefault weg (touch-action bleibt frei, sonst käme nach wenigen Pixeln pointercancel – Durchsicht 30.10.2026). Maus/Stift über Pointer-Events.
+  // per preventDefault weg. Maus/Stift über Pointer-Events.
   let y0 = null, zug = 0;
   const start = (y) => { if (blatt.scrollTop > 0) return; y0 = y; zug = 0; blatt.style.transition = "none"; };
   const ziehen = (y) => { if (y0 === null) return false; const dy = y - y0; if (dy <= 0) { zug = 0; blatt.style.transform = ""; return false; } zug = dy; blatt.style.transform = `translateY(${Math.min(dy, 160)}px)`; return true; };
@@ -68,7 +68,7 @@ export function blattSchliessen() {
 const ladenBild = (stand) => { const art = ladenArtVon(stand); return `bilder/laden-${["doener", "pizza", "burger", "asia", "baeckerei", "cafe", "foodtruck"].includes(art) ? art : "anders"}.svg`; };
 
 // ---------- Menü-Blatt (Laden) ----------
-// Lauf 2, Bildpaket D (4d) – 31.10.2026: Tipp auf die große Zahl bleibt im Laden. Ein Blatt mit drei Zeilen (Umsatz, Kosten bis heute, bis null / über null),
+// Lauf 2, Bildpaket D (4d) –: Tipp auf die große Zahl bleibt im Laden. Ein Blatt mit drei Zeilen (Umsatz, Kosten bis heute, bis null / über null),
 // „Umsatz eintragen“ und „Mehr im Büro“. m = monatsZiel() aus js/zaehler.js (fertig gerechnet, hier nur gezeigt). Höchstens 15 erklärende Wörter.
 export function monatBlattZeigen(stand, d) {
   // d = { umsatz, nullpunkt, ziel, geschaetzt } aus monatsZiel() – drei Zeilen, die zur großen Zahl passen: Ziel − Umsatz = die Karte
@@ -107,16 +107,16 @@ export function laedenZeigen(wurzel) {
 }
 
 // ---------- Hilfe „?" ----------
-// Laden-Umbau (20.10.2026): was im Laden nicht mehr dauernd steht, steht hier hinter „?“ (vorhandene Texte, nichts gelöscht)
+// Laden-Umbau: was im Laden nicht mehr dauernd steht, steht hier hinter „?“ (vorhandene Texte, nichts gelöscht)
 const HILFE_MEHR = {
   muell: ["muell1.anleitung"],
   kuehl: ["kuehl.stellenTippen", "kuehl.einrichtenText", "kuehl.haftung"],
   putzplan: ["putzplan.erklaerung", "putzplan.quellenHinweis"],
   abschluss: ["abschluss.ohneUmsatz", "abschluss.hinweis"],
-  start: ["zaehler.zielBewegt"], buero: ["zaehler.zielBewegt"], // Vorab-Prüfung 03.11.2026 (C4): gewollt – echte Tageslöhne ersetzen den geschätzten Tagesanteil
+  start: ["zaehler.zielBewegt"], buero: ["zaehler.zielBewegt"], // Vorab-Prüfung (C4): gewollt – echte Tageslöhne ersetzen den geschätzten Tagesanteil
 };
 const HILFE = ["start", "muell", "kuehl", "putzplan", "karte", "abschluss", "laeden", "personal", "buero"];
-// Zeki beantwortet Fragen (Baris 26.10.2026, Variante C): fester, geprüfter Katalog, offline. Aufklappen ohne Skript (details).
+// Zeki beantwortet Fragen: fester, geprüfter Katalog, offline. Aufklappen ohne Skript (details).
 function zekiFragenHtml(k) {
   const fragen = zekiFragenFuer(k, sprache());
   if (!fragen.length) return "";
@@ -190,7 +190,7 @@ export async function pinTaste(wert, wurzel) {
   if (p.zweck === "setzen") {
     if (!p.erste) { p.erste = e; p.eingabe = ""; pinZeichnen(); return null; }
     if (p.erste !== e || !pinGueltig(e)) { p.erste = null; p.eingabe = ""; p.fehler = true; p.meldung = t("ebene.pin.ungleich"); pinZeichnen(); return null; }
-    await pinSetzen(wurzel, e); const rettungscode = await rettungAnlegen(wurzel); // Rettung (17.10.2026): zu jedem neuen Code ein neuer Rettungscode
+    await pinSetzen(wurzel, e); const rettungscode = await rettungAnlegen(wurzel); // Rettung: zu jedem neuen Code ein neuer Rettungscode
     blattSchliessen(); return { zweck: "setzen", ziel: p.ziel, rettungscode };
   }
   if (p.pruefend) return null; p.pruefend = true; // die Prüfung dauert (PBKDF2) – keine zweite gleichzeitig
@@ -201,7 +201,7 @@ export async function pinTaste(wert, wurzel) {
   p.eingabe = ""; p.fehler = true; p.meldung = dauer ? warteText(dauer) : t("ebene.pin.falsch"); pinZeichnen(); return { fehler: true };
 }
 
-// ---------- Rettungscode (17.10.2026) ----------
+// ---------- Rettungscode ----------
 // „Code vergessen?“ nur an der Code-Abfrage, nur wenn ein Rettungscode angelegt ist; im Personal-Modus nur am Schloss (rettung.js).
 function vergessenErlaubt(p) { return !!p.wurzel && rettungErlaubt(p.wurzel, p.zweck); }
 export const pinZweck = () => (pin ? { zweck: pin.zweck, ziel: pin.ziel } : null);
@@ -242,10 +242,10 @@ export function rettungscodeZeigen(code, ziel = null) {
     <button type="button" class="knopf" data-a="rettung-ok">${esc(t("rettung.aufgeschrieben"))}</button>`);
 }
 
-// ---------- Passwort der Sicherung (E5, 16.10.2026) ----------
+// ---------- Passwort der Sicherung ----------
 // zweck "teilen": Blatt vor dem Teilen (Hauptknopf „Sicherung teilen“, leiser Knopf „Ohne Passwort teilen“).
 // zweck "einlesen": Datei ist verschlüsselt, Passwort abfragen (Knopf „Einlesen“). Das Passwort wird nie gespeichert – es steht nur im Feld.
-// Laden-Umbau (20.10.2026), zweck "teilen": Kopf „Sicherung“, „Letzte vom Handy weg: vor n Tagen“, Schalter „Mit Passwort“ (vorgewählt –
+// Laden-Umbau, zweck "teilen": Kopf „Sicherung“, „Letzte vom Handy weg: vor n Tagen“, Schalter „Mit Passwort“ (vorgewählt –
 // wer ihn ausschaltet, teilt ohne Passwort), Schalter „Ohne Fotos (klein, für Mail)“, ein Knopf „Sicherung verschicken“.
 // extra.tage: Tage seit der letzten Sicherung, die vom Handy weg ist (null = noch nie).
 export function passwortStarten(zweck, extra = {}) {

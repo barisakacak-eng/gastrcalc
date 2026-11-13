@@ -1,4 +1,4 @@
-// Ablage – EIN Weg für jedes Foto und jede Datei (Speisekarte, Rechnung, Kostenbeleg). Etappe 6a, Baris 14.10.2026:
+// Ablage – EIN Weg für jedes Foto und jede Datei (Speisekarte, Rechnung, Kostenbeleg). Etappe 6a, Baris:
 // „Das Fundament des Speicherwegs heute schon richten, falls wir umschalten müssen."
 //
 // Die App kennt nur vier Aufrufe: ablegen, holen, entfernen, ablageOrt. Wo die Datei liegt, entscheidet der Ort:
@@ -11,7 +11,7 @@ import { uid } from "./util.js";
 import { istSpeicherVoll } from "./bedienhilfe.js"; // Lauf 6, E5-Draht (8)
 import { leinwand, leinwandDa } from "./adapter/leinwand.js";
 
-// 20.10.2026 (Sicherungs-Test, Fund 1): Konnte ein Foto nicht auf dem Gerät abgelegt werden (Speicher voll), lebte es nur bis zum Neustart –
+// (Sicherungs-Test, Fund 1): Konnte ein Foto nicht auf dem Gerät abgelegt werden (Speicher voll), lebte es nur bis zum Neustart –
 // ohne Meldung. Jetzt meldet die Ablage es über denselben Weg wie der Speicher (Banner „Speichern fehlgeschlagen“, app.js).
 let ablageFehler = null;
 export function beiAblageFehler(fn) { ablageFehler = fn; } // fn(art "ablage", fehler)
@@ -74,7 +74,7 @@ let aktiv = "lokal";
 export const ablageOrt = () => aktiv;
 export const ablageFluechtig = () => ORTE[aktiv].fluechtig;
 
-export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell", "gericht", "zbon"]; // zbon (18.10.2026): Foto des Z-Bons, nachvollziehbar für Amt/Steuerberater
+export const ZWECKE = ["speisekarte", "rechnung", "kosten", "muell", "gericht", "zbon"]; // zbon: Foto des Z-Bons, nachvollziehbar für Amt/Steuerberater
 
 // Legt eine Datei ab und liefert die Beschreibung, die im Laden (stand.uploads) gespeichert wird – die Datei selbst steht nie im Laden.
 export async function ablegen(blob, { name = "", zweck = "rechnung", laden = null } = {}) {

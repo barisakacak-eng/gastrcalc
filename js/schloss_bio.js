@@ -1,4 +1,4 @@
-// Face ID / Fingerabdruck als Schlüssel fürs Büro (Baris 26.10.2026 23:44, Entwurf 27.10.2026).
+// Face ID / Fingerabdruck als Schlüssel fürs Büro.
 // Über die Passkey-Technik des Geräts (WebAuthn, „platform authenticator“). Ohne Server ist das ein Schloss am Gerät, kein Schutz
 // der Daten selbst – für den Pilot reicht das, für Konten und Personal-Zugänge kommt später der Server.
 import { hostName, schluesselAnlegen, schluesselPruefen } from "./adapter/webauthn.js";

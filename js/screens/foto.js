@@ -1,15 +1,15 @@
 // Foto und Upload – Speisekarte fotografieren (Einrichtung und Karte) und den Lauf von der Datei bis zum Text.
 // Ein Lauf: Datei wählen → ablegen (Ablage) → auswerten (Auswertung) → Vorschläge → der Wirt bestätigt. Etappe 6a.
 import { sym } from "../symbole.js";
-import { t, artikelText } from "../i18n.js"; // Paket 6 (17.10.2026): Zutaten in der aktiven Sprache
+import { t, artikelText } from "../i18n.js"; // Paket 6: Zutaten in der aktiven Sprache
 import { esc, parseZahl, uid, fmtEuro } from "../util.js";
 import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ablage.js";
 import { auswerten, vorwaermen } from "../auswertung.js";
 import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau, kartePruefZahlen, baukastenZutatenOhneVerpackung, preisAuffaellig } from "../karte_lesen.js";
 import { gerichtBildQuelle } from "../bilder.js";
-import { mascotMarkup } from "../gastrocash-brand.js"; // Trennung 2 (17.10.2026)
-import { artikelAbgleichen } from "../karte_daten.js"; // Trennung (17.10.2026)
-import { uploadAnlegen, uploadAendern } from "../stamm.js"; // Trennung (17.10.2026): Uploads schreibt das Rechenwerk
+import { mascotMarkup } from "../gastrocash-brand.js"; // Trennung 2
+import { artikelAbgleichen } from "../karte_daten.js"; // Trennung
+import { uploadAnlegen, uploadAendern } from "../stamm.js"; // Trennung: Uploads schreibt das Rechenwerk
 import { fehlendeRezepteErgaenzen } from "../rezept_baukasten.js";
 
 // Zustand des laufenden Fotos (flüchtig; das Ergebnis landet erst mit „Übernehmen" im Laden)
@@ -25,7 +25,7 @@ let serie = { aufgenommen: 0, gelesen: 0, fehler: 0 };
 export const fotoLauf = () => lauf;
 export function fotoZuruecksetzen() { lauf = null; vorschlaege = []; seiten = 0; laufUploads = []; warteschlange = []; laeuft = false; generation += 1; sammeln = true; serie = { aufgenommen: 0, gelesen: 0, fehler: 0 }; }
 // Was die Speisekarten-Strecke gerade zeigt: Fotos sammeln, auf das Lesen warten oder die Prüfliste
-export const karteModus = () => (sammeln ? "sammeln" : vorschlaege.length ? "pruefen" : laeuft || warteschlange.length ? "warten" : "sammeln"); // P4 (30.10.2026): sobald Gerichte da sind, die Prüfliste zeigen – auch wenn die Erkennung noch läuft
+export const karteModus = () => (sammeln ? "sammeln" : vorschlaege.length ? "pruefen" : laeuft || warteschlange.length ? "warten" : "sammeln"); // P4: sobald Gerichte da sind, die Prüfliste zeigen – auch wenn die Erkennung noch läuft
 export function sammelnBeenden() { sammeln = false; if (!vorschlaege.length && !laeuft && !warteschlange.length) sammeln = true; }
 // Abbrechen während des Wartens: Warteschlange stoppen, bereits Gefundenes bleibt in der Prüfliste.
 export function serieAbbrechen() { warteschlange = []; generation += 1; laeuft = false; lauf = null; if (!vorschlaege.length) fotoZuruecksetzen(); }
@@ -84,7 +84,7 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
   try {
     const fuerAblage = await bildFuerAblage(datei);
     const abgelegt = await ablegen(fuerAblage, { name: datei.name || "", zweck, laden: stand.id });
-    const eintrag = uploadAnlegen(stand, { ...kopf, datei: abgelegt, auswertung: null, ergebnis: null }); // Trennung (17.10.2026)
+    const eintrag = uploadAnlegen(stand, { ...kopf, datei: abgelegt, auswertung: null, ergebnis: null }); // Trennung
     mein.upload = eintrag; if (zweck === "speisekarte") laufUploads.push(eintrag);
   } catch (e) {
     // Ablegen fehlgeschlagen (zu groß, Speicher voll): trotzdem lesen, nur ohne Kopie auf dem Gerät
@@ -93,11 +93,11 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
   if (verworfen()) return null;
   try {
     mein.schritt = "lesen"; neuZeichnen();
-    // P4 (30.10.2026): erste Lesart → Gerichte sofort zeigen (vorläufig), die zweite Lesart ergänzt danach
+    // P4: erste Lesart → Gerichte sofort zeigen (vorläufig), die zweite Lesart ergänzt danach
     const zwischen = zweck !== "speisekarte" ? null : (text) => { if (verworfen()) return; const neu = vorschlaegeAusText(text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
       mein.schritt = "mehr"; // P6 (4): zweite Lesart läuft
-      // Durchsicht 30.10.2026 (Fund 2): vorläufige Zeilen sind markiert; die zweite Lesart ersetzt sie, sofern der Chef sie nicht angefasst hat
+      // Durchsicht (Fund 2): vorläufige Zeilen sind markiert; die zweite Lesart ersetzt sie, sofern der Chef sie nicht angefasst hat
       for (const v of neu) v.vorab = true;
       if (neu.length) { vorschlaege.push(...neu); mein.vorlaeufig = true; mein.neuVorab = neu.length; } neuZeichnen(); };
     const r = await auswerten(datei, { zweck, zwischen, fortschritt: (f) => { if (verworfen()) return; mein.schritt = f.schritt; mein.seite = f.seite; mein.von = f.von; neuZeichnen(); } });
@@ -111,7 +111,7 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
       const vorab = vorschlaege.filter((v) => v.vorab); for (const v of vorab) { const i = vorschlaege.indexOf(v); if (i >= 0) vorschlaege.splice(i, 1); if (aufgeklappt === v.id) aufgeklappt = null; }
       const neu = vorschlaegeAusText(r.text, stand).filter((v) => !vorschlaege.some((x) => x.name.toLowerCase() === v.name.toLowerCase()));
       mein.neuVorab = 0;
-      // Trennung (17.10.2026): Gruppe einmal beim Hinzufügen festlegen (vorher beim Zeichnen), damit ein Gericht beim Korrigieren nicht wegspringt.
+      // Trennung: Gruppe einmal beim Hinzufügen festlegen (vorher beim Zeichnen), damit ein Gericht beim Korrigieren nicht wegspringt.
       // „Bitte prüfen" nur für Lesefehler (Name, Preis); eine Rezept-Rückfrage steht als Hinweis in der Zeile unter „Erkannt"
       for (const v of neu) if (v.gruppe === undefined) v.gruppe = grund(v) && grund(v) !== "rezept" ? "pruefen" : "erkannt";
       vorschlaege.push(...neu); seiten += 1;
@@ -135,7 +135,7 @@ export async function fotoVerarbeiten(stand, datei, zweck, neuZeichnen, { geraet
 let gewaermt = false;
 export function fotoVorbereiten() { if (!gewaermt) { gewaermt = true; vorwaermen(); } }
 
-// Pilotfest P6 (4), 30.10.2026 (Bildpaket C freigegeben): drei Stufen statt Kreisel – Bild vorbereiten · Lesen · Nachlesen.
+// Pilotfest P6 (4), (Bildpaket C freigegeben): drei Stufen statt Kreisel – Bild vorbereiten · Lesen · Nachlesen.
 // Der Balken läuft zeitgesteuert bis kurz vor das Stufenende (die Erkennung meldet keinen Zwischenstand), springt beim nächsten Schritt weiter.
 const fortschrittStufe = () => !lauf || lauf.schritt === "ablegen" ? 1 : lauf.schritt === "mehr" ? 3 : 2;
 function fortschrittHtml() {
@@ -190,7 +190,7 @@ function fvZeile(v) {
       ${auf ? bearbeiter(v) : ""}
     </div>`;
 }
-// Entwurf 26.10.2026 (Baris: „Wo ist Zeki, die einfache Sprache, wo sind unsere Bilder?“): Zeki sagt oben in einem Satz, was los ist;
+// Entwurf (Baris: „Wo ist Zeki, die einfache Sprache, wo sind unsere Bilder?“): Zeki sagt oben in einem Satz, was los ist;
 // jedes Gericht mit Bild, Name, Preis und einem Knopf. Rezept-Zeilen gehören ins Büro (Rezepte), nicht hierher.
 const fvBild = (v) => { const q = gerichtBildQuelle({ name: v.vorlage || v.name, vorlageName: v.vorlage || undefined });
   return q.foto ? `<img class="fvbild" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="fvbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`; };
@@ -209,8 +209,8 @@ function pruefKarte(v) {
       </div></div>`;
 }
 export function kartePruefenView() {
-  // Trennung (17.10.2026): die Gruppe (prüfen/erkannt) steht schon seit dem Hinzufügen fest – Zeichnen schreibt nichts
-  const kz = kartePruefZahlen(vorschlaege); const pr = kz.pruefen, ok = kz.erkannt; // Trennung 2 (17.10.2026): Zahlen aus js/karte_lesen.js
+  // Trennung: die Gruppe (prüfen/erkannt) steht schon seit dem Hinzufügen fest – Zeichnen schreibt nichts
+  const kz = kartePruefZahlen(vorschlaege); const pr = kz.pruefen, ok = kz.erkannt; // Trennung 2: Zahlen aus js/karte_lesen.js
   const offen = pr.filter((v) => v.an && grund(v)).length;
   return `
     <div class="s2kopf s2zeki fvzeki"><div class="s2zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(offen ? "frage" : "freude")}</div>
@@ -234,7 +234,7 @@ export function kartePruefenEingabe(feld, wert) {
   const v = vorschlaege.find((x) => x.id === m[2]); if (!v) return false;
   if (m[1] === "name") { v.name = wert.slice(0, 80); v.pruefen = false; } else { Object.assign(v, { preis: parseZahl(wert), preisPruefen: false, preisHoch: false, preisGeprueft: true }); }
   delete v.vorab; // angefasst → bleibt
-  kopfNachziehen(v); // Klasse D 03.11.2026: die Kopfzeile zeigt beim Tippen den neuen Namen und Preis, nicht den alten
+  kopfNachziehen(v); // Klasse D: die Kopfzeile zeigt beim Tippen den neuen Namen und Preis, nicht den alten
   return false;
 }
 
@@ -244,7 +244,7 @@ export function kartePruefenAktion(name, el) {
   const v = vorschlaege.find((x) => x.id === el.dataset.id); if (v) delete v.vorab; // angefasst → bleibt
   if (name === "fv-an" && v) { v.an = !v.an; if (!v.an && aufgeklappt === v.id) aufgeklappt = null; return true; }
   if (name === "fv-auf" && v) { aufgeklappt = aufgeklappt === v.id ? null : v.id; return true; }
-  if (name === "fv-stimmt" && v) { Object.assign(v, { pruefen: false, preisPruefen: false, preisHoch: false, preisGeprueft: true }); return true; } // Baris 19.10.2026: Name und Preis stimmen – bestätigen ohne zu tippen
+  if (name === "fv-stimmt" && v) { Object.assign(v, { pruefen: false, preisPruefen: false, preisHoch: false, preisGeprueft: true }); return true; } // Baris: Name und Preis stimmen – bestätigen ohne zu tippen
   if (name === "fv-rezept-ja" && v) { v.sicher = "sicher"; return true; }
   if (name === "fv-rezept-nein" && v) { v.vorlage = null; v.sicher = v.getraenk ? "getraenk" : "ohne"; return true; }
   return false;

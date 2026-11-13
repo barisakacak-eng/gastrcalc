@@ -1,4 +1,4 @@
-// Paket 6 (17.10.2026): Kühlstellen-Namen in der Anzeige.
+// Paket 6: Kühlstellen-Namen in der Anzeige.
 // Standardnamen aus dem Schnellstart (Kühlschrank, Saladette, Tiefkühler, Warmhalter, ggf. mit Nummer „Kühlschrank 2“)
 // folgen der aktuellen Sprache. Ein vom Wirt umbenannter Name bleibt, wie er ist.
 // Gespeichert wird weiter der Name der Anlage (k.name) – Amt-Export und Ausdruck nutzen ihn unverändert.
@@ -8,7 +8,7 @@ import de from "./lang/de.js";
 import tr from "./lang/tr.js";
 import en from "./lang/en.js";
 
-const KUEHL_TYP_SCHLUESSEL = ["getraenke", "kuehlschrank", "saladette", "tiefkuehler", "warmhalter", "eistheke"]; // Baris 24.10.2026: Getränkekühlschrank und Kühlschrank (Lebensmittel) getrennt
+const KUEHL_TYP_SCHLUESSEL = ["getraenke", "kuehlschrank", "saladette", "tiefkuehler", "warmhalter", "eistheke"]; // Baris: Getränkekühlschrank und Kühlschrank (Lebensmittel) getrennt
 export const TYP_AUS_ART = { kuehl: "kuehlschrank", tk: "tiefkuehler", warm: "warmhalter", eis: "eistheke" };
 
 // Alle bekannten Standardnamen je Typ (ohne Nummer), klein geschrieben.

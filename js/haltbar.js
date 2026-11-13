@@ -1,4 +1,4 @@
-// Stufe 1 (17.10.2026): Haltbarkeit und Abverkauf. Reine Funktionen, keine Oberfläche, keine Speicherung (außer den Setzern unten), kein Netz.
+// Stufe 1: Haltbarkeit und Abverkauf. Reine Funktionen, keine Oberfläche, keine Speicherung (außer den Setzern unten), kein Netz.
 // Belegzeilen tragen optional haltbar {art: "mhd"|"verbrauch", datum: "JJJJ-MM-TT"}. Mit dem laufenden Bestand (js/bestand.js) und dem
 // Ø-Verbrauch (bedarfAm) rechnet die App je Lieferung mit Datum, wie viel bis zum Datum voraussichtlich NICHT verbraucht ist.
 // FIFO: die älteste Lieferung wird zuerst verbraucht. Der Bestand heute steckt also in den jüngsten Lieferungen (von hinten aufgefüllt),
@@ -14,15 +14,15 @@ import { fmtEuro } from "./util.js";
 import { tagGewicht } from "./zaehler.js";
 import { t, artikelText } from "./i18n.js";
 import { imTakt } from "./takt.js";
-import { nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Aushang mit Ausschankmenge
+import { nameMitMenge } from "./getraenk_feld.js"; // Getränke: Aushang mit Ausschankmenge
 import { tageZwischen } from "./zeit.js";
 import { rund2, nettoVonBrutto } from "./geld.js";
 
 export const HALTBAR_ARTEN = ["mhd", "verbrauch"];
-const ABVERKAUF_TAGE = 7;   // Stufe 1 (17.10.2026): MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
+const ABVERKAUF_TAGE = 7;   // Stufe 1: MHD-Ware ist Abverkaufs-Kandidat, wenn sie in höchstens 7 Tagen abläuft (Auftrag)
 const VORLAUF_TAGE = 7;     // Verbrauchsdatum: so weit voraus zeigt „Läuft ab“ (Annahme Stufe 1)
 export const RUECKBLICK_TAGE = 7;  // abgelaufene Ware mit Rest: so lange zurück wird noch erinnert, danach gilt sie als erledigt (Annahme)
-// Stufe 1 (17.10.2026): Preisstufe für Aktionspreise. Die App rundet Zielpreise sonst nur auf 10 Cent (engine.js aufrunden10Cent);
+// Stufe 1: Preisstufe für Aktionspreise. Die App rundet Zielpreise sonst nur auf 10 Cent (engine.js aufrunden10Cent);
 // eine Regel ,00/,50/,90 gibt es nicht – deshalb wie im Auftrag 50-Cent-Schritte.
 export const PREIS_SCHRITT = 0.5;
 const DATUM = /^\d{4}-\d{2}-\d{2}$/;
@@ -127,7 +127,7 @@ export function chargenStand(stand, { heuteTag = heuteGeschaeft(), bs = bestandS
 // ---------- 2. Ablauf-Warnung ----------
 // laeuftAb: Verbrauchsdatum (art "verbrauch") mit Rest > 0 oder unbekannt, von 7 Tagen zurück bis 7 Tage voraus; dazu MHD-Ware, die schon
 //   abgelaufen ist und noch da sein dürfte („prüfen“, kein Abverkauf). kandidaten: MHD-Ware mit Rest > 0, Ablauf heute bis in 7 Tagen.
-// Prüfgremium 17.10.2026 (2): Bestand und Verbrauch rechnen mit dem Geschäftstag (heuteTag, bis 4 Uhr = Vortag), das Datum auf der Packung
+// Prüfgremium (2): Bestand und Verbrauch rechnen mit dem Geschäftstag (heuteTag, bis 4 Uhr = Vortag), das Datum auf der Packung
 // ist ein Kalendertag – „vorbei/heute/morgen“ zählt deshalb ab dem Kalendertag (kalenderTag). Um 01:30 ist Freitags-Ware schon vorbei.
 // Ohne Angabe: Kalendertag = heute, wenn heuteTag der laufende Geschäftstag ist, sonst = heuteTag (fester Tag, z. B. in Tests).
 const kalenderVon = (heuteTag, kalenderTag) => kalenderTag || (heuteTag === heuteGeschaeft() ? heute() : heuteTag);
@@ -199,8 +199,8 @@ export const kurzName = (n) => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").t
 // Höchstens EIN Satz für den Büro-Hinweis. Reihenfolge: Verbrauchsdatum heute/morgen/vorbei (rot) → lohnende Aktion (gelb) →
 // Verbrauchsdatum in 2–3 Tagen (gelb) → MHD vorbei (gelb). Im Laden steht nichts.
 const wtKurz = (iso) => { const l = t("aktionen.wt"); return (Array.isArray(l) && l[wochentag(iso)]) || iso.slice(5); };
-export const datumKurz = (iso) => (typeof iso === "string" && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${wtKurz(iso)} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.` : ""); // „Mo 20.10.“ in der Sprache der App; Prüfgremium 18.10.2026 (H1): ohne Datum leer statt Absturz
-// Prüfgremium 17.10.2026 (4): Letzter Öffnungstag bis zum Ablauf (einschließlich). Ist der Ablauftag ein Ruhetag, muss die Ware vorher weg –
+export const datumKurz = (iso) => (typeof iso === "string" && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${wtKurz(iso)} ${iso.slice(8, 10)}.${iso.slice(5, 7)}.` : ""); // „Mo 20.10.“ in der Sprache der App; Prüfgremium (H1): ohne Datum leer statt Absturz
+// Prüfgremium (4): Letzter Öffnungstag bis zum Ablauf (einschließlich). Ist der Ablauftag ein Ruhetag, muss die Ware vorher weg –
 // „bis morgen“ wäre dann falsch. Gibt es keinen Öffnungstag dazwischen (heute zu, morgen Ablauf und zu), gilt heute.
 export function letzterOffenTag(stand, von, ablauf) {
   for (let d = ablauf; d > von; d = tagPlus(d, -1)) if (tagGewicht(stand, d) > 0) return d;
@@ -211,7 +211,7 @@ export function haltbarUhrzeit(stand, { heuteTag = heuteGeschaeft(), kalenderTag
   const ziel = { aktion: "nav", wert: "aktionen" }; const knopf = t("aktionen.uhr.knopf");
   const satz = (ton, text, art) => ({ id: "haltbar", art, ton, text, knopf, ziel });
   const verbrauch = hs.laeuftAb.filter((x) => x.art === "verbrauch");
-  // Prüfgremium 17.10.2026 (3): abgelaufen heißt „nicht mehr verwenden“ – eigener Satz, Vorrang vor allem anderen
+  // Prüfgremium (3): abgelaufen heißt „nicht mehr verwenden“ – eigener Satz, Vorrang vor allem anderen
   const vorbei = verbrauch.filter((x) => x.tage < 0);
   if (vorbei.length > 1) return satz("rot", t("aktionen.uhr.vorbeiMehrere", vorbei.length), "verbrauch");
   if (vorbei.length === 1) return satz("rot", t("aktionen.uhr.vorbei", artikelText(vorbei[0].name)), "verbrauch");

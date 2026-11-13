@@ -1,7 +1,7 @@
-// Preisrunden-Rechner im Büro (Masterauftrag „Gehirn“ 1.2, 1.3 und 1.6, 28.10.2026).
+// Preisrunden-Rechner im Büro.
 // Ein Gericht, ein neuer Preis: „Bis zu x von 100 Gästen dürfen wegbleiben, dann verdienst du gleich viel“ und Euro im Monat, wenn alle bleiben.
 // Darunter die Extras dieses Gerichts („bringt dir ≈ x €“) und „Was bringen 30 Cent mehr?“ für die Gerichte mit dem größten Hebel.
-// Gerechnet wird in js/preisrunde.js, js/hebel.js und js/extras.js; hier nur Anzeige und Entwurf (Trennung 2, 17.10.2026).
+// Gerechnet wird in js/preisrunde.js, js/hebel.js und js/extras.js; hier nur Anzeige und Entwurf.
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtEuroGeschaetzt, fmtZahl, parseZahl, uid } from "../util.js";
 import { kalkulation } from "../engine.js";
@@ -12,9 +12,9 @@ import { nav } from "./nav.js";
 import { preisRundeUebernehmen, extraDazu, extraWeg } from "../stamm.js";
 import { rund2 } from "../geld.js";
 
- // Setzung 28.10.2026: Schritt der Knöpfe −/+ (10 Cent)
-const START_AUFSCHLAG = 0.50; // Setzung 28.10.2026: Rechner öffnet mit +0,50 € (Goldwert-Beispiel des Masterauftrags)
-const MIN_PREIS = 0.10; // Setzung 28.10.2026: kleinster Preis im Rechner
+ // Setzung: Schritt der Knöpfe −/+ (10 Cent)
+const START_AUFSCHLAG = 0.50; // Setzung: Rechner öffnet mit +0,50 € (Goldwert-Beispiel des Masterauftrags)
+const MIN_PREIS = 0.10; // Setzung: kleinster Preis im Rechner
 let gerichtId = null, preisNeu = null; let entwurf = { name: "", preis: "", zutat: "", menge: "" };
 export const preisrundeZuruecksetzen = () => { gerichtId = null; preisNeu = null; entwurf = { name: "", preis: "", zutat: "", menge: "" }; };
 

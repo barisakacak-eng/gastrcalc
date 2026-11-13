@@ -1,5 +1,5 @@
-// Zeki-Auftritt beim App-Start (Variante B, Baris-Freigabe 27.10.2026). Nur Anzeige, keine Rechen- oder Speicherlogik.
-// Ablauf (28.10.2026 auf die Gliederpuppe umgestellt): 0–1,0 s Zeki läuft am Kopfplatz herein · 1,0–2,3 s er winkt, unter dem Logo steht klein „Hallo, Chef!“ · danach Ruhe.
+// Zeki-Auftritt beim App-Start. Nur Anzeige, keine Rechen- oder Speicherlogik.
+// Ablauf: 0–1,0 s Zeki läuft am Kopfplatz herein · 1,0–2,3 s er winkt, unter dem Logo steht klein „Hallo, Chef!“ · danach Ruhe.
 // Höchstens einmal pro App-Start (sessionStorage), nie bei „reduzierte Bewegung“, jeder Tipp beendet ihn sofort.
 // Er fängt keine Eingaben ab: Die Seite ist von der ersten Sekunde an bedienbar.
 import { zekiSpielen } from "./gastrocash-brand.js";

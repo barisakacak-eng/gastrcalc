@@ -1,4 +1,4 @@
-// Euro-Zähler „Weniger Verlust seit Start“ (Titel 24.10.2026 nach Gremium 3: keine Wirkungsbehauptung, § 5 UWG; vorher „Diesen Monat gebracht“) (Vertrag docs/vertraege.md Abschnitt 1, Zoro 23.10.2026).
+// Euro-Zähler „Weniger Verlust seit Start“.
 // Rein: liest den Stand, schreibt nichts, gibt kein HTML zurück. Nur Gemessenes zählt in die Summe; nichts wird erfunden.
 // Leitsatz: vorne wird verdient, hinten bleibt das Geld – der Zähler zeigt beides, aber nur mit Beleg.
 import { heuteGeschaeft } from "./util.js";
@@ -8,7 +8,7 @@ import { schwundVerdacht } from "./ware.js"; // W2-K1
 import { tageZwischen, plusTage } from "./zeit.js";
 import { rund2, nettoVonBrutto } from "./geld.js";
 
-export const AUSGANGSWERT_TAGE = 14; // Wochen 1–2 nach Messbeginn (Baris 21.10.2026)
+export const AUSGANGSWERT_TAGE = 14; // Wochen 1–2 nach Messbeginn
 
 const istMuell = (e) => e && !e.storniert && typeof e.datum === "string" && (SCHWUND_ARTEN[e.art] || 1) === 1;
 
@@ -24,7 +24,7 @@ function muellWert(stand, von, bis) {
   let s = 0, n = 0, u = 0;
   for (const e of stand.schwund || []) {
     if (!istMuell(e) || e.datum < von || e.datum > bis) continue;
-    const w = eintragWert(e, stand); if (w === null) { u += 1; continue; } // Gremium 2 (24.10.2026): unbewertete Einträge zählen nicht als Messung
+    const w = eintragWert(e, stand); if (w === null) { u += 1; continue; } // Gremium 2: unbewertete Einträge zählen nicht als Messung
     n += 1; s += w;
   }
   return { wert: s, anzahl: n, unbewertet: u };
@@ -64,18 +64,18 @@ function postenPapier(stand) {
   return { art: "papier", euro: rund2((min / 60) * satz), gemessen: false, stand: "geschaetzt", quelle: `≈ ${min} Minuten Papierkram je Monat vorher, Schätzung des Wirts` };
 }
 
-// Posten Preis (Masterauftrag 1.4, 28.10.2026): Preisrunden, die der Wirt im Preisrunden-Rechner übernommen hat (stand.preisRunden).
+// Posten Preis: Preisrunden, die der Wirt im Preisrunden-Rechner übernommen hat (stand.preisRunden).
 // Je Runde: (neu − alt) / (1 + MwSt) × Menge im Monat zum Zeitpunkt der Änderung = Mehr-Deckungsbeitrag im Monat, wenn alle Gäste bleiben.
 // Immer ≈ geschätzt (nicht gemessen): ob Gäste weggeblieben sind, weiß die App nicht. Ohne Runde ehrlich „fehlt“.
 function postenPreis(stand) {
-  const r = (stand?.preisRunden || []).filter((x) => x && x.neu > 0 && x.alt > 0 && x.mengeMonat > 0); // Senkungen zählen mit (Kanzlei-Test 28.10.2026)
+  const r = (stand?.preisRunden || []).filter((x) => x && x.neu > 0 && x.alt > 0 && x.mengeMonat > 0); // Senkungen zählen mit
   if (!r.length) return { art: "preis", euro: null, gemessen: false, stand: "fehlt", quelle: "Noch keine Preisrunde im Preisrunden-Rechner übernommen" };
   const monat = r.reduce((s, x) => s + nettoVonBrutto(x.neu - x.alt, x.mwst) * x.mengeMonat, 0);
   // Je Woche wie die übrigen Posten („pro Woche“ auf Heute): Monat × 12 / 52
   return { art: "preis", euro: rund2(Math.max(0, monat) * 12 / 52), gemessen: false, stand: "geschaetzt", quelle: `≈ ${r.length} Preisrunde(n), je Woche bei gleicher Menge` };
 }
 
-// Posten Schwund (W2-K1, 28.10.2026): Euro aus der Wochenzählung, Ampel „melden“, ab der zweiten Zählung. Immer ≈ (Rezept und Verkäufe
+// Posten Schwund: Euro aus der Wochenzählung, Ampel „melden“, ab der zweiten Zählung. Immer ≈ (Rezept und Verkäufe
 // sind Durchschnitte), nie „gemessen“: es ist ein Verdacht, kein belegter Verlust. Euro = je Woche (Zeitraum zwischen den Zählungen).
 function postenSchwund(stand) {
   let v = null; try { v = schwundVerdacht(stand); } catch { v = null; }

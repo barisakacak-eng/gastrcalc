@@ -1,4 +1,4 @@
-// Trennung (17.10.2026): Sicherungsstufe aus js/screens/nav.js ins Rechenwerk verschoben – rein rechnend, ohne Oberfläche.
+// Trennung: Sicherungsstufe aus js/screens/nav.js ins Rechenwerk verschoben – rein rechnend, ohne Oberfläche.
 // Sicherung: gelb ab 3 Tagen oder 20 neuen Einträgen, rot ab 7 Tagen (wie Etappe 5)
 import { eintraegeZaehlen } from "./store.js";
 import { isoTag, monatsErster, monatVon } from "./zeit.js";
@@ -10,11 +10,11 @@ export function sicherungStufe(wurzel, jetzt = Date.now()) {
   return { stufe: tage === null ? (n >= 5 ? "rot" : null) : tage >= 7 ? "rot" : (tage >= 3 || neu >= 20) ? "gelb" : null, tage, neu, n };
 }
 
-// Sicherung Stufe 1 (Masterauftrag „Gehirn“ 0.3, 28.10.2026): Wann erinnert Zeki an „Sicherung schicken“?
+// Sicherung Stufe 1: Wann erinnert Zeki an „Sicherung schicken“?
 //   nie gesichert und schon ≥ 5 Einträge → grund "nie" · letzte Sicherung ≥ 7 Tage alt → "woche"
 //   in den ersten 7 Tagen eines Monats, letzte Sicherung vor dem Monatsersten und seitdem neue Einträge → "monat" (Monat ist abgeschlossen)
 // Rückgabe: null | { grund, tage } (tage = null bei „nie“). Kalendertage in Berliner Zeit.
-const SICHERUNG_MONAT_TAGE = 7; // Setzung 28.10.2026
+const SICHERUNG_MONAT_TAGE = 7; // Setzung
 export function sicherungFaellig(wurzel, jetzt = Date.now()) {
   const s = sicherungStufe(wurzel, jetzt); if (!s) return null;
   if (s.tage === null) return s.n >= 5 ? { grund: "nie", tage: null } : null;
@@ -24,9 +24,9 @@ export function sicherungFaellig(wurzel, jetzt = Date.now()) {
   return null;
 }
 
-// Laden-Umbau (20.10.2026): Nach dem Teilen fragt die App „Wo liegt sie jetzt?“. Nur „woanders“ (anderes Gerät, Mail, Cloud) zählt als
+// Laden-Umbau: Nach dem Teilen fragt die App „Wo liegt sie jetzt?“. Nur „woanders“ (anderes Gerät, Mail, Cloud) zählt als
 // Sicherung und setzt die Erinnerung zurück. „handy“ (nur auf diesem Handy) zählt NICHT – geht das Handy verloren, ist beides weg
-// (Eigentümer-Entscheidung 20.10.2026). Rückgabe: true = als Sicherung gezählt.
+//. Rückgabe: true = als Sicherung gezählt.
 const SICHERUNG_ORTE = ["woanders", "handy"];
 export function sicherungOrtSetzen(wurzel, ort, { jetzt = new Date() } = {}) {
   if (!wurzel || !SICHERUNG_ORTE.includes(ort) || ort !== "woanders") return false;
@@ -34,7 +34,7 @@ export function sicherungOrtSetzen(wurzel, ort, { jetzt = new Date() } = {}) {
   return true;
 }
 
-// Datensicherung (28.10.2026, Bauplan Prompt 12): Vorschau vor dem Einlesen – wie viele Tage stecken in der Datei, von wann bis wann.
+// Datensicherung: Vorschau vor dem Einlesen – wie viele Tage stecken in der Datei, von wann bis wann.
 // Zählt jedes Feld „datum“ (JJJJ-MM-TT) in allen Läden: Umsatz, Müll, Kühlung, Abschlüsse, Lieferungen … Rein rechnend.
 export function sicherungZeitraum(wurzel) {
   const tage = new Set(); const RE = /^\d{4}-\d{2}-\d{2}$/;

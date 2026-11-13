@@ -1,7 +1,7 @@
-// Aktion planen (18.10.2026): Zeitraum-Vorschlag, Fortschritt und Bilanz einer Aktion. Reine Funktionen, keine Oberfläche, kein Netz;
+// Aktion planen: Zeitraum-Vorschlag, Fortschritt und Bilanz einer Aktion. Reine Funktionen, keine Oberfläche, kein Netz;
 // geschrieben wird nur in aktionenAbschliessen (Bilanz nach dem Ende) – die Bildschirme zeigen nur an.
 //
-// Vorgabe des Eigentümers (18.10.2026): „Die Laufzeit einer Aktion muss immer variabel sein und mit dem Gastronomen besprochen werden.
+// Vorgabe des Eigentümers: „Die Laufzeit einer Aktion muss immer variabel sein und mit dem Gastronomen besprochen werden.
 // Dahinter gehören Aktionszeitraum, Warenbestand und Interesse.“ → Die App SCHLÄGT einen Zeitraum vor, begründet ihn in einem kurzen Satz
 // und der Wirt bestätigt oder ändert ihn (nie automatisch, js/tafel.js aktionUebernehmen / aktionZeitraumSetzen).
 //
@@ -269,7 +269,7 @@ export function aktionBilanz(stand, a, { heuteTag = heuteGeschaeft(), k = kalkul
 export function aktionenAbschliessen(stand, { heuteTag = heuteGeschaeft(), jetzt = new Date().toISOString(), k = null } = {}) {
   let n = 0;
   stand.aktionen = (stand.aktionen || []).map((a) => {
-    if (a.bilanz || a.doppelt || !aktionVorbei(a, heuteTag)) return a; // Prüfgremium 18.10.2026 (M1): zusammengelegte Kopie hat keine eigene Bilanz
+    if (a.bilanz || a.doppelt || !aktionVorbei(a, heuteTag)) return a; // Prüfgremium (M1): zusammengelegte Kopie hat keine eigene Bilanz
     k ??= kalkulation(stand); n += 1;
     return { ...a, bilanz: aktionBilanz(stand, a, { heuteTag, k, jetzt }) };
   });
@@ -291,7 +291,7 @@ export function fortschrittZeilen(f) {
   return z;
 }
 // Zeitraum in Worten: „Mo 19.10. – So 25.10.“, „ab Mo 19.10., bis die Ware weg ist (, längstens …)“
-// Prüfgremium 18.10.2026 (H1): ohne letztes Datum immer „bis die Ware weg ist“ (auch bei einem Stand ohne ende) – nie ein leeres Datum
+// Prüfgremium (H1): ohne letztes Datum immer „bis die Ware weg ist“ (auch bei einem Stand ohne ende) – nie ein leeres Datum
 export const aktionZeitraumText = (a) => (a.ende === "ware" || !a.bis ? (a.bis ? t("plan.zeitraumWareBis", datumKurz(a.von), datumKurz(a.bis)) : t("plan.zeitraumWare", datumKurz(a.von))) : t("plan.zeitraum", datumKurz(a.von), datumKurz(a.bis)));
 export function bilanzText(b) {
   if (!b || b.vergleichbar < MIN_DATENTAGE || b.mehrAnteil === null) return t("plan.bilanzOhne");

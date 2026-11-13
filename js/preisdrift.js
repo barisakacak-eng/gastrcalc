@@ -1,4 +1,4 @@
-// Preisdrift in Euro (Masterauftrag „Gehirn“ 1.4, 28.10.2026): Was kostet dich die Preiserhöhung einer Zutat im Monat,
+// Preisdrift in Euro: Was kostet dich die Preiserhöhung einer Zutat im Monat,
 // und welches Gericht ist dadurch unter Rot gerutscht? Reine Rechnung, keine Oberfläche.
 //
 // Rechenweg je Zutat (nur echte Einkaufspreise, keine Richtpreise):
@@ -12,13 +12,13 @@ import { kalkulation, mengenJeMonat, preisJeBasis, istRichtpreis } from "./engin
 import { sollVerbrauch } from "./verkauf.js";
 import { plusTage } from "./zeit.js";
 
-const DRIFT_TAGE = 91; // Setzung 28.10.2026: „seit 3 Monaten“ ≈ 13 Wochen
-const DRIFT_AB = 0.03; // Setzung 28.10.2026: kleinere Änderungen als 3 % zeigt die App nicht (Rundung, Packungswechsel)
+const DRIFT_TAGE = 91; // Setzung: „seit 3 Monaten“ ≈ 13 Wochen
+const DRIFT_AB = 0.03; // Setzung: kleinere Änderungen als 3 % zeigt die App nicht (Rundung, Packungswechsel)
 
 
 // Preis je Basis, der am Tag `grenze` galt, oder null (keine Änderung seither, oder nur Richtpreise)
 function preisDamals(a, grenze) {
-  // W2-K2 (28.10.2026): nur Preise vom Beleg – eine Handkorrektur (Tippfehler) ist keine Preiserhöhung des Lieferanten
+  // W2-K2: nur Preise vom Beleg – eine Handkorrektur (Tippfehler) ist keine Preiserhöhung des Lieferanten
   const h = (a.preisHistorie || []).filter((x) => x.herkunft === "beleg" && typeof x.datum === "string" && x.datum >= grenze);
   if (!h.length) return null;
   const x = h[0];

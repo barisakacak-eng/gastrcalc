@@ -12,7 +12,7 @@ export { ruhetageVerlauf, ruhetageAm, tagGewicht, oeffnungstage }; // viele Modu
 
 // Mehrwertsteuer auf Eingangsrechnungen (Strom, Telefon, Entsorgung …): Regelsatz. Ein brutto eingetragener Posten wird netto verrechnet,
 // weil der Betrieb die Vorsteuer zurückbekommt (Regelbesteuerung).
-// Paket 3 (16.10.2026), M1: Steuersatz je Posten (Feld satz: 19, 7 oder 0 in Prozent), Standard 19; Wasser 7. Kleinunternehmer
+// Paket 3, M1: Steuersatz je Posten (Feld satz: 19, 7 oder 0 in Prozent), Standard 19; Wasser 7. Kleinunternehmer
 // (betrieb.kleinunternehmer, Schalter im Büro) bekommen keine Vorsteuer zurück: dann zählt jeder Bruttobetrag, wie er ist (Satz 0).
 export const VORSTEUER = mwstHeute("voll"); // Regelsatz (Regelwerk mwst_voll) – Fallback für alte Posten ohne Satz
 export { nettoVonBrutto }; // eine Definition: js/geld.js (Weiterreichen, weil viele Module sie von der Engine holen)
@@ -108,7 +108,7 @@ function lohnJeMonat(team) {
 // Lohnsplit saisonal/ganzjährig kommt später). Ergebnis-Objekt sagt, ob Teile offen sind.
 export function monatsLast(stand, datum = heuteGeschaeft()) {
   const fk = fixkosten(stand, typeof datum === "string" ? datum.slice(0, 7) : null); // Lauf 6 (P1 B4): Beträge des Monats (gültig ab)
-  // 27.10.2026: Lohn im Monat = eingetragene Lohnkosten, mindestens aber die festen Monatslöhne der Personen (Brutto + Arbeitgeberanteil)
+  // Lohn im Monat = eingetragene Lohnkosten, mindestens aber die festen Monatslöhne der Personen (Brutto + Arbeitgeberanteil)
   const lohnEingetragen = lohnJeMonat(stand.team); const festPersonal = festPersonalMonat(stand);
   const lohn = festPersonal > 0 ? Math.max(lohnEingetragen ?? 0, festPersonal) : lohnEingetragen;
   const eigen = eigenerLohnJeMonat(stand.team, datum);
@@ -118,7 +118,7 @@ export function monatsLast(stand, datum = heuteGeschaeft()) {
   return { fix: fk, lohn, festPersonal, eigen, fixJeOffen, reinigung, sachbezugAbgaben, gesamt: fixJeOffen + (lohn ?? 0) + sachbezugAbgaben + (eigen.betrag ?? 0) + (reinigung?.betrag ?? 0), lohnOffen: lohn === null, offen: fk.offen + (lohn === null ? 1 : 0) + (eigen.betrag === null ? 1 : 0) + (reinigung?.firmaOffen ? 1 : 0) };
 }
 
-// Masterauftrag 0.5 (28.10.2026): Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage (≈ je Monat).
+// Masterauftrag 0.5: Abgaben des Arbeitgebers auf den Sachbezug der Personalessen der letzten 30 Tage (≈ je Monat).
 // = Sachbezugswert (SvEV nach Datum) × Arbeitgeber-Aufschlag „angestellt“ (inkl. BGN). Die Ware selbst zählt schon beim Wareneinsatz.
 export function sachbezugAbgabenMonat(stand, datum = heuteGeschaeft()) {
   const von = tagPlus(datum, -29); let sb = 0;
@@ -229,7 +229,7 @@ function provisionAnteil(portal) {
 // ======================= Etappe 2: Karte, Artikel, Kalkulation =======================
 import { neuerTakt, imTakt } from "./takt.js";
 import { EINHEITEN, inBasis, PRODUKT_INDEX, GARVERLUST_START, STEUER_JE_GRUPPE } from "./data/katalog.js";
-import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026): offene Getränke – Schankverlust auf das Großgebinde
+import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke: offene Getränke – Schankverlust auf das Großgebinde
 
 // Klasse eines Gerichts aus dem Katalogbereich (Äquivalenzziffern, Prüfung Befund 3). Der Betrieb kann sie ändern.
 const KLASSE_JE_BEREICH = {
@@ -240,7 +240,7 @@ const KLASSE_JE_BEREICH = {
 };
 export const klasseFuerBereich = (b) => KLASSE_JE_BEREICH[b] || "haupt";
 
-// Steuersatz eines Gerichts (Prüfung Befund 7): Getränke 19 %, Speisen 7 % (Stand Oktober 2026, dauerhaft 7 % seit 1.1.2026).
+// Steuersatz eines Gerichts (Prüfung Befund 7): Getränke 19 %, Speisen 7 %.
 export function steuersatzGericht(gericht) {
   if (typeof gericht.steuer === "number") return gericht.steuer;
   return gericht.klasse === "getraenk" ? mwstHeute("voll") : mwstHeute("ermaessigt");
@@ -254,12 +254,12 @@ export function steuersatzAusZutaten(zutaten) {
 // Steuersatz eines Artikels beim Einkauf: Getränke 19 %, Lebensmittel 7 %. Verpackung 19 %.
 export const steuersatzArtikel = (artikel) => mwstHeute(STEUER_JE_GRUPPE[artikel?.gruppe] ?? (artikel?.gruppe === "verpackung" ? "voll" : "ermaessigt"));
 // Nettopreis je Gebinde: ein brutto eingetragener Preis (Supermarktbon) wird um die Steuer bereinigt.
-// Paket 3 (16.10.2026), M3: Preis 0 ist kein Preis (sonst wird das Gericht grün statt grau) – gilt wie null als „fehlt“.
+// Paket 3, M3: Preis 0 ist kein Preis (sonst wird das Gericht grün statt grau) – gilt wie null als „fehlt“.
 export function preisNettoGebinde(artikel) {
   if (artikel.preis === null || artikel.preis === undefined || !(Number(artikel.preis) > 0)) return null;
   return artikel.preisBasis === "brutto" ? nettoVonBrutto(artikel.preis, steuersatzArtikel(artikel)) : artikel.preis;
 }
-// Stück ↔ Gewicht (Baris 19.10.2026, Spezifikation „Selbstgemacht und Gebinde“): ein Artikel kann ein Stückgewicht haben
+// Stück ↔ Gewicht: ein Artikel kann ein Stückgewicht haben
 // (g bzw. ml je Stück) – eigenes Feld stueckGewicht, sonst bei selbst Gemachtem aus der Stück-Ausbeute („40 Ballen à 250 g“).
 // Damit lassen sich Rezepte in Stück und Einkauf in Gramm (oder umgekehrt) verrechnen. Ohne Stückgewicht wird nie geraten.
 export function stueckGewicht(a) {
@@ -306,7 +306,7 @@ export function gebindePreise(artikel) {
   const z = kette[1] || null;
   return { gebinde: p, zwischen: p !== null && z ? p / z.anzahl : null, jeEinheit: p !== null && kette[0].inhalt ? p / kette[0].inhalt : null, einheit: kette[0].einheit };
 }
-// Richtpreise (17.10.2026): ein eingesetzter Richtpreis trägt am Artikel die Marke richtpreis {preis, menge, einheit, stand, …}.
+// Richtpreise: ein eingesetzter Richtpreis trägt am Artikel die Marke richtpreis {preis, menge, einheit, stand, …}.
 // Er gilt nur, solange Preis, Packung und Basis genau so sind, wie sie eingesetzt wurden – ändert der Wirt etwas, ist es sein Preis.
 export function istRichtpreis(a) {
   const r = a?.richtpreis;
@@ -322,7 +322,7 @@ export function preisMerken(artikel, datum) {
   artikel.preisHistorie ??= [];
   const letzter = artikel.preisHistorie[artikel.preisHistorie.length - 1];
   if (letzter && letzter.preis === artikel.preis && letzter.menge === artikel.packung.menge && letzter.einheit === artikel.packung.einheit) return;
-  // W2-K2 (Abnahme Welle 2, 28.10.2026): herkunft des alten Preises – "richtpreis" | "beleg" | "hand" | "errechnet" (aus artikel.preisQuelle); alte Daten ohne Angabe bleiben ohne
+  // W2-K2: herkunft des alten Preises – "richtpreis" | "beleg" | "hand" | "errechnet" (aus artikel.preisQuelle); alte Daten ohne Angabe bleiben ohne
   const quelle = istRichtpreis(artikel) ? "richtpreis" : ["beleg", "hand", "errechnet"].includes(artikel.preisQuelle) ? artikel.preisQuelle : null;
   artikel.preisHistorie.push({ datum, preis: artikel.preis, menge: artikel.packung.menge, einheit: artikel.packung.einheit, basis: artikel.preisBasis || "netto", ...(quelle ? { herkunft: quelle } : {}) });
   if (artikel.preisHistorie.length > 24) artikel.preisHistorie.splice(0, artikel.preisHistorie.length - 24);
@@ -345,14 +345,14 @@ export function warenGericht(gericht, artikelIndex) {
     const pj = a ? preisJeBasis(a) : null;
     if (pj === null) { fehlt.push(z.name); continue; }
     if (!(Number(z.menge) > 0)) { fehlt.push(z.name); continue; }                      // Menge fehlt: kein 0-€-Posten
-    const mBasis = mengeInArtikelBasis(z.menge, z.einheit, a); // 19.10.2026: Stück ↔ Gramm über das Stückgewicht
+    const mBasis = mengeInArtikelBasis(z.menge, z.einheit, a); // Stück ↔ Gramm über das Stückgewicht
     if (mBasis === null) { fehlt.push(z.name); continue; } // g gegen Stück ohne Stückgewicht: nicht rechnen
     const gv = a ? garverlustAnteil(a) : { wert: 0 };
     if (gv.status === "geschaetzt") geschaetzt = true;
-    if (preisGeschaetzt(a)) { geschaetzt = true; richtpreis = true; } // Richtpreise (17.10.2026): Wareneinsatz mit Richtpreis = Schätzung (≈)
+    if (preisGeschaetzt(a)) { geschaetzt = true; richtpreis = true; } // Richtpreise: Wareneinsatz mit Richtpreis = Schätzung (≈)
     const roh0 = rohmengeFuer(mBasis, gv.wert);
     if (roh0 === null) { fehlt.push(z.name); continue; }
-    const roh = mitSchankverlust(roh0, schankAnteil(gericht, z.name)); // Getränke (18.10.2026): Ausschank / (1 − Schankverlust), Standard 0
+    const roh = mitSchankverlust(roh0, schankAnteil(gericht, z.name)); // Getränke: Ausschank / (1 − Schankverlust), Standard 0
     waren += roh * pj;
   }
   // Ein Gericht ohne Rezept hat keinen Wareneinsatz von 0 €, sondern keinen – bleibt grau.
@@ -436,13 +436,13 @@ export function zwischenpreis(artikel, artikelIndex, minutensatz = null) {
     const mB = pj === null ? null : mengeInArtikelBasis(z.menge, z.einheit, a);
     if (pj === null || !(Number(z.menge) > 0) || mB === null) { fehlt.push(z.name); continue; }
     material += mB * pj; teile.push({ name: z.name, wert: mB * pj });
-    if (istRichtpreis(a)) richtpreis = true; // Richtpreise (17.10.2026): das Teil erbt die Schätzung
+    if (istRichtpreis(a)) richtpreis = true; // Richtpreise: das Teil erbt die Schätzung
   }
   const arbeitGeld = minutensatz === null ? null : (Number(r.arbeitMin) || 0) * minutensatz;
   return { preis: fehlt.length ? null : material, bisher: material, teile, arbeitGeld, fehlt, richtpreis };
 }
 
-// Warenwert eines selbst gemachten Teils (19.10.2026): je Ansatz, je kg/l, je Stück (Ballen, Fladen) und je 50 g (Soße auf dem Teller).
+// Warenwert eines selbst gemachten Teils: je Ansatz, je kg/l, je Stück (Ballen, Fladen) und je 50 g (Soße auf dem Teller).
 // Nur, was sich ohne Annahme rechnen lässt: je Stück braucht Stückzahl oder Stückgewicht, je 50 g eine Gewichtsausbeute.
 export function selbstWerte(a) {
   const pj = preisJeBasis(a); if (pj === null) return null;
@@ -537,7 +537,7 @@ function kalkulationRechnen(standOriginal, { produktivAnteil = 0.7 } = {}) {
   const gerichteFix = gerichteMitMenge.map((x) => ({ ...x, menge: mengenFix[x.id] || 0 }));
   const kFix = fixkostenJeGericht(gerichteFix, last.gesamt);
   const portal = (stand.kanaele?.portale || []).find((p) => p.provision > 0) || null;
-  // 27.10.2026 (Prüfung fest/beweglich, F2): Die Untergrenze „Anteil nie unter 0“ (schnelle Getränke) hob die Summe aller Anteile über die
+  // (Prüfung fest/beweglich, F2): Die Untergrenze „Anteil nie unter 0“ (schnelle Getränke) hob die Summe aller Anteile über die
   // Monatskosten (Beispiel ≈ 711 €/Monat zu viel). Was unten abgeschnitten wird, ziehen wir jetzt anteilig bei den übrigen Gerichten wieder ab.
   const roh = new Map(gerichteMitMenge.map((x) => [x.id, (kFix(x) ?? 0) + (minutensatz === null ? 0 : zeitzuschlag(x, tQuer, minutensatz))]));
   let abgeschnitten = 0, positiv = 0;
@@ -564,7 +564,7 @@ function kalkulationRechnen(standOriginal, { produktivAnteil = 0.7 } = {}) {
     }
     const preisBrutto = typeof x.preis === "number" ? x.preis : null;
     const preisNetto = preisBrutto === null ? null : nettoVonBrutto(preisBrutto, mwst);
-    const { ampel, db, gewinn: ampelGewinn, quote: ampelQuote } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto); // Gremium 2 (24.10.2026): eine Rechnung für Ampel und Anzeige
+    const { ampel, db, gewinn: ampelGewinn, quote: ampelQuote } = preisAmpel({ sk, zielNetto, mwst, waren: w.vollstaendig ? w.waren : null }, preisBrutto); // Gremium 2: eine Rechnung für Ampel und Anzeige
     return { id: x.id, name: x.name, klasse: x.klasse, menge: x.menge, waren: w.vollstaendig ? w.waren : null, warenFehlt: w.fehlt, warenGeschaetzt: w.geschaetzt, warenRichtpreis: w.richtpreis,
       fix, zeit, sk, mwst, preisBrutto, preisNetto, zielNetto, zielBrutto, zielAufschlag, zielStufe: ziel.stufe, portalBrutto, portalStufe, portalName: portal?.name || null, portalBasis: portal ? basisFuerRechnung(portal.basis) : null, portalBasisUnbekannt: portal ? portal.basis !== "netto" && portal.basis !== "brutto" : false, ampel, db,
       wareneinsatzAnteil: preisNetto > 0 && w.vollstaendig ? w.waren / preisNetto : null, ampelGewinn, ampelQuote };
@@ -576,12 +576,12 @@ function kalkulationRechnen(standOriginal, { produktivAnteil = 0.7 } = {}) {
     unvollstaendig: last.offen > 0 || geschaetzt || zeilen.some((z) => z.ampel === "grau") };
 }
 
-// Ampel je Gericht (Baris 19.10.2026): gemessen am GEWINN NACH ALLEN KOSTEN in % vom Nettopreis – Ware, Personal (auch eigener Lohn),
+// Ampel je Gericht: gemessen am GEWINN NACH ALLEN KOSTEN in % vom Nettopreis – Ware, Personal (auch eigener Lohn),
 // Miete, Nebenkosten und Zeit sind in den Selbstkosten (sk). Rot unter 10 %, Gelb 10 bis unter 19 %, Grün ab 19 %.
 // Einordnung: BMF-Richtsatzsammlung 2024, Imbissstuben u. Ä. (Umsatz über 100.000 €): Reingewinn 8–39 %, Mittel 24 % vom Umsatz –
 // dort OHNE Unternehmerlohn; unsere Rechnung zieht den eigenen Lohn ab und ist damit strenger.
-// Quelle: https://www.ihk-muenchen.de/ihk/documents/Recht-Steuern/Steuerrecht/Einkommensteuer/2025-12-08-download-richtsatzsammlung-2024.pdf (geprüft 19.10.2026)
-// Vorab-Prüfung 03.11.2026 (C13): Richtsatzsammlung 2025 = Kalenderjahr 2025, BMF-Schreiben 25.06.2026 (iww.de, abgerufen 03.11.2026); Reingewinn Imbiss Mittel 24 %
+// Quelle: https://www.ihk-muenchen.de/ihk/documents/Recht-Steuern/Steuerrecht/Einkommensteuer/2025-12-08-download-richtsatzsammlung-2024.pdf
+// Vorab-Prüfung (C13): Richtsatzsammlung 2025 = Kalenderjahr 2025, BMF-Schreiben; Reingewinn Imbiss Mittel 24 %
 // laut Wiedergabe im Prüfpaket Welle 3 (Original gesperrt). Grenzen 10/19 % bleiben Setzung; der Hinweistext nennt jetzt die Sammlung 2025 statt „Datenjahr 2024“.
 export const AMPEL_GRENZEN = { rot: 0.10, gruen: 0.19 };
 // zeile braucht sk, mwst, waren (wie in kalkulation().zeilen). Ampel rechnet auf den Cent, so wie die Zahlen angezeigt werden.
@@ -596,7 +596,7 @@ export function preisAmpel(zeile, preisBrutto) {
   return { ampel, db, gewinn, quote, preisNetto };
 }
 
-// Wohin geht der Preis? (Baris 19.10.2026) Aufteilung eines Bruttopreises je Portion in Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn.
+// Wohin geht der Preis? Aufteilung eines Bruttopreises je Portion in Ware, Personal, Miete, Nebenkosten, Steuer, Gewinn.
 // Der Fixanteil (fix) verteilt die Monatslast; er wird nach den Anteilen der Monatslast aufgeteilt (Lohn + eigener Lohn → Personal,
 // Kategorie Miete/Standgebühr → Miete, Rest → Nebenkosten). Zeitzuschlag gehört zum Personal. Summe der Teile = Bruttopreis.
 export function preisAufteilung(zeile, last, preisBrutto) {
@@ -607,7 +607,7 @@ export function preisAufteilung(zeile, last, preisBrutto) {
   const kat = last.fix?.jeKategorie || {}; const mieteMonat = ((kat.miete?.summe || 0) + (kat.standgebuehr?.summe || 0)) * (last.fix?.gesamt > 0 ? last.fixJeOffen / last.fix.gesamt : 1);
   const anteil = (x) => (gesamt > 0 ? x / gesamt : 0);
   const ware = zeile.waren;
-  // 27.10.2026 (F2): Anteile wie in der Kalkulation gekürzt, damit die Teile wieder den Selbstkosten entsprechen
+  // (F2): Anteile wie in der Kalkulation gekürzt, damit die Teile wieder den Selbstkosten entsprechen
   const k = fix + zeit > 0 ? Math.max(0, zeile.sk - ware) / (fix + zeit) : 0; // gekürzt auf 0 → keine Miete/Personal-Anteile (Gegenprüfung 27.10.)
   const personal = Math.max(0, fix * anteil(personalMonat) + zeit) * k;
   const miete = fix * anteil(mieteMonat) * k;
@@ -618,7 +618,7 @@ export function preisAufteilung(zeile, last, preisBrutto) {
 
 // Mischsatz der Umsatzsteuer auf den Tagesumsatz (Etappe 5): eigener Wert, sonst aus der Karte (Speisen 7 %, Getränke 19 %,
 // gewichtet mit Preis × Menge), sonst 7 %. Der Tagesumsatz aus der Kasse ist brutto; der Zähler rechnet netto.
-// Paket 3 (16.10.2026), M2: ohne echte Mengen (mengenJeMonat verteilt gleichmäßig, eine Cola zählt wie ein Döner) ist der Mischsatz
+// Paket 3, M2: ohne echte Mengen (mengenJeMonat verteilt gleichmäßig, eine Cola zählt wie ein Döner) ist der Mischsatz
 // eine Schätzung – geschaetzt: true wandert in Zähler und Monatsziel. Keine neue Mengenabfrage; eigener Satz = nicht geschätzt.
 export function umsatzSteuerSatz(stand) {
   if (typeof stand.betrieb?.steuerSatz === "number") return { satz: stand.betrieb.steuerSatz, quelle: "eigen", geschaetzt: false };
@@ -632,7 +632,7 @@ export function umsatzSteuerSatz(stand) {
   return { satz: mwstHeute("ermaessigt"), quelle: "standard", geschaetzt: true };
 }
 
-// Paket 3 (16.10.2026), M4: eine Warnstufe für den Wareneinsatz-Anteil am Nettoumsatz, für Umsatz-Seite, Büro „Monat & Zähler“ und
+// Paket 3, M4: eine Warnstufe für den Wareneinsatz-Anteil am Nettoumsatz, für Umsatz-Seite, Büro „Monat & Zähler“ und
 // Gerichte im Vergleich. null = unauffällig; "hoch" ab 50 %, "sehrHoch" ab 65 %. Im Laden (home.js) wird sie bewusst NICHT gezeigt.
 const WARENEINSATZ_WARNUNG_AB = 0.5;
 export function wareneinsatzWarnung(quote) {
@@ -642,8 +642,8 @@ export function wareneinsatzWarnung(quote) {
   return null;
 }
 
-// Paket 3 (16.10.2026), M15/E2: Branchen-Richtwert Wareneinsatz, wenn weder Belege noch eine Karte mit Einkaufspreisen eine Quote liefern.
-// Quelle (geprüft 16.10.2026): BMF-Richtsatzsammlung für das Kalenderjahr 2025, Gewerbeklasse „Imbissstuben u. Ä.“ (56103.0/56109.0),
+// Paket 3, M15/E2: Branchen-Richtwert Wareneinsatz, wenn weder Belege noch eine Karte mit Einkaufspreisen eine Quote liefern.
+// Quelle: BMF-Richtsatzsammlung für das Kalenderjahr 2025, Gewerbeklasse „Imbissstuben u. Ä.“ (56103.0/56109.0),
 // Rohgewinn I (Mittel und Grenzen) → Wareneinsatz: die Werte stehen im Regelwerk (richtsatz_wareneinsatz, _min, _max). Immer als Schätzung (≈) gekennzeichnet.
 export const RICHTWERT_WARENEINSATZ = { quote: regelwert("richtsatz_wareneinsatz", "2026-12-31"), min: regelwert("richtsatz_wareneinsatz_min", "2026-12-31"), max: regelwert("richtsatz_wareneinsatz_max", "2026-12-31"), quelle: "BMF-Richtsatzsammlung Kalenderjahr 2025, Imbissstuben u. Ä. (56103.0)", stand: "2026-10-16" };
 
@@ -665,13 +665,13 @@ import { rund2, nettoVonBrutto, mwstHeute, mwstProzent } from "./geld.js";
 //  2 = Personalverzehr – bewertet nach Sachbezugswerten (SvEV 2026)
 //  3 = Eigenverzehr des Inhabers – BMF-Pauschbeträge oder Einzelaufzeichnung; hier Einzelaufzeichnung
 // Etappe 5: drei Wege in zwei Tipps – gericht (Teller weg), rohware (Artikel weg), eimer (nur gewogen). Alte Arten bleiben lesbar.
-export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3, ausgegeben: 4 }; // ausgegeben (27.10.2026): Essen, das der Chef Gästen ausgibt – nicht im Pauschbetrag
+export const SCHWUND_ARTEN = { verderb: 1, bruch: 1, fehler: 1, nichtverkauft: 1, gericht: 1, rohware: 1, eimer: 1, personal: 2, eigen: 3, ausgegeben: 4 }; // ausgegeben: Essen, das der Chef Gästen ausgibt – nicht im Pauschbetrag
 // Sachbezugswerte (SvEV) und Pauschbetrag Eigenverbrauch: alle Beträge mit Quelle und Gültigkeit stehen NUR im Regelwerk
 // (js/data/regelwerk.js: sachbezug_fruehstueck, sachbezug_mittag, sachbezug_monat, eigenverbrauch_pauschale). Hier wird nur gelesen.
 // Tageswert = Monatswert ÷ 30 auf zwei Stellen. Mittag und Abend haben denselben Wert. geplant: true = der Eintrag im Regelwerk hat status
-// „geplant“ (Anzeige mit ≈). Die Namen SVEV_2026 / SVEV_2027 / PAUSCHBETRAG_EIGEN_2026 bleiben als Werte für den Stichtag 31.12.2026 bzw. 01.01.2027.
+// „geplant“ (Anzeige mit ≈). Die Namen SVEV_2026 / SVEV_2027 / PAUSCHBETRAG_EIGEN_2026 bleiben als Werte für den Stichtag bzw..
 // Pauschbetrag unentgeltliche Wertabgaben, Gaststätten aller Art mit kalten und warmen Speisen, je Person und Jahr netto: nur zum Vergleich im
-// Steuer-Ordner, keine Buchung (Baris 20.10.2026: P1).
+// Steuer-Ordner, keine Buchung.
 export const PAUSCHBETRAG_EIGEN_2026 = regelwert("eigenverbrauch_pauschale", "2026-12-31");
 const SVEV_TABELLEN = new Map(); // gleiche Inhalte = dasselbe Objekt
 function svevTabelle(tag) {
@@ -682,10 +682,10 @@ function svevTabelle(tag) {
 }
 export const SVEV_2026 = svevTabelle("2026-12-31");
 export const svevAm = (datum) => svevTabelle(typeof datum === "string" && /^\d{4}-\d{2}-\d{2}/.test(datum) ? datum.slice(0, 10) : "2026-12-31");
-// Trennung 2 (17.10.2026): Sachbezug eines Personalessens = Menge × Satz der Mahlzeit (ohne Mahlzeit: Mittag). Vorher zweimal im Bildschirm.
-// 28.10.2026: Satz nach dem Datum des Essens (ohne Datum: heute).
+// Trennung 2: Sachbezug eines Personalessens = Menge × Satz der Mahlzeit (ohne Mahlzeit: Mittag). Vorher zweimal im Bildschirm.
+// Satz nach dem Datum des Essens (ohne Datum: heute).
 export const sachbezugWert = (menge, mahlzeit, datum = heuteGeschaeft()) => { const t = svevAm(datum); return (Number(menge) || 0) * (t[mahlzeit] ?? t.mittag); };
-// Trennung 2 (17.10.2026): Schwund-Liste eines Zeitraums, neueste zuerst (Büro „Listen“).
+// Trennung 2: Schwund-Liste eines Zeitraums, neueste zuerst (Büro „Listen“).
 export const schwundEintraege = (stand, { von, bis }) => (stand.schwund || []).filter((e) => e.datum >= von && e.datum <= bis).slice().reverse();
 
 // Wert eines Schwund-Eintrags zu Einkaufspreisen. Rohware nach Gewicht ohne Garverlust (weggeworfen wird roh gewogen);
@@ -706,7 +706,7 @@ export function wertEintrag(e, stand) {
   return null;
 }
 
-// Paket 3 (16.10.2026), M6: EINE Bewertung für jeden Schwund-Eintrag – Momentaufnahme (Feld wert, auch null = kein Preis) bleibt;
+// Paket 3, M6: EINE Bewertung für jeden Schwund-Eintrag – Momentaufnahme (Feld wert, auch null = kein Preis) bleibt;
 // nur Alt-Einträge ohne das Feld werden zum heutigen Einkaufspreis nachbewertet. Genutzt von schwundAuswertung, Zähler (muellJeTag),
 // muellHeute und den Listen, damit alle dieselbe Zahl zeigen.
 export function eintragWert(e, stand) {
@@ -723,7 +723,7 @@ export function dbJePortion(stand) {
   return m > 0 ? s / m : null;
 }
 
-// Paket 3 (16.10.2026), M7: Schwund-Zeiträume enden am Geschäftstag (bis 4 Uhr zählt die Nacht zum Vortag).
+// Paket 3, M7: Schwund-Zeiträume enden am Geschäftstag (bis 4 Uhr zählt die Nacht zum Vortag).
 export const zeitraumTage = (n) => ({ von: plusTage(heuteGeschaeft(), -(n - 1)), bis: heuteGeschaeft() });
 export const monatsZeitraum = () => { const h = heuteGeschaeft(); return { von: h.slice(0, 8) + "01", bis: h }; };
 
@@ -837,18 +837,18 @@ export function ladenUebersicht(stand) {
 
 // ---------- Etappe 4: Kühlkontrolle ----------
 // Grenzen legt der Betrieb fest (Art. 5 Abs. 2 c VO (EG) 852/2004); die App gibt nur Anhaltspunkte als Text. Ohne Grenze keine Kontrolle.
-export const KUEHL_ARTEN = ["kuehl", "tk", "warm", "eis"]; // eis = Speiseeis-Theke (K3, 28.10.2026)
+export const KUEHL_ARTEN = ["kuehl", "tk", "warm", "eis"]; // eis = Speiseeis-Theke
 export const MASSNAHMEN = ["tuer", "eingeraeumt", "eingestellt", "umgeraeumt", "stecker", "chef", "techniker", "weggeworfen"];
 export const NICHT_GEMESSEN = ["geschlossen", "geraetAus", "leer"];
 export const NACHKONTROLLE_STUNDEN = { h1: 1, h2: 2, naechste: null };
  // 0 = Sonntag (JavaScript)
 
 // Etappe 5 (Baris 12.10.): keine Grenzwerte abfragen. Ohne eigene Grenze gilt ein Standard-Anhaltswert; eigene Werte überschreiben ihn,
-// das Blatt sagt, welcher galt. Korrekturauftrag K1/K2/K3 (Abnahme Welle 0, 28.10.2026) – Quellen, Abruf 28.10.2026:
-//   kuehl ≤ 7 °C: LAVES-Merkblatt MFB 08-002-00 „Lagertemperaturen für Lebensmittel“, Stand 03.08.2022 (Bezug VO (EG) 853/2004, Tier-LMHV),
+// das Blatt sagt, welcher galt. Korrekturauftrag K1/K2/K3 – Quellen, Abruf:
+//   kuehl ≤ 7 °C: LAVES-Merkblatt MFB 08-002-00 „Lagertemperaturen für Lebensmittel“, Stand (Bezug VO (EG) 853/2004, Tier-LMHV),
 //     https://www.laves.niedersachsen.de/download/209574/Merkblatt_Lagertemperaturen_fuer_Lebensmittel.pdf (Datenjahr 2022)
 //   tk ≤ −18 °C: § 2 Abs. 4 TLMV („ständig bei minus 18 Grad C oder tiefer“, kurze Toleranz bis 3 Grad), https://www.gesetze-im-internet.de/tlmv/__2.html
-//   warm ≥ 60 °C: BfR-Stellungnahme 037/2020 vom 27.08.2020 (mindestens 60 °C an allen Stellen; die frühere 65 °C-Empfehlung von 2008 ist abgelöst),
+//   warm ≥ 60 °C: BfR-Stellungnahme 037/2020 vom (mindestens 60 °C an allen Stellen; die frühere 65 °C-Empfehlung von 2008 ist abgelöst),
 //     https://www.bfr.bund.de/cm/343/schutz-vor-lebensmittelbedingten-erkrankungen-beim-heisshalten-von-speisen.pdf
 //   eis ≤ −10 °C: Speiseeis zum Ausportionieren, LAVES-Merkblatt (wie oben). Eine Eiswürfelmaschine ist keine Kühlstelle (Putzplan, Gerät „eismaschine“).
 export const GRENZEN_STANDARD = { kuehl: { min: null, max: 7 }, tk: { min: null, max: -18 }, warm: { min: 60, max: null }, eis: { min: null, max: -10 } };
@@ -904,7 +904,7 @@ export function stationEintragen(r, stelle, daten) {
   return m;
 }
 
-// Trennung (17.10.2026): offenen Rundgang verwerfen (vorher in screens/kuehl.js) – er stand noch nicht im Journal der Messungen.
+// Trennung: offenen Rundgang verwerfen (vorher in screens/kuehl.js) – er stand noch nicht im Journal der Messungen.
 export function rundgangVerwerfen(stand, id) { const vorher = (stand.rundgaenge || []).length; stand.rundgaenge = (stand.rundgaenge || []).filter((x) => x.id !== id); return stand.rundgaenge.length < vorher; }
 
 // Schwund-Eintrag für Ware, die nach einer Kühl-Abweichung weggeworfen wurde (Rundgang und Büro „Ware nach Kühl-Abweichung“ buchen gleich).
@@ -962,7 +962,7 @@ export function nachkontrolleStand(stand, m) {
 }
 
 // W2-H (p03 H1): Was ist mit der Ware? Nur Daten – die Knöpfe baut die Optik-Runde. „Ware weggeworfen“ als Maßnahme zählt schon heute.
-const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen", "behalten"]; // Trennung (17.10.2026), Punkt 4: „behalten“ mit Begründung (Büro)
+const WARE_ENTSCHEIDUNGEN = ["umgelagert", "weggeworfen", "behalten"]; // Trennung, Punkt 4: „behalten“ mit Begründung (Büro)
 export function wareEntscheidung(m) {
   if (m?.ware && WARE_ENTSCHEIDUNGEN.includes(m.ware.art)) return m.ware.art;
   if ((m?.massnahmen || []).includes("weggeworfen")) return "weggeworfen";
@@ -979,7 +979,7 @@ export function wareEntscheiden(stand, messungId, art, { von = null, jetzt = new
   stand.messungen[i] = { ...m, ware: { art, erfasst: jetzt, von, ...(art === "behalten" ? { grund: g } : {}) } };
   return stand.messungen[i];
 }
-// Trennung (17.10.2026), Punkt 4 – Büro „Ware nach Kühl-Abweichung“: offene Abweichungen der letzten 30 Tage ohne Abschluss
+// Trennung, Punkt 4 – Büro „Ware nach Kühl-Abweichung“: offene Abweichungen der letzten 30 Tage ohne Abschluss
 // (dieselbe Auswahl wie der Büro-Hinweis „kuehlMassnahme“ in offen.js), neueste zuerst.
 export function offeneWareEntscheidungen(stand, { heuteTag = heute() } = {}) {
   const ab = tagPlus(heuteTag, -30);
@@ -1018,9 +1018,9 @@ export function abweichungStand(stand, m) {
   return nk === "erledigt" ? "behoben" : nk === "verspaetet" ? "verspaetet" : "massnahmeOffen";
 }
 export const letzteMessung = (stand, stelleId) => messungenDerStelle(stand, stelleId).filter((m) => typeof m.wert === "number").pop() || null;
-// Trennung (17.10.2026): aus js/screens/home.js (Laden-Kachel Kühlung) – die schlimmste Abweichung: letzter Wert je Stelle, offener
+// Trennung: aus js/screens/home.js (Laden-Kachel Kühlung) – die schlimmste Abweichung: letzter Wert je Stelle, offener
 // Rundgang (W2-H, p01 K3) und heutige Messungen am Kalendertag K; sortiert nach Abstand zur Grenze. null = keine.
-// Lauf 2 (31.10.2026), Klicker K1 A1: Die Kachel „Kühlung“ bleibt rot, solange die LETZTE Messung einer Stelle (vom Tag K) abweicht oder eine offene
+// Lauf 2, Klicker K1 A1: Die Kachel „Kühlung“ bleibt rot, solange die LETZTE Messung einer Stelle (vom Tag K) abweicht oder eine offene
 // Rundgang-Messung abweicht. Vorher zählte jede Abweichung des Tages bis Mitternacht – nach einer Nachkontrolle mit 5 °C stand weiter „9 °C“ rot.
 // Die Abweichung selbst bleibt im Kontrollblatt und in der Nachkontroll-Liste dokumentiert; hier geht es nur um die Ampel im Laden.
 export function kuehlSchlimmsteAbweichung(stand, K = heute()) {

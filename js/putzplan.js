@@ -1,4 +1,4 @@
-// Putzplan (Empfehlung nach HACCP, Baris 15.10.2026): Plan = Stammdaten, Abhaken = Protokoll (Liste für die Lebensmittelkontrolle).
+// Putzplan: Plan = Stammdaten, Abhaken = Protokoll (Liste für die Lebensmittelkontrolle).
 // Protokoll wird nie gelöscht, nur storniert. Empfehlung der Recherche: mindestens 12, besser 24 Monate aufbewahren.
 import { imTakt } from "./takt.js";
 import { AUFGABEN, TAKT_TAGE, GERAETE_JE_ART, STANDARD_AUS } from "./data/putzplan.js";
@@ -12,7 +12,7 @@ export const planVon = (stand) => stand.putzplan || null;
 export function planVorschlag(stand) {
   const arten = ladenArtenVon(stand); if (!arten.length) arten.push(ladenArtVon(stand) || "anders");
   const g = new Set(arten.flatMap((art) => GERAETE_JE_ART[art] || GERAETE_JE_ART.anders)); // P6 (1): Geräte aller gewählten Arten
-  // Vorab-Prüfung 03.11.2026 (C9): Sind Kühlgeräte gewählt, kommt „Saladette“ nur aus einer gewählten Saladette, nicht aus der Ladenart
+  // Vorab-Prüfung (C9): Sind Kühlgeräte gewählt, kommt „Saladette“ nur aus einer gewählten Saladette, nicht aus der Ladenart
   if ((stand.kuehlstellen || []).some((k) => !k.archiviert)) g.delete("saladette");
   for (const k of stand.kuehlstellen || []) { if (k.archiviert) continue;
     if (k.art === "tk") g.add("tiefkuehler"); else if (k.art === "kuehl") g.add((k.typ === "saladette" || /theke|saladet|vitrine/i.test(k.name || "")) ? "saladette" : "kuehlschrank"); }
@@ -96,7 +96,7 @@ export function planUebernehmen(stand, entwurf, datum = heute(), jetzt = new Dat
   stand.putzplan = neu; return neu;
 }
 
-// Laden-Umbau (20.10.2026): Im Laden gibt es keine Geräte-Auswahl mehr. Ohne aktiven Plan wird still der Vorschlag nach Laden-Art
+// Laden-Umbau: Im Laden gibt es keine Geräte-Auswahl mehr. Ohne aktiven Plan wird still der Vorschlag nach Laden-Art
 // (GERAETE_JE_ART, dazu die Kühlstellen) übernommen – wie „Plan übernehmen“ in der Einrichtung. Ändern geht im Büro (Einrichtung).
 // Rückgabe: true = Plan neu angelegt (speichern), false = es gab schon einen.
 export function planSicherstellen(stand, datum = heute()) {

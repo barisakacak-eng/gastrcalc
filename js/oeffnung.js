@@ -19,7 +19,7 @@ export function ruhetageAm(stand, datum) {
 // (22 Öffnungstage im Zähler, 25 in der Reinigung). Gewicht eines Kalendertags: 0 an Feiertagen, wenn der Wirt „an Feiertagen zu“ gewählt hat; 1 oder 0
 // nach den Ruhetagen mit Gültig-ab-Verlauf; ohne bekannte Ruhetage tageProWoche/7. Zähler, Reinigung, Eigentümer, Bestand rufen diese Funktion.
 export function tagGewicht(stand, datum) {
-  if (feiertagZu(stand, datum)) return 0; // Feiertage (18.10.2026): nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
+  if (feiertagZu(stand, datum)) return 0; // Feiertage: nur wenn der Wirt „an Feiertagen zu“ gewählt hat (Standard: wie ein normaler Wochentag)
   const ruhetage = ruhetageAm(stand, datum);
   if (ruhetage.length) return ruhetage.includes(wochentag(datum)) ? 0 : 1;
   const t = Math.min(7, Math.max(1, Number(stand.betrieb?.tageProWoche) || 6));

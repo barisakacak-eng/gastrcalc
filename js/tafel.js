@@ -1,10 +1,10 @@
-// Menütafel (18.10.2026), Stufe 2 ohne Server (Variante D der Serverfrage): Aus der Karte und den übernommenen Aktionen wird eine Tafel für einen
+// Menütafel, Stufe 2 ohne Server (Variante D der Serverfrage): Aus der Karte und den übernommenen Aktionen wird eine Tafel für einen
 // Fernseher oder ein Tablet im Laden. Innen Uhrwerk: hier wird beschrieben, gerechnet und die Datei gebaut; die Bildschirme zeigen nur an.
 //
 // Ablauf: tafelBeschreibung(stand) → Seiten und Spalten nach Gruppen (Speisen, Beilagen, Getränke), Aktionen mit Laufzeit, Hinweise fürs Büro
 //         tafelHtml(beschreibung) → EINE HTML-Datei, alles eingebettet (Texte, Fotos als data-URI, Systemschrift), Querformat 16:9
 // Pflicht nach § 13 PAngV (Gaststätten): Endpreise (inkl. Umsatzsteuer; Gerichte tragen in der App den Bruttopreis), bei Getränken die
-// Ausschankmenge. Getränke (18.10.2026): Die Menge kommt aus dem Feld getraenk.menge (js/getraenk_feld.js) – nicht mehr aus dem Namen; der Name
+// Ausschankmenge. Getränke: Die Menge kommt aus dem Feld getraenk.menge (js/getraenk_feld.js) – nicht mehr aus dem Namen; der Name
 // liefert sie nur noch einmal bei der Migration. Fehlt sie, rät die App nicht – Hinweis im Büro.
 // Gültigkeit: unten steht „Stand: Datum Uhrzeit“; abgelaufene Aktionen blendet die Datei anhand der Uhr des Anzeigegeräts selbst aus
 // (tafelAktionSichtbar wird so, wie sie hier steht, in die Datei eingebettet – darum ES5 ohne Bezüge nach außen, für alte Fernseh-Browser).
@@ -13,8 +13,8 @@ import { tIn, RTL, SPRACHEN } from "./i18n.js";
 import { gerichtBildQuelle } from "./bilder.js";
 import { tagPlus, wochentag } from "./engine.js";
 import { kurzName } from "./haltbar.js";
-import { getraenkVon, literAusText, literText, nameMitMenge } from "./getraenk_feld.js"; // Getränke (18.10.2026): Ausschankmenge aus dem Feld
-import { aktionVorschlag, aktionBilanz, PLAN_TAGE } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Zeitraum-Vorschlag und Bilanz
+import { getraenkVon, literAusText, literText, nameMitMenge } from "./getraenk_feld.js"; // Getränke: Ausschankmenge aus dem Feld
+import { aktionVorschlag, aktionBilanz, PLAN_TAGE } from "./aktion_plan.js"; // Aktion planen: Zeitraum-Vorschlag und Bilanz
 import { isoTag, uhr } from "./zeit.js";
 import { rund2 } from "./geld.js";
 import { leinwand, leinwandDa } from "./adapter/leinwand.js";
@@ -53,7 +53,7 @@ export function mengeAusText(text) {
   const zahl = m[1].replace(".", ","); if (!(Number(m[1].replace(",", ".")) > 0)) return null;
   const e = m[2].toLowerCase(); return `${zahl} ${e === "liter" ? "l" : e}`;
 }
-// Getränke (18.10.2026): { menge, imNamen, anders } aus dem Feld getraenk.menge. imNamen: der Name nennt dieselbe Menge (dann nicht doppelt
+// Getränke: { menge, imNamen, anders } aus dem Feld getraenk.menge. imNamen: der Name nennt dieselbe Menge (dann nicht doppelt
 // anschreiben); anders: der Name nennt eine andere Menge als das Feld (das Feld gilt, Hinweis im Büro). menge null = fehlt.
 function ausschankMenge(g) {
   const x = getraenkVon(g); const feld = x?.menge ?? null; const imName = literAusText(g?.name);
@@ -72,7 +72,7 @@ export function aktiveAktionen(stand, { heuteTag = heuteGeschaeft() } = {}) {
     .sort((x, y) => x.von.localeCompare(y.von) || String(x.bis || "9999").localeCompare(String(y.bis || "9999")) || String(x.erfasst || "").localeCompare(String(y.erfasst || "")));
 }
 // Übernehmen (Büro „Aktionen & Haltbarkeit“): art „abverkauf“ (ein Gericht) oder „kombi“ (2–4 Gerichte).
-// Aktion planen (18.10.2026): KEINE feste Laufzeit mehr. Der Zeitraum kommt vom Wirt (von, bis, ende "datum" | "ware" = bis Ware weg) – er hat
+// Aktion planen: KEINE feste Laufzeit mehr. Der Zeitraum kommt vom Wirt (von, bis, ende "datum" | "ware" = bis Ware weg) – er hat
 // den Vorschlag der App gesehen (plan: Vorschlag und Begründung, wie gezeigt). Ohne Angabe gilt der Vorschlag (aktionVorschlag); lässt er sich nicht
 // rechnen (Gericht ohne Rezept), eine Woche ab sofort. Nie eine Aktion für Ware mit Verbrauchsdatum (Rückgabe null).
 // Gleiche laufende Aktion (gleiche Gerichte, gleicher Preis) wird nicht doppelt angelegt – Rückgabe dann die vorhandene.
@@ -81,7 +81,7 @@ export function aktionUebernehmen(stand, { art, gerichte, preis, statt = null, v
   if (!ids.length || !(preis > 0)) return null;
   const artSauber = art === "abverkauf" ? "abverkauf" : "kombi";
   const vs = aktionVorschlag(stand, { art: artSauber, gerichte: ids, preis, ware }, { heuteTag });
-  // Prüfgremium 18.10.2026 (N4): Das Rechenwerk lehnt selbst ab, nicht nur der Bildschirm – Verbrauchsdatum (nie eine Aktion), Preis unter dem
+  // Prüfgremium (N4): Das Rechenwerk lehnt selbst ab, nicht nur der Bildschirm – Verbrauchsdatum (nie eine Aktion), Preis unter dem
   // Wareneinsatz („lohnt“: es bleibt nie etwas übrig) und Ware schon weg („leer“). Nur ein Gericht ohne Rezept („gericht“) fällt auf eine Woche zurück.
   if (!vs.moeglich && ["verbrauch", "lohnt", "leer"].includes(vs.grund)) return null;
   const v = von && von >= heuteTag ? von : vs.moeglich ? vs.von : heuteTag;
@@ -97,7 +97,7 @@ export function aktionUebernehmen(stand, { art, gerichte, preis, statt = null, v
   stand.aktionen = [...(stand.aktionen || []), a];
   return a;
 }
-// Aktion planen (18.10.2026): Zeitraum einer laufenden oder kommenden Aktion ändern (der Wirt bespricht und entscheidet). Läuft sie schon, bleibt der
+// Aktion planen: Zeitraum einer laufenden oder kommenden Aktion ändern (der Wirt bespricht und entscheidet). Läuft sie schon, bleibt der
 // Start; sonst frühestens heute. bis ≥ von (und nicht vor heute); „bis Ware weg“ darf ohne Datum sein. Rückgabe: die neue Aktion oder null (ungültig/unverändert).
 export function aktionZeitraumSetzen(stand, id, { von, bis, ende }, { heuteTag = heuteGeschaeft(), jetzt = new Date().toISOString() } = {}) {
   const i = (stand.aktionen || []).findIndex((a) => a.id === id && laeuftNoch(a, heuteTag)); if (i < 0) return null;
@@ -112,7 +112,7 @@ export function aktionZeitraumSetzen(stand, id, { von, bis, ende }, { heuteTag =
   stand.aktionen = stand.aktionen.map((x, j) => (j === i ? neu : x));
   return neu;
 }
-// Beenden: bleibt in der Liste (beim Zusammenführen gewinnt „beendet“), steht nicht mehr auf der Tafel. Aktion planen (18.10.2026): mit Bilanz.
+// Beenden: bleibt in der Liste (beim Zusammenführen gewinnt „beendet“), steht nicht mehr auf der Tafel. Aktion planen: mit Bilanz.
 export function aktionBeenden(stand, id, { jetzt = new Date().toISOString(), heuteTag = heuteGeschaeft(new Date(jetzt)) } = {}) {
   const i = (stand.aktionen || []).findIndex((a) => a.id === id && !a.entfernt); if (i < 0) return false;
   const beendet = { ...stand.aktionen[i], entfernt: true, entferntZeit: jetzt };
@@ -160,7 +160,7 @@ export function tafelBeschreibung(stand, { heuteTag = heuteGeschaeft(), jetzt = 
       if (!(typeof g.preis === "number" && g.preis > 0)) { hinweise.push({ art: "ohnePreis", id: g.id, name: g.name }); continue; }
       const m = gruppe === "getraenke" ? ausschankMenge(g) : { menge: null, imNamen: false };
       if (gruppe === "getraenke" && !m.menge) hinweise.push({ art: "mengeFehlt", id: g.id, name: g.name });
-      if (gruppe === "getraenke" && m.anders) hinweise.push({ art: "mengeAnders", id: g.id, name: g.name }); // Getränke (18.10.2026): Feld gilt, Name sagt etwas anderes
+      if (gruppe === "getraenke" && m.anders) hinweise.push({ art: "mengeAnders", id: g.id, name: g.name }); // Getränke: Feld gilt, Name sagt etwas anderes
       eintraege.push({ id: g.id, name: String(g.name || ""), preis: g.preis, preisText: euro(g.preis), menge: m.imNamen ? null : m.menge, bild: bild(g) });
     }
     return { gruppe, titel: T("gruppen." + gruppe), eintraege };
@@ -221,7 +221,7 @@ body{background:${farben.tinte};color:${farben.weiss};font-family:system-ui,-app
 .aktionen.eins .text{padding-left:2.4rem;-webkit-box-flex:1;flex:1 1 auto;min-width:0}.aktionen.eins h2{font-size:3.6rem;margin-top:0}.aktionen.eins .preis{font-size:7rem}
 .fuss{position:absolute;left:3.5rem;right:3.5rem;bottom:1.6rem;font-size:1.45rem;color:${farben.holz};display:-webkit-box;display:flex;-webkit-box-pack:justify;justify-content:space-between}
 .beispiel{color:${farben.gelbHell};font-weight:800}.leer{font-size:3rem;padding-top:10rem;text-align:center}`;
-// Farben aus css/tokens.css (Kräuter & Kupfer, Sanji 15.10.2026) – fest übernommen, weil die Datei ohne die App läuft.
+// Farben aus css/tokens.css – fest übernommen, weil die Datei ohne die App läuft.
 // Kontrast (WCAG): Weiß auf Salbei-tief 10,6:1; Preis-Gelb (Kurve Prognose) auf Salbei-tief 8,5:1; Kupfer-dunkel auf Papier 6,3:1.
 const TAFEL_FARBEN = { tinte: "#1F2A24", tinteDunkel: "#1F2A24", tinteWeich: "#55604F", weiss: "#FFFDF8", salbeiTief: "#2E4034", holz: "#DDC9AD", holzTief: "#C9A87C",
   lehm: "#78583F", glut: "#C97A3E", papier: "#F5EBDD", kupferDunkel: "#8A4C20", gelbHell: "#F6D686" };

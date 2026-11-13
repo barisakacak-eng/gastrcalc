@@ -1,7 +1,7 @@
-// Getränke (18.10.2026): die Felder eines Getränks. Reine Funktionen, keine Oberfläche, keine Speicherung, kein Netz.
+// Getränke: die Felder eines Getränks. Reine Funktionen, keine Oberfläche, keine Speicherung, kein Netz.
 // Bewusst ohne Import aus engine.js oder verkauf.js – beide nutzen von hier den Schankverlust (sonst Kreis-Import).
 //
-// Vorgabe des Eigentümers (18.10.2026): Getränkegrößen gibt es von 0,2 bis 1,5 l, je nach Produkt; jede Gastronomie hat andere Lieferanten –
+// Vorgabe des Eigentümers: Getränkegrößen gibt es von 0,2 bis 1,5 l, je nach Produkt; jede Gastronomie hat andere Lieferanten –
 // nicht alle arbeiten mit Coca-Cola-Dosen, sondern teils mit Fritz-Kola oder mit offenen Getränken.
 //
 // Am GERICHT (was verkauft wird, klasse "getraenk"):   getraenk = { menge, gebinde, quelle, schankverlust }
@@ -66,7 +66,7 @@ export function getraenkArtikelSauber(x) {
   const pfand = typeof o.pfand === "number" && Number.isFinite(o.pfand) && o.pfand > 0 && o.pfand <= PFAND_MAX ? rund2(o.pfand) : null;
   return { menge: menge(o.menge), gebinde: GEBINDE_EINKAUF.includes(o.gebinde) ? o.gebinde : null, marke: text(o.marke), pfand, lieferant: text(o.lieferant) };
 }
-// Aus einem alten Feld „ausschank“ (Text, Tafel bis 18.10.2026) oder dem Namen – sonst null (nie raten)
+// Aus einem alten Feld „ausschank“ oder dem Namen – sonst null (nie raten)
 const mengeAlt = (obj) => literAusText(obj?.name) ?? literAusText(obj?.ausschank);
 
 // Migration (store.js): Gericht und Artikel bekommen ihr Getränke-Feld; vorhandene Angaben bleiben, fehlende Größe aus dem Namen.
@@ -74,7 +74,7 @@ const mengeAlt = (obj) => literAusText(obj?.name) ?? literAusText(obj?.ausschank
 export function getraenkGerichtMigrieren(g) {
   if (!istGetraenkGericht(g)) { if (g && "getraenk" in g) delete g.getraenk; return g; }
   g.getraenk = istObjekt(g.getraenk) ? getraenkGerichtSauber(g.getraenk) : getraenkGerichtSauber({ menge: mengeAlt(g) });
-  delete g.ausschank; // Menütafel-Feld bis 18.10.2026 – steckt jetzt in getraenk.menge
+  delete g.ausschank; // Menütafel-Feld bis – steckt jetzt in getraenk.menge
   return g;
 }
 export function getraenkArtikelMigrieren(a) {

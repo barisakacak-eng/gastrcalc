@@ -1,4 +1,4 @@
-// Welle 3 (Hochtouren 03.11.2026, Bildpaket W3): Büro-Bildschirm „Geld & Finanzamt“ – Baris Ja am 04.11.2026; live nach dem Prüfungsausschuss (06.11.).
+// Welle 3: Büro-Bildschirm „Geld & Finanzamt“ – Baris Ja am; live nach dem Prüfungsausschuss (06.11.).
 // Je Thema eine aufklappbare Karte (Überschrift + eine Zahl), Inhalt auf Tipp – Büro-Maß 120 Wörter. Nur Anzeige; Zahlen aus den Rechenkernen.
 import { nav } from "./nav.js";
 import { t, sprache } from "../i18n.js";
@@ -11,7 +11,7 @@ import { monatEinfrieren, eingefroren, monatVergleich, abschlussVeraltet } from 
 import { l6yText } from "../data/l6y_texte.js"; // Lauf 6, E5-Draht (6): Satz „Daten seit Abschluss geändert.“
 import { istPersonen } from "../rechtsform.js";
 import { BUNDESLAENDER } from "../feiertage.js";
-const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
+const w3b = () => true; // W3b: Baris Ja zu 1–4 am 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
 import { schichtenAusLaden, zaehlerSumme, minijobGrenzeStunden, eintragStunden, schichtEintragenMitGrund, schichtStunden } from "../schichten.js";
 import { l6x } from "../data/l6x_texte.js"; // Lauf 6 (P1 B5): Hinweis „Beginn und Ende sind gleich“
 import { offeneKlappen } from "./bausteine.js"; // Ausschuss P4 (Lauf 4): offene Karte bleibt nach einer Aktion offen
@@ -19,9 +19,9 @@ import { plusTage, plusMonate } from "../zeit.js";
 const dk = (d) => `\u2066${datumLesbar(d).slice(0, 6)}\u2069`; // Lauf 4 (P4 C2): Datum im Arabischen isoliert, sonst „.10.12“
 let schichtEntwurf = { person: null, datum: null, von: "", bis: "" }; // W3b: Formular „Schicht eintragen“ (Entwurf bis zum Tipp)
 
-// Setzung 03.11.2026: unter 15 % Wareneinsatz aus Belegen fehlen vermutlich Belege (Richtsatz Imbiss ≈ 32 %) – dann keine Kennzahlen, nur dieser Hinweis
+// Setzung: unter 15 % Wareneinsatz aus Belegen fehlen vermutlich Belege (Richtsatz Imbiss ≈ 32 %) – dann keine Kennzahlen, nur dieser Hinweis
 const PLAUSIBEL_AB = 0.15;
- // Baris Ja zu Bildpaket W3 (04.11.2026): kein Schalter mehr
+ // Baris Ja zu Bildpaket W3: kein Schalter mehr
 const karte = (id, titel, zahl, inhalt) => `<details class="karte auf g3-karte" data-g3="${id}" data-klapp="g3-${id}"${offeneKlappen.has("g3-" + id) ? " open" : ""}><summary><span><b>${esc(titel)}</b>${zahl ? `<small class="g3-zahl">${zahl}</small>` : ""}</span></summary>${inhalt}</details>`;
 const z = (text, wert, cls = "") => `<div class="summenzeile"><span>${esc(text)}</span><span class="wert ${cls}">${wert}</span></div>`;
 

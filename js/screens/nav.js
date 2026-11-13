@@ -1,16 +1,16 @@
-// Kopfleiste und Leiste unten – drei Ebenen (15.10.2026, Entwickler A). Ersetzt das Menü mit 16 Zeilen und den Schnellknopf „+".
+// Kopfleiste und Leiste unten – drei Ebenen. Ersetzt das Menü mit 16 Zeilen und den Schnellknopf „+".
 // LADEN: ☰ (öffnet das Menü-Blatt, siehe ebene.js) · Logo · „?" oben, fünf Reiter unten. PERSONAL: Logo und Schloss, keine Leiste.
 // BÜRO: „‹ Laden" bzw. „‹ Büro" oben, keine Leiste. Jede Ansicht ruft wie bisher nav(<aktiv>) am Ende ihres HTML auf.
 import { t } from "../i18n.js";
 import { esc } from "../util.js";
-import { ladenPunkt } from "../offen.js"; // Trennung (17.10.2026)
+import { ladenPunkt } from "../offen.js"; // Trennung
 import { modus, LADEN_TABS } from "../modus.js";
 import { sym } from "../symbole.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
 
 let kontext = { stand: null, wurzel: null, ansicht: "start", weg: [] };
 export const navKontext = (stand, wurzel, ansicht = "start", weg = []) => { kontext = { stand, wurzel, ansicht, weg }; };
-// Baris 01.11.2026 (Klicker K2 Runde 2, B1): „Zurück“ im Büro führt eine Ebene zurück – zum vorigen Büro-Bildschirm, sonst zum Büro-Start.
+// Baris (Klicker K2 Runde 2, B1): „Zurück“ im Büro führt eine Ebene zurück – zum vorigen Büro-Bildschirm, sonst zum Büro-Start.
 // weg = Liste der vorher besuchten Büro-Bildschirme (app.js); data-zurueck sagt app.js, dass der Eintrag vom Weg genommen wird.
 export function bueroZurueckKnopf() {
   const vorher = kontext.weg?.length ? kontext.weg[kontext.weg.length - 1] : null;
@@ -19,7 +19,7 @@ export function bueroZurueckKnopf() {
     : `<button type="button" class="zurueckzeile" data-a="nav" data-wert="buero" data-zurueck="1">${sym("chevron-left")}<span>${esc(t("ebene.zumBuero"))}</span></button>`;
 }
 
-// Trennung (17.10.2026): sicherungStufe → js/sicherung_stufe.js, menueZaehler und ladenPunkt → js/offen.js (Rechenwerk).
+// Trennung: sicherungStufe → js/sicherung_stufe.js, menueZaehler und ladenPunkt → js/offen.js (Rechenwerk).
 
 const TAB_SYM = { start: "house", muell: "trash-2", kuehl: "snowflake", putzplan: "spray-can", karte: "utensils-crossed" };
 
@@ -29,7 +29,7 @@ function tabLeiste(aktiv, stand) {
 }
 
 const logo = () => `<span class="gc-brand" aria-label="GastroCash"><span class="gc-brand-name">Gastro<strong>Cash</strong></span></span>`; // Markenbaustein in der echten Navigationsfunktion
-// Zeki als Begleiter (Baris 26.10.2026): Statt „?“ steht Zeki oben rechts auf jedem Bildschirm, bewegt sich alle ≈ 4 s und erklärt beim Antippen, was hier zu tun ist.
+// Zeki als Begleiter: Statt „?“ steht Zeki oben rechts auf jedem Bildschirm, bewegt sich alle ≈ 4 s und erklärt beim Antippen, was hier zu tun ist.
 export const hilfeKnopf = (zustand = "hilfe") => `<button type="button" class="ikonknopf hilfe zeki-knopf zeki-lebt" data-a="hilfe-auf" aria-label="${esc(t("ebene.hilfeAuf"))}">${mascotMarkup(zustand)}</button>`;
 
 // nav(aktiv): Kopfleiste (+ Leiste unten im Laden). Zweites Argument nur noch aus Verträglichkeit ({ schnell } hat keine Wirkung mehr).

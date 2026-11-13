@@ -1,4 +1,4 @@
-// Büro-Ordner „Steuerberater“ und „Buchhalter“ (Drei Ebenen, 15.10.2026): das Monatspaket als reine Daten und als CSV.
+// Büro-Ordner „Steuerberater“ und „Buchhalter“: das Monatspaket als reine Daten und als CSV.
 // Keine Oberfläche, keine Texte – die Ansicht (screens/ordner.js) übersetzt. Alles wird aus den vorhandenen Journalen gelesen,
 // nichts neu gerechnet, was schon eine Stelle rechnet: Umsatz über umsatzEintrag (nur brutto, ohne Steuer), Schwund über schwundAuswertung,
 // Belege über lieferungTeile, Inventur über den festgehaltenen Wert. Arbeitsunterlagen zur Vorbereitung – kein Kassenbuch, keine Buchführung.
@@ -11,7 +11,7 @@ import { inventurWert, inventurKurz } from "./inventur.js"; // W2-D: inventurKur
 import { heute } from "./util.js";
 import { plusMonate, plusTage, uhr, monatsLetzter, gueltigerTag } from "./zeit.js";
 import { arbeitszeitListe } from "./schichten.js"; // Lauf 4, P3 C4
-import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt 27.10.2026: Lieferanteil in der Tagesliste
+import { lieferTag, lieferProvision } from "./stamm.js"; // Persona-Test Wirt: Lieferanteil in der Tagesliste
 import { rund2, nettoVonBrutto, mwst } from "./geld.js";
 
 // ---------- CSV ----------
@@ -32,7 +32,7 @@ export function csvZelle(v, dezimal = 2) {
   if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   return /[";\r\n]/.test(s) || /^\s|\s$/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
-// 20.10.2026 (Export-Test F9): Nummern wie „0012345“, „1E5“ oder sehr lange Ziffernfolgen verfälscht Excel (führende Null weg, Zehnerpotenz).
+// (Export-Test F9): Nummern wie „0012345“, „1E5“ oder sehr lange Ziffernfolgen verfälscht Excel (führende Null weg, Zehnerpotenz).
 // Solche Codes stehen als ="…" in der Zelle – Excel zeigt dann genau den Text. Nur für harmlose Zeichen (Ziffern, Buchstaben, . - /), sonst normaler Text.
 export function csvCode(v) {
   if (v === null || v === undefined || v === "") return "";
@@ -57,7 +57,7 @@ const nachDatum = (a, b) => String(a.datum).localeCompare(String(b.datum)) || St
 // Wert eines Schwund-Eintrags: die beim Eintragen festgehaltene Momentaufnahme, wie in schwundAuswertung (engine.js)
 const schwundWert = (e, stand) => ("wert" in e ? (typeof e.wert === "number" ? e.wert : null) : wertEintrag(e, stand));
 const personName = (stand, id) => (stand.personen || []).find((p) => p.id === id)?.kuerzel || null;
-// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): alte Personalessen zeigen das Kürzel weiter, gekennzeichnet mit dem Austrittsdatum
+// Kürzel ausgeschiedener Mitarbeiter: alte Personalessen zeigen das Kürzel weiter, gekennzeichnet mit dem Austrittsdatum
 const personAus = (stand, id) => { const p = (stand.personen || []).find((x) => x.id === id); return p && (p.entfernt || p.aktiv === false) ? { personAus: true, personAusAm: p.ausgeschieden || null } : { personAus: false, personAusAm: null }; };
 
 // ---------- Teile des Pakets ----------
@@ -77,7 +77,7 @@ export function tagesumsaetze(stand, z) {
 
 // Rücknahmen und Korrekturen des Monats (W2-T, Prüfung p04 Nr. 3): Tagesnotizen, Warenbelege, Kostenbelege – nichts verschwindet still.
 // vorgang "ersetzt" (neuer Wert steht dabei) oder "storniert" (zurückgenommen); zeit = Zeitpunkt der Änderung (ISO).
-// 20.10.2026 (Konkurrenz-Lehren, Export F3): Eine Rücknahme im Folgemonat für einen Beleg des Vormonats steht auch im Paket des Monats,
+// (Konkurrenz-Lehren, Export F3): Eine Rücknahme im Folgemonat für einen Beleg des Vormonats steht auch im Paket des Monats,
 // in dem sie geschah – sonst erfährt der Steuerberater nie davon, wenn der Vormonat schon abgegeben war.
 const rueckIm = (x, z) => imZeitraum(x.datum, z) || (typeof x.storniertZeit === "string" && imZeitraum(heute(new Date(x.storniertZeit)), z));
 export function aenderungen(stand, z) {
@@ -135,9 +135,9 @@ export function schwund(stand, z) {
   const a = schwundAuswertung(stand, z);
   const zeilen = (stand.schwund || []).filter((e) => !e.storniert && imZeitraum(e.datum, z) && (SCHWUND_ARTEN[e.art] || 1) !== 2).sort(nachDatum)
     .map((e) => ({ datum: e.datum, art: e.art, name: e.art === "eimer" ? (e.ref?.name || "") : (e.ref?.name || ""), menge: Number(e.menge) || 0, einheit: e.einheit || "", wert: schwundWert(e, stand), vorgang: SCHWUND_ARTEN[e.art] || 1, grund: e.grund || "" }));
-  // 20.10.2026 (Export-Test F4/F5): Die Summenzeile passt zu den Zeilen – gerundet wie gedruckt, Müll (Vorgang 1) und Eigenverbrauch (Vorgang 3) getrennt
+  // (Export-Test F4/F5): Die Summenzeile passt zu den Zeilen – gerundet wie gedruckt, Müll (Vorgang 1) und Eigenverbrauch (Vorgang 3) getrennt
   const summe = (v) => rund2(zeilen.filter((x) => x.vorgang === v && typeof x.wert === "number").reduce((s, x) => s + rund2(x.wert), 0));
-  // P1 (20.10.2026): Eigenverbrauch im Kalenderjahr bis Zeitraum-Ende, zum Vergleich mit dem Pauschbetrag (nur Anzeige)
+  // P1: Eigenverbrauch im Kalenderjahr bis Zeitraum-Ende, zum Vergleich mit dem Pauschbetrag (nur Anzeige)
   const jahr = String(z.bis).slice(0, 4); const eigenJahr = rund2(schwundAuswertung(stand, { von: jahr + "-01-01", bis: z.bis }).eigen.waren || 0);
   return { zeilen, jeArt: a.jeArt, muellwert: a.muellwert, ohneWert: a.ohneWert, eigen: a.eigen, summeMuell: summe(1), summeEigen: summe(3), summeAusgegeben: summe(4), ausgegeben: a.ausgegeben, eigenJahr, jahr };
 }
@@ -157,7 +157,7 @@ function lieferungSteuer(l, netto, pfand) {
   if (brutto === null) return { brutto, ust, hinweis: "ohneBrutto" };
   if (brutto >= 0 && netto > 0 && brutto + 0.005 < netto + pfand) return { brutto, ust, hinweis: "pruefen" }; // Ausschuss Lauf 3, P3 A1: Brutto unter Netto ist ein Lesefehler
   if (!zl.length || zl.some((r) => !saetzeAm(l.datum).includes(r.steuersatz))) return { brutto, ust, hinweis: "ohneSatz" };
-  // 20.10.2026 (Export F2): Gutschrift/Retoure mit negativem Brutto trägt negative Steuer – das Vorzeichen muss zum Brutto passen, nicht immer ≥ 0 sein
+  // (Export F2): Gutschrift/Retoure mit negativem Brutto trägt negative Steuer – das Vorzeichen muss zum Brutto passen, nicht immer ≥ 0 sein
   const gesamt = rund2(brutto - netto - pfand); if (gesamt * (brutto < 0 ? -1 : 1) < -0.005) return { brutto, ust, hinweis: "pruefen" };
   const saetze = [...new Set(zl.map((r) => r.steuersatz))];
   // Ein Satz auf dem Beleg: die Steuer ist Brutto − Netto − Pfand, genau wie auf der Rechnung
@@ -167,7 +167,7 @@ function lieferungSteuer(l, netto, pfand) {
   ust[S7] = u7; ust[S19] = rund2(gesamt - u7); // Rundungscent in den 19-%-Teil, damit die Zeile aufgeht
   return { brutto, ust, hinweis: null };
 }
-// 20.10.2026 (Prüfgremium): Ein Beleg, der mehr als 7 Tage nach seinem Datum erfasst wurde, trägt den Tag der Erfassung – der Steuerberater sieht so,
+// (Prüfgremium): Ein Beleg, der mehr als 7 Tage nach seinem Datum erfasst wurde, trägt den Tag der Erfassung – der Steuerberater sieht so,
 // warum er im Paket steht, das er vielleicht schon hatte. Liefert das Erfassungsdatum (JJJJ-MM-TT) oder null.
 function nachtrag(x) {
   if (typeof x.erfasst !== "string" || typeof x.datum !== "string") return null;
@@ -194,9 +194,9 @@ export function belege(stand, z) {
     zeilen.push({ nachgetragen: nachtrag(k), datum: k.datum, quelle: "kosten", rechnungNr: k.rechnungNr || null, lieferant: k.lieferant || "", stelle: k.stelle, netto, ust7: satz === satz7(k.datum) ? ust : null, ust19: satz === satz19(k.datum) ? ust : null, pfand: 0, brutto, betriebsmittel: 0, hinweis: satz === null ? "ohneSatz" : null, verteilung: k.verteilung, id: k.id });
   }
   zeilen.sort(nachDatum);
-  // Paket C (19.10.2026): fortlaufende Beleg-Nr. je Monat (JJJJ-MM-001 …) – dieselbe Nummer schreibt der Inhaber auf den Beleg;
+  // Paket C: fortlaufende Beleg-Nr. je Monat (JJJJ-MM-001 …) – dieselbe Nummer schreibt der Inhaber auf den Beleg;
   // Kleinbetrag (Brutto bis 250 €, § 33 UStDV) wird markiert, weil dort weniger Rechnungsangaben genügen.
-  // 20.10.2026 (Export F1): Die Nummer ist fest. Gezählt wird in der Reihenfolge der Erfassung über alle Belege des Monats, auch zurückgenommene –
+  // (Export F1): Die Nummer ist fest. Gezählt wird in der Reihenfolge der Erfassung über alle Belege des Monats, auch zurückgenommene –
   // ein Nachtrag mit früherem Datum bekommt die nächste freie Nummer, eine Rücknahme hinterlässt eine Lücke. Was der Inhaber schon auf
   // das Papier geschrieben hat, verschiebt sich nie.
   const nrVon = new Map();
@@ -224,7 +224,7 @@ function reinigungsmittel(stand, z) {
 // Es zählt nur der beim Abschluss festgehaltene Wert, nie eine Neubewertung zu heutigen Preisen (wert null = nicht festgehalten).
 function inventurwerte(stand, z) {
   const fertig = (stand.inventuren || []).filter((i) => i.abgeschlossen && typeof i.datum === "string").sort((a, b) => a.datum.localeCompare(b.datum));
-  const zeile = (i, vorher = false) => { const w = inventurKurz(i) || inventurWert(stand, i); return { datum: i.datum, wert: typeof i.wert === "number" ? rund2(i.wert) : null, gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, richtpreise: Array.isArray(i.richtpreise) ? i.richtpreise.length : 0, vorher }; }; // Richtpreise (17.10.2026): Zahl der Posten zu Richtpreisen · W2-T Wert nur aus Abschluss, W2-D schneller Weg
+  const zeile = (i, vorher = false) => { const w = inventurKurz(i) || inventurWert(stand, i); return { datum: i.datum, wert: typeof i.wert === "number" ? rund2(i.wert) : null, gezaehlt: w.gezaehlt, ohnePreis: w.ohnePreis.length, richtpreise: Array.isArray(i.richtpreise) ? i.richtpreise.length : 0, vorher }; }; // Richtpreise: Zahl der Posten zu Richtpreisen · W2-T Wert nur aus Abschluss, W2-D schneller Weg
   const drin = fertig.filter((i) => imZeitraum(i.datum, z)).map((i) => zeile(i));
   const davor = fertig.filter((i) => i.datum < z.von).pop();
   return { zeilen: davor ? [zeile(davor, true), ...drin] : drin, imZeitraum: drin.length };
@@ -256,7 +256,7 @@ export function festeKosten(stand, z) {
 // art "steuer": was der Steuerberater zum Monatsende braucht; art "buch": was der Buchhalter verbucht.
 // Vollständigkeit (W2-T, Prüfung p04 Nr. 2): nur Belege, Kosten und Listen zählen. Tagesumsätze sind Notizen (Stand "notiz"),
 // maßgeblich ist die Kasse – sie machen den Ordner nie „vollständig“.
-// Ordner getrennt (Baris Ja 26.10.2026): Buchhalter = jeden Monat alles zum Buchen; Steuerberater = einmal im Jahr alles zum Abschluss.
+// Ordner getrennt: Buchhalter = jeden Monat alles zum Buchen; Steuerberater = einmal im Jahr alles zum Abschluss.
 export const TEILE = { steuer: ["inventur", "schwund", "personal"], buch: ["umsatz", "belege", "kosten", "personal", "reinigung", "arbeitszeiten"] }; // Lauf 4, P3 C4: Arbeitszeiten als eigener Teil mit CSV
 // Jahr des Steuerberater-Pakets: 1.1. bis 31.12. (laufendes Jahr bis heute). monat trägt das Jahr ("JJJJ"), damit Vergleiche gleich bleiben.
 export function jahrVon(jahr, H = heute()) {
@@ -275,7 +275,7 @@ export function monatsPaket(stand, z, art = "steuer") {
   if (teile.includes("arbeitszeiten")) p.arbeitszeiten = arbeitszeitListe(stand, z.von, z.bis);
   p.aenderungen = aenderungen(stand, z);
   p.stand = Object.fromEntries(teile.map((t) => [t, teilStand(p, t)]));
-  p.pruefTeile = teile.filter((t) => !["umsatz", "personal", "reinigung", "arbeitszeiten"].includes(t)); // 26.10.2026: Personalessen und Reinigungsmittel sind Zusatz – leer zählt nicht als „fertig“
+  p.pruefTeile = teile.filter((t) => !["umsatz", "personal", "reinigung", "arbeitszeiten"].includes(t)); // Personalessen und Reinigungsmittel sind Zusatz – leer zählt nicht als „fertig“
   p.vollstaendig = p.pruefTeile.filter((t) => p.stand[t] === "ok").length;
   return p;
 }

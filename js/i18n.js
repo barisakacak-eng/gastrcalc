@@ -7,14 +7,14 @@ import { fuelleRegeln } from "./regeltext.js";
 import { sprachAttribute } from "./adapter/seite.js";
 
 // Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
-// wenn jemand sie wählt (15.10.2026: 18 Sprachen, die App bleibt trotzdem klein und schnell).
+// wenn jemand sie wählt.
 const TABELLEN = { de, tr, en };
 export const SPRACH_NAMEN = { de: "Deutsch", tr: "Türkçe", en: "English", ar: "العربية", fa: "فارسی", ku: "Kurdî (Kurmancî)", pl: "Polski", ro: "Română", bg: "Български",
   ru: "Русский", uk: "Українська", sq: "Shqip", bs: "Bosanski · Hrvatski · Srpski", el: "Ελληνικά", it: "Italiano", es: "Español", fr: "Français", vi: "Tiếng Việt" };
 const NACHLADBAR = ["ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
 export const SPRACHEN = ["de", "tr", "en", ...NACHLADBAR];
 export const RTL = new Set(["ar", "fa"]);
-// Masterauftrag „Gehirn“ 0.6 (28.10.2026): Sprachen ohne vollständige Prüfung tragen „Beta“ (de führend, tr/en vollständig gepflegt).
+// Masterauftrag „Gehirn“ 0.6: Sprachen ohne vollständige Prüfung tragen „Beta“ (de führend, tr/en vollständig gepflegt).
 // Kein Muttersprachler hat bisher gegengelesen – das steht im Projektstand, nicht hier.
 const SPRACHE_BETA = new Set(NACHLADBAR);
 export const spracheName = (c) => (SPRACH_NAMEN[c] || c) + (SPRACHE_BETA.has(c) ? " · Beta" : "");
@@ -30,7 +30,7 @@ export function setzeSprache(code, danach) {
   if (!TABELLEN[code]) { ladeSprache(code).then((ok) => { if (ok) { setzeSprache(code); if (danach) danach(); } }); return; }
   aktiv = code;
   sprachAttribute(aktiv, RTL.has(aktiv));
-  // 20.10.2026 (Laden-Test): auch bei schon geladener Sprache neu zeichnen – sonst blieb der Willkommen-Bildschirm deutsch,
+  // (Laden-Test): auch bei schon geladener Sprache neu zeichnen – sonst blieb der Willkommen-Bildschirm deutsch,
   // und „Weiter“ (trägt die Sprache vom letzten Zeichnen) setzte auf Deutsch zurück.
   if (danach) danach();
 }
@@ -50,7 +50,7 @@ export function t(pfad, ...args) {
   return fuelleRegeln(typeof v === "function" ? v(...args) : v); // Fachwerte stehen als {regel_id} im Text und kommen aus dem Regelwerk (js/regeltext.js)
 }
 
-// Menütafel (18.10.2026): Text in einer bestimmten Sprache (die Sprache der Tafel, nicht die der App). Nicht geladen → Deutsch.
+// Menütafel: Text in einer bestimmten Sprache (die Sprache der Tafel, nicht die der App). Nicht geladen → Deutsch.
 export function tIn(code, pfad, ...args) {
   let v = hole(TABELLEN[code] || de, pfad);
   if (v === undefined) v = hole(de, pfad);
@@ -75,16 +75,16 @@ export function fehlendeSchluessel(code) {
 }
 
 // Einheiten-Beschriftung: "Stück" ist das einzige Wort, die Kürzel g/kg/ml/l sind in allen drei Sprachen gleich.
-// Klasse D 03.11.2026: Einheiten in der Schrift der Sprache (nur wo der Glossar es vorgibt; sonst g/kg/ml/l wie auf der Packung)
+// Klasse D: Einheiten in der Schrift der Sprache (nur wo der Glossar es vorgibt; sonst g/kg/ml/l wie auf der Packung)
 const EINHEIT_SCHRIFT = { ar: { g: "غ", kg: "كغ", ml: "مل", l: "ل" } };
-export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === "portion" ? t("tag.portionen") : (EINHEIT_SCHRIFT[aktiv]?.[e] ?? (e || ""))); // Klasse D 03.11.2026: Arabisch „غ“ statt „g“
+export const einheitLabel = (e) => (e === "stk" ? t("allgemein.stueck") : e === "portion" ? t("tag.portionen") : (EINHEIT_SCHRIFT[aktiv]?.[e] ?? (e || ""))); // Klasse D: Arabisch „غ“ statt „g“
 
-// Paket 6 (17.10.2026): Katalog-Artikelname in der aktiven Sprache – nur Anzeige, gespeichert bleibt der deutsche Name.
+// Paket 6: Katalog-Artikelname in der aktiven Sprache – nur Anzeige, gespeichert bleibt der deutsche Name.
 export const artikelText = (name) => artikelAnzeige(name, aktiv);
 export const mengenText = (name) => mengenName(name, aktiv); // Mengenfrage: „Dönerfleisch“ statt „Dönerspieß“
-export const gerichtText = (name) => gerichtAnzeige(name, aktiv); // Perfektionswoche 24.10.2026: Vorlagen-Namen
+export const gerichtText = (name) => gerichtAnzeige(name, aktiv); // Perfektionswoche: Vorlagen-Namen
 
-// Persona-Test Team (27.10.2026): Chromium kennt Kurmancî nicht und zeigte Datumstexte deutsch. Eigene Namen für ku, sonst Intl;
+// Persona-Test Team: Chromium kennt Kurmancî nicht und zeigte Datumstexte deutsch. Eigene Namen für ku, sonst Intl;
 // fehlt einer Sprache die Intl-Unterstützung, lieber Englisch als Deutsch.
 const KU_TAG = ["yekşem", "duşem", "sêşem", "çarşem", "pêncşem", "în", "şemî"];
 const KU_MONAT = ["çile", "sibat", "adar", "nîsan", "gulan", "hezîran", "tîrmeh", "tebax", "îlon", "cotmeh", "mijdar", "berfanbar"];

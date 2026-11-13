@@ -1,8 +1,8 @@
-// 20.10.2026 (Laden-Test, Arabisch): Temperaturen stehen in einer Links-nach-rechts-Isolierung (U+2066 … U+2069), sonst zeigte RTL „C° 7,0 ≥“ statt „≤ 7,0 °C“.
+// (Laden-Test, Arabisch): Temperaturen stehen in einer Links-nach-rechts-Isolierung (U+2066 … U+2069), sonst zeigte RTL „C° 7,0 ≥“ statt „≤ 7,0 °C“.
 // Etappe 4: Kühlkontrolle – Einrichtung der Kühlstellen, der Rundgang, das Monatsblatt.
 // Regeln aus der Vorprüfung des Gremiums: Grenzen setzt der Betrieb (die App nennt nur Anhaltspunkte), kein Wert ist vorbelegt,
 // „nicht gemessen" mit Grund ist erlaubt, der Rundgang ist unterbrechbar und bis zum Abschluss änderbar, danach nur anhängen.
-import { einklappen } from "./bausteine.js"; // Prüfer 19.10.2026: Haftungstext eingeklappt (15-Wörter-Regel im Laden)
+import { einklappen } from "./bausteine.js"; // Prüfer: Haftungstext eingeklappt (15-Wörter-Regel im Laden)
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
 import { t, sprache, artikelText, datumText } from "../i18n.js";
@@ -10,21 +10,21 @@ import { esc, parseZahl, fmtZahl, fmtEuro, heute, wertAnzeige, parseTemperatur }
 import { KUEHL_ARTEN, MASSNAHMEN, NICHT_GEMESSEN, aktiveStellen, kuehlBereit, stelleBereit, abweichung, rundgangOffen, rundgangStarten, stationEintragen, rundgangAbschliessen,
   letzteMessung, offeneNachkontrollen, nachkontrolleErledigt, monatsblatt, kuehlStatus, messungenDerStelle, wertEintrag, grenzenVon, GRENZEN_STANDARD,
   ruhetagUmschalten, rundgangVollstaendig, rundgangVerwerfen } from "../engine.js"; // W2-H
-// Trennung (17.10.2026): Einrichtung (Stellen, Grenzen, Takt, Personen) schreibt über js/stamm.js
+// Trennung: Einrichtung (Stellen, Grenzen, Takt, Personen) schreibt über js/stamm.js
 import { kuehlstelleAnlegen, kuehlstelleArtSetzen, kuehlstelleArchivieren, kuehlstelleVerschieben, kuehlstelleNameSetzen, kuehlstelleGrenzeSetzen, kuehlEingerichtetSetzen, kuehlTaktSetzen, personAnlegen, personEntfernen, personenAusgeschieden } from "../stamm.js";
 import { naechsteLfd } from "../store.js";
 import { nav } from "./nav.js";
 import { datumLesbar } from "./tag.js";
-import { zeitKurz } from "../anzeige_text.js"; // Trennung 2 (17.10.2026)
-import { personalAktiv, anredeTeam, schichtPerson } from "./personal.js"; // D: im Personal-Modus kein Euro; 27.10.2026: Schicht-Person misst
-import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6 (17.10.2026): Standardnamen folgen der Sprache, eigene bleiben
+import { zeitKurz } from "../anzeige_text.js"; // Trennung 2
+import { personalAktiv, anredeTeam, schichtPerson } from "./personal.js"; // D: im Personal-Modus kein Euro;: Schicht-Person misst
+import { kuehlstelleAnzeige as kn } from "../kuehlname.js"; // Paket 6: Standardnamen folgen der Sprache, eigene bleiben
 import { normalisieren, suchRang } from "../data/suchnamen.js";
-import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau (20.10.2026): Rundgang startet direkt an der ersten Stelle
+import { kuehlWerVorschlag, kuehlNaechsteStelle, rundgangVonSetzen } from "../laden_zahlen.js"; // Laden-Umbau: Rundgang startet direkt an der ersten Stelle
 import { plusTage, plusMonate, monatsErster, monatsLetzter } from "../zeit.js";
 
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : k.typ === "getraenke" ? "k-getraenke" : "k-kuehlschrank";
-  const f = { "k-theke": "k-saladette-foto", "k-kuehlschrank": "k-kuehlschrank-lebensmittel-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden; Getränke/Lebensmittel getrennt (24.10.2026)
+  const f = { "k-theke": "k-saladette-foto", "k-kuehlschrank": "k-kuehlschrank-lebensmittel-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden; Getränke/Lebensmittel getrennt
   if (n === "k-getraenke" && !FOTOS.has(f)) return `<img class="gerichtbild mini pikto" src="bilder/k-kuehlschrank.svg" alt="">`;
   return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">`; };
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
@@ -39,25 +39,25 @@ let startStelle = null;         // Nachmessen einer einzelnen Stelle
 export const kuehlKennung = () => `${ansicht}:${station || ""}:${rundgangOffen ? "" : ""}`; // für den Doppeltipp-Schutz: jede Ebene ist ein eigener Bildschirm
 export function kuehlZuruecksetzen() { ansicht = "start"; station = null; form = null; }
 export function kuehlZurueck() { // Zurück-Geste: eine Ebene hoch; true = behandelt
-  if (station) { station = null; form = null; if (personalAktiv()) ansicht = "start"; return true; } // 27.10.2026: Personal startet direkt im Messfeld – Zurück führt zur Kühlung, nicht in die Stellenliste
+  if (station) { station = null; form = null; if (personalAktiv()) ansicht = "start"; return true; } // Personal startet direkt im Messfeld – Zurück führt zur Kühlung, nicht in die Stellenliste
   if (ansicht !== "start") { ansicht = "start"; return true; }
   return false;
 }
 
 const artName = (a) => t("kuehl.arten." + a);
 // Grenzen einer Stelle als Text; ohne eigene Grenze gilt der Standard (Etappe 5), das steht dann dabei.
-const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `\u2066≥\u00a0${fmtZahl(g.min, 1)}\u00a0°C\u2069` : "", typeof g.max === "number" ? `\u2066≤\u00a0${fmtZahl(g.max, 1)}\u00a0°C\u2069` : ""].filter(Boolean).join(" · ") + (g.standard && !personalAktiv() ? ` (${t("kuehl.standard")})` : ""); }; // 27.10.2026 (Persona-Test): Personal braucht „Standard“ nicht
+const grenzen = (k) => { const g = grenzenVon(k); return [typeof g.min === "number" ? `\u2066≥\u00a0${fmtZahl(g.min, 1)}\u00a0°C\u2069` : "", typeof g.max === "number" ? `\u2066≤\u00a0${fmtZahl(g.max, 1)}\u00a0°C\u2069` : ""].filter(Boolean).join(" · ") + (g.standard && !personalAktiv() ? ` (${t("kuehl.standard")})` : ""); }; // (Persona-Test): Personal braucht „Standard“ nicht
 const kuerzelVon = (stand, id) => stand.personen.find((p) => p.id === id)?.kuerzel || "";
-const zeitOderStrich = (iso) => (iso ? zeitKurz(iso) : "–"); // W2-H: Nachtrag ohne Uhrzeit. Trennung 2 (17.10.2026): Uhrzeit aus js/anzeige_text.js
+const zeitOderStrich = (iso) => (iso ? zeitKurz(iso) : "–"); // W2-H: Nachtrag ohne Uhrzeit. Trennung 2: Uhrzeit aus js/anzeige_text.js
 const grundText = (g) => NICHT_GEMESSEN.includes(g) ? t("kuehl.gruende." + g) : t("kuehl.nichtGemessenKurz");
 
 // ---------- Hauptansicht ----------
 const chefHinweis = () => `<p class="hinweis">${sym("lock")} ${esc(t("sicherheit.chefRichtetEin"))}</p>`; // W2-S: statt Einrichtung im Personal-Modus
-// Laden-Umbau (20.10.2026): im Laden nur Kopf „Kühlung“, Karte „Heute gemessen x / y“ mit „Rundgang starten“ und die Stellen mit ihrem Wert.
+// Laden-Umbau: im Laden nur Kopf „Kühlung“, Karte „Heute gemessen x / y“ mit „Rundgang starten“ und die Stellen mit ihrem Wert.
 // Die Grenze einer Stelle steht nur, wenn ihr letzter Wert außerhalb lag (sonst nach dem Antippen im Messfeld). Dauerhinweise (Lücken der
 // letzten 7 Tage, „Eine Stelle antippen …“, Verantwortung) stehen im Büro bzw. hinter „?“. Im Büro (buero: true) bleiben Monatsblatt,
 // Einrichtung und der 7-Tage-Hinweis auf dieser Seite.
-// Laden-Schablone (27.10.2026): Zeki sagt in einem Satz, was los ist – statt „0 / 4“.
+// Laden-Schablone: Zeki sagt in einem Satz, was los ist – statt „0 / 4“.
 function zekiKuehl(stand, st, fertig) {
   const warm = aktiveStellen(stand).map((k) => ({ k, m: letzteMessung(stand, k.id) })).find((x) => x.m?.abweichung && x.m.datum === heute());
   if (warm) return `<p class="zeki-zeile a-rot" role="status">${esc(anredeTeam(t("l15b.warm", kn(warm.k)), stand))}</p>`; // kurzer Satz: höchstens 6 Wörter
@@ -106,7 +106,7 @@ export function kuehlView(stand, { buero = false } = {}) {
 }
 
 // ---------- Einrichtung ----------
-// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): wer ausgeschieden ist, steht in keiner Auswahl mehr (Schicht, Rundgang, Putzen) –
+// Kürzel ausgeschiedener Mitarbeiter: wer ausgeschieden ist, steht in keiner Auswahl mehr (Schicht, Rundgang, Putzen) –
 // hier im Büro steht er mit Datum, dazu der Satz, dass alte Einträge und Nachweise erhalten bleiben. Löschen nach der Aufbewahrungsfrist kommt später.
 function ausgeschiedenView(stand) {
   const aus = personenAusgeschieden(stand);
@@ -184,7 +184,7 @@ function rundgangView(stand) {
     ${nav("kuehl", { schnell: false })}`;
 }
 
-// Laden-Umbau (20.10.2026): wer misst, ist vorbelegt; bei mehreren Personen hier mit einem Tipp änderbar (Kürzel, keine Wörter)
+// Laden-Umbau: wer misst, ist vorbelegt; bei mehreren Personen hier mit einem Tipp änderbar (Kürzel, keine Wörter)
 function personenWahl(stand, r) {
   const ps = stand.personen.filter((p) => !p.entfernt && p.aktiv !== false);
   if (ps.length < 2 || r.messungen.length || personalAktiv()) return ""; // Personal: die Schicht-Person misst
@@ -210,17 +210,17 @@ function rundgangStartView(stand) {
     ${nav("kuehl")}`;
 }
 
-// 27.10.2026 (Persona-Test Vater): „18“ beim Tiefkühler ist fast immer „−18“ mit vergessenem Minus – erst fragen, statt sofort Maßnahmen zu verlangen
+// (Persona-Test Vater): „18“ beim Tiefkühler ist fast immer „−18“ mit vergessenem Minus – erst fragen, statt sofort Maßnahmen zu verlangen
 const minusVergessen = (k, wert, abw) => k?.art === "tk" && typeof wert === "number" && wert >= 5 && abw && !abweichung(k, -wert);
 function stationView(stand, r, k) {
   const f = form; const letzte = letzteMessung(stand, k.id);
   const wert = f.wert; const abw = abweichung(k, wert); f.abwGezeigt = typeof wert === "number" && abw;
-  // Persona-Test Team (27.10.2026): „18“ ohne Minus wurde als +18 °C gespeichert, sobald eine Maßnahme gewählt war – jetzt erst Minus ja/nein
+  // Persona-Test Team: „18“ ohne Minus wurde als +18 °C gespeichert, sobald eine Maßnahme gewählt war – jetzt erst Minus ja/nein
   const minusOffen = minusVergessen(k, wert, abw) && !f.plusBestaetigt;
   const kannSpeichern = typeof wert === "number" ? !minusOffen && (!abw || f.massnahmen.length > 0) : !!f.grund;
-  // 27.10.2026 (Persona-Test Personal, 15-Wörter-Regel): im Personal-Modus ohne „Erste Messung“ und „(Standard)“, Nachkontrolle (vorbelegt: in 2 Stunden)
+  // (Persona-Test Personal, 15-Wörter-Regel): im Personal-Modus ohne „Erste Messung“ und „(Standard)“, Nachkontrolle (vorbelegt: in 2 Stunden)
   // und „nicht gemessen“ erst auf Tipp (Knopf statt Überschrift und Chips), kurze Maßnahmen-Namen
-  const pers = personalAktiv(); const kurzForm = true; // Persona-Test Vater 27.10.2026: die kurze Form (15-Wörter-Regel) gilt im Laden auch für den Chef; „Chef informiert“ nur fürs Team
+  const pers = personalAktiv(); const kurzForm = true; // Persona-Test Vater: die kurze Form (15-Wörter-Regel) gilt im Laden auch für den Chef; „Chef informiert“ nur fürs Team
   const marke = [letzte ? (kurzForm ? `${t("kuehl.zuletzt")} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : t("kuehl.zuletztLang", fmtZahl(letzte.wert, 1), datumLesbar(letzte.datum))) : kurzForm ? "" : t("kuehl.ersteMessung"), k.art === "tk" ? t("kuehl.minusHinweis") : ""].filter(Boolean).join(" · ");
   const nachkontrolleChips = `<div class="chips">${["h1", "h2", "naechste"].map((n) => `<button type="button" class="chip klein ${f.nachkontrolle === n ? "an" : ""}" data-a="nachkontrolle" data-wert="${n}">${esc(t("kuehl.nachkontrollen." + n))}</button>`).join("")}</div>`;
   const grundChips = `<div class="chips">${NICHT_GEMESSEN.map((g) => `<button type="button" class="chip klein ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>`;
@@ -298,11 +298,11 @@ export function kuehlAktion(name, el, stand, wurzel) {
   if (name === "kuehl-einrichtung-fertig") { kuehlEingerichtetSetzen(stand); ansicht = "start"; return true; }
   if (name === "kuehl-start") { ansicht = "start"; station = null; form = null; return true; }
   if (name === "kuehl-rundgang") { if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; } ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = null; return true; } // W2-S: Personal ohne Einrichtung
-  // Laden-Umbau (20.10.2026): „Rundgang starten“ im Laden – Name des Messenden vorbelegt (letzter bzw. erste Person), heute, sofort die erste
+  // Laden-Umbau: „Rundgang starten“ im Laden – Name des Messenden vorbelegt (letzter bzw. erste Person), heute, sofort die erste
   // Stelle ohne Wert. Läuft schon ein Rundgang, geht es an seiner ersten offenen Stelle weiter. Wer misst, lässt sich oben im Rundgang mit einem Tipp ändern (personenWahl).
   if (name === "kuehl-rundgang-los") {
     if (!kuehlBereit(stand)) { ansicht = personalAktiv() ? "start" : "einrichtung"; return true; }
-    const von = personalAktiv() ? schichtPerson(stand) || null : kuehlWerVorschlag(stand); // 27.10.2026: im Personal-Modus misst die Schicht-Person, keine Frage „Wer misst?“
+    const von = personalAktiv() ? schichtPerson(stand) || null : kuehlWerVorschlag(stand); // im Personal-Modus misst die Schicht-Person, keine Frage „Wer misst?“
     const offen = rundgangOffen(stand) || rundgangStarten(stand, { von, datum: heute() });
     ansicht = "rundgang"; startVon = null; startNach = null; startStelle = null;
     station = kuehlNaechsteStelle(stand, offen); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null;
@@ -313,15 +313,15 @@ export function kuehlAktion(name, el, stand, wurzel) {
     if (m) { form.wert = m.wert; form.wertText = wertAnzeige(m.wert); form.grund = m.grund; form.massnahmen = [...m.massnahmen]; form.notiz = m.notiz; form.nachkontrolle = m.nachkontrolle || "h2"; form.weg = (m.weg || []).map((w) => ({ ...w })); }
     return true; }
   if (name === "kuehl-einzel") { if (!kuehlBereit(stand) || rundgangOffen(stand)) return false; ansicht = "rundgang"; station = null; form = null; startVon = null; startNach = null; startStelle = el.dataset.id;
-    if (personalAktiv()) { startVon = schichtPerson(stand) || ""; return kuehlAktion("rundgang-start", el, stand); } // 27.10.2026: Schicht-Person misst, direkt ins Messfeld
-    if (!stand.personen.some((p) => !p.entfernt && p.aktiv)) { startVon = ""; return kuehlAktion("rundgang-start", el, stand); } // Lauf 2 (4c), Ja 01.11.2026: ohne Kürzel gleich ins Messfeld – kein Erklärtext
+    if (personalAktiv()) { startVon = schichtPerson(stand) || ""; return kuehlAktion("rundgang-start", el, stand); } // Schicht-Person misst, direkt ins Messfeld
+    if (!stand.personen.some((p) => !p.entfernt && p.aktiv)) { startVon = ""; return kuehlAktion("rundgang-start", el, stand); } // Lauf 2 (4c), Ja: ohne Kürzel gleich ins Messfeld – kein Erklärtext
     return true; }
   if (name === "kuehl-blatt") { ansicht = "blatt"; blattStelle = el.dataset.id || blattStelle; blattMonat = 0; return true; }
   if (name === "blatt-stelle") { blattStelle = el.dataset.id; return true; }
   if (name === "blatt-monat") { blattMonat = Number(el.dataset.wert); return true; }
   if (name === "blatt-drucken") { window.print(); return false; }
   // Einrichtung
-  // Klickjagd 30.10.2026: „Hinzufügen“ ohne Namen tat nichts – jetzt springt der Fokus ins Feld, der Chef sieht, was fehlt
+  // Klickjagd: „Hinzufügen“ ohne Namen tat nichts – jetzt springt der Fokus ins Feld, der Chef sieht, was fehlt
   if (name === "stelle-neu") { const n = neuName.trim(); if (!n) { el.closest(".neu")?.querySelector("input")?.focus(); return false; } kuehlstelleAnlegen(stand, { name: n, art: "kuehl" }); neuName = ""; return true; }
   if (name === "stelle-art") return kuehlstelleArtSetzen(stand, el.dataset.id, el.dataset.wert);
   if (name === "stelle-archiv") { const k = stand.kuehlstellen.find((x) => x.id === el.dataset.id); if (!k || !confirm(t("kuehl.stelleWegFrage", kn(k)))) return false; return kuehlstelleArchivieren(stand, k.id); } // nie löschen – alte Messungen behalten ihre Stelle
@@ -352,7 +352,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     station = null; form = null; ansicht = "start"; return "abgeschlossen";
   }
   if (!form) return false;
-  if (name === "station-nicht-auf") { form.nichtAuf = true; return true; } // 27.10.2026: Personal – Gründe erst auf Tipp
+  if (name === "station-nicht-auf") { form.nichtAuf = true; return true; } // Personal – Gründe erst auf Tipp
   if (name === "station-nk-auf") { form.nkAuf = true; return true; }
   if (name === "station-plus-ok") { if (form) form.plusBestaetigt = true; return true; }
   if (name === "station-minus") { if (typeof form?.wert === "number" && form.wert > 0) { form.wert = -form.wert; form.wertText = "-" + form.wertText.trim().replace(/^\+/, ""); } return true; }
@@ -374,7 +374,7 @@ export function kuehlAktion(name, el, stand, wurzel) {
     const k = aktiveStellen(stand).find((x) => x.id === station); if (!k || !kuehlFormGueltig()) return false; // Minus-Frage offen: nicht speichern
     stationEintragen(r, k, form); // „Ware weggeworfen" wird erst beim Abschluss zu Schwund-Einträgen
     station = null; form = null;
-    if (!r.einzel && !rundgangVollstaendig(stand, r)) { // Gremium 1 (24.10.2026): nach dem Speichern direkt die nächste offene Stelle, kein Umweg über die Übersicht
+    if (!r.einzel && !rundgangVollstaendig(stand, r)) { // Gremium 1: nach dem Speichern direkt die nächste offene Stelle, kein Umweg über die Übersicht
       station = kuehlNaechsteStelle(stand, r); form = station ? { ...leeresForm(), k: aktiveStellen(stand).find((x) => x.id === station) } : null; return true;
     }
     if (r.einzel || rundgangVollstaendig(stand, r)) { rundgangAbschliessen( /* W2-H (p01 K3): nach der letzten Stelle schließt sich der Rundgang selbst */stand, r, () => naechsteLfd(wurzel), wurzel.geraet, (n) => t("kuehl.schwundGrund", n)); ansicht = "start"; return "abgeschlossen"; } // Nachmessen einer Stelle: sofort ins Journal
@@ -399,7 +399,7 @@ export function kuehlEingabe(feld, wert, stand) {
     return "knopf";
   }
   if (feld === "station-notiz") { form.notiz = wert; return false; }
-  if (feld === "weg-name") { // 17.10.2026: angezeigt wird der übersetzte Name, gespeichert bleibt der deutsche Katalogname
+  if (feld === "weg-name") { // angezeigt wird der übersetzte Name, gespeichert bleibt der deutsche Katalogname
     const treffer = (stand?.artikel || []).find((x) => artikelText(x.name) === wert.trim()); form.wegName = treffer ? treffer.name : wert; return true; }
   if (feld === "weg-menge") { form.wegMenge = parseZahl(wert); return false; }
   return false;

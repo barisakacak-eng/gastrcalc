@@ -51,7 +51,7 @@ export async function serviceWorkerStarten() {
     const bereit = (w) => { Z.aktualisierung = w; if ((Z.ansicht === "start" || Z.ansicht === "buero") && Z.stand?.phase === "app") zeichne(); }; // W2-D: auch im Büro
     if (reg.waiting && navigator.serviceWorker.controller) bereit(reg.waiting);
     reg.addEventListener("updatefound", () => { const w = reg.installing; if (!w) return; w.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) bereit(w); }); });
-    // 27.10.2026 (Persona-Test): beim allerersten Besuch hat die Seite noch keinen Service Worker. sw.js übernimmt sie per
+    // (Persona-Test): beim allerersten Besuch hat die Seite noch keinen Service Worker. sw.js übernimmt sie per
     // clients.claim() – das löst ebenfalls „controllerchange“ aus, ist aber KEINE neue Fassung (die Seite läuft schon mit genau
     // diesen Dateien). Dieser erste Wechsel lädt deshalb nicht neu; erst ein späterer Wechsel (echtes Update) läuft wie gehabt.
     let ersteUebernahme = !navigator.serviceWorker.controller;

@@ -1,5 +1,5 @@
-// Hinweis-Motor „Was dir zusteht“ (Lauf 3, Phase 5, 09.11.2026). Rechenteil, Klasse A. Anzeige live seit Baris' Ja 09.11.2026 17:21.
-// Grundlage: Projekt-Dokument „GastroCash Hinweis-Katalog Was dir zusteht 28.10.2026“, Abschnitt 3 (Top 15) mit den Änderungen aus Abschnitt 6.
+// Hinweis-Motor „Was dir zusteht“. Rechenteil, Klasse A. Anzeige live seit Baris' Ja 17:21.
+// Grundlage: Projekt-Dokument „GastroCash Hinweis-Katalog Was dir zusteht“, Abschnitt 3 (Top 15) mit den Änderungen aus Abschnitt 6.
 // Regeln:
 //   - Auslöser nur aus Daten, die die App hat (Personen, Schichten, Abwesenheit, Monatsabschluss, Kanäle, Karte, Rechtsform) und aus vier
 //     Büro-Fragen, die nur dieser Motor stellt (stand.betrieb.hmAngaben). Kein Auslöser schätzt etwas über den Wirt.

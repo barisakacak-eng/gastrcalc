@@ -1,4 +1,4 @@
-// Rezepte: woher kommt jede Menge? (Etappe 6, Punkt 7 – Baris 14.10.2026, 17:41)
+// Rezepte: woher kommt jede Menge?
 // Stufen je Zutatenmenge: schaetzung (gelb, ≈) · pilot (ein echter Betrieb) · branche (Beleg, mindestens 2 Gastro-Quellen) · eigen (grün, gewogen).
 // „eigen-abgeleitet": vom Wirt an einem Gericht gewogen und auf die Familie übertragen (grün mit ~).
 // Regeln: Geschätztes ist nie grün. Eigene Werte überschreibt die App nie. Nichts ändert sich still.
@@ -141,7 +141,7 @@ export function wareneinsatzSicherheit(stand) {
   return { anteilGeschaetzt: anteil, unsicher: anteil > 0.5, zaehl, fortschritt };
 }
 
-// Mitmach-Rundgang (28.10.2026, Konzept 7.3): Wie viele Gerichte haben schon ein eigenes Rezept? „Eigen“ heißt: der Stempel ist nicht
+// Mitmach-Rundgang: Wie viele Gerichte haben schon ein eigenes Rezept? „Eigen“ heißt: der Stempel ist nicht
 // mehr „schaetzung“ (gewogen, abgeleitet oder belegt). Getränke und Gerichte ohne Zutaten zählen nicht. Verkaufsrenner = Gerichte mit
 // Tagesmenge; ist keine eingetragen, zählen alle Gerichte. rennerFertig: alle Verkaufsrenner haben ein eigenes Rezept.
 const speise = (g) => !!g && g.klasse !== "getraenk" && !!rezeptStempel(g).stufe;
@@ -158,7 +158,7 @@ export function naechstesRezept(stand) {
   return [...offen].sort((a, b) => (Number(b.mengeTag) || 0) - (Number(a.mengeTag) || 0) || frage(b) - frage(a))[0] || null;
 }
 
-// Kein rotes Minus aus Startwerten (Masterauftrag „Gehirn“ 0.1, 28.10.2026): Ist ein Gericht rot, aber das Rezept nur geschätzt
+// Kein rotes Minus aus Startwerten: Ist ein Gericht rot, aber das Rezept nur geschätzt
 // (Vorlage, Baukasten) oder ein Preis nur Richtwert, ist das Minus nicht belegt. Die Oberfläche zeigt dann „≈ prüfen: abwiegen“ statt Rot.
 export function minusUnsicher(zeile, gericht) {
   if (!zeile || zeile.ampel !== "rot") return false;

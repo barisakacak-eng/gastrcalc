@@ -1,4 +1,4 @@
-// Zeki als Gliederpuppe (Baris 28.10.2026: „besser, schneller, effizienter – einfach machen“).
+// Zeki als Gliederpuppe.
 // Statt 25 gemalter Bilder je Bewegung bewegt sich die vorhandene Vektorfigur an Gelenken:
 // Kopf am Hals, Arme an der Schulter, Hand am Handgelenk, Füße am Knöchel. Gleiche Figur in jeder Bewegung, kein Springen,
 // keine Bilddateien, offline. Neue Bewegung = ein Eintrag in BEWEGUNGEN.
@@ -17,7 +17,7 @@ const teil = (svg, id) => svg.querySelector(`[data-zeki-teil="${id}"]`);
 // Einmal je Figur: Arme und Füße als eigene Teile aus der Figur schneiden, Gelenkpunkte setzen.
 // Schnittlinien liegen genau auf der dunklen Kontur zwischen Arm und Körper; Arme und Füße liegen hinter dem Körper,
 // darum sieht man die Schnittkante nicht, wenn sie sich drehen.
-// Die Figur ist nicht spiegelgleich: Schürzenrand links außen bei x 43,8, rechts bei 186,5 (gemessen 28.10.2026 an 4-facher Darstellung).
+// Die Figur ist nicht spiegelgleich: Schürzenrand links außen bei x 43,8, rechts bei 186,5.
 // Der Schnitt liegt genau auf dem äußeren Rand der Schürzen-Kontur – so bleibt beim Armheben kein Ärmelstreifen am Rumpf hängen.
 const L = 43.4, M = 118.5, R = 187.2; // linke und rechte Kante des Rumpfs, Mitte
 const RO = [179.5, 185.5]; // rechte Schulterlinie oben (bei y 135 und 165), wie links um 7,5 bzw. 2,5 nach innen
@@ -37,7 +37,7 @@ function zekiPuppeVorbereiten(svg) {
   const defs = svg.querySelector("defs"), href = use?.getAttribute("href") || use?.getAttribute("xlink:href");
   if (koerper && use && m && defs && href) {
     const prefix = m[1];
-    // Halsfuge (28.10.2026): Kopf und Körper waren genau bei y 146 getrennt. Neigt sich der Kopf, öffnete sich dort ein weißer Spalt.
+    // Halsfuge: Kopf und Körper waren genau bei y 146 getrennt. Neigt sich der Kopf, öffnete sich dort ein weißer Spalt.
     // Der Körper beginnt im Halsbereich (x 72–164) jetzt 8 Einheiten höher; in Ruhe liegt der Kopf darüber (gleiche Pixel), beim Neigen füllt er die Fuge.
     [...defs.querySelectorAll("clipPath")].find((c) => c.id === prefix + "clip-koerper")?.querySelector("path")?.setAttribute("d", "M41 146H72V138H164V146H188V328H41Z");
     const el = (tag, attrs = {}) => { const e = doc.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e; };

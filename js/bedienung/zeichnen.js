@@ -182,7 +182,7 @@ function karteFotoSchirm() {
 }
 
 function zeichneOnboarding() {
-  // E: Kennung des sichtbaren Schritts – Trennung (17.10.2026): gemerkt in schrittBetreten(), nicht mehr beim Zeichnen
+  // E: Kennung des sichtbaren Schritts – Trennung: gemerkt in schrittBetreten(), nicht mehr beim Zeichnen
   const SCHRITTE = schritteFuer(Z.stand);
   const i = Math.min(Z.stand.schritt, SCHRITTE.length - 1);
   const s = SCHRITTE[i];

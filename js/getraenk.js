@@ -1,4 +1,4 @@
-// Getränke (18.10.2026): Büro „Getränke“ – Übersicht, Felder setzen, neues Getränk anlegen. Reine Funktionen bis auf die Setzer
+// Getränke: Büro „Getränke“ – Übersicht, Felder setzen, neues Getränk anlegen. Reine Funktionen bis auf die Setzer
 // (getraenkSetzen, getraenkAnlegen), keine Oberfläche, kein Netz. Felder und Migration: js/getraenk_feld.js.
 //
 // Wareneinsatz je Glas (offenes Getränk) = Preis je Liter des Großgebindes × Ausschankmenge / (1 − Schankverlust). Das steht als Zutat im Rezept
@@ -74,7 +74,7 @@ export function getraenkSetzen(stand, id, felder = {}) {
     g.zutaten = i >= 0 ? g.zutaten.map((z, j) => (j === i ? { ...z, ...neuZ } : z)).filter((z, j) => j === i || z.name !== sauber.quelle) : [neuZ, ...g.zutaten];
     if (JSON.stringify(g.zutaten) !== alt && g.rezeptQuelle === "baukasten") g.rezeptQuelle = "eigen";
   }
-  // Prüfgremium 18.10.2026 (N2): von „offen“/„Becher“ auf Dose oder Flasche umgestellt – das Rezept zog weiter aus dem Großgebinde ab. Jetzt wie
+  // Prüfgremium (N2): von „offen“/„Becher“ auf Dose oder Flasche umgestellt – das Rezept zog weiter aus dem Großgebinde ab. Jetzt wie
   // beim Anlegen ohne Großgebinde: die Großgebinde-Zutat wird durch den Stück-Artikel des Getränks ersetzt (gleicher Name, 1 Stück; fehlt er, wird er
   // ohne Preis angelegt – den trägt der Wirt unter „Einkaufspreise“ ein). Bestand und Bestellung zählen dann Dosen/Flaschen.
   const altQuelle = getraenkVon(g)?.quelle || null;

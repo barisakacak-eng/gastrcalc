@@ -1,10 +1,10 @@
-// Hinweis-Karten im Büro (Vertrag docs/vertraege.md Abschnitt 2, Zoro 23.10.2026).
-// Allgemeine Hinweise aus dem Steuer-Register (Franky, 22.10.2026, Quellenprüfung 23.10.2026), ausgelöst durch Daten, die die App ohnehin hat.
+// Hinweis-Karten im Büro.
+// Allgemeine Hinweise aus dem Steuer-Register, ausgelöst durch Daten, die die App ohnehin hat.
 // Keine Einzelfallberatung, keine Ersparnis-Rechnung (§ 5 StBerG). Die App zeigt nur Karten mit geprueft: true –
 // das setzt Zoro erst nach Prüfung an der Primärquelle. Jede Karte nennt die Quelle und das Prüfdatum.
 // Rein: schreibt nur über hinweisStatusSetzen in stand.betrieb.hinweise (Bereich betrieb).
 import { SCHWUND_ARTEN } from "./engine.js";
-import { PERSONEN, KAPITAL, passtZurRechtsform } from "./rechtsform.js"; // Rechtsform (23.10.2026)
+import { PERSONEN, KAPITAL, passtZurRechtsform } from "./rechtsform.js"; // Rechtsform
 import { fuelleRegeln } from "./regeltext.js";
 import { heute } from "./util.js";
 
@@ -38,16 +38,16 @@ export const HINWEISE = [
   { id: "tagesabschluss", titel: "Kasse täglich abschließen", satz: "Jeder Tag braucht einen Kassenabschluss. Fehlt er, darf das Finanzamt deinen Gewinn schätzen. Z-Bons jeden Tag sichern und mit deinem Steuerberater klären.", quelle: "§ 146 AO, § 162 AO", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Z-Bon", "Kassenbuch"], rechtsformen: "alle", geprueft: true, pruefung: "2026-10-23 Gesetzestext", register: "03.02" },
   { id: "inventur_schwund", titel: "Schwund erklären", satz: "Erfasster Müll und Inventur helfen zu erklären, warum Ware fehlt, ohne verkauft zu sein. Beides weiterführen und mit deinem Steuerberater klären.", quelle: "§ 162 AO", gilt_fuer: "beide", spur: "hinten", versprechen: 2, ausloeser: "inventur", belege: ["Müll-Liste", "Inventur"], rechtsformen: "alle", geprueft: true, pruefung: "2026-10-23 Gesetzestext", register: "06.01" },
   { id: "bewirtung", titel: "Bewirtungsbeleg ab {kleinbetragsrechnung} €", satz: "Firmenkunde will Bewirtungsbeleg: Immer Bon aus der Kasse geben. Über {kleinbetragsrechnung} €: volle Rechnung mit Name und Adresse des Kunden. Mit deinem Steuerberater klären.", quelle: "BMF 19.11.2025, IV C 6 - S 2145/00026/005/033; § 33 UStDV", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Bewirtungsbeleg"], rechtsformen: "alle", geprueft: false, pruefung: "2026-10-24 Gremium 3: BMF-PDF nicht am Original gelesen, nur Fachportale; bis dahin nicht freigeschaltet", register: "12.11" },
-  // Lauf 6 (12.11.2026): vier Pflicht-Hinweise, je am Gesetzestext gelesen (gesetze-im-internet.de, 12.11.2026).
+  // Lauf 6: vier Pflicht-Hinweise, je am Gesetzestext gelesen.
   { id: "belegausgabe", titel: "Jeder Kunde bekommt Bon", satz: "Mit elektronischer Kasse musst du bei jedem Verkauf sofort einen Bon anbieten, auf Papier oder digital. Mit deinem Steuerberater klären.", quelle: "§ 146a Abs. 2 AO", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Z-Bon"], rechtsformen: "alle", geprueft: true, pruefung: "2026-11-12 Gesetzestext", register: "L6.01" },
   { id: "kasse_melden", titel: "Kasse beim Finanzamt melden", satz: "Eine elektronische Kasse muss dem Finanzamt gemeldet sein: innerhalb eines Monats nach Kauf oder Abschaffung, elektronisch. Mit deinem Steuerberater klären.", quelle: "§ 146a Abs. 4 AO", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Meldebestätigung"], rechtsformen: "alle", geprueft: true, pruefung: "2026-11-12 Gesetzestext", register: "L6.02" },
   { id: "gewerbesteuer_vz", titel: "Gewerbesteuer viermal im Jahr", satz: "Setzt die Gemeinde Vorauszahlungen zur Gewerbesteuer fest, sind sie am 15. Februar, Mai, August und November fällig. Bescheid ansehen und mit deinem Steuerberater klären.", quelle: "§ 19 Abs. 1 GewStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Gewerbesteuer-Bescheid"], rechtsformen: "alle", geprueft: true, pruefung: "2026-11-12 Gesetzestext", register: "L6.03" },
   { id: "sondervorauszahlung", titel: "Dauerfrist kostet Vorauszahlung", satz: "Dauerfristverlängerung bei monatlicher Umsatzsteuer-Voranmeldung: Jedes Jahr wird eine Sondervorauszahlung fällig, ein Elftel der Vorauszahlungen des Vorjahres. Mit deinem Steuerberater klären.", quelle: "§ 47 Abs. 1 UStDV", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "dauerfristMonat", belege: ["Antrag Dauerfristverlängerung"], rechtsformen: "alle", geprueft: true, pruefung: "2026-11-12 Gesetzestext", register: "L6.04" },
-  // Nur GmbH und UG (Franky Rückwärts-Vorlage 23.10.2026, Zoro am Gesetz geprüft): die Gesellschaft versteuert, nicht der Inhaber.
+  // Nur GmbH und UG: die Gesellschaft versteuert, nicht der Inhaber.
   { id: "gmbh_chefessen", titel: "Chef-Essen abrechnen", satz: "Als Geschäftsführer isst du nicht gratis mit: Dein Essen zählt als Lohn oder als versteckte Gewinn-Auszahlung an dich. Abrechnung mit deinem Steuerberater klären.", quelle: "§ 8 Abs. 3 KStG, § 8 Abs. 2 EStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Lohnabrechnung Geschäftsführer"], rechtsformen: KAPITAL, geprueft: true, pruefung: "2026-10-23 Gesetzestext, Franky-Vorlage", register: "04.03" },
   { id: "gmbh_bilanz", titel: "Bilanz ist Pflicht", satz: "Deine Gesellschaft braucht immer eine Bilanz, egal wie klein der Umsatz ist. Belege monatlich sortieren und mit deinem Steuerberater klären.", quelle: "§ 6, § 238 HGB; § 13 Abs. 3 GmbHG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Monatspaket", "Kontoauszüge"], rechtsformen: ["gmbh", "ug", "kg_ohg"], geprueft: true, pruefung: "2026-10-24 Gesetzestext; OHG und KG sind Handelsgesellschaften (§ 6 HGB) und damit bilanzpflichtig, § 241a HGB befreit nur Einzelkaufleute (Gremium 3)", register: "03.03" },
   { id: "gmbh_gewerbesteuer", titel: "Kein Gewerbesteuer-Freibetrag", satz: "Den Freibetrag von {gewerbesteuer_freibetrag} € bei der Gewerbesteuer gibt es nur für Einzelunternehmer und Personengesellschaften, nicht für deine Gesellschaft. Gewerbesteuer einplanen, mit deinem Steuerberater klären.", quelle: "§ 11 Abs. 1 Satz 3 Nr. 1 GewStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "abschluesse5", belege: ["Gewerbesteuer-Bescheid"], rechtsformen: KAPITAL, geprueft: true, pruefung: "2026-10-23 gesetze-im-internet.de § 11 GewStG gelesen", register: "13.01" },
-  // Noch ungeprüft (Franky 23.10.2026, Rückfragen offen): nicht in der App sichtbar, bis Quelle gelesen.
+  // Noch ungeprüft: nicht in der App sichtbar, bis Quelle gelesen.
   { id: "trinkgeld", titel: "Trinkgeld richtig trennen", satz: "Trinkgeld der Gäste an dein Personal ist für das Personal steuerfrei. Trinkgeld für dich selbst ist Einnahme mit Umsatzsteuer. Liste führen, mit deinem Steuerberater klären.", quelle: "§ 3 Nr. 51 EStG; § 10 Abs. 1 Satz 2 UStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "mitarbeiter", belege: ["Trinkgeld-Liste"], rechtsformen: "alle", geprueft: true, pruefung: "2026-10-24 gesetze-im-internet.de § 3 Nr. 51 EStG und § 10 Abs. 1 Satz 2 UStG gelesen (Gremium 3 + Zoro)", register: "12.12" },
   { id: "gutschein", titel: "Gutscheine richtig buchen", satz: "Gutschein über einen Betrag für Essen und Getränke: Steuer erst beim Einlösen. Gutschein für ein bestimmtes Gericht: Steuer schon beim Verkauf. Mit deinem Steuerberater klären.", quelle: "§ 3 Abs. 13–15 UStG", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "belege", belege: ["Gutschein-Liste"], rechtsformen: "alle", geprueft: true, pruefung: "2026-10-24 gesetze-im-internet.de § 3 Abs. 13–15 UStG gelesen (Gremium 3)", register: "01.05" },
   { id: "pfand", titel: "Pfand wie das Getränk", satz: "Pfand auf Flaschen bekommt denselben Steuersatz wie das Getränk darin, meist 19 %. In der Kasse trennen und mit deinem Steuerberater klären.", quelle: "UStAE 10.1 Abs. 8; BMF 05.11.2013, IV D 2 - S 7200/07/10022 :001", gilt_fuer: "beide", spur: "hinten", versprechen: 3, ausloeser: "belege", belege: ["Pfand-Journal"], rechtsformen: "alle", geprueft: false, pruefung: "2026-10-24 nur über Haufe gegengelesen, Original offen (Gremium 3)", register: "01.06" },
@@ -55,7 +55,7 @@ export const HINWEISE = [
 
 export const hinweisMitId = (id) => HINWEISE.find((h) => h.id === id) || null;
 
-const hinweisListe = (stand) => (Array.isArray(stand?.betrieb?.hinweise) ? stand.betrieb.hinweise : []); // Gremium 2 (24.10.2026): kaputte Daten tolerieren
+const hinweisListe = (stand) => (Array.isArray(stand?.betrieb?.hinweise) ? stand.betrieb.hinweise : []); // Gremium 2: kaputte Daten tolerieren
 function statusVon(stand, id) {
   const e = hinweisListe(stand).find((x) => x && x.id === id);
   return HINWEIS_STATUS.includes(e?.status) ? e.status : "neu";
@@ -67,7 +67,7 @@ export function hinweiseFuer(stand, { nurGeprueft = true, mitErledigt = false, b
   for (const h of HINWEISE) {
     if (nurGeprueft && !h.geprueft) continue;
     if (betriebsart && h.gilt_fuer !== "beide" && h.gilt_fuer !== betriebsart) continue;
-    if (!passtZurRechtsform(h, stand)) continue; // Rechtsform (23.10.2026): „unbekannt“ sieht nur Karten für alle
+    if (!passtZurRechtsform(h, stand)) continue; // Rechtsform: „unbekannt“ sieht nur Karten für alle
     const f = AUSLOESER[h.ausloeser] || AUSLOESER.manuell;
     if (!f(stand)) continue;
     const status = statusVon(stand, h.id);
@@ -105,6 +105,6 @@ export function hinweisPruefen(h) {
   if (h.geprueft && !/^\d{4}-\d{2}-\d{2} /.test(h.pruefung || "")) fehler.push("geprüft ohne Prüfdatum");
   return fehler;
 }
-// Vorab-Prüfung 03.11.2026 (C11): „Belege bereitlegen“ nur bei Hinweisen, zu denen es einen Papierbeleg gibt (Rechnung, Quittung, Z-Bon) –
+// Vorab-Prüfung (C11): „Belege bereitlegen“ nur bei Hinweisen, zu denen es einen Papierbeleg gibt (Rechnung, Quittung, Z-Bon) –
 // nicht bei Listen, die die App selbst führt, und nicht bei reinen Regeln.
 export const BELEG_KNOPF = new Set(["steuer_sieben", "berufskleidung", "gwg", "belehrung", "aufbewahrung", "tagesabschluss", "bewirtung"]);

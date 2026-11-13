@@ -1,4 +1,4 @@
-// Eigentümer-Ebene (18.10.2026): ein Blick über alle Läden auf diesem Handy – je Laden und Zeitraum Umsatz, Wareneinsatz, Müll,
+// Eigentümer-Ebene: ein Blick über alle Läden auf diesem Handy – je Laden und Zeitraum Umsatz, Wareneinsatz, Müll,
 // Schwund-Verdacht, Personalessen, offene Pflichten, Stand „bis null“, Lager und Bestellbedarf, laufende Aktionen; dazu Rang je Kennzahl,
 // Abstand zum besten Laden und Trend gegenüber dem Vorzeitraum. Reine Funktionen, keine Oberfläche, nichts wird geschrieben.
 // Alles kommt aus den vorhandenen Rechenwerken (engine, zaehler, export_amt, verkauf, bestand, aktion_plan) – keine zweite Rechnung.
@@ -45,7 +45,7 @@ export function eigentuemerZeitraum(wahl = { art: "woche" }, H = heuteGeschaeft(
 
 // ---------- je Laden ----------
 // Öffnungstage im Zeitraum (gewichtet wie im Zähler: Ruhetage 0, sonst tageProWoche/7) – gerundet, mindestens 1 bei Tagen ≥ 1
-// Vorab-Prüfung 03.11.2026 (C7): erst ab dem Tag, an dem es den Laden in der App gibt (angelegt, sonst erster Eintrag) – ein neuer Laden
+// Vorab-Prüfung (C7): erst ab dem Tag, an dem es den Laden in der App gibt (angelegt, sonst erster Eintrag) – ein neuer Laden
 // meldete am ersten Tag „5 Tage ohne Umsatz-Eintrag“ (Zeitraum 7 Tage zurück).
 function ladenSeit(stand) {
   const a = typeof stand.angelegt === "string" ? stand.angelegt.slice(0, 10) : null;
@@ -294,7 +294,7 @@ export function eigentuemerCsv(ue) {
   const z = ue.zeitraum;
   const kopf = [...t("eigentuemer.dok.kopf"), `${t("eigentuemer.kennzahl.umsatz")} (${t("eigentuemer.dok.tage")})`, t("eigentuemer.dok.quelle"), t("eigentuemer.kennzahl.personal"), t("eigentuemer.kennzahl.aktionen"), t("eigentuemer.dok.fehlt")];
   const zeilen = ue.laeden.map((l) => { const c = ladenZellen(l); return [l.name + (l.beispiel ? ` (${t("eigentuemer.beispiel")})` : ""), c.umsatz, c.ware, c.muell, c.schwund, c.pflichtenZahl, c.bisNull, c.lager, c.bestellen, `${l.umsatz.tage}/${l.umsatz.erwartet}`, c.wareQuelle, c.personal, c.aktionen, c.fehlt]; });
-  // Vorab-Prüfung D (04.11.2026): eigene Zahlenspalten ohne „€“/„≈“ für die Weiterverarbeitung (leer = keine Daten)
+  // Vorab-Prüfung D: eigene Zahlenspalten ohne „€“/„≈“ für die Weiterverarbeitung (leer = keine Daten)
   const k = t("eigentuemer.dok.kopf"); const zk = (i) => t("eigentuemer.dok.zahlKopf", k[i]);
   kopf.push(zk(1), zk(2), zk(3), zk(4), zk(6), zk(7));
   const r2 = (x) => (Number.isFinite(x) ? rund2(x) : null); // nur endliche Zahlen, sonst null

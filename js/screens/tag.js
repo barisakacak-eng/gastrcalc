@@ -1,22 +1,22 @@
 // Etappe 3/5: die Listen (Schwund, Müll je Fraktion, Personalessen) und gemeinsame Helfer für Datum und Einträge.
 // Die Eingabe selbst liegt seit Etappe 5 in muell.js (Müll) und umsatz.js (Tagesumsatz). Einträge werden nur angehängt; Rücknahme = storniert.
 import { t } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3 (16.10.2026), M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
-import { eintragWert, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SVEV_2026, svevAm, sachbezugWert, schwundEintraege } from "../engine.js"; // Trennung 2 (17.10.2026): Sachbezug, Liste und Wert aus dem Rechenwerk
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft } from "../util.js"; // Paket 3, M7: Umsatz/Müll-Tag ist der Geschäftstag (bis 4 Uhr = Vortag)
+import { eintragWert, schwundAuswertung, zeitraumTage, monatsZeitraum, schwundWertSetzen, SVEV_2026, svevAm, sachbezugWert, schwundEintraege } from "../engine.js"; // Trennung 2: Sachbezug, Liste und Wert aus dem Rechenwerk
 import { nav } from "./nav.js";
-import { muellStornieren } from "../muell.js"; // Trennung (17.10.2026): Storno über das Rechenwerk
+import { muellStornieren } from "../muell.js"; // Trennung: Storno über das Rechenwerk
 import { tagGewaehlt, tagZuruecksetzen, tagWaehlen } from "./tag_wahl.js";
 import { muellStatistikView } from "./muell.js"; // Drei Ebenen: Müll-Statistik wohnt im Büro unter Listen
 
 let listenZeitraum = "woche"; // "woche" | "monat"
 export { tagGewaehlt, tagZuruecksetzen }; // der gewählte Tag wohnt in tag_wahl.js (damit muell.js ihn ohne Importkreis lesen kann)
 
-// Trennung 2 (17.10.2026): eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz wohnen in js/anzeige_text.js
+// Trennung 2: eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz wohnen in js/anzeige_text.js
 import { eintragName, eintragMenge, datumLesbar } from "../anzeige_text.js";
 export { eintragName, eintragMenge, datumLesbar, monatName, tagLesbar, zeitKurz } from "../anzeige_text.js";
 // Was ein Eintrag „wert" ist: Vorgang 1 zum Einkaufspreis, Personalessen zum Sachbezugswert (mit Wareneinsatz als Nebensatz), Eigenverbrauch zum Wareneinsatz.
 function eintragBetrag(e, stand) {
-  const waren = eintragWert(e, stand); // Trennung 2 (17.10.2026)
+  const waren = eintragWert(e, stand); // Trennung 2
   if (e.wertOffen && waren === null && !e.storniert) return `<span class="packung"><input inputmode="decimal" data-f="wert:${esc(e.id)}" placeholder="${esc(t("tag.wertNachtragen"))}" aria-label="${esc(t("tag.wertNachtragen"))}"><span class="einheit">€</span></span>`;
   if (e.art === "personal") return `<b>${fmtEuro(sachbezugWert(e.menge, e.mahlzeit, e.datum), { dezimal: 2 })}</b><small class="marke">${esc(t("tag.sachbezug"))}${waren !== null ? ` · ${esc(t("tag.warenKurz"))} ${fmtEuro(waren, { dezimal: 2 })}` : ""}</small>`;
   return `<b>${waren === null ? `<span class="marke offen">${esc(t("tag.keinPreis"))}</span>` : fmtEuro(waren, { dezimal: 2 })}</b>`;

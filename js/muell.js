@@ -5,8 +5,8 @@ import { imTakt } from "./takt.js";
 import { uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
 import { warenGericht, kalkulation, wertEintrag, eintragWert, SCHWUND_ARTEN, mengeUmrechnen, sachbezugWert } from "./engine.js";
-import { normalisieren, suchRang } from "./data/suchnamen.js"; // Trennung 2 (17.10.2026): Suche „Andere“
-// Paket 3 (16.10.2026), M7: Müll und Personalessen gehören zum Geschäftstag (bis 4 Uhr = Vortag).
+import { normalisieren, suchRang } from "./data/suchnamen.js"; // Trennung 2: Suche „Andere“
+// Paket 3, M7: Müll und Personalessen gehören zum Geschäftstag (bis 4 Uhr = Vortag).
 
 // Gewicht eines Gerichts in Gramm aus dem Rezept (g- und ml-Zutaten; Stück-Zutaten wie Brot zählen nicht, die App sagt „≈").
 export function gewichtGericht(g) {
@@ -87,7 +87,7 @@ export function personalessen(stand, gericht, { datum = heuteGeschaeft(), mahlze
   stand.schwund.push(e); return e;
 }
 
-// Ausgegeben (Baris 27.10.2026): ein Gericht, das der Chef Gästen oder Freunden ausgibt – Ware ohne Umsatz, für den Steuerberater getrennt.
+// Ausgegeben: ein Gericht, das der Chef Gästen oder Freunden ausgibt – Ware ohne Umsatz, für den Steuerberater getrennt.
 export function ausgegeben(stand, gericht, { datum = heuteGeschaeft() } = {}) {
   const e = neu(datum, "ausgegeben", { typ: "gericht", id: gericht.id, name: gericht.name }, 1, "portion", { quelle: "muell" });
   e.wert = wertEintrag(e, stand);
@@ -188,7 +188,7 @@ function muellVorschau(stand, wahl, D = heuteGeschaeft()) {
 }
 void preisJeBasis;
 
-// ---------- Drei Ebenen, Punkt 8: Müll mit einem Tipp (15.10.2026) ----------
+// ---------- Drei Ebenen, Punkt 8: Müll mit einem Tipp ----------
 // Schlüssel einer Kachel: Gericht über die id, Rohware über den Namen (wie haeufigsteMuell).
 export const muellSchluessel = (x) => (x.ref ? (x.ref.typ === "gericht" ? "g:" + x.ref.id : "a:" + x.ref.name) : x.typ === "gericht" ? "g:" + x.id : "a:" + x.name);
 
@@ -204,7 +204,7 @@ export function standardMenge(stand, x) {
 }
 
 // Ein Tipp = ein Eintrag mit der üblichen Menge. von = Person (Personal-Modus), sonst ohne.
-export function muellTippEintragen(stand, x, { datum = heuteGeschaeft(), von = null, uebrig = false, grund = null } = {}) { // grund „personal“ (27.10.2026): Gericht als Personalessen // uebrig: abends nicht Verkauftes (Baris 24.10.2026, ersetzt „Eimer wiegen“)
+export function muellTippEintragen(stand, x, { datum = heuteGeschaeft(), von = null, uebrig = false, grund = null } = {}) { // grund „personal“: Gericht als Personalessen // uebrig: abends nicht Verkauftes
   let e = null;
   if (x.typ === "gericht") { const g = (stand.gerichte || []).find((y) => y.id === x.id); if (!g) return null; e = grund === "personal" ? personalessen(stand, g, { datum }) : grund === "ausgegeben" ? ausgegeben(stand, g, { datum }) : gerichtWeg(stand, g, { datum, anzahl: 1 }); }
   else { const a = (stand.artikel || []).find((y) => y.name === x.name); if (!a) return null; const m = standardMenge(stand, x); e = rohwareWeg(stand, a, { datum, menge: m.menge, einheit: m.einheit }); }
@@ -220,15 +220,15 @@ export function muellStornieren(stand, ids) {
   return n;
 }
 
-// Trennung (17.10.2026): Nachweis an frische Müll-Einträge hängen (vorher screens/muell.js) – Foto-Upload und/oder Person im Personal-Modus.
+// Trennung: Nachweis an frische Müll-Einträge hängen (vorher screens/muell.js) – Foto-Upload und/oder Person im Personal-Modus.
 export function schwundNachweisSetzen(stand, ids, { foto = null, von = null } = {}) {
   for (const id of ids) { const x = (stand.schwund || []).find((y) => y.id === id); if (!x) continue; if (foto) x.foto = foto; if (von) x.von = von; }
 }
 
 // Wie oft eine Kachel heute getippt wurde (Zähler „2ד) – Müll-Einträge, nicht Personalessen.
-// Lauf 2 (31.10.2026), Klicker K1 C2: auch Personalessen und Ausgegeben bekommen ihr „1×“ – je Grund gezählt (grund: roh | personal | ausgegeben | bruch | null = alle Müll-Arten)
+// Lauf 2, Klicker K1 C2: auch Personalessen und Ausgegeben bekommen ihr „1×“ – je Grund gezählt (grund: roh | personal | ausgegeben | bruch | null = alle Müll-Arten)
 export function tippsHeute(stand, datum = heuteGeschaeft(), grund = null) {
-  // Grund „uebrig“ (K1 Runde 2, 01.11.2026): nur abends als „übrig geblieben“ getippte Einträge; die Reiter zählen ohne sie
+  // Grund „uebrig“: nur abends als „übrig geblieben“ getippte Einträge; die Reiter zählen ohne sie
   const out = {}; const arten = grund === "personal" ? ["personal"] : grund === "ausgegeben" ? ["ausgegeben"] : grund === "bruch" ? ["gericht"] : grund === "roh" ? ["rohware"] : grund === "uebrig" ? ["gericht", "rohware"] : ["gericht", "rohware", "personal", "ausgegeben"];
   for (const e of stand.schwund || []) if (!e.storniert && e.datum === datum && arten.includes(e.art) && (grund === null || !!e.uebrig === (grund === "uebrig"))) { const k = muellSchluessel(e); out[k] = (out[k] || 0) + 1; }
   return out;
@@ -244,7 +244,7 @@ export function muellHeute(stand, datum = heuteGeschaeft()) {
   return { wert, anzahl, offen };
 }
 
-// ---------- Trennung 2 (17.10.2026): Zahlen für die Müll-Bildschirme (vorher in js/screens/muell.js) ----------
+// ---------- Trennung 2: Zahlen für die Müll-Bildschirme (vorher in js/screens/muell.js) ----------
 // Monatstonne im Büro: Füllstand (0–1) dieses Monats und Linie des Vormonats (0–1 oder null), Maßstab = größerer Wert bzw. Vormonat × 1,25.
 export function muellTonne(mv) {
   const fuell = mv.vormonat ? Math.min(1, mv.monat / Math.max(mv.monat, mv.vormonat * 1.25)) : (mv.monat > 0 ? 0.5 : 0);

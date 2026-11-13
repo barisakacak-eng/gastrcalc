@@ -1,4 +1,4 @@
-// Welle 2 „Ware und Schwund“ (Masterauftrag „Gehirn“ 2.1–2.7, 28.10.2026). Reine Rechnungen, keine Oberfläche.
+// Welle 2 „Ware und Schwund“. Reine Rechnungen, keine Oberfläche.
 // Grundlage sind vorhandene Bausteine: Rezept-Bedarf (verkauf.bedarfGericht), Preise je Basis (engine.preisJeBasis), Mengen im Monat
 // (engine.mengenJeMonat), Müll-Journal (stand.schwund), Belege (stand.lieferungen), Bestellvorschlag (bestand.bestellVorschlag).
 // Euro-Zahlen sind Schätzungen (≈), sobald Mengen, Garverlust oder Preise geschätzt sind – jede Funktion liefert dafür „geschaetzt“.
@@ -46,7 +46,7 @@ export function spiessVergleich(a, b, portionenMonat = 0) {
 
 // ---------- 2.3 A-Artikel für die Wochenzählung ----------
 // Die 5–8 teuersten Zutaten nach Wert im Wochenverbrauch (Rezept × Menge). Setzung: höchstens 8, und so viele, bis ≈ 80 % des Wertes erfasst sind.
-const A_MIN = 5, A_MAX = 8, A_ANTEIL = 0.8; // Setzung 28.10.2026 (ABC-Analyse: wenige Artikel tragen den Großteil des Wertes)
+const A_MIN = 5, A_MAX = 8, A_ANTEIL = 0.8; // Setzung (ABC-Analyse: wenige Artikel tragen den Großteil des Wertes)
 export function aArtikel(stand) {
   const { mengen, geschaetzt } = mengenJeMonat(stand);
   const woche = Object.fromEntries(Object.entries(mengen).map(([k, v]) => [k, v / WOCHEN_JE_MONAT]));
@@ -88,7 +88,7 @@ export function zuVielVorbereitet(stand, datum) {
   const out = [];
   for (const [id, x] of je) {
     if (x.tage.size < UEBRIG_MIN_TAGE) continue;
-    // Vorab-Prüfung 03.11.2026 (C6): ohne echte Verkaufsmenge rechnet mengenJeMonat mit 1 je Tag (Platzhalter) – dann kam bei 1 Portion Müll
+    // Vorab-Prüfung (C6): ohne echte Verkaufsmenge rechnet mengenJeMonat mit 1 je Tag (Platzhalter) – dann kam bei 1 Portion Müll
     // am Tag für jedes Gericht „50 % bleibt übrig“. Ohne Menge (Gericht oder Bestellungen je Tag) jetzt keine Aussage.
     const g = (stand.gerichte || []).find((y) => y.id === id); if (!(g?.mengeTag > 0) && !(Number(stand.verkauf?.bestellungenTag) > 0)) continue;
     const verkauft = (mengen[id] || 0) / tageMonat * x.tage.size; const anteil = x.menge / (verkauft + x.menge);
@@ -100,7 +100,7 @@ export function zuVielVorbereitet(stand, datum) {
 // ---------- 2.5 Lieferantenvergleich aus eigenen Belegen ----------
 // Je Ware und Lieferant der letzte Preis je Basiseinheit (netto ÷ (Menge × Inhalt)). Nur gleiche Basis (kg/l/Stück) und gleicher Packungsinhalt
 // (± LIEFERANT_INHALT_TOLERANZ) werden verglichen, sonst kein Sieger. Ersparnis im Jahr = Preisunterschied × Jahresverbrauch laut Rezept.
-const LIEFERANT_INHALT_TOLERANZ = 0.1; // Setzung 28.10.2026: Packungsgröße darf um 10 % abweichen
+const LIEFERANT_INHALT_TOLERANZ = 0.1; // Setzung: Packungsgröße darf um 10 % abweichen
 export function lieferantenVergleich(stand) {
   const je = new Map(); // ware → lieferant → { preis, inhalt, basis, datum }
   for (const l of [...(stand.lieferungen || [])].filter((x) => !x.storniert).sort((a, b) => (a.datum < b.datum ? -1 : 1))) {
@@ -179,7 +179,7 @@ export function hauptZutat(stand, g) {
 }
 export const wochenZaehlungen = (stand) => (stand.wochenZaehlungen || []).filter((w) => w && !w.verworfen).sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : 0));
 
-// W2-K1 (Abnahme Welle 2, 28.10.2026): Schwund-Verdacht aus den letzten zwei Wochenzählungen – nur Ampel „melden“, immer ≈.
+// W2-K1: Schwund-Verdacht aus den letzten zwei Wochenzählungen – nur Ampel „melden“, immer ≈.
 // null, solange es keine zwei Zählungen gibt. Fließt als eigener Posten in den Nutzen-Zähler und als Hinweisfeld in den Zähler.
 export function schwundVerdacht(stand) {
   const wz = wochenZaehlungen(stand); if (wz.length < 2) return null;

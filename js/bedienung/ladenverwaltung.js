@@ -55,7 +55,7 @@ export async function ladenLoeschenJetzt(id) {
   const b = Z.wurzel.betriebe.find((x) => x.id === id);
   if (!b || Z.wurzel.betriebe.length < 2 || !confirm(t("einstellungen.ladenLoeschenFrage", b.betrieb.name))) return;
   Z.wurzel.betriebe = Z.wurzel.betriebe.filter((x) => x.id !== id);
-  aktivSetzen((Z.wurzel.betriebe.find((x) => x.phase === "app" && !x.beispiel) || Z.wurzel.betriebe.find((x) => x.phase === "app") || Z.wurzel.betriebe[0]).id); // Beispiel-Laden (17.10.2026): zurück zum eigenen Laden
+  aktivSetzen((Z.wurzel.betriebe.find((x) => x.phase === "app" && !x.beispiel) || Z.wurzel.betriebe.find((x) => x.phase === "app") || Z.wurzel.betriebe[0]).id); // Beispiel-Laden: zurück zum eigenen Laden
   await ereignis("laden-geloescht", { laden: id, beispiel: !!b.beispiel }); Z.ansicht = "laeden"; await sofortSpeichern(Z.wurzel); return zeichne();
 }
 

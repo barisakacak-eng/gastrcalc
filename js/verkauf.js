@@ -1,4 +1,4 @@
-// E7 (17.10.2026): Verkauf je Gericht. Reine Funktionen, keine Oberfläche, keine Speicherung, kein Netz.
+// E7: Verkauf je Gericht. Reine Funktionen, keine Oberfläche, keine Speicherung, kein Netz.
 // Kreislauf Einkauf → Lager → Verkauf → Ergebnis: Verkäufe kommen aus dem Kassen-Export (DSFinV-K) oder von Hand (Z-Bon-Artikelbericht
 // abgelesen) und liegen im Journal stand.verkaeufe (nur anhängen, Rücknahme = storniert). Daraus: Rang je Gericht, Soll-Verbrauch je Ware
 // (über die Rezepte, Selbstgemachtes auf Rohware heruntergerechnet), Abgleich mit zwei Inventuren (Schwund-Verdacht), Ladenhüter, totes Lager.
@@ -11,12 +11,12 @@
 //   cashpointclosing.csv (Stamm_Abschluss): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, Z_BUCHUNGSTAG
 //   lines_vat.csv (Bonpos_USt, wenn vorhanden): Z_KASSE_ID, Z_ERSTELLUNG, Z_NR, BON_ID, POS_ZEILE, POS_BRUTTO
 //   index.xml (wenn vorhanden): DecimalSymbol, ColumnDelimiter, TextEncapsulator
-// Zeichensatz, Spaltentrenner, Textbegrenzer und Dezimalzeichen legt die DSFinV-K selbst NICHT fest (Prüfung 18.10.2026, audit/dsfinvk_pruefung.md,
+// Zeichensatz, Spaltentrenner, Textbegrenzer und Dezimalzeichen legt die DSFinV-K selbst NICHT fest (Prüfung, audit/dsfinvk_pruefung.md,
 // Abschnitt 1.1.3 und 4): sie verweist auf die beschreibende index.xml nach dem GoBD-Beschreibungsstandard („Ergänzende Informationen zur
 // Datenträgerüberlassung“). Deshalb liest dieser Parser die index.xml (erste Fundstelle gilt für alle Dateien) und fällt ohne sie auf Erkennung
 // zurück: Trennzeichen aus der Kopfzeile, Punkt oder Komma als Dezimalzeichen, BOM, UTF-8 mit Windows-1252 als Rückfall. Üblich in der Praxis
 // (keine Vorgabe der DSFinV-K): Semikolon, Dezimalkomma, Anführungszeichen, UTF-8.
-// Mengen (Prüfung 18.10.2026, Abweichung 1): Menge = MENGE × FAKTOR (Gebindegröße), EINHEIT „Stück“ oder leer zählt als Stück; jede andere
+// Mengen: Menge = MENGE × FAKTOR (Gebindegröße), EINHEIT „Stück“ oder leer zählt als Stück; jede andere
 // Einheit (kg, g, l …) ist „nach Menge“ und wird keinem Gericht zugeordnet, weil Gerichte nur je Stück verkauft werden.
 // Rabatt/Aufschlag (Abweichung 2): eigene Bonpos-Zeilen mit GV_TYP „Rabatt“/„Aufschlag“ werden auf die Umsatz-Zeilen desselben Bons
 // anteilig nach POS_BRUTTO verteilt, damit der Umsatz je Gericht nach Rabatt stimmt; die Menge bleibt.
@@ -24,7 +24,7 @@
 // Ursprungsbelegs – Vorzeichen von MENGE und POS_BRUTTO gelten wie geliefert (ein Storno einer Rücknahme steht dann positiv und addiert wieder).
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { EINHEITEN, inBasis } from "./data/katalog.js";
-import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke (18.10.2026)
+import { schankAnteil, mitSchankverlust } from "./getraenk_feld.js"; // Getränke
 import { garverlustAnteil, rohmengeFuer, preisJeBasis, preisGeschaetzt, preisNettoGebinde, istRichtpreis, tagPlus, SCHWUND_ARTEN, mengeInArtikelBasis, mengeInBasisVon, stueckGewicht } from "./engine.js";
 import { inventurenFertig, inventurVorher, lagerortFuer, mengeSauber, inventurAbTag, inventurBisTag } from "./inventur.js";
 import { uid, heute, heuteGeschaeft } from "./util.js";
@@ -47,7 +47,7 @@ export function verkaufSchalter({ suche = globalThis.location?.search || "", spe
   } catch (_) { /* ohne Speicher gilt nur die Adresse */ }
   return wert === "1";
 }
-// E7 (17.10.2026, abends): Baris – Inhalt vor Optik, Büro-Funktionen sichtbar, sobald geprüft. Schalter bleibt für Tests erhalten.
+// E7: Baris – Inhalt vor Optik, Büro-Funktionen sichtbar, sobald geprüft. Schalter bleibt für Tests erhalten.
 export const verkaufSichtbar = (stand) => !!stand;
 
 // ---------- CSV lesen ----------
@@ -156,7 +156,7 @@ export function einheitLesen(s) {
   if (STUECK.has(e)) return null;
   return EINHEIT_KURZ[e] || String(s).trim().slice(0, 10);
 }
-// Rabatt/Aufschlag als eigene Zeile: Betrag gehört zum Bon und wird auf dessen Umsatz-Zeilen verteilt (Prüfung 18.10.2026, Abweichung 2).
+// Rabatt/Aufschlag als eigene Zeile: Betrag gehört zum Bon und wird auf dessen Umsatz-Zeilen verteilt.
 const VERTEILEN = new Set(["rabatt", "aufschlag"]);
 
 // Der Export (Liste {name, bytes}) → Summen je Geschäftstag und Kassenartikel plus Bericht über alles, was nicht gezählt wurde.
@@ -217,7 +217,7 @@ export function dsfinvkLesen(dateien) {
     if (f !== 1) bericht.faktor += 1;
     const einheit = einheitLesen(r.EINHEIT); if (einheit) bericht.nachMenge += 1;
     const plu = r.ART_NR || null; const text = (r.ARTIKELTEXT || "").slice(0, 120);
-    const kasse = r.Z_KASSE_ID ? String(r.Z_KASSE_ID).slice(0, 50) : null; // Prüfgremium 17.10.2026 (5): zwei Kassen = zwei getrennte Stände je Tag
+    const kasse = r.Z_KASSE_ID ? String(r.Z_KASSE_ID).slice(0, 50) : null; // Prüfgremium (5): zwei Kassen = zwei getrennte Stände je Tag
     gezaehlt.push({ bk, datum, kasse, plu, text, einheit, menge: menge0, umsatz: umsatz0 });
     bericht.gezaehlt += 1;
   }
@@ -255,8 +255,8 @@ export async function exportEinlesen(dateien) {
 // ---------- Zuordnung Kassentext → Gericht ----------
 export const normKasse = (s) => normalisieren(s).replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 // Reihenfolge: Artikelnummer (plu) → gelernter Kassentext → genau gleicher Name. Mehrdeutig oder unbekannt: nicht zugeordnet, nie geraten.
-// Schwadron 18.10.2026, M1: ein Kassenartikel kann auch ein Kombi-Menü sein (stand.kassenKombis) – dann { gericht: null, kombi: id }.
-// Prüfung 18.10.2026 (Abweichung 1): eine Position „nach Menge“ (EINHEIT kg, g, l …) wird keinem Gericht zugeordnet – Gerichte haben kein
+// Schwadron, M1: ein Kassenartikel kann auch ein Kombi-Menü sein (stand.kassenKombis) – dann { gericht: null, kombi: id }.
+// Prüfung (Abweichung 1): eine Position „nach Menge“ (EINHEIT kg, g, l …) wird keinem Gericht zugeordnet – Gerichte haben kein
 // Verkaufs-Einheitsfeld, sie zählen je Stück. Sie bleibt { gericht: null, grund: "einheit" } und wird in Vorschau und Auswertung mit Einheit ausgewiesen.
 export const nachMenge = (p) => typeof p?.einheit === "string" && !!p.einheit;
 export function zuordnen(stand, { plu = null, text = "", einheit = null } = {}) {
@@ -273,7 +273,7 @@ export function zuordnen(stand, { plu = null, text = "", einheit = null } = {}) 
   return { gericht: null, weg: null, vorschlaege: vorschlaege(stand, text) };
 }
 
-// ---------- Kombi-Menüs aus der Kasse (Schwadron 18.10.2026, M1) ----------
+// ---------- Kombi-Menüs aus der Kasse ----------
 // „Menü Döner+Pommes+Cola“ ist EIN Kassenartikel, aber drei Gerichte: Bestand, Verbrauch und Rang je Gericht zählen jeden Bestandteil.
 // stand.kassenKombis: [{ id, name, kassenNamen: [Kassentext], plu, teile: [{ gericht, menge }] }]. Gelernt wird wie bei Gerichten (Text/Nummer).
 export const kombisVon = (stand) => (Array.isArray(stand?.kassenKombis) ? stand.kassenKombis : []);
@@ -327,7 +327,7 @@ export function zuordnungLernen(stand, { text = "", plu = null } = {}, gerichtId
     if (Array.isArray(g.kassenNamen)) { g.kassenNamen = g.kassenNamen.filter((n) => normKasse(n) !== q); if (!g.kassenNamen.length) delete g.kassenNamen; }
     if (plu && g.plu === String(plu) && g.id !== gerichtId) delete g.plu;
   }
-  for (const k of kombisVon(stand)) { k.kassenNamen = (k.kassenNamen || []).filter((n) => normKasse(n) !== q); if (plu && k.plu === String(plu)) k.plu = null; } // Schwadron 18.10.2026, M1
+  for (const k of kombisVon(stand)) { k.kassenNamen = (k.kassenNamen || []).filter((n) => normKasse(n) !== q); if (plu && k.plu === String(plu)) k.plu = null; } // Schwadron, M1
   if (!gerichtId) return true;
   const g = (stand.gerichte || []).find((x) => x.id === gerichtId); if (!g) return false;
   if (q && normKasse(g.name) !== q) g.kassenNamen = [...(g.kassenNamen || []), String(text).trim().slice(0, 120)];
@@ -343,7 +343,7 @@ export function gerichtVon(stand, e) {
 
 // ---------- Vorschau und Übernehmen ----------
 const aktiv = (stand) => (stand.verkaeufe || []).filter((v) => !v.storniert);
-// Prüfgremium 17.10.2026 (5): Kassen-ID (Z_KASSE_ID) gehört zum Ersetzungsschlüssel. Dieselbe Kasse und derselbe Tag ersetzt, eine andere Kasse addiert.
+// Prüfgremium (5): Kassen-ID (Z_KASSE_ID) gehört zum Ersetzungsschlüssel. Dieselbe Kasse und derselbe Tag ersetzt, eine andere Kasse addiert.
 // Einträge von vor dieser Änderung tragen kein Feld „kasse“: sie gelten als derselbe Stand wie die neue Datei (Verhalten wie bisher, kein Doppeltzählen).
 const kasseVon = (p) => (typeof p?.kasse === "string" && p.kasse ? p.kasse : null);
 const gleicheKasse = (v, k) => !("kasse" in v) || kasseVon(v) === k;
@@ -352,7 +352,7 @@ const abdruck = (liste) => liste.map((p) => [p.plu || "", normKasse(p.text || p.
 export function importVorschau(stand, ergebnis, { herkunft = "dsfinvk" } = {}) {
   const pos = (ergebnis?.positionen || []).map((p) => ({ ...p, ...zuordnen(stand, p) }));
   const offen = new Map();
-  const zu = (p) => !!(p.gericht || p.kombi); // Schwadron 18.10.2026, M1: ein Menü gilt als zugeordnet
+  const zu = (p) => !!(p.gericht || p.kombi); // Schwadron, M1: ein Menü gilt als zugeordnet
   for (const p of pos) if (!zu(p)) { const k = (p.plu || "") + "|" + normKasse(p.text) + "|" + (p.einheit || ""); const o = offen.get(k) || { text: p.text, plu: p.plu, ...(p.einheit ? { einheit: p.einheit } : {}), menge: 0, umsatzBrutto: 0, tage: new Set(), vorschlaege: p.vorschlaege }; o.menge += p.menge; o.umsatzBrutto += p.umsatzBrutto || 0; o.tage.add(p.datum); offen.set(k, o); }
   const tage = ergebnis?.tage || [];
   const jeTag = tage.map((d) => { const neuTag = pos.filter((p) => p.datum === d); const staende = [];
@@ -412,7 +412,7 @@ export function importe(stand) {
 // ---------- Handeingabe ----------
 // „Verkauf für Tag X: Gericht → Menge“ (z. B. vom Z-Bon-Artikelbericht abgelesen). Ersetzt den vorigen Hand-Eintrag desselben Tags und Gerichts.
 // Menge 0 oder leer nimmt den Eintrag zurück. Umsatz bleibt leer (abgelesen ist nur die Stückzahl).
-// Schwadron 18.10.2026, M1: gerichtId darf auch die Kennung eines Kombi-Menüs sein (Z-Bon-Artikelbericht führt das Menü als eigene Zeile).
+// Schwadron, M1: gerichtId darf auch die Kennung eines Kombi-Menüs sein (Z-Bon-Artikelbericht führt das Menü als eigene Zeile).
 export function handVerkaufSetzen(stand, datum, gerichtId, menge, { jetzt = new Date().toISOString(), geraet = null } = {}) {
   const kombi = kombiVon(stand, gerichtId);
   const g = kombi ? null : (stand.gerichte || []).find((x) => x.id === gerichtId); if ((!g && !kombi) || !/^\d{4}-\d{2}-\d{2}$/.test(String(datum))) return null;
@@ -446,9 +446,9 @@ export function verkaufJeGericht(stand, z) {
   const je = new Map((stand.gerichte || []).map((g) => [g.id, { gericht: g.id, name: g.name, menge: 0, umsatz: 0, umsatzTeile: 0, preis: typeof g.preis === "number" ? g.preis : null }]));
   const ohne = { menge: 0, umsatz: 0, texte: new Map(), nachMenge: new Map() }; let menge = 0, umsatz = 0, mitUmsatz = 0;
   for (const v of eintraege) {
-    // Prüfung 18.10.2026 (Abweichung 1): nach Menge verkauft (kg, l …) – nie als Stück zählen, eigener Posten mit Einheit; Umsatz zählt mit
+    // Prüfung (Abweichung 1): nach Menge verkauft (kg, l …) – nie als Stück zählen, eigener Posten mit Einheit; Umsatz zählt mit
     if (nachMenge(v)) { if (v.umsatzBrutto !== null) { umsatz += v.umsatzBrutto; mitUmsatz += 1; } ohne.umsatz += v.umsatzBrutto || 0; const t = v.text || v.name; const kk = t + "|" + v.einheit; const x = ohne.nachMenge.get(kk) || { text: t, einheit: v.einheit, menge: 0 }; x.menge += v.menge; ohne.nachMenge.set(kk, x); continue; }
-    // Schwadron 18.10.2026, M1: ein Menü zählt jeden Bestandteil (Menge × Teil-Menge); sein Umsatz wird nach Kartenpreis × Menge verteilt
+    // Schwadron, M1: ein Menü zählt jeden Bestandteil (Menge × Teil-Menge); sein Umsatz wird nach Kartenpreis × Menge verteilt
     const teile = teileVon(stand, v).filter((x) => je.has(x.gericht)); if (v.umsatzBrutto !== null) { umsatz += v.umsatzBrutto; mitUmsatz += 1; }
     if (!teile.length) { menge += v.menge; ohne.menge += v.menge; ohne.umsatz += v.umsatzBrutto || 0; const t = v.text || v.name; ohne.texte.set(t, (ohne.texte.get(t) || 0) + v.menge); continue; }
     const gewicht = teile.map((x) => (je.get(x.gericht).preis || 0) * x.menge); const gSumme = gewicht.reduce((a, b) => a + b, 0);
@@ -467,12 +467,12 @@ export function verkaufJeGericht(stand, z) {
 // selbst gemachte Teile über ihr Rezept anteilig auf die Rohstoffe (wie zwischenpreis: eine Stufe, ohne Garverlust).
 // probleme: Zutaten, die sich nicht rechnen lassen (unbekannt, Menge fehlt, Einheit passt nicht, kein Rezept).
 // Menge eines selbst gemachten Teils (Teig, Soße …) → Rohware über sein Rezept, anteilig zur Ausbeute (eine Stufe, ohne Garverlust).
-// Prüfgremium 17.10.2026 (6): gemeinsame Rechnung für den Soll-Verbrauch (bedarfGericht) und den Müll (schwundVerbrauch).
+// Prüfgremium (6): gemeinsame Rechnung für den Soll-Verbrauch (bedarfGericht) und den Müll (schwundVerbrauch).
 // Rückgabe { bedarf: [{ name, menge, basis, ueber }], probleme } – ohne Rezept: null.
 export function selbstAufRohware(a, menge, einheit, idx) {
   const r = a?.herkunft === "selbst" ? a.rezept : null; if (!r) return null;
   const out = []; const probleme = [];
-  const aus = r.ausbeute; const mA = aus?.menge > 0 ? mengeInBasisVon(menge, einheit, aus.einheit, stueckGewicht(a)) : null; // 19.10.2026: „2 Ballen“ über das Stückgewicht
+  const aus = r.ausbeute; const mA = aus?.menge > 0 ? mengeInBasisVon(menge, einheit, aus.einheit, stueckGewicht(a)) : null; // „2 Ballen“ über das Stückgewicht
   if (mA === null) return { bedarf: out, probleme: [{ name: a.name, grund: "einheit" }] };
   const anteil = mA / inBasis(aus.menge, aus.einheit);
   for (const rz of r.zutaten || []) {
@@ -493,11 +493,11 @@ export function bedarfGericht(g, idx) {
     if (!(Number(z.menge) > 0) || !bZ) { probleme.push({ name: z.name, grund: "menge" }); continue; }
     if (a.herkunft === "selbst" && a.rezept) { const s = selbstAufRohware(a, z.menge, z.einheit, idx); out.push(...s.bedarf); probleme.push(...s.probleme); continue; }
     const bA = EINHEITEN[a.packung?.einheit || a.einheit]?.basis || bZ;
-    const mZ = mengeInArtikelBasis(z.menge, z.einheit, a); // 19.10.2026: Stück ↔ Gramm über das Stückgewicht
+    const mZ = mengeInArtikelBasis(z.menge, z.einheit, a); // Stück ↔ Gramm über das Stückgewicht
     if (mZ === null) { probleme.push({ name: z.name, grund: "einheit" }); continue; }
     const roh = rohmengeFuer(mZ, garverlustAnteil(a).wert);
     if (roh === null) { probleme.push({ name: z.name, grund: "menge" }); continue; }
-    out.push({ name: z.name, menge: mitSchankverlust(roh, schankAnteil(g, z.name)), basis: bA }); // Getränke (18.10.2026): offenes Getränk – Schankverlust wie in warenGericht
+    out.push({ name: z.name, menge: mitSchankverlust(roh, schankAnteil(g, z.name)), basis: bA }); // Getränke: offenes Getränk – Schankverlust wie in warenGericht
   }
   return { bedarf: out, probleme };
 }
@@ -529,7 +529,7 @@ export function schwundVerbrauch(stand, { von, bis }, idx = artikelIndex(stand))
     const vorgang = SCHWUND_ARTEN[e.art] || 1; const ziel = vorgang === 1 ? muell : personal; eintraege += 1;
     if (e.art === "eimer") { eimerKg += Number(e.menge) || 0; continue; }
     if (e.ref?.typ === "artikel") { const b = EINHEITEN[e.einheit]?.basis; if (!b) { ohne.push(e.id); continue; }
-      // Prüfgremium 17.10.2026 (6): Selbstgemachtes (Teig, Soße …) über sein Rezept auf die Rohware – wie der Soll-Verbrauch
+      // Prüfgremium (6): Selbstgemachtes (Teig, Soße …) über sein Rezept auf die Rohware – wie der Soll-Verbrauch
       const s = selbstAufRohware(idx[e.ref.name], Number(e.menge) || 0, e.einheit, idx);
       if (s) { if (!s.bedarf.length) { ohne.push(e.id); continue; } for (const x of s.bedarf) dazu(ziel, x.name, x.menge, x.basis); continue; }
       dazu(ziel, e.ref.name, inBasis(e.menge, e.einheit), b); continue; }
@@ -565,7 +565,7 @@ export function einkaufMengen(stand, { von, bis }) {
 }
 
 // Grenze, ab der eine Differenz auffällt: gezählt wird in Vierteln eines Gebindes (zweimal gezählt → ¼ Gebinde Spielraum),
-// Rezepte sind Durchschnitte (5 % der erwarteten Menge). Annahme E7 (17.10.2026), im Bericht e7.md beschrieben.
+// Rezepte sind Durchschnitte (5 % der erwarteten Menge). Annahme E7, im Bericht e7.md beschrieben.
 const TOLERANZ_GEBINDE = 0.25, TOLERANZ_ANTEIL = 0.05;
 
 // (c) Abgleich mit der Inventur: Ist-Verbrauch = Anfang + Einkauf − Ende (zwischen zwei abgeschlossenen Inventuren, Zeitraum wie inventurVergleich:
@@ -575,14 +575,14 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
   const fertig = inventurenFertig(stand);
   inv ??= fertig[fertig.length - 1] || null; vorher ??= inv ? inventurVorher(stand, inv) : null;
   if (!inv || !vorher) return null;
-  const von = inventurAbTag(vorher), bis = inventurBisTag(inv); if (bis < von) return { von, bis, zeilen: [], gleicherTag: true }; // Schwadron 18.10.2026, M2
+  const von = inventurAbTag(vorher), bis = inventurBisTag(inv); if (bis < von) return { von, bis, zeilen: [], gleicherTag: true }; // Schwadron, M2
   const idx = artikelIndex(stand);
   const vk = verkaufJeGericht(stand, { von, bis });
   const mengen = Object.fromEntries(vk.zeilen.filter((r) => r.menge > 0).map((r) => [r.gericht, r.menge]));
   const soll = sollVerbrauch(stand, mengen, idx);
   const sw = schwundVerbrauch(stand, { von, bis }, idx);
   const ek = einkaufMengen(stand, { von, bis });
-  // Schwadron 18.10.2026, N4: Tage mit Umsatz, aber ohne Verkäufe (wie ehrlichkeit) – dann fehlt ein Teil des Solls, eine Differenz ist kein Schwund
+  // Schwadron, N4: Tage mit Umsatz, aber ohne Verkäufe (wie ehrlichkeit) – dann fehlt ein Teil des Solls, eine Differenz ist kein Schwund
   const tageVk = new Set(verkaeufeImZeitraum(stand, { von, bis }).eintraege.map((v) => v.datum));
   const fehlenTage = [...new Set((stand.tagesnotizen || []).filter((n) => !n.storniert && typeof n.umsatz === "number" && n.datum >= von && n.datum <= bis).map((n) => n.datum))].filter((d) => !tageVk.has(d)).sort();
   // Nur Waren, die in einem Rezept der Karte stehen (direkt oder über Selbstgemachtes): Putzmittel & Co. haben kein Soll
@@ -591,7 +591,7 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
   const zeilen = [];
   for (const name of namen) {
     const a = idx[name] || null; const jetzt = inhaltBasis(a);
-    // E7 (17.10.2026): bei der Inventur gespeicherter Packungsinhalt gewinnt (Gebinde kann sich seitdem geändert haben)
+    // E7: bei der Inventur gespeicherter Packungsinhalt gewinnt (Gebinde kann sich seitdem geändert haben)
     const iA = vorher.inhalte?.[name] > 0 ? vorher.inhalte[name] : jetzt, iE = inv.inhalte?.[name] > 0 ? inv.inhalte[name] : jetzt; const inhalt = iE; const basis = basisVon(a) || soll.artikel[name]?.basis || null;
     const mA = mengeSauber(vorher.posten?.[name]), mE = mengeSauber(inv.posten?.[name]);
     const s = soll.artikel[name]?.menge || 0, mu = sw.muell[name]?.menge || 0, pe = sw.personal[name]?.menge || 0;
@@ -605,7 +605,7 @@ export function abgleichInventur(stand, inv = null, vorher = null) {
       z.anfang = mA * (iA ?? inhalt); z.ende = mE * inhalt; z.ist = z.anfang + e.menge - z.ende; z.diff = z.ist - erwartet;
       z.toleranz = Math.max(TOLERANZ_GEBINDE * inhalt, TOLERANZ_ANTEIL * erwartet);
       z.diffWert = pj === null ? null : z.diff * pj;
-      if (z.diff > z.toleranz) z.status = fehlenTage.length ? "verkaufFehlt" : "schwund"; // Schwadron 18.10.2026, N4: ohne alle Verkaufstage kein Schwund-Verdacht
+      if (z.diff > z.toleranz) z.status = fehlenTage.length ? "verkaufFehlt" : "schwund"; // Schwadron, N4: ohne alle Verkaufstage kein Schwund-Verdacht
       else if (z.diff < -z.toleranz) z.status = e.zeilen ? "weniger" : "einkaufFehlt";
     }
     zeilen.push(z);
@@ -659,7 +659,7 @@ export function ehrlichkeit(stand, z, vk = verkaufJeGericht(stand, z)) {
 // Zeitraum der Auswertung: zwischen den letzten zwei Inventuren, sonst die letzten 30 Geschäftstage bis gestern.
 export function auswertungZeitraum(stand, { heuteTag = heuteGeschaeft() } = {}) {
   const f = inventurenFertig(stand);
-  if (f.length >= 2) { const inv = f[f.length - 1], vor = inventurVorher(stand, inv); if (vor && inventurBisTag(inv) >= inventurAbTag(vor)) return { von: inventurAbTag(vor), bis: inventurBisTag(inv), quelle: "inventur" }; } // Schwadron 18.10.2026, M2
+  if (f.length >= 2) { const inv = f[f.length - 1], vor = inventurVorher(stand, inv); if (vor && inventurBisTag(inv) >= inventurAbTag(vor)) return { von: inventurAbTag(vor), bis: inventurBisTag(inv), quelle: "inventur" }; } // Schwadron, M2
   return { von: tagPlus(heuteTag, -30), bis: tagPlus(heuteTag, -1), quelle: "tage" };
 }
 export function verkaufAuswertung(stand, z = auswertungZeitraum(stand)) {

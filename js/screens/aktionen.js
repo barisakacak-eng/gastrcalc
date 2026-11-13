@@ -1,4 +1,4 @@
-// Stufe 1 (17.10.2026): Büro-Bereich „Aktionen & Haltbarkeit“. Oben ein Satz (haltbarUhrzeit), darunter „Läuft ab“ (Verbrauchsdatum, MHD vorbei),
+// Stufe 1: Büro-Bereich „Aktionen & Haltbarkeit“. Oben ein Satz (haltbarUhrzeit), darunter „Läuft ab“ (Verbrauchsdatum, MHD vorbei),
 // „Abverkauf“ (Vorschläge mit Teilen-Text) und „Kombi-Angebot“ (Gerichte per Chips, drei Stufen, Teilen-Text für Aushang/WhatsApp-Status).
 // Rechnen tun nur js/haltbar.js und js/deal.js; hier stehen Aufbau, Texte und data-Attribute. Nur vorhandene Klassen, kein eigenes CSS.
 // Personal-Modus: nicht erreichbar (modus.js lässt nur Personal, Müll, Kühlung, Putzen zu). Im Laden steht nichts davon.
@@ -7,14 +7,14 @@ import { esc, fmtEuro, fmtZahl } from "../util.js";
 import { haltbarStand, haltbarUhrzeit, abverkaufText, datumKurz } from "../haltbar.js";
 import { kombiTeileSortiert, kombiAuswahlBereinigt, kombiRechnen, kombiVorschlaege, kombiText, KOMBI_MAX } from "../deal.js";
 import { kalkulation } from "../engine.js";
-import { aktionUebernehmen, aktiveAktionen, aktionName, aktionZeitraumSetzen, aktionBeenden } from "../tafel.js"; // Menütafel (18.10.2026): „Auf die Tafel“
-import { aktionVorschlag, aktionFortschritt, fortschrittZeilen, aktionUhrzeit, aktionBilanz, bilanzText, aktionVorbei, aktionZeitraumText } from "../aktion_plan.js"; // Aktion planen (18.10.2026)
+import { aktionUebernehmen, aktiveAktionen, aktionName, aktionZeitraumSetzen, aktionBeenden } from "../tafel.js"; // Menütafel: „Auf die Tafel“
+import { aktionVorschlag, aktionFortschritt, fortschrittZeilen, aktionUhrzeit, aktionBilanz, bilanzText, aktionVorbei, aktionZeitraumText } from "../aktion_plan.js"; // Aktion planen
 import { heuteGeschaeft } from "../util.js";
-import { mengeBasisText as mengeText, textTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
+import { mengeBasisText as mengeText, textTeilen } from "./bausteine.js"; // Trennung
 import { nav } from "./nav.js";
 
 let auswahl = [];   // Kombi: gewählte Gericht-Kennungen (2–4)
-// Aktion planen (18.10.2026): offener Plan (flüchtiger Bildschirmzustand) – { angaben, vorschlag, entwurf: { von, bis, ende }, aktion? (Zeitraum ändern) }
+// Aktion planen: offener Plan (flüchtiger Bildschirmzustand) – { angaben, vorschlag, entwurf: { von, bis, ende }, aktion? (Zeitraum ändern) }
 let plan = null;
 
 export const aktionenKennung = () => auswahl.join(",") + (plan ? "|plan:" + (plan.aktion || plan.angaben?.art) : "");
@@ -28,13 +28,13 @@ const menge = (m, basis) => (m === null || m === undefined ? t("aktionen.mengeUn
 
 export function aktionenView(stand) {
   const kopf = `<div class="kopfband"><h1>${esc(t("aktionen.titel"))}</h1><div class="unter">${esc(t("aktionen.unter"))}</div></div>`;
-  const hs = haltbarStand(stand); const uhr = haltbarUhrzeit(stand) || aktionUhrzeit(stand); // Aktion planen (18.10.2026): sonst der Satz zur laufenden Aktion
+  const hs = haltbarStand(stand); const uhr = haltbarUhrzeit(stand) || aktionUhrzeit(stand); // Aktion planen: sonst der Satz zur laufenden Aktion
   const oben = uhr ? `<div class="karte ${uhr.ton === "rot" ? "hinweisrot" : "hinweisgelb"}"><h2>${esc(uhr.text)}</h2></div>` : `<div class="karte"><h2>${esc(t("aktionen.allesGut"))}</h2></div>`;
   if (plan) return `${kopf}<div class="inhalt">${planView(stand)}</div>${nav("aktionen", { schnell: false })}`; // Aktion planen: eine Handlung – bestätigen oder ändern
   return `${kopf}<div class="inhalt">${oben}${laufendView(stand)}${laeuftView(hs)}${abverkaufView(hs)}${kombiView(stand, hs)}${vorbeiView(stand)}</div>${nav("aktionen", { schnell: false })}`;
 }
 
-// ---------- Aktion planen (18.10.2026) ----------
+// ---------- Aktion planen ----------
 // Vorschlag der App (Zeitraum + ein Satz Begründung aus Ware, Haltbarkeit, Interesse), darunter änderbar: ab sofort / von, bis Datum / bis Ware weg.
 function planView(stand) {
   const H = heuteGeschaeft(); const v = plan.vorschlag; const e = plan.entwurf;
@@ -114,7 +114,7 @@ function abverkaufView(hs) {
 function kombiView(stand, hs) {
   const ue = `<h2 class="inv-ue">${esc(t("aktionen.kombiTitel"))}</h2>`;
   const k = (stand.gerichte || []).length ? kalkulation(stand) : { zeilen: [] };
-  const teile = kombiTeileSortiert(stand, k); // Trennung 2 (17.10.2026): Reihenfolge und Bereinigung in js/deal.js
+  const teile = kombiTeileSortiert(stand, k); // Trennung 2: Reihenfolge und Bereinigung in js/deal.js
   const kasse = `<p class="hinweis">${esc(t("aktionen.kasse"))}</p>`;
   if (teile.length < 2) return `${ue}<div class="karte leer"><div>${esc(t("aktionen.kombiLeer"))}</div></div>${kasse}`;
   auswahl = kombiAuswahlBereinigt(auswahl, teile); // flüchtiger Bildschirmzustand, kein Laden-Datum
@@ -152,14 +152,14 @@ export function aktionenTextFuer(stand, art, wert) {
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? kombiText(kb, s) : null; }
   return null;
 }
-// Menütafel (18.10.2026): Angaben für „Auf die Tafel“ aus dem gezeigten Vorschlag (Abverkauf: ein Gericht, Ware mit MHD; Kombi: Stufe).
-// Aktion planen (18.10.2026): den Zeitraum schlägt aktionVorschlag vor, der Wirt bestätigt oder ändert ihn (planView).
+// Menütafel: Angaben für „Auf die Tafel“ aus dem gezeigten Vorschlag (Abverkauf: ein Gericht, Ware mit MHD; Kombi: Stufe).
+// Aktion planen: den Zeitraum schlägt aktionVorschlag vor, der Wirt bestätigt oder ändert ihn (planView).
 function aktionTafelAngaben(stand, art, wert) {
   if (art === "abverkauf") { const x = haltbarStand(stand).abverkauf[Number(wert)]; const v = x?.bester; return v ? { art, gerichte: [v.gericht], preis: v.aktionspreis, statt: v.preis, ware: x.name } : null; }
   if (art === "kombi") { const kb = kombiRechnen(stand, auswahl); const s = kb.stufen?.find((y) => y.stufe === wert); return s?.moeglich ? { art, gerichte: kb.teile.map((x) => x.id), preis: s.preis, statt: kb.summe } : null; }
   return null;
 }
-const teilen = (text) => textTeilen(text, t("aktionen.teilen")); // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
+const teilen = (text) => textTeilen(text, t("aktionen.teilen")); // Trennung: gemeinsames Teilen (./bausteine.js)
 
 // ---------- Aktionen ----------
 // Rückgabe: false (nicht meine) | true (neu zeichnen) | { meldung }
@@ -167,7 +167,7 @@ export async function aktionenAktion(name, el, stand) {
   if (name === "akt-kombi") { const id = el.dataset.wert; if (auswahl.includes(id)) auswahl = auswahl.filter((x) => x !== id); else if (auswahl.length < KOMBI_MAX) auswahl = [...auswahl, id]; return true; }
   if (name === "akt-kombi-leeren") { auswahl = []; return true; }
   if (name === "akt-kombi-vorschlag") { const v = kombiVorschlaege(stand)[Number(el.dataset.wert)]; if (!v) return false; auswahl = v.kombi.teile.map((x) => x.id); return true; }
-  if (name === "akt-tafel") { // Aktion planen (18.10.2026): erst der Vorschlag mit Begründung – „Auf die Tafel“ im Plan übernimmt (akt-plan-ok)
+  if (name === "akt-tafel") { // Aktion planen: erst der Vorschlag mit Begründung – „Auf die Tafel“ im Plan übernimmt (akt-plan-ok)
     const angaben = aktionTafelAngaben(stand, el.dataset.art, el.dataset.wert); if (!angaben) return false;
     const vorschlag = aktionVorschlag(stand, angaben);
     plan = { angaben, vorschlag, entwurf: vorschlag.moeglich ? { von: vorschlag.von, bis: vorschlag.bis, ende: vorschlag.ende } : { von: heuteGeschaeft(), bis: null, ende: "datum" } };
@@ -208,7 +208,7 @@ export async function aktionenAktion(name, el, stand) {
   }
   return false;
 }
-// Aktion planen (18.10.2026): Datumsfelder des Plans – nur Entwurf, gespeichert wird erst mit „Auf die Tafel“ / „Speichern“
+// Aktion planen: Datumsfelder des Plans – nur Entwurf, gespeichert wird erst mit „Auf die Tafel“ / „Speichern“
 export function aktionenEingabe(feld, wert) {
   if (!plan || (feld !== "akt-von" && feld !== "akt-bis")) return false;
   const d = /^\d{4}-\d{2}-\d{2}$/.test(String(wert || "")) ? String(wert) : null;

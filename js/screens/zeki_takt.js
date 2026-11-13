@@ -1,12 +1,12 @@
-// Zeki lebt (Baris 26.10.2026, 23:14 nachgeschärft): natürlich wie ein Mensch.
+// Zeki lebt: natürlich wie ein Mensch.
 // – Erstes Lebenszeichen nach ≈ 1 s (Blinzeln), danach Blinzeln in unregelmäßigen Abständen (2,5–6 s, manchmal doppelt).
 //   Blinzeln läuft nur im Vektor (Lider), kein Wechsel auf die Bildfolge → kein Flackern.
 // – Gesten (Bildfolge) selten: alle 14–22 s eine ruhige Geste. Zwinkern NIE im Leerlauf, nur gezielt (Sprechblase, Erfolg).
 // – Ruht, wenn die App im Hintergrund ist; bei „reduzierte Bewegung“ weder Blinzeln noch Gesten.
-// Nur Anzeige. Bei Warnung (zustand warnung/fehler) keine fröhlichen Gesten (Maskottchen-Regel vom 23.10.2026).
+// Nur Anzeige. Bei Warnung (zustand warnung/fehler) keine fröhlichen Gesten.
 import { zekiSpielen } from "../gastrocash-brand.js";
 
-const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freuen"], ernst: ["nachdenken", "nicken"] }; // 28.10.2026 Puppe: mehr Abwechslung, nie zweimal dieselbe
+const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freuen"], ernst: ["nachdenken", "nicken"] }; // Puppe: mehr Abwechslung, nie zweimal dieselbe
 export const ZEKI_ERSTES_ZEICHEN_MS = 1000;
 export const ZEKI_BLINZELN_MS = [2500, 6000];
 export const ZEKI_GESTE_MS = [14000, 22000];
@@ -49,7 +49,7 @@ export function zekiTaktStarten(doc = typeof document !== "undefined" ? document
   }, ZEKI_TAKT_MS);
 }
 
-// Zekis Stimme (Baris 27.10.2026, 02:05): Was Zeki sagt, steht direkt neben ihm im Kopf – keine Sprechblase, kein Kasten,
+// Zekis Stimme: Was Zeki sagt, steht direkt neben ihm im Kopf – keine Sprechblase, kein Kasten,
 // nie über dem Inhalt. Der Kopf ist Zekis Ebene: links Menü, in der Mitte sein Satz (statt Logo), rechts Zeki selbst.
 function stimmePlatz(root) {
   const kopf = root?.querySelector?.(".appleiste .zeki-knopf"); if (!kopf) return null;

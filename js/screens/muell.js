@@ -1,23 +1,23 @@
-// Müll mit einem Tipp (Drei Ebenen, Punkt 8 – 15.10.2026): Foto-Raster der häufigsten Waren dieses Ladens (Gerichte und Rohware gemischt).
+// Müll mit einem Tipp: Foto-Raster der häufigsten Waren dieses Ladens (Gerichte und Rohware gemischt).
 // Tipp auf ein Foto = sofort eingetragen mit der üblichen Menge, Haken + Zähler „2ד + Hinweis mit „Rückgängig" (= Storno).
 // Lang drücken (500 ms) oder „…" öffnet das Detail (Menge, Foto, Personalessen). „Andere" öffnet die Suche (auch türkische/englische Namen)
 // und „Eimer gewogen". Die Wochen-Statistik (früher Müll-Zentrale) wohnt jetzt im Büro unter Listen (muellStatistikView).
 // Im Personal-Modus: keine Euro-Beträge, nur Mengen; Einträge tragen von: personId. Rechenwerk unverändert (js/muell.js).
 import { t, einheitLabel, sprache, artikelText, datumText } from "../i18n.js";
-import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
+import { esc, parseZahl, fmtEuro, fmtZahl, heuteGeschaeft as heute, wertAnzeige } from "../util.js"; // Paket 3, M7: Müll-Tag = Geschäftstag (bis 4 Uhr = Vortag)
 import { normalisieren } from "../data/suchnamen.js";
 import { mengeUmrechnen } from "../engine.js";
 import { ausgegeben, gerichtWeg, rohwareWeg, eimerEintragen, personalessen, muellWoche, muellMonatVergleich, haeufigsteMuell,
-  muellSchluessel, standardMenge, muellTippEintragen, muellStornieren, tippsHeute, muellHeute, schwundNachweisSetzen, muellTonne, muellSuche, muellFormWerte } from "../muell.js"; // Trennung (17.10.2026): schwundNachweisSetzen
+  muellSchluessel, standardMenge, muellTippEintragen, muellStornieren, tippsHeute, muellHeute, schwundNachweisSetzen, muellTonne, muellSuche, muellFormWerte } from "../muell.js"; // Trennung: schwundNachweisSetzen
 import { nav } from "./nav.js";
-import { mengeEinheitText } from "./bausteine.js"; // Trennung (17.10.2026)
+import { mengeEinheitText } from "./bausteine.js"; // Trennung
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
 import { gerichtBild } from "./vergleich.js";
-import { wareBildQuelle } from "../bilder.js"; // Trennung 2 (17.10.2026): Bildzuordnung
+import { wareBildQuelle } from "../bilder.js"; // Trennung 2: Bildzuordnung
 import { personalAktiv, personalVon, personalLeiste } from "./personal.js";
 export function wareBild(x) {
-  const q = wareBildQuelle(x); // Trennung 2 (17.10.2026): Zuordnung in js/bilder.js
+  const q = wareBildQuelle(x); // Trennung 2: Zuordnung in js/bilder.js
   return q.foto ? `<img class="gerichtbild mini" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`;
 }
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
@@ -38,7 +38,7 @@ let letzterTipp = { id: "", zeit: 0 };
 let toastUhr = null;
 const TOAST_MS = 5000;
 const RASTER = 5;
-let grund = "roh";       // Baris 26.10.2026 23:46: Lebensmittel zuerst; Personalessen und ganze Gerichte (Bruch) als eigene Wahl         // Design B (19.10.2026): 5 Fotos + „Andere" = 2 × 3, passt ohne Scrollen
+let grund = "roh";       // Baris 23:46: Lebensmittel zuerst; Personalessen und ganze Gerichte (Bruch) als eigene Wahl         // Design B: 5 Fotos + „Andere" = 2 × 3, passt ohne Scrollen
 
 export const muellKennung = () => `${ansicht}:${wahl ? wahl.typ + wahl.name : ""}`;
 export function muellZuruecksetzen() { grund = "roh"; ansicht = "start"; rueckkehr = "start"; suche = ""; wahl = null; zuletzt = null; auswahlOffen = false; foto = null; }
@@ -48,8 +48,8 @@ export const muellAnsicht = () => ansicht;
 
 const letzteTage = (n) => { const out = []; for (let i = 0; i < n; i++) out.push(plusTage(heute(), -i)); return out; }; // Paket 3, M7: Geschäftstage
 const kurzTag = (iso) => t("kuehl.tage." + wochentag(iso));
-const mengeText = mengeEinheitText; // Trennung (17.10.2026): ./bausteine.js
-// Paket 6 (17.10.2026): Artikel in der aktiven Sprache anzeigen; Gerichte heißen, wie der Wirt sie nennt. data-name bleibt deutsch.
+const mengeText = mengeEinheitText; // Trennung: ./bausteine.js
+// Paket 6: Artikel in der aktiven Sprache anzeigen; Gerichte heißen, wie der Wirt sie nennt. data-name bleibt deutsch.
 const zeigName = (x) => (x && x.typ === "artikel" ? artikelText(x.name) : x?.name || "");
 const bildFuer = (stand, x) => (x.typ === "gericht" ? thumb(stand, x.id) : wareBild(x));
 
@@ -63,10 +63,10 @@ function kachelHtml(stand, x, zaehl, frisch, station = false) {
     <button type="button" class="ware-mehr" data-a="muell-detail" ${daten} aria-label="${esc(t("muell1.menge"))}">${station ? "" : "…"}</button>
   </div>`;
 }
-// Laden-Umbau (20.10.2026): Kopf als rote Summenleiste „Müll heute · x €“ (an einem Vortag: „Müll · TT.MM.“)
+// Laden-Umbau: Kopf als rote Summenleiste „Müll heute · x €“ (an einem Vortag: „Müll · TT.MM.“)
 function pilleHtml(stand, D) {
   const h = muellHeute(stand, D);
-  const zahl = personalAktiv() || (h.anzahl > 0 && h.offen === h.anzahl) ? `${fmtZahl(h.anzahl)}×` : h.anzahl > 0 && h.offen === h.anzahl ? "–" : fmtEuro(h.wert, { dezimal: 2 }); // Gremium 1 (24.10.2026): nur unbewertete Einträge → „–“ statt 0,00 €; Lauf 2 (4b): einheitlich „n×“
+  const zahl = personalAktiv() || (h.anzahl > 0 && h.offen === h.anzahl) ? `${fmtZahl(h.anzahl)}×` : h.anzahl > 0 && h.offen === h.anzahl ? "–" : fmtEuro(h.wert, { dezimal: 2 }); // Gremium 1: nur unbewertete Einträge → „–“ statt 0,00 €; Lauf 2 (4b): einheitlich „n×“
   return `<div class="heutewert muellsumme" id="muell-heute"><h1>${esc(D === heute() ? t("heute.kachel.muell") : `${t("muell1.titel")} · ${datumLesbar(D).slice(0, 6)}`)}</h1><span class="zahl">${zahl}</span></div>`;
 }
 function toastHtml() {
@@ -92,7 +92,7 @@ function rasterView(stand, D, nach) {
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   const h = muellHeute(stand, D);
   const satz = grund === "ausgegeben" ? t("muell.zeki.ausgegeben") : grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");
-  const reiter = ["roh", "personal", "ausgegeben", "bruch"].filter((g) => g !== "ausgegeben" || !personalAktiv()); // Persona-Test Team 27.10.: Personalessen auch für das Team // „Ausgegeben“ (27.10.2026) nur für den Chef
+  const reiter = ["roh", "personal", "ausgegeben", "bruch"].filter((g) => g !== "ausgegeben" || !personalAktiv()); // Persona-Test Team 27.10.: Personalessen auch für das Team // „Ausgegeben“ nur für den Chef
   return `<div class="inhalt muell1 m-schablone">
     <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.uebrig"))}">${sym("moon")}<span>${esc(t("muell.uebrig"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
@@ -104,10 +104,10 @@ function rasterView(stand, D, nach) {
 }
 
 // Dieselben Daten und Schreibfunktionen wie L2: kein zweiter Zähler, keine Rechenlogik.
-// „Übrig geblieben“ (Baris 24.10.2026, ersetzt die Eimer-Waage): abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
+// „Übrig geblieben“: abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
 function stationView(stand, D) {
   const waren = haeufigsteMuell(stand, { datum: D, max: RASTER, mischen: true });
-  const zaehl = tippsHeute(stand, D, "uebrig"); // K1 Runde 2 (01.11.2026): hier zählen nur die Übrig-Einträge, nicht die des offenen Reiters
+  const zaehl = tippsHeute(stand, D, "uebrig"); // K1 Runde 2: hier zählen nur die Übrig-Einträge, nicht die des offenen Reiters
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   return `<div class="inhalt muell-station">
     <div class="muell-station-kopf">
@@ -130,7 +130,7 @@ export function muellTippZeigen(root, stand) {
   const ziel = zuletzt ? raster.querySelector(`.ware[data-k="${CSS.escape(zuletzt.schluessel)}"]`) : null;
   if (ziel) { const x = kachelDaten(ziel.querySelector("[data-a='muell-tipp']"), stand); if (x) ziel.outerHTML = kachelHtml(stand, x, zaehl, zuletzt.schluessel, ansicht === "station"); }
   const p = root.querySelector("#muell-heute"); if (p) p.outerHTML = pilleHtml(stand, D);
-  const z = root.querySelector(".muell1 .zeki-zeile"); if (z && grund === "roh" && muellHeute(stand, D).anzahl) z.replaceChildren(t("muell.zeki.weiter")); // 27.10.2026: nach dem ersten Tipp „Noch was weg?“ statt der Startfrage
+  const z = root.querySelector(".muell1 .zeki-zeile"); if (z && grund === "roh" && muellHeute(stand, D).anzahl) z.replaceChildren(t("muell.zeki.weiter")); // nach dem ersten Tipp „Noch was weg?“ statt der Startfrage
   root.querySelector(".muelltoast")?.remove();
   const html = toastHtml(); if (html) raster.closest(".inhalt").insertAdjacentHTML("afterend", html);
   clearTimeout(toastUhr); const id = zuletzt?.ids;
@@ -171,7 +171,7 @@ export function muellStatistikView(stand) {
   const D = heute();
   const w = muellWoche(stand, D); const mv = muellMonatVergleich(stand, D);
   const leer = !w.anzahl;
-  const { fuell, linie } = muellTonne(mv); // Trennung 2 (17.10.2026)
+  const { fuell, linie } = muellTonne(mv); // Trennung 2
   const vormonatName = datumText(new Date(Number(D.slice(0, 4)), Number(D.slice(5, 7)) - 2, 1), { month: "long" });
   return `<div class="muellzentrale">
     <div class="karte muellkarte">
@@ -192,8 +192,8 @@ export function muellStatistikView(stand) {
 
 // ---------- „Andere": Suche über alle Waren (auch türkische/englische Namen) + Eimer gewogen ----------
 function eingabeView(stand, D) {
-  const q = normalisieren(suche); const nurGerichte = (grund === "personal" || grund === "ausgegeben") && ansicht !== "station"; // 27.10.2026 (Persona-Test): Personalessen ist immer ein Gericht, nie Rohware
-  const kacheln = muellSuche(stand, suche, D).filter((x) => !nurGerichte || x.typ === "gericht"); // Trennung 2 (17.10.2026): Suche im Rechenwerk
+  const q = normalisieren(suche); const nurGerichte = (grund === "personal" || grund === "ausgegeben") && ansicht !== "station"; // (Persona-Test): Personalessen ist immer ein Gericht, nie Rohware
+  const kacheln = muellSuche(stand, suche, D).filter((x) => !nurGerichte || x.typ === "gericht"); // Trennung 2: Suche im Rechenwerk
   return `<div class="inhalt">
     <h2>${esc(t("muell.auswaehlen"))}</h2>
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))}" autocomplete="off">
@@ -208,7 +208,7 @@ ${nurGerichte ? "" : `<button type="button" class="kachel klein eimerkachel" dat
 // ---------- Detail: Menge · Foto · Personalessen · ein Knopf (ohne Untertitel in drei Sprachen) ----------
 function formView(stand, D) {
   const w = wahl; const pers = personalAktiv(); const ohneEuro = pers || rueckkehr === "station" || !!w?.ausgegeben;
-  const { einheit, basis, ganze, wert, personalWert } = muellFormWerte(stand, w, D, { personal: pers }); // Trennung 2 (17.10.2026)
+  const { einheit, basis, ganze, wert, personalWert } = muellFormWerte(stand, w, D, { personal: pers }); // Trennung 2
   const einheitText = w?.typ === "gericht" ? t("muell.teller") : einheitLabel(einheit);
   return `<div class="inhalt muellform ${rueckkehr === "station" ? "muell-station-detail" : ""}">
     <button type="button" class="karte auswahlkarte ${w ? "gewaehlt" : ""}" data-a="muell-auswahl">
@@ -248,7 +248,7 @@ const GEISTER_TIPP_MS = 60;
 export function muellTipp(el, stand) {
   const x = kachelDaten(el, stand); if (!x) return false;
   const k = muellSchluessel(x); const jetzt = Date.now();
-  if (letzterTipp.id === "tipp:" + k && jetzt - letzterTipp.zeit < GEISTER_TIPP_MS) return false; // Vorab-Prüfung 03.11.2026 (B1): vorher 350 ms – bei 100 ms Abstand zählten 2 von 5; jetzt zählt jeder Tipp, nur doppelt gefeuerte Ereignisse (< 60 ms) nicht
+  if (letzterTipp.id === "tipp:" + k && jetzt - letzterTipp.zeit < GEISTER_TIPP_MS) return false; // Vorab-Prüfung (B1): vorher 350 ms – bei 100 ms Abstand zählten 2 von 5; jetzt zählt jeder Tipp, nur doppelt gefeuerte Ereignisse (< 60 ms) nicht
   letzterTipp = { id: "tipp:" + k, zeit: jetzt };
   const e = muellTippEintragen(stand, x, { datum: tagGewaehlt(), von: personalVon(stand), uebrig: ansicht === "station", grund: ansicht === "station" ? null : grund === "personal" || grund === "ausgegeben" ? grund : null });
   if (!e) return false;

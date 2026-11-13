@@ -1,23 +1,23 @@
-// Büro – die drei Ordner zum Abgeben (Drei Ebenen, 15.10.2026, Vorschau-Rahmen „Ordner Gesundheitsamt“):
+// Büro – die drei Ordner zum Abgeben:
 // "ordner-amt" (Gesundheitsamt: Kühlprotokoll, Putznachweis, Belehrungen, Eigenkontroll-Konzept), "ordner-steuer" (Steuerberater),
 // "ordner-buch" (Buchhalter). Je Ordner: Zeitraum, Stand mit Ring, Inhaltsliste mit Haken/Lücke, „Als PDF teilen“, Vorschau, CSV.
-// Daten kommen rein rechnend aus js/export_amt.js und js/export_steuer.js, Texte und Druckmodelle aus js/ordner_text.js (Trennung 2, 17.10.2026);
+// Daten kommen rein rechnend aus js/export_amt.js und js/export_steuer.js, Texte und Druckmodelle aus js/ordner_text.js;
 // hier stehen nur Aufbau, Zeitraum-Wahl und Teilen/Drucken.
 import { kontaktSetzen } from "../stamm.js";
 import { t } from "../i18n.js";
-import { hinweiseFuer } from "../hinweis.js"; // Fragen an dich (26.10.2026)
+import { hinweiseFuer } from "../hinweis.js"; // Fragen an dich
 import { esc, heute } from "../util.js";
-import { personAnlegen, beilageBereitSchalten, beilagenBereit } from "../stamm.js"; // Trennung (17.10.2026)
+import { personAnlegen, beilageBereitSchalten, beilagenBereit } from "../stamm.js"; // Trennung
 import { ordnerAmt, zeitraumFuer, belehrungEintragen } from "../export_amt.js";
 import { monatsPaket, monatPlus, datumDe } from "../export_steuer.js";
-import { BEILAGEN, amtZeitraumVon, paketZeitVon, monatLang, amtUnter, amtHinweis, paketUnter, dateiName, csvDateien as csvDateienR, dokumentFuer as dokumentFuerR } from "../ordner_text.js"; // Trennung 2 (17.10.2026)
+import { BEILAGEN, amtZeitraumVon, paketZeitVon, monatLang, amtUnter, amtHinweis, paketUnter, dateiName, csvDateien as csvDateienR, dokumentFuer as dokumentFuerR } from "../ordner_text.js"; // Trennung 2
 import { monatName } from "./tag.js";
 import { bsym, bueroKopf } from "./buero.js";
-import { bueroRing as ring, dateienTeilen } from "./bausteine.js"; // Trennung (17.10.2026)
+import { bueroRing as ring, dateienTeilen } from "./bausteine.js"; // Trennung
 
 // ---------- Zustand ----------
 let amtZeit = { art: "monat", von: null, bis: null };
-let paketMonat = { steuer: null, buch: null };  // buch "JJJJ-MM" (null = Vormonat), steuer "JJJJ" (null = laufendes Jahr; 26.10.2026)
+let paketMonat = { steuer: null, buch: null };  // buch "JJJJ-MM" (null = Vormonat), steuer "JJJJ"
 let belehrungAuf = false;
 const belDatum = {};          // personId → gewähltes Datum (Feld), Standard heute
 let personNeu = "";
@@ -25,7 +25,7 @@ let vorschauHtml = null;      // offene Vorschau (fertiges Dokument)
 export function ordnerZuruecksetzen() { belehrungAuf = false; vorschauHtml = null; personNeu = ""; }
 export const ordnerVorschauOffen = () => !!vorschauHtml;
 
-// Trennung 2 (17.10.2026): Zeitraum, Texte, Druckmodelle und CSV wohnen in js/ordner_text.js; hier nur die gewählte Zeit (Modulzustand).
+// Trennung 2: Zeitraum, Texte, Druckmodelle und CSV wohnen in js/ordner_text.js; hier nur die gewählte Zeit (Modulzustand).
 const datum = (iso) => (iso ? datumDe(iso) : "–");
 const wahl = () => ({ amtZeit, paketMonat });
 const amtZeitraum = (H = heute()) => amtZeitraumVon(amtZeit, H);
@@ -79,13 +79,13 @@ function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
   return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: fertig ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(!gesamt ? t("ordner.leer") : fertig ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
 }
 
-// Paket C (19.10.2026): was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“
-// 26.10.2026: beim Steuerberater/Buchhalter als Abhakliste – abgehakt heißt nur „liegt bereit“ (je Zeitraum gemerkt).
+// Paket C: was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“
+// beim Steuerberater/Buchhalter als Abhakliste – abgehakt heißt nur „liegt bereit“ (je Zeitraum gemerkt).
 const beilagenKarte = (art, stand = null, zeitraum = null) => {
   const bereit = stand && zeitraum ? beilagenBereit(stand, art, zeitraum) : null;
   const zeile = (b) => bereit ? `<button type="button" class="b-beilage ${bereit.has(b) ? "an" : ""}" data-a="beilage-bereit" data-wert="${esc(b)}" aria-pressed="${bereit.has(b)}"><span class="b-kasten" aria-hidden="true">${bereit.has(b) ? "✓" : ""}</span><span>${esc(t("ordnerC.teile." + b))}</span></button>` : `<li>${esc(t("ordnerC.teile." + b))}</li>`;
   const liste = (BEILAGEN[art] || []).map(zeile).join("");
-  // Vorab-Prüfung 03.11.2026 (C12): aufklappbar (Buchhalter-Ordner 141 Wörter, Maß 120); offen, sobald etwas abgehakt ist
+  // Vorab-Prüfung (C12): aufklappbar (Buchhalter-Ordner 141 Wörter, Maß 120); offen, sobald etwas abgehakt ist
   return `<details class="karte b-beilagen auf" ${bereit && bereit.size ? "open" : ""}><summary><b>${esc(t(bereit ? "ordnerC.selbstTitel" : "ordnerC.karteTitel"))}</b></summary>${bereit ? `<div class="b-beilagenliste">${liste}</div>` : `<ul>${liste}</ul>`}${art === "amt" ? "" : `<small class="b-leise">${esc(t("ordnerC.hinweis"))}</small>`}</details>`;
 };
 // Steuerberater: offene Hinweis-Karten als „Fragen an dich“ (Weg zum Bildschirm Hinweise)
@@ -135,7 +135,7 @@ export function ordnerPaketView(stand, art) {
     </div>${vorschauBlatt()}</div>`;
 }
 
-// Fertige E-Mail an Steuerberater/Buchhalter (Baris 26.10.2026 23:56): Zeki erklärt in einem Satz, die App baut Text und Anhänge,
+// Fertige E-Mail an Steuerberater/Buchhalter: Zeki erklärt in einem Satz, die App baut Text und Anhänge,
 // der Chef tippt nur noch auf „Senden“. Lücken in [Klammern] füllt er selbst. Adresse freiwillig.
 let mailEntwurf = {}; const mailMerken = (art, wert) => { mailEntwurf = { ...mailEntwurf, [art]: wert }; }; // flüchtiger Entwurf, keine Stammdaten
 function schickenKarte(stand, art) {
@@ -152,7 +152,7 @@ function mailText(stand, art, zeitraum) {
 }
 
 // ---------- Drucken und Teilen (Browser) ----------
-// Eigentümer-Ebene (18.10.2026): exportiert, screens/laeden.js druckt den Eigentümer-Bericht damit
+// Eigentümer-Ebene: exportiert, screens/laeden.js druckt den Eigentümer-Bericht damit
 export function drucken(html) {
   const f = document.createElement("iframe");
   f.setAttribute("aria-hidden", "true"); f.className = "b-druckrahmen";
@@ -160,7 +160,7 @@ export function drucken(html) {
   f.onload = () => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { console.warn(e); const w = window.open("", "_blank"); if (w) { w.document.write(html); w.document.close(); w.print(); } } setTimeout(() => f.remove(), 60000); };
   f.srcdoc = html; document.body.appendChild(f);
 }
-const teilen = dateienTeilen; // Trennung (17.10.2026): gemeinsames Teilen (./bausteine.js)
+const teilen = dateienTeilen; // Trennung: gemeinsames Teilen (./bausteine.js)
 
 // ---------- Aktionen und Eingaben ----------
 // Rückgabe: false | true (neu zeichnen) | { speichern?: true, meldung? }
@@ -168,7 +168,7 @@ export async function ordnerAktion(name, el, stand, ansicht) {
   const H = heute();
   if (name === "ordner-zeit") { amtZeit = { art: el.dataset.wert, von: amtZeit.von, bis: amtZeit.bis }; if (amtZeit.art === "frei" && !amtZeit.von) { const z = zeitraumFuer("monat", { datum: H }); amtZeit.von = z.von; amtZeit.bis = H; } return true; }
   if (name === "ordner-monat") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; const jetzt = paketZeit(art, H, stand).monat; const d = Number(el.dataset.wert) || 0;
-    if (art === "steuer") { const neu = String(Number(jetzt) + d); if (neu > H.slice(0, 4)) return false; paketMonat.steuer = neu; return true; } // Steuerberater: Jahr (26.10.2026)
+    if (art === "steuer") { const neu = String(Number(jetzt) + d); if (neu > H.slice(0, 4)) return false; paketMonat.steuer = neu; return true; } // Steuerberater: Jahr
     const neu = monatPlus(jetzt, d); if (neu > H.slice(0, 7)) return false; paketMonat[art] = neu; return true; }
   if (name === "beilage-bereit") { const art = ansicht === "ordner-steuer" ? "steuer" : "buch"; beilageBereitSchalten(stand, art, paketZeit(art, H, stand).monat, el.dataset.wert); return { speichern: true }; }
   if (name === "ordner-belehrung") { belehrungAuf = !belehrungAuf; return true; }

@@ -1,4 +1,4 @@
-// Lieferanten (18.10.2026): Büro-Bereich „Lieferanten“ – Liste, Bearbeiten (Liefertage oder Abholung, Bestellschluss, Lieferzeit,
+// Lieferanten: Büro-Bereich „Lieferanten“ – Liste, Bearbeiten (Liefertage oder Abholung, Bestellschluss, Lieferzeit,
 // Mindestbestellwert, Bestellweg mit Nummer/Adresse, Kundennummer, Notiz) und „Waren zuordnen“ (Haupt- und Zweitlieferant je Ware).
 // Rechnen und Schreiben: js/lieferant.js (Stammdaten, Termine) und js/bestand.js (Sätze). Hier nur Aufbau, Texte, data-Attribute
 // und vorhandene CSS-Klassen. Einstieg im Büro und aus „Lager & Bestellen“. Personal-Modus: nicht erreichbar, Handlungen „lf-…“ gesperrt.
@@ -11,7 +11,7 @@ import { LIEFERANT_ARTEN, LIEFER_MODI, BESTELLWEGE, WOCHE, VORHER_WAHL, lieferan
 import { lieferSaetze, uhrText } from "../bestand.js";
 import { tagKurz as kurz } from "../anzeige_text.js";
 import { nav } from "./nav.js";
-import { BUNDESLAENDER, ladenLand, feiertagOffen, feiertagSetzen, naechsterFeiertag, landGeprueft } from "../feiertage.js"; // Feiertage (18.10.2026)
+import { BUNDESLAENDER, ladenLand, feiertagOffen, feiertagSetzen, naechsterFeiertag, landGeprueft } from "../feiertage.js"; // Feiertage
 import { datumKurz } from "../haltbar.js";
 
 // flüchtiger Bildschirmzustand: offenes Formular { id | "neu", werte } oder die Zuordnung der Waren
@@ -44,7 +44,7 @@ export function lieferantenView(stand) {
   const saetze = lieferSaetze(stand);
   const oben = saetze.length ? `<div class="karte ${saetze[0].ton === "rot" ? "hinweisrot" : "hinweisgelb"}" data-lf-saetze="${saetze.length}">${saetze.slice(0, 3).map((x, i) => (i ? `<p>${esc(x.text)}</p>` : `<h2>${esc(x.text)}</h2>`)).join("")}</div>` : "";
   const liste = lieferantenAktiv(stand);
-  // Prüfer 19.10.2026: statt Fließtext je Lieferant eine klare Karte – Name + „Ändern“, darunter drei Zeilen mit Symbol
+  // Prüfer: statt Fließtext je Lieferant eine klare Karte – Name + „Ändern“, darunter drei Zeilen mit Symbol
   const zeile = (lf) => {
     const n = lieferantWaren(stand, lf.id).length; const naechste = naechsteText(stand, lf);
     const details = [lf.weg ? t("lieferanten.weg." + lf.weg) : "", lf.mindestwert ? t("lieferanten.mindestKurz", fmtEuro(lf.mindestwert)) : "", t("lieferanten.waren", n)].filter(Boolean).join(" · ");
@@ -61,7 +61,7 @@ export function lieferantenView(stand) {
     ${feiertageView(stand)}
     ${was(t("lieferanten.was"))}</div>${nav("lieferanten", { schnell: false })}`;
 }
-// Feiertage (18.10.2026): Bundesland (für landesweite Feiertage, nur geprüfte Länder haben eigene) und ob der Laden an Feiertagen zu hat.
+// Feiertage: Bundesland (für landesweite Feiertage, nur geprüfte Länder haben eigene) und ob der Laden an Feiertagen zu hat.
 // An Feiertagen liefert kein Lieferant – das rechnet js/lieferant.js; hier nur die Einstellung und der nächste Feiertag.
 function feiertageView(stand) {
   const land = ladenLand(stand); const zu = !feiertagOffen(stand); const n = naechsterFeiertag(stand, heuteGeschaeft());
@@ -140,7 +140,7 @@ export function lieferantenAktion(name, el, stand) {
   if (name === "lf-zu") { form = null; return true; }
   if (name === "lf-zuordnen") { zuordnen = true; form = null; return true; }
   if (name === "lf-zuordnen-zu") { zuordnen = false; return true; }
-  if (name === "lf-feiertag-zu") return feiertagSetzen(stand, "offen", !feiertagOffen(stand)) ? { speichern: true } : true; // Feiertage (18.10.2026)
+  if (name === "lf-feiertag-zu") return feiertagSetzen(stand, "offen", !feiertagOffen(stand)) ? { speichern: true } : true; // Feiertage
   if (name === "lf-entfernen") {
     const lf = lieferantMitId(stand, el.dataset.wert); if (!lf) return false;
     if (typeof confirm === "function" && !confirm(t("lieferanten.entfernenFrage", lf.name))) return false;
@@ -170,7 +170,7 @@ export function lieferantenEingabe(feld, wert, stand) {
     const ok = artikelLieferantSetzen(stand, ware, f.startsWith("lf-haupt:") ? { haupt: id } : { zweit: id });
     return ok ? "speichern" : { meldung: t("lieferanten.fehler.unbekannt") };
   }
-  if (f === "lf-land") return feiertagSetzen(stand, "land", String(wert || "") || null) ? "speichern" : false; // Feiertage (18.10.2026)
+  if (f === "lf-land") return feiertagSetzen(stand, "land", String(wert || "") || null) ? "speichern" : false; // Feiertage
   if (!form || !f.startsWith("lf-")) return false;
   const k = f.slice(3); if (!["name", "uhr", "lieferzeit", "mindest", "kontakt", "kundennummer", "notiz"].includes(k)) return false;
   form = { ...form, werte: { ...form.werte, [k]: String(wert ?? "").slice(0, 200) } };

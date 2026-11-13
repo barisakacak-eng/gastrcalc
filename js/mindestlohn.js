@@ -1,4 +1,4 @@
-// Mindestlohn-Vorschau (Masterauftrag „Gehirn“ 1.1, 28.10.2026): Was kostet die nächste Erhöhung dein Team im Monat,
+// Mindestlohn-Vorschau: Was kostet die nächste Erhöhung dein Team im Monat,
 // und wie viel Umsatz brauchst du dafür mehr? Reine Rechnung, keine Oberfläche.
 //
 // Rechenweg je Person mit bekanntem Stundenlohn (aus „Mitarbeiter heute“, stand.teamTage, letzte 28 Tage):
@@ -15,8 +15,8 @@ import { warenQuote } from "./zaehler.js";
 import { umsatzSteuerSatz, tagPlus, TAGE_JE_MONAT } from "./engine.js";
 
 export const MONATSTAGE = TAGE_JE_MONAT; // Durchschnitt 365 / 12 ≈ 30,42 Tage, gerundet auf 30,4 – eine Stelle: js/engine.js (Lauf 6, P1 C5)
-const VORSCHAU_TAGE_VORHER = 92; // Setzung 28.10.2026: Karte ab ≈ 3 Monate vor der Erhöhung
-const VORSCHAU_TAGE_NACHHER = 31; // Setzung 28.10.2026: und noch einen Monat danach („seit Januar …“)
+const VORSCHAU_TAGE_VORHER = 92; // Setzung: Karte ab ≈ 3 Monate vor der Erhöhung
+const VORSCHAU_TAGE_NACHHER = 31; // Setzung: und noch einen Monat danach („seit Januar …“)
 
 // Stunden und letzter Stundenlohn je Person aus den Tageseinträgen der letzten 28 Tage (je Datum gilt der jüngste Eintrag)
 function personenStunden(stand, datum) {
@@ -71,7 +71,7 @@ export function mindestlohnKarteZeigen(stand, datum) {
   for (const ab of alle) {
     const tage = Math.round((Date.parse(ab + "T12:00:00Z") - Date.parse(datum + "T12:00:00Z")) / 864e5);
     if (tage > 0 && tage <= VORSCHAU_TAGE_VORHER) { const v = mindestlohnVorschau(stand, datum); return v && v.mehrMonat > 0 ? v : null; }
-    // Pilotfest P5 (30.10.2026): am Stichtag selbst gilt der neue Satz schon → „seit“ (vorher fehlte die Karte genau an diesem Tag)
+    // Pilotfest P5: am Stichtag selbst gilt der neue Satz schon → „seit“ (vorher fehlte die Karte genau an diesem Tag)
     if (tage <= 0 && -tage <= VORSCHAU_TAGE_NACHHER) { const v = mindestlohnVorschau(stand, tagPlus(ab, -1)); return v && v.mehrMonat > 0 ? { ...v, seit: true } : null; }
   }
   return null;

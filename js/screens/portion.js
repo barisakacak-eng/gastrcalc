@@ -1,4 +1,4 @@
-// Laden „Portion prüfen“ (Masterauftrag „Gehirn“ 2.1, 28.10.2026): Chef wiegt die Hauptzutat einer echten Portion, die App sagt in einem Satz,
+// Laden „Portion prüfen“: Chef wiegt die Hauptzutat einer echten Portion, die App sagt in einem Satz,
 // was die Abweichung vom eigenen Rezept im Jahr kostet. Das Rezept bleibt unverändert. Gerechnet wird in js/ware.js (portionEuro).
 import { t, mengenText } from "../i18n.js";
 import { esc, fmtZahl, fmtEuroGeschaetzt } from "../util.js";
@@ -6,12 +6,12 @@ import { hauptZutat, portionEuro } from "../ware.js";
 import { portionMessungSpeichern } from "../stamm.js";
 import { nav } from "./nav.js";
 
-const PORTION_SCHRITT = 5; // Setzung 28.10.2026: −/+ in 5 g (bzw. 5 ml)
+const PORTION_SCHRITT = 5; // Setzung: −/+ in 5 g (bzw. 5 ml)
 let p = null; // { gid, zutat, soll, einheit, wert, fertig }
 export const portionZuruecksetzen = () => { p = null; };
 export function portionOeffnen(stand, gid) {
   const g = (stand.gerichte || []).find((x) => x.id === gid); const h = g ? hauptZutat(stand, g) : null;
-  // K1 Runde 2 (01.11.2026): Gericht mit Rezept, aber ohne bepreiste Hauptzutat → eigener Hinweis statt „kein eigenes Rezept“
+  // K1 Runde 2: Gericht mit Rezept, aber ohne bepreiste Hauptzutat → eigener Hinweis statt „kein eigenes Rezept“
   p = h ? { gid, zutat: h.name, soll: h.menge, einheit: h.einheit, wert: h.menge, fertig: false } : g ? { gid, zutat: null } : null; return !!p;
 }
 

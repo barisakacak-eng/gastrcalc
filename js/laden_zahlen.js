@@ -1,13 +1,13 @@
-// Trennung 2 (17.10.2026): Zahlen für die Laden-Bildschirme „Heute“ und „Tag abschließen“ – ohne Text und ohne HTML.
+// Trennung 2: Zahlen für die Laden-Bildschirme „Heute“ und „Tag abschließen“ – ohne Text und ohne HTML.
 // Vorher in js/screens/home.js (heuteZielWerte, heuteKachelWerte) und js/screens/abschluss.js (Haken, Bilanz, Vergleiche).
 import { heute, heuteGeschaeft, parseZahl } from "./util.js";
-import { tagesnotizSetzen, tagesnotizenFestschreiben, aktiveStellen, messungenDerStelle } from "./engine.js"; // Laden-Umbau (20.10.2026): „Umsatz heute“ und Kühl-Rundgang im Laden
+import { tagesnotizSetzen, tagesnotizenFestschreiben, aktiveStellen, messungenDerStelle } from "./engine.js"; // Laden-Umbau: „Umsatz heute“ und Kühl-Rundgang im Laden
 import { umsatzEintrag, schwundAuswertung, kuehlStatus, kuehlSchlimmsteAbweichung, tagPlus, wochentag, ruhetageAm } from "./engine.js";
 import { zaehler, monatsZiel, abschlussVon } from "./zaehler.js";
 import { planGruppen } from "./putzplan.js";
 import { umsatzRueckfrage } from "./umsatz_pruefung.js";
 
-// Erste Zahl vertrauenswürdig (Masterauftrag „Gehirn“ 0.1, 28.10.2026): Ohne Miete und ohne Löhne ist „bis null“ nur der Richtwert des
+// Erste Zahl vertrauenswürdig: Ohne Miete und ohne Löhne ist „bis null“ nur der Richtwert des
 // eigenen Lohns – die Zahl sieht echt aus und ist es nicht (Gremium: leerer Laden zeigte „≈ 487 €“). Dann fehlt eine Euro-Zahl, und die App
 // sagt, was als Nächstes einzutragen ist. Rückgabe: null (genug da) | "miete" | "personal".
 // Miete fehlt: kein Posten der Gruppe „miete“ mit Betrag, und der Wirt hat „Miete“ nicht ausgeschaltet (status "aus" = gibt es nicht).
@@ -26,7 +26,7 @@ export function ersteZahlFehlt(stand, last) {
 // tempo: { art: "gut", am } (Ziel erreicht am …) | { art: "knapp", proTag } (so viel pro Tag nötig) | null. m = monatsZiel().
 export function heuteZiel(stand, z, H) {
   const m = monatsZiel(stand, z, H);
-  // Baris 24.10.2026, Variante A: immer der Monatsblick. Erst „bis null“ (Umsatz bis zum Monats-Nullpunkt), dann „zum Ziel“, dann „über Ziel“.
+  // Baris, Variante A: immer der Monatsblick. Erst „bis null“ (Umsatz bis zum Monats-Nullpunkt), dann „zum Ziel“, dann „über Ziel“.
   // Vorher wechselte die Zahl am Tag zwischen Monats- und Tagesstand (Gremium 1, Blocker 3).
   const u = m.umsatz || 0;
   const stufe = m.ziel === null ? "bisNull" : u < m.nullpunkt ? "bisNull" : u < m.ziel ? "bisZiel" : "ueberZiel";
@@ -34,9 +34,9 @@ export function heuteZiel(stand, z, H) {
   const marke = m.ziel === null ? null : stufe === "bisNull" ? m.nullpunkt : m.ziel;
   const anteil = marke ? Math.max(0, Math.min(1, m.umsatz / marke)) : 0;
   const tempo = m.erreichtAm ? { art: "gut", am: m.erreichtAm } : m.proTagNoetig ? { art: "knapp", proTag: m.proTagNoetig } : null;
-  // 27.10.2026 (Baris: die Zahl bewegt sich jeden Tag): Bewegung seit gestern – gleiche Rechnung mit dem Stand bis gestern
+  // (Baris: die Zahl bewegt sich jeden Tag): Bewegung seit gestern – gleiche Rechnung mit dem Stand bis gestern
   let bewegung = null;
-  // Persona-Test Vater (27.10.2026): ohne heutigen Umsatz stand morgens „seit gestern − 483 €“ – nur Prognose-Rauschen. Erst mit Umsatz zeigen.
+  // Persona-Test Vater: ohne heutigen Umsatz stand morgens „seit gestern − 483 €“ – nur Prognose-Rauschen. Erst mit Umsatz zeigen.
   try { if (!umsatzEintrag(stand, H)) throw 0; const G = tagPlus(H, -1); const ab = typeof stand.angelegt === "string" ? heuteGeschaeft(new Date(stand.angelegt)) : null; if (G.slice(0, 7) === H.slice(0, 7) && (!ab || G >= ab)) { const mg = monatsZiel(stand, zaehler(stand, { datum: G }), G);
     if (mg.nullpunkt !== null && m.nullpunkt !== null) { const vorher = mg.fehltNull ?? 0, jetzt = m.fehltNull ?? 0; bewegung = { betrag: jetzt - vorher, umsatz: (m.umsatz || 0) - (mg.umsatz || 0) }; } } } catch { bewegung = null; }
   return { m, stufe, zahl, marke, anteil, tempo, bewegung, fehlt: ersteZahlFehlt(stand, z?.last) };
@@ -44,7 +44,7 @@ export function heuteZiel(stand, z, H) {
 
 // Vier Kacheln. Umsatz und Müll nach Geschäftstag H, Kühlung und Putzen nach Kalendertag K (Paket 3, M7).
 // kuehl: null (nicht eingerichtet) | { art: "abweichung", wert (°C), alarm: true } | { art: "ok" } | { art: "offen", anzahl, offen: true }
-//   | { art: "ruhetag" } (Schwadron 18.10.2026, N2: heute ist laut Kühlkontrolle Ruhetag – nichts offen, solange nichts abweicht);
+//   | { art: "ruhetag" };
 // putz: null (kein Putzplan) | { erledigt, gesamt, alarm (etwas überfällig) }.
 export function heuteKachelZahlen(stand, ks, H, K = heute()) {
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H });
@@ -61,7 +61,7 @@ export function heuteKachelZahlen(stand, ks, H, K = heute()) {
   return { umsatz: u ? u.umsatz : null, muell: sw.anzahl ? sw.muellwert : null, kuehl, putz };
 }
 
-// Schwadron 18.10.2026, N2: Kalendertag K ist ein Ruhetag (Ruhetage der Kühlkontrolle, mit Gültig-ab-Verlauf)
+// Schwadron, N2: Kalendertag K ist ein Ruhetag (Ruhetage der Kühlkontrolle, mit Gültig-ab-Verlauf)
 const istRuhetag = (stand, K = heute()) => ruhetageAm(stand, K).includes(wochentag(K));
 
 // „Tag abschließen“ – die drei Haken. H = Geschäftstag. umsatz: Notiz oder null; muell: Auswertung des Tages;
@@ -69,7 +69,7 @@ const istRuhetag = (stand, K = heute()) => ruhetageAm(stand, K).includes(wochent
 export function abschlussHaken(stand, H) {
   const u = umsatzEintrag(stand, H); const sw = schwundAuswertung(stand, { von: H, bis: H }); const ks = kuehlStatus(stand);
   return { umsatz: u, muell: { anzahl: sw.anzahl, wert: sw.muellwert, ohneWert: sw.ohneWert },
-    kuehl: { eingerichtet: ks.eingerichtet, gemessen: ks.heuteGemessen, stellen: ks.stellen, nachkontrollen: ks.nachkontrollen || 0, fertig: ks.eingerichtet && ks.heuteGemessen >= ks.stellen && !(ks.nachkontrollen > 0) }, // Gremium 1 (24.10.2026): offene Nachkontrolle = nicht fertig
+    kuehl: { eingerichtet: ks.eingerichtet, gemessen: ks.heuteGemessen, stellen: ks.stellen, nachkontrollen: ks.nachkontrollen || 0, fertig: ks.eingerichtet && ks.heuteGemessen >= ks.stellen && !(ks.nachkontrollen > 0) }, // Gremium 1: offene Nachkontrolle = nicht fertig
     schon: abschlussVon(stand, H) };
 }
 
@@ -96,13 +96,13 @@ export function tagesBilanz(stand, H, K = heute()) {
   };
 }
 
-// ---------- Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden ----------
+// ---------- Laden-Umbau: „Umsatz heute“ im Laden ----------
 // Eine Zahl aus der Kasse (brutto, wie die Kasse sie druckt), ein Knopf. Gespeichert wird genau wie die Tagesumsatz-Eingabe im Büro
 // (tagesnotizSetzen + festschreiben, Geschäftstag bis 4 Uhr). Über UMSATZ_RUECKFRAGE_AB fragt der Bildschirm einmal nach (Tippfehler-Schutz),
 // statt still zu speichern – die Grenze ist eine Plausibilitätsgrenze für einen Imbiss-Tag, keine Rechenregel.
 export const UMSATZ_RUECKFRAGE_AB = 100000;
 // Rückgabe: { status: "leer" | "ungueltig" | "rueckfrage" | "ok", betrag }
-// Masterauftrag „Gehirn“ 0.1 (28.10.2026): mit stand auch Rückfrage bei weniger als 10 % oder mehr als dem Dreifachen des üblichen Tages
+// Masterauftrag „Gehirn“ 0.1: mit stand auch Rückfrage bei weniger als 10 % oder mehr als dem Dreifachen des üblichen Tages
 // (Median der letzten 14 Tage, ab 5 Tagen; js/umsatz_pruefung.js).
 export function umsatzHeutePruefen(eingabe, { bestaetigt = false, stand = null, datum = heuteGeschaeft() } = {}) {
   if (eingabe === null || eingabe === undefined || String(eingabe).trim() === "") return { status: "leer", betrag: null };
@@ -130,7 +130,7 @@ export function kuehlWerVorschlag(stand) {
 // Erste Stelle im Rundgang, die noch keinen Wert hat (in der Reihenfolge der Einrichtung); alle gemessen = null.
 export function kuehlNaechsteStelle(stand, r) {
   if (!r) return null;
-  // Vorab-Prüfung 03.11.2026 (C5): zuerst eine Stelle, die heute noch gar nicht gemessen ist („1 offen“ führt zu genau dieser),
+  // Vorab-Prüfung (C5): zuerst eine Stelle, die heute noch gar nicht gemessen ist („1 offen“ führt zu genau dieser),
   // danach – wie bisher – jede Stelle, die in diesem Rundgang noch fehlt.
   const stellen = aktiveStellen(stand); const H = r.datum || heute(); const imRundgang = (x) => r.messungen.some((m) => m.stelle === x.id);
   const k = stellen.find((x) => !imRundgang(x) && !messungenDerStelle(stand, x.id).some((m) => m.datum === H)) || stellen.find((x) => !imRundgang(x));

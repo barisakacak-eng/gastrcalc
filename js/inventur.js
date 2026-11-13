@@ -1,4 +1,4 @@
-// Inventur (Punkt 3, Baris 15.10.2026: „A1 + A2, A-E sehr gut mit Erklärung"). Reine Funktionen, keine Oberfläche.
+// Inventur. Reine Funktionen, keine Oberfläche.
 // Gezählt wird in Einkaufseinheiten (Karton, Kiste, Sack …), so wie der Wirt einkauft; angebrochene Packungen als ¼ ½ ¾.
 // Wert je Zeile = Anzahl × Einkaufspreis je Packung (netto). Nichts wird erfunden: ohne Preis kein Wert („Preis fehlt noch").
 //
@@ -10,12 +10,12 @@
 // Vergleich (ab der zweiten Inventur): Anfang + Einkauf − Ende = Verbrauch. Zeitraum: nach dem Tag der vorigen Inventur bis einschließlich
 // des Tags dieser Inventur (gezählt wird nach Ladenschluss; was am Zähltag geliefert wurde, steckt schon in der vorigen Zählung).
 import { imTakt } from "./takt.js";
-import { uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js"; // Prüfgremium 17.10.2026 (2): Inventur zählt zum Geschäftstag (bis 4 Uhr = Vortag)
+import { uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE } from "./util.js"; // Prüfgremium (2): Inventur zählt zum Geschäftstag (bis 4 Uhr = Vortag)
 import { istBetriebsmittel } from "./betriebsmittel.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
 import { preisNettoGebinde, umsatzZeitraum, umsatzSteuerSatz, schwundAuswertung, tagPlus, istRichtpreis } from "./engine.js";
 import { warenQuote } from "./warenquote.js";
-import { artikelText, sprache } from "./i18n.js"; // Trennung 2 (17.10.2026): Reihenfolge nach dem angezeigten Namen
+import { artikelText, sprache } from "./i18n.js"; // Trennung 2: Reihenfolge nach dem angezeigten Namen
 import { normalisieren, suchRang } from "./data/suchnamen.js";
 import { tageZwischen, berlin } from "./zeit.js";
 import { nettoVonBrutto } from "./geld.js";
@@ -57,7 +57,7 @@ const inventurenAlle = (stand) => Array.isArray(stand.inventuren) ? stand.invent
 export const inventurOffen = (stand) => inventurenAlle(stand).find((i) => !i.abgeschlossen) || null;
 export const inventurenFertig = (stand) => inventurenAlle(stand).filter((i) => i.abgeschlossen)
   .sort((a, b) => String(a.datum).localeCompare(String(b.datum)) || String(a.abgeschlossen).localeCompare(String(b.abgeschlossen)));
-// Schwadron 18.10.2026, M2: Wann wurde gezählt – vor dem Verkauf des Zähltags (morgens vor dem Öffnen) oder danach (nach Ladenschluss)?
+// Schwadron, M2: Wann wurde gezählt – vor dem Verkauf des Zähltags (morgens vor dem Öffnen) oder danach (nach Ladenschluss)?
 // Regel: abgeschlossen am Kalendertag des Zähltags zwischen 04:00 (Beginn des Geschäftstags) und 11:00 → „vor“ (wie mahlzeitJetzt in
 // js/muell.js: bis 11 Uhr ist Frühstück, der Verkauf eines Imbisses beginnt danach). Alles andere (auch 01:15 nach Mitternacht) → „nach“.
 // Beim Abschluss steht das Ergebnis als inv.zeitpunkt fest ("vor" | "nach"); alte Inventuren ohne Feld bekommen es aus der Uhrzeit.
@@ -112,7 +112,7 @@ export function artikelFuerInventur(stand, inv) {
     const a = artikel[name] || null; const gruppe = a?.gruppe || PRODUKT_INDEX[name]?.g || null;
     const preis = preise ? (typeof preise[name] === "number" ? preise[name] : null) : (a ? preisNettoGebinde(a) : null);
     const menge = mengeSauber(inv?.posten?.[name]);
-    // Richtpreise (17.10.2026): Wert zu einem Richtpreis ist eine Schätzung (≈); abgeschlossene Inventur merkt sich, welche es waren
+    // Richtpreise: Wert zu einem Richtpreis ist eine Schätzung (≈); abgeschlossene Inventur merkt sich, welche es waren
     const richtpreis = preise ? (Array.isArray(inv.richtpreise) && inv.richtpreise.includes(name)) : !!a && istRichtpreis(a);
     return { name, gruppe, richtpreis, lagerort: lagerortFuer({ name, gruppe }), artikel: a, gebinde: a?.gebinde?.art || "packung", packung: a?.packung || null,
       preis: typeof preis === "number" && Number.isFinite(preis) && preis >= 0 ? preis : null, menge, wert: menge !== null && typeof preis === "number" ? menge * preis : null,
@@ -122,7 +122,7 @@ export function artikelFuerInventur(stand, inv) {
   return { liste: zeilen.filter((z) => !z.ausgeblendet), ausgeblendet: zeilen.filter((z) => z.ausgeblendet) };
 }
 
-// 17.10.2026 Fehler F2: Gibt es noch gar nichts zu zählen (keine Gerichte mit Rezept, keine Belege, keine Verpackung, nichts vom letzten Mal)?
+// Fehler F2: Gibt es noch gar nichts zu zählen (keine Gerichte mit Rezept, keine Belege, keine Verpackung, nichts vom letzten Mal)?
 // Dann führt die Übersicht zuerst zur Speisekarte statt in eine leere Liste.
 export const inventurOhneWaren = (stand) => !inventurOffen(stand) && artikelFuerInventur(stand, null).liste.length === 0;
 
@@ -176,15 +176,15 @@ export function inventurAbschliessen(stand, inv, { datum = heuteGeschaeft(), jet
   if (!inv || inv.abgeschlossen) return false;
   const { liste } = artikelFuerInventur(stand, inv);
   inv.preise = {};
-  inv.inhalte = {}; // E7 (17.10.2026): Packungsinhalt in Grundeinheit beim Abschluss merken – für den Abgleich mit Verkäufen
+  inv.inhalte = {}; // E7: Packungsinhalt in Grundeinheit beim Abschluss merken – für den Abgleich mit Verkäufen
   const art = Object.fromEntries((stand.artikel || []).map((a) => [a.name, a]));
   for (const z of liste) { if (!(z.name in inv.posten)) inv.posten[z.name] = null; if (z.menge !== null) { inv.preise[z.name] = z.preis; const p = art[z.name]?.packung; if (p?.menge > 0 && EINHEITEN[p.einheit]) inv.inhalte[z.name] = inBasis(p.menge, p.einheit); } }
-  const rp = liste.filter((z) => z.menge !== null && z.richtpreis).map((z) => z.name); if (rp.length) inv.richtpreise = rp; // Richtpreise (17.10.2026)
-  // Prüfgremium 17.10.2026 (2): Der Zähltag liegt nie nach dem laufenden Geschäftstag – wer nach Mitternacht den Kalendertag übergibt
+  const rp = liste.filter((z) => z.menge !== null && z.richtpreis).map((z) => z.name); if (rp.length) inv.richtpreise = rp; // Richtpreise
+  // Prüfgremium (2): Der Zähltag liegt nie nach dem laufenden Geschäftstag – wer nach Mitternacht den Kalendertag übergibt
   // (bis 4 Uhr), bekommt den Geschäftstag der Schicht, die gerade zu ist.
   { const g = Number.isFinite(Date.parse(jetzt)) ? heuteGeschaeft(new Date(jetzt)) : null; if (g && typeof datum === "string" && datum > g) datum = g; }
   inv.datum = datum; inv.abgeschlossen = jetzt;
-  if (inv.zeitpunkt !== "vor" && inv.zeitpunkt !== "nach") inv.zeitpunkt = inventurVorVerkauf({ datum, abgeschlossen: jetzt }) ? "vor" : "nach"; // Schwadron 18.10.2026, M2
+  if (inv.zeitpunkt !== "vor" && inv.zeitpunkt !== "nach") inv.zeitpunkt = inventurVorVerkauf({ datum, abgeschlossen: jetzt }) ? "vor" : "nach"; // Schwadron, M2
   inv.wert = inventurWert(stand, inv).summe;
   const v = inventurVergleich(stand, inv); if (v && typeof v.betriebsmittel.jeMonat === "number") inv.betriebsmittelJeMonat = v.betriebsmittel.jeMonat; // für die Zeile im Zähler (Stufe „aus Inventur“)
   return true;
@@ -220,7 +220,7 @@ const tageInklusive = (von, bis) => tageZwischen(von, bis) + 1;
 export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv)) {
   if (!inv || !vorher) return null;
   const anfang = inventurWert(stand, vorher); const ende = inventurWert(stand, inv);
-  const von = inventurAbTag(vorher), bis = inventurBisTag(inv); // Schwadron 18.10.2026, M2: Zählung vor dem Verkauf zählt den Tag mit
+  const von = inventurAbTag(vorher), bis = inventurBisTag(inv); // Schwadron, M2: Zählung vor dem Verkauf zählt den Tag mit
   const tage = bis >= von ? tageInklusive(von, bis) : 0;
   const einkauf = tage > 0 ? einkaufZeitraum(stand, { von, bis }) : { summe: 0, belege: 0, lieferanten: [] };
   // Putzmittel & Co. sind kein Wareneinsatz: getrennt rechnen (Punkt 5, Zeile „Reinigung & Betriebsmittel“ im Zähler)
@@ -232,7 +232,7 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
   const st = umsatzSteuerSatz(stand);
   const u = tage > 0 ? umsatzZeitraum(stand, { von, bis }) : { summe: 0, tage: 0 };
   const umsatzNetto = nettoVonBrutto(u.summe, st.satz);
-  const q = warenQuote(stand); if (q.quelle === "richtwert") q.quote = null; // Paket 3 (16.10.2026): die Inventur vergleicht echte Zahlen, kein Branchen-Richtwert
+  const q = warenQuote(stand); if (q.quelle === "richtwert") q.quote = null; // Paket 3: die Inventur vergleicht echte Zahlen, kein Branchen-Richtwert
   const echteQuote = umsatzNetto > 0 ? verbrauch / umsatzNetto : null;
   const sollWare = umsatzNetto > 0 && q.quote !== null ? umsatzNetto * q.quote : null;
   const luecke = sollWare !== null ? verbrauch - sollWare : null;
@@ -252,7 +252,7 @@ export function inventurVergleich(stand, inv, vorher = inventurVorher(stand, inv
   };
 }
 
-// ---------- Trennung 2 (17.10.2026): Zahlen für die Inventur-Bildschirme (vorher in js/screens/inventur.js) ----------
+// ---------- Trennung 2: Zahlen für die Inventur-Bildschirme (vorher in js/screens/inventur.js) ----------
 // Liste A1: Waren je Lagerort (nach dem angezeigten Namen sortiert) mit Summe je Ort; fortschritt in Prozent (gezählt/alle).
 // Verhaltensgleich mit dem Bildschirm vorher: auch leere Lagerorte bleiben in der Liste (dort hatte ein Zeilenkommentar den Filter
 // „.filter((g) => g.zeilen.length)“ verschluckt). Ob leere Orte weg sollen, entscheidet Baris – dann eine Zeile hier.

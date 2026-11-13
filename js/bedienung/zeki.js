@@ -48,35 +48,35 @@ export function hinweiseMitHm() {
 
 export function zekiBildschirm() {
   if (fuehrungOffen() || (Z.ansicht === "start" && !Z.stand?.fuehrung && modus(Z.wurzel) === "laden")) return; // Führung zuerst, keine zweite Blase darüber
-  if (Z.root.querySelector(".zeki-zeile, .kl-zeki, .zeki-stimme > *")) return; // 27.10.2026: Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
+  if (Z.root.querySelector(".zeki-zeile, .kl-zeki, .zeki-stimme > *")) return; // Bildschirm hat schon seinen Zeki-Satz – keine zweite Blase
   const nur = Z.ansicht === "start" ? null : ZEKI_BILDSCHIRM[Z.ansicht]; if ((Z.ansicht !== "start" && !nur) || !Z.stand) return; // Heute: alle Lagen, Zeki spricht oben rechts
   const H = heuteGeschaeft(); const gesehen = zekiGesehenLesen();
   if (Z.zekiGerade && Date.now() - Z.zekiGerade.t < 7000) gesehen.delete(Z.zekiGerade.key);
   let zm = null;
-  // Mitmach-Rundgang (28.10.2026, 7.3): erstes eigenes Rezept da, aber noch nicht alle Verkaufsrenner → höchstens einmal am Tag leise „3 von 12 …“
+  // Mitmach-Rundgang: erstes eigenes Rezept da, aber noch nicht alle Verkaufsrenner → höchstens einmal am Tag leise „3 von 12 …“
   if (Z.ansicht === "start" && !personalAktiv()) { const r = rezeptFortschritt(Z.stand); const key = `rezepte:${H}`;
     if (r.mit > 0 && !r.rennerFertig && (!gesehen.has(key) || Z.zekiGerade?.key === key) && !Z.root.querySelector('[data-dran="kuehlAlarm"]')) {
       const laeuft = Z.zekiGerade?.key === key;
       zekiSprechblase(Z.root, { ausloeser: "rezepte", text: t("heute.rezeptErinnerung.stand", r.mit, r.gesamt), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - Z.zekiGerade.t) : 7000, bewegen: !laeuft });
       zekiGesehenMerken(key); return; } }
-  // Lauf 3, Phase 6 (09.11.2026): 5 Tage vor einem Pflichttermin sagt Zeki auf Heute einen Satz, höchstens einmal am Tag, nie über einem Kühl-Alarm
+  // Lauf 3, Phase 6: 5 Tage vor einem Pflichttermin sagt Zeki auf Heute einen Satz, höchstens einmal am Tag, nie über einem Kühl-Alarm
   if (Z.ansicht === "start" && !personalAktiv() && !Z.root.querySelector('[data-dran="kuehlAlarm"]')) { const key = `frist:${H}`;
     if (!gesehen.has(key) || Z.zekiGerade?.key === key) { let f = null; try { f = fristErinnerungHeute(Z.stand, heute()); } catch { f = null; }
       if (f) { const laeuft = Z.zekiGerade?.key === key; const arten = f.arten.map((a) => t("w3.termine.art." + a)).join(", ");
         zekiSprechblase(Z.root, { ausloeser: "frist", text: fristSatz(aktuelleSprache(), arten, f.datum.slice(8, 10) + "." + f.datum.slice(5, 7) + "."), bewegung: "nicken" }, { restMs: laeuft ? 7000 - (Date.now() - Z.zekiGerade.t) : 7000, bewegen: !laeuft });
         zekiGesehenMerken(key); return; } } }
-  // Lauf 3 (09.11.2026, Baris Ja 17:21), Hinweis-Motor: im Laden höchstens einmal je 7 Tage ein Satz, nie in der Stoßzeit, nie über einem Kühl-Alarm
+  // Lauf 3, Hinweis-Motor: im Laden höchstens einmal je 7 Tage ein Satz, nie in der Stoßzeit, nie über einem Kühl-Alarm
   if (Z.ansicht === "start" && !personalAktiv() && !Z.root.querySelector('[data-dran="kuehlAlarm"]')) {
     let k = null; try { k = hmLadenZeile(Z.stand, { jetzt: new Date() }); } catch { k = null; }
     if (k) { zekiSprechblase(Z.root, { ausloeser: "hm", text: hmUi(aktuelleSprache(), k === "hm.zeki.geld" ? "zekiGeld" : "zekiPflicht"), bewegung: "nicken" }, { restMs: 7000, bewegen: true });
       hmLadenGezeigt(Z.stand, heute()); sofortSpeichern(Z.wurzel); return; } }
   try { zm = zekiMoment(Z.stand, { H, sprache: aktuelleSprache(), gesehen, sicherungTage: sicherungStufe(Z.wurzel)?.tage ?? null, sicherung: personalAktiv() ? null : sicherungFaellig(Z.wurzel), nur: nur && personalAktiv() ? nur.filter((x) => x !== "muell_hoch") : nur || undefined }); } catch { zm = null; }
   if (!zm) return;
-  // 27.10.2026: Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter
+  // Auf Heute spricht die Jetzt-Karte schon („Kühlrundgang“) – Zeki sagt dort nur Ernstes, sonst doppelt und über 15 Wörter
   if (Z.ansicht === "start" && zm.ausloeser !== "kuehl_abweichung" && zm.ausloeser !== "muell_hoch") return;
   if (Z.ansicht === "start" && zm.ausloeser === "kuehl_abweichung" && Z.root.querySelector('[data-dran="kuehlAlarm"]')) return; // Persona-Test Vater 27.10.: Warnung stand doppelt
   const key = `${zm.ausloeser}:${H}`; const laeuft = Z.zekiGerade?.key === key;
-  if (personalAktiv()) zm = { ...zm, text: anredeTeam(zm.text, Z.stand) }; // Baris 27.10.2026: andere Anrede im Personal-Modus
+  if (personalAktiv()) zm = { ...zm, text: anredeTeam(zm.text, Z.stand) }; // Baris: andere Anrede im Personal-Modus
   zekiSprechblase(Z.root, zm, { restMs: laeuft ? 7000 - (Date.now() - Z.zekiGerade.t) : 7000, bewegen: !laeuft });
   zekiGesehenMerken(key);
 }
@@ -85,6 +85,6 @@ export function homeLage({ buero = false } = {}) {
   const g = probeGeraet();
   const z = installZustand(g ? { matchMedia: () => ({ matches: false }), navigator: { userAgent: g === "android" ? "Android" : "iPhone" } } : globalThis);
   if (buero) return { ...z, knopf: !!Z.installAufforderung };
-  if (fuehrungOffen() || kurzOffen() || !(Z.stand?.fuehrung || (Z.wurzel?.betriebe || []).some((b) => b.fuehrung)) || !homeHinweisFaellig(Z.wurzel, z)) return null; // erst nach dem Rundgang (03.11.2026: Rundgang je Gerät, also auch im zweiten Laden)
+  if (fuehrungOffen() || kurzOffen() || !(Z.stand?.fuehrung || (Z.wurzel?.betriebe || []).some((b) => b.fuehrung)) || !homeHinweisFaellig(Z.wurzel, z)) return null; // erst nach dem Rundgang
   return z;
 }

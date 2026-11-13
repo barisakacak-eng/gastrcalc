@@ -5,7 +5,7 @@ import { zwischenpreiseSetzen } from "./engine.js"; // Lauf 6 (P1 B6)
 import { ladenArtVon, ladenArtenVon } from "./profil.js";
 
 // Die gewählten Kacheln: eigene Antwort, sonst die Vorauswahl der Laden-Art.
-// P6 (1), 30.10.2026: bei mehreren Ladenarten die Vereinigung der Vorauswahlen.
+// P6 (1),: bei mehreren Ladenarten die Vereinigung der Vorauswahlen.
 const vorauswahlFuerArten = (arten) => [...new Set(arten.flatMap((a) => vorauswahlFuer(a)))];
 export const selbstGewaehlt = (stand) => (Array.isArray(stand.selbst) ? stand.selbst : vorauswahlFuerArten(ladenArtenVon(stand)));
 
@@ -37,7 +37,7 @@ export function selbstAnwenden(stand, ids = selbstGewaehlt(stand)) {
   return stand;
 }
 
-// Trennung (17.10.2026): aus js/screens/onboarding.js ins Rechenwerk verschoben (unverändert).
+// Trennung: aus js/screens/onboarding.js ins Rechenwerk verschoben (unverändert).
 // Vorauswahl „selbst gemacht“ nach Laden-Art – still angewendet, ohne Frage. Eine eigene Antwort des Wirts (im Büro geändert) bleibt.
 const gleich = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
 export function selbstStandard(stand) {

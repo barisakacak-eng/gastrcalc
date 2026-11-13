@@ -75,7 +75,7 @@ async function sicherungZurueckholen() {
 }
 
 export async function sicherungEinlesen(datei, passwort = null, { ersetzen = Z.einleseErsetzen } = {}) {
-  Z.einleseErsetzen = !!ersetzen && Z.notfall && modus(Z.wurzel) !== "personal"; // Rettung (17.10.2026): nur von der Fehlerseite
+  Z.einleseErsetzen = !!ersetzen && Z.notfall && modus(Z.wurzel) !== "personal"; // Rettung: nur von der Fehlerseite
   let r;
   try { r = await importSicherung(datei, { passwort }); }
   catch (e) {
@@ -94,7 +94,7 @@ async function sicherungUebernehmen(gelesen) {
     if (pruefsumme !== "ok") { await ereignis("import-pruefsumme", { pruefsumme }); if (!confirm(t(pruefsumme === "abweichung" ? "einstellungen.pruefsummeFalsch" : "w2d.pruefsummeFehlt"))) return; } // W2-D: Rückfrage vor dem Einlesen
     const gleich = importiert.betriebe.filter((b) => Z.wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
     const neu = importiert.betriebe.filter((b) => !Z.wurzel.betriebe.some((x) => x.id === b.id)).map((b) => b.betrieb.name || t("start.hallo", ""));
-    if (!confirm(zeitraumZeile(importiert) + t("einstellungen.importFrage", neu, gleich))) return; // Datensicherung 28.10.2026: Tage und Zeitraum zuerst
+    if (!confirm(zeitraumZeile(importiert) + t("einstellungen.importFrage", neu, gleich))) return; // Datensicherung: Tage und Zeitraum zuerst
     const leerVorher = Z.stand && Z.stand.phase === "onboarding" && !Z.stand.betrieb.name && !Z.stand.kosten.length && !Z.stand.gerichte.length ? Z.stand.id : null;
     const r = (await einlesenSicher(Z.wurzel, importiert)).bericht; // Lauf 6, E5-Draht (4): sicher, mit Rückholpunkt
     if (leerVorher && Z.wurzel.betriebe.length > 1) { Z.wurzel.betriebe = Z.wurzel.betriebe.filter((b) => b.id !== leerVorher); if (Z.wurzel.aktiv === leerVorher) Z.wurzel.aktiv = importiert.aktiv; }

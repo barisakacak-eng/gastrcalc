@@ -8,25 +8,25 @@
 // Journale (schwund, messungen, rundgaenge, tagesnotizen, lieferungen, abschluesse) werden nur angehängt; Rücknahme = storniert.
 // Schema 5 (Etappe 6a): dazu uploads (Beschreibung abgelegter Fotos/Dateien – die Datei selbst liegt in der Ablage, nie im Laden),
 // kostenbelege (Rechnungen mit Kostenstelle und Verteilung) und weg ("schnell" | "genau") für die Einrichtung.
-// Schema 6 (W2-D, 15.10.2026): putzplan, putzlog und belehrungen gehören zum Laden (belehrungen ist jetzt ein Journal mit eindeutigen
+// Schema 6: putzplan, putzlog und belehrungen gehören zum Laden (belehrungen ist jetzt ein Journal mit eindeutigen
 // Kennungen), dazu je Laden stammZeit (Zeitstempel je Bereich; der Fingerabdruck liegt im Speicher-Kopf) und abgleich (Stand des letzten Zusammenführens).
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
 import { speicherApi, seiteVersteckt as seiteIstVersteckt, fensterMelden } from "./adapter/seite.js";
-import { hmAngabenSauber } from "./hm_angaben.js"; // Lauf 3 (09.11.2026): Hinweis-Motor
+import { hmAngabenSauber } from "./hm_angaben.js"; // Lauf 3: Hinweis-Motor
 import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE, MAX_ZAHL } from "./util.js";
 import { FORMATE } from "./data/formate.js";
 import { KUECHEN } from "./data/kuechen.js";
 import { basisStandard, satzStandard } from "./data/kosten.js";
 import { GEBINDE_ARTEN, istRichtpreis, umsatzEintrag } from "./engine.js";
-import { getraenkGerichtMigrieren, getraenkArtikelMigrieren } from "./getraenk_feld.js"; // Getränke (18.10.2026): Größe, Gebinde, Marke, Pfand, Lieferant
-import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber, lieferantenEntdoppeln } from "./lieferant.js"; // Lieferanten (18.10.2026): Stammdaten, aus Beleg-Namen angelegt
-import { LAND_CODES } from "./feiertage.js"; // Feiertage (18.10.2026)
+import { getraenkGerichtMigrieren, getraenkArtikelMigrieren } from "./getraenk_feld.js"; // Getränke: Größe, Gebinde, Marke, Pfand, Lieferant
+import { lieferantenSauber, lieferantenAusBelegen, artikelLieferantSauber, lieferantenEntdoppeln } from "./lieferant.js"; // Lieferanten: Stammdaten, aus Beleg-Namen angelegt
+import { LAND_CODES } from "./feiertage.js"; // Feiertage
 import { pinWertGueltig, sperreSauber } from "./modus.js"; // W2-S: Prüfwert und Fehlversuch-Zähler des Büro-Codes
 import { FASSUNG } from "./fassung.js"; // W2-D: eine Fassungsnummer für App, Service Worker und Sicherung
 import { zipBlob, zipLesen, istZip, crc32 as crc32Pruefen, ZIP_GESAMT_MAX, ZIP_EINZEL_MAX } from "./zip.js";
 import { ablageKennungen, ablageLesen } from "./ablage.js";
-import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5 (16.10.2026): Passwort für die Sicherung
+import { verschluesseln, entschluesseln, istVerschluesselt, SICHERUNG_ENC, LIESMICH_NAME, LIESMICH } from "./schluessel.js"; // E5: Passwort für die Sicherung
 import { berlin, gueltigerTag } from "./zeit.js";
 import { rund2, mwstProzent } from "./geld.js";
 import { felderVerschmelzen, felderSauber } from "./abgleich_felder.js"; // Lauf 6, E5 (A1): Stunden, Schichten, Abwesenheit … werden beim Abgleich vereinigt
@@ -66,14 +66,14 @@ export function leererBetrieb() {
     rundgaenge: [],             // {id, datum, von, gestartet, abgeschlossen, nacherfasst, quelle, messungen:[…]} – bis zum Abschluss änderbar, danach nur anhängen
     messungen: [],              // abgeschlossene Messungen: {id, lfd, rundgang, stelle, datum, zeit, wert|null, grund, min, max, abweichung, massnahmen, notiz, nachkontrolle, von, erfasst, nacherfasst, quelle}
     putzplan: null, putzlog: [], belehrungen: [], // W2-D: Putzplan, Putz-Nachweis und Belehrungen gehören zum Laden (Schema 6)
-    verkaeufe: [],              // E7 (17.10.2026): nur anhängen: {id, datum (Geschäftstag), gericht|null, name, text?, plu?, menge, umsatzBrutto|null, herkunft, importId|null, erfasst, storniert} (js/verkauf.js)
-    kassenKombis: [],           // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse {id, name, kassenNamen, plu, teile:[{gericht, menge}]} (js/verkauf.js)
-    lager: { tage: 7, puffer: 2 }, // Bestand (17.10.2026): Bestellvorschlag – bestellen für so viele Tage, dazu Puffer in Tagen (js/bestand.js); Artikel dürfen mindestbestand (Gebinde) tragen
-    aktionen: [],               // Menütafel (18.10.2026): vom Wirt übernommene Aktionen {id, art: abverkauf|kombi, gerichte:[id], preis (brutto), statt|null, von, bis (Geschäftstage), erfasst, entfernt?, entferntZeit?} (js/tafel.js)
-                                // Aktion planen (18.10.2026): dazu ende "datum"|"ware" (bis Ware weg: bis = längstens, darf leer sein), ware? (Abverkaufs-Ware), plan? (Vorschlag mit
+    verkaeufe: [],              // E7: nur anhängen: {id, datum (Geschäftstag), gericht|null, name, text?, plu?, menge, umsatzBrutto|null, herkunft, importId|null, erfasst, storniert} (js/verkauf.js)
+    kassenKombis: [],           // Schwadron, M1: Kombi-Menüs der Kasse {id, name, kassenNamen, plu, teile:[{gericht, menge}]} (js/verkauf.js)
+    lager: { tage: 7, puffer: 2 }, // Bestand: Bestellvorschlag – bestellen für so viele Tage, dazu Puffer in Tagen (js/bestand.js); Artikel dürfen mindestbestand (Gebinde) tragen
+    aktionen: [],               // Menütafel: vom Wirt übernommene Aktionen {id, art: abverkauf|kombi, gerichte:[id], preis (brutto), statt|null, von, bis (Geschäftstage), erfasst, entfernt?, entferntZeit?} (js/tafel.js)
+                                // Aktion planen: dazu ende "datum"|"ware" (bis Ware weg: bis = längstens, darf leer sein), ware? (Abverkaufs-Ware), plan? (Vorschlag mit
                                 // Begründung, wie bestätigt), geaendertZeit? (Zeitraum vom Wirt geändert), bilanz? (nach dem Ende, js/aktion_plan.js)
-    tafel: { sekunden: 12, gruppen: ["speisen", "beilagen", "getraenke"], aktionen: true, sprache: "de" }, // Menütafel (18.10.2026): Einstellungen der Tafel-Datei
-    lieferanten: [],            // Lieferanten (18.10.2026): Stammdaten {id, name, namen[], art, modus, tage[], schluss, lieferzeit, mindestwert, weg, kontakt, kundennummer, notiz, erfasst, geaendert, entfernt} (js/lieferant.js);
+    tafel: { sekunden: 12, gruppen: ["speisen", "beilagen", "getraenke"], aktionen: true, sprache: "de" }, // Menütafel: Einstellungen der Tafel-Datei
+    lieferanten: [],            // Lieferanten: Stammdaten {id, name, namen[], art, modus, tage[], schluss, lieferzeit, mindestwert, weg, kontakt, kundennummer, notiz, erfasst, geaendert, entfernt} (js/lieferant.js);
                                 // kontakt/kundennummer/notiz bleiben nur auf dem Gerät (und in der eigenen Sicherung), nie in Exporten. Artikel dürfen lieferantId/lieferant2Id tragen.
     inventuren: [],             // Punkt 3: {id, datum, begonnen, abgeschlossen|null, posten:{name: menge|null}, ausgeblendet:[name], preise?, wert?} – offene änderbar, abgeschlossene nur anhängen (js/inventur.js)
   };
@@ -146,7 +146,7 @@ export async function laden() {
     return leereWurzel();
   }
 }
-// Stand aus der offenen Datenbank lesen (Paket 2, 16.10.2026: aus laden() herausgelöst, damit ein fremder Stand ohne neues Öffnen nachgeladen wird)
+// Stand aus der offenen Datenbank lesen (Paket 2,: aus laden() herausgelöst, damit ein fremder Stand ohne neues Öffnen nachgeladen wird)
 async function standLesen() {
   {
     ladeBericht = { gesperrt: false, grund: null, fehlt: [] }; bereichH = new Map(); rohGefunden = [];
@@ -274,17 +274,17 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
                    periode: k.periode === "jahr" ? "jahr" : "monat",
                    // Schema ≤ 3 kannte keine Basis: eingetragene Zahlen bleiben, wie sie sind (netto = so verrechnen, wie eingetragen)
                    basis: k.basis === "brutto" || k.basis === "netto" ? k.basis : (alt ? "netto" : basisStandard(k.posten)),
-                   // Paket 3 (16.10.2026), M1: Vorsteuersatz je Posten; alte Daten ohne Feld bekommen den Standard (19, Wasser 7)
+                   // Paket 3, M1: Vorsteuersatz je Posten; alte Daten ohne Feld bekommen den Standard (19, Wasser 7)
                    satz: [mwstProzent("voll"), mwstProzent("ermaessigt"), 0].includes(Number(k.satz)) ? Number(k.satz) : satzStandard(k.posten) })); // Prozent wie gespeichert: 19, 7, 0 – aus dem Regelwerk
   // Lauf 6, E5-Draht (2): Betrags-Verlauf eines Postens ([{ ab: "JJJJ-MM" (oder "" = von Anfang an), wert }]) bleibt, nur gültige Einträge; ohne gültigen Eintrag fällt das Feld weg.
   for (const k of s.kosten) if (k.verlauf !== undefined) { const v = Array.isArray(k.verlauf) ? k.verlauf.filter((e) => istObjekt(e) && typeof e.ab === "string" && /^(\d{4}-\d{2})?$/.test(e.ab) && typeof e.wert === "number" && betragOk(e.wert)) : []; if (v.length) k.verlauf = v; else delete k.verlauf; }
   if (typeof s.betrieb.steuerSatz !== "number" || !(s.betrieb.steuerSatz >= 0 && s.betrieb.steuerSatz < 1)) s.betrieb.steuerSatz = null;
   s.betrieb.kleinunternehmer = s.betrieb.kleinunternehmer === true; // Paket 3, M1
-  // Gremium 2 (24.10.2026): Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
+  // Gremium 2: Hinweis-Status und Rechtsform aus fremden Dateien prüfen (Vertrag docs/vertraege.md Abschnitt 2, js/rechtsform.js)
   s.betrieb.hinweise = hinweiseSauber(s.betrieb.hinweise);
   if (s.betrieb.hmAngaben !== undefined) s.betrieb.hmAngaben = hmAngabenSauber(s.betrieb.hmAngaben); // Lauf 3, Hinweis-Motor (js/hm_angaben.js)
   if (s.betrieb.rechtsform !== undefined && !["einzel", "gbr", "gmbh", "ug", "kg_ohg", "unbekannt"].includes(s.betrieb.rechtsform)) delete s.betrieb.rechtsform;
-  if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage (18.10.2026): Bundesland des Ladens (optional)
+  if (!LAND_CODES.includes(s.betrieb.bundesland)) delete s.betrieb.bundesland; // Feiertage: Bundesland des Ladens (optional)
   if (s.betrieb.ruhezeiten !== undefined && !(Array.isArray(s.betrieb.ruhezeiten) && s.betrieb.ruhezeiten.every((x) => Array.isArray(x) && x.length === 2 && x.every((y) => typeof y === "number" && y >= 0 && y < 24)))) delete s.betrieb.ruhezeiten; // K4
   if (s.betrieb.feiertagOffen !== false) delete s.betrieb.feiertagOffen;      // Standard: an Feiertagen offen wie an einem normalen Wochentag
   if (!["geschaetzt", "eigen", "offen"].includes(s.team.eigenerLohnStatus)) s.team.eigenerLohnStatus = typeof s.team.eigenerLohn === "number" ? "eigen" : "geschaetzt";
@@ -296,29 +296,29 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   if (!FORMATE.some((f) => f.id === s.betrieb.format)) s.betrieb.format = null; // unbekannte Kennungen aus fremden Dateien
   s.betrieb.tageProWoche = Math.min(7, Math.max(1, Number(s.betrieb.tageProWoche) || 6));
   s.betrieb.monate = Math.min(12, Math.max(1, Number(s.betrieb.monate) || 12));
-  s.gerichte = mitId(s.gerichte).map((g) => getraenkGerichtMigrieren(gerichtKasse({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }))); // Getränke (18.10.2026): Feld getraenk, Größe aus dem Namen
+  s.gerichte = mitId(s.gerichte).map((g) => getraenkGerichtMigrieren(gerichtKasse({ ...g, zutaten: Array.isArray(g.zutaten) ? g.zutaten.filter(istObjekt) : [] }))); // Getränke: Feld getraenk, Größe aus dem Namen
   s.artikel = s.artikel.filter(zaehlt((a) => istObjekt(a) && typeof a.name === "string")).map((a) => ({ ...a,
     gebinde: istObjekt(a.gebinde) && GEBINDE_ARTEN.includes(a.gebinde.art) ? { art: a.gebinde.art, zwischen: istObjekt(a.gebinde.zwischen) && Number(a.gebinde.zwischen.anzahl) > 0 ? { art: String(a.gebinde.zwischen.art || "beutel"), anzahl: Number(a.gebinde.zwischen.anzahl) } : null } : { art: "packung", zwischen: null },
     preisBasis: a.preisBasis === "brutto" ? "brutto" : "netto",
     preisHistorie: (Array.isArray(a.preisHistorie) ? a.preisHistorie : []).filter((h) => istObjekt(h) && typeof h.datum === "string" && typeof h.preis === "number").slice(-24) }));
-  for (const a of s.artikel) getraenkArtikelMigrieren(a); // Getränke (18.10.2026)
-  for (const a of s.artikel) artikelLieferantSauber(a); // Lieferanten (18.10.2026): Haupt-/Zweitlieferant nur als Kennung
-  for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand (17.10.2026)
-  { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand (17.10.2026): Tage 1–60, Puffer 0–30
+  for (const a of s.artikel) getraenkArtikelMigrieren(a); // Getränke
+  for (const a of s.artikel) artikelLieferantSauber(a); // Lieferanten: Haupt-/Zweitlieferant nur als Kennung
+  for (const a of s.artikel) { if (typeof a.mindestbestand === "number" && Number.isFinite(a.mindestbestand) && a.mindestbestand > 0 && a.mindestbestand <= 9999) a.mindestbestand = Math.round(a.mindestbestand * 4) / 4; else delete a.mindestbestand; } // Bestand
+  { const zahl = (v, min, max, std) => { const n = Math.round(Number(v)); return typeof v === "number" && Number.isFinite(n) && n >= min && n <= max ? n : std; }; // Bestand: Tage 1–60, Puffer 0–30
     s.lager = mitRest(s.lager, { tage: zahl(s.lager.tage, 1, 60, 7), puffer: zahl(s.lager.puffer, 0, 30, 2) }, []); }
   s.lieferungen = mitId(s.lieferungen).filter(zaehlt((l) => gueltigerTag(l.datum))).map((l) => ({ ...l, zeilen: Array.isArray(l.zeilen) ? l.zeilen.filter(istObjekt).map(haltbarZeile) : [], storniert: !!l.storniert }));
-  preisQuelleNachtragen(s); // Lauf 2, A5 (31.10.2026): Bestandsläden ohne preisQuelle (Durchsicht-Fund 6)
-  for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1 (17.10.2026): nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
-  { const roh = new Map((Array.isArray(s.lieferanten) ? s.lieferanten : []).filter((x) => istObjekt(x) && typeof x.id === "string").map((x) => [x.id.trim().slice(0, 60), x])); s.lieferanten = lieferantenSauber(s.lieferanten).map((x) => mitRest(roh.get(x.id), x, LIEFERANT_FELDER)); } lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten (18.10.2026): vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium 18.10.2026 (N3): gleiche Namen zusammenlegen
+  preisQuelleNachtragen(s); // Lauf 2, A5: Bestandsläden ohne preisQuelle (Durchsicht-Fund 6)
+  for (const a of s.artikel) if (!HALTBAR_ARTEN.includes(a.haltbarArt)) delete a.haltbarArt; // Stufe 1: nur „mhd“ | „verbrauch“, sonst gilt der Vorschlag (js/haltbar.js)
+  { const roh = new Map((Array.isArray(s.lieferanten) ? s.lieferanten : []).filter((x) => istObjekt(x) && typeof x.id === "string").map((x) => [x.id.trim().slice(0, 60), x])); s.lieferanten = lieferantenSauber(s.lieferanten).map((x) => mitRest(roh.get(x.id), x, LIEFERANT_FELDER)); } lieferantenAusBelegen(s); lieferantenEntdoppeln(s); // Lieferanten: vorhandene Beleg-Namen werden Lieferanten (Kennung aus dem Namen, auf jedem Handy gleich); Prüfgremium (N3): gleiche Namen zusammenlegen
   s.abschluesse = mitId(s.abschluesse).filter(zaehlt((a) => gueltigerTag(a.datum)));
   s.uploads = mitId(s.uploads).filter((u) => istObjekt(u.datei) && typeof u.datei.id === "string");
   s.kostenbelege = mitId(s.kostenbelege).filter(zaehlt((k) => typeof k.stelle === "string" && betragOk(k.betrag) && typeof k.ab === "string")).map((k) => ({ ...k, storniert: !!k.storniert }));
   // Läden, die schon vor Etappe 6a mitten in der Einrichtung waren, bleiben auf dem genauen Weg
   if (!["schnell", "genau"].includes(s.weg)) s.weg = alt || s.schritt > 0 || s.phase === "app" ? "genau" : "schnell";
   s.schwund = mitId(s.schwund).filter(zaehlt((e) => gueltigerTag(e.datum)));
-  s.verkaeufe = verkaeufeEntdoppeln(verkaeufeSauber(s.verkaeufe), { nur: "zbon" }); // E7 (17.10.2026): alte Läden ohne Verkäufe bekommen eine leere Liste; Prüfgremium 18.10.2026 (H2): Z-Bon-Doppel aus älteren Ständen bereinigen
-  s.kassenKombis = kombisSauber(s.kassenKombis, s.gerichte); // Schwadron 18.10.2026, M1
-  s.aktionen = aktionenEntdoppeln(aktionenSauber(s.aktionen)); s.tafel = tafelSauber(s.tafel); // Menütafel (18.10.2026); Prüfgremium 18.10.2026 (M1): Doppel aus älteren Ständen
+  s.verkaeufe = verkaeufeEntdoppeln(verkaeufeSauber(s.verkaeufe), { nur: "zbon" }); // E7: alte Läden ohne Verkäufe bekommen eine leere Liste; Prüfgremium (H2): Z-Bon-Doppel aus älteren Ständen bereinigen
+  s.kassenKombis = kombisSauber(s.kassenKombis, s.gerichte); // Schwadron, M1
+  s.aktionen = aktionenEntdoppeln(aktionenSauber(s.aktionen)); s.tafel = tafelSauber(s.tafel); // Menütafel; Prüfgremium (M1): Doppel aus älteren Ständen
   // Tagesnotizen Schema ≤ 2: ein Wert je Datum ohne id → Journal-Einträge
   s.tagesnotizen = s.tagesnotizen.filter(zaehlt((n) => istObjekt(n) && gueltigerTag(n.datum) && betragOk(n.umsatz)))
     .map((n) => mitRest(n, { id: typeof n.id === "string" ? n.id : "alt-" + kurzHash(n.datum + "|" + n.umsatz + "|" + (n.geaendert || "")), datum: n.datum, umsatz: n.umsatz,
@@ -326,18 +326,18 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
       // W2-T: Spur der Korrekturen bleibt beim Laden erhalten (Gerät, Rücknahmezeit, Nachfolger); ein Entwurf ist nach dem Neustart fest
       ...(typeof n.geraet === "string" ? { geraet: n.geraet } : {}), ...(typeof n.storniertZeit === "string" ? { storniertZeit: n.storniertZeit } : {}),
       ...(typeof n.ersetzt === "string" || n.ersetzt === true ? { ersetzt: n.ersetzt } : {}) }, NOTIZ_FELDER));
-  s.personen = mitId(s.personen).map((p) => mitRest(p, { id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt, ...(typeof p.ausgeschieden === "string" ? { ausgeschieden: p.ausgeschieden } : {}), ...(typeof p.stundenlohn === "number" && p.stundenlohn > 0 ? { stundenlohn: p.stundenlohn } : {}), ...(p.lohnArt === "minijob" || p.lohnArt === "angestellt" ? { lohnArt: p.lohnArt } : {}), ...(p.lohnModell === "monat" || p.lohnModell === "stunde" ? { lohnModell: p.lohnModell } : {}), ...(typeof p.monatsBrutto === "number" && p.monatsBrutto > 0 ? { monatsBrutto: p.monatsBrutto } : {}) }, PERSON_FELDER)); // 27.10.2026: Stundenlohn für „Mitarbeiter heute“ // W2-H: Datum „ausgeschieden“ bleibt
+  s.personen = mitId(s.personen).map((p) => mitRest(p, { id: p.id, kuerzel: String(p.kuerzel || "").slice(0, 12), aktiv: p.aktiv !== false, entfernt: !!p.entfernt, ...(typeof p.ausgeschieden === "string" ? { ausgeschieden: p.ausgeschieden } : {}), ...(typeof p.stundenlohn === "number" && p.stundenlohn > 0 ? { stundenlohn: p.stundenlohn } : {}), ...(p.lohnArt === "minijob" || p.lohnArt === "angestellt" ? { lohnArt: p.lohnArt } : {}), ...(p.lohnModell === "monat" || p.lohnModell === "stunde" ? { lohnModell: p.lohnModell } : {}), ...(typeof p.monatsBrutto === "number" && p.monatsBrutto > 0 ? { monatsBrutto: p.monatsBrutto } : {}) }, PERSON_FELDER)); // Stundenlohn für „Mitarbeiter heute“ // W2-H: Datum „ausgeschieden“ bleibt
   s.kuehl.takt = s.kuehl.takt === 2 ? 2 : 1; if (typeof s.kuehl.seit !== "string") s.kuehl.seit = null; s.kuehl.ruhetage = (Array.isArray(s.kuehl.ruhetage) ? s.kuehl.ruhetage : []).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
   s.kuehlstellen = mitId(s.kuehlstellen).map((k, i) => mitRest(k, { id: k.id, name: String(k.name || "").slice(0, 40), art: ["kuehl", "tk", "warm", "eis"].includes(k.art) ? k.art : "kuehl",
     min: typeof k.min === "number" ? k.min : null, max: typeof k.max === "number" ? k.max : null, reihe: Number.isFinite(k.reihe) ? k.reihe : i, archiviert: !!k.archiviert, ...(typeof k.ware === "string" ? { ware: k.ware } : {}),
-    ...(["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"].includes(k.typ) ? { typ: k.typ } : {}) }, KUEHLSTELLE_FELDER)); // Paket 6 (17.10.2026): Typ-Schlüssel bleibt erhalten (Anzeige-Name folgt der Sprache) // W2-H: Datenstelle Grenze je Ware
+    ...(["kuehlschrank", "saladette", "tiefkuehler", "warmhalter"].includes(k.typ) ? { typ: k.typ } : {}) }, KUEHLSTELLE_FELDER)); // Paket 6: Typ-Schlüssel bleibt erhalten (Anzeige-Name folgt der Sprache) // W2-H: Datenstelle Grenze je Ware
   s.rundgaenge = mitId(s.rundgaenge).filter(zaehlt((r) => gueltigerTag(r.datum))).map((r) => ({ ...r, messungen: Array.isArray(r.messungen) ? r.messungen.filter(istObjekt) : [] }));
   s.messungen = mitId(s.messungen).filter(zaehlt((m) => gueltigerTag(m.datum) && typeof m.stelle === "string")).map((m) => ({ ...m,
     wert: typeof m.wert === "number" ? m.wert : null, massnahmen: Array.isArray(m.massnahmen) ? m.massnahmen.filter((x) => typeof x === "string") : [],
     notiz: typeof m.notiz === "string" ? m.notiz.slice(0, 200) : "", nachkontrolle: istObjekt(m.nachkontrolle) ? m.nachkontrolle : null, abweichung: !!m.abweichung, zeit: typeof m.zeit === "string" ? m.zeit : m.nacherfasst ? null : m.datum + "T00:00:00.000Z" })); // W2-H: Nachtrag ohne Uhrzeit bleibt ohne
   // Stresstest 15.10.: abgeschlossene Rundgänge tragen keine doppelte Kopie ihrer Messungen mehr (stehen vollständig im Journal)
   s.rundgaenge = s.rundgaenge.map((r) => (rundeDoppelt(r, s) ? { ...r, messungen: [] } : r));
-  rundgangDoppelBereinigen(s); // Schwadron 18.10.2026, H3: falsche „Sicherungs-Kopien“ gleicher Rundgänge aus früherem Zusammenführen entfernen
+  rundgangDoppelBereinigen(s); // Schwadron, H3: falsche „Sicherungs-Kopien“ gleicher Rundgänge aus früherem Zusammenführen entfernen
   // Inventuren (Punkt 3): Posten nur Zahlen ≥ 0 oder null, höchstens eine offene (die jüngste bleibt offen)
   s.inventuren = mitId(s.inventuren).filter(zaehlt((i) => gueltigerTag(i.datum))).map((i) => ({ ...i, datum: inventurGeschaeftstag(i),
     begonnen: typeof i.begonnen === "string" ? i.begonnen : i.datum + "T00:00:00.000Z", abgeschlossen: typeof i.abgeschlossen === "string" ? i.abgeschlossen : null,
@@ -354,14 +354,14 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   for (const k of ["stammZeit", "abgleich"]) if (!istObjekt(s[k])) delete s[k];
   delete s.stammH; // Fingerabdrücke liegen im Kopf des Speichers, nicht im Laden
   if (!istObjekt(s.abgleichHinweis)) delete s.abgleichHinweis;
-  if (s.beispiel !== true) delete s.beispiel; // Beispiel-Laden (17.10.2026): Merkmal bleibt beim Einlesen erhalten, nur echtes true
+  if (s.beispiel !== true) delete s.beispiel; // Beispiel-Laden: Merkmal bleibt beim Einlesen erhalten, nur echtes true
   if (!["onboarding", "app"].includes(s.phase)) s.phase = "onboarding";
   s.schritt = Math.max(0, Number(s.schritt) || 0);
   delete s.schema; // gehört an die Wurzel
   return s;
 }
 
-// Stufe 1 (17.10.2026): Haltbarkeit einer Belegzeile – haltbar {art: "mhd"|"verbrauch", datum: JJJJ-MM-TT, erfasst?}; Ungültiges fällt weg
+// Stufe 1: Haltbarkeit einer Belegzeile – haltbar {art: "mhd"|"verbrauch", datum: JJJJ-MM-TT, erfasst?}; Ungültiges fällt weg
 const HALTBAR_ARTEN = ["mhd", "verbrauch"];
 function haltbarZeile(z) {
   if (z.haltbar === undefined) return z;
@@ -369,7 +369,7 @@ function haltbarZeile(z) {
   if (!istObjekt(h) || !HALTBAR_ARTEN.includes(h.art) || typeof h.datum !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(h.datum)) return rest;
   return { ...rest, haltbar: { art: h.art, datum: h.datum, ...(typeof h.erfasst === "string" ? { erfasst: h.erfasst } : {}) } };
 }
-// Stufe 1 (17.10.2026): Zusammenführen – derselbe Beleg auf zwei Handys, auf einem die Haltbarkeit nachgetragen: sie geht nicht verloren
+// Stufe 1: Zusammenführen – derselbe Beleg auf zwei Handys, auf einem die Haltbarkeit nachgetragen: sie geht nicht verloren
 // (der Beleg selbst bleibt, wie er war; je Zeile gewinnt die zuletzt eingetragene Haltbarkeit, eine fehlende wird ergänzt).
 function haltbarVereinigen(liste, lokal, fremd) {
   const a = new Map((lokal || []).filter((l) => l && typeof l.id === "string").map((l) => [l.id, l])), b = new Map((fremd || []).filter((l) => l && typeof l.id === "string").map((l) => [l.id, l]));
@@ -385,7 +385,7 @@ function haltbarVereinigen(liste, lokal, fremd) {
     return neu ? { ...l, zeilen: neu } : l;
   });
 }
-// Prüfgremium 17.10.2026 (2): Inventuren, die vor der Korrektur nach Mitternacht (0–4 Uhr) abgeschlossen wurden, trugen den Kalendertag.
+// Prüfgremium (2): Inventuren, die vor der Korrektur nach Mitternacht (0–4 Uhr) abgeschlossen wurden, trugen den Kalendertag.
 // Gezählt wurde nach Ladenschluss – der Tag der Zählung ist der Geschäftstag davor. Nur dieser eindeutige Fall wird umgestellt; es ist
 // idempotent (danach passt das Datum zum Geschäftstag) und auf jedem Handy gleich.
 function inventurGeschaeftstag(i) {
@@ -393,14 +393,14 @@ function inventurGeschaeftstag(i) {
   const d = new Date(i.abgeschlossen); if (!Number.isFinite(d.getTime()) || berlin(d).stunde >= GESCHAEFTSTAG_BIS_STUNDE) return i.datum;
   return heute(d) === i.datum ? heuteGeschaeft(d) : i.datum;
 }
-// E7 (17.10.2026): Kassen-Artikelnummer (plu) und gelernte Kassentexte (kassenNamen) je Gericht – nur Text, sonst weg
+// E7: Kassen-Artikelnummer (plu) und gelernte Kassentexte (kassenNamen) je Gericht – nur Text, sonst weg
 function gerichtKasse(g) {
   if (typeof g.plu === "string" && g.plu.trim()) g.plu = g.plu.trim().slice(0, 50); else delete g.plu;
   if (Array.isArray(g.kassenNamen)) { const n = [...new Set(g.kassenNamen.filter((x) => typeof x === "string").map((x) => x.trim().slice(0, 120)).filter(Boolean))].slice(0, 40); if (n.length) g.kassenNamen = n; else delete g.kassenNamen; }
   else delete g.kassenNamen;
   return g;
 }
-// Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – Kennung, Name, gelernte Kassentexte, Nummer, Teile (Gericht-Kennung × Menge > 0)
+// Schwadron, M1: Kombi-Menüs der Kasse – Kennung, Name, gelernte Kassentexte, Nummer, Teile (Gericht-Kennung × Menge > 0)
 function kombisSauber(liste, gerichte) {
   const ids = new Set((gerichte || []).map((g) => g.id));
   return mitId(Array.isArray(liste) ? liste : []).map((k) => mitRest(k, { id: k.id, name: String(k.name ?? "").slice(0, 120),
@@ -408,9 +408,9 @@ function kombisSauber(liste, gerichte) {
     plu: typeof k.plu === "string" && k.plu.trim() ? k.plu.trim().slice(0, 50) : null,
     teile: (Array.isArray(k.teile) ? k.teile : []).filter((x) => istObjekt(x) && ids.has(x.gericht) && Number(x.menge) > 0).map((x) => ({ gericht: x.gericht, menge: Number(x.menge) })) }, KOMBI_FELDER));
 }
-// Menütafel (18.10.2026): übernommene Aktionen – Kennung, Gerichte (Kennungen, 1–4), Preis > 0, von ≤ bis als JJJJ-MM-TT; Ungültiges fällt weg.
+// Menütafel: übernommene Aktionen – Kennung, Gerichte (Kennungen, 1–4), Preis > 0, von ≤ bis als JJJJ-MM-TT; Ungültiges fällt weg.
 // Gerichte, die es nicht mehr gibt, bleiben in der Liste (die Tafel lässt die Aktion dann weg und sagt es im Büro) – so geht beim Zusammenführen nichts verloren.
-// Aktion planen (18.10.2026): frei wählbarer Zeitraum – ende "datum" (bis = letzter Tag) oder "ware" (bis Ware weg; bis = längstens, darf fehlen).
+// Aktion planen: frei wählbarer Zeitraum – ende "datum" (bis = letzter Tag) oder "ware" (bis Ware weg; bis = längstens, darf fehlen).
 // Alte Aktionen (feste Laufzeit) behalten von/bis und bekommen ende "datum". plan und bilanz werden geprüft, nicht neu gerechnet.
 const TAG_RE = /^\d{4}-\d{2}-\d{2}$/;
 const tagOder = (x) => (typeof x === "string" && TAG_RE.test(x) ? x : null);
@@ -427,7 +427,7 @@ function bilanzSauber(b) {
   return { von: tagOder(b.von), bis: tagOder(b.bis), tage, vergleichbar: zahlOder(b.vergleichbar, 0, 10000) ?? 0, verkauft: zahlOder(b.verkauft, 0), vorher: zahlOder(b.vorher, 0), mehrAnteil: zahlOder(b.mehrAnteil, -1, 1000),
     rohertrag: zahlOder(b.rohertrag), rohertragVorher: zahlOder(b.rohertragVorher), geschaetzt: b.geschaetzt === true, erstellt: typeof b.erstellt === "string" ? b.erstellt : null };
 }
-// Hinweis-Status: nur gültige Einträge, ein Eintrag je Karte (jüngste Zeit gewinnt) – Gremium 2 (24.10.2026)
+// Hinweis-Status: nur gültige Einträge, ein Eintrag je Karte (jüngste Zeit gewinnt) – Gremium 2
 function hinweiseSauber(liste) {
   const m = new Map();
   for (const e of Array.isArray(liste) ? liste : []) {
@@ -452,7 +452,7 @@ function aktionenSauber(liste) {
       ...(typeof a.doppelt === "string" && a.doppelt ? { doppelt: a.doppelt.slice(0, 60) } : {}) }, AKTION_FELDER);
   }).filter((a) => a.gerichte.length && a.preis !== null && a.von && (a.bis ? a.von <= a.bis : a.ende === "ware"));
 }
-// Prüfgremium 18.10.2026 (M1): Dieselbe Aktion auf zwei Handys angelegt (gleiche Art, gleiche Gerichte, gleicher Preis, beide laufend) ist EINE Aktion.
+// Prüfgremium (M1): Dieselbe Aktion auf zwei Handys angelegt (gleiche Art, gleiche Gerichte, gleicher Preis, beide laufend) ist EINE Aktion.
 // Die zuerst angelegte bleibt (bei gleicher Zeit die kleinere Kennung); die anderen gelten als beendet (entfernt, doppelt = Kennung der bleibenden,
 // keine eigene Bilanz). Ein später geänderter Zeitraum einer Kopie geht auf die bleibende über. Rein aus der Liste – beide Handys rechnen gleich.
 function aktionenEntdoppeln(liste) {
@@ -471,7 +471,7 @@ function aktionenEntdoppeln(liste) {
   }
   return neu.size ? l.map((a) => { const n = neu.get(a); if (!n) return a; if (n.entferntZeit === null) delete n.entferntZeit; return n; }) : l;
 }
-// Menütafel (18.10.2026): Einstellungen – Seitenwechsel 5–120 s, Gruppen aus der festen Liste (mindestens eine), Aktionen ja/nein, Sprache der Tafel
+// Menütafel: Einstellungen – Seitenwechsel 5–120 s, Gruppen aus der festen Liste (mindestens eine), Aktionen ja/nein, Sprache der Tafel
 const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 function tafelSauber(x) {
   const t = istObjekt(x) ? x : {}; const sek = Math.round(Number(t.sekunden));
@@ -479,7 +479,7 @@ function tafelSauber(x) {
   return mitRest(t, { sekunden: typeof t.sekunden === "number" && sek >= 5 && sek <= 120 ? sek : 12, gruppen: Array.isArray(t.gruppen) && gruppen.length ? gruppen : [...TAFEL_GRUPPEN],
     aktionen: t.aktionen !== false, sprache: SPRACH_CODES.includes(t.sprache) ? t.sprache : "de" }, TAFEL_FELDER);
 }
-// Menütafel (18.10.2026): Zusammenführen – Aktionen beider Handys bleiben (Vereinigung nach Kennung); „beendet“ gewinnt immer.
+// Menütafel: Zusammenführen – Aktionen beider Handys bleiben (Vereinigung nach Kennung); „beendet“ gewinnt immer.
 // Vereinigung zweier Listen mit Kennung: Sieger-Fassung gewinnt je id, Rest des Verlierers kommt dazu, Reihenfolge nach datum/erfasst, dann id.
 function listeNachId(sieger, verlierer) {
   const m = new Map(); for (const x of Array.isArray(sieger) ? sieger : []) if (istObjekt(x) && typeof x.id === "string") m.set(x.id, structuredClone(x));
@@ -493,13 +493,13 @@ function aktionenVereinigen(sieger, verlierer) {
     if (!istObjekt(a) || typeof a.id !== "string") continue; const s = m.get(a.id);
     if (!s) { m.set(a.id, { ...a }); continue; }
     if (a.entfernt && !s.entfernt) { s.entfernt = true; if (a.entferntZeit) s.entferntZeit = a.entferntZeit; }
-    // Aktion planen (18.10.2026): Zeitraum – die zuletzt vom Wirt geänderte Fassung gilt; eine Bilanz geht nie verloren
+    // Aktion planen: Zeitraum – die zuletzt vom Wirt geänderte Fassung gilt; eine Bilanz geht nie verloren
     if (String(a.geaendertZeit || "") > String(s.geaendertZeit || "")) { s.von = a.von; s.bis = a.bis; s.ende = a.ende; s.geaendertZeit = a.geaendertZeit; }
     if (a.bilanz && (!s.bilanz || String(a.bilanz.erstellt || "") > String(s.bilanz.erstellt || ""))) s.bilanz = a.bilanz;
   }
-  return aktionenEntdoppeln([...m.values()].sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || x.id.localeCompare(y.id))); // Prüfgremium 18.10.2026 (M1)
+  return aktionenEntdoppeln([...m.values()].sort((x, y) => String(x.erfasst || "").localeCompare(String(y.erfasst || "")) || x.id.localeCompare(y.id))); // Prüfgremium (M1)
 }
-// E7 (17.10.2026): Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
+// E7: Verkäufe je Gericht – Datum JJJJ-MM-TT und eine Zahl als Menge sind Pflicht, der Rest wird geprüft
 const VERKAUF_HERKUNFT = ["hand", "zbon", "dsfinvk", "kasse"];
 function verkaeufeSauber(liste) {
   return mitId(Array.isArray(liste) ? liste : []).map(({ kombi, ...v }) => (typeof kombi === "string" && kombi ? { ...v, kombi } : v)).filter(zaehlt((v) => gueltigerTag(v.datum) && Number.isFinite(Number(v.menge)) && Math.abs(Number(v.menge)) <= MAX_ZAHL && v.menge !== null && v.menge !== "" && (typeof v.umsatzBrutto !== "number" || !Number.isFinite(v.umsatzBrutto) || Math.abs(v.umsatzBrutto) <= MAX_ZAHL)))
@@ -507,18 +507,18 @@ function verkaeufeSauber(liste) {
       umsatzBrutto: typeof v.umsatzBrutto === "number" && Number.isFinite(v.umsatzBrutto) ? v.umsatzBrutto : null, herkunft: VERKAUF_HERKUNFT.includes(v.herkunft) ? v.herkunft : "hand",
       importId: typeof v.importId === "string" && v.importId ? v.importId : null, erfasst: typeof v.erfasst === "string" ? v.erfasst : v.datum + "T00:00:00.000Z", storniert: !!v.storniert,
       ...(typeof v.plu === "string" && v.plu ? { plu: v.plu.slice(0, 50) } : { plu: null }), ...(typeof v.text === "string" ? { text: v.text.slice(0, 120) } : {}),
-      ...(typeof v.kombi === "string" && v.kombi ? { kombi: v.kombi.slice(0, 60) } : {}), // Schwadron 18.10.2026, M1
-      ...("kasse" in v ? { kasse: typeof v.kasse === "string" && v.kasse ? v.kasse.slice(0, 50) : null } : {}) })); // Prüfgremium 17.10.2026 (5): Kassen-ID
+      ...(typeof v.kombi === "string" && v.kombi ? { kombi: v.kombi.slice(0, 60) } : {}), // Schwadron, M1
+      ...("kasse" in v ? { kasse: typeof v.kasse === "string" && v.kasse ? v.kasse.slice(0, 50) : null } : {}) })); // Prüfgremium (5): Kassen-ID
 }
 
-// Prüfgremium 17.10.2026 (1): Nach dem Vereinigen zweier Handys dürfen logisch gleiche Verkäufe nicht doppelt zählen. Die Kennungen sind
+// Prüfgremium (1): Nach dem Vereinigen zweier Handys dürfen logisch gleiche Verkäufe nicht doppelt zählen. Die Kennungen sind
 // je Handy verschieden (Zeitpunkt, Zufall) – deshalb entscheidet hier der Inhalt, auch für schon gespeicherte Altdaten:
 //   Kasse/Z-Bon: je (Tag, Herkunft, Kasse) zählt nur EIN Import (der jüngste nach „erfasst“), die anderen gelten als ersetzt.
 //   Hand: je (Tag, Gericht) zählt nur EIN Eintrag (der jüngste).
 // Stornos: Hat ein Handy einen Stand zurückgenommen (storniert ohne „ersetzt“) und ist das jünger als der jüngste aktive Stand der
 // Gruppe, gilt die Rücknahme für die ganze Gruppe. Ergebnis hängt nur von der vereinigten Liste ab – beide Handys rechnen gleich.
 // Geänderte Einträge sind neue Objekte (Journal-Regel); Zeiten sind die aus den Daten, nicht „jetzt“.
-// Prüfgremium 18.10.2026 (H2): Z-Bon ohne lesbare Nummer (kasse null oder eigene Kasse ohne Nummer) und ein Z-Bon MIT Nummer am selben Tag sind
+// Prüfgremium (H2): Z-Bon ohne lesbare Nummer (kasse null oder eigene Kasse ohne Nummer) und ein Z-Bon MIT Nummer am selben Tag sind
 // derselbe Abschluss, wenn sie gleich sind: gleiches Foto (upload), gleiche Summe der Positionen oder gleiche Positionen. Dann zählt er zur Gruppe
 // der Nummer (der jüngste Stand gilt). Passt er zu keiner oder zu mehreren Nummern, bleibt er für sich (zweite Kasse bleibt möglich).
 // nur: "zbon" – nur Z-Bons entdoppeln (beim Laden, idempotent: bereinigt Doppel aus älteren Ständen).
@@ -587,10 +587,10 @@ export function migrierenWurzel(w) {
     if (w.persistGefragt === true) out.persistGefragt = true;
     if (typeof w.letzteSicherungGroesse === "number") out.letzteSicherungGroesse = w.letzteSicherungGroesse;
     if (["laden", "personal", "buero"].includes(w.modus)) out.modus = w.modus; // Drei Ebenen: Modus je Handy
-    if (/^\d{4}-\d{2}-\d{2}$/.test(w.homeHinweisGesehen || "")) out.homeHinweisGesehen = w.homeHinweisGesehen; // Bildpaket D (1), K3 Runde 2 (01.11.2026): „OK“ am Home-Hinweis übersteht den Neustart
+    if (/^\d{4}-\d{2}-\d{2}$/.test(w.homeHinweisGesehen || "")) out.homeHinweisGesehen = w.homeHinweisGesehen; // Bildpaket D (1), K3 Runde 2: „OK“ am Home-Hinweis übersteht den Neustart
     if (pinWertGueltig(w.bueroPin)) out.bueroPin = w.bueroPin; else if (w.bueroPin === null) out.bueroPin = null; // nur der Prüfwert, nie die Ziffern (W2-S: auch PBKDF2 mit Salz)
     { const sp = sperreSauber(w.pinSperre); if (sp) out.pinSperre = sp; } // W2-S: Fehlversuche übersteht den Neustart
-    if (pinWertGueltig(w.rettungPin) && w.rettungPin.includes("$")) out.rettungPin = w.rettungPin; // Rettung (17.10.2026): nur der Prüfwert des Rettungscodes
+    if (pinWertGueltig(w.rettungPin) && w.rettungPin.includes("$")) out.rettungPin = w.rettungPin; // Rettung: nur der Prüfwert des Rettungscodes
     // Lauf 6, E5 (B7/C3): testphase.ohneCode (Wahrheitswert) und bio.id (Text) gingen beim Neustart verloren – hier durchreichen, nur gültige Werte
     if (istObjekt(w.testphase) && typeof w.testphase.ohneCode === "boolean") out.testphase = { ...w.testphase };
     if (istObjekt(w.bio) && typeof w.bio.id === "string" && w.bio.id) out.bio = { ...w.bio };
@@ -622,12 +622,12 @@ function stempeln(wurzel) {
 // Wie Änderungen erkannt werden, ohne alles zu lesen (keine andere Datei muss etwas melden):
 //  1. je Journal und Stelle: ist es noch dasselbe Objekt? Neu, entfernt, umsortiert → betroffene Monate neu schreiben.
 //  2. alte Einträge: die Felder storniert, erfasst, wertGesetzt und ersetzt (Storno setzt storniert, Neu-Erfassen setzt erfasst,
-//     Wert nachtragen setzt wertGesetzt, Festschreiben einer Tagesnotiz setzt ersetzt am Vorgänger – Paket 2, 16.10.2026).
+//     Wert nachtragen setzt wertGesetzt, Festschreiben einer Tagesnotiz setzt ersetzt am Vorgänger – Paket 2,).
 //  3. in dieser Sitzung angelegte Einträge (die man noch bearbeiten darf) und offene Rundgänge/Inventuren: ganz verglichen.
 //  4. im Leerlauf und beim Verlassen der App wird jedes Teil ganz verglichen – das fängt auch tiefe Änderungen an alten Einträgen.
 // Für alle, die Journale anfassen: Einträge nur anhängen; ein gespeicherter Eintrag wird nur über die Felder aus 2. geändert
 // (oder durch ein neues Objekt ersetzt) – dann ist die Änderung sofort gespeichert, sonst erst bei 4.
-// Lauf 2, A5 (31.10.2026) – Durchsicht Pilotfest, Fund 6: Seit W2-K2 (28.10.2026) trägt jeder Artikelpreis seine Herkunft (preisQuelle
+// Lauf 2, A5 – Durchsicht Pilotfest, Fund 6: Seit W2-K2 trägt jeder Artikelpreis seine Herkunft (preisQuelle
 // "beleg" | "hand" | "errechnet"); Preisänderungen (lieferung.preisAenderungen) und Preisdrift (preisdrift.js) zählen nur Preise vom Beleg.
 // Läden von vor dem 28.10. haben Preise ohne Herkunft – für sie blieben beide Karten still. Nachtragen, einmal beim Laden, ohne Datenverlust:
 // Richtpreis bleibt Richtpreis (eigene Markierung); steht der Artikel mit Preis auf einer nicht zurückgenommenen Lieferung bis zum Preisdatum
@@ -645,7 +645,7 @@ export function preisQuelleNachtragen(s) {
   }
   return n;
 }
-export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads", "verkaeufe"]; // W2-D: belehrungen als Journal (Schema 6); E7 (17.10.2026): verkaeufe
+export const JOURNALE = ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "kostenbelege", "putzlog", "belehrungen", "rundgaenge", "inventuren", "uploads", "verkaeufe"]; // W2-D: belehrungen als Journal (Schema 6); E7: verkaeufe
 const JOURNAL_SET = new Set(JOURNALE);
 // Stammdaten, die groß werden (Waren mit Preisverlauf, Gerichte mit Zutaten): je Laden ein eigenes Teil "ladenId|artikel|alle",
 // bei jedem Speichern ganz verglichen (Text gegen Text) und nur geschrieben, wenn anders. So bleibt der Kopf klein.
@@ -655,7 +655,7 @@ const FORMAT_GETEILT = 2;
 const PLATZHALTER = 0;          // hält im Kopf die Stelle des Felds frei, damit die Reihenfolge der Felder gleich bleibt
 const NF = 5;                   // beobachtete Felder je alten Eintrag: storniert, erfasst, wertGesetzt, ersetzt, entwurf – alle späteren Änderungen an
                                 // gespeicherten Einträgen setzen eines davon (Storno, neu erfasst, Wert nachgetragen, Tagesnotiz festgeschrieben).
-                                // Feste Namen sind auf dem Handy am schnellsten. Paket 2 (16.10.2026): vorher nur storniert/erfasst – ein nachgetragener
+                                // Feste Namen sind auf dem Handy am schnellsten. Paket 2: vorher nur storniert/erfasst – ein nachgetragener
                                 // Schwund-Wert (schwundWertSetzen) und das Festschreiben einer Tagesnotiz wurden erst im Leerlauf gefunden; Safari ohne
                                 // requestIdleCallback nie, und bei App-Abbruch war der Wert weg.
 const FRISCH_MAX = 600;         // so viele frische/offene Einträge werden ganz verglichen
@@ -673,7 +673,7 @@ let bekanntGueltig = false;     // false → nächstes Speichern schreibt alles 
 let kopfAlt = null, ordnungAlt = null, stempelAlt = null;
 let altModus = false;           // Rückfall, wenn der Umzug nicht bestätigt wurde: ein Gesamt-Datensatz wie bis 15.10.
 let letzteWurzel = null, leerlaufZuletzt = 0, leerlaufGeplant = false, tiefZuletzt = 0;
-// Paket 2 (16.10.2026): Generationszähler gegen zwei Fenster derselben Fassung. Der Kopf trägt `gen`; jedes Schreiben zählt hoch
+// Paket 2: Generationszähler gegen zwei Fenster derselben Fassung. Der Kopf trägt `gen`; jedes Schreiben zählt hoch
 // und prüft in derselben Transaktion, ob die Datenbank noch die zuletzt gelesene Generation hat. Wenn nicht, hat ein anderes
 // Fenster geschrieben: nichts überschreiben, Stand neu laden und der App „gc-fremder-stand“ melden. Alte Köpfe ohne gen zählen als 0.
 let genGelesen = 0;
@@ -723,7 +723,7 @@ export function rundeDoppelt(r, b) {
   return r.messungen.every((m) => { const j = m && ix.mess.get(m.id);
     return !!j && j.rundgang === r.id && j.stelle === m.stelle && j.wert === (typeof m.wert === "number" ? m.wert : null) && (!(Array.isArray(m.weg) && m.weg.length) || ix.weg.has(m.id)); });
 }
-// Schwadron 18.10.2026, H3: Beim Zusammenführen galt jeder Rundgang dieser Sitzung (volle Messungs-Kopie) als Konflikt zur selben Kennung
+// Schwadron, H3: Beim Zusammenführen galt jeder Rundgang dieser Sitzung (volle Messungs-Kopie) als Konflikt zur selben Kennung
 // aus einer Sicherung (Kopie beim Laden geleert, Zeile oben) und stand danach doppelt (quelle "sicherung", konfliktMit). Beide Seiten werden
 // jetzt vor dem Vergleich gleich geleert (rundgangKern). Vorhandene Doppel räumt diese Funktion beim Laden weg – idempotent: eine Kopie
 // verschwindet nur, wenn sie bis auf Messungs-Kopie und Sicherungs-Kennzeichen genau dem Rundgang mit der Kennung konfliktMit gleicht.
@@ -801,19 +801,19 @@ function journalPruefen(b, sid, j, arr, tief, out) {
 // Kein Bildschirm muss etwas melden. Ein Müll- oder Umsatz-Eintrag ändert keinen Bereich. Erster Fingerabdruck (nach dem Update) = kein Zeitstempel.
 export const BEREICHE = {
   kosten: ["kosten", "kostenKategorienGeprueft", "team"],
-  gerichte: ["gerichte", "selbst", "selbstAutoArt", "adanaBrot"], // 20.10.2026: Antwort auf die Brot-Frage zum Adana
+  gerichte: ["gerichte", "selbst", "selbstAutoArt", "adanaBrot"], // Antwort auf die Brot-Frage zum Adana
   artikel: ["artikel"],
   betrieb: ["betrieb", "kanaele", "verkauf", "ladenArt"],
-  ladenArten: ["ladenArten"], // P6 (1), Durchsicht 30.10.2026 (Fund 4): eigener Bereich – der Fingerabdruck „betrieb“ alter Läden bleibt, sonst kippt bereichWahl beim Abgleich zweier Handys
+  ladenArten: ["ladenArten"], // P6 (1), Durchsicht (Fund 4): eigener Bereich – der Fingerabdruck „betrieb“ alter Läden bleibt, sonst kippt bereichWahl beim Abgleich zweier Handys
   wochen: ["wochenZaehlungen"], spiesse: ["spiesse"], portionen: ["portionMessungen"], // Welle 2, Durchsicht Fund 5: eigene Bereiche, beim Zusammenführen nach id vereinigt (vorher fielen Einträge des anderen Handys still weg)
   kuehl: ["kuehlstellen", "kuehl"],
   putzplan: ["putzplan", "putzplanSpaeter"],
   personen: ["personen"],
-  lager: ["lager"], // Bestand (17.10.2026): eigener Bereich – ältere Stände bekommen dadurch keinen neuen Zeitstempel in „Betrieb“
-  kombis: ["kassenKombis"], // Schwadron 18.10.2026, M1: Kombi-Menüs der Kasse – eigener Bereich (wie lager), alte Stände bleiben unberührt
-  aktionen: ["aktionen"], // Menütafel (18.10.2026): übernommene Aktionen – eigener Bereich, beim Zusammenführen vereinigt (verschmelzen)
-  tafel: ["tafel"],       // Menütafel (18.10.2026): Einstellungen der Tafel
-  lieferanten: ["lieferanten"], // Lieferanten (18.10.2026): eigener Bereich, beim Zusammenführen vereinigt (entfernt gewinnt)
+  lager: ["lager"], // Bestand: eigener Bereich – ältere Stände bekommen dadurch keinen neuen Zeitstempel in „Betrieb“
+  kombis: ["kassenKombis"], // Schwadron, M1: Kombi-Menüs der Kasse – eigener Bereich (wie lager), alte Stände bleiben unberührt
+  aktionen: ["aktionen"], // Menütafel: übernommene Aktionen – eigener Bereich, beim Zusammenführen vereinigt (verschmelzen)
+  tafel: ["tafel"],       // Menütafel: Einstellungen der Tafel
+  lieferanten: ["lieferanten"], // Lieferanten: eigener Bereich, beim Zusammenführen vereinigt (entfernt gewinnt)
 };
 const BEREICH_NAMEN = Object.keys(BEREICHE);
 function bereichText(b, a) { const f = BEREICHE[a]; return f.length === 1 ? JSON.stringify(b[f[0]] ?? null) : JSON.stringify(f.map((k) => b[k] ?? null)); }
@@ -851,7 +851,7 @@ const seiteVersteckt = () => seiteIstVersteckt() && Date.now() - tiefZuletzt > 5
 
 // Speichern läuft nacheinander: solange eine Transaktion offen ist, wartet das nächste Speichern auf sie.
 let kette = Promise.resolve(), laufend = 0;
-// Mitmach-Rundgang (28.10.2026): Übungsmodus – solange der Rundgang läuft, wird nichts geschrieben (auch kein Ereignis).
+// Mitmach-Rundgang: Übungsmodus – solange der Rundgang läuft, wird nichts geschrieben (auch kein Ereignis).
 // Der Stand vor dem Rundgang liegt damit unverändert im Speicher: Abbruch oder Neuladen nehmen alle Übungseinträge spurlos zurück.
 let pausiert = false;
 export function speichernPausieren(an) { pausiert = !!an; }
@@ -922,7 +922,7 @@ function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt(), zweit
   let fremd = null; // Paket 2: Generation in der Datenbank, falls sie nicht mehr die gelesene ist
   return txMehr(["stand", "teile"], "readwrite", (t) => {
     const stand = t.objectStore("stand"), tl = t.objectStore("teile");
-    // Paket 2 (16.10.2026): erst lesen, dann in DERSELBEN Transaktion schreiben – IndexedDB hält andere Schreiber solange zurück.
+    // Paket 2: erst lesen, dann in DERSELBEN Transaktion schreiben – IndexedDB hält andere Schreiber solange zurück.
     // Hat ein anderes Fenster inzwischen geschrieben (gen ≠ gelesen), bleibt die Transaktion ohne Schreiben; der Stand wird danach neu geladen.
     const r = stand.get("kopf");
     r.onsuccess = () => {
@@ -938,7 +938,7 @@ function schreibenJetzt(wurzel, { stempel = true, tief = seiteVersteckt(), zweit
 }
 function speicherFehler(e) { console.warn("Speichern fehlgeschlagen:", e); if (fehlerMelder) fehlerMelder("speichern", e); return false; }
 
-// Paket 2 (16.10.2026, Nachtrag Lead): ein anderes Fenster hat geschrieben. Die eigene Arbeitskopie wird nicht weggeworfen, sondern
+// Paket 2: ein anderes Fenster hat geschrieben. Die eigene Arbeitskopie wird nicht weggeworfen, sondern
 // in den frischen Stand aus der Datenbank gemischt (zusammenfuehren – derselbe Weg wie beim Einlesen einer Sicherung: Journale nach
 // Kennung vereinigt, Bereiche nach Zeitstempel, HACCP-Einträge nie überschrieben) und das Ergebnis einmal erneut geschrieben.
 // Meldet das zweite Schreiben wieder eine fremde Generation, wird aufgegeben: frischer Stand geladen, eigene Kopie verworfen.
@@ -1107,7 +1107,7 @@ function grundlageSetzen(w, teile, fehlt = []) {
 
 // Leerlauf-Prüfung: jedes Teil ganz vergleichen (fängt Änderungen tief in alten Einträgen, die die Felder aus 2. nicht sehen).
 // Läuft in kleinen Stücken, wenn das Handy nichts zu tun hat; findet sie etwas, wird normal (verzögert) gespeichert.
-// Paket 2 (16.10.2026): Safari/iOS kennt requestIdleCallback nicht – Rückfall auf setTimeout mit festem Zeitbudget je Stück (8 ms),
+// Paket 2: Safari/iOS kennt requestIdleCallback nicht – Rückfall auf setTimeout mit festem Zeitbudget je Stück (8 ms),
 // damit die Prüfung dort nicht ganz ausfällt. Die Felder aus 2. fangen die bekannten Änderungen sofort; das hier ist das Sicherheitsnetz.
 const ricRueckfall = (fn, { timeout = 0 } = {}) => { // erstes Stück nach 1 s (Start nicht stören), weitere alle 200 ms
   const z = setTimeout(() => { const start = Date.now(); fn({ didTimeout: false, timeRemaining: () => Math.max(0, 8 - (Date.now() - start)) }); }, timeout >= 10000 ? 1000 : 200);
@@ -1144,7 +1144,7 @@ function leerlaufPlanen() {
   }, { timeout: 10000 });
 }
 
-// Vorab-Prüfung 03.11.2026 (A1): Der erste Eintrag nach einer Pause wird SOFORT geschrieben – vorher wartete jedes Speichern 900 ms, und ein Neuladen
+// Vorab-Prüfung (A1): Der erste Eintrag nach einer Pause wird SOFORT geschrieben – vorher wartete jedes Speichern 900 ms, und ein Neuladen
 // 100–700 ms nach dem Tipp verlor den Eintrag (pagehide sichert asynchron, das reicht beim Neuladen nicht). Folgen weitere Tipps dicht auf,
 // werden sie gebündelt und spätestens nach SPEICHER_BUENDEL_MS geschrieben (Stresstest 15.10.: nicht bei jedem Tipp den ganzen Stand schreiben).
 const SPEICHER_BUENDEL_MS = 250;
@@ -1165,12 +1165,12 @@ export const speichernAbbrechen = () => speichern.abbrechen();
 export const _speicherInnen = () => ({ teile: teileH.size, gueltig: bekanntGueltig, altModus, frisch: frischZahl });
 
 // Zahl der Journal-Einträge aller Läden – für die Sicherungs-Erinnerung („20 neue Einträge seit der letzten Sicherung").
-// Beispiel-Laden (17.10.2026): zählt nicht – erfundene Einträge machen keine Sicherung fällig.
-// 20.10.2026 (Sicherungs-Test, Fund 3): auch Einrichtungsarbeit zählt – jeder Artikel mit eigenem Preis. Sonst kam die Erinnerung nie,
+// Beispiel-Laden: zählt nicht – erfundene Einträge machen keine Sicherung fällig.
+// (Sicherungs-Test, Fund 3): auch Einrichtungsarbeit zählt – jeder Artikel mit eigenem Preis. Sonst kam die Erinnerung nie,
 // solange jemand nur Karte und Preise einträgt (100 Artikel, 0 Journal-Einträge = Stufe null).
 const eigenePreise = (b) => (b.artikel || []).filter((a) => typeof a.preis === "number" && a.preis > 0 && !istRichtpreis(a)).length;
 export function eintraegeZaehlen(wurzel) {
-  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + eigenePreise(b) + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length + (b.verkaeufe || []).length, 0); // E7 (17.10.2026): Verkäufe zählen mit
+  return wurzel.betriebe.filter((b) => !b.beispiel).reduce((n, b) => n + eigenePreise(b) + b.schwund.length + b.tagesnotizen.length + b.messungen.length + (b.lieferungen || []).length + (b.abschluesse || []).length + (b.kostenbelege || []).length + (b.putzlog || []).length + (b.inventuren || []).filter((i) => i.abgeschlossen).length + (b.verkaeufe || []).length, 0); // E7: Verkäufe zählen mit
 }
 
 // Ereignisprotokoll: nur lokal. Beantwortet die Testfragen (kommt der Tester durch, kommt er wieder?).
@@ -1218,7 +1218,7 @@ async function sha256Hex(daten) { // daten: Text oder schon kodierte Bytes
 // ablage.json (Typ und Größe je Datei) und ablage/<Kennung> – alle Fotos und Belege dieses Geräts. Ein Knopf, ein Dateiname mit Datum.
 // letzteSicherung setzt app.js erst, wenn Teilen oder Speichern geklappt hat.
 export const SICHERUNG_JSON = "gastrocalc-sicherung.json";
-// E5 (16.10.2026): mit passwort wird die fertige ZIP als Ganzes verschlüsselt (schluessel.js) und in eine zweite ZIP gelegt:
+// E5: mit passwort wird die fertige ZIP als Ganzes verschlüsselt (schluessel.js) und in eine zweite ZIP gelegt:
 // sicherung.enc + LIESMICH.txt, Endung .gcs.zip. Ohne passwort bleibt alles wie bisher (gleiche Bytes, gleicher Name). Das Passwort wird nicht gespeichert.
 export async function exportDatei(wurzel, { mitAblage = true, passwort = null } = {}) {
   const r = await exportDateiOffen(wurzel, { mitAblage });
@@ -1250,7 +1250,7 @@ async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
 }
 
 // W2-D: Einlesen nimmt das ZIP und die alte JSON-Datei. Rückgabe wie importDatei, dazu ablage: [{ id, typ, eintrag }] (Fotos/Belege, noch nicht abgelegt).
-// E5 (16.10.2026): Liegt sicherung.enc in der ZIP, braucht es ein Passwort: ohne → { passwortNoetig: true }; mit → entschlüsseln und
+// E5: Liegt sicherung.enc in der ZIP, braucht es ein Passwort: ohne → { passwortNoetig: true }; mit → entschlüsseln und
 // wie bisher weiter. Falsches Passwort wirft Fehler mit grund "passwort". Unverschlüsselte Dateien laufen ohne Rückfrage.
 export async function importSicherung(datei, { passwort = null } = {}) {
   if (datei && datei.size > ZIP_GESAMT_MAX) throw Object.assign(new Error("gross"), { grund: "gross", maxMB: Math.round(ZIP_GESAMT_MAX / 1048576) }); // Lauf 6, E5 (C5): Satz „zuGross“ in js/data/l6y_texte.js
@@ -1319,10 +1319,10 @@ export async function importDatei(text) {
 // W2-S (p07 M3): Code und Fehlversuche aus einer Datei gelten nie – jedes Handy behält seinen eigenen Büro-Code
 // Lauf 6, E5 (C5): die Zahl übersprungener Einträge hängt (nicht aufgezählt, geht nie in eine Sicherung) an der eingelesenen Wurzel; zusammenfuehren nennt sie bericht.ungueltig
 function eingelesen(w) { ohneCode(w); Object.defineProperty(w, "_ungueltig", { value: ungueltigZaehler, enumerable: false, configurable: true }); return w; }
-function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; delete w.rettungPin; return w; } // Rettung (17.10.2026): auch der Rettungscode bleibt am Handy
+function ohneCode(w) { delete w.bueroPin; delete w.pinSperre; delete w.rettungPin; return w; } // Rettung: auch der Rettungscode bleibt am Handy
 
 // ---------- Zusammenführen ----------
-// W2-D (15.10.2026): Journale werden vereinigt (wie bisher). Stammdaten gewinnen nicht mehr als ganzer Laden, sondern je Bereich (BEREICHE).
+// W2-D: Journale werden vereinigt (wie bisher). Stammdaten gewinnen nicht mehr als ganzer Laden, sondern je Bereich (BEREICHE).
 // HACCP-Nachweise (Messungen, Rundgänge, Putz-Nachweis, Belehrungen, Abschlüsse) werden beim Einlesen nie verändert: gleiche Kennung mit
 // anderem Inhalt kommt als eigener Eintrag daneben (quelle "sicherung", konfliktMit). Einträge mit Datum in der Zukunft werden übernommen und mit datumPruefen: true markiert (Lauf 6, E5 B4).
 const TAG_MS = 86400e3;
@@ -1408,8 +1408,8 @@ function bereichWahl(lokal, fremd, a, jetzt) {
   return { q: zeitKappen(fremd.geaendert, jetzt) >= zeitKappen(lokal.geaendert, jetzt) ? "fremd" : "lokal", art: "zeit", hL, hF };
 }
 // Listen mit Kennung (Kühlstellen, Personen): Liste der gewählten Seite, dazu Einträge, die nur die andere Seite kennt; Kennzeichen gewinnen.
-// Kürzel ausgeschiedener Mitarbeiter (18.10.2026): das Datum „ausgeschieden“ geht beim Zusammenführen nicht verloren (das frühere gilt).
-// Lieferanten (18.10.2026): dieselbe Vereinigung für die Lieferanten – entfernt gewinnt, die Zeit der Entfernung bleibt (personen: false).
+// Kürzel ausgeschiedener Mitarbeiter: das Datum „ausgeschieden“ geht beim Zusammenführen nicht verloren (das frühere gilt).
+// Lieferanten: dieselbe Vereinigung für die Lieferanten – entfernt gewinnt, die Zeit der Entfernung bleibt (personen: false).
 function listeMitKennzeichen(sieger, verlierer, flag, { personen = flag === "entfernt" } = {}) {
   const m = new Map(); for (const x of sieger || []) if (x && typeof x.id === "string") m.set(x.id, { ...x });
   for (const x of verlierer || []) {
@@ -1495,7 +1495,7 @@ function unterschiedMerken(a, lokal, fremd, bericht, gilt = "lokal") { // gilt: 
 }
 export function abgleichGrundlage(b) { for (const a of BEREICH_NAMEN) abgleichMerken(b, a, null); return b; }
 
-// Lauf 3, Phase 6 (09.11.2026): Monatsabschlüsse zweier Handys vereinigen. Gleicher Eintrag (Monat + Zeitpunkt) zählt einmal. Haben beide denselben
+// Lauf 3, Phase 6: Monatsabschlüsse zweier Handys vereinigen. Gleicher Eintrag (Monat + Zeitpunkt) zählt einmal. Haben beide denselben
 // Monat abgeschlossen, bleibt der frühere gültig; der spätere bleibt sichtbar als „ersetzt“ (nichts verschwindet still, js/monatsabschluss.js).
 export function monatsabschluesseVereinigen(a, b) {
   const alle = new Map();
@@ -1536,26 +1536,26 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
     if (EINTRAG_BEREICHE[a] && (w.art === "beide" || w.art === "zeit")) eintraegeVerschmelzen(a, basis, lokal, fremd, w, bericht); // Lauf 6, E5 (B1): je Eintrag statt je Bereich
     else if (w.art === "beide" && !OHNE_UNTERSCHIED.has(a)) unterschiedMerken(a, lokal, fremd, bericht, w.q === "fremd" ? "fremd" : "lokal");
     if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
-    if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel (18.10.2026)
+    if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel
     if (a === "wochen" || a === "spiesse" || a === "portionen") { const k = BEREICHE[a][0]; basis[k] = listeNachId(sieger[k], verlierer[k]); } // Fund 5
-    if (a === "lieferanten") { basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten (18.10.2026)
-      if (lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); } // Prüfgremium 18.10.2026 (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
+    if (a === "lieferanten") { basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten
+      if (lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); } // Prüfgremium (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
     if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
-    if (a === "betrieb" && istObjekt(basis.betrieb)) basis.betrieb.hinweise = hinweiseVereinigen(lokal.betrieb?.hinweise, fremd.betrieb?.hinweise); // Vertrag Abschnitt 2: je Karte jüngste Zeit gewinnt (Gremium 2, 24.10.2026)
+    if (a === "betrieb" && istObjekt(basis.betrieb)) basis.betrieb.hinweise = hinweiseVereinigen(lokal.betrieb?.hinweise, fremd.betrieb?.hinweise); // Vertrag Abschnitt 2: je Karte jüngste Zeit gewinnt
     const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
     if (w.beide) bericht.beide.push(a);
     abgleichMerken(basis, a, w.hF);
   }
   const sortErfasst = (x, y) => String(x.erfasst || x.datum || "").localeCompare(String(y.erfasst || y.datum || ""));
   const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
-  for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7 (17.10.2026): verkaeufe
+  for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7: verkaeufe
     basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
   umsatzKonflikteZaehlen(basis, lokal, fremd, bericht); // Lauf 6, E5 (B2)
   felderVerschmelzen(basis, lokal, fremd); // Lauf 6, E5 (A1): teamTage, schichten, abwesend, lieferTage, preisRunden, chef, zekiLog, liquiditaet – nichts geht verloren
-  basis.verkaeufe = verkaeufeEntdoppeln(basis.verkaeufe); // Prüfgremium 17.10.2026 (1): gleiche Verkäufe von zwei Handys zählen einmal
-  basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1 (17.10.2026)
+  basis.verkaeufe = verkaeufeEntdoppeln(basis.verkaeufe); // Prüfgremium (1): gleiche Verkäufe von zwei Handys zählen einmal
+  basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
-  // Schwadron 18.10.2026, H3: beide Seiten vorher wie beim Laden leeren (Messungs-Kopie, die vollständig im Journal steht) – sonst falscher Konflikt
+  // Schwadron, H3: beide Seiten vorher wie beim Laden leeren (Messungs-Kopie, die vollständig im Journal steht) – sonst falscher Konflikt
   const abgeschlossen = journalVereinigen((lokal.rundgaenge || []).filter((r) => r.abgeschlossen).map((r) => rundgangKern(r, lokal)), (fremd.rundgaenge || []).filter((r) => r.abgeschlossen).map((r) => rundgangKern(r, fremd)), ["storniert"], opt("rundgaenge"));
   basis.rundgaenge = [...abgeschlossen, ...(lokal.rundgaenge || []).filter((r) => !r.abgeschlossen)];
   // Inventuren wie Rundgänge: abgeschlossene vereinigen, eine offene nur vom lokalen Stand

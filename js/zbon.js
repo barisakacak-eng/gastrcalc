@@ -1,4 +1,4 @@
-// Z-Bon per Foto (18.10.2026): dritter Weg in „Verkauf je Gericht“ neben Kassen-Export (DSFinV-K) und Handeingabe.
+// Z-Bon per Foto: dritter Weg in „Verkauf je Gericht“ neben Kassen-Export (DSFinV-K) und Handeingabe.
 // Reine Funktionen, keine Oberfläche, kein Netz. Der Text kommt aus der vorhandenen Texterkennung (js/auswertung.js → js/ocr-worker.js,
 // derselbe Weg wie Rechnungen); das Foto liegt wie jedes Belegfoto in der Ablage (js/ablage.js, Zweck "zbon").
 //
@@ -11,7 +11,7 @@
 // Wichtig (Entscheidung des Eigentümers): Verkaufszahlen aus dem Foto ersetzen keine Buchhaltung. Sie zählen nur für „Verkauf je Gericht“
 // (Herkunft "zbon", Rangfolge Kasse vor Z-Bon vor Hand). Die Tagesumsätze im Steuer-Ordner bleiben „Notiz – kein Z-Bon“.
 import { normKasse, zahlLesen, importVorschau, importUebernehmen, zuordnen } from "./verkauf.js";
-import { verkaeufeEntdoppeln } from "./store.js"; // Prüfgremium 18.10.2026 (H2): dieselbe Regel wie beim Zusammenführen und Laden
+import { verkaeufeEntdoppeln } from "./store.js"; // Prüfgremium (H2): dieselbe Regel wie beim Zusammenführen und Laden
 import { tagPlus } from "./engine.js";
 import { heute } from "./util.js";
 import { gueltigerTag } from "./zeit.js";
@@ -54,7 +54,7 @@ const STUNDE = /^\d{1,2}[:.]?\d{0,2}\s*(-|bis)\s*\d{1,2}[:.]?\d{0,2}\s*(uhr)?\b/
 // ---------- Kopf: Datum, Uhrzeit, Z-Nummer ----------
 const DATUM_DE = /(?<!\d)(\d{1,2})\s?[.\/]\s?(\d{1,2})\s?[.\/]\s?(\d{4}|\d{2})(?!\d)/;
 const DATUM_ISO = /(?<!\d)(\d{4})-(\d{2})-(\d{2})(?!\d)/;
-// 18.10.2026: OCR liest Punkte oft als Kommas („17,10,2026“) – nur mit vierstelligem Jahr, damit kein Betrag als Datum gilt
+// OCR liest Punkte oft als Kommas („17,10,2026“) – nur mit vierstelligem Jahr, damit kein Betrag als Datum gilt
 const DATUM_KOMMA = /(?<!\d)(\d{1,2}),(\d{1,2}),(\d{4})(?!\d)/;
 const UHR = /(?<!\d)([01]?\d|2[0-3])[:.]([0-5]\d)(?![\d.,])/;
 function isoDatum(j, m, d) {
@@ -76,7 +76,7 @@ export function zbonKopf(text, { heuteTag = heute() } = {}) {
     if (!iso && (m = DATUM_KOMMA.exec(z))) iso = isoDatum(Number(m[3]), Number(m[2]), Number(m[1]));
     if (!iso) return;
     const rest = z.replace(m[0], " "); let u = UHR.exec(rest);
-    // Prüfgremium 18.10.2026 (M5): Uhrzeit in einer eigenen Zeile („Datum: 17.10.2026“ / „Zeit: 00:45“) – höchstens zwei Zeilen tiefer,
+    // Prüfgremium (M5): Uhrzeit in einer eigenen Zeile – höchstens zwei Zeilen tiefer,
     // nur eine Zeile mit „Zeit/Uhrzeit/Uhr“ oder eine Zeile, die nur eine Uhrzeit ist; nie eine Zeile mit eigenem Datum
     if (!u) for (const n of [zeilen[i + 1], zeilen[i + 2]]) {
       if (typeof n !== "string") break; const zn = n.replace(/[Oo](?=\d)|(?<=\d)[Oo]/g, "0");
@@ -108,7 +108,7 @@ export function zbonZeileLesen(roh) {
     .replace(/[_=~]{2,}|\.{3,}|-{3,}/g, " ") // Füllzeichen zwischen Spalten
     .replace(/(\d)\s*([xX×*])(?=\s|[A-ZÄÖÜ]|\d)\s*/g, "$1 $2 ").replace(/(\d)(stk|stck|st)\b\.?/gi, "$1 $2") // „12x Cola“, „43Stk“
     .replace(/\s+/g, " ").trim();
-  // Prüfgremium 18.10.2026 (M3): Steuerkennzeichen und Steuersatz hinter dem Betrag abtrennen, BEVOR Lesefehler korrigiert werden
+  // Prüfgremium (M3): Steuerkennzeichen und Steuersatz hinter dem Betrag abtrennen, BEVOR Lesefehler korrigiert werden
   // („344,00A“, „75,00B“ – sonst wird aus B eine 8 –, „28,00*“, „344,00 7%“, „63,00 19 %“, „344,00 A 7%“)
   for (let k = 0; k < 3; k++) { const s2 = s.replace(/(\d[.,]\d{2}(?:\s?[A-D*])?)\s?\d{1,2}(?:[.,]\d{1,2})?\s?%$/i, "$1").replace(/(\d[.,]\d{2})\s?[A-D*]$/i, "$1"); if (s2 === s) break; s = s2; }
   s = s.trim();
@@ -158,12 +158,12 @@ export function zbonZeileLesen(roh) {
   { const t2 = text.replace(/(\d[.,]\d{1,3})\s?[1I|](?=\s|$)/g, "$1 l"); if (t2 !== text) { text = t2; gruende.add("name"); } }
   if (menge !== null && menge < 0) storno = true;
   if (betrag !== null && betrag < 0) storno = true;
-  // Prüfgremium 18.10.2026 (N1): Leerzeichen mitten im Betrag („43  3 44,00“) – dann endet der Kassentext auf einer Zahl und davor steht eine
+  // Prüfgremium (N1): Leerzeichen mitten im Betrag („43  3 44,00“) – dann endet der Kassentext auf einer Zahl und davor steht eine
   // kurze „Menge“. Nicht raten (es kann auch „Menü 2“ heißen): die Zeile wird zum Prüfen markiert, die Summenprüfung zeigt den Rest.
   const luecke = menge !== null && betrag !== null && !einzel && Number.isInteger(menge) && Math.abs(menge) < 1000 && /(^|\s)\d{1,4}$/.test(text) && !/[.,]\d{3}/.test(s);
   // Art der Zeile
   const textOhne = text.replace(/\d+[.,]?\d*\s*%?/g, " ").trim();
-  // Prüfgremium 18.10.2026 (M4): Ein Summen-Wort am Anfang macht eine Zeile nur dann zur Summenzeile, wenn danach kein Gerichtname folgt.
+  // Prüfgremium (M4): Ein Summen-Wort am Anfang macht eine Zeile nur dann zur Summenzeile, wenn danach kein Gerichtname folgt.
   // Mehrdeutige Wörter (Bar, Kunden, Total, EC, Karte …) mit Menge, Betrag und einem weiteren Wort, das kein typisches Bon-Wort ist
   // („Kunden-Menü 3 27,00“, „Total Menü 2 15,00“), sind Artikel. „Bar 85 1.234,50“, „Kunden 57“, „Total Speisen 99,00“ bleiben Summen.
   const sm = SUMME_ANFANG.exec(text) || SUMME_ANFANG.exec(textOhne);
@@ -191,7 +191,7 @@ export function zbonZeileLesen(roh) {
 const BON_SUMME = /^(summe\w*|ges(amt|\.)\w*|total\w*|endsumme|umsatz\s*brutto|brutto\s*umsatz|bruttoumsatz|umsatz\s*gesamt|gesamtumsatz)/i;
 const NICHT_SUMME = /(netto|mwst|m\.?w\.?st|ust|steuer|bar\b|karte|ec\b|storno|rabatt|anzahl|kunden|bons?\b|warengruppe|gruppe)/i;
 
-// Prüfgremium 18.10.2026 (M2): Viele Kassen drucken unter einem Menü dessen Teile mit 0,00 € („Menü Döner 5 57,50“ / „  Döner Kebab 5 0,00“ …).
+// Prüfgremium (M2): Viele Kassen drucken unter einem Menü dessen Teile mit 0,00 € („Menü Döner 5 57,50“ / „  Döner Kebab 5 0,00“ …).
 // Diese Zeilen sind Bestandteile, keine Verkäufe: Sie zählen nicht und stehen in der Vorschau abgewählt (der Wirt kann sie wieder dazunehmen).
 // Erkannt nur, wenn die Zeile darüber (mit Betrag) ein Menü ist: Wort „Menü/Kombi/Combo/Spar…“, ein gelerntes Kassen-Menü (stand, js/verkauf.js
 // kassenKombis) oder die 0,00-Zeile ist weiter eingerückt. Sonst bleibt eine 0,00-Zeile ein eigener, markierter Posten (Grund „preis“) und wird
@@ -263,7 +263,7 @@ function plausibel(zeilen, bonSumme, pfand = 0) {
 
 // ---------- Vorschau bearbeiten (rein: gibt eine neue Lesung zurück) ----------
 // feld: "text" | "menge" | "betrag" | "weg" | "datum" | "bonSumme" | "neu" | "teil" (Menü-Bestandteil an/aus) | "kasse" (Wahl der Kasse) | "zweite" (alt: Ja/Nein)
-// Prüfgremium 18.10.2026 (N5): „kasse“ – wert { art: "ersetzt", key } (ersetzt genau diesen Z-Bon des Tages; key null = der erste ohne Merkmal)
+// Prüfgremium (N5): „kasse“ – wert { art: "ersetzt", key } (ersetzt genau diesen Z-Bon des Tages; key null = der erste ohne Merkmal)
 // oder { art: "neu" } (weitere Kasse, wird als „Kasse 2, 3 …“ gespeichert) oder null (keine Wahl). „zweite“ true = { art: "neu" }.
 const kasseWahlSauber = (w) => (!w || typeof w !== "object" ? null : w.art === "neu" ? { art: "neu" } : w.art === "ersetzt" ? { art: "ersetzt", key: typeof w.key === "string" && w.key ? w.key.slice(0, 50) : null } : null);
 export function zbonAendern(lesung, id, feld, wert) {
@@ -290,9 +290,9 @@ export function zbonAendern(lesung, id, feld, wert) {
 //   Z-Nummer erkannt → "Z-<Nr>": gleicher Tag + gleiche Nummer ersetzt (erneutes Foto), andere Nummer addiert (zweite Kasse/zweiter Abschluss).
 //   ohne Nummer, erster Bon des Tages → null („Kasse 1“).
 //   ohne Nummer, weiterer Bon: der Wirt wählt, welchen er ersetzt (dessen Schlüssel) oder „weitere Kasse“ → "Z-K<n>" (Kasse 2, 3 …) –
-//   ein Merkmal, kein Zufall: dieselbe Kasse auf zwei Handys ergibt denselben Schlüssel (Prüfgremium 18.10.2026, N5). Ältere Stände mit "Z-?<id>" bleiben gültig.
+//   ein Merkmal, kein Zufall: dieselbe Kasse auf zwei Handys ergibt denselben Schlüssel. Ältere Stände mit "Z-?<id>" bleiben gültig.
 // Zusammenführen und Laden: verkaeufeEntdoppeln (store.js) – gleicher Schlüssel zählt einmal; ein Bon ohne Nummer, der einem Bon mit Nummer am selben Tag
-// gleicht (gleiches Foto, gleiche Summe oder gleiche Positionen), gilt als derselbe Abschluss (Prüfgremium 18.10.2026, H2).
+// gleicht (gleiches Foto, gleiche Summe oder gleiche Positionen), gilt als derselbe Abschluss.
 const aktivZbon = (stand, datum) => (stand.verkaeufe || []).filter((v) => !v.storniert && v.herkunft === "zbon" && v.datum === datum);
 const KASSE_NR = /^Z-K(\d{1,3})$/;
 // [{ key, art: "kasse" | "zNr", nr }] – Kasse 1 (null), Kasse 2 … (Z-K2 …, alte "Z-?…" der Reihe nach), dann Z-Nummern
@@ -326,7 +326,7 @@ const zbonSchluessel = (lesung, stand = null) => (stand ? zbonZiel(stand, lesung
 // ---------- in den Aufbau der Kassen-Daten (wie dsfinvkLesen) ----------
 // Gleicher Kassentext (oder gleiche Nummer) wird zusammengezählt; eine Storno-Zeile zieht beim gleichnamigen Artikel ab
 // (gleicher Text, sonst der eine Artikel, dessen Text den Storno-Text enthält oder umgekehrt), sonst steht sie als eigene Minus-Position da.
-// Prüfgremium 18.10.2026 (M2): Menü-Bestandteile (bestandteil) zählen nicht; eine 0,00-Zeile wird nie mit einer bezahlten gleichen Namens zusammengezählt.
+// Prüfgremium (M2): Menü-Bestandteile (bestandteil) zählen nicht; eine 0,00-Zeile wird nie mit einer bezahlten gleichen Namens zusammengezählt.
 export function zbonErgebnis(lesung, datum = lesung?.datum, { kasse = zbonSchluessel(lesung) } = {}) {
   const bericht = { zbon: true, zNr: lesung?.zNr || null, zeilen: (lesung?.zeilen || []).length, stornoZeilen: 0, ohneMenge: 0, ohneText: 0, bestandteile: 0, pruefung: lesung?.pruefung || null, abweichung: lesung?.abweichung ?? null, fehler: [] };
   if (!datum || !/^\d{4}-\d{2}-\d{2}$/.test(datum)) { bericht.fehler.push("datum"); return { positionen: [], tage: [], bericht, fingerabdruck: null }; }

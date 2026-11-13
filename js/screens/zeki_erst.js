@@ -1,4 +1,4 @@
-// Sonderauftrag 6b R2 (28.10.2026, live seit 30.10.2026): Zeki beim ersten Tipp.
+// Sonderauftrag 6b R2: Zeki beim ersten Tipp.
 // Erster Tipp auf einen Menüpunkt oder eine Büro-Zeile → Zeki sagt genau einmal einen Satz (≤ 15 Wörter) mit „Verstanden“.
 // Merker je Punkt auf dem Gerät (localStorage, eine Neuinstallation setzt ihn zurück). In der Stoßzeit nicht – dann beim nächsten Tipp danach.
 // Die Sätze sind gekürzte Hilfetexte (rundgang.erst.*), kein neuer Textberg.
@@ -8,7 +8,7 @@ import { mascotMarkup } from "../gastrocash-brand.js";
 import { istHauptzeit } from "../offen.js";
 
 const ERST_KEY = "gc-zeki-erst";
-const ERST_DAUER_MS = 7000; // Setzung 30.10.2026: Zekis Erst-Satz steht höchstens 7 s
+const ERST_DAUER_MS = 7000; // Setzung: Zekis Erst-Satz steht höchstens 7 s
 const ERST_PUNKTE = ["muell", "kuehl", "putzplan", "karte", "umsatzheute", "ware", "preisrunde", "vergleich", "inventur", "bestand", "ordner-amt", "ordner-steuer", "ordner-buch", "personal", "listen", "aktionen"];
 const lesen = (sp) => { try { return new Set(JSON.parse(sp?.getItem(ERST_KEY) || "[]")); } catch { return new Set(); } };
 const schreiben = (sp, set) => { try { sp?.setItem(ERST_KEY, JSON.stringify([...set])); } catch { /* privat: dann eben jedes Mal */ } };
@@ -30,11 +30,11 @@ export function erstZeigen(doc, punkt, satz, speicher) {
   el.innerHTML = `<div class="ze-karte"><span class="ze-zeki">${mascotMarkup("hilfe", "none")}</span><div class="ze-blase"><p dir="auto">${esc(satz)}</p>
     <button type="button" class="knopf" data-ze="ok">${esc(t("rundgang.erst.ok"))}</button></div></div>`;
   doc.body.appendChild(el);
-  // Pilotfest 30.10.2026 (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
+  // Pilotfest (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
   const weg = () => { el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
   const zu = () => { erstGesehen(punkt, speicher); weg(); };
   const draussen = (e) => { if (!el.contains(e.target)) zu(); };
-  el.__weg = weg; // Durchsicht 30.10.2026: ein Blatt räumt die Karte samt Listener weg, ohne „gesehen“ zu setzen
+  el.__weg = weg; // Durchsicht: ein Blatt räumt die Karte samt Listener weg, ohne „gesehen“ zu setzen
   el.querySelector('[data-ze="ok"]').addEventListener("click", zu);
   setTimeout(() => { if (el.isConnected) doc.addEventListener("pointerdown", draussen, true); }, 50);
   setTimeout(() => { if (el.isConnected) zu(); }, ERST_DAUER_MS); // nach 7 s von allein weg (gilt als gesehen)

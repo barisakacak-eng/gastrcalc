@@ -1,7 +1,7 @@
-// Welle 3, 3.2 Pflichtenkalender (Bau-Chat 03.11.2026, Auftrag „Hochtouren“). Reine Rechnung, keine Oberfläche, keine Speicherung.
-// Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte 28.10.2026“, Teil C (Zoro, mit Python nachgerechnet, AOK-Liste 2027 gegengeprüft).
+// Welle 3, 3.2 Pflichtenkalender. Reine Rechnung, keine Oberfläche, keine Speicherung.
+// Goldwerte: „GastroCash Prüfpaket Welle 3 Goldwerte“, Teil C (Zoro, mit Python nachgerechnet, AOK-Liste 2027 gegengeprüft).
 //
-// Regeln (Quellen laut Prüfpaket, Abruf 28.10.2026):
+// Regeln:
 // - USt-Voranmeldung und Lohnsteuer-Anmeldung: 10. des Folgemonats (§ 18 Abs. 1 UStG, § 41a Abs. 1 EStG). Fällt der Tag auf Samstag,
 //   Sonntag oder einen Feiertag, gilt der nächste Werktag (§ 108 Abs. 3 AO). Gerechnet mit den Feiertagen des Ladens (Standard BW).
 // - Dauerfristverlängerung (§ 46 UStDV): jeder USt-Termin einen Monat später. Schalter, nie geraten.

@@ -5,13 +5,13 @@ import { datenschutzText } from "../data/datenschutz.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache, datumText } from "../i18n.js";
 import { l6yText } from "../data/l6y_texte.js"; // Lauf 6, E5-Draht (4)
-import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform (23.10.2026)
-import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3 (16.10.2026), M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
+import { RECHTSFORMEN, rechtsform } from "../rechtsform.js"; // Rechtsform
+import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, wertAnzeige } from "../util.js"; // Paket 3, M7: Zähler und Zielkarte im Laden rechnen mit dem Geschäftstag
 import { monatsLast, kuehlStatus, umsatzSteuerSatz } from "../engine.js";
 import { jetztDran, ruhezeitenVon } from "../offen.js";
-import { zielAttr } from "./bausteine.js"; // Trennung (17.10.2026): ein zielAttr für alle Bildschirme
-import { zaehler, warenQuote, zaehlerVerlauf } from "../zaehler.js"; // Trennung (17.10.2026): zaehlerVerlauf aus dem Rechenwerk
-import { heuteZiel, heuteKachelZahlen } from "../laden_zahlen.js"; // Trennung 2 (17.10.2026): Zahlen der Zielkarte und Kacheln
+import { zielAttr } from "./bausteine.js"; // Trennung: ein zielAttr für alle Bildschirme
+import { zaehler, warenQuote, zaehlerVerlauf } from "../zaehler.js"; // Trennung: zaehlerVerlauf aus dem Rechenwerk
+import { heuteZiel, heuteKachelZahlen } from "../laden_zahlen.js"; // Trennung 2: Zahlen der Zielkarte und Kacheln
 import { ergebnisView } from "./karte.js";
 import { nav } from "./nav.js";
 import { bueroCodeKarte } from "./ebene.js"; // Drei Ebenen (A): Büro-Code in den Einstellungen
@@ -19,16 +19,16 @@ import { einrichtungStand } from "../einrichtung.js";
 import { sym } from "../symbole.js";
 import { muellHeute } from "../muell.js"; // Lauf 2 (4b): Müll ohne Preis als „n×“
 import { datumLesbar, monatName } from "./tag.js";
-import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau (20.10.2026): „Letzte vom Handy weg“
+import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau: „Letzte vom Handy weg“
 import { bueroKopf } from "./buero.js";
 import { nutzenStand } from "../nutzen.js";
-import { zekiMoment } from "../zeki.js"; // Zeki auf Heute (26.10.2026)
+import { zekiMoment } from "../zeki.js"; // Zeki auf Heute
 import { mascotMarkup } from "../gastrocash-brand.js";
-import { rezeptFortschritt } from "../rezept_quelle.js"; // Mitmach-Rundgang (28.10.2026): Rezept-Erinnerung auf Heute
+import { rezeptFortschritt } from "../rezept_quelle.js"; // Mitmach-Rundgang: Rezept-Erinnerung auf Heute
 
-// Drei Ebenen (15.10.2026, Entwickler B): Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
+// Drei Ebenen: Laden „Heute“ – ein Bildschirm ohne Scrollen. Datum, EINE Zielkarte (Bis null / Bis zum Ziel /
 // Über dem Ziel) mit Balken, vier Kacheln (Umsatz, Müll, Kühlung, Putzen) und höchstens eine „Jetzt dran“-Karte aus der festen Liste
-// in js/offen.js. Einrichtungsring, Kostenlücken und Hinweise wohnen im Büro (offenImBuero). Trennung (17.10.2026): die nie gezeigten Bausteine
+// in js/offen.js. Einrichtungsring, Kostenlücken und Hinweise wohnen im Büro (offenImBuero). Trennung: die nie gezeigten Bausteine
 // (Spruch, Monatsbalken, Einrichtungskarte, Instrumente, Band) sind entfernt; der Monatsbalken im Büro ist umsatz.js.
 export function startView(stand, extra = {}) {
   const H = heuteGeschaeft(); const z = zaehler(stand, { datum: H }); const ks = kuehlStatus(stand); // Kühl-Kachel bleibt am Kalendertag (kuehlStatus intern)
@@ -52,7 +52,7 @@ export function startView(stand, extra = {}) {
 // Vertrag von Zoro: summe ist bereits ausschließlich gemessen. Schätzungen niemals addieren.
 // Ohne Messung auch dann keine Zahl, wenn ein geschätzter Posten vorliegt.
 export function nutzenKarte(nutzen) {
-  if (nutzen.leer && !nutzen.ab) return ""; // Baris 27.10.2026: „Ab erstem Müll-Eintrag“ entfällt – versteht niemand, kostet Wörter auf Heute
+  if (nutzen.leer && !nutzen.ab) return ""; // Baris: „Ab erstem Müll-Eintrag“ entfällt – versteht niemand, kostet Wörter auf Heute
   if (nutzen.leer) return `<section class="karte h-nutzen h-nutzen-leer" aria-label="${esc(t("nutzen.titel"))}"><span data-t="nutzen.laueft">${esc(nutzen.ab ? t("nutzen.laueft", datumLesbar(nutzen.ab)) : t("nutzen.start"))}</span></section>`;
   // Im Laden nur die Zahl; „Gespart pro Woche“ und die Posten erst auf Tipp (aufklappbar)
   return `<details class="karte h-nutzen h-nutzen-l15b ${nutzen.summe > 0 ? "h-nutzen-plus" : "h-nutzen-null"}"><summary aria-label="${esc(t("nutzen.titel"))}: ${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}">${sym("wallet")}<b class="h-nutzen-summe">${esc(fmtEuro(nutzen.summe, { dezimal: 2 }))}</b></summary><span class="h-nutzen-titel">${esc(t("nutzen.titel"))}</span></details>`;
@@ -60,7 +60,7 @@ export function nutzenKarte(nutzen) {
 const tagKurz = (H) => { const [j, m, d] = H.split("-").map(Number); try { return datumText(new Date(j, m - 1, d), { weekday: "short", day: "numeric", month: "short" }); } catch { return datumLesbar(H); } };
 
 // Zielkarte im Laden: Stufe als Überschrift, eine große Zahl, Balken vom Monatsumsatz bis zur Zielmarke, Tempo als kleine Pille.
-// Trennung 2 (17.10.2026): alle Zahlen aus heuteZiel() (js/laden_zahlen.js); hier entsteht nur der Tempo-Satz.
+// Trennung 2: alle Zahlen aus heuteZiel() (js/laden_zahlen.js); hier entsteht nur der Tempo-Satz.
 function zielTexte(stand, z, H) {
   const w = heuteZiel(stand, z, H);
   const tempo = !w.tempo ? null : w.tempo.art === "gut" ? { art: "gut", text: t("heute.tempoGut", datumLesbar(w.tempo.am).slice(0, 6)) } : { art: "knapp", text: t("heute.tempoKnapp", fmtEuro(w.tempo.proTag, { dezimal: 0 })) };
@@ -70,12 +70,12 @@ function heuteZielKarte(stand, z, H) {
   const w = zielTexte(stand, z, H); const { m } = w;
   // Lauf 2, Bildpaket D (4a): Löhne fehlen, aber Stunden stehen schon → ≈-Zahl mit Mindestlohn-Richtwert (zaehler.js) und kleiner Hinweis „Löhne eintragen“
   const richtwertLohn = w.fehlt === "personal" && (z?.lohnRichtwertTage || 0) > 0;
-  // Masterauftrag „Gehirn“ 0.1 (28.10.2026): ohne Miete oder Löhne keine Euro-Zahl, sondern der nächste Eintrag
+  // Masterauftrag „Gehirn“ 0.1: ohne Miete oder Löhne keine Euro-Zahl, sondern der nächste Eintrag
   if (w.fehlt && !richtwertLohn) return `<button type="button" class="karte h-ziel h-ziel-fehlt" ${zielAttr(w.fehlt === "miete" ? { aktion: "bearbeiten", schritt: "kosten-miete", bis: "kosten-miete" } : { aktion: "bearbeiten", schritt: "lohn" })} data-fehlt="${esc(w.fehlt)}">
     <span class="h-riesig leicht" aria-label="${esc(t("nutzen.stufe.bisNull"))}">?</span>
     <span class="h-fehlt-knopf">${esc(t("heute.fehlt." + w.fehlt))}${sym("chevron-right", "h-pfeil")}</span>
   </button>`;
-  // Sanji-Entwurf C (Baris 20.10.2026, 19:4x): Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
+  // Sanji-Entwurf C: Lorbeer oben rechts, Kursdiagramm (Monatsumsatz kumuliert, Linie mit Fläche) mit
   // gestrichelter Ziellinie (beschriftet mit dem Betrag, 15-Wörter-Regel) statt Balken; ohne Überzeile „Heute“ (steht schon in der Leiste); das Tempo steht als kleine Zeile unter der großen Zahl.
   return `<button type="button" class="karte h-ziel h-ziel-kurs ${w.stufe === "ueberZiel" ? "plus" : ""}" data-a="monat-blatt" aria-description="${esc([t("cockpit.kalkulatorisch"), w.tempo?.text].filter(Boolean).join(" · "))}">
     ${LORBEER}
@@ -87,7 +87,7 @@ function heuteZielKarte(stand, z, H) {
   </button>${richtwertLohn ? `<button type="button" class="leise h-lohn-tipp" ${zielAttr({ aktion: "bearbeiten", schritt: "lohn" })}>${esc(t("heute.fehlt.personal"))}${sym("chevron-right", "h-pfeil")}</button>` : ""}`; // Laden-Umbau (20.10.2026): die Zeile „Richtwert · Preise eintragen“ wohnt im Büro (Bereich „Geld“ und „Ware“ → Einkaufspreise)
 }
 
-// Kursdiagramm der Zielkarte (Sanji-Entwurf 20.10.2026): x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
+// Kursdiagramm der Zielkarte: x = Tag im Monat, y = Umsatz kumuliert; Ziellinie = Marke (null bzw. Ziel).
 // Daten aus monatsZiel (m.tage: kumuliert bis heute) – die Oberfläche rechnet nichts Neues, sie zeichnet nur.
 function kursDiagramm(m, marke, z, stufe = "bisZiel") {
   const alle = z?.tage || []; const n = Math.max(2, alle.length); const ist = (m.tage || []).filter((x) => x.umsatz !== null || x.kumuliert > 0);
@@ -98,7 +98,7 @@ function kursDiagramm(m, marke, z, stufe = "bisZiel") {
   const tage = m.tage || []; const pfad = tage.map((x, i) => `${i ? "L" : "M"}${X(idx(x.datum))},${Y(x.kumuliert || 0)}`).join(" ");
   const letzt = tage[tage.length - 1]; const yz = Y(marke || 0);
   const tag = (d) => (d ? datumLesbar(d).slice(0, 6) : "");
-  // Baris 24.10.2026: Texte nicht mehr im gestreckten SVG (preserveAspectRatio none verzerrte Zahlen und Datum), sondern als HTML darüber.
+  // Baris: Texte nicht mehr im gestreckten SVG (preserveAspectRatio none verzerrte Zahlen und Datum), sondern als HTML darüber.
   const zielProzent = ((165 - Number(yz)) / 165 * 100).toFixed(1);
   return `<span class="h-kurswrap"><svg class="h-kurs" viewBox="0 0 320 165" preserveAspectRatio="none" role="img" aria-label="${esc(t("heute.zielLinie"))}">
     <line class="h-kurs-ziel" x1="4" x2="316" y1="${yz}" y2="${yz}"/>
@@ -110,10 +110,10 @@ function kursDiagramm(m, marke, z, stufe = "bisZiel") {
 const LORBEER = `<svg class="h-lorbeer" viewBox="0 0 44 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 53 C4 40 4 23 14 7"/><path d="M32 53 C40 40 40 23 30 7"/></g><g fill="currentColor"><ellipse cx="8" cy="42" rx="3" ry="7" transform="rotate(-34 8 42)"/><ellipse cx="6" cy="31" rx="3" ry="7" transform="rotate(-12 6 31)"/><ellipse cx="9" cy="20" rx="3" ry="7" transform="rotate(19 9 20)"/><ellipse cx="15" cy="11" rx="2.5" ry="6" transform="rotate(39 15 11)"/><ellipse cx="36" cy="42" rx="3" ry="7" transform="rotate(34 36 42)"/><ellipse cx="38" cy="31" rx="3" ry="7" transform="rotate(12 38 31)"/><ellipse cx="35" cy="20" rx="3" ry="7" transform="rotate(-19 35 20)"/><ellipse cx="29" cy="11" rx="2.5" ry="6" transform="rotate(-39 29 11)"/></g></svg>`;
 
 // Vier Kacheln: Symbol + Zahl. Kühlung zeigt den schlechtesten Wert (rot) oder „OK“ oder „2 offen“; Putzen erledigt/gesamt heute.
-// Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
-// Laden-Umbau (20.10.2026): eine schmale Reihe aus vier gleich großen Feldern – oben Zahl, Haken oder „+“, darunter ein Wort.
+// Trennung 2: Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
+// Laden-Umbau: eine schmale Reihe aus vier gleich großen Feldern – oben Zahl, Haken oder „+“, darunter ein Wort.
 // Kühlung zeigt den schlechtesten Wert (rot), einen Haken (alles gemessen) oder die Zahl offener Stellen; Putzen erledigt/gesamt.
-// Trennung 2 (17.10.2026): Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
+// Trennung 2: Zahlen und Zustand aus heuteKachelZahlen() (js/laden_zahlen.js); hier entstehen nur die kurzen Texte.
 function kachelTexte(stand, ks, H) {
   const w = heuteKachelZahlen(stand, ks, H);
   const k = w.kuehl;
@@ -126,24 +126,24 @@ function heuteKachelnLaden(stand, ks, H) {
   const w = kachelTexte(stand, ks, H);
   // Lauf 2, Bildpaket D (4b): Müll ohne Preis überall gleich – „1×“ wie auf der Kachel im Müll-Bildschirm, statt „0,00 €“ hier und „–“ dort
   const mh = muellHeute(stand, H); const muellOhnePreis = mh.anzahl > 0 && mh.offen === mh.anzahl;
-  // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“ (Entrümpelung Punkt 5, 18.10.2026)
+  // Leeres Feld zeigt seinen ersten Handgriff („+“ in Orange, Text für Vorlesehilfen) statt „–“
   const symbole = { umsatz: "wallet", muell: "trash-2", kuehl: "snowflake", putz: "spray-can" };
-  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`; // Baris 24.10.2026: ein Wort unter jedem Icon
+  const feld = (cls, wortKey, wert, ziel, alarm, handgriff, html = false) => `<button type="button" class="karte h-kachel h-feld ${cls} ${alarm ? "alarm" : ""} ${handgriff ? "leer" : ""}" ${ziel} aria-label="${esc(t(wortKey))}: ${esc(handgriff || (html ? (alarm ? wert : t("heute.ok")) : wert))}">${sym(symbole[cls], "h-feld-symbol")}${handgriff ? `<b class="handgriff">${sym("plus")}</b>` : `<b class="zahl">${html ? wert : esc(wert)}</b>`}<small>${esc(t(wortKey))}</small></button>`; // Baris: ein Wort unter jedem Icon
   return feld("umsatz", "ladenSchirm.umsatz", w.umsatz === null ? "" : fmtEuro(w.umsatz, { dezimal: 0 }), 'data-a="nav" data-wert="umsatzheute"', false, w.umsatz === null && t("schnellknopf.umsatz"))
     + feld("muell", "ebene.tabs.muell", muellOhnePreis ? `${fmtZahl(mh.anzahl)}×` : w.muell === null ? "" : fmtEuro(w.muell, { dezimal: w.muell < 10 ? 2 : 0 }), 'data-a="nav" data-wert="muell"', false, w.muell === null && t("schnellknopf.muell"))
     + feld("kuehl", "ebene.tabs.kuehl", w.kuehl.wert, 'data-a="nav" data-wert="kuehl"', w.kuehl.alarm, !ks.eingerichtet && t("schnellknopf.kuehl"), w.kuehl.html || w.kuehl.alarm)
     + feld("putz", "ebene.tabs.putzplan", w.putz.wert, 'data-a="nav" data-wert="putzplan"', w.putz.alarm, w.putz.wert === "–" && t("menue.putzplan"));
 }
-// Laden-Umbau (20.10.2026): „Jetzt dran“ ist die eine Haupthandlung – ein großer oranger Knopf (ohne eigenen „Los“-Knopf).
-// Zeki auf Heute (Baris Ja 26.10.2026): Zeki steht neben dem einen Knopf. Beim ersten Mal am Tag je Lage sagt er seinen Satz
+// Laden-Umbau: „Jetzt dran“ ist die eine Haupthandlung – ein großer oranger Knopf (ohne eigenen „Los“-Knopf).
+// Zeki auf Heute: Zeki steht neben dem einen Knopf. Beim ersten Mal am Tag je Lage sagt er seinen Satz
 // in einer Blase und macht seine Bewegung; nach ≈ 7 s blendet CSS die Blase aus und den Knopf ein (15-Wörter-Regel im Ruhezustand).
 // Welche Lage und welcher Satz: js/zeki.js. Ob schon gesehen: extra.zekiGesehen (Set „auslöser:Tag“, hält app.js im Browser).
 const ZEKI_ZUSTAND = { kuehl_abweichung: "warnung", kuehl_offen: "aufmerksam", umsatz_fehlt: "frage", karte_leer: "hilfe", preis_fehlt: "preis", erster_muell: "aufmerksam", muell_hoch: "warnung", ziel_erreicht: "freude", tag_abgeschlossen: "bestaetigt", inventur_faellig: "aufmerksam", sicherung_alt: "warnung", hinweis_neu: "hilfe" };
 export function zekiReihe(stand, H, dran, extra = {}) {
-  // Baris 26.10.2026 23:42: keine zweite Zeki-Figur auf Heute – Zeki steht oben rechts als eigene Ebene und spricht dort (app.js zekiBildschirm).
-  // Mitmach-Rundgang (28.10.2026, 7.3): solange kein Gericht ein eigenes Rezept hat, steht hier fest Zekis Frage mit „Jetzt“ (führt direkt zur
+  // Baris 23:42: keine zweite Zeki-Figur auf Heute – Zeki steht oben rechts als eigene Ebene und spricht dort (app.js zekiBildschirm).
+  // Mitmach-Rundgang: solange kein Gericht ein eigenes Rezept hat, steht hier fest Zekis Frage mit „Jetzt“ (führt direkt zur
   // Mengenfrage). Sie ersetzt die Zeile (15-Wörter-Regel) und geht der Zeki-Rotation vor; nur ein Kühl-Alarm bleibt wichtiger.
-  // Eine Haupthandlung (Gegenprüfung 28.10.2026): fehlt noch Miete oder Personal (heuteZiel().fehlt), kommt das zuerst – das Rezept wartet.
+  // Eine Haupthandlung: fehlt noch Miete oder Personal (heuteZiel().fehlt), kommt das zuerst – das Rezept wartet.
   const r = rezeptFortschritt(stand);
   if (r.gesamt && !r.mit && dran?.id !== "kuehlAlarm" && !extra.fehlt) { const frage = t("l15b.rezeptFrage"), jetzt = t("heute.rezeptErinnerung.knopf");
     return `<button type="button" class="zeki-zeile h-rezept-text a-gelb" data-a="rezept-direkt" dir="auto">${esc(frage)}</button>
@@ -161,7 +161,7 @@ function einrichtungZeile(e, ids) {
 }
 
 export function zaehlerKarte(z, H, { tipp = true, ziel = null } = {}) {
-  // 27.10.2026 (Baris: eine Rechnung): Mit „ziel“ (heuteZiel) zeigt das Büro dieselbe große Zahl wie der Laden; der Stand heute steht darunter.
+  // (Baris: eine Rechnung): Mit „ziel“ (heuteZiel) zeigt das Büro dieselbe große Zahl wie der Laden; der Stand heute steht darunter.
   if (ziel && ziel.zahl !== null && ziel.m?.nullpunkt !== null) return zaehlerKarteMonat(z, H, ziel);
   const vorUmsatz = null;
   const monat = monatName(H);
@@ -180,14 +180,14 @@ export function zaehlerKarte(z, H, { tipp = true, ziel = null } = {}) {
 
 function zaehlerKarteMonat(z, H, w) {
   const monat = monatName(H); const g = w.m.geschaetzt ? "≈ " : "";
-  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("zaehler.ueberZiel", monat); // K2 Runde 2 (01.11.2026): die Zahl ist Umsatz über dem Ziel, kein Gewinn – „Verdient“ war irreführend (Netto-Ergebnis steht in Monat & Zähler unten)
+  const label = w.stufe === "bisNull" ? t("cockpit.bisNull", monat) : w.stufe === "bisZiel" ? t("zaehler.zumZiel", monat) : t("zaehler.ueberZiel", monat); // K2 Runde 2: die Zahl ist Umsatz über dem Ziel, kein Gewinn – „Verdient“ war irreführend (Netto-Ergebnis steht in Monat & Zähler unten)
   const zahl = `${g}${w.stufe === "ueberZiel" ? "+ " : ""}${fmtEuro(w.zahl, { dezimal: 0 })}`;
-  // Persona-Test Wirt (27.10.2026): an einem Vortag stand „Heute stehst du bei …“ und „seit gestern“ – jetzt mit Datum, ohne Tagesvergleich.
+  // Persona-Test Wirt: an einem Vortag stand „Heute stehst du bei …“ und „seit gestern“ – jetzt mit Datum, ohne Tagesvergleich.
   const istHeute = H === heuteGeschaeft(); const betrag = `${z.stand >= 0 ? "+" : "−"} ${fmtEuro(Math.abs(z.stand), { dezimal: 0 })}`;
-  // Nachtest 27.10.2026: „Heute stehst du bei + 500 €“ neben „bis null fehlen 4.065 €“ verwirrte – eine Zahl (Baris B, 02:13); nur an Vortagen der Stand mit Datum
+  // Nachtest: „Heute stehst du bei + 500 €“ neben „bis null fehlen 4.065 €“ verwirrte – eine Zahl (Baris B, 02:13); nur an Vortagen der Stand mit Datum
   const heuteZeile = z.keinUmsatz ? t("cockpit.keinUmsatz") : istHeute ? "" : t("zaehler.standTagZeile", datumLesbar(H).slice(0, 6), betrag);
   const erklaerung = "";
-  // Welle 3 (K2 A1, Hochtouren 03.11.2026; Baris Ja zu Bildpaket W3 am 04.11.2026, Schalter entfernt): Über dem Ziel ist im Büro das Netto-Ergebnis die große Zahl
+  // Welle 3: Über dem Ziel ist im Büro das Netto-Ergebnis die große Zahl
   // (voraussichtlich am Monatsende, wie „Monatsende“ in „Wenn es so weiterläuft“); der Umsatz über dem Ziel steht darunter.
   const w3 = w.stufe === "ueberZiel" && typeof z.monatsende === "number";
   if (w3) return `<div class="karte dunkel zaehler ${z.monatsende >= 0 ? "plus" : "minus"}">
@@ -238,8 +238,8 @@ export function karteView(stand) {
     ${nav("kartebuero")}`;
 }
 
-// Pilotfest P6 (6), 30.10.2026 (Bildpaket C freigegeben): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
-// Lauf 2 (31.10.2026), Bildpaket D (1): Home-Bildschirm. Laden: ein Satz (≤ 15 Wörter), einmal, „OK“. Büro (Sicherung): Weg in zwei Schritten + Warum.
+// Pilotfest P6 (6), (Bildpaket C freigegeben): „Fehler melden“ teilt den Fehler-Rucksack (js/fehler.js) als Text – ohne Namen und Zahlen.
+// Lauf 2, Bildpaket D (1): Home-Bildschirm. Laden: ein Satz (≤ 15 Wörter), einmal, „OK“. Büro (Sicherung): Weg in zwei Schritten + Warum.
 function homeBlockBuero(h) {
   if (!h) return "";
   if (h.standalone) return `<p class="home-schon">${sym("check")} ${esc(t("home.schon"))}</p>`;
@@ -255,7 +255,7 @@ function fehlerKarte(n) {
     <div class="knopfreihe"><button type="button" class="knopf zweit" data-a="fehler-melden">${sym("send")} ${esc(t("einstellungen.fehler.melden"))}</button>
     ${n ? `<button type="button" class="leise" data-a="fehler-leeren">${esc(t("einstellungen.fehler.leeren"))}</button>` : ""}</div></div>`;
 }
-// Datenschutz im Büro (Baris 27.10.2026: Verantwortlicher als Platzhalter bis zur Firma); Text in js/data/datenschutz.js
+// Datenschutz im Büro; Text in js/data/datenschutz.js
 function datenschutzKarte() {
   const d = datenschutzText(sprache());
   return `<details class="karte ds-karte" id="datenschutz"><summary><h2>${esc(d.titel)}</h2><small>${esc(d.stand)}</small></summary>

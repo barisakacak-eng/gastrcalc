@@ -1,5 +1,5 @@
-// Trennung (17.10.2026): Schreib-Funktionen für Speisekarte, Rezepte, Verkaufspreise und Einkaufspreise (Artikel).
-import { gerichtText } from "./i18n.js"; // Perfektionswoche 24.10.2026
+// Trennung: Schreib-Funktionen für Speisekarte, Rezepte, Verkaufspreise und Einkaufspreise (Artikel).
+import { gerichtText } from "./i18n.js"; // Perfektionswoche
 // Vorher schrieben js/screens/karte.js, foto.js, beleg.js und karte_laden.js diese Felder selbst. Felder und Regeln sind unverändert.
 import { uid } from "./util.js";
 import { PRODUKT_INDEX, EINHEITEN, inBasis } from "./data/katalog.js";
@@ -15,18 +15,18 @@ export function artikelAbgleichen(stand) { stand.artikel = artikelAusGerichten(s
 export function artikelVorschau(stand) { return artikelAusGerichten({ ...stand, artikel: structuredClone(stand.artikel || []) }); }
 
 // ---------- Gerichte ----------
-export function gerichtAusVorlage(v) { // 17.10.2026 Fehler F1 (vorher screens/karte.js)
+export function gerichtAusVorlage(v) { // Fehler F1 (vorher screens/karte.js)
   const zutaten = v.zutaten.map(([name, menge, einheit]) => ({ name, menge, einheit }));
   return { id: uid(), name: gerichtText(v.name) /* Perfektionswoche 24.10.2026: Name in der aktiven Sprache, vorlageName bleibt deutsch */, vorlageName: v.name, bereich: v.bereich, klasse: klasseFuerBereich(v.bereich), zeit: v.zeit, vorlage: true,
     zutaten, preis: null, mengeTag: null, steuer: steuersatzAusZutaten(zutaten), rezeptFamilie: rezeptBauen(v.name)?.familie || null };
 }
 export function gerichtAusVorlageAnlegen(stand, v) { const g = gerichtAusVorlage(v); stand.gerichte.push(g); return g; }
-// Persona-Test Wirt (27.10.2026): „Classic Smash 9.90“ wurde komplett zum Namen, „Fries 3.50“ zum Hauptgericht (trug Miete wie ein Burger).
+// Persona-Test Wirt: „Classic Smash 9.90“ wurde komplett zum Namen, „Fries 3.50“ zum Hauptgericht (trug Miete wie ein Burger).
 // Ein Preis am Ende des Namens wird zum Preis; Pommes/Dips sind Kleinigkeiten, Getränke Getränke (änderbar wie bisher).
 const KLEIN_RE = /\b(pommes|fries|wedges|chips|dip|soße|sosse|sauce|nuggets|onion rings|ayran)\b/i;
 const GETRAENK_RE = /\b(cola|fanta|sprite|wasser|water|limo|saft|juice|eistee|ice tea|bier|beer|kaffee|coffee|tee|tea|çay|energy)\b/i;
 export function nameUndPreis(text) {
-  // Nachtest 27.10.2026: nur eindeutige Preise – mit zwei Nachkommastellen („9.90“) oder mit €-Zeichen („12 €“); „Menü 1“, „Pizza 32“, „Cola 0,5“ bleiben Namen
+  // Nachtest: nur eindeutige Preise – mit zwei Nachkommastellen („9.90“) oder mit €-Zeichen („12 €“); „Menü 1“, „Pizza 32“, „Cola 0,5“ bleiben Namen
   const roh = String(text || "").trim();
   const m = roh.match(/^(.*?\S)\s+(\d{1,3}[.,]\d{2})\s*€?$/) || roh.match(/^(.*?\S)\s+(\d{1,3}(?:[.,]\d{1,2})?)\s*€$/);
   if (!m) return { name: roh, preis: null };
@@ -38,7 +38,7 @@ export function gerichtEigenAnlegen(stand, eingabe) {
   const g = { id: uid(), name, bereich: null, klasse, zeit: klasse === "haupt" ? 5 : 2, vorlage: false, zutaten: [], preis, mengeTag: null, steuer: mwstHeute("ermaessigt") };
   stand.gerichte.push(g); startRezept(stand, g); return g;
 }
-// Persona-Test Wirt (27.10.2026): Ein eigenes Gericht bekam das Start-Rezept aus dem Baukasten erst beim nächsten App-Start –
+// Persona-Test Wirt: Ein eigenes Gericht bekam das Start-Rezept aus dem Baukasten erst beim nächsten App-Start –
 // bis dahin zeigte der Rezept-Schritt „0 Zutaten“, das Büro später fremde Zutaten. Jetzt sofort, sobald der Name passt.
 function startRezept(stand, g) {
   if (!g?.name || String(g.name).trim().length < 4 || (g.zutaten || []).length || g.rezeptBewusstLeer || g.klasse === "getraenk") return false;
@@ -75,7 +75,7 @@ export function zielgewinnSetzen(stand, n) { stand.verkauf.zielgewinn = n; stand
 
 // ---------- Einkaufspreise (Artikel) ----------
 const artikel = (stand, name) => (stand.artikel || []).find((x) => x.name === name) || null;
-// Richtpreise (17.10.2026): solange Preis und Packung unverändert sind, bleibt es ein Richtpreis; jede Änderung macht ihn zum eigenen
+// Richtpreise: solange Preis und Packung unverändert sind, bleibt es ein Richtpreis; jede Änderung macht ihn zum eigenen
 function statusNeu(a) { a.status = preisJeBasis(a) === null ? "offen" : istRichtpreis(a) ? "richtpreis" : "bekannt"; if (a.richtpreis && !istRichtpreis(a)) delete a.richtpreis; }
 // feld: "packung" | "preis" | "zwischen" | "roh" | "gar"; wert schon als Zahl (oder null); datum = heute
 export function artikelFeldSetzen(stand, name, feld, wert, datum) {
@@ -83,7 +83,7 @@ export function artikelFeldSetzen(stand, name, feld, wert, datum) {
   if (feld === "packung") { a.packung ??= { menge: null, einheit: a.einheit }; a.packung.menge = wert; }
   if (feld === "preis") { if (wert !== a.preis) { preisMerken(a, datum); a.preis = wert; a.preisQuelle = "hand"; if (wert !== null) a.preisDatum = datum; } } // W2-K2: Preis von Hand
   if (feld === "zwischen") { a.gebinde ??= { art: "packung", zwischen: null }; a.gebinde.zwischen = wert > 0 ? { art: a.gebinde.zwischen?.art || a.gebinde.zwischenArt || "beutel", anzahl: Math.round(wert) } : null; }
-  // Gebinde in Stück (19.10.2026, Teil 2): „Karton 40 Stück à 250 g“ – Inhalt bleibt in Gramm (40 × 250 = 10 kg), das Stückgewicht merkt sich der Artikel
+  // Gebinde in Stück: „Karton 40 Stück à 250 g“ – Inhalt bleibt in Gramm (40 × 250 = 10 kg), das Stückgewicht merkt sich der Artikel
   if (feld === "stk-anzahl" || feld === "stk-gewicht") {
     a.gebinde ??= { art: "packung", zwischen: null }; const st = (a.gebinde.stueck ??= { anzahl: null, gewicht: a.stueckGewicht || null });
     st[feld === "stk-anzahl" ? "anzahl" : "gewicht"] = wert > 0 ? wert : null;
@@ -119,7 +119,7 @@ export function preisBasisSetzen(stand, name, basis) {
   zwischenpreiseSetzen(stand); // Lauf 6 (P1 B6)
   return true;
 }
-// Teil 2 (19.10.2026): Art der inneren Packung (Karton à 4 Beutel / à 6 Dosen). Ohne Anzahl merkt sie sich die Art schon vor.
+// Teil 2: Art der inneren Packung (Karton à 4 Beutel / à 6 Dosen). Ohne Anzahl merkt sie sich die Art schon vor.
 export function zwischenArtSetzen(stand, name, art) {
   const a = artikel(stand, name); if (!a) return false; a.gebinde ??= { art: "packung", zwischen: null };
   if (a.gebinde.zwischen) a.gebinde.zwischen.art = art; else a.gebinde.zwischenArt = art; return true;
@@ -131,12 +131,12 @@ export function selbstUmschalten(stand, kachel, an) {
   const wahl = new Set(selbstGewaehlt(stand)); if (an) wahl.add(kachel); else wahl.delete(kachel);
   selbstAnwenden(stand, [...wahl]); artikelAbgleichen(stand);
 }
-// Selbst gemacht als echtes Unterrezept (19.10.2026, „Go beide“ Teil 1): der Wirt trägt seinen Ansatz selbst ein.
+// Selbst gemacht als echtes Unterrezept: der Wirt trägt seinen Ansatz selbst ein.
 // Jede Änderung macht das Rezept zu „eigen“ (selbstAnwenden überschreibt es dann nie mehr); der Preis folgt beim Abgleich (zwischenpreiseRechnen).
 const eigenMachen = (r, datum) => { r.quelle = "eigen"; if (datum) r.gewogenAm = datum; };
 const basisEinheit = (e) => (e === "kg" || e === "g" ? "g" : e === "l" || e === "ml" ? "ml" : "stk");
 // Ausbeute aus Stückzahl × Stückgewicht: 6 Ballen à 275 g = 1650 g. Nur Stückzahl → Ausbeute in Stück.
-// 20.10.2026 (Baris): „Wie viel ist die Gesamtmasse, wie schwer ist ein Ballen – daraus der Rest.“ Mit Teig gesamt und Gewicht je Stück
+// (Baris): „Wie viel ist die Gesamtmasse, wie schwer ist ein Ballen – daraus der Rest.“ Mit Teig gesamt und Gewicht je Stück
 // folgt die Stückzahl (abgerundet, der Rest bleibt Teig). Ausbeute ist dann der ganze Teig, Warenwert je Stück = je Gramm × Ballengewicht.
 function stueckAusbeute(r) {
   const s = r.stueck; if (!s) return;
@@ -161,7 +161,7 @@ export function selbstFeldSetzen(stand, name, feld, roh, datum) {
   else return false;
   eigenMachen(r, datum); return true;
 }
-// 20.10.2026 (Baris): Zutaten sind austauschbar – „Weizenmehl Typ 550“ ist nur ein Startwert. Menge bleibt, die Einheit folgt der neuen Ware
+// (Baris): Zutaten sind austauschbar – „Weizenmehl Typ 550“ ist nur ein Startwert. Menge bleibt, die Einheit folgt der neuen Ware
 // (Gramm, Milliliter oder Stück), wenn sie nicht passt.
 export function selbstZutatTauschen(stand, name, i, neuName, datum) {
   const r = artikel(stand, name)?.rezept; const z = r?.zutaten?.[i]; if (!z || !neuName || neuName === z.name || neuName === name) return false;
@@ -213,7 +213,7 @@ export function gerichtFotoSetzen(stand, id, meta, { geraet = null, jetzt = new 
   g.foto = meta.id; g.fotoMeta = meta; return g;
 }
 
-// Brot zum Adana-Teller (Baris 20.10.2026: „je nach Betrieb immer unterschiedlich“ → einmal fragen). Die Antwort ersetzt das Brot in jedem Gericht,
+// Brot zum Adana-Teller. Die Antwort ersetzt das Brot in jedem Gericht,
 // das aus der Vorlage „Adana-Spieß“ stammt, und wird am Stand gemerkt (keine zweite Frage). Wahl: pide | pideHalb | fladen | kein.
 export const ADANA_BROT = { pide: { name: "Pide-Brot", menge: 1 }, pideHalb: { name: "Pide-Brot", menge: 0.5 }, fladen: { name: "Dürüm-Wrap", menge: 1 }, kein: null };
 const BROTE = new Set(["Pide-Brot", "Dürüm-Wrap", "Dönerbrot / Fladen"]);

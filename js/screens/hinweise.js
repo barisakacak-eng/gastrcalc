@@ -1,19 +1,19 @@
-// Hinweis-Karten im Büro (Vertrag docs/vertraege.md Abschnitt 2, 23.10.2026): allgemeine Steuer-Hinweise aus den Daten, die die App hat.
+// Hinweis-Karten im Büro: allgemeine Steuer-Hinweise aus den Daten, die die App hat.
 // Nur Anzeige. Rechenwerk und Inhalt: js/hinweis.js. Pflichtzeile oben: allgemeiner Hinweis, keine Steuerberatung.
 // Je Karte: Titel, Satz, Quelle, Knopf „Belege bereitlegen“ (führt in den Steuer-Ordner), „Später“, „Erledigt“.
 import { t, sprache } from "../i18n.js";
-import { hinweisAnzeige } from "../data/hinweis_texte.js"; // 24.10.2026: Karten in en/tr, sonst Deutsch
+import { hinweisAnzeige } from "../data/hinweis_texte.js"; // Karten in en/tr, sonst Deutsch
 import { esc } from "../util.js";
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
 import { hinweiseFuer, BELEG_KNOPF } from "../hinweis.js";
-import { hmFuerBuero, hmOffeneFragen, hmErledigtZahl } from "../hinweis_motor.js"; // Lauf 3 (09.11.2026), live seit Baris' Ja 17:21
+import { hmFuerBuero, hmOffeneFragen, hmErledigtZahl } from "../hinweis_motor.js"; // Lauf 3, live seit Baris' Ja 17:21
 import { hmUi, hmAnzeige } from "../data/hm_texte.js";
 import { heute } from "../util.js";
 
 const datumKurz = (iso) => iso.split("-").reverse().join(".");
 // Hinweis-Motor „Was dir zusteht“: höchstens 3 Karten nach Nutzen (Auswahl und Takt in js/hinweis_motor.js), darunter nur die Fragen,
-// die ein Hinweis braucht. Baris Ja 09.11.2026 17:21 (Bildpaket HM).
+// die ein Hinweis braucht. Baris Ja 17:21 (Bildpaket HM).
 function hmBlock(stand, sp, datum = heute()) {
   const u = (k, w) => hmUi(sp, k, w);
   const { karten } = hmFuerBuero(stand, { datum }); const fragen = hmOffeneFragen(stand); const n = hmErledigtZahl(stand);
@@ -36,7 +36,7 @@ function hmBlock(stand, sp, datum = heute()) {
 
 export function hinweiseView(stand) {
   const karten = hinweiseFuer(stand).map((h) => hinweisAnzeige(h, sprache()));
-  // Vorab-Prüfung 03.11.2026 (C12): je Hinweis nur der Titel, Satz, Quelle und Knöpfe auf Tipp (Büro-Maß 120 Wörter; vorher ≈ 250–300)
+  // Vorab-Prüfung (C12): je Hinweis nur der Titel, Satz, Quelle und Knöpfe auf Tipp (Büro-Maß 120 Wörter; vorher ≈ 250–300)
   const karte = (h) => `<details class="karte hinweiskarte auf ${h.status === "spaeter" ? "spaeter" : ""}" data-hinweis="${esc(h.id)}">
       <summary class="hk-kopf"><b>${esc(h.titel)}</b>${h.status === "spaeter" ? `<small>${esc(t("hinweise.spaeter"))}</small>` : ""}</summary>
       <p>${esc(h.satz)}</p>

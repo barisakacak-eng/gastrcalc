@@ -1,5 +1,5 @@
 // Speisekarte lesen – aus erkanntem Text (Foto oder PDF) werden Gerichte mit Preis, und aus den Rezeptvorlagen die Zutaten.
-// Daraus entsteht automatisch die Inventurliste (engine.artikelAusGerichten). Etappe 6a, Baris 14.10.2026:
+// Daraus entsteht automatisch die Inventurliste (engine.artikelAusGerichten). Etappe 6a, Baris:
 // „Kamerafunktion für die Aufnahme der Speisekarte, auf der dann automatisch die Inventurliste entsteht."
 // Grundsatz: Nichts wird still übernommen. Jede Zeile kommt als Vorschlag mit Sicherheit; der Wirt bestätigt oder ändert.
 
@@ -192,7 +192,7 @@ function positionenEinerLesart(text) {
 }
 
 // Passt ein Kartenname zu einer Rezeptvorlage? Wert 0..1 (≥ 0,5 = Vorschlag, ≥ 0,75 = sicher)
-// Mengenwörter (Burger-Test 28.10.2026: „Cheeseburger“ bekam das Rezept „Doppel-Cheeseburger“ mit 2 Patties): steht so ein Wort nur auf
+// Mengenwörter: steht so ein Wort nur auf
 // einer Seite, ist es ein anderes Gericht – Abschlag MENGENWORT_ABSCHLAG (Setzung), damit die einfache Vorlage gewinnt.
 const MENGENWORT = /\b(doppel\w*|double|dopp|triple|dreifach|xxl|xl|mega|maxi|mini|kids?|kinder|gross|grosse|klein|kleine)\b/g;
 const MENGENWORT_ABSCHLAG = 0.25;
@@ -312,9 +312,9 @@ export function inventurVorschau(stand) {
   return { anzahl: namen.size, gruppen, namen: [...namen] };
 }
 
-// Trennung 2 (17.10.2026): Zahlen der Prüfliste „Karte per Foto“ (vorher in js/screens/foto.js kartePruefenView).
+// Trennung 2: Zahlen der Prüfliste „Karte per Foto“ (vorher in js/screens/foto.js kartePruefenView).
 // an = übernommene Vorschläge, mitRezept = davon mit Vorlage, zutaten = Zahl verschiedener Waren (Zutaten der Vorlagen, Getränke selbst).
-// Baris 26.10.2026 („48 € für Maccaroni rutscht durch“): Preis auffällig, wenn über 30 € oder mehr als das Dreifache des mittleren Kartenpreises.
+// Baris („48 € für Maccaroni rutscht durch“): Preis auffällig, wenn über 30 € oder mehr als das Dreifache des mittleren Kartenpreises.
 export function preisAuffaellig(v, alle) {
   if (!v || v.preis === null || v.preis === undefined) return false;
   const p = (alle || []).filter((x) => x.an !== false && x.preis !== null && x.preis !== undefined).map((x) => x.preis).sort((a, b) => a - b);

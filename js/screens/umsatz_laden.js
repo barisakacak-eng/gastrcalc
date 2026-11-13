@@ -1,4 +1,4 @@
-// Laden-Umbau (20.10.2026): „Umsatz heute“ im Laden – eine Zahl aus der Kasse, ein Knopf. Vorher führte die Kachel ins Büro (umsatz.js).
+// Laden-Umbau: „Umsatz heute“ im Laden – eine Zahl aus der Kasse, ein Knopf. Vorher führte die Kachel ins Büro (umsatz.js).
 // Gespeichert wird wie die Tagesumsatz-Eingabe im Büro (js/laden_zahlen.js umsatzHeuteSpeichern: Geschäftstag bis 4 Uhr, festgeschrieben).
 // brutto/netto, Vortage und Korrekturen bleiben im Büro. Über 100.000 € fragt der Bildschirm einmal nach („Stimmt das?“), ohne alert().
 import { t } from "../i18n.js";
@@ -10,11 +10,11 @@ import { teamTag, teamTagSetzen, teamTagLohn, teamTagKosten, abwesendMonat, abwe
 import { sym } from "../symbole.js";
 import { tageImMonat } from "../zeit.js";
 
-let teamEntwurf = { pers: null, std: null, satz: null }; let satzAuf = false; // Baris 27.10.2026 18:10: Mitarbeiter kompakt unter dem Umsatz (Personen, Stunden zusammen, Lohn je Stunde einmal)
-let lieferEntwurf = null; // „davon Lieferdienst“ (27.10.2026), nur wenn ein Portal mit Provision eingerichtet ist
+let teamEntwurf = { pers: null, std: null, satz: null }; let satzAuf = false; // Baris 18:10: Mitarbeiter kompakt unter dem Umsatz (Personen, Stunden zusammen, Lohn je Stunde einmal)
+let lieferEntwurf = null; // „davon Lieferdienst“, nur wenn ein Portal mit Provision eingerichtet ist
 let entwurf = null;   // getippter Text (null = noch nichts getippt, Feld zeigt den gespeicherten Wert)
 let rueckfrage = null; // Betrag, nach dem gerade gefragt wird (über der Grenze)
-// Mitarbeiter heute (Baris 27.10.2026, 11:14): nach dem Umsatz fragt Zeki „Waren heute Mitarbeiter da?“. schritt: "feld" | "frage" | "liste"
+// Mitarbeiter heute: nach dem Umsatz fragt Zeki „Waren heute Mitarbeiter da?“. schritt: "feld" | "frage" | "liste"
 let schritt = "feld"; let team = null; const satzEntwuerfe = new Map(); const monatEntwuerfe = new Map(); // team: [{ person, name, stunden, satz, an }]
 
 export const umsatzLadenKennung = () => (rueckfrage !== null ? "frage" : schritt);
@@ -22,10 +22,10 @@ export function umsatzLadenZuruecksetzen() { entwurf = null; lieferEntwurf = nul
 
 function teamStart(stand, H) {
   const alt = teamTag(stand, H);
-  // 27.10.2026 (Baris 13:02): Personen mit festem Monatslohn stehen nicht in der täglichen Frage – ihr Lohn ist feste Kosten.
+  // (Baris 13:02): Personen mit festem Monatslohn stehen nicht in der täglichen Frage – ihr Lohn ist feste Kosten.
   const leute = (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false && p.lohnModell !== "monat");
   const basis = leute.length ? leute.map((p) => ({ person: p.id, name: p.kuerzel, satz: p.stundenlohn || null, art: p.lohnArt || null, modell: p.lohnModell || null })) : [{ person: null, name: t("teamTag.person", 1), satz: null, art: null, modell: "stunde" }];
-  return basis.map((b) => { const v = alt?.eintraege.find((x) => (x.person || x.name) === (b.person || b.name)); return { ...b, stunden: v ? v.stunden : 8, satz: v?.satz || b.satz, art: v?.art || b.art, an: !!v }; }); // 27.10.2026 (Prüfung F5): nichts vorauswählen – sonst zählt der Inhaber als Mitarbeiter doppelt
+  return basis.map((b) => { const v = alt?.eintraege.find((x) => (x.person || x.name) === (b.person || b.name)); return { ...b, stunden: v ? v.stunden : 8, satz: v?.satz || b.satz, art: v?.art || b.art, an: !!v }; }); // (Prüfung F5): nichts vorauswählen – sonst zählt der Inhaber als Mitarbeiter doppelt
 }
 // Gibt es überhaupt jemanden mit Stundenlohn (oder noch ohne Lohnart)? Sonst entfällt die Frage „Waren heute Mitarbeiter da?“.
 export const teamFrageNoetig = (stand) => { const p = (stand.personen || []).filter((x) => !x.entfernt && x.aktiv !== false); return !p.length || p.some((x) => x.lohnModell !== "monat"); };
@@ -38,7 +38,7 @@ function zeileLohn(x, i) {
   return `${modellWahl}<div class="stepper team-std"><button type="button" data-a="ul-team-std" data-i="${i}" data-d="-0.5" aria-label="−">−</button><div class="wert"><b>${esc(String(x.stunden).replace(".", ","))}</b><small>${esc(t("teamTag.std"))}</small></div><button type="button" data-a="ul-team-std" data-i="${i}" data-d="0.5" aria-label="+">+</button></div>
           ${x.satz && x.art ? "" : `<label class="team-satz"><span>${esc(t("teamTag.satz"))}</span><input inputmode="decimal" data-f="ul-team-satz:${i}" value="${x.satz ? esc(String(x.satz).replace(".", ",")) : ""}" placeholder="0,00" autocomplete="off"><span>€</span></label>${art}`}`;
 }
-// Monatsende (Baris 27.10.2026): in den letzten 3 Tagen des Monats einmal fragen, ob Stundenkräfte krank oder im Urlaub waren
+// Monatsende: in den letzten 3 Tagen des Monats einmal fragen, ob Stundenkräfte krank oder im Urlaub waren
 const stundenLeute = (stand) => (stand.personen || []).filter((p) => !p.entfernt && p.aktiv !== false && p.lohnModell !== "monat" && p.stundenlohn > 0);
 export function abwesendFrageNoetig(stand, H) {
   const [j, m] = H.split("-").map(Number); const letzter = tageImMonat(j, m);
@@ -60,7 +60,7 @@ function abwesendView(stand) {
       <button type="button" class="knopf glut" data-a="ul-abw-fertig">${esc(t("teamTag.fertig"))}</button>
     </div>${nav("start")}`;
 }
-let normalAntwort = null; // Baris 27.10.2026 (B): Antwort auf „Ist das ein normaler Tag?“
+let normalAntwort = null; // Baris (B): Antwort auf „Ist das ein normaler Tag?“
 function teamView(stand) {
   if (schritt.startsWith("abw-")) return abwesendView(stand);
   if (schritt === "normal-frage") return `
@@ -154,7 +154,7 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   if (name === "ul-abw-fertig" && abwesend) { abwesendSetzen(stand, H, abwesend); schritt = "feld"; abwesend = null; return { fertig: true }; }
   if (name === "ul-satz-auf") { satzAuf = true; return "zeichnen"; }
   if (name === "ul-normal-ja" || name === "ul-normal-nein") { normalAntwort = name === "ul-normal-ja"; normalTagSetzen(stand, H, normalAntwort);
-    return weiterOderFertig(); } // Bildpaket E3 (Baris Ja 03.11.2026, K1 C7): Antwort genügt – keine Zwischenseite „Gut. Ab jetzt …“ mehr
+    return weiterOderFertig(); } // Bildpaket E3: Antwort genügt – keine Zwischenseite „Gut. Ab jetzt …“ mehr
   if (name === "ul-normal-fertig") return weiterOderFertig();
   if (name === "ul-team-nein") { teamTagSetzen(stand, H, []); return weiterOderFertig(); }
   if (name === "ul-team-ja") { team = teamStart(stand, H); schritt = "liste"; return "zeichnen"; }
@@ -186,12 +186,12 @@ export function umsatzLadenAktion(name, el, stand, wurzel) {
   const satzNeu = String(teamEntwurf.satz ?? "").trim() === "" ? null : parseZahl(teamEntwurf.satz);
   const satz = satzNeu ?? (Number(stand.team?.stundenlohn) > 0 ? stand.team.stundenlohn : null);
   if (std === null || (teamEntwurf.satz && satzNeu === null)) return { meldung: t("allgemein.zahlUngueltig", String(std === null ? stdText : teamEntwurf.satz).trim().slice(0, 20)) };
-  // Klicker K1 (30.10.2026): fehlt nur der Stundenlohn, wird der Umsatz trotzdem gespeichert; der Bildschirm bleibt offen und das Lohn-Feld geht auf
+  // Klicker K1: fehlt nur der Stundenlohn, wird der Umsatz trotzdem gespeichert; der Bildschirm bleibt offen und das Lohn-Feld geht auf
   if (std > 0 && !satz) { umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null }); if (prov) lieferTagSetzen(stand, H, liefer);
-    // Lauf 2 (31.10.2026), Bildpaket D (4a): die Stunden gehen nicht verloren – Team-Tag ohne Satz speichern; der Zähler rechnet bis zum echten Lohn mit dem Mindestlohn (≈)
+    // Lauf 2, Bildpaket D (4a): die Stunden gehen nicht verloren – Team-Tag ohne Satz speichern; der Zähler rechnet bis zum echten Lohn mit dem Mindestlohn (≈)
     teamTagSetzen(stand, H, [{ person: null, name: `${pers || 1}`, kompakt: true, personen: pers || 1, stunden: std, satz: null, art: "angestellt", modell: "stunde" }]);
     entwurf = null; rueckfrage = null; satzAuf = true; return { teil: true, betrag: p.betrag, meldung: t("teamTag.satzFehlt") }; }
-  // Nachtest 27.10.2026: unplausible Werte nicht still speichern (1.400 €/Std. ergab „bis null ≈ 409.027 €“)
+  // Nachtest: unplausible Werte nicht still speichern (1.400 €/Std. ergab „bis null ≈ 409.027 €“)
   if ((satz && (satz < 5 || satz > 80)) || (std > 0 && std > 24 * Math.max(1, pers || 1)) || (pers && pers > 60)) return { meldung: t("teamTag.unplausibel") };
   umsatzHeuteSpeichern(stand, p.betrag, { geraet: wurzel?.geraet || null });
   if (prov) lieferTagSetzen(stand, H, liefer);

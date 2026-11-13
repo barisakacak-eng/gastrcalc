@@ -1,4 +1,4 @@
-// Mitmach-Rundgang mit Zeki (Entwurf 28.10.2026, Konzept „Mitmach-Rundgang“ Abschnitt 7, freigegeben 13:39). Ersetzt den Vortrag vom 26.10.:
+// Mitmach-Rundgang mit Zeki. Ersetzt den Vortrag vom 26.10.:
 // zeigen, tippen lassen, loben, weiter. Nur das Ziel im Lichtkegel ist antippbar, der Rest gesperrt; der Chef tippt auf die ECHTEN Knöpfe.
 // Alles, was er dabei einträgt, ist Übung: app.js merkt den Stand vorher, pausiert das Speichern und legt den Stand am Ende zurück
 // (js/stamm.js uebungStarten/uebungZuruecknehmen, js/store.js speichernPausieren). Diese Datei zeigt nur an und meldet über die Rückrufe
@@ -144,7 +144,7 @@ function klick(ev) {
   if (ev.target.closest?.(".rg-karte, .rg-ueberspringen, .rg-ende")) return;
   const x = ev.clientX, y = ev.clientY;
   const drin = x >= rect.left - PAD && x <= rect.right + PAD && y >= rect.top - PAD && y <= rect.bottom + PAD;
-  // F2 (Sonderauftrag 6b, 28.10.2026): auch ein Tipp direkt auf das Ziel zählt, selbst wenn der Lichtkegel auf dem Handy leicht verrutscht ist
+  // F2: auch ein Tipp direkt auf das Ziel zählt, selbst wenn der Lichtkegel auf dem Handy leicht verrutscht ist
   const aufZiel = zielListe(schritt).some((sel) => typeof sel === "string" && ev.target.closest?.(sel));
   if (!drin && !aufZiel) return;
   if (schritt.tipp && !ev.target.closest?.(schritt.tipp)) return;
