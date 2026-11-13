@@ -41,5 +41,5 @@ export const Z = {
 };
 
 export const haken = {
-  fuehrungStarten: null,   // js/bedienung/rundgang.js: Führung auf Heute starten (von zeichne aufgerufen)
+  fuehrungStartPlanen: null, // js/bedienung/rundgang.js: Führung auf Heute planen (von zeichne aufgerufen)
 };

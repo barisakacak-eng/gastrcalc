@@ -13,6 +13,8 @@ const HIER = path.dirname(fileURLToPath(import.meta.url));
 const JS = path.join(HIER, "..", "js");
 const SCREENS = path.join(JS, "screens");
 const lies = (p) => fs.readFileSync(p, "utf8");
+// js/app.js ist nur noch der Einstieg; der Rest der Bedienschicht liegt in js/bedienung/ – für Quelltext-Suchen zusammen lesen.
+const liesApp = () => [path.join(JS, "app.js"), ...fs.readdirSync(path.join(JS, "bedienung")).sort().map((f) => path.join(JS, "bedienung", f))].map(lies).join("\n");
 const i18n = await import("../js/i18n.js");
 i18n.setzeSprache("de");
 
@@ -159,7 +161,7 @@ test("Trennung: ring, zielAttr, Mengen-Schreibweise und Teilen gibt es je einmal
 });
 
 test("Trennung: tote Anzeige-Bausteine (home.js) und tote Handlungen (app.js) sind entfernt", () => {
-  const home = lies(path.join(SCREENS, "home.js")), app = lies(path.join(JS, "app.js"));
+  const home = lies(path.join(SCREENS, "home.js")), app = liesApp();
   for (const n of ["heuteKacheln(", "umsatzInstrument", "tonneInstrument", "wareneinsatzInstrument", "kuehlInstrument", "bandView", "einrichtungKarte", "monatKarte", "spruchKarte"]) assert.ok(!home.includes(n), n);
   for (const n of ['"schnell-muell"', '"schnell-umsatz"', '"personal-start"', '"einrichtung-liste"']) assert.ok(!app.includes(n), n);
   assert.ok(!app.includes("muellEingabeOeffnen"), "nur von schnell-muell benutzt");
@@ -221,7 +223,7 @@ test("Trennung: Prüfliste der Karte legt ihre Gruppen beim Hinzufügen fest, ni
 });
 
 test("Trennung: app.js schreibt beim Zeichnen nichts (Beispiel-Name, Person im Personal-Modus, Schritt-Kennung)", () => {
-  const app = lies(path.join(JS, "app.js"));
+  const app = liesApp();
   const zeichne = app.slice(app.indexOf("function zeichne() {"), app.indexOf("function karteFotoSchirm"));
   assert.ok(!/b\.betrieb\.name =|personalNachtragen\(|beispielNamenFolgen\(/.test(zeichne.split("function setzeSprache")[0]), "zeichne() schreibt nicht");
   const ob = app.slice(app.indexOf("function zeichneOnboarding"), app.indexOf("// ---------- Ablauf ----------"));
@@ -303,5 +305,5 @@ test("Ware nach Kühl-Abweichung: Bildschirm im Büro – Handlungen, Texte in 1
     for (const k of Object.keys(de.kuehlWare)) assert.ok(typeof tab.kuehlWare?.[k] === "string" && tab.kuehlWare[k].trim(), `${c}: kuehlWare.${k}`);
     assert.ok(tab.amtW2.ware.behalten, `${c}: amtW2.ware.behalten`); }
   // der Bildschirm steht in der zentralen Zurücksetzer-Liste
-  assert.match(lies(path.join(JS, "app.js")), /kuehlWareZuruecksetzen\]/);
+  assert.match(liesApp(), /kuehlWareZuruecksetzen\]/);
 });

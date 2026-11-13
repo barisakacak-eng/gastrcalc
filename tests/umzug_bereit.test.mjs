@@ -17,7 +17,7 @@ test("manifest: start_url und scope relativ", () => {
 test("index.html und sw.js: relative Pfade, SW relativ registriert", () => {
   const html = lies("index.html");
   for (const m of html.matchAll(/(?:src|href)="([^"]+)"/g)) assert.ok(!m[1].startsWith("/") && !/^https?:/.test(m[1]), "absolut in index.html: " + m[1]);
-  assert.match(lies("js/app.js"), /serviceWorker\.register\("sw\.js"/);
+  assert.match(lies("js/bedienung/update.js"), /serviceWorker\.register\("sw\.js"/); // der Service Worker wird in js/bedienung/update.js angemeldet
   const sw = lies("sw.js");
   for (const d of sw.match(/const DATEIEN = \[([^\]]+)\]/)[1].split(",").map((x) => x.trim().replace(/^"|"$/g, ""))) assert.ok(!d.startsWith("/"), "absolut in sw.js: " + d);
 });

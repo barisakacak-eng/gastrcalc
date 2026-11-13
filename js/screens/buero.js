@@ -48,7 +48,7 @@ const zielAttr = (z) => zielAttrAlle(z, { zusatz: false });
 
 // ---------- Kopf ----------
 // Gleiche Leiste wie alle Büro-Bildschirme (nav.js): Ziel „start" heißt zurück in den Laden.
- export function bueroZuruecksetzen() {} export function bueroSperren() {}
+ export function bueroZuruecksetzen() {}
 const kopf = (zurueck, titel) => `<header class="appleiste ebene-kopf buero">${zurueck.ziel === "start"
     ? `<button type="button" class="zurueckzeile" data-a="modus" data-wert="laden">${bsym("chevron-left")}<span>${esc(t("ebene.zumLaden"))}</span></button>`
     : zurueck.ziel === "buero" ? bueroZurueckKnopf() // 01.11.2026: eine Ebene zurück

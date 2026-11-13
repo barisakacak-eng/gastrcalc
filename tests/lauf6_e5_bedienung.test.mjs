@@ -157,7 +157,7 @@ test("F: Für jeden data-a-Namen aus js/screens gilt im Personal-Modus: erlaubt 
   assert.equal(M.personalGesperrt("tag-datum", HEUTE, HEUTE), false); assert.equal(M.personalGesperrt("tag-datum", "2026-11-12", HEUTE), true);
 });
 test("F: Die Positivliste öffnet nichts mit Euro, Büro oder Einstellungen – und jeder Eintrag kommt im Code vor", () => {
-  const namen = aktionsNamen(); const app = fs.readFileSync(path.join(WURZEL, "js", "app.js"), "utf8");
+  const namen = aktionsNamen(); const app = [path.join(WURZEL, "js", "app.js"), ...fs.readdirSync(path.join(WURZEL, "js", "bedienung")).sort().map((f) => path.join(WURZEL, "js", "bedienung", f))].map((f) => fs.readFileSync(f, "utf8")).join("\n"); // app.js ist nur der Einstieg, der Rest liegt in js/bedienung/
   for (const n of M.PERSONAL_ERLAUBT) {
     assert.ok(!M.PERSONAL_NIE.has(n) && !M.PERSONAL_NIE_VORSILBEN.test(n), "in der Gegenliste: " + n);
     assert.ok(!/euro|buero|einstell|umsatz|export|sprache|pin-setzen|pin-entfernen|loeschen|einricht|stelle|person-|kosten|karte|lohn|preis|ordner|laden-|testphase|modus|menue|abschluss-fertig/.test(n) || /^(personal-|muell-personal)/.test(n), "verdächtiger Name: " + n);
