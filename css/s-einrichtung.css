@@ -40,7 +40,7 @@
 .s2willkommen{display:flex;flex-direction:column;gap:12px;padding-block-start:6px}
 .s2unterzeile{margin:0;text-align:start;font-size:1rem;line-height:1.4;color:var(--tinte)}
 .s2willkommen .s2feldtitel{font-weight:700;color:var(--tinte-weich);margin-block-start:8px}
-.s2sprachwahl{min-block-size:56px;font-size:1.0588rem;font-weight:700;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);box-shadow:var(--schatten-karte)}
+.s2sprachwahl{direction:inherit;min-block-size:56px;font-size:1.0588rem;font-weight:700;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);box-shadow:var(--schatten-karte)}
 
 /* Laden: Name, dann Arten als Foto-Kacheln (drei in einer Reihe) */
 .s2name{min-block-size:52px;font-size:1.0588rem;font-weight:700;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);padding:8px 14px}
