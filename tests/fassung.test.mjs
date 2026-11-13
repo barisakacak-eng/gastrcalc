@@ -39,10 +39,22 @@ test("Fassungs-Wächter: jede App-Datei auf der Platte steht in der Liste des Se
       if (e.isDirectory()) { if (!aus.has(e.name)) gehe(voll); continue; }
       if (!endungen.has(path.extname(e.name)) || e.name === "sw.js") continue;
       if (rel.startsWith("js/lang/") && !["de", "tr", "en"].includes(path.basename(e.name, ".js"))) continue;
-      if (rel.startsWith("foto/")) { if (!(rel in fotos)) fehlt.push(rel); continue; }
+      if (rel.startsWith("foto/") || rel.startsWith("assets/brand/zeki-klein/")) { if (!(rel in fotos)) fehlt.push(rel); continue; } // Nachlade-Cache (Fotos, Zeki-Folgen)
       if (!dateien.has(rel)) fehlt.push(rel);
     }
   };
   gehe(WURZEL);
   assert.deepEqual(fehlt, [], "Dateien fehlen in sw.js – python3 tools/sw_liste.py ausführen");
+});
+
+test("Fassungs-Wächter: die 25 Zeki-Folgen liegen im Nachlade-Cache, nicht in der Start-Liste; Bühnen-Bilder, Mienen und Schriften stehen in der Start-Liste", () => {
+  const dateien = JSON.parse(sw.match(/const DATEIEN = (\[[^\]]*\])/)[1]);
+  const fotos = JSON.parse(sw.match(/const FOTOS_H = (\{[^}]*\})/)[1]);
+  assert.deepEqual(dateien.filter((d) => d.startsWith("assets/brand/zeki-klein/")), []);
+  assert.equal(Object.keys(fotos).filter((k) => k.startsWith("assets/brand/zeki-klein/")).length, 25);
+  assert.equal(dateien.filter((d) => d.startsWith("assets/brand/zeki-buehne/")).length, 24);
+  assert.equal(dateien.filter((d) => d.startsWith("assets/brand/zeki-mienen/")).length, 12);
+  for (const f of ["NotoSans-Regular", "NotoSans-Bold", "NotoSansArabic-Regular", "NotoSansArabic-Bold"]) assert.ok(dateien.includes(`fonts/${f}.woff2`), f);
+  for (const d of dateien) assert.ok(!/^(design|tools|docs)\//.test(d), "nicht offline: " + d);
+  assert.match(sw, /const NACHLADE = \["foto\/", "assets\/brand\/zeki-klein\/"\]/);
 });
