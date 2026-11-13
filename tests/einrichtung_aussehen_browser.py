@@ -48,7 +48,7 @@ KONTRAST = """() => {
   const num = (c) => { let m = c.match(/^rgba?\\(([^)]+)\\)/); if (m) { const p = m[1].split(/[ ,\\/]+/).filter(Boolean).map(parseFloat); return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1]; }
     m = c.match(/^color\\(srgb ([^)]+)\\)/); if (m) { const p = m[1].split(/[ \\/]+/).filter(Boolean).map(parseFloat); return [p[0] * 255, p[1] * 255, p[2] * 255, p.length > 3 ? p[3] : 1]; } return null; };
   const lum = (r, g, b) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
-  const hinter = (e) => { let lagen = []; for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const c = num(getComputedStyle(x).backgroundColor); if (c && c[3] > 0) { lagen.push(c); if (c[3] >= 0.99) break; } }
+  const hinter = (e) => { if (e.closest('.schirm > .kopf') && document.querySelector('.gc-buehne')) e = document.querySelector('.gc-buehne'); /* der Kopf liegt über der Bühne */ let lagen = []; for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const c = num(getComputedStyle(x).backgroundColor); if (c && c[3] > 0) { lagen.push(c); if (c[3] >= 0.99) break; } }
     let b = [245, 237, 226]; for (const c of lagen.reverse()) b = [c[0] * c[3] + b[0] * (1 - c[3]), c[1] * c[3] + b[1] * (1 - c[3]), c[2] * c[3] + b[2] * (1 - c[3])]; return b; };
   const aus = []; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let n = w.nextNode(); n; n = w.nextNode()) {
