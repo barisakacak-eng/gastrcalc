@@ -12,7 +12,8 @@ export const MINDESTLOHN = REGELN.mindestlohn
 // Eintrag, der an diesem Tag gilt (JJJJ-MM-TT). Vor dem ersten Eintrag (oder ohne gültigen Tag): der erste Eintrag, gekennzeichnet mit vorErstem: true.
 export function mindestlohnAm(datum) {
   let e = null;
-  for (const x of MINDESTLOHN) if (typeof datum === "string" && datum >= x.ab) e = x;
+  const tag = typeof datum === "string" && /^\d{4}-\d{2}-\d{2}/.test(datum) ? datum : null; // Text, der kein Datum ist, vergleicht sich sonst „größer“ als jede Zahl
+  for (const x of MINDESTLOHN) if (tag !== null && tag >= x.ab) e = x;
   return e || { ...MINDESTLOHN[0], vorErstem: true };
 }
 // Nächste Erhöhung nach diesem Tag, oder null
