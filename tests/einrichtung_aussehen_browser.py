@@ -36,12 +36,32 @@ MESSEN = """() => {
     .map((e) => { const r = e.getBoundingClientRect(); return { k: (e.dataset.a || e.dataset.f || e.className || e.tagName).toString().slice(0, 40), w: Math.round(r.width), h: Math.round(r.height), t: (e.textContent || '').trim().slice(0, 20) }; })
     .filter((x) => x.h < 43.5 || x.w < 43.5);
   const rects = [...(blaetter.length ? huelle : app).querySelectorAll('*')].filter(sichtbar).filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).filter((e) => !e.closest('.gc-figur-knopf, .gc-figur, .zeki-lebt, .home-bilder, .dateifeld')).map((e) => (e.className || e.tagName).toString().slice(0, 40));
-  const fr = document.querySelector('.gc-buehne .gc-figur-knopf'); const f = fr ? fr.getBoundingClientRect() : null;
+  const fr = document.querySelector('.gc-buehne .gc-figur-knopf') || document.querySelector('.gc-buehne .gc-figur'); const f = fr ? fr.getBoundingClientRect() : null;
   return { blattImDom, buehnen: buehnen.length, blaetter: blaetter.length, figuren: bilderFiguren.length, blasen, ueberlaufX: doc.scrollWidth > innerWidth + 1, rects: rects.slice(0, 4),
     ueberlaufY: doc.scrollHeight - innerHeight, appY: app.scrollHeight - app.clientHeight, text: (app.innerText || '') + ' ' + (huelle ? huelle.innerText : ''), tippflaechen: tippflaechen.slice(0, 5),
     buehneH: buehnen[0] ? Math.round(buehnen[0].getBoundingClientRect().height) : 0, figurMitte: f ? f.left + f.width / 2 : null, figurRechts: f ? f.right : null, figurLinks: f ? f.left : null, breite: innerWidth,
     schritt: (window.__gastrocalc && window.__gastrocalc.stand && window.__gastrocalc.stand.schrittId) || '' };
 }"""
+
+# Lesbarkeit: Text gegen den Hintergrund, mindestens 4,5 : 1 (große Schrift ab 24 px / 19 px fett: 3 : 1)
+KONTRAST = """() => {
+  const num = (c) => { let m = c.match(/^rgba?\\(([^)]+)\\)/); if (m) { const p = m[1].split(/[ ,\\/]+/).filter(Boolean).map(parseFloat); return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1]; }
+    m = c.match(/^color\\(srgb ([^)]+)\\)/); if (m) { const p = m[1].split(/[ \\/]+/).filter(Boolean).map(parseFloat); return [p[0] * 255, p[1] * 255, p[2] * 255, p.length > 3 ? p[3] : 1]; } return null; };
+  const lum = (r, g, b) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+  const hinter = (e) => { let lagen = []; for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const c = num(getComputedStyle(x).backgroundColor); if (c && c[3] > 0) { lagen.push(c); if (c[3] >= 0.99) break; } }
+    let b = [245, 237, 226]; for (const c of lagen.reverse()) b = [c[0] * c[3] + b[0] * (1 - c[3]), c[1] * c[3] + b[1] * (1 - c[3]), c[2] * c[3] + b[2] * (1 - c[3])]; return b; };
+  const aus = []; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = w.nextNode(); n; n = w.nextNode()) {
+    if (!n.textContent.trim()) continue; const e = n.parentElement; if (!e || e.closest('script,style,noscript,option,select,[disabled],.versteckt')) continue;
+    const r = e.getBoundingClientRect(); if (r.width < 2 || r.height < 2) continue; const s = getComputedStyle(e);
+    let op = 1, sichtbar = true; for (let x = e; x && x.nodeType === 1; x = x.parentElement) { const c = getComputedStyle(x); if (c.visibility === 'hidden' || c.display === 'none') sichtbar = false; op *= +c.opacity; }
+    if (!sichtbar || op < 0.6) continue;
+    if (e.closest('#app') && document.querySelector('.ebene-blatt') && !e.closest('#ebene-huelle')) continue; // hinter dem Blatt abgedunkelt
+    const f = num(s.color); if (!f) continue; const b = hinter(e); const fg = [f[0] * f[3] + b[0] * (1 - f[3]), f[1] * f[3] + b[1] * (1 - f[3]), f[2] * f[3] + b[2] * (1 - f[3])];
+    const l1 = lum(...fg), l2 = lum(...b), v = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    const px = parseFloat(s.fontSize), gross = px >= 24 || (px >= 18.66 && +s.fontWeight >= 700);
+    if (v < (gross ? 3 : 4.5)) aus.push(`${(e.className || e.tagName).toString().slice(0, 30)} „${n.textContent.trim().slice(0, 18)}“ ${v.toFixed(2)}`);
+  } return aus.slice(0, 5); }"""
 
 
 async def main():
@@ -87,7 +107,10 @@ async def lauf(b, sprache, br, ho, art, name, befund, fehler):
         if m["blasen"]: befund.append(f"{tag}: sichtbare Sprechblase {m['blasen']}")
         if m["ueberlaufX"] or m["rects"]: befund.append(f"{tag}: waagrechter Überlauf {m['rects']}")
         if einrichtung and (m["ueberlaufY"] > 1 or m["appY"] > 1): befund.append(f"{tag}: senkrechtes Scrollen (Dokument +{m['ueberlaufY']}, #app +{m['appY']})")
+        kon = await pg.evaluate(KONTRAST)
+        if kon: befund.append(f"{tag}: Kontrast zu schwach {kon}")
         if m["tippflaechen"]: befund.append(f"{tag}: Tippfläche unter 44 px {m['tippflaechen']}")
+        if m["figurLinks"] is not None and not blatt and (m["figurLinks"] < -0.5 or m["figurRechts"] > m["breite"] + 0.5): befund.append(f"{tag}: Zeki/Hilfe-Knopf ragt aus dem Fenster ({m['figurLinks']}…{m['figurRechts']})")
         if sprache == "ar" and not blatt and m["figurMitte"] is not None and m["figurMitte"] >= m["breite"] / 2: befund.append(f"{tag}: Figur im Arabischen nicht links ({m['figurMitte']})")
         print(f"{tag}: Bühne {m['buehneH']} px, Zekis {m['figuren']}, Blätter {m['blaetter']}, Scroll {m['ueberlaufY']}/{m['appY']}", flush=True)
         if BILDER and (sprache == "de" or True):
@@ -160,7 +183,11 @@ async def lauf(b, sprache, br, ho, art, name, befund, fehler):
     if not await pg.locator("#ebene-huelle .blatt-pin").count(): await pg.click('[data-a="menue-auf"]') if False else None
     await pg.wait_for_selector("#ebene-huelle .blatt-pin")
     for _ in range(5):
-        await schnellstart.code_tippen(pg, "9999"); await pg.wait_for_timeout(1500)
+        if await pg.locator('#ebene-huelle .pintaste[data-wert="9"][disabled]').count(): break
+        await schnellstart.code_tippen(pg, "9999")
+        for _ in range(40):  # die Prüfung rechnet (PBKDF2): warten, bis die Punkte wieder leer sind oder die Wartezeit steht
+            await pg.wait_for_timeout(150)
+            if await pg.locator('#ebene-huelle .pin-punkte i.voll').count() == 0: break
     await pruefe("b9-wartezeit", False, blatt=True)
     if not await pg.locator("#ebene-huelle .pin-meldung").inner_text(): befund.append(f"[{sprache}] Wartezeit-Text fehlt")
     await pg.click('#ebene-huelle .pintaste.leer[data-a="blatt-zu"]'); await pg.wait_for_timeout(300)

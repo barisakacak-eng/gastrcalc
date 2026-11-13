@@ -2,6 +2,11 @@
    Wird nach css/buehne.css geladen. Nur Tokens aus css/tokens.css (kein Hex, kein rgb), Schriftgrößen in rem, kein !important.
    Ersetzt die alte Schicht css/schnell.css (dort steht nichts mehr, was noch gebraucht wird). */
 
+/* Schrift auf Glut: dunkel auf hell, im dunklen Thema umgekehrt (--tinte und --papier tauschen dort die Plätze) */
+:root{--auf-glut:var(--tinte)}
+[data-theme=dark]{--auf-glut:var(--papier)}
+@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]){--auf-glut:var(--papier)}}
+
 /* ============================== 1 Einrichtung ============================== */
 /* Aufbau: oben die Bühne (steht im Inhalt, js/screens/onboarding.js, mitBuehne) mit Zurück-Pfeil und Fortschritt darüber (.kopf, absolut),
    darunter Papier (.s-papier), unten der Hauptknopf (.fuss). Auf 390 × 844 und 360 × 740 ohne Scrollen. */
@@ -25,7 +30,7 @@
 .schirm[class*="weg-"]>.fuss{position:sticky;inset-block-end:0;margin:0;padding:8px 16px max(12px,env(safe-area-inset-bottom));background:var(--papier);gap:8px}
 .schirm[class*="weg-"]>.fuss .knopf{inline-size:100%}
 .schirm[class*="weg-"]>.fuss .leise{min-block-size:44px;justify-content:center;text-align:center}
-.schirm[class*="weg-"]>.fuss .knopf.glut,.schirm[class*="weg-"] .s2los{background:var(--glut);color:var(--tinte);border-color:transparent}
+.schirm[class*="weg-"]>.fuss .knopf.glut,.schirm[class*="weg-"] .s2los{background:var(--glut);color:var(--auf-glut);border-color:transparent}
 .s2zeki-hilfe{margin:0;padding:10px 12px;border-radius:var(--radius-klein);border-inline-start:3px solid var(--salbei);background:var(--salbei-hell);color:var(--tinte);font-size:0.9412rem;line-height:1.4}
 .s2zeki-hilfe.fvzeki{margin:0}
 .s-papier>.leise[data-a="weg-genau"]{align-self:flex-start}
@@ -42,10 +47,10 @@
 .s2arten{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .s2arten .kachel.fotokachel{padding:0;overflow:hidden;border-radius:var(--radius);border:1px solid var(--linie);box-shadow:var(--schatten-karte);background:var(--papier);position:relative}
 .s2arten .kachel.fotokachel .kachelfoto{inline-size:100%;aspect-ratio:3/2;border-radius:0;object-fit:cover;background:var(--salbei-hell)}
-.s2arten .kachel.fotokachel .kachelfoto.pikto{object-fit:contain;padding:10px;background:var(--holz)}
+.s2arten .kachel.fotokachel .kachelfoto.pikto{object-fit:contain;padding:10px;background:var(--papier-tief)}
 .s2arten .kachel.fotokachel b{display:block;padding:5px 6px 7px;font-size:0.8235rem;line-height:1.2;overflow-wrap:anywhere;word-break:normal;hyphens:manual;text-align:start}
 .s2arten .kachel.an{outline:3px solid var(--salbei);outline-offset:-3px;background:var(--salbei-hell);box-shadow:var(--schatten-karte)}
-.s2arten.mehrfach .kachel.an::after{content:"✓";position:absolute;inset-block-start:6px;inset-inline-end:6px;inline-size:24px;block-size:24px;border-radius:50%;background:var(--salbei);color:var(--papier);font-weight:800;font-size:0.8235rem;display:grid;place-items:center}
+.s2arten.mehrfach .kachel.an::after{content:"✓";position:absolute;inset-block-start:6px;inset-inline-end:6px;inline-size:24px;block-size:24px;border-radius:50%;background:var(--salbei);color:var(--aktion-text);font-weight:800;font-size:0.8235rem;display:grid;place-items:center}
 
 /* Karte: eine große Foto-Fläche, darunter leise „Fotos oder PDF“ */
 .s2fotoflaeche{flex:1;display:block;position:relative;min-block-size:150px;max-block-size:300px;overflow:hidden;cursor:pointer;border-radius:var(--radius-gross);background:var(--salbei-tief);box-shadow:var(--schatten-karte)}
@@ -79,7 +84,7 @@
 .s2putz b{font-size:1rem}
 .s2putz .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .s2putz .chip{min-block-size:48px;padding:8px;font-size:0.9412rem;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);font-weight:700}
-.s2putz .chip.an{background:var(--salbei);color:var(--papier);border-color:var(--salbei)}
+.s2putz .chip.an{background:var(--salbei);color:var(--aktion-text);border-color:var(--salbei)}
 
 /* Schloss: Code und Face ID */
 .s2schloss{display:flex;flex-direction:column;gap:10px}
@@ -159,8 +164,8 @@
 #ebene-huelle .grosskachel{border-radius:var(--radius);border:1px solid var(--linie);background:var(--papier);color:var(--tinte);box-shadow:var(--schatten-karte);min-block-size:104px}
 #ebene-huelle .grosskacheln.drei>:first-child{min-block-size:84px}
 #ebene-huelle .grosskachel .ks{background:var(--salbei-hell);color:var(--salbei-tief)}
-#ebene-huelle .grosskachel.dunkel{background:var(--salbei);border-color:var(--salbei);color:var(--papier)}
-#ebene-huelle .grosskachel.dunkel .ks{background:color-mix(in srgb,var(--papier) 18%,transparent);color:var(--papier)}
+#ebene-huelle .grosskachel.dunkel{background:var(--salbei);border-color:var(--salbei);color:var(--buehne-text)}
+#ebene-huelle .grosskachel.dunkel .ks{background:color-mix(in srgb,var(--buehne-text) 18%,transparent);color:var(--buehne-text)}
 #ebene-huelle .grosskachel .ks .punkt{background:var(--glut);border-color:var(--papier)}
 #ebene-huelle .sprachzeile{min-block-size:56px;border-radius:var(--radius);border:1px solid var(--linie);background:var(--papier);box-shadow:var(--schatten-karte)}
 #ebene-huelle .blattliste{border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);box-shadow:var(--schatten-karte)}
@@ -174,7 +179,7 @@
 #ebene-huelle .mb-zeile.plus b{color:var(--salbei-tief)}
 #ebene-huelle .mb-knoepfe{display:grid;gap:8px}
 #ebene-huelle .mb-knoepfe .knopf{inline-size:100%}
-#ebene-huelle .mb-knoepfe .knopf.glut{background:var(--glut);color:var(--tinte);border-color:transparent}
+#ebene-huelle .mb-knoepfe .knopf.glut{background:var(--glut);color:var(--auf-glut);border-color:transparent}
 
 /* ============================== 3 Büro-Code und Sperre ============================== */
 /* Punkte, Ziffernfeld (3 Spalten, nie gespiegelt: 1-2-3), „Code vergessen?“ und Wartezeit-Text */
@@ -237,8 +242,8 @@
   .s2kuehlzeile .s2zaehler{grid-column:1/-1;justify-self:end}
 }
 .weg-schnell .kopfzeile .schrittzahl{display:none}
-.s2arten .kachel.fotokachel .kachelfoto.pikto{display:grid;place-items:center;color:var(--tinte);padding:0}
+.s2arten .kachel.fotokachel .kachelfoto.pikto{display:grid;place-items:center;color:var(--tinte);padding:0;background:var(--papier-tief)}
 .s2arten .kachel.fotokachel .kachelfoto.pikto svg{inline-size:36px;block-size:36px;stroke-width:1.6}
-#ebene-huelle .grosskachel.dunkel b{color:var(--papier)}
+#ebene-huelle .grosskachel.dunkel b{color:var(--buehne-text)}
 #ebene-huelle .pw-schalter{display:block;inline-size:100%}
 #ebene-huelle .pw-schalter .oben{inline-size:100%;justify-content:space-between}
