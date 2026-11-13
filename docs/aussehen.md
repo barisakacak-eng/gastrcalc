@@ -6,7 +6,7 @@ Stand 13.11.2026. Grundlage: Übergabe „Rebranding Salbei & Papier“ (12.11.2
 
 - `js/zeki_figur.js` – ruhende Haltung (`buehnenBild`, `figurHtml`), Mienen (`mienenBild`), Folgen (`folge`, `folgeFuer`), Zuordnung Ansicht → Bühnen-Bild (`ZEKI_ANSICHT`, `buehnenSchluessel`), Abspieler (`zekiSpielen`, `zekiEreignis`).
 - `js/buehne.js` – der gemeinsame Kopf „Bühne“ als HTML-Text (`buehneHtml`).
-- `assets/brand/zeki-buehne/` (24 ruhende Haltungen, 512 × 354, `zuordnung.json`, `haltebild.json`), `assets/brand/zeki-klein/` (25 Folgen, Raster 5 × 5, Zelle 256 × 318), `assets/brand/zeki-mienen/` (12 Mienen), `assets/brand/zeki/ablauf.json`, `assets/brand/zeki-gelenke.json`, `assets/brand/zeki.svg`.
+- `assets/brand/zeki-buehne/` (24 ruhende Haltungen, 512 × 354, `zuordnung.json`, `haltebild.json`), `assets/brand/zeki-klein/` (25 Folgen, Raster 5 × 5, Zelle 256 × 318), `assets/brand/zeki-mienen/` (12 Mienen), `assets/brand/zeki/ablauf.json`, `assets/brand/zeki-gelenke.json`, `design/zeki.svg`.
 - `fonts/NotoSans-*.woff2`, `fonts/NotoSansArabic-*.woff2`, `fonts/zeichen.json`; erzeugt von `tools/schrift_teilmenge.py`, geprüft von `tests/schrift.test.mjs`.
 - `tools/zeki-quelle/` – die Werkstatt, aus der Zeki gebaut ist (neue Bewegung = ein Eintrag in `bewegungen.py`, dann `build.py`). `tools/zeki_deckung.py` misst die Deckung von Bühnen-Bild und Folge an den echten Bildern.
 

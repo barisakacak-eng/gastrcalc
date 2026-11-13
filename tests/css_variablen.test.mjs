@@ -45,7 +45,7 @@ test("tokens.css: sechs Farben, Übergangs-Block gekennzeichnet, helle und dunkl
 test("index.html: optik.css nach allen anderen Schichten, buehne.css danach; theme-color und Manifest in Salbei", () => {
   const h = lies("index.html");
   const reihe = [...h.matchAll(/href="css\/([a-z0-9-]+)\.css"/g)].map((m) => m[1]);
-  assert.deepEqual(reihe.slice(-2), ["optik", "buehne"]); assert.equal(reihe[0], "tokens"); assert.equal(new Set(reihe).size, reihe.length);
+  const i = reihe.indexOf("optik"); assert.equal(reihe[i + 1], "buehne"); assert.ok(reihe.slice(i + 2).every((x) => x.startsWith("s-")), "nach der Bühne nur noch die Dateien der Ansichten (s-…)"); assert.ok(reihe.slice(0, i).every((x) => !x.startsWith("s-"))); assert.equal(reihe[0], "tokens"); assert.equal(new Set(reihe).size, reihe.length);
   assert.match(h, /<meta name="theme-color" content="#4C6B55">/);
   const m = JSON.parse(lies("manifest.webmanifest")); assert.equal(m.theme_color, "#4C6B55"); assert.equal(m.background_color, "#F5EDE2");
 });

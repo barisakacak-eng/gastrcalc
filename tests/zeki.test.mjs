@@ -27,8 +27,8 @@ test('Zeki: CSS wird lokal geladen, der Offline-Speicher kennt die neue Technik 
   assert.match(read('index.html'),/href="css\/zeki.css"/);
   const sw=read('sw.js');
   for(const p of ['css/zeki.css','js/zeki_figur.js','js/gastrocash-brand.js','js/adapter/brand_start.js','assets/brand/zeki-mienen/zeki-hilfe.webp','assets/brand/zeki-buehne/start.webp'])assert.ok(sw.includes('"'+p+'"'),p);
-  for(const p of ['js/zeki-svg.js','js/zeki-puppe.js','assets/brand/zeki.svg','assets/brand/mascot-classic.svg','assets/brand/zeki/hand.webp'])assert.ok(!sw.includes('"'+p+'"'),p+' gehört nicht mehr in den Offline-Speicher');
-  assert.ok(existsSync(new URL('../assets/brand/zeki.svg',import.meta.url)),'zeki.svg bleibt als Entwurf im Repo');
+  for(const p of ['js/zeki-svg.js','js/zeki-puppe.js','design/zeki.svg','assets/brand/mascot-classic.svg','assets/brand/zeki/hand.webp'])assert.ok(!sw.includes('"'+p+'"'),p+' gehört nicht mehr in den Offline-Speicher');
+  assert.ok(existsSync(new URL('../design/zeki.svg',import.meta.url)),'zeki.svg bleibt als Entwurf im Repo');
   assert.ok(sw.includes('"assets/brand/zeki-klein/'),'die Folgen (3,5 MB) stehen im Nachlade-Cache, nicht in der Startliste');
   assert.ok(!/"assets\/brand\/zeki-klein\/[^"]+"(?=[^\]]*\])/.test(sw.match(/const DATEIEN = \[[^\]]*\]/)[0]),'keine Folge in der Start-Liste');
 });

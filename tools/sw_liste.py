@@ -3,7 +3,7 @@ Aufruf vor jeder Veröffentlichung: python3 tools/sw_liste.py"""
 import pathlib, re, datetime, hashlib
 APP = pathlib.Path(__file__).resolve().parent.parent
 NACHLADE = ("foto/", "assets/brand/zeki-klein/")  # Ordner mit eigenem Nachlade-Cache (sw.js: FOTOS_H, Cache „gcf“); gleiche Liste in sw.js (NACHLADE)
-NUR_ENTWURF = ("assets/brand/zeki.svg",)  # Zeki als Vektor-Entwurf (design): die App lädt sie zur Laufzeit nicht, darum nicht in den Offline-Speicher
+NUR_ENTWURF = ()  # Zeki als Vektor-Entwurf (design): die App lädt sie zur Laufzeit nicht, darum nicht in den Offline-Speicher
 dateien = ["./", "index.html"]; fotos = {}
 # W2-D: Fassungsnummer auch für die App selbst (Einstellungen, Diagnose, Sicherung) – js/fassung.js, gleiche Nummer wie sw.js
 _sw = (APP / "sw.js").read_text(); _m = re.search(r'const V = "(\d{4}-\d{2}-\d{2})\.(\d+)"', _sw)
