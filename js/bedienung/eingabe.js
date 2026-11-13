@@ -25,10 +25,10 @@ function eingabeWert(el) {
   const h = Z.ansicht.startsWith("ordner-") ? ANSICHT_EINGABE["ordner-"] : Object.hasOwn(ANSICHT_EINGABE, Z.ansicht) ? ANSICHT_EINGABE[Z.ansicht] : null;
   return h ? h(el) : false;
 }
-function aufEingabe(ev) {
+export function aufEingabe(ev) {
   Z.ruheBis = 0; // wer tippt, hat nicht doppelt getippt
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
-  if (modus(Z.wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // Einrichtungsfelder wirken im Personal-Modus nicht
+  if (modus(Z.wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // Personal-Modus: nur Felder der Positivliste (PERSONAL_FELDER)
   if (el.dataset.f === "sprache-wahl") { Z.wurzel.sprache = el.value; setzeSprache(el.value, () => zeichne()); return; } // Sprache sofort zeigen
   const neu = eingabeWert(el);
   if (neu === FERTIG) return;
@@ -41,8 +41,9 @@ function aufEingabe(ev) {
 }
 
 // Wenn ein Feld verlassen wird: Zahl prüfen und einmal neu zeichnen, damit Zwischenstände und Markierungen stimmen.
-function aufFeldVerlassen(ev) {
+export function aufFeldVerlassen(ev) {
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
+  if (modus(Z.wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // Personal-Modus: nur Felder der Positivliste
   if ((el.dataset.f === "station-wert" || el.dataset.f.startsWith("stelle-max:") || el.dataset.f.startsWith("stelle-min:")) && el.value.trim() !== "" && parseTemperatur(el.value) === null) meldung(t("kuehl.tempUngueltig", el.value.trim().slice(0, 12)));
   if (el.getAttribute("inputmode") === "decimal" && el.value.trim() !== "" && parseZahl(el.value) === null) {
     meldung(t(/^[0-9.,\s]+$/.test(el.value) ? "allgemein.zahlZuGross" : "allgemein.zahlUngueltig", el.value.trim().slice(0, 20)));

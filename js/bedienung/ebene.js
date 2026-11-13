@@ -3,7 +3,7 @@
 import { Z } from "../bedienung/zustand.js";
 import {
   pinGesetzt, testphaseOhneCode, modus, modusSetzen, startAnsicht, codeAktiv, bioKennung, BUERO_OFFEN_MS, bioSetzen, testphaseSetzen,
-  pinSetzen,
+  pinSetzen, personalHilfeErlaubt, sperreKappenHaken,
 } from "../modus.js";
 import { schichtPersonVergessen } from "../screens/personal.js";
 import { tagZuruecksetzen } from "../screens/tag.js";
@@ -67,6 +67,7 @@ function nachCodeGesetzt(ziel) {
 
 // Büro-Code nach 5 Minuten im Hintergrund wieder verlangen.
 export function ebeneAnmelden() {
+  sperreKappenHaken((w) => { sofortSpeichern(w); }); // eine gekürzte Wartezeit bleibt auch nach einem Neustart gekürzt
   if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => { if (document.hidden) Z.versteckt = Date.now(); else if (Z.versteckt && Date.now() - Z.versteckt > 5 * 60 * 1000) Z.bueroOffenBis = 0; });
 }
 
@@ -184,7 +185,7 @@ export const KLICK = {
   "menue-auf": () => { blattMerken(); menueZeigen(Z.stand, Z.wurzel); },
   "menue-zurueck": () => menueZeigen(Z.stand, Z.wurzel),
   "blatt-zu": () => { blattSchliessen(); Z.einleseDatei = null; Z.einleseErsetzen = false; }, // wartende Sicherungsdatei loslassen
-  "hilfe-mehr": (el) => hilfeZeigen(el.dataset.wert, true), // ganze Hilfe nach „Mehr“
+  "hilfe-mehr": (el) => { if (modus(Z.wurzel) === "personal" && !personalHilfeErlaubt(el.dataset.wert)) return; return hilfeZeigen(el.dataset.wert, true); }, // ganze Hilfe nach „Mehr“; im Personal-Modus nur die Einträge der Personal-Ansichten
   "blatt-sprache": () => spracheZeigen(),
   "blatt-laeden": () => laedenZeigen(Z.wurzel),
   "hilfe-auf": () => { blattMerken(); hilfeZeigen(Z.ansicht); },
