@@ -33,7 +33,7 @@
 .gc-buehne .gc-buehne-text>*{min-inline-size:0;margin:0}
 /* Alte Kopfbänder und Köpfe unter der Bühne: kein eigenes Band, kein Rand, Schrift in Bühnenfarbe */
 .gc-buehne .kopfband,.gc-buehne .kl-kopf,.gc-buehne .h-kopf,.gc-buehne .personalkopf{display:block;background:none;color:inherit;padding:0;margin:0;border:0;border-radius:0;box-shadow:none;min-block-size:0}
-.gc-buehne .kopfband h1,.gc-buehne .kl-kopf h1,.gc-buehne h1{color:inherit;font-family:var(--schrift);font-size:1.2941rem;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.gc-buehne .kopfband h1,.gc-buehne .kl-kopf h1,.gc-buehne h1{color:inherit;font-family:var(--schrift);font-size:1.1765rem;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
 .gc-buehne .kopfband .unter,.gc-buehne .kl-kopf small,.gc-buehne .h-datum,.gc-buehne .personalkopf small{display:block;color:color-mix(in srgb,var(--buehne-text) 94%,transparent);font-size:0.8235rem;line-height:1.35;margin:2px 0 0}
 .gc-buehne .kopfband .zahl{font-weight:700}
 .gc-buehne .h-kopf,.gc-buehne .personalkopf{display:grid;gap:2px}
@@ -79,4 +79,4 @@ body:has(.rg-huelle[data-station="14"]) .gc-buehne .gc-figur-knopf{visibility:vi
 .gc-buehne.gc-muell.spricht .gc-brand{visibility:hidden}
 
 /* Sicht-Gremium Runde 1: lange Titel trennen an der Silbe statt mitten im Wort */
-.gc-buehne .gc-buehne-text h1{font-size:1.1765rem;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;word-break:normal}
+.gc-buehne h1{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;word-break:normal}
