@@ -2,7 +2,7 @@
 // zeichne() setzt Z.root.innerHTML komplett neu; Zustand ändert es nicht.
 import { Z } from "../bedienung/zustand.js";
 import { einstellungenView, karteView, startView } from "../screens/home.js";
-import { speicherIstDauerhaft, APP_FASSUNG, speicherVerfuegbar, beiSpeicherFehler } from "../store.js";
+import { speicherIstDauerhaft, APP_FASSUNG, speicherVerfuegbar, beiSpeicherFehler, rueckholNeuSeitdem } from "../store.js";
 import { fehlerLesen } from "../fehler.js";
 import { speicherLokal } from "../adapter/browser_speicher.js";
 import { homeLage, zekiLage, zekiGesehenMerken, zekiBildschirm } from "./zeki.js";
@@ -36,7 +36,7 @@ import { bueroPaket, bueroPaketLaden, istBueroAnsicht } from "./nachladen.js";
 const ANSICHT_VIEW = { // Kern-Ansichten; die Büro-Ansichten zeichnet das Büro-Paket (paket_buero.js, VIEW)
   einstellungen: () => einstellungenView(Z.stand, Z.ereignisAnzahl, Z.wurzel, {
     offline: Z.offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length,
-    home: homeLage({ buero: true }), rueckhol: Z.rueckholInfo,
+    home: homeLage({ buero: true }), rueckhol: Z.rueckholInfo ? { ...Z.rueckholInfo, neuSeitdem: rueckholNeuSeitdem(Z.wurzel, Z.rueckholInfo.zeit) } : null, // E11 (B4): der Knopf erscheint nur, solange nichts Neues eingetragen wurde
   }),
   karte: () => karteLadenView(Z.stand),
   kartebuero: () => karteView(Z.stand),

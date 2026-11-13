@@ -110,11 +110,12 @@ test("P2 B1: A ändert Preis Gericht 1, B ändert Preis Gericht 2 – nach Austa
 test("P2 B1: derselbe Eintrag auf beiden Handys verschieden – die gewählte Seite gilt, im Bericht steht Bereich, Kennung und beide Werte, im abgleichHinweis ebenso", () => {
   const [wa, wb] = synchron(mitGerichten);
   wa.betriebe[0].gerichte[0].preis = 7.5; wb.betriebe[0].gerichte[0].preis = 8; wb.betriebe[0].gerichte[1].preis = 9.5; // g1 auf beiden verschieden, g2 nur auf B
+  st.feldZeitenNachziehen(wa, JETZT + 1000); st.feldZeitenNachziehen(wb, JETZT + 2000); // E11 (B1): jedes Feld trägt seine Änderungszeit, B hat später geändert
   const r = st.zusammenfuehren(wa, J(wb), { jetzt: JETZT });
   const l = wa.betriebe[0];
-  assert.equal(l.gerichte[0].preis, 7.5, "bereichWahl: bei „beide geändert“ bleibt dieses Handy"); assert.equal(l.gerichte[1].preis, 9.5, "die Änderung nur auf B kommt trotzdem");
+  assert.equal(l.gerichte[0].preis, 8, "E11 (B1): bei „beide geändert“ gilt die spätere Änderung – nicht mehr „immer dieses Handy“ (die Handys blieben so für immer verschieden)"); assert.equal(l.gerichte[1].preis, 9.5, "die Änderung nur auf B kommt trotzdem");
   assert.equal(r.bericht.eintraege.length, 1);
-  const v = r.bericht.eintraege[0]; assert.equal(v.bereich, "gerichte"); assert.equal(v.kennung, "g1"); assert.match(v.lokal, /7\.5/); assert.match(v.fremd, /\b8\b/); assert.equal(v.behalten, "lokal");
+  const v = r.bericht.eintraege[0]; assert.equal(v.bereich, "gerichte"); assert.equal(v.kennung, "g1"); assert.match(v.lokal, /7\.5/); assert.match(v.fremd, /\b8\b/); assert.equal(v.behalten, "fremd");
   assert.equal(l.abgleichHinweis.eintraege.length, 1); assert.deepEqual(l.abgleichHinweis.bereiche.includes("gerichte"), true);
   // Löschen auf der einen, Ändern auf der anderen Seite: das Gericht bleibt, mit Vermerk
   const [xa, xb] = synchron(mitGerichten); xa.betriebe[0].gerichte.splice(1, 1); xb.betriebe[0].gerichte[1].preis = 9.9; xb.betriebe[0].gerichte[0].preis = 7.1; xa.betriebe[0].gerichte[0].preis = 7.2;
@@ -123,14 +124,15 @@ test("P2 B1: derselbe Eintrag auf beiden Handys verschieden – die gewählte Se
   const [ya, yb] = synchron(mitGerichten); ya.betriebe[0].gerichte.splice(1, 1); yb.betriebe[0].gerichte[0].preis = 7.7; ya.betriebe[0].kosten[0].betrag = 1; 
   st.zusammenfuehren(ya, J(yb), { jetzt: JETZT }); assert.deepEqual(ya.betriebe[0].gerichte.map((g) => [g.id, g.preis]), [["g1", 7.7]]);
 });
-test("P2 B1: Bereiche ohne Kennung (Betrieb): wie bisher gewinnt eine Seite, aber abgleichHinweis trägt beide Werte", () => {
+test("P2 B1: Bereiche ohne Kennung (Betrieb): die spätere Änderung gewinnt je Feld (E11), abgleichHinweis trägt beide Werte", () => {
   const [wa, wb] = synchron(mitGerichten);
   wa.betriebe[0].betrieb.name = "Nord A"; wb.betriebe[0].betrieb.name = "Nord B";
+  st.feldZeitenNachziehen(wa, JETZT + 1000); st.feldZeitenNachziehen(wb, JETZT + 2000); // B später
   const r = st.zusammenfuehren(wa, J(wb), { jetzt: JETZT });
-  assert.equal(wa.betriebe[0].betrieb.name, "Nord A");
-  assert.equal(r.bericht.unterschiede.length, 1); const u = r.bericht.unterschiede[0]; assert.equal(u.bereich, "betrieb"); assert.match(u.lokal, /Nord A/); assert.match(u.fremd, /Nord B/);
+  assert.equal(wa.betriebe[0].betrieb.name, "Nord B", "E11 (B1): vorher blieb immer dieses Handy – die Handys blieben verschieden");
+  assert.equal(r.bericht.unterschiede.length, 1); const u = r.bericht.unterschiede[0]; assert.equal(u.bereich, "betrieb"); assert.match(u.lokal, /Nord A/); assert.match(u.fremd, /Nord B/); assert.equal(u.gilt, "fremd");
   assert.deepEqual(wa.betriebe[0].abgleichHinweis.unterschiede.map((x) => x.bereich), ["betrieb"]);
-  assert.match(l6y.l6ySatz("bereichUnterschied", "de", "Betrieb", u.lokal, u.fremd), /Nord A/);
+  assert.match(l6y.l6ySatz("bereichUnterschiedFremd", "de", "Betrieb", u.lokal, u.fremd), /Nord B/);
 });
 
 // ---------- P2 B2: Tagesumsatz ----------

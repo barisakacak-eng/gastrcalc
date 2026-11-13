@@ -25,7 +25,7 @@ export function dauerfristUmschalten(stand) { stand.betrieb.dauerfrist = !stand.
 export function chefStundenSetzen(stand, n) { stand.chef ??= {}; stand.chef.stundenMonat = Number.isFinite(n) && n > 0 && n <= 744 ? Math.round(n) : null; stand.chef.geaendert = new Date().toISOString(); } // Lauf 6, E5-Draht (3): Zeitstempel – beim Abgleich zweier Handys gilt der jüngere Wert (js/abgleich_felder.js, juengererWert)
 // W3b (04.11.2026): Land, in dem die Krankenkasse sitzt (SV-Termin Mai 2027 hängt daran); null = weiß nicht → früherer Termin
 export function svLandSetzen(stand, code) { stand.betrieb.svLand = LAND_CODES.includes(code) ? code : null; }
-export function geldHeuteSetzen(stand, betrag, datum = heute()) { stand.liquiditaet = Number.isFinite(betrag) ? { betrag: rund2(betrag), datum } : null; }
+export function geldHeuteSetzen(stand, betrag, datum = heute()) { stand.liquiditaet = Number.isFinite(betrag) ? { betrag: rund2(betrag), datum, erfasst: new Date().toISOString() } : null; } // erfasst (E11, B2): beim Abgleich am selben Tag gewinnt die spätere Erfassung
 
 
 // Pflichttermine der nächsten 60 Tage für diesen Laden

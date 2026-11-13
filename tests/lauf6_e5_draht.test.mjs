@@ -145,6 +145,7 @@ test("Draht 9: einstellungenView zeigt „Schloss gegen neugierige Blicke, kein 
   w.bueroPin = { hash: "x", salz: "y" }; // gesetztes Schloss
   assert.ok(text(einstellungenView(s, 0, w, {})).includes("Schloss gegen neugierige Blicke, kein Tresor."), "mit Code");
   assert.equal(l6y.l6yText("rueckgaengig", "de"), "Einlesen rückgängig machen.");
-  assert.ok(einstellungenView(s, 0, w, { rueckhol: { zeit: "2026-11-13T10:00:00.000Z", grund: "einlesen" } }).includes('data-a="sicherung-zurueckholen"'), "Rückgängig-Knopf erscheint mit Info");
+  assert.ok(einstellungenView(s, 0, w, { rueckhol: { zeit: "2026-11-13T10:00:00.000Z", grund: "einlesen", neuSeitdem: 0 } }).includes('data-a="sicherung-zurueckholen"'), "Rückgängig-Knopf erscheint mit Info");
+  assert.ok(!einstellungenView(s, 0, w, { rueckhol: { zeit: "2026-11-13T10:00:00.000Z", grund: "einlesen", neuSeitdem: 2 } }).includes('data-a="sicherung-zurueckholen"'), "E11 B4: nach neuen Einträgen kein Knopf");
   assert.ok(!einstellungenView(s, 0, w, {}).includes('data-a="sicherung-zurueckholen"'), "ohne Info kein Knopf");
 });
