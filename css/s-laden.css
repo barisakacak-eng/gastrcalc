@@ -334,8 +334,17 @@ body[data-modus] #app .inhalt:has(.karte.hinweisrot){padding-block-end:12px;gap:
 #app .inhalt:has(.karte.hinweisrot) .karte.formular{gap:6px;padding:8px 12px}
 #app .inhalt:has(.karte.hinweisrot) .stationkopf .gerichtbild{inline-size:40px;block-size:40px}
 #app .inhalt:has(.karte.hinweisrot) .zahlfeld input{min-block-size:52px;font-size:2rem}
+/* Warnzustand: niedrigere Bühne, Zeki verkleinert (Bild und Folge skalieren gemeinsam), damit alles ohne Scrollen passt */
+body:has(#app .karte.hinweisrot) .gc-buehne .gc-buehne-innen{min-block-size:60px}
+body:has(#app .karte.hinweisrot) .gc-buehne .gc-kopf{min-block-size:44px}
+body:has(#app .karte.hinweisrot) .gc-buehne .gc-figur-knopf{transform:scale(.52);transform-origin:100% 100%}
+[dir=rtl] body:has(#app .karte.hinweisrot) .gc-buehne .gc-figur-knopf,body:has(#app .karte.hinweisrot)[dir=rtl] .gc-buehne .gc-figur-knopf{transform-origin:0 100%}
+#app .karte.hinweisrot{grid-template-columns:minmax(0,1fr) auto}
+#app .karte.hinweisrot>*{grid-column:1/-1}
+#app .karte.hinweisrot>[data-f="station-notiz"]{grid-column:1}
+#app .karte.hinweisrot>.leise{grid-column:2;padding-inline:10px;white-space:nowrap}
 #app .karte.hinweisrot .chips{gap:4px}
-#app .karte.hinweisrot .chip{padding:0 8px;min-block-size:44px;font-size:.8235rem}
+#app .karte.hinweisrot .chip{padding:0 6px;min-block-size:44px;font-size:.8235rem}
 #app .inhalt:has(.karte.hinweisrot) .kuehl-stellen,#app .inhalt:has(.karte.hinweisrot) .m-reiter{margin:0}
 #app .inhalt:has(.karte.hinweisrot){padding-block-start:6px}
 #app .inhalt:has(.karte.hinweisrot) .zeit,#app .inhalt:has(.karte.hinweisrot) .zuletzt{margin:0}

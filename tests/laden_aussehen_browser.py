@@ -30,7 +30,6 @@ AUSNAHMEN = {
     ("karte-rezept", "scroll"): "Rezept-Blatt liegt über der Karte mit vielen Gerichten; gemessen wird die Seite darunter",
     ("putzplan", "scroll"): "Putzliste mit mehr als 6 Aufgaben (Regel in tests/regeln.py)",
     ("putzplan-haken", "scroll"): "Putzliste mit mehr als 6 Aufgaben (Regel in tests/regeln.py)",
-    ("kuehl-warnung", "scroll"): "nur bei 360x740: Warnzustand mit 7 Maßnahmen-Chips, Leiste ist dort ausgeblendet; Wunsch an buehne.css: niedrigere Bühne im Warnzustand",
     ("muell-andere", "scroll"): "Suchblatt „Andere“ ist ein Blatt von unten über allen Waren und scrollt in sich",
     ("personal-putzen", "scroll"): "Putzliste mit mehr als 6 Aufgaben (Regel in tests/regeln.py)",
 }
@@ -118,7 +117,7 @@ async def main():
                             await pg.screenshot(path=str(BILDER / f"{name}{suffix}.png"))
                         def pruefe(regel, ok, text):
                             if ok: return
-                            if (name, regel) in AUSNAHMEN and not (name == 'kuehl-warnung' and '390' in kennung): ausnahmen_gebraucht.add((name, regel, kennung)); return
+                            if (name, regel) in AUSNAHMEN: ausnahmen_gebraucht.add((name, regel, kennung)); return
                             verstoesse.append(f"{kennung} {name}: {regel} – {text}"); print("VERSTOSS", kennung, name, regel, text, flush=True)
                         pruefe("ueberlauf", not m["ueberlaufX"], "waagrechter Überlauf")
                         pruefe("scroll", m["hoehe"] <= m["innen"] + 1, f"Seite {m['hoehe']} px > Fenster {m['innen']} px")
