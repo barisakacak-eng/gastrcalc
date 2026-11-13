@@ -1,6 +1,7 @@
 // Lauf 6, Etappe 5 – Draht (13.11.2026): Verdrahtung der neuen Fähigkeiten des Rechenwerks in der Oberfläche. Ein Abschnitt je Punkt.
 import { test } from "node:test";
 import assert from "node:assert/strict";
+globalThis.document ??= { documentElement: {} };
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
 const st = await import("../js/store.js");
 const af = await import("../js/abgleich_felder.js");
@@ -56,4 +57,29 @@ test("Draht 3: zekiLogLoeschen schreibt zekiLogGeloescht; gelöschter Verlauf bl
   // neuer Eintrag nach dem Löschen bleibt
   await warte(); stamm.zekiLogAnhaengen(a, { art: "neu" });
   const [x, y] = beideRichtungen(a, b); assert.equal(x.zekiLog.length, 1); assert.deepEqual(x.zekiLog, y.zekiLog);
+});
+
+// ---------- 5: Blatt „Sicherung teilen“ trägt den Satz ohne Passwort ----------
+test("Draht 5: Blatt „Sicherung teilen“ enthält den Satz „Ohne Passwort …“, sichtbar erst bei ausgeschaltetem Passwort", async () => {
+  const umschalter = [];
+  const kind = (name = "") => ({ addEventListener() {}, focus() {}, setAttribute() {}, value: "", classList: { add() {}, remove() {}, toggle: (k, an) => umschalter.push([name, k, an]) }, querySelector: (s) => kind(s), querySelectorAll: () => [], textContent: "", click() {} });
+  const huelle = { ...kind(), innerHTML: "" };
+  const dok = globalThis.document; const alt = { gid: dok.getElementById, body: dok.body, qs: dok.querySelector };
+  dok.getElementById = () => huelle; dok.body = { classList: { add() {}, remove() {} }, appendChild() {} }; dok.querySelector = () => null;
+  const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
+  try {
+    const eb = await import("../js/screens/ebene.js");
+    eb.passwortStarten("teilen", { tage: 3 });
+    const satz = l6y.l6yText("ohnePasswort", "de");
+    assert.ok(satz.length > 20);
+    assert.ok(huelle.innerHTML.includes(satz), "Satz steht im Blatt");
+    assert.match(huelle.innerHTML, /<p class="hinweis pw-ohne versteckt"/, "zunächst versteckt (Passwort ist vorgewählt)");
+    eb.sicherungSchalter("passwort"); // Passwort aus
+    assert.ok(umschalter.some(([n, k, an]) => n === ".pw-ohne" && k === "versteckt" && an === false), "Satz wird sichtbar, wenn kein Passwort gewählt ist");
+    eb.sicherungSchalter("passwort"); // wieder an
+    assert.ok(umschalter.some(([n, k, an]) => n === ".pw-ohne" && k === "versteckt" && an === true), "und wieder versteckt");
+    eb.blattSchliessen();
+    // Einlesen-Blatt trägt den Satz nicht
+    eb.passwortStarten("einlesen"); assert.ok(!huelle.innerHTML.includes(satz)); eb.blattSchliessen();
+  } finally { dok.getElementById = alt.gid; dok.body = alt.body; dok.querySelector = alt.qs; }
 });

@@ -3,6 +3,7 @@
 // Bildschirm darunter NICHT neu; teure Zahlen werden erst beim Öffnen gerechnet.
 // „personal" (Entwickler D, screens/personal.js) und „buero" (Entwickler C, screens/buero.js) haben eigene Bildschirme.
 import { t, sprache, SPRACHEN, SPRACH_NAMEN, spracheName } from "../i18n.js";
+import { l6yText } from "../data/l6y_texte.js"; // Lauf 6, E5-Draht (5)
 import { zekiFragenFuer } from "../data/zeki_fragen.js"; // Zeki-Fragen (26.10.2026)
 import { esc, fmtEuro } from "../util.js";
 import { sym } from "../symbole.js";
@@ -261,7 +262,8 @@ export function passwortStarten(zweck, extra = {}) {
     <form class="pw-form" autocomplete="off">
       ${einlesen ? feld : `<p class="pw-letzte ${extra.tage === null || extra.tage >= 7 ? "rot" : ""}">${esc(extra.tage === null || extra.tage === undefined ? t("ladenSchirm.sicherung.nieWeg") : t("ladenSchirm.sicherung.letzteWeg", extra.tage))}</p>
       ${schalter("sicherung-pw-schalter", true, t("ladenSchirm.sicherung.mitPasswort"))}
-      <div class="pw-mit">${feld}</div>`}
+      <div class="pw-mit">${feld}</div>
+      <p class="hinweis pw-ohne versteckt" role="status">${esc(l6yText("ohnePasswort", sprache()))}</p>`}
       <small class="pin-meldung" role="status" aria-live="polite"></small>
       ${einlesen ? "" : `<p class="hinweis pw-hinweis">${esc(t("passwort.hinweis"))}</p>
       ${schalter("sicherung-fotos-schalter", false, t("ladenSchirm.sicherung.ohneFotos"))}`}
@@ -277,7 +279,7 @@ export function sicherungSchalter(art) {
   const k = huelle.querySelector(`[data-a="${art === "passwort" ? "sicherung-pw-schalter" : "sicherung-fotos-schalter"}"]`);
   const an = art === "passwort" ? pw.mitPasswort : pw.ohneFotos;
   if (k) { k.classList.toggle("an", an); k.setAttribute("aria-pressed", String(an)); }
-  if (art === "passwort") { const m = huelle.querySelector(".pw-mit"); if (m) m.classList.toggle("versteckt", !pw.mitPasswort); passwortMeldung(""); if (pw.mitPasswort) huelle.querySelector('[data-f="passwort"]')?.focus({ preventScroll: true }); }
+  if (art === "passwort") { const m = huelle.querySelector(".pw-mit"); if (m) m.classList.toggle("versteckt", !pw.mitPasswort); const o = huelle.querySelector(".pw-ohne"); if (o) o.classList.toggle("versteckt", pw.mitPasswort); /* E5-Draht (5): ohne Passwort → ehrlicher Satz */ passwortMeldung(""); if (pw.mitPasswort) huelle.querySelector('[data-f="passwort"]')?.focus({ preventScroll: true }); }
   return { mitPasswort: pw.mitPasswort, ohneFotos: pw.ohneFotos };
 }
 export const sicherungWahl = () => (pw && pw.zweck === "teilen" ? { mitPasswort: pw.mitPasswort, ohneFotos: pw.ohneFotos } : { mitPasswort: true, ohneFotos: false });
