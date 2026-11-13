@@ -68,7 +68,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .muellkopf1{display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
 #app .muellkopf1 .heutewert.muellsumme{inline-size:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-block-size:52px;padding:8px 14px;background:var(--papier);background-image:none;color:var(--tinte);border:1px solid var(--linie);border-inline-start:6px solid var(--muell);border-radius:var(--radius);box-shadow:var(--schatten-karte)}
 #app .muellkopf1 .heutewert h1{margin:0;font:700 1rem/1.2 var(--schrift);color:var(--tinte)}
-#app .muellkopf1 .heutewert .zahl{font:700 1.2353rem/1.1 var(--schrift);color:var(--muell);font-variant-numeric:var(--zahlen)}
+#app .muellkopf1 .heutewert .zahl{font:700 1.2353rem/1.1 var(--schrift);color:color-mix(in srgb,var(--muell) 55%,var(--tinte));font-variant-numeric:var(--zahlen)}
 #app .muell-station-start{inline-size:100%;display:flex;align-items:center;justify-content:center;gap:8px;min-block-size:44px;background:transparent;border:1px solid var(--linie);border-radius:var(--radius);color:var(--tinte);font-weight:700;box-shadow:none}
 #app .muell-station-start .sym{inline-size:20px;block-size:20px;color:var(--salbei)}
 #app .m-reiter{display:flex;gap:4px;background:var(--papier-tief);border-radius:10px;padding:4px}
@@ -80,8 +80,8 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .muellraster .ware-tipp .gerichtbild{inline-size:100%;block-size:auto;aspect-ratio:4/3;border-radius:0;object-fit:cover}
 #app .muellraster .ware-tipp .gerichtbild.pikto{padding:14px;object-fit:contain}
 #app .muellraster .ware .ware-mehr::before{content:none}
-#app .muellraster .ware-tipp .wt{display:grid;gap:0;padding:4px 4px 6px;min-inline-size:0}
-#app .muellraster .ware-tipp .wt b{font-size:.7rem;line-height:1.2;font-weight:700;overflow-wrap:break-word;hyphens:auto;color:var(--tinte)}
+#app .muellraster .ware-tipp .wt{display:grid;gap:0;padding:4px 2px 6px;min-inline-size:0}
+#app .muellraster .ware-tipp .wt b{font-size:.75rem;letter-spacing:-.02em;line-height:1.2;font-weight:700;overflow-wrap:break-word;hyphens:auto;color:var(--tinte)}
 #app .muellraster .ware-tipp .wt small{font-size:.75rem;color:var(--tinte-weich);font-weight:600}
 #app .muellraster .karte.ware.frisch{outline:2px solid var(--muell);outline-offset:-2px}
 #app .muellraster .ware .haken{position:absolute;inset-inline-start:6px;inset-block-start:6px;inline-size:28px;block-size:28px;border-radius:50%;background:var(--muell);color:var(--papier);display:grid;place-items:center}
@@ -124,7 +124,7 @@ body[data-modus="laden"] #app .inhalt{padding-block-end:calc(env(safe-area-inset
 #app .mengekarte .periode{display:flex;gap:4px;justify-self:center;background:var(--papier-tief);border-radius:10px;padding:4px}
 #app .mengekarte .periode button{min-block-size:44px;min-inline-size:56px;padding:0 14px;border:0;border-radius:8px;background:transparent;font-weight:700;color:var(--tinte-weich)}
 #app .mengekarte .periode button.an{background:var(--salbei);color:var(--aktion-text)}
-#app .mengekarte .muellwert{margin:0;text-align:center;font-weight:700;color:var(--muell)}
+#app .mengekarte .muellwert{margin:0;text-align:center;font-weight:700;color:color-mix(in srgb,var(--muell) 55%,var(--tinte))}
 #app .formkacheln{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #app .formkacheln .karte.formkachel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-block-size:64px;padding:8px;color:var(--tinte)}
 #app .formkacheln .karte.formkachel.an{outline:2px solid var(--salbei);outline-offset:-2px}
