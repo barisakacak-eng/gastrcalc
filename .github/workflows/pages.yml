@@ -104,6 +104,20 @@ jobs:
             grep -E "FEHLT|Error|Timeout|ECHT" echt.txt | tail -8 | while read -r l; do echo "::warning::echt Versuch $versuch: $l"; done
           done
           tail -30 echt.txt; exit 1
+      - name: Doppeltipp und Uhrsprung
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8872 python tests/doppeltipp_browser.py > doppeltipp_browser.txt 2>&1; then exit 0; fi
+            grep -E "FEHLT|Error|Timeout|DOPPELTIPP" doppeltipp_browser.txt | tail -8 | while read -r l; do echo "::warning::doppeltipp_browser Versuch $versuch: $l"; done
+          done
+          tail -30 doppeltipp_browser.txt; exit 1
+      - name: Einlesen rückgängig machen
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=8873 python tests/rueckhol_browser.py > rueckhol_browser.txt 2>&1; then exit 0; fi
+            grep -E "FEHLT|Error|Timeout|RUECKHOL" rueckhol_browser.txt | tail -8 | while read -r l; do echo "::warning::rueckhol_browser Versuch $versuch: $l"; done
+          done
+          tail -30 rueckhol_browser.txt; exit 1
       - name: Büro „Zurück“ eine Ebene (01.11.2026)
         run: |
           for versuch in 1 2; do
