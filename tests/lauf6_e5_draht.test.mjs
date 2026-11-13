@@ -1,5 +1,5 @@
 // Lauf 6, Etappe 5 – Draht (13.11.2026): Verdrahtung der neuen Fähigkeiten des Rechenwerks in der Oberfläche. Ein Abschnitt je Punkt.
-import { test } from "node:test";
+import { test, mock } from "node:test";
 import assert from "node:assert/strict";
 globalThis.document ??= { documentElement: {} };
 import { idbAttrappe } from "./hilfe/idb_attrappe.mjs";
@@ -82,4 +82,21 @@ test("Draht 5: Blatt „Sicherung teilen“ enthält den Satz „Ohne Passwort �
     // Einlesen-Blatt trägt den Satz nicht
     eb.passwortStarten("einlesen"); assert.ok(!huelle.innerHTML.includes(satz)); eb.blattSchliessen();
   } finally { dok.getElementById = alt.gid; dok.body = alt.body; dok.querySelector = alt.qs; }
+});
+
+// ---------- 6: Monatsabschluss zeigt „Daten seit Abschluss geändert.“ ----------
+test("Draht 6: geld3View zeigt den Satz „Daten seit Abschluss geändert.“ nur bei veraltetem Abschluss des Vormonats", async () => {
+  const ma = await import("../js/monatsabschluss.js"); const g = await import("../js/screens/geld3.js");
+  const i18n = await import("../js/i18n.js"); i18n.setzeSprache("de");
+  const satz = l6y.l6yText("abschlussVeraltet", "de"); assert.equal(satz, "Daten seit Abschluss geändert.");
+  mock.timers.enable({ apis: ["Date"], now: Date.parse("2026-11-13T12:00:00Z") });
+  try {
+    const a = beispielLaden("2026-11-13"); ma.monatEinfrieren(a, "2026-10", { jetzt: "2026-11-02T10:00:00.000Z" });
+    const karte = (s) => g.geld3View(s).match(/data-g3="monat"[\s\S]*?<\/details>/)[0];
+    assert.ok(!karte(a).includes(satz), "frisch eingefroren: kein Hinweis");
+    assert.match(karte(a), /abgeschlossen|Abgeschlossen/i);
+    a.tagesnotizen.push({ id: "spaet-1", datum: "2026-10-31", umsatz: 123, erfasst: "2026-11-05T10:00:00.000Z", nacherfasst: true, storniert: false });
+    assert.equal(ma.abschlussVeraltet(a, "2026-10"), true);
+    assert.ok(karte(a).includes(satz), "nach nachgetragenem Tag: Hinweis steht in der Karte");
+  } finally { mock.timers.reset(); }
 });

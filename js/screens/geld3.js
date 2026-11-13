@@ -8,7 +8,8 @@ import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, kleinunternehmerPruefung, wasBleibt, prueferBlick } from "../steuertopf.js";
 import { wert as regelWert } from "../data/regelwerk.js";
 import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, lstRhythmusSetzen, lstVorjahrSetzen, lstVorschlag, estBescheidUmschalten, chefStundenSetzen, geldHeuteSetzen, svLandSetzen } from "../welle3.js";
-import { monatEinfrieren, eingefroren, monatVergleich } from "../monatsabschluss.js";
+import { monatEinfrieren, eingefroren, monatVergleich, abschlussVeraltet } from "../monatsabschluss.js";
+import { l6yText } from "../data/l6y_texte.js"; // Lauf 6, E5-Draht (6): Satz „Daten seit Abschluss geändert.“
 import { istPersonen } from "../rechtsform.js";
 import { BUNDESLAENDER } from "../feiertage.js";
 const w3b = () => true; // W3b: Baris Ja zu 1–4 am 04.11.2026 22:54 – Schalter entfernt (Monat abschließen, Sitz der Krankenkasse, Schicht im Büro)
@@ -86,7 +87,7 @@ export function geld3View(stand) {
   let monatKarte = "";
   if (w3b()) { const ab = eingefroren(stand, vm); const vgl = ab ? monatVergleich(stand, vm) : null; const mname = vm.split("-").reverse().join(".");
     monatKarte = karte("monat", t("w3b.monat.titel"), ab ? esc(t("w3b.monat.zu")) : vmDa ? esc(t("w3b.monat.offen")) : "",
-      ab ? `<p>${esc(t("w3b.monat.abgeschlossen", mname, dk(ab.eingefroren.slice(0, 10))))}</p>${z(t("w3b.monat.umsatz"), esc(fmtEuro(ab.umsatzBrutto)))}${vgl?.zumVormonat ? z(t("w3b.monat.zumVormonat"), `${vgl.zumVormonat.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVormonat.umsatz)))}`) : ""}${vgl?.zumVorjahr ? z(t("w3b.monat.zumVorjahr"), `${vgl.zumVorjahr.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVorjahr.umsatz)))}`) : ""}`
+      ab ? `<p>${esc(t("w3b.monat.abgeschlossen", mname, dk(ab.eingefroren.slice(0, 10))))}</p>${abschlussVeraltet(stand, vm) ? `<p class="hinweis warn" role="status">${esc(l6yText("abschlussVeraltet", sprache()))}</p>` : ""}${z(t("w3b.monat.umsatz"), esc(fmtEuro(ab.umsatzBrutto)))}${vgl?.zumVormonat ? z(t("w3b.monat.zumVormonat"), `${vgl.zumVormonat.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVormonat.umsatz)))}`) : ""}${vgl?.zumVorjahr ? z(t("w3b.monat.zumVorjahr"), `${vgl.zumVorjahr.umsatz >= 0 ? "+" : "−"} ${esc(fmtEuro(Math.abs(vgl.zumVorjahr.umsatz)))}`) : ""}`
         : vmDa ? `<p>${esc(t("w3b.monat.satz"))}</p><button type="button" class="knopf" data-a="g3-monat-zu">${esc(t("w3b.monat.knopf", mname))}</button>` : `<p>${esc(t("w3.bleibt.ersterMonat"))}</p>`); }
   return `<div class="kopfband"><h1>${esc(t("w3.titel"))}</h1><div class="unter">${esc(t("w3.unter"))}</div></div>
     <div class="inhalt buero g3">${topf}${termine2}${bleibt}${pruefer}${monatKarte}${liq}${schicht}<p class="hinweis">${esc(t("w3.fuss"))}</p></div>${nav("geld3")}`; // Ausschuss Lauf 3, P3 B1: Kopfleiste mit „‹ Zurück“
