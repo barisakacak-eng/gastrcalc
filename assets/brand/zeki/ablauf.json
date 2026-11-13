@@ -1,0 +1,702 @@
+[
+ {
+  "name": "warten",
+  "datei": "warten.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 4200,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": true
+ },
+ {
+  "name": "zwinkern",
+  "datei": "zwinkern.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 720,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "grinsen",
+  "datei": "grinsen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 720,
+  "miene": "freude",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "hand",
+  "datei": "hand.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1200,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "nicken",
+  "datei": "nicken.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1200,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "kopfschuetteln",
+  "datei": "kopfschuetteln.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1200,
+  "miene": "warnung",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "pruefen",
+  "datei": "pruefen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1200,
+  "miene": "import",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "preis",
+  "datei": "preis.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1200,
+  "miene": "preis",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "zeigen-links",
+  "datei": "zeigen-links.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1400,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "zeigen-rechts",
+  "datei": "zeigen-rechts.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1400,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "zeigen-oben",
+  "datei": "zeigen-oben.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1400,
+  "miene": "aufmerksam",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "zeigen-unten",
+  "datei": "zeigen-unten.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1400,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "kopf-drehen",
+  "datei": "kopf-drehen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1600,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "auftreten",
+  "datei": "auftreten.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 2400,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": false,
+  "schleife": false
+ },
+ {
+  "name": "abgehen",
+  "datei": "abgehen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 2400,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": false,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "schuerze",
+  "datei": "schuerze.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "daumen",
+  "datei": "daumen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1400,
+  "miene": "bestaetigt",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "nachdenken",
+  "datei": "nachdenken.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "frage",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "schreiben",
+  "datei": "schreiben.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "suchen",
+  "datei": "suchen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "import",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "zahlen-zeigen",
+  "datei": "zahlen-zeigen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "papier-zeigen",
+  "datei": "papier-zeigen.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "hilfe",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "jubeln",
+  "datei": "jubeln.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1400,
+  "miene": "freude",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "foto",
+  "datei": "foto.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1800,
+  "miene": "neutral",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ },
+ {
+  "name": "muenze",
+  "datei": "muenze.webp",
+  "raster": [
+   5,
+   5
+  ],
+  "bilder": 25,
+  "zelle": [
+   512,
+   636
+  ],
+  "zelle_klein": [
+   256,
+   318
+  ],
+  "dauer_ms": 1600,
+  "miene": "bestaetigt",
+  "registrierung_viewBox": [
+   -80,
+   -45,
+   420,
+   521.71875
+  ],
+  "endet_in_ruhe": true,
+  "beginnt_in_ruhe": true,
+  "schleife": false
+ }
+]
