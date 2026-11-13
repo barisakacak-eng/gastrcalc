@@ -163,14 +163,6 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .b-leise.b-werkzeuge{margin-block-start:8px}
 @media (prefers-reduced-motion:reduce){#app:has(.appleiste.buero) .b-bereich>summary .b-pfeil,#app:has(.appleiste.buero) .b-mehr-zeile::after{transition:none}}
 
-/* ---------- Büro-Kopf von Seiten ohne Bühnen-Titel und Sperre ---------- */
-#app:has(.appleiste.buero) .b-sperre{align-items:center;text-align:center;justify-content:center;gap:16px;padding-block-start:32px}
-#app:has(.appleiste.buero) .b-sperrsym{display:grid;place-items:center;inline-size:72px;block-size:72px;border-radius:22px;background:var(--salbei-hell);color:var(--salbei-tief)}
-#app:has(.appleiste.buero) .b-codefeld{inline-size:100%;max-inline-size:240px;min-block-size:64px;text-align:center;font-size:2rem;letter-spacing:.5em;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier)}
-#app:has(.appleiste.buero) .b-blatt-hinten{position:fixed;inset:0;z-index:60;background:color-mix(in srgb,var(--tinte) 42%,transparent)}
-#app:has(.appleiste.buero) .b-blatt{position:fixed;inset-inline:0;inset-block-end:0;z-index:61;background:var(--papier);border-radius:var(--radius-gross) var(--radius-gross) 0 0;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 20px);box-shadow:var(--schatten-menu);display:flex;flex-direction:column;gap:12px;max-inline-size:640px;margin-inline:auto}
-#app:has(.appleiste.buero) .b-griff{inline-size:40px;block-size:4px;border-radius:4px;background:var(--holz-tief);margin:0 auto 4px}
-
 /* ---------- Papier (Bauart 11): Ordner Amt, Steuerberater, Buchhalter ---------- */
 #app:has(.appleiste.buero) .b-ordnerseite{gap:12px}
 #app:has(.appleiste.buero) .b-ordnerkopf{display:block}
@@ -353,4 +345,21 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 @media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]) #app:has(.appleiste.buero){--s-ikon:var(--tinte)}}
 #app:has(.appleiste.buero) .b-zs,#app:has(.appleiste.buero) .b-wert.plus,#app:has(.appleiste.buero) .plus,#app:has(.appleiste.buero) .b-status.ok,#app:has(.appleiste.buero) .b-mini,#app:has(.appleiste.buero) .pr-gross,#app:has(.appleiste.buero) .kl-monat,#app:has(.appleiste.buero) .vk-hebel,#app:has(.appleiste.buero) .b-rund,#app:has(.appleiste.buero) .b-pille,#app:has(.appleiste.buero) .topzeile .rang{color:var(--s-ikon)}
 #app:has(.appleiste.buero) .b-bereich>.b-liste .b-zs{color:var(--s-ikon)}
-#app:has(.appleiste.buero) .b-sperrsym{color:var(--s-ikon)}
+
+/* ---------- Reste der alten Büro-Schicht, die Laden-Bildschirme noch brauchen (gelten überall, nur Tokens) ---------- */
+.po{display:flex;flex-direction:column;gap:18px;padding-block-start:12px}
+.po-ergebnis{text-align:center;padding:28px 16px;border-radius:var(--radius);background:var(--papier-tief);display:flex;flex-direction:column;gap:8px}
+.po-gross{font-size:3rem;line-height:1;font-variant-numeric:var(--zahlen);color:var(--tinte);font-weight:700}
+.po-ergebnis.mehr .po-gross{color:var(--tinte)}
+.po-ergebnis.gut .po-gross{color:var(--salbei-tief)}
+.po-ergebnis p{margin:0;font-size:1.0625rem;font-weight:700}
+.po-wert{display:inline-flex;align-items:baseline;gap:4px}
+.po-wert input{inline-size:4.2ch;font:inherit;text-align:end;border:0;border-block-end:2px solid var(--holz);background:transparent;color:inherit;padding:0;min-block-size:0}
+.kl-monat{margin:6px 0 12px;font-weight:700;color:var(--salbei-tief)}
+.kl-monat.minus{color:var(--tinte)}
+
+/* ---------- Foto links in Listenzeilen ---------- */
+#app:has(.appleiste.buero) .summenzeile.mit-foto{flex-wrap:nowrap;align-items:center;gap:12px}
+#app:has(.appleiste.buero) .summenzeile.mit-foto>.gerichtbild{flex:none;inline-size:52px;block-size:48px;border-radius:var(--radius-klein);object-fit:cover}
+#app:has(.appleiste.buero) .summenzeile.mit-foto>.gerichtbild.pikto{object-fit:contain;padding:6px;background:var(--papier-tief)}
+#app:has(.appleiste.buero) .summenzeile.mit-foto>span:not(.wert){flex:1 1 0;min-inline-size:0}
