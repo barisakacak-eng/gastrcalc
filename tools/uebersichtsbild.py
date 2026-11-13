@@ -124,7 +124,12 @@ async def nachspielen(b, quelle, ziel, sprache, farbe, port, modi=("einrichtung"
             if modus == "einrichtung":
                 await Z.einrichtung(l); neu.extend(l.schirme)
             else:
-                await Z.vorbereiten(l)
+                for versuch in (1, 2):  # der erste Start fängt manchmal ein Rundgang-Fenster ein: einmal neu beginnen
+                    try: await Z.vorbereiten(l); break
+                    except Exception as ex:
+                        if versuch == 2: raise
+                        notizen.append(f"{modus}: Vorbereitung beim ersten Versuch gescheitert ({ex!r})"[:140])
+                        await l.ende(); l = Z.Lauf(b, modus, port + i, je_modus); l.tor = lauf_ctx; await l.start()
                 for e in [x for x in daten if x["modus"] == modus and x.get("datei")]:
                     ansicht = e.get("ansicht") or (e["weg"][0][4:] if e["weg"] and e["weg"][0].startswith("nav:") else None)
                     weg = [w for w in e["weg"] if not w.startswith("nav:")]
