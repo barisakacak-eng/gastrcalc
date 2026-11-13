@@ -12,9 +12,9 @@ import { isoTag } from "./zeit.js";
 export function cent(eur) {
   const n = Number(eur); if (!Number.isFinite(n)) return 0;
   const c = Number((Math.abs(n) * 100).toPrecision(15)); const r = Math.floor(c + 0.5);
-  return n < 0 ? -r : r;
+  return (n < 0 ? -r : r) + 0; // + 0: aus −0 wird 0 (Lauf 6, E11 C1: nie „−0“)
 }
-export const euro = (c) => c / 100;
+export const euro = (c) => c / 100 + 0;
 // Kein Betrag (Text, leer, NaN) bleibt „kein Betrag“ (NaN) – die Anzeige zeigt dann „–“ statt fälschlich 0 €.
 export const rund2 = (eur) => (eur === null || eur === undefined || !Number.isFinite(Number(eur)) ? NaN : euro(cent(eur)));
 // Summe von Euro-Beträgen, auf den Cent genau (jeder Posten wird zuerst zu Cent)
