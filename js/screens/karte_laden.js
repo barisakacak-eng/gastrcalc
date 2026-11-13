@@ -161,6 +161,7 @@ function rezeptBlatt(stand) {
       <div class="kl-preiskopf">${gerichtBild(g)}<div><b>${esc(g.name)}</b><small>${esc(tt("rezepte.zusammenfassung", g.zutaten.length, g.zeit))}</small></div>
         <button type="button" class="kl-x" data-a="kl-zu" aria-label="${esc(tt("kartelaeden.schliessen"))}">${sym("x")}</button></div>
       <ul class="kl-zutaten">${g.zutaten.map(zeile).join("")}</ul>
+      ${g.klasse !== "getraenk" && hatEigenesRezept(g) ? `<button type="button" class="knopf zweit portionknopf" data-a="nav" data-wert="portion" data-id="${esc(g.id)}">${sym("scale")} ${esc(t("gehirn.portion.knopf"))}</button>` : ""}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-zu">${esc(tt("allgemein.fertig"))}</button>
     </div>`;
 }
