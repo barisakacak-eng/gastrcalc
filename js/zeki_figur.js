@@ -89,6 +89,16 @@ export function figurHtml({ schluessel, rtl = false } = {}) {
   return `<div class="gc-figur"${rtl ? ' data-gespiegelt="1"' : ""} data-zeki-buehne="${esc(k)}"><img class="gc-zeki" src="${esc(b.datei)}" alt="" width="${DARSTELLUNG_BREITE}" height="${Math.round(a.hoehe)}" decoding="async"></div>`;
 }
 
+// ---------- Zeki vorn (Führung, Intro, Hinweis, Blatt von unten) ----------
+// Er steht dann nicht in der Bühne, sondern vor dem Inhalt: die ganze Figur als Zelle der Folgen (256 × 318, die Figur selbst nimmt davon ≈ 47 % × 59 % ein), ohne Kreis, ohne Rahmen.
+// Das Bild ist die passende Miene aus assets/brand/zeki-mienen/ (gleiche Zelle, deckungsgleich mit Bild 0 jeder Folge). Die Größe setzt das CSS (css/zeki.css), die Maße hier sind der Rückfall.
+// start: Name einer Folge, die einmal läuft, sobald das Element erscheint (js/adapter/brand_start.js); leer = ruhendes Bild.
+export const VORN_BREITE = 128, VORN_HOEHE = Math.round(VORN_BREITE * ZELLE_KLEIN[1] / ZELLE_KLEIN[0]);
+export function vornHtml({ miene = "neutral", start = "", klasse = "" } = {}) {
+  const k = klasse ? ` ${esc(klasse)}` : "", s = start && Object.hasOwn(ZEKI_FOLGEN, start) ? ` data-zeki-start="${esc(start)}"` : "";
+  return `<span class="gc-zeki-vorn${k}" data-zeki-vorn="1"${s}><img class="gc-zeki" src="${esc(mienenBild(miene))}" alt="" width="${VORN_BREITE}" height="${VORN_HOEHE}" decoding="async"></span>`;
+}
+
 // ---------- Welche Folge zu welchem Ereignis (Übergabe Abschnitt 4) ----------
 // Leerlauf ist immer „warten“ (atmen, einmal blinzeln) – nie „zwinkern“. Zwinkern gibt es nur bei Lob. Warnung und Fehler: nie grinsen oder jubeln.
 export const LEERLAUF_FOLGE = "warten";
@@ -214,11 +224,19 @@ export function folgeVorladen(el, name, opt = {}) { const f = folge(name); retur
 function ueberlagerung(el, f, breite, i0) {
   let o = el.querySelector?.(".gc-zeki-folge");
   if (!o) { o = el.ownerDocument.createElement("span"); o.className = "gc-zeki-folge"; o.setAttribute?.("aria-hidden", "true"); el.appendChild(o); }
+  if (el.hasAttribute?.("data-zeki-vorn")) { // Zeki vorn (Führung, Intro, Blatt): die ganze Zelle über dem ganzen Bild, Größe in Prozent – gilt für jede Breite
+    const [x, y] = rasterProzent(i0);
+    Object.assign(o.style, { position: "absolute", top: "0px", left: "0px", width: "100%", height: "100%", pointerEvents: "none", display: "block",
+      backgroundImage: `url("${f.datei}")`, backgroundRepeat: "no-repeat", backgroundSize: `${SPALTEN * 100}% ${ZEILEN * 100}%`, backgroundPosition: `${x}% ${y}%` });
+    return { o, a: null };
+  }
   const a = ausschnitt(breite), [x, y] = a.position(i0);
   Object.assign(o.style, { position: "absolute", top: "0px", left: "0px", width: `${a.breite}px`, height: `${a.hoehe}px`, pointerEvents: "none", display: "block",
     backgroundImage: `url("${f.datei}")`, backgroundRepeat: "no-repeat", backgroundSize: `${a.bildB}px ${a.bildH}px`, backgroundPosition: `${x}px ${y}px` });
   return { o, a };
 }
+// background-position in Prozent für Bild Nummer i (0–24) bei background-size 500 % × 500 %
+const rasterProzent = (i) => [(i % SPALTEN) * 100 / (SPALTEN - 1), Math.floor(i / SPALTEN) * 100 / (ZEILEN - 1)];
 function ruhe(el, wie) { // wie: "ruhe" = ruhendes Bild wieder zeigen, "weg" = Figur hat die Bühne verlassen
   const o = el.querySelector?.(".gc-zeki-folge"); if (o) o.style.display = "none";
   const bild = el.querySelector?.("img.gc-zeki"); if (bild) bild.style.visibility = wie === "weg" ? "hidden" : "";
@@ -281,7 +299,7 @@ function starten(l) {
       if (el.isConnected === false) return aus("abbruch");
       const jetzt = typeof ts === "number" ? ts : l.z.jetzt(); if (t0 === null) t0 = jetzt;
       const k = Math.min(n - 1, Math.floor((jetzt - t0) / dauer * n)), i = l.rueck ? l.ab - k : l.ab + k;
-      if (i !== zuletzt) { zuletzt = i; const [x, y] = a.position(i); o.style.backgroundPosition = `${x}px ${y}px`; }
+      if (i !== zuletzt) { zuletzt = i; if (a) { const [x, y] = a.position(i); o.style.backgroundPosition = `${x}px ${y}px`; } else { const [x, y] = rasterProzent(i); o.style.backgroundPosition = `${x}% ${y}%`; } }
       if (jetzt - t0 >= dauer) return nachLauf();
       l.rafId = l.z.raf(schritt);
     };
@@ -304,6 +322,7 @@ export function zekiSpielen(el, name, opt = {}) {
     const alt = LAEUFE.get(el); if (alt && alt.f.schleife) return { name, fertig: alt.fertig, abbrechen: alt.abbrechen };
   }
   const l = neuerLauf(el, name, opt, { ab: opt.ab, bis: opt.bis, rueck: opt.rueckwaerts });
+  if (!f.beginntInRuhe && !opt.ab) { const bild = el.querySelector?.("img.gc-zeki"); if (bild) bild.style.visibility = "hidden"; } // „auftreten“ beginnt außerhalb des Bildes: Zeki ist erst da, wenn er hereinkommt (fehlt die Folge, zeigt ruhe() das Bild wieder)
   anmelden(l); return handleVon(l, [l]);
 }
 
