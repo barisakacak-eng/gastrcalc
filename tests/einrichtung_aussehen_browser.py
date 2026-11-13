@@ -30,14 +30,14 @@ MESSEN = """() => {
     const bg = s.backgroundColor && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(s.backgroundColor); const rand = ['Top','Right','Bottom','Left'].some((k) => parseFloat(s['border' + k + 'Width']) > 0 && s['border' + k + 'Style'] !== 'none');
     const schatten = s.boxShadow && s.boxShadow !== 'none'; const zipfel = z.content && z.content !== 'none' && z.content !== 'normal' && z.display !== 'none' && parseFloat(z.width) > 0 && z.backgroundColor !== 'rgba(0, 0, 0, 0)';
     return bg || rand || schatten || zipfel; }).map((e) => e.className);
-  const doc = document.documentElement;
+  const doc = document.documentElement; const blattImDom = document.querySelectorAll('.ebene-blatt').length;
   const wurzel = blaetter.length ? huelle : document;
   const tippflaechen = [...wurzel.querySelectorAll('button, a[href], select, input:not([type=hidden]):not(.dateifeld):not([type=file]), label.leise, summary, [role=button]')].filter(sichtbar).filter((e) => !e.closest('.dateifeld'))
     .map((e) => { const r = e.getBoundingClientRect(); return { k: (e.dataset.a || e.dataset.f || e.className || e.tagName).toString().slice(0, 40), w: Math.round(r.width), h: Math.round(r.height), t: (e.textContent || '').trim().slice(0, 20) }; })
     .filter((x) => x.h < 43.5 || x.w < 43.5);
   const rects = [...(blaetter.length ? huelle : app).querySelectorAll('*')].filter(sichtbar).filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).filter((e) => !e.closest('.gc-figur-knopf, .gc-figur, .zeki-lebt, .home-bilder, .dateifeld')).map((e) => (e.className || e.tagName).toString().slice(0, 40));
   const fr = document.querySelector('.gc-buehne .gc-figur-knopf'); const f = fr ? fr.getBoundingClientRect() : null;
-  return { buehnen: buehnen.length, blaetter: blaetter.length, figuren: bilderFiguren.length, blasen, ueberlaufX: doc.scrollWidth > innerWidth + 1, rects: rects.slice(0, 4),
+  return { blattImDom, buehnen: buehnen.length, blaetter: blaetter.length, figuren: bilderFiguren.length, blasen, ueberlaufX: doc.scrollWidth > innerWidth + 1, rects: rects.slice(0, 4),
     ueberlaufY: doc.scrollHeight - innerHeight, appY: app.scrollHeight - app.clientHeight, text: (app.innerText || '') + ' ' + (huelle ? huelle.innerText : ''), tippflaechen: tippflaechen.slice(0, 5),
     buehneH: buehnen[0] ? Math.round(buehnen[0].getBoundingClientRect().height) : 0, figurMitte: f ? f.left + f.width / 2 : null, figurRechts: f ? f.right : null, figurLinks: f ? f.left : null, breite: innerWidth,
     schritt: (window.__gastrocalc && window.__gastrocalc.stand && window.__gastrocalc.stand.schrittId) || '' };
@@ -72,7 +72,7 @@ async def lauf(b, sprache, br, ho, art, name, befund, fehler):
     pg.on("console", lambda m: fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text and "Failed to load resource" not in m.text else None)
     suffix = f"{sprache}-{br}" + ("-dunkel" if DUNKEL else "") + ("" if art == "doener" else f"-{art}")
 
-    async def pruefe(was, einrichtung, blatt=False):
+    async def pruefe(was, einrichtung, blatt=False, figur=True):
         await pg.wait_for_timeout(450)
         m = await pg.evaluate(MESSEN); tag = f"[{sprache} {br}x{ho} {art}] {was}"
         if blatt:
@@ -80,7 +80,8 @@ async def lauf(b, sprache, br, ho, art, name, befund, fehler):
         else:
             if m["blaetter"] != 0: befund.append(f"{tag}: Blatt offen, obwohl keins offen sein soll ({m['blaetter']})")
         if m["figuren"] > 1: befund.append(f"{tag}: {m['figuren']} sichtbare Zekis")
-        if m["figuren"] < 1: befund.append(f"{tag}: kein Zeki sichtbar")
+        if m["figuren"] < 1 and figur: befund.append(f"{tag}: kein Zeki sichtbar")
+        if m["blattImDom"] > 1: befund.append(f"{tag}: {m['blattImDom']} Blätter im DOM (höchstens 1)")
         if blatt and m["buehnen"] and m["figuren"] > 1: befund.append(f"{tag}: Zeki in Blatt UND Bühne")
         if einrichtung and m["buehnen"] != 1: befund.append(f"{tag}: {m['buehnen']} Bühnen statt 1")
         if m["blasen"]: befund.append(f"{tag}: sichtbare Sprechblase {m['blasen']}")
@@ -138,11 +139,33 @@ async def lauf(b, sprache, br, ho, art, name, befund, fehler):
     await pg.click('#ebene-huelle .ikonknopf.zu'); await pg.wait_for_timeout(300)
     await pg.click('[data-a="hilfe-auf"]'); await pg.wait_for_selector("#ebene-huelle .blatt-hilfe"); await pruefe("b3-hilfe", False, blatt=True)
     await pg.click('#ebene-huelle .knopf[data-a="blatt-zu"]'); await pg.wait_for_timeout(300)
+    # Sicherung teilen (Passwort-Blatt)
     await nav_hilfe.ins_buero(pg); await pg.wait_for_timeout(300)
+    if await pg.locator('#app [data-a="export"]').count():
+        await pg.locator('#app [data-a="export"]').first.click(); await pg.wait_for_selector("#ebene-huelle .blatt-passwort"); await pruefe("b5-sicherung", False, blatt=True)
+        await pg.click('#ebene-huelle .ikonknopf.zu'); await pg.wait_for_timeout(300)
+    else: befund.append(f"[{sprache}] Sicherung teilen im Büro nicht gefunden")
+    # Büro-Code setzen (Ziffernfeld), danach der Rettungscode
     await pg.click('#app [data-a="pin-setzen"]'); await pg.wait_for_selector("#ebene-huelle .blatt-pin"); await pruefe("b4-pin", False, blatt=True)
     xs = await pg.evaluate("""() => ['1','2','3'].map((z) => document.querySelector(`#ebene-huelle [data-a="pin-taste"][data-wert="${z}"]`).getBoundingClientRect().left)""")
     if not (xs[0] < xs[1] < xs[2]): befund.append(f"[{sprache}] Ziffern nicht 1, 2, 3 von links nach rechts: {xs}")
+    await schnellstart.code_tippen(pg, "1234"); await pg.wait_for_timeout(300); await pruefe("b4-pin-halb", False, blatt=True); await schnellstart.code_tippen(pg, "1234")
+    await pg.locator("#ebene-huelle .blatt-rettungscode").wait_for(timeout=20000); await pruefe("b6-rettungscode", False, blatt=True)
+    await pg.click('#ebene-huelle [data-a="rettung-ok"]'); await pg.locator("#ebene-huelle .blatt-rettungscode").wait_for(state="detached"); await pg.wait_for_timeout(300)
+    # Code abfragen, „Code vergessen?“, Rettungscode-Eingabe, Wartezeit nach Fehlversuchen
+    await nav_hilfe.zum_laden(pg); await nav_hilfe.ins_buero(pg); await pg.wait_for_selector("#ebene-huelle .blatt-pin"); await pruefe("b7-pin-buero", False, blatt=True)
+    await pg.click('#ebene-huelle [data-a="rettung-start"]'); await pg.wait_for_selector("#ebene-huelle .blatt-rettung"); await pruefe("b8-rettung", False, blatt=True)
+    await pg.click('#ebene-huelle .ikonknopf.zu'); await pg.wait_for_timeout(300)
+    await nav_hilfe.ins_buero(pg)
+    if not await pg.locator("#ebene-huelle .blatt-pin").count(): await pg.click('[data-a="menue-auf"]') if False else None
+    await pg.wait_for_selector("#ebene-huelle .blatt-pin")
+    for _ in range(5):
+        await schnellstart.code_tippen(pg, "9999"); await pg.wait_for_timeout(1500)
+    await pruefe("b9-wartezeit", False, blatt=True)
+    if not await pg.locator("#ebene-huelle .pin-meldung").inner_text(): befund.append(f"[{sprache}] Wartezeit-Text fehlt")
     await pg.click('#ebene-huelle .pintaste.leer[data-a="blatt-zu"]'); await pg.wait_for_timeout(300)
+    # Notfallseite (nur Gestaltung per CSS)
+    await pg.evaluate("import('/js/bedienung/zeichnen.js').then((m) => m.notfallSeite())"); await pruefe("n1-notfall", False, figur=False)
     await ctx.close()
 
 
