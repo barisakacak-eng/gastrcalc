@@ -3,10 +3,10 @@ jeweils mit dem Beispiel-Laden und allen Unterseiten/Blättern, die das Werkzeug
 Die Liste kommt aus dem Ordner TOR_QUELLE (daten.json des Zählwerkzeugs; die Wege werden in jeder Sprache/Größe nachgespielt, die Einrichtung läuft als Durchgang).
 Je Bildschirm wird gemessen – Rückgabecode 1 bei Verstoß:
   a  Zeki-Figuren sichtbar ≤ 1 (Bühne .gc-figur, vorn .gc-zeki-vorn / mascotMarkup, Folgen-Überzug .gc-zeki-folge, alte Figuren .zeki; sichtbar = im Bild, nicht hidden/none/opacity 0)
-  b  kein Zeki in der Kopfzeile (.gc-kopf, .ebene-kopf, header außerhalb der Bühne)
+  b  kein Zeki in der Kopfzeile (.gc-kopf – die Zeile mit ☰, Titel und Hilfe-Knopf; die Bühne darunter ist nicht gemeint)
   c  keine Sprechblase (sichtbares Element mit „blase“ in der Klasse UND Hintergrund, Rahmen oder Schatten)
   d  höchstens ein offenes Blatt (#ebene-huelle .ebene-blatt)
-  e  kein doppeltes Feld (gleiches data-f; gleiches data-a + data-wert + Text; Listenzeilen mit data-id / data-i ausgenommen)
+  e  kein doppeltes Feld (gleiches data-f; Knöpfe mit gleichem data-a + data-wert + Text UND sonst gleichen data-* – Listenzeilen mit data-id / data-i oder anderem Datensatz sind ausgenommen)
   f  kein Überlauf: waagrecht nirgends; senkrecht nicht in Laden und Personal bei 390 × 844 (Ausnahmen wie in tests/laden_aussehen_browser.py, siehe AUSNAHMEN)
   g  Personal: kein „€“ im sichtbaren Text
   h  Arabisch: Code-Tasten 1, 2, 3 von links nach rechts (Büro-Code-Blatt wird dafür eigens geöffnet)
@@ -79,7 +79,7 @@ TOR_JS = r"""
   const figNamen = figuren.map(nm);
   // b) Kopfzeile
   const kopfFig = [];
-  for (const k of document.querySelectorAll('.gc-kopf, .ebene-kopf, header.kopf, .kopf')) if (sichtbar(k)) for (const f of k.querySelectorAll(FIG)) if (zeigt(f)) kopfFig.push(nm(f));
+  for (const k of document.querySelectorAll('.gc-kopf, .kopfzeile, header.kopf, .appleiste > .kopf')) if (sichtbar(k)) for (const f of k.querySelectorAll(FIG)) if (zeigt(f)) kopfFig.push(nm(f));
   // c) Sprechblasen
   const blasen = [];
   for (const e of document.querySelectorAll('[class*="blase"]')) {
@@ -99,9 +99,10 @@ TOR_JS = r"""
     if (!sichtbar(e) || e.dataset.id !== undefined || e.dataset.i !== undefined || e.closest('[aria-hidden="true"]')) continue;
     if (e.matches('input, select, textarea')) continue;
     const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim();
-    const k = e.dataset.a + '|' + (e.dataset.wert ?? '') + '|' + t; knN[k] = (knN[k] || 0) + 1;
+    const alleDaten = Object.entries(e.dataset).sort().map(([n, w]) => n + '=' + w).join(',');  // gleiche Knöpfe: ALLE data-* und der Text stimmen überein
+    const k = alleDaten + '|' + t; knN[k] = (knN[k] || 0) + 1;
   }
-  const doppeltK = Object.entries(knN).filter(([, n]) => n > 1).map(([k, n]) => k.split('|').filter(Boolean).join(' / ') + ' ×' + n);
+  const doppeltK = Object.entries(knN).filter(([, n]) => n > 1).map(([k, n]) => k.replace('|', ' / ') + ' ×' + n);
   // f) Überlauf
   const de = document.documentElement, app = document.querySelector('#app');
   const ueberX = Math.max(de.scrollWidth, document.body.scrollWidth) > W + 1;
@@ -124,8 +125,9 @@ TOR_JS = r"""
     if (s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0) pr.push(s.outlineColor);
     return pr.some((c, i) => { if (!gleich(rgb(c), t)) return false; if (i === 0) return [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) || e.matches('svg, svg *'); return true; }); };
   const alle = [...document.querySelectorAll('body *')].filter((e) => !e.closest('script,style') && sichtbar(e) && imBild(e));
-  const glutEl = alle.filter((e) => !e.closest('.tableiste') && farbig(e, glut)).map(nm);
-  const weinEl = alle.filter((e) => farbig(e, wein) || farbig(e, muell)).map(nm);
+  const einzeln = (liste) => [...new Set(liste.map((e) => e.closest('svg') || e))].map(nm);  // ein Symbol (svg samt Pfaden) zählt einmal
+  const glutEl = einzeln(alle.filter((e) => !e.closest('.tableiste') && farbig(e, glut)));
+  const weinEl = einzeln(alle.filter((e) => farbig(e, wein) || farbig(e, muell)));
   // j) Bewegung an der Figur
   const lauf = [];
   for (const f of document.querySelectorAll(FIG + ', .gc-figur *, [data-zeki-vorn] *')) {
@@ -248,13 +250,15 @@ def auswerten(zeilen, ausnahmen, notizen, dauer):
     for z in zeilen:
         k = (z["ebene"], z["sprache"], z["groesse"], z["farbe"], z["bewegung"]); zaehl[k] = zaehl.get(k, 0) + 1
     ergebnis = {"stand": time.strftime("%d.%m.%Y %H:%M"), "dauer_min": round(dauer / 60, 1), "regeln": REGELN,
-                "verstoesse_je_regel": {r: len(v) for r, v in je_regel.items()}, "ausnahmen": sorted(f"{n}: {g}" for n, g in ausnahmen), "notizen": notizen,
+                "verstoesse_je_regel": {r: len(v) for r, v in je_regel.items()}, "ohne_figur": len([z for z in zeilen if z["messwerte"]["figuren"] == 0]), "ausnahmen": sorted(f"{n}: {g}" for n, g in ausnahmen), "notizen": notizen,
                 "bildschirme_je_lauf": [{"ebene": k[0], "sprache": k[1], "groesse": k[2], "farbe": k[3], "bewegung": k[4], "anzahl": n} for k, n in sorted(zaehl.items())],
                 "tabelle": zeilen}
     (OUT / "tor.json").write_text(json.dumps(ergebnis, ensure_ascii=False, indent=1), encoding="utf-8")
     # ---- Konsole
     print("\nTOR – Bildschirme je Lauf:")
     for e in ergebnis["bildschirme_je_lauf"]: print(f"  {e['ebene']:13s} {e['sprache']} {e['groesse']} {e['farbe']:5s} {e['bewegung']:9s} {e['anzahl']:3d}")
+    ohne = [f"{z['sprache']}/{z['groesse']}/{z['farbe']} {z['ebene']}-{z['name']}" for z in zeilen if z["messwerte"]["figuren"] == 0]
+    print(f"\nBildschirme ohne sichtbare Figur: {len(ohne)} von {len(zeilen)}" + (" (z. B. Blätter, Führung, Einrichtung mit Hinweis)" if ohne else ""))
     print("\nTOR – Verstöße je Regel:")
     for r, text in REGELN.items(): print(f"  {r}) {text}: {len(je_regel[r])}")
     for r in REGELN:
