@@ -3,7 +3,7 @@
 // danach tritt er zurück hinter die Kante und die ruhende Bühnen-Figur steht wieder da. Keine Sprechblase.
 // Höchstens einmal pro App-Start (sessionStorage), nie bei „reduzierte Bewegung“, jeder Tipp beendet ihn sofort.
 // Er fängt keine Eingaben ab (pointer-events: none): Die Seite ist von der ersten Sekunde an bedienbar.
-import { zekiSpielen, vornHtml } from "./zeki_figur.js";
+import { zekiSpielen, zekiStopp, vornHtml } from "./zeki_figur.js";
 import { t } from "./i18n.js";
 
 // SCHALTER: false = Auftritt ganz aus. (Häufigkeit ist noch offen – hier stellt Baris es um.)
@@ -48,7 +48,7 @@ export function introStarten(doc = document, { speicher, an = INTRO_AN } = {}) {
     gruss?.remove(); leiste.classList.remove("gc-spricht-kurz"); huelle.remove();
   };
   doc.addEventListener("pointerdown", ende, true); doc.addEventListener("keydown", ende, true); // nur lauschen, nichts abfangen
-  doc.body.appendChild(huelle);
+  doc.body.appendChild(huelle); zekiStopp(knopf.querySelector(".gc-figur")); // die Bühnen-Figur ruht, solange er vorn steht
   lauf = zekiSpielen(huelle.querySelector("[data-zeki-vorn]"), "auftreten");
   if (!lauf) { ende(); return false; }
   zeiten.push(setTimeout(() => { // Gruß: eine Zeile in der Bühne neben Zeki

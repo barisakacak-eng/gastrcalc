@@ -7,7 +7,7 @@
 import { t, sprache, mengenText } from "../i18n.js";
 import { esc } from "../util.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
-import { zekiSpielen, zekiAbgang, folgeVorladen } from "../zeki_figur.js";
+import { zekiSpielen, zekiAbgang, folgeVorladen, zekiStopp } from "../zeki_figur.js";
 import { zekiFragenFuer } from "../data/zeki_fragen.js";
 
 const M = (k, ...a) => t("rundgang.mitmach." + k, ...a);
@@ -74,6 +74,7 @@ export function rundgangStarten(d, rueck = {}) {
   huelle = doc.createElement("div");
   huelle.setAttribute("class", "rg-huelle rg-mitmach"); huelle.setAttribute("role", "dialog"); huelle.setAttribute("aria-modal", "true"); huelle.setAttribute("aria-label", M("titel"));
   doc.body.appendChild(huelle); doc.body.classList.add("rg-aktiv");
+  for (const f of doc.querySelectorAll(".gc-buehne .gc-figur")) zekiStopp(f); // er tritt vor: die Bühnen-Figur ruht (nur eine Folge gleichzeitig)
   doc.addEventListener("click", klick, true);
   startZeit = Date.now();
   api.log?.({ art: "rundgang", inhalt: "start", station: MITMACH_REIHE[pos] });

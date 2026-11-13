@@ -314,6 +314,12 @@ function starten(l) {
 const haltungVon = (el, opt) => { const k = opt.schluessel ?? el.getAttribute?.("data-zeki-buehne"); return k ? buehnenBild(k)?.haltung : undefined; };
 const handleVon = (l, alle) => ({ name: l.name, fertig: alle[alle.length - 1].fertig, abbrechen: () => alle.forEach((x) => x.abbrechen()) });
 
+// Alles anhalten, was an diesem Element läuft oder wartet (auch den Leerlauf): Zeki steht danach im ruhenden Bild. Zum Beispiel, wenn er die Bühne verlässt und vorn auftritt (Führung, Intro): nur eine Folge gleichzeitig.
+export function zekiStopp(el) {
+  const l = el ? LAEUFE.get(el) : null; if (!l) return false;
+  verwerfen(l, "abbruch"); stoppen(l, "abbruch"); return true;
+}
+
 export function zekiSpielen(el, name, opt = {}) {
   const f = folge(name);
   if (!f || !el || reduziertVon(el, opt)) return null;

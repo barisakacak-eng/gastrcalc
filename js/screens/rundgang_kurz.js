@@ -4,7 +4,7 @@
 import { t } from "../i18n.js";
 import { esc } from "../util.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
-import { zekiSpielen, zekiAbgang, folgeVorladen } from "../zeki_figur.js";
+import { zekiSpielen, zekiAbgang, folgeVorladen, zekiStopp } from "../zeki_figur.js";
 
 const KURZ_STATIONEN = [
   { ziel: "#app .h-ziel, #app .b-hauptzahl", text: "k1" },
@@ -20,7 +20,7 @@ export const kurzOffen = () => !!huelle;
 export function kurzStarten(doc, { fertig } = {}) {
   if (!doc || huelle) return false;
   huelle = doc.createElement("div"); huelle.className = "rg-huelle rg-kurz"; huelle.setAttribute("role", "dialog"); huelle.setAttribute("aria-modal", "true");
-  doc.body.appendChild(huelle); i = 0; fertigRuf = fertig || null; zeigen(doc); return true;
+  doc.body.appendChild(huelle); for (const f of doc.querySelectorAll(".gc-buehne .gc-figur")) zekiStopp(f); i = 0; fertigRuf = fertig || null; zeigen(doc); return true;
 }
 function ende() { zekiAbgang(huelle?.querySelector(".rg-zeki [data-zeki-vorn]")); huelle?.remove(); huelle = null; const f = fertigRuf; fertigRuf = null; f?.(); }
 function zeigen(doc) {

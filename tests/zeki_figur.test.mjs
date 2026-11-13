@@ -263,7 +263,7 @@ test("Abgang am Ende der Führung: loser Nachlauf ohne Dunkelfläche an der Stel
   assert.equal(Z.zekiAbgang(vorn, { reduziert: true }), null, "Bewegung reduzieren: Zeki ist einfach weg");
   assert.equal(kinder.length, 0);
   const lauf = Z.zekiAbgang(vorn, { laden: async () => true, raf: () => 1, caf() {}, setTimeout: () => 1, clearTimeout() {}, jetzt: () => 0 });
-  assert.ok(lauf, "Abgang läuft"); assert.equal(kinder.length, 1); assert.equal(kinder[0].className, "rg-abgang"); assert.match(kinder[0].style.cssText, /left:20px;top:300px;width:150px;height:186px/);
+  assert.ok(lauf, "Abgang läuft"); assert.equal(kinder.length, 1); assert.equal(kinder[0].class, "rg-abgang"); assert.match(kinder[0].style.cssText, /left:20px;top:300px;width:150px;height:186px/);
   assert.match(kinder[0].innerHTML, /data-zeki-vorn="1"/); assert.doesNotMatch(kinder[0].innerHTML, /dunkel|blase/i);
   lauf.abbrechen(); await lauf.fertig; await new Promise((r) => setImmediate(r)); assert.equal(kinder[0].isConnected, false, "nach dem Abgang entfernt");
 });

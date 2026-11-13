@@ -6,7 +6,7 @@
 import { buehnenBild, folgeFuer, folgeVorladen, zekiEreignis, zekiSpielen, LEERLAUF_FOLGE } from "../zeki_figur.js";
 import { buehneEinrichten } from "./buehne_dom.js";
 
-export const ZEKI_ANKOMMEN_FRIST_MS = 1500; // ist die Folge so lange nach dem Ankommen noch nicht geladen, bleibt es beim ruhenden Bild
+const ZEKI_ANKOMMEN_FRIST_MS = 1500; // ist die Folge so lange nach dem Ankommen noch nicht geladen, bleibt es beim ruhenden Bild
 export const ERNST_AUSLOESER = ["kuehl_abweichung", "muell_hoch"];
 const reduziert = (el) => { try { return !!el?.ownerDocument?.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches; } catch { return false; } };
 export const buehnenFigur = (root) => root?.querySelector?.(".gc-buehne .gc-figur[data-zeki-buehne]") || null;
