@@ -160,6 +160,13 @@ jobs:
             grep -E "VORAB-D|Error|Timeout" vorab_d.txt | tail -8 | while read -r l; do echo "::warning::vorab_d Versuch $versuch: $l"; done
           done
           tail -30 vorab_d.txt; exit 1
+      - name: Personal-Modus (Müll mit Foto, Kühlung, Putzen, Schloss, Wartezeit, Rettungscode)
+        run: |
+          for versuch in 1 2; do
+            if DURCHLAUF_PORT=9131 python tests/personal_haertung_browser.py > personal_haertung.txt 2>&1; then exit 0; fi
+            grep -E "FEHLT|Error|Timeout" personal_haertung.txt | tail -8 | while read -r l; do echo "::warning::personal_haertung Versuch $versuch: $l"; done
+          done
+          tail -40 personal_haertung.txt; exit 1
       - name: Erststart jeder Ladenart (de, drei Ladenarten)
         run: |
           for versuch in 1 2; do
