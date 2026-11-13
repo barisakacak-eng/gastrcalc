@@ -58,7 +58,24 @@ def nach_token(txt):
     _cache[txt] = farbe; return farbe
 
 
+def _alt():
+    t = (APP / "css" / "tokens.css").read_text(); i = t.index("ÜBERGANG"); j = t.index("}", i)
+    return {m.group(1): m.group(2).strip() for m in re.finditer(r"(--[\w-]+):([^;]+);", t[i:j])}
+ALT = None
+
+
+def alt_ersetzen(wert):
+    global ALT
+    if ALT is None: ALT = _alt()
+    for _ in range(4):
+        neu = re.sub(r"var\((--[\w-]+)\s*(?:,\s*(?:[^()]|\([^()]*\))*)?\)", lambda m: ALT.get(m.group(1), m.group(0)) if m.group(1) in ALT else m.group(0), wert)
+        if neu == wert: break
+        wert = neu
+    return wert
+
+
 def farben_ersetzen(wert):
+    wert = alt_ersetzen(wert)
     return FARB.sub(lambda m: nach_token(m.group(0)), wert)
 
 
@@ -66,7 +83,15 @@ def main():
     erg = json.loads(pathlib.Path(sys.argv[1]).read_text()); aus = pathlib.Path(sys.argv[2]); dateien = sys.argv[3:]
     treffer = set(erg["treffer"]); gew = set(erg["gewinner"]); out = []; bericht = []
     andere = "".join((APP / "css" / f"{f}.css").read_text() for f in ["tokens", "app", "zeki", "optik", "buehne", "s-laden", "s-einrichtung", "s-buero"] if f not in dateien) + C.korpus()
+    ORD = ["tokens", "app", "zielbild", "laden", "heute", "personal", "design-b", "facelift-v1", "zeki", "optik", "buehne", "s-laden", "s-einrichtung", "s-buero"]
+    spaeter = {}
+    for fi, f in enumerate(ORD):
+        for ri, k in enumerate(C.zerlege((APP / "css" / f"{f}.css").read_text())):
+            if k["t"] != "regel": continue
+            for sel in C.selektoren(k["sel"]):
+                for p_, v_, w_ in k["decl"]: spaeter.setdefault((k["ctx"], sel, p_), []).append((fi, ri, w_))
     for f in dateien:
+        fi = ORD.index(f)
         text = (APP / "css" / f"{f}.css").read_text(); knoten = C.zerlege(text); a = dict(regeln=0, gilt=0, ungetroffen_behalten=0, tot=0, decl_vor=0, decl_nach=0)
         neu = []
         for k in knoten:
@@ -85,7 +110,11 @@ def main():
             else:
                 lebend = [s for s in C.selektoren(k["sel"]) if all(C.kommt_vor(n) for n in C.positive_namen(s))]
                 if not lebend: a["tot"] += 1; continue
-                a["ungetroffen_behalten"] += 1; k = dict(k, sel=", ".join(lebend))
+                ri = knoten.index(k)
+                def ueber(p_, w_): return all(any((fj, rj) > (fi, ri) and (wj or not w_) for fj, rj, wj in spaeter.get((k["ctx"], sel, p_), [])) for sel in lebend)
+                rest = [d for d in k["decl"] if not ueber(d[0], d[2])]
+                if not rest: a["tot"] += 1; continue
+                a["ungetroffen_behalten"] += 1; k = dict(k, sel=", ".join(lebend), decl=rest)
             k["decl"] = [[p, farben_ersetzen(v), w] for p, v, w in k["decl"]]; a["decl_nach"] += len(k["decl"]); neu.append(k)
         out.append(f"/* ---- aus {f}.css (gilt: {a['gilt']}, nicht fotografierter Zustand: {a['ungetroffen_behalten']}, gestrichen: {a['tot']}) ---- */\n" + C.ausgeben(neu))
         bericht.append((f, a, len(text), len(C.ausgeben(neu))))

@@ -45,12 +45,12 @@
 .gc-buehne .zeki-zeile.a-rot,.gc-buehne .kl-zeki.a-rot,.gc-buehne .zeki-zeile.a-gelb,.gc-buehne .kl-zeki.a-gelb,.gc-buehne .zeki-zeile.a-gruen{background:none;border:0;color:inherit;padding:0;box-shadow:none;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
 .gc-buehne .zeki-zeile.a-gruen{text-decoration:none}
 /* Zeki: selbst der Hilfe-Knopf; steht hinter der unteren Kante der Bühne (Hüfte aufwärts), weicher Schatten auf der Kante, nie über Inhalt */
-.gc-buehne .gc-figur-knopf{position:absolute;inset-inline-end:-12px;inset-block-end:0;z-index:1;inline-size:164px;block-size:113px;min-inline-size:164px;min-block-size:113px;margin:0;padding:0;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gc-buehne .gc-buehne-innen button.gc-figur-knopf{position:absolute;inset-inline-end:-12px;inset-block-end:0;z-index:1;inline-size:164px;block-size:113px;min-inline-size:164px;min-block-size:113px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .gc-buehne .gc-figur-knopf .gc-figur{position:static;inset:auto;inline-size:164px;block-size:113px;overflow:hidden;pointer-events:none;animation:none;transform-origin:50% 100%}
 .gc-buehne .gc-figur-knopf .gc-figur[data-gespiegelt]{transform:scaleX(-1)}
 .gc-buehne .gc-figur-knopf .gc-figur img{display:block;inline-size:164px;block-size:113px;object-fit:fill}
 .gc-buehne .gc-figur-knopf:focus-visible{outline:3px solid var(--buehne-text);outline-offset:-3px}
-.gc-buehne .gc-figur::after{inset-inline:0;block-size:7px;background:linear-gradient(transparent,color-mix(in srgb,var(--tinte) 34%,transparent));-webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent)}
+.gc-buehne .gc-figur::after{inset-inline:0;block-size:7px;background:linear-gradient(transparent,color-mix(in srgb,var(--tinte) 34%,transparent));-webkit-mask-image:linear-gradient(90deg,transparent,var(--tinte) 22%,var(--tinte) 78%,transparent);mask-image:linear-gradient(90deg,transparent,var(--tinte) 22%,var(--tinte) 78%,transparent)}
 .gc-buehne .intro-gruss{display:none}
 /* Ein flüchtiger Satz (Lage des Tages) ersetzt Titel und Satz kurz */
 .gc-buehne.gc-spricht-kurz .gc-buehne-text>:is(.zeki-zeile,.kl-zeki){display:none}

@@ -10,16 +10,22 @@ import schnellstart, ansichten as A
 PORT = int(os.environ.get("SAMMELN_PORT", "9050"))
 ORD = ["tokens", "app", "zielbild", "laden", "heute", "personal", "design-b", "facelift-v1", "zeki", "optik", "buehne", "s-laden", "s-einrichtung", "s-buero"]
 if os.environ.get("SAMMELN_ORD"): ORD = os.environ["SAMMELN_ORD"].split(",")
-LANG = {}
+GESEHEN = set()
 EXPAND = "(paare) => { const e = document.createElement('i'); const o = {}; for (const [n, v] of paare) { if (n.startsWith('--')) { o[n + '\\u0000' + v] = [n]; continue; } e.style.cssText = ''; e.style.setProperty(n, v); const l = []; for (let i = 0; i < e.style.length; i++) l.push(e.style[i]); o[n + '\\u0000' + v] = l.length ? l : [n]; } return o; }"
 
 
 async def erfasse(cdp, pg, hdr, treffer, gewinner, cache):
     doc = await cdp.send("DOM.getDocument", {"depth": -1, "pierce": False}); knoten = []
-    def geh(n):
-        if n.get("nodeType") == 1 and n.get("nodeName", "").lower() not in ("script", "style", "meta", "link", "title", "noscript", "head", "svg_unused"): knoten.append(n["nodeId"])
-        for c in n.get("children", []): geh(c)
-    geh(doc["root"])
+    def attr(n):
+        a = n.get("attributes", []); return {a[i]: a[i + 1] for i in range(0, len(a) - 1, 2)}
+    def geh(n, pfad):
+        if n.get("nodeType") == 1 and n.get("nodeName", "").lower() not in ("script", "style", "meta", "link", "title", "noscript", "head"):
+            a = attr(n); eigen = n["nodeName"].lower() + "." + a.get("class", "") + "|" + "|".join(f"{k}={a[k]}" for k in ("data-a", "type", "role", "dir", "disabled", "open", "data-theme", "data-modus", "aria-pressed", "aria-expanded", "aria-current", "hidden") if k in a)
+            sig = pfad + ">" + eigen
+            if sig not in GESEHEN: GESEHEN.add(sig); knoten.append(n["nodeId"])
+            pfad = pfad + ">" + n["nodeName"].lower() + "." + a.get("class", "")
+        for c in n.get("children", []): geh(c, pfad)
+    geh(doc["root"], "")
     async def eins(nid):
         try: return await cdp.send("CSS.getMatchedStylesForNode", {"nodeId": nid})
         except Exception: return None
@@ -52,8 +58,10 @@ async def erfasse(cdp, pg, hdr, treffer, gewinner, cache):
                     sp = (sp["a"], sp["b"], sp["c"]); ordnung = (ORD.index(datei) if datei in ORD else 99, rr["style"]["range"]["startLine"], rr["style"]["range"]["startColumn"])
                     zaehl = {}
                     for pr in rr["style"]["cssProperties"]:
-                        nm = pr["name"]; occ = zaehl.get(nm, 0); zaehl[nm] = occ + 1
-                        if not pr.get("parsedOk", True) or pr.get("implicit") or pr.get("disabled") or not pr.get("range"): continue
+                        nm = pr["name"]
+                        if pr.get("implicit") or not pr.get("range"): continue  # Längenschreibweise aus Kurzschreibweise zählt nicht als geschriebene Deklaration
+                        occ = zaehl.get(nm, 0); zaehl[nm] = occ + 1
+                        if not pr.get("parsedOk", True) or pr.get("disabled"): continue
                         schl = (1 if pr.get("important") else 0, sp, ordnung)
                         for lh in cache.get(nm + "\0" + pr["value"], [nm]):
                             if lh not in best or best[lh][0] < schl: best[lh] = (schl, rk, nm, occ)

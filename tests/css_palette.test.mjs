@@ -23,8 +23,9 @@ test("keine Farbwerte außerhalb von css/tokens.css", () => {
 test("höchstens 20 !important in css/, jedes mit Grund im Kommentar (gleiche Zeile oder Zeile davor)", () => {
   let n = 0; const ohneGrund = [];
   for (const f of dateien) {
-    const z = lies(f).split("\n");
-    z.forEach((s, i) => { const k = (s.replace(/\/\*[\s\S]*?\*\//g, "").match(/!important/g) || []).length; if (!k) return; n += k; if (!/\/\*/.test(s) && !/\*\//.test(z[i - 1] || "")) ohneGrund.push(`${f}:${i + 1}`); });
+    const roh = lies(f), z = roh.split("\n");
+    const code = roh.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " ")).split("\n"); // Kommentare ausblenden, Zeilen bleiben
+    code.forEach((s, i) => { const k = (s.match(/!important/g) || []).length; if (!k) return; n += k; if (!/\*\//.test(z[i]) && !/\*\//.test(z[i - 1] || "")) ohneGrund.push(`${f}:${i + 1}`); });
   }
   assert.ok(n <= 20, `${n} × !important`);
   assert.deepEqual(ohneGrund, []);

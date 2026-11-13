@@ -104,8 +104,9 @@ def ausgeben(knoten):
         if ctx is not None: out.append("}\n"); ctx = None
     for k in knoten:
         if k["t"] == "at-roh": zu(); out.append(k["text"].strip() + "\n"); continue
-        if k["ctx"] != ctx: zu(); ctx = k["ctx"]
-        if ctx is not None: out.append(ctx + "{\n")
+        if k["ctx"] != ctx:
+            zu(); ctx = k["ctx"]
+            if ctx is not None: out.append(ctx + "{\n")
         d = ";".join(f"{p}:{v}{'!important' if w else ''}" for p, v, w in k["decl"])
         out.append(f"{k['sel']}{{{d}}}\n")
     zu()
