@@ -1,0 +1,241 @@
+/* Einrichtung, Sprachwahl, Blätter von unten, Sperre und Notfallseite – Salbei & Papier (Tafel II, Bauart 12).
+   Wird nach css/buehne.css geladen. Nur Tokens aus css/tokens.css (kein Hex, kein rgb), Schriftgrößen in rem, kein !important.
+   Ersetzt die alte Schicht css/schnell.css (dort steht nichts mehr, was noch gebraucht wird). */
+
+/* ============================== 1 Einrichtung ============================== */
+/* Aufbau: oben die Bühne (steht im Inhalt, js/screens/onboarding.js, mitBuehne) mit Zurück-Pfeil und Fortschritt darüber (.kopf, absolut),
+   darunter Papier (.s-papier), unten der Hauptknopf (.fuss). Auf 390 × 844 und 360 × 740 ohne Scrollen. */
+.schirm[class*="weg-"]{position:relative;background:var(--papier);color:var(--tinte);min-block-size:100dvh}
+.schirm[class*="weg-"]>.kopf{position:absolute;inset-block-start:0;inset-inline:0;z-index:3;padding:env(safe-area-inset-top,0px) 16px 0;color:var(--buehne-text);pointer-events:none}
+.schirm[class*="weg-"]>.kopf>*{pointer-events:auto}
+.schirm[class*="weg-"]>.kopf .fortschritt{inline-size:auto;block-size:4px;margin:6px 0 0;gap:4px;background:none;border-radius:0;overflow:visible}
+.schirm[class*="weg-"]>.kopf .fortschritt i{background:color-mix(in srgb,var(--buehne-text) 30%,transparent);border-radius:4px}
+.schirm[class*="weg-"]>.kopf .fortschritt i.da{background:var(--buehne-text)}
+.schirm[class*="weg-"]>.kopf .kopfzeile{margin:0;min-block-size:44px;gap:8px}
+.schirm[class*="weg-"]>.kopf .kopfzeile .zurueck{min-inline-size:44px;min-block-size:44px;padding:0 8px;margin-inline-start:-8px;color:var(--buehne-text);font-weight:700;border-radius:12px;white-space:nowrap}
+.schirm[class*="weg-"]>.kopf .kopfzeile .schrittzahl{color:var(--buehne-text);font-size:0.8235rem;font-weight:700}
+.schirm[class*="weg-"]>.inhalt{padding:0;gap:0;flex:1}
+/* Die Bühne der Einrichtung: niedrig, Zeki hinter der unteren Kante */
+.s2buehne .gc-kopf{min-block-size:54px}
+.s2buehne .gc-buehne-innen{min-block-size:80px;padding-block-end:0}
+.s2buehne h1{font-size:1.1765rem;line-height:1.25}
+.s2buehne .gc-buehne-text{padding-block:4px 10px}
+.s-papier{flex:1;display:flex;flex-direction:column;gap:12px;padding:14px 16px 12px;min-inline-size:0}
+.s-papier>*{min-inline-size:0}
+.schirm[class*="weg-"]>.fuss{position:sticky;inset-block-end:0;margin:0;padding:8px 16px max(12px,env(safe-area-inset-bottom));background:var(--papier);gap:8px}
+.schirm[class*="weg-"]>.fuss .knopf{inline-size:100%}
+.schirm[class*="weg-"]>.fuss .leise{min-block-size:44px;justify-content:center;text-align:center}
+.schirm[class*="weg-"]>.fuss .knopf.glut,.schirm[class*="weg-"] .s2los{background:var(--glut);color:var(--tinte);border-color:transparent}
+.s2zeki-hilfe{margin:0;padding:10px 12px;border-radius:var(--radius-klein);border-inline-start:3px solid var(--salbei);background:var(--salbei-hell);color:var(--tinte);font-size:0.9412rem;line-height:1.4}
+.s2zeki-hilfe.fvzeki{margin:0}
+.s-papier>.leise[data-a="weg-genau"]{align-self:flex-start}
+
+/* Sprache: ein Auswahlfeld */
+.s2willkommen{display:flex;flex-direction:column;gap:12px;padding-block-start:6px}
+.s2unterzeile{margin:0;text-align:start;font-size:1rem;line-height:1.4;color:var(--tinte)}
+.s2willkommen .s2feldtitel{font-weight:700;color:var(--tinte-weich);margin-block-start:8px}
+.s2sprachwahl{min-block-size:56px;font-size:1.0588rem;font-weight:700;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);box-shadow:var(--schatten-karte)}
+
+/* Laden: Name, dann Arten als Foto-Kacheln (drei in einer Reihe) */
+.s2name{min-block-size:52px;font-size:1.0588rem;font-weight:700;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);padding:8px 14px}
+.s2mehrere{margin:0;font-size:0.8235rem;color:var(--tinte-weich)}
+.s2arten{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.s2arten .kachel.fotokachel{padding:0;overflow:hidden;border-radius:var(--radius);border:1px solid var(--linie);box-shadow:var(--schatten-karte);background:var(--papier);position:relative}
+.s2arten .kachel.fotokachel .kachelfoto{inline-size:100%;aspect-ratio:4/3;border-radius:0;object-fit:cover;background:var(--salbei-hell)}
+.s2arten .kachel.fotokachel .kachelfoto.pikto{object-fit:contain;padding:10px;background:var(--holz)}
+.s2arten .kachel.fotokachel b{display:block;padding:5px 6px 7px;font-size:0.8235rem;line-height:1.2;overflow-wrap:anywhere;word-break:normal;hyphens:manual;text-align:start}
+.s2arten .kachel.an{outline:3px solid var(--salbei);outline-offset:-3px;background:var(--salbei-hell);box-shadow:var(--schatten-karte)}
+.s2arten.mehrfach .kachel.an::after{content:"✓";position:absolute;inset-block-start:6px;inset-inline-end:6px;inline-size:24px;block-size:24px;border-radius:50%;background:var(--salbei);color:var(--papier);font-weight:800;font-size:0.8235rem;display:grid;place-items:center}
+
+/* Karte: eine große Foto-Fläche, darunter leise „Fotos oder PDF“ */
+.s2fotoflaeche{flex:1;display:block;position:relative;min-block-size:150px;max-block-size:300px;overflow:hidden;cursor:pointer;border-radius:var(--radius-gross);background:var(--salbei-tief);box-shadow:var(--schatten-karte)}
+.s2fotoflaeche img{position:absolute;inset:0;inline-size:100%;block-size:100%;object-fit:cover;opacity:.7}
+.s2fotoknopf{position:absolute;inset-inline:12px;inset-block-end:12px;min-block-size:56px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:var(--radius);background:var(--aktion);color:var(--aktion-text);font-weight:700;font-size:1.0588rem}
+.s2kamera svg{inline-size:24px;block-size:24px}
+.s2fotoflaeche:focus-within{outline:3px solid var(--fokus);outline-offset:3px}
+.s2fotoflaeche .dateifeld,.s2galerie .dateifeld{position:absolute;inline-size:1px;block-size:1px;min-block-size:0;opacity:0;overflow:hidden}
+.s2galerie{position:relative;align-self:center;display:flex;align-items:center;min-block-size:44px;cursor:pointer;border:0;text-decoration:underline;text-underline-offset:3px}
+
+/* Kühlung: Foto · Name · − Zahl + */
+.s2kuehl{display:flex;flex-direction:column;gap:8px}
+.s2kuehlzeile{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 8px;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);box-shadow:var(--schatten-karte)}
+.s2kuehlzeile.an{border-color:var(--salbei);outline:2px solid var(--salbei);outline-offset:-2px}
+.s2kuehlzeile img{inline-size:48px;block-size:48px;border-radius:var(--radius-klein);object-fit:cover;background:var(--salbei-hell)}
+.s2kuehlzeile img.pikto{object-fit:contain;padding:6px;background:var(--holz)}
+.s2kuehlzeile b{font-size:0.9412rem;line-height:1.2;min-inline-size:0;overflow-wrap:anywhere;word-break:normal;hyphens:manual}
+.s2zaehler{display:flex;align-items:center;gap:2px}
+.s2zaehler button{inline-size:44px;block-size:44px;border-radius:50%;border:1px solid var(--linie);background:var(--papier-tief);color:var(--tinte);font:700 1.375rem/1 var(--schrift)}
+.s2zaehler button:disabled{opacity:.35}
+.s2anzahl{min-inline-size:2ch;text-align:center;font-size:1.25rem;font-weight:700;font-variant-numeric:var(--zahlen)}
+
+/* Geld: vier Zahlenzeilen, darunter „Wer putzt?“ */
+.s2geld{display:flex;flex-direction:column;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);box-shadow:var(--schatten-karte);overflow:hidden}
+.s2geldzeile{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 14px;min-block-size:56px}
+.s2geldzeile+.s2geldzeile{border-block-start:1px solid var(--linie)}
+.s2geldzeile>span:first-child{font-weight:700;min-inline-size:0}
+.s2geldzeile .betrag{flex:none;inline-size:150px;display:flex;align-items:center;gap:6px}
+.s2geldzeile .betrag input{font-size:1.1765rem;text-align:end;min-block-size:44px;padding:4px 10px}
+.s2putz{display:flex;flex-direction:column;gap:8px}
+.s2putz b{font-size:1rem}
+.s2putz .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.s2putz .chip{min-block-size:48px;padding:8px;font-size:0.9412rem;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);font-weight:700}
+.s2putz .chip.an{background:var(--salbei);color:var(--papier);border-color:var(--salbei)}
+
+/* Schloss: Code und Face ID */
+.s2schloss{display:flex;flex-direction:column;gap:10px}
+.s2schloss-zeile{display:flex;align-items:center;gap:14px;inline-size:100%;min-block-size:68px;padding:10px 14px;text-align:start;font:inherit}
+.s2schloss-zeile .ks{inline-size:44px;block-size:44px;border-radius:12px;display:grid;place-items:center;background:var(--salbei-hell);color:var(--salbei-tief);flex:none}
+.s2schloss-zeile b{flex:1;font-size:1.0588rem}
+.s2schloss-zeile.an{border-color:var(--salbei);background:var(--salbei-hell)}
+.s2schloss-zeile .haken{color:var(--salbei-tief)}
+.s2schloss-zeile[disabled]{opacity:.5}
+.pin-bio{margin-block-start:4px}
+
+/* Fertig: Home-Bildschirm-Karte, kompakt */
+.s2fertig{display:flex;flex-direction:column;gap:12px;flex:1}
+.s2home{padding:12px;text-align:start}
+.s2home>b{display:block;font-size:1rem;margin-block-end:4px}
+.s2home .home-bilder{display:flex;gap:8px;margin:6px 0;overflow-x:auto;scroll-snap-type:x mandatory}
+.s2home .home-bilder img{flex:0 0 auto;inline-size:auto;block-size:clamp(120px,24dvh,230px);aspect-ratio:216/270;scroll-snap-align:start;border-radius:var(--radius-klein);border:1px solid var(--linie);background:var(--papier)}
+.s2home details summary{display:flex;align-items:center;min-block-size:44px;font-size:0.9412rem;cursor:pointer}
+.s2fertig>.leise{align-self:center;min-block-size:44px}
+
+/* Ein „Weiter“ am Ende: Sicherungsdatei einlesen steht sichtbar unter dem Hauptknopf */
+.fuss .ob-import{display:flex;align-items:center;justify-content:center;min-block-size:44px;margin:0;text-align:center}
+
+/* Karte prüfen (Foto-Lesen) im Papier */
+.fvkarten{display:flex;flex-direction:column;gap:10px}
+.fvk{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:var(--radius);background:var(--papier);border:1px solid var(--linie);box-shadow:var(--schatten-karte)}
+.fvk.karte-gelb{background:var(--papier-tief);border-style:dashed;border-color:var(--holz-tief)}
+.fvk.karte-rot{background:var(--papier-tief);border:2px solid var(--tinte)}
+.fvk.aus{align-items:center;justify-content:space-between;opacity:.6}
+.fvbild{inline-size:56px;block-size:56px;flex:0 0 56px;border-radius:var(--radius-klein);object-fit:cover;background:var(--salbei-hell)}
+.fvbild.pikto{object-fit:contain;padding:6px;background:var(--holz)}
+.fvbild.mini{inline-size:40px;block-size:40px;flex-basis:40px}
+.fvk-mitte{flex:1;min-inline-size:0;display:flex;flex-direction:column;gap:6px}
+.fvk .fvgrund{font-size:0.8235rem;font-weight:700;color:var(--tinte)}
+.fvk-name{padding:6px 12px;min-block-size:44px}
+.fvk-reihe{display:flex;align-items:center;gap:8px}
+.fvk-reihe .betrag{flex:1;min-inline-size:0;max-inline-size:175px}
+.fvk-reihe .chip{white-space:nowrap;flex:0 0 auto}
+.fvtipp{display:flex;align-items:center}
+.fvliste .fvbild.mini+.pkt:not(.gelb):not(.rot){display:none}
+
+/* ============================== 2 Blätter von unten (Bauart 12) ============================== */
+/* Papier-Blatt mit Griff, runde Ecken oben, abgedunkelter Hintergrund. Im Blatt steht Zeki VORN – die Bühne dahinter ist leer (css/buehne.css) –
+   mit seinem Satz als Zeile daneben, keine Sprechblase. */
+#ebene-huelle{--dimm:var(--tinte)}
+[data-theme=dark] #ebene-huelle{--dimm:var(--papier)}
+@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]) #ebene-huelle{--dimm:var(--papier)}}
+#ebene-huelle .ebene-dimmer{background:color-mix(in srgb,var(--dimm) 62%,transparent)}
+#ebene-huelle .ebene-blatt{inset-inline:0;margin-inline:auto;inline-size:100%;max-inline-size:560px;max-block-size:90dvh;padding:8px 16px calc(env(safe-area-inset-bottom,0px) + 16px);gap:12px;background:var(--papier);color:var(--tinte);border-radius:24px 24px 0 0;border:1px solid var(--linie);border-block-end:0;box-shadow:var(--schatten-menu)}
+#ebene-huelle .ebene-blatt .griff{inline-size:40px;block-size:4px;border-radius:4px;background:var(--holz-tief);margin:0 auto 2px}
+#ebene-huelle .blatt-zeki{display:flex;align-items:flex-end;gap:12px;padding:0;min-inline-size:0}
+#ebene-huelle .blatt-zeki .gc-help-bot{flex:none;display:block;inline-size:100px;block-size:124px;overflow:visible;background:none;border:0;border-radius:0;box-shadow:none}
+#ebene-huelle .blatt-zeki .gc-help-bot>*{display:block;inline-size:100%;block-size:100%}
+#ebene-huelle .blatt-zeki.klein .gc-help-bot{inline-size:64px;block-size:80px}
+#ebene-huelle .blatt-zeile{flex:1;min-inline-size:0;display:grid;gap:4px;align-content:center;align-self:center}
+#ebene-huelle .blatt-zeile>*{margin:0;min-inline-size:0}
+#ebene-huelle .blatt-zeile b{display:block;font-size:1.1765rem;line-height:1.25;white-space:normal;overflow:visible;text-overflow:clip}
+#ebene-huelle .blatt-zeile p{font-size:1rem;line-height:1.4;color:var(--tinte)}
+#ebene-huelle .blatt-zeile small{display:block;font-size:0.8235rem;color:var(--tinte-weich)}
+#ebene-huelle .blattkopf.blatt-zeki{padding:0}
+#ebene-huelle .blattkopf .ikonknopf{inline-size:44px;block-size:44px;min-inline-size:44px;color:var(--tinte-weich);align-self:flex-start;flex:none}
+#ebene-huelle .blattkopf.nur .ikonknopf:first-child{align-self:center}
+#ebene-huelle .blattkopf.nur .zu{margin-inline-start:auto}
+/* Hilfe: Zeki erklärt; OK bleibt unten ganz sichtbar */
+#ebene-huelle .ebene-blatt.blatt-hilfe{max-block-size:calc(100dvh - 48px);padding-block-end:0}
+#ebene-huelle .hilfe-inhalt{padding:0;gap:10px;align-items:stretch}
+#ebene-huelle .ebene-blatt.blatt-hilfe>.knopf[data-a="blatt-zu"]{position:sticky;inset-block-end:0;margin:4px 0 0;inline-size:100%;min-block-size:52px;flex:none;border-radius:var(--radius);box-shadow:0 -10px 14px var(--papier),0 calc(env(safe-area-inset-bottom,0px) + 16px) 0 var(--papier)}
+#ebene-huelle .zeki-fragen{display:grid;gap:6px}
+#ebene-huelle .zeki-fragen-titel{font-size:0.8235rem;color:var(--tinte-weich)}
+#ebene-huelle .zeki-frage{border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);padding:0 12px}
+#ebene-huelle .zeki-frage summary{display:flex;align-items:center;min-block-size:44px;font-weight:700;font-size:0.9412rem;cursor:pointer}
+#ebene-huelle .zeki-frage p{margin:0 0 10px;font-size:0.9412rem;line-height:1.45}
+#ebene-huelle .hilfe-inhalt .hilfe-mehr{margin:0;font-size:0.9412rem;line-height:1.45}
+#ebene-huelle .hilfe-inhalt.kurz .hilfe-mehr-knopf{align-self:center}
+/* Menü-Blatt: vier Kacheln, Sprache als Zeile */
+#ebene-huelle .grosskacheln{gap:10px}
+#ebene-huelle .grosskachel{border-radius:var(--radius);border:1px solid var(--linie);background:var(--papier);color:var(--tinte);box-shadow:var(--schatten-karte);min-block-size:104px}
+#ebene-huelle .grosskacheln.drei>:first-child{min-block-size:84px}
+#ebene-huelle .grosskachel .ks{background:var(--salbei-hell);color:var(--salbei-tief)}
+#ebene-huelle .grosskachel.dunkel{background:var(--salbei);border-color:var(--salbei);color:var(--papier)}
+#ebene-huelle .grosskachel.dunkel .ks{background:color-mix(in srgb,var(--papier) 18%,transparent);color:var(--papier)}
+#ebene-huelle .grosskachel .ks .punkt{background:var(--glut);border-color:var(--papier)}
+#ebene-huelle .sprachzeile{min-block-size:56px;border-radius:var(--radius);border:1px solid var(--linie);background:var(--papier);box-shadow:var(--schatten-karte)}
+#ebene-huelle .blattliste{border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);box-shadow:var(--schatten-karte)}
+#ebene-huelle .blattzeile{min-block-size:52px;border:0;border-block-end:1px solid var(--linie);border-radius:0;background:transparent;box-shadow:none;color:var(--tinte);padding:0 16px}
+#ebene-huelle .blattzeile:last-child{border-block-end:0}
+#ebene-huelle .blattzeile.an{color:var(--salbei-tief);font-weight:700;background:var(--salbei-hell)}
+/* Dein Monat */
+#ebene-huelle .mb-zeilen{display:grid;gap:0;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);overflow:hidden}
+#ebene-huelle .mb-zeile{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;min-block-size:48px}
+#ebene-huelle .mb-zeile+.mb-zeile{border-block-start:1px solid var(--linie)}
+#ebene-huelle .mb-zeile.plus b{color:var(--salbei-tief)}
+#ebene-huelle .mb-knoepfe{display:grid;gap:8px}
+#ebene-huelle .mb-knoepfe .knopf{inline-size:100%}
+#ebene-huelle .mb-knoepfe .knopf.glut{background:var(--glut);color:var(--tinte);border-color:transparent}
+
+/* ============================== 3 Büro-Code und Sperre ============================== */
+/* Punkte, Ziffernfeld (3 Spalten, nie gespiegelt: 1-2-3), „Code vergessen?“ und Wartezeit-Text */
+#ebene-huelle .pin-kopf{display:flex;flex-direction:row;align-items:flex-end;gap:12px;text-align:start;padding:0}
+#ebene-huelle .pin-kopf .blatt-zeile b{font-size:1.1765rem}
+#ebene-huelle .pin-meldung{min-block-size:20px;font-size:0.8235rem;line-height:1.35;font-weight:700;color:var(--tinte-weich)}
+#ebene-huelle .pin-meldung.fehler{color:var(--tinte);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+#ebene-huelle .pin-punkte{display:flex;justify-content:center;gap:18px;margin:2px 0 4px}
+#ebene-huelle .pin-punkte i{inline-size:16px;block-size:16px;border-radius:50%;border:2px solid var(--salbei)}
+#ebene-huelle .pin-punkte i.voll{background:var(--salbei)}
+#ebene-huelle .pin-punkte.wackeln i{border-color:var(--tinte)}
+#ebene-huelle .pin-tasten{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;inline-size:100%;max-inline-size:320px;margin:0 auto;direction:ltr}
+#ebene-huelle .pintaste{min-block-size:56px;min-inline-size:44px;border:1px solid var(--linie);border-radius:14px;background:var(--papier-tief);color:var(--tinte);font-size:1.5rem;font-weight:700;font-variant-numeric:var(--zahlen);box-shadow:none}
+#ebene-huelle .pintaste:active{background:var(--salbei-hell)}
+#ebene-huelle .pintaste.leer{background:transparent;border-color:transparent;color:var(--tinte-weich);font-size:0.9412rem;font-weight:700}
+#ebene-huelle .pintaste.weg{background:transparent;border-color:transparent}
+#ebene-huelle .pintaste:disabled{opacity:.4}
+#ebene-huelle .pin-bio,#ebene-huelle .ebene-blatt>.leise{align-self:center}
+#ebene-huelle .ebene-blatt>.leise{min-block-size:44px;border-color:transparent;text-decoration:underline;text-underline-offset:3px}
+
+/* Rettungscode, Sicherung teilen, „Wo liegt sie jetzt?“ */
+#ebene-huelle .pw-form{display:flex;flex-direction:column;gap:10px}
+#ebene-huelle .pw-feld{position:relative}
+#ebene-huelle .pw-feld .textfeld{padding-inline:12px 56px;min-block-size:52px;font-size:1.0588rem}
+#ebene-huelle .pw-feld .pw-auge{position:absolute;inset-inline-end:2px;inset-block-start:50%;transform:translateY(-50%);inline-size:48px;block-size:48px;min-inline-size:44px}
+#ebene-huelle .pw-form .pin-meldung{text-align:center}
+#ebene-huelle .pw-hinweis,#ebene-huelle .hinweis{margin:0;font-size:0.8235rem;line-height:1.4;color:var(--tinte-weich)}
+#ebene-huelle .pw-letzte{margin:0;font-size:0.9412rem;font-weight:700}
+#ebene-huelle .pw-schalter{padding:6px 0;border:0;background:none;box-shadow:none}
+#ebene-huelle .pw-schalter .oben{display:flex;align-items:center;justify-content:space-between;gap:12px;min-block-size:44px}
+#ebene-huelle .pw-schalter .name{font-weight:700;font-size:0.9412rem}
+#ebene-huelle .schalter{inline-size:52px;block-size:30px;min-inline-size:52px;min-block-size:44px;position:relative;flex:none;border:0;background:none}
+#ebene-huelle .schalter::before{content:"";position:absolute;inset-inline:0;inset-block:7px;border-radius:16px;background:var(--holz);border:1px solid var(--holz-tief)}
+#ebene-huelle .schalter::after{content:"";position:absolute;inset-block-start:9px;inset-inline-start:3px;inline-size:24px;block-size:24px;border-radius:50%;background:var(--papier);box-shadow:var(--schatten-karte);transition:inset-inline-start var(--bewegung) var(--kurve)}
+#ebene-huelle .schalter.an::before{background:var(--salbei);border-color:var(--salbei)}
+#ebene-huelle .schalter.an::after{inset-inline-start:25px}
+#ebene-huelle .ebene-blatt .knopf.zweit{background:transparent;color:var(--tinte);border:1px solid var(--linie)}
+#ebene-huelle .versteckt{display:none}
+
+/* Rechts-nach-links: Pfeile gespiegelt, Ziffern nicht */
+[dir=rtl] #ebene-huelle .blattkopf.nur .ikonknopf .sym,[dir=rtl] #ebene-huelle .sprachzeile .sz-wert .sym{transform:scaleX(-1);scale:1 1}
+[dir=rtl] .schirm[class*="weg-"]>.kopf .kopfzeile .zurueck{margin-inline-start:-8px}
+
+/* ============================== 4 Notfall- und Fehlerseite ============================== */
+/* js/bedienung/zeichnen.js notfallSeite: nur Gestaltung, kein neues HTML. Oben ein grünes Band mit Zeki (Bild per CSS), darunter Papier. */
+.schirm>.inhalt:has(>[data-a="loeschen"]){position:relative;padding:0 16px 24px;gap:12px}
+.schirm>.inhalt:has(>[data-a="loeschen"])::before{content:"";display:block;margin:0 -16px 6px;padding-block-start:max(100px,calc(env(safe-area-inset-top,0px) + 84px));background:var(--buehne) url("../assets/brand/zeki-buehne/blatt-sperre.webp") no-repeat right 16px bottom/116px 80px;border-block-end:4px solid var(--holz)}
+[dir=rtl] .schirm>.inhalt:has(>[data-a="loeschen"])::before{background-position:left 16px bottom}
+.schirm>.inhalt:has(>[data-a="loeschen"])>.frage{font-size:1.2941rem;margin:0}
+.schirm>.inhalt:has(>[data-a="loeschen"])>.knopf.warn{background:transparent;color:var(--tinte);border:1px solid var(--tinte)}
+.schirm>.inhalt:has(>[data-a="loeschen"])>label.knopf.zweit{background:var(--aktion);color:var(--aktion-text);border-color:transparent}
+
+@media(prefers-reduced-motion:reduce){#ebene-huelle .schalter::after{transition:none}}
+
+/* Große Handy-Schrift: Container-Abfrage in em (16em = 272 px bei Standardschrift greift nie, bei 200 % immer) */
+.weg-schnell .inhalt{container-type:inline-size}
+@container (max-width:16em){
+  .s2arten{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .s2kuehlzeile{grid-template-columns:48px minmax(0,1fr)}
+  .s2kuehlzeile .s2zaehler{grid-column:1/-1;justify-self:end}
+}
+.weg-schnell .kopfzeile .schrittzahl{display:none}
+.s2arten .kachel.fotokachel .kachelfoto.pikto{display:grid;place-items:center;color:var(--tinte);padding:0}
+.s2arten .kachel.fotokachel .kachelfoto.pikto svg{inline-size:36px;block-size:36px;stroke-width:1.6}

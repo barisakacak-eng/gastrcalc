@@ -41,7 +41,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 
 /* ---- Schritt 2a (19.10.2026): Laden „Heute“ 1:1 nach referenz_10_screens.png, Screen 2 ---- */
 /* Kopf: jetzt die Bühne (css/buehne.css) */
-.s2willkommen .s2logo { height: 96px; margin-bottom: 8px; }
 .h-zeitzeile { text-align: center; color: var(--b-text); font-size: calc(14rem / 17); font-weight: 500; margin-top: -6px; }
 /* Hauptzahl-Karte: Titel weiß, Zahl groß, Balken orange, Zahlen darunter */
 .karte.h-ziel { border-radius: 16px; padding: 18px 18px 16px; box-shadow: 0 6px 18px rgba(15,61,46,.22); }
@@ -80,10 +79,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .h-kachel b.handgriff { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-top: 4px; border-radius: 50%; border: 2px solid var(--b-akzent); color: var(--kupfer-dunkel); }
 .h-kachel b.handgriff .sym { width: 18px; height: 18px; stroke-width: 2.6; }
 /* Willkommen (Screen 1): großes Logo, Titel, Unterzeile, Kräuter unten */
-.s2willkommen .s2titel-gross { margin: 4px 0 0; font-size: calc(30rem / 17); font-weight: 800; color: var(--b-text); text-align: center; }
-.s2willkommen .s2unterzeile { margin: 0 0 18px; font-size: calc(17rem / 17); color: var(--b-text-leise); text-align: center; line-height: 1.4; max-width: 18em; }
-.s2willkommen .s2sprachwahl { box-shadow: 0 2px 10px rgba(15,23,32,.07); border-color: var(--b-linie); }
-.s2willkommen .s2kraeuter { width: 100%; max-width: 390px; margin-top: auto; opacity: .9; pointer-events: none; }
 /* ---- Schritt 2b (19.10.2026): Putzen, Büro, Kühlung, Müll nach Referenz 04–08 ---- */
 /* Putzen: ruhige weiße Zeilen, Überfälliges nur als rote Unterzeile; Haken grün */
 .aufgabe { border: 1px solid var(--b-linie); box-shadow: 0 1px 4px rgba(15,23,32,.05); min-height: 64px; border-radius: 14px; }
@@ -107,8 +102,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .b-chip { border-color: var(--b-linie); }
 .b-bereich { border-radius: 14px; }
 .b-bereich > summary .b-zt b { font-size: calc(18rem / 17); font-weight: 800; }
-.s2willkommen { min-height: calc(100dvh - 200px); }
-.s2willkommen .s2logo { height: 110px; }
 /* Müll (Screen 4): zwei große Fotokacheln je Reihe, Heute-Betrag als rote Karte */
 .muellkopf1 { flex-direction: column; align-items: stretch; gap: 10px; }
 .heutewert { justify-content: space-between; align-items: center; border-radius: 16px; padding: 14px 18px; background: var(--b-rot-hell); color: var(--b-rot-text); border: 1px solid #F2C9C9; }

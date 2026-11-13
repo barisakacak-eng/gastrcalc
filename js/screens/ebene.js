@@ -65,6 +65,10 @@ export function blattSchliessen() {
   return true;
 }
 
+// Salbei & Papier (Tafel I Schirm 12): Im Blatt steht Zeki VORN (die Bühne dahinter ist dann leer, css/buehne.css) und sein Satz steht als Zeile daneben – keine Sprechblase.
+// Die Figur kommt über mascotMarkup (js/gastrocash-brand.js); ihre Größe setzt css/s-einrichtung.css (≈ 100 × 124 px, in Listen und beim Ziffernfeld kleiner).
+const zekiVorn = (zustand = "hilfe", bewegung = "hand") => `<span class="gc-help-bot zeki-lebt" aria-hidden="true">${mascotMarkup(zustand, bewegung)}</span>`;
+
 const ladenBild = (stand) => { const art = ladenArtVon(stand); return `bilder/laden-${["doener", "pizza", "burger", "asia", "baeckerei", "cafe", "foodtruck"].includes(art) ? art : "anders"}.svg`; };
 
 // ---------- Menü-Blatt (Laden) ----------
@@ -75,7 +79,7 @@ export function monatBlattZeigen(stand, d) {
   const u = d?.umsatz || 0; const np = d?.nullpunkt ?? null; const ziel = d?.ziel ?? null;
   const zeile = (k, wert, kl = "") => `<div class="mb-zeile ${kl}"><span>${esc(t("heute.blatt." + k))}</span><b>${wert}</b></div>`;
   const g = d?.geschaetzt ? "≈ " : "";
-  zeigen("monat", `<div class="blattkopf"><div><b>${esc(t("heute.blatt.titel"))}</b><small>${esc(stand?.betrieb?.name || "")}</small></div>
+  zeigen("monat", `<div class="blattkopf blatt-zeki">${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("heute.blatt.titel"))}</b><small>${esc(stand?.betrieb?.name || "")}</small></div>
       <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
     <div class="mb-zeilen">${zeile("umsatz", fmtEuro(u, { dezimal: 0 }))}${np === null ? "" : zeile("nullpunkt", g + fmtEuro(np, { dezimal: 0 }), u >= np ? "plus" : "")}${ziel === null || ziel === np ? "" : zeile("ziel", g + fmtEuro(ziel, { dezimal: 0 }), u >= ziel ? "plus" : "")}</div>
     <div class="mb-knoepfe"><button type="button" class="knopf glut" data-a="nav" data-wert="umsatzheute">${esc(t("schnellknopf.umsatz"))}</button><button type="button" class="knopf zweit" data-a="nav" data-wert="umsatz">${esc(t("heute.blatt.buero"))}</button></div>`);
@@ -85,7 +89,7 @@ export function menueZeigen(stand, wurzel) {
   const punktBuero = sicherungStufe(wurzel)?.stufe === "rot"; // erst beim Öffnen gerechnet
   const kachel = (a, wert, symName, text, klasse = "", extra = "") => `<button type="button" class="karte grosskachel ${klasse}" data-a="${a}"${wert ? ` data-wert="${wert}"` : ""}><span class="ks">${sym(symName)}${extra}</span><b>${esc(text)}</b></button>`;
   zeigen("menue", `
-    <div class="blattkopf"><img class="ladenbild" src="${ladenBild(stand)}" alt=""><div><b>${esc(stand?.betrieb?.name || t("ebene.deinLaden"))}</b><small>${esc(t("ebene.deinLaden"))}</small></div>
+    <div class="blattkopf blatt-zeki">${zekiVorn()}<div class="blatt-zeile"><b>${esc(stand?.betrieb?.name || t("ebene.deinLaden"))}</b><small>${esc(t("ebene.deinLaden"))}</small></div>
       <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
     <div class="grosskacheln${mehrere ? "" : " drei"}">
       ${kachel("nav", "abschluss", "moon", t("ebene.abschluss"), "dunkel")}
@@ -97,12 +101,12 @@ export function menueZeigen(stand, wurzel) {
 }
 
 export function spracheZeigen() {
-  zeigen("sprache", `<div class="blattkopf nur"><button type="button" class="ikonknopf" data-a="menue-zurueck" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button><b>${esc(t("ebene.sprache"))}</b></div>
+  zeigen("sprache", `<div class="blattkopf nur blatt-zeki klein"><button type="button" class="ikonknopf" data-a="menue-zurueck" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button>${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("ebene.sprache"))}</b></div></div>
     <div class="blattliste">${SPRACHEN.map((c) => `<button type="button" class="blattzeile ${sprache() === c ? "an" : ""}" data-a="sprache" data-wert="${c}" lang="${c}"><span>${esc(spracheName(c))}</span>${sprache() === c ? sym("check") : ""}</button>`).join("")}</div>`);
 }
 
 export function laedenZeigen(wurzel) {
-  zeigen("laeden", `<div class="blattkopf nur"><button type="button" class="ikonknopf" data-a="menue-zurueck" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button><b>${esc(t("ebene.ladenWechseln"))}</b></div>
+  zeigen("laeden", `<div class="blattkopf nur blatt-zeki klein"><button type="button" class="ikonknopf" data-a="menue-zurueck" aria-label="${esc(t("allgemein.zurueck"))}">${sym("chevron-left")}</button>${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("ebene.ladenWechseln"))}</b></div></div>
     <div class="blattliste">${wurzel.betriebe.filter((b) => b.phase === "app").map((b) => `<button type="button" class="blattzeile laden ${b.id === wurzel.aktiv ? "an" : ""}" data-a="laden-wechseln" data-id="${esc(b.id)}"><img src="${ladenBild(b)}" alt=""><span>${esc(b.betrieb.name || t("ebene.deinLaden"))}</span>${b.id === wurzel.aktiv ? sym("check") : ""}</button>`).join("")}</div>`);
 }
 
@@ -130,7 +134,7 @@ export function hilfeZeigen(ansicht, voll = false) {
   hilfeVoll = !!voll; if (!voll) return hilfeKurzZeigen(k);
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
   const mehr = (HILFE_MEHR[k] || []).map((key) => `<p class="hilfe-mehr">${esc(t(key))}</p>`).join("");
-  zeigen("hilfe", `<div class="hilfe-inhalt"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p>${mehr}${zekiFragenHtml(k)}</div>
+  zeigen("hilfe", `<div class="hilfe-inhalt"><div class="blatt-zeki">${zekiVorn()}<div class="blatt-zeile"><b>${esc(titel)}</b><p>${esc(t("ebene.hilfeText." + k))}</p></div></div>${mehr}${zekiFragenHtml(k)}</div>
     <button type="button" class="knopf" data-a="blatt-zu">${esc(t("allgemein.ok"))}</button>`);
 }
 
@@ -138,7 +142,7 @@ function hilfeKurzZeigen(k) {
   const titel = ["start", "muell", "kuehl", "putzplan", "karte"].includes(k) ? t("ebene.tabs." + k) : k === "abschluss" ? t("ebene.abschluss") : k === "personal" ? t("ebene.personal") : k === "buero" ? t("ebene.buero") : k === "laeden" ? t("ebene.ladenWechseln") : t("ebene.hilfeAuf");
   const fragen = zekiFragenFuer(k, sprache()).slice(0, 2);
   const mehrDa = (HILFE_MEHR[k] || []).length || zekiFragenFuer(k, sprache()).length > 2 || ersterSatz(t("ebene.hilfeText." + k)) !== t("ebene.hilfeText." + k);
-  zeigen("hilfe", `<div class="hilfe-inhalt kurz"><span class="gc-help-bot zeki-lebt">${mascotMarkup("hilfe", "hand")}</span><b>${esc(titel)}</b><p>${esc(ersterSatz(t("ebene.hilfeText." + k)))}</p>
+  zeigen("hilfe", `<div class="hilfe-inhalt kurz"><div class="blatt-zeki">${zekiVorn()}<div class="blatt-zeile"><b>${esc(titel)}</b><p>${esc(ersterSatz(t("ebene.hilfeText." + k)))}</p></div></div>
     ${fragen.length ? `<div class="zeki-fragen">${fragen.map((q) => `<details class="zeki-frage"><summary>${esc(q.f)}</summary><p>${esc(q.a)}</p></details>`).join("")}</div>` : ""}
     ${mehrDa ? `<button type="button" class="leise hilfe-mehr-knopf" data-a="hilfe-mehr" data-wert="${esc(k)}">${esc(t("ebene.mehr"))}</button>` : ""}</div>
     <button type="button" class="knopf" data-a="blatt-zu">${esc(t("allgemein.ok"))}</button>`);
@@ -168,7 +172,7 @@ function pinZeichnen() {
   const rest = p.zweck === "setzen" ? 0 : sperreRest(p.wurzel);
   if (rest) { p.meldung = warteText(rest); p.fehler = true; }
   const taste = (z) => `<button type="button" class="pintaste" data-a="pin-taste" data-wert="${z}"${rest ? " disabled" : ""}>${z}</button>`;
-  zeigen("pin", `<div class="pin-kopf"><span class="ks">${sym("lock")}</span><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div>
+  zeigen("pin", `<div class="pin-kopf blatt-zeki klein">${zekiVorn(p.fehler ? "warnung" : "hilfe", "none")}<div class="blatt-zeile"><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div></div>
     <div class="pin-punkte${p.fehler && !rest ? " wackeln" : ""}" aria-hidden="true">${[0, 1, 2, 3].map((i) => `<i class="${i < p.eingabe.length ? "voll" : ""}"></i>`).join("")}</div>
     <div class="pin-tasten" dir="ltr">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}"${rest ? " disabled" : ""}>${sym("delete")}</button></div>
     ${p.zweck !== "setzen" && p.wurzel?.bio?.id ? `<button type="button" class="knopf zweit pin-bio" data-a="pin-bio">${esc(t("schloss.mitBio"))}</button>` : ""}
@@ -209,7 +213,7 @@ export const pinZweck = () => (pin ? { zweck: pin.zweck, ziel: pin.ziel } : null
 export function rettungStarten(ziel, wurzel) {
   rett = { ziel };
   const rest = sperreRestUhr(wurzel); // Lauf 6, E5 (G): die harte Sperre gilt dem Büro-Code, der Rettungscode bleibt offen
-  zeigen("rettung", `<div class="blattkopf nur"><span class="ks pw-ks">${sym("key-round")}</span><b>${esc(t("rettung.titel"))}</b>
+  zeigen("rettung", `<div class="blattkopf nur blatt-zeki klein">${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("rettung.titel"))}</b></div>
       <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
     <form class="pw-form" autocomplete="off">
       <p class="hinweis">${esc(t("rettung.eingeben"))}</p>
@@ -235,8 +239,8 @@ export const rettungWarteText = (ms) => wartezeitText(ms);
 // Neuer Rettungscode: einmal zeigen. Der Klartext steht nur in diesem Blatt; „Aufgeschrieben“ schließt es, danach ist er weg.
 export function rettungscodeZeigen(code, ziel = null) {
   rett = { ziel };
-  zeigen("rettungscode", `<div class="hilfe-inhalt"><span class="ks">${sym("key-round")}</span><b>${esc(t("rettung.neuTitel"))}</b>
-      <p>${esc(t("rettung.aufschreiben"))}</p></div>
+  zeigen("rettungscode", `<div class="hilfe-inhalt"><div class="blatt-zeki klein">${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("rettung.neuTitel"))}</b>
+      <p>${esc(t("rettung.aufschreiben"))}</p></div></div></div>
     <input class="textfeld gross" type="text" readonly value="${esc(rettungBloecke(code))}" aria-label="${esc(t("rettung.titel"))}" data-rettungscode="1">
     <p class="hinweis">${esc(t("rettung.nurEinmal"))}</p>
     <button type="button" class="knopf" data-a="rettung-ok">${esc(t("rettung.aufgeschrieben"))}</button>`);
@@ -254,7 +258,7 @@ export function passwortStarten(zweck, extra = {}) {
   const schalter = (a, an, text) => `<div class="zeile pw-schalter"><div class="oben"><div class="name">${esc(text)}</div><button type="button" class="schalter ${an ? "an" : ""}" data-a="${a}" aria-pressed="${an}" aria-label="${esc(text)}"></button></div></div>`;
   const feld = `<div class="pw-feld"><input class="textfeld" type="password" inputmode="text" minlength="${PASSWORT_MIN}" autocomplete="${einlesen ? "current-password" : "new-password"}" data-f="passwort" placeholder="${esc(t("passwort.feld"))}" aria-label="${esc(t("passwort.feld"))}">
         <button type="button" class="ikonknopf pw-auge" data-a="passwort-zeigen" aria-label="${esc(t("passwort.zeigen"))}" aria-pressed="false">${sym("eye")}</button></div>`;
-  zeigen("passwort", `<div class="blattkopf nur"><span class="ks pw-ks">${sym("key-round")}</span><b>${esc(t(einlesen ? "passwort.titelEinlesen" : "passwort.titel"))}</b>
+  zeigen("passwort", `<div class="blattkopf nur blatt-zeki klein">${zekiVorn()}<div class="blatt-zeile"><b>${esc(t(einlesen ? "passwort.titelEinlesen" : "passwort.titel"))}</b></div>
       <button type="button" class="ikonknopf zu" data-a="blatt-zu" aria-label="${esc(t("ebene.schliessen"))}">${sym("x")}</button></div>
     <form class="pw-form" autocomplete="off">
       ${einlesen ? feld : `<p class="pw-letzte ${extra.tage === null || extra.tage >= 7 ? "rot" : ""}">${esc(extra.tage === null || extra.tage === undefined ? t("ladenSchirm.sicherung.nieWeg") : t("ladenSchirm.sicherung.letzteWeg", extra.tage))}</p>
@@ -282,7 +286,7 @@ export function sicherungSchalter(art) {
 export const sicherungWahl = () => (pw && pw.zweck === "teilen" ? { mitPasswort: pw.mitPasswort, ohneFotos: pw.ohneFotos } : { mitPasswort: true, ohneFotos: false });
 // Nach dem Teilen/Herunterladen: einmal fragen, wo die Datei jetzt liegt. Nur „Anderes Gerät, Mail, Cloud“ zählt als Sicherung (app.js).
 export function ortFrageZeigen() {
-  zeigen("sicherungort", `<div class="hilfe-inhalt"><span class="ks">${sym("package")}</span><b>${esc(t("ladenSchirm.sicherung.woFrage"))}</b></div>
+  zeigen("sicherungort", `<div class="hilfe-inhalt"><div class="blatt-zeki klein">${zekiVorn()}<div class="blatt-zeile"><b>${esc(t("ladenSchirm.sicherung.woFrage"))}</b></div></div></div>
     <button type="button" class="knopf" data-a="sicherung-ort" data-wert="woanders">${esc(t("ladenSchirm.sicherung.woanders"))}</button>
     <button type="button" class="knopf zweit" data-a="sicherung-ort" data-wert="handy">${esc(t("ladenSchirm.sicherung.nurHandy"))}</button>`);
 }
