@@ -3,16 +3,12 @@
    Nur Tokens aus tokens.css. Tippflächen ≥ 48 px. */
 
 /* ---------- Kopfleiste ---------- */
-.appleiste.ebene-kopf { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; justify-content: stretch; gap: 0;
-  min-height: 56px; padding: calc(env(safe-area-inset-top, 0px) + 4px) 4px 4px; }
-.appleiste.ebene-kopf .logo { justify-self: center; height: 28px; }
+/* Kopf: jetzt die Bühne (css/buehne.css) */
 .ebene-kopf .ikonknopf { position: static; width: 48px; height: 48px; border: 0; border-radius: 12px; background: transparent; color: var(--tinte);
   display: inline-flex; align-items: center; justify-content: center; justify-self: center; padding: 0; box-shadow: none; }
 .ebene-kopf .ikonknopf .sym { width: 26px; height: 26px; }
 .ebene-kopf .ikonknopf.hilfe { color: var(--tinte-weich); }
 .ebene-kopf .ikonknopf:active, .tab:active, .grosskachel:active, .blattzeile:active, .pintaste:active { transform: scale(.97); }
-.ebene-kopf.buero { grid-template-columns: minmax(96px, auto) 1fr minmax(96px, auto); }
-.ebene-kopf.buero .ikonknopf { justify-self: end; }
 .zurueckzeile { display: inline-flex; align-items: center; gap: 2px; min-height: 48px; padding: 0 10px 0 4px; border: 0; background: transparent;
   color: var(--salbei-tief); font: inherit; font-size: calc(16rem / 17); font-weight: 700; white-space: nowrap; justify-self: start; border-radius: 12px; }
 .zurueckzeile .sym { width: 22px; height: 22px; }
@@ -220,8 +216,6 @@ body.blatt-da { overflow: hidden; }
 .blatt-monat .mb-zeile.plus b{color:var(--gruen)}
 .blatt-monat .mb-knoepfe{display:grid;gap:.5rem}
 /* Lauf 2, Bildpaket D (4f), Ja 01.11.2026: Zeki-Kopf nicht mehr am oberen Rand angeschnitten, „?“-Karte ruhiger (Zeichen und Knopf mittig, kein Riesen-Zeichen am Rand) */
-.appleiste .ikonknopf.zeki-knopf .zeki{width:52px;height:72px}
-.appleiste .ikonknopf.hilfe.zeki-knopf{margin-bottom:-6px}
 .karte.h-ziel.h-ziel-fehlt{align-items:center;justify-content:center;min-height:150px;text-align:center}
 .h-ziel-fehlt .h-riesig{font-size:calc(40rem / 17);line-height:1;opacity:.85}
 

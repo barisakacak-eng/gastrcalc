@@ -48,10 +48,11 @@ test("Heute bindet Zoros wirkliche Messwerte an Karte und Helfer, ohne den Stand
   assert.ok(n.summe > 0);
   const html = startView(s, { wurzel: w });
   assert.ok(html.includes(fmtEuro(n.summe, { dezimal: 2 })));
-  assert.match(html, /gc-bot--freundlich gc-motion--none/);
+  assert.match(html, /gc-buehne/); // Kopf ist jetzt die Bühne (Zeki als Hilfe-Knopf), nicht mehr das alte Maskottchen
+  assert.equal((html.match(/data-a="hilfe-auf"/g) || []).length, 1);
   assert.equal(JSON.stringify(s), vorher);
   s.schwund = []; s.betrieb.nutzen = { papierMinutenVorher: 120, stundensatz: 30 };
   const ohne = startView(s, { wurzel: w });
-  assert.match(ohne, /gc-bot--neutral gc-motion--none/);
+  assert.match(ohne, /gc-buehne/); // Bühne statt altem Maskottchen im Kopf
   assert.doesNotMatch(ohne, /h-nutzen-summe/);
 });

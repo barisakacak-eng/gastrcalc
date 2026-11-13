@@ -1,0 +1,57 @@
+{
+ "viewBox": [
+  0,
+  0,
+  237,
+  328
+ ],
+ "kopf": [
+  118.5,
+  150
+ ],
+ "schulter": {
+  "L": [
+   57.0,
+   181.0
+  ],
+  "R": [
+   180.0,
+   181.0
+  ]
+ },
+ "auge_l": [
+  91.5,
+  88.0
+ ],
+ "auge_r": [
+  145.5,
+  88.0
+ ],
+ "mund": [
+  118.5,
+  109.0
+ ],
+ "buehne_schnitt_y": 245,
+ "figur_oben": 8,
+ "figur_unten": 318,
+ "filmfenster": [
+  -80,
+  -45,
+  420,
+  521.71875
+ ],
+ "mienen": [
+  "neutral",
+  "hilfe",
+  "aufmerksam",
+  "import",
+  "staunt",
+  "warnung",
+  "fehler",
+  "freude",
+  "bestaetigt",
+  "erleichtert",
+  "frage",
+  "preis"
+ ]
+}

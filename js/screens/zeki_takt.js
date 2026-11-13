@@ -1,12 +1,13 @@
-// Zeki lebt: natürlich wie ein Mensch.
+// Zeki lebt (Baris 26.10.2026, 23:14 nachgeschärft): natürlich wie ein Mensch.
 // – Erstes Lebenszeichen nach ≈ 1 s (Blinzeln), danach Blinzeln in unregelmäßigen Abständen (2,5–6 s, manchmal doppelt).
 //   Blinzeln läuft nur im Vektor (Lider), kein Wechsel auf die Bildfolge → kein Flackern.
 // – Gesten (Bildfolge) selten: alle 14–22 s eine ruhige Geste. Zwinkern NIE im Leerlauf, nur gezielt (Sprechblase, Erfolg).
 // – Ruht, wenn die App im Hintergrund ist; bei „reduzierte Bewegung“ weder Blinzeln noch Gesten.
-// Nur Anzeige. Bei Warnung (zustand warnung/fehler) keine fröhlichen Gesten.
+// Nur Anzeige. Bei Warnung (zustand warnung/fehler) keine fröhlichen Gesten (Maskottchen-Regel vom 23.10.2026).
 import { zekiSpielen } from "../gastrocash-brand.js";
+import { buehneEinrichten } from "./buehne_dom.js";
 
-const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freuen"], ernst: ["nachdenken", "nicken"] }; // Puppe: mehr Abwechslung, nie zweimal dieselbe
+const FOLGE = { ruhig: ["nicken", "winken", "nachdenken", "zeigen-unten", "freuen"], ernst: ["nachdenken", "nicken"] }; // 28.10.2026 Puppe: mehr Abwechslung, nie zweimal dieselbe
 export const ZEKI_ERSTES_ZEICHEN_MS = 1000;
 export const ZEKI_BLINZELN_MS = [2500, 6000];
 export const ZEKI_GESTE_MS = [14000, 22000];
@@ -49,24 +50,21 @@ export function zekiTaktStarten(doc = typeof document !== "undefined" ? document
   }, ZEKI_TAKT_MS);
 }
 
-// Zekis Stimme: Was Zeki sagt, steht direkt neben ihm im Kopf – keine Sprechblase, kein Kasten,
-// nie über dem Inhalt. Der Kopf ist Zekis Ebene: links Menü, in der Mitte sein Satz (statt Logo), rechts Zeki selbst.
-function stimmePlatz(root) {
-  const kopf = root?.querySelector?.(".appleiste .zeki-knopf"); if (!kopf) return null;
-  const leiste = kopf.closest(".appleiste");
-  let platz = leiste.querySelector(".zeki-stimme");
-  if (!platz) { platz = root.ownerDocument.createElement("div"); platz.setAttribute("class", "zeki-stimme"); platz.setAttribute("aria-live", "polite"); leiste.insertBefore(platz, kopf); }
-  return { kopf, leiste, platz };
-}
-// Der feste Satz eines Bildschirms (.zeki-zeile / .kl-zeki) wandert aus dem Inhalt neben Zeki. Rückgabe: true, wenn Zeki spricht.
+// Zekis Stimme: Was Zeki sagt, steht in der Bühne direkt neben ihm – keine Sprechblase, kein Kasten, nie über dem Inhalt (Salbei & Papier).
+// Den festen Satz eines Bildschirms (.zeki-zeile / .kl-zeki) und den Titel holt buehneEinrichten aus dem Inhalt in die Bühne. Rückgabe: true, wenn Zeki spricht.
 export function zekiStimmeEinsetzen(root) {
-  const satz = [...(root?.querySelectorAll?.(".zeki-zeile, .kl-zeki") || [])].find((el) => !el.closest(".zeki-stimme, .appleiste")); if (!satz) return false;
-  const p = stimmePlatz(root); if (!p) return false;
-  p.platz.replaceChildren(satz); p.leiste.classList.add("spricht");
-  if (satz.classList.contains("a-rot")) p.leiste.classList.add("spricht-ernst");
-  return true;
+  const r = buehneEinrichten(root);
+  return !!(r.satz || root?.querySelector?.(".gc-buehne.spricht"));
 }
-// Flüchtiger Satz (Lage des Tages): steht ≈ 7 s neben Zeki, dann kommt das Logo zurück. Antippen schließt sofort.
+// Ein flüchtiger Satz (Lage des Tages) ersetzt ≈ 7 s lang Zekis festen Satz in der Bühne (CSS blendet ihn aus, der Titel bleibt), dann ist der feste Satz wieder da. Antippen schließt sofort.
+function stimmePlatz(root) {
+  const leiste = root?.querySelector?.(".gc-buehne"); const innen = leiste?.querySelector(".gc-buehne-innen"); if (!innen) return null;
+  let text = innen.querySelector(".gc-buehne-text"); let neu = false;
+  if (!text) { text = root.ownerDocument.createElement("div"); text.setAttribute("class", "gc-buehne-text"); innen.insertBefore(text, innen.firstChild); neu = true; leiste.classList.remove("gc-buehne-niedrig"); }
+  let platz = text.querySelector(".zeki-stimme");
+  if (!platz) { platz = root.ownerDocument.createElement("div"); platz.setAttribute("class", "zeki-stimme"); platz.setAttribute("aria-live", "polite"); text.append(platz); }
+  return { kopf: leiste.querySelector(".zeki-knopf"), leiste, text, platz, neu };
+}
 export function zekiSprechblase(root, moment, { restMs = 7000, bewegen = true } = {}) {
   if (!moment?.text) return false;
   const p = stimmePlatz(root); if (!p) return false;
@@ -75,10 +73,13 @@ export function zekiSprechblase(root, moment, { restMs = 7000, bewegen = true } 
   satz.setAttribute("class", "zeki-sprech" + (ernst ? " zeki-sprech--ernst" : ""));
   satz.setAttribute("role", "status"); satz.style.setProperty("--zeki-rest", Math.max(0, Math.round(restMs)) + "ms");
   satz.append(moment.text);
-  const weg = () => { satz.remove(); if (!p.platz.childElementCount) p.leiste.classList.remove("spricht", "spricht-ernst"); };
+  const weg = () => {
+    satz.remove(); if (p.platz.childElementCount) return;
+    p.platz.remove(); p.leiste.classList.remove("gc-spricht-kurz");
+    if (!p.text.childElementCount) { p.text.remove(); p.leiste.classList.add("gc-buehne-niedrig"); }
+  };
   satz.addEventListener("click", weg); satz.addEventListener("animationend", (e) => { if (e.animationName === "zekiBlaseAus") weg(); });
-  p.platz.replaceChildren(satz); p.leiste.classList.add("spricht"); if (ernst) p.leiste.classList.add("spricht-ernst");
-  if (bewegen && moment.bewegung && moment.bewegung !== "keine") zekiSpielen(p.kopf, moment.bewegung);
+  p.platz.replaceChildren(satz); p.leiste.classList.add("gc-spricht-kurz");
+  if (bewegen && moment.bewegung && moment.bewegung !== "keine" && p.kopf) zekiSpielen(p.kopf, moment.bewegung);
   return true;
 }
-

@@ -78,8 +78,8 @@ function toastHtml() {
 export function muellView(stand) {
   const D = tagGewaehlt(); const nach = D !== heute(); const pers = personalAktiv();
   const stationDetail = ansicht === "eingabe" && rueckkehr === "station";
-  const oben = pers && !stationDetail ? personalLeiste(true) : "";
-  const unten = pers || stationDetail ? "" : nav("muell", { schnell: false });
+  const oben = pers && !stationDetail ? personalLeiste(ansicht === "eingabe" ? "eingabe" : undefined) : "";
+  const unten = pers || stationDetail ? "" : nav("muell", { schnell: false, schritt: ansicht === "eingabe" ? "eingabe" : undefined });
   if (ansicht === "station") return stationView(stand, D);
   if (ansicht === "eingabe") return oben + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog"><button type="button" class="blatt-x" data-a="muell-auswahl-zu" aria-label="${esc(t("kartelaeden.schliessen"))}">${sym("x")}</button>${eingabeView(stand, D)}</div>` : "") + unten;
   return oben + rasterView(stand, D, nach) + unten;
