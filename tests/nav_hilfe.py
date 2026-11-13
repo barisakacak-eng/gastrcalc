@@ -36,7 +36,13 @@ async def rundgang_weg(pg):
 async def _tipp(pg, sel, warte):
     if await pg.locator(".rg-huelle").count(): await rundgang_weg(pg)
     await pg.evaluate(OEFFNEN, sel)  # Büro-Bereiche (19.10.2026) sind aufklappbar – Ziel vorher aufklappen, wie ein Mensch es täte
-    await pg.locator(sel).first.click(); await pg.wait_for_timeout(warte)
+    for versuch in range(6):  # der kurze Rundgang kann nach der Prüfung oben noch aufgehen und das Tippen abfangen – wegtippen und noch einmal
+        try: await pg.locator(sel).first.click(timeout=30000 if versuch == 5 else 4000); break
+        except Exception:
+            if versuch == 5: raise
+            if await pg.locator(".rg-huelle").count(): await rundgang_weg(pg)
+            await pg.evaluate(OEFFNEN, sel)
+    await pg.wait_for_timeout(warte)
 
 
 async def zum_laden(pg, warte=420):
