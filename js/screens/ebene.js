@@ -172,7 +172,7 @@ function pinZeichnen() {
   const rest = p.zweck === "setzen" ? 0 : sperreRest(p.wurzel);
   if (rest) { p.meldung = warteText(rest); p.fehler = true; }
   const taste = (z) => `<button type="button" class="pintaste" data-a="pin-taste" data-wert="${z}"${rest ? " disabled" : ""}>${z}</button>`;
-  zeigen("pin", `<div class="pin-kopf blatt-zeki klein">${zekiVorn(p.fehler ? "warnung" : "hilfe", "none")}<div class="blatt-zeile"><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div></div>
+  zeigen("pin", `<div class="pin-kopf blatt-zeki">${zekiVorn(p.fehler ? "warnung" : "hilfe", "none")}<div class="blatt-zeile"><b>${esc(titel)}</b><small class="pin-meldung${p.fehler ? " fehler" : ""}" role="status" aria-live="polite">${esc(p.meldung || "")}</small></div></div>
     <div class="pin-punkte${p.fehler && !rest ? " wackeln" : ""}" aria-hidden="true">${[0, 1, 2, 3].map((i) => `<i class="${i < p.eingabe.length ? "voll" : ""}"></i>`).join("")}</div>
     <div class="pin-tasten" dir="ltr">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(taste).join("")}<button type="button" class="pintaste leer" data-a="blatt-zu">${esc(t("allgemein.abbrechen"))}</button>${taste(0)}<button type="button" class="pintaste weg" data-a="pin-weg" aria-label="${esc(t("ebene.pin.loeschen"))}"${rest ? " disabled" : ""}>${sym("delete")}</button></div>
     ${p.zweck !== "setzen" && p.wurzel?.bio?.id ? `<button type="button" class="knopf zweit pin-bio" data-a="pin-bio">${esc(t("schloss.mitBio"))}</button>` : ""}

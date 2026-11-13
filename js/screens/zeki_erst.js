@@ -23,6 +23,10 @@ export function erstSatz(punkt, { speicher, stunde, stand } = {}) {
 export function erstGesehen(punkt, speicher) { const s = lesen(speicher); s.add(punkt); schreiben(speicher, s); }
 export function erstWiederZeigen(speicher) { try { speicher?.removeItem(ERST_KEY); } catch { /* egal */ } }
 
+// Die Karte gehört zu EINEM Schirm: wechselt die Ansicht, ist sie weg (ohne „gesehen“ zu setzen – beim nächsten Besuch kommt sie noch).
+export function erstAbraeumen(doc, ansicht) {
+  const z = doc?.querySelector(".zeki-erst"); if (z && z.dataset.punkt !== ansicht) (z.__weg || (() => z.remove()))();
+}
 // Anzeige: kleine Karte unten mit Zeki, Satz und „Verstanden“
 export function erstZeigen(doc, punkt, satz, speicher) {
   if (!doc || !satz || doc.querySelector(".zeki-erst")) return;
@@ -30,7 +34,8 @@ export function erstZeigen(doc, punkt, satz, speicher) {
   el.innerHTML = `<div class="ze-karte"><span class="ze-zeki">${mascotMarkup("hilfe", "none")}</span><div class="ze-blase"><p dir="auto">${esc(satz)}</p>
     <button type="button" class="knopf" data-ze="ok">${esc(t("rundgang.erst.ok"))}</button></div></div>`;
   doc.body.appendChild(el);
-  const buehne = doc.querySelector(".gc-buehne"); if (buehne) el.style.top = Math.round(buehne.getBoundingClientRect().bottom + 8) + "px"; // direkt unter der Bühne, die jetzt leer ist
+  el.dataset.punkt = punkt;
+  const leiste = doc.querySelector(".tableiste"); if (leiste) el.style.bottom = Math.round((doc.defaultView?.innerHeight || 0) - leiste.getBoundingClientRect().top + 8) + "px"; // direkt über der unteren Leiste; oben bleibt die Haupthandlung frei
   // Pilotfest (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
   const weg = () => { el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
   const zu = () => { erstGesehen(punkt, speicher); weg(); };

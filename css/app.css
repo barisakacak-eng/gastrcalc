@@ -756,7 +756,7 @@ body.blatt-da{overflow:hidden}
 .home-karte.s2home:has(.home-bilder){width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
 .home-karte details summary{font-size:.85rem;color:var(--tinte-weich);margin-top:.2rem}
 .home-schritte{margin:.4rem 0 0;padding:0 0 0 1.2rem;display:grid;gap:.3rem;font-size:.95rem}
-.home-schritte .sym{width:1rem;height:1rem;vertical-align:-.15em;color:var(--glut)}
+.home-schritte .sym{width:1rem;height:1rem;vertical-align:-.15em;color:var(--salbei)}
 .home-buero{margin:.6rem 0 .2rem}
 .home-buero .knopf{margin-top:.5rem}
 .home-schon{display:flex;align-items:center;gap:.4rem;color:var(--salbei-text);margin:.4rem 0}

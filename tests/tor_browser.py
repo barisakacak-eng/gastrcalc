@@ -6,7 +6,7 @@ Je Bildschirm wird gemessen – Rückgabecode 1 bei Verstoß:
   b  kein Zeki in der Kopfzeile (.gc-kopf – die Zeile mit ☰, Titel und Hilfe-Knopf; die Bühne darunter ist nicht gemeint)
   c  keine Sprechblase (sichtbares Element mit „blase“ in der Klasse UND Hintergrund, Rahmen oder Schatten)
   d  höchstens ein offenes Blatt (#ebene-huelle .ebene-blatt)
-  e  kein doppeltes Feld (gleiches data-f; Knöpfe mit gleichem data-a + data-wert + Text UND sonst gleichen data-* – Listenzeilen mit data-id / data-i oder anderem Datensatz sind ausgenommen)
+  e  kein doppeltes Feld (gleiches data-f ohne unterscheidendes data-id; die untere Leiste (.tableiste, Navigation) ist ausgenommen; Knöpfe mit gleichem data-a + data-wert + Text UND sonst gleichen data-* – Listenzeilen mit data-id / data-i oder anderem Datensatz sind ausgenommen)
   f  kein Überlauf: waagrecht nirgends; senkrecht nicht in Laden und Personal bei 390 × 844 (Ausnahmen wie in tests/laden_aussehen_browser.py, siehe AUSNAHMEN)
   g  Personal: kein „€“ im sichtbaren Text
   h  Arabisch: Code-Tasten 1, 2, 3 von links nach rechts (Büro-Code-Blatt wird dafür eigens geöffnet)
@@ -92,12 +92,13 @@ TOR_JS = r"""
   // d) Blätter
   const blaetter = [...document.querySelectorAll('#ebene-huelle .ebene-blatt')].filter(sichtbar).length;
   // e) Doppelte Felder und Knöpfe
-  const felderN = {}; for (const e of document.querySelectorAll('input[data-f], select[data-f], textarea[data-f]')) if (sichtbar(e) && e.type !== 'hidden') felderN[e.dataset.f] = (felderN[e.dataset.f] || 0) + 1;
+  const felderN = {}; for (const e of document.querySelectorAll('input[data-f], select[data-f], textarea[data-f]')) if (sichtbar(e) && e.type !== 'hidden') { const k = e.dataset.f + (e.dataset.id !== undefined ? '#' + e.dataset.id : ''); felderN[k] = (felderN[k] || 0) + 1; }  // Zeilen einer Liste tragen data-id (je Datensatz ein Feld mit gleichem Namen ist kein doppeltes Feld)
   const doppeltF = Object.entries(felderN).filter(([, n]) => n > 1).map(([k, n]) => k + ' ×' + n);
   const knN = {};
   for (const e of document.querySelectorAll('[data-a]')) {
     if (!sichtbar(e) || e.dataset.id !== undefined || e.dataset.i !== undefined || e.closest('[aria-hidden="true"]')) continue;
     if (e.matches('input, select, textarea')) continue;
+    if (e.closest('.tableiste')) continue;  // die untere Leiste ist Navigation (Wegweiser): „Müll“/„Putzen“ als Kachel auf Heute UND als Reiter unten ist kein doppeltes Feld
     const t = (e.innerText || e.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim();
     const alleDaten = Object.entries(e.dataset).sort().map(([n, w]) => n + '=' + w).join(',');  // gleiche Knöpfe: ALLE data-* und der Text stimmen überein
     const k = alleDaten + '|' + t; knN[k] = (knN[k] || 0) + 1;

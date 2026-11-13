@@ -38,7 +38,7 @@ function bueroWegFuehren(ziel, zurueck) {
 function erstSatzPlanen(ziel) {
   let sp = null; try { sp = localStorage; } catch { sp = null; }
   const satz = fuehrungOffen() ? null : erstSatz(ziel, { speicher: sp, stunde: berlin().stunde, stand: Z.stand });
-  if (satz) setTimeout(() => { if (!fuehrungOffen()) erstZeigen(document, ziel, satz, sp); }, 350);
+  if (satz) setTimeout(() => { if (!fuehrungOffen() && Z.ansicht === ziel) erstZeigen(document, ziel, satz, sp); }, 350);
 }
 // Was das Ziel beim Betreten vorbereitet (alles vor dem Wechsel der Ansicht).
 function zielVorbereiten(ziel, el) {

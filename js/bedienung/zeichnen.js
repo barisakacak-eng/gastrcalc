@@ -29,6 +29,7 @@ import { navKontext, nav } from "../screens/nav.js";
 import { zekiStimmeEinsetzen, zekiTaktStarten } from "../screens/zeki_takt.js";
 import { haken } from "./zustand.js";
 import { blattSchliessen } from "../screens/ebene.js";
+import { erstAbraeumen } from "../screens/zeki_erst.js";
 import { schritteFuer } from "../screens/onboarding.js";
 import { bueroPaket, bueroPaketLaden, istBueroAnsicht } from "./nachladen.js";
 
@@ -98,6 +99,7 @@ export function zeichne() {
   speicherBandZeigen();
   if (kennung !== Z.letzterSchirm) { Z.ruheBis = Date.now() + 250; meldungBeiWechsel(); }
   Z.letzterSchirm = kennung; Z.gezeichneterTag = tagStand();
+  erstAbraeumen(document, Z.ansicht); // Zekis Erst-Hinweis gehört zu seinem Schirm
   window.scrollTo(0, y);
 }
 

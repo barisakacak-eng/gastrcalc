@@ -113,7 +113,7 @@ export function ordnerAmtView(stand) {
         ${inhaltZeile("trash-2", t("amtW2.muellTitel"), amtUnter("muell", o.teile.muell), "info")}
       </div>
       ${beilagenKarte("amt")}
-      ${knoepfe()}
+      ${vorschauHtml ? "" : knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
 
@@ -132,7 +132,7 @@ export function ordnerPaketView(stand, art) {
       <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], teil === "arbeitszeiten" ? t("w3b.az.titel") : t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
       ${art === "steuer" ? fragenKarte(stand) : ""}
       ${beilagenKarte(art, stand, z.monat)}
-      ${knoepfe()}
+      ${vorschauHtml ? "" : knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
 
