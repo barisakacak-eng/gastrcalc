@@ -65,6 +65,7 @@ h1, h2, h3, p{margin:0}
 .summenzeile .wert{font-weight:700}
 .summenzeile.gesamt{margin-top:4px}
 .abzeichen{vertical-align:middle;margin-left:8px}
+.karte .gross .abzeichen{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--papier-tief);border:1px solid var(--holz-tief);color:var(--tinte);font-size:.75rem;font-weight:700;letter-spacing:0;line-height:1.3;white-space:nowrap;margin-inline:8px 0}
 .meldung{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--tinte);color:var(--weiss);padding:10px 16px;border-radius:999px;font-size:0.95rem;opacity:0;transition:opacity .2s;pointer-events:none}
 .meldung.da{opacity:1}
 label:has(> input[type="file"]){position:relative}
