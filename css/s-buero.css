@@ -364,3 +364,6 @@ body:has(.appleiste.buero){background:var(--papier);background-image:none}
 #app:has(.appleiste.buero) .summenzeile.mit-foto>.gerichtbild{flex:none;inline-size:52px;block-size:48px;border-radius:var(--radius-klein);object-fit:cover}
 #app:has(.appleiste.buero) .summenzeile.mit-foto>.gerichtbild.pikto{object-fit:contain;padding:6px;background:var(--papier-tief)}
 #app:has(.appleiste.buero) .summenzeile.mit-foto>span:not(.wert){flex:1 1 0;min-inline-size:0}
+
+/* Sprung-Ziel „Sicherung“ (Anker aus Heute/Büro): die Bühne scrollt mit weg, es gibt keine feste Kopfzeile mehr – das Blatt soll mit Luft zum oberen Rand stehen, nicht daran kleben */
+#sicherung{scroll-margin-top:16px}
