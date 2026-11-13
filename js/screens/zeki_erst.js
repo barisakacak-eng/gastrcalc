@@ -35,7 +35,7 @@ export function erstZeigen(doc, punkt, satz, speicher) {
     <button type="button" class="knopf" data-ze="ok">${esc(t("rundgang.erst.ok"))}</button></div></div>`;
   doc.body.appendChild(el);
   el.dataset.punkt = punkt;
-  const leiste = doc.querySelector(".tableiste"); if (leiste) el.style.bottom = Math.round((doc.defaultView?.innerHeight || 0) - leiste.getBoundingClientRect().top + 8) + "px"; // direkt über der unteren Leiste; oben bleibt die Haupthandlung frei
+  const buehne = doc.querySelector(".gc-buehne"); if (buehne) el.style.top = Math.round(buehne.getBoundingClientRect().bottom + 8) + "px"; // direkt unter der Bühne, die jetzt leer ist
   // Pilotfest (live): „Verstanden“ ODER ein Tipp irgendwo sonst schließt die Karte – sie steht nie im Weg (Regel: keine unnötigen Meldungen im Laden).
   const weg = () => { el.remove(); doc.removeEventListener("pointerdown", draussen, true); };
   const zu = () => { erstGesehen(punkt, speicher); weg(); };
