@@ -69,7 +69,8 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `karte_daten.js` – Setzer für Speisekarte, Rezepte, Verkaufs- und Einkaufspreise (Herkunft „hand“).
 - `karte_lesen.js` – aus erkanntem Text Gerichte mit Preis, Vorlagen zuordnen.
 - `kostenbeleg.js` – Kostenbelege, die keine Ware sind.
-- `kuehlname.js` – Kühlstellen-Namen.
+- `kuehlname.js` – Kühlstellen-Namen (liest den Auszug `data/kuehl_namen.js`, nicht die ganzen Sprachtabellen).
+- `sprachdaten.js` – große Sprachdaten (Namen, Zeki-Sätze weiterer Sprachen): im Browser erst mit der gewählten Sprache geladen, in Node sofort da.
 - `laden_zahlen.js` – Zahlen für „Heute“ und „Tag abschließen“.
 - `lieferant.js`, `lieferung.js` – Lieferanten als Stammdaten; Belege werden Lieferungen (Herkunft „beleg“).
 - `mindestlohn.js` – Mindestlohn-Vorschau (14,60 € ab 1.1.2027, Minijob 633 €).
@@ -202,7 +203,7 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 
 Adapter: Hier und nur hier (neben `app.js`, `bedienung/`, `screens/`, `rahmen.js`) darf der Browser berührt werden.
 
-- `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
+- `umgebung.js` – Browser oder Node (`imBrowser`): große Sprachdaten laden im Browser erst bei Bedarf. `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
 - `leinwand.js` – Zeichenfläche. `pdfjs.js` – PDF-Leser nachladen. `webauthn.js` – Passkey. `seite.js` – Dokument-Attribute, Sichtbarkeit, Fenster-Ereignis, Speicher-API.
 - `brand_start.js` – startet Zekis Bewegungen beim Erscheinen.
 

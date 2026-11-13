@@ -4,9 +4,7 @@
 // Gespeichert wird weiter der Name der Anlage (k.name) – Amt-Export und Ausdruck nutzen ihn unverändert.
 // Rückwärtskompatibel: ein alter Standardname in Deutsch, Türkisch oder Englisch (auch aus dem alten Einrichten-Schritt) gilt als Standard.
 import { t } from "./i18n.js";
-import de from "./lang/de.js";
-import tr from "./lang/tr.js";
-import en from "./lang/en.js";
+import { KUEHL_ARTEN, KUEHL_ALT } from "./data/kuehl_namen.js";
 
 const KUEHL_TYP_SCHLUESSEL = ["getraenke", "kuehlschrank", "saladette", "tiefkuehler", "warmhalter", "eistheke"]; // Baris: Getränkekühlschrank und Kühlschrank (Lebensmittel) getrennt
 export const TYP_AUS_ART = { kuehl: "kuehlschrank", tk: "tiefkuehler", warm: "warmhalter", eis: "eistheke" };
@@ -14,13 +12,8 @@ export const TYP_AUS_ART = { kuehl: "kuehlschrank", tk: "tiefkuehler", warm: "wa
 // Alle bekannten Standardnamen je Typ (ohne Nummer), klein geschrieben.
 const STANDARD = (() => {
   const m = {};
-  for (const typ of KUEHL_TYP_SCHLUESSEL) m[typ] = new Set([de, tr, en].map((L) => L.schnell2?.arten?.[typ]).filter(Boolean).map((s) => s.toLocaleLowerCase("de")));
-  for (const L of [de, tr, en]) { // alter Einrichten-Schritt: kuehl.obName(n), obNameTk, obNameWarm
-    const k = L.kuehl || {};
-    if (typeof k.obName === "function") m.kuehlschrank.add(String(k.obName("")).trim().toLocaleLowerCase("de"));
-    if (k.obNameTk) m.tiefkuehler.add(k.obNameTk.toLocaleLowerCase("de"));
-    if (k.obNameWarm) m.warmhalter.add(k.obNameWarm.toLocaleLowerCase("de"));
-  }
+  for (const typ of KUEHL_TYP_SCHLUESSEL) m[typ] = new Set((KUEHL_ARTEN[typ] || []).map((s) => s.toLocaleLowerCase("de")));
+  for (const [typ, namen] of Object.entries(KUEHL_ALT)) for (const n of namen) m[typ].add(n.toLocaleLowerCase("de")); // alter Einrichten-Schritt: kuehl.obName(n), obNameTk, obNameWarm
   return m;
 })();
 
