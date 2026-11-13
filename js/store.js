@@ -12,6 +12,7 @@
 // Kennungen), dazu je Laden stammZeit (Zeitstempel je Bereich; der Fingerabdruck liegt im Speicher-Kopf) und abgleich (Stand des letzten Zusammenführens).
 // Schema 1 (Einzelbetrieb), 2 und 3 werden beim Laden gehoben. Eine neuere Datei als diese App wird abgewiesen.
 
+import { speicherApi, seiteVersteckt as seiteIstVersteckt, fensterMelden } from "./adapter/seite.js";
 import { hmAngabenSauber } from "./hm_angaben.js"; // Lauf 3 (09.11.2026): Hinweis-Motor
 import { debounce, uid, heute, heuteGeschaeft, GESCHAEFTSTAG_BIS_STUNDE, MAX_ZAHL } from "./util.js";
 import { FORMATE } from "./data/formate.js";
@@ -188,7 +189,7 @@ async function ladeFehlerMerken(w, fehlt) {
 let speicherDauerhaft = null; // true | false | null (unbekannt)
 export const speicherIstDauerhaft = () => speicherDauerhaft;
 export async function speicherDauerhaftPruefen({ anfragen = false } = {}) {
-  const s = globalThis.navigator?.storage; if (!s) return null;
+  const s = speicherApi(); if (!s) return null;
   try {
     if (anfragen && s.persist) speicherDauerhaft = await s.persist();
     else if (s.persisted) speicherDauerhaft = await s.persisted();
@@ -196,7 +197,7 @@ export async function speicherDauerhaftPruefen({ anfragen = false } = {}) {
   return speicherDauerhaft;
 }
 export async function speicherBelegt() {
-  try { const e = await globalThis.navigator?.storage?.estimate?.(); return e ? { belegt: e.usage ?? null, frei: e.quota ?? null } : null; } catch (_) { return null; }
+  try { const e = await speicherApi()?.estimate?.(); return e ? { belegt: e.usage ?? null, frei: e.quota ?? null } : null; } catch (_) { return null; }
 }
 
 // Einmaliger Umzug vom alten Gesamt-Datensatz ("main") in Kopf + Monatsteile. Der alte Datensatz bleibt,
@@ -846,7 +847,7 @@ function stammPruefen(sid, j, liste, out, fertig) {
 }
 
 // Beim Verlassen der App (versteckt) ganz vergleichen – höchstens alle 5 s, denn auf „versteckt" folgt oft gleich „pagehide"
-const seiteVersteckt = () => typeof document !== "undefined" && document.visibilityState === "hidden" && Date.now() - tiefZuletzt > 5000;
+const seiteVersteckt = () => seiteIstVersteckt() && Date.now() - tiefZuletzt > 5000;
 
 // Speichern läuft nacheinander: solange eine Transaktion offen ist, wartet das nächste Speichern auf sie.
 let kette = Promise.resolve(), laufend = 0;
@@ -973,7 +974,7 @@ async function fremderStand(wurzel, genDa, { stempel = true, zweiter = false } =
     }
   }
   ereignis("speicher-fremder-stand", { gen: genDa, geladen: !!neu, zusammengefuehrt: ok });
-  if (typeof window !== "undefined" && typeof CustomEvent === "function") window.dispatchEvent(new CustomEvent(FREMDER_STAND, { detail: { wurzel: neu, zusammengefuehrt: ok } }));
+  fensterMelden(FREMDER_STAND, { wurzel: neu, zusammengefuehrt: ok });
   return ok;
 }
 

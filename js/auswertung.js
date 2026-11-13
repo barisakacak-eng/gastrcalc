@@ -5,6 +5,8 @@
 
 import { istPdf, istBild } from "./ablage.js";
 import { zeilenAusTsv } from "./ocr_layout.js";
+import { leinwand, istLeinwand } from "./adapter/leinwand.js";
+import { pdfLaden } from "./adapter/pdfjs.js";
 
 // Speisekarte: beide Lesarten (Block / Spalten) weitergeben.
 export function besteKartenLesart(text, tsv) {
@@ -52,9 +54,9 @@ async function bildLesen(datei) {
   try { const img = new Image(); img.src = url; await img.decode(); return img; } finally { setTimeout(() => URL.revokeObjectURL(url), 1000); }
 }
 async function bildVorbereiten(quelle) {
-  const bmp = quelle instanceof HTMLCanvasElement ? quelle : await bildLesen(quelle);
+  const bmp = istLeinwand(quelle) ? quelle : await bildLesen(quelle);
   const f = Math.min(1, LANGE_SEITE_ERKENNUNG / Math.max(bmp.width, bmp.height));
-  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * f); c.height = Math.round(bmp.height * f);
+  const c = leinwand(Math.round(bmp.width * f), Math.round(bmp.height * f));
   const g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(bmp, 0, 0, c.width, c.height);
   const d = g.getImageData(0, 0, c.width, c.height); const p = d.data;
   for (let i = 0; i < p.length; i += 4) { const y = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2]; const k = Math.max(0, Math.min(255, (y - 128) * 1.25 + 128)); p[i] = p[i + 1] = p[i + 2] = k; }
@@ -66,13 +68,6 @@ async function bildVorbereiten(quelle) {
 }
 
 // ---------- PDF ----------
-let pdfjs = null;
-async function pdfLaden() {
-  if (pdfjs) return pdfjs;
-  await new Promise((res, rej) => { const s = document.createElement("script"); s.src = new URL("../vendor/pdfjs/pdf.min.js", import.meta.url).href; s.onload = res; s.onerror = () => rej(Object.assign(new Error("PDF-Leser nicht geladen"), { grund: "laden" })); document.head.appendChild(s); });
-  pdfjs = window.pdfjsLib; pdfjs.GlobalWorkerOptions.workerSrc = new URL("../vendor/pdfjs/pdf.worker.min.js", import.meta.url).href;
-  return pdfjs;
-}
 // Textschicht einer PDF-Seite in Zeilen: Stücke mit gleicher Höhe (y) zusammen, von links nach rechts.
 export function zeilenAusTextStuecken(items) {
   const zeilen = [];
@@ -97,7 +92,7 @@ async function pdfAuswerten(datei, fortschritt, modus) {
     if (t.replace(/\s/g, "").length > 40) { texte.push(t); continue; }
     // eingescanntes PDF: Seite als Bild malen und erkennen
     art = "pdf-bild";
-    const vp = seite.getViewport({ scale: 2 }); const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+    const vp = seite.getViewport({ scale: 2 }); const c = leinwand(vp.width, vp.height);
     await seite.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
     texte.push(await ocrAuftrag(await bildVorbereiten(c), modus));
   }

@@ -17,6 +17,7 @@ import { getraenkVon, literAusText, literText, nameMitMenge } from "./getraenk_f
 import { aktionVorschlag, aktionBilanz, PLAN_TAGE } from "./aktion_plan.js"; // Aktion planen (18.10.2026): Zeitraum-Vorschlag und Bilanz
 import { isoTag, uhr } from "./zeit.js";
 import { rund2 } from "./geld.js";
+import { leinwand, leinwandDa } from "./adapter/leinwand.js";
 
 export const TAFEL_GRUPPEN = ["speisen", "beilagen", "getraenke"];
 export const TAFEL_SEKUNDEN = [8, 12, 20, 30];   // Auswahl im Büro (gespeichert werden 5–120 s, store.js)
@@ -279,9 +280,9 @@ export async function tafelBilder(b, { lesen = tafelBildLesen } = {}) {
 }
 const alsDataUri = (blob) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
 async function verkleinert(blob, max = 640) {
-  if (typeof createImageBitmap !== "function" || typeof document === "undefined") return alsDataUri(blob);
+  if (typeof createImageBitmap !== "function" || !leinwandDa()) return alsDataUri(blob);
   const bm = await createImageBitmap(blob); const f = Math.min(1, max / Math.max(bm.width, bm.height));
-  const c = document.createElement("canvas"); c.width = Math.round(bm.width * f); c.height = Math.round(bm.height * f);
+  const c = leinwand(Math.round(bm.width * f), Math.round(bm.height * f));
   c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height); bm.close?.(); return c.toDataURL("image/jpeg", 0.82);
 }
 async function tafelBildLesen(bild) {

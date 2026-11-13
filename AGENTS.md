@@ -2,7 +2,7 @@
 
 Diese Datei lesen Coding-Agenten automatisch. Sie gilt für jeden Auftrag in diesem Repo.
 
-## Was GastroCalc ist
+## Was GastroCash ist (der Repo-Name `gastrcalc` bleibt)
 Handy-Web-App (PWA, Vanilla JS, kein Bauschritt) für kleine Imbisse: Döner, Pizza, Asia, Foodtruck, 1–15 Mitarbeiter.
 Nutzer: Inhaber ohne BWL-Wissen, wenig Zeit, oft mit Sprachbarriere. Live: https://barisakacak-eng.github.io/gastrcalc/
 
@@ -18,8 +18,12 @@ Jede Änderung muss die App einfacher machen, nicht voller. Im Zweifel weglassen
 - Keine neuen Funktionen ohne ausdrücklichen Auftrag. Keine Änderung an Rechenregeln (js/*.js) ohne Auftrag.
 
 ## Aufbau
-- `js/*.js` = Rechenwerk, rein (keine DOM-Zugriffe). `js/screens/*.js` = nur Anzeige. `tests/trennung.test.mjs` prüft das.
-- Texte nur über `js/i18n.js` und `js/lang/*.js`, nie fest im Bildschirm-Code. Deutsch ist führend.
+- `js/*.js` = Rechenwerk, rein (kein `document`, `window`, `localStorage`, `navigator`, `location`; das geht über `js/adapter/`). `js/screens/*.js` = nur Anzeige. `js/app.js` = Einstieg, `js/bedienung/` = Bedienschicht (Zustand in `zustand.js`, ein Bereich je Datei). `tests/trennung.test.mjs` und der Wächter prüfen das.
+- Neuer `data-a`-Name: in die Klick-Tabelle (`export const KLICK`) des Bereichs in `js/bedienung/<bereich>.js`, nicht in `app.js`.
+- Einen Test allein laufen lassen: `node --test tests/<name>.test.mjs`.
+- Geld in `js/geld.js`, Zeit in `js/zeit.js`, Regeln in `js/data/regelwerk.js` mit `js/regeltext.js`, Abgleich zweier Handys in `js/abgleich_felder.js`.
+- Es gibt keine Schalter am `window` mehr (`__gc6b`, `__gcW3`, `__gcHM`, `__gcL15b` sind entfernt); nur die Test-Haken (`docs/architektur.md`, Abschnitt 7).
+- Texte nur über `js/i18n.js` und `js/lang/*.js`, nie fest im Bildschirm-Code. Deutsch ist führend. Ein neuer Satz kommt in alle 18 Sprachdateien (`tools/sprachpruefung.mjs` prüft das).
 - Farben und Maße nur aus `css/tokens.css` (Zielbild „Kräuter & Kupfer“).
 - Neue oder geänderte Dateien: danach `python3 tools/sw_liste.py` laufen lassen (erzeugt `sw.js` und `js/fassung.js`). `sw.js` nie von Hand ändern.
 

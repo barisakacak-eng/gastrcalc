@@ -1,10 +1,10 @@
-# GastroCash – Architektur (Pilotfest E6, 30.10.2026)
+# GastroCash – Architektur
 
-Wer hier etwas ändert, liest zuerst diese Seite. Der Schutz-Test `tests/architektur.test.mjs` prüft, dass jede Datei unter `js/` und `js/screens/` hier mit einem Satz steht und dass die Regeln unten im Code eingehalten werden. Ein neues Modul ohne Eintrag macht den Test rot.
+Wer hier etwas ändert, liest zuerst diese Seite. Der Schutz-Test `tests/architektur.test.mjs` prüft, dass jede Datei unter `js/`, `js/screens/`, `js/bedienung/` und `js/adapter/` hier mit einem Satz steht und dass die Regeln unten im Code eingehalten werden. Ein neues Modul ohne Eintrag macht den Test rot.
 
 ## 1. Die Idee in fünf Sätzen
 
-GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bauschritt, offline über einen Service Worker, alle Daten in IndexedDB auf dem Gerät. Innen rechnet ein **Rechenwerk** (`js/*.js`, reine Funktionen), außen zeigen **Bildschirme** (`js/screens/*.js`) nur an. Die **Bedienschicht** (`js/app.js`) hält den Zustand, zeichnet den aktuellen Bildschirm komplett neu (`zeichne()` setzt `root.innerHTML`) und verteilt jeden Tipp über einen einzigen delegierten Klick-Handler (`aufKlick`) nach `data-a`. Texte kommen nur aus `js/i18n.js` + `js/lang/*.js` (Deutsch ist Leitsprache, 18 Sprachen, Beta-Sprachen fallen auf Englisch zurück). Drei Ebenen trennen, wer was sieht: **Laden** (Chef in der Schicht, ≤ 15 Wörter je Bildschirm), **Personal** (ohne Euro, nur mit Büro-Code erreichbar), **Büro** (alles für Amt, Steuerberater, Buchhalter, Einrichtung; ≤ 120 Wörter).
+GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bauschritt, offline über einen Service Worker, alle Daten in IndexedDB auf dem Gerät. Innen rechnet ein **Rechenwerk** (`js/*.js`, reine Funktionen), außen zeigen **Bildschirme** (`js/screens/*.js`) nur an. Die **Bedienschicht** (`js/app.js` als Einstieg, der Rest in `js/bedienung/`) hält den Zustand, zeichnet den aktuellen Bildschirm komplett neu (`zeichne()` setzt `root.innerHTML`) und verteilt jeden Tipp über einen einzigen delegierten Klick-Handler (`aufKlick`) nach `data-a`. Texte kommen nur aus `js/i18n.js` + `js/lang/*.js` (Deutsch ist Leitsprache, 18 Sprachen, Beta-Sprachen fallen auf Englisch zurück). Drei Ebenen trennen, wer was sieht: **Laden** (Chef in der Schicht, ≤ 15 Wörter je Bildschirm), **Personal** (ohne Euro, nur mit Büro-Code erreichbar), **Büro** (alles für Amt, Steuerberater, Buchhalter, Einrichtung; ≤ 120 Wörter).
 
 ## 2. Regeln, die der Code einhalten muss
 
@@ -15,11 +15,16 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 5. **Zahlen mit Quelle oder „Setzung“.** Richtwerte stehen in `js/data/branchenwerte.js` mit Quelle und Datum; Goldwerte (`tests/goldwert.test.mjs`) frieren bekannte Ergebnisse ein.
 6. **Relativ bleiben.** Keine absoluten Pfade, kein Host im Code; `manifest.webmanifest` und `sw.js` sind relativ, der Umzug auf eine eigene Domain ist eine Pages-Einstellung (`tests/umzug_bereit.test.mjs`).
 7. **Eine Fassung, ganz oder gar nicht.** `tools/sw_liste.py` schreibt `sw.js` (Dateiliste + Fingerabdruck) und `js/fassung.js`; vor jedem Push ausführen, `tests/fassung.test.mjs` prüft den Fingerabdruck.
-8. **Neue sichtbare Oberfläche nur nach Bildpaket und Ja.** Entwürfe laufen hinter einem Schalter (`window.__gc6b`-Muster) bis zur Freigabe; Klassen A/B/C stehen im Projektstand.
+8. **Neue sichtbare Oberfläche nur nach Bildpaket und Ja.** Ein Entwurf wird erst gebaut, wenn er freigegeben ist; es gibt keine Schalter am `window`-Objekt mehr dafür (nur die Test-Haken in Abschnitt 7).
+9. **Der Browser bleibt am Rand.** Die Rechenwerk-Module in `js/*.js` greifen nicht selbst auf `document`, `window`, `localStorage`, `navigator` oder `location` zu; das geht über `js/adapter/`. Erlaubt sind außerdem `js/app.js`, `js/bedienung/`, `js/screens/` und `js/rahmen.js`. Geprüft im Wächter `tests/quelltext_waechter.test.mjs` (Teil 7, Ausnahmen mit Grund stehen dort).
+10. **18 Sprachdateien.** Jeder Text-Schlüssel steht in allen 18 Dateien unter `js/lang/` mit gleicher Form (Art, Anzahl Platzhalter, nie leer). Ein neuer Satz kommt in alle 18 Dateien; `tools/sprachpruefung.mjs` und `tests/i18n.test.mjs` prüfen das.
+11. **Keine Altschalter.** `__gc6b`, `__gcW3`, `__gcHM` und `__gcL15b` gibt es nicht mehr; Neues wird nicht hinter einen Schalter am `window` gelegt.
 
 ## 3. Ablauf eines Tipps
 
-`index.html` → `js/app.js` lädt Wurzel (`store.js`), Sprache (`i18n.js`), registriert `sw.js`, startet den Fehler-Rucksack (`fehler.js`) → `zeichne()` wählt nach `stand.phase` (Einrichtung `screens/onboarding.js` oder App) und `ansicht` den Bildschirm → Bildschirm liefert HTML aus Daten → Tipp landet in `aufKlick` → `data-a` entscheidet: Rechenwerk-Setzer aufrufen, `speichern(wurzel)`, `zeichne()`. Blätter über dem Bildschirm (Menü, Hilfe, Code) leben in `#ebene-huelle` (`screens/ebene.js`). Doppeltipp-Schutz: nur ein zweiter Tipp **an derselben Stelle** innerhalb von 180 ms wird verworfen (`DOPPELTIPP_MS`, Pilotfest U1).
+`index.html` → `js/app.js` verdrahtet nur (Rückrufe eintragen, Ereignisse anmelden, `starten()`). `js/bedienung/start.js` lädt die Wurzel (`store.js`) und die Sprache (`i18n.js`), `update.js` registriert `sw.js`, `sicherung.js` startet den Fehler-Rucksack (`fehler.js`) → `zeichne()` (`zeichnen.js`) wählt nach `stand.phase` (Einrichtung `screens/onboarding.js` oder App) und `ansicht` den Bildschirm → der Bildschirm liefert HTML aus Daten → ein Tipp landet in `aufKlick` (`klick.js`) → `data-a` entscheidet über die Klick-Tabellen der Bereiche: Rechenwerk-Setzer aufrufen, `speichern(wurzel)`, bei Bedarf `zeichne()`.
+
+**Wo ein neuer `data-a`-Name hingehört:** in die Klick-Tabelle (`export const KLICK = { "name": (el, kontext) => … }`) des Bereichs in `js/bedienung/<bereich>.js`. Ein Eintrag, der nichts zu tun hat, gibt `NICHT` zurück (aus `tabellen.js`); dann fragt `klick.js` die nächste Stufe. Hängt der Name am Bildschirm (Namen, die nur dort gelten), gehört er in `ANSICHT_KLICK[ansicht]` in `laden.js` oder `buero.js`, Eingaben in `ANSICHT_EINGABE`, Dateifelder in `AENDERUNG` (`fotos.js`). Ein Name in zwei Tabellen wirft beim Laden (`zusammenfuehren`). Die Reihenfolge der Stufen steht im Kopf von `klick.js`.
 
 ## 4. Module – Rechenwerk (`js/`)
 
@@ -27,7 +32,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `ablage.js` – ein Weg für jedes Foto und jede Datei (IndexedDB-Ablage).
 - `aktion_plan.js` – Aktion planen: Zeitraum-Vorschlag, Fortschritt, Bilanz.
 - `anzeige_text.js` – Texte aus Daten (Datum, Monat, Mengen, Bruchzahlen).
-- `app.js` – Einstieg und Bedienschicht: Zustand, Zeichnen, Klick-Verteiler, Service Worker, Rundgang-Start.
+- `app.js` – Einstieg: trägt Rückrufe ein, meldet die Ereignisse des Browsers an und startet (ohne eigene Logik, höchstens 300 Zeilen).
 - `bedienhilfe.js` – kleine reine Helfer der Bedienschicht: Doppeltipp-Sperre, Tageswechsel bei offener App, Speicher-Banner.
 - `auswertung.js` – ein Weg vom Foto/PDF zum Text (OCR-Auftrag an den Worker, Zwischenstand „erste Gerichte“ seit P4).
 - `beispiel.js` – Beispiel-Laden zum Ausprobieren.
@@ -164,8 +169,36 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `zeki_erst.js` – Zeki beim ersten Tipp (6b R2).
 - `zeki_takt.js` – Zeki lebt: Blinzeln, Gesten, Sprechblase.
 
+## 5b. Bedienschicht (`js/bedienung/`) und Rand zum Browser (`js/adapter/`)
+
+Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkreise (`tests/bedienung_struktur.test.mjs`, `tests/importkreise.test.mjs`, Werkzeuge `tools/bedienung_masse.mjs`, `tools/importkreise.mjs`, `tools/tote_exporte.mjs`).
+
+- `zustand.js` – der EINE Zustand der Bedienschicht (`Z`) und `haken` (Rückrufe nach oben, damit keine Kreise entstehen).
+- `tabellen.js` – `NICHT`, `FERTIG`, `zusammenfuehren` für die Klick-, Eingabe- und Änderungs-Tabellen.
+- `klick.js` – `aufKlick` (Doppeltipp-Schutz, Sperre) und die Stufen der Klick-Verteilung.
+- `eingabe.js` – Tippen, Feld verlassen, Enter; fragt `ANSICHT_EINGABE`.
+- `fotos.js` – Dateifelder (`AENDERUNG`): Sicherung einlesen, Kassen-Export, Fotos.
+- `ebene.js` – Laden · Personal · Büro, Blätter, Büro-Code, Rettung, Hinweise.
+- `einrichtung.js` – Einrichtung: Weiter, Zurück, Fertig, Bearbeiten, Rezept-Direkt.
+- `navigation.js` – Tab-Leiste und Menü, Büro-Weg. `zurueck.js` – Zurück-Geste.
+- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan, Beleg, Abschluss, Inventur).
+- `buero.js` – Büro-Bildschirme (Büro, Ordner, Verkauf, Bestand, Waren, Preise, Aktionen, Lieferanten, Getränke, Tafel, Läden, Geld, Einstellungen).
+- `personal.js` – Personal-Modus. `ladenverwaltung.js` – Läden anlegen, wechseln, löschen, „Alles löschen“.
+- `sicherung.js` – Sicherung, Rückholpunkt, Diagnose, Fehlerliste. `update.js` – neue Fassung, Service Worker, zweites Fenster.
+- `start.js` – Start, Fehlerseiten, Heute-Handlungen, Zeki-Handlungen, Debug-Objekt. `tag.js` – Tageswechsel, Tag wählen.
+- `zeichnen.js` – `zeichne()` und das Banner. `speichern.js` – Speichern mit Fehler-Banner. `meldung.js` – kurze Meldungen.
+- `sprache.js` – Sprache setzen. `zeki.js` – Zeki auf dem Bildschirm. `rundgang.js` – Mitmach-Rundgang und erste Führung.
+- `zuruecksetzen.js` – EINE Liste aller Bildschirm-Zustände.
+
+Adapter: Hier und nur hier (neben `app.js`, `bedienung/`, `screens/`, `rahmen.js`) darf der Browser berührt werden.
+
+- `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
+- `leinwand.js` – Zeichenfläche. `pdfjs.js` – PDF-Leser nachladen. `webauthn.js` – Passkey. `seite.js` – Dokument-Attribute, Sichtbarkeit, Fenster-Ereignis, Speicher-API.
+- `brand_start.js` – startet Zekis Bewegungen beim Erscheinen.
+
 ## 6. Tests und Wächter
 
+- Eine einzelne Testdatei: `node --test tests/<name>.test.mjs` (eine Datei, ein Aufruf; mit `--test-name-pattern="Teil des Namens"` nur ein Test).
 - Node: `TZ=UTC node --test tests/*.mjs` und `TZ=Europe/Berlin …` (Rechenwerk, Goldwerte, Trennung, Sprachen, Fassung, Umzug, Architektur).
 - Browser (Playwright, Chromium, 390×844 und 360×780): `tests/regeln.py` (Wörter, verbotene Wörter, Knopfhöhen je Bildschirm), `tests/bedienung_browser.py` (Bedienschicht U1–U5), `tests/erststart_alle.py` (Einrichtung jeder Ladenart mit Zeiten), `tests/klickjagd.py` (Crawler: tote Tipps, Hänger, Konsolenfehler), `tests/durchlauf_*.py` (Abläufe je Bereich), `tests/umzug_browser.py`, `tests/sicherung_rundreise.test.mjs`.
 - Wächter: `.github/workflows/pages.yml` – Pages veröffentlicht nur, wenn Node-Tests (beide Zeitzonen), Sprachprüfung, Regeln, Funktionstests und kurzer Crawler grün sind. Keine Secrets.

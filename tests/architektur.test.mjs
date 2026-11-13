@@ -8,16 +8,18 @@ const WURZEL = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DOK = fs.readFileSync(path.join(WURZEL, "docs", "architektur.md"), "utf8");
 const module = (ordner) => fs.readdirSync(path.join(WURZEL, ordner)).filter((f) => f.endsWith(".js"));
 
-test("jedes Modul in js/ und js/screens/ ist in docs/architektur.md beschrieben", () => {
+test("jedes Modul in js/, js/screens/, js/bedienung/ und js/adapter/ ist in docs/architektur.md beschrieben", () => {
   const fehlt = [];
   for (const f of module("js")) if (!DOK.includes("`" + f + "`") && !DOK.includes(", `" + f + "`")) fehlt.push("js/" + f);
   const teil5 = DOK.slice(DOK.indexOf("## 5."));
   for (const f of module("js/screens")) if (!teil5.includes("`" + f + "`")) fehlt.push("js/screens/" + f);
+  const teil5b = DOK.slice(DOK.indexOf("## 5b."), DOK.indexOf("## 6."));
+  for (const ord of ["bedienung", "adapter"]) for (const f of module("js/" + ord)) if (!teil5b.includes("`" + f + "`")) fehlt.push(`js/${ord}/` + f);
   assert.deepEqual(fehlt, [], "ohne Eintrag in docs/architektur.md: " + fehlt.join(", "));
 });
 test("kein Eintrag im Dokument ohne Datei (Karteileichen)", () => {
   const genannt = [...DOK.matchAll(/- `([a-z0-9_-]+\.js)`/g)].map((m) => m[1]);
-  const vorhanden = new Set([...module("js"), ...module("js/screens")]);
+  const vorhanden = new Set([...module("js"), ...module("js/screens"), ...module("js/bedienung"), ...module("js/adapter")]);
   const leichen = genannt.filter((n) => !vorhanden.has(n));
   assert.deepEqual(leichen, [], "im Dokument, aber nicht im Code: " + leichen.join(", "));
 });

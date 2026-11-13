@@ -15,8 +15,9 @@ export const PERSONAL_ANSICHTEN = ["personal", "muell", "kuehl", "putzplan"];
 // Spiegel im Browser-Speicher: nur noch der Modus. Der Büro-Code wohnt allein in der Wurzel (W2-S, Prüfgremium p07 M3);
 // ein alter Code-Spiegel („gc-buero-pin") wird beim Start einmal übernommen und dann gelöscht.
 const SCHLUESSEL = { modus: "gc-modus", pinAlt: "gc-buero-pin" };
-function merke(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* ohne Speicher gilt nur die Wurzel */ } }
-function lies(k) { try { return localStorage.getItem(k); } catch { return null; } }
+import { merken, lesen } from "./adapter/geraet_speicher.js";
+const merke = merken; // Gerätespeicher: js/adapter/geraet_speicher.js (ohne Speicher gilt nur die Wurzel)
+const lies = lesen;
 
 export function modusSetzen(wurzel, m) {
   if (!wurzel || !MODI.includes(m)) return false;

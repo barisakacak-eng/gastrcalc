@@ -4,6 +4,7 @@ import tr from "./lang/tr.js";
 import en from "./lang/en.js";
 import { artikelAnzeige, gerichtAnzeige, mengenName } from "./data/artikelnamen.js";
 import { fuelleRegeln } from "./regeltext.js";
+import { sprachAttribute } from "./adapter/seite.js";
 
 // Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
 // wenn jemand sie wählt (15.10.2026: 18 Sprachen, die App bleibt trotzdem klein und schnell).
@@ -28,7 +29,7 @@ export function setzeSprache(code, danach) {
   if (!SPRACHEN.includes(code)) code = "de";
   if (!TABELLEN[code]) { ladeSprache(code).then((ok) => { if (ok) { setzeSprache(code); if (danach) danach(); } }); return; }
   aktiv = code;
-  if (typeof document !== "undefined") { document.documentElement.lang = aktiv; document.documentElement.dir = RTL.has(aktiv) ? "rtl" : "ltr"; }
+  sprachAttribute(aktiv, RTL.has(aktiv));
   // 20.10.2026 (Laden-Test): auch bei schon geladener Sprache neu zeichnen – sonst blieb der Willkommen-Bildschirm deutsch,
   // und „Weiter“ (trägt die Sprache vom letzten Zeichnen) setzte auf Deutsch zurück.
   if (danach) danach();

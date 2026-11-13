@@ -152,3 +152,22 @@ for (const w of WAECHTER) test("Quelltext-Wächter: " + w.name, () => {
   if (w.muss) assert.match(text, w.muss, "fehlt in " + w.dateien.join(", "));
   if (w.darfNicht) { const m = text.match(w.darfNicht); assert.equal(m, null, "verboten in " + w.dateien.join(", ") + ": " + (m && m[0])); }
 });
+
+// ───── Teil 7: der Browser bleibt am Rand ─────
+// Diese Rechenwerk-Module greifen nicht selbst auf document, window, localStorage, sessionStorage, navigator oder location zu –
+// das geht über js/adapter/. Erlaubt sind js/app.js, js/rahmen.js, js/bedienung/ und js/screens/ (dort ist die Anzeige und Bedienung zu Hause);
+// sie stehen hier nicht. Kommentare zählen nicht. `ausser`: Textstücke, die vor der Prüfung entfernt werden – jede Ausnahme mit Grund.
+const BROWSER = /\b(document|window|localStorage|sessionStorage|navigator|location)\b/;
+const ohneKommentare = (t) => t.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
+const RAND = [
+  { datei: "js/ablage.js" }, { datei: "js/auswertung.js" }, { datei: "js/modus.js" }, { datei: "js/schloss_bio.js" },
+  { datei: "js/gastrocash-brand.js" }, { datei: "js/i18n.js" }, { datei: "js/store.js" },
+  // Ausnahme tafel.js: SKRIPT ist Text für die fertige Tafel-Datei (läuft im Browser des Fernsehers), kein Zugriff der App.
+  { datei: "js/tafel.js", ausser: [/const SKRIPT = [\s\S]*?`;\n/] },
+];
+for (const r of RAND) test("Rand zum Browser: " + r.datei + " greift nicht selbst auf document, window, localStorage, navigator, location zu", () => {
+  let text = ohneKommentare(lesen(r.datei));
+  for (const a of r.ausser || []) text = text.replace(a, "");
+  const m = text.match(BROWSER);
+  assert.equal(m, null, r.datei + ": Browser-Zugriff gehört nach js/adapter/ – " + (m && text.slice(Math.max(0, m.index - 40), m.index + 40).replace(/\n/g, " ")));
+});

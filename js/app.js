@@ -1,6 +1,7 @@
 // GastroCash – Einstieg. Hier wird nur verdrahtet: die Rückrufe eintragen, die Ereignisse des Browsers anmelden, starten.
 // Der Zustand der Bedienschicht liegt in js/bedienung/zustand.js, jeder Bereich in einer eigenen Datei in js/bedienung/
 // (Klick-Tabellen: KLICK, ANSICHT_KLICK, ANSICHT_EINGABE, AENDERUNG). Wo ein neuer data-a-Name hingehört: docs/architektur.md.
+import "./adapter/brand_start.js"; // Zekis Bewegungen starten, sobald sie erscheinen
 import { haken } from "./bedienung/zustand.js";
 import { fehlerSammlerAnmelden } from "./bedienung/sicherung.js";
 import { meldungAnmelden } from "./bedienung/meldung.js";

@@ -9,6 +9,7 @@
 
 import { uid } from "./util.js";
 import { istSpeicherVoll } from "./bedienhilfe.js"; // Lauf 6, E5-Draht (8)
+import { leinwand, leinwandDa } from "./adapter/leinwand.js";
 
 // 20.10.2026 (Sicherungs-Test, Fund 1): Konnte ein Foto nicht auf dem Gerät abgelegt werden (Speicher voll), lebte es nur bis zum Neustart –
 // ohne Meldung. Jetzt meldet die Ablage es über denselben Weg wie der Speicher (Banner „Speichern fehlgeschlagen“, app.js).
@@ -104,11 +105,11 @@ export const istBild = (datei) => /^image\//.test(datei?.type || "") || /\.(jpe?
 // Fotos vor dem Ablegen verkleinern (lange Seite höchstens 2000 Pixel, JPEG): spart Platz auf dem Handy und später Upload-Zeit.
 // Gelingt das nicht (z. B. HEIC in einem Browser, der es nicht lesen kann), wird das Original abgelegt.
 export async function bildFuerAblage(datei, maxSeite = 2000) {
-  if (!istBild(datei) || typeof createImageBitmap !== "function" || typeof document === "undefined") return datei;
+  if (!istBild(datei) || typeof createImageBitmap !== "function" || !leinwandDa()) return datei;
   try {
     const bmp = await createImageBitmap(datei, { imageOrientation: "from-image" });
     const f = Math.min(1, maxSeite / Math.max(bmp.width, bmp.height));
-    const c = document.createElement("canvas"); c.width = Math.round(bmp.width * f); c.height = Math.round(bmp.height * f);
+    const c = leinwand(Math.round(bmp.width * f), Math.round(bmp.height * f));
     c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); bmp.close?.();
     const blob = await new Promise((res) => c.toBlob(res, "image/jpeg", 0.85));
     return blob && blob.size < datei.size ? blob : datei;

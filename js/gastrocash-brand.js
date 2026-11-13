@@ -19,11 +19,6 @@ export function zekiSpielen(element,bewegung='none',dauerMs=0){
  let cancelled=false,timer;const cleanup=()=>{cancelled=true;clearTimeout(timer);film.removeEventListener('animationend',end);film.removeEventListener('animationcancel',end);if(runs.get(svg)===cleanup){svg.classList.remove('zeki--spielt');runs.delete(svg);}};const end=e=>{if(e.target===film)cleanup()};runs.set(svg,cleanup);
  const url=new URL('../assets/brand/zeki/'+info.datei,import.meta.url).href,img=new svg.ownerDocument.defaultView.Image();img.onload=()=>{if(cancelled)return;film.setAttribute('href',url);film.setAttribute('width','1385');film.setAttribute('height','1720');svg.style.setProperty('--zeki-ablauf','zeki3d-'+m);svg.style.setProperty('--zeki-dauer',info.dauer+'ms');film.addEventListener('animationend',end);film.addEventListener('animationcancel',end);const win=svg.ownerDocument.defaultView,los=()=>{if(cancelled)return;void film.getBoundingClientRect();svg.classList.add('zeki--spielt');timer=setTimeout(cleanup,info.dauer+450)};/* 26.10.2026 Flackern: erst wenn das Bild dekodiert und gemalt ist, vom Vektor auf die Bildfolge wechseln (iPhone zeigte sonst kurz eine leere Figur) */(img.decode?img.decode().catch(()=>{}):Promise.resolve()).then(()=>win.requestAnimationFrame(()=>win.requestAnimationFrame(los)))};img.onerror=cleanup;img.src=url;return true;
 }
-// Nur angeforderte Darstellungsbewegungen starten; keine fachliche Ereigniszuordnung.
-if(typeof document!=='undefined'&&typeof MutationObserver!=='undefined'){
- const start=root=>{for(const s of root.querySelectorAll('.zeki[data-zeki-start]')){const m=s.dataset.zekiStart;s.removeAttribute('data-zeki-start');if(m&&m!=='none')zekiSpielen(s,m)}};/* 28.10.2026: „none“ beim Erscheinen nicht abspielen – es brach sonst eine gerade gestartete Bewegung (Intro) ab */
- const observer=new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1)start(n.parentElement||document)});observer.observe(document.documentElement,{childList:true,subtree:true});start(document);
-}
 export function mascotResultState({ aboveZero=false, delta=0, incomplete=false }={}) {
   if (incomplete) return 'nachdenklich';
   if (aboveZero) return 'erfolg';
