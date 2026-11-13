@@ -4,6 +4,7 @@
 import { t } from "../i18n.js";
 import { esc } from "../util.js";
 import { mascotMarkup } from "../gastrocash-brand.js";
+import { zekiSpielen, zekiAbgang, folgeVorladen } from "../zeki_figur.js";
 
 const KURZ_STATIONEN = [
   { ziel: "#app .h-ziel, #app .b-hauptzahl", text: "k1" },
@@ -21,7 +22,7 @@ export function kurzStarten(doc, { fertig } = {}) {
   huelle = doc.createElement("div"); huelle.className = "rg-huelle rg-kurz"; huelle.setAttribute("role", "dialog"); huelle.setAttribute("aria-modal", "true");
   doc.body.appendChild(huelle); i = 0; fertigRuf = fertig || null; zeigen(doc); return true;
 }
-function ende() { huelle?.remove(); huelle = null; const f = fertigRuf; fertigRuf = null; f?.(); }
+function ende() { zekiAbgang(huelle?.querySelector(".rg-zeki [data-zeki-vorn]")); huelle?.remove(); huelle = null; const f = fertigRuf; fertigRuf = null; f?.(); }
 function zeigen(doc) {
   const st = KURZ_STATIONEN[i]; const el = [...doc.querySelectorAll(st.ziel)].find((x) => x.getClientRects().length);
   if (!el) { if (i < KURZ_STATIONEN.length - 1) { i += 1; return zeigen(doc); } return ende(); }
@@ -37,6 +38,13 @@ function zeigen(doc) {
   const karte = huelle.querySelector(".rk-karte"); const kh = karte.getBoundingClientRect().height || 140;
   const top = h - o.bottom >= kh + 24 ? o.bottom + 14 : o.top >= kh + 24 ? o.top - kh - 14 : Math.max(60, h - kh - 90);
   karte.style.top = Math.round(top) + "px";
+  // Zeki tritt vor (erste Station), danach zeigt er auf das Ziel; „Bewegung reduzieren“: Standbild
+  const figur = huelle.querySelector(".rg-zeki [data-zeki-vorn]"), z = figur?.getBoundingClientRect(), r2 = el.getBoundingClientRect();
+  if (figur && z) {
+    const dx = (r2.left + r2.right) / 2 - (z.left + z.right) / 2, dy = (r2.top + r2.bottom) / 2 - (z.top + z.bottom) / 2;
+    zekiSpielen(figur, i === 0 ? "auftreten" : Math.abs(dy) > Math.abs(dx) ? (dy < 0 ? "zeigen-oben" : "zeigen-unten") : dx > 0 ? "zeigen-rechts" : "zeigen-links");
+    if (i === 0) folgeVorladen(figur, "abgehen");
+  }
   huelle.querySelector('[data-rk="weiter"]').addEventListener("click", () => { if (letzte) ende(); else { i += 1; zeigen(doc); } });
   huelle.querySelector('[data-rk="weg"]').addEventListener("click", ende);
 }

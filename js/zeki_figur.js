@@ -346,3 +346,17 @@ export function zekiEreignis(el, ereignis, opt = {}) {
   const rein = neuerLauf(el, h, opt, { ab: halt, bis: 0, rueck: true }), mitte = neuerLauf(el, name, opt, { fortsetzung: true }), raus = neuerLauf(el, h, opt, { ab: 0, bis: halt, fortsetzung: true });
   rein.danach = mitte; mitte.danach = raus; anmelden(rein); return handleVon(rein, [rein, mitte, raus]);
 }
+
+// Zeki geht ab (Ende der Führung): Die Hülle mit der Figur verschwindet sofort, ein loser Nachlauf (div.rg-abgang, keine Dunkelfläche, fängt keine Tipps) zeigt die Folge „abgehen“ an derselben Stelle,
+// danach ist er weg und die Bühne zeigt ihn wieder. Nur wenn die Folge schon geladen ist (folgeVorladen beim Start der Führung); sonst null und kein Abgang.
+export function zekiAbgang(vornEl, opt = {}) {
+  const doc = vornEl?.ownerDocument; if (!doc || vornEl.isConnected === false || reduziertVon(vornEl, opt) || !folgeBereit("abgehen")) return null;
+  const r = vornEl.getBoundingClientRect(); if (!(r.width > 1)) return null;
+  const w = doc.createElement("div"); w.setAttribute("class", "rg-abgang"); w.setAttribute("aria-hidden", "true");
+  w.style.cssText = `left:${Math.round(r.left)}px;top:${Math.round(r.top)}px;width:${Math.round(r.width)}px;height:${Math.round(r.height)}px`;
+  w.innerHTML = vornHtml({ miene: opt.miene || "hilfe" }); doc.body.appendChild(w);
+  const lauf = zekiSpielen(w.querySelector("[data-zeki-vorn]"), "abgehen", opt);
+  if (!lauf) { w.remove(); return null; }
+  lauf.fertig.then(() => w.remove());
+  return lauf;
+}
