@@ -264,3 +264,13 @@
 .schirm[class*="weg-"] .seg{display:flex;gap:4px;background:var(--papier-tief);border:1px solid var(--linie);border-radius:12px;padding:4px}
 .schirm[class*="weg-"] .seg button{flex:1;min-inline-size:0;min-block-size:44px;border:0;border-radius:9px;background:transparent;color:var(--tinte);font-weight:700;font-size:0.875rem;padding:6px 10px}
 .schirm[class*="weg-"] .seg button.an{background:var(--salbei);color:var(--aktion-text)}
+
+/* Plus/Minus und Zeitraum-Schalter der „genau“-Schritte: gleiche Bauart wie im Büro */
+.schirm[class*="weg-"] .feldzeile{display:flex;flex-direction:column;gap:6px}
+.schirm[class*="weg-"] .feldzeile>label{font-weight:700;color:var(--tinte)}
+.schirm[class*="weg-"] .stepper{display:flex;align-items:center;gap:8px}
+.schirm[class*="weg-"] .stepper button{flex:none;inline-size:48px;block-size:48px;min-inline-size:48px;min-block-size:48px;border:1px solid var(--linie);border-radius:50%;background:var(--papier);color:var(--tinte);font-size:1.5rem;font-weight:700;padding:0;box-shadow:var(--schatten-karte)}
+.schirm[class*="weg-"] .stepper .wert{flex:1;text-align:center;font-weight:700;color:var(--tinte)}
+.schirm[class*="weg-"] .periode{display:flex;gap:4px;background:var(--papier-tief);border:1px solid var(--linie);border-radius:12px;padding:4px}
+.schirm[class*="weg-"] .periode button{flex:1;min-inline-size:0;min-block-size:44px;border:0;border-radius:9px;background:transparent;color:var(--tinte);font-weight:700;font-size:0.875rem;padding:6px 10px}
+.schirm[class*="weg-"] .periode button.an{background:var(--salbei);color:var(--aktion-text)}

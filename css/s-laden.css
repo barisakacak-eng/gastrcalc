@@ -352,3 +352,13 @@ body:has(#app .karte.hinweisrot) .gc-buehne .gc-figur-knopf{transform:scale(.52)
 #app .inhalt:has(.karte.hinweisrot) .zeit,#app .inhalt:has(.karte.hinweisrot) .zuletzt{margin:0}
 #app .karte.hinweisrot{gap:4px;padding:8px 10px}
 #app .karte.hinweisrot .textfeld{min-block-size:44px;padding-block:4px}
+
+/* Schmale Telefone: Gerichtname bricht nicht mitten im Wort (Dönerteller, Mineralwasser) */
+@media (max-width:400px){
+  #app .kl-zeile-haupt{grid-template-columns:48px minmax(0,1fr) auto;gap:4px 8px;padding-inline:6px}
+  #app .kl-zeile-haupt .gerichtbild{inline-size:48px;block-size:48px}
+  #app .kl-zeile-haupt .kl-gn{font-size:.875rem}
+}
+/* Umsatz heute: „Std. zusammen“ bleibt in der Karte */
+#app .ul-team-zahl input{flex:0 0 64px;inline-size:64px;min-inline-size:0}
+#app .ul-team-zahl .einheit{flex:1 1 0;min-inline-size:0;overflow-wrap:anywhere}
