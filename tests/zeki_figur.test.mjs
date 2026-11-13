@@ -119,7 +119,7 @@ test("docs/aussehen.md: Tabelle nennt jede Ansicht mit Bauart und Bühnen-Bild w
 
 test("figurHtml: genau ein Bild, leeres alt, feste Maße, Behälter gc-figur, keine Blase", () => {
   const h = Z.figurHtml({ schluessel: "start" });
-  assert.equal((h.match(/<img /g) || []).length, 1); assert.match(h, /alt=""/); assert.match(h, /width="116" height="80"/); assert.match(h, /class="gc-zeki"/);
+  assert.equal((h.match(/<img /g) || []).length, 1); assert.match(h, /alt=""/); assert.match(h, /width="164" height="113"/); assert.match(h, /class="gc-zeki"/);
   assert.match(h, /^<div class="gc-figur" data-zeki-buehne="start">/); assert.doesNotMatch(h, /blase/i); assert.match(h, /src="assets\/brand\/zeki-buehne\/start\.webp"/);
   assert.match(Z.figurHtml({ schluessel: "kosten", rtl: true }), /data-gespiegelt="1"/); assert.doesNotMatch(h, /gespiegelt|dir=/);
   assert.match(Z.figurHtml({ schluessel: "\"><script>" }), /data-zeki-buehne="intro"/, "unbekannter Schlüssel: kein Einschleusen, ruhige Haltung");
