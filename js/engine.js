@@ -550,7 +550,7 @@ function kalkulationRechnen(standOriginal, { produktivAnteil = 0.7 } = {}) {
     // Untergrenze (Prüfung Befund 1): Selbstkosten nie unter dem Wareneinsatz, auch wenn der Zeitzuschlag negativ ist.
     const anteilKosten = Math.max(0, fix + zeit) * (fix + zeit > 0 ? faktor : 1);
     const sk = w.vollstaendig ? w.waren + anteilKosten : null;
-    const mwst = steuersatzGericht(x);
+    const mwst = stand.betrieb?.kleinunternehmer === true ? 0 : steuersatzGericht(x); // Kleinunternehmer (§ 19 UStG): Preis netto = Preis brutto
     const ziel = sk === null ? { netto: null, stufe: "ok" } : nettoPreis(sk, g, 0);
     const zielNetto = ziel.netto;
     // Aufrundung auf 10 Cent wird ausgewiesen (Prüfung Befund 10).

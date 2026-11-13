@@ -43,7 +43,7 @@ test("A1: Beispiel-Laden mit Schalter an – netto = brutto, Nullpunkt = Wert mi
   const nullKu = Z.monatsZiel(ku, Z.zaehler(ku, { datum: H }), H).nullpunkt;
   const satz0 = klon(laden(), (x) => { x.betrieb.kleinunternehmer = true; x.betrieb.steuerSatz = 0; }); // der alte Umweg: Schalter an UND Satz 0 von Hand im Büro
   const nullSatz0 = Z.monatsZiel(satz0, Z.zaehler(satz0, { datum: H }), H).nullpunkt;
-  assert.equal(nullKu, nullSatz0); assert.equal(nullKu.toFixed(2), "18491.60"); // vorher 19.965,38 €
+  assert.equal(nullKu, nullSatz0); assert.equal(nullKu.toFixed(2), "17840.17"); // vorher 19.965,38 €; Karten-Quote rechnet jetzt auch mit Preis netto = brutto (A1b)
   assert.equal(wasBleibt(ku, "2026-11").ergebnis, -3651.77); // vorher -4.197,37 €
   const pb = prueferBlick(ku, "2026-11"); assert.equal(pb.quote, Math.round(p.ware / p.umsatzBrutto * 10000) / 10000); // Wareneinsatz-Quote auf den vollen Umsatz
   assert.equal(steuerTopf(ku, "2026-11"), null); // kein Topf, wie bisher
@@ -211,4 +211,15 @@ test("Rundreise: derselbe Netto-Wert wie angezeigt ändert den gespeicherten Bru
   assert.equal(Z.umsatzAusEingabe(100, "netto", 0.07, 1000.07), 107); // ein anderer Netto-Wert rechnet neu
   assert.equal(Z.umsatzAusEingabe(100, "netto", 0.07, null), 107); assert.equal(Z.umsatzAusEingabe(107.01, "brutto", 0.07, 5), 107.01);
   assert.equal(Z.umsatzAusEingabe(100.01, "netto", 0.07), 107.01);
+});
+
+test("A1b: Kleinunternehmer – Kalkulation je Gericht rechnet Preis netto = Preis brutto", async () => {
+  const { kalkulation } = await import("../js/engine.js");
+  const b = beispielLaden("2026-11-10");
+  const ohne = kalkulation(b).zeilen.find((z) => z.preisBrutto > 0);
+  assert.ok(ohne.preisNetto < ohne.preisBrutto);
+  b.betrieb.kleinunternehmer = true;
+  const mit = kalkulation(b).zeilen.filter((z) => z.preisBrutto > 0);
+  assert.ok(mit.length > 0);
+  for (const z of mit) { assert.equal(z.mwst, 0); assert.equal(z.preisNetto, z.preisBrutto); }
 });
