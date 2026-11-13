@@ -41,6 +41,14 @@ export function fristErinnerungHeute(stand, tag = heute()) {
   const datum = f[0].datum; return { datum, arten: [...new Set(f.filter((x) => x.datum === datum).map((x) => x.art))] }; // { datum, arten: ["est", "ust", …] }
 }
 
+// Lauf 6, E11 (A2): Zahllast eines USt-Zeitraums. Monat „JJJJ-MM“ = Steuer-Topf des Monats; Quartal „JJJJ-Qn“ = Summe der drei Monate des Quartals
+// (Monate ohne Umsatz und Belege tragen 0 bei; die Summe bleibt eine Schätzung wie der einzelne Monat). Anderer Text → 0.
+function ustZahllast(stand, zeitraum) {
+  const q = /^(\d{4})-Q([1-4])$/.exec(zeitraum || "");
+  const monate = q ? [0, 1, 2].map((i) => `${q[1]}-${String((Number(q[2]) - 1) * 3 + 1 + i).padStart(2, "0")}`) : /^\d{4}-\d{2}$/.test(zeitraum || "") ? [zeitraum] : [];
+  let summe = 0; for (const m of monate) { const st = steuerTopf(stand, m); if (st) summe += st.zahllast; }
+  return rund2(summe);
+}
 // Liquidität 8 Wochen aus dem Laden (≈): Einnahmen = Schnitt der letzten 28 Tage mit Umsatz je Öffnungstag (Mo–Sa bzw. tageProWoche ab Montag),
 // Ware wöchentlich am Montag (Umsatz × Warenquote ÷ 1 + USt ≈ brutto), feste Kosten am 1., Lohn am 28., Steuer-Topf des Vormonats am Termin der USt-VA.
 // Alles Schätzung aus den eigenen Zahlen; ohne Eingabe „Geld heute“ keine Rechnung.
@@ -54,7 +62,7 @@ export function liquiditaetLaden(stand, H = heute()) {
   const posten = [{ betrag: schnitt, wochentage: offen }, { betrag: -(schnitt * tpw * q), wochentage: [1] }, { betrag: -(fk.gesamt || 0), tagImMonat: 1 }];
   if (ml.lohn) posten.push({ betrag: -ml.lohn, tagImMonat: 28 });
   if (!kleinunternehmer(stand) && stand.betrieb?.ustRhythmus) {
-    for (const t of termineLaden(stand, e.datum, 56).filter((x) => x.art === "ust")) { const st = /^\d{4}-\d{2}$/.test(t.zeitraum) ? steuerTopf(stand, t.zeitraum) : null; if (st && st.zahllast > 0) posten.push({ betrag: -st.zahllast, datum: t.datum }); }
+    for (const t of termineLaden(stand, e.datum, 56).filter((x) => x.art === "ust")) { const z = ustZahllast(stand, t.zeitraum); if (z > 0) posten.push({ betrag: -z, datum: t.datum }); }
   }
   const l = liquiditaet({ start: e.betrag, ab: e.datum, posten });
   return { ...l, geschaetzt: true, nachfragen: nachfragen(e, H), schnitt: rund2(schnitt) };

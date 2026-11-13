@@ -620,7 +620,11 @@ export function preisAufteilung(zeile, last, preisBrutto) {
 // gewichtet mit Preis × Menge), sonst 7 %. Der Tagesumsatz aus der Kasse ist brutto; der Zähler rechnet netto.
 // Paket 3, M2: ohne echte Mengen (mengenJeMonat verteilt gleichmäßig, eine Cola zählt wie ein Döner) ist der Mischsatz
 // eine Schätzung – geschaetzt: true wandert in Zähler und Monatsziel. Keine neue Mengenabfrage; eigener Satz = nicht geschätzt.
+// Lauf 6, E11 (A1): Kleinunternehmer (§ 19 UStG, betrieb.kleinunternehmer) erheben keine Umsatzsteuer – der Satz ist 0, der Umsatz bleibt brutto = netto.
+// Das ist die EINE Stelle: Zähler, Nullpunkt, Monatsposten, Eigentümer-/Prüfer-Blick und Monatsabschluss rechnen alle über diese Funktion
+// (oder über kleinunternehmer() in js/steuertopf.js, das dieselbe Eigenschaft liest).
 export function umsatzSteuerSatz(stand) {
+  if (stand.betrieb?.kleinunternehmer === true) return { satz: 0, quelle: "kleinunternehmer", geschaetzt: false };
   if (typeof stand.betrieb?.steuerSatz === "number") return { satz: stand.betrieb.steuerSatz, quelle: "eigen", geschaetzt: false };
   const mitPreis = (stand.gerichte || []).filter((g) => typeof g.preis === "number" && g.preis > 0);
   if (mitPreis.length) {
