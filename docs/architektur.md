@@ -111,7 +111,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `ware.js` – Welle 2 „Ware und Schwund“: Spieß, Wochenzählung, Zukauf, Portion.
 - `zaehler.js` – Break-even-Zähler („bis null plus Zielgewinn“).
 - `zbon.js` – Z-Bon per Foto.
-- `buehne.js` – Salbei & Papier: der gemeinsame Kopf „Bühne“ als HTML-Text (Kopfzeile, Titel, Zekis Satz als Zeile oder Knopf, Figur); rein, noch nicht verdrahtet.
+- `buehne.js` – Salbei & Papier: der gemeinsame Kopf „Bühne“ als HTML-Text (Kopfzeile, Titel, Zekis Satz als Zeile oder Knopf, Figur, optional die Figur als Hilfe-Knopf); rein. nav.js baut damit den Kopf aller Ansichten.
 - `zeki_figur.js` – Zeki neu: Bühnen-Bild je Ansicht (Bauart 1–12), Mienen, Bewegungs-Folgen, Ereignis → Folge, Abspieler (requestAnimationFrame, „Bewegung reduzieren“); rein bis auf den Abspieler, der nur ein übergebenes Element steuert.
 - `zeki-bilder.js`, `zeki-puppe.js`, `zeki-svg.js` – Zekis Bilder, Gliederpuppe, Vektorfigur.
 - `zeki.js` – Zekis Kopf: welche Lage ist wichtig, welcher Satz passt.
@@ -164,7 +164,8 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `verkauf.js` – Büro „Verkauf je Gericht“.
 - `ware.js` – Büro „Ware & Schwund“.
 - `zeki_erst.js` – Zeki beim ersten Tipp (6b R2).
-- `zeki_takt.js` – Zeki lebt: Blinzeln, Gesten, Sprechblase.
+- `zeki_takt.js` – Zeki lebt: Blinzeln, Gesten, flüchtiger Satz in der Bühne; `zekiStimmeEinsetzen` ruft zuerst `buehneEinrichten`.
+- `buehne_dom.js` – Bühne nach dem Zeichnen einrichten: Titelbereich (`.kopfband`, `.kl-kopf`, `.h-kopf`, `.personalkopf`) und Zekis Satz (`.zeki-zeile`, `.kl-zeki`) wandern aus dem Inhalt in die Bühne; idempotent, wirft nie.
 
 **Zeki neu (Salbei & Papier, 13.11.2026).** Die alte Gliederpuppe (`zeki-puppe.js`, `zeki-svg.js`) bleibt bis zum Umbau von `app.js`; der neue Zeki besteht aus gemalten Flächen und wird nur als Bild oder Raster-Folge gezeigt. Ruhend: `assets/brand/zeki-buehne/<schluessel>.webp` (512 × 354, Hüfte aufwärts) in `.gc-figur` hinter der Bühnenkante. Bewegung: `assets/brand/zeki-klein/<name>.webp` (5 × 5 Bilder), über dasselbe Element gelegt (`zekiSpielen`, `zekiEreignis`); Bild und Folge liegen oben links bündig (Maßstab 116 px Breite). Das Bühnen-Bild ist die gehaltene Pose, nicht die Ruhe: Ereignisse laufen als Kette Pose → Ruhe → Bewegung → Pose (`HALTEBILD`). Welche Ansicht welches Bild trägt: `docs/aussehen.md`. Folgen (3,5 MB) gehören nicht in die Start-Liste von `tools/sw_liste.py`. Schriften: Noto Sans und Noto Sans Arabic als woff2-Teilmenge (`tools/schrift_teilmenge.py`, `fonts/zeichen.json`, `tests/schrift.test.mjs`). Die neuen Stile liegen als `css/neu-tokens.css`, `css/neu-optik.css`, `css/neu-zeki.css` bereit und werden in einem späteren Schritt eingetauscht.
 

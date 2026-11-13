@@ -3,50 +3,8 @@
    So wechselt die ganze App auf einmal, und Entfernen dieser einen Datei stellt „Kräuter & Kupfer“ wieder her. */
 
 /* Manrope (SIL OFL 1.1, fonts/Manrope-LICENSE.txt), lokal – keine Verbindung nach außen */
-@font-face { font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("../fonts/Manrope-Variable.woff") format("woff"); }
 
-:root {
-  /* Sanjis Werte (paket/tokens.css) */
-  --b-primaer: #0F3D2E; --b-primaer-hell: #E5F2EB; --b-akzent: #FF7A3D; --b-akzent-hell: #FFE6D9;
-  --b-hintergrund: #FAFBF8; --b-karte: #FFFFFF; --b-text: #0F1720; --b-text-leise: #52616A; --b-linie: #DCE5E0;
-  --b-rot: #D64545; --b-rot-hell: #FCEAEA; --b-rot-text: #B4232C; --b-gelb: #F4B400; --b-gelb-hell: #FFF4CE; --b-gelb-text: #715000; --b-gruen-ok: #187A4C;
-
-  /* bisherige Namen → Design B */
-  --papier: var(--b-hintergrund);
-  --papier-tief: #EEF2EF;            /* Flächen-Ton zwischen Hintergrund und Linie (abgeleitet) */
-  --weiss: var(--b-karte);
-  --tinte: var(--b-text);
-  --tinte-weich: var(--b-text-leise);
-  --salbei: var(--b-gruen-ok);
-  --salbei-tief: var(--b-primaer);
-  --salbei-hell: var(--b-primaer-hell);
-  --holz: var(--b-linie);
-  --holz-tief: #C3D0C8;              /* abgeleitet: kräftigere Linie */
-  --lehm: var(--b-text-leise);
-  --glut: var(--b-akzent);
-  --aktion: var(--b-akzent);
-  --aktion-text: var(--b-text);
-  --kupfer-dunkel: #9A3F12;          /* abgeleitet: lesbarer Text auf Akzent hell */
-  --kupfer-hell: var(--b-akzent-hell);
-  --gelb: var(--b-gelb);
-  --rot: var(--b-rot-text);          /* Text-Rot (AA); Flächen nutzen --b-rot */
-  --gruen: var(--b-gruen-ok);
-  --eigen: var(--b-gruen-ok);
-  --eigen-hell: var(--b-primaer-hell);
-  --geschaetzt-hell: var(--b-gelb-hell);
-  --geschaetzt-text: var(--b-gelb-text);
-  --muell: var(--b-rot-text);
-  --muell-hell: var(--b-rot-hell);
-  --fokus: var(--b-primaer);
-  --kurve-ist: var(--b-primaer-hell);
-
-  --radius: 14px;
-  --radius-klein: 8px;
-  --radius-gross: 18px;
-  --schatten-karte: 0 2px 10px rgba(15,23,32,.07);
-  --schatten-knopf: 0 2px 6px rgba(15,23,32,.09);
-  --schrift: "Manrope", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-}
+/* Token-Block entfernt (Salbei & Papier): die Werte kommen aus css/tokens.css */
 body { font-family: var(--schrift); background: var(--papier); color: var(--tinte); }
 
 /* Hauptknopf: Akzent-Orange mit dunkler Schrift (6,96 : 1), zweiter Knopf weiß mit Linie */
@@ -79,11 +37,10 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 
 /* Büro: Bereiche als weiße Karten */
 .b-bereich { background: var(--b-karte); border: 1px solid var(--b-linie); box-shadow: none; }
-.h-jetzt .los { background: var(--b-akzent); color: var(--b-text); }
+.h-jetzt .los { background: var(--glut); color: var(--tinte); }
 
 /* ---- Schritt 2a (19.10.2026): Laden „Heute“ 1:1 nach referenz_10_screens.png, Screen 2 ---- */
-.appleiste.ebene-kopf { background: var(--b-hintergrund); border-bottom: 0; box-shadow: none; }
-.appleiste.ebene-kopf .logo, .appleiste .logo { height: 36px; width: auto; }
+/* Kopf: jetzt die Bühne (css/buehne.css) */
 .s2willkommen .s2logo { height: 96px; margin-bottom: 8px; }
 .h-zeitzeile { text-align: center; color: var(--b-text); font-size: calc(14rem / 17); font-weight: 500; margin-top: -6px; }
 /* Hauptzahl-Karte: Titel weiß, Zahl groß, Balken orange, Zahlen darunter */
@@ -106,7 +63,7 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .karte.h-kachel.alarm { background: var(--b-karte); border-color: var(--b-linie); }
 /* Jetzt dran: Symbol als oranger Umriss, Knopf „Los →“ orange */
 .jetzt.h-jetzt { min-height: 76px; border-radius: 14px; }
-.h-jetzt .ks { background: transparent; color: var(--b-akzent); }
+.h-jetzt .ks { background: transparent; color: var(--salbei); }
 .h-jetzt .ks .sym { width: 30px; height: 30px; }
 .h-jetzt .los { border-radius: 12px; min-height: 44px; padding: 0 16px; gap: 6px; }
 /* Leiste unten: ohne Kapsel, aktiver Reiter dunkel und fett */
@@ -115,7 +72,6 @@ body { font-family: var(--schrift); background: var(--papier); color: var(--tint
 .tab.an { color: var(--b-primaer); font-weight: 800; }
 .tab.an .ik { background: transparent; }
 .tab .sym { width: 22px; height: 22px; }
-.appleiste.ebene-kopf .logo, .appleiste .logo { height: 44px; }
 .karte.h-kachel { min-height: 88px; }
 .h-kachel small { font-size: calc(15rem / 17); }
 .h-kachel b { font-size: calc(22rem / 17); }
@@ -420,10 +376,10 @@ button.summenzeile.zeilentipp { width: 100%; background: transparent; border: 0;
 .ep-rp:not(:has(*)) { display: none; }
 
 /* ---- Laden-Umbau (20.10.2026): höchstens 15 Wörter, eine Haupthandlung je Bildschirm (Entwurf laden-entwuerfe.html, freigegeben) ---- */
-/* Heute: „Jetzt dran“ als großer oranger Knopf, darunter eine schmale Reihe aus vier gleich großen Feldern */
-.jetzt.h-jetzt.h-haupt, .jetzt.h-jetzt.h-haupt.normal, .jetzt.h-jetzt.h-haupt.dunkel { background: var(--b-akzent); color: var(--b-text); border: 0; min-height: 84px; border-radius: 16px; box-shadow: var(--schatten-knopf); }
-.h-haupt .ks, .h-haupt.dunkel .ks { background: transparent; color: var(--b-text); }
-.h-haupt .h-jetzt-text small, .h-haupt.dunkel .h-jetzt-text small { color: var(--b-text); font-weight: 700; }
+/* Heute: „Jetzt dran“ als großer Knopf (Salbei & Papier: das eine, das dran ist, trägt die Glut) */, darunter eine schmale Reihe aus vier gleich großen Feldern */
+.jetzt.h-jetzt.h-haupt, .jetzt.h-jetzt.h-haupt.normal, .jetzt.h-jetzt.h-haupt.dunkel { background: var(--aktion); color: var(--aktion-text); border: 0; min-height: 84px; border-radius: 16px; box-shadow: var(--schatten-knopf); }
+.h-haupt .ks, .h-haupt.dunkel .ks { background: transparent; color: var(--aktion-text); }
+.h-haupt .h-jetzt-text small, .h-haupt.dunkel .h-jetzt-text small { color: var(--aktion-text); font-weight: 700; }
 .h-haupt .h-jetzt-text b { font-size: calc(21rem / 17); font-weight: 800; }
 .h-haupt .h-pfeil { width: 28px; height: 28px; flex: none; stroke-width: 2.6; }
 .jetzt.h-jetzt.h-haupt.rot { background: var(--b-rot-text); color: var(--b-karte); }

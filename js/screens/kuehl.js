@@ -155,7 +155,7 @@ function einrichtungView(stand) {
       </div>
       <button type="button" class="knopf ${kuehlBereit(stand) ? "" : "zweit"}" data-a="kuehl-einrichtung-fertig">${esc(t(kuehlBereit(stand) ? "allgemein.fertig" : "kuehl.spaeter"))}</button>
     </div>
-    ${nav("kuehl")}`;
+    ${nav("kuehl", { schritt: "einrichtung" })}`;
 }
 
 // ---------- Rundgang ----------
@@ -181,7 +181,7 @@ function rundgangView(stand) {
       ${fertig < stellen.length ? `<button type="button" class="knopf zweit" data-a="kuehl-start">${esc(t("kuehl.unterbrechen"))}</button>` : ""}
       ${personalAktiv() ? "" : `<button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}`}
     </div>
-    ${nav("kuehl", { schnell: false })}`;
+    ${nav("kuehl", { schnell: false, schritt: "rundgang" })}`;
 }
 
 // Laden-Umbau (20.10.2026): wer misst, ist vorbelegt; bei mehreren Personen hier mit einem Tipp änderbar (Kürzel, keine Wörter)
@@ -207,7 +207,7 @@ function rundgangStartView(stand) {
         <button type="button" class="knopf glut" data-a="rundgang-start" ${personen.length && startVon === null ? "disabled" : ""}>${esc(t("kuehl.los"))}</button>
       </div>
     </div>
-    ${nav("kuehl")}`;
+    ${nav("kuehl", { schritt: "rundgang" })}`;
 }
 
 // 27.10.2026 (Persona-Test Vater): „18“ beim Tiefkühler ist fast immer „−18“ mit vergessenem Minus – erst fragen, statt sofort Maßnahmen zu verlangen

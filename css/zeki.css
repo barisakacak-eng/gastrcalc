@@ -18,9 +18,7 @@
 
 /* Zeki als eigene Ebene (Baris 26.10.2026, 23:42): kein Knopf-Kreis, keine zweite Figur auf Heute – Zeki steht frei in der Ecke
    des (deckenden, klebenden) Kopfes, mit weichem Schatten. Er steht nie über Inhalt, weil der Kopf nie über Inhalt liegt. */
-.appleiste .ikonknopf.hilfe.zeki-knopf{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;width:64px;height:64px;overflow:visible;position:relative;z-index:31;align-self:flex-end;margin-bottom:-10px}
-.appleiste .ikonknopf.zeki-knopf .zeki{width:58px;height:80px;filter:drop-shadow(0 7px 7px rgba(31,42,36,.28))}
-.appleiste .ikonknopf.zeki-knopf::after{content:"";position:absolute;left:12px;right:12px;bottom:-2px;height:7px;border-radius:50%;background:radial-gradient(closest-side,rgba(31,42,36,.28),transparent);pointer-events:none}
+/* Kopf-Zeki, Stimme und Einlauf: abgelöst durch die Bühne (css/buehne.css) */
 
 /* Zeki in einem Satz – gemeinsame Zeile für alle Laden-Bildschirme (27.10.2026) */
 .zeki-zeile{position:relative;margin:4px 0 14px;padding:12px 16px;border-radius:18px 6px 18px 18px;background:var(--b-karte,#fff);border:1px solid var(--b-linie,#e4ddd0);font-weight:650;font-size:calc(17rem / 17);line-height:1.35;color:var(--b-text,#1d2a22)}
@@ -29,29 +27,15 @@
 
 /* Zekis Stimme (Baris 27.10.2026, 02:05): Der Satz steht direkt neben Zeki im Kopf – keine Sprechblase, kein Kasten.
    Der Kopf ist Zekis Ebene: Menü links, sein Satz in der Mitte (statt Logo), Zeki rechts. Nichts liegt über dem Inhalt. */
-.appleiste .zeki-stimme{display:none}
-.appleiste.spricht>.gc-brand,.appleiste.spricht>.kopftitel{display:none}
-.appleiste.spricht .zeki-stimme{display:flex;justify-content:flex-end;align-items:center;min-width:0;padding:8px 16px 8px 4px;grid-column:2}
-.zeki-stimme>.zeki-zeile,.zeki-stimme>.kl-zeki,.zeki-stimme>.zeki-sprech{position:static;display:block;width:auto;max-width:none;margin:0;padding:0;border:0!important;border-radius:0;background:none!important;box-shadow:none!important;text-align:right;font:inherit;font-weight:700;font-size:calc(16rem / 17);line-height:1.3;color:var(--b-text,#1d2a22);cursor:default;animation-name:none}
-.zeki-stimme>button{cursor:pointer}
-.zeki-stimme>.a-gruen{color:#24543a}
-.zeki-stimme>.a-gelb{color:#7a5300}
-.zeki-stimme>.a-rot,.zeki-stimme>.zeki-sprech--ernst{color:#9a2c1a}
-.zeki-stimme>button.a-rot::after,.zeki-stimme>button.a-gelb::after{content:" ›";position:static;transform:none;font-size:1.2em;font-weight:800}
-.zeki-stimme>.kl-zeki.a-rot{padding-right:0}
-.zeki-stimme>.zeki-sprech{animation:zekiStimmeEin .35s ease both,zekiBlaseAus .35s ease var(--zeki-rest,7s) forwards}
-.zeki-stimme>.zeki-zeile,.zeki-stimme>.kl-zeki{animation:zekiStimmeEin .35s ease both}
+/* Kopf-Zeki, Stimme und Einlauf: abgelöst durch die Bühne (css/buehne.css) */
 @keyframes zekiStimmeEin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
 
 /* Zeki lebt (Baris 27.10.2026, 02:05 „nicht so steif“): ruhiges Atmen, ab und zu Gewicht auf das andere Bein,
    und wenn er spricht, dreht er sich leicht zu seinem Satz. Nur Bewegung der ganzen Figur, keine Bildwechsel. */
-.appleiste .zeki-knopf{transform-origin:50% 100%;animation:zekiGewicht 11s ease-in-out infinite}
-.appleiste .zeki-knopf .zeki{transform-origin:50% 100%;animation:zekiAtmen 3.8s ease-in-out infinite}
-.appleiste.spricht .zeki-knopf{animation:zekiZuwenden 1.1s ease both}
+/* Kopf-Zeki, Stimme und Einlauf: abgelöst durch die Bühne (css/buehne.css) */
 @keyframes zekiAtmen{0%,100%{transform:translateY(0) scale(1,1)}45%{transform:translateY(-1.5px) scale(1.012,1.018)}}
 @keyframes zekiGewicht{0%,38%,100%{rotate:0deg;translate:0 0}46%,82%{rotate:-2.2deg;translate:-1px 0}90%{rotate:1deg;translate:1px 0}}
 @keyframes zekiZuwenden{0%{rotate:0deg}45%{rotate:-7deg;translate:-3px 0}100%{rotate:-4deg;translate:-2px 0}}
-@media (prefers-reduced-motion: reduce){.appleiste .zeki-knopf,.appleiste .zeki-knopf .zeki,.appleiste.spricht .zeki-knopf,.zeki-stimme>*{animation:none!important}.zeki-stimme>.zeki-sprech{animation:zekiBlaseAus .01s linear var(--zeki-rest,7s) forwards!important}}
 
 /* Auch in Einrichtung und Führung spricht Zeki ohne Kasten – der Satz steht neben ihm. */
 .s2zeki-blase{background:none;border:0;box-shadow:none;padding:4px 0}
@@ -66,9 +50,8 @@
 .zeki--zwinkern-r [data-zeki-teil="lid-r"] [data-variante="lid"] { opacity: 1 !important; }
 
 /* Zeki-Auftritt (28.10.2026): Gruß unter dem Logo – kleiner App-Text, fängt nie Eingaben ab. Bewegung macht die Puppe (js/zeki-puppe.js). */
-.appleiste .intro-gruss{position:absolute;left:56px;right:56px;bottom:3px;text-align:center;font-size:calc(12rem / 17);font-weight:650;line-height:1.1;color:var(--b-text,#1d2a22);pointer-events:none;animation:introGruss var(--intro-gruss-dauer,1.3s) ease both}
+/* Kopf-Zeki, Stimme und Einlauf: abgelöst durch die Bühne (css/buehne.css) */
 @keyframes introGruss{0%{opacity:0;transform:translateY(-3px)}18%,78%{opacity:1;transform:none}100%{opacity:0}}
-@media (prefers-reduced-motion: reduce){.appleiste .intro-gruss{display:none}}
 
 /* Mitmach-Rundgang (28.10.2026): Lichtkegel mit antippbarem Ziel, Sperrflächen ringsum, Zeki mit Blase, „Überspringen“ ≥ 44 px.
    Farben nur aus css/tokens.css. */
@@ -141,10 +124,8 @@
 .zeki-erst .ze-blase p{margin:0;font-weight:600;color:var(--tinte)}
 /* Pilotfest P6 (3), 30.10.2026 (Entwurf hinter window.__gcC): Zeki läuft von rechts nach links an seinen Platz ein; zwei Vorschläge für den sichtbaren Platz. */
 @keyframes zekiEinlauf{from{transform:translateX(96px);opacity:0}60%{opacity:1}to{transform:translateX(0);opacity:1}}
-.appleiste .ikonknopf.zeki-knopf.einlauf{animation:zekiEinlauf 1s cubic-bezier(.2,.8,.3,1) both,zekiGewicht 11s ease-in-out 1s infinite}
+/* Kopf-Zeki, Stimme und Einlauf: abgelöst durch die Bühne (css/buehne.css) */
 /* Zekis Platz (Bildpaket C, Vorschlag A „Teller“, Annahme Zoro 30.10.2026 – Baris gab das Paket frei, ohne A oder B zu nennen): kupferner Standring unter den Füßen */
-.appleiste .ikonknopf.zeki-knopf::after{left:6px;right:6px;bottom:-4px;height:12px;background:radial-gradient(closest-side,rgba(181,104,58,.55) 0 58%,rgba(181,104,58,.18) 59% 100%);box-shadow:0 2px 3px rgba(31,42,36,.18)}
-@media (prefers-reduced-motion: reduce){.appleiste .ikonknopf.zeki-knopf.einlauf{animation:none}}
 /* Lauf 2, Bildpaket D (2): Baris wählte am 01.11.2026 Platz A „Teller“ (Kupferring oben); der Sockel-Vorschlag B ist entfernt. */
 /* K2 Runde 2 (01.11.2026): die Blase des kurzen Rundgangs durfte nicht schmaler werden als ihr Fuß (Überspringen · Punkte · Weiter) und ragte in de rechts aus dem Bild */
 .rg-kurz .rg-blase{min-width:0}
@@ -153,9 +134,7 @@
 
 /* Klasse D (03.11.2026, Prüfstand Freitag Abschnitt 4) – nur Layout, keine Rechnung */
 /* Büro › Start: Zekis Satz in der Kopfzeile bekommt die Breite, die der Titel nicht braucht („Rechtsform eintragen“ einzeilig) */
-.ebene-kopf.buero.spricht{grid-template-columns:auto minmax(0,1fr) auto}
-.ebene-kopf.buero.spricht .zeki-stimme{padding-inline:8px 6px}
-.ebene-kopf.buero.spricht .zeki-stimme>.zeki-zeile{text-wrap:balance;line-height:1.2}
+/* Kopf-Zeki, Stimme und Einlauf: abgelöst durch die Bühne (css/buehne.css) */
 /* Büro › Start: weniger Leerraum zwischen den Ordnern und den Bereichen */
 .b-ruhig .b-bereiche{margin-top:0}
 .b-ruhig .b-gruppe+.b-bereiche{margin-top:0}
@@ -172,9 +151,8 @@
 /* Laden › Hilfe-Blatt: OK-Knopf mit Rand und runden Ecken, bleibt unten sichtbar */
 .ebene-blatt.blatt-hilfe>.knopf[data-a="blatt-zu"]{margin:8px 0 calc(env(safe-area-inset-bottom,0px) + 12px);width:100%;border-radius:var(--radius-knopf,16px);padding-bottom:0;min-height:56px;bottom:12px;box-shadow:0 -10px 14px var(--papier),0 12px 0 var(--papier)}
 /* Laden › Kopfzeile: Zekis Kopf ragt nicht mehr über den Bildschirmrand */
-.appleiste .ikonknopf.zeki-knopf .zeki{width:54px;height:74px}
 /* Laden › erster Besuch: Zekis Erst-Karte oben unter der Kopfzeile statt über der letzten Kachelzeile */
-.zeki-erst{top:calc(78px + env(safe-area-inset-top,0px));bottom:auto}
+.zeki-erst{top:calc(176px + env(safe-area-inset-top,0px));bottom:auto}
 /* Laden › Kühlung: Satz unter den Maßnahmen, solange „Eintragen“ grau ist */
 .kuehl-erst-massnahme{margin:0;text-align:center;font-weight:650;color:var(--rot,#9a2c1a)}
 /* Einrichtung › Speisekarte prüfen: ein Rahmen ums Preisfeld; Preise in Arabisch wie auf der Karte („8,90 €“) */

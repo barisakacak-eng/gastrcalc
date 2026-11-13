@@ -1,10 +1,7 @@
 /* Zielbild „Kräuter & Kupfer“ (Sanjis Vorlage vom 15.10.) – Zoros Abgleich, damit die App 1:1 wie die Vorlage aussieht.
    Wird nach optik.css geladen. Wenn Sanji seine optik.css nachzieht, wandern diese Regeln dorthin. */
 .schirm { display: flex; flex-direction: column; min-height: 100vh; }
-.appleiste { order: -1; position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; min-height: 60px;
-  padding: calc(env(safe-area-inset-top, 0px) + 6px) 12px 6px; background: var(--weiss); border-bottom: 1px solid var(--holz); }
-.appleiste .logo { height: 28px; width: auto; }
-.appleiste .leiste-rechts { margin-left: auto; color: var(--muell); display: flex; }
+/* Kopf: jetzt die Bühne (css/buehne.css) */
 .menueknopf { position: static; width: 44px; height: 44px; background: transparent; color: var(--tinte); box-shadow: none; border-radius: 10px; }
 .menuepunkt { top: 6px; right: 6px; }
 /* Seitentitel hell statt dunkles Band */
@@ -85,10 +82,6 @@
 .knopf.muellhaupt:disabled { background: var(--muell-hell); color: var(--muell); }
 .muellwert .leise-text { color: var(--tinte-weich); font-weight: 400; font-size: calc(14rem / 17); }
 .auswahlblatt { max-height: 82vh; }
-.appleiste { justify-content: center; }
-.appleiste .menueknopf { position: absolute; left: 8px; }
-.appleiste .leiste-rechts { position: absolute; right: 16px; }
-.appleiste .logo { height: 32px; }
 .formkachel .kachelsym { width: 48px; height: 48px; } .formkachel .kachelsym .sym { width: 28px; height: 28px; }
 .knopf.muellhaupt { min-height: 64px; font-size: calc(18rem / 17); }
 .bildwahl { position: relative; flex: none; cursor: pointer; }
@@ -337,8 +330,6 @@ input:focus-visible { outline: 3px solid var(--salbei); outline-offset: 0; }
 .kacheln:has(.sprachkachel) { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .kachel.sprachkachel { min-height: 56px; padding: 10px 12px; align-items: flex-start; justify-content: center; text-align: start; }
 .kachel.sprachkachel b { font-size: calc(16rem / 17); }
-[dir="rtl"] .appleiste .menueknopf { left: auto; right: 8px; }
-[dir="rtl"] .appleiste .leiste-rechts { right: auto; left: 16px; }
 [dir="rtl"] .pfeil, [dir="rtl"] .sym-richtung { transform: scaleX(-1); display: inline-block; }
 [dir="rtl"] .zeileknopf, [dir="rtl"] .ez-haupt, [dir="rtl"] .auswahlkarte, [dir="rtl"] .aufgabe, [dir="rtl"] .pwahl { text-align: right; }
 [dir="rtl"] .auswahlkarte > .sym:last-child { margin-left: 0; margin-right: auto; transform: scaleX(-1); }
