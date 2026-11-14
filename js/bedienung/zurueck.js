@@ -4,23 +4,39 @@ import { kuehlZurueck } from "../screens/kuehl.js";
 import { putzplanZurueck } from "../screens/putzplan.js";
 import { Z } from "../bedienung/zustand.js";
 import { muellZurueck } from "../screens/muell.js";
+import { belegZurueck } from "../screens/beleg.js";
+import { inventurZurueck } from "../screens/inventur.js";
+import { verkaufZurueck } from "../screens/verkauf.js";
+import { bestandZurueck } from "../screens/bestand.js";
+import { aktionenZurueck } from "../screens/aktionen.js";
+import { getraenkeZurueck } from "../screens/getraenke.js";
+import { lieferantenZurueck } from "../screens/lieferanten.js";
+import { kuehlWareZurueck } from "../screens/kuehl_ware.js";
 import { karteLadenZurueck } from "../screens/karte_laden.js";
 import { umsatzLadenZuruecksetzen } from "../screens/umsatz_laden.js";
 import { fotoZuruecksetzen, fotoLauf } from "../screens/foto.js";
+import { ordnerVorschauOffen, ordnerZuruecksetzen } from "../screens/ordner.js";
+import { abschlussZuruecksetzen } from "../screens/abschluss.js";
 import { rundgangOffen as fuehrungOffen } from "../screens/rundgang.js";
 import { blattSchliessen } from "../screens/ebene.js";
 import { modus, startAnsicht, ansichtErlaubt } from "../modus.js";
 import { schrittZurueck } from "./einrichtung.js";
 import { ebeneWechseln } from "./ebene.js";
 import { zeichne } from "./zeichnen.js";
-import { bueroPaket } from "./nachladen.js";
 
 // Bildschirme mit eigenen Ebenen: gibt true zurück, wenn „Zurück“ eine Ebene im Bildschirm selbst hochgegangen ist.
-// Die Büro-Bildschirme (Beleg, Inventur, Verkauf, Lager, Aktionen, Getränke, Lieferanten, Ware) stehen in paket_buero.js (EBENE_ZURUECK).
 const EBENE_ZURUECK = {
   kuehl: () => kuehlZurueck(), // eine Ebene hoch
   putzplan: () => putzplanZurueck(Z.stand),
   muell: () => muellZurueck(),
+  beleg: () => belegZurueck(),
+  inventur: () => inventurZurueck(Z.stand), // Karte → Liste → Übersicht
+  verkauf: () => verkaufZurueck(), // Vorschau/Handeingabe → Übersicht
+  bestand: () => bestandZurueck(), // Mindestbestand-Liste zu
+  aktionen: () => aktionenZurueck(), // Kombi-Auswahl leeren; Aktion planen: Plan schließen
+  getraenke: () => getraenkeZurueck(), // Formular schließen
+  lieferanten: () => lieferantenZurueck(), // Formular bzw. Zuordnung schließen
+  kuehlware: () => kuehlWareZurueck(), // offene Entscheidung schließen
   karte: () => karteLadenZurueck(), // erst das Preis-Blatt schließen
 };
 // Bildschirme, die woanders hin zurückführen: gibt das Ziel der Ansicht zurück.
@@ -32,19 +48,18 @@ const ZIEL_ZURUECK = {
 };
 // Ordner im Büro: erst die Vorschau zu, dann ins Büro.
 function ordnerZurueck() {
-  const P = bueroPaket(); if (!P) { Z.ansicht = "buero"; return; }
-  if (P.ordnerVorschauOffen()) P.ordnerZuruecksetzen(); else { P.ordnerZuruecksetzen(); Z.ansicht = "buero"; }
+  if (ordnerVorschauOffen()) ordnerZuruecksetzen(); else { ordnerZuruecksetzen(); Z.ansicht = "buero"; }
 }
 
 // Eine Ebene zurück im App-Bildschirm. Laden-Reiter stapeln nicht: Zurück = Heute; Büro → Büro-Start; Personal → drei Kacheln.
 function ansichtZurueck(m, anfang) {
   if (Z.ansicht === "listen") { Z.ansicht = ZIEL_ZURUECK.listen(m); return; }
-  if ((EBENE_ZURUECK[Z.ansicht] || bueroPaket()?.EBENE_ZURUECK[Z.ansicht])?.()) return;
+  if (EBENE_ZURUECK[Z.ansicht]?.()) return;
   if (Z.ansicht === "beleg") { Z.ansicht = ZIEL_ZURUECK.beleg(m); return; }
   if (Object.hasOwn(ZIEL_ZURUECK, Z.ansicht)) { Z.ansicht = ZIEL_ZURUECK[Z.ansicht](m, anfang); return; }
   if (Z.ansicht.startsWith("ordner-")) return ordnerZurueck();
   if (m === "buero" && Z.bueroWeg.length) { Z.ansicht = Z.bueroWeg.pop(); return; } // Büro – eine Ebene zurück
-  if (Z.ansicht === "abschluss") bueroPaket()?.abschlussZuruecksetzen();
+  if (Z.ansicht === "abschluss") abschlussZuruecksetzen();
   Z.ansicht = anfang;
 }
 

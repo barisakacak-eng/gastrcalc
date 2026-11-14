@@ -69,8 +69,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `karte_daten.js` – Setzer für Speisekarte, Rezepte, Verkaufs- und Einkaufspreise (Herkunft „hand“).
 - `karte_lesen.js` – aus erkanntem Text Gerichte mit Preis, Vorlagen zuordnen.
 - `kostenbeleg.js` – Kostenbelege, die keine Ware sind.
-- `kuehlname.js` – Kühlstellen-Namen (liest den Auszug `data/kuehl_namen.js`, nicht die ganzen Sprachtabellen).
-- `sprachdaten.js` – große Sprachdaten (Namen, Zeki-Sätze weiterer Sprachen): im Browser erst mit der gewählten Sprache geladen, in Node sofort da.
+- `kuehlname.js` – Kühlstellen-Namen.
 - `laden_zahlen.js` – Zahlen für „Heute“ und „Tag abschließen“.
 - `lieferant.js`, `lieferung.js` – Lieferanten als Stammdaten; Belege werden Lieferungen (Herkunft „beleg“).
 - `mindestlohn.js` – Mindestlohn-Vorschau (14,60 € ab 1.1.2027, Minijob 633 €).
@@ -117,9 +116,7 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `ware.js` – Welle 2 „Ware und Schwund“: Spieß, Wochenzählung, Zukauf, Portion.
 - `zaehler.js` – Break-even-Zähler („bis null plus Zielgewinn“).
 - `zbon.js` – Z-Bon per Foto.
-- `buehne.js` – Salbei & Papier: der gemeinsame Kopf „Bühne“ als HTML-Text (Kopfzeile, Titel, Zekis Satz als Zeile oder Knopf, Figur, optional die Figur als Hilfe-Knopf); rein. nav.js baut damit den Kopf aller Ansichten.
-- `zeki_figur.js` – Zeki neu: Bühnen-Bild je Ansicht (Bauart 1–12), Mienen, Bewegungs-Folgen, Ereignis → Folge, Abspieler (requestAnimationFrame, „Bewegung reduzieren“); rein bis auf den Abspieler, der nur ein übergebenes Element steuert.
-- `zeki_figur.js` – die neue Zeki-Figur: Mienen-Bild, Folgen (Bildreihen), Ereignisse.
+- `zeki-bilder.js`, `zeki-puppe.js`, `zeki-svg.js` – Zekis Bilder, Gliederpuppe, Vektorfigur.
 - `zeki.js` – Zekis Kopf: welche Lage ist wichtig, welcher Satz passt.
 - `zip.js` – kleines ZIP ohne Fremdbibliothek: schreibt „store“, liest auch „deflate“ (DecompressionStream) und entfernt einen gemeinsamen Ordner; Größengrenzen (200 MB gesamt, 50 MB je Eintrag).
 - `data/` – Branchenwerte, Vorlagen, Datenschutztext (Daten, keine Logik).
@@ -137,7 +134,6 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `beleg.js` – Beleg einlesen (Büro).
 - `bestand.js` – Büro „Lager & Bestellen“.
 - `buero.js` – Büro-Startseite.
-- `buero_kopf.js` – Büro-Kopf und Büro-Symbole (klein, damit die Einstellungen im Laden nicht das ganze Büro laden).
 - `ebene.js` – Blätter über dem Bildschirm: Menü, Sprache, Läden, Hilfe, Code, Passwort.
 - `foto.js` – Speisekarte fotografieren, Prüfliste (zeigt erste Gerichte vor dem Ende der Erkennung).
 - `getraenke.js` – Büro „Getränke“.
@@ -168,14 +164,10 @@ GastroCash ist eine Handy-Web-App ohne Server: HTML, CSS und JavaScript ohne Bau
 - `umsatz.js` – Büro „Umsatz“ und Zähler-Seite.
 - `umsatz_laden.js` – Laden „Umsatz heute“.
 - `vergleich.js` – Büro „Gerichte im Vergleich“.
-- `gerichtbild.js` – Bild eines Gerichts (Foto oder Piktogramm) für Laden und Büro.
 - `verkauf.js` – Büro „Verkauf je Gericht“.
 - `ware.js` – Büro „Ware & Schwund“.
 - `zeki_erst.js` – Zeki beim ersten Tipp (6b R2).
-- `zeki_takt.js` – Zeki lebt: Blinzeln, Gesten, flüchtiger Satz in der Bühne; `zekiStimmeEinsetzen` ruft zuerst `buehneEinrichten`.
-- `buehne_dom.js` – Bühne nach dem Zeichnen einrichten: Titelbereich (`.kopfband`, `.kl-kopf`, `.h-kopf`, `.personalkopf`) und Zekis Satz (`.zeki-zeile`, `.kl-zeki`) wandern aus dem Inhalt in die Bühne; idempotent, wirft nie.
-
-**Zeki neu (Salbei & Papier, 13.11.2026).** Die alte Gliederpuppe (`zeki-puppe.js`, `zeki-svg.js`) bleibt bis zum Umbau von `app.js`; der neue Zeki besteht aus gemalten Flächen und wird nur als Bild oder Raster-Folge gezeigt. Ruhend: `assets/brand/zeki-buehne/<schluessel>.webp` (512 × 354, Hüfte aufwärts) in `.gc-figur` hinter der Bühnenkante. Bewegung: `assets/brand/zeki-klein/<name>.webp` (5 × 5 Bilder), über dasselbe Element gelegt (`zekiSpielen`, `zekiEreignis`); Bild und Folge liegen oben links bündig (Maßstab 116 px Breite). Das Bühnen-Bild ist die gehaltene Pose, nicht die Ruhe: Ereignisse laufen als Kette Pose → Ruhe → Bewegung → Pose (`HALTEBILD`). Welche Ansicht welches Bild trägt: `docs/aussehen.md`. Folgen (3,5 MB) gehören nicht in die Start-Liste von `tools/sw_liste.py`. Schriften: Noto Sans und Noto Sans Arabic als woff2-Teilmenge (`tools/schrift_teilmenge.py`, `fonts/zeichen.json`, `tests/schrift.test.mjs`). Die neuen Stile liegen als `css/neu-tokens.css`, `css/neu-optik.css`, `css/neu-zeki.css` bereit und werden in einem späteren Schritt eingetauscht.
+- `zeki_takt.js` – Zeki lebt: Blinzeln, Gesten, Sprechblase.
 
 ## 5b. Bedienschicht (`js/bedienung/`) und Rand zum Browser (`js/adapter/`)
 
@@ -189,8 +181,7 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 - `ebene.js` – Laden · Personal · Büro, Blätter, Büro-Code, Rettung, Hinweise.
 - `einrichtung.js` – Einrichtung: Weiter, Zurück, Fertig, Bearbeiten, Rezept-Direkt.
 - `navigation.js` – Tab-Leiste und Menü, Büro-Weg. `zurueck.js` – Zurück-Geste.
-- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan).
-- `laden_buero.js` – Büro-Teil davon (Beleg, Abschluss, Inventur, Ware nach Kühl-Abweichung); kommt mit dem Büro-Paket.
+- `laden.js` – Bildschirme des Tagesgeschäfts (Karte, Müll, Umsatz, Kühlung, Putzplan, Beleg, Abschluss, Inventur).
 - `buero.js` – Büro-Bildschirme (Büro, Ordner, Verkauf, Bestand, Waren, Preise, Aktionen, Lieferanten, Getränke, Tafel, Läden, Geld, Einstellungen).
 - `personal.js` – Personal-Modus. `ladenverwaltung.js` – Läden anlegen, wechseln, löschen, „Alles löschen“.
 - `sicherung.js` – Sicherung, Rückholpunkt, Diagnose, Fehlerliste. `update.js` – neue Fassung, Service Worker, zweites Fenster.
@@ -198,12 +189,10 @@ Höchstens 80 Zeilen je Funktion, keine Zeile über 400 Zeichen, keine Importkre
 - `zeichnen.js` – `zeichne()` und das Banner. `speichern.js` – Speichern mit Fehler-Banner. `meldung.js` – kurze Meldungen.
 - `sprache.js` – Sprache setzen. `zeki.js` – Zeki auf dem Bildschirm. `rundgang.js` – Mitmach-Rundgang und erste Führung.
 - `zuruecksetzen.js` – EINE Liste aller Bildschirm-Zustände.
-- `nachladen.js` – Büro-Paket erst bei Bedarf laden (`bueroPaket()`, `bueroPaketLaden()`); der alte Bildschirm bleibt stehen, bis das Paket da ist.
-- `paket_buero.js` – das Büro-Paket: alle Büro-Bildschirme mit Klick- und Eingabe-Tabellen (`VIEW`, `ANSICHT_KLICK`, `ANSICHT_EINGABE`, `ZIEL`, `EBENE_ZURUECK`).
 
 Adapter: Hier und nur hier (neben `app.js`, `bedienung/`, `screens/`, `rahmen.js`) darf der Browser berührt werden.
 
-- `umgebung.js` – Browser oder Node (`imBrowser`): große Sprachdaten laden im Browser erst bei Bedarf. `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
+- `testhaken.js` – Test-Haken nur auf localhost. `browser_speicher.js` – `localStorage` mit Ersatz. `geraet_speicher.js` – Merker je Handy.
 - `leinwand.js` – Zeichenfläche. `pdfjs.js` – PDF-Leser nachladen. `webauthn.js` – Passkey. `seite.js` – Dokument-Attribute, Sichtbarkeit, Fenster-Ereignis, Speicher-API.
 - `brand_start.js` – startet Zekis Bewegungen beim Erscheinen.
 

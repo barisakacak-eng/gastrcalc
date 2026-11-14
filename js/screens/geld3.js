@@ -1,9 +1,9 @@
 // Welle 3: Büro-Bildschirm „Geld & Finanzamt“ – Baris Ja am; live nach dem Prüfungsausschuss (06.11.).
 // Je Thema eine aufklappbare Karte (Überschrift + eine Zahl), Inhalt auf Tipp – Büro-Maß 120 Wörter. Nur Anzeige; Zahlen aus den Rechenkernen.
 import { nav } from "./nav.js";
-import { t, sprache, RTL } from "../i18n.js";
+import { t, sprache } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl, heute, heuteGeschaeft, parseZahl, wertAnzeige } from "../util.js";
-import { datumLesbar, monatName } from "../anzeige_text.js";
+import { datumLesbar } from "../anzeige_text.js";
 import { steuerTopf, steuerTopfTag, kleinunternehmer, kleinunternehmerPruefung, wasBleibt, prueferBlick } from "../steuertopf.js";
 import { wert as regelWert } from "../data/regelwerk.js";
 import { termineLaden, liquiditaetLaden, monatPlus, ustRhythmusSetzen, dauerfristUmschalten, lstRhythmusSetzen, lstVorjahrSetzen, lstVorschlag, estBescheidUmschalten, chefStundenSetzen, geldHeuteSetzen, svLandSetzen } from "../welle3.js";
@@ -69,12 +69,13 @@ export function geld3View(stand) {
     return z(p.kuerzel || p.name || "?", esc(t("w3.schicht.zeile", fmtZahl(zs.gesamt, 1), fmtZahl(zs.nacht25 + zs.nacht40, 1), fmtZahl(zs.sonntag + zs.feiertag125 + zs.feiertag150, 1)) + mini)); }).join("");
   const zeilen = zeilenFuer(von, H);
   // Auch der Vormonat ist sichtbar, nicht nur der laufende Monat
-  const vorm = (() => { const vm = plusMonate(monat, -1); const r = zeilenFuer(vm + "-01", plusTage(von, -1)); return r ? `<small class="marke">\u2066${esc(monatName(vm + "-01"))} ${vm.slice(0, 4)}\u2069</small>${r}` : ""; })();
+  const vorm = (() => { const vm = plusMonate(monat, -1); const d = new Date(Number(vm.slice(0, 4)), Number(vm.slice(5, 7)) - 1, 1);
+    const r = zeilenFuer(vm + "-01", plusTage(von, -1)); return r ? `<small class="marke">${esc(d.toLocaleDateString(sprache(), { month: "long", year: "numeric" }))}</small>${r}` : ""; })();
   // W3b: Schicht im Büro eintragen (Beginn/Ende je Person) – die Laden-Eingabe „Mitarbeiter heute“ bleibt, wie sie ist
   const se = schichtEntwurf; const sp = se.person || pers[0]?.id || ""; const sd = se.datum || H;
   const form = !w3b() ? "" : !pers.length ? `<div class="g3-schicht-form"><p class="hinweis">${esc(t("w3b.schicht.keinTeam"))}</p><button type="button" class="knopf zweit" data-a="kuehl-einrichtung-oeffnen">${esc(t("kuehl.einrichtungAendern"))}</button></div>` /* Lauf 4, P1 C2: Weg zum Team */ : `<div class="g3-schicht-form"><b>${esc(t("w3b.schicht.titel"))}</b>
     <select data-f="g3-s-person" aria-label="${esc(t("w3b.schicht.person"))}">${pers.map((p) => `<option value="${esc(p.id)}" ${p.id === sp ? "selected" : ""}>${esc(p.kuerzel || p.name || "?")}</option>`).join("")}</select>
-    <input type="date" data-f="g3-s-datum" value="${esc(sd)}" lang="${RTL.has(sprache()) ? "en-GB" : sprache()}" dir="ltr" aria-label="${esc(t("w3b.schicht.datum"))}">
+    <input type="date" data-f="g3-s-datum" value="${esc(sd)}" aria-label="${esc(t("w3b.schicht.datum"))}">
     <div class="g3-zeiten"><input type="time" data-f="g3-s-von" value="${esc(se.von)}" aria-label="${esc(t("teamTag.von"))}"><span aria-hidden="true">–</span><input type="time" data-f="g3-s-bis" value="${esc(se.bis)}" aria-label="${esc(t("teamTag.bis"))}"></div>
     ${schichtHinweis ? `<p class="hinweis warn" role="alert">${esc(l6x(sprache(), "schichtGleich"))}</p>` : ""}${schichtOk ? `<p class="hinweis ok" role="status">${esc(t("tag.gespeichert"))}</p>` : "" /* Lauf 5 (P1 D5): kurze Bestätigung nach „Speichern“ */}<button type="button" class="knopf zweit" data-a="g3-schicht">${esc(t("w3b.schicht.knopf"))}</button></div>`;
   const letzte = !w3b() ? "" : (stand.schichten || []).filter((x) => !x.storniert && x.datum >= von).slice(-5).reverse().map((x) => z(`${dk(x.datum)} · ${(pers.find((p) => p.id === x.person) || {}).kuerzel || "?"}`, `${esc(x.von)}–${esc(x.bis)} · ${esc(t("w3b.schicht.std", fmtZahl(schichtStunden(x.von, x.bis, x.datum), 2)))}`)).join("");

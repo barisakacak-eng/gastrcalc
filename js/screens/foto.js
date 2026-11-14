@@ -7,6 +7,7 @@ import { ablegen, bildFuerAblage, ablageFluechtig, istPdf, istBild } from "../ab
 import { auswerten, vorwaermen } from "../auswertung.js";
 import { vorschlaegeAusText, vorschlaegeUebernehmen, inventurVorschau, kartePruefZahlen, baukastenZutatenOhneVerpackung, preisAuffaellig } from "../karte_lesen.js";
 import { gerichtBildQuelle } from "../bilder.js";
+import { mascotMarkup } from "../gastrocash-brand.js"; // Trennung 2
 import { artikelAbgleichen } from "../karte_daten.js"; // Trennung
 import { uploadAnlegen, uploadAendern } from "../stamm.js"; // Trennung: Uploads schreibt das Rechenwerk
 import { fehlendeRezepteErgaenzen } from "../rezept_baukasten.js";
@@ -192,7 +193,7 @@ function fvZeile(v) {
 // Entwurf (Baris: „Wo ist Zeki, die einfache Sprache, wo sind unsere Bilder?“): Zeki sagt oben in einem Satz, was los ist;
 // jedes Gericht mit Bild, Name, Preis und einem Knopf. Rezept-Zeilen gehören ins Büro (Rezepte), nicht hierher.
 const fvBild = (v) => { const q = gerichtBildQuelle({ name: v.vorlage || v.name, vorlageName: v.vorlage || undefined });
-  return q.foto ? `<img class="fvbild" src="foto/${q.foto}.webp" alt="" loading="lazy" decoding="async">` : `<img class="fvbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy" decoding="async">`; };
+  return q.foto ? `<img class="fvbild" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="fvbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`; };
 const GRUND_TEXT = { preis: "foto.preisFehltKurz", preisHoch: "foto.preisHochKurz", name: "foto.namePruefen", preisUnsicher: "foto.preisPruefen", zweiPreise: "foto.zweiPreiseKurz", rezept: "foto.rezeptBestaetigen" };
 function pruefKarte(v) {
   const g = grund(v);
@@ -212,8 +213,9 @@ export function kartePruefenView() {
   const kz = kartePruefZahlen(vorschlaege); const pr = kz.pruefen, ok = kz.erkannt; // Trennung 2: Zahlen aus js/karte_lesen.js
   const offen = pr.filter((v) => v.an && grund(v)).length;
   return `
-    <h1 class="frage s2zeki-blase" dir="auto">${esc(t("foto.zeki.titel", vorschlaege.length))}</h1>
-    <p class="s2zeki-hilfe fvzeki">${esc(offen ? t("foto.zeki.pruefen", offen) : t("foto.zeki.alle"))}</p>
+    <div class="s2kopf s2zeki fvzeki"><div class="s2zeki-figur zeki-lebt" aria-hidden="true">${mascotMarkup(offen ? "frage" : "freude")}</div>
+      <div class="s2zeki-blase"><h1 class="frage" dir="auto">${esc(t("foto.zeki.titel", vorschlaege.length))}</h1>
+      <p class="s2zeki-hilfe">${esc(offen ? t("foto.zeki.pruefen", offen) : t("foto.zeki.alle"))}</p></div></div>
     ${lauf?.vorlaeufig ? `<div class="fortschritt stufe-3 schmal" role="status" aria-live="polite" aria-label="${esc(t("foto.stufe3"))}"><div class="fortschritt-balken"></div></div>` : ""}
     ${pr.length ? `<div class="fvkarten">${pr.map(pruefKarte).join("")}</div>` : ""}
     ${ok.length ? `<h2 class="fvgrp">${esc(t("foto.zeki.erkannt", ok.filter((v) => v.an).length))}</h2>

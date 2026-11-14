@@ -13,7 +13,7 @@ import { modus, personalGesperrt } from "../modus.js";
 import { heuteGeschaeft } from "../util.js";
 import { meldung } from "./meldung.js";
 import { t } from "../i18n.js";
-import { bueroPaket } from "./nachladen.js";
+import { bestandLink } from "../screens/bestand.js";
 import { blattOffen, blattSchliessen, ebeneHuelle } from "../screens/ebene.js";
 import { BLATT_INTERN } from "./ebene.js";
 import { offeneKlappen } from "../screens/bausteine.js";
@@ -26,14 +26,15 @@ import { KLICK as KLICK_LADENVERWALTUNG } from "./ladenverwaltung.js";
 import { KLICK as KLICK_SPRACHE } from "./sprache.js";
 import { KLICK as KLICK_START } from "./start.js";
 import { KLICK as KLICK_LADEN, ANSICHT_KLICK as ANSICHT_LADEN } from "./laden.js";
+import { KLICK as KLICK_BUERO, ANSICHT_KLICK as ANSICHT_BUERO } from "./buero.js";
 import { KLICK as KLICK_TAGWAHL, KLICK_TAG } from "./tag.js";
 import { personalKlick } from "./personal.js";
 
 // Stufe 2: alle Bereiche zusammen. Ein Name in zwei Bereichen wirft sofort beim Laden (zusammenfuehren).
 const BEREICHE = zusammenfuehren(
-  KLICK_EINRICHTUNG, KLICK_NAVIGATION, KLICK_SICHERUNG, KLICK_UPDATE, KLICK_LADENVERWALTUNG, KLICK_SPRACHE, KLICK_START, KLICK_LADEN,
+  KLICK_EINRICHTUNG, KLICK_NAVIGATION, KLICK_SICHERUNG, KLICK_UPDATE, KLICK_LADENVERWALTUNG, KLICK_SPRACHE, KLICK_START, KLICK_LADEN, KLICK_BUERO,
 );
-const ANSICHT_KLICK = ANSICHT_LADEN; // dazu kommen die Büro-Ansichten aus dem Büro-Paket (bueroPaket().ANSICHT_KLICK)
+const ANSICHT_KLICK = zusammenfuehren(ANSICHT_LADEN, ANSICHT_BUERO);
 
 const WECHSEL_SCHUTZ_MS = 450;
 
@@ -61,7 +62,7 @@ async function aufKlick(ev) {
   if (nah && abstand < WECHSEL_SCHUTZ_MS && prevEl && prevEl !== el && ((ZAEHL_TIPPS.has(name) && !prevEl.isConnected && prevEl.dataset?.a !== name) || (/(^|-)zu$/.test(name) && !/(^|-)zu$/.test(prevEl.dataset?.a || "")))) return;
   if (!Z.stand && !Z.notfall) return; // Rettung: auf der Fehlerseite gibt es evtl. keinen Laden – Sicherung einlesen und Löschen gehen trotzdem
   if (modus(Z.wurzel) === "personal" && personalGesperrt(name, el.dataset.wert, heuteGeschaeft())) { if (/^kuehl-einrichtung|^pp-/.test(name) || name === "pp-ansicht") meldung(t("sicherheit.chefRichtetEin")); return; } // W2-S (p02 K2): im Personal-Modus abgewiesen
-  if (name === "best-wa" && Z.ansicht === "bestand") { const l = bueroPaket()?.bestandLink(Z.stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten: WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
+  if (name === "best-wa" && Z.ansicht === "bestand") { const l = bestandLink(Z.stand, el.dataset.wert); if (l) window.open(l, "_blank", "noopener"); return; } // Lieferanten: WhatsApp gleich beim Tipp öffnen (vor jedem await, sonst blockt der Browser)
 
   // Lauf 6, E5 (A): Doppeltipp-Sperre. Solange dieselbe Aktion (Name + Wert + Kennung) mit `await` läuft, startet sie nicht noch einmal –
   // sonst ergab „Tag abschließen“ zweimal getippt (0–30 ms) zwei Abschlüsse. Zähl-Tipps sind ausgenommen (jeder Tipp zählt).
@@ -82,8 +83,7 @@ async function ebeneStufe(name, el, k) {
 }
 // Bildschirm der Ansicht: „ordner-…“ gehören alle dem Ordner-Handler. Der Handler bekommt Namen und Element.
 function ansichtKlick(name, el) {
-  const tab = { ...ANSICHT_KLICK, ...bueroPaket()?.ANSICHT_KLICK };
-  const h = Z.ansicht.startsWith("ordner-") ? tab["ordner-"] : tab[Z.ansicht];
+  const h = Z.ansicht.startsWith("ordner-") ? ANSICHT_KLICK["ordner-"] : ANSICHT_KLICK[Z.ansicht];
   return h ? h(name, el) : undefined;
 }
 
@@ -92,7 +92,6 @@ async function aufKlickAktion(ev, el, name) {
   if (await ebeneStufe(name, el, k)) return; // Blätter öffnen/schließen ohne Neuzeichnen
   if (blattOffen() && !BLATT_INTERN.has(name)) blattSchliessen(); // jede andere Handlung aus einem Blatt schließt es zuerst
   if (await tabellenStufe(BEREICHE, name, el, k)) return;
-  if (await tabellenStufe(bueroPaket()?.KLICK ?? {}, name, el, k)) return; // Namen des Büro-Pakets (z. B. „vergleich-modus“)
   if (Z.stand.phase === "onboarding") return onboardingKlick(name, el);
   if (await tabellenStufe(KLICK_TAGWAHL, name, el, k)) return;
   if (Z.ansicht === "personal") return personalKlick(name, el);

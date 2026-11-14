@@ -4,8 +4,7 @@
 import { t } from "../i18n.js";
 import { esc, fmtEuro, fmtZahl } from "../util.js";
 import { gerichteVergleich } from "../gerichte_vergleich.js"; // Trennung 2 (17.10.2026)
-import { gerichtBild } from "./gerichtbild.js"; // eigene kleine Datei: Laden-Bildschirme brauchen das Bild, nicht den Vergleich
-export { gerichtBild };
+import { gerichtBildQuelle } from "../bilder.js"; // Trennung 2 (17.10.2026): Bildzuordnung
 import { nav } from "./nav.js";
 import { sym } from "../symbole.js";
 import { hebelJeGericht, rennerPenner, HEBEL_CENT, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3/1.5
@@ -27,6 +26,11 @@ export const vergleichModus = (m) => { if (m === "db" || m === "marge" || m === 
 export const vergleichModusAktuell = () => modus; // Paket 2: für Tests
 export const vergleichZuruecksetzen = () => { modus = "db"; }; // Paket 2 (16.10.2026): Ladenwechsel – zentrale Liste in app.js
 
+export function gerichtBild(g) {
+  const q = gerichtBildQuelle(g); // Trennung 2 (17.10.2026): Zuordnung in js/bilder.js
+  if (q.eigen) return `<img class="gerichtbild" data-foto="${esc(q.eigen)}" src="bilder/${q.pikto}.svg" alt="">`; // eigenes Foto des Wirts, wird nach dem Zeichnen aus der Ablage geladen
+  return q.foto ? `<img class="gerichtbild" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`;
+}
 
 export function vergleichView(stand) {
   const { mit, ohne, geschaetzt } = gerichteVergleich(stand, modus === "renner" ? "db" : modus);

@@ -3,7 +3,7 @@
 import { Z } from "../bedienung/zustand.js";
 import {
   pinGesetzt, testphaseOhneCode, modus, modusSetzen, startAnsicht, codeAktiv, bioKennung, BUERO_OFFEN_MS, bioSetzen, testphaseSetzen,
-  pinSetzen, personalHilfeErlaubt, sperreKappenHaken,
+  pinSetzen,
 } from "../modus.js";
 import { schichtPersonVergessen } from "../screens/personal.js";
 import { tagZuruecksetzen } from "../screens/tag.js";
@@ -32,7 +32,7 @@ import { rechtsformSetzen } from "../rechtsform.js";
 import { hmFrageSetzen, hmStatusSetzen } from "../hinweis_motor.js";
 import { heute } from "../util.js";
 import { hinweisStatusSetzen } from "../hinweis.js";
-import { bueroPaket } from "./nachladen.js";
+import { geld3Aktion } from "../screens/geld3.js";
 
 export function ebeneWechseln(m, ziel) {
   Z.bueroWeg = []; // Ebenenwechsel beginnt den Büro-Weg neu
@@ -67,7 +67,6 @@ function nachCodeGesetzt(ziel) {
 
 // Büro-Code nach 5 Minuten im Hintergrund wieder verlangen.
 export function ebeneAnmelden() {
-  sperreKappenHaken((w) => { sofortSpeichern(w); }); // eine gekürzte Wartezeit bleibt auch nach einem Neustart gekürzt
   if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => { if (document.hidden) Z.versteckt = Date.now(); else if (Z.versteckt && Date.now() - Z.versteckt > 5 * 60 * 1000) Z.bueroOffenBis = 0; });
 }
 
@@ -185,7 +184,7 @@ export const KLICK = {
   "menue-auf": () => { blattMerken(); menueZeigen(Z.stand, Z.wurzel); },
   "menue-zurueck": () => menueZeigen(Z.stand, Z.wurzel),
   "blatt-zu": () => { blattSchliessen(); Z.einleseDatei = null; Z.einleseErsetzen = false; }, // wartende Sicherungsdatei loslassen
-  "hilfe-mehr": (el) => { if (modus(Z.wurzel) === "personal" && !personalHilfeErlaubt(el.dataset.wert)) return; return hilfeZeigen(el.dataset.wert, true); }, // ganze Hilfe nach „Mehr“; im Personal-Modus nur die Einträge der Personal-Ansichten
+  "hilfe-mehr": (el) => hilfeZeigen(el.dataset.wert, true), // ganze Hilfe nach „Mehr“
   "blatt-sprache": () => spracheZeigen(),
   "blatt-laeden": () => laedenZeigen(Z.wurzel),
   "hilfe-auf": () => { blattMerken(); hilfeZeigen(Z.ansicht); },
@@ -221,6 +220,6 @@ export const KLICK = {
 
 // Geld-Seite (Welle 3): alle Namen mit „g3-“ gehören den Geld-Karten.
 export function praefixKlick(name, el) {
-  if (name.startsWith("g3-") && bueroPaket()?.geld3Aktion(name, el, Z.stand)) { speichern(Z.wurzel); return zeichne(); }
+  if (name.startsWith("g3-") && geld3Aktion(name, el, Z.stand)) { speichern(Z.wurzel); return zeichne(); }
   return NICHT;
 }

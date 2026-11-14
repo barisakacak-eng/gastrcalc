@@ -19,7 +19,7 @@ import { lieferantenAktion, lieferantenEingabe } from "../screens/lieferanten.js
 import { getraenkeAktion, getraenkeEingabe } from "../screens/getraenke.js";
 import { tafelAktion, tafelEingabe } from "../screens/tafel.js";
 import { laedenAktion, laedenEingabe } from "../screens/laeden.js";
-import { warenQuoteSetzen, steuerSatzSetzen, ruhezeitSetzen } from "../stamm.js";
+import { abgleichHinweisQuittieren, warenQuoteSetzen, steuerSatzSetzen, ruhezeitSetzen } from "../stamm.js";
 import { FERTIG } from "./tabellen.js";
 import { ladeSprache } from "../i18n.js";
 import { geld3Eingabe } from "../screens/geld3.js";
@@ -64,7 +64,9 @@ export const ANSICHT_KLICK = {
   },
 };
 
-export const KLICK = {}; // keine Namen ohne Bildschirm im Büro („abgleich-ok“ steht in laden.js: der Chip erscheint auch auf Heute)
+export const KLICK = {
+  "abgleich-ok": () => { abgleichHinweisQuittieren(Z.stand); speichern(Z.wurzel); return zeichne(); }, // Hinweis „Beim Zusammenführen …“ gelesen
+};
 
 // ---------- Eingaben ----------
 function einstellungenEingabe(el) {

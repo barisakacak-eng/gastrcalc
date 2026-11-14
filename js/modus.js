@@ -77,16 +77,8 @@ export function personalErlaubt(name, wert, heute) {
   return PERSONAL_ERLAUBT.has(name);
 }
 export const personalGesperrt = (name, wert, heute) => !personalErlaubt(name, wert, heute);
-// Eingabefelder im Personal-Modus ebenfalls als POSITIVLISTE: nur was die Personal-Ansichten (Müll, Kühl-Rundgang, Schloss/Rettung) wirklich anbieten.
-// Alles andere (Einrichtung, Sprache, Euro-Nachträge, Fremdfelder) bleibt ohne Wirkung. tests/lauf6_e11_personal.test.mjs: Registertest gegen die gezeichneten Ansichten.
-export const PERSONAL_FELDER = new Set(["muell-menge", "muell-suche", "muell-foto", "station-wert", "station-notiz", "weg-name", "weg-menge", "rettungscode"]);
-export const personalFeldErlaubt = (feld) => PERSONAL_FELDER.has(String(feld ?? ""));
-export const personalFeldGesperrt = (feld) => !personalFeldErlaubt(feld);
-// Aufrufe, die im Personal-Modus gelten: Ziele der drei Kacheln und Hilfe-Einträge der Personal-Ansichten.
-export const PERSONAL_ZIELE = ["muell", "kuehl", "putzplan"];
-export const PERSONAL_HILFE = ["personal", "muell", "kuehl", "putzplan"];
-export const personalZielErlaubt = (ziel) => PERSONAL_ZIELE.includes(ziel);
-export const personalHilfeErlaubt = (ziel) => PERSONAL_HILFE.includes(ziel);
+// Eingabefelder der Einrichtung (Kühlstellen, Grenzen, Kürzel) – im Personal-Modus ohne Wirkung.
+export const personalFeldGesperrt = (feld) => /^stelle-|^person-neu$/.test(String(feld || ""));
 
 // Startbildschirm je Ebene
 export function startAnsicht(wurzel) { const m = modus(wurzel); return m === "personal" ? "personal" : m === "buero" ? "buero" : "start"; }
@@ -192,19 +184,8 @@ const rettungDa = (wurzel) => typeof wurzel?.rettungPin === "string" && NEU.test
 export const hartGesperrt = (wurzel) => (Number(wurzel?.pinSperre?.fehler) || 0) >= SPERRE_HART_AB && rettungDa(wurzel);
 // Nur die Uhr (Wartezeit nach 5+ Fehlversuchen) – so rechnet auch der Rettungscode, damit er bei der harten Sperre offen bleibt
 export function sperreRestUhr(wurzel, jetzt = Date.now()) {
-  sperreKappen(wurzel, jetzt);
   const bis = Number(wurzel?.pinSperre?.bis) || 0; if (bis <= jetzt) return 0;
-  return bis - jetzt;
-}
-// Uhr zurückgestellt: liegt „bis“ weiter als die größte Wartezeit voraus, wird es auf jetzt + Höchstdauer gesetzt (und gespeichert, sobald ein Speicher-Haken da ist).
-let nachKappen = null;
-export function sperreKappenHaken(f) { nachKappen = typeof f === "function" ? f : null; }
-export function sperreKappen(wurzel, jetzt = Date.now()) {
-  const s = wurzel?.pinSperre; const bis = Number(s?.bis) || 0;
-  if (!s || bis - jetzt <= SPERRE_MAX_MS) return false;
-  s.bis = jetzt + SPERRE_MAX_MS;
-  try { nachKappen?.(wurzel); } catch { /* Speichern ist Zugabe */ }
-  return true;
+  return Math.min(bis - jetzt, SPERRE_MAX_MS); // Uhr zurückgestellt: nie länger als die größte Wartezeit
 }
 // Rest der Sperre für den Büro-Code: hart gesperrt = immer die größte Wartezeit, unabhängig von der Uhr
 export function sperreRest(wurzel, jetzt = Date.now()) { return hartGesperrt(wurzel) ? SPERRE_MAX_MS : sperreRestUhr(wurzel, jetzt); }

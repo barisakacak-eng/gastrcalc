@@ -154,7 +154,7 @@ test("Export: eine einzige HTML-Datei, alles eingebettet, keine Verweise nach au
   assert.ok(!html.includes("foto/") && !html.includes("bilder/"), "keine Pfade der App");
   assert.ok(html.includes('<span class="ohne"></span>'), "fehlendes Bild: Platz bleibt leer");
   assert.ok(/<style>[\s\S]*#tafel[\s\S]*<\/style>/.test(html) && html.includes("system-ui"), "eigenes CSS, Systemschrift");
-  for (const farbe of ["#22301F", "#F5EDE2", "#E8763A", "#E2CDB2"]) assert.ok(html.includes(farbe), "Tafel-Datei trägt die Markenfarbe " + farbe); // die Datei ist eigenständig; Abgleich mit css/tokens.css entfällt (Optik)
+  for (const farbe of ["#2E4034", "#FFFDF8", "#C97A3E", "#F5EBDD"]) assert.ok(html.includes(farbe), "Tafel-Datei trägt die Markenfarbe " + farbe); // die Datei ist eigenständig; Abgleich mit css/tokens.css entfällt (Optik)
   assert.ok(html.includes('data-sekunden="12"') && html.includes("BEISPIEL – keine echten Daten"));
   assert.equal((html.match(/<section class="seite/g) || []).length, 3); assert.equal((html.match(/class="seite an"/g) || []).length, 1, "ohne Skript steht die erste Seite");
   // Vorschau einer Seite für das Büro: ohne Skript, Bilder aus der App

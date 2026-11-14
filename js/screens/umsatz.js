@@ -143,7 +143,7 @@ export function umsatzEingabe(feld, wert, stand, wurzel) {
   if (feld !== "umsatz") return false;
   const n = parseZahl(wert); const D = tagGewaehlt(); const st = umsatzSteuerSatz(stand);
   if (n === null) tagesnotizLoeschen(stand, D, wurzel?.geraet || null);
-  else tagesnotizSetzen(stand, D, umsatzAusEingabe(n, umsatzBasis, st.satz, umsatzEintrag(stand, D)?.umsatz ?? null), { // Trennung 2
+  else tagesnotizSetzen(stand, D, umsatzAusEingabe(n, umsatzBasis, st.satz), { // Trennung 2
     nacherfasst: D !== heute(), geraet: wurzel?.geraet || null });
   return false;
 }

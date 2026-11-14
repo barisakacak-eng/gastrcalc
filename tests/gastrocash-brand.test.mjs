@@ -3,24 +3,22 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { mascotMarkup, mascotResultState } from '../js/gastrocash-brand.js';
 
-test('Zeki: jeder Zustand ist ein Bild seiner Miene – feste Maße, leeres alt, kein Kreis, keine SVG-Figur',()=>{
-  const zustaende=['neutral','freude','frage','import','preis','hilfe','warnung','bestaetigt','aufmerksam','erleichtert','fehler','staunt'];
-  const quellen=new Set();
-  for(const z of zustaende){
-    const h=mascotMarkup(z);
-    assert.match(h,/^<span class="gc-zeki-vorn gc-bot gc-bot--[a-z]+ gc-motion--none" data-zeki-vorn="1"><img class="gc-zeki" src="assets\/brand\/zeki-mienen\/zeki-[a-z]+\.webp" alt="" width="\d+" height="\d+" decoding="async"><\/span>$/,z);
-    assert.doesNotMatch(h,/<svg|<circle|border-radius|clip-path|style=/);
-    const src=h.match(/src="([^"]+)"/)[1]; assert.ok(fs.existsSync(new URL('../'+src,import.meta.url)),src+' fehlt'); quellen.add(src);
+test('Zeki: die vier Zustände sehen verschieden aus, Clip-IDs sind eindeutig',()=>{
+  // Die Figur selbst (Maße, Teile, Klassennamen) wird neu gezeichnet und ist hier bewusst nicht festgeschrieben.
+  const states=['neutral','freude','nachdenklich','warnung'];
+  const drawings=new Set();
+  for(const state of states){
+    const svg=mascotMarkup(state);
+    assert.match(svg,/^\s*<svg\b/);
+    const ids=[...svg.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);assert.equal(ids.length,new Set(ids).size,'jede Clip-ID ist eindeutig');
+    drawings.add(svg);
   }
-  assert.equal(quellen.size,12,'zwölf verschiedene Mienen');
-  // alte Namen bleiben benutzbar und landen bei der passenden Miene
-  assert.match(mascotMarkup('nachdenklich'),/zeki-import\.webp/); assert.match(mascotMarkup('ernst'),/zeki-warnung\.webp/); assert.match(mascotMarkup('erfolg'),/zeki-freude\.webp/);
+  assert.equal(drawings.size,4);
 });
 test('unbekannter Zustand fällt neutral zurück; keine HTML-Injektion',()=>{
-  for(const roh of ['<img onerror=alert(1)>','__proto__','constructor',{},null,42]){
-    const h=mascotMarkup(roh); assert.ok(!h.includes('onerror')); assert.equal(h,mascotMarkup('neutral'));
-    assert.equal(mascotMarkup('neutral',roh),mascotMarkup('neutral'));
-  }
+  const roh=mascotMarkup('<img onerror=alert(1)>');
+  assert.ok(!roh.includes('onerror'));
+  assert.equal(roh.replace(/zeki-\d+-clip-/g,'clip-'),mascotMarkup('neutral').replace(/zeki-\d+-clip-/g,'clip-'));
 });
 test('Markenpaket: index.html lädt das alte Marken-CSS nicht mehr',()=>{
   const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
@@ -60,17 +58,11 @@ test('Tagesabschluss: schlechte Lage wird nicht lächelnd dargestellt',()=>{
   assert.equal(mascotResultState({aboveZero:false,delta:0}),'neutral');
 });
 
-test('Bewegungen sind von Emotionen getrennt: nur echte Folgen starten beim Erscheinen, unbekannte fallen sicher zurück',()=>{
-  assert.match(mascotMarkup('freundlich','thumb'),/gc-motion--thumb" data-zeki-vorn="1" data-zeki-start="daumen"/);
-  assert.match(mascotMarkup('hilfe','hand'),/data-zeki-start="hand"/);
-  assert.match(mascotMarkup('erfolg','celebrate'),/data-zeki-start="jubeln"/);
+test('Bewegungen sind von Emotionen getrennt und unbekannte Bewegung fällt sicher zurück',()=>{
+  assert.match(mascotMarkup('freundlich','thumb'),/gc-motion--thumb/);
+  assert.match(mascotMarkup('nachdenklich','turn'),/gc-motion--turn/);
+  assert.match(mascotMarkup('erfolg','celebrate'),/gc-motion--celebrate/);
   assert.match(mascotMarkup('neutral','irgendwas'),/gc-motion--none/);
-  for(const still of ['none','zwinkern','grinsen','laecheln','idle']) assert.doesNotMatch(mascotMarkup('neutral',still),/data-zeki-start/,still+': Zwinkern und Grinsen laufen nie von selbst');
-});
-test('Die alte Vektorfigur und die Gliederpuppe sind weg, nichts importiert sie mehr',()=>{
-  for(const d of ['js/zeki-svg.js','js/zeki-puppe.js','js/zeki-bilder.js','assets/brand/mascot-classic.svg']) assert.ok(!fs.existsSync(new URL('../'+d,import.meta.url)),d);
-  const alle=(d)=>fs.readdirSync(new URL('../'+d,import.meta.url),{withFileTypes:true}).flatMap(e=>e.isDirectory()?alle(d+'/'+e.name):e.name.endsWith('.js')?[d+'/'+e.name]:[]);
-  for(const f of alle('js')) assert.doesNotMatch(fs.readFileSync(new URL('../'+f,import.meta.url),'utf8'),/zeki-svg|zeki-puppe|zeki-bilder|ZEKI_SVG/,f);
 });
 
 

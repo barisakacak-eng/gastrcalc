@@ -1,6 +1,6 @@
 // Dateien und Fotos: ein Feld mit type="file" meldet „change“. AENDERUNG[data-f](el, dateien) entscheidet je Feld, was mit den Dateien
 // geschieht. Alles bleibt auf dem Gerät – gesendet wird nichts.
-import { bueroPaket } from "./nachladen.js";
+import { verkaufDatei, verkaufZbonFoto } from "../screens/verkauf.js";
 import { Z } from "../bedienung/zustand.js";
 import { meldung } from "./meldung.js";
 import { t } from "../i18n.js";
@@ -13,11 +13,12 @@ import { gerichtFotoSetzen } from "../karte_daten.js";
 import { muellFotoSetzen } from "../screens/muell.js";
 import { uploadAnlegen } from "../stamm.js";
 import { fotosHinzufuegen, fotoVerarbeiten, fotoLauf } from "../screens/foto.js";
+import { belegTextVonFoto } from "../screens/beleg.js";
 import { sicherungEinlesen } from "./sicherung.js";
 
 // Kassen-Export lesen.
 async function verkaufDateiAenderung(el, dateien) {
-  try { await bueroPaket().verkaufDatei(Z.stand, dateien); } catch (e) { console.warn(e); meldung(t("verkaeufe.vorschau.fehlerDatei")); }
+  try { await verkaufDatei(Z.stand, dateien); } catch (e) { console.warn(e); meldung(t("verkaeufe.vorschau.fehlerDatei")); }
   return zeichne();
 }
 // Z-Bon per Foto: ablegen und auf dem Handy lesen wie ein Belegfoto; nur im Büro.
@@ -25,7 +26,7 @@ async function zbonFotoAenderung(el, dateien) {
   const datei = dateien[0];
   if (Z.ansicht !== "verkauf" || modus(Z.wurzel) === "personal") return;
   ereignis("foto", { laden: Z.stand.id, zweck: "zbon", art: datei.type || "?", anzahl: 1 });
-  try { await bueroPaket().verkaufZbonFoto(Z.stand, datei, () => zeichne(), { geraet: Z.wurzel.geraet }); } catch (e) { console.warn(e); meldung(t("verkaeufe.zbon.nichts")); }
+  try { await verkaufZbonFoto(Z.stand, datei, () => zeichne(), { geraet: Z.wurzel.geraet }); } catch (e) { console.warn(e); meldung(t("verkaeufe.zbon.nichts")); }
   speichern(Z.wurzel); return zeichne();
 }
 // Eigenes Foto je Gericht (ersetzt das Standardbild).
@@ -41,7 +42,6 @@ async function gerichtFotoAenderung(el, dateien) {
 // Foto (optional) beim Müll – nur ablegen, nicht lesen; hängt am nächsten Eintrag.
 async function muellFotoAenderung(el, dateien) {
   const datei = dateien[0];
-  if (!/^image\//i.test(String(datei?.type || ""))) return; // nur Bilddateien; anderes wird still abgewiesen
   const kopf = { id: "u-" + Date.now().toString(36), zweck: "muell", erfasst: new Date().toISOString(), geraet: Z.wurzel.geraet, status: "abgelegt" };
   try {
     const abgelegt = await ablegen(await bildFuerAblage(datei, 1200), { name: datei.name || "", zweck: "muell", laden: Z.stand.id });
@@ -59,7 +59,7 @@ async function fotoAenderung(el, dateien) {
     speichern(Z.wurzel); zeichne(); return;
   }
   const lauf = await fotoVerarbeiten(Z.stand, datei, zweck, () => zeichne(), { geraet: Z.wurzel.geraet });
-  if (lauf && lauf === fotoLauf() && lauf.status === "fertig" && Z.ansicht === "beleg") bueroPaket().belegTextVonFoto(lauf.text, lauf.upload);
+  if (lauf && lauf === fotoLauf() && lauf.status === "fertig" && Z.ansicht === "beleg") belegTextVonFoto(lauf.text, lauf.upload);
   speichern(Z.wurzel); zeichne();
 }
 
@@ -74,7 +74,6 @@ export const AENDERUNG = {
 
 export async function aufAenderung(ev) {
   const el = ev.target; if (!el.files?.[0]) return;
-  if (modus(Z.wurzel) === "personal" && el.dataset.f !== "muell-foto") return; // Personal-Modus: nur das Müll-Foto, nichts einlesen, nichts ablegen
   const dateien = [...el.files]; el.value = "";
   if (Object.hasOwn(AENDERUNG, el.dataset.f)) return AENDERUNG[el.dataset.f](el, dateien);
 }

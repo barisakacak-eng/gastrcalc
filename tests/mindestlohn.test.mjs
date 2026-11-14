@@ -13,7 +13,7 @@ const tag = (d, eintraege) => ({ datum: d, eintraege, erfasst: d + "T20:00:00Z" 
 test("Mindestlohn und Minijob-Grenze nach Datum", () => {
   assert.deepEqual([mindestlohnAm("2026-12-31").satz, mindestlohnAm("2026-12-31").minijob], [13.90, 603]);
   assert.deepEqual([mindestlohnAm("2027-01-01").satz, mindestlohnAm("2027-01-01").minijob], [14.60, 633]);
-  assert.equal(mindestlohnAm("2025-06-01").satz, 12.82); // Lauf 6, E11 C5: 2025 hat einen eigenen Eintrag (vorher: stilles 13,90 des Jahres 2026)
+  assert.equal(mindestlohnAm("2025-06-01").satz, 13.90); // davor: Wert 2026
   assert.equal(naechsteErhoehung("2026-10-28").ab, "2027-01-01");
   assert.equal(naechsteErhoehung("2027-01-01"), null);
   assert.equal(Math.ceil(14.60 * 130 / 3), 633); // § 8 Abs. 1a SGB IV

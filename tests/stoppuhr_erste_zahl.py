@@ -1,6 +1,6 @@
 """Stoppuhr bis zur ersten Euro-Zahl (28.10.2026): Wie lange braucht ein LANGSAMER Nutzer vom ersten Bild bis zur ersten Euro-Zahl auf „Heute“?
 Langsamer Nutzer: 300 ms je Tastendruck, 1,5 s Denkpause vor jedem Bildschirm und vor jedem Tipp. Schnellstart Döner & Grill, Deutsch,
-Handy 390×844, Karte „Später“, 1 Kühlschrank, Geld: Miete 1500 und Löhne 3000. Seit „Gehirn 0.1“ zeigt Heute ohne Miete und Löhne bewusst keine Euro-Zahl, sondern „?“ und „Miete eintragen“ / „Löhne eintragen“ – der langsame Nutzer tippt darum beide Zahlen (je 4 Tasten × 300 ms) in den Schnellstart. Die Uhr startet, sobald das erste Bild (Willkommen) steht und der Service Worker
+Handy 390×844, Karte „Später“, 1 Kühlschrank, Geld leer. Die Uhr startet, sobald das erste Bild (Willkommen) steht und der Service Worker
 die Seite übernommen hat (das Warten darauf ist Technik, kein Nutzerschritt) und stoppt, wenn auf „Heute“ die erste Euro-Zahl sichtbar steht.
 Muss unter GRENZE_S = 120 Sekunden liegen, sonst Exit 1.
 Start: python3 tests/stoppuhr_erste_zahl.py   (eigener Webserver, Port über Umgebung DURCHLAUF_PORT, sonst 8799)"""
@@ -51,9 +51,7 @@ async def main():
             await weiter("kuehl-schnell")                                                                              # Karte: „Später“
             await denken(); await pg.click('[data-a="s2-kuehl"][data-wert="kuehlschrank"][data-d="1"]')
             await weiter("geld")
-            await denken(); await pg.click('[data-f="ks:miete"]'); await pg.keyboard.type("1500", delay=TASTE_MS)      # ohne Miete und Löhne zeigt Heute bewusst keine Euro-Zahl
-            await denken(); await pg.click('[data-f="ks:personal"]'); await pg.keyboard.type("3000", delay=TASTE_MS)
-            await weiter("fertig-schnell")
+            await weiter("fertig-schnell")                                                                             # Geld leer lassen
             await denken()
             for versuch in range(3):
                 knopf = pg.locator('[data-a="ob-fertig"].s2los')

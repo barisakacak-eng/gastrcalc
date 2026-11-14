@@ -14,21 +14,20 @@ import { t } from "../i18n.js";
 import { umsatzEingabe, umsatzFeldVerlassen } from "../screens/umsatz.js";
 import { tagWertUebernehmen } from "../screens/tag.js";
 import { ANSICHT_EINGABE as EINGABE_LADEN } from "./laden.js";
-import { bueroPaket } from "./nachladen.js";
+import { ANSICHT_EINGABE as EINGABE_BUERO } from "./buero.js";
 import { aufAenderung } from "./fotos.js";
 
-const KERN_EINGABE = zusammenfuehren(EINGABE_LADEN); // dazu kommen die Büro-Ansichten aus dem Büro-Paket (bueroPaket().ANSICHT_EINGABE)
+const ANSICHT_EINGABE = zusammenfuehren(EINGABE_LADEN, EINGABE_BUERO);
 
 function eingabeWert(el) {
   if (Z.stand.phase === "onboarding") return onboardingEingabe(el);
-  const ANSICHT_EINGABE = { ...KERN_EINGABE, ...bueroPaket()?.ANSICHT_EINGABE };
   const h = Z.ansicht.startsWith("ordner-") ? ANSICHT_EINGABE["ordner-"] : Object.hasOwn(ANSICHT_EINGABE, Z.ansicht) ? ANSICHT_EINGABE[Z.ansicht] : null;
   return h ? h(el) : false;
 }
-export function aufEingabe(ev) {
+function aufEingabe(ev) {
   Z.ruheBis = 0; // wer tippt, hat nicht doppelt getippt
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
-  if (modus(Z.wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // Personal-Modus: nur Felder der Positivliste (PERSONAL_FELDER)
+  if (modus(Z.wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // Einrichtungsfelder wirken im Personal-Modus nicht
   if (el.dataset.f === "sprache-wahl") { Z.wurzel.sprache = el.value; setzeSprache(el.value, () => zeichne()); return; } // Sprache sofort zeigen
   const neu = eingabeWert(el);
   if (neu === FERTIG) return;
@@ -41,9 +40,8 @@ export function aufEingabe(ev) {
 }
 
 // Wenn ein Feld verlassen wird: Zahl prüfen und einmal neu zeichnen, damit Zwischenstände und Markierungen stimmen.
-export function aufFeldVerlassen(ev) {
+function aufFeldVerlassen(ev) {
   const el = ev.target.closest("[data-f]"); if (!el || el.type === "file") return;
-  if (modus(Z.wurzel) === "personal" && personalFeldGesperrt(el.dataset.f)) return; // Personal-Modus: nur Felder der Positivliste
   if ((el.dataset.f === "station-wert" || el.dataset.f.startsWith("stelle-max:") || el.dataset.f.startsWith("stelle-min:")) && el.value.trim() !== "" && parseTemperatur(el.value) === null) meldung(t("kuehl.tempUngueltig", el.value.trim().slice(0, 12)));
   if (el.getAttribute("inputmode") === "decimal" && el.value.trim() !== "" && parseZahl(el.value) === null) {
     meldung(t(/^[0-9.,\s]+$/.test(el.value) ? "allgemein.zahlZuGross" : "allgemein.zahlUngueltig", el.value.trim().slice(0, 20)));

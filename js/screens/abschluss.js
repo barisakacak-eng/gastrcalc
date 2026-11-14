@@ -72,7 +72,7 @@ function bilanzView(stand, H) {
       <div class="jetzt still ab-vergleich ${v.art}"><span><b>${esc(vergleich)}</b>${tonne ? `<small>${esc(tonne)}</small>` : ""}</span></div>
       <button type="button" class="knopf glut ab-zurueck" data-a="nav" data-wert="start">${esc(t("abschluss.zumCockpit"))}</button>
     </div>
-    ${nav("start", { schritt: "bilanz" })}`;
+    ${nav("start")}`;
 }
 
 // Lauf 6, E5 (A): gibt es für diesen Geschäftstag schon einen aktiven (nicht stornierten) Abschluss? Reine Funktion.

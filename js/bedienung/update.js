@@ -62,16 +62,7 @@ export async function serviceWorkerStarten() {
       if (Z.aktualisierungKlick) location.reload(); else fremdeFassungUebernehmen(); // Paket 2: auch ohne eigenen Tipp
     });
     document.addEventListener("visibilitychange", () => { if (!document.hidden) reg.update().catch(() => {}); });
-    // Etappe 10: „bereit“ gilt erst, wenn der Service Worker „alles da“ meldet. Er lädt im Leerlauf nach, sobald die Seite ihn darum bittet.
-    navigator.serviceWorker.addEventListener("message", (ev) => {
-      if (ev.data?.art !== "nachladen") return;
-      Z.offlineStand = ev.data.stand === "fertig" ? "bereit" : "laedt"; Z.nachladeLuecke = ev.data.stand !== "fertig";
-    });
-    const nachladenBitten = () => navigator.serviceWorker.ready.then((r) => { if (Z.offlineStand !== "bereit") (r.active || navigator.serviceWorker.controller)?.postMessage("nachladen"); }).catch(() => {});
-    const leerlauf = (f) => (window.requestIdleCallback ? window.requestIdleCallback(f, { timeout: 4000 }) : setTimeout(f, 1500));
-    await navigator.serviceWorker.ready; leerlauf(nachladenBitten);
-    window.addEventListener("online", nachladenBitten); // Lücke (kein Netz): beim nächsten Netz oder Start weitermachen
-    document.addEventListener("visibilitychange", () => { if (!document.hidden && Z.nachladeLuecke) nachladenBitten(); });
+    await navigator.serviceWorker.ready; Z.offlineStand = "bereit";
     setInterval(stillAktualisieren, 60e3); document.addEventListener("visibilitychange", () => { if (!document.hidden) stillAktualisieren(); }); // W2-D
   } catch (e) { console.warn("Kein Service Worker:", e); Z.offlineStand = "keinSw"; }
 }

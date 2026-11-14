@@ -169,7 +169,7 @@ async def main():
 
             # ---- 360 px und Türkisch
             await pg.set_viewport_size({"width": 360, "height": 780})
-            await pg.evaluate("(async () => { const i = await import('./js/i18n.js'); await i.ladeSprache('tr'); window.__gastrocalc.wurzel.sprache = 'tr'; i.setzeSprache('tr'); window.__gastrocalc.zeichne(); })()")
+            await pg.evaluate("(async () => { const i = await import('./js/i18n.js'); window.__gastrocalc.wurzel.sprache = 'tr'; i.setzeSprache('tr'); window.__gastrocalc.zeichne(); })()")
             await pg.wait_for_timeout(200); await bild("tr-ergebnis")
             assert "Başta mal" in await pg.inner_text(".inv-ergebnis")
             assert await ueberlauf() <= 0, "waagrechter Überlauf (360, tr)"

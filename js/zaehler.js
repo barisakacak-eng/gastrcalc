@@ -330,13 +330,7 @@ export function zaehlerVerlauf(z) {
 // ---------- Trennung 2: Zahlen der Seite „Monat & Zähler“ (vorher in js/screens/umsatz.js) ----------
 // Kasse ist brutto; wer netto tippt, bekommt es brutto gespeichert. satz = Umsatzsteuer-Satz (Anteil, z. B. der ermäßigte aus dem Regelwerk).
 export const umsatzAnzeigeWert = (brutto, basis, satz) => (brutto === null || brutto === undefined ? null : basis === "netto" ? rund2(nettoVonBrutto(brutto, satz)) : brutto);
-// Lauf 6, E11: Tippt jemand denselben Netto-Wert, den das Feld zeigt, bleibt der gespeicherte Brutto-Wert (Kasse) unverändert – die Rückrechnung netto → brutto lag sonst
-// bei manchen Beträgen einen Cent daneben (Beispiel bei 7 %: Brutto 1.000,07 € zeigt netto 934,64 €, zurück kam 1.000,06 €). bruttoGespeichert = der Wert des Tages oder null.
-export const umsatzAusEingabe = (betrag, basis, satz, bruttoGespeichert = null) => {
-  if (basis !== "netto") return betrag;
-  if (typeof bruttoGespeichert === "number" && Number.isFinite(bruttoGespeichert) && umsatzAnzeigeWert(bruttoGespeichert, "netto", satz) === rund2(betrag)) return bruttoGespeichert;
-  return rund2(betrag * (1 + satz));
-};
+export const umsatzAusEingabe = (betrag, basis, satz) => (basis === "netto" ? rund2(betrag * (1 + satz)) : betrag);
 // Strecke von „alle Kosten offen“ (links, 0 %) bis Monatsende (rechts): Lage von heute und null in Prozent; bringt = was ein Beispielumsatz übrig lässt.
 // Lauf 6 (P1 B1): der Tag der „null“-Marke kommt aus monatsZiel (mz.nullAm), nie aus dem Tagesstand (z.nullTag) – ohne mz keine Beschriftung.
 export function zaehlerStrecke(z, beispiel = 1000, mz = null) {

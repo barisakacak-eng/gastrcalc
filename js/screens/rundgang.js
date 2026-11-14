@@ -6,8 +6,7 @@
 // ohne eigenes Rezept vorher über das Fenster „Achtung Chef …“. Station 16 lässt sich nicht überspringen oder schließen.
 import { t, sprache, mengenText } from "../i18n.js";
 import { esc } from "../util.js";
-import { mascotMarkup } from "../gastrocash-brand.js";
-import { zekiSpielen, zekiAbgang, folgeVorladen, zekiStopp } from "../zeki_figur.js";
+import { mascotMarkup, zekiSpielen } from "../gastrocash-brand.js";
 import { zekiFragenFuer } from "../data/zeki_fragen.js";
 
 const M = (k, ...a) => t("rundgang.mitmach." + k, ...a);
@@ -74,7 +73,6 @@ export function rundgangStarten(d, rueck = {}) {
   huelle = doc.createElement("div");
   huelle.setAttribute("class", "rg-huelle rg-mitmach"); huelle.setAttribute("role", "dialog"); huelle.setAttribute("aria-modal", "true"); huelle.setAttribute("aria-label", M("titel"));
   doc.body.appendChild(huelle); doc.body.classList.add("rg-aktiv");
-  for (const f of doc.querySelectorAll(".gc-buehne .gc-figur")) zekiStopp(f); // er tritt vor: die Bühnen-Figur ruht (nur eine Folge gleichzeitig)
   doc.addEventListener("click", klick, true);
   startZeit = Date.now();
   api.log?.({ art: "rundgang", inhalt: "start", station: MITMACH_REIHE[pos] });
@@ -167,7 +165,7 @@ function stationFertig(still = false) {
   huelle.querySelector(".rg-blase p")?.replaceChildren(lobText);
   if (schritt?.beispiel === "beleg") huelle.querySelector(".rg-blase")?.insertAdjacentHTML("beforeend", `<div class="rg-beleg" aria-hidden="true"><b>${esc(M("beispiel"))}</b><i></i><i></i><i></i><i></i></div>`);
   huelle.querySelector(".rg-fuss")?.setAttribute("hidden", "");
-  zeki("zwinkern"); // Lob: eine einzelne kurze Bewegung
+  zeki(pos % 2 ? "freuen" : "nicken");
   setTimeout(() => { if (meins === laeuft) naechsteStation(); }, schritt?.beispiel ? 1500 : 850);
 }
 
@@ -224,7 +222,7 @@ function zeigen(karte, r) {
   const dx = (r.left + r.right) / 2 - (z.left + z.right) / 2, dy = (r.top + r.bottom) / 2 - (z.top + z.bottom) / 2;
   zeki(Math.abs(dy) > Math.abs(dx) ? (dy < 0 ? "zeigen-oben" : "zeigen-unten") : dx > 0 ? "zeigen-rechts" : "zeigen-links");
 }
-function zeki(bewegung) { const el = huelle?.querySelector(".rg-zeki [data-zeki-vorn]"); if (el) zekiSpielen(el, bewegung); } // eine Folge gleichzeitig; „Bewegung reduzieren“: Standbild
+function zeki(bewegung) { const el = huelle?.querySelector(".rg-zeki"); if (el) zekiSpielen(el, bewegung); }
 
 // Station 0: zwei Blasen, groß in der Mitte, ohne Lichtkegel
 function blasen(liste, i) {
@@ -238,8 +236,7 @@ function blasen(liste, i) {
   huelle.querySelector('[data-rg="ueberspringen"]').addEventListener("click", ueberspringen);
   huelle.querySelector('[data-rg="weiter"]').addEventListener("click", () => { if (meins !== laeuft) return; if (i + 1 < liste.length) blasen(liste, i + 1); else naechsteStation(); });
   huelle.querySelector('[data-rg="weiter"]').focus();
-  zeki(i ? "hand" : "auftreten"); // erste Karte: Zeki tritt vor
-  if (!i) folgeVorladen(huelle, "abgehen"); // schon jetzt laden, damit er am Ende abgehen kann
+  zeki(i ? "zwinkern" : "winken");
 }
 
 // Station 15: „Chef, alles verstanden?“ Ja / Nochmal / Frage
@@ -350,7 +347,6 @@ function schliessen() {
   const dauer = Math.round((Date.now() - startZeit) / 1000);
   api.log?.({ art: "rundgang", inhalt: ergebnis, dauer });
   doc.removeEventListener("click", klick, true);
-  zekiAbgang(huelle?.querySelector(".rg-zeki [data-zeki-vorn]")); // Zeki geht ab (loser Nachlauf, wenn die Folge geladen ist)
   huelle?.remove(); huelle = null; doc.body.classList.remove("rg-aktiv");
   api.ende?.(ergebnis);
 }

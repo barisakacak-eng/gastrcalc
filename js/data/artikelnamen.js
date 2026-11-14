@@ -1,4 +1,4 @@
-import { DATEN } from "../sprachdaten.js"; // 27.10.2026: 15 weitere Sprachen (namen_mehr.js, kommt im Browser erst mit der gewählten Sprache)
+import { NAMEN_MEHR, GERICHT_TR_EN } from "./namen_mehr.js"; // 27.10.2026: 15 weitere Sprachen
 import { MENUE_GERICHTE, MENUE_ARTIKEL } from "./burger_ergaenzung.js";
 // Paket 6 (17.10.2026): Anzeige-Übersetzung der Katalog-Artikelnamen (Türkisch, Englisch).
 // Gespeichert, gerechnet und exportiert wird IMMER der deutsche Katalogname (Rezepte, Amt, Steuerberater) – übersetzt wird nur die Anzeige.
@@ -613,7 +613,7 @@ export function mengenName(name, sprache) {
 export function artikelAnzeige(name, sprache) {
   if (!name || !sprache || sprache === "de") return name;
   const e = ARTIKELNAMEN[name] || MENUE_GERICHTNAMEN[name];
-  return e?.[sprache] || DATEN.NAMEN_MEHR[sprache]?.[name] || e?.en || name;
+  return e?.[sprache] || NAMEN_MEHR[sprache]?.[name] || e?.en || name;
 }
 
 // Gericht-Vorlagen (Perfektionswoche 24.10.2026): Anzeige im Vorlagen-Wähler; das Gericht bekommt beim Anlegen den Namen in der
@@ -656,5 +656,5 @@ for (const [n, e] of Object.entries(MENUE_GERICHTNAMEN)) GERICHTNAMEN[n] ??= e; 
 export function gerichtAnzeige(name, sprache) {
   if (!name || !sprache || sprache === "de") return name;
   const e = GERICHTNAMEN[name];
-  return e?.[sprache] || DATEN.NAMEN_MEHR[sprache]?.[name] || DATEN.GERICHT_TR_EN[sprache]?.[name] || e?.en || DATEN.GERICHT_TR_EN.en?.[name] || name;
+  return e?.[sprache] || NAMEN_MEHR[sprache]?.[name] || GERICHT_TR_EN[sprache]?.[name] || e?.en || GERICHT_TR_EN.en?.[name] || name;
 }

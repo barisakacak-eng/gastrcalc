@@ -1,31 +1,29 @@
 // Sprachtabelle. Deutsch ist die Leitsprache; fehlt ein Schlüssel in einer Sprache, fällt die App auf Deutsch zurück.
 import de from "./lang/de.js";
-import { sprachdatenLaden } from "./sprachdaten.js";
-import { imBrowser } from "./adapter/umgebung.js";
+import tr from "./lang/tr.js";
+import en from "./lang/en.js";
 import { artikelAnzeige, gerichtAnzeige, mengenName } from "./data/artikelnamen.js";
 import { fuelleRegeln } from "./regeltext.js";
 import { sprachAttribute } from "./adapter/seite.js";
 
-// Deutsch ist immer da (Leitsprache und Rückfall). Jede andere Sprache – auch Türkisch und Englisch – wird im Browser erst geladen,
-// wenn jemand sie wählt (ladeSprache); in Node (Tests, Werkzeuge) sind Türkisch und Englisch nach dem Import sofort da.
-const TABELLEN = { de };
+// Deutsch, Türkisch, Englisch sind immer da (Leitsprache + mehrsprachige Hinweise beim Müll). Alle anderen werden erst geladen,
+// wenn jemand sie wählt.
+const TABELLEN = { de, tr, en };
 export const SPRACH_NAMEN = { de: "Deutsch", tr: "Türkçe", en: "English", ar: "العربية", fa: "فارسی", ku: "Kurdî (Kurmancî)", pl: "Polski", ro: "Română", bg: "Български",
   ru: "Русский", uk: "Українська", sq: "Shqip", bs: "Bosanski · Hrvatski · Srpski", el: "Ελληνικά", it: "Italiano", es: "Español", fr: "Français", vi: "Tiếng Việt" };
-const WEITERE = ["ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
-const NACHLADBAR = ["tr", "en", ...WEITERE];
-export const SPRACHEN = ["de", "tr", "en", ...WEITERE];
+const NACHLADBAR = ["ar", "fa", "ku", "pl", "ro", "bg", "ru", "uk", "sq", "bs", "el", "it", "es", "fr", "vi"];
+export const SPRACHEN = ["de", "tr", "en", ...NACHLADBAR];
 export const RTL = new Set(["ar", "fa"]);
 // Masterauftrag „Gehirn“ 0.6: Sprachen ohne vollständige Prüfung tragen „Beta“ (de führend, tr/en vollständig gepflegt).
 // Kein Muttersprachler hat bisher gegengelesen – das steht im Projektstand, nicht hier.
-const SPRACHE_BETA = new Set(WEITERE);
+const SPRACHE_BETA = new Set(NACHLADBAR);
 export const spracheName = (c) => (SPRACH_NAMEN[c] || c) + (SPRACHE_BETA.has(c) ? " · Beta" : "");
 let aktiv = "de";
 export const spracheGeladen = (c) => !!TABELLEN[c];
 export async function ladeSprache(code) {
-  if (!TABELLEN[code] && NACHLADBAR.includes(code)) { try { TABELLEN[code] = (await import(`./lang/${code}.js`)).default; await sprachdatenLaden(code); } catch (e) { delete TABELLEN[code]; console.warn("Sprache", code, e); } }
+  if (!TABELLEN[code] && NACHLADBAR.includes(code)) { try { TABELLEN[code] = (await import(`./lang/${code}.js`)).default; } catch (e) { console.warn("Sprache", code, e); } }
   return !!TABELLEN[code];
 }
-if (!imBrowser) for (const c of ["tr", "en"]) await ladeSprache(c);
 // Setzt die Sprache. Ist sie noch nicht geladen, wird sie geladen und danach `danach()` aufgerufen (neu zeichnen).
 export function setzeSprache(code, danach) {
   if (!SPRACHEN.includes(code)) code = "de";

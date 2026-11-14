@@ -39,8 +39,8 @@ async def pruefe_nutzen(pg, art, lang, width, out, pruefe_heute):
                 assert await karte.locator('.h-nutzen-summe').inner_text()==wert
                 # Lauf 5 (L15b Standard, Baris 11.11.): im Laden nur Symbol und Summe – geschätzte Posten stehen nicht mehr im Laden
                 assert await karte.locator('.h-nutzen-geschaetzt').count()==0
-            # Neues Aussehen: Zekis Stimmung hängt nicht mehr am Nutzen (keine Puppe .gc-bot mehr); er steht als EIN Bild in der Bühne (Haltung je Tageszeit)
-            assert await pg.locator('.zeki-knopf .gc-figur img.gc-zeki').count()==1 and await pg.locator('.gc-bot').count()==0
+            state='freundlich' if erwartung['summe']>0 else 'neutral'
+            assert await pg.locator('.zeki-knopf .gc-bot--'+state+'.gc-motion--none').count()==1
             assert await karte.locator('button,a,input').count()==0,"Nutzenkarte führt keine zweite Hauptaktion ein"
             grenzen=await karte.evaluate("""k=>({unten:k.getBoundingClientRect().bottom,nav:document.querySelector('.tableiste').getBoundingClientRect().top,scroll:document.documentElement.scrollHeight,viewport:innerHeight})""")
             assert grenzen['unten']<=grenzen['nav'] and grenzen['scroll']<=grenzen['viewport'],(fall,grenzen)

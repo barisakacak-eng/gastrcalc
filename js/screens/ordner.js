@@ -72,12 +72,11 @@ const vorschauBlatt = () => !vorschauHtml ? "" : `<div class="b-vorschau" role="
     <iframe class="b-vorschau-dok" title="${esc(t("ordner.knopf.vorschau"))}" srcdoc="${esc(vorschauHtml)}"></iframe></div>`;
 
 function kopfOrdner(stand, art, symbol, unter) {
-  // Titel und Unterzeile wandern in die Bühne (kopfband, buehne_dom.js); das Symbol steht dort nicht mehr
-  return `<div class="kopfband b-ordnerkopf"><h1>${esc(t(`ordner.${art}.titel`))}</h1><p class="unter">${esc(stand.betrieb?.name || t("menue.deinLaden"))} · ${esc(unter)}</p></div>`;
+  return `<div class="b-ordnerkopf"><span class="b-ks ${art}">${bsym(symbol)}</span><div><b>${esc(t(`ordner.${art}.titel`))}</b><small>${esc(stand.betrieb?.name || t("menue.deinLaden"))} · ${esc(unter)}</small></div></div>`;
 }
 function standKarte(von, gesamt, hinweis, allesDa = t("ordner.allesDa")) {
   const fertig = gesamt > 0 && von === gesamt;
-  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: fertig ? "var(--salbei)" : "var(--holz-tief)", text: true })}<div><b>${esc(!gesamt ? t("ordner.leer") : fertig ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
+  return `<div class="karte b-stand">${ring(gesamt ? von / gesamt * 100 : 0, { groesse: 54, dicke: 6, farbe: fertig ? "var(--eigen)" : "var(--glut)", text: true })}<div><b>${esc(!gesamt ? t("ordner.leer") : fertig ? allesDa : t("ordner.standVon", von, gesamt))}</b>${hinweis ? `<small>${esc(hinweis)}</small>` : ""}</div></div>`;
 }
 
 // Paket C: was der Inhaber selbst beilegt – steht auch im Dokument im ersten Abschnitt „Inhalt und Beilagen“
@@ -113,7 +112,7 @@ export function ordnerAmtView(stand) {
         ${inhaltZeile("trash-2", t("amtW2.muellTitel"), amtUnter("muell", o.teile.muell), "info")}
       </div>
       ${beilagenKarte("amt")}
-      ${vorschauHtml ? "" : knoepfe()}
+      ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
 
@@ -132,7 +131,7 @@ export function ordnerPaketView(stand, art) {
       <div class="karte b-liste">${p.teile.map((teil) => inhaltZeile(TEIL_SYM[teil], teil === "arbeitszeiten" ? t("w3b.az.titel") : t("ordner.teil." + teil), paketUnter(teil, p), p.stand[teil], { teil, csv: true })).join("")}</div>
       ${art === "steuer" ? fragenKarte(stand) : ""}
       ${beilagenKarte(art, stand, z.monat)}
-      ${vorschauHtml ? "" : knoepfe()}
+      ${knoepfe()}
     </div>${vorschauBlatt()}</div>`;
 }
 

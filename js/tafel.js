@@ -206,7 +206,7 @@ body{background:${farben.tinte};color:${farben.weiss};font-family:system-ui,-app
 .spalten{display:-webkit-box;display:flex;height:42.5rem;padding-top:1.5rem}.spalte{-webkit-box-flex:1;flex:1 1 0;min-width:0;padding:0 1.5rem}.spalte{max-width:60rem}.spalte+.spalte{border-left:.15rem solid ${farben.lehm}}
 [dir=rtl] .spalte+.spalte{border-left:0;border-right:.15rem solid ${farben.lehm}}
 .spalte h2{font-size:2.6rem;color:${farben.holz};font-weight:800;margin-bottom:.8rem}
-.zeile{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;height:6.1rem;border-bottom:.1rem solid rgba(245,237,226,.18)}
+.zeile{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;height:6.1rem;border-bottom:.1rem solid rgba(255,253,248,.18)}
 .zeile img,.zeile .ohne{width:7.2rem;height:5.4rem;border-radius:.8rem;-o-object-fit:cover;object-fit:cover;background:${farben.papier};-webkit-box-flex:0;flex:none}
 .zeile .name{-webkit-box-flex:1;flex:1 1 auto;min-width:0;font-size:2.35rem;font-weight:700;line-height:1.15;padding:0 1.4rem;overflow:hidden}
 .zeile .menge{display:block;font-size:1.7rem;font-weight:600;color:${farben.holz}}
@@ -222,9 +222,9 @@ body{background:${farben.tinte};color:${farben.weiss};font-family:system-ui,-app
 .fuss{position:absolute;left:3.5rem;right:3.5rem;bottom:1.6rem;font-size:1.45rem;color:${farben.holz};display:-webkit-box;display:flex;-webkit-box-pack:justify;justify-content:space-between}
 .beispiel{color:${farben.gelbHell};font-weight:800}.leer{font-size:3rem;padding-top:10rem;text-align:center}`;
 // Farben aus css/tokens.css – fest übernommen, weil die Datei ohne die App läuft.
-// Die sechs Farben von Salbei & Papier. Kontrast (WCAG): Papier auf Tinte 12:1; Holz auf Tinte 10:1; Glut (Preise) auf Tinte 5,2:1; Salbei auf Papier 4,9:1.
-const TAFEL_FARBEN = { tinte: "#22301F", tinteDunkel: "#22301F", tinteWeich: "#4C6B55", weiss: "#F5EDE2", salbeiTief: "#22301F", holz: "#E2CDB2", holzTief: "#E2CDB2",
-  lehm: "#4C6B55", glut: "#E8763A", papier: "#F5EDE2", kupferDunkel: "#4C6B55", gelbHell: "#E8763A" };
+// Kontrast (WCAG): Weiß auf Salbei-tief 10,6:1; Preis-Gelb (Kurve Prognose) auf Salbei-tief 8,5:1; Kupfer-dunkel auf Papier 6,3:1.
+const TAFEL_FARBEN = { tinte: "#1F2A24", tinteDunkel: "#1F2A24", tinteWeich: "#55604F", weiss: "#FFFDF8", salbeiTief: "#2E4034", holz: "#DDC9AD", holzTief: "#C9A87C",
+  lehm: "#78583F", glut: "#C97A3E", papier: "#F5EBDD", kupferDunkel: "#8A4C20", gelbHell: "#F6D686" };
 
 // Seitenwechsel, Ablauf der Aktionen, Vollbild per Tipp. ES5 für alte Fernseh-Browser. Der Text von tafelAktionSichtbar wird eingesetzt.
 const SKRIPT = (sichtbar) => `(function(){var sichtbar=${sichtbar};var T=document.getElementById("tafel");var sek=Number(T.getAttribute("data-sekunden"))||12;var i=0;

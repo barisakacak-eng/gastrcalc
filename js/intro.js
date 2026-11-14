@@ -1,17 +1,15 @@
 // Zeki-Auftritt beim App-Start. Nur Anzeige, keine Rechen- oder Speicherlogik.
-// Ablauf: Zeki tritt vor die Bühne (Folge „auftreten“, ganze Figur über der Bühnen-Figur, die solange leer ist), „Hallo, Chef!“ steht in der Bühne neben ihm,
-// danach tritt er zurück hinter die Kante und die ruhende Bühnen-Figur steht wieder da. Keine Sprechblase.
+// Ablauf: 0–1,0 s Zeki läuft am Kopfplatz herein · 1,0–2,3 s er winkt, unter dem Logo steht klein „Hallo, Chef!“ · danach Ruhe.
 // Höchstens einmal pro App-Start (sessionStorage), nie bei „reduzierte Bewegung“, jeder Tipp beendet ihn sofort.
-// Er fängt keine Eingaben ab (pointer-events: none): Die Seite ist von der ersten Sekunde an bedienbar.
-import { zekiSpielen, zekiStopp, vornHtml } from "./zeki_figur.js";
+// Er fängt keine Eingaben ab: Die Seite ist von der ersten Sekunde an bedienbar.
+import { zekiSpielen } from "./gastrocash-brand.js";
 import { t } from "./i18n.js";
 
 // SCHALTER: false = Auftritt ganz aus. (Häufigkeit ist noch offen – hier stellt Baris es um.)
 export const INTRO_AN = true;
 export const INTRO_SCHLUESSEL = "gastrocash-intro-gesehen";
-export const INTRO_AUFTRETEN_MS = 2400; // Dauer der Folge „auftreten“ (assets/brand/zeki/ablauf.json)
-export const INTRO_ZURUECK_MS = 300;    // Zeki tritt hinter die Kante zurück (CSS .zeki-intro.hinein)
-export const INTRO_GRUSS_AB_MS = 1200;  // ab hier steht „Hallo, Chef!“
+export const INTRO_AUFTRETEN_MS = 1000;
+export const INTRO_WINKEN_MS = 1300; // 1,0 s + 1,3 s = 2,3 s; Gesamtdauer inkl. Aufräumen bleibt unter 2,5 s
 
 // Reine Entscheidung (testbar): läuft der Auftritt jetzt?
 export function introErlaubt({ an = INTRO_AN, reduziert = false, gesehen = false } = {}) {
@@ -33,33 +31,22 @@ export function introStarten(doc = document, { speicher, an = INTRO_AN } = {}) {
   const knopf = doc.querySelector(".appleiste.ebene-kopf.laden .zeki-knopf, .appleiste.ebene-kopf .zeki-knopf");
   const leiste = knopf?.closest(".appleiste");
   if (!knopf || !leiste || leiste.classList.contains("spricht")) return false; // spricht Zeki schon einen Satz, kein Auftritt
-  const r = knopf.getBoundingClientRect(); if (!(r.width > 1 && r.height > 1)) return false;
   gestartet = true; introMerken(sp);
-  let aus = false; const zeiten = []; let lauf = null;
-  const huelle = doc.createElement("div"); huelle.setAttribute("class", "zeki-intro"); huelle.setAttribute("aria-hidden", "true");
-  if (knopf.querySelector(".gc-figur[data-gespiegelt]")) huelle.setAttribute("data-gespiegelt", "1"); // Arabisch, Persisch: wie die Bühne gespiegelt
-  huelle.style.cssText = `left:${Math.round(r.left)}px;top:${Math.round(r.top)}px;width:${Math.round(r.width)}px`;
-  huelle.innerHTML = vornHtml({ miene: "hilfe" });
-  const text = leiste.querySelector(".gc-buehne-text");
-  let gruss = null;
+  let aus = false; const zeiten = [];
+  const gruss = doc.createElement("span"); gruss.setAttribute("class", "intro-gruss"); gruss.setAttribute("aria-hidden", "true"); gruss.textContent = t("heute.introGruss");
   const ende = () => {
-    if (aus) return; aus = true; zeiten.forEach(clearTimeout); lauf?.abbrechen?.();
+    if (aus) return; aus = true; zeiten.forEach(clearTimeout);
     doc.removeEventListener("pointerdown", ende, true); doc.removeEventListener("keydown", ende, true);
-    gruss?.remove(); leiste.classList.remove("gc-spricht-kurz"); huelle.remove();
+    gruss.remove(); if (knopf.isConnected) zekiSpielen(knopf, "none"); // beendet die laufende Bewegung sofort
   };
   doc.addEventListener("pointerdown", ende, true); doc.addEventListener("keydown", ende, true); // nur lauschen, nichts abfangen
-  doc.body.appendChild(huelle); zekiStopp(knopf.querySelector(".gc-figur")); // die Bühnen-Figur ruht, solange er vorn steht
-  lauf = zekiSpielen(huelle.querySelector("[data-zeki-vorn]"), "auftreten");
-  if (!lauf) { ende(); return false; }
-  zeiten.push(setTimeout(() => { // Gruß: eine Zeile in der Bühne neben Zeki
-    if (aus || !text) return;
-    gruss = doc.createElement("div"); gruss.setAttribute("class", "zeki-stimme"); gruss.setAttribute("aria-hidden", "true");
-    const p = doc.createElement("p"); p.setAttribute("class", "zeki-sprech"); p.textContent = t("heute.introGruss"); gruss.append(p);
-    text.append(gruss); leiste.classList.add("gc-spricht-kurz");
-  }, INTRO_GRUSS_AB_MS));
-  lauf.fertig.then((g) => {
-    if (aus) return; if (g !== "ende") return ende();
-    huelle.classList.add("hinein"); zeiten.push(setTimeout(ende, INTRO_ZURUECK_MS + 50)); // zurück hinter die Kante
-  });
+  { knopf.classList.add("einlauf"); zeiten.push(setTimeout(() => knopf.classList.remove("einlauf"), INTRO_AUFTRETEN_MS + 50)); } // P6 (3): Einlauf von rechts
+  zekiSpielen(knopf, "auftreten", INTRO_AUFTRETEN_MS);
+  zeiten.push(setTimeout(() => {
+    if (aus || !knopf.isConnected) return ende();
+    gruss.style.setProperty("--intro-gruss-dauer", INTRO_WINKEN_MS + "ms"); leiste.append(gruss); zekiSpielen(knopf, "winken", INTRO_WINKEN_MS);
+  }, INTRO_AUFTRETEN_MS));
+  zeiten.push(setTimeout(ende, INTRO_AUFTRETEN_MS + INTRO_WINKEN_MS + 100));
   return true;
 }
+// nur für Tests

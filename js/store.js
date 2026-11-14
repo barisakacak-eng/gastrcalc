@@ -136,7 +136,6 @@ export async function laden() {
   try {
     if (typeof indexedDB === "undefined") throw Object.assign(new Error("ohne IndexedDB"), { ohne: true });
     db = await openDb();
-    await rueckholAltLoeschen(); // Lauf 6, E11 (B4): Punkt älter als 7 Tage fällt beim Start weg
     return await standLesen();
   } catch (e) {
     if (e.grund === "neuer") throw e;
@@ -244,8 +243,8 @@ function kurzHash(str) { let h = 5381; for (let i = 0; i < str.length; i++) h = 
 function ergaenze(ziel, vorlage) {
   for (const k of Object.keys(vorlage)) {
     const v = vorlage[k];
-    if (Array.isArray(v)) { if (!Array.isArray(ziel[k])) { if (ziel[k] !== undefined && ziel[k] !== null) zaehleUngueltig(); ziel[k] = []; } } // Lauf 6, E11 (C3): eine Liste, die durch Objekt oder Text ersetzt wurde, zählt als ungültig (bericht.ungueltig)
-    else if (istObjekt(v)) { if (!istObjekt(ziel[k])) { if (ziel[k] !== undefined && ziel[k] !== null) zaehleUngueltig(); ziel[k] = {}; } ergaenze(ziel[k], v); }
+    if (Array.isArray(v)) { if (!Array.isArray(ziel[k])) ziel[k] = []; }
+    else if (istObjekt(v)) { if (!istObjekt(ziel[k])) ziel[k] = {}; ergaenze(ziel[k], v); }
     else if (ziel[k] === undefined) ziel[k] = v;
   }
   return ziel;
@@ -262,23 +261,6 @@ function eindeutigeIds(liste, vor) {
   });
 }
 const mitId = (liste) => liste.filter(zaehlt((e) => istObjekt(e) && typeof e.id === "string"));
-
-// Namen von Gerichten und Waren höchstens 80 Zeichen (wie der Ladenname): länger → gekürzt und gezählt. Der Name einer Ware ist ihr Schlüssel: bleibt er eindeutig (Zusatz „~2“) und
-// Zutaten und Inventuren, die ihn nennen, folgen. Kürzere Namen bleiben unverändert (dasselbe Objekt).
-const NAME_MAX = 80;
-function namenKuerzen(s) {
-  if (s.gerichte.some((g) => typeof g.name === "string" && g.name.length > NAME_MAX)) s.gerichte = s.gerichte.map((g) => { if (typeof g.name === "string" && g.name.length > NAME_MAX) { zaehleUngueltig(); return { ...g, name: g.name.slice(0, NAME_MAX) }; } return g; });
-  if (!s.artikel.some((a) => typeof a.name === "string" && a.name.length > NAME_MAX)) return;
-  const benutzt = new Set(s.artikel.filter((a) => a.name.length <= NAME_MAX).map((a) => a.name)); const umbenannt = new Map();
-  s.artikel = s.artikel.map((a) => {
-    if (a.name.length <= NAME_MAX) return a; zaehleUngueltig();
-    let n = a.name.slice(0, NAME_MAX); for (let i = 2; benutzt.has(n); i++) n = a.name.slice(0, NAME_MAX - 1 - String(i).length) + "~" + i;
-    benutzt.add(n); if (!umbenannt.has(a.name)) umbenannt.set(a.name, n); return { ...a, name: n };
-  });
-  const neuer = (n) => (umbenannt.has(n) ? umbenannt.get(n) : n);
-  s.gerichte = s.gerichte.map((g) => (g.zutaten.some((z) => umbenannt.has(z.name)) ? { ...g, zutaten: g.zutaten.map((z) => (umbenannt.has(z.name) ? { ...z, name: neuer(z.name) } : z)) } : g));
-  s.inventuren = s.inventuren.map((i) => ({ ...i, posten: Object.fromEntries(Object.entries(i.posten).map(([n, m]) => [neuer(n), m])), ausgeblendet: i.ausgeblendet.map(neuer) }));
-}
 
 // Ein einzelner Betrieb (Schema 1, 2 oder 3) wird geprüft und vervollständigt.
 export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stammt aus Schema ≤ 3
@@ -365,16 +347,11 @@ export function migrierenBetrieb(s, { alt = false } = {}) { // alt: Betrieb stam
   // W2-D (Schema 6): Putz-Nachweis und Belehrungen – jeder Eintrag braucht eine eigene Kennung (bis Schema 5 trugen „storniert“ und
   // „neu eingetragen“ am selben Tag dieselbe Kennung, beim Zusammenführen gewann dann das Storno). Fehlende oder doppelte Kennungen
   // werden aus dem Inhalt abgeleitet – auf jedem Handy gleich, damit dieselbe Belehrung nach dem Zusammenführen nicht doppelt steht.
-  namenKuerzen(s); // Lauf 6, E11 (C7): Namen von Gericht und Ware höchstens 80 Zeichen
   felderSauber(s, zaehleUngueltig); // Lauf 6, E5 (A1/C5): teamTage, lieferTage, abwesend, preisRunden, zekiLog, schichten, chef, liquiditaet grob prüfen; Rest bleibt unverändert
   s.putzlog = eindeutigeIds(s.putzlog.filter(istObjekt), "putz");
   s.belehrungen = eindeutigeIds(s.belehrungen.filter(istObjekt), "bel");
   if (s.putzplan !== null && !istObjekt(s.putzplan)) s.putzplan = null;
   for (const k of ["stammZeit", "abgleich"]) if (!istObjekt(s[k])) delete s[k];
-  if (s.feldZeit !== undefined) { // Lauf 6, E11 (B1): Änderungszeit je Feld – nur endliche Zahlen > 0; ohne gültigen Eintrag fällt das Feld weg (Zeit 0)
-    const z = {}; if (istObjekt(s.feldZeit)) for (const [p, t] of Object.entries(s.feldZeit)) if (p !== "__proto__" && typeof t === "number" && Number.isFinite(t) && t > 0 && t < 8.64e15) z[p] = t;
-    if (Object.keys(z).length) s.feldZeit = z; else delete s.feldZeit;
-  }
   delete s.stammH; // Fingerabdrücke liegen im Kopf des Speichers, nicht im Laden
   if (!istObjekt(s.abgleichHinweis)) delete s.abgleichHinweis;
   if (s.beispiel !== true) delete s.beispiel; // Beispiel-Laden: Merkmal bleibt beim Einlesen erhalten, nur echtes true
@@ -599,8 +576,7 @@ export function migrierenWurzel(w) {
     out.sprache = SPRACH_CODES.includes(w.sprache) ? w.sprache : null;
     const alt = Number(w.schema) < 4;
     const vor6 = Number(w.schema) < 5;
-    // Lauf 6, E11 (C6): Einträge, die kein Objekt sind, und Läden ohne Kennung werden nicht zu Phantom-Läden (jedes Einlesen hätte einen neuen angelegt), sondern gezählt
-    out.betriebe = w.betriebe.filter((b) => { const ok = istObjekt(b) && typeof b.id === "string" && b.id !== ""; if (!ok) zaehleUngueltig(); return ok; }).map((b) => { if (vor6 && !b.weg) b.weg = "genau"; const m = migrierenBetrieb(b, { alt }); zellenSnapshotSetzen(m); return m; }); // E11: Vergleichsstand für die Änderungszeit je Feld
+    out.betriebe = w.betriebe.map((b) => { if (vor6 && !b.weg) b.weg = "genau"; return migrierenBetrieb(b, { alt }); });
     out.aktiv = out.betriebe.some((b) => b.id === w.aktiv) ? w.aktiv : (out.betriebe[0]?.id ?? null);
     if (typeof w.geraet === "string" && w.geraet) out.geraet = w.geraet;
     out.lfd = Math.max(0, Number(w.lfd) || 0);
@@ -627,7 +603,7 @@ export function migrierenWurzel(w) {
   const b = migrierenBetrieb(w, { alt: true });
   const out = leereWurzel();
   out.sprache = SPRACH_CODES.includes(w.sprache) ? w.sprache : null;
-  out.betriebe = [b]; out.aktiv = b.id; zellenSnapshotSetzen(b);
+  out.betriebe = [b]; out.aktiv = b.id;
   return out;
 }
 
@@ -854,8 +830,7 @@ function bereicheStempeln(b, sid, texte) {
   for (const a of BEREICH_NAMEN) {
     const t = bereichText(b, a); if (BEREICHE[a].length === 1 && STAMM_SET.has(BEREICHE[a][0])) texte[BEREICHE[a][0]] = t;
     if (alt[a] === t && H[a] !== undefined) continue;
-    alt[a] = t; if (ZELLEN[a]) zellenNachziehen(b, [a]); // E11 (B1): geänderte Felder bekommen ihre Zeit
-    const h = hash(t); if (H[a] === h) continue;
+    alt[a] = t; const h = hash(t); if (H[a] === h) continue;
     neuH ??= { ...H }; const vorher = neuH[a]; neuH[a] = h;
     if (vorher !== undefined) { neuZ ??= { ...(istObjekt(b.stammZeit) ? b.stammZeit : {}) }; neuZ[a] = jetzt; }
   }
@@ -1254,7 +1229,6 @@ export async function exportDatei(wurzel, { mitAblage = true, passwort = null } 
 }
 async function exportDateiOffen(wurzel, { mitAblage = true } = {}) {
   await ereignis("export", { betriebe: wurzel.betriebe.length });
-  for (const b of wurzel.betriebe) zellenNachziehen(b); // E11 (B1): auch ungespeicherte Änderungen tragen ihre Zeit in der Datei
   const ereignisse = await alleEreignisse();
   // Stresstest 15.10.: einmal in Text, einmal in Bytes – Prüfsumme und Datei entstehen aus denselben Bytes
   const { bueroPin: _pin, pinSperre: _sperre, rettungPin: _rettung, ...ohneCode } = wurzel; // W2-S (p07 M3): der Büro-Code wandert nicht in die Sicherung (das Einlesen übernimmt ihn ohnehin nicht)
@@ -1369,22 +1343,8 @@ function stabil(x) {
   if (x && typeof x === "object") return "{" + Object.keys(x).filter((k) => x[k] !== undefined).sort().map((k) => JSON.stringify(k) + ":" + stabil(x[k])).join(",") + "}";
   return JSON.stringify(x ?? null);
 }
-// Lauf 6, E11 (A2): JEDES Feld, das ein Storno setzt, ist ein Kennzeichen (storniert, storniertZeit, storniertVon, …) und gehört nicht zum Inhalt – sonst gilt eine
-// Rücknahme auf dem anderen Handy als „anderer Inhalt“ (HACCP-Konflikt, Kopie, Haken bleibt erledigt).
-const istStornoFeld = (k) => typeof k === "string" && k.startsWith("storniert");
-const FLAGGEN_FIX = new Set(["importiert", "konfliktMit", "quelleVorher", "datumPruefen"]);
-const istFlagge = (k) => FLAGGEN_FIX.has(k) || istStornoFeld(k);
-function kern(e, ohneWert) { const o = {}; for (const k of Object.keys(e)) if (!istFlagge(k) && !(ohneWert && k === "wert")) o[k] = e[k]; return stabil(o); }
-// Storno beider Seiten zusammenführen: „storniert“ gewinnt immer; haben beide storniert, gilt die frühere Rücknahme (mit ihren Begleitfeldern) – auf beiden Handys dieselbe.
-function stornoVereinen(neu, alt, e) {
-  const sa = !!alt.storniert, se = !!e.storniert;
-  for (const k of Object.keys(neu)) if (istStornoFeld(k) && k !== "storniert") delete neu[k];
-  if (!sa && !se) return neu;
-  const felder = (x) => Object.fromEntries(Object.keys(x).filter((k) => istStornoFeld(k) && k !== "storniert" && x[k] !== undefined).map((k) => [k, x[k]]));
-  let q = sa ? alt : e;
-  if (sa && se) { const za = String(alt.storniertZeit ?? "~"), ze = String(e.storniertZeit ?? "~"); q = za !== ze ? (za < ze ? alt : e) : (stabil(felder(alt)) >= stabil(felder(e)) ? alt : e); }
-  Object.assign(neu, felder(q)); return neu;
-}
+const FLAGGEN = new Set(["storniert", "storniertZeit", "importiert", "konfliktMit", "quelleVorher", "datumPruefen"]);
+function kern(e, ohneWert) { const o = {}; for (const k of Object.keys(e)) if (!FLAGGEN.has(k) && !(ohneWert && k === "wert")) o[k] = e[k]; return stabil(o); }
 
 // Journale: Vereinigung nach Kennung, Kennzeichen (storniert, entfernt, archiviert) gewinnen immer.
 // schutz (HACCP): vorhandene lokale Einträge ändern sich nur über Kennzeichen (Storno, nachgetragener Wert); bericht zählt Konflikte und Zukunft.
@@ -1408,8 +1368,7 @@ function journalVereinigen(a, b, kennzeichen = ["storniert"], { schutz = false, 
       }
       const neu = { ...alt };
       for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
-      if (kennzeichen.includes("storniert")) stornoVereinen(neu, alt, e);
-      if (alt.datumPruefen || e.datumPruefen) neu.datumPruefen = true; // E11: das Merkmal „Datum prüfen“ geht nicht verloren und steht auf beiden Handys
+      if (!alt.storniertZeit && e.storniertZeit) neu.storniertZeit = e.storniertZeit;
       if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert; // nachgetragener Wert gewinnt über „offen"
       m.set(e.id, neu); continue;
     }
@@ -1423,221 +1382,118 @@ function vereinige(alt, e, kennzeichen) {
   const neu = { ...aelter, ...juenger };
   for (const k of kennzeichen) neu[k] = !!(alt[k] || e[k]);
   if (kennzeichen.includes("entfernt") && (alt.entfernt || e.entfernt)) { const q = alt.entfernt ? alt : e; neu.kuerzel = q.kuerzel; neu.aktiv = false; } // Pseudonym bleibt
-  if (kennzeichen.includes("storniert")) stornoVereinen(neu, alt, e);
-  if (alt.datumPruefen || e.datumPruefen) neu.datumPruefen = true;
+  if (alt.storniertZeit || e.storniertZeit) neu.storniertZeit = alt.storniertZeit || e.storniertZeit;
   if (alt.wert === null && typeof e.wert === "number") neu.wert = e.wert;
   if (typeof alt.wert === "number" && e.wert === null) neu.wert = alt.wert;
   return neu;
 }
 
-// ---------- Lauf 6, E11: Bereiche zusammenführen (A1, A3, B1) ----------
-// Grundsatz: zwei Handys kommen zum selben Ergebnis, egal wer zuerst einliest, und nichts geht still verloren.
-// 1) Stand der Gegenseite je QUELLE (Gerätekennung): `abgleich[bereich].quellen[geraet] = { h, eintraege, zeit }` = Fingerabdruck des Bereichs und je Eintrag,
-//    wie diese Quelle ihn beim letzten Einlesen hatte. „Quelle unverändert“ heißt hF === h; „dieses Handy unverändert“ heißt: es gleicht noch dem, was die Quelle hatte.
-//    (Bis Lauf 6 stand dort der Stand NACH dem Zusammenführen – das hielt eigene Änderungen für „der anderen Seite bekannt“, A1.) `quellen["*"]` ist der Stand beim Anlegen
-//    des Ladens aus einer Datei (Anfang): für Quellen, die dieses Handy noch nie eingelesen hat. Alte Läden kennen nur `zuletzt` („alt“): damit wird nichts gelöscht.
-// 2) Änderungszeit je Feld: `feldZeit[pfad] = ms` (Pfad = Feld, Kennung, Unterfeld, getrennt durch ZSEP), beim Speichern aus dem Inhalt gestempelt (kein Bildschirm muss etwas melden).
-//    Beim Zusammenführen gewinnt je Feld die spätere Zeit; bei gleicher Zeit die spätere Bereichszeit, danach der größere Wert (auf beiden Handys derselbe).
-//    Alte Daten ohne Zeit zählen als 0. Je Eintrag gilt zuerst der Vergleich mit dem Stand der Quelle (nur eine Seite geändert → die Änderung gilt, gelöscht und
-//    unverändert → gelöscht, gelöscht und geändert → bleibt mit Vermerk); haben beide geändert, wird je Feld entschieden.
-const ZSEP = "\u001f";
-const ZELLEN = {
-  kosten: { kosten: ["liste", "id"], kostenKategorienGeprueft: ["vereinigung"], team: ["objekt"] },
-  gerichte: { gerichte: ["liste", "id"], selbst: ["wert"], selbstAutoArt: ["wert"], adanaBrot: ["wert"] },
-  artikel: { artikel: ["liste", "name"] },
-  betrieb: { betrieb: ["objekt"], kanaele: ["objekt"], verkauf: ["objekt"], ladenArt: ["wert"] },
-  ladenArten: { ladenArten: ["wert"] },
-  kuehl: { kuehlstellen: ["liste", "id"], kuehl: ["objekt"] },
-  putzplan: { putzplan: ["wert"], putzplanSpaeter: ["wert"] },
-  personen: { personen: ["liste", "id"] },
-  lager: { lager: ["objekt"] },
-  kombis: { kassenKombis: ["liste", "id"] },
-  tafel: { tafel: ["objekt"] },
-  lieferanten: { lieferanten: ["liste", "id"] },
-};
-const ZELL_BEREICHE = Object.keys(ZELLEN);
-const FELD_ART = {}; for (const a of ZELL_BEREICHE) for (const [f, [art, key]] of Object.entries(ZELLEN[a])) FELD_ART[f] = { art, key, bereich: a };
-const LISTE_VON = Object.fromEntries(ZELL_BEREICHE.map((a) => [a, Object.entries(ZELLEN[a]).find(([, [art]]) => art === "liste")]).filter(([, e]) => e).map(([a, [f, [, key]]]) => [a, { feld: f, key }]));
-const schluesselVon = (a, e) => { const k = istObjekt(e) ? e[LISTE_VON[a].key] : null; return typeof k === "string" && k ? k : null; };
-const zeitZahl = (x) => (typeof x === "number" && Number.isFinite(x) && x > 0 ? x : 0);
-const feldArray = (x) => (Array.isArray(x) ? x : []);
-// Zellen eines Bereichs: Pfad → Fingerabdruck des Werts (Eintrags-Marker: null)
-function zellenVon(b, a) {
-  const m = new Map();
-  for (const [feld, [art, key]] of Object.entries(ZELLEN[a])) {
-    const v = b[feld];
-    if (art === "liste") { for (const e of feldArray(v)) { const k = schluesselVon(a, e); if (k === null) continue; m.set(feld + ZSEP + k, null); for (const f of Object.keys(e)) if (e[f] !== undefined) m.set(feld + ZSEP + k + ZSEP + f, hash(stabil(e[f]))); } }
-    else if (art === "objekt" && istObjekt(v)) { for (const f of Object.keys(v)) if (v[f] !== undefined) m.set(feld + ZSEP + f, hash(stabil(v[f]))); }
-    else if (v !== undefined) m.set(feld, hash(stabil(v)));
-  }
-  return m;
-}
-const zellSnap = new WeakMap(); // Laden → { bereich: Zellen beim letzten Speichern / Zusammenführen }
-function zellenSnapshotSetzen(b) { if (!istObjekt(b)) return; const s = {}; for (const a of ZELL_BEREICHE) s[a] = zellenVon(b, a); zellSnap.set(b, s); }
-// Geänderte Zellen stempeln (jetzt). Ohne Vergleichsstand (Laden neu angelegt, ersetzt) wird nur der Stand gemerkt.
-function zellenNachziehen(b, bereiche = ZELL_BEREICHE, jetzt = Date.now()) {
-  if (!istObjekt(b)) return; const snap = zellSnap.get(b);
-  if (!snap) { zellenSnapshotSetzen(b); return; }
-  for (const a of bereiche) {
-    const neu = zellenVon(b, a), alt = snap[a]; snap[a] = neu; if (!alt) continue;
-    let z = null; const frisch = () => (z ??= { ...(istObjekt(b.feldZeit) ? b.feldZeit : {}) });
-    for (const [p, h] of neu) if (h !== null && alt.get(p) !== h) frisch()[p] = jetzt;
-    for (const p of alt.keys()) {
-      if (neu.has(p)) continue; const t = p.split(ZSEP), f = FELD_ART[t[0]];
-      if (f?.art === "liste") { if (t.length === 3) { if (neu.has(t[0] + ZSEP + t[1])) frisch()[p] = jetzt; else if (istObjekt(b.feldZeit) && p in b.feldZeit) delete frisch()[p]; } }
-      else frisch()[p] = jetzt; // Feld entfernt: die Entfernung hat eine Zeit
-    }
-    if (z) b.feldZeit = z;
-  }
-}
-// Zeiten beider Seiten: je Pfad die spätere; nur Pfade, die es noch gibt; nichts, was älter als 200 Tage ist
-function zeitenVereinen(l, f, basis, jetzt) {
-  const out = {}; const grenze = jetzt - 200 * TAG_MS, kappe = jetzt + TAG_MS; const keys = {};
-  const lebt = (p) => {
-    const t = p.split(ZSEP), fa = FELD_ART[t[0]]; if (!fa) return false;
-    if (fa.art === "liste") { if (t.length < 2) return false; keys[t[0]] ??= new Set(feldArray(basis[t[0]]).map((e) => schluesselVon(fa.bereich, e))); return keys[t[0]].has(t[1]); }
-    if (fa.art === "objekt") return t.length === 1 ? true : istObjekt(basis[t[0]]);
-    return t.length === 1;
-  };
-  for (const p of new Set([...Object.keys(istObjekt(l) ? l : {}), ...Object.keys(istObjekt(f) ? f : {})])) {
-    if (p === "__proto__") continue; const t = Math.min(Math.max(zeitZahl(l?.[p]), zeitZahl(f?.[p])), kappe);
-    if (t > grenze && lebt(p)) out[p] = t;
-  }
-  return out;
-}
-
-// Der Stand dieser Quelle beim letzten Einlesen (oder der Anfang, oder – für alte Läden – nur der Fingerabdruck).
-function basisFuer(lokal, a, quelle) {
-  const ab = istObjekt(lokal.abgleich) ? lokal.abgleich[a] : null; if (!istObjekt(ab)) return null;
-  const qs = istObjekt(ab.quellen) ? ab.quellen : {}; const q = (quelle && qs[quelle]) || qs["*"];
-  if (istObjekt(q) && typeof q.h === "string") return { h: q.h, eintraege: istObjekt(q.eintraege) ? q.eintraege : null, zeit: zeitZahl(q.zeit), fz: zeitZahl(q.fz), art: quelle && qs[quelle] ? "quelle" : "anfang" };
-  if (typeof ab.zuletzt === "string") return { h: ab.zuletzt, eintraege: null, zeit: 0, fz: 0, art: "alt" };
-  return null;
-}
-// Welche Seite liefert einen Bereich? art sagt, WARUM: "gleich" | "bekannt" (die Quelle hat sich seit dem letzten Einlesen nicht geändert → dieses Handy) |
-// "lokalGleich" (dieses Handy gleicht noch dem, was die Quelle hatte; die Quelle ist neuer → fremd) | "beide" (beide geändert) | "zeit" (Quelle noch nie eingelesen:
-// der jüngere Zeitstempel des Bereichs, ohne Zeitstempel der jüngere Laden). Nur bei "beide" und "zeit" wird je Feld und Eintrag zusammengeführt und vermerkt.
-function bereichWahl(lokal, fremd, a, jetzt, base) {
+// Welche Seite liefert einen Bereich? 1) gleicher Inhalt → lokal. 2) Es gab schon einen Abgleich: kennt dieses Handy den fremden Stand schon →
+// lokal; hat sich lokal seitdem nichts geändert → fremd; beide geändert → lokal bleibt (beide: true, Hinweis im Büro).
+// 3) Noch kein Abgleich: der jüngere Zeitstempel des Bereichs (gekappt), ohne Zeitstempel der jüngere Laden (wie bis Schema 5).
+// Lauf 6, E5 (B1): art sagt, WARUM so gewählt wurde – "gleich" | "bekannt" (dieses Handy kennt den fremden Stand schon) | "lokalGleich" (lokal seit dem
+// letzten Abgleich unverändert, der fremde Stand ist neuer) | "beide" (beide Seiten geändert) | "zeit" (noch kein Abgleich: der jüngere Zeitstempel gewinnt).
+// Nur bei "beide" und "zeit" kann beim Wählen einer Seite etwas der anderen Seite verloren gehen – dort wird je Eintrag zusammengeführt und vermerkt.
+function bereichWahl(lokal, fremd, a, jetzt) {
   const hL = bereichHash(lokal, a), hF = bereichHash(fremd, a);
   if (hL === hF) return { q: "lokal", art: "gleich", hL, hF };
-  if (base) {
-    if (base.h === hF) return { q: "lokal", art: "bekannt", hL, hF };
-    if (base.h === hL && base.art !== "alt") return { q: "fremd", art: "lokalGleich", hL, hF };
+  const ab = istObjekt(lokal.abgleich) ? lokal.abgleich[a] : null;
+  if (istObjekt(ab) && typeof ab.zuletzt === "string") {
+    if (ab.zuletzt === hF || (Array.isArray(ab.bekannt) && ab.bekannt.includes(hF))) return { q: "lokal", art: "bekannt", hL, hF };
+    if (ab.zuletzt === hL) return { q: "fremd", art: "lokalGleich", hL, hF };
     return { q: "lokal", beide: true, art: "beide", hL, hF };
   }
   const tL = zeitKappen(lokal.stammZeit?.[a], jetzt), tF = zeitKappen(fremd.stammZeit?.[a], jetzt);
   if (tL || tF) return { q: tF > tL ? "fremd" : "lokal", art: "zeit", hL, hF };
   return { q: zeitKappen(fremd.geaendert, jetzt) >= zeitKappen(lokal.geaendert, jetzt) ? "fremd" : "lokal", art: "zeit", hL, hF };
 }
-function eintragHashes(a, b) {
-  const o = {}; if (!LISTE_VON[a]) return o;
-  for (const e of feldArray(b[LISTE_VON[a].feld])) { const k = schluesselVon(a, e); if (k !== null && !(k in o)) o[k] = hash(stabil(e)); }
-  return o;
+// Listen mit Kennung (Kühlstellen, Personen): Liste der gewählten Seite, dazu Einträge, die nur die andere Seite kennt; Kennzeichen gewinnen.
+// Kürzel ausgeschiedener Mitarbeiter: das Datum „ausgeschieden“ geht beim Zusammenführen nicht verloren (das frühere gilt).
+// Lieferanten: dieselbe Vereinigung für die Lieferanten – entfernt gewinnt, die Zeit der Entfernung bleibt (personen: false).
+function listeMitKennzeichen(sieger, verlierer, flag, { personen = flag === "entfernt" } = {}) {
+  const m = new Map(); for (const x of sieger || []) if (x && typeof x.id === "string") m.set(x.id, { ...x });
+  for (const x of verlierer || []) {
+    if (!x || typeof x.id !== "string") continue; const s = m.get(x.id);
+    if (!s) { m.set(x.id, { ...x }); continue; }
+    if (x[flag] && !s[flag]) { s[flag] = true; if (flag === "entfernt" && personen) { s.kuerzel = x.kuerzel; s.aktiv = false; } if (typeof x.entferntZeit === "string") s.entferntZeit = x.entferntZeit; }
+    if (personen && typeof x.ausgeschieden === "string" && (typeof s.ausgeschieden !== "string" || x.ausgeschieden < s.ausgeschieden)) s.ausgeschieden = x.ausgeschieden;
+  }
+  return [...m.values()];
 }
-function abgleichMerken(b, a, hF, { quelle = null, fremd = null, jetzt = Date.now(), anfang = false } = {}) {
+function abgleichMerken(b, a, hF) {
   const h = bereichHash(b, a); bereichVorgabe.set(b, { ...(bereichVorgabe.get(b) || {}), [a]: h }); // gilt beim nächsten Speichern als bekannt
   const alt = istObjekt(b.abgleich?.[a]) ? b.abgleich[a] : {};
   const bekannt = [...new Set([...(Array.isArray(alt.bekannt) ? alt.bekannt : []), ...(hF ? [hF] : []), h])].slice(-8);
-  const ein = LISTE_VON[a] ? eintragHashes(a, b) : null;
-  const qs = { ...(istObjekt(alt.quellen) ? alt.quellen : {}) };
-  if (anfang) { qs["*"] = { h, ...(ein ? { eintraege: ein } : {}), zeit: 0 }; if (quelle) qs[quelle] = qs["*"]; }
-  // zeit = Uhr dieses Handys beim Einlesen, fz = späteste Feldzeit der Quelle (deren Uhr): „die Quelle hat dieses Feld seitdem geändert“ heißt Feldzeit > fz – ohne Uhren zu vergleichen
-  else if (quelle && hF && istObjekt(fremd)) qs[quelle] = { h: hF, ...(LISTE_VON[a] ? { eintraege: eintragHashes(a, fremd) } : {}), zeit: jetzt, fz: Math.max(0, ...Object.values(istObjekt(fremd.feldZeit) ? fremd.feldZeit : {}).map(zeitZahl)) };
-  const namen = Object.keys(qs).filter((k) => k !== "*").sort((x, y) => zeitZahl(qs[y]?.zeit) - zeitZahl(qs[x]?.zeit)); for (const k of namen.slice(8)) delete qs[k]; // höchstens acht Quellen
-  b.abgleich = { ...(istObjekt(b.abgleich) ? b.abgleich : {}), [a]: { zuletzt: hF || (anfang || !alt.zuletzt ? h : alt.zuletzt), bekannt, ...(ein && (anfang || alt.eintraege) ? { eintraege: anfang ? ein : alt.eintraege } : {}), ...(Object.keys(qs).length ? { quellen: qs } : {}) } };
+  // Lauf 6, E5 (B1): Stand jedes Eintrags beim Abgleich (Kennung → Fingerabdruck) – damit der nächste Abgleich weiß, WER einen Eintrag geändert hat
+  const ein = EINTRAG_BEREICHE[a] ? eintragHashes(a, b) : null;
+  b.abgleich = { ...(istObjekt(b.abgleich) ? b.abgleich : {}), [a]: { zuletzt: h, bekannt, ...(ein ? { eintraege: ein } : {}) } };
+}
+// ---------- Lauf 6, E5 (B1): Stammdaten-Listen je Eintrag zusammenführen ----------
+// Bisher wählte bereichWahl je Bereich EINE Seite: A ändert den Preis von Gericht 1, B den von Gericht 2 → eine Änderung ging verloren.
+// Jetzt (bei „beide geändert“ und ohne bisherigen Abgleich): je Eintrag, mit dem Stand beim letzten Abgleich als Vergleich (3-Wege).
+//   nur auf einer Seite geändert → die Änderung gilt · auf beiden gleich → einmal · auf beiden verschieden → der Eintrag der gewählten Seite,
+//   PLUS Vermerk in bericht.eintraege (nie still überschreiben) · neu auf einer Seite → übernehmen · gelöscht auf einer Seite, auf der anderen unverändert → gelöscht;
+//   gelöscht, aber auf der anderen Seite geändert → bleibt (mit Vermerk). Schlüssel: gerichte und kosten = id, artikel = name (so führt die Engine sie).
+const EINTRAG_BEREICHE = { gerichte: { feld: "gerichte", schluessel: (e) => e.id }, artikel: { feld: "artikel", schluessel: (e) => e.name }, kosten: { feld: "kosten", schluessel: (e) => e.id } };
+const schluesselVon = (a, e) => { const k = istObjekt(e) ? EINTRAG_BEREICHE[a].schluessel(e) : null; return typeof k === "string" && k ? k : null; };
+function eintragHashes(a, b) {
+  const o = {}; for (const e of Array.isArray(b[EINTRAG_BEREICHE[a].feld]) ? b[EINTRAG_BEREICHE[a].feld] : []) { const k = schluesselVon(a, e); if (k !== null) o[k] = hash(stabil(e)); }
+  return o;
 }
 const kurzText = (x) => { const t = x === undefined ? "–" : typeof x === "string" ? x : JSON.stringify(x); return t.length > 40 ? t.slice(0, 39) + "…" : t; };
-// Entscheidung je Feld: spätere Zeit; gleiche Zeit → spätere Bereichszeit; sonst ein vorhandener Wert vor einem fehlenden, dann der größere Text (symmetrisch)
-function zelleWahl(vl, vf, tl, tf, tieL, tieF) {
-  if (tl !== tf) return tl > tf ? "lokal" : "fremd";
-  if (tieL !== tieF) return tieL > tieF ? "lokal" : "fremd";
-  if (vl === undefined) return "fremd"; if (vf === undefined) return "lokal";
-  return stabil(vl) >= stabil(vf) ? "lokal" : "fremd";
-}
-function zellenVerschmelzen(a, basis, lokal, fremd, { base, jetzt, bericht }) {
-  const kontakt = base ? base.zeit : 0; const zl = (p) => Math.min(zeitZahl(lokal.feldZeit?.[p]), jetzt + TAG_MS), zf = (p) => Math.min(zeitZahl(fremd.feldZeit?.[p]), jetzt + TAG_MS);
-  let tieL = Date.parse(zeitKappen(lokal.stammZeit?.[a], jetzt)) || 0, tieF = Date.parse(zeitKappen(fremd.stammZeit?.[a], jetzt)) || 0;
-  if (!tieL && !tieF) { tieL = Date.parse(zeitKappen(lokal.geaendert, jetzt)) || 0; tieF = Date.parse(zeitKappen(fremd.geaendert, jetzt)) || 0; } // Altdaten ohne Bereichszeit: der jüngere Laden
-  const fz = base ? base.fz : 0;
-  const bereichKonflikte = []; // Felder ohne Eintragskennung (team, betrieb, lager …): { pfad, vl, vf, gilt }
-  const wahl = (pfad, vl, vf, beideSicher) => { // → { wert, gilt, konflikt }
-    const tl = zl(pfad), tf = zf(pfad); const g = zelleWahl(vl, vf, tl, tf, tieL, tieF);
-    const konflikt = stabil(vl) !== stabil(vf) && ((tl > kontakt && tf > fz) || (tl === 0 && tf === 0 && beideSicher));
-    return { wert: g === "lokal" ? vl : vf, gilt: g, konflikt };
+// Die Felder, die sich unterscheiden, je Seite als kurzer Text (höchstens drei Felder, jedes höchstens 40 Zeichen)
+function unterschiedKurz(l, f, pfad = "", ausser = []) {
+  const aus = [];
+  const lauf = (x, y, p) => {
+    if (aus.length >= 3) return;
+    if (istObjekt(x) && istObjekt(y)) { for (const k of [...new Set([...Object.keys(x), ...Object.keys(y)])].sort()) if (!ausser.includes(k)) lauf(x[k], y[k], p ? p + "." + k : k); return; }
+    if (stabil(x) !== stabil(y)) aus.push([p || "wert", x, y]);
   };
-  const setzen = (ziel, f, v) => { if (v !== undefined) ziel[f] = structuredClone(v); };
-  for (const [feld, [art, key]] of Object.entries(ZELLEN[a])) {
-    const vL = lokal[feld], vF = fremd[feld];
-    if (vL === undefined && vF === undefined) { delete basis[feld]; continue; }
-    if (art === "vereinigung") { basis[feld] = [...new Set([...feldArray(vL), ...feldArray(vF)])]; continue; }
-    if (art === "wert" || (art === "objekt" && !istObjekt(vL) && !istObjekt(vF))) {
-      const r = wahl(feld, vL, vF, !base || base.h !== bereichHash(lokal, a)); if (r.wert === undefined) delete basis[feld]; else basis[feld] = structuredClone(r.wert);
-      if (r.konflikt) bereichKonflikte.push({ pfad: feld, vl: vL, vf: vF, gilt: r.gilt }); continue;
-    }
-    if (art === "objekt") {
-      const L = istObjekt(vL) ? vL : {}, F = istObjekt(vF) ? vF : {}, out = {};
-      for (const f of new Set([...Object.keys(L), ...Object.keys(F)])) {
-        if (f === "__proto__") continue;
-        if (feld === "betrieb" && f === "hinweise") { const h = hinweiseVereinigen(L.hinweise, F.hinweise); out.hinweise = h; continue; } // Vertrag Abschnitt 2: je Karte jüngste Zeit gewinnt
-        const r = wahl(feld + ZSEP + f, L[f], F[f], true); setzen(out, f, r.wert);
-        if (r.konflikt) bereichKonflikte.push({ pfad: feld + "." + f, vl: L[f], vf: F[f], gilt: r.gilt });
-      }
-      basis[feld] = out; continue;
-    }
-    // Liste mit Kennung (je Eintrag)
-    const L = feldArray(vL), F = feldArray(vF); const lm = new Map(), fm = new Map();
-    for (const e of L) { const k = schluesselVon(a, e); if (k !== null && !lm.has(k)) lm.set(k, e); }
-    for (const e of F) { const k = schluesselVon(a, e); if (k !== null && !fm.has(k)) fm.set(k, e); }
-    const ordnung = []; const gesehen = new Set();
-    for (const e of L) { const k = schluesselVon(a, e); if (k === null) ordnung.push([null, e]); else if (!gesehen.has(k)) { gesehen.add(k); ordnung.push([k, null]); } }
-    for (const e of F) { const k = schluesselVon(a, e); if (k !== null && !gesehen.has(k)) { gesehen.add(k); ordnung.push([k, null]); } }
-    const bE = base?.eintraege; const out = [];
-    const vermerk = (k, el, ef, behalten, art2, felder) => bericht.eintraege.push({ bereich: a, kennung: k, art: art2,
-      lokal: el === undefined ? "–" : felder.slice(0, 3).map((c) => `${c.f} ${kurzText(c.vl)}`).join(", "), fremd: ef === undefined ? "–" : felder.slice(0, 3).map((c) => `${c.f} ${kurzText(c.vf)}`).join(", "), behalten });
-    const ganz = (e) => Object.keys(e).filter((f) => e[f] !== undefined).map((f) => ({ f, vl: e[f], vf: e[f] }));
-    for (const [k, ohne] of ordnung) {
-      if (k === null) { out.push(structuredClone(ohne)); continue; }
-      const el = lm.get(k), ef = fm.get(k); let nimm;
-      const b0 = bE && Object.prototype.hasOwnProperty.call(bE, k) ? bE[k] : undefined; const hl = el && hash(stabil(el)), hf = ef && hash(stabil(ef));
-      if (el && ef) {
-        if (hl === hf) nimm = el;
-        else if (b0 !== undefined && hl === b0) nimm = ef;           // nur die Quelle hat geändert
-        else if (b0 !== undefined && hf === b0) nimm = el;           // nur dieses Handy hat geändert
-        else {                                                        // beide geändert (oder die Quelle ist neu): je Feld entscheiden
-          const e2 = {}; const konflikte = []; let gilt = 0;
-          for (const f of new Set([...Object.keys(el), ...Object.keys(ef)])) {
-            if (f === "__proto__") continue; const vl = el[f], vf = ef[f];
-            if (f === "entfernt" || f === "archiviert") { const v = !!(vl || vf); if (v || vl !== undefined || vf !== undefined) e2[f] = v; continue; } // Kennzeichen gewinnen immer
-            if (f === "ausgeschieden") { const s = [vl, vf].filter((x) => typeof x === "string").sort(); if (s.length) e2[f] = s[0]; continue; } // das frühere Datum gilt
-            if (f === "entferntZeit") continue; // unten, zusammen mit „entfernt“
-            const r = wahl(LISTE_VON[a].feld + ZSEP + k + ZSEP + f, vl, vf, true); setzen(e2, f, r.wert);
-            if (r.konflikt) { konflikte.push({ f, vl, vf }); gilt += r.gilt === "lokal" ? 1 : -1; }
-          }
-          if (e2.entfernt) { // wer entfernt wurde, bleibt entfernt (Pseudonym und Zeit der Entfernung von der Seite, die entfernt hat)
-            const seiten = [el, ef].filter((x) => x.entfernt); const z = seiten.map((x) => x.entferntZeit).filter((x) => typeof x === "string").sort(); if (z.length) e2.entferntZeit = z[0];
-            if (a === "personen") { const q = seiten.length === 1 ? seiten[0] : seiten.sort((x, y) => String(x.entferntZeit ?? "~").localeCompare(String(y.entferntZeit ?? "~")) || stabil(x).localeCompare(stabil(y)))[0]; e2.kuerzel = q.kuerzel; e2.aktiv = false; }
-          } else for (const x of [el, ef]) if (typeof x.entferntZeit === "string" && e2.entferntZeit === undefined) e2.entferntZeit = x.entferntZeit;
-          if (konflikte.length) vermerk(k, el, ef, gilt >= 0 ? "lokal" : "fremd", "verschieden", konflikte);
-          nimm = e2;
-        }
-      } else if (el || ef) {
-        const da = el || ef; const hda = el ? hl : hf; const seiteLokal = !!el;
-        if (b0 === undefined) nimm = da;                              // neu auf einer Seite
-        else if (hda === b0) nimm = null;                             // auf der anderen Seite gelöscht, hier unverändert → gelöscht
-        else { nimm = da; vermerk(k, seiteLokal ? el : undefined, seiteLokal ? undefined : ef, seiteLokal ? "lokal" : "fremd", "geloeschtGeaendert", ganz(da)); }
-      }
-      if (nimm) out.push(structuredClone(nimm));
-    }
-    basis[feld] = a === "kuehl" ? out.sort((x, y) => x.reihe - y.reihe) : out;
-  }
-  if (bereichKonflikte.length) {
-    const mehrheit = bereichKonflikte.reduce((s, c) => s + (c.gilt === "lokal" ? 1 : -1), 0);
-    bericht.unterschiede.push({ bereich: a, lokal: bereichKonflikte.slice(0, 3).map((c) => `${c.pfad} ${kurzText(c.vl)}`).join(", "), fremd: bereichKonflikte.slice(0, 3).map((c) => `${c.pfad} ${kurzText(c.vf)}`).join(", "), gilt: mehrheit >= 0 ? "lokal" : "fremd" });
-  }
+  lauf(l, f, pfad);
+  return { lokal: aus.map(([p, x]) => `${p} ${kurzText(x)}`).join(", "), fremd: aus.map(([p, , y]) => `${p} ${kurzText(y)}`).join(", ") };
 }
-// Geänderte Felder stempeln (jetzt) – für Aufrufer, die vor dem Vergleichen oder Weitergeben ungespeicherte Änderungen mitnehmen wollen (exportDatei und das Einlesen tun es selbst).
-export function feldZeitenNachziehen(wurzel, jetzt = Date.now()) { for (const b of wurzel?.betriebe || []) zellenNachziehen(b, ZELL_BEREICHE, jetzt); }
-export function abgleichGrundlage(b, quelle = null) { for (const a of BEREICH_NAMEN) abgleichMerken(b, a, null, { quelle, anfang: true }); return b; }
+function eintraegeVerschmelzen(a, basis, lokal, fremd, w, bericht) {
+  const { feld } = EINTRAG_BEREICHE[a];
+  const L = Array.isArray(lokal[feld]) ? lokal[feld] : [], F = Array.isArray(fremd[feld]) ? fremd[feld] : [];
+  const sL = w.q === "fremd" ? F : L, sF = w.q === "fremd" ? L : F; // Sieger-Seite zuerst (Reihenfolge der gewählten Seite bleibt)
+  const lm = new Map(), fm = new Map();
+  for (const e of L) { const k = schluesselVon(a, e); if (k !== null && !lm.has(k)) lm.set(k, e); }
+  for (const e of F) { const k = schluesselVon(a, e); if (k !== null && !fm.has(k)) fm.set(k, e); }
+  const basisH = istObjekt(lokal.abgleich?.[a]?.eintraege) ? lokal.abgleich[a].eintraege : null;
+  const vermerk = (k, el, ef, behalten, art) => { const u = unterschiedKurz(el, ef); bericht.eintraege.push({ bereich: a, kennung: k, art, lokal: el === undefined ? "–" : u.lokal, fremd: ef === undefined ? "–" : u.fremd, behalten }); };
+  const reihenfolge = []; const gesehen = new Set();
+  for (const e of [...sL, ...sF]) { const k = schluesselVon(a, e); if (k === null) { if (sL.includes(e)) reihenfolge.push([null, e]); continue; } if (!gesehen.has(k)) { gesehen.add(k); reihenfolge.push([k, null]); } }
+  const out = [];
+  for (const [k, ohneKey] of reihenfolge) {
+    if (k === null) { out.push(structuredClone(ohneKey)); continue; }
+    const el = lm.get(k), ef = fm.get(k); const hl = el && hash(stabil(el)), hf = ef && hash(stabil(ef)); const b0 = basisH ? basisH[k] : undefined;
+    const sieger = w.q === "fremd" ? ef : el;
+    let nimm;
+    if (el && ef) {
+      if (hl === hf) nimm = el;
+      else if (b0 !== undefined && hl === b0) nimm = ef;           // nur die andere Seite hat geändert
+      else if (b0 !== undefined && hf === b0) nimm = el;           // nur dieses Handy hat geändert
+      else { nimm = sieger; vermerk(k, el, ef, w.q === "fremd" ? "fremd" : "lokal", "verschieden"); }
+    } else if (el || ef) {
+      const da = el || ef; const hda = el ? hl : hf; const seiteLokal = !!el;
+      if (b0 === undefined) nimm = da;                              // neu auf einer Seite
+      else if (hda === b0) nimm = null;                             // auf der anderen Seite gelöscht, hier unverändert → gelöscht
+      else { nimm = da; vermerk(k, seiteLokal ? el : undefined, seiteLokal ? undefined : ef, seiteLokal ? "lokal" : "fremd", "geloeschtGeaendert"); }
+    }
+    if (nimm) out.push(structuredClone(nimm));
+  }
+  basis[feld] = out;
+  if (a === "kosten") basis.kostenKategorienGeprueft = [...new Set([...(Array.isArray(lokal.kostenKategorienGeprueft) ? lokal.kostenKategorienGeprueft : []), ...(Array.isArray(fremd.kostenKategorienGeprueft) ? fremd.kostenKategorienGeprueft : [])])];
+}
+// Bereiche ohne Kennungen (Betrieb, Kanäle, Verkauf …), bei denen beide Handys etwas geändert haben: die gewählte Seite gilt wie bisher,
+// aber beide Werte werden im abgleichHinweis festgehalten (Satz „bereichUnterschied“ in js/data/l6y_texte.js).
+const OHNE_UNTERSCHIED = new Set(["kuehl", "aktionen", "wochen", "spiesse", "portionen", "lieferanten", "personen", "gerichte", "artikel", "kosten"]);
+function unterschiedMerken(a, lokal, fremd, bericht, gilt = "lokal") { // gilt: welche Seite die Bereichswahl gewonnen hat (E5-Draht 7: der Satz im Büro nennt die richtige)
+  const f = (x) => Object.fromEntries(BEREICHE[a].map((k) => [k, x[k]]));
+  const u = unterschiedKurz(f(lokal), f(fremd), "", ["hinweise"]);
+  if (u.lokal || u.fremd) bericht.unterschiede.push({ bereich: a, lokal: u.lokal, fremd: u.fremd, gilt });
+}
+export function abgleichGrundlage(b) { for (const a of BEREICH_NAMEN) abgleichMerken(b, a, null); return b; }
 
 // Lauf 3, Phase 6: Monatsabschlüsse zweier Handys vereinigen. Gleicher Eintrag (Monat + Zeitpunkt) zählt einmal. Haben beide denselben
 // Monat abgeschlossen, bleibt der frühere gültig; der spätere bleibt sichtbar als „ersetzt“ (nichts verschwindet still, js/monatsabschluss.js).
@@ -1668,34 +1524,34 @@ function umsatzKonflikteZaehlen(basis, lokal, fremd, bericht) {
     bericht.umsatzKonflikte.push({ tag, lokal: l.umsatz, fremd: f.umsatz, gilt: gilt === f ? "fremd" : "lokal" });
   }
 }
-export function verschmelzen(lokal, fremd, { jetzt = Date.now(), quelle = null } = {}) {
+export function verschmelzen(lokal, fremd, { jetzt = Date.now() } = {}) {
   const basis = structuredClone(lokal); // Rest (Einrichtungsstand, Hinweise …) bleibt vom eigenen Handy
   if ((lokal.phase === "app" || fremd.phase === "app") && basis.phase !== "app") { basis.phase = "app"; basis.rueckkehr = null; }
   const bericht = { beide: [], zukunft: 0, konflikte: 0, eintraege: [], unterschiede: [], umsatzKonflikte: [] };
   basis.stammZeit = { ...(istObjekt(lokal.stammZeit) ? lokal.stammZeit : {}) };
   for (const a of BEREICH_NAMEN) {
-    const base = basisFuer(lokal, a, quelle); // E11 (A1): der Stand dieser Quelle beim letzten Einlesen
-    const w = bereichWahl(lokal, fremd, a, jetzt, base);
+    const w = bereichWahl(lokal, fremd, a, jetzt);
     const [sieger, verlierer] = w.q === "fremd" ? [fremd, lokal] : [lokal, fremd];
     for (const k of BEREICHE[a]) { if (sieger[k] === undefined) delete basis[k]; else basis[k] = structuredClone(sieger[k]); }
-    const zellen = ZELLEN[a] && (w.art === "beide" || w.art === "zeit");
-    if (zellen) zellenVerschmelzen(a, basis, lokal, fremd, { base, jetzt, bericht }); // E11 (A1, A3, B1): je Feld und Eintrag statt je Bereich – Personen, Kühlstellen, Lieferanten, Team, Betrieb … wie Gerichte
-    if (a === "kuehl" && Array.isArray(basis.kuehlstellen)) basis.kuehlstellen = basis.kuehlstellen.slice().sort((x, y) => x.reihe - y.reihe);
+    if (EINTRAG_BEREICHE[a] && (w.art === "beide" || w.art === "zeit")) eintraegeVerschmelzen(a, basis, lokal, fremd, w, bericht); // Lauf 6, E5 (B1): je Eintrag statt je Bereich
+    else if (w.art === "beide" && !OHNE_UNTERSCHIED.has(a)) unterschiedMerken(a, lokal, fremd, bericht, w.q === "fremd" ? "fremd" : "lokal");
+    if (a === "kuehl") basis.kuehlstellen = listeMitKennzeichen(sieger.kuehlstellen, verlierer.kuehlstellen, "archiviert").sort((x, y) => x.reihe - y.reihe);
     if (a === "aktionen") basis.aktionen = aktionenVereinigen(sieger.aktionen, verlierer.aktionen); // Menütafel
     if (a === "wochen" || a === "spiesse" || a === "portionen") { const k = BEREICHE[a][0]; basis[k] = listeNachId(sieger[k], verlierer[k]); } // Fund 5
-    if (a === "lieferanten" && lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); // Prüfgremium (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
-    if (a === "personen" && Array.isArray(basis.personen)) basis.personen = basis.personen.map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
+    if (a === "lieferanten") { basis.lieferanten = listeMitKennzeichen(sieger.lieferanten, verlierer.lieferanten, "entfernt", { personen: false }); // Lieferanten
+      if (lieferantenEntdoppeln(basis)) abgleichMerken(basis, "artikel", null); } // Prüfgremium (N3): umbenannt + neu angelegt = einer; Waren zeigen auf den bleibenden
+    if (a === "personen") basis.personen = listeMitKennzeichen(sieger.personen, verlierer.personen, "entfernt").map((p) => ({ ...p, aktiv: p.entfernt ? false : p.aktiv }));
     if (a === "betrieb" && istObjekt(basis.betrieb)) basis.betrieb.hinweise = hinweiseVereinigen(lokal.betrieb?.hinweise, fremd.betrieb?.hinweise); // Vertrag Abschnitt 2: je Karte jüngste Zeit gewinnt
-    const t = zellen ? [zeitKappen(lokal.stammZeit?.[a], jetzt), zeitKappen(fremd.stammZeit?.[a], jetzt)].filter(Boolean).sort().pop() : zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
+    const t = zeitKappen(sieger.stammZeit?.[a], jetzt); if (t) basis.stammZeit[a] = t; else delete basis.stammZeit[a];
     if (w.beide) bericht.beide.push(a);
-    abgleichMerken(basis, a, w.hF, { quelle, fremd, jetzt });
+    abgleichMerken(basis, a, w.hF);
   }
   const sortErfasst = (x, y) => String(x.erfasst || x.datum || "").localeCompare(String(y.erfasst || y.datum || ""));
   const opt = (j) => ({ schutz: HACCP.has(j), bericht, jetzt });
   for (const j of ["schwund", "tagesnotizen", "messungen", "lieferungen", "abschluesse", "uploads", "kostenbelege", "putzlog", "belehrungen", "verkaeufe"]) // E7: verkaeufe
     basis[j] = journalVereinigen(lokal[j] || [], fremd[j] || [], ["storniert"], opt(j)).sort(sortErfasst);
   umsatzKonflikteZaehlen(basis, lokal, fremd, bericht); // Lauf 6, E5 (B2)
-  felderVerschmelzen(basis, lokal, fremd, bericht); // Lauf 6, E5 (A1): teamTage, schichten, abwesend, lieferTage, preisRunden, chef, zekiLog, liquiditaet – nichts geht verloren
+  felderVerschmelzen(basis, lokal, fremd); // Lauf 6, E5 (A1): teamTage, schichten, abwesend, lieferTage, preisRunden, chef, zekiLog, liquiditaet – nichts geht verloren
   basis.verkaeufe = verkaeufeEntdoppeln(basis.verkaeufe); // Prüfgremium (1): gleiche Verkäufe von zwei Handys zählen einmal
   basis.lieferungen = haltbarVereinigen(basis.lieferungen, lokal.lieferungen, fremd.lieferungen); // Stufe 1
   // Rundgänge: abgeschlossene vereinigen; ein offener Rundgang bleibt nur vom lokalen Stand
@@ -1708,8 +1564,6 @@ export function verschmelzen(lokal, fremd, { jetzt = Date.now(), quelle = null }
   basis.inventuren = [...invFertig, ...(lokal.inventuren || []).filter((i) => !i.abgeschlossen && !fertigIds.has(i.id))];
   if (lokal.monatsabschluesse || fremd.monatsabschluesse) basis.monatsabschluesse = monatsabschluesseVereinigen(lokal.monatsabschluesse, fremd.monatsabschluesse); // Lauf 3, Phase 6: Abschlüsse beider Handys
   basis.geaendert = [zeitKappen(lokal.geaendert, jetzt), zeitKappen(fremd.geaendert, jetzt)].filter(Boolean).sort().pop() || new Date(jetzt).toISOString();
-  { const z = zeitenVereinen(lokal.feldZeit, fremd.feldZeit, basis, jetzt); if (Object.keys(z).length) basis.feldZeit = z; else delete basis.feldZeit; } // E11 (B1): Änderungszeit je Feld – auf beiden Handys die spätere
-  zellenSnapshotSetzen(basis); // das Zusammengeführte ist der neue Vergleichsstand, es wird nicht noch einmal gestempelt
   Object.defineProperty(basis, "_bericht", { value: bericht, enumerable: false, configurable: true }); // nur für zusammenfuehren
   if (bericht.beide.length || bericht.zukunft || bericht.konflikte || bericht.eintraege.length || bericht.unterschiede.length || bericht.umsatzKonflikte.length) {
     const alt = istObjekt(lokal.abgleichHinweis) ? lokal.abgleichHinweis : { bereiche: [], zukunft: 0, konflikte: 0 };
@@ -1751,36 +1605,9 @@ async function rueckholpunkt(wurzel, { grund = "einlesen" } = {}) {
   try { await tx("stand", "readwrite", (st) => [st.put(punkt, "rueckhol"), st.put({ zeit: punkt.zeit, grund }, "rueckhol-info")]); return true; }
   catch (e) { console.warn("Rückholpunkt nicht gespeichert:", e); return false; }
 }
-// Lauf 6, E11 (B4): Wie viel Neues ist seit dem Einlesen eingetragen worden? Gezählt werden Journal-Einträge (erfasst oder storniert nach dem Punkt), Stunden-, Schicht- und Lieferdienst-Einträge,
-// Chef-Stunden, „Geld heute“ und Bereiche der Stammdaten, deren Zeit nach dem Punkt liegt. Wer jetzt zurückholt, verliert genau das – die Oberfläche warnt oder bietet es gar nicht an.
-export function rueckholNeuSeitdem(wurzel, zeit) {
-  const t = Date.parse(zeit); if (!Number.isFinite(t) || !Array.isArray(wurzel?.betriebe)) return null;
-  const nach = (x) => typeof x === "string" && Date.parse(x) > t; let n = 0;
-  for (const b of wurzel.betriebe) {
-    if (!istObjekt(b)) continue;
-    for (const j of JOURNALE) for (const e of feldArray(b[j])) if (istObjekt(e) && (nach(e.erfasst) || nach(e.storniertZeit) || nach(e.abgeschlossen) || (j === "inventuren" && nach(e.begonnen)))) n += 1;
-    for (const f of ["teamTage", "lieferTage", "abwesend", "schichten"]) for (const e of feldArray(b[f])) if (istObjekt(e) && nach(e.erfasst)) n += 1;
-    if (nach(b.chef?.geaendert)) n += 1; if (nach(b.liquiditaet?.erfasst)) n += 1;
-    if (istObjekt(b.stammZeit)) for (const a of BEREICH_NAMEN) if (nach(b.stammZeit[a])) n += 1;
-  }
-  return n;
-}
-const RUECKHOL_TAGE = 7; // ein Rückholpunkt, der älter ist, wird beim Start gelöscht
-async function rueckholAltLoeschen() {
-  const grenze = Date.now() - RUECKHOL_TAGE * TAG_MS;
-  if (rueckholMem && !(Date.parse(rueckholMem.zeit) >= grenze)) rueckholMem = null;
-  if (!verfuegbar || !db) return;
-  try {
-    const [i] = await tx("stand", "readonly", (st) => [st.get("rueckhol-info")]);
-    if (istObjekt(i) && !(Date.parse(i.zeit) >= grenze)) { await txMehr(["stand"], "readwrite", (t) => { t.objectStore("stand").delete("rueckhol"); t.objectStore("stand").delete("rueckhol-info"); }); ereignis("einlesen-zurueck-verfallen", { zeit: i.zeit }); }
-  } catch (_) { /* egal */ }
-}
-// Mit der Wurzel, mit der die App arbeitet, kommt neuSeitdem dazu (null = unbekannt: die Oberfläche zeigt dann nichts an).
-export async function rueckholpunktInfo(wurzel = null) {
-  let info = null;
-  if (verfuegbar && db) { try { const [i] = await tx("stand", "readonly", (st) => [st.get("rueckhol-info")]); if (istObjekt(i) && typeof i.zeit === "string") info = { zeit: i.zeit, grund: i.grund || "einlesen" }; } catch (_) { /* Arbeitsspeicher */ } }
-  if (!info && rueckholMem) info = { zeit: rueckholMem.zeit, grund: rueckholMem.grund };
-  return info ? { ...info, neuSeitdem: wurzel ? rueckholNeuSeitdem(wurzel, info.zeit) : null } : null;
+export async function rueckholpunktInfo() {
+  if (verfuegbar && db) { try { const [i] = await tx("stand", "readonly", (st) => [st.get("rueckhol-info")]); if (istObjekt(i) && typeof i.zeit === "string") return { zeit: i.zeit, grund: i.grund || "einlesen" }; } catch (_) { /* Arbeitsspeicher */ } }
+  return rueckholMem ? { zeit: rueckholMem.zeit, grund: rueckholMem.grund } : null;
 }
 // Holt den gemerkten Stand zurück: gibt { wurzel, zeit } zurück (die App arbeitet mit dieser Wurzel weiter) und schreibt sie in den Speicher; danach ist der Punkt verbraucht.
 // aktuelle = die Wurzel, mit der die App bis jetzt gearbeitet hat – sie wird nicht mehr geschrieben (auch nicht vom noch anstehenden verzögerten Speichern).
@@ -1791,7 +1618,6 @@ export async function zurueckholen(aktuelle = null) {
   if (!istObjekt(punkt) || !istObjekt(punkt.wurzel)) return null;
   speichern.abbrechen(); if (aktuelle) verworfen.add(aktuelle);
   const w = migrierenWurzel(structuredClone(punkt.wurzel));
-  for (const b of w.betriebe) bereichVorgabe.set(b, Object.fromEntries(BEREICH_NAMEN.map((a) => [a, bereichHash(b, a)]))); // Lauf 6, E11 (C8): der alte Stand gilt als bekannt – die Bereichszeiten werden nicht neu gestempelt
   const ok = await schreiben(w, { stempel: false }); if (verfuegbar && db && ok === false) return null; // Schreiben misslungen: Punkt bleibt, nichts ist zurückgeholt
   rueckholMem = null;
   if (verfuegbar && db) { try { await txMehr(["stand"], "readwrite", (t) => { t.objectStore("stand").delete("rueckhol"); t.objectStore("stand").delete("rueckhol-info"); }); } catch (_) { /* egal */ } }
@@ -1809,15 +1635,12 @@ export async function einlesenSicher(wurzel, importiert, opt = {}) {
 }
 function zusammenfuehrenRoh(wurzel, importiert, { jetzt = Date.now() } = {}) {
   const ids = new Set(wurzel.betriebe.map((b) => b.id));
-  let ersetzt = 0, neu = 0, beispielUebersprungen = 0;
-  const leeresHandy = wurzel.betriebe.length === 0; // Lauf 6, E11 (C1): nur ein leeres Handy bekommt auch den Beispiel-Laden aus der Datei (Rundreise vollständig)
+  let ersetzt = 0, neu = 0;
   const bericht = { beide: [], zukunft: 0, konflikte: 0, eintraege: [], unterschiede: [], umsatzKonflikte: [] };
   for (const b of importiert.betriebe) {
-    if (b?.beispiel === true && !leeresHandy) { beispielUebersprungen += 1; continue; } // NUR_LOKAL.beispiel: der Beispiel-Laden wird nie abgeglichen und nicht als fremder Laden übernommen
     const i = wurzel.betriebe.findIndex((x) => x.id === b.id);
     if (i >= 0) {
-      zellenNachziehen(wurzel.betriebe[i], ZELL_BEREICHE, jetzt); // E11: noch nicht gespeicherte eigene Änderungen bekommen ihre Zeit, bevor verglichen wird
-      const m = verschmelzen(wurzel.betriebe[i], b, { jetzt, quelle: typeof importiert.geraet === "string" && importiert.geraet ? importiert.geraet : null }); const r = m._bericht; delete m._bericht;
+      const m = verschmelzen(wurzel.betriebe[i], b, { jetzt }); const r = m._bericht; delete m._bericht;
       wurzel.betriebe[i] = m; ersetzt += 1;
       bericht.beide.push(...r.beide); bericht.zukunft += r.zukunft; bericht.konflikte += r.konflikte;
       bericht.eintraege.push(...r.eintraege.map((x) => ({ laden: b.id, ...x }))); bericht.unterschiede.push(...r.unterschiede.map((x) => ({ laden: b.id, ...x }))); bericht.umsatzKonflikte.push(...r.umsatzKonflikte.map((x) => ({ laden: b.id, ...x })));
@@ -1827,17 +1650,17 @@ function zusammenfuehrenRoh(wurzel, importiert, { jetzt = Date.now() } = {}) {
       for (const j of HACCP) if (Array.isArray(b[j])) b[j] = journalVereinigen([], b[j], ["storniert"], { schutz: true, bericht: n, jetzt });
       if (n.zukunft) { b.abgleichHinweis = { zeit: new Date(jetzt).toISOString(), bereiche: [], zukunft: n.zukunft, konflikte: 0 }; bericht.zukunft += n.zukunft; }
       if (istObjekt(b.stammZeit)) for (const a of Object.keys(b.stammZeit)) { const t = zeitKappen(b.stammZeit[a], jetzt); if (t) b.stammZeit[a] = t; else delete b.stammZeit[a]; }
-      abgleichGrundlage(b, typeof importiert.geraet === "string" && importiert.geraet ? importiert.geraet : null); zellenSnapshotSetzen(b); wurzel.betriebe.push(b); ids.add(b.id); neu += 1;
+      abgleichGrundlage(b); wurzel.betriebe.push(b); ids.add(b.id); neu += 1;
     }
   }
-  if (!wurzel.aktiv || !ids.has(wurzel.aktiv)) wurzel.aktiv = (ids.has(importiert.aktiv) ? importiert.aktiv : null) || wurzel.betriebe[0]?.id || null;
+  if (!wurzel.aktiv || !ids.has(wurzel.aktiv)) wurzel.aktiv = importiert.aktiv || wurzel.betriebe[0]?.id || null;
   if (!wurzel.sprache) wurzel.sprache = importiert.sprache;
   // Laufende Nummer: nie unter die höchste eigene Nummer fallen (Neuinstallation + Import)
   let maxEigen = 0;
   for (const b of wurzel.betriebe) for (const m of b.messungen) if (m.geraet === wurzel.geraet && Number(m.lfd) > maxEigen) maxEigen = Number(m.lfd);
   wurzel.lfd = Math.max(wurzel.lfd, maxEigen, importiert.geraet === wurzel.geraet ? (importiert.lfd || 0) : 0);
   // bericht (nicht aufgezählt, damit die Rückgabe wie bisher { ersetzt, neu } bleibt): beide geändert, Zukunft, abweichende HACCP-Einträge
-  return Object.defineProperty({ ersetzt, neu }, "bericht", { value: { beide: [...new Set(bericht.beide)], zukunft: bericht.zukunft, konflikte: bericht.konflikte, eintraege: bericht.eintraege, unterschiede: bericht.unterschiede, umsatzKonflikte: bericht.umsatzKonflikte, ...(beispielUebersprungen ? { beispielUebersprungen } : {}) }, enumerable: false });
+  return Object.defineProperty({ ersetzt, neu }, "bericht", { value: { beide: [...new Set(bericht.beide)], zukunft: bericht.zukunft, konflikte: bericht.konflikte, eintraege: bericht.eintraege, unterschiede: bericht.unterschiede, umsatzKonflikte: bericht.umsatzKonflikte }, enumerable: false });
 }
 
 export async function ereignisseUebernehmen(liste) {

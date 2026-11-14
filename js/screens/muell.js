@@ -13,12 +13,12 @@ import { nav } from "./nav.js";
 import { mengeEinheitText } from "./bausteine.js"; // Trennung
 import { sym } from "../symbole.js";
 import { FOTOS } from "../data/fotos.js";
-import { gerichtBild } from "./gerichtbild.js";
+import { gerichtBild } from "./vergleich.js";
 import { wareBildQuelle } from "../bilder.js"; // Trennung 2: Bildzuordnung
 import { personalAktiv, personalVon, personalLeiste } from "./personal.js";
 export function wareBild(x) {
   const q = wareBildQuelle(x); // Trennung 2: Zuordnung in js/bilder.js
-  return q.foto ? `<img class="gerichtbild mini" src="foto/${q.foto}.webp" alt="" loading="lazy" decoding="async">` : `<img class="gerichtbild mini pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy" decoding="async">`;
+  return q.foto ? `<img class="gerichtbild mini" src="foto/${q.foto}.webp" alt="" loading="lazy">` : `<img class="gerichtbild mini pikto" src="bilder/${q.pikto}.svg" alt="" loading="lazy">`;
 }
 // Kleines Bild auf Gericht-Kacheln (Foto der Familie oder eigenes Foto)
 const thumb = (stand, id) => { const g = (stand.gerichte || []).find((x) => x.id === id); return g ? gerichtBild(g).replace('class="gerichtbild', 'class="gerichtbild mini') : ""; };
@@ -78,8 +78,8 @@ function toastHtml() {
 export function muellView(stand) {
   const D = tagGewaehlt(); const nach = D !== heute(); const pers = personalAktiv();
   const stationDetail = ansicht === "eingabe" && rueckkehr === "station";
-  const oben = pers && !stationDetail ? personalLeiste(ansicht === "eingabe" ? "eingabe" : undefined) : "";
-  const unten = pers || stationDetail ? "" : nav("muell", { schnell: false, schritt: ansicht === "eingabe" ? "eingabe" : undefined });
+  const oben = pers && !stationDetail ? personalLeiste(true) : "";
+  const unten = pers || stationDetail ? "" : nav("muell", { schnell: false });
   if (ansicht === "station") return stationView(stand, D);
   if (ansicht === "eingabe") return oben + formView(stand, D) + (auswahlOffen ? `<div class="blatthinten" data-a="muell-auswahl-zu"></div><div class="blatt auswahlblatt" role="dialog"><button type="button" class="blatt-x" data-a="muell-auswahl-zu" aria-label="${esc(t("kartelaeden.schliessen"))}">${sym("x")}</button>${eingabeView(stand, D)}</div>` : "") + unten;
   return oben + rasterView(stand, D, nach) + unten;
@@ -92,24 +92,16 @@ function rasterView(stand, D, nach) {
   const frisch = zuletzt && Date.now() - zuletzt.zeit <= TOAST_MS ? zuletzt.schluessel : null;
   const h = muellHeute(stand, D);
   const satz = grund === "ausgegeben" ? t("muell.zeki.ausgegeben") : grund === "personal" ? t("muell.zeki.personal") : grund === "bruch" ? t("muell.zeki.bruch") : h.anzahl ? t("muell.zeki.weiter") : t("muell.zeki.start");
-  // Frischer Döner-Laden ohne Dönerspieß, Hähnchenspieß, Pommes, Cola (DOENER_VORNE in js/muell.js greift nur bei angelegten Waren): „Andere“ steht gut sichtbar zuerst. Es wird nichts angelegt.
-  const andereZuerst = grund === "roh" && _andereZuerst(stand);
   const reiter = ["roh", "personal", "ausgegeben", "bruch"].filter((g) => g !== "ausgegeben" || !personalAktiv()); // Persona-Test Team 27.10.: Personalessen auch für das Team // „Ausgegeben“ nur für den Chef
   return `<div class="inhalt muell1 m-schablone">
     <div class="muellkopf1">${pilleHtml(stand, D)}<button type="button" class="muell-station-start" data-a="muell-station-auf" aria-label="${esc(t("muell.uebrig"))}">${sym("moon")}<span>${esc(t("muell.uebrig"))}</span></button></div>
     ${nach ? `<div class="nachband">${esc(t("kuehl.nacherfasst"))} · ${esc(tagLesbar(D))} <button type="button" class="leise" data-a="tag-datum" data-wert="${heute()}">${esc(t("tag.titel"))}</button></div>` : ""}
     <p class="zeki-zeile" role="status">${esc(satz)}</p>
     <div class="m-reiter" role="tablist">${reiter.map((g) => `<button type="button" role="tab" aria-selected="${grund === g}" class="${grund === g ? "an" : ""}" data-a="muell-grund" data-wert="${g}">${esc(t("muell.grund." + g))}</button>`).join("")}</div>
-    <div class="muellraster ${andereZuerst ? "andere-zuerst" : ""}">${andereZuerst ? andereKachel() : ""}${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
-      ${andereZuerst ? "" : andereKachel()}</div>
+    <div class="muellraster">${kacheln.map((x) => kachelHtml(stand, x, zaehl, frisch)).join("")}
+      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button></div>
   </div>${toastHtml()}`;
 }
-
-// „Andere“: Kachel mit Piktogramm (jede Kachel der Liste trägt ein Bild) – öffnet die Suche
-const ANDERE_BILD = "bilder/ui/plus.svg";
-const andereKachel = () => `<button type="button" class="karte ware andere" data-a="muell-andere"><img class="gerichtbild mini pikto" src="${ANDERE_BILD}" alt="" loading="lazy" decoding="async"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>`;
-const DOENER_WAREN = [/^Dönerspieß/i, /^Hähnchenspieß/i, /^Pommes/i, /^Cola/i]; // dieselben Namen wie DOENER_VORNE in js/muell.js (dort unverändert)
-export const _andereZuerst = (stand) => !(stand.schwund || []).length && (stand.betrieb?.kuechen || []).includes("doener") && !(stand.artikel || []).some((a) => DOENER_WAREN.some((r) => r.test(a.name)));
 
 // Dieselben Daten und Schreibfunktionen wie L2: kein zweiter Zähler, keine Rechenlogik.
 // „Übrig geblieben“: abends nur, was fertig war und nicht verkauft wurde. Kein Euro, keine Leiste. Einträge tragen uebrig: true, zählen einmal in die Tonne.
@@ -125,7 +117,7 @@ function stationView(stand, D) {
     </div>
     <div class="muellraster muell-station-raster">
       ${waren.map((x) => kachelHtml(stand, x, zaehl, frisch, true)).join("")}
-      ${andereKachel()}
+      <button type="button" class="karte ware andere" data-a="muell-andere"><span class="rund">${sym("plus")}</span><b>${esc(t("muell1.andere"))}</b></button>
     </div>
   </div>${toastHtml()}`;
 }
@@ -207,7 +199,7 @@ function eingabeView(stand, D) {
     <input class="textfeld" data-f="muell-suche" value="${esc(suche)}" placeholder="${esc(t("muell.suchen"))}" autocomplete="off">
     <div class="zweier muellkacheln">
       ${kacheln.map((x) => `<button type="button" class="kachel klein g-${esc(x.gruppe || "speise")}" data-a="muell-kachel" data-typ="${x.typ}" data-id="${esc(x.id || "")}" data-name="${esc(x.name)}">${bildFuer(stand, x)}<b>${esc(zeigName(x))}</b><small>${esc(x.typ === "gericht" ? t("muell.teller") : einheitLabel(x.einheit === "g" ? "kg" : x.einheit))}</small></button>`).join("")}
-${nurGerichte ? "" : `<button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="" loading="lazy" decoding="async">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="" loading="lazy" decoding="async">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>`}
+${nurGerichte ? "" : `<button type="button" class="kachel klein eimerkachel" data-a="muell-kachel" data-typ="eimer" data-name="">${FOTOS.has("m-eimer-foto") ? `<img class="gerichtbild mini" src="foto/m-eimer-foto.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/m-eimer.svg" alt="">`}<b>${esc(t("muell.eimer"))}</b><small>${esc(t("muell.eimerNurGewicht"))}</small></button>`}
     </div>
     ${!kacheln.length && q ? `<p class="hinweis">${esc(t("muell.nichtsGefunden"))}</p>` : ""}
   </div>`;

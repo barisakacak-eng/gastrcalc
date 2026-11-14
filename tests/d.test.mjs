@@ -59,7 +59,7 @@ test("ZIP ohne Kompression: schreiben, lesen, CRC32 prüft", async () => {
   assert.equal(new TextDecoder().decode(await e[0].bytes()), "{\"x\":1}");
   assert.deepEqual([...await e[1].bytes()], [1, 2, 3, 250]); assert.equal(await e[1].crcOk(), true);
   // ein Byte im Foto kippen → CRC falsch
-  const roh = new Uint8Array(await b.arrayBuffer()); const i = roh.findIndex((x, k) => x === 1 && roh[k + 1] === 2 && roh[k + 2] === 3 && roh[k + 3] === 250) + 3; roh[i] = 251; // die Bytes des Fotos suchen, nicht irgendeine 250 (die Uhrzeit im Kopf kann auch 250 sein)
+  const roh = new Uint8Array(await b.arrayBuffer()); const i = roh.indexOf(250); roh[i] = 251;
   const e2 = await zip.zipLesen(new Blob([roh])); assert.equal(await e2[1].crcOk(), false);
 });
 

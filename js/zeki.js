@@ -3,7 +3,7 @@
 // Regeln: höchstens ein Satz je Moment; jede Lage höchstens einmal je Geschäftstag (gesehen); Reihenfolge = ZEKI_AUSLOESER (Gefahr vor Geld vor Pflege).
 // Sätze aus js/data/zeki_saetze.js (Frankys Format). Platzhalter werden hier gefüllt; fehlt ein Wert, fällt der Satz weg (kein „{betrag}“ auf dem Schirm).
 import { ZEKI_AUSLOESER, ZEKI_SAETZE } from "./data/zeki_saetze.js";
-import { DATEN } from "./sprachdaten.js"; // zeki_mehrsprachig.js kommt im Browser erst mit der gewählten Sprache
+import { ZEKI_SAETZE_MEHR } from "./data/zeki_mehrsprachig.js";
 import { offeneNachkontrollen, kuehlStatus, umsatzEintrag, schwundAuswertung, tagPlus, SCHWUND_ARTEN, grenzenVon } from "./engine.js";
 import { zaehler, monatsZiel } from "./zaehler.js";
 import { inventurenFertig } from "./inventur.js";
@@ -77,7 +77,7 @@ export function zekiMoment(stand, { H, sprache = "de", gesehen = new Set(), sich
     for (let i = 0; i < saetze.length; i++) {
       const x = saetze[(start + i) % saetze.length];
       if (x.wenn && x.wenn !== werte.wenn) continue; // Satz gilt nur für eine Richtung (z. B. „zu warm“)
-      const text = fuellen(x[sprache] || DATEN.ZEKI_SAETZE_MEHR[sprache]?.[x.id] || (sprache === "de" ? x.de : x.en || x.de), werte); // 27.10.2026: sonst Englisch statt Deutsch
+      const text = fuellen(x[sprache] || ZEKI_SAETZE_MEHR[sprache]?.[x.id] || (sprache === "de" ? x.de : x.en || x.de), werte); // 27.10.2026: sonst Englisch statt Deutsch
       if (text) return { id: x.id, ausloeser: a, art: x.art, bewegung: x.bewegung, text };
     }
   }

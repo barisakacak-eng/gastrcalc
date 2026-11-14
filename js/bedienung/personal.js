@@ -9,10 +9,8 @@ import { kuehlBereit, rundgangOffen } from "../engine.js";
 import { speichern } from "./speichern.js";
 import { putzplanZuruecksetzen, putzplanAktion } from "../screens/putzplan.js";
 import { zeichne } from "./zeichnen.js";
-import { personalZielErlaubt } from "../modus.js";
 
 export function personalKlick(name, el) {
-  if (name === "personal-ziel" && !personalZielErlaubt(el?.dataset?.wert)) return; // nur die drei Kacheln
   const r = personalAktion(name, el, Z.stand); if (!r) return;
   if (r.ziel) {
     const wer = schichtPerson(Z.stand) || "";

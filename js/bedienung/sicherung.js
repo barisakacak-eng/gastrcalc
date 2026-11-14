@@ -2,7 +2,7 @@
 // Das Passwort einer Sicherung wird hier nur durchgereicht, nie gespeichert.
 import { fehlerSammlerStarten, fehlerText, fehlerLeeren } from "../fehler.js";
 import {
-  APP_FASSUNG, exportDatei, rueckholpunktInfo, rueckholNeuSeitdem, zurueckholen, speichernAbbrechen, ereignis, alleEreignisse, importSicherung, einlesenSicher,
+  APP_FASSUNG, exportDatei, rueckholpunktInfo, zurueckholen, speichernAbbrechen, ereignis, alleEreignisse, importSicherung, einlesenSicher,
   ablageAusSicherung, ereignisseUebernehmen, leereWurzel, speicherDauerhaftPruefen, speicherBelegt, SCHEMA, speicherVerfuegbar,
   speicherIstDauerhaft, eintraegeZaehlen,
 } from "../store.js";
@@ -59,10 +59,10 @@ function einlesenFehlerText(e) {
   return t("einstellungen.importFehler");
 }
 
-export async function rueckholInfoHolen() { try { Z.rueckholInfo = await rueckholpunktInfo(Z.wurzel); } catch (_) { Z.rueckholInfo = null; } if (Z.stand?.phase === "app" && Z.ansicht === "einstellungen") zeichne(); }
+export async function rueckholInfoHolen() { try { Z.rueckholInfo = await rueckholpunktInfo(); } catch (_) { Z.rueckholInfo = null; } if (Z.stand?.phase === "app" && Z.ansicht === "einstellungen") zeichne(); }
 
 async function sicherungZurueckholen() {
-  if (!Z.rueckholInfo || rueckholNeuSeitdem(Z.wurzel, Z.rueckholInfo.zeit) !== 0 || !confirm(l6yText("rueckgaengig", aktuelleSprache()))) return; // E11 (B4): mit Neuem seit dem Einlesen wird nichts zurückgeholt
+  if (!Z.rueckholInfo || !confirm(l6yText("rueckgaengig", aktuelleSprache()))) return;
   const r = await zurueckholen(Z.wurzel);
   if (!r) { meldung(t("einstellungen.importFehler")); await rueckholInfoHolen(); return; }
   speichernAbbrechen(); alleZuruecksetzen(); blattSchliessen();

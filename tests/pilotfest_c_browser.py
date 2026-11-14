@@ -1,7 +1,7 @@
 """Bildpaket „Pilotfest C“ (freigegeben 30.10.2026 16:30): die sechs sichtbaren Änderungen im echten Browser.
 C1 Ladenart mehrfach: zwei Kacheln an, Küchen vereint, Weiter geht; eine abwählen → eine bleibt.
 C2 Zeki-Hilfe kurz: höchstens 1 Satz + 2 Fragen, „Mehr“ zeigt den Rest; Blatt schließt per Wischen nach unten (Menü-Blatt).
-C3 Zeki-Auftritt: beim Start tritt Zeki kurz vor die Bühne (Hülle „zeki-intro“ in der Seite, nur bei frischer Sitzung) und geht danach wieder weg.
+C3 Zeki-Einlauf: Klasse „einlauf“ steht beim Start kurz am Knopf (nur bei frischer Sitzung).
 C4 Fortschritt: beim Lesen der Speisekarte steht der Stufen-Balken (kein Kreisel mehr).
 C6 Büro „Fehler melden“: Karte da, Probefehler zählt, Text ohne Zahlen, „Liste leeren“ leert.
 Aufruf: DURCHLAUF_PORT=8845 python3 tests/pilotfest_c_browser.py"""
@@ -44,20 +44,14 @@ async def main():
                     if await pg.evaluate("window.__gastrocalc.stand.schrittId") == ziel: break
             await pg.click('[data-a="ob-fertig"].s2los'); await pg.wait_for_selector('[data-a="menue-auf"]', timeout=20000)
             await pg.wait_for_timeout(600); await nav_hilfe.rundgang_weg(pg); await pg.wait_for_timeout(300)
-            # C3: der Auftritt läuft erst ab dem zweiten Start (beim ersten läuft der kurze Rundgang) – neue Sitzung, dann Auftritt.
-            # Seit dem neuen Aussehen gibt es keine Klasse „einlauf“ am Knopf mehr (kein Zeki in der Kopfzeile): Zeki tritt als Hülle „.zeki-intro“ vor die Bühne (js/intro.js).
-            await pg.evaluate("() => sessionStorage.clear()"); await pg.reload(); await pg.wait_for_selector(".appleiste .zeki-knopf", state="attached")  # attached: solange Zeki vorn steht, ist die Bühnen-Figur unsichtbar
+            # C3: der Auftritt läuft erst ab dem zweiten Start (beim ersten läuft der kurze Rundgang) – neue Sitzung, dann Einlauf
+            await pg.evaluate("() => sessionStorage.clear()"); await pg.reload(); await pg.wait_for_selector(".appleiste .zeki-knopf")
             einlauf = False
-            for _ in range(60):
-                if await pg.locator(".zeki-intro").count(): einlauf = True; break
+            for _ in range(30):
+                if await pg.locator(".zeki-knopf.einlauf").count(): einlauf = True; break
                 await pg.wait_for_timeout(50)
-            pruefe(einlauf, "C3 Zeki-Auftritt beim Start (Hülle zeki-intro)")
-            weg = False
-            for _ in range(80):  # der Auftritt dauert ≈ 2,7 s und räumt sich selbst auf
-                if not await pg.locator(".zeki-intro").count(): weg = True; break
-                await pg.wait_for_timeout(100)
-            pruefe(weg, "C3 Zeki-Auftritt endet von selbst (Hülle weg)")
-            await nav_hilfe.rundgang_weg(pg)
+            pruefe(einlauf, "C3 Zeki-Einlauf-Klasse beim Start gesetzt")
+            await pg.wait_for_timeout(2600); await nav_hilfe.rundgang_weg(pg)
             # ---- C2 Zeki-Hilfe kurz
             await nav_hilfe.geh(pg, "start"); await pg.wait_for_timeout(300)
             await pg.click('.appleiste [data-a="hilfe-auf"]'); await pg.wait_for_timeout(500)

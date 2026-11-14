@@ -1,0 +1,184 @@
+/* Entwickler B – Drei Ebenen (15.10.2026): Laden „Heute“ und Laden „Karte“ mit Preis-Blatt.
+   Vorlage: architektur/vorschau.src.html (Frames „Heute“, „Karte“, „Preis ändern“). Nur Tokens aus css/tokens.css. */
+
+/* ---------- Heute ---------- */
+.inhalt.heute-laden { padding: 14px 16px 104px; gap: 12px; }
+.h-zeitzeile { color: var(--tinte-weich); font-size: calc(14rem / 17); padding: 0 4px; font-variant-numeric: var(--zahlen); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.karte.h-ziel { display: flex; flex-direction: column; gap: 0; padding: 16px 18px 14px; border: 1px solid var(--holz); box-shadow: var(--schatten-karte); text-align: left; width: 100%; }
+.h-zielkopf { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: calc(15rem / 17); min-height: 42px; }
+.h-zielkopf .zielsym { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--kupfer-hell); color: var(--glut); flex: none; }
+.h-tempo { border-radius: 999px; padding: 6px 11px; font-size: calc(13rem / 17); font-weight: 700; white-space: nowrap; font-variant-numeric: var(--zahlen); }
+.h-tempo.gut { background: var(--eigen-hell); color: var(--eigen); }
+.h-tempo.knapp { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
+.h-riesig { font-size: clamp(calc(24rem / 17), 19vw, calc(58rem / 17)); /* W2-U: wächst mit der Grundschrift, schrumpft aber vor dem Rand */ font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 0 0 12px; font-variant-numeric: var(--zahlen); white-space: nowrap; color: var(--tinte); }
+.h-riesig.leicht { color: #3B463F; } /* geschätzt: nur eine Spur heller, Erklärung steht im Büro */
+.karte.h-ziel.plus .h-riesig { color: var(--gruen); }
+.h-unter { color: var(--tinte-weich); font-size: calc(14rem / 17); }
+/* Paket 3 (16.10.2026), M15/E2: kleine Kupferzeile unter der Zielkarte – „Richtwert · Preise eintragen ›“, führt ins Büro zu den Einkaufspreisen */
+.h-richtwert { display: block; width: 100%; background: none; border: 0; text-align: left; padding: 0 6px; margin-top: -8px; min-height: 28px; color: var(--kupfer-dunkel, var(--kupfer-dunkel)); font-size: calc(13rem / 17); font-weight: 700; }
+.h-balken { display: block; height: 10px; border-radius: 5px; background: var(--papier-tief); overflow: hidden; }
+.h-balken i { display: block; height: 100%; background: linear-gradient(90deg, var(--salbei), var(--salbei-tief)); border-radius: 5px; }
+.h-balkenzahlen { display: flex; justify-content: space-between; font-size: calc(13rem / 17); color: var(--tinte-weich); margin-top: 6px; font-variant-numeric: var(--zahlen); }
+
+.h-kacheln { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.karte.h-kachel { padding: 14px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; min-height: 112px; border: 1px solid var(--holz); box-shadow: var(--schatten-karte); text-align: left; width: 100%; }
+.h-kachel .ks { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.h-kachel small { display: block; color: var(--tinte-weich); font-size: calc(13rem / 17); font-weight: 600; white-space: nowrap; }
+.h-kachel b { display: block; font-size: calc(30rem / 17); font-weight: 800; letter-spacing: -.01em; line-height: 1.1; font-variant-numeric: var(--zahlen); white-space: nowrap; }
+.ks.umsatz { background: var(--salbei-hell); color: var(--salbei-tief); }
+.ks.muell { background: var(--muell-hell); color: var(--muell); }
+.ks.kuehl { background: var(--branche-hell); color: var(--branche); }
+.ks.putz { background: var(--kupfer-hell); color: var(--kupfer-dunkel); }
+.karte.h-kachel.alarm { border-color: #E5B7B3; }
+.karte.h-kachel.alarm .ks { background: var(--muell-hell); color: var(--rot); }
+.karte.h-kachel.alarm b { color: var(--rot); }
+
+/* Jetzt dran: eine Karte, Knopf rechts in Daumenhöhe */
+.jetzt.h-jetzt { border: 0; border-left: 0; border-radius: var(--radius); padding: 12px 12px 12px 14px; display: flex; align-items: center; gap: 12px; min-height: 72px; text-align: left; width: 100%;
+  background: var(--salbei-hell); color: var(--tinte); box-shadow: var(--schatten-karte); }
+.h-jetzt .ks { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--weiss); color: var(--salbei-tief); }
+.h-jetzt-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.h-jetzt-text small { font-size: calc(13rem / 17); font-weight: 600; color: var(--tinte-weich); }
+.h-jetzt-text b { font-size: calc(18rem / 17); line-height: 1.2; }
+.h-jetzt .los { background: var(--salbei-tief); color: var(--weiss); font-weight: 800; border-radius: 12px; padding: 0 16px; min-height: 48px; display: inline-flex; align-items: center; font-size: calc(15rem / 17); white-space: nowrap; flex: none; }
+.jetzt.h-jetzt.rot { background: var(--rot); color: #fff; box-shadow: 0 10px 24px rgba(171,66,62,.28); }
+.h-jetzt.rot .ks { background: rgba(255,255,255,.16); color: #fff; }
+.h-jetzt.rot .h-jetzt-text small { color: #fff; opacity: .9; }
+.h-jetzt.rot .los { background: #fff; color: var(--rot); }
+.jetzt.h-jetzt.dunkel { background: var(--salbei-tief); color: var(--weiss); }
+.h-jetzt.dunkel .ks { background: rgba(255,255,255,.12); color: var(--weiss); }
+.h-jetzt.dunkel .h-jetzt-text small { color: #DCE3D6; }
+.h-jetzt.dunkel .los { background: var(--glut); color: var(--tinte); }
+
+/* ---------- Karte (Laden) ---------- */
+.inhalt.kartelaeden { padding: 14px 16px 104px; gap: 12px; }
+.kl-kopf { display: flex; justify-content: space-between; align-items: baseline; padding: 2px 4px 0; }
+.kl-kopf h1 { margin: 0; font-size: calc(28rem / 17); letter-spacing: -.02em; font-weight: 800; color: var(--tinte); }
+.kl-kopf small { color: var(--tinte-weich); font-size: calc(14rem / 17); font-variant-numeric: var(--zahlen); }
+.kl-segment { display: flex; background: var(--papier-tief); border-radius: 12px; padding: 4px; gap: 4px; }
+.kl-segment button { flex: 1; border: 0; background: transparent; min-height: 44px; border-radius: 9px; font-weight: 700; font-size: calc(14rem / 17); color: var(--tinte-weich); display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
+.kl-segment button.an { background: var(--salbei-tief); color: var(--weiss); }
+.kl-segment button:disabled { opacity: .55; cursor: default; }
+.kl-raster { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.karte.kl-gericht { overflow: hidden; padding: 0; gap: 0; border: 1px solid var(--holz); box-shadow: var(--schatten-karte); text-align: left; width: 100%; display: block; content-visibility: auto; contain-intrinsic-size: auto 200px; }
+.karte.kl-gericht.rotrand { border-color: #E5B7B3; }
+.kl-gericht .gerichtbild { width: 100%; aspect-ratio: 16 / 11; object-fit: cover; display: block; background: var(--papier-tief); }
+.kl-gericht .gerichtbild.pikto { object-fit: contain; padding: 14px; }
+.kl-gt { display: block; padding: 9px 11px 11px; }
+.kl-gn { display: block; font-size: calc(14rem / 17); font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tinte); }
+.kl-gp { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+.kl-gp b { font-size: calc(21rem / 17); font-weight: 800; letter-spacing: -.01em; font-variant-numeric: var(--zahlen); white-space: nowrap; }
+.kl-punkt { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex: none; background: var(--weggelassen); box-shadow: 0 0 0 3px var(--weiss), 0 0 0 4px rgba(31,42,36,.08); }
+.kl-punkt.g { background: var(--eigen); } .kl-punkt.y { background: var(--gelb); } .kl-punkt.r { background: var(--rot); }
+.kl-punkt.klein { width: 10px; height: 10px; box-shadow: none; }
+.karte.kl-leer { align-items: center; text-align: center; gap: 14px; padding: 24px 16px; }
+
+/* Preis-Blatt */
+.kl-dimmer { position: fixed; inset: 0; background: rgba(31,42,36,.42); z-index: 60; }
+.kl-blatt { position: fixed; left: 0; right: 0; bottom: 0; z-index: 61; background: var(--papier); border-radius: 28px 28px 0 0; padding: 10px 18px calc(24px + env(safe-area-inset-bottom)); box-shadow: 0 -12px 40px rgba(31,42,36,.25);
+  max-width: 560px; margin: 0 auto; animation: kl-hoch var(--bewegung) ease-out; }
+@keyframes kl-hoch { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .kl-blatt { animation: none; } }
+.kl-griff { display: block; width: 40px; height: 5px; border-radius: 3px; background: var(--holz-tief); margin: 0 auto 14px; }
+.kl-preiskopf { display: flex; gap: 14px; align-items: center; }
+.kl-preiskopf .gerichtbild { width: 76px; height: 76px; border-radius: 16px; object-fit: cover; flex: none; background: var(--papier-tief); }
+.kl-preiskopf > div { flex: 1; min-width: 0; }
+.kl-preiskopf b { font-size: calc(20rem / 17); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kl-preiskopf s { color: var(--tinte-weich); font-size: calc(14rem / 17); font-variant-numeric: var(--zahlen); }
+.kl-x { width: 48px; height: 48px; border: 0; background: transparent; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; color: var(--tinte-weich); flex: none; }
+.kl-preisrad { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 22px 0 14px; }
+.kl-rund { width: 64px; height: 64px; border-radius: 50%; background: var(--weiss); border: 1px solid var(--holz); display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--schatten-karte); color: var(--salbei-tief); flex: none; }
+.kl-rund .sym { width: 28px; height: 28px; }
+.kl-rund:active { background: var(--salbei-hell); }
+.kl-rund:disabled { opacity: .4; }
+.kl-gross { flex: 1; min-width: 0; display: flex; align-items: baseline; justify-content: center; gap: 6px; font-size: calc(52rem / 17); font-weight: 800; letter-spacing: -.03em; color: var(--tinte); }
+.kl-gross input { width: 100%; max-width: 190px; min-width: 0; border: 0; background: transparent; text-align: right; font: inherit; letter-spacing: inherit; color: inherit; padding: 0; font-variant-numeric: var(--zahlen); border-bottom: 2px dashed transparent; }
+.kl-gross input:focus { outline: none; border-bottom-color: var(--holz-tief); }
+.kl-bleibt { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: var(--radius); background: var(--geschaetzt-hell); font-weight: 650; margin-bottom: 14px; min-height: 56px; }
+.kl-bleibt.a-gruen { background: var(--eigen-hell); } .kl-bleibt.a-rot { background: var(--muell-hell); } .kl-bleibt.a-grau { background: var(--papier-tief); }
+.kl-bleibt b { font-size: calc(20rem / 17); display: inline-flex; align-items: center; gap: 12px; font-variant-numeric: var(--zahlen); }
+.kl-bleibt .kl-punkt { box-shadow: none; }
+.knopf.kl-speichern { min-height: 60px; color: var(--tinte); box-shadow: var(--schatten-knopf); }
+.knopf.kl-speichern:disabled { opacity: .5; }
+
+/* Baris 24.10.2026: Diagramm-Texte als HTML über dem gestreckten SVG – keine verzerrten Zahlen mehr */
+.h-kurswrap { position: relative; display: block; width: 100%; }
+.h-kurswrap .h-kurs { display: block; width: 100%; }
+.h-kurswrap .h-kurs-ziellabel { position: absolute; right: 6px; color: #FFF9F1; font: 800 0.75rem var(--gc-ui, var(--schrift)); text-shadow: 0 0 2px rgba(20,45,29,.7), 0 0 2px rgba(20,45,29,.7); pointer-events: none; }
+.h-kurswrap .h-kurs-tag { position: absolute; bottom: 0; color: #FFF9F1; font: 600 0.75rem var(--gc-ui, var(--schrift)); text-shadow: 0 0 2px rgba(27,48,29,.7); pointer-events: none; }
+.h-kurswrap .h-kurs-tag.links { left: 6px; } .h-kurswrap .h-kurs-tag.rechts { right: 6px; }
+
+/* Zeki auf Heute (26.10.2026): Figur links, rechts Blase (nur beim ersten Mal am Tag) und darunter liegend der eine Knopf */
+.h-zeki { display: flex; align-items: flex-end; gap: 10px; margin-top: 10px; }
+.h-zeki-figur { flex: 0 0 64px; }
+.h-zeki-figur .zeki { width: 64px; height: 88px; display: block; }
+.h-zeki-platz { flex: 1; display: grid; min-width: 0; }
+.h-zeki-platz > * { grid-area: 1 / 1; align-self: end; }
+.h-zeki-platz .jetzt.h-jetzt { margin: 0; }
+.h-zeki-blase { background: var(--b-karte, #fff); border: 1px solid var(--b-linie); border-radius: 16px 16px 16px 4px; padding: 10px 12px;
+  font-size: 1rem; line-height: 1.3; font-weight: 600; color: var(--b-text); box-shadow: var(--schatten-knopf); }
+.h-zeki--neu .h-zeki-blase { animation: zekiBlaseAus .35s ease var(--zeki-rest, 7s) both; }
+.h-zeki--neu .h-jetzt { animation: zekiKnopfEin .35s ease var(--zeki-rest, 7s) both; }
+@keyframes zekiBlaseAus { to { opacity: 0; visibility: hidden; } }
+@keyframes zekiKnopfEin { from { opacity: 0; visibility: hidden; } to { opacity: 1; visibility: visible; } }
+@media (prefers-reduced-motion: reduce) { .h-zeki--neu .h-zeki-blase, .h-zeki--neu .h-jetzt { animation-duration: .01s; } }
+.kl-bleibt-teil { display: block; }
+/* 27.10.2026 (Baris-Foto 23:49): Blatt war höher als der Bildschirm – Name lag unter der Uhr/Dynamic Island. Höhe begrenzen, innen scrollen. */
+.kl-blatt { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 16px); overflow-y: auto; overscroll-behavior: contain; }
+.h-zeki--ohne-figur{display:block}
+/* Zeki in einem Satz auf der Karte (27.10.2026) – Sprechblase mit Spitze nach oben rechts zu Zeki */
+.kl-zeki { position: relative; display: block; width: 100%; text-align: left; margin: 4px 0 14px; padding: 12px 16px; border-radius: 18px 6px 18px 18px; font: inherit; font-weight: 650; font-size: calc(17rem / 17); line-height: 1.35; background: var(--b-karte, #fff); border: 1px solid var(--b-linie, #e4ddd0); color: var(--b-text, #1d2a22); }
+.kl-zeki.a-gelb { background: #fff8e6; border-color: #f0d58a; }
+.kl-zeki.a-rot { background: #fdecea; border: 2px solid #b23a26; color: #7f1f10; box-shadow: 0 6px 18px rgba(178,58,38,.18); animation: klZekiRot 1.4s ease 1; }
+.kl-zeki.a-rot::after { content: "›"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 1.6em; }
+.kl-zeki.a-rot { padding-right: 36px; }
+@keyframes klZekiRot { 0%, 100% { transform: none; } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } }
+@media (prefers-reduced-motion: reduce) { .kl-zeki.a-rot { animation: none; } }
+.kl-gericht.rotrand { border: 2px solid #b23a26 !important; }
+/* Putzen im Laden mit Bildern (27.10.2026) */
+.p-schablone .pzeile.p2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.p-schablone .pzeile.p2 .aufgabe{display:flex;align-items:center;gap:12px;width:100%;min-height:72px;padding:8px 12px 8px 8px;text-align:left}
+.p-schablone .pbild{width:56px;height:56px;flex:0 0 56px;border-radius:14px;object-fit:cover;background:#eef3ee;display:grid;place-items:center;color:var(--gc-deep,#24412f)}
+.p-schablone .pbild.pikto svg{width:26px;height:26px}
+.p-schablone .atext{flex:1}
+.p-schablone .box{margin-left:auto}
+.p-schablone .pwarum{grid-column:1/-1;margin:0 4px 6px;font-size:calc(15rem / 17);color:var(--b-text-leise,#5b5b52)}
+.p-schablone .wer-titel{display:block;font-weight:700;margin-bottom:6px}
+.p-schablone .p-fertig summary{cursor:pointer;font-weight:700;padding:10px 4px;color:var(--b-text-leise,#5b5b52)}
+.p-schablone .aufgabe.erledigt{opacity:.7}
+/* Müll mit Lebensmitteln zuerst (27.10.2026) */
+.m-schablone .m-reiter{display:flex;gap:6px;margin:0 0 12px;padding:4px;border-radius:16px;background:var(--papier-tief,#efe7da)}
+.m-schablone .m-reiter button{flex:1;min-height:44px;border:0;border-radius:12px;background:transparent;font:inherit;font-weight:700;font-size:calc(14rem / 17);color:var(--b-text-leise,#5b5b52)}
+.m-schablone .m-reiter button.an{background:var(--b-karte,#fff);color:var(--b-text,#1d2a22);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.m-schablone .zeki-zeile{margin-top:12px}
+/* Karte: eine Zahl je Gericht nach allen Kosten (Baris 27.10.2026, B) – die Erklärung steht einmal oben, Details nur auf Tipp */
+.kl-legende{margin:-6px 0 12px;font-size:calc(15rem / 17);color:var(--b-text-leise,#5b5b52)}
+.kl-wohin summary{cursor:pointer;font-weight:700;font-size:calc(15rem / 17);min-height:44px;display:flex;align-items:center;list-style:none}
+.kl-wohin summary::-webkit-details-marker{display:none}
+.kl-wohin summary::after{content:"›";margin-left:auto;transition:transform .2s;font-size:1.3em}
+.kl-wohin[open] summary{margin-bottom:8px}
+.kl-wohin[open] summary::after{transform:rotate(90deg)}
+.kl-ohne{margin:6px 2px 10px;font-weight:650;color:var(--b-text-leise,#5b5b52)}
+.h-bewegung{display:block;margin:-2px 0 4px;font-weight:800;font-size:calc(15rem / 17);color:#f4e7c8}.h-bewegung.gut{color:#bfe3c4}.h-bewegung.schlecht{color:#ffcdb8}
+/* Masterauftrag „Gehirn“ 0.1 (28.10.2026): ohne Miete/Löhne keine Euro-Zahl, sondern ein klarer nächster Eintrag */
+.karte.h-ziel.h-ziel-fehlt { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-height: 180px; }
+.h-ziel-fehlt .h-fehlt-knopf { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border-radius: 999px;
+  background: var(--aktion); color: var(--aktion-text); font-weight: 700; font-size: calc(17rem / 17); }
+
+/* Lauf 2, Bildpaket D (3) Variante B: Zutaten-Blatt im Laden */
+.kl-rezeptblatt .kl-preiskopf small{display:block;color:var(--tinte-weich);font-size:.85rem}
+.kl-zutaten{list-style:none;margin:.4rem 0 .8rem;padding:0;display:grid;gap:.45rem}
+.kl-zutat{display:grid;grid-template-columns:1fr auto minmax(5.5rem,auto) auto;align-items:center;gap:.5rem;min-height:3rem}
+.kl-zname{font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2}
+.kl-zmenge{text-align:center;font-size:1.15rem;font-variant-numeric:tabular-nums}
+.kl-zmenge small{font-size:.8rem;font-weight:500;color:var(--tinte-weich)}
+.kl-zutat.q-eigen .kl-zmenge::after{content:"";display:inline-block;width:.45rem;height:.45rem;border-radius:50%;background:var(--gruen);margin-inline-start:.35rem;vertical-align:middle}
+.kl-rund.klein{width:48px;height:48px}
+.kl-rund.klein .sym{width:22px;height:22px}
+
+/* Lauf 2, Bildpaket D (4a): kleiner Hinweis unter der Zielkarte, wenn die Zahl mit Mindestlohn-Richtwert gerechnet ist */
+.h-lohn-tipp{display:flex;align-items:center;justify-content:center;gap:.2rem;margin:-.3rem auto .5rem;color:var(--glut);font-weight:600}
+.h-lohn-tipp .h-pfeil{width:1rem;height:1rem}
+/* Vorab-Prüfung D (04.11.2026): langer Gerichtname im Preis-/Rezept-Blatt auf zwei Zeilen statt nach einem Wort abgeschnitten (tr 360 px) */
+.kl-preiskopf b { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow-wrap: anywhere; }

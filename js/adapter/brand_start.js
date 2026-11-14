@@ -1,13 +1,12 @@
-// Startet die Folgen von Zeki, sobald ein Element mit data-zeki-start erscheint (und für das, was schon da ist).
-// Nur angeforderte Bewegungen (js/gastrocash-brand.js mascotMarkup); keine fachliche Ereigniszuordnung. Die Folge wird erst jetzt geladen, nicht vorher.
-// Bei „Bewegung reduzieren“ passiert nichts: die Figur bleibt als ruhendes Bild stehen.
-import { zekiSpielen, zekiStopp } from "../zeki_figur.js";
+// Startet die Darstellungsbewegungen von Zeki, sobald ein Element mit data-zeki-start erscheint (und für das, was schon da ist).
+// Nur angeforderte Bewegungen; keine fachliche Ereigniszuordnung. „none“ beim Erscheinen nicht abspielen – es brach sonst eine
+// gerade gestartete Bewegung ab.
+import { zekiSpielen } from "../gastrocash-brand.js";
 
 if (typeof document !== "undefined" && typeof MutationObserver !== "undefined") {
   const start = (root) => {
-    for (const el of root.querySelectorAll("[data-zeki-vorn][data-zeki-start]")) {
-      const name = el.getAttribute("data-zeki-start"); el.removeAttribute("data-zeki-start");
-      if (name && el.isConnected) { for (const f of document.querySelectorAll(".gc-buehne .gc-figur")) zekiStopp(f); zekiSpielen(el, name); } // vorn gibt es nur eine Folge: die Bühnen-Figur ruht
+    for (const s of root.querySelectorAll(".zeki[data-zeki-start]")) {
+      const m = s.dataset.zekiStart; s.removeAttribute("data-zeki-start"); if (m && m !== "none") zekiSpielen(s, m);
     }
   };
   new MutationObserver((records) => { for (const r of records) for (const n of r.addedNodes) if (n.nodeType === 1) start(n.parentElement || document); })

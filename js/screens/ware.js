@@ -67,7 +67,7 @@ export function wareView(stand, { datum, minutensatz = kalkulation(stand).minute
   if (selbst.length) karten.push(`<div class="karte wa-karte"><h2>${esc(t("gehirn.ware.selbstTitel"))}</h2>${selbst.map((a) => { const r = selbstOderKaufen(stand, a.name, minutensatz);
     return `<div class="wa-selbst"><div class="summenzeile"><span><b>${esc(a.name)}</b><br><small>${esc(!r ? t("gehirn.ware.selbstFehlt") : r.besser === "selbst" ? t("gehirn.ware.selbstBesser", fmtEuroGeschaetzt(Math.abs(r.jahr), true)) : t("gehirn.ware.kaufenBesser", fmtEuroGeschaetzt(Math.abs(r.jahr), true)))}</small></span></div>
       <label class="wa-zukauf"><span>${esc(t("gehirn.ware.zukauf", a.rezept.ausbeute?.einheit === "stk" ? t("gehirn.ware.jeStueck") : a.rezept.ausbeute?.einheit === "l" || a.rezept.ausbeute?.einheit === "ml" ? t("gehirn.ware.jeLiter") : t("gehirn.ware.jeKg")))}</span>
-      <input type="text" inputmode="decimal" data-f="wa-zukauf" data-id="${esc(a.name)}" data-name="${esc(a.name)}" value="${esc(a.rezept.zukaufPreis ? wertAnzeige(a.rezept.zukaufPreis) : "")}" placeholder="€"></label></div>`; }).join("")}
+      <input type="text" inputmode="decimal" data-f="wa-zukauf" data-name="${esc(a.name)}" value="${esc(a.rezept.zukaufPreis ? wertAnzeige(a.rezept.zukaufPreis) : "")}" placeholder="€"></label></div>`; }).join("")}
     ${minutensatz === null ? `<small>${esc(t("gehirn.ware.ohneArbeit"))}</small>` : ""}</div>`);
   return `${kopf}<div class="inhalt pr wa">${karten.join("")}</div>${nav("ware")}`;
 }
@@ -77,7 +77,7 @@ function zaehlView(stand) {
   return `<div class="inhalt pr wa"><div class="karte wa-karte"><h2>${esc(t("gehirn.ware.zaehlJetzt"))}</h2><p>${esc(t("gehirn.ware.zaehlWie"))}</p>
     ${aa.map((x) => { const a = idx[x.name]; const g = a?.gebinde?.art || "packung"; const inhalt = a?.packung?.menge ? `${fmtZahl(a.packung.menge)} ${a.packung.einheit}` : "";
       return `<label class="wa-zaehlzeile"><span><b>${esc(x.name)}</b><small>${esc(t("gehirn.ware.zaehlEinheit", t("gebinde.arten." + g), inhalt))}</small></span>
-      <input type="text" inputmode="decimal" data-f="wa-zp" data-id="${esc(x.name)}" data-name="${esc(x.name)}" value="${esc(zaehlen.posten[x.name] ?? "")}" placeholder="0"></label>`; }).join("")}
+      <input type="text" inputmode="decimal" data-f="wa-zp" data-name="${esc(x.name)}" value="${esc(zaehlen.posten[x.name] ?? "")}" placeholder="0"></label>`; }).join("")}
     <button type="button" class="knopf" data-a="wa-zaehlen-fertig">${esc(t("gehirn.ware.zaehlFertig"))}</button>
     <button type="button" class="leise" data-a="wa-zaehlen-ab">${esc(t("allgemein.abbrechen"))}</button></div></div>`;
 }

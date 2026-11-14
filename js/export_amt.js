@@ -220,43 +220,41 @@ const cssText = (s) => `"${String(s ?? "").replace(/[\\"]/g, "\\$&").replace(/[\
 export function druckHtml(dok) {
   const klasse = (z) => [z.warn ? "warn" : "", z.klasse || ""].filter(Boolean).join(" ");
   const abschnitt = (a) => `<section><h2>${esc(a.titel)}</h2>${a.info ? `<p class="info${a.warn ? " warn" : ""}">${esc(a.info)}</p>` : ""}
-    ${a.zeilen?.length ? `<div class="tab"><table${a.kopf.length >= 4 ? ' class="breit"' : ""}><thead><tr>${a.kopf.map((k, i) => `<th${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(k)}</th>`).join("")}</tr></thead>
+    ${a.zeilen?.length ? `<div class="tab"><table><thead><tr>${a.kopf.map((k, i) => `<th${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(k)}</th>`).join("")}</tr></thead>
     <tbody>${a.zeilen.map((z) => `<tr${klasse(z) ? ` class="${klasse(z)}"` : ""}>${(z.zellen || z).map((c, i) => `<td${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>
     ${a.summe ? `<tfoot><tr>${a.summe.map((c, i) => `<td${(a.rechts || []).includes(i) ? ' class="r"' : ""}>${esc(c)}</td>`).join("")}</tr></tfoot>` : ""}</table></div>` : a.leer ? `<p class="leer">${esc(a.leer)}</p>` : ""}</section>`;
   const seite = Array.isArray(dok.seite) && dok.seite.length === 2 ? dok.seite : null;
-  const rand = seite ? ` @bottom-right { content: ${cssText(seite[0] + " ")} counter(page) ${cssText(" " + seite[1] + " ")} counter(pages); font-size: 8pt; color: #4C6B55; }
-  @bottom-left { content: ${cssText(`${dok.beispiel ? dok.beispiel + " · " : ""}${dok.laden || ""} · ${dok.zeitraum || ""}`)}; font-size: 8pt; color: #4C6B55; }` : "";
+  const rand = seite ? ` @bottom-right { content: ${cssText(seite[0] + " ")} counter(page) ${cssText(" " + seite[1] + " ")} counter(pages); font-size: 8pt; color: #55604F; }
+  @bottom-left { content: ${cssText(`${dok.beispiel ? dok.beispiel + " · " : ""}${dok.laden || ""} · ${dok.zeitraum || ""}`)}; font-size: 8pt; color: #55604F; }` : "";
   return `<!doctype html><html lang="${esc(dok.sprache || "de")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${dok.beispiel ? esc(dok.beispiel) + " – " : ""}${esc(dok.titel)} – ${esc(dok.laden)} – ${esc(dok.zeitraum)}</title>
 <style>
 @page { size: A4; margin: 16mm 14mm 18mm;${rand} }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; padding: 20px; font: 10.5pt/1.4 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color: #22301F; background: #F5EDE2; }
-header { border-bottom: 2px solid #4C6B55; padding-bottom: 10px; margin-bottom: 14px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+body { margin: 0; padding: 20px; font: 10.5pt/1.4 system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color: #1F2A24; background: #fff; }
+header { border-bottom: 2px solid #2E4034; padding-bottom: 10px; margin-bottom: 14px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
 h1 { font-size: 17pt; margin: 0 0 2px; letter-spacing: -.01em; }
 header .laden { font-size: 12pt; font-weight: 700; }
-header .meta { color: #4C6B55; font-size: 9.5pt; text-align: right; }
+header .meta { color: #55604F; font-size: 9.5pt; text-align: right; }
 section { margin: 0 0 16px; break-inside: auto; }
-h2 { font-size: 12pt; margin: 0 0 4px; color: #4C6B55; break-after: avoid; }
-p.info { margin: 0 0 6px; color: #4C6B55; } p.info.warn { color: #22301F; font-weight: 600; }
-p.leer { margin: 0; color: #4C6B55; font-style: italic; }
+h2 { font-size: 12pt; margin: 0 0 4px; color: #2E4034; break-after: avoid; }
+p.info { margin: 0 0 6px; color: #55604F; } p.info.warn { color: #8A4C20; font-weight: 600; }
+p.leer { margin: 0; color: #55604F; font-style: italic; }
 table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
-th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #E2CDB2; vertical-align: top; overflow-wrap: break-word; }
+th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #E9DDCB; vertical-align: top; overflow-wrap: break-word; }
 .tab { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-@media screen and (max-width: 640px) { body { padding: 14px; font-size: 10pt; } table.breit { min-width: 560px; } h1 { font-size: 15pt; } }
-/* Breite Tabellen scrollen in ihrem Rahmen; ein weicher Rand zeigt, dass es weitergeht */
-@media screen { .tab { background: linear-gradient(to right, #F5EDE2 30%, rgba(245,237,226,0)) 0 0 / 28px 100% no-repeat local, linear-gradient(to left, #F5EDE2 30%, rgba(245,237,226,0)) 100% 0 / 28px 100% no-repeat local, linear-gradient(to right, rgba(34,48,31,.16), rgba(34,48,31,0)) 0 0 / 10px 100% no-repeat scroll, linear-gradient(to left, rgba(34,48,31,.16), rgba(34,48,31,0)) 100% 0 / 10px 100% no-repeat scroll; } }
-th { background: #F5EDE2; font-weight: 700; border-bottom: 1px solid #E2CDB2; }
+@media screen and (max-width: 640px) { body { padding: 14px; font-size: 10pt; } table { min-width: 560px; } h1 { font-size: 15pt; } }
+th { background: #F5EBDD; font-weight: 700; border-bottom: 1px solid #C9A87C; }
 thead { display: table-header-group; } tr { break-inside: avoid; }
 td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-tr.warn td { background: rgba(232,118,58,.12); }
-tr.spaet td { background: rgba(226,205,178,.45); }
-tr.nach td { background: rgba(34,48,31,.06); color: #4C6B55; }
-tr.warn.nach td { background: rgba(232,118,58,.08); }
-tfoot td { font-weight: 700; border-top: 2px solid #4C6B55; border-bottom: 0; }
+tr.warn td { background: #FBE9E6; }
+tr.spaet td { background: #FCEBD6; }
+tr.nach td { background: #EFEFEC; color: #5E625C; }
+tr.warn.nach td { background: #F3E2DE; }
+tfoot td { font-weight: 700; border-top: 2px solid #C9A87C; border-bottom: 0; }
 .unterschrift { margin-top: 28px; display: flex; gap: 32px; flex-wrap: wrap; }
-.unterschrift div { flex: 1; min-width: 200px; border-top: 1px solid #22301F; padding-top: 4px; color: #4C6B55; font-size: 9pt; }
-footer { margin-top: 18px; color: #4C6B55; font-size: 8.5pt; }
+.unterschrift div { flex: 1; min-width: 200px; border-top: 1px solid #1F2A24; padding-top: 4px; color: #55604F; font-size: 9pt; }
+footer { margin-top: 18px; color: #55604F; font-size: 8.5pt; }
 @media screen { body { max-width: 900px; margin: 0 auto; } }
 @media print { body { padding: 0; } tr.warn td, tr.spaet td, tr.nach td { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
 </style></head><body>

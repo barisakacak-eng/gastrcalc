@@ -15,9 +15,6 @@ async def main():
     try:
         async with async_playwright() as p:
             b = await p.chromium.launch(); ctx, pg = await schnellstart.kontext(b, 390, 844, fehler)
-            # Die Prüfstand-Sicherung trägt Einträge mit Zeitstempel bis 01.01.2027. „Neu seit dem Einlesen“ (rueckholNeuSeitdem) zählt jeden Eintrag mit späterem Zeitstempel – mit der echten Uhr (vor 2027) wären das 500+ „neue“ Einträge
-            # und der Rückgängig-Knopf würde zu Recht nicht angeboten. Darum läuft die Uhr der Seite auf 02.01.2027 (Date verschoben; nur die Uhr, keine Timer).
-            await ctx.add_init_script("(() => { const D = Date, off = D.parse('2027-01-02T12:00:00Z') - D.now(); class F extends D { constructor(...a) { if (a.length) super(...a); else super(D.now() + off); } static now() { return D.now() + off; } } window.Date = F; })();")
             async def ja(d): dialoge.append(d.message); await d.accept()
             pg.on("dialog", lambda d: asyncio.ensure_future(ja(d)))
             await schnellstart.schnellstart(pg, PORT, name="Mein Laden"); await nav_hilfe.rundgang_weg(pg)

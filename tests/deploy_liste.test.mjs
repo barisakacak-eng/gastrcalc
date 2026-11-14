@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 
 test("Deploy kopiert jeden Ordner, den sw.js vorab lädt", () => {
   const sw = readFileSync(new URL("../sw.js", import.meta.url), "utf8");
-  const liste = [...JSON.parse(sw.match(/const DATEIEN = (\[.*?\]);/s)[1]), ...JSON.parse(sw.match(/const SPAETER = (\[.*?\]);/s)[1])];
+  const liste = JSON.parse(sw.match(/const DATEIEN = (\[.*?\]);/s)[1]);
   const yml = readFileSync(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8");
   const cp = yml.match(/cp -r (.+?) \/tmp\/seite\//)[1].split(/\s+/);
   const fehlt = [...new Set(liste.filter((f) => f !== "./").map((f) => f.split("/")[0]))].filter((top) => !cp.includes(top));

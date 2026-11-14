@@ -376,7 +376,6 @@ class Lauf:
                         pos = await pg.evaluate("([w, k, o]) => window.__kl.finde(w, k, o)", [scr["wurzel"], el["k"], el["o"]])
                         if "grund" in pos:
                             info["nicht_tippbar"][pos["grund"]] = info["nicht_tippbar"].get(pos["grund"], 0) + 1; break
-                        if beschr.startswith("pp-haken"): await pg.wait_for_timeout(450)  # der Putzplan schluckt 0,4 s lang jeden zweiten Haken (Doppeltipp-Schutz HAKEN_RUHE_MS) – das ist gewollt, kein toter Tipp
                         f0 = len(self.fehler)
                         geaendert, lt = await self.geste(pos["x"], pos["y"], druck)
                         if DEBUG: print(f"    {gname} {beschr}: geändert {geaendert} lang {lt:.0f} anker {await pg.evaluate('window.__kl.anker()')}", file=sys.stderr, flush=True)

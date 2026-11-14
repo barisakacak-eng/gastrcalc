@@ -110,8 +110,8 @@ const TEIL4 = [
   // Ausnahme: js/geld.js – dort steht die eine Rundung (cent/rund2). Gerundet auf 1, 3 oder 4 Stellen (Math.round(x * 1000) / 1000) ist erlaubt und wird hier nicht gesucht.
   { name: "Geld: kein Math.round(… * 100) / 100 außerhalb js/geld.js – die eine Rundung heißt rund2", dateien: jsOhne("js/geld.js"), darfNicht: /Math\.round\((?:[^()]|\([^()]*\))*\*\s*100\)\s*\/\s*100(?!\d)/ },
   // Ausnahmen: js/data/regelwerk.js (dort stehen die Sätze), js/data/richtpreise.js und js/data/richtpreise_nachtrag.js (Preise und Spannen in Euro, die zufällig 0,19 oder 0,07 € heißen),
-  // die Zeile mit AMPEL_GRENZEN in js/engine.js (Gewinn-Ampel „Grün ab 19 % Gewinn“ – kein Steuersatz) und Kommentarzeilen. Gesucht wird auch 1,19 / 1,07 (Bruttofaktor).
-  { name: "Geld: kein Steuersatz-Literal 0.19 / 0.07 (auch 1.19 / 1.07, mit Komma) außerhalb js/data/regelwerk.js – Sätze kommen aus geld.mwst", dateien: jsOhne("js/data/regelwerk.js", "js/data/richtpreise.js", "js/data/richtpreise_nachtrag.js"), darfNicht: /^(?!\s*\/\/)(?!.*AMPEL_GRENZEN).*?(?<![\d.,])[01][.,](?:19|07)(?!\d)/m },
+  // js/zeki-svg.js (Zeichnungsdaten: Koordinaten wie 0.19), die Zeile mit AMPEL_GRENZEN in js/engine.js (Gewinn-Ampel „Grün ab 19 % Gewinn“ – kein Steuersatz) und Kommentarzeilen. Gesucht wird auch 1,19 / 1,07 (Bruttofaktor).
+  { name: "Geld: kein Steuersatz-Literal 0.19 / 0.07 (auch 1.19 / 1.07, mit Komma) außerhalb js/data/regelwerk.js – Sätze kommen aus geld.mwst", dateien: jsOhne("js/data/regelwerk.js", "js/data/richtpreise.js", "js/data/richtpreise_nachtrag.js", "js/zeki-svg.js"), darfNicht: /^(?!\s*\/\/)(?!.*AMPEL_GRENZEN).*?(?<![\d.,])[01][.,](?:19|07)(?!\d)/m },
 ];
 
 // ───── Teil 5 (Lauf 6, Etappe 5): Bedienschicht – Verdrahtung, die nur im Browser (tests/doppeltipp_browser.py, tests/echt_browser.py) als Verhalten prüfbar ist ─────

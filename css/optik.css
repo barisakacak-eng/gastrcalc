@@ -1,75 +1,352 @@
-/* Nach allen bisherigen visuellen CSS-Dateien laden. Keine Inhalte generieren oder verstecken. */
-*,*::before,*::after{box-sizing:border-box}
-html,body{font-family:var(--schrift);font-size:var(--text);line-height:var(--zeilenhoehe);color:var(--tinte);background:var(--papier);background-image:none}
-button,input,select,textarea{font:inherit;color:inherit;touch-action:manipulation}
-button,a,input,select{min-block-size:var(--tippflaeche)}
-button{cursor:pointer}button:disabled,[aria-disabled=true]{cursor:default;opacity:.48}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--fokus);outline-offset:3px}
-h1,h2,h3,.frage{font-family:var(--schrift);font-weight:700;line-height:1.25;letter-spacing:-.015em}h1,.frage{font-size:var(--text-titel)}h2{font-size:1.0588rem}small,.hinweis{font-size:var(--text-klein);color:var(--tinte-weich)}
-.knopf{display:flex;align-items:center;justify-content:center;gap:8px;min-block-size:var(--knopf-hoehe);padding:10px 16px;border:1px solid transparent;border-radius:var(--radius);font-weight:700;background:var(--aktion);color:var(--aktion-text);box-shadow:none;transition:background var(--bewegung) var(--kurve),transform var(--bewegung) var(--kurve)}
-.knopf:active,.knopf.gedrueckt{background:var(--salbei-tief);transform:translateY(1px)}
-.knopf.zweit,.knopf.leise,.leise{background:transparent;color:var(--tinte);border:1px solid var(--linie);box-shadow:none}
-.leise{padding:8px 12px;border-radius:var(--radius-klein)}
-.textfeld,input:not([type=checkbox]):not([type=radio]),select,textarea{inline-size:100%;min-block-size:48px;padding:10px 12px;border:1px solid var(--linie);border-radius:var(--radius);background:var(--papier);color:var(--tinte);font-size:0.9412rem;line-height:1.4}
-input::placeholder{color:var(--tinte-weich)}input:focus{border-color:var(--salbei)}
-input[aria-invalid=true],.feld-fehler input{border:2px solid var(--rot)}.feld-fehler small{color:var(--tinte);font-weight:700}
-.karte,.kachel,.zeile,.b-bereich,.einklapp{background:var(--papier);border:1px solid var(--linie);border-radius:var(--radius);box-shadow:var(--schatten-karte)}
-.zeile,.blattzeile{padding:12px 14px;display:flex;gap:12px;align-items:center;min-block-size:52px}.zeile>span,.blattzeile>span{flex:1;min-inline-size:0}
-.liste{display:grid;gap:8px}.karte{padding:16px}.kacheln{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kachel{padding:8px;min-inline-size:0;text-align:start}.kachel img{display:block;inline-size:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}.kachel.an,[aria-pressed=true]{outline:2px solid var(--salbei);outline-offset:-2px}
-input[type=checkbox]{accent-color:var(--salbei);inline-size:22px;block-size:22px;margin:0;flex:none}label.zeile{min-block-size:52px;cursor:pointer}
-.seg{display:flex;gap:4px;background:var(--papier-tief);border-radius:10px;padding:4px}.seg button{flex:1;min-inline-size:0;border:0;border-radius:8px;background:transparent;padding:8px;font-size:0.8235rem}.seg button.an,.seg [aria-selected=true]{background:var(--salbei);color:var(--buehne-text)}
-.tableiste{display:flex;background:var(--papier);border-block-start:1px solid var(--linie);border-radius:0;box-shadow:none;padding:6px 8px max(6px,env(safe-area-inset-bottom));gap:4px}.tab{flex:1;display:grid;justify-items:center;gap:2px;min-inline-size:0;min-block-size:52px;border:0;background:none;color:var(--tinte-weich);font-size:0.7059rem}.tab svg{inline-size:22px;block-size:22px}.tab.an{color:var(--tinte);box-shadow:inset 0 -2px var(--glut);font-weight:700}
-.ik,svg.ik{inline-size:24px;block-size:24px;stroke-width:1.7}.ikonknopf{min-inline-size:44px;min-block-size:44px;border:0;background:transparent;color:inherit;display:inline-grid;place-items:center}
-.blattkopf{display:flex;align-items:center;gap:12px}.blattkopf .zu{margin-inline-start:auto}.ebene-blatt{background:var(--papier);color:var(--tinte);border-radius:22px 22px 0 0;box-shadow:var(--schatten-menu);padding:12px 20px 24px;max-block-size:90dvh;overflow:auto;animation:gcBlatt var(--dauer-blatt) var(--kurve)}.griff{inline-size:40px;block-size:4px;background:var(--holz-tief);border-radius:4px;margin:0 auto 16px}.ebene-dimmer{background:color-mix(in srgb,var(--tinte) 72%,transparent)}
-.a-gruen,.a-gelb,.a-rot{padding:12px;border-radius:8px;border-inline-start:3px solid var(--salbei);background:var(--salbei-hell);color:var(--tinte)}.a-gelb{border-inline-start-color:var(--holz-tief);border-style:dashed;background:var(--papier-tief)}.a-rot{border-inline-start-color:var(--rot);border-width:2px;background:var(--papier-tief);font-weight:700}
-.geschaetzt{border:1px dashed var(--holz-tief)}.plus{color:var(--salbei-text)}.minus{color:var(--rot)}
-.h-riesig,.grosse-zahl{font-size:var(--text-zahl);line-height:1.2;font-weight:700;font-variant-numeric:var(--zahlen)}
-.h-ziel,.h-kachel,.h-dran{border-radius:var(--radius);box-shadow:var(--schatten-karte)}.h-kacheln{gap:8px}.h-ladenname{font:700 1.0588rem/1.3 var(--schrift)}
-.buero-liste,.b-bereiche{gap:0}.buero-liste>.zeile,.b-bereiche>.b-bereich{box-shadow:none;border-radius:0;border-width:0 0 1px;background:var(--papier)}
-.zeki-stimme>*,.s2zeki-blase,.rg-blase{background:none;border:0;border-radius:0;box-shadow:none}.s2zeki-blase::before,.rg-blase::before{display:none}
-/* Zusätzliche Vorlagenklassen: Zoro setzt die Bühne im Renderer zusammen; keine alten Klassen entfernen. */
-.gc-screen{inline-size:390px;block-size:844px;display:flex;flex-direction:column;position:relative;overflow:hidden;background:var(--papier);color:var(--tinte)}
-.gc-buehne{position:relative;flex:none;min-block-size:var(--buehne-hoehe);background:var(--buehne);color:var(--buehne-text);border-block-end:4px solid var(--holz);padding:16px 20px 0;isolation:isolate}
-.gc-kopf{display:flex;align-items:center;justify-content:space-between;min-block-size:44px;font-size:0.8235rem;font-weight:700}.gc-buehne-innen{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:12px;align-items:center;min-block-size:152px;padding-block-end:12px}
-.gc-buehne h1,.gc-buehne p{max-inline-size:100%;margin:0}.gc-buehne h1{font-size:1.1765rem}.gc-buehne p{font-size:0.9412rem}.gc-buehne button.gc-satz{color:inherit;background:none;border:0;padding:4px 0;text-align:start;text-decoration:underline;text-underline-offset:4px}
-.gc-figur{position:absolute;inset-inline-end:0;inset-block-end:0;inline-size:116px;block-size:142px;overflow:hidden;pointer-events:none}
-.gc-figur img{display:block;inline-size:116px;block-size:184px;object-fit:contain;object-position:top;filter:drop-shadow(0 2px 2px color-mix(in srgb,var(--tinte) 20%,transparent))}
-.gc-figur::after{content:"";position:absolute;inset-inline:8px;inset-block-end:0;block-size:3px;background:linear-gradient(transparent,color-mix(in srgb,var(--tinte) 20%,transparent))}
-.gc-inhalt{padding:20px;display:flex;flex:1;min-block-size:0;flex-direction:column;gap:12px}.gc-inhalt>.gc-aktion{margin-block-start:auto}.gc-aktion{inline-size:100%}.gc-inhalt p{margin:0}.gc-inhalt h2{margin:0}.gc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-block-end:1px solid var(--linie);min-block-size:52px}.gc-row>span{flex:1;min-inline-size:0}.gc-row img{inline-size:52px;block-size:48px;object-fit:cover;border-radius:8px}.gc-row b{font-size:0.9412rem}.gc-form{display:grid;gap:12px}.gc-form label{display:grid;gap:6px;font-size:0.8235rem}.gc-hero{inline-size:100%;max-block-size:170px;object-fit:cover;border-radius:14px}.gc-muell{--buehne:var(--weinrot)}
-.gc-blatt{position:absolute;inset-inline:0;inset-block-end:0;z-index:5}.gc-screen:has(.gc-blatt) .gc-buehne .gc-figur,.gc-screen:has(.gc-blatt) .gc-buehne p,.gc-screen:has(.gc-blatt) .gc-buehne button.gc-satz{visibility:hidden}
-.gc-vorn{display:flex;align-items:center;gap:16px}.gc-vorn img{inline-size:100px;block-size:140px;object-fit:contain}.gc-screen.gc-tour .gc-buehne .gc-figur{visibility:hidden}.gc-tour .gc-overlay{position:absolute;inset:0;background:color-mix(in srgb,var(--tinte) 82%,transparent);z-index:3}.gc-tour .gc-vorn{position:absolute;inset-inline:20px;inset-block-end:150px;z-index:4;color:var(--papier)}.gc-tour .gc-ziel{position:relative;z-index:4;outline:2px solid var(--glut);background:var(--papier)}
-.gc-chart{display:flex;align-items:end;gap:12px;block-size:160px;border-block-end:1px solid var(--tinte);padding:0 10px}.gc-bar{flex:1;background:var(--salbei);min-inline-size:8px}.gc-tage{display:flex;justify-content:space-around;font-size:0.7059rem}.gc-leer{display:grid;place-items:center;gap:12px;min-block-size:180px;text-align:center}.gc-laden{display:flex;gap:8px;align-items:center}.gc-laden::before{content:"";inline-size:20px;block-size:20px;border:2px solid var(--holz);border-block-start-color:var(--salbei);border-radius:50%;animation:gcLaden 900ms linear infinite}
-.gc-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.gc-keypad button{min-block-size:44px;border:1px solid var(--linie);border-radius:8px;background:var(--papier-tief)}
-[dir=rtl] .gc-buehne-innen{direction:rtl}[dir=rtl] .gc-figur{inset-inline-end:0}[dir=rtl] .gc-arrow{transform:scaleX(-1)}
-.gc-screen:not(.gc-tour) .zeki{animation:gcAtmen 4200ms ease-in-out infinite;transform-origin:50% 100%}.gc-screen .gc-figur{animation:gcGewicht 13s ease-in-out infinite;transform-origin:50% 100%}
-@keyframes gcAtmen{50%{transform:translateY(-1px) scaleY(1.008)}}@keyframes gcGewicht{0%,35%,100%{rotate:0deg}55%,80%{rotate:-.6deg}}@keyframes gcBlatt{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}@keyframes gcLaden{to{transform:rotate(360deg)}}
-/* !important: Bewegung reduzieren – nichts bewegt sich, egal welche Regel eine Bewegung setzt */
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.gc-laden::before{border-color:var(--salbei)}}
-/* ---------- Alte Bausteine im neuen Aussehen (Salbei & Papier): nur Farben, Linien, Schatten – kein Inhalt, keine Klasse entfällt ---------- */
-/* Heute: Zielkarte ohne Foto ruhig auf Papier (die Bühne trägt schon das Grün); mit Foto (h-ziel-kurs) bleibt die dunkle Bildkarte */
-.karte.h-ziel:not(.h-ziel-kurs){background:var(--papier);color:var(--tinte);border:1px solid var(--linie);box-shadow:var(--schatten-karte)}
-.karte.h-ziel:not(.h-ziel-kurs) .h-zielkopf,.karte.h-ziel:not(.h-ziel-kurs) .h-riesig,.karte.h-ziel.plus:not(.h-ziel-kurs) .h-riesig{color:var(--tinte);text-shadow:none;opacity:1}
-.karte.h-ziel:not(.h-ziel-kurs) .h-unter,.karte.h-ziel:not(.h-ziel-kurs) .h-balkenzahlen{color:var(--tinte-weich)}
-.karte.h-ziel:not(.h-ziel-kurs) .h-balken{background:color-mix(in srgb,var(--tinte) 12%,transparent)}
-.karte.h-ziel:not(.h-ziel-kurs) .h-balken i{background:var(--salbei)}
-.h-ziel-fehlt .h-fehlt-knopf{background:var(--aktion);color:var(--aktion-text)}
+/* SANJI | Kräuter & Kupfer | 15.10.2026 | DESIGN ONLY
+   Laden nach css/app.css. Keine Layoutsteuerung / HTML- / JS- / Klassenänderung.
+   Nur Optik, Größen der Touch-Ziele, Typografie, sichere Umbrüche, Animation.
+   Mobile: 390px. Keine fremden Schriftserver. Musterwerte kommen von Zoro. */
 
-/* Putzplan: acht Zeilen passen bei 390 × 844 ohne Scrollen (Laden: kein senkrechtes Scrollen) */
-.putzplan .planliste{gap:7px}
-.putzplan .pzeile{min-height:64px}
-.p-schablone .pzeile.p2 .aufgabe{min-height:60px;padding-block:5px}
-.putzplan .pbild{width:48px;height:48px}
-.putzplan .pmehr{width:46px;height:46px;min-height:46px;min-width:46px}
+/* Grundklima: edles Papier, klare Typografie, lesbar zwischen Grill und Kasse */
+html { color-scheme: light; }
+body { background: var(--papier); color: var(--tinte); font-family: var(--schrift); font-size: calc(17rem / 17); line-height: 1.48; }
+#app { background: var(--papier); }
+.schirm { background: var(--papier); }
+h1, h2, h3, .frage { letter-spacing: -.022em; }
+.frage { font-size: clamp(1.6rem,6.5vw,1.9rem); line-height: 1.16; font-weight: 800; }
+.hinweis, .tipp, .gruppe, .karte h2, .marke, .zeile .oben small,
+.zeileknopf small, .kachel small, .wahl small, .instrument small,
+.karte small, .kennzahlen, .fvgrp, .fvgrund, .fvz small, .fvtipp .n small, .zahlenraster small, .jetzt small, .band small, .tueren button, .kachel.tuer small.fein,
+.menuegruppe h2, .menuekopf small, .menuezeile .zahl,
+.schrittzahl, .chip.klein, .unterzeile, .tage, .muellkarte .tage,
+.blattzeile .messung small, .schrittzeile .anteil { font-size: calc(15rem / 17); line-height: 1.45; }
+.hinweis, .marke, .karte h2, .zeile .oben small, .zeileknopf small,
+.kachel small, .instrument small, .zahlenraster small { color: var(--tinte-weich); }
+.kopfband { background: linear-gradient(145deg,var(--salbei-tief) 2%,#395544 100%); color: var(--weiss); border-radius: 0 0 var(--radius-gross) var(--radius-gross); box-shadow: 0 12px 26px rgba(31,42,36,.16); }
+.kopfband .unter { color: var(--salbei-hell); }
+.kopfband h1 { letter-spacing: -.03em; }
+.kopfzeile .schrittzahl { color: var(--tinte-weich); }
 
-/* Müll-Eintrag (Menge): alles samt „Müll eintragen“ passt bei 390 × 844 über die Tableiste, ohne Scrollen */
-.inhalt.muellform:not(.muell-station-detail){gap:11px;padding-top:10px}
-.inhalt.muellform:not(.muell-station-detail) .auswahlkarte{min-height:72px;padding-block:8px}
-.inhalt.muellform:not(.muell-station-detail) .mengekarte{gap:8px;padding-block:12px}
-.inhalt.muellform:not(.muell-station-detail) .formkacheln .karte,.inhalt.muellform:not(.muell-station-detail) .formkacheln button{min-height:64px}
+/* Oberflächen: keine sterile Tabellenoptik, trotzdem klare Kanten */
+.karte, .kachel, .zeile, .zeileknopf, .wahl, .instrument,
+.fvliste, .blattzeile { background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); }
+.karte { padding: 17px; gap: 10px; }
+.zeile, .zeileknopf, .wahl { padding: 14px; }
+.kachel { padding: 14px; gap: 8px; }
+.kachel b { font-size: calc(17rem / 17); line-height: 1.36; }
+.karte.dunkel, .karte.zaehler { background: linear-gradient(156deg,var(--salbei-tief),#395544); border-color: var(--salbei-tief); color: var(--weiss); box-shadow: 0 12px 24px rgba(31,42,36,.17); }
+.karte.dunkel h2, .karte.zaehler h2 { color: var(--salbei-hell); }
+.karte.dunkel .gross, .karte .gross, .karte.zaehler .riesig,
+.instrument b, .mid, .preisheute, .zahlenraster b, .summenzeile .wert,
+.betrag input, .zahlfeld input, .muellwert { font-variant-numeric: tabular-nums lining-nums; letter-spacing: -.023em; }
+.karte .gross, .karte.zaehler .riesig { font-size: clamp(calc(35rem / 17),9.5vw,calc(45rem / 17)); font-weight: 800; line-height: 1.12; }
+.karte.zaehler .lbl { color: var(--salbei-hell); font-size: calc(15rem / 17); }
+.karte.zaehler small { color: var(--salbei-hell); font-size: calc(15rem / 17); }
+.karte.zaehler small.fein { color: var(--salbei-hell); }
+.karte.zaehler.minus .riesig { color: #FFD8CB; }
+.karte.zaehler.plus .riesig { color: #C7F2D0; }
+.karte.zaehler.grau .riesig { color: #E9DDCB; }
+.karte.leer { border: 2px dashed var(--holz-tief); box-shadow: none; }
+.karte.hinweisgelb, .zeile.offen, .fvliste.offen .fvz { background: var(--geschaetzt-hell); border: 2px dashed var(--geschaetzt); }
+.kachel.an, .wahl.an, .zeile.an, .karte.gruenrand { background: var(--eigen-hell); border: 2px solid var(--eigen); box-shadow: 0 0 0 3px rgba(53,95,63,.10); }
+.kachel.klein { padding: 12px; }
+.kachel.klein b { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; font-size: calc(16rem / 17); }
+.kachel.klein small { font-size: calc(15rem / 17); }
 
-/* Weinrot gehört nur auf die Müll-Bühne: das Müll-Symbol auf Kacheln (Heute, Personal) bleibt Salbei */
-.ks.muell,.riesenkachel .rt .ks.muell{background:var(--salbei-hell);color:var(--salbei-text)}
+/* Bedienflächen: Platz für Handschuhe, schnelle sichere Berührung */
+.knopf { min-height: 56px; padding: 16px 18px; font-size: calc(17rem / 17); font-weight: 750; border-radius: var(--radius); background: var(--salbei-tief); color: var(--weiss); box-shadow: var(--schatten-knopf); transition: transform var(--bewegung) ease, background var(--bewegung) ease, box-shadow var(--bewegung) ease; }
+.knopf.glut, .muellknopf, .fab { background: var(--aktion); color: var(--aktion-text); }
+.knopf:active, .chip:active, .kachel:active, .zeileknopf:active { transform: translateY(1px); box-shadow: none; }
+.knopf.zweit, .knopf.weich { box-shadow: none; }
+.knopf.warn { border: 2px solid var(--rot); color: var(--rot); }
+.knopf:disabled { background: var(--papier-tief); color: var(--tinte-weich); box-shadow: none; }
+.chip, .chip.klein, .periode button, .seg button, .seg.klein button,
+.leise, .kopfzeile .zurueck, .menuezeile, .menuekopf,
+.zeileknopf, .wahl, button.kachel, .fvx, .fvtipp,
+.einrichtungzeile, .jetzt, .schrittzeile .anteil,
+.schalter, button.schalter, .pille, .tueren button,
+.muellkacheln .kachel { min-height: 48px; }
+.stepper button { min-height: 56px; min-width: 56px; background: var(--weiss); border-color: var(--holz); }
+.fab { min-height: 60px; min-width: 60px; border-radius: 50%; box-shadow: var(--schatten-knopf); }
+.pille { background: var(--weiss); color: var(--tinte); border: 1px solid var(--holz); box-shadow: var(--schatten-knopf); padding: 12px 18px; }
+.chip, .periode, .seg, .textfeld, .stepper button { border-color: var(--holz); }
+.chip { padding: 11px 15px; font-size: calc(16rem / 17); }
+.chip.an, .periode button.an, .seg button.an { background: var(--salbei-tief); border-color: var(--salbei-tief); color: var(--weiss); }
+.textfeld { border-radius: var(--radius); background: var(--weiss); padding: 14px 16px; min-height: 52px; font-size: calc(17rem / 17); }
+:focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; }
+.textfeld:focus, .zahlfeld:focus-within, .betrag:focus-within { outline: 3px solid var(--fokus); outline-offset: 3px; }
+.fortschritt i.da { background: var(--glut); }
+.kachel.tuer, .kachel.breit { padding: 16px; }
 
-/* Piktogramme aus bilder/ sind Strichzeichnungen in currentColor; als <img> würden sie schwarz: im Dunkeln hell darstellen */
-:root[data-theme=dark] img.pikto,:root[data-theme=dark] .ep-ohne img{filter:invert(.92)}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]) img.pikto,:root:not([data-theme=light]) .ep-ohne img{filter:invert(.92)}}
+/* Pflicht-Bedeutungen: ≈ gelb gestrichelt, eigen grün, Branche blau */
+.stempel-schaetzung, .ampel.gelb, .karte.hinweisgelb,
+.zeile.offen, .zahlfeld.geschaetzt, .betrag.geschaetzt input { border: 2px dashed var(--geschaetzt); background: var(--geschaetzt-hell); color: var(--geschaetzt-text); }
+.stempel-schaetzung::before, .marke.geschaetzt::before,
+.zahlfeld.geschaetzt .einheit::before, .betrag.geschaetzt .einheit::before { content: '≈ '; font-weight: 800; color: var(--geschaetzt-text); }
+.stempel-eigen, .stempel-eigen-abgeleitet, .ampel.gruen { background: var(--eigen-hell); border: 2px solid var(--eigen); color: var(--eigen); }
+.stempel-branche, .stempel-pilot { background: var(--branche-hell); border: 2px solid var(--branche); color: var(--branche); }
+.pkt.gelb { background: var(--geschaetzt); }
+.pkt.gruen { background: var(--eigen); }
+.pkt.blau { background: var(--branche); }
+.pkt.rot { background: var(--rot); }
+.gruen, .marke.gruen { color: var(--eigen); }
+.ampel.rot { color: var(--rot); border: 2px solid var(--rot); background: var(--muell-hell); }
+.ampel::before { min-height: 12px; min-width: 12px; }
+.zahlfeld { border-bottom-color: var(--salbei); }
+.zahlfeld.offen, .betrag.offen input { border-bottom: 2px dashed var(--geschaetzt); }
+.gruppe { color: var(--salbei-tief); font-size: calc(15rem / 17); font-weight: 750; letter-spacing: .025em; }
+.tipp, .ergebnis { background: var(--salbei-hell); border-color: var(--salbei); color: var(--tinte); border-radius: var(--radius-klein); }
+.abzeichen { color: var(--tinte); border-color: var(--kupfer-dunkel); background: var(--geschaetzt-hell); }
+
+/* Navigation und Schnellknopf nur stylen: die Positionierung ist Zoros Aufgabe */
+.menueknopf { background: var(--salbei-tief); color: var(--weiss); border-radius: var(--radius); box-shadow: var(--schatten-karte); }
+.menue { background: var(--weiss); border-radius: 0 22px 22px 0; box-shadow: var(--schatten-menu); }
+.menuegruppe h2 { color: var(--tinte-weich); font-size: calc(15rem / 17); letter-spacing: .08em; }
+.menuezeile { color: var(--tinte); border-radius: 12px; padding: 12px; font-size: calc(16rem / 17); }
+.menuezeile.an { background: var(--salbei-hell); color: var(--salbei-tief); font-weight: 750; }
+.menuezeile .farbe { border-radius: 50%; }
+.m-muell .farbe { background: var(--muell); }
+.m-kuehl .farbe { background: var(--branche); }
+.m-karte .farbe { background: var(--eigen); }
+.m-umsatz .farbe { background: var(--glut); }
+.menuehinten, .schnellhinten, .blatthinten { background: rgba(24,34,28,.5); }
+
+/* Analysen: NEKAVO-Klarheit ohne sterile Kühle */
+.instrument { padding: 15px; gap: 7px; background: var(--weiss); border: 1px solid var(--holz); border-radius: var(--radius); box-shadow: var(--schatten-karte); color: var(--tinte); }
+.instrument b { font-size: clamp(calc(21rem / 17),5.5vw,calc(27rem / 17)); color: var(--tinte); line-height: 1.14; }
+.instrument .balken.mini { gap: 4px; }
+.instrument .balken.mini b { background: var(--salbei); border-radius: 4px 4px 0 0; }
+.instrument .balken.mini s { background: var(--holz); border-radius: 4px 4px 0 0; }
+.instrument .balken.mini i.heute b { background: var(--glut); }
+.instrument .balken.mini.muell b { background: #D6A6A4; }
+.instrument .balken.mini.muell i.heute b { background: var(--muell); }
+.i-tonne b, .muellwert { color: var(--muell); }
+.zielbalken { background: var(--papier-tief); border-radius: 99px; }
+.zielbalken i { background: var(--eigen); border-radius: 99px; }
+.i-ware.gelb .zielbalken i { background: var(--geschaetzt); }
+.i-ware.rot .zielbalken i { background: var(--rot); }
+.zielbalken s { background: var(--tinte); }
+.monatskurve { margin: 12px 0 10px; }
+.monatskurve .nulllinie { stroke: rgba(255,253,248,.72); stroke-width: 1.2; stroke-dasharray: 3 4; }
+.monatskurve path { stroke: var(--kurve-ist); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.monatskurve .prognose { stroke: var(--kurve-prognose); stroke-width: 2.7; stroke-dasharray: 6 6; opacity: 1; }
+.monatskurve .heute { fill: var(--glut); stroke: var(--weiss); stroke-width: 2; }
+.monatskurve .nulltag { fill: var(--eigen); stroke: var(--weiss); stroke-width: 2; }
+.ring .ring-grund { stroke: var(--holz); }
+.ring .ring-wert { stroke: var(--salbei); stroke-linecap: round; }
+.ring text { font-family: var(--schrift); fill: var(--tinte); font-weight: 800; }
+.strecke { border-radius: 99px; } /* Zoros dynamische --null-Grenze bleibt unangetastet */
+.strecke i, .strecke i.null { background: var(--tinte); }
+.strecke i.heute::after { color: var(--tinte); }
+.monat i { border-radius: 7px; }
+.einrichtungzeile { background: var(--geschaetzt-hell); color: var(--geschaetzt-text); border: 1px dashed var(--geschaetzt); border-radius: var(--radius-klein); padding: 12px; font-size: calc(15rem / 17); }
+
+/* Mitarbeiterwege: PORSIVO-Eindeutigkeit, Weinrot nur für Müll */
+.bildplatz { border: 1px solid var(--holz); border-radius: var(--radius); background-color: var(--salbei-hell); }
+.kachel.tuer { background: var(--weiss); border-color: var(--holz); }
+.fotofeld .knopf { background: var(--salbei-tief); color: var(--weiss); }
+.fotofeld .knopf.glut { background: var(--glut); color: var(--tinte); }
+.kreisel { border-color: var(--salbei-hell); border-top-color: var(--glut); }
+.fvgrp { color: var(--tinte-weich); }
+.fvliste { background: var(--weiss); border-color: var(--holz); }
+.fvliste.offen .fvz { background: var(--geschaetzt-hell); border: 2px dashed var(--geschaetzt); }
+.fvliste.offen .fvz.karte-rot { border-color: var(--rot); }
+.fvliste.offen .fvz.karte-ok { border-color: var(--eigen); }
+.fvz.auf { background: var(--salbei-hell); }
+.fvtipp .n { -webkit-line-clamp: unset; white-space: normal; overflow-wrap: anywhere; }
+.fvtipp .p { color: var(--tinte); }
+.fvtipp .p.leer { color: var(--rot); }
+.muellkarte { background: linear-gradient(158deg,var(--muell),#772A35); color: var(--weiss); border: 1px solid var(--muell); box-shadow: 0 12px 26px rgba(140,47,57,.16); }
+.muellkarte h2, .muellkarte small, .muellkarte .tage { color: var(--weiss); }
+.muellkarte .besser { color: #E2F3E1; }
+.muellkarte .schlechter { color: #FFE2DC; }
+.balken.muell b { background: #DEADA9; border-radius: 4px 4px 0 0; }
+.balken.muell i.heute b { background: var(--weiss); }
+.monatstonne .fuellung { background: #E0B0AE; }
+.zuletzt { background: var(--muell-hell); border: 1px solid #DDB7B5; color: var(--muell); border-radius: var(--radius-klein); }
+.topzeile .rang { background: var(--muell-hell); color: var(--muell); border-radius: 50%; }
+.muellkacheln .kachel { border-left: 6px solid var(--salbei); }
+.muellkacheln .g-gemuese { border-left-color: var(--eigen); }
+.muellkacheln .g-fleisch, .muellkacheln .g-fisch { border-left-color: var(--muell); }
+.muellkacheln .g-teig { border-left-color: var(--holz-tief); }
+.muellkacheln .g-sauce { border-left-color: var(--geschaetzt); }
+.eimerkachel { border: 2px dashed var(--muell) !important; }
+.blatt { background: var(--weiss); border-radius: 24px 24px 0 0; border-top: 3px solid var(--holz); box-shadow: 0 -16px 40px rgba(31,42,36,.18); padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 24px); gap: 12px; }
+.muellwert { font-size: calc(23rem / 17); font-weight: 800; }
+.knebelschalter .knebel { background: var(--holz-tief); }
+.knebelschalter.an .knebel { background: var(--eigen); }
+
+/* Textdehnung: kein gekapptes Türkisch, kein Ein-Zeilen-Zwang in Kacheln */
+.kachel b, .kachel small, .karte h2, .zeile .name, .wahl,
+.zeileknopf b, .zeileknopf small, .instrument small, .instrument b,
+.menuezeile, .pille, .chip, .schrittzeile, .fvtipp .n,
+.schirm .frage { overflow-wrap: anywhere; word-break: normal; }
+.zahlenraster b, .kachel.klein b { white-space: normal; text-overflow: clip; }
+.kennzahlen span, .tueren button { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; }
+
+/* Dezente Bewegung, nur wenn gewünscht. Keine permanenten Zahlenspiele */
+@media (prefers-reduced-motion: no-preference) {
+  .knopf, .chip, .kachel.an, .zeileknopf, .instrument { transition: background var(--bewegung) ease, border-color var(--bewegung) ease, box-shadow var(--bewegung) ease; }
+  .knopf:active, .chip:active, .zeileknopf:active { transform: translateY(1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .knopf, .chip, .kachel, .instrument, .zeileknopf, .monatskurve path { animation: none !important; transition: none !important; }
+}
+@media (max-width: 399px) {
+  .karte, .kachel, .instrument { padding: 12px; }
+  .instrumente, .kacheln, .muellkacheln { gap: 9px; }
+}
+
+/* Druck: keine Dunkelfläche hinter Tabellenkopien erzwingen */
+@media print {
+  .karte, .instrument, .zeile, .blattzeile { box-shadow: none; border-color: var(--holz-tief); }
+}
+
+
+/* Euro-Zähler – Sanji */
+/* Variante A, freigegeben 23.10.2026: ersetzt den Kupfertrenner, Kurve bleibt.
+   Zusätzliche Spezifität schützt diesen Abschnitt vor den späteren Optikschichten. */
+.heute-laden.hat-nutzen { gap: 10px; }
+.heute-laden.hat-nutzen .karte.h-ziel.h-ziel-kurs { min-height: 218px; padding: 15px 16px 12px; }
+.heute-laden.hat-nutzen .h-ziel .h-zielkopf { min-height: 24px; }
+.heute-laden.hat-nutzen .h-ziel .h-riesig { font-size: 2.5rem; margin: 7px 0 5px; }
+.heute-laden.hat-nutzen .h-ziel svg.h-kurs { height: 95px; max-height: 95px; margin-top: 3px; }
+.heute-laden.hat-nutzen .karte.h-nutzen { display: flex; flex-direction: column; gap: 3px; padding: 12px 16px; margin: 0; border: 1px solid var(--holz); border-radius: var(--radius); background: var(--weiss); box-shadow: var(--schatten-karte); }
+.heute-laden.hat-nutzen .h-nutzen-titel { font-size: 1rem; font-weight: 700; line-height: 1.3; }
+.heute-laden.hat-nutzen .h-nutzen-summe { font-size: 2.25rem; font-weight: 800; line-height: 1.15; font-variant-numeric: var(--zahlen); letter-spacing: -.03em; overflow-wrap: anywhere; color: var(--gruen); }
+.heute-laden.hat-nutzen .h-nutzen-null .h-nutzen-summe { color: var(--tinte-weich); }
+.heute-laden.hat-nutzen .h-nutzen-leer { min-height: 64px; justify-content: center; color: var(--tinte-weich); font-size: 1rem; line-height: 1.4; }
+.heute-laden.hat-nutzen .h-nutzen-posten { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.heute-laden.hat-nutzen .h-nutzen-geschaetzt { display: inline-flex; align-items: center; gap: 5px; color: var(--tinte-weich); font-size: .875rem; line-height: 1.4; font-weight: 600; }
+.heute-laden.hat-nutzen .h-nutzen-geschaetzt > .sym { width: 18px; height: 18px; flex: none; }
+.heute-laden.hat-nutzen .karte.h-kachel.h-feld { min-height: 72px; gap: 5px; padding: 8px 3px; }
+.heute-laden.hat-nutzen .h-feld-symbol { width: 22px; height: 22px; color: var(--salbei-tief); }
+.heute-laden.hat-nutzen .h-feld.alarm .h-feld-symbol { color: var(--rot); }
+.heute-laden.hat-nutzen .jetzt.h-jetzt.h-haupt { min-height: 68px; padding-block: 10px; }
+.heute-laden.hat-nutzen .h-jetzt-text b { font-size: 1.1875rem; }
+@media (max-width: 360px) {
+  .heute-laden.hat-nutzen .karte.h-ziel.h-ziel-kurs { min-height: 204px; padding-block: 12px; }
+  .heute-laden.hat-nutzen .h-ziel svg.h-kurs { height: 88px; max-height: 88px; }
+  .heute-laden.hat-nutzen .h-nutzen-summe { font-size: 2rem; }
+}
+
+/* GastroCash B – Marke und Küchenhelfer; 23.10.2026. Keine Rechenlogik. */
+/* GastroCash B: lokale Marke, ohne Einfluss auf Rechenkern oder Bedienaktionen. */
+.gc-brand{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;max-width:180px;flex:0 1 auto;color:#22301F;font:400 1rem/1.1 system-ui,-apple-system,sans-serif;white-space:nowrap}
+.gc-brand-name{min-width:0;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.025em}
+.gc-brand-name strong{font-weight:850}
+.gc-brand .gc-bot{width:30px;height:34px;flex:none}
+.appleiste.ebene-kopf.laden>.gc-brand,.appleiste.ebene-kopf.personal>.gc-brand{margin-inline:auto}
+.appleiste.ebene-kopf.buero>.gc-brand{display:none} /* Büro-Kopf behält Zurück und Bereichstitel */
+.gc-bot-head,.gc-bot-thumb,.gc-bot-body{transform-box:fill-box;transform-origin:center}
+.gc-bot-thumb{opacity:0}
+.gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{opacity:1}
+/* Grundstellung aller fünf Gesichter (neutral, freundlich, erfolg: gerade); nachdenklich und ernst neigen den Kopf */
+.gc-bot--neutral .gc-bot-head,.gc-bot--freundlich .gc-bot-head,.gc-bot--erfolg .gc-bot-head{transform:none}
+.gc-bot--nachdenklich .gc-bot-head{transform:rotate(-7deg)}
+.gc-bot--ernst .gc-bot-head{transform:rotate(3deg)}
+.gc-motion--none .gc-bot-eyes,.gc-motion--none .gc-bot-body,.gc-motion--none .gc-bot-head{animation:none}
+@media(prefers-reduced-motion:no-preference){
+.gc-motion--thumb .gc-bot-thumb,.gc-motion--celebrate .gc-bot-thumb{animation:gc-thumb .8s ease-out 1}
+.gc-motion--celebrate .gc-bot-coin{animation:gc-coin .8s ease-out 1}
+.gc-motion--celebrate .gc-bot-body{animation:gc-celebrate .75s ease-out 1}
+.gc-motion--turn .gc-bot-head{animation:gc-turn .8s ease-in-out 1}
+.gc-motion--idle .gc-bot-eyes{transform-box:fill-box;transform-origin:center;animation:gc-blink 2.4s ease-in-out 1}
+}
+@keyframes gc-thumb{from{transform:rotate(-18deg)}to{transform:rotate(0)}}
+@keyframes gc-coin{50%{transform:scale(1.08);transform-origin:80px 128px}}
+@keyframes gc-celebrate{45%{transform:translateY(-5px)}}
+@keyframes gc-turn{35%{transform:rotate(-10deg)}70%{transform:rotate(7deg)}}
+@keyframes gc-blink{0%,44%,52%,100%{transform:scaleY(1)}48%{transform:scaleY(.08)}}
+@media(max-width:360px){.gc-brand{max-width:135px;font-size:.875rem;gap:4px}.gc-brand .gc-bot{width:25px;height:29px}}
+@media(max-width:320px){.gc-brand{max-width:110px;font-size:.75rem}.gc-brand .gc-bot{width:22px;height:25px}}
+
+/* Küchenhelfer an echten Interaktionspunkten */
+.gc-help-bot{display:block;width:68px;height:76px;margin:0 auto 8px}
+.gc-help-bot .gc-bot{width:100%;height:100%;display:block}
+.ab-hero{position:relative}
+.gc-ab-mascot{position:absolute;top:12px;right:12px;width:58px;height:66px;padding:4px;border-radius:16px;background:rgba(255,253,249,.94);box-shadow:0 4px 12px rgba(34,48,31,.16);pointer-events:none}
+.gc-ab-mascot .gc-bot{display:block;width:100%;height:100%}
+.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:70px}
+@media(max-width:360px){.gc-ab-mascot{width:50px;height:57px;top:10px;right:10px}.ab-hero .lbl,.ab-hero .bewegung,.ab-hero .ab-verlauf,.ab-hero .fein{padding-right:60px}.gc-help-bot{width:60px;height:68px}}
+
+/* Zeki als Begleiter oben rechts (26.10.2026) */
+.ikonknopf.zeki-knopf{width:48px;height:48px;padding:0;background:transparent;border:0;box-shadow:none;display:grid;place-items:center}
+.ikonknopf.zeki-knopf .zeki{width:38px;height:52px;display:block}
+.gc-help-bot.zeki-lebt .zeki{width:96px;height:132px}
+/* Zeki-Zustände: Mimik steuert css/zeki.css über .zeki--<zustand>; diese Klassen tragen nur den Namen (Prüfung „Klasse ohne CSS“) */
+.gc-bot--freude,.gc-bot--warnung,.gc-bot--frage,.gc-bot--import,.gc-bot--preis,.gc-bot--hilfe,.gc-bot--bestaetigt,.gc-bot--aufmerksam,.gc-bot--erleichtert,.gc-bot--fehler{flex:none}
+/* Zeki spricht auf jedem Bildschirm (26.10.2026) */
+.appleiste{position:relative}
+.zeki-sprech{position:absolute;top:calc(100% - 4px);right:12px;z-index:30;max-width:min(300px,calc(100vw - 32px));background:var(--b-karte,#fff);color:var(--b-text,#22301F);border:1px solid var(--b-linie,#e2d6c4);border-radius:16px 4px 16px 16px;padding:10px 12px;font-size:1rem;line-height:1.3;font-weight:600;box-shadow:var(--schatten-knopf,0 4px 14px rgba(0,0,0,.12));animation:zekiBlaseAus .35s ease var(--zeki-rest,7s) both}
+.zeki-sprech--ernst{border-color:#8B3A2E}
+@keyframes zekiBlaseAus{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion: reduce){.zeki-sprech{animation-duration:.01s}}
+/* Frag Zeki (26.10.2026) */
+.zeki-fragen{margin-top:14px;text-align:left}
+.zeki-fragen-titel{display:block;margin:0 0 6px;font-size:1rem}
+.zeki-frage{border-top:1px solid var(--b-linie,#e2d6c4);padding:2px 0}
+.zeki-frage summary{min-height:44px;display:flex;align-items:center;font-weight:650;cursor:pointer;list-style:none}
+.zeki-frage summary::-webkit-details-marker{display:none}
+.zeki-frage summary::after{content:"›";margin-left:auto;padding-left:10px;transition:transform .2s}
+.zeki-frage[open] summary::after{transform:rotate(90deg)}
+.zeki-frage p{margin:0 0 10px;line-height:1.4}
+
+/* Rundgang mit Zeki (Entwurf 26.10.2026) */
+body.rg-aktiv { overflow: hidden; }
+.rg-huelle { position: fixed; inset: 0; z-index: 9000; }
+.rg-loch { position: fixed; border-radius: 22px; box-shadow: 0 0 0 9999px rgba(18,26,20,.74); transition: all .35s ease; pointer-events: none; }
+.rg-karte { position: fixed; left: 16px; right: 16px; display: flex; gap: 10px; align-items: flex-end; animation: rgEin .3s ease both; }
+.rg-zeki { flex: 0 0 72px; width: 72px; height: 86px; } .rg-zeki .zeki { width: 72px; height: 86px; }
+.rg-zeki.gross { width: 140px; height: 168px; flex-basis: auto; margin: 0 auto; } .rg-zeki.gross .zeki { width: 140px; height: 168px; }
+.rg-blase { flex: 1; background: #fff; border-radius: 20px; padding: 14px 16px; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.rg-blase p { margin: 0 0 12px; font-size: calc(19rem / 17); font-weight: 700; line-height: 1.3; color: var(--b-text, #1d2a22); }
+.rg-fuss { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rg-fuss .knopf { width: auto; min-width: 120px; margin: 0; }
+.rg-punkte { display: flex; gap: 6px; } .rg-punkte i { width: 8px; height: 8px; border-radius: 50%; background: #d9d1c2; } .rg-punkte i.an { background: var(--glut, #a8441f); }
+.rg-ende { position: fixed; inset: 0; background: var(--b-hintergrund, #f6efe5); display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); overflow-y: auto; animation: rgEin .3s ease both; }
+.rg-ende h2 { text-align: center; font-size: calc(26rem / 17); margin: 4px 0 12px; }
+.rg-ende .knopf { margin: 0; }
+.rg-fragen { justify-content: flex-start; } .rg-fragen .rg-zeki { margin: 0 auto; }
+.rg-danke { margin: 0; padding: 10px 14px; border-radius: 14px; background: #e8f3ea; font-weight: 600; }
+@keyframes rgEin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rg-karte, .rg-ende, .rg-loch { animation: none; transition: none; } }
+.rg-text{font:inherit;font-size:calc(16rem / 17)}
+/* 27.10.2026 (Persona-Test Wirt): Stempeltext beginnt in allen 18 Sprachen schon mit „≈“ – kein zweites davor */
+.stempel-schaetzung::before{content:none}
+
+/* Sicht-Prüfung 27.10.2026 */
+.ul-liefer input:focus, .ul-feld input:focus, .ul-liefer-buero input:focus { outline: none; box-shadow: none; }
+.ul-liefer-buero .ul-liefer-text { min-width: 0; flex: 1 1 60%; } .ul-liefer-buero input { flex: 0 0 7.5em; min-width: 0; }
+#app input.textfeld + button.knopf { margin-top: 10px; }
+.rg-blase { background: rgba(14, 20, 16, .94) !important; border-radius: 18px; padding: 14px 16px 12px !important; box-shadow: 0 8px 30px rgba(0,0,0,.35) !important; }
+.b-ruhig summary.b-mehr-zeile { min-height: 44px; display: flex; align-items: center; }
+.periode button { min-width: 44px; }
+textarea.rg-text { resize: none; }
+.b-zeki { min-height: 44px; }
+.s2name:focus, .s2name:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 93, 67, .18); }
+
+/* Persona-Test Team 27.10.2026: °C, g, kg in RTL nicht umdrehen */
+.einheit { unicode-bidi: isolate; direction: ltr; }
+.kuehl-minus-wahl { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin: 10px 0; } .kuehl-minus-wahl .knopf { margin: 0; }
+/* Persona-Test Team 27.10.2026: die Müll-Bestätigung blieb ohne Neuzeichnen stehen und verdeckte Kacheln – nach 5 s weg (wie TOAST_MS) */
+@keyframes muellToastWeg { to { opacity: 0; visibility: hidden; } }
+.muelltoast { animation: muellToastWeg .35s ease 5s forwards; }
+@media (prefers-reduced-motion: reduce) { .muelltoast { animation: muellToastWeg 0s linear 5s forwards; } }
+/* Mitarbeiter kompakt unter dem Umsatz (Baris 27.10.2026, 18:10) */
+.ul-feld.ul-team-kompakt { display: block; padding: 10px 16px 12px; }
+.ul-team-kompakt .ul-liefer-text { display: block; font-weight: 700; font-size: calc(16rem / 17); }
+.ul-team-kompakt .ul-liefer-text small { display: block; font-weight: 600; color: var(--b-text-leise); font-size: calc(14rem / 17); }
+.ul-team-satz-zeile { display: block; padding: 0; margin: 2px 0 0; border: 0; background: none; font: inherit; font-weight: 600; color: var(--b-text-leise); font-size: calc(14rem / 17); text-align: start; min-height: 44px; text-decoration: underline dotted; }
+.ul-team-zahlen { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.ul-team-zahl { display: flex; align-items: baseline; gap: 6px; border: 2px solid var(--b-linie); border-radius: 12px; padding: 6px 10px; background: var(--b-karte); }
+.ul-team-zahl:focus-within { border-color: var(--b-primaer); }
+.ul-team-zahl input { flex: 1 1 auto; min-width: 2ch; width: 100%; border: 0; background: none; font-size: calc(28rem / 17); font-weight: 800; text-align: end; outline: none; color: var(--b-text); font-variant-numeric: var(--zahlen); }
+.umsatz-laden .ul-feld.ul-liefer { padding: 8px 16px; } .umsatz-laden .ul-feld.ul-liefer input { font-size: calc(26rem / 17); min-width: 3.5ch; flex: 1 1 5ch; }
+.umsatz-laden .ul-feld.ul-liefer .ul-liefer-text { flex: 1 1 auto; min-width: 0; }
+.inhalt.umsatz-laden { gap: 10px; } .inhalt.umsatz-laden .ul-feld:not(.ul-liefer):not(.ul-team-kompakt) { padding: 10px 18px; }
+.ul-team-zahl .einheit { flex: 0 0 auto; font-size: calc(16rem / 17); }
+.umsatz-laden .ul-feld.ul-liefer input, .ul-team-zahl input { min-height: 44px; } .ul-team-zahl input { min-width: 44px; }
+.ul-team-zahl { padding: 6px 8px; gap: 4px; } .ul-team-zahl input { flex: 1 0 44px; } .ul-team-zahlen { gap: 8px; }
+.ul-team-zahl input { font-size: calc(24rem / 17); } .ul-team-zahl .einheit { font-size: calc(14rem / 17); } /* Nachtest: „12“ und „96,5“ passen auch bei 360 px */
+/* F1 (Sonderauftrag 6b, 28.10.2026): Einheit unter die Zahl, damit „1234,5“ und „38,5“ auch bei 360 px ganz sichtbar bleiben (Baris: Zahl verschwand im Kasten) */
+.ul-team-zahl { flex-direction: column; align-items: stretch; gap: 0; padding: 4px 8px 6px; }
+.ul-team-zahl input { flex: 0 0 auto; width: 100%; min-width: 0; text-align: center; font-size: calc(24rem / 17); letter-spacing: -0.01em; padding: 0; }
+.ul-team-zahl .einheit { text-align: center; font-size: calc(14rem / 17); line-height: 1.1; }
+.ul-team-zahlen .ul-team-zahl input { text-align: center; font-size: calc(24rem / 17); } /* F1: gilt vor späteren Regeln, damit auch „120,5“ bei 360 px Luft hat */

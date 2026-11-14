@@ -29,11 +29,9 @@ export function werktagAb(tag, land = "BW") {
 }
 const frist = (art, zeitraum, datum, land) => { const f = werktagAb(datum, land); return { art, zeitraum, regulaer: datum, datum: f, verschoben: f !== datum, erinnerung: plusTage(f, -ERINNERUNG_TAGE) }; };
 
-// Lauf 6, E11 (C4): ein Jahr, mit dem die Terminrechnung etwas anfängt: ganze Zahl, 1970 bis 2200. Alles andere (NaN, Infinity, 1e308, Text) → keine Termine statt Endlosschleife.
-const jahrOk = (j) => typeof j === "number" && Number.isInteger(j) && j >= 1970 && j <= 2200;
 // USt-Voranmeldungen, die in einem Kalenderjahr fällig werden. rhythmus "monat" | "quartal" | null (null = nicht abgefragt → keine Termine).
 export function ustTermine(jahr, { rhythmus = null, dauerfrist = false, land = "BW", kleinunternehmer = false } = {}) {
-  if (kleinunternehmer || !rhythmus || !jahrOk(jahr)) return []; // § 19 UStG: keine Voranmeldung; Rhythmus wird nie geraten
+  if (kleinunternehmer || !rhythmus) return []; // § 19 UStG: keine Voranmeldung; Rhythmus wird nie geraten
   const out = []; const versatz = 1 + (dauerfrist ? 1 : 0);
   for (let zj = jahr - 1; zj <= jahr; zj++) for (let zm = 1; zm <= 12; zm++) {
     if (rhythmus === "quartal" && zm % 3 !== 0) continue;
@@ -46,7 +44,7 @@ export function ustTermine(jahr, { rhythmus = null, dauerfrist = false, land = "
 // rhythmus "monat" | "quartal" | "jahr" | null. null = nicht abgefragt → keine Termine (wie bei der Umsatzsteuer: nie geraten).
 // Abgabe immer am 10. nach Ablauf des Zeitraums (§ 41a Abs. 1), verschoben nach § 108 Abs. 3 AO. Keine Dauerfristverlängerung.
 export function lohnsteuerTermine(jahr, { rhythmus = null, land = "BW" } = {}) {
-  if (!rhythmus || !jahrOk(jahr)) return [];
+  if (!rhythmus) return [];
   if (rhythmus === "jahr") return [frist("lohnsteuer", String(jahr - 1), tagVon(jahr, 1, 10), land)];
   return ustTermine(jahr, { rhythmus, land }).map((x) => ({ ...x, art: "lohnsteuer" }));
 }
@@ -58,7 +56,6 @@ export function lstRhythmusVorschlag(lstVorjahr, tag) {
 // Einkommensteuer-Vorauszahlungen (§ 37 Abs. 1 EStG): 10.03., 10.06., 10.09., 10.12. Es gibt sie nur mit Vorauszahlungsbescheid (§ 37 Abs. 3)
 // und nur, wenn der Inhaber selbst Einkommensteuer zahlt (Einzelunternehmen, Personengesellschaft). Das entscheidet pflichtTermine.
 export function estVorauszahlungen(jahr, { land = "BW" } = {}) {
-  if (!jahrOk(jahr)) return [];
   return [3, 6, 9, 12].map((m) => frist("est", `${jahr}-Q${m / 3}`, tagVon(jahr, m, 10), land));
 }
 
@@ -76,13 +73,12 @@ function svTerminLand(jahr, monat, landKasse) {
 }
 // SV-Termin eines Monats. Sitz unbekannt → der früheste Termin über alle Länder (Prüfpaket C: „im Zweifel früher“).
 export function svTermin(jahr, monat, { landKasse = null } = {}) {
-  if (!jahrOk(jahr) || !Number.isInteger(monat) || monat < 1 || monat > 12) return null; // Lauf 6, E11 (C4): kein Hänger bei absurden Werten
   if (landKasse) return { monat: tagVon(jahr, monat, 1).slice(0, 7), ...svTerminLand(jahr, monat, landKasse), sitzBekannt: true };
   let best = null;
   for (const l of [null, ...LAND_CODES]) { const x = svTerminLand(jahr, monat, l); if (!best || x.faellig < best.faellig) best = x; }
   return { monat: tagVon(jahr, monat, 1).slice(0, 7), ...best, sitzBekannt: false };
 }
-export const svTermine = (jahr, opt = {}) => (jahrOk(jahr) ? Array.from({ length: 12 }, (_, i) => svTermin(jahr, i + 1, opt)) : []);
+export const svTermine = (jahr, opt = {}) => Array.from({ length: 12 }, (_, i) => svTermin(jahr, i + 1, opt));
 
 // Alle Pflichttermine zwischen zwei Tagen (einschließlich), nach Datum. einstellung: { rhythmus, dauerfrist, kleinunternehmer, personal, lstRhythmus, est, landKasse, land }
 export function pflichtTermine(von, bis, einstellung = {}) {

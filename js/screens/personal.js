@@ -54,7 +54,7 @@ export function personalNachtragen(stand) { return personalAktiv() ? vonNachtrag
 const SCHLOSS = `<svg class="sym" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 // Kopfleiste im Personal-Modus: links frei oder Zurück, Mitte Logo, rechts Schloss
 // Kopf im Personal-Modus kommt aus nav.js (Zurück, Logo, Schloss – fragt immer den Büro-Code) – eine Leiste für alle Personal-Bildschirme.
-export const personalLeiste = (schritt) => nav("personal", { schritt });
+export const personalLeiste = () => nav("personal");
 
 // ---------- Ansicht ----------
 export function personalView(stand) {
@@ -64,14 +64,14 @@ export function personalView(stand) {
   const name = wer ? nameVon(stand, wer) : "";
   const datum = datumText(new Date(), { weekday: "long", day: "numeric", month: "long" });
   const kachel = (ziel, bild, symbol, farbe, titel, pille, klasse = "") => `<button type="button" class="riesenkachel ${klasse}" data-a="personal-ziel" data-wert="${ziel}">
-      ${bild ? `<img src="foto/${bild}.webp" alt="" loading="lazy" decoding="async">` : `<span class="putzmuster" aria-hidden="true">${sym("spray-can")}</span>`}
+      ${bild ? `<img src="foto/${bild}.webp" alt="">` : `<span class="putzmuster" aria-hidden="true">${sym("spray-can")}</span>`}
       <span class="rt"><span class="ks" style="color:var(${farbe})">${sym(symbol)}</span><b>${esc(titel)}</b>${pille || ""}</span></button>`;
   const kuehlPille = z.kuehlOffen === null ? "" : z.kuehlOffen > 0 ? `<span class="pille">${esc(t("personal.offen", z.kuehlOffen))}</span>` : `<span class="pille ruhig">${sym("check")}</span>`;
   const putzPille = z.putzen ? `<span class="pille ruhig zahl">${z.putzen.erledigt} / ${z.putzen.gesamt}</span>` : "";
   return `${personalLeiste()}<div class="inhalt personalstart">
     <div class="personalkopf">${name ? `<span class="avatar">${esc(name.slice(0, 1).toUpperCase())}</span>` : ""}<div><b>${esc(name ? t("personal.hallo", name) : t("personal.halloOhne"))}</b><small>${esc(datum)}</small></div>
       ${personen.length ? `<button type="button" class="leise personwechsel" data-a="personal-wechseln">${esc(t("personal.wechseln"))}</button>` : ""}</div>
-    ${kachel("muell", "m-eimer-foto", "trash-2", "--salbei-tief", t("personal.muell"), "")}
+    ${kachel("muell", "m-eimer-foto", "trash-2", "--muell", t("personal.muell"), "")}
     ${kachel("kuehl", "k-kuehlschrank-lebensmittel-foto", "snowflake", "--branche", t("personal.kuehlung"), kuehlPille)}
     ${kachel("putzplan", null, "spray-can", "--salbei-tief", t("personal.putzen"), putzPille, "putz")}
   </div>`;

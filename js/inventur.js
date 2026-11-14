@@ -118,7 +118,7 @@ export function artikelFuerInventur(stand, inv) {
       preis: typeof preis === "number" && Number.isFinite(preis) && preis >= 0 ? preis : null, menge, wert: menge !== null && typeof preis === "number" ? menge * preis : null,
       letztes: vor ? mengeSauber(vor.posten?.[name]) : null, ausgeblendet: weg.has(name) };
   });
-  zeilen.sort((x, y) => LAGERORTE.indexOf(x.lagerort) - LAGERORTE.indexOf(y.lagerort) || String(x.name).localeCompare(String(y.name), "de"));
+  zeilen.sort((x, y) => LAGERORTE.indexOf(x.lagerort) - LAGERORTE.indexOf(y.lagerort) || x.name.localeCompare(y.name, "de"));
   return { liste: zeilen.filter((z) => !z.ausgeblendet), ausgeblendet: zeilen.filter((z) => z.ausgeblendet) };
 }
 
