@@ -72,7 +72,7 @@ const putzBild = (a) => { const f = (PUTZ_BILD[a.id] || []).find((n) => FOTOS.ha
   return f ? `<img class="pbild" src="foto/${f}.webp" alt="" loading="lazy" decoding="async">` : `<span class="pbild pikto" aria-hidden="true">${sym("spray-can")}</span>`; };
 // Vorab-Prüfung 03.11.2026 (B2): nach einem Haken rückt die Liste nach – ein zweiter Tipp binnen 400 ms (Doppeltipp) traf die nächste Zeile
 // und hakte sie mit ab. Jetzt zählt in diesem Fenster nur der erste Tipp (Setzung 400 ms; ein bewusster zweiter Haken braucht länger).
-const HAKEN_RUHE_MS = 400; let hakenZeit = 0, hakenId = null; // Schutz gegen Doppeltipp auf DIESELBE Aufgabe; eine andere Aufgabe direkt danach zählt
+const HAKEN_RUHE_MS = 400; let hakenZeit = 0;
 function ladenPlanView(stand) {
   const g = planGruppen(stand); const personen = aktivePersonen(stand);
   const faellig = [...g.tag, ...g.woche, ...g.monat].filter((a) => a.status !== "spaeter");
@@ -146,7 +146,7 @@ export function putzplanAktion(name, el, stand) {
   if (name === "pp-geraet") { const g = el.dataset.wert; entwurf.geraete = entwurf.geraete.includes(g) ? entwurf.geraete.filter((x) => x !== g) : [...entwurf.geraete, g]; return true; }
   if (name === "pp-aufgabe") { const id = el.dataset.id; entwurf.aus = entwurf.aus.includes(id) ? entwurf.aus.filter((x) => x !== id) : [...entwurf.aus, id]; return true; }
   if (name === "pp-uebernehmen") { planUebernehmen(stand, entwurf); entwurf = null; /* W2-H: Änderung gilt ab heute (Verlauf) */ ansicht = "plan"; return "speichern"; }
-  if (name === "pp-haken") { const jetzt = Date.now(); if (jetzt - hakenZeit < HAKEN_RUHE_MS && hakenId === el.dataset.id) return true; hakenZeit = jetzt; hakenId = el.dataset.id; const a = planGruppen(stand); const x = [...a.tag, ...a.woche, ...a.monat, ...a.spaeter].find((y) => y.id === el.dataset.id); if (!x) return false;
+  if (name === "pp-haken") { const jetzt = Date.now(); if (jetzt - hakenZeit < HAKEN_RUHE_MS) return true; hakenZeit = jetzt; const a = planGruppen(stand); const x = [...a.tag, ...a.woche, ...a.monat, ...a.spaeter].find((y) => y.id === el.dataset.id); if (!x) return false;
     if (x.status === "erledigt" && x.letzte?.datum === heute()) zuruecknehmen(stand, x.id, heute(), { von: werFuer(stand) }); /* W2-H: wer zurücknimmt */ else abhaken(stand, x.id, { von: werFuer(stand) }); return "speichern"; }
   if (name === "pp-mehr") { offen = offen === el.dataset.id ? null : el.dataset.id; return true; }
   if (name === "pp-wer") { werId = el.dataset.id; try { localStorage.setItem("gc-putz-wer", werId); } catch { /* egal */ } return true; }
