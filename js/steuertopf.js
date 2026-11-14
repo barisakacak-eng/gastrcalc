@@ -17,7 +17,9 @@ const SATZ_7 = (tag = heute()) => mwst("ermaessigt", tag), SATZ_19 = (tag = heut
 // Anteil des Tagesumsatzes, der zu 19 % besteuert wird (Getränke, Außer-Haus-Getränke …), aus dem Mischsatz der App:
 // Mischsatz s = s7·(1−a) + s19·a  →  a = (s − s7) / (s19 − s7) (Sätze aus dem Regelwerk). Eigener Satz im Büro = nicht geschätzt; Karte/Standard = Schätzung.
 export function anteil19(stand, tag = heute()) {
-  const s = umsatzSteuerSatz(stand); const s7 = SATZ_7(tag), s19 = SATZ_19(tag);
+  const s = umsatzSteuerSatz(stand);
+  if (s.quelle === "kleinunternehmer") return { anteil: 0, geschaetzt: false, quelle: s.quelle, keineUst: true }; // § 19 UStG: keine Umsatzsteuer (Lauf 6, E11 A1)
+  const s7 = SATZ_7(tag), s19 = SATZ_19(tag);
   const a = Math.min(1, Math.max(0, (s.satz - s7) / (s19 - s7)));
   return { anteil: a, geschaetzt: s.geschaetzt, quelle: s.quelle };
 }
@@ -96,9 +98,9 @@ export function monatsPosten(stand, monat) {
   // Umsatz netto = Brutto minus die Umsatzsteuer je Satz (dieselbe Aufteilung wie im Steuer-Topf: anteil19, ustImUmsatz). So gilt für jeden Monat
   // Umsatz netto + Umsatzsteuer des Steuer-Topfs = Umsatz brutto. Der Zähler im Laden rechnet dagegen als Schätzung mit Brutto ÷ (1 + Mischsatz);
   // das weicht um ≈ 0,1 % ab (Beispiel-Laden Oktober: 16.643,59 € genau gegen 16.629,62 € im Zähler) und ist dort mit ≈ gekennzeichnet.
-  const { anteil } = anteil19(stand, z.von);
+  const { anteil } = anteil19(stand, z.von); const ku = kleinunternehmer(stand); // Lauf 6, E11 (A1): Kleinunternehmer – netto = brutto, keine Umsatzsteuer herausrechnen
   let brutto = 0, netto = 0;
-  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ustImUmsatz(e.umsatz, anteil, d); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
+  for (let d = z.von; d <= z.bis; d = plusTage(d, 1)) { const e = umsatzEintrag(stand, d); if (!e) continue; const u = ku ? { ust7: 0, ust19: 0 } : ustImUmsatz(e.umsatz, anteil, d); brutto += e.umsatz; netto += e.umsatz - u.ust7 - u.ust19; }
   const b = belege(stand, z);
   // Lauf 6 (P1 B3): Ware = dieselbe Funktion wie im Zähler (ohne Putzmittel); die Putzmittel stehen als eigene Zeile „putzmittel“
   const wb = wareNettoAusBelegen(stand, z.von, z.bis); const wareBeleg = rund2(wb.ware); const putzmittel = rund2(wb.betriebsmittel);

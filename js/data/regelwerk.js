@@ -25,6 +25,7 @@ export const REGELN = {
   ],
   // Minijob-Grenze = Mindestlohn × 130 / 3, auf volle Euro aufgerundet (§ 8 Abs. 1a SGB IV)
   minijob_grenze: [
+    e(556, "2025-01-01", "2025-12-31", "§ 8 Abs. 1a SGB IV (Formel: Mindestlohn × 130 / 3, aufgerundet; gesetze-im-internet.de/sgb_4/__8.html, gelesen 13.11.2026): 12,82 € × 130 / 3 = 555,53 → 556 €; Minijob-Zentrale: „Im Jahr 2025 liegt die monatliche Verdienstgrenze bei 556 Euro.“", "https://magazin.minijob-zentrale.de/minijob-mindestlohn-2025/", "2026-11-13"),
     e(603, "2026-01-01", "2026-12-31", "§ 8 Abs. 1a SGB IV: 13,90 € × 130 / 3 = 602,33 → 603 €", G + "sgb_4/__8.html", "2026-11-12"),
     e(633, "2027-01-01", null, "§ 8 Abs. 1a SGB IV: 14,60 € × 130 / 3 = 632,67 → 633 €", G + "sgb_4/__8.html", "2026-11-12"),
   ],

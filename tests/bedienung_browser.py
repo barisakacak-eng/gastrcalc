@@ -61,6 +61,7 @@ async def main():
             for (w, h) in [(390, 844), (360, 780)]:
                 ctx, pg = await schnellstart.kontext(b, w, h, fehler)
                 await schnellstart.schnellstart(pg, PORT); await pg.evaluate(GERICHTE); await pg.wait_for_timeout(400)
+                await pg.wait_for_selector('.zeki-intro', state='detached', timeout=15000)  # Zeki-Auftritt (Intro) ist vorbei, dann ist der Hilfe-Knopf wieder da
                 await tap(pg, '.appleiste [data-a="hilfe-auf"]'); await pg.wait_for_timeout(500)
                 ok = pg.locator('#ebene-huelle .ebene-blatt button[data-a="blatt-zu"]'); box = await ok.bounding_box()
                 sichtbar = bool(box) and box["y"] + box["height"] <= h and box["y"] >= 0

@@ -14,7 +14,7 @@
 import { feiertagAm } from "./feiertage.js";
 import { MINDESTLOHN, mindestlohnAm } from "./data/mindestlohn.js";
 import { wert } from "./data/regelwerk.js";
-import { plusTage, wochentag, berlin, berlinZeitpunkt } from "./zeit.js";
+import { plusTage, wochentag, berlin, berlinZeitpunkt, gueltigerTag } from "./zeit.js";
 import { rund2 } from "./geld.js";
 import { schichtKennung } from "./abgleich_felder.js";
 
@@ -29,11 +29,13 @@ const echteMinuten = (datum, a, b) => {
 // Dauer einer Schicht in Stunden (über Mitternacht erlaubt); null, wenn Zeiten fehlen. Mit `datum` (Tag des Beginns) zählt die echte Dauer in Berlin.
 export function schichtStunden(von, bis, datum = null) {
   const a = minuten(von), b = minuten(bis); if (a === null || b === null) return null;
+  if (a === b) return 0; // Lauf 6, E11 (B1): gleicher Beginn und gleiches Ende = 0 Stunden (im Imbiss gibt es keine 24-Stunden-Schicht); vorher 24 h
   const d = b > a ? b - a : b + 1440 - a; if (!(d > 0 && d <= 1440)) return null;
   return datum && /^\d{4}-\d{2}-\d{2}$/.test(datum) ? echteMinuten(datum, a, b) / 60 : d / 60;
 }
 // Stunden eines Eintrags: aus Zeiten, sonst die gespeicherten Stunden (alte Daten); `datum` = Tag der Schicht (Standard: x.datum)
-export const eintragStunden = (x, datum = x?.datum) => schichtStunden(x?.von, x?.bis, datum) ?? (Number(x?.stunden) || 0);
+// Gleicher Beginn und gleiches Ende (0 h aus den Zeiten) → es gelten die gespeicherten Stunden, sonst 0.
+export const eintragStunden = (x, datum = x?.datum) => { const s = schichtStunden(x?.von, x?.bis, datum); return s === null || s === 0 ? (Number(x?.stunden) > 0 ? Number(x.stunden) : 0) : s; };
 
 // Sonn-/Feiertagsstufe einer Minute an einem Kalendertag: 0 keine, 50 Sonntag, 125, 150
 const prozent = (id, tag) => Math.round(wert(id, tag) * 100);
@@ -47,8 +49,8 @@ function stufe(tag, minuteImTag, land) {
 
 // Zähler einer Schicht in Stunden: { gesamt, nacht25, nacht40, sonntag, feiertag125, feiertag150 }
 export function schichtZaehler(datum, von, bis, { land = "BW" } = {}) {
-  const a = minuten(von), dauer = schichtStunden(von, bis, datum); const z = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
-  if (a === null || dauer === null) return z;
+  const a = minuten(von), dauer = gueltigerTag(datum) ? schichtStunden(von, bis, datum) : null; const z = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
+  if (a === null || dauer === null) return z; // ungültiges Datum oder ungültige Zeit: Null-Zähler statt Ausnahme (Lauf 6, E11 C4)
   const nachtAb = wert("nacht_beginn_uhr", datum) * 60, nachtBis = wert("nacht_ende_uhr", datum) * 60; // Nacht nach dem Tag der Schicht
   const sSo = prozent("zuschlag_sonntag", datum), sFt = prozent("zuschlag_feiertag", datum), sWe = prozent("zuschlag_weihnachten", datum);
   const startMs = berlinZeitpunkt(datum, Math.floor(a / 60), a % 60).getTime();
@@ -71,7 +73,11 @@ export function schichtZaehler(datum, von, bis, { land = "BW" } = {}) {
 // Summe über viele Schichten [{ datum, von, bis }]
 export function zaehlerSumme(schichten, opt = {}) {
   const s = { gesamt: 0, nacht25: 0, nacht40: 0, sonntag: 0, feiertag125: 0, feiertag150: 0 };
-  for (const x of schichten || []) { const z = schichtZaehler(x.datum, x.von, x.bis, opt); for (const k of Object.keys(s)) s[k] += z[k]; }
+  for (const x of schichten || []) {
+    // Lauf 6, E11 (B1): gleicher Beginn und gleiches Ende mit gespeicherten Stunden (alter Eintrag aus „Mitarbeiter heute“): die Stunden zählen, ohne Zuschläge (Lage unbekannt)
+    if (x && minuten(x.von) !== null && minuten(x.von) === minuten(x.bis) && Number(x.stunden) > 0) { s.gesamt += Number(x.stunden); continue; }
+    const z = schichtZaehler(x?.datum, x?.von, x?.bis, opt); for (const k of Object.keys(s)) s[k] += z[k];
+  }
   for (const k of Object.keys(s)) s[k] = rund2(s[k]);
   return s;
 }
@@ -81,7 +87,7 @@ export function zaehlerSumme(schichten, opt = {}) {
 export function schichtenAusLaden(stand, personId, von, bis) {
   const out = new Map();
   const jeTag = new Map(); for (const e of stand?.teamTage || []) if (e.datum >= von && e.datum <= bis) jeTag.set(e.datum, e);
-  for (const e of [...jeTag.values()]) for (const x of e.eintraege || []) if (x.person === personId && x.von && x.bis) out.set(e.datum, { datum: e.datum, von: x.von, bis: x.bis });
+  for (const e of [...jeTag.values()]) for (const x of e.eintraege || []) if (x.person === personId && x.von && x.bis) out.set(e.datum, { datum: e.datum, von: x.von, bis: x.bis, ...(x.von === x.bis && x.stunden > 0 ? { stunden: x.stunden } : {}) });
   for (const x of stand?.schichten || []) if (!x.storniert && x.person === personId && x.datum >= von && x.datum <= bis) out.set(x.datum, { datum: x.datum, von: x.von, bis: x.bis });
   return [...out.values()].sort((a, b) => (a.datum < b.datum ? -1 : 1));
 }

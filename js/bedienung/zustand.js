@@ -27,7 +27,7 @@ export const Z = {
   einleseDatei: null, einleseErsetzen: false, rueckholInfo: null,
   dauerhaftVersucht: false,
   aktualisierung: null,    // wartender Service Worker (neue Fassung liegt bereit)
-  aktualisierungKlick: false, fremdeFassung: false, swGestartet: false,
+  aktualisierungKlick: false, fremdeFassung: false, swGestartet: false, nachladeLuecke: false,
   offlineStand: "laedt",   // "laedt" | "bereit" | "keinSw"
   zuletztBedient: Date.now(),
   installAufforderung: null, // Android/Chrome: „beforeinstallprompt“ für den Knopf „Installieren“

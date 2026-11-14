@@ -3,7 +3,7 @@ import { MENUE_GERICHTE } from "../data/burger_ergaenzung.js";
 // Grundsatz wie überall: Vorlagen sind Schätzungen, der Betrieb korrigiert nur. Nichts blockiert.
 import { sym, SYMBOLE } from "../symbole.js";
 import { wareBildQuelle } from "../bilder.js"; // Einkaufspreise als Bilderwand (20.10.2026): dieselbe Fotozuordnung wie Müll und Inventur
-import { gerichtBild } from "./vergleich.js";
+import { gerichtBild } from "./gerichtbild.js";
 import { reinigungZeile } from "./reinigung_zeile.js";
 import { t, einheitLabel, artikelText, gerichtText, mengenText } from "../i18n.js"; // Paket 6 (17.10.2026): artikelText = Katalogname in der aktiven Sprache (nur Anzeige)
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heute } from "../util.js";
@@ -59,7 +59,7 @@ export const karte = {
       if (!l.length) return "";
       return `<div class="gruppe">${esc(t("bereiche." + b))}</div><div class="liste eng">${l.map((v) => `
           <button type="button" class="wahl ${gewaehlt.has(v.name) ? "an" : ""}" aria-pressed="${gewaehlt.has(v.name)}" data-a="vorlage" data-name="${esc(v.name)}" data-bereich="${esc(b)}">
-            <span class="haken" aria-hidden="true">${gewaehlt.has(v.name) ? "✓" : ""}</span><span>${esc(gerichtText(v.name))}</span></button>`).join("")}</div>`;
+            <span class="haken" aria-hidden="true">${gewaehlt.has(v.name) ? "✓" : ""}</span>${gerichtBild({ name: v.name, vorlageName: v.name, vorlage: true, bereich: b })}<span>${esc(gerichtText(v.name))}</span></button>`).join("")}</div>`;
     }).join("");
     const art = ladenArtVon(stand);
     const kernHtml = gruppen(sortiert.kern), oftHtml = gruppen(sortiert.oft);

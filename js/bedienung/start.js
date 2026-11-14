@@ -64,7 +64,7 @@ async function startNachLaden() {
   branchenwerteEinspielen();
   rueckholInfoHolen();
   vormonatEinfrieren(); // nach dem Laden des Standes, nur Läden in der Phase „app“
-  serviceWorkerStarten(); setInterval(tagPruefen, 60e3); // Minuten-Takt für den Tageswechsel bei offener App
+  setInterval(tagPruefen, 60e3); // Minuten-Takt für den Tageswechsel bei offener App
   speicherDauerhaftPruefen().then(() => { if (Z.wurzel.betriebe.some((b) => b.phase === "app")) dauerhaftAnfragen(); }); // einmal nach der Einrichtung (auch für schon eingerichtete Läden)
   // Vor der Sprachwahl in der Sprache des Geräts fragen, damit ein türkischer oder englischer Tester die erste Frage lesen kann.
   await ladeSprache(Z.wurzel.sprache || spracheDesGeraets()); setzeSprache(Z.wurzel.sprache || spracheDesGeraets());
@@ -74,6 +74,7 @@ async function startNachLaden() {
   history.replaceState({ schritt: Z.stand.schritt }, "");
   history.pushState({ schritt: Z.stand.schritt }, "");
   zeichne();
+  serviceWorkerStarten(); // erst nach dem ersten brauchbaren Bild: Service Worker anmelden, danach lädt er im Leerlauf den Rest nach
 }
 
 // Der gespeicherte Stand stammt aus einer neueren Fassung der App (z. B. alte Fassung aus dem Cache): nichts anfassen, nur erklären.

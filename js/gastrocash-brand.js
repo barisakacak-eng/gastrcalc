@@ -1,28 +1,21 @@
-// Darstellung und Bewegung. Keine Sätze, Ereignisentscheidungen oder Speicherung.
-import {ZEKI_SVG} from './zeki-svg.js';
-import {ZEKI_BILDER} from './zeki-bilder.js';
-import {zekiPuppeSpielen,zekiPuppeName} from './zeki-puppe.js';
-const own=(o,k)=>typeof k==='string'&&Object.hasOwn(o,k);
-const states={neutral:'neutral',freude:'freude',nachdenklich:'import',warnung:'warnung',freundlich:'freude',ernst:'warnung',erfolg:'freude',frage:'frage',import:'import',preis:'preis',hilfe:'hilfe',bestaetigt:'bestaetigt',aufmerksam:'aufmerksam',erleichtert:'erleichtert',fehler:'fehler'};
-const motions={none:'none',idle:'none',atmen:'none',zwinkern:'zwinkern',grinsen:'grinsen',laecheln:'grinsen',hand:'hand',nicken:'nicken',kopfschuetteln:'kopfschuetteln',pruefen:'pruefen',preis:'preis',thumb:'hand',celebrate:'grinsen',turn:'pruefen',winken:'winken',nachdenken:'nachdenken',freuen:'freuen','zeigen-rechts':'zeigen-rechts','zeigen-links':'zeigen-links','zeigen-oben':'zeigen-oben','zeigen-unten':'zeigen-unten',auftreten:'auftreten',abgehen:'abgehen'};
-let instance=0;const runs=new WeakMap();
-export function mascotMarkup(zustand='neutral',bewegung='none'){
- const s=own(states,zustand)?zustand:'neutral',m=own(motions,bewegung)?bewegung:'none',prefix='zeki-'+(++instance)+'-';
- return ZEKI_SVG.replace(/<style>[\s\S]*?<\/style>/,'').replace(/id="([^"]+)"/g,(_,id)=>id.startsWith('clip-')?'id="'+prefix+id+'"':'data-zeki-teil="'+id+'"').replaceAll('url(#clip-','url(#'+prefix+'clip-').replaceAll('href="#clip-','href="#'+prefix+'clip-').replace('class="zeki"',`class="gc-bot gc-bot--${s} gc-motion--${m} zeki zeki--${states[s]}" data-zeki-start="${motions[m]}"`).replace('data-zeki-zustand="neutral"',`data-zeki-zustand="${states[s]}"`);
+// Darstellung von Zeki außerhalb der Bühne (Hilfe-Blatt, Erst-Hinweis, Abschluss, Einrichtung, Führung). Keine Sätze, Ereignisentscheidungen oder Speicherung.
+// Salbei & Papier: Die Figur ist ein gemaltes Bild der passenden Miene (assets/brand/zeki-mienen/, js/zeki_figur.js vornHtml) – ohne Kreis, ohne Rahmen, mit festen Maßen.
+// Die alte Vektorfigur (SVG-Text) und die Gliederpuppe gibt es nicht mehr. Bewegung kommt aus den Folgen in assets/brand/zeki-klein/ (js/zeki_figur.js zekiSpielen, gestartet von js/adapter/brand_start.js).
+import { vornHtml } from "./zeki_figur.js";
+const own = (o, k) => typeof k === "string" && Object.hasOwn(o, k);
+// Zustand (alte und neue Namen) → Miene
+const states = { neutral: "neutral", freude: "freude", nachdenklich: "import", warnung: "warnung", freundlich: "freude", ernst: "warnung", erfolg: "freude", frage: "frage", import: "import", preis: "preis", hilfe: "hilfe", bestaetigt: "bestaetigt", aufmerksam: "aufmerksam", erleichtert: "erleichtert", fehler: "fehler", staunt: "staunt" };
+// Bewegung (alte und neue Namen) → Folge, die einmal läuft, sobald die Figur erscheint; "none" = ruhendes Bild. Zwinkern und Grinsen laufen nie von selbst beim Erscheinen (nur als Lob, siehe js/screens/zeki_takt.js).
+const motions = { none: "none", idle: "none", atmen: "none", zwinkern: "none", grinsen: "none", laecheln: "none", hand: "hand", winken: "hand", nicken: "nicken", kopfschuetteln: "kopfschuetteln", pruefen: "pruefen", preis: "preis", thumb: "daumen", daumen: "daumen", celebrate: "jubeln", jubeln: "jubeln", turn: "pruefen", nachdenken: "nachdenken", freuen: "nicken",
+  "zeigen-rechts": "zeigen-rechts", "zeigen-links": "zeigen-links", "zeigen-oben": "zeigen-oben", "zeigen-unten": "zeigen-unten", auftreten: "auftreten", abgehen: "abgehen" };
+export function mascotMarkup(zustand = "neutral", bewegung = "none") {
+  const s = own(states, zustand) ? zustand : "neutral", m = own(motions, bewegung) ? bewegung : "none";
+  return vornHtml({ miene: states[s], start: motions[m] === "none" ? "" : motions[m], klasse: `gc-bot gc-bot--${s} gc-motion--${m}` });
 }
-export function zekiSpielen(element,bewegung='none',dauerMs=0){
- const svg=element?.matches?.('.zeki')?element:element?.querySelector?.('.zeki');if(!svg||!own(motions,bewegung))return false;runs.get(svg)?.();const m=motions[bewegung];if(m==='none')return true;
- if(svg.ownerDocument.defaultView.matchMedia('(prefers-reduced-motion: reduce)').matches)return true;
- /* 28.10.2026: Zeki als Gliederpuppe – Gelenke statt Bildfolge; die Bildfolge bleibt nur als Rückfall */
- if(zekiPuppeName(bewegung)||zekiPuppeName(m)){const stopp=zekiPuppeSpielen(svg,zekiPuppeName(bewegung)?bewegung:m,{dauer:dauerMs,fertig:()=>{if(runs.get(svg)===stopp)runs.delete(svg)}});if(stopp){runs.set(svg,stopp);return true}}
- const info=ZEKI_BILDER[m],film=svg.querySelector('[data-zeki-teil="film"]');if(!info||!film)return false;
- let cancelled=false,timer;const cleanup=()=>{cancelled=true;clearTimeout(timer);film.removeEventListener('animationend',end);film.removeEventListener('animationcancel',end);if(runs.get(svg)===cleanup){svg.classList.remove('zeki--spielt');runs.delete(svg);}};const end=e=>{if(e.target===film)cleanup()};runs.set(svg,cleanup);
- const url=new URL('../assets/brand/zeki/'+info.datei,import.meta.url).href,img=new svg.ownerDocument.defaultView.Image();img.onload=()=>{if(cancelled)return;film.setAttribute('href',url);film.setAttribute('width','1385');film.setAttribute('height','1720');svg.style.setProperty('--zeki-ablauf','zeki3d-'+m);svg.style.setProperty('--zeki-dauer',info.dauer+'ms');film.addEventListener('animationend',end);film.addEventListener('animationcancel',end);const win=svg.ownerDocument.defaultView,los=()=>{if(cancelled)return;void film.getBoundingClientRect();svg.classList.add('zeki--spielt');timer=setTimeout(cleanup,info.dauer+450)};/* 26.10.2026 Flackern: erst wenn das Bild dekodiert und gemalt ist, vom Vektor auf die Bildfolge wechseln (iPhone zeigte sonst kurz eine leere Figur) */(img.decode?img.decode().catch(()=>{}):Promise.resolve()).then(()=>win.requestAnimationFrame(()=>win.requestAnimationFrame(los)))};img.onerror=cleanup;img.src=url;return true;
-}
-export function mascotResultState({ aboveZero=false, delta=0, incomplete=false }={}) {
-  if (incomplete) return 'nachdenklich';
-  if (aboveZero) return 'erfolg';
-  if (Number(delta) < 0) return 'ernst';
-  if (Number(delta) > 0) return 'nachdenklich';
-  return 'neutral';
+export function mascotResultState({ aboveZero = false, delta = 0, incomplete = false } = {}) {
+  if (incomplete) return "nachdenklich";
+  if (aboveZero) return "erfolg";
+  if (Number(delta) < 0) return "ernst";
+  if (Number(delta) > 0) return "nachdenklich";
+  return "neutral";
 }

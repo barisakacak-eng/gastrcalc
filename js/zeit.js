@@ -51,6 +51,9 @@ export const tagPlusMonate = (tag, n) => { const m = plusMonate(tag.slice(0, 7),
 // Zeiten, die es am Umstellungstag nicht gibt, landen eine Stunde später; doppelte auf der Sommerzeit-Seite.
 export function berlinZeitpunkt(tag, stunde = 0, minute = 0) {
   const ziel = utc(tag) + (stunde * 60 + minute) * 60000; let t = ziel;
-  for (let i = 0; i < 4; i++) { const b = berlin(new Date(t)); const wand = utc(b.tag) + (b.stunde * 60 + b.minute) * 60000; const diff = ziel - wand; if (!diff) break; t += diff; }
+  const wandVon = (ms) => { const b = berlin(new Date(ms)); return utc(b.tag) + (b.stunde * 60 + b.minute) * 60000; };
+  for (let i = 0; i < 4; i++) { const diff = ziel - wandVon(t); if (!diff) break; t += diff; }
+  // Lauf 6, E11 (C2): doppelte Stunde (Ende der Sommerzeit, 02:00–02:59): die Wanduhr zeigt sie zweimal; es gilt das erste Mal (Sommerzeit-Seite), wie oben beschrieben.
+  if (wandVon(t) === ziel && wandVon(t - 3600000) === ziel) t -= 3600000;
   return new Date(t);
 }

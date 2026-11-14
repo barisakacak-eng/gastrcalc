@@ -34,7 +34,7 @@ async def layout(pg, label, controls=""):
       bad:[...document.querySelectorAll(sel || '[data-nicht-vorhanden]')].filter(e=>e.getClientRects().length && !e.disabled).map(e=>({
         text:e.innerText.slice(0,55), height:e.getBoundingClientRect().height,
         clipped:e.scrollWidth>e.clientWidth+1
-      })).filter(x=>x.height<55.5 || x.clipped)})""", controls)
+      })).filter(x=>x.height<43.5 || x.clipped)})""", controls)  # Mindesthöhe 44 px (Regel „Salbei & Papier“: Tippflächen ≥ 44 px, --tippflaeche; früher 56 px im alten Aussehen)
     assert m["scroll"] <= m["width"], (label, "Querscrollen", m)
     assert not m["bad"], (label, "Touchfläche/Text", m)
 
@@ -134,7 +134,7 @@ async def pilot(browser, art, temp):
         # Einstellungen → Sicherung ohne neue Route/Hash, echter ZIP-Download.
         await nav_hilfe.ins_buero(pg);await tipp(pg,'.b-werkzeuge [data-wert="einstellungen"]')
         await tipp(pg,'.b-sicherung-link')
-        r=await pg.locator('#sicherung').bounding_box();assert 55<=r['y']<=100,r
+        r=await pg.locator('#sicherung').bounding_box();assert 8<=r['y']<=40,r  # neues Aussehen: keine feste Kopfzeile, die Bühne scrollt weg – das Blatt steht mit ≈ 16 px Luft (scroll-margin-top) am oberen Rand, nicht ganz oben (y≈0)
         async with pg.expect_download() as info:
             await tipp(pg,'[data-a="export"]');await tipp(pg,'[data-a="sicherung-pw-schalter"]')
             await tipp(pg,'[data-a="sicherung-teilen"]')

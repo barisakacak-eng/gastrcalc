@@ -12,9 +12,9 @@ import { isoTag } from "./zeit.js";
 export function cent(eur) {
   const n = Number(eur); if (!Number.isFinite(n)) return 0;
   const c = Number((Math.abs(n) * 100).toPrecision(15)); const r = Math.floor(c + 0.5);
-  return n < 0 ? -r : r;
+  return (n < 0 ? -r : r) + 0; // + 0: aus −0 wird 0 (Lauf 6, E11 C1: nie „−0“)
 }
-export const euro = (c) => c / 100;
+export const euro = (c) => c / 100 + 0;
 // Kein Betrag (Text, leer, NaN) bleibt „kein Betrag“ (NaN) – die Anzeige zeigt dann „–“ statt fälschlich 0 €.
 export const rund2 = (eur) => (eur === null || eur === undefined || !Number.isFinite(Number(eur)) ? NaN : euro(cent(eur)));
 // Summe von Euro-Beträgen, auf den Cent genau (jeder Posten wird zuerst zu Cent)
@@ -29,9 +29,12 @@ export function aufteilen(bruttoCent, satz) { const netto = cent(nettoVonBrutto(
 // Einen Betrag (Cent) nach Gewichten auf Teile verteilen, ohne dass ein Cent verloren geht (größter Rest bekommt den Rest-Cent)
 export function verteilen(betragCent, gewichte) {
   const g = gewichte.map((x) => (x > 0 ? x : 0)); const sum = g.reduce((a, b) => a + b, 0); if (!sum) return g.map(() => 0);
+  // Lauf 6, E11 (C4): Betrag oder Gewicht nicht endlich (oder zu groß für ganze Cent) → lauter Nullen, kein Hänger in der Rest-Schleife unten
+  if (!Number.isFinite(sum) || !Number.isFinite(Number(betragCent)) || Math.abs(Number(betragCent)) > Number.MAX_SAFE_INTEGER) return g.map(() => 0);
+  betragCent = Number(betragCent);
   const roh = g.map((x) => betragCent * x / sum); const teile = roh.map((x) => Math.floor(x)); let rest = betragCent - teile.reduce((a, b) => a + b, 0);
   const reihen = roh.map((x, i) => [x - Math.floor(x), i]).sort((a, b) => b[0] - a[0] || a[1] - b[1]);
-  for (let k = 0; rest > 0; k++, rest--) teile[reihen[k % reihen.length][1]] += 1;
+  for (let k = 0; rest > 0 && k < 4 * reihen.length; k++, rest--) teile[reihen[k % reihen.length][1]] += 1;
   return teile;
 }
 // Lauf 6, Etappe 4 – Sätze für Stellen ohne Vorgangsdatum und in der Schreibweise, in der die App sie speichert

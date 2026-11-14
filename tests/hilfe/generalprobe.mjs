@@ -409,7 +409,7 @@ TAG = "Stichtag"; uhr("2027-01-01", 23, 50);
     if (ao.teile.kuehl.zeilen && ao.teile.kuehl.zeilen.length !== mD && ao.teile.kuehl.zeilen.filter((z) => z && z.datum).length !== mD) befund("A", "amt-kuehl-dez", `${wo}: Kühlprotokoll Dezember ${ao.teile.kuehl.zeilen.length} Zeilen, ${mD} Messungen im Dezember`);
     if (mD + mJ !== s.messungen.length) befund("A", "messung-monat", `${wo}: Messungen Dez ${mD} + Jan ${mJ} ≠ ${s.messungen.length}`);
     // Mindestlohn: Vorschau am 31.12. kennt 14,60 € / 633 € ab 01.01.2027
-    const mv = MW.mindestlohnVorschau(s, D1); const m26 = MINDESTLOHN[0], m27 = MINDESTLOHN[1];
+    const mv = MW.mindestlohnVorschau(s, D1); const m26 = MINDESTLOHN.find((x) => x.ab === "2026-01-01"), m27 = MINDESTLOHN.find((x) => x.ab === J1); // Lauf 6, E11: die Tabelle beginnt jetzt mit 2025
     if (m26.satz !== 13.9 || m26.minijob !== 603 || m27.satz !== 14.6 || m27.minijob !== 633 || m27.ab !== J1) befund("A", "mindestlohn-tabelle", "Mindestlohn-Tabelle (js/data/mindestlohn.js:9-10) ≠ 13,90/603 und 14,60/633 ab 2027-01-01", MINDESTLOHN);
     if (Math.ceil(m27.satz * 130 / 3) !== 633 || Math.ceil(m26.satz * 130 / 3) !== 603) befund("A", "minijob-formel", "Minijob-Grenze ≠ Mindestlohn × 130 / 3 aufgerundet");
     if (!mv || mv.neu !== 14.6 || mv.alt !== 13.9 || mv.minijobNeu !== 633 || mv.minijobAlt !== 603 || mv.ab !== J1) befund("A", "mindestlohn-vorschau", `${wo}: Vorschau 31.12. ≠ 13,90→14,60 / 603→633 ab 01.01.2027`, mv && { ab: mv.ab, alt: mv.alt, neu: mv.neu, minijob: [mv.minijobAlt, mv.minijobNeu] });

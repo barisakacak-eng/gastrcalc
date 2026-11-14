@@ -25,8 +25,8 @@ import { plusTage, plusMonate, monatsErster, monatsLetzter } from "../zeit.js";
 // Piktogramm je Kühlstelle (Sanjis k-*-Bilder; Theke nach Name)
 const stelleBild = (k) => { const n = k.art === "warm" ? "k-warmhalter" : k.art === "tk" ? "k-tiefkuehler" : k.typ === "saladette" || /theke|vitrine|saladet/i.test(k.name || "") ? "k-theke" : k.typ === "getraenke" ? "k-getraenke" : "k-kuehlschrank";
   const f = { "k-theke": "k-saladette-foto", "k-kuehlschrank": "k-kuehlschrank-lebensmittel-foto" }[n] || n + "-foto"; // echtes Foto (Sanji Welle 3), sobald vorhanden; Getränke/Lebensmittel getrennt
-  if (n === "k-getraenke" && !FOTOS.has(f)) return `<img class="gerichtbild mini pikto" src="bilder/k-kuehlschrank.svg" alt="">`;
-  return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="">`; };
+  if (n === "k-getraenke" && !FOTOS.has(f)) return `<img class="gerichtbild mini pikto" src="bilder/k-kuehlschrank.svg" alt="" loading="lazy" decoding="async">`;
+  return FOTOS.has(f) ? `<img class="gerichtbild mini" src="foto/${f}.webp" alt="" loading="lazy" decoding="async">` : `<img class="gerichtbild mini pikto" src="bilder/${n}.svg" alt="" loading="lazy" decoding="async">`; };
 let ansicht = "start";          // "start" | "einrichtung" | "rundgang" | "blatt"
 let station = null;             // id der Stelle, die im Rundgang gerade offen ist
 let form = null;                // Eingabe der offenen Station
@@ -155,7 +155,7 @@ function einrichtungView(stand) {
       </div>
       <button type="button" class="knopf ${kuehlBereit(stand) ? "" : "zweit"}" data-a="kuehl-einrichtung-fertig">${esc(t(kuehlBereit(stand) ? "allgemein.fertig" : "kuehl.spaeter"))}</button>
     </div>
-    ${nav("kuehl")}`;
+    ${nav("kuehl", { schritt: "einrichtung" })}`;
 }
 
 // ---------- Rundgang ----------
@@ -172,7 +172,7 @@ function rundgangView(stand) {
       ${k ? stationView(stand, r, k) : `
       <div class="liste">${stellen.map((x) => { const m = r.messungen.find((y) => y.stelle === x.id); const letzte = letzteMessung(stand, x.id); return `
         <button type="button" class="wahl ${m ? "an" : ""} ${m?.abweichung ? "warnung" : ""}" data-a="station" data-id="${esc(x.id)}">
-          <span class="haken">${m ? (m.abweichung ? "!" : "✓") : ""}</span>
+          <span class="haken">${m ? (m.abweichung ? "!" : "✓") : ""}</span>${stelleBild(x)}
           <span class="fuell"><b>${esc(kn(x))}</b><small class="block">${esc(grenzen(x))}${letzte ? ` · ${esc(t("kuehl.zuletzt"))} \u2066${fmtZahl(letzte.wert, 1)}\u00a0°C\u2069` : ""}</small></span>
           <span style="font-weight:800;white-space:nowrap" class="${m?.abweichung ? "rot" : ""}">${m ? (typeof m.wert === "number" ? `\u2066${fmtZahl(m.wert, 1)}\u00a0°C\u2069` : esc(t("kuehl.nichtGemessenKurz"))) : "›"}</span>
         </button>`; }).join("")}</div>
@@ -181,7 +181,7 @@ function rundgangView(stand) {
       ${fertig < stellen.length ? `<button type="button" class="knopf zweit" data-a="kuehl-start">${esc(t("kuehl.unterbrechen"))}</button>` : ""}
       ${personalAktiv() ? "" : `<button type="button" class="leise" data-a="rundgang-verwerfen">${esc(t("kuehl.verwerfen"))}</button>`}`}
     </div>
-    ${nav("kuehl", { schnell: false })}`;
+    ${nav("kuehl", { schnell: false, schritt: "rundgang" })}`;
 }
 
 // Laden-Umbau: wer misst, ist vorbelegt; bei mehreren Personen hier mit einem Tipp änderbar (Kürzel, keine Wörter)
@@ -207,7 +207,7 @@ function rundgangStartView(stand) {
         <button type="button" class="knopf glut" data-a="rundgang-start" ${personen.length && startVon === null ? "disabled" : ""}>${esc(t("kuehl.los"))}</button>
       </div>
     </div>
-    ${nav("kuehl")}`;
+    ${nav("kuehl", { schritt: "rundgang" })}`;
 }
 
 // (Persona-Test Vater): „18“ beim Tiefkühler ist fast immer „−18“ mit vergessenem Minus – erst fragen, statt sofort Maßnahmen zu verlangen
@@ -226,7 +226,7 @@ function stationView(stand, r, k) {
   const grundChips = `<div class="chips">${NICHT_GEMESSEN.map((g) => `<button type="button" class="chip klein ${f.grund === g ? "an" : ""}" data-a="station-grund" data-wert="${g}">${esc(t("kuehl.gruende." + g))}</button>`).join("")}</div>`;
   return `
     <div class="karte formular">
-      <h2>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></h2>
+      <h2 class="stationkopf">${stelleBild(k)}<span>${esc(kn(k))} <span class="marke">${esc(grenzen(k))}</span></span></h2>
       ${f.grund ? "" : `
       <div class="zahlfeld ${abw ? "rot" : ""}"><input inputmode="text" data-f="station-wert" value="${esc(f.wertText)}" aria-label="°C" autocomplete="off"><span class="einheit">°C</span></div>
       ${marke ? `<span class="marke">${esc(marke)}</span>` : ""}

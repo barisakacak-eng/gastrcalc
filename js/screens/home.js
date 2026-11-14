@@ -20,7 +20,7 @@ import { sym } from "../symbole.js";
 import { muellHeute } from "../muell.js"; // Lauf 2 (4b): Müll ohne Preis als „n×“
 import { datumLesbar, monatName } from "./tag.js";
 import { sicherungStufe } from "../sicherung_stufe.js"; // Laden-Umbau: „Letzte vom Handy weg“
-import { bueroKopf } from "./buero.js";
+import { bueroKopf } from "./buero_kopf.js";
 import { nutzenStand } from "../nutzen.js";
 import { zekiMoment } from "../zeki.js"; // Zeki auf Heute
 import { mascotMarkup } from "../gastrocash-brand.js";
@@ -323,7 +323,7 @@ export function einstellungenView(stand, ereignisAnzahl, wurzel, extra = {}) {
         <p class="tipp">${esc(t("einstellungen.fotosNichtDrin"))}</p>
         <button type="button" class="knopf" data-a="export">${esc(t("einstellungen.exportieren"))}</button>
         <label class="knopf zweit mitte">${esc(t("einstellungen.importieren"))}<input type="file" accept="application/zip,.zip,application/json,.json" data-f="import" class="versteckt"></label>
-        ${extra.rueckhol ? `<button type="button" class="knopf weich" data-a="sicherung-zurueckholen">${esc(l6yText("rueckgaengig", sprache()))}</button>` : ""}
+        ${extra.rueckhol && extra.rueckhol.neuSeitdem === 0 ? `<button type="button" class="knopf weich" data-a="sicherung-zurueckholen">${esc(l6yText("rueckgaengig", sprache()))}</button>` : ""}
         <span class="marke">${esc(t("einstellungen.ereignisse", ereignisAnzahl))}${wurzel?.letzteSicherung ? ` · ${esc(t("einstellungen.letzteSicherung", datumLesbar(wurzel.letzteSicherung.slice(0, 10))))}` : ""}${typeof wurzel?.letzteSicherungGroesse === "number" ? ` · ${esc(t("w2d.groesse", Math.max(0.1, Math.round(wurzel.letzteSicherungGroesse / 104857.6) / 10)))}` : ""}</span>
         <p class="hinweis">${esc(t("einstellungen.pruefsummeText"))}</p>
       </div>

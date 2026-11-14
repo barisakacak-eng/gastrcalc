@@ -1,82 +1,26 @@
-/* Schrift Inter 4.1 (SIL OFL 1.1), lokal und gekürzt auf DE/TR/EN – keine Verbindung nach außen */
-@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../fonts/InterVariable-de-tr.woff2") format("woff2");
-  /* W2-U: genau die Zeichen, die in der gekürzten Datei stecken (im Browser gemessen 15.10.2026). Alles andere nimmt sofort die Systemschrift. */
-  unicode-range: U+20-7E, U+A0-FF, U+11E-11F, U+130-131, U+15E-15F, U+2000-200A, U+2013-2014, U+2018-201E, U+2022, U+2026, U+2028-2029, U+202F,
-    U+2039-203A, U+205F, U+20AC, U+2191-2193, U+21BA, U+2212, U+2248, U+2264-2265, U+25B2, U+25BC, U+2713; }
-/* Sanji | Kräuter & Kupfer | 15.10.2026
-   Vollständiger Ersatz der bisherigen Tokens. Alle bisherigen Namen bleiben.
-   Schrift: lokale Systemschrift ohne Download, keine externe Verbindung. */
-:root {
-  /* Papier, Kräuter, Kupfer */
-  --papier: #F5EBDD;
-  --papier-tief: #E9DDCB;
-  --weiss: #FFFDF8;
-  --tinte: #1F2A24;
-  --tinte-weich: #55604F; /* Abnahme 15.10.: 4,9:1 auf Papier-tief (vorher 4,4:1) */
-  --salbei: #6B7F5E; /* Zielbild 15.10. */
-  --salbei-tief: #2E4034;
-  --salbei-hell: #E6EBDD;
-  --holz: #DDC9AD;
-  --holz-tief: #C9A87C;
-  --lehm: #78583F;
-  --glut: #C97A3E; /* Kupfer (Zielbild 15.10.). Text darauf dunkel! */
-  --gelb: #D9A22E;
-  --rot: #AB423E;
-  --gruen: #355F3F;
-
-  /* Bedeutungen: nie nur über eine Farbe vermitteln */
-  --geschaetzt: #BB871C;
-  --geschaetzt-hell: #FFF1D4;
-  --geschaetzt-text: #664A10;
-  --eigen: #355F3F;
-  --eigen-hell: #E3EFE5;
-  --muell: #8C2F39;
-  --muell-hell: #F6E5E4;
-  --weggelassen: #ACB1AC;
-  --branche: #365D75;
-  --branche-hell: #E5EDF2;
-
-  /* Knopf, Diagramme, Konturen */
-  --aktion: var(--glut);
-  --aktion-text: var(--tinte);
-  --kurve-ist: #E6EBDD;
-  --kurve-prognose: #F6D686;
-  --kurve-null: #FFFDF8;
-  --kupfer-dunkel: #8A4C20;
-  --kupfer-hell: #F6E6D6;   /* helle Kupferfläche (Büro-Chips, Schloss) – 16.10.2026: war nur als Fallback vorhanden */
-  --fokus: #365D75;
-
-  /* Form & Bewegung */
-  --radius: 14px;
-  --radius-klein: 10px;
-  --radius-gross: 22px;
-  --schatten-karte: 0 3px 10px rgba(31,42,36,.045), 0 12px 28px rgba(31,42,36,.075);
-  --schatten-knopf: 0 3px 0 rgba(31,42,36,.12), 0 8px 16px rgba(31,42,36,.08);
-  --schatten-menu: 12px 0 38px rgba(31,42,36,.22);
-  --schrift: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  --zahlen: tabular-nums lining-nums;
-  --bewegung: 180ms;
+@font-face{font-family:NotoSans;font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/NotoSans-Regular.woff2) format("woff2")}
+@font-face{font-family:NotoSans;font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/NotoSans-Bold.woff2) format("woff2")}
+@font-face{font-family:NotoSansArabic;font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/NotoSansArabic-Regular.woff2) format("woff2")}
+@font-face{font-family:NotoSansArabic;font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/NotoSansArabic-Bold.woff2) format("woff2")}
+/* I – Salbei & Papier. Freigabe 12.11.2026; kein JS-/Text-Ersatz. */
+:root{
+--papier:#F5EDE2;--tinte:#22301F;--salbei:#4C6B55;--glut:#E8763A;--holz:#E2CDB2;--weinrot:#8B3A2E;
+--papier-tief:color-mix(in srgb,var(--papier) 88%,var(--holz));--weiss:var(--papier);--schleier:#121A14;--schleier-text:#F5EDE2;
+--tinte-weich:color-mix(in srgb,var(--tinte) 78%,var(--papier));
+--salbei-tief:color-mix(in srgb,var(--salbei) 75%,var(--tinte));--salbei-text:var(--salbei-tief);--auf-farbe:var(--papier);--salbei-hell:color-mix(in srgb,var(--salbei) 12%,var(--papier));
+--holz-tief:color-mix(in srgb,var(--holz) 72%,var(--tinte));--lehm:var(--tinte-weich);
+--gruen:var(--salbei);--rot:color-mix(in srgb,var(--glut) 45%,var(--tinte));--gelb:color-mix(in srgb,var(--holz) 70%,var(--glut));
+--eigen:var(--salbei);--eigen-hell:var(--salbei-hell);--geschaetzt:var(--holz-tief);--geschaetzt-hell:var(--papier-tief);--geschaetzt-text:var(--tinte);
+--muell:var(--weinrot);--muell-hell:color-mix(in srgb,var(--weinrot) 9%,var(--papier));--weggelassen:var(--tinte-weich);
+--branche:var(--salbei);--branche-hell:var(--salbei-hell);--aktion:var(--salbei);--aktion-text:var(--papier);--fokus:var(--salbei-tief);
+--kurve-ist:var(--salbei);--kurve-prognose:var(--holz-tief);--kurve-null:var(--tinte);--kupfer-dunkel:var(--tinte);--kupfer-hell:var(--papier-tief);
+--schrift:NotoSans,system-ui,sans-serif;--zahlen:tabular-nums lining-nums;
+--text-klein:13px;--text:16px;--text-titel:22px;--text-zahl:32px;--zeilenhoehe:1.45;
+--radius:14px;--radius-klein:8px;--radius-gross:22px;--raum-1:4px;--raum-2:8px;--raum-3:12px;--raum-4:16px;--raum-6:24px;--raum-8:32px;
+--schatten-karte:0 2px 10px color-mix(in srgb,var(--tinte) 6%,transparent);--schatten-knopf:none;--schatten-menu:0 -12px 32px color-mix(in srgb,var(--tinte) 18%,transparent);
+--linie:color-mix(in srgb,var(--tinte) 18%,var(--papier));--buehne:var(--salbei);--buehne-text:var(--papier);--buehne-hoehe:216px;--knopf-hoehe:48px;--tippflaeche:44px;
+--bewegung:180ms;--dauer-blatt:260ms;--dauer-bestaetigung:220ms;--dauer-zeki:1800ms;--kurve:cubic-bezier(.2,.7,.2,1);
 }
-
-
-/* W2-U: Sprachen, deren Buchstaben in der mitgelieferten Inter fehlen (Polnisch, Rumänisch, Bosnisch, Vietnamesisch,
-   Russisch, Ukrainisch, Bulgarisch, Griechisch): ganz in der Systemschrift setzen statt Buchstabe für Buchstabe zu mischen.
-   Greift für die ganze App (html lang) und für einzelne Elemente mit lang (z. B. Sprachwahl). Keine Schrift aus dem Netz. */
-[lang]:is(:lang(pl), :lang(ro), :lang(bs), :lang(vi), :lang(ru), :lang(uk), :lang(bg), :lang(el)) {
-  --schrift: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', Arial, sans-serif;
-  font-family: var(--schrift);
-}
-
-/* Zeki: Farbproben der verbindlichen Bildreferenz, 24.10.2026.
-   Von Flächenfarben getrennt, damit ein Bildschirmthema die Figur nicht umfärbt. */
-:root {
-  --zeki-visier: #182519;
-  --zeki-kontur: #1B2819;
-  --zeki-helm: #F4E6CB;
-  --zeki-schuerze: #6B846E;
-  --zeki-muenze: #E67435;
-  --zeki-kupfer: #C25F29;
-  --zeki-glanz: #2F4230;
-}
-/* Zeki 3D 26.10.2026 */
-:root{--zeki-3d-0:#1F2718;--zeki-3d-1:#1F2A1C;--zeki-3d-2:#2C3A2B;--zeki-3d-3:#2E3B2D;--zeki-3d-4:#2E3E2E;--zeki-3d-5:#3F533F;--zeki-3d-6:#6C846B;--zeki-3d-7:#857652;--zeki-3d-8:#987751;--zeki-3d-9:#A77F53;--zeki-3d-10:#B28050;--zeki-3d-11:#BD7E4E;--zeki-3d-12:#C65519;--zeki-3d-13:#D0C4A4;--zeki-3d-14:#D0C4A5;--zeki-3d-15:#D2C5A7;--zeki-3d-16:#D3C5A6;--zeki-3d-17:#DF773A;--zeki-3d-18:#E57638;--zeki-3d-19:#E7E2CD;--zeki-3d-20:#EBE5CE;--zeki-3d-21:#ECE5CB;--zeki-3d-22:#EEE6CE;--zeki-3d-23:#EFE4CB;--zeki-3d-24:#F0E9D0;}
+[lang=ar],[lang=fa]{--schrift:NotoSansArabic,NotoSans,system-ui,sans-serif}
+[data-theme=dark]{--auf-farbe:#F5EDE2;--salbei-text:color-mix(in srgb,#4C6B55 45%,#F5EDE2);--muell:color-mix(in srgb,#8B3A2E 55%,#F5EDE2);--papier:#22301F;--tinte:#F5EDE2;--papier-tief:color-mix(in srgb,#22301F 85%,#4C6B55);--tinte-weich:color-mix(in srgb,#F5EDE2 80%,#22301F);--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion:#4C6B55;--aktion-text:#F5EDE2;--linie:color-mix(in srgb,#F5EDE2 28%,#22301F)}
+@media(prefers-color-scheme:dark){html:not([data-theme=light]):not([data-theme=dark]){--auf-farbe:#F5EDE2;--salbei-text:color-mix(in srgb,#4C6B55 45%,#F5EDE2);--muell:color-mix(in srgb,#8B3A2E 55%,#F5EDE2);--papier:#22301F;--tinte:#F5EDE2;--papier-tief:#2A3B2E;--tinte-weich:#D2CCBD;--buehne:#354B3C;--buehne-text:#F5EDE2;--aktion-text:#F5EDE2;--linie:#57634F}}

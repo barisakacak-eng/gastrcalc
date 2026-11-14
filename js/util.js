@@ -39,12 +39,12 @@ export function fmtEuro(n, opts = {}) {
   if (n === null || n === undefined || !Number.isFinite(n)) return "–";
   const d = opts.dezimal ?? 0; // Formatierer je Nachkommastellen nur einmal bauen (Stresstest 15.10.: kostete 50 ms je Seite)
   const f = EURO_FMT[d] ??= new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: d, minimumFractionDigits: d });
-  return f.format(n);
+  return f.format(Number(n.toFixed(d)) === 0 ? 0 : n); // Lauf 6, E11 (C1): ein Betrag, der auf die gezeigten Stellen 0 ergibt, zeigt „0 €“, nie „-0 €“
 }
 
 export function fmtZahl(n, dezimal = 0) {
   if (n === null || n === undefined || !Number.isFinite(n)) return "–";
-  return (ZAHL_FMT[dezimal] ??= new Intl.NumberFormat("de-DE", { maximumFractionDigits: dezimal, minimumFractionDigits: dezimal })).format(n);
+  return (ZAHL_FMT[dezimal] ??= new Intl.NumberFormat("de-DE", { maximumFractionDigits: dezimal, minimumFractionDigits: dezimal })).format(Number(n.toFixed(dezimal)) === 0 ? 0 : n); // nie „-0“ (Lauf 6, E11 C1)
 }
 
 // Zwei Arten von „heute“ – beide kommen aus js/zeit.js und gelten in der Zeitzone Europe/Berlin, egal wie das Gerät eingestellt ist:

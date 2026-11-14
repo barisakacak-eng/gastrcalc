@@ -8,7 +8,7 @@ import { kalkulation, preisAmpel, preisAufteilung } from "../engine.js";
 import { verkaufspreisSetzen, zutatMengeSetzen } from "../karte_daten.js"; // Trennung; Lauf 2 Bildpaket D (3): Mengen im Laden-Blatt
 import { t as tt, einheitLabel, artikelText } from "../i18n.js";
 import { quelleVon } from "../rezept_quelle.js";
-import { gerichtBild } from "./vergleich.js";
+import { gerichtBild } from "./gerichtbild.js";
 import { nav } from "./nav.js";
 import { mehrImMonat, HEBEL_MIN_EURO } from "../hebel.js"; // Masterauftrag 1.3
 import { fmtEuroGeschaetzt } from "../util.js";
@@ -161,6 +161,7 @@ function rezeptBlatt(stand) {
       <div class="kl-preiskopf">${gerichtBild(g)}<div><b>${esc(g.name)}</b><small>${esc(tt("rezepte.zusammenfassung", g.zutaten.length, g.zeit))}</small></div>
         <button type="button" class="kl-x" data-a="kl-zu" aria-label="${esc(tt("kartelaeden.schliessen"))}">${sym("x")}</button></div>
       <ul class="kl-zutaten">${g.zutaten.map(zeile).join("")}</ul>
+      ${g.klasse !== "getraenk" && hatEigenesRezept(g) ? `<button type="button" class="knopf zweit portionknopf" data-a="nav" data-wert="portion" data-id="${esc(g.id)}">${sym("scale")} ${esc(t("gehirn.portion.knopf"))}</button>` : ""}
       <button type="button" class="knopf glut kl-speichern" data-a="kl-zu">${esc(tt("allgemein.fertig"))}</button>
     </div>`;
 }

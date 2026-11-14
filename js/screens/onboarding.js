@@ -7,7 +7,9 @@ import { ring } from "./bausteine.js"; // Trennung
 import { FOTOS } from "../data/fotos.js";
 import { sym } from "../symbole.js";
 import { installZustand } from "../homebildschirm.js"; // Lauf 2, Bildpaket D (1)
-import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache as aktiveSprache } from "../i18n.js";
+import { t, SPRACHEN, SPRACH_NAMEN, spracheName, sprache as aktiveSprache, RTL } from "../i18n.js";
+import { buehneHtml } from "../buehne.js"; // Salbei & Papier: Kopf jedes Schritts = Bühne mit der Frage und Zeki
+import { buehnenSchluessel } from "../zeki_figur.js";
 import { kuehlstelleAnzeige, kuehlTypVon } from "../kuehlname.js"; // Paket 6
 import { esc, parseZahl, fmtEuro, fmtZahl, wertAnzeige, heuteGeschaeft } from "../util.js";
 import { reinigungVon, putzzeitMonat } from "../reinigung.js";
@@ -26,7 +28,6 @@ import { mindestlohnAm } from "../data/mindestlohn.js";
 import { karte, rezepte, preise, verkauf, ergebnis } from "./karte.js";
 import { karteFotoView, kartePruefenView, kartePruefenEingabe, kartePruefenAktion, karteUebernehmen, karteFussKnopf, karteZeigtPruefliste, karteModus, serieStand, fotoLauf, fotoVorbereiten } from "./foto.js";
 import { monatsLast } from "../engine.js";
-import { mascotMarkup } from "../gastrocash-brand.js"; // Zeki führt durch die Einrichtung
 
 // ---------- Bausteine ----------
 
@@ -53,7 +54,7 @@ const knopfOffen = (text = t("allgemein.weissNicht")) => `<button type="button" 
 const sprache = {
   id: "sprache",
   view: () => `
-    ${FOTOS.has("hero-doenergrill") ? `<img class="titelbild" src="foto/hero-doenergrill.webp" alt="">` : ""}
+    ${FOTOS.has("hero-doenergrill") ? `<img class="titelbild" src="foto/hero-doenergrill.webp" alt="" loading="lazy" decoding="async">` : ""}
     <h1 class="frage">${esc(t("sprache.frage"))}</h1>
     <p class="hinweis">${esc(t("sprache.hinweis"))}</p>
     <div class="kacheln">
@@ -359,7 +360,9 @@ export const reinigungSchritt = {
   },
 };
 
-export const SCHRITTE = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
+// Jeder Schritt bekommt denselben Kopf: die Bühne (mitBuehne, ganz unten in dieser Datei). Die Schritte selbst bleiben, wie sie sind.
+const SCHRITTE_ROH = [sprache, format, kueche, betrieb, team, lohn, kostenIntro, ...KATEGORIEN.map(kostenSchritt), reinigungSchritt, kanaele, kuehlstellen, karte, rezepte, preise, verkauf, ergebnis];
+export const SCHRITTE = SCHRITTE_ROH.map(mitBuehne);
 export const schrittIndex = (id) => SCHRITTE.findIndex((s) => s.id === id);
 // Fehler F1: Ohne Gerichte zeigten „Rezepte“ und „Einkaufspreise“ (Büro, Speisekarte) eine leere Seite mit „Übernehmen“, das nichts übernahm.
 // Dann zuerst die Gerichte-Auswahl mit den Vorlagen öffnen; danach geht es weiter bis zum gewünschten Schritt.
@@ -417,12 +420,26 @@ let hilfeAuf = null;
 export function onboardingZuruecksetzen() { hilfeAuf = null; } // Paket 2: Ladenwechsel – zentrale Liste in app.js
 // Entwurf (Baris: „Zeki gibt bei jedem Fenster Hilfestellung“): Zeki spricht die Frage selbst, ein Tipp auf Zeki öffnet die kurze Erklärung.
 const zekiSatz = (id, titel) => { const k = "schnell2.zeki." + id, v = t(k); return v === k ? titel : v; };
-const kopfS2 = (id, titel, hilfeText, extra = "") => `
-    <div class="s2kopf s2zeki">
-      <button type="button" class="s2zeki-figur zeki-lebt" data-a="s2-hilfe" data-wert="${id}" aria-expanded="${hilfeAuf === id}" aria-label="${esc(t("schnell2.hilfe"))}">${mascotMarkup(hilfeAuf === id ? "hilfe" : "frage")}</button>
-      <div class="s2zeki-blase"><h1 class="frage" dir="auto">${esc(zekiSatz(id, titel))}</h1>
-      ${hilfeText && hilfeAuf === id ? `<p class="s2zeki-hilfe" role="note">${esc(hilfeText)}</p>${extra}` : ""}</div>
-    </div>`;
+// Die Frage ist Zekis Satz. Sie steht als Überschrift im Kopf (Bühne, mitBuehne unten), die Erklärung unter „?“ als Notiz auf dem Papier. data-hilfe: Zeki selbst ist der „?“-Knopf.
+const kopfS2 = (id, titel, hilfeText, extra = "") => `<h1 class="frage s2zeki-blase" dir="auto" data-hilfe="${esc(id)}">${esc(zekiSatz(id, titel))}</h1>
+    ${hilfeText && hilfeAuf === id ? `<p class="s2zeki-hilfe" role="note">${esc(hilfeText)}</p>${extra}` : ""}`;
+// ---------- Der Kopf jedes Schritts: Bühne (Salbei & Papier, Tafel II) ----------
+// Die erste Überschrift des Schritts (die Frage = Zekis Satz) wandert in die Bühne, neben Zeki; der Rest ist das Papier darunter. Keine Sprechblase, kein zweiter Zeki.
+// Hat der Schritt ein „?“ (data-hilfe), ist Zeki selbst der Knopf dafür. Funktion, Felder und data-Namen der Schritte bleiben.
+const ERSTE_UEBERSCHRIFT = /<h1\b([^>]*)>([\s\S]*?)<\/h1>/;
+function buehneSchritt(id, html) {
+  const m = ERSTE_UEBERSCHRIFT.exec(html);
+  const hilfe = !!(m && /\bdata-hilfe=/.test(m[1]));
+  let kopf = buehneHtml({ kopf: "", titel: m ? "§" : "", schluessel: buehnenSchluessel("einrichtung", { schritt: id }), rtl: RTL.has(aktiveSprache()), klasse: "appleiste s2buehne",
+    figurKnopf: hilfe ? { aktion: "s2-hilfe", label: t("schnell2.hilfe"), klassen: "gc-figur-knopf s2zeki-figur zeki-lebt" } : null });
+  if (m) kopf = kopf.replace("<h1>§</h1>", `<h1${m[1].replace(/\s*data-hilfe="[^"]*"/, "")}>${m[2]}</h1>`);
+  if (hilfe) kopf = kopf.replace('data-a="s2-hilfe"', `data-a="s2-hilfe" data-wert="${esc(id)}" aria-expanded="${hilfeAuf === id}"`);
+  return `${kopf}<div class="s-papier">${m ? html.replace(ERSTE_UEBERSCHRIFT, "") : html}</div>`;
+}
+function mitBuehne(schritt) {
+  if (typeof schritt.view !== "function") return schritt;
+  return { ...schritt, view: (...a) => buehneSchritt(schritt.id, schritt.view(...a)) };
+}
 const hilfeAktion = (name, el) => { if (name !== "s2-hilfe") return false; hilfeAuf = hilfeAuf === el.dataset.wert ? null : el.dataset.wert; return true; };
 
 // Vorauswahl „selbst gemacht“ nach Laden-Art – Trennung: selbstStandard wohnt jetzt in js/selbst.js
@@ -435,24 +452,21 @@ const spracheSchnell = {
   id: "sprache",
   view: () => `
     <div class="s2sprache s2willkommen">
-      <div class="s2zeki-intro zeki-lebt" aria-hidden="true">${mascotMarkup("freude", "hand")}</div>
-      <div class="s2zeki-introblase"><h1 class="s2titel-gross">${esc(zekiSatz("hallo", t("schnell2.willkommen")))}</h1>
-      <p class="s2unterzeile">${esc(zekiSatz("rolle", t("schnell2.willkommenText")))}</p></div>
+      <h1 class="s2titel-gross s2zeki-blase">${esc(zekiSatz("hallo", t("schnell2.willkommen")))}</h1>
+      <p class="s2unterzeile">${esc(zekiSatz("rolle", t("schnell2.willkommenText")))}</p>
       <label class="s2feldtitel" for="sprache-wahl">${esc(t("schnell2.sprache"))}</label>
       <select id="sprache-wahl" class="textfeld s2sprachwahl" data-f="sprache-wahl" dir="auto">
         ${SPRACHEN.map((s) => `<option value="${s}" lang="${s}"${s === aktiveSprache() ? " selected" : ""}>${esc(spracheName(s))}</option>`).join("")}
       </select>
-      <img class="s2kraeuter" src="bilder/ui/kraeuter.svg" alt="" aria-hidden="true">
     </div>`,
   fuss: () => `<button type="button" class="knopf" data-a="sprache" data-wert="${aktiveSprache()}">${esc(t("allgemein.weiter"))}</button>`,
   aktion: sprache.aktion,
 };
 
 // Foto je Laden-Art (foto/laden-*.webp, sobald Sanjis Bildpaket da ist), sonst Sanjis Piktogramm
-const LADEN_PIKTO = { imbiss: "laden-burger", kiosk: "laden-anders" };
 const LADEN_FOTO = { imbiss: ["laden-burger", "laden-imbiss", "laden-kiosk"], cafe: ["laden-cafe", "laden-baeckerei"] }; // erst eigenes Foto, sonst das ähnlichste Ladenbild
 const ladenBild = (id) => { const f = [...(LADEN_FOTO[id] || []), "laden-" + id].find((n) => FOTOS.has(n));
-  return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true">` : `<img class="kachelfoto pikto" src="bilder/${LADEN_PIKTO[id] || "laden-" + id}.svg" alt="" aria-hidden="true">`; };
+  return f ? `<img class="kachelfoto" src="foto/${f}.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">` : `<span class="kachelfoto pikto" aria-hidden="true">${sym("store")}</span>`; }; // kein Foto für diese Art: ruhiges Symbol auf Holz (Sanjis Piktogramm hat Strichfarbe = Hintergrund und bliebe als <img loading="lazy" decoding="async"> leer)
 // Pilotfest P6 (1), (Bildpaket C freigegeben): mehrere Ladenarten zugleich wählbar, erste = Hauptart.
 // Durchsicht (Fund 1): nur wirklich gewählte Arten markieren – kein Rückfall auf „anders“/Format, solange nichts getippt ist
 const ladenArtAn = (stand, id) => (Array.isArray(stand.ladenArten) ? stand.ladenArten : stand.ladenArt ? [stand.ladenArt] : []).includes(id);
@@ -485,7 +499,7 @@ const karteSchnell = {
     return `
       ${kopfS2("karte-foto", t("schnell2.karte"), t("schnell2.karteHilfe"))}
       <label class="s2fotoflaeche">
-        ${FOTOS.has("g-doener-teller") ? `<img src="foto/g-doener-teller.webp" alt="" aria-hidden="true">` : ""}
+        ${FOTOS.has("g-doener-teller") ? `<img src="foto/g-doener-teller.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">` : ""}
         <span class="s2fotoknopf"><span class="s2kamera" aria-hidden="true">${sym("camera")}</span>${esc(t("schnell2.karteFoto"))}</span>
         <input type="file" accept="image/*" capture="environment" data-f="foto" data-zweck="speisekarte" class="dateifeld">
       </label>
@@ -537,7 +551,7 @@ const kuehlSchnell = {
       <div class="s2kuehl">${KUEHL_TYPEN.map((T) => {
         const n = alle.filter((k) => kuehlTyp(k) === T.typ).length; const name = t("schnell2.arten." + T.typ);
         return `<div class="s2kuehlzeile ${n ? "an" : ""}">
-          ${FOTOS.has(T.foto) ? `<img src="foto/${T.foto}.webp" alt="" aria-hidden="true">` : `<img class="pikto" src="bilder/${T.pikto}.svg" alt="" aria-hidden="true">`}
+          ${FOTOS.has(T.foto) ? `<img src="foto/${T.foto}.webp" alt="" aria-hidden="true" loading="lazy" decoding="async">` : `<img class="pikto" src="bilder/${T.pikto}.svg" alt="" aria-hidden="true" loading="lazy" decoding="async">`}
           <b>${esc(name)}</b>
           <div class="s2zaehler">
             <button type="button" data-a="s2-kuehl" data-wert="${T.typ}" data-d="-1" aria-label="${esc(name)} −" ${n ? "" : "disabled"}>−</button>
@@ -601,7 +615,7 @@ function homeKarteEinrichtung() {
   // Lauf 3, Phase 6: Sanjis Bilder (PR #21, design-handoffs/sanji/home-bildschirm, schematisch, de/tr beschriftet)
   // statt der zwei Textschritte; nur in de/tr, weil die Bilder nur diese Sprachen tragen. Die Textschritte bleiben als „Als Text“ aufklappbar.
   if (["de", "tr"].includes(aktiveSprache())) { const bilder = a ? ["04_android", "05_android"] : ["01_ios", "02_ios", "03_ios"];
-    return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><div class="home-bilder">${bilder.map((b, i) => `<img src="bilder/home/home_${b}.svg" alt="${i + 1}" loading="lazy" width="216" height="270">`).join("")}</div>
+    return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><div class="home-bilder">${bilder.map((b, i) => `<img src="bilder/home/home_${b}.svg" alt="${i + 1}" loading="lazy" width="216" height="270" decoding="async">`).join("")}</div>
       <details><summary>${esc(t("home.titel"))}</summary><ol class="home-schritte"><li>${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></details></div>`; }
   return `<div class="karte home-karte s2home"><b>${esc(t("home.titel"))}</b><ol class="home-schritte"><li>${sym(a ? "menu" : "share")} ${esc(t(a ? "home.android1" : "home.ios1"))}</li><li>${sym(a ? "download" : "plus")} ${esc(t(a ? "home.android2" : "home.ios2"))}</li></ol></div>`;
 }
@@ -611,7 +625,6 @@ const fertigSchnell = {
     const e = einrichtungStand(stand);
     return `
       <div class="s2fertig">
-        <div class="s2zeki-intro zeki-lebt" aria-hidden="true">${mascotMarkup("bestaetigt", "nicken")}</div>
         <h1 class="frage" dir="auto">${esc(zekiSatz("fertig", t("schnell2.fertig")))}</h1>
         ${""/* 27.10.2026 (Persona-Test): „Fertig“ und „14 %“ zugleich verwirrt – Einrichtungsstand steht im Büro */}
         ${homeKarteEinrichtung()}
@@ -646,9 +659,9 @@ const schlossSchnell = {
   fuss: () => knopfWeiter(),
   aktion(name, el) { return hilfeAktion(name, el); },
 };
-export const SCHNELL = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, kuehlSchnell, geld, fertigSchnell];
+export const SCHNELL = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, kuehlSchnell, geld, fertigSchnell].map(mitBuehne);
 // Bildpaket E1: „Aus Vorlagen wählen“ öffnet die Gerichtewahl sofort – vor Kühlung, Geld und Abschlussbildschirm.
-const SCHNELL_E1 = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, karte, kuehlSchnell, geld, fertigSchnell];
+const SCHNELL_E1 = [spracheSchnell, schlossSchnell, ladenSchnell, karteSchnell, karte, kuehlSchnell, geld, fertigSchnell].map(mitBuehne);
 export const schritteFuer = (stand) => (stand?.weg === "schnell" ? (stand.karteWeg === "vorlagen" ? SCHNELL_E1 : SCHNELL) : SCHRITTE);
 
 // ---------- Gespeicherter Schritt: nach Kennung, nicht nur nach Nummer ----------

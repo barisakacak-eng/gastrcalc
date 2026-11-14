@@ -29,12 +29,25 @@ function schichten(a, b) {
   for (const x of liste) if (!x.storniert && juengste.get(x.datum + "|" + x.person) !== x) x.storniert = juengste.get(x.datum + "|" + x.person).erfasst;
   return liste;
 }
-// Einzelwert mit Zeit: der jüngere gewinnt; ohne Zeit auf beiden Seiten bleibt der eigene, außer er ist leer.
+// Einzelwert mit Zeit: der jüngere gewinnt; bei gleicher Zeit (E11, B2) der größere Inhalt – auf beiden Handys derselbe (früher blieb „der eigene“ und die Handys blieben verschieden).
 function juengererWert(lokal, fremd) {
   if (!istObjekt(fremd)) return istObjekt(lokal) ? structuredClone(lokal) : lokal;
   if (!istObjekt(lokal)) return structuredClone(fremd);
   const zl = String(lokal.geaendert ?? ""), zf = String(fremd.geaendert ?? "");
-  return structuredClone(zf > zl ? fremd : lokal); // gleiche Zeit: der eigene bleibt
+  if (zf !== zl) return structuredClone(zf > zl ? fremd : lokal);
+  return structuredClone(text(fremd) > text(lokal) ? fremd : lokal);
+}
+// „Geld heute“ (E11, B2): der jüngere Tag gilt; am selben Tag die spätere Erfassungszeit (`erfasst`, ISO) – auf beiden Handys dasselbe. Fehlt die Zeit (alte Daten) oder ist sie gleich,
+// gilt vorsichtig der kleinere Betrag (auf beiden Handys derselbe). Haben beide am selben Tag verschiedene Beträge, steht das im Bericht (`unterschiede`, Bereich „liquiditaet“).
+function geldHeute(a, b, _lokal, _fremd, bericht) {
+  if (!istObjekt(b)) return a ?? null; if (!istObjekt(a)) return structuredClone(b);
+  const da = String(a.datum ?? ""), db = String(b.datum ?? "");
+  if (da !== db) return structuredClone(db > da ? b : a);
+  if (a.betrag === b.betrag) return structuredClone(String(b.erfasst ?? "") > String(a.erfasst ?? "") ? b : a);
+  const ea = String(a.erfasst ?? ""), eb = String(b.erfasst ?? "");
+  const sieger = ea !== eb ? (eb > ea ? b : a) : ((Number(b.betrag) < Number(a.betrag)) ? b : a);
+  if (bericht) bericht.unterschiede.push({ bereich: "liquiditaet", lokal: `betrag ${a.betrag}`, fremd: `betrag ${b.betrag}`, gilt: sieger === b ? "fremd" : "lokal" });
+  return structuredClone(sieger);
 }
 
 // Feld → Verfahren (lokal, fremd) → Ergebnis. Fehlt ein Feld auf beiden Seiten, bleibt es weg.
@@ -51,12 +64,12 @@ export const FELD_ABGLEICH = {
   // Version der eingespielten Branchenwerte: die kleinere gilt – das Handy mit der älteren Version spielt die neuen Werte beim Start noch einmal ein
   // (sie ersetzen nur Schätzungen, eigene Werte bleiben); so geht keine Branchenwert-Änderung verloren.
   branchenVersion: (a, b) => { const n = Math.min(Number(a) || 0, Number(b) || 0); return n > 0 ? n : undefined; },
-  liquiditaet: (a, b) => { if (!istObjekt(b)) return a ?? null; if (!istObjekt(a)) return structuredClone(b); return structuredClone(String(b.datum ?? "") > String(a.datum ?? "") ? b : a); }, // „Geld heute“: der jüngere Tag gilt
+  liquiditaet: geldHeute, // „Geld heute“: der jüngere Tag gilt, am selben Tag die spätere Erfassung
 };
-export function felderVerschmelzen(basis, lokal, fremd) {
+export function felderVerschmelzen(basis, lokal, fremd, bericht = null) {
   for (const [feld, f] of Object.entries(FELD_ABGLEICH)) {
     if (lokal[feld] === undefined && fremd[feld] === undefined) continue;
-    const r = f(lokal[feld], fremd[feld], lokal, fremd); if (r === undefined) delete basis[feld]; else basis[feld] = r;
+    const r = f(lokal[feld], fremd[feld], lokal, fremd, bericht); if (r === undefined) delete basis[feld]; else basis[feld] = r;
   }
   return basis;
 }
@@ -72,6 +85,7 @@ export const IN_VERSCHMELZEN = {
   stammZeit: "Zeitstempel je Bereich, folgt dem Sieger-Bereich, in verschmelzen",
   abgleich: "Merkzettel des Abgleichs je Bereich (abgleichMerken), in verschmelzen",
   abgleichHinweis: "Hinweis im Büro, wird in verschmelzen fortgeschrieben",
+  feldZeit: "Änderungszeit je Feld (ms), je Pfad die spätere, nur lebende Pfade, in zeitenVereinen (E11, B1)",
   monatsabschluesse: "monatsabschluesseVereinigen: gleicher Abschluss einmal, der frühere gilt, in verschmelzen",
 };
 export const NUR_LOKAL = {
@@ -115,6 +129,7 @@ export function felderSauber(b, zaehle = () => {}) {
     if (!Array.isArray(b[feld])) { zaehle(1); delete b[feld]; continue; }
     const liste = b[feld].filter((x) => { const gut = istObjekt(x) && ok(x); if (!gut) zaehle(1); return gut; });
     if (feld === "teamTage" || feld === "abwesend") for (const x of liste) if (x.eintraege.some((e) => !istObjekt(e))) { zaehle(x.eintraege.filter((e) => !istObjekt(e)).length); x.eintraege = x.eintraege.filter(istObjekt); }
+    if (feld === "teamTage") for (const x of liste) for (const e of x.eintraege) if (!zahl01(e.stunden)) { zaehle(1); e.stunden = 0; } // E11 (C5): Stunden sind eine Zahl ≥ 0, sonst 0 und gezählt
     if (liste.length !== b[feld].length) b[feld] = liste;
   }
   if (b.chef !== undefined && !istObjekt(b.chef)) { zaehle(1); delete b.chef; }

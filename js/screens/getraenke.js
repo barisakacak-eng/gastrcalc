@@ -7,6 +7,7 @@ import { esc, fmtEuro, fmtZahl, parseZahl } from "../util.js";
 import { getraenkeListe, getraenkHinweise, getraenkSetzen, getraenkAnlegen, grossgebindeWahl, GETRAENK_VORLAGEN } from "../getraenk.js";
 import { GEBINDE_VERKAUF, GROESSEN, literText, literEingabe } from "../getraenk_feld.js";
 import { nav } from "./nav.js";
+import { gerichtBild } from "./gerichtbild.js"; // Foto links in der Zeile (Zuordnung js/bilder.js)
 
 // flüchtiger Bildschirmzustand: offenes Formular { id | "neu", werte: { … als Text } }
 let form = null;
@@ -29,7 +30,8 @@ export function getraenkeView(stand) {
     const teile = [x.offen ? "" : x.mengeText || t("getraenke.ohneGroesse"), x.gebinde ? t("getraenke.art." + x.gebinde) : "", x.offen ? t("getraenke.offenAus", x.mengeText, artikelText(x.quelle)) : "", x.marke].filter(Boolean);
     const ware = x.waren !== null ? t(x.offen ? "getraenke.jeGlas" : "getraenke.jeStueck", euro(x.waren, x.warenGeschaetzt)) : t("getraenke.warePreisFehlt");
     const zusatz = [x.pfand ? t("getraenke.pfandKurz", euro(x.pfand)) : "", x.lieferant ? x.lieferant : "", x.offen && x.schankverlust ? t("getraenke.schankKurz", Math.round(x.schankverlust * 100)) : ""].filter(Boolean);
-    return `<div class="summenzeile" data-getraenk="${esc(x.id)}"><span><b>${esc(x.name)}</b><br><small>${esc(teile.join(" · "))}</small><br><small>${esc([ware, ...zusatz].join(" · "))}</small></span>
+    const g = (stand.gerichte || []).find((y) => y.id === x.id);
+    return `<div class="summenzeile mit-foto" data-getraenk="${esc(x.id)}">${g ? gerichtBild(g) : ""}<span><b>${esc(x.name)}</b><br><small>${esc(teile.join(" · "))}</small><br><small>${esc([ware, ...zusatz].join(" · "))}</small></span>
       <span class="wert"><button type="button" class="leise klein" data-a="gt-auf" data-wert="${esc(x.id)}">${esc(t("getraenke.aendern"))}</button></span></div>`;
   };
   const listeView = liste.length ? `<div class="karte">${liste.map(zeile).join("")}</div>` : `<div class="karte leer"><div>${esc(t("getraenke.leer"))}</div></div>`;

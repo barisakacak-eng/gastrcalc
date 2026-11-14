@@ -21,7 +21,7 @@ test("Schema 1 wird zu einer Wurzel mit einem Laden gehoben", () => {
 test("Zusammenführen: gleiche Kennung ersetzt, neue kommt dazu, aktiver Laden bleibt", () => {
   const a = leererBetrieb(); a.betrieb.name = "A"; const b = leererBetrieb(); b.betrieb.name = "B";
   const w = { schema: 2, sprache: "de", aktiv: a.id, betriebe: [a, b] };
-  const a2 = structuredClone(a); a2.betrieb.name = "A neu"; const c = leererBetrieb(); c.betrieb.name = "C";
+  const a2 = structuredClone(a); a2.betrieb.name = "A neu"; a2.geaendert = "2027-01-02T10:00:00.000Z"; /* E11: gleiche Zeit ersetzt nicht mehr blind (beide Handys müssen dasselbe wählen); der jüngere Laden gilt */ const c = leererBetrieb(); c.betrieb.name = "C";
   const r = zusammenfuehren(w, { schema: 2, sprache: "en", aktiv: c.id, betriebe: [a2, c] });
   assert.deepEqual(r, { ersetzt: 1, neu: 1 });
   assert.deepEqual(w.betriebe.map((x) => x.betrieb.name), ["A neu", "B", "C"]);

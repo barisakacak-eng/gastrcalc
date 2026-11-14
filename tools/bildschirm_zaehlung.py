@@ -3,7 +3,7 @@
 in allen Ebenen – Laden, Personal (mit Büro-Code), Büro – plus die Einrichtung (Schnellweg und „Alles genau einrichten“).
 
 Woher die Bildschirme kommen:
-  1. aus dem Code: alle Ansichten aus der Zeichen-Weiche in js/app.js (ansicht === "…" ? …View) und die erlaubten Ansichten je
+  1. aus dem Code: alle Ansichten aus der Zeichen-Weiche ANSICHT_VIEW in js/bedienung/zeichnen.js (seit dem Umbau; früher js/app.js) und die erlaubten Ansichten je
      Ebene aus js/modus.js (LADEN_ANSICHTEN, PERSONAL_ANSICHTEN). Jede Ansicht wird über einen Nav-Knopf geöffnet, den das Werkzeug
      in die Seite legt (genau der Weg, den die App selbst für data-a="nav" nimmt).
   2. durch Klicken: auf jedem Bildschirm wird jeder sichtbare Knopf mit data-a einmal angetippt (bis Tiefe 2). Ändert sich danach
@@ -13,7 +13,7 @@ Woher die Bildschirme kommen:
 
 Je Bildschirm: Foto, sichtbarer Text, Wortzahl (ganzer Bildschirm und nur der sichtbare Ausschnitt), Laden-Regel (≤ 15 Wörter),
 Konsolenfehler, waagerechter Überlauf (Seite und einzelne Elemente), abgeschnittene Texte.
-Ausgabe (außerhalb des Repos): /tmp/zaehlung/<modus>-<name>.png, /tmp/zaehlung/bericht.md, /tmp/zaehlung/wand.html, /tmp/zaehlung/daten.json
+Ausgabe (außerhalb des Repos; ZAEHLUNG_OUT): /tmp/zaehlung/<modus>-<name>.png, /tmp/zaehlung/bericht.md, /tmp/zaehlung/wand.html, /tmp/zaehlung/daten.json
 
 Start:  python3 tools/bildschirm_zaehlung.py      (eigene Webserver auf DURCHLAUF_PORT … +3, Standard 8790)
 Umgebung: ZAEHLUNG_OUT=/tmp/zaehlung  ZAEHLUNG_TIEFE=2  ZAEHLUNG_MAX=170 (Bildschirme je Ebene)  ZAEHLUNG_NUR=laden,buero,personal,einrichtung
@@ -31,9 +31,17 @@ OUT = pathlib.Path(os.environ.get("ZAEHLUNG_OUT", "/tmp/zaehlung")); OUT.mkdir(p
 PORT = int(os.environ.get("DURCHLAUF_PORT", "8790"))
 TIEFE = int(os.environ.get("ZAEHLUNG_TIEFE", "2"))
 MAX_JE_EBENE = int(os.environ.get("ZAEHLUNG_MAX", "170"))
-MAX_KNOEPFE = 45
+MAX_KNOEPFE = int(os.environ.get("ZAEHLUNG_KNOEPFE", "45"))
+MAX_GLEICHE = int(os.environ.get("ZAEHLUNG_GLEICHE", "3"))  # höchstens so viele Knöpfe mit gleichem data-a (verschiedenem data-wert) je Bildschirm antippen
 NUR = [x for x in os.environ.get("ZAEHLUNG_NUR", "einrichtung,laden,buero,personal").split(",") if x]
 CODE = "1234"
+SPRACHE = os.environ.get("SCHNELLSTART_SPRACHE", "de")           # Sprache über die Sprachwahl der App (wie tests/schnellstart.py)
+FARBE = "dark" if os.environ.get("ZAEHLUNG_DUNKEL") == "1" else "light"
+GROESSE = (390, 844)
+KEIN_FOTO = False      # Prüfwerkzeuge (tests/tor_browser.py) messen nur und legen keine Bilder ab
+REDUZIERT = False      # reduced_motion="reduce"
+NACH_FOTO = None       # async (Lauf, Eintrag, Zustand) → Messung je neuem Bildschirm (Haken für tests/tor_browser.py)
+LOCALE = {"de": "de-DE", "tr": "tr-TR", "ar": "ar-SA"}.get(SPRACHE, SPRACHE)
 LADEN_GRENZE = 15
 
 # Knöpfe, die nicht angetippt werden: zerstören Daten, wechseln Sprache/Ebene/Laden, setzen den Code, öffnen Dateiauswahl,
@@ -44,18 +52,21 @@ SPERRE = re.compile(r"^(nav|modus|sprache|laden-wechseln|pin-taste|pin-zurueck|b
 
 # ---------------------------------------------------------------- Bildschirme aus dem Code
 def ansichten_aus_code():
-    app = (APP / "js" / "app.js").read_text(encoding="utf-8")
-    weiche = re.findall(r'ansicht === "([a-z-]+)" \? (\w+)\(', app)
+    # Seit dem Umbau liegt die Zeichen-Weiche (ANSICHT_VIEW) in js/bedienung/zeichnen.js; die Views stammen aus js/screens/*.js oder js/bedienung/*.js
+    quelle = (APP / "js" / "bedienung" / "zeichnen.js").read_text(encoding="utf-8")
+    block = re.search(r"const ANSICHT_VIEW = \{(.*?)\n\};", quelle, re.S).group(1)
+    weiche = re.findall(r'^\s*"?([a-z0-9-]+)"?: \(\) => (\w+)\(', block, re.M)
     imp = {}
-    for namen, datei in re.findall(r'import \{([^}]*)\} from "\./screens/([a-z_]+)\.js"', app):
-        for n in namen.split(","):
+    for m in re.finditer(r'import \{([^}]*)\} from "(\.\.?/[a-z_0-9/]+)\.js"', quelle):
+        pfad = m.group(2).replace("../", "").replace("./", "bedienung/")
+        for n in m.group(1).split(","):
             n = n.strip().split(" as ")[0].strip()
-            if n: imp[n] = datei
+            if n: imp[n] = pfad
     ansichten, schon = [], set()
-    for a, f in weiche:  # nur die Zeichen-Weiche (…View / …Schirm), nicht die Kennungs-Kette davor
-        if f.endswith("Kennung") or a in schon: continue
-        schon.add(a); ansichten.append({"ansicht": a, "funktion": f, "datei": imp.get(f, "app.js (eigene Funktion)")})
-    ansichten.append({"ansicht": "start", "funktion": "startView", "datei": imp.get("startView", "home")})  # „sonst“-Zweig der Weiche
+    for a, f in weiche:
+        if a in schon: continue
+        schon.add(a); ansichten.append({"ansicht": a, "funktion": f, "datei": imp.get(f, "bedienung/zeichnen.js (eigene Funktion)")})
+    ansichten.append({"ansicht": "start", "funktion": "startView", "datei": imp.get("startView", "screens/home")})  # „sonst“-Zweig der Weiche
     modus = (APP / "js" / "modus.js").read_text(encoding="utf-8")
     tabs = re.findall(r'"([a-z]+)"', re.search(r"LADEN_TABS = \[([^\]]*)\]", modus).group(1))
     laden_extra = re.findall(r'"([a-z]+)"', re.search(r"LADEN_ANSICHTEN = \[\.\.\.LADEN_TABS, ([^\]]*)\]", modus).group(1))
@@ -165,7 +176,7 @@ class Lauf:
 
     async def start(self):
         self.srv = schnellstart.server(self.port)
-        self.ctx = await self.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
+        self.ctx = await self.b.new_context(viewport={"width": GROESSE[0], "height": GROESSE[1]}, device_scale_factor=1 if KEIN_FOTO else 2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE, **({"reduced_motion": "reduce"} if REDUZIERT else {}))
         await self.ctx.add_init_script(path=str(APP / "tests" / "hilfe" / "aufklappen.js"))
         await self.ctx.add_init_script(script="window.print = () => { window.__druck = (window.__druck || 0) + 1; };")
         self.pg = pg = await self.ctx.new_page()
@@ -205,7 +216,7 @@ class Lauf:
             except Exception: await self.pg.wait_for_timeout(500)
         return await self.pg.evaluate(LESEN_JS)
 
-    async def foto(self, name, weg, z=None):
+    async def foto(self, name, weg, z=None, ansicht=None):
         z = z or await self.z()
         fp = fingerabdruck(z)
         if fp in self.gesehen: return None
@@ -214,20 +225,24 @@ class Lauf:
         while any(s["name"] == n for s in self.schirme): n = f"{name}-{i}"; i += 1
         self.gesehen[fp] = n
         datei = OUT / f"{self.modus}-{n}.png"
-        try:
-            await self.pg.screenshot(path=str(datei), full_page=True, timeout=15000)
-        except Exception as e:
-            self.notizen.append(f"Foto {n}: {e}")
+        if not KEIN_FOTO:
+            try:
+                await self.pg.screenshot(path=str(datei), full_page=True, timeout=15000)
+            except Exception as e:
+                self.notizen.append(f"Foto {n}: {e}")
         for k in z["knoepfe"]:
             if k["a"] == "nav" and k["wert"]: self.nav_gefunden.add(k["wert"])
         v, s_, ol = woerter(z["voll"]), woerter(z["sicht"]), woerter(z["ohneLeiste"])
-        eintrag = {"modus": self.modus, "name": n, "datei": datei.name, "weg": weg, "titel": z["titel"], "blatt": z["blatt"],
+        eintrag = {"modus": self.modus, "name": n, "ansicht": ansicht, "datei": datei.name, "weg": weg, "titel": z["titel"], "blatt": z["blatt"],
                    "phase": z["phase"], "schritt": z["schritt"], "ebeneIst": z["modus"],
                    "woerter": len(v), "woerterSicht": len(s_), "woerterOhneLeiste": len(ol), "text": z["voll"][:4000],
                    "seiteBreit": z["seiteBreit"], "ueber": z["ueber"], "abgeschnitten": z["abgeschnitten"],
                    "fehler": list(dict.fromkeys(self.fehler)), "dialoge": list(dict.fromkeys(self.dialoge)), "knoepfe": len(z["knoepfe"])}
         self.fehler.clear(); self.dialoge.clear()
         self.schirme.append(eintrag)
+        if NACH_FOTO:
+            try: eintrag["messung"] = await NACH_FOTO(self, eintrag, z)
+            except Exception as ex: self.notizen.append(f"Messung {n}: {ex!r}"[:200])
         return eintrag
 
     async def blatt_zu(self):
@@ -246,12 +261,14 @@ class Lauf:
         """Nach „Bearbeiten“ steht die App in einem Einrichtungs-Schritt – mit „Weiter“ zurück in die App."""
         for _ in range(25):
             if await self.pg.evaluate("window.__gastrocalc.stand.phase") != "onboarding": return True
-            k = self.pg.locator('[data-a="weiter"], [data-a="ob-fertig"]')
+            k = self.pg.locator('[data-a="weiter"], [data-a="ob-fertig"], [data-a="waage-weiss-nicht"], [data-a="zurueck"]')  # Rezept-Frage („Weiß ich nicht“) und „Zurück“ gibt es ohne „Weiter“
             if await k.count():
                 try: await k.first.click(timeout=2000)
                 except Exception: pass
             await self.pg.wait_for_timeout(300)
-        return False
+        try: await self.pg.reload(); await self.pg.wait_for_selector('[data-a="menue-auf"], .schirm', timeout=15000)  # letzter Ausweg
+        except Exception: pass
+        return await self.pg.evaluate("window.__gastrocalc.stand.phase") != "onboarding"
 
     async def nav(self, ziel):
         await self.pg.evaluate("z => { const b = document.createElement('button'); b.type = 'button'; b.dataset.a = 'nav'; b.dataset.wert = z; b.hidden = true; (document.querySelector('#app') || document.body).appendChild(b); b.click(); b.remove(); }", ziel)
@@ -304,6 +321,7 @@ class Lauf:
             if SPERRE.search(k["a"]): continue
             key = (k["a"], k["wert"], k["imBlatt"])
             if key in schl: continue
+            if sum(1 for x in kand if x["a"] == k["a"] and x["imBlatt"] == k["imBlatt"]) >= MAX_GLEICHE: continue  # viele Zeilen derselben Art (je Datum, je Ware …): die ersten genügen
             schl.add(key); kand.append(k)
         for k in kand[:MAX_KNOEPFE]:
             if len(self.schirme) >= MAX_JE_EBENE: self.notizen.append(f"Obergrenze {MAX_JE_EBENE} Bildschirme erreicht"); return
@@ -328,7 +346,7 @@ class Lauf:
                                      "woerterSicht": 0, "woerterOhneLeiste": 0, "text": " | ".join(self.dialoge), "seiteBreit": 0, "ueber": [], "abgeschnitten": [],
                                      "fehler": list(self.fehler), "dialoge": list(self.dialoge), "knoepfe": 0})
                 self.fehler.clear(); self.dialoge.clear(); continue
-            e = await self.foto(name, list(weg) + [sel], z2)
+            e = await self.foto(name, list(weg) + [sel], z2, ansicht)
             if e and z2["phase"] != "onboarding" and z2["modus"] == self.modus:
                 await self.erkunden(e["name"], ansicht, list(weg) + [sel], z2, tiefe + 1)
 
@@ -347,7 +365,7 @@ class Lauf:
                                          "phase": z["phase"], "schritt": None, "ebeneIst": z["modus"], "woerter": 0, "woerterSicht": 0, "woerterOhneLeiste": 0, "text": "",
                                          "seiteBreit": 0, "ueber": [], "abgeschnitten": [], "fehler": [], "dialoge": [], "knoepfe": 0, "zurueck": True})
                     continue
-                e = await self.foto(ansicht, ["nav:" + ansicht], z)
+                e = await self.foto(ansicht, ["nav:" + ansicht], z, ansicht)
                 if e is None:
                     self.notizen.append(f"Ansicht „{ansicht}“ sieht aus wie ein schon fotografierter Bildschirm ({self.gesehen.get(fingerabdruck(z))})")
                     continue
@@ -363,7 +381,11 @@ class Lauf:
 # ---------------------------------------------------------------- Vorbereitung je Lauf
 async def beispiel_laden(l):
     await nav_hilfe.geh(l.pg, "laeden")
-    await l.pg.locator('#app [data-a="beispiel-anlegen"]').first.click(); await l.pg.wait_for_timeout(900)
+    for _ in range(4):  # der kurze Rundgang kann nachträglich aufgehen und das Tippen abfangen – wegtippen wie ein Mensch
+        if await l.pg.locator(".rg-huelle").count(): await nav_hilfe.rundgang_weg(l.pg)
+        try: await l.pg.locator('#app [data-a="beispiel-anlegen"]').first.click(timeout=4000); break
+        except Exception: await l.pg.wait_for_timeout(600)
+    await l.pg.wait_for_timeout(900)
     s = await l.pg.evaluate("window.__gastrocalc.stand.beispiel")
     assert s, "Beispiel-Laden nicht aktiv"
 
@@ -384,7 +406,7 @@ async def einrichtung(l):
         if await pg.evaluate("!!navigator.serviceWorker.controller"): break
         await pg.wait_for_timeout(500)
     await l.foto("schnell-sprache", ["start"])
-    await pg.select_option('[data-f="sprache-wahl"]', "de"); await pg.click('[data-a="sprache"][data-wert="de"]'); await pg.wait_for_selector('[data-a="laden-art"]')
+    await pg.select_option('[data-f="sprache-wahl"]', SPRACHE); await pg.click(f'[data-a="sprache"][data-wert="{SPRACHE}"]'); await nav_hilfe.nach_sprache(pg); await pg.wait_for_selector('[data-a="laden-art"]')
     await l.foto("schnell-laden", ["sprache de"])
     # Hilfe „?“ des Schnellwegs
     if await pg.locator('[data-a="s2-hilfe"]').count():
@@ -405,7 +427,7 @@ async def einrichtung(l):
     await weiter("geld"); await l.foto("schnell-geld", ["weiter"])
     await weiter("fertig-schnell"); await l.foto("schnell-fertig", ["weiter"])
     # „Alles genau einrichten“: neuer Kontext, jeder Schritt mit „Weiter“
-    ctx2 = await l.b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True, locale="de-DE")
+    ctx2 = await l.b.new_context(viewport={"width": GROESSE[0], "height": GROESSE[1]}, device_scale_factor=1 if KEIN_FOTO else 2, is_mobile=True, has_touch=True, locale=LOCALE, color_scheme=FARBE, **({"reduced_motion": "reduce"} if REDUZIERT else {}))
     await ctx2.add_init_script(path=str(APP / "tests" / "hilfe" / "aufklappen.js"))
     pg2 = await ctx2.new_page()
     pg2.on("console", lambda m: l.fehler.append(m.text) if m.type == "error" and "ERR_TUNNEL" not in m.text else None)
@@ -414,7 +436,7 @@ async def einrichtung(l):
     alt = l.pg; l.pg = pg2
     try:
         await pg2.goto(f"http://127.0.0.1:{l.port}/index.html"); await pg2.wait_for_selector('[data-f="sprache-wahl"]')
-        await pg2.select_option('[data-f="sprache-wahl"]', "de"); await pg2.click('[data-a="sprache"][data-wert="de"]'); await pg2.wait_for_timeout(400)
+        await pg2.select_option('[data-f="sprache-wahl"]', SPRACHE); await pg2.click(f'[data-a="sprache"][data-wert="{SPRACHE}"]'); await nav_hilfe.nach_sprache(pg2); await pg2.wait_for_timeout(400)
         await pg2.click('[data-a="s2-hilfe"]'); await pg2.wait_for_timeout(300)
         await pg2.click('[data-a="weg-genau"]'); await pg2.wait_for_timeout(500)
         vorige = None; gleich = 0
@@ -514,7 +536,7 @@ def bericht(ergebnisse, ansichten, je_modus, dauer):
         z += ["", "## Browser-Dialoge (confirm/alert)", ""]
         for s in dl: z.append(f"- {s['modus']}-{s['name']}: " + " ⏐ ".join(d[:200] for d in s["dialoge"]))
     # Ansichten aus dem Code
-    z += ["", "## Ansichten aus dem Code (js/app.js) – erreicht?", "", "| Ansicht | Funktion | Datei | Laden | Personal | Büro | als echter Knopf gesehen |", "|---|---|---|---|---|---|---|"]
+    z += ["", "## Ansichten aus dem Code (js/bedienung/zeichnen.js, ANSICHT_VIEW) – erreicht?", "", "| Ansicht | Funktion | Datei | Laden | Personal | Büro | als echter Knopf gesehen |", "|---|---|---|---|---|---|---|"]
     def status(m, a):
         if m not in ergebnisse: return "–"
         if a not in je_modus.get(m, []) and not (m == "laden" and a == "start") and not (m == "personal" and a == "personal"): return "·"
@@ -578,6 +600,7 @@ figure.warn small{{color:var(--warn);opacity:1}}
 async def main():
     ansichten, je_modus, _ = ansichten_aus_code()
     for p in OUT.glob("*.png"): p.unlink()
+    OUT.mkdir(parents=True, exist_ok=True)
     t0 = time.time(); ergebnisse = {}
     async with async_playwright() as p:
         b = await p.chromium.launch()

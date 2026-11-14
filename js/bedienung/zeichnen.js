@@ -1,12 +1,11 @@
 // Zeichnen: wählt nach Phase und Ansicht den Bildschirm, setzt ihn ein und räumt danach auf (Banner, Scrollposition, Fotos nachladen).
 // zeichne() setzt Z.root.innerHTML komplett neu; Zustand ändert es nicht.
-import { bueroView } from "../screens/buero.js";
 import { Z } from "../bedienung/zustand.js";
 import { einstellungenView, karteView, startView } from "../screens/home.js";
-import { speicherIstDauerhaft, APP_FASSUNG, speicherVerfuegbar, beiSpeicherFehler } from "../store.js";
+import { speicherIstDauerhaft, APP_FASSUNG, speicherVerfuegbar, beiSpeicherFehler, rueckholNeuSeitdem } from "../store.js";
 import { fehlerLesen } from "../fehler.js";
 import { speicherLokal } from "../adapter/browser_speicher.js";
-import { homeLage, hinweiseMitHm, zekiLage, zekiGesehenMerken, zekiBildschirm } from "./zeki.js";
+import { homeLage, zekiLage, zekiGesehenMerken, zekiBildschirm } from "./zeki.js";
 import { karteLadenView, karteLadenKennung } from "../screens/karte_laden.js";
 import { muellView, muellKennung } from "../screens/muell.js";
 import { umsatzView } from "../screens/umsatz.js";
@@ -15,25 +14,8 @@ import { kuehlView, kuehlKennung } from "../screens/kuehl.js";
 import { modus, ansichtErlaubt, startAnsicht } from "../modus.js";
 import { putzplanView } from "../screens/putzplan.js";
 import { umsatzLadenView, umsatzLadenKennung } from "../screens/umsatz_laden.js";
-import { laedenView } from "../screens/laeden.js";
-import { belegView, belegKennung } from "../screens/beleg.js";
-import { abschlussView, abschlussKennung } from "../screens/abschluss.js";
-import { vergleichView } from "../screens/vergleich.js";
-import { preisrundeView } from "../screens/preisrunde.js";
-import { wareView } from "../screens/ware.js";
-import { heuteGeschaeft, esc } from "../util.js";
-import { portionView } from "../screens/portion.js";
-import { inventurView, inventurKennung } from "../screens/inventur.js";
-import { verkaufView, verkaufKennung } from "../screens/verkauf.js";
-import { bestandView, bestandKennung } from "../screens/bestand.js";
-import { aktionenView, aktionenKennung } from "../screens/aktionen.js";
-import { tafelView } from "../screens/tafel.js";
-import { geld3View } from "../screens/geld3.js";
-import { getraenkeView, getraenkeKennung } from "../screens/getraenke.js";
-import { lieferantenView, lieferantenKennung } from "../screens/lieferanten.js";
-import { kuehlWareView, kuehlWareKennung } from "../screens/kuehl_ware.js";
+import { esc } from "../util.js";
 import { personalView, personalKontext, personalAktiv } from "../screens/personal.js";
-import { ordnerAmtView, ordnerPaketView } from "../screens/ordner.js";
 import { sicherungStufe } from "../sicherung_stufe.js";
 import { fotoKennung, karteZeigtPruefliste, kartePruefenView, karteFotoView, karteFussKnopf, fotoLauf } from "../screens/foto.js";
 import { holen, beiAblageFehler } from "../ablage.js";
@@ -47,14 +29,15 @@ import { navKontext, nav } from "../screens/nav.js";
 import { zekiStimmeEinsetzen, zekiTaktStarten } from "../screens/zeki_takt.js";
 import { haken } from "./zustand.js";
 import { blattSchliessen } from "../screens/ebene.js";
+import { erstAbraeumen } from "../screens/zeki_erst.js";
 import { schritteFuer } from "../screens/onboarding.js";
+import { bueroPaket, bueroPaketLaden, istBueroAnsicht } from "./nachladen.js";
 
-// Welche Funktion liefert das HTML einer Ansicht in der Phase „app“? Jede andere Ansicht (auch „start“) zeigt Heute.
-const ANSICHT_VIEW = {
-  buero: () => bueroView(Z.stand, Z.wurzel, { aktualisierung: !!Z.aktualisierung }),
+// Welche Funktion liefert das HTML einer Ansicht in der Phase „app“? Jede andere Ansicht (auch „start“) zeigt Heute. Büro-Ansichten: bueroPaket().VIEW.
+const ANSICHT_VIEW = { // Kern-Ansichten; die Büro-Ansichten zeichnet das Büro-Paket (paket_buero.js, VIEW)
   einstellungen: () => einstellungenView(Z.stand, Z.ereignisAnzahl, Z.wurzel, {
     offline: Z.offlineStand, dauerhaft: speicherIstDauerhaft(), fassung: APP_FASSUNG, fehlerAnzahl: fehlerLesen(speicherLokal()).length,
-    home: homeLage({ buero: true }), rueckhol: Z.rueckholInfo,
+    home: homeLage({ buero: true }), rueckhol: Z.rueckholInfo ? { ...Z.rueckholInfo, neuSeitdem: rueckholNeuSeitdem(Z.wurzel, Z.rueckholInfo.zeit) } : null, // E11 (B4): der Knopf erscheint nur, solange nichts Neues eingetragen wurde
   }),
   karte: () => karteLadenView(Z.stand),
   kartebuero: () => karteView(Z.stand),
@@ -64,28 +47,8 @@ const ANSICHT_VIEW = {
   kuehl: () => kuehlView(Z.stand, { buero: modus(Z.wurzel) === "buero" }), // Monatsblatt, Einrichtung, 7-Tage-Lücken nur im Büro
   putzplan: () => putzplanView(Z.stand, { buero: modus(Z.wurzel) === "buero" }), // Einrichten und Anpassen nur im Büro
   umsatzheute: () => umsatzLadenView(Z.stand),
-  laeden: () => laedenView(Z.wurzel),
-  beleg: () => belegView(Z.stand),
-  abschluss: () => abschlussView(Z.stand),
   kartefoto: () => karteFotoSchirm(),
-  vergleich: () => vergleichView(Z.stand),
-  preisrunde: () => preisrundeView(Z.stand),
-  ware: () => wareView(Z.stand, { datum: heuteGeschaeft() }),
-  portion: () => portionView(Z.stand),
-  inventur: () => inventurView(Z.stand),
-  verkauf: () => verkaufView(Z.stand),
-  bestand: () => bestandView(Z.stand),
-  aktionen: () => aktionenView(Z.stand),
-  tafel: () => tafelView(Z.stand),
-  hinweise: () => hinweiseMitHm(),
-  geld3: () => geld3View(Z.stand),
-  getraenke: () => getraenkeView(Z.stand),
-  lieferanten: () => lieferantenView(Z.stand),
-  kuehlware: () => kuehlWareView(Z.stand),
   personal: () => personalView(Z.stand),
-  "ordner-amt": () => ordnerAmtView(Z.stand),
-  "ordner-steuer": () => ordnerPaketView(Z.stand, "steuer"),
-  "ordner-buch": () => ordnerPaketView(Z.stand, "buch"),
 };
 const heuteView = () => startView(Z.stand, {
   aktualisierung: !!Z.aktualisierung, wurzel: Z.wurzel, ...zekiLage(), sicherungTage: sicherungStufe(Z.wurzel)?.tage ?? null, home: homeLage(),
@@ -93,12 +56,11 @@ const heuteView = () => startView(Z.stand, {
 
 // Zusatz zur Kennung eines Bildschirms: ein offenes Formular oder Blatt zählt als anderer Bildschirm (dann beginnt das Scrollen oben).
 const KENNUNG_UNTER = {
-  karte: karteLadenKennung, kuehl: kuehlKennung, muell: muellKennung, beleg: belegKennung, abschluss: abschlussKennung, kartefoto: fotoKennung,
-  inventur: inventurKennung, verkauf: verkaufKennung, bestand: bestandKennung, aktionen: aktionenKennung, getraenke: getraenkeKennung,
-  kuehlware: kuehlWareKennung, lieferanten: lieferantenKennung, umsatzheute: umsatzLadenKennung,
+  karte: karteLadenKennung, kuehl: kuehlKennung, muell: muellKennung, kartefoto: fotoKennung, umsatzheute: umsatzLadenKennung,
 };
 function schirmKennung() {
-  const unter = Object.hasOwn(KENNUNG_UNTER, Z.ansicht) ? KENNUNG_UNTER[Z.ansicht]() : "";
+  const kennung = Object.hasOwn(KENNUNG_UNTER, Z.ansicht) ? KENNUNG_UNTER[Z.ansicht] : bueroPaket()?.KENNUNG[Z.ansicht];
+  const unter = kennung ? kennung() : "";
   return Z.stand.phase === "onboarding"
     ? `ob:${Z.stand.id}:${Z.stand.weg}:${Z.stand.schritt}:${fotoKennung()}`
     : `app:${Z.stand.id}:${Z.ansicht}${unter ? ":" + unter : ""}`;
@@ -125,6 +87,7 @@ export function zeichne() {
     personalKontext(Z.wurzel);
     if (personalAktiv() && !["personal", "muell", "kuehl", "putzplan"].includes(Z.ansicht)) Z.ansicht = "personal";
   }
+  if (bueroNachladen()) return; // Büro-Ansicht, Paket noch nicht da: der alte Bildschirm bleibt stehen, danach wird gezeichnet
   const kennung = schirmKennung();
   const y = kennung === Z.letzterSchirm ? window.scrollY : 0;
   try {
@@ -136,16 +99,35 @@ export function zeichne() {
   speicherBandZeigen();
   if (kennung !== Z.letzterSchirm) { Z.ruheBis = Date.now() + 250; meldungBeiWechsel(); }
   Z.letzterSchirm = kennung; Z.gezeichneterTag = tagStand();
+  erstAbraeumen(document, Z.ansicht); // Zekis Erst-Hinweis gehört zu seinem Schirm
   window.scrollTo(0, y);
+}
+
+// Die Wächter der Ansicht: Ebene schützt (z. B. kein Euro-Bildschirm im Personal-Modus), ohne Schalter gibt es „Verkauf“ nicht.
+function ansichtPruefen() {
+  if (!ansichtErlaubt(Z.wurzel, Z.ansicht)) Z.ansicht = startAnsicht(Z.wurzel);
+  if (Z.ansicht === "verkauf" && !verkaufSichtbar(Z.stand)) Z.ansicht = startAnsicht(Z.wurzel);
+}
+
+// Büro-Ansichten brauchen das Büro-Paket. Fehlt es noch, wird es geladen (der alte Bildschirm bleibt stehen, nichts flackert) und danach
+// neu gezeichnet; schlägt das Laden fehl, kommt die vorhandene Fehlerseite. Gibt true zurück, wenn jetzt nicht gezeichnet werden soll.
+let paketWartet = false;
+function bueroNachladen() {
+  if (!Z.stand || Z.stand.phase !== "app" || bueroPaket()) return false;
+  ansichtPruefen();
+  if (!istBueroAnsicht(Z.ansicht)) return false;
+  if (paketWartet) return true;
+  paketWartet = true;
+  bueroPaketLaden().then(() => { paketWartet = false; zeichne(); }, (e) => { paketWartet = false; console.error(e); notfallSeite(); });
+  return true;
 }
 
 // Phase „app“: Bildschirm der Ansicht einsetzen, Zeki dazu, Führung oder Auftritt planen.
 function zeichneApp() {
-  if (!ansichtErlaubt(Z.wurzel, Z.ansicht)) Z.ansicht = startAnsicht(Z.wurzel); // Ebene schützt: z. B. kein Euro-Bildschirm im Personal-Modus
-  if (Z.ansicht === "verkauf" && !verkaufSichtbar(Z.stand)) Z.ansicht = startAnsicht(Z.wurzel); // ohne Schalter gibt es den Bereich nicht
+  ansichtPruefen();
   navKontext(Z.stand, Z.wurzel, Z.ansicht, modus(Z.wurzel) === "buero" ? Z.bueroWeg : []);
   document.body.dataset.modus = modus(Z.wurzel);
-  const v = (ANSICHT_VIEW[Z.ansicht] || heuteView)();
+  const v = (ANSICHT_VIEW[Z.ansicht] || bueroPaket()?.VIEW[Z.ansicht] || heuteView)();
   Z.root.innerHTML = `<div class="schirm">${v}</div>`;
   zekiGesehenMerken(Z.root.querySelector("[data-zeki-key]")?.dataset.zekiKey); zekiStimmeEinsetzen(Z.root); zekiBildschirm(); zekiTaktStarten();
   haken.fuehrungStartPlanen?.();
